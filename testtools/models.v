@@ -1,0 +1,4 @@
+module testtools
+
+struct TestRun {
+}
