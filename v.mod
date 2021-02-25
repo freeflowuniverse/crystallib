@@ -1,4 +1,3 @@
-
 Module {
     name: 'crystallib',
     description: 'Set of various libraries as how is being used by threefold and crystal universe contributors'
