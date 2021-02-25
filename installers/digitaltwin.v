@@ -38,7 +38,7 @@ pub fn digitaltwin_install(cfg &myconfig.ConfigRoot) ? {
 			cd $repo.path/publisher
 
 			npm install
-
+			npm config set user 0
 			npm install -g @hyperspace/cli
 
 			'
