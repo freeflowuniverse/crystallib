@@ -12,3 +12,4 @@ install_publisher
 vex_webserver
 publishtools/publishtools
 .vscode
+_docs/

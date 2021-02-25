@@ -10,10 +10,8 @@ pub enum StoryStatus {
 
 pub struct Story {
 pub mut:
-	name         string
-	path         string
-	state        FileStatus
-	assignment 	 []int //someone works on the story or task, or bug, ...
-
-
-
+	name string
+	path string
+	// state        FileStatus
+	assignment []int // someone works on the story or task, or bug, ...
+}

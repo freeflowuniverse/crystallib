@@ -1,4 +1,5 @@
 module planner
+
 import time
 
 pub enum ProjectStatus {
@@ -11,18 +12,17 @@ pub enum ProjectStatus {
 
 pub struct Project {
 pub mut:
-	id 	  	     int
+	id           int
 	name         string
 	state        ProjectStatus
-	stories 	 []int
-	issues 	     []int
+	stories      []int
+	issues       []int
 	tasks        []int
-	members 	 []MemberShip
-	deadline 	 time.Time
-	dependencies []int //dependencies to other projects
+	members      []MemberShip
+	deadline     time.Time
+	dependencies []int // dependencies to other projects
 	description  string
-	comments 	 []int
-
+	comments     []int
 }
 
 pub enum MemberType {
@@ -34,11 +34,9 @@ pub enum MemberType {
 
 pub struct MemberShip {
 pub mut:
-	person       int
-	group 		 int
-	membertype 	 MemberType
-	expiration   time.Time
-	reputation   int = 50
+	person     int
+	group      int
+	membertype MemberType
+	expiration time.Time
+	reputation int = 50
 }
-
-
