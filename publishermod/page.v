@@ -1,7 +1,7 @@
 module publishermod
 
-import os
 import despiegk.crystallib.texttools
+import os
 
 pub fn (page Page) write(mut publisher Publisher, content string) {
 	mut path := page.path_get(mut publisher)
@@ -177,6 +177,10 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 			println(' >> $line')
 		}
 
+		if macro_process(state,line){
+			continue
+		}
+		
 		if do_defs {
 			if linestrip.starts_with('!!!def') {
 				if ':' in line {
@@ -213,9 +217,20 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 		}
 
 		if linestrip.starts_with('!!!include') {
+			mut params := texttools.new_params()
 			mut page_name_include := linestrip['!!!include'.len + 1..]
 			if debug {
 				println(' >> includes-- $page_name_include')
+			}
+
+			if ' ' in page_name_include {
+				splitted_spaces := page_name_include.split_nth(' ', 2)
+
+				params = texttools.text_to_params(splitted_spaces[1]) or {
+					state.error('cannot process include: ${page_name_include}.\n$err\n')
+					continue
+				}
+				page_name_include = splitted_spaces[0]
 			}
 
 			page_linked = publisher.page_check_find(page_name_include, state.page.id) or {
@@ -243,7 +258,12 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 
 			// do the include
 			state.serverline_last_pop()
-			for line_include in page_linked.content.split('\n') {
+			mut content_incl := page_linked.content
+			if params.exists('level') {
+				minlevel := params.get_int('level') or { panic(err) }
+				content_incl = texttools.markdown_min_header(content_incl, minlevel)
+			}
+			for line_include in content_incl.split('\n') {
 				state.lines_server << line_include
 			}
 			continue

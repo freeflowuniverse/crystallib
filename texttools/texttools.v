@@ -32,7 +32,7 @@ pub fn dedent(text string) string {
 	return res.join_lines()
 }
 
-enum MultiLineStatus {
+pub enum MultiLineStatus {
 	start
 	multiline
 }
@@ -110,23 +110,61 @@ fn multiline_end(multiline_first string, multiline string) string {
 	return multiline2
 }
 
-struct TextParams {
+pub struct TextParams {
 pub mut:
 	params []TextParam
 }
 
-struct TextParam {
+pub struct TextParam {
 pub:
 	key   string
 	value string
 }
 
-enum TextParamStatus {
+pub fn new_params() TextParams {
+	return TextParams{}
+}
+
+pub enum TextParamStatus {
 	start
 	name // found name of the var
 	value_wait // wait for value to start (can be quote or end of spaces and first meaningful char)
 	value // value started, so was no quote
 	quote // quote found means value in between ''
+}
+
+pub fn (mut tp TextParams) get(key_ string) ?string {
+	key := key_.to_lower()
+	for p in tp.params {
+		if p.key == key {
+			return p.value.trim(' ')
+		}
+	}
+	return error('Did not find key:$key in $tp')
+}
+
+pub fn (mut tp TextParams) get_int(key string) ?int {
+	valuestr := tp.get(key) ?
+	return valuestr.int()
+}
+
+
+pub fn (mut tp TextParams) get_int_default(key string,defval int) ?int {
+	if tp.exists(key){
+		valuestr := tp.get(key) ?
+		return valuestr.int()
+	}
+	return defval
+}
+
+pub fn (mut tp TextParams) exists(key_ string) bool {
+	key := key_.to_lower()
+	for p in tp.params {
+		if p.key == key {
+			return true
+		}
+	}
+	return false
 }
 
 // convert text with e.g. color:red or color:'red' to arguments
