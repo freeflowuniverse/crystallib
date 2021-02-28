@@ -93,7 +93,11 @@ pub fn website_build(cmd &cli.Command) ? {
 					'domains': site.domains
 				})) ?
 
-				os.write_file('$conf.paths.publish/$site.name/.repo', '$repo2.addr.name') ?
+				os.write_file('$conf.paths.publish/$site.name/.repo', json.encode(map{
+					'repo':  '$repo2.addr.name'
+					'alias': site.name
+				})) ?
+
 				
 				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(map{
 					'users': []string{},
@@ -114,8 +118,11 @@ pub fn website_build(cmd &cli.Command) ? {
 				os.write_file('$conf.paths.publish/$site.name/.domains.json', json.encode(map{
 					'domains': site.domains
 				})) ?
-
-				os.write_file('$conf.paths.publish/$site.name/.repo', '$repo.addr.name') ?
+				
+				os.write_file('$conf.paths.publish/$site.name/.repo', json.encode(map{
+					'repo':  '$repo.addr.name'
+					'alias': site.name
+				})) ?
 
 				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(map{
 					'users': []string{},
