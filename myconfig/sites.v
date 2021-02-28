@@ -116,6 +116,16 @@ fn site_config(mut c ConfigRoot) {
 		domains: ['twin_info.threefold.io']
 		descr :''
 	}
+
+	c.sites << SiteConfig{
+		name: 'info_bettertoken'
+		shortname: 'bt'
+		url: 'https://github.com/BetterToken/info_bettertoken.git'
+		domains: ['bt_info.threefold.io']
+		descr :''
+	}
+
+	
 	c.sites << SiteConfig{
 		name: 'data_threefold'
 		shortname: 'data'

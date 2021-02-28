@@ -8,7 +8,7 @@ import process
 import nodejs
 
 pub fn main(cmd cli.Command) ? {
-	cfg := myconfig.get() ?
+	cfg := myconfig.get(true) ?
 
 	mut ourreset := false
 	mut clean := false
@@ -29,7 +29,7 @@ pub fn main(cmd cli.Command) ? {
 	}
 	base() or { return error(' ** ERROR: cannot prepare system. Error was:\n$err') }
 
-	sites_download(cmd) or {
+	sites_download(cmd,true) or {
 		return error(' ** ERROR: cannot get web & wiki sites. Error was:\n$err')
 	}
 
@@ -43,7 +43,7 @@ pub fn main(cmd cli.Command) ? {
 }
 
 pub fn base() ? {
-	myconfig := myconfig.get() ?
+	myconfig := myconfig.get(true) ?
 	base := myconfig.paths.base
 
 	mut node := builder.node_get({}) or {
@@ -59,7 +59,7 @@ pub fn base() ? {
 }
 
 pub fn config_get(cmd cli.Command) ?myconfig.ConfigRoot {
-	mut cfg := myconfig.get() ?
+	mut cfg := myconfig.get(true) ?
 	for flag in cmd.flags {
 		if flag.name == 'pull' && flag.value.len > 0 {
 			cfg.pull = true
@@ -75,7 +75,7 @@ pub fn config_get(cmd cli.Command) ?myconfig.ConfigRoot {
 }
 
 pub fn reset() ? {
-	myconfig := myconfig.get() ?
+	myconfig := myconfig.get(true) ?
 	base := myconfig.paths.base
 	assert base.len > 10 // just to make sure we don't erase all
 	script := '

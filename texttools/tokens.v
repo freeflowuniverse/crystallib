@@ -1,6 +1,6 @@
 module texttools
 
-import regex
+// import regex
 
 pub struct TokenizerResult {
 pub mut:
@@ -25,8 +25,12 @@ pub fn (mut tr TokenizerResult) replace(text string, tofind string, replacewith 
 	mut text2 := text
 	for item in tr.items {
 		if item.matchstring == tofind2 {
+			// println(' ... $item.matchstring found -> $replacewith')
 			text2 = text2.replace(item.toreplace, replacewith)
 		}
+		// } else {
+		// 	println(' ... $item.matchstring !=  $tofind2')
+		// }
 	}
 	return text2
 }
@@ -50,54 +54,143 @@ pub fn name_fix(name string) string {
 	return item
 }
 
-pub fn tokenize(text string) TokenizerResult {
-	query := r'[\]a-zA-Z0-9_\[]]*'
-	mut r := regex.regex_opt(query) or { panic(err) }
-	// mut res := []string{}
-	mut res := TokenizerResult{}
-	mut word1 := ''
-	// mut word2 := ""
-	// mut word3 := ""
+fn word_skip(text string) bool {
+	if text.to_lower() in ['the', 'some', 'and', 'plus', 'will', 'do', 'are', 'these'] {
+		return true
+	}
+	return false
+}
+
+pub fn tokenize(text_ string) TokenizerResult {
+	text := dedent(text_)
+	// println(text)
+	mut skip := false
+	mut skipline := false
+	mut prev := ''
+	mut word := ''
+	mut islink := false
+	mut tr := TokenizerResult{}
 	mut done := []string{}
-	// look per line
-	// aggregate different words per max 3
-	// calculate the lowest common name (only a...z0...9)
 	for line in text.split('\n') {
-		all := r.find_all(line)
-		// println(all)
-		mut x := 0
-		for x < all.len {
-			word1 = line[all[x]..all[x + 1]]
-			if '[' in word1 || ']' in word1 {
-				println(word1)
-				panic('s')
+		if line.trim(' ').starts_with('!') {
+			continue
+		}
+		if line.trim(' ').starts_with('http') {
+			continue
+		}
+		if line.contains("'''") || line.contains('```') || line.contains('"""') {
+			skipline = !skipline
+		}
+		if skipline {
+			continue
+		}
+		prev = ''
+		word = ''
+		skip = false
+		for char in line.split('') {
+			if char in '[({' {
+				skip = true
+				continue
 			}
-			// println("+$word1")
-			if !(word1 in done) {
-				res.items << TokenizerItem{
-					toreplace: word1
-					matchstring: name_fix_no_underscore(word1)
+			if skip {
+				if char in ')]}' {
+					skip = false
+					prev = ''
+					continue
 				}
-				done << word1
+			} else {
+				if islink {
+					if char == ' ' {
+						islink = false
+					} else {
+						continue
+					}
+				}
+				if char.to_lower() in 'abcdefghijklmnopqrstuvwxyz0123456789_-' {
+					if word.len > 0 || prev == '' || prev in '\t\n ,:;.?!#|' {
+						word += char
+					}
+					if word.starts_with('http') {
+						islink = true
+					}
+				} else if char in '\t\n ,:;.?!#|' {
+					// only when end is newline tab or whitespace or ...
+					if word.len > 1 && !word_skip(word) && !(word in done) {
+						tr.items << TokenizerItem{
+							toreplace: word
+							matchstring: name_fix_no_underscore(word)
+						}
+						done << word
+					}
+					word = ''
+					prev = ''
+					continue
+				} else {
+					word = ''
+				}
+				prev = char
 			}
-			// if x>1{
-			// 	word2 = line[all[x-2]..all[x-1]]  + " " + line[all[x]..all[x + 1]] 
-			// 	// println("++$word2")
-			// 	if ! (word2 in done){
-			// 		res.items << TokenizerItem{toreplace:word2,matchstring:name_fix_no_underscore(word2)}
-			// 		done << word2
-			// 	}
-			// }
-			// if x>2{
-			// 	word3 = line[all[x-4]..all[x-3]] +" " + line[all[x-2]..all[x-1]] + " " + line[all[x]..all[x + 1]] 
-			// 	// println("+++$word3")
-			// 	if ! (word3 in done){
-			// 		res.items << TokenizerItem{toreplace:word3,matchstring:name_fix_no_underscore(word3)}
-			// 		done << word3
-			// 	}
-			// }
-			x += 2
+		}
+		if word.len > 1 && !word_skip(word) && !(word in done) {
+			tr.items << TokenizerItem{
+				toreplace: word
+				matchstring: name_fix_no_underscore(word)
+			}
+			done << word
 		}
 	}
-	return res
+	return tr
 }
+
+// pub fn tokenize2(text string) TokenizerResult {
+// 	// println('REGEX: $text')
+// 	query := r'[a-zA-Z0-9_]*'
+// 	mut r := regex.regex_opt(query) or { panic(err) }
+// 	// mut res := []string{}
+// 	mut res := TokenizerResult{}
+// 	mut word1 := ''
+// 	// mut word2 := ""
+// 	// mut word3 := ""
+// 	mut done := []string{}
+// 	// look per line
+// 	// aggregate different words per max 3
+// 	// calculate the lowest common name (only a...z0...9)
+// 	for line in text.split('\n') {
+// 		all := r.find_all(line)
+// 		// println(all)
+// 		mut x := 0
+// 		for x < all.len {
+// 			word1 = line[all[x]..all[x + 1]]
+// 			if '[' in word1 || ']' in word1 {
+// 				println(word1)
+// 				panic('s')
+// 			}
+// 			// println("+$word1")
+// 			if !(word1 in done) {
+// 				res.items << TokenizerItem{
+// 					toreplace: word1
+// 					matchstring: name_fix_no_underscore(word1)
+// 				}
+// 				done << word1
+// 			}
+// 			// if x>1{
+// 			// 	word2 = line[all[x-2]..all[x-1]]  + " " + line[all[x]..all[x + 1]] 
+// 			// 	// println("++$word2")
+// 			// 	if ! (word2 in done){
+// 			// 		res.items << TokenizerItem{toreplace:word2,matchstring:name_fix_no_underscore(word2)}
+// 			// 		done << word2
+// 			// 	}
+// 			// }
+// 			// if x>2{
+// 			// 	word3 = line[all[x-4]..all[x-3]] +" " + line[all[x-2]..all[x-1]] + " " + line[all[x]..all[x + 1]] 
+// 			// 	// println("+++$word3")
+// 			// 	if ! (word3 in done){
+// 			// 		res.items << TokenizerItem{toreplace:word3,matchstring:name_fix_no_underscore(word3)}
+// 			// 		done << word3
+// 			// 	}
+// 			// }
+// 			x += 2
+// 		}
+// 	}
+// 	return res
+// }

@@ -26,10 +26,9 @@ fn helloworld (req &ctx.Req, mut res ctx.Resp) {
 	}
 
 // Run server
-pub fn webserver_run() {	
+pub fn webserver_run(config myconfig.ConfigRoot) {	
     mut app := router.new()
 
-	config := myconfig.get()
 	mycontext := &MyContext{config: &config}
 	app.inject(mycontext)
 
@@ -39,9 +38,5 @@ pub fn webserver_run() {
 
     server.serve(app, 6789)	
 
-}
-
-fn main(){
-	webserver_run()
 }
 

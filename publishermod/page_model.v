@@ -45,6 +45,11 @@ pub fn (page Page) site_get(mut publisher Publisher) ?&Site {
 	return publisher.site_get_by_id(page.site_id)
 }
 
+pub fn (page Page) site(mut publisher Publisher) &Site {
+	mut s := publisher.site_get_by_id(page.site_id) or { panic(err) }
+	return s
+}
+
 pub fn (page Page) path_relative_get(mut publisher Publisher) string {
 	if page.path == '' {
 		panic('file path should never be empty, is bug')

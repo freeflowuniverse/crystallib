@@ -2,7 +2,7 @@ module publishermod
 
 import os
 import json
-import myconfig
+import despiegk.crystallib.myconfig
 
 struct PublisherErrors {
 pub mut:
@@ -47,14 +47,14 @@ pub fn (mut publisher Publisher) errors_get(site Site) ?PublisherErrors {
 pub fn (mut publisher Publisher) flatten() ? {
 	mut dest_file := ''
 
-	mut config := myconfig.get() ?
+	mut config := myconfig.get(true) ?
 
 	publisher.check() // makes sure we checked all
 
 	// process all definitions, will do over all sites
 	mut pd := PublisherDefs{}
-	for def, pageid_def in publisher.defs {
-		page_def := publisher.page_get_by_id(pageid_def) ?
+	for def, defobj in publisher.defs {
+		page_def := publisher.page_get_by_id(defobj.pageid) ?
 		site_def := page_def.site_get(mut publisher) ?
 		pd.defs << PublisherDef{
 			def: def
@@ -78,7 +78,10 @@ pub fn (mut publisher Publisher) flatten() ? {
 		// write the json errors file
 		os.write_file('$dest_dir/errors.json', json.encode(errors2)) ?
 		for c in config.sites {
-			if c.cat == myconfig.SiteCat.web{continue} // ignore websites
+			if c.cat == myconfig.SiteCat.web {
+				continue
+			}
+			// ignore websites
 			if c.shortname == site.name {
 				os.write_file('$dest_dir/.domains.json', json.encode(map{
 					'domains': c.domains
@@ -87,7 +90,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 				os.write_file('$dest_dir/.repo', c.name) ?
 
 				os.write_file('$dest_dir/.acls.json', json.encode(map{
-					'users': []string{},
+					'users':  []string{}
 					'groups': []string{}
 				})) ?
 

@@ -84,14 +84,14 @@ fn (mut self ReplaceInstructions) add_item(regex_find_str string, replace_with s
 // findstr is a normal string to look for, is always matched case insensitive
 // regex is regex as described in https://github.com/vlang/v/blob/master/vlib/regex/README.md
 //   regex start with ^R
-// all matching is case insensitive
+//   case insensitive regex start with ^S
 pub fn (mut ri ReplaceInstructions) add(replacelist []string) ? {
 	for i in replacelist {
 		splitted := i.split(':')
 		replace_with := splitted[splitted.len - 1]
 		// last one not to be used
 		if splitted.len < 2 {
-			return error('Cannot add $i because needs to have 2 parts, wrong syntax, to regex instructions')
+			return error('Cannot add $i because needs to have 2 parts, wrong syntax, to regex instructions:\n\"$replacelist\"')
 		}
 		for item in splitted[0..(splitted.len - 1)] {
 			ri.add_item(item, replace_with) ?
@@ -109,11 +109,12 @@ pub fn (mut self ReplaceInstructions) replace(text string) ?string {
 	// println('AAA\n$text\nBBB\n')
 	for line in text2.split_into_lines() {
 		line2 = line
+		// println(' >>>> $line')
 		mut tl := tokenize(line)
 		// println(tl)
 		for mut i in self.instructions {
 			if i.find_str == '' {
-				// println("REGEX:"+i.regex.get_query()+" <-$line")
+				// println('REGEX:' + i.regex.get_query() + ' <-$line')
 				all := i.regex.find_all(line)
 				for gi < all.len {
 					// println('  >> "${line[all[gi]..all[gi + 1]]}"')
@@ -122,6 +123,7 @@ pub fn (mut self ReplaceInstructions) replace(text string) ?string {
 				line2 = i.regex.replace(line2, i.replace_with)
 				// println('REPLACE_R:${i.regex.get_query()}:$line:$line2')
 			} else {
+				// println(tl)
 				// line2 = line2.replace(i.find_str, i.replace_with)
 				line2 = tl.replace(line2, i.find_str, i.replace_with) ?
 				// println('REPLACE:$i.find_str -> $line -> $line2')
@@ -133,6 +135,6 @@ pub fn (mut self ReplaceInstructions) replace(text string) ?string {
 	return res.join('\n')
 }
 
-pub fn regex_instructions_new() ?ReplaceInstructions {
+pub fn regex_instructions_new() ReplaceInstructions {
 	return ReplaceInstructions{}
 }

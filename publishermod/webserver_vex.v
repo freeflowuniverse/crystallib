@@ -365,12 +365,11 @@ fn site_deliver(req &ctx.Req, mut res ctx.Resp) {
 }
 
 // Run server
-pub fn webserver_run(publisher &Publisher) {
+pub fn webserver_run(publisher &Publisher, config &myconfig.ConfigRoot) {
 	mut app := router.new()
-	mut config := myconfig.get() or { panic(err) }
 
 	mycontext := &MyContext{
-		config: &config
+		config: config
 		publisher: publisher
 	}
 	app.inject(mycontext)

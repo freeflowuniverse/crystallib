@@ -52,10 +52,9 @@ pub fn (mut repo GitRepo) repo_url_get() ?string {
 	// panic("ss")
 
 	nrkeys, exists := ssh_agent_key_loaded(repo.addr.name)
-	println(' >>> $repo.addr.name $nrkeys, $exists')
+	// println(' >>> $repo.addr.name $nrkeys, $exists')
 
 	if os.exists(key_path) {
-		println(' -- FOUND')
 		if (!exists) || nrkeys > 1 {
 			ssh_agent_reset() ?
 			ssh_agent_load(key_path) ?

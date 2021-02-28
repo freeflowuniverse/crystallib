@@ -5,7 +5,7 @@ import hostsfile
 
 pub fn dns_on(sudo bool) {
 	mut domains := []string{}
-	mut myconfig := myconfig.get()or {panic(err)}
+	mut myconfig := myconfig.get(true)or {panic(err)}
 	for site in myconfig.sites {
 		for domain in site.domains {
 			domains << domain
@@ -21,7 +21,7 @@ pub fn dns_on(sudo bool) {
 
 pub fn dns_off(sudo bool) {
 	mut domains := []string{}
-	mut myconfig := myconfig.get() or {panic(err)}
+	mut myconfig := myconfig.get(true) or {panic(err)}
 	for site in myconfig.sites {
 		for domain in site.domains {
 			domains << domain

@@ -1,6 +1,6 @@
 module publishermod
 
-import texttools
+import despiegk.crystallib.texttools
 import os
 
 // the factory, get your tools here
@@ -9,9 +9,10 @@ import os
 pub fn new(path string) ?Publisher {
 	mut publisher := Publisher{}
 	publisher.gitlevel = 0
-	publisher.replacer.site = texttools.regex_instructions_new() or { panic(err) }
-	publisher.replacer.file = texttools.regex_instructions_new() or { panic(err) }
-	publisher.replacer.word = texttools.regex_instructions_new() or { panic(err) }
+	publisher.replacer.site = texttools.regex_instructions_new()
+	publisher.replacer.file = texttools.regex_instructions_new()
+	publisher.replacer.word = texttools.regex_instructions_new()
+	publisher.replacer.defs = texttools.regex_instructions_new()
 	publisher.find_sites(path.replace('~', os.home_dir())) ?
 
 	return publisher

@@ -1,7 +1,7 @@
 module publishermod
 
 import os
-import texttools
+import despiegk.crystallib.texttools
 
 pub fn (page Page) write(mut publisher Publisher, content string) {
 	mut path := page.path_get(mut publisher)
@@ -23,9 +23,8 @@ pub fn (page Page) write(mut publisher Publisher, content string) {
 // }
 
 fn (mut page Page) error_add(error PageError, mut publisher Publisher) {
-
-	for error_existing in page.errors{
-		if error_existing.msg.trim(" ") == error.msg.trim(" "){
+	for error_existing in page.errors {
+		if error_existing.msg.trim(' ') == error.msg.trim(' ') {
 			return
 		}
 	}
@@ -116,6 +115,12 @@ fn (mut state LineProcessorState) serverline_change(ffrom string, tto string) {
 	state.changed_server = true
 }
 
+// remove the last line e.g. needed for include
+fn (mut state LineProcessorState) serverline_last_pop() {
+	_ := state.lines_server.pop()
+	state.changed_server = true
+}
+
 fn (mut state LineProcessorState) sourceline_change(ffrom string, tto string) {
 	linelast := state.lines_source.pop()
 	state.lines_source << linelast.replace(ffrom, tto)
@@ -132,7 +137,7 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 		page: page
 	}
 
-	mut debug:=false
+	mut debug := false
 
 	mut page_linked := Page{}
 
@@ -143,6 +148,7 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 
 	// println(state.site.name + " " + state.page.name)
 	// if state.site.name == "sdk" && state.page.name.starts_with("sidebar"){
+	// if state.site.name == 'sdk' && state.page.name.starts_with('grid_concepts') {
 	// 	debug = true
 	// }
 
@@ -167,8 +173,8 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 			continue
 		}
 
-		if debug{
-			println(" >> $line")
+		if debug {
+			println(' >> $line')
 		}
 
 		if do_defs {
@@ -178,16 +184,21 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 					if splitted.len == 2 {
 						for defname in splitted[1].split(',') {
 							defname2 := name_fix_no_underscore(defname)
+							defname_full := defname.replace('_', ' ')
 							if defname2 in publisher.defs {
 								// println(publisher.defs[defname2])
-								page_def_double_id := publisher.defs[defname2]
-								page_def_double := publisher.page_get_by_id(page_def_double_id) ?
+								defobj := publisher.defs[defname2]
+								page_def_double := publisher.page_get_by_id(defobj.pageid) ?
 								{
 									panic('cannot find page by id')
 								}
 								state.error('duplicate definition: $defname, already exists in $page_def_double.name')
 							} else {
-								publisher.defs[defname2] = page.id
+								publisher.defs[defname2] = Def{
+									pageid: page.id
+									name: defname_full
+								}
+								state.serverline_last_pop()
 							}
 						}
 					} else {
@@ -203,7 +214,9 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 
 		if linestrip.starts_with('!!!include') {
 			mut page_name_include := linestrip['!!!include'.len + 1..]
-			// println('-includes-- $page_name_include')
+			if debug {
+				println(' >> includes-- $page_name_include')
+			}
 
 			page_linked = publisher.page_check_find(page_name_include, state.page.id) or {
 				state.error('include, cannot find page: ${page_name_include}.\n$err')
@@ -211,7 +224,7 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 			}
 
 			if page_linked.path_get(mut publisher) == page.path_get(mut publisher) {
-				state.error('recursive include: ${page_linked.path_get(mut publisher)}\n${ page.path_get(mut publisher)}')
+				state.error('recursive include: ${page_linked.path_get(mut publisher)}\n${page.path_get(mut publisher)}')
 				continue
 			}
 
@@ -229,6 +242,7 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 			}
 
 			// do the include
+			state.serverline_last_pop()
 			for line_include in page_linked.content.split('\n') {
 				state.lines_server << line_include
 			}
@@ -266,22 +280,21 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 				}
 			}
 
-
 			if link.cat == LinkType.page || link.cat == LinkType.file {
 				// only process links if page or file
 
-				if ":" in linkname{
-					mut sitename9,_ := name_split(linkname) or {panic(err)}
+				if ':' in linkname {
+					mut sitename9, _ := name_split(linkname) or { panic(err) }
 					link.site = sitename9
 				}
 
-				if link.site == "" {
+				if link.site == '' {
 					link.site = state.site.name
 				}
 
-				if debug{
-					println(" >>>> process link \n$link")
-					println(" >>< sitename:$state.site.name linksitename:$link.site")	
+				if debug {
+					println(' >>>> process link \n$link')
+					println(' >>< sitename:$state.site.name linksitename:$link.site')
 					// if link.filename.contains("disclaimer"){
 					// 	panic("s")
 					// }				
@@ -294,13 +307,13 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 				if link.state == LinkState.ok {
 					if link.original_get() != link.source_get(state.site.name) {
 						state.sourceline_change(link.original_get(), link.source_get(state.site.name))
-						if debug{
-							println(" >>>> ${link.original_get()} -> ${link.source_get(state.site.name)}")
+						if debug {
+							println(' >>>> $link.original_get() -> ${link.source_get(state.site.name)}')
 						}
 					}
 					state.serverline_change(link.original_get(), link.server_get())
-					if debug{
-						println(" >>>> server: ${link.original_get()} -> ${link.server_get()}")
+					if debug {
+						println(' >>>> server: $link.original_get() -> $link.server_get()')
 					}
 				}
 			}
@@ -308,12 +321,11 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 	} // end of the line walk
 
 	// now we need to rewrite the source & server lines
-	page.content = state.lines_server.join("\n")
+	page.content = state.lines_server.join('\n')
 
-	if state.changed_source{
-		os.write_file(page.path_get(mut publisher),state.lines_source.join("\n")) or {panic(err)}
+	if state.changed_source {
+		os.write_file(page.path_get(mut publisher), state.lines_source.join('\n')) or { panic(err) }
 	}
-
 }
 
 fn (mut page Page) title() string {
@@ -329,22 +341,36 @@ fn (mut page Page) title() string {
 
 // return a page where all definitions are replaced with link
 fn (mut page Page) content_defs_replaced(mut publisher Publisher) ?string {
-	site := page.site_get(mut publisher) ?
-
-	tr := texttools.tokenize(page.content)
-	mut text2 := page.content
-	for def, pageid in publisher.defs {
-		page_def := publisher.page_get_by_id(pageid) or { panic("page get by id:$pageid\n$err") }
-		// don't replace on your own page
-		if page_def.name != page.name {
-			for item in tr.items {
-				if item.matchstring == def {
-					replacewith := '[$item.toreplace](page__${site.name}__$page_def.name)'
-					text2 = text2.replace(item.toreplace, replacewith)
-				}
-			}
+	mut skipline := false
+	mut res := []string{}
+	for mut line in page.content.split('\n') {
+		if line.trim(' ').starts_with('!') {
+			res << line
+			continue
 		}
-	}
+		if line.trim(' ').starts_with('/') {
+			res << line
+			continue
+		}
+		if line.trim(' ').starts_with('#') {
+			res << line
+			continue
+		}
+		if line.contains("'''") || line.contains('```') || line.contains('"""') {
+			skipline = !skipline
+		}
+		if skipline {
+			res << line
+			continue
+		}
 
-	return text2
+		mut tr := texttools.tokenize(line)
+		for defname, defobj in publisher.defs {
+			page2 := publisher.page_get_by_id(defobj.pageid) ?
+			site2 := page2.site(mut publisher)
+			line = tr.replace(line, defname, '[$defobj.name](${site2.name}__$page2.name)') ?
+		}
+		res << line
+	}
+	return res.join('\n')
 }

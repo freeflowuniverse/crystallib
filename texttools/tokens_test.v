@@ -1,7 +1,5 @@
 module texttools
 
-
-
 fn test_tokens() {
 	mut text := '
 	these; Are Some ramdom words!
@@ -10,52 +8,45 @@ fn test_tokens() {
 	blue_lagoon
 	blue_Lagoon
 	lagoon
-	;bluelagoon
+    blueLagoon
+	&redlagoon
 
 	'
-	r:=tokenize(text)
-	// println(r)
+	r := tokenize(text)
+	println(r)
 
-	r2 := texttools.TokenizerResult{
-    items: [texttools.TokenizerItem{
-        toreplace: 'these'
-        matchstring: 'these'
-    }, texttools.TokenizerItem{
-        toreplace: 'Are'
-        matchstring: 'are'
-    }, texttools.TokenizerItem{
-        toreplace: 'Some'
-        matchstring: 'some'
-    }, texttools.TokenizerItem{
-        toreplace: 'ramdom'
-        matchstring: 'ramdom'
-    }, texttools.TokenizerItem{
-        toreplace: 'words'
-        matchstring: 'words'
-    }, texttools.TokenizerItem{
-        toreplace: 'blue'
-        matchstring: 'blue'
-    }, texttools.TokenizerItem{
-        toreplace: 'lagoon'
-        matchstring: 'lagoon'
-    }, texttools.TokenizerItem{
-        toreplace: 'Blue'
-        matchstring: 'blue'
-    }, texttools.TokenizerItem{
-        toreplace: 'blue_lagoon'
-        matchstring: 'bluelagoon'
-    }, texttools.TokenizerItem{
-        toreplace: 'blue_Lagoon'
-        matchstring: 'bluelagoon'
-    }, texttools.TokenizerItem{
-        toreplace: 'bluelagoon'
-        matchstring: 'bluelagoon'
-    }]}
-	assert r==r2
+	r2 := TokenizerResult{
+		items: [TokenizerItem{
+			toreplace: 'ramdom'
+			matchstring: 'ramdom'
+		}, TokenizerItem{
+			toreplace: 'words'
+			matchstring: 'words'
+		}, TokenizerItem{
+			toreplace: 'blue'
+			matchstring: 'blue'
+		}, TokenizerItem{
+			toreplace: 'lagoon'
+			matchstring: 'lagoon'
+		}, TokenizerItem{
+			toreplace: 'Blue'
+			matchstring: 'blue'
+		}, TokenizerItem{
+			toreplace: 'blue_lagoon'
+			matchstring: 'bluelagoon'
+		}, TokenizerItem{
+			toreplace: 'blue_Lagoon'
+			matchstring: 'bluelagoon'
+		}, TokenizerItem{
+			toreplace: 'blueLagoon'
+			matchstring: 'bluelagoon'
+		}]
+	}
+
+	assert r == r2
 }
 
 fn test_tokens2() {
-
 	mut text := '
 	these; Are Some ramdom words!
 	blue lagoon
@@ -69,9 +60,8 @@ fn test_tokens2() {
 
 	'
 
-	mut ri := regex_instructions_new(['bluelagoon:reddragon:ThreeFold']) or {
-		panic(err)
-	}
+	mut ri := regex_instructions_new()
+	ri.add(['bluelagoon:red_dragon:ThreeFold']) or { panic(err) }
 
 	mut text_out2 := ri.replace(text) or { panic(err) }
 
@@ -91,6 +81,34 @@ fn test_tokens2() {
 	println(text_out2)
 
 	assert dedent(text_out2).trim(' \n') == dedent(compare).trim(' \n')
+}
 
+fn test_tokens3() {
+	mut text := '
+    - [Definitions](tftech:definitions)
+    (koekoe)
+    (great )
+        {great }
+    - [Disclaimer](disclaimer)
+    - [farmer_terms_conditions](terms_conditions_farmer)
+    - [terms_conditions_websites](terms_conditions_websites) test
+    - [terms_conditions_griduser](terms_conditions_griduser)
+    - [privacypolicy](privacypolicy)
 
+    http://localhost:9998/threefold/#/farming_certification
+    https://greencloud
+
+	'
+
+	r := tokenize(text)
+	println(r)
+
+	assert r == TokenizerResult{
+		items: [TokenizerItem{
+			toreplace: 'test'
+			matchstring: 'test'
+		}]
+	}
+
+	// panic('s')
 }

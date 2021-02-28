@@ -48,7 +48,6 @@ pub fn ssh_agent_key_loaded(name string) (int, bool) {
 	} }
 	if res.exit_code == 0 {
 		for line in res.output.split('\n') {
-			println('sshkeyline:$line')
 			if line.trim(' ') == '' {
 				continue
 			}

@@ -9,7 +9,7 @@ import os
 // import process
 
 pub fn sites_list(cmd &cli.Command) ? {
-	mut conf := myconfig.get() ?
+	mut conf := myconfig.get(true) ?
 	mut gt := gittools.new(conf.paths.code) or { return error('cannot load gittools:$err') }
 	for mut site in conf.sites_get() {
 		mut repo := gt.repo_get(name: site.reponame()) or {
@@ -30,13 +30,16 @@ pub fn sites_list(cmd &cli.Command) ? {
 	}
 }
 
-pub fn sites_download(cmd cli.Command) ? {
+pub fn sites_download(cmd cli.Command, web bool) ? {
 	mut cfg := config_get(cmd) ?
 	mut gt := gittools.new(cfg.paths.code) or { return error('cannot load gittools:$err') }
-	println(' - get all code repositories.')
+	// println(' - get all code repositories.')
 
 	for mut sc in cfg.sites {
-		println(' - get:$sc.url')
+		if sc.cat == myconfig.SiteCat.web && !web{
+			continue
+		}
+		// println(' - get:$sc.url')
 		gt.repo_get_from_url(url: sc.url, pull: sc.pull) or {
 			println(' - WARNING: could not download site $sc.url, do you have rights?')
 		}
@@ -47,7 +50,7 @@ pub fn sites_install(cmd cli.Command) ? {
 	mut cfg := config_get(cmd) ?
 	println(' - sites install.')
 	mut first := true
-	sites_download(cmd) ?
+	sites_download(cmd,true) ?
 	for mut sc in cfg.sites_get() {
 		if sc.cat == myconfig.SiteCat.web {
 			website_install(sc.name, first, &cfg) ?

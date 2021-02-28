@@ -16,7 +16,7 @@ fn (mut publisher Publisher) defs_pages_init() {
 	def_names.sort()
 
 	for defname in def_names {
-		pageid := publisher.defs[defname]
+		defobj := publisher.defs[defname]
 		firstletter_found = defname[0].ascii_str()
 		if firstletter_found != firstletter {
 			out << ''
@@ -26,12 +26,17 @@ fn (mut publisher Publisher) defs_pages_init() {
 			out << '| ---- | ---- |'
 			firstletter = firstletter_found
 		}
-		mut page := publisher.page_get_by_id(pageid) or { panic(err) }
+		mut page := publisher.page_get_by_id(defobj.pageid) or { panic(err) }
+
 		site := page.site_get(mut publisher) or { panic(err) }
+
+		publisher.replacer.defs.add(['defname:[defobj.name](${site.name}__${page.name}.md)']) or {
+			panic(err)
+		}
 
 		deftitle := page.title()
 
-		out << '| [$defname](${site.name}:${page.name}.md) | $deftitle |'
+		out << '| [$defobj.name](${site.name}__${page.name}.md) | $deftitle |'
 	}
 
 	out << ''
@@ -56,7 +61,7 @@ fn (mut publisher Publisher) defs_pages_init() {
 fn (mut publisher Publisher) def_page_get(name string) ?&Page {
 	name2 := name_fix_no_underscore(name)
 	if name2 in publisher.defs {
-		pageid := publisher.defs[name2]
+		pageid := publisher.defs[name2].pageid
 		// println(publisher.pages.map(it.id))
 		// println(':::$pageid:::')
 		if pageid in publisher.pages.map(it.id) {
@@ -74,7 +79,7 @@ fn (mut publisher Publisher) def_page_get(name string) ?&Page {
 fn (mut publisher Publisher) def_page_exists(name string) bool {
 	name2 := name_fix_no_underscore(name)
 	if name2 in publisher.defs {
-		pageid := publisher.defs[name2]
+		pageid := publisher.defs[name2].pageid
 		if pageid in publisher.pages.map(it.id) {
 			return true
 		} else {

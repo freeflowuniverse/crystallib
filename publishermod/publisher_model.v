@@ -1,6 +1,6 @@
 module publishermod
 
-import texttools
+import despiegk.crystallib.texttools
 
 struct Publisher {
 mut:
@@ -11,9 +11,14 @@ pub mut:
 	files      []File
 	site_names map[string]int
 	// maps definition name to page id
-	defs     map[string]int
+	defs     map[string]Def
 	develop  bool
 	replacer ReplacerInstructions
+}
+
+struct Def {
+	name   string
+	pageid int
 }
 
 struct ReplacerInstructions {
@@ -21,6 +26,7 @@ pub mut:
 	site texttools.ReplaceInstructions
 	file texttools.ReplaceInstructions
 	word texttools.ReplaceInstructions
+	defs texttools.ReplaceInstructions
 }
 
 pub fn (mut publisher Publisher) site_get_by_id(id int) ?&Site {

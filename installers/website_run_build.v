@@ -15,7 +15,7 @@ pub struct Group{
 
 fn website_conf_repo_get(cmd &cli.Command) ?(myconfig.ConfigRoot, &gittools.GitRepo) {
 	mut name := ''
-	mut conf := myconfig.get() ?
+	mut conf := myconfig.get(true) ?
 
 	for flag in cmd.flags {
 		if flag.name == 'repo' {
@@ -73,7 +73,7 @@ pub fn website_build(cmd &cli.Command) ? {
 		}
 	}
 
-	mut conf := myconfig.get() ?
+	mut conf := myconfig.get(true) ?
 	mut sites := conf.sites_get()
 	// groups
 	os.write_file('$conf.paths.publish/.groups.json', json.encode(map{'test': Group{}})) ?
