@@ -158,6 +158,24 @@ pub fn decode(value string) RValue {
 }
 
 // Builder
+pub fn return_str(value string) RValue {
+	return RValue(RString{
+		value: value
+	})
+}
+
+pub fn return_error(value string) RValue {
+	return RError(RString{
+		value: value
+	})
+}
+
+pub fn return_int(value int) RValue {
+	return RValue(RInt{
+		value: value
+	})
+}
+
 pub fn return_ok() RValue {
 	return return_str('OK')
 }
@@ -175,7 +193,7 @@ pub fn return_list_int(values []int) RValue {
 pub fn return_list_string(values []string) RValue {
 	mut ll := []RValue{}
 	for v in values {
-		ll << decode_bstr(v)
+		ll << return_str(v)
 	}
 	return RValue(RArray{
 		values: ll

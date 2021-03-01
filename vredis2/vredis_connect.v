@@ -18,16 +18,6 @@ struct SetOpts {
 		keep_ttl bool
 }
 
-enum KeyType {
-	t_none
-	t_string
-	t_list
-	t_set
-	t_zset
-	t_hash
-	t_stream
-	t_unknown
-}
 
 
 // https://redis.io/topics/protocol
@@ -39,11 +29,7 @@ pub fn connect(addr string) ?Redis {
 	}
 }
 
-// fn (mut  r Redis) read() ?[]byte {
-// 	mut data := []byte{len: 1024}
-// 	r.reader.read(mut data)?
-// 	return data
-// }
+
 
 pub fn (mut r Redis) socket_read_line() ?string {
 	res := r.socket.read_line()
@@ -69,13 +55,14 @@ pub fn (mut r Redis) disconnect() {
 //implement protocol of redis how to send he data
 // https://redis.io/topics/protocol
 fn (mut r Redis) encode_send_legacy(items []string)? {
-	mut root := RedisValue{datatype: RedisValTypes.list}
-
+	mut root := RValue(RArray{
+		values: []
+	})
 	for item in items {
-		obj := RedisValue{datatype: RedisValTypes.str, str: item}
-		root.list << obj
+		root.values << RValue(RString{
+			value: item
+		})
 	}
-
 	return r.encode_send(root)
 	/*
 	mut out := "*${items.len}\r\n"
@@ -89,62 +76,20 @@ fn (mut r Redis) encode_send_legacy(items []string)? {
 	*/
 }
 
-fn (mut r Redis) encode_value(value RedisValue) ?string {
-	if value.datatype == RedisValTypes.str {
-		return "\$${value.str.len}\r\n${value.str}\r\n"
-	}
 
-	if value.datatype == RedisValTypes.success {
-		return "+${value.str}\r\n"
-	}
-
-	if value.datatype == RedisValTypes.err {
-		return "-${value.str}\r\n"
-	}
-
-	if value.datatype == RedisValTypes.nil {
-		return "$-1\r\n"
-	}
-
-	if value.datatype == RedisValTypes.num {
-		return ":" + value.num.str() + "\r\n"
-	}
-
-	if value.datatype == RedisValTypes.list {
-		mut buffer := "*${value.list.len}\r\n"
-		for v in value.list {
-			response := r.encode_value(v)?
-			buffer = buffer + response
-		}
-
-		return buffer
-	}
-
-	// parsing error
-	println("Could not prepare response")
-	return "-Could not prepare response\r\n"
-}
-
-fn (mut r Redis) encode_send(value RedisValue)? {
-	buffer := r.encode_value(value)?
+fn (mut r Redis) encode_send(value RValue)? {
+	buffer := value.encode()
 	r.socket_write(buffer)?
 	time.sleep_ms(10) // FIXME
 }
 
 
 enum ReceiveState {data error array}
-enum RedisValTypes { str num nil list success err unknown }
 
-struct RedisValue {
-	mut:
-		datatype RedisValTypes
-		str string
-		num int
-		list []RedisValue
-}
 
-pub fn (mut r Redis) get_response()? RedisValue {
-	mut result := RedisValue{}
+
+pub fn (mut r Redis) get_response()? RValue {
+	mut result := RValue{}
 
 	mut line := r.socket_read_line()?
 	line = line[..line.len-2] // ignore the \r\n at the end
@@ -152,22 +97,18 @@ pub fn (mut r Redis) get_response()? RedisValue {
 	if line.starts_with("-") {
 		// error coming back from redis server
 		// strip the - and set error
-		return error(line[1..])
+		return RError{value:line[1..]}
 	}
 
 	// parse integers
 	if line.starts_with(":") {
-		result.datatype = RedisValTypes.num
-		result.num = line[1..].int()
-		return result
+		return RInt{value : line[1 ..].int()}
 	}
 
 	if line.starts_with("+") {
 		// default simple string
 		// strip + and return value, works for OK aswell
-		result.datatype = RedisValTypes.str
-		result.str = line[1..]
-		return result
+		return RString{value: line[1..]}
 	}
 
 	if line.starts_with("$") {
@@ -176,17 +117,14 @@ pub fn (mut r Redis) get_response()? RedisValue {
 
 		if bulkstring_size == -1 {
 			// represents null
-			result.datatype = RedisValTypes.nil
-			return result
+			return RNill{}
 		}
 
-		result.datatype = RedisValTypes.str
 		if bulkstring_size == 0 {
 			// extract final \r\n and not reading
 			// any payload
 			r.socket_read_line()?
-			result.str = ""
-			return result
+			return RString{value: ""}
 		}
 
 		// read payload
@@ -200,29 +138,29 @@ pub fn (mut r Redis) get_response()? RedisValue {
 
 		// extract final \r\n
 		r.socket_read_line()?
-
-		result.str = buffer.bytestr() // FIXME: won't support binary (afaik)
-		return result
+		return RString{value: buffer.bytestr()}  // FIXME: won't support binary (afaik)
 	}
 
 	if line.starts_with("*") {
-		result.datatype = RedisValTypes.list
+		arr = RArray{
+			values: []RValue{}
+		}
 		items := line[1..].int()
 
 		// proceed each entries, they can be of any types
 		for _ in 0 .. items {
 			value := r.get_response()?
-			result.list << value
+			arr.values << value
 		}
 
-		return result
+		return arr
 	}
 
 	return error("unsupported response type")
 }
 
 //return the int or string as string, if empty return then empty string
-pub fn (mut r Redis) send(items []string)? RedisValue {
+pub fn (mut r Redis) send(items []string)? RValue {
 	r.encode_send_legacy(items)?
 	return r.get_response()
 }
@@ -231,59 +169,59 @@ pub fn (mut r Redis) send_ok(items []string) ? bool {
 	r.encode_send_legacy(items)?
 	res := r.get_response()?
 
-	if res.datatype != RedisValTypes.str {
+	if typeof(res) != RString {
 		return error("Wrong response, expected string")
 	}
 
-	return if res.str == "OK" { true } else { false }
+	return if res.value == "OK" { true } else { false }
 }
 
 pub fn (mut r Redis) send_int(items []string) ? int {
 	r.encode_send_legacy(items)?
 	res := r.get_response()?
 
-	if res.datatype != RedisValTypes.num {
+	if typeof(res) != RInt {
 		return error("Wrong response, expected integer")
 	}
 
-	return res.num
+	return res.value
 }
 
 pub fn (mut r Redis) send_str(items []string) ? string {
 	r.encode_send_legacy(items)?
 	res := r.get_response()?
 
-	if res.datatype != RedisValTypes.str {
+	if typeof(res) != RString {
 		return error("Wrong response, expected string")
 	}
 
-	return res.str
+	return res.value
 }
 
 pub fn (mut r Redis) send_strnil(items []string) ? string {
 	r.encode_send_legacy(items)?
 	res := r.get_response()?
 
-	if res.datatype == RedisValTypes.nil {
+	if typeof(res) == RNill {
 		return error("(nil)")
 	}
 
-	if res.datatype != RedisValTypes.str {
+	if typeof(res) != RString {
 		return error("Wrong response, expected string/nil")
 	}
 
-	return res.str
+	return res.value
 }
 
-pub fn (mut r Redis) send_list(items []string) ?[]RedisValue {
+pub fn (mut r Redis) send_list(items []string) ?[]RValue {
 	r.encode_send_legacy(items)?
 	res := r.get_response()?
 
-	if res.datatype != RedisValTypes.list {
+	if typeof(res) != RArray {
 		return error("Wrong response, expected array")
 	}
 
-	return res.list
+	return res.values
 }
 
 // fn parse_int(res string) ?int {

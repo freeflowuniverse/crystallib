@@ -13,7 +13,7 @@ struct RedisSrv {
 		socket net.TcpListener
 }
 
-type RedisCallback = fn(RedisValue, mut RedisInstance) RedisValue
+type RedisCallback = fn(RValue, mut RedisInstance) RValue
 
 struct RedisHandler {
 	command string
@@ -30,87 +30,58 @@ pub fn listen(addr string, port int) ?RedisSrv {
 }
 
 
-pub fn value_nil() RedisValue {
-	return RedisValue{datatype: RedisValTypes.nil}
-}
-
-pub fn value_str(value string) RedisValue {
-	return RedisValue{datatype: RedisValTypes.str, str: value}
-}
-
-pub fn value_success(value string) RedisValue {
-	return RedisValue{datatype: RedisValTypes.success, str: value}
-}
-
-pub fn value_ok() RedisValue {
-	return value_success("OK")
-}
-
-pub fn value_int(value int) RedisValue {
-	return RedisValue{datatype: RedisValTypes.num, num: value}
-}
-
-pub fn value_error(value string) RedisValue {
-	return RedisValue{datatype: RedisValTypes.err, str: value}
-}
-
-
-//
-// commands
-//
-
-fn command_ping(input RedisValue, mut _ RedisInstance) RedisValue {
-	if input.list.len > 1 {
-		return value_success(input.list[1].str)
+fn command_ping(input RValue, mut _ RedisInstance) RValue {
+	if input.values.len > 1 {
+		return input.values[1]
 	}
 
-	return value_success("PONG")
+	return return_str("PONG")
 }
 
-fn command_set(input RedisValue, mut srv RedisInstance) RedisValue {
-	if input.list.len != 3 {
-		return value_error("Invalid arguments")
+fn command_set(input RValue, mut srv RedisInstance) RValue {
+	if input.values.len != 3 {
+		return return_error("Invalid arguments")
 	}
 
-	key := input.list[1].str
-	value := input.list[2].str
+	key := input.values[1].value
+	value := input.values[2].value
 
 	srv.db[key] = value
 
-	return value_ok()
+	return return_ok()
 }
 
-fn command_get(input RedisValue, mut srv RedisInstance) RedisValue {
-	if input.list.len != 2 {
-		return value_error("Invalid arguments")
+fn command_get(input RValue, mut srv RedisInstance) RValue {
+	if input.values.len != 2 {
+		return return_error("Invalid arguments")
 	}
 
-	key := input.list[1].str
+	key := input.values[1].value
 
 	if key !in srv.db {
-		return value_nil()
+		return return_nil()
 	}
 
-	return value_str(srv.db[key])
+	return return_str(srv.db[key])
 }
 
 
-fn command_del(input RedisValue, mut srv RedisInstance) RedisValue {
-	if input.list.len != 2 {
-		return value_error("Invalid arguments")
+fn command_del(input RValue, mut srv RedisInstance) RValue {
+	if input.values.len != 2 {
+		return return_error("Invalid arguments")
 	}
 
-	key := input.list[1].str
+	key := input.values[1].value
 
 	if key !in srv.db {
-		return value_nil()
+		return return_nil()
 	}
 	panic("implement del")
-	return value_str(srv.db[key])
+	return return_str(srv.db[key])
 }
 
 
-fn command_info(input RedisValue, mut srv RedisInstance) RedisValue {
+fn command_info(input RValue, mut srv RedisInstance) RValue {
 	mut lines := []string{}
 
 	lines << "# Server"
@@ -119,20 +90,20 @@ fn command_info(input RedisValue, mut srv RedisInstance) RedisValue {
 	lines << "# Keyspace"
 	lines << "db0:keys=${srv.db.len},expires=0,avg_ttl=0"
 
-	return value_str(lines.join("\r\n"))
+	return return_str(lines.join("\r\n"))
 }
 
-fn command_select(input RedisValue, mut srv RedisInstance) RedisValue {
-	if input.list.len != 2 {
-		return value_error("Invalid arguments")
+fn command_select(input RValue, mut srv RedisInstance) RValue {
+	if input.values.len != 2 {
+		return return_error("Invalid arguments")
 	}
 
 	// only support db0
-	if input.list[1].str != "0" {
-		return value_error("Incorrect database")
+	if input.values[1].value != "0" {
+		return return_error("Incorrect database")
 	}
 
-	return value_ok()
+	return return_ok()
 }
 
 fn command_scan(input RedisValue, mut srv RedisInstance) RedisValue {
@@ -140,44 +111,44 @@ fn command_scan(input RedisValue, mut srv RedisInstance) RedisValue {
 		return value_error("Invalid arguments")
 	}
 
-	mut root := RedisValue{datatype: RedisValTypes.list}
-	root.list << RedisValue{datatype: RedisValTypes.str, str: "0"}
+	mut root := RArray{values: []RValue{}}
+	root.values << return_str("0")
 
-	mut list := RedisValue{datatype: RedisValTypes.list}
+	mut new_arr := RArray{values: []RValue{}}
 
 	// we ignore cursor and reply the full list
 	for k, _ in srv.db {
-		list.list << RedisValue{datatype: RedisValTypes.str, str: k}
+		new_arr.values << return_str(k)
 	}
 
-	root.list << list
+	root.values << new_arr
 
 	return root
 }
 
-fn command_type(input RedisValue, mut srv RedisInstance) RedisValue {
-	if input.list.len != 2 {
-		return value_error("Invalid arguments")
+fn command_type(input RValue, mut srv RedisInstance) RValue {
+	if input.values.len != 2 {
+		return return_error("Invalid arguments")
 	}
 
-	key := input.list[1].str
+	key := input.values[1].value
 
 	if key !in srv.db {
-		return value_nil()
+		return return_nil()
 	}
 
 	// only support string value
-	return value_success("string")
+	return return_str("string")
 }
 
-fn command_ttl(input RedisValue, mut srv RedisInstance) RedisValue {
-	return value_int(0)
+fn command_ttl(input RValue, mut srv RedisInstance) RValue {
+	return return_int(0)
 }
 
 //
 // socket management
 //
-pub fn process_input(mut client Redis, mut instance RedisInstance, value RedisValue) ?bool {
+pub fn process_input(mut client Redis, mut instance RedisInstance, value RValue) ?bool {
 	mut h := []RedisHandler{}
 
 	h << RedisHandler{command: "PING", handler: command_ping}
@@ -190,7 +161,7 @@ pub fn process_input(mut client Redis, mut instance RedisInstance, value RedisVa
 	h << RedisHandler{command: "GET", handler: command_get}
 	h << RedisHandler{command: "DEL", handler: command_del}
 
-	command := value.list[0].str.to_upper()
+	command := value.values[0].value.to_upper()
 
 	for rh in h {
 		if command == rh.command {
@@ -203,12 +174,12 @@ pub fn process_input(mut client Redis, mut instance RedisInstance, value RedisVa
 
 	// debug
 	print("Error: unknown command: ")
-	for cmd in value.list {
-		print("$cmd.str ")
+	for cmd in value.values {
+		print("$cmd.value ")
 	}
 	println("")
 
-	err := value_error("Unknown command")
+	err := return_error("Unknown command")
 	client.encode_send(err)?
 
 	return false
@@ -228,7 +199,7 @@ pub fn new_client(mut conn net.TcpConn, mut main RedisInstance)? {
 			continue
 		}
 
-		if value.datatype != RedisValTypes.list {
+		if typeof(value) != RArray {
 			// should not receive anything else than
 			// array with commands and args
 			println("Wrong request from client, rejecting")
@@ -236,7 +207,7 @@ pub fn new_client(mut conn net.TcpConn, mut main RedisInstance)? {
 			return
 		}
 
-		if value.list[0].datatype != RedisValTypes.str {
+		if typeof(value.values[0]) != RString {
 			println("Wrong request from client, rejecting")
 			conn.close()?
 			return
