@@ -1,10 +1,14 @@
-module builder
+module ipaddress
 
 import regex
+import os
+import despiegk.crystallib.process
 
 pub struct IPAddress {
 pub:
 	addr string
+	// e.g. 24, default not specified
+	mask int
 	port int
 	cat  IpAddressType = IpAddressType.ipv4
 }
@@ -14,17 +18,35 @@ pub enum IpAddressType {
 	ipv6
 }
 
+// TODO: implementation not correct !!!
+
 // format: localhost:7777
 // format: 192.168.6.6:7777
 // format: 192.168.6.6
 // format: any ipv6 addr
+// format: localhost:7777/24
+// format ipv6: [x:x:x:x:x:x:x:x]:p TODO: implement
+// format ipv6: x:x:x:x:x:x:x:x
+// format ipv6: x::x/96
+
 pub fn ipaddress_new(addr_string string) ?IPAddress {
 	mut cat := IpAddressType.ipv4
 	mut addr := addr_string
-	mut port := '0'
+	mut port := ''
+	mut mask := 0
 
 	if addr_string.starts_with('localhost') {
 		addr = addr_string.replace('localhost', '127.0.0.1')
+	}
+
+	if '/' in addr {
+		splitted := addr.split(addr)
+		if splitted.len == 2 {
+			mask = splitted[1].int()
+			addr = splitted[0]
+		} else {
+			return error('syntax error in ipaddr: $addr, should only have one /')
+		}
 	}
 
 	if '::' in addr && addr.count('::') == 1 {
@@ -47,20 +69,56 @@ pub fn ipaddress_new(addr_string string) ?IPAddress {
 		addr: addr.trim_space()
 		port: port.int()
 		cat: cat
+		mask: mask
 	}
 
-	ip.check() or { return error('Invalid Ip address string') }
+	ip.check() ?
 
 	return ip
 }
 
-pub fn (mut ipaddr IPAddress) ping(executor Executor) bool {
-	if ipaddr.cat == IpAddressType.ipv4 {
-		executor.exec('ping -c 3 $ipaddr.addr') or { return false }
-	} else {
-		executor.exec('ping -6 -c 3 $ipaddr.addr') or { return false }
+pub struct PingArgs {
+pub mut:
+	retry   int
+	timeout int
+}
+
+// PingArgs: retry & timeout
+// retry default 1
+// timeout default 1000 (msec)
+pub fn (mut ipaddr IPAddress) ping(args_ PingArgs) bool {
+	mut args := args_
+	if args.retry == 0 {
+		args.retry = 1
 	}
-	return true
+	if args.timeout == 0 {
+		args.timeout = 1000
+	}
+
+	mut timeout := int(args.timeout / 1000)
+	if timeout < 1 {
+		timeout = 1
+	}
+
+	mut cmd := ''
+	if ipaddr.cat == IpAddressType.ipv4 {
+		cmd = 'ping -c 1 -W $args.timeout $ipaddr.addr'
+	} else {
+		if process.is_osx() {
+			cmd = 'ping6 -c 1 -i $timeout $ipaddr.addr'
+		} else {
+			cmd = 'ping -6 -c 1 -W $args.timeout $ipaddr.addr'
+		}
+	}
+	for _ in 0 .. args.retry {
+		println(cmd)
+		res := os.exec(cmd) or { continue }
+		if res.exit_code > 0 {
+			continue
+		}
+		return true
+	}
+	return false
 }
 
 // check if ipaddress is well formed
@@ -76,10 +134,36 @@ pub fn (mut ipaddr IPAddress) check() ? {
 	start, _ := re.match_string(ipaddr.addr)
 
 	if start < 0 {
-		error('Invalid Ip address string')
+		return error('Invalid Ip address string. $ipaddr')
 	}
 }
 
-fn (mut ipaddr IPAddress) address() string {
-	return '$ipaddr.addr:$ipaddr.port'
+fn (mut ipaddr IPAddress) address() ?string {
+	if ipaddr.cat == IpAddressType.ipv4 {
+		if ipaddr.port > 0 {
+			if ipaddr.mask > 0 {
+				return error('cannot have mask when port specified')
+			}
+			return '$ipaddr.addr:$ipaddr.port'
+		} else {
+			if ipaddr.mask > 0 {
+				return '$ipaddr.addr/$ipaddr.mask'
+			} else {
+				return '$ipaddr.addr'
+			}
+		}
+	} else {
+		if ipaddr.port > 0 {
+			if ipaddr.mask > 0 {
+				return error('cannot have mask when port specified')
+			}
+			return '[$ipaddr.addr]:$ipaddr.port'
+		} else {
+			if ipaddr.mask > 0 {
+				return '$ipaddr.addr/$ipaddr.mask'
+			} else {
+				return '$ipaddr.addr'
+			}
+		}
+	}
 }
