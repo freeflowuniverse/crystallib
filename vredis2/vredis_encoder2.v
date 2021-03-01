@@ -20,8 +20,8 @@ struct RBString {
 	value string
 }
 
-struct RNill {
-	// Redis Nill
+struct RNil {
+	// Redis Nil
 }
 
 struct RArray {
@@ -29,7 +29,7 @@ struct RArray {
 	values []RValue
 }
 
-type RValue = RArray | RBString | RError | RInt | RNill | RString
+type RValue = RArray | RBString | RError | RInt | RNil | RString
 
 const crlf = '\r\n'
 
@@ -49,7 +49,7 @@ pub fn (value RValue) encode() string {
 		RError {
 			return '-$value.value\r\n'
 		}
-		RNill {
+		RNil {
 			return '$-1\r\n'
 		}
 		RArray {
@@ -90,7 +90,7 @@ fn decode_bstr(value string) (RValue, int) {
 	len := value[1..value.index_after(crlf, 0)].int()
 	if len == -1 {
 		// Example "$-1\r\n"
-		return RValue(RNill{}), value.index_after(crlf, 0) + crlf_len
+		return RValue(RNil{}), value.index_after(crlf, 0) + crlf_len
 	}else{
 		// Example "$6\r\nfoobar\r\n"
 		start := value.index_after(crlf, 0) + crlf_len
@@ -147,7 +147,7 @@ pub fn decode_helper(str string) (RValue,int) {
 			return decoded, ind
 		} else {
 			println('This is not anything')
-			return RValue(RNill{}), 0
+			return RValue(RNil{}), 0
 		}
 	}
 }
@@ -201,7 +201,7 @@ pub fn return_list_string(values []string) RValue {
 }
 
 pub fn return_nil() RValue {
-	return RValue(RNill{})
+	return RValue(RNil{})
 }
 
 // TODO: move to a proper test file
@@ -234,7 +234,7 @@ pub fn redis_encode_decode_test() {
 			RValue(RBString{
 				value: 'This is a bulk string\r\nTest New Line inside it'
 			}),
-			RValue(RNill{}),
+			RValue(RNil{}),
 		]
 	})
 	println(rv.encode())

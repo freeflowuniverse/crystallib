@@ -117,7 +117,7 @@ pub fn (mut r Redis) get_response()? RValue {
 
 		if bulkstring_size == -1 {
 			// represents null
-			return RNill{}
+			return RNil{}
 		}
 
 		if bulkstring_size == 0 {
@@ -142,7 +142,7 @@ pub fn (mut r Redis) get_response()? RValue {
 	}
 
 	if line.starts_with("*") {
-		arr = RArray{
+		arr := RArray{
 			values: []RValue{}
 		}
 		items := line[1..].int()
@@ -202,7 +202,7 @@ pub fn (mut r Redis) send_strnil(items []string) ? string {
 	r.encode_send_legacy(items)?
 	res := r.get_response()?
 
-	if typeof(res) == RNill {
+	if typeof(res) == RNil {
 		return error("(nil)")
 	}
 
