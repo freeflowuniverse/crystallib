@@ -182,13 +182,13 @@ enum ExistState {
 // try and get if page exists and return state of how it did exist
 pub fn (mut publisher Publisher) page_exists_state(name string) ExistState {
 	_ := publisher.page_get(name) or {
-		if err.contains('not find page') {
+		if err.msg.contains('not find page') {
 			return ExistState.notfound
-		} else if err.contains('site not found') {
+		} else if err.msg.contains('site not found') {
 			return ExistState.notfound
-		} else if err.contains('more than 1 page') {
+		} else if err.msg.contains('more than 1 page') {
 			return ExistState.double
-		} else if err.contains('namesplit issue') {
+		} else if err.msg.contains('namesplit issue') {
 			return ExistState.namespliterror
 		}
 		return ExistState.error
@@ -199,13 +199,13 @@ pub fn (mut publisher Publisher) page_exists_state(name string) ExistState {
 // try and get if file exists and return state of how it did exist
 pub fn (mut publisher Publisher) file_exists_state(name string) ExistState {
 	_ := publisher.file_get(name) or {
-		if err.contains('not find file') {
+		if err.msg.contains('not find file') {
 			return ExistState.notfound
-		} else if err.contains('site not found') {
+		} else if err.msg.contains('site not found') {
 			return ExistState.notfound
-		} else if err.contains('more than 1 file') {
+		} else if err.msg.contains('more than 1 file') {
 			return ExistState.double
-		} else if err.contains('namesplit issue') {
+		} else if err.msg.contains('namesplit issue') {
 			return ExistState.namespliterror
 		}
 		return ExistState.error
