@@ -2,6 +2,19 @@
 
 As used for Threefold and ...
 
+## to install
+
+```bash
+sh install.sh
+```
+
+## to develop
+
+- go to ~/.vmodules/ checkout this repo under despiegk/crystallib
+- edit the code there
+- use `v run test.v` to run some ad hoc tests
+- use `v test vredis2/` to run tests of one module
+
 ## generating docs
 
 ```bash
