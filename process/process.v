@@ -2,7 +2,7 @@ module process
 
 import os
 import time
-import texttools
+import despiegk.crystallib.texttools
 
 pub struct Command {
 pub mut:
@@ -212,7 +212,7 @@ pub fn cmd_to_args(cmd string) ?(string, []string) {
 	// }
 
 	// is still giving issues prob easier for now to only use first part and then all the rest together, lets see what happens now
-	// mut args := texttools.text_to_args(text)?
+	// mut args := texttools.cmd_line_args_parser(text)?
 
 	// splitted := text.split_nth(' ', 2)
 	// mut args := [splitted[0], splitted[1]]

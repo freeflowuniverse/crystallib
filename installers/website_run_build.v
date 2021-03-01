@@ -1,16 +1,16 @@
 module installers
 
-import myconfig
-import process
-import gittools
+import despiegk.crystallib.myconfig
+import despiegk.crystallib.process
+import despiegk.crystallib.gittools
 import cli
 import os
 import json
 
-pub struct Group{
-	pub mut:
-		users []string
-		groups []string
+pub struct Group {
+pub mut:
+	users  []string
+	groups []string
 }
 
 fn website_conf_repo_get(cmd &cli.Command) ?(myconfig.ConfigRoot, &gittools.GitRepo) {
@@ -65,16 +65,16 @@ pub fn website_develop(cmd &cli.Command) ? {
 
 pub fn website_build(cmd &cli.Command) ? {
 	mut arg := false
-	mut usePrefix := false
+	mut use_prefix := false
 
 	for flag in cmd.flags {
 		if flag.name == 'repo' {
 			if flag.value.len > 0 {
 				arg = true
 			}
-		}else if flag.name == 'pathprefix'{
-			flag.value.len > 0 {
-				usePrefix = true
+		} else if flag.name == 'pathprefix' {
+			if flag.value.len > 0 {
+				use_prefix = true
 			}
 		}
 	}
@@ -82,7 +82,9 @@ pub fn website_build(cmd &cli.Command) ? {
 	mut conf := myconfig.get(true) ?
 	mut sites := conf.sites_get()
 	// groups
-	os.write_file('$conf.paths.publish/.groups.json', json.encode(map{'test': Group{}})) ?
+	os.write_file('$conf.paths.publish/.groups.json', json.encode(map{
+		'test': Group{}
+	})) ?
 	if !arg {
 		println(' - build all websites')
 		mut gt := gittools.new(conf.paths.code) or {
@@ -94,14 +96,14 @@ pub fn website_build(cmd &cli.Command) ? {
 					return error('ERROR: cannot find repo: $site.name\n$err')
 				}
 				println(' - build website: $repo2.path')
-				
-				if usePrefix{
+
+				if use_prefix {
 					process.execute_stdout('sed -i \'s/plugins: \[/pathPrefix: "$site.shortname",\n\tplugins: \[/g\' $repo2.path/gridsome.config.js') ?
 				}
 
 				process.execute_stdout('$repo2.path/build.sh') ?
-				
-				if usePrefix{
+
+				if use_prefix {
 					process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?
 				}
 
@@ -114,12 +116,10 @@ pub fn website_build(cmd &cli.Command) ? {
 					'alias': site.name
 				})) ?
 
-				
 				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(map{
-					'users': []string{},
+					'users':  []string{}
 					'groups': []string{}
 				})) ?
-			
 			}
 		}
 	} else {
@@ -130,27 +130,27 @@ pub fn website_build(cmd &cli.Command) ? {
 		for site in sites {
 			if site.name == repo.addr.name {
 				println(' - build website: $repo.path')
-				if usePrefix{
+				if use_prefix {
 					process.execute_stdout('sed -i \'s/plugins: \[/pathPrefix: "$site.shortname",\n\tplugins: \[/g\' $repo.path/gridsome.config.js') ?
 				}
 
 				process.execute_stdout('$repo.path/build.sh') ?
 
-				if usePrefix{
+				if use_prefix {
 					process.execute_stdout('cd $repo.path/ && git checkout gridsome.config.js') ?
 				}
 
 				os.write_file('$conf.paths.publish/$site.name/.domains.json', json.encode(map{
 					'domains': site.domains
 				})) ?
-				
+
 				os.write_file('$conf.paths.publish/$site.name/.repo', json.encode(map{
 					'repo':  '$repo.addr.name'
 					'alias': site.name
 				})) ?
 
 				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(map{
-					'users': []string{},
+					'users':  []string{}
 					'groups': []string{}
 				})) ?
 

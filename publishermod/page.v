@@ -177,10 +177,10 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 			println(' >> $line')
 		}
 
-		if macro_process(state,line){
+		if macro_process(mut state, line) {
 			continue
 		}
-		
+
 		if do_defs {
 			if linestrip.starts_with('!!!def') {
 				if ':' in line {
