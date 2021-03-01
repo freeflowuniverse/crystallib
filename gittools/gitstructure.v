@@ -96,7 +96,7 @@ fn (mut gitstructure GitStructure) load_recursive(path1 string) ? {
 		if os.is_dir(pathnew) {
 			// println(" - $pathnew")		
 			if os.exists(os.join_path(pathnew, '.git')) {
-				gitaddr := gitstructure.addr_get_from_path(pathnew) or { return error(err) }
+				gitaddr := gitstructure.addr_get_from_path(pathnew) or { return err }
 				gitstructure.repos << GitRepo{
 					addr: gitaddr
 					path: pathnew

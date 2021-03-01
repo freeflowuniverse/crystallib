@@ -24,13 +24,13 @@ fn macro_process(mut state LineProcessorState, line string) bool {
 	}
 
 	mut macro := texttools.macro_parse(line) or {
-		state.error(err)
+		state.error(err.msg)
 		return true
 	}
 	if macro.cmd in fns_map {
 		amethod := fns_map[macro.cmd]
 		amethod(mut state, mut macro) or {
-			state.error(err)
+			state.error(err.msg)
 			return true
 		}
 	} else {

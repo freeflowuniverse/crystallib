@@ -52,7 +52,7 @@ pub fn base() ? {
 	node.platform_prepare() ?
 
 	if !os.exists(base) {
-		os.mkdir(base) or { return error(err) }
+		os.mkdir(base) or { return err }
 	}
 
 	println(' - installed base requirements')
@@ -69,7 +69,7 @@ pub fn config_get(cmd cli.Command) ?myconfig.ConfigRoot {
 		}
 	}
 	if !os.exists(cfg.paths.code) {
-		os.mkdir(cfg.paths.code) or { return error(err) }
+		os.mkdir(cfg.paths.code) or { return err }
 	}
 	return cfg
 }
