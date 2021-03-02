@@ -31,20 +31,20 @@ pub fn listen(addr string, port int) ?RedisSrv {
 
 
 fn command_ping(input RValue, mut _ RedisInstance) RValue {
-	if input.values.len > 1 {
-		return input.values[1]
+	if r_array_len(input) > 1 {
+		return r_list(input)[1]
 	}
 
 	return return_str("PONG")
 }
 
 fn command_set(input RValue, mut srv RedisInstance) RValue {
-	if input.values.len != 3 {
+	if r_array_len(input) != 3 {
 		return return_error("Invalid arguments")
 	}
 
-	key := input.values[1].value
-	value := input.values[2].value
+	key := r_value_by_index(input,1)
+	value := r_value_by_index(input,2)
 
 	srv.db[key] = value
 
@@ -52,11 +52,11 @@ fn command_set(input RValue, mut srv RedisInstance) RValue {
 }
 
 fn command_get(input RValue, mut srv RedisInstance) RValue {
-	if input.values.len != 2 {
+	if r_array_len(input) != 2 {
 		return return_error("Invalid arguments")
 	}
 
-	key := input.values[1].value
+	key := r_value_by_index(input,1)
 
 	if key !in srv.db {
 		return return_nil()
@@ -67,11 +67,11 @@ fn command_get(input RValue, mut srv RedisInstance) RValue {
 
 
 fn command_del(input RValue, mut srv RedisInstance) RValue {
-	if input.values.len != 2 {
+	if r_array_len(input) != 2 {
 		return return_error("Invalid arguments")
 	}
 
-	key := input.values[1].value
+	key := r_value_by_index(input,1)
 
 	if key !in srv.db {
 		return return_nil()
@@ -94,21 +94,21 @@ fn command_info(input RValue, mut srv RedisInstance) RValue {
 }
 
 fn command_select(input RValue, mut srv RedisInstance) RValue {
-	if input.values.len != 2 {
+	if r_array_len(input) != 2 {
 		return return_error("Invalid arguments")
 	}
 
 	// only support db0
-	if input.values[1].value != "0" {
+	if r_value_by_index(input,1) != "0" {
 		return return_error("Incorrect database")
 	}
 
 	return return_ok()
 }
 
-fn command_scan(input RedisValue, mut srv RedisInstance) RedisValue {
-	if input.list.len < 2 {
-		return value_error("Invalid arguments")
+fn command_scan(input RValue, mut srv RedisInstance) RValue {
+	if r_array_len(input) < 2 {
+		panic ("Invalid arguments")
 	}
 
 	mut root := RArray{values: []RValue{}}
@@ -127,11 +127,11 @@ fn command_scan(input RedisValue, mut srv RedisInstance) RedisValue {
 }
 
 fn command_type(input RValue, mut srv RedisInstance) RValue {
-	if input.values.len != 2 {
+	if r_array_len(input) != 2 {
 		return return_error("Invalid arguments")
 	}
 
-	key := input.values[1].value
+	key := r_value_by_index(input,1)
 
 	if key !in srv.db {
 		return return_nil()
@@ -161,7 +161,7 @@ pub fn process_input(mut client Redis, mut instance RedisInstance, value RValue)
 	h << RedisHandler{command: "GET", handler: command_get}
 	h << RedisHandler{command: "DEL", handler: command_del}
 
-	command := value.values[0].value.to_upper()
+	command := r_value_by_index(value,0).to_upper()
 
 	for rh in h {
 		if command == rh.command {
@@ -174,8 +174,9 @@ pub fn process_input(mut client Redis, mut instance RedisInstance, value RValue)
 
 	// debug
 	print("Error: unknown command: ")
-	for cmd in value.values {
-		print("$cmd.value ")
+	for cmd in r_list(value) {
+		mut cmd_value := r_value(cmd)
+		print("$cmd_value ")
 	}
 	println("")
 
@@ -191,15 +192,15 @@ pub fn new_client(mut conn net.TcpConn, mut main RedisInstance)? {
 
 	for {
 		// fetch command from client (process incoming buffer)
-		value := client.get_response() or {
-			if err == "no data in socket" {
-				// FIXME
-				time.sleep_ms(1)
-			}
-			continue
-		}
+		value := client.get_response() or { panic("Can't create new client") }
+			// if err == "no data in socket" {
+			// 	// FIXME
+			// 	time.sleep_ms(1)
+			// }
+			// continue
+		// }
 
-		if typeof(value) != RArray {
+		if value !is RArray {
 			// should not receive anything else than
 			// array with commands and args
 			println("Wrong request from client, rejecting")
@@ -207,7 +208,7 @@ pub fn new_client(mut conn net.TcpConn, mut main RedisInstance)? {
 			return
 		}
 
-		if typeof(value.values[0]) != RString {
+		if r_list(value)[0] !is RString {
 			println("Wrong request from client, rejecting")
 			conn.close()?
 			return

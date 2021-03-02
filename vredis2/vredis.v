@@ -148,19 +148,19 @@ pub fn (mut r Redis) selectdb(database int) ?bool {
 
 pub fn (mut r Redis) scan(cursor int) ? (string, []string) {
 	res := r.send_list(['SCAN', cursor.str()])?
-	if typeof(res[0]) != RString {
+	if res[0] !is RString {
 		return error("Redis SCAN wrong response type (cursor)")
 	}
 
-	if typeof(res[1]) != RArray {
+	if res[1] !is RArray {
 		return error("Redis SCAN wrong response type (list content)")
 	}
 
 	mut values := []string{}
 
-	for i in 0 .. res[1].values.len {
-		values << res[1].values[i].value
+	for i in 0 .. r_array_len(res[1]) {
+		values << r_value_by_index(res[1],i)
 	}
 
-	return res[0].value, values
+	return r_value(res[0]), values
 }

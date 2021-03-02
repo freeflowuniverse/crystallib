@@ -44,7 +44,7 @@ fn (mut r Redis) socket_write_line(data string) ? {
 	r.socket.write('$data\r\n'.bytes())?
 }
 
-fn (mut r Redis) socket_write(data string) ? {
+fn (mut r Redis) socket_write(data string) ?int {
 	return r.socket.write(data.bytes())
 }
 
@@ -55,9 +55,9 @@ pub fn (mut r Redis) disconnect() {
 //implement protocol of redis how to send he data
 // https://redis.io/topics/protocol
 fn (mut r Redis) encode_send_legacy(items []string)? {
-	mut root := RValue(RArray{
-		values: []
-	})
+	mut root := RArray{
+		values: []RValue{}
+	}
 	for item in items {
 		root.values << RValue(RString{
 			value: item
@@ -78,7 +78,7 @@ fn (mut r Redis) encode_send_legacy(items []string)? {
 
 
 fn (mut r Redis) encode_send(value RValue)? {
-	buffer := value.encode()
+	buffer := encode(value)
 	r.socket_write(buffer)?
 	time.sleep_ms(10) // FIXME
 }
@@ -89,8 +89,6 @@ enum ReceiveState {data error array}
 
 
 pub fn (mut r Redis) get_response()? RValue {
-	mut result := RValue{}
-
 	mut line := r.socket_read_line()?
 	line = line[..line.len-2] // ignore the \r\n at the end
 
@@ -142,7 +140,7 @@ pub fn (mut r Redis) get_response()? RValue {
 	}
 
 	if line.starts_with("*") {
-		arr := RArray{
+		mut arr := RArray{
 			values: []RValue{}
 		}
 		items := line[1..].int()
@@ -169,59 +167,59 @@ pub fn (mut r Redis) send_ok(items []string) ? bool {
 	r.encode_send_legacy(items)?
 	res := r.get_response()?
 
-	if typeof(res) != RString {
+	if res !is RString {
 		return error("Wrong response, expected string")
 	}
 
-	return if res.value == "OK" { true } else { false }
+	return if r_value(res) == "OK" { true } else { false }
 }
 
 pub fn (mut r Redis) send_int(items []string) ? int {
 	r.encode_send_legacy(items)?
 	res := r.get_response()?
 
-	if typeof(res) != RInt {
+	if res !is RInt {
 		return error("Wrong response, expected integer")
 	}
 
-	return res.value
+	return r_value(res).int()
 }
 
 pub fn (mut r Redis) send_str(items []string) ? string {
 	r.encode_send_legacy(items)?
 	res := r.get_response()?
 
-	if typeof(res) != RString {
+	if res !is RString {
 		return error("Wrong response, expected string")
 	}
 
-	return res.value
+	return r_value(res)
 }
 
 pub fn (mut r Redis) send_strnil(items []string) ? string {
 	r.encode_send_legacy(items)?
 	res := r.get_response()?
 
-	if typeof(res) == RNil {
+	if res is RNil {
 		return error("(nil)")
 	}
 
-	if typeof(res) != RString {
+	if res !is RString {
 		return error("Wrong response, expected string/nil")
 	}
 
-	return res.value
+	return r_value(res)
 }
 
 pub fn (mut r Redis) send_list(items []string) ?[]RValue {
 	r.encode_send_legacy(items)?
 	res := r.get_response()?
 
-	if typeof(res) != RArray {
+	if res !is RArray {
 		return error("Wrong response, expected array")
 	}
 
-	return res.values
+	return r_list(res)
 }
 
 // fn parse_int(res string) ?int {
