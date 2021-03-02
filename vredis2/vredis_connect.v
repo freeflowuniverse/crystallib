@@ -59,7 +59,7 @@ fn (mut r Redis) encode_send_legacy(items []string)? {
 		values: []RValue{}
 	}
 	for item in items {
-		root.values << RValue(RString{
+		root.values << RValue(RBString{
 			value: item
 		})
 	}
