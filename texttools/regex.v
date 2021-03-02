@@ -53,7 +53,7 @@ fn (mut self ReplaceInstructions) add_item(regex_find_str string, replace_with s
 	mut item := regex_find_str
 	if item.starts_with('^R') {
 		item = item[2..] // remove ^r
-		r := regex.regex_opt(item) or { return err }
+		r := regex.regex_opt(item) ?
 		self.instructions << ReplaceInstruction{
 			regex_str: item
 			regex: r
@@ -61,8 +61,8 @@ fn (mut self ReplaceInstructions) add_item(regex_find_str string, replace_with s
 		}
 	} else if item.starts_with('^S') {
 		item = item[2..] // remove ^S
-		item2 := regex_rewrite(item) or { return err }
-		r := regex.regex_opt(item2) or { return err }
+		item2 := regex_rewrite(item) ?
+		r := regex.regex_opt(item2) ?
 		self.instructions << ReplaceInstruction{
 			regex_str: item
 			regex: r
