@@ -1,19 +1,26 @@
 module digitaltwin
 
-import os
 import libsodium
 
-pub fn (mut twin DigitalTwinFactory) sign(data []byte) []byte {
+pub fn (mut twin DigitalTwinFactory) sign(data string) []byte {
 	println("[+] sign: signing data: $data")
 
-	// result := libsodium.new_signing_key(twin.privkey.public_key.data, twin.privkey.public_key.data)
-	// println(result)
+	sk := libsodium.generate_signing_key_seed(twin.seed.data)
 
-	// TODO: sign the data with private key
-	return []byte{}
+	signed := sk.sign_string(data)
+	println(signed)
+	println(sk.verify_key.verify_string(signed))
+
+	return signed.bytes()
 }
 
 pub fn (mut twin DigitalTwinFactory) verify(data []byte) bool {
-	// TODO: verify that data was signed by us
-	return true
+	println("[+] sign: signing data: $data")
+
+	sk := libsodium.generate_signing_key_seed(twin.seed.data)
+
+	signed := sk.verify_key.verify(data)
+	println(signed)
+
+	return signed
 }

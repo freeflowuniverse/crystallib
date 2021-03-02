@@ -17,6 +17,7 @@ pub mut:
 	me      DigitalTwinME
 	redis   &int // &redisclient.Redis // FIXME
 	privkey libsodium.PrivateKey
+	seed    []byte // not sure about security
 }
 
 pub fn (mut twin DigitalTwin) id() int {

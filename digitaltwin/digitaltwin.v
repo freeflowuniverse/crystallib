@@ -52,5 +52,6 @@ pub fn factory(redis int) ?DigitalTwinFactory {
 		me: me
 		redis: &redis
 		privkey: pk
+		seed: seed
 	}
 }

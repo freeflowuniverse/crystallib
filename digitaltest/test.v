@@ -7,6 +7,9 @@ fn main() {
 
 	data := "Hello World"
 
-	payload := twin.sign(data.bytes())
+	payload := twin.sign(data)
 	println(payload)
+
+	verify := twin.verify(payload)
+	println(verify)
 }
