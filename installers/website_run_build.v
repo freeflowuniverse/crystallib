@@ -113,7 +113,7 @@ pub fn website_build(cmd &cli.Command) ? {
 
 				os.write_file('$conf.paths.publish/$site.name/.repo', json.encode(map{
 					'repo':  '$repo2.addr.name'
-					'alias': site.name
+					'alias': site.alias
 				})) ?
 
 				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(map{
@@ -146,7 +146,7 @@ pub fn website_build(cmd &cli.Command) ? {
 
 				os.write_file('$conf.paths.publish/$site.name/.repo', json.encode(map{
 					'repo':  '$repo.addr.name'
-					'alias': site.name
+					'alias': site.alias
 				})) ?
 
 				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(map{
