@@ -44,7 +44,9 @@ pub fn factory(redis int) ?DigitalTwinFactory {
 	libsodium.crypto_box_seed_keypair(pk.public_key.data, pk.secret_key.data, seed.data)
 	println(pk)
 
-	mut me := DigitalTwinME{}
+	mut me := DigitalTwinME{
+		id: 1
+	}
 
 	return DigitalTwinFactory{
 		me: me

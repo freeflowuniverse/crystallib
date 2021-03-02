@@ -14,8 +14,8 @@ pub struct DigitalTwinME {
 struct DigitalTwinFactory {
 pub mut:
 	// who am I
-	me    DigitalTwinME
-	redis &int // &redisclient.Redis // FIXME
+	me      DigitalTwinME
+	redis   &int // &redisclient.Redis // FIXME
 	privkey libsodium.PrivateKey
 }
 
