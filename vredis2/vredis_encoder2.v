@@ -2,21 +2,25 @@ module vredis2
 
 struct RString {
 	// Redis string
+pub mut:
 	value string
 }
 
 struct RError {
 	// Redis Error
+pub mut:
 	value string
 }
 
 struct RInt {
 	// Redis Integer
+pub mut:
 	value int
 }
 
 struct RBString {
 	// Redis Bulk String
+pub mut:
 	value string
 }
 
@@ -26,6 +30,7 @@ struct RNil {
 
 struct RArray {
 	// Redis Array
+pub mut:
 	values []RValue
 }
 
@@ -35,7 +40,7 @@ const crlf = '\r\n'
 
 const crlf_len = '\r\n'.len
 
-pub fn (value RValue) encode() string {
+pub fn encode(value RValue) string {
 	match value {
 		RBString {
 			return '\$$value.value.len\r\n$value.value\r\n'
@@ -55,7 +60,7 @@ pub fn (value RValue) encode() string {
 		RArray {
 			mut buffer := '*$value.values.len\r\n'
 			for val in value.values {
-				response := val.encode()
+				response := encode(val)
 				buffer = buffer + response
 			}
 			return buffer
@@ -165,7 +170,7 @@ pub fn return_str(value string) RValue {
 }
 
 pub fn return_error(value string) RValue {
-	return RError(RString{
+	return RValue(RError{
 		value: value
 	})
 }
@@ -203,13 +208,74 @@ pub fn return_list_string(values []string) RValue {
 pub fn return_nil() RValue {
 	return RValue(RNil{})
 }
+pub fn r_value(rv RValue) string {
+	if rv is RArray || rv is RNil{
+		rv_type := rv.type_name()
+		panic("Can't get value for $rv_type")
+	}
+	return match rv {
+		RInt {
+			rv.value.str()
+		}
+		RString,RBString,RError {
+			rv.value
+		}
+		else {
+			""
+		}
+	}
+}
+
+pub fn r_value_by_index(rv RValue, i int) string {
+	if rv !is RArray{
+		panic("This functions used with RArray only, use get_value instead")
+	}
+	return match rv {
+		RArray {
+			r_value(rv.values[i])
+		}
+		else {
+			""
+		}
+	}
+}
+
+pub fn r_list(rv RValue) []RValue{
+	if rv !is RArray{
+		panic("This functions used with RArray only, use get_value instead")
+	}
+	return match rv {
+		RArray {
+			rv.values
+		}
+		else {
+			[]RValue{}
+		}
+	}
+}
+
+pub fn r_array_len(rv RValue) int {
+	if rv !is RArray{
+		panic("This functions used with RArray only")
+	}
+	return match rv {
+		RArray {
+			rv.values.len
+		}
+		else {
+			result := -1
+			result
+		}
+	}
+}
 
 // TODO: move to a proper test file
 pub fn redis_encode_decode_test() {
+// pub fn main(){
 	mut rv := RValue(RError{
 		value: 'my error'
 	})
-	println(rv.encode())
+	println(encode(rv))
 
 	rv = RValue(RArray{
 		values: [RValue(RError{
@@ -218,7 +284,7 @@ pub fn redis_encode_decode_test() {
 			value: 100
 		})]
 	})
-	println(rv.encode())
+	println(encode(rv))
 
 	rv = RValue(RArray{
 		values: [
@@ -237,7 +303,9 @@ pub fn redis_encode_decode_test() {
 			RValue(RNil{}),
 		]
 	})
-	println(rv.encode())
+	println(encode(rv))
+	// println(rv.values)
+	
 	println(decode('+hello\r\n'))
 	println(decode('-hello\r\n'))
 	println(decode(':100\r\n'))
