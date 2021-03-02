@@ -1,38 +1,54 @@
 module digitaltwin
 
 import libsodium
-import despiegk.crystallib.redisclient
+// import despiegk.crystallib.redisclient
 import os
 
-pub fn factory(redis redisclient.Redis) ?DigitalTwinFactory {
+// pub fn factory(redis redisclient.Redis) ?DigitalTwinFactory { // FIXME
+pub fn factory(redis int) ?DigitalTwinFactory {
+	seedlen := 32 // FIXME (extracted from sodium lib)
+
+	mut pk := libsodium.PrivateKey{
+		public_key: []byte{len: libsodium.public_key_size}
+		secret_key: []byte{len: libsodium.secret_key_size}
+	}
+
 	mut path := os.home_dir() + '/.digitaltwin'
 	if !os.exists(path) {
-		os.mkdir_all(path) ?
+		os.mkdir_all(path)?
 	}
-	path_key := os.join_path(path, 'key.priv')
-	if !os.exists(path_key) {
-		pkey := libsodium.new_private_key()
-		// mut f := os.open(path_key) ?
-		os.write_file_array(path_key, pkey.secret_key) ?
-		path_key2 := os.join_path(path, 'key.pub')
-		os.write_file_array(path_key2, pkey.public_key) ?
+
+	// seed will contains data needed to build
+	// private key, it will be generated or loaded
+	// from local file if existing
+	mut seed := []byte{len: seedlen}
+
+	path_seed := os.join_path(path, 'seed')
+	if !os.exists(path_seed) {
+		// generating new seed and saving it
+		libsodium.randombytes_buf(seed.data, size_t(seedlen))
+
+		println("[+] key: saving new generated seed: $path_seed")
+		os.write_file_array(path_seed, seed)?
+
 	} else {
-		// read the key
-		secret_key := os.read_bytes(path_key) ?
-		// NOW need to get the private key obj back TODO:
-		mut privkey := libsodium.PrivateKey{}
-		privkey.secret_key = secret_key
-		privkey.public_key = secret_key //PUB KEY CHANGE
-		println(secret_key)
-		panic('s')
-		privkey := '' // TODO: need to be obj? dont know how
+		// loading existing seed from file
+		seed = os.read_bytes(path_seed)?
+
+		println("[+] key: seed loaded from local file")
 	}
+
+	println(seed)
+
+	// building private key from seed
+	libsodium.crypto_box_seed_keypair(pk.public_key.data, pk.secret_key.data, seed.data)
+	println(pk)
 
 	mut me := DigitalTwinME{}
 
 	return DigitalTwinFactory{
 		me: me
 		redis: &redis
-		privkey: privkey
+		privkey: pk
 	}
 }
