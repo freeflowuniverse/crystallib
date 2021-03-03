@@ -14,13 +14,16 @@ pub fn (mut twin DigitalTwinFactory) sign(data string) []byte {
 	return signed.bytes()
 }
 
-pub fn (mut twin DigitalTwinFactory) verify(data []byte) bool {
+pub fn (mut twin DigitalTwinFactory) verify(data []byte) (bool, string) {
 	println("[+] sign: signing data: $data")
 
 	sk := libsodium.generate_signing_key_seed(twin.seed.data)
 
-	signed := sk.verify_key.verify(data)
-	println(signed)
+	println(sk)
 
-	return signed
+	valid, message := sk.verify_key.verify(data)
+	println(valid)
+	println(message)
+
+	return valid, string(message)
 }

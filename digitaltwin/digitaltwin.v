@@ -44,6 +44,9 @@ pub fn factory(redis int) ?DigitalTwinFactory {
 	libsodium.crypto_box_seed_keypair(pk.public_key.data, pk.secret_key.data, seed.data)
 	println(pk)
 
+	signkey := libsodium.generate_signing_key_seed(seed.data)
+	println(signkey)
+
 	mut me := DigitalTwinME{
 		id: 1
 	}
@@ -52,6 +55,31 @@ pub fn factory(redis int) ?DigitalTwinFactory {
 		me: me
 		redis: &redis
 		privkey: pk
+		signkey: signkey
 		seed: seed
 	}
+}
+
+pub fn foreign(verifkey []byte) ?DigitalTwinForeign {
+	println("[+] foreign: loading with key: $verifkey")
+
+	vk := libsodium.VerifyKey{}
+
+	C.memcpy(vk.public_key, verifkey.data, 32)
+
+	return DigitalTwinForeign{
+		verifkey: vk
+	}
+}
+
+pub fn (mut twin DigitalTwinForeign) verify(data []byte) (bool, string) {
+	println("[+] foreign: verifying data")
+
+	println(twin.verifkey)
+
+	valid, message := twin.verifkey.verify(data)
+	println(valid)
+	println(message)
+
+	return valid, string(message)
 }
