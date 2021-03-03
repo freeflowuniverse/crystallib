@@ -1,5 +1,18 @@
 module resp2
 
+struct Builder {
+mut:
+	data []byte
+}
+
+pub fn builder_new() Builder {
+	return Builder{}
+}
+
+pub fn (mut b Builder) add(val RValue) {
+	b.data << val.encode()
+}
+
 pub fn (val RValue) encode() []byte {
 	match val {
 		RBString {
@@ -39,7 +52,7 @@ pub fn r_string(value string) RValue {
 	})
 }
 
-pub fn r_ok(value string) RValue {
+pub fn r_ok() RValue {
 	return r_string('OK')
 }
 
@@ -73,4 +86,12 @@ pub fn r_error(value string) RValue {
 	return RValue(RError{
 		value: value
 	})
+}
+
+pub fn encode(items []RValue) []byte {
+	mut b := builder_new()
+	for item in items {
+		b.add(item)
+	}
+	return b.data
 }
