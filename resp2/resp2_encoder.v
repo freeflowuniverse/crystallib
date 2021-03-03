@@ -52,6 +52,18 @@ pub fn r_string(value string) RValue {
 	})
 }
 
+pub fn r_array(value string) RValue {
+	return RValue(RArray{})
+}
+
+
+pub fn r_bytestring(value []byte]) RValue {
+	return RValue(RBString{
+		value: value
+	})
+}
+
+
 pub fn r_ok() RValue {
 	return r_string('OK')
 }

@@ -77,3 +77,51 @@ pub fn decode(data []byte) ?[]RValue {
 	}
 	return res
 }
+
+pub fn (mut r StringLineReader) get_int() ?int {
+	line_ := r.read_line() ?
+	line := line_.bytestr()
+	if line.starts_with(':') {
+		return line[1..].int()
+	} else {
+		return error("Did not find int, did find:'$line'")
+	}
+}
+
+pub fn (mut r StringLineReader) get_string() ?string {
+	line_ := r.read_line() ?
+	line := line_.bytestr()
+	if line.starts_with('+') {
+		return line[1..]
+	} else {
+		return error("Did not find string, did find:'$line'")
+	}
+}
+
+pub fn (mut r StringLineReader) get_bool() ?bool {
+	i := r.get_int() ?
+	return i == 1
+}
+
+pub fn (mut r StringLineReader) get_bytes() ?[]byte {
+	line_ := r.read_line() ?
+	line := line_.bytestr()
+	if line.starts_with('$') {
+		mut bulkstring_size := line[1..].int()
+		if bulkstring_size == -1 {
+			return none
+		}
+		if bulkstring_size == 0 {
+			// extract final \r\n and not reading
+			// any payload
+			r.read_line() ?
+			return ''.bytes()
+		}
+		// read payload
+		buffer := r.read(bulkstring_size) ?
+		// extract final \r\n
+		return buffer
+	} else {
+		return error("Did not find bulkstring, did find:'$line'")
+	}
+}

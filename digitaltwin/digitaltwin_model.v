@@ -4,10 +4,12 @@ import libsodium
 // import despiegk.crystallib.redisclient
 
 pub struct DigitalTwin {
+pub:
 	id int
 }
 
 pub struct DigitalTwinME {
+pub:
 	id int
 }
 

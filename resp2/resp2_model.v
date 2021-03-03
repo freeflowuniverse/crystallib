@@ -28,7 +28,7 @@ struct RNil {
 	// Redis Nil
 }
 
-struct RArray {
+pub struct RArray {
 pub mut:
 	// Redis Array
 	values []RValue
