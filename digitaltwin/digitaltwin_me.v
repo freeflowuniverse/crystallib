@@ -2,8 +2,15 @@ module digitaltwin
 
 import libsodium
 
+struct DigitalTwinME {
+	id        int
+	seed      string
+	pubkey    string
+	ipaddress string = '::1' // ipv6 localhost
+}
+
 pub fn (mut twin DigitalTwinFactory) sign(data string) []byte {
-	println("[+] sign: signing data: $data")
+	println('[+] sign: signing data: $data')
 
 	sk := libsodium.generate_signing_key_seed(twin.seed.data)
 
@@ -15,7 +22,7 @@ pub fn (mut twin DigitalTwinFactory) sign(data string) []byte {
 }
 
 pub fn (mut twin DigitalTwinFactory) verify(data []byte) bool {
-	println("[+] sign: signing data: $data")
+	println('[+] sign: signing data: $data')
 
 	sk := libsodium.generate_signing_key_seed(twin.seed.data)
 

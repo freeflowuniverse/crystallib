@@ -39,10 +39,10 @@ pub mut:
 	direction Direction
 }
 
-enum Direction{
-	//will be encoded as 0,
+enum Direction {
+	// will be encoded as 0,
 	send
-	//1 is receive
+	// 1 is receive
 	receive
 }
 
@@ -60,9 +60,9 @@ fn (mut m Message) encode() resp2.RValue {
 	data.values << resp2.r_string(m.return_queue)
 	data.values << resp2.r_string(m.schema)
 	data.values << resp2.r_int(m.epoch)
-	if m.direction == Direction.send{
+	if m.direction == Direction.send {
 		data.values << resp2.r_int(0)
-	}else{
+	} else {
 		data.values << resp2.r_int(1)
 	}
 
@@ -77,39 +77,40 @@ fn (mut m Message) encode() resp2.RValue {
 }
 
 fn decode(data []byte) ?Message {
+	mut r0 := resp2.new_line_reader(data)
 
-	mut r0 := new_line_reader(data)
-
-	version := r0.get_int()?
+	version := r0.get_int() ?
 	assert version == 1
 
-	payload := r0.get_bytes()?
-	fingerprint := r0.get_bytes()?
-	signature := r0.get_bytes()?
+	payload := r0.get_bytes() ?
+	fingerprint := r0.get_bytes() ?
+	signature := r0.get_bytes() ?
 
-	//TODO: verify the fingerprint & the signature
+	// TODO: verify the fingerprint & the signature
 
-	mut r := new_line_reader(payload)
+	mut r := resp2.new_line_reader(payload)
 
 	mut m := Message{}
-	m.cmd= r.get_string()?
-	expiration := r.get_int()?
-	m.expiration= Expiration{expiration : expiration}
-	m.data = r.get_bytes()
+	m.cmd = r.get_string() ?
+	expiration := r.get_int() ?
+	m.expiration = Expiration{
+		expiration: expiration
+	}
+	m.data = r.get_bytes() ?
 
-	twin_source_id = r.get_int()?
-	twin_dest_ids = r.get_list_int()?
+	twin_source_id := r.get_int() ?
+	twin_dest_ids := r.get_list_int() ?
 
-	//TODO: need to get the twin's from the factory and put in message
+	// TODO: need to get the twin's from the factory and put in message
 
-	m.target = r.get_string()?
-	m.return_queue = r.get_string()?
-	m.schema = r.get_string()?
-	m.epoch = r.get_int()?
-	direction := r.get_int()?
-	if direction ==0 {
+	m.target = r.get_string() ?
+	m.return_queue = r.get_string() ?
+	m.schema = r.get_string() ?
+	m.epoch = r.get_int() ?
+	direction := r.get_int() ?
+	if direction == 0 {
 		m.direction = Direction.send
-	}else{
+	} else {
 		m.direction = Direction.receive
 	}
 

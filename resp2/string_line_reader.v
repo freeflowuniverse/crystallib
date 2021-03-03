@@ -7,7 +7,7 @@ mut:
 	x int
 }
 
-fn new_line_reader(data []byte) StringLineReader {
+pub fn new_line_reader(data []byte) StringLineReader {
 	return StringLineReader{
 		data: data
 		y: data.len

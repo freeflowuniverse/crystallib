@@ -88,6 +88,24 @@ pub fn (mut r StringLineReader) get_int() ?int {
 	}
 }
 
+pub fn (mut r StringLineReader) get_list_int() ?[]int {
+	line_ := r.read_line() ?
+	line := line_.bytestr()
+	mut res := []int{}
+
+	if line.starts_with('*') {
+		items := line[1..].int()
+		// proceed each entries, they can be of any types
+		for _ in 0 .. items {
+			value := r.get_int() ?
+			res << value
+		}
+		return res
+	} else {
+		return error("Did not find int, did find:'$line'")
+	}
+}
+
 pub fn (mut r StringLineReader) get_string() ?string {
 	line_ := r.read_line() ?
 	line := line_.bytestr()

@@ -1,14 +1,9 @@
 module digitaltwin
 
 import libsodium
-// import despiegk.crystallib.redisclient
+import despiegk.crystallib.redisclient
 
 pub struct DigitalTwin {
-pub:
-	id int
-}
-
-pub struct DigitalTwinME {
 pub:
 	id int
 }
@@ -17,7 +12,7 @@ struct DigitalTwinFactory {
 pub mut:
 	// who am I
 	me      DigitalTwinME
-	redis   &int // &redisclient.Redis // FIXME
+	redis   &redisclient.Redis
 	privkey libsodium.PrivateKey
 	seed    []byte // not sure about security
 }
