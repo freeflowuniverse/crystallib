@@ -14,7 +14,14 @@ pub mut:
 	me      DigitalTwinME
 	redis   &redisclient.Redis
 	privkey libsodium.PrivateKey
+	signkey libsodium.SigningKey
 	seed    []byte // not sure about security
+}
+
+pub struct DigitalTwinForeign {
+pub mut:
+	pubkey [32]byte
+	verifkey libsodium.VerifyKey
 }
 
 pub fn (mut twin DigitalTwin) id() int {
