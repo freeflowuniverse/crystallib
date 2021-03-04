@@ -1,30 +1,30 @@
 module resp2
 
-struct RString {
+pub struct RString {
 pub mut:
 	// Redis string
 	value string
 }
 
-struct RError {
+pub struct RError {
 pub mut:
 	// Redis Error
 	value string
 }
 
-struct RInt {
+pub struct RInt {
 pub mut:
 	// Redis Integer
 	value int
 }
 
-struct RBString {
+pub struct RBString {
 pub mut:
 	// Redis Bulk String
 	value []byte
 }
 
-struct RNil {
+pub struct RNil {
 	// Redis Nil
 }
 
@@ -36,6 +36,6 @@ pub mut:
 
 type RValue = RArray | RBString | RError | RInt | RNil | RString
 
-const crlf = '\r\n'
+pub const crlf = '\r\n'
 
 const crlf_len = '\r\n'.len

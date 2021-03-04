@@ -58,7 +58,7 @@ pub fn factory(redis &redisclient.Redis) ?DigitalTwinFactory {
 }
 
 pub fn foreign(verifkey []byte) ?DigitalTwinForeign {
-	println("[+] foreign: loading with key: $verifkey")
+	println('[+] foreign: loading with key: $verifkey')
 
 	vk := libsodium.VerifyKey{}
 
@@ -70,7 +70,7 @@ pub fn foreign(verifkey []byte) ?DigitalTwinForeign {
 }
 
 pub fn (mut twin DigitalTwinForeign) verify(data []byte) (bool, string) {
-	println("[+] foreign: verifying data")
+	println('[+] foreign: verifying data')
 
 	println(twin.verifkey)
 
@@ -80,3 +80,29 @@ pub fn (mut twin DigitalTwinForeign) verify(data []byte) (bool, string) {
 
 	return valid, string(message)
 }
+
+pub fn (mut twin DigitalTwinFactory) sign(data string) []byte {
+	println('[+] sign: signing data: $data')
+
+	sk := libsodium.generate_signing_key_seed(twin.seed.data)
+
+	signed := sk.sign_string(data)
+	println(signed)
+	println(sk.verify_key.verify_string(signed))
+
+	return signed.bytes()
+}
+
+// pub fn (mut twin DigitalTwinFactory) verify(data []byte) (bool, string) {
+// 	println('[+] sign: signing data: $data')
+
+// 	sk := libsodium.generate_signing_key_seed(twin.seed.data)
+
+// 	println(sk)
+
+// 	valid, message := sk.verify_key.verify(data)
+// 	println(valid)
+// 	println(message)
+
+// 	return valid, string(message)
+// }

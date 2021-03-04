@@ -17,14 +17,14 @@ fn test_set() {
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
-	println('start')
-	for _ in 0 .. 10000 {
-		redis.set('test 0', '123') or { panic(err) }
-	}
+	// println('start')
+	// for _ in 0 .. 10000 {
+	// 	redis.set('test 0', '123') or { panic(err) }
+	// }
 	println('stop')
 	redis.set('test 0', '456') or { panic(err) }
 	res := redis.get('test 0') or { panic(err) }
-	println(res)
+	assert res == '456'
 
 	redis.hset('x', 'a', '222') or { panic(err) }
 	redis.hset('x', 'b', '333') or { panic(err) }
@@ -54,6 +54,8 @@ fn test_queue() {
 	assert res == ''
 	println(res)
 }
+
+// TODO: need all the other tests done
 
 // fn test_set_opts() {
 // 	mut redis := setup()
