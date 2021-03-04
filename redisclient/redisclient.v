@@ -5,7 +5,7 @@ module redisclient
 import net
 // import strconv
 import time
-import despiegk.crystallib.resp2
+import resp2
 import io
 
 pub struct Redis {

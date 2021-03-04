@@ -143,3 +143,67 @@ pub fn (mut r StringLineReader) get_bytes() ?[]byte {
 		return error("Did not find bulkstring, did find:'$line'")
 	}
 }
+
+pub fn get_redis_value(rv RValue) string {
+	if rv is RArray || rv is RNil{
+		rv_type := rv.type_name()
+		panic("Can't get value for $rv_type")
+	}
+	return match rv {
+		RInt {
+			rv.value.str()
+		}
+		RString,RError {
+			rv.value
+		}
+		RBString {
+			rv.value.bytestr()
+		}
+		else {
+			""
+		}
+	}
+}
+
+pub fn get_redis_value_by_index(rv RValue, i int) string {
+	if rv !is RArray{
+		panic("This functions used with RArray only, use get_value instead")
+	}
+	return match rv {
+		RArray {
+			get_redis_value(rv.values[i])
+		}
+		else {
+			""
+		}
+	}
+}
+
+pub fn get_redis_array(rv RValue) []RValue{
+	if rv !is RArray{
+		panic("This functions used with RArray only, use get_value instead")
+	}
+	return match rv {
+		RArray {
+			rv.values
+		}
+		else {
+			[]RValue{}
+		}
+	}
+}
+
+pub fn get_redis_array_len(rv RValue) int {
+	if rv !is RArray{
+		panic("This functions used with RArray only")
+	}
+	return match rv {
+		RArray {
+			rv.values.len
+		}
+		else {
+			result := -1
+			result
+		}
+	}
+}
