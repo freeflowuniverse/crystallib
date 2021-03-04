@@ -1,4 +1,5 @@
 module redisclient
+import resp2
 
 pub fn (mut r Redis) set(key string, value string) ? {
 	return r.send_expect_ok(['SET', key, value])
@@ -150,22 +151,21 @@ pub fn (mut r Redis) selectdb(database int) ? {
 	return r.send_expect_ok(['SELECT', database.str()])
 }
 
-// TODO: implement SCAN
-// pub fn (mut r Redis) scan(cursor int) ?(string, []string) {
-// 	res := r.send_expect_list_str(['SCAN', cursor.str()]) ?
-// 	if res[0].datatype != RedisValTypes.str {
-// 		return error('Redis SCAN wrong response type (cursor)')
-// 	}
+pub fn (mut r Redis) scan(cursor int) ?(string, []string) {
+	res := r.send_expect_list(['SCAN', cursor.str()]) ?
+	if res[0] !is resp2.RBString {
+		return error('Redis SCAN wrong response type (cursor)')
+	}
 
-// 	if res[1].datatype != RedisValTypes.list {
-// 		return error('Redis SCAN wrong response type (list content)')
-// 	}
+	if res[1] !is resp2.RArray {
+		return error('Redis SCAN wrong response type (list content)')
+	}
 
-// 	mut values := []string{}
+	mut values := []string{}
 
-// 	for i in 0 .. res[1].list.len {
-// 		values << res[1].list[i].str
-// 	}
+	for i in 0 .. resp2.get_redis_array_len(res[1]) {
+		values << resp2.get_redis_value_by_index(res[1],i)
+	}
 
-// 	return res[0].str, values
-// }
+	return resp2.get_redis_value(res[0]), values
+}

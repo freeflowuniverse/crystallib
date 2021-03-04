@@ -1,9 +1,11 @@
-import despiegk.crystallib.redisclient
+import redisclient
 // original code see https://github.com/patrickpissurno/vredis/blob/master/vredis_test.v
 // credits see there as well (-:
 
 fn setup() redisclient.Redis {
 	redis := redisclient.connect('localhost:6379') or { panic(err) }
+	// Select db 10 to be away from default one '0'
+	redis.selectdb(10) or {panic(err)}
 	return redis
 }
 
@@ -53,6 +55,24 @@ fn test_queue() {
 	println('stop')
 	assert res == ''
 	println(res)
+}
+
+fn test_scan() {
+	mut redis := setup()
+	redis.flushall() or { panic(err) }
+	defer {
+		cleanup(mut redis) or { panic(err) }
+	}
+	println('stop')
+	redis.set('testscan0', '12') or { panic(err) }
+	redis.set('testscan1', '34') or { panic(err) }
+	redis.set('testscan2', '56') or { panic(err) }
+	redis.set('testscan3', '78') or { panic(err) }
+	redis.set('testscan4', '9') or { panic(err) }
+	cursor, data :=redis.scan(0) or { panic(err) }
+	println(data)
+	assert cursor == "0"
+	println("Scanned")
 }
 
 // TODO: need all the other tests done
@@ -176,9 +196,11 @@ fn test_queue() {
 // fn test_decrby() {
 // 	mut redis := setup()
 // 	defer {
-// 		cleanup(mut redis)
+// 		cleanup(mut redis) or { panic(err) }
 // 	}
-// 	assert redis.set('test 30', '100') == true
+// 	redis.set('test 30', '100') or { panic(err) }
+// 	mut val := redis.get("test 30") or { panic(err) }
+// 	assert val == "100"
 // 	r1 := redis.decrby('test 30', 4) or {
 // 		assert false
 // 		return
@@ -189,7 +211,7 @@ fn test_queue() {
 // 		return
 // 	}
 // 	assert r2 == -2
-// 	assert redis.set('test 32', 'nan') == true
+// 	redis.set('test 32', 'nan') or { panic(err) }
 // 	redis.decrby('test 32', 1) or {
 // 		assert true
 // 		return
