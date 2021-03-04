@@ -1,4 +1,4 @@
-v doc -all -m . -o docs/ -f html
+v doc -all -m . -f html
 
 export home=$HOME
 
