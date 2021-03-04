@@ -101,7 +101,7 @@ pub fn website_build(cmd &cli.Command) ? {
 					process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.shortname\\\",\\n\\tplugins: \\\[/g" $repo2.path/gridsome.config.js') ?
 				}
 
-				process.execute_stdout('$repo2.path/build.sh') ?
+				process.execute_stdout('$repo2.path/build.sh') or {process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?}
 
 				if use_prefix {
 					process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?
@@ -113,7 +113,7 @@ pub fn website_build(cmd &cli.Command) ? {
 
 				os.write_file('$conf.paths.publish/$site.name/.repo', json.encode(map{
 					'repo':  '$repo2.addr.name'
-					'alias': site.alias
+					'alias': site.shortname
 				})) ?
 
 				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(map{
@@ -146,7 +146,7 @@ pub fn website_build(cmd &cli.Command) ? {
 
 				os.write_file('$conf.paths.publish/$site.name/.repo', json.encode(map{
 					'repo':  '$repo.addr.name'
-					'alias': site.alias
+					'alias': site.shortname
 				})) ?
 
 				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(map{
