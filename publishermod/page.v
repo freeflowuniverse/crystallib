@@ -56,7 +56,6 @@ pub fn (mut page Page) load(mut publisher Publisher) ?bool {
 
 	// loads the defs
 	page.process_lines(mut publisher, true) ?
-
 	return true
 }
 

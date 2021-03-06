@@ -4,10 +4,14 @@ import despiegk.crystallib.texttools
 
 fn macro_def(mut state LineProcessorState, mut macro texttools.MacroObj, mut publisher Publisher, mut page Page) ? {
 	mut categories := macro.params.get_list('category') ?
+	categories << macro.params.get_list('categories') ?
+	// println(categories)
 	mut defname2 := macro.params.get_default('name',"") ?
 	//defname not defined, will get the title as the definition name
 	if defname2 == "" {
 		defname2 = page.title()
+	}else{
+		defname2 = defname2.replace("_"," ")
 	}
 
 	if defname2 == "" {
@@ -36,14 +40,13 @@ fn macro_def(mut state LineProcessorState, mut macro texttools.MacroObj, mut pub
 
 	defobj.categories_add(categories)
 
-	println(defobj)
-
-	panic("s")
-
+	// println(defobj)
 
 }
 
 fn macro_def_list(mut state LineProcessorState, mut macro texttools.MacroObj, mut publisher Publisher, mut page Page) ? {
 	mut categories := macro.params.get_list('category') ?
+	println(categories)
+	panic("s")
 
 }

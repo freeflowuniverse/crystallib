@@ -26,7 +26,6 @@ pub fn (mut publisher Publisher) check() {
 	for mut site in publisher.sites {
 		site.process(mut publisher)
 	}
-	publisher.defs_pages_init()
 }
 
 // returns the found locations for the sites, will return [[name,path]]
@@ -37,3 +36,5 @@ pub fn (mut publisher Publisher) site_locations_get() [][]string {
 	}
 	return res
 }
+
+
