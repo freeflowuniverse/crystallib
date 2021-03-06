@@ -6,17 +6,15 @@ import despiegk.crystallib.texttools
 // format !!!$macroname $arg1 $arg2 
 // arg's can be one or more, can also be $name:$val then keyvalue which will become params
 // the args always need to come first
-fn macro_process(mut state LineProcessorState, line string) bool {
+fn macro_process(mut state LineProcessorState, line string, mut publisher Publisher, mut page Page) bool {
 	fns_map := map{
 		'vimeo':   vimeo
 		'iframe':  iframe
 		'youtube': youtube
+		'def': macro_def
 	}
 
 	if !line.starts_with('!!!') {
-		return false
-	}
-	if line.starts_with('!!!def') {
 		return false
 	}
 	if line.starts_with('!!!include') {
@@ -29,7 +27,8 @@ fn macro_process(mut state LineProcessorState, line string) bool {
 	}
 	if macro.cmd in fns_map {
 		amethod := fns_map[macro.cmd]
-		amethod(mut state, mut macro) or {
+		println (" - macro: $macro.cmd $page.name")
+		amethod(mut state, mut macro, mut publisher, mut page) or {
 			state.error(err.msg)
 			return true
 		}

@@ -17,6 +17,7 @@ enum LinkType {
 	data
 	email
 	anchor
+	code
 }
 
 enum LinkState {
@@ -200,6 +201,8 @@ fn (mut link Link) init_() {
 			// link.cat = LinkType.page
 		} else if ext in ['html', 'htm'] {
 			link.cat = LinkType.html
+		} else if ext in ['v', 'py','js',"c","sh"] {
+			link.cat = LinkType.code
 		} else if ext in ['doc', 'docx', 'zip', 'xls', 'pdf', 'xlsx', 'ppt', 'pptx'] {
 			link.cat = LinkType.file
 		} else if ext in ['json', 'yaml', 'yml', 'toml'] {

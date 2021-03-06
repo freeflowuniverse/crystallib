@@ -16,10 +16,6 @@ pub mut:
 	replacer ReplacerInstructions
 }
 
-struct Def {
-	name   string
-	pageid int
-}
 
 struct ReplacerInstructions {
 pub mut:
