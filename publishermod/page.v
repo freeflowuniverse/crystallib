@@ -180,10 +180,10 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 				macro_process(mut state, line, mut publisher, mut page)
 			}
 			continue
-		}
-
-		if macro_process(mut state, line, mut publisher, mut page) {
-			continue
+		}else{
+			if macro_process(mut state, line, mut publisher, mut page) {
+				continue
+			}
 		}
 
 		state.lines_server << line
