@@ -25,24 +25,23 @@ pub fn (mut r Redis) get_response() ?resp2.RValue {
 		mut bulkstring_size := line[1..].int()
 		if bulkstring_size == -1 {
 			return resp2.RNil{}
-		}else if bulkstring_size == 0 {
+		}
+		if bulkstring_size == 0 {
 			// extract final \r\n and not reading
 			// any payload
 			r.read_line() ?
 			return resp2.RString{
 				value: ''
 			}
-		}else{
-			// read payload
-			buffer := r.read(bulkstring_size) or { panic(err) }
-			// extract final \r\n
-			r.read_line() ?
-			println("readline result:'$buffer.bytestr()'")
-			return resp2.RBString{
-				value: buffer
-			} // TODO: won't support binary (afaik), need to fix
 		}
-		
+		// read payload
+		buffer := r.read(bulkstring_size) or { panic(err) }
+		// extract final \r\n
+		r.read_line() ?
+		println("readline result:'$buffer.bytestr()'")
+		return resp2.RBString{
+			value: buffer
+		} // TODO: won't support binary (afaik), need to fix		
 	}
 
 	if line.starts_with('*') {
