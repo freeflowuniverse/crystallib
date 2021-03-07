@@ -1,6 +1,36 @@
 module publishermod
 
-fn (mut publisher Publisher) defs_pages_init() {
+struct Def {
+	name   string
+	pageid int
+mut:
+	categories []string
+}
+
+//walk over categories, see if we can find the prefix
+pub fn (def Def) category_prefix_exists(prefix_ string) bool {
+	prefix := prefix_.to_lower()
+	for cat in def.categories{
+		if cat.starts_with(prefix){
+			return true
+		}
+	}
+	return false
+}
+
+pub fn (mut def Def) categories_add(categories []string){
+	for cat_ in categories{
+		cat := cat_.to_lower()
+		if !(cat in def.categories){
+			def.categories<<cat
+		}
+	}	
+
+}
+
+
+
+fn (mut publisher Publisher) defs_page_get(categories []string) {
 	mut firstletter := ' '
 	mut out := []string{}
 	mut firstletter_found := ''

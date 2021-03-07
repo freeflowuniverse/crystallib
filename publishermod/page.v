@@ -56,7 +56,6 @@ pub fn (mut page Page) load(mut publisher Publisher) ?bool {
 
 	// loads the defs
 	page.process_lines(mut publisher, true) ?
-
 	return true
 }
 
@@ -162,7 +161,6 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 		// the default has been done, which means the source & server have the last line
 		// now its up to the future to replace that last line or not
 		state.lines_source << line
-		state.lines_server << line
 
 		state.nr++
 
@@ -177,44 +175,18 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 			println(' >> $line')
 		}
 
-		if macro_process(mut state, line) {
-			continue
-		}
-
-		if do_defs {
-			if linestrip.starts_with('!!!def') {
-				if ':' in line {
-					splitted := line.split(':')
-					if splitted.len == 2 {
-						for defname in splitted[1].split(',') {
-							defname2 := name_fix_no_underscore(defname)
-							defname_full := defname.replace('_', ' ')
-							if defname2 in publisher.defs {
-								// println(publisher.defs[defname2])
-								defobj := publisher.defs[defname2]
-								page_def_double := publisher.page_get_by_id(defobj.pageid) ?
-								{
-									panic('cannot find page by id')
-								}
-								state.error('duplicate definition: $defname, already exists in $page_def_double.name')
-							} else {
-								publisher.defs[defname2] = Def{
-									pageid: page.id
-									name: defname_full
-								}
-								state.serverline_last_pop()
-							}
-						}
-					} else {
-						state.error('syntax error in def macro: $line')
-					}
-				} else {
-					state.error('syntax error in def macro (no ":"): $line')
-				}
-				continue
+		if do_defs{
+			if linestrip.trim(' ').starts_with("!!!def"){
+				macro_process(mut state, line, mut publisher, mut page)
 			}
 			continue
+		}else{
+			if macro_process(mut state, line, mut publisher, mut page) {
+				continue
+			}
 		}
+
+		state.lines_server << line
 
 		if linestrip.starts_with('!!!include') {
 			mut params := texttools.new_params()
