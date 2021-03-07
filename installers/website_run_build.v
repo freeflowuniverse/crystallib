@@ -96,16 +96,15 @@ pub fn website_build(cmd &cli.Command) ? {
 					return error('ERROR: cannot find repo: $site.name\n$err')
 				}
 				println(' - build website: $repo2.path')
-
+				process.execute_stdout('sed -i "s/pathPrefix.*//" $repo2.path/gridsome.config.js') ?
+				
 				if use_prefix {
 					process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.shortname\\\",\\n\\tplugins: \\\[/g" $repo2.path/gridsome.config.js') ?
 				}
 
 				process.execute_stdout('$repo2.path/build.sh') or {process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?}
 
-				if use_prefix {
-					process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?
-				}
+				process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?
 
 				os.write_file('$conf.paths.publish/$site.name/.domains.json', json.encode(map{
 					'domains': site.domains
@@ -130,15 +129,14 @@ pub fn website_build(cmd &cli.Command) ? {
 		for site in sites {
 			if site.name == repo.addr.name {
 				println(' - build website: $repo.path')
+				process.execute_stdout('sed -i "s/pathPrefix.*//" $repo.path/gridsome.config.js') ?
+
 				if use_prefix {
 					process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.shortname\\\",\\n\\tplugins: \\\[/g" $repo.path/gridsome.config.js') ?
 				}
 
 				process.execute_stdout('$repo.path/build.sh') ?
-
-				if use_prefix {
-					process.execute_stdout('cd $repo.path/ && git checkout gridsome.config.js') ?
-				}
+				process.execute_stdout('cd $repo.path/ && git checkout gridsome.config.js') ?
 
 				os.write_file('$conf.paths.publish/$site.name/.domains.json', json.encode(map{
 					'domains': site.domains
