@@ -1,8 +1,29 @@
 module redisclient
 import resp2
+import time
 
 pub fn (mut r Redis) set(key string, value string) ? {
 	return r.send_expect_ok(['SET', key, value])
+}
+
+pub fn (mut r Redis) set_opts(key string, value string, opts SetOpts) bool {
+	ex := if opts.ex == -4 && opts.px == -4 { '' } else if opts.ex != -4 { ' EX $opts.ex' } else { ' PX $opts.px' }
+	nx := if opts.nx == false && opts.xx == false { '' } else if opts.nx == true { ' NX' } else { ' XX' }
+	keep_ttl := if opts.keep_ttl == false { '' } else { ' KEEPTTL' }
+	message := 'SET "$key" "$value"$ex$nx$keep_ttl\r\n'
+	r.socket.write(message.bytes()) or {
+		return false
+	}
+	time.sleep(1*time.millisecond)
+	res := r.socket.read_line()
+	match res {
+		'+OK\r\n' {
+			return true
+		}
+		else {
+			return false
+		}
+	}
 }
 
 pub fn (mut r Redis) get(key string) ?string {

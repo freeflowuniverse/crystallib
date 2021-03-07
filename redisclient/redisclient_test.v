@@ -73,29 +73,27 @@ fn test_scan() {
 	cursor, data :=redis.scan(0) or { panic(err) }
 	println(data)
 	assert cursor == "0"
-	println("Scanned")
 }
 
-// TODO: need all the other tests done
-
-// [8] fn test_set_opts() {
-// 	mut redis := setup()
-// 	defer {
-// 		cleanup(mut redis)
-// 	}
-// 	assert redis.set_opts('test5', '123', redisclient.SetOpts{
-// 		ex: 2
-// 	}) == true
-// 	assert redis.set_opts('test5', '456', redisclient.SetOpts{
-// 		px: 2000
-// 		xx: true
-// 	}) == true
-// 	assert redis.set_opts('test5', '789', redisclient.SetOpts{
-// 		px: 1000
-// 		nx: true
-// 	}) == false
-// 	// assert redis.set_opts('test5', '012', redisclient.SetOpts{ keep_ttl: true }) == true //disabled because I don't have redis >= 6 to testit
-// }
+fn test_set_opts() {
+	mut redis := setup()
+	defer {
+		cleanup(mut redis) or { panic(err) }
+	}
+	assert redis.set_opts('test8', '123', redisclient.SetOpts{
+		ex: 2
+	}) == true
+	assert redis.set_opts('test8', '456', redisclient.SetOpts{
+		px: 2000
+		xx: true
+	}) == true
+	assert redis.set_opts('test8', '789', redisclient.SetOpts{
+		px: 1000
+		nx: true
+	}) == false
+	// Works with redis version > 6
+	assert redis.set_opts('test8', '012', redisclient.SetOpts{ keep_ttl: true }) == true
+}
 
 fn test_setex() {
 	mut redis := setup()
@@ -109,7 +107,7 @@ fn test_setex() {
 	}
 	assert r == '123'
 
-	time.sleep_ms(2100)
+	time.sleep(2100 * time.millisecond)
 	r = redis.get('test9') or {
 		assert true
 		return
@@ -129,7 +127,7 @@ fn test_psetex() {
 	}
 	assert r == '123'
 
-	time.sleep_ms(220)
+	time.sleep(220 * time.millisecond)
 	r = redis.get('test10') or {
 		assert true
 		return
@@ -673,24 +671,24 @@ fn test_type_of() {
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
-	r1 := redis.type_of('test60') or {
+	_ := redis.type_of('test60') or {
 		assert true
 		return
 	}
 
 	redis.set('test61', '123') or { panic(err) }
-	mut r2 := redis.type_of('test61') or {
+	mut r := redis.type_of('test61') or {
 		assert false
 		return
 	}
-	assert r2 == 'string'
+	assert r == 'string'
 
 	_ := redis.lpush('test62', '123') or { panic(err) }
-	r2 = redis.type_of('test62') or {
+	r = redis.type_of('test62') or {
 		assert false
 		return
 	}
-	assert r2 == 'list'
+	assert r == 'list'
 }
 
 fn test_del() {

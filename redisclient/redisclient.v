@@ -6,7 +6,6 @@ import net
 // import strconv
 import time
 import resp2
-import io
 
 pub struct Redis {
 pub mut:
