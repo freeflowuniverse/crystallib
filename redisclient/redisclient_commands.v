@@ -138,6 +138,22 @@ pub fn (mut r Redis) renamenx(key string, newkey string) ?int {
 	return r.send_expect_int(['RENAMENX', key, newkey])
 }
 
+pub fn (mut r Redis) setex(key string, second i64, value string) ? {
+	return r.send_expect_ok(['SETEX', key, second.str(), value])
+}
+
+pub fn (mut r Redis) psetex(key string, millisecond i64, value string) ? {
+	return r.send_expect_ok(['PSETEX', key, millisecond.str(), value])
+}
+
+pub fn (mut r Redis) setnx(key string, value string) ?int {
+	return r.send_expect_int(['SETNX', key, value])
+}
+
+pub fn (mut r Redis) type_of(key string) ?string {
+	return r.send_expect_strnil(['TYPE', key])
+}
+
 pub fn (mut r Redis) flushall() ? {
 	return r.send_expect_ok(['FLUSHALL'])
 }
