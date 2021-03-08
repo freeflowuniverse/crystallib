@@ -7,65 +7,71 @@ fn site_config(mut c ConfigRoot) {
 		url: 'https://github.com/threefoldfoundation/www_threefold_io'
 		cat: SiteCat.web
 		descr: 'is our entry point for everyone, redirect to the detailed websites underneith.'
-		domains: ['www.threefold.io', 'www.threefold.me']
+		domains: {'new.threefold.io': 'staging'}
+		standalone: true
 	}
 	c.sites << SiteConfig{
 		name: 'www_threefold_cloud'
 		shortname: 'cloud'
 		url: 'https://github.com/threefoldfoundation/www_threefold_cloud'
 		cat: SiteCat.web
-		domains: ['cloud.threefold.io', 'cloud.threefold.me']
+		domains: {'new.threefold.io': 'staging'}
 		descr: 'for people looking to deploy solutions on top of a cloud, alternative to e.g. digital ocean'
+		standalone: false
 	}
 	c.sites << SiteConfig{
 		name: 'www_threefold_farming'
 		shortname: 'farming'
 		url: 'https://github.com/threefoldfoundation/www_threefold_farming'
 		cat: SiteCat.web
-		domains: ['farming.threefold.io', 'farming.threefold.me']
+		domains: {'new.threefold.io': 'staging'}
 		descr: 'crypto & minining enthusiasts, be the internet, know about farming & tokens.'
+		standalone: false
 	}
 	c.sites << SiteConfig{
 		name: 'www_threefold_twin'
 		shortname: 'twin'
 		url: 'https://github.com/threefoldfoundation/www_threefold_twin'
 		cat: SiteCat.web
-		domains: ['twin.threefold.io', 'twin.threefold.me']
+		domains: {'new.threefold.io': 'staging'}
 		descr: "you digital life"
+		standalone: false
 	}
 	c.sites << SiteConfig{
 		name: 'www_threefold_marketplace'
 		shortname: 'marketplace'
 		url: 'https://github.com/threefoldfoundation/www_threefold_marketplace'
 		cat: SiteCat.web
-		domains: ['now.threefold.io', 'marketplace.threefold.io', 'now.threefold.me', 'marketplace.threefold.me']
+		domains: {'new.threefold.io': 'staging'}
 		descr: "apps for community builders, runs on top of evdc"
+		standalone: false
 	}
 	c.sites << SiteConfig{
 		name: 'www_conscious_internet'
 		shortname: 'conscious_internet'
 		url: 'https://github.com/threefoldfoundation/www_conscious_internet'
 		cat: SiteCat.web
-		domains: ['www.consciousinternet.org', 'eco.threefold.io', 'community.threefold.io', 'eco.threefold.me',
-			'community.threefold.me',
-		]
+		domains: {'new.threefold.io': 'staging'}
 		descr: 'community around threefold, partners, friends, ...'
+		standalone: false
 	}
 	c.sites << SiteConfig{
 		name: 'www_threefold_tech'
 		shortname: 'tech'
 		url: 'https://github.com/threefoldtech/www_threefold_tech'
 		cat: SiteCat.web
-		domains: ['www.threefold.tech']
+		domains: {'new.threefold.io': 'staging'}
 		descr: 'cyberpandemic, use the tech to build your own solutions with, certification for TFGrid'
+		standalone: false
 	}
 	c.sites << SiteConfig{
 		name: 'www_examplesite'
 		shortname: 'example'
 		url: 'https://github.com/threefoldfoundation/www_examplesite'
 		cat: SiteCat.web
-		domains: ['example.threefold.io']
+		domains: {'new.threefold.io': 'staging'}
 		descr :''
+		standalone: false
 	}
 	c.sites << SiteConfig{
 		name: 'info_threefold'
@@ -73,8 +79,9 @@ fn site_config(mut c ConfigRoot) {
 		//will be moved to this url
 		// url: 'https://github.com/threefoldfoundation/info_threefold'
 		url: 'https://github.com/threefoldfoundation/info_foundation_archive'
-		domains: ['info.threefold.io']
+		domains: {'new.threefold.io': 'staging'}
 		descr :'wiki for foundation, collaborate, what if farmings, tokens'
+		standalone: false
 	}
 	// c.sites << SiteConfig{
 	// 	name: 'info_marketplace'
@@ -85,44 +92,50 @@ fn site_config(mut c ConfigRoot) {
 		name: 'info_sdk'
 		shortname: 'sdk'
 		url: 'https://github.com/threefoldfoundation/info_sdk'
-		domains: ['sdk.threefold.io', 'sdk_info.threefold.io']
+		domains: {'new.threefold.io': 'staging'}
 		descr: 'for IAC, devops, how to do Infrastruture As Code, 3bot, Ansible, tfgrid-sdk, ...'
+		standalone: false
 	}
 	c.sites << SiteConfig{
 		name: 'info_legal'
 		shortname: 'legal'
 		url: 'https://github.com/threefoldfoundation/info_legal'
-		domains: ['legal.threefold.io', 'legal_info.threefold.io']
+		domains: {'new.threefold.io': 'staging'}
 		descr :''
+		standalone: false
 	}
 	c.sites << SiteConfig{
 		name: 'info_cloud'
 		shortname: 'cloud'
 		url: 'https://github.com/threefoldfoundation/info_cloud'
-		domains: ['cloud_info.threefold.io']
+		domains: {'new.threefold.io': 'staging'}
 		descr :'how to use the cloud for deploying apps: evdc, kubernetes, planetary fs, ... + marketplace solutions '
+		standalone: false
 	}
 	c.sites << SiteConfig{
 		name: 'info_tftech'
 		shortname: 'tftech'
 		url: 'https://github.com/threefoldtech/info_tftech'
-		domains: ['info.threefold.tech']
+		domains: {'new.threefold.io': 'staging'}
 		descr :''
+		standalone: false
 	}
 	c.sites << SiteConfig{
 		name: 'info_digitaltwin'
 		shortname: 'twin'
 		url: 'https://github.com/threefoldfoundation/info_digitaltwin.git'
-		domains: ['twin_info.threefold.io']
+		domains: {'new.threefold.io': 'staging'}
 		descr :''
+		standalone: false
 	}
 
 	c.sites << SiteConfig{
 		name: 'info_bettertoken'
 		shortname: 'bt'
 		url: 'https://github.com/BetterToken/info_bettertoken.git'
-		domains: ['bt_info.threefold.io']
+		domains: {'new.threefold.io': 'staging'}
 		descr :''
+		standalone: false
 	}
 
 	
@@ -131,7 +144,8 @@ fn site_config(mut c ConfigRoot) {
 		shortname: 'data'
 		url: 'https://github.com/threefoldfoundation/data_threefold'
 		cat: SiteCat.data
-		domains: []string{}
+		domains: map[string]string{}
+		standalone: false
 		descr :''
 	}
 }

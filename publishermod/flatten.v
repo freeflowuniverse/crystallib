@@ -21,6 +21,20 @@ struct PublisherDef {
 	site string
 }
 
+pub struct Acl {
+	pub mut:
+		users  []string
+		groups []string
+		login bool
+}
+
+pub struct Domains {
+	pub mut:
+		domains map[string]string
+		standalone bool
+}
+
+
 pub fn (mut publisher Publisher) errors_get(site Site) ?PublisherErrors {
 	mut errors := PublisherErrors{}
 
@@ -83,19 +97,14 @@ pub fn (mut publisher Publisher) flatten() ? {
 			}
 			// ignore websites
 			if c.shortname == site.name {
-				os.write_file('$dest_dir/.domains.json', json.encode(map{
-					'domains': c.domains
-				})) ?
+				os.write_file('$dest_dir/.domains.json', json.encode(Domains{standalone: c.standalone, domains: c.domains})) ?
 
 				os.write_file('$dest_dir/.repo', json.encode(map{
 					'repo':  c.name
 					'alias': c.shortname
 				})) ?
 
-				os.write_file('$dest_dir/.acls.json', json.encode(map{
-					'users':  []string{}
-					'groups': []string{}
-				})) ?
+				os.write_file('$dest_dir/.acls.json', json.encode(Acl{})) ?
 
 				break
 			}

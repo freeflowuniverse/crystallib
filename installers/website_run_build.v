@@ -7,11 +7,25 @@ import cli
 import os
 import json
 
-pub struct Group {
-pub mut:
-	users  []string
-	groups []string
+pub struct Acl {
+	pub mut:
+		users  []string
+		groups []string
+		login bool
 }
+
+pub struct Group {
+	pub mut:
+		users  []string
+		groups []string
+}
+
+pub struct Domains {
+	pub mut:
+		domains map[string]string
+		standalone bool
+}
+
 
 fn website_conf_repo_get(cmd &cli.Command) ?(myconfig.ConfigRoot, &gittools.GitRepo) {
 	mut name := ''
@@ -99,26 +113,22 @@ pub fn website_build(cmd &cli.Command) ? {
 				process.execute_stdout('sed -i "s/pathPrefix.*//" $repo2.path/gridsome.config.js') ?
 				
 				if use_prefix {
-					process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.shortname\\\",\\n\\tplugins: \\\[/g" $repo2.path/gridsome.config.js') ?
+					if !site.standalone{
+						println("site is not standalone .. building with path prefix")
+						process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.shortname\\\",\\n\\tplugins: \\\[/g" $repo2.path/gridsome.config.js') ?
+					}
 				}
-
 				process.execute_stdout('$repo2.path/build.sh') or {process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?}
-
 				process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?
 
-				os.write_file('$conf.paths.publish/$site.name/.domains.json', json.encode(map{
-					'domains': site.domains
-				})) ?
+				os.write_file('$conf.paths.publish/$site.name/.domains.json', json.encode(Domains{standalone: site.standalone, domains: site.domains})) ?
 
 				os.write_file('$conf.paths.publish/$site.name/.repo', json.encode(map{
 					'repo':  '$repo2.addr.name'
 					'alias': site.shortname
 				})) ?
 
-				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(map{
-					'users':  []string{}
-					'groups': []string{}
-				})) ?
+				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(Acl{})) ?
 			}
 		}
 	} else {
@@ -132,25 +142,22 @@ pub fn website_build(cmd &cli.Command) ? {
 				process.execute_stdout('sed -i "s/pathPrefix.*//" $repo.path/gridsome.config.js') ?
 
 				if use_prefix {
-					process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.shortname\\\",\\n\\tplugins: \\\[/g" $repo.path/gridsome.config.js') ?
+					if !site.standalone{
+						println("site is not standalone .. building with path prefix")
+						process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.shortname\\\",\\n\\tplugins: \\\[/g" $repo.path/gridsome.config.js') ?
+					}
 				}
-
 				process.execute_stdout('$repo.path/build.sh') ?
 				process.execute_stdout('cd $repo.path/ && git checkout gridsome.config.js') ?
 
-				os.write_file('$conf.paths.publish/$site.name/.domains.json', json.encode(map{
-					'domains': site.domains
-				})) ?
+				os.write_file('$conf.paths.publish/$site.name/.domains.json', json.encode(Domains{standalone: site.standalone, domains: site.domains})) ?
 
 				os.write_file('$conf.paths.publish/$site.name/.repo', json.encode(map{
 					'repo':  '$repo.addr.name'
 					'alias': site.shortname
 				})) ?
 
-				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(map{
-					'users':  []string{}
-					'groups': []string{}
-				})) ?
+				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(Acl{})) ?
 
 				break
 			}

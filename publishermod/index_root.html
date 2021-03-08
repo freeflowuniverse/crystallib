@@ -4,9 +4,9 @@
 	<div>		
 		@if site.cat == .wiki		
 		@if config.web_hostnames
-		<a href="//@{site.domains[0]}@port_str">@{site.name}</a> 
+		<a href="//@{site.domains.keys()[0]}@port_str">@{site.name}</a> 
 		&nbsp;&nbsp;	
-		<a href="//@{site.domains[0]}@port_str/errors">errors check</a>		
+		<a href="//@{site.domains.keys()[0]}@port_str/errors">errors check</a>		
 		@else
 		<a href="@{site.shortname}/">@{site.name}</a>
 		&nbsp;&nbsp;
@@ -22,7 +22,7 @@
 @for site in sites
 <div>
 	@if site.cat == .web
-	<a href="//@{site.domains[0]}@port_str">@{site.name}</a>
+	<a href="//@{site.domains.keys()[0]}@port_str">@{site.name}</a>
 	&nbsp;&nbsp;
 	@end
 </div>

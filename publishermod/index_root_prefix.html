@@ -16,7 +16,7 @@
 @for site in sites
 <div>
 	@if site.cat == .web
-	<a href="//@{site.domains[0]}@port_str">@{site.name}</a>
+	<a href="//@{site.domains.keys()[0]}@port_str">@{site.name}</a>
 	&nbsp;&nbsp;
 	@end
 </div>
