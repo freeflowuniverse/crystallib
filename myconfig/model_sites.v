@@ -11,8 +11,7 @@ pub mut:
 	cat       SiteCat
 	shortname     string
 	path_code string
-	domains   map[string]string
-	standalone bool
+	domains   []string
 	descr	 string
 }
 
