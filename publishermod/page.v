@@ -54,8 +54,8 @@ pub fn (mut page Page) load(mut publisher Publisher) ?bool {
 		return error('Failed to open $path_source\nerror:$err')
 	}
 
-	// loads the defs
-	page.process_lines(mut publisher, true) ?
+	// loads the defs and other metadata
+	page.process_metadata(mut publisher) ?
 	return true
 }
 
@@ -67,7 +67,7 @@ pub fn (mut page Page) process(mut publisher Publisher) ?bool {
 		return false
 	}
 
-	page.process_lines(mut publisher, false) ? // first find all the links
+	page.process_lines(mut publisher) ? // first find all the links
 	// println(page.content)
 	// make sure we only execute this once !
 	page.state = PageStatus.ok
@@ -88,8 +88,12 @@ mut:
 }
 
 fn (mut state LineProcessorState) error(msg string) {
+	mut line := ""
+	if state.lines_source.len>0{
+		line = state.lines_source[state.lines_source.len - 1]
+	}
 	page_error := PageError{
-		line: state.lines_source[state.lines_source.len - 1]
+		line: line
 		linenr: state.nr
 		msg: msg
 		cat: PageErrorCat.brokeninclude
@@ -126,10 +130,52 @@ fn (mut state LineProcessorState) sourceline_change(ffrom string, tto string) {
 	state.changed_source = true
 }
 
+// walk over each line in the page and check for definitions
+fn (mut page Page) process_metadata(mut publisher Publisher) ? {
+	mut state := LineProcessorState{
+		site: &publisher.sites[page.site_id]
+		publisher: publisher
+		page: page
+	}
+
+	mut debug := false
+
+	state.site = &publisher.sites[page.site_id]
+	state.publisher = publisher
+
+	// println(state.site.name + " " + state.page.name)
+	// if state.site.name == 'sdk' && state.page.name.starts_with('grid_concepts') {
+	if state.page.name.starts_with("restricted_account"){
+		debug = true
+		println(page.content)
+		println("DEBUG")
+	}
+
+	for line in page.content.split_into_lines() {
+		state.nr++
+		state.lines_source << line
+
+		linestrip := line.trim(' ')
+
+		if linestrip.trim(' ').starts_with('> **ERROR') {
+			// these are error messages which will be rewritten if errors are still there
+			continue
+		}
+
+		if debug {
+			println(' >> $line')
+		}
+
+		if linestrip.trim(' ').starts_with("!!!def"){
+			macro_process(mut state, line)
+		}
+	}
+}
+
 // walk over each line in the page and do the link parsing on it
 // will also look for definitions
 // happens line per line
-fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
+fn (mut page Page) process_lines(mut publisher Publisher) ? {
 	mut state := LineProcessorState{
 		site: &publisher.sites[page.site_id]
 		publisher: publisher
@@ -146,9 +192,11 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 	state.publisher = publisher
 
 	// println(state.site.name + " " + state.page.name)
-	// if state.site.name == "sdk" && state.page.name.starts_with("sidebar"){
-	// if state.site.name == 'sdk' && state.page.name.starts_with('grid_concepts') {
+	// if state.page.name.starts_with("restricted_account"){
+	// // if state.site.name == 'sdk' && state.page.name.starts_with('grid_concepts') {
 	// 	debug = true
+	// 	println(page.content)
+	// 	println("DEBUG")
 	// }
 
 	if state.site.error_ignore_check(page.name) {
@@ -156,7 +204,9 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 	}
 
 	for line in page.content.split_into_lines() {
-		// eprintln (" >> LINE: $line")
+		if debug{
+			eprintln (" >> LINE: $line")
+		}
 
 		// the default has been done, which means the source & server have the last line
 		// now its up to the future to replace that last line or not
@@ -175,15 +225,12 @@ fn (mut page Page) process_lines(mut publisher Publisher, do_defs bool) ? {
 			println(' >> $line')
 		}
 
-		if do_defs{
-			if linestrip.trim(' ').starts_with("!!!def"){
-				macro_process(mut state, line, mut publisher, mut page)
-			}
+		if linestrip.trim(' ').starts_with("!!!def"){
+			continue //ignore the line, was already processed
+		}
+
+		if macro_process(mut state, line) {
 			continue
-		}else{
-			if macro_process(mut state, line, mut publisher, mut page) {
-				continue
-			}
 		}
 
 		state.lines_server << line
@@ -358,9 +405,12 @@ fn (mut page Page) content_defs_replaced(mut publisher Publisher) ?string {
 
 		mut tr := texttools.tokenize(line)
 		for defname, defobj in publisher.defs {
+			println(" == $defname")
 			page2 := publisher.page_get_by_id(defobj.pageid) ?
+			println(" === $page2.name")
 			site2 := page2.site(mut publisher)
 			line = tr.replace(line, defname, '[$defobj.name](${site2.name}__$page2.name)') ?
+			println(" ==== $line $tr")
 		}
 		res << line
 	}

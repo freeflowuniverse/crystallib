@@ -156,6 +156,7 @@ fn return_wiki_errors(sitename string, req &ctx.Req, mut res ctx.Resp) {
 }
 
 fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string, req &ctx.Req, mut res ctx.Resp) ? {
+	debug := true
 	mut sitename := config.name_web_get(domain) or {
 		res.send('Cannot find domain: $domain\n$err', 404)
 		return
@@ -169,7 +170,12 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 	}
 
 	if publisherobj.develop {
+
+		
+
 		filetype, sitename2, name2 := filetype_site_name_get(mut config, sitename, name) ?
+		if debug {println(" >> page get develop: $name2")}
+
 		mut site2 := publisherobj.site_get(sitename2) or {
 			res.send('Cannot find site: $sitename2\n$err', 404)
 			return
@@ -185,6 +191,7 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 		} else if filetype == FileType.wiki {
 			mut page := site2.page_get(name2, mut publisherobj) ?
 			content4 := page.content_defs_replaced(mut publisherobj) ?
+			if debug {println(" >> page send: $name2")}
 			res.send(content4, 200)
 			return
 		} else {

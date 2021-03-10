@@ -6,7 +6,7 @@ import despiegk.crystallib.texttools
 // format !!!$macroname $arg1 $arg2 
 // arg's can be one or more, can also be $name:$val then keyvalue which will become params
 // the args always need to come first
-fn macro_process(mut state LineProcessorState, line string, mut publisher Publisher, mut page Page) bool {
+fn macro_process(mut state LineProcessorState, line string) bool {
 	fns_map := map{
 		'vimeo':   vimeo
 		'iframe':  iframe
@@ -27,8 +27,8 @@ fn macro_process(mut state LineProcessorState, line string, mut publisher Publis
 	}
 	if macro.cmd in fns_map {
 		amethod := fns_map[macro.cmd]
-		println (" - macro: $macro.cmd $page.name")
-		amethod(mut state, mut macro, mut publisher, mut page) or {
+		println (" - macro: $macro.cmd $state.page.name")
+		amethod(mut state, mut macro) or {
 			state.error(err.msg)
 			return true
 		}

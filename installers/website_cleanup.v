@@ -35,6 +35,15 @@ pub fn website_cleanup(name string, conf &myconfig.ConfigRoot) ? {
 	run.sh
 	build.sh
 	package-lock.json
+	src/errors.md
+	session_data/*
+	book
+	book/
+	boo/*
+	"https*
+	https*
+	http*	
+	.vscode
 	'
 	os.write_file('$repo.path/.gitignore', texttools.dedent(gitignore)) or {
 		return error('cannot write to $repo.path/.gitignore\n$err')

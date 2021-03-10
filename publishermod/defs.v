@@ -28,8 +28,6 @@ pub fn (mut def Def) categories_add(categories []string){
 
 }
 
-
-
 fn (mut publisher Publisher) defs_page_get(categories []string) {
 	mut firstletter := ' '
 	mut out := []string{}

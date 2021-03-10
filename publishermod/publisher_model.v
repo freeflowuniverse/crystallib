@@ -33,9 +33,11 @@ pub fn (mut publisher Publisher) site_get_by_id(id int) ?&Site {
 }
 
 pub fn (mut publisher Publisher) page_get_by_id(id int) ?&Page {
+	println("page get by id: '$id'")
 	if id > publisher.pages.len {
 		return error('cannot get page with id: $id because not enough pages in the list')
 	}
+	println(publisher.pages[id])
 	return &publisher.pages[id]
 }
 
