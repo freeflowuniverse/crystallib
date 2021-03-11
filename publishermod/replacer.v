@@ -167,7 +167,7 @@ fn (mut publisher Publisher) page_check_find(name2find string, consumer_page_id 
 		}
 
 		if x == 5 {
-			// lets now try if we can get if from definitions
+			// lets now try if we can get if from definitions but replaced
 			zzz := publisher.def_page_get(objname_replaced) or { continue }
 			return zzz
 		}

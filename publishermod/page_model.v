@@ -24,6 +24,7 @@ pub mut:
 	content         string
 	nrtimes_inluded int
 	categories []string
+	replaced		bool
 }
 
 pub enum PageErrorCat {

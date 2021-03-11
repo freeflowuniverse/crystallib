@@ -171,10 +171,8 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 
 	if publisherobj.develop {
 
-		
-
 		filetype, sitename2, name2 := filetype_site_name_get(mut config, sitename, name) ?
-		if debug {println(" >> page get develop: $name2")}
+		// if debug {println(" >> page get develop: $name2")}
 
 		mut site2 := publisherobj.site_get(sitename2) or {
 			res.send('Cannot find site: $sitename2\n$err', 404)
@@ -189,11 +187,29 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 			res.send(index_out, 200)
 			return
 		} else if filetype == FileType.wiki {
-			mut page := site2.page_get(name2, mut publisherobj) ?
-			content4 := page.content_defs_replaced(mut publisherobj) ?
-			if debug {println(" >> page send: $name2")}
-			res.send(content4, 200)
-			return
+
+			if site2.page_exists(name2){
+				mut page := site2.page_get(name2, mut publisherobj) ?
+				// content4 := page.content_defs_replaced(mut publisherobj) ?
+				// if debug {println(" >> page send: $name2")}
+				// println(page.content)
+								
+				page.replace_defs(mut publisherobj)or {
+				res.send('Cannot replace defs\n$err', 504)
+				return
+				}
+				res.send(page.content, 200)
+				return
+			}else{
+				mut page_def := publisherobj.def_page_get(name2)?
+				page_def.replace_defs(mut publisherobj)or {
+				res.send('Cannot replace defs\n$err', 504)
+				return
+				}
+				// if debug {println(" >> page send: $name2")}
+				res.send(page_def.content, 200)
+				return
+			}
 		} else {
 			// now is a file
 			file3 := site2.file_get(name2, mut publisherobj) ?
@@ -207,11 +223,11 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 		}
 	} else {
 		filetype, path2 := path_wiki_get(mut config, sitename, name) or {
-			println('could not get path for: $sitename:$name\n$err')
+			println(' - ERROR: could not get path for: $sitename:$name\n$err')
 			res.send('$err', 404)
 			return
 		}
-		println(" - '$sitename:$name' -> $path2")
+		if debug {println(" - '$sitename:$name' -> $path2")}
 		if filetype == FileType.wiki {
 			content := os.read_file(path2) or {
 				res.send('Cannot find file: $path2\n$err', 404)
@@ -221,7 +237,7 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 			res.send(content, 200)
 		} else {
 			if !os.exists(path2) {
-				println(' - ERROR: cannot find path:$path2')
+				if debug{println(' - ERROR: cannot find path:$path2')}
 				res.send('cannot find path:$path2', 404)
 				return
 			} else {

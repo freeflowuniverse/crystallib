@@ -12,6 +12,16 @@ pub fn (page Page) write(mut publisher Publisher, content string) {
 	os.write_file(path, content) or { panic('cannot write, $err') }
 }
 
+pub fn (page Page) path_exists(mut publisher Publisher) bool {
+	mut path := page.path_get(mut publisher)
+	if path.ends_with('.md') {
+		path = path[..path.len - 3]
+	}
+	path += '.md'
+	return os.exists(path)
+}
+
+
 // // will load the content, check everything, return true if ok
 // pub fn (mut page Page) check(mut publisher Publisher) bool {
 // 	page.process(mut publisher) or { panic(err) }
@@ -145,11 +155,11 @@ fn (mut page Page) process_metadata(mut publisher Publisher) ? {
 
 	// println(state.site.name + " " + state.page.name)
 	// if state.site.name == 'sdk' && state.page.name.starts_with('grid_concepts') {
-	if state.page.name.starts_with("restricted_account"){
-		debug = true
-		println(page.content)
-		println("DEBUG")
-	}
+	// if state.page.name.starts_with("restricted_account"){
+	// 	debug = true
+	// 	println(page.content)
+	// 	println("DEBUG")
+	// }
 
 	for line in page.content.split_into_lines() {
 		state.nr++
@@ -192,7 +202,7 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 	state.publisher = publisher
 
 	// println(state.site.name + " " + state.page.name)
-	// if state.page.name.starts_with("restricted_account"){
+	// if state.page.name.starts_with("defs"){
 	// // if state.site.name == 'sdk' && state.page.name.starts_with('grid_concepts') {
 	// 	debug = true
 	// 	println(page.content)
@@ -221,11 +231,7 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 			continue
 		}
 
-		if debug {
-			println(' >> $line')
-		}
-
-		if linestrip.trim(' ').starts_with("!!!def"){
+		if linestrip.trim(' ').starts_with("!!!def "){
 			continue //ignore the line, was already processed
 		}
 
@@ -379,40 +385,8 @@ fn (mut page Page) title() string {
 }
 
 // return a page where all definitions are replaced with link
-fn (mut page Page) content_defs_replaced(mut publisher Publisher) ?string {
-	mut skipline := false
-	mut res := []string{}
-	for mut line in page.content.split('\n') {
-		if line.trim(' ').starts_with('!') {
-			res << line
-			continue
-		}
-		if line.trim(' ').starts_with('/') {
-			res << line
-			continue
-		}
-		if line.trim(' ').starts_with('#') {
-			res << line
-			continue
-		}
-		if line.contains("'''") || line.contains('```') || line.contains('"""') {
-			skipline = !skipline
-		}
-		if skipline {
-			res << line
-			continue
-		}
-
-		mut tr := texttools.tokenize(line)
-		for defname, defobj in publisher.defs {
-			println(" == $defname")
-			page2 := publisher.page_get_by_id(defobj.pageid) ?
-			println(" === $page2.name")
-			site2 := page2.site(mut publisher)
-			line = tr.replace(line, defname, '[$defobj.name](${site2.name}__$page2.name)') ?
-			println(" ==== $line $tr")
-		}
-		res << line
-	}
-	return res.join('\n')
+fn (mut page Page) replace_defs(mut publisher Publisher) ? {
+	if page.replaced{return}
+	page.content = publisher.replace_defs_links(page.content)?
+	page.replaced = true
 }

@@ -14,7 +14,8 @@ pub fn load() HostsFile{
 	mut content := os.read_file("/etc/hosts") or {panic(err)}
 	mut section := ""
 
-	for mut line in content.split("\n"){
+	for line_ in content.split("\n"){
+		mut line:=line_
 		line = line.trim_space()
 		if line.starts_with("#"){
 			section = line.trim("#").trim_space()				

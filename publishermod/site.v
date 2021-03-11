@@ -164,6 +164,7 @@ fn (mut site Site) files_process(mut publisher Publisher) ? {
 	return site.files_process_recursive(site.path, mut publisher)
 }
 
+
 fn (mut site Site) files_process_recursive(path string, mut publisher Publisher) ? {
 	items := os.ls(path) ?
 	for item in items {

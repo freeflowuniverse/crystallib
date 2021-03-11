@@ -20,7 +20,7 @@ pub fn (def Def) category_prefix_exists(prefix_ string) bool {
 
 pub fn (mut def Def) categories_add(categories []string){
 	for cat_ in categories{
-		cat := cat_.to_lower()
+		cat := name_fix_no_underscore(cat_)
 		if !(cat in def.categories){
 			def.categories<<cat
 		}
@@ -28,94 +28,58 @@ pub fn (mut def Def) categories_add(categories []string){
 
 }
 
-fn (mut publisher Publisher) defs_page_get(categories []string) {
-	mut firstletter := ' '
-	mut out := []string{}
-	mut firstletter_found := ''
+pub fn (def Def) page_get(mut publisher &Publisher) ?&Page {
+	return publisher.page_get_by_id(def.pageid)
+}
 
-	out << '# Definitions & Concepts'
-	out << ''
+pub fn (def Def) name_fixed() string {
+	return name_fix_no_underscore(def.name)
+}
 
-	mut def_names := []string{}
 
-	for defname, _ in publisher.defs {
-		def_names << defname
-	}
-	def_names.sort()
 
-	for defname in def_names {
-		defobj := publisher.defs[defname]
-		firstletter_found = defname[0].ascii_str()
-		if firstletter_found != firstletter {
-			out << ''
-			out << '## $firstletter_found'
-			out << ''
-			out << '| def | description |'
-			out << '| ---- | ---- |'
-			firstletter = firstletter_found
-		}
-		mut page := publisher.page_get_by_id(defobj.pageid) or { panic(err) }
 
-		site := page.site_get(mut publisher) or { panic(err) }
+fn (mut publisher Publisher) defs_init(categories []string, exclude []string, mut site &Site, name_ string) {
 
-		publisher.replacer.defs.add(['defname:[defobj.name](${site.name}__${page.name}.md)']) or {
-			panic(err)
-		}
-
-		deftitle := page.title()
-
-		out << '| [$defobj.name](${site.name}__${page.name}.md) | $deftitle |'
+	mut name := name_
+	if name == "" {
+		name = "defs"
 	}
 
-	out << ''
+	// for defobjin publisher.defs  {
+	// 	// defobj := publisher.defs[defname]
+	// 	mut page := publisher.page_get_by_id(defobj.pageid) or { panic(err) }
+	// 	//add replacer for the definitions TODO: see if works ok
+	// 	//NOT NEEDED NOW
+	// 	// publisher.replacer.defs.add(['${defname}:[defobj.name](${site.name}__${page.name}.md)']) or {
+	// 	// 	panic(err)
+	// 	// }
+	// }
 
-	content := out.join('\n')
+	if ! (name in site.pages){
 
-	// attach this page to the sites in the publisher
-	for mut site in publisher.sites {
+		categories2 := categories.join(",")
+		exclude2 := exclude.join(",")
+		content := "!!!def_list categories:'${categories2}' exclude:'${exclude2}'\n"
+
+		// attach this def page to the site
 		page := Page{
 			id: publisher.pages.len
 			site_id: site.id
-			name: 'defs'
+			name: name
 			content: content
-			path: 'defs.md'
+			path: '${name}.md'
 		}
 		publisher.pages << page
-		site.pages['defs'] = publisher.pages.len - 1
-		// page.write(mut publisher, page.content)
+		site.pages[name] = publisher.pages.len - 1
+		// if page.path_exists(mut publisher){
+		// 	panic("should never be here, page path cannnot exists.\n Now: ${page.path_get(mut publisher)}")
+		// }
+		page.write(mut publisher, page.content)		
 	}
 }
 
 fn (mut publisher Publisher) def_page_get(name string) ?&Page {
-	name2 := name_fix_no_underscore(name)
-	if name2 in publisher.defs {
-		pageid := publisher.defs[name2].pageid
-		// println(publisher.pages.map(it.id))
-		// println(':::$pageid:::')
-		if pageid in publisher.pages.map(it.id) {
-			return &publisher.pages[pageid]
-		} else {
-			panic('BUG: Cannot find page with $pageid in pages, for def:$name\n')
-		}
-	}
-	if publisher.defs.len == 0 {
-		panic('defs need to be loaded first')
-	}
-	return error("Cannot find page for def:'$name'\n")
-}
-
-fn (mut publisher Publisher) def_page_exists(name string) bool {
-	name2 := name_fix_no_underscore(name)
-	if name2 in publisher.defs {
-		pageid := publisher.defs[name2].pageid
-		if pageid in publisher.pages.map(it.id) {
-			return true
-		} else {
-			panic('BUG: Cannot find page with $pageid in pages, for def:$name\n')
-		}
-	}
-	if publisher.defs.len == 0 {
-		panic('defs need to be loaded first')
-	}
-	return false
+	def := publisher.def_get(name)?
+	return def.page_get(mut publisher)
 }

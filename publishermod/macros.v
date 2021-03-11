@@ -12,6 +12,7 @@ fn macro_process(mut state LineProcessorState, line string) bool {
 		'iframe':  iframe
 		'youtube': youtube
 		'def': macro_def
+		'def_list': macro_def_list
 	}
 
 	if !line.starts_with('!!!') {
@@ -27,7 +28,7 @@ fn macro_process(mut state LineProcessorState, line string) bool {
 	}
 	if macro.cmd in fns_map {
 		amethod := fns_map[macro.cmd]
-		println (" - macro: $macro.cmd $state.page.name")
+		// println (" - macro: $macro.cmd $state.page.name")
 		amethod(mut state, mut macro) or {
 			state.error(err.msg)
 			return true

@@ -39,6 +39,9 @@ pub fn sites_download(cmd cli.Command, web bool) ? {
 		if sc.cat == myconfig.SiteCat.web && !web{
 			continue
 		}
+		if sc.cat == myconfig.SiteCat.data && !web{
+			continue
+		}		
 		// println(' - get:$sc.url')
 		gt.repo_get_from_url(url: sc.url, pull: sc.pull) or {
 			println(' - WARNING: could not download site $sc.url, do you have rights?')

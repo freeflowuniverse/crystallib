@@ -9,9 +9,10 @@ pub mut:
 	sites      []Site
 	pages      []Page
 	files      []File
+	defs 	   []Def
 	site_names map[string]int
 	// maps definition name to page id
-	defs     map[string]Def
+	def_names     map[string]int
 	develop  bool
 	replacer ReplacerInstructions
 }
@@ -32,14 +33,23 @@ pub fn (mut publisher Publisher) site_get_by_id(id int) ?&Site {
 	return &publisher.sites[id]
 }
 
+pub fn (mut publisher Publisher) def_get_by_id(id int) ?&Def {
+	if id > publisher.defs.len {
+		return error('cannot get def with id: $id because not enough defs in the list')
+	}
+	return &publisher.defs[id]
+}
+
+
 pub fn (mut publisher Publisher) page_get_by_id(id int) ?&Page {
-	println("page get by id: '$id'")
+	// println("page get by id: '$id'")
 	if id > publisher.pages.len {
 		return error('cannot get page with id: $id because not enough pages in the list')
 	}
-	println(publisher.pages[id])
+	// println(publisher.pages[id])
 	return &publisher.pages[id]
 }
+
 
 pub fn (mut publisher Publisher) file_get_by_id(id int) ?&File {
 	if id > publisher.files.len {
@@ -53,6 +63,11 @@ pub fn (mut publisher Publisher) file_get_by_id(id int) ?&File {
 pub fn (mut publisher Publisher) site_exists(name string) bool {
 	name2 := name_fix(name)
 	return name2 in publisher.site_names
+}
+
+pub fn (mut publisher Publisher) def_exists(name string) bool {
+	name2 := name_fix_no_underscore(name)
+	return name2 in publisher.def_names
 }
 
 pub fn (mut publisher Publisher) file_exists(name string) bool {
@@ -99,6 +114,23 @@ pub fn (mut publisher Publisher) site_get(namefull string) ?&Site {
 	return error('cannot find site: $sitename')
 }
 
+pub fn (mut publisher Publisher) def_get(namefull string) ?&Def {
+	mut defname := name_fix_no_underscore(namefull)
+	if defname.ends_with(".md"){
+		defname=defname[0..(defname.len-3)]
+	}
+	// println(" >>> defget: $defname")
+	if defname in publisher.def_names {
+		mut def := publisher.def_get_by_id(publisher.def_names[defname]) or {
+			// println(publisher.def_names)
+			return error('cannot find def: $defname')
+		}
+		return def
+	}
+	return error('cannot find def: $defname')
+}
+
+
 // namefull is name with : if needed
 pub fn (mut publisher Publisher) files_get(namefull string) []&File {
 	sitename, itemname := name_split(namefull) or { panic(err) }
@@ -144,7 +176,11 @@ pub fn (mut publisher Publisher) pages_get(namefull string) []&Page {
 // name in form: 'sitename:filename' or 'filename'
 pub fn (mut publisher Publisher) file_get(namefull string) ?&File {
 	sitename, itemname := publisher.name_split_alias(namefull) ?
-	println(" >> file_get:'$sitename':'$itemname'")
+	// println(" >> file_get:'$sitename':'$itemname'")
+	if sitename != ""{
+		site := publisher.site_get(sitename)?
+		return site.file_get(itemname,mut publisher)
+	}
 	res := publisher.files_get(namefull)
 	if res.len == 0 {
 		return error("Could not find file: '$namefull'")
@@ -158,7 +194,11 @@ pub fn (mut publisher Publisher) file_get(namefull string) ?&File {
 // name in form: 'sitename:pagename' or 'pagename'
 pub fn (mut publisher Publisher) page_get(namefull string) ?&Page {
 	sitename, itemname := publisher.name_split_alias(namefull) ?
-	println(" >> page_get:'$sitename':'$itemname'")
+	// println(" >> page_get:'$sitename':'$itemname'")
+	if sitename != ""{
+		site := publisher.site_get(sitename)?
+		return site.page_get(itemname,mut publisher)
+	}
 	res := publisher.pages_get(namefull)
 	if res.len == 0 {
 		return error("Could not find page: '$namefull'")
@@ -192,6 +232,12 @@ pub fn (mut publisher Publisher) page_exists_state(name string) ExistState {
 		return ExistState.error
 	}
 	return ExistState.ok
+}
+
+pub fn (mut publisher Publisher) def_add(def Def) int {
+	publisher.defs << def
+	publisher.def_names[def.name_fixed()] = publisher.defs.len - 1
+	return publisher.def_names[def.name_fixed()]
 }
 
 // try and get if file exists and return state of how it did exist

@@ -10,6 +10,7 @@ pub mut:
 	page_errors map[string][]PageError
 }
 
+//this is used to write json to the flatten dir so the webserver can process defs
 struct PublisherDefs {
 mut:
 	defs []PublisherDef
@@ -53,11 +54,11 @@ pub fn (mut publisher Publisher) flatten() ? {
 
 	// process all definitions, will do over all sites
 	mut pd := PublisherDefs{}
-	for def, defobj in publisher.defs {
+	for defobj in publisher.defs {
 		page_def := publisher.page_get_by_id(defobj.pageid) ?
 		site_def := page_def.site_get(mut publisher) ?
 		pd.defs << PublisherDef{
-			def: def
+			def: defobj.name_fixed()
 			page: page_def.name
 			site: site_def.name
 		}
@@ -137,9 +138,9 @@ pub fn (mut publisher Publisher) flatten() ? {
 			mut page := site.page_get(name, mut publisher) ?
 			// println(' >> $name: $page.path')
 			// write processed content
-			content := page.content_defs_replaced(mut publisher) ?
+			page.replace_defs(mut publisher)?
 			dest_file = os.join_path(dest_dir, os.file_name(page.path_get(mut publisher)))
-			os.write_file(dest_file, content) ?
+			os.write_file(dest_file, page.content) ?
 		}
 
 		for name, _ in site.files {

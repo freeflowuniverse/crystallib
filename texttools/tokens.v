@@ -20,6 +20,47 @@ pub fn text_token_replace(text string, tofind string, replacewith string) ?strin
 	return text2
 }
 
+
+//the map has as key the normalized string (fix_name_no_underscore), the value is what to replace with
+pub fn replace_items(text string, replacer map[string]string) ?string {
+	mut skipline := false
+	mut res := []string{}
+	for line_ in text.split('\n') {
+		mut line := line_
+		if line.trim(' ').starts_with('!') {
+			res << line
+			continue
+		}
+		if line.trim(' ').starts_with('/') {
+			res << line
+			continue
+		}
+		if line.trim(' ').starts_with('#') {
+			res << line
+			continue
+		}
+		if line.contains("'''") || line.contains('```') || line.contains('"""') {
+			skipline = !skipline
+		}
+		if skipline {
+			res << line
+			continue
+		}
+
+		//TODO: is very brute force can be done much better
+		mut tr := texttools.tokenize(line)
+		// println(" ==== $line")
+		// println(tr.items)
+		for key, replacewith in replacer {
+			// println(" == $defname")
+			line = tr.replace(line, key, replacewith) ?
+			line = tr.replace(line, key+"s",replacewith+"s") ?
+		}
+		res << line
+	}
+	return res.join('\n')
+}
+
 pub fn (mut tr TokenizerResult) replace(text string, tofind string, replacewith string) ?string {
 	tofind2 := name_fix_no_underscore(tofind)
 	mut text2 := text

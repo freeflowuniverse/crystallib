@@ -4,10 +4,7 @@ import os
 
 // check command exists on the platform, knows how to deal with different platforms
 pub fn (mut node Node) cmd_exists(cmd string) bool {
-	res := os.exec('which $cmd') or {
-		println('cmd exists no: $cmd')
-		return false
-	}
+	res := os. execute('which $cmd')
 	if res.exit_code == 0 {
 		return true
 	}

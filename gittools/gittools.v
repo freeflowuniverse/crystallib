@@ -3,10 +3,7 @@ module gittools
 import os
 
 pub fn ssh_agent_loaded() bool {
-	res := os.exec('ssh-add -l') or { os.Result{
-		exit_code: 1
-		output: ''
-	} }
+	res := os. execute_or_panic('ssh-add -l') 
 	if res.exit_code == 0 {
 		return true
 	} else {
@@ -15,15 +12,15 @@ pub fn ssh_agent_loaded() bool {
 }
 
 pub fn ssh_agent_reset() ? {
-	_ := os.exec('ssh-add -D') ?
+	_ := os. execute_or_panic('ssh-add -D')
 }
 
 pub fn ssh_agent_load(keypath string) ? {
-	_ := os.exec('ssh-add $keypath') ?
+	_ := os. execute_or_panic('ssh-add $keypath')
 }
 
 // pub fn ssh_agent_keys() []string{
-// 	res := os.exec("ssh-add -l") or {
+// 	res := os. execute_or_panic("ssh-add -l") or {
 // 			os.Result{exit_code:1,output:""}
 // 		}
 // 	if res.exit_code==0{
@@ -42,10 +39,7 @@ pub fn ssh_agent_load(keypath string) ? {
 pub fn ssh_agent_key_loaded(name string) (int, bool) {
 	mut counter := 0
 	mut exists := false
-	res := os.exec('ssh-add -l') or { os.Result{
-		exit_code: 1
-		output: ''
-	} }
+	res := os. execute_or_panic('ssh-add -l')
 	if res.exit_code == 0 {
 		for line in res.output.split('\n') {
 			if line.trim(' ') == '' {

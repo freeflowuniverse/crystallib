@@ -65,8 +65,9 @@ pub fn (mut tp Params) get_int_default(key string, defval int) ?int {
 pub fn (mut tp Params) get_list(key string) ?[]string {
 	mut res:=[]string{}
 	if tp.exists(key) {
-		valuestr := tp.get(key) ?
+		mut valuestr := tp.get(key) ?
 		if "," in valuestr{
+			valuestr = valuestr.trim(" ,")
 			res = valuestr.split(",").map(it.trim(" '\""))
 		}else{
 			res = [valuestr.trim(" '\"")]
@@ -78,8 +79,9 @@ pub fn (mut tp Params) get_list(key string) ?[]string {
 pub fn (mut tp Params) get_list_int(key string) ?[]int {
 	mut res:=[]int{}
 	if tp.exists(key) {
-		valuestr := tp.get(key) ?
+		mut valuestr := tp.get(key) ?
 		if "," in valuestr{
+			valuestr = valuestr.trim(" ,")
 			res = valuestr.split(",").map(it.trim(" '\"").int())
 		}else{
 			res = [valuestr.trim(" '\"").int()]

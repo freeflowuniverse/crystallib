@@ -112,7 +112,7 @@ pub fn (mut ipaddr IPAddress) ping(args_ PingArgs) bool {
 	}
 	for _ in 0 .. args.retry {
 		println(cmd)
-		res := os.exec(cmd) or { continue }
+		res := os. execute(cmd)
 		if res.exit_code > 0 {
 			continue
 		}

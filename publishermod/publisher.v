@@ -23,6 +23,14 @@ pub fn (mut publisher Publisher) check() {
 	for mut site in publisher.sites {
 		site.load(mut publisher)
 	}
+
+	//now the defs are loaded
+	//so we can write the default defs pages
+	for mut site in publisher.sites {
+		//write default def page for all categories
+		publisher.defs_init([],["tech"],mut site,"")
+	}
+
 	for mut site in publisher.sites {
 		site.process(mut publisher)
 	}
@@ -38,3 +46,16 @@ pub fn (mut publisher Publisher) site_locations_get() [][]string {
 }
 
 
+
+//replace in text the defs to a link
+fn (mut publisher Publisher) replace_defs_links(text string) ?string {
+	mut replacer := map[string]string{}
+	for defname, defid in publisher.def_names {
+		defobj := publisher.def_get_by_id(defid) ?
+		page2 := defobj.page_get(mut publisher)?
+		site2 := page2.site(mut publisher)
+		replacer[defname]='[$defobj.name](${site2.name}__$page2.name)'
+	}
+
+	return texttools.replace_items(text,replacer)
+}
