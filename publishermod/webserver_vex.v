@@ -152,6 +152,7 @@ fn return_wiki_errors(sitename string, req &ctx.Req, mut res ctx.Resp) {
 		return
 	}
 	// println(t)
+	res.headers['Content-Type'] = ['text/html']
 	res.send(t, 200)
 }
 
@@ -184,6 +185,7 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 			// }
 			index_out := template_wiki_root(sitename, '')
 			// index_root(req, mut res)
+			res.headers['Content-Type'] = ['text/html']
 			res.send(index_out, 200)
 			return
 		} else if filetype == FileType.wiki {
@@ -198,6 +200,7 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 				res.send('Cannot replace defs\n$err', 504)
 				return
 				}
+				res.headers['Content-Type'] = ['text/html']
 				res.send(page.content, 200)
 				return
 			}else{
@@ -207,6 +210,7 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 				return
 				}
 				// if debug {println(" >> page send: $name2")}
+				res.headers['Content-Type'] = ['text/html']
 				res.send(page_def.content, 200)
 				return
 			}
@@ -219,7 +223,10 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 				return
 			}
 			// NOT GOOD NEEDS TO BE NOT LIKE THIS: TODO: find way how to send file
+			ct := content_type_get(path3)?
+			res.headers['Content-Type'] = [ct]
 			res.send(content3, 200)
+			return
 		}
 	} else {
 		filetype, path2 := path_wiki_get(mut config, sitename, name) or {
@@ -247,6 +254,8 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 					return
 				}
 				// NOT GOOD NEEDS TO BE NOT LIKE THIS: TODO: find way how to send file
+				ct := content_type_get(path2)?
+				res.headers['Content-Type'] = [ct]
 				res.send(content, 200)
 				// res.send_file(path2,200)
 			}
@@ -272,6 +281,9 @@ fn content_type_get(path string) ?string {
 	}
 	if path.ends_with('.gif') {
 		return 'image/gif'
+	}
+	if path.ends_with('.pdf') {
+		return 'application/pdf'
 	}
 	return error('cannot find content type for $path')
 }
@@ -304,7 +316,8 @@ fn site_www_deliver(mut config myconfig.ConfigRoot, domain string, path string, 
 			res.send('Cannot find file: $path2\n$err', 404)
 			return
 		}
-		res.headers['Content-Type'] = [content_type_get(path2)]
+		ct := content_type_get(path2)?
+		res.headers['Content-Type'] = [ct]
 		res.send(content, 200)
 	}
 }
