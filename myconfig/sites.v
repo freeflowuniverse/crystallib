@@ -7,7 +7,7 @@ module myconfig
 fn site_config(mut c ConfigRoot) {
 	c.sites << SiteConfig{
 		name: 'www_threefold_io'
-		shortname: 'tf'
+		shortname: 'threefold'
 		url: 'https://github.com/threefoldfoundation/www_threefold_io'
 		cat: SiteCat.web
 		descr: 'is our entry point for everyone, redirect to the detailed websites underneith.'
@@ -89,7 +89,7 @@ fn site_config(mut c ConfigRoot) {
 	}	
 	c.sites << SiteConfig{
 		name: 'info_threefold'
-		shortname: 'tf'
+		shortname: 'threefold'
 		//will be moved to this url
 		// url: 'https://github.com/threefoldfoundation/info_threefold'
 		url: 'https://github.com/threefoldfoundation/info_foundation_archive'
