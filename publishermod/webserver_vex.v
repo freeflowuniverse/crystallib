@@ -14,6 +14,8 @@ struct MyContext {
 pub:
 	config    &myconfig.ConfigRoot
 	publisher &Publisher
+pub mut:
+	webnames map[string]string
 }
 
 enum FileType {
@@ -195,10 +197,11 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 				// println(page.content)
 								
 				page.replace_defs(mut publisherobj)or {
-				res.send('Cannot replace defs\n$err', 504)
-				return
+					res.send('Cannot replace defs\n$err', 504)
+					return
 				}
-				res.send(page.content, 200)
+				content := domain_replacer(req, page.content)
+				res.send(content, 200)
 				return
 			}else{
 				mut page_def := publisherobj.def_page_get(name2)?
@@ -207,18 +210,21 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 				return
 				}
 				// if debug {println(" >> page send: $name2")}
-				res.send(page_def.content, 200)
+				content2 := domain_replacer(req, page_def.content)
+				res.send(content2, 200)
 				return
 			}
 		} else {
 			// now is a file
 			file3 := site2.file_get(name2, mut publisherobj) ?
 			path3 := file3.path_get(mut publisherobj)
+			// println (" >> file get: $path3")
 			content3 := os.read_file(path3) or {
 				res.send('Cannot find file: $path3\n$err', 404)
 				return
 			}
 			// NOT GOOD NEEDS TO BE NOT LIKE THIS: TODO: find way how to send file
+			res.headers['Content-Type'] = [content_type_get(path3)]					
 			res.send(content3, 200)
 		}
 	} else {
@@ -247,6 +253,7 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 					return
 				}
 				// NOT GOOD NEEDS TO BE NOT LIKE THIS: TODO: find way how to send file
+				res.headers['Content-Type'] = [content_type_get(path2)]					
 				res.send(content, 200)
 				// res.send_file(path2,200)
 			}
@@ -273,10 +280,14 @@ fn content_type_get(path string) ?string {
 	if path.ends_with('.gif') {
 		return 'image/gif'
 	}
+	if path.ends_with('.pdf') {
+		return 'application/pdf'
+	}	
 	return error('cannot find content type for $path')
 }
 
 fn site_www_deliver(mut config myconfig.ConfigRoot, domain string, path string, req &ctx.Req, mut res ctx.Resp) ? {
+
 	mut site_path := config.path_publish_web_get_domain(domain) or {
 		res.send('Cannot find domain: $domain\n$err', 404)
 		return
@@ -298,14 +309,26 @@ fn site_www_deliver(mut config myconfig.ConfigRoot, domain string, path string, 
 			path2 = os.join_path(path2, 'index.html')
 			res.headers['Content-Type'] = ['text/html']
 		}
-		// println("deliver: '$path2'")
-		// NOT GOOD NEEDS TO BE NOT LIKE THIS: TODO: find way how to send file
-		content := os.read_file(path2) or {
-			res.send('Cannot find file: $path2\n$err', 404)
-			return
+
+		if path.ends_with(".html"){
+			mut content := os.read_file(path2) or {
+				res.send('Cannot find file: $path2\n$err', 404)
+				return
+			}
+			content = domain_replacer(req, content)
+			res.headers['Content-Type'] = ['text/html']
+			res.send(content, 200)			
+
+		}else{
+			// println("deliver: '$path2'")
+			// NOT GOOD NEEDS TO BE NOT LIKE THIS: TODO: find way how to send file
+			content2 := os.read_file(path2) or {
+				res.send('Cannot find file: $path2\n$err', 404)
+				return
+			}
+			res.headers['Content-Type'] = [content_type_get(path2)]
+			res.send(content2, 200)
 		}
-		res.headers['Content-Type'] = [content_type_get(path2)]
-		res.send(content, 200)
 	}
 }
 
@@ -316,6 +339,8 @@ fn site_deliver(req &ctx.Req, mut res ctx.Resp) {
 	// what is this doing?
 	mut path := req.params['path']
 	mut domain := ''
+
+	mut cat := myconfig.SiteCat.web
 
 	if config.web_hostnames {
 		if !('Host' in req.headers) {
@@ -330,20 +355,28 @@ fn site_deliver(req &ctx.Req, mut res ctx.Resp) {
 		mut splitted2 := host.split(':')
 		domain = splitted2[0]
 	} else {
-		splitted := path.trim('/').split('/')
+		path = path.trim('/')
+		if path.starts_with("info/"){
+			path = path[5..]
+			cat = myconfig.SiteCat.wiki
+		}else{
+			cat = myconfig.SiteCat.web
+		}
+
+		splitted := path.split('/')
 
 		sitename := splitted[0]
 		path = splitted[1..].join('/').trim('/').trim(' ')
 
-		if sitename == ""{
+		if sitename == "" {
 			domain ="localhost"
 		}else{
 
-			domain = config.domain_web_get(sitename) or {			
-				res.send('unknown domain for $sitename', 404)
+			domain = config.domain_get(sitename,cat) or {			
+				res.send('unknown domain for ${sitename}.\n$err', 404)
 				return
 			}
-			// println("DOMAIN:$domain")
+			println("DOMAIN:$domain")
 		}
 	}
 
@@ -391,10 +424,13 @@ fn site_deliver(req &ctx.Req, mut res ctx.Resp) {
 pub fn webserver_run(publisher &Publisher, config &myconfig.ConfigRoot) {
 	mut app := router.new()
 
-	mycontext := &MyContext{
+	mut mycontext := &MyContext{
 		config: config
 		publisher: publisher
 	}
+
+	mycontext.domain_replacer_init()
+
 	app.inject(mycontext)
 
 	app.use(print_req_info)

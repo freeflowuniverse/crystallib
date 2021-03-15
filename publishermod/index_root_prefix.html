@@ -1,11 +1,11 @@
-<h1>WIKIs</h1>
+<h1>WIKI</h1>
 
 @for site in sites
 	<div>
 		@if site.cat == .wiki
-		<a href="@{site.shortname}/">@{site.name}</a> 
+		<a href="info/@{site.shortname}/">@{site.name}</a> 
 		&nbsp;&nbsp;	
-		<a href="@{site.shortname}/errors">errors check</a>
+		<a href="info/@{site.shortname}/errors">errors check</a>
 		@end	
 	</div>
 @end

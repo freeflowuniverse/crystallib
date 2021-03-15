@@ -173,6 +173,9 @@ fn (mut site Site) files_process_recursive(path string, mut publisher Publisher)
 				continue
 			} else if item.starts_with('_') {
 				continue
+			} else if item.starts_with('gallery_') {
+				//TODO: need to be implemented by macro
+				continue
 			} else {
 				site.files_process_recursive(os.join_path(path, item), mut publisher) ?
 			}
@@ -209,7 +212,7 @@ fn (mut site Site) files_process_recursive(path string, mut publisher Publisher)
 						site.page_remember(path, item2, mut publisher) ?
 					}
 
-					if ext2 in ['jpg', 'png', 'svg', 'jpeg', 'gif'] {
+					if ext2 in ['jpg', 'png', 'svg', 'jpeg', 'gif',"pdf"] {
 						// println(path+"/"+item2)
 						site.file_remember(path, item2, mut publisher)
 					}

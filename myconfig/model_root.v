@@ -63,13 +63,3 @@ pub fn (mut config ConfigRoot) name_web_get(domain string) ?string {
 	return error('Cannot find wiki site with domain: $domain')
 }
 
-//get the domain starting from the shortname
-//only for wiki's
-pub fn (mut config ConfigRoot) domain_web_get(shortname string) ?string {
-	for s in config.sites {
-		if shortname == s.shortname && s.cat == SiteCat.wiki{
-			return s.domains[0]
-		}
-	}
-	return error('Cannot find wiki site with shortname: $shortname')
-}

@@ -1,5 +1,9 @@
 module myconfig
 
+
+//websites are under $ipaddr/$shortname
+//wiki are under $ipaddr/info/$shortname
+
 fn site_config(mut c ConfigRoot) {
 	c.sites << SiteConfig{
 		name: 'www_threefold_io'
@@ -43,7 +47,7 @@ fn site_config(mut c ConfigRoot) {
 	}
 	c.sites << SiteConfig{
 		name: 'www_conscious_internet'
-		shortname: 'conscious_internet'
+		shortname: 'aci'
 		url: 'https://github.com/threefoldfoundation/www_conscious_internet'
 		cat: SiteCat.web
 		domains: ['www.consciousinternet.org', 'eco.threefold.io', 'community.threefold.io', 'eco.threefold.me',
@@ -53,7 +57,7 @@ fn site_config(mut c ConfigRoot) {
 	}
 	c.sites << SiteConfig{
 		name: 'www_threefold_tech'
-		shortname: 'tech'
+		shortname: 'tftech'
 		url: 'https://github.com/threefoldtech/www_threefold_tech'
 		cat: SiteCat.web
 		domains: ['www.threefold.tech']
@@ -66,10 +70,26 @@ fn site_config(mut c ConfigRoot) {
 		cat: SiteCat.web
 		domains: ['example.threefold.io']
 		descr :''
+	}	
+	c.sites << SiteConfig{
+		name: 'www_uhuru'
+		shortname: 'uhuru'
+		url: 'https://github.com/uhuru-me/www_uhuru'
+		cat: SiteCat.web
+		domains: ['www.uhuru.me']
+		descr :'uhuru (freedom) peer2peer cloud.'
 	}
 	c.sites << SiteConfig{
+		name: 'www_mitaa'
+		shortname: 'mitaa'
+		url: 'https://github.com/mitaa-me/www_mitaa'
+		cat: SiteCat.web
+		domains: ['www.mitaa.me']
+		descr :'Mitaa website.'
+	}	
+	c.sites << SiteConfig{
 		name: 'info_threefold'
-		shortname: 'threefold'
+		shortname: 'tf'
 		//will be moved to this url
 		// url: 'https://github.com/threefoldfoundation/info_threefold'
 		url: 'https://github.com/threefoldfoundation/info_foundation_archive'
@@ -81,6 +101,28 @@ fn site_config(mut c ConfigRoot) {
 	// 	shortname: 'marketplace'
 	// 	url: 'https://github.com/threefoldfoundation/info_marketplace'
 	// }
+	c.sites << SiteConfig{
+		name: 'info_uhuru'
+		shortname: 'uhuru'
+		url: 'https://github.com/uhuru-me/info_uhuru'
+		domains: ['info.uhuru.me']
+		descr :'wiki for uhuru Peer2Peer Cloud.'
+	}	
+	c.sites << SiteConfig{
+		name: 'info_tag'
+		shortname: 'tag'
+		url: 'https://github.com/takeactionglobal/info_tag'
+		domains: ['info.takeactionglobal.org']
+		descr :'wiki for TAG.'
+	}		
+	c.sites << SiteConfig{
+		name: 'info_mitaa'
+		shortname: 'mitaa'
+		url: 'https://github.com/mitaa-me/info_mitaa'
+		domains: ['info.mitaa.me','info.mitaa.org']
+		descr :'wiki for Mitaa.'
+	}		
+		
 	c.sites << SiteConfig{
 		name: 'info_sdk'
 		shortname: 'sdk'

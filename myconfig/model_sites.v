@@ -106,3 +106,14 @@ pub fn (config ConfigRoot) reponame(name string) ?string {
 	mut site := config.site_get(name) or { return error('Cannot find site with configname: $name') }
 	return site.reponame()
 }
+
+
+//get the domain name
+pub fn (mut config ConfigRoot) domain_get(shortname string, cat SiteCat) ?string {
+	for s in config.sites {
+		if shortname == s.shortname && s.cat == cat{
+			return s.domains[0]
+		}
+	}
+	return error('Cannot find $cat site with shortname: $shortname')
+}

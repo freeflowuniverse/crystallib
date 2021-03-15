@@ -29,6 +29,10 @@ fn (mut file File) relocate(mut publisher Publisher) {
 		return
 	}
 
+	if path.ends_with('.pdf') {
+		return
+	}	
+
 	if file.usedby.len > 0 {
 		// println(" >> relocate in ${file.name} used")
 		if file.usedby.len > 1 {

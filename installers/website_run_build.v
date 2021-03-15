@@ -63,6 +63,10 @@ pub fn website_develop(cmd &cli.Command) ? {
 	process.execute_interactive('$repo.path/run.sh') ?
 }
 
+fn rewrite_config(path string,shortname string){
+	println (" >> REWRITE CONFIG: $path $shortname")
+}
+
 pub fn website_build(cmd &cli.Command) ? {
 	mut arg := false
 	mut use_prefix := false
@@ -100,6 +104,7 @@ pub fn website_build(cmd &cli.Command) ? {
 				
 				if use_prefix {
 					process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.shortname\\\",\\n\\tplugins: \\\[/g" $repo2.path/gridsome.config.js') ?
+					// rewrite_config("${repo2.path}/gridsome.config.js",site.shortname)
 				}
 
 				process.execute_stdout('$repo2.path/build.sh') or {process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?}
