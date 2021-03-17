@@ -61,13 +61,17 @@ pub fn replace_items(text string, replacer map[string]string) ?string {
 	return res.join('\n')
 }
 
+[manualfree]
 pub fn (mut tr TokenizerResult) replace(text string, tofind string, replacewith string) ?string {
 	tofind2 := name_fix_no_underscore(tofind)
+	defer { unsafe { tofind2.free() } }
 	mut text2 := text
 	for item in tr.items {
 		if item.matchstring == tofind2 {
-			// println(' ... $item.matchstring found -> $replacewith')
-			text2 = text2.replace(item.toreplace, replacewith)
+			// text2 = text2.replace(item.toreplace, replacewith)
+			new_text := text2.replace(item.toreplace, replacewith)
+            unsafe { text2.free() }
+            text2 = new_text
 		}
 		// } else {
 		// 	println(' ... $item.matchstring !=  $tofind2')
@@ -76,22 +80,33 @@ pub fn (mut tr TokenizerResult) replace(text string, tofind string, replacewith 
 	return text2
 }
 
+
+[manualfree]
 pub fn name_fix_no_underscore(name string) string {
 	mut item := name_fix(name)
-	return item.replace('_', '')
+	mut newitem := ''               unsafe { newitem.free() }
+	newitem = item.replace('_', '') unsafe { item.free() }
+	item = newitem
+	return item
 }
 
+const name_fix_replaces = [
+      ' ', '_',
+      '-', '_',
+      '__', '_',
+      '__', '_', /* needs to be 2x because can be 3 to 2 to 1 */
+      '::', '_',
+      ';', '_',
+      ':', '_',
+      '.', '_',
+]
+
+[manualfree]
 pub fn name_fix(name string) string {
 	mut item := name.to_lower()
-	item = item.replace(' ', '_')
-	item = item.replace('-', '_')
-	item = item.replace('__', '_')
-	item = item.replace('__', '_') // needs to be 2x because can be 3 to 2 to 1
-	item = item.replace('::', '_')
-	item = item.replace(';', '_')
-	item = item.replace(':', '_')
-	item = item.replace('.', '_')
-	item = item.trim(' ._')
+	item = item.replace_each(name_fix_replaces)
+	mut newitem := ''                 unsafe { newitem.free() }
+	newitem = item.trim(' ._')        unsafe { item.free() } item = newitem
 	return item
 }
 
@@ -112,11 +127,19 @@ pub fn tokenize(text_ string) TokenizerResult {
 	mut islink := false
 	mut tr := TokenizerResult{}
 	mut done := []string{}
-	for line in text.split('\n') {
+	lines := text.split('\n')
+
+	
+
+
+	for i in 0..lines.len {
+		mut line := lines[i].trim(' ')
+
 		if line.trim(' ').starts_with('!') {
 			continue
 		}
-		if line.trim(' ').starts_with('http') {
+
+		if line.starts_with('http') {
 			continue
 		}
 		if line.contains("'''") || line.contains('```') || line.contains('"""') {
@@ -182,56 +205,3 @@ pub fn tokenize(text_ string) TokenizerResult {
 	}
 	return tr
 }
-
-// pub fn tokenize2(text string) TokenizerResult {
-// 	// println('REGEX: $text')
-// 	query := r'[a-zA-Z0-9_]*'
-// 	mut r := regex.regex_opt(query) or { panic(err) }
-// 	// mut res := []string{}
-// 	mut res := TokenizerResult{}
-// 	mut word1 := ''
-// 	// mut word2 := ""
-// 	// mut word3 := ""
-// 	mut done := []string{}
-// 	// look per line
-// 	// aggregate different words per max 3
-// 	// calculate the lowest common name (only a...z0...9)
-// 	for line in text.split('\n') {
-// 		all := r.find_all(line)
-// 		// println(all)
-// 		mut x := 0
-// 		for x < all.len {
-// 			word1 = line[all[x]..all[x + 1]]
-// 			if '[' in word1 || ']' in word1 {
-// 				println(word1)
-// 				panic('s')
-// 			}
-// 			// println("+$word1")
-// 			if !(word1 in done) {
-// 				res.items << TokenizerItem{
-// 					toreplace: word1
-// 					matchstring: name_fix_no_underscore(word1)
-// 				}
-// 				done << word1
-// 			}
-// 			// if x>1{
-// 			// 	word2 = line[all[x-2]..all[x-1]]  + " " + line[all[x]..all[x + 1]] 
-// 			// 	// println("++$word2")
-// 			// 	if ! (word2 in done){
-// 			// 		res.items << TokenizerItem{toreplace:word2,matchstring:name_fix_no_underscore(word2)}
-// 			// 		done << word2
-// 			// 	}
-// 			// }
-// 			// if x>2{
-// 			// 	word3 = line[all[x-4]..all[x-3]] +" " + line[all[x-2]..all[x-1]] + " " + line[all[x]..all[x + 1]] 
-// 			// 	// println("+++$word3")
-// 			// 	if ! (word3 in done){
-// 			// 		res.items << TokenizerItem{toreplace:word3,matchstring:name_fix_no_underscore(word3)}
-// 			// 		done << word3
-// 			// 	}
-// 			// }
-// 			x += 2
-// 		}
-// 	}
-// 	return res
-// }
