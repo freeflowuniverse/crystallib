@@ -40,6 +40,7 @@ pub fn digitaltwin_install(cfg &myconfig.ConfigRoot) ? {
 			npm install
 			npm config set user 0
 			npm install -g @hyperspace/cli
+			npm install pm2@latest -g
 
 			'
 		process.execute_silent(script) or {
@@ -51,7 +52,7 @@ pub fn digitaltwin_install(cfg &myconfig.ConfigRoot) ? {
 	println(' - digital twin installed')
 }
 
-pub fn digitaltwin_start(cfg &myconfig.ConfigRoot) ? {
+pub fn digitaltwin_start(cfg &myconfig.ConfigRoot, isproduction bool) ? {
 	digitaltwin_install(cfg) ?
 	base := cfg.paths.base
 
@@ -63,18 +64,32 @@ pub fn digitaltwin_start(cfg &myconfig.ConfigRoot) ? {
 	}
 
 	println(' - will start digitaltwin')
+	mut script := ''
 
-	script := '
+	if !isproduction{
+		script = '
+				set -e
+				export NVM_DIR=$base
+				source $base/nvm.sh
+				cd $repo.path/publisher
+
+				export PATH=$cfg.nodejs.path/bin:\$PATH
+				node server.js
+				'
+	}else{
+		script = '
 		set -e
 		export NVM_DIR=$base
 		source $base/nvm.sh
 		cd $repo.path/publisher
 
 		export PATH=$cfg.nodejs.path/bin:\$PATH
-
-		node server.js
-
+		export NODE_ENV=production
+		pm2 start server.js
+		pm2.save()
 		'
+	}
+	
 
 	// TODO: need to have a config file being written for the digitaltwin server to use !!!
 	// TODO: the config file is filled in from this tools
