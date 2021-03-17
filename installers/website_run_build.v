@@ -85,6 +85,8 @@ pub fn website_build(cmd &cli.Command) ? {
 
 	mut conf := myconfig.get(true) ?
 	mut sites := conf.sites_get()
+	mut empty := []string{}
+
 	// groups
 	os.write_file('$conf.paths.publish/.groups.json', json.encode(map{
 		'test': Group{}
@@ -121,8 +123,8 @@ pub fn website_build(cmd &cli.Command) ? {
 				})) ?
 
 				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(map{
-					'users':  []string{}
-					'groups': []string{}
+					'users':  empty
+					'groups': empty
 				})) ?
 			}
 		}
@@ -153,8 +155,8 @@ pub fn website_build(cmd &cli.Command) ? {
 				})) ?
 
 				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(map{
-					'users':  []string{}
-					'groups': []string{}
+					'users':  empty
+					'groups': empty
 				})) ?
 
 				break

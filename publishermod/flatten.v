@@ -93,9 +93,12 @@ pub fn (mut publisher Publisher) flatten() ? {
 					'alias': c.shortname
 				})) ?
 
+				// work around a V bug
+				mut empty := []string{}
+
 				os.write_file('$dest_dir/.acls.json', json.encode(map{
-					'users':  []string{}
-					'groups': []string{}
+					'users':  empty
+					'groups': empty
 				})) ?
 
 				break
