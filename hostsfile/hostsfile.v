@@ -21,7 +21,7 @@ pub fn load() HostsFile{
 				continue
 		}	
 
-		mut splitted := line.split_by_whitespace()
+		mut splitted := line.fields()
 		if splitted.len > 1 {
 				if !(section in obj.hosts){
 					obj.hosts[section] = []map[string]string{}

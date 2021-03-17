@@ -48,7 +48,7 @@ pub fn (mut e DockerEngine) images_list() []DockerImage {
 	}
 	mut lines := images.split('\n')
 	for line in lines[1..lines.len] {
-		info := line.split_by_whitespace()
+		info := line.fields()
 		mut repo := info[0]
 		mut tag := info[1]
 		if tag == '<none>' {
@@ -102,7 +102,7 @@ pub fn (mut e DockerEngine) containers_list() []DockerContainer {
 	
 	mut lines := containers.split('\n')
 	for line in lines[1..lines.len] {
-		info := line.split_by_whitespace()
+		info := line.fields()
 		mut id := info[0]
 		mut name := info[info.len - 1]
 		
