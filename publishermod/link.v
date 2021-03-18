@@ -84,7 +84,7 @@ fn (mut link Link) source_get(sitename string) string {
 		if ':' in link.filename {
 			panic("should not have ':' in link for page or file.\n$link")
 		}
-		if sitename == link.site{
+		if sitename == link.site {
 			return '[$link.description]($link.filename)'
 		} else {
 			return '[$link.description]($link.site:$link.filename)'
@@ -167,7 +167,7 @@ fn (mut link Link) init_() {
 			splitted2 := link.filename.split(':')
 			if splitted2.len == 2 {
 				link.site = name_fix(splitted2[0])
-				if link.site.starts_with("info_"){
+				if link.site.starts_with('info_') {
 					link.site = link.site[5..]
 				}
 				link.filename = splitted2[1]
@@ -181,7 +181,12 @@ fn (mut link Link) init_() {
 		}
 
 		link.filename = link.filename.replace('\\', '/')
-		link.filename = name_fix(os.base(link.filename)).to_lower().trim('.')
+
+		base_of_link_filename := os.base(link.filename)
+		fixed_name := name_fix(base_of_link_filename)
+		fixed_name_lower := fixed_name.to_lower()
+		fixed_name_lower_trimmed := fixed_name_lower.trim('.')
+		link.filename = fixed_name_lower_trimmed
 
 		// check which link type
 		ext := os.file_ext(link.filename).trim('.')
@@ -201,7 +206,7 @@ fn (mut link Link) init_() {
 			// link.cat = LinkType.page
 		} else if ext in ['html', 'htm'] {
 			link.cat = LinkType.html
-		} else if ext in ['v', 'py','js',"c","sh"] {
+		} else if ext in ['v', 'py', 'js', 'c', 'sh'] {
 			link.cat = LinkType.code
 		} else if ext in ['doc', 'docx', 'zip', 'xls', 'pdf', 'xlsx', 'ppt', 'pptx'] {
 			link.cat = LinkType.file

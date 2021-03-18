@@ -21,7 +21,6 @@ pub fn (page Page) path_exists(mut publisher Publisher) bool {
 	return os.exists(path)
 }
 
-
 // // will load the content, check everything, return true if ok
 // pub fn (mut page Page) check(mut publisher Publisher) bool {
 // 	page.process(mut publisher) or { panic(err) }
@@ -97,9 +96,15 @@ mut:
 	changed_server bool
 }
 
+[unsafe]
+fn (lps &LineProcessorState) free() {
+	unsafe { lps.lines_source.free() }
+	unsafe { lps.lines_server.free() }
+}
+
 fn (mut state LineProcessorState) error(msg string) {
-	mut line := ""
-	if state.lines_source.len>0{
+	mut line := ''
+	if state.lines_source.len > 0 {
 		line = state.lines_source[state.lines_source.len - 1]
 	}
 	page_error := PageError{
@@ -141,11 +146,15 @@ fn (mut state LineProcessorState) sourceline_change(ffrom string, tto string) {
 }
 
 // walk over each line in the page and check for definitions
+[manualfree]
 fn (mut page Page) process_metadata(mut publisher Publisher) ? {
 	mut state := LineProcessorState{
 		site: &publisher.sites[page.site_id]
 		publisher: publisher
 		page: page
+	}
+	defer {
+		unsafe { state.free() }
 	}
 
 	mut debug := false
@@ -160,25 +169,31 @@ fn (mut page Page) process_metadata(mut publisher Publisher) ? {
 	// 	println(page.content)
 	// 	println("DEBUG")
 	// }
-
-	for line in page.content.split_into_lines() {
+	page_lines := page.content.split_into_lines()
+	defer {
+		unsafe { page_lines.free() }
+	}
+	for line in page_lines {
 		state.nr++
 		state.lines_source << line
-
 		linestrip := line.trim(' ')
-
-		if linestrip.trim(' ').starts_with('> **ERROR') {
+		linestrip_trimmed := linestrip.trim(' ')
+		if linestrip_trimmed.starts_with('> **ERROR') {
 			// these are error messages which will be rewritten if errors are still there
+			unsafe { linestrip_trimmed.free() }
+			unsafe { linestrip.free() }
 			continue
 		}
-
 		if debug {
 			println(' >> $line')
 		}
-
-		if linestrip.trim(' ').starts_with("!!!def"){
+		trimmed_line := linestrip.trim(' ')
+		if trimmed_line.starts_with('!!!def') {
 			macro_process(mut state, line)
 		}
+		unsafe { trimmed_line.free() }
+		unsafe { linestrip_trimmed.free() }
+		unsafe { linestrip.free() }
 	}
 }
 
@@ -214,8 +229,8 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 	}
 
 	for line in page.content.split_into_lines() {
-		if debug{
-			eprintln (" >> LINE: $line")
+		if debug {
+			eprintln(' >> LINE: $line')
 		}
 
 		// the default has been done, which means the source & server have the last line
@@ -231,8 +246,8 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 			continue
 		}
 
-		if linestrip.trim(' ').starts_with("!!!def "){
-			continue //ignore the line, was already processed
+		if linestrip.trim(' ').starts_with('!!!def ') {
+			continue // ignore the line, was already processed
 		}
 
 		if macro_process(mut state, line) {
@@ -371,22 +386,38 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 	if state.changed_source {
 		os.write_file(page.path_get(mut publisher), state.lines_source.join('\n')) or { panic(err) }
 	}
+	unsafe { state.free() }
 }
 
 fn (mut page Page) title() string {
-	for line in page.content.split('\n') {
-		mut line2 := line.trim(' ')
-		if line2.starts_with('#') {
-			line2 = line2.trim('#').trim(' ')
-			return line2
+	lines := page.content.split('\n')
+	defer {
+		unsafe { lines.free() }
+	}
+	for line in lines {
+		line_trimmed := line.trim(' ')
+		if line_trimmed.starts_with('#') {
+			line_trimmed_sharp := line_trimmed.trim('#')
+			line_trimmed_space := line_trimmed_sharp.trim(' ')
+			unsafe { line_trimmed_sharp.free() }
+			unsafe { line_trimmed.free() }
+			return line_trimmed_space
 		}
+		unsafe { line_trimmed.free() }
 	}
 	return 'NO TITLE'
 }
 
 // return a page where all definitions are replaced with link
+[manualfree]
 fn (mut page Page) replace_defs(mut publisher Publisher) ? {
-	if page.replaced{return}
-	page.content = publisher.replace_defs_links(page.content)?
+	if page.replaced {
+		return
+	}
+	new_content := publisher.replace_defs_links(page.content) ?
+	defer {
+		unsafe { new_content.free() }
+	}
+	page.content = new_content
 	page.replaced = true
 }

@@ -10,7 +10,7 @@ pub mut:
 	page_errors map[string][]PageError
 }
 
-//this is used to write json to the flatten dir so the webserver can process defs
+// this is used to write json to the flatten dir so the webserver can process defs
 struct PublisherDefs {
 mut:
 	defs []PublisherDef
@@ -70,43 +70,39 @@ pub fn (mut publisher Publisher) flatten() ? {
 		// src_path[site.id] = site.path
 		mut dest_dir := config.path_publish_wiki_get(site.name) ?
 		println(' - flatten: $site.name to $dest_dir')
-
-		errors2 := publisher.errors_get(site) ?
-
 		if !os.exists(dest_dir) {
 			os.mkdir_all(dest_dir) ?
 		}
 		// write the json errors file
-		os.write_file('$dest_dir/errors.json', json.encode(errors2)) ?
+		the_errors2 := json.encode(publisher.errors_get(site) ?)
+		os.write_file('$dest_dir/errors.json', the_errors2) ?
 		for c in config.sites {
 			if c.cat == myconfig.SiteCat.web {
 				continue
 			}
 			// ignore websites
 			if c.shortname == site.name {
-				os.write_file('$dest_dir/.domains.json', json.encode(map{
+				the_domains := json.encode(map{
 					'domains': c.domains
-				})) ?
-
-				os.write_file('$dest_dir/.repo', json.encode(map{
+				})
+				os.write_file('$dest_dir/.domains.json', the_domains) ?
+				the_repo := json.encode(map{
 					'repo':  c.name
 					'alias': c.shortname
-				})) ?
-
-				// work around a V bug
-				mut empty := []string{}
-
-				os.write_file('$dest_dir/.acls.json', json.encode(map{
-					'users':  empty
-					'groups': empty
-				})) ?
+				})
+				os.write_file('$dest_dir/.repo', the_repo) ?
+				the_acls := json.encode(map{
+					'users':  []string{}
+					'groups': []string{}
+				})
+				os.write_file('$dest_dir/.acls.json', the_acls) ?
 
 				break
 			}
 		}
-
 		// write the defs file
-		os.write_file('$dest_dir/defs.json', json.encode(pd)) ?
+		the_defs := json.encode(pd)
+		os.write_file('$dest_dir/defs.json', the_defs) ?
 
 		mut site_config := config.site_wiki_get(site.name) ?
 
@@ -137,19 +133,32 @@ pub fn (mut publisher Publisher) flatten() ? {
 			}
 		}
 
+		mut page_counter := 0
 		for name, _ in site.pages {
 			mut page := site.page_get(name, mut publisher) ?
+			page_counter++
+			trace_progress('    ${page_counter:4}, processing page $page.path ...')
 			// println(' >> $name: $page.path')
 			// write processed content
-			page.replace_defs(mut publisher)?
-			dest_file = os.join_path(dest_dir, os.file_name(page.path_get(mut publisher)))
+			page.replace_defs(mut publisher) ?
+			site_page_path := page.path_get(mut publisher)
+			file_name_of_site_page_path := os.file_name(site_page_path)
+			dest_file = os.join_path(dest_dir, file_name_of_site_page_path)
 			os.write_file(dest_file, page.content) ?
 		}
 
+		mut file_counter := 0
 		for name, _ in site.files {
 			mut fileobj := site.file_get(name, mut publisher) ?
 			dest_file = os.join_path(dest_dir, os.file_name(fileobj.path))
+			file_counter++
+			trace_progress('    ${file_counter:4}, creating file $dest_file ...')
 			os.cp(fileobj.path_get(mut publisher), dest_file) ?
 		}
 	}
+}
+
+[if trace_progress]
+fn trace_progress(msg string) {
+	eprintln(msg)
 }

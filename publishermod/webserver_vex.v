@@ -5,7 +5,7 @@ import nedpals.vex.router
 import nedpals.vex.server
 import nedpals.vex.ctx
 import nedpals.vex.utils
-import myconfig
+import despiegk.crystallib.myconfig
 import json
 
 // this webserver is used for looking at the builded results
@@ -37,7 +37,7 @@ fn helloworld(req &ctx.Req, mut res ctx.Resp) {
 
 fn path_wiki_get(mut config myconfig.ConfigRoot, sitename_ string, name_ string) ?(FileType, string) {
 	filetype, sitename, mut name := filetype_site_name_get(mut config, sitename_, name_) ?
-	
+
 	mut path2 := os.join_path(config.paths.publish, sitename, name)
 	if name == 'readme.md' && (!os.exists(path2)) {
 		name = 'sidebar.md'
@@ -51,23 +51,23 @@ fn path_wiki_get(mut config myconfig.ConfigRoot, sitename_ string, name_ string)
 	return filetype, path2
 }
 
-fn filetype_site_name_get(mut config myconfig.ConfigRoot, site string, name_ string) ?(FileType, string,string) {
+fn filetype_site_name_get(mut config myconfig.ConfigRoot, site string, name_ string) ?(FileType, string, string) {
 	// println(" - wiki get: '$site' '$name'")
 	site_config := config.site_wiki_get(site) ?
 	mut name := name_.to_lower().trim(' ').trim('.').trim(' ')
 	extension := os.file_ext(name).trim('.')
 	mut sitename := site_config.shortname
 	if sitename.starts_with('wiki_') || sitename.starts_with('info_') {
-		panic("sitename short cannot start with wiki_ or info_.\n$site_config")
+		panic('sitename short cannot start with wiki_ or info_.\n$site_config')
 	}
 
-	if "__" in name {
-		parts := name.split("__")
-		if parts.len != 2{
+	if '__' in name {
+		parts := name.split('__')
+		if parts.len != 2 {
 			return error('filename not well formatted. Needs to have 2 parts around "__". Now ${name}.')
 		}
-		sitename = parts[0].trim(" ")
-		name = parts[1].trim(" ")
+		sitename = parts[0].trim(' ')
+		name = parts[1].trim(' ')
 	}
 
 	// println( " - ${app.req.url}")
@@ -172,7 +172,6 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 	}
 
 	if publisherobj.develop {
-
 		filetype, sitename2, name2 := filetype_site_name_get(mut config, sitename, name) ?
 		// if debug {println(" >> page get develop: $name2")}
 
@@ -189,25 +188,24 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 			res.send(index_out, 200)
 			return
 		} else if filetype == FileType.wiki {
-
-			if site2.page_exists(name2){
+			if site2.page_exists(name2) {
 				mut page := site2.page_get(name2, mut publisherobj) ?
 				// content4 := page.content_defs_replaced(mut publisherobj) ?
 				// if debug {println(" >> page send: $name2")}
 				// println(page.content)
-								
-				page.replace_defs(mut publisherobj)or {
+
+				page.replace_defs(mut publisherobj) or {
 					res.send('Cannot replace defs\n$err', 504)
 					return
 				}
 				content := domain_replacer(req, page.content)
 				res.send(content, 200)
 				return
-			}else{
-				mut page_def := publisherobj.def_page_get(name2)?
-				page_def.replace_defs(mut publisherobj)or {
-				res.send('Cannot replace defs\n$err', 504)
-				return
+			} else {
+				mut page_def := publisherobj.def_page_get(name2) ?
+				page_def.replace_defs(mut publisherobj) or {
+					res.send('Cannot replace defs\n$err', 504)
+					return
 				}
 				// if debug {println(" >> page send: $name2")}
 				content2 := domain_replacer(req, page_def.content)
@@ -224,7 +222,7 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 				return
 			}
 			// NOT GOOD NEEDS TO BE NOT LIKE THIS: TODO: find way how to send file
-			res.headers['Content-Type'] = [content_type_get(path3)]					
+			res.headers['Content-Type'] = [content_type_get(path3) ?]
 			res.send(content3, 200)
 		}
 	} else {
@@ -233,7 +231,9 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 			res.send('$err', 404)
 			return
 		}
-		if debug {println(" - '$sitename:$name' -> $path2")}
+		if debug {
+			println(" - '$sitename:$name' -> $path2")
+		}
 		if filetype == FileType.wiki {
 			content := os.read_file(path2) or {
 				res.send('Cannot find file: $path2\n$err', 404)
@@ -243,7 +243,9 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 			res.send(content, 200)
 		} else {
 			if !os.exists(path2) {
-				if debug{println(' - ERROR: cannot find path:$path2')}
+				if debug {
+					println(' - ERROR: cannot find path:$path2')
+				}
 				res.send('cannot find path:$path2', 404)
 				return
 			} else {
@@ -253,7 +255,7 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 					return
 				}
 				// NOT GOOD NEEDS TO BE NOT LIKE THIS: TODO: find way how to send file
-				res.headers['Content-Type'] = [content_type_get(path2)]					
+				res.headers['Content-Type'] = [content_type_get(path2) ?]
 				res.send(content, 200)
 				// res.send_file(path2,200)
 			}
@@ -282,12 +284,11 @@ fn content_type_get(path string) ?string {
 	}
 	if path.ends_with('.pdf') {
 		return 'application/pdf'
-	}	
+	}
 	return error('cannot find content type for $path')
 }
 
 fn site_www_deliver(mut config myconfig.ConfigRoot, domain string, path string, req &ctx.Req, mut res ctx.Resp) ? {
-
 	mut site_path := config.path_publish_web_get_domain(domain) or {
 		res.send('Cannot find domain: $domain\n$err', 404)
 		return
@@ -310,23 +311,22 @@ fn site_www_deliver(mut config myconfig.ConfigRoot, domain string, path string, 
 			res.headers['Content-Type'] = ['text/html']
 		}
 
-		if path.ends_with(".html"){
+		if path.ends_with('.html') {
 			mut content := os.read_file(path2) or {
 				res.send('Cannot find file: $path2\n$err', 404)
 				return
 			}
 			content = domain_replacer(req, content)
 			res.headers['Content-Type'] = ['text/html']
-			res.send(content, 200)			
-
-		}else{
+			res.send(content, 200)
+		} else {
 			// println("deliver: '$path2'")
 			// NOT GOOD NEEDS TO BE NOT LIKE THIS: TODO: find way how to send file
 			content2 := os.read_file(path2) or {
 				res.send('Cannot find file: $path2\n$err', 404)
 				return
 			}
-			res.headers['Content-Type'] = [content_type_get(path2)]
+			res.headers['Content-Type'] = [content_type_get(path2) ?]
 			res.send(content2, 200)
 		}
 	}
@@ -356,10 +356,10 @@ fn site_deliver(req &ctx.Req, mut res ctx.Resp) {
 		domain = splitted2[0]
 	} else {
 		path = path.trim('/')
-		if path.starts_with("info/"){
+		if path.starts_with('info/') {
 			path = path[5..]
 			cat = myconfig.SiteCat.wiki
-		}else{
+		} else {
 			cat = myconfig.SiteCat.web
 		}
 
@@ -368,15 +368,14 @@ fn site_deliver(req &ctx.Req, mut res ctx.Resp) {
 		sitename := splitted[0]
 		path = splitted[1..].join('/').trim('/').trim(' ')
 
-		if sitename == "" {
-			domain ="localhost"
-		}else{
-
-			domain = config.domain_get(sitename,cat) or {			
+		if sitename == '' {
+			domain = 'localhost'
+		} else {
+			domain = config.domain_get(sitename, cat) or {
 				res.send('unknown domain for ${sitename}.\n$err', 404)
 				return
 			}
-			println("DOMAIN:$domain")
+			println('DOMAIN:$domain')
 		}
 	}
 

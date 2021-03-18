@@ -1,35 +1,54 @@
 module texttools
 
 // remove all leading spaces at same level
+[manualfree]
 pub fn dedent(text string) string {
 	mut pre := 999
 	mut pre_current := 0
-	mut line2 := ''
 	mut res := []string{}
-	for line in text.split_into_lines() {
-		line2 = line
-		if line2.trim_space() == '' {
+	defer {
+		unsafe { res.free() }
+	}
+	//
+	text_lines := text.split_into_lines()
+	defer {
+		unsafe { text_lines.free() }
+	}
+	//
+	for line2 in text_lines {
+		line2_trimmed := line2.trim_space()
+		if line2_trimmed == '' {
+			unsafe { line2_trimmed.free() }
 			continue
 		}
 		// println("'$line2' $pre")
-		line2 = line2.replace('\t', '    ')
-		pre_current = line2.len - line2.trim_left(' ').len
+		line2_expanded_tab := line2.replace('\t', '    ')
+		line2_expanded_tab_trimmed := line2_expanded_tab.trim_left(' ')
+		pre_current = line2_expanded_tab.len - line2_expanded_tab_trimmed.len
 		if pre > pre_current {
 			pre = pre_current
 		}
+		unsafe { line2_expanded_tab_trimmed.free() }
+		unsafe { line2_expanded_tab.free() }
+		unsafe { line2_trimmed.free() }
 	}
 	// now remove the prefix length
-	for line in text.split_into_lines() {
-		line2 = line
-		line2 = line2.replace('\t', '    ') // important to deal with tabs
+	for line2 in text_lines {
+		line2_expanded_tab := line2.replace('\t', '    ') // important to deal with tabs
+		line2_expanded_tab_trimmed := line2.trim_space()
 		// println("'$line2' ${line2.len}")
-		if line2.trim_space() == '' {
+		if line2_expanded_tab_trimmed == '' {
 			res << ''
 		} else {
-			res << line2[pre..]
+			if pre <= line2_expanded_tab_trimmed.len {
+				res << line2_expanded_tab_trimmed[pre..]
+			}
 		}
+		unsafe { line2_expanded_tab_trimmed.free() }
+		unsafe { line2_expanded_tab.free() }
 	}
-	return res.join_lines()
+	final_result := res.join_lines()
+	return final_result
 }
 
 pub enum MultiLineStatus {
