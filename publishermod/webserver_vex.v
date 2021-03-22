@@ -285,6 +285,10 @@ fn content_type_get(path string) ?string {
 	if path.ends_with('.pdf') {
 		return 'application/pdf'
 	}
+	if path.ends_with('html'){
+		return 'text/html'
+	}
+	
 	return error('cannot find content type for $path')
 }
 
