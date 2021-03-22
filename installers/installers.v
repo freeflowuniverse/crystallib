@@ -10,16 +10,10 @@ import nodejs
 pub fn main(cmd cli.Command) ? {
 	cfg := myconfig.get(true) ?
 
-	mut ourreset := false
-	mut clean := false
-	for flag in cmd.flags {
-		if flag.name == 'reset' && flag.value.len > 0 {
-			ourreset = true
-		}
-		if flag.name == 'clean' && flag.value.len > 0 {
-			clean = true
-		}
-	}
+	flags := cmd.flags.get_all_found()	
+
+	ourreset := flags.get_bool("reset")or{false}
+	clean := flags.get_bool("clean")or{false}
 
 	println('INSTALLER:')
 
@@ -60,14 +54,11 @@ pub fn base() ? {
 
 pub fn config_get(cmd cli.Command) ?myconfig.ConfigRoot {
 	mut cfg := myconfig.get(true) ?
-	for flag in cmd.flags {
-		if flag.name == 'pull' && flag.value.len > 0 {
-			cfg.pull = true
-		}
-		if flag.name == 'reset' && flag.value.len > 0 {
-			cfg.reset = true
-		}
-	}
+
+	flags := cmd.flags.get_all_found()	
+	cfg.pull = flags.get_bool("pull")or{false}
+	cfg.reset = flags.get_bool("reset")or{false}
+
 	if !os.exists(cfg.paths.code) {
 		os.mkdir(cfg.paths.code) or { return err }
 	}

@@ -63,33 +63,26 @@ pub fn sites_install(cmd cli.Command) ? {
 }
 
 fn flag_message_get(cmd cli.Command) string {
-	for flag in cmd.flags {
-		if flag.name == 'message' {
-			if flag.value.len == 0 {
-				msg := readline.read_line('Message for commit?:') or { panic(err) }
-				return msg
-			}
-			return flag.value[0]
-		}
+	flags := cmd.flags.get_all_found()
+	msg := flags.get_string('message') or {
+		msg := readline.read_line('Message for commit?:') or { panic(err) }
+		return msg
 	}
-	msg := readline.read_line('Message for commit?:') or { panic(err) }
 	return msg
 }
 
 fn flag_repo_do(cmd cli.Command, reponame string, site myconfig.SiteConfig) bool {
-	for flag in cmd.flags {
-		if flag.name == 'repo' {
-			if flag.value.len > 0 {
-				// println("match $reponame $site.shortname")
-				if reponame.to_lower().contains(flag.value[0].to_lower()) {
-					return true
-				} else if site.shortname.to_lower().contains(flag.value[0].to_lower()) {
-					return true
-				} else {
-					return false
-				}
-			}
-		}
+	flags := cmd.flags.get_all_found()
+	repo := flags.get_string('repo') or {
+		return true
+	}
+	// println("match $reponame $site.shortname")
+	if reponame.to_lower().contains(repo.to_lower()) {
+		return true
+	} else if site.shortname.to_lower().contains(repo.to_lower()) {
+		return true
+	} else {
+		return false
 	}
 	return true
 }
