@@ -14,20 +14,9 @@ pub mut:
 }
 
 fn website_conf_repo_get(cmd &cli.Command) ?(myconfig.ConfigRoot, &gittools.GitRepo) {
-	mut name := ''
 	mut conf := myconfig.get(true) ?
-
-	for flag in cmd.flags {
-		if flag.name == 'repo' {
-			if flag.value.len > 0 {
-				name = flag.value[0]
-			}
-		}
-	}
-
-	if name == '' {
-		return error("please specify repo name with '-r name', can be part of name")
-	}
+	flags := cmd.flags.get_all_found()
+	mut name := flags.get_string("repo") or {""}
 
 	mut res := []string{}
 	for mut site in conf.sites_get() {
@@ -71,17 +60,9 @@ pub fn website_build(cmd &cli.Command) ? {
 	mut arg := false
 	mut use_prefix := false
 
-	for flag in cmd.flags {
-		if flag.name == 'repo' {
-			if flag.value.len > 0 {
-				arg = true
-			}
-		} else if flag.name == 'pathprefix' {
-			if flag.value.len > 0 {
-				use_prefix = true
-			}
-		}
-	}
+	arg = cmd.flags.get_bool("repo") or {false}
+	use_prefix = cmd.flags.get_bool("pathprefix") or {false}
+
 
 	mut conf := myconfig.get(true) ?
 	mut sites := conf.sites_get()
