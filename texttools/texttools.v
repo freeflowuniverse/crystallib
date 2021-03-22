@@ -40,9 +40,7 @@ pub fn dedent(text string) string {
 		if line2_expanded_tab_trimmed == '' {
 			res << ''
 		} else {
-			if pre <= line2_expanded_tab_trimmed.len {
-				res << line2_expanded_tab_trimmed[pre..]
-			}
+				res << line2_expanded_tab[pre..]
 		}
 		unsafe { line2_expanded_tab_trimmed.free() }
 		unsafe { line2_expanded_tab.free() }
