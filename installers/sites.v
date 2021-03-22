@@ -30,6 +30,7 @@ pub fn sites_list(cmd &cli.Command) ? {
 	}
 }
 
+//if web true then will download websites
 pub fn sites_download(cmd cli.Command, web bool) ? {
 	mut cfg := config_get(cmd) ?
 	mut gt := gittools.new(cfg.paths.code) or { return error('cannot load gittools:$err') }
