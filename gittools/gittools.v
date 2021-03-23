@@ -3,7 +3,7 @@ module gittools
 import os
 
 pub fn ssh_agent_loaded() bool {
-	res := os. execute_or_panic('ssh-add -l') 
+	res := os.execute('ssh-add -l')
 	if res.exit_code == 0 {
 		return true
 	} else {
@@ -12,17 +12,15 @@ pub fn ssh_agent_loaded() bool {
 }
 
 pub fn ssh_agent_reset() ? {
-	_ := os. execute_or_panic('ssh-add -D')
+	_ := os.execute('ssh-add -D')
 }
 
 pub fn ssh_agent_load(keypath string) ? {
-	_ := os. execute_or_panic('ssh-add $keypath')
+	_ := os.execute('ssh-add $keypath')
 }
 
 // pub fn ssh_agent_keys() []string{
-// 	res := os. execute_or_panic("ssh-add -l") or {
-// 			os.Result{exit_code:1,output:""}
-// 		}
+// 	res := os. execute("ssh-add -l")
 // 	if res.exit_code==0{
 // 		println(res)
 // 		panic("sA")
@@ -39,7 +37,7 @@ pub fn ssh_agent_load(keypath string) ? {
 pub fn ssh_agent_key_loaded(name string) (int, bool) {
 	mut counter := 0
 	mut exists := false
-	res := os. execute_or_panic('ssh-add -l')
+	res := os.execute('ssh-add -l')
 	if res.exit_code == 0 {
 		for line in res.output.split('\n') {
 			if line.trim(' ') == '' {
