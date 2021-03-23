@@ -3,6 +3,7 @@ module installers
 import despiegk.crystallib.myconfig
 import despiegk.crystallib.process
 import despiegk.crystallib.gittools
+import despiegk.crystallib.publishermod
 import cli
 import os
 import json
@@ -57,12 +58,11 @@ fn rewrite_config(path string,shortname string){
 }
 
 pub fn website_build(cmd &cli.Command) ? {
-	mut arg := false
+	mut arg := ""
 	mut use_prefix := false
 
-	arg = cmd.flags.get_bool("repo") or {false}
+	arg = cmd.flags.get_string("repo") or {""}
 	use_prefix = cmd.flags.get_bool("pathprefix") or {false}
-
 
 	mut conf := myconfig.get(true) ?
 	mut sites := conf.sites_get()
@@ -72,7 +72,10 @@ pub fn website_build(cmd &cli.Command) ? {
 	os.write_file('$conf.paths.publish/.groups.json', json.encode(map{
 		'test': Group{}
 	})) ?
-	if !arg {
+	if arg.len == 0 {
+		println('- Flatten all wikis')
+		mut publ := publishermod.new(conf.paths.code) or { panic('cannot init publisher. $err') }
+		publ.flatten()?
 		println(' - build all websites')
 		mut gt := gittools.new(conf.paths.code) or {
 			return error('ERROR: cannot load gittools:$err')
@@ -111,7 +114,6 @@ pub fn website_build(cmd &cli.Command) ? {
 		}
 	} else {
 		_, repo := website_conf_repo_get(cmd) ?
-		println(' - build website: $repo.path')
 		// be careful process stops after interactive execute
 		// process.execute_interactive('$repo.path/build.sh') ?
 		for site in sites {
