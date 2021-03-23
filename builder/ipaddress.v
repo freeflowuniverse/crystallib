@@ -27,17 +27,17 @@ pub fn ipaddress_new(addr_string string) ?IPAddress {
 		addr = addr_string.replace('localhost', '127.0.0.1')
 	}
 
-	if '::' in addr && addr.count('::') == 1 {
+	if addr.contains('::') && addr.count('::') == 1 {
 		cat = IpAddressType.ipv6
 		s := addr.split('::')
 		addr, port = s[0], s[1]
-	} else if ':' in addr && addr.count(':') == 1 {
+	} else if  addr.contains(':' ) && addr.count(':') == 1 {
 		cat = IpAddressType.ipv4
 		s := addr.split(':')
 		addr, port = s[0], s[1]
-	} else if ':' in addr && addr.count(':') > 1 {
+	} else if addr.contains(':') && addr.count(':') > 1 {
 		cat = IpAddressType.ipv6
-	} else if '.' in addr && addr.count('.') == 3 {
+	} else if addr.contains('.') && addr.count('.') == 3 {
 		cat = IpAddressType.ipv4
 	} else {
 		return error('Invalid Ip address string')

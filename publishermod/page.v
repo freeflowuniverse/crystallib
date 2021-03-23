@@ -263,7 +263,7 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 				println(' >> includes-- $page_name_include')
 			}
 
-			if ' ' in page_name_include {
+			if page_name_include.contains(' ') {
 				splitted_spaces := page_name_include.split_nth(' ', 2)
 
 				params = texttools.text_to_params(splitted_spaces[1]) or {
@@ -343,7 +343,7 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 			if link.cat == LinkType.page || link.cat == LinkType.file {
 				// only process links if page or file
 
-				if ':' in linkname {
+				if  linkname.contains(':') {
 					mut sitename9, _ := name_split(linkname) or { panic(err) }
 					link.site = sitename9
 				}

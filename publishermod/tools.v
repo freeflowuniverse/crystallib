@@ -28,7 +28,7 @@ pub fn name_fix_no_underscore(name string) string {
 [manualfree]
 pub fn name_fix_keepext(name_ string) string {
 	mut name := name_.to_lower()
-	if '#' in name {
+	if name.contains('#') {
 		old_name := name
 		name = old_name.split('#')[0]
 		unsafe { old_name.free() }
@@ -82,7 +82,7 @@ pub fn name_split(name string) ?(string, string) {
 	mut objname := name.trim(' ')
 	objname = objname.trim_left('.')
 
-	if '__' in name {
+	if  name.contains('__') {
 		parts := name.split('__')
 		if parts.len != 2 {
 			return error('filename not well formatted. Needs to have 2 parts around "__". Now ${name}.')
@@ -107,7 +107,7 @@ pub fn name_split(name string) ?(string, string) {
 		return error("name needs to be in format 'sitename:filename' or 'filename', now '$objname'")
 	}
 	objname = objname.trim_left('.')
-	if '/' in objname {
+	if  objname.contains('/') {
 		objname = os.base(objname)
 		if objname.trim(' ') == '' {
 			return error('objname empty for os.base')

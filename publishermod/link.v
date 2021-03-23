@@ -81,7 +81,7 @@ fn (link Link) server_get() string {
 fn (mut link Link) source_get(sitename string) string {
 	// println(" >>< $sitename $link.site")
 	if link.cat == LinkType.page {
-		if ':' in link.filename {
+		if link.filename.contains(':') {
 			panic("should not have ':' in link for page or file.\n$link")
 		}
 		if sitename == link.site {
@@ -91,7 +91,7 @@ fn (mut link Link) source_get(sitename string) string {
 		}
 	}
 	if link.cat == LinkType.file {
-		if ':' in link.filename {
+		if link.filename.contains(':') {
 			panic('should not have in link for page or file.\n$link')
 		}
 		mut filename := ''
@@ -163,7 +163,7 @@ fn (mut link Link) init_() {
 
 	if link.filename != '' {
 		// lets now check if there is site info in there
-		if ':' in link.filename {
+		if link.filename.contains(':') {
 			splitted2 := link.filename.split(':')
 			if splitted2.len == 2 {
 				link.site = name_fix(splitted2[0])
@@ -224,7 +224,7 @@ fn (mut link Link) init_() {
 		}
 	}
 
-	if ':' in link.filename {
+	if  link.filename.contains(':') {
 		panic("should not have ':' in link for page or file (2).\n$link")
 	}
 }

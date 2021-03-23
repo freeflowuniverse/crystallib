@@ -162,7 +162,7 @@ fn check_write(text string) bool {
 	if texttools.check_exists_outside_quotes(text, ['<', '>', '|']) {
 		return true
 	}
-	if '\n' in text {
+	if text.contains('\n') {
 		return true
 	}
 	return false

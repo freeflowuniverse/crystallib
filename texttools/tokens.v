@@ -208,12 +208,12 @@ pub fn tokenize(text_ string) TokenizerResult {
 		skip = false
 		splitted_line := line.split('')
 		for char in splitted_line {
-			if char in '[({' {
+			if  '[({'.contains(char) {
 				skip = true
 				continue
 			}
 			if skip {
-				if char in ')]}' {
+				if  ')]}'.contains(char) {
 					skip = false
 					prev = ''
 					continue
@@ -226,14 +226,14 @@ pub fn tokenize(text_ string) TokenizerResult {
 						continue
 					}
 				}
-				if char.to_lower() in 'abcdefghijklmnopqrstuvwxyz0123456789_-' {
-					if word.len > 0 || prev == '' || prev in '\t\n ,:;.?!#|' {
+				if 'abcdefghijklmnopqrstuvwxyz0123456789_-'.contains(char.to_lower()) {
+					if word.len > 0 || prev == '' ||  '\t\n ,:;.?!#|'.contains(prev) {
 						word += char
 					}
 					if word.starts_with('http') {
 						islink = true
 					}
-				} else if char in '\t\n ,:;.?!#|' {
+				} else if '\t\n ,:;.?!#|'.contains(char) {
 					// only when end is newline tab or whitespace or ...
 					if word.len > 1 && !word_skip(word) && !(word in done) {
 						word_with_no_underscores := name_fix_no_underscore(word)

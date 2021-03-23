@@ -84,7 +84,7 @@ pub fn (gs GitStructure) addr_get_from_url(url string) ?GitAddr {
 	// deal with path
 	if parts.len > 4 {
 		path = parts[4..parts.len].join('/')
-		if '#' in path {
+		if path.contains('#') {
 			parts2 := path.split('#')
 			if parts2.len == 2 {
 				path = parts2[0]

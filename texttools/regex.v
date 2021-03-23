@@ -28,17 +28,18 @@ fn regex_rewrite(r string) ?string {
 	r2 := r.to_lower()
 	mut res := []string{}
 	for char in r2 {
-		if char.ascii_str() in 'abcdefghijklmnopqrstuvwxyz' {
-			char_upper := char.ascii_str().to_upper()
-			res << '[' + char.ascii_str() + char_upper + ']'
-		} else if char.ascii_str() in '0123456789' {
-			res << char.ascii_str()
-		} else if char.ascii_str() in '_- ' {
+		mut c := char.ascii_str()
+		if 'abcdefghijklmnopqrstuvwxyz'.contains(c) {
+			char_upper := c.to_upper()
+			res << '[' + c + char_upper + ']'
+		} else if '0123456789'.contains(c) {
+			res << c
+		} else if  '_- '.contains(c) {
 			// res << r"\[\\s _\\-\]*"
 			res << r' *'
-		} else if char.ascii_str() in '\'"' {
+		} else if '\'"'.contains(c) {
 			continue
-		} else if char.ascii_str() in '^&![]' {
+		} else if '^&![]'.contains(c) {
 			return error('cannot rewrite regex: $r, found illegal char ^&![]')
 		}
 	}

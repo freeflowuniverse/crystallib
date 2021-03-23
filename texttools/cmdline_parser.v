@@ -33,7 +33,7 @@ pub fn text_remove_quotes(text string) string {
 pub fn check_exists_outside_quotes(text string, items []string) bool {
 	text2 := text_remove_quotes(text)
 	for i in items {
-		if i in text2 {
+		if text2.contains(i) {
 			return true
 		}
 	}
@@ -51,7 +51,7 @@ pub fn cmd_line_args_parser(text string) ?[]string {
 	mut char := ''
 
 	if check_exists_outside_quotes(text, ['<', '>', '|']) {
-		if !(' ' in text) {
+		if !(text.contains(' ')) {
 			return error("cannot convert text '$text' to args because no space to split")
 		}
 		splitted := text.split_nth(' ', 2)

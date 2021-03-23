@@ -66,7 +66,7 @@ pub fn (mut tp Params) get_list(key string) ?[]string {
 	mut res:=[]string{}
 	if tp.exists(key) {
 		mut valuestr := tp.get(key) ?
-		if "," in valuestr{
+		if valuestr.contains(","){
 			valuestr = valuestr.trim(" ,")
 			res = valuestr.split(",").map(it.trim(" '\""))
 		}else{
@@ -80,7 +80,7 @@ pub fn (mut tp Params) get_list_int(key string) ?[]int {
 	mut res:=[]int{}
 	if tp.exists(key) {
 		mut valuestr := tp.get(key) ?
-		if "," in valuestr{
+		if valuestr.contains(","){
 			valuestr = valuestr.trim(" ,")
 			res = valuestr.split(",").map(it.trim(" '\"").int())
 		}else{

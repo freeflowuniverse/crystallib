@@ -61,7 +61,7 @@ fn filetype_site_name_get(mut config myconfig.ConfigRoot, site string, name_ str
 		panic('sitename short cannot start with wiki_ or info_.\n$site_config')
 	}
 
-	if '__' in name {
+	if name.contains('__') {
 		parts := name.split('__')
 		if parts.len != 2 {
 			return error('filename not well formatted. Needs to have 2 parts around "__". Now ${name}.')
