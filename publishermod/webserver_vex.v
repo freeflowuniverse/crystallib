@@ -184,6 +184,7 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 			// 	res.send("index.html not found", 404) 
 			// }
 			index_out := template_wiki_root(sitename, '')
+			res.headers['Content-Type'] = ['text/html']
 			// index_root(req, mut res)
 			res.send(index_out, 200)
 			return

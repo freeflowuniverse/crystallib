@@ -21,7 +21,6 @@ fn template_wiki_root(reponame string, repourl string) string {
       <meta charset="UTF-8">
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.1.5/simple-lightbox.min.css">
-
     <style>
         .markdown-section {
             max-width: 60em !important;  
@@ -48,6 +47,12 @@ fn template_wiki_root(reponame string, repourl string) string {
     </style>
     </head>
     <body>
+    <!-- markmap is based on d3, so must load those files first. -->
+   
+     <script src="//unpkg.com/d3@3/d3.min.js"></script>
+    <script src="//unpkg.com/markmap@0.6.0/lib/d3-flextree.js"></script>
+    <script src="//unpkg.com/markmap@0.6.0/lib/view.mindmap.js"></script>
+
       <div id="app"></div>
       <script>
         window.$docsify = {
@@ -113,7 +118,12 @@ fn template_wiki_root(reponame string, repourl string) string {
                         new SimpleLightbox(".gallery a");
                     });
                 },
-            ]
+            ],
+
+            mindmap: {
+                preset: "colorful", // or default
+                linkShape: "diagonal" // or bracket
+            }
         }
       </script>
       <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
@@ -132,6 +142,8 @@ fn template_wiki_root(reponame string, repourl string) string {
       <script src="//unpkg.com/mermaid/dist/mermaid.js"></script>
       <script src="//unpkg.com/docsify-mermaid@latest/dist/docsify-mermaid.js"> 
       <script>mermaid.initialize({ startOnLoad: true, securityLevel:\'loose\' });</script>
+      <script src="//unpkg.com/docsify-mindmap/dist/docsify-mindmap.min.js"></script>
+       
     </body>
     </html>
     '
