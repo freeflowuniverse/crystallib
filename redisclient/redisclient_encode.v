@@ -1,6 +1,6 @@
 module redisclient
 
-import despiegk.crystallib.resp2
+import resp2
 
 pub fn (mut r Redis) get_response() ?resp2.RValue {
 	line_ := r.read_line() ?
@@ -38,9 +38,10 @@ pub fn (mut r Redis) get_response() ?resp2.RValue {
 		buffer := r.read(bulkstring_size) or { panic(err) }
 		// extract final \r\n
 		r.read_line() ?
+		println("readline result:'$buffer.bytestr()'")
 		return resp2.RBString{
 			value: buffer
-		} // TODO: won't support binary (afaik), need to fix
+		} // TODO: won't support binary (afaik), need to fix		
 	}
 
 	if line.starts_with('*') {

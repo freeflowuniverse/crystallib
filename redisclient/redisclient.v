@@ -5,8 +5,7 @@ module redisclient
 import net
 // import strconv
 import time
-import despiegk.crystallib.resp2
-import io
+import resp2
 
 pub struct Redis {
 pub mut:
@@ -54,7 +53,9 @@ pub fn (mut r Redis) read_line() ?[]byte {
 			continue
 		}
 		if buf == '\n'.bytes() {
-			println("readline result:'$out.bytestr()'")
+			if out.bytestr() != ''{
+				println("readline result:'$out.bytestr()'")
+			}
 			return out
 		}
 		out << buf

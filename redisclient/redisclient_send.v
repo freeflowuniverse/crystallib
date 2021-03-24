@@ -1,4 +1,5 @@
 module redisclient
+import resp2
 
 // send list of strings, expect OK back
 pub fn (mut r Redis) send_expect_ok(items []string) ? {
@@ -37,4 +38,10 @@ pub fn (mut r Redis) send_expect_strnil(items []string) ?string {
 pub fn (mut r Redis) send_expect_list_str(items []string) ?[]string {
 	r.write_cmds(items) ?
 	return r.get_list_str()
+}
+
+pub fn (mut r Redis) send_expect_list(items []string) ?[]resp2.RValue {
+	r.write_cmds(items) ?
+	res := r.get_response() ?
+	return resp2.get_redis_array(res)
 }

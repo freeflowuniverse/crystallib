@@ -1,7 +1,29 @@
 module redisclient
+import resp2
+import time
 
 pub fn (mut r Redis) set(key string, value string) ? {
 	return r.send_expect_ok(['SET', key, value])
+}
+
+pub fn (mut r Redis) set_opts(key string, value string, opts SetOpts) bool {
+	ex := if opts.ex == -4 && opts.px == -4 { '' } else if opts.ex != -4 { ' EX $opts.ex' } else { ' PX $opts.px' }
+	nx := if opts.nx == false && opts.xx == false { '' } else if opts.nx == true { ' NX' } else { ' XX' }
+	keep_ttl := if opts.keep_ttl == false { '' } else { ' KEEPTTL' }
+	message := 'SET "$key" "$value"$ex$nx$keep_ttl\r\n'
+	r.socket.write(message.bytes()) or {
+		return false
+	}
+	time.sleep(1*time.millisecond)
+	res := r.socket.read_line()
+	match res {
+		'+OK\r\n' {
+			return true
+		}
+		else {
+			return false
+		}
+	}
 }
 
 pub fn (mut r Redis) get(key string) ?string {
@@ -137,6 +159,22 @@ pub fn (mut r Redis) renamenx(key string, newkey string) ?int {
 	return r.send_expect_int(['RENAMENX', key, newkey])
 }
 
+pub fn (mut r Redis) setex(key string, second i64, value string) ? {
+	return r.send_expect_ok(['SETEX', key, second.str(), value])
+}
+
+pub fn (mut r Redis) psetex(key string, millisecond i64, value string) ? {
+	return r.send_expect_ok(['PSETEX', key, millisecond.str(), value])
+}
+
+pub fn (mut r Redis) setnx(key string, value string) ?int {
+	return r.send_expect_int(['SETNX', key, value])
+}
+
+pub fn (mut r Redis) type_of(key string) ?string {
+	return r.send_expect_strnil(['TYPE', key])
+}
+
 pub fn (mut r Redis) flushall() ? {
 	return r.send_expect_ok(['FLUSHALL'])
 }
@@ -150,22 +188,21 @@ pub fn (mut r Redis) selectdb(database int) ? {
 	return r.send_expect_ok(['SELECT', database.str()])
 }
 
-// TODO: implement SCAN
-// pub fn (mut r Redis) scan(cursor int) ?(string, []string) {
-// 	res := r.send_expect_list_str(['SCAN', cursor.str()]) ?
-// 	if res[0].datatype != RedisValTypes.str {
-// 		return error('Redis SCAN wrong response type (cursor)')
-// 	}
+pub fn (mut r Redis) scan(cursor int) ?(string, []string) {
+	res := r.send_expect_list(['SCAN', cursor.str()]) ?
+	if res[0] !is resp2.RBString {
+		return error('Redis SCAN wrong response type (cursor)')
+	}
 
-// 	if res[1].datatype != RedisValTypes.list {
-// 		return error('Redis SCAN wrong response type (list content)')
-// 	}
+	if res[1] !is resp2.RArray {
+		return error('Redis SCAN wrong response type (list content)')
+	}
 
-// 	mut values := []string{}
+	mut values := []string{}
 
-// 	for i in 0 .. res[1].list.len {
-// 		values << res[1].list[i].str
-// 	}
+	for i in 0 .. resp2.get_redis_array_len(res[1]) {
+		values << resp2.get_redis_value_by_index(res[1],i)
+	}
 
-// 	return res[0].str, values
-// }
+	return resp2.get_redis_value(res[0]), values
+}
