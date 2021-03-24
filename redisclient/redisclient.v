@@ -5,7 +5,7 @@ module redisclient
 import net
 // import strconv
 import time
-import resp2
+import despiegk.crystallib.resp2
 
 pub struct Redis {
 pub mut:
@@ -92,7 +92,7 @@ fn (mut r Redis) write(data []byte) ? {
 }
 
 // write resp2 value to the redis channel
-fn (mut r Redis) write_rval(val resp2.RValue) ? {
+pub fn (mut r Redis) write_rval(val resp2.RValue) ? {
 	_ := r.socket.write(val.encode()) ?
 }
 

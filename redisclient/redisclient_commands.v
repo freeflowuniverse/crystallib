@@ -1,5 +1,5 @@
 module redisclient
-import resp2
+import despiegk.crystallib.resp2
 import time
 
 pub fn (mut r Redis) set(key string, value string) ? {
