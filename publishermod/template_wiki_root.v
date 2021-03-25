@@ -4,7 +4,7 @@ import myconfig
 
 fn template_wiki_root(reponame string, repourl string) string {
     mut cfg := myconfig.get(true) or {panic("can not get config")}
-    mut p := os.join_path(cfg.paths.code, ".cache")
+    mut p := os.join_path(cfg.paths.base, "static")
     p = ".$p"
 
     index_wiki := r'

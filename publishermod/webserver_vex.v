@@ -185,7 +185,7 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 		
 		if filetype == FileType.javascript  || filetype == FileType.css{
 			
-			mut p := os.join_path(config.paths.code, ".cache", name2)
+			mut p := os.join_path(config.paths.base, "static", name2)
 			mut content := os.read_file(p) or {
 				res.send('Cannot find file: $p\n$err', 404)
 				return

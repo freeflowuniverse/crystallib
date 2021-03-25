@@ -69,7 +69,7 @@ pub fn (mut config ConfigRoot) name_web_get(domain string) ?string {
 
 pub fn(mut config ConfigRoot) update_javascript_files(force bool)?{
 	println("Updating Javascript files in cache")
-	mut p := os.join_path(config.paths.code, ".cache")
+	mut p := os.join_path(config.paths.base, "static")
 	process.execute_silent('mkdir -p $p') or {panic("can not create dir $p")}
 	for file, link in config.javascriptfiles{
 		mut dest := os.join_path(p, file)
