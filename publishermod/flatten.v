@@ -49,6 +49,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 	mut dest_file := ''
 
 	mut config := myconfig.get(true) ?
+	config.update_javascript_files(false)?
 
 	publisher.check() // makes sure we checked all
 

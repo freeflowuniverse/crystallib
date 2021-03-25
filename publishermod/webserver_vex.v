@@ -24,6 +24,8 @@ enum FileType {
 	file
 	image
 	html
+	javascript
+	css
 }
 
 fn print_req_info(mut req ctx.Req, mut res ctx.Resp) {
@@ -83,6 +85,12 @@ fn filetype_site_name_get(mut config myconfig.ConfigRoot, site string, name_ str
 		filetype = FileType.html
 	} else if name.ends_with('.md') {
 		filetype = FileType.wiki
+	}else if name.ends_with('.js'){
+		name = name_
+		filetype = FileType.javascript
+	}else if name.ends_with('css'){
+		name = name_
+		filetype = FileType.css 
 	} else if extension == '' {
 		filetype = FileType.wiki
 	} else {
@@ -174,6 +182,18 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 	if publisherobj.develop {
 		filetype, sitename2, name2 := filetype_site_name_get(mut config, sitename, name) ?
 		// if debug {println(" >> page get develop: $name2")}
+		
+		if filetype == FileType.javascript  || filetype == FileType.css{
+			
+			mut p := os.join_path(config.paths.code, ".cache", name2)
+			mut content := os.read_file(p) or {
+				res.send('Cannot find file: $p\n$err', 404)
+				return
+			}
+			res.headers['Content-Type'] = [content_type_get(p) ?]
+			res.send(content, 200)
+			return
+		}
 
 		mut site2 := publisherobj.site_get(sitename2) or {
 			res.send('Cannot find site: $sitename2\n$err', 404)
@@ -418,7 +438,7 @@ fn site_deliver(req &ctx.Req, mut res ctx.Resp) {
 		}
 	} else if iswiki {
 		site_wiki_deliver(mut config, domain, path, req, mut res) or {
-			res.send('unknown error.\n$err', 501)
+			res.send('unknown error.\n$err', 404)
 			return
 		}
 	}

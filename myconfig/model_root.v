@@ -1,5 +1,8 @@
 module myconfig
 
+import os
+import process
+
 pub struct ConfigRoot {
 pub mut:
 	root   string
@@ -12,6 +15,7 @@ pub mut:
 	redis  bool
 	port   int = 9998
 	web_hostnames bool
+	javascriptfiles map[string]string
 }
 
 pub struct Paths {
@@ -61,5 +65,18 @@ pub fn (mut config ConfigRoot) name_web_get(domain string) ?string {
 		}
 	}
 	return error('Cannot find wiki site with domain: $domain')
+}
+
+pub fn(mut config ConfigRoot) update_javascript_files(force bool)?{
+	println("Updating Javascript files in cache")
+	mut p := os.join_path(config.paths.code, ".cache")
+	process.execute_silent('mkdir -p $p') or {panic("can not create dir $p")}
+	for file, link in config.javascriptfiles{
+		mut dest := os.join_path(p, file)
+		if !os.exists(dest) || (os.exists(dest) && force){
+			process.execute_silent('curl -L -o $dest $link') or {panic("can not  download $link")}
+			println(' - downloaded $link')
+		}
+	}
 }
 

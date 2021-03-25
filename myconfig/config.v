@@ -29,6 +29,7 @@ fn get2() ConfigRoot {
 
 	// add the site configurations to it
 	site_config(mut &c)
+	javascriptfiles_config(mut &c)
 
 	return c
 }
