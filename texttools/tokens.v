@@ -78,7 +78,7 @@ pub fn replace_items(text string, replacer map[string]string) ?string {
 			line = tr.replace(line, key, replacewith) ?
 			line = tr.replace(line, key + 's', replacewith + 's') ?
 		}
-		unsafe { tr.free() }
+		//unsafe { tr.free() }
 		res << line
 	}
 	final_res := res.join('\n')
