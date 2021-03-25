@@ -140,7 +140,7 @@ fn template_wiki_root(reponame string, repourl string) string {
       <script src="docsify-tabs@1.js"></script>
       <script src="docsify-themeable@0.js"></script>
       <script src="docsify-sidebar-collapse.min.js"></script>
-      <script src="plugins/zoom-image.min.js"></script>
+      <script src="zoom-image.min.js"></script>
       <script src="docsify-copy-code.js"></script>
       <script src="docsify-glossary.min.js"></script>
       <script src="simple-lightbox.min.js"></script>
