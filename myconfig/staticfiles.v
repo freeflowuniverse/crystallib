@@ -4,8 +4,8 @@ module myconfig
 //websites are under $ipaddr/$shortname
 //wiki are under $ipaddr/info/$shortname
 
-fn javascriptfiles_config(mut c ConfigRoot) {
-	c.javascriptfiles = {
+fn staticfiles_config(mut c ConfigRoot) {
+	c.staticfiles = {
 		"googletagmanager.js": "https://www.googletagmanager.com/gtag/js?id=UA-100065546-4",
 		"cookie-consent.js": "https://www.freeprivacypolicy.com/public/cookie-consent/3.1.0/cookie-consent.js",
 		"theme-simple.css": "https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css",
