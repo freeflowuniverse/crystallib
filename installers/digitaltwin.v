@@ -86,7 +86,7 @@ pub fn digitaltwin_start(cfg &myconfig.ConfigRoot, isproduction bool) ? {
 		export PATH=$cfg.nodejs.path/bin:\$PATH
 		export NODE_ENV=production
 		pm2 start server.js
-		pm2.save()
+		pm2 save
 		'
 	}
 	
