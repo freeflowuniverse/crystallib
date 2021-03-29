@@ -67,6 +67,7 @@ pub fn (mut config ConfigRoot) name_web_get(domain string) ?string {
 	return error('Cannot find wiki site with domain: $domain')
 }
 
+//get all static files from internet
 pub fn(mut config ConfigRoot) update_staticfiles(force bool)?{
 	println("Updating Javascript files in cache")
 	mut p := os.join_path(config.paths.base, "static")
