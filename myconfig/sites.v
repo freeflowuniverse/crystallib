@@ -11,7 +11,7 @@ fn site_config(mut c ConfigRoot) {
 		url: 'https://github.com/threefoldfoundation/www_threefold_io'
 		cat: SiteCat.web
 		descr: 'is our entry point for everyone, redirect to the detailed websites underneith.'
-		domains: ['www.threefold.io', 'www.threefold.me', 'new.threefold.io', 'staging.threefold.io']
+		domains: ['www.threefold.io', 'www.threefold.me', 'new.threefold.io', 'staging.threefold.io', 'threefold.io']
 	}
 	c.sites << SiteConfig{
 		name: 'www_threefold_cloud'
