@@ -11,7 +11,7 @@ fn site_config(mut c ConfigRoot) {
 		url: 'https://github.com/threefoldfoundation/www_threefold_io'
 		cat: SiteCat.web
 		descr: 'is our entry point for everyone, redirect to the detailed websites underneith.'
-		domains: ['www.threefold.io', 'www.threefold.me']
+		domains: ['www.threefold.io', 'www.threefold.me', 'new.threefold.io', 'staging.threefold.io']
 	}
 	c.sites << SiteConfig{
 		name: 'www_threefold_cloud'
@@ -60,7 +60,7 @@ fn site_config(mut c ConfigRoot) {
 		shortname: 'tftech'
 		url: 'https://github.com/threefoldtech/www_threefold_tech'
 		cat: SiteCat.web
-		domains: ['www.threefold.tech']
+		domains: ['www.threefold.tech', 'threefold.tech']
 		descr: 'cyberpandemic, use the tech to build your own solutions with, certification for TFGrid'
 	}
 	c.sites << SiteConfig{
@@ -93,7 +93,7 @@ fn site_config(mut c ConfigRoot) {
 		//will be moved to this url
 		// url: 'https://github.com/threefoldfoundation/info_threefold'
 		url: 'https://github.com/threefoldfoundation/info_foundation_archive'
-		domains: ['info.threefold.io']
+		domains: ['info.threefold.io', 'wiki.threefold.io']
 		descr :'wiki for foundation, collaborate, what if farmings, tokens'
 	}
 	// c.sites << SiteConfig{
@@ -127,21 +127,21 @@ fn site_config(mut c ConfigRoot) {
 		name: 'info_sdk'
 		shortname: 'sdk'
 		url: 'https://github.com/threefoldfoundation/info_sdk'
-		domains: ['sdk.threefold.io', 'sdk_info.threefold.io']
+		domains: ['sdk.threefold.io', 'sdk_info.threefold.io', 'wiki.sdk.threefold.io']
 		descr: 'for IAC, devops, how to do Infrastruture As Code, 3bot, Ansible, tfgrid-sdk, ...'
 	}
 	c.sites << SiteConfig{
 		name: 'info_legal'
 		shortname: 'legal'
 		url: 'https://github.com/threefoldfoundation/info_legal'
-		domains: ['legal.threefold.io', 'legal_info.threefold.io']
+		domains: ['legal.threefold.io', 'legal_info.threefold.io', 'wiki.legal.threefold.io']
 		descr :''
 	}
 	c.sites << SiteConfig{
 		name: 'info_cloud'
 		shortname: 'cloud'
 		url: 'https://github.com/threefoldfoundation/info_cloud'
-		domains: ['cloud_info.threefold.io']
+		domains: ['cloud_info.threefold.io', 'wiki.cloud.threefold.io']
 		descr :'how to use the cloud for deploying apps: evdc, kubernetes, planetary fs, ... + marketplace solutions '
 	}
 	c.sites << SiteConfig{
@@ -155,7 +155,7 @@ fn site_config(mut c ConfigRoot) {
 		name: 'info_digitaltwin'
 		shortname: 'twin'
 		url: 'https://github.com/threefoldfoundation/info_digitaltwin.git'
-		domains: ['twin_info.threefold.io']
+		domains: ['twin_info.threefold.io', 'wiki.twin.threefold.io']
 		descr :''
 	}
 
