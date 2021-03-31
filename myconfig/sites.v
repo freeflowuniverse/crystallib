@@ -34,7 +34,7 @@ fn site_config(mut c ConfigRoot) {
 		shortname: 'twin'
 		url: 'https://github.com/threefoldfoundation/www_threefold_twin'
 		cat: SiteCat.web
-		domains: ['twin.threefold.io', 'twin.threefold.me']
+		domains: ['mydigitaltwin.io', 'www.mydigitaltwin.io']
 		descr: "you digital life"
 	}
 	c.sites << SiteConfig{
@@ -127,7 +127,7 @@ fn site_config(mut c ConfigRoot) {
 		name: 'info_sdk'
 		shortname: 'sdk'
 		url: 'https://github.com/threefoldfoundation/info_sdk'
-		domains: ['sdk.threefold.io', 'sdk_info.threefold.io', 'wiki.sdk.threefold.io']
+		domains: ['sdk.threefold.io', 'wiki.sdk.threefold.io']
 		descr: 'for IAC, devops, how to do Infrastruture As Code, 3bot, Ansible, tfgrid-sdk, ...'
 	}
 	c.sites << SiteConfig{
@@ -155,7 +155,7 @@ fn site_config(mut c ConfigRoot) {
 		name: 'info_digitaltwin'
 		shortname: 'twin'
 		url: 'https://github.com/threefoldfoundation/info_digitaltwin.git'
-		domains: ['twin_info.threefold.io', 'wiki.twin.threefold.io']
+		domains: ['info.mydigitaltwin.io', 'www.info.mydigitaltwin.io']
 		descr :''
 	}
 
