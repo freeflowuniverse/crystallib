@@ -22,6 +22,12 @@ struct PublisherDef {
 	site string
 }
 
+pub struct RewriteRole {
+	pub mut:
+		redirect map[string]string
+		rewrite map[string]string
+}
+
 pub fn (mut publisher Publisher) errors_get(site Site) ?PublisherErrors {
 	mut errors := PublisherErrors{}
 
@@ -63,6 +69,19 @@ pub fn (mut publisher Publisher) flatten() ? {
 			page: page_def.name
 			site: site_def.name
 		}
+	
+	}
+
+	
+	mut role := RewriteRole{
+		redirect: map{
+			"from": ""
+			"to": ""
+		}
+		rewrite: map{
+			"in": ""
+			"out": ""
+		}
 	}
 
 	for mut site in publisher.sites {
@@ -99,6 +118,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 					'passwords': []
 				})
 				os.write_file('$dest_dir/.acls.json', the_acls) ?
+				os.write_file('$dest_dir/.roles.json', json.encode(role)) ?
 
 				break
 			}

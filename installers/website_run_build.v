@@ -9,9 +9,15 @@ import os
 import json
 
 pub struct Group {
-pub mut:
-	users  []string
-	groups []string
+	pub mut:
+		users  []string
+		groups []string
+}
+
+pub struct RewriteRole {
+	pub mut:
+		redirect map[string]string
+		rewrite map[string]string
 }
 
 fn website_conf_repo_get(cmd &cli.Command) ?(myconfig.ConfigRoot, &gittools.GitRepo) {
@@ -67,6 +73,16 @@ pub fn website_build(cmd &cli.Command) ? {
 	mut conf := myconfig.get(true) ?
 	mut sites := conf.sites_get()
 	mut empty := []string{}
+	mut role := RewriteRole{
+		redirect: map{
+			"from": ""
+			"to": ""
+		}
+		rewrite: map{
+			"in": ""
+			"out": ""
+		}
+	}
 
 	// groups
 	os.write_file('$conf.paths.publish/.groups.json', json.encode(map{
@@ -112,6 +128,8 @@ pub fn website_build(cmd &cli.Command) ? {
 					'usernames': ['admin']
 					'passwords': []
 				})) ?
+
+				os.write_file('$conf.paths.publish/$site.name/.roles.json', json.encode(role)) ?
 			}
 		}
 	} else {
@@ -146,6 +164,7 @@ pub fn website_build(cmd &cli.Command) ? {
 					'passwords': []
 				})) ?
 
+				os.write_file('$conf.paths.publish/$site.name/.roles.json', json.encode(role)) ?
 				break
 			}
 		}
