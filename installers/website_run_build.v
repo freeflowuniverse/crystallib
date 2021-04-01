@@ -109,6 +109,8 @@ pub fn website_build(cmd &cli.Command) ? {
 				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(map{
 					'users':  empty
 					'groups': empty
+					'usernames': ['admin']
+					'passwords': []
 				})) ?
 			}
 		}
@@ -140,6 +142,8 @@ pub fn website_build(cmd &cli.Command) ? {
 				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(map{
 					'users':  empty
 					'groups': empty
+					'usernames': ['admin']
+					'passwords': []
 				})) ?
 
 				break

@@ -95,6 +95,8 @@ pub fn (mut publisher Publisher) flatten() ? {
 				the_acls := json.encode(map{
 					'users':  []string{}
 					'groups': []string{}
+					'usernames': ['admin']
+					'passwords': []
 				})
 				os.write_file('$dest_dir/.acls.json', the_acls) ?
 
