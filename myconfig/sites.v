@@ -127,21 +127,21 @@ fn site_config(mut c ConfigRoot) {
 		name: 'info_sdk'
 		shortname: 'sdk'
 		url: 'https://github.com/threefoldfoundation/info_sdk'
-		domains: ['sdk.threefold.io', 'wiki.sdk.threefold.io']
+		domains: ['sdk.threefold.io']
 		descr: 'for IAC, devops, how to do Infrastruture As Code, 3bot, Ansible, tfgrid-sdk, ...'
 	}
 	c.sites << SiteConfig{
 		name: 'info_legal'
 		shortname: 'legal'
 		url: 'https://github.com/threefoldfoundation/info_legal'
-		domains: ['legal.threefold.io', 'legal_info.threefold.io', 'wiki.legal.threefold.io']
+		domains: ['legal.threefold.io', 'legal-info.threefold.io', 'legal-wiki.threefold.io']
 		descr :''
 	}
 	c.sites << SiteConfig{
 		name: 'info_cloud'
 		shortname: 'cloud'
 		url: 'https://github.com/threefoldfoundation/info_cloud'
-		domains: ['cloud_info.threefold.io', 'wiki.cloud.threefold.io']
+		domains: ['cloud-info.threefold.io', 'cloud-wiki.threefold.io']
 		descr :'how to use the cloud for deploying apps: evdc, kubernetes, planetary fs, ... + marketplace solutions '
 	}
 	c.sites << SiteConfig{
@@ -155,7 +155,7 @@ fn site_config(mut c ConfigRoot) {
 		name: 'info_digitaltwin'
 		shortname: 'twin'
 		url: 'https://github.com/threefoldfoundation/info_digitaltwin.git'
-		domains: ['info.mydigitaltwin.io', 'www.info.mydigitaltwin.io']
+		domains: ['info.mydigitaltwin.io', 'wiki.mydigitaltwin.io']
 		descr :''
 	}
 
@@ -163,7 +163,7 @@ fn site_config(mut c ConfigRoot) {
 		name: 'info_bettertoken'
 		shortname: 'bt'
 		url: 'https://github.com/BetterToken/info_bettertoken.git'
-		domains: ['bt_info.threefold.io']
+		domains: ['bt-info.threefold.io']
 		descr :''
 	}
 
