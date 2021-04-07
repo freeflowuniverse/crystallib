@@ -131,7 +131,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 
 		template_wiki_root_save(dest_dir, site.name, site_config.url)
 
-		mut special := ['readme.md', 'README.md', '_sidebar.md', '_navbar.md', 'sidebar.md', 'navbar.md']
+		mut special := ['readme.md', 'README.md', '_sidebar.md', '_navbar.md', 'sidebar.md', 'navbar.md', "favicon.ico"]
 
 		// renameitems := [["_sidebar.md","sidebar.md"],["_navbar.md","navbar.md"]]
 		// for ffrom,tto in renameitems{
