@@ -79,7 +79,6 @@ pub fn website_build(cmd &cli.Command) ? {
 
 	mut conf := myconfig.get(true) ?
 	mut sites := conf.sites_get()
-	mut empty := []string{}
 	mut role := RewriteRole{
 		redirect: map{
 			"from": ""
