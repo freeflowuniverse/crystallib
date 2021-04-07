@@ -26,7 +26,7 @@ fn staticfiles_config(mut c ConfigRoot) {
 		"docsify-copy-code.js": "https://cdn.jsdelivr.net/npm/docsify-copy-code",
 		"docsify-glossary.min.js": "unpkg.com/docsify-glossary/dist/docsify-glossary.min.js",
 		"simple-lightbox.min.js":"https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.1.5/simple-lightbox.min.js",
-		"mermaid.js": "https://unpkg.com/mermaid/dist/mermaid.js",
+		"mermaid.min.js": "https://unpkg.com/mermaid@8.9.2/dist/mermaid.min.js",
 		"docsify-mermaid.js": "https://unpkg.com/docsify-mermaid@latest/dist/docsify-mermaid.js",
 		"docsify-mindmap.min.js": "https://unpkg.com/docsify-mindmap/dist/docsify-mindmap.min.js",
 		"docsify-charty.min.js": "https://unpkg.com/@markbattistella/docsify-charty@latest",

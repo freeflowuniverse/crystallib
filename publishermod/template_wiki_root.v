@@ -148,7 +148,7 @@ fn template_wiki_root(reponame string, repourl string) string {
       <script src="docsify-copy-code.js"></script>
       <script src="docsify-glossary.min.js"></script>
       <script src="simple-lightbox.min.js"></script>
-      <script src="mermaid.js"></script>
+      <script src="mermaid.min.js"></script>
       <script src="docsify-mermaid.js"> 
       <script>mermaid.initialize({ startOnLoad: true, securityLevel:\'loose\' });</script>
       <script src="docsify-mindmap.min.js"></script>
