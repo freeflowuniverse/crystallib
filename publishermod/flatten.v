@@ -28,6 +28,13 @@ pub struct RewriteRole {
 		rewrite map[string]string
 }
 
+pub struct Acls {
+	pub mut:
+		users []string
+		groups []string
+		password string   
+}
+
 pub fn (mut publisher Publisher) errors_get(site Site) ?PublisherErrors {
 	mut errors := PublisherErrors{}
 
@@ -111,12 +118,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 					'alias': c.shortname
 				})
 				os.write_file('$dest_dir/.repo', the_repo) ?
-				the_acls := json.encode(map{
-					'users':  []string{}
-					'groups': []string{}
-					'usernames': ['admin']
-					'passwords': []
-				})
+				the_acls := json.encode(Acls{})
 				os.write_file('$dest_dir/.acls.json', the_acls) ?
 				os.write_file('$dest_dir/.roles.json', json.encode(role)) ?
 
