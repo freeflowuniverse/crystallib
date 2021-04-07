@@ -54,7 +54,17 @@ fn template_wiki_root(reponame string, repourl string) string {
     </head>
     <body>
     <!-- markmap is based on d3, so must load those files first. -->
-   
+    <script>
+    var link = document.querySelector("link[rel~=\"icon\"]");
+    if (!link) {
+        link = document.createElement("link");
+        link.rel = "icon";
+        document.getElementsByTagName("head")[0].appendChild(link);
+
+    }
+    link.href = document.location.href.slice(0, -2) + "/favicon.ico";
+    console.log(link)
+    </script>
      <script src="d3.min.js"></script>
     <script src="d3-flextree.js"></script>
     <script src="view.mindmap.js"></script>
