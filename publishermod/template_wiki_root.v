@@ -25,7 +25,6 @@ fn template_wiki_root(reponame string, repourl string) string {
       <meta name="viewport" content="width=device-width,initial-scale=1">
       <meta charset="UTF-8">
       <link rel="stylesheet" href="theme-simple.css">
-      
 
     <style>
         .markdown-section {
@@ -54,17 +53,6 @@ fn template_wiki_root(reponame string, repourl string) string {
     </head>
     <body>
     <!-- markmap is based on d3, so must load those files first. -->
-    <script>
-    var link = document.querySelector("link[rel~=\"icon\"]");
-    if (!link) {
-        link = document.createElement("link");
-        link.rel = "icon";
-        document.getElementsByTagName("head")[0].appendChild(link);
-
-    }
-    link.href = document.location.href.slice(0, -2) + "/favicon.ico";
-    console.log(link)
-    </script>
      <script src="d3.min.js"></script>
     <script src="d3-flextree.js"></script>
     <script src="view.mindmap.js"></script>
@@ -165,6 +153,24 @@ fn template_wiki_root(reponame string, repourl string) string {
        <link rel="stylesheet" href="docsify-charty.min.css">
        <link rel="stylesheet" href="charty-custom-style.css">
       <script src="docsify-charty.min.js"></script>
+
+      <script>
+    // add favicon link
+        var link = document.querySelector("link[rel~=\"icon\"]");
+        if (!link) {
+            link = document.createElement("link");
+            link.rel = "icon";
+            document.getElementsByTagName("head")[0].appendChild(link);
+
+        }
+        var ref = document.location.href.replace("#/", "")
+        if(!ref.endsWith("/")){
+            ref = ref + "/"
+        }
+        link.href =  ref + "favicon.ico";
+        console.log(link)
+        
+    </script>
     </body>
     </html>
     '
