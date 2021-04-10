@@ -75,7 +75,12 @@ pub fn(mut config ConfigRoot) update_staticfiles(force bool)?{
 	for file, link in config.staticfiles{
 		mut dest := os.join_path(p, file)
 		if !os.exists(dest) || (os.exists(dest) && force){
-			process.execute_silent('curl -L -o $dest $link') or {panic("can not  download $link")}
+			cmd := 'curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -L -o $dest $link'
+			// println(cmd)
+			process.execute_silent(cmd) or {
+					panic(" *** WARNING: can not  download $link to ${dest}. \n${cmd}")
+					continue
+				}
 			println(' - downloaded $link')
 		}
 	}

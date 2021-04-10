@@ -142,7 +142,7 @@ pub fn text_to_params(text string) ?Params {
 	text2 = text2.replace('\\n', '<<BR>>')
 	text2 = text2.replace('\n', ' ')
 
-	validchars := 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_'
+	validchars := 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,'
 
 	mut char := ''
 	mut state := ParamStatus.start

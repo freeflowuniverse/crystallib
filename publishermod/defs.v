@@ -3,9 +3,11 @@ module publishermod
 struct Def {
 	name   string
 	pageid int
+	hidden bool
 mut:
 	categories []string
 }
+
 
 //walk over categories, see if we can find the prefix
 pub fn (def Def) category_prefix_exists(prefix_ string) bool {

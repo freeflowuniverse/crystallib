@@ -13,6 +13,7 @@ fn macro_process(mut state LineProcessorState, line string) bool {
 		'youtube': youtube
 		'def': macro_def
 		'def_list': macro_def_list
+		'alias': macro_alias
 	}
 
 	if !line.starts_with('!!!') {

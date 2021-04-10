@@ -128,6 +128,7 @@ fn (mut publisher Publisher) page_check_fix(name2find string, consumer_page_id i
 
 // check if we can find the page, page can be on another site
 // we check the page based on name & replaced version of name
+// we also check definitions because they can also lead to right page
 fn (mut publisher Publisher) page_check_find(name2find string, consumer_page_id int) ?&Page {
 	mut consumer_page := publisher.page_get_by_id(consumer_page_id) or { panic("page get by id:$consumer_page_id\n$err") }
 	mut consumer_site := consumer_page.site_get(mut publisher) or { panic("site_get:'n$err") }	

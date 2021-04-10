@@ -2,6 +2,9 @@ module publishermod
 
 import despiegk.crystallib.texttools
 
+
+
+
 fn macro_def(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	
 	mut categories := macro.params.get_list('category') ?
@@ -93,6 +96,9 @@ fn macro_def_list(mut state LineProcessorState, mut macro texttools.MacroObj) ? 
 		// println(" >>> $defname")
 		defobj := state.publisher.def_get(defname)?
 		if defobj.pageid in done{
+			continue
+		}
+		if defobj.hidden{
 			continue
 		}
 		if ! def_list_check(defobj, categories, exclude){
