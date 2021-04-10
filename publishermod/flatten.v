@@ -28,6 +28,13 @@ pub struct RewriteRole {
 		rewrite map[string]string
 }
 
+pub struct Acls {
+	pub mut:
+		users []string
+		groups []string
+		password string   
+}
+
 pub fn (mut publisher Publisher) errors_get(site Site) ?PublisherErrors {
 	mut errors := PublisherErrors{}
 
@@ -111,12 +118,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 					'alias': c.shortname
 				})
 				os.write_file('$dest_dir/.repo', the_repo) ?
-				the_acls := json.encode(map{
-					'users':  []string{}
-					'groups': []string{}
-					'usernames': ['admin']
-					'passwords': []
-				})
+				the_acls := json.encode(Acls{})
 				os.write_file('$dest_dir/.acls.json', the_acls) ?
 				os.write_file('$dest_dir/.roles.json', json.encode(role)) ?
 
@@ -131,7 +133,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 
 		template_wiki_root_save(dest_dir, site.name, site_config.url)
 
-		mut special := ['readme.md', 'README.md', '_sidebar.md', '_navbar.md', 'sidebar.md', 'navbar.md']
+		mut special := ['readme.md', 'README.md', '_sidebar.md', '_navbar.md', 'sidebar.md', 'navbar.md', "favicon.ico"]
 
 		// renameitems := [["_sidebar.md","sidebar.md"],["_navbar.md","navbar.md"]]
 		// for ffrom,tto in renameitems{

@@ -20,6 +20,13 @@ pub struct RewriteRole {
 		rewrite map[string]string
 }
 
+pub struct Acls {
+	pub mut:
+		users []string
+		groups []string
+		password string   
+}
+
 fn website_conf_repo_get(cmd &cli.Command) ?(myconfig.ConfigRoot, &gittools.GitRepo) {
 	mut conf := myconfig.get(true) ?
 	flags := cmd.flags.get_all_found()
@@ -72,7 +79,6 @@ pub fn website_build(cmd &cli.Command) ? {
 
 	mut conf := myconfig.get(true) ?
 	mut sites := conf.sites_get()
-	mut empty := []string{}
 	mut role := RewriteRole{
 		redirect: map{
 			"from": ""
@@ -122,12 +128,7 @@ pub fn website_build(cmd &cli.Command) ? {
 					'alias': site.shortname
 				})) ?
 
-				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(map{
-					'users':  empty
-					'groups': empty
-					'usernames': ['admin']
-					'passwords': []
-				})) ?
+				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(Acls{})) ?
 
 				os.write_file('$conf.paths.publish/$site.name/.roles.json', json.encode(role)) ?
 			}
@@ -157,13 +158,7 @@ pub fn website_build(cmd &cli.Command) ? {
 					'alias': site.shortname
 				})) ?
 
-				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(map{
-					'users':  empty
-					'groups': empty
-					'usernames': ['admin']
-					'passwords': []
-				})) ?
-
+				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(Acls{})) ?
 				os.write_file('$conf.paths.publish/$site.name/.roles.json', json.encode(role)) ?
 				break
 			}
