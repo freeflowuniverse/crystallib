@@ -86,15 +86,22 @@ fn site_config(mut c ConfigRoot) {
 		cat: SiteCat.web
 		domains: ['www.mitaa.me']
 		descr :'Mitaa website.'
-	}	
+	}
 	c.sites << SiteConfig{
-		name: 'info_threefold'
+		name: 'info_foundation'
 		shortname: 'threefold'
+		url: 'https://github.com/threefoldfoundation/info_foundation'
+		domains: ['info.threefold.io', 'wiki.threefold.io']
+		descr :'wiki for foundation, collaborate, with farmings, tokens'
+	}
+	// c.sites << SiteConfig{
+	//	name: 'info_threefold'
+	//	shortname: 'threefold'
 		//will be moved to this url
 		// url: 'https://github.com/threefoldfoundation/info_threefold'
-		url: 'https://github.com/threefoldfoundation/info_foundation_archive'
-		domains: ['info.threefold.io', 'wiki.threefold.io']
-		descr :'wiki for foundation, collaborate, what if farmings, tokens'
+	//	url: 'https://github.com/threefoldfoundation/info_foundation_archive'
+	//	domains: ['info.threefold.io', 'wiki.threefold.io']
+	//	descr :'wiki for foundation, collaborate, what if farmings, tokens'
 	}
 	// c.sites << SiteConfig{
 	// 	name: 'info_marketplace'
