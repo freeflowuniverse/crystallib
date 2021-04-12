@@ -30,7 +30,7 @@ fn (mut publisher Publisher) load_site(repoconfig SiteRepoConfig, path string) ?
 	}
 	path2 := path.replace('~', os.home_dir())
 	println(' - load publisher: $repoconfig_site -> $myconfig_site.shortname - $path2')
-	if !publisher.site_exists(myconfig_site.shortname) {
+	if !publisher.site_exists(myconfig_site.name) {
 		id := publisher.sites.len
 		mut site := Site{
 			id: id
@@ -41,7 +41,7 @@ fn (mut publisher Publisher) load_site(repoconfig SiteRepoConfig, path string) ?
 		publisher.sites << site
 		publisher.site_names[myconfig_site.shortname] = id
 	} else {
-		return error("should not load on same name 2x: '$myconfig_site.shortname'")
+		return error("should not load on same name 2x: '$myconfig_site.name'")
 	}
 }
 
