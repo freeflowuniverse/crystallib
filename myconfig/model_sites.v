@@ -111,13 +111,7 @@ pub fn (mut config ConfigRoot) sites_get() []SiteConfig {
 	mut sites := []SiteConfig{}
 	for site in config.sites {
 		path := site.path_code
-		if path == '' {
-			continue
-			// panic('we did not find site: $site, was the site downloaded?')
-		}
-		if os.exists(path) {
-			sites << site
-		}
+		sites << site
 	}
 	return sites
 }

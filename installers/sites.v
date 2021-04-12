@@ -47,9 +47,7 @@ pub fn sites_download(cmd cli.Command, web bool) ? {
 		mut r := gt.repo_get_from_url(url: sc.url, pull: sc.pull, reset: sc.reset, branch: sc.branch) or {
 			return error(' - ERROR: could not download site $sc.url, do you have rights?\n$err\n$sc')
 		}
-		println(r)
 		r.check(false, false) ?
-		println('222')
 	}
 }
 

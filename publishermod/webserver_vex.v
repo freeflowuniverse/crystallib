@@ -147,8 +147,6 @@ fn index_template(req &ctx.Req) string {
 	mut config := (&MyContext(req.ctx)).config
 	mut publisherobj := (&MyContext(req.ctx)).publisher
 	mut sites := config.sites_get()
-	println(sites)
-	panic("s")
 	mut port_str := ''
 	if config.port != 80 {
 		port_str = ':$config.port'
