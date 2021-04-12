@@ -30,7 +30,7 @@ fn site_config(mut c ConfigRoot) {
 		domains: ['www.threefold.io', 'www.threefold.me', 'threefold.me', 'new.threefold.io', 'staging.threefold.io',
 			'threefold.io',
 		]
-		circles: [gr_tf1, gr_tf2]
+		groups: [gr_tf1, gr_tf2]
 	}
 	c.sites << SiteConfig{
 		name: 'www_threefold_cloud'

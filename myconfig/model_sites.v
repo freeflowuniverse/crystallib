@@ -14,7 +14,7 @@ pub mut:
 	path_code string
 	domains   []string
 	descr     string
-	circles   []TFGroup
+	groups    []TFGroup
 	acl       []SiteACE // access control list
 }
 
