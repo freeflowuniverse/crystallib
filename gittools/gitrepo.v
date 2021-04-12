@@ -65,12 +65,14 @@ pub fn (mut repo GitRepo) check(pull_force_ bool, reset_force_ bool) ? {
 
 		// first check if path does not exist yet, if not need to clone
 		if !os.exists(repo.path_get()) {
+			println(' - NEED TO GIT PULL: -> $repo.path_get()')
 			if !needs_to_be_ssh && ssh_agent_loaded() {
 				needs_to_be_ssh = true
 			}
 			// get the url (http or ssh)
 			mut cmd := repo.get_clone_cmd(!needs_to_be_ssh)
 			mut ok := true
+			// println(cmd)
 			process.execute_silent(cmd) or {
 				println(' GIT FAILED: $cmd')
 				ok = false
@@ -88,7 +90,8 @@ pub fn (mut repo GitRepo) check(pull_force_ bool, reset_force_ bool) ? {
 					return error('Cannot pull repo: ${repo.path}. Error was $err')
 				}
 			}
-			// can return safely, because pull did work
+			println(' - GIT PULL OK')
+			// can return safely, because pull did work			
 			repo.state = GitStatus.ok
 			return
 		}
@@ -101,7 +104,7 @@ pub fn (mut repo GitRepo) check(pull_force_ bool, reset_force_ bool) ? {
 
 		if repo.addr.branch != '' {
 			mut branchname := repo.branch_get() ?
-			branchname = branchname.trim("\n ")
+			branchname = branchname.trim('\n ')
 			if branchname != repo.addr.branch {
 				println('-  branch switch $branchname -> $repo.addr.branch')
 				repo.branch_switch(repo.addr.branch) ?
@@ -200,6 +203,5 @@ pub fn (mut repo GitRepo) branch_switch(branchname string) ? {
 		return error('Cannot pull repo: ${repo.path}. Error was $err \n cmd: $cmd')
 	}
 	// println(cmd)
-	repo.pull()?
+	repo.pull() ?
 }
-

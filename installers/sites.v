@@ -49,6 +49,7 @@ pub fn sites_download(cmd cli.Command, web bool) ? {
 		}
 		println(r)
 		r.check(false, false) ?
+		println('222')
 	}
 }
 
