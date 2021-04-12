@@ -33,7 +33,7 @@ pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs
 			return error('Could not clone the repo from ${args.url}.\nError:$err')
 		}
 	}
-
+	// println(args2)
 	mut r := gitstructure.repo_get(args2) or { return error('cannot load git $args.url\nerr') }
 	return r
 }
@@ -58,6 +58,7 @@ pub fn (mut gitstructure GitStructure) repo_get(addr RepoGetArgs) ?&GitRepo {
 					println(' - repo on $r2.path did not exist yet will pull.')
 					r2.pull({}) ?
 				}
+				r2.check()
 				return r2
 			}
 		}

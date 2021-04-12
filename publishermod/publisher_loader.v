@@ -22,6 +22,10 @@ fn (mut publisher Publisher) load_site(repoconfig SiteRepoConfig, path string) ?
 	mut cfg := myconfig.get(true)?	
 	repoconfig_site := name_fix(repoconfig.name)
 	mut myconfig_site := cfg.site_get(repoconfig_site) or {
+		if "$err".contains("Cannot find wiki site"){
+			//means we should not load because file is not in the site configs
+			return
+		}
 		return error("$cfg\n -- ERROR: sitename in config file ($repoconfig_site) on repo in git, does not correspond with configname publishtools config.")
 	}
 	path2 := path.replace('~', os.home_dir())

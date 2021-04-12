@@ -50,7 +50,7 @@ pub fn save(path string) ? {
 pub fn get(web bool) ?ConfigRoot {
 	mut conf := initial()
 	if os.exists('sites.json') {
-		println(' - Found config files for sites in local dir.')
+		// println(' - Found config files for sites in local dir.')
 		txt := os.read_file('sites.json') ?
 		conf.sites = []SiteConfig{}
 		conf.sites = json.decode([]SiteConfig, txt) ?
