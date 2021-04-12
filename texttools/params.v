@@ -29,7 +29,7 @@ pub enum ParamStatus {
 	quote // quote found means value in between ''
 }
 
-//return string, will be trimmed
+// return string, will be trimmed
 pub fn (mut tp Params) get(key_ string) ?string {
 	key := key_.to_lower()
 	for p in tp.params {
@@ -43,7 +43,7 @@ pub fn (mut tp Params) get(key_ string) ?string {
 pub fn (mut tp Params) get_default(key string, defval string) ?string {
 	if tp.exists(key) {
 		valuestr := tp.get(key) ?
-		return valuestr.trim(" ")
+		return valuestr.trim(' ')
 	}
 	return defval
 }
@@ -61,30 +61,30 @@ pub fn (mut tp Params) get_int_default(key string, defval int) ?int {
 	return defval
 }
 
-//return list of strings
+// return list of strings
 pub fn (mut tp Params) get_list(key string) ?[]string {
-	mut res:=[]string{}
+	mut res := []string{}
 	if tp.exists(key) {
 		mut valuestr := tp.get(key) ?
-		if valuestr.contains(","){
-			valuestr = valuestr.trim(" ,")
-			res = valuestr.split(",").map(it.trim(" '\""))
-		}else{
-			res = [valuestr.trim(" '\"")]
+		if valuestr.contains(',') {
+			valuestr = valuestr.trim(' ,')
+			res = valuestr.split(',').map(it.trim(' \'"'))
+		} else {
+			res = [valuestr.trim(' \'"')]
 		}
 	}
 	return res
 }
 
 pub fn (mut tp Params) get_list_int(key string) ?[]int {
-	mut res:=[]int{}
+	mut res := []int{}
 	if tp.exists(key) {
 		mut valuestr := tp.get(key) ?
-		if valuestr.contains(","){
-			valuestr = valuestr.trim(" ,")
-			res = valuestr.split(",").map(it.trim(" '\"").int())
-		}else{
-			res = [valuestr.trim(" '\"").int()]
+		if valuestr.contains(',') {
+			valuestr = valuestr.trim(' ,')
+			res = valuestr.split(',').map(it.trim(' \'"').int())
+		} else {
+			res = [valuestr.trim(' \'"').int()]
 		}
 	}
 	return res

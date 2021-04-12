@@ -1,8 +1,7 @@
 module myconfig
 
-
-//websites are under $ipaddr/$shortname
-//wiki are under $ipaddr/info/$shortname
+// websites are under $ipaddr/$shortname
+// wiki are under $ipaddr/info/$shortname
 
 fn site_config(mut c ConfigRoot) {
 	c.sites << SiteConfig{
@@ -11,7 +10,9 @@ fn site_config(mut c ConfigRoot) {
 		url: 'https://github.com/threefoldfoundation/www_threefold_io'
 		cat: SiteCat.web
 		descr: 'is our entry point for everyone, redirect to the detailed websites underneith.'
-		domains: ['www.threefold.io', 'www.threefold.me', 'threefold.me', 'new.threefold.io', 'staging.threefold.io', 'threefold.io']
+		domains: ['www.threefold.io', 'www.threefold.me', 'threefold.me', 'new.threefold.io', 'staging.threefold.io',
+			'threefold.io',
+		]
 	}
 	c.sites << SiteConfig{
 		name: 'www_threefold_cloud'
@@ -35,7 +36,7 @@ fn site_config(mut c ConfigRoot) {
 		url: 'https://github.com/threefoldfoundation/www_threefold_twin'
 		cat: SiteCat.web
 		domains: ['mydigitaltwin.io', 'www.mydigitaltwin.io']
-		descr: "you digital life"
+		descr: 'you digital life'
 	}
 	c.sites << SiteConfig{
 		name: 'www_threefold_marketplace'
@@ -43,7 +44,7 @@ fn site_config(mut c ConfigRoot) {
 		url: 'https://github.com/threefoldfoundation/www_threefold_marketplace'
 		cat: SiteCat.web
 		domains: ['now.threefold.io', 'marketplace.threefold.io', 'now.threefold.me', 'marketplace.threefold.me']
-		descr: "apps for community builders, runs on top of evdc"
+		descr: 'apps for community builders, runs on top of evdc'
 	}
 	c.sites << SiteConfig{
 		name: 'www_conscious_internet'
@@ -69,15 +70,15 @@ fn site_config(mut c ConfigRoot) {
 		url: 'https://github.com/threefoldfoundation/www_examplesite'
 		cat: SiteCat.web
 		domains: ['example.threefold.io']
-		descr :''
-	}	
+		descr: ''
+	}
 	c.sites << SiteConfig{
 		name: 'www_uhuru'
 		shortname: 'uhuru'
 		url: 'https://github.com/uhuru-me/www_uhuru'
 		cat: SiteCat.web
 		domains: ['www.uhuru.me']
-		descr :'uhuru (freedom) peer2peer cloud.'
+		descr: 'uhuru (freedom) peer2peer cloud.'
 	}
 	c.sites << SiteConfig{
 		name: 'www_mitaa'
@@ -85,16 +86,16 @@ fn site_config(mut c ConfigRoot) {
 		url: 'https://github.com/mitaa-me/www_mitaa'
 		cat: SiteCat.web
 		domains: ['www.mitaa.me']
-		descr :'Mitaa website.'
-	}	
+		descr: 'Mitaa website.'
+	}
 	c.sites << SiteConfig{
 		name: 'info_threefold'
 		shortname: 'threefold'
-		//will be moved to this url
-		// url: 'https://github.com/threefoldfoundation/info_threefold'
-		url: 'https://github.com/threefoldfoundation/info_foundation_archive'
+		// will be moved to this url
+		url: 'https://github.com/threefoldfoundation/info_threefold'
+		// url: 'https://github.com/threefoldfoundation/info_foundation_archive'
 		domains: ['info.threefold.io', 'wiki.threefold.io']
-		descr :'wiki for foundation, collaborate, what if farmings, tokens'
+		descr: 'wiki for foundation, collaborate, what if farmings, tokens'
 	}
 	// c.sites << SiteConfig{
 	// 	name: 'info_marketplace'
@@ -106,23 +107,23 @@ fn site_config(mut c ConfigRoot) {
 		shortname: 'uhuru'
 		url: 'https://github.com/uhuru-me/info_uhuru'
 		domains: ['info.uhuru.me']
-		descr :'wiki for uhuru Peer2Peer Cloud.'
-	}	
+		branch: 's'
+		descr: 'wiki for uhuru Peer2Peer Cloud.'
+	}
 	c.sites << SiteConfig{
 		name: 'info_tag'
 		shortname: 'tag'
 		url: 'https://github.com/takeactionglobal/info_tag'
 		domains: ['info.takeactionglobal.org']
-		descr :'wiki for TAG.'
-	}		
+		descr: 'wiki for TAG.'
+	}
 	c.sites << SiteConfig{
 		name: 'info_mitaa'
 		shortname: 'mitaa'
 		url: 'https://github.com/mitaa-me/info_mitaa'
-		domains: ['info.mitaa.me','info.mitaa.org']
-		descr :'wiki for Mitaa.'
-	}		
-		
+		domains: ['info.mitaa.me', 'info.mitaa.org']
+		descr: 'wiki for Mitaa.'
+	}
 	c.sites << SiteConfig{
 		name: 'info_sdk'
 		shortname: 'sdk'
@@ -135,45 +136,42 @@ fn site_config(mut c ConfigRoot) {
 		shortname: 'legal'
 		url: 'https://github.com/threefoldfoundation/info_legal'
 		domains: ['legal.threefold.io', 'legal-info.threefold.io', 'legal-wiki.threefold.io']
-		descr :''
+		descr: ''
 	}
 	c.sites << SiteConfig{
 		name: 'info_cloud'
 		shortname: 'cloud'
 		url: 'https://github.com/threefoldfoundation/info_cloud'
 		domains: ['cloud-info.threefold.io', 'cloud-wiki.threefold.io']
-		descr :'how to use the cloud for deploying apps: evdc, kubernetes, planetary fs, ... + marketplace solutions '
+		descr: 'how to use the cloud for deploying apps: evdc, kubernetes, planetary fs, ... + marketplace solutions '
 	}
 	c.sites << SiteConfig{
 		name: 'info_tftech'
 		shortname: 'tftech'
 		url: 'https://github.com/threefoldtech/info_tftech'
 		domains: ['info.threefold.tech']
-		descr :''
+		descr: ''
 	}
 	c.sites << SiteConfig{
 		name: 'info_digitaltwin'
 		shortname: 'twin'
 		url: 'https://github.com/threefoldfoundation/info_digitaltwin.git'
 		domains: ['info.mydigitaltwin.io', 'wiki.mydigitaltwin.io']
-		descr :''
+		descr: ''
 	}
-
 	c.sites << SiteConfig{
 		name: 'info_bettertoken'
 		shortname: 'bt'
 		url: 'https://github.com/BetterToken/info_bettertoken.git'
 		domains: ['bt-info.threefold.io']
-		descr :''
+		descr: ''
 	}
-
-	
 	c.sites << SiteConfig{
 		name: 'data_threefold'
 		shortname: 'data'
 		url: 'https://github.com/threefoldfoundation/data_threefold'
 		cat: SiteCat.data
 		domains: []string{}
-		descr :''
+		descr: ''
 	}
 }
