@@ -5,20 +5,32 @@ import os
 pub struct RepoGetFromUrlArgs {
 mut:
 	url    string
-	branch string = 'development'
+	branch string
 	pull   bool // will pull if this is set
+	reset  bool // this means will pull and reset all changes
 }
 
 // will get repo starting from url, if the repo does not exist, only then will pull
+// if pull is set on true, will then pull as well 
+// struct RepoGetFromUrlArgs {
+// 	url    string
+// 	branch string
+// 	pull   bool // will pull if this is set
+// 	reset bool //this means will pull and reset all changes
+// }
 pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs) ?&GitRepo {
 	mut addr := gitstructure.addr_get_from_url(args.url) or {
 		return error('cannot get addr from url:$err')
 	}
-	addr.branch = args.branch
+	if addr.branch != '' && args.branch != '' && addr.branch != args.branch {
+		return error('conflict in branch names.\naddr:\n$addr\nargs:\n$args')
+	}
+	if addr.branch == '' {
+		addr.branch = args.branch
+	}
 	args2 := RepoGetArgs{
 		name: addr.name
 		account: addr.account
-		pull: args.pull
 	}
 	if !gitstructure.repo_exists(args2) {
 		// repo does not exist yet
@@ -27,43 +39,47 @@ pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs
 			addr: addr
 			id: gitstructure.repos.len
 		}
-		_ := gitstructure.repo_get(args2) or {
+		mut r0 := gitstructure.repo_get(args2) or {
 			// means could not pull need to remove the repo from the list again
 			gitstructure.repos.delete_last()
 			return error('Could not clone the repo from ${args.url}.\nError:$err')
 		}
+		r0.check(args.pull,args.reset)?
+		return r0
+	} else {
+		mut r := gitstructure.repo_get(args2) or { return error('cannot load git $args.url\nerr') }
+		r.addr = addr
+		r.check(args.pull,args.reset)?
+		return r
 	}
-	// println(args2)
-	mut r := gitstructure.repo_get(args2) or { return error('cannot load git $args.url\nerr') }
-	return r
 }
 
 pub struct RepoGetArgs {
 mut:
 	account string
 	name    string // is the name of the repository
-	pull    bool   // will pull if this is set
 }
 
 // will return first found git repo
 // to use gitstructure.repo_get({account:"something",name:"myname"})
 // or gitstructure.repo_get({name:"myname"})
-pub fn (mut gitstructure GitStructure) repo_get(addr RepoGetArgs) ?&GitRepo {
+// struct RepoGetArgs {
+// 	account string
+// 	name    string // is the name of the repository
+// 	pull    bool   // will pull if this is set, but not reset
+// 	reset bool //this means will pull and reset all changes
+// }
+// THIS FUNCTION DOES NOT EXECUTE THE CHECK !!!
+pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) ?&GitRepo {
 	for r in gitstructure.repos {
-		if r.addr.name == addr.name {
-			if addr.account == '' || addr.account == r.addr.account {
+		if r.addr.name == args.name {
+			if args.account == '' || args.account == r.addr.account {
 				mut r2 := &gitstructure.repos[r.id]
-				if !os.exists(r2.path) {
-					// is not checked out yet need to do
-					println(' - repo on $r2.path did not exist yet will pull.')
-					r2.pull({}) ?
-				}
-				r2.check()
 				return r2
 			}
 		}
 	}
-	return error("Could not find repo for account:'$addr.account' name:'$addr.name'")
+	return error("Could not find repo for account:'$args.account' name:'$args.name'")
 }
 
 // to use gitstructure.repo_get({account:"something",name:"myname"})

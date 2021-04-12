@@ -30,23 +30,25 @@ pub fn sites_list(cmd &cli.Command) ? {
 	}
 }
 
-//if web true then will download websites
+// if web true then will download websites
 pub fn sites_download(cmd cli.Command, web bool) ? {
 	mut cfg := config_get(cmd) ?
 	mut gt := gittools.new(cfg.paths.code) or { return error('cannot load gittools:$err') }
 	// println(' - get all code repositories.')
 
 	for mut sc in cfg.sites {
-		if sc.cat == myconfig.SiteCat.web && !web{
+		if sc.cat == myconfig.SiteCat.web && !web {
 			continue
 		}
-		if sc.cat == myconfig.SiteCat.data && !web{
+		if sc.cat == myconfig.SiteCat.data && !web {
 			continue
-		}		
-		// println(' - get:$sc.url')
-		gt.repo_get_from_url(url: sc.url, pull: sc.pull) or {
-			println(' - WARNING: could not download site $sc.url, do you have rights?')
 		}
+		println(' - get:$sc.url')
+		mut r := gt.repo_get_from_url(url: sc.url, pull: sc.pull, reset: sc.reset, branch: sc.branch) or {
+			return error(' - ERROR: could not download site $sc.url, do you have rights?\n$err\n$sc')
+		}
+		println(r)
+		r.check(false, false) ?
 	}
 }
 
@@ -54,7 +56,7 @@ pub fn sites_install(cmd cli.Command) ? {
 	mut cfg := config_get(cmd) ?
 	println(' - sites install.')
 	mut first := true
-	sites_download(cmd,true) ?
+	sites_download(cmd, true) ?
 	for mut sc in cfg.sites_get() {
 		if sc.cat == myconfig.SiteCat.web {
 			website_install(sc.name, first, &cfg) ?
@@ -74,9 +76,7 @@ fn flag_message_get(cmd cli.Command) string {
 
 fn flag_repo_do(cmd cli.Command, reponame string, site myconfig.SiteConfig) bool {
 	flags := cmd.flags.get_all_found()
-	repo := flags.get_string('repo') or {
-		return true
-	}
+	repo := flags.get_string('repo') or { return true }
 	// println("match $reponame $site.shortname")
 	if reponame.to_lower().contains(repo.to_lower()) {
 		return true
@@ -92,7 +92,9 @@ pub fn sites_pull(cmd cli.Command) ? {
 	mut cfg := config_get(cmd) ?
 	println(' - sites pull.')
 	codepath := cfg.paths.code
-	mut gt := gittools.new(codepath) or { return error('ERROR: cannot load gittools:$err') }
+	mut gt := gittools.new(codepath) or {
+		return error_with_code('ERROR: cannot load gittools:$err', 2)
+	}
 	for mut sc in cfg.sites_get() {
 		mut repo := gt.repo_get(name: sc.reponame()) or {
 			return error('ERROR: cannot get repo:$err')
@@ -101,7 +103,12 @@ pub fn sites_pull(cmd cli.Command) ? {
 			continue
 		}
 		println(' - pull  $repo.path')
-		repo.pull(force: cfg.reset) or { return error('ERROR: cannot pull repo $repo.path :$err') }
+
+		if sc.reset {
+			repo.check(false, true) ?
+		} else {
+			repo.pull() or { return error('ERROR: cannot pull repo $repo.path :$err') }
+		}
 	}
 }
 
@@ -178,7 +185,7 @@ pub fn sites_pushcommit(cmd cli.Command) ? {
 			repo.commit(msg) or { return error('ERROR: cannot commit repo $repo.path :$err') }
 		}
 		println('     > pull')
-		repo.pull(force: cfg.reset) or { return error('ERROR: cannot pull repo $repo.path :$err') }
+		repo.pull() or { return error('ERROR: cannot pull repo $repo.path :$err') }
 		if change {
 			println('     > push')
 			repo.push() or { return error('ERROR: cannot push repo $repo.path :$err') }

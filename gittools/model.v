@@ -16,7 +16,7 @@ pub mut:
 struct GitRepo {
 	id int [skip]
 pub:
-	path string
+	path string // path on filesystem
 pub mut:
 	addr  GitAddr
 	state GitStatus
@@ -31,5 +31,5 @@ pub mut:
 	path     string // path in the repo (not on filesystem)
 	branch   string
 	anker    string // position in the file
-	depth    int = 1
+	depth    int // 0 means we have all depth
 }

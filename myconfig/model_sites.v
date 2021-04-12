@@ -14,6 +14,23 @@ pub mut:
 	path_code string
 	domains   []string
 	descr     string
+	circles   []TFGroup
+	acl       []SiteACE // access control list
+}
+
+pub struct TFGroup {
+pub mut:
+	name           string // needs to be unique
+	members_users  []string
+	members_groups []string
+}
+
+pub struct SiteACE {
+pub mut:
+	groups  []string
+	users   []string
+	rights  string   // default R today
+	secrets []string // is list of secrets in stead of threefold connect which can give access
 }
 
 pub enum SiteCat {
@@ -23,11 +40,13 @@ pub enum SiteCat {
 }
 
 pub fn (mut site SiteConfig) reponame() string {
-	mut name2 := os.base(site.url)
-	if name2.ends_with('.git') {
-		name2 = name2[..name2.len - 4]
+	if site.name == '' {
+		site.name = os.base(site.url)
+		if site.name.ends_with('.git') {
+			site.name = site.name[..site.name.len - 4]
+		}
 	}
-	return name2
+	return site.name
 }
 
 pub fn (config ConfigRoot) site_get(name string) ?SiteConfig {

@@ -1,7 +1,7 @@
 module myconfig
 
 import os
-import gittools
+// import gittools
 import myconfig
 import json
 
@@ -44,6 +44,7 @@ pub fn save(path string) ? {
 		path2 = '~/.publisher/sites.json'
 	}
 	path2 = os.real_path(path2).replace('~', os.home_dir())
+	println(' - write config file on $path2')
 	os.write_file(path2, txt) ?
 }
 
@@ -55,23 +56,33 @@ pub fn get(web bool) ?ConfigRoot {
 		conf.sites = []SiteConfig{}
 		conf.sites = json.decode([]SiteConfig, txt) ?
 	}
-	mut gt := gittools.new(conf.paths.code) or { return error('ERROR: cannot load gittools:$err') }
-	for mut site in conf.sites {
-		// println(' >> $site.name')
-		if !web && site.cat == myconfig.SiteCat.web {
-			continue
-		}
-		if site.path_code == '' {
-			// println(' >> $site.reponame() ')
-			mut repo := gt.repo_get(name: site.reponame()) or {
-				// return error('ERROR: cannot find repo: $site.name\n$err')
-				// do NOTHING, just ignore the site to work with
-				// print(err)
-				// println(' - WARNING: did not find site: $site.name, $err')				
-				continue
-			}
-			site.path_code = repo.path_get()
-		}
-	}
+	// mut gt := gittools.new(conf.paths.code) or { return error('ERROR: cannot load gittools:$err') }
+	// for mut site in conf.sites {
+	// 	// println(' >> $site.name')
+	// 	if !web && site.cat == myconfig.SiteCat.web {
+	// 		continue
+	// 	}
+
+	// 	gt.repo_get(name: site.reponame()) or {
+	// 		// return error('ERROR: cannot find repo: $site.name\n$err')
+	// 		// do NOTHING, just ignore the site to work with
+	// 		// print(err)
+	// 		// panic(' - ERROR: did not find site: $site.name, $err')
+	// 		continue
+	// 	}
+
+	// 	// if site.path_code == '' {
+	// 	// 	// println(' >> $site.reponame() ')
+	// 	// 	// mut repo := 
+	// 	// 	gt.repo_get(name: site.reponame()) or {
+	// 	// 		// return error('ERROR: cannot find repo: $site.name\n$err')
+	// 	// 		// do NOTHING, just ignore the site to work with
+	// 	// 		// print(err)
+	// 	// 		// panic(' - ERROR: did not find site: $site.name, $err')
+	// 	// 		continue
+	// 	// 	}
+	// 	// site.path_code = repo.path_get()
+	// 	// }
+	// }
 	return conf
 }

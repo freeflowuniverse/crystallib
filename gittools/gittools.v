@@ -33,8 +33,8 @@ pub fn ssh_agent_load(keypath string) ? {
 // }
 
 // check if key loaded
-// return nr of keys found & if matched
-pub fn ssh_agent_key_loaded(name string) (int, bool) {
+// return if key found, and how many ssh keys found in general
+pub fn ssh_agent_key_loaded(name string) (bool, int) {
 	mut counter := 0
 	mut exists := false
 	res := os.execute('ssh-add -l')
@@ -44,14 +44,13 @@ pub fn ssh_agent_key_loaded(name string) (int, bool) {
 				continue
 			}
 			counter++
-			if line.contains('.ssh/$name') {
+			if line.contains('.ssh/$name ') {
+				// space at end is needed because then we know its not partial part of ssh key
 				exists = true
 			}
 		}
-	} else {
-		return 0, false
 	}
-	return counter, exists
+	return exists, counter
 }
 
 // the factory for getting the gitstructure

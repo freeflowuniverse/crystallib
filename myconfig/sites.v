@@ -4,6 +4,23 @@ module myconfig
 // wiki are under $ipaddr/info/$shortname
 
 fn site_config(mut c ConfigRoot) {
+	gr_tf1 := TFGroup{
+		name: 'tf1'
+		members_users: ['kristof', 'adnan', 'rob']
+	}
+	gr_tf2 := TFGroup{
+		name: 'tf2'
+		members_users: ['polleke']
+		members_groups: ['tf1']
+	}
+
+	ace1 := SiteACE{
+		groups: ['tf2']
+		users: ['polleke2']
+		rights: 'R'
+		secrets: ['1234', '5678']
+	}
+
 	c.sites << SiteConfig{
 		name: 'www_threefold_io'
 		shortname: 'threefold'
@@ -13,6 +30,7 @@ fn site_config(mut c ConfigRoot) {
 		domains: ['www.threefold.io', 'www.threefold.me', 'threefold.me', 'new.threefold.io', 'staging.threefold.io',
 			'threefold.io',
 		]
+		circles: [gr_tf1, gr_tf2]
 	}
 	c.sites << SiteConfig{
 		name: 'www_threefold_cloud'
@@ -21,6 +39,7 @@ fn site_config(mut c ConfigRoot) {
 		cat: SiteCat.web
 		domains: ['cloud.threefold.io', 'cloud.threefold.me']
 		descr: 'for people looking to deploy solutions on top of a cloud, alternative to e.g. digital ocean'
+		acl: [ace1]
 	}
 	c.sites << SiteConfig{
 		name: 'www_threefold_farming'

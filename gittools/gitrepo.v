@@ -11,10 +11,6 @@ pub fn (mut repo GitRepo) path_get() string {
 	}
 }
 
-fn (mut repo GitRepo) url_get() string {
-	return repo.addr.url_get()
-}
-
 // if there are changes then will return 'true', otherwise 'false'
 pub fn (mut repo GitRepo) changes() ?bool {
 	cmd := 'cd $repo.addr.path_get() && git status'
@@ -37,87 +33,102 @@ pub fn (mut repo GitRepo) changes() ?bool {
 	return true
 }
 
-pub struct PullArgs {
-	force      bool
-	force_ssh  bool
-	force_http bool
+fn (mut repo GitRepo) get_clone_cmd(http bool) string {
+	url := repo.url_get(http)
+	mut cmd := 'mkdir -p $repo.addr.path_account_get() && cd $repo.addr.path_account_get() && git clone $url'
+	if repo.addr.branch != '' {
+		cmd += ' -b $repo.addr.branch'
+	}
+	if repo.addr.depth != 0 {
+		cmd += ' --depth=$repo.addr.depth'
+		//  && cd $repo.addr.name && git fetch
+		// why was this there? 
+	}
+	return cmd
 }
 
-pub fn (mut repo GitRepo) repo_url_get() ?string {
-	key_path := '$os.home_dir()/.ssh/$repo.addr.name'
+pub fn (mut repo GitRepo) check(pull_force_ bool, reset_force_ bool) ? {
+	mut pull_force := pull_force_
+	mut reset_force := reset_force_
+	if repo.state != GitStatus.ok {
+		// need to get the status of the repo 
+		// println(' - repo $repo.addr.name check')
+		// println(repo)
 
-	// println(" - check keypath: $key_path")
+		mut needs_to_be_ssh := false
 
-	// println(ssh_agent_key_loaded("info_digitaltwin"))
-	// panic("ss")
-
-	nrkeys, exists := ssh_agent_key_loaded(repo.addr.name)
-	// println(' >>> $repo.addr.name $nrkeys, $exists')
-
-	if os.exists(key_path) {
-		if (!exists) || nrkeys > 1 {
-			ssh_agent_reset() ?
-			ssh_agent_load(key_path) ?
-			return repo.addr.url_ssh_get()
-		} else if exists && nrkeys == 1 {
-			return repo.addr.url_ssh_get()
-		} else {
-			return repo.addr.url_http_get()
+		// check if there is a custom key to be used (sshkey)
+		needs_to_be_ssh0 := repo.ssh_key_load_if_exists() ?
+		if needs_to_be_ssh0 {
+			needs_to_be_ssh = true
 		}
+
+		// first check if path does not exist yet, if not need to clone
+		if !os.exists(repo.path_get()) {
+			if !needs_to_be_ssh && ssh_agent_loaded() {
+				needs_to_be_ssh = true
+			}
+			// get the url (http or ssh)
+			mut cmd := repo.get_clone_cmd(!needs_to_be_ssh)
+			mut ok := true
+			process.execute_silent(cmd) or {
+				println(' GIT FAILED: $cmd')
+				ok = false
+				if needs_to_be_ssh {
+					// get new cmd but now based on http
+					cmd = repo.get_clone_cmd(true)
+					needs_to_be_ssh = false
+				} else {
+					return error('Cannot pull repo (http): ${repo.path}. Error was $err')
+				}
+			}
+			if !ok {
+				process.execute_silent(cmd) or {
+					println(' GIT FAILED 2: $cmd')
+					return error('Cannot pull repo: ${repo.path}. Error was $err')
+				}
+			}
+			// can return safely, because pull did work
+			repo.state = GitStatus.ok
+			return
+		}
+
+		// check the branch, see if branch on FS is same as what is required if set
+
+		if reset_force {
+			repo.remove_changes() ?
+		}
+
+		if repo.addr.branch != '' {
+			mut branchname := repo.branch_get() ?
+			branchname = branchname.trim("\n ")
+			if branchname != repo.addr.branch {
+				println('-  branch switch $branchname -> $repo.addr.branch')
+				repo.branch_switch(repo.addr.branch) ?
+			}
+			repo.state = GitStatus.ok
+			return
+		}
+
+		if pull_force {
+			repo.pull() ?
+		}
+
+		repo.state = GitStatus.ok
 	}
-	if nrkeys == 1 {
-		return repo.addr.url_ssh_get()
-	} else {
-		return repo.addr.url_http_get()
-	}
+	return
 }
 
 // pulls remote content in, will fail if there are local changes
 // when using force:true it means we reset, overwrite all changes
-pub fn (mut repo GitRepo) pull(args PullArgs) ? {
-	mut cmd := ''
-
-	url := repo.repo_url_get() ?
-
-	println(' - PULL: $url')
-
-	if os.exists(repo.path_get()) {
-		// LETS NOT DO YET, we first need to make sure that a repo can be loaded with ssh, there needs to be a check
-		// if ssh_agent_loaded() {
-		// 	repo.change_to_ssh() or {
-		// 		if err != '' {
-		// 			return error('cannot change to ssh for $repo.path')
-		// 		}
-		// 	}
-		// }
-
-		if args.force {
-			if repo.addr.branch == '' {
-				cmd = 'cd $repo.path_get() && git clean -xfd && git checkout .'
-			} else {
-				cmd = 'cd $repo.path_get() && git clean -xfd && git checkout . && git checkout $repo'
-			}
-			process.execute_silent(cmd) or {
-				return error('Cannot pull repo: ${repo.path}. Error was $err')
-			}
-		}
-		cmd = 'cd $repo.addr.path_get() && git pull'
-
-		process.execute_silent(cmd) or {
-			println(' GIT FAILED: $cmd')
-			return error('Cannot pull repo: ${repo.path}. Error was $err')
-		}
+pub fn (mut repo GitRepo) pull() ? {
+	println(' - PULL: ${repo.url_get(true)}')
+	if !os.exists(repo.path_get()) {
+		repo.check(false, false) ?
 	} else {
-		cmd = 'mkdir -p $repo.addr.path_account_get() && cd $repo.addr.path_account_get() && git clone $url'
-		if repo.addr.branch != '' {
-			cmd += ' -b $repo.addr.branch'
-		}
-		if repo.addr.depth != 0 {
-			cmd += ' --depth=$repo.addr.depth  && cd $repo.addr.name && git fetch'
-		}
-
-		process.execute_silent(cmd) or {
-			println(' GIT FAILED: $cmd')
+		cmd2 := 'cd $repo.addr.path_get() && git pull'
+		process.execute_silent(cmd2) or {
+			println(' GIT PULL FAILED: $cmd2')
 			return error('Cannot pull repo: ${repo.path}. Error was $err')
 		}
 	}
@@ -154,7 +165,9 @@ pub fn (mut repo GitRepo) remove_changes() ? {
 		set +e
 		#checkout . -f
 		git reset HEAD --hard
-		git clean -fd
+		git clean -fd		
+		#git clean -xfd && git checkout .
+		git checkout .
 		echo ""
 		'
 		process.execute_silent(cmd) or {
@@ -166,48 +179,27 @@ pub fn (mut repo GitRepo) remove_changes() ? {
 }
 
 pub fn (mut repo GitRepo) push() ? {
-	repo.repo_url_get() ?
-
 	cmd := 'cd $repo.addr.path_get() && git push'
 	process.execute_silent(cmd) or {
 		return error('Cannot push repo: ${repo.path}. Error was $err')
 	}
 }
 
-// make sure we use ssh instead of https in the config file
-fn (mut repo GitRepo) change_to_ssh() ? {
-	path2 := repo.path_get()
-	if !os.exists(path2) {
-		// nothing to do
-		return
+pub fn (mut repo GitRepo) branch_get() ?string {
+	cmd := 'cd $repo.addr.path_get() && git rev-parse --abbrev-ref HEAD'
+	branch := process.execute_silent(cmd) or {
+		return error('Cannot get branch name from repo: ${repo.path}. Error was $err for cmd $cmd')
 	}
-
-	pathconfig := os.join_path(path2, '.git', 'config')
-	if !os.exists(pathconfig) {
-		return error("path: '$path2' is not a git dir, missed a .git/config file. Could not change git to ssh repo.")
-	}
-	content := os.read_file(pathconfig) or {
-		return error('Failed to load config $pathconfig for sshconfig')
-	}
-
-	mut result := []string{}
-	mut line2 := ''
-	mut found := false
-	for line in content.split_into_lines() {
-		// see if we can find the line which has the url
-		pos := line.index('url =') or { 0 }
-		if pos > 0 {
-			line2 = line[0..pos] + 'url = ' + repo.url_get()
-			found = true
-		} else {
-			line2 = line
-		}
-		result << line2
-	}
-
-	if found {
-		os.write_file(pathconfig, result.join_lines()) or {
-			return error('Failed to write config $pathconfig in change to ssh')
-		}
-	}
+	return branch.trim(' ')
 }
+
+pub fn (mut repo GitRepo) branch_switch(branchname string) ? {
+	cmd := 'cd $repo.addr.path_get() && git checkout $branchname'
+	process.execute_silent(cmd) or {
+		// println('GIT CHECKOUT FAILED: $cmd_checkout')
+		return error('Cannot pull repo: ${repo.path}. Error was $err \n cmd: $cmd')
+	}
+	// println(cmd)
+	repo.pull()?
+}
+

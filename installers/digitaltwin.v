@@ -7,11 +7,10 @@ import process
 import myconfig
 import gittools
 
-
-pub fn digitaltwin_install(mut cfg &myconfig.ConfigRoot, update bool) ? {
+pub fn digitaltwin_install(mut cfg myconfig.ConfigRoot, update bool) ? {
 	base := cfg.paths.base
 	mut gt := gittools.new(cfg.paths.code) ?
-	
+
 	mut pull := update
 
 	url := 'https://github.com/threefoldtech/digitaltwin.git'
@@ -21,11 +20,11 @@ pub fn digitaltwin_install(mut cfg &myconfig.ConfigRoot, update bool) ? {
 
 	if !os.exists('$repo.path/publisher/node_modules') || update == true {
 		println('- will make sure repo is up2date')
-		repo.pull(gittools.PullArgs{}) ?
+		repo.pull() ?
 
 		println('- will download static files')
-		
-		cfg.update_staticfiles(true)?
+
+		cfg.update_staticfiles(true) ?
 
 		println(' - will install digitaltwin')
 
@@ -46,7 +45,7 @@ pub fn digitaltwin_install(mut cfg &myconfig.ConfigRoot, update bool) ? {
 	println(' - digital twin installed/updated')
 }
 
-pub fn digitaltwin_start(mut cfg &myconfig.ConfigRoot, isproduction bool, update bool) ? {
+pub fn digitaltwin_start(mut cfg myconfig.ConfigRoot, isproduction bool, update bool) ? {
 	digitaltwin_install(mut cfg, update) ?
 	base := cfg.paths.base
 
@@ -60,7 +59,7 @@ pub fn digitaltwin_start(mut cfg &myconfig.ConfigRoot, isproduction bool, update
 	println(' - will start digitaltwin')
 	mut script := ''
 
-	if !isproduction{
+	if !isproduction {
 		script = '
 				set -e
 				export NVM_DIR=$base
@@ -70,7 +69,7 @@ pub fn digitaltwin_start(mut cfg &myconfig.ConfigRoot, isproduction bool, update
 				export PATH=$cfg.nodejs.path/bin:\$PATH
 				node server.js
 				'
-	}else{
+	} else {
 		script = '
 		set -e
 		export NVM_DIR=$base
@@ -83,7 +82,6 @@ pub fn digitaltwin_start(mut cfg &myconfig.ConfigRoot, isproduction bool, update
 		pm2 save
 		'
 	}
-	
 
 	// TODO: need to have a config file being written for the digitaltwin server to use !!!
 	// TODO: the config file is filled in from this tools
@@ -94,8 +92,7 @@ pub fn digitaltwin_start(mut cfg &myconfig.ConfigRoot, isproduction bool, update
 	println(' - digital twin started')
 }
 
-pub fn digitaltwin_restart(mut cfg &myconfig.ConfigRoot, isproduction bool) ? {
-
+pub fn digitaltwin_restart(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
 	base := cfg.paths.base
 
 	mut gt := gittools.new(cfg.paths.code) ?
@@ -108,7 +105,7 @@ pub fn digitaltwin_restart(mut cfg &myconfig.ConfigRoot, isproduction bool) ? {
 	println(' - will restart digitaltwin')
 	mut script := ''
 
-	if !isproduction{
+	if !isproduction {
 		script = '
 				set -e
 				export NVM_DIR=$base
@@ -119,7 +116,7 @@ pub fn digitaltwin_restart(mut cfg &myconfig.ConfigRoot, isproduction bool) ? {
 				pkill -9 node
 				node server.js
 				'
-	}else{
+	} else {
 		script = '
 		set -e
 		export NVM_DIR=$base
@@ -136,19 +133,18 @@ pub fn digitaltwin_restart(mut cfg &myconfig.ConfigRoot, isproduction bool) ? {
 	println(' - digital twin restarted')
 }
 
-pub fn digitaltwin_reload(mut cfg &myconfig.ConfigRoot, isproduction bool) ? {
-
+pub fn digitaltwin_reload(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
 	base := cfg.paths.base
 
 	println(' - will reload digitaltwin')
 	mut script := ''
 
-	if !isproduction{
+	if !isproduction {
 		script = '
 				set -e
 				kill -10 `ps aux | grep "node server.js" | head -n 1 | tr -s " " | cut -d " " -f 2`
 				'
-	}else{
+	} else {
 		script = '
 		set -e
 		export NVM_DIR=$base
@@ -163,19 +159,18 @@ pub fn digitaltwin_reload(mut cfg &myconfig.ConfigRoot, isproduction bool) ? {
 	println(' - digital twin restarted')
 }
 
-pub fn digitaltwin_stop(mut cfg &myconfig.ConfigRoot, isproduction bool) ? {
-
+pub fn digitaltwin_stop(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
 	base := cfg.paths.base
 
 	println(' - will stop digitaltwin')
 	mut script := ''
 
-	if !isproduction{
+	if !isproduction {
 		script = '
 				set -e
 				kill -9 `ps aux | grep "node server.js" | head -n 1 | tr -s " " | cut -d " " -f 2`
 				'
-	}else{
+	} else {
 		script = '
 		set -e
 		export NVM_DIR=$base
@@ -190,19 +185,18 @@ pub fn digitaltwin_stop(mut cfg &myconfig.ConfigRoot, isproduction bool) ? {
 	println(' - digital twin reloaded')
 }
 
-pub fn digitaltwin_status(mut cfg &myconfig.ConfigRoot, isproduction bool) ? {
-
+pub fn digitaltwin_status(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
 	base := cfg.paths.base
 
 	println(' - will check status of digitaltwin')
 	mut script := ''
 
-	if !isproduction{
+	if !isproduction {
 		script = '
 				set -e
 				ps -C "node server"  >/dev/null && echo "Running" || echo "Not running"
 				'
-	}else{
+	} else {
 		script = '
 		set -e
 		export NVM_DIR=$base
@@ -216,19 +210,18 @@ pub fn digitaltwin_status(mut cfg &myconfig.ConfigRoot, isproduction bool) ? {
 	process.execute_interactive('$script') ?
 }
 
-pub fn digitaltwin_logs(mut cfg &myconfig.ConfigRoot, isproduction bool) ? {
-
+pub fn digitaltwin_logs(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
 	base := cfg.paths.base
 
 	println(' - will check logs of digitaltwin')
 	mut script := ''
 
-	if !isproduction{
+	if !isproduction {
 		script = '
 				set -e
 				echo "Check logs @ ~/codewww/github/threefoldtech/digitaltwin/publisher/logs"
 				'
-	}else{
+	} else {
 		script = '
 		set -e
 		export NVM_DIR=$base
@@ -241,6 +234,3 @@ pub fn digitaltwin_logs(mut cfg &myconfig.ConfigRoot, isproduction bool) ? {
 	}
 	process.execute_interactive('$script') ?
 }
-
-
-
