@@ -14,7 +14,7 @@ pub fn digitaltwin_install(mut cfg myconfig.ConfigRoot, update bool) ? {
 	mut pull := update
 
 	url := 'https://github.com/threefoldtech/digitaltwin.git'
-	mut repo := gt.repo_get_from_url(url: url, branch: 'master', pull: pull) or {
+	mut repo := gt.repo_get_from_url(url: url, branch: 'main', pull: pull) or {
 		return error('cannot pull digital twin git repo:\n$url\n$err')
 	}
 
@@ -52,7 +52,7 @@ pub fn digitaltwin_start(mut cfg myconfig.ConfigRoot, isproduction bool, update 
 	mut gt := gittools.new(cfg.paths.code) ?
 
 	url := 'https://github.com/threefoldtech/digitaltwin.git'
-	mut repo := gt.repo_get_from_url(url: url, branch: 'master') or {
+	mut repo := gt.repo_get_from_url(url: url, branch: 'main') or {
 		return error('cannot pull digital twin git repo:\n$url\n$err')
 	}
 
@@ -98,7 +98,7 @@ pub fn digitaltwin_restart(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
 	mut gt := gittools.new(cfg.paths.code) ?
 
 	url := 'https://github.com/threefoldtech/digitaltwin.git'
-	mut repo := gt.repo_get_from_url(url: url, branch: 'master') or {
+	mut repo := gt.repo_get_from_url(url: url, branch: 'main') or {
 		return error('cannot pull digital twin git repo:\n$url\n$err')
 	}
 
