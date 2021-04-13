@@ -22,19 +22,6 @@ struct PublisherDef {
 	site string
 }
 
-pub struct RewriteRole {
-	pub mut:
-		redirect map[string]string
-		rewrite map[string]string
-}
-
-pub struct Acls {
-	pub mut:
-		users []string
-		groups []string
-		password string   
-}
-
 pub fn (mut publisher Publisher) errors_get(site Site) ?PublisherErrors {
 	mut errors := PublisherErrors{}
 
@@ -79,18 +66,6 @@ pub fn (mut publisher Publisher) flatten() ? {
 	
 	}
 
-	
-	mut role := RewriteRole{
-		redirect: map{
-			"from": ""
-			"to": ""
-		}
-		rewrite: map{
-			"in": ""
-			"out": ""
-		}
-	}
-
 	for mut site in publisher.sites {
 		site.files_process(mut publisher) ?
 
@@ -109,19 +84,6 @@ pub fn (mut publisher Publisher) flatten() ? {
 			}
 			// ignore websites
 			if c.shortname == site.name {
-				the_domains := json.encode(map{
-					'domains': c.domains
-				})
-				os.write_file('$dest_dir/.domains.json', the_domains) ?
-				the_repo := json.encode(map{
-					'repo':  c.name
-					'alias': c.shortname
-				})
-				os.write_file('$dest_dir/.repo', the_repo) ?
-				the_acls := json.encode(Acls{})
-				os.write_file('$dest_dir/.acls.json', the_acls) ?
-				os.write_file('$dest_dir/.roles.json', json.encode(role)) ?
-
 				break
 			}
 		}
@@ -134,18 +96,6 @@ pub fn (mut publisher Publisher) flatten() ? {
 		template_wiki_root_save(dest_dir, site.name, site_config.url)
 
 		mut special := ['readme.md', 'README.md', '_sidebar.md', '_navbar.md', 'sidebar.md', 'navbar.md', "favicon.ico"]
-
-		// renameitems := [["_sidebar.md","sidebar.md"],["_navbar.md","navbar.md"]]
-		// for ffrom,tto in renameitems{
-		// 	if os.exists('$site.path/$ffrom'){
-		// 		if os.exists('$site.path/$tto'){
-		// 			os.rm('$site.path/$ffrom') ?
-		// 		}else{
-		// 			os.cp('$site.path/$ffrom','$site.path/$tto')?
-		// 		}				
-		// 		os.rm('$site.path/$ffrom')?
-		// 	}
-		// }
 
 		for file in special {
 			dest_file = file
@@ -180,6 +130,8 @@ pub fn (mut publisher Publisher) flatten() ? {
 			trace_progress('    ${file_counter:4}, creating file $dest_file ...')
 			os.cp(fileobj.path_get(mut publisher), dest_file) ?
 		}
+
+		myconfig.save('') ?
 	}
 }
 

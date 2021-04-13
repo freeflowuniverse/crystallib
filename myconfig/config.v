@@ -50,39 +50,5 @@ pub fn save(path string) ? {
 
 pub fn get(web bool) ?ConfigRoot {
 	mut conf := initial()
-	if os.exists('sites.json') {
-		// println(' - Found config files for sites in local dir.')
-		txt := os.read_file('sites.json') ?
-		conf.sites = []SiteConfig{}
-		conf.sites = json.decode([]SiteConfig, txt) ?
-	}
-	// mut gt := gittools.new(conf.paths.code) or { return error('ERROR: cannot load gittools:$err') }
-	// for mut site in conf.sites {
-	// 	// println(' >> $site.name')
-	// 	if !web && site.cat == myconfig.SiteCat.web {
-	// 		continue
-	// 	}
-
-	// 	gt.repo_get(name: site.reponame()) or {
-	// 		// return error('ERROR: cannot find repo: $site.name\n$err')
-	// 		// do NOTHING, just ignore the site to work with
-	// 		// print(err)
-	// 		// panic(' - ERROR: did not find site: $site.name, $err')
-	// 		continue
-	// 	}
-
-	// 	// if site.path_code == '' {
-	// 	// 	// println(' >> $site.reponame() ')
-	// 	// 	// mut repo := 
-	// 	// 	gt.repo_get(name: site.reponame()) or {
-	// 	// 		// return error('ERROR: cannot find repo: $site.name\n$err')
-	// 	// 		// do NOTHING, just ignore the site to work with
-	// 	// 		// print(err)
-	// 	// 		// panic(' - ERROR: did not find site: $site.name, $err')
-	// 	// 		continue
-	// 	// 	}
-	// 	// site.path_code = repo.path_get()
-	// 	// }
-	// }
 	return conf
 }

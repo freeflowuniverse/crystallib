@@ -14,8 +14,8 @@ pub mut:
 	path_code string
 	domains   []string
 	descr     string
-	groups   []TFGroup
-	acl       []SiteACE // access control list 
+	groups    []TFGroup
+	acl       []SiteACE // access control list
 }
 
 pub struct TFGroup {
@@ -110,7 +110,6 @@ pub fn (mut config ConfigRoot) site_wiki_get(name string) ?SiteConfig {
 pub fn (mut config ConfigRoot) sites_get() []SiteConfig {
 	mut sites := []SiteConfig{}
 	for site in config.sites {
-		// path := site.path_code
 		sites << site
 	}
 	return sites

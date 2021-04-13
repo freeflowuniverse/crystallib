@@ -5,27 +5,6 @@ import despiegk.crystallib.process
 import despiegk.crystallib.gittools
 import despiegk.crystallib.publishermod
 import cli
-import os
-import json
-
-pub struct Group {
-	pub mut:
-		users  []string
-		groups []string
-}
-
-pub struct RewriteRole {
-	pub mut:
-		redirect map[string]string
-		rewrite map[string]string
-}
-
-pub struct Acls {
-	pub mut:
-		users []string
-		groups []string
-		password string   
-}
 
 fn website_conf_repo_get(cmd &cli.Command) ?(myconfig.ConfigRoot, &gittools.GitRepo) {
 	mut conf := myconfig.get(true) ?
@@ -71,6 +50,9 @@ fn rewrite_config(path string,shortname string){
 }
 
 pub fn website_build(cmd &cli.Command) ? {
+	// save new config file
+	myconfig.save('')?
+
 	mut arg := ""
 	mut use_prefix := false
 
@@ -79,21 +61,7 @@ pub fn website_build(cmd &cli.Command) ? {
 
 	mut conf := myconfig.get(true) ?
 	mut sites := conf.sites_get()
-	mut role := RewriteRole{
-		redirect: map{
-			"from": ""
-			"to": ""
-		}
-		rewrite: map{
-			"in": ""
-			"out": ""
-		}
-	}
 
-	// groups
-	os.write_file('$conf.paths.publish/.groups.json', json.encode(map{
-		'test': Group{}
-	})) ?
 	if arg.len == 0 {
 		println('- Flatten all wikis')
 		mut publ := publishermod.new(conf.paths.code) or { panic('cannot init publisher. $err') }
@@ -118,19 +86,6 @@ pub fn website_build(cmd &cli.Command) ? {
 				process.execute_stdout('$repo2.path/build.sh') or {process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?}
 
 				process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?
-
-				os.write_file('$conf.paths.publish/$site.name/.domains.json', json.encode(map{
-					'domains': site.domains
-				})) ?
-
-				os.write_file('$conf.paths.publish/$site.name/.repo', json.encode(map{
-					'repo':  '$repo2.addr.name'
-					'alias': site.shortname
-				})) ?
-
-				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(Acls{})) ?
-
-				os.write_file('$conf.paths.publish/$site.name/.roles.json', json.encode(role)) ?
 			}
 		}
 	} else {
@@ -148,18 +103,6 @@ pub fn website_build(cmd &cli.Command) ? {
 
 				process.execute_stdout('$repo.path/build.sh') ?
 				process.execute_stdout('cd $repo.path/ && git checkout gridsome.config.js') ?
-
-				os.write_file('$conf.paths.publish/$site.name/.domains.json', json.encode(map{
-					'domains': site.domains
-				})) ?
-
-				os.write_file('$conf.paths.publish/$site.name/.repo', json.encode(map{
-					'repo':  '$repo.addr.name'
-					'alias': site.shortname
-				})) ?
-
-				os.write_file('$conf.paths.publish/$site.name/.acls.json', json.encode(Acls{})) ?
-				os.write_file('$conf.paths.publish/$site.name/.roles.json', json.encode(role)) ?
 				break
 			}
 		}
