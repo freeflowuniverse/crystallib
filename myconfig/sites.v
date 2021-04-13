@@ -30,7 +30,7 @@ fn site_config(mut c ConfigRoot) {
 		domains: ['www.threefold.io', 'www.threefold.me', 'threefold.me', 'new.threefold.io', 'staging.threefold.io',
 			'threefold.io',
 		]
-		circles: [gr_tf1, gr_tf2]
+		groups: [gr_tf1, gr_tf2]
 	}
 	c.sites << SiteConfig{
 		name: 'www_threefold_cloud'
@@ -99,14 +99,14 @@ fn site_config(mut c ConfigRoot) {
 		domains: ['www.uhuru.me']
 		descr: 'uhuru (freedom) peer2peer cloud.'
 	}
-	c.sites << SiteConfig{
-		name: 'www_mitaa'
-		shortname: 'mitaa'
-		url: 'https://github.com/mitaa-me/www_mitaa'
-		cat: SiteCat.web
-		domains: ['www.mitaa.me']
-		descr: 'Mitaa website.'
-	}
+	// c.sites << SiteConfig{
+	// 	name: 'www_mitaa'
+	// 	shortname: 'mitaa'
+	// 	url: 'https://github.com/mitaa-me/www_mitaa'
+	// 	cat: SiteCat.web
+	// 	domains: ['www.mitaa.me']
+	// 	descr: 'Mitaa website.'
+	// }
 	c.sites << SiteConfig{
 		name: 'info_threefold'
 		shortname: 'threefold'
@@ -121,14 +121,14 @@ fn site_config(mut c ConfigRoot) {
 	// 	shortname: 'marketplace'
 	// 	url: 'https://github.com/threefoldfoundation/info_marketplace'
 	// }
-	c.sites << SiteConfig{
-		name: 'info_uhuru'
-		shortname: 'uhuru'
-		url: 'https://github.com/uhuru-me/info_uhuru'
-		domains: ['info.uhuru.me']
-		branch: 's'
-		descr: 'wiki for uhuru Peer2Peer Cloud.'
-	}
+	// c.sites << SiteConfig{
+	// 	name: 'info_uhuru'
+	// 	shortname: 'uhuru'
+	// 	url: 'https://github.com/uhuru-me/info_uhuru'
+	// 	domains: ['info.uhuru.me']
+	// 	branch: 's'
+	// 	descr: 'wiki for uhuru Peer2Peer Cloud.'
+	// }
 	c.sites << SiteConfig{
 		name: 'info_tag'
 		shortname: 'tag'
@@ -136,13 +136,13 @@ fn site_config(mut c ConfigRoot) {
 		domains: ['info.takeactionglobal.org']
 		descr: 'wiki for TAG.'
 	}
-	c.sites << SiteConfig{
-		name: 'info_mitaa'
-		shortname: 'mitaa'
-		url: 'https://github.com/mitaa-me/info_mitaa'
-		domains: ['info.mitaa.me', 'info.mitaa.org']
-		descr: 'wiki for Mitaa.'
-	}
+	// c.sites << SiteConfig{
+	// 	name: 'info_mitaa'
+	// 	shortname: 'mitaa'
+	// 	url: 'https://github.com/mitaa-me/info_mitaa'
+	// 	domains: ['info.mitaa.me', 'info.mitaa.org']
+	// 	descr: 'wiki for Mitaa.'
+	// }
 	c.sites << SiteConfig{
 		name: 'info_sdk'
 		shortname: 'sdk'
