@@ -73,12 +73,11 @@ pub fn digitaltwin_start(mut cfg myconfig.ConfigRoot, isproduction bool, update 
 		tmux new -d -s "digitaltwin"
 		tmux send-keys -t digitaltwin.0 "export THREEBOT_PHRASE=\$THREEBOT_PHRASE" ENTER
 		tmux send-keys -t digitaltwin.0 "export SECRET=\$SECRET" ENTER
-		tmux send-keys -t digitaltwin.0 "set -e" ENTER
 		tmux send-keys -t digitaltwin.0 "export NVM_DIR=$base" ENTER
 		tmux send-keys -t digitaltwin.0 "source $base/nvm.sh" ENTER
+		tmux send-keys -t digitaltwin.0 "nvm use --lts" ENTER
 		tmux send-keys -t digitaltwin.0 "cd $repo.path/publisher" ENTER
-		tmux send-keys -t digitaltwin.0 "export PATH=$cfg.nodejs.path/bin:\$PATH" ENTER
-		tmux send-keys -t digitaltwin.0 "NODE_ENV=production node server.js || echo \" can not run" " ENTER
+		tmux send-keys -t digitaltwin.0 "NODE_ENV=production node server.js || echo \\"can not run\\" " ENTER
 		'
 	}
 	process.execute_interactive('$script')?
@@ -111,16 +110,16 @@ pub fn digitaltwin_restart(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
 				'
 	} else {
 		script = '
-		tmux send-keys -t digitaltwin.0 exit ENTER
+		tmux kill-session -t digitaltwin
 		tmux new -d -s "digitaltwin"
 		tmux send-keys -t digitaltwin.0 "export THREEBOT_PHRASE=\$THREEBOT_PHRASE" ENTER
 		tmux send-keys -t digitaltwin.0 "export SECRET=\$SECRET" ENTER
 		tmux send-keys -t digitaltwin.0 "set -e" ENTER
 		tmux send-keys -t digitaltwin.0 "export NVM_DIR=$base" ENTER
 		tmux send-keys -t digitaltwin.0 "source $base/nvm.sh" ENTER
+		tmux send-keys -t digitaltwin.0 "nvm use --lts" ENTER
 		tmux send-keys -t digitaltwin.0 "cd $repo.path/publisher" ENTER
-		tmux send-keys -t digitaltwin.0 "export PATH=$cfg.nodejs.path/bin:\$PATH" ENTER
-		tmux send-keys -t digitaltwin.0 "NODE_ENV=production node server.js || echo \" can not run" " ENTER
+		tmux send-keys -t digitaltwin.0 "NODE_ENV=production node server.js || echo \\"can not run\\" " ENTER
 		'
 	}
 	process.execute_interactive('$script') ?
