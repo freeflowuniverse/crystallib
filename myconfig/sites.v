@@ -207,11 +207,20 @@ fn site_config(mut c ConfigRoot) {
 	}
 
 	c.sites << SiteConfig{
-		name: 'info_grid_operations'
+		name: 'info_publishtools'
+		shortname: 'publishtools'
+		url: 'https://github.com/crystaluniverse/info_publishtools'
+		domains: ['publishtools-info.threefold.io']
+		descr: 'Publishtools Info'
+		trackingid: ""
+	}
+
+	c.sites << SiteConfig{
+		name: 'info_operations'
 		shortname: 'operations'
-		url: 'https://github.com/threefoldtech/info_grid_operations.git'
-		domains: ['grid-operations.threefold.io']
-		descr: ''
+		url: 'https://github.com/threefoldtech/info_grid_operations'
+		domains: ['operations-info.threefold.io']
+		descr: 'Grid operations'
 		trackingid: ""
 	}
 
