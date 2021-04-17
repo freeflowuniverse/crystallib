@@ -5,6 +5,11 @@ import myconfig
 fn template_wiki_root(reponame string, repourl string, trackingid string) string {
     mut cfg := myconfig.get(true) or {panic("can not get config")}
     mut p := os.join_path(cfg.paths.base, "static")
+    mut crispwebsiteid := "1a5a5241-91cb-4a41-8323-5ba5ec574da0"
+    if reponame == 'twin'{
+        crispwebsiteid = "fa9a7744-5454-4e83-99ae-9ef342d3bff4"
+    }
+
     p = ".$p"
 
     index_wiki := r'
@@ -20,7 +25,7 @@ fn template_wiki_root(reponame string, repourl string, trackingid string) string
 
             gtag("config", "UA-100065546-4");
         </script>
-      <script type="text/javascript" src="cookie-consent.js"></script> <script type="text/javascript"> document.addEventListener("DOMContentLoaded", function () { cookieconsent.run({"notice_banner_type":"headline","consent_type":"express","palette":"light","language":"en","website_name":"https://wiki.threefold.io/","cookies_policy_url":"https://wiki.threefold.io/#/privacypolicy"}); }); </script> <script type="text/plain" cookie-consent="tracking" async src="https://www.googletagmanager.com/gtag/js?id=UA-100065546-4"></script> <script type="text/plain" cookie-consent="tracking"> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag("js", new Date()); gtag("config", "UA-100065546-4"); </script> <script type="text/plain" cookie-consent="functionality">window.$crisp=[];window.CRISP_WEBSITE_ID="1a5a5241-91cb-4a41-8323-5ba5ec574da0";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>    
+      <script type="text/javascript" src="cookie-consent.js"></script> <script type="text/javascript"> document.addEventListener("DOMContentLoaded", function () { cookieconsent.run({"notice_banner_type":"headline","consent_type":"express","palette":"light","language":"en","website_name":"https://wiki.threefold.io/","cookies_policy_url":"https://wiki.threefold.io/#/privacypolicy"}); }); </script> <script type="text/plain" cookie-consent="tracking" async src="https://www.googletagmanager.com/gtag/js?id=UA-100065546-4"></script> <script type="text/plain" cookie-consent="tracking"> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag("js", new Date()); gtag("config", "UA-100065546-4"); </script> <script type="text/plain" cookie-consent="functionality">window.$crisp=[];window.CRISP_WEBSITE_ID="@crispwebsiteid";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>    
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       <meta charset="UTF-8">
@@ -196,6 +201,7 @@ fn template_wiki_root(reponame string, repourl string, trackingid string) string
     out = out.replace("@reponame",reponame)
     out = out.replace("@repourl",repourl)
     out = out.replace("@trackingid",trackingid)
+    out = out.replace("@crispwebsiteid",crispwebsiteid)
     return out
 }
 
