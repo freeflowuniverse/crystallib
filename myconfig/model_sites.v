@@ -16,6 +16,7 @@ pub mut:
 	descr     string
 	groups    []TFGroup
 	acl       []SiteACE // access control list
+	trackingid string // Matomo/Analytics
 }
 
 pub struct TFGroup {

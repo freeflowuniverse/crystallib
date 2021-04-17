@@ -2,7 +2,7 @@ module publishermod
 import os
 import myconfig
 
-fn template_wiki_root(reponame string, repourl string) string {
+fn template_wiki_root(reponame string, repourl string, trackingid string) string {
     mut cfg := myconfig.get(true) or {panic("can not get config")}
     mut p := os.join_path(cfg.paths.base, "static")
     p = ".$p"
@@ -52,6 +52,22 @@ fn template_wiki_root(reponame string, repourl string) string {
     </style>
     </head>
     <body>
+    <!-- Matomo -->
+        <script type="text/javascript">
+        var _paq = window._paq = window._paq || [];
+        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+        _paq.push(["trackPageView"]);
+        _paq.push(["enableLinkTracking"]);
+        (function() {
+            var u="//analytics.threefold.io/";
+            _paq.push(["setTrackerUrl", u+"matomo.php"]);
+            _paq.push(["setSiteId", "@trackingid"]);
+            var d=document, g=d.createElement("script"), s=d.getElementsByTagName("script")[0];
+            g.type="text/javascript"; g.async=true; g.src=u+"matomo.js"; s.parentNode.insertBefore(g,s);
+        })();
+        </script>
+    <!-- End Matomo Code -->
+
     <!-- markmap is based on d3, so must load those files first. -->
      <script src="d3.min.js"></script>
     <script src="d3-flextree.js"></script>
@@ -179,11 +195,12 @@ fn template_wiki_root(reponame string, repourl string) string {
     mut out := index_wiki
     out = out.replace("@reponame",reponame)
     out = out.replace("@repourl",repourl)
+    out = out.replace("@trackingid",trackingid)
     return out
 }
 
-fn template_wiki_root_save(destdir string, reponame string, repourl string){
-    out := template_wiki_root(reponame, repourl)
+fn template_wiki_root_save(destdir string, reponame string, repourl string, trackingid string){
+    out := template_wiki_root(reponame, repourl, trackingid)
     os.write_file("$destdir/index.html",out) or {panic(err)}
 }
 
