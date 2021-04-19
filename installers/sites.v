@@ -94,6 +94,8 @@ pub fn sites_pull(cmd cli.Command) ? {
 	mut gt := gittools.new(codepath) or {
 		return error_with_code('ERROR: cannot load gittools:$err', 2)
 	}
+	mut found := false
+
 	for mut sc in cfg.sites_get() {
 		mut repo := gt.repo_get(name: sc.reponame()) or {
 			return error('ERROR: cannot get repo:$err')
@@ -101,6 +103,7 @@ pub fn sites_pull(cmd cli.Command) ? {
 		if !flag_repo_do(cmd, repo.addr.name, sc) {
 			continue
 		}
+		found = true
 		println(' - pull  $repo.path')
 
 		if sc.reset {
@@ -108,6 +111,10 @@ pub fn sites_pull(cmd cli.Command) ? {
 		} else {
 			repo.pull() or { return error('ERROR: cannot pull repo $repo.path :$err') }
 		}
+	}
+
+	if !found{
+		return error('ERROR: unknown repo')
 	}
 }
 
