@@ -1,42 +1,38 @@
 module main
-// import os
 
+// import os
 import nedpals.vex.router
 import nedpals.vex.server
 import nedpals.vex.ctx
-
-import myconfig
+import despiegk.crystallib.myconfig
 import json
 
-
-
 fn print_req_info(mut req ctx.Req, mut res ctx.Resp) {
-	println('${req.method} ${req.path}')
+	println('$req.method $req.path')
 }
 
 struct MyContext {
-   config  &myconfig.ConfigRoot
-   // now you can inject other stuff also
+	config &myconfig.ConfigRoot
+	// now you can inject other stuff also
 }
 
-
-fn helloworld (req &ctx.Req, mut res ctx.Resp) {
-		myconfig := (&MyContext(req.ctx)).config
-		res.send('Hello World! ${myconfig.paths.base}', 200)
-	}
+fn helloworld(req &ctx.Req, mut res ctx.Resp) {
+	myconfig := (&MyContext(req.ctx)).config
+	res.send('Hello World! $myconfig.paths.base', 200)
+}
 
 // Run server
-pub fn webserver_run(config myconfig.ConfigRoot) {	
-    mut app := router.new()
+pub fn webserver_run(config myconfig.ConfigRoot) {
+	mut app := router.new()
 
-	mycontext := &MyContext{config: &config}
+	mycontext := &MyContext{
+		config: &config
+	}
 	app.inject(mycontext)
 
-    app.use(print_req_info)
+	app.use(print_req_info)
 
-	app.route(.get, '/hello',helloworld )	
+	app.route(.get, '/hello', helloworld)
 
-    server.serve(app, 6789)	
-
+	server.serve(app, 6789)
 }
-

@@ -9,7 +9,7 @@ struct GitRepo {
 	commit_message string
 	actions        []GitAction
 pub mut:
-	state          GitRepoState
+	state GitRepoState
 }
 
 // reset means we lose the changes

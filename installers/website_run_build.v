@@ -9,7 +9,7 @@ import cli
 fn website_conf_repo_get(cmd &cli.Command) ?(myconfig.ConfigRoot, &gittools.GitRepo) {
 	mut conf := myconfig.get(true) ?
 	flags := cmd.flags.get_all_found()
-	mut name := flags.get_string("repo") or {""}
+	mut name := flags.get_string('repo') or { '' }
 
 	mut res := []string{}
 	for mut site in conf.sites_get() {
@@ -45,19 +45,19 @@ pub fn website_develop(cmd &cli.Command) ? {
 	process.execute_interactive('$repo.path/run.sh') ?
 }
 
-fn rewrite_config(path string,shortname string){
-	println (" >> REWRITE CONFIG: $path $shortname")
+fn rewrite_config(path string, shortname string) {
+	println(' >> REWRITE CONFIG: $path $shortname')
 }
 
 pub fn website_build(cmd &cli.Command) ? {
 	// save new config file
-	myconfig.save('')?
+	myconfig.save('') ?
 
-	mut arg := ""
+	mut arg := ''
 	mut use_prefix := false
 
-	arg = cmd.flags.get_string("repo") or {""}
-	use_prefix = cmd.flags.get_bool("pathprefix") or {false}
+	arg = cmd.flags.get_string('repo') or { '' }
+	use_prefix = cmd.flags.get_bool('pathprefix') or { false }
 
 	mut conf := myconfig.get(true) ?
 	mut sites := conf.sites_get()
@@ -65,7 +65,7 @@ pub fn website_build(cmd &cli.Command) ? {
 	if arg.len == 0 {
 		println('- Flatten all wikis')
 		mut publ := publishermod.new(conf.paths.code) or { panic('cannot init publisher. $err') }
-		publ.flatten()?
+		publ.flatten() ?
 		println(' - build all websites')
 		mut gt := gittools.new(conf.paths.code) or {
 			return error('ERROR: cannot load gittools:$err')
@@ -77,13 +77,15 @@ pub fn website_build(cmd &cli.Command) ? {
 				}
 				println(' - build website: $repo2.path')
 				process.execute_stdout('sed -i "s/pathPrefix.*//" $repo2.path/gridsome.config.js') ?
-				
+
 				if use_prefix {
 					process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.shortname\\\",\\n\\tplugins: \\\[/g" $repo2.path/gridsome.config.js') ?
 					// rewrite_config("${repo2.path}/gridsome.config.js",site.shortname)
 				}
 
-				process.execute_stdout('$repo2.path/build.sh') or {process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?}
+				process.execute_stdout('$repo2.path/build.sh') or {
+					process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?
+				}
 
 				process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?
 			}

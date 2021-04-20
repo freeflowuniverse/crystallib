@@ -3,15 +3,15 @@ module builder
 import rand
 
 // Assuming this function runs first (which is the case)
-// This generates ssh keys on local machine to use for 
+// This generates ssh keys on local machine to use for
 // connecting to local host over ssh and test executor
 fn test_init() {
 	mut e := ExecutorLocal{}
-	e.exec("yes '' | ssh-keygen -t rsa  -f ~/.ssh/id_rsa_test -N ''") or {panic(err)}
-	e.exec('chmod 0600 ~/.ssh/id_rsa_test && chmod 0644 ~/.ssh/id_rsa_test.pub')or {panic(err)}
-	e.exec('cat ~/.ssh/id_rsa_test.pub >> ~/.ssh/authorized_keys')or {panic(err)}
-	e.exec('chmod og-wx ~/.ssh/authorized_keys')or {panic(err)}
-	println("x")
+	e.exec("yes '' | ssh-keygen -t rsa  -f ~/.ssh/id_rsa_test -N ''") or { panic(err) }
+	e.exec('chmod 0600 ~/.ssh/id_rsa_test && chmod 0644 ~/.ssh/id_rsa_test.pub') or { panic(err) }
+	e.exec('cat ~/.ssh/id_rsa_test.pub >> ~/.ssh/authorized_keys') or { panic(err) }
+	e.exec('chmod og-wx ~/.ssh/authorized_keys') or { panic(err) }
+	println('x')
 }
 
 fn test_exec() {
@@ -22,7 +22,7 @@ fn test_exec() {
 		addr: '127.0.0.1'
 		port: 22
 	}
-	res := e.exec('ls  /') or {panic(err)}
+	res := e.exec('ls  /') or { panic(err) }
 	println(res)
 }
 
@@ -41,7 +41,7 @@ fn test_file_operations() {
 	assert text == 'ssh'
 	mut exists := e.file_exists(filepath)
 	assert exists == true
-	e.remove(filepath) or {panic(err)}
+	e.remove(filepath) or { panic(err) }
 	exists = e.file_exists(filepath)
 	assert exists == false
 }

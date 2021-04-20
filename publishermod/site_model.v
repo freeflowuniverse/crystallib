@@ -6,7 +6,7 @@ pub mut: // id and index in the Publisher.sites array
 	// not in json if we would serialize
 	errors []SiteError
 	path   string
-	name   string       //is the shortname!!!
+	name   string // is the shortname!!!
 	files  map[string]int
 	pages  map[string]int
 	state  SiteState
@@ -36,7 +36,7 @@ pub enum SiteState {
 
 struct SiteRepoConfig {
 	// name of the wiki site
-	name  string
+	name string
 	// depends on which other wiki sites
 	depends      []string
 	wordreplace  []string

@@ -1,5 +1,5 @@
 import os
-import publishermod
+import despiegk.crystallib.publishermod
 
 fn test_get_content_basic() {
 	mut p := @FILE.split('/')

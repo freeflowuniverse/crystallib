@@ -1,7 +1,6 @@
 import os
 
-fn main(){
+fn main() {
 	println(1)
-	println(os.file_name("img/my:test.png"))
+	println(os.file_name('img/my:test.png'))
 }
-

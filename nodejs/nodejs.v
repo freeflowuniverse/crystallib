@@ -1,9 +1,9 @@
 module nodejs
 
 import os
-import builder
-import process
-import myconfig
+import despiegk.crystallib.builder
+import despiegk.crystallib.process
+import despiegk.crystallib.myconfig
 
 // return string which represents init for npm
 pub fn init_string(cfg &myconfig.ConfigRoot) string {

@@ -1,9 +1,9 @@
 import vredis2
 
 fn redis_server() {
-	println("Listening")
+	println('Listening')
 
-	srv := vredis2.listen("0.0.0.0", 5555) or { panic(err) }
+	srv := vredis2.listen('0.0.0.0', 5555) or { panic(err) }
 	mut main := &vredis2.RedisInstance{}
 
 	for {
@@ -12,6 +12,6 @@ fn redis_server() {
 	}
 }
 
-fn main(){
+fn main() {
 	redis_server()
 }

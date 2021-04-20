@@ -34,7 +34,7 @@ fn regex_rewrite(r string) ?string {
 			res << '[' + c + char_upper + ']'
 		} else if '0123456789'.contains(c) {
 			res << c
-		} else if  '_- '.contains(c) {
+		} else if '_- '.contains(c) {
 			// res << r"\[\\s _\\-\]*"
 			res << r' *'
 		} else if '\'"'.contains(c) {

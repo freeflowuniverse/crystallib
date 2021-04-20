@@ -69,11 +69,11 @@ fn (mut publisher Publisher) file_check_fix(name2find string, consumer_page_id i
 // check if we can find the file, if not copy to site if found in other site
 // we check the file based on name & replaced version of name
 fn (mut publisher Publisher) file_check_find(name2find string, consumer_page_id int) ?&File {
-	// didn't find a better way how to do it, more complicated than it should I believe 
+	// didn't find a better way how to do it, more complicated than it should I believe
 	mut consumer_page := publisher.page_get_by_id(consumer_page_id) or { panic(err) }
 	mut consumer_site := consumer_page.site_get(mut publisher) or { panic(err) }
-	_, mut objname := name_split(name2find) or { panic(err) }	
-	mut objname_full := "${consumer_site.name}:$objname"	
+	_, mut objname := name_split(name2find) or { panic(err) }
+	mut objname_full := '$consumer_site.name:$objname'
 	objname_replaced := publisher.replacer.file.replace(objname) or { panic(err) }
 
 	for x in 0 .. 4 {
@@ -88,7 +88,7 @@ fn (mut publisher Publisher) file_check_find(name2find string, consumer_page_id 
 		}
 
 		if x == 2 {
-			if objname != name2find{
+			if objname != name2find {
 				zzz := publisher.file_check_fix(objname, consumer_page_id) or { continue }
 				return zzz
 			}
@@ -130,28 +130,32 @@ fn (mut publisher Publisher) page_check_fix(name2find string, consumer_page_id i
 // we check the page based on name & replaced version of name
 // we also check definitions because they can also lead to right page
 fn (mut publisher Publisher) page_check_find(name2find string, consumer_page_id int) ?&Page {
-	mut consumer_page := publisher.page_get_by_id(consumer_page_id) or { panic("page get by id:$consumer_page_id\n$err") }
-	mut consumer_site := consumer_page.site_get(mut publisher) or { panic("site_get:'n$err") }	
-	_, mut objname := name_split(name2find)?
-	mut objname_full := "${consumer_site.name}:$objname"
-	mut objname_replaced := publisher.replacer.file.replace(objname) or { panic("file_replace:\n$err") }
+	mut consumer_page := publisher.page_get_by_id(consumer_page_id) or {
+		panic('page get by id:$consumer_page_id\n$err')
+	}
+	mut consumer_site := consumer_page.site_get(mut publisher) or { panic("site_get:'n$err") }
+	_, mut objname := name_split(name2find) ?
+	mut objname_full := '$consumer_site.name:$objname'
+	mut objname_replaced := publisher.replacer.file.replace(objname) or {
+		panic('file_replace:\n$err')
+	}
 
-	// didn't find a better way how to do it, more complicated than it should I believe 
+	// didn't find a better way how to do it, more complicated than it should I believe
 	for x in 0 .. 6 {
 		if x == 0 {
-			//first check if we can find the page in the site itself
+			// first check if we can find the page in the site itself
 			zzz := publisher.page_check_fix(objname_full, consumer_page_id) or { continue }
 			return zzz
 		}
 
 		if x == 1 {
-			//now check if we can find it more generic, site name can be defined here
+			// now check if we can find it more generic, site name can be defined here
 			zzz := publisher.page_check_fix(name2find, consumer_page_id) or { continue }
 			return zzz
 		}
 
-		if x == 2 && name2find!=objname{
-			//now check if we can find it more generic
+		if x == 2 && name2find != objname {
+			// now check if we can find it more generic
 			zzz := publisher.page_check_fix(objname, consumer_page_id) or { continue }
 			return zzz
 		}

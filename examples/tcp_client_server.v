@@ -8,28 +8,20 @@ const (
 )
 
 fn setup() (net.TcpListener, net.TcpConn, net.TcpConn) {
-	server := net.listen_tcp(server_port) or {
-		panic(err)
-	}
-	mut client := net.dial_tcp('127.0.0.1:$server_port') or {
-		panic(err)
-	}
-	mut socket := server.accept() or {
-		panic(err)
-	}
+	server := net.listen_tcp(server_port) or { panic(err) }
+	mut client := net.dial_tcp('127.0.0.1:$server_port') or { panic(err) }
+	mut socket := server.accept() or { panic(err) }
 	$if debug_peer_ip ? {
-		ip := con.peer_ip() or {
-			'$err'
-		}
+		ip := con.peer_ip() or { '$err' }
 		eprintln('connection peer_ip: $ip')
 	}
 	return server, client, socket
 }
 
 fn cleanup(server &net.TcpListener, client &net.TcpConn, socket &net.TcpConn) {
-	server.close() or { }
-	client.close() or { }
-	socket.close() or { }
+	server.close() or {}
+	client.close() or {}
+	socket.close() or {}
 }
 
 // fn t1_socket() {
@@ -132,64 +124,62 @@ fn cleanup(server &net.TcpListener, client &net.TcpConn, socket &net.TcpConn) {
 
 fn t5_socket_read_line_long_line_without_eol() {
 	server, client, socket := setup()
-	mut reader := io.new_buffered_reader({
+	mut reader := io.new_buffered_reader(
 		reader: io.make_reader(client)
-	})
+	)
 	defer {
-		println("defer")
+		println('defer')
 		cleanup(server, client, socket)
 	}
 	message := strings.repeat_string('123\n', 400)
 	// message := strings.repeat_string('123\r\n', 400)
 	socket.write_str(message)
 	socket.write_str('\n')
-	println("written to server")
-	for i in 0..500{
+	println('written to server')
+	for i in 0 .. 500 {
 		line := reader.read_line() or {
-			println("readline empty")
+			println('readline empty')
 			return
 		}
 
-		if i>390{			
+		if i > 390 {
 			socket.write_str('aaa$i\n')
 		}
-		
-		println("$i:$line")
+
+		println('$i:$line')
 	}
 }
 
 fn t6_char_based() {
 	server, client, socket := setup()
-	mut reader := io.new_buffered_reader({
+	mut reader := io.new_buffered_reader(
 		reader: io.make_reader(client)
-	})
+	)
 	defer {
-		println("defer")
+		println('defer')
 		cleanup(server, client, socket)
 	}
 	message := strings.repeat_string('123\n', 400)
 	// message := strings.repeat_string('123\r\n', 400)
 	socket.write_str(message)
 	socket.write_str('\n')
-	println("written to server")
-	for i in 0..500{
+	println('written to server')
+	for i in 0 .. 500 {
 		line := reader.read_line() or {
-			println("readline empty")
+			println('readline empty')
 			return
 		}
 
-		if i>390{			
+		if i > 390 {
 			socket.write_str('aaa$i\n')
 		}
-		
-		println("$i:$line")
+
+		println('$i:$line')
 	}
 }
 
-
-
 fn main() {
-	println("start")
+	println('start')
 	t5_socket_read_line_long_line_without_eol()
 }
 

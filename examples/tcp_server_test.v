@@ -1,5 +1,5 @@
 import time
-import ourserver
+import despiegk.crystallib.examples.ourserver
 
 fn main() {
 	go ourserver.server_start()

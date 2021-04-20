@@ -1,7 +1,7 @@
 module gittools
 
 import os
-import process
+import despiegk.crystallib.process
 
 pub fn (mut repo GitRepo) path_get() string {
 	if repo.path == '' {
@@ -42,7 +42,7 @@ fn (mut repo GitRepo) get_clone_cmd(http bool) string {
 	if repo.addr.depth != 0 {
 		cmd += ' --depth=$repo.addr.depth'
 		//  && cd $repo.addr.name && git fetch
-		// why was this there? 
+		// why was this there?
 	}
 	return cmd
 }
@@ -51,7 +51,7 @@ pub fn (mut repo GitRepo) check(pull_force_ bool, reset_force_ bool) ? {
 	mut pull_force := pull_force_
 	mut reset_force := reset_force_
 	if repo.state != GitStatus.ok {
-		// need to get the status of the repo 
+		// need to get the status of the repo
 		// println(' - repo $repo.addr.name check')
 		// println(repo)
 

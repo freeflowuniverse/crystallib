@@ -3,17 +3,17 @@ module publishermod
 import despiegk.crystallib.texttools
 
 // if return true, means macro found and was ok
-// format !!!$macroname $arg1 $arg2 
+// format !!!$macroname $arg1 $arg2
 // arg's can be one or more, can also be $name:$val then keyvalue which will become params
 // the args always need to come first
 fn macro_process(mut state LineProcessorState, line string) bool {
 	fns_map := map{
-		'vimeo':   vimeo
-		'iframe':  iframe
-		'youtube': youtube
-		'def': macro_def
+		'vimeo':    vimeo
+		'iframe':   iframe
+		'youtube':  youtube
+		'def':      macro_def
 		'def_list': macro_def_list
-		'alias': macro_alias
+		'alias':    macro_alias
 	}
 
 	if !line.starts_with('!!!') {

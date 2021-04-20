@@ -23,8 +23,8 @@ pub mut:
 	pages_linked    []int // links to pages
 	content         string
 	nrtimes_inluded int
-	categories []string
-	replaced		bool
+	categories      []string
+	replaced        bool
 }
 
 pub enum PageErrorCat {
@@ -52,28 +52,25 @@ pub fn (page Page) site(mut publisher Publisher) &Site {
 	return s
 }
 
-//walk over categories, see if we can find the prefix
+// walk over categories, see if we can find the prefix
 pub fn (page Page) category_prefix_exists(prefix_ string) bool {
 	prefix := prefix_.to_lower()
-	for cat in page.categories{
-		if cat.starts_with(prefix){
+	for cat in page.categories {
+		if cat.starts_with(prefix) {
 			return true
 		}
 	}
 	return false
 }
 
-pub fn (mut page Page) categories_add(categories []string){
-	for cat_ in categories{
+pub fn (mut page Page) categories_add(categories []string) {
+	for cat_ in categories {
 		cat := cat_.to_lower()
-		if !(cat in page.categories){
-			page.categories<<cat
+		if !(cat in page.categories) {
+			page.categories << cat
 		}
-	}	
-
+	}
 }
-
-
 
 pub fn (page Page) path_relative_get(mut publisher Publisher) string {
 	if page.path == '' {

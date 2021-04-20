@@ -152,7 +152,7 @@ fn command_ttl(input resp2.RValue, mut srv RedisInstance) resp2.RValue {
 // socket management
 //
 pub fn process_input(mut client redisclient.Redis, mut instance RedisInstance, value resp2.RValue) ?bool {
-	println("Inside process")
+	println('Inside process')
 	mut h := []RedisHandler{}
 
 	h << RedisHandler{
@@ -231,7 +231,7 @@ pub fn new_client(mut conn net.TcpConn, mut main RedisInstance) ? {
 		// }
 		// continue
 		// }
-		println(".... here")
+		println('.... here')
 		if value !is resp2.RArray {
 			// should not receive anything else than
 			// array with commands and args
@@ -247,5 +247,4 @@ pub fn new_client(mut conn net.TcpConn, mut main RedisInstance) ? {
 		}
 		process_input(mut client, mut main, value) ?
 	}
-
 }

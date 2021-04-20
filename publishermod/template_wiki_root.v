@@ -1,18 +1,19 @@
 module publishermod
+
 import os
-import myconfig
+import despiegk.crystallib.myconfig
 
 fn template_wiki_root(reponame string, repourl string, trackingid string) string {
-    mut cfg := myconfig.get(true) or {panic("can not get config")}
-    mut p := os.join_path(cfg.paths.base, "static")
-    mut crispwebsiteid := "1a5a5241-91cb-4a41-8323-5ba5ec574da0"
-    if reponame == 'twin'{
-        crispwebsiteid = "fa9a7744-5454-4e83-99ae-9ef342d3bff4"
-    }
+	mut cfg := myconfig.get(true) or { panic('can not get config') }
+	mut p := os.join_path(cfg.paths.base, 'static')
+	mut crispwebsiteid := '1a5a5241-91cb-4a41-8323-5ba5ec574da0'
+	if reponame == 'twin' {
+		crispwebsiteid = 'fa9a7744-5454-4e83-99ae-9ef342d3bff4'
+	}
 
-    p = ".$p"
+	p = '.$p'
 
-    index_wiki := r'
+	index_wiki := r'
     <!DOCTYPE html>
     <html>
     <head>
@@ -196,17 +197,15 @@ fn template_wiki_root(reponame string, repourl string, trackingid string) string
     </html>
     '
 
-
-    mut out := index_wiki
-    out = out.replace("@reponame",reponame)
-    out = out.replace("@repourl",repourl)
-    out = out.replace("@trackingid",trackingid)
-    out = out.replace("@crispwebsiteid",crispwebsiteid)
-    return out
+	mut out := index_wiki
+	out = out.replace('@reponame', reponame)
+	out = out.replace('@repourl', repourl)
+	out = out.replace('@trackingid', trackingid)
+	out = out.replace('@crispwebsiteid', crispwebsiteid)
+	return out
 }
 
-fn template_wiki_root_save(destdir string, reponame string, repourl string, trackingid string){
-    out := template_wiki_root(reponame, repourl, trackingid)
-    os.write_file("$destdir/index.html",out) or {panic(err)}
+fn template_wiki_root_save(destdir string, reponame string, repourl string, trackingid string) {
+	out := template_wiki_root(reponame, repourl, trackingid)
+	os.write_file('$destdir/index.html', out) or { panic(err) }
 }
-

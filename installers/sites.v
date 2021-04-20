@@ -1,9 +1,9 @@
 module installers
 
 import cli
-import gittools
-import myconfig
-import publishermod
+import despiegk.crystallib.gittools
+import despiegk.crystallib.myconfig
+import despiegk.crystallib.publishermod
 import readline
 import os
 // import process

@@ -53,7 +53,7 @@ pub fn (mut r Redis) read_line() ?[]byte {
 			continue
 		}
 		if buf == '\n'.bytes() {
-			if out.bytestr() != ''{
+			if out.bytestr() != '' {
 				println("readline result:'$out.bytestr()'")
 			}
 			return out
@@ -118,5 +118,5 @@ fn (mut r Redis) read(size int) ?[]byte {
 }
 
 pub fn (mut r Redis) disconnect() {
-	r.socket.close() or { }
+	r.socket.close() or {}
 }

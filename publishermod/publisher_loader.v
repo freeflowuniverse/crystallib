@@ -2,8 +2,7 @@ module publishermod
 
 import os
 import json
-import myconfig
-
+import despiegk.crystallib.myconfig
 
 // use path="" if you want to go from os.home_dir()/code/	
 fn (mut publisher Publisher) find_sites(path string) ? {
@@ -11,22 +10,20 @@ fn (mut publisher Publisher) find_sites(path string) ? {
 	publisher.find_sites_recursive(path) ?
 }
 
-
 ///////////////////////////////////////////////////////// INTERNAL BELOW ////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
-
 
 // load a site into the publishing tools
 // name of the site needs to be unique
 fn (mut publisher Publisher) load_site(repoconfig SiteRepoConfig, path string) ? {
-	mut cfg := myconfig.get(true)?	
+	mut cfg := myconfig.get(true) ?
 	repoconfig_site := name_fix(repoconfig.name)
 	mut myconfig_site := cfg.site_get(repoconfig_site) or {
-		if "$err".contains("Cannot find wiki site"){
-			//means we should not load because file is not in the site configs
+		if '$err'.contains('Cannot find wiki site') {
+			// means we should not load because file is not in the site configs
 			return
 		}
-		return error("$cfg\n -- ERROR: sitename in config file ($repoconfig_site) on repo in git, does not correspond with configname publishtools config.")
+		return error('$cfg\n -- ERROR: sitename in config file ($repoconfig_site) on repo in git, does not correspond with configname publishtools config.')
 	}
 	path2 := path.replace('~', os.home_dir())
 	println(' - load publisher: $repoconfig_site -> $myconfig_site.shortname - $path2')

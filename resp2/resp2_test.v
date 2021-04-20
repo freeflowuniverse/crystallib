@@ -70,17 +70,19 @@ fn test_2() {
 
 	res := decode(b.data) or { [r_error('could not decode')] }
 
-	compare := [RValue(RArray{
+	compare := [
+		RValue(RArray{
 		values: [RValue(RString{
 			value: 'a'
 		}), RValue(RString{
 			value: 'b'
 		})]
-	}), RValue(RInt{
-		value: 10
-	}), RValue(RString{
-		value: 'OK'
-	})]
+	}),
+		RValue(RInt{
+			value: 10
+		}), RValue(RString{
+			value: 'OK'
+		})]
 	assert compare == res
 }
 

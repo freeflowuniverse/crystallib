@@ -35,7 +35,7 @@ pub mut:
 	schema string
 	// creation date in epoch (int)
 	epoch int
-	// direction 
+	// direction
 	direction Direction
 }
 

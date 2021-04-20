@@ -2,11 +2,11 @@ module builder
 
 // long running process
 pub struct Process {
-	cmd        string
-	arguments  []string
+	cmd       string
+	arguments []string
 	// timeout in seconds, default 5 min
-	timeout    int = 300
-	retry      int = 1
+	timeout    int  = 300
+	retry      int  = 1
 	stdout_log bool = true
 	stderr_log bool = true
 pub mut:
@@ -23,7 +23,7 @@ enum ProcessState {
 	halted
 }
 
-// make sure all is there so the process can start, not used 
+// make sure all is there so the process can start, not used
 pub fn (mut process Process) prepare(wish Wish) ? {
 }
 

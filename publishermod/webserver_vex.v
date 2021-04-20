@@ -85,12 +85,12 @@ fn filetype_site_name_get(mut config myconfig.ConfigRoot, site string, name_ str
 		filetype = FileType.html
 	} else if name.ends_with('.md') {
 		filetype = FileType.wiki
-	}else if name.ends_with('.js'){
+	} else if name.ends_with('.js') {
 		name = name_
 		filetype = FileType.javascript
-	}else if name.ends_with('css'){
+	} else if name.ends_with('css') {
 		name = name_
-		filetype = FileType.css 
+		filetype = FileType.css
 	} else if extension == '' {
 		filetype = FileType.wiki
 	} else {
@@ -114,7 +114,6 @@ fn filetype_site_name_get(mut config myconfig.ConfigRoot, site string, name_ str
 	if name == '_glossary.md' {
 		name = 'glossary.md'
 	}
-
 
 	// println(" >>>WEB: filetype_site_name_get: $filetype-$sitename-$name")
 	return filetype, sitename, name
@@ -187,10 +186,9 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 	if publisherobj.develop {
 		filetype, sitename2, name2 := filetype_site_name_get(mut config, sitename, name) ?
 		// if debug {println(" >> page get develop: $name2")}
-		
-		if filetype == FileType.javascript  || filetype == FileType.css{
-			
-			mut p := os.join_path(config.paths.base, "static", name2)
+
+		if filetype == FileType.javascript || filetype == FileType.css {
+			mut p := os.join_path(config.paths.base, 'static', name2)
 			mut content := os.read_file(p) or {
 				res.send('Cannot find file: $p\n$err', 404)
 				return
@@ -206,7 +204,7 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 		}
 		if name2 == 'index.html' {
 			// mut index := os.read_file( site.path + '/index.html') or {
-			// 	res.send("index.html not found", 404) 
+			// 	res.send("index.html not found", 404)
 			// }
 			index_out := template_wiki_root(sitename, '', '')
 			res.headers['Content-Type'] = ['text/html']
@@ -311,10 +309,10 @@ fn content_type_get(path string) ?string {
 	if path.ends_with('.pdf') {
 		return 'application/pdf'
 	}
-	if path.ends_with('html'){
+	if path.ends_with('html') {
 		return 'text/html'
 	}
-	
+
 	return error('cannot find content type for $path')
 }
 
@@ -397,18 +395,18 @@ fn site_deliver(req &ctx.Req, mut res ctx.Resp) {
 
 		sitename := splitted[0]
 		path = splitted[1..].join('/').trim('/').trim(' ')
-		
-		if sitename.ends_with(".css") || sitename.ends_with("js"){
-			mut p := os.join_path(config.paths.base, "static", sitename)
+
+		if sitename.ends_with('.css') || sitename.ends_with('js') {
+			mut p := os.join_path(config.paths.base, 'static', sitename)
 			mut content := os.read_file(p) or {
 				res.send('Cannot find file: $p\n$err', 404)
 				return
 			}
-			res.headers['Content-Type'] = [content_type_get(p) or {panic(err)}]
+			res.headers['Content-Type'] = [content_type_get(p) or { panic(err) }]
 			res.send(content, 200)
-			return	
+			return
 		}
-		
+
 		if sitename == '' {
 			domain = 'localhost'
 		} else {

@@ -76,7 +76,7 @@ pub fn cmd_line_args_parser(text string) ?[]string {
 					char_previous = char
 					continue
 				} else {
-					// end of quote 
+					// end of quote
 					quote = ''
 					res << arg.trim(' ')
 					arg = ''

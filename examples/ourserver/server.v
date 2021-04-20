@@ -1,13 +1,14 @@
 module ourserver
+
 import net
 import sync
 import time
 
 struct Controller {
 mut:
-	x   int // share data
-	mtx &sync.Mutex
-	y   map[string]string
+	x     int // share data
+	mtx   &sync.Mutex
+	y     map[string]string
 	queue []string
 }
 
@@ -22,7 +23,7 @@ fn (mut controller Controller) handle_conn(_c net.TcpConn, instance int) {
 		// println("msg for")
 		controller.mtx.m_lock()
 		// read/modify/write b.x
-		controller.y["$instance"]=buf.bytestr()
+		controller.y['$instance'] = buf.bytestr()
 		controller.queue << buf.bytestr()
 		controller.mtx.unlock()
 
@@ -39,10 +40,10 @@ fn (mut controller Controller) reader() {
 	for {
 		time.sleep(1)
 		controller.mtx.m_lock()
-		for x in controller.queue{
+		for x in controller.queue {
 			println(x)
 		}
-		controller.queue=[]
+		controller.queue = []
 		// println(controller.y)
 		controller.mtx.unlock()
 
@@ -55,58 +56,49 @@ fn (mut controller Controller) reader() {
 	}
 }
 
-
-
 // struct Controller{
 // 	mut:
 // 		db map[string]string
 // 		channels []chan string
 // }
 
-
-
 // fn echo_server(l net.TcpListener) ? {
-pub fn server_start() ? {	
-	println("server start")
-	l := net.listen_tcp(tcp_server_port) or {
-		panic(err)
-	}
+pub fn server_start() ? {
+	println('server start')
+	l := net.listen_tcp(tcp_server_port) or { panic(err) }
 
-	mut controller := &Controller{mtx:sync.new_mutex()}
+	mut controller := &Controller{
+		mtx: sync.new_mutex()
+	}
 
 	// mut x:=0
 	mut ret := 0
 
 	// mut mainchannel := chan int{}
-	//{cap: 100} 
+	//{cap: 100}
 
 	go controller.reader()
 
-	mut instance := 0 
+	mut instance := 0
 
 	for {
-		new_conn := l.accept() or {
-			continue
-		}
+		new_conn := l.accept() or { continue }
 
 		instance++
 
-		//how can I create a channel per connection & keep a connection open with the mother?
-		// controller.channels << chan string{cap: 100} 
+		// how can I create a channel per connection & keep a connection open with the mother?
+		// controller.channels << chan string{cap: 100}
 		// go handle_conn(new_conn,controller.channels[controller.channels.len-1]) //thread per user
-		go controller.handle_conn(new_conn,instance) //thread per user
+		go controller.handle_conn(new_conn, instance) // thread per user
 
 		// x++
 
 		// ret <-mainchannel
-		
+
 		// for ch in controller.channels{
 		// 	ret <-ch
 		// 	println("MAIN: $ret")
 		// }
-
 	}
 	return none
 }
-
-

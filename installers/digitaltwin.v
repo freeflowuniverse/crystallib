@@ -3,9 +3,9 @@ module installers
 // import builder
 // import nodejs
 import os
-import process
-import myconfig
-import gittools
+import despiegk.crystallib.process
+import despiegk.crystallib.myconfig
+import despiegk.crystallib.gittools
 
 pub fn digitaltwin_install(mut cfg myconfig.ConfigRoot, update bool) ? {
 	base := cfg.paths.base
@@ -80,7 +80,7 @@ pub fn digitaltwin_start(mut cfg myconfig.ConfigRoot, isproduction bool, update 
 		tmux send-keys -t digitaltwin.0 "NODE_ENV=production node server.js || echo \\"can not run\\" " ENTER
 		'
 	}
-	process.execute_interactive('$script')?
+	process.execute_interactive('$script') ?
 	println(' - digital twin started')
 }
 
@@ -156,7 +156,7 @@ pub fn digitaltwin_stop(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
 
 pub fn digitaltwin_status(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
 	println(' - will check status of digitaltwin')
-		script := '
+	script := '
 				set -e
 				ps -C "node server.js"  >/dev/null && echo "Running" || echo "Not running"
 				'
@@ -165,10 +165,10 @@ pub fn digitaltwin_status(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
 
 pub fn digitaltwin_logs(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
 	println(' - will check logs of digitaltwin')
-		script := '
+	script := '
 				set -e
 				echo "Check logs @ ~/codewww/github/threefoldtech/digitaltwin/publisher/logs"
 				'
-	
+
 	process.execute_interactive('$script') ?
 }

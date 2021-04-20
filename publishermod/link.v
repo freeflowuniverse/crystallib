@@ -131,7 +131,7 @@ fn (link Link) replace(text string, replacewith string) string {
 fn (mut link Link) init_() {
 	// see if its an external link or internal
 	// mut linkstate := LinkState.init
-	if link.original_link.contains('://'){
+	if link.original_link.contains('://') {
 		// linkstate = LinkState.ok
 		link.isexternal = true
 	}
@@ -141,7 +141,9 @@ fn (mut link Link) init_() {
 		return
 	}
 
-	if link.original_link.trim(' ').starts_with('http') || link.original_link.trim(' ').starts_with('/') || link.original_link.trim(' ').starts_with('..') {
+	if link.original_link.trim(' ').starts_with('http')
+		|| link.original_link.trim(' ').starts_with('/')
+		|| link.original_link.trim(' ').starts_with('..') {
 		link.cat = LinkType.html
 		return
 	}
@@ -224,7 +226,7 @@ fn (mut link Link) init_() {
 		}
 	}
 
-	if  link.filename.contains(':') {
+	if link.filename.contains(':') {
 		panic("should not have ':' in link for page or file (2).\n$link")
 	}
 }
@@ -378,7 +380,8 @@ pub fn link_parser(text string) ParseResult {
 				// original += char
 				if char == ')' {
 					// end of capture group
-					mut link := link_new(capturegroup_pre.trim(' '), capturegroup_post.trim(' '),isimage)
+					mut link := link_new(capturegroup_pre.trim(' '), capturegroup_post.trim(' '),
+						isimage)
 					parseresult.links << link
 					capturegroup_pre = ''
 					capturegroup_post = ''

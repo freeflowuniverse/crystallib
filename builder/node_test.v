@@ -2,7 +2,7 @@ module builder
 
 // test the creation of a node
 fn test_node_local_basic1() {
-	n := node.node_get({})or {panic(err)}
+	n := node.node_get({}) or { panic(err) }
 	res := n.executor.execute('ls /')
 	println(res)
 	panic('SSS')

@@ -2,10 +2,10 @@ module myconfig
 
 import os
 // import gittools
-import myconfig
+import despiegk.crystallib.myconfig
 import json
 
-// get the initial config 
+// get the initial config
 fn initial() ConfigRoot {
 	mut c := ConfigRoot{}
 	c.paths.base = '$os.home_dir()/.publisher'

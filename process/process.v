@@ -46,7 +46,7 @@ pub mut:
 //	 logcmd bool  //if we keep the output in the job command
 //	 node Node    //e.g. 192.13.3.3:2022 (is ip address)
 //   args map[string]string  // these arguments are replaced in the text given
-// 
+//
 // returns Job:
 //     start time.Time
 //     end time.Time
@@ -124,7 +124,7 @@ pub fn execute_job(cmd Command) ?Job {
 		}
 	} else {
 		if cleanuppath != '' {
-			os.rm(cleanuppath) or { }
+			os.rm(cleanuppath) or {}
 		}
 	}
 	return job
@@ -243,6 +243,6 @@ pub fn execute_interactive(cmd string) ? {
 	os.execvp(args[0], args[1..args.len]) ?
 
 	if cleanuppath != '' {
-		os.rm(cleanuppath) or { }
+		os.rm(cleanuppath) or {}
 	}
 }

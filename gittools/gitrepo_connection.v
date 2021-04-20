@@ -20,7 +20,7 @@ pub fn (mut repo GitRepo) ssh_key_load_if_exists() ?bool {
 	// println(ssh_agent_key_loaded("info_digitaltwin"))
 	// panic("ss")
 
-	// exists means the key has been loaded 
+	// exists means the key has been loaded
 	// nrkeys is how many keys were loaded in sshagent in first place
 	exists, nrkeys := ssh_agent_key_loaded(repo.addr.name)
 	// println(' >>> $repo.addr.name $nrkeys, $exists')

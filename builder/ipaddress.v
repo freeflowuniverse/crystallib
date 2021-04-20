@@ -31,7 +31,7 @@ pub fn ipaddress_new(addr_string string) ?IPAddress {
 		cat = IpAddressType.ipv6
 		s := addr.split('::')
 		addr, port = s[0], s[1]
-	} else if  addr.contains(':' ) && addr.count(':') == 1 {
+	} else if addr.contains(':') && addr.count(':') == 1 {
 		cat = IpAddressType.ipv4
 		s := addr.split(':')
 		addr, port = s[0], s[1]

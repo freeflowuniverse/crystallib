@@ -1,7 +1,6 @@
 import regex
 
 fn main() {
-
 	// query := '\[(.*)\]\( *(\w*\:*\w*) *\)'
 	// query := '\[(.*)\]\( *(\w*\:*\w*) *\)'
 
@@ -10,7 +9,7 @@ fn main() {
 	// query := r'\[.*\]\( *\w*\:*\w+ *\)'
 	// query := '\[.*\]\( *\w*\:*\w+ *\)'
 
-	mut text := "[ an s. s! ]( wi4ki:something )
+	mut text := '[ an s. s! ]( wi4ki:something )
 	[ AN s. s! ]( wi4_ki:some_thing )
 	[ an s. s! ](wiki:something)
 	[ an s. _s! ](something)dd
@@ -18,13 +17,11 @@ fn main() {
 	d [ an s. s! ](something ) d
 	[  more text ]( something ) s [ something b ](something)dd
 
-	"
-
-
+	'
 
 	// text = "[  more text ]( something ) s [ something b ](something)dd"
 
-  //check the regex on https://regex101.com/r/HdYya8/1/
+	// check the regex on https://regex101.com/r/HdYya8/1/
 
 	// query := r'(\[[a-z\.\! ]*\]\( *\w*\:*\w* *\))*'
 	// query := r'(\[[a-z\.\! ]*\]\( *\w*\:*\w* *\))'
@@ -50,7 +47,6 @@ fn main() {
 	// println(re.groups)
 	// println(re.groups[1])
 
-
 	// for g in re.get_group_list(){
 	// 	println(g)
 	// }
@@ -58,7 +54,7 @@ fn main() {
 	query := r'(\[[\w_\.\! ]*\]\( *[\w_]*\:*[\w_\.]* *\))'
 
 	mut re := regex.new()
-	re.compile_opt(query) or { panic(err) }	
+	re.compile_opt(query) or { panic(err) }
 
 	mut gi := 0
 	all := re.find_all(text)
@@ -67,6 +63,4 @@ fn main() {
 		gi += 2
 	}
 	println('')
-
-
 }

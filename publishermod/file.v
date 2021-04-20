@@ -8,7 +8,7 @@ fn (mut file File) consumer_page_register(consumer_page_id int, mut publisher Pu
 		panic('can only register page for same site, is bug (site:$file.name:$file.site_id)\n$page\n')
 	}
 	if !(consumer_page_id in file.usedby) {
-		file.usedby << consumer_page_id	
+		file.usedby << consumer_page_id
 	}
 }
 
@@ -31,7 +31,7 @@ fn (mut file File) relocate(mut publisher Publisher) {
 
 	if path.ends_with('.pdf') {
 		return
-	}	
+	}
 
 	if file.usedby.len > 0 {
 		// println(" >> relocate in ${file.name} used")
@@ -56,10 +56,10 @@ fn (mut file File) relocate(mut publisher Publisher) {
 				if os.real_path(dest) == os.real_path(path) {
 					panic('should never be same path: $dest and $path')
 				}
-				println("   >>>RM3: $path")
+				println('   >>>RM3: $path')
 				os.rm(path) or { panic(err) }
 			} else {
-				println("   >>>MV3: $path -> $dest")
+				println('   >>>MV3: $path -> $dest')
 				os.mkdir_all(os.dir(dest)) or { panic(err) }
 				os.mv(path, dest) or { panic(err) }
 			}
@@ -75,7 +75,7 @@ fn (mut file File) relocate(mut publisher Publisher) {
 				if os.real_path(dest) == os.real_path(path) {
 					panic('should never be same path: $dest and $path')
 				}
-				println(" >>>RM2: $path")
+				println(' >>>RM2: $path')
 				os.rm(path) or { panic(err) }
 			} else {
 				println(" >>>MV2: '$path' -> '$dest'")

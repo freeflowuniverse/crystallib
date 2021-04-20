@@ -31,7 +31,9 @@ fn (mut w Window) create() {
 			panic("Can't create new window $w.name")
 		}
 
-		get_pid := w.session.tmux.node.executor.exec("tmux list-windows -a -F '#{session_name}|#{window_name}|#{pane_pid}' | grep $w.session.name | grep $w.name") or {"Test"}
+		get_pid := w.session.tmux.node.executor.exec("tmux list-windows -a -F '#{session_name}|#{window_name}|#{pane_pid}' | grep $w.session.name | grep $w.name") or {
+			'Test'
+		}
 		get_pid_arr := get_pid.split('|')
 		w.pid = get_pid_arr[2].int()
 		os.log('WINDOW - Window: $w.name created in session: $w.session.name')
@@ -63,7 +65,7 @@ fn (mut w Window) activate() {
 		if !w.active || w.pid == 0 {
 			w.restart()
 			w.active = true
-		}else{
+		} else {
 			w.session.activate()
 		}
 		w.session.tmux.node.executor.exec('tmux select-window -t $w.id') or {

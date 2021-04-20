@@ -6,7 +6,7 @@ import time
 fn setup() redisclient.Redis {
 	mut redis := redisclient.connect('localhost:6379') or { panic(err) }
 	// Select db 10 to be away from default one '0'
-	redis.selectdb(10) or {panic(err)}
+	redis.selectdb(10) or { panic(err) }
 	return redis
 }
 
@@ -70,9 +70,9 @@ fn test_scan() {
 	redis.set('test5', '56') or { panic(err) }
 	redis.set('test6', '78') or { panic(err) }
 	redis.set('test7', '9') or { panic(err) }
-	cursor, data :=redis.scan(0) or { panic(err) }
+	cursor, data := redis.scan(0) or { panic(err) }
 	println(data)
-	assert cursor == "0"
+	assert cursor == '0'
 }
 
 fn test_set_opts() {
@@ -190,13 +190,13 @@ fn test_incr() {
 		return
 	}
 	assert r1 == 101
-	
+
 	r2 := redis.incr('test16') or {
 		assert false
 		return
 	}
 	assert r2 == 1
-	
+
 	redis.set('test17', 'nan') or { panic(err) }
 	redis.incr('test17') or {
 		assert true
@@ -292,9 +292,9 @@ fn test_incrbyfloat() {
 fn test_append() {
 	mut redis := setup()
 	defer {
-		cleanup(mut redis)  or { panic(err) }
+		cleanup(mut redis) or { panic(err) }
 	}
-	redis.set('test27', 'bac')  or { panic(err) }
+	redis.set('test27', 'bac') or { panic(err) }
 	r1 := redis.append('test27', 'on') or {
 		assert false
 		return
@@ -353,7 +353,7 @@ fn test_setrange() {
 fn test_expire() {
 	mut redis := setup()
 	defer {
-		cleanup(mut redis)  or { panic(err) }
+		cleanup(mut redis) or { panic(err) }
 	}
 	r1 := redis.expire('test31', 2) or {
 		assert false
@@ -380,7 +380,7 @@ fn test_pexpire() {
 	}
 	assert r1 == 0
 
-	redis.set('test32', '123')  or { panic(err) }
+	redis.set('test32', '123') or { panic(err) }
 	r2 := redis.pexpire('test32', 200) or {
 		assert false
 		return
@@ -391,7 +391,7 @@ fn test_pexpire() {
 fn test_expireat() {
 	mut redis := setup()
 	defer {
-		cleanup(mut redis)  or { panic(err) }
+		cleanup(mut redis) or { panic(err) }
 	}
 	r1 := redis.expireat('test33', 1293840000) or {
 		assert false
@@ -399,7 +399,7 @@ fn test_expireat() {
 	}
 	assert r1 == 0
 
-	redis.set('test33', '123')  or { panic(err) }
+	redis.set('test33', '123') or { panic(err) }
 	r2 := redis.expireat('test33', 1293840000) or {
 		assert false
 		return
@@ -410,7 +410,7 @@ fn test_expireat() {
 fn test_pexpireat() {
 	mut redis := setup()
 	defer {
-		cleanup(mut redis)  or { panic(err) }
+		cleanup(mut redis) or { panic(err) }
 	}
 	r1 := redis.pexpireat('test34', 1555555555005) or {
 		assert false
@@ -418,7 +418,7 @@ fn test_pexpireat() {
 	}
 	assert r1 == 0
 
-	redis.set('test34', '123')  or { panic(err) }
+	redis.set('test34', '123') or { panic(err) }
 	r2 := redis.pexpireat('test34', 1555555555005) or {
 		assert false
 		return
@@ -463,7 +463,7 @@ fn test_getset() {
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
-	mut r1 := redis.getset('test38', '10') or { '' } 
+	mut r1 := redis.getset('test38', '10') or { '' }
 	assert r1 == ''
 
 	r2 := redis.getset('test38', '15') or {
@@ -633,7 +633,7 @@ fn test_pttl() {
 	}
 	assert r1 >= 1490 && r1 <= 1500
 
-	redis.set('test56', '123')  or { panic(err) }
+	redis.set('test56', '123') or { panic(err) }
 	r2 := redis.pttl('test56') or {
 		assert false
 		return
@@ -710,7 +710,7 @@ fn test_rename() {
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
-	redis.rename('test64', 'test65') or { println("key not found") }
+	redis.rename('test64', 'test65') or { println('key not found') }
 	redis.set('test64', 'will be 65') or { panic(err) }
 	redis.rename('test64', 'test65') or { panic(err) }
 	r := redis.get('test65') or {
@@ -727,7 +727,7 @@ fn test_renamenx() {
 	}
 	assert helper_renamenx_err_helper(mut redis, 'test66', 'test67') == 'no such key'
 	redis.set('test68', '123') or { panic(err) }
-	redis.set('test66', 'will be 67')or { panic(err) }
+	redis.set('test66', 'will be 67') or { panic(err) }
 	r1 := redis.renamenx('test66', 'test67') or {
 		assert false
 		return
@@ -770,7 +770,7 @@ fn helper_get_key_not_found(mut redis redisclient.Redis, key string) bool {
 
 fn helper_randomkey_database_empty(mut redis redisclient.Redis) bool {
 	redis.randomkey() or {
-		if err.msg == 'database is empty' || err.msg == ''{
+		if err.msg == 'database is empty' || err.msg == '' {
 			return true
 		} else {
 			return false
@@ -780,7 +780,7 @@ fn helper_randomkey_database_empty(mut redis redisclient.Redis) bool {
 }
 
 fn helper_renamenx_err_helper(mut redis redisclient.Redis, key string, newkey string) string {
-	redis.renamenx(key, newkey) or { return "no such key" }
+	redis.renamenx(key, newkey) or { return 'no such key' }
 	return ''
 }
 

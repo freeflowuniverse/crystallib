@@ -343,7 +343,7 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 			if link.cat == LinkType.page || link.cat == LinkType.file {
 				// only process links if page or file
 
-				if  linkname.contains(':') {
+				if linkname.contains(':') {
 					mut sitename9, _ := name_split(linkname) or { panic(err) }
 					link.site = sitename9
 				}

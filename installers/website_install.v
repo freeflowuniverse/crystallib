@@ -1,10 +1,10 @@
 module installers
 
 import os
-import myconfig
-import process
-import gittools
-import texttools
+import despiegk.crystallib.myconfig
+import despiegk.crystallib.process
+import despiegk.crystallib.gittools
+import despiegk.crystallib.texttools
 
 // Initialize (load wikis) only once when server starts
 pub fn website_install(name string, first bool, conf &myconfig.ConfigRoot) ? {

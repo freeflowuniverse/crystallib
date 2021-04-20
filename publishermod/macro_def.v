@@ -2,43 +2,40 @@ module publishermod
 
 import despiegk.crystallib.texttools
 
-
-
-
 fn macro_def(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
-	
 	mut categories := macro.params.get_list('category') ?
 	categories << macro.params.get_list('categories') ?
 	// println(categories)
-	mut defname2 := macro.params.get_default('name',"") ?
-	defname2 = defname2.trim(" ")
-	//defname not defined, will get the title as the definition name
-	if defname2 == "" {
+	mut defname2 := macro.params.get_default('name', '') ?
+	defname2 = defname2.trim(' ')
+	// defname not defined, will get the title as the definition name
+	if defname2 == '' {
 		defname2 = state.page.title()
 	}
-	defname2 = defname2.replace("_"," ")
+	defname2 = defname2.replace('_', ' ')
 
-
-	if defname2 == "" {
-		return error("could not find name of the definition in the page.")
+	if defname2 == '' {
+		return error('could not find name of the definition in the page.')
 	}
 
 	// state.page.categories_add(categories)
 
 	mut defobj := Def{
 		pageid: state.page.id
-		name: defname2		
+		name: defname2
 	}
 
 	defid := state.publisher.def_add(defobj)
 
-	mut aliasses :=  macro.params.get_list('alias') ?
+	mut aliasses := macro.params.get_list('alias') ?
 	for alias in aliasses {
 		aliasname := name_fix_no_underscore(alias)
-		if aliasname==""{panic("cannot be empty:'$aliasses'")}
-		if ! state.publisher.def_exists(aliasname){
-			state.publisher.def_names[aliasname]=defid
-		}		
+		if aliasname == '' {
+			panic("cannot be empty:'$aliasses'")
+		}
+		if !state.publisher.def_exists(aliasname) {
+			state.publisher.def_names[aliasname] = defid
+		}
 	}
 
 	defobj.categories_add(categories)
@@ -48,20 +45,19 @@ fn macro_def(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	// 	panic("sqq")
 	// }
 	// println(defobj)
-
 }
 
-//check if the def is not excluded or reverse
-fn def_list_check(defobj Def,categories []string, exclude []string)bool{
-	for cat in defobj.categories{
-		if cat in exclude{
+// check if the def is not excluded or reverse
+fn def_list_check(defobj Def, categories []string, exclude []string) bool {
+	for cat in defobj.categories {
+		if cat in exclude {
 			return false
 		}
-		if cat in categories{
+		if cat in categories {
 			return true
 		}
 	}
-	if categories == []{
+	if categories == [] {
 		return true
 	}
 	return false
@@ -74,8 +70,8 @@ fn macro_def_list(mut state LineProcessorState, mut macro texttools.MacroObj) ? 
 	categories = categories.map(name_fix_no_underscore(it))
 
 	mut out := []string{}
-	mut firstletter := ""
-	mut firstletter_found := ""
+	mut firstletter := ''
+	mut firstletter_found := ''
 
 	out << '# Definitions & Concepts'
 	out << ''
@@ -83,8 +79,8 @@ fn macro_def_list(mut state LineProcessorState, mut macro texttools.MacroObj) ? 
 	mut def_names := []string{}
 
 	for defname, _ in state.publisher.def_names {
-		if defname.trim(" ")==""{
-			return error("defname cannot be empty")
+		if defname.trim(' ') == '' {
+			return error('defname cannot be empty')
 		}
 		def_names << defname
 	}
@@ -94,17 +90,17 @@ fn macro_def_list(mut state LineProcessorState, mut macro texttools.MacroObj) ? 
 
 	for defname in def_names {
 		// println(" >>> $defname")
-		defobj := state.publisher.def_get(defname)?
-		if defobj.pageid in done{
+		defobj := state.publisher.def_get(defname) ?
+		if defobj.pageid in done {
 			continue
 		}
-		if defobj.hidden{
+		if defobj.hidden {
 			continue
 		}
-		if ! def_list_check(defobj, categories, exclude){
+		if !def_list_check(defobj, categories, exclude) {
 			continue
 		}
-		
+
 		// println(state.publisher.defs)
 		// println(" >>> $defname ok")
 		firstletter_found = defname[0].ascii_str()
@@ -137,5 +133,4 @@ fn macro_def_list(mut state LineProcessorState, mut macro texttools.MacroObj) ? 
 
 	// println(categories)
 	// panic("s")
-
 }

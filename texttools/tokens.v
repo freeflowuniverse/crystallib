@@ -78,7 +78,7 @@ pub fn replace_items(text string, replacer map[string]string) ?string {
 			line = tr.replace(line, key, replacewith) ?
 			line = tr.replace(line, key + 's', replacewith + 's') ?
 		}
-		//unsafe { tr.free() }
+		// unsafe { tr.free() }
 		res << line
 	}
 	final_res := res.join('\n')
@@ -208,12 +208,12 @@ pub fn tokenize(text_ string) TokenizerResult {
 		skip = false
 		splitted_line := line.split('')
 		for char in splitted_line {
-			if  '[({'.contains(char) {
+			if '[({'.contains(char) {
 				skip = true
 				continue
 			}
 			if skip {
-				if  ')]}'.contains(char) {
+				if ')]}'.contains(char) {
 					skip = false
 					prev = ''
 					continue
@@ -227,7 +227,7 @@ pub fn tokenize(text_ string) TokenizerResult {
 					}
 				}
 				if 'abcdefghijklmnopqrstuvwxyz0123456789_-'.contains(char.to_lower()) {
-					if word.len > 0 || prev == '' ||  '\t\n ,:;.?!#|'.contains(prev) {
+					if word.len > 0 || prev == '' || '\t\n ,:;.?!#|'.contains(prev) {
 						word += char
 					}
 					if word.starts_with('http') {

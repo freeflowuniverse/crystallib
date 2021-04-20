@@ -1,20 +1,19 @@
 module builder
 
-import process
+import despiegk.crystallib.process
 import os
 
 pub struct ExecutorLocal {
 	retry int = 1 // nr of times something will be retried before failing, need to check also what error is, only things which should be retried need to be done, default 1 because is local
 }
 
-
 pub fn (mut executor ExecutorLocal) exec(cmd string) ?string {
-	res := process.execute_job({cmd:cmd})?
+	res := process.execute_job(cmd: cmd) ?
 	return res.output
 }
 
 pub fn (mut executor ExecutorLocal) exec_silent(cmd string) ?string {
-	res :=  process.execute_job({cmd:cmd,stdout:false})?
+	res := process.execute_job(cmd: cmd, stdout: false) ?
 	return res.output
 }
 
@@ -51,31 +50,31 @@ pub fn (mut executor ExecutorLocal) environ_get() ?map[string]string {
 
 /*
 Executor info or meta data
-accessing type Executor won't allow to access the 
+accessing type Executor won't allow to access the
 fields of the struct, so this is workaround
 */
 pub fn (mut executor ExecutorLocal) info() map[string]string {
-	return {
+	return map{
 		'category': 'local'
 	}
 }
 
 // upload from local FS to executor FS
 pub fn (mut executor ExecutorLocal) upload(source string, dest string) ? {
-	executor.exec("cp -r $source $dest") ?
+	executor.exec('cp -r $source $dest') ?
 }
 
 // download from executor FS to local FS
 pub fn (mut executor ExecutorLocal) download(source string, dest string) ? {
-	executor.exec("cp -r $source $dest") ?
+	executor.exec('cp -r $source $dest') ?
 }
 
-pub fn (mut executor ExecutorLocal) ssh_shell(port int)? {
-	os.execvp("ssh", ["localhost", "-p $port"])?
+pub fn (mut executor ExecutorLocal) ssh_shell(port int) ? {
+	os.execvp('ssh', ['localhost', '-p $port']) ?
 }
 
 pub fn (mut executor ExecutorLocal) list(path string) ?[]string {
-	if ! executor.dir_exists(path){
+	if !executor.dir_exists(path) {
 		panic('Dir Not found')
 	}
 	return os.ls(path)

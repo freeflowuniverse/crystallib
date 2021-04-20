@@ -1,20 +1,19 @@
 module main
 
-fn main(){
+fn main() {
+	mut r := map{
+		'a': 'aaa'
+	}
 
-
-	mut r := map{"a":"aaa"}
-
-	r[""]="a"
-	r["b"]="b1"
+	r[''] = 'a'
+	r['b'] = 'b1'
 
 	println(r)
 
-	assert !("c" in r)
-	assert ("a" in r)
+	assert !('c' in r)
+	assert 'a' in r
 
-	if "a" in r{
-		println("aaaa")
+	if 'a' in r {
+		println('aaaa')
 	}
-
 }

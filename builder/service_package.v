@@ -55,7 +55,7 @@ pub fn (mut package Package) check(wish Wish) bool {
 // check if we are in right state if not lets try to recover
 pub fn (mut package Package) recover(wish Wish) ? {
 	if !package.check(wish) {
-		package.delete(wish) or {panic(err)}
+		package.delete(wish) or { panic(err) }
 		package.prepare(wish)
 		// package.start()
 	}

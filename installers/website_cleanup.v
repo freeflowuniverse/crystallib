@@ -1,10 +1,10 @@
 module installers
 
 import os
-import myconfig
-import process
-import gittools
-import texttools
+import despiegk.crystallib.myconfig
+import despiegk.crystallib.process
+import despiegk.crystallib.gittools
+import despiegk.crystallib.texttools
 
 pub fn website_cleanup(name string, conf &myconfig.ConfigRoot) ? {
 	codepath := conf.paths.code
@@ -63,7 +63,7 @@ pub fn website_cleanup(name string, conf &myconfig.ConfigRoot) ? {
 	> please make sure you work in line with instructions above
 
 	'
-	if ! os.exists('$repo.path/readme.md'){
+	if !os.exists('$repo.path/readme.md') {
 		os.write_file('$repo.path/readme.md', texttools.dedent(readme)) or {
 			return error('cannot write to $repo.path/README.md\n$err')
 		}

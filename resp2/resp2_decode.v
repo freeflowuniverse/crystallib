@@ -145,7 +145,7 @@ pub fn (mut r StringLineReader) get_bytes() ?[]byte {
 }
 
 pub fn get_redis_value(rv RValue) string {
-	if rv is RArray || rv is RNil{
+	if rv is RArray || rv is RNil {
 		rv_type := rv.type_name()
 		panic("Can't get value for $rv_type")
 	}
@@ -153,35 +153,35 @@ pub fn get_redis_value(rv RValue) string {
 		RInt {
 			rv.value.str()
 		}
-		RString,RError {
+		RString, RError {
 			rv.value
 		}
 		RBString {
 			rv.value.bytestr()
 		}
 		else {
-			""
+			''
 		}
 	}
 }
 
 pub fn get_redis_value_by_index(rv RValue, i int) string {
-	if rv !is RArray{
-		panic("This functions used with RArray only, use get_value instead")
+	if rv !is RArray {
+		panic('This functions used with RArray only, use get_value instead')
 	}
 	return match rv {
 		RArray {
 			get_redis_value(rv.values[i])
 		}
 		else {
-			""
+			''
 		}
 	}
 }
 
-pub fn get_redis_array(rv RValue) []RValue{
-	if rv !is RArray{
-		panic("This functions used with RArray only, use get_value instead")
+pub fn get_redis_array(rv RValue) []RValue {
+	if rv !is RArray {
+		panic('This functions used with RArray only, use get_value instead')
 	}
 	return match rv {
 		RArray {
@@ -194,8 +194,8 @@ pub fn get_redis_array(rv RValue) []RValue{
 }
 
 pub fn get_redis_array_len(rv RValue) int {
-	if rv !is RArray{
-		panic("This functions used with RArray only")
+	if rv !is RArray {
+		panic('This functions used with RArray only')
 	}
 	return match rv {
 		RArray {

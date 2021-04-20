@@ -1,7 +1,7 @@
 module texttools
 
-fn test_fake(){
-	println("")
+fn test_fake() {
+	println('')
 }
 
 // fn test_regex1() {

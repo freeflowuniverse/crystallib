@@ -1,10 +1,10 @@
 module installers
 
 import os
-import myconfig
-import process
-import gittools
-import texttools
+import despiegk.crystallib.myconfig
+import despiegk.crystallib.process
+import despiegk.crystallib.gittools
+import despiegk.crystallib.texttools
 
 pub fn wiki_cleanup(name string, conf &myconfig.ConfigRoot) ? {
 	codepath := conf.paths.code

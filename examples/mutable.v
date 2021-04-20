@@ -1,15 +1,15 @@
 struct GitRepo {
 pub:
-	path        string
-	addr 		GitAddr
+	path string
+	addr GitAddr
 pub mut:
-	state       GitStatus
+	state GitStatus
 }
 
-//is just a test, meaningless
+// is just a test, meaningless
 struct GitAddr {
-	pub:
-		addr string
+pub:
+	addr string
 }
 
 pub enum GitStatus {
@@ -19,9 +19,13 @@ pub enum GitStatus {
 	error
 }
 
-
-fn main(){
-	mut gr := GitRepo{path:"a path", addr:GitAddr{addr:"myaddr"}}
+fn main() {
+	mut gr := GitRepo{
+		path: 'a path'
+		addr: GitAddr{
+			addr: 'myaddr'
+		}
+	}
 	gr.state = GitStatus.ok
 	println(gr)
 	gr.state = GitStatus.error

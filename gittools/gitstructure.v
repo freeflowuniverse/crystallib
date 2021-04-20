@@ -11,7 +11,7 @@ mut:
 }
 
 // will get repo starting from url, if the repo does not exist, only then will pull
-// if pull is set on true, will then pull as well 
+// if pull is set on true, will then pull as well
 // struct RepoGetFromUrlArgs {
 // 	url    string
 // 	branch string
@@ -44,12 +44,12 @@ pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs
 			gitstructure.repos.delete_last()
 			return error('Could not clone the repo from ${args.url}.\nError:$err')
 		}
-		r0.check(args.pull,args.reset)?
+		r0.check(args.pull, args.reset) ?
 		return r0
 	} else {
 		mut r := gitstructure.repo_get(args2) or { return error('cannot load git $args.url\nerr') }
 		r.addr = addr
-		r.check(args.pull,args.reset)?
+		r.check(args.pull, args.reset) ?
 		return r
 	}
 }

@@ -18,7 +18,8 @@ struct TestTwin {
 	pubkey string
 }
 
-// was used to generate the data of the next method, this is for testing our code and get 20 twin's prepopulated in the redis
+// was used to generate the data of the next method, this is for testing 
+//our code and get 20 twin's prepopulated in the redis
 pub fn bootstrap_test_generate() {
 	mut pk := libsodium.PrivateKey{
 		public_key: []byte{len: libsodium.public_key_size}
@@ -132,6 +133,6 @@ pub fn bootstrap_test_populate(mut redis redisclient.Redis) {
 	'
 	twins := json.decode(TestTwins, data) or { panic(err) }
 	for twin in twins.twins {
-		redis.hset('twins', '$twin.id', '::1|$twin.pubkey') or { }
+		redis.hset('twins', '$twin.id', '::1|$twin.pubkey') or {}
 	}
 }

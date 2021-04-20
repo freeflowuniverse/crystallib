@@ -1,4 +1,4 @@
-import publishermod
+import despiegk.crystallib.publishermod
 
 fn test_link1() {
 	text := ' ![ some text    ]( http://something.com/?hi&yo  )'

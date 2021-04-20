@@ -4,19 +4,19 @@ import os
 
 pub struct SiteConfig {
 pub mut:
-	name      string
-	url       string
-	branch    string
-	pull      bool // if set will pull but not reset
-	reset     bool // if set will reset & pull, reset means remove changes
-	cat       SiteCat
-	shortname string
-	path_code string
-	domains   []string
-	descr     string
-	groups    []TFGroup
-	acl       []SiteACE // access control list
-	trackingid string // Matomo/Analytics
+	name       string
+	url        string
+	branch     string
+	pull       bool // if set will pull but not reset
+	reset      bool // if set will reset & pull, reset means remove changes
+	cat        SiteCat
+	shortname  string
+	path_code  string
+	domains    []string
+	descr      string
+	groups     []TFGroup
+	acl        []SiteACE // access control list
+	trackingid string    // Matomo/Analytics
 }
 
 pub struct TFGroup {

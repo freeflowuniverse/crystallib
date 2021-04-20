@@ -31,5 +31,5 @@ pub mut:
 	path     string // path in the repo (not on filesystem)
 	branch   string
 	anker    string // position in the file
-	depth    int // 0 means we have all depth
+	depth    int    // 0 means we have all depth
 }

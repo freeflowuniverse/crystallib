@@ -1,21 +1,21 @@
 module myconfig
 
 import os
-import process
+import despiegk.crystallib.process
 
 pub struct ConfigRoot {
 pub mut:
-	root   string
-	paths  Paths
-	sites  []SiteConfig
-	nodejs NodejsConfig
-	reset  bool
-	pull   bool
-	debug  bool
-	redis  bool
-	port   int = 9998
+	root          string
+	paths         Paths
+	sites         []SiteConfig
+	nodejs        NodejsConfig
+	reset         bool
+	pull          bool
+	debug         bool
+	redis         bool
+	port          int = 9998
 	web_hostnames bool
-	staticfiles map[string]string
+	staticfiles   map[string]string
 }
 
 pub struct Paths {
@@ -67,22 +67,21 @@ pub fn (mut config ConfigRoot) name_web_get(domain string) ?string {
 	return error('Cannot find wiki site with domain: $domain')
 }
 
-//get all static files from internet
-pub fn(mut config ConfigRoot) update_staticfiles(force bool)?{
-	println("Updating Javascript files in cache")
-	mut p := os.join_path(config.paths.base, "static")
-	process.execute_silent('mkdir -p $p') or {panic("can not create dir $p")}
-	for file, link in config.staticfiles{
+// get all static files from internet
+pub fn (mut config ConfigRoot) update_staticfiles(force bool) ? {
+	println('Updating Javascript files in cache')
+	mut p := os.join_path(config.paths.base, 'static')
+	process.execute_silent('mkdir -p $p') or { panic('can not create dir $p') }
+	for file, link in config.staticfiles {
 		mut dest := os.join_path(p, file)
-		if !os.exists(dest) || (os.exists(dest) && force){
+		if !os.exists(dest) || (os.exists(dest) && force) {
 			cmd := 'curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -L -o $dest $link'
 			// println(cmd)
 			process.execute_silent(cmd) or {
-					panic(" *** WARNING: can not  download $link to ${dest}. \n${cmd}")
-					continue
-				}
+				panic(' *** WARNING: can not  download $link to ${dest}. \n$cmd')
+				continue
+			}
 			println(' - downloaded $link')
 		}
 	}
 }
-

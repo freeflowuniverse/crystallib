@@ -65,7 +65,7 @@ module publishermod
 // 	if filename.starts_with("file__"){
 // 		splitted := filename.split("__")
 // 		if splitted.len != 3{
-// 			return app.not_found() 
+// 			return app.not_found()
 // 		}
 // 		return app.get_wiki_img(splitted[1], splitted[2])
 // 	}
@@ -73,7 +73,7 @@ module publishermod
 // 	if filename.starts_with("page__"){
 // 		splitted := filename.split("__")
 // 		if splitted.len != 3{
-// 			return app.not_found() 
+// 			return app.not_found()
 // 		}
 // 		return app.get_wiki_file(splitted[1], splitted[2])
 // 	}
@@ -82,7 +82,7 @@ module publishermod
 // 		mut splitted := filename.split("__")
 
 // 		if splitted.len < 3{
-// 			return app.not_found() 
+// 			return app.not_found()
 // 		}
 
 // 		mut site := app.publisher.site_get(splitted[1]) or { return app.not_found() }
@@ -147,7 +147,7 @@ module publishermod
 // 	mut site_errors := []SiteError{}
 
 // 	for err in site.errors{
-// 		if err.cat !=SiteErrorCategory.duplicatefile && 
+// 		if err.cat !=SiteErrorCategory.duplicatefile &&
 // 				err.cat !=SiteErrorCategory.duplicatepage{
 // 			site_errors << err
 // 		}

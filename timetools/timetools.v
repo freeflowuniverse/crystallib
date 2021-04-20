@@ -1,6 +1,16 @@
-module msgbus
+module timetools
 
 import time
+
+pub struct Expiration {
+pub mut:
+	// expiration in epoch
+	expiration int
+}
+
+fn (mut exp Expiration) epoch() int {
+	return exp.expiration
+}
 
 //+1h +1s +1d +1m
 // 0 means nothing

@@ -40,7 +40,7 @@ pub fn dedent(text string) string {
 		if line2_expanded_tab_trimmed == '' {
 			res << ''
 		} else {
-				res << line2_expanded_tab[pre..]
+			res << line2_expanded_tab[pre..]
 		}
 		unsafe { line2_expanded_tab_trimmed.free() }
 		unsafe { line2_expanded_tab.free() }
@@ -179,7 +179,7 @@ fn multiline_end(multiline_first string, multiline string) string {
 //     for key in args.key_values{
 //         args2[key.to_upper()]=args[key]
 //     }
-//     for arg in template_find_args(text){        
+//     for arg in template_find_args(text){
 //         if arg.to_upper() in args2{
 //             text2 = text2.replace("\$${arg}",args2[arg.to_upper()])
 //         }else{

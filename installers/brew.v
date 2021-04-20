@@ -1,7 +1,7 @@
 module installers
 
-import myconfig
-import process
+import despiegk.crystallib.myconfig
+import despiegk.crystallib.process
 
 pub fn brew_remove(conf &myconfig.ConfigRoot) ? {
 	script := '
@@ -23,7 +23,6 @@ pub fn brew_remove(conf &myconfig.ConfigRoot) ? {
 
 	process.execute_silent(script) ?
 }
-
 
 pub fn brew_install(conf &myconfig.ConfigRoot) ? {
 	script := '
