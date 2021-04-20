@@ -22,6 +22,7 @@ pub struct Paths {
 pub mut:
 	base    string
 	code    string
+	codewiki string
 	publish string
 }
 

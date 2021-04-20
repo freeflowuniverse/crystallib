@@ -11,9 +11,16 @@ fn initial() ConfigRoot {
 	c.paths.base = '$os.home_dir()/.publisher'
 	c.paths.publish = '$c.paths.base/publish'
 	c.paths.code = '$os.home_dir()/codewww'
+	c.paths.codewiki = '$os.home_dir()/codewiki'
+
 	if !os.exists(c.paths.code) {
 		os.mkdir(c.paths.code) or { panic(err) }
 	}
+	
+	if !os.exists(c.paths.codewiki) {
+		os.mkdir(c.paths.codewiki) or { panic(err) }
+	}
+
 	mut nodejsconfig := NodejsConfig{
 		version: NodejsVersion{
 			cat: myconfig.NodejsVersionEnum.lts
