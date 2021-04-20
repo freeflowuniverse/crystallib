@@ -6,8 +6,7 @@ import despiegk.crystallib.gittools
 import despiegk.crystallib.publishermod
 import cli
 
-fn website_conf_repo_get(cmd &cli.Command) ?(myconfig.ConfigRoot, &gittools.GitRepo) {
-	mut conf := myconfig.get(true) ?
+fn website_conf_repo_get(cmd &cli.Command, mut conf &myconfig.ConfigRoot) ?(&gittools.GitRepo) {
 	flags := cmd.flags.get_all_found()
 	mut name := flags.get_string('repo') or { '' }
 
@@ -36,11 +35,12 @@ fn website_conf_repo_get(cmd &cli.Command) ?(myconfig.ConfigRoot, &gittools.GitR
 		return error('ERROR: cannot find repo: $name\n$err')
 	}
 
-	return conf, repo
+	return repo
 }
 
-pub fn website_develop(cmd &cli.Command) ? {
-	_, repo := website_conf_repo_get(cmd) ?
+pub fn website_develop(cmd &cli.Command, mut cfg &myconfig.ConfigRoot) ? {
+	repo := website_conf_repo_get(cmd, mut cfg) ?
+	
 	println(' - start website: $repo.path')
 	process.execute_interactive('$repo.path/run.sh') ?
 }
@@ -91,7 +91,7 @@ pub fn website_build(cmd &cli.Command) ? {
 			}
 		}
 	} else {
-		_, repo := website_conf_repo_get(cmd) ?
+		repo := website_conf_repo_get(cmd, mut &conf) ?
 		// be careful process stops after interactive execute
 		// process.execute_interactive('$repo.path/build.sh') ?
 		for site in sites {
