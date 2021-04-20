@@ -49,7 +49,7 @@ pub fn (mut hostsfile HostsFile) save(sudo bool) &HostsFile {
 		str = str + '\n\n'
 	}
 	if sudo {
-		process.execute_interactive('sudo -- sh -c -e \"echo '$str' > /etc/hosts\"') or {
+		process.execute_interactive('sudo -- sh -c -e "echo \'$str\' > /etc/hosts"') or {
 			panic(err)
 		}
 	} else {
