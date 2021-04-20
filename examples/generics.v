@@ -58,7 +58,7 @@
 // user := users_repo.find_by_id(1)
 // post := posts_repo.find_by_id(1)
 
-struct DB{
+struct DB {
 	name string
 }
 
@@ -66,9 +66,8 @@ struct DB{
 // 	return T
 // }
 
-
 struct Repo<T> {
-    db DB
+	db DB
 }
 
 struct User {
@@ -77,22 +76,24 @@ struct User {
 }
 
 struct Post {
-	id   int
+	id      int
 	user_id int
-	title string
-	body string
+	title   string
+	body    string
 }
 
 fn new_repo<T>(db DB) Repo<T> {
-    return Repo<T>{db: db}
+	return Repo{
+		db: db
+	}
 }
 
 // This is a generic function. V will generate it for every type it's used with.
 fn (r Repo<T>) find_by_id(id int) ? {
 	println(T{})
-    table_name := T.name // in this example getting the name of the type gives us the table name
+	table_name := T.name // in this example getting the name of the type gives us the table name
 	println(table_name)
-    // return r.db.query_one<T>('select * from $table_name where id = ?', id)
+	// return r.db.query_one<T>('select * from $table_name where id = ?', id)
 	e := T{}
 	return e
 }
@@ -101,6 +102,5 @@ db := DB{}
 users_repo := new_repo<User>(db) // returns Repo<User>
 posts_repo := new_repo<Post>(db) // returns Repo<Post>
 
-
-user := users_repo.find_by_id(1)? // find_by_id<User>
-post := posts_repo.find_by_id(1)? // find_by_id<Post>
+user := users_repo.find_by_id(1) ? // find_by_id<User>
+post := posts_repo.find_by_id(1) ? // find_by_id<Post>

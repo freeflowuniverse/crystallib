@@ -18,8 +18,8 @@ struct TestTwin {
 	pubkey string
 }
 
-// was used to generate the data of the next method, this is for testing 
-//our code and get 20 twin's prepopulated in the redis
+// was used to generate the data of the next method, this is for testing
+// our code and get 20 twin's prepopulated in the redis
 pub fn bootstrap_test_generate() {
 	mut pk := libsodium.PrivateKey{
 		public_key: []byte{len: libsodium.public_key_size}

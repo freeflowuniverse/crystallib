@@ -72,17 +72,19 @@ fn test_2() {
 
 	compare := [
 		RValue(RArray{
-		values: [RValue(RString{
-			value: 'a'
-		}), RValue(RString{
-			value: 'b'
-		})]
-	}),
+			values: [RValue(RString{
+				value: 'a'
+			}), RValue(RString{
+				value: 'b'
+			})]
+		}),
 		RValue(RInt{
 			value: 10
-		}), RValue(RString{
+		}),
+		RValue(RString{
 			value: 'OK'
-		})]
+		}),
+	]
 	assert compare == res
 }
 

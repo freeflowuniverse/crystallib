@@ -6,7 +6,7 @@ import despiegk.crystallib.gittools
 import despiegk.crystallib.publishermod
 import cli
 
-fn website_conf_repo_get(cmd &cli.Command, mut conf &myconfig.ConfigRoot) ?(&gittools.GitRepo) {
+fn website_conf_repo_get(cmd &cli.Command, mut conf myconfig.ConfigRoot) ?&gittools.GitRepo {
 	flags := cmd.flags.get_all_found()
 	mut name := flags.get_string('repo') or { '' }
 
@@ -38,9 +38,9 @@ fn website_conf_repo_get(cmd &cli.Command, mut conf &myconfig.ConfigRoot) ?(&git
 	return repo
 }
 
-pub fn website_develop(cmd &cli.Command, mut cfg &myconfig.ConfigRoot) ? {
+pub fn website_develop(cmd &cli.Command, mut cfg myconfig.ConfigRoot) ? {
 	repo := website_conf_repo_get(cmd, mut cfg) ?
-	
+
 	println(' - start website: $repo.path')
 	process.execute_interactive('$repo.path/run.sh') ?
 }
