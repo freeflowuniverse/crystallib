@@ -203,13 +203,13 @@ pub fn (mut e DockerEngine) container_create(args DockerContainerCreateArgs) ?Do
 
 	mut container := e.container_get(args.name) or { panic(err) }
 	mut docker_pubkey := pubkey
-	cmd = 'docker exec $container.id sh -c 'echo \"$docker_pubkey\" >> ~/.ssh/authorized_keys''
+	cmd = "docker exec $container.id sh -c 'echo \"$docker_pubkey\" >> ~/.ssh/authorized_keys'"
 
 	if container.node.executor is builder.ExecutorSSH {
 		mut sshkey := container.node.executor.info()['sshkey'] + '.pub'
 		sshkey = os.read_file(sshkey) or { panic(err) }
 		// add pub sshkey on authorized keys of node and container
-		cmd = 'echo \"$sshkey\" >> ~/.ssh/authorized_keys && docker exec $container.id sh -c 'echo \"$docker_pubkey\" >> ~/.ssh/authorized_keys && echo \"$sshkey\" >> ~/.ssh/authorized_keys''
+		cmd = "echo \"$sshkey\" >> ~/.ssh/authorized_keys && docker exec $container.id sh -c 'echo \"$docker_pubkey\" >> ~/.ssh/authorized_keys && echo \"$sshkey\" >> ~/.ssh/authorized_keys'"
 	}
 
 	// wait  making sure container started correctly
