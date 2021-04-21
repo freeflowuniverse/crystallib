@@ -82,15 +82,6 @@ fn site_config(mut c ConfigRoot) {
 		trackingid: ''
 	}
 	c.sites << SiteConfig{
-		name: 'www_threefold_tech'
-		shortname: 'tftech'
-		url: 'https://github.com/threefoldtech/www_threefold_tech'
-		cat: SiteCat.web
-		domains: ['www.threefold.tech', 'threefold.tech']
-		descr: 'cyberpandemic, use the tech to build your own solutions with, certification for TFGrid'
-		trackingid: ''
-	}
-	c.sites << SiteConfig{
 		name: 'www_examplesite'
 		shortname: 'example'
 		url: 'https://github.com/threefoldfoundation/www_examplesite'
@@ -197,14 +188,6 @@ fn site_config(mut c ConfigRoot) {
 		descr: ''
 		trackingid: '13'
 	}
-	c.sites << SiteConfig{
-		name: 'info_bettertoken'
-		shortname: 'bt'
-		url: 'https://github.com/BetterToken/info_bettertoken.git'
-		domains: ['bt-info.threefold.io']
-		descr: ''
-		trackingid: ''
-	}
 
 	c.sites << SiteConfig{
 		name: 'info_publishtools'
@@ -215,23 +198,15 @@ fn site_config(mut c ConfigRoot) {
 		trackingid: ''
 	}
 
-	c.sites << SiteConfig{
-		name: 'info_grid_operations'
-		shortname: 'operations'
-		url: 'https://github.com/threefoldtech/info_grid_operations'
-		domains: ['operations-info.threefold.io']
-		descr: 'Grid operations'
-		trackingid: ""
-	}
+	// c.sites << SiteConfig{
+	// 	name: 'info_grid_operations'
+	// 	shortname: 'operations'
+	// 	url: 'https://github.com/threefoldtech/info_grid_operations'
+	// 	domains: ['operations-info.threefold.io']
+	// 	descr: 'Grid operations'
+	// 	trackingid: ""
+	// }
 
-	c.sites << SiteConfig{
-		name: 'info_tftech_funding'
-		shortname: 'funding'
-		url: 'https://github.com/threefoldtech/info_tftech_funding'
-		domains: ['funding.threefold.tech']
-		descr: ''
-		trackingid: ""
-	}
 
 	c.sites << SiteConfig{
 		name: 'data_threefold'
