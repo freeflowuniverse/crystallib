@@ -107,7 +107,7 @@ pub:
 pub struct Alert {
 pub:
 	id 					int
-	// type 				string
+	// type 				string //TODO
 	level 				int
 	app_name 			string
 	category 			string
@@ -142,34 +142,17 @@ pub:
 	code string
 }
 
-pub struct Body {
-mut:
-	password string [required]
+pub struct DeleteResponse {
+pub:
+	success bool
 }
 
-pub struct AddKubernetesBody {
-mut:
-	password string [required]
-	flavor string 	[required]
-
+pub struct Status {
+pub:
+	running bool
 }
 
-pub struct AddStorageBody {
-mut:
-	password string [required]
-	capacity string [required]
+struct AddNode{
+	capacity int
 	farm string
-}
-
-pub struct DeleteBody {
-mut:
-	password string [required]
-	wid string 	[required]
-
-}
-
-pub struct AlertBody {
-mut:
-	password string [required]
-	application string
 }
