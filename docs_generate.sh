@@ -1,4 +1,4 @@
-v doc -all -m . -f html
+v doc -all -m . -f html -inline-assets
 
 export home=$HOME
 
