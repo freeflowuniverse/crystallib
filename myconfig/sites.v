@@ -215,14 +215,23 @@ fn site_config(mut c ConfigRoot) {
 		trackingid: ''
 	}
 
-	// c.sites << SiteConfig{
-	// 	name: 'info_operations'
-	// 	shortname: 'operations'
-	// 	url: 'https://github.com/threefoldtech/info_grid_operations'
-	// 	domains: ['operations-info.threefold.io']
-	// 	descr: 'Grid operations'
-	// 	trackingid: ""
-	// }
+	c.sites << SiteConfig{
+		name: 'info_grid_operations'
+		shortname: 'operations'
+		url: 'https://github.com/threefoldtech/info_grid_operations'
+		domains: ['operations-info.threefold.io']
+		descr: 'Grid operations'
+		trackingid: ""
+	}
+
+	c.sites << SiteConfig{
+		name: 'info_tftech_funding'
+		shortname: 'funding'
+		url: 'https://github.com/threefoldtech/info_tftech_funding'
+		domains: ['funding.threefold.tech']
+		descr: ''
+		trackingid: ""
+	}
 
 	c.sites << SiteConfig{
 		name: 'data_threefold'
