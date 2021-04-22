@@ -4,7 +4,7 @@ fn setup() vdcclient.Client {
 	return vdcclient.Client{
 		vdcname: "ADD_YOUR_VDC_NAME"
 		password: "ADD_YOUR_VDC_PASSWORD"
-		url: "ADD_YOUR_VDC_URL_INCLUDING vdc_dashboard PART"
+		url: "ADD_YOUR_VDC_URL_INCLUDING_vdc_dashboard_PART"
 	}
 }
 
@@ -23,7 +23,7 @@ fn test_list_kubernetes_nodes() {
 	response, status_code := client.list_kubernetes_nodes()
 	println(response)
 	assert status_code == 200
-	assert response[0].wid != 0
+	assert response[0].wid > 0
 }
 
 fn test_add_kubernetes_node() {
@@ -32,7 +32,7 @@ fn test_add_kubernetes_node() {
 	response, status_code := client.add_kubernetes_node("MEDIUM")
 	println(response)
 	assert status_code == 200
-	assert response[0] != 0
+	assert response[0] > 0
 }
 
 fn test_delete_kubernetes_node() {
@@ -54,7 +54,9 @@ fn test_list_storage_nodes() {
 	response, status_code := client.list_storage_nodes()
 	println(response)
 	assert status_code == 200
-	assert response[0].wid != 0
+	if response.len > 0 {
+		assert response[0].wid > 0
+	}
 }
 
 fn test_add_storage_node() {
@@ -65,7 +67,7 @@ fn test_add_storage_node() {
 	response, status_code := client.add_storage_node(capacity, farm)
 	println(response)
 	assert status_code == 200
-	assert response[0] != 0
+	assert response[0] > 0
 }
 
 fn test_delete_storage_node() {
@@ -95,7 +97,7 @@ fn test_get_vdc_used_pools() {
 	response, status_code := client.get_used_pools()
 	println(response)
 	assert status_code == 200
-	assert response[0].pool_id != 0
+	assert response[0].pool_id > 0
 }
 
 fn test_get_alerts() {
@@ -105,7 +107,6 @@ fn test_get_alerts() {
 	response, status_code := client.get_alerts(application)
 	println(response)
 	assert status_code == 200
-	assert response[0].id > 0
 }
 
 
@@ -130,7 +131,6 @@ fn test_get_zstor_config() {
 fn test_get_status() {
 	client := setup()
 	println("************ TEST13_GET_STATUS ************")
-	ip_version := 4 	// 4 or 6
 	response, status_code := client.get_status()
 	println(response)
 	assert status_code == 200
