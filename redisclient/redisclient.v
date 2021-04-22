@@ -104,7 +104,7 @@ fn (mut r Redis) write_cmds(items []string) ? {
 		if c == 0 {
 			out << v
 		} else {
-			out << '\"$v\"'
+			out << "'$v'"
 		}
 		c++
 	}
