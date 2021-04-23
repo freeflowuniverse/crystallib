@@ -264,7 +264,7 @@ pub fn load_tokens() StatsTFT {
 	println("[+] connecting to redis")
 	mut r := redisclient.connect("127.0.0.1:6379") or { panic(err) }
 
-	println("[+] fetching data from redis")
+	println("[+] fetching tokens data from redis")
 	rtft := r.get("tft:raw") or { download("tft:raw", "", mut r) }
 	rtfta := r.get("tfta:raw") or { download("tfta:raw", "", mut r) }
 
@@ -279,28 +279,25 @@ pub fn load_tokens() StatsTFT {
 	}
 
 	merged := parse(tft, tfta)
-	print(merged)
 
 	return merged
 }
 
-fn load_account() {
+pub fn load_account(accid string) Account {
 	println("[+] connecting to redis")
 	mut r := redisclient.connect("127.0.0.1:6379") or { panic(err) }
 
-	accid := "GDRFR3QGMRO5PG3BMSTFGBMDFXNVAB6HUZZS34S7QODXXFZX7YBNUQOE"
-
-	println("[+] fetching data from redis")
+	println("[+] fetching account data from redis")
 	raccount := r.get("account:raw:" + accid) or { download("account:raw", accid, mut r) }
 
 	account := json.decode(Raw_Account, raccount) or {
 		eprintln('Failed to decode json')
-		return
+		return Account{}
 	}
 
 	nicer := account_info(account)
-	println(account)
-	println(nicer)
+
+	return nicer
 }
 
 
