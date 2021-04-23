@@ -141,8 +141,6 @@ fn macro_tokens_account_locked(mut state LineProcessorState, mut macro texttools
 	accid := macro.params.get("id")?
 	s := tokens.load_account(accid)
 
-	println(s)
-
 	mut out := []string{}
 
 	for locked in s.locked_amounts {
