@@ -300,10 +300,3 @@ pub fn load_account(accid string) Account {
 	return nicer
 }
 
-
-/*
-fn main() {
-	load_tokens()
-	load_account()
-}
-*/

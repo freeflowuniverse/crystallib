@@ -96,6 +96,41 @@ fn macro_tokens_locked_table(mut state LineProcessorState, mut macro texttools.M
 	state.lines_server << out
 }
 
+fn macro_tokens_locked_chart(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+	s := tokens.load_tokens()
+	mut out := []string{}
+
+	mut total_locked := i64(0)
+	for locked in s.locked_tokens_info {
+		total_locked += i64(locked.amount)
+	}
+
+	mut data := []ChartData{}
+	mut remain := total_locked
+
+	for locked in s.locked_tokens_info {
+		amount := i64(locked.amount)
+		data << ChartData{label: locked.until, value: remain - amount}
+		remain -= amount
+	}
+
+	out << "```charty"
+	out << '{'
+	out << '"title":  "Labels and numbers",'
+	out << '"config": {'
+	out << '  "type":    "line",'
+	out << '  "labels":  true,'
+	out << '  "numbers": true'
+	out << '},'
+	out << '"data": '
+	out << json.encode(data)
+	out << '}'
+	out << "```"
+
+	state.lines_server << out
+}
+
+
 fn macro_tokens_account_info(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	accid := macro.params.get("id")?
 	s := tokens.load_account(accid)
@@ -174,6 +209,10 @@ fn macro_tokens(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 
 	if tokentype == "locked-table" {
 		macro_tokens_locked_table(mut state, mut macro)?
+	}
+
+	if tokentype == "locked-chart" {
+		macro_tokens_locked_chart(mut state, mut macro)?
 	}
 
 	if tokentype == "account-info" {
