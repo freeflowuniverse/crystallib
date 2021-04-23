@@ -172,14 +172,14 @@ fn site_config(mut c ConfigRoot) {
 		descr: 'how to use the cloud for deploying apps: evdc, kubernetes, planetary fs, ... + marketplace solutions '
 		trackingid: '16'
 	}
-	c.sites << SiteConfig{
-		name: 'info_tftech'
-		shortname: 'tftech'
-		url: 'https://github.com/threefoldtech/info_tftech'
-		domains: ['info.threefold.tech']
-		descr: ''
-		trackingid: '15'
-	}
+	// c.sites << SiteConfig{
+	// 	name: 'info_tftech'
+	// 	shortname: 'tftech'
+	// 	url: 'https://github.com/threefoldtech/info_tftech'
+	// 	domains: ['info.threefold.tech']
+	// 	descr: ''
+	// 	trackingid: '15'
+	// }
 	c.sites << SiteConfig{
 		name: 'info_digitaltwin'
 		shortname: 'twin'
