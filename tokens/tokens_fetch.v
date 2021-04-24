@@ -56,11 +56,27 @@ struct Raw_LockedAmount {
 	balances []Raw_Balance
 }
 
+struct Raw_StellarBalance {
+	asset string
+	balance string
+}
+
+struct Raw_StellarHistory {
+	ts int
+	payments int
+	trades int
+	balances []Raw_StellarBalance
+}
+
+struct Raw_StellarAccount {
+	account string
+	history []Raw_StellarHistory
+}
 
 //
 // Improved struct
 //
-struct Wallet {
+pub struct Wallet {
 pub mut:
 	address string
 	description string
@@ -68,7 +84,7 @@ pub mut:
 	amount f64
 }
 
-struct FoundationAccountInfo {
+pub struct FoundationAccountInfo {
 pub mut:
 	category string
 	wallets []Wallet
@@ -121,6 +137,16 @@ pub mut:
 	balances []Balance
 }
 
+struct Group {
+pub mut:
+	name string
+	distribution f32  // in percent from 0..1
+	farmed f64        // in tokens
+	done f64
+	amount f64
+	remain f64
+}
+
 //
 // Formatter
 //
@@ -132,6 +158,7 @@ fn download(target string, account string, mut r redisclient.Redis) string {
 		"tft:raw": "https://statsdata.threefoldtoken.com/stellar_stats/api/stats?detailed=true",
 		"tfta:raw": "https://statsdata.threefoldtoken.com/stellar_stats/api/stats?detailed=true&tokencode=TFTA",
 		"account:raw": "https://statsdata.testnet.threefold.io/stellar_stats/api/account/" + account,
+		"stellar:raw": "https://api.stellar.expert/explorer/public/account/" + account + "?history=true",
 	}
 
 	mut key := target
@@ -139,6 +166,11 @@ fn download(target string, account string, mut r redisclient.Redis) string {
 	if key == "account:raw" {
 		key = "account:raw:" + account
 	}
+
+	if key == "stellar:raw" {
+		key = "stellar:raw:" + account
+	}
+
 
 	println("[+] downloading: " + links[target])
 	text := http.get_text(links[target])
@@ -154,7 +186,7 @@ fn parsef(f string) f64 {
 	return strconv.atof64(x)
 }
 
-fn parse(tft Raw_StatsTFT, tfta Raw_StatsTFT) StatsTFT {
+fn parse(tft Raw_StatsTFT, tfta Raw_StatsTFT, stellar Raw_StellarAccount) StatsTFT {
 	mut final := StatsTFT{}
 
 	final.total_tokens = parsef(tft.total_tokens) + parsef(tfta.total_tokens)
@@ -180,6 +212,11 @@ fn parse(tft Raw_StatsTFT, tfta Raw_StatsTFT) StatsTFT {
 				found.description = wal.description
 				found.liquid = wal.liquid
 				found.amount += parsef(wal.amount)
+
+				// FIX original json
+				if found.description == "Liquidity/Ecosystem Contribution Wisdom" {
+					found.liquid = true
+				}
 
 				info[entry.category][wal.address] = found
 			}
@@ -212,8 +249,130 @@ fn parse(tft Raw_StatsTFT, tfta Raw_StatsTFT) StatsTFT {
 		}
 	}
 
+	// add extra stellar account for missing wallet
+	balances := stellar.history[stellar.history.len - 1].balances
+	for balance in balances {
+		if balance.asset.starts_with("TFT") {
+			wallet := Wallet{
+				address: balance.asset[4..56],
+				description: "TF DAY2DAY operations"
+				liquid: true,
+				amount: parsef(balance.balance) / 1000000,
+			}
+
+			for mut account in final.foundation_accounts_info {
+				if account.category == "threefold contribution wallets" {
+					account.wallets << wallet
+				}
+			}
+		}
+	}
+
 	return final
 }
+
+pub fn parse_special(s StatsTFT) map[string]Group {
+	// fixed 4 billion tokens
+	// master_total_tokens := f64(4000000000)
+	total_tokens := s.total_tokens
+
+	mut liquidity := tokens.FoundationAccountInfo{}
+	mut contribution := tokens.FoundationAccountInfo{}
+	mut council := tokens.FoundationAccountInfo{}
+
+	for info in s.foundation_accounts_info {
+		if info.category == "threefold contribution wallets" {
+			contribution = info
+		}
+
+		if info.category == "liquidity wallets" {
+			liquidity = info
+		}
+
+		if info.category == "wisdom council wallets" {
+			council = info
+		}
+	}
+
+	mut group := map[string]Group{}
+
+	// Farming rewards after April 19 2018 (***)
+	group["farming-rewards-2018"] = Group{
+		name: "Farming rewards after April 19 2018",
+		distribution: 0.75,
+		done: s.total_tokens - 695000000, // Genesis pool
+	}
+
+	mut grant_amount := f64(0)
+
+	for wallet in contribution.wallets {
+		if wallet.description == "TF Grants Wallet" {
+			grant_amount += f64(wallet.amount)
+		}
+	}
+
+	for wallet in council.wallets {
+		if wallet.description == "TF Grants Wisdom" {
+			grant_amount += f64(wallet.amount)
+		}
+	}
+
+	// Ecosystem Grants  (*)
+	group["ecosystem-grants"] = Group{
+		name: "Ecosystem Grants",
+		distribution: 0.03,
+		done: grant_amount,
+	}
+
+	// Promotion & Marketing Effort 
+	group["promotion-marketing"] = Group{
+		name: "Promotion & Marketing Effort ",
+		distribution: 0.05,
+		done: 100000000, // estimation
+	}
+
+	mut liquidity_amount := i64(0)
+
+	for info in s.foundation_accounts_info {
+		for wallet in info.wallets {
+			if wallet.liquid == true {
+				println(wallet)
+				liquidity_amount += i64(wallet.amount)
+			}
+		}
+	}
+
+	// Ecosystem Contribution, Liquidity Exchanges
+	group["ecosystem-contribution"] = Group{
+		name: "Ecosystem Contribution, Liquidity Exchanges",
+		distribution: 0.04,
+		done: liquidity_amount,
+	}
+
+	// Technology Acquisition + Starting Team (40p)
+	group["technology"] = Group{
+		name: "Technology Acquisition + Starting Team (40p)",
+		distribution: 0.07,
+		done: 290000000,
+	}
+
+	// Advisors, Founders & Team
+	group["advisors-founders"] = Group{
+		name: "Advisors, Founders & Team",
+		distribution: 0.06,
+	}
+
+	sum := group["farming-rewards-2018"].done +
+	       group["ecosystem-grants"].done +
+		   group["promotion-marketing"].done +
+		   group["ecosystem-contribution"].done +
+		   group["technology"].done
+
+	group["advisors-founders"].done = total_tokens - sum
+
+	return group
+}
+
 
 fn parse_balance(bal Raw_Balance) Balance {
 	return Balance{
@@ -264,9 +423,14 @@ pub fn load_tokens() StatsTFT {
 	println("[+] connecting to redis")
 	mut r := redisclient.connect("127.0.0.1:6379") or { panic(err) }
 
+
 	println("[+] fetching tokens data from redis")
 	rtft := r.get("tft:raw") or { download("tft:raw", "", mut r) }
 	rtfta := r.get("tfta:raw") or { download("tfta:raw", "", mut r) }
+
+	// extra stellar account for missing account in tft
+	addac := "GB2C5HCZYWNGVM6JGXDWQBJTMUY4S2HPPTCAH63HFAQVL2ALXDW7SSJ7"
+	rstel := r.get("stellar:raw:" + addac) or { download("stellar:raw", addac, mut r) }
 
 	tft := json.decode(Raw_StatsTFT, rtft) or {
 		eprintln('Failed to decode json')
@@ -278,7 +442,12 @@ pub fn load_tokens() StatsTFT {
 		return StatsTFT{}
 	}
 
-	merged := parse(tft, tfta)
+	stellar := json.decode(Raw_StellarAccount, rstel) or {
+		eprintln('Failed to decode json')
+		return StatsTFT{}
+	}
+
+	merged := parse(tft, tfta, stellar)
 
 	return merged
 }

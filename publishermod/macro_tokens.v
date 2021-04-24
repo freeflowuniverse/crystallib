@@ -29,6 +29,34 @@ fn thousand(input f64) string {
 	return final
 }
 
+// format an addresst link to stellar
+fn address_link(target string, display string) string {
+	stellar := "https://stellar.expert/explorer/public/account/"
+	prefix := target.before(":")
+	addr := target.after(":")
+
+	// not a valid address
+	if addr.len < 16 {
+		return target
+	}
+
+	if prefix == target {
+		// no prefix found
+		return "[" + display + "](" + stellar + addr + ")"
+	}
+
+	return "[(" + prefix + ") " + display + "](" + stellar + addr + ")"
+}
+
+fn address(a string) string {
+	return address_link(a, a)
+}
+
+fn address_trunc(a string) string {
+	trunc := a[0..12] + "..."
+	return address_link(a, trunc)
+}
+
 fn macro_tokens_values(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	s := tokens.load_tokens()
 
@@ -116,7 +144,7 @@ fn macro_tokens_locked_chart(mut state LineProcessorState, mut macro texttools.M
 
 	out << "```charty"
 	out << '{'
-	out << '"title":  "Labels and numbers",'
+	out << '"title":  "Locked Tokens Expiration",'
 	out << '"config": {'
 	out << '  "type":    "line",'
 	out << '  "labels":  true,'
@@ -143,7 +171,9 @@ fn macro_tokens_account_info(mut state LineProcessorState, mut macro texttools.M
 	out << "| --- | --- |"
 	for bal in s.balances {
 		balance := strconv.f64_to_str_l(bal.amount)
-		out << "| $bal.asset | $balance |"
+		addr := address(bal.asset)
+
+		out << "| $addr | $balance |"
 	}
 
 	state.lines_server << out
@@ -194,6 +224,82 @@ fn macro_tokens_account_locked(mut state LineProcessorState, mut macro texttools
 	state.lines_server << out
 }
 
+fn macro_tokens_current_distribution(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+	s := tokens.parse_special(tokens.load_tokens())
+
+	mut out := []string{}
+
+	out << "| Tokens | Distribution | Done |"
+	out << "| --- | --- | --- |"
+
+	mut total := f64(0)
+
+	for _, special in s {
+		distribution := special.distribution * 100
+		done := strconv.f64_to_str_l(special.done / 1000000).before(".")
+		total += special.done
+
+		out << "| $special.name | ${distribution}% | ${done} M |"
+	}
+
+	total_found := strconv.f64_to_str_l(total / 1000000).before(".")
+	out << "| **Total** | **100%** | **${total_found} M** |"
+
+	state.lines_server << out
+}
+
+fn macro_tokens_total_distribution(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+	s := tokens.parse_special(tokens.load_tokens())
+
+	mut out := []string{}
+	mut data := []ChartData{}
+
+	for _, special in s {
+		distribution := int(special.distribution * 100)
+		data << ChartData{label: special.name, value: distribution }
+	}
+
+	out << "```charty"
+	out << '{'
+	out << '"title":  "Tokens Total (4 Billion) Distribution (percentage)",'
+	out << '"config": {'
+	out << '  "type":    "doughnut",'
+	out << '  "labels":  true,'
+	out << '  "numbers": true'
+	out << '},'
+	out << '"data": '
+	out << json.encode(data)
+	out << '}'
+	out << "```"
+
+	state.lines_server << out
+}
+
+fn macro_tokens_special_wallets_table(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+	s := tokens.load_tokens()
+
+	mut out := []string{}
+
+	for info in s.foundation_accounts_info {
+		category := info.category.title()
+
+		out << ""
+		out << "## $category"
+		out << ""
+
+		out << "| Address | Description | Balance |"
+		out << "| --- | --- | --- |"
+
+		for wallet in info.wallets {
+			addr := address_trunc(wallet.address)
+			amount := thousand(wallet.amount)
+			out << "| $addr | `$wallet.description` | $amount |"
+		}
+	}
+
+	state.lines_server << out
+}
+
 
 
 fn macro_tokens(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
@@ -225,5 +331,17 @@ fn macro_tokens(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 
 	if tokentype == "account-locked" {
 		macro_tokens_account_locked(mut state, mut macro)?
+	}
+
+	if tokentype == "current-distribution" {
+		macro_tokens_current_distribution(mut state, mut macro)?
+	}
+
+	if tokentype == "total-distribution" {
+		macro_tokens_total_distribution(mut state, mut macro)?
+	}
+
+	if tokentype == "special-wallets-table" {
+		macro_tokens_special_wallets_table(mut state, mut macro)?
 	}
 }
