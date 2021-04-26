@@ -213,11 +213,6 @@ fn parse(tft Raw_StatsTFT, tfta Raw_StatsTFT, stellar Raw_StellarAccount) StatsT
 				found.liquid = wal.liquid
 				found.amount += parsef(wal.amount)
 
-				// FIX original json
-				if found.description == "Liquidity/Ecosystem Contribution Wisdom" {
-					found.liquid = true
-				}
-
 				info[entry.category][wal.address] = found
 			}
 		}
@@ -245,25 +240,6 @@ fn parse(tft Raw_StatsTFT, tfta Raw_StatsTFT, stellar Raw_StellarAccount) StatsT
 			final.locked_tokens_info << LockedTokensInfo{
 				amount: parsef(x[0]),
 				until: x[3] + " " + x[4]
-			}
-		}
-	}
-
-	// add extra stellar account for missing wallet
-	balances := stellar.history[stellar.history.len - 1].balances
-	for balance in balances {
-		if balance.asset.starts_with("TFT") {
-			wallet := Wallet{
-				address: balance.asset[4..56],
-				description: "TF DAY2DAY operations"
-				liquid: true,
-				amount: parsef(balance.balance) / 1000000,
-			}
-
-			for mut account in final.foundation_accounts_info {
-				if account.category == "threefold contribution wallets" {
-					account.wallets << wallet
-				}
 			}
 		}
 	}
@@ -336,7 +312,6 @@ pub fn parse_special(s StatsTFT) map[string]Group {
 	for info in s.foundation_accounts_info {
 		for wallet in info.wallets {
 			if wallet.liquid == true {
-				println(wallet)
 				liquidity_amount += i64(wallet.amount)
 			}
 		}
