@@ -29,7 +29,7 @@ fn (mut file File) relocate(mut publisher Publisher) {
 		return
 	}
 
-	if path.ends_with('.pdf') {
+	if path.ends_with('.pdf') || path.ends_with('zip') {
 		return
 	}
 
