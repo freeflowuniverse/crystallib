@@ -72,7 +72,12 @@ fn (link Link) server_get() string {
 		return '[$link.description](${link.site}__${link.filename}.md)'
 	}
 	if link.cat == LinkType.file {
-		return '![$link.description](${link.site}__$link.filename  $link.extra)'
+		if link.isimage{
+			return '![$link.description](${link.site}__$link.filename  $link.extra)'
+		}
+		// return '[$link.description](/${link.site}__$link.filename  $link.extra)'
+		return '<a href="${link.site}__$link.filename  $link.extra"> $link.description </a>'
+		
 	}
 	return link.original_get()
 }
@@ -95,9 +100,13 @@ fn (mut link Link) source_get(sitename string) string {
 			panic('should not have in link for page or file.\n$link')
 		}
 		mut filename := ''
-
-		if link.site == sitename && link.isimage {
-			filename = 'img/$link.filename'
+		
+		if link.site == sitename{
+			if link.isimage {
+				filename = 'img/$link.filename'
+			}else{
+				filename = '$link.filename'
+			}
 		}
 
 		mut j := ''
