@@ -128,7 +128,7 @@ pub fn (mut executor ExecutorSSH) ssh_shell(port int) ? {
 		p = '$port'
 	}
 
-	os.execvp('ssh', ['$executor.user@$executor.ipaddr.addr', '-p $port']) ?
+	os.execvp('ssh', ['$executor.user@$executor.ipaddr.addr', '-p $p']) ?
 }
 
 pub fn (mut executor ExecutorSSH) list(path string) ?[]string {
