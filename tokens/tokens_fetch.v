@@ -175,8 +175,8 @@ fn download(target string, account string, mut r redisclient.Redis) string {
 	println("[+] downloading: " + links[target])
 	text := http.get_text(links[target])
 
-	// cache in redis
-	r.set(key, text) or { eprintln(err) }
+	// cache in redis, for 1 day
+	r.set_ex(key, text, "86400") or { eprintln(err) }
 
 	return text
 }

@@ -7,6 +7,10 @@ pub fn (mut r Redis) set(key string, value string) ? {
 	return r.send_expect_ok(['SET', key, value])
 }
 
+pub fn (mut r Redis) set_ex(key string, value string, ex string) ? {
+	return r.send_expect_ok(['SET', key, value, "EX", ex])
+}
+
 pub fn (mut r Redis) set_opts(key string, value string, opts SetOpts) bool {
 	ex := if opts.ex == -4 && opts.px == -4 {
 		''

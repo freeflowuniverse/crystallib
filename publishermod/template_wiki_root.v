@@ -33,6 +33,9 @@ fn template_wiki_root(reponame string, repourl string, trackingid string) string
       <link rel="stylesheet" href="theme-simple.css">
 
     <style>
+        :root {
+            --graph-size: 750 !important;
+        }
         .markdown-section {
             max-width: 60em !important;  
             padding-left: 0 !important;

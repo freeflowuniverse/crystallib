@@ -136,7 +136,7 @@ fn macro_tokens_locked_chart(mut state LineProcessorState, mut macro texttools.M
 	mut months := map[string]f64
 
 	for locked in s.locked_tokens_info {
-		key := locked.until[0..8]
+		key := locked.until[0..7]
 
 		mut value := months[key]
 		value += locked.amount
@@ -148,7 +148,7 @@ fn macro_tokens_locked_chart(mut state LineProcessorState, mut macro texttools.M
 
 	for date, value in months {
 		amount := i64(value)
-		data << ChartData{label: date, value: remain - amount}
+		data << ChartData{label: date.replace("-", "_"), value: remain - amount}
 		remain -= amount
 	}
 
