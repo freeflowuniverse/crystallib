@@ -76,8 +76,11 @@ fn (link Link) server_get() string {
 			return '![$link.description](${link.site}__$link.filename  $link.extra)'
 		}
 		// return '[$link.description](/${link.site}__$link.filename  $link.extra)'
-		return '<a href="${link.site}__$link.filename  $link.extra"> $link.description </a>'
-		
+		if link.extra == ''{
+			return '<a href="${link.site}__$link.filename"> $link.description </a>'
+		}else{
+			return '<a href="${link.site}__$link.filename $link.extra"> $link.description </a>'
+		}
 	}
 	return link.original_get()
 }
