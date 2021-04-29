@@ -136,3 +136,14 @@ fn test_get_status() {
 	assert status_code == 200
 	assert response.running
 }
+
+fn test_get_backup() {
+	client := setup()
+	println("************ TEST14_GET_BACKUP ************")
+	response, status_code := client.get_backup()
+	println(response)
+	assert status_code == 200
+	if response.len > 0 {
+		assert response[0].name != ""
+	}
+}

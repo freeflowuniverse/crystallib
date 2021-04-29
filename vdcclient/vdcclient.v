@@ -94,7 +94,7 @@ pub fn (client Client) get_alerts(application string) ([]Alert, int) {
 	full_url := client.url + "/api/controller/alerts/" + application
 
 	response := get(full_url, auth_cred)
-	return json.decode([]Alert, response.text), response.status_code
+	return parse_alerts(response.text), response.status_code
 }
 
 pub fn (client Client) get_kubeconfig() (string, int) {
@@ -120,4 +120,12 @@ pub fn (client Client) get_status() (Status, int) {
 
 	response := get(full_url, auth_cred)
 	return json.decode(Status, response.text), response.status_code
+}
+
+pub fn (client Client) get_backup() ([]Backup, int) {
+	auth_cred := base64.encode_str("$client.vdcname:$client.password")
+	full_url := client.url + "/api/controller/backup"
+
+	response := get(full_url, auth_cred)
+	return parse_backups(response.text), response.status_code
 }

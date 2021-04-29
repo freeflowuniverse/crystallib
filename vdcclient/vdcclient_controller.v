@@ -8,6 +8,7 @@ pub:
 	identity_tid 	int
 	s3 				S3
 	kubernetes 		[]Kubernetes
+	etcd			Etcd
 	threebot 		Threebot
 	created 		u64
 	last_updated 	u64
@@ -61,7 +62,8 @@ pub:
 }
 
 pub struct Etcd {
-
+pub:
+	ip_address string
 }
 
 pub struct Threebot {
@@ -107,7 +109,6 @@ pub:
 pub struct Alert {
 pub:
 	id 					int
-	// type 				string //TODO
 	level 				int
 	app_name 			string
 	category 			string
@@ -120,6 +121,28 @@ pub:
 	data 				string
 	event 				Event
 	tracebacks			[]Traceback
+mut: 
+	alert_type 		string
+}
+
+pub struct Backup {
+pub:
+	name string
+	vdc_backup 				string
+	config_backup 			string
+	expiration 				u64
+	status 					string
+	start_timestamp 		u64
+	completion_timestamp 	u64
+	errors 					int
+mut:
+	progress 				BackupProgress
+}
+
+struct BackupProgress {
+mut:
+	total_items 	int
+	item_backedup 	int
 }
 
 struct Event {
