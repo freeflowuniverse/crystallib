@@ -33,6 +33,9 @@ fn template_wiki_root(reponame string, repourl string, trackingid string) string
       <link rel="stylesheet" href="theme-simple.css">
 
     <style>
+        :root {
+            --graph-size: 750 !important;
+        }
         .markdown-section {
             max-width: 60em !important;  
             padding-left: 0 !important;
@@ -172,8 +175,8 @@ fn template_wiki_root(reponame string, repourl string, trackingid string) string
       <script src="docsify-mermaid.js"> 
       <script>mermaid.initialize({ startOnLoad: true, securityLevel:\'loose\' });</script>
       <script src="docsify-mindmap.min.js"></script>
-       <link rel="stylesheet" href="docsify-charty.min.css">
-       <link rel="stylesheet" href="charty-custom-style.css">
+      <link rel="stylesheet" href="docsify-charty.min.css">
+      <link rel="stylesheet" href="charty-custom-style.css">
       <script src="docsify-charty.min.js"></script>
 
       <script>
