@@ -84,11 +84,11 @@ fn macro_tokens_distribution(mut state LineProcessorState, mut macro texttools.M
 	mut out := []string{}
 	mut data := []ChartData{}
 
-	data << ChartData{label: "Total Locked in Individual Vesting", value: int(s.total_locked_tokens / 1000) }
-	data << ChartData{label: "Total Locked in Community Vesting", value: int(s.total_vested_tokens / 1000) }
-	data << ChartData{label: "Total Liquid Foundation", value: int(s.total_liquid_foundation_tokens / 1000) }
-	data << ChartData{label: "Total Illiquid Foundation", value: int(s.total_illiquid_foundation_tokens / 1000) }
-	data << ChartData{label: "Total Liquid Tokens", value: int(s.total_liquid_tokens / 1000) }
+	data << ChartData{label: "Total Locked in Individual Vesting (in K)", value: int(s.total_locked_tokens / 1000) }
+	data << ChartData{label: "Total Locked in Community Vesting (in K)", value: int(s.total_vested_tokens / 1000) }
+	data << ChartData{label: "Total Liquid Foundation (in K)", value: int(s.total_liquid_foundation_tokens / 1000) }
+	data << ChartData{label: "Total Illiquid Foundation (in K)", value: int(s.total_illiquid_foundation_tokens / 1000) }
+	data << ChartData{label: "Total Liquid Tokens (in K)", value: int(s.total_liquid_tokens / 1000) }
 
 	total_tokens := thousand(s.total_tokens)
 
