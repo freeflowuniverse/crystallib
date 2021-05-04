@@ -323,7 +323,7 @@ fn macro_tokens_total_liquid(mut state LineProcessorState, mut macro texttools.M
 	capth := thousand(cap)
 
 	out << "| Total Liquid Tokens | $total |"
-	out << "| TFT Marketcap at $price USD | $capth |"
+	out << "| TFT Marketcap at **$price USD** | $capth USD |"
 
 	state.lines_server << out
 }
