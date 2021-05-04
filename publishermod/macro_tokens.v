@@ -328,6 +328,36 @@ fn macro_tokens_total_liquid(mut state LineProcessorState, mut macro texttools.M
 	state.lines_server << out
 }
 
+fn macro_tokens_total_liquid_chart(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+	s := tokens.load_tokens()
+
+	mut out := []string{}
+	mut data := []ChartData{}
+
+	divider := 1000
+
+	total := i64(4000000000 / divider)
+	liquid := total - (s.total_liquid_tokens / divider)
+
+	data << ChartData{label: "Liquid", value: i64(total - liquid) }
+	data << ChartData{label: "Non Liquid", value: i64(liquid) }
+
+	out << "```charty"
+	out << '{'
+	out << '"title":  "Tokens Liquidity Distribution (in Thousand)",'
+	out << '"config": {'
+	out << '  "type":    "doughnut",'
+	out << '  "labels":  true,'
+	out << '  "numbers": true'
+	out << '},'
+	out << '"data": '
+	out << json.encode(data)
+	out << '}'
+	out << "```"
+
+	state.lines_server << out
+}
+
 fn macro_tokens_special_wallets_table(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	s := tokens.load_tokens()
 
@@ -396,6 +426,10 @@ fn macro_tokens(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 
 	if tokentype == "total-liquid" {
 		macro_tokens_total_liquid(mut state, mut macro)?
+	}
+
+	if tokentype == "total-liquid-chart" {
+		macro_tokens_total_liquid_chart(mut state, mut macro)?
 	}
 
 	if tokentype == "special-wallets-table" {
