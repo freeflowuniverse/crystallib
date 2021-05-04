@@ -26,6 +26,7 @@ pub fn new(redis &redisclient.Redis) ?MSGBusConnection {
 pub fn (mut bus MSGBusConnection) send(mut msg Message) ? {
 	for mut twin in msg.twin_dest {
 		lastid := bus.redis.incr('bus:lastid') ?
+		//???
 		mut msg_ll := MessageLowLevel{
 			id: lastid
 			cmd: msg.cmd

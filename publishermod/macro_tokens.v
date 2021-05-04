@@ -57,6 +57,15 @@ fn address_trunc(a string) string {
 	return address_link(a, trunc)
 }
 
+//links to the address as defined in a wiki page
+//the first 6 letters define which page to link too
+fn address_defined(a string) string {
+	trunc := a[0..12] + "..."
+	trunc2 := a[0..6]
+	return "[$trunc](tft_account_$trunc2)"
+}
+
+
 fn macro_tokens_values(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	s := tokens.load_tokens()
 
@@ -84,11 +93,11 @@ fn macro_tokens_distribution(mut state LineProcessorState, mut macro texttools.M
 	mut out := []string{}
 	mut data := []ChartData{}
 
-	data << ChartData{label: "Total Locked in Individual Vesting", value: int(s.total_locked_tokens / 1000) }
-	data << ChartData{label: "Total Locked in Community Vesting", value: int(s.total_vested_tokens / 1000) }
-	data << ChartData{label: "Total Liquid Foundation", value: int(s.total_liquid_foundation_tokens / 1000) }
-	data << ChartData{label: "Total Illiquid Foundation", value: int(s.total_illiquid_foundation_tokens / 1000) }
 	data << ChartData{label: "Total Liquid Tokens", value: int(s.total_liquid_tokens / 1000) }
+	data << ChartData{label: "Total Locked Individual Vesting", value: int(s.total_locked_tokens / 1000) }
+	data << ChartData{label: "Total Locked Community Vesting", value: int(s.total_vested_tokens / 1000) }
+	data << ChartData{label: "Total Foundation Operations", value: int(s.total_liquid_foundation_tokens / 1000) }
+	data << ChartData{label: "Total Foundation Non Liquid", value: int(s.total_illiquid_foundation_tokens / 1000) }
 
 	total_tokens := thousand(s.total_tokens)
 
@@ -175,16 +184,30 @@ fn macro_tokens_account_info(mut state LineProcessorState, mut macro texttools.M
 
 	mut out := []string{}
 
-	out << "### Balance"
-
+	out << ""
+	out << "> [$accid](https://stellar.expert/explorer/public/account/$accid)"
+	out << ""
+	out << "### Balance\n"
 	out << "| Asset | Balance |"
 	out << "| --- | --- |"
 	for bal in s.balances {
-		balance := strconv.f64_to_str_l(bal.amount)
+		balance := thousand(bal.amount)
 		addr := address(bal.asset)
 
 		out << "| $addr | $balance |"
 	}
+
+	mut raw := "$s"
+	raw = raw.replace("despiegk.crystallib.tokens.","")
+
+	out << ""
+	out << "**[stellar link](https://stellar.expert/explorer/public/account/$accid)**"
+	out << ""
+	out << "### Raw Data\n"
+	out << "```"
+	out << raw
+	out << "```"
+	out << "\n\n."
 
 	state.lines_server << out
 }
@@ -204,7 +227,8 @@ fn macro_tokens_account_vesting(mut state LineProcessorState, mut macro texttool
 		out << "| Balance Asset | Balance |"
 		out << "| --- | --- |"
 		for bal in vest.balances {
-			balance := strconv.f64_to_str_l(bal.amount)
+			// balance := strconv.f64_to_str_l(bal.amount)
+			balance := thousand(bal.amount)
 			out << "| $bal.asset | $balance |"
 		}
 	}
@@ -226,7 +250,7 @@ fn macro_tokens_account_locked(mut state LineProcessorState, mut macro texttools
 		out << "| Balance Asset | Balance |"
 		out << "| --- | --- |"
 		for bal in locked.balances {
-			balance := strconv.f64_to_str_l(bal.amount)
+			balance := thousand(bal.amount)
 			out << "| $bal.asset | $balance |"
 		}
 	}
@@ -301,7 +325,7 @@ fn macro_tokens_special_wallets_table(mut state LineProcessorState, mut macro te
 		out << "| --- | --- | --- |"
 
 		for wallet in info.wallets {
-			addr := address_trunc(wallet.address)
+			addr := address_defined(wallet.address)
 			amount := thousand(wallet.amount)
 			out << "| $addr | `$wallet.description` | $amount |"
 		}
