@@ -45,7 +45,7 @@ fn address_link(target string, display string) string {
 		return "[" + display + "](" + stellar + addr + ")"
 	}
 
-	return "[(" + prefix + ") " + display + "](" + stellar + addr + ")"
+	return "[(" + prefix + ") " + addr + "](" + stellar + addr + ")"
 }
 
 fn address(a string) string {
