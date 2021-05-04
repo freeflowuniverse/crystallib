@@ -309,6 +309,25 @@ fn macro_tokens_total_distribution(mut state LineProcessorState, mut macro textt
 	state.lines_server << out
 }
 
+fn macro_tokens_total_liquid(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+	s := tokens.load_tokens()
+	price := macro.params.get('tftprice')?
+
+	mut out := []string{}
+
+	out << "| Description | Value |"
+	out << "| --- | --- |"
+
+	total := thousand(s.total_liquid_tokens)
+	cap := price.f64() * s.total_liquid_tokens
+	capth := thousand(cap)
+
+	out << "| Total Liquid Tokens | $total |"
+	out << "| TFT Marketcap at $price USD | $capth |"
+
+	state.lines_server << out
+}
+
 fn macro_tokens_special_wallets_table(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	s := tokens.load_tokens()
 
@@ -373,6 +392,10 @@ fn macro_tokens(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 
 	if tokentype == "total-distribution" {
 		macro_tokens_total_distribution(mut state, mut macro)?
+	}
+
+	if tokentype == "total-liquid" {
+		macro_tokens_total_liquid(mut state, mut macro)?
 	}
 
 	if tokentype == "special-wallets-table" {
