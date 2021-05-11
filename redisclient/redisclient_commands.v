@@ -150,6 +150,13 @@ pub fn (mut r Redis) lpop(key string) ?string {
 	return r.send_expect_strnil(['LPOP', key])
 }
 
+pub fn (mut r Redis) blpop(keys []string, timeout string) ?[]resp2.RValue {
+	mut cmds := ["BLPOP"]
+	cmds << keys
+	cmds << timeout
+	return r.send_expect_list(cmds)
+}
+
 pub fn (mut r Redis) rpop(key string) ?string {
 	return r.send_expect_strnil(['RPOP', key])
 }
