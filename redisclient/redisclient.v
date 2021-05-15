@@ -84,7 +84,16 @@ fn (mut r Redis) write_line(data_ []byte) ? {
 	data << '\r'.bytes()
 	data << '\n'.bytes()
 	println(' >> ' + data.bytestr())
-	r.socket.write(data) ?
+
+	// mac os fix, this will fails if not connected
+	r.socket.peer_addr() or {
+		println("[-] could not fetch peer address")
+		return
+	}
+
+	// this will silently close software
+	// if socket is not connected (on macos)
+	r.socket.write(data)?
 }
 
 fn (mut r Redis) write(data []byte) ? {
