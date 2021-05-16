@@ -9,6 +9,7 @@ pub enum PageStatus {
 	reprocess
 }
 
+[heap]
 struct Page {
 	id      int [skip]
 	site_id int [skip]

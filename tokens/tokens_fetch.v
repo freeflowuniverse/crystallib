@@ -269,6 +269,8 @@ pub fn parse_special(s StatsTFT) map[string]Group {
 			council = info
 		}
 	}
+	
+	println(liquidity)
 
 	mut group := map[string]Group{}
 

@@ -3,6 +3,7 @@ module hostsfile
 import os
 import despiegk.crystallib.process
 
+[heap]
 pub struct HostsFile {
 pub mut:
 	hosts map[string][]map[string]string

@@ -2,6 +2,7 @@ module publishermod
 
 import despiegk.crystallib.texttools
 
+[heap]
 struct Publisher {
 mut:
 	gitlevel int
