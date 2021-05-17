@@ -5,7 +5,7 @@ pub struct Process {
 	cmd       string
 	arguments []string
 	// timeout in seconds, default 5 min
-	timeout    int  = 300
+	timeout    int  = 600
 	retry      int  = 1
 	stdout_log bool = true
 	stderr_log bool = true

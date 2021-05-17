@@ -61,7 +61,7 @@ fn address_trunc(a string) string {
 //the first 6 letters define which page to link too
 fn address_defined(a string) string {
 	trunc := a[0..12] + "..."
-	trunc2 := a[0..6]
+	trunc2 := a[0..6].to_lower()
 	return "[$trunc](tft_account_$trunc2)"
 }
 

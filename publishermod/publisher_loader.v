@@ -16,7 +16,7 @@ fn (mut publisher Publisher) find_sites(path string) ? {
 // load a site into the publishing tools
 // name of the site needs to be unique
 fn (mut publisher Publisher) load_site(repoconfig SiteRepoConfig, path string) ? {
-	mut cfg := myconfig.get(true) ?
+	mut cfg := myconfig.get() ?
 	repoconfig_site := name_fix(repoconfig.name)
 	mut myconfig_site := cfg.site_get(repoconfig_site) or {
 		if '$err'.contains('Cannot find wiki site') {
