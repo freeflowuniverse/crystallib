@@ -63,12 +63,12 @@ pub fn website_install(name string, first bool, conf &myconfig.ConfigRoot) ? {
 	set -e
 
 	if [ "$first" = "true" ]; then
-		nvm use --lts
+		#nvm use --lts
 		npm install
 		rsync -ra --delete node_modules/ $base/node_modules/
 	else
 		rsync -ra --delete $base/node_modules/ node_modules/ 
-		nvm use --lts
+		#nvm use --lts
 		npm install
 	fi
 
@@ -90,7 +90,7 @@ pub fn website_install(name string, first bool, conf &myconfig.ConfigRoot) ? {
 	source $base/nvm.sh
 
 	set -e
-	nvm use --lts
+	#nvm use --lts
 
 	export PATH=$nodejspath/bin:\$PATH
 
@@ -108,7 +108,7 @@ pub fn website_install(name string, first bool, conf &myconfig.ConfigRoot) ? {
 	source $base/nvm.sh
 
 	set -e
-	nvm use --lts
+	#nvm use --lts
 
 	export PATH=$nodejspath/bin:\$PATH
 

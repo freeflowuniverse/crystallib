@@ -29,6 +29,8 @@ fn website_conf_repo_get(cmd &cli.Command, mut conf myconfig.ConfigRoot) ?&gitto
 		return error('Cannot find website with name: $name')
 	}
 
+	conf.nodejs_check()
+
 	mut gt := gittools.new(conf.paths.code) or { return error('ERROR: cannot load gittools:$err') }
 	reponame := conf.reponame(name) ?
 	mut repo := gt.repo_get(name: reponame) or {
@@ -59,7 +61,7 @@ pub fn website_build(cmd &cli.Command) ? {
 	arg = cmd.flags.get_string('repo') or { '' }
 	use_prefix = cmd.flags.get_bool('pathprefix') or { false }
 
-	mut conf := myconfig.get(true) ?
+	mut conf := myconfig.get() ?
 	mut sites := conf.sites_get()
 
 	if arg.len == 0 {

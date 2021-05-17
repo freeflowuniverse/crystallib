@@ -45,7 +45,7 @@ fn initial() ConfigRoot {
 
 pub fn save(path string) ? {
 	mut path2 := path
-	c := get(true) ?
+	c := get() ?
 	txt := json.encode_pretty(c.sites)
 	if path2 == '' {
 		path2 = '~/.publisher/sites.json'
@@ -55,7 +55,7 @@ pub fn save(path string) ? {
 	os.write_file(path2, txt) ?
 }
 
-pub fn get(web bool) ?ConfigRoot {
+pub fn get() ?ConfigRoot {
 	mut conf := initial()
 	if os.exists('sites.json') {
 		// println(' - Found config files for sites in local dir.')
@@ -64,4 +64,11 @@ pub fn get(web bool) ?ConfigRoot {
 		conf.sites = json.decode([]SiteConfig, txt) ?
 	}
 	return conf
+}
+
+pub fn (mut cfg ConfigRoot) nodejs_check(){
+	if ! os.exists(cfg.nodejs.path){
+		println("ERROR\ncannot find nodejs, reinstall using 'publishtools install -r'")
+		exit(1)
+	}
 }

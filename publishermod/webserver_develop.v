@@ -28,7 +28,7 @@ module publishermod
 
 // // Initialize (load wikis) only once when server starts
 // pub fn (mut app App2) init_once() {
-// 	app.config := myconfig.get(true)
+// 	app.config := myconfig.get()
 // 	app.publisher = publishermod.new(configdata.paths.code) or { panic('cannot init publisher. $err') }
 // 	app.publisher.check()
 

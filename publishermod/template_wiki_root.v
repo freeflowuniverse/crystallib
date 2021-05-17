@@ -4,7 +4,7 @@ import os
 import despiegk.crystallib.myconfig
 
 fn template_wiki_root(reponame string, repourl string, trackingid string) string {
-	mut cfg := myconfig.get(true) or { panic('can not get config') }
+	mut cfg := myconfig.get() or { panic('can not get config') }
 	mut p := os.join_path(cfg.paths.base, 'static')
 	mut crispwebsiteid := '1a5a5241-91cb-4a41-8323-5ba5ec574da0'
 	if reponame == 'twin' {

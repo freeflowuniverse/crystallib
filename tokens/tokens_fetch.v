@@ -328,7 +328,7 @@ pub fn parse_special(s StatsTFT) map[string]Group {
 
 	// Technology Acquisition + Starting Team (40p)
 	group["technology"] = Group{
-		name: "Technology Acquisition + Starting Team (40p)",
+		name: "Technology Acquisition + Starting Team",
 		distribution: 0.07,
 		done: 290000000,
 	}
