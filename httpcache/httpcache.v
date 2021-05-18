@@ -8,11 +8,17 @@ mut:
 	redis redisclient.Redis
 }
 
-pub fn newcache() HttpCache {
-	mut c := HttpCache{}
-	c.redis = redisclient.connect("127.0.0.1:6379") or { redisclient.Redis{} }
+fn init_single_cache() HttpCache {
+	return HttpCache{
+		redis: redisclient.connect("127.0.0.1:6379") or { redisclient.Redis{} },
+	}
+}
 
-	return c
+const gcache = init_single_cache()
+
+pub fn newcache() HttpCache {
+	// reuse single object
+	return gcache
 }
 
 pub fn (mut h HttpCache) getex(url string, expire int) string {
