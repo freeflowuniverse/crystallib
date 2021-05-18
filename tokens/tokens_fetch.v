@@ -370,7 +370,9 @@ fn account_info(account Raw_Account) Account {
 	return final
 }
 
-pub fn load_tokens(mut hc httpcache.HttpCache) StatsTFT {
+pub fn load_tokens() StatsTFT {
+	mut hc := httpcache.newcache()
+
 	println("[+] fetching tokens data from redis")
 	rtft := hc.getex("https://statsdata.threefoldtoken.com/stellar_stats/api/stats?detailed=true", 86400)
 	rtfta := hc.getex("https://statsdata.threefoldtoken.com/stellar_stats/api/stats?detailed=true&tokencode=TFTA", 86400)
@@ -399,7 +401,9 @@ pub fn load_tokens(mut hc httpcache.HttpCache) StatsTFT {
 	return merged
 }
 
-pub fn load_account(accid string, mut hc httpcache.HttpCache) Account {
+pub fn load_account(accid string) Account {
+	mut hc := httpcache.newcache()
+
 	println("[+] fetching account data from redis")
 	raccount := hc.getex(account_url(accid), 86400)
 

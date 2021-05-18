@@ -6,7 +6,6 @@ pub struct MacroObj {
 pub mut:
 	cmd    string
 	params Params
-	hc httpcache.HttpCache
 }
 
 // fix cmd to remain lower case and dots only
@@ -27,9 +26,7 @@ pub fn cmd_fix(name string) ?string {
 
 pub fn macro_parse(line_ string) ?MacroObj {
 	mut line := line_
-	mut r := MacroObj{
-		hc: httpcache.newcache(),
-	}
+	mut r := MacroObj{}
 
 	line = line.trim(' ')
 	line = line.trim('!')
