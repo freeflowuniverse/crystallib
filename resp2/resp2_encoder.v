@@ -16,7 +16,7 @@ pub fn (mut b Builder) add(val RValue) {
 pub fn (val RValue) encode() []byte {
 	match val {
 		RBString {
-			return '\${$val.value.len}\r\n$val.value\r\n'.bytes()
+			return '\$${val.value.len}\r\n$val.value.bytestr()\r\n'.bytes()
 		}
 		RInt {
 			return ':$val.value\r\n'.bytes()
@@ -86,6 +86,16 @@ pub fn r_list_string(values []string) RValue {
 	mut ll := []RValue{}
 	for v in values {
 		ll << r_string(v)
+	}
+	return RValue(RArray{
+		values: ll
+	})
+}
+
+pub fn r_list_bstring(values []string) RValue {
+	mut ll := []RValue{}
+	for v in values {
+		ll << r_bytestring(v.bytes())
 	}
 	return RValue(RArray{
 		values: ll

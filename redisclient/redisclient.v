@@ -98,17 +98,8 @@ pub fn (mut r Redis) write_rval(val resp2.RValue) ? {
 
 // write list of strings to redis challen
 fn (mut r Redis) write_cmds(items []string) ? {
-	mut out := []string{}
-	mut c := 0
-	for v in items {
-		if c == 0 {
-			out << v
-		} else {
-			out << "'$v'"
-		}
-		c++
-	}
-	r.write_line(out.join(' ').bytes()) ?
+	a := resp2.r_list_bstring(items)
+	r.write_rval(a)?
 }
 
 fn (mut r Redis) read(size int) ?[]byte {
