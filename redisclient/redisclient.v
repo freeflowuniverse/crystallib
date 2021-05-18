@@ -93,6 +93,7 @@ fn (mut r Redis) write(data []byte) ? {
 
 // write resp2 value to the redis channel
 pub fn (mut r Redis) write_rval(val resp2.RValue) ? {
+	// macos: needed to avoid silent exit
 	r.socket.peer_addr() or {
 		println("[-] could not fetch peer address")
 		return
