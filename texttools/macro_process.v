@@ -1,7 +1,5 @@
 module texttools
 
-import despiegk.crystallib.httpcache
-
 pub struct MacroObj {
 pub mut:
 	cmd    string

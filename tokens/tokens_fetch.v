@@ -1,7 +1,6 @@
 module tokens
 
 import json
-import net.http
 import strconv
 import despiegk.crystallib.httpcache
 
