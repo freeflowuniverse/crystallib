@@ -55,7 +55,7 @@ pub fn save(path string) ? {
 	os.write_file(path2, txt) ?
 }
 
-pub fn get() ?ConfigRoot {
+pub fn init_config() ?ConfigRoot {
 	mut conf := initial()
 	if os.exists('sites.json') {
 		// println(' - Found config files for sites in local dir.')
@@ -64,6 +64,12 @@ pub fn get() ?ConfigRoot {
 		conf.sites = json.decode([]SiteConfig, txt) ?
 	}
 	return conf
+}
+
+const gconf = init_config() or {panic(err)}
+
+pub fn get() ?ConfigRoot {
+	return gconf
 }
 
 pub fn (mut cfg ConfigRoot) nodejs_check(){
