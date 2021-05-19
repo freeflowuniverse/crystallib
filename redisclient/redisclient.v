@@ -9,6 +9,7 @@ import despiegk.crystallib.resp2
 
 pub struct Redis {
 pub mut:
+	connected bool
 	socket net.TcpConn
 	// reader &io.BufferedReader
 }
@@ -34,10 +35,12 @@ pub enum KeyType {
 
 // https://redis.io/topics/protocol
 pub fn connect(addr string) ?Redis {
-	mut socket := net.dial_tcp(addr) ?
+	mut socket := net.dial_tcp(addr) or { return Redis{connected: false} }
+
 	socket.set_read_timeout(2 * time.second)
 
 	return Redis{
+		connected: true,
 		socket: socket
 		// reader: io.new_buffered_reader(reader: io.make_reader(socket))
 	}
@@ -84,7 +87,17 @@ fn (mut r Redis) write_line(data_ []byte) ? {
 	data << '\r'.bytes()
 	data << '\n'.bytes()
 	println(' >> ' + data.bytestr())
-	r.socket.write(data) ?
+
+	// mac os fix, this will fails if not connected
+	r.socket.peer_addr() or {
+		r.connected = false
+		println("[-] could not fetch peer address")
+		return
+	}
+
+	// this will silently close software
+	// if socket is not connected (on macos)
+	r.socket.write(data)?
 }
 
 fn (mut r Redis) write(data []byte) ? {
