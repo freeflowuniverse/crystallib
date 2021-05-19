@@ -74,7 +74,7 @@ pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) ?&GitRepo {
 	for r in gitstructure.repos {
 		if r.addr.name == args.name {
 			if args.account == '' || args.account == r.addr.account {
-				mut r2 := &gitstructure.repos[r.id]
+				mut r2 := unsafe { &gitstructure.repos[r.id] }
 				return r2
 			}
 		}

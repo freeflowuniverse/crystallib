@@ -1,9 +1,8 @@
 module tokens
 
 import json
-import net.http
 import strconv
-import despiegk.crystallib.redisclient
+import despiegk.crystallib.httpcache
 
 //
 // Raw JSON struct
@@ -148,37 +147,11 @@ pub mut:
 }
 
 //
-// Formatter
-//
-//
 // Workflow
 //
-fn download(target string, account string, mut r redisclient.Redis) string {
-	links := {
-		"tft:raw": "https://statsdata.threefoldtoken.com/stellar_stats/api/stats?detailed=true",
-		"tfta:raw": "https://statsdata.threefoldtoken.com/stellar_stats/api/stats?detailed=true&tokencode=TFTA",
-		"account:raw": "https://statsdata.testnet.threefold.io/stellar_stats/api/account/" + account,
-		"stellar:raw": "https://api.stellar.expert/explorer/public/account/" + account + "?history=true",
-	}
+fn account_url(account string) string {
+	return "https://statsdata.testnet.threefold.io/stellar_stats/api/account/" + account
 
-	mut key := target
-
-	if key == "account:raw" {
-		key = "account:raw:" + account
-	}
-
-	if key == "stellar:raw" {
-		key = "stellar:raw:" + account
-	}
-
-
-	println("[+] downloading: " + links[target])
-	text := http.get_text(links[target])
-
-	// cache in redis, for 1 day
-	r.set_ex(key, text, "86400") or { eprintln(err) }
-
-	return text
 }
 
 fn parsef(f string) f64 {
@@ -269,6 +242,8 @@ pub fn parse_special(s StatsTFT) map[string]Group {
 			council = info
 		}
 	}
+
+	println(liquidity)
 
 	mut group := map[string]Group{}
 
@@ -395,17 +370,15 @@ fn account_info(account Raw_Account) Account {
 }
 
 pub fn load_tokens() StatsTFT {
-	println("[+] connecting to redis")
-	mut r := redisclient.connect("127.0.0.1:6379") or { panic(err) }
-
+	mut hc := httpcache.newcache()
 
 	println("[+] fetching tokens data from redis")
-	rtft := r.get("tft:raw") or { download("tft:raw", "", mut r) }
-	rtfta := r.get("tfta:raw") or { download("tfta:raw", "", mut r) }
+	rtft := hc.getex("https://statsdata.threefoldtoken.com/stellar_stats/api/stats?detailed=true", 86400)
+	rtfta := hc.getex("https://statsdata.threefoldtoken.com/stellar_stats/api/stats?detailed=true&tokencode=TFTA", 86400)
 
 	// extra stellar account for missing account in tft
 	addac := "GB2C5HCZYWNGVM6JGXDWQBJTMUY4S2HPPTCAH63HFAQVL2ALXDW7SSJ7"
-	rstel := r.get("stellar:raw:" + addac) or { download("stellar:raw", addac, mut r) }
+	rstel := hc.getex(account_url(addac), 86400)
 
 	tft := json.decode(Raw_StatsTFT, rtft) or {
 		eprintln('Failed to decode json')
@@ -428,11 +401,10 @@ pub fn load_tokens() StatsTFT {
 }
 
 pub fn load_account(accid string) Account {
-	println("[+] connecting to redis")
-	mut r := redisclient.connect("127.0.0.1:6379") or { panic(err) }
+	mut hc := httpcache.newcache()
 
 	println("[+] fetching account data from redis")
-	raccount := r.get("account:raw:" + accid) or { download("account:raw", accid, mut r) }
+	raccount := hc.getex(account_url(accid), 86400)
 
 	account := json.decode(Raw_Account, raccount) or {
 		eprintln('Failed to decode json')

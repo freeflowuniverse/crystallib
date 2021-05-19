@@ -3,6 +3,7 @@ module myconfig
 import os
 import despiegk.crystallib.process
 
+[heap]
 pub struct ConfigRoot {
 pub mut:
 	root          string

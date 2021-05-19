@@ -27,5 +27,5 @@ pub fn buffered_string_reader(s string) &io.BufferedReader {
 	mut s2 := StringReader{
 		text: s + ' '
 	}
-	return io.new_buffered_reader(reader: io.make_reader(s2), cap: 256)
+	return io.new_buffered_reader(reader: s2 cap: 256)
 }
