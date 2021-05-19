@@ -1,7 +1,5 @@
 module myconfig
 
-import os
-
 pub struct NodejsConfig {
 pub mut:
 	version NodejsVersion
