@@ -116,6 +116,12 @@ fn site_config(mut c ConfigRoot) {
 		domains: ['info.threefold.io', 'wiki.threefold.io']
 		descr: 'wiki for foundation, collaborate, what if farmings, tokens'
 		trackingid: '11'
+		opengraph: {
+			url: 'https://info.threefold.io'
+			title: 'ThreeFold | Knowledge'
+			description: 'All you need to know about ThreeFold.'
+			image: 'https://wiki.threefold.io/threefold__welcomepage.png'
+		}		
 	}
 	// c.sites << SiteConfig{
 	// 	name: 'info_marketplace'
@@ -155,6 +161,11 @@ fn site_config(mut c ConfigRoot) {
 		domains: ['sdk.threefold.io']
 		descr: 'for IAC, devops, how to do Infrastruture As Code, 3bot, Ansible, tfgrid-sdk, ...'
 		trackingid: '14'
+		opengraph: {
+			title: 'ThreeFold | Grid Manual (SDK)',
+			description: 'All you need to know about how to create and deploy IT Solutions on top of the ThreeFold P2P Cloud.',
+			image: 'https://sdk.threefold.io/sdk__storage_compute.png'
+		}
 	}
 	c.sites << SiteConfig{
 		name: 'info_legal'
@@ -163,6 +174,7 @@ fn site_config(mut c ConfigRoot) {
 		domains: ['legal.threefold.io', 'legal-info.threefold.io', 'legal-wiki.threefold.io']
 		descr: ''
 		trackingid: '17'
+		
 	}
 	c.sites << SiteConfig{
 		name: 'info_cloud'
@@ -171,6 +183,11 @@ fn site_config(mut c ConfigRoot) {
 		domains: ['cloud-info.threefold.io', 'cloud-wiki.threefold.io']
 		descr: 'how to use the cloud for deploying apps: evdc, kubernetes, planetary fs, ... + marketplace solutions '
 		trackingid: '16'
+		opengraph: {
+			title: 'ThreeFold P2P Cloud | Knowledge'
+			description: 'All you need to know about the ThreeFold P2P Cloud and its offerings.'
+			image: 'https://cloud-info.threefold.io/cloud__cloud_node.png'
+		}
 	}
 	// c.sites << SiteConfig{
 	// 	name: 'info_tftech'

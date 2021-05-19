@@ -3,7 +3,7 @@ module publishermod
 import os
 import despiegk.crystallib.myconfig
 
-fn template_wiki_root(reponame string, repourl string, trackingid string) string {
+fn template_wiki_root(reponame string, repourl string, trackingid string, opengraph myconfig.OpenGraph) string {
 	mut cfg := myconfig.get() or { panic('can not get config') }
 	mut p := os.join_path(cfg.paths.base, 'static')
 	mut crispwebsiteid := '1a5a5241-91cb-4a41-8323-5ba5ec574da0'
@@ -30,6 +30,14 @@ fn template_wiki_root(reponame string, repourl string, trackingid string) string
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       <meta charset="UTF-8">
+      <meta property="og:url"                content="@og_url" />
+      <meta property="og:type"               content="@og_type" />
+      <meta property="og:title"              content="@og_title" />
+      <meta property="og:description"        content="@og_description" />
+      <meta property="og:image"              content="@og_image" />
+      <meta property="og:image:width" content="@og_image_width" />
+      <meta property="og:image:height" content="@og_image_height" />
+      
       <link rel="stylesheet" href="theme-simple.css">
 
     <style>
@@ -205,10 +213,20 @@ fn template_wiki_root(reponame string, repourl string, trackingid string) string
 	out = out.replace('@repourl', repourl)
 	out = out.replace('@trackingid', trackingid)
 	out = out.replace('@crispwebsiteid', crispwebsiteid)
+    
+    out = out.replace('@og_url', opengraph.url)
+    out = out.replace('@og_title', opengraph.title)
+    out = out.replace('@og_type', opengraph.type_)
+    out = out.replace('@og_description', opengraph.description)
+    out = out.replace('@og_image_width', opengraph.image_width)
+    out = out.replace('@og_image_height', opengraph.image_height)
+    out = out.replace('@og_image', opengraph.image)
+    
+    
 	return out
 }
 
-fn template_wiki_root_save(destdir string, reponame string, repourl string, trackingid string) {
-	out := template_wiki_root(reponame, repourl, trackingid)
+fn template_wiki_root_save(destdir string, reponame string, repourl string, trackingid string, opengraph myconfig.OpenGraph) {
+	out := template_wiki_root(reponame, repourl, trackingid, opengraph)
 	os.write_file('$destdir/index.html', out) or { panic(err) }
 }
