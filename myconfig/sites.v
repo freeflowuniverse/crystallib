@@ -120,7 +120,7 @@ fn site_config(mut c ConfigRoot) {
 			url: 'https://info.threefold.io'
 			title: 'ThreeFold | Knowledge'
 			description: 'All you need to know about ThreeFold.'
-			image: 'https://wiki.threefold.io/threefold__welcomepage.png'
+			image: 'https://info.threefold.io/threefold__welcomepage.png'
 		}		
 	}
 	// c.sites << SiteConfig{
@@ -162,6 +162,7 @@ fn site_config(mut c ConfigRoot) {
 		descr: 'for IAC, devops, how to do Infrastruture As Code, 3bot, Ansible, tfgrid-sdk, ...'
 		trackingid: '14'
 		opengraph: {
+			url: 'https://sdk.threefold.io'
 			title: 'ThreeFold | Grid Manual (SDK)',
 			description: 'All you need to know about how to create and deploy IT Solutions on top of the ThreeFold P2P Cloud.',
 			image: 'https://sdk.threefold.io/sdk__storage_compute.png'
@@ -184,6 +185,7 @@ fn site_config(mut c ConfigRoot) {
 		descr: 'how to use the cloud for deploying apps: evdc, kubernetes, planetary fs, ... + marketplace solutions '
 		trackingid: '16'
 		opengraph: {
+			url: 'https://cloud-info.threefold.io'
 			title: 'ThreeFold P2P Cloud | Knowledge'
 			description: 'All you need to know about the ThreeFold P2P Cloud and its offerings.'
 			image: 'https://cloud-info.threefold.io/cloud__cloud_node.png'
