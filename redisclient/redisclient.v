@@ -56,9 +56,9 @@ pub fn (mut r Redis) read_line() ?[]byte {
 			continue
 		}
 		if buf == '\n'.bytes() {
-			if out.bytestr() != '' {
-				println("readline result:'$out.bytestr()'")
-			}
+			// if out.bytestr() != '' {
+			// 	println("readline result:'$out.bytestr()'")
+			// }
 			return out
 		}
 		out << buf

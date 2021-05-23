@@ -22,19 +22,19 @@ pub fn newcache() HttpCache {
 }
 
 pub fn (mut h HttpCache) getex(url string, expire int) string {
-	println("[+] cache: request url: " + url)
+	// println("[+] cache: request url: " + url)
 
 	hit := h.redis.get("httpcache:" + url) or {
 		println("[-] cache: cache miss, downloading: " + url)
 		data := http.get_text(url)
 
-		println("[+] cache: caching response (${data.len} bytes)")
+		// println("[+] cache: caching response (${data.len} bytes)")
 		h.redis.set_ex("httpcache:" + url, data, expire.str()) or { eprintln(err) }
 
 		return data
 	}
 
-	println("[+] cache hit")
+	// println("[+] cache hit")
 	return hit
 }
 

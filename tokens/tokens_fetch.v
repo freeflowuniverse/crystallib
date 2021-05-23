@@ -243,7 +243,7 @@ pub fn parse_special(s StatsTFT) map[string]Group {
 		}
 	}
 
-	println(liquidity)
+	// println(liquidity)
 
 	mut group := map[string]Group{}
 
@@ -372,7 +372,7 @@ fn account_info(account Raw_Account) Account {
 pub fn load_tokens() StatsTFT {
 	mut hc := httpcache.newcache()
 
-	println("[+] fetching tokens data from redis")
+	// println("[+] fetching tokens data from redis")
 	rtft := hc.getex("https://statsdata.threefoldtoken.com/stellar_stats/api/stats?detailed=true", 86400)
 	rtfta := hc.getex("https://statsdata.threefoldtoken.com/stellar_stats/api/stats?detailed=true&tokencode=TFTA", 86400)
 
@@ -403,7 +403,7 @@ pub fn load_tokens() StatsTFT {
 pub fn load_account(accid string) Account {
 	mut hc := httpcache.newcache()
 
-	println("[+] fetching account data from redis")
+	// println("[+] fetching account data from redis")
 	raccount := hc.getex(account_url(accid), 86400)
 
 	account := json.decode(Raw_Account, raccount) or {
