@@ -82,7 +82,6 @@ pub fn reset() ? {
 
 pub fn publishtools_update() ? {
 	script := '
-	rm -f /usr/local/bin/publishtools
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/crystaluniverse/publishtools/development/scripts/install.sh)"
 	'
 	process.execute_silent(script) ?
