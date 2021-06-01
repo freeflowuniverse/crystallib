@@ -71,9 +71,18 @@ pub fn (mut tr TokenizerResult) replace(text string, tofind string, replacewith 
 	mut text2 := text
 	for item in tr.items {
 		if item.matchstring == tofind2 {
-			// text2 = text2.replace(item.toreplace, replacewith)
-			new_text := text2.replace(item.toreplace, replacewith)
-			text2 = new_text
+			mut new_text := ''
+			mut words := text2.split(' ')
+			for word in words {
+				if word.to_lower() == item.toreplace.to_lower(){
+					new_text += word.replace(item.toreplace, replacewith)
+				}else {
+					new_text += word
+				}
+				
+				new_text += ' '
+			}
+			text2 = new_text.trim(' ')
 		}
 		// } else {
 		// 	println(' ... $item.matchstring !=  $tofind2')
