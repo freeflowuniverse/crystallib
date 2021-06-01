@@ -1,24 +1,19 @@
 module texttools
 
 // remove all leading spaces at same level
-[manualfree]
+
 pub fn dedent(text string) string {
 	mut pre := 999
 	mut pre_current := 0
 	mut res := []string{}
-	defer {
-		unsafe { res.free() }
-	}
+	
 	//
 	text_lines := text.split_into_lines()
-	defer {
-		unsafe { text_lines.free() }
-	}
+	
 	//
 	for line2 in text_lines {
 		line2_trimmed := line2.trim_space()
 		if line2_trimmed == '' {
-			unsafe { line2_trimmed.free() }
 			continue
 		}
 		// println("'$line2' $pre")
@@ -28,9 +23,6 @@ pub fn dedent(text string) string {
 		if pre > pre_current {
 			pre = pre_current
 		}
-		unsafe { line2_expanded_tab_trimmed.free() }
-		unsafe { line2_expanded_tab.free() }
-		unsafe { line2_trimmed.free() }
 	}
 	// now remove the prefix length
 	for line2 in text_lines {
@@ -42,8 +34,6 @@ pub fn dedent(text string) string {
 		} else {
 			res << line2_expanded_tab[pre..]
 		}
-		unsafe { line2_expanded_tab_trimmed.free() }
-		unsafe { line2_expanded_tab.free() }
 	}
 	final_result := res.join_lines()
 	return final_result

@@ -96,12 +96,6 @@ mut:
 	changed_server bool
 }
 
-[unsafe]
-fn (lps &LineProcessorState) free() {
-	unsafe { lps.lines_source.free() }
-	unsafe { lps.lines_server.free() }
-}
-
 fn (mut state LineProcessorState) error(msg string) {
 	mut line := ''
 	if state.lines_source.len > 0 {
@@ -146,15 +140,11 @@ fn (mut state LineProcessorState) sourceline_change(ffrom string, tto string) {
 }
 
 // walk over each line in the page and check for definitions
-[manualfree]
 fn (mut page Page) process_metadata(mut publisher Publisher) ? {
 	mut state := LineProcessorState{
 		site: &publisher.sites[page.site_id]
 		publisher: publisher
 		page: page
-	}
-	defer {
-		unsafe { state.free() }
 	}
 
 	mut debug := false
@@ -170,9 +160,7 @@ fn (mut page Page) process_metadata(mut publisher Publisher) ? {
 	// 	println("DEBUG")
 	// }
 	page_lines := page.content.split_into_lines()
-	defer {
-		unsafe { page_lines.free() }
-	}
+	
 	for line in page_lines {
 		state.nr++
 		state.lines_source << line
@@ -180,8 +168,6 @@ fn (mut page Page) process_metadata(mut publisher Publisher) ? {
 		linestrip_trimmed := linestrip.trim(' ')
 		if linestrip_trimmed.starts_with('> **ERROR') {
 			// these are error messages which will be rewritten if errors are still there
-			unsafe { linestrip_trimmed.free() }
-			unsafe { linestrip.free() }
 			continue
 		}
 		if debug {
@@ -191,9 +177,6 @@ fn (mut page Page) process_metadata(mut publisher Publisher) ? {
 		if trimmed_line.starts_with('!!!def') {
 			macro_process(mut state, line)
 		}
-		unsafe { trimmed_line.free() }
-		unsafe { linestrip_trimmed.free() }
-		unsafe { linestrip.free() }
 	}
 }
 
@@ -386,38 +369,29 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 	if state.changed_source {
 		os.write_file(page.path_get(mut publisher), state.lines_source.join('\n')) or { panic(err) }
 	}
-	unsafe { state.free() }
 }
 
 fn (mut page Page) title() string {
 	lines := page.content.split('\n')
-	defer {
-		unsafe { lines.free() }
-	}
+	
 	for line in lines {
 		line_trimmed := line.trim(' ')
 		if line_trimmed.starts_with('#') {
 			line_trimmed_sharp := line_trimmed.trim('#')
 			line_trimmed_space := line_trimmed_sharp.trim(' ')
-			unsafe { line_trimmed_sharp.free() }
-			unsafe { line_trimmed.free() }
 			return line_trimmed_space
 		}
-		unsafe { line_trimmed.free() }
 	}
 	return 'NO TITLE'
 }
 
 // return a page where all definitions are replaced with link
-[manualfree]
 fn (mut page Page) replace_defs(mut publisher Publisher) ? {
 	if page.replaced {
 		return
 	}
 	new_content := publisher.replace_defs_links(page.content) ?
-	defer {
-		unsafe { new_content.free() }
-	}
+
 	page.content = new_content
 	page.replaced = true
 }
