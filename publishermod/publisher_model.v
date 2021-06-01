@@ -30,14 +30,14 @@ pub fn (mut publisher Publisher) site_get_by_id(id int) ?&Site {
 	if id > publisher.sites.len {
 		return error('cannot get site with id: $id because not enough sites in the list')
 	}
-	return unsafe { &publisher.sites[id] }
+	return &publisher.sites[id]
 }
 
 pub fn (mut publisher Publisher) def_get_by_id(id int) ?&Def {
 	if id > publisher.defs.len {
 		return error('cannot get def with id: $id because not enough defs in the list')
 	}
-	return unsafe { &publisher.defs[id] }
+	return &publisher.defs[id]
 }
 
 pub fn (mut publisher Publisher) page_get_by_id(id int) ?&Page {
@@ -46,14 +46,14 @@ pub fn (mut publisher Publisher) page_get_by_id(id int) ?&Page {
 		return error('cannot get page with id: $id because not enough pages in the list')
 	}
 	// println(publisher.pages[id])
-	return unsafe { &publisher.pages[id] }
+	return &publisher.pages[id]
 }
 
 pub fn (mut publisher Publisher) file_get_by_id(id int) ?&File {
 	if id > publisher.files.len {
 		return error('cannot get file with id: $id because not enough files in the list')
 	}
-	return unsafe { &publisher.files[id] }
+	return &publisher.files[id]
 }
 
 ////////////////////////////////////////////////////////////////

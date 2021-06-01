@@ -149,7 +149,7 @@ fn (mut state LineProcessorState) sourceline_change(ffrom string, tto string) {
 [manualfree]
 fn (mut page Page) process_metadata(mut publisher Publisher) ? {
 	mut state := LineProcessorState{
-		site: unsafe { &publisher.sites[page.site_id] }
+		site: &publisher.sites[page.site_id]
 		publisher: publisher
 		page: page
 	}
@@ -159,7 +159,7 @@ fn (mut page Page) process_metadata(mut publisher Publisher) ? {
 
 	mut debug := false
 
-	state.site = unsafe { &publisher.sites[page.site_id] }
+	state.site = &publisher.sites[page.site_id]
 	state.publisher = publisher
 
 	// println(state.site.name + " " + state.page.name)
@@ -202,7 +202,7 @@ fn (mut page Page) process_metadata(mut publisher Publisher) ? {
 // happens line per line
 fn (mut page Page) process_lines(mut publisher Publisher) ? {
 	mut state := LineProcessorState{
-		site: unsafe { &publisher.sites[page.site_id] }
+		site: &publisher.sites[page.site_id]
 		publisher: publisher
 		page: page
 	}
@@ -213,7 +213,7 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 
 	// first we need to do the links, then the process_includes
 
-	state.site = unsafe { &publisher.sites[page.site_id] }
+	state.site = &publisher.sites[page.site_id]
 	state.publisher = publisher
 
 	// println(state.site.name + " " + state.page.name)
