@@ -381,17 +381,17 @@ pub fn load_tokens() StatsTFT {
 	rstel := hc.getex(account_url(addac), 86400)
 
 	tft := json.decode(Raw_StatsTFT, rtft) or {
-		eprintln('Failed to decode json')
+		eprintln('Failed to decode json (statsdata / tft)')
 		return StatsTFT{}
 	}
 
 	tfta := json.decode(Raw_StatsTFT, rtfta) or {
-		eprintln('Failed to decode json')
+		eprintln('Failed to decode json (statsdata / tfta)')
 		return StatsTFT{}
 	}
 
 	stellar := json.decode(Raw_StellarAccount, rstel) or {
-		eprintln('Failed to decode json')
+		eprintln('Failed to decode json (root stellar $addac)')
 		return StatsTFT{}
 	}
 
@@ -407,7 +407,7 @@ pub fn load_account(accid string) Account {
 	raccount := hc.getex(account_url(accid), 86400)
 
 	account := json.decode(Raw_Account, raccount) or {
-		eprintln('Failed to decode json')
+		eprintln('Failed to decode json (stellar accound $accid)')
 		return Account{}
 	}
 
