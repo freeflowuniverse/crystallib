@@ -225,7 +225,7 @@ pub fn parse_special(s StatsTFT) map[string]Group {
 	// master_total_tokens := f64(4000000000)
 	total_tokens := s.total_tokens
 
-	mut liquidity := tokens.FoundationAccountInfo{}
+	// mut liquidity := tokens.FoundationAccountInfo{}
 	mut contribution := tokens.FoundationAccountInfo{}
 	mut council := tokens.FoundationAccountInfo{}
 
@@ -234,9 +234,11 @@ pub fn parse_special(s StatsTFT) map[string]Group {
 			contribution = info
 		}
 
+		/*
 		if info.category == "liquidity wallets" {
 			liquidity = info
 		}
+		*/
 
 		if info.category == "wisdom council wallets" {
 			council = info
