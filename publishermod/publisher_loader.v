@@ -33,7 +33,10 @@ fn (mut publisher Publisher) load_site(repoconfig SiteRepoConfig, path string) ?
 	//copy the dir in codewiki, makes it easy to edit
 	path_links := '$os.home_dir()/codewiki/'
 	target := "$path_links/$repoconfig.name"
-	os.symlink(path,target)?
+	if !os.exists(target) {
+		os.symlink(path,target)?
+	}
+
 	mut cfg := myconfig.get() ?
 
 	repoconfig_site := name_fix(repoconfig.name)
