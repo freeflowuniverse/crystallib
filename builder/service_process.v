@@ -4,8 +4,8 @@ module builder
 pub struct Process {
 	cmd       string
 	arguments []string
-	// timeout in seconds, default 5 min
-	timeout    int  = 600
+	// timeout in seconds, default 20 min
+	timeout    int  = 1200
 	retry      int  = 1
 	stdout_log bool = true
 	stderr_log bool = true

@@ -55,7 +55,7 @@ pub fn save(path string) ? {
 	os.write_file(path2, txt) ?
 }
 
-pub fn init_config() ?ConfigRoot {
+fn init_config() ?ConfigRoot {
 	mut conf := initial()
 	if os.exists('sites.json') {
 		// println(' - Found config files for sites in local dir.')
