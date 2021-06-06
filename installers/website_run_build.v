@@ -81,7 +81,7 @@ pub fn website_build(cmd &cli.Command) ? {
 				process.execute_stdout('sed -i "s/pathPrefix.*//" $repo2.path/gridsome.config.js') ?
 
 				if use_prefix {
-					process.execute_stdout("sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.shortname\\\",\\n\\tplugins: \\\[/g" $repo2.path/gridsome.config.js") ?
+					process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.shortname\\\",\\n\\tplugins: \\\[/g" $repo2.path/gridsome.config.js') ?
 					// rewrite_config("${repo2.path}/gridsome.config.js",site.shortname)
 				}
 
@@ -102,7 +102,7 @@ pub fn website_build(cmd &cli.Command) ? {
 				process.execute_stdout('sed -i "s/pathPrefix.*//" $repo.path/gridsome.config.js') ?
 
 				if use_prefix {
-					process.execute_stdout("sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.shortname\\\",\\n\\tplugins: \\\[/g" $repo.path/gridsome.config.js") ?
+					process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.shortname\\\",\\n\\tplugins: \\\[/g" $repo.path/gridsome.config.js') ?
 				}
 
 				process.execute_stdout('$repo.path/build.sh') ?

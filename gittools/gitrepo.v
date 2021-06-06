@@ -142,13 +142,13 @@ pub fn (mut repo GitRepo) commit(msg string) ? {
 		return error('cannot detect if there are changes on repo.\n$err')
 	}
 	if change {
-		cmd := "
+		cmd := '
 		cd $repo.addr.path_get()
 		set +e
 		git add . -A
 		git commit -m \"$msg\"
 		echo ""
-		"
+		'
 		process.execute_silent(cmd) or {
 			return error('Cannot commit repo: ${repo.path}. Error was $err')
 		}
