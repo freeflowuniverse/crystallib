@@ -28,8 +28,8 @@ fn staticfiles_config(mut c ConfigRoot) {
 		'mermaid.min.js':                  'https://unpkg.com/mermaid@8.9.2/dist/mermaid.min.js'
 		'docsify-mermaid.js':              'https://unpkg.com/docsify-mermaid@latest/dist/docsify-mermaid.js'
 		'docsify-mindmap.min.js':          'https://unpkg.com/docsify-mindmap/dist/docsify-mindmap.min.js'
-		'docsify-charty.min.js':           'https://unpkg.com/@markbattistella/docsify-charty@latest'
-		'docsify-charty.min.css':          'https://unpkg.com/@markbattistella/docsify-charty@1.0.4/dist/docsify-charty.min.css'
+		'docsify-charty.min.js':           'https://unpkg.com/@markbattistella/docsify-charty@1.0.5'
+		'docsify-charty.min.css':          'https://unpkg.com/@markbattistella/docsify-charty@1.0.5/dist/docsify-charty.min.css'
 		'charty-custom-style.css':         'https://raw.githubusercontent.com/markbattistella/docsify-charty/main/docs/site/style.min.css'
 	}
 }
