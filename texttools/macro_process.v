@@ -13,7 +13,7 @@ pub fn cmd_fix(name string) ?string {
 	item = item.replace('!', '')
 	for x in ':;[]{}' {
 		if item.contains(x.str()) {
-			return error("cannot have \'$x.str()\' in cmd: $item")
+			return error('cannot have \'$x.str()\' in cmd: $item')
 		}
 	}
 	item = item.replace('-', '.')

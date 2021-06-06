@@ -1,16 +1,16 @@
-import vdcclient
+import despiegk.crystallib.vdcclient
 
 fn setup() vdcclient.Client {
 	return vdcclient.Client{
-		vdcname: "ADD_YOUR_VDC_NAME"
-		password: "ADD_YOUR_VDC_PASSWORD"
-		url: "ADD_YOUR_VDC_URL_INCLUDING_vdc_dashboard_PART"
+		vdcname: 'ADD_YOUR_VDC_NAME'
+		password: 'ADD_YOUR_VDC_PASSWORD'
+		url: 'ADD_YOUR_VDC_URL_INCLUDING_vdc_dashboard_PART'
 	}
 }
 
 fn test_get_vdc_info() {
 	client := setup()
-	println("************ TEST01_GET_VDC_INFO ************")
+	println('************ TEST01_GET_VDC_INFO ************')
 	response, status_code := client.get_vdc_info()
 	println(response)
 	assert status_code == 200
@@ -19,7 +19,7 @@ fn test_get_vdc_info() {
 
 fn test_list_kubernetes_nodes() {
 	client := setup()
-	println("************ TEST02_LIST_KUBERNETES_NODES ************")
+	println('************ TEST02_LIST_KUBERNETES_NODES ************')
 	response, status_code := client.list_kubernetes_nodes()
 	println(response)
 	assert status_code == 200
@@ -28,8 +28,8 @@ fn test_list_kubernetes_nodes() {
 
 fn test_add_kubernetes_node() {
 	client := setup()
-	println("************ TEST03_ADD_KUBERNETES_NODE ************")
-	response, status_code := client.add_kubernetes_node("MEDIUM")
+	println('************ TEST03_ADD_KUBERNETES_NODE ************')
+	response, status_code := client.add_kubernetes_node('MEDIUM')
 	println(response)
 	assert status_code == 200
 	assert response[0] > 0
@@ -37,7 +37,7 @@ fn test_add_kubernetes_node() {
 
 fn test_delete_kubernetes_node() {
 	client := setup()
-	println("************ TEST04_DELETE_KUBERNETES_NODE ************")
+	println('************ TEST04_DELETE_KUBERNETES_NODE ************')
 	before_delete, _ := client.list_kubernetes_nodes()
 	// to_delete := before_delete[before_delete.len -1].wid
 	to_delete := 47049
@@ -50,7 +50,7 @@ fn test_delete_kubernetes_node() {
 
 fn test_list_storage_nodes() {
 	client := setup()
-	println("************ TEST05_LIST_STORAGE_NODES ************")
+	println('************ TEST05_LIST_STORAGE_NODES ************')
 	response, status_code := client.list_storage_nodes()
 	println(response)
 	assert status_code == 200
@@ -61,9 +61,9 @@ fn test_list_storage_nodes() {
 
 fn test_add_storage_node() {
 	client := setup()
-	println("************ TEST06_ADD_STORAGE_NODE ************")
+	println('************ TEST06_ADD_STORAGE_NODE ************')
 	capacity := 10
-	farm := ""
+	farm := ''
 	response, status_code := client.add_storage_node(capacity, farm)
 	println(response)
 	assert status_code == 200
@@ -72,7 +72,7 @@ fn test_add_storage_node() {
 
 fn test_delete_storage_node() {
 	client := setup()
-	println("************ TEST07_DELETE_STORAGE_NODE ************")
+	println('************ TEST07_DELETE_STORAGE_NODE ************')
 	before_delete, _ := client.list_storage_nodes()
 	to_delete := before_delete[before_delete.len - 1].wid
 	response, status_code := client.delete_storage_node(to_delete)
@@ -84,16 +84,16 @@ fn test_delete_storage_node() {
 
 fn test_get_vdc_wallet() {
 	client := setup()
-	println("************ TEST08_GET_VDC_WALLET ************")
+	println('************ TEST08_GET_VDC_WALLET ************')
 	response, status_code := client.get_vdc_wallet()
 	println(response)
 	assert status_code == 200
-	assert response.address != ""
+	assert response.address != ''
 }
 
 fn test_get_vdc_used_pools() {
 	client := setup()
-	println("************ TEST09_GET_USED_POOLS ************")
+	println('************ TEST09_GET_USED_POOLS ************')
 	response, status_code := client.get_used_pools()
 	println(response)
 	assert status_code == 200
@@ -102,26 +102,25 @@ fn test_get_vdc_used_pools() {
 
 fn test_get_alerts() {
 	client := setup()
-	println("************ TEST10_GET_VDC_ALERTS ************")
-	application := "REPLACE_WITH YOUR_APP OR LET IT EMPTY"
+	println('************ TEST10_GET_VDC_ALERTS ************')
+	application := 'REPLACE_WITH YOUR_APP OR LET IT EMPTY'
 	response, status_code := client.get_alerts(application)
 	println(response)
 	assert status_code == 200
 }
 
-
 fn test_get_kubeconfig() {
 	client := setup()
-	println("************ TEST11_GET_KUBECONFIG ************")
+	println('************ TEST11_GET_KUBECONFIG ************')
 	response, status_code := client.get_kubeconfig()
-	println("Request Status: $status_code")
+	println('Request Status: $status_code')
 	println(response)
 	assert status_code == 200
 }
 
 fn test_get_zstor_config() {
 	client := setup()
-	println("************ TEST12_GET_ZSTOR-CONFIG ************")
+	println('************ TEST12_GET_ZSTOR-CONFIG ************')
 	ip_version := 4 // 4 or 6
 	response, status_code := client.get_zstor_config(ip_version)
 	println(response)
@@ -130,7 +129,7 @@ fn test_get_zstor_config() {
 
 fn test_get_status() {
 	client := setup()
-	println("************ TEST13_GET_STATUS ************")
+	println('************ TEST13_GET_STATUS ************')
 	response, status_code := client.get_status()
 	println(response)
 	assert status_code == 200
@@ -139,11 +138,11 @@ fn test_get_status() {
 
 fn test_get_backup() {
 	client := setup()
-	println("************ TEST14_GET_BACKUP ************")
+	println('************ TEST14_GET_BACKUP ************')
 	response, status_code := client.get_backup()
 	println(response)
 	assert status_code == 200
 	if response.len > 0 {
-		assert response[0].name != ""
+		assert response[0].name != ''
 	}
 }

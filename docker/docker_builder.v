@@ -3,7 +3,7 @@ module docker
 import rand
 
 pub const (
-	bootfile   = '#!/usr/bin/dumb-init /bin/sh
+	bootfile = '#!/usr/bin/dumb-init /bin/sh
 set -ex
 
 if [ ! -f "/etc/ssh/ssh_host_rsa_key" ]; then
@@ -77,8 +77,8 @@ RUN echo "THREEFOLD BASE DEV ENV WELCOMES YOU" > /etc/motd
 CMD ["/usr/local/bin/boot.sh"]
 '
 
-	pubkey     = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC+yekqnDVUHm3eRQcfdDMWAYF6uxFQlzvRIimv7IXh2yhU8TD/9gpq9arcfsl+BJz7GPA+pvlobtVcdDvfr4Z9WhiwpAun4b5As24MoZvMNscApuc4HzIDdNTSe8DeCIpA/lfrIuwuSFz9vqtYrk126udyGOfeDicl5pwbXknc6S8uDy2uJDrEsiGnhCwVeQp3p/taaF25pMYROOIJBYXraK7+qQePX/fd7pyg+jrT6Rl+b4SXMLlSqEfWpW7DQOjqqgJARw7PjONE1CfvRiqdcZu24vm7qELjgw3roonB8trGzj7vAVulVjtWzJChISiLJdT7LYZBJEkNeNcHY49B4My0TUnlb3Ik0hiF8AaKFCvdxMMVVaQtSi1Lys3YPZMp90TMVm+Kd906MVYw4fzWPAJL0SQLtfm2YpWvEJpka/WoVE0E/SuyaYofxVC5Vmff793It30YAVR1nriiHhjG54D9zGTiz7+Lzt9dORnIHYnBTfbGElgd9SRQVJP3JFU='
-	privkey    = '-----BEGIN OPENSSH PRIVATE KEY-----
+	pubkey  = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC+yekqnDVUHm3eRQcfdDMWAYF6uxFQlzvRIimv7IXh2yhU8TD/9gpq9arcfsl+BJz7GPA+pvlobtVcdDvfr4Z9WhiwpAun4b5As24MoZvMNscApuc4HzIDdNTSe8DeCIpA/lfrIuwuSFz9vqtYrk126udyGOfeDicl5pwbXknc6S8uDy2uJDrEsiGnhCwVeQp3p/taaF25pMYROOIJBYXraK7+qQePX/fd7pyg+jrT6Rl+b4SXMLlSqEfWpW7DQOjqqgJARw7PjONE1CfvRiqdcZu24vm7qELjgw3roonB8trGzj7vAVulVjtWzJChISiLJdT7LYZBJEkNeNcHY49B4My0TUnlb3Ik0hiF8AaKFCvdxMMVVaQtSi1Lys3YPZMp90TMVm+Kd906MVYw4fzWPAJL0SQLtfm2YpWvEJpka/WoVE0E/SuyaYofxVC5Vmff793It30YAVR1nriiHhjG54D9zGTiz7+Lzt9dORnIHYnBTfbGElgd9SRQVJP3JFU='
+	privkey = '-----BEGIN OPENSSH PRIVATE KEY-----
 b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABlwAAAAdzc2gtcn
 NhAAAAAwEAAQAAAYEAvsnpKpw1VB5t3kUHH3QzFgGBersRUJc70SIpr+yF4dsoVPEw//YK
 avWq3H7JfgSc+xjwPqb5aG7VXHQ736+GfVoYsKQLp+G+QLNuDKGbzDbHAKbnOB8yA3TU0n

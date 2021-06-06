@@ -18,25 +18,25 @@ pub mut:
 	stories      []int
 	issues       []int
 	tasks        []int
-	members      []MemberShip
+	members      []ProjectMemberShip
 	deadline     time.Time
 	dependencies []int // dependencies to other projects
 	description  string
 	comments     []int
 }
 
-pub enum MemberType {
+pub enum ProjectMemberType {
 	owner
 	stakeholder
 	member
 	observer
 }
 
-pub struct MemberShip {
+pub struct ProjectMemberShip {
 pub mut:
-	person     int
-	group      int
-	membertype MemberType
+	person     string
+	group      string
+	membertype ProjectMemberType
 	expiration time.Time
 	reputation int = 50
 }

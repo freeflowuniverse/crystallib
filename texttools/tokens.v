@@ -14,7 +14,6 @@ pub mut:
 	matchstring string
 }
 
-
 pub fn text_token_replace(text string, tofind string, replacewith string) ?string {
 	mut tr := tokenize(text)
 	text2 := tr.replace(text, tofind, replacewith) ?
@@ -27,7 +26,7 @@ pub fn replace_items(text string, replacer map[string]string) ?string {
 	mut skipline := false
 	mut res := []string{}
 	text_lines := text.split('\n')
-	
+
 	for line_ in text_lines {
 		mut line := line_
 		if line.trim(' ').starts_with('!') {
@@ -65,33 +64,29 @@ pub fn replace_items(text string, replacer map[string]string) ?string {
 	return final_res
 }
 
-
 pub fn (mut tr TokenizerResult) replace(text string, tofind string, replacewith string) ?string {
-	tofind2 := name_fix_no_underscore(tofind)
+	tofind2 := name_fix_no_underscore_token(tofind)
 	mut text2 := text
 	for item in tr.items {
 		if item.matchstring == tofind2 {
 			// text2 = text2.replace(item.toreplace, replacewith)
 			new_text := text2.replace(item.toreplace, replacewith)
-			text2 = new_text		
+			text2 = new_text
 
+			///WAS TO GET FULL WORDS TO WORK, IS NOT WORKING !!!!
+			// if item.matchstring == tofind2 {
+			// 	mut new_text := ''
+			// 	mut words := text2.split(' ')
+			// 	for word in words {
+			// 		if word.to_lower() == item.toreplace.to_lower(){
+			// 			new_text += word.replace(item.toreplace, replacewith)
+			// 		}else {
+			// 			new_text += word
+			// 		}
 
-		///WAS TO GET FULL WORDS TO WORK, IS NOT WORKING !!!!
-		// if item.matchstring == tofind2 {
-		// 	mut new_text := ''
-		// 	mut words := text2.split(' ')
-		// 	for word in words {
-		// 		if word.to_lower() == item.toreplace.to_lower(){
-		// 			new_text += word.replace(item.toreplace, replacewith)
-		// 		}else {
-		// 			new_text += word
-		// 		}
-				
-		// 		new_text += ' '
-		// 	}
-		// 	text2 = new_text.trim(' ')
-
-
+			// 		new_text += ' '
+			// 	}
+			// 	text2 = new_text.trim(' ')
 		}
 		// } else {
 		// 	println(' ... $item.matchstring !=  $tofind2')
@@ -100,9 +95,8 @@ pub fn (mut tr TokenizerResult) replace(text string, tofind string, replacewith 
 	return text2
 }
 
-
-pub fn name_fix_no_underscore(name string) string {
-	item := name_fix(name)
+pub fn name_fix_no_underscore_token(name string) string {
+	item := name_fix_token(name)
 	newitem := item.replace('_', '')
 	return newitem
 }
@@ -126,14 +120,12 @@ const name_fix_replaces = [
 	'_',
 ]
 
-
-pub fn name_fix(name string) string {
+pub fn name_fix_token(name string) string {
 	item := name.to_lower()
 	item_replaced := item.replace_each(texttools.name_fix_replaces)
 	newitem := item_replaced.trim(' ._')
 	return newitem
 }
-
 
 fn word_skip(text string) bool {
 	lower_text := text.to_lower()
@@ -142,7 +134,6 @@ fn word_skip(text string) bool {
 	}
 	return false
 }
-
 
 pub fn tokenize(text_ string) TokenizerResult {
 	text := dedent(text_)
@@ -205,7 +196,7 @@ pub fn tokenize(text_ string) TokenizerResult {
 				} else if '\t\n ,:;.?!#|'.contains(char) {
 					// only when end is newline tab or whitespace or ...
 					if word.len > 1 && !word_skip(word) && !(word in done) {
-						word_with_no_underscores := name_fix_no_underscore(word)
+						word_with_no_underscores := name_fix_no_underscore_token(word)
 						tr.items << TokenizerItem{
 							toreplace: word
 							matchstring: word_with_no_underscores.clone()
@@ -222,7 +213,7 @@ pub fn tokenize(text_ string) TokenizerResult {
 			}
 		}
 		if word.len > 1 && !word_skip(word) && !(word in done) {
-			word_with_no_underscores := name_fix_no_underscore(word)
+			word_with_no_underscores := name_fix_no_underscore_token(word)
 			tr.items << TokenizerItem{
 				toreplace: word
 				matchstring: word_with_no_underscores.clone()

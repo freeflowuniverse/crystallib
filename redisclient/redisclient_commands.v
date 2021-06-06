@@ -8,7 +8,7 @@ pub fn (mut r Redis) set(key string, value string) ? {
 }
 
 pub fn (mut r Redis) set_ex(key string, value string, ex string) ? {
-	return r.send_expect_ok(['SET', key, value, "EX", ex])
+	return r.send_expect_ok(['SET', key, value, 'EX', ex])
 }
 
 pub fn (mut r Redis) set_opts(key string, value string, opts SetOpts) bool {
@@ -151,7 +151,7 @@ pub fn (mut r Redis) lpop(key string) ?string {
 }
 
 pub fn (mut r Redis) blpop(keys []string, timeout string) ?[]resp2.RValue {
-	mut cmds := ["BLPOP"]
+	mut cmds := ['BLPOP']
 	cmds << keys
 	cmds << timeout
 	return r.send_expect_list(cmds)

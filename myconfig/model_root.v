@@ -21,10 +21,10 @@ pub mut:
 
 pub struct Paths {
 pub mut:
-	base    string
-	code    string
+	base     string
+	code     string
 	codewiki string
-	publish string
+	publish  string
 }
 
 // NOT WORKING YET

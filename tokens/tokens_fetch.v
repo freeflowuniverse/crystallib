@@ -8,62 +8,62 @@ import despiegk.crystallib.httpcache
 // Raw JSON struct
 //
 struct Raw_Wallet {
-	address string
+	address     string
 	description string
-	liquid bool
-	amount string
+	liquid      bool
+	amount      string
 }
 
 struct Raw_FoundationAccountInfo {
 	category string
-	wallets []Raw_Wallet
+	wallets  []Raw_Wallet
 }
 
 struct Raw_StatsTFT {
-	total_tokens string
-	total_accounts string
-	total_locked_tokens string
-	total_vested_tokens string
-	total_liquid_foundation_tokens string
+	total_tokens                     string
+	total_accounts                   string
+	total_locked_tokens              string
+	total_vested_tokens              string
+	total_liquid_foundation_tokens   string
 	total_illiquid_foundation_tokens string
-	total_liquid_tokens string
-	foundation_accounts_info []Raw_FoundationAccountInfo
-	locked_tokens_info []string
+	total_liquid_tokens              string
+	foundation_accounts_info         []Raw_FoundationAccountInfo
+	locked_tokens_info               []string
 }
 
 struct Raw_Balance {
 	amount string
-	asset string
+	asset  string
 }
 
 struct Raw_Account {
-	address string
-	balances []Raw_Balance
+	address          string
+	balances         []Raw_Balance
 	vesting_accounts []Raw_VestingAccount
-	locked_amounts []Raw_LockedAmount
+	locked_amounts   []Raw_LockedAmount
 }
 
 struct Raw_VestingAccount {
-	address string
+	address       string
 	vestingscheme string
-	balances []Raw_Balance
+	balances      []Raw_Balance
 }
 
 struct Raw_LockedAmount {
-	address string
+	address      string
 	locked_until string
-	balances []Raw_Balance
+	balances     []Raw_Balance
 }
 
 struct Raw_StellarBalance {
-	asset string
+	asset   string
 	balance string
 }
 
 struct Raw_StellarHistory {
-	ts int
+	ts       int
 	payments int
-	trades int
+	trades   int
 	balances []Raw_StellarBalance
 }
 
@@ -77,85 +77,84 @@ struct Raw_StellarAccount {
 //
 pub struct Wallet {
 pub mut:
-	address string
+	address     string
 	description string
-	liquid bool
-	amount f64
+	liquid      bool
+	amount      f64
 }
 
 pub struct FoundationAccountInfo {
 pub mut:
 	category string
-	wallets []Wallet
+	wallets  []Wallet
 }
 
 struct LockedTokensInfo {
 pub mut:
 	amount f64
-	until string
+	until  string
 }
 
 struct StatsTFT {
 pub mut:
-	total_tokens f64
-	total_accounts f64
-	total_locked_tokens f64
-	total_vested_tokens f64
-	total_liquid_foundation_tokens f64
+	total_tokens                     f64
+	total_accounts                   f64
+	total_locked_tokens              f64
+	total_vested_tokens              f64
+	total_liquid_foundation_tokens   f64
 	total_illiquid_foundation_tokens f64
-	total_liquid_tokens f64
-	foundation_accounts_info []FoundationAccountInfo
-	locked_tokens_info []LockedTokensInfo
+	total_liquid_tokens              f64
+	foundation_accounts_info         []FoundationAccountInfo
+	locked_tokens_info               []LockedTokensInfo
 }
 
 struct Balance {
 pub:
 	amount f64
-	asset string
+	asset  string
 }
 
 struct Account {
 pub mut:
-	address string
-	balances []Balance
+	address          string
+	balances         []Balance
 	vesting_accounts []VestingAccount
-	locked_amounts []LockedAmount
+	locked_amounts   []LockedAmount
 }
 
 struct VestingAccount {
 pub mut:
-	address string
+	address       string
 	vestingscheme string
-	balances []Balance
+	balances      []Balance
 }
 
 struct LockedAmount {
 pub mut:
-	address string
+	address      string
 	locked_until string
-	balances []Balance
+	balances     []Balance
 }
 
 struct Group {
 pub mut:
-	name string
-	distribution f32  // in percent from 0..1
-	farmed f64        // in tokens
-	done f64
-	amount f64
-	remain f64
+	name         string
+	distribution f32 // in percent from 0..1
+	farmed       f64 // in tokens
+	done         f64
+	amount       f64
+	remain       f64
 }
 
 //
 // Workflow
 //
 fn account_url(account string) string {
-	return "https://statsdata.testnet.threefold.io/stellar_stats/api/account/" + account
-
+	return 'https://statsdata.testnet.threefold.io/stellar_stats/api/account/' + account
 }
 
 fn parsef(f string) f64 {
-	x := f.replace(",", "")
+	x := f.replace(',', '')
 	return strconv.atof64(x)
 }
 
@@ -166,11 +165,13 @@ fn parse(tft Raw_StatsTFT, tfta Raw_StatsTFT, stellar Raw_StellarAccount) StatsT
 	final.total_accounts = parsef(tft.total_accounts) + parsef(tfta.total_accounts)
 	final.total_locked_tokens = parsef(tft.total_locked_tokens) + parsef(tfta.total_locked_tokens)
 	final.total_vested_tokens = parsef(tft.total_vested_tokens) + parsef(tfta.total_vested_tokens)
-	final.total_liquid_foundation_tokens = parsef(tft.total_liquid_foundation_tokens) + parsef(tfta.total_liquid_foundation_tokens)
-	final.total_illiquid_foundation_tokens = parsef(tft.total_illiquid_foundation_tokens) + parsef(tfta.total_illiquid_foundation_tokens)
+	final.total_liquid_foundation_tokens = parsef(tft.total_liquid_foundation_tokens) +
+		parsef(tfta.total_liquid_foundation_tokens)
+	final.total_illiquid_foundation_tokens = parsef(tft.total_illiquid_foundation_tokens) +
+		parsef(tfta.total_illiquid_foundation_tokens)
 	final.total_liquid_tokens = parsef(tft.total_liquid_tokens) + parsef(tfta.total_liquid_tokens)
 
-	mut info := map[string]map[string]Wallet
+	mut info := map[string]map[string]Wallet{}
 	src := [tft, tfta]
 
 	//
@@ -211,8 +212,8 @@ fn parse(tft Raw_StatsTFT, tfta Raw_StatsTFT, stellar Raw_StellarAccount) StatsT
 			x := locked.fields()
 
 			final.locked_tokens_info << LockedTokensInfo{
-				amount: parsef(x[0]),
-				until: x[3] + " " + x[4]
+				amount: parsef(x[0])
+				until: x[3] + ' ' + x[4]
 			}
 		}
 	}
@@ -226,11 +227,11 @@ pub fn parse_special(s StatsTFT) map[string]Group {
 	total_tokens := s.total_tokens
 
 	// mut liquidity := tokens.FoundationAccountInfo{}
-	mut contribution := tokens.FoundationAccountInfo{}
-	mut council := tokens.FoundationAccountInfo{}
+	mut contribution := FoundationAccountInfo{}
+	mut council := FoundationAccountInfo{}
 
 	for info in s.foundation_accounts_info {
-		if info.category == "threefold contribution wallets" {
+		if info.category == 'threefold contribution wallets' {
 			contribution = info
 		}
 
@@ -240,7 +241,7 @@ pub fn parse_special(s StatsTFT) map[string]Group {
 		}
 		*/
 
-		if info.category == "wisdom council wallets" {
+		if info.category == 'wisdom council wallets' {
 			council = info
 		}
 	}
@@ -250,38 +251,38 @@ pub fn parse_special(s StatsTFT) map[string]Group {
 	mut group := map[string]Group{}
 
 	// Farming rewards after April 19 2018 (***)
-	group["farming-rewards-2018"] = Group{
-		name: "Farming rewards after April 19 2018",
-		distribution: 0.75,
-		done: s.total_tokens - 695000000, // Genesis pool
+	group['farming-rewards-2018'] = Group{
+		name: 'Farming rewards after April 19 2018'
+		distribution: 0.75
+		done: s.total_tokens - 695000000 // Genesis pool
 	}
 
 	mut grant_amount := f64(0)
 
 	for wallet in contribution.wallets {
-		if wallet.description == "TF Grants Wallet" {
+		if wallet.description == 'TF Grants Wallet' {
 			grant_amount += f64(wallet.amount)
 		}
 	}
 
 	for wallet in council.wallets {
-		if wallet.description == "TF Grants Wisdom" {
+		if wallet.description == 'TF Grants Wisdom' {
 			grant_amount += f64(wallet.amount)
 		}
 	}
 
 	// Ecosystem Grants  (*)
-	group["ecosystem-grants"] = Group{
-		name: "Ecosystem Grants",
-		distribution: 0.03,
-		done: grant_amount,
+	group['ecosystem-grants'] = Group{
+		name: 'Ecosystem Grants'
+		distribution: 0.03
+		done: grant_amount
 	}
 
-	// Promotion & Marketing Effort 
-	group["promotion-marketing"] = Group{
-		name: "Promotion & Marketing Effort ",
-		distribution: 0.05,
-		done: 100000000, // estimation
+	// Promotion & Marketing Effort
+	group['promotion-marketing'] = Group{
+		name: 'Promotion & Marketing Effort '
+		distribution: 0.05
+		done: 100000000 // estimation
 	}
 
 	mut liquidity_amount := i64(0)
@@ -295,41 +296,38 @@ pub fn parse_special(s StatsTFT) map[string]Group {
 	}
 
 	// Ecosystem Contribution, Liquidity Exchanges
-	group["ecosystem-contribution"] = Group{
-		name: "Ecosystem Contribution, Liquidity Exchanges",
-		distribution: 0.04,
-		done: liquidity_amount,
+	group['ecosystem-contribution'] = Group{
+		name: 'Ecosystem Contribution, Liquidity Exchanges'
+		distribution: 0.04
+		done: liquidity_amount
 	}
 
 	// Technology Acquisition + Starting Team (40p)
-	group["technology"] = Group{
-		name: "Technology Acquisition + Starting Team",
-		distribution: 0.07,
-		done: 290000000,
+	group['technology'] = Group{
+		name: 'Technology Acquisition + Starting Team'
+		distribution: 0.07
+		done: 290000000
 	}
 
 	// Advisors, Founders & Team
-	group["advisors-founders"] = Group{
-		name: "Advisors, Founders & Team",
-		distribution: 0.06,
+	group['advisors-founders'] = Group{
+		name: 'Advisors, Founders & Team'
+		distribution: 0.06
 	}
 
-	sum := group["farming-rewards-2018"].done +
-	       group["ecosystem-grants"].done +
-		   group["promotion-marketing"].done +
-		   group["ecosystem-contribution"].done +
-		   group["technology"].done
+	sum := group['farming-rewards-2018'].done + group['ecosystem-grants'].done +
+		group['promotion-marketing'].done + group['ecosystem-contribution'].done +
+		group['technology'].done
 
-	group["advisors-founders"].done = total_tokens - sum
+	group['advisors-founders'].done = total_tokens - sum
 
 	return group
 }
 
-
 fn parse_balance(bal Raw_Balance) Balance {
 	return Balance{
-		amount: parsef(bal.amount),
-		asset: bal.asset,
+		amount: parsef(bal.amount)
+		asset: bal.asset
 	}
 }
 
@@ -344,8 +342,8 @@ fn account_info(account Raw_Account) Account {
 
 	for vest in account.vesting_accounts {
 		mut vesting := VestingAccount{
-			address: vest.address,
-			vestingscheme: vest.vestingscheme,
+			address: vest.address
+			vestingscheme: vest.vestingscheme
 		}
 
 		for bal in vest.balances {
@@ -357,7 +355,7 @@ fn account_info(account Raw_Account) Account {
 
 	for locking in account.locked_amounts {
 		mut locked := LockedAmount{
-			address: locking.address,
+			address: locking.address
 			locked_until: locking.locked_until
 		}
 
@@ -374,15 +372,15 @@ fn account_info(account Raw_Account) Account {
 pub fn load_tokens() StatsTFT {
 	mut hc := httpcache.newcache()
 
-	urltft := "https://statsdata.threefoldtoken.com/stellar_stats/api/stats?detailed=true"
-	urltfta := "https://statsdata.threefoldtoken.com/stellar_stats/api/stats?detailed=true&tokencode=TFTA"
+	urltft := 'https://statsdata.threefoldtoken.com/stellar_stats/api/stats?detailed=true'
+	urltfta := 'https://statsdata.threefoldtoken.com/stellar_stats/api/stats?detailed=true&tokencode=TFTA'
 
 	// println("[+] fetching tokens data from redis")
 	rtft := hc.getex(urltft, 86400)
 	rtfta := hc.getex(urltfta, 86400)
 
 	// extra stellar account for missing account in tft
-	addac := "GB2C5HCZYWNGVM6JGXDWQBJTMUY4S2HPPTCAH63HFAQVL2ALXDW7SSJ7"
+	addac := 'GB2C5HCZYWNGVM6JGXDWQBJTMUY4S2HPPTCAH63HFAQVL2ALXDW7SSJ7'
 	addurl := account_url(addac)
 	rstel := hc.getex(addurl, 86400)
 
@@ -422,4 +420,3 @@ pub fn load_account(accid string) Account {
 
 	return nicer
 }
-

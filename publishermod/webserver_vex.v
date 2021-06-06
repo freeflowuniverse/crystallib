@@ -1,5 +1,6 @@
 module publishermod
 
+import despiegk.crystallib.texttools
 import os
 import nedpals.vex.router
 import nedpals.vex.server
@@ -76,7 +77,7 @@ fn filetype_site_name_get(mut config myconfig.ConfigRoot, site string, name_ str
 	if name.trim(' ') == '' {
 		name = 'index.html'
 	} else {
-		name = name_fix_keepext(name)
+		name = texttools.name_fix_keepext(name)
 	}
 
 	mut filetype := FileType{}

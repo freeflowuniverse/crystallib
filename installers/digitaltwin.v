@@ -69,7 +69,7 @@ pub fn digitaltwin_start(mut cfg myconfig.ConfigRoot, isproduction bool, update 
 				node server.js
 				'
 	} else {
-		script = '
+		script = "
 		tmux new -d -s "digitaltwin"
 		tmux send-keys -t digitaltwin.0 "export THREEBOT_PHRASE=\$THREEBOT_PHRASE" ENTER
 		tmux send-keys -t digitaltwin.0 "export SECRET=\$SECRET" ENTER
@@ -78,7 +78,7 @@ pub fn digitaltwin_start(mut cfg myconfig.ConfigRoot, isproduction bool, update 
 		#tmux send-keys -t digitaltwin.0 "nvm use --lts" ENTER
 		tmux send-keys -t digitaltwin.0 "cd $repo.path/publisher" ENTER
 		tmux send-keys -t digitaltwin.0 "NODE_ENV=production node server.js || echo \\"can not run\\" " ENTER
-		'
+		"
 	}
 	process.execute_interactive('$script') ?
 	println(' - digital twin started')
@@ -109,7 +109,7 @@ pub fn digitaltwin_restart(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
 				node server.js
 				'
 	} else {
-		script = '
+		script = "
 		tmux kill-session -t digitaltwin
 		tmux new -d -s "digitaltwin"
 		tmux send-keys -t digitaltwin.0 "export THREEBOT_PHRASE=\$THREEBOT_PHRASE" ENTER
@@ -120,7 +120,7 @@ pub fn digitaltwin_restart(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
 		#tmux send-keys -t digitaltwin.0 "nvm use --lts" ENTER
 		tmux send-keys -t digitaltwin.0 "cd $repo.path/publisher" ENTER
 		tmux send-keys -t digitaltwin.0 "NODE_ENV=production node server.js || echo \\"can not run\\" " ENTER
-		'
+		"
 	}
 	process.execute_interactive('$script') ?
 	println(' - digital twin restarted')

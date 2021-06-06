@@ -48,7 +48,7 @@ pub fn (mut publisher Publisher) site_locations_get() [][]string {
 // replace in text the defs to a link
 fn (mut publisher Publisher) replace_defs_links(text string) ?string {
 	mut replacer := map[string]string{}
-	
+
 	for defname, defid in publisher.def_names {
 		defobj := publisher.def_get_by_id(defid) ?
 		page2 := defobj.page_get(mut publisher) ?

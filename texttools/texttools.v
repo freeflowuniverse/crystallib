@@ -6,10 +6,10 @@ pub fn dedent(text string) string {
 	mut pre := 999
 	mut pre_current := 0
 	mut res := []string{}
-	
+
 	//
 	text_lines := text.split_into_lines()
-	
+
 	//
 	for line2 in text_lines {
 		line2_trimmed := line2.trim_space()

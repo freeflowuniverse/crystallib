@@ -1,21 +1,22 @@
 module publishermod
 
+import despiegk.crystallib.texttools
 import os
 
 fn (mut publ Publisher) name_fix_alias_page(name string) ?string {
 	// name0 := name
 	name0 := publ.replacer.file.replace(name) ?
-	return name_fix(name0)
+	return texttools.name_fix(name0)
 }
 
 fn (mut publ Publisher) name_fix_alias_site(name string) ?string {
 	name0 := publ.replacer.site.replace(name) ?
-	return name_fix(name0)
+	return texttools.name_fix(name0)
 }
 
 fn (mut publ Publisher) name_fix_alias_file(name string) ?string {
 	name0 := publ.replacer.file.replace(name) ?
-	return name_fix_keepext(name0)
+	return texttools.name_fix_keepext(name0)
 }
 
 fn (mut publ Publisher) name_fix_alias_word(name string) ?string {

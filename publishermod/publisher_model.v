@@ -59,12 +59,12 @@ pub fn (mut publisher Publisher) file_get_by_id(id int) ?&File {
 ////////////////////////////////////////////////////////////////
 
 pub fn (mut publisher Publisher) site_exists(name string) bool {
-	name2 := name_fix(name)
+	name2 := texttools.name_fix(name)
 	return name2 in publisher.site_names
 }
 
 pub fn (mut publisher Publisher) def_exists(name string) bool {
-	name2 := name_fix_no_underscore(name)
+	name2 := texttools.name_fix_no_underscore(name)
 	return name2 in publisher.def_names
 }
 
@@ -101,7 +101,7 @@ pub fn (mut publisher Publisher) page_exists(name string) bool {
 ////////////// GET BY NAME
 
 pub fn (mut publisher Publisher) site_get(namefull string) ?&Site {
-	sitename := name_fix(namefull)
+	sitename := texttools.name_fix(namefull)
 	if sitename in publisher.site_names {
 		mut site := publisher.site_get_by_id(publisher.site_names[sitename]) or {
 			// println(publisher.site_names)
@@ -113,7 +113,7 @@ pub fn (mut publisher Publisher) site_get(namefull string) ?&Site {
 }
 
 pub fn (mut publisher Publisher) def_get(namefull string) ?&Def {
-	mut defname := name_fix_no_underscore(namefull)
+	mut defname := texttools.name_fix_no_underscore(namefull)
 	if defname.ends_with('.md') {
 		defname = defname[0..(defname.len - 3)]
 	}

@@ -29,7 +29,7 @@ fn macro_def(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 
 	mut aliasses := macro.params.get_list('alias') ?
 	for alias in aliasses {
-		aliasname := name_fix_no_underscore(alias)
+		aliasname := texttools.name_fix_no_underscore(alias)
 		if aliasname == '' {
 			panic("cannot be empty:'$aliasses'")
 		}
@@ -66,8 +66,8 @@ fn def_list_check(defobj Def, categories []string, exclude []string) bool {
 fn macro_def_list(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	mut categories := macro.params.get_list('category') ?
 	mut exclude := macro.params.get_list('exclude') ?
-	exclude = exclude.map(name_fix_no_underscore(it))
-	categories = categories.map(name_fix_no_underscore(it))
+	exclude = exclude.map(texttools.name_fix_no_underscore(it))
+	categories = categories.map(texttools.name_fix_no_underscore(it))
 
 	mut out := []string{}
 	mut firstletter := ''

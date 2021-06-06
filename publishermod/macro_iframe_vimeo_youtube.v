@@ -25,7 +25,7 @@ fn iframe(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 		return error('url should start with http. ${url}. \n$macro')
 	}
 
-	out := '<iframe src=\"$url\" width=\"$width\" height=\"$height\" frameborder=\"0\" scrolling=\"no\" align=\"center\" allow=\"autoplay; fullscreen; encrypted-media\" allowfullscreen></iframe>'
+	out := "<iframe src=\"$url\" width=\"$width\" height=\"$height\" frameborder=\"0\" scrolling=\"no\" align=\"center\" allow=\"autoplay; fullscreen; encrypted-media\" allowfullscreen></iframe>"
 
 	// [photos genesis pool](structure/images_threefold_genisispool_dubai.html ':include :type=iframe width=100% height=550px frameBorder="0" scrolling="no" align="center"')
 

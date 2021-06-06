@@ -64,7 +64,7 @@ module publishermod
 
 // fn (mut app App) site_config_get(name string)? myconfig.SiteConfig{
 
-// 	name2 := name_fix_keepext(name)
+// 	name2 := texttools.name_fix_keepext(name)
 
 // 	for site in app.config.sites{
 // 		if site.name.to_lower() == "info_"+name2.to_lower(){
@@ -145,7 +145,7 @@ module publishermod
 
 // 	println( " - ${app.req.url}")
 
-// 	name2 = name_fix_keepext(name2)
+// 	name2 = texttools.name_fix_keepext(name2)
 
 // 	if name2 == '_sidebar.md'{
 // 		name2 = 'sidebar.md'

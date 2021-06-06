@@ -121,7 +121,7 @@ fn site_config(mut c ConfigRoot) {
 			title: 'ThreeFold | Knowledge'
 			description: 'All you need to know about ThreeFold.'
 			image: 'https://info.threefold.io/threefold__welcomepage.png'
-		}		
+		}
 	}
 	// c.sites << SiteConfig{
 	// 	name: 'info_marketplace'
@@ -163,8 +163,8 @@ fn site_config(mut c ConfigRoot) {
 		trackingid: '14'
 		opengraph: {
 			url: 'https://sdk.threefold.io'
-			title: 'ThreeFold | Grid Manual (SDK)',
-			description: 'All you need to know about how to create and deploy IT Solutions on top of the ThreeFold P2P Cloud.',
+			title: 'ThreeFold | Grid Manual (SDK)'
+			description: 'All you need to know about how to create and deploy IT Solutions on top of the ThreeFold P2P Cloud.'
 			image: 'https://sdk.threefold.io/sdk__storage_compute.png'
 		}
 	}
@@ -175,7 +175,6 @@ fn site_config(mut c ConfigRoot) {
 		domains: ['legal.threefold.io', 'legal-info.threefold.io', 'legal-wiki.threefold.io']
 		descr: ''
 		trackingid: '17'
-		
 	}
 	c.sites << SiteConfig{
 		name: 'info_cloud'
@@ -225,7 +224,6 @@ fn site_config(mut c ConfigRoot) {
 	// 	descr: 'Grid operations'
 	// 	trackingid: ""
 	// }
-
 
 	c.sites << SiteConfig{
 		name: 'data_threefold'

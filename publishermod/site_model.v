@@ -1,5 +1,7 @@
 module publishermod
 
+import despiegk.crystallib.texttools
+
 struct Site {
 	id int [skip]
 pub mut: // id and index in the Publisher.sites array
@@ -47,7 +49,7 @@ struct SiteRepoConfig {
 
 pub fn (mut site Site) error_ignore_check(name string) bool {
 	for mut item in site.config.error_ignore {
-		if name_fix(name) == name_fix(item) {
+		if texttools.name_fix(name) == texttools.name_fix(item) {
 			return true
 		}
 	}
@@ -55,7 +57,7 @@ pub fn (mut site Site) error_ignore_check(name string) bool {
 }
 
 pub fn (site Site) page_get(name string, mut publisher Publisher) ?&Page {
-	mut namelower := name_fix(name)
+	mut namelower := texttools.name_fix(name)
 	if namelower in site.pages {
 		return publisher.page_get_by_id(site.pages[namelower])
 	}
@@ -63,7 +65,7 @@ pub fn (site Site) page_get(name string, mut publisher Publisher) ?&Page {
 }
 
 pub fn (site Site) file_get(name string, mut publisher Publisher) ?&File {
-	mut namelower := name_fix(name)
+	mut namelower := texttools.name_fix(name)
 	if namelower in site.files {
 		file := publisher.file_get_by_id(site.files[namelower]) ?
 		return file
@@ -72,11 +74,11 @@ pub fn (site Site) file_get(name string, mut publisher Publisher) ?&File {
 }
 
 pub fn (site Site) page_exists(name string) bool {
-	mut namelower := name_fix(name)
+	mut namelower := texttools.name_fix(name)
 	return namelower in site.pages
 }
 
 pub fn (site Site) file_exists(name string) bool {
-	mut namelower := name_fix(name)
+	mut namelower := texttools.name_fix(name)
 	return namelower in site.files
 }

@@ -28,5 +28,4 @@ fn (mut cfg ConfigRoot) init() {
 		cfg.nodejs.path = '$cfg.paths.base/versions/node/$version'
 		cfg.nodejs.version.name = version
 	}
-
 }

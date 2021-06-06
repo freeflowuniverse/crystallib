@@ -1,5 +1,6 @@
 module publishermod
 
+import despiegk.crystallib.texttools
 import os
 
 enum ParseStatus {
@@ -72,13 +73,13 @@ fn (link Link) server_get() string {
 		return '[$link.description](${link.site}__${link.filename}.md)'
 	}
 	if link.cat == LinkType.file {
-		if link.isimage{
+		if link.isimage {
 			return '![$link.description](${link.site}__$link.filename  $link.extra)'
 		}
 		// return '[$link.description](/${link.site}__$link.filename  $link.extra)'
-		if link.extra == ''{
+		if link.extra == '' {
 			return '<a href="${link.site}__$link.filename"> $link.description </a>'
-		}else{
+		} else {
 			return '<a href="${link.site}__$link.filename $link.extra"> $link.description </a>'
 		}
 	}
@@ -103,11 +104,11 @@ fn (mut link Link) source_get(sitename string) string {
 			panic('should not have in link for page or file.\n$link')
 		}
 		mut filename := ''
-		
-		if link.site == sitename{
+
+		if link.site == sitename {
 			if link.isimage {
 				filename = 'img/$link.filename'
-			}else{
+			} else {
 				filename = '$link.filename'
 			}
 		}
@@ -180,7 +181,7 @@ fn (mut link Link) init_() {
 		if link.filename.contains(':') {
 			splitted2 := link.filename.split(':')
 			if splitted2.len == 2 {
-				link.site = name_fix(splitted2[0])
+				link.site = texttools.name_fix(splitted2[0])
 				if link.site.starts_with('info_') {
 					link.site = link.site[5..]
 				}
@@ -197,7 +198,7 @@ fn (mut link Link) init_() {
 		link.filename = link.filename.replace('\\', '/')
 
 		base_of_link_filename := os.base(link.filename)
-		fixed_name := name_fix(base_of_link_filename)
+		fixed_name := texttools.name_fix(base_of_link_filename)
 		fixed_name_lower := fixed_name.to_lower()
 		fixed_name_lower_trimmed := fixed_name_lower.trim('.')
 		link.filename = fixed_name_lower_trimmed

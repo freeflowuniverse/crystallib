@@ -92,7 +92,8 @@ pub fn (mut publisher Publisher) flatten() ? {
 
 		mut site_config := config.site_wiki_get(site.name) ?
 
-		template_wiki_root_save(dest_dir, site.name, site_config.url, site_config.trackingid, site_config.opengraph)
+		template_wiki_root_save(dest_dir, site.name, site_config.url, site_config.trackingid,
+			site_config.opengraph)
 
 		mut special := ['readme.md', 'README.md', '_sidebar.md', '_navbar.md', 'sidebar.md',
 			'navbar.md', 'favicon.ico']

@@ -206,16 +206,15 @@ fn template_wiki_root(reponame string, repourl string, trackingid string, opengr
 	out = out.replace('@repourl', repourl)
 	out = out.replace('@trackingid', trackingid)
 	out = out.replace('@crispwebsiteid', crispwebsiteid)
-    
-    out = out.replace('@og_url', opengraph.url)
-    out = out.replace('@og_title', opengraph.title)
-    out = out.replace('@og_type', opengraph.type_)
-    out = out.replace('@og_description', opengraph.description)
-    out = out.replace('@og_image_width', opengraph.image_width)
-    out = out.replace('@og_image_height', opengraph.image_height)
-    out = out.replace('@og_image', opengraph.image)
-    
-    
+
+	out = out.replace('@og_url', opengraph.url)
+	out = out.replace('@og_title', opengraph.title)
+	out = out.replace('@og_type', opengraph.type_)
+	out = out.replace('@og_description', opengraph.description)
+	out = out.replace('@og_image_width', opengraph.image_width)
+	out = out.replace('@og_image_height', opengraph.image_height)
+	out = out.replace('@og_image', opengraph.image)
+
 	return out
 }
 

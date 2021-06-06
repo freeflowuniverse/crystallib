@@ -21,7 +21,7 @@ fn macro_alias(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	defid := state.publisher.def_add(defobj)
 
 	for alias in aliasses {
-		aliasname := name_fix_no_underscore(alias)
+		aliasname := texttools.name_fix_no_underscore(alias)
 		if aliasname == '' {
 			panic("cannot be empty:'$aliasses'")
 		}

@@ -1,5 +1,7 @@
 module publishermod
 
+import despiegk.crystallib.texttools
+
 struct Def {
 	name   string
 	pageid int
@@ -21,7 +23,7 @@ pub fn (def Def) category_prefix_exists(prefix_ string) bool {
 
 pub fn (mut def Def) categories_add(categories []string) {
 	for cat_ in categories {
-		cat := name_fix_no_underscore(cat_)
+		cat := texttools.name_fix_no_underscore(cat_)
 		if !(cat in def.categories) {
 			def.categories << cat
 		}
@@ -33,7 +35,7 @@ pub fn (def Def) page_get(mut publisher Publisher) ?&Page {
 }
 
 pub fn (def Def) name_fixed() string {
-	return name_fix_no_underscore(def.name)
+	return texttools.name_fix_no_underscore(def.name)
 }
 
 fn (mut publisher Publisher) defs_init(categories []string, exclude []string, mut site Site, name_ string) {

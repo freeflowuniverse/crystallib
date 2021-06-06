@@ -160,7 +160,7 @@ fn (mut page Page) process_metadata(mut publisher Publisher) ? {
 	// 	println("DEBUG")
 	// }
 	page_lines := page.content.split_into_lines()
-	
+
 	for line in page_lines {
 		state.nr++
 		state.lines_source << line
@@ -373,7 +373,7 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 
 fn (mut page Page) title() string {
 	lines := page.content.split('\n')
-	
+
 	for line in lines {
 		line_trimmed := line.trim(' ')
 		if line_trimmed.starts_with('#') {

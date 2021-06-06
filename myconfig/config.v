@@ -16,7 +16,7 @@ fn initial() ConfigRoot {
 	if !os.exists(c.paths.code) {
 		os.mkdir(c.paths.code) or { panic(err) }
 	}
-	
+
 	if !os.exists(c.paths.codewiki) {
 		os.mkdir(c.paths.codewiki) or { panic(err) }
 	}
@@ -66,14 +66,14 @@ fn init_config() ?ConfigRoot {
 	return conf
 }
 
-const gconf = init_config() or {panic(err)}
+const gconf = init_config() or { panic(err) }
 
 pub fn get() ?ConfigRoot {
-	return gconf
+	return myconfig.gconf
 }
 
-pub fn (mut cfg ConfigRoot) nodejs_check(){
-	if ! os.exists(cfg.nodejs.path){
+pub fn (mut cfg ConfigRoot) nodejs_check() {
+	if !os.exists(cfg.nodejs.path) {
 		println("ERROR\ncannot find nodejs, reinstall using 'publishtools install -r'")
 		exit(1)
 	}

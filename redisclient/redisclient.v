@@ -10,7 +10,7 @@ import despiegk.crystallib.resp2
 pub struct Redis {
 pub mut:
 	connected bool
-	socket net.TcpConn
+	socket    net.TcpConn
 	// reader &io.BufferedReader
 }
 
@@ -35,12 +35,14 @@ pub enum KeyType {
 
 // https://redis.io/topics/protocol
 pub fn connect(addr string) ?Redis {
-	mut socket := net.dial_tcp(addr) or { return Redis{connected: false} }
+	mut socket := net.dial_tcp(addr) or { return Redis{
+		connected: false
+	} }
 
 	socket.set_read_timeout(2 * time.second)
 
 	return Redis{
-		connected: true,
+		connected: true
 		socket: socket
 		// reader: io.new_buffered_reader(reader: io.make_reader(socket))
 	}
@@ -91,13 +93,13 @@ fn (mut r Redis) write_line(data_ []byte) ? {
 	// mac os fix, this will fails if not connected
 	r.socket.peer_addr() or {
 		r.connected = false
-		println("[-] could not fetch peer address")
+		println('[-] could not fetch peer address')
 		return
 	}
 
 	// this will silently close software
 	// if socket is not connected (on macos)
-	r.socket.write(data)?
+	r.socket.write(data) ?
 }
 
 fn (mut r Redis) write(data []byte) ? {
@@ -108,7 +110,7 @@ fn (mut r Redis) write(data []byte) ? {
 pub fn (mut r Redis) write_rval(val resp2.RValue) ? {
 	// macos: needed to avoid silent exit
 	r.socket.peer_addr() or {
-		println("[-] could not fetch peer address")
+		println('[-] could not fetch peer address')
 		return
 	}
 
@@ -118,7 +120,7 @@ pub fn (mut r Redis) write_rval(val resp2.RValue) ? {
 // write list of strings to redis challen
 fn (mut r Redis) write_cmds(items []string) ? {
 	a := resp2.r_list_bstring(items)
-	r.write_rval(a)?
+	r.write_rval(a) ?
 }
 
 fn (mut r Redis) read(size int) ?[]byte {

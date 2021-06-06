@@ -16,7 +16,7 @@ pub fn (mut b Builder) add(val RValue) {
 pub fn (val RValue) encode() []byte {
 	match val {
 		RBString {
-			return '\$${val.value.len}\r\n$val.value.bytestr()\r\n'.bytes()
+			return '\$$val.value.len\r\n$val.value.bytestr()\r\n'.bytes()
 		}
 		RInt {
 			return ':$val.value\r\n'.bytes()
