@@ -21,16 +21,26 @@ pub fn newcache() HttpCache {
 	return httpcache.gcache
 }
 
-pub fn (mut h HttpCache) getex(url string, expire int) string {
+pub fn (mut h HttpCache) getex(url string, expire int) ?string {
 	// println("[+] cache: request url: " + url)
 
 	hit := h.redis.get('httpcache:' + url) or {
 		println('[-] cache: cache miss, downloading: ' + url)
-		data := http.get_text(url)
+		
+		r := http.get(url) ?
+		data := r.text
 
-		// println("[+] cache: caching response (${data.len} bytes)")
-		h.redis.set_ex('httpcache:' + url, data, expire.str()) or { eprintln(err) }
+		status := http.status_from_int(r.status_code)
+		println(r)
 
+		if status.is_success(){
+			// println("[+] cache: caching response (${data.len} bytes)")
+			h.redis.set_ex('httpcache:' + url, data, expire.str()) or { eprintln(err) }
+		}else{
+			msg := "error in http request.\n$data"
+			println(msg)
+			return error(msg)
+		}
 		return data
 	}
 

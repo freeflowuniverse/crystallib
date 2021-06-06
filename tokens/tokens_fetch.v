@@ -369,20 +369,20 @@ fn account_info(account Raw_Account) Account {
 	return final
 }
 
-pub fn load_tokens() StatsTFT {
+pub fn load_tokens()? StatsTFT {
 	mut hc := httpcache.newcache()
 
 	urltft := 'https://statsdata.threefoldtoken.com/stellar_stats/api/stats?detailed=true'
 	urltfta := 'https://statsdata.threefoldtoken.com/stellar_stats/api/stats?detailed=true&tokencode=TFTA'
 
 	// println("[+] fetching tokens data from redis")
-	rtft := hc.getex(urltft, 86400)
-	rtfta := hc.getex(urltfta, 86400)
+	rtft := hc.getex(urltft, 86400)?
+	rtfta := hc.getex(urltfta, 86400)?
 
 	// extra stellar account for missing account in tft
 	addac := 'GB2C5HCZYWNGVM6JGXDWQBJTMUY4S2HPPTCAH63HFAQVL2ALXDW7SSJ7'
 	addurl := account_url(addac)
-	rstel := hc.getex(addurl, 86400)
+	rstel := hc.getex(addurl, 86400)?
 
 	tft := json.decode(Raw_StatsTFT, rtft) or {
 		eprintln('Failed to decode json (statsdata: $urltft)')
@@ -404,12 +404,12 @@ pub fn load_tokens() StatsTFT {
 	return merged
 }
 
-pub fn load_account(accid string) Account {
+pub fn load_account(accid string) ?Account {
 	mut hc := httpcache.newcache()
 
 	// println("[+] fetching account data from redis")
 	accurl := account_url(accid)
-	raccount := hc.getex(accurl, 86400)
+	raccount := hc.getex(accurl, 86400)?
 
 	account := json.decode(Raw_Account, raccount) or {
 		eprintln('Failed to decode json (stellar: $accurl)')
