@@ -64,6 +64,11 @@ pub fn (mut r Redis) hget(key string, skey string) ?string {
 	return r.send_expect_strnil(['HGET', key, skey])
 }
 
+pub fn (mut r Redis) hgetall(key string) ?[]resp2.RValue {
+	// mut key2 := key.trim("\"'")
+	return r.send_expect_list(['HGETALL', key])
+}
+
 pub fn (mut r Redis) hexists(key string, skey string) ?bool {
 	return r.send_expect_bool(['HEXISTS', key, skey])
 }
