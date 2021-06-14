@@ -99,6 +99,17 @@ fn site_config(mut c ConfigRoot) {
 		descr: 'uhuru (freedom) peer2peer cloud.'
 		trackingid: ''
 	}
+
+	c.sites << SiteConfig{
+		name: 'www_digitialtwin'
+		shortname: 'digitaltwin'
+		url: 'https://github.com/threefoldfoundtech/www_digitaltwin'
+		cat: SiteCat.web
+		domains: ['digitaltwin.threefold.io']
+		descr: 'Digital twin frontend'
+		trackingid: ''
+	}
+
 	// c.sites << SiteConfig{
 	// 	name: 'www_mitaa'
 	// 	shortname: 'mitaa'

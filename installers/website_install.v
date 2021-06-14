@@ -94,8 +94,12 @@ pub fn website_install(name string, first bool, conf &myconfig.ConfigRoot) ? {
 
 	export PATH=$nodejspath/bin:\$PATH
 
-	gridsome develop
-
+	if [ -f vue.config.js ]; then
+    	npm run-script serve
+	else
+		gridsome develop
+	fi
+	
 	'
 
 	script_build := '
@@ -113,7 +117,11 @@ pub fn website_install(name string, first bool, conf &myconfig.ConfigRoot) ? {
 	export PATH=$nodejspath/bin:\$PATH
 
 	set +e
-	gridsome build
+	if [ -f vue.config.js ]; then
+    	npm run-script build
+	else
+		gridsome build
+	fi
 
 	set -e
 

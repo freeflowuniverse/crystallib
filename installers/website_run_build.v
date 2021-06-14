@@ -5,6 +5,7 @@ import despiegk.crystallib.process
 import despiegk.crystallib.gittools
 import despiegk.crystallib.publishermod
 import cli
+import os
 
 fn website_conf_repo_get(cmd &cli.Command, mut conf myconfig.ConfigRoot) ?&gittools.GitRepo {
 	flags := cmd.flags.get_all_found()
@@ -78,18 +79,46 @@ pub fn website_build(cmd &cli.Command) ? {
 					return error('ERROR: cannot find repo: $site.name\n$err')
 				}
 				println(' - build website: $repo2.path')
-				process.execute_stdout('sed -i "s/pathPrefix.*//" $repo2.path/gridsome.config.js') ?
+				mut isgridsome := true
+				mut vuejs := true
+
+				if !os.exists('$repo2.path/gridsome.config.js'){
+					isgridsome = false
+				}
+
+				if !os.exists('$repo2.path/vue.config.js'){
+					vuejs = false
+				}
+
+
+				if isgridsome{
+					process.execute_stdout('sed -i "s/pathPrefix.*//" $repo2.path/gridsome.config.js') ?
+				}else if vuejs{
+					process.execute_stdout('sed -i "s/publicPath:.*//" $repo2.path/vue.config.js') ?
+				}
 
 				if use_prefix {
-					process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.shortname\\\",\\n\\tplugins: \\\[/g" $repo2.path/gridsome.config.js') ?
-					// rewrite_config("${repo2.path}/gridsome.config.js",site.shortname)
+					if isgridsome{
+						process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.shortname\\\",\\n\\tplugins: \\\[/g" $repo2.path/gridsome.config.js') ?
+					}else if vuejs{
+						process.execute_stdout('sed -i "s/configureWebpack:: \\\{/publicPath: \\\"$site.shortname\\\",\\n\\configureWebpack:: \\\{/g" $repo2.path/vue.config.js') ?
+					}
+					
 				}
 
 				process.execute_stdout('$repo2.path/build.sh') or {
-					process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?
+					if isgridsome{
+						process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?
+					}else if vuejs{
+						process.execute_stdout('cd $repo2.path/ && git checkout vue.config.js') ?
+					}
 				}
 
-				process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?
+				if isgridsome{
+					process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?
+				}else if vuejs{
+					process.execute_stdout('cd $repo2.path/ && git checkout vue.config.js') ?
+				}
 			}
 		}
 	} else {
@@ -99,14 +128,40 @@ pub fn website_build(cmd &cli.Command) ? {
 		for site in sites {
 			if site.name == repo.addr.name {
 				println(' - build website: $repo.path')
-				process.execute_stdout('sed -i "s/pathPrefix.*//" $repo.path/gridsome.config.js') ?
+				
+				mut isgridsome := true
+				mut vuejs := true
+
+				if !os.exists('$repo.path/gridsome.config.js'){
+					isgridsome = false
+				}
+
+				if !os.exists('$repo.path/vue.config.js'){
+					vuejs = false
+				}
+
+				if isgridsome{
+					process.execute_stdout('sed -i "s/pathPrefix.*//" $repo.path/gridsome.config.js') ?
+				}else if vuejs{
+					process.execute_stdout('sed -i "s/publicPath:.*//" $repo.path/vue.config.js') ?
+				}
 
 				if use_prefix {
-					process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.shortname\\\",\\n\\tplugins: \\\[/g" $repo.path/gridsome.config.js') ?
+					if isgridsome{
+						process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.shortname\\\",\\n\\tplugins: \\\[/g" $repo.path/gridsome.config.js') ?
+					}else if vuejs{
+						process.execute_stdout('sed -i "s/configureWebpack: {/publicPath: \\\"$site.shortname\\\",\\n\configureWebpack: {/g" $repo.path/vue.config.js') ?
+					}
+					
 				}
 
 				process.execute_stdout('$repo.path/build.sh') ?
-				process.execute_stdout('cd $repo.path/ && git checkout gridsome.config.js') ?
+				
+				if isgridsome{
+					process.execute_stdout('cd $repo.path/ && git checkout gridsome.config.js') ?
+				}else if vuejs{
+					process.execute_stdout('cd $repo.path/ && git checkout vue.config.js') ?
+				}
 				break
 			}
 		}
