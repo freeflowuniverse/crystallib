@@ -150,7 +150,7 @@ pub mut:
 // Workflow
 //
 fn account_url(account string) string {
-	return 'https://statsdata.testnet.threefold.io/stellar_stats/api/account/' + account
+	return 'https://statsdata.threefold.io/stellar_stats/api/account/' + account
 }
 
 fn parsef(f string) f64 {
