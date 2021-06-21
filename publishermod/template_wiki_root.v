@@ -68,10 +68,21 @@ fn template_wiki_root(reponame string, repourl string, trackingid string, opengr
         /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
         _paq.push(["trackPageView"]);
         _paq.push(["enableLinkTracking"]);
+    
+        window.addEventListener("hashchange", function() {
+            console.log(window.location.hash.substr(2))
+            _paq.push(["trackPageView"]);
+            _paq.push(["enableLinkTracking"]);
+            _paq.push(["setDocumentTitle", window.location.hash.substr(2)]);
+             _paq.push(["setCustomUrl", "/" + window.location.hash.substr(2)]);
+              
+        });
+
         (function() {
             var u="//analytics.threefold.io/";
             _paq.push(["setTrackerUrl", u+"matomo.php"]);
             _paq.push(["setSiteId", "@trackingid"]);
+             _paq.push(["setCustomUrl", "/" + window.location.hash.substr(2)]);
             var d=document, g=d.createElement("script"), s=d.getElementsByTagName("script")[0];
             g.type="text/javascript"; g.async=true; g.src=u+"matomo.js"; s.parentNode.insertBefore(g,s);
         })();
@@ -198,6 +209,7 @@ fn template_wiki_root(reponame string, repourl string, trackingid string, opengr
         
     </script>
     </body>
+    
     </html>
     '
 
