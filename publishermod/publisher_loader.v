@@ -94,7 +94,7 @@ fn (mut publisher Publisher) find_sites_recursive(path string) ? {
 					// eprintln()
 					return error('Failed to decode json ${os.join_path(pathnew, 'wikiconfig.json')}')
 				}
-				publisher.load_site(repoconfig, pathnew) or { panic(err) }
+				publisher.load_site(repoconfig, pathnew)?
 				continue
 			}
 			if item == '.git' {
@@ -110,7 +110,7 @@ fn (mut publisher Publisher) find_sites_recursive(path string) ? {
 			if item.starts_with('_') {
 				continue
 			}
-			publisher.find_sites_recursive(pathnew) or { panic(err) }
+			publisher.find_sites_recursive(pathnew)?
 		}
 	}
 	publisher.gitlevel--
