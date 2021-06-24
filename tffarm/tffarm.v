@@ -1,5 +1,7 @@
 module tffarm
 
+//is only for farmers v3
+
 pub struct TFFarm {
 pub mut:
 	name string
@@ -10,6 +12,7 @@ pub mut:
 	location_type LocationType
 	//give more information about location
 	location_description string
+	//TFT for farming will come to this wallet
 	farming_wallet string
 	//can be separate of farming wallet if needed, if not filled in then farming wallet used
 	cultivation_wallet string
