@@ -135,7 +135,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 	myconfig.save('') ?
 }
 
-[if trace_progress]
+[if trace_progress?]
 fn trace_progress(msg string) {
 	eprintln(msg)
 }
