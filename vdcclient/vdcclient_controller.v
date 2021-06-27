@@ -122,7 +122,7 @@ pub:
 	event            Event
 	tracebacks       []Traceback
 mut:
-	alert_type string
+	alert_type string [json: "type"]
 }
 
 pub struct Backup {
@@ -141,8 +141,8 @@ mut:
 
 struct BackupProgress {
 mut:
-	total_items   int
-	item_backedup int
+	total_items   int [json: totalItems]
+	item_backedup int [json: itemsBackedUp]
 }
 
 struct Event {
