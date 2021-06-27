@@ -103,10 +103,20 @@ fn site_config(mut c ConfigRoot) {
 	c.sites << SiteConfig{
 		name: 'www_digitialtwin'
 		shortname: 'digitaltwin'
-		url: 'https://github.com/threefoldfoundtech/www_digitaltwin'
+		url: 'https://github.com/threefoldtech/www_digitaltwin'
 		cat: SiteCat.web
 		domains: ['digitaltwin.threefold.io']
 		descr: 'Digital twin frontend'
+		trackingid: ''
+	}
+
+	c.sites << SiteConfig{
+		name: 'www_freeflow'
+		shortname: 'myfreeflow'
+		url: 'https://github.com/threefoldfoundation/www_freeflow'
+		cat: SiteCat.web
+		domains: ['www.myfreeflow.org']
+		descr: 'My freeflow website'
 		trackingid: ''
 	}
 
