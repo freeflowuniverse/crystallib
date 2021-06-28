@@ -101,7 +101,7 @@ fn site_config(mut c ConfigRoot) {
 	}
 
 	c.sites << SiteConfig{
-		name: 'www_digitialtwin'
+		name: 'www_digitaltwin'
 		shortname: 'digitaltwin'
 		url: 'https://github.com/threefoldtech/www_digitaltwin'
 		cat: SiteCat.web

@@ -101,7 +101,7 @@ pub fn website_build(cmd &cli.Command) ? {
 					if isgridsome{
 						process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.shortname\\\",\\n\\tplugins: \\\[/g" $repo2.path/gridsome.config.js') ?
 					}else if vuejs{
-						process.execute_stdout('sed -i "s/configureWebpack:: \\\{/publicPath: \\\"$site.shortname\\\",\\n\\configureWebpack:: \\\{/g" $repo2.path/vue.config.js') ?
+						process.execute_stdout('sed -i "s/configureWebpack:: \\\{/publicPath: \\\".\\/\\\",\\n\\configureWebpack:: \\\{/g" $repo2.path/vue.config.js') ?
 					}
 					
 				}
@@ -150,7 +150,7 @@ pub fn website_build(cmd &cli.Command) ? {
 					if isgridsome{
 						process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.shortname\\\",\\n\\tplugins: \\\[/g" $repo.path/gridsome.config.js') ?
 					}else if vuejs{
-						process.execute_stdout('sed -i "s/configureWebpack: {/publicPath: \\\"$site.shortname\\\",\\n\configureWebpack: {/g" $repo.path/vue.config.js') ?
+						process.execute_stdout('sed -i "s/configureWebpack: {/publicPath: \\\".\\/\\\",\\n\configureWebpack: {/g" $repo.path/vue.config.js') ?
 					}
 					
 				}
