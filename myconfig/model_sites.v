@@ -29,7 +29,6 @@ pub mut:
 	acl        []SiteACE // access control list
 	trackingid string    // Matomo/Analytics
 	opengraph  OpenGraph
-	digitaltwinowner string //
 }
 
 pub struct TFGroup {
