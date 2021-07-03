@@ -1,13 +1,21 @@
-module myconfig
+module publishconfig
 
 import os
 // import gittools
-import despiegk.crystallib.myconfig
+
 import json
 
-// get the initial config
-fn initial() ConfigRoot {
+// load the initial config from filesystem
+fn config_load() ?ConfigRoot {
 	mut c := ConfigRoot{}
+
+	if os.exists('config.json') {
+		println(' - Found config file for publish tools.')
+		txt := os.read_file('config.json') ?
+		conf.sites = json.decode(PublishConfig, txt) ?
+	}
+
+
 	c.paths.base = '$os.home_dir()/.publisher'
 	c.paths.publish = '$c.paths.base/publish'
 	c.paths.code = '$os.home_dir()/codewww'
@@ -23,7 +31,7 @@ fn initial() ConfigRoot {
 
 	mut nodejsconfig := NodejsConfig{
 		version: NodejsVersion{
-			cat: myconfig.NodejsVersionEnum.lts
+			cat: NodejsVersionEnum.lts
 		}
 	}
 	c.nodejs = nodejsconfig
@@ -36,45 +44,28 @@ fn initial() ConfigRoot {
 
 	c.init()
 
+
+
 	// add the site configurations to it
 	site_config(mut &c)
 	staticfiles_config(mut &c)
 
-	return c
-}
-
-pub fn save(path string) ? {
-	mut path2 := path
-	c := get() ?
-	txt := json.encode_pretty(c.sites)
-	if path2 == '' {
-		path2 = '~/.publisher/sites.json'
-	}
-	path2 = os.real_path(path2).replace('~', os.home_dir())
-	println(' - write config file on $path2')
-	os.write_file(path2, txt) ?
-}
-
-fn init_config() ?ConfigRoot {
-	mut conf := initial()
 	if os.exists('sites.json') {
 		// println(' - Found config files for sites in local dir.')
 		txt := os.read_file('sites.json') ?
 		conf.sites = []SiteConfig{}
 		conf.sites = json.decode([]SiteConfig, txt) ?
 	}
-	return conf
+
+
+	return c
 }
 
-const gconf = init_config() or { panic(err) }
+
+//to create singleton
+const gconf = config_load() or { panic(err) }
 
 pub fn get() ?ConfigRoot {
-	return myconfig.gconf
+	return publishconfig.gconf
 }
 
-pub fn (mut cfg ConfigRoot) nodejs_check() {
-	if !os.exists(cfg.nodejs.path) {
-		println("ERROR\ncannot find nodejs, reinstall using 'publishtools install -r'")
-		exit(1)
-	}
-}

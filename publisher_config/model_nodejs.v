@@ -1,4 +1,4 @@
-module myconfig
+module publishconfig
 
 pub struct NodejsConfig {
 pub mut:

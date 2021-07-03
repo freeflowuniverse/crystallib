@@ -1,17 +1,6 @@
-module myconfig
+module publishconfig
 
 import os
-
-pub struct OpenGraph {
-pub mut:
-	title        string
-	description  string
-	url          string
-	type_        string = 'article'
-	image        string
-	image_width  string = '1200'
-	image_height string = '630'
-}
 
 pub struct SiteConfig {
 pub mut:
@@ -25,17 +14,10 @@ pub mut:
 	path_code  string
 	domains    []string
 	descr      string
-	groups     []TFGroup
+	groups     []UserGroup
 	acl        []SiteACE // access control list
 	trackingid string    // Matomo/Analytics
 	opengraph  OpenGraph
-}
-
-pub struct TFGroup {
-pub mut:
-	name           string // needs to be unique
-	members_users  []string
-	members_groups []string
 }
 
 pub struct SiteACE {
