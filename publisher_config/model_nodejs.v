@@ -1,7 +1,7 @@
 module publishconfig
 
-const LTS_VER := 'v14.17.0'
-const LATEST_VER := 'v16.1.0'
+const lts_ver = 'v14.17.0'
+const latest_ver = 'v16.1.0'
 
 pub struct NodejsConfig {
 pub mut:
@@ -13,9 +13,9 @@ fn (mut cfg ConfigRoot) init_nodejs() {
 	mut version := ''
 	if cfg.nodejs.path == '' {
 		if cfg.nodejs.version == "lts" {
-			version = LTS_VER
+			version = lts_ver
 		} else {
-			version = LATEST_VER
+			version = latest_ver
 		}
 		cfg.nodejs.path = '$cfg.publish.paths.base/versions/node/$version'
 		cfg.nodejs.version = version

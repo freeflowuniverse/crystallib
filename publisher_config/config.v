@@ -56,13 +56,21 @@ fn config_load() ?ConfigRoot {
 
 	// Load Static confif
 	staticfiles_config(mut &config)
-
-	// Load Site Config -- TODO: take variable site config file name
-	if os.exists('sites.json') {
-		println(' - Found config files for Sites.')
-		txt := os.read_file('sites.json') ?
+	
+	// Load Site Config
+	mut sites_config_files := []string{}
+	config_dir := "/" // TODO: Check that is the right dir
+	mut files := os.ls(config_dir) or { panic(err) }
+	for file in files {
+		if (file.starts_with("site_") || file.starts_with("sites")) && file.ends_with(".json"){
+			sites_config_files << file
+		}
+	}
+	for site_file in sites_config_files {
+		println(' - Found $site_file as a config file for Sites.')
+		txt := os.read_file(site_file) ?
 		config.sites = []SiteConfig{}
-		config.sites = json.decode([]SiteConfig, txt) ?
+		config.sites << json.decode([]SiteConfig, txt) ?
 	}
 
 	return config
