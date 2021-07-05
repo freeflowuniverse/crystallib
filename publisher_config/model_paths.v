@@ -32,13 +32,13 @@ pub mut:
 // get path for wiki site
 pub fn (mut config ConfigRoot) path_publish_wiki_get(name string) ?string {
 	config_site := config.site_wiki_get(name) ?
-	return '$config.publishconfig.paths.publish/wiki_$config_site.shortname'
+	return '$config.publish.paths.publish/wiki_$config_site.shortname'
 }
 
 // get path for website
 pub fn (mut config ConfigRoot) path_publish_web_get(name string) ?string {
 	config_web := config.site_web_get(name) ?
-	return '$config.publishconfig.paths.publish/$config_web.name'
+	return '$config.publish.paths.publish/$config_web.name'
 }
 
 pub fn (mut config ConfigRoot) path_publish_web_get_domain(domain string) ?string {

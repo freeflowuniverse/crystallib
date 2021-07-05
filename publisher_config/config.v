@@ -13,10 +13,10 @@ fn config_load() ?ConfigRoot {
 	if os.exists('config.json') {
 		println(' - Found config file for publish tools.')
 		txt := os.read_file('config.json') ?
-		config.publishconfig = json.decode(PublishConfig, txt) ?
+		config.publish = json.decode(PublishConfig, txt) ?
 	}else{
 		println(' - Not Found config file for publish tools. Default values applied')
-		config.publishconfig = PublishConfig{
+		config.publish = PublishConfig{
 			reset: false
 			pull: false
 			debug: true
@@ -27,25 +27,29 @@ fn config_load() ?ConfigRoot {
 				codewiki: '$os.home_dir()/codewiki'
 			}
 		}
-		config.publishconfig.paths.publish = '$config.publishconfig.paths.base/publish'
+		config.publish.paths.publish = '$config.publish.paths.base/publish'
 	}
 
 	// Make sure that all dirs existed/created 
-	if !os.exists(config.publishconfig.paths.code) {
-		os.mkdir(config.publishconfig.paths.code) or { panic(err) }
+	if !os.exists(config.publish.paths.code) {
+		os.mkdir(config.publish.paths.code) or { panic(err) }
 	}
 
-	if !os.exists(config.publishconfig.paths.codewiki) {
-		os.mkdir(config.publishconfig.paths.codewiki) or { panic(err) }
+	if !os.exists(config.publish.paths.codewiki) {
+		os.mkdir(config.publish.paths.codewiki) or { panic(err) }
 	}
 
 	// Load nodejs config
-	mut nodejsconfig := NodejsConfig{
-		version: NodejsVersion{
-			cat: NodejsVersionEnum.lts
+	if os.exists('nodejs.json') {
+		println(' - Found config file for NodeJS.')
+		txt := os.read_file('nodejs.json') ?
+		config.nodejs = json.decode(NodejsConfig, txt) ?
+	}else{
+		println(' - Not Found config file for NodeJS. Default values applied')
+		config.nodejs = NodejsConfig{
+			version: "lts"
 		}
 	}
-	config.nodejs = nodejsconfig
 	config.init_nodejs() // Init nodejs configurations
 
 	// config.web_hostnames = false // This key commented in the struct
