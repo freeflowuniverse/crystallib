@@ -9,7 +9,7 @@ import json
 fn config_load() ?ConfigRoot {
 	mut config := ConfigRoot{}
 
-	// Load Publish Config
+	// Load Publish config
 	if os.exists('config.json') {
 		println(' - Found config file for publish tools.')
 		txt := os.read_file('config.json') ?
@@ -54,15 +54,15 @@ fn config_load() ?ConfigRoot {
 
 	// config.web_hostnames = false // This key commented in the struct
 
-	// Load Static confif
+	// Load Static config
 	staticfiles_config(mut &config)
 	
-	// Load Site Config
+	// Load Site config
 	mut sites_config_files := []string{}
 	config_dir := "/" // TODO: Check that is the right dir
 	mut files := os.ls(config_dir) or { panic(err) }
 	for file in files {
-		if (file.starts_with("site_") || file.starts_with("sites")) && file.ends_with(".json"){
+		if (file.starts_with("site_") && file.ends_with(".json")) || file == "sites.json" {
 			sites_config_files << file
 		}
 	}
