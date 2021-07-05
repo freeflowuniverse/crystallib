@@ -8,14 +8,9 @@ import os
 pub struct ConfigRoot {
 pub mut:
 	root   string
-	paths  Paths
 	sites  []SiteConfig
 	nodejs NodejsConfig
-	reset  bool
-	pull   bool
-	debug  bool
-	redis  bool
-	port   int = 9998
+	publishconfig PublishConfig
 	// web_hostnames bool
 	staticfiles map[string]string
 }

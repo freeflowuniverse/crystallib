@@ -7,60 +7,62 @@ import json
 
 // load the initial config from filesystem
 fn config_load() ?ConfigRoot {
-	mut c := ConfigRoot{}
+	mut config := ConfigRoot{}
 
+	// Load Publish Config
 	if os.exists('config.json') {
 		println(' - Found config file for publish tools.')
 		txt := os.read_file('config.json') ?
-		conf.sites = json.decode(PublishConfig, txt) ?
+		config.publishconfig = json.decode(PublishConfig, txt) ?
+	}else{
+		println(' - Not Found config file for publish tools. Default values applied')
+		config.publishconfig = PublishConfig{
+			reset: false
+			pull: false
+			debug: true
+			redis: false
+			paths: Paths{
+				base: '$os.home_dir()/.publisher'
+				code: '$os.home_dir()/codewww'
+				codewiki: '$os.home_dir()/codewiki'
+			}
+		}
+		config.publishconfig.paths.publish = '$config.publishconfig.paths.base/publish'
 	}
 
-
-	c.paths.base = '$os.home_dir()/.publisher'
-	c.paths.publish = '$c.paths.base/publish'
-	c.paths.code = '$os.home_dir()/codewww'
-	c.paths.codewiki = '$os.home_dir()/codewiki'
-
-	if !os.exists(c.paths.code) {
-		os.mkdir(c.paths.code) or { panic(err) }
+	// Make sure that all dirs existed/created 
+	if !os.exists(config.publishconfig.paths.code) {
+		os.mkdir(config.publishconfig.paths.code) or { panic(err) }
 	}
 
-	if !os.exists(c.paths.codewiki) {
-		os.mkdir(c.paths.codewiki) or { panic(err) }
+	if !os.exists(config.publishconfig.paths.codewiki) {
+		os.mkdir(config.publishconfig.paths.codewiki) or { panic(err) }
 	}
 
+	// Load nodejs config
 	mut nodejsconfig := NodejsConfig{
 		version: NodejsVersion{
 			cat: NodejsVersionEnum.lts
 		}
 	}
-	c.nodejs = nodejsconfig
+	config.nodejs = nodejsconfig
+	config.init_nodejs() // Init nodejs configurations
 
-	c.reset = false
-	c.pull = false
-	c.debug = true
-	c.redis = false
-	c.web_hostnames = false
+	// config.web_hostnames = false // This key commented in the struct
 
-	c.init()
+	// Load Static confif
+	staticfiles_config(mut &config)
 
-
-
-	// add the site configurations to it
-	site_config(mut &c)
-	staticfiles_config(mut &c)
-
+	// Load Site Config -- TODO: take variable site config file name
 	if os.exists('sites.json') {
-		// println(' - Found config files for sites in local dir.')
+		println(' - Found config files for Sites.')
 		txt := os.read_file('sites.json') ?
-		conf.sites = []SiteConfig{}
-		conf.sites = json.decode([]SiteConfig, txt) ?
+		config.sites = []SiteConfig{}
+		config.sites = json.decode([]SiteConfig, txt) ?
 	}
 
-
-	return c
+	return config
 }
-
 
 //to create singleton
 const gconf = config_load() or { panic(err) }

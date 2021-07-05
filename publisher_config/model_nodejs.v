@@ -17,7 +17,7 @@ pub enum NodejsVersionEnum {
 	latest
 }
 
-fn (mut cfg ConfigRoot) init() {
+fn (mut cfg ConfigRoot) init_nodejs() {
 	mut version := ''
 	if cfg.nodejs.path == '' {
 		if cfg.nodejs.version.cat == NodejsVersionEnum.lts {
@@ -25,7 +25,7 @@ fn (mut cfg ConfigRoot) init() {
 		} else {
 			version = 'v16.1.0'
 		}
-		cfg.nodejs.path = '$cfg.paths.base/versions/node/$version'
+		cfg.nodejs.path = '$cfg.publishconfig.paths.base/versions/node/$version'
 		cfg.nodejs.version.name = version
 	}
 }
