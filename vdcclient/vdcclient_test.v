@@ -39,8 +39,7 @@ fn test_delete_kubernetes_node() {
 	client := setup()
 	println('************ TEST04_DELETE_KUBERNETES_NODE ************')
 	before_delete, _ := client.list_kubernetes_nodes()
-	// to_delete := before_delete[before_delete.len -1].wid
-	to_delete := 47049
+	to_delete := before_delete[before_delete.len -1].wid
 	response, status_code := client.delete_kubernetes_node(to_delete)
 	after_delete, _ := client.list_kubernetes_nodes()
 	println(response)
@@ -145,4 +144,35 @@ fn test_get_backup() {
 	if response.len > 0 {
 		assert response[0].name != ''
 	}
+}
+
+fn test_list_vms() {
+	client := setup()
+	println('************ TEST15_LIST_VMS ************')
+	response, status_code := client.list_vms()
+	println(response)
+	assert status_code == 200
+	assert response[0].wid > 0
+}
+
+fn test_add_vm() {
+	client := setup()
+	println('************ TEST16_ADD_VM ************')
+	response, status_code := client.add_vm('MEDIUM')
+	println(response)
+	assert status_code == 200
+	assert response[0] > 0
+}
+
+fn test_delete_vm() {
+	client := setup()
+	println('************ TEST17_DELETE_VM ************')
+	before_delete, _ := client.list_vms()
+	to_delete := before_delete[before_delete.len -1].wids
+	// to_delete := 47049
+	response, status_code := client.delete_vm(to_delete)
+	after_delete, _ := client.list_vms()
+	println(response)
+	assert status_code == 200
+	assert before_delete.len == after_delete.len + 1
 }

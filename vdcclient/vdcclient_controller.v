@@ -178,3 +178,16 @@ struct AddNode {
 	capacity int
 	farm     string
 }
+
+pub struct VM {
+	name 		string
+	wids 		[]int
+	cpu 		int
+	memory 		int
+	disk 		int
+	network 	string
+	ip 			string
+	public_ip 	string
+	pool 		int
+	node_id 	string
+}
