@@ -2,7 +2,6 @@ module publishconfig
 
 import os
 // import gittools
-
 import json
 
 // load the initial config from filesystem
@@ -14,7 +13,7 @@ fn config_load() ?ConfigRoot {
 		println(' - Found config file for publish tools.')
 		txt := os.read_file('config.json') ?
 		config.publish = json.decode(PublishConfig, txt) ?
-	}else{
+	} else {
 		println(' - Not Found config file for publish tools. Default values applied')
 		config.publish = PublishConfig{
 			reset: false
@@ -30,7 +29,7 @@ fn config_load() ?ConfigRoot {
 		config.publish.paths.publish = '$config.publish.paths.base/publish'
 	}
 
-	// Make sure that all dirs existed/created 
+	// Make sure that all dirs existed/created
 	if !os.exists(config.publish.paths.code) {
 		os.mkdir(config.publish.paths.code) or { panic(err) }
 	}
@@ -44,10 +43,10 @@ fn config_load() ?ConfigRoot {
 		println(' - Found config file for NodeJS.')
 		txt := os.read_file('nodejs.json') ?
 		config.nodejs = json.decode(NodejsConfig, txt) ?
-	}else{
+	} else {
 		println(' - Not Found config file for NodeJS. Default values applied')
 		config.nodejs = NodejsConfig{
-			version: "lts"
+			version: 'lts'
 		}
 	}
 	config.init_nodejs() // Init nodejs configurations
@@ -56,13 +55,13 @@ fn config_load() ?ConfigRoot {
 
 	// Load Static config
 	staticfiles_config(mut &config)
-	
+
 	// Load Site config
 	mut sites_config_files := []string{}
-	config_dir := "/" // TODO: Check that is the right dir
+	config_dir := '/' // TODO: Check that is the right dir
 	mut files := os.ls(config_dir) or { panic(err) }
 	for file in files {
-		if (file.starts_with("site_") && file.ends_with(".json")) || file == "sites.json" {
+		if (file.starts_with('site_') && file.ends_with('.json')) || file == 'sites.json' {
 			sites_config_files << file
 		}
 	}
@@ -76,10 +75,9 @@ fn config_load() ?ConfigRoot {
 	return config
 }
 
-//to create singleton
+// to create singleton
 const gconf = config_load() or { panic(err) }
 
 pub fn get() ?ConfigRoot {
 	return publishconfig.gconf
 }
-

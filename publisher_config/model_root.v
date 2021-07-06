@@ -7,9 +7,9 @@ import os
 [heap]
 pub struct ConfigRoot {
 pub mut:
-	root   string
-	sites  []SiteConfig
-	nodejs NodejsConfig
+	root    string
+	sites   []SiteConfig
+	nodejs  NodejsConfig
 	publish PublishConfig
 	// web_hostnames bool
 	staticfiles map[string]string
