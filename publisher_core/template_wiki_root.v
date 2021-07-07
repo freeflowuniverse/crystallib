@@ -1,11 +1,11 @@
 module publishermod
 
 import os
-import despiegk.crystallib.myconfig
+import despiegk.crystallib.publishconfig
 
-fn template_wiki_root(reponame string, repourl string, trackingid string, opengraph myconfig.OpenGraph) string {
-	mut cfg := myconfig.get() or { panic('can not get config') }
-	mut p := os.join_path(cfg.paths.base, 'static')
+fn template_wiki_root(reponame string, repourl string, trackingid string, opengraph publishconfig.OpenGraph) string {
+	mut cfg := publishconfig.get() or { panic('can not get config') }
+	mut p := os.join_path(cfg.publish.paths.base, 'static')
 	mut crispwebsiteid := '1a5a5241-91cb-4a41-8323-5ba5ec574da0'
 	if reponame == 'twin' {
 		crispwebsiteid = 'fa9a7744-5454-4e83-99ae-9ef342d3bff4'
@@ -230,7 +230,7 @@ fn template_wiki_root(reponame string, repourl string, trackingid string, opengr
 	return out
 }
 
-fn template_wiki_root_save(destdir string, reponame string, repourl string, trackingid string, opengraph myconfig.OpenGraph) {
+fn template_wiki_root_save(destdir string, reponame string, repourl string, trackingid string, opengraph publishconfig.OpenGraph) {
 	out := template_wiki_root(reponame, repourl, trackingid, opengraph)
 	os.write_file('$destdir/index.html', out) or { panic(err) }
 }

@@ -58,8 +58,8 @@ fn config_load() ?ConfigRoot {
 
 	// Load Site config
 	mut sites_config_files := []string{}
-	config_dir := '/' // TODO: Check that is the right dir
-	mut files := os.ls(config_dir) or { panic(err) }
+	current_dir := "."
+	mut files := os.ls(current_dir) or { panic(err) }
 	for file in files {
 		if (file.starts_with('site_') && file.ends_with('.json')) || file == 'sites.json' {
 			sites_config_files << file

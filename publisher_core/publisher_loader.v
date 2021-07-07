@@ -3,7 +3,7 @@ module publishermod
 import despiegk.crystallib.texttools
 import os
 import json
-import despiegk.crystallib.myconfig
+import despiegk.crystallib.publishconfig
 
 // use path="" if you want to go from os.home_dir()/code/	
 fn (mut publisher Publisher) find_sites(path string) ? {
@@ -37,7 +37,7 @@ fn (mut publisher Publisher) load_site(repoconfig SiteRepoConfig, path string) ?
 		os.symlink(path, target) ?
 	}
 
-	mut cfg := myconfig.get() ?
+	mut cfg := publishconfig.get() ?
 
 	repoconfig_site := texttools.name_fix(repoconfig.name)
 	mut myconfig_site := cfg.site_get(repoconfig_site) or {

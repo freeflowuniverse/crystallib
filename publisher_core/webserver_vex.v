@@ -6,14 +6,14 @@ import nedpals.vex.router
 import nedpals.vex.server
 import nedpals.vex.ctx
 import nedpals.vex.utils
-import despiegk.crystallib.myconfig
+import despiegk.crystallib.publishconfig
 import json
 
 // this webserver is used for looking at the builded results
 
 struct MyContext {
 pub:
-	config    &myconfig.ConfigRoot
+	config    &publishconfig.ConfigRoot
 	publisher &Publisher
 pub mut:
 	webnames map[string]string
@@ -35,16 +35,16 @@ fn print_req_info(mut req ctx.Req, mut res ctx.Resp) {
 
 fn helloworld(req &ctx.Req, mut res ctx.Resp) {
 	mut myconfig := (&MyContext(req.ctx)).config
-	res.send('Hello World! $myconfig.paths.base', 200)
+	res.send('Hello World! $myconfig.publish.paths.base', 200)
 }
 
-fn path_wiki_get(mut config myconfig.ConfigRoot, sitename_ string, name_ string) ?(FileType, string) {
+fn path_wiki_get(mut config publishconfig.ConfigRoot, sitename_ string, name_ string) ?(FileType, string) {
 	filetype, sitename, mut name := filetype_site_name_get(mut config, sitename_, name_) ?
 
-	mut path2 := os.join_path(config.paths.publish, sitename, name)
+	mut path2 := os.join_path(config.publish.paths.publish, sitename, name)
 	if name == 'readme.md' && (!os.exists(path2)) {
 		name = 'sidebar.md'
-		path2 = os.join_path(config.paths.publish, sitename, name)
+		path2 = os.join_path(config.publish.paths.publish, sitename, name)
 	}
 	// println('  > get: $path2 ($name)')
 
@@ -54,7 +54,7 @@ fn path_wiki_get(mut config myconfig.ConfigRoot, sitename_ string, name_ string)
 	return filetype, path2
 }
 
-fn filetype_site_name_get(mut config myconfig.ConfigRoot, site string, name_ string) ?(FileType, string, string) {
+fn filetype_site_name_get(mut config publishconfig.ConfigRoot, site string, name_ string) ?(FileType, string, string) {
 	// println(" - wiki get: '$site' '$name'")
 	site_config := config.site_wiki_get(site) ?
 	mut name := name_.to_lower().trim(' ').trim('.').trim(' ')
@@ -132,7 +132,7 @@ fn error_template(req &ctx.Req, sitename string) string {
 			return 'ERROR: cannot get errors, in template for errors\n $err'
 		}
 	} else {
-		path2 := os.join_path(config.paths.publish, 'wiki_$sitename', 'errors.json')
+		path2 := os.join_path(config.publish.paths.publish, 'wiki_$sitename', 'errors.json')
 		err_file := os.read_file(path2) or { return 'ERROR: could not find errors file on $path2' }
 		errors = json.decode(PublisherErrors, err_file) or {
 			return 'ERROR: json not well formatted on $path2'
@@ -170,7 +170,7 @@ fn return_wiki_errors(sitename string, req &ctx.Req, mut res ctx.Resp) {
 	res.send(t, 200)
 }
 
-fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string, req &ctx.Req, mut res ctx.Resp) ? {
+fn site_wiki_deliver(mut config publishconfig.ConfigRoot, domain string, path string, req &ctx.Req, mut res ctx.Resp) ? {
 	debug := true
 	mut sitename := config.name_web_get(domain) or {
 		res.send('Cannot find domain: $domain\n$err', 404)
@@ -189,7 +189,7 @@ fn site_wiki_deliver(mut config myconfig.ConfigRoot, domain string, path string,
 		// if debug {println(" >> page get develop: $name2")}
 
 		if filetype == FileType.javascript || filetype == FileType.css {
-			mut p := os.join_path(config.paths.base, 'static', name2)
+			mut p := os.join_path(config.publish.paths.base, 'static', name2)
 			mut content := os.read_file(p) or {
 				res.send('Cannot find file: $p\n$err', 404)
 				return
@@ -323,7 +323,7 @@ fn content_type_get(path string) ?string {
 	return error('cannot find content type for $path')
 }
 
-fn site_www_deliver(mut config myconfig.ConfigRoot, domain string, path string, req &ctx.Req, mut res ctx.Resp) ? {
+fn site_www_deliver(mut config publishconfig.ConfigRoot, domain string, path string, req &ctx.Req, mut res ctx.Resp) ? {
 	mut site_path := config.path_publish_web_get_domain(domain) or {
 		res.send('Cannot find domain: $domain\n$err', 404)
 		return
@@ -375,7 +375,7 @@ fn site_deliver(req &ctx.Req, mut res ctx.Resp) {
 	mut path := req.params['path']
 	mut domain := ''
 
-	mut cat := myconfig.SiteCat.web
+	mut cat := publishconfig.SiteCat.web
 
 	if config.web_hostnames {
 		if !('Host' in req.headers) {
@@ -393,9 +393,9 @@ fn site_deliver(req &ctx.Req, mut res ctx.Resp) {
 		path = path.trim('/')
 		if path.starts_with('info/') {
 			path = path[5..]
-			cat = myconfig.SiteCat.wiki
+			cat = publishconfig.SiteCat.wiki
 		} else {
-			cat = myconfig.SiteCat.web
+			cat = publishconfig.SiteCat.web
 		}
 
 		splitted := path.split('/')
@@ -404,7 +404,7 @@ fn site_deliver(req &ctx.Req, mut res ctx.Resp) {
 		path = splitted[1..].join('/').trim('/').trim(' ')
 
 		if sitename.ends_with('.css') || sitename.ends_with('js') {
-			mut p := os.join_path(config.paths.base, 'static', sitename)
+			mut p := os.join_path(config.publish.paths.base, 'static', sitename)
 			mut content := os.read_file(p) or {
 				res.send('Cannot find file: $p\n$err', 404)
 				return
@@ -436,7 +436,7 @@ fn site_deliver(req &ctx.Req, mut res ctx.Resp) {
 	for siteconfig in config.sites {
 		if domain in siteconfig.domains {
 			domainfound = true
-			if siteconfig.cat == myconfig.SiteCat.web {
+			if siteconfig.cat == publishconfig.SiteCat.web {
 				iswiki = false
 			}
 			break
@@ -466,7 +466,7 @@ fn site_deliver(req &ctx.Req, mut res ctx.Resp) {
 }
 
 // Run server
-pub fn webserver_run(publisher &Publisher, config &myconfig.ConfigRoot) {
+pub fn webserver_run(publisher &Publisher, config &publishconfig.ConfigRoot) {
 	mut app := router.new()
 
 	mut mycontext := &MyContext{
