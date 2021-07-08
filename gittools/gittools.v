@@ -1,7 +1,7 @@
 module gittools
 
 import os
-import despiegk.crystallib.myconfig
+import despiegk.crystallib.publisher_config
 
 pub fn ssh_agent_loaded() bool {
 	res := os.execute('ssh-add -l')
@@ -56,9 +56,9 @@ pub fn ssh_agent_key_loaded(name string) (bool, int) {
 
 // cache ~/codewww
 pub fn init_codewww() ?GitStructure {
-	cfg := myconfig.get() ?
+	cfg := publisher_config.get() ?
 	mut gitstructure := GitStructure{
-		root: cfg.paths.code
+		root: cfg.publish.paths.code
 	}
 
 	gitstructure.load() ?
@@ -70,8 +70,8 @@ const codecache = init_codewww() or { panic(err) }
 // the factory for getting the gitstructure
 // git is checked uderneith $/code
 pub fn new(root string) ?GitStructure {
-	cfg := myconfig.get() ?
-	if root == '' || root == cfg.paths.code {
+	cfg := publisher_config.get() ?
+	if root == '' || root == cfg.publish.paths.code {
 		return gittools.codecache
 	}
 	mut gitstructure := GitStructure{
