@@ -12,10 +12,10 @@ fn config_load() ?ConfigRoot {
 	if os.exists('config.json') {
 		println(' - Found config file for publish tools.')
 		txt := os.read_file('config.json') ?
-		config.publish = json.decode(PublishConfig, txt) ?
+		config.publish = json.decode(publisher_config, txt) ?
 	} else {
 		println(' - Not Found config file for publish tools. Default values applied')
-		config.publish = PublishConfig{
+		config.publish = publisher_config{
 			reset: false
 			pull: false
 			debug: true

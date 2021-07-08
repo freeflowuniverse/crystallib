@@ -4,7 +4,7 @@ module main
 import nedpals.vex.router
 import nedpals.vex.server
 import nedpals.vex.ctx
-import despiegk.crystallib.myconfig
+import despiegk.crystallib.publisher_config
 import json
 
 fn print_req_info(mut req ctx.Req, mut res ctx.Resp) {
@@ -12,17 +12,17 @@ fn print_req_info(mut req ctx.Req, mut res ctx.Resp) {
 }
 
 struct MyContext {
-	config &myconfig.ConfigRoot
+	config &publisher_config.ConfigRoot
 	// now you can inject other stuff also
 }
 
 fn helloworld(req &ctx.Req, mut res ctx.Resp) {
 	myconfig := (&MyContext(req.ctx)).config
-	res.send('Hello World! $myconfig.paths.base', 200)
+	res.send('Hello World! $publisher_config.paths.base', 200)
 }
 
 // Run server
-pub fn webserver_run(config myconfig.ConfigRoot) {
+pub fn webserver_run(config publisher_config.ConfigRoot) {
 	mut app := router.new()
 
 	mycontext := &MyContext{

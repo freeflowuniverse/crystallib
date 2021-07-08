@@ -21,7 +21,7 @@ module publisher_core
 //  	vweb.Context
 // pub mut:
 //  	cnt      int
-// 	config 	myconfig.ConfigRoot
+// 	config 	publisher_config.ConfigRoot
 // 	website string
 // }
 
@@ -38,7 +38,7 @@ module publisher_core
 
 // // Initialize (load wikis) only once when server starts
 // pub fn (mut app App) init_once() {
-// 	app.config = myconfig.get()
+// 	app.config = publisher_config.get()
 // 	// app.handle_static('.')
 // }
 
@@ -62,7 +62,7 @@ module publisher_core
 // 	return $vweb.html()
 // }
 
-// fn (mut app App) site_config_get(name string)? myconfig.SiteConfig{
+// fn (mut app App) site_config_get(name string)? publisher_config.SiteConfig{
 
 // 	name2 := texttools.name_fix_keepext(name)
 
@@ -190,7 +190,7 @@ module publisher_core
 // 	}
 
 // 	//now check if is static website
-// 	if site_config.cat == myconfig.SiteCat.web{
+// 	if site_config.cat == publisher_config.SiteCat.web{
 // 		app.website = site_config.name
 // 	}
 

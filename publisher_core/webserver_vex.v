@@ -35,7 +35,7 @@ fn print_req_info(mut req ctx.Req, mut res ctx.Resp) {
 
 fn helloworld(req &ctx.Req, mut res ctx.Resp) {
 	mut myconfig := (&MyContext(req.ctx)).config
-	res.send('Hello World! $myconfig.publish.paths.base', 200)
+	res.send('Hello World! $publisher_config.publish.paths.base', 200)
 }
 
 fn path_wiki_get(mut config publisher_config.ConfigRoot, sitename_ string, name_ string) ?(FileType, string) {

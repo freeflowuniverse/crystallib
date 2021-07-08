@@ -3,14 +3,14 @@ module nodejs
 import os
 import despiegk.crystallib.builder
 import despiegk.crystallib.process
-import despiegk.crystallib.myconfig
+import despiegk.crystallib.publisher_config
 
 // return string which represents init for npm
-pub fn init_string(cfg &myconfig.ConfigRoot) string {
+pub fn init_string(cfg &publisher_config.ConfigRoot) string {
 	return ''
 }
 
-pub fn install(cfg &myconfig.ConfigRoot) ? {
+pub fn install(cfg &publisher_config.ConfigRoot) ? {
 	mut script := ''
 
 	base := cfg.paths.base
@@ -39,7 +39,7 @@ pub fn install(cfg &myconfig.ConfigRoot) ? {
 		
 		lts := cfg.nodejs.version.name.replace('v', '')
 
-		if cfg.nodejs.version.cat == myconfig.NodejsVersionEnum.lts {
+		if cfg.nodejs.version.cat == publisher_config.NodejsVersionEnum.lts {
 			script = '
 			set -e
 			export NVM_DIR=$base

@@ -38,7 +38,7 @@ pub fn main(cmd cli.Command) ? {
 
 pub fn base() ? {
 	myconfig := publisher_config.get() ?
-	base := myconfig.paths.base
+	base := publisher_config.paths.base
 
 	mut node := builder.node_get({}) or {
 		return error(' ** ERROR: cannot load node. Error was:\n$err')
@@ -67,7 +67,7 @@ pub fn config_get(cmd cli.Command) ?publisher_config.ConfigRoot {
 
 pub fn reset() ? {
 	myconfig := publisher_config.get() ?
-	base := myconfig.paths.base
+	base := publisher_config.paths.base
 	assert base.len > 10 // just to make sure we don't erase all
 	script := '
 	set -e
