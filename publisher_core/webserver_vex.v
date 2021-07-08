@@ -1,4 +1,4 @@
-module publishermod
+module publisher_core
 
 import despiegk.crystallib.texttools
 import os
@@ -6,14 +6,14 @@ import nedpals.vex.router
 import nedpals.vex.server
 import nedpals.vex.ctx
 import nedpals.vex.utils
-import despiegk.crystallib.publishconfig
+import despiegk.crystallib.publisher_config
 import json
 
 // this webserver is used for looking at the builded results
 
 struct MyContext {
 pub:
-	config    &publishconfig.ConfigRoot
+	config    &publisher_config.ConfigRoot
 	publisher &Publisher
 pub mut:
 	webnames map[string]string
@@ -38,7 +38,7 @@ fn helloworld(req &ctx.Req, mut res ctx.Resp) {
 	res.send('Hello World! $myconfig.publish.paths.base', 200)
 }
 
-fn path_wiki_get(mut config publishconfig.ConfigRoot, sitename_ string, name_ string) ?(FileType, string) {
+fn path_wiki_get(mut config publisher_config.ConfigRoot, sitename_ string, name_ string) ?(FileType, string) {
 	filetype, sitename, mut name := filetype_site_name_get(mut config, sitename_, name_) ?
 
 	mut path2 := os.join_path(config.publish.paths.publish, sitename, name)
@@ -54,7 +54,7 @@ fn path_wiki_get(mut config publishconfig.ConfigRoot, sitename_ string, name_ st
 	return filetype, path2
 }
 
-fn filetype_site_name_get(mut config publishconfig.ConfigRoot, site string, name_ string) ?(FileType, string, string) {
+fn filetype_site_name_get(mut config publisher_config.ConfigRoot, site string, name_ string) ?(FileType, string, string) {
 	// println(" - wiki get: '$site' '$name'")
 	site_config := config.site_wiki_get(site) ?
 	mut name := name_.to_lower().trim(' ').trim('.').trim(' ')
@@ -170,7 +170,7 @@ fn return_wiki_errors(sitename string, req &ctx.Req, mut res ctx.Resp) {
 	res.send(t, 200)
 }
 
-fn site_wiki_deliver(mut config publishconfig.ConfigRoot, domain string, path string, req &ctx.Req, mut res ctx.Resp) ? {
+fn site_wiki_deliver(mut config publisher_config.ConfigRoot, domain string, path string, req &ctx.Req, mut res ctx.Resp) ? {
 	debug := true
 	mut sitename := config.name_web_get(domain) or {
 		res.send('Cannot find domain: $domain\n$err', 404)
@@ -323,7 +323,7 @@ fn content_type_get(path string) ?string {
 	return error('cannot find content type for $path')
 }
 
-fn site_www_deliver(mut config publishconfig.ConfigRoot, domain string, path string, req &ctx.Req, mut res ctx.Resp) ? {
+fn site_www_deliver(mut config publisher_config.ConfigRoot, domain string, path string, req &ctx.Req, mut res ctx.Resp) ? {
 	mut site_path := config.path_publish_web_get_domain(domain) or {
 		res.send('Cannot find domain: $domain\n$err', 404)
 		return
@@ -375,7 +375,7 @@ fn site_deliver(req &ctx.Req, mut res ctx.Resp) {
 	mut path := req.params['path']
 	mut domain := ''
 
-	mut cat := publishconfig.SiteCat.web
+	mut cat := publisher_config.SiteCat.web
 
 	if config.web_hostnames {
 		if !('Host' in req.headers) {
@@ -393,9 +393,9 @@ fn site_deliver(req &ctx.Req, mut res ctx.Resp) {
 		path = path.trim('/')
 		if path.starts_with('info/') {
 			path = path[5..]
-			cat = publishconfig.SiteCat.wiki
+			cat = publisher_config.SiteCat.wiki
 		} else {
-			cat = publishconfig.SiteCat.web
+			cat = publisher_config.SiteCat.web
 		}
 
 		splitted := path.split('/')
@@ -436,7 +436,7 @@ fn site_deliver(req &ctx.Req, mut res ctx.Resp) {
 	for siteconfig in config.sites {
 		if domain in siteconfig.domains {
 			domainfound = true
-			if siteconfig.cat == publishconfig.SiteCat.web {
+			if siteconfig.cat == publisher_config.SiteCat.web {
 				iswiki = false
 			}
 			break
@@ -466,7 +466,7 @@ fn site_deliver(req &ctx.Req, mut res ctx.Resp) {
 }
 
 // Run server
-pub fn webserver_run(publisher &Publisher, config &publishconfig.ConfigRoot) {
+pub fn webserver_run(publisher &Publisher, config &publisher_config.ConfigRoot) {
 	mut app := router.new()
 
 	mut mycontext := &MyContext{

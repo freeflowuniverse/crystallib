@@ -1,4 +1,4 @@
-module publishconfig
+module publisher_config
 
 import os
 // import despiegk.crystallib.process

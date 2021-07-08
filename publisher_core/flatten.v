@@ -1,8 +1,8 @@
-module publishermod
+module publisher_core
 
 import os
 import json
-import despiegk.crystallib.publishconfig
+import despiegk.crystallib.publisher_config
 
 struct PublisherErrors {
 pub mut:
@@ -48,7 +48,7 @@ pub fn (mut publisher Publisher) errors_get(site Site) ?PublisherErrors {
 pub fn (mut publisher Publisher) flatten() ? {
 	mut dest_file := ''
 
-	mut config := publishconfig.get() ?
+	mut config := publisher_config.get() ?
 	config.update_staticfiles(false) ?
 
 	publisher.check() // makes sure we checked all
@@ -78,7 +78,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 		the_errors2 := json.encode(publisher.errors_get(site) ?)
 		os.write_file('$dest_dir/errors.json', the_errors2) ?
 		for c in config.sites {
-			if c.cat == publishconfig.SiteCat.web {
+			if c.cat == publisher_config.SiteCat.web {
 				continue
 			}
 			// ignore websites
@@ -132,7 +132,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 			os.cp(fileobj.path_get(mut publisher), dest_file) ?
 		}
 	}
-	publishconfig.save('') ?
+	publisher_config.save('') ?
 }
 
 [if trace_progress?]

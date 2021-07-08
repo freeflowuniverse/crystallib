@@ -1,11 +1,11 @@
-module publishermod
+module publisher_core
 
-import despiegk.crystallib.publishconfig
+import despiegk.crystallib.publisher_config
 import despiegk.crystallib.hostsfile
 
 pub fn dns_on(sudo bool) {
 	mut domains := []string{}
-	mut myconfig := publishconfig.get() or { panic(err) }
+	mut myconfig := publisher_config.get() or { panic(err) }
 	for site in myconfig.sites {
 		for domain in site.domains {
 			domains << domain
@@ -21,7 +21,7 @@ pub fn dns_on(sudo bool) {
 
 pub fn dns_off(sudo bool) {
 	mut domains := []string{}
-	mut myconfig := publishconfig.get() or { panic(err) }
+	mut myconfig := publisher_config.get() or { panic(err) }
 	for site in myconfig.sites {
 		for domain in site.domains {
 			domains << domain

@@ -1,4 +1,4 @@
-module publishconfig
+module publisher_config
 
 // websites are under $ipaddr/$shortname
 // wiki are under $ipaddr/info/$shortname

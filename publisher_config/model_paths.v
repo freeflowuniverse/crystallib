@@ -1,4 +1,4 @@
-module publishconfig
+module publisher_config
 
 // paths
 // base: ?

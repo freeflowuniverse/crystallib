@@ -1,12 +1,12 @@
 module installers
 
 import os
-import despiegk.crystallib.myconfig
+import despiegk.crystallib.publisher_config
 import despiegk.crystallib.process
 import despiegk.crystallib.gittools
 import despiegk.crystallib.texttools
 
-pub fn website_cleanup(name string, conf &myconfig.ConfigRoot) ? {
+pub fn website_cleanup(name string, conf &publisher_config.ConfigRoot) ? {
 	codepath := conf.paths.code
 
 	mut gt := gittools.new(codepath) or { return error('ERROR: cannot load gittools:$err') }

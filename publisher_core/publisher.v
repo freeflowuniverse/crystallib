@@ -1,4 +1,4 @@
-module publishermod
+module publisher_core
 
 import despiegk.crystallib.texttools
 import os

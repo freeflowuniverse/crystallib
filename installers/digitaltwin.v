@@ -4,10 +4,10 @@ module installers
 // import nodejs
 import os
 import despiegk.crystallib.process
-import despiegk.crystallib.myconfig
+import despiegk.crystallib.publisher_config
 import despiegk.crystallib.gittools
 
-pub fn digitaltwin_install(mut cfg myconfig.ConfigRoot, update bool) ? {
+pub fn digitaltwin_install(mut cfg publisher_config.ConfigRoot, update bool) ? {
 	base := cfg.paths.base
 	mut gt := gittools.new(cfg.paths.code) ?
 
@@ -44,7 +44,7 @@ pub fn digitaltwin_install(mut cfg myconfig.ConfigRoot, update bool) ? {
 	println(' - digital twin installed/updated')
 }
 
-pub fn digitaltwin_start(mut cfg myconfig.ConfigRoot, isproduction bool, update bool) ? {
+pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool, update bool) ? {
 	digitaltwin_install(mut cfg, update) ?
 	base := cfg.paths.base
 
@@ -84,7 +84,7 @@ pub fn digitaltwin_start(mut cfg myconfig.ConfigRoot, isproduction bool, update 
 	println(' - digital twin started')
 }
 
-pub fn digitaltwin_restart(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
+pub fn digitaltwin_restart(mut cfg publisher_config.ConfigRoot, isproduction bool) ? {
 	base := cfg.paths.base
 
 	mut gt := gittools.new(cfg.paths.code) ?
@@ -126,7 +126,7 @@ pub fn digitaltwin_restart(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
 	println(' - digital twin restarted')
 }
 
-pub fn digitaltwin_reload(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
+pub fn digitaltwin_reload(mut cfg publisher_config.ConfigRoot, isproduction bool) ? {
 	println(' - will reload digitaltwin')
 	mut script := '
 				set -e
@@ -136,7 +136,7 @@ pub fn digitaltwin_reload(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
 	println(' - digital twin restarted')
 }
 
-pub fn digitaltwin_stop(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
+pub fn digitaltwin_stop(mut cfg publisher_config.ConfigRoot, isproduction bool) ? {
 	println(' - will stop digitaltwin')
 	mut script := ''
 
@@ -154,7 +154,7 @@ pub fn digitaltwin_stop(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
 	println(' - digital twin reloaded')
 }
 
-pub fn digitaltwin_status(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
+pub fn digitaltwin_status(mut cfg publisher_config.ConfigRoot, isproduction bool) ? {
 	println(' - will check status of digitaltwin')
 	script := '
 				set -e
@@ -163,7 +163,7 @@ pub fn digitaltwin_status(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
 	process.execute_interactive('$script') ?
 }
 
-pub fn digitaltwin_logs(mut cfg myconfig.ConfigRoot, isproduction bool) ? {
+pub fn digitaltwin_logs(mut cfg publisher_config.ConfigRoot, isproduction bool) ? {
 	println(' - will check logs of digitaltwin')
 	script := '
 				set -e

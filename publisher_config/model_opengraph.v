@@ -1,4 +1,4 @@
-module publishconfig
+module publisher_config
 
 pub struct OpenGraph {
 pub mut:

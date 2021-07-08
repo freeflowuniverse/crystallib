@@ -1,4 +1,4 @@
-module publishconfig
+module publisher_config
 
 import os
 // import gittools
@@ -58,7 +58,7 @@ fn config_load() ?ConfigRoot {
 
 	// Load Site config
 	mut sites_config_files := []string{}
-	current_dir := "."
+	current_dir := '.'
 	mut files := os.ls(current_dir) or { panic(err) }
 	for file in files {
 		if (file.starts_with('site_') && file.ends_with('.json')) || file == 'sites.json' {
@@ -79,5 +79,5 @@ fn config_load() ?ConfigRoot {
 const gconf = config_load() or { panic(err) }
 
 pub fn get() ?ConfigRoot {
-	return publishconfig.gconf
+	return publisher_config.gconf
 }

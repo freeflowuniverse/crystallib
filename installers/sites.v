@@ -2,14 +2,14 @@ module installers
 
 import cli
 import despiegk.crystallib.gittools
-import despiegk.crystallib.myconfig
-import despiegk.crystallib.publishermod
+import despiegk.crystallib.publisher_config
+import despiegk.crystallib.publisher_core
 import readline
 import os
 // import process
 
 pub fn sites_list(cmd &cli.Command) ? {
-	mut conf := myconfig.get() ?
+	mut conf := publisher_config.get() ?
 	mut gt := gittools.new(conf.paths.code) or { return error('cannot load gittools:$err') }
 	for mut site in conf.sites_get() {
 		mut repo := gt.repo_get(name: site.reponame()) or {
@@ -37,10 +37,10 @@ pub fn sites_download(cmd cli.Command, web bool) ? {
 	// println(' - get all code repositories.')
 
 	for mut sc in cfg.sites {
-		if sc.cat == myconfig.SiteCat.web && !web {
+		if sc.cat == publisher_config.SiteCat.web && !web {
 			continue
 		}
-		if sc.cat == myconfig.SiteCat.data && !web {
+		if sc.cat == publisher_config.SiteCat.data && !web {
 			continue
 		}
 		println(' - get:$sc.url')
@@ -57,7 +57,7 @@ pub fn sites_install(cmd cli.Command) ? {
 	mut first := true
 	sites_download(cmd, true) ?
 	for mut sc in cfg.sites_get() {
-		if sc.cat == myconfig.SiteCat.web {
+		if sc.cat == publisher_config.SiteCat.web {
 			website_install(sc.name, first, &cfg) ?
 			first = false
 		}
@@ -73,7 +73,7 @@ fn flag_message_get(cmd cli.Command) string {
 	return msg
 }
 
-fn flag_repo_do(cmd cli.Command, reponame string, site myconfig.SiteConfig) bool {
+fn flag_repo_do(cmd cli.Command, reponame string, site publisher_config.SiteConfig) bool {
 	flags := cmd.flags.get_all_found()
 	repo := flags.get_string('repo') or { return true }
 	// println("match $reponame $site.shortname")
@@ -235,13 +235,13 @@ pub fn sites_pushcommit(cmd cli.Command) ? {
 pub fn sites_cleanup(cmd cli.Command) ? {
 	mut cfg := config_get(cmd) ?
 	println(' - cleanup wiki.')
-	mut publisher := publishermod.new(cfg.paths.code) or { panic('cannot init publisher. $err') }
+	mut publisher := publisher_core.new(cfg.paths.code) or { panic('cannot init publisher. $err') }
 	publisher.check()
 	println(' - cleanup websites.')
 	for mut sc in cfg.sites_get() {
-		if sc.cat == myconfig.SiteCat.web {
+		if sc.cat == publisher_config.SiteCat.web {
 			website_cleanup(sc.name, &cfg) ?
-		} else if sc.cat == myconfig.SiteCat.wiki {
+		} else if sc.cat == publisher_config.SiteCat.wiki {
 			wiki_cleanup(sc.name, &cfg) ?
 		}
 	}

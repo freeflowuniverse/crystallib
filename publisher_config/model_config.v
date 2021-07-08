@@ -1,4 +1,4 @@
-module publishconfig
+module publisher_config
 
 // the main config file for a publishing environment
 // name of the json needs to be config.json

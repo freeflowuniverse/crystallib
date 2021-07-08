@@ -1,4 +1,4 @@
-module publishconfig
+module publisher_config
 
 const lts_ver = 'v14.17.0'
 
@@ -14,9 +14,9 @@ fn (mut cfg ConfigRoot) init_nodejs() {
 	mut version := ''
 	if cfg.nodejs.path == '' {
 		if cfg.nodejs.version == 'lts' {
-			version = publishconfig.lts_ver
+			version = publisher_config.lts_ver
 		} else {
-			version = publishconfig.latest_ver
+			version = publisher_config.latest_ver
 		}
 		cfg.nodejs.path = '$cfg.publish.paths.base/versions/node/$version'
 		cfg.nodejs.version = version

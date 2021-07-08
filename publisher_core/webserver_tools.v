@@ -1,10 +1,10 @@
-module publishermod
+module publisher_core
 
 // import nedpals.vex.router
 // import nedpals.vex.server
 import nedpals.vex.ctx
 // import nedpals.vex.utils
-import despiegk.crystallib.publishconfig
+import despiegk.crystallib.publisher_config
 
 // replace the text from domain name to localhost url
 fn domain_replacer(req &ctx.Req, text_ string) string {
@@ -27,7 +27,7 @@ fn domain_replacer(req &ctx.Req, text_ string) string {
 fn (mut ctx MyContext) domain_replacer_init() {
 	mut alias := ''
 	for site in ctx.config.sites {
-		if site.cat == publishconfig.SiteCat.web {
+		if site.cat == publisher_config.SiteCat.web {
 			alias = site.shortname
 		} else {
 			alias = 'info/$site.shortname'
