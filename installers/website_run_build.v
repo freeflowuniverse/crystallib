@@ -54,7 +54,7 @@ fn rewrite_config(path string, shortname string) {
 
 pub fn website_build(cmd &cli.Command) ? {
 	// save new config file
-	publisher_config.save('') ?
+	// publisher_config.save('') ?
 
 	mut arg := ''
 	mut use_prefix := false

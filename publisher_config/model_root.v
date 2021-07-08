@@ -11,7 +11,8 @@ pub mut:
 	sites   []SiteConfig
 	nodejs  NodejsConfig
 	publish PublishConfig
-	// web_hostnames bool
+	//what is purpose of this??? 
+	web_hostnames bool
 	staticfiles map[string]string
 }
 
