@@ -1,5 +1,6 @@
 module publisher_config
-
+import process
+import os
 // websites are under $ipaddr/$shortname
 // wiki are under $ipaddr/info/$shortname
 // JSON REPRESENTATION:
@@ -59,5 +60,24 @@ fn staticfiles_config(mut c ConfigRoot) {
 		'docsify-charty.min.js':           'https://unpkg.com/@markbattistella/docsify-charty@1.0.5'
 		'docsify-charty.min.css':          'https://unpkg.com/@markbattistella/docsify-charty@1.0.5/dist/docsify-charty.min.css'
 		'charty-custom-style.css':         'https://raw.githubusercontent.com/markbattistella/docsify-charty/fa755c3e058ba1110fc6586a50207626d552b88f/docs/site/style.min.css'
+	}
+}
+
+// get all static files from internet
+pub fn (mut config ConfigRoot) update_staticfiles(force bool) ? {
+	println('Updating Javascript files in cache')
+	mut p := os.join_path(config.publish.paths.base, 'static')
+	process.execute_silent('mkdir -p $p') or { panic('can not create dir $p') }
+	for file, link in config.staticfiles {
+		mut dest := os.join_path(p, file)
+		if !os.exists(dest) || (os.exists(dest) && force) {
+			cmd := 'curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 0 --retry-max-time 60 -L -o $dest $link'
+			// println(cmd)
+			process.execute_silent(cmd) or {
+				panic(' *** WARNING: can not  download $link to ${dest}. \n$cmd')
+				continue
+			}
+			println(' - downloaded $link')
+		}
 	}
 }

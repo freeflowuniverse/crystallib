@@ -58,7 +58,7 @@ pub fn ssh_agent_key_loaded(name string) (bool, int) {
 pub fn init_codewww() ?GitStructure {
 	cfg := publisher_config.get() ?
 	mut gitstructure := GitStructure{
-		root: cfg.paths.code
+		root: cfg.publish.paths.code
 	}
 
 	gitstructure.load() ?
@@ -71,7 +71,7 @@ const codecache = init_codewww() or { panic(err) }
 // git is checked uderneith $/code
 pub fn new(root string) ?GitStructure {
 	cfg := publisher_config.get() ?
-	if root == '' || root == cfg.paths.code {
+	if root == '' || root == cfg.publish.paths.code {
 		return gittools.codecache
 	}
 	mut gitstructure := GitStructure{

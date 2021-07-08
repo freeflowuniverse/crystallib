@@ -18,7 +18,7 @@ struct MyContext {
 
 fn helloworld(req &ctx.Req, mut res ctx.Resp) {
 	myconfig := (&MyContext(req.ctx)).config
-	res.send('Hello World! $publisher_config.paths.base', 200)
+	res.send('Hello World! $myconfig.publish.path.base', 200)
 }
 
 // Run server

@@ -148,8 +148,8 @@ fn index_template(req &ctx.Req) string {
 	mut publisherobj := (&MyContext(req.ctx)).publisher
 	mut sites := config.sites_get()
 	mut port_str := ''
-	if config.port != 80 {
-		port_str = ':$config.port'
+	if config.publish.port != 80 {
+		port_str = ':$config.publish.port'
 	}
 	return $tmpl('index_root.html')
 }

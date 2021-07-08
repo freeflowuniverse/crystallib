@@ -13,7 +13,7 @@ pub fn init_string(cfg &publisher_config.ConfigRoot) string {
 pub fn install(cfg &publisher_config.ConfigRoot) ? {
 	mut script := ''
 
-	base := cfg.paths.base
+	base := cfg.publish.paths.base
 	nodejspath := cfg.nodejs.path
 
 	mut node := builder.node_get({}) or {
@@ -37,7 +37,7 @@ pub fn install(cfg &publisher_config.ConfigRoot) ? {
 	if !os.exists('$nodejspath/bin/node') {
 		println(' - will install nodejs (can take quite a while)')
 		
-		lts := cfg.nodejs.version.name.replace('v', '')
+		lts := cfg.nodejs.version.replace('v', '')
 
 		if cfg.nodejs.version.cat == publisher_config.NodejsVersionEnum.lts {
 			script = '
