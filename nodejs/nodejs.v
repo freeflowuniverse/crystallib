@@ -39,7 +39,7 @@ pub fn install(cfg &publisher_config.ConfigRoot) ? {
 		
 		lts := cfg.nodejs.version.replace('v', '')
 
-		if cfg.nodejs.version.cat == publisher_config.NodejsVersionEnum.lts {
+		if cfg.nodejs.version == "lts" {
 			script = '
 			set -e
 			export NVM_DIR=$base

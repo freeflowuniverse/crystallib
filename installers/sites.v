@@ -10,7 +10,7 @@ import os
 
 pub fn sites_list(cmd &cli.Command) ? {
 	mut conf := publisher_config.get() ?
-	mut gt := gittools.new(conf.paths.code) or { return error('cannot load gittools:$err') }
+	mut gt := gittools.new(conf.publish.paths.code) or { return error('cannot load gittools:$err') }
 	for mut site in conf.sites_get() {
 		mut repo := gt.repo_get(name: site.reponame()) or {
 			return error('ERROR: cannot get repo:$err')
@@ -33,7 +33,7 @@ pub fn sites_list(cmd &cli.Command) ? {
 // if web true then will download websites
 pub fn sites_download(cmd cli.Command, web bool) ? {
 	mut cfg := config_get(cmd) ?
-	mut gt := gittools.new(cfg.paths.code) or { return error('cannot load gittools:$err') }
+	mut gt := gittools.new(cfg.publish.paths.code) or { return error('cannot load gittools:$err') }
 	// println(' - get all code repositories.')
 
 	for mut sc in cfg.sites {
@@ -90,7 +90,7 @@ fn flag_repo_do(cmd cli.Command, reponame string, site publisher_config.SiteConf
 pub fn sites_pull(cmd cli.Command) ? {
 	mut cfg := config_get(cmd) ?
 	println(' - sites pull.')
-	codepath := cfg.paths.code
+	codepath := cfg.publish.paths.code
 	mut gt := gittools.new(codepath) or {
 		return error_with_code('ERROR: cannot load gittools:$err', 2)
 	}
@@ -123,7 +123,7 @@ pub fn sites_pull(cmd cli.Command) ? {
 pub fn sites_push(cmd cli.Command) ? {
 	mut cfg := config_get(cmd) ?
 	println(' - sites push.')
-	codepath := cfg.paths.code
+	codepath := cfg.publish.paths.code
 	mut gt := gittools.new(codepath) or { return error('ERROR: cannot load gittools:$err') }
 
 	mut found := false
@@ -159,7 +159,7 @@ pub fn sites_commit(cmd cli.Command) ? {
 	mut cfg := config_get(cmd) ?
 	println(' - sites commit.')
 	msg := flag_message_get(cmd)
-	codepath := cfg.paths.code
+	codepath := cfg.publish.paths.code
 	mut gt := gittools.new(codepath) or { return error('ERROR: cannot load gittools:$err') }
 	mut found := false
 
@@ -194,7 +194,7 @@ pub fn sites_commit(cmd cli.Command) ? {
 pub fn sites_pushcommit(cmd cli.Command) ? {
 	mut cfg := config_get(cmd) ?
 	println(' - sites commit, pull, push')
-	codepath := cfg.paths.code
+	codepath := cfg.publish.paths.code
 	mut gt := gittools.new(codepath) or { return error('ERROR: cannot load gittools:$err') }
 	msg := flag_message_get(cmd)
 
@@ -235,7 +235,7 @@ pub fn sites_pushcommit(cmd cli.Command) ? {
 pub fn sites_cleanup(cmd cli.Command) ? {
 	mut cfg := config_get(cmd) ?
 	println(' - cleanup wiki.')
-	mut publisher := publisher_core.new(cfg.paths.code) or { panic('cannot init publisher. $err') }
+	mut publisher := publisher_core.new(cfg.publish.paths.code) or { panic('cannot init publisher. $err') }
 	publisher.check()
 	println(' - cleanup websites.')
 	for mut sc in cfg.sites_get() {
@@ -249,7 +249,7 @@ pub fn sites_cleanup(cmd cli.Command) ? {
 
 pub fn sites_removechanges(cmd cli.Command) ? {
 	mut cfg := config_get(cmd) ?
-	codepath := cfg.paths.code
+	codepath := cfg.publish.paths.code
 	mut gt := gittools.new(codepath) or { return error('ERROR: cannot load gittools:$err') }
 	println(' - remove changes')
 	for mut sc in cfg.sites_get() {
@@ -281,7 +281,7 @@ pub fn sites_removechanges(cmd cli.Command) ? {
 
 pub fn site_edit(cmd cli.Command) ? {
 	mut cfg := config_get(cmd) ?
-	codepath := cfg.paths.code
+	codepath := cfg.publish.paths.code
 	mut gt := gittools.new(codepath) or { return error('ERROR: cannot load gittools:$err') }
 	for mut sc in cfg.sites_get() {
 		mut repo := gt.repo_get(name: sc.reponame()) or {

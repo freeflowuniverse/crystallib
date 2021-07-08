@@ -38,7 +38,7 @@ pub fn main(cmd cli.Command) ? {
 
 pub fn base() ? {
 	myconfig := publisher_config.get() ?
-	base := developer_config.publish.paths.base
+	base := myconfig.publish.paths.base
 
 	mut node := builder.node_get({}) or {
 		return error(' ** ERROR: cannot load node. Error was:\n$err')
@@ -56,11 +56,11 @@ pub fn config_get(cmd cli.Command) ?publisher_config.ConfigRoot {
 	mut cfg := publisher_config.get() ?
 
 	flags := cmd.flags.get_all_found()
-	cfg.pull = flags.get_bool('pull') or { false }
-	cfg.reset = flags.get_bool('reset') or { false }
+	cfg.publish.pull = flags.get_bool('pull') or { false }
+	cfg.publish.reset = flags.get_bool('reset') or { false }
 
-	if !os.exists(cfg.paths.code) {
-		os.mkdir(cfg.paths.code) or { return err }
+	if !os.exists(cfg.publish.paths.code) {
+		os.mkdir(cfg.publish.paths.code) or { return err }
 	}
 	return cfg
 }

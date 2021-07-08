@@ -32,7 +32,7 @@ fn website_conf_repo_get(cmd &cli.Command, mut conf publisher_config.ConfigRoot)
 
 	conf.nodejs_check()
 
-	mut gt := gittools.new(conf.paths.code) or { return error('ERROR: cannot load gittools:$err') }
+	mut gt := gittools.new(conf.publish.paths.code) or { return error('ERROR: cannot load gittools:$err') }
 	reponame := conf.reponame(name) ?
 	mut repo := gt.repo_get(name: reponame) or {
 		return error('ERROR: cannot find repo: $name\n$err')
@@ -67,10 +67,10 @@ pub fn website_build(cmd &cli.Command) ? {
 
 	if arg.len == 0 {
 		println('- Flatten all wikis')
-		mut publ := publisher_core.new(conf.paths.code) or { panic('cannot init publisher. $err') }
+		mut publ := publisher_core.new(conf.publish.paths.code) or { panic('cannot init publisher. $err') }
 		publ.flatten() ?
 		println(' - build all websites')
-		mut gt := gittools.new(conf.paths.code) or {
+		mut gt := gittools.new(conf.publish.paths.code) or {
 			return error('ERROR: cannot load gittools:$err')
 		}
 		for site in sites {

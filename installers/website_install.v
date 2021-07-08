@@ -8,8 +8,8 @@ import despiegk.crystallib.texttools
 
 // Initialize (load wikis) only once when server starts
 pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoot) ? {
-	base := conf.paths.base
-	codepath := conf.paths.code
+	base := conf.publish.paths.base
+	codepath := conf.publish.paths.code
 	nodejspath := conf.nodejs.path
 
 	mut gt := gittools.new(codepath) or { return error('ERROR: cannot load gittools:$err') }
@@ -17,7 +17,7 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 	mut repo := gt.repo_get(name: reponame) or { return error('ERROR: cannot load gittools:$err') }
 	println(' - install website on $repo.path')
 
-	if conf.reset {
+	if conf.publish.reset {
 		script6 := '
 		
 		cd $repo.path
@@ -33,7 +33,7 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 		}
 	}
 
-	if conf.pull {
+	if conf.publish.pull {
 		script7 := '
 		
 		cd $repo.path
@@ -125,8 +125,8 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 
 	set -e
 
-	mkdir -p $conf.paths.publish/$name
-	rsync -ra --delete $repo.path/dist/ $conf.paths.publish/$name/
+	mkdir -p $conf.publish.paths.publish/$name
+	rsync -ra --delete $repo.path/dist/ $conf.publish.paths.publish/$name/
 
 	cd $repo.path/dist
 

@@ -8,8 +8,8 @@ import despiegk.crystallib.publisher_config
 import despiegk.crystallib.gittools
 
 pub fn digitaltwin_install(mut cfg publisher_config.ConfigRoot, update bool) ? {
-	base := cfg.paths.base
-	mut gt := gittools.new(cfg.paths.code) ?
+	base := cfg.publish.paths.base
+	mut gt := gittools.new(cfg.publish.paths.code) ?
 
 	mut pull := update
 
@@ -46,9 +46,9 @@ pub fn digitaltwin_install(mut cfg publisher_config.ConfigRoot, update bool) ? {
 
 pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool, update bool) ? {
 	digitaltwin_install(mut cfg, update) ?
-	base := cfg.paths.base
+	base := cfg.publish.paths.base
 
-	mut gt := gittools.new(cfg.paths.code) ?
+	mut gt := gittools.new(cfg.publish.paths.code) ?
 
 	url := 'https://github.com/threefoldtech/digitaltwin.git'
 	mut repo := gt.repo_get_from_url(url: url, branch: 'main') or {
@@ -85,9 +85,9 @@ pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool,
 }
 
 pub fn digitaltwin_restart(mut cfg publisher_config.ConfigRoot, isproduction bool) ? {
-	base := cfg.paths.base
+	base := cfg.publish.paths.base
 
-	mut gt := gittools.new(cfg.paths.code) ?
+	mut gt := gittools.new(cfg.publish.paths.code) ?
 
 	url := 'https://github.com/threefoldtech/digitaltwin.git'
 	mut repo := gt.repo_get_from_url(url: url, branch: 'main') or {

@@ -7,7 +7,7 @@ import despiegk.crystallib.gittools
 import despiegk.crystallib.texttools
 
 pub fn website_cleanup(name string, conf &publisher_config.ConfigRoot) ? {
-	codepath := conf.paths.code
+	codepath := conf.publish.paths.code
 
 	mut gt := gittools.new(codepath) or { return error('ERROR: cannot load gittools:$err') }
 	reponame := conf.reponame(name) ?

@@ -35,7 +35,7 @@ fn print_req_info(mut req ctx.Req, mut res ctx.Resp) {
 
 fn helloworld(req &ctx.Req, mut res ctx.Resp) {
 	mut myconfig := (&MyContext(req.ctx)).config
-	res.send('Hello World! $publisher_config.publish.paths.base', 200)
+	res.send('Hello World! $myconfig.publish.paths.base', 200)
 }
 
 fn path_wiki_get(mut config publisher_config.ConfigRoot, sitename_ string, name_ string) ?(FileType, string) {
@@ -481,5 +481,5 @@ pub fn webserver_run(publisher &Publisher, config &publisher_config.ConfigRoot) 
 	app.use(print_req_info)
 	app.route(.get, '/*path', site_deliver)
 
-	server.serve(app, config.port)
+	server.serve(app, config.publish.port)
 }
