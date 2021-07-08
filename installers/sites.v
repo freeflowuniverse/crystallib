@@ -235,8 +235,8 @@ pub fn sites_pushcommit(cmd cli.Command) ? {
 pub fn sites_cleanup(cmd cli.Command) ? {
 	mut cfg := config_get(cmd) ?
 	println(' - cleanup wiki.')
-	mut publisher := publishermod.new(cfg.paths.code) or { panic('cannot init publisher. $err') }
-	publisher.check()
+	mut publisher := publishermod.new(cfg.paths.code)?
+	publisher.check()?
 	println(' - cleanup websites.')
 	for mut sc in cfg.sites_get() {
 		if sc.cat == myconfig.SiteCat.web {
@@ -250,7 +250,7 @@ pub fn sites_cleanup(cmd cli.Command) ? {
 pub fn sites_removechanges(cmd cli.Command) ? {
 	mut cfg := config_get(cmd) ?
 	codepath := cfg.paths.code
-	mut gt := gittools.new(codepath) or { return error('ERROR: cannot load gittools:$err') }
+	mut gt := gittools.new(codepath)?
 	println(' - remove changes')
 	for mut sc in cfg.sites_get() {
 		mut repo := gt.repo_get(name: sc.reponame()) or {

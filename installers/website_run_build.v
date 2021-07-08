@@ -67,7 +67,7 @@ pub fn website_build(cmd &cli.Command) ? {
 
 	if arg.len == 0 {
 		println('- Flatten all wikis')
-		mut publ := publishermod.new(conf.paths.code) or { panic('cannot init publisher. $err') }
+		mut publ := publishermod.new(conf.paths.code)?
 		publ.flatten() ?
 		println(' - build all websites')
 		mut gt := gittools.new(conf.paths.code) or {

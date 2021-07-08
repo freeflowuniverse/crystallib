@@ -51,7 +51,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 	mut config := myconfig.get() ?
 	config.update_staticfiles(false) ?
 
-	publisher.check() // makes sure we checked all
+	publisher.check()? // makes sure we checked all
 
 	// process all definitions, will do over all sites
 	mut pd := PublisherDefs{}
