@@ -10,7 +10,7 @@ pub mut:
 	root    string
 	sites   []SiteConfig
 	nodejs  NodejsConfig
-	publish publisher_config
+	publish PublishConfig
 	// web_hostnames bool
 	staticfiles map[string]string
 }
