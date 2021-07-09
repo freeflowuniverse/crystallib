@@ -26,16 +26,28 @@ fn config_load() ?ConfigRoot {
 				codewiki: '$os.home_dir()/codewiki'
 			}
 		}
+		
+	}
+	if config.publish.paths.base == "" {
+		config.publish.paths.base = '$os.home_dir()/.publisher'
+	}
+	if config.publish.paths.code == "" {
+		config.publish.paths.code = '$os.home_dir()/codewww'
+	}
+	if config.publish.paths.codewiki == "" {
+		config.publish.paths.codewiki = '$os.home_dir()/codewiki'
+	}
+	if config.publish.paths.publish == "" {
 		config.publish.paths.publish = '$config.publish.paths.base/publish'
 	}
 
 	// Make sure that all dirs existed/created
 	if !os.exists(config.publish.paths.code) {
-		os.mkdir(config.publish.paths.code) or { panic(err) }
+		os.mkdir(config.publish.paths.code) or { error("Cannot create path for publisher: $err") }
 	}
 
 	if !os.exists(config.publish.paths.codewiki) {
-		os.mkdir(config.publish.paths.codewiki) or { panic(err) }
+		os.mkdir(config.publish.paths.codewiki) or { error("Cannot create path for publisher: $err") }
 	}
 
 	// Load nodejs config
@@ -51,7 +63,7 @@ fn config_load() ?ConfigRoot {
 	}
 	config.init_nodejs() // Init nodejs configurations
 
-	// config.web_hostnames = false // This key commented in the struct
+	config.web_hostnames = false
 
 	// Load Static config
 	staticfiles_config(mut &config)
@@ -66,7 +78,7 @@ fn config_load() ?ConfigRoot {
 		}
 	}
 	for site_file in sites_config_files {
-		println(' - Found $site_file as a config file for Sites.')
+		println(' - found $site_file as a config file for sites.')
 		txt := os.read_file(site_file) ?
 		config.sites = []SiteConfig{}
 		config.sites << json.decode([]SiteConfig, txt) ?
