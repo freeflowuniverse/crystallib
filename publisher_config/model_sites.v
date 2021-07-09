@@ -14,7 +14,6 @@ pub mut:
 	path_code  string
 	domains    []string
 	descr      string
-	groups     []UserGroup
 	acl        []SiteACE // access control list
 	trackingid string    // Matomo/Analytics
 	opengraph  OpenGraph

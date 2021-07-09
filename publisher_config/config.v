@@ -3,6 +3,7 @@ module publisher_config
 import os
 // import gittools
 import json
+import despiegk.crystallib.gittools
 
 // load the initial config from filesystem
 fn config_load() ?ConfigRoot {
@@ -42,12 +43,17 @@ fn config_load() ?ConfigRoot {
 	}
 
 	// Make sure that all dirs existed/created
+
+	if !os.exists(config.publish.paths.base) {
+		os.mkdir(config.publish.paths.base) or { return error("Cannot create path for publisher: $err") }
+	}
+
 	if !os.exists(config.publish.paths.code) {
-		os.mkdir(config.publish.paths.code) or { error("Cannot create path for publisher: $err") }
+		os.mkdir(config.publish.paths.code) or { return error("Cannot create path for publisher: $err") }
 	}
 
 	if !os.exists(config.publish.paths.codewiki) {
-		os.mkdir(config.publish.paths.codewiki) or { error("Cannot create path for publisher: $err") }
+		os.mkdir(config.publish.paths.codewiki) or { return error("Cannot create path for publisher: $err") }
 	}
 
 	// Load nodejs config
@@ -68,13 +74,17 @@ fn config_load() ?ConfigRoot {
 	// Load Static config
 	staticfiles_config(mut &config)
 
-	// Load Site config
+	// Load Site & Group config files
 	mut sites_config_files := []string{}
+	mut groups_config_files := []string{}
 	current_dir := '.'
-	mut files := os.ls(current_dir) or { panic(err) }
+	mut files := os.ls(current_dir) or { return error("Cannot load config files in current dir, $err") }
 	for file in files {
 		if (file.starts_with('site_') && file.ends_with('.json')) || file == 'sites.json' {
 			sites_config_files << file
+		}
+		if file.starts_with('groups_') && file.ends_with('.json'){
+			groups_config_files << file
 		}
 	}
 	for site_file in sites_config_files {
@@ -83,6 +93,73 @@ fn config_load() ?ConfigRoot {
 		config.sites = []SiteConfig{}
 		config.sites << json.decode([]SiteConfig, txt) ?
 	}
+
+	// Load Groups
+	for group_file in groups_config_files {
+		println(' - found $group_file as a config file for group.')
+		txt := os.read_file(group_file) ?
+		config.groups = []UserGroup{}
+		config.groups << json.decode([]UserGroup, txt) ?
+	}
+
+	mut gt := gittools.new(config.publish.paths.code) or { return error('cannot load gittools:$err') }
+
+	for site in config.sites{
+
+	
+		if site.cat == publisher_config.SiteCat.web {
+			continue
+		}
+		if site.cat == publisher_config.SiteCat.data{
+			continue
+		}
+
+		mut pathnew := ""
+
+		if site.path_code != "" {
+			pathnew = site.path_code 
+		}else{
+			println(' - get:$site.url')
+			mut repo := gt.repo_get_from_url(url: site.url, pull: site.pull, reset: site.reset, branch: site.branch) or {
+				return error(' - ERROR: could not download site $site.url, do you have rights?\n$err\n$site')
+			}
+		
+			println(repo)
+
+			// change := repo.changes() or {
+			// 	return error('cannot detect if there are changes on repo.\n$err')
+			// }
+			// mut changed := ''
+			// if change {
+			// 	changed = ' (CHANGED)'
+			// }
+			// println(' - $site.name $changed')
+		}
+
+		println(site)
+
+		panic("s")		
+
+		pathnew2 := os.join_path(pathnew, 'wikiconfig.json')
+
+		if os.exists(pathnew2) {
+			
+			content := os.read_file(pathnew2) or {
+				return error('Failed to load json ${os.join_path(pathnew, 'wikiconfig.json')}')
+			}
+			repoconfig := json.decode(SiteConfigLocal, content) or {
+				// eprintln()
+				return error('Failed to decode json ${os.join_path(pathnew, 'wikiconfig.json')}')
+			}
+			println(repoconfig)
+			continue
+		}
+
+		panic("S")
+
+	}
+
+
 
 	return config
 }

@@ -9,6 +9,7 @@ pub struct ConfigRoot {
 pub mut:
 	root    string
 	sites   []SiteConfig
+	groups   []UserGroup
 	nodejs  NodejsConfig
 	publish PublishConfig
 	//what is purpose of this??? 

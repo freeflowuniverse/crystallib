@@ -67,7 +67,9 @@ fn staticfiles_config(mut c ConfigRoot) {
 pub fn (mut config ConfigRoot) update_staticfiles(force bool) ? {
 	println(' - updating Javascript files in cache')
 	mut p := os.join_path(config.publish.paths.base, 'static')
-	os.mkdir(p) or { panic('can not create dir $p') }
+	if !os.exists(p) {
+		os.mkdir(p) or { return error('can not create dir $p, $err') }
+	}
 	for file, link in config.staticfiles {
 		mut dest := os.join_path(p, file)
 		if !os.exists(dest) || force {
