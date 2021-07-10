@@ -11,7 +11,8 @@ pub mut:
 	reset      bool // if set will reset & pull, reset means remove changes
 	cat        SiteCat
 	shortname  string
-	path_code  string
+	path_fs string
+	path  string
 	domains    []string
 	descr      string
 	acl        []SiteACE // access control list

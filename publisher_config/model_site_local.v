@@ -11,7 +11,7 @@ pub mut:
 	name       string
 	cat        SiteCat
 	descr      string
-	dependencies []SiteDependency
+	depends []SiteDependency
 }
 
 

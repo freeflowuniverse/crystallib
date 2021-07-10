@@ -49,6 +49,7 @@ fn config_load() ?ConfigRoot {
 	}
 
 	if !os.exists(config.publish.paths.code) {
+	
 		os.mkdir(config.publish.paths.code) or { return error("Cannot create path for publisher: $err") }
 	}
 
@@ -116,46 +117,22 @@ fn config_load() ?ConfigRoot {
 
 		mut pathnew := ""
 
-		if site.path_code != "" {
-			pathnew = site.path_code 
+		if site.path_fs!= "" {
+			//this is the path on the filesystem
+			pathnew = site.path_fs
 		}else{
 			println(' - get:$site.url')
 			mut repo := gt.repo_get_from_url(url: site.url, pull: site.pull, reset: site.reset, branch: site.branch) or {
 				return error(' - ERROR: could not download site $site.url, do you have rights?\n$err\n$site')
 			}
 		
-			println(repo)
-
-			// change := repo.changes() or {
-			// 	return error('cannot detect if there are changes on repo.\n$err')
-			// }
-			// mut changed := ''
-			// if change {
-			// 	changed = ' (CHANGED)'
-			// }
-			// println(' - $site.name $changed')
+			pathnew = "$repo.path/$site.path"
 		}
 
-		println(site)
 
-		panic("s")		
+		process_site(mut &config, site, pathnew)?
 
-		pathnew2 := os.join_path(pathnew, 'wikiconfig.json')
-
-		if os.exists(pathnew2) {
-			
-			content := os.read_file(pathnew2) or {
-				return error('Failed to load json ${os.join_path(pathnew, 'wikiconfig.json')}')
-			}
-			repoconfig := json.decode(SiteConfigLocal, content) or {
-				// eprintln()
-				return error('Failed to decode json ${os.join_path(pathnew, 'wikiconfig.json')}')
-			}
-			println(repoconfig)
-			continue
-		}
-
-		panic("S")
+		panic("AA")
 
 	}
 
@@ -163,6 +140,34 @@ fn config_load() ?ConfigRoot {
 
 	return config
 }
+
+
+fn process_site(mut config ConfigRoot,site SiteConfig, path string) ? {
+		
+		pathnew2 := os.join_path(path, 'wikiconfig.json')
+
+		if os.exists(pathnew2) {
+			
+			content := os.read_file(pathnew2) or {
+				return error('Failed to load json ${os.join_path(pathnew, 'wikiconfig.json')}')
+			}
+			repoconfig := json.decode(SiteConfigLocal, content) or {
+				return error('Failed to decode json ${os.join_path(pathnew, 'wikiconfig.json')}')
+			}
+
+			//check dependencies
+			for dep in repoconfig{
+				mut repo := gt.repo_get_from_url(url: repoconfig.url, pull: site.pull, reset: site.reset, branch: repoconfig.branch) or {
+					return error(' - ERROR: could not download site $repoconfig.url, do you have rights?\n$err\n$repoconfig')
+				}
+			}
+
+		}else{
+			return error("Could not find wikiconfig.json on $pathnew2 for $site.url")
+		}
+
+}
+
 
 // to create singleton
 const gconf = config_load() or { panic(err) }
