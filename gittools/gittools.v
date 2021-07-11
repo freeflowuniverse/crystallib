@@ -52,19 +52,6 @@ pub fn ssh_agent_key_loaded(name string) (bool, int) {
 	return exists, counter
 }
 
-// // cache ~/codewww
-// pub fn init_codewww() ?GitStructure {
-// 	cfg := publisher_config.get() ?
-// 	mut gitstructure := GitStructure{
-// 		root: cfg.publish.paths.code
-// 	}
-
-// 	gitstructure.load() ?
-// 	return gitstructure
-// }
-
-// const codecache = init_codewww() or { panic(err) }
-
 // the factory for getting the gitstructure
 // git is checked uderneith $/code
 pub fn new(root string) ?GitStructure {

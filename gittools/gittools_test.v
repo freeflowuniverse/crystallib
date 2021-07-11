@@ -20,6 +20,7 @@ fn test_url1() {
 	assert json.encode(obj) == json.encode(tocompare)
 }
 
+
 fn test_url2() {
 	gs = new()
 

@@ -5,19 +5,20 @@ import os
 pub struct SiteConfig {
 pub mut:
 	name       string
+	prefix 	   string //prefix as will be used on web, is optional
 	url        string
 	branch     string
 	pull       bool // if set will pull but not reset
 	reset      bool // if set will reset & pull, reset means remove changes
 	cat        SiteCat
-	shortname  string
-	path_fs string
-	path  string
+	path_fs string //path directly in the git repo or absolute on filesystem
+	path  string //path in git
 	domains    []string
 	descr      string
 	acl        []SiteACE // access control list
 	trackingid string    // Matomo/Analytics
 	opengraph  OpenGraph
+	state 	   SiteState
 }
 
 pub struct SiteACE {
@@ -33,6 +34,13 @@ pub enum SiteCat {
 	data
 	web
 }
+
+pub enum SiteState {
+	init
+	loaded
+	processed
+}
+
 
 pub fn (mut site SiteConfig) reponame() string {
 	if site.name == '' {
@@ -50,12 +58,20 @@ pub fn (config ConfigRoot) site_get(name string) ?SiteConfig {
 		if site.name.to_lower() == name.to_lower() {
 			return site
 		}
-		if site.shortname.to_lower() == name.to_lower() {
-			return site
-		}
 	}
 	return error('Cannot find wiki site with name: $name')
 }
+
+pub fn (config ConfigRoot) site_exists(name string) bool {
+	for site in config.sites {
+		// println(" >> $site.name ${name.to_lower()}")
+		if site.name.to_lower() == name.to_lower() {
+			return true
+		}
+	}
+	return false
+}
+
 
 // return using shortname or name (will first use shortname)
 pub fn (mut config ConfigRoot) site_web_get(name string) ?SiteConfig {

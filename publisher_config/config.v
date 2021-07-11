@@ -105,67 +105,84 @@ fn config_load() ?ConfigRoot {
 
 	mut gt := gittools.new(config.publish.paths.code) or { return error('cannot load gittools:$err') }
 
-	for site in config.sites{
-
-	
-		if site.cat == publisher_config.SiteCat.web {
-			continue
-		}
-		if site.cat == publisher_config.SiteCat.data{
-			continue
-		}
-
-		mut pathnew := ""
-
-		if site.path_fs!= "" {
-			//this is the path on the filesystem
-			pathnew = site.path_fs
-		}else{
-			println(' - get:$site.url')
-			mut repo := gt.repo_get_from_url(url: site.url, pull: site.pull, reset: site.reset, branch: site.branch) or {
-				return error(' - ERROR: could not download site $site.url, do you have rights?\n$err\n$site')
-			}
-		
-			pathnew = "$repo.path/$site.path"
-		}
-
-
-		process_site(mut &config, site, pathnew)?
-
-		panic("AA")
-
+	for mut site in config.sites{
+		config.process_site_repo( mut &gt, mut &site)?
 	}
 
 
+	panic("AA")
 
 	return config
 }
 
 
-fn process_site(mut config ConfigRoot,site SiteConfig, path string) ? {
-		
-		pathnew2 := os.join_path(path, 'wikiconfig.json')
+fn (mut config ConfigRoot) process_site_repo(mut gt gittools.GitStructure, mut site SiteConfig) ? {
 
-		if os.exists(pathnew2) {
-			
-			content := os.read_file(pathnew2) or {
-				return error('Failed to load json ${os.join_path(pathnew, 'wikiconfig.json')}')
-			}
-			repoconfig := json.decode(SiteConfigLocal, content) or {
-				return error('Failed to decode json ${os.join_path(pathnew, 'wikiconfig.json')}')
-			}
+	if site.state != SiteState.init{
+		println(site)
+		panic("should not get here, site need to be in state init.")
+	}
 
-			//check dependencies
-			for dep in repoconfig{
-				mut repo := gt.repo_get_from_url(url: repoconfig.url, pull: site.pull, reset: site.reset, branch: repoconfig.branch) or {
-					return error(' - ERROR: could not download site $repoconfig.url, do you have rights?\n$err\n$repoconfig')
-				}
-			}
+	mut site_path := ""
 
-		}else{
-			return error("Could not find wikiconfig.json on $pathnew2 for $site.url")
+	if site.path_fs!= "" {
+		//this is the path on the filesystem
+		site_path = site.path_fs
+	}else{
+		println(' - get:$site.url')
+		mut repo := gt.repo_get_from_url(url: site.url, pull: site.pull, reset: site.reset, branch: site.branch) or {
+			return error(' - ERROR: could not download site $site.url, do you have rights?\n$err\n$site')
 		}
+		site_path = "$repo.path/$site.path"
+	}
 
+	site_config := os.join_path(site_path, 'wikiconfig.json')
+
+	if ! os.exists(site_config) {
+		return error("cannot find config file for repo in $site_config")
+	}
+		
+	content := os.read_file(site_config) or {
+		return error('Failed to load json $site_config')
+	}
+	//local config as defined in repo
+	repoconfig := json.decode(SiteConfigLocal, content) or {
+		return error('Failed to decode json $site_config')
+	}
+
+	if site.name == "" {
+		site.name = repoconfig.name
+	}
+	if site.descr=="" {
+		site.descr = repoconfig.descr
+	}
+
+	site.cat = repoconfig.cat
+
+	for dep in repoconfig.depends{
+
+		if config.site_exists_from_dep(dep){
+			if site.branch.to_lower() != dep.branch.to_lower(){
+				return error("no support yet for multiple branches in 1 publishtools instance: $site\n$depconfig")
+			}
+		}else{
+			mut repo := gt.repo_get_from_url(url: dep.url, pull: site.pull, reset: site.reset, branch: dep.branch) or {
+				return error(' - ERROR: could not download site $dep.url, do you have rights?\n$err\n$dep')
+			}
+
+			mut site_dep := SiteConfig{}
+			site_dep.path = dep.path
+			site_dep.path_fs = dep.path_fs
+			site_dep.url = dep.url
+			site_dep.branch = dep.branch
+			site_dep.pull = site.pull
+			site_dep.reset = site.reset
+			config.sites << site_dep
+			//to process recursive all sub paths				
+			config.process_site_repo(mut &gt, mut &site_dep)?
+		}
+	}
+	site.state = SiteState.loaded
 }
 
 
