@@ -7,10 +7,10 @@ struct Path {
 mut:
 	exists i8
 pub:
-	cat State
+	cat Category
 }
 
-enum State{
+enum Category{
 	file
 	dir
 	linkdir
@@ -23,10 +23,10 @@ fn file_new(path string)? Path {
 	if os.exists(path.path){
 		if ! is_file(path.path){
 			return error("cannot create new file obj, because file existed and was not file type. $path.path")
-		}		
-		return Path{path:path, state:State.file, exists:1}	
+		}
+		return Path{path:path, Category:Category.file, exists:1}
 	}else{
-		return Path{path:path, state:State.file, exists:2}
+		return Path{path:path, Category:Category.file, exists:2}
 	}
 }
 
@@ -35,11 +35,14 @@ fn file_new(path string)? Path {
 //CAREFULL: if it exists, will delete
 //new file is empty
 fn file_new_empty(path string)? Path {
-	if ! os.exists(path.path){
-		//TODO: need to check if the parent directory exists, if not create one
+	if ! os.exists(path){
+		//TODO: need to check if the parent directory exists, if not create one --> Will use mkdir_all() to create any parent folder
+		// Path not exist, create all needed parents
+		parent_paths 
+		os.mkdir_all(path)
 		os.write_file(path,"")?
 	}
-	return Path{path:path, state:State.file, exists:1}
+	return Path{path:path, Category:Category.file, exists:1}
 }
 
 //will create file obj, check if it exists, if not will give error
@@ -50,7 +53,7 @@ fn file_new_exists(path string)? Path {
 	if ! is_file(path.path){
 		return error("cannot create new file obj, because file existed and was not file type. $path.path")
 	}
-	return Path{path:path, state:State.file, exists:1}
+	return Path{path:path, Category:Category.file, exists:1}
 }
 
 
@@ -60,9 +63,9 @@ fn dir_new(path string)? Path {
 		if ! is_dir(path.path){
 			return error("cannot create new dir obj, because dir existed and was not dir type. $path.path")
 		}	
-		return Path{path:path, state:State.dir, exists:1}	
+		return Path{path:path, Category:Category.dir, exists:1}	
 	}else{
-		return Path{path:path, state:State.dir, exists:2}
+		return Path{path:path, Category:Category.dir, exists:2}
 	}
 }
 
@@ -73,7 +76,7 @@ fn dir_new_empty(path string)? Path {
 	if ! os.exists(path.path){
 		os.mkdir_all(path)?
 	}
-	return Path{path:path, state:State.dir, exists:1}
+	return Path{path:path, Category:Category.dir, exists:1}
 }
 
 //will create file obj, check if it exists, if not will give error
@@ -84,7 +87,7 @@ fn dir_new_exists(path string)? Path {
 	if ! is_dir(path.path){
 		return error("cannot create new dir obj, because dir existed and was not dir type. $path.path")
 	}
-	return Path{path:path, state:State.dir, exists:1}
+	return Path{path:path, Category:Category.dir, exists:1}
 }
 
 //TODO: do same for link (dir & file)
@@ -139,7 +142,7 @@ pub fn (mut path Path) parent() ?Path {
 		return error("no parent for path $path")
 	}
 	path2:="/".join(splitted[0..len(splitted)-1])
-	return Path{path:path2,state:State.dir, exists:1}
+	return Path{path:path2,Category:Category.dir, exists:1}
 }
 
 
@@ -196,7 +199,7 @@ pub fn (mut path Path) dir_list(tofind string,recursive bool)?[]Path{
 }
 
 //find file underneith path,
-pub fn (mut path Path) file_liste(tofind string,recursive bool)?[]Path{
+pub fn (mut path Path) file_list(tofind string,recursive bool)?[]Path{
 	//todo
 }
 
@@ -214,6 +217,19 @@ pub fn (mut path Path) write(content string)?{
 pub fn (mut path Path) read()?string{
 	//todo (error when it doesn't exist)
 }
+
+//copy file,dir is always recursive
+//dest needs to be a directory or file
+//need to check than only valid items can be done
+//return Path of the destination file or dir
+pub fn (mut path Path) copy(dest Path)?Path{
+}
+
+//create symlink on dest (which is Path wich is non existing)
+//return Path of the symlink
+pub fn (mut path Path) link(dest Path)?Path{
+}
+
 
 
 //TODO: create a good set of tests
