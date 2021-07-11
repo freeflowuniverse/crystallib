@@ -5,7 +5,6 @@ import os
 pub struct RepoGetFromUrlArgs {
 mut:
 	url    string
-	branch string
 	pull   bool // will pull if this is set
 	reset  bool // this means will pull and reset all changes
 }
@@ -22,17 +21,7 @@ pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs
 	mut addr := gitstructure.addr_get_from_url(args.url) or {
 		return error('cannot get addr from url:$err')
 	}
-	if addr.branch != '' && args.branch != '' && addr.branch != args.branch {
-		return error('conflict in branch names.\naddr:\n$addr\nargs:\n$args')
-	}
-	if addr.branch == '' {
-		addr.branch = args.branch
-	}
-	args2 := RepoGetArgs{
-		name: addr.name
-		account: addr.account
-	}
-	if !gitstructure.repo_exists(args2) {
+	if !gitstructure.repo_exists(addr) {
 		// repo does not exist yet
 		gitstructure.repos << GitRepo{
 			path: addr.path_get()
