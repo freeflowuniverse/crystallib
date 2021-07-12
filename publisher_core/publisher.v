@@ -1,5 +1,5 @@
 module publisher_core
-
+import os
 import despiegk.crystallib.texttools
 
 // the factory, get your tools here
@@ -12,7 +12,7 @@ pub fn new(path string) ?Publisher {
 	publisher.replacer.file = texttools.regex_instructions_new()
 	publisher.replacer.word = texttools.regex_instructions_new()
 	publisher.replacer.defs = texttools.regex_instructions_new()
-	// publisher.find_sites(path.replace('~', os.home_dir())) ?
+	publisher.find_sites(path.replace('~', os.home_dir())) ?
 
 	return publisher
 }
