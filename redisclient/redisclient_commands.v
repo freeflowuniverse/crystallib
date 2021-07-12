@@ -3,6 +3,10 @@ module redisclient
 import despiegk.crystallib.resp2
 import time
 
+pub fn (mut r Redis) ping() ?string {
+	return r.send_expect_strnil(['PING'])
+}
+
 pub fn (mut r Redis) set(key string, value string) ? {
 	return r.send_expect_ok(['SET', key, value])
 }
