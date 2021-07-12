@@ -20,7 +20,7 @@ pub mut:
 pub fn (mut config ConfigRoot) name_web_get(domain string) ?string {
 	for s in config.sites {
 		if domain in s.domains {
-			return s.shortname
+			return s.name
 		}
 	}
 	return error('Cannot find wiki site with domain: $domain')

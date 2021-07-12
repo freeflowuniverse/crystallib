@@ -28,9 +28,9 @@ fn (mut ctx MyContext) domain_replacer_init() {
 	mut alias := ''
 	for site in ctx.config.sites {
 		if site.cat == publisher_config.SiteCat.web {
-			alias = site.shortname
+			alias = site.name
 		} else {
-			alias = 'info/$site.shortname'
+			alias = 'info/$site.name'
 		}
 		for domain in site.domains {
 			ctx.webnames[domain] = alias

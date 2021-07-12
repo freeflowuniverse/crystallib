@@ -94,7 +94,7 @@ pub fn (mut config ConfigRoot) site_web_get(name string) ?SiteConfig {
 	}
 	for site in config.sites {
 		if site.cat == SiteCat.web {
-			if site.shortname.to_lower() == name2 {
+			if site.name.to_lower() == name2 {
 				return site
 			}
 			if site.name.to_lower() == name2 {
@@ -116,7 +116,7 @@ pub fn (mut config ConfigRoot) site_wiki_get(name string) ?SiteConfig {
 	}
 	for site in config.sites {
 		if site.cat == SiteCat.wiki {
-			if site.shortname.to_lower() == name2 {
+			if site.name.to_lower() == name2 {
 				return site
 			}
 			if site.name.to_lower() == name2 {
@@ -144,7 +144,7 @@ pub fn (config ConfigRoot) reponame(name string) ?string {
 // get the domain name
 pub fn (mut config ConfigRoot) domain_get(shortname string, cat SiteCat) ?string {
 	for s in config.sites {
-		if shortname == s.shortname && s.cat == cat {
+		if shortname == s.name && s.cat == cat {
 			return s.domains[0]
 		}
 	}

@@ -82,7 +82,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 				continue
 			}
 			// ignore websites
-			if c.shortname == site.name {
+			if c.name == site.name {
 				break
 			}
 		}

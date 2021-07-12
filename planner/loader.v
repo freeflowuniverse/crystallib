@@ -33,17 +33,17 @@ fn (mut planner Planner) load_site(repoconfig PlannerSiteConfig, path string) ? 
 	// 	return error('$cfg\n -- ERROR: sitename in config file ($repoconfig_site) on repo in git, does not correspond with configname publishtools config.')
 	// }
 	// path2 := path.replace('~', os.home_dir())
-	// println(' - load planner: $repoconfig_site -> $myconfig_site.shortname - $path2')
+	// println(' - load planner: $repoconfig_site -> $myconfig_site.name - $path2')
 	// if !planner.site_exists(myconfig_site.name) {
 	// 	id := planner.sites.len
 	// 	mut site := Site{
 	// 		id: id
 	// 		path: path2
-	// 		name: myconfig_site.shortname
+	// 		name: myconfig_site.name
 	// 	}
 	// 	site.config = repoconfig
 	// 	planner.sites << site
-	// 	planner.site_names[myconfig_site.shortname] = id
+	// 	planner.site_names[myconfig_site.name] = id
 	// } else {
 	// 	return error("should not load on same name 2x: '$myconfig_site.name'")
 	// }

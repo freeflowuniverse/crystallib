@@ -59,7 +59,7 @@ fn filetype_site_name_get(mut config publisher_config.ConfigRoot, site string, n
 	site_config := config.site_wiki_get(site) ?
 	mut name := name_.to_lower().trim(' ').trim('.').trim(' ')
 	extension := os.file_ext(name).trim('.')
-	mut sitename := site_config.shortname
+	mut sitename := site_config.name
 	if sitename.starts_with('wiki_') || sitename.starts_with('info_') {
 		panic('sitename short cannot start with wiki_ or info_.\n$site_config')
 	}

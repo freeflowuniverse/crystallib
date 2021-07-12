@@ -32,7 +32,7 @@ pub mut:
 // get path for wiki site
 pub fn (mut config ConfigRoot) path_publish_wiki_get(name string) ?string {
 	config_site := config.site_wiki_get(name) ?
-	return '$config.publish.paths.publish/wiki_$config_site.shortname'
+	return '$config.publish.paths.publish/wiki_$config_site.name'
 }
 
 // get path for website
@@ -44,7 +44,7 @@ pub fn (mut config ConfigRoot) path_publish_web_get(name string) ?string {
 pub fn (mut config ConfigRoot) path_publish_web_get_domain(domain string) ?string {
 	for s in config.sites {
 		if domain in s.domains {
-			return config.path_publish_web_get(s.shortname)
+			return config.path_publish_web_get(s.name)
 		}
 	}
 	return error('Cannot find wiki site with domain: $domain')
