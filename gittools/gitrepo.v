@@ -47,7 +47,6 @@ fn (mut repo GitRepo) get_clone_cmd(http bool) string {
 	return cmd
 }
 
-//pullforce,resetforce
 pub fn (mut repo GitRepo) check(pull_force_ bool, reset_force_ bool) ? {
 	mut pull_force := pull_force_
 	mut reset_force := reset_force_
