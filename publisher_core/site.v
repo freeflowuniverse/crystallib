@@ -89,47 +89,47 @@ fn (mut site Site) page_remember(path string, name string, mut publisher Publish
 	}
 }
 
-pub fn (mut site Site) reload(mut publisher Publisher) {
+pub fn (mut site Site) reload(mut publisher Publisher) ?{
 	site.state = SiteState.init
 	site.pages = map[string]int{}
 	site.files = map[string]int{}
 	site.errors = []SiteError{}
-	site.files_process(mut publisher) or { panic(err) }
-	site.load(mut publisher)
+	site.files_process(mut publisher)?
+	site.load(mut publisher)?
 }
 
-pub fn (mut site Site) load(mut publisher Publisher) {
+pub fn (mut site Site) load(mut publisher Publisher) ? {
 	if site.state == SiteState.ok {
 		return
 	}
 
 	if site.pages.len == 0 {
-		site.files_process(mut publisher) or { panic(err) }
+		site.files_process(mut publisher) ?
 	}
 
-	publisher.replacer.site.add(site.config.sitereplace) or { panic(err) }
-	publisher.replacer.word.add(site.config.wordreplace) or { panic(err) }
-	publisher.replacer.file.add(site.config.filereplace) or { panic(err) }
+	publisher.replacer.site.add(site.config.sitereplace) ?
+	publisher.replacer.word.add(site.config.wordreplace) ?
+	publisher.replacer.file.add(site.config.filereplace) ?
 
 	imgnotusedpath := site.path + '/img_notused'
 	if !os.exists(imgnotusedpath) {
-		os.mkdir(imgnotusedpath) or { panic(err) }
+		os.mkdir(imgnotusedpath) ?
 	}
 	imgtosortpath := site.path + '/img_tosort'
 	if !os.exists(imgtosortpath) {
-		os.mkdir(imgtosortpath) or { panic(err) }
+		os.mkdir(imgtosortpath) ?
 	}
 
 	println(' - load pages for site: $site.name')
 	for _, id in site.pages {
-		mut p := publisher.page_get_by_id(id) or { panic(err) }
-		p.load(mut publisher) or { panic(err) }
+		mut p := publisher.page_get_by_id(id) ?
+		p.load(mut publisher) ?
 	}
 
 	site.state = SiteState.loaded
 }
 
-pub fn (mut site Site) process(mut publisher Publisher) {
+pub fn (mut site Site) process(mut publisher Publisher)? {
 	if site.state == SiteState.ok {
 		return
 	}
@@ -140,8 +140,8 @@ pub fn (mut site Site) process(mut publisher Publisher) {
 
 	println(' - process pages for site: $site.name')
 	for _, id in site.pages {
-		mut p := publisher.page_get_by_id(id) or { panic(err) }
-		p.process(mut publisher) or { panic(err) }
+		mut p := publisher.page_get_by_id(id)?
+		p.process(mut publisher)?
 	}
 	println(' - process file for site: $site.name')
 	for _, id in site.files {

@@ -18,9 +18,9 @@ pub fn new(path string) ?Publisher {
 }
 
 // check all pages, try to find errors
-pub fn (mut publisher Publisher) check() {
+pub fn (mut publisher Publisher) check() ? {
 	for mut site in publisher.sites {
-		site.load(mut publisher)
+		site.load(mut publisher)?
 	}
 
 	// now the defs are loaded
@@ -31,7 +31,7 @@ pub fn (mut publisher Publisher) check() {
 	}
 
 	for mut site in publisher.sites {
-		site.process(mut publisher)
+		site.process(mut publisher)?
 	}
 }
 

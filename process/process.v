@@ -7,7 +7,7 @@ import despiegk.crystallib.texttools
 pub struct Command {
 pub mut:
 	cmd        string
-	timeout    int = 600
+	timeout    int = 1200
 	stdout     bool
 	stdout_log bool = true
 	debug      bool
