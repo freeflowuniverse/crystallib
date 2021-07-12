@@ -2,8 +2,8 @@ module installers
 
 import cli
 import despiegk.crystallib.gittools
-import despiegk.crystallib.myconfig
-import despiegk.crystallib.publishermod
+import despiegk.crystallib.publisher_config
+import despiegk.crystallib.publisher_core
 import readline
 import os
 // import process
@@ -73,7 +73,7 @@ fn flag_message_get(cmd cli.Command) string {
 	return msg
 }
 
-fn flag_repo_do(cmd cli.Command, reponame string, site myconfig.SiteConfig) bool {
+fn flag_repo_do(cmd cli.Command, reponame string, site publisher_config.SiteConfig) bool {
 	flags := cmd.flags.get_all_found()
 	repo := flags.get_string('repo') or { return true }
 	// println("match $reponame $site.shortname")
@@ -235,7 +235,7 @@ pub fn sites_pushcommit(cmd cli.Command) ? {
 pub fn sites_cleanup(cmd cli.Command) ? {
 	mut cfg := config_get(cmd) ?
 	println(' - cleanup wiki.')
-	mut publisher := publishermod.new(cfg.paths.code)?
+	mut publisher := publisher_core.new(cfg.paths.code)?
 	publisher.check()?
 	println(' - cleanup websites.')
 	for mut sc in cfg.sites_get() {

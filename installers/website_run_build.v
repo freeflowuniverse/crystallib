@@ -1,13 +1,13 @@
 module installers
 
-import despiegk.crystallib.myconfig
+import despiegk.crystallib.publisher_config
 import despiegk.crystallib.process
 import despiegk.crystallib.gittools
-import despiegk.crystallib.publishermod
+import despiegk.crystallib.publisher_core
 import cli
 import os
 
-fn website_conf_repo_get(cmd &cli.Command, mut conf myconfig.ConfigRoot) ?&gittools.GitRepo {
+fn website_conf_repo_get(cmd &cli.Command, mut conf publisher_config.ConfigRoot) ?&gittools.GitRepo {
 	flags := cmd.flags.get_all_found()
 	mut name := flags.get_string('repo') or { '' }
 
@@ -41,7 +41,7 @@ fn website_conf_repo_get(cmd &cli.Command, mut conf myconfig.ConfigRoot) ?&gitto
 	return repo
 }
 
-pub fn website_develop(cmd &cli.Command, mut cfg myconfig.ConfigRoot) ? {
+pub fn website_develop(cmd &cli.Command, mut cfg publisher_config.ConfigRoot) ? {
 	repo := website_conf_repo_get(cmd, mut cfg) ?
 
 	println(' - start website: $repo.path')
@@ -67,7 +67,7 @@ pub fn website_build(cmd &cli.Command) ? {
 
 	if arg.len == 0 {
 		println('- Flatten all wikis')
-		mut publ := publishermod.new(conf.paths.code)?
+		mut publ := publisher_core.new(conf.paths.code)?
 		publ.flatten() ?
 		println(' - build all websites')
 		mut gt := gittools.new(conf.paths.code) or {
