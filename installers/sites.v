@@ -43,11 +43,13 @@ pub fn sites_download(cmd cli.Command, web bool) ? {
 		if sc.cat == publisher_config.SiteCat.data && !web {
 			continue
 		}
-		println(' - get:$sc.url')
-		mut r := gt.repo_get_from_url(url: sc.url, pull: sc.pull, reset: sc.reset, branch: sc.branch) or {
-			return error(' - ERROR: could not download site $sc.url, do you have rights?\n$err\n$sc')
+		if sc.url != "" {
+			println(' - get:$sc.url')
+			mut r := gt.repo_get_from_url(url: sc.url, pull: sc.pull, reset: sc.reset, branch: sc.branch) or {
+				return error(' - ERROR: could not download site $sc.url, do you have rights?\n$err\n$sc')
+			}
+			r.check(false, false) ?
 		}
-		r.check(false, false) ?
 	}
 }
 
