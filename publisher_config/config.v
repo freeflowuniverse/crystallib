@@ -78,6 +78,7 @@ fn config_load() ?ConfigRoot {
 	// Load Site & Group config files
 	mut sites_config_files := []string{}
 	mut groups_config_files := []string{}
+
 	current_dir := '.'
 	mut files := os.ls(current_dir) or { return error("Cannot load config files in current dir, $err") }
 	for file in files {
@@ -91,7 +92,6 @@ fn config_load() ?ConfigRoot {
 	for site_file in sites_config_files {
 		println(' - found $site_file as a config file for sites.')
 		txt := os.read_file(site_file) ?
-		config.sites = []SiteConfig{}
 		config.sites << json.decode([]SiteConfig, txt) ?
 	}
 
@@ -99,7 +99,6 @@ fn config_load() ?ConfigRoot {
 	for group_file in groups_config_files {
 		println(' - found $group_file as a config file for group.')
 		txt := os.read_file(group_file) ?
-		config.groups = []UserGroup{}
 		config.groups << json.decode([]UserGroup, txt) ?
 	}
 
@@ -108,10 +107,6 @@ fn config_load() ?ConfigRoot {
 	for mut site in config.sites{
 		config.process_site_repo( mut &gt, mut &site)?
 	}
-
-	println(config)
-
-	panic("AA")
 
 	return config
 }
