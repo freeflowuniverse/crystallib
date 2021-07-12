@@ -11,24 +11,21 @@ mut:
 }
 
 //copy all 
-pub fn (mut pathlist PathList) copy(dest Path)?Path{
-}
+// pub fn (mut pathlist PathList) copy(dest Path)?Path{
+// }
 
-//copy all 
-pub fn (mut pathlist PathList) delete(dest Path)?Path{
-}
-
-
-//return relative path of path in relation to root in PathList
-pub fn (mut pathlist PathList) path_relative_get(path Path)?string{
-}
+// //delete all 
+// pub fn (mut pathlist PathList) delete(dest Path)?Path{
+// }
 
 
-pub fn (mut pathlist PathList) path_abs_get(path Path)?string{
-}
+// //return relative path of path in relation to root in PathList
+// pub fn (mut pathlist PathList) path_relative_get(path Path)?string{
+// }
 
-pub fn (mut pathlist PathList) add(path Path){
-}
 
-pub fn (mut pathlist PathList) delete(path Path){
-}
+// pub fn (mut pathlist PathList) path_abs_get(path Path)?string{
+// }
+
+// pub fn (mut pathlist PathList) add(path Path){
+// }
