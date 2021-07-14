@@ -38,8 +38,8 @@ fn (mut publisher Publisher) load_site(name string) ? {
 	mut mysite_config := publisher.config.site_get(mysite_name) ?
 	mut mysite_path := ""
 	// Get Path from fs or repo
-	if mysite_config.path_fs != "" {
-		mysite_path = os.join_path(publisher.config.publish.paths.code, mysite_config.path_fs)
+	if mysite_config.fs_path != "" {
+		mysite_path = os.join_path(publisher.config.publish.paths.code, mysite_config.fs_path)
 	}else{
 		mysite_path = os.join_path(publisher.config.publish.paths.code, mysite_name)
 	}
@@ -47,7 +47,7 @@ fn (mut publisher Publisher) load_site(name string) ? {
 	// link the dir in codewiki, makes it easy to edit
 	path_links := '$os.home_dir()/codewiki/'
 	target := '$path_links/$name'
-	if (mysite_config.path == "" && mysite_config.path_fs == "") || !os.exists(mysite_path){
+	if (mysite_config.path == "" && mysite_config.fs_path == "") || !os.exists(mysite_path){
 		println(error(" >>> ERROR FROM LOAD_SITE<<<"))
 		println(error(" >>> FROM LOAD_SITE >> site: $mysite_name >> site path: $mysite_path"))
 		return error("Could not find config path.\n$mysite_config")
@@ -74,7 +74,7 @@ fn (mut publisher Publisher) load_site(name string) ? {
 }
 
 // // find all wiki's, this goes very fast, no reason to cache
-// fn (mut publisher Publisher) get_site_path(path string) ? {
+// fn (mut publisher Publisher) find_sites_recursive(path string) ? {
 // 	mut path1 := ''
 // 	if path == '' {
 // 		path1 = '$os.home_dir()/code/'

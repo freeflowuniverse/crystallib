@@ -198,7 +198,7 @@ module publisher_core
 // 	if ! os.exists(path){
 // 		// panic ("need to have index.html file in the wiki repo")
 // 		reponame := siteconfig.name
-// 		repourl := siteconfig.url
+// 		repourl := siteconfig.git_url
 // 		theme_simple := "https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css"
 // 		docsify_tabs := "https://cdn.jsdelivr.net/npm/docsify-tabs@1"
 // 		docsify_themable := "https://cdn.jsdelivr.net/npm/docsify-themeable@0"

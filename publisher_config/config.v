@@ -121,21 +121,20 @@ fn (mut config ConfigRoot) process_site_repo(mut gt gittools.GitStructure, mut s
 
 	mut site_path := ""
 
-	if site.path_fs!= "" {
+	if site.fs_path!= "" {
 		//this is the path on the filesystem
-		site_path = site.path_fs
+		site_path = site.fs_path
 	}else{
-		println(' - get:$site.url')
-		mut repo := gt.repo_get_from_url(url: site.url, pull: site.pull, reset: site.reset, branch: site.branch) or {
-			return error(' - ERROR: could not download site $site.url, do you have rights?\n$err\n$site')
+		println(' - get:$site.git_url')
+
+		mut repo := gt.repo_get_from_url(url: site.git_url, pull: site.pull, reset: site.reset) or {
+			return error(' - ERROR: could not download site $site.git_url, do you have rights?\n$err\n$site')
 		}
-		site_path = "$repo.path/$site.path"
-	}
-
-	site_config := os.join_path(site_path, 'wikiconfig.json')
-
-	if ! os.exists(site_config) {
-		return error("cannot find config file for repo in $site_config")
+		// Get repo path without code part
+		repo_path := repo.path.substr(config.publish.paths.code.len,repo.path.len)
+		site.fs_path = os.join_path(repo_path, repo.addr.path)
+		site.branch = repo.addr.branch
+		site.path = repo.addr.path
 	}
 
 	//DONT DO YET, NEED TO FIGURE OUT HOW TO DEAL WITH DEPENDENCIES ... (kristof)
@@ -164,14 +163,14 @@ fn (mut config ConfigRoot) process_site_repo(mut gt gittools.GitStructure, mut s
 	// 			return error("no support yet for multiple branches in 1 publishtools instance: $site\n$depconfig")
 	// 		}
 	// 	}else{
-	// 		mut repo := gt.repo_get_from_url(url: dep.url, pull: site.pull, reset: site.reset, branch: dep.branch) or {
-	// 			return error(' - ERROR: could not download site $dep.url, do you have rights?\n$err\n$dep')
+	// 		mut repo := gt.repo_get_from_url(url: dep.git_url, pull: site.pull, reset: site.reset, branch: dep.branch) or {
+	// 			return error(' - ERROR: could not download site $dep.git_url, do you have rights?\n$err\n$dep')
 	// 		}
 
 	// 		mut site_dep := SiteConfig{}
 	// 		site_dep.path = dep.path
-	// 		site_dep.path_fs = dep.path_fs
-	// 		site_dep.url = dep.url
+	// 		site_dep.fs_path = dep.fs_path
+	// 		site_dep.git_url = dep.git_url
 	// 		site_dep.branch = dep.branch
 	// 		site_dep.pull = site.pull
 	// 		site_dep.reset = site.reset

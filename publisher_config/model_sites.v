@@ -6,12 +6,12 @@ pub struct SiteConfig {
 pub mut:
 	name       string
 	prefix 	   string //prefix as will be used on web, is optional
-	url        string
+	git_url        string
 	branch     string
 	pull       bool // if set will pull but not reset
 	reset      bool // if set will reset & pull, reset means remove changes
 	cat        SiteCat
-	path_fs string //path directly in the git repo or absolute on filesystem
+	fs_path string //path directly in the git repo or absolute on filesystem
 	path  string //path in git
 	domains    []string
 	descr      string
@@ -24,9 +24,9 @@ pub mut:
 
 pub struct SiteDependency {
 pub mut:
-	url       string
-	path        string  //path in the git repo as defined by the url
-	path_fs	  string    //path as on fs, can be local to the location of this config file
+	git_url       string
+	path        string  //path in the git repo as defined by the git_url
+	fs_path	  string    //path as on fs, can be local to the location of this config file
 	branch      string
 }
 
@@ -54,7 +54,7 @@ pub enum SiteState {
 
 pub fn (mut site SiteConfig) reponame() string {
 	if site.name == '' {
-		site.name = os.base(site.url)
+		site.name = os.base(site.git_url)
 		if site.name.ends_with('.git') {
 			site.name = site.name[..site.name.len - 4]
 		}

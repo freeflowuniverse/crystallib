@@ -76,6 +76,7 @@ pub fn (gs GitStructure) addr_get_from_url(url string) ?GitAddr {
 	urllower = urllower.replace('//', '/')
 	urllower = urllower.trim('/')
 	urllower = urllower.replace('/blob/', '/')
+	urllower = urllower.replace('/tree/', '/')
 	// println("AA:$urllower")
 	parts := urllower.split('/')
 	mut anker := ''
