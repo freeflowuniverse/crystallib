@@ -172,6 +172,14 @@ fn return_wiki_errors(sitename string, req &ctx.Req, mut res ctx.Resp) {
 
 fn site_wiki_deliver(mut config publisher_config.ConfigRoot, domain string, path string, req &ctx.Req, mut res ctx.Resp) ? {
 	debug := true
+	if debug {
+		// println(" >>> Webserver >> config >> $config")
+		// println(" >>> Webserver >> domain >> $domain")
+		// println(" >>> Webserver >> path >> $path")
+		// println(" >>> Webserver >> req >> $req")
+		// println(" >>> Webserver >> res >> $res")
+	}
+
 	mut sitename := config.name_web_get(domain) or {
 		res.send('Cannot find domain: $domain\n$err', 404)
 		return

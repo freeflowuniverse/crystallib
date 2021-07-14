@@ -20,6 +20,7 @@ fn (mut publisher Publisher) load() ? {
 	}
 
 	for site in publisher.config.sites {
+		publisher.load_site(site.name) or {panic(err)}
 		println(site)
 		// panic("ssss")
 	}
@@ -33,39 +34,47 @@ fn (mut publisher Publisher) load() ? {
 // name of the site needs to be unique
 fn (mut publisher Publisher) load_site(name string) ? {
 	
-
-	name2 := texttools.name_fix(name)
-	mut myconfig_site := publisher.config.site_get(name2) ?
-
+	mysite_name := texttools.name_fix(name)
+	mut mysite_config := publisher.config.site_get(mysite_name) ?
+	mut mysite_path := ""
+	// Get Path from fs or repo
+	if mysite_config.path_fs != "" {
+		mysite_path = os.join_path(publisher.config.publish.paths.code, mysite_config.path_fs)
+	}else{
+		mysite_path = os.join_path(publisher.config.publish.paths.code, mysite_name)
+	}
+	
 	// link the dir in codewiki, makes it easy to edit
 	path_links := '$os.home_dir()/codewiki/'
 	target := '$path_links/$name'
-	if myconfig_site.path == "" || !os.exists(myconfig_site.path){
-		return error("Could not find config path.\n$myconfig_site")
+	if (mysite_config.path == "" && mysite_config.path_fs == "") || !os.exists(mysite_path){
+		println(error(" >>> ERROR FROM LOAD_SITE<<<"))
+		println(error(" >>> FROM LOAD_SITE >> site: $mysite_name >> site path: $mysite_path"))
+		return error("Could not find config path.\n$mysite_config")
 	}
 	if !os.exists(target) {
-		os.symlink(myconfig_site.path, target) ?
+		os.symlink(mysite_path, target) ?
 	}
 
-	println(' - load publisher: $myconfig_site.name - $myconfig_site.path')
+	println(' - load publisher: $mysite_config.name - $mysite_path')
 	if !publisher.site_exists(name) {
 		id := publisher.sites.len
 		mut site := Site{
 			id: id
-			path: myconfig_site.path
-			name: myconfig_site.name
-			config: &myconfig_site
+			path: mysite_path
+			name: mysite_config.name
+			config: &mysite_config
 		}
-		// site.config = &myconfig_site
+		// site.config = &mysite_config
 		publisher.sites << site
-		publisher.site_names[myconfig_site.name] = id
+		publisher.site_names[mysite_config.name] = id
 	} else {
-		return error("should not load on same name 2x: '$myconfig_site.name'")
+		return error("should not load on same name 2x: '$mysite_config.name'")
 	}
 }
 
 // // find all wiki's, this goes very fast, no reason to cache
-// fn (mut publisher Publisher) find_sites_recursive(path string) ? {
+// fn (mut publisher Publisher) get_site_path(path string) ? {
 // 	mut path1 := ''
 // 	if path == '' {
 // 		path1 = '$os.home_dir()/code/'
