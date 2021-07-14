@@ -55,7 +55,7 @@ pub fn ssh_agent_key_loaded(name string) (bool, int) {
 
 // cache ~/codewww
 // pub fn init_codewww() ?GitStructure {
-// 	cfg := publisher_config.get() ?
+// 	cfg := publisher_config.get()
 // 	mut gitstructure := GitStructure{
 // 		root: cfg.publish.paths.code
 // 	}
@@ -69,7 +69,7 @@ pub fn ssh_agent_key_loaded(name string) (bool, int) {
 // the factory for getting the gitstructure
 // git is checked uderneith $/code
 pub fn new(root string) ?GitStructure {
-	// cfg := publisher_config.get() ?
+	// cfg := publisher_config.get()
 	// if root == '' || root == cfg.publish.paths.code {
 	// 	return gittools.codecache
 	// }

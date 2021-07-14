@@ -19,9 +19,9 @@ fn (mut publisher Publisher) load() ? {
 		}
 	}
 
-	for site in  publisher.config.sites {
+	for site in publisher.config.sites {
 		println(site)
-		panic("ssss")
+		// panic("ssss")
 	}
 	// publisher.find_sites_recursive(path) ?
 }
@@ -54,8 +54,9 @@ fn (mut publisher Publisher) load_site(name string) ? {
 			id: id
 			path: myconfig_site.path
 			name: myconfig_site.name
+			config: &myconfig_site
 		}
-		site.config = &myconfig_site
+		// site.config = &myconfig_site
 		publisher.sites << site
 		publisher.site_names[myconfig_site.name] = id
 	} else {

@@ -22,7 +22,7 @@ fn helloworld(req &ctx.Req, mut res ctx.Resp) {
 }
 
 // Run server
-pub fn webserver_run(config publisher_config.ConfigRoot) {
+pub fn webserver_run(config publisher_config.ConfigRoot)? {
 	mut app := router.new()
 
 	mycontext := &MyContext{

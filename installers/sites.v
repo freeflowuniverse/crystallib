@@ -9,7 +9,7 @@ import os
 // import process
 
 pub fn sites_list(cmd &cli.Command) ? {
-	mut conf := publisher_config.get() ?
+	mut conf := publisher_config.get()
 	mut gt := gittools.new(conf.publish.paths.code) or { return error('cannot load gittools:$err') }
 	for mut site in conf.sites_get() {
 		mut repo := gt.repo_get(name: site.reponame()) or {

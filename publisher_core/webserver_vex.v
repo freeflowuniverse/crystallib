@@ -474,6 +474,7 @@ pub fn webserver_run(mut publisher &Publisher)? {
 
 	mut mycontext := &MyContext{
 		publisher: publisher
+		config: &publisher.config
 	}
 
 	mycontext.domain_replacer_init()

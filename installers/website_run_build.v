@@ -62,7 +62,7 @@ pub fn website_build(cmd &cli.Command) ? {
 	arg = cmd.flags.get_string('repo') or { '' }
 	use_prefix = cmd.flags.get_bool('pathprefix') or { false }
 
-	mut conf := publisher_config.get() ?
+	mut conf := publisher_config.get()
 	mut sites := conf.sites_get()
 
 	if arg.len == 0 {

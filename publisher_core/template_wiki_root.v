@@ -4,7 +4,7 @@ import os
 import despiegk.crystallib.publisher_config
 
 fn template_wiki_root(reponame string, repourl string, trackingid string, opengraph publisher_config.OpenGraph) string {
-	mut cfg := publisher_config.get() or { panic('can not get config') }
+	mut cfg := publisher_config.get()
 	mut p := os.join_path(cfg.publish.paths.base, 'static')
 	mut crispwebsiteid := '1a5a5241-91cb-4a41-8323-5ba5ec574da0'
 	if reponame == 'twin' {

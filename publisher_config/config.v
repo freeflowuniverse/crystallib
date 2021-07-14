@@ -188,6 +188,6 @@ fn (mut config ConfigRoot) process_site_repo(mut gt gittools.GitStructure, mut s
 // to create singleton
 const gconf = config_load() or { panic(err) }
 
-pub fn get() ?ConfigRoot {
+pub fn get() ConfigRoot {
 	return publisher_config.gconf
 }

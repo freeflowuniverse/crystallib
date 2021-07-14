@@ -50,11 +50,11 @@ struct SiteRepoConfig {
 }
 
 pub fn (mut site Site) error_ignore_check(name string) bool {
-	for mut item in site.config.error_ignore {
-		if texttools.name_fix(name) == texttools.name_fix(item) {
-			return true
-		}
-	}
+	// for mut item in site.config.error_ignore {
+	// 	if texttools.name_fix(name) == texttools.name_fix(item) {
+	// 		return true
+	// 	}
+	// }
 	return false
 }
 

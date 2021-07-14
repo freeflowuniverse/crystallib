@@ -48,7 +48,7 @@ pub fn (mut publisher Publisher) errors_get(site Site) ?PublisherErrors {
 pub fn (mut publisher Publisher) flatten() ? {
 	mut dest_file := ''
 
-	mut config := publisher_config.get() ?
+	mut config := publisher_config.get()
 	config.update_staticfiles(false) ?
 
 	publisher.check()? // makes sure we checked all

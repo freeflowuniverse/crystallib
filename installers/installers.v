@@ -8,7 +8,7 @@ import despiegk.crystallib.process
 import despiegk.crystallib.nodejs
 
 pub fn main(cmd cli.Command) ? {
-	cfg := publisher_config.get() ?
+	cfg := publisher_config.get()
 
 	flags := cmd.flags.get_all_found()
 
@@ -37,7 +37,7 @@ pub fn main(cmd cli.Command) ? {
 }
 
 pub fn base() ? {
-	myconfig := publisher_config.get() ?
+	myconfig := publisher_config.get()
 	base := myconfig.publish.paths.base
 
 	mut node := builder.node_get({}) or {
@@ -53,7 +53,7 @@ pub fn base() ? {
 }
 
 pub fn config_get(cmd cli.Command) ?publisher_config.ConfigRoot {
-	mut cfg := publisher_config.get() ?
+	mut cfg := publisher_config.get()
 
 	flags := cmd.flags.get_all_found()
 	cfg.publish.pull = flags.get_bool('pull') or { false }
@@ -66,7 +66,7 @@ pub fn config_get(cmd cli.Command) ?publisher_config.ConfigRoot {
 }
 
 pub fn reset() ? {
-	myconfig := publisher_config.get() ?
+	myconfig := publisher_config.get()
 	base := myconfig.publish.paths.base
 	assert base.len > 10 // just to make sure we don't erase all
 	script := '
