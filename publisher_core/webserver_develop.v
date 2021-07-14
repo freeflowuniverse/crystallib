@@ -29,7 +29,7 @@ module publisher_core
 // // Initialize (load wikis) only once when server starts
 // pub fn (mut app App2) init_once() {
 // 	app.config := publisher_config.get()
-// 	app.publisher = publisher_core.new(configdata.paths.code) or { panic('cannot init publisher. $err') }
+// 	app.publisher = publisher_core.new(&config) }
 // 	app.publisher.check()
 
 // }

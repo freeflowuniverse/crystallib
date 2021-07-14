@@ -20,7 +20,7 @@ pub struct PublishConfig {
 pub mut:
 	reset bool
 	pull  bool
-	debug bool
+	debug bool = true
 	redis bool
 	port  int = 9998
 	paths Paths

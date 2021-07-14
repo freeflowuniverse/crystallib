@@ -7,7 +7,9 @@ fn test_get_content_basic() {
 
 	mut path := os.join_path(p.join('/'), '..', '..', 'examples')
 
-	mut f := publisher_core.new(path) or { panic(err) }
+	mut config := publisher_config.get() ?
+
+	mut f := publisher_core.new(&config) }
 	f.check()
 	mut wiki := f.site_get('wiki') or { panic('cant find wiki') }
 	assert wiki.page_exists('roadmap')
@@ -40,8 +42,10 @@ fn test_get_content1() {
 	mut p := @FILE.split('/')
 	p.pop()
 
+	mut config := publisher_config.get() ?
+
 	mut path := os.join_path(p.join('/'), '..', '..', 'examples')
-	mut f := publisher_core.new(path) or { panic(err) }
+	mut f := publisher_core.new(&config) }
 	f.check()
 	fileobj := f.file_get('test:blockchain_dilema.png') or { panic(err) }
 	// this has enough info to serve the file back
@@ -57,9 +61,11 @@ fn test_get_content2() {
 	mut p := @FILE.split('/')
 	p.pop()
 
+	mut config := publisher_config.get() ?
+	
 	mut path := os.join_path(p.join('/'), '..', '..', 'examples')
 
-	mut f := publisher_core.new(path) or { panic(err) }
+	mut f := publisher_core.new(&config) }
 	f.check()
 	println('start')
 	for site in f.sites {

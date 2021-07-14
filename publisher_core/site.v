@@ -107,9 +107,9 @@ pub fn (mut site Site) load(mut publisher Publisher) ? {
 		site.files_process(mut publisher) ?
 	}
 
-	publisher.replacer.site.add(site.config.sitereplace) ?
-	publisher.replacer.word.add(site.config.wordreplace) ?
-	publisher.replacer.file.add(site.config.filereplace) ?
+	// publisher.replacer.site.add(site.config.sitereplace) ?
+	// publisher.replacer.word.add(site.config.wordreplace) ?
+	// publisher.replacer.file.add(site.config.filereplace) ?
 
 	imgnotusedpath := site.path + '/img_notused'
 	if !os.exists(imgnotusedpath) {

@@ -1,18 +1,20 @@
 module publisher_core
 import os
 import despiegk.crystallib.texttools
+import despiegk.crystallib.publisher_config
 
 // the factory, get your tools here
 // use path="" if you want to go from os.home_dir()/code/
 // will find all wiki's
-pub fn new(path string) ?Publisher {
+pub fn new(config ?publisher_config.ConfigRoot) ?Publisher {
 	mut publisher := Publisher{}
-	publisher.gitlevel = 0
+	// publisher.gitlevel = 0
 	publisher.replacer.site = texttools.regex_instructions_new()
 	publisher.replacer.file = texttools.regex_instructions_new()
 	publisher.replacer.word = texttools.regex_instructions_new()
 	publisher.replacer.defs = texttools.regex_instructions_new()
-	publisher.find_sites(path.replace('~', os.home_dir())) ?
+	publisher.config = config
+	publisher.load()?
 
 	return publisher
 }

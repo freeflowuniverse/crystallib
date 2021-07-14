@@ -237,7 +237,7 @@ pub fn sites_pushcommit(cmd cli.Command) ? {
 pub fn sites_cleanup(cmd cli.Command) ? {
 	mut cfg := config_get(cmd) ?
 	println(' - cleanup wiki.')
-	mut publisher := publisher_core.new(cfg.publish.paths.code)?
+	mut publisher := publisher_core.new(&cfg)?
 	publisher.check()?
 	println(' - cleanup websites.')
 	for mut sc in cfg.sites_get() {

@@ -466,11 +466,13 @@ fn site_deliver(req &ctx.Req, mut res ctx.Resp) {
 }
 
 // Run server
-pub fn webserver_run(publisher &Publisher, config &publisher_config.ConfigRoot) {
+pub fn webserver_run(mut publisher &Publisher)? {
 	mut app := router.new()
 
+	publisher.check() ?
+	publisher.config.update_staticfiles(false) ?
+
 	mut mycontext := &MyContext{
-		config: config
 		publisher: publisher
 	}
 
@@ -481,5 +483,5 @@ pub fn webserver_run(publisher &Publisher, config &publisher_config.ConfigRoot) 
 	app.use(print_req_info)
 	app.route(.get, '/*path', site_deliver)
 
-	server.serve(app, config.publish.port)
+	server.serve(app, publisher.config.publish.port)
 }

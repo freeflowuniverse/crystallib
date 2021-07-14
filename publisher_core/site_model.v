@@ -1,7 +1,9 @@
 module publisher_core
 
 import despiegk.crystallib.texttools
+import despiegk.crystallib.publisher_config
 
+[heap]
 struct Site {
 	id int [skip]
 pub mut: // id and index in the Publisher.sites array
@@ -12,7 +14,7 @@ pub mut: // id and index in the Publisher.sites array
 	files  map[string]int
 	pages  map[string]int
 	state  SiteState
-	config SiteRepoConfig
+	config &publisher_config.SiteConfig
 }
 
 pub enum SiteErrorCategory {

@@ -67,7 +67,7 @@ pub fn website_build(cmd &cli.Command) ? {
 
 	if arg.len == 0 {
 		println('- Flatten all wikis')
-		mut publ := publisher_core.new(conf.publish.paths.code)?
+		mut publ := publisher_core.new(&conf)?
 		publ.flatten() ?
 		println(' - build all websites')
 		mut gt := gittools.new(conf.publish.paths.code) or {
