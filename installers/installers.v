@@ -3,12 +3,12 @@ module installers
 import cli
 import os
 import despiegk.crystallib.builder
-import despiegk.crystallib.myconfig
+import despiegk.crystallib.publisher_config
 import despiegk.crystallib.process
 import despiegk.crystallib.nodejs
 
 pub fn main(cmd cli.Command) ? {
-	cfg := myconfig.get() ?
+	cfg := publisher_config.get()
 
 	flags := cmd.flags.get_all_found()
 
@@ -37,8 +37,8 @@ pub fn main(cmd cli.Command) ? {
 }
 
 pub fn base() ? {
-	myconfig := myconfig.get() ?
-	base := myconfig.paths.base
+	myconfig := publisher_config.get()
+	base := myconfig.publish.paths.base
 
 	mut node := builder.node_get({}) or {
 		return error(' ** ERROR: cannot load node. Error was:\n$err')
@@ -52,22 +52,22 @@ pub fn base() ? {
 	println(' - installed base requirements')
 }
 
-pub fn config_get(cmd cli.Command) ?myconfig.ConfigRoot {
-	mut cfg := myconfig.get() ?
+pub fn config_get(cmd cli.Command) ?publisher_config.ConfigRoot {
+	mut cfg := publisher_config.get()
 
 	flags := cmd.flags.get_all_found()
-	cfg.pull = flags.get_bool('pull') or { false }
-	cfg.reset = flags.get_bool('reset') or { false }
+	cfg.publish.pull = flags.get_bool('pull') or { false }
+	cfg.publish.reset = flags.get_bool('reset') or { false }
 
-	if !os.exists(cfg.paths.code) {
-		os.mkdir(cfg.paths.code) or { return err }
+	if !os.exists(cfg.publish.paths.code) {
+		os.mkdir(cfg.publish.paths.code) or { return err }
 	}
 	return cfg
 }
 
 pub fn reset() ? {
-	myconfig := myconfig.get() ?
-	base := myconfig.paths.base
+	myconfig := publisher_config.get()
+	base := myconfig.publish.paths.base
 	assert base.len > 10 // just to make sure we don't erase all
 	script := '
 	set -e

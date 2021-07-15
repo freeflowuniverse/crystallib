@@ -2,18 +2,6 @@ module gittools
 
 import os
 
-fn (addr GitAddr) path_get() string {
-	mut provider := ''
-	if addr.provider == 'github.com' {
-		provider = 'github'
-	} else {
-		provider = addr.provider
-	}
-	if addr.root == '' {
-		panic('cannot be empty')
-	}
-	return '$addr.root/$provider/$addr.account/$addr.name'
-}
 
 fn (addr GitAddr) path_account_get() string {
 	mut provider := ''
@@ -76,6 +64,7 @@ pub fn (gs GitStructure) addr_get_from_url(url string) ?GitAddr {
 	urllower = urllower.replace('//', '/')
 	urllower = urllower.trim('/')
 	urllower = urllower.replace('/blob/', '/')
+	urllower = urllower.replace('/tree/', '/')
 	// println("AA:$urllower")
 	parts := urllower.split('/')
 	mut anker := ''
@@ -99,7 +88,7 @@ pub fn (gs GitStructure) addr_get_from_url(url string) ?GitAddr {
 		branch = parts[3]
 	}
 	if parts.len < 3 {
-		return error('url badly formatted, not enough parts in $urllower')
+		return error("url badly formatted, not enough parts in '$urllower' \nparts:\n$parts")
 	}
 
 	provider := parts[0]
@@ -129,6 +118,9 @@ pub fn (gs GitStructure) addr_get_from_url(url string) ?GitAddr {
 // }
 // ```
 pub fn (gs GitStructure) addr_get_from_path(path string) ?GitAddr {
+
+	//TODO: need to get it to work for branch
+
 	//"cd #{@path} && git config --get remote.origin.url"
 	mut path2 := path.replace('~', os.home_dir())
 	if !os.exists(os.join_path(path2, '.git')) {

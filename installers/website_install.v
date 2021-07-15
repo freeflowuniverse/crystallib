@@ -1,26 +1,26 @@
 module installers
 
 import os
-import despiegk.crystallib.myconfig
+import despiegk.crystallib.publisher_config
 import despiegk.crystallib.process
 import despiegk.crystallib.gittools
 import despiegk.crystallib.texttools
 
 // Initialize (load wikis) only once when server starts
-pub fn website_install(name string, first bool, conf &myconfig.ConfigRoot) ? {
-	base := conf.paths.base
-	codepath := conf.paths.code
+pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoot) ? {
+	base := conf.publish.paths.base
+	codepath := conf.publish.paths.code
 	nodejspath := conf.nodejs.path
 
-	mut gt := gittools.new(codepath) or { return error('ERROR: cannot load gittools:$err') }
+	mut gt := gittools.new(codepath,false) or { return error('ERROR: cannot load gittools:$err') }
 	reponame := conf.reponame(name) ?
 	mut repo := gt.repo_get(name: reponame) or { return error('ERROR: cannot load gittools:$err') }
-	println(' - install website on $repo.path')
+	println(' - install website on $repo.path_get()')
 
-	if conf.reset {
+	if conf.publish.reset {
 		script6 := '
 		
-		cd $repo.path
+		cd $repo.path_get()
 
 		rm -rf modules
 		rm -f .installed
@@ -33,10 +33,10 @@ pub fn website_install(name string, first bool, conf &myconfig.ConfigRoot) ? {
 		}
 	}
 
-	if conf.pull {
+	if conf.publish.pull {
 		script7 := '
 		
-		cd $repo.path
+		cd $repo.path_get()
 
 		git pull
 
@@ -45,7 +45,7 @@ pub fn website_install(name string, first bool, conf &myconfig.ConfigRoot) ? {
 		process.execute_silent(script7) or { return error('cannot pull code for ${name}.\n$err') }
 	}
 
-	if os.exists('$repo.path/.installed') {
+	if os.exists('$repo.path_get()/.installed') {
 		return
 	}
 
@@ -53,7 +53,7 @@ pub fn website_install(name string, first bool, conf &myconfig.ConfigRoot) ? {
 
 	set -e
 
-	cd $repo.path
+	cd $repo.path_get()
 
 	rm -f yarn.lock
 	rm -rf .cache		
@@ -83,7 +83,7 @@ pub fn website_install(name string, first bool, conf &myconfig.ConfigRoot) ? {
 	script_run := '
 
 	set -e
-	cd $repo.path
+	cd $repo.path_get()
 
 	#need to ignore errors for getting nvm not sure why
 	set +e
@@ -105,7 +105,7 @@ pub fn website_install(name string, first bool, conf &myconfig.ConfigRoot) ? {
 	script_build := '
 
 	set -e
-	cd $repo.path
+	cd $repo.path_get()
 
 	#need to ignore errors for getting nvm not sure why
 	set +e
@@ -125,29 +125,29 @@ pub fn website_install(name string, first bool, conf &myconfig.ConfigRoot) ? {
 
 	set -e
 
-	mkdir -p $conf.paths.publish/$name
-	rsync -ra --delete $repo.path/dist/ $conf.paths.publish/$name/
+	mkdir -p $conf.publish.paths.publish/$name
+	rsync -ra --delete $repo.path_get()/dist/ $conf.publish.paths.publish/$name/
 
-	cd $repo.path/dist
+	cd $repo.path_get()/dist
 
 	#echo go to http://localhost:9999/
  	#python3 -m http.server 9999
 
 	'
 
-	os.write_file('$repo.path/install.sh', texttools.dedent(script_install)) or {
-		return error('cannot write to $repo.path/install.sh\n$err')
+	os.write_file('$repo.path_get()/install.sh', texttools.dedent(script_install)) or {
+		return error('cannot write to $repo.path_get()/install.sh\n$err')
 	}
-	os.write_file('$repo.path/run.sh', texttools.dedent(script_run)) or {
-		return error('cannot write to $repo.path/run.sh\n$err')
+	os.write_file('$repo.path_get()/run.sh', texttools.dedent(script_run)) or {
+		return error('cannot write to $repo.path_get()/run.sh\n$err')
 	}
-	os.write_file('$repo.path/build.sh', texttools.dedent(script_build)) or {
-		return error('cannot write to $repo.path/build.sh\n$err')
+	os.write_file('$repo.path_get()/build.sh', texttools.dedent(script_build)) or {
+		return error('cannot write to $repo.path_get()/build.sh\n$err')
 	}
 
-	os.chmod('$repo.path/install.sh', 0o700)
-	os.chmod('$repo.path/run.sh', 0o700)
-	os.chmod('$repo.path/build.sh', 0o700)
+	os.chmod('$repo.path_get()/install.sh', 0o700)
+	os.chmod('$repo.path_get()/run.sh', 0o700)
+	os.chmod('$repo.path_get()/build.sh', 0o700)
 
 	println('   > node modules install')
 	process.execute_silent(script_install) or {
@@ -156,19 +156,19 @@ pub fn website_install(name string, first bool, conf &myconfig.ConfigRoot) ? {
 
 	// println(job)
 
-	// process.execute_silent("mkdir -p $repo.path/content") ?
+	// process.execute_silent("mkdir -p $repo.path_get()/content") ?
 
 	for x in ['blog', 'person', 'news', 'project'] {
-		if os.exists('$repo.path/content') {
-			process.execute_silent('rm -rf $repo.path/content/$x\n') ?
+		if os.exists('$repo.path_get()/content') {
+			process.execute_silent('rm -rf $repo.path_get()/content/$x\n') ?
 			os.symlink('$codepath/github/threefoldfoundation/data_threefold/content/$x',
-				'$repo.path/content/$x') or {
-				return error('Cannot link $x from data path to repo path.\n$err')
+				'$repo.path_get()/content/$x') or {
+				return error('Cannot link $x from data path to repo.path_get().\n$err')
 			}
 		}
 	}
 
-	os.write_file('$repo.path/.installed', '') or {
-		return error('cannot write to $repo.path/.installed\n$err')
+	os.write_file('$repo.path_get()/.installed', '') or {
+		return error('cannot write to $repo.path_get()/.installed\n$err')
 	}
 }

@@ -7,16 +7,20 @@ pub enum GitStatus {
 	error
 }
 
+[heap]
 struct GitStructure {
+	multibranch bool
 pub mut:
-	root  string
+	root  string	
 	repos []GitRepo
 }
 
 struct GitRepo {
 	id int [skip]
-pub:
-	path string // path on filesystem
+	//only use when custom path
+	path string
+mut:
+	gitstructure &GitStructure
 pub mut:
 	addr  GitAddr
 	state GitStatus

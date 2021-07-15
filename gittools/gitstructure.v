@@ -35,7 +35,7 @@ pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs
 	if !gitstructure.repo_exists(args2) {
 		// repo does not exist yet
 		gitstructure.repos << GitRepo{
-			path: addr.path_get()
+			gitstructure: &gitstructure
 			addr: addr
 			id: gitstructure.repos.len
 		}
@@ -44,11 +44,13 @@ pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs
 			gitstructure.repos.delete_last()
 			return error('Could not clone the repo from ${args.url}.\nError:$err')
 		}
+		// println (" GIT REPO GET URL: PULL:$args.pull, RESET: $args.reset")
 		r0.check(args.pull, args.reset) ?
 		return r0
 	} else {
 		mut r := gitstructure.repo_get(args2) or { return error('cannot load git $args.url\nerr') }
 		r.addr = addr
+		// println (" GIT REPO GET URL: PULL:$args.pull, RESET: $args.reset")
 		r.check(args.pull, args.reset) ?
 		return r
 	}
@@ -115,6 +117,7 @@ fn (mut gitstructure GitStructure) load_recursive(path1 string) ? {
 			if os.exists(os.join_path(pathnew, '.git')) {
 				gitaddr := gitstructure.addr_get_from_path(pathnew) or { return err }
 				gitstructure.repos << GitRepo{
+					gitstructure: &gitstructure
 					addr: gitaddr
 					path: pathnew
 					id: gitstructure.repos.len

@@ -1,18 +1,18 @@
 module installers
 
 import os
-import despiegk.crystallib.myconfig
+import despiegk.crystallib.publisher_config
 import despiegk.crystallib.process
 import despiegk.crystallib.gittools
 import despiegk.crystallib.texttools
 
-pub fn website_cleanup(name string, conf &myconfig.ConfigRoot) ? {
-	codepath := conf.paths.code
+pub fn website_cleanup(name string, conf &publisher_config.ConfigRoot) ? {
+	codepath := conf.publish.paths.code
 
-	mut gt := gittools.new(codepath) or { return error('ERROR: cannot load gittools:$err') }
+	mut gt := gittools.new(codepath,false) or { return error('ERROR: cannot load gittools:$err') }
 	reponame := conf.reponame(name) ?
 	mut repo := gt.repo_get(name: reponame) or { return error('ERROR: cannot load gittools:$err') }
-	println(' - cleanup website $repo.path')
+	println(' - cleanup website $repo.path_get()')
 
 	gitignore := '
 	*.log
@@ -45,8 +45,8 @@ pub fn website_cleanup(name string, conf &myconfig.ConfigRoot) ? {
 	http*	
 	.vscode
 	'
-	os.write_file('$repo.path/.gitignore', texttools.dedent(gitignore)) or {
-		return error('cannot write to $repo.path/.gitignore\n$err')
+	os.write_file('$repo.path_get()/.gitignore', texttools.dedent(gitignore)) or {
+		return error('cannot write to $repo.path_get()/.gitignore\n$err')
 	}
 
 	readme := '
@@ -63,14 +63,14 @@ pub fn website_cleanup(name string, conf &myconfig.ConfigRoot) ? {
 	> please make sure you work in line with instructions above
 
 	'
-	if !os.exists('$repo.path/readme.md') {
-		os.write_file('$repo.path/readme.md', texttools.dedent(readme)) or {
-			return error('cannot write to $repo.path/README.md\n$err')
+	if !os.exists('$repo.path_get()/readme.md') {
+		os.write_file('$repo.path_get()/readme.md', texttools.dedent(readme)) or {
+			return error('cannot write to $repo.path_get()/README.md\n$err')
 		}
 	}
 	script_cleanup := '
 	
-	cd $repo.path
+	cd $repo.path_get()
 
 	rm -f yarn.lock
 	rm -rf .cache		
