@@ -152,24 +152,30 @@ fn test_list_vms() {
 	response, status_code := client.list_vms()
 	println(response)
 	assert status_code == 200
-	assert response[0].wid > 0
+	if response.len > 0 {
+		assert response[0].name != ''
+	}
 }
 
 fn test_add_vm() {
 	client := setup()
 	println('************ TEST16_ADD_VM ************')
-	response, status_code := client.add_vm('MEDIUM')
+	req_body := vdcclient.AddVM{
+		name: "new_vm"
+		size: 1
+		ssh_public_key: "ADD_YOUR_PUBLIC_IP"
+	}
+	response, status_code := client.add_vm(req_body)
 	println(response)
 	assert status_code == 200
-	assert response[0] > 0
+	assert response.len > 0 && response[0] > 0
 }
 
 fn test_delete_vm() {
 	client := setup()
 	println('************ TEST17_DELETE_VM ************')
 	before_delete, _ := client.list_vms()
-	to_delete := before_delete[before_delete.len -1].wids
-	// to_delete := 47049
+	to_delete := before_delete[before_delete.len -1].wid
 	response, status_code := client.delete_vm(to_delete)
 	after_delete, _ := client.list_vms()
 	println(response)
