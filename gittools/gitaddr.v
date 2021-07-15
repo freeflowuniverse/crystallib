@@ -88,7 +88,7 @@ pub fn (gs GitStructure) addr_get_from_url(url string) ?GitAddr {
 		branch = parts[3]
 	}
 	if parts.len < 3 {
-		return error('url badly formatted, not enough parts in $urllower')
+		return error("url badly formatted, not enough parts in '$urllower' \nparts:\n$parts")
 	}
 
 	provider := parts[0]

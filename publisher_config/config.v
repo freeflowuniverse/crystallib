@@ -121,7 +121,6 @@ fn (mut config ConfigRoot) process_site_repo(mut gt gittools.GitStructure, mut s
 		panic("should not get here, bug, site need to be in state init.")
 	}
 
-
 	if site.fs_path!= "" {
 		//this is the path on the filesystem
 		site.path = os.real_path(site.fs_path)
