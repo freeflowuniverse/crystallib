@@ -13,7 +13,7 @@ pub fn (repo GitRepo) path_content_get() string {
 
 pub fn (repo GitRepo) path_get() string {
 	if repo.gitstructure.multibranch{
-		return '$repo.addr.path_account_get()/$repo.addr.branch/$repo.addr.name'
+		return '$repo.addr.path_account_get()/$repo.addr.name/$repo.addr.branch'
 	}else{
 		return '$repo.addr.path_account_get()/$repo.addr.name'
 	}
@@ -44,7 +44,12 @@ pub fn (mut repo GitRepo) changes() ?bool {
 
 fn (mut repo GitRepo) get_clone_cmd(http bool) string {
 	url := repo.url_get(http)
-	mut cmd := 'mkdir -p $repo.addr.path_account_get() && cd $repo.addr.path_account_get() && git clone $url'
+	mut cmd := ""
+	if repo.gitstructure.multibranch{
+		cmd = 'mkdir -p $repo.addr.path_account_get()/$repo.addr.name && cd $repo.addr.path_account_get()/$repo.addr.name && git clone $url $repo.addr.branch'		
+	}else{
+		cmd = 'mkdir -p $repo.addr.path_account_get() && cd $repo.addr.path_account_get() && git clone $url'
+	}
 	if repo.addr.branch != '' {
 		cmd += ' -b $repo.addr.branch'
 	}
@@ -52,13 +57,16 @@ fn (mut repo GitRepo) get_clone_cmd(http bool) string {
 		cmd += ' --depth=$repo.addr.depth'
 		//  && cd $repo.addr.name && git fetch
 		// why was this there?
-	}
+	}	
+	// println(" - CMD: $cmd")
 	return cmd
 }
 
+//this is the main git functionality to get git repo, update, reset, ...
 pub fn (mut repo GitRepo) check(pull_force_ bool, reset_force_ bool) ? {
 	mut pull_force := pull_force_
 	mut reset_force := reset_force_
+
 	if repo.state != GitStatus.ok || pull_force_ || reset_force_{
 		// need to get the status of the repo
 		// println(' - repo $repo.addr.name check')
@@ -207,6 +215,9 @@ pub fn (mut repo GitRepo) branch_get() ?string {
 }
 
 pub fn (mut repo GitRepo) branch_switch(branchname string) ? {
+	if repo.gitstructure.multibranch{
+		return error("cannot do a branch switch if we are using multibranch strategy.")
+	}
 	cmd := 'cd $repo.path_get() && git checkout $branchname'
 	process.execute_silent(cmd) or {
 		// println('GIT CHECKOUT FAILED: $cmd_checkout')
