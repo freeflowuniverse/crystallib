@@ -1,5 +1,5 @@
 module publisher_core
-import os
+// import os
 import despiegk.crystallib.texttools
 import despiegk.crystallib.publisher_config
 

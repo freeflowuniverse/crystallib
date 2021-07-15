@@ -116,25 +116,32 @@ fn (mut config ConfigRoot) process_site_repo(mut gt gittools.GitStructure, mut s
 
 	if site.state != SiteState.init{
 		println(site)
-		panic("should not get here, site need to be in state init.")
+		panic("should not get here, bug, site need to be in state init.")
 	}
 
-	mut site_path := ""
 
 	if site.fs_path!= "" {
 		//this is the path on the filesystem
-		site_path = site.fs_path
+		site.path = os.real_path(site.fs_path)
 	}else{
 		println(' - get:$site.git_url')
-
 		mut repo := gt.repo_get_from_url(url: site.git_url, pull: site.pull, reset: site.reset) or {
 			return error(' - ERROR: could not download site $site.git_url, do you have rights?\n$err\n$site')
 		}
-		// Get repo path without code part
-		repo_path := repo.path.substr(config.publish.paths.code.len,repo.path.len)
-		site.fs_path = os.join_path(repo_path, repo.addr.path)
-		site.branch = repo.addr.branch
-		site.path = repo.addr.path
+		site.fs_path = ""
+		site.path = repo.addr.path_get()
+	}
+	if ! os.exists(site.path) || site.path == "" {
+		return error("Cannot find site.fs_path on `$site.path` for \n$site\nin process site repo.")
+	}
+
+	toremoves := [os.join_path(site.path,"index.html"),os.join_path(site.path,"wikiconfig.json")]
+	for toremove in toremoves{
+		if os.exists(toremove){
+			os.rm(toremove) or {
+				return error("could not remove: $toremove for process_site_repo. \n$err")
+			}
+		}
 	}
 
 	//DONT DO YET, NEED TO FIGURE OUT HOW TO DEAL WITH DEPENDENCIES ... (kristof)
@@ -185,7 +192,11 @@ fn (mut config ConfigRoot) process_site_repo(mut gt gittools.GitStructure, mut s
 
 
 // to create singleton
-const gconf = config_load() or { panic(err) }
+const gconf = config_load() or { 
+	println("Cannot load configuraton for publish tools.\n$err") 
+	println("===ERROR===")
+	exit(1)
+	}
 
 pub fn get() ConfigRoot {
 	return publisher_config.gconf

@@ -79,7 +79,7 @@ fn (mut planner Planner) find_sites_recursive(path string) ? {
 					// eprintln()
 					return error('Failed to decode json ${os.join_path(pathnew, 'plannerconfig.json')}')
 				}
-				planner.load_site(repoconfig, pathnew) or { panic(err) }
+				planner.load_site(repoconfig, pathnew)?
 				continue
 			}
 			// if item == '.git' {

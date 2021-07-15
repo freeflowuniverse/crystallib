@@ -2,29 +2,25 @@ module publisher_core
 
 import despiegk.crystallib.texttools
 import os
-import json
-import despiegk.crystallib.publisher_config
+// import json
+// import despiegk.crystallib.publisher_config
 
 fn (mut publisher Publisher) load() ? {
 	// remove code_wiki subdirs
 	path_links := '$os.home_dir()/codewiki/'
 	path_links_list := os.ls(path_links) ?
 	for path_to_remove in path_links_list {
-		if path_to_remove.starts_with('info_') {
-			// os.rmdir(path_to_remove)?
-			// println("---REMOVE $path_to_remove")
-			// os.exec("rm -f $path_to_remove")?
+		// if path_to_remove.starts_with('info_') {
 			//TODO: faster way to remove, using vlang construct
-			os.execute_or_panic('rm -f $path_links/$path_to_remove')
-		}
+		// println(" - rm -f $path_links/$path_to_remove")
+		os.execute_or_panic('rm -f $path_links/$path_to_remove')
+		// }
 	}
 
 	for site in publisher.config.sites {
-		publisher.load_site(site.name) or {panic(err)}
-		println(site)
-		// panic("ssss")
+		publisher.load_site(site.name)?
 	}
-	// publisher.find_sites_recursive(path) ?
+	println( " - all sites loaded")
 }
 
 ///////////////////////////////////////////////////////// INTERNAL BELOW ////////////////
@@ -36,32 +32,23 @@ fn (mut publisher Publisher) load_site(name string) ? {
 	
 	mysite_name := texttools.name_fix(name)
 	mut mysite_config := publisher.config.site_get(mysite_name) ?
-	mut mysite_path := ""
-	// Get Path from fs or repo
-	if mysite_config.fs_path != "" {
-		mysite_path = os.join_path(publisher.config.publish.paths.code, mysite_config.fs_path)
-	}else{
-		mysite_path = os.join_path(publisher.config.publish.paths.code, mysite_name)
-	}
-	
+
 	// link the dir in codewiki, makes it easy to edit
-	path_links := '$os.home_dir()/codewiki/'
+	path_links := '$os.home_dir()/codewiki'
 	target := '$path_links/$name'
-	if (mysite_config.path == "" && mysite_config.fs_path == "") || !os.exists(mysite_path){
-		println(error(" >>> ERROR FROM LOAD_SITE<<<"))
-		println(error(" >>> FROM LOAD_SITE >> site: $mysite_name >> site path: $mysite_path"))
-		return error("Could not find config path.\n$mysite_config")
+	if mysite_config.path == "" || !os.exists(mysite_config.path){
+		return error("$mysite_config \nCould not find config path (load site).\n   site: $mysite_name >> site path: $mysite_config.path\n")
 	}
-	if !os.exists(target) {
-		os.symlink(mysite_path, target) ?
+	os.symlink(mysite_config.path, target) or {
+		return error("cannot symlink for load site in publtools: $mysite_config.path to $target \nERROR:\n$err")
 	}
 
-	println(' - load publisher: $mysite_config.name - $mysite_path')
+	println(' - load publisher: $mysite_config.name - $mysite_config.path')
 	if !publisher.site_exists(name) {
 		id := publisher.sites.len
 		mut site := Site{
 			id: id
-			path: mysite_path
+			path: mysite_config.path
 			name: mysite_config.name
 			config: &mysite_config
 		}
@@ -71,6 +58,7 @@ fn (mut publisher Publisher) load_site(name string) ? {
 	} else {
 		return error("should not load on same name 2x: '$mysite_config.name'")
 	}
+	// println(' - load publisher: $mysite_config.name - $mysite_config.path OK')
 }
 
 // // find all wiki's, this goes very fast, no reason to cache

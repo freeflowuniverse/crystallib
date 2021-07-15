@@ -70,11 +70,12 @@ pub fn ssh_agent_key_loaded(name string) (bool, int) {
 // git is checked uderneith $/code
 pub fn new(root string) ?GitStructure {
 	// cfg := publisher_config.get()
-	// if root == '' || root == cfg.publish.paths.code {
-	// 	return gittools.codecache
-	// }
+	mut root2:=root
+	if root2 == ''{
+		root2 = '$os.home_dir()/code/'
+	}
 	mut gitstructure := GitStructure{
-		root: root
+		root: root2
 	}
 	gitstructure.load() ?
 	return gitstructure

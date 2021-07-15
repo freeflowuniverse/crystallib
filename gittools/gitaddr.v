@@ -2,7 +2,7 @@ module gittools
 
 import os
 
-fn (addr GitAddr) path_get() string {
+pub fn (addr GitAddr) path_get() string {
 	mut provider := ''
 	if addr.provider == 'github.com' {
 		provider = 'github'
@@ -12,7 +12,7 @@ fn (addr GitAddr) path_get() string {
 	if addr.root == '' {
 		panic('cannot be empty')
 	}
-	return '$addr.root/$provider/$addr.account/$addr.name'
+	return '$addr.root/$provider/$addr.account/$addr.name/$addr.path'
 }
 
 fn (addr GitAddr) path_account_get() string {
@@ -130,6 +130,9 @@ pub fn (gs GitStructure) addr_get_from_url(url string) ?GitAddr {
 // }
 // ```
 pub fn (gs GitStructure) addr_get_from_path(path string) ?GitAddr {
+
+	//TODO: need to get it to work for branch
+
 	//"cd #{@path} && git config --get remote.origin.url"
 	mut path2 := path.replace('~', os.home_dir())
 	if !os.exists(os.join_path(path2, '.git')) {
