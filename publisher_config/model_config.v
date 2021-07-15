@@ -24,4 +24,5 @@ pub mut:
 	redis bool
 	port  int = 9998
 	paths Paths
+	multibranch bool
 }

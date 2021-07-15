@@ -68,7 +68,7 @@ pub fn ssh_agent_key_loaded(name string) (bool, int) {
 
 // the factory for getting the gitstructure
 // git is checked uderneith $/code
-pub fn new(root string) ?GitStructure {
+pub fn new(root string, multibranch bool) ?GitStructure {
 	// cfg := publisher_config.get()
 	mut root2:=root
 	if root2 == ''{
@@ -76,6 +76,7 @@ pub fn new(root string) ?GitStructure {
 	}
 	mut gitstructure := GitStructure{
 		root: root2
+		multibranch: multibranch
 	}
 	gitstructure.load() ?
 	return gitstructure

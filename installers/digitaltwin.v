@@ -9,7 +9,7 @@ import despiegk.crystallib.gittools
 
 pub fn digitaltwin_install(mut cfg publisher_config.ConfigRoot, update bool) ? {
 	base := cfg.publish.paths.base
-	mut gt := gittools.new(cfg.publish.paths.code) ?
+	mut gt := gittools.new(cfg.publish.paths.code,false) ?
 
 	mut pull := update
 
@@ -18,7 +18,7 @@ pub fn digitaltwin_install(mut cfg publisher_config.ConfigRoot, update bool) ? {
 		return error('cannot pull digital twin git repo:\n$url\n$err')
 	}
 
-	if !os.exists('$repo.path/publisher/node_modules') || update == true {
+	if !os.exists('$repo.path_get()/publisher/node_modules') || update == true {
 		println('- will make sure repo is up2date')
 		repo.pull() ?
 
@@ -32,11 +32,11 @@ pub fn digitaltwin_install(mut cfg publisher_config.ConfigRoot, update bool) ? {
 			set -e
 			export NVM_DIR=$base
 			source $base/nvm.sh
-			cd $repo.path/publisher
+			cd $repo.path_get()/publisher
 			npm install
 			'
 		process.execute_silent(script) or {
-			os.rmdir_all('$repo.path/publisher/node_modules') or { panic(err) }
+			os.rmdir_all('$repo.path_get()/publisher/node_modules') or { panic(err) }
 			return error('cannot install digital twin.\n$err')
 		}
 	}
@@ -48,7 +48,7 @@ pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool,
 	digitaltwin_install(mut cfg, update) ?
 	base := cfg.publish.paths.base
 
-	mut gt := gittools.new(cfg.publish.paths.code) ?
+	mut gt := gittools.new(cfg.publish.paths.code,false) ?
 
 	url := 'https://github.com/threefoldtech/digitaltwin.git'
 	mut repo := gt.repo_get_from_url(url: url, branch: 'main') or {
@@ -63,7 +63,7 @@ pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool,
 				set -e
 				export NVM_DIR=$base
 				source $base/nvm.sh
-				cd $repo.path/publisher
+				cd $repo.path_get()/publisher
 
 				export PATH=$cfg.nodejs.path/bin:\$PATH
 				node server.js
@@ -76,7 +76,7 @@ pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool,
 		tmux send-keys -t digitaltwin.0 "export NVM_DIR=$base" ENTER
 		tmux send-keys -t digitaltwin.0 "source $base/nvm.sh" ENTER
 		#tmux send-keys -t digitaltwin.0 "nvm use --lts" ENTER
-		tmux send-keys -t digitaltwin.0 "cd $repo.path/publisher" ENTER
+		tmux send-keys -t digitaltwin.0 "cd $repo.path_get()/publisher" ENTER
 		tmux send-keys -t digitaltwin.0 "NODE_ENV=production node server.js || echo \\"can not run\\" " ENTER
 		'
 	}
@@ -87,7 +87,7 @@ pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool,
 pub fn digitaltwin_restart(mut cfg publisher_config.ConfigRoot, isproduction bool) ? {
 	base := cfg.publish.paths.base
 
-	mut gt := gittools.new(cfg.publish.paths.code) ?
+	mut gt := gittools.new(cfg.publish.paths.code,false) ?
 
 	url := 'https://github.com/threefoldtech/digitaltwin.git'
 	mut repo := gt.repo_get_from_url(url: url, branch: 'main') or {
@@ -102,7 +102,7 @@ pub fn digitaltwin_restart(mut cfg publisher_config.ConfigRoot, isproduction boo
 				set -e
 				export NVM_DIR=$base
 				source $base/nvm.sh
-				cd $repo.path/publisher
+				cd $repo.path_get()/publisher
 
 				export PATH=$cfg.nodejs.path/bin:\$PATH
 				pkill -9 node
@@ -118,7 +118,7 @@ pub fn digitaltwin_restart(mut cfg publisher_config.ConfigRoot, isproduction boo
 		tmux send-keys -t digitaltwin.0 "export NVM_DIR=$base" ENTER
 		tmux send-keys -t digitaltwin.0 "source $base/nvm.sh" ENTER
 		#tmux send-keys -t digitaltwin.0 "nvm use --lts" ENTER
-		tmux send-keys -t digitaltwin.0 "cd $repo.path/publisher" ENTER
+		tmux send-keys -t digitaltwin.0 "cd $repo.path_get()/publisher" ENTER
 		tmux send-keys -t digitaltwin.0 "NODE_ENV=production node server.js || echo \\"can not run\\" " ENTER
 		'
 	}

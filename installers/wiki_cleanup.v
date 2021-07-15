@@ -9,10 +9,10 @@ import despiegk.crystallib.texttools
 pub fn wiki_cleanup(name string, conf &publisher_config.ConfigRoot) ? {
 	codepath := conf.publish.paths.code
 
-	mut gt := gittools.new(codepath) or { return error('ERROR: cannot load gittools:$err') }
+	mut gt := gittools.new(codepath,false) or { return error('ERROR: cannot load gittools:$err') }
 	reponame := conf.reponame(name) ?
 	mut repo := gt.repo_get(name: reponame) or { return error('ERROR: cannot load gittools:$err') }
-	println(' - cleanup wiki $repo.path')
+	println(' - cleanup wiki $repo.path_get()')
 
 	gitignore := '
 	src/errors.md
@@ -27,13 +27,13 @@ pub fn wiki_cleanup(name string, conf &publisher_config.ConfigRoot) ? {
 	docshttp*
 	.vscode
 	'
-	os.write_file('$repo.path/.gitignore', texttools.dedent(gitignore)) or {
-		return error('cannot write to $repo.path/.gitignore\n$err')
+	os.write_file('$repo.path_get()/.gitignore', texttools.dedent(gitignore)) or {
+		return error('cannot write to $repo.path_get()/.gitignore\n$err')
 	}
 
 	script_cleanup := '
 	
-	cd $repo.path
+	cd $repo.path_get()
 
 	rm -rf .vscode
 	rm -rf .cache		
@@ -61,7 +61,7 @@ pub fn wiki_cleanup(name string, conf &publisher_config.ConfigRoot) ? {
 	process.execute_stdout(script_cleanup) or { return error('cannot cleanup for ${name}.\n$err') }
 
 	script_commit := '
-	cd $repo.path
+	cd $repo.path_get()
 	set +e
 	git add . -A
 	git commit -m "wiki reformat"
@@ -76,7 +76,7 @@ pub fn wiki_cleanup(name string, conf &publisher_config.ConfigRoot) ? {
 
 	// script_merge_master := '
 	// set -ex
-	// cd $repo.path
+	// cd $repo.path_get()
 	// set -e
 	// git checkout master
 	// git merge development

@@ -2,18 +2,6 @@ module gittools
 
 import os
 
-pub fn (addr GitAddr) path_get() string {
-	mut provider := ''
-	if addr.provider == 'github.com' {
-		provider = 'github'
-	} else {
-		provider = addr.provider
-	}
-	if addr.root == '' {
-		panic('cannot be empty')
-	}
-	return '$addr.root/$provider/$addr.account/$addr.name/$addr.path'
-}
 
 fn (addr GitAddr) path_account_get() string {
 	mut provider := ''

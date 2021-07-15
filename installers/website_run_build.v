@@ -32,7 +32,7 @@ fn website_conf_repo_get(cmd &cli.Command, mut conf publisher_config.ConfigRoot)
 
 	conf.nodejs_check()
 
-	mut gt := gittools.new(conf.publish.paths.code) or { return error('ERROR: cannot load gittools:$err') }
+	mut gt := gittools.new(conf.publish.paths.code,false) or { return error('ERROR: cannot load gittools:$err') }
 	reponame := conf.reponame(name) ?
 	mut repo := gt.repo_get(name: reponame) or {
 		return error('ERROR: cannot find repo: $name\n$err')
@@ -44,8 +44,8 @@ fn website_conf_repo_get(cmd &cli.Command, mut conf publisher_config.ConfigRoot)
 pub fn website_develop(cmd &cli.Command, mut cfg publisher_config.ConfigRoot) ? {
 	repo := website_conf_repo_get(cmd, mut cfg) ?
 
-	println(' - start website: $repo.path')
-	process.execute_interactive('$repo.path/run.sh') ?
+	println(' - start website: $repo.path_get()')
+	process.execute_interactive('$repo.path_get()/run.sh') ?
 }
 
 fn rewrite_config(path string, shortname string) {
@@ -70,7 +70,7 @@ pub fn website_build(cmd &cli.Command) ? {
 		mut publ := publisher_core.new(&conf)?
 		publ.flatten() ?
 		println(' - build all websites')
-		mut gt := gittools.new(conf.publish.paths.code) or {
+		mut gt := gittools.new(conf.publish.paths.code,false) or {
 			return error('ERROR: cannot load gittools:$err')
 		}
 		for site in sites {
@@ -78,89 +78,89 @@ pub fn website_build(cmd &cli.Command) ? {
 				mut repo2 := gt.repo_get(name: site.name) or {
 					return error('ERROR: cannot find repo: $site.name\n$err')
 				}
-				println(' - build website: $repo2.path')
+				println(' - build website: $repo2.path_get()')
 				mut isgridsome := true
 				mut vuejs := true
 
-				if !os.exists('$repo2.path/gridsome.config.js'){
+				if !os.exists('$repo2.path_get()/gridsome.config.js'){
 					isgridsome = false
 				}
 
-				if !os.exists('$repo2.path/vue.config.js'){
+				if !os.exists('$repo2.path_get()/vue.config.js'){
 					vuejs = false
 				}
 
 
 				if isgridsome{
-					process.execute_stdout('sed -i "s/pathPrefix.*//" $repo2.path/gridsome.config.js') ?
+					process.execute_stdout('sed -i "s/pathPrefix.*//" $repo2.path_get()/gridsome.config.js') ?
 				}else if vuejs{
-					process.execute_stdout('sed -i "s/publicPath:.*//" $repo2.path/vue.config.js') ?
+					process.execute_stdout('sed -i "s/publicPath:.*//" $repo2.path_get()/vue.config.js') ?
 				}
 
 				if use_prefix {
 					if isgridsome{
-						process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.name\\\",\\n\\tplugins: \\\[/g" $repo2.path/gridsome.config.js') ?
+						process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.name\\\",\\n\\tplugins: \\\[/g" $repo2.path_get()/gridsome.config.js') ?
 					}else if vuejs{
-						process.execute_stdout('sed -i "s/configureWebpack:: \\\{/publicPath: \\\"\\/$site.name\\\",\\n\\configureWebpack:: \\\{/g" $repo2.path/vue.config.js') ?
+						process.execute_stdout('sed -i "s/configureWebpack:: \\\{/publicPath: \\\"\\/$site.name\\\",\\n\\configureWebpack:: \\\{/g" $repo2.path_get()/vue.config.js') ?
 					}
 					
 				}
 
-				process.execute_stdout('$repo2.path/build.sh') or {
+				process.execute_stdout('$repo2.path_get()/build.sh') or {
 					if isgridsome{
-						process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?
+						process.execute_stdout('cd $repo2.path_get()/ && git checkout gridsome.config.js') ?
 					}else if vuejs{
-						process.execute_stdout('cd $repo2.path/ && git checkout vue.config.js') ?
+						process.execute_stdout('cd $repo2.path_get()/ && git checkout vue.config.js') ?
 					}
 				}
 
 				if isgridsome{
-					process.execute_stdout('cd $repo2.path/ && git checkout gridsome.config.js') ?
+					process.execute_stdout('cd $repo2.path_get()/ && git checkout gridsome.config.js') ?
 				}else if vuejs{
-					process.execute_stdout('cd $repo2.path/ && git checkout vue.config.js') ?
+					process.execute_stdout('cd $repo2.path_get()/ && git checkout vue.config.js') ?
 				}
 			}
 		}
 	} else {
 		repo := website_conf_repo_get(cmd, mut &conf) ?
 		// be careful process stops after interactive execute
-		// process.execute_interactive('$repo.path/build.sh') ?
+		// process.execute_interactive('$repo.path_get()/build.sh') ?
 		for site in sites {
 			if site.name == repo.addr.name {
-				println(' - build website: $repo.path')
+				println(' - build website: $repo.path_get()')
 				
 				mut isgridsome := true
 				mut vuejs := true
 
-				if !os.exists('$repo.path/gridsome.config.js'){
+				if !os.exists('$repo.path_get()/gridsome.config.js'){
 					isgridsome = false
 				}
 
-				if !os.exists('$repo.path/vue.config.js'){
+				if !os.exists('$repo.path_get()/vue.config.js'){
 					vuejs = false
 				}
 
 				if isgridsome{
-					process.execute_stdout('sed -i "s/pathPrefix.*//" $repo.path/gridsome.config.js') ?
+					process.execute_stdout('sed -i "s/pathPrefix.*//" $repo.path_get()/gridsome.config.js') ?
 				}else if vuejs{
-					process.execute_stdout('sed -i "s/publicPath:.*//" $repo.path/vue.config.js') ?
+					process.execute_stdout('sed -i "s/publicPath:.*//" $repo.path_get()/vue.config.js') ?
 				}
 
 				if use_prefix {
 					if isgridsome{
-						process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.name\\\",\\n\\tplugins: \\\[/g" $repo.path/gridsome.config.js') ?
+						process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.name\\\",\\n\\tplugins: \\\[/g" $repo.path_get()/gridsome.config.js') ?
 					}else if vuejs{
-						process.execute_stdout('sed -i "s/configureWebpack: {/publicPath: \\\"\\/$site.name\\\",\\n\configureWebpack: {/g" $repo.path/vue.config.js') ?
+						process.execute_stdout('sed -i "s/configureWebpack: {/publicPath: \\\"\\/$site.name\\\",\\n\configureWebpack: {/g" $repo.path_get()/vue.config.js') ?
 					}
 					
 				}
 
-				process.execute_stdout('$repo.path/build.sh') ?
+				process.execute_stdout('$repo.path_get()/build.sh') ?
 				
 				if isgridsome{
-					process.execute_stdout('cd $repo.path/ && git checkout gridsome.config.js') ?
+					process.execute_stdout('cd $repo.path_get()/ && git checkout gridsome.config.js') ?
 				}else if vuejs{
-					process.execute_stdout('cd $repo.path/ && git checkout vue.config.js') ?
+					process.execute_stdout('cd $repo.path_get()/ && git checkout vue.config.js') ?
 				}
 				break
 			}

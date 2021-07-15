@@ -102,7 +102,9 @@ fn config_load() ?ConfigRoot {
 		config.groups << json.decode([]UserGroup, txt) ?
 	}
 
-	mut gt := gittools.new(config.publish.paths.code) or { return error('cannot load gittools:$err') }
+	mut gt := gittools.new(config.publish.paths.code,config.publish.multibranch) or { return error('cannot load gittools:$err') }
+
+
 
 	for mut site in config.sites{
 		config.process_site_repo( mut &gt, mut &site)?
@@ -129,7 +131,7 @@ fn (mut config ConfigRoot) process_site_repo(mut gt gittools.GitStructure, mut s
 			return error(' - ERROR: could not download site $site.git_url, do you have rights?\n$err\n$site')
 		}
 		site.fs_path = ""
-		site.path = repo.addr.path_get()
+		site.path = repo.path_get()
 	}
 	if ! os.exists(site.path) || site.path == "" {
 		return error("Cannot find site.fs_path on `$site.path` for \n$site\nin process site repo.")
