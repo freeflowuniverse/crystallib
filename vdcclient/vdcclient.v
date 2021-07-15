@@ -141,18 +141,16 @@ pub fn (client Client) get_backup() ([]Backup, int) {
 
 pub fn (client Client) list_vms() ([]VM, int) {
 	auth_cred := base64.encode_str('$client.vdcname:$client.password')
-	full_url := client.url + '/api/controller/vm'
+	full_url := client.url + '/api/controller/vmachine'
 
 	response := get(full_url, auth_cred)
 	return json.decode([]VM, response.text) or {}, response.status_code
 }
 
-pub fn (client Client) add_vm(flavor string) ([]int, int) {
+pub fn (client Client) add_vm(add_vm_request_body AddVM) ([]int, int) {
 	auth_cred := base64.encode_str('$client.vdcname:$client.password')
-	body := json.encode(map{
-		'flavor': flavor
-	})
-	full_url := client.url + '/api/controller/vm'
+	body := json.encode(add_vm_request_body)
+	full_url := client.url + '/api/controller/vmachine'
 
 	response := post(full_url, auth_cred, body)
 	return json.decode([]int, response.text) or {}, response.status_code
@@ -163,7 +161,7 @@ pub fn (client Client) delete_vm(wid int) (DeleteResponse, int) {
 	body := json.encode(map{
 		'wid': wid
 	})
-	full_url := client.url + '/api/controller/vm'
+	full_url := client.url + '/api/controller/vmachine'
 
 	response := delete(full_url, auth_cred, body)
 	return json.decode(DeleteResponse, response.text) or {}, response.status_code

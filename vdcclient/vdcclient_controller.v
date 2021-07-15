@@ -20,6 +20,7 @@ pub:
 	total_capacity  int
 	wallet          Wallet
 	price           int
+	vmachines		VM
 }
 
 pub struct S3 {
@@ -179,15 +180,35 @@ struct AddNode {
 	farm     string
 }
 
+pub struct PublicIP {
+	wid int
+	address string
+}
+
+pub struct Resources {
+pub:
+	cru int
+	mru int
+	sru int
+}
+
 pub struct VM {
+pub:
 	name 		string
-	wids 		[]int
-	cpu 		int
-	memory 		int
-	disk 		int
-	network 	string
-	ip 			string
-	public_ip 	string
-	pool 		int
+	wid 		int
+	resources	Resources
+	size 		int
+	ip_address 	string
+	public_ip 	PublicIP
+	pool_id 	int
 	node_id 	string
+}
+
+pub struct AddVM {
+pub:
+	name 				string
+	size 				int
+	ssh_public_key 		string
+	enable_public_ip 	bool
+	farm_name 			string
 }
