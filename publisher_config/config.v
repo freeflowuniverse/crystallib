@@ -82,7 +82,7 @@ fn config_load() ?ConfigRoot {
 	current_dir := '.'
 	mut files := os.ls(current_dir) or { return error("Cannot load config files in current dir, $err") }
 	for file in files {
-		if (file.starts_with('site_') && file.ends_with('.json')) || file == 'sites.json' {
+		if file.starts_with('site_') && file.ends_with('.json') {
 			sites_config_files << file
 		}
 		if file.starts_with('groups_') && file.ends_with('.json'){
@@ -92,7 +92,7 @@ fn config_load() ?ConfigRoot {
 	for site_file in sites_config_files {
 		println(' - found $site_file as a config file for sites.')
 		txt := os.read_file(site_file) ?
-		config.sites << json.decode([]SiteConfig, txt) ?
+		config.sites << json.decode(SiteConfig, txt) ?
 	}
 
 	// Load Groups
