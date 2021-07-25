@@ -14,12 +14,12 @@ pub fn digitaltwin_install(mut cfg publisher_config.ConfigRoot, update bool) ? {
 
 	mut pull := update
 
-	url := 'https://github.com/threefoldtech/digitaltwin.git'
+	url := 'https://github.com/threefoldtech/twin_server/'
 	mut repo := gt.repo_get_from_url(url: url, branch: 'main', pull: pull) or {
 		return error('cannot pull digital twin git repo:\n$url\n$err')
 	}
 
-	if !os.exists('$repo.path_get()/publisher/node_modules') || update == true {
+	if !os.exists('$repo.path_get()/node_modules') || update == true {
 		println('- will make sure repo is up2date')
 		repo.pull() ?
 
@@ -33,11 +33,12 @@ pub fn digitaltwin_install(mut cfg publisher_config.ConfigRoot, update bool) ? {
 			set -e
 			export NVM_DIR=$base
 			source $base/nvm.sh
-			cd $repo.path_get()/publisher
+			cd $repo.path_get()
 			npm install
 			'
 		process.execute_silent(script) or {
-			os.rmdir_all('$repo.path_get()/publisher/node_modules') or { panic(err) }
+			print(err)
+			os.rmdir_all('$repo.path_get()/node_modules') or { }
 			return error('cannot install digital twin.\n$err')
 		}
 	}
@@ -48,10 +49,10 @@ pub fn digitaltwin_install(mut cfg publisher_config.ConfigRoot, update bool) ? {
 pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool, update bool) ? {
 	digitaltwin_install(mut cfg, update) ?
 	base := cfg.publish.paths.base
-
+	
 	mut gt := gittools.new(cfg.publish.paths.code, cfg.publish.multibranch) ?
 
-	url := 'https://github.com/threefoldtech/digitaltwin.git'
+	url := 'https://github.com/threefoldtech/twin_server/'
 	mut repo := gt.repo_get_from_url(url: url, branch: 'main') or {
 		return error('cannot pull digital twin git repo:\n$url\n$err')
 	}
@@ -62,12 +63,12 @@ pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool,
 	if !isproduction {
 		script = '
 				set -e
-				export NVM_DIR=$base
-				source $base/nvm.sh
-				cd $repo.path_get()/publisher
-
-				export PATH=$cfg.nodejs.path/bin:\$PATH
-				node server.js
+				tmux new -d -s "digitaltwin"
+				tmux send-keys -t digitaltwin.0 "export NVM_DIR=$base && source $base/nvm.sh && cd $repo.path_get()" ENTER
+				tmux send-keys -t digitaltwin.0 "export PATH=$cfg.nodejs.path/bin:\$PATH" ENTER
+				tmux send-keys -t digitaltwin.0 "node server.js" ENTER
+				tmux new-window -t digitaltwin:1
+				tmux send-keys -t digitaltwin:1 "cd $base/config && publishtools pull && publishtools develop" ENTER
 				'
 	} else {
 		script = '
@@ -77,8 +78,10 @@ pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool,
 		tmux send-keys -t digitaltwin.0 "export NVM_DIR=$base" ENTER
 		tmux send-keys -t digitaltwin.0 "source $base/nvm.sh" ENTER
 		#tmux send-keys -t digitaltwin.0 "nvm use --lts" ENTER
-		tmux send-keys -t digitaltwin.0 "cd $repo.path_get()/publisher" ENTER
+		tmux send-keys -t digitaltwin.0 "cd $repo.path_get()" ENTER
 		tmux send-keys -t digitaltwin.0 "NODE_ENV=production node server.js || echo \\"can not run\\" " ENTER
+		tmux new-window -t digitaltwin:1
+		tmux send-keys -t digitaltwin:1 "cd $base/config && publishtools pull && publishtools develop" ENTER
 		'
 	}
 	process.execute_interactive('$script') ?
@@ -87,51 +90,58 @@ pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool,
 
 pub fn digitaltwin_restart(mut cfg publisher_config.ConfigRoot, isproduction bool) ? {
 	base := cfg.publish.paths.base
-
 	mut gt := gittools.new(cfg.publish.paths.code, cfg.publish.multibranch) ?
 
-	url := 'https://github.com/threefoldtech/digitaltwin.git'
+	url := 'https://github.com/threefoldtech/twin_server/'
 	mut repo := gt.repo_get_from_url(url: url, branch: 'main') or {
 		return error('cannot pull digital twin git repo:\n$url\n$err')
 	}
 
 	println(' - will restart digitaltwin')
+	
 	mut script := ''
-
 	if !isproduction {
 		script = '
 				set -e
-				export NVM_DIR=$base
-				source $base/nvm.sh
-				cd $repo.path_get()/publisher
-
-				export PATH=$cfg.nodejs.path/bin:\$PATH
-				pkill -9 node
-				node server.js
+				tmux kill-session -t digitaltwin
+				tmux new -d -s "digitaltwin"
+				tmux send-keys -t digitaltwin.0 "export NVM_DIR=$base && source $base/nvm.sh && cd $repo.path_get()" ENTER
+				tmux send-keys -t digitaltwin.0 "export PATH=$cfg.nodejs.path/bin:\$PATH" ENTER
+				tmux send-keys -t digitaltwin.0 "node server.js" ENTER
+				tmux new-window -t digitaltwin:1
+				tmux send-keys -t digitaltwin:1 "cd $base/config && && publishtools pull && publishtools develop" ENTER
 				'
 	} else {
 		script = '
 		tmux kill-session -t digitaltwin
+		
 		tmux new -d -s "digitaltwin"
 		tmux send-keys -t digitaltwin.0 "export THREEBOT_PHRASE=\$THREEBOT_PHRASE" ENTER
 		tmux send-keys -t digitaltwin.0 "export SECRET=\$SECRET" ENTER
-		tmux send-keys -t digitaltwin.0 "set -e" ENTER
 		tmux send-keys -t digitaltwin.0 "export NVM_DIR=$base" ENTER
 		tmux send-keys -t digitaltwin.0 "source $base/nvm.sh" ENTER
 		#tmux send-keys -t digitaltwin.0 "nvm use --lts" ENTER
-		tmux send-keys -t digitaltwin.0 "cd $repo.path_get()/publisher" ENTER
+		tmux send-keys -t digitaltwin.0 "cd $repo.path_get()" ENTER
 		tmux send-keys -t digitaltwin.0 "NODE_ENV=production node server.js || echo \\"can not run\\" " ENTER
+		tmux new-window -t digitaltwin:1
+		tmux send-keys -t digitaltwin:1 "cd $base/config && && publishtools pull && publishtools develop" ENTER
 		'
 	}
+
+	
 	process.execute_interactive('$script') ?
 	println(' - digital twin restarted')
 }
 
 pub fn digitaltwin_reload(mut cfg publisher_config.ConfigRoot, isproduction bool) ? {
 	println(' - will reload digitaltwin')
+	base := cfg.publish.paths.base
 	mut script := '
 				set -e
 				kill -10 `ps aux | grep "node server.js" | head -n 1 | tr -s " " | cut -d " " -f 2`
+				tmux kill-window  -t digitaltwin:1
+				tmux new-window -t digitaltwin:1
+				tmux send-keys -t digitaltwin:1 "cd $base/config && publishtools pull && publishtools develop" ENTER
 				'
 	process.execute_interactive('$script') ?
 	println(' - digital twin restarted')
@@ -139,18 +149,7 @@ pub fn digitaltwin_reload(mut cfg publisher_config.ConfigRoot, isproduction bool
 
 pub fn digitaltwin_stop(mut cfg publisher_config.ConfigRoot, isproduction bool) ? {
 	println(' - will stop digitaltwin')
-	mut script := ''
-
-	if !isproduction {
-		script = '
-				set -e
-				kill -9 `ps aux | grep "node server.js" | head -n 1 | tr -s " " | cut -d " " -f 2`
-				'
-	} else {
-		script = '
-		tmux send-keys -t digitaltwin.0 exit ENTER
-		'
-	}
+	script := 'tmux kill-session -t digitaltwin'
 	process.execute_interactive('$script') ?
 	println(' - digital twin reloaded')
 }
@@ -166,10 +165,5 @@ pub fn digitaltwin_status(mut cfg publisher_config.ConfigRoot, isproduction bool
 
 pub fn digitaltwin_logs(mut cfg publisher_config.ConfigRoot, isproduction bool) ? {
 	println(' - will check logs of digitaltwin')
-	script := '
-				set -e
-				echo "Check logs @ ~/codewww/github/threefoldtech/digitaltwin/publisher/logs"
-				'
-
-	process.execute_interactive('$script') ?
+	// process.execute_interactive('$script') ?
 }

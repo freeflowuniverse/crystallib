@@ -94,7 +94,6 @@ fn config_load() ?ConfigRoot {
 		txt := os.read_file(site_file) ?
 		// mut site_in := json.decode(SiteConfig, txt) ?
 		mut site_in := json.decode(SiteConfig, txt) or {panic(err)}
-		println(site_in)
 		if site_in.name == ""{
 			panic("site name should not be empty. Prob means error in json.\n$txt")
 		}
@@ -125,7 +124,6 @@ fn (mut config ConfigRoot) process_site_repo(mut gt gittools.GitStructure, mut s
 	// println(" - process site: $site.name")
 
 	if site.state != SiteState.init{
-		println(site)
 		panic("should not get here, bug, site need to be in state init.")
 	}
 

@@ -3,7 +3,6 @@ module installers
 import despiegk.crystallib.publisher_config
 import despiegk.crystallib.process
 import despiegk.crystallib.gittools
-import despiegk.crystallib.publisher_core
 import cli
 import os
 
@@ -66,9 +65,6 @@ pub fn website_build(cmd &cli.Command) ? {
 	mut sites := conf.sites_get()
 
 	if arg.len == 0 {
-		println('- Flatten all wikis')
-		mut publ := publisher_core.new(&conf)?
-		publ.flatten() ?
 		println(' - build all websites')
 		mut gt := gittools.new(conf.publish.paths.code, conf.publish.multibranch) or {
 			return error('ERROR: cannot load gittools:$err')
