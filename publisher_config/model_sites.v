@@ -35,7 +35,7 @@ pub struct SiteACE {
 pub mut:
 	groups  []string
 	users   []string
-	rights  string   // default R today
+	rights  string = "R"  // default R today
 	secrets []string // is list of secrets in stead of threefold connect which can give access
 }
 
