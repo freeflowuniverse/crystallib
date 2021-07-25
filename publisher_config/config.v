@@ -92,7 +92,13 @@ fn config_load() ?ConfigRoot {
 	for site_file in sites_config_files {
 		println(' - found $site_file as a config file for sites.')
 		txt := os.read_file(site_file) ?
-		config.sites << json.decode(SiteConfig, txt) ?
+		// mut site_in := json.decode(SiteConfig, txt) ?
+		mut site_in := json.decode(SiteConfig, txt) or {panic(err)}
+		println(site_in)
+		if site_in.name == ""{
+			panic("site name should not be empty. Prob means error in json.\n$txt")
+		}
+		config.sites << site_in
 	}
 
 	// Load Groups
@@ -115,6 +121,8 @@ fn config_load() ?ConfigRoot {
 
 
 fn (mut config ConfigRoot) process_site_repo(mut gt gittools.GitStructure, mut site SiteConfig) ? {
+
+	// println(" - process site: $site.name")
 
 	if site.state != SiteState.init{
 		println(site)
