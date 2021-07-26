@@ -98,6 +98,10 @@ pub fn update_config() ?{
 	println(' - copying config files to ~/.publishtools/config')
 	res := os.ls('.')?
 	for file in res{
-		os.cp('./$file', '$cfg.publish.paths.base/config/$file') ?
+		if !os.is_file(file){
+			continue
+		}
+
+		os.cp('./$file', '$cfg.publish.paths.base/config/$file')?
 	}
 }

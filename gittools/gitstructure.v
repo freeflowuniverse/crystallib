@@ -74,7 +74,7 @@ mut:
 // THIS FUNCTION DOES NOT EXECUTE THE CHECK !!!
 pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) ?&GitRepo {
 	for r in gitstructure.repos {
-		mut newname := r.addr.name.replace('info_', '')		
+		mut newname := r.addr.name.replace('info_', '').replace('www_', '')
 		if r.addr.name == args.name || newname == args.name{
 			if args.account == '' || args.account == r.addr.account {
 				mut r2 := &gitstructure.repos[r.id]

@@ -155,14 +155,14 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 		return error('cannot install node modules for ${name}.\n$err')
 	}
 
-	// println(job)
-
-	// process.execute_silent("mkdir -p $repo.path_get()/content") ?
-
+	mut datarepo := gt.repo_get(name: 'threefold_data') or {
+			return error('ERROR: cannot get repo:$err')
+	}
+	
 	for x in ['blog', 'person', 'news', 'project'] {
 		if os.exists('$repo.path_get()/content') {
 			process.execute_silent('rm -rf $repo.path_get()/content/$x\n') ?
-			os.symlink('$codepath/github/threefoldfoundation/data_threefold/content/$x',
+			os.symlink('$datarepo.path_get()/content/$x',
 				'$repo.path_get()/content/$x') or {
 				return error('Cannot link $x from data path to repo.path_get().\n$err')
 			}
