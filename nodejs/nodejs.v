@@ -35,29 +35,17 @@ pub fn install(cfg &publisher_config.ConfigRoot) ? {
 	}
 
 	if !os.exists('$nodejspath/bin/node') {
-		println(' - will install nodejs (can take quite a while)')
+		println(' - will install nodejs $cfg.nodejs.version (can take quite a while)')
+		script = '
+		set -e
+		export NVM_DIR=$base
+		source $base/nvm.sh
+		nvm install $cfg.nodejs.version
+		npm install --global @gridsome/cli
+		npm install -g @vue/cli@latest
+		npm install -g @vue/cli-service 
+		'
 		
-		lts := cfg.nodejs.version.replace('v', '')
-
-		if cfg.nodejs.version == "lts" {
-			script = '
-			set -e
-			export NVM_DIR=$base
-			source $base/nvm.sh
-			nvm install $lts
-			npm install --global @gridsome/cli
-			npm install -g @vue/cli
-			'
-		} else {
-			script = '
-			set -e
-			export NVM_DIR=$base
-			source $base/nvm.sh
-			nvm install node
-			npm install --global @gridsome/cli
-			npm install -g @vue/cli
-			'
-		}
 		process.execute_silent(script) or {
 			println('cannot install nodejs.\n$err')
 			exit(1)
