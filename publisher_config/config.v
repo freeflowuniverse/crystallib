@@ -45,16 +45,16 @@ fn config_load() ?ConfigRoot {
 	// Make sure that all dirs existed/created
 
 	if !os.exists(config.publish.paths.base) {
-		os.mkdir(config.publish.paths.base) or { return error("Cannot create path for publisher: $err") }
+		os.mkdir_all(config.publish.paths.base) or { return error("Cannot create path for publisher: $err") }
 	}
 
 	if !os.exists(config.publish.paths.code) {
 	
-		os.mkdir(config.publish.paths.code) or { return error("Cannot create path for publisher: $err") }
+		os.mkdir_all(config.publish.paths.code) or { return error("Cannot create path for publisher: $err") }
 	}
 
 	if !os.exists(config.publish.paths.codewiki) {
-		os.mkdir(config.publish.paths.codewiki) or { return error("Cannot create path for publisher: $err") }
+		os.mkdir_all(config.publish.paths.codewiki) or { return error("Cannot create path for publisher: $err") }
 	}
 
 	// Load nodejs config

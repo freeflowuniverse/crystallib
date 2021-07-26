@@ -48,6 +48,8 @@ pub fn base() ? {
 	if !os.exists(base) {
 		os.mkdir(base) or { return err }
 	}
+	
+	os.mkdir_all('$base/config') or { return err }
 
 	println(' - installed base requirements')
 }

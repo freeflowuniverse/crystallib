@@ -46,6 +46,7 @@ pub fn install(cfg &publisher_config.ConfigRoot) ? {
 			source $base/nvm.sh
 			nvm install $lts
 			npm install --global @gridsome/cli
+			npm install --global vue
 			'
 		} else {
 			script = '
@@ -54,6 +55,7 @@ pub fn install(cfg &publisher_config.ConfigRoot) ? {
 			source $base/nvm.sh
 			nvm install node
 			npm install --global @gridsome/cli
+			npm install --global vue
 			'
 		}
 		process.execute_silent(script) or {
