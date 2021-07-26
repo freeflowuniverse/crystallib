@@ -42,8 +42,6 @@ pub fn install(cfg &publisher_config.ConfigRoot) ? {
 		source $base/nvm.sh
 		nvm install $cfg.nodejs.version
 		npm install -g @gridsome/cli
-		npm install -g @vue/cli@^3.1.0
-		npm install -g @vue/cli-service 
 		'
 		
 		process.execute_silent(script) or {
