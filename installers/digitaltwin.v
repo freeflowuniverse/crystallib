@@ -35,6 +35,8 @@ pub fn digitaltwin_install(mut cfg publisher_config.ConfigRoot, update bool) ? {
 			source $base/nvm.sh
 			cd $repo.path_get()
 			npm install
+			mkdir -p /appdata/user
+			mkdir -p /appdata/chats
 			'
 		process.execute_silent(script) or {
 			print(err)
