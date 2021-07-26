@@ -122,7 +122,7 @@ pub fn website_build(cmd &cli.Command) ? {
 		// be careful process stops after interactive execute
 		// process.execute_interactive('$repo.path_get()/build.sh') ?
 		for site in sites {
-			if site.name == repo.addr.name {
+			if site.name == repo.addr.name.replace('www_', '') {
 				println(' - build website: $repo.path_get()')
 				
 				mut isgridsome := true

@@ -41,8 +41,8 @@ pub fn install(cfg &publisher_config.ConfigRoot) ? {
 		export NVM_DIR=$base
 		source $base/nvm.sh
 		nvm install $cfg.nodejs.version
-		npm install --global @gridsome/cli
-		npm install -g @vue/cli@latest
+		npm install -g @gridsome/cli
+		npm install -g @vue/cli@^3.1.0
 		npm install -g @vue/cli-service 
 		'
 		
