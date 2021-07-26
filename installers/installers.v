@@ -43,7 +43,7 @@ pub fn base() ? {
 	myconfig := publisher_config.get()
 	base := myconfig.publish.paths.base
 
-	mut node := builder.node_get({}) or {
+	mut node := builder.node_get(builder.NodeArguments{}) or {
 		return error(' ** ERROR: cannot load node. Error was:\n$err')
 	}
 	node.platform_prepare() ?

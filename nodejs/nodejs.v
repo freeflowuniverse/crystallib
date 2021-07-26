@@ -16,7 +16,7 @@ pub fn install(cfg &publisher_config.ConfigRoot) ? {
 	base := cfg.publish.paths.base
 	nodejspath := cfg.nodejs.path
 
-	mut node := builder.node_get({}) or {
+	mut node := builder.node_get(builder.NodeArguments{}) or {
 		println(' ** ERROR: cannot load node. Error was:\n$err')
 		exit(1)
 	}

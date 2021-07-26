@@ -73,7 +73,8 @@ pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool,
 	} else {
 		script = '
 		tmux new -d -s "digitaltwin"
-		tmux send-keys -t digitaltwin.0 "export THREEBOT_PHRASE=\$THREEBOT_PHRASE" ENTER
+		tmux send-keys -t digitaltwin.0 "export ENABLE_SSL=\$ENABLE_SSL" ENTER
+		tmux send-keys -t digitaltwin.0 "export THREEBOT_PHRASE=\'\$THREEBOT_PHRASE\'" ENTER
 		tmux send-keys -t digitaltwin.0 "export SECRET=\$SECRET" ENTER
 		tmux send-keys -t digitaltwin.0 "export NVM_DIR=$base" ENTER
 		tmux send-keys -t digitaltwin.0 "source $base/nvm.sh" ENTER
@@ -116,7 +117,8 @@ pub fn digitaltwin_restart(mut cfg publisher_config.ConfigRoot, isproduction boo
 		tmux kill-session -t digitaltwin
 		
 		tmux new -d -s "digitaltwin"
-		tmux send-keys -t digitaltwin.0 "export THREEBOT_PHRASE=\$THREEBOT_PHRASE" ENTER
+		tmux send-keys -t digitaltwin.0 "export ENABLE_SSL=\$ENABLE_SSL" ENTER
+		tmux send-keys -t digitaltwin.0 "export THREEBOT_PHRASE=\'\$THREEBOT_PHRASE\'" ENTER
 		tmux send-keys -t digitaltwin.0 "export SECRET=\$SECRET" ENTER
 		tmux send-keys -t digitaltwin.0 "export NVM_DIR=$base" ENTER
 		tmux send-keys -t digitaltwin.0 "source $base/nvm.sh" ENTER
