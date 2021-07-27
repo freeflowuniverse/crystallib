@@ -2,8 +2,7 @@ module publisher_core
 
 import despiegk.crystallib.texttools
 import os
-// import json
-// import despiegk.crystallib.publisher_config
+import despiegk.crystallib.publisher_config
 
 fn (mut publisher Publisher) load() ? {
 	// remove code_wiki subdirs
@@ -18,6 +17,10 @@ fn (mut publisher Publisher) load() ? {
 	}
 
 	for site in publisher.config.sites {
+		if site.cat != publisher_config.SiteCat.wiki {
+			continue
+		}
+
 		publisher.load_site(site.name)?
 	}
 	println( " - all sites loaded")
