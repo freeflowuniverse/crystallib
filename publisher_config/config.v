@@ -136,10 +136,11 @@ fn (mut config ConfigRoot) process_site_repo(mut gt gittools.GitStructure, mut s
 			return error(' - ERROR: could not download site $site.git_url\n$err\n$site')
 		}
 		site.fs_path = ""
-		site.path = repo.path_get()
+		site.path = os.join_path(repo.path_get(), repo.addr.path)
 	}
 	if ! os.exists(site.path) || site.path == "" {
-		return error("Cannot find site.fs_path on `$site.path` for \n$site\nin process site repo.")
+		println( "- Error Cannot find `$site.path` for \n$site\nin process site repo. Creating `$site.path`")
+		os.mkdir_all(site.path)?
 	}
 
 	toremoves := [os.join_path(site.path,"index.html"),os.join_path(site.path,"wikiconfig.json")]
