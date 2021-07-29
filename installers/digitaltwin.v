@@ -82,7 +82,7 @@ pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool,
 		tmux send-keys -t digitaltwin.0 "source $base/nvm.sh" ENTER
 		#tmux send-keys -t digitaltwin.0 "nvm use --lts" ENTER
 		tmux send-keys -t digitaltwin.0 "cd $repo.path_get()/src" ENTER
-		tmux send-keys -t digitaltwin.0 "WIKI_FS=true  NODE_ENV=production && node server.js || echo \\"can not run\\" " ENTER
+		tmux send-keys -t digitaltwin.0 "WIKI_FS=true  NODE_ENV=production node server.js || echo \\"can not run\\" " ENTER
 		tmux new-window -t digitaltwin:1
 		tmux send-keys -t digitaltwin:1 "cd $base/config && publishtools removechanges && publishtools develop" ENTER
 		'
