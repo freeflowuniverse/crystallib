@@ -70,7 +70,7 @@ pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool,
 				tmux send-keys -t digitaltwin.0 "export PATH=$cfg.nodejs.path/bin:\$PATH" ENTER
 				tmux send-keys -t digitaltwin.0 "node server.js" ENTER
 				tmux new-window -t digitaltwin:1
-				tmux send-keys -t digitaltwin:1 "cd $base/config && publishtools pull && publishtools develop" ENTER
+				tmux send-keys -t digitaltwin:1 "cd $base/config && publishtools develop" ENTER
 				'
 	} else {
 		script = '
@@ -84,7 +84,7 @@ pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool,
 		tmux send-keys -t digitaltwin.0 "cd $repo.path_get()" ENTER
 		tmux send-keys -t digitaltwin.0 "NODE_ENV=production node server.js || echo \\"can not run\\" " ENTER
 		tmux new-window -t digitaltwin:1
-		tmux send-keys -t digitaltwin:1 "cd $base/config && publishtools pull && publishtools develop" ENTER
+		tmux send-keys -t digitaltwin:1 "cd $base/config && publishtools develop" ENTER
 		'
 	}
 	process.execute_interactive('$script') ?
@@ -112,7 +112,7 @@ pub fn digitaltwin_restart(mut cfg publisher_config.ConfigRoot, isproduction boo
 				tmux send-keys -t digitaltwin.0 "export PATH=$cfg.nodejs.path/bin:\$PATH" ENTER
 				tmux send-keys -t digitaltwin.0 "node server.js" ENTER
 				tmux new-window -t digitaltwin:1
-				tmux send-keys -t digitaltwin:1 "cd $base/config && && publishtools pull && publishtools develop" ENTER
+				tmux send-keys -t digitaltwin:1 "cd $base/config && publishtools develop" ENTER
 				'
 	} else {
 		script = '
@@ -128,7 +128,7 @@ pub fn digitaltwin_restart(mut cfg publisher_config.ConfigRoot, isproduction boo
 		tmux send-keys -t digitaltwin.0 "cd $repo.path_get()" ENTER
 		tmux send-keys -t digitaltwin.0 "NODE_ENV=production node server.js || echo \\"can not run\\" " ENTER
 		tmux new-window -t digitaltwin:1
-		tmux send-keys -t digitaltwin:1 "cd $base/config && && publishtools pull && publishtools develop" ENTER
+		tmux send-keys -t digitaltwin:1 "cd $base/config && publishtools develop" ENTER
 		'
 	}
 
@@ -145,7 +145,7 @@ pub fn digitaltwin_reload(mut cfg publisher_config.ConfigRoot, isproduction bool
 				kill -10 `ps aux | grep "node server.js" | head -n 1 | tr -s " " | cut -d " " -f 2`
 				tmux kill-window  -t digitaltwin:1
 				tmux new-window -t digitaltwin:1
-				tmux send-keys -t digitaltwin:1 "cd $base/config && publishtools pull && publishtools develop" ENTER
+				tmux send-keys -t digitaltwin:1 "cd $base/config && publishtools develop" ENTER
 				'
 	process.execute_interactive('$script') ?
 	println(' - digital twin restarted')

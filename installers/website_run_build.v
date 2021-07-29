@@ -97,7 +97,7 @@ pub fn website_build(cmd &cli.Command) ? {
 					if isgridsome{
 						process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.prefix\\\",\\n\\tplugins: \\\[/g" $repo2.path_get()/gridsome.config.js') ?
 					}else if vuejs{
-						process.execute_stdout('sed -i "s/configureWebpack:: \\\{/publicPath: \\\"\\/$site.prefix\\\",\\n\\configureWebpack:: \\\{/g" $repo2.path_get()/vue.config.js') ?
+						process.execute_stdout('sed -i "s/configureWebpack: {/publicPath: \\\"\\/$site.prefix\\\",\\n\configureWebpack: {/g" $repo2.path_get()/vue.config.js') ?
 					}
 					
 				}
