@@ -19,7 +19,7 @@ pub fn digitaltwin_install(mut cfg publisher_config.ConfigRoot, update bool) ? {
 		return error('cannot pull digital twin git repo:\n$url\n$err')
 	}
 
-	if !os.exists('$repo.path_get()/node_modules') || update == true {
+	if !os.exists('$repo.path_get()/src/node_modules') || update == true {
 		println('- will make sure repo is up2date')
 		repo.pull() ?
 
@@ -33,14 +33,14 @@ pub fn digitaltwin_install(mut cfg publisher_config.ConfigRoot, update bool) ? {
 			set -e
 			export NVM_DIR=$base
 			source $base/nvm.sh
-			cd $repo.path_get()
+			cd $repo.path_get()/src
 			npm install
 			mkdir -p /appdata/user
 			mkdir -p /appdata/chats
 			'
 		process.execute_silent(script) or {
 			print(err)
-			os.rmdir_all('$repo.path_get()/node_modules') or { }
+			os.rmdir_all('$repo.path_get()/src/node_modules') or { }
 			return error('cannot install digital twin.\n$err')
 		}
 	}
@@ -68,7 +68,7 @@ pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool,
 				tmux new -d -s "digitaltwin"
 				tmux send-keys -t digitaltwin.0 "export NVM_DIR=$base && source $base/nvm.sh && cd $repo.path_get()" ENTER
 				tmux send-keys -t digitaltwin.0 "export PATH=$cfg.nodejs.path/bin:\$PATH" ENTER
-				tmux send-keys -t digitaltwin.0 "node server.js" ENTER
+				tmux send-keys -t digitaltwin.0 "cd src && node server.js" ENTER
 				tmux new-window -t digitaltwin:1
 				tmux send-keys -t digitaltwin:1 "cd $base/config && publishtools removechanges && publishtools develop" ENTER
 				'
@@ -82,7 +82,7 @@ pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool,
 		tmux send-keys -t digitaltwin.0 "source $base/nvm.sh" ENTER
 		#tmux send-keys -t digitaltwin.0 "nvm use --lts" ENTER
 		tmux send-keys -t digitaltwin.0 "cd $repo.path_get()" ENTER
-		tmux send-keys -t digitaltwin.0 "WIKI_FS=true  NODE_ENV=production node server.js || echo \\"can not run\\" " ENTER
+		tmux send-keys -t digitaltwin.0 "WIKI_FS=true  NODE_ENV=production && cd src && node server.js || echo \\"can not run\\" " ENTER
 		tmux new-window -t digitaltwin:1
 		tmux send-keys -t digitaltwin:1 "cd $base/config && publishtools removechanges && publishtools develop" ENTER
 		'
@@ -110,7 +110,7 @@ pub fn digitaltwin_restart(mut cfg publisher_config.ConfigRoot, isproduction boo
 				tmux new -d -s "digitaltwin"
 				tmux send-keys -t digitaltwin.0 "export NVM_DIR=$base && source $base/nvm.sh && cd $repo.path_get()" ENTER
 				tmux send-keys -t digitaltwin.0 "export PATH=$cfg.nodejs.path/bin:\$PATH" ENTER
-				tmux send-keys -t digitaltwin.0 "node server.js" ENTER
+				tmux send-keys -t digitaltwin.0 "cd src && node server.js" ENTER
 				tmux new-window -t digitaltwin:1
 				tmux send-keys -t digitaltwin:1 "cd $base/config && publishtools removechanges && publishtools develop" ENTER
 				'
@@ -127,7 +127,7 @@ pub fn digitaltwin_restart(mut cfg publisher_config.ConfigRoot, isproduction boo
 		tmux send-keys -t digitaltwin.0 "source $base/nvm.sh" ENTER
 		#tmux send-keys -t digitaltwin.0 "nvm use --lts" ENTER
 		tmux send-keys -t digitaltwin.0 "cd $repo.path_get()" ENTER
-		tmux send-keys -t digitaltwin.0 "WIKI_FS=true  NODE_ENV=production node server.js || echo \\"can not run\\" " ENTER
+		tmux send-keys -t digitaltwin.0 "WIKI_FS=true  NODE_ENV=production cd src && node server.js || echo \\"can not run\\" " ENTER
 		tmux new-window -t digitaltwin:1
 		tmux send-keys -t digitaltwin:1 "cd $base/config && publishtools removechanges && publishtools develop" ENTER
 		'
