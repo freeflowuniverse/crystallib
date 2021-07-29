@@ -117,8 +117,9 @@ pub fn digitaltwin_restart(mut cfg publisher_config.ConfigRoot, isproduction boo
 	} else {
 		script = '
 		tmux kill-session -t digitaltwin
-		
+		source ~/.bashrc
 		tmux new -d -s "digitaltwin"
+		
 		tmux send-keys -t digitaltwin.0 "export ENABLE_SSL=\$ENABLE_SSL" ENTER
 		tmux send-keys -t digitaltwin.0 "export THREEBOT_PHRASE=\'\$THREEBOT_PHRASE\'" ENTER
 		tmux send-keys -t digitaltwin.0 "export SECRET=\$SECRET" ENTER
