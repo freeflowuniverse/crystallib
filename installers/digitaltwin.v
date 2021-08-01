@@ -35,8 +35,8 @@ pub fn digitaltwin_install(mut cfg publisher_config.ConfigRoot, update bool) ? {
 			source $base/nvm.sh
 			cd $repo.path_get()/src
 			npm install
-			mkdir -p /appdata/user
-			mkdir -p /appdata/chats
+			mkdir -p \$HOME/appdata/user
+			mkdir -p \$HOME/appdata/chats
 			'
 		process.execute_silent(script) or {
 			print(err)
@@ -66,6 +66,7 @@ pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool,
 		script = '
 				set -e
 				tmux new -d -s "digitaltwin"
+				tmux send-keys -t digitaltwin.0 "export BASEDIR=\$HOME/appdata/" ENTER
 				tmux send-keys -t digitaltwin.0 "export NVM_DIR=$base && source $base/nvm.sh && cd $repo.path_get()/src" ENTER
 				tmux send-keys -t digitaltwin.0 "export PATH=$cfg.nodejs.path/bin:\$PATH" ENTER
 				tmux send-keys -t digitaltwin.0 "node server.js" ENTER
@@ -75,6 +76,7 @@ pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool,
 	} else {
 		script = '
 		tmux new -d -s "digitaltwin"
+		tmux send-keys -t digitaltwin.0 "export BASEDIR=\$HOME/appdata" ENTER
 		tmux send-keys -t digitaltwin.0 "export ENABLE_SSL=\$ENABLE_SSL" ENTER
 		tmux send-keys -t digitaltwin.0 "export THREEBOT_PHRASE=\'\$THREEBOT_PHRASE\'" ENTER
 		tmux send-keys -t digitaltwin.0 "export SECRET=\$SECRET" ENTER
