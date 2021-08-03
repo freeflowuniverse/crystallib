@@ -24,7 +24,6 @@ struct AuthDetail {
 mut:
 	auth_token string
 	bio string
-	// date_joined string
 	email string
 	full_name string
 	full_name_display string
@@ -128,7 +127,24 @@ fn (mut h TaigaConnection) get_json(prefix string, data string, cache bool) ?map
 	data_raw := json2.raw_decode(result) ?
 	data2 := data_raw.as_map()
 	return data2
-}	
+}
+
+fn (mut h TaigaConnection) get_json_str(prefix string, data string, cache bool) ?string{
+	mut result := h.cache_get(prefix,data,cache)
+	if result == "" {
+		// println("MISS1")
+		mut req := http.new_request(http.Method.get,"$h.url/api/v1/$prefix",data)?
+		req.header = h.header()
+		res := req.do()?
+		result = res.text
+	}
+	//means empty result from cache
+	if result == "NULL" {
+		result = ""
+	}
+	h.cache_set(prefix,data,result, cache)
+	return result
+}
 
 fn (mut h TaigaConnection) auth(url string, login string, passwd string) ? AuthDetail{
 	h.url = url

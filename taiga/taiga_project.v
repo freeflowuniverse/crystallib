@@ -1,21 +1,30 @@
 module taiga
+import json
 
-struct ProjectList {
-pub mut:
-	projects []Project
-}
+// struct ProjectList {
+// pub mut:
+// 	projects []Project
+// }
 
 struct Project {
 pub mut:
-	name string  //normalized name
-	name_original string
+	name string
 	description string
 	id int
-	uuid string
 	is_private bool
-	// members[]
+	members []int
 	tags []string
-	slug string	
+	slug string
+	created_date string
+	modified_date string
+	owner ProjectOwner
+}
+
+struct ProjectOwner{
+pub mut:
+	username string
+	id int
+	email string
 }
 
 pub enum Projectype {
@@ -25,22 +34,9 @@ pub enum Projectype {
 }
 
 
-fn (mut h TaigaConnection) projects() ?ProjectList {
-	// reuse single object
-	data := h.get_json("projects","",true)?
-	mut pl := ProjectList{}
-	for key,val in data{
-		val2 := val.as_map()
-		println(key)
-		println(val2)
-		pl.projects << Project{
-			name: val2["name"].str()
-			name_original: val2["name"].str()
-		}
-		panic("//TODO load projects in obj")
-	}
-	
-	return pl
+fn (mut h TaigaConnection) projects() ?[]Project {
+	data := h.get_json_str("projects","",true)?
+	return json.decode([]Project, data)
 }
 
 //create project based on our standards

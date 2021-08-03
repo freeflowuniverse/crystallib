@@ -1,16 +1,22 @@
 module taiga
-
-struct UserList {
-pub mut:
-	users []User
-}
+import json
 
 struct User {
 pub mut:
-	name string
-	description string
 	id int
-	is_private bool
-	// members[]
+	is_active bool
+	username string
+	full_name string
+	full_name_display string
+	bio string
+	photo string
+	roles []string
+	email string
+	public_key string
+	date_joined string
+}
 
+fn (mut h TaigaConnection) users() ?[]User {
+	data := h.get_json_str("users","",true)?
+	return json.decode([]User, data)
 }
