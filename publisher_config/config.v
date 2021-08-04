@@ -135,6 +135,7 @@ fn (mut config ConfigRoot) process_site_repo(mut gt gittools.GitStructure, mut s
 		mut repo := gt.repo_get_from_url(url: site.git_url, pull: site.pull, reset: site.reset) or {
 			return error(' - ERROR: could not download site $site.git_url\n$err\n$site')
 		}
+		// println(' - get git addr obj:$repo.addr')
 		site.fs_path = ""
 		site.path = os.join_path(repo.path_get(), repo.addr.path)
 	}

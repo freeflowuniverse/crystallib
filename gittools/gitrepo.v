@@ -4,21 +4,19 @@ import os
 import despiegk.crystallib.process
 
 pub fn (repo GitRepo) path_content_get() string {
-	if repo.path != ""{
+	if repo.path != '' {
 		return repo.path
 	}
 	return '$repo.path_get()/$repo.addr.path'
 }
 
-
 pub fn (repo GitRepo) path_get() string {
-	if repo.gitstructure.multibranch{
+	if repo.gitstructure.multibranch {
 		return '$repo.addr.path_account_get()/$repo.addr.name/$repo.addr.branch'
-	}else{
+	} else {
 		return '$repo.addr.path_account_get()/$repo.addr.name'
 	}
 }
-
 
 // if there are changes then will return 'true', otherwise 'false'
 pub fn (mut repo GitRepo) changes() ?bool {
@@ -44,10 +42,10 @@ pub fn (mut repo GitRepo) changes() ?bool {
 
 fn (mut repo GitRepo) get_clone_cmd(http bool) string {
 	url := repo.url_get(http)
-	mut cmd := ""
-	if repo.gitstructure.multibranch{
-		cmd = 'mkdir -p $repo.addr.path_account_get()/$repo.addr.name && cd $repo.addr.path_account_get()/$repo.addr.name && git clone $url $repo.addr.branch'		
-	}else{
+	mut cmd := ''
+	if repo.gitstructure.multibranch {
+		cmd = 'mkdir -p $repo.addr.path_account_get()/$repo.addr.name && cd $repo.addr.path_account_get()/$repo.addr.name && git clone $url $repo.addr.branch'
+	} else {
 		cmd = 'mkdir -p $repo.addr.path_account_get() && cd $repo.addr.path_account_get() && git clone $url'
 	}
 	if repo.addr.branch != '' {
@@ -57,17 +55,17 @@ fn (mut repo GitRepo) get_clone_cmd(http bool) string {
 		cmd += ' --depth=$repo.addr.depth'
 		//  && cd $repo.addr.name && git fetch
 		// why was this there?
-	}	
+	}
 	// println(" - CMD: $cmd")
 	return cmd
 }
 
-//this is the main git functionality to get git repo, update, reset, ...
+// this is the main git functionality to get git repo, update, reset, ...
 pub fn (mut repo GitRepo) check(pull_force_ bool, reset_force_ bool) ? {
 	mut pull_force := pull_force_
 	mut reset_force := reset_force_
 
-	if repo.state != GitStatus.ok || pull_force_ || reset_force_{
+	if repo.state != GitStatus.ok || pull_force_ || reset_force_ {
 		// need to get the status of the repo
 		// println(' - repo $repo.addr.name check')
 		// println(repo)
@@ -120,6 +118,7 @@ pub fn (mut repo GitRepo) check(pull_force_ bool, reset_force_ bool) ? {
 		}
 
 		// println(repo.addr)
+		// print_backtrace() 
 		if repo.addr.branch != '' {
 			mut branchname := repo.branch_get() ?
 			branchname = branchname.trim('\n ')
@@ -160,13 +159,12 @@ pub fn (mut repo GitRepo) commit(msg string) ? {
 		return error('cannot detect if there are changes on repo.\n$err')
 	}
 	if change {
-		cmd := '
+		cmd := "
 		cd $repo.path_get()
 		set +e
 		git add . -A
 		git commit -m \"$msg\"
-		echo ""
-		'
+		echo "
 		process.execute_silent(cmd) or {
 			return error('Cannot commit repo: ${repo.path_get()}. Error was $err')
 		}
@@ -215,8 +213,8 @@ pub fn (mut repo GitRepo) branch_get() ?string {
 }
 
 pub fn (mut repo GitRepo) branch_switch(branchname string) ? {
-	if repo.gitstructure.multibranch{
-		return error("cannot do a branch switch if we are using multibranch strategy.")
+	if repo.gitstructure.multibranch {
+		return error('cannot do a branch switch if we are using multibranch strategy.')
 	}
 	cmd := 'cd $repo.path_get() && git checkout $branchname'
 	process.execute_silent(cmd) or {
