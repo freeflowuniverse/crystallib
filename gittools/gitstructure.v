@@ -22,6 +22,7 @@ pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs
 	mut addr := gitstructure.addr_get_from_url(args.url) or {
 		return error('cannot get addr from url:$err')
 	}
+	println(addr)
 	if addr.branch != '' && args.branch != '' && addr.branch != args.branch {
 		return error('conflict in branch names.\naddr:\n$addr\nargs:\n$args')
 	}
@@ -44,7 +45,7 @@ pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs
 			gitstructure.repos.delete_last()
 			return error('Could not clone the repo from ${args.url}.\nError:$err')
 		}
-		// println (" GIT REPO GET URL: PULL:$args.pull, RESET: $args.reset")
+		// println (" GIT REPO GET URL: PULL:$args.pull, RESET: $args.reset\n$r0.addr")
 		r0.check(args.pull, args.reset) ?
 		return r0
 	} else {
@@ -73,14 +74,19 @@ mut:
 // }
 // THIS FUNCTION DOES NOT EXECUTE THE CHECK !!!
 pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) ?&GitRepo {
+	mut res_ids := []int{}
 	for r in gitstructure.repos {
-		mut newname := r.addr.name.replace('info_', '').replace('www_', '')
-		if r.addr.name == args.name || newname == args.name{
+		if r.addr.name == args.name {
 			if args.account == '' || args.account == r.addr.account {
-				mut r2 := &gitstructure.repos[r.id]
-				return r2
+				res_ids << r.id
 			}
 		}
+	}
+	if res_ids.len == 1{
+		return &gitstructure.repos[res_ids[0]]
+	}
+	if  res_ids.len > 1{
+		return error("Found too many repo's for account:'$args.account' name:'$args.name'")
 	}
 	return error("Could not find repo for account:'$args.account' name:'$args.name'")
 }
