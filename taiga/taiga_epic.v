@@ -8,10 +8,14 @@ pub mut:
 	is_private bool
 	tags []string
 	project int
+	project_extra_info ProjectInfo
 	user_story int
 	status int
+	status_extra_info StatusInfo
 	assigned_to int
+	assigned_to_extra_info UserInfo
 	owner int
+	owner_extra_info UserInfo
 	created_date string
 	modified_date string
 	finished_date string
@@ -30,8 +34,25 @@ struct UserStoriesCount{
 	progress int
 }
 
+struct NewEpic {
+pub mut:
+	subject string
+	project int
+}
+
 fn (mut h TaigaConnection) epics() ?[]Epic {
 	data := h.get_json_str("epics","",true)?
 	return json.decode([]Epic, data)
+}
+
+fn (mut h TaigaConnection) epic_create(subject string, project_id int) ? {
+	//TODO 
+	// h.cache_drop() //to make sure all is consistent
+	epic := NewEpic{
+		subject: subject
+		project: project_id
+	}
+	postdata := json.encode_pretty(epic)
+	response := h.post_json("epics",postdata, true, true)?
 }
 
