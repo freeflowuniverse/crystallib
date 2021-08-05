@@ -64,18 +64,27 @@ fn (mut h TaigaConnection) project_get(name string) ?Project  {
 			return proj
 		}
 	}
+	return error("cannot find project with name: $name")
 }
 
 
 //check if project exists with certain name
 fn (mut h TaigaConnection) project_exists(name string) bool  {
-	h.project_get or {return false}
+	h.project_get(name) or {
+		if err.contains("cannot find"){
+			return false
+			}
+		panic("cannot check project exists, bug, $err")
+	}
 	return true
 }
 
 // create project based on predefined standards
 // return project id
 fn (mut h TaigaConnection) project_create(name string, description string, projtype Projectype) ?int  {
+	if h.project_exists(name){
+		return error("Cannot create project with name: '$name' because already exists.")
+	}
 	// TODO
 	// h.cache_drop() //to make sure all is consistent
 	mut proj := NewProject{
