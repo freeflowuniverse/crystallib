@@ -2,11 +2,6 @@ module taiga
 import texttools
 import json
 
-// struct ProjectList {
-// pub mut:
-// 	projects []Project
-// }
-
 struct Project {
 pub mut:
 	name          string
@@ -19,6 +14,8 @@ pub mut:
 	created_date  string
 	modified_date string
 	owner         UserInfo
+	client        TaigaConnection
+	projtype      Projectype
 }
 
 pub enum Projectype {
@@ -59,8 +56,10 @@ fn (mut h TaigaConnection) projects() ?[]Project {
 fn (mut h TaigaConnection) project_get(name string) ?Project  {
 	//because we cache we can walk over it
 	name2 := texttools.name_fix(name)
-	for proj in h.projects(){
+	mut all_projects := h.projects() ?
+	for mut proj in all_projects{
 		if proj.name == name2{
+			proj.client = h
 			return proj
 		}
 	}
@@ -71,7 +70,7 @@ fn (mut h TaigaConnection) project_get(name string) ?Project  {
 //check if project exists with certain name
 fn (mut h TaigaConnection) project_exists(name string) bool  {
 	h.project_get(name) or {
-		if err.contains("cannot find"){
+		if "$err".contains("cannot find"){
 			return false
 			}
 		panic("cannot check project exists, bug, $err")
@@ -80,16 +79,18 @@ fn (mut h TaigaConnection) project_exists(name string) bool  {
 }
 
 //create project if it doesnt exist
-fn (mut h TaigaConnection) project_create_if_not_exist(name string, description string, projtype Projectype) ?  {
+fn (mut h TaigaConnection) project_create_if_not_exist(name string, description string, projtype Projectype) ?Project  {
 	if h.project_exists(name){
-		return h.project_get(name)
+		mut project := h.project_get(name)?
+		project.projtype = projtype
+		return project
 	}
 	return h.project_create(name,description,projtype)
 }
 
 // create project based on predefined standards
 // return Project obj
-fn (mut h TaigaConnection) project_create(name string, description string, projtype Projectype) ?int  {
+fn (mut h TaigaConnection) project_create(name string, description string, projtype Projectype) ?Project  {
 	if h.project_exists(name){
 		return error("Cannot create project with name: '$name' because already exists.")
 	}
@@ -102,7 +103,7 @@ fn (mut h TaigaConnection) project_create(name string, description string, projt
 
 	match projtype {
 		.funnel {
-			proj.name = texttools.name_fix('FUNNEL_' + name2)
+			proj.name = texttools.name_fix('FUNNEL_' + name)
 			proj.is_backlog_activated = false
 			proj.is_kanban_activated = true
 			proj.is_wiki_activated = true
@@ -121,7 +122,7 @@ fn (mut h TaigaConnection) project_create(name string, description string, projt
 			proj_config.custom_fields << ['bookings', 'commission']
 		}
 		.project {
-			proj.name = texttools.name_fix('PROJECT_' + name2()
+			proj.name = texttools.name_fix('PROJECT_' + name)
 			proj.is_backlog_activated = false
 			proj.is_kanban_activated = true
 			proj.is_wiki_activated = false
@@ -135,7 +136,7 @@ fn (mut h TaigaConnection) project_create(name string, description string, projt
 				'Implemented', 'Closed', 'Rejected', 'Postponed', 'Archived']
 		}
 		.team {
-			proj.name = texttools.name_fix('TEAM_' + name2)
+			proj.name = texttools.name_fix('TEAM_' + name)
 			proj.is_backlog_activated = true
 			proj.is_kanban_activated = false
 			proj.is_wiki_activated = true
@@ -156,10 +157,13 @@ fn (mut h TaigaConnection) project_create(name string, description string, projt
 	// h.cache_drop() //to make sure all is consistent
 
 	// return response["id"]
-	return h.project_get(name)
+	mut result := h.project_get(proj.name) ?
+	result.client = h
+	result.projtype = projtype
+	return result
 }
 
 
-fn (mut p Project) delete() ?{
-	//TODO: delete project
+fn (mut p Project) delete() ?bool{
+	return p.client.delete("projects", p.id, false)
 }
