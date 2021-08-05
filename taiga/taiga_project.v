@@ -79,14 +79,20 @@ fn (mut h TaigaConnection) project_exists(name string) bool  {
 	return true
 }
 
+//create project if it doesnt exist
+fn (mut h TaigaConnection) project_create_if_not_exist(name string, description string, projtype Projectype) ?  {
+	if h.project_exists(name){
+		return h.project_get(name)
+	}
+	return h.project_create(name,description,projtype)
+}
+
 // create project based on predefined standards
-// return project id
+// return Project obj
 fn (mut h TaigaConnection) project_create(name string, description string, projtype Projectype) ?int  {
 	if h.project_exists(name){
 		return error("Cannot create project with name: '$name' because already exists.")
 	}
-	// TODO
-	// h.cache_drop() //to make sure all is consistent
 	mut proj := NewProject{
 		description: description
 		is_issues_activated: true
@@ -145,5 +151,10 @@ fn (mut h TaigaConnection) project_create(name string, description string, projt
 	}
 	postdata := json.encode_pretty(proj)
 	response := h.post_json('projects', postdata, true, true) ?
-	return response["id"]
+
+	// TODO
+	// h.cache_drop() //to make sure all is consistent
+
+	// return response["id"]
+	return h.project_get(name)
 }
