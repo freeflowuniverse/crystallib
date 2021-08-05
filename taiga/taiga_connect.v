@@ -150,6 +150,7 @@ fn (mut h TaigaConnection) get_json_str(prefix string, data string, cache bool) 
 	return result
 }
 
+//what does this mean? whats difference with get_json TODO:
 fn (mut h TaigaConnection) edit_json(prefix string, id int, data string, cache bool) ?map[string]json2.Any{
 	mut req := http.new_request(http.Method.get,"$h.url/api/v1/$prefix/$id",data)?
 	req.header = h.header()

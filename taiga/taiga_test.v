@@ -1,7 +1,6 @@
 import  despiegk.crystallib.taiga
 
 fn test_main() {
-	// mut t := taiga.new("circles.threefold.me","despiegk","kds007kds",10)
 	mut t := taiga.new("https://staging.circles.threefold.me","admin","123123",10)
 	println("Taiga Client: $t")
 	projects := t.projects() or {panic("cannot fetch projects. $err")}
@@ -21,4 +20,5 @@ fn test_main() {
 	t.epic_create("This is a new epic in project 1", 1) or {panic("Can't create epic $err")}
 	t.task_create("This is a new task in project 1", 1) or {panic("Can't create task $err")}
 	t.userstory_create("This is a new userstory in project 1", 1) or {panic("Can't create userstory $err")}
+	panic("s")
 }
