@@ -158,3 +158,8 @@ fn (mut h TaigaConnection) project_create(name string, description string, projt
 	// return response["id"]
 	return h.project_get(name)
 }
+
+
+fn (mut p Project) delete() ?{
+	//TODO: delete project
+}
