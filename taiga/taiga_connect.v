@@ -42,8 +42,6 @@ pub fn new(url string, login string, passwd string,cache_timeout int) TaigaConne
 	return conn
 }
 
-
-
 fn (mut h TaigaConnection) header() http.Header {
 	mut header := http.new_header_from_map({
 			http.CommonHeader.content_type: "application/json"
@@ -77,7 +75,6 @@ fn (mut h TaigaConnection) cache_get(prefix string,reqdata string,cache bool) st
 	return text
 }
 
-
 fn (mut h TaigaConnection) cache_set(prefix string,reqdata string, data string, cache bool){
 	if cache{
 		key := h.cache_key(prefix,reqdata)
@@ -89,7 +86,6 @@ fn (mut h TaigaConnection) cache_set(prefix string,reqdata string, data string, 
 	}
 }
 
-
 //drop the cache for all
 //maintain authentication & reconnect
 fn (mut h TaigaConnection) cache_drop(){
@@ -97,15 +93,23 @@ fn (mut h TaigaConnection) cache_drop(){
 }
 
 //prefix e.g. projects
-fn (mut h TaigaConnection) post_json(prefix string, postdata string, cache bool) ?map[string]json2.Any{
-	mut res := h.cache_get(prefix,postdata,cache)
-	if res == "" {
-		// println("MISS0")
-		res0:=http.post_json("$h.url/api/v1/$prefix",postdata)?
-		res = res0.text
+fn (mut h TaigaConnection) post_json(prefix string, postdata string, cache bool, authenticated bool) ?map[string]json2.Any{
+	mut result := h.cache_get(prefix,postdata,cache)
+	// Post with auth header
+	if result == "" && authenticated{
+		mut req := http.new_request(http.Method.post,"$h.url/api/v1/$prefix",postdata)?
+		req.header = h.header()
+		println(req)
+		response := req.do()?
+		result = response.text
+	} 
+	// Post without auth header
+	else {
+		response:= http.post_json("$h.url/api/v1/$prefix",postdata)?
+		result = response.text
 	}
-	h.cache_set(prefix,postdata,res, cache)
-	data_raw := json2.raw_decode(res) ?
+	h.cache_set(prefix, postdata, result, cache)
+	data_raw := json2.raw_decode(result) ?
 	data := data_raw.as_map()
 	return data
 }	
@@ -146,6 +150,29 @@ fn (mut h TaigaConnection) get_json_str(prefix string, data string, cache bool) 
 	return result
 }
 
+//what does this mean? whats difference with get_json TODO:
+fn (mut h TaigaConnection) edit_json(prefix string, id int, data string, cache bool) ?map[string]json2.Any{
+	mut req := http.new_request(http.Method.get,"$h.url/api/v1/$prefix/$id",data)?
+	req.header = h.header()
+	res := req.do()?
+	result := res.text
+	h.cache_set(prefix,data,result, cache)
+	data_raw := json2.raw_decode(result) ?
+	data2 := data_raw.as_map()
+	return data2
+}
+
+fn (mut h TaigaConnection) delete(prefix string, id int, cache bool) ?bool{
+	mut req := http.new_request(http.Method.delete,"$h.url/api/v1/$prefix/$id", "")?
+	req.header = h.header()
+	res := req.do()?
+	if res.status_code == 204 {
+		return true
+	} else {
+		return false
+	}
+}
+
 fn (mut h TaigaConnection) auth(url string, login string, passwd string) ? AuthDetail{
 	h.url = url
 	if ! h.url .starts_with("http"){
@@ -160,7 +187,7 @@ fn (mut h TaigaConnection) auth(url string, login string, passwd string) ? AuthD
 			"password": "$passwd",
 			"type": "normal",
 			"username": "$login"
-		}',true)?
+		}',true, false)?
 
 	mut obj := AuthDetail{}
 	obj.auth_token = data["auth_token"].str()

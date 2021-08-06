@@ -12,9 +12,13 @@ pub mut:
 	is_private bool
 	tags []string
 	project int
+	project_extra_info ProjectInfo
 	status int
+	status_extra_info StatusInfo
 	assigned_to int
+	assigned_to_extra_info UserInfo
 	owner int
+	owner_extra_info UserInfo
 	severity int
 	priority int
 	issue_type int [json: "type"]
@@ -28,8 +32,10 @@ pub mut:
 	ref int
 }
 
-pub enum Issueype {
-	other
+struct NewIssue {
+pub mut:
+	subject string
+	project int
 }
 
 
@@ -39,8 +45,14 @@ fn (mut h TaigaConnection) issues() ?[]Issue {
 }
 
 //create issue based on our standards
-fn (mut h TaigaConnection) issue_create(name string, description string, issuetype Issueype) ? {
+fn (mut h TaigaConnection) issue_create(subject string, project_id int) ? {
 	//TODO 
-	h.cache_drop() //to make sure all is consistent
+	// h.cache_drop() //to make sure all is consistent
+	issue := NewIssue{
+		subject: subject
+		project: project_id
+	}
+	postdata := json.encode_pretty(issue)
+	response := h.post_json("issues",postdata, true, true)?
 }
 
