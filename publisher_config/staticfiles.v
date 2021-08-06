@@ -33,7 +33,7 @@ import os
 //     "charty-custom-style.css": "https: //raw.githubusercontent.com/markbattistella/docsify-charty/fa755c3e058ba1110fc6586a50207626d552b88f/docs/site/style.min.css"
 // }
 fn staticfiles_config(mut c ConfigRoot) {
-	c.staticfiles = map{
+	c.staticfiles = {
 		'googletagmanager.js':             'https://www.googletagmanager.com/gtag/js?id=UA-100065546-4'
 		'cookie-consent.js':               'https://www.freeprivacypolicy.com/public/cookie-consent/3.1.0/cookie-consent.js'
 		'theme-simple.css':                'https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css'

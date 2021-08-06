@@ -7,7 +7,7 @@ import despiegk.crystallib.texttools
 // arg's can be one or more, can also be $name:$val then keyvalue which will become params
 // the args always need to come first
 fn macro_process(mut state LineProcessorState, line string) bool {
-	fns_map := map{
+	fns_map := {
 		'vimeo':    vimeo
 		'iframe':   iframe
 		'youtube':  youtube

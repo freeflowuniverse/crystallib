@@ -45,7 +45,7 @@ pub fn new(url string, login string, passwd string,cache_timeout int) TaigaConne
 
 
 fn (mut h TaigaConnection) header() http.Header {
-	mut header := http.new_header_from_map(map{
+	mut header := http.new_header_from_map({
 			http.CommonHeader.content_type: "application/json"
 			http.CommonHeader.authorization: "Bearer $h.auth.auth_token"
 		}
