@@ -35,7 +35,17 @@ mut:
 }
 
 pub fn new(url string, login string, passwd string,cache_timeout int) TaigaConnection {
-	// reuse single object
+/*
+	Create a new taiga client
+	Inputs:
+		url: Taiga url
+		login: Username that used in login
+		passwd: Username password
+		cache_timeout: Expire time in seconds for caching
+
+	Output:
+		TaigaConnection: Client contains taiga auth details, taiga url, redis cleint and cache timeout.
+*/
 	mut conn := init_connection()
 	conn.auth(url,login,passwd) or {panic("Could not connect to $url with $login and passwd:'$passwd'\n$err")}
 	conn.cache_timeout = cache_timeout
@@ -43,6 +53,12 @@ pub fn new(url string, login string, passwd string,cache_timeout int) TaigaConne
 }
 
 fn (mut h TaigaConnection) header() http.Header {
+/*
+	Create a new header for Content type and Authorization
+
+	Output:
+		header: http.Header with the needed headers
+*/
 	mut header := http.new_header_from_map(map{
 			http.CommonHeader.content_type: "application/json"
 			http.CommonHeader.authorization: "Bearer $h.auth.auth_token"
@@ -92,8 +108,18 @@ fn (mut h TaigaConnection) cache_drop(){
 	//TODO: 
 }
 
-//prefix e.g. projects
 fn (mut h TaigaConnection) post_json(prefix string, postdata string, cache bool, authenticated bool) ?map[string]json2.Any{
+/*
+	Post Request with Json Data
+	Inputs:
+		prefix: Taiga elements types, ex (projects, issues, tasks, ...).
+		postdata: Json encoded data.
+		cache: Flag to enable caching.
+		authenticated: Flag to add authorization flag with the request.
+
+	Output:
+		response: response as Json2 struct.
+*/
 	mut result := h.cache_get(prefix,postdata,cache)
 	// Post with auth header
 	if result == "" && authenticated{
@@ -115,6 +141,16 @@ fn (mut h TaigaConnection) post_json(prefix string, postdata string, cache bool,
 }	
 
 fn (mut h TaigaConnection) get_json(prefix string, data string, cache bool) ?map[string]json2.Any{
+/*
+	Get Request with Json Data
+	Inputs:
+		prefix: Taiga elements types, ex (projects, issues, tasks, ...).
+		data: Json encoded data.
+		cache: Flag to enable caching.
+
+	Output:
+		response: response as Json2.Any map.
+*/
 	mut result := h.cache_get(prefix,data,cache)
 	if result == "" {
 		// println("MISS1")
@@ -134,6 +170,16 @@ fn (mut h TaigaConnection) get_json(prefix string, data string, cache bool) ?map
 }
 
 fn (mut h TaigaConnection) get_json_str(prefix string, data string, cache bool) ?string{
+/*
+	Get Request with Json Data
+	Inputs:
+		prefix: Taiga elements types, ex (projects, issues, tasks, ...).
+		data: Json encoded data.
+		cache: Flag to enable caching.
+
+	Output:
+		response: response as string.
+*/
 	mut result := h.cache_get(prefix,data,cache)
 	if result == "" {
 		// println("MISS1")
@@ -150,9 +196,19 @@ fn (mut h TaigaConnection) get_json_str(prefix string, data string, cache bool) 
 	return result
 }
 
-//what does this mean? whats difference with get_json TODO:
 fn (mut h TaigaConnection) edit_json(prefix string, id int, data string, cache bool) ?map[string]json2.Any{
-	mut req := http.new_request(http.Method.get,"$h.url/api/v1/$prefix/$id",data)?
+/*
+	Patch Request with Json Data
+	Inputs:
+		prefix: Taiga elements types, ex (projects, issues, tasks, ...).
+		id: id of the element.
+		data: Json encoded data.
+		cache: Flag to enable caching.
+
+	Output:
+		response: response Json2.Any map.
+*/
+	mut req := http.new_request(http.Method.patch,"$h.url/api/v1/$prefix/$id",data)?
 	req.header = h.header()
 	res := req.do()?
 	result := res.text
@@ -163,6 +219,16 @@ fn (mut h TaigaConnection) edit_json(prefix string, id int, data string, cache b
 }
 
 fn (mut h TaigaConnection) delete(prefix string, id int, cache bool) ?bool{
+/*
+	Delete Request
+	Inputs:
+		prefix: Taiga elements types, ex (projects, issues, tasks, ...).
+		id: id of the element.
+		cache: Flag to enable caching.
+
+	Output:
+		bool: True if deleted successfully.
+*/
 	mut req := http.new_request(http.Method.delete,"$h.url/api/v1/$prefix/$id", "")?
 	req.header = h.header()
 	res := req.do()?
@@ -174,6 +240,16 @@ fn (mut h TaigaConnection) delete(prefix string, id int, cache bool) ?bool{
 }
 
 fn (mut h TaigaConnection) auth(url string, login string, passwd string) ? AuthDetail{
+/*
+	Get authorization token by verifing username and password
+	Inputs:
+		url: Taiga url.
+		login: Username that used in login.
+		passwd: Username password.
+
+	Output:
+		response: AuthDetails struct contains auth token and other info.
+*/
 	h.url = url
 	if ! h.url .starts_with("http"){
 		if h.url .contains("http"){
