@@ -27,6 +27,7 @@ pub mut:
 	team_requirement bool
 	ref int
 	user_stories_counts UserStoriesCount
+	client TaigaConnection
 }
 
 struct UserStoriesCount{

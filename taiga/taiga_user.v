@@ -14,6 +14,7 @@ pub mut:
 	email string
 	public_key string
 	date_joined string
+	client TaigaConnection
 }
 
 fn (mut h TaigaConnection) users() ?[]User {

@@ -25,6 +25,7 @@ pub mut:
 	is_blocked bool
 	blocked_note string
 	ref int
+	client TaigaConnection
 }
 
 struct NewTask {

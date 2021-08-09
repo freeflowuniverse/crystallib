@@ -26,6 +26,7 @@ pub mut:
 	client_requirement bool
 	team_requirement bool
 	tasks []Task
+	client TaigaConnection
 }
 
 struct NewUserStory {
