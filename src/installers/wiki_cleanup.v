@@ -9,7 +9,9 @@ import despiegk.crystallib.texttools
 pub fn wiki_cleanup(name string, conf &publisher_config.ConfigRoot) ? {
 	codepath := conf.publish.paths.code
 	multibranch := conf.publish.multibranch
-	mut gt := gittools.new(codepath,multibranch) or { return error('ERROR: cannot load gittools:$err') }
+	mut gt := gittools.new(codepath, multibranch) or {
+		return error('ERROR: cannot load gittools:$err')
+	}
 	reponame := conf.reponame(name) ?
 	mut repo := gt.repo_get(name: reponame) or { return error('ERROR: cannot load gittools:$err') }
 	println(' - cleanup wiki $repo.path_get()')

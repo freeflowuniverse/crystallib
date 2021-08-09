@@ -51,7 +51,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 	mut config := publisher_config.get()
 	config.update_staticfiles(false) ?
 
-	publisher.check()? // makes sure we checked all
+	publisher.check() ? // makes sure we checked all
 
 	// process all definitions, will do over all sites
 	mut pd := PublisherDefs{}
@@ -135,7 +135,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 	// publisher_config.save('') ? // This method no longer available
 }
 
-[if trace_progress?]
+[if trace_progress ?]
 fn trace_progress(msg string) {
 	eprintln(msg)
 }

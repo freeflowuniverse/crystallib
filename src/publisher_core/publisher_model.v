@@ -17,7 +17,7 @@ pub mut:
 	def_names map[string]int
 	develop   bool
 	replacer  ReplacerInstructions
-	config 	  publisher_config.ConfigRoot
+	config    publisher_config.ConfigRoot
 }
 
 struct ReplacerInstructions {

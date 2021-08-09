@@ -14,8 +14,6 @@ module publisher_config
 // 	depends []SiteDependency
 // }
 
-
-
 // pub struct SiteDependency {
 // pub mut:
 // 	git_url       string
@@ -23,6 +21,3 @@ module publisher_config
 // 	fs_path	  string    //path as on fs, can be local to the location of this config file
 // 	branch      string
 // }
-
-
-

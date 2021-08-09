@@ -9,7 +9,7 @@ fn test_get_content_basic() {
 
 	mut config := publisher_config.get()
 
-	mut f := publisher_core.new(&config) }
+	mut f := publisher_core.new(&config) or { panic('cant create new publisher') }
 	f.check()
 	mut wiki := f.site_get('wiki') or { panic('cant find wiki') }
 	assert wiki.page_exists('roadmap')
@@ -45,7 +45,7 @@ fn test_get_content1() {
 	mut config := publisher_config.get()
 
 	mut path := os.join_path(p.join('/'), '..', '..', 'examples')
-	mut f := publisher_core.new(&config) }
+	mut f := publisher_core.new(&config) or { panic('cant create new publisher') }
 	f.check()
 	fileobj := f.file_get('test:blockchain_dilema.png') or { panic(err) }
 	// this has enough info to serve the file back
@@ -62,10 +62,10 @@ fn test_get_content2() {
 	p.pop()
 
 	mut config := publisher_config.get()
-	
+
 	mut path := os.join_path(p.join('/'), '..', '..', 'examples')
 
-	mut f := publisher_core.new(&config) }
+	mut f := publisher_core.new(&config) or { panic('cant create new publisher') }
 	f.check()
 	println('start')
 	for site in f.sites {
