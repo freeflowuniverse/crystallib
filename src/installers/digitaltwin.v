@@ -40,7 +40,7 @@ pub fn digitaltwin_install(mut cfg publisher_config.ConfigRoot, update bool) ? {
 			'
 		process.execute_silent(script) or {
 			print(err)
-			os.rmdir_all('$repo.path_get()/src/node_modules') or { }
+			os.rmdir_all('$repo.path_get()/src/node_modules') or {}
 			return error('cannot install digital twin.\n$err')
 		}
 	}
@@ -51,7 +51,7 @@ pub fn digitaltwin_install(mut cfg publisher_config.ConfigRoot, update bool) ? {
 pub fn digitaltwin_start(mut cfg publisher_config.ConfigRoot, isproduction bool, update bool) ? {
 	digitaltwin_install(mut cfg, update) ?
 	base := cfg.publish.paths.base
-	
+
 	mut gt := gittools.new(cfg.publish.paths.code, cfg.publish.multibranch) ?
 
 	url := 'https://github.com/threefoldtech/twin_server/'
@@ -103,7 +103,7 @@ pub fn digitaltwin_restart(mut cfg publisher_config.ConfigRoot, isproduction boo
 	}
 
 	println(' - will restart digitaltwin')
-	
+
 	mut script := ''
 	if !isproduction {
 		script = '
@@ -135,7 +135,6 @@ pub fn digitaltwin_restart(mut cfg publisher_config.ConfigRoot, isproduction boo
 		'
 	}
 
-	
 	process.execute_interactive('$script') ?
 	println(' - digital twin restarted')
 }

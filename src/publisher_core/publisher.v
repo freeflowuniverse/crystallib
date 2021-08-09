@@ -1,4 +1,5 @@
 module publisher_core
+
 // import os
 import despiegk.crystallib.texttools
 import despiegk.crystallib.publisher_config
@@ -14,7 +15,7 @@ pub fn new(config publisher_config.ConfigRoot) ?Publisher {
 	publisher.replacer.word = texttools.regex_instructions_new()
 	publisher.replacer.defs = texttools.regex_instructions_new()
 	publisher.config = config
-	publisher.load()?
+	publisher.load() ?
 
 	return publisher
 }
@@ -22,7 +23,7 @@ pub fn new(config publisher_config.ConfigRoot) ?Publisher {
 // check all pages, try to find errors
 pub fn (mut publisher Publisher) check() ? {
 	for mut site in publisher.sites {
-		site.load(mut publisher)?
+		site.load(mut publisher) ?
 	}
 
 	// now the defs are loaded
@@ -33,7 +34,7 @@ pub fn (mut publisher Publisher) check() ? {
 	}
 
 	for mut site in publisher.sites {
-		site.process(mut publisher)?
+		site.process(mut publisher) ?
 	}
 }
 

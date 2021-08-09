@@ -17,18 +17,18 @@ fn init_single_planner() Planner {
 
 const planner = init_single_planner()
 
-//init instance of planner
+// init instance of planner
 pub fn new() Planner {
 	// reuse single object
-	return planner
+	return planner.planner
 }
 
-//add story to planner starting from text
+// add story to planner starting from text
 pub fn (mut planner Planner) story_new(text string) ?&Story {
 	return &Story{}
 }
 
-//get story from the planner
+// get story from the planner
 pub fn (mut planner Planner) story_get(id int) ?&Story {
 	return &Story{}
 }

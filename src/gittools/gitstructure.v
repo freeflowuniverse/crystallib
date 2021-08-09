@@ -82,10 +82,10 @@ pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) ?&GitRepo {
 			}
 		}
 	}
-	if res_ids.len == 1{
+	if res_ids.len == 1 {
 		return &gitstructure.repos[res_ids[0]]
 	}
-	if  res_ids.len > 1{
+	if res_ids.len > 1 {
 		return error("Found too many repo's for account:'$args.account' name:'$args.name'")
 	}
 	return error("Could not find repo for account:'$args.account' name:'$args.name'")

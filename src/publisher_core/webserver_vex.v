@@ -474,7 +474,7 @@ fn site_deliver(req &ctx.Req, mut res ctx.Resp) {
 }
 
 // Run server
-pub fn webserver_run(mut publisher &Publisher)? {
+pub fn webserver_run(mut publisher Publisher) ? {
 	mut app := router.new()
 
 	publisher.check() ?

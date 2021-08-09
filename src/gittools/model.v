@@ -11,13 +11,13 @@ pub enum GitStatus {
 struct GitStructure {
 	multibranch bool
 pub mut:
-	root  string	
+	root  string
 	repos []GitRepo
 }
 
 struct GitRepo {
 	id int [skip]
-	//only use when custom path
+	// only use when custom path
 	path string
 mut:
 	gitstructure &GitStructure

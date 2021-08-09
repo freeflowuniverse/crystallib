@@ -9,12 +9,12 @@ pub struct ConfigRoot {
 pub mut:
 	root    string
 	sites   []SiteConfig
-	groups   []UserGroup
+	groups  []UserGroup
 	nodejs  NodejsConfig
 	publish PublishConfig
-	//what is purpose of this??? 
+	// what is purpose of this???
 	web_hostnames bool
-	staticfiles map[string]string
+	staticfiles   map[string]string
 }
 
 pub fn (mut config ConfigRoot) name_web_get(domain string) ?string {
