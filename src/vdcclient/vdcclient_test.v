@@ -39,7 +39,7 @@ fn test_delete_kubernetes_node() {
 	client := setup()
 	println('************ TEST04_DELETE_KUBERNETES_NODE ************')
 	before_delete, _ := client.list_kubernetes_nodes()
-	to_delete := before_delete[before_delete.len - 1].wid
+	to_delete := before_delete[before_delete.len -1].wid
 	response, status_code := client.delete_kubernetes_node(to_delete)
 	after_delete, _ := client.list_kubernetes_nodes()
 	println(response)
@@ -161,9 +161,9 @@ fn test_add_vm() {
 	client := setup()
 	println('************ TEST16_ADD_VM ************')
 	req_body := vdcclient.AddVM{
-		name: 'new_vm'
+		name: "new_vm"
 		size: 1
-		ssh_public_key: 'ADD_YOUR_PUBLIC_IP'
+		ssh_public_key: "ADD_YOUR_PUBLIC_IP"
 	}
 	response, status_code := client.add_vm(req_body)
 	println(response)
@@ -175,7 +175,7 @@ fn test_delete_vm() {
 	client := setup()
 	println('************ TEST17_DELETE_VM ************')
 	before_delete, _ := client.list_vms()
-	to_delete := before_delete[before_delete.len - 1].wid
+	to_delete := before_delete[before_delete.len -1].wid
 	response, status_code := client.delete_vm(to_delete)
 	after_delete, _ := client.list_vms()
 	println(response)

@@ -66,7 +66,7 @@ fn address_defined(a string) string {
 }
 
 fn macro_tokens_values(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
-	s := tokens.load_tokens() ?
+	s := tokens.load_tokens()?
 
 	mut id := macro.params.get('id') ?
 
@@ -87,7 +87,7 @@ fn macro_tokens_values(mut state LineProcessorState, mut macro texttools.MacroOb
 }
 
 fn macro_tokens_distribution(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
-	s := tokens.load_tokens() ?
+	s := tokens.load_tokens()?
 
 	mut out := []string{}
 	mut data := []ChartData{}
@@ -132,7 +132,7 @@ fn macro_tokens_distribution(mut state LineProcessorState, mut macro texttools.M
 }
 
 fn macro_tokens_locked_table(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
-	s := tokens.load_tokens() ?
+	s := tokens.load_tokens()?
 
 	mut out := []string{}
 
@@ -148,7 +148,7 @@ fn macro_tokens_locked_table(mut state LineProcessorState, mut macro texttools.M
 }
 
 fn macro_tokens_locked_chart(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
-	s := tokens.load_tokens() ?
+	s := tokens.load_tokens()?
 	mut out := []string{}
 
 	mut total_locked := i64(0)
@@ -196,7 +196,7 @@ fn macro_tokens_locked_chart(mut state LineProcessorState, mut macro texttools.M
 
 fn macro_tokens_account_info(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	accid := macro.params.get('id') ?
-	s := tokens.load_account(accid) ?
+	s := tokens.load_account(accid)?
 
 	mut out := []string{}
 
@@ -230,7 +230,7 @@ fn macro_tokens_account_info(mut state LineProcessorState, mut macro texttools.M
 
 fn macro_tokens_account_vesting(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	accid := macro.params.get('id') ?
-	s := tokens.load_account(accid) ?
+	s := tokens.load_account(accid)?
 
 	mut out := []string{}
 
@@ -253,7 +253,7 @@ fn macro_tokens_account_vesting(mut state LineProcessorState, mut macro texttool
 
 fn macro_tokens_account_locked(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	accid := macro.params.get('id') ?
-	s := tokens.load_account(accid) ?
+	s := tokens.load_account(accid)?
 
 	mut out := []string{}
 
@@ -274,7 +274,7 @@ fn macro_tokens_account_locked(mut state LineProcessorState, mut macro texttools
 }
 
 fn macro_tokens_current_distribution(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
-	s := tokens.parse_special(tokens.load_tokens() ?)
+	s := tokens.parse_special(tokens.load_tokens()?)
 
 	mut out := []string{}
 
@@ -298,7 +298,7 @@ fn macro_tokens_current_distribution(mut state LineProcessorState, mut macro tex
 }
 
 fn macro_tokens_total_distribution(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
-	s := tokens.parse_special(tokens.load_tokens() ?)
+	s := tokens.parse_special(tokens.load_tokens()?)
 
 	mut out := []string{}
 	mut data := []ChartData{}
@@ -328,7 +328,7 @@ fn macro_tokens_total_distribution(mut state LineProcessorState, mut macro textt
 }
 
 fn macro_tokens_total_liquid(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
-	s := tokens.load_tokens() ?
+	s := tokens.load_tokens()?
 	price := macro.params.get('tftprice') ?
 
 	mut out := []string{}
@@ -347,7 +347,7 @@ fn macro_tokens_total_liquid(mut state LineProcessorState, mut macro texttools.M
 }
 
 fn macro_tokens_total_liquid_chart(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
-	s := tokens.load_tokens() ?
+	s := tokens.load_tokens()?
 
 	mut out := []string{}
 	mut data := []ChartData{}
@@ -383,7 +383,7 @@ fn macro_tokens_total_liquid_chart(mut state LineProcessorState, mut macro textt
 }
 
 fn macro_tokens_special_wallets_table(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
-	s := tokens.load_tokens() ?
+	s := tokens.load_tokens()?
 
 	mut out := []string{}
 

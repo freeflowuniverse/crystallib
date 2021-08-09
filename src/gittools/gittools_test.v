@@ -3,10 +3,10 @@ module gittools
 import json
 
 fn test_url1() {
-	gs := new('', false) or { panic('init. $err') }
+	gs := new("",false) or {panic("init. $err")}
 
 	url := 'https://github.com/vlang/v/blob/master/doc/docs.md#maps'
-	obj := gs.addr_get_from_url(url) or { panic('$err') }
+	obj := gs.addr_get_from_url(url) or {panic("$err")}
 
 	tocompare := GitAddr{
 		root: '/Users/despiegk/code/'
@@ -23,10 +23,10 @@ fn test_url1() {
 }
 
 fn test_url2() {
-	gs := new('', false) or { panic('init. $err') }
+	gs := new("",false) or {panic("init. $err")}
 
 	url := 'git@github.com:crystaluniverse/publishtools/tree/development/doc'
-	obj := gs.addr_get_from_url(url) or { panic('$err') }
+	obj := gs.addr_get_from_url(url) or {panic("$err")}
 
 	println(obj)
 

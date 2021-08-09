@@ -34,9 +34,7 @@ pub fn main(cmd cli.Command) ? {
 	}
 
 	// make sure the config we are working with is refelected in ~/.publisher/config
-	update_config() or {
-		return error(' ** ERROR: cannot copy config files to ~publisher/config. Error was:\n$err')
-	}
+	update_config() or { return error(' ** ERROR: cannot copy config files to ~publisher/config. Error was:\n$err') }
 
 	sites_install(cmd) or { return error(' ** ERROR: cannot install sites. Error was:\n$err') }
 }
@@ -53,7 +51,7 @@ pub fn base() ? {
 	if !os.exists(base) {
 		os.mkdir(base) or { return err }
 	}
-
+	
 	os.mkdir_all('$base/config') or { return err }
 
 	println(' - installed base requirements')
@@ -95,15 +93,15 @@ pub fn publishtools_update() ? {
 	println(' -update done')
 }
 
-pub fn update_config() ? {
+pub fn update_config() ?{
 	cfg := publisher_config.get()
 	println(' - copying config files to ~/.publishtools/config')
-	res := os.ls('.') ?
-	for file in res {
-		if !os.is_file(file) {
+	res := os.ls('.')?
+	for file in res{
+		if !os.is_file(file){
 			continue
 		}
 
-		os.cp('./$file', '$cfg.publish.paths.base/config/$file') ?
+		os.cp('./$file', '$cfg.publish.paths.base/config/$file')?
 	}
 }

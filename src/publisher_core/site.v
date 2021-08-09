@@ -89,13 +89,13 @@ fn (mut site Site) page_remember(path string, name string, mut publisher Publish
 	}
 }
 
-pub fn (mut site Site) reload(mut publisher Publisher) ? {
+pub fn (mut site Site) reload(mut publisher Publisher) ?{
 	site.state = SiteState.init
 	site.pages = map[string]int{}
 	site.files = map[string]int{}
 	site.errors = []SiteError{}
-	site.files_process(mut publisher) ?
-	site.load(mut publisher) ?
+	site.files_process(mut publisher)?
+	site.load(mut publisher)?
 }
 
 pub fn (mut site Site) load(mut publisher Publisher) ? {
@@ -129,7 +129,7 @@ pub fn (mut site Site) load(mut publisher Publisher) ? {
 	site.state = SiteState.loaded
 }
 
-pub fn (mut site Site) process(mut publisher Publisher) ? {
+pub fn (mut site Site) process(mut publisher Publisher)? {
 	if site.state == SiteState.ok {
 		return
 	}
@@ -140,8 +140,8 @@ pub fn (mut site Site) process(mut publisher Publisher) ? {
 
 	println(' - process pages for site: $site.name')
 	for _, id in site.pages {
-		mut p := publisher.page_get_by_id(id) ?
-		p.process(mut publisher) ?
+		mut p := publisher.page_get_by_id(id)?
+		p.process(mut publisher)?
 	}
 	println(' - process file for site: $site.name')
 	for _, id in site.files {

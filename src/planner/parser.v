@@ -12,3 +12,4 @@ fn line_parser_params(line string) ?(bool, texttools.Params) {
 	mut p := texttools.new_params()
 	return false, p
 }
+

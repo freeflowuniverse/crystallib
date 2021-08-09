@@ -1,37 +1,36 @@
 module taiga
-
 import json
 
 struct Epic {
 pub mut:
-	description            string
-	id                     int
-	is_private             bool
-	tags                   []string
-	project                int
-	project_extra_info     ProjectInfo
-	user_story             int
-	status                 int
-	status_extra_info      StatusInfo
-	assigned_to            int
+	description string
+	id int
+	is_private bool
+	tags []string
+	project int
+	project_extra_info ProjectInfo
+	user_story int
+	status int
+	status_extra_info StatusInfo
+	assigned_to int
 	assigned_to_extra_info UserInfo
-	owner                  int
-	owner_extra_info       UserInfo
-	created_date           string
-	modified_date          string
-	finished_date          string
-	subject                string
-	is_closed              bool
-	is_blocked             bool
-	blocked_note           string
-	client_requirement     bool
-	team_requirement       bool
-	ref                    int
-	user_stories_counts    UserStoriesCount
+	owner int
+	owner_extra_info UserInfo
+	created_date string
+	modified_date string
+	finished_date string
+	subject string
+	is_closed bool
+	is_blocked bool
+	blocked_note string
+	client_requirement bool
+	team_requirement bool
+	ref int
+	user_stories_counts UserStoriesCount
 }
 
-struct UserStoriesCount {
-	total    int
+struct UserStoriesCount{
+	total int
 	progress int
 }
 
@@ -42,17 +41,18 @@ pub mut:
 }
 
 fn (mut h TaigaConnection) epics() ?[]Epic {
-	data := h.get_json_str('epics', '', true) ?
-	return json.decode([]Epic, data) or {}
+	data := h.get_json_str("epics","",true)?
+	return json.decode([]Epic, data)
 }
 
 fn (mut h TaigaConnection) epic_create(subject string, project_id int) ? {
-	// TODO
+	//TODO 
 	// h.cache_drop() //to make sure all is consistent
 	epic := NewEpic{
 		subject: subject
 		project: project_id
 	}
 	postdata := json.encode_pretty(epic)
-	response := h.post_json('epics', postdata, true, true) ?
+	response := h.post_json("epics",postdata, true, true)?
 }
+

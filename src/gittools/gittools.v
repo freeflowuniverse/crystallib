@@ -70,12 +70,12 @@ pub fn ssh_agent_key_loaded(name string) (bool, int) {
 // git is checked uderneith $/code
 pub fn new(root string, multibranch bool) ?GitStructure {
 	// cfg := publisher_config.get()
-	mut root2 := root
-	if root2 == '' {
-		if 'DIR_CODE' in os.environ() {
-			dir_ct := os.environ()['DIR_CODE']
+	mut root2:=root
+	if root2 == ''{
+		if "DIR_CODE" in os.environ(){
+			dir_ct := os.environ()["DIR_CODE"]
 			root2 = '$dir_ct/'
-		} else {
+		}else{
 			root2 = '$os.home_dir()/code/'
 		}
 	}

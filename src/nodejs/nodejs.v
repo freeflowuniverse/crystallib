@@ -43,7 +43,7 @@ pub fn install(cfg &publisher_config.ConfigRoot) ? {
 		nvm install $cfg.nodejs.version
 		npm install -g @gridsome/cli
 		'
-
+		
 		process.execute_silent(script) or {
 			println('cannot install nodejs.\n$err')
 			exit(1)

@@ -118,7 +118,7 @@ pub fn (mut repo GitRepo) check(pull_force_ bool, reset_force_ bool) ? {
 		}
 
 		// println(repo.addr)
-		// print_backtrace()
+		// print_backtrace() 
 		if repo.addr.branch != '' {
 			mut branchname := repo.branch_get() ?
 			branchname = branchname.trim('\n ')

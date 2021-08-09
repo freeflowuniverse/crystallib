@@ -20,7 +20,7 @@ pub:
 	total_capacity  int
 	wallet          Wallet
 	price           int
-	vmachines       VM
+	vmachines		VM
 }
 
 pub struct S3 {
@@ -123,7 +123,7 @@ pub:
 	event            Event
 	tracebacks       []Traceback
 mut:
-	alert_type string [json: 'type']
+	alert_type string [json: "type"]
 }
 
 pub struct Backup {
@@ -181,7 +181,7 @@ struct AddNode {
 }
 
 pub struct PublicIP {
-	wid     int
+	wid int
 	address string
 }
 
@@ -194,21 +194,21 @@ pub:
 
 pub struct VM {
 pub:
-	name       string
-	wid        int
-	resources  Resources
-	size       int
-	ip_address string
-	public_ip  PublicIP
-	pool_id    int
-	node_id    string
+	name 		string
+	wid 		int
+	resources	Resources
+	size 		int
+	ip_address 	string
+	public_ip 	PublicIP
+	pool_id 	int
+	node_id 	string
 }
 
 pub struct AddVM {
 pub:
-	name             string
-	size             int
-	ssh_public_key   string
-	enable_public_ip bool
-	farm_name        string
+	name 				string
+	size 				int
+	ssh_public_key 		string
+	enable_public_ip 	bool
+	farm_name 			string
 }

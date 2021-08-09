@@ -121,8 +121,7 @@ fn (mut publisher Publisher) page_check_fix(name2find string, consumer_page_id i
 			msg += '<br> - ${p.path_get(mut publisher)}<br>'
 		}
 		msg = msg.trim(',')
-		consumer_page.error_add(PageError{ msg: msg, cat: PageErrorCat.doublepage }, mut
-			publisher)
+		consumer_page.error_add(PageError{ msg: msg, cat: PageErrorCat.doublepage }, mut publisher)
 		return error('found more than 1 page: $name2find')
 	}
 	return res[0]
