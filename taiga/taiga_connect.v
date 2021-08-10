@@ -1,5 +1,6 @@
 module taiga
 import x.json2
+import json
 import net.http
 import despiegk.crystallib.redisclient
 import crypto.md5
@@ -67,45 +68,67 @@ fn (mut h TaigaConnection) header() http.Header {
 	return header
 }
 
-fn (mut h TaigaConnection) cache_key(prefix string,reqdata string) string{
-	mut cache_key := ""
+fn cache_key(prefix string, reqdata string) string{
+/*
+	Create Cache Key
+	Inputs:
+		prefix: Taiga elements types, ex (projects, issues, tasks, ...).
+		reqdata: data used in the request.
+
+	Output:
+		cache_key: key that will be used in redis
+*/
+	mut ckey := ""
 	if reqdata == ""{
-		cache_key = 'taiga:' + prefix
+		ckey = 'taiga:' + prefix
 	}else{
-		cache_key = 'taiga:' + prefix + ":" + md5.hexhash(reqdata)
+		ckey = 'taiga:' + prefix + ":" + md5.hexhash(reqdata)
 	}
-	return cache_key
+	return ckey
 }
 
-//return empty if no cachgin
-// return 'NULL' if cache but text was empty
-fn (mut h TaigaConnection) cache_get(prefix string,reqdata string,cache bool) string {
+fn (mut h TaigaConnection) cache_get(prefix string, reqdata string, cache bool) string {
+/*
+	Get from Cache
+	Inputs:
+		prefix: Taiga elements types, ex (projects, issues, tasks, ...).
+		reqdata: data used in the request.
+		cache: Flag to enable caching.
+	Output:
+		result: If cache ture and no thing stored or cache false will return empty string
+*/
 	mut text := ""
-	if cache{
-		text = h.redis.get(h.cache_key(prefix,reqdata)) or {
-			""
-		}
-	}else{
-		return ""
+	if cache {
+		text = h.redis.get(cache_key(prefix,reqdata)) or {""}
 	}
 	return text
 }
 
-fn (mut h TaigaConnection) cache_set(prefix string,reqdata string, data string, cache bool){
-	if cache{
-		key := h.cache_key(prefix,reqdata)
-		h.redis.set(key, data) or {
-			//do nothing redis does not work
-			return
-		}
+fn (mut h TaigaConnection) cache_set(prefix string,reqdata string, data string, cache bool) ? {
+/*
+	Set Cache
+	Inputs:
+		prefix: Taiga elements types, ex (projects, issues, tasks, ...).
+		reqdata: data used in the request.
+		data: Json encoded data.
+		cache: Flag to enable caching.
+*/
+	if cache {
+		key := cache_key(prefix,reqdata)
+		h.redis.set(key, data) ?
 		h.redis.expire(key,h.cache_timeout) or {panic("should never get here, if redis worked expire should also work.$err")}
 	}
 }
 
-//drop the cache for all
-//maintain authentication & reconnect
-fn (mut h TaigaConnection) cache_drop(){
-	//TODO: 
+fn (mut h TaigaConnection) cache_drop() ? {
+/*
+	Drop all cache related to taiga
+*/
+	all_keys := h.redis.keys("taiga:*")
+	for key in all_keys{
+		h.redis.del(key)
+	}
+	//TODO:: maintain authentication & reconnect (Need More Info)
 }
 
 fn (mut h TaigaConnection) post_json(prefix string, postdata string, cache bool, authenticated bool) ?map[string]json2.Any{
@@ -134,10 +157,40 @@ fn (mut h TaigaConnection) post_json(prefix string, postdata string, cache bool,
 		response:= http.post_json("$h.url/api/v1/$prefix",postdata)?
 		result = response.text
 	}
-	h.cache_set(prefix, postdata, result, cache)
+	h.cache_set(prefix, postdata, result, cache)?
 	data_raw := json2.raw_decode(result) ?
 	data := data_raw.as_map()
 	return data
+}
+
+fn (mut h TaigaConnection) post_json_str(prefix string, postdata string, cache bool, authenticated bool) ?string{
+/*
+	Post Request with Json Data
+	Inputs:
+		prefix: Taiga elements types, ex (projects, issues, tasks, ...).
+		postdata: Json encoded data.
+		cache: Flag to enable caching.
+		authenticated: Flag to add authorization flag with the request.
+
+	Output:
+		response: response as string.
+*/
+	mut result := h.cache_get(prefix,postdata,cache)
+	// Post with auth header
+	if result == "" && authenticated{
+		mut req := http.new_request(http.Method.post,"$h.url/api/v1/$prefix",postdata)?
+		req.header = h.header()
+		println(req)
+		response := req.do()?
+		result = response.text
+	} 
+	// Post without auth header
+	else {
+		response:= http.post_json("$h.url/api/v1/$prefix",postdata)?
+		result = response.text
+	}
+	h.cache_set(prefix, postdata, result, cache)?
+	return result
 }	
 
 fn (mut h TaigaConnection) get_json(prefix string, data string, cache bool) ?map[string]json2.Any{
@@ -163,7 +216,7 @@ fn (mut h TaigaConnection) get_json(prefix string, data string, cache bool) ?map
 	if result == "NULL" {
 		result = ""
 	}
-	h.cache_set(prefix,data,result, cache)
+	h.cache_set(prefix,data,result, cache)?
 	data_raw := json2.raw_decode(result) ?
 	data2 := data_raw.as_map()
 	return data2
@@ -192,7 +245,7 @@ fn (mut h TaigaConnection) get_json_str(prefix string, data string, cache bool) 
 	if result == "NULL" {
 		result = ""
 	}
-	h.cache_set(prefix,data,result, cache)
+	h.cache_set(prefix,data,result, cache)?
 	return result
 }
 
@@ -212,7 +265,7 @@ fn (mut h TaigaConnection) edit_json(prefix string, id int, data string, cache b
 	req.header = h.header()
 	res := req.do()?
 	result := res.text
-	h.cache_set(prefix,data,result, cache)
+	h.cache_set(prefix,data,result, cache)?
 	data_raw := json2.raw_decode(result) ?
 	data2 := data_raw.as_map()
 	return data2
@@ -259,36 +312,13 @@ fn (mut h TaigaConnection) auth(url string, login string, passwd string) ? AuthD
 	}
 
 	//https://docs.taiga.io/api.html#object-auth-user-detail
-	data:=h.post_json("auth",'{
+	data:=h.post_json_str("auth",'{
 			"password": "$passwd",
 			"type": "normal",
 			"username": "$login"
 		}',true, false)?
 
-	mut obj := AuthDetail{}
-	obj.auth_token = data["auth_token"].str()
-	obj.bio = data["bio"].str()
-	obj.email = data["email"].str()
-	obj.full_name = data["full_name"].str()
-	obj.full_name_display = data["full_name_display"].str()
-	obj.gravatar_id = data["gravatar_id"].str()
-	obj.id = data["id"].int()
-	obj.is_active = data["is_active"].bool()
-	obj.username = data["username"].str()
-	obj.uuid = data["uuid"].str()
-
-	h.auth = obj
+	h.auth = json.decode(AuthDetail, data) ?
 
 	return h
 }
-
-
-
-// pub fn (mut h TaigaConnection) getex(url string, expire int) ?string {
-// 	// println("[+] cache: request url: " + url)
-
-
-
-// 	// println("[+] cache hit")
-// 	return hit
-// }
