@@ -3,7 +3,7 @@ module publisher_core
 import os
 import json
 import despiegk.crystallib.publisher_config
-
+import despiegk.crystallib.gittools
 struct PublisherErrors {
 pub mut:
 	site_errors []SiteError
@@ -44,11 +44,34 @@ pub fn (mut publisher Publisher) errors_get(site Site) ?PublisherErrors {
 	return errors
 }
 
+// pub fn sites_download(cmd cli.Command, web bool) ? {
+// 	mut cfg := config_get(cmd) ?
+// 	// println(' - get all code repositories.')
+
+// 	for mut sc in cfg.sites {
+// 		if sc.cat == publisher_config.SiteCat.web && !web {
+// 			continue
+// 		}
+// 		if sc.cat == publisher_config.SiteCat.data && !web {
+// 			continue
+// 		}
+// 		if sc.git_url != "" {
+// 			println(' - get:$sc.git_url')
+// 			mut r := gt.repo_get_from_url(url: sc.git_url, pull: sc.pull, reset: sc.reset) or {
+// 				return error(' - ERROR: could not download site $sc.git_url\n$err\n$sc')
+// 			}
+// 			r.check(false, false) ?
+// 		}
+// 	}
+// }
+
+
 // destination is the destination path for the flatten operation
 pub fn (mut publisher Publisher) flatten() ? {
 	mut dest_file := ''
 
 	mut config := publisher_config.get()
+
 	config.update_staticfiles(false) ?
 
 	publisher.check()? // makes sure we checked all
@@ -66,6 +89,10 @@ pub fn (mut publisher Publisher) flatten() ? {
 	}
 
 	for mut site in publisher.sites {
+
+		sc:=site.config
+		println(' - publish:$sc.git_url')
+
 		site.files_process(mut publisher) ?
 
 		// src_path[site.id] = site.path
