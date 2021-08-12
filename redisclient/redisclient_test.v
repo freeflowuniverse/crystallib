@@ -757,6 +757,20 @@ fn test_flushall() {
 	assert helper_get_key_not_found(mut redis, 'test69') == true
 }
 
+fn test_keys() {
+	mut redis := setup()
+	defer {
+		cleanup(mut redis) or { panic(err) }
+	}
+	redis.set('test70:1', '1') or { panic(err) }
+	redis.set('test70:2', '2') or { panic(err) }
+	r1 := redis.keys('test70:*') or {
+		assert false
+		return
+	}
+	assert r1.len == 2
+}
+
 fn helper_get_key_not_found(mut redis redisclient.Redis, key string) bool {
 	redis.get(key) or {
 		if err.msg == 'key not found' || err.msg == '' {

@@ -147,6 +147,15 @@ pub fn (mut r Redis) getrange(key string, start int, end int) ?string {
 	return r.send_expect_str(['GETRANGE', key, start.str(), end.str()])
 }
 
+pub fn (mut r Redis) keys(pattern string) ?[]string {
+	response := r.send_expect_list(['KEYS', pattern])?
+	mut result := []string{}
+	for item in response{
+		result << resp2.get_redis_value(item)
+	}
+	return result
+}
+
 pub fn (mut r Redis) randomkey() ?string {
 	return r.send_expect_strnil(['RANDOMKEY'])
 }

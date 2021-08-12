@@ -1,5 +1,6 @@
 module taiga
-import texttools
+
+import despiegk.crystallib.texttools
 import json
 
 struct Project {
@@ -52,46 +53,45 @@ fn (mut h TaigaConnection) projects() ?[]Project {
 	return json.decode([]Project, data) or {}
 }
 
-//get the project
-fn (mut h TaigaConnection) project_get(name string) ?Project  {
-	//because we cache we can walk over it
+// get the project
+fn (mut h TaigaConnection) project_get(name string) ?Project {
+	// because we cache we can walk over it
 	name2 := texttools.name_fix(name)
 	mut all_projects := h.projects() ?
-	for mut proj in all_projects{
-		if proj.name == name2{
+	for mut proj in all_projects {
+		if proj.name == name2 {
 			proj.client = h
 			return proj
 		}
 	}
-	return error("cannot find project with name: $name")
+	return error('cannot find project with name: $name')
 }
 
-
-//check if project exists with certain name
-fn (mut h TaigaConnection) project_exists(name string) bool  {
+// check if project exists with certain name
+fn (mut h TaigaConnection) project_exists(name string) bool {
 	h.project_get(name) or {
-		if "$err".contains("cannot find"){
+		if '$err'.contains('cannot find') {
 			return false
-			}
-		panic("cannot check project exists, bug, $err")
+		}
+		panic('cannot check project exists, bug, $err')
 	}
 	return true
 }
 
-//create project if it doesnt exist
-fn (mut h TaigaConnection) project_create_if_not_exist(name string, description string, projtype Projectype) ?Project  {
-	if h.project_exists(name){
-		mut project := h.project_get(name)?
+// create project if it doesnt exist
+fn (mut h TaigaConnection) project_create_if_not_exist(name string, description string, projtype Projectype) ?Project {
+	if h.project_exists(name) {
+		mut project := h.project_get(name) ?
 		project.projtype = projtype
 		return project
 	}
-	return h.project_create(name,description,projtype)
+	return h.project_create(name, description, projtype)
 }
 
 // create project based on predefined standards
 // return Project obj
-fn (mut h TaigaConnection) project_create(name string, description string, projtype Projectype) ?Project  {
-	if h.project_exists(name){
+fn (mut h TaigaConnection) project_create(name string, description string, projtype Projectype) ?Project {
+	if h.project_exists(name) {
 		return error("Cannot create project with name: '$name' because already exists.")
 	}
 	mut proj := NewProject{
@@ -151,19 +151,18 @@ fn (mut h TaigaConnection) project_create(name string, description string, projt
 		}
 	}
 	postdata := json.encode_pretty(proj)
-	response := h.post_json('projects', postdata, true, true) ?
+	response := h.post_json_str('projects', postdata, true, true) ?
 
 	// TODO
 	// h.cache_drop() //to make sure all is consistent
 
 	// return response["id"]
-	mut result := h.project_get(proj.name) ?
+	mut result := json.decode(Project, response) ?
 	result.client = h
 	result.projtype = projtype
 	return result
 }
 
-
-fn (mut p Project) delete() ?bool{
-	return p.client.delete("projects", p.id, false)
+fn (mut p Project) delete() ?bool {
+	return p.client.delete('projects', p.id, false)
 }
