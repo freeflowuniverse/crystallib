@@ -22,7 +22,7 @@ pub mut:
 	opengraph  OpenGraph
 	state 	   SiteState
 	// depends []SiteDependency
-	configroot &ConfigRoot
+	// configroot &ConfigRoot
 }
 
 pub struct SiteDependency {

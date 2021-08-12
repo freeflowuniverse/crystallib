@@ -36,6 +36,7 @@ fn (mut publisher Publisher) load_site(name string) ? {
 	mysite_name := texttools.name_fix(name)
 	mut mysite_config := publisher.config.site_get(mysite_name) ?
 
+	mysite_config.load()?
 	// link the dir in codewiki, makes it easy to edit
 	path_links := '$os.home_dir()/codewiki'
 	target := '$path_links/$name'

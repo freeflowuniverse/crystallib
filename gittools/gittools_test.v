@@ -4,7 +4,7 @@ import json
 import os
 
 fn test_url1() {
-	mut gs := new()
+	mut gs := get()
 
 	url := 'https://github.com/vlang/v/blob/master/doc/docs.md#maps'
 	obj := gs.addr_get_from_url(url) or {panic("$err")}
@@ -26,7 +26,7 @@ fn test_url1() {
 }
 
 fn test_url2() {
-	mut gs := new()
+	mut gs := new("",false) or {panic("cannot load")}
 
 	url := 'git@github.com:crystaluniverse/publishtools/tree/development/doc'
 	obj := gs.addr_get_from_url(url) or {panic("$err")}

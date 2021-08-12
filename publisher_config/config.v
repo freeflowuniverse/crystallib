@@ -100,7 +100,7 @@ fn config_load() ?ConfigRoot {
 		}
 		//make sure we normalize the name
 		site_in.name = texttools.name_fix(site_in.name)
-		site_in.configroot = &config
+		// site_in.configroot = &config
 		config.sites << site_in
 	}
 
@@ -111,18 +111,11 @@ fn config_load() ?ConfigRoot {
 		config.groups << json.decode([]UserGroup, txt) ?
 	}
 
-	config.gittools = gittools.new(config.publish.paths.code,config.publish.multibranch) or { return error('cannot load gittools:$err') }
-
-
-	// for mut site in config.sites{
-	// 	config.load()?
-	// }
-
 	return config
 }
 
 
-pub fn (mut site SiteConfig) load()  ? {
+pub fn (mut site SiteConfig) load(configroot ConfigRoot)  ? {
 
 	if site.state == SiteState.loaded{
 		return
@@ -130,8 +123,10 @@ pub fn (mut site SiteConfig) load()  ? {
 
 	// println(" - process site: $site.name")
 
-	mut config := site.configroot
-	mut gt := &config.gittools
+	mut config := configroot
+	
+	//just get instance of the gittools
+	mut gt := gittools.new(config.publish.paths.code,config.publish.multibranch)?
 
 	if site.state != SiteState.init{
 		panic("should not get here, bug, site need to be in state init.")
