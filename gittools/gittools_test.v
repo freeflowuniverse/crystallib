@@ -1,15 +1,18 @@
 module gittools
 
 import json
+import os
 
 fn test_url1() {
-	gs := new("",false) or {panic("init. $err")}
+	mut gs := new()
 
 	url := 'https://github.com/vlang/v/blob/master/doc/docs.md#maps'
 	obj := gs.addr_get_from_url(url) or {panic("$err")}
 
+	home := os.real_path(os.environ()["HOME"])
+
 	tocompare := GitAddr{
-		root: '/Users/despiegk/code/'
+		root: '$home/code/'
 		provider: 'github.com'
 		account: 'vlang'
 		name: 'v'
@@ -23,15 +26,17 @@ fn test_url1() {
 }
 
 fn test_url2() {
-	gs := new("",false) or {panic("init. $err")}
+	mut gs := new()
 
 	url := 'git@github.com:crystaluniverse/publishtools/tree/development/doc'
 	obj := gs.addr_get_from_url(url) or {panic("$err")}
 
 	println(obj)
 
+	home := os.real_path(os.environ()["HOME"])
+
 	tocompare := GitAddr{
-		root: '/Users/despiegk/code/'
+		root: '$home/code/'
 		provider: 'github.com'
 		account: 'crystaluniverse'
 		name: 'publishtools'

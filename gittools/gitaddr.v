@@ -45,7 +45,9 @@ fn (addr GitAddr) url_http_get() string {
 // 		anker string //position in the file
 // }
 // ```
-pub fn (gs GitStructure) addr_get_from_url(url string) ?GitAddr {
+pub fn (mut gs GitStructure) addr_get_from_url(url string) ?GitAddr {
+
+	gs.check()?
 	mut urllower := url.to_lower()
 	urllower = urllower.trim_space()
 	if urllower.starts_with('git@') {
@@ -118,7 +120,9 @@ pub fn (gs GitStructure) addr_get_from_url(url string) ?GitAddr {
 // 		anker string //position in the file
 // }
 // ```
-pub fn (gs GitStructure) addr_get_from_path(path string) ?GitAddr {
+pub fn (mut gs GitStructure) addr_get_from_path(path string) ?GitAddr {
+
+	gs.check()?
 
 	//TODO: need to get it to work for branch
 

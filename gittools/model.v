@@ -1,5 +1,10 @@
 module gittools
 
+pub enum GitStructureStatus {
+	init
+	loaded
+	error
+}
 pub enum GitStatus {
 	unknown
 	changes
@@ -9,10 +14,11 @@ pub enum GitStatus {
 
 [heap]
 struct GitStructure {
-	multibranch bool
 pub mut:
+	multibranch bool
 	root  string	
 	repos []GitRepo
+	status GitStructureStatus
 }
 
 struct GitRepo {

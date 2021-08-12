@@ -1,7 +1,7 @@
 module publisher_config
 
 import os
-// import despiegk.crystallib.process
+import despiegk.crystallib.gittools
 
 // the main config file as used for the publisher
 [heap]
@@ -9,12 +9,13 @@ pub struct ConfigRoot {
 pub mut:
 	root    string
 	sites   []SiteConfig
-	groups   []UserGroup
+	groups  []UserGroup
 	nodejs  NodejsConfig
 	publish PublishConfig
 	//what is purpose of this??? 
 	web_hostnames bool
 	staticfiles map[string]string
+	// gittools gittools.GitStructure
 }
 
 pub fn (config ConfigRoot) name_web_get(domain string) ?string {

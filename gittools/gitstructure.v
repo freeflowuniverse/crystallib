@@ -1,7 +1,5 @@
 module gittools
 
-import os
-
 pub struct RepoGetFromUrlArgs {
 mut:
 	url    string
@@ -19,6 +17,9 @@ mut:
 // 	reset bool //this means will pull and reset all changes
 // }
 pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs) ?&GitRepo {
+
+	gitstructure.check()?
+
 	mut addr := gitstructure.addr_get_from_url(args.url) or {
 		return error('cannot get addr from url:$err')
 	}
@@ -74,6 +75,9 @@ mut:
 // }
 // THIS FUNCTION DOES NOT EXECUTE THE CHECK !!!
 pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) ?&GitRepo {
+
+	gitstructure.check()?
+
 	mut res_ids := []int{}
 	for r in gitstructure.repos {
 		if r.addr.name == args.name {
@@ -94,6 +98,9 @@ pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) ?&GitRepo {
 // to use gitstructure.repo_get({account:"something",name:"myname"})
 // or gitstructure.repo_get({name:"myname"})
 pub fn (mut gitstructure GitStructure) repo_exists(addr RepoGetArgs) bool {
+	
+	gitstructure.check() or {panic("cannot check gitstructure, $err")}
+	
 	for r in gitstructure.repos {
 		if r.addr.name == addr.name {
 			if addr.account == '' || addr.account == r.addr.account {
@@ -102,42 +109,4 @@ pub fn (mut gitstructure GitStructure) repo_exists(addr RepoGetArgs) bool {
 		}
 	}
 	return false
-}
-
-// find all git repo's, this goes very fast, no reason to cache
-fn (mut gitstructure GitStructure) load() ? {
-	gitstructure.repos = []GitRepo{}
-	if gitstructure.root == '' {
-		gitstructure.root = '$os.home_dir()/code/'
-	}
-	gitstructure.root = gitstructure.root.replace('~', os.home_dir())
-	return gitstructure.load_recursive(gitstructure.root)
-}
-
-fn (mut gitstructure GitStructure) load_recursive(path1 string) ? {
-	items := os.ls(path1) or { return error('cannot load gitstructure because cannot find $path1') }
-	mut pathnew := ''
-	for item in items {
-		pathnew = os.join_path(path1, item)
-		if os.is_dir(pathnew) {
-			// println(" - $pathnew")		
-			if os.exists(os.join_path(pathnew, '.git')) {
-				gitaddr := gitstructure.addr_get_from_path(pathnew) or { return err }
-				gitstructure.repos << GitRepo{
-					gitstructure: &gitstructure
-					addr: gitaddr
-					path: pathnew
-					id: gitstructure.repos.len
-				}
-				continue
-			}
-			if item.starts_with('.') {
-				continue
-			}
-			if item.starts_with('_') {
-				continue
-			}
-			gitstructure.load_recursive(pathnew) ?
-		}
-	}
 }

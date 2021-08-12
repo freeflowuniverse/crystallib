@@ -1,88 +1,92 @@
 module gittools
-
 import os
 
-pub fn ssh_agent_loaded() bool {
-	res := os.execute('ssh-add -l')
-	if res.exit_code == 0 {
-		return true
-	} else {
-		return false
+fn init_codewww() GitStructure {
+	mut gitstructure := GitStructure{}
+	return gitstructure
+}
+
+const codecache = init_codewww()
+
+pub fn new() GitStructure{
+	return codecache
+}
+
+fn (mut gitstructure GitStructure) check()? {
+	if gitstructure.status == GitStructureStatus.loaded{
+		return
 	}
+	gitstructure.load("",false)?
 }
-
-pub fn ssh_agent_reset() ? {
-	_ := os.execute('ssh-add -D')
-}
-
-pub fn ssh_agent_load(keypath string) ? {
-	_ := os.execute('ssh-add $keypath')
-}
-
-// pub fn ssh_agent_keys() []string{
-// 	res := os. execute("ssh-add -l")
-// 	if res.exit_code==0{
-// 		println(res)
-// 		panic("sA")
-// 		return []string{}
-// 	}else{
-// 		println(res)
-// 		panic("sB")		
-// 		return []string{}
-// 	}
-// }
-
-// check if key loaded
-// return if key found, and how many ssh keys found in general
-pub fn ssh_agent_key_loaded(name string) (bool, int) {
-	mut counter := 0
-	mut exists := false
-	res := os.execute('ssh-add -l')
-	if res.exit_code == 0 {
-		for line in res.output.split('\n') {
-			if line.trim(' ') == '' {
-				continue
-			}
-			counter++
-			if line.contains('.ssh/$name ') {
-				// space at end is needed because then we know its not partial part of ssh key
-				exists = true
-			}
-		}
-	}
-	return exists, counter
-}
-
-// cache ~/codewww
-// pub fn init_codewww() ?GitStructure {
-// 	cfg := publisher_config.get()
-// 	mut gitstructure := GitStructure{
-// 		root: cfg.publish.paths.code
-// 	}
-
-// 	gitstructure.load() ?
-// 	return gitstructure
-// }
-
-// const codecache = init_codewww() or { panic(err) }
 
 // the factory for getting the gitstructure
 // git is checked uderneith $/code
-pub fn new(root string, multibranch bool) ?GitStructure {
-	// cfg := publisher_config.get()
+pub fn (mut gitstructure GitStructure) load(root string, multibranch bool) ? {
+
 	mut root2:=root
-	if root2 == ''{
+	if root2 == '' {
 		if "DIR_CODE" in os.environ(){
 			dir_ct := os.environ()["DIR_CODE"]
 			root2 = '$dir_ct/'
 		}else{
 			root2 = '$os.home_dir()/code/'
+			if ! os.exists(root2){
+				os.mkdir_all(root2)?
+			}
+		}
+	}		
+
+	root2 = root2.replace('~', os.home_dir())
+
+	//check if there are other arguments used as the ones loaded
+	if gitstructure.status == GitStructureStatus.loaded{
+		if root2 != gitstructure.root {
+			gitstructure.status = GitStructureStatus.init
+		}
+		if multibranch != gitstructure.multibranch {
+			gitstructure.status = GitStructureStatus.init
+		}		
+	}
+
+	if gitstructure.status == GitStructureStatus.loaded{
+		return
+	}
+
+	gitstructure.root = root2
+	gitstructure.multibranch = multibranch
+
+	gitstructure.repos = []GitRepo{}
+
+	gitstructure.load_recursive(gitstructure.root)?
+
+	gitstructure.status = GitStructureStatus.loaded
+
+}
+
+fn (mut gitstructure GitStructure) load_recursive(path1 string) ? {
+	items := os.ls(path1) or { return error('cannot load gitstructure because cannot find $path1') }
+	mut pathnew := ''
+	for item in items {
+		pathnew = os.join_path(path1, item)
+		if os.is_dir(pathnew) {
+			// println(" - $pathnew")		
+			if os.exists(os.join_path(pathnew, '.git')) {
+				gitaddr := gitstructure.addr_get_from_path(pathnew) or { return err }
+				gitstructure.repos << GitRepo{
+					gitstructure: &gitstructure
+					addr: gitaddr
+					path: pathnew
+					id: gitstructure.repos.len
+				}
+				continue
+			}
+			if item.starts_with('.') {
+				continue
+			}
+			if item.starts_with('_') {
+				continue
+			}
+			gitstructure.load_recursive(pathnew) ?
 		}
 	}
-	mut gitstructure := GitStructure{
-		root: root2
-		multibranch: multibranch
-	}
-	gitstructure.load() ?
-	return gitstructure
 }

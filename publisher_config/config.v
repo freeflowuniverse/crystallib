@@ -1,9 +1,10 @@
 module publisher_config
 
 import os
-// import gittools
+import despiegk.crystallib.texttools
 import json
 import despiegk.crystallib.gittools
+
 
 // load the initial config from filesystem
 fn config_load() ?ConfigRoot {
@@ -97,6 +98,9 @@ fn config_load() ?ConfigRoot {
 		if site_in.name == ""{
 			panic("site name should not be empty. Prob means error in json.\n$txt")
 		}
+		//make sure we normalize the name
+		site_in.name = texttools.name_fix(site_in.name)
+		site_in.configroot = &config
 		config.sites << site_in
 	}
 
@@ -107,19 +111,27 @@ fn config_load() ?ConfigRoot {
 		config.groups << json.decode([]UserGroup, txt) ?
 	}
 
-	mut gt := gittools.new(config.publish.paths.code,config.publish.multibranch) or { return error('cannot load gittools:$err') }
+	config.gittools = gittools.new(config.publish.paths.code,config.publish.multibranch) or { return error('cannot load gittools:$err') }
 
-	for mut site in config.sites{
-		config.process_site_repo( mut &gt, mut &site)?
-	}
+
+	// for mut site in config.sites{
+	// 	config.load()?
+	// }
 
 	return config
 }
 
 
-fn (mut config ConfigRoot) process_site_repo(mut gt gittools.GitStructure, mut site SiteConfig) ? {
+pub fn (mut site SiteConfig) load()  ? {
+
+	if site.state == SiteState.loaded{
+		return
+	}
 
 	// println(" - process site: $site.name")
+
+	mut config := site.configroot
+	mut gt := &config.gittools
 
 	if site.state != SiteState.init{
 		panic("should not get here, bug, site need to be in state init.")
@@ -150,6 +162,8 @@ fn (mut config ConfigRoot) process_site_repo(mut gt gittools.GitStructure, mut s
 			}
 		}
 	}
+
+	site.state = SiteState.loaded
 
 	//DONT DO YET, NEED TO FIGURE OUT HOW TO DEAL WITH DEPENDENCIES ... (kristof)
 		
