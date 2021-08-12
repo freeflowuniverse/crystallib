@@ -25,6 +25,13 @@ pub enum Projectype {
 	team
 }
 
+pub enum TaigaElementTypes{
+	userstory
+	issue
+	task
+	epic
+}
+type TaigaElement = UserStory | Issue | Task | Epic
 struct NewProject {
 pub mut:
 	name                 string
@@ -49,12 +56,14 @@ pub mut:
 }
 
 fn (mut h TaigaConnection) projects() ?[]Project {
+	// List all Projects
 	data := h.get_json_str('projects', '', true) ?
 	return json.decode([]Project, data) or {}
 }
 
 // get the project
-fn (mut h TaigaConnection) project_get(name string) ?Project {
+fn (mut h TaigaConnection) project_get_by_name(name string) ?Project {
+	// Get project by name
 	// because we cache we can walk over it
 	name2 := texttools.name_fix(name)
 	mut all_projects := h.projects() ?
@@ -69,7 +78,7 @@ fn (mut h TaigaConnection) project_get(name string) ?Project {
 
 // check if project exists with certain name
 fn (mut h TaigaConnection) project_exists(name string) bool {
-	h.project_get(name) or {
+	h.project_get_by_name(name) or {
 		if '$err'.contains('cannot find') {
 			return false
 		}
@@ -81,7 +90,7 @@ fn (mut h TaigaConnection) project_exists(name string) bool {
 // create project if it doesnt exist
 fn (mut h TaigaConnection) project_create_if_not_exist(name string, description string, projtype Projectype) ?Project {
 	if h.project_exists(name) {
-		mut project := h.project_get(name) ?
+		mut project := h.project_get_by_name(name) ?
 		project.projtype = projtype
 		return project
 	}
@@ -156,7 +165,6 @@ fn (mut h TaigaConnection) project_create(name string, description string, projt
 	// TODO
 	// h.cache_drop() //to make sure all is consistent
 
-	// return response["id"]
 	mut result := json.decode(Project, response) ?
 	result.client = h
 	result.projtype = projtype
@@ -165,4 +173,38 @@ fn (mut h TaigaConnection) project_create(name string, description string, projt
 
 fn (mut p Project) delete() ?bool {
 	return p.client.delete('projects', p.id, false)
+}
+
+fn (mut p Project) copy (element_type TaigaElementTypes, element_id int, to_project_id int) ?TaigaElement {
+	/*
+	Copy userstory, issue, task and epic from project to other one.
+	Inputs:
+		element_type: enum --> userstory, issue, task and epic
+		element_id: id of the element we want to copy
+		to_project_id: id of the destination project
+	Output
+		new_element: return the new element casted as TaigaElement Type
+	*/
+	mut new_element := TaigaElement(Issue{}) // Initialize with any empty element type
+	match element_type{
+		.userstory {
+			//Get element
+			element := p.client.userstory_get(element_id) ?
+			// Create new element in the distination project
+			new_element = p.client.userstory_create(element.subject, to_project_id) ?
+		}
+		.issue {
+			element := p.client.issue_get(element_id) ?
+			new_element = p.client.issue_create(element.subject, to_project_id) ?
+		}
+		.task {
+			element := p.client.task_get(element_id) ?
+			new_element = p.client.task_create(element.subject, to_project_id) ?
+		}
+		.epic {
+			element := p.client.epic_get(element_id) ?
+			new_element = p.client.epic_create(element.subject, to_project_id) ?
+		}
+	}
+	return new_element
 }

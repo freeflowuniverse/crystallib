@@ -41,7 +41,7 @@ fn (mut h TaigaConnection) userstories() ?[]UserStory {
 	return json.decode([]UserStory, data) or {}
 }
 
-fn (mut h TaigaConnection) userstory_create(subject string, project_id int) ? {
+fn (mut h TaigaConnection) userstory_create(subject string, project_id int) ?UserStory {
 	// TODO
 	// h.cache_drop() //to make sure all is consistent
 	userstory := NewUserStory{
@@ -49,5 +49,16 @@ fn (mut h TaigaConnection) userstory_create(subject string, project_id int) ? {
 		project: project_id
 	}
 	postdata := json.encode_pretty(userstory)
-	response := h.post_json('userstories', postdata, true, true) ?
+	response := h.post_json_str('userstories', postdata, true, true) ?
+	mut result := json.decode(UserStory, response) ?
+	result.client = h
+	return result
+}
+
+fn (mut h TaigaConnection) userstory_get(id int) ?UserStory {
+	// TODO: Check Cache first (Mohammed Essam)
+	response := h.get_json_str('userstories/$id', "", true) ?
+	mut result := json.decode(UserStory, response) ?
+	result.client = h
+	return result
 }
