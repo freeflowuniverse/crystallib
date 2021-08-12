@@ -17,7 +17,7 @@ pub mut:
 	staticfiles map[string]string
 }
 
-pub fn (mut config ConfigRoot) name_web_get(domain string) ?string {
+pub fn (config ConfigRoot) name_web_get(domain string) ?string {
 	for s in config.sites {
 		if domain in s.domains {
 			return s.name

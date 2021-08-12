@@ -1,16 +1,10 @@
 module publisher_core
 
-// import nedpals.vex.router
-// import nedpals.vex.server
-import nedpals.vex.ctx
-// import nedpals.vex.utils
 import despiegk.crystallib.publisher_config
 
 // replace the text from domain name to localhost url
-fn domain_replacer(req &ctx.Req, text_ string) string {
+fn domain_replacer(webnames map[string]string, text_ string) string {
 	mut text := text_
-	// mut myconfig := (&MyContext(req.ctx)).config
-	mut webnames := (&MyContext(req.ctx)).webnames
 
 	for name, alias in webnames {
 		if text.contains(name) {
