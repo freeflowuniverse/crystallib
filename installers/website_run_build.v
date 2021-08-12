@@ -3,7 +3,6 @@ module installers
 import despiegk.crystallib.publisher_config
 import despiegk.crystallib.process
 import despiegk.crystallib.gittools
-import despiegk.crystallib.publisher_core
 import cli
 import os
 
@@ -32,7 +31,7 @@ fn website_conf_repo_get(cmd &cli.Command, mut conf publisher_config.ConfigRoot)
 
 	conf.nodejs_check()
 
-	mut gt := gittools.new(conf.publish.paths.code,false) or { return error('ERROR: cannot load gittools:$err') }
+	mut gt := gittools.new(conf.publish.paths.code, conf.publish.multibranch) or { return error('ERROR: cannot load gittools:$err') }
 	reponame := conf.reponame(name) ?
 	mut repo := gt.repo_get(name: reponame) or {
 		return error('ERROR: cannot find repo: $name\n$err')
@@ -60,17 +59,14 @@ pub fn website_build(cmd &cli.Command) ? {
 	mut use_prefix := false
 
 	arg = cmd.flags.get_string('repo') or { '' }
-	use_prefix = cmd.flags.get_bool('pathprefix') or { false }
+	use_prefix = !(cmd.flags.get_bool('nopathprefix') or { false })
 
 	mut conf := publisher_config.get()
 	mut sites := conf.sites_get()
 
 	if arg.len == 0 {
-		println('- Flatten all wikis')
-		mut publ := publisher_core.new(&conf)?
-		publ.flatten() ?
 		println(' - build all websites')
-		mut gt := gittools.new(conf.publish.paths.code,false) or {
+		mut gt := gittools.new(conf.publish.paths.code, conf.publish.multibranch) or {
 			return error('ERROR: cannot load gittools:$err')
 		}
 		for site in sites {
@@ -99,9 +95,9 @@ pub fn website_build(cmd &cli.Command) ? {
 
 				if use_prefix {
 					if isgridsome{
-						process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.name\\\",\\n\\tplugins: \\\[/g" $repo2.path_get()/gridsome.config.js') ?
+						process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.prefix\\\",\\n\\tplugins: \\\[/g" $repo2.path_get()/gridsome.config.js') ?
 					}else if vuejs{
-						process.execute_stdout('sed -i "s/configureWebpack:: \\\{/publicPath: \\\"\\/$site.name\\\",\\n\\configureWebpack:: \\\{/g" $repo2.path_get()/vue.config.js') ?
+						process.execute_stdout('sed -i "s/configureWebpack: {/publicPath: \\\"\\/$site.prefix\\\",\\n\configureWebpack: {/g" $repo2.path_get()/vue.config.js') ?
 					}
 					
 				}
@@ -126,7 +122,7 @@ pub fn website_build(cmd &cli.Command) ? {
 		// be careful process stops after interactive execute
 		// process.execute_interactive('$repo.path_get()/build.sh') ?
 		for site in sites {
-			if site.name == repo.addr.name {
+			if site.name == repo.addr.name.replace('www_', '') {
 				println(' - build website: $repo.path_get()')
 				
 				mut isgridsome := true
@@ -148,9 +144,9 @@ pub fn website_build(cmd &cli.Command) ? {
 
 				if use_prefix {
 					if isgridsome{
-						process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.name\\\",\\n\\tplugins: \\\[/g" $repo.path_get()/gridsome.config.js') ?
+						process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.prefix\\\",\\n\\tplugins: \\\[/g" $repo.path_get()/gridsome.config.js') ?
 					}else if vuejs{
-						process.execute_stdout('sed -i "s/configureWebpack: {/publicPath: \\\"\\/$site.name\\\",\\n\configureWebpack: {/g" $repo.path_get()/vue.config.js') ?
+						process.execute_stdout('sed -i "s/configureWebpack: {/publicPath: \\\"\\/$site.prefix\\\",\\n\configureWebpack: {/g" $repo.path_get()/vue.config.js') ?
 					}
 					
 				}

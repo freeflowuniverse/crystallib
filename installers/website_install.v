@@ -10,9 +10,10 @@ import despiegk.crystallib.texttools
 pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoot) ? {
 	base := conf.publish.paths.base
 	codepath := conf.publish.paths.code
+	multibranch := conf.publish.multibranch
 	nodejspath := conf.nodejs.path
 
-	mut gt := gittools.new(codepath,false) or { return error('ERROR: cannot load gittools:$err') }
+	mut gt := gittools.new(codepath, multibranch) or { return error('ERROR: cannot load gittools:$err') }
 	reponame := conf.reponame(name) ?
 	mut repo := gt.repo_get(name: reponame) or { return error('ERROR: cannot load gittools:$err') }
 	println(' - install website on $repo.path_get()')
@@ -154,16 +155,19 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 		return error('cannot install node modules for ${name}.\n$err')
 	}
 
-	// println(job)
-
-	// process.execute_silent("mkdir -p $repo.path_get()/content") ?
-
-	for x in ['blog', 'person', 'news', 'project'] {
-		if os.exists('$repo.path_get()/content') {
-			process.execute_silent('rm -rf $repo.path_get()/content/$x\n') ?
-			os.symlink('$codepath/github/threefoldfoundation/data_threefold/content/$x',
-				'$repo.path_get()/content/$x') or {
-				return error('Cannot link $x from data path to repo.path_get().\n$err')
+	// only require threebot_data in case of gridsome website
+	if os.exists('$repo.path_get()/gridsome.config.js'){
+		mut datarepo := gt.repo_get(name: 'threefold_data') or {
+			return error('ERROR: cannot get repo:$err')
+		}
+	
+		for x in ['blog', 'person', 'news', 'project'] {
+			if os.exists('$repo.path_get()/content') {
+				process.execute_silent('rm -rf $repo.path_get()/content/$x\n') ?
+				os.symlink('$datarepo.path_get()/content/$x',
+					'$repo.path_get()/content/$x') or {
+					return error('Cannot link $x from data path to repo.path_get().\n$err')
+				}
 			}
 		}
 	}

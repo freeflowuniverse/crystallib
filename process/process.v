@@ -151,7 +151,8 @@ pub fn temp_write(text string) ?string {
 			break
 		}
 		if i > 99 {
-			return error('Cannote write execscripts, maybe too many of them. Please remove.\ndo:\nrm -rf /temp/execscripts')
+			os.rmdir_all('$tmpdir/execscripts')?
+			temp_write(text)?
 		}
 	}
 	os.write_file(tmppath, text) ?

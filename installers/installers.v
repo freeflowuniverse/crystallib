@@ -33,6 +33,9 @@ pub fn main(cmd cli.Command) ? {
 		sites_cleanup(cmd) or { return error(' ** ERROR: cannot cleanup sites. Error was:\n$err') }
 	}
 
+	// make sure the config we are working with is refelected in ~/.publisher/config
+	update_config() or { return error(' ** ERROR: cannot copy config files to ~publisher/config. Error was:\n$err') }
+
 	sites_install(cmd) or { return error(' ** ERROR: cannot install sites. Error was:\n$err') }
 }
 
@@ -40,7 +43,7 @@ pub fn base() ? {
 	myconfig := publisher_config.get()
 	base := myconfig.publish.paths.base
 
-	mut node := builder.node_get({}) or {
+	mut node := builder.node_get(builder.NodeArguments{}) or {
 		return error(' ** ERROR: cannot load node. Error was:\n$err')
 	}
 	node.platform_prepare() ?
@@ -48,6 +51,8 @@ pub fn base() ? {
 	if !os.exists(base) {
 		os.mkdir(base) or { return err }
 	}
+	
+	os.mkdir_all('$base/config') or { return err }
 
 	println(' - installed base requirements')
 }
@@ -86,4 +91,17 @@ pub fn publishtools_update() ? {
 	'
 	process.execute_silent(script) ?
 	println(' -update done')
+}
+
+pub fn update_config() ?{
+	cfg := publisher_config.get()
+	println(' - copying config files to ~/.publishtools/config')
+	res := os.ls('.')?
+	for file in res{
+		if !os.is_file(file){
+			continue
+		}
+
+		os.cp('./$file', '$cfg.publish.paths.base/config/$file')?
+	}
 }

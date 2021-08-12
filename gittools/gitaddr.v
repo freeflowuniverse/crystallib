@@ -66,7 +66,7 @@ pub fn (gs GitStructure) addr_get_from_url(url string) ?GitAddr {
 	urllower = urllower.replace('/blob/', '/')
 	urllower = urllower.replace('/tree/', '/')
 	// println("AA:$urllower")
-	parts := urllower.split('/')
+	mut parts := urllower.split('/')
 	mut anker := ''
 	mut path := ''
 	mut branch := ''
@@ -86,6 +86,7 @@ pub fn (gs GitStructure) addr_get_from_url(url string) ?GitAddr {
 	// found the branch
 	if parts.len > 3 {
 		branch = parts[3]
+		parts[2] = parts[2].replace('.git', '')
 	}
 	if parts.len < 3 {
 		return error("url badly formatted, not enough parts in '$urllower' \nparts:\n$parts")
@@ -151,5 +152,10 @@ pub fn (gs GitStructure) addr_get_from_path(path string) ?GitAddr {
 	if url == '' {
 		return error('could not parse config file to find url for git.\n$content')
 	}
+	
+	// add branch
+	mut splitted := path.split('/')
+	mut branch := splitted[splitted.len -1]
+	url = '$url/$branch'
 	return gs.addr_get_from_url(url)
 }

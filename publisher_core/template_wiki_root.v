@@ -185,7 +185,7 @@ fn template_wiki_root(reponame string, repourl string, trackingid string, opengr
       <script src="simple-lightbox.min.js"></script>
       <script src="mermaid.min.js"></script>
       <script src="docsify-mermaid.js"> 
-      <script>mermaid.initialize({ startOnLoad: true, securityLevel:\'loose\' });</script>
+      <script>mermaid.initialize({ startOnLoad: true, securityLevel:"loose" });</script>
       <script src="docsify-mindmap.min.js"></script>
       <link rel="stylesheet" href="docsify-charty.min.css">
       <link rel="stylesheet" href="charty-custom-style.css">

@@ -16,7 +16,7 @@ pub fn install(cfg &publisher_config.ConfigRoot) ? {
 	base := cfg.publish.paths.base
 	nodejspath := cfg.nodejs.path
 
-	mut node := builder.node_get({}) or {
+	mut node := builder.node_get(builder.NodeArguments{}) or {
 		println(' ** ERROR: cannot load node. Error was:\n$err')
 		exit(1)
 	}
@@ -35,27 +35,15 @@ pub fn install(cfg &publisher_config.ConfigRoot) ? {
 	}
 
 	if !os.exists('$nodejspath/bin/node') {
-		println(' - will install nodejs (can take quite a while)')
+		println(' - will install nodejs $cfg.nodejs.version (can take quite a while)')
+		script = '
+		set -e
+		export NVM_DIR=$base
+		source $base/nvm.sh
+		nvm install $cfg.nodejs.version
+		npm install -g @gridsome/cli
+		'
 		
-		lts := cfg.nodejs.version.replace('v', '')
-
-		if cfg.nodejs.version == "lts" {
-			script = '
-			set -e
-			export NVM_DIR=$base
-			source $base/nvm.sh
-			nvm install $lts
-			npm install --global @gridsome/cli
-			'
-		} else {
-			script = '
-			set -e
-			export NVM_DIR=$base
-			source $base/nvm.sh
-			nvm install node
-			npm install --global @gridsome/cli
-			'
-		}
 		process.execute_silent(script) or {
 			println('cannot install nodejs.\n$err')
 			exit(1)

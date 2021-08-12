@@ -27,7 +27,7 @@ pub fn load() HostsFile {
 			if !(section in obj.hosts) {
 				obj.hosts[section] = []map[string]string{}
 			}
-			obj.hosts[section] << map{
+			obj.hosts[section] << {
 				splitted[0]: splitted[1]
 			}
 		}
@@ -72,7 +72,7 @@ pub fn (mut hostsfile HostsFile) add(ip string, domain string, section string) &
 	if !(section in hostsfile.hosts) {
 		hostsfile.hosts[section] = []map[string]string{}
 	}
-	hostsfile.hosts[section] << map{
+	hostsfile.hosts[section] << {
 		ip: domain
 	}
 	return hostsfile

@@ -45,16 +45,16 @@ fn config_load() ?ConfigRoot {
 	// Make sure that all dirs existed/created
 
 	if !os.exists(config.publish.paths.base) {
-		os.mkdir(config.publish.paths.base) or { return error("Cannot create path for publisher: $err") }
+		os.mkdir_all(config.publish.paths.base) or { return error("Cannot create path for publisher: $err") }
 	}
 
 	if !os.exists(config.publish.paths.code) {
 	
-		os.mkdir(config.publish.paths.code) or { return error("Cannot create path for publisher: $err") }
+		os.mkdir_all(config.publish.paths.code) or { return error("Cannot create path for publisher: $err") }
 	}
 
 	if !os.exists(config.publish.paths.codewiki) {
-		os.mkdir(config.publish.paths.codewiki) or { return error("Cannot create path for publisher: $err") }
+		os.mkdir_all(config.publish.paths.codewiki) or { return error("Cannot create path for publisher: $err") }
 	}
 
 	// Load nodejs config
@@ -82,7 +82,7 @@ fn config_load() ?ConfigRoot {
 	current_dir := '.'
 	mut files := os.ls(current_dir) or { return error("Cannot load config files in current dir, $err") }
 	for file in files {
-		if (file.starts_with('site_') && file.ends_with('.json')) || file == 'sites.json' {
+		if file.starts_with('site_') && file.ends_with('.json') {
 			sites_config_files << file
 		}
 		if file.starts_with('groups_') && file.ends_with('.json'){
@@ -92,7 +92,12 @@ fn config_load() ?ConfigRoot {
 	for site_file in sites_config_files {
 		println(' - found $site_file as a config file for sites.')
 		txt := os.read_file(site_file) ?
-		config.sites << json.decode([]SiteConfig, txt) ?
+		// mut site_in := json.decode(SiteConfig, txt) ?
+		mut site_in := json.decode(SiteConfig, txt) or {panic(err)}
+		if site_in.name == ""{
+			panic("site name should not be empty. Prob means error in json.\n$txt")
+		}
+		config.sites << site_in
 	}
 
 	// Load Groups
@@ -116,8 +121,9 @@ fn config_load() ?ConfigRoot {
 
 fn (mut config ConfigRoot) process_site_repo(mut gt gittools.GitStructure, mut site SiteConfig) ? {
 
+	// println(" - process site: $site.name")
+
 	if site.state != SiteState.init{
-		println(site)
 		panic("should not get here, bug, site need to be in state init.")
 	}
 
@@ -129,11 +135,13 @@ fn (mut config ConfigRoot) process_site_repo(mut gt gittools.GitStructure, mut s
 		mut repo := gt.repo_get_from_url(url: site.git_url, pull: site.pull, reset: site.reset) or {
 			return error(' - ERROR: could not download site $site.git_url\n$err\n$site')
 		}
+		// println(' - get git addr obj:$repo.addr')
 		site.fs_path = ""
-		site.path = repo.path_get()
+		site.path = os.join_path(repo.path_get(), repo.addr.path)
 	}
 	if ! os.exists(site.path) || site.path == "" {
-		return error("Cannot find site.fs_path on `$site.path` for \n$site\nin process site repo.")
+		println( "- Error Cannot find `$site.path` for \n$site\nin process site repo. Creating `$site.path`")
+		os.mkdir_all(site.path)?
 	}
 
 	toremoves := [os.join_path(site.path,"index.html"),os.join_path(site.path,"wikiconfig.json")]

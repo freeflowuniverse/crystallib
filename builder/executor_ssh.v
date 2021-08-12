@@ -110,7 +110,7 @@ accessing type Executor won't allow to access the
 fields of the struct, so this is workaround
 */
 pub fn (mut executor ExecutorSSH) info() map[string]string {
-	return map{
+	return {
 		'category':  'ssh'
 		'sshkey':    executor.sshkey
 		'user':      executor.user
