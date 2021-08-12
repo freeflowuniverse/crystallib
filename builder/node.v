@@ -27,7 +27,7 @@ pub struct NodeArguments {
 // the factory which returns an node, based on the arguments will chose ssh executor or the local one
 
 pub fn node_get(args NodeArguments) ?Node {
-	mut node := Node{}
+	mut node := Node{executor:ExecutorLocal{}}
 	if args.ipaddr == '' || args.ipaddr.starts_with('localhost')
 		|| args.ipaddr.starts_with('127.0.0.1') {
 		node.executor = ExecutorLocal{}

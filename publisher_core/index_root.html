@@ -3,7 +3,7 @@
 @for site in sites
 	<div>		
 		@if site.cat == .wiki		
-		@if config.web_hostnames
+		@if web_hostnames
 		<a href="//@{site.domains[0]}@port_str">@{site.name}</a> 
 		&nbsp;&nbsp;	
 		<a href="//@{site.domains[0]}@port_str/errors">errors check</a>		
@@ -17,7 +17,7 @@
 @end
 
 
-@if config.web_hostnames
+@if web_hostnames
 <h1>WEBSITES</h1>
 @for site in sites
 <div>

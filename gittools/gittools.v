@@ -72,7 +72,12 @@ pub fn new(root string, multibranch bool) ?GitStructure {
 	// cfg := publisher_config.get()
 	mut root2:=root
 	if root2 == ''{
-		root2 = '$os.home_dir()/code/'
+		if "DIR_CODE" in os.environ(){
+			dir_ct := os.environ()["DIR_CODE"]
+			root2 = '$dir_ct/'
+		}else{
+			root2 = '$os.home_dir()/code/'
+		}
 	}
 	mut gitstructure := GitStructure{
 		root: root2

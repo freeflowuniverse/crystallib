@@ -15,7 +15,7 @@ fn (mut file File) consumer_page_register(consumer_page_id int, mut publisher Pu
 // need to create smaller sizes if needed and change the name
 // also need to make sure its in right directory
 // do this after the loading/checking of all pages & files
-fn (mut file File) relocate(mut publisher Publisher) {
+fn (mut file File) relocate(mut publisher Publisher) ? {
 	if file.site_id > publisher.sites.len {
 		panic('cannot find site: $file.site_id, not enough elements in list.')
 	}
@@ -54,14 +54,13 @@ fn (mut file File) relocate(mut publisher Publisher) {
 			}
 			if os.exists(dest) {
 				if os.real_path(dest) == os.real_path(path) {
-					panic('should never be same path: $dest and $path')
+					return error ('should never be same path: $dest and $path')
 				}
 				println('   >>>RM3: $path')
-				os.rm(path) or { panic(err) }
+				file.delete() ?
 			} else {
 				println('   >>>MV3: $path -> $dest')
-				os.mkdir_all(os.dir(dest)) or { panic(err) }
-				os.mv(path, dest) or { panic(err) }
+				file.mv(dest)?
 			}
 		} else {
 			pageid_who_has_file := file.usedby[0]
@@ -76,11 +75,10 @@ fn (mut file File) relocate(mut publisher Publisher) {
 					panic('should never be same path: $dest and $path')
 				}
 				println(' >>>RM2: $path')
-				os.rm(path) or { panic(err) }
+				file.delete() ?
 			} else {
 				println(" >>>MV2: '$path' -> '$dest'")
-				os.mkdir_all(os.dir(dest)) or { panic(err) }
-				os.mv(path, dest) or { panic(err) }
+				file.mv(dest)?
 			}
 		}
 	} else {
@@ -90,9 +88,8 @@ fn (mut file File) relocate(mut publisher Publisher) {
 		// println("${file.name} not used")
 		dest = '$site.path/img_notused/${os.base(path)}'
 		if !os.exists(dest) {
-			// println(">>>MV: $path -> $dest")
-			os.mkdir_all(os.dir(dest)) or { panic(err) }
-			os.mv(path, dest) or { panic(err) }
+			println(">>>MV3: $path -> $dest")
+			file.mv(dest)?
 		}
 	}
 	file.path = '/img_notused/${os.base(path)}'

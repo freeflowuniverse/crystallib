@@ -28,7 +28,7 @@ pub fn (client Client) list_kubernetes_nodes() ([]Kubernetes, int) {
 
 pub fn (client Client) add_kubernetes_node(flavor string) ([]int, int) {
 	auth_cred := base64.encode_str('$client.vdcname:$client.password')
-	body := json.encode(map{
+	body := json.encode({
 		'flavor': flavor
 	})
 	full_url := client.url + '/api/controller/node'
@@ -39,7 +39,7 @@ pub fn (client Client) add_kubernetes_node(flavor string) ([]int, int) {
 
 pub fn (client Client) delete_kubernetes_node(wid int) (DeleteResponse, int) {
 	auth_cred := base64.encode_str('$client.vdcname:$client.password')
-	body := json.encode(map{
+	body := json.encode({
 		'wid': wid
 	})
 	full_url := client.url + '/api/controller/node'
@@ -70,7 +70,7 @@ pub fn (client Client) add_storage_node(capacity int, farm string) ([]int, int) 
 
 pub fn (client Client) delete_storage_node(wid int) (DeleteResponse, int) {
 	auth_cred := base64.encode_str('$client.vdcname:$client.password')
-	body := json.encode(map{
+	body := json.encode({
 		'wid': wid
 	})
 	full_url := client.url + '/api/controller/zdb'
@@ -114,7 +114,7 @@ pub fn (client Client) get_kubeconfig() (string, int) {
 
 pub fn (client Client) get_zstor_config(ip_version int) (string, int) {
 	auth_cred := base64.encode_str('$client.vdcname:$client.password')
-	body := json.encode(map{
+	body := json.encode({
 		'ip_version': ip_version
 	})
 	full_url := client.url + '/api/controller/zstor_config'
@@ -158,7 +158,7 @@ pub fn (client Client) add_vm(add_vm_request_body AddVM) ([]int, int) {
 
 pub fn (client Client) delete_vm(wid int) (DeleteResponse, int) {
 	auth_cred := base64.encode_str('$client.vdcname:$client.password')
-	body := json.encode(map{
+	body := json.encode({
 		'wid': wid
 	})
 	full_url := client.url + '/api/controller/vmachine'

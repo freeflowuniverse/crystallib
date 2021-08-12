@@ -84,7 +84,7 @@ pub fn (config ConfigRoot) site_exists(name string) bool {
 
 
 // return using shortname or name (will first use shortname)
-pub fn (mut config ConfigRoot) site_web_get(name string) ?SiteConfig {
+pub fn (config ConfigRoot) site_web_get(name string) ?SiteConfig {
 	mut name2 := name.to_lower()
 	if name2.starts_with('www_') {
 		name2 = name2[4..]
@@ -106,7 +106,7 @@ pub fn (mut config ConfigRoot) site_web_get(name string) ?SiteConfig {
 }
 
 // return using shortname or name (will first use shortname)
-pub fn (mut config ConfigRoot) site_wiki_get(name string) ?SiteConfig {
+pub fn (config ConfigRoot) site_wiki_get(name string) ?SiteConfig {
 	mut name2 := name.to_lower()
 	if name2.starts_with('wiki_') {
 		name2 = name2[5..]
@@ -128,7 +128,7 @@ pub fn (mut config ConfigRoot) site_wiki_get(name string) ?SiteConfig {
 }
 
 // return using shortname or name (will first use shortname)
-pub fn (mut config ConfigRoot) sites_get() []SiteConfig {
+pub fn (config ConfigRoot) sites_get() []SiteConfig {
 	mut sites := []SiteConfig{}
 	for site in config.sites {
 		sites << site
@@ -142,7 +142,7 @@ pub fn (config ConfigRoot) reponame(name string) ?string {
 }
 
 // get the domain name
-pub fn (mut config ConfigRoot) domain_get(shortname string, cat SiteCat) ?string {
+pub fn (config ConfigRoot) domain_get(shortname string, cat SiteCat) ?string {
 	for s in config.sites {
 		if shortname == s.name && s.cat == cat {
 			return s.domains[0]

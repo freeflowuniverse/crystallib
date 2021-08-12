@@ -109,8 +109,6 @@ fn config_load() ?ConfigRoot {
 
 	mut gt := gittools.new(config.publish.paths.code,config.publish.multibranch) or { return error('cannot load gittools:$err') }
 
-
-
 	for mut site in config.sites{
 		config.process_site_repo( mut &gt, mut &site)?
 	}
@@ -128,7 +126,7 @@ fn (mut config ConfigRoot) process_site_repo(mut gt gittools.GitStructure, mut s
 	}
 
 	if site.fs_path!= "" {
-		//this is the path on the filesystem
+		//this is the path on the filesystem	
 		site.path = os.real_path(site.fs_path)
 	}else{
 		println(' - get:$site.git_url')
@@ -141,7 +139,7 @@ fn (mut config ConfigRoot) process_site_repo(mut gt gittools.GitStructure, mut s
 	}
 	if ! os.exists(site.path) || site.path == "" {
 		println( "- Error Cannot find `$site.path` for \n$site\nin process site repo. Creating `$site.path`")
-		os.mkdir_all(site.path)?
+		return error(' - ERROR: could not find source path:$site.path for\nsite $site.git_url\n$site')
 	}
 
 	toremoves := [os.join_path(site.path,"index.html"),os.join_path(site.path,"wikiconfig.json")]
@@ -210,3 +208,7 @@ const gconf = config_load() or {
 pub fn get() ConfigRoot {
 	return publisher_config.gconf
 }
+
+
+	
+

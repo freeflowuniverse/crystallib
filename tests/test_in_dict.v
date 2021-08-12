@@ -1,7 +1,7 @@
 module main
 
 fn main() {
-	mut r := map{
+	mut r := {
 		'a': 'aaa'
 	}
 
