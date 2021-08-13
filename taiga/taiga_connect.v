@@ -63,7 +63,7 @@ fn (mut h TaigaConnection) header() http.Header {
 	Output:
 		header: http.Header with the needed headers
 	*/
-	mut header := http.new_header_from_map({
+	mut header := http.new_header_from_map(map{
 		http.CommonHeader.content_type:  'application/json'
 		http.CommonHeader.authorization: 'Bearer $h.auth.auth_token'
 	})
@@ -128,9 +128,9 @@ fn (mut h TaigaConnection) cache_drop() ? {
 	/*
 	Drop all cache related to taiga
 	*/
-	all_keys := h.redis.keys('taiga:*')
+	all_keys := h.redis.keys('taiga:*') ?
 	for key in all_keys {
-		h.redis.del(key)
+		h.redis.del(key) ?
 	}
 	// TODO:: maintain authentication & reconnect (Need More Info)
 }
@@ -327,11 +327,3 @@ fn (mut h TaigaConnection) auth(url string, login string, passwd string) ?AuthDe
 
 	return h
 }
-/private/tmp/vls_temp_formatting.v:63:41: warning: deprecated map syntax, use syntax like `{'age': 20}`
-   61 |         header: http.Header with the needed headers
-   62 | */
-   63 |     mut header := http.new_header_from_map(map{
-      |                                            ~~~
-   64 |             http.CommonHeader.content_type: "application/json"
-   65 |             http.CommonHeader.authorization: "Bearer $h.auth.auth_token"
-

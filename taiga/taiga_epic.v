@@ -47,7 +47,7 @@ fn (mut h TaigaConnection) epics() ?[]Epic {
 	return json.decode([]Epic, data) or {}
 }
 
-fn (mut h TaigaConnection) epic_create(subject string, project_id int) ? {
+fn (mut h TaigaConnection) epic_create(subject string, project_id int) ?Epic {
 	// TODO
 	// h.cache_drop() //to make sure all is consistent
 	epic := NewEpic{
@@ -55,5 +55,16 @@ fn (mut h TaigaConnection) epic_create(subject string, project_id int) ? {
 		project: project_id
 	}
 	postdata := json.encode_pretty(epic)
-	response := h.post_json('epics', postdata, true, true) ?
+	response := h.post_json_str('epics', postdata, true, true) ?
+	mut result := json.decode(Epic, response) ?
+	result.client = h
+	return result
+}
+
+fn (mut h TaigaConnection) epic_get(id int) ?Epic {
+	// TODO: Check Cache first (Mohammed Essam)
+	response := h.get_json_str('epics/$id', "", true) ?
+	mut result := json.decode(Epic, response) ?
+	result.client = h
+	return result
 }

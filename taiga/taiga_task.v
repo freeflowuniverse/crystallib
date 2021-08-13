@@ -40,7 +40,7 @@ fn (mut h TaigaConnection) tasks() ?[]Task {
 	return json.decode([]Task, data) or {}
 }
 
-fn (mut h TaigaConnection) task_create(subject string, project_id int) ? {
+fn (mut h TaigaConnection) task_create(subject string, project_id int) ?Task {
 	// TODO
 	// h.cache_drop() //to make sure all is consistent
 	task := NewTask{
@@ -48,5 +48,16 @@ fn (mut h TaigaConnection) task_create(subject string, project_id int) ? {
 		project: project_id
 	}
 	postdata := json.encode_pretty(task)
-	response := h.post_json('tasks', postdata, true, true) ?
+	response := h.post_json_str('tasks', postdata, true, true) ?
+	mut result :=  json.decode(Task, response) ?
+	result.client = h
+	return result
+}
+
+fn (mut h TaigaConnection) task_get(id int) ?Task {
+	// TODO: Check Cache first (Mohammed Essam)
+	response := h.get_json_str('tasks/$id', "", true) ?
+	mut result := json.decode(Task, response) ?
+	result.client = h
+	return result
 }

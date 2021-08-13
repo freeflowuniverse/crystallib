@@ -46,7 +46,7 @@ fn (mut h TaigaConnection) issues() ?[]Issue {
 }
 
 // create issue based on our standards
-fn (mut h TaigaConnection) issue_create(subject string, project_id int) ? {
+fn (mut h TaigaConnection) issue_create(subject string, project_id int) ?Issue {
 	// TODO
 	// h.cache_drop() //to make sure all is consistent
 	issue := NewIssue{
@@ -54,5 +54,16 @@ fn (mut h TaigaConnection) issue_create(subject string, project_id int) ? {
 		project: project_id
 	}
 	postdata := json.encode_pretty(issue)
-	response := h.post_json('issues', postdata, true, true) ?
+	response := h.post_json_str('issues', postdata, true, true) ?
+	mut result := json.decode(Issue, response) ?
+	result.client = h
+	return result
+}
+
+fn (mut h TaigaConnection) issue_get(id int) ?Issue {
+	// TODO: Check Cache first (Mohammed Essam)
+	response := h.get_json_str('issues/$id', "", true) ?
+	mut result := json.decode(Issue, response) ?
+	result.client = h
+	return result
 }
