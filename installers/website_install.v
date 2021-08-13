@@ -14,8 +14,8 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 	nodejspath := conf.nodejs.path
 
 	mut gt := gittools.new(codepath, multibranch) or { return error('ERROR: cannot load gittools:$err') }
-	reponame := conf.reponame(name) ?
-	mut repo := gt.repo_get(name: reponame) or { return error('ERROR: cannot load gittools:$err') }
+	// println(" - install repo: $name")
+	mut repo := gt.repo_get(name:name) or { return error('ERROR: cannot load gittools, cannot find reponame:$name \n$err') }
 	println(' - install website on $repo.path_get()')
 
 	if conf.publish.reset {
@@ -59,9 +59,9 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 	rm -f yarn.lock
 	rm -rf .cache		
 	
-	set +e
-	source $base/nvm.sh
-	set -e
+	#set +e
+	#source $base/nvm.sh
+	#set -e
 
 	if [ "$first" = "true" ]; then
 		#nvm use --lts
@@ -86,11 +86,9 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 	set -e
 	cd $repo.path_get()
 
-	#need to ignore errors for getting nvm not sure why
-	set +e
-	source $base/nvm.sh
-
-	set -e
+	#set +e
+	#source $base/nvm.sh
+	#set -e
 	#nvm use --lts
 
 	export PATH=$nodejspath/bin:\$PATH
@@ -108,11 +106,9 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 	set -e
 	cd $repo.path_get()
 
-	#need to ignore errors for getting nvm not sure why
-	set +e
-	source $base/nvm.sh
-
-	set -e
+	#set +e
+	#source $base/nvm.sh
+	#set -e
 	#nvm use --lts
 
 	export PATH=$nodejspath/bin:\$PATH
@@ -136,6 +132,54 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 
 	'
 
+	package_json :='
+	{
+	"name": "$name",
+	"private": true,
+	"scripts": {
+		"build": "gridsome build",
+		"develop": "gridsome develop",
+		"explore": "gridsome explore"
+	},
+	"dependencies": {
+		"@fortawesome/fontawesome-svg-core": "^1.2.30",
+		"@fortawesome/free-brands-svg-icons": "^5.14.0",
+		"@fortawesome/free-solid-svg-icons": "^5.14.0",
+		"@fortawesome/vue-fontawesome": "^2.0.0",
+		"@gridsome/source-filesystem": "^0.6.2",
+		"@gridsome/transformer-remark": "^0.6.2",
+		"@noxify/gridsome-remark-classes": "^1.0.0",
+		"@noxify/gridsome-remark-table-align": "^1.0.0",
+		"axios": "^0.21.1",
+		"babel-runtime": "^6.26.0",
+		"core-js": "^3.6.5",
+		"gridsome": "^0.7.3",
+		"gridsome-plugin-matomo": "^0.1.0",
+		"gridsome-plugin-remark-prismjs-all": "^0.3.5",
+		"gridsome-plugin-tailwindcss": "^3.0.1",
+		"gridsome-source-graphql": "^1.0.2",
+		"gridsome-source-static-meta": "github:noxify/gridsome-source-static-meta#master",
+		"lodash": "^4.17.20",
+		"pluralize": "^8.0.0",
+		"sass-loader": "^10.0.2",
+		"tailwindcss": "^2.0.0",
+		"tailwindcss-gradients": "^3.0.0",
+		"tailwindcss-tables": "^0.4.0",
+		"v-tooltip": "^2.0.3",
+		"vue-markdown": "^2.1.2",
+		"isexe": "^2.0.0",
+		"vue-share-it": "^1.1.4"
+		},
+		"devDependencies": {
+			"@tailwindcss/aspect-ratio": "^0.2.0"
+		}
+	}
+	'
+
+	// "node-sass": "^5.0.0"
+
+	//REMARK: changed tailwind css to 2.x series, maybe that is not good
+
 	os.write_file('$repo.path_get()/install.sh', texttools.dedent(script_install)) or {
 		return error('cannot write to $repo.path_get()/install.sh\n$err')
 	}
@@ -145,6 +189,10 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 	os.write_file('$repo.path_get()/build.sh', texttools.dedent(script_build)) or {
 		return error('cannot write to $repo.path_get()/build.sh\n$err')
 	}
+
+	os.write_file('$repo.path_get()/package.json', texttools.dedent(package_json)) or {
+		return error('cannot write to $repo.path_get()/package.json\n$err')
+	}	
 
 	os.chmod('$repo.path_get()/install.sh', 0o700)
 	os.chmod('$repo.path_get()/run.sh', 0o700)

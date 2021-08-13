@@ -14,7 +14,7 @@ fn website_conf_repo_get(cmd &cli.Command, mut conf publisher_config.ConfigRoot)
 	for mut site in conf.sites_get() {
 		if site.cat == publisher_config.SiteCat.web {
 			if site.name.contains(name) {
-				res << site.reponame()
+				res << site.reponame
 			}
 		}
 	}

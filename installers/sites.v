@@ -14,7 +14,7 @@ pub fn sites_list(cmd &cli.Command) ? {
 		return error('cannot load gittools:$err')
 	}
 	for mut site in conf.sites_get() {
-		mut repo := gt.repo_get(name: site.reponame()) or {
+		mut repo := gt.repo_get(name: site.reponame) or {
 			return error('ERROR: cannot get repo:$err')
 		}
 		change := repo.changes() or {
@@ -64,7 +64,8 @@ pub fn sites_install(cmd cli.Command) ? {
 	sites_download(cmd, true) ?
 	for mut sc in cfg.sites_get() {
 		if sc.cat == publisher_config.SiteCat.web {
-			website_install(sc.name, first, cfg) ?
+			sc.load(cfg)?
+			website_install(sc.reponame, first, cfg) ?
 			first = false
 		}
 	}
@@ -104,7 +105,7 @@ pub fn sites_pull(cmd cli.Command) ? {
 	mut found := false
 
 	for mut sc in cfg.sites_get() {
-		mut repo := gt.repo_get(name: sc.reponame()) or {
+		mut repo := gt.repo_get(name: sc.reponame) or {
 			return error('ERROR: cannot get repo:$err')
 		}
 		if !flag_repo_do(cmd, repo.addr.name, sc) {
@@ -139,7 +140,7 @@ pub fn sites_push(cmd cli.Command) ? {
 	mut found := false
 
 	for mut sc in cfg.sites_get() {
-		mut repo := gt.repo_get(name: sc.reponame()) or {
+		mut repo := gt.repo_get(name: sc.reponame) or {
 			return error('ERROR: cannot get repo:$err')
 		}
 		if !flag_repo_do(cmd, repo.addr.name, sc) {
@@ -177,7 +178,7 @@ pub fn sites_commit(cmd cli.Command) ? {
 	mut found := false
 
 	for mut sc in cfg.sites_get() {
-		mut repo := gt.repo_get(name: sc.reponame()) or {
+		mut repo := gt.repo_get(name: sc.reponame) or {
 			return error('ERROR: cannot get repo:$err')
 		}
 		if !flag_repo_do(cmd, repo.addr.name, sc) {
@@ -217,7 +218,7 @@ pub fn sites_pushcommit(cmd cli.Command) ? {
 	mut found := false
 
 	for mut sc in cfg.sites_get() {
-		mut repo := gt.repo_get(name: sc.reponame()) or {
+		mut repo := gt.repo_get(name: sc.reponame) or {
 			return error('ERROR: cannot get repo:$err')
 		}
 		if !flag_repo_do(cmd, repo.addr.name, sc) {
@@ -270,7 +271,7 @@ pub fn sites_removechanges(cmd cli.Command) ? {
 	mut gt := gittools.new(codepath, multibranch) ?
 	println(' - remove changes')
 	for mut sc in cfg.sites_get() {
-		mut repo := gt.repo_get(name: sc.reponame()) or {
+		mut repo := gt.repo_get(name: sc.reponame) or {
 			return error('ERROR: cannot get repo:$err')
 		}
 
@@ -304,7 +305,7 @@ pub fn site_edit(cmd cli.Command) ? {
 		return error('ERROR: cannot load gittools:$err')
 	}
 	for mut sc in cfg.sites_get() {
-		mut repo := gt.repo_get(name: sc.reponame()) or {
+		mut repo := gt.repo_get(name: sc.reponame) or {
 			return error('ERROR: cannot get repo:$err')
 		}
 		if !flag_repo_do(cmd, repo.addr.name, sc) {

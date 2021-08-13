@@ -146,6 +146,7 @@ pub fn (mut site SiteConfig) load(configroot ConfigRoot) ? {
 		// println(' - get git addr obj:$repo.addr')
 		site.fs_path = ''
 		site.path = os.join_path(repo.path_get(), repo.addr.path)
+		site.reponame = repo.addr.name
 	}
 	if !os.exists(site.path) || site.path == '' {
 		println('- Error Cannot find `$site.path` for \n$site\nin process site repo. Creating `$site.path`')
@@ -160,6 +161,8 @@ pub fn (mut site SiteConfig) load(configroot ConfigRoot) ? {
 			}
 		}
 	}
+
+	// println(site)
 
 	site.state = SiteState.loaded
 

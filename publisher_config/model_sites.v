@@ -2,11 +2,12 @@ module publisher_config
 
 import os
 import despiegk.crystallib.texttools
-
+import despiegk.crystallib.gittools
 
 pub struct SiteConfig {
 pub mut:
 	name       string
+	reponame       string
 	prefix 	   string //prefix as will be used on web, is optional
 	//the site config is known by git_url or by fs_path
 	git_url        string
@@ -54,16 +55,6 @@ pub enum SiteState {
 	processed
 }
 
-
-pub fn (mut site SiteConfig) reponame() string {
-	if site.name == '' {
-		site.name = os.base(site.git_url)
-		if site.name.ends_with('.git') {
-			site.name = site.name[..site.name.len - 4]
-		}
-	}
-	return site.name
-}
 
 pub fn (config ConfigRoot) site_get(name2 string) ?SiteConfig {
 	name := texttools.name_fix(name2)
@@ -143,7 +134,7 @@ pub fn (config ConfigRoot) sites_get() []SiteConfig {
 
 pub fn (config ConfigRoot) reponame(name string) ?string {
 	mut site := config.site_get(name) or { return error('Cannot find site with configname: $name') }
-	return site.reponame()
+	return site.reponame
 }
 
 // get the domain name
