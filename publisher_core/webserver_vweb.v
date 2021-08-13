@@ -176,13 +176,27 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path str
 	if publisherobj.develop {
 		filetype, sitename2, name2 := filetype_site_name_get(config, sitename, name) ?
 		if debug {
-			println(' >> page get develop: $filetype, $sitename2, $name2')
+			println(' >> get develop: $filetype, $sitename2, $name2')
 		}
 
 		if filetype == FileType.javascript || filetype == FileType.css {
+			if debug {
+				println(' >>> file static get: $filetype, $sitename2, $name2')
+			}
+
 			mut p := os.join_path(config.publish.paths.base, 'static', name2)
-			mut content := os.read_file(p) or { return app.not_found() }
+			mut content := os.read_file(p) or {
+				if debug {
+					println(' >>> file static not found or error: $p\n$err')
+				}
+				return app.not_found()
+			}
 			app.set_content_type(content_type_get(p) ?)
+			if debug {
+				content_type := content_type_get(p) ?
+				len1 := content.len
+				println(' >>> file static content type: $content_type, len:$len1')
+			}
 			return app.ok(content)
 		}
 
