@@ -5,7 +5,6 @@ import despiegk.crystallib.texttools
 import json
 import despiegk.crystallib.gittools
 
-
 // load the initial config from filesystem
 fn config_load() ?ConfigRoot {
 	mut config := ConfigRoot{}
@@ -28,34 +27,38 @@ fn config_load() ?ConfigRoot {
 				codewiki: '$os.home_dir()/codewiki'
 			}
 		}
-		
 	}
-	if config.publish.paths.base == "" {
+	if config.publish.paths.base == '' {
 		config.publish.paths.base = '$os.home_dir()/.publisher'
 	}
-	if config.publish.paths.code == "" {
+	if config.publish.paths.code == '' {
 		config.publish.paths.code = '$os.home_dir()/codewww'
 	}
-	if config.publish.paths.codewiki == "" {
+	if config.publish.paths.codewiki == '' {
 		config.publish.paths.codewiki = '$os.home_dir()/codewiki'
 	}
-	if config.publish.paths.publish == "" {
+	if config.publish.paths.publish == '' {
 		config.publish.paths.publish = '$config.publish.paths.base/publish'
 	}
 
 	// Make sure that all dirs existed/created
 
 	if !os.exists(config.publish.paths.base) {
-		os.mkdir_all(config.publish.paths.base) or { return error("Cannot create path for publisher: $err") }
+		os.mkdir_all(config.publish.paths.base) or {
+			return error('Cannot create path base for publisher: $err')
+		}
 	}
 
 	if !os.exists(config.publish.paths.code) {
-	
-		os.mkdir_all(config.publish.paths.code) or { return error("Cannot create path for publisher: $err") }
+		os.mkdir_all(config.publish.paths.code) or {
+			return error('Cannot create path code for publisher: $err')
+		}
 	}
 
 	if !os.exists(config.publish.paths.codewiki) {
-		os.mkdir_all(config.publish.paths.codewiki) or { return error("Cannot create path for publisher: $err") }
+		os.mkdir_all(config.publish.paths.codewiki) or {
+			return error('Cannot create path codewiki for publisher: $err')
+		}
 	}
 
 	// Load nodejs config
@@ -81,12 +84,14 @@ fn config_load() ?ConfigRoot {
 	mut groups_config_files := []string{}
 
 	current_dir := '.'
-	mut files := os.ls(current_dir) or { return error("Cannot load config files in current dir, $err") }
+	mut files := os.ls(current_dir) or {
+		return error('Cannot load config files in current dir, $err')
+	}
 	for file in files {
 		if file.starts_with('site_') && file.ends_with('.json') {
 			sites_config_files << file
 		}
-		if file.starts_with('groups_') && file.ends_with('.json'){
+		if file.starts_with('groups_') && file.ends_with('.json') {
 			groups_config_files << file
 		}
 	}
@@ -94,11 +99,11 @@ fn config_load() ?ConfigRoot {
 		println(' - found $site_file as a config file for sites.')
 		txt := os.read_file(site_file) ?
 		// mut site_in := json.decode(SiteConfig, txt) ?
-		mut site_in := json.decode(SiteConfig, txt) or {panic(err)}
-		if site_in.name == ""{
-			panic("site name should not be empty. Prob means error in json.\n$txt")
+		mut site_in := json.decode(SiteConfig, txt) or { panic(err) }
+		if site_in.name == '' {
+			panic('site name should not be empty. Prob means error in json.\n$txt')
 		}
-		//make sure we normalize the name
+		// make sure we normalize the name
 		site_in.name = texttools.name_fix(site_in.name)
 		// site_in.configroot = &config
 		config.sites << site_in
@@ -114,54 +119,52 @@ fn config_load() ?ConfigRoot {
 	return config
 }
 
-
-pub fn (mut site SiteConfig) load(configroot ConfigRoot)  ? {
-
-	if site.state == SiteState.loaded{
+pub fn (mut site SiteConfig) load(configroot ConfigRoot) ? {
+	if site.state == SiteState.loaded {
 		return
 	}
 
 	// println(" - process site: $site.name")
 
 	mut config := configroot
-	
-	//just get instance of the gittools
-	mut gt := gittools.new(config.publish.paths.code,config.publish.multibranch)?
 
-	if site.state != SiteState.init{
-		panic("should not get here, bug, site need to be in state init.")
+	// just get instance of the gittools
+	mut gt := gittools.new(config.publish.paths.code, config.publish.multibranch) ?
+
+	if site.state != SiteState.init {
+		panic('should not get here, bug, site need to be in state init.')
 	}
 
-	if site.fs_path!= "" {
-		//this is the path on the filesystem	
+	if site.fs_path != '' {
+		// this is the path on the filesystem	
 		site.path = os.real_path(site.fs_path)
-	}else{
+	} else {
 		println(' - get:$site.git_url')
 		mut repo := gt.repo_get_from_url(url: site.git_url, pull: site.pull, reset: site.reset) or {
 			return error(' - ERROR: could not download site $site.git_url\n$err\n$site')
 		}
 		// println(' - get git addr obj:$repo.addr')
-		site.fs_path = ""
+		site.fs_path = ''
 		site.path = os.join_path(repo.path_get(), repo.addr.path)
 	}
-	if ! os.exists(site.path) || site.path == "" {
-		println( "- Error Cannot find `$site.path` for \n$site\nin process site repo. Creating `$site.path`")
+	if !os.exists(site.path) || site.path == '' {
+		println('- Error Cannot find `$site.path` for \n$site\nin process site repo. Creating `$site.path`')
 		return error(' - ERROR: could not find source path:$site.path for\nsite $site.git_url\n$site')
 	}
 
-	toremoves := [os.join_path(site.path,"index.html"),os.join_path(site.path,"wikiconfig.json")]
-	for toremove in toremoves{
-		if os.exists(toremove){
+	toremoves := [os.join_path(site.path, 'index.html'), os.join_path(site.path, 'wikiconfig.json')]
+	for toremove in toremoves {
+		if os.exists(toremove) {
 			os.rm(toremove) or {
-				return error("could not remove: $toremove for process_site_repo. \n$err")
+				return error('could not remove: $toremove for process_site_repo. \n$err')
 			}
 		}
 	}
 
 	site.state = SiteState.loaded
 
-	//DONT DO YET, NEED TO FIGURE OUT HOW TO DEAL WITH DEPENDENCIES ... (kristof)
-		
+	// DONT DO YET, NEED TO FIGURE OUT HOW TO DEAL WITH DEPENDENCIES ... (kristof)
+
 	// content := os.read_file(site_config) or {
 	// 	return error('Failed to load json $site_config')
 	// }
@@ -206,18 +209,13 @@ pub fn (mut site SiteConfig) load(configroot ConfigRoot)  ? {
 	site.state = SiteState.loaded
 }
 
-
 // to create singleton
-const gconf = config_load() or { 
-	println("Cannot load configuraton for publish tools.\n$err") 
-	println("===ERROR===")
+const gconf = config_load() or {
+	println('Cannot load configuraton for publish tools.\n$err')
+	println('===ERROR===')
 	exit(1)
-	}
-
-pub fn get() ConfigRoot {
-	return publisher_config.gconf
 }
 
-
-	
-
+pub fn get() &ConfigRoot {
+	return &publisher_config.gconf
+}

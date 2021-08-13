@@ -156,11 +156,11 @@ fn site_www_deliver(config publisher_config.ConfigRoot, domain string, path stri
 fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path string, mut app App) ?vweb.Result {
 	debug := true
 	if debug {
-		// println(" >>> Webserver >> config >> $config")
-		// println(" >>> Webserver >> domain >> $domain")
-		// println(" >>> Webserver >> path >> $path")
-		// println(" >>> Webserver >> req >> $req")
-		// println(" >>> Webserver >> res >> $res")
+		println(' >>> Webserver >> config >> $config')
+		println(' >>> Webserver >> domain >> $domain')
+		println(' >>> Webserver >> path >> $path')
+		// println(' >>> Webserver >> req >> $req')
+		// println(' >>> Webserver >> res >> $res')
 	}
 
 	mut sitename := config.name_web_get(domain) or { return app.not_found() }

@@ -118,7 +118,7 @@ pub fn website_build(cmd &cli.Command) ? {
 			}
 		}
 	} else {
-		repo := website_conf_repo_get(cmd, mut &conf) ?
+		repo := website_conf_repo_get(cmd, mut conf) ?
 		// be careful process stops after interactive execute
 		// process.execute_interactive('$repo.path_get()/build.sh') ?
 		for site in sites {

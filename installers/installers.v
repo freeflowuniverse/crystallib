@@ -27,8 +27,10 @@ pub fn main(cmd cli.Command) ? {
 	// 	return error(' ** ERROR: cannot get web & wiki sites. Error was:\n$err')
 	// }
 
-	if ! os.exists("/workspace"){
-		nodejs.install(cfg) or { return error(' ** ERROR: cannot install nodejs. Error was:\n$err') }
+	if !os.exists('/workspace') {
+		nodejs.install(cfg) or {
+			return error(' ** ERROR: cannot install nodejs. Error was:\n$err')
+		}
 	}
 
 	// if clean {
@@ -53,22 +55,19 @@ pub fn base() ? {
 	if !os.exists(base) {
 		os.mkdir(base) or { return err }
 	}
-	
+
 	os.mkdir_all('$base/config') or { return err }
 
 	println(' - installed base requirements')
 }
 
-pub fn config_get(cmd cli.Command) ?publisher_config.ConfigRoot {
+pub fn config_get(cmd cli.Command) ?&publisher_config.ConfigRoot {
 	mut cfg := publisher_config.get()
 
 	flags := cmd.flags.get_all_found()
 	cfg.publish.pull = flags.get_bool('pull') or { false }
 	cfg.publish.reset = flags.get_bool('reset') or { false }
 
-	if !os.exists(cfg.publish.paths.code) {
-		os.mkdir(cfg.publish.paths.code) or { return err }
-	}
 	return cfg
 }
 
@@ -95,15 +94,15 @@ pub fn publishtools_update() ? {
 	println(' -update done')
 }
 
-pub fn update_config() ?{
+pub fn update_config() ? {
 	cfg := publisher_config.get()
 	println(' - copying config files to ~/.publishtools/config')
-	res := os.ls('.')?
-	for file in res{
-		if !os.is_file(file){
+	res := os.ls('.') ?
+	for file in res {
+		if !os.is_file(file) {
 			continue
 		}
 
-		os.cp('./$file', '$cfg.publish.paths.base/config/$file')?
+		os.cp('./$file', '$cfg.publish.paths.base/config/$file') ?
 	}
 }

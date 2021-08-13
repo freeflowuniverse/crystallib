@@ -10,7 +10,9 @@ import os
 
 pub fn sites_list(cmd &cli.Command) ? {
 	mut conf := publisher_config.get()
-	mut gt := gittools.new(conf.publish.paths.code, conf.publish.multibranch) or { return error('cannot load gittools:$err') }
+	mut gt := gittools.new(conf.publish.paths.code, conf.publish.multibranch) or {
+		return error('cannot load gittools:$err')
+	}
 	for mut site in conf.sites_get() {
 		mut repo := gt.repo_get(name: site.reponame()) or {
 			return error('ERROR: cannot get repo:$err')
@@ -33,7 +35,9 @@ pub fn sites_list(cmd &cli.Command) ? {
 // if web true then will download websites
 pub fn sites_download(cmd cli.Command, web bool) ? {
 	mut cfg := config_get(cmd) ?
-	mut gt := gittools.new(cfg.publish.paths.code, cfg.publish.multibranch) or { return error('cannot load gittools:$err') }
+	mut gt := gittools.new(cfg.publish.paths.code, cfg.publish.multibranch) or {
+		return error('cannot load gittools:$err')
+	}
 	// println(' - get all code repositories.')
 
 	for mut sc in cfg.sites {
@@ -43,7 +47,7 @@ pub fn sites_download(cmd cli.Command, web bool) ? {
 		if sc.cat == publisher_config.SiteCat.data && !web {
 			continue
 		}
-		if sc.git_url != "" {
+		if sc.git_url != '' {
 			println(' - get:$sc.git_url')
 			mut r := gt.repo_get_from_url(url: sc.git_url, pull: sc.pull, reset: sc.reset) or {
 				return error(' - ERROR: could not download site $sc.git_url\n$err\n$sc')
@@ -60,7 +64,7 @@ pub fn sites_install(cmd cli.Command) ? {
 	sites_download(cmd, true) ?
 	for mut sc in cfg.sites_get() {
 		if sc.cat == publisher_config.SiteCat.web {
-			website_install(sc.name, first, &cfg) ?
+			website_install(sc.name, first, cfg) ?
 			first = false
 		}
 	}
@@ -128,7 +132,9 @@ pub fn sites_push(cmd cli.Command) ? {
 	println(' - sites push.')
 	codepath := cfg.publish.paths.code
 	multibranch := cfg.publish.multibranch
-	mut gt := gittools.new(codepath, multibranch) or { return error('ERROR: cannot load gittools:$err') }
+	mut gt := gittools.new(codepath, multibranch) or {
+		return error('ERROR: cannot load gittools:$err')
+	}
 
 	mut found := false
 
@@ -165,7 +171,9 @@ pub fn sites_commit(cmd cli.Command) ? {
 	msg := flag_message_get(cmd)
 	codepath := cfg.publish.paths.code
 	multibranch := cfg.publish.multibranch
-	mut gt := gittools.new(codepath, multibranch) or { return error('ERROR: cannot load gittools:$err') }
+	mut gt := gittools.new(codepath, multibranch) or {
+		return error('ERROR: cannot load gittools:$err')
+	}
 	mut found := false
 
 	for mut sc in cfg.sites_get() {
@@ -201,7 +209,9 @@ pub fn sites_pushcommit(cmd cli.Command) ? {
 	println(' - sites commit, pull, push')
 	codepath := cfg.publish.paths.code
 	multibranch := cfg.publish.multibranch
-	mut gt := gittools.new(codepath, multibranch) or { return error('ERROR: cannot load gittools:$err') }
+	mut gt := gittools.new(codepath, multibranch) or {
+		return error('ERROR: cannot load gittools:$err')
+	}
 	msg := flag_message_get(cmd)
 
 	mut found := false
@@ -241,14 +251,14 @@ pub fn sites_pushcommit(cmd cli.Command) ? {
 pub fn sites_cleanup(cmd cli.Command) ? {
 	mut cfg := config_get(cmd) ?
 	println(' - cleanup wiki.')
-	mut publisher := publisher_core.new(&cfg)?
-	publisher.check()?
+	mut publisher := publisher_core.new(cfg) ?
+	publisher.check() ?
 	println(' - cleanup websites.')
 	for mut sc in cfg.sites_get() {
 		if sc.cat == publisher_config.SiteCat.web {
-			website_cleanup(sc.name, &cfg) ?
+			website_cleanup(sc.name, cfg) ?
 		} else if sc.cat == publisher_config.SiteCat.wiki {
-			wiki_cleanup(sc.name, &cfg) ?
+			wiki_cleanup(sc.name, cfg) ?
 		}
 	}
 }
@@ -257,7 +267,7 @@ pub fn sites_removechanges(cmd cli.Command) ? {
 	mut cfg := config_get(cmd) ?
 	codepath := cfg.publish.paths.code
 	multibranch := cfg.publish.multibranch
-	mut gt := gittools.new(codepath, multibranch)?
+	mut gt := gittools.new(codepath, multibranch) ?
 	println(' - remove changes')
 	for mut sc in cfg.sites_get() {
 		mut repo := gt.repo_get(name: sc.reponame()) or {
@@ -290,7 +300,9 @@ pub fn site_edit(cmd cli.Command) ? {
 	mut cfg := config_get(cmd) ?
 	codepath := cfg.publish.paths.code
 	multibranch := cfg.publish.multibranch
-	mut gt := gittools.new(codepath, multibranch) or { return error('ERROR: cannot load gittools:$err') }
+	mut gt := gittools.new(codepath, multibranch) or {
+		return error('ERROR: cannot load gittools:$err')
+	}
 	for mut sc in cfg.sites_get() {
 		mut repo := gt.repo_get(name: sc.reponame()) or {
 			return error('ERROR: cannot get repo:$err')

@@ -30,40 +30,11 @@ pub fn (file File) path_relative_get(mut publisher Publisher) string {
 	return file.path
 }
 
-//mark this file as duplicate from other file
-pub fn (mut file File) duplicate_from(mut fileother File)? {
-	file.delete()?
-	for idd in file.usedby{
-		if ! (idd in fileother.usedby){
-			fileother.usedby << idd
-		}
-	}
-	file.usedby=[]
-}
-
-
-pub fn (mut file File) delete()? {
-	file.state = FileStatus.deleted
-	if os.exists(file.path){
-		os.rm(file.path)?
-	}
-	file.path=""
-	file.usedby=[]
-}
-
-
-pub fn (mut file File) mv(dest string)? {
-	os.mkdir_all(os.dir(dest))?
-	os.mv(file.path,dest)?
-	file.path=dest
-}
-
-
 pub fn (file File) path_get(mut publisher Publisher) string {
 	if file.site_id > publisher.sites.len {
 		panic('cannot find site: $file.site_id, not enough elements in list.')
 	}
-	if file.state == FileStatus.deleted{
+	if file.state == FileStatus.deleted {
 		panic('file should not be used is deleted\n$file')
 	}
 	if file.path == '' {

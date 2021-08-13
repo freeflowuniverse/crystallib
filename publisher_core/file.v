@@ -54,13 +54,13 @@ fn (mut file File) relocate(mut publisher Publisher) ? {
 			}
 			if os.exists(dest) {
 				if os.real_path(dest) == os.real_path(path) {
-					return error ('should never be same path: $dest and $path')
+					return error('should never be same path: $dest and $path')
 				}
 				println('   >>>RM3: $path')
-				file.delete() ?
+				file.delete(mut publisher) ?
 			} else {
 				println('   >>>MV3: $path -> $dest')
-				file.mv(dest)?
+				file.mv(mut publisher, dest) ?
 			}
 		} else {
 			pageid_who_has_file := file.usedby[0]
@@ -75,10 +75,10 @@ fn (mut file File) relocate(mut publisher Publisher) ? {
 					panic('should never be same path: $dest and $path')
 				}
 				println(' >>>RM2: $path')
-				file.delete() ?
+				file.delete(mut publisher) ?
 			} else {
 				println(" >>>MV2: '$path' -> '$dest'")
-				file.mv(dest)?
+				file.mv(mut publisher, dest) ?
 			}
 		}
 	} else {
@@ -88,9 +88,37 @@ fn (mut file File) relocate(mut publisher Publisher) ? {
 		// println("${file.name} not used")
 		dest = '$site.path/img_notused/${os.base(path)}'
 		if !os.exists(dest) {
-			println(">>>MV3: $path -> $dest")
-			file.mv(dest)?
+			println('>>>MV5: $path -> $dest')
+			file.mv(mut publisher, dest) ?
 		}
 	}
 	file.path = '/img_notused/${os.base(path)}'
+}
+
+// mark this file as duplicate from other file
+pub fn (mut file File) duplicate_from(mut publisher Publisher, mut fileother File) ? {
+	file.delete(mut publisher) ?
+	for idd in file.usedby {
+		if !(idd in fileother.usedby) {
+			fileother.usedby << idd
+		}
+	}
+	file.usedby = []
+}
+
+pub fn (mut file File) delete(mut publisher Publisher) ? {
+	file.state = FileStatus.deleted
+	path := file.path_get(mut publisher)
+	if os.exists(path) {
+		os.rm(path) ?
+	}
+	file.path = ''
+	file.usedby = []
+}
+
+pub fn (mut file File) mv(mut publisher Publisher, dest string) ? {
+	path := file.path_get(mut publisher)
+	os.mkdir_all(os.dir(dest)) ?
+	os.mv(path, dest) or { return error('could not rename $path to $dest .\n$err\n$file') }
+	file.path = dest
 }
