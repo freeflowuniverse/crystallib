@@ -401,6 +401,10 @@ pub fn (mut app App) handler(_path string) vweb.Result {
 	}
 }
 
+pub fn (mut app App) index() vweb.Result {
+	return app.handler('/')
+}
+
 // Run server
 pub fn webserver_run(mut publisher Publisher) ? {
 	publisher.check() ?

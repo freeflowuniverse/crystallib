@@ -13,7 +13,7 @@ pub fn main(cmd cli.Command) ? {
 	flags := cmd.flags.get_all_found()
 
 	ourreset := flags.get_bool('reset') or { false }
-	clean := flags.get_bool('clean') or { false }
+	// clean := flags.get_bool('clean') or { false }
 
 	println('INSTALLER:')
 
@@ -23,18 +23,20 @@ pub fn main(cmd cli.Command) ? {
 	}
 	base() or { return error(' ** ERROR: cannot prepare system. Error was:\n$err') }
 
-	sites_download(cmd, true) or {
-		return error(' ** ERROR: cannot get web & wiki sites. Error was:\n$err')
+	// sites_download(cmd, true) or {
+	// 	return error(' ** ERROR: cannot get web & wiki sites. Error was:\n$err')
+	// }
+
+	if ! os.exists("/workspace"){
+		nodejs.install(cfg) or { return error(' ** ERROR: cannot install nodejs. Error was:\n$err') }
 	}
 
-	nodejs.install(cfg) or { return error(' ** ERROR: cannot install nodejs. Error was:\n$err') }
-
-	if clean {
-		sites_cleanup(cmd) or { return error(' ** ERROR: cannot cleanup sites. Error was:\n$err') }
-	}
+	// if clean {
+	// 	sites_cleanup(cmd) or { return error(' ** ERROR: cannot cleanup sites. Error was:\n$err') }
+	// }
 
 	// make sure the config we are working with is refelected in ~/.publisher/config
-	update_config() or { return error(' ** ERROR: cannot copy config files to ~publisher/config. Error was:\n$err') }
+	// update_config() or { return error(' ** ERROR: cannot copy config files to ~publisher/config. Error was:\n$err') }
 
 	sites_install(cmd) or { return error(' ** ERROR: cannot install sites. Error was:\n$err') }
 }
