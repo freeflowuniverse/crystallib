@@ -69,10 +69,11 @@ pub fn website_build(cmd &cli.Command) ? {
 		mut gt := gittools.new(conf.publish.paths.code, conf.publish.multibranch) or {
 			return error('ERROR: cannot load gittools:$err')
 		}
-		for site in sites {
+		for mut site in sites {
+			site.load()?
 			if site.cat == publisher_config.SiteCat.web {
-				mut repo2 := gt.repo_get(name: site.name) or {
-					return error('ERROR: cannot find repo: $site.name\n$err')
+				mut repo2 := gt.repo_get(name: site.reponame) or {
+					return error('ERROR: cannot find repo for build: $site.reponame\n$err')
 				}
 				println(' - build website: $repo2.path_get()')
 				mut isgridsome := true
@@ -121,7 +122,8 @@ pub fn website_build(cmd &cli.Command) ? {
 		repo := website_conf_repo_get(cmd, mut conf) ?
 		// be careful process stops after interactive execute
 		// process.execute_interactive('$repo.path_get()/build.sh') ?
-		for site in sites {
+		for mut site in sites {
+			site.load()?
 			if site.name == repo.addr.name.replace('www_', '') {
 				println(' - build website: $repo.path_get()')
 				
