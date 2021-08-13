@@ -168,15 +168,14 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 		"v-tooltip": "^2.0.3",
 		"vue-markdown": "^2.1.2",
 		"isexe": "^2.0.0",
-		"vue-share-it": "^1.1.4"
+		"vue-share-it": "^1.1.4",
+		"node-sass": "^6.0.1"
 		},
 		"devDependencies": {
 			"@tailwindcss/aspect-ratio": "^0.2.0"
 		}
 	}
 	'
-
-	// "node-sass": "^5.0.0"
 
 	//REMARK: changed tailwind css to 2.x series, maybe that is not good
 
