@@ -50,5 +50,7 @@ pub fn install(cfg &publisher_config.ConfigRoot) ? {
 		}
 	}
 
+	
+
 	println(' - nodejs installed')
 }
