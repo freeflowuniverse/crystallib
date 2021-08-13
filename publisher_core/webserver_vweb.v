@@ -156,7 +156,7 @@ fn site_www_deliver(config publisher_config.ConfigRoot, domain string, path stri
 fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path string, mut app App) ?vweb.Result {
 	debug := true
 	if debug {
-		println(' >>> Webserver >> config >> $config')
+		// println(' >>> Webserver >> config >> $config')
 		println(' >>> Webserver >> domain >> $domain')
 		println(' >>> Webserver >> path >> $path')
 		// println(' >>> Webserver >> req >> $req')
@@ -175,7 +175,9 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path str
 
 	if publisherobj.develop {
 		filetype, sitename2, name2 := filetype_site_name_get(config, sitename, name) ?
-		// if debug {println(" >> page get develop: $name2")}
+		if debug {
+			println(' >> page get develop: $filetype, $sitename2, $name2')
+		}
 
 		if filetype == FileType.javascript || filetype == FileType.css {
 			mut p := os.join_path(config.publish.paths.base, 'static', name2)
@@ -195,10 +197,6 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path str
 		} else if filetype == FileType.wiki {
 			if site2.page_exists(name2) {
 				mut page := site2.page_get(name2, mut publisherobj) ?
-				// content4 := page.content_defs_replaced(mut publisherobj) ?
-				// if debug {println(" >> page send: $name2")}
-				// println(page.content)
-
 				page.replace_defs(mut publisherobj) or { return app.server_error(2) }
 				content := domain_replacer(rlock app.ctx {
 					app.ctx.webnames
@@ -217,7 +215,9 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path str
 			// now is a file
 			file3 := site2.file_get(name2, mut publisherobj) ?
 			path3 := file3.path_get(mut publisherobj)
-			// println (" >> file get: $path3")
+			if debug {
+				println(' >> file get: $path3')
+			}
 			content3 := os.read_file(path3) or { return app.not_found() }
 			// NOT GOOD NEEDS TO BE NOT LIKE THIS: TODO: find way how to send file
 			app.set_content_type(content_type_get(path3) ?)

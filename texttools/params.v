@@ -215,7 +215,6 @@ pub fn text_to_params(text string) ?Params {
 				key = ''
 				continue
 			} else if !validchars.contains(char) {
-				println('\n\nERROR:')
 				return error("parameters can only be A-Za-z0-9 and _, here found: '$key$char' in\n$text2")
 			} else {
 				key += char

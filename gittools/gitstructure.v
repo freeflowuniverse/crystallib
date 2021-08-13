@@ -17,13 +17,11 @@ mut:
 // 	reset bool //this means will pull and reset all changes
 // }
 pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs) ?&GitRepo {
-
-	gitstructure.check()?
+	gitstructure.check() ?
 
 	mut addr := gitstructure.addr_get_from_url(args.url) or {
 		return error('cannot get addr from url:$err')
 	}
-	println(addr)
 	if addr.branch != '' && args.branch != '' && addr.branch != args.branch {
 		return error('conflict in branch names.\naddr:\n$addr\nargs:\n$args')
 	}
@@ -75,8 +73,7 @@ mut:
 // }
 // THIS FUNCTION DOES NOT EXECUTE THE CHECK !!!
 pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) ?&GitRepo {
-
-	gitstructure.check()?
+	gitstructure.check() ?
 
 	mut res_ids := []int{}
 	for r in gitstructure.repos {
@@ -86,10 +83,10 @@ pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) ?&GitRepo {
 			}
 		}
 	}
-	if res_ids.len == 1{
+	if res_ids.len == 1 {
 		return &gitstructure.repos[res_ids[0]]
 	}
-	if  res_ids.len > 1{
+	if res_ids.len > 1 {
 		return error("Found too many repo's for account:'$args.account' name:'$args.name'")
 	}
 	return error("Could not find repo for account:'$args.account' name:'$args.name'")
@@ -98,9 +95,8 @@ pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) ?&GitRepo {
 // to use gitstructure.repo_get({account:"something",name:"myname"})
 // or gitstructure.repo_get({name:"myname"})
 pub fn (mut gitstructure GitStructure) repo_exists(addr RepoGetArgs) bool {
-	
-	gitstructure.check() or {panic("cannot check gitstructure, $err")}
-	
+	gitstructure.check() or { panic('cannot check gitstructure, $err') }
+
 	for r in gitstructure.repos {
 		if r.addr.name == addr.name {
 			if addr.account == '' || addr.account == r.addr.account {
