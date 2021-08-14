@@ -212,11 +212,10 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 	]
 	ri.add(instr) or { panic(err) }
 	mut count := 0
-	count += ri.replace_in_dir(path:"repo.path_get()/src",extensions:["html","vue"],dryrun:true) or { panic(err) }
-	count += ri.replace_in_dir(path:"repo.path_get()/tailwindui",extensions:["html","vue"],dryrun:true) or { panic(err) }
+	count += ri.replace_in_dir(path:"$repo.path_get()/src",extensions:["html","vue"],dryrun:true) or { panic(err) }
+	count += ri.replace_in_dir(path:"$repo.path_get()/tailwindui",extensions:["html","vue"],dryrun:true) or { panic(err) }
 	if count>0{
 		println(" - TAILWIND UPGRADE WITH $count CHANGES for $repo.path_get()")
-		panic("a")
 	}
 	
 
