@@ -93,6 +93,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 		println(' - publish:$sc.git_url')
 
 		site.files_process(mut publisher) ?
+		
 
 		// src_path[site.id] = site.path
 		mut dest_dir := config.path_publish_wiki_get(site.name) ?
@@ -100,8 +101,14 @@ pub fn (mut publisher Publisher) flatten() ? {
 		if !os.exists(dest_dir) {
 			os.mkdir_all(dest_dir) ?
 		}
+
+		mut dest_dir_publ := config.publish.paths.publish
+
+		site.config.publish_path = dest_dir
+
 		// write the json errors file
-		the_errors2 := json.encode(publisher.errors_get(site) ?)
+		errors_t := publisher.errors_get(site)?
+		the_errors2 := json.encode_pretty(errors_t)
 		os.write_file('$dest_dir/errors.json', the_errors2) ?
 		for c in config.sites {
 			if c.cat == publisher_config.SiteCat.web {
@@ -113,11 +120,20 @@ pub fn (mut publisher Publisher) flatten() ? {
 			}
 		}
 		// write the defs file
-		the_defs := json.encode(pd)
+		the_defs := json.encode_pretty(pd)
 		os.write_file('$dest_dir/defs.json', the_defs) ?
 
 		mut site_config := config.site_wiki_get(site.name) ?
 
+		the_config := json.encode_pretty(site_config)
+		os.write_file('$dest_dir/config_site.json', the_config) ?	
+		os.write_file('$dest_dir_publ/config_wiki_'+site_config.name+'.json', the_config) ?		
+
+		the_config_group := json.encode_pretty(config.groups)
+		os.write_file('$dest_dir/config_groups.json', the_config_group) ?
+		os.write_file('$dest_dir_publ/config_groups.json', the_config_group) ?
+
+		//the main index file for docsify
 		template_wiki_root_save(dest_dir, site.name, site_config.git_url, site_config.trackingid,
 			site_config.opengraph)
 
@@ -158,7 +174,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 			os.cp(fileobj.path_get(mut publisher), dest_file) ?
 		}
 	}
-	// publisher_config.save('') ? // This method no longer available
+
 }
 
 [if trace_progress?]

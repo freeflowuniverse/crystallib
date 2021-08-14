@@ -10,6 +10,7 @@ pub mut:
 	//the site config is known by git_url or by fs_path
 	git_url        string
 	fs_path string //path directly in the git repo or absolute on filesystem
+	publish_path string //path where the publishing was done
 	pull       bool // if set will pull but not reset
 	reset      bool // if set will reset & pull, reset means remove changes
 	cat        SiteCat
