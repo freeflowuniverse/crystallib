@@ -21,58 +21,54 @@ fn config_load() ?ConfigRoot {
 			pull: false
 			debug: true
 			redis: false
-			paths: Paths{
-				base: '$os.home_dir()/.publisher'
-				code: '$os.home_dir()/codewww'
-				codewiki: '$os.home_dir()/codewiki'
-			}
 		}
 	}
-	if config.publish.paths.base == '' {
-		config.publish.paths.base = '$os.home_dir()/.publisher'
+	if config.publish.paths.base == '' {		
+		if "DIR_BASE" in os.environ(){
+			config.publish.paths.base = os.environ()["DIR_BASE"]
+		}else{
+			config.publish.paths.base = '$os.home_dir()/.publisher'
+		}
 	}
 	if config.publish.paths.code == '' {
-		config.publish.paths.code = '$os.home_dir()/codewww'
+		if "DIR_CODE" in os.environ(){
+			config.publish.paths.base = os.environ()["DIR_CODE"]
+		}else{
+			config.publish.paths.base = '$os.home_dir()/code'
+		}
 	}
 	if config.publish.paths.codewiki == '' {
-		config.publish.paths.codewiki = '$os.home_dir()/codewiki'
+		if "DIR_CODEWIKI" in os.environ(){
+			config.publish.paths.base = os.environ()["DIR_CODEWIKI"]
+		}else{
+			config.publish.paths.base = '$os.home_dir()/codewiki'
+		}
 	}
 	if config.publish.paths.publish == '' {
 		config.publish.paths.publish = '$config.publish.paths.base/publish'
 	}
 
 	// Make sure that all dirs existed/created
-
-	if !os.exists(config.publish.paths.base) {
-		os.mkdir_all(config.publish.paths.base) or {
-			return error('Cannot create path base for publisher: $err')
+	for dest in [config.publish.paths.base,config.publish.paths.code,config.publish.paths.codewiki]{
+		if !os.exists(dest) {
+			os.mkdir_all(dest) or {
+				return error('Cannot create path $dest for publisher: $err')
+			}
 		}
 	}
 
-	if !os.exists(config.publish.paths.code) {
-		os.mkdir_all(config.publish.paths.code) or {
-			return error('Cannot create path code for publisher: $err')
-		}
-	}
-
-	if !os.exists(config.publish.paths.codewiki) {
-		os.mkdir_all(config.publish.paths.codewiki) or {
-			return error('Cannot create path codewiki for publisher: $err')
-		}
-	}
-
-	// Load nodejs config
-	if os.exists('nodejs.json') {
-		println(' - Found config file for NodeJS.')
-		txt := os.read_file('nodejs.json') ?
-		config.nodejs = json.decode(NodejsConfig, txt) ?
-	} else {
-		println(' - Not Found config file for NodeJS. Default values applied')
-		config.nodejs = NodejsConfig{
-			version: 'lts'
-		}
-	}
-	config.init_nodejs() // Init nodejs configurations
+	// // Load nodejs config
+	// if os.exists('nodejs.json') {
+	// 	println(' - Found config file for NodeJS.')
+	// 	txt := os.read_file('nodejs.json') ?
+	// 	config.nodejs = json.decode(NodejsConfig, txt) ?
+	// } else {
+	// 	println(' - Not Found config file for NodeJS. Default values applied')
+	// 	config.nodejs = NodejsConfig{
+	// 		version: 'lts'
+	// 	}
+	// }
+	// config.init_nodejs() // Init nodejs configurations
 
 	config.web_hostnames = false
 

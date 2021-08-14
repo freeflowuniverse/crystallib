@@ -2,12 +2,12 @@ module gittools
 
 import os
 
-fn init_codewww() GitStructure {
+fn init_gitstructure() GitStructure {
 	mut gitstructure := GitStructure{}
 	return gitstructure
 }
 
-const codecache = init_codewww()
+const codecache = init_gitstructure()
 
 pub fn get() &GitStructure {
 	return &gittools.codecache
