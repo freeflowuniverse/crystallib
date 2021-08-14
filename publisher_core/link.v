@@ -256,12 +256,12 @@ fn (mut link Link) check(mut publisher Publisher, mut page Page, linenr int, lin
 	if link.cat in [LinkType.file, LinkType.page] {
 		// check if there are pagename or sitename changes
 		if link.site != '' {
-			sitename_replaced := publisher.replacer.site.replace(link.site) or { panic(err) }
+			sitename_replaced := publisher.replacer.site.replace(text:link.site) or { panic(err) }
 			if link.site != sitename_replaced {
 				link.site = sitename_replaced
 			}
 		}
-		filename_replaced := publisher.replacer.file.replace(link.filename) or { panic(err) }
+		filename_replaced := publisher.replacer.file.replace(text:link.filename) or { panic(err) }
 		if link.filename != filename_replaced {
 			link.filename = filename_replaced
 		}

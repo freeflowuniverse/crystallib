@@ -10,7 +10,7 @@ fn (mut publ Publisher) name_fix_alias_page(name string) ?string {
 }
 
 fn (mut publ Publisher) name_fix_alias_site(name string) ?string {
-	name0 := publ.replacer.site.replace(name) ?
+	name0 := publ.replacer.site.replace(text:name) ?
 	return texttools.name_fix(name0)
 }
 

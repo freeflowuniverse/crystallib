@@ -100,10 +100,11 @@ pub fn (mut ri ReplaceInstructions) add(replacelist []string) ? {
 	}
 }
 
-struct ReplaceArgs{
-	text string
-	dedent bool 
-}
+// struct ReplaceArgs{
+// pub mut:
+// 	text string
+// 	dedent bool 
+// }
 
 // does the matching line per line
 // will use dedent function, on text
@@ -159,7 +160,8 @@ pub fn (mut self ReplaceInstructions) replace(args ReplaceArgs) ?string {
 	return x
 }
 
-struct ReplaceDirArgs{
+pub struct ReplaceDirArgs{
+pub mut:	
 	path string
 	extensions []string
 	dryrun bool
@@ -220,6 +222,10 @@ fn (mut self ReplaceInstructions) replace_in_dir_recursive(path1 string, extensi
 				}else{
 					println(" - replace done  : $pathnew")
 					count ++
+					if ! dryrun{
+						//now write the file back
+						os.write_file(pathnew,txtnew)?
+					}
 					// println("===========")
 					// println(txtold)
 					// println("===========")
