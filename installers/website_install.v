@@ -77,9 +77,9 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 
 	'
 
-	if nodejspath.len == 0 {
-		panic('nodejspath needs to be set')
-	}
+	// if nodejspath.len == 0 {
+	// 	panic('nodejspath needs to be set')
+	// }
 
 	script_run := '
 
@@ -91,7 +91,7 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 	#set -e
 	#nvm use --lts
 
-	export PATH=$nodejspath/bin:\$PATH
+	#export PATH=$nodejspath/bin:\$PATH
 
 	if [ -f vue.config.js ]; then
     	npm run-script serve
@@ -111,7 +111,7 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 	#set -e
 	#nvm use --lts
 
-	export PATH=$nodejspath/bin:\$PATH
+	#export PATH=$nodejspath/bin:\$PATH
 
 	set +e
 	if [ -f vue.config.js ]; then
