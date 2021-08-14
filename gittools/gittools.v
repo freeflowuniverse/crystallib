@@ -42,7 +42,7 @@ pub fn (mut gitstructure GitStructure) load(root string, multibranch bool) ? {
 		}
 	}
 
-	root2 = root2.replace('~', os.home_dir())
+	root2 = root2.replace('~', os.home_dir()).trim_right("/")
 
 	// check if there are other arguments used as the ones loaded
 	if gitstructure.status == GitStructureStatus.loaded {
