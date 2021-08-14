@@ -75,7 +75,7 @@ fn (mut publisher Publisher) file_check_find(name2find string, consumer_page_id 
 	mut consumer_site := consumer_page.site_get(mut publisher) or { panic(err) }
 	_, mut objname := name_split(name2find) or { panic(err) }
 	mut objname_full := '$consumer_site.name:$objname'
-	objname_replaced := publisher.replacer.file.replace(objname) or { panic(err) }
+	objname_replaced := publisher.replacer.file.replace(text:objname) or { panic(err) }
 
 	for x in 0 .. 4 {
 		if x == 0 {

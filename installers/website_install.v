@@ -203,14 +203,14 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 	}
 
 	//lets upgrade for tailwind
-	mut ri := regex_instructions_new()
+	mut ri := texttools.regex_instructions_new()
 	instr := [
 		'whitespace-no-wrap:whitespace-nowrap',
 		'flex-no-wrap:flex-nowrap',
 		'col-gap-:gap-x-',
 		'row-gap-:gap-y-'
 	]
-	ri.add([instr) or { panic(err) }
+	ri.add(instr) or { panic(err) }
 	mut count := 0
 	count += ri.replace_in_dir(path:"repo.path_get()/src",extensions:["html","vue"],dryrun:true) or { panic(err) }
 	count += ri.replace_in_dir(path:"repo.path_get()/tailwindui",extensions:["html","vue"],dryrun:true) or { panic(err) }

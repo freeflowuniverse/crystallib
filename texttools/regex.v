@@ -100,7 +100,7 @@ pub fn (mut ri ReplaceInstructions) add(replacelist []string) ? {
 	}
 }
 
-struct ReplaceArgs{
+pub struct ReplaceArgs{
 pub mut:
 	text string
 	dedent bool 
