@@ -5,8 +5,8 @@ import os
 // the main config file as used for the publisher
 [heap]
 pub struct ConfigRoot {
-mut:
-	root    string
+// mut:
+	// root    string
 pub mut:
 	sites   []SiteConfig
 	groups  []UserGroup

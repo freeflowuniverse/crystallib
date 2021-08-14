@@ -164,7 +164,7 @@ pub fn (mut gs GitStructure) addr_get_from_path(path string) ?GitAddr {
 	//TODO: NOT GOOD NEED TO DO BETTER
 
 	// add branch
-	mut splitted := path.split('/')
+	// mut splitted := path.split('/')
 	if branch == "" {
 		// branch = splitted[splitted.len]
 		panic("bug branch not there yet")

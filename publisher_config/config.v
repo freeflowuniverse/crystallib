@@ -32,16 +32,16 @@ fn config_load() ?ConfigRoot {
 	}
 	if config.publish.paths.code == '' {
 		if "DIR_CODE" in os.environ(){
-			config.publish.paths.base = os.environ()["DIR_CODE"]
+			config.publish.paths.code = os.environ()["DIR_CODE"]
 		}else{
-			config.publish.paths.base = '$os.home_dir()/code'
+			config.publish.paths.code = '$os.home_dir()/code'
 		}
 	}
 	if config.publish.paths.codewiki == '' {
 		if "DIR_CODEWIKI" in os.environ(){
-			config.publish.paths.base = os.environ()["DIR_CODEWIKI"]
+			config.publish.paths.codewiki = os.environ()["DIR_CODEWIKI"]
 		}else{
-			config.publish.paths.base = '$os.home_dir()/codewiki'
+			config.publish.paths.codewiki = '$os.home_dir()/codewiki'
 		}
 	}
 	if config.publish.paths.publish == '' {
