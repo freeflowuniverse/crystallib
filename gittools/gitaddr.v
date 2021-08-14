@@ -133,6 +133,7 @@ pub fn (mut gs GitStructure) addr_get_from_path(path string) ?GitAddr {
 	mut state := 'start'
 	mut line2 := ''
 	mut url := ''
+	mut branch := ''
 	for line in content.split_into_lines() {
 		line2 = line.trim_space()
 		// println(" - '$line2'")
@@ -145,15 +146,32 @@ pub fn (mut gs GitStructure) addr_get_from_path(path string) ?GitAddr {
 		}
 		if state == 'remote' && line2.starts_with('url') {
 			url = line2.split('=')[1]
+			state = 'branch'
+		}
+		if state == 'branch' && line2.starts_with('merge') {
+			parts := line2.split('/')
+			branch = parts[parts.len-1]
+			state = 'end'
 		}
 	}
 	if url == '' {
 		return error('could not parse config file to find url for git.\n$content')
 	}
 
+	// println(content)
+	// println("UUUUU URL:$url")
+
+	//TODO: NOT GOOD NEED TO DO BETTER
+
 	// add branch
 	mut splitted := path.split('/')
-	mut branch := splitted[splitted.len - 1]
-	url = '$url/$branch'
-	return gs.addr_get_from_url(url)
+	if branch == "" {
+		// branch = splitted[splitted.len]
+		panic("bug branch not there yet")
+	}
+	// url = '$url/$branch'
+	mut addr := gs.addr_get_from_url(url)?
+	addr.branch = branch
+	println(addr)
+	return addr
 }
