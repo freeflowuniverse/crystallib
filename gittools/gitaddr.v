@@ -172,6 +172,6 @@ pub fn (mut gs GitStructure) addr_get_from_path(path string) ?GitAddr {
 	// url = '$url/$branch'
 	mut addr := gs.addr_get_from_url(url)?
 	addr.branch = branch
-	println(addr)
+	// println(addr)
 	return addr
 }
