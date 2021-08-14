@@ -168,15 +168,14 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 		"v-tooltip": "^2.0.3",
 		"vue-markdown": "^2.1.2",
 		"isexe": "^2.0.0",
-		"vue-share-it": "^1.1.4"
+		"vue-share-it": "^1.1.4",
+		"node-sass": "^6.0.1"
 		},
 		"devDependencies": {
 			"@tailwindcss/aspect-ratio": "^0.2.0"
 		}
 	}
 	'
-
-	// "node-sass": "^5.0.0"
 
 	//REMARK: changed tailwind css to 2.x series, maybe that is not good
 
@@ -202,6 +201,24 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 	process.execute_silent(script_install) or {
 		return error('cannot install node modules for ${name}.\n$err')
 	}
+
+	//lets upgrade for tailwind
+	mut ri := regex_instructions_new()
+	instr := [
+		'whitespace-no-wrap:whitespace-nowrap',
+		'flex-no-wrap:flex-nowrap',
+		'col-gap-:gap-x-',
+		'row-gap-:gap-y-'
+	]
+	ri.add([instr) or { panic(err) }
+	mut count := 0
+	count += ri.replace_in_dir(path:"repo.path_get()/src",extensions:["html","vue"],dryrun:true) or { panic(err) }
+	count += ri.replace_in_dir(path:"repo.path_get()/tailwindui",extensions:["html","vue"],dryrun:true) or { panic(err) }
+	if count>0{
+		println(" - TAILWIND UPGRADE WITH $count CHANGES for $repo.path_get()")
+		panic("a")
+	}
+	
 
 	// only require threebot_data in case of gridsome website
 	if os.exists('$repo.path_get()/gridsome.config.js'){

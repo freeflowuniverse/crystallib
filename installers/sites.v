@@ -41,6 +41,7 @@ pub fn sites_download(cmd cli.Command, web bool) ? {
 	// println(' - get all code repositories.')
 
 	for mut sc in cfg.sites {
+		sc.load()?
 		if sc.cat == publisher_config.SiteCat.web && !web {
 			continue
 		}
@@ -63,6 +64,7 @@ pub fn sites_install(cmd cli.Command) ? {
 	mut first := true
 	sites_download(cmd, true) ?
 	for mut sc in cfg.sites_get() {
+		sc.load()?
 		if sc.cat == publisher_config.SiteCat.web {
 			sc.load(cfg) ?
 			website_install(sc.reponame, first, cfg) ?
@@ -105,6 +107,7 @@ pub fn sites_pull(cmd cli.Command) ? {
 	mut found := false
 
 	for mut sc in cfg.sites_get() {
+		sc.load()?
 		mut repo := gt.repo_get(name: sc.reponame) or {
 			return error('ERROR: cannot get repo:$err')
 		}
@@ -140,6 +143,7 @@ pub fn sites_push(cmd cli.Command) ? {
 	mut found := false
 
 	for mut sc in cfg.sites_get() {
+		sc.load()?
 		mut repo := gt.repo_get(name: sc.reponame) or {
 			return error('ERROR: cannot get repo:$err')
 		}
@@ -178,6 +182,7 @@ pub fn sites_commit(cmd cli.Command) ? {
 	mut found := false
 
 	for mut sc in cfg.sites_get() {
+		sc.load()?
 		mut repo := gt.repo_get(name: sc.reponame) or {
 			return error('ERROR: cannot get repo:$err')
 		}
@@ -305,6 +310,7 @@ pub fn site_edit(cmd cli.Command) ? {
 		return error('ERROR: cannot load gittools:$err')
 	}
 	for mut sc in cfg.sites_get() {
+		sc.load()?
 		mut repo := gt.repo_get(name: sc.reponame) or {
 			return error('ERROR: cannot get repo:$err')
 		}

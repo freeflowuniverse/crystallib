@@ -5,22 +5,22 @@ import os
 
 fn (mut publ Publisher) name_fix_alias_page(name string) ?string {
 	// name0 := name
-	name0 := publ.replacer.file.replace(name) ?
+	name0 := publ.replacer.file.replace(text:name) ?
 	return texttools.name_fix(name0)
 }
 
 fn (mut publ Publisher) name_fix_alias_site(name string) ?string {
-	name0 := publ.replacer.site.replace(name) ?
+	name0 := publ.replacer.site.replace(text:name) ?
 	return texttools.name_fix(name0)
 }
 
 fn (mut publ Publisher) name_fix_alias_file(name string) ?string {
-	name0 := publ.replacer.file.replace(name) ?
+	name0 := publ.replacer.file.replace(text:name) ?
 	return texttools.name_fix_keepext(name0)
 }
 
 fn (mut publ Publisher) name_fix_alias_word(name string) ?string {
-	name0 := publ.replacer.file.replace(name) ?
+	name0 := publ.replacer.file.replace(text:name) ?
 	return name0.trim(' ')
 }
 
@@ -137,7 +137,7 @@ fn (mut publisher Publisher) page_check_find(name2find string, consumer_page_id 
 	mut consumer_site := consumer_page.site_get(mut publisher) or { panic("site_get:'n$err") }
 	_, mut objname := name_split(name2find) ?
 	mut objname_full := '$consumer_site.name:$objname'
-	mut objname_replaced := publisher.replacer.file.replace(objname) or {
+	mut objname_replaced := publisher.replacer.file.replace(text:objname) or {
 		panic('file_replace:\n$err')
 	}
 

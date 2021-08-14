@@ -1,8 +1,6 @@
 module publisher_config
 
-import os
 import despiegk.crystallib.texttools
-import despiegk.crystallib.gittools
 
 pub struct SiteConfig {
 pub mut:

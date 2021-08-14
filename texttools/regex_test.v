@@ -1,9 +1,65 @@
 module texttools
+import os
+fn test_stdtext() {
 
-fn test_fake() {
-	println('')
+	//this is test without much fancyness, just rext replace, no regex, all case sensitive
+
+	text := '
+
+	this is test_1 SomeTest
+	this is test 1 SomeTest
+
+	need to replace TF to ThreeFold
+	need to replace ThreeFold0 to ThreeFold
+	need to replace ThreeFold1 to ThreeFold
+
+	'
+
+	text_out := '
+
+	this is TTT SomeTest
+	this is TTT SomeTest
+
+	need to replace ThreeFold to ThreeFold
+	need to replace ThreeFold to ThreeFold
+	need to replace ThreeFold to ThreeFold
+
+	'
+
+	mut ri := regex_instructions_new()
+	ri.add(['TF:ThreeFold0:ThreeFold1:ThreeFold']) or { panic(err) }
+	ri.add_item('test_1', 'TTT') or { panic(err) }
+	ri.add_item('test 1', 'TTT') or { panic(err) }
+
+	mut text_out2 := ri.replace(text:text,dedent:true) or { panic(err) }
+
+	// println('!' + dedent(text) + '!')
+	// println('!' + dedent(text_out) + '!')
+	// println('!' + dedent(text_out2) + '!')
+
+	assert dedent(text_out2).trim('\n') == dedent(text_out).trim('\n')
+	// panic('s')
 }
 
+
+fn test_dirreplace() {
+
+	//this is test without much fancyness, just rext replace, no regex, all case sensitive
+
+	//get path where to look for text
+	mut p := @FILE.split('/')
+	p = p[0..p.len-2]
+	mut path := os.real_path(os.join_path(p.join('/'), 'examples'))
+
+	mut ri := regex_instructions_new()
+
+	ri.add(['key_bob:KEY_BOB','GitStatus:GITSTATUS']) or { panic(err) }
+	
+	count := ri.replace_in_dir(path:path,extensions:["v"],dryrun:true) or { panic(err) }
+	
+	assert count == 2
+
+}
 // fn test_regex1() {
 // 	text := '
 
