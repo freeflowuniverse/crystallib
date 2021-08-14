@@ -100,11 +100,11 @@ pub fn (mut ri ReplaceInstructions) add(replacelist []string) ? {
 	}
 }
 
-// struct ReplaceArgs{
-// pub mut:
-// 	text string
-// 	dedent bool 
-// }
+struct ReplaceArgs{
+pub mut:
+	text string
+	dedent bool 
+}
 
 // does the matching line per line
 // will use dedent function, on text
