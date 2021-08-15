@@ -104,7 +104,6 @@ pub fn (mut publisher Publisher) flatten() ? {
 
 		mut dest_dir_publ := config.publish.paths.publish
 
-		site.config.publish_path = dest_dir
 
 		// write the json errors file
 		errors_t := publisher.errors_get(site)?
@@ -125,13 +124,14 @@ pub fn (mut publisher Publisher) flatten() ? {
 
 		mut site_config := config.site_wiki_get(site.name) ?
 
+		site_config.publish_path = dest_dir
+
 		the_config := json.encode_pretty(site_config)
 		os.write_file('$dest_dir/config_site.json', the_config) ?	
 		os.write_file('$dest_dir_publ/config_wiki_'+site_config.name+'.json', the_config) ?		
 
 		the_config_group := json.encode_pretty(config.groups)
 		os.write_file('$dest_dir/config_groups.json', the_config_group) ?
-		os.write_file('$dest_dir_publ/config_groups.json', the_config_group) ?
 
 		//the main index file for docsify
 		template_wiki_root_save(dest_dir, site.name, site_config.git_url, site_config.trackingid,
