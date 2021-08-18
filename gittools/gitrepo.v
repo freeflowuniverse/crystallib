@@ -85,25 +85,20 @@ pub fn (mut repo GitRepo) check(pull_force_ bool, reset_force_ bool) ? {
 				needs_to_be_ssh = true
 			}
 			// get the url (http or ssh)
-			mut cmd := repo.get_clone_cmd(!needs_to_be_ssh)
-			mut ok := true
-			// println(cmd)
+			mut cmd := ""
+			if needs_to_be_ssh {
+				println("GIT: PULL USING SSH")
+				// cmd based on ssh
+				cmd = repo.get_clone_cmd(false)
+			} else {
+				// cmd based on http
+				println("GIT: PULL USING HTTP")
+				cmd = repo.get_clone_cmd(true)
+			}
+			
 			process.execute_silent(cmd) or {
 				println(' GIT FAILED: $cmd')
-				ok = false
-				if needs_to_be_ssh {
-					// get new cmd but now based on http
-					cmd = repo.get_clone_cmd(true)
-					needs_to_be_ssh = false
-				} else {
-					return error('Cannot pull repo (http): ${repo.path_get()}. Error was $err')
-				}
-			}
-			if !ok {
-				process.execute_silent(cmd) or {
-					println(' GIT FAILED 2: $cmd')
-					return error('Cannot pull repo: ${repo.path_get()}. Error was $err')
-				}
+				return error('Cannot pull repo: ${repo.path_get()}. Error was $err')
 			}
 			println(' - GIT PULL OK')
 			// can return safely, because pull did work			

@@ -1,5 +1,7 @@
 # set of libraries
 
+- [PLANNING HERE](https://circles.threefold.me/project/despiegk-product_publisher/issues)
+
 As used for Threefold and ...
 
 ## to install

@@ -6,7 +6,8 @@ import despiegk.crystallib.publisher_config
 
 fn (mut publisher Publisher) load() ? {
 	// remove code_wiki subdirs
-	path_links := '$os.home_dir()/codewiki/'
+	cfg := publisher_config.get()
+	path_links := cfg.publish.paths.codewiki
 	path_links_list := os.ls(path_links) ?
 	for path_to_remove in path_links_list {
 		// if path_to_remove.starts_with('info_') {
@@ -20,10 +21,10 @@ fn (mut publisher Publisher) load() ? {
 		if site.cat != publisher_config.SiteCat.wiki {
 			continue
 		}
-
 		publisher.load_site(site.name)?
 	}
 	println( " - all sites loaded")
+
 }
 
 ///////////////////////////////////////////////////////// INTERNAL BELOW ////////////////
@@ -38,8 +39,14 @@ fn (mut publisher Publisher) load_site(name string) ? {
 
 	mysite_config.load()?
 	// link the dir in codewiki, makes it easy to edit
-	path_links := '$os.home_dir()/codewiki'
-	target := '$path_links/$name'
+	// remove code_wiki subdirs
+	cfg := publisher_config.get()
+	path_links := cfg.publish.paths.codewiki	
+
+	if mysite_name.trim(" ")==""{
+		panic("mysite_name should not be empty")
+	}
+	target := '$path_links/$mysite_name'
 	if mysite_config.path == "" || !os.exists(mysite_config.path){
 		return error("$mysite_config \nCould not find config path (load site).\n   site: $mysite_name >> site path: $mysite_config.path\n")
 	}

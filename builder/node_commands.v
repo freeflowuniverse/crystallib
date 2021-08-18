@@ -51,7 +51,7 @@ pub fn (mut node Node) platform_prepare() ? {
 			}
 		}
 	} else if node.platform == PlatformType.ubuntu {
-		println('ubuntu prepare')
+		println(' - Ubuntu prepare')
 		for x in ['mc', 'git', 'rsync', 'curl'] {
 			if !node.cmd_exists(x) {
 				node.package_install(name: x) ?

@@ -15,7 +15,7 @@ pub fn main(cmd cli.Command) ? {
 	ourreset := flags.get_bool('reset') or { false }
 	// clean := flags.get_bool('clean') or { false }
 
-	println('INSTALLER:')
+	// println('INSTALLER:')
 
 	if ourreset {
 		println(' - reset the full system')
