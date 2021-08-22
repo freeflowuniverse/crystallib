@@ -133,48 +133,51 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 	'
 
 	package_json :='
-	{
+{
 	"name": "$name",
 	"private": true,
 	"scripts": {
-		"build": "gridsome build",
-		"develop": "gridsome develop",
-		"explore": "gridsome explore"
+			"build": "gridsome build",
+			"develop": "gridsome develop",
+			"explore": "gridsome explore"
 	},
 	"dependencies": {
-		"@fortawesome/fontawesome-svg-core": "^1.2.30",
-		"@fortawesome/free-brands-svg-icons": "^5.14.0",
-		"@fortawesome/free-solid-svg-icons": "^5.14.0",
-		"@fortawesome/vue-fontawesome": "^2.0.0",
-		"@gridsome/source-filesystem": "^0.6.2",
-		"@gridsome/transformer-remark": "^0.6.2",
-		"@noxify/gridsome-remark-classes": "^1.0.0",
-		"@noxify/gridsome-remark-table-align": "^1.0.0",
-		"axios": "^0.21.1",
-		"babel-runtime": "^6.26.0",
-		"core-js": "^3.6.5",
-		"gridsome": "^0.7.3",
-		"gridsome-plugin-matomo": "^0.1.0",
-		"gridsome-plugin-remark-prismjs-all": "^0.3.5",
-		"gridsome-plugin-tailwindcss": "^3.0.1",
-		"gridsome-source-graphql": "^1.0.2",
-		"gridsome-source-static-meta": "github:noxify/gridsome-source-static-meta#master",
-		"lodash": "^4.17.20",
-		"pluralize": "^8.0.0",
-		"sass-loader": "^10.0.2",
-		"tailwindcss": "^2.0.0",
-		"tailwindcss-gradients": "^3.0.0",
-		"tailwindcss-tables": "^0.4.0",
-		"v-tooltip": "^2.0.3",
-		"vue-markdown": "^2.1.2",
-		"isexe": "^2.0.0",
-		"vue-share-it": "^1.1.4",
-		"node-sass": "^6.0.1"
-		},
-		"devDependencies": {
+			"@fortawesome/fontawesome-svg-core": "^1.2.30",
+			"@fortawesome/free-brands-svg-icons": "^5.14.0",
+			"@fortawesome/free-solid-svg-icons": "^5.14.0",
+			"@fortawesome/vue-fontawesome": "^2.0.0",
+			"@gridsome/source-filesystem": "^0.6.2",
+			"@gridsome/transformer-remark": "^0.6.2",
+			"@noxify/gridsome-remark-classes": "^1.0.0",
+			"@noxify/gridsome-remark-table-align": "^1.0.0",
+			"autoprefixer": "^10.3.1",
+			"axios": "^0.21.1",
+			"babel-runtime": "^6.26.0",
+			"core-js": "^3.6.5",
+			"gridsome": "^0.7.3",
+			"gridsome-plugin-matomo": "^0.1.0",
+			"gridsome-plugin-remark-prismjs-all": "^0.3.5",
+			"gridsome-plugin-tailwindcss": "^3.0.1",
+			"gridsome-source-graphql": "^1.0.2",
+			"gridsome-source-static-meta": "github:noxify/gridsome-source-static-meta#master",
+			"isexe": "^2.0.0",
+			"lodash": "^4.17.20",
+			"node-sass": "^6.0.1",
+			"pluralize": "^8.0.0",
+			"postcss": "^8.3.6",
+			"sass-loader": "^10.0.2",
+			"tailwindcss": "^2.2.7",
+			"tailwindcss-gradients": "^3.0.0",
+			"tailwindcss-tables": "^0.4.0",
+			"v-tooltip": "^2.0.3",
+			"vue-markdown": "^2.1.2",
+			"vue-share-it": "^1.1.4",
+			"vue-slick-carousel": "^1.0.6"
+	},
+	"devDependencies": {
 			"@tailwindcss/aspect-ratio": "^0.2.0"
-		}
 	}
+}
 	'
 
 	//REMARK: changed tailwind css to 2.x series, maybe that is not good
