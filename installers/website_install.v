@@ -134,7 +134,7 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 
 	package_json :='
 {
-  "name": $name",
+  "name": "$name",
   "private": true,
   "scripts": {
     "build": "gridsome build",
