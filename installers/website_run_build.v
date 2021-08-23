@@ -3,6 +3,7 @@ module installers
 import despiegk.crystallib.publisher_config
 import despiegk.crystallib.process
 import despiegk.crystallib.gittools
+import json
 import cli
 import os
 
