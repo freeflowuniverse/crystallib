@@ -116,6 +116,10 @@ pub fn website_build(cmd &cli.Command) ? {
 				}else if vuejs{
 					process.execute_stdout('cd $repo2.path_get()/ && git checkout vue.config.js') ?
 				}
+				// Write config files
+				println("-  Write config file for site: $site.name to $config.publish.paths.publish")
+				the_config := json.encode_pretty(site)
+				os.write_file('$config.publish.paths.publish/config_site_'+site.name+'.json', the_config) ?
 			}
 		}
 	} else {
@@ -160,6 +164,10 @@ pub fn website_build(cmd &cli.Command) ? {
 				}else if vuejs{
 					process.execute_stdout('cd $repo.path_get()/ && git checkout vue.config.js') ?
 				}
+				// Write config files
+				println("-  Write config file for site: $site.name to $config.publish.paths.publish")
+				the_config := json.encode_pretty(site)
+				os.write_file('$config.publish.paths.publish/config_site_'+site.name+'.json', the_config) ?
 				break
 			}
 		}
