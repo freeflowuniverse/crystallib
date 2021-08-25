@@ -69,6 +69,8 @@ pub fn sites_install(cmd cli.Command) ? {
 			sc.load(cfg)?
 			website_install(sc, first, cfg) ?
 			first = false
+		}else if sc.cat == publisher_config.SiteCat.wiki{
+			wiki_install(sc, cfg) ?
 		}
 	}
 }

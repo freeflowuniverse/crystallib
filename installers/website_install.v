@@ -8,7 +8,7 @@ import despiegk.crystallib.texttools
 
 // Initialize (load wikis) only once when server starts
 pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &publisher_config.ConfigRoot) ? {
-	name := site_conf.name
+	name := site_conf.reponame
 	base := conf.publish.paths.base
 	codepath := conf.publish.paths.code
 	multibranch := conf.publish.multibranch
@@ -241,5 +241,29 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 
 	os.write_file('$repo.path_get()/.installed', '') or {
 		return error('cannot write to $repo.path_get()/.installed\n$err')
+	}
+}
+
+pub fn wiki_install(site_conf publisher_config.SiteConfig, conf &publisher_config.ConfigRoot) ? {
+	name := site_conf.reponame
+	base := conf.publish.paths.base
+	codepath := conf.publish.paths.code
+	multibranch := conf.publish.multibranch
+
+	mut gt := gittools.new(codepath, multibranch) or { return error('ERROR: cannot load gittools:$err') }
+	// println(" - install repo: $name")
+	mut repo := gt.repo_get(name:name) or { return error('ERROR: cannot load gittools, cannot find reponame:$name \n$err') }
+	println(' - install wiki on $repo.path_get()')
+
+	if conf.publish.pull || site_conf.pull {
+		script7 := '
+		
+		cd $repo.path_get()
+
+		git pull
+
+		'
+		println('   > pull')
+		process.execute_silent(script7) or { return error('cannot pull code for ${name}.\n$err') }
 	}
 }
