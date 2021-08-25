@@ -67,7 +67,7 @@ pub fn sites_install(cmd cli.Command) ? {
 		sc.load()?
 		if sc.cat == publisher_config.SiteCat.web {
 			sc.load(cfg)?
-			website_install(sc.reponame, first, cfg) ?
+			website_install(sc, first, cfg) ?
 			first = false
 		}
 	}
