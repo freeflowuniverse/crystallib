@@ -67,9 +67,8 @@ pub fn website_build(cmd &cli.Command) ? {
 
 	if arg.len == 0 {
 		println(' - build all websites')
-		mut gt := gittools.new(conf.publish.paths.code, conf.publish.multibranch) or {
-			return error('ERROR: cannot load gittools:$err')
-		}
+		mut gt := gittools.new(conf.publish.paths.code, conf.publish.multibranch) or { return error('ERROR: cannot load gittools:$err') }
+
 		for mut site in sites {
 			site.load()?
 			if site.cat == publisher_config.SiteCat.web {

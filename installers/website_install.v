@@ -10,18 +10,18 @@ import despiegk.crystallib.texttools
 pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &publisher_config.ConfigRoot) ? {
 	name := site_conf.reponame
 	base := conf.publish.paths.base
-	codepath := conf.publish.paths.code
-	multibranch := conf.publish.multibranch
+	// codepath := conf.publish.paths.code
+	// multibranch := conf.publish.multibranch
 	nodejspath := conf.nodejs.path
 	mut path := site_conf.path
 
-	mut gt := gittools.new(codepath, multibranch) or { return error('ERROR: cannot load gittools:$err') }
+	mut gt := gittools.new(conf.publish.paths.code, conf.publish.multibranch) or { return error('ERROR: cannot load gittools:$err') }
 	
 	println(' - install website on $path')
 
 	if conf.publish.reset || site_conf.reset {
 		script6 := '
-		
+		#!/usr/bin/env bash
 		cd $path
 
 		rm -rf modules
@@ -45,7 +45,7 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 	}
 
 	script_install := '
-
+	#!/usr/bin/env bash
 	$nvm_line
 
 	set -e
@@ -65,7 +65,7 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 
 	'
 	script_run := '
-
+	#!/usr/bin/env bash
 	$nvm_line
 
 	set -e
@@ -80,6 +80,7 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 	'
 
 	script_build := '
+	#!/usr/bin/env bash
 
 	$nvm_line
 
@@ -152,13 +153,13 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 	}
 	'
 
-	os.write_file('$path/install.sh', texttools.dedent(script_install)) or {
+	os.write_file('$path/install', texttools.dedent(script_install)) or {
 		return error('cannot write to $path/install.sh\n$err')
 	}
-	os.write_file('$path/run.sh', texttools.dedent(script_run)) or {
+	os.write_file('$path/run', texttools.dedent(script_run)) or {
 		return error('cannot write to $path/run.sh\n$err')
 	}
-	os.write_file('$path/build.sh', texttools.dedent(script_build)) or {
+	os.write_file('$path/build', texttools.dedent(script_build)) or {
 		return error('cannot write to $path/build.sh\n$err')
 	}
 
@@ -166,9 +167,9 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 		return error('cannot write to $path/package.json\n$err')
 	}	
 
-	os.chmod('$path/install.sh', 0o700)
-	os.chmod('$path/run.sh', 0o700)
-	os.chmod('$path/build.sh', 0o700)
+	os.chmod('$path/install', 0o700)
+	os.chmod('$path/run', 0o700)
+	os.chmod('$path/build', 0o700)
 
 	println('   > node modules install')
 	process.execute_silent(script_install) or {
