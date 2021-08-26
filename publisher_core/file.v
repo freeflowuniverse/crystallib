@@ -47,9 +47,11 @@ fn (mut file File) relocate(mut publisher Publisher) ? {
 			page_strings.sort()
 			page_id_found := m[page_strings[0]]
 			mut page_file2 := publisher.page_get_by_id(page_id_found) or { panic(err) }
+			//this is the page which has first part in sorted list, is like the master which will hold the file
 			page_path2 := page_file2.path_get(mut publisher)
 			dest = os.dir(page_path2) + '/img/${os.base(path)}'
 			if dest.replace('//', '/').trim(' /') == path.replace('//', '/').trim(' /') {
+				//this means the file we are looking at is on right path, nothing to do
 				return
 			}
 			if os.exists(dest) {
@@ -57,7 +59,7 @@ fn (mut file File) relocate(mut publisher Publisher) ? {
 					return error('should never be same path: $dest and $path')
 				}
 				println('   >>>RM3: $path')
-				file.delete(mut publisher) ?
+				os.rm(path) ?
 			} else {
 				println('   >>>MV3: $path -> $dest')
 				file.mv(mut publisher, dest) ?
