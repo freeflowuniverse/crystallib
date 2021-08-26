@@ -154,13 +154,13 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 	'
 
 	os.write_file('$path/install', texttools.dedent(script_install)) or {
-		return error('cannot write to $path/install.sh\n$err')
+		return error('cannot write to $path/install\n$err')
 	}
 	os.write_file('$path/run', texttools.dedent(script_run)) or {
-		return error('cannot write to $path/run.sh\n$err')
+		return error('cannot write to $path/run\n$err')
 	}
 	os.write_file('$path/build', texttools.dedent(script_build)) or {
-		return error('cannot write to $path/build.sh\n$err')
+		return error('cannot write to $path/build\n$err')
 	}
 
 	os.write_file('$path/package.json', texttools.dedent(package_json)) or {

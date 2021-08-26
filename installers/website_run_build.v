@@ -45,7 +45,7 @@ pub fn website_develop(cmd &cli.Command, mut cfg publisher_config.ConfigRoot) ? 
 	repo := website_conf_repo_get(cmd, mut cfg) ?
 
 	println(' - start website: $repo.path_get()')
-	process.execute_interactive('$repo.path_get()/run.sh') ?
+	process.execute_interactive('$repo.path_get()/run') ?
 }
 
 fn rewrite_config(path string, shortname string) {
@@ -103,7 +103,7 @@ pub fn website_build(cmd &cli.Command) ? {
 					
 				}
 
-				process.execute_stdout('$repo2.path_get()/build.sh') or {
+				process.execute_stdout('$repo2.path_get()/build') or {
 					if isgridsome{
 						process.execute_stdout('cd $repo2.path_get()/ && git checkout gridsome.config.js') ?
 					}else if vuejs{
@@ -157,7 +157,7 @@ pub fn website_build(cmd &cli.Command) ? {
 					
 				}
 
-				process.execute_stdout('$repo.path_get()/build.sh') ?
+				process.execute_stdout('$repo.path_get()/build') ?
 				
 				if isgridsome{
 					process.execute_stdout('cd $repo.path_get()/ && git checkout gridsome.config.js') ?
