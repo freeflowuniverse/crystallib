@@ -64,9 +64,9 @@ pub fn sites_install(cmd cli.Command) ? {
 	mut first := true
 	sites_download(cmd, true) ?
 	for mut sc in cfg.sites_get() {
+		// println(sc)
 		sc.load() ?
 		if sc.cat == publisher_config.SiteCat.web {
-			sc.load(cfg) ?
 			website_install(sc, first, cfg) ?
 			first = false
 		} else if sc.cat == publisher_config.SiteCat.wiki {

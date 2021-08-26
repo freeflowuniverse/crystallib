@@ -65,6 +65,9 @@ pub fn (mut n NodeJS) install() ? {
 				println('cannot install nodejs.\n$err')
 				exit(1)
 			}
+
+			n.npm_install('@gridsome/cli', true) ?
+
 		}
 	} else {
 		if n.cfg.nodejs.version == publisher_config.NodejsCat.latest {
@@ -83,11 +86,13 @@ pub fn (mut n NodeJS) install() ? {
 		} else {
 			panic('implement for other platforms')
 		}
+
+		n.npm_install('@gridsome/cli', true) ?
 	}
 
 	println(' - nodejs installed')
 
-	n.npm_install('@gridsome/cli', true) ?
+	
 }
 
 pub fn (mut n NodeJS) npm_install(name string,global bool) ? {

@@ -6,6 +6,7 @@ import despiegk.crystallib.builder
 import despiegk.crystallib.publisher_config
 import despiegk.crystallib.process
 import despiegk.crystallib.nodejs
+import despiegk.crystallib.gittools
 
 pub fn web(cmd cli.Command) ? {
 	cfg := publisher_config.get()
@@ -13,7 +14,7 @@ pub fn web(cmd cli.Command) ? {
 	flags := cmd.flags.get_all_found()
 
 	ourreset := flags.get_bool('reset') or { false }
-	// clean := flags.get_bool('clean') or { false }
+	clean := flags.get_bool('clean') or { false }
 
 	// println('INSTALLER:')
 
@@ -29,14 +30,18 @@ pub fn web(cmd cli.Command) ? {
 	mut n := nodejs.get(cfg) or { return error(' ** ERROR: cannot install nodejs. Error was:\n$err') }
 	n.install() or { return error(' ** ERROR: cannot install nodejs. Error was:\n$err') }
 
-	// if clean {
-	// 	sites_cleanup(cmd) or { return error(' ** ERROR: cannot cleanup sites. Error was:\n$err') }
-	// }
+	if clean {
+		sites_cleanup(cmd) or { return error(' ** ERROR: cannot cleanup sites. Error was:\n$err') }
+	}
 
 	// make sure the config we are working with is refelected in ~/.publisher/config
 	// update_config() or { return error(' ** ERROR: cannot copy config files to ~publisher/config. Error was:\n$err') }
 
-	// sites_install(cmd) or { return error(' ** ERROR: cannot install sites. Error was:\n$err') }
+	mut gt := gittools.new(cfg.publish.paths.code, cfg.publish.multibranch) or { return error('ERROR: cannot load gittools on web installer:$err') }
+		
+	gt.repo_get_from_url(url:"https://github.com/threefoldfoundation/threefold_data")? 
+	
+	sites_install(cmd) or { return error(' ** ERROR: cannot install sites. Error was:\n$err') }
 }
 
 pub fn base() ? {
