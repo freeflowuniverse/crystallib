@@ -70,13 +70,7 @@ fn (mut file File) relocate(mut publisher Publisher) ? {
 			if dest.replace('//', '/').trim(' /') == path.replace('//', '/').trim(' /') {
 				return
 			}
-			if os.exists(dest) {
-				if os.real_path(dest) == os.real_path(path) {
-					panic('should never be same path: $dest and $path')
-				}
-				println(' >>>RM2: $path')
-				file.delete(mut publisher) ?
-			} else {
+			if ! os.exists(dest) {
 				println(" >>>MV2: '$path' -> '$dest'")
 				file.mv(mut publisher, dest) ?
 			}
