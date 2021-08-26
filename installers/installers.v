@@ -7,7 +7,7 @@ import despiegk.crystallib.publisher_config
 import despiegk.crystallib.process
 import despiegk.crystallib.nodejs
 
-pub fn main(cmd cli.Command) ? {
+pub fn web(cmd cli.Command) ? {
 	cfg := publisher_config.get()
 
 	flags := cmd.flags.get_all_found()
@@ -27,11 +27,7 @@ pub fn main(cmd cli.Command) ? {
 	// 	return error(' ** ERROR: cannot get web & wiki sites. Error was:\n$err')
 	// }
 
-	if !os.exists('/workspace') {
-		nodejs.install(cfg) or {
-			return error(' ** ERROR: cannot install nodejs. Error was:\n$err')
-		}
-	}
+	nodejs.install(cfg) or { return error(' ** ERROR: cannot install nodejs. Error was:\n$err') }
 
 	// if clean {
 	// 	sites_cleanup(cmd) or { return error(' ** ERROR: cannot cleanup sites. Error was:\n$err') }
@@ -40,7 +36,7 @@ pub fn main(cmd cli.Command) ? {
 	// make sure the config we are working with is refelected in ~/.publisher/config
 	// update_config() or { return error(' ** ERROR: cannot copy config files to ~publisher/config. Error was:\n$err') }
 
-	sites_install(cmd) or { return error(' ** ERROR: cannot install sites. Error was:\n$err') }
+	// sites_install(cmd) or { return error(' ** ERROR: cannot install sites. Error was:\n$err') }
 }
 
 pub fn base() ? {
@@ -56,7 +52,7 @@ pub fn base() ? {
 		os.mkdir(base) or { return err }
 	}
 
-	os.mkdir_all('$base/config') or { return err }
+	// os.mkdir_all('$base/config') or { return err }
 
 	println(' - installed base requirements')
 }
@@ -94,15 +90,15 @@ pub fn publishtools_update() ? {
 	println(' -update done')
 }
 
-pub fn update_config() ? {
-	cfg := publisher_config.get()
-	println(' - copying config files to ~/.publishtools/config')
-	res := os.ls('.') ?
-	for file in res {
-		if !os.is_file(file) {
-			continue
-		}
+// pub fn update_config() ? {
+// 	cfg := publisher_config.get()
+// 	println(' - copying config files to ~/.publishtools/config')
+// 	res := os.ls('.') ?
+// 	for file in res {
+// 		if !os.is_file(file) {
+// 			continue
+// 		}
 
-		os.cp('./$file', '$cfg.publish.paths.base/config/$file') ?
-	}
-}
+// 		os.cp('./$file', '$cfg.publish.paths.base/config/$file') ?
+// 	}
+// }

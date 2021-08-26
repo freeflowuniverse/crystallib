@@ -1,5 +1,6 @@
 module builder
 
+import process
 import os
 
 // check command exists on the platform, knows how to deal with different platforms
@@ -39,12 +40,11 @@ pub fn (mut node Node) platform_prepare() ? {
 	println(' - node prepare')
 	node.platform_load()
 	if node.platform == PlatformType.osx {
-		// lets not use for now, its huge and prob not needed
-		// if ! node.cmd_exists("brew"){
-		// 	process.execute_interactive('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"') or {
-		// 		return error("cannot install brew, something went wrong.\n$err")
-		// 	}
-		// }
+		if !node.cmd_exists('brew') {
+			process.execute_interactive('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"') or {
+				return error('cannot install brew, something went wrong.\n$err')
+			}
+		}
 		if !node.cmd_exists('clang') {
 			node.executor.exec('xcode-select --install') or {
 				return error('cannot install xcode-select --install, something went wrong.\n$err')

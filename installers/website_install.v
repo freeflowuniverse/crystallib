@@ -7,7 +7,8 @@ import despiegk.crystallib.gittools
 import despiegk.crystallib.texttools
 
 // Initialize (load wikis) only once when server starts
-pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoot) ? {
+pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &publisher_config.ConfigRoot) ? {
+	name := site_conf.reponame
 	base := conf.publish.paths.base
 	codepath := conf.publish.paths.code
 	multibranch := conf.publish.multibranch
@@ -18,7 +19,7 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 	mut repo := gt.repo_get(name:name) or { return error('ERROR: cannot load gittools, cannot find reponame:$name \n$err') }
 	println(' - install website on $repo.path_get()')
 
-	if conf.publish.reset {
+	if conf.publish.reset || site_conf.reset {
 		script6 := '
 		
 		cd $repo.path_get()
@@ -34,7 +35,7 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 		}
 	}
 
-	if conf.publish.pull {
+	if conf.publish.pull || site_conf.pull {
 		script7 := '
 		
 		cd $repo.path_get()
@@ -133,48 +134,49 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 	'
 
 	package_json :='
-	{
-	"name": "$name",
-	"private": true,
-	"scripts": {
-		"build": "gridsome build",
-		"develop": "gridsome develop",
-		"explore": "gridsome explore"
-	},
-	"dependencies": {
-		"@fortawesome/fontawesome-svg-core": "^1.2.30",
-		"@fortawesome/free-brands-svg-icons": "^5.14.0",
-		"@fortawesome/free-solid-svg-icons": "^5.14.0",
-		"@fortawesome/vue-fontawesome": "^2.0.0",
-		"@gridsome/source-filesystem": "^0.6.2",
-		"@gridsome/transformer-remark": "^0.6.2",
-		"@noxify/gridsome-remark-classes": "^1.0.0",
-		"@noxify/gridsome-remark-table-align": "^1.0.0",
-		"axios": "^0.21.1",
-		"babel-runtime": "^6.26.0",
-		"core-js": "^3.6.5",
-		"gridsome": "^0.7.3",
-		"gridsome-plugin-matomo": "^0.1.0",
-		"gridsome-plugin-remark-prismjs-all": "^0.3.5",
-		"gridsome-plugin-tailwindcss": "^3.0.1",
-		"gridsome-source-graphql": "^1.0.2",
-		"gridsome-source-static-meta": "github:noxify/gridsome-source-static-meta#master",
-		"lodash": "^4.17.20",
-		"pluralize": "^8.0.0",
-		"sass-loader": "^10.0.2",
-		"tailwindcss": "^2.0.0",
-		"tailwindcss-gradients": "^3.0.0",
-		"tailwindcss-tables": "^0.4.0",
-		"v-tooltip": "^2.0.3",
-		"vue-markdown": "^2.1.2",
-		"isexe": "^2.0.0",
-		"vue-share-it": "^1.1.4",
-		"node-sass": "^6.0.1"
-		},
-		"devDependencies": {
-			"@tailwindcss/aspect-ratio": "^0.2.0"
-		}
-	}
+{
+  "name": "$name",
+  "private": true,
+  "scripts": {
+    "build": "gridsome build",
+    "develop": "gridsome develop",
+    "explore": "gridsome explore"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.30",
+    "@fortawesome/free-brands-svg-icons": "^5.14.0",
+    "@fortawesome/free-solid-svg-icons": "^5.14.0",
+    "@fortawesome/vue-fontawesome": "^2.0.0",
+    "@gridsome/source-filesystem": "^0.6.2",
+    "@gridsome/transformer-remark": "^0.6.2",
+    "@noxify/gridsome-remark-classes": "^1.0.0",
+    "@noxify/gridsome-remark-table-align": "^1.0.0",
+    "axios": "^0.21.1",
+    "babel-runtime": "^6.26.0",
+    "core-js": "^3.6.5",
+    "gridsome": "^0.7.3",
+    "gridsome-plugin-matomo": "^0.1.0",
+    "gridsome-plugin-remark-prismjs-all": "^0.3.5",
+    "gridsome-plugin-tailwindcss": "^3.0.1",
+    "gridsome-source-graphql": "^1.0.2",
+    "gridsome-source-static-meta": "github:noxify/gridsome-source-static-meta#master",
+    "isexe": "^2.0.0",
+    "lodash": "^4.17.20",
+    "node-sass": "^5.0.0",
+    "pluralize": "^8.0.0",
+    "sass-loader": "^10.0.2",
+    "tailwindcss": "^1.8.4",
+    "tailwindcss-gradients": "^3.0.0",
+    "tailwindcss-tables": "^0.4.0",
+    "v-tooltip": "^2.0.3",
+    "vue-markdown": "^2.1.2",
+    "vue-share-it": "^1.1.4",
+    "vue-slick-carousel": "^1.0.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/aspect-ratio": "^0.2.0"
+  }
+}
 	'
 
 	//REMARK: changed tailwind css to 2.x series, maybe that is not good
@@ -213,11 +215,12 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 	ri.add(instr) or { panic(err) }
 	mut count := 0
 	count += ri.replace_in_dir(path:"$repo.path_get()/src",extensions:["html","vue"],dryrun:true) or { panic(err) }
-	count += ri.replace_in_dir(path:"$repo.path_get()/tailwindui",extensions:["html","vue"],dryrun:true) or { panic(err) }
-	if count>0{
-		println(" - TAILWIND UPGRADE WITH $count CHANGES for $repo.path_get()")
+	if os.exists("$repo.path_get()/tailwindui"){
+		count += ri.replace_in_dir(path:"$repo.path_get()/tailwindui",extensions:["html","vue"],dryrun:true) or { panic(err) }
+		if count>0{
+			println(" - TAILWIND UPGRADE WITH $count CHANGES for $repo.path_get()")
+		}
 	}
-	
 
 	// only require threebot_data in case of gridsome website
 	if os.exists('$repo.path_get()/gridsome.config.js'){
@@ -238,5 +241,29 @@ pub fn website_install(name string, first bool, conf &publisher_config.ConfigRoo
 
 	os.write_file('$repo.path_get()/.installed', '') or {
 		return error('cannot write to $repo.path_get()/.installed\n$err')
+	}
+}
+
+pub fn wiki_install(site_conf publisher_config.SiteConfig, conf &publisher_config.ConfigRoot) ? {
+	name := site_conf.reponame
+	base := conf.publish.paths.base
+	codepath := conf.publish.paths.code
+	multibranch := conf.publish.multibranch
+
+	mut gt := gittools.new(codepath, multibranch) or { return error('ERROR: cannot load gittools:$err') }
+	// println(" - install repo: $name")
+	mut repo := gt.repo_get(name:name) or { return error('ERROR: cannot load gittools, cannot find reponame:$name \n$err') }
+	println(' - install wiki on $repo.path_get()')
+
+	if conf.publish.pull || site_conf.pull {
+		script7 := '
+		
+		cd $repo.path_get()
+
+		git pull
+
+		'
+		println('   > pull')
+		process.execute_silent(script7) or { return error('cannot pull code for ${name}.\n$err') }
 	}
 }
