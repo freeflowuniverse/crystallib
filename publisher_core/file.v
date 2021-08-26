@@ -59,7 +59,7 @@ fn (mut file File) relocate(mut publisher Publisher) ? {
 					return error('should never be same path: $dest and $path')
 				}
 				println('   >>>RM3: $path')
-				os.rm(path) ?
+				// os.rm(path) ?
 			} else {
 				println('   >>>MV3: $path -> $dest')
 				file.mv(mut publisher, dest) ?
