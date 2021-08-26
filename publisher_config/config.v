@@ -5,6 +5,11 @@ import despiegk.crystallib.texttools
 import json
 import despiegk.crystallib.gittools
 
+// fn config_dir_find(path string) string{
+
+
+// }
+
 // load the initial config from filesystem
 fn config_load() ?ConfigRoot {
 	mut config := ConfigRoot{}
