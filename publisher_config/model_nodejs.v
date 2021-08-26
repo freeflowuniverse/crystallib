@@ -1,8 +1,8 @@
 module publisher_config
 
-const lts_ver = 'v14.17.0'
+const lts_ver = '14.17.5'
 
-const latest_ver = 'v16.7.0'
+const latest_ver = '16.8.0'
 
 pub struct NodejsConfigFS {
 pub mut:
@@ -26,12 +26,13 @@ pub enum NodejsCat {
 fn (mut cfg ConfigRoot) init_nodejs() {
 	mut version := ''
 	if cfg.nodejs.path == '' {
-		if cfg.nodejs.version == NodejsCat.lts {
-			version = publisher_config.lts_ver
-		} else {
+		if cfg.nodejs.version == NodejsCat.latest {
 			version = publisher_config.latest_ver
+		} else {
+			version = publisher_config.lts_ver
 		}
-		cfg.nodejs.path = '$cfg.publish.paths.base/versions/node/$version'
+		cfg.nodejs.path = '$cfg.publish.paths.base/versions/node/v$version'
 		cfg.nodejs.versionnr = version
 	}
+	// println(cfg.nodejs)
 }

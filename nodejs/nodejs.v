@@ -24,6 +24,9 @@ pub fn (mut n NodeJS) install() ? {
 
 	n.node.platform_prepare() ?
 
+	println(" - base dir: $base")
+	println(" - nodejs dir: $nodejspath")
+
 	if n.cfg.nodejs.nvm {
 		if !os.exists('$base/nvm.sh') {
 			script = "
@@ -37,13 +40,24 @@ pub fn (mut n NodeJS) install() ? {
 			}
 		}
 
+
+		mut nodev := ""
+
+		if n.cfg.nodejs.version == publisher_config.NodejsCat.latest{
+			// nodev = "node"
+			nodev = "$n.cfg.nodejs.versionnr"
+		}else{
+			// nodev = "--lts"
+			nodev = "$n.cfg.nodejs.versionnr"
+		}
+
 		if !os.exists('$nodejspath/bin/node') {
 			println(' - will install nodejs $n.cfg.nodejs.version (can take quite a while)')
 			script = '
-			set -e
+			set +e
 			export NVM_DIR=$base
 			source $base/nvm.sh
-			nvm install $n.cfg.nodejs.version
+			nvm install $nodev
 			npm install -g @gridsome/cli
 			'
 

@@ -55,8 +55,9 @@ fn config_load() ?ConfigRoot {
 		}
 	}
 
+	//DEFAULT VALUES
 	config.nodejs = NodejsConfig{
-		version: NodejsCat.latest
+		version: NodejsCat.lts
 		// means we don't install in platform
 		nvm: true
 	}

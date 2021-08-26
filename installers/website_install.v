@@ -51,7 +51,14 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 		return
 	}
 
+	mut nvm_line := ""
+	if conf.nodejs.nvm {
+		nvm_line = "source $base/nvm.sh && nvm use --lts && export PATH=$nodejspath/bin:\$PATH"
+	}
+
 	script_install := '
+
+	$nvm_line
 
 	set -e
 
@@ -60,39 +67,21 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 	rm -f yarn.lock
 	rm -rf .cache		
 	
-	#set +e
-	#source $base/nvm.sh
-	#set -e
-
 	if [ "$first" = "true" ]; then
-		#nvm use --lts
 		npm install
 		rsync -ra --delete node_modules/ $base/node_modules/
 	else
 		rsync -ra --delete $base/node_modules/ node_modules/ 
-		#nvm use --lts
 		npm install
 	fi
 
-
-
 	'
-
-	// if nodejspath.len == 0 {
-	// 	panic('nodejspath needs to be set')
-	// }
-
 	script_run := '
+
+	$nvm_line
 
 	set -e
 	cd $repo.path_get()
-
-	#set +e
-	#source $base/nvm.sh
-	#set -e
-	#nvm use --lts
-
-	#export PATH=$nodejspath/bin:\$PATH
 
 	if [ -f vue.config.js ]; then
     	npm run-script serve
@@ -104,15 +93,11 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 
 	script_build := '
 
+	$nvm_line
+
 	set -e
 	cd $repo.path_get()
 
-	#set +e
-	#source $base/nvm.sh
-	#set -e
-	#nvm use --lts
-
-	#export PATH=$nodejspath/bin:\$PATH
 
 	set +e
 	if [ -f vue.config.js ]; then
@@ -205,22 +190,22 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 	}
 
 	//lets upgrade for tailwind
-	mut ri := texttools.regex_instructions_new()
-	instr := [
-		'whitespace-no-wrap:whitespace-nowrap',
-		'flex-no-wrap:flex-nowrap',
-		'col-gap-:gap-x-',
-		'row-gap-:gap-y-'
-	]
-	ri.add(instr) or { panic(err) }
-	mut count := 0
-	count += ri.replace_in_dir(path:"$repo.path_get()/src",extensions:["html","vue"],dryrun:true) or { panic(err) }
-	if os.exists("$repo.path_get()/tailwindui"){
-		count += ri.replace_in_dir(path:"$repo.path_get()/tailwindui",extensions:["html","vue"],dryrun:true) or { panic(err) }
-		if count>0{
-			println(" - TAILWIND UPGRADE WITH $count CHANGES for $repo.path_get()")
-		}
-	}
+	// mut ri := texttools.regex_instructions_new()
+	// instr := [
+	// 	'whitespace-no-wrap:whitespace-nowrap',
+	// 	'flex-no-wrap:flex-nowrap',
+	// 	'col-gap-:gap-x-',
+	// 	'row-gap-:gap-y-'
+	// ]
+	// ri.add(instr) or { panic(err) }
+	// mut count := 0
+	// count += ri.replace_in_dir(path:"$repo.path_get()/src",extensions:["html","vue"],dryrun:true) or { panic(err) }
+	// if os.exists("$repo.path_get()/tailwindui"){
+	// 	count += ri.replace_in_dir(path:"$repo.path_get()/tailwindui",extensions:["html","vue"],dryrun:true) or { panic(err) }
+	// 	if count>0{
+	// 		println(" - TAILWIND UPGRADE WITH $count CHANGES for $repo.path_get()")
+	// 	}
+	// }
 
 	// only require threebot_data in case of gridsome website
 	if os.exists('$repo.path_get()/gridsome.config.js'){
