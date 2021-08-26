@@ -149,7 +149,7 @@ pub fn (mut site Site) process(mut publisher Publisher)? {
 			eprintln(err)
 			continue
 		}
-		// f.relocate(mut publisher)? //TODO: FIXME
+		f.relocate(mut publisher)?
 	}
 
 	site.state = SiteState.ok

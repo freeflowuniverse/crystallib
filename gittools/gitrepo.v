@@ -80,19 +80,19 @@ pub fn (mut repo GitRepo) check(pull_force_ bool, reset_force_ bool) ? {
 
 		// first check if path does not exist yet, if not need to clone
 		if !os.exists(repo.path_get()) {
-			println(' - NEED TO GIT PULL: -> $repo.path_get()')
+			// println(' - NEED TO GIT PULL: -> $repo.path_get()')
 			if !needs_to_be_ssh && ssh_agent_loaded() {
 				needs_to_be_ssh = true
 			}
 			// get the url (http or ssh)
 			mut cmd := ""
 			if needs_to_be_ssh {
-				println("GIT: PULL USING SSH")
+				// println("GIT: PULL USING SSH")
 				// cmd based on ssh
 				cmd = repo.get_clone_cmd(false)
 			} else {
 				// cmd based on http
-				println("GIT: PULL USING HTTP")
+				// println("GIT: PULL USING HTTP")
 				cmd = repo.get_clone_cmd(true)
 			}
 			
@@ -100,7 +100,7 @@ pub fn (mut repo GitRepo) check(pull_force_ bool, reset_force_ bool) ? {
 				println(' GIT FAILED: $cmd')
 				return error('Cannot pull repo: ${repo.path_get()}. Error was $err')
 			}
-			println(' - GIT PULL OK')
+			// println(' - GIT PULL OK')
 			// can return safely, because pull did work			
 			repo.state = GitStatus.ok
 			return

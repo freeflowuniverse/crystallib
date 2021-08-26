@@ -26,8 +26,8 @@ pub fn web(cmd cli.Command) ? {
 	// sites_download(cmd, true) or {
 	// 	return error(' ** ERROR: cannot get web & wiki sites. Error was:\n$err')
 	// }
-
-	nodejs.install(cfg) or { return error(' ** ERROR: cannot install nodejs. Error was:\n$err') }
+	mut n := nodejs.get(cfg) or { return error(' ** ERROR: cannot install nodejs. Error was:\n$err') }
+	n.install() or { return error(' ** ERROR: cannot install nodejs. Error was:\n$err') }
 
 	// if clean {
 	// 	sites_cleanup(cmd) or { return error(' ** ERROR: cannot cleanup sites. Error was:\n$err') }

@@ -246,7 +246,7 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 
 pub fn wiki_install(site_conf publisher_config.SiteConfig, conf &publisher_config.ConfigRoot) ? {
 	name := site_conf.reponame
-	base := conf.publish.paths.base
+	// base := conf.publish.paths.base
 	codepath := conf.publish.paths.code
 	multibranch := conf.publish.multibranch
 
