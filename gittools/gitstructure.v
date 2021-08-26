@@ -48,7 +48,7 @@ pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs
 		r0.check(args.pull, args.reset) ?
 		return r0
 	} else {
-		mut r := gitstructure.repo_get(args2) or { return error('cannot load git $args.url\nerr') }
+		mut r := gitstructure.repo_get(args2) or { return error('cannot load git $args.url\n$err') }
 		r.addr = addr
 		// println (" GIT REPO GET URL: PULL:$args.pull, RESET: $args.reset")
 		r.check(args.pull, args.reset) ?
@@ -87,6 +87,9 @@ pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) ?&GitRepo {
 		return &gitstructure.repos[res_ids[0]]
 	}
 	if res_ids.len > 1 {
+		for idd in res_ids{
+			println(" --- duplicate: " + gitstructure.repos[idd].path)
+		}
 		return error("Found too many repo's for account:'$args.account' name:'$args.name'")
 	}
 	// print_backtrace()
