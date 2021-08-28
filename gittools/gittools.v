@@ -69,6 +69,8 @@ pub fn (mut gitstructure GitStructure) load(root string, multibranch bool) ? {
 	mut done := []string{}
 	gitstructure.load_recursive(gitstructure.root, mut done) ?
 	gitstructure.status = GitStructureStatus.loaded
+
+	println(" - SCAN done")
 }
 
 fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []string) ? {

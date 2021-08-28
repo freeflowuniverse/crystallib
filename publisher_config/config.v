@@ -18,9 +18,11 @@ fn config_load() ?ConfigRoot {
 
 	if "PUBSITE" in envs{
 		mut gt2 := gittools.new("",false) ?
-		r := gt2.repo_get_from_url(url:envs["PUBSITE"],pull:true)?
-		println(r.addr)
-		println(r.path_content_get())
+		url := envs["PUBSITE"]
+		println(" - get git repo to fetch config for publ tools: $url")
+		r := gt2.repo_get_from_url(url:url,pull:true)?
+		// println(r.addr)
+		// println(r.path_content_get())
 		// panic("s")
 		println(" - changedir for config: $r.path_content_get()")
 		os.chdir(r.path_content_get())
