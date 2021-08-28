@@ -14,6 +14,18 @@ import despiegk.crystallib.gittools
 fn config_load() ?ConfigRoot {
 	mut config := ConfigRoot{}
 
+	envs := os.environ()
+
+	if "PUBSITE" in envs{
+		mut gt2 := gittools.new("",false) ?
+		r := gt2.repo_get_from_url(url:envs["PUBSITE"])?
+		// println(r.addr)
+		// println(r.path_content_get())
+		// panic("s")
+		os.chdir(r.path_content_get())
+	}
+	
+
 	// Load Publish config
 	if os.exists('config.json') {
 		println(' - Found config file for publish tools.')

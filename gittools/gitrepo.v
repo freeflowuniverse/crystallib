@@ -4,9 +4,10 @@ import os
 import despiegk.crystallib.process
 
 pub fn (repo GitRepo) path_content_get() string {
-	if repo.path != '' {
-		return repo.path
-	}
+	// if repo.path != '' {
+	// 	return repo.path
+	// }
+	// panic(repo.addr.path)
 	return '$repo.path_get()/$repo.addr.path'
 }
 
