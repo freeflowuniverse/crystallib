@@ -18,14 +18,40 @@ fn config_load() ?ConfigRoot {
 
 	if "PUBSITE" in envs{
 		mut gt2 := gittools.new("",false) ?
-		r := gt2.repo_get_from_url(url:envs["PUBSITE"])?
-		// println(r.addr)
-		// println(r.path_content_get())
+		r := gt2.repo_get_from_url(url:envs["PUBSITE"],pull:true)?
+		println(r.addr)
+		println(r.path_content_get())
 		// panic("s")
 		println(" - changedir for config: $r.path_content_get()")
 		os.chdir(r.path_content_get())
 	}
 	
+	
+	// Load Site & Group config files
+	mut sites_config_files := []string{}
+	mut groups_config_files := []string{}
+
+	current_dir := '.'
+	mut files := os.ls(current_dir) or {
+		return error('Cannot load config files in current dir, $err')
+	}
+	for file in files {
+		if file.starts_with('site_') && file.ends_with('.json') {
+			sites_config_files << file
+		}
+		if file.starts_with('groups_') && file.ends_with('.json') {
+			groups_config_files << file
+		}
+	}
+
+	
+	if sites_config_files.len < 1{
+		curdir := os.getwd()
+		return error("cannot find site files in current dir: $curdir, site files start with site_")
+	}
+
+	//will check if there are site_... files, if not is error
+
 
 	// Load Publish config
 	if os.exists('config.json') {
@@ -101,22 +127,7 @@ fn config_load() ?ConfigRoot {
 	// Load Static config
 	staticfiles_config(mut &config)
 
-	// Load Site & Group config files
-	mut sites_config_files := []string{}
-	mut groups_config_files := []string{}
 
-	current_dir := '.'
-	mut files := os.ls(current_dir) or {
-		return error('Cannot load config files in current dir, $err')
-	}
-	for file in files {
-		if file.starts_with('site_') && file.ends_with('.json') {
-			sites_config_files << file
-		}
-		if file.starts_with('groups_') && file.ends_with('.json') {
-			groups_config_files << file
-		}
-	}
 	for site_file in sites_config_files {
 		println(' - found $site_file as a config file for sites.')
 		txt := os.read_file(site_file) ?
