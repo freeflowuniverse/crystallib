@@ -167,9 +167,9 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 		return error('cannot write to $path/package.json\n$err')
 	}	
 
-	os.chmod('$path/install', 0o700)
-	os.chmod('$path/run', 0o700)
-	os.chmod('$path/build', 0o700)
+	os.chmod('$path/install', 0o700) ?
+	os.chmod('$path/run', 0o700) ?
+	os.chmod('$path/build', 0o700) ?
 
 	println('   > node modules install')
 	process.execute_silent(script_install) or {

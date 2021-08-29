@@ -25,7 +25,7 @@ fn config_load() ?ConfigRoot {
 		// println(r.path_content_get())
 		// panic("s")
 		println(" - changedir for config: $r.path_content_get()")
-		os.chdir(r.path_content_get())
+		os.chdir(r.path_content_get()) ?
 	}
 	
 	
