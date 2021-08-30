@@ -7,6 +7,8 @@ import net
 import time
 import despiegk.crystallib.resp2
 
+const default_read_timeout = net.infinite_timeout
+
 pub struct Redis {
 pub mut:
 	connected bool
@@ -39,13 +41,17 @@ pub fn connect(addr string) ?Redis {
 		connected: false
 	} }
 
-	socket.set_read_timeout(2 * time.second)
+	socket.set_read_timeout(default_read_timeout)
 
 	return Redis{
-		connected: true
+		connected: true,
 		socket: socket
 		// reader: io.new_buffered_reader(reader: io.make_reader(socket))
 	}
+}
+
+pub fn (mut r Redis) set_read_timeout(timeout time.Duration) {
+	r.socket.set_read_timeout(timeout)
 }
 
 // would be faster to do a buffered reader, but for now ok I guess
