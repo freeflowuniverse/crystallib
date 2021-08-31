@@ -17,7 +17,7 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 
 	mut gt := gittools.new(conf.publish.paths.code, conf.publish.multibranch) or { return error('ERROR: cannot load gittools:$err') }
 	
-	println(' - install website on $path')
+	println(' - install website $name on $path')
 
 	if conf.publish.reset || site_conf.reset {
 		script6 := '
@@ -35,8 +35,13 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 		}
 	}
 
-	if os.exists('$path/.installed') {
-		return
+	if conf.publish.pull || site_conf.pull {
+		script7 := '
+		cd $path
+		git pull
+		'
+		println('   > pull site: $name')
+		process.execute_silent(script7) or { return error('cannot pull code for ${name}.\n$err') }
 	}
 
 	mut nvm_line := ""
@@ -171,6 +176,10 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 	os.chmod('$path/run', 0o700) ?
 	os.chmod('$path/build', 0o700) ?
 
+	if os.exists('$path/.installed') {
+		return
+	}
+
 	println('   > node modules install')
 	process.execute_silent(script_install) or {
 		return error('cannot install node modules for ${name}.\n$err')
@@ -217,11 +226,16 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 }
 
 pub fn wiki_install(site_conf publisher_config.SiteConfig, conf &publisher_config.ConfigRoot) ? {
-	// name := site_conf.reponame
-	// base := conf.publish.paths.base
-	// codepath := conf.publish.paths.code
-	// multibranch := conf.publish.multibranch
+	name := site_conf.reponame
 	mut path := site_conf.path
-	println(' - install wiki on $path')
+	println(' - install wiki $name on $path')
 
+	if conf.publish.pull || site_conf.pull {
+		script7 := '
+		cd $path
+		git pull
+		'
+		println('   > pull wiki: $name')
+		process.execute_silent(script7) or { return error('cannot pull code for ${name}.\n$err') }
+	}
 }

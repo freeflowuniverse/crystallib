@@ -27,7 +27,7 @@ pub fn (mut q RedisQueue) get(timeout u64) ?string {
 		if r != '' {
 			return r
 		}
-		if time.now().unix_time_milli() > (start + timeout) {
+		if u64(time.now().unix_time_milli()) > (start + timeout) {
 			break
 		}
 		time.sleep(time.microsecond)
