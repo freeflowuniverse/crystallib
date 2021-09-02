@@ -236,6 +236,7 @@ pub fn wiki_install(site_conf publisher_config.SiteConfig, conf &publisher_confi
 	if conf.publish.pull || site_conf.pull {
 		script7 := '
 		cd $path
+		git checkout .
 		git pull
 		'
 		println('   > pull wiki: $name')
