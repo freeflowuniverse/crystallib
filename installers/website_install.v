@@ -38,6 +38,7 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 	if conf.publish.pull || site_conf.pull {
 		script7 := '
 		cd $path
+		git checkout .
 		git pull
 		'
 		println('   > pull site: $name')
