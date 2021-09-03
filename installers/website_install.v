@@ -38,6 +38,7 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 	if conf.publish.pull || site_conf.pull {
 		script7 := '
 		cd $path
+		git checkout .
 		git pull
 		'
 		println('   > pull site: $name')
@@ -130,6 +131,7 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 			"@gridsome/transformer-remark": "^0.6.2",
 			"@noxify/gridsome-remark-classes": "^1.0.0",
 			"@noxify/gridsome-remark-table-align": "^1.0.0",
+			"autoprefixer": "^10.3.3",
 			"axios": "^0.21.1",
 			"babel-runtime": "^6.26.0",
 			"core-js": "^3.6.5",
@@ -143,8 +145,9 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 			"lodash": "^4.17.20",
 			"node-sass": "^5.0.0",
 			"pluralize": "^8.0.0",
+			"postcss": "^8.3.6",
 			"sass-loader": "^10.0.2",
-			"tailwindcss": "^1.8.4",
+			"tailwindcss": "^2.2.9",
 			"tailwindcss-gradients": "^3.0.0",
 			"tailwindcss-tables": "^0.4.0",
 			"v-tooltip": "^2.0.3",
@@ -233,6 +236,7 @@ pub fn wiki_install(site_conf publisher_config.SiteConfig, conf &publisher_confi
 	if conf.publish.pull || site_conf.pull {
 		script7 := '
 		cd $path
+		git checkout .
 		git pull
 		'
 		println('   > pull wiki: $name')
