@@ -5,7 +5,7 @@ import despiegk.crystallib.texttools
 import json
 import despiegk.crystallib.gittools
 
-// fn config_dir_find(path path.Path) string{
+// fn config_dir_find(path string) string{
 
 // }
 

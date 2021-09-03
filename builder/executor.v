@@ -3,15 +3,15 @@ module builder
 interface Executor {
 	exec(cmd string) ?string
 	exec_silent(cmd string) ?string
-	file_write(path path.Path, text string) ?
-	file_read(path path.Path) ?string
-	file_exists(path path.Path) bool
-	remove(path path.Path) ?
+	file_write(path string, text string) ?
+	file_read(path string) ?string
+	file_exists(path string) bool
+	remove(path string) ?
 	download(source string, dest string) ?
 	upload(source string, dest string) ?
 	environ_get() ?map[string]string
 	info() map[string]string
 	ssh_shell(port int) ?
-	list(path path.Path) ?[]string
-	dir_exists(path path.Path) bool
+	list(path string) ?[]string
+	dir_exists(path string) bool
 }

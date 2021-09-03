@@ -45,22 +45,22 @@ pub fn (mut executor ExecutorSSH) exec_silent(cmd string) ?string {
 	return res.output
 }
 
-pub fn (mut executor ExecutorSSH) file_write(path path.Path, text string) ? {
+pub fn (mut executor ExecutorSSH) file_write(path string, text string) ? {
 	local_path := '/tmp/$rand.uuid_v4()'
 	os.write_file(local_path, text) ?
 	executor.upload(local_path, path) ?
 	os.rm(local_path) ?
 }
 
-pub fn (mut executor ExecutorSSH) file_read(path path.Path) ?string {
+pub fn (mut executor ExecutorSSH) file_read(path string) ?string {
 	local_path := '/tmp/$rand.uuid_v4()'
 	executor.download(path, local_path) ?
-	r := local_path.read() ?
+	r := os.read_file(local_path) ?
 	os.rm(local_path) or { panic(err) }
 	return r
 }
 
-pub fn (mut executor ExecutorSSH) file_exists(path path.Path) bool {
+pub fn (mut executor ExecutorSSH) file_exists(path string) bool {
 	output := executor.exec('test -f $path && echo found || echo not found') or { return false }
 	if output == 'found' {
 		return true
@@ -69,7 +69,7 @@ pub fn (mut executor ExecutorSSH) file_exists(path path.Path) bool {
 }
 
 // carefull removes everything
-pub fn (mut executor ExecutorSSH) remove(path path.Path) ? {
+pub fn (mut executor ExecutorSSH) remove(path string) ? {
 	executor.exec('rm -rf $path') or { panic(err) }
 }
 
@@ -131,7 +131,7 @@ pub fn (mut executor ExecutorSSH) ssh_shell(port int) ? {
 	os.execvp('ssh', ['$executor.user@$executor.ipaddr.addr', '-p $p']) ?
 }
 
-pub fn (mut executor ExecutorSSH) list(path path.Path) ?[]string {
+pub fn (mut executor ExecutorSSH) list(path string) ?[]string {
 	if !executor.dir_exists(path) {
 		panic('Dir Not found')
 	}
@@ -143,7 +143,7 @@ pub fn (mut executor ExecutorSSH) list(path path.Path) ?[]string {
 	return res
 }
 
-pub fn (mut executor ExecutorSSH) dir_exists(path path.Path) bool {
+pub fn (mut executor ExecutorSSH) dir_exists(path string) bool {
 	output := executor.exec('test -d $path && echo found || echo not found') or { return false }
 	if output == 'found' {
 		return true

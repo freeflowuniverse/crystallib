@@ -73,7 +73,7 @@ fn (mut publisher Publisher) load_site(name string) ? {
 }
 
 // // find all wiki's, this goes very fast, no reason to cache
-// fn (mut publisher Publisher) find_sites_recursive(path path.Path) ? {
+// fn (mut publisher Publisher) find_sites_recursive(path string) ? {
 // 	mut path1 := ''
 // 	if path == '' {
 // 		path1 = '$os.home_dir()/code/'

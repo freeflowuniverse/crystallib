@@ -21,11 +21,11 @@ pub fn (mut image DockerImage) delete(force bool) ?string {
 }
 
 // export docker image to tar.gz
-pub fn (mut image DockerImage) export(path path.Path) ?string {
+pub fn (mut image DockerImage) export(path string) ?string {
 	return image.node.executor.exec('docker save $image.id > $path')
 }
 
 // import docker image back into the local env
-pub fn (mut image DockerImage) load(path path.Path) ?string {
+pub fn (mut image DockerImage) load(path string) ?string {
 	return image.node.executor.exec('docker load < $path')
 }

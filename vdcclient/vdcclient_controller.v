@@ -159,7 +159,7 @@ pub:
 struct Stacktrace {
 pub:
 	filename string
-	filepath path.Path
+	filepath string
 	context  string
 	linenr   int
 	code     string

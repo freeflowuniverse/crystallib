@@ -84,7 +84,7 @@ pub fn (mut container DockerContainer) save2image(image_repo string, image_tag s
 }
 
 // export docker to tgz
-pub fn (mut container DockerContainer) export(path path.Path) ?string {
+pub fn (mut container DockerContainer) export(path string) ?string {
 	return container.node.executor.exec('docker export $container.id > $path')
 }
 

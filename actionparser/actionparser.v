@@ -2,7 +2,6 @@ module actionparser
 
 import os
 import despiegk.crystallib.texttools
-import despiegk.crystallib.path
 
 enum ParseBlockStatus {
 	start
@@ -51,11 +50,11 @@ mut:
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 
-pub fn parse(path path.Path) ?ParseResult {
-	if ! path.exists(){
+pub fn parse(path string) ?ParseResult {
+	if !os.exists(path) {
 		return error("path: '$path' does not exist, cannot parse.")
 	}
-	content := path.read() or { panic('Failed to load file $path') }
+	content := os.read_file(path) or { panic('Failed to load file $path') }
 
 	blocks := parse_into_blocks(content) ?
 

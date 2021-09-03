@@ -27,8 +27,8 @@ pub fn (path Path) absolute() Path {
 	}
 	mut p2 := Path{
 		path:path.path
-		exists:path.path
-		cat:path.path
+		exists:path.exists
+		cat:path.cat
 	}
 	p2.path = p2.path_absolute()
 	p2.absolute = true
@@ -39,8 +39,8 @@ pub fn (path Path) absolute() Path {
 //absolute path
 pub fn (path Path) path_absolute() string {
 	//Check if the link is read --> Working with links but return the origin path
-	path.path = path.path.replace("~",os.home_dir())
-	return os.real_path(path.path)
+	p2 := path.path.replace("~",os.home_dir())
+	return os.real_path(p2)
 }
 
 //find parent of path
@@ -48,7 +48,7 @@ pub fn (path Path) parent() Path {
 	mut p := path.path_absolute()
 	parent := os.dir(p) // get parent directory
 	if parent == "."{
-		return error("no parent for path $path")
+		panic("no parent for path $path.path")
 	}else if parent == "" {
 		return Path{path:"/",cat:Category.dir, exists:PathExists.yes}
 	}
@@ -142,7 +142,7 @@ pub fn (mut path Path) file_find(tofind string)?Path{
 
 //list all files & dirs, follow symlinks
 //return as list of Paths
-//param tofind: part of name (relative to path.path)
+//param tofind: part of name (relative to string)
 //param recursive: if recursive behaviour
 pub fn (mut path Path) list(tofind string,recursive bool)?[]Path{
 	if !(path.cat in [Category.dir, Category.linkdir]) {

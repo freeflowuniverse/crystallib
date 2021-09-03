@@ -1,4 +1,5 @@
 module publisher_core
+import despiegk.crystallib.path
 
 import os
 
@@ -14,7 +15,7 @@ struct Page {
 	id      int [skip]
 	site_id int [skip]
 mut:
-	path path.Path
+	path string
 pub:
 	name string
 pub mut:

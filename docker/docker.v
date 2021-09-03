@@ -207,7 +207,7 @@ pub fn (mut e DockerEngine) container_create(args DockerContainerCreateArgs) ?Do
 
 	if container.node.executor is builder.ExecutorSSH {
 		mut sshkey := container.node.executor.info()['sshkey'] + '.pub'
-		sshkey = sshkey.read() or { panic(err) }
+		sshkey = os.read_file(sshkey) or { panic(err) }
 		// add pub sshkey on authorized keys of node and container
 		cmd = "echo \"$sshkey\" >> ~/.ssh/authorized_keys && docker exec $container.id sh -c 'echo \"$docker_pubkey\" >> ~/.ssh/authorized_keys && echo \"$sshkey\" >> ~/.ssh/authorized_keys'"
 	}
@@ -230,7 +230,7 @@ pub fn (mut e DockerEngine) container_get(name_or_id string) ?DockerContainer {
 // import a container into an image, run docker container with it
 // image_repo examples ['myimage', 'myimage:latest']
 // if DockerContainerCreateArgs contains a name, container will be created and restarted
-pub fn (mut e DockerEngine) container_load(path path.Path, mut args DockerContainerCreateArgs) ?DockerContainer {
+pub fn (mut e DockerEngine) container_load(path string, mut args DockerContainerCreateArgs) ?DockerContainer {
 	mut image := args.image_repo
 
 	if args.image_tag != '' {

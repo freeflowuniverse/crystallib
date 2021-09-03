@@ -19,16 +19,21 @@ fn (repo GitRepo) path_account_get() string {
 	return '$repo.gitstructure.root/$provider/$addr.account'
 }
 
-pub fn (repo GitRepo) path_content_get() ?path.Path  {
-	mut p := repo.path_get()?
-	return p.extend_exists('$repo.addr.path')?
+pub fn (repo GitRepo) path_content_get() string  {
+	mut p := repo.path_get()
+	if repo.addr.path==""{
+		return p
+	}else{
+		return '$p/$repo.addr.path'
+	}
+	
 }
 
-pub fn (repo GitRepo) path_get() ?path.Path {
+pub fn (repo GitRepo) path_get() string {
 	if repo.gitstructure.multibranch {
-		return path.dir_new_exists('$repo.path_account_get()/$repo.addr.name/$repo.addr.branch')
+		return '$repo.path_account_get()/$repo.addr.name/$repo.addr.branch'
 	} else {
-		return path.dir_new_exists('$repo.path_account_get()/$repo.addr.name')
+		return '$repo.path_account_get()/$repo.addr.name'
 	}
 }
 

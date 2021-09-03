@@ -1,5 +1,7 @@
 module path
 
+import os
+
 pub fn (mut path Path) is_dir() bool {
 	if path.cat == Category.unknown {
 
@@ -12,16 +14,16 @@ pub fn (mut path Path) is_file() bool {
 }
 
 fn (mut path Path) check(){
-	if os.exists(path){
-		p2.exists = PathExists.yes
+	if os.exists(path.path){
+		path.exists = PathExists.yes
 		if os.is_file(path.path){
 			if os.is_link(path.path){
 				path.cat = Category.linkfile
 			}else{
 				path.cat = Category.file
 			}
-		}else if os.is_dir(path){
-			if os.is_link(path){
+		}else if os.is_dir(path.path){
+			if os.is_link(path.path){
 				path.cat = Category.linkdir
 			}else{
 				path.cat = Category.dir
@@ -30,6 +32,6 @@ fn (mut path Path) check(){
 			panic("cannot define type: $path.path")
 		}		
 	}else{
-		p2.exists = PathExists.no
+		path.exists = PathExists.no
 	}
 }

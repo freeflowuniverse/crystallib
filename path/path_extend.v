@@ -1,40 +1,40 @@
 module path
 
 //join parts to a path and return path, returns a new path
-pub fn (path Path) join(parts ...string) Path {
+pub fn (mut p Path) join(parts ...string) Path {
 	mut p2 := Path{
-		path:path.path
-		exists:false
-		absolute:path.absolute
+		path:p.path
+		exists:p.exists
+		absolute:p.absolute
 
 	}
 	if ! p2.is_dir(){
 		panic("can only extend dir, $p2.path")
 	}
-	for mut part in parts{
-		if "~" in part{
-			panic("cannot extend part to $path.path if ~ in")
+	for part in parts{
+		if part.contains("~"){
+			panic("cannot extend part $part if ~ in")
 		}
-		part = part.trim(" ")
-		p2.path += part
+		part2 := part.trim(" ")
+		p2.path += part2
 	}
-	path.check()
-	return path
+	p2.check()
+	return p2
 }
 
 //extend the path, path stays same, no return
 //if dir, needs to stay dir
 // anything else fails
-pub fn (path Path) extend(parts ...string)? {
+pub fn (mut path Path) extend(parts ...string)? {
 	if ! path.is_dir(){
-		return error("can only extend dir, $path.path")
+		return error("can only extend dir, $path")
 	}
-	for mut part in parts{
-		if "~" in part{
-			return error("cannot extend part to $path.path if ~ in")
+	for part in parts{
+		if part.contains("~"){
+			return error("cannot extend part to $part if ~ in")
 		}
-		part = part.trim(" ")
-		path.path += part
+		part2 := part.trim(" ")
+		path.path += part2
 	}
 	if path.exists(){
 		if ! path.is_dir(){
@@ -44,51 +44,38 @@ pub fn (path Path) extend(parts ...string)? {
 	path.check()	
 }
 
-pub fn (path Path) extend_dir(relpath path.Path) ? {
+// pub fn (path Path) extend_dir(relpath string) ? {
 
 
-	relpath2 = relpath2.replace("\\","/")
+// 	relpath2 = relpath2.replace("\\","/")
 
-	if path.cat != Category.dir{
-		return error("cannot only extend a dir, not a file or a link. $path.path")
-	}
-	return dir_new("$path.path/relpath2")
-}
-
-
-pub fn (path Path) extend_file_exists(relpath path.Path) ?Path {
-
-	mut relpath2 := relpath.trim(" ")
-
-	relpath2 = relpath2.replace("\\","/")
-
-	if path.cat != Category.dir{
-		return error("cannot only extend a dir, not a file or a link. $path.path")
-	}
-	return file_new_exists("$path.path/relpath2")
-}
+// 	if path.cat != Category.dir{
+// 		return error("cannot only extend a dir, not a file or a link. $path")
+// 	}
+// 	return dir_new("$path/relpath2")
+// }
 
 
-pub fn (path Path) extend_exists(relpath path.Path) ?Path {
+// pub fn (path Path) extend_file_exists(relpath string) ?Path {
 
-	p2 := path.extend(relpath)?
-	if ! p2.exists(){
-		return error("cannot extend $path.path with $relpath, directory does not exist")
-	}
-	return p2
-}
+// 	mut relpath2 := relpath.trim(" ")
+
+// 	relpath2 = relpath2.replace("\\","/")
+
+// 	if path.cat != Category.dir{
+// 		return error("cannot only extend a dir, not a file or a link. $path")
+// 	}
+// 	return file_new_exists("$path/relpath2")
+// }
 
 
-pub fn (path Path) extend(relpath path.Path) ?Path {
+// pub fn (path Path) extend_exists(relpath string) ?Path {
 
-	mut relpath2 := relpath.trim(" ")
-
-	relpath2 = relpath2.replace("\\","/")
-
-	if path.cat != Category.dir{
-		return error("cannot only extend a dir, not a file or a link. $path.path")
-	}
-	return get("$path.path/relpath2")
-}
+// 	p2 := path.extend(relpath)?
+// 	if ! p2.exists(){
+// 		return error("cannot extend $path with $relpath, directory does not exist")
+// 	}
+// 	return p2
+// }
 
 

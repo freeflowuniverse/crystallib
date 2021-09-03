@@ -4,7 +4,7 @@ import os
 
 pub struct Path {
 pub mut:
-	path path.Path
+	path string
 	exists PathExists
 	cat Category
 	absolute bool
@@ -26,7 +26,7 @@ pub enum PathExists{
 
 //gets Path object, will check if it exists, is dir_file, ...
 pub fn get(path string) Path {
-	mut p2 := Path{path:args.path}
+	mut p2 := Path{path:path}
 	p2.check()
 	return p2
 }
@@ -34,15 +34,19 @@ pub fn get(path string) Path {
 //check if path obj exists, is file, link, dir, ...
 pub fn get_dir(path string, create bool) Path {
 	mut p2 := get(path)
-	if create and && !p2.exists() {
-		os.mkdir_all(p2.path_absolute())? // Make sure that all the needed paths created
+	if create && !p2.exists() {
+		pp := p2.path_absolute()
+		os.mkdir_all(pp) or {
+			panic("cannot create path $pp")
+		} // Make sure that all the needed paths created
 		p2.check()
 	}
+	return p2
 }
 
 pub fn get_file(path string, create bool) Path {
 	mut p2 := get(path)
-	if create and && !p2.exists() {
+	if create && !p2.exists() {
 		os.mkdir_all(p2.parent().path_absolute()) or {
 			panic("cannot create path:$path")
 		}
@@ -56,7 +60,7 @@ pub fn get_file(path string, create bool) Path {
 
 //will create a new empty dir
 //CAREFULL: if it exists, will delete
-fn new_dir_empty(path path.Path)? Path {
+fn new_dir_empty(path string)? Path {
 	if os.exists(path) && ! os.is_dir_empty(path){
 		os.rmdir_all(path) ?// delete dir with its content
 	}

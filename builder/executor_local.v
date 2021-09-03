@@ -17,20 +17,20 @@ pub fn (mut executor ExecutorLocal) exec_silent(cmd string) ?string {
 	return res.output
 }
 
-pub fn (mut executor ExecutorLocal) file_write(path path.Path, text string) ? {
+pub fn (mut executor ExecutorLocal) file_write(path string, text string) ? {
 	return os.write_file(path, text)
 }
 
-pub fn (mut executor ExecutorLocal) file_read(path path.Path) ?string {
-	return path.read()
+pub fn (mut executor ExecutorLocal) file_read(path string) ?string {
+	return os.read_file(path)
 }
 
-pub fn (mut executor ExecutorLocal) file_exists(path path.Path) bool {
+pub fn (mut executor ExecutorLocal) file_exists(path string) bool {
 	return os.exists(path)
 }
 
 // carefull removes everything
-pub fn (mut executor ExecutorLocal) remove(path path.Path) ? {
+pub fn (mut executor ExecutorLocal) remove(path string) ? {
 	if os.is_file(path) || os.is_link(path) {
 		return os.rm(path)
 	} else if os.is_dir(path) {
@@ -73,13 +73,13 @@ pub fn (mut executor ExecutorLocal) ssh_shell(port int) ? {
 	os.execvp('ssh', ['localhost', '-p $port']) ?
 }
 
-pub fn (mut executor ExecutorLocal) list(path path.Path) ?[]string {
+pub fn (mut executor ExecutorLocal) list(path string) ?[]string {
 	if !executor.dir_exists(path) {
 		panic('Dir Not found')
 	}
 	return os.ls(path)
 }
 
-pub fn (mut executor ExecutorLocal) dir_exists(path path.Path) bool {
+pub fn (mut executor ExecutorLocal) dir_exists(path string) bool {
 	return os.is_dir(path)
 }

@@ -123,13 +123,13 @@ fn (mut n NodeJS) check() ? {
 	}
 }
 
-pub fn (mut n NodeJS) npm_install_all(path path.Path) ? {
+pub fn (mut n NodeJS) npm_install_all(path string) ? {
 
 	base := n.cfg.publish.paths.base
 
 	n.check()?
 
-	if ! path.exists(){
+	if !os.exists(path) {
 		return error("cannot find path: $path to do 'npm install' in")
 	}
 	mut script := ''

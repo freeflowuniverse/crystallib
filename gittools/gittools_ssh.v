@@ -15,7 +15,7 @@ pub fn ssh_agent_reset() ? {
 	_ := os.execute('ssh-add -D')
 }
 
-pub fn ssh_agent_load(keypath path.Path) ? {
+pub fn ssh_agent_load(keypath string) ? {
 	_ := os.execute('ssh-add $keypath')
 }
 

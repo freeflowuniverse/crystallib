@@ -64,7 +64,7 @@ pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr,args Repo
 
 //will return repo starting from a path
 //if .git not in the path will go for parent untill .git found
-pub fn (mut gitstructure GitStructure) repo_get_from_path(path path.Path,pull bool, reset bool) ?&GitRepo {
+pub fn (mut gitstructure GitStructure) repo_get_from_path(path string,pull bool, reset bool) ?&GitRepo {
 	gitstructure.check() ?
 
 	path2 := path.parent_find(".git")?

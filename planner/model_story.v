@@ -14,7 +14,7 @@ pub struct Story {
 pub mut:
 	name        string
 	description string
-	// path path.Path
+	// path string
 	// state        FileStatus
 	owner        []string
 	contributors []string

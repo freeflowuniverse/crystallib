@@ -37,7 +37,7 @@ fn (addr GitAddr) url_http_with_branch_get() string {
 // 		provider string
 // 		account string
 // 		name string
-// 		path path.Path		//path in the repo
+// 		path string		//path in the repo
 // 		branch string
 // 		anker string //position in the file
 // }
@@ -109,12 +109,12 @@ pub fn addr_get_from_url(url string) ?GitAddr {
 // 		provider string
 // 		account string
 // 		name string
-// 		path path.Path		//path in the repo
+// 		path string		//path in the repo
 // 		branch string
 // 		anker string //position in the file
 // }
 // ```
-pub fn addr_get_from_path(path path.Path) ?GitAddr {
+pub fn addr_get_from_path(path string) ?GitAddr {
 	// TODO: need to get it to work for branch
 
 	//"cd #{@path} && git config --get remote.origin.url"

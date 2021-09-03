@@ -4,7 +4,7 @@ import os
 
 // remember the file, so we know if we have duplicates
 // also fixes the name
-fn (mut site Site) file_remember(path path.Path, name string, mut publisher Publisher) &File {
+fn (mut site Site) file_remember(path string, name string, mut publisher Publisher) &File {
 	mut namelower := publisher.name_fix_alias_file(name) or { panic(err) }
 	mut pathfull_fixed := os.join_path(path, namelower)
 	mut pathfull := os.join_path(path, name)
@@ -46,11 +46,11 @@ fn (mut site Site) file_remember(path path.Path, name string, mut publisher Publ
 
 // remember the file, so we know if we have duplicates
 // also fixes the name
-fn (mut site Site) file_remember_full_path(full_path path.Path, mut publisher Publisher) &File {
+fn (mut site Site) file_remember_full_path(full_path string, mut publisher Publisher) &File {
 	return site.file_remember(os.dir(full_path), os.base(full_path), mut publisher)
 }
 
-fn (mut site Site) page_remember(path path.Path, name string, mut publisher Publisher) ? {
+fn (mut site Site) page_remember(path string, name string, mut publisher Publisher) ? {
 	mut namelower := publisher.name_fix_alias_page(name) or { panic(err) }
 	if namelower.trim(' ') == '' {
 		site.errors << SiteError{
@@ -164,7 +164,7 @@ fn (mut site Site) files_process(mut publisher Publisher) ? {
 	return site.files_process_recursive(site.path, mut publisher)
 }
 
-fn (mut site Site) files_process_recursive(path path.Path, mut publisher Publisher) ? {
+fn (mut site Site) files_process_recursive(path string, mut publisher Publisher) ? {
 	items := os.ls(path) ?
 	for item in items {
 		if os.is_dir(os.join_path(path, item)) {

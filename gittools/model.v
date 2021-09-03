@@ -24,7 +24,7 @@ pub mut:
 struct GitRepo {
 	id int [skip]
 	//only use when custom path
-	path path.Path
+	path string
 mut:
 	gitstructure &GitStructure
 pub mut:

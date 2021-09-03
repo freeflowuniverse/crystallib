@@ -2,7 +2,7 @@ module planner
 
 import os
 
-// fn (mut planner planner) file_remember(path path.Path) &File {
+// fn (mut planner planner) file_remember(path string) &File {
 // 	mut namelower := textools.name_fix(name) or { panic(err) }
 // 	mut pathfull_fixed := os.join_path(path, namelower)
 // 	mut pathfull := os.join_path(path, name)

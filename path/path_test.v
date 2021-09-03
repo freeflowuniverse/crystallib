@@ -187,7 +187,7 @@ fn test_link(){
 	
 // }
 
-// fn test_dir_new_exists(){ // private function
+// fn test_get(){ // private function
 // 	println('************ TEST_ ************')
 
 // }
@@ -208,7 +208,7 @@ fn test_link(){
 
 // }
 
-// fn test_linkdir_new_exists(){ // private function
+// fn test_linkget(){ // private function
 // 	println('************ TEST_ ************')
 
 // }

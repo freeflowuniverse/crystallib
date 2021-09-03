@@ -93,7 +93,7 @@ module publisher_core
 // 	return app.ok(f)	
 // }
 
-// fn (mut app App) path_get(site string, name string)? (FileType, string) {
+// fn (mut app App) path.get(site string, name string) (FileType, string) {
 
 // 	site_config := app.site_config_get(site) ?
 // 	mut name2 := name.to_lower().trim(" ")

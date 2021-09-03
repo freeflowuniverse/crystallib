@@ -13,11 +13,11 @@ mut:
 pub mut:
 	name       string
 	prefix 	   string //prefix as will be used on web, is optional
-	publish_path path.Path //path where the publishing will be done
+	publish_path string //path where the publishing will be done
 	pull       bool // if set will pull but not reset
 	reset      bool // if set will reset & pull, reset means remove changes
 	cat        SiteCat
-	path  	   path.Path
+	path  	   string
 	domains    []string
 	descr      string
 	acl        []SiteACE // access control list
@@ -87,7 +87,7 @@ fn site_new(site_in SiteConfig) ?SiteConfig{
 		if site_in.git_url != "" {
 			return error("cannot specify fs_path and git_url in: \n$site_in")
 		}
-		sc.path = path.dir_new_exists(site_in.fs_path)?
+		sc.path = path.get(site_in.fs_path,false)
 	}
 	if site_in.git_url != ""{
 		if site_in.fs_path != "" {
@@ -101,7 +101,7 @@ fn site_new(site_in SiteConfig) ?SiteConfig{
 		sc.repo = gittools.repo_get_from_url(args) or {
 			return error("cannot get repo from: $site_in.git_url\n$err")
 		}
-		sc.path = sc.repo.path_get()?
+		sc.path = sc.repo.path.get()
 	}	
 	return sc
 }
