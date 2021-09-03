@@ -19,6 +19,8 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 	
 	println(' - install website $name on $path')
 
+	// TODO: need to refactor to use gittools, not manual git commands !!!
+
 	if conf.publish.reset || site_conf.reset {
 		script6 := '
 		#!/usr/bin/env bash
@@ -27,6 +29,8 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 		rm -rf modules
 		rm -f .installed
 		rm -f src/errors.md
+
+		git checkout .		
 
 		'
 		println('   > reset')
@@ -38,7 +42,6 @@ pub fn website_install(site_conf publisher_config.SiteConfig, first bool, conf &
 	if conf.publish.pull || site_conf.pull {
 		script7 := '
 		cd $path
-		git checkout .
 		git pull
 		'
 		println('   > pull site: $name')
@@ -233,10 +236,24 @@ pub fn wiki_install(site_conf publisher_config.SiteConfig, conf &publisher_confi
 	mut path := site_conf.path
 	println(' - install wiki $name on $path')
 
+	// TODO: need to refactor to use gittools, not manual git commands !!!
+
+	if conf.publish.reset || site_conf.reset {
+		script6 := '
+		#!/usr/bin/env bash
+		cd $path
+		git checkout .		
+
+		'
+		println('   > reset')
+		process.execute_silent(script6) or {
+			return error('cannot install node modules for ${name}.\n$err')
+		}
+	}	
+
 	if conf.publish.pull || site_conf.pull {
 		script7 := '
 		cd $path
-		git checkout .
 		git pull
 		'
 		println('   > pull wiki: $name')
