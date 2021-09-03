@@ -1,6 +1,6 @@
 module path
 
-import os
+// import os
 
 struct PathList {
 	//is the root under which all paths are, think about it like a changeroot environment

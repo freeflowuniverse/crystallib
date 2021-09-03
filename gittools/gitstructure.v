@@ -1,5 +1,7 @@
 module gittools
 
+import despiegk.crystallib.path
+
 pub struct RepoGetFromUrlArgs {
 mut:
 	url    string
@@ -28,6 +30,10 @@ pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs
 	if addr.branch == '' {
 		addr.branch = args.branch
 	}
+	return gitstructure.repo_get_from_addr(addr,args)
+}
+
+pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr,args RepoGetFromUrlArgs) ?&GitRepo {
 	args2 := RepoGetArgs{
 		name: addr.name
 		account: addr.account
@@ -42,7 +48,7 @@ pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs
 		mut r0 := gitstructure.repo_get(args2) or {
 			// means could not pull need to remove the repo from the list again
 			gitstructure.repos.delete_last()
-			return error('Could not clone the repo from ${args.url}.\nError:$err')
+			return error('Could not find repo ${args2.account}.${args2.name} \nError:$err')
 		}
 		// println (" GIT REPO GET URL: PULL:$args.pull, RESET: $args.reset\n$r0.addr")
 		r0.check(args.pull, args.reset) ?
@@ -55,6 +61,23 @@ pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs
 		return r
 	}
 }
+
+//will return repo starting from a path
+//if .git not in the path will go for parent untill .git found
+pub fn (mut gitstructure GitStructure) repo_get_from_path(path path.Path,pull bool, reset bool) ?&GitRepo {
+	gitstructure.check() ?
+
+	path2 := path.parent_find(".git")?
+
+	mut addr := addr_get_from_path(path2.path) or {
+		return error('cannot get addr from path:$err')
+	}
+	args := RepoGetFromUrlArgs{pull:pull, reset:reset}
+
+	return gitstructure.repo_get_from_addr(addr,args)
+}
+
+
 
 pub struct RepoGetArgs {
 mut:

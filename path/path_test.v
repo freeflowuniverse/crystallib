@@ -149,8 +149,8 @@ fn test_copy(){
 
 fn test_link(){
 	println('************ TEST_link ************')
-	mut dest_p:= path.Path{path:"$testpath/linkdir1", cat:path.Category.linkdir, exists:2}
-	mut lp := path.Path{path:"/workspace/crystallib/path", cat:path.Category.dir, exists:1}
+	mut dest_p:= path.Path{path:"$testpath/linkdir1", cat:path.Category.linkdir, exists:PathExists.no}
+	mut lp := path.Path{path:"/workspace/crystallib/path", cat:path.Category.dir, exists:PathExists.yes}
 	lp.link(dest_p) or {panic(err)}
 	mut get_link := path.get("$testpath/linkdir1") or {panic(err)}
 	assert get_link.exists()

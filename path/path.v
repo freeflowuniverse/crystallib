@@ -5,15 +5,22 @@ import os
 pub struct Path {
 pub mut:
 	path string
-	exists i8
+	exists PathExists
 	cat Category
 }
 
 pub enum Category{
+	unknown
 	file
 	dir
 	linkdir
 	linkfile
+}
+
+pub enum PathExists{
+	unknown
+	yes
+	no
 }
 
 
@@ -24,9 +31,9 @@ pub fn file_new(path string)? Path {
 		if ! os.is_file(path){
 			return error("cannot create new file obj, because file existed and was not file type. $path")
 		}
-		return Path{path:path, cat:Category.file, exists:1}
+		return Path{path:path, cat:Category.file, exists:PathExists.yes}
 	}else{
-		return Path{path:path, cat:Category.file, exists:2}
+		return Path{path:path, cat:Category.file, exists:PathExists.no}
 	}
 }
 
@@ -40,7 +47,7 @@ fn file_new_empty(path string)? Path {
 		os.mkdir_all(dir_path)? // Make sure that all the needed paths created
 	}
 	os.write_file(path,"")? // Make file empty even if exists
-	return Path{path:path, cat:Category.file, exists:1}
+	return Path{path:path, cat:Category.file, exists:PathExists.yes}
 }
 
 //will create file obj, check if it exists, if not will give error
@@ -51,7 +58,7 @@ fn file_new_exists(path string)? Path {
 	if ! os.is_file(path){
 		return error("cannot create new file obj, because file existed and was not file type. $path")
 	}
-	return Path{path:path, cat:Category.file, exists:1}
+	return Path{path:path, cat:Category.file, exists:PathExists.yes}
 }
 
 // Directories
@@ -61,9 +68,9 @@ fn dir_new(path string)? Path {
 		if ! os.is_dir(path){
 			return error("cannot create new dir obj, because dir existed and was not dir type. $path")
 		}	
-		return Path{path:path, cat:Category.dir, exists:1}
+		return Path{path:path, cat:Category.dir, exists:PathExists.yes}
 	}else{
-		return Path{path:path, cat:Category.dir, exists:2}
+		return Path{path:path, cat:Category.dir, exists:PathExists.no}
 	}
 }
 
@@ -74,7 +81,7 @@ fn dir_new_empty(path string)? Path {
 		os.rmdir_all(path) ?// delete dir with its content
 	}
 	os.mkdir_all(path)? // create dir and make sure it is empty dir
-	return Path{path:path, cat:Category.dir, exists:1}
+	return Path{path:path, cat:Category.dir, exists:PathExists.yes}
 }
 
 //will create dir obj, check if it exists, if not will give error
@@ -85,7 +92,7 @@ fn dir_new_exists(path string)? Path {
 	if ! os.is_dir(path){
 		return error("cannot create new dir obj, because dir existed and was not dir type. $path")
 	}
-	return Path{path:path, cat:Category.dir, exists:1}
+	return Path{path:path, cat:Category.dir, exists:PathExists.yes}
 }
 
 // LinkFiles 
@@ -96,9 +103,9 @@ fn linkfile_new(path string)? Path {
 		if ! (os.is_link(path) && os.is_file(path)){
 			return error("cannot create new linkfile obj, because it is existed and was not linkfile type. $path")
 		}
-		return Path{path:path, cat:Category.linkfile, exists:1}
+		return Path{path:path, cat:Category.linkfile, exists:PathExists.yes}
 	}else{
-		return Path{path:path, cat:Category.linkfile, exists:2}
+		return Path{path:path, cat:Category.linkfile, exists:PathExists.no}
 	}
 }
 
@@ -111,7 +118,7 @@ fn linkfile_new_exists(path string)? Path {
 	if ! (os.is_link(path) && os.is_file(path)){
 		return error("cannot create new linkfile obj, because it is existed and was not linkfile type. $path")
 	}
-	return Path{path:path, cat:Category.linkfile, exists:1}
+	return Path{path:path, cat:Category.linkfile, exists:PathExists.yes}
 }
 
 // LinkDirs, Note: is_link function works with symlinks only
@@ -121,9 +128,9 @@ fn linkdir_new(path string)? Path {
 		if ! (os.is_link(path) && os.is_dir(path)){
 			return error("cannot create new linkdir obj, because it is existed and was not linkdir type. $path")
 		}
-		return Path{path:path, cat:Category.linkdir, exists:1}
+		return Path{path:path, cat:Category.linkdir, exists:PathExists.yes}
 	}else{
-		return Path{path:path, cat:Category.linkdir, exists:2}
+		return Path{path:path, cat:Category.linkdir, exists:PathExists.no}
 	}
 }
 
@@ -135,7 +142,7 @@ fn linkdir_new_exists(path string)? Path {
 	if ! (os.is_link(path) && os.is_dir(path)){
 		return error("cannot create new linkdir obj, because it is existed and was not linkdir type. $path")
 	}
-	return Path{path:path, cat:Category.linkdir, exists:1}
+	return Path{path:path, cat:Category.linkdir, exists:PathExists.yes}
 }
 
 //check if path obj exists, is file, link, dir, ...
@@ -145,16 +152,16 @@ pub fn get(path string)? Path {
 	}
 	if os.is_file(path){
 		if os.is_link(path){
-			return Path{path:path, cat:Category.linkfile, exists:1}
+			return Path{path:path, cat:Category.linkfile, exists:PathExists.yes}
 		}else{
-			return Path{path:path, cat:Category.file, exists:1}
+			return Path{path:path, cat:Category.file, exists:PathExists.yes}
 		}
 	}
 	if os.is_dir(path){
 		if os.is_link(path){
-			return Path{path:path, cat:Category.linkdir, exists:1}
+			return Path{path:path, cat:Category.linkdir, exists:PathExists.yes}
 		}else{
-			return Path{path:path, cat:Category.dir, exists:1}
+			return Path{path:path, cat:Category.dir, exists:PathExists.yes}
 		}
 	}
 }
@@ -163,17 +170,17 @@ pub fn get(path string)? Path {
 
 //check path exists
 pub fn (mut path Path) exists() bool {
-	if path.exists == 1{
+	if path.exists == PathExists.yes{
 		return true
 	}
-	if path.exists == 2{
+	if path.exists == PathExists.no{
 		return false
 	}
 	if os.exists(path.path){
-		path.exists = 1
+		path.exists = PathExists.yes
 		return true
 	}else{
-		path.exists = 2
+		path.exists = PathExists.no
 		return false
 	}
 	return false
@@ -192,23 +199,23 @@ pub fn (path Path) parent() ?Path {
 	if parent == "."{
 		return error("no parent for path $path")
 	}else if parent == "" {
-		return Path{path:"/",cat:Category.dir, exists:1}
+		return Path{path:"/",cat:Category.dir, exists:PathExists.yes}
 	}
-	return Path{path:parent,cat:Category.dir, exists:1}
+	return Path{path:parent,cat:Category.dir, exists:PathExists.yes}
 	// splitted := path.path_absolute().split("/")
 	// if len(splitted)==0{
 	// 	return error("no parent for path $path")
 	// }
 	// path2:="/".join(splitted[0..len(splitted)-1])
-	// return Path{path:path2,cat:Category.dir, exists:1}
+	// return Path{path:path2,cat:Category.dir, exists:PathExists.yes}
 }
 
 
 //walk upwards starting from path untill dir or file tofind is found
 //works recursive
-pub fn (path Path) parent_find(tofind string)  ?string {
+pub fn (path Path) parent_find(tofind string)  ?Path {
 	if os.exists(os.join_path(path.path,tofind)) {
-		return path.path
+		return path
 	}
 	mut path2 := path.parent()?
 	return path2.parent_find(tofind)
@@ -227,8 +234,11 @@ pub fn (mut path Path) delete()?{
 		.dir {
 			os.rmdir_all(path.path) ?
 		}
+		.unknown {
+			return error("Path cannot be unknown type")
+		}		
 	}
-	path.exists = 2
+	path.exists = PathExists.no
 }
 
 //find dir underneith path, if exists return True
@@ -250,7 +260,7 @@ pub fn (mut path Path) dir_exists(tofind string) bool{
 pub fn (mut path Path) dir_find(tofind string) ?Path{
 	if path.dir_exists(tofind) {
 		dir_path := os.join_path(path.path, tofind)
-		return Path{path:dir_path,cat:Category.dir, exists:1}
+		return Path{path:dir_path,cat:Category.dir, exists:PathExists.yes}
 	}
 	return error("$tofind is not in $path.path")
 }
@@ -276,7 +286,7 @@ pub fn (mut path Path) file_exists(tofind string)bool{
 pub fn (mut path Path) file_find(tofind string)?Path{
 	if path.file_exists(tofind) {
 		file_path := os.join_path(path.path, tofind)
-		return Path{path:file_path,cat:Category.file, exists:1}
+		return Path{path:file_path,cat:Category.file, exists:PathExists.yes}
 	}
 	return error("$tofind is not in $path.path")
 }
@@ -305,7 +315,7 @@ pub fn (mut path Path) list(tofind string,recursive bool)?[]Path{
 			}
 			// If recusrive
 			if recursive {
-				mut rec_path := Path{path:p, cat:new_path.cat, exists:1}
+				mut rec_path := Path{path:p, cat:new_path.cat, exists:PathExists.yes}
 				mut rec_list := rec_path.list(tofind, recursive) ?
 				all_list << rec_list
 			}
@@ -323,7 +333,7 @@ pub fn (mut path Path) list(tofind string,recursive bool)?[]Path{
 			continue
 		}
 		new_path.path = p
-		new_path.exists = 1
+		new_path.exists = PathExists.yes
 		all_list << new_path
 	}
 	return all_list
@@ -393,9 +403,9 @@ pub fn (mut path Path) copy(dest Path)?Path{
 		// In case src is a file and dest is dir, we need to join the file name to the dest file
 		file_name := os.base(path.path)
 		dest_path := os.join_path(dest.path, file_name)
-		return Path{path:dest_path,cat:Category.file, exists:1}
+		return Path{path:dest_path,cat:Category.file, exists:PathExists.yes}
 	}
-	return Path{path:dest.path, cat:dest.cat, exists:1}
+	return Path{path:dest.path, cat:dest.cat, exists:PathExists.yes}
 }
 
 //create symlink on dest (which is Path wich is non existing)
@@ -404,11 +414,14 @@ pub fn (mut path Path) link(dest Path)?Path{
 	os.symlink(path.path, dest.path) ?
 	match path.cat{
 		.dir, .linkdir {
-			return Path{path:dest.path,cat:Category.linkdir, exists:1}
+			return Path{path:dest.path,cat:Category.linkdir, exists:PathExists.yes}
 		}
 		.file, .linkfile{
-			return Path{path:dest.path,cat:Category.linkfile, exists:1}
+			return Path{path:dest.path,cat:Category.linkfile, exists:PathExists.yes}
 		}
+		.unknown {
+			return error("Path cannot be unknown type")
+		}		
 	}
 }
 
