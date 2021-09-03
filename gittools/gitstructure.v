@@ -19,7 +19,7 @@ mut:
 pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs) ?&GitRepo {
 	gitstructure.check() ?
 
-	mut addr := gitstructure.addr_get_from_url(args.url) or {
+	mut addr := addr_get_from_url(args.url) or {
 		return error('cannot get addr from url:$err')
 	}
 	if addr.branch != '' && args.branch != '' && addr.branch != args.branch {

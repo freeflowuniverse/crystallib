@@ -2,18 +2,6 @@ module gittools
 
 import os
 
-fn (addr GitAddr) path_account_get() string {
-	mut provider := ''
-	if addr.provider == 'github.com' {
-		provider = 'github'
-	} else {
-		provider = addr.provider
-	}
-	if addr.root == '' {
-		panic('cannot be empty')
-	}
-	return '$addr.root/$provider/$addr.account'
-}
 
 fn (addr GitAddr) url_get() string {
 	if ssh_agent_loaded() {
@@ -31,6 +19,16 @@ fn (addr GitAddr) url_http_get() string {
 	return 'https://$addr.provider/$addr.account/$addr.name'
 }
 
+// return http url with branch inside
+fn (addr GitAddr) url_http_with_branch_get() string {
+	u := addr.url_http_get()
+	if addr.branch != '' {
+		return '$u/tree/$addr.branch'
+	} else {
+		return u
+	}
+}
+
 // return provider e.g. github, account is the name of the account, name of the repo, path if any
 // deals with quite some different formats Returns
 // ```
@@ -44,7 +42,7 @@ fn (addr GitAddr) url_http_get() string {
 // 		anker string //position in the file
 // }
 // ```
-pub fn (mut gs GitStructure) addr_get_from_url(url string) ?GitAddr {
+pub fn addr_get_from_url(url string) ?GitAddr {
 	mut urllower := url.to_lower()
 	urllower = urllower.trim_space()
 	if urllower.starts_with('git@') {
@@ -95,7 +93,6 @@ pub fn (mut gs GitStructure) addr_get_from_url(url string) ?GitAddr {
 	account := parts[1]
 	name := parts[2]
 	return GitAddr{
-		root: gs.root
 		provider: provider
 		account: account
 		name: name
@@ -117,7 +114,7 @@ pub fn (mut gs GitStructure) addr_get_from_url(url string) ?GitAddr {
 // 		anker string //position in the file
 // }
 // ```
-pub fn (mut gs GitStructure) addr_get_from_path(path string) ?GitAddr {
+pub fn addr_get_from_path(path string) ?GitAddr {
 	// TODO: need to get it to work for branch
 
 	//"cd #{@path} && git config --get remote.origin.url"
@@ -150,7 +147,7 @@ pub fn (mut gs GitStructure) addr_get_from_path(path string) ?GitAddr {
 		}
 		if state == 'branch' && line2.starts_with('merge') {
 			parts := line2.split('/')
-			branch = parts[parts.len-1]
+			branch = parts[parts.len - 1]
 			state = 'end'
 		}
 	}
@@ -161,16 +158,16 @@ pub fn (mut gs GitStructure) addr_get_from_path(path string) ?GitAddr {
 	// println(content)
 	// println("UUUUU URL:$url")
 
-	//TODO: NOT GOOD NEED TO DO BETTER
+	// TODO: NOT GOOD NEED TO DO BETTER
 
 	// add branch
 	// mut splitted := path.split('/')
-	if branch == "" {
+	if branch == '' {
 		// branch = splitted[splitted.len]
-		panic("bug branch not there yet")
+		panic('bug branch not there yet')
 	}
 	// url = '$url/$branch'
-	mut addr := gs.addr_get_from_url(url)?
+	mut addr := addr_get_from_url(url) ?
 	addr.branch = branch
 	// println(addr)
 	return addr

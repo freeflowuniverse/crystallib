@@ -184,6 +184,7 @@ pub fn sites_commit(cmd cli.Command) ? {
 	mut found := false
 
 	for mut sc in cfg.sites_get() {
+		println(sc)
 		sc.load() ?
 		mut repo := gt.repo_get(name: sc.reponame) or {
 			return error('ERROR: cannot get repo:$err')

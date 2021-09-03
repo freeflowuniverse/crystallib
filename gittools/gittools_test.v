@@ -7,7 +7,7 @@ fn test_url1() {
 	mut gs := get()
 
 	url := 'https://github.com/vlang/v/blob/master/doc/docs.md#maps'
-	obj := gs.addr_get_from_url(url) or {panic("$err")}
+	obj := addr_get_from_url(url) or {panic("$err")}
 
 	home := os.real_path(os.environ()["HOME"])
 
@@ -29,7 +29,7 @@ fn test_url2() {
 	mut gs := new("",false) or {panic("cannot load")}
 
 	url := 'git@github.com:crystaluniverse/publishtools/tree/development/doc'
-	obj := gs.addr_get_from_url(url) or {panic("$err")}
+	obj := addr_get_from_url(url) or {panic("$err")}
 
 	println(obj)
 
@@ -53,7 +53,7 @@ fn test_url2() {
 // 	gs := new("",false)?
 
 // 	url := 'https://github.com/vlang/v/blob/master/doc/docs.md'
-// 	obj := gs.addr_get_from_url(url)
+// 	obj := addr_get_from_url(url)
 
 // 	tocompare := GitAddr{
 // 		provider: 'github.com'
@@ -70,7 +70,7 @@ fn test_url2() {
 // 	gs := new("",false)?
 
 // 	url := 'https://github.com/vlang/v/blob/master/'
-// 	obj := gs.addr_get_from_url(url)
+// 	obj := addr_get_from_url(url)
 
 // 	tocompare := GitAddr{
 // 		provider: 'github.com'
@@ -87,7 +87,7 @@ fn test_url2() {
 // 	gs := new("",false)?
 
 // 	url := 'https://github.com/vlang/v'
-// 	obj := gs.addr_get_from_url(url)
+// 	obj := addr_get_from_url(url)
 
 // 	tocompare := GitAddr{
 // 		provider: 'github.com'
@@ -104,7 +104,7 @@ fn test_url2() {
 // 	gs := new("",false)?
 
 // 	url := 'https://github.com/vlang/v.git'
-// 	obj := gs.addr_get_from_url(url)
+// 	obj := addr_get_from_url(url)
 
 // 	tocompare := GitAddr{
 // 		provider: 'github.com'
@@ -121,7 +121,7 @@ fn test_url2() {
 // 	gs := new("",false)?
 
 // 	url := 'http://github.com/vlang/v.git'
-// 	obj := gs.addr_get_from_url(url)
+// 	obj := addr_get_from_url(url)
 
 // 	tocompare := GitAddr{
 // 		provider: 'github.com'
@@ -138,7 +138,7 @@ fn test_url2() {
 // 	gs := new("",false)?
 
 // 	url := 'git@github.com:vlang/v.git'
-// 	obj := gs.addr_get_from_url(url)
+// 	obj := addr_get_from_url(url)
 
 // 	tocompare := GitAddr{
 // 		provider: 'github.com'
@@ -155,7 +155,7 @@ fn test_url2() {
 // 	gs := new("",false)?
 
 // 	url := 'github.com:vlang/v.git'
-// 	obj := gs.addr_get_from_url(url)
+// 	obj := addr_get_from_url(url)
 
 // 	tocompare := GitAddr{
 // 		provider: 'github.com'
@@ -172,7 +172,7 @@ fn test_url2() {
 // 	gs := new("",false)?
 
 // 	url := 'github.com:vlang/v'
-// 	obj := gs.addr_get_from_url(url)
+// 	obj := addr_get_from_url(url)
 
 // 	tocompare := GitAddr{
 // 		provider: 'github.com'

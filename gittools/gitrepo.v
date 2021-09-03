@@ -3,6 +3,21 @@ module gittools
 import os
 import despiegk.crystallib.process
 
+
+fn (repo GitRepo) path_account_get() string {
+	mut provider := ''
+	addr := repo.addr
+	if addr.provider == 'github.com' {
+		provider = 'github'
+	} else {
+		provider = addr.provider
+	}
+	if repo.gitstructure.root == '' {
+		panic('cannot be empty')
+	}
+	return '$repo.gitstructure.root/$provider/$addr.account'
+}
+
 pub fn (repo GitRepo) path_content_get() string {
 	// if repo.path != '' {
 	// 	return repo.path
@@ -13,9 +28,9 @@ pub fn (repo GitRepo) path_content_get() string {
 
 pub fn (repo GitRepo) path_get() string {
 	if repo.gitstructure.multibranch {
-		return '$repo.addr.path_account_get()/$repo.addr.name/$repo.addr.branch'
+		return '$repo.path_account_get()/$repo.addr.name/$repo.addr.branch'
 	} else {
-		return '$repo.addr.path_account_get()/$repo.addr.name'
+		return '$repo.path_account_get()/$repo.addr.name'
 	}
 }
 
@@ -45,9 +60,9 @@ fn (mut repo GitRepo) get_clone_cmd(http bool) string {
 	url := repo.url_get(http)
 	mut cmd := ''
 	if repo.gitstructure.multibranch {
-		cmd = 'mkdir -p $repo.addr.path_account_get()/$repo.addr.name && cd $repo.addr.path_account_get()/$repo.addr.name && git clone $url $repo.addr.branch'
+		cmd = 'mkdir -p $repo.path_account_get()/$repo.addr.name && cd $repo.path_account_get()/$repo.addr.name && git clone $url $repo.addr.branch'
 	} else {
-		cmd = 'mkdir -p $repo.addr.path_account_get() && cd $repo.addr.path_account_get() && git clone $url'
+		cmd = 'mkdir -p $repo.path_account_get() && cd $repo.path_account_get() && git clone $url'
 	}
 	if repo.addr.branch != '' {
 		cmd += ' -b $repo.addr.branch'
@@ -62,14 +77,15 @@ fn (mut repo GitRepo) get_clone_cmd(http bool) string {
 }
 
 // this is the main git functionality to get git repo, update, reset, ...
-pub fn (mut repo GitRepo) check(pull_force_ bool, reset_force_ bool) ? {
-	mut pull_force := pull_force_
+pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ? {
+	mut pull_soft := pull_soft_ || reset_force_
 	mut reset_force := reset_force_
-
-	if repo.state != GitStatus.ok || pull_force_ || reset_force_ {
+	url := repo.addr.url_http_with_branch_get()
+	// println(' - check repo:$url, pull:$pull_soft, reset:$reset_force')
+	// println(repo.addr)
+	if repo.state != GitStatus.ok || pull_soft {
 		// need to get the status of the repo
 		// println(' - repo $repo.addr.name check')
-		// println(repo)
 
 		mut needs_to_be_ssh := false
 
@@ -81,12 +97,12 @@ pub fn (mut repo GitRepo) check(pull_force_ bool, reset_force_ bool) ? {
 
 		// first check if path does not exist yet, if not need to clone
 		if !os.exists(repo.path_get()) {
-			// println(' - NEED TO GIT PULL: -> $repo.path_get()')
+			println(' - missing repo, pull: $url-> $repo.path_get()')
 			if !needs_to_be_ssh && ssh_agent_loaded() {
 				needs_to_be_ssh = true
 			}
 			// get the url (http or ssh)
-			mut cmd := ""
+			mut cmd := ''
 			if needs_to_be_ssh {
 				// println("GIT: PULL USING SSH")
 				// cmd based on ssh
@@ -96,7 +112,7 @@ pub fn (mut repo GitRepo) check(pull_force_ bool, reset_force_ bool) ? {
 				// println("GIT: PULL USING HTTP")
 				cmd = repo.get_clone_cmd(true)
 			}
-			
+
 			process.execute_silent(cmd) or {
 				println(' GIT FAILED: $cmd')
 				return error('Cannot pull repo: ${repo.path_get()}. Error was $err')
@@ -110,23 +126,26 @@ pub fn (mut repo GitRepo) check(pull_force_ bool, reset_force_ bool) ? {
 		// check the branch, see if branch on FS is same as what is required if set
 
 		if reset_force {
+			println(' - remove git changes: $repo.path_get()')
 			repo.remove_changes() ?
 		}
 
 		// println(repo.addr)
-		// print_backtrace() 
+		// print_backtrace()
 		if repo.addr.branch != '' {
 			mut branchname := repo.branch_get() ?
 			branchname = branchname.trim('\n ')
 			if branchname != repo.addr.branch {
-				println(' -  branch switch $branchname -> $repo.addr.branch')
+				println(' - branch switch $branchname -> $repo.addr.branch for $url')
 				repo.branch_switch(repo.addr.branch) ?
+				//need to pull now
+				pull_soft = true
 			}
 			repo.state = GitStatus.ok
 			return
 		}
 
-		if pull_force {
+		if pull_soft {
 			repo.pull() ?
 		}
 
@@ -142,6 +161,10 @@ pub fn (mut repo GitRepo) pull() ? {
 	if !os.exists(repo.path_get()) {
 		repo.check(false, false) ?
 	} else {
+		changes := repo.changes()?
+		if changes{
+			return error('Cannot pull repo: ${repo.path_get()} because there are changes in the dir.')
+		}
 		cmd2 := 'cd $repo.path_get() && git pull'
 		process.execute_silent(cmd2) or {
 			println(' GIT PULL FAILED: $cmd2')
@@ -212,10 +235,14 @@ pub fn (mut repo GitRepo) branch_switch(branchname string) ? {
 	if repo.gitstructure.multibranch {
 		return error('cannot do a branch switch if we are using multibranch strategy.')
 	}
+	changes := repo.changes()?
+	if changes{
+		return error('Cannot branch switch repo: ${repo.path_get()} because there are changes in the dir.')
+	}
 	cmd := 'cd $repo.path_get() && git checkout $branchname'
 	process.execute_silent(cmd) or {
 		// println('GIT CHECKOUT FAILED: $cmd_checkout')
-		return error('Cannot pull repo: ${repo.path_get()}. Error was $err \n cmd: $cmd')
+		return error('Cannot branch switch repo: ${repo.path_get()}. Error was $err \n cmd: $cmd')
 	}
 	// println(cmd)
 	repo.pull() ?

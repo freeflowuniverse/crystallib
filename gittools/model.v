@@ -33,7 +33,7 @@ pub mut:
 }
 
 struct GitAddr {
-	root string
+	// root string
 pub mut:
 	provider string
 	account  string

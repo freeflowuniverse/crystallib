@@ -7,7 +7,6 @@ import despiegk.crystallib.gittools
 
 // fn config_dir_find(path string) string{
 
-
 // }
 
 // load the initial config from filesystem
@@ -16,19 +15,19 @@ fn config_load() ?ConfigRoot {
 
 	envs := os.environ()
 
-	if "PUBSITE" in envs{
-		mut gt2 := gittools.new("",false) ?
-		url := envs["PUBSITE"]
-		println(" - get git repo to fetch config for publ tools: $url")
-		r := gt2.repo_get_from_url(url:url,pull:true)?
+	if 'PUBSITE' in envs && envs['PUBSITE'].trim(" ") != '' {
+		mut gt2 := gittools.new('', false) ?
+		url := envs['PUBSITE']
+		println(' - found PUBSITE in environment variables, will use this one for config dir.')
+		println(' - get git repo to fetch config for publ tools: $url')
+		r := gt2.repo_get_from_url(url: url, pull: false) ?
 		// println(r.addr)
 		// println(r.path_content_get())
 		// panic("s")
-		println(" - changedir for config: $r.path_content_get()")
+		println(' - changedir for config: $r.path_content_get()')
 		os.chdir(r.path_content_get()) ?
 	}
-	
-	
+
 	// Load Site & Group config files
 	mut sites_config_files := []string{}
 	mut groups_config_files := []string{}
@@ -46,14 +45,12 @@ fn config_load() ?ConfigRoot {
 		}
 	}
 
-	
-	if sites_config_files.len < 1{
+	if sites_config_files.len < 1 {
 		curdir := os.getwd()
-		return error("cannot find site files in current dir: $curdir, site files start with site_")
+		return error('cannot find site files in current dir: $curdir, site files start with site_')
 	}
 
-	//will check if there are site_... files, if not is error
-
+	// will check if there are site_... files, if not is error
 
 	// Load Publish config
 	if os.exists('config.json') {
@@ -101,7 +98,7 @@ fn config_load() ?ConfigRoot {
 		}
 	}
 
-	//DEFAULT VALUES
+	// DEFAULT VALUES
 	config.nodejs = NodejsConfig{
 		version: NodejsCat.lts
 		// means we don't install in platform
@@ -128,7 +125,6 @@ fn config_load() ?ConfigRoot {
 
 	// Load Static config
 	staticfiles_config(mut &config)
-
 
 	for site_file in sites_config_files {
 		println(' - found $site_file as a config file for sites.')
