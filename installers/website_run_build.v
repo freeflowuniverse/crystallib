@@ -48,7 +48,7 @@ pub fn website_develop(cmd &cli.Command, mut cfg publisher_config.ConfigRoot) ? 
 	process.execute_interactive('$repo.path_get()/run') ?
 }
 
-fn rewrite_config(path string, shortname string) {
+fn rewrite_config(path path.Path, shortname string) {
 	println(' >> REWRITE CONFIG: $path $shortname')
 }
 

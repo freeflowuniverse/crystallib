@@ -162,7 +162,7 @@ pub fn (mut self ReplaceInstructions) replace(args ReplaceArgs) ?string {
 
 pub struct ReplaceDirArgs{
 pub mut:	
-	path string
+	path path.Path
 	extensions []string
 	dryrun bool
 }

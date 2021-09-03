@@ -2,6 +2,7 @@ module gittools
 
 import os
 import despiegk.crystallib.process
+import despiegk.crystallib.path
 
 
 fn (repo GitRepo) path_account_get() string {
@@ -18,19 +19,16 @@ fn (repo GitRepo) path_account_get() string {
 	return '$repo.gitstructure.root/$provider/$addr.account'
 }
 
-pub fn (repo GitRepo) path_content_get() string {
-	// if repo.path != '' {
-	// 	return repo.path
-	// }
-	// panic(repo.addr.path)
-	return '$repo.path_get()/$repo.addr.path'
+pub fn (repo GitRepo) path_content_get() ?path.Path  {
+	mut p := repo.path_get()?
+	return p.extend_exists('$repo.addr.path')?
 }
 
-pub fn (repo GitRepo) path_get() string {
+pub fn (repo GitRepo) path_get() ?path.Path {
 	if repo.gitstructure.multibranch {
-		return '$repo.path_account_get()/$repo.addr.name/$repo.addr.branch'
+		return path.dir_new_exists('$repo.path_account_get()/$repo.addr.name/$repo.addr.branch')
 	} else {
-		return '$repo.path_account_get()/$repo.addr.name'
+		return path.dir_new_exists('$repo.path_account_get()/$repo.addr.name')
 	}
 }
 

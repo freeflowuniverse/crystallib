@@ -3,7 +3,7 @@ module planner
 import os
 
 // Note: T should be passed a struct name only
-fn obj_new<T>(path string) ?T {
+fn obj_new<T>(path path.Path) ?T {
 	lines := os.read_lines(path) ?
 	mut obj := T{}
 	obj.load(lines) ?
@@ -22,7 +22,7 @@ fn obj_new<T>(path string) ?T {
 	return obj
 }
 
-// fn (mut site Site) file_remember(path string, name string) &File {
+// fn (mut site Site) file_remember(path path.Path, name string) &File {
 // 	mut namelower := texttools.name_fix(name)
 // 	mut pathfull_fixed := os.join_path(path, namelower)
 // 	mut pathfull := os.join_path(path, name)

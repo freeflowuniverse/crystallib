@@ -14,7 +14,7 @@ struct Page {
 	id      int [skip]
 	site_id int [skip]
 mut:
-	path string
+	path path.Path
 pub:
 	name string
 pub mut:

@@ -118,7 +118,7 @@ fn index_template(config &publisher_config.ConfigRoot) string {
 	return $tmpl('index_root.html')
 }
 
-fn site_www_deliver(config publisher_config.ConfigRoot, domain string, path string, mut app App) ?vweb.Result {
+fn site_www_deliver(config publisher_config.ConfigRoot, domain string, path path.Path, mut app App) ?vweb.Result {
 	mut site_path := config.path_publish_web_get_domain(domain) or { return app.not_found() }
 	mut path2 := path
 
@@ -153,7 +153,7 @@ fn site_www_deliver(config publisher_config.ConfigRoot, domain string, path stri
 	}
 }
 
-fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path string, mut app App) ?vweb.Result {
+fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path path.Path, mut app App) ?vweb.Result {
 	debug := true
 	if debug {
 		// println(' >>> Webserver >> config >> $config')
@@ -301,7 +301,7 @@ fn error_template(mut app App, sitename string) string {
 	return $tmpl('errors.html')
 }
 
-fn content_type_get(path string) ?string {
+fn content_type_get(path path.Path) ?string {
 	if path.ends_with('.css') {
 		return 'text/css'
 	}
@@ -342,7 +342,7 @@ pub mut:
 }
 
 ['/:path...']
-pub fn (mut app App) handler(_path string) vweb.Result {
+pub fn (mut app App) handler(_path path.Path) vweb.Result {
 	config, publisherobj := rlock app.ctx {
 		app.ctx.config, app.ctx.publisher
 	}

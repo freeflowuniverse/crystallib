@@ -5,7 +5,7 @@ import despiegk.crystallib.texttools
 import json
 import despiegk.crystallib.gittools
 
-// fn config_dir_find(path string) string{
+// fn config_dir_find(path path.Path) string{
 
 // }
 
@@ -130,13 +130,14 @@ fn config_load() ?ConfigRoot {
 		println(' - found $site_file as a config file for sites.')
 		txt := os.read_file(site_file) ?
 		// mut site_in := json.decode(SiteConfig, txt) ?
-		mut site_in := json.decode(SiteConfig, txt) or { panic(err) }
-		if site_in.name == '' {
+		mut site_in_raw := json.decode(SiteConfigRaw, txt) or { panic(err) }
+		if site_in_raw.name == '' {
 			panic('site name should not be empty. Prob means error in json.\n$txt')
 		}
 		// make sure we normalize the name
-		site_in.name = texttools.name_fix(site_in.name)
+		site_in_raw.name = texttools.name_fix(site_in_raw.name)
 		// site_in.configroot = &config
+		mut site_in := site_new(site_in_raw)?
 		config.sites << site_in
 	}
 
@@ -157,90 +158,15 @@ pub fn (mut site SiteConfig) load(configroot ConfigRoot) ? {
 
 	// println(" - process site: $site.name")
 
-	mut config := configroot
-
-	// just get instance of the gittools
-	mut gt := gittools.new(config.publish.paths.code, config.publish.multibranch) ?
-
-	if site.state != SiteState.init {
-		panic('should not get here, bug, site need to be in state init.')
+	if !site.path.exists() {
+		return error('- Error Cannot find `$site.path.path` for \n$site\nin process site repo. Creating `$site.path.path`')
 	}
 
-	if site.fs_path != '' {
-		// this is the path on the filesystem	
-		site.path = os.real_path(site.fs_path)
-	} else {
-		println(' - get:$site.git_url')
-		mut repo := gt.repo_get_from_url(url: site.git_url, pull: site.pull, reset: site.reset) or {
-			return error(' - ERROR: could not download site $site.git_url\n$err\n$site')
-		}
-		// println(' - get git addr obj:$repo.addr')
-		site.fs_path = ''
-		site.path = os.join_path(repo.path_get(), repo.addr.path)
-		site.reponame = repo.addr.name
+	for toremove in [site.path.extend('index.html'),site.path.extend('wikiconfig.json')] {
+		toremove.delete()?
 	}
-	if !os.exists(site.path) || site.path == '' {
-		println('- Error Cannot find `$site.path` for \n$site\nin process site repo. Creating `$site.path`')
-		return error(' - ERROR: could not find source path:$site.path for\nsite $site.git_url\n$site')
-	}
-
-	toremoves := [os.join_path(site.path, 'index.html'), os.join_path(site.path, 'wikiconfig.json')]
-	for toremove in toremoves {
-		if os.exists(toremove) {
-			os.rm(toremove) or {
-				return error('could not remove: $toremove for process_site_repo. \n$err')
-			}
-		}
-	}
-
-	// println(site)
-
 	site.state = SiteState.loaded
 
-	// DONT DO YET, NEED TO FIGURE OUT HOW TO DEAL WITH DEPENDENCIES ... (kristof)
-
-	// content := os.read_file(site_config) or {
-	// 	return error('Failed to load json $site_config')
-	// }
-	// //local config as defined in repo
-	// repoconfig := json.decode(SiteConfigLocal, content) or {
-	// 	return error('Failed to decode json $site_config')
-	// }
-
-	// if site.name == "" {
-	// 	site.name = repoconfig.name
-	// }
-	// if site.descr=="" {
-	// 	site.descr = repoconfig.descr
-	// }
-
-	// site.cat = repoconfig.cat
-
-	// for dep in repoconfig.depends{
-
-	// 	if config.site_exists_from_dep(dep){
-	// 		if site.branch.to_lower() != dep.branch.to_lower(){
-	// 			return error("no support yet for multiple branches in 1 publishtools instance: $site\n$depconfig")
-	// 		}
-	// 	}else{
-	// 		mut repo := gt.repo_get_from_url(url: dep.git_url, pull: site.pull, reset: site.reset, branch: dep.branch) or {
-	// 			return error(' - ERROR: could not download site $dep.git_url, do you have rights?\n$err\n$dep')
-	// 		}
-
-	// 		mut site_dep := SiteConfig{}
-	// 		site_dep.path = dep.path
-	// 		site_dep.fs_path = dep.fs_path
-	// 		site_dep.git_url = dep.git_url
-	// 		site_dep.branch = dep.branch
-	// 		site_dep.pull = site.pull
-	// 		site_dep.reset = site.reset
-	// 		config.sites << site_dep
-	// 		//to process recursive all sub paths				
-	// 		config.process_site_repo(mut &gt, mut &site_dep)?
-	// 	}
-	// }
-
-	site.state = SiteState.loaded
 }
 
 // to create singleton

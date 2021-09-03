@@ -204,7 +204,7 @@ module publisher_core
 // 		docsify_themable := "https://cdn.jsdelivr.net/npm/docsify-themeable@0"
 // 		return $vweb.html()
 // 	}
-// 	file := os.read_file(path) or {return app.not_found()}
+// 	file := path.read() or {return app.not_found()}
 // 	app.set_content_type('text/html')
 // 	return app.ok(file)
 // }
@@ -244,7 +244,7 @@ module publisher_core
 // 	}
 
 // 	path := os.join_path(app.config.paths.publish, sitename, "errors.json")
-// 	err_file := os.read_file(path) or {
+// 	err_file := path.read() or {
 // 			println(" >> **ERROR: could not find errors file on $path")
 // 			app.set_status(501,"could not find errors file on $path")
 // 			return app.not_found()

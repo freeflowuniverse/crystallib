@@ -47,7 +47,7 @@ fn (mut publisher Publisher) load_site(name string) ? {
 		panic("mysite_name should not be empty")
 	}
 	target := '$path_links/$mysite_name'
-	if mysite_config.path == "" || !os.exists(mysite_config.path){
+	if ! mysite_config.exists(){
 		return error("$mysite_config \nCould not find config path (load site).\n   site: $mysite_name >> site path: $mysite_config.path\n")
 	}
 	os.symlink(mysite_config.path, target) or {
@@ -73,7 +73,7 @@ fn (mut publisher Publisher) load_site(name string) ? {
 }
 
 // // find all wiki's, this goes very fast, no reason to cache
-// fn (mut publisher Publisher) find_sites_recursive(path string) ? {
+// fn (mut publisher Publisher) find_sites_recursive(path path.Path) ? {
 // 	mut path1 := ''
 // 	if path == '' {
 // 		path1 = '$os.home_dir()/code/'

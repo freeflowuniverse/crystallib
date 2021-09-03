@@ -1,6 +1,6 @@
 struct GitRepo {
 pub:
-	path string
+	path path.Path
 	addr GitAddr
 pub mut:
 	state GitStatus

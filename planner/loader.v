@@ -5,7 +5,7 @@ import json
 import despiegk.crystallib.texttools
 
 // use path="" if you want to go from os.home_dir()/code/	
-pub fn (mut planner Planner) load(path string) ? {
+pub fn (mut planner Planner) load(path path.Path) ? {
 	planner.gitlevel = -3 // we do this gitlevel to make sure we don't go too deep in the directory level
 	planner.find_sites_recursive(path) ?
 }
@@ -15,7 +15,7 @@ pub fn (mut planner Planner) load(path string) ? {
 
 // load a site into the publishing tools
 // name of the site needs to be unique
-fn (mut planner Planner) load_site(repoconfig PlannerSiteConfig, path string) ? {
+fn (mut planner Planner) load_site(repoconfig PlannerSiteConfig, path path.Path) ? {
 	println(repoconfig)
 	repo_name_fixed := texttools.name_fix(repoconfig.name)
 	mut site := PlannerSite{
@@ -50,7 +50,7 @@ fn (mut planner Planner) load_site(repoconfig PlannerSiteConfig, path string) ? 
 }
 
 // find all wiki's, this goes very fast, no reason to cache
-fn (mut planner Planner) find_sites_recursive(path string) ? {
+fn (mut planner Planner) find_sites_recursive(path path.Path) ? {
 	mut path1 := ''
 	if path == '' {
 		path1 = '$os.home_dir()/code/'
@@ -111,7 +111,7 @@ fn (mut site PlannerSite) files_process() ? {
 	return site.files_process_recursive(site.path)
 }
 
-fn (mut site PlannerSite) files_process_recursive(path string) ? {
+fn (mut site PlannerSite) files_process_recursive(path path.Path) ? {
 	items := os.ls(path) ?
 	for item in items {
 		println(' - $item')
@@ -164,7 +164,7 @@ fn (mut site PlannerSite) files_process_recursive(path string) ? {
 	}
 }
 
-fn (mut site PlannerSite) page_remember(path string, name string) ? {
+fn (mut site PlannerSite) page_remember(path path.Path, name string) ? {
 	println(' - page remember:$path/$name')
 	name2 := texttools.name_fix_keepext(name)
 	if name2.starts_with('story') {

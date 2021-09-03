@@ -12,7 +12,7 @@ pub fn factory(redis &redisclient.Redis) ?DigitalTwinFactory {
 	}
 
 	mut path := os.home_dir() + '/.digitaltwin'
-	if !os.exists(path) {
+	if ! path.exists(){
 		os.mkdir_all(path) ?
 	}
 
