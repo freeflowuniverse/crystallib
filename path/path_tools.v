@@ -21,13 +21,30 @@ pub fn (mut path Path) exists() bool {
 }
 
 //absolute path
+pub fn (path Path) absolute() Path {
+	if path.absolute {
+		return path
+	}
+	mut p2 := Path{
+		path:path.path
+		exists:path.path
+		cat:path.path
+	}
+	p2.path = p2.path_absolute()
+	p2.absolute = true
+	return p2
+}
+
+
+//absolute path
 pub fn (path Path) path_absolute() string {
 	//Check if the link is read --> Working with links but return the origin path
+	path.path = path.path.replace("~",os.home_dir())
 	return os.real_path(path.path)
 }
 
 //find parent of path
-pub fn (path Path) parent() ?Path {
+pub fn (path Path) parent() Path {
 	mut p := path.path_absolute()
 	parent := os.dir(p) // get parent directory
 	if parent == "."{
@@ -36,12 +53,6 @@ pub fn (path Path) parent() ?Path {
 		return Path{path:"/",cat:Category.dir, exists:PathExists.yes}
 	}
 	return Path{path:parent,cat:Category.dir, exists:PathExists.yes}
-	// splitted := path.path_absolute().split("/")
-	// if len(splitted)==0{
-	// 	return error("no parent for path $path")
-	// }
-	// path2:="/".join(splitted[0..len(splitted)-1])
-	// return Path{path:path2,cat:Category.dir, exists:PathExists.yes}
 }
 
 
@@ -51,7 +62,7 @@ pub fn (path Path) parent_find(tofind string)  ?Path {
 	if os.exists(os.join_path(path.path,tofind)) {
 		return path
 	}
-	mut path2 := path.parent()?
+	mut path2 := path.parent()
 	return path2.parent_find(tofind)
 }
 
