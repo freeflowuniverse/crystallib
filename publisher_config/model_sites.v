@@ -81,7 +81,10 @@ pub fn (config ConfigRoot) sites_get() []SiteConfig {
 
 pub fn (config ConfigRoot) reponame(name string) ?string {
 	mut site := config.site_get(name) or { return error('Cannot find site with configname: $name') }
-	return site.reponame
+	if site.repo.addr.name == "" {
+		return error("name on repo cannot be empty")
+	}
+	return site.repo.addr.name
 }
 
 // get the domain name

@@ -17,7 +17,7 @@ pub mut:
 	pull       bool // if set will pull but not reset
 	reset      bool // if set will reset & pull, reset means remove changes
 	cat        SiteCat
-	path  	   string
+	path  	   path.Path
 	domains    []string
 	descr      string
 	acl        []SiteACE // access control list
@@ -50,11 +50,13 @@ pub enum SiteState {
 
 
 
-fn site_new(site_in SiteConfig) ?SiteConfig{
+fn site_new(site_in SiteConfigRaw) ?SiteConfig{
+
+	mut gt := gittools.new("",false) or { panic('cannot load gittools:$err') }
+
 	mut sc := SiteConfig{
 		name: site_in.name
 		prefix: site_in.prefix
-		publish_path: site_in.publish_path
 		pull: site_in.pull
 		reset: site_in.reset
 		domains: site_in.domains
@@ -87,28 +89,28 @@ fn site_new(site_in SiteConfig) ?SiteConfig{
 		if site_in.git_url != "" {
 			return error("cannot specify fs_path and git_url in: \n$site_in")
 		}
-		sc.path = path.get(site_in.fs_path,false)
+		sc.path = path.get(site_in.fs_path)
 	}
 	if site_in.git_url != ""{
 		if site_in.fs_path != "" {
 			return error("cannot specify fs_path and git_url in: \n$site_in")
 		}
-		args := RepoGetFromUrlArgs{
+		args := gittools.RepoGetFromUrlArgs{
 			url:site_in.git_url
 			pull:site_in.pull
 			reset:site_in.reset
 		}
-		sc.repo = gittools.repo_get_from_url(args) or {
+		sc.repo = gt.repo_get_from_url(args) or {
 			return error("cannot get repo from: $site_in.git_url\n$err")
 		}
-		sc.path = sc.repo.path.get()
+		sc.path = path.get(sc.repo.path_get())
 	}	
 	return sc
 }
 
 pub fn (site SiteConfig) repo_get() ?gittools.GitRepo {
 
-	if site.repo.name == ""{
+	if site.repo.addr.name == ""{
 		return error("Cannot return repo, because was not initialized, name empty")
 	}
 

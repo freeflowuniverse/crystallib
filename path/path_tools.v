@@ -258,7 +258,7 @@ pub fn (mut path Path) copy(dest Path)?Path{
 
 //create symlink on dest (which is Path wich is non existing)
 //return Path of the symlink
-pub fn (mut path Path) link(dest Path)?Path{
+pub fn (mut path Path) link(mut dest Path) ?Path{
 	if dest.exists(){
 		return error("cannot link $path.path to $dest.path, because dest exists.")
 	}

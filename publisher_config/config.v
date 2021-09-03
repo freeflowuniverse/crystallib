@@ -162,10 +162,14 @@ pub fn (mut site SiteConfig) load(configroot ConfigRoot) ? {
 		return error('- Error Cannot find `$site.path.path` for \n$site\nin process site repo. Creating `$site.path.path`')
 	}
 
-	for toremove in [site.path.extend('index.html'),site.path.extend('wikiconfig.json')] {
-		toremove.delete()?
-	}
-	site.state = SiteState.loaded
+	mut o := site.path.join('index.html')
+	println(o)
+	o.delete()?
+	// site.path.join('wikiconfig.json').delete()
+
+	// site.state = SiteState.loaded
+
+	panic("s")
 
 }
 
