@@ -26,6 +26,7 @@ pub mut:
 	state 	   SiteState
 	// depends []SiteDependency
 	// configroot &ConfigRoot
+	raw		   SiteConfigRaw
 }
 
 // pub struct SiteDependency {
@@ -62,6 +63,7 @@ fn site_new(site_in SiteConfigRaw) ?SiteConfig{
 		acl: site_in.acl
 		trackingid: site_in.trackingid
 		opengraph: site_in.opengraph
+		raw: site_in
 	}
 
 	match site_in.cat.to_lower().trim(" "){
