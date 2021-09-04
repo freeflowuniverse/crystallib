@@ -16,7 +16,7 @@ fn config_load() ?ConfigRoot {
 	envs := os.environ()
 
 	if 'PUBSITE' in envs && envs['PUBSITE'].trim(" ") != '' {
-		mut gt2 := gittools.new() ?
+		mut gt2 := gittools.new()
 		url := envs['PUBSITE']
 		println(' - found PUBSITE in environment variables, will use this one for config dir.')
 		println(' - get git repo to fetch config for publ tools: $url')

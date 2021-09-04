@@ -6,6 +6,7 @@ import despiegk.crystallib.process
 
 
 fn (repo GitRepo) path_account_get() string {
+	mut gitstructure := gittools.new()
 	mut provider := ''
 	addr := repo.addr
 	if addr.provider == 'github.com' {
@@ -13,10 +14,10 @@ fn (repo GitRepo) path_account_get() string {
 	} else {
 		provider = addr.provider
 	}
-	if repo.gitstructure.root == '' {
+	if gitstructure.root == '' {
 		panic('cannot be empty')
 	}
-	return '$repo.gitstructure.root/$provider/$addr.account'
+	return '$gitstructure.root/$provider/$addr.account'
 }
 
 pub fn (repo GitRepo) path_content_get() string  {
@@ -34,7 +35,8 @@ pub fn (repo GitRepo) path() string {
 }
 
 pub fn (repo GitRepo) path_get() string {
-	if repo.gitstructure.multibranch {
+	mut gitstructure := gittools.new()
+	if gitstructure.multibranch {
 		return '$repo.path_account_get()/$repo.addr.name/$repo.addr.branch'
 	} else {
 		return '$repo.path_account_get()/$repo.addr.name'
@@ -64,9 +66,10 @@ pub fn (mut repo GitRepo) changes() ?bool {
 }
 
 fn (mut repo GitRepo) get_clone_cmd(http bool) string {
+	mut gitstructure := gittools.new()
 	url := repo.url_get(http)
 	mut cmd := ''
-	if repo.gitstructure.multibranch {
+	if gitstructure.multibranch {
 		cmd = 'mkdir -p $repo.path_account_get()/$repo.addr.name && cd $repo.path_account_get()/$repo.addr.name && git clone $url $repo.addr.branch'
 	} else {
 		cmd = 'mkdir -p $repo.path_account_get() && cd $repo.path_account_get() && git clone $url'
@@ -239,7 +242,8 @@ pub fn (mut repo GitRepo) branch_get() ?string {
 }
 
 pub fn (mut repo GitRepo) branch_switch(branchname string) ? {
-	if repo.gitstructure.multibranch {
+	mut gitstructure := gittools.new()
+	if gitstructure.multibranch {
 		return error('cannot do a branch switch if we are using multibranch strategy.')
 	}
 	changes := repo.changes()?

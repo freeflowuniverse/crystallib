@@ -13,9 +13,9 @@ pub fn get() &GitStructure {
 	return &gittools.codecache
 }
 
-pub fn new() ?&GitStructure {
+pub fn new() &GitStructure {
 	mut gs := get()
-	gs.load() ?
+	gs.load() or {panic("cannot load gittools")}
 	return gs
 }
 
@@ -91,7 +91,6 @@ fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []strin
 			if os.exists(os.join_path(pathnew, '.git')) {
 				gitaddr := addr_get_from_path(pathnew) or { return err }
 				gitstructure.repos << GitRepo{
-					gitstructure: &gitstructure
 					addr: gitaddr
 					path: pathnew
 					id: gitstructure.repos.len

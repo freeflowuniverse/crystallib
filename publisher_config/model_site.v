@@ -50,7 +50,7 @@ pub enum SiteState {
 
 fn site_new(site_in SiteConfigRaw) ?SiteConfig{
 
-	mut gt := gittools.new() or { panic('cannot load gittools:$err') }
+	mut gt := gittools.new()
 
 	mut sc := SiteConfig{
 		name: site_in.name

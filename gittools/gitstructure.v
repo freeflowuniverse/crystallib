@@ -41,7 +41,6 @@ pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr,args Repo
 	if !gitstructure.repo_exists(args2) {
 		// repo does not exist yet
 		gitstructure.repos << GitRepo{
-			gitstructure: &gitstructure
 			addr: addr
 			id: gitstructure.repos.len
 		}

@@ -71,8 +71,9 @@ pub fn website_build(use_prefix bool, names []string) ? {
 		}
 		// Write config files
 		println("-  Write config file for site: $sc.name to $conf.publish.paths.publish")
-		the_config := json.encode_pretty(sc)
-		os.write_file('$conf.publish.paths.publish/config_site_'+sc.name+'.json', the_config) ?
+		// the_config := json.encode_pretty(sc)
+		panic("needs to be differently encoded, the raw source is needed")
+		// os.write_file('$conf.publish.paths.publish/config_site_'+sc.name+'.json', the_config) ?
 
 	}
 }

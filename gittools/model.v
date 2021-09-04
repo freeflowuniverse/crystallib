@@ -25,8 +25,6 @@ struct GitRepo {
 	id int [skip]
 	//only use when custom path
 	path string
-mut:
-	gitstructure &GitStructure
 pub mut:
 	addr  GitAddr
 	state GitStatus

@@ -30,7 +30,7 @@ pub fn web(doreset bool, clean bool) ? {
 	// make sure the config we are working with is refelected in ~/.publisher/config
 	// update_config() or { return error(' ** ERROR: cannot copy config files to ~publisher/config. Error was:\n$err') }
 
-	mut gt := gittools.new() or { return error('ERROR: cannot load gittools on web installer:$err') }
+	mut gt := gittools.new()
 		
 	gt.repo_get_from_url(url:"https://github.com/threefoldfoundation/threefold_data")? 
 	

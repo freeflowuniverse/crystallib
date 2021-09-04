@@ -19,7 +19,7 @@ pub fn website_install(names []string, first bool) ? {
 		
 		println(' - install website $site.name on $path')
 
-		mut gt := gittools.new() ?
+		mut gt := gittools.new()
 
 		if conf.publish.reset || site.reset {
 			script6 := '
@@ -32,7 +32,7 @@ pub fn website_install(names []string, first bool) ? {
 			'
 			println('   > reset')
 			process.execute_silent(script6) or {
-				return error('cannot install node modules for ${site.name}.\n$err')
+				return error('cannot install node modules for ${repo.addr.name}.\n$err')
 			}
 			repo.remove_changes()?
 
@@ -182,7 +182,7 @@ pub fn website_install(names []string, first bool) ? {
 
 		println('   > node modules install')
 		process.execute_silent(script_install) or {
-			return error('cannot install node modules for ${site.name}.\n$err')
+			return error('cannot install node modules for ${repo.addr.name}.\n$err')
 		}
 
 		//lets upgrade for tailwind
