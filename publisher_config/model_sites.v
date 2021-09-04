@@ -70,11 +70,17 @@ pub fn (config ConfigRoot) site_wiki_get(name string) ?SiteConfig {
 	return error('Cannot find wiki site with name: $name')
 }
 
-// return using shortname or name (will first use shortname)
-pub fn (config ConfigRoot) sites_get() []SiteConfig {
+// return sites, can specify one or more names
+pub fn (config ConfigRoot) sites_get(names []string) []SiteConfig {
+	mut names2 := []string{}
+	for name in names{
+		names2 << texttools.name_fix(name)
+	}
 	mut sites := []SiteConfig{}
 	for site in config.sites {
-		sites << site
+		if texttools.name_fix(site.name) in names2{
+			sites << site
+		}
 	}
 	return sites
 }

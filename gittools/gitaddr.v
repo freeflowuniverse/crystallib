@@ -3,7 +3,7 @@ module gittools
 import os
 
 
-fn (addr GitAddr) url_get() string {
+pub fn (addr GitAddr) url_get() string {
 	if ssh_agent_loaded() {
 		return addr.url_ssh_get()
 	} else {
@@ -11,11 +11,11 @@ fn (addr GitAddr) url_get() string {
 	}
 }
 
-fn (addr GitAddr) url_ssh_get() string {
+pub fn (addr GitAddr) url_ssh_get() string {
 	return 'git@$addr.provider:$addr.account/${addr.name}.git'
 }
 
-fn (addr GitAddr) url_http_get() string {
+pub fn (addr GitAddr) url_http_get() string {
 	return 'https://$addr.provider/$addr.account/$addr.name'
 }
 

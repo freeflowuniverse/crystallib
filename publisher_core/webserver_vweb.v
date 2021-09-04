@@ -109,7 +109,7 @@ fn filetype_site_name_get(config publisher_config.ConfigRoot, site string, name_
 }
 
 fn index_template(config &publisher_config.ConfigRoot) string {
-	sites := config.sites_get()
+	sites := config.sites_get([])
 	web_hostnames := config.web_hostnames
 	mut port_str := ''
 	if config.publish.port != 80 {

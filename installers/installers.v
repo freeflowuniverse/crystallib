@@ -1,6 +1,6 @@
 module installers
 
-import cli
+
 import os
 import despiegk.crystallib.builder
 import despiegk.crystallib.publisher_config
@@ -8,40 +8,33 @@ import despiegk.crystallib.process
 import despiegk.crystallib.nodejs
 import despiegk.crystallib.gittools
 
-pub fn web(cmd cli.Command) ? {
-	cfg := publisher_config.get()
-
-	flags := cmd.flags.get_all_found()
-
-	ourreset := flags.get_bool('reset') or { false }
-	clean := flags.get_bool('clean') or { false }
+pub fn web(doreset bool, clean bool) ? {
 
 	// println('INSTALLER:')
-
-	if ourreset {
+	if doreset {
 		println(' - reset the full system')
 		reset() or { return error(' ** ERROR: cannot reset. Error was:\n$err') }
 	}
 	base() or { return error(' ** ERROR: cannot prepare system. Error was:\n$err') }
 
-	// sites_download(cmd, true) or {
+	// sites_download( true) or {
 	// 	return error(' ** ERROR: cannot get web & wiki sites. Error was:\n$err')
 	// }
-	mut n := nodejs.get(cfg) or { return error(' ** ERROR: cannot install nodejs. Error was:\n$err') }
+	mut n := nodejs.get() or { return error(' ** ERROR: cannot install nodejs. Error was:\n$err') }
 	n.install() or { return error(' ** ERROR: cannot install nodejs. Error was:\n$err') }
 
 	if clean {
-		sites_cleanup(cmd) or { return error(' ** ERROR: cannot cleanup sites. Error was:\n$err') }
+		sites_cleanup([]) or { return error(' ** ERROR: cannot cleanup sites. Error was:\n$err') }
 	}
 
 	// make sure the config we are working with is refelected in ~/.publisher/config
 	// update_config() or { return error(' ** ERROR: cannot copy config files to ~publisher/config. Error was:\n$err') }
 
-	mut gt := gittools.new(cfg.publish.paths.code, cfg.publish.multibranch) or { return error('ERROR: cannot load gittools on web installer:$err') }
+	mut gt := gittools.new() or { return error('ERROR: cannot load gittools on web installer:$err') }
 		
 	gt.repo_get_from_url(url:"https://github.com/threefoldfoundation/threefold_data")? 
 	
-	sites_install(cmd) or { return error(' ** ERROR: cannot install sites. Error was:\n$err') }
+	sites_install([]) or { return error(' ** ERROR: cannot install sites. Error was:\n$err') }
 }
 
 pub fn base() ? {
@@ -60,16 +53,6 @@ pub fn base() ? {
 	// os.mkdir_all('$base/config') or { return err }
 
 	println(' - installed base requirements')
-}
-
-pub fn config_get(cmd cli.Command) ?&publisher_config.ConfigRoot {
-	mut cfg := publisher_config.get()
-
-	flags := cmd.flags.get_all_found()
-	cfg.publish.pull = flags.get_bool('pull') or { false }
-	cfg.publish.reset = flags.get_bool('reset') or { false }
-
-	return cfg
 }
 
 pub fn reset() ? {
@@ -104,6 +87,6 @@ pub fn publishtools_update() ? {
 // 			continue
 // 		}
 
-// 		os.cp('./$file', '$cfg.publish.paths.base/config/$file') ?
+// 		os.cp('./$file', '$conf.publish.paths.base/config/$file') ?
 // 	}
 // }

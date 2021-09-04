@@ -13,9 +13,9 @@ pub fn get() &GitStructure {
 	return &gittools.codecache
 }
 
-pub fn new(root string, multibranch bool) ?&GitStructure {
+pub fn new() ?&GitStructure {
 	mut gs := get()
-	gs.load(root, multibranch) ?
+	gs.load() ?
 	return gs
 }
 
@@ -23,23 +23,26 @@ fn (mut gitstructure GitStructure) check() ? {
 	if gitstructure.status == GitStructureStatus.loaded {
 		return
 	}
-	gitstructure.load('', false) ?
+	gitstructure.load() ?
 }
 
 // the factory for getting the gitstructure
 // git is checked uderneith $/code
-pub fn (mut gitstructure GitStructure) load(root string, multibranch bool) ? {
-	mut root2 := root
-	if root2 == '' {
-		if 'DIR_CODE' in os.environ() {
-			dir_ct := os.environ()['DIR_CODE']
-			root2 = '$dir_ct/'
-		} else {
-			root2 = '$os.home_dir()/code/'
-			if !os.exists(root2) {
-				os.mkdir_all(root2) ?
-			}
+pub fn (mut gitstructure GitStructure) load() ? {
+	mut root2:=""
+	if 'DIR_CODE' in os.environ() {
+		dir_ct := os.environ()['DIR_CODE']
+		root2 = '$dir_ct/'
+	} else {
+		root2 = '$os.home_dir()/code/'
+		if !os.exists(root2) {
+			os.mkdir_all(root2) ?
 		}
+	}
+
+	mut multibranch := false
+	if 'MULTIBRANCH' in os.environ() {
+		multibranch = true
 	}
 
 	root2 = root2.replace('~', os.home_dir()).trim_right("/")

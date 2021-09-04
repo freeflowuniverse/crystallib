@@ -2,175 +2,77 @@ module installers
 
 import despiegk.crystallib.publisher_config
 import despiegk.crystallib.process
-import despiegk.crystallib.gittools
-import despiegk.crystallib.path
+// import despiegk.crystallib.path
 import json
-import cli
+
 import os
 
-fn website_conf_repo_get(cmd &cli.Command, mut conf publisher_config.ConfigRoot) ?&gittools.GitRepo {
-	flags := cmd.flags.get_all_found()
-	mut name := flags.get_string('repo') or { '' }
-
-	mut res := []string{}
-	for mut site in conf.sites_get() {
-		if site.cat == publisher_config.SiteCat.web {
-			if site.name.contains(name) {
-				res << site.reponame
-			}
-		}
+pub fn website_develop( names []string) ? {
+	mut conf := publisher_config.get()
+	for mut sc in conf.sites_get(names) {
+		mut repo := sc.repo_get()
+		println(' - start website: $repo.path()')
+		process.execute_interactive('$repo.path()/run') ?
 	}
-
-	if res.len == 1 {
-		name = res[0]
-	} else if res.len > 1 {
-		sites_list(cmd) ?
-		return error('Found more than 1 or website with name: $name')
-	} else {
-		sites_list(cmd) ?
-		return error('Cannot find website with name: $name')
-	}
-
-	conf.nodejs_check()
-
-	mut gt := gittools.new(conf.publish.paths.code, conf.publish.multibranch) or { return error('ERROR: cannot load gittools:$err') }
-	reponame := conf.reponame(name) ?
-	mut repo := gt.repo_get(name: reponame) or {
-		return error('ERROR: cannot find repo: $name\n$err')
-	}
-
-	return repo
-}
-
-pub fn website_develop(cmd &cli.Command, mut cfg publisher_config.ConfigRoot) ? {
-	repo := website_conf_repo_get(cmd, mut cfg) ?
-
-	println(' - start website: $repo.path_get()')
-	process.execute_interactive('$repo.path_get()/run') ?
 }
 
 fn rewrite_config(path string, shortname string) {
 	println(' >> REWRITE CONFIG: $path $shortname')
 }
 
-pub fn website_build(cmd &cli.Command) ? {
+pub fn website_build(use_prefix bool, names []string) ? {
 	// save new config file
 	// publisher_config.save('') ?
-
-	mut arg := ''
-	mut use_prefix := false
-
-	arg = cmd.flags.get_string('repo') or { '' }
-	use_prefix = !(cmd.flags.get_bool('nopathprefix') or { false })
-
 	mut conf := publisher_config.get()
-	mut sites := conf.sites_get()
+	for mut sc in conf.sites_get(names) {
+		mut repo := sc.repo_get()
+		if sc.cat != publisher_config.SiteCat.web {
+			continue
+		}
+		println(' - build website: $repo.path_get()')
+		mut isgridsome := true
+		mut vuejs := true
 
-	if arg.len == 0 {
-		println(' - build all websites')
-		mut gt := gittools.new(conf.publish.paths.code, conf.publish.multibranch) or { return error('ERROR: cannot load gittools:$err') }
+		if !os.exists('$repo.path_get()/gridsome.config.js'){
+			isgridsome = false
+		}
 
-		for mut site in sites {
-			site.load()?
-			if site.cat == publisher_config.SiteCat.web {
-				mut repo2 := gt.repo_get(name: site.reponame) or {
-					return error('ERROR: cannot find repo for build: $site.reponame\n$err')
-				}
-				println(' - build website: $repo2.path_get()')
-				mut isgridsome := true
-				mut vuejs := true
+		if !os.exists('$repo.path_get()/vue.config.js'){
+			vuejs = false
+		}
 
-				if !os.exists('$repo2.path_get()/gridsome.config.js'){
-					isgridsome = false
-				}
+		if isgridsome{
+			process.execute_stdout('sed -i "s/pathPrefix.*//" $repo.path_get()/gridsome.config.js') ?
+		}else if vuejs{
+			process.execute_stdout('sed -i "s/publicPath:.*//" $repo.path_get()/vue.config.js') ?
+		}
 
-				if !os.exists('$repo2.path_get()/vue.config.js'){
-					vuejs = false
-				}
+		if use_prefix {
+			if isgridsome{
+				process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$sc.prefix\\\",\\n\\tplugins: \\\[/g" $repo.path_get()/gridsome.config.js') ?
+			}else if vuejs{
+				process.execute_stdout('sed -i "s/configureWebpack: {/publicPath: \\\"\\/$sc.prefix\\\",\\n\configureWebpack: {/g" $repo.path_get()/vue.config.js') ?
+			}
+			
+		}
 
-
-				if isgridsome{
-					process.execute_stdout('sed -i "s/pathPrefix.*//" $repo2.path_get()/gridsome.config.js') ?
-				}else if vuejs{
-					process.execute_stdout('sed -i "s/publicPath:.*//" $repo2.path_get()/vue.config.js') ?
-				}
-
-				if use_prefix {
-					if isgridsome{
-						process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.prefix\\\",\\n\\tplugins: \\\[/g" $repo2.path_get()/gridsome.config.js') ?
-					}else if vuejs{
-						process.execute_stdout('sed -i "s/configureWebpack: {/publicPath: \\\"\\/$site.prefix\\\",\\n\configureWebpack: {/g" $repo2.path_get()/vue.config.js') ?
-					}
-					
-				}
-
-				process.execute_stdout('$repo2.path_get()/build') or {
-					if isgridsome{
-						process.execute_stdout('cd $repo2.path_get()/ && git checkout gridsome.config.js') ?
-					}else if vuejs{
-						process.execute_stdout('cd $repo2.path_get()/ && git checkout vue.config.js') ?
-					}
-				}
-
-				if isgridsome{
-					process.execute_stdout('cd $repo2.path_get()/ && git checkout gridsome.config.js') ?
-				}else if vuejs{
-					process.execute_stdout('cd $repo2.path_get()/ && git checkout vue.config.js') ?
-				}
-				// Write config files
-				println("-  Write config file for site: $site.name to $conf.publish.paths.publish")
-				the_config := json.encode_pretty(site)
-				os.write_file('$conf.publish.paths.publish/config_site_'+site.name+'.json', the_config) ?
+		process.execute_stdout('$repo.path_get()/build') or {
+			if isgridsome{
+				process.execute_stdout('cd $repo.path_get()/ && git checkout gridsome.config.js') ?
+			}else if vuejs{
+				process.execute_stdout('cd $repo.path_get()/ && git checkout vue.config.js') ?
 			}
 		}
-	} else {
-		repo := website_conf_repo_get(cmd, mut conf) ?
-		// be careful process stops after interactive execute
-		// process.execute_interactive('$repo.path_get()/build.sh') ?
-		for mut site in sites {
-			site.load()?
-			if site.name == repo.addr.name.replace('www_', '') {
-				println(' - build website: $repo.path_get()')
-				
-				mut isgridsome := true
-				mut vuejs := true
 
-				if !os.exists('$repo.path_get()/gridsome.config.js'){
-					isgridsome = false
-				}
-
-				if !os.exists('$repo.path_get()/vue.config.js'){
-					vuejs = false
-				}
-
-				if isgridsome{
-					process.execute_stdout('sed -i "s/pathPrefix.*//" $repo.path_get()/gridsome.config.js') ?
-				}else if vuejs{
-					process.execute_stdout('sed -i "s/publicPath:.*//" $repo.path_get()/vue.config.js') ?
-				}
-
-				if use_prefix {
-					if isgridsome{
-						process.execute_stdout('sed -i "s/plugins: \\\[/pathPrefix: \\\"$site.prefix\\\",\\n\\tplugins: \\\[/g" $repo.path_get()/gridsome.config.js') ?
-					}else if vuejs{
-						process.execute_stdout('sed -i "s/configureWebpack: {/publicPath: \\\"\\/$site.prefix\\\",\\n\configureWebpack: {/g" $repo.path_get()/vue.config.js') ?
-					}
-					
-				}
-
-				process.execute_stdout('$repo.path_get()/build') ?
-				
-				if isgridsome{
-					process.execute_stdout('cd $repo.path_get()/ && git checkout gridsome.config.js') ?
-				}else if vuejs{
-					process.execute_stdout('cd $repo.path_get()/ && git checkout vue.config.js') ?
-				}
-				// Write config files
-				println("-  Write config file for site: $site.name to $conf.publish.paths.publish")
-				the_config := json.encode_pretty(site)
-				os.write_file('$conf.publish.paths.publish/config_site_'+site.name+'.json', the_config) ?
-				break
-			}
+		if isgridsome{
+			process.execute_stdout('cd $repo.path_get()/ && git checkout gridsome.config.js') ?
+		}else if vuejs{
+			process.execute_stdout('cd $repo.path_get()/ && git checkout vue.config.js') ?
 		}
+		// Write config files
+		println("-  Write config file for site: $sc.name to $conf.publish.paths.publish")
+		the_config := json.encode_pretty(sc)
+		os.write_file('$conf.publish.paths.publish/config_site_'+sc.name+'.json', the_config) ?
+
 	}
 }

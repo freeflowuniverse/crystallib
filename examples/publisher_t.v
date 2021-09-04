@@ -3,7 +3,7 @@ import despiegk.crystallib.gittools
 
 fn main() {
 	// get publisher, check for all wiki's
-	mut gt := gittools.new("",false) or { panic('cannot load gittools:$err') }
+	mut gt := gittools.new() or { panic('cannot load gittools:$err') }
 	// will only pull if it does not exists
 
 	_ := gt.repo_get_from_url('https://github.com/threefoldtech/info_tftech') or {

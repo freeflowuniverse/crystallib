@@ -43,27 +43,6 @@ pub fn (mut publisher Publisher) errors_get(site Site) ?PublisherErrors {
 	return errors
 }
 
-// pub fn sites_download(cmd cli.Command, web bool) ? {
-// 	mut cfg := config_get(cmd) ?
-// 	// println(' - get all code repositories.')
-
-// 	for mut sc in cfg.sites {
-// 		if sc.cat == publisher_config.SiteCat.web && !web {
-// 			continue
-// 		}
-// 		if sc.cat == publisher_config.SiteCat.data && !web {
-// 			continue
-// 		}
-// 		if sc.git_url != "" {
-// 			println(' - get:$sc.git_url')
-// 			mut r := gt.repo_get_from_url(url: sc.git_url, pull: sc.pull, reset: sc.reset) or {
-// 				return error(' - ERROR: could not download site $sc.git_url\n$err\n$sc')
-// 			}
-// 			r.check(false, false) ?
-// 		}
-// 	}
-// }
-
 
 // destination is the destination path for the flatten operation
 pub fn (mut publisher Publisher) flatten() ? {
@@ -90,7 +69,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 	for mut site in publisher.sites {
 
 		sc:=site.config
-		println(' - publish:$sc.git_url')
+		println(' - publish:$sc.git_url()')
 
 		site.files_process(mut publisher) ?
 		
@@ -134,7 +113,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 		os.write_file('$dest_dir/config_groups.json', the_config_group) ?
 
 		//the main index file for docsify
-		template_wiki_root_save(dest_dir, site.name, site_config.git_url, site_config.trackingid,
+		template_wiki_root_save(dest_dir, site.name, site_config.git_url(), site_config.trackingid,
 			site_config.opengraph)
 
 		mut special := ['readme.md', 'README.md', '_sidebar.md', '_navbar.md', 'sidebar.md',

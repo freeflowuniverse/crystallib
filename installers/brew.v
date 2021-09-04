@@ -1,9 +1,11 @@
 module installers
 
-import despiegk.crystallib.publisher_config
+// import despiegk.crystallib.publisher_config
 import despiegk.crystallib.process
 
-pub fn brew_remove(conf &publisher_config.ConfigRoot) ? {
+pub fn brew_remove() ? {
+    // mut conf := publisher_config.get()
+
 	script := '
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh)"
 
@@ -24,7 +26,7 @@ pub fn brew_remove(conf &publisher_config.ConfigRoot) ? {
 	process.execute_silent(script) ?
 }
 
-pub fn brew_install(conf &publisher_config.ConfigRoot) ? {
+pub fn brew_install() ? {
 	script := '
 	echo ... to be done
 	exit 1

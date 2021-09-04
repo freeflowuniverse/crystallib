@@ -48,11 +48,9 @@ pub enum SiteState {
 	processed
 }
 
-
-
 fn site_new(site_in SiteConfigRaw) ?SiteConfig{
 
-	mut gt := gittools.new("",false) or { panic('cannot load gittools:$err') }
+	mut gt := gittools.new() or { panic('cannot load gittools:$err') }
 
 	mut sc := SiteConfig{
 		name: site_in.name
@@ -86,12 +84,16 @@ fn site_new(site_in SiteConfigRaw) ?SiteConfig{
 	}
 
 	if site_in.fs_path != ""{
-		if site_in.git_url != "" {
+		if site_in.git_url!= "" {
 			return error("cannot specify fs_path and git_url in: \n$site_in")
 		}
 		sc.path = path.get(site_in.fs_path)
+		sc.repo = gt.repo_get_from_path(sc.path.path,site_in.pull,site_in.reset) or {
+			return error("cannot get repo from: $site_in.fs_path\n$err")
+		}
+
 	}
-	if site_in.git_url != ""{
+	if site_in.git_url!= ""{
 		if site_in.fs_path != "" {
 			return error("cannot specify fs_path and git_url in: \n$site_in")
 		}
@@ -103,17 +105,28 @@ fn site_new(site_in SiteConfigRaw) ?SiteConfig{
 		sc.repo = gt.repo_get_from_url(args) or {
 			return error("cannot get repo from: $site_in.git_url\n$err")
 		}
-		sc.path = path.get(sc.repo.path_get())
+		sc.path = path.get(sc.repo.path())
 	}	
 	return sc
 }
 
-pub fn (site SiteConfig) repo_get() ?gittools.GitRepo {
-
+pub fn (site SiteConfig) repo_get() gittools.GitRepo {
 	if site.repo.addr.name == ""{
-		return error("Cannot return repo, because was not initialized, name empty")
+		panic("Cannot return repo, because was not initialized, name empty")
 	}
 
 	return site.repo
 
+}
+
+
+
+pub fn (site SiteConfig) reponame() string {
+	mut r:= site.repo_get()
+	return r.addr.name
+}
+
+pub fn (site SiteConfig) git_url() string {
+	mut r:= site.repo_get()
+	return r.addr.url_http_get()
 }

@@ -11,14 +11,14 @@ pub mut:
 	cfg &publisher_config.ConfigRoot
 }
 
-pub fn get(cfg &publisher_config.ConfigRoot)?NodeJS{
+pub fn get()?NodeJS{
+	mut cfg := publisher_config.get()
 	mut n := builder.node_get(builder.NodeArguments{})?
 	return NodeJS{node:n, cfg:cfg}
 }
 
 pub fn (mut n NodeJS) install() ? {
 	mut script := ''
-
 	base := n.cfg.publish.paths.base
 	nodejspath := n.cfg.nodejs.path
 

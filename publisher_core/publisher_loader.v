@@ -47,19 +47,19 @@ fn (mut publisher Publisher) load_site(name string) ? {
 		panic("mysite_name should not be empty")
 	}
 	target := '$path_links/$mysite_name'
-	if ! mysite_config.exists(){
+	if ! mysite_config.path.exists(){
 		return error("$mysite_config \nCould not find config path (load site).\n   site: $mysite_name >> site path: $mysite_config.path\n")
 	}
-	os.symlink(mysite_config.path, target) or {
-		return error("cannot symlink for load site in publtools: $mysite_config.path to $target \nERROR:\n$err")
+	os.symlink(mysite_config.path.path, target) or {
+		return error("cannot symlink for load site in publtools: $mysite_config.path.path to $target \nERROR:\n$err")
 	}
 
-	println(' - load publisher: $mysite_config.name - $mysite_config.path')
+	println(' - load publisher: $mysite_config.name - $mysite_config.path.path')
 	if !publisher.site_exists(name) {
 		id := publisher.sites.len
 		mut site := Site{
 			id: id
-			path: mysite_config.path
+			path: mysite_config.path.path
 			name: mysite_config.name
 			config: &mysite_config
 		}

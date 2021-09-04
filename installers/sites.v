@@ -1,22 +1,14 @@
 module installers
 
-import cli
-import despiegk.crystallib.gittools
 import despiegk.crystallib.publisher_config
 import despiegk.crystallib.publisher_core
-import readline
-import os
-// import process
 
-pub fn sites_list(cmd &cli.Command) ? {
+import os
+
+pub fn sites_list(names []string) ? {
 	mut conf := publisher_config.get()
-	mut gt := gittools.new(conf.publish.paths.code, conf.publish.multibranch) or {
-		return error('cannot load gittools:$err')
-	}
-	for mut site in conf.sites_get() {
-		mut repo := gt.repo_get(name: site.reponame) or {
-			return error('ERROR: cannot get repo:$err')
-		}
+	for mut site in conf.sites_get(names) {
+		mut repo := site.repo_get()
 		change := repo.changes() or {
 			return error('cannot detect if there are changes on repo.\n$err')
 		}
@@ -32,261 +24,121 @@ pub fn sites_list(cmd &cli.Command) ? {
 	}
 }
 
-// if web true then will download websites
-pub fn sites_download(cmd cli.Command, web bool) ? {
-	mut cfg := config_get(cmd) ?
-	mut gt := gittools.new(cfg.publish.paths.code, cfg.publish.multibranch) or {
-		return error('cannot load gittools:$err')
-	}
-	// println(' - get all code repositories.')
-
-	for mut sc in cfg.sites {
-		sc.load() ?
-		if sc.cat == publisher_config.SiteCat.web && !web {
-			continue
-		}
-		if sc.cat == publisher_config.SiteCat.data && !web {
-			continue
-		}
-		if sc.git_url != '' {
-			println(' - get:$sc.git_url')
-			mut r := gt.repo_get_from_url(url: sc.git_url, pull: sc.pull, reset: sc.reset) or {
-				return error(' - ERROR: could not download site $sc.git_url\n$err\n$sc')
-			}
-			r.check(false, false) ?
-		}
-	}
-}
-
-pub fn sites_install(cmd cli.Command) ? {
-	mut cfg := config_get(cmd) ?
+pub fn sites_install(names []string) ? {
+	mut conf := publisher_config.get()
 	println(' - sites install.')
 	mut first := true
-	sites_download(cmd, true) ?
-	for mut sc in cfg.sites_get() {
+	for mut sc in conf.sites_get(names) {		
 		// println(sc)
-		sc.load() ?
 		if sc.cat == publisher_config.SiteCat.web {
-			website_install(sc, first, cfg) ?
+			website_install([sc.name], first) ?
 			first = false
 		} else if sc.cat == publisher_config.SiteCat.wiki {
-			wiki_install(sc, cfg) ?
+			wiki_install([sc.name]) ?
 		}
 	}
 }
 
-fn flag_message_get(cmd cli.Command) string {
-	flags := cmd.flags.get_all_found()
-	msg := flags.get_string('message') or {
-		msg := readline.read_line('Message for commit?:') or { panic(err) }
-		return msg
-	}
-	return msg
-}
 
-fn flag_repo_do(cmd cli.Command, reponame string, site publisher_config.SiteConfig) bool {
-	flags := cmd.flags.get_all_found()
-	repo := flags.get_string('repo') or { return true }
-	// println("match $reponame $site.name")
-	if reponame.to_lower().contains(repo.to_lower()) {
-		return true
-	} else if site.name.to_lower().contains(repo.to_lower()) {
-		return true
-	} else {
-		return false
-	}
-	return true
-}
-
-pub fn sites_pull(cmd cli.Command) ? {
-	mut cfg := config_get(cmd) ?
+pub fn sites_pull(names []string) ? {
+	mut conf := publisher_config.get()
 	println(' - sites pull.')
-	codepath := cfg.publish.paths.code
-	multibranch := cfg.publish.multibranch
-	mut gt := gittools.new(codepath, multibranch) or {
-		return error_with_code('ERROR: cannot load gittools:$err', 2)
-	}
-	mut found := false
-
-	for mut sc in cfg.sites_get() {
-		sc.load() ?
-		mut repo := gt.repo_get(name: sc.reponame) or {
-			return error('ERROR: cannot get repo:$err')
-		}
-		if !flag_repo_do(cmd, repo.addr.name, sc) {
-			continue
-		}
-		found = true
-		println(' - pull  $repo.path_get()')
-
+	for mut sc in conf.sites_get(names) {
+		mut repo := sc.repo_get()
+		println(' - pull  $repo.path()')
 		if sc.reset {
 			repo.check(false, true) ?
 		} else {
-			repo.pull() or { return error('ERROR: cannot pull repo $repo.path_get() :$err') }
+			repo.pull() or { return error('ERROR: cannot pull repo $repo.path() :$err') }
 		}
 	}
 
-	if !found {
-		flags := cmd.flags.get_all_found()
-		flags.get_string('repo') or { return }
-		return error('ERROR: unknown repo')
-	}
 }
 
-pub fn sites_push(cmd cli.Command) ? {
-	mut cfg := config_get(cmd) ?
+pub fn sites_push(names []string) ? {
+	mut conf := publisher_config.get()
 	println(' - sites push.')
-	codepath := cfg.publish.paths.code
-	multibranch := cfg.publish.multibranch
-	mut gt := gittools.new(codepath, multibranch) or {
-		return error('ERROR: cannot load gittools:$err')
-	}
-
-	mut found := false
-
-	for mut sc in cfg.sites_get() {
-		sc.load() ?
-		mut repo := gt.repo_get(name: sc.reponame) or {
-			return error('ERROR: cannot get repo:$err')
-		}
-		if !flag_repo_do(cmd, repo.addr.name, sc) {
-			continue
-		}
-		found = true
-		println(' - push  $repo.path_get()')
+	for mut sc in conf.sites_get(names) {
+		mut repo := sc.repo_get()
+		println(' - push  $repo.path()')
 		change := repo.changes() or {
 			return error('cannot detect if there are changes on repo.\n$err')
 		}
 		if change {
-			repo.push() or { return error('ERROR: cannot push repo $repo.path_get() :$err') }
+			repo.push() or { return error('ERROR: cannot push repo $repo.path() :$err') }
 			println('     > ok')
 		} else {
 			println('     > nochange')
 		}
 	}
 
-	if !found {
-		flags := cmd.flags.get_all_found()
-		flags.get_string('repo') or { return }
-		return error('ERROR: unknown repo')
-	}
 }
 
-pub fn sites_commit(cmd cli.Command) ? {
-	mut cfg := config_get(cmd) ?
+pub fn sites_commit(msg string,names []string) ? {
+	mut conf := publisher_config.get()
 	println(' - sites commit.')
-	msg := flag_message_get(cmd)
-	codepath := cfg.publish.paths.code
-	multibranch := cfg.publish.multibranch
-	mut gt := gittools.new(codepath, multibranch) or {
-		return error('ERROR: cannot load gittools:$err')
-	}
-	mut found := false
-
-	for mut sc in cfg.sites_get() {
+	for mut sc in conf.sites_get(names) {
+		mut repo := sc.repo_get()
 		println(sc)
-		sc.load() ?
-		mut repo := gt.repo_get(name: sc.reponame) or {
-			return error('ERROR: cannot get repo:$err')
-		}
-		if !flag_repo_do(cmd, repo.addr.name, sc) {
-			continue
-		}
-
-		found = true
 		change := repo.changes() or {
 			return error('cannot detect if there are changes on repo.\n$err')
 		}
-		println(' - $repo.path_get()')
+		println(' - $repo.path()')
 		if change {
 			println('     > commit message: $msg')
-			repo.commit(msg) or { return error('ERROR: cannot commit repo $repo.path_get() :$err') }
+			repo.commit(msg) or { return error('ERROR: cannot commit repo $repo.path() :$err') }
 		} else {
 			println('     > no change')
 		}
 	}
-
-	if !found {
-		flags := cmd.flags.get_all_found()
-		flags.get_string('repo') or { return }
-		return error('ERROR: unknown repo')
-	}
 }
 
-pub fn sites_pushcommit(cmd cli.Command) ? {
-	mut cfg := config_get(cmd) ?
+pub fn sites_pushcommit(msg string, names []string) ? {
+	mut conf := publisher_config.get()
 	println(' - sites commit, pull, push')
-	codepath := cfg.publish.paths.code
-	multibranch := cfg.publish.multibranch
-	mut gt := gittools.new(codepath, multibranch) or {
-		return error('ERROR: cannot load gittools:$err')
-	}
-	msg := flag_message_get(cmd)
-
-	mut found := false
-
-	for mut sc in cfg.sites_get() {
-		mut repo := gt.repo_get(name: sc.reponame) or {
-			return error('ERROR: cannot get repo:$err')
-		}
-		if !flag_repo_do(cmd, repo.addr.name, sc) {
-			continue
-		}
-
-		found = true
-		println(' - $repo.path_get()')
+	for mut sc in conf.sites_get(names) {
+		mut repo := sc.repo_get()
+		println(' - $repo.path()')
 		change := repo.changes() or {
 			return error('cannot detect if there are changes on repo.\n$err')
 		}
 		if change {
 			println('     > commit')
-			repo.commit(msg) or { return error('ERROR: cannot commit repo $repo.path_get() :$err') }
+			repo.commit(msg) or { return error('ERROR: cannot commit repo $repo.path() :$err') }
 		}
 		println('     > pull')
-		repo.pull() or { return error('ERROR: cannot pull repo $repo.path_get() :$err') }
+		repo.pull() or { return error('ERROR: cannot pull repo $repo.path() :$err') }
 		if change {
 			println('     > push')
-			repo.push() or { return error('ERROR: cannot push repo $repo.path_get() :$err') }
+			repo.push() or { return error('ERROR: cannot push repo $repo.path() :$err') }
 		}
-	}
-
-	if !found {
-		flags := cmd.flags.get_all_found()
-		flags.get_string('repo') or { return }
-		return error('ERROR: unknown repo')
 	}
 }
 
-pub fn sites_cleanup(cmd cli.Command) ? {
-	mut cfg := config_get(cmd) ?
+pub fn sites_cleanup(names []string) ? {
+	mut conf := publisher_config.get()
 	println(' - cleanup wiki.')
-	mut publisher := publisher_core.new(cfg) ?
+	mut publisher := publisher_core.new(conf) ?
 	publisher.check() ?
 	println(' - cleanup websites.')
-	for mut sc in cfg.sites_get() {
+	for mut sc in conf.sites_get(names) {
 		if sc.cat == publisher_config.SiteCat.web {
-			website_cleanup(sc.name, cfg) ?
+			website_cleanup(sc.name) ?
 		} else if sc.cat == publisher_config.SiteCat.wiki {
-			wiki_cleanup(sc.name, cfg) ?
+			wiki_cleanup([sc.name]) ?
 		}
 	}
 }
 
-pub fn sites_removechanges(cmd cli.Command) ? {
-	mut cfg := config_get(cmd) ?
-	codepath := cfg.publish.paths.code
-	multibranch := cfg.publish.multibranch
-	mut gt := gittools.new(codepath, multibranch) ?
+pub fn sites_removechanges(names []string) ? {
+	mut conf := publisher_config.get()
 	println(' - remove changes')
-	for mut sc in cfg.sites_get() {
-		mut repo := gt.repo_get(name: sc.reponame) or {
-			return error('ERROR: cannot get repo:$err')
-		}
-
+	for mut sc in conf.sites_get(names) {
+		mut repo := sc.repo_get()
 		// script_cleanup := '
 		// set -e
-		// echo " - cleanup: $repo.path_get()"
-		// cd $repo.path_get()
+		// echo " - cleanup: $repo.path()"
+		// cd $repo.path()
 
 		// rm -f yarn.lock
 		// rm -rf .cache		
@@ -295,32 +147,16 @@ pub fn sites_removechanges(cmd cli.Command) ? {
 		// rm -rf dist
 		// rm -f package-lock.json
 		// '
-
-		// process.execute_stdout(script_cleanup) or { return error('cannot cleanup for ${repo.path_get()}.\n$err') }
-
-		if !flag_repo_do(cmd, repo.addr.name, sc) {
-			continue
-		}
+		// process.execute_stdout(script_cleanup) or { return error('cannot cleanup for ${repo.path()}.\n$err') }
 		repo.remove_changes() ?
 	}
 }
 
-pub fn site_edit(cmd cli.Command) ? {
-	mut cfg := config_get(cmd) ?
-	codepath := cfg.publish.paths.code
-	multibranch := cfg.publish.multibranch
-	mut gt := gittools.new(codepath, multibranch) or {
-		return error('ERROR: cannot load gittools:$err')
-	}
-	for mut sc in cfg.sites_get() {
-		sc.load() ?
-		mut repo := gt.repo_get(name: sc.reponame) or {
-			return error('ERROR: cannot get repo:$err')
-		}
-		if !flag_repo_do(cmd, repo.addr.name, sc) {
-			continue
-		}
-		// println(' - $repo.path_get()')
-		os.execvp('code', [repo.path_get()]) ?
+pub fn site_edit(name string) ? {
+	mut conf := publisher_config.get()
+	for mut sc in conf.sites_get([name]) {		
+		mut repo := sc.repo_get()
+		// println(' - $repo.path()')
+		os.execvp('code', [repo.path()]) ?
 	}
 }
