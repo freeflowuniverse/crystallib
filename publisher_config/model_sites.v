@@ -78,7 +78,7 @@ pub fn (config ConfigRoot) sites_get(names []string) []SiteConfig {
 	}
 	mut sites := []SiteConfig{}
 	for site in config.sites {
-		if texttools.name_fix(site.name) in names2{
+		if texttools.name_fix(site.name) in names2 || names==[]{
 			sites << site
 		}
 	}
