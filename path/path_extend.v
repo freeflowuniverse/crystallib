@@ -16,8 +16,9 @@ pub fn (mut p Path) join(parts ...string) Path {
 			panic("cannot extend part $part if ~ in")
 		}
 		part2 := part.trim(" ")
-		p2.path += part2
+		p2.path += "/" + part2
 	}
+	p2.path = p2.path.replace("//","/")
 	p2.check()
 	return p2
 }
@@ -34,13 +35,14 @@ pub fn (mut path Path) extend(parts ...string)? {
 			return error("cannot extend part to $part if ~ in")
 		}
 		part2 := part.trim(" ")
-		path.path += part2
+		path.path += "/" + part2
 	}
 	if path.exists(){
 		if ! path.is_dir(){
 			return error("can only extend dir if is dir again.")
 		}
 	}
+	path.path = path.path.replace("//","/")
 	path.check()	
 }
 

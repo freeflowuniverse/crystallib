@@ -40,6 +40,7 @@ pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr,args Repo
 	}
 	if !gitstructure.repo_exists(args2) {
 		// repo does not exist yet
+		println (" - repo does not exist yet")
 		gitstructure.repos << GitRepo{
 			addr: addr
 			id: gitstructure.repos.len
@@ -55,7 +56,7 @@ pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr,args Repo
 	} else {
 		mut r := gitstructure.repo_get(args2) or { return error('cannot load git $args.url\n$err') }
 		r.addr = addr
-		// println (" GIT REPO GET URL: PULL:$args.pull, RESET: $args.reset")
+		// println (" GIT REPO GET PULL:$args.pull, RESET: $args.reset")
 		r.check(args.pull, args.reset) ?
 		return r
 	}
@@ -71,8 +72,9 @@ pub fn (mut gitstructure GitStructure) repo_get_from_path(p string,pull bool, re
 	mut addr := addr_get_from_path(path2.path) or {
 		return error('cannot get addr from path:$err')
 	}
+	// println(" - pull:$pull reset:$reset")
 	args := RepoGetFromUrlArgs{pull:pull, reset:reset}
-
+	// println(addr)
 	return gitstructure.repo_get_from_addr(addr,args)
 }
 

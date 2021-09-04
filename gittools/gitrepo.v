@@ -144,6 +144,7 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ? {
 		// print_backtrace()
 		if repo.addr.branch != '' {
 			mut branchname := repo.branch_get() ?
+			println( " - branch detected: $branchname, branch on repo obj:'$repo.addr.branch'")
 			branchname = branchname.trim('\n ')
 			if branchname != repo.addr.branch {
 				println(' - branch switch $branchname -> $repo.addr.branch for $url')
@@ -238,7 +239,7 @@ pub fn (mut repo GitRepo) branch_get() ?string {
 	branch := process.execute_silent(cmd) or {
 		return error('Cannot get branch name from repo: ${repo.path()}. Error was $err for cmd $cmd')
 	}
-	return branch.trim(' ')
+	return branch.trim(' \n')
 }
 
 pub fn (mut repo GitRepo) branch_switch(branchname string) ? {

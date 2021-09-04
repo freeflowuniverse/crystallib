@@ -163,13 +163,9 @@ pub fn (mut site SiteConfig) load(configroot ConfigRoot) ? {
 	}
 
 	mut o := site.path.join('index.html')
-	println(o)
 	o.delete()?
-	// site.path.join('wikiconfig.json').delete()
-
-	// site.state = SiteState.loaded
-
-	panic("s")
+	mut o2 := site.path.join('wikiconfig.json')
+	o2.delete()?
 
 }
 

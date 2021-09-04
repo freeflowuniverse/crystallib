@@ -4,7 +4,7 @@ import os
 
 pub fn (mut path Path) is_dir() bool {
 	if path.cat == Category.unknown {
-
+		path.check()
 	}
 	return path.cat== Category.dir
 }

@@ -89,16 +89,18 @@ fn site_new(site_in SiteConfigRaw) ?SiteConfig{
 		if site_in.git_url!= "" {
 			return error("cannot specify fs_path and git_url in: \n$site_in")
 		}
+		
 		sc.path = path.get(site_in.fs_path)
+		println(" - path: $sc.path.path")
 		sc.repo = gt.repo_get_from_path(sc.path.path,site_in.pull,site_in.reset) or {
 			return error("cannot get repo from: $site_in.fs_path\n$err")
 		}
-
-	}
-	if site_in.git_url!= ""{
+		// println(sc.repo)
+	}else if site_in.git_url!= ""{
 		if site_in.fs_path != "" {
 			return error("cannot specify fs_path and git_url in: \n$site_in")
 		}
+		println(" - url: $site_in.git_url")
 		args := gittools.RepoGetFromUrlArgs{
 			url:site_in.git_url
 			pull:site_in.pull
@@ -107,8 +109,11 @@ fn site_new(site_in SiteConfigRaw) ?SiteConfig{
 		sc.repo = gt.repo_get_from_url(args) or {
 			return error("cannot get repo from: $site_in.git_url\n$err")
 		}
+		// println(sc.repo)
 		sc.path = path.get(sc.repo.path())
-	}	
+	}else{
+		return error("fs_path or git_url needs to be specified in: \n$site_in, 2")
+	}
 	return sc
 }
 

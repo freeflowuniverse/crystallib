@@ -60,9 +60,13 @@ fn (mut site Site) page_remember(path string, name string, mut publisher Publish
 		}
 		// panic('empty page name:$path + $name')
 	}
+	if path.trim(" ") == ""{
+		panic("path cannot be empty")
+	}
 	mut pathfull := os.join_path(path, name)
 	mut pathfull_fixed := os.join_path(path, namelower) + '.md'
 	if pathfull_fixed != pathfull {
+		println(" - mv page remember: $pathfull to $pathfull_fixed")
 		os.mv(pathfull, pathfull_fixed) or { panic(err) }
 		pathfull = pathfull_fixed
 	}
