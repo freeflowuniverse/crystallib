@@ -7,6 +7,8 @@ import os
 
 pub fn sites_list(names []string) ? {
 	mut conf := publisher_config.get()
+	println("\033[2J")
+	println("\n ===== list of sites =====\n")
 	for mut site in conf.sites_get(names) {
 		mut repo := site.repo_get()
 		change := repo.changes() or {
@@ -20,8 +22,9 @@ pub fn sites_list(names []string) ? {
 		if site.name != '' {
 			shortname = '$site.name:  '
 		}
-		println(' - $shortname$site.name $changed')
+		println(' - $site.name  ${site.repo_get().addr.url_http_get()} $changed')
 	}
+	println("\n")
 }
 
 pub fn sites_install(names []string) ? {

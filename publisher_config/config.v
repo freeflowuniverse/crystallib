@@ -127,7 +127,7 @@ fn config_load() ?ConfigRoot {
 	staticfiles_config(mut &config)
 
 	for site_file in sites_config_files {
-		println(' - found $site_file as a config file for sites.')
+		// println(' - found $site_file as a config file for sites.')
 		txt := os.read_file(site_file) ?
 		// mut site_in := json.decode(SiteConfig, txt) ?
 		mut site_in_raw := json.decode(SiteConfigRaw, txt) or { panic(err) }

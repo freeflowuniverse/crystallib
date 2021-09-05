@@ -144,7 +144,7 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ? {
 		// print_backtrace()
 		if repo.addr.branch != '' {
 			mut branchname := repo.branch_get() ?
-			println( " - branch detected: $branchname, branch on repo obj:'$repo.addr.branch'")
+			// println( " - branch detected: $branchname, branch on repo obj:'$repo.addr.branch'")
 			branchname = branchname.trim('\n ')
 			if branchname != repo.addr.branch {
 				println(' - branch switch $branchname -> $repo.addr.branch for $url')
@@ -172,10 +172,10 @@ pub fn (mut repo GitRepo) pull() ? {
 	if !os.exists(repo.path()) {
 		repo.check(false, false) ?
 	} else {
-		changes := repo.changes()?
-		if changes{
-			return error('Cannot pull repo: ${repo.path()} because there are changes in the dir.')
-		}
+		// changes := repo.changes()?
+		// if changes{
+		// 	return error('Cannot pull repo: ${repo.path()} because there are changes in the dir.')
+		// }
 		cmd2 := 'cd $repo.path() && git pull'
 		process.execute_silent(cmd2) or {
 			println(' GIT PULL FAILED: $cmd2')
