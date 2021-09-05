@@ -18,7 +18,7 @@ enum LinkType {
 	data
 	email
 	anchor
-	code
+	code	
 }
 
 enum LinkState {
@@ -37,6 +37,7 @@ struct Link {
 	original_descr string // when we want to replace
 	original_link  string
 pub mut:
+	path		string
 	isexternal  bool
 	cat         LinkType
 	isimage     bool // means started with !

@@ -154,17 +154,23 @@ fn site_www_deliver(config publisher_config.ConfigRoot, domain string, path stri
 }
 
 fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path string, mut app App) ?vweb.Result {
+	mut path0 := path
 	debug := true
 	if debug {
 		// println(' >>> Webserver >> config >> $config')
 		println(' >>> Webserver >> domain >> $domain')
-		println(' >>> Webserver >> path >> $path')
+		println(' >>> Webserver >> path >> $path0')
 		// println(' >>> Webserver >> req >> $req')
 		// println(' >>> Webserver >> res >> $res')
 	}
 
 	mut sitename := config.name_web_get(domain) or { return app.not_found() }
-	name := os.base(path)
+	if path0.contains("/") && path0.contains("sidebar"){
+		path0 = path0.replace("/","|")
+		path0 = path0.replace("||","|")
+		path0 = path0.replace("_sidebar","sidebar")
+	}
+	name := os.base(path0)	
 	mut publisherobj := rlock app.ctx {
 		app.ctx.publisher
 	}
@@ -347,6 +353,8 @@ pub fn (mut app App) handler(_path string) vweb.Result {
 		app.ctx.config, app.ctx.publisher
 	}
 	mut path := _path
+
+	println(" ++ $path")
 
 	mut domain := ''
 	mut cat := publisher_config.SiteCat.web

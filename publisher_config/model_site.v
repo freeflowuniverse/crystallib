@@ -91,7 +91,8 @@ fn site_new(site_in SiteConfigRaw) ?SiteConfig{
 		}
 		
 		sc.path = path.get(site_in.fs_path)
-		println(" - path: $sc.path.path")
+		sc.path.path = sc.path.path_absolute()
+		// println(" - path: $sc.path.path")
 		sc.repo = gt.repo_get_from_path(sc.path.path,site_in.pull,site_in.reset) or {
 			return error("cannot get repo from: $site_in.fs_path\n$err")
 		}
@@ -109,8 +110,7 @@ fn site_new(site_in SiteConfigRaw) ?SiteConfig{
 		sc.repo = gt.repo_get_from_url(args) or {
 			return error("cannot get repo from: $site_in.git_url\n$err")
 		}
-		// println(sc.repo)
-		sc.path = path.get(sc.repo.path())
+		sc.path = path.get(sc.repo.path_content_get())
 	}else{
 		return error("fs_path or git_url needs to be specified in: \n$site_in, 2")
 	}

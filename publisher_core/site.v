@@ -1,5 +1,5 @@
 module publisher_core
-
+import despiegk.crystallib.texttools
 import os
 
 // remember the file, so we know if we have duplicates
@@ -66,11 +66,22 @@ fn (mut site Site) page_remember(path string, name string, mut publisher Publish
 	mut pathfull := os.join_path(path, name)
 	mut pathfull_fixed := os.join_path(path, namelower) + '.md'
 	if pathfull_fixed != pathfull {
-		println(" - mv page remember: $pathfull to $pathfull_fixed")
+		println(" - mv page remember, because name not normalized: $pathfull to $pathfull_fixed")
 		os.mv(pathfull, pathfull_fixed) or { panic(err) }
 		pathfull = pathfull_fixed
 	}
 	pathrelative := pathfull[site.path.len..]
+
+	if namelower == "sidebar"{
+		mut path_sidebar := os.join_path(path, namelower)
+		mut path_sidebar_relative := path_sidebar[site.path.len..]
+		path_sidebar_relative = path_sidebar_relative.replace("//","/").trim(" /")
+		namelower = path_sidebar_relative.replace("/","|")
+		// println(" - found sidebar: $namelower")
+		// path_sidebar_relative = texttools.name_fix(path_sidebar_relative)
+		// println(" ----- $pathrelative $path_sidebar_relative")
+	}
+
 	if site.page_exists(namelower) {
 		// panic('duplicate path: ' + path + '/' + name)
 		site.errors << SiteError{

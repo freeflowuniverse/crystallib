@@ -51,7 +51,6 @@ pub fn name_fix_keepext(name_ string) string {
 		name_x3 := name_x2 + '.$extension'
 		name = name_x3.clone()
 	}
-
 	name6 := name.replace('__', '_')
 	name7 := name6.replace('__', '_') // needs to be 2x because can be 3 to 2 to 1
 
