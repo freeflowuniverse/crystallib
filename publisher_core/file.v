@@ -88,7 +88,7 @@ fn (mut file File) relocate(mut publisher Publisher) ? {
 			file.mv(mut publisher, dest) ?
 		}
 	}
-	file.path = '/img_notused/${os.base(path)}'
+	// file.path = '/img_notused/${os.base(path)}'
 }
 
 // mark this file as duplicate from other file
