@@ -115,9 +115,7 @@ pub fn addr_get_from_url(url string) ?GitAddr {
 // }
 // ```
 pub fn addr_get_from_path(path string) ?GitAddr {
-	// TODO: need to get it to work for branch
 
-	
 	mut path2 := path.replace('~', os.home_dir())
 	if !os.exists(os.join_path(path2, '.git')) {
 		return error("path: '$path2' is not a git dir, missed a .git directory")
@@ -133,49 +131,6 @@ pub fn addr_get_from_path(path string) ?GitAddr {
 	cmd2 := "cd $path && git rev-parse --abbrev-ref HEAD"
 	branch := os.execute_or_panic(cmd2).output.trim(" \n")
 	
-	///////the parsing was not good enough
-
-	// content := os.read_file(pathconfig) or { panic('Failed to load config $pathconfig') }
-	// mut state := 'start'
-	// mut line2 := ''
-	// mut url := ''
-	// mut branch := ''
-	// for line in content.split_into_lines() {
-	// 	line2 = line.trim_space()
-	// 	// println(" - '$line2'")
-	// 	if state == 'start' && line.starts_with('[remote') {
-	// 		state = 'remote'
-	// 		continue
-	// 	}
-	// 	if state == 'remote' && line.starts_with('[') {
-	// 		state == 'start'
-	// 	}
-	// 	if state == 'remote' && line2.starts_with('url') {
-	// 		url = line2.split('=')[1]
-	// 		state = 'branch'
-	// 	}
-	// 	if state == 'branch' && line2.starts_with('merge') {
-	// 		parts := line2.split('/')
-	// 		branch = parts[parts.len - 1]
-	// 		state = 'end'
-	// 	}
-	// }
-	// if url == '' {
-	// 	return error('could not parse config file to find url for git.\n$content')
-	// }
-
-	// println(content)
-	// println("UUUUU URL:$url")
-
-	// TODO: NOT GOOD NEED TO DO BETTER
-
-	// add branch
-	// mut splitted := path.split('/')
-	// if branch == '' {
-	// 	// branch = splitted[splitted.len]
-	// 	panic('bug branch not there yet')
-	// }
-	// url = '$url/$branch'
 	mut addr := addr_get_from_url(url) ?
 	addr.branch = branch
 	// println(addr)

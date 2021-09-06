@@ -16,6 +16,7 @@ fn macro_process(mut state LineProcessorState, line string) bool {
 		'alias':    macro_alias
 		'tokens':   macro_tokens
 		'time':     macro_time
+		'code':		macro_code
 	}
 
 	if !line.starts_with('!!!') {
