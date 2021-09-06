@@ -177,6 +177,7 @@ fn template_wiki_root(reponame string, repourl string, trackingid string, opengr
       <script src="prism-v.min.js"></script>
       <script src="prism-typescript.min.js"></script>
       <script src="prism-go.min.js"></script>
+      <script src="prism-graphql.min.js"></script>
       <script src="search.min.js"></script>
       <script src="docsify-remote-markdown.min.js"></script>
       <script src="docsify-tabs@1.js"></script>
