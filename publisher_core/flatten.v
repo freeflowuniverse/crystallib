@@ -67,11 +67,10 @@ pub fn (mut publisher Publisher) flatten() ? {
 	}
 
 	for mut site in publisher.sites {
-
 		sc:=site.config
 		println(' - publish:$sc.git_url()')
 
-		site.files_process(mut publisher) ?
+		// site.files_process(mut publisher) ? // NO NEED TO PROCESS SITE AGAIN ALREADY DONE IN CHECK LINE 55 FOR ALL WEBSITES
 		
 
 		// src_path[site.id] = site.path
@@ -139,7 +138,13 @@ pub fn (mut publisher Publisher) flatten() ? {
 			// write processed content
 			page.replace_defs(mut publisher) ?
 			site_page_path := page.path_get(mut publisher)
-			file_name_of_site_page_path := os.file_name(site_page_path)
+			mut file_name_of_site_page_path := ""
+			// Handle Multi Sidebars
+			if name.contains("|"){
+				file_name_of_site_page_path = name.replace("|", "_") + ".md"
+			}else{
+				file_name_of_site_page_path = os.file_name(site_page_path)
+			}
 			dest_file = os.join_path(dest_dir, file_name_of_site_page_path)
 			os.write_file(dest_file, page.content) ?
 		}

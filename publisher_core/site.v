@@ -84,22 +84,23 @@ fn (mut site Site) page_remember(path string, name string, mut publisher Publish
 
 	if site.page_exists(namelower) {
 		// panic('duplicate path: ' + path + '/' + name)
-		site.errors << SiteError{
+		new_error := SiteError{
 			path: pathrelative
 			error: 'duplicate page $pathrelative'
 			cat: SiteErrorCategory.duplicatepage
 		}
+		site.errors << new_error
 	} else {
 		if publisher.pages.len == 0 {
 			publisher.pages = []Page{}
 		}
-
-		publisher.pages << Page{
+		new_page := Page{
 			id: publisher.pages.len
 			site_id: site.id
 			name: namelower
 			path: pathrelative
 		}
+		publisher.pages << new_page
 		site.pages[namelower] = publisher.pages.len - 1
 	}
 }
