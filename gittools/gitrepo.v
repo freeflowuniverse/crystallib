@@ -251,6 +251,8 @@ pub fn (mut repo GitRepo) branch_switch(branchname string) ? {
 	if changes{
 		return error('Cannot branch switch repo: ${repo.path()} because there are changes in the dir.')
 	}
+	// Fetch repo before checkout, in case a new branch added.
+	repo.fetch_all() ?
 	cmd := 'cd $repo.path() && git checkout $branchname'
 	process.execute_silent(cmd) or {
 		// println('GIT CHECKOUT FAILED: $cmd_checkout')
@@ -258,4 +260,12 @@ pub fn (mut repo GitRepo) branch_switch(branchname string) ? {
 	}
 	// println(cmd)
 	repo.pull() ?
+}
+
+pub fn (mut repo GitRepo) fetch_all () ? {
+	cmd := 'cd $repo.path() && git fetch --all'
+	process.execute_silent(cmd) or {
+		// println('GIT FETCH FAILED: $cmd_checkout')
+		return error('Cannot fetch repo: ${repo.path()}. Error was $err \n cmd: $cmd')
+	}
 }

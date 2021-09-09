@@ -76,9 +76,13 @@ pub fn (mut publisher Publisher) flatten() ? {
 		// src_path[site.id] = site.path
 		mut dest_dir := config.path_publish_wiki_get(site.name) ?
 		println(' - flatten: $site.name to $dest_dir')
-		if !os.exists(dest_dir) {
-			os.mkdir_all(dest_dir) ?
+		
+		// Remove destination directory to make sure no old content
+		if os.exists(dest_dir) {
+			os.rmdir_all(dest_dir) ?
 		}
+		// Create destination directory
+		os.mkdir_all(dest_dir) ?
 
 		mut dest_dir_publ := config.publish.paths.publish
 
