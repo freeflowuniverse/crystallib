@@ -44,13 +44,23 @@ fn (mut site Site) file_remember(path string, name string, mut publisher Publish
 	return file0
 }
 
+
+// fn (mut site Site) sidebar_remember(path string, pageid int){
+
+// 	mut path_sidebar_relative := path[site.path.len..]
+// 	path_sidebar_relative = path_sidebar_relative.replace("//","/").trim(" /")
+// 	site.sidebars[path_sidebar_relative] = pageid
+
+// }
+
+
 // remember the file, so we know if we have duplicates
 // also fixes the name
 fn (mut site Site) file_remember_full_path(full_path string, mut publisher Publisher) &File {
 	return site.file_remember(os.dir(full_path), os.base(full_path), mut publisher)
 }
 
-fn (mut site Site) page_remember(path string, name string, mut publisher Publisher) ? {
+fn (mut site Site) page_remember(path string, name string, mut publisher Publisher) ?int {
 	mut namelower := publisher.name_fix_alias_page(name) or { panic(err) }
 	if namelower.trim(' ') == '' {
 		site.errors << SiteError{
@@ -90,6 +100,7 @@ fn (mut site Site) page_remember(path string, name string, mut publisher Publish
 			cat: SiteErrorCategory.duplicatepage
 		}
 		site.errors << new_error
+		return 0
 	} else {
 		if publisher.pages.len == 0 {
 			publisher.pages = []Page{}
@@ -99,10 +110,14 @@ fn (mut site Site) page_remember(path string, name string, mut publisher Publish
 			site_id: site.id
 			name: namelower
 			path: pathrelative
+			sidebarid: site.sidebar_last
 		}
 		publisher.pages << new_page
-		site.pages[namelower] = publisher.pages.len - 1
+		site.pages[namelower] = publisher.pages.len - 1		
+		// println(" ------- $new_page.sidebarid")
+		return publisher.pages.len - 1
 	}
+	
 }
 
 pub fn (mut site Site) reload(mut publisher Publisher) ?{
@@ -112,6 +127,7 @@ pub fn (mut site Site) reload(mut publisher Publisher) ?{
 	site.errors = []SiteError{}
 	site.files_process(mut publisher)?
 	site.load(mut publisher)?
+	site.sidebar_last = 0
 }
 
 pub fn (mut site Site) load(mut publisher Publisher) ? {
@@ -177,11 +193,45 @@ fn (mut site Site) files_process(mut publisher Publisher) ? {
 	if !os.exists(site.path) {
 		return error("cannot find site on path:'$site.path'")
 	}
+	site.sidebar_last = 0
 	return site.files_process_recursive(site.path, mut publisher)
 }
 
 fn (mut site Site) files_process_recursive(path string, mut publisher Publisher) ? {
 	items := os.ls(path) ?
+	mut path_sidebar := "$path/sidebar.md"
+	if os.exists(path_sidebar){
+		//means we are not in root of path
+		sidebar_last := site.page_remember(path, "sidebar.md", mut publisher) ?
+		if path != site.path{
+			site.sidebar_last = sidebar_last
+			//needs to happen manually because otherwise the sidebar itself doesn't have the id
+			mut page_sidebar := publisher.page_get_by_id(site.sidebar_last) or { panic(err) }
+			page_sidebar.sidebarid = sidebar_last
+		}
+	}else{
+		if site.sidebar_last>0 {
+			page_sidebar_found := publisher.page_get_by_id(site.sidebar_last) or { panic(err) }
+			path_sidebar_found := os.dir(page_sidebar_found.path_get(mut publisher))+"/"
+			path2 := path + "/"
+			if ! path2.starts_with(path_sidebar_found){
+				//means is not subdir of previous sidebar
+				site.sidebar_last = 0
+			}
+		}
+	}
+	// if path.contains("/farming"){
+	// 	println("\n - $path ($site.sidebar_last)")
+	// 	if site.sidebar_last>0 {
+	// 		page_sidebar2 := publisher.page_get_by_id(site.sidebar_last) or { panic(err) }
+	// 		path_sidebar2 := os.dir(page_sidebar2.path_get(mut publisher))
+	// 		println(" - SIDEBAR: '$path_sidebar2'")
+	// 	}
+	// }
+	// if site.sidebar_last>0{
+	// 	page_sidebar2 := publisher.page_get_by_id(site.sidebar_last) or { panic(err) }
+	// 	// println("--R-- $path : $site.sidebar_last : ${page_sidebar2.path}")
+	// }
 	for item in items {
 		if os.is_dir(os.join_path(path, item)) {
 			if item.starts_with('.') {
@@ -202,6 +252,8 @@ fn (mut site Site) files_process_recursive(path string, mut publisher Publisher)
 			} else if item.starts_with('_') && !(item.starts_with('_sidebar'))
 				&& !(item.starts_with('_glossary')) && !(item.starts_with('_navbar')) {
 				// println('SKIP: $item')
+				continue
+			} else if item.starts_with('sidebar') {
 				continue
 			} else {
 				// for names we do everything case insensitive
@@ -224,8 +276,16 @@ fn (mut site Site) files_process_recursive(path string, mut publisher Publisher)
 					// only process files which do have extension
 					ext2 := ext[1..]
 					if ext2 == 'md' {
-						site.page_remember(path, item2, mut publisher) ?
+						b:= site.page_remember(path, item2, mut publisher) ?
+
+						// if path.contains("/farming"){
+						// 	page4 := publisher.page_get_by_id(b) or { panic(err) }
+						// 	println(" - $page4.path $page4.sidebarid")
+						// }
+
 					}
+					
+
 
 					if ext2 in ['jpg', 'png', 'svg', 'jpeg', 'gif', 'pdf', 'zip'] {
 						// println(path+"/"+item2)

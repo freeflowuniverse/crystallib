@@ -35,10 +35,12 @@ pub mut:
 struct Link {
 	// original string //how link was put in the document
 	original_descr string // when we want to replace
+mut:
 	original_link  string
 pub mut:
 	path		string
 	isexternal  bool
+	newtab		bool
 	cat         LinkType
 	isimage     bool // means started with !
 	description string
@@ -48,6 +50,8 @@ pub mut:
 	state       LinkState
 	extra       string // e.g. ':size=800x900'
 	error_msg   string
+	page_file_id 	int  //is the id of the page where the link is
+	consumer_page_id int //is the id of the page which has the link
 }
 
 fn link_new(original_descr string, original_link string, isimage bool) Link {
@@ -69,13 +73,45 @@ fn (link Link) original_get() string {
 }
 
 // return how to represent link on server
-fn (link Link) server_get() string {
+// page is the page from where the link is on
+fn (mut link Link) server_get(mut publisher &Publisher) string {
+	mut page_source := link.page_source_get(mut publisher) or { panic(err) }
 	if link.cat == LinkType.page {
-		return '[$link.description](${link.site}__${link.filename}.md)'
+		// mut page := link.page_link_get(mut publisher &Publisher)
+		if link.newtab == false {
+			if page_source.sidebarid > 0 && link.filename.to_lower()!="readme" {
+				// return '[$link.description](${link.site}__${link.filename}.md)'	
+
+				mut page_sidebar := page_source.sidebar_page_get(mut publisher) or { panic(err) }
+				mut path_sidebar := page_sidebar.path_relative_get(mut publisher).trim(" /")
+
+				if page_source.name == "sidebar"{
+					println(" - serverget: path_sidebar:$path_sidebar $link.filename")	
+				}
+
+				// println(" - serverget: path_sidebar:$path_sidebar $link.filename")
+
+				if path_sidebar != ""{
+					site := page_source.site_get(mut publisher) or { panic(err) }
+					if link.site != site.name{
+						return '<a href="/info/${link.site}/#/$path_sidebar/$link.filename"> $link.description </a>'
+					}else{
+						return '[$link.description](/$path_sidebar/${link.filename}.md)'	
+					}
+				}
+			}
+			// return '<a href="/info/${link.site}/#/$link.filename"> $link.description </a>'
+			return '[$link.description](${link.site}__${link.filename}.md)'	
+		}else{
+			// return '[$link.description](/${link.site}/${link.filename}.md \':target=_blank\')'
+			return '<a href="/info/${link.site}/#/$link.filename" target="_blank"> $link.description </a>'
+		}
+		
 	}
 	if link.cat == LinkType.file {
 		if link.isimage {
-			return '![$link.description](${link.site}__$link.filename  $link.extra)'
+			// return '![$link.description](${link.site}__$link.filename  $link.extra)'
+			return '![$link.description]($link.filename  $link.extra)'
 		}
 		// return '[$link.description](/${link.site}__$link.filename  $link.extra)'
 		if link.extra == '' {
@@ -142,7 +178,7 @@ fn (link Link) replace(text string, replacewith string) string {
 	return text.replace(link.original_get(), replacewith)
 }
 
-fn (mut link Link) init_() {
+fn (mut link Link) init_(mut publisher &Publisher) {
 	// see if its an external link or internal
 	// mut linkstate := LinkState.init
 	if link.original_link.contains('://') {
@@ -153,6 +189,10 @@ fn (mut link Link) init_() {
 	if link.original_link.trim(' ').starts_with('#') {
 		link.cat = LinkType.anchor
 		return
+	}
+
+	if link.original_link.trim(' ').starts_with('!') {
+		link.newtab = true
 	}
 
 	if link.original_link.trim(' ').starts_with('http')
@@ -198,6 +238,8 @@ fn (mut link Link) init_() {
 
 		link.filename = link.filename.replace('\\', '/')
 
+		link.filename = link.filename.after('!')
+
 		base_of_link_filename := os.base(link.filename)
 		fixed_name := texttools.name_fix(base_of_link_filename)
 		fixed_name_lower := fixed_name.to_lower()
@@ -238,14 +280,77 @@ fn (mut link Link) init_() {
 			link.error_msg = "$link.original_link (no match), ext was:'$ext'"
 			link.state = LinkState.error
 		}
-	}
 
-	if link.filename.contains(':') {
-		panic("should not have ':' in link for page or file (2).\n$link")
+
+		if link.cat == LinkType.page {
+			mut linktocheck := link.original_link
+			if linktocheck.starts_with("!"){
+				linktocheck = linktocheck.after('!')
+			}
+			item_linked := publisher.page_check_find(linktocheck, link.consumer_page_id) or {
+				link.state = LinkState.error
+				link.error_msg = 'link, cannot find page: ${link.original_link}.\n$err'
+				link.state = LinkState.error
+				return
+			}
+			link.page_file_id = item_linked.id
+		}else if link.cat == LinkType.file {
+			mut linktocheck := link.original_link
+			item_linked := publisher.file_check_find(linktocheck, link.consumer_page_id) or {
+				link.state = LinkState.error
+				link.error_msg = 'link, cannot find file: ${link.original_link}.\n$err'
+				link.state = LinkState.error
+				return
+			}
+			link.page_file_id = item_linked.id
+		}
+		
+		// if link.original_link.starts_with("!"){
+		// 	println(link)
+		// 	panic("a")
+		// }		
+
+		if link.filename.contains(':') {
+			panic("should not have ':' in link for page or file (2).\n$link")
+		}
 	}
 }
 
-// used by the line processor on page (page walks over content line by line to parts links, checks if valid here)
+//get the page where is linked too
+pub fn (mut link Link) page_link_get(mut publisher Publisher) ?&Page{
+	if link.page_file_id==0{
+		return error("consumer page_link id cannot be 0./n$link")
+	}
+	if link.cat == LinkType.page {
+		return publisher.page_get_by_id(link.page_file_id)?
+	}
+	return error("can only return Page")
+}
+
+//get the page which has the link
+pub fn (mut link Link) page_source_get(mut publisher Publisher) ?&Page{
+	if link.consumer_page_id==0{
+		return error("page_link id cannot be 0./n$link")
+	}
+	if link.cat == LinkType.page {
+		return publisher.page_get_by_id(link.consumer_page_id)?
+	}
+	return error("can only return Page")
+}
+
+fn (mut link Link) file_get(mut publisher Publisher) ?&Page{
+	if link.page_file_id==0{
+		return error("file id cannot be 0./n$link")
+	}
+	if link.cat == LinkType.file {
+		return publisher.file_get_by_id(link.page_file_id)?
+	}
+	return error("can only return File")
+}
+
+
+// used by the line processor on page (page walks over content line by line to parts links, 
+// checks if valid here)
 fn (mut link Link) check(mut publisher Publisher, mut page Page, linenr int, line string) {
 	// mut filename_complete := ''
 	// mut site := &publisher.sites[page.site_id]
@@ -292,48 +397,13 @@ fn (mut link Link) check(mut publisher Publisher, mut page Page, linenr int, lin
 			return
 		}
 	}
-	// if link.cat == LinkType.page {
-	// 	if !publisher.page_exists(filename_complete) {
-	// 		page.error_add({
-	// 			line: line
-	// 			linenr: linenr
-	// 			msg: "CANNOT FIND PAGE: '$link.filename' for $link.original_get()"
-	// 			cat: PageErrorCat.brokenlink
-	// 		}, mut publisher)
-	// 		link.state = LinkState.missing
-	// 		// println(link)
-	// 		return
-	// 	}
-	// 	return
-	// }
-	// if link.cat == LinkType.file {
-	// 	// println('filename_complete:$filename_complete')
-	// 	if !publisher.file_exists(filename_complete) {
-	// 		page.error_add({
-	// 			line: line
-	// 			linenr: linenr
-	// 			msg: "CANNOT FIND FILE: '$link.filename' for $link.original_get()"
-	// 			cat: PageErrorCat.brokenlink
-	// 		}, mut publisher)
-	// 		link.state = LinkState.missing
-	// 		// println(link)
-	// 		return
-	// 	}
-	// 	mut file := publisher.file_get(filename_complete) or {
-	// 		panic('should not be possible because file existed, error:$err')
-	// 	}
-	// 	// remember in file that this page uses it
-	// 	if !(page.id in file.usedby) {
-	// 		file.usedby << page.id
-	// 	}
-	// 	return
-	// }
+
 }
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT REALITIES
 // returns all the links
-pub fn link_parser(text string) ParseResult {
+pub fn link_parser(text string, consumer_page_id int) ParseResult {
 	mut charprev := ''
 	mut char := ''
 	mut state := ParseStatus.start
@@ -396,6 +466,8 @@ pub fn link_parser(text string) ParseResult {
 					// end of capture group
 					mut link := link_new(capturegroup_pre.trim(' '), capturegroup_post.trim(' '),
 						isimage)
+					//remember the consumer page
+					link.consumer_page_id = consumer_page_id
 					parseresult.links << link
 					capturegroup_pre = ''
 					capturegroup_post = ''

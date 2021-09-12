@@ -13,9 +13,10 @@ pub mut: // id and index in the Publisher.sites array
 	name   string // is the shortname!!!
 	files  map[string]int
 	pages  map[string]int
-	sitebars map[string]int
+	// sitebars map[string]int
 	state  SiteState
 	config &publisher_config.SiteConfig
+	sidebar_last int
 }
 
 pub enum SiteErrorCategory {

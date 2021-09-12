@@ -212,9 +212,9 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 	}
 
 	for line in page.content.split_into_lines() {
-		if debug {
-			eprintln(' >> LINE: $line')
-		}
+		// if debug {
+		// 	eprintln(' >> LINE: $line')
+		// }
 
 		// the default has been done, which means the source & server have the last line
 		// now its up to the future to replace that last line or not
@@ -292,7 +292,7 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 			continue
 		}
 		// DEAL WITH LINKS
-		links_parser_result := link_parser(line)
+		links_parser_result := link_parser(line,page.id)
 
 		// there can be more than 1 link on 1 line
 		for mut link in links_parser_result.links {
@@ -305,21 +305,21 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 			}
 
 			if link.cat == LinkType.page {
-				page_linked = publisher.page_check_find(link.original_link, state.page.id) or {
+					mut page_linked2 := link.page_get(mut publisher,state.page.id) or {
 					state.error('link, cannot find page: ${link.original_link}.\n$err')
 					continue
 				}
-				linkname = page_linked.name_get(mut publisher, state.site.id)
+				linkname = page_linked2.name_get(mut publisher, state.site.id)
 			}
 
 			if link.cat == LinkType.file {
-				mut file_linked := publisher.file_check_find(link.original_link, state.page.id) or {
-					state.error('link, cannot find file: ${link.original_link}.\n$err')
+					mut file_linked2 := link.file_get(mut publisher,state.page.id) or {
+					state.error('link, cannot find file link: ${link.original_link}.\n$err')
 					continue
 				}
-				linkname = file_linked.name_get(mut publisher, state.site.id)
-				if !(page.id in file_linked.usedby) {
-					file_linked.usedby << page.id
+				linkname = file_linked2.name_get(mut publisher, state.site.id)
+				if !(page.id in file_linked2.usedby) {
+					file_linked2.usedby << page.id
 				}
 			}
 
@@ -345,7 +345,7 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 
 				if linkname != link.filename {
 					link.filename = linkname
-					link.init_()
+					link.init_(publisher)
 				}
 				if link.state == LinkState.ok {
 					if link.original_get() != link.source_get(state.site.name) {
@@ -354,9 +354,10 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 							println(' >>>> $link.original_get() -> ${link.source_get(state.site.name)}')
 						}
 					}
-					state.serverline_change(link.original_get(), link.server_get())
+					llink := link.server_get (mut &publisher, mut &page)
+					state.serverline_change(link.original_get(),llink)
 					if debug {
-						println(' >>>> server: $link.original_get() -> $link.server_get()')
+						println(' >>>> server: $link.original_get() -> $llink')
 					}
 				}
 			}
@@ -395,3 +396,17 @@ fn (mut page Page) replace_defs(mut publisher Publisher) ? {
 	page.content = new_content
 	page.replaced = true
 }
+
+
+//get the page of the sidebar which is close by
+pub fn (mut page Page) sidebar_page_get(mut publisher Publisher) ?&Page{
+
+	return publisher.page_get_by_id(page.sidebarid)?
+	mut path_sidebar := os.dir(page_sidebar.path).trim(" /")
+
+	if page.name == "sidebar"{
+		println(" - serverget: path_sidebar:$path_sidebar $link.filename")	
+	}
+
+}
+

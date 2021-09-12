@@ -27,6 +27,7 @@ pub mut:
 	nrtimes_inluded int
 	categories      []string
 	replaced        bool
+	sidebarid		int
 }
 
 pub enum PageErrorCat {
@@ -89,7 +90,7 @@ pub fn (page Page) path_get(mut publisher Publisher) string {
 		panic('file path should never be empty, is bug. For page\n$page')
 	}
 	site_path := publisher.sites[page.site_id].path
-	return os.join_path(site_path, page.path)
+	return os.join_path(site_path, page.path).replace("//","/")
 }
 
 // get the name of the page with or without site prefix, depending if page is in the site
