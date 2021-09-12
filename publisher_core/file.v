@@ -58,7 +58,7 @@ fn (mut file File) relocate(mut publisher &Publisher) ? {
 				if os.real_path(dest) == os.real_path(path) {
 					return error('should never be same path: $dest and $path')
 				}
-				println('   >>>RM3: $path')
+				// println('   >>>RM3: $path')
 				// os.rm(path) ?
 			} else {
 				println('   >>>MV3: $path -> $dest')

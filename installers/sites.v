@@ -81,7 +81,7 @@ pub fn sites_commit(msg string,names []string) ? {
 	println(' - sites commit.')
 	for mut sc in conf.sites_get(names) {
 		mut repo := sc.repo_get()
-		println(sc)
+		// println(sc)
 		change := repo.changes() or {
 			return error('cannot detect if there are changes on repo.\n$err')
 		}
@@ -94,6 +94,19 @@ pub fn sites_commit(msg string,names []string) ? {
 		}
 	}
 }
+
+
+pub fn sites_discard(names []string) ? {
+	mut conf := publisher_config.get()
+	println(' - sites discard.')
+	for mut sc in conf.sites_get(names) {
+		mut repo := sc.repo_get()
+		// println(sc)
+		println(' - $repo.path()')
+		repo.remove_changes() ?
+	}
+}
+
 
 pub fn sites_pushcommit(msg string, names []string) ? {
 	mut conf := publisher_config.get()

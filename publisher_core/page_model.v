@@ -82,6 +82,14 @@ pub fn (page Page) path_relative_get(mut publisher &Publisher) string {
 	return page.path
 }
 
+pub fn (page Page) path_dir_relative_get(mut publisher &Publisher) string {
+	if page.path == '' {
+		panic('file path should never be empty, is bug')
+	}
+	return os.dir(page.path).trim(" /")
+}
+
+
 pub fn (page Page) path_get(mut publisher &Publisher) string {
 	if page.site_id > publisher.sites.len {
 		panic('cannot find site: $page.site_id, not enough elements in list.')

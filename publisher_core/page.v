@@ -217,6 +217,8 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 		// }
 
 		// the default has been done, which means the source & server have the last line
+		// source is info on disk, the code
+		// server is what we will serve to the world
 		// now its up to the future to replace that last line or not
 		state.lines_source << line
 

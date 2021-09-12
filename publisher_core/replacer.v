@@ -58,6 +58,7 @@ fn (mut publisher Publisher) file_check_fix(name2find string, consumer_page_id i
 	file_source := filesres[0]
 	file_source_path := file_source.path_get(mut publisher)
 	dest := '$consumer_site.path/img_tosort/${os.base(file_source_path)}'
+	println(" - $consumer_page.name cp:$file_source_path $dest")
 	os.cp(file_source_path, dest) or { panic(err) }
 
 	// will remember new file and will make sure rename if needed happens, but should already be ok
@@ -70,11 +71,19 @@ fn (mut publisher Publisher) file_check_fix(name2find string, consumer_page_id i
 // check if we can find the file, if not copy to site if found in other site
 // we check the file based on name & replaced version of name
 fn (mut publisher Publisher) file_check_find(name2find string, consumer_page_id int) ?&File {
+	if consumer_page_id==999999{
+		mut consumer_page2 := publisher.page_get_by_id(consumer_page_id) or { panic(err) }
+		println(consumer_page2)
+		panic("consumer page id cannot be 999999")
+	}
 	// didn't find a better way how to do it, more complicated than it should I believe
 	mut consumer_page := publisher.page_get_by_id(consumer_page_id) or { panic(err) }
 	mut consumer_site := consumer_page.site_get(mut publisher) or { panic(err) }
 	_, mut objname := name_split(name2find) or { panic(err) }
 	mut objname_full := '$consumer_site.name:$objname'
+
+	//this is for when we have stad replacements to be done, normally this is not the case
+	//can be defined as metadata in config (or at least was like that)
 	objname_replaced := publisher.replacer.file.replace(text:objname) or { panic(err) }
 
 	for x in 0 .. 4 {
@@ -131,6 +140,9 @@ fn (mut publisher Publisher) page_check_fix(name2find string, consumer_page_id i
 // we check the page based on name & replaced version of name
 // we also check definitions because they can also lead to right page
 fn (mut publisher Publisher) page_check_find(name2find string, consumer_page_id int) ?&Page {
+	if consumer_page_id==999999{
+		panic("consumer page id cannot be 999999")
+	}
 	mut consumer_page := publisher.page_get_by_id(consumer_page_id) or {
 		panic('page get by id:$consumer_page_id\n$err')
 	}

@@ -50,15 +50,16 @@ pub mut:
 	state       LinkState
 	extra       string // e.g. ':size=800x900'
 	error_msg   string
-	page_file_id 	int  //is the id of the page where the link is
-	consumer_page_id int //is the id of the page which has the link
+	page_file_id 	int = 999999  //is the id of the page where the link is
+	consumer_page_id int = 999999 //is the id of the page which has the link
 }
 
-fn link_new(mut publisher &Publisher, original_descr string, original_link string, isimage bool) Link {
+fn link_new(mut publisher &Publisher, original_descr string, original_link string, isimage bool,consumer_page_id int ) Link {
 	mut link := Link{
 		original_descr: original_descr.trim(' ')
 		original_link: original_link.trim(' ')
 		isimage: isimage
+		consumer_page_id: consumer_page_id
 	}
 	link.init_(mut publisher)
 	return link
@@ -84,7 +85,7 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 				// return '[$link.description](${link.site}__${link.filename}.md)'	
 
 				mut page_sidebar := page_source.sidebar_page_get(mut publisher) or { panic(err) }
-				mut path_sidebar := page_sidebar.path_relative_get(mut publisher).trim(" /")
+				mut path_sidebar := page_sidebar.path_dir_relative_get(mut publisher).trim(" /")
 
 				if page_source.name == "sidebar"{
 					println(" - serverget: path_sidebar:$path_sidebar $link.filename")	
@@ -112,7 +113,12 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 	if link.cat == LinkType.file {
 		if link.isimage {
 			// return '![$link.description](${link.site}__$link.filename  $link.extra)'
-			return '![$link.description]($link.filename  $link.extra)'
+			if link.extra==""{
+				return '![$link.description]($link.filename)'
+			}else{
+				return '![$link.description]($link.filename $link.extra)'
+			}
+			
 		}
 		// return '[$link.description](/${link.site}__$link.filename  $link.extra)'
 		if link.extra == '' {
@@ -143,28 +149,20 @@ fn (mut link Link) source_get(sitename string) string {
 		}
 		mut filename := ''
 
-		if link.site == sitename {
-			if link.isimage {
-				filename = 'img/$link.filename'
-			} else {
-				filename = '$link.filename'
-			}
+		if link.isimage {
+			filename = 'img/$link.filename'
+		} else {
+			filename = '$link.filename'
 		}
 
 		mut j := ''
-		if sitename == link.site {
-			if link.extra == '' {
-				j = '[$link.description]($filename)'
-			} else {
-				j = '[$link.description]($filename $link.extra)'
-			}
+
+		if link.extra == '' {
+			j = '[$link.description]($filename)'
 		} else {
-			if link.extra == '' {
-				j = '[$link.description]($link.site:$link.filename)'
-			} else {
-				j = '[$link.description]($link.site:$link.filename $link.extra)'
-			}
+			j = '[$link.description]($filename $link.extra)'
 		}
+
 		if link.isimage {
 			j = '!$j'
 		}
@@ -466,9 +464,8 @@ pub fn link_parser(mut publisher &Publisher,text string, consumer_page_id int) P
 				if char == ')' {
 					// end of capture group
 					mut link := link_new(mut publisher, capturegroup_pre.trim(' '), 
-						capturegroup_post.trim(' '),isimage)
+						capturegroup_post.trim(' '),isimage,consumer_page_id )
 					//remember the consumer page
-					link.consumer_page_id = consumer_page_id
 					parseresult.links << link
 					capturegroup_pre = ''
 					capturegroup_post = ''
