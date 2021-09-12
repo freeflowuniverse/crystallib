@@ -19,18 +19,18 @@ pub mut:
 	usedby []int // names of pages which use this file
 }
 
-pub fn (file File) site_get(mut publisher Publisher) ?&Site {
+pub fn (file File) site_get(mut publisher &Publisher) ?&Site {
 	return publisher.site_get_by_id(file.site_id)
 }
 
-pub fn (file File) path_relative_get(mut publisher Publisher) string {
+pub fn (file File) path_relative_get(mut publisher &Publisher) string {
 	if file.path == '' {
 		panic('file path should never be empty, is bug')
 	}
 	return file.path
 }
 
-pub fn (file File) path_get(mut publisher Publisher) string {
+pub fn (file File) path_get(mut publisher &Publisher) string {
 	if file.site_id > publisher.sites.len {
 		panic('cannot find site: $file.site_id, not enough elements in list.')
 	}
@@ -45,7 +45,7 @@ pub fn (file File) path_get(mut publisher Publisher) string {
 }
 
 // get the name of the file with or without site prefix, depending if file is in the site
-pub fn (file File) name_get(mut publisher Publisher, site_id int) string {
+pub fn (file File) name_get(mut publisher &Publisher, site_id int) string {
 	site := file.site_get(mut publisher) or { panic(err) }
 	if site.id == site_id {
 		return file.name

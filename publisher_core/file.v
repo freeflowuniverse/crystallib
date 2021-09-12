@@ -2,7 +2,7 @@ module publisher_core
 
 import os
 
-fn (mut file File) consumer_page_register(consumer_page_id int, mut publisher Publisher) {
+fn (mut file File) consumer_page_register(consumer_page_id int, mut publisher &Publisher) {
 	page := publisher.page_get_by_id(consumer_page_id) or { panic(err) }
 	if page.site_id != file.site_id {
 		panic('can only register page for same site, is bug (site:$file.name:$file.site_id)\n$page\n')
@@ -15,7 +15,7 @@ fn (mut file File) consumer_page_register(consumer_page_id int, mut publisher Pu
 // need to create smaller sizes if needed and change the name
 // also need to make sure its in right directory
 // do this after the loading/checking of all pages & files
-fn (mut file File) relocate(mut publisher Publisher) ? {
+fn (mut file File) relocate(mut publisher &Publisher) ? {
 	if file.site_id > publisher.sites.len {
 		panic('cannot find site: $file.site_id, not enough elements in list.')
 	}
@@ -92,7 +92,7 @@ fn (mut file File) relocate(mut publisher Publisher) ? {
 }
 
 // mark this file as duplicate from other file
-pub fn (mut file File) duplicate_from(mut publisher Publisher, mut fileother File) ? {
+pub fn (mut file File) duplicate_from(mut publisher &Publisher, mut fileother File) ? {
 	file.delete(mut publisher) ?
 	for idd in file.usedby {
 		if !(idd in fileother.usedby) {
@@ -102,7 +102,7 @@ pub fn (mut file File) duplicate_from(mut publisher Publisher, mut fileother Fil
 	file.usedby = []
 }
 
-pub fn (mut file File) delete(mut publisher Publisher) ? {
+pub fn (mut file File) delete(mut publisher &Publisher) ? {
 	file.state = FileStatus.deleted
 	path := file.path_get(mut publisher)
 	if os.exists(path) {
@@ -112,7 +112,7 @@ pub fn (mut file File) delete(mut publisher Publisher) ? {
 	file.usedby = []
 }
 
-pub fn (mut file File) mv(mut publisher Publisher, dest string) ? {
+pub fn (mut file File) mv(mut publisher &Publisher, dest string) ? {
 	path := file.path_get(mut publisher)
 	os.mkdir_all(os.dir(dest)) ?
 	os.mv(path, dest) or { return error('could not rename $path to $dest .\n$err\n$file') }

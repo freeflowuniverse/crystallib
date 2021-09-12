@@ -3,7 +3,7 @@ module publisher_core
 import despiegk.crystallib.texttools
 import os
 
-pub fn (page Page) write(mut publisher Publisher, content string) {
+pub fn (page Page) write(mut publisher &Publisher, content string) {
 	mut path := page.path_get(mut publisher)
 	if path.ends_with('.md') {
 		path = path[..path.len - 3]
@@ -12,7 +12,7 @@ pub fn (page Page) write(mut publisher Publisher, content string) {
 	os.write_file(path, content) or { panic('cannot write, $err') }
 }
 
-pub fn (page Page) path_exists(mut publisher Publisher) bool {
+pub fn (page Page) path_exists(mut publisher &Publisher) bool {
 	mut path := page.path_get(mut publisher)
 	if path.ends_with('.md') {
 		path = path[..path.len - 3]
@@ -22,7 +22,7 @@ pub fn (page Page) path_exists(mut publisher Publisher) bool {
 }
 
 // // will load the content, check everything, return true if ok
-// pub fn (mut page Page) check(mut publisher Publisher) bool {
+// pub fn (mut page Page) check(mut publisher &Publisher) bool {
 // 	page.process(mut publisher) or { panic(err) }
 
 // 	if page.state == PageStatus.error {
@@ -31,7 +31,7 @@ pub fn (page Page) path_exists(mut publisher Publisher) bool {
 // 	return true
 // }
 
-fn (mut page Page) error_add(error PageError, mut publisher Publisher) {
+fn (mut page Page) error_add(error PageError, mut publisher &Publisher) {
 	for error_existing in page.errors {
 		if error_existing.msg.trim(' ') == error.msg.trim(' ') {
 			return
@@ -52,7 +52,7 @@ fn (mut page Page) error_add(error PageError, mut publisher Publisher) {
 
 // load the page & find defs
 // if it returns false, it means was already processed
-pub fn (mut page Page) load(mut publisher Publisher) ?bool {
+pub fn (mut page Page) load(mut publisher &Publisher) ?bool {
 	if page.state == PageStatus.ok {
 		// means was already processed, content is available
 		return false
@@ -70,7 +70,7 @@ pub fn (mut page Page) load(mut publisher Publisher) ?bool {
 
 // process the markdown content and include other files, find links, ...
 // find errors
-pub fn (mut page Page) process(mut publisher Publisher) ?bool {
+pub fn (mut page Page) process(mut publisher &Publisher) ?bool {
 	if page.state == PageStatus.ok {
 		// means was already processed, content is available
 		return false
@@ -140,7 +140,7 @@ fn (mut state LineProcessorState) sourceline_change(ffrom string, tto string) {
 }
 
 // walk over each line in the page and check for definitions
-fn (mut page Page) process_metadata(mut publisher Publisher) ? {
+fn (mut page Page) process_metadata(mut publisher &Publisher) ? {
 	mut state := LineProcessorState{
 		site: &publisher.sites[page.site_id]
 		publisher: publisher
@@ -183,7 +183,7 @@ fn (mut page Page) process_metadata(mut publisher Publisher) ? {
 // walk over each line in the page and do the link parsing on it
 // will also look for definitions
 // happens line per line
-fn (mut page Page) process_lines(mut publisher Publisher) ? {
+fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 	mut state := LineProcessorState{
 		site: &publisher.sites[page.site_id]
 		publisher: publisher
@@ -192,7 +192,7 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 
 	mut debug := false
 
-	mut page_linked := Page{}
+	// mut page_linked := Page{}
 
 	// first we need to do the links, then the process_includes
 
@@ -256,7 +256,7 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 				page_name_include = splitted_spaces[0]
 			}
 
-			page_linked = publisher.page_check_find(page_name_include, state.page.id) or {
+			mut page_linked := publisher.page_check_find(page_name_include, state.page.id) or {
 				state.error('include, cannot find page: ${page_name_include}.\n$err')
 				continue
 			}
@@ -292,7 +292,7 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 			continue
 		}
 		// DEAL WITH LINKS
-		links_parser_result := link_parser(line,page.id)
+		links_parser_result := link_parser(mut publisher, line,page.id)
 
 		// there can be more than 1 link on 1 line
 		for mut link in links_parser_result.links {
@@ -305,7 +305,7 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 			}
 
 			if link.cat == LinkType.page {
-					mut page_linked2 := link.page_get(mut publisher,state.page.id) or {
+					mut page_linked2 := link.page_source_get(mut publisher) or {
 					state.error('link, cannot find page: ${link.original_link}.\n$err')
 					continue
 				}
@@ -313,7 +313,7 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 			}
 
 			if link.cat == LinkType.file {
-					mut file_linked2 := link.file_get(mut publisher,state.page.id) or {
+					mut file_linked2 := link.file_get(mut publisher) or {
 					state.error('link, cannot find file link: ${link.original_link}.\n$err')
 					continue
 				}
@@ -345,7 +345,7 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 
 				if linkname != link.filename {
 					link.filename = linkname
-					link.init_(publisher)
+					link.init_(mut publisher)
 				}
 				if link.state == LinkState.ok {
 					if link.original_get() != link.source_get(state.site.name) {
@@ -354,7 +354,7 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 							println(' >>>> $link.original_get() -> ${link.source_get(state.site.name)}')
 						}
 					}
-					llink := link.server_get (mut &publisher, mut &page)
+					llink := link.server_get (mut &publisher)
 					state.serverline_change(link.original_get(),llink)
 					if debug {
 						println(' >>>> server: $link.original_get() -> $llink')
@@ -387,7 +387,7 @@ fn (mut page Page) title() string {
 }
 
 // return a page where all definitions are replaced with link
-fn (mut page Page) replace_defs(mut publisher Publisher) ? {
+fn (mut page Page) replace_defs(mut publisher &Publisher) ? {
 	if page.replaced {
 		return
 	}
@@ -399,14 +399,7 @@ fn (mut page Page) replace_defs(mut publisher Publisher) ? {
 
 
 //get the page of the sidebar which is close by
-pub fn (mut page Page) sidebar_page_get(mut publisher Publisher) ?&Page{
-
-	return publisher.page_get_by_id(page.sidebarid)?
-	mut path_sidebar := os.dir(page_sidebar.path).trim(" /")
-
-	if page.name == "sidebar"{
-		println(" - serverget: path_sidebar:$path_sidebar $link.filename")	
-	}
-
+pub fn (mut page Page) sidebar_page_get(mut publisher &Publisher) ?&Page{
+	return publisher.page_get_by_id(page.sidebarid)
 }
 

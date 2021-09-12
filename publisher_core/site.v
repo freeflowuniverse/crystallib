@@ -4,7 +4,7 @@ import os
 
 // remember the file, so we know if we have duplicates
 // also fixes the name
-fn (mut site Site) file_remember(path string, name string, mut publisher Publisher) &File {
+fn (mut site Site) file_remember(path string, name string, mut publisher &Publisher) &File {
 	mut namelower := publisher.name_fix_alias_file(name) or { panic(err) }
 	mut pathfull_fixed := os.join_path(path, namelower)
 	mut pathfull := os.join_path(path, name)
@@ -56,11 +56,11 @@ fn (mut site Site) file_remember(path string, name string, mut publisher Publish
 
 // remember the file, so we know if we have duplicates
 // also fixes the name
-fn (mut site Site) file_remember_full_path(full_path string, mut publisher Publisher) &File {
+fn (mut site Site) file_remember_full_path(full_path string, mut publisher &Publisher) &File {
 	return site.file_remember(os.dir(full_path), os.base(full_path), mut publisher)
 }
 
-fn (mut site Site) page_remember(path string, name string, mut publisher Publisher) ?int {
+fn (mut site Site) page_remember(path string, name string, mut publisher &Publisher) ?int {
 	mut namelower := publisher.name_fix_alias_page(name) or { panic(err) }
 	if namelower.trim(' ') == '' {
 		site.errors << SiteError{
@@ -120,7 +120,7 @@ fn (mut site Site) page_remember(path string, name string, mut publisher Publish
 	
 }
 
-pub fn (mut site Site) reload(mut publisher Publisher) ?{
+pub fn (mut site Site) reload(mut publisher &Publisher) ?{
 	site.state = SiteState.init
 	site.pages = map[string]int{}
 	site.files = map[string]int{}
@@ -130,7 +130,7 @@ pub fn (mut site Site) reload(mut publisher Publisher) ?{
 	site.sidebar_last = 0
 }
 
-pub fn (mut site Site) load(mut publisher Publisher) ? {
+pub fn (mut site Site) load(mut publisher &Publisher) ? {
 	if site.state == SiteState.ok {
 		return
 	}
@@ -154,14 +154,14 @@ pub fn (mut site Site) load(mut publisher Publisher) ? {
 
 	println(' - load pages for site: $site.name')
 	for _, id in site.pages {
-		mut p := publisher.page_get_by_id(id) ?
+		mut p := publisher.page_get_by_id(id)?
 		p.load(mut publisher) ?
 	}
 
 	site.state = SiteState.loaded
 }
 
-pub fn (mut site Site) process(mut publisher Publisher)? {
+pub fn (mut site Site) process(mut publisher &Publisher)? {
 	if site.state == SiteState.ok {
 		return
 	}
@@ -189,7 +189,7 @@ pub fn (mut site Site) process(mut publisher Publisher)? {
 
 // process files in the site (find all files)
 // they will not be processed yet
-fn (mut site Site) files_process(mut publisher Publisher) ? {
+fn (mut site Site) files_process(mut publisher &Publisher) ? {
 	if !os.exists(site.path) {
 		return error("cannot find site on path:'$site.path'")
 	}
@@ -197,7 +197,7 @@ fn (mut site Site) files_process(mut publisher Publisher) ? {
 	return site.files_process_recursive(site.path, mut publisher)
 }
 
-fn (mut site Site) files_process_recursive(path string, mut publisher Publisher) ? {
+fn (mut site Site) files_process_recursive(path string, mut publisher &Publisher) ? {
 	items := os.ls(path) ?
 	mut path_sidebar := "$path/sidebar.md"
 	if os.exists(path_sidebar){

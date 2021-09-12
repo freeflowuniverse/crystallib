@@ -10,10 +10,10 @@ import json
 
 struct MyContext {
 pub:
-	config    &publisher_config.ConfigRoot
-	publisher &Publisher
+	config    		&publisher_config.ConfigRoot
 pub mut:
-	webnames map[string]string
+	publisher 	&Publisher
+	webnames 		map[string]string
 }
 
 enum FileType {
@@ -428,7 +428,7 @@ pub fn (mut app App) index() vweb.Result {
 }
 
 // Run server
-pub fn webserver_run(mut publisher Publisher) ? {
+pub fn webserver_run(mut publisher &Publisher) ? {
 	publisher.check() ?
 	publisher.config.update_staticfiles(false) ?
 

@@ -60,7 +60,7 @@ pub fn (mut site Site) error_ignore_check(name string) bool {
 	return false
 }
 
-pub fn (site Site) page_get(name string, mut publisher Publisher) ?&Page {
+pub fn (site Site) page_get(name string, mut publisher &Publisher) ?&Page {
 	mut namelower := texttools.name_fix(name)
 	if namelower in site.pages {
 		return publisher.page_get_by_id(site.pages[namelower])
@@ -68,7 +68,7 @@ pub fn (site Site) page_get(name string, mut publisher Publisher) ?&Page {
 	return error('cannot find page with name $name')
 }
 
-pub fn (site Site) file_get(name string, mut publisher Publisher) ?&File {
+pub fn (site Site) file_get(name string, mut publisher &Publisher) ?&File {
 	mut namelower := texttools.name_fix(name)
 	if namelower in site.files {
 		file := publisher.file_get_by_id(site.files[namelower]) ?

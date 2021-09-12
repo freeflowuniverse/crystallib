@@ -30,7 +30,7 @@ pub fn (mut def Def) categories_add(categories []string) {
 	}
 }
 
-pub fn (def Def) page_get(mut publisher Publisher) ?&Page {
+pub fn (def Def) page_get(mut publisher &Publisher) ?&Page {
 	return publisher.page_get_by_id(def.pageid)
 }
 

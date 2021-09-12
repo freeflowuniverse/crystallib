@@ -54,13 +54,13 @@ pub mut:
 	consumer_page_id int //is the id of the page which has the link
 }
 
-fn link_new(original_descr string, original_link string, isimage bool) Link {
+fn link_new(mut publisher &Publisher, original_descr string, original_link string, isimage bool) Link {
 	mut link := Link{
 		original_descr: original_descr.trim(' ')
 		original_link: original_link.trim(' ')
 		isimage: isimage
 	}
-	link.init_()
+	link.init_(mut publisher)
 	return link
 }
 
@@ -75,8 +75,9 @@ fn (link Link) original_get() string {
 // return how to represent link on server
 // page is the page from where the link is on
 fn (mut link Link) server_get(mut publisher &Publisher) string {
-	mut page_source := link.page_source_get(mut publisher) or { panic(err) }
+	
 	if link.cat == LinkType.page {
+		mut page_source := link.page_source_get(mut publisher) or { panic(err) }
 		// mut page := link.page_link_get(mut publisher &Publisher)
 		if link.newtab == false {
 			if page_source.sidebarid > 0 && link.filename.to_lower()!="readme" {
@@ -317,33 +318,33 @@ fn (mut link Link) init_(mut publisher &Publisher) {
 }
 
 //get the page where is linked too
-pub fn (mut link Link) page_link_get(mut publisher Publisher) ?&Page{
+pub fn (mut link Link) page_link_get(mut publisher &Publisher) ?&Page{
 	if link.page_file_id==0{
 		return error("consumer page_link id cannot be 0./n$link")
 	}
 	if link.cat == LinkType.page {
-		return publisher.page_get_by_id(link.page_file_id)?
+		return publisher.page_get_by_id(link.page_file_id)
 	}
 	return error("can only return Page")
 }
 
 //get the page which has the link
-pub fn (mut link Link) page_source_get(mut publisher Publisher) ?&Page{
+pub fn (mut link Link) page_source_get(mut publisher &Publisher) ?&Page{
 	if link.consumer_page_id==0{
 		return error("page_link id cannot be 0./n$link")
 	}
 	if link.cat == LinkType.page {
-		return publisher.page_get_by_id(link.consumer_page_id)?
+		return publisher.page_get_by_id(link.consumer_page_id)
 	}
 	return error("can only return Page")
 }
 
-fn (mut link Link) file_get(mut publisher Publisher) ?&Page{
+fn (mut link Link) file_get(mut publisher &Publisher) ?&File{
 	if link.page_file_id==0{
 		return error("file id cannot be 0./n$link")
 	}
 	if link.cat == LinkType.file {
-		return publisher.file_get_by_id(link.page_file_id)?
+		return publisher.file_get_by_id(link.page_file_id)
 	}
 	return error("can only return File")
 }
@@ -351,7 +352,7 @@ fn (mut link Link) file_get(mut publisher Publisher) ?&Page{
 
 // used by the line processor on page (page walks over content line by line to parts links, 
 // checks if valid here)
-fn (mut link Link) check(mut publisher Publisher, mut page Page, linenr int, line string) {
+fn (mut link Link) check(mut publisher &Publisher, mut page Page, linenr int, line string) {
 	// mut filename_complete := ''
 	// mut site := &publisher.sites[page.site_id]
 
@@ -403,7 +404,7 @@ fn (mut link Link) check(mut publisher Publisher, mut page Page, linenr int, lin
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT REALITIES
 // returns all the links
-pub fn link_parser(text string, consumer_page_id int) ParseResult {
+pub fn link_parser(mut publisher &Publisher,text string, consumer_page_id int) ParseResult {
 	mut charprev := ''
 	mut char := ''
 	mut state := ParseStatus.start
@@ -464,8 +465,8 @@ pub fn link_parser(text string, consumer_page_id int) ParseResult {
 				// original += char
 				if char == ')' {
 					// end of capture group
-					mut link := link_new(capturegroup_pre.trim(' '), capturegroup_post.trim(' '),
-						isimage)
+					mut link := link_new(mut publisher, capturegroup_pre.trim(' '), 
+						capturegroup_post.trim(' '),isimage)
 					//remember the consumer page
 					link.consumer_page_id = consumer_page_id
 					parseresult.links << link
