@@ -104,7 +104,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 
 		site_config.publish_path = dest_dir
 
-		the_config := json.encode_pretty(site_config)
+		the_config := json.encode_pretty(site_config.raw)
 		os.write_file('$dest_dir/config_site.json', the_config) ?	
 		os.write_file('$dest_dir_publ/config_wiki_'+site_config.name+'.json', the_config) ?		
 
