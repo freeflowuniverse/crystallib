@@ -22,17 +22,26 @@ pub fn new(config publisher_config.ConfigRoot) ?Publisher {
 // check all pages, try to find errors
 pub fn (mut publisher Publisher) check() ? {
 	for mut site in publisher.sites {
+		if site.config.cat != publisher_config.SiteCat.wiki{
+			continue
+		}
 		site.load(mut publisher)?
 	}
 
 	// now the defs are loaded
 	// so we can write the default defs pages
 	for mut site in publisher.sites {
+		if site.config.cat != publisher_config.SiteCat.wiki{
+			continue
+		}
 		// write default def page for all categories
 		publisher.defs_init([], ['tech'], mut site, '')
 	}
 
 	for mut site in publisher.sites {
+		if site.config.cat != publisher_config.SiteCat.wiki{
+			continue
+		}
 		site.process(mut publisher)?
 	}
 }

@@ -68,6 +68,11 @@ pub fn (mut publisher Publisher) flatten() ? {
 
 	for mut site in publisher.sites {
 		sc:=site.config
+		// Ignore Websites
+		if sc.cat != publisher_config.SiteCat.wiki{
+			println(' - Skip: $sc.name, It is not a wiki!')
+			continue
+		}
 		println(' - publish:$sc.git_url()')
 
 		// site.files_process(mut publisher) ? // NO NEED TO PROCESS SITE AGAIN ALREADY DONE IN CHECK LINE 55 FOR ALL WEBSITES
@@ -91,15 +96,6 @@ pub fn (mut publisher Publisher) flatten() ? {
 		errors_t := publisher.errors_get(site)?
 		the_errors2 := json.encode_pretty(errors_t)
 		os.write_file('$dest_dir/errors.json', the_errors2) ?
-		for c in config.sites {
-			if c.cat == publisher_config.SiteCat.web {
-				continue
-			}
-			// ignore websites
-			if c.name == site.name {
-				break
-			}
-		}
 		// write the defs file
 		the_defs := json.encode_pretty(pd)
 		os.write_file('$dest_dir/defs.json', the_defs) ?
