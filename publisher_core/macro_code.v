@@ -1,6 +1,5 @@
 module publisher_core
 
-import time
 import despiegk.crystallib.texttools
 import despiegk.crystallib.gittools
 import os

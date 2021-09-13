@@ -15,12 +15,8 @@ pub fn sites_list(names []string) ? {
 			return error('cannot detect if there are changes on repo.\n$err')
 		}
 		mut changed := ''
-		mut shortname := ''
 		if change {
 			changed = ' (CHANGED)'
-		}
-		if site.name != '' {
-			shortname = '$site.name:  '
 		}
 		println(' - $site.name  ${site.repo_get().addr.url_http_get()} $changed')
 	}
