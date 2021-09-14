@@ -152,7 +152,7 @@ pub fn (mut publisher Publisher) files_get(namefull string) []&File {
 }
 
 // namefull is name with : if needed
-pub fn (mut publisher Publisher) pages_get(namefull string) []&Page {
+pub fn (mut publisher Publisher) pages_find(namefull string) []&Page {
 	sitename, itemname := name_split(namefull) or { panic(err) }
 	site_id := publisher.site_names[sitename]
 	mut res := []&Page{}
@@ -198,7 +198,7 @@ pub fn (mut publisher Publisher) page_get(namefull string) ?&Page {
 		site := publisher.site_get(sitename) ?
 		return site.page_get(itemname, mut publisher)
 	}
-	res := publisher.pages_get(namefull)
+	res := publisher.pages_find(namefull)
 	if res.len == 0 {
 		return error("Could not find page: '$namefull'")
 	} else if res.len > 1 {

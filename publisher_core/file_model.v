@@ -23,6 +23,13 @@ pub fn (file File) site_get(mut publisher &Publisher) ?&Site {
 	return publisher.site_get_by_id(file.site_id)
 }
 
+pub fn (file File) site_name_get(mut publisher &Publisher) string {
+	site := publisher.site_get_by_id(file.site_id) or {
+		panic("cannot find side with id: $file.site_id")
+	}
+	return site.name
+}
+
 pub fn (file File) path_relative_get(mut publisher &Publisher) string {
 	if file.path == '' {
 		panic('file path should never be empty, is bug')

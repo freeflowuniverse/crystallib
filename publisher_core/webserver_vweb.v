@@ -174,9 +174,11 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path str
 	mut publisherobj := rlock app.ctx {
 		app.ctx.publisher
 	}
+	
 	if path.ends_with('errors') || path.ends_with('error') || path.ends_with('errors.md')
 		|| path.ends_with('error.md') {
-		return return_wiki_errors(sitename, mut app)
+		app.set_content_type('text/html')
+		return return_html_errors(sitename, mut app)
 	}
 
 	if publisherobj.develop {
@@ -271,7 +273,7 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path str
 	}
 }
 
-fn return_wiki_errors(sitename string, mut app App) vweb.Result {
+fn return_html_errors(sitename string, mut app App) vweb.Result {
 	t := error_template(mut app, sitename)
 	if t.starts_with('ERROR:') {
 		return app.server_error(4)

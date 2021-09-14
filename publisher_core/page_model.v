@@ -50,6 +50,13 @@ pub fn (page Page) site_get(mut publisher &Publisher) ?&Site {
 	return publisher.site_get_by_id(page.site_id)
 }
 
+pub fn (page Page) site_name_get(mut publisher &Publisher) string {
+	site := publisher.site_get_by_id(page.site_id) or {
+		panic("cannot find side with id: $page.site_id")
+	}
+	return site.name
+}
+
 pub fn (page Page) site(mut publisher &Publisher) &Site {
 	mut s := publisher.site_get_by_id(page.site_id) or { panic(err) }
 	return s

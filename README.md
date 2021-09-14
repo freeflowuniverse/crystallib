@@ -47,7 +47,7 @@ v doc -all -m . -o docs/ -f html
 - site/page/file_get_by_id
 - file/page/file_exists
 - file/page/file_get
-- files/pages_get
+- files/pages_find
 - page_file_exists_state with bool selects page or file
   - page/file_exists_state (returns a state where we can see its double, error, ok means we found it onece)
 

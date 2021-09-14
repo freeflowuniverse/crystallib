@@ -121,6 +121,7 @@ fn (mut state LineProcessorState) error(msg string) {
 	// println(page_error)
 }
 
+//change what will be given by server to the client, so not change on source
 fn (mut state LineProcessorState) serverline_change(ffrom string, tto string) {
 	linelast := state.lines_server.pop()
 	state.lines_server << linelast.replace(ffrom, tto)
@@ -258,7 +259,9 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 				page_name_include = splitted_spaces[0]
 			}
 
-			mut page_linked := publisher.page_check_find(page_name_include, state.page.id) or {
+			// println(" -- include: '$page_name_include'")
+
+			mut page_linked := publisher.page_find(page_name_include, state.page.id) or {
 				state.error('include, cannot find page: ${page_name_include}.\n$err')
 				continue
 			}
@@ -268,10 +271,12 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 				continue
 			}
 
-			if page_linked.name_get(mut publisher, state.site.id) != page_name_include {
-				// means we need to change
-				state.serverline_change(page_name_include, page_linked.name_get(mut publisher,
-					state.site.id))
+			//make sure server will publish the full page
+			name_server := page_linked.name_get(mut publisher, state.site.id)
+			if  name_server != page_name_include {
+				// means we need to change on the server and source side
+				state.serverline_change(page_name_include, name_server)
+				state.sourceline_change(page_name_include, name_server)
 			}
 			page_linked.nrtimes_inluded++
 
@@ -312,9 +317,7 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 					continue
 				}
 				linkname = page_linked2.name_get(mut publisher, state.site.id)
-			}
-
-			if link.cat == LinkType.file {
+			}else if link.cat == LinkType.file {
 					mut file_linked2 := link.file_get(mut publisher) or {
 					state.error('link, cannot find file link: ${link.original_link}.\n$err')
 					continue
@@ -349,18 +352,20 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 					link.filename = linkname
 					link.init_(mut publisher)
 				}
+				// if line.contains(":smartcontract_it"){
+				// 	println(line)
+				// 	println(link)
+				// }
 				if link.state == LinkState.ok {
 					if link.original_get() != link.source_get(state.site.name) {
 						state.sourceline_change(link.original_get(), link.source_get(state.site.name))
-						if debug {
-							println(' >>>> $link.original_get() -> ${link.source_get(state.site.name)}')
-						}
+						println(' >> link replace: $link.original_get() -> ${link.source_get(state.site.name)}')
 					}
 					llink := link.server_get (mut &publisher)
 					state.serverline_change(link.original_get(),llink)
-					if debug {
-						println(' >>>> server: $link.original_get() -> $llink')
-					}
+					// if debug {
+					// 	println(' >>>> server: $link.original_get() -> $llink')
+					// }
 				}
 			}
 		} // end of the walk over all links

@@ -286,13 +286,14 @@ fn (mut link Link) init_(mut publisher &Publisher) {
 			if linktocheck.starts_with("!"){
 				linktocheck = linktocheck.after('!')
 			}
-			item_linked := publisher.page_check_find(linktocheck, link.consumer_page_id) or {
+			item_linked := publisher.page_find(linktocheck, link.consumer_page_id) or {
 				link.state = LinkState.error
 				link.error_msg = 'link, cannot find page: ${link.original_link}.\n$err'
 				link.state = LinkState.error
 				return
 			}
 			link.page_file_id = item_linked.id
+			link.site = item_linked.site_name_get(mut publisher)
 		}else if link.cat == LinkType.file {
 			mut linktocheck := link.original_link
 			item_linked := publisher.file_check_find(linktocheck, link.consumer_page_id) or {
@@ -302,8 +303,16 @@ fn (mut link Link) init_(mut publisher &Publisher) {
 				return
 			}
 			link.page_file_id = item_linked.id
+			link.site = item_linked.site_name_get(mut publisher)
 		}
+
+		if link.original_link.starts_with("*"){
+			link.filename = link.filename.all_after('*')
+			//don't replace original link name, otherwise will not replace
+		}
+
 		
+
 		// if link.original_link.starts_with("!"){
 		// 	println(link)
 		// 	panic("a")
@@ -349,7 +358,6 @@ fn (mut link Link) file_get(mut publisher &Publisher) ?&File{
 
 
 // used by the line processor on page (page walks over content line by line to parts links, 
-// checks if valid here)
 fn (mut link Link) check(mut publisher &Publisher, mut page Page, linenr int, line string) {
 	// mut filename_complete := ''
 	// mut site := &publisher.sites[page.site_id]

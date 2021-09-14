@@ -115,16 +115,17 @@ fn (mut publisher Publisher) file_check_find(name2find string, consumer_page_id 
 }
 
 // check if the page can be found over all sites
-fn (mut publisher Publisher) page_check_fix(name2find string, consumer_page_id int) ?&Page {
-	mut consumer_page := publisher.page_get_by_id(consumer_page_id) or { panic(err) }
+// is used by page_find , page_find does for multiple name combinations, this one only for 1
+fn (mut publisher Publisher) page_find_(name2find string, consumer_page_id int) ?&Page {
 
-	mut res := publisher.pages_get(name2find)
+	mut res := publisher.pages_find(name2find)
 
 	if res.len == 0 {
 		return error('cannot find the page: $name2find')
 	}
 	if res.len > 1 {
 		// we found more than 1 result, not ok cannot continue
+		mut consumer_page := publisher.page_get_by_id(consumer_page_id) or { panic(err) }
 		mut msg := 'we found more than 1 page for $name2find in source page:$consumer_page.name, doubles found:\n '
 		for p in res {
 			msg += '<br> - ${p.path_get(mut publisher)}<br>'
@@ -136,10 +137,9 @@ fn (mut publisher Publisher) page_check_fix(name2find string, consumer_page_id i
 	return res[0]
 }
 
-// check if we can find the page, page can be on another site
-// we check the page based on name & replaced version of name
+// check if we can find the page, page can be on another site|
 // we also check definitions because they can also lead to right page
-fn (mut publisher Publisher) page_check_find(name2find string, consumer_page_id int) ?&Page {
+pub fn (mut publisher Publisher) page_find(name2find_ string, consumer_page_id int) ?&Page {
 	if consumer_page_id==999999{
 		panic("consumer page id cannot be 999999")
 	}
@@ -147,49 +147,89 @@ fn (mut publisher Publisher) page_check_find(name2find string, consumer_page_id 
 		panic('page get by id:$consumer_page_id\n$err')
 	}
 	mut consumer_site := consumer_page.site_get(mut publisher) or { panic("site_get:'n$err") }
-	_, mut objname := name_split(name2find) ?
-	mut objname_full := '$consumer_site.name:$objname'
-	mut objname_replaced := publisher.replacer.file.replace(text:objname) or {
-		panic('file_replace:\n$err')
+
+	//if healing then will look for more files to fix, find files more easily
+	//can be dangerous !!!
+	mut heal:= false
+	if "HEAL" in os.environ(){
+		heal= true
 	}
 
+	//if we heal then we look for moresites
+	mut moresites := heal
+	mut name2find := name2find_
+	if name2find.starts_with("*"){
+		//will look over multiple sites
+		name2find = name2find.all_after("*")
+		moresites = true		
+	}
+
+	sitename , objname := name_split(name2find) ?
+	// mut objname_replaced := publisher.replacer.file.replace(text:objname) or {
+	// 	panic('file_replace:\n$err')
+	// }
+
+	if moresites && sitename != "" && heal == false {
+		//is error because can not do wildcard search if sitename has been specified
+		return error("can not do wildcard search if sitename has been specified for $name2find")
+	}
+
+
 	// didn't find a better way how to do it, more complicated than it should I believe
-	for x in 0 .. 6 {
-		if x == 0 {
+	for x in 0 .. 4 {
+
+		//check name can be found as mentioned with full name
+		if sitename != ''{
+			if x == 0  {
+				// first check if we can find the page with full original name, if not is error
+				zzz := publisher.page_find_('$sitename:$objname', consumer_page_id) or { continue }
+				return zzz
+			}else{
+				if ! heal{
+					return error('cannot find the file: $name2find, looked on site \'$sitename\'.')
+				}
+			}
+		}
+
+		//lets now check that we can find the name in the site itself, if yes is ok
+		if x == 1  {
 			// first check if we can find the page in the site itself
-			zzz := publisher.page_check_fix(objname_full, consumer_page_id) or { continue }
+			zzz := publisher.page_find_('$consumer_site.name:$objname', consumer_page_id) or { continue }
 			return zzz
 		}
 
-		if x == 1 {
-			// now check if we can find it more generic, site name can be defined here
-			zzz := publisher.page_check_fix(name2find, consumer_page_id) or { continue }
-			return zzz
-		}
-
-		if x == 2 && name2find != objname {
-			// now check if we can find it more generic
-			zzz := publisher.page_check_fix(objname, consumer_page_id) or { continue }
+		if x == 2 && moresites {
+			// lets now check on name over all sites
+			// println(" -- find: '$sitename' '$objname' (moresites)")
+			zzz := publisher.page_find_(objname, consumer_page_id) or { continue }
+			// println(" --- FOUND")
 			return zzz
 		}
 
 		if x == 3 {
-			zzz := publisher.page_check_fix(objname_replaced, consumer_page_id) or { continue }
-			return zzz
-		}
-
-		if x == 4 {
 			// lets now try if we can get if from definitions
 			zzz := publisher.def_page_get(objname) or { continue }
 			return zzz
 		}
 
-		if x == 5 {
-			// lets now try if we can get if from definitions but replaced
-			zzz := publisher.def_page_get(objname_replaced) or { continue }
-			return zzz
-		}
+		// if x == 3 && name2find != objname {
+		// 	// now check if we can find it more generic
+		// 	zzz := publisher.page_find_(objname, consumer_page_id) or { continue }
+		// 	return zzz
+		// }
+
+		// if x == 3 {
+		// 	zzz := publisher.page_find_(objname_replaced, consumer_page_id) or { continue }
+		// 	return zzz
+		// }
+
+
+		// if x == 5 {
+		// 	// lets now try if we can get if from definitions but replaced
+		// 	zzz := publisher.def_page_get(objname_replaced) or { continue }
+		// 	return zzz
+		// }
 	}
-	// we did not manage to find a page, not even after replace
-	return error('cannot find the file: $name2find')
+	// we did not manage to find a page
+	return error('cannot find the page: $name2find')
 }
