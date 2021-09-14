@@ -63,16 +63,21 @@ fn (mut publisher Publisher) replace_defs_links(mut page &Page) ?string {
 
 	mut page_sidebar := page.sidebar_page_get(mut publisher) or { panic(err) }
 	mut path_sidebar := page_sidebar.path_dir_relative_get(mut publisher).trim(" /")
-	println(" ==== $path_sidebar")
+	// println(" ==== $path_sidebar")
 
 	for defname, defid in publisher.def_names {
+		if page.name == defname{
+			continue
+		}
 		defobj := publisher.def_get_by_id(defid) ?
 		page2 := defobj.page_get(mut publisher) ?
 		site2 := page2.site(mut publisher)
 		if path_sidebar == ""{
 			replacer[defname] = '[$defobj.name](${site2.name}__$page2.name)'
+			replacer[defname+"s"] = '[${defobj.name}s](${site2.name}__$page2.name)'
 		}else{
 			replacer[defname] = '[$defobj.name](/$path_sidebar/${site2.name}__$page2.name)'
+			replacer[defname+"s"] = '[${defobj.name}s](/$path_sidebar/${site2.name}__$page2.name)'
 		}
 	}
 	result := texttools.replace_items(text, replacer)

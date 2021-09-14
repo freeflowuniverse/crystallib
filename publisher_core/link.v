@@ -114,9 +114,9 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 		if link.isimage {
 			// return '![$link.description](${link.site}__$link.filename  $link.extra)'
 			if link.extra==""{
-				return '![$link.description]($link.filename)'
+				return '![$link.description](${link.site}__$link.filename)'
 			}else{
-				return '![$link.description]($link.filename $link.extra)'
+				return '![$link.description](${link.site}__$link.filename $link.extra)'
 			}
 			
 		}

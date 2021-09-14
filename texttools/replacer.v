@@ -15,7 +15,8 @@ pub fn replace_items(text string, replacer map[string]string) string {
 	mut keys := []string{}
 	mut var := ""
 	mut char := ""
-	toskip := "/.|:"
+	toskip := "/.|:'`"
+	mut done := []string{}
 
 	mut replacer2 :=  map[string]string{}
 
@@ -26,7 +27,6 @@ pub fn replace_items(text string, replacer map[string]string) string {
 	for key in keys {
 		key2 := texttools.name_fix_no_underscore_token(key)
 		replacer2[key2] = replacer[key]
-		replacer2[key2+"s"] = replacer[key]+"s"
 	}
 
 	text_lines := text.split('\n')
