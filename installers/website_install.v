@@ -15,7 +15,7 @@ pub fn website_install(names []string, first bool) ? {
 		mut repo := site.repo_get()
 		base := conf.publish.paths.base
 		nodejspath := conf.nodejs.path
-		mut path := site.path
+		mut path := site.path.path
 		
 		println(' - install website $site.name on $path')
 

@@ -18,9 +18,6 @@ pub fn sites_list(names []string) ? {
 		if change {
 			changed = ' (CHANGED)'
 		}
-		// if site.name != '' {
-		// 	shortname := '$site.name:  '
-		// }
 		println(' - $site.name  ${site.repo_get().addr.url_http_get()} $changed')
 	}
 	println("\n")

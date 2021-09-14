@@ -1,5 +1,4 @@
 module publisher_core
-import despiegk.crystallib.texttools
 import os
 
 // remember the file, so we know if we have duplicates
