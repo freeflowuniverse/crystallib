@@ -117,14 +117,6 @@ fn multiline_end(multiline_first string, multiline string) string {
 	return multiline2
 }
 
-// //check the char is in a...Z0..9
-// fn is_var_char(char string) bool{
-//     tocheck:="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
-//     if char in tocheck{
-//         return true
-//     }
-//     return false
-// }
 
 // //find variables which is $[a...zA...Z0...9]
 // pub fn template_find_args(text string)[]string{

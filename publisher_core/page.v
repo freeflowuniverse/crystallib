@@ -352,10 +352,7 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 					link.filename = linkname
 					link.init_(mut publisher)
 				}
-				// if line.contains(":smartcontract_it"){
-				// 	println(line)
-				// 	println(link)
-				// }
+
 				if link.state == LinkState.ok {
 					if link.original_get() != link.source_get(state.site.name) {
 						state.sourceline_change(link.original_get(), link.source_get(state.site.name))
@@ -366,7 +363,13 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 					// if debug {
 					// 	println(' >>>> server: $link.original_get() -> $llink')
 					// }
+					if line.contains("grid_home"){
+						println(line)
+						println(link)
+						println(llink)
+					}						
 				}
+			
 			}
 		} // end of the walk over all links
 	} // end of the line walk
@@ -395,10 +398,10 @@ fn (mut page Page) title() string {
 
 // return a page where all definitions are replaced with link
 fn (mut page Page) replace_defs(mut publisher &Publisher) ? {
-	if page.replaced {
-		return
-	}
-	new_content := publisher.replace_defs_links(page.content) ?
+	// if page.replaced {
+	// 	return
+	// }
+	new_content := publisher.replace_defs_links(mut &page) ?
 
 	page.content = new_content
 	page.replaced = true

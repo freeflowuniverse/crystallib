@@ -79,22 +79,22 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 	
 	if link.cat == LinkType.page {
 		mut page_source := link.page_source_get(mut publisher) or { panic(err) }
-		// mut page := link.page_link_get(mut publisher &Publisher)
+		mut page_dest := link.page_link_get(mut publisher) or { panic(err) }
 		if link.newtab == false {
-			if page_source.sidebarid > 0 && link.filename.to_lower()!="readme" {
+			if page_dest.sidebarid > 0 && link.filename.to_lower()!="readme" {
 				// return '[$link.description](${link.site}__${link.filename}.md)'	
 
-				mut page_sidebar := page_source.sidebar_page_get(mut publisher) or { panic(err) }
+				mut page_sidebar := page_dest.sidebar_page_get(mut publisher) or { panic(err) }
 				mut path_sidebar := page_sidebar.path_dir_relative_get(mut publisher).trim(" /")
 
-				if page_source.name == "sidebar"{
-					println(" - serverget: path_sidebar:$path_sidebar $link.filename")	
-				}
+				// if page_dest.name == "sidebar"{
+				// 	println(" - serverget: path_sidebar:$path_sidebar $link.filename")	
+				// }
 
 				// println(" - serverget: path_sidebar:$path_sidebar $link.filename")
 
 				if path_sidebar != ""{
-					site := page_source.site_get(mut publisher) or { panic(err) }
+					site := page_dest.site_get(mut publisher) or { panic(err) }
 					if link.site != site.name{
 						return '<a href="/info/${link.site}/#/$path_sidebar/$link.filename"> $link.description </a>'
 					}else{
