@@ -85,9 +85,10 @@ pub fn (mut config ConfigRoot) update_staticfiles(force bool) ? {
 			// Fix cookie-consent.js :: fix the recursion error
 			if file == 'cookie-consent.js'{
 				fix_cmd := "cd $p && sed -i 's/(\\\\#\[-a-z\\\\d_\]\*)/(\\\\#\[\/-a-z\\\\d_\]\*)/g' cookie-consent.js"
-				process.execute_silent(fix_cmd) or {
-					return error(" *** WARNING: can not  fix ${dest}. \n$fix_cmd \n$err")
-				}
+				//TODO: had to comment to get it to work
+				// process.execute_silent(fix_cmd) or {
+				// 	return error(" *** WARNING: can not  fix ${dest}. \n$fix_cmd \n$err")
+				// }
 			}
 			println(' - downloaded $link')
 		}
