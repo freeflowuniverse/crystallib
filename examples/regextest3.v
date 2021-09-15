@@ -10,7 +10,7 @@ fn main() {
 			ignorecase = true
 			precomposeunicode = true
 	[remote "origin"]
-			url = https://github.com/crystaluniverse/crystaltools
+			url = https://github.com/freeflowuniverse/crystaltools
 			fetch = +refs/heads/*:refs/remotes/origin/*
 	[branch "master"]
 			remote = origin

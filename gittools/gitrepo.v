@@ -165,7 +165,7 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ? {
 			mut branchname := repo.branch_get() ?
 			// println( " - branch detected: $branchname, branch on repo obj:'$repo.addr.branch'")
 			branchname = branchname.trim('\n ')
-			if branchname != repo.addr.branch {
+			if branchname != repo.addr.branch && pull_soft {
 				println(' - branch switch $branchname -> $repo.addr.branch for $url')
 				repo.branch_switch(repo.addr.branch) ?
 				//need to pull now

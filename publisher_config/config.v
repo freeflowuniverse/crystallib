@@ -21,9 +21,6 @@ fn config_load() ?ConfigRoot {
 		println(' - found PUBSITE in environment variables, will use this one for config dir.')
 		println(' - get git repo to fetch config for publ tools: $url')
 		r := gt2.repo_get_from_url(url: url, pull: false) ?
-		// println(r.addr)
-		// println(r.path_content_get())
-		// panic("s")
 		println(' - changedir for config: $r.path_content_get()')
 		os.chdir(r.path_content_get()) ?
 	}
@@ -116,8 +113,8 @@ fn config_load() ?ConfigRoot {
 			config.nodejs.version = NodejsCat.latest
 		}
 		config.nodejs.nvm = fsnodejs.nvm
-	} else {
-		println(' - Not Found config file for NodeJS. Default values applied')
+	// } else {
+	// 	println(' - Not Found config file for NodeJS. Default values applied')
 	}
 	config.init_nodejs() // Init nodejs configurations
 
