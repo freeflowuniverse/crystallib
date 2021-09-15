@@ -1,6 +1,6 @@
 import os
-import despiegk.crystallib.tmux
-import despiegk.crystallib.builder
+import tmux
+import builder
 
 fn tmuxtest(node_args builder.NodeArguments) ?bool {
 	os.log('TMUX-EXAMPLE - Create tmux object, scan function called')

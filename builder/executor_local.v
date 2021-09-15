@@ -1,6 +1,6 @@
 module builder
 
-import despiegk.crystallib.process
+import process
 import os
 
 pub struct ExecutorLocal {

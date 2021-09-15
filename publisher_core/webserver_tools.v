@@ -1,6 +1,6 @@
 module publisher_core
 
-import despiegk.crystallib.publisher_config
+import publisher_config
 
 // replace the text from domain name to localhost url
 fn domain_replacer(webnames map[string]string, text_ string) string {

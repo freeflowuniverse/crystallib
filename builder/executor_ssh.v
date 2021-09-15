@@ -2,7 +2,7 @@ module builder
 
 import os
 import rand
-import despiegk.crystallib.process
+import process
 
 pub struct ExecutorSSH {
 mut:

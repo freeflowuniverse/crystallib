@@ -1,7 +1,7 @@
 module publisher_core
 
-import despiegk.crystallib.texttools
-import despiegk.crystallib.publisher_config
+import texttools
+import publisher_config
 
 [heap]
 struct Publisher {

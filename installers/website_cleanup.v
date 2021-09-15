@@ -1,9 +1,9 @@
 module installers
 
 import os
-import despiegk.crystallib.publisher_config
-import despiegk.crystallib.process
-import despiegk.crystallib.texttools
+import publisher_config
+import process
+import texttools
 
 pub fn website_cleanup(name string) ? {
 	mut conf := publisher_config.get()

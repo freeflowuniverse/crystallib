@@ -2,8 +2,8 @@ module redisserver
 
 // NEED TO USE RESP2
 import net
-import despiegk.crystallib.resp2
-import despiegk.crystallib.redisclient
+import resp2
+import redisclient
 
 pub struct RedisInstance {
 pub mut:

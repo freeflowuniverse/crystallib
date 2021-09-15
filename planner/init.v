@@ -1,6 +1,6 @@
 module planner
 
-import despiegk.crystallib.redisclient
+import redisclient
 
 [heap]
 struct Planner {

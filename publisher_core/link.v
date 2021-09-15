@@ -1,6 +1,6 @@
 module publisher_core
 
-import despiegk.crystallib.texttools
+import texttools
 import os
 
 enum ParseStatus {

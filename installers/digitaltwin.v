@@ -3,9 +3,9 @@ module installers
 // import builder
 // import nodejs
 import os
-import despiegk.crystallib.process
-import despiegk.crystallib.publisher_config
-import despiegk.crystallib.gittools
+import process
+import publisher_config
+import gittools
 
 pub fn digitaltwin_install(update bool) ? {
 	mut conf := publisher_config.get()

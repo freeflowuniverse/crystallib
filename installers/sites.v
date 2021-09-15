@@ -1,7 +1,7 @@
 module installers
 
-import despiegk.crystallib.publisher_config
-import despiegk.crystallib.publisher_core
+import publisher_config
+import publisher_core
 
 import os
 

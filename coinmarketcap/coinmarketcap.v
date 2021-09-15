@@ -2,7 +2,7 @@ module coinmarketcap
 import os
 import x.json2
 import net.http
-import despiegk.crystallib.redisclient
+import redisclient
 import crypto.md5
 
 struct CoinMarketConnection {

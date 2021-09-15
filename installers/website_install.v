@@ -1,10 +1,10 @@
 module installers
 
 import os
-import despiegk.crystallib.publisher_config
-import despiegk.crystallib.process
-import despiegk.crystallib.gittools
-import despiegk.crystallib.texttools
+import publisher_config
+import process
+import gittools
+import texttools
 
 // Initialize (load wikis) only once when server starts
 pub fn website_install(names []string, first bool) ? {

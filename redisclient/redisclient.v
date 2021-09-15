@@ -5,7 +5,7 @@ module redisclient
 import net
 // import strconv
 import time
-import despiegk.crystallib.resp2
+import resp2
 
 const default_read_timeout = net.infinite_timeout
 

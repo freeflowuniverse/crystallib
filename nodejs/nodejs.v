@@ -1,9 +1,9 @@
 module nodejs
 
 import os
-import despiegk.crystallib.builder
-import despiegk.crystallib.process
-import despiegk.crystallib.publisher_config
+import builder
+import process
+import publisher_config
 
 struct NodeJS{
 pub mut:

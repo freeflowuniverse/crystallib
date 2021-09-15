@@ -2,11 +2,11 @@ module installers
 
 
 import os
-import despiegk.crystallib.builder
-import despiegk.crystallib.publisher_config
-import despiegk.crystallib.process
-import despiegk.crystallib.nodejs
-import despiegk.crystallib.gittools
+import builder
+import publisher_config
+import process
+import nodejs
+import gittools
 
 pub fn web(doreset bool, clean bool) ? {
 

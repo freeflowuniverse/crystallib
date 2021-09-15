@@ -1,7 +1,7 @@
 module actionparser
 
 import os
-import despiegk.crystallib.texttools
+import texttools
 
 enum ParseBlockStatus {
 	start

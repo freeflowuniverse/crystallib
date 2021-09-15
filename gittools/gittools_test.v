@@ -188,18 +188,18 @@ fn test_url2() {
 // fn test_path1() {
 // 	mut s := new("",false)?
 
-// 	addr := s.addr_get_from_url('https://github.com/crystaluniverse/crystaltools')
+// 	addr := s.addr_get_from_url('https://github.com/freeflowuniverse/crystaltools')
 // 	mut r := s.repo_get(addr) or { panic('cannot load git $addr.url\n$err\n') }
 
 // 	println(r.url_get())
 
 // 	if ssh_agent_loaded() {
-// 		assert r.url_get() == 'git@github.com:crystaluniverse/crystaltools.git'
+// 		assert r.url_get() == 'git@github.com:freeflowuniverse/crystaltools.git'
 // 	} else {
-// 		assert r.url_get() == 'https://github.com/crystaluniverse/crystaltools'
+// 		assert r.url_get() == 'https://github.com/freeflowuniverse/crystaltools'
 // 	}
 
-// 	path := '~/code/github/crystaluniverse/crystaltools'
+// 	path := '~/code/github/freeflowuniverse/crystaltools'
 // 	obj := addr_get_from_path(path)
 
 // 	tocompare := GitAddr{
@@ -216,7 +216,7 @@ fn test_url2() {
 // fn test_changes() {
 // 	mut s := new("",false)?
 
-// 	addr := s.addr_get_from_url('https://github.com/crystaluniverse/crystaltools')
+// 	addr := s.addr_get_from_url('https://github.com/freeflowuniverse/crystaltools')
 // 	mut r := s.repo_get(addr) or { panic('cannot load git repo:\n$err\n$addr') }
 
 // 	println(r.changes())

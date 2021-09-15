@@ -1,6 +1,6 @@
 module docker
 
-import despiegk.crystallib.builder
+import builder
 
 pub enum DockerContainerStatus {
 	up

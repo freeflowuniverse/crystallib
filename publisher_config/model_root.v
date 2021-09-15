@@ -3,7 +3,7 @@ module publisher_config
 import os
 
 // the main config file as used for the publisher
-[heap]
+[heap; params]
 pub struct ConfigRoot {
 // mut:
 	// root    string

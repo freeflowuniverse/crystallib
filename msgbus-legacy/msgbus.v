@@ -1,9 +1,9 @@
 module msgbus
 
-import despiegk.crystallib.redisclient
+import redisclient
 import time
 import json
-import despiegk.crystallib.digitaltwin
+import digitaltwin
 
 struct MSGBusConnection {
 mut:

@@ -1,8 +1,8 @@
 module installers
 
-import despiegk.crystallib.publisher_config
-import despiegk.crystallib.process
-// import despiegk.crystallib.path
+import publisher_config
+import process
+// import path
 import json
 
 import os

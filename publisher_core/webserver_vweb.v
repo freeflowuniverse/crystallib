@@ -1,9 +1,9 @@
 module publisher_core
 
-import despiegk.crystallib.texttools
+import texttools
 import os
 import vweb
-import despiegk.crystallib.publisher_config
+import publisher_config
 import json
 
 // this webserver is used for looking at the builded results

@@ -1,5 +1,5 @@
 module publisher_core
-// import despiegk.crystallib.path
+// import path
 
 import os
 

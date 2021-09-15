@@ -1,7 +1,7 @@
 module publisher_core
 
-import despiegk.crystallib.publisher_config
-import despiegk.crystallib.hostsfile
+import publisher_config
+import hostsfile
 
 pub fn dns_on(sudo bool) {
 	mut domains := []string{}

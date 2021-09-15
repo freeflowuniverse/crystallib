@@ -2,8 +2,8 @@ module publisher_core
 
 import json
 import strconv
-import despiegk.crystallib.texttools
-import despiegk.crystallib.tokens
+import texttools
+import tokens
 
 struct ChartData {
 	label string
@@ -214,7 +214,7 @@ fn macro_tokens_account_info(mut state LineProcessorState, mut macro texttools.M
 	}
 
 	mut raw := '$s'
-	raw = raw.replace('despiegk.crystallib.tokens.', '')
+	raw = raw.replace('crystallib.tokens.', '')
 
 	out << ''
 	out << '**[stellar link](https://stellar.expert/explorer/public/account/$accid)**'

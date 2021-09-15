@@ -1,8 +1,8 @@
 module gittools
 
 import os
-import crystallib.process
-// import despiegk.crystallib.path
+import process
+// import path
 
 
 fn (repo GitRepo) path_account_get() string {
@@ -35,6 +35,9 @@ pub fn (repo GitRepo) path() string {
 }
 
 pub fn (repo GitRepo) path_get() string {
+	if repo.path != ""{
+		return repo.path
+	}
 	mut gitstructure := gittools.new()
 	if gitstructure.multibranch {
 		return '$repo.path_account_get()/$repo.addr.name/$repo.addr.branch'
@@ -162,7 +165,7 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ? {
 			mut branchname := repo.branch_get() ?
 			// println( " - branch detected: $branchname, branch on repo obj:'$repo.addr.branch'")
 			branchname = branchname.trim('\n ')
-			if branchname != repo.addr.branch {
+			if branchname != repo.addr.branch && pull_soft {
 				println(' - branch switch $branchname -> $repo.addr.branch for $url')
 				repo.branch_switch(repo.addr.branch) ?
 				//need to pull now
@@ -184,7 +187,7 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ? {
 // pulls remote content in, will fail if there are local changes
 // when using force:true it means we reset, overwrite all changes
 pub fn (mut repo GitRepo) pull() ? {
-	println(' - PULL: ${repo.url_get(true)}')
+	println('   - PULL: ${repo.url_get(true)}')
 	if !os.exists(repo.path()) {
 		repo.check(false, false) ?
 	} else {
@@ -244,6 +247,7 @@ pub fn (mut repo GitRepo) remove_changes() ? {
 }
 
 pub fn (mut repo GitRepo) push() ? {
+	println('   - PUSH: ${repo.url_get(true)}')
 	cmd := 'cd $repo.path() && git push'
 	process.execute_silent(cmd) or {
 		return error('Cannot push repo: ${repo.path()}. Error was $err')
