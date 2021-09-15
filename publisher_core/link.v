@@ -296,7 +296,7 @@ fn (mut link Link) init_(mut publisher &Publisher) {
 			link.site = item_linked.site_name_get(mut publisher)
 		}else if link.cat == LinkType.file {
 			mut linktocheck := link.original_link
-			item_linked := publisher.file_check_find(linktocheck, link.consumer_page_id) or {
+			item_linked := publisher.file_find(linktocheck, link.consumer_page_id) or {
 				link.state = LinkState.error
 				link.error_msg = 'link, cannot find file: ${link.original_link}.\n$err'
 				link.state = LinkState.error

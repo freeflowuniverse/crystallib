@@ -38,7 +38,7 @@ fn (mut publ Publisher) name_split_alias(name string) ?(string, string) {
 
 // check if the file can be found and add the file to the site if needed
 // it will also rename the file if needed
-fn (mut publisher Publisher) file_check_fix(name2find string, consumer_page_id int) ?&File {
+fn (mut publisher Publisher) file_find_(name2find string, consumer_page_id int) ?&File {
 	consumer_page := publisher.page_get_by_id(consumer_page_id) or { panic(err) }
 	mut consumer_site := consumer_page.site_get(mut publisher) or { panic(err) }
 
@@ -70,7 +70,7 @@ fn (mut publisher Publisher) file_check_fix(name2find string, consumer_page_id i
 
 // check if we can find the file, if not copy to site if found in other site
 // we check the file based on name & replaced version of name
-fn (mut publisher Publisher) file_check_find(name2find string, consumer_page_id int) ?&File {
+fn (mut publisher Publisher) file_find(name2find string, consumer_page_id int) ?&File {
 	if consumer_page_id==999999{
 		mut consumer_page2 := publisher.page_get_by_id(consumer_page_id) or { panic(err) }
 		println(consumer_page2)
@@ -88,24 +88,24 @@ fn (mut publisher Publisher) file_check_find(name2find string, consumer_page_id 
 
 	for x in 0 .. 4 {
 		if x == 0 {
-			zzz := publisher.file_check_fix(objname_full, consumer_page_id) or { continue }
+			zzz := publisher.file_find_(objname_full, consumer_page_id) or { continue }
 			return zzz
 		}
 
 		if x == 1 {
-			zzz := publisher.file_check_fix(name2find, consumer_page_id) or { continue }
+			zzz := publisher.file_find_(name2find, consumer_page_id) or { continue }
 			return zzz
 		}
 
 		if x == 2 {
 			if objname != name2find {
-				zzz := publisher.file_check_fix(objname, consumer_page_id) or { continue }
+				zzz := publisher.file_find_(objname, consumer_page_id) or { continue }
 				return zzz
 			}
 		}
 
 		if x == 3 {
-			zzz := publisher.file_check_fix(objname_replaced, consumer_page_id) or { continue }
+			zzz := publisher.file_find_(objname_replaced, consumer_page_id) or { continue }
 			return zzz
 		}
 	}
@@ -152,6 +152,7 @@ pub fn (mut publisher Publisher) page_find(name2find_ string, consumer_page_id i
 	//can be dangerous !!!
 	mut heal:= false
 	if "HEAL" in os.environ(){
+		println("#### WARNING HEALING MODE, CHECK CHANGES ###")
 		heal= true
 	}
 
