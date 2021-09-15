@@ -1,7 +1,6 @@
 module coinmarketcap
-
+import os
 import x.json2
-import json
 import net.http
 import despiegk.crystallib.redisclient
 import crypto.md5
@@ -38,16 +37,17 @@ pub fn new(args CMCNewArgs) CoinMarketConnection {
 	Output:
 		CoinMarketConnection: Client contains taiga auth details, taiga url, redis cleint and cache timeout.
 	*/
-	if args.secret=="" and "CMCKEY" in os.eviron(){
-		args.secret = os.environ()["CMCKEY"]
+	mut updated_args := args
+	if args.secret=="" && "CMCKEY" in os.environ(){
+		updated_args.secret = os.environ()["CMCKEY"]
 	}
 	if args.cache_timeout==0{
-		args.cache_timeout = 3600*12
+		updated_args.cache_timeout = 3600*12
 	}
 	mut conn := init_connection()
-	conn.url = "https://pro-api.coinmarketcap.com/v1/"
-	conn.secret = args.secret
-	conn.cache_timeout = args.cache_timeout
+	conn.url = "https://pro-api.coinmarketcap.com/v1"
+	conn.secret = updated_args.secret
+	conn.cache_timeout = updated_args.cache_timeout
 
 	if conn.secret == "" {
 		panic("secret not specified, use env arg for CMCKEY")
@@ -56,7 +56,7 @@ pub fn new(args CMCNewArgs) CoinMarketConnection {
 	return conn
 }
 
-fn (mut h CoinMarketConnection) header() http.Header {
+fn (mut h CoinMarketConnection) header() ?http.Header {
 	/*
 	Create a new header for Content type and Authorization
 
@@ -65,8 +65,10 @@ fn (mut h CoinMarketConnection) header() http.Header {
 	*/
 	mut header := http.new_header_from_map(map{
 		http.CommonHeader.content_type:  'application/json'
-		http.CommonHeader.authorization: 'Bearer $h.auth.auth_token'
+		http.CommonHeader.accept:  'application/json'
+		http.CommonHeader.accept_encoding: 'deflate, gzip'
 	})
+	header.add_custom('X-CMC_PRO_API_KEY', h.secret)?
 	return header
 }
 
@@ -151,7 +153,7 @@ fn (mut h CoinMarketConnection) post_json(prefix string, postdata string, cache 
 	// Post with auth header
 	if result == '' && authenticated {
 		mut req := http.new_request(http.Method.post, '$h.url/api/v1/$prefix', postdata) ?
-		req.header = h.header()
+		req.header = h.header() ?
 		println(req)
 		response := req.do() ?
 		result = response.text
@@ -183,7 +185,7 @@ fn (mut h CoinMarketConnection) post_json_str(prefix string, postdata string, ca
 	// Post with auth header
 	if result == '' && authenticated {
 		mut req := http.new_request(http.Method.post, '$h.url/api/v1/$prefix', postdata) ?
-		req.header = h.header()
+		req.header = h.header() ?
 		println(req)
 		response := req.do() ?
 		result = response.text
@@ -212,7 +214,7 @@ fn (mut h CoinMarketConnection) get_json(prefix string, data string, cache bool)
 	if result == '' {
 		// println("MISS1")
 		mut req := http.new_request(http.Method.get, '$h.url/api/v1/$prefix', data) ?
-		req.header = h.header()
+		req.header = h.header() ?
 		res := req.do() ?
 		result = res.text
 	}
@@ -226,7 +228,7 @@ fn (mut h CoinMarketConnection) get_json(prefix string, data string, cache bool)
 	return data2
 }
 
-fn (mut h CoinMarketConnection) get_json_str(prefix string, data string, cache bool) ?string {
+fn (mut h CoinMarketConnection) get_json_str(prefix string, data string, query string,cache bool) ?string {
 	/*
 	Get Request with Json Data
 	Inputs:
@@ -240,9 +242,18 @@ fn (mut h CoinMarketConnection) get_json_str(prefix string, data string, cache b
 	mut result := h.cache_get(prefix, data, cache)
 	if result == '' {
 		// println("MISS1")
-		mut req := http.new_request(http.Method.get, '$h.url/api/v1/$prefix', data) ?
-		req.header = h.header()
+		mut req := http.Request{}
+		if query != ''{
+			req = http.new_request(http.Method.get, '$h.url/api/v1/$prefix?$query', data) ?
+		}else{
+			req = http.new_request(http.Method.get, '$h.url/api/v1/$prefix', data) ?
+		}
+		req.header = h.header() ?
+		println('--------------------- Request ----------------------------')
+		println(req)
 		res := req.do() ?
+		println('--------------------- RESPONSE ----------------------------')
+		println(res)
 		result = res.text
 	}
 	// means empty result from cache
@@ -266,7 +277,7 @@ fn (mut h CoinMarketConnection) edit_json(prefix string, id int, data string, ca
 		response: response Json2.Any map.
 	*/
 	mut req := http.new_request(http.Method.patch, '$h.url/api/v1/$prefix/$id', data) ?
-	req.header = h.header()
+	req.header = h.header() ?
 	res := req.do() ?
 	result := res.text
 	h.cache_set(prefix, data, result, cache) ?
@@ -287,7 +298,7 @@ fn (mut h CoinMarketConnection) delete(prefix string, id int, cache bool) ?bool 
 		bool: True if deleted successfully.
 	*/
 	mut req := http.new_request(http.Method.delete, '$h.url/api/v1/$prefix/$id', '') ?
-	req.header = h.header()
+	req.header = h.header() ?
 	res := req.do() ?
 	if res.status_code == 204 {
 		return true
