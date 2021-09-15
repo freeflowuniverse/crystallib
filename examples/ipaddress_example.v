@@ -1,4 +1,4 @@
-import despiegk.crystallib.builder
+import crystallib.builder
 
 fn main() {
 	mut ip := builder.ipaddress_new('8.8.8.8') or { panic(err) }

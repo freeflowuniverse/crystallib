@@ -1,6 +1,6 @@
 module gittools
 
-import despiegk.crystallib.path
+import crystallib.path
 
 pub struct RepoGetFromUrlArgs {
 mut:

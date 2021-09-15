@@ -1,5 +1,5 @@
 import publisher
-import despiegk.crystallib.gittools
+import crystallib.gittools
 
 fn main() {
 	// get publisher, check for all wiki's

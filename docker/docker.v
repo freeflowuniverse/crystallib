@@ -2,7 +2,7 @@ module docker
 
 import os
 import time
-import despiegk.crystallib.builder
+import crystallib.builder
 import arrays
 
 struct DockerEngine {

@@ -2,7 +2,7 @@ module ipaddress
 
 import regex
 import os
-import despiegk.crystallib.process
+import crystallib.process
 
 pub struct IPAddress {
 pub:

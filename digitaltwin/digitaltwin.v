@@ -1,7 +1,7 @@
 module digitaltwin
 
 import libsodium
-import despiegk.crystallib.redisclient
+import crystallib.redisclient
 import os
 
 // pub fn factory(redis redisclient.Redis) ?DigitalTwinFactory { // FIXME

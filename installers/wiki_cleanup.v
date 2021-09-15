@@ -1,9 +1,9 @@
 module installers
 
 import os
-import despiegk.crystallib.publisher_config
-import despiegk.crystallib.process
-import despiegk.crystallib.texttools
+import crystallib.publisher_config
+import crystallib.process
+import crystallib.texttools
 
 pub fn wiki_cleanup(names []string) ? {
 

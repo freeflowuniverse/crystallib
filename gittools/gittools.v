@@ -1,4 +1,5 @@
 module gittools
+import crystallib.texttools
 
 import os
 
@@ -43,15 +44,22 @@ pub fn (mut gitstructure GitStructure) repos_get(args GSArgs) []GitRepo  {
 }
 
 pub fn (mut gitstructure GitStructure) list(args GSArgs)  {
+	mut r := [][]string{}
 	for mut g in gitstructure.repos_get(args){
-		println(g)
+		// println(g)
 		changed:=g.changes()or {panic("issue in repo changes. $err")}
 		if changed{
-			println( " - ${g.path_rel_get()} - $g.addr.branch (CHANGED)")
+			r << ["- ${g.path_rel_get()}","$g.addr.branch","CHANGED"]
 		}else{
-			println( " - ${g.path_rel_get()} - $g.addr.branch")
+			// println( " - ${g.path_rel_get()} - $g.addr.branch")
+			r << ["- ${g.path_rel_get()}","$g.addr.branch",""]
 		}
 	}
+	texttools.print_clear()
+	println(" #### overview of repositories:")
+	println("")
+	texttools.print_array2(r,"  ",true)
+	println("")
 }
 
 

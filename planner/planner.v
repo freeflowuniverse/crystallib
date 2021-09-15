@@ -1,5 +1,5 @@
 module planner
 
-import despiegk.crystallib.texttools
+import crystallib.texttools
 
 // texttools.text_to_params()?

@@ -1,8 +1,8 @@
 module msgbus
 
 import crypto.md5
-import despiegk.crystallib.digitaltwin
-import despiegk.crystallib.resp2
+import crystallib.digitaltwin
+import crystallib.resp2
 
 pub struct Message {
 pub mut:

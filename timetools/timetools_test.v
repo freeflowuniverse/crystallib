@@ -1,4 +1,4 @@
-import despiegk.crystallib.timetools
+import crystallib.timetools
 
 fn test_base() {
 	e := timetools.expiration_new('+1h') or { panic('cannot do expiration') }

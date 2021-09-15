@@ -1,7 +1,7 @@
 module publisher_core
 
-import despiegk.crystallib.texttools
-import despiegk.crystallib.gittools
+import crystallib.texttools
+import crystallib.gittools
 import os
 
 enum State {

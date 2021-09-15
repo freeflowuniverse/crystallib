@@ -1,4 +1,4 @@
-import despiegk.crystallib.hostsfile
+import crystallib.hostsfile
 
 pub fn main() {
 	mut hostsfile := hostsfile.load()

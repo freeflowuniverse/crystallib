@@ -1,4 +1,4 @@
-import despiegk.crystallib.builder
+import crystallib.builder
 
 // hello_test.v
 fn test_ping() {

@@ -1,6 +1,6 @@
 module publisher_core
 
-import despiegk.crystallib.texttools
+import crystallib.texttools
 import os
 
 pub fn (page Page) write(mut publisher &Publisher, content string) {

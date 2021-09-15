@@ -1,6 +1,6 @@
 module planner
 
-import despiegk.crystallib.texttools
+import crystallib.texttools
 
 pub enum StoryStatus {
 	suggested

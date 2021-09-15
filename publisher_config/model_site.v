@@ -1,8 +1,8 @@
 module publisher_config
 
-// import despiegk.crystallib.texttools
-import despiegk.crystallib.gittools
-import despiegk.crystallib.path
+// import crystallib.texttools
+import crystallib.gittools
+import crystallib.path
 
 struct Empty {}
 

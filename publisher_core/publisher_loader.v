@@ -1,8 +1,8 @@
 module publisher_core
 
-import despiegk.crystallib.texttools
+import crystallib.texttools
 import os
-import despiegk.crystallib.publisher_config
+import crystallib.publisher_config
 
 fn (mut publisher Publisher) load() ? {
 	// remove code_wiki subdirs

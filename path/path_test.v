@@ -1,4 +1,4 @@
-import despiegk.crystallib.path
+import crystallib.path
 import os
 const testpath=os.dir(@FILE)+"/test_path"
 

@@ -1,6 +1,6 @@
 module redisclient
 
-import despiegk.crystallib.resp2
+import crystallib.resp2
 
 pub fn (mut r Redis) get_response() ?resp2.RValue {
 	line_ := r.read_line() ?

@@ -2,7 +2,7 @@ module publisher_core
 
 import os
 import json
-import despiegk.crystallib.publisher_config
+import crystallib.publisher_config
 struct PublisherErrors {
 pub mut:
 	site_errors []SiteError

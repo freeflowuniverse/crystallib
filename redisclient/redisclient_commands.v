@@ -1,6 +1,6 @@
 module redisclient
 
-import despiegk.crystallib.resp2
+import crystallib.resp2
 import time
 
 pub fn (mut r Redis) ping() ?string {

@@ -1,7 +1,7 @@
 module main
 
-import despiegk.crystallib.digitaltwin
-import despiegk.crystallib.redisclient
+import crystallib.digitaltwin
+import crystallib.redisclient
 
 fn main() {
 	mut redis := redisclient.connect('localhost:6379') or { panic(err) }

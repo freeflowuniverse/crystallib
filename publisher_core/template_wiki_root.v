@@ -1,7 +1,7 @@
 module publisher_core
 
 import os
-import despiegk.crystallib.publisher_config
+import crystallib.publisher_config
 
 fn template_wiki_root(reponame string, repourl string, trackingid string, opengraph publisher_config.OpenGraph) string {
 	mut cfg := publisher_config.get()

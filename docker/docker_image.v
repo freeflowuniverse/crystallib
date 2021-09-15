@@ -1,6 +1,6 @@
 module docker
 
-import despiegk.crystallib.builder
+import crystallib.builder
 
 pub struct DockerImage {
 pub mut:

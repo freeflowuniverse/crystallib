@@ -2,7 +2,7 @@ module tokens
 
 import json
 import strconv
-import despiegk.crystallib.httpcache
+import crystallib.httpcache
 
 //
 // Raw JSON struct

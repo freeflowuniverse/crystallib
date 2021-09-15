@@ -1,5 +1,5 @@
-import despiegk.crystallib.docker
-import despiegk.crystallib.builder
+import crystallib.docker
+import crystallib.builder
 
 fn test_docker1() {
 	mut engine := docker.new({}) or { panic(err) }

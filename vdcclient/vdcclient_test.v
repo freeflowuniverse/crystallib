@@ -1,4 +1,4 @@
-import despiegk.crystallib.vdcclient
+import crystallib.vdcclient
 
 fn setup() vdcclient.Client {
 	return vdcclient.Client{

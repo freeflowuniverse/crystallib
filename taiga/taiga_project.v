@@ -1,6 +1,6 @@
 module taiga
 
-import despiegk.crystallib.texttools
+import crystallib.texttools
 import json
 
 struct Project {

@@ -1,7 +1,7 @@
 module installers
 
-// import despiegk.crystallib.publisher_config
-import despiegk.crystallib.process
+// import crystallib.publisher_config
+import crystallib.process
 
 pub fn brew_remove() ? {
     // mut conf := publisher_config.get()

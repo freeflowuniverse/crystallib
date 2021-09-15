@@ -2,7 +2,7 @@ module process
 
 import os
 import time
-import despiegk.crystallib.texttools
+import crystallib.texttools
 
 pub struct Command {
 pub mut:

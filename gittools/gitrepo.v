@@ -2,7 +2,7 @@ module gittools
 
 import os
 import crystallib.process
-// import despiegk.crystallib.path
+// import crystallib.path
 
 
 fn (repo GitRepo) path_account_get() string {
@@ -35,6 +35,9 @@ pub fn (repo GitRepo) path() string {
 }
 
 pub fn (repo GitRepo) path_get() string {
+	if repo.path != ""{
+		return repo.path
+	}
 	mut gitstructure := gittools.new()
 	if gitstructure.multibranch {
 		return '$repo.path_account_get()/$repo.addr.name/$repo.addr.branch'

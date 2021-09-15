@@ -1,9 +1,9 @@
 module publisher_config
 
 import os
-import despiegk.crystallib.texttools
+import crystallib.texttools
 import json
-import despiegk.crystallib.gittools
+import crystallib.gittools
 
 // fn config_dir_find(path string) string{
 

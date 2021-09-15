@@ -43,8 +43,12 @@ fn (addr GitAddr) url_http_with_branch_get() string {
 // }
 // ```
 pub fn addr_get_from_url(url string) ?GitAddr {
+	// println(" ** URL: $url **")
 	mut urllower := url.to_lower()
 	urllower = urllower.trim_space()
+	if urllower.starts_with('ssh://') {
+		urllower = urllower[6..]
+	}	
 	if urllower.starts_with('git@') {
 		urllower = urllower[4..]
 	}
@@ -62,7 +66,9 @@ pub fn addr_get_from_url(url string) ?GitAddr {
 	urllower = urllower.trim('/')
 	urllower = urllower.replace('/blob/', '/')
 	urllower = urllower.replace('/tree/', '/')
-	// println("AA:$urllower")
+
+	// println(" ** URL2: $urllower **")
+
 	mut parts := urllower.split('/')
 	mut anker := ''
 	mut path := ''
@@ -133,6 +139,9 @@ pub fn addr_get_from_path(path string) ?GitAddr {
 	
 	mut addr := addr_get_from_url(url) ?
 	addr.branch = branch
+
+	
+
 	// println(addr)
 	return addr
 }

@@ -1,7 +1,7 @@
 module httpcache
 
 import net.http
-import despiegk.crystallib.redisclient
+import crystallib.redisclient
 
 struct HttpCache {
 mut:

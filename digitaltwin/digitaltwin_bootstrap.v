@@ -1,7 +1,7 @@
 module digitaltwin
 
 import libsodium
-import despiegk.crystallib.redisclient
+import crystallib.redisclient
 import json
 import encoding.base64
 

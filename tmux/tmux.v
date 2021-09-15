@@ -2,7 +2,7 @@ module tmux
 
 import os
 import vredis2
-import despiegk.crystallib.builder
+import crystallib.builder
 
 struct Tmux {
 mut:
