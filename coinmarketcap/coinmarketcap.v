@@ -65,8 +65,6 @@ fn (mut h CoinMarketConnection) header() ?http.Header {
 	*/
 	mut header := http.new_header_from_map(map{
 		http.CommonHeader.content_type:  'application/json'
-		http.CommonHeader.accept:  'application/json'
-		http.CommonHeader.accept_encoding: 'deflate, gzip'
 	})
 	header.add_custom('X-CMC_PRO_API_KEY', h.secret)?
 	return header
@@ -84,9 +82,9 @@ fn cache_key(prefix string, reqdata string) string {
 	*/
 	mut ckey := ''
 	if reqdata == '' {
-		ckey = 'taiga:' + prefix
+		ckey = 'coinmarketcap:' + prefix
 	} else {
-		ckey = 'taiga:' + prefix + ':' + md5.hexhash(reqdata)
+		ckey = 'coinmarketcap:' + prefix + ':' + md5.hexhash(reqdata)
 	}
 	return ckey
 }
@@ -137,69 +135,7 @@ fn (mut h CoinMarketConnection) cache_drop() ? {
 	// TODO:: maintain authentication & reconnect (Need More Info)
 }
 
-fn (mut h CoinMarketConnection) post_json(prefix string, postdata string, cache bool, authenticated bool) ?map[string]json2.Any {
-	/*
-	Post Request with Json Data
-	Inputs:
-		prefix: CoinMarket elements types, ex (projects, issues, tasks, ...).
-		postdata: Json encoded data.
-		cache: Flag to enable caching.
-		authenticated: Flag to add authorization flag with the request.
-
-	Output:
-		response: response as Json2 struct.
-	*/
-	mut result := h.cache_get(prefix, postdata, cache)
-	// Post with auth header
-	if result == '' && authenticated {
-		mut req := http.new_request(http.Method.post, '$h.url/api/v1/$prefix', postdata) ?
-		req.header = h.header() ?
-		println(req)
-		response := req.do() ?
-		result = response.text
-	}
-	// Post without auth header
-	else {
-		response := http.post_json('$h.url/api/v1/$prefix', postdata) ?
-		result = response.text
-	}
-	h.cache_set(prefix, postdata, result, cache) ?
-	data_raw := json2.raw_decode(result) ?
-	data := data_raw.as_map()
-	return data
-}
-
-fn (mut h CoinMarketConnection) post_json_str(prefix string, postdata string, cache bool, authenticated bool) ?string {
-	/*
-	Post Request with Json Data
-	Inputs:
-		prefix: CoinMarket elements types, ex (projects, issues, tasks, ...).
-		postdata: Json encoded data.
-		cache: Flag to enable caching.
-		authenticated: Flag to add authorization flag with the request.
-
-	Output:
-		response: response as string.
-	*/
-	mut result := h.cache_get(prefix, postdata, cache)
-	// Post with auth header
-	if result == '' && authenticated {
-		mut req := http.new_request(http.Method.post, '$h.url/api/v1/$prefix', postdata) ?
-		req.header = h.header() ?
-		println(req)
-		response := req.do() ?
-		result = response.text
-	}
-	// Post without auth header
-	else {
-		response := http.post_json('$h.url/api/v1/$prefix', postdata) ?
-		result = response.text
-	}
-	h.cache_set(prefix, postdata, result, cache) ?
-	return result
-}
-
-fn (mut h CoinMarketConnection) get_json(prefix string, data string, cache bool) ?map[string]json2.Any {
+fn (mut h CoinMarketConnection) get_json(prefix string, data string, query string, cache bool) ?map[string]json2.Any {
 	/*
 	Get Request with Json Data
 	Inputs:
@@ -213,7 +149,12 @@ fn (mut h CoinMarketConnection) get_json(prefix string, data string, cache bool)
 	mut result := h.cache_get(prefix, data, cache)
 	if result == '' {
 		// println("MISS1")
-		mut req := http.new_request(http.Method.get, '$h.url/api/v1/$prefix', data) ?
+		mut req := http.Request{}
+		if query != ''{
+			req = http.new_request(http.Method.get, '$h.url/$prefix?$query', data) ?
+		}else{
+			req = http.new_request(http.Method.get, '$h.url/$prefix', data) ?
+		}
 		req.header = h.header() ?
 		res := req.do() ?
 		result = res.text
@@ -244,16 +185,12 @@ fn (mut h CoinMarketConnection) get_json_str(prefix string, data string, query s
 		// println("MISS1")
 		mut req := http.Request{}
 		if query != ''{
-			req = http.new_request(http.Method.get, '$h.url/api/v1/$prefix?$query', data) ?
+			req = http.new_request(http.Method.get, '$h.url/$prefix?$query', data) ?
 		}else{
-			req = http.new_request(http.Method.get, '$h.url/api/v1/$prefix', data) ?
+			req = http.new_request(http.Method.get, '$h.url/$prefix', data) ?
 		}
 		req.header = h.header() ?
-		println('--------------------- Request ----------------------------')
-		println(req)
 		res := req.do() ?
-		println('--------------------- RESPONSE ----------------------------')
-		println(res)
 		result = res.text
 	}
 	// means empty result from cache
@@ -264,45 +201,10 @@ fn (mut h CoinMarketConnection) get_json_str(prefix string, data string, query s
 	return result
 }
 
-fn (mut h CoinMarketConnection) edit_json(prefix string, id int, data string, cache bool) ?map[string]json2.Any {
-	/*
-	Patch Request with Json Data
-	Inputs:
-		prefix: CoinMarket elements types, ex (projects, issues, tasks, ...).
-		id: id of the element.
-		data: Json encoded data.
-		cache: Flag to enable caching.
+pub fn (mut h CoinMarketConnection) token_price_usd () ?f64{
+	prefix := "cryptocurrency/quotes/latest"
+	query := "symbol=TFT"
+	result := h.get_json(prefix, "", query, true) ?
 
-	Output:
-		response: response Json2.Any map.
-	*/
-	mut req := http.new_request(http.Method.patch, '$h.url/api/v1/$prefix/$id', data) ?
-	req.header = h.header() ?
-	res := req.do() ?
-	result := res.text
-	h.cache_set(prefix, data, result, cache) ?
-	data_raw := json2.raw_decode(result) ?
-	data2 := data_raw.as_map()
-	return data2
-}
-
-fn (mut h CoinMarketConnection) delete(prefix string, id int, cache bool) ?bool {
-	/*
-	Delete Request
-	Inputs:
-		prefix: CoinMarket elements types, ex (projects, issues, tasks, ...).
-		id: id of the element.
-		cache: Flag to enable caching.
-
-	Output:
-		bool: True if deleted successfully.
-	*/
-	mut req := http.new_request(http.Method.delete, '$h.url/api/v1/$prefix/$id', '') ?
-	req.header = h.header() ?
-	res := req.do() ?
-	if res.status_code == 204 {
-		return true
-	} else {
-		return false
-	}
+	return result["data"].as_map()["TFT"].as_map()["quote"].as_map()["USD"].as_map()["price"].f64()
 }
