@@ -326,7 +326,7 @@ fn (mut link Link) init_(mut publisher &Publisher) {
 
 //get the page where is linked too
 pub fn (mut link Link) page_link_get(mut publisher &Publisher) ?&Page{
-	if link.page_file_id==0{
+	if link.page_file_id==999999{
 		return error("consumer page_link id cannot be 0./n$link")
 	}
 	if link.cat == LinkType.page {
@@ -337,7 +337,7 @@ pub fn (mut link Link) page_link_get(mut publisher &Publisher) ?&Page{
 
 //get the page which has the link
 pub fn (mut link Link) page_source_get(mut publisher &Publisher) ?&Page{
-	if link.consumer_page_id==0{
+	if link.consumer_page_id==999999{
 		return error("page_link id cannot be 0./n$link")
 	}
 	if link.cat == LinkType.page {
@@ -347,7 +347,7 @@ pub fn (mut link Link) page_source_get(mut publisher &Publisher) ?&Page{
 }
 
 fn (mut link Link) file_get(mut publisher &Publisher) ?&File{
-	if link.page_file_id==0{
+	if link.page_file_id==999999{
 		return error("file id cannot be 0./n$link")
 	}
 	if link.cat == LinkType.file {
