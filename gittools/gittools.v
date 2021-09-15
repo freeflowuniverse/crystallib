@@ -26,8 +26,32 @@ fn (mut gitstructure GitStructure) check() ? {
 	gitstructure.load() ?
 }
 
-pub fn (mut gitstructure GitStructure) list()  {
-	println(gitstructure)
+pub struct GSArgs{
+pub mut:
+	filter string
+	force bool
+}
+
+pub fn (mut gitstructure GitStructure) repos_get(args GSArgs) []GitRepo  {
+	mut res := []GitRepo{}
+
+	for mut g in gitstructure.repos{
+		res << g
+	}
+
+	return res
+}
+
+pub fn (mut gitstructure GitStructure) list(args GSArgs)  {
+	for mut g in gitstructure.repos_get(args){
+		println(g)
+		changed:=g.changes()or {panic("issue in repo changes. $err")}
+		if changed{
+			println( " - ${g.path_rel_get()} - $g.addr.branch (CHANGED)")
+		}else{
+			println( " - ${g.path_rel_get()} - $g.addr.branch")
+		}
+	}
 }
 
 

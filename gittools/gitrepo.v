@@ -1,7 +1,7 @@
 module gittools
 
 import os
-import despiegk.crystallib.process
+import crystallib.process
 // import despiegk.crystallib.path
 
 
@@ -42,6 +42,16 @@ pub fn (repo GitRepo) path_get() string {
 		return '$repo.path_account_get()/$repo.addr.name'
 	}
 }
+
+pub fn (repo GitRepo) path_rel_get() string {
+	mut gitstructure := gittools.new()
+	if gitstructure.multibranch {
+		return '$repo.addr.account/$repo.addr.name/$repo.addr.branch'
+	} else {
+		return '$repo.addr.account/$repo.addr.name'
+	}
+}
+
 
 // if there are changes then will return 'true', otherwise 'false'
 pub fn (mut repo GitRepo) changes() ?bool {
