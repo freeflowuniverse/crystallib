@@ -25,8 +25,10 @@ pub fn (mut gitstructure GitStructure) pushcommit(args GSArgs) ?  {
 		if args.pull{
 			g.pull()?
 			g.commit(args.message)?
-		}		
-		g.push()?
+		}	
+		if changes{
+			g.push()?
+		}	
 	}
 }
 
