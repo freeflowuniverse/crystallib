@@ -275,7 +275,7 @@ fn (mut site Site) files_process_recursive(path string, mut publisher &Publisher
 					// only process files which do have extension
 					ext2 := ext[1..]
 					if ext2 == 'md' {
-						b:= site.page_remember(path, item2, mut publisher) ?
+						_:= site.page_remember(path, item2, mut publisher) ?
 
 						// if path.contains("/farming"){
 						// 	page4 := publisher.page_get_by_id(b) or { panic(err) }

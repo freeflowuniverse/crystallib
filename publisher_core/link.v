@@ -78,7 +78,7 @@ fn (link Link) original_get() string {
 fn (mut link Link) server_get(mut publisher &Publisher) string {
 	
 	if link.cat == LinkType.page {
-		mut page_source := link.page_source_get(mut publisher) or { panic(err) }
+		// mut page_source := link.page_source_get(mut publisher) or { panic(err) }
 		mut page_dest := link.page_link_get(mut publisher) or { panic(err) }
 		if link.newtab == false {
 			if page_dest.sidebarid > 0 && link.filename.to_lower()!="readme" {
