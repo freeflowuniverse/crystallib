@@ -69,10 +69,16 @@ fn (mut repo GitRepo) get_clone_cmd(http bool) string {
 	mut gitstructure := gittools.new()
 	url := repo.url_get(http)
 	mut cmd := ''
+
+	mut light := ""
+	if gitstructure.light {
+		light = " --depth 1 --no-single-branch"
+	}
+	
 	if gitstructure.multibranch {
-		cmd = 'mkdir -p $repo.path_account_get()/$repo.addr.name && cd $repo.path_account_get()/$repo.addr.name && git clone $url $repo.addr.branch'
+		cmd = 'mkdir -p $repo.path_account_get()/$repo.addr.name && cd $repo.path_account_get()/$repo.addr.name && git clone $light $url $repo.addr.branch'
 	} else {
-		cmd = 'mkdir -p $repo.path_account_get() && cd $repo.path_account_get() && git clone $url'
+		cmd = 'mkdir -p $repo.path_account_get() && cd $repo.path_account_get() && git clone $light $url'
 	}
 	if repo.addr.branch != '' {
 		cmd += ' -b $repo.addr.branch'

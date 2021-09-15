@@ -26,6 +26,11 @@ fn (mut gitstructure GitStructure) check() ? {
 	gitstructure.load() ?
 }
 
+pub fn (mut gitstructure GitStructure) list()  {
+	println(gitstructure)
+}
+
+
 // the factory for getting the gitstructure
 // git is checked uderneith $/code
 pub fn (mut gitstructure GitStructure) load() ? {

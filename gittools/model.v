@@ -19,6 +19,7 @@ pub mut:
 	root  string	
 	repos []GitRepo
 	status GitStructureStatus
+	light  bool = true // if set then will clone only last history for all branches	
 }
 
 struct GitRepo {

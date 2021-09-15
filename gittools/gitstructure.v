@@ -24,6 +24,7 @@ pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs
 	mut addr := addr_get_from_url(args.url) or {
 		return error('cannot get addr from url:$err')
 	}
+
 	if addr.branch != '' && args.branch != '' && addr.branch != args.branch {
 		return error('conflict in branch names.\naddr:\n$addr\nargs:\n$args')
 	}
