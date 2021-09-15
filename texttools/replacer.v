@@ -16,7 +16,7 @@ pub fn replace_items(text string, replacer map[string]string) string {
 	mut var := ""
 	mut char := ""
 	toskip := "/.|:'`"
-	mut done := []string{}
+	// mut done := []string{}
 
 	mut replacer2 :=  map[string]string{}
 

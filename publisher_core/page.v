@@ -363,11 +363,11 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 					// if debug {
 					// 	println(' >>>> server: $link.original_get() -> $llink')
 					// }
-					if line.contains("grid_home"){
-						println(line)
-						println(link)
-						println(llink)
-					}						
+					// if line.contains("grid_home"){
+					// 	println(line)
+					// 	println(link)
+					// 	println(llink)
+					// }						
 				}
 			
 			}
