@@ -151,7 +151,7 @@ fn config_load() ?ConfigRoot {
 	return config
 }
 
-pub fn (mut site SiteConfig) load(configroot ConfigRoot) ? {
+pub fn (mut site SiteConfig) load() ? {
 	if site.state == SiteState.loaded {
 		return
 	}
