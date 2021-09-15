@@ -13,9 +13,19 @@ pub fn (mut gitstructure GitStructure) pushcommit(args GSArgs) ?  {
 	}
 
 	for mut g in gitstructure.repos_get(args){
-		println (" - COMMIT, PULL, PUSH: $g.addr.name")
-		g.commit(args.message)?
-		g.pull()?
+		if args.pull{
+			println (" - COMMIT, PULL, PUSH: $g.addr.name")
+		}else{
+			println (" - COMMIT, PUSH: $g.addr.name")
+		}
+		changes := g.changes()?
+		if changes{
+			g.commit(args.message)?
+		}
+		if args.pull{
+			g.pull()?
+			g.commit(args.message)?
+		}		
 		g.push()?
 	}
 }
@@ -33,8 +43,19 @@ pub fn (mut gitstructure GitStructure) commit(args GSArgs) ?  {
 	}
 
 	for mut g in gitstructure.repos_get(args){
-		println (" - COMMIT: $g.addr.name")
-		g.commit(args.message)?
+		if args.pull{
+			println (" - COMMIT, PULL: $g.addr.name")
+		}else{
+			println (" - COMMIT: $g.addr.name")
+		}		
+		changes := g.changes()?
+		if changes{
+			g.commit(args.message)?
+		}
+		if args.pull{
+			g.pull()?
+			g.commit(args.message)?
+		}		
 	}
 }
 

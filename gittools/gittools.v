@@ -33,6 +33,7 @@ pub mut:
 	message string
 	force bool
 	show bool
+	pull bool
 }
 
 pub fn (mut gitstructure GitStructure) repos_get(args GSArgs) []GitRepo  {
