@@ -1,4 +1,4 @@
-import crystallib.builder
+import builder
 
 // hello_test.v
 fn test_ping() {

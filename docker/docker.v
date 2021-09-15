@@ -2,7 +2,7 @@ module docker
 
 import os
 import time
-import crystallib.builder
+import builder
 import arrays
 
 struct DockerEngine {

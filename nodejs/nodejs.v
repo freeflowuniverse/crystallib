@@ -1,9 +1,9 @@
 module nodejs
 
 import os
-import crystallib.builder
-import crystallib.process
-import crystallib.publisher_config
+import builder
+import process
+import publisher_config
 
 struct NodeJS{
 pub mut:

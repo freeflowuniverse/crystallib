@@ -1,4 +1,4 @@
-import crystallib.hostsfile
+import hostsfile
 
 pub fn main() {
 	mut hostsfile := hostsfile.load()

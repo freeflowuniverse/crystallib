@@ -1,7 +1,7 @@
 module publisher_core
 
-import crystallib.publisher_config
-import crystallib.hostsfile
+import publisher_config
+import hostsfile
 
 pub fn dns_on(sudo bool) {
 	mut domains := []string{}

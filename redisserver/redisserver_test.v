@@ -1,5 +1,5 @@
-import crystallib.redisserver
-import crystallib.redisclient
+import redisserver
+import redisclient
 import time
 
 fn setup() redisserver.RedisSrv {

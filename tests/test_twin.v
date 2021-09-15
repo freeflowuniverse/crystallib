@@ -1,7 +1,7 @@
 module main
 
-import crystallib.digitaltwin
-import crystallib.redisclient
+import digitaltwin
+import redisclient
 
 fn main() {
 	mut redis := redisclient.connect('localhost:6379') or { panic(err) }

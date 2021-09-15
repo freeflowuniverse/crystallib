@@ -1,6 +1,6 @@
 module planner
 
-import crystallib.redisclient
+import redisclient
 
 [heap]
 struct Planner {

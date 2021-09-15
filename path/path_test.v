@@ -1,4 +1,4 @@
-import crystallib.path
+import path
 import os
 const testpath=os.dir(@FILE)+"/test_path"
 

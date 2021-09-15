@@ -1,8 +1,8 @@
 module gittools
 
 import os
-import crystallib.process
-// import crystallib.path
+import process
+// import path
 
 
 fn (repo GitRepo) path_account_get() string {
@@ -187,7 +187,7 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ? {
 // pulls remote content in, will fail if there are local changes
 // when using force:true it means we reset, overwrite all changes
 pub fn (mut repo GitRepo) pull() ? {
-	println(' - PULL: ${repo.url_get(true)}')
+	println('   - PULL: ${repo.url_get(true)}')
 	if !os.exists(repo.path()) {
 		repo.check(false, false) ?
 	} else {
@@ -247,6 +247,7 @@ pub fn (mut repo GitRepo) remove_changes() ? {
 }
 
 pub fn (mut repo GitRepo) push() ? {
+	println('   - PUSH: ${repo.url_get(true)}')
 	cmd := 'cd $repo.path() && git push'
 	process.execute_silent(cmd) or {
 		return error('Cannot push repo: ${repo.path()}. Error was $err')

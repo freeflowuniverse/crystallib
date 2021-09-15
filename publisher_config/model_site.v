@@ -1,8 +1,8 @@
 module publisher_config
 
-// import crystallib.texttools
-import crystallib.gittools
-import crystallib.path
+// import texttools
+import gittools
+import path
 
 struct Empty {}
 

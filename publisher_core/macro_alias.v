@@ -1,6 +1,6 @@
 module publisher_core
 
-import crystallib.texttools
+import texttools
 
 fn macro_alias(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	if macro.params.args.len < 1 {

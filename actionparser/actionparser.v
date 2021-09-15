@@ -1,7 +1,7 @@
 module actionparser
 
 import os
-import crystallib.texttools
+import texttools
 
 enum ParseBlockStatus {
 	start

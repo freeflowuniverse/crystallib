@@ -1,6 +1,6 @@
 module docker
 
-import crystallib.builder
+import builder
 
 pub enum DockerContainerStatus {
 	up

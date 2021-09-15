@@ -1,6 +1,6 @@
 module redisclient
 
-import crystallib.resp2
+import resp2
 
 // send list of strings, expect OK back
 pub fn (mut r Redis) send_expect_ok(items []string) ? {

@@ -1,9 +1,9 @@
 module installers
 
 import os
-import crystallib.publisher_config
-import crystallib.process
-import crystallib.texttools
+import publisher_config
+import process
+import texttools
 
 pub fn website_cleanup(name string) ? {
 	mut conf := publisher_config.get()

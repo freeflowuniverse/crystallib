@@ -3,9 +3,9 @@ module installers
 // import builder
 // import nodejs
 import os
-import crystallib.process
-import crystallib.publisher_config
-import crystallib.gittools
+import process
+import publisher_config
+import gittools
 
 pub fn digitaltwin_install(update bool) ? {
 	mut conf := publisher_config.get()

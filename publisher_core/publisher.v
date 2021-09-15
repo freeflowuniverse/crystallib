@@ -1,7 +1,7 @@
 module publisher_core
 // import os
-import crystallib.texttools
-import crystallib.publisher_config
+import texttools
+import publisher_config
 
 // the factory, get your tools here
 // use path="" if you want to go from os.home_dir()/code/

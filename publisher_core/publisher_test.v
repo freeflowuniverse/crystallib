@@ -1,5 +1,5 @@
 import os
-import crystallib.publisher_core
+import publisher_core
 
 fn test_get_content_basic() {
 	mut p := @FILE.split('/')

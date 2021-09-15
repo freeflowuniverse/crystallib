@@ -2,7 +2,7 @@ module builder
 
 import os
 import rand
-import crystallib.process
+import process
 
 pub struct ExecutorSSH {
 mut:

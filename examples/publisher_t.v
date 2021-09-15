@@ -1,5 +1,5 @@
 import publisher
-import crystallib.gittools
+import gittools
 
 fn main() {
 	// get publisher, check for all wiki's

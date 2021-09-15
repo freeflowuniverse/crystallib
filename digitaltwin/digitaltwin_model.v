@@ -1,7 +1,7 @@
 module digitaltwin
 
 import libsodium
-import crystallib.redisclient
+import redisclient
 
 pub struct DigitalTwin {
 pub:

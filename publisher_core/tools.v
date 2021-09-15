@@ -1,6 +1,6 @@
 module publisher_core
 
-import crystallib.texttools
+import texttools
 import os
 
 // return (sitename,pagename)

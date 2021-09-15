@@ -1,6 +1,6 @@
 import os
 import rand
-import crystallib.builder
+import builder
 
 fn test_nodedb_local(args builder.DBArguments) ? {
 	mut db := builder.db_new(args) or { panic(err) }

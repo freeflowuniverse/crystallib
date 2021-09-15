@@ -1,8 +1,8 @@
 module publisher_core
 
-import crystallib.texttools
+import texttools
 import os
-import crystallib.publisher_config
+import publisher_config
 
 fn (mut publisher Publisher) load() ? {
 	// remove code_wiki subdirs

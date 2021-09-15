@@ -1,4 +1,4 @@
-import crystallib.taiga
+import taiga
 
 fn test_main() {
 	mut t := taiga.new('https://staging.circles.threefold.me', 'admin', '123123', 10000)

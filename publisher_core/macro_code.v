@@ -1,7 +1,7 @@
 module publisher_core
 
-import crystallib.texttools
-import crystallib.gittools
+import texttools
+import gittools
 import os
 
 enum State {

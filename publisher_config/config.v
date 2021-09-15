@@ -1,9 +1,9 @@
 module publisher_config
 
 import os
-import crystallib.texttools
+import texttools
 import json
-import crystallib.gittools
+import gittools
 
 // fn config_dir_find(path string) string{
 

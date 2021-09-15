@@ -1,7 +1,7 @@
 module publisher_core
 
-import crystallib.texttools
-import crystallib.publisher_config
+import texttools
+import publisher_config
 
 [heap]
 struct Publisher {

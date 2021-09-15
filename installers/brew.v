@@ -1,7 +1,7 @@
 module installers
 
-// import crystallib.publisher_config
-import crystallib.process
+// import publisher_config
+import process
 
 pub fn brew_remove() ? {
     // mut conf := publisher_config.get()

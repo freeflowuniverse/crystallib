@@ -1,6 +1,6 @@
 module gittools
 
-import crystallib.path
+import path
 
 pub struct RepoGetFromUrlArgs {
 mut:

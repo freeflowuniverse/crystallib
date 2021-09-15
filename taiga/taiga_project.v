@@ -1,6 +1,6 @@
 module taiga
 
-import crystallib.texttools
+import texttools
 import json
 
 struct Project {

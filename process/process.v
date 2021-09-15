@@ -2,7 +2,7 @@ module process
 
 import os
 import time
-import crystallib.texttools
+import texttools
 
 pub struct Command {
 pub mut:

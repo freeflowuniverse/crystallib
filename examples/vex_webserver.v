@@ -4,7 +4,7 @@ module main
 import nedpals.vex.router
 import nedpals.vex.server
 import nedpals.vex.ctx
-import crystallib.publisher_config
+import publisher_config
 import json
 
 fn print_req_info(mut req ctx.Req, mut res ctx.Resp) {

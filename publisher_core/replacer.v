@@ -1,6 +1,6 @@
 module publisher_core
 
-import crystallib.texttools
+import texttools
 import os
 
 fn (mut publ Publisher) name_fix_alias_page(name string) ?string {

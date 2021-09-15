@@ -1,8 +1,8 @@
 module installers
 
-import crystallib.publisher_config
-import crystallib.process
-// import crystallib.path
+import publisher_config
+import process
+// import path
 import json
 
 import os

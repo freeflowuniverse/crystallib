@@ -1,6 +1,6 @@
 module builder
 
-import crystallib.process
+import process
 import os
 
 pub struct ExecutorLocal {

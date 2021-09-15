@@ -1,4 +1,4 @@
-import crystallib.builder
+import builder
 
 fn main() {
 	mut ip := builder.ipaddress_new('8.8.8.8') or { panic(err) }

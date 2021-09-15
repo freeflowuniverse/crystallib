@@ -2,8 +2,8 @@ module publisher_core
 
 import json
 import strconv
-import crystallib.texttools
-import crystallib.tokens
+import texttools
+import tokens
 
 struct ChartData {
 	label string

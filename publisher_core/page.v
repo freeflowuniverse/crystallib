@@ -1,6 +1,6 @@
 module publisher_core
 
-import crystallib.texttools
+import texttools
 import os
 
 pub fn (page Page) write(mut publisher &Publisher, content string) {

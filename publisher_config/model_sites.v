@@ -1,6 +1,6 @@
 module publisher_config
 
-import crystallib.texttools
+import texttools
 
 
 pub fn (config ConfigRoot) site_get(name2 string) ?SiteConfig {

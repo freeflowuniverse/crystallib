@@ -1,5 +1,5 @@
 module publisher_core
-// import crystallib.path
+// import path
 
 import os
 

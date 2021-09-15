@@ -3,7 +3,7 @@ module liquid
 import x.json2
 import json
 import net.http
-import crystallib.redisclient
+import redisclient
 import crypto.md5
 
 struct LiquidConnection {

@@ -1,5 +1,5 @@
 module gittools
-import crystallib.texttools
+import texttools
 
 import os
 
@@ -30,20 +30,29 @@ fn (mut gitstructure GitStructure) check() ? {
 pub struct GSArgs{
 pub mut:
 	filter string
+	message string
 	force bool
+	show bool
 }
 
 pub fn (mut gitstructure GitStructure) repos_get(args GSArgs) []GitRepo  {
 	mut res := []GitRepo{}
-
-	for mut g in gitstructure.repos{
-		res << g
+	for mut g in gitstructure.repos {
+		relpath := g.path_rel_get()
+		if args.filter != "" {
+			if relpath.contains(args.filter){
+				// println("$g.addr.name")
+				res << g
+			}		
+		}else{
+			res << g
+		}
 	}
 
 	return res
 }
 
-pub fn (mut gitstructure GitStructure) list(args GSArgs)  {
+pub fn (mut gitstructure GitStructure) repos_print(args GSArgs)  {
 	mut r := [][]string{}
 	for mut g in gitstructure.repos_get(args){
 		// println(g)
@@ -55,10 +64,15 @@ pub fn (mut gitstructure GitStructure) list(args GSArgs)  {
 			r << ["- ${g.path_rel_get()}","$g.addr.branch",""]
 		}
 	}
+	texttools.print_array2(r,"  ",true)
+}
+
+
+pub fn (mut gitstructure GitStructure) list(args GSArgs)? {
 	texttools.print_clear()
 	println(" #### overview of repositories:")
 	println("")
-	texttools.print_array2(r,"  ",true)
+	gitstructure.repos_print(args)
 	println("")
 }
 

@@ -1,10 +1,10 @@
 module installers
 
 import os
-import crystallib.publisher_config
-import crystallib.process
-import crystallib.gittools
-import crystallib.texttools
+import publisher_config
+import process
+import gittools
+import texttools
 
 // Initialize (load wikis) only once when server starts
 pub fn website_install(names []string, first bool) ? {

@@ -1,6 +1,6 @@
 module publisher_core
 
-import crystallib.texttools
+import texttools
 
 fn macro_def(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	mut categories := macro.params.get_list('category') ?

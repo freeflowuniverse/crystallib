@@ -1,4 +1,4 @@
-import crystallib.redisclient
+import redisclient
 import time
 // original code see https://github.com/patrickpissurno/vredis/blob/master/vredis_test.v
 // credits see there as well (-:

@@ -1,4 +1,4 @@
-import crystallib.vdcclient
+import vdcclient
 
 fn setup() vdcclient.Client {
 	return vdcclient.Client{

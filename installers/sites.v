@@ -1,7 +1,7 @@
 module installers
 
-import crystallib.publisher_config
-import crystallib.publisher_core
+import publisher_config
+import publisher_core
 
 import os
 

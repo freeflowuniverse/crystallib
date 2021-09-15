@@ -1,5 +1,5 @@
 module planner
 
-import crystallib.texttools
+import texttools
 
 // texttools.text_to_params()?

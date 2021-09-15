@@ -1,5 +1,5 @@
 import time
-import crystallib.examples.ourserver
+import examples.ourserver
 
 fn main() {
 	go ourserver.server_start()

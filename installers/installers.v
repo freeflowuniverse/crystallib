@@ -2,11 +2,11 @@ module installers
 
 
 import os
-import crystallib.builder
-import crystallib.publisher_config
-import crystallib.process
-import crystallib.nodejs
-import crystallib.gittools
+import builder
+import publisher_config
+import process
+import nodejs
+import gittools
 
 pub fn web(doreset bool, clean bool) ? {
 

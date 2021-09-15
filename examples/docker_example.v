@@ -1,5 +1,5 @@
 import rand
-import crystallib.docker
+import docker
 
 fn docker1() {
 	mut engine := docker.new(
