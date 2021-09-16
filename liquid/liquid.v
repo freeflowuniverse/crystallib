@@ -299,11 +299,11 @@ fn (mut h LiquidConnection) delete(prefix string, id int, cache bool) ?bool {
 pub fn (mut h LiquidConnection) token_price_usdt () ?f64{
 	prefix := "products/638"
 	result := h.get_json(prefix, "", true) ?
-	return result["market_bid"].f64()
+	return result["last_price_24h"].f64()
 }
 
 pub fn (mut h LiquidConnection) token_price_btc () ?f64{
 	prefix := "products/637"
 	result := h.get_json(prefix, "", true) ?
-	return result["market_bid"].f64()
+	return result["last_price_24h"].f64()
 }

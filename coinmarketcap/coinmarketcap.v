@@ -202,9 +202,13 @@ fn (mut h CoinMarketConnection) get_json_str(prefix string, data string, query s
 }
 
 pub fn (mut h CoinMarketConnection) token_price_usd () ?f64{
+	
 	prefix := "cryptocurrency/quotes/latest"
 	query := "symbol=TFT"
 	result := h.get_json(prefix, "", query, true) ?
+	price := result["data"].as_map()["TFT"].as_map()["quote"].as_map()["USD"].as_map()["price"].f64()
+	per_last_week := result["data"].as_map()["TFT"].as_map()["quote"].as_map()["USD"].as_map()["percent_change_7d"].f64()
+	price_avg := price * (100 - per_last_week) / 100
 
-	return result["data"].as_map()["TFT"].as_map()["quote"].as_map()["USD"].as_map()["price"].f64()
+	return price_avg
 }
