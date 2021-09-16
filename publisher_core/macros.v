@@ -17,6 +17,7 @@ fn macro_process(mut state LineProcessorState, line string) bool {
 		'tokens':   macro_tokens
 		'time':     macro_time
 		'code':		macro_code
+		'tfpriceinfo': macro_tfpriceinfo
 	}
 
 	if !line.starts_with('!!!') {
