@@ -76,10 +76,14 @@ fn (link Link) original_get() string {
 // return how to represent link on server
 // page is the page from where the link is on
 fn (mut link Link) server_get(mut publisher &Publisher) string {
+
+	println(link.original_link)
 	
 	if link.cat == LinkType.page {
-		// mut page_source := link.page_source_get(mut publisher) or { panic(err) }
+		mut page_source := link.page_source_get(mut publisher) or { panic(err) }
 		mut page_dest := link.page_link_get(mut publisher) or { panic(err) }
+		site_dest := page_dest.site_get(mut publisher) or { panic(err) }
+		site_source := page_source.site_get(mut publisher) or { panic(err) }
 		if link.newtab == false {
 			if page_dest.sidebarid > 0 && link.filename.to_lower()!="readme" {
 				// return '[$link.description](${link.site}__${link.filename}.md)'	
@@ -87,23 +91,29 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 				mut page_sidebar := page_dest.sidebar_page_get(mut publisher) or { panic(err) }
 				mut path_sidebar := page_sidebar.path_dir_relative_get(mut publisher).trim(" /")
 
-				// if page_dest.name == "sidebar"{
-				// 	println(" - serverget: path_sidebar:$path_sidebar $link.filename")	
-				// }
-
 				// println(" - serverget: path_sidebar:$path_sidebar $link.filename")
 
-				if path_sidebar != ""{
-					site := page_dest.site_get(mut publisher) or { panic(err) }
-					if link.site != site.name{
-						return '<a href="/info/${link.site}/#/$path_sidebar/$link.filename"> $link.description </a>'
-					}else{
-						return '[$link.description](/$path_sidebar/${link.filename}.md)'	
-					}
+				// if path_sidebar != ""{
+				if link.original_link.to_lower().contains("threefold_home"){
+					println(" - serverget: path_sidebar:$path_sidebar $link.filename")	
+					println("    = $site_source.name $site_dest.name $link.site ")
 				}
+
+				if site_source.name != site_dest.name{
+					return '<a href="/info/${link.site}/#/$path_sidebar/${link.filename}.md"> $link.description </a>'
+					// return '[$link.description](/info/${link.site}/#/$path_sidebar/${link.filename}.md)'	
+					// return '[$link.description](../${link.site}/$path_sidebar/${link.filename}.md)'	
+				}else{
+					return '[$link.description](/$path_sidebar/${link.filename}.md)'	
+				}
+				// }
 			}
+			if site_source.name != site_dest.name{
 			// return '<a href="/info/${link.site}/#/$link.filename"> $link.description </a>'
-			return '[$link.description](${link.site}__${link.filename}.md)'	
+				return '<a href="/info/${link.site}/#/$link.filename"> $link.description </a>'
+			}else{
+				return '[$link.description](${link.site}__${link.filename}.md)'	
+			}
 		}else{
 			// return '[$link.description](/${link.site}/${link.filename}.md \':target=_blank\')'
 			return '<a href="/info/${link.site}/#/$link.filename" target="_blank"> $link.description </a>'
