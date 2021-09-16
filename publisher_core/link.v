@@ -73,6 +73,15 @@ fn (link Link) original_get() string {
 	return l
 }
 
+fn (link Link) original_get_with_ignore() string {
+	mut l := "[$link.original_descr]($link.original_link ':ignore')"
+	if link.isimage {
+		l = '!$l'
+	}
+	return l
+}
+
+
 // return how to represent link on server
 // page is the page from where the link is on
 fn (mut link Link) server_get(mut publisher &Publisher) string {
@@ -137,7 +146,7 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 			return '<a href="${link.site}__$link.filename $link.extra"> $link.description </a>'
 		}
 	}
-	return link.original_get()
+	return link.original_get_with_ignore()
 }
 
 // return how to represent link on source
