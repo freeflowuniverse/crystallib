@@ -1,19 +1,24 @@
 module liquid
-module gittools
 
-import os
+fn test_get_tft_usdt_price() {
 
-fn test_1() {
+	key := "92be9b29-7f6c-48e4-9ef2-d6aa0550f620"
+	mut args := LiquidArgs{secret:key}
+	mut l := new(args)
 
-	// key = "92be9b29-7f6c-48e4-9ef2-d6aa0550f620"
-
-	mut c := new({secret:key})
-
-	//need to fetch USD/TFT price
-	//see how we did for taiga how to use the connection
-
+	// TFT/USDT price
+	pair_tft_usdt := l.token_price_usdt() or {panic(err)}
+	println("Market Pid for TFT/USDT pair = $pair_tft_usdt")
+}
 
 
-	panic("sss")
+fn test_get_tft_btc_price() {
 
+	key := "92be9b29-7f6c-48e4-9ef2-d6aa0550f620"
+	mut args := LiquidArgs{secret:key}
+	mut l := new(args)
+
+	// TFT/BTC price
+	pair_tft_btc := l.token_price_btc() or {panic(err)}
+	println("Market Pid for TFT/BTC pair = $pair_tft_btc")
 }
