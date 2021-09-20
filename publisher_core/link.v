@@ -73,6 +73,15 @@ fn (link Link) original_get() string {
 	return l
 }
 
+fn (link Link) original_get_with_ignore() string {
+	mut l := "[$link.original_descr]($link.original_link ':ignore')"
+	if link.isimage {
+		l = '!$l'
+	}
+	return l
+}
+
+
 // return how to represent link on server
 // page is the page from where the link is on
 fn (mut link Link) server_get(mut publisher &Publisher) string {
@@ -97,6 +106,7 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 				if link.original_link.to_lower().contains("threefold_home"){
 					println(" - serverget: path_sidebar:$path_sidebar $link.filename")	
 					println("    = $site_source.name $site_dest.name $link.site ")
+<<<<<<< HEAD
 				}
 
 				if site_source.name != site_dest.name{
@@ -106,6 +116,17 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 				}else{
 					return '[$link.description](/$path_sidebar/${link.filename}.md)'	
 				}
+=======
+				}
+
+				if site_source.name != site_dest.name{
+					return '<a href="/info/${link.site}/#/$path_sidebar/${link.filename}.md"> $link.description </a>'
+					// return '[$link.description](/info/${link.site}/#/$path_sidebar/${link.filename}.md)'	
+					// return '[$link.description](../${link.site}/$path_sidebar/${link.filename}.md)'	
+				}else{
+					return '[$link.description](/$path_sidebar/${link.filename}.md)'	
+				}
+>>>>>>> development
 				// }
 			}
 			if site_source.name != site_dest.name{
@@ -137,7 +158,7 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 			return '<a href="${link.site}__$link.filename $link.extra"> $link.description </a>'
 		}
 	}
-	return link.original_get()
+	return link.original_get_with_ignore()
 }
 
 // return how to represent link on source

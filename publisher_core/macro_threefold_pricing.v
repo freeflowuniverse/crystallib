@@ -1,11 +1,26 @@
 module publisher_core
 
+import coinmarketcap
+import liquid
 import time
 import texttools
 
-fn tft_usd_get()f64 {
-	return 0.06
+const CMCKEY = "92be9b29-7f6c-48e4-9ef2-d6aa0550f620"
 
+fn tft_usd_get()f64 {
+	cmc_args := coinmarketcap.CMCNewArgs{secret:CMCKEY}
+	mut cmc := coinmarketcap.new(cmc_args)
+	price_cmc := cmc.token_price_usd() or {0.0}
+	
+	liquid_args := liquid.LiquidArgs{secret:CMCKEY}
+	mut l := liquid.new(liquid_args)
+	price_liquid := l.token_price_usdt() or {0.0}
+	
+	// retrun the higher value
+	if price_liquid > price_cmc {
+		return price_liquid
+	}
+	return price_cmc
 }
 
 fn tfprices_varf() map[string]f64 {

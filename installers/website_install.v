@@ -100,8 +100,8 @@ pub fn website_install(names []string, first bool) ? {
 
 		set -e
 
-		mkdir -p $conf.publish.paths.publish/$site.name
-		rsync -ra --delete $path/dist/ $conf.publish.paths.publish/$site.name/
+		mkdir -p $conf.publish.paths.publish/www_$site.name
+		rsync -ra --delete $path/dist/ $conf.publish.paths.publish/www_$site.name/
 
 		cd $path/dist
 
