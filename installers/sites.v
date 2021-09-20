@@ -45,7 +45,7 @@ pub fn sites_pull(names []string, reset bool) ? {
 	for mut sc in conf.sites_get(names) {
 		mut repo := sc.repo_get()
 		println(' - pull  $repo.path()')
-		if sc.reset {
+		if sc.reset || reset {
 			repo.check(false, true) ?
 		} else {
 			repo.pull() or { return error('ERROR: cannot pull repo $repo.path() :$err') }
