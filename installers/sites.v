@@ -39,13 +39,13 @@ pub fn sites_install(names []string) ? {
 }
 
 
-pub fn sites_pull(names []string) ? {
+pub fn sites_pull(names []string, reset bool) ? {
 	mut conf := publisher_config.get()
 	println(' - sites pull.')
 	for mut sc in conf.sites_get(names) {
 		mut repo := sc.repo_get()
 		println(' - pull  $repo.path()')
-		if sc.reset {
+		if sc.reset || reset {
 			repo.check(false, true) ?
 		} else {
 			repo.pull() or { return error('ERROR: cannot pull repo $repo.path() :$err') }
