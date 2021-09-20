@@ -44,6 +44,9 @@ pub fn new(args CMCNewArgs) CoinMarketConnection {
 	if args.cache_timeout==0{
 		updated_args.cache_timeout = 3600*12
 	}
+	if updated_args.secret==""{
+		panic("CMCKEY needs to be set in env.")
+	}
 	mut conn := init_connection()
 	conn.url = "https://pro-api.coinmarketcap.com/v1"
 	conn.secret = updated_args.secret
