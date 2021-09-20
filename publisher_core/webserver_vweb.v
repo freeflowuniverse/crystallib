@@ -369,6 +369,11 @@ pub fn (mut app App) handler(_path string) vweb.Result {
 		domain = host.all_before(':')
 	} else {
 		path = path.trim('/')
+
+		if path == 'info' {
+			return app.html(index_template(config))
+		}
+
 		if path.starts_with('info/') {
 			path = path[5..]
 			cat = publisher_config.SiteCat.wiki
