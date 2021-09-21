@@ -78,3 +78,34 @@ fn get_dir_exists(path string)? Path {
 	}
 	return Path{path:path, cat:Category.dir, exists:PathExists.yes}
 }
+
+
+pub fn (mut path Path) size_kb()int{
+	// println(" - filesize: $path.path")
+	return (os.file_size(path.path)/1000).str().int()
+}
+
+pub fn (mut path Path) size() f64{
+	// println(" - filesize: $path.path")
+	return os.file_size(path.path)
+}
+
+
+
+pub fn (mut path Path) name()string{
+	return os.base(path.path)
+}
+
+//full path of dir
+pub fn (mut path Path) path_dir()string{
+	return os.dir(path.path)
+}
+
+pub fn (mut path Path) name_no_ext()string{
+	return path.name().all_before_last(".")
+}
+
+pub fn (mut path Path) path_no_ext()string{
+	return path.path.all_before_last(".")
+}
+

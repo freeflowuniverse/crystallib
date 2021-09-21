@@ -56,6 +56,19 @@ pub fn (path Path) parent() Path {
 }
 
 
+
+pub fn (path Path) extension()  string {
+	return os.file_ext(path.path).trim(".")
+}
+
+
+pub fn (path Path) is_image()  bool {
+	// println(path.extension())
+	return ["png","jpg","jpeg"].contains(path.extension().to_lower())
+}
+
+
+
 //walk upwards starting from path untill dir or file tofind is found
 //works recursive
 pub fn (path Path) parent_find(tofind string)  ?Path {
@@ -239,12 +252,15 @@ pub fn (mut path Path) read()?string{
 //dest needs to be a directory or file
 //need to check than only valid items can be done
 //return Path of the destination file or dir
-pub fn (mut path Path) copy(dest Path)?Path{
-	if ! (path.cat in [.file, .dir] && dest.cat in [.file, .dir]) {
-		return error("Source or Destination path is not file or directory")
-	}
-	if path.cat == .dir && dest.cat == .file {
-		return error("Can't copy directory to file")
+pub fn (mut path Path) copy(mut dest Path)?Path{
+	dest.check()
+	if dest.exists(){
+		if ! (path.cat in [.file, .dir] && dest.cat in [.file, .dir]) {
+			return error("Source or Destination path is not file or directory.\n$path.cat\n$dest.cat")
+		}
+		if path.cat == .dir && dest.cat == .file {
+			return error("Can't copy directory to file")
+		}
 	}
 	os.cp_all(path.path, dest.path, true) ?// Always overwite if needed
 	if path.cat == .file && dest.cat == .dir {
@@ -274,4 +290,45 @@ pub fn (mut path Path) link(mut dest Path) ?Path{
 			return error("Path cannot be unknown type")
 		}		
 	}
+}
+
+//start from existing name and look for name_$nr.$ext, nr need to be unique, ideal for backups
+pub fn (mut path Path) backup_name_find(source string, dest string) ?Path{
+	
+	if !path.exists(){
+		return path
+	}
+	size := path.size()
+
+	mut path_str := ""
+	mut path_found := Path{}
+	mut rel := ""
+	if source != ""{
+		path_abs := path.path_absolute()
+		mut source_path := Path{path:source}.path_absolute()
+		if path_abs.starts_with(source_path){
+			rel = os.dir(path_abs.substr(source_path.len+1,path_abs.len))+"/"
+		}
+	}
+	os.mkdir_all("$dest/$rel")?
+	for i in 0 .. 20 {
+		if i ==0 {
+			path_str = "$dest/$rel${path.name_no_ext()}.${path.extension()}"
+		}else{
+			path_str = "$dest/$rel${path.name_no_ext()}_${i{}.${path.extension()}"
+		}
+		path_found = Path{path:path_str}
+		if ! path_found.exists(){
+			return path_found
+		}			
+		if size>0{
+			 	if path_found.size() == size {
+				//means we found the last one which is same as the one we are trying to backup
+				return path_found
+			}
+		}
+	
+	}
+	return error("cannot find path for backup, last one was: ${path_found.path}")
+
 }
