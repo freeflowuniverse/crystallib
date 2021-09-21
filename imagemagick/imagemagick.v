@@ -149,9 +149,9 @@ fn (mut images Images) load_recursive(p string, mut done []string) ? {
 			if item.starts_with('.') {
 				continue
 			}
-			if item.starts_with('_') {
-				continue
-			}
+			// if item.starts_with('_') {
+			// 	continue
+			// }
 			images.load_recursive(pathnew, mut done) ?
 			continue
 		}

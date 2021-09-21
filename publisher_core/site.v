@@ -1,15 +1,22 @@
 module publisher_core
 import os
+import path
+import imagemagick
 
 // remember the file, so we know if we have duplicates
 // also fixes the name
-fn (mut site Site) file_remember(path string, name string, mut publisher &Publisher) &File {
+fn (mut site Site) file_remember(path_ string, name string, mut publisher &Publisher) &File {
 	mut namelower := publisher.name_fix_alias_file(name) or { panic(err) }
-	mut pathfull_fixed := os.join_path(path, namelower)
-	mut pathfull := os.join_path(path, name)
+	mut pathfull_fixed := os.join_path(path_, namelower)
+	mut pathfull := os.join_path(path_, name)
 	if pathfull_fixed != pathfull {
 		os.mv(pathfull, pathfull_fixed) or { panic(err) }
 		pathfull = pathfull_fixed
+	}
+	//check if we need to downsize
+	mut path_object := path.Path{path:pathfull}
+	if path_object.is_image(){
+		imagemagick.image_downsize(path_object.path) or {panic("cannot downsize image:\n$path_object.path")}
 	}
 	// now remove the root path
 	pathrelative := pathfull[site.path.len..]

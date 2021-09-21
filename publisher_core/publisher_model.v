@@ -141,7 +141,10 @@ pub fn (mut publisher Publisher) files_get(namefull string) []&File {
 			// no need to check more, check next file
 			continue
 		}
-		if file.name == itemname {
+		//check if we can find _png
+		filenamepng0 := file.name.all_before_last(".")+"_.png"
+		filenamepng1 := itemname.all_before_last(".")+"_.png"
+		if filenamepng0 == filenamepng1 || file.name == itemname {
 			file_found := publisher.file_get_by_id(x) or { panic(err) }
 			if !(file_found in res) {
 				res << file_found

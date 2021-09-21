@@ -86,7 +86,7 @@ fn (link Link) original_get_with_ignore() string {
 // page is the page from where the link is on
 fn (mut link Link) server_get(mut publisher &Publisher) string {
 
-	println(link.original_link)
+	// println(link.original_link)
 	
 	if link.cat == LinkType.page {
 		mut page_source := link.page_source_get(mut publisher) or { panic(err) }
@@ -199,6 +199,7 @@ fn (link Link) replace(text string, replacewith string) string {
 fn (mut link Link) init_(mut publisher &Publisher) {
 	// see if its an external link or internal
 	// mut linkstate := LinkState.init
+
 	if link.original_link.contains('://') {
 		// linkstate = LinkState.ok
 		link.isexternal = true
@@ -323,6 +324,8 @@ fn (mut link Link) init_(mut publisher &Publisher) {
 			}
 			link.page_file_id = item_linked.id
 			link.site = item_linked.site_name_get(mut publisher)
+			//TODO: need to check if this is ok
+			link.filename = item_linked.name
 		}
 
 		if link.original_link.starts_with("*"){
