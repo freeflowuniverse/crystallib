@@ -3,51 +3,107 @@ import os
 import path
 import imagemagick
 
+
+
 // remember the file, so we know if we have duplicates
 // also fixes the name
-fn (mut site Site) file_remember(path_ string, name string, mut publisher &Publisher) &File {
-	mut namelower := publisher.name_fix_alias_file(name) or { panic(err) }
-	mut pathfull_fixed := os.join_path(path_, namelower)
-	mut pathfull := os.join_path(path_, name)
-	if pathfull_fixed != pathfull {
-		os.mv(pathfull, pathfull_fixed) or { panic(err) }
-		pathfull = pathfull_fixed
-	}
-	//check if we need to downsize
-	mut path_object := path.Path{path:pathfull}
-	if path_object.is_image(){
-		imagemagick.image_downsize(path_object.path) or {panic("cannot downsize image:\n$path_object.path")}
-	}
-	// now remove the root path
-	pathrelative := pathfull[site.path.len..]
+fn (mut site Site) file_remember(mut patho path.Path, mut publisher &Publisher) ?&File {
+	patho.normalize() or {panic("cannot normalize $patho")}
+	pathrelative := patho.path_relative(site.path)
+	mut namelower := ""
 	// println(' - File $namelower <- $pathfull')
-	if site.file_exists(namelower) {
-		// error there should be no duplicates
-		site.errors << SiteError{
-			path: pathrelative
-			error: 'duplicate file $pathrelative'
-			cat: SiteErrorCategory.duplicatefile
-		}
-	} else {
-		if publisher.files.len == 0 {
-			publisher.files = []File{}
-		}
 
-		file := File{
-			id: publisher.files.len
-			site_id: site.id
-			name: namelower
-			path: pathrelative
-		}
-		// println("remember site: $file.name")
-		publisher.files << file
-		site.files[namelower] = publisher.files.len - 1
+	if publisher.files.len == 0 {
+		publisher.files = []File{}
 	}
-	file0 := site.file_get(namelower, mut publisher) or { panic(err) }
+
+	if patho.is_image(){			
+		namelower = publisher.name_fix_no_underscore_no_ext(patho.name()) or {panic("cannot fix image name")}
+	}else{
+		namelower = publisher.name_fix_alias_file(patho.name()) or {panic("cannot fix file name")}
+	}
+
+	file := File{
+		id: publisher.files.len
+		site_id: site.id
+		name: namelower
+		path: pathrelative
+	}
+
+	if patho.is_image(){			
+		namelower = publisher.name_fix_no_underscore_no_ext(patho.name()) or {panic("cannot fix image name")}
+		if site.image_exists(namelower){
+				
+				image_double := site.image_get(namelower, mut publisher)?
+				mut pathdouble := image_double.path_object_get(mut publisher)
+
+			if publisher.healcheck() {
+				println(" - try to heal, double file: $patho.path")
+
+				println(namelower)
+				println(image_double)
+
+				mut prio_double := false
+
+				if patho.extension() == "jpg" && pathdouble.extension() == "png"{
+					prio_double = true
+				}else if patho.extension() == "jpg" && pathdouble.extension() == "jpg" && pathdouble.name_ends_with_underscore(){
+					//means are both jpg but the double one has underscore so prio
+					prio_double = true
+				}			
+				if prio_double {
+					println(" - delete double: $patho.path")
+					patho.delete()?
+					//nothing to do in table ok there
+					return site.image_get(namelower, mut publisher)
+				}else{
+					//means we have to put the path on this one				
+					publisher.files[image_double.id].path = pathrelative
+					println(" - delete double: $pathdouble.path")
+					pathdouble.delete()?		
+					return site.image_get(namelower, mut publisher)
+				}
+			}else{
+				//no automatic check
+				site.errors << SiteError{
+					path: pathrelative
+					error: 'duplicate image $pathrelative\n ${pathdouble.path}'
+					cat: SiteErrorCategory.duplicatefile
+				}
+				println(" - ERROR: duplicate image: $pathrelative, \n$pathdouble.path")
+			}
+		}else{
+			//means the its a new one, lets add it
+			publisher.files << file
+			site.images[namelower] = publisher.files.len - 1
+		}
+	}else{
+		//now we are working on non file
+		if site.file_exists(namelower)  {
+			file_double := site.file_get(namelower, mut publisher)?
+			site.errors << SiteError{
+				path: pathrelative
+				error: 'duplicate file $pathrelative\n ${file_double.path}'
+				cat: SiteErrorCategory.duplicatefile
+			}
+			println(" - ERROR: duplicate file: $pathrelative, \n$file_double.path")
+		}else{
+			publisher.files << file
+			site.files[namelower] = publisher.files.len - 1
+		}
+	}
+
+	// println("remember site: $file.name")
+	mut file0 := File{}
+	if patho.is_image(){	
+		file0 = site.image_get(namelower, mut publisher) or { panic(err) }
+	}else{
+		file0 = site.file_get(namelower, mut publisher) or { panic(err) }
+	}
 	if file0.site_id > 1000 {
 		panic('cannot be')
 	}
-	return file0
+	return &file0
 }
 
 
@@ -62,8 +118,9 @@ fn (mut site Site) file_remember(path_ string, name string, mut publisher &Publi
 
 // remember the file, so we know if we have duplicates
 // also fixes the name
-fn (mut site Site) file_remember_full_path(full_path string, mut publisher &Publisher) &File {
-	return site.file_remember(os.dir(full_path), os.base(full_path), mut publisher)
+fn (mut site Site) file_remember_full_path(full_path string, mut publisher &Publisher)? &File {
+	mut path_ := path.get_file(full_path,false)
+	return site.file_remember(mut path_, mut publisher)
 }
 
 fn (mut site Site) page_remember(path string, name string, mut publisher &Publisher) ?int {
@@ -203,13 +260,13 @@ fn (mut site Site) files_process(mut publisher &Publisher) ? {
 	return site.files_process_recursive(site.path, mut publisher)
 }
 
-fn (mut site Site) files_process_recursive(path string, mut publisher &Publisher) ? {
-	items := os.ls(path) ?
-	mut path_sidebar := "$path/sidebar.md"
+fn (mut site Site) files_process_recursive(path_ string, mut publisher &Publisher) ? {
+	items := os.ls(path_) ?
+	mut path_sidebar := "$path_/sidebar.md"
 	if os.exists(path_sidebar){
 		//means we are not in root of path
-		sidebar_last := site.page_remember(path, "sidebar.md", mut publisher) ?
-		if path != site.path{
+		sidebar_last := site.page_remember(path_, "sidebar.md", mut publisher) ?
+		if path_ != site.path{
 			site.sidebar_last = sidebar_last
 			//needs to happen manually because otherwise the sidebar itself doesn't have the id
 			mut page_sidebar := publisher.page_get_by_id(site.sidebar_last) or { panic(err) }
@@ -219,7 +276,7 @@ fn (mut site Site) files_process_recursive(path string, mut publisher &Publisher
 		if site.sidebar_last>0 {
 			page_sidebar_found := publisher.page_get_by_id(site.sidebar_last) or { panic(err) }
 			path_sidebar_found := os.dir(page_sidebar_found.path_get(mut publisher))+"/"
-			path2 := path + "/"
+			path2 := path_ + "/"
 			if ! path2.starts_with(path_sidebar_found){
 				//means is not subdir of previous sidebar
 				site.sidebar_last = 0
@@ -239,7 +296,7 @@ fn (mut site Site) files_process_recursive(path string, mut publisher &Publisher
 	// 	// println("--R-- $path : $site.sidebar_last : ${page_sidebar2.path}")
 	// }
 	for item in items {
-		if os.is_dir(os.join_path(path, item)) {
+		if os.is_dir(os.join_path(path_, item)) {
 			if item.starts_with('.') {
 				continue
 			} else if item.starts_with('_') {
@@ -248,13 +305,13 @@ fn (mut site Site) files_process_recursive(path string, mut publisher &Publisher
 				// TODO: need to be implemented by macro
 				continue
 			} else {
-				site.files_process_recursive(os.join_path(path, item), mut publisher) ?
+				site.files_process_recursive(os.join_path(path_, item), mut publisher) ?
 			}
 		} else {
 			if item.starts_with('.') || item.to_lower() == 'defs.md' {
 				continue
 			} else if item.contains('.test') {
-				os.rm(os.join_path(path, item)) ?
+				os.rm(os.join_path(path_, item)) ?
 			} else if item.starts_with('_') && !(item.starts_with('_sidebar'))
 				&& !(item.starts_with('_glossary')) && !(item.starts_with('_navbar')) {
 				// println('SKIP: $item')
@@ -271,8 +328,8 @@ fn (mut site Site) files_process_recursive(path string, mut publisher &Publisher
 				filename_new := publisher.name_fix_alias_file(item2) ?
 				if item2 != filename_new {
 					// means file name not ok
-					a := os.join_path(path, item2)
-					b := os.join_path(path, filename_new)
+					a := os.join_path(path_, item2)
+					b := os.join_path(path_, filename_new)
 					// println(' -- $a -> $b')
 					os.mv(a, b) ?
 					item2 = filename_new
@@ -282,7 +339,7 @@ fn (mut site Site) files_process_recursive(path string, mut publisher &Publisher
 					// only process files which do have extension
 					ext2 := ext[1..]
 					if ext2 == 'md' {
-						_:= site.page_remember(path, item2, mut publisher) ?
+						_:= site.page_remember(path_, item2, mut publisher) ?
 
 						// if path.contains("/farming"){
 						// 	page4 := publisher.page_get_by_id(b) or { panic(err) }
@@ -290,12 +347,11 @@ fn (mut site Site) files_process_recursive(path string, mut publisher &Publisher
 						// }
 
 					}
-					
-
 
 					if ext2 in ['jpg', 'png', 'svg', 'jpeg', 'gif', 'pdf', 'zip'] {
 						// println(path+"/"+item2)
-						site.file_remember(path, item2, mut publisher)
+						mut fullpath := path.get_file("$path_/$item2",false)
+						site.file_remember(mut fullpath, mut publisher)?
 					}
 				}
 			}

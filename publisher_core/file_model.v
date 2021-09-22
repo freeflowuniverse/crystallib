@@ -1,6 +1,7 @@
 module publisher_core
 
 import os
+import path
 
 pub enum FileStatus {
 	unknown
@@ -30,6 +31,8 @@ pub fn (file File) site_name_get(mut publisher &Publisher) string {
 	return site.name
 }
 
+
+
 pub fn (file File) path_relative_get(mut publisher &Publisher) string {
 	if file.path == '' {
 		panic('file path should never be empty, is bug')
@@ -49,6 +52,12 @@ pub fn (file File) path_get(mut publisher &Publisher) string {
 	}
 	site_path := publisher.sites[file.site_id].path
 	return os.join_path(site_path, file.path)
+}
+
+
+pub fn (file File) path_object_get(mut publisher &Publisher) path.Path {
+	return path.get_file(file.path_get(mut publisher),false)
+
 }
 
 // get the name of the file with or without site prefix, depending if file is in the site

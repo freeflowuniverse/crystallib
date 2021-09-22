@@ -19,6 +19,13 @@ fn (mut publ Publisher) name_fix_alias_file(name string) ?string {
 	return texttools.name_fix_keepext(name0)
 }
 
+
+//gets name, lower case, normalize, remove extension, right trim _
+fn (mut publ Publisher) name_fix_no_underscore_no_ext(name string) ?string {
+	name0 := publ.replacer.file.replace(text:name) ?
+	return texttools.name_fix_no_underscore_no_ext(name0)
+}
+
 fn (mut publ Publisher) name_fix_alias_word(name string) ?string {
 	name0 := publ.replacer.file.replace(text:name) ?
 	return name0.trim(' ')
@@ -62,7 +69,7 @@ fn (mut publisher Publisher) file_find_(name2find string, consumer_page_id int) 
 	os.cp(file_source_path, dest) or { panic(err) }
 
 	// will remember new file and will make sure rename if needed happens, but should already be ok
-	file := consumer_site.file_remember_full_path(dest, mut publisher)
+	file := consumer_site.file_remember_full_path(dest, mut publisher)?
 
 	// we know the name is in right site
 	return file
@@ -80,24 +87,28 @@ fn (mut publisher Publisher) file_find(name2find string, consumer_page_id int) ?
 	mut consumer_page := publisher.page_get_by_id(consumer_page_id) or { panic(err) }
 	mut consumer_site := consumer_page.site_get(mut publisher) or { panic(err) }
 	_, mut objname := name_split(name2find) or { panic(err) }
-	mut objname_full := '$consumer_site.name:$objname'
+	// mut objname_full := '$consumer_site.name:$objname'
 
 	//this is for when we have stad replacements to be done, normally this is not the case
 	//can be defined as metadata in config (or at least was like that)
 	objname_replaced := publisher.replacer.file.replace(text:objname) or { panic(err) }
 
 	for x in 0 .. 4 {
+
+		//find the image in the site of where the page is
 		if x == 0 {
-			zzz := publisher.file_find_(objname_full, consumer_page_id) or { continue }
+			zzz := consumer_site.file_get(objname, mut publisher) or { continue }
 			return zzz
 		}
 
+		//find the image with site name or without can be e.g. cloud:afile or afile
 		if x == 1 {
 			zzz := publisher.file_find_(name2find, consumer_page_id) or { continue }
 			return zzz
 		}
 
 		if x == 2 {
+			//if name2find not done yet they look for file on objname only
 			if objname != name2find {
 				zzz := publisher.file_find_(objname, consumer_page_id) or { continue }
 				return zzz
@@ -105,8 +116,11 @@ fn (mut publisher Publisher) file_find(name2find string, consumer_page_id int) ?
 		}
 
 		if x == 3 {
-			zzz := publisher.file_find_(objname_replaced, consumer_page_id) or { continue }
-			return zzz
+			//if replace instruction is there, then do the replace and look for it
+			if objname != objname_replaced {
+				zzz := publisher.file_find_(objname_replaced, consumer_page_id) or { continue }
+				return zzz
+			}
 		}
 	}
 
@@ -137,6 +151,15 @@ fn (mut publisher Publisher) page_find_(name2find string, consumer_page_id int) 
 	return res[0]
 }
 
+pub fn (mut publisher Publisher) healcheck() bool{
+	mut heal:= false
+	if "HEAL" in os.environ(){
+		// println("#### WARNING HEALING MODE, CHECK CHANGES ###")
+		heal= true
+	}
+	return heal
+}
+
 // check if we can find the page, page can be on another site|
 // we also check definitions because they can also lead to right page
 pub fn (mut publisher Publisher) page_find(name2find_ string, consumer_page_id int) ?&Page {
@@ -150,11 +173,7 @@ pub fn (mut publisher Publisher) page_find(name2find_ string, consumer_page_id i
 
 	//if healing then will look for more files to fix, find files more easily
 	//can be dangerous !!!
-	mut heal:= false
-	if "HEAL" in os.environ(){
-		println("#### WARNING HEALING MODE, CHECK CHANGES ###")
-		heal= true
-	}
+	heal := publisher.healcheck()
 
 	//if we heal then we look for moresites
 	mut moresites := heal

@@ -304,6 +304,7 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 		// there can be more than 1 link on 1 line
 		for mut link in links_parser_result.links {
 			mut linkname := ''
+
 			link.check(mut publisher, mut page, state.nr, line)
 
 			if link.state != LinkState.ok {

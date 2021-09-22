@@ -103,10 +103,10 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 				// println(" - serverget: path_sidebar:$path_sidebar $link.filename")
 
 				// if path_sidebar != ""{
-				if link.original_link.to_lower().contains("threefold_home"){
-					println(" - serverget: path_sidebar:$path_sidebar $link.filename")	
-					println("    = $site_source.name $site_dest.name $link.site ")
-				}
+				// if link.original_link.to_lower().contains("threefold_home"){
+				// 	println(" - serverget: path_sidebar:$path_sidebar $link.filename")	
+				// 	println("    = $site_source.name $site_dest.name $link.site ")
+				// }
 
 				if site_source.name != site_dest.name{
 					return '<a href="/info/${link.site}/#/$path_sidebar/${link.filename}.md"> $link.description </a>'
@@ -325,15 +325,14 @@ fn (mut link Link) init_(mut publisher &Publisher) {
 			link.page_file_id = item_linked.id
 			link.site = item_linked.site_name_get(mut publisher)
 			//TODO: need to check if this is ok
-			link.filename = item_linked.name
+			// link.filename = item_linked.name
 		}
 
 		if link.original_link.starts_with("*"){
 			link.filename = link.filename.all_after('*')
 			//don't replace original link name, otherwise will not replace
 		}
-
-		
+	
 
 		// if link.original_link.starts_with("!"){
 		// 	println(link)

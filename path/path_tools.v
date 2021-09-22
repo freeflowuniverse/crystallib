@@ -1,6 +1,7 @@
 module path
 
 import os
+import texttools
 
 //check path exists
 pub fn (mut path Path) exists() bool {
@@ -43,6 +44,17 @@ pub fn (path Path) path_absolute() string {
 	return os.real_path(p2)
 }
 
+//get relative path in relation to sourcepath
+pub fn (path Path) path_relative(sourcepath string) string {
+	path_abs := path.path_absolute()
+	sourcepath_abs := Path{path:sourcepath}.path_absolute()
+	if path_abs.starts_with(sourcepath_abs){
+		return path_abs[sourcepath_abs.len..]
+	}
+	return path_abs
+}
+
+
 //find parent of path
 pub fn (path Path) parent() Path {
 	mut p := path.path_absolute()
@@ -62,10 +74,25 @@ pub fn (path Path) extension()  string {
 }
 
 
-pub fn (path Path) is_image()  bool {
+
+
+//make sure name is normalized and jpeg becomes jpg
+pub fn (mut path Path) normalize() ?{
 	// println(path.extension())
-	return ["png","jpg","jpeg"].contains(path.extension().to_lower())
+	if path.extension().to_lower() == "jpeg"{
+		dest := path.path_no_ext()+".jpg"
+		println(" - RENAME: $path.path to $dest")
+		os.mv(path.path,dest)?
+		path.path = dest
+	}
+	if texttools.name_fix_keepext(path.name()) != path.name(){
+		dest := path.path_dir() + "/" + texttools.name_fix_keepext(path.name())
+		println(" - RENAME: $path.path to $dest")
+		os.mv(path.path,dest)?
+		path.path = dest
+	}
 }
+
 
 
 

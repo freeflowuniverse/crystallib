@@ -2,6 +2,7 @@ module publisher_core
 
 import texttools
 import publisher_config
+import path
 
 [heap]
 struct Site {
@@ -12,6 +13,7 @@ pub mut: // id and index in the Publisher.sites array
 	path   string
 	name   string // is the shortname!!!
 	files  map[string]int
+	images  map[string]int
 	pages  map[string]int
 	// sitebars map[string]int
 	state  SiteState
@@ -69,6 +71,9 @@ pub fn (site Site) page_get(name string, mut publisher &Publisher) ?&Page {
 }
 
 pub fn (site Site) file_get(name string, mut publisher &Publisher) ?&File {
+	if name.ends_with(".png") || name.ends_with(".jpeg") || name.ends_with(".jpg"){
+		return site.image_get(name, mut publisher)
+	}
 	mut namelower := texttools.name_fix(name)
 	if namelower in site.files {
 		file := publisher.file_get_by_id(site.files[namelower]) ?
@@ -77,12 +82,26 @@ pub fn (site Site) file_get(name string, mut publisher &Publisher) ?&File {
 	return error('cannot find file with name $name')
 }
 
+pub fn (site Site) image_get(name string, mut publisher &Publisher) ?&File {
+	namelower := texttools.name_fix_no_underscore_no_ext(name)
+	if namelower in site.images {
+		file := publisher.file_get_by_id(site.images[namelower]) ?
+		return file
+	}
+	return error('cannot find image with name $name')
+}
+
 pub fn (site Site) page_exists(name string) bool {
 	mut namelower := texttools.name_fix(name)
 	return namelower in site.pages
 }
 
+pub fn (site Site) image_exists(name string) bool {
+	namelower := texttools.name_fix_no_underscore_no_ext(name)
+	return namelower in site.images
+}
+
 pub fn (site Site) file_exists(name string) bool {
-	mut namelower := texttools.name_fix(name)
+	namelower := texttools.name_fix(name)	
 	return namelower in site.files
 }

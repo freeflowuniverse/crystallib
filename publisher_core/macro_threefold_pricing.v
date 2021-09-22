@@ -70,7 +70,7 @@ fn tfprices_vars() map[string]string{
 
 
 fn macro_tfpriceinfo(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
-	mut out := []string{}
+	// mut out := []string{}
 
 	varf := tfprices_varf()
 	vars := tfprices_vars()

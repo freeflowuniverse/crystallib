@@ -109,3 +109,17 @@ pub fn (mut path Path) path_no_ext()string{
 	return path.path.all_before_last(".")
 }
 
+pub fn (mut path Path) name_ends_with_underscore() bool{
+	return path.name_no_ext().ends_with("_")
+}
+
+
+
+// return a path which has name ending with _
+pub fn (mut path Path) path_get_name_with_underscore() string{
+	if path.name_ends_with_underscore(){
+		return path.path
+	}else{
+		return path.path.all_before_last(".")+"_."+path.extension()
+	}
+}

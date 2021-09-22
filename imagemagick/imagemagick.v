@@ -18,6 +18,15 @@ pub enum ImagesStatus{
 	loaded
 }
 
+pub fn installed() bool {
+	out := process.execute_silent("convert -version")or{
+		return false
+	}
+	if ! out.contains("ImageMagick"){
+		return false
+	}
+	return true
+}
 
 fn init_magick() Images {
 	out := process.execute_silent("convert -version")or{
