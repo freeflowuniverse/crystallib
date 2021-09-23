@@ -8,7 +8,7 @@ Client for twin_server_v2 using V Lang based on RMB
 # How to use it
 1. Init the Client
 ```V
-import twinclient { init, GenericMachine }
+import despiegk.crystallib.twinclient {init, GenericMachine, Disk, Network, Env}
 
 const redis_server = 'localhost:6379'
 mut twin_dest := 49 // ADD TWIN ID.

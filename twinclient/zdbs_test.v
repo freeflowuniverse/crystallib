@@ -1,4 +1,4 @@
-import twinclient { DeployZDBPayload, ZDB, init }
+module twinclient
 
 const redis_server = 'localhost:6379'
 

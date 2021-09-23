@@ -1,4 +1,4 @@
-import twinclient { Disk, Env, GenericMachine, Network, init }
+module twinclient
 
 const redis_server = 'localhost:6379'
 

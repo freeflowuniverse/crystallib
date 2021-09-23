@@ -4,6 +4,7 @@ import threefoldtech.info_specs_grid3.vlang.zos
 import json
 
 pub struct GenericMachine {
+pub:
 	node_id     u32
 	disks       []Disk
 	network     Network
