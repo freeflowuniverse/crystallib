@@ -48,6 +48,9 @@ pub fn (mut tw Client) deploy_kubernetes_with_encoded_payload(payload_encoded st
 	*/
 	mut msg := tw.send('twinserver.k8s.deploy', payload_encoded) ?
 	response := tw.read(msg)
+	if response.err != ''{
+		return error(response.err)
+	}
 	return json.decode(DeployResponse, response.data) or {}
 }
 
@@ -61,6 +64,9 @@ pub fn (mut tw Client) get_kubernetes(name string) ?[]zos.Deployment {
 	*/
 	mut msg := tw.send('twinserver.k8s.get', '{"name": "$name"}') ?
 	response := tw.read(msg)
+	if response.err != ''{
+		return error(response.err)
+	}
 	return json.decode([]zos.Deployment, response.data) or {}
 }
 
@@ -78,6 +84,9 @@ pub fn (mut tw Client) add_worker(deployment_name string, worker Node) ?DeployRe
 	payload_encoded := json.encode_pretty(add_payload)
 	mut msg := tw.send('twinserver.k8s.add_worker', payload_encoded) ?
 	response := tw.read(msg)
+	if response.err != ''{
+		return error(response.err)
+	}
 	return json.decode(DeployResponse, response.data) or {}
 }
 
@@ -98,6 +107,9 @@ pub fn (mut tw Client) delete_worker(deployment_name string, worker_name string)
 	payload_encoded := json.encode_pretty(delete_payload)
 	mut msg := tw.send('twinserver.k8s.delete_worker', payload_encoded) ?
 	response := tw.read(msg)
+	if response.err != ''{
+		return error(response.err)
+	}
 	return json.decode(DeployResponse, response.data) or {}
 }
 
@@ -123,6 +135,9 @@ pub fn (mut tw Client) update_kubernetes_with_encoded_payload(payload_encoded st
 	*/
 	mut msg := tw.send('twinserver.k8s.update', payload_encoded) ?
 	response := tw.read(msg)
+	if response.err != ''{
+		return error(response.err)
+	}
 	return json.decode(DeployResponse, response.data) or {}
 }
 
@@ -134,6 +149,9 @@ pub fn (mut tw Client) list_kubernetes() ?[]string {
 	*/
 	mut msg := tw.send('twinserver.k8s.list', '{}') ?
 	response := tw.read(msg)
+	if response.err != ''{
+		return error(response.err)
+	}
 	return json.decode([]string, response.data) or {}
 }
 
@@ -147,5 +165,8 @@ pub fn (mut tw Client) delete_kubernetes(name string) ?ContractDeployResponse {
 	*/
 	mut msg := tw.send('twinserver.k8s.delete', '{"name": "$name"}') ?
 	response := tw.read(msg)
+	if response.err != ''{
+		return error(response.err)
+	}
 	return json.decode(ContractDeployResponse, response.data) or {}
 }

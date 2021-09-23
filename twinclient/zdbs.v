@@ -46,6 +46,9 @@ pub fn (mut tw Client) deploy_zdbs_with_encoded_payload(payload_encoded string) 
 	*/
 	mut msg := tw.send('twinserver.zdbs.deploy', payload_encoded) ?
 	response := tw.read(msg)
+	if response.err != ''{
+		return error(response.err)
+	}
 	return json.decode(ContractDeployResponse, response.data) or {}
 }
 
@@ -63,6 +66,9 @@ pub fn (mut tw Client) add_zdb(deployment_name string, zdb ZDB) ?ContractDeployR
 	payload_encoded := json.encode(add_payload)
 	mut msg := tw.send('twinserver.zdbs.add_zdb', payload_encoded) ?
 	response := tw.read(msg)
+	if response.err != ''{
+		return error(response.err)
+	}
 	return json.decode(ContractDeployResponse, response.data) or {}
 }
 
@@ -83,6 +89,9 @@ pub fn (mut tw Client) delete_zdb(deployment_name string, zdb_name string) ?Cont
 	payload_encoded := json.encode_pretty(delete_payload)
 	mut msg := tw.send('twinserver.zdbs.delete_zdb', payload_encoded) ?
 	response := tw.read(msg)
+	if response.err != ''{
+		return error(response.err)
+	}
 	return json.decode(ContractDeployResponse, response.data) or {}
 }
 
@@ -96,7 +105,9 @@ pub fn (mut tw Client) get_zdbs(name string) ?[]zos.Deployment {
 	*/
 	mut msg := tw.send('twinserver.zdbs.get', '{"name": "$name"}') ?
 	response := tw.read(msg)
-
+	if response.err != ''{
+		return error(response.err)
+	}
 	return json.decode([]zos.Deployment, response.data) or {}
 }
 
@@ -122,8 +133,9 @@ pub fn (mut tw Client) update_zdbs_with_encoded_payload(payload_encoded string) 
 	*/
 	mut msg := tw.send('twinserver.zdbs.update', payload_encoded) ?
 	response := tw.read(msg)
-	println('--------- Update ZDB ---------')
-	println(response)
+	if response.err != ''{
+		return error(response.err)
+	}
 	return json.decode(ContractDeployResponse, response.data) or {}
 }
 
@@ -135,6 +147,9 @@ pub fn (mut tw Client) list_zdbs() ?[]string {
 	*/
 	mut msg := tw.send('twinserver.zdbs.list', '{}') ?
 	response := tw.read(msg)
+	if response.err != ''{
+		return error(response.err)
+	}
 	return json.decode([]string, response.data) or {}
 }
 
@@ -148,5 +163,8 @@ pub fn (mut tw Client) delete_zdbs(name string) ?ContractDeployResponse {
 	*/
 	mut msg := tw.send('twinserver.zdbs.delete', '{"name": "$name"}') ?
 	response := tw.read(msg)
+	if response.err != ''{
+		return error(response.err)
+	}
 	return json.decode(ContractDeployResponse, response.data) or {}
 }

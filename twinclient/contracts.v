@@ -45,6 +45,9 @@ pub fn (mut tw Client) create_contract(node_id u32, hash string, data string, pu
 	*/
 	mut msg := tw.send('twinserver.contracts.create', '{"node_id": $node_id, "hash": "$hash", "data": "$data", "public_ip": $public_ip}') ?
 	response := tw.read(msg)
+	if response.err != ''{
+		return error(response.err)
+	}
 	return json.decode(Contract, response.data) or {}
 }
 
@@ -58,6 +61,9 @@ pub fn (mut tw Client) get_contract(id u64) ?Contract {
 	*/
 	mut msg := tw.send('twinserver.contracts.get', '{"id": $id}') ?
 	response := tw.read(msg)
+	if response.err != ''{
+		return error(response.err)
+	}
 	return json.decode(Contract, response.data) or {}
 }
 
@@ -73,6 +79,9 @@ pub fn (mut tw Client) update_contract(id u64, hash string, data string) ?Contra
 	*/
 	mut msg := tw.send('twinserver.contracts.update', '{"id": $id, "hash": "$hash", "data": "$data"}') ?
 	response := tw.read(msg)
+	if response.err != ''{
+		return error(response.err)
+	}
 	return json.decode(Contract, response.data) or {}
 }
 
@@ -86,5 +95,8 @@ pub fn (mut tw Client) cancel_contract(id u64) ?u64 {
 	*/
 	mut msg := tw.send('twinserver.contracts.cancel', '{"id": $id}') ?
 	response := tw.read(msg)
+	if response.err != ''{
+		return error(response.err)
+	}
 	return response.data.u64()
 }
