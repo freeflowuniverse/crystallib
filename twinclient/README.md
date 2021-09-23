@@ -1,6 +1,10 @@
 # twinclient
 Client for twin_server_v2 using V Lang based on RMB
 
+# Prerequisites
+1. Running twin_server_v2, follow instructions [here](https://github.com/threefoldtech/twin_server_v2/blob/development/docs/server.md)
+2. Running RMB server, follow instruction [here](https://github.com/threefoldtech/rmb/blob/master/README.md)
+
 # How to use it
 1. Init the Client
 ```V
@@ -38,7 +42,9 @@ payload := GenericMachine{
 ```V
 new_machine := tw.deploy_machine(payload) or { panic(err) }
 ```
+# Tests
 
+For each category there is a test that can help you to use the client, make sure to edit it with your info.
 # Supported Commands
 
 ## Twins
@@ -78,11 +84,11 @@ new_machine := tw.deploy_machine(payload) or { panic(err) }
 
 ## ZDB
 - Deploy zdbs                                     --> `deploy_zdbs(<DeployZDBPayload>)`
-                                                        --> `deploy_zdbs_with_encoded_payload(<String Payload>)` In case you have the payload as string
+                                                  --> `deploy_zdbs_with_encoded_payload(<String Payload>)` In case you have the payload as string
 - Get zdbs deployment info                        --> `get_zdbs(<ZDBS NAME>)`
 - Update zdbs                                     --> `update_zdbs(<DeployZDBPayload>)`
-                                                        --> `update_zdbs_with_encoded_payload(<String Payload>)` In case you have the payload as string
+                                                  --> `update_zdbs_with_encoded_payload(<String Payload>)` In case you have the payload as string
 - List all deployed zdbs related to specific twin --> `list_zdbs()`
 - Delete zdbs                                     --> `delete_zdbs(<ZDBS NAME>)`
-- Add single zdb                                            --> `add_zdb(<DEPLOYMENT NAME>, <ZDB>)`
-- Delete single zdb                                         --> `delete worker(<DEPLOYMENT NAME>, <ZDB NAME>)`
+- Add single zdb                                  --> `add_zdb(<DEPLOYMENT NAME>, <ZDB>)`
+- Delete single zdb                               --> `delete worker(<DEPLOYMENT NAME>, <ZDB NAME>)`
