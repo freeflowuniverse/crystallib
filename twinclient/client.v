@@ -2,6 +2,8 @@ module twinclient
 
 import threefoldtech.rmb.twinclient { TwinClient, new }
 
+const redis_server = 'localhost:6379'
+
 pub struct Client {
 	TwinClient
 }

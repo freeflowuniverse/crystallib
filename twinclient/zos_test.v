@@ -1,7 +1,5 @@
 module twinclient
 
-const redis_server = 'localhost:6379'
-
 pub fn test_zos() {
 	mut twin_dest := 49
 	mut tw := init(redis_server, twin_dest) or { panic(err) }

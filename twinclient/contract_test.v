@@ -1,7 +1,5 @@
 module twinclient
 
-const redis_server = 'localhost:6379'
-
 pub fn test_contract() {
 	mut twin_dest := 49 // ADD TWIN ID.
 	mut tw := init(redis_server, twin_dest) or { panic(err) }
