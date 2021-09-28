@@ -32,7 +32,7 @@ pub struct DeployResponse {
 	wireguard_config string
 }
 
-pub fn (mut tw Client) create_contract(node_id u32, hash string, data string, public_ip u32) ?Contract {
+pub fn (mut tw Client) create_node_contract(node_id u32, hash string, data string, public_ip u32) ?Contract {
 	/*
 	Create new contract
 		Input:
@@ -43,7 +43,7 @@ pub fn (mut tw Client) create_contract(node_id u32, hash string, data string, pu
 		Output:
 			- Contract: new Contract instance with all contract info.
 	*/
-	mut msg := tw.send('twinserver.contracts.create', '{"node_id": $node_id, "hash": "$hash", "data": "$data", "public_ip": $public_ip}') ?
+	mut msg := tw.send('twinserver.contracts.create_node', '{"node_id": $node_id, "hash": "$hash", "data": "$data", "public_ip": $public_ip}') ?
 	response := tw.read(msg)
 	if response.err != ''{
 		return error(response.err)
@@ -67,7 +67,7 @@ pub fn (mut tw Client) get_contract(id u64) ?Contract {
 	return json.decode(Contract, response.data) or {}
 }
 
-pub fn (mut tw Client) update_contract(id u64, hash string, data string) ?Contract {
+pub fn (mut tw Client) update_node_contract(id u64, hash string, data string) ?Contract {
 	/*
 	Update contract hash and data using contract id
 		Input:
@@ -77,7 +77,7 @@ pub fn (mut tw Client) update_contract(id u64, hash string, data string) ?Contra
 		Output:
 			- Contract: Contract instance with all contract info after update.
 	*/
-	mut msg := tw.send('twinserver.contracts.update', '{"id": $id, "hash": "$hash", "data": "$data"}') ?
+	mut msg := tw.send('twinserver.contracts.update_node', '{"id": $id, "hash": "$hash", "data": "$data"}') ?
 	response := tw.read(msg)
 	if response.err != ''{
 		return error(response.err)

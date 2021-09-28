@@ -1,7 +1,7 @@
 module twinclient
 
 pub fn test_zos() {
-	mut twin_dest := 49
+	// redis_server and twin_dest are const in client.v
 	mut tw := init(redis_server, twin_dest) or { panic(err) }
 
 	// Deploy ZOS workload

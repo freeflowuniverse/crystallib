@@ -1,16 +1,16 @@
 module twinclient
 
 pub fn test_contract() {
-	mut twin_dest := 49 // ADD TWIN ID.
+	// redis_server and twin_dest are const in client.v
 	mut tw := init(redis_server, twin_dest) or { panic(err) }
 
 	// Create new contract
-	node_id := u32(2) // CHOOSE THE NODE ID YOU WANT.
-	hash := '96e3227c5f19f482b0b2fb21074832a1' // ADD YOUR HASH HERE.
+	node_id := u32(5) // CHOOSE THE NODE ID YOU WANT.
+	hash := '58cf017a18520fc478b2bc28123088e4' // ADD YOUR HASH HERE.
 	data := '' // ADD NEEDED DATA HERE, Let it empty for default.
-	public_ip := u32(1)
+	public_ip := u32(0)
 	println('--------- Create Contract ---------')
-	new_contract := tw.create_contract(node_id, hash, data, public_ip) or {
+	new_contract := tw.create_node_contract(node_id, hash, data, public_ip) or {
 		panic("Can't create new contract with error: $err")
 	}
 	println(new_contract)
@@ -26,7 +26,7 @@ pub fn test_contract() {
 	mod_hash := '96e3227c5f19f482b0b2fb21074832a1' // ADD YOUR HASH HERE.
 	mod_data := '' // ADD NEEDED DATA HERE, Let it empty for default.
 	println('--------- Update Contract ---------')
-	mod_con := tw.update_contract(mod_contract_id, mod_hash, mod_data) or { panic(err) }
+	mod_con := tw.update_node_contract(mod_contract_id, mod_hash, mod_data) or { panic(err) }
 	println(mod_con)
 
 	// Cancel Contract
@@ -39,8 +39,8 @@ pub fn test_contract() {
 
 	// List My Contracts
 	println('--------- List Contracts ---------')
-	start := u64(1500) // START FROM --> CONTRACT ID
-	end := u64(1520) // END AT -- > CONTRACT ID
+	start := u64(1) // START FROM --> CONTRACT ID
+	end := u64(20) // END AT -- > CONTRACT ID
 	mut mycontracts := []Contract{}
 	mut con := Contract{}
 	for i in start .. end {

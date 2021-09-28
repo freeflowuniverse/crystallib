@@ -21,7 +21,7 @@ fn prepare_src_wallet(mut twinclient Client) ?StellarWallet {
 }
 
 pub fn test_stellar() {
-	mut twin_dest := 49 // ADD TWIN ID.
+	// redis_server and twin_dest are const in client.v
 	mut tw := init(redis_server, twin_dest) or { panic(err) }
 	src_wallet := prepare_src_wallet(mut tw) or { panic(err) }
 	
