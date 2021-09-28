@@ -60,9 +60,9 @@ For each category there is a test that can help you to use the client, make sure
 
 |Description|Function|
 |:----------|:-------|
-|Create a new contract|`create_contract(<NODE_ID>, <HASH>, <DATA>, <PUBLIC_IP>)`|
+|Create a new contract|`create__node_contract(<NODE_ID>, <HASH>, <DATA>, <PUBLIC_IP>)`|
 |Get info of a contract with id|`get_contract(<CONTRACT_ID>)`|
-|Update contract|`update_contract(<CONTRACT_ID>, <HASH>, <DATA>)`|
+|Update contract|`update_node_contract(<CONTRACT_ID>, <HASH>, <DATA>)`|
 |Cancel contract|`cancel_contract(<CONTRACT_ID>)`|
 
 ## ZOS
