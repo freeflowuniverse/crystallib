@@ -178,7 +178,7 @@ pub fn (mut publisher Publisher) healcheck() bool{
 // check if we can find the page, page can be on another site|
 // we also check definitions because they can also lead to right page
 pub fn (mut publisher Publisher) page_find(name2find_ string, consumer_page_id int) ?&Page {
-	println (" == page find: $name2find")
+	// println (" == page find: $name2find")
 	if consumer_page_id==999999{
 		panic("consumer page id cannot be 999999")
 	}
