@@ -2,6 +2,7 @@ module liquid
 
 import os
 import x.json2
+import json
 import net.http
 import redisclient
 import crypto.md5
@@ -26,6 +27,10 @@ pub mut:
 	secret string
 	cache_timeout int
 	
+}
+
+struct LiquidResult {
+	last_price_24h string
 }
 
 pub fn new(args LiquidArgs) LiquidConnection {
@@ -64,7 +69,7 @@ fn (mut h LiquidConnection) header() http.Header {
 	Output:
 		header: http.Header with the needed headers
 	*/
-	mut header := http.new_header_from_map(map{
+	mut header := http.new_header_from_map({
 		http.CommonHeader.content_type:  'application/json'
 	})
 	return header
@@ -298,12 +303,14 @@ fn (mut h LiquidConnection) delete(prefix string, id int, cache bool) ?bool {
 
 pub fn (mut h LiquidConnection) token_price_usdt () ?f64{
 	prefix := "products/638"
-	result := h.get_json(prefix, "", true) ?
-	return result["last_price_24h"].f64()
+	result := h.get_json_str(prefix, "", true) ?
+	r := json.decode(LiquidResult, result) ?
+	return r.last_price_24h.f64()
 }
 
 pub fn (mut h LiquidConnection) token_price_btc () ?f64{
 	prefix := "products/637"
-	result := h.get_json(prefix, "", true) ?
-	return result["last_price_24h"].f64()
+	result := h.get_json_str(prefix, "", true) ?
+	r := json.decode(LiquidResult, result) ?
+	return r.last_price_24h.f64()
 }

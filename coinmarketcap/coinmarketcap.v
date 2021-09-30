@@ -1,15 +1,17 @@
 module coinmarketcap
+
 import os
 import x.json2
+import json
 import net.http
 import redisclient
 import crypto.md5
 
 struct CoinMarketConnection {
 mut:
-	redis         redisclient.Redis
-	url           string
-	secret		  string
+	redis  redisclient.Redis
+	url    string
+	secret string
 	// auth          AuthDetail
 	cache_timeout int
 }
@@ -21,10 +23,30 @@ fn init_connection() CoinMarketConnection {
 }
 
 pub struct CMCNewArgs {
-pub mut:	
-	secret string
+pub mut:
+	secret        string
 	cache_timeout int
-	
+}
+
+struct CoinMarketResult {
+	data CoinMarketResultData
+}
+
+struct CoinMarketResultData {
+	tft CoinMarketResultTFT [json: 'TFT']
+}
+
+struct CoinMarketResultTFT {
+	quote CoinMarketResultQuote
+}
+
+struct CoinMarketResultQuote {
+	usd CoinMarketResultUSD [json: 'USD']
+}
+
+struct CoinMarketResultUSD {
+	price             f64
+	percent_change_7d f64
 }
 
 pub fn new(args CMCNewArgs) CoinMarketConnection {
@@ -38,22 +60,22 @@ pub fn new(args CMCNewArgs) CoinMarketConnection {
 		CoinMarketConnection: Client contains taiga auth details, taiga url, redis cleint and cache timeout.
 	*/
 	mut updated_args := args
-	if args.secret=="" && "CMCKEY" in os.environ(){
-		updated_args.secret = os.environ()["CMCKEY"]
+	if args.secret == '' && 'CMCKEY' in os.environ() {
+		updated_args.secret = os.environ()['CMCKEY']
 	}
-	if args.cache_timeout==0{
-		updated_args.cache_timeout = 3600*12
+	if args.cache_timeout == 0 {
+		updated_args.cache_timeout = 3600 * 12
 	}
-	if updated_args.secret==""{
-		panic("CMCKEY needs to be set in env.")
+	if updated_args.secret == '' {
+		panic('CMCKEY needs to be set in env.')
 	}
 	mut conn := init_connection()
-	conn.url = "https://pro-api.coinmarketcap.com/v1"
+	conn.url = 'https://pro-api.coinmarketcap.com/v1'
 	conn.secret = updated_args.secret
 	conn.cache_timeout = updated_args.cache_timeout
 
-	if conn.secret == "" {
-		panic("secret not specified, use env arg for CMCKEY")
+	if conn.secret == '' {
+		panic('secret not specified, use env arg for CMCKEY')
 	}
 
 	return conn
@@ -66,10 +88,10 @@ fn (mut h CoinMarketConnection) header() ?http.Header {
 	Output:
 		header: http.Header with the needed headers
 	*/
-	mut header := http.new_header_from_map(map{
-		http.CommonHeader.content_type:  'application/json'
+	mut header := http.new_header_from_map({
+		http.CommonHeader.content_type: 'application/json'
 	})
-	header.add_custom('X-CMC_PRO_API_KEY', h.secret)?
+	header.add_custom('X-CMC_PRO_API_KEY', h.secret) ?
 	return header
 }
 
@@ -153,9 +175,9 @@ fn (mut h CoinMarketConnection) get_json(prefix string, data string, query strin
 	if result == '' {
 		// println("MISS1")
 		mut req := http.Request{}
-		if query != ''{
+		if query != '' {
 			req = http.new_request(http.Method.get, '$h.url/$prefix?$query', data) ?
-		}else{
+		} else {
 			req = http.new_request(http.Method.get, '$h.url/$prefix', data) ?
 		}
 		req.header = h.header() ?
@@ -172,7 +194,7 @@ fn (mut h CoinMarketConnection) get_json(prefix string, data string, query strin
 	return data2
 }
 
-fn (mut h CoinMarketConnection) get_json_str(prefix string, data string, query string,cache bool) ?string {
+fn (mut h CoinMarketConnection) get_json_str(prefix string, data string, query string, cache bool) ?string {
 	/*
 	Get Request with Json Data
 	Inputs:
@@ -187,9 +209,9 @@ fn (mut h CoinMarketConnection) get_json_str(prefix string, data string, query s
 	if result == '' {
 		// println("MISS1")
 		mut req := http.Request{}
-		if query != ''{
+		if query != '' {
 			req = http.new_request(http.Method.get, '$h.url/$prefix?$query', data) ?
-		}else{
+		} else {
 			req = http.new_request(http.Method.get, '$h.url/$prefix', data) ?
 		}
 		req.header = h.header() ?
@@ -204,13 +226,13 @@ fn (mut h CoinMarketConnection) get_json_str(prefix string, data string, query s
 	return result
 }
 
-pub fn (mut h CoinMarketConnection) token_price_usd () ?f64{
-	
-	prefix := "cryptocurrency/quotes/latest"
-	query := "symbol=TFT"
-	result := h.get_json(prefix, "", query, true) ?
-	price := result["data"].as_map()["TFT"].as_map()["quote"].as_map()["USD"].as_map()["price"].f64()
-	per_last_week := result["data"].as_map()["TFT"].as_map()["quote"].as_map()["USD"].as_map()["percent_change_7d"].f64()
+pub fn (mut h CoinMarketConnection) token_price_usd() ?f64 {
+	prefix := 'cryptocurrency/quotes/latest'
+	query := 'symbol=TFT'
+	result := h.get_json_str(prefix, '', query, true) ?
+	r := json.decode(CoinMarketResult, result) ?
+	price := r.data.tft.quote.usd.price
+	per_last_week := r.data.tft.quote.usd.percent_change_7d
 	price_avg := price * (100 - per_last_week) / 100
 
 	return price_avg
