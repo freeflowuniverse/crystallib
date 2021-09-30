@@ -37,7 +37,8 @@ fn (mut page Page) error_add(error PageError, mut publisher &Publisher) {
 			return
 		}
 	}
-
+	errormsg := error.msg.replace('\n',' ')
+	println (" - ERROR in page: $page.path : $errormsg")
 	if page.state != PageStatus.error {
 		// only add when not in error mode yet, because means check was already done
 		// println(' - ERROR: $error.msg')
@@ -323,12 +324,11 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 					state.error('link, cannot find file link: ${link.original_link}.\n$err')
 					continue
 				}
-				linkname = file_linked2.name_get(mut publisher, state.site.id)
+				linkname = file_linked2.name_with_site(mut publisher, state.site.id)?
 				if !(page.id in file_linked2.usedby) {
 					file_linked2.usedby << page.id
 				}
 			}
-
 			if link.cat == LinkType.page || link.cat == LinkType.file {
 				// only process links if page or file
 
@@ -355,15 +355,26 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 				}
 
 				if link.state == LinkState.ok {
-					if link.original_get() != link.source_get(state.site.name) {
-						state.sourceline_change(link.original_get(), link.source_get(state.site.name))
-						println(' >> link replace: $link.original_get() -> ${link.source_get(state.site.name)}')
+					sourcelink := link.source_get(state.site, mut publisher)?
+
+					if link.original_get() != sourcelink {
+						state.sourceline_change(link.original_get(), sourcelink)
+						println(' >> link replace: $link.original_get() -> $sourcelink')
 					}
 					llink := link.server_get (mut &publisher)
 					state.serverline_change(link.original_get(),llink)
-					// if debug {
-					// 	println(' >>>> server: $link.original_get() -> $llink')
-					// }
+					if link.filename.contains("home_threefold_new"){
+						println(' >>>> server: $link.original_get() -> $llink')
+					}
+					// if link.filename.contains("home_threefold_new"){
+					// 	println(link.original_get())
+					// 	println(sourcelink)
+					// 	//serverlink
+					// 	println(llink)
+					// 	//object
+					// 	println(link)
+					// 	panic("ssss1")
+					// }					
 					// if line.contains("grid_home"){
 					// 	println(line)
 					// 	println(link)

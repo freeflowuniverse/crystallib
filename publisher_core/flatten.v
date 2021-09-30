@@ -152,7 +152,7 @@ pub fn (mut publisher Publisher) flatten() ? {
 		mut file_counter := 0
 		for name, _ in site.files {
 			mut fileobj := site.file_get(name, mut publisher) ?
-			dest_file = os.join_path(dest_dir, os.file_name(fileobj.path))
+			dest_file = os.join_path(dest_dir, os.file_name(fileobj.pathrel))
 			file_counter++
 			trace_progress('    ${file_counter:4}, creating file $dest_file ...')
 			os.cp(fileobj.path_get(mut publisher), dest_file) ?

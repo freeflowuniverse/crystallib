@@ -44,6 +44,17 @@ pub fn get_dir(path string, create bool) Path {
 	return p2
 }
 
+//get file path object, make sure the dir exists
+pub fn get_file_dir_create(path string) Path {
+	mut p2 := get(path)
+	os.mkdir_all(p2.parent().path_absolute()) or {
+		panic("cannot create path:$path")
+	}
+	p2.check()
+	
+	return p2
+}
+
 pub fn get_file(path string, create bool) Path {
 	mut p2 := get(path)
 	if create && !p2.exists() {

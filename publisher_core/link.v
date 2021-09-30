@@ -38,8 +38,9 @@ struct Link {
 mut:
 	original_link  string
 pub mut:
-	path		string
+	// path		string
 	isexternal  bool
+	include		bool //means we will not link to the remote location, will always keep on local sidebar
 	newtab		bool
 	cat         LinkType
 	isimage     bool // means started with !
@@ -54,7 +55,7 @@ pub mut:
 	consumer_page_id int = 999999 //is the id of the page which has the link
 }
 
-fn link_new(mut publisher &Publisher, original_descr string, original_link string, isimage bool,consumer_page_id int ) Link {
+fn link_new(mut publisher &Publisher, original_descr string, original_link string, isimage bool,consumer_page_id int) Link {
 	mut link := Link{
 		original_descr: original_descr.trim(' ')
 		original_link: original_link.trim(' ')
@@ -93,7 +94,17 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 		mut page_dest := link.page_link_get(mut publisher) or { panic(err) }
 		site_dest := page_dest.site_get(mut publisher) or { panic(err) }
 		site_source := page_source.site_get(mut publisher) or { panic(err) }
+
 		if link.newtab == false {
+			if link.include{
+				mut page_sidebar1 := page_source.sidebar_page_get(mut publisher) or { panic(err) }
+				mut path_sidebar1 := page_sidebar1.path_dir_relative_get(mut publisher).trim(" /")
+				// println(path_sidebar1)
+				// println(link)
+				// println( '[$link.description](/${path_sidebar1}/${link.filename}.md)')
+				// panic("sser")
+				return '[$link.description](/$path_sidebar1/${link.filename}.md)'
+			}
 			if page_dest.sidebarid > 0 && link.filename.to_lower()!="readme" {
 				// return '[$link.description](${link.site}__${link.filename}.md)'	
 
@@ -101,6 +112,7 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 				mut path_sidebar := page_sidebar.path_dir_relative_get(mut publisher).trim(" /")
 
 				// println(" - serverget: path_sidebar:$path_sidebar $link.filename")
+
 
 				// if path_sidebar != ""{
 				// if link.original_link.to_lower().contains("threefold_home"){
@@ -113,7 +125,7 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 					// return '[$link.description](/info/${link.site}/#/$path_sidebar/${link.filename}.md)'	
 					// return '[$link.description](../${link.site}/$path_sidebar/${link.filename}.md)'	
 				}else{
-					return '[$link.description](/$path_sidebar/${link.filename}.md)'	
+					return '[$link.description](/$path_sidebar/${link.filename}.md)'
 				}
 
 			}
@@ -150,16 +162,38 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 }
 
 // return how to represent link on source
-fn (mut link Link) source_get(sitename string) string {
+fn (mut link Link) source_get(site &Site, mut publisher &Publisher) ?string {
 	// println(" >>< $sitename $link.site")
 	if link.cat == LinkType.page {
 		if link.filename.contains(':') {
 			panic("should not have ':' in link for page or file.\n$link")
+		}		
+		if link.isimage{
+			if site.image_exists(link.filename){
+				mut file := site.image_get(link.filename, mut publisher)?
+				if file.exists(mut publisher){
+					panic("file $file should exist.")
+				}
+				return '[$link.description](${file.name(mut publisher)})'
+			}			
 		}
+		sitename := site.name
 		if sitename == link.site {
-			return '[$link.description]($link.filename)'
+			if link.include{
+				return '[$link.description](@$link.filename)'
+			}else if link.newtab{
+				return '[$link.description](!$link.filename)'
+			}else{
+				return '[$link.description]($link.filename)'
+			}
 		} else {
-			return '[$link.description]($link.site:$link.filename)'
+			if link.include{
+				return '[$link.description](@$link.site:$link.filename)'
+			}else if link.newtab{
+				return '[$link.description](!$link.site:$link.filename)'
+			}else{
+				return '[$link.description]($link.site:$link.filename)'
+			}
 		}
 	}
 	if link.cat == LinkType.file {
@@ -200,6 +234,8 @@ fn (mut link Link) init_(mut publisher &Publisher) {
 	// see if its an external link or internal
 	// mut linkstate := LinkState.init
 
+	link.original_link = link.original_link.trim(" ")
+
 	if link.original_link.contains('://') {
 		// linkstate = LinkState.ok
 		link.isexternal = true
@@ -210,9 +246,14 @@ fn (mut link Link) init_(mut publisher &Publisher) {
 		return
 	}
 
-	if link.original_link.trim(' ').starts_with('!') {
+	if link.original_link.starts_with('!') {
 		link.newtab = true
 	}
+	
+	if link.original_link.starts_with('@') {
+		link.include = true
+	}
+
 
 	if link.original_link.trim(' ').starts_with('http')
 		|| link.original_link.trim(' ').starts_with('/')
@@ -238,6 +279,12 @@ fn (mut link Link) init_(mut publisher &Publisher) {
 
 	if link.filename != '' {
 		// lets now check if there is site info in there
+		if link.filename.starts_with("!"){
+			link.filename = link.filename.after('!')
+		}
+		if link.filename.starts_with("@"){
+			link.filename = link.filename.after('@')
+		}
 		if link.filename.contains(':') {
 			splitted2 := link.filename.split(':')
 			if splitted2.len == 2 {
@@ -256,8 +303,6 @@ fn (mut link Link) init_(mut publisher &Publisher) {
 		}
 
 		link.filename = link.filename.replace('\\', '/')
-
-		link.filename = link.filename.after('!')
 
 		base_of_link_filename := os.base(link.filename)
 		fixed_name := texttools.name_fix(base_of_link_filename)
@@ -302,9 +347,10 @@ fn (mut link Link) init_(mut publisher &Publisher) {
 
 
 		if link.cat == LinkType.page {
-			mut linktocheck := link.original_link
-			if linktocheck.starts_with("!"){
-				linktocheck = linktocheck.after('!')
+			mut linktocheck := link.filename
+			if linktocheck.starts_with("!") || linktocheck.starts_with("@") {
+				println(linktocheck)
+				panic("should never be here")
 			}
 			item_linked := publisher.page_find(linktocheck, link.consumer_page_id) or {
 				link.state = LinkState.error
@@ -316,28 +362,21 @@ fn (mut link Link) init_(mut publisher &Publisher) {
 			link.site = item_linked.site_name_get(mut publisher)
 		}else if link.cat == LinkType.file {
 			mut linktocheck := link.original_link
-			item_linked := publisher.file_find(linktocheck, link.consumer_page_id) or {
+			mut item_linked := publisher.file_find(linktocheck, link.consumer_page_id) or {
 				link.state = LinkState.error
 				link.error_msg = 'link, cannot find file: ${link.original_link}.\n$err'
 				link.state = LinkState.error
 				return
 			}
+			link.filename = item_linked.name(mut publisher)
 			link.page_file_id = item_linked.id
 			link.site = item_linked.site_name_get(mut publisher)
-			//TODO: need to check if this is ok
-			// link.filename = item_linked.name
 		}
 
 		if link.original_link.starts_with("*"){
 			link.filename = link.filename.all_after('*')
 			//don't replace original link name, otherwise will not replace
-		}
-	
-
-		// if link.original_link.starts_with("!"){
-		// 	println(link)
-		// 	panic("a")
-		// }		
+		}		
 
 		if link.filename.contains(':') {
 			panic("should not have ':' in link for page or file (2).\n$link")

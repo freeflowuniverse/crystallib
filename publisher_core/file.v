@@ -1,18 +1,18 @@
 module publisher_core
 
 import os
+import path
 
 fn (mut file File) consumer_page_register(consumer_page_id int, mut publisher &Publisher) {
 	page := publisher.page_get_by_id(consumer_page_id) or { panic(err) }
 	if page.site_id != file.site_id {
-		panic('can only register page for same site, is bug (site:$file.name:$file.site_id)\n$page\n')
+		panic('can only register page for same site, is bug (site:${file.name(mut publisher)}:$file.site_id)\n$page\n')
 	}
 	if !(consumer_page_id in file.usedby) {
 		file.usedby << consumer_page_id
 	}
 }
 
-// need to create smaller sizes if needed and change the name
 // also need to make sure its in right directory
 // do this after the loading/checking of all pages & files
 fn (mut file File) relocate(mut publisher &Publisher) ? {
@@ -89,6 +89,7 @@ fn (mut file File) relocate(mut publisher &Publisher) ? {
 		}
 	}
 	// file.path = '/img_notused/${os.base(path)}'
+
 }
 
 // mark this file as duplicate from other file
@@ -108,13 +109,25 @@ pub fn (mut file File) delete(mut publisher &Publisher) ? {
 	if os.exists(path) {
 		os.rm(path) ?
 	}
-	file.path = ''
+	file.state = .deleted
 	file.usedby = []
 }
 
 pub fn (mut file File) mv(mut publisher &Publisher, dest string) ? {
-	path := file.path_get(mut publisher)
+	path_file := file.path_get(mut publisher)
 	os.mkdir_all(os.dir(dest)) ?
-	os.mv(path, dest) or { return error('could not rename $path to $dest .\n$err\n$file') }
-	file.path = dest
+	mut desto := path.get_file_dir_create(dest)
+	os.mv(path_file, desto.path_absolute()) or { return error('could not rename $path_file to ${desto.path_absolute()} .\n$err\n$file') }
+	site := file.site_get(mut publisher) ?
+	//need to get relative path in, in relation to site
+	file.pathrel = desto.path_relative(site.path)
+}
+
+pub fn (mut file File) exists(mut publisher &Publisher) bool {
+	if file.state == FileStatus.deleted {
+		return false
+	}
+	//return the full path
+	path := file.path_get(mut publisher)
+	return os.exists(path)
 }

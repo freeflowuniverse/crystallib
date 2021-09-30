@@ -134,6 +134,7 @@ fn (mut image Image) is_png() bool {
 	if image.path.extension().to_lower() == "png"{
 		return true
 	}
+
 	return false
 }
 
@@ -141,6 +142,10 @@ fn (mut image Image) skip() bool {
 	if image.path.name_no_ext().ends_with("_"){
 		return true
 	}
+	if image.size_kbyte < 400 {
+		// println("SMALLER  $image.path.path (size: $image.size_kbyte)")
+		return true
+	}	
 	return false
 }
 
@@ -150,10 +155,7 @@ fn (mut image Image) downsize(sourcedir string, backupdir string) ? {
 	if image.skip(){
 		return
 	}
-	if image.size_kbyte < 400 && ! image.is_png(){
-		//when jpg and smaller than 400kb return
-		return
-	}
+	println(" - PROCESS DOWNSIZE $image.path.path")
 	if image.is_png(){
 		image.identify_verbose()?
 	}else{
@@ -166,12 +168,14 @@ fn (mut image Image) downsize(sourcedir string, backupdir string) ? {
 
 	if image.size_x > 2400{
 		image.size_kbyte = 0
+		println("   - convert image resize 50%: ${image.path.path}")
 		process.execute_silent("convert '${image.path.path}' -resize 50% '${image.path.path}'")?
 		// println(image)
 		image.init()?
 
 	}else if image.size_kbyte > 300 && image.size_x > 1800{
 		image.size_kbyte = 0
+		println("   - convert image resize 75%: ${image.path.path}")
 		process.execute_silent("convert '${image.path.path}' -resize 75% '${image.path.path}'")?
 		image.init()?
 	}
@@ -179,7 +183,7 @@ fn (mut image Image) downsize(sourcedir string, backupdir string) ? {
 	if image.is_png() {
 		if image.size_kbyte > 400 && ! image.transparent{
 			path_dest := image.path.path_no_ext()+".jpg"
-			println("   - convert to jpg")
+			println("   - convert image jpg: $path_dest")
 			process.execute_silent("convert '${image.path.path}' '$path_dest'")?
 			if os.exists(path_dest){
 				os.rm(image.path.path)?
@@ -189,6 +193,7 @@ fn (mut image Image) downsize(sourcedir string, backupdir string) ? {
 	}
 	//means we should not process next time, we do this by adding _ at end of name
 	path_dest2 := image.path.path_get_name_with_underscore()
+	println("    - add _ at end of image: $path_dest2")
 	os.mv(image.path.path,path_dest2)?
 	image.path.path = path_dest2
 }

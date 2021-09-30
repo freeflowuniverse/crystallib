@@ -2,6 +2,7 @@ module publisher_core
 
 import texttools
 import os
+import path
 
 fn (mut publ Publisher) name_fix_alias_page(name string) ?string {
 	// name0 := name
@@ -17,6 +18,20 @@ fn (mut publ Publisher) name_fix_alias_site(name string) ?string {
 fn (mut publ Publisher) name_fix_alias_file(name string) ?string {
 	name0 := publ.replacer.file.replace(text:name) ?
 	return texttools.name_fix_keepext(name0)
+}
+
+//returns name without extension and _ from image
+//returns name with extension for normal file
+//all is lower case & normalized
+fn (mut publisher Publisher)  path_get_name_fix(pathin string) string {
+	mut patho := path.get_file(pathin,false)
+	mut namelower := ""
+	if patho.is_image(){			
+		namelower = publisher.name_fix_no_underscore_no_ext(patho.name()) or {panic("cannot fix image name")}
+	}else{
+		namelower = publisher.name_fix_alias_file(patho.name()) or {panic("cannot fix file name")}
+	}
+	return namelower
 }
 
 
@@ -62,7 +77,7 @@ fn (mut publisher Publisher) file_find_(name2find string, consumer_page_id int) 
 		}
 	}
 	// means we found files but we don't have it in our site, we need to copy
-	file_source := filesres[0]
+	mut file_source := filesres[0]
 	file_source_path := file_source.path_get(mut publisher)
 	dest := '$consumer_site.path/img_tosort/${os.base(file_source_path)}'
 	println(" - $consumer_page.name cp:$file_source_path $dest")
@@ -89,7 +104,7 @@ fn (mut publisher Publisher) file_find(name2find string, consumer_page_id int) ?
 	_, mut objname := name_split(name2find) or { panic(err) }
 	// mut objname_full := '$consumer_site.name:$objname'
 
-	//this is for when we have stad replacements to be done, normally this is not the case
+	//this is for when we have replacements to be done, normally this is not the case
 	//can be defined as metadata in config (or at least was like that)
 	objname_replaced := publisher.replacer.file.replace(text:objname) or { panic(err) }
 
@@ -163,6 +178,7 @@ pub fn (mut publisher Publisher) healcheck() bool{
 // check if we can find the page, page can be on another site|
 // we also check definitions because they can also lead to right page
 pub fn (mut publisher Publisher) page_find(name2find_ string, consumer_page_id int) ?&Page {
+	println (" == page find: $name2find")
 	if consumer_page_id==999999{
 		panic("consumer page id cannot be 999999")
 	}
@@ -206,7 +222,7 @@ pub fn (mut publisher Publisher) page_find(name2find_ string, consumer_page_id i
 				return zzz
 			}else{
 				if ! heal{
-					return error('cannot find the file: $name2find, looked on site \'$sitename\'.')
+					return error('cannot find the page: $name2find, looked on site \'$sitename\'.')
 				}
 			}
 		}

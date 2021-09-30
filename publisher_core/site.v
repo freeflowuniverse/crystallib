@@ -4,38 +4,24 @@ import path
 import imagemagick
 
 
-
 // remember the file, so we know if we have duplicates
 // also fixes the name
 fn (mut site Site) file_remember(mut patho path.Path, mut publisher &Publisher) ?&File {
 	patho.normalize() or {panic("cannot normalize $patho")}
 	pathrelative := patho.path_relative(site.path)
-	mut namelower := ""
-	// println(' - File $namelower <- $pathfull')
 
-	if publisher.files.len == 0 {
-		publisher.files = []File{}
-	}
+	mut file := file_new(mut patho, site, mut publisher)?
+	
+	// println(' - File remember $file.pathrel')
 
-	if patho.is_image(){			
-		namelower = publisher.name_fix_no_underscore_no_ext(patho.name()) or {panic("cannot fix image name")}
-	}else{
-		namelower = publisher.name_fix_alias_file(patho.name()) or {panic("cannot fix file name")}
-	}
+	mut namelower := file.name_fixed(mut publisher)
 
-	file := File{
-		id: publisher.files.len
-		site_id: site.id
-		name: namelower
-		path: pathrelative
-	}
+	if patho.is_image(){		
 
-	if patho.is_image(){			
-		namelower = publisher.name_fix_no_underscore_no_ext(patho.name()) or {panic("cannot fix image name")}
 		if site.image_exists(namelower){
 				
-				image_double := site.image_get(namelower, mut publisher)?
-				mut pathdouble := image_double.path_object_get(mut publisher)
+			mut image_double := site.image_get(namelower, mut publisher)?
+			mut pathdouble := image_double.path_object_get(mut publisher)?
 
 			if publisher.healcheck() {
 				println(" - try to heal, double file: $patho.path")
@@ -45,9 +31,12 @@ fn (mut site Site) file_remember(mut patho path.Path, mut publisher &Publisher) 
 
 				mut prio_double := false
 
-				if patho.extension() == "jpg" && pathdouble.extension() == "png"{
+				if pathdouble.name_ends_with_underscore(){
+					if patho.name_ends_with_underscore(){
+						return site.error_report_file(mut &file, 'found 2 images with _ at end: ${pathdouble.path}')
+					}
 					prio_double = true
-				}else if patho.extension() == "jpg" && pathdouble.extension() == "jpg" && pathdouble.name_ends_with_underscore(){
+				}else if patho.extension() == "jpg" && pathdouble.extension() == "png" {
 					//means are both jpg but the double one has underscore so prio
 					prio_double = true
 				}			
@@ -58,54 +47,51 @@ fn (mut site Site) file_remember(mut patho path.Path, mut publisher &Publisher) 
 					return site.image_get(namelower, mut publisher)
 				}else{
 					//means we have to put the path on this one				
-					publisher.files[image_double.id].path = pathrelative
+					publisher.files[image_double.id].pathrel = pathrelative
 					println(" - delete double: $pathdouble.path")
 					pathdouble.delete()?		
 					return site.image_get(namelower, mut publisher)
 				}
 			}else{
 				//no automatic check
-				site.errors << SiteError{
-					path: pathrelative
-					error: 'duplicate image $pathrelative\n ${pathdouble.path}'
-					cat: SiteErrorCategory.duplicatefile
-				}
-				println(" - ERROR: duplicate image: $pathrelative, \n$pathdouble.path")
+				return site.error_report_file(mut &file, 'duplicate file ${pathdouble.path}')
 			}
 		}else{
-			//means the its a new one, lets add it
-			publisher.files << file
-			site.images[namelower] = publisher.files.len - 1
+			//means the its a new one, lets add it, first see if it needs to be downsized
+			imagedownsized := imagemagick.image_downsize(patho.path)?
+			//after downsize it could be the path has been changed, need to set it on the file
+			file.pathrel = imagedownsized.path.path_relative(site.path)
+			mut file_out := file_add(mut file,mut publisher)
+			site.images[namelower] = file_out.id
+			return file_out
 		}
 	}else{
-		//now we are working on non file
+		//now we are working on non image
 		if site.file_exists(namelower)  {
 			file_double := site.file_get(namelower, mut publisher)?
-			site.errors << SiteError{
-				path: pathrelative
-				error: 'duplicate file $pathrelative\n ${file_double.path}'
-				cat: SiteErrorCategory.duplicatefile
-			}
-			println(" - ERROR: duplicate file: $pathrelative, \n$file_double.path")
+			return site.error_report_file(mut &file, 'duplicate file ${file_double.pathrel}')
 		}else{
-			publisher.files << file
-			site.files[namelower] = publisher.files.len - 1
+			mut file_out := file_add(mut file,mut publisher)
+			site.files[namelower] = file_out.id
+			return file_out
 		}
 	}
 
-	// println("remember site: $file.name")
-	mut file0 := File{}
-	if patho.is_image(){	
-		file0 = site.image_get(namelower, mut publisher) or { panic(err) }
-	}else{
-		file0 = site.file_get(namelower, mut publisher) or { panic(err) }
-	}
-	if file0.site_id > 1000 {
-		panic('cannot be')
-	}
-	return &file0
+	
 }
 
+
+fn (mut site Site) error_report_file(mut file &File, msg string) &File {
+	pathrelative := file.pathrel
+	errormsg := 'Error in remember file for site: $pathrelative\n $msg'
+	site.errors << SiteError{
+		path: pathrelative
+		error: errormsg
+		cat: .duplicatefile
+	}
+	println(" - ERROR: $errormsg")
+	return file
+}
 
 // fn (mut site Site) sidebar_remember(path string, pageid int){
 
@@ -245,6 +231,17 @@ pub fn (mut site Site) process(mut publisher &Publisher)? {
 			continue
 		}
 		f.relocate(mut publisher)?
+	}
+	for _, id in site.images {
+		mut f := publisher.file_get_by_id(id) or {
+			eprintln(err)
+			continue
+		}
+		f.relocate(mut publisher)?
+		// if f.name(mut publisher).contains("home_threefold_new"){
+		// 	println(f)
+		// 	panic("ssssss3")
+		// }		
 	}
 
 	site.state = SiteState.ok

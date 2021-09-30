@@ -5,14 +5,14 @@ import liquid
 import time
 import texttools
 
-const CMCKEY = "92be9b29-7f6c-48e4-9ef2-d6aa0550f620"
+const cmckey = "92be9b29-7f6c-48e4-9ef2-d6aa0550f620"
 
 fn tft_usd_get()f64 {
-	cmc_args := coinmarketcap.CMCNewArgs{secret:CMCKEY}
+	cmc_args := coinmarketcap.CMCNewArgs{secret:cmckey}
 	mut cmc := coinmarketcap.new(cmc_args)
 	price_cmc := cmc.token_price_usd() or {0.0}
 	
-	liquid_args := liquid.LiquidArgs{secret:CMCKEY}
+	liquid_args := liquid.LiquidArgs{secret:cmckey}
 	mut l := liquid.new(liquid_args)
 	price_liquid := l.token_price_usdt() or {0.0}
 	
