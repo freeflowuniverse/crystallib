@@ -60,8 +60,8 @@ fn (mut publ Publisher) name_split_alias(name string) ?(string, string) {
 
 // check if the file can be found and add the file to the site if needed
 // it will also rename the file if needed
-fn (mut publisher Publisher) file_find_(name2find string, consumer_page_id int) ?&File {
-	consumer_page := publisher.page_get_by_id(consumer_page_id) or { panic(err) }
+fn (mut publisher Publisher) file_find_(name2find string, page_id_source int) ?&File {
+	consumer_page := publisher.page_get_by_id(page_id_source) or { panic(err) }
 	mut consumer_site := consumer_page.site_get(mut publisher) or { panic(err) }
 
 	mut filesres := publisher.files_get(name2find)
@@ -72,7 +72,7 @@ fn (mut publisher Publisher) file_find_(name2find string, consumer_page_id int) 
 		if (*f).site_id == consumer_site.id {
 			// we found a file in the right site, nothing to do
 			mut file2 := publisher.file_get_by_id((*f).id) ?
-			file2.consumer_page_register(consumer_page_id, mut publisher)
+			file2.consumer_page_register(page_id_source, mut publisher)
 			return file2
 		}
 	}
@@ -92,14 +92,14 @@ fn (mut publisher Publisher) file_find_(name2find string, consumer_page_id int) 
 
 // check if we can find the file, if not copy to site if found in other site
 // we check the file based on name & replaced version of name
-fn (mut publisher Publisher) file_find(name2find string, consumer_page_id int) ?&File {
-	if consumer_page_id==999999{
-		mut consumer_page2 := publisher.page_get_by_id(consumer_page_id) or { panic(err) }
+fn (mut publisher Publisher) file_find(name2find string, page_id_source int) ?&File {
+	if page_id_source==999999{
+		mut consumer_page2 := publisher.page_get_by_id(page_id_source) or { panic(err) }
 		println(consumer_page2)
 		panic("consumer page id cannot be 999999")
 	}
 	// didn't find a better way how to do it, more complicated than it should I believe
-	mut consumer_page := publisher.page_get_by_id(consumer_page_id) or { panic(err) }
+	mut consumer_page := publisher.page_get_by_id(page_id_source) or { panic(err) }
 	mut consumer_site := consumer_page.site_get(mut publisher) or { panic(err) }
 	_, mut objname := name_split(name2find) or { panic(err) }
 	// mut objname_full := '$consumer_site.name:$objname'
@@ -118,14 +118,14 @@ fn (mut publisher Publisher) file_find(name2find string, consumer_page_id int) ?
 
 		//find the image with site name or without can be e.g. cloud:afile or afile
 		if x == 1 {
-			zzz := publisher.file_find_(name2find, consumer_page_id) or { continue }
+			zzz := publisher.file_find_(name2find, page_id_source) or { continue }
 			return zzz
 		}
 
 		if x == 2 {
 			//if name2find not done yet they look for file on objname only
 			if objname != name2find {
-				zzz := publisher.file_find_(objname, consumer_page_id) or { continue }
+				zzz := publisher.file_find_(objname, page_id_source) or { continue }
 				return zzz
 			}
 		}
@@ -133,7 +133,7 @@ fn (mut publisher Publisher) file_find(name2find string, consumer_page_id int) ?
 		if x == 3 {
 			//if replace instruction is there, then do the replace and look for it
 			if objname != objname_replaced {
-				zzz := publisher.file_find_(objname_replaced, consumer_page_id) or { continue }
+				zzz := publisher.file_find_(objname_replaced, page_id_source) or { continue }
 				return zzz
 			}
 		}
@@ -145,7 +145,7 @@ fn (mut publisher Publisher) file_find(name2find string, consumer_page_id int) ?
 
 // check if the page can be found over all sites
 // is used by page_find , page_find does for multiple name combinations, this one only for 1
-fn (mut publisher Publisher) page_find_(name2find string, consumer_page_id int) ?&Page {
+fn (mut publisher Publisher) page_find_(name2find string, page_id_source int) ?&Page {
 
 	mut res := publisher.pages_find(name2find)
 
@@ -154,7 +154,7 @@ fn (mut publisher Publisher) page_find_(name2find string, consumer_page_id int) 
 	}
 	if res.len > 1 {
 		// we found more than 1 result, not ok cannot continue
-		mut consumer_page := publisher.page_get_by_id(consumer_page_id) or { panic(err) }
+		mut consumer_page := publisher.page_get_by_id(page_id_source) or { panic(err) }
 		mut msg := 'we found more than 1 page for $name2find in source page:$consumer_page.name, doubles found:\n '
 		for p in res {
 			msg += '<br> - ${p.path_get(mut publisher)}<br>'
@@ -177,13 +177,13 @@ pub fn (mut publisher Publisher) healcheck() bool{
 
 // check if we can find the page, page can be on another site|
 // we also check definitions because they can also lead to right page
-pub fn (mut publisher Publisher) page_find(name2find_ string, consumer_page_id int) ?&Page {
+pub fn (mut publisher Publisher) page_find(name2find_ string, page_id_source int) ?&Page {
 	// println (" == page find: $name2find")
-	if consumer_page_id==999999{
+	if page_id_source==999999{
 		panic("consumer page id cannot be 999999")
 	}
-	mut consumer_page := publisher.page_get_by_id(consumer_page_id) or {
-		panic('page get by id:$consumer_page_id\n$err')
+	mut consumer_page := publisher.page_get_by_id(page_id_source) or {
+		panic('page get by id:$page_id_source\n$err')
 	}
 	mut consumer_site := consumer_page.site_get(mut publisher) or { panic("site_get:'n$err") }
 
@@ -218,7 +218,7 @@ pub fn (mut publisher Publisher) page_find(name2find_ string, consumer_page_id i
 		if sitename != ''{
 			if x == 0  {
 				// first check if we can find the page with full original name, if not is error
-				zzz := publisher.page_find_('$sitename:$objname', consumer_page_id) or { continue }
+				zzz := publisher.page_find_('$sitename:$objname', page_id_source) or { continue }
 				return zzz
 			}else{
 				if ! heal{
@@ -230,14 +230,14 @@ pub fn (mut publisher Publisher) page_find(name2find_ string, consumer_page_id i
 		//lets now check that we can find the name in the site itself, if yes is ok
 		if x == 1  {
 			// first check if we can find the page in the site itself
-			zzz := publisher.page_find_('$consumer_site.name:$objname', consumer_page_id) or { continue }
+			zzz := publisher.page_find_('$consumer_site.name:$objname', page_id_source) or { continue }
 			return zzz
 		}
 
 		if x == 2 && moresites {
 			// lets now check on name over all sites
 			// println(" -- find: '$sitename' '$objname' (moresites)")
-			zzz := publisher.page_find_(objname, consumer_page_id) or { continue }
+			zzz := publisher.page_find_(objname, page_id_source) or { continue }
 			// println(" --- FOUND")
 			return zzz
 		}
@@ -250,12 +250,12 @@ pub fn (mut publisher Publisher) page_find(name2find_ string, consumer_page_id i
 
 		// if x == 3 && name2find != objname {
 		// 	// now check if we can find it more generic
-		// 	zzz := publisher.page_find_(objname, consumer_page_id) or { continue }
+		// 	zzz := publisher.page_find_(objname, page_id_source) or { continue }
 		// 	return zzz
 		// }
 
 		// if x == 3 {
-		// 	zzz := publisher.page_find_(objname_replaced, consumer_page_id) or { continue }
+		// 	zzz := publisher.page_find_(objname_replaced, page_id_source) or { continue }
 		// 	return zzz
 		// }
 

@@ -3,13 +3,13 @@ module publisher_core
 import os
 import path
 
-fn (mut file File) consumer_page_register(consumer_page_id int, mut publisher &Publisher) {
-	page := publisher.page_get_by_id(consumer_page_id) or { panic(err) }
+fn (mut file File) consumer_page_register(page_id_source int, mut publisher &Publisher) {
+	page := publisher.page_get_by_id(page_id_source) or { panic(err) }
 	if page.site_id != file.site_id {
 		panic('can only register page for same site, is bug (site:${file.name(mut publisher)}:$file.site_id)\n$page\n')
 	}
-	if !(consumer_page_id in file.usedby) {
-		file.usedby << consumer_page_id
+	if !(page_id_source in file.usedby) {
+		file.usedby << page_id_source
 	}
 }
 

@@ -300,89 +300,27 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 			continue
 		}
 		// DEAL WITH LINKS
-		links_parser_result := link_parser(mut publisher, line,page.id)
+		links_parser_result := link_parser(mut publisher, mut &page, line, state.nr)
 
 		// there can be more than 1 link on 1 line
 		for mut link in links_parser_result.links {
-			mut linkname := ''
-
-			link.check(mut publisher, mut page, state.nr, line)
-
 			if link.state != LinkState.ok {
 				state.error('link:' + link.error_msg)
 				continue
 			}
 
-			if link.cat == LinkType.page {
-					mut page_linked2 := link.page_source_get(mut publisher) or {
-					state.error('link, cannot find page: ${link.original_link}.\n$err')
-					continue
-				}
-				linkname = page_linked2.name_get(mut publisher, state.site.id)
-			}else if link.cat == LinkType.file {
-					mut file_linked2 := link.file_get(mut publisher) or {
-					state.error('link, cannot find file link: ${link.original_link}.\n$err')
-					continue
-				}
-				linkname = file_linked2.name_with_site(mut publisher, state.site.id)?
-				if !(page.id in file_linked2.usedby) {
-					file_linked2.usedby << page.id
-				}
+			sourcelink := link.source_get(state.site, mut publisher)?
+
+			if link.original_get() != sourcelink {
+				state.sourceline_change(link.original_get(), sourcelink)
+				println(' >>>>  link replace source: $link.original_get() -> $sourcelink')
 			}
-			if link.cat == LinkType.page || link.cat == LinkType.file {
-				// only process links if page or file
-
-				if linkname.contains(':') {
-					mut sitename9, _ := name_split(linkname) or { panic(err) }
-					link.site = sitename9
-				}
-
-				if link.site == '' {
-					link.site = state.site.name
-				}
-
-				if debug {
-					println(' >>>> process link \n$link')
-					println(' >>< sitename:$state.site.name linksitename:$link.site')
-					// if link.filename.contains("disclaimer"){
-					// 	panic("s")
-					// }				
-				}
-
-				if linkname != link.filename {
-					link.filename = linkname
-					link.init_(mut publisher)
-				}
-
-				if link.state == LinkState.ok {
-					sourcelink := link.source_get(state.site, mut publisher)?
-
-					if link.original_get() != sourcelink {
-						state.sourceline_change(link.original_get(), sourcelink)
-						println(' >> link replace: $link.original_get() -> $sourcelink')
-					}
-					llink := link.server_get (mut &publisher)
-					state.serverline_change(link.original_get(),llink)
-					if link.filename.contains("home_threefold_new"){
-						println(' >>>> server: $link.original_get() -> $llink')
-					}
-					// if link.filename.contains("home_threefold_new"){
-					// 	println(link.original_get())
-					// 	println(sourcelink)
-					// 	//serverlink
-					// 	println(llink)
-					// 	//object
-					// 	println(link)
-					// 	panic("ssss1")
-					// }					
-					// if line.contains("grid_home"){
-					// 	println(line)
-					// 	println(link)
-					// 	println(llink)
-					// }						
-				}
+			llink := link.server_get (mut &publisher)
+			state.serverline_change(link.original_get(),llink)
+			if link.filename.contains("home_threefold_new"){
+				println(' >>>> link replace server: $link.original_get() -> $llink')
+			}
 			
-			}
 		} // end of the walk over all links
 	} // end of the line walk
 
