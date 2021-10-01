@@ -2,7 +2,7 @@ module publisher_core
 
 import texttools
 import publisher_config
-import path
+// import path
 
 [heap]
 struct Site {

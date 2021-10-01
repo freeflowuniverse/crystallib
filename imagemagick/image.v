@@ -124,6 +124,7 @@ pub fn (mut image Image) identify() ? {
 	splitted := out.split(" ")
 	size_str := splitted[2]
 	if ! size_str.contains("x"){
+		println(out)
 		panic("error in parsing. $size_str")
 	}
 	image.size_x = size_str.split("x")[0].int()

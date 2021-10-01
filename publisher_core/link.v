@@ -40,7 +40,7 @@ mut:
 pub mut:
 	// path		string
 	isexternal  bool
-	include		bool //means we will not link to the remote location, will always keep on local sidebar
+	include		bool = true //means we will not link to the remote location, will always keep on local sidebar
 	newtab		bool
 	cat         LinkType
 	isimage     bool // means started with !
@@ -180,19 +180,19 @@ fn (mut link Link) source_get(site &Site, mut publisher &Publisher) ?string {
 		sitename := site.name
 		if sitename == link.site {
 			if link.include{
-				return '[$link.description](@$link.filename)'
+				return '[$link.description]($link.filename)'
 			}else if link.newtab{
 				return '[$link.description](!$link.filename)'
 			}else{
-				return '[$link.description]($link.filename)'
+				return '[$link.description](@$link.filename)'
 			}
 		} else {
 			if link.include{
-				return '[$link.description](@$link.site:$link.filename)'
+				return '[$link.description]($link.site:$link.filename)'
 			}else if link.newtab{
 				return '[$link.description](!$link.site:$link.filename)'
 			}else{
-				return '[$link.description]($link.site:$link.filename)'
+				return '[$link.description](@$link.site:$link.filename)'
 			}
 		}
 	}
@@ -251,7 +251,7 @@ fn (mut link Link) init_(mut publisher &Publisher) {
 	}
 	
 	if link.original_link.starts_with('@') {
-		link.include = true
+		link.include = false
 	}
 
 
