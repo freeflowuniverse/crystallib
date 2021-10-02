@@ -5,7 +5,7 @@ import regex
 pub struct IPAddress {
 pub:
 	addr string
-	port int
+	port int = 22
 	cat  IpAddressType = IpAddressType.ipv4
 }
 
@@ -21,8 +21,7 @@ pub enum IpAddressType {
 pub fn ipaddress_new(addr_string string) ?IPAddress {
 	mut cat := IpAddressType.ipv4
 	mut addr := addr_string
-	mut port := '0'
-
+	mut port := "22"
 	if addr_string.starts_with('localhost') {
 		addr = addr_string.replace('localhost', '127.0.0.1')
 	}

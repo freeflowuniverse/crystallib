@@ -4,13 +4,16 @@ import os
 import rand
 import process
 
+[heap]
 pub struct ExecutorSSH {
 mut:
 	ipaddr      IPAddress
 	sshkey      string
 	user        string = 'root' // default will be root
 	initialized bool
-	retry       int = 5 // nr of times something will be retried before failing, need to check also what error is, only things which should be retried need to be done
+	retry       int = 1 // nr of times something will be retried before failing, need to check also what error is, only things which should be retried need to be done
+pub mut:
+	debug 		bool
 }
 
 fn (mut executor ExecutorSSH) init() ? {
@@ -33,19 +36,35 @@ fn (mut executor ExecutorSSH) init() ? {
 	}
 }
 
+pub fn (mut executor ExecutorSSH) debug_on() {
+	executor.debug = true
+}
+
+pub fn (mut executor ExecutorSSH) debug_off() {
+	executor.debug = false
+}
+
+
 pub fn (mut executor ExecutorSSH) exec(cmd string) ?string {
 	cmd2 := 'ssh $executor.user@$executor.ipaddr.addr -p $executor.ipaddr.port "$cmd"'
-	res := process.execute_job(cmd: cmd2, stdout: false) ?
+	if executor.debug{println(" - $cmd2")}
+	res := process.execute_job(cmd: cmd2, stdout: true) ?
 	return res.output
 }
 
 pub fn (mut executor ExecutorSSH) exec_silent(cmd string) ?string {
+	mut stdout := false
+	if executor.debug{
+		stdout = true
+	}
+	if executor.debug{println(" - $cmd")}
 	cmd2 := 'ssh $executor.user@$executor.ipaddr.addr -p $executor.ipaddr.port "$cmd"'
-	res := process.execute_job(cmd: cmd2, stdout: false) ?
+	res := process.execute_job(cmd: cmd2, stdout: stdout) ?
 	return res.output
 }
 
 pub fn (mut executor ExecutorSSH) file_write(path string, text string) ? {
+	if executor.debug{println(" - file write: $path")}
 	local_path := '/tmp/$rand.uuid_v4()'
 	os.write_file(local_path, text) ?
 	executor.upload(local_path, path) ?
@@ -53,6 +72,7 @@ pub fn (mut executor ExecutorSSH) file_write(path string, text string) ? {
 }
 
 pub fn (mut executor ExecutorSSH) file_read(path string) ?string {
+	if executor.debug{println(" - file read: $path")}
 	local_path := '/tmp/$rand.uuid_v4()'
 	executor.download(path, local_path) ?
 	r := os.read_file(local_path) ?
@@ -61,6 +81,7 @@ pub fn (mut executor ExecutorSSH) file_read(path string) ?string {
 }
 
 pub fn (mut executor ExecutorSSH) file_exists(path string) bool {
+	if executor.debug{println(" - file exists: $path")}
 	output := executor.exec('test -f $path && echo found || echo not found') or { return false }
 	if output == 'found' {
 		return true
@@ -93,12 +114,14 @@ pub fn (mut executor ExecutorSSH) upload(source string, dest string) ? {
 pub fn (mut executor ExecutorSSH) environ_get() ?map[string]string {
 	env := executor.exec('env') or { return error('can not get environment') }
 	mut res := map[string]string{}
-	if '\n' in res {
+	if env.contains("\n") {
 		for line in env.split('\n') {
-			splitted := line.split('=')
-			key := splitted[0]
-			val := splitted[1]
-			res[key] = val
+			if line.contains("="){
+				splitted := line.split('=')
+				key := splitted[0].trim(" ")
+				val := splitted[1].trim(" ")
+				res[key] = val
+			}
 		}
 	}
 	return res
@@ -122,12 +145,8 @@ pub fn (mut executor ExecutorSSH) info() map[string]string {
 // ssh shell on the node default ssh port, or any custom port that may be
 // forwarding ssh traffic to certain container
 
-pub fn (mut executor ExecutorSSH) ssh_shell(port int) ? {
+pub fn (mut executor ExecutorSSH) shell() ? {
 	mut p := '$executor.ipaddr.port'
-	if port != 0 {
-		p = '$port'
-	}
-
 	os.execvp('ssh', ['$executor.user@$executor.ipaddr.addr', '-p $p']) ?
 }
 

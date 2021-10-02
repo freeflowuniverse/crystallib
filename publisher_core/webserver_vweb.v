@@ -67,6 +67,9 @@ fn filetype_site_name_get(config publisher_config.ConfigRoot, site string, name_
 		if sitename == "cloud"{
 			sitename = "threefold"
 		}
+		if sitename == "internet4"{
+			sitename = "threefold"
+		}		
 		name = parts[1].trim(' ')
 	}
 

@@ -3,8 +3,11 @@ module builder
 import process
 import os
 
+[heap]
 pub struct ExecutorLocal {
 	retry int = 1 // nr of times something will be retried before failing, need to check also what error is, only things which should be retried need to be done, default 1 because is local
+pub mut:
+	debug bool
 }
 
 pub fn (mut executor ExecutorLocal) exec(cmd string) ?string {
@@ -13,7 +16,11 @@ pub fn (mut executor ExecutorLocal) exec(cmd string) ?string {
 }
 
 pub fn (mut executor ExecutorLocal) exec_silent(cmd string) ?string {
-	res := process.execute_job(cmd: cmd, stdout: false) ?
+	mut stdout := false
+	if executor.debug{
+		stdout = true
+	}	
+	res := process.execute_job(cmd: cmd, stdout: stdout) ?
 	return res.output
 }
 
@@ -28,6 +35,15 @@ pub fn (mut executor ExecutorLocal) file_read(path string) ?string {
 pub fn (mut executor ExecutorLocal) file_exists(path string) bool {
 	return os.exists(path)
 }
+
+pub fn (mut executor ExecutorLocal) debug_on() {
+	executor.debug = true
+}
+
+pub fn (mut executor ExecutorLocal) debug_off() {
+	executor.debug = false
+}
+
 
 // carefull removes everything
 pub fn (mut executor ExecutorLocal) remove(path string) ? {
@@ -69,8 +85,8 @@ pub fn (mut executor ExecutorLocal) download(source string, dest string) ? {
 	executor.exec('cp -r $source $dest') ?
 }
 
-pub fn (mut executor ExecutorLocal) ssh_shell(port int) ? {
-	os.execvp('ssh', ['localhost', '-p $port']) ?
+pub fn (mut executor ExecutorLocal) shell() ? {
+	os.execvp('xterm',[]) ?
 }
 
 pub fn (mut executor ExecutorLocal) list(path string) ?[]string {

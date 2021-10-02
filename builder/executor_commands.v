@@ -5,14 +5,14 @@ import os
 
 // check command exists on the platform, knows how to deal with different platforms
 pub fn (mut node Node) cmd_exists(cmd string) bool {
-	res := os.execute('which $cmd')
-	if res.exit_code == 0 {
-		return true
+	res := node.executor.exec('which $cmd') or {
+		return false
 	}
-	return false
+	return true
 }
 
 pub fn (mut node Node) exec_ok(cmd string) bool {
+	//TODO: need to put in support for multiline text files
 	node.executor.exec_silent(cmd) or {
 		// see if it executes ok, if cmd not found is false
 		return false
@@ -37,8 +37,7 @@ fn (mut node Node) platform_load() {
 }
 
 pub fn (mut node Node) platform_prepare() ? {
-	println(' - node prepare')
-	node.platform_load()
+	println(' - executor prepare')
 	if node.platform == PlatformType.osx {
 		if !node.cmd_exists('brew') {
 			process.execute_interactive('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"') or {
@@ -64,7 +63,6 @@ pub fn (mut node Node) platform_prepare() ? {
 
 pub fn (mut node Node) package_install(package Package) ? {
 	name := package.name
-	node.platform_load()
 	if node.platform == PlatformType.osx {
 		node.executor.exec('brew install $name') or {
 			return error('could not install package:$package.name\nerror:\n$err')
