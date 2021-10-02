@@ -27,3 +27,5 @@ fn main() {
 	// was hoping that r.a was still set, but it isn't
 	println(r2)
 }
+
+

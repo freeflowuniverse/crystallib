@@ -18,7 +18,7 @@ pub mut: // id and index in the Publisher.sites array
 	// sitebars map[string]int
 	state  SiteState
 	config &publisher_config.SiteConfig
-	sidebar_last int
+	sidebars_last []&Page
 }
 
 pub enum SiteErrorCategory {
@@ -26,6 +26,7 @@ pub enum SiteErrorCategory {
 	duplicatepage
 	emptypage
 	unknown
+	sidebar
 }
 
 struct SiteError {
@@ -61,6 +62,17 @@ pub fn (mut site Site) error_ignore_check(name string) bool {
 	// }
 	return false
 }
+
+fn (mut site Site) error(pathrelative string, errormsg string, cat SiteErrorCategory){
+	site.errors << SiteError{
+		path: pathrelative
+		error: errormsg
+		cat: cat
+	}
+	println(" - SITE ERROR: $pathrelative -> $errormsg")
+}
+
+
 
 pub fn (site Site) page_get(name string, mut publisher &Publisher) ?&Page {
 	mut namelower := texttools.name_fix(name)

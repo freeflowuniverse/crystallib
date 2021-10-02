@@ -1,8 +1,5 @@
 module publisher_core
 
-import texttools
-import os
-
 
 enum LinkType {
 	file

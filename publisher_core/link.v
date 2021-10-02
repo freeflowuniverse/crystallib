@@ -218,7 +218,7 @@ fn (mut link Link) init_(mut publisher &Publisher, page &Page) {
 		//GOOD DEBUG TRICK
 		// if link.cat == LinkType.page {
 
-		// 	if link.original_link.contains("@threefold:how_to_buy"){
+		// 	if link.original_link.contains("@manual3_home"){
 		// 		link.debug_info(mut publisher,"TEMP")
 		// 	}
 		// }
@@ -240,8 +240,8 @@ fn (mut link Link) debug_info(mut publisher Publisher, msg string)  {
 	println("    - sourcelink: $source_link")
 	println("    - destpage: ${page_dest.path}")
 	println("    - destsite: ${site_dest.name}")
-	println("    - destlink: $dest_link")		
-	// panic("link debug info")	
+	println("    - serverlink: $dest_link")		
+	panic("link debug info")		
 }
 
 //###########################################################################
@@ -270,14 +270,29 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 	// println(link.original_link)
 	
 	if link.cat == LinkType.page {
-		mut page_source := link.page_source_get(mut publisher) or { panic(err) }
-		mut page_dest := link.page_dest_get(mut publisher) or { panic(err) }
-		site_dest := page_dest.site_get(mut publisher) or { panic(err) }
-		site_source := page_source.site_get(mut publisher) or { panic(err) }
+		mut page_source := link.page_source_get(mut publisher) or { 
+			println( " cannot find the page at source for link:\n$link")
+			panic(err) 
+		}
+		mut page_dest := link.page_dest_get(mut publisher) or { 
+			println( " cannot find the page at dest for link:\n$link")
+			panic(err) 
+		}
+		site_dest := page_dest.site_get(mut publisher) or { 
+			println( " cannot find site for destpage for link:\n$link")
+			panic(err) 
+		}
+		site_source := page_source.site_get(mut publisher) or { 
+			println( " cannot find site for source page for link:\n$link")
+			panic(err) 
+		}
 
 		if link.newtab == false {
 			if link.include{
-				mut page_sidebar1 := page_source.sidebar_page_get(mut publisher) or { panic(err) }
+				mut page_sidebar1 := page_source.sidebar_page_get(mut publisher) or { 
+					println( " cannot find sidebar for source page:$page_source.path for link:\n$link")
+					panic(err) 
+				}
 				mut path_sidebar1 := page_sidebar1.path_dir_relative_get(mut publisher).trim(" /")
 				// println(path_sidebar1)
 				// println(link)
@@ -285,10 +300,13 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 				// panic("sser")
 				return '[$link.description](/$path_sidebar1/${link.filename}.md)'
 			}
-			if page_dest.sidebarid > 0 && link.filename.to_lower()!="readme" {
+			if page_dest.sidebarid > 0 && link.filename.to_lower()!="readme" && link.filename.to_lower()!="defs"{
 				// return '[$link.description](${link.site}__${link.filename}.md)'	
 
-				mut page_sidebar := page_dest.sidebar_page_get(mut publisher) or { panic(err) }
+				mut page_sidebar := page_dest.sidebar_page_get(mut publisher) or { 
+					println( " cannot find sidebar for dest page:$page_dest.path for link:\n$link")
+					panic(err) 
+				}
 				mut path_sidebar := page_sidebar.path_dir_relative_get(mut publisher).trim(" /")
 
 				// println(" - serverget: path_sidebar:$path_sidebar $link.filename")

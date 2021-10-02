@@ -2,7 +2,7 @@ module publisher_core
 import os
 import path
 import imagemagick
-
+import texttools
 
 // remember the file, so we know if we have duplicates
 // also fixes the name
@@ -84,12 +84,7 @@ fn (mut site Site) file_remember(mut patho path.Path, mut publisher &Publisher) 
 fn (mut site Site) error_report_file(mut file &File, msg string) &File {
 	pathrelative := file.pathrel
 	errormsg := 'Error in remember file for site: $pathrelative\n $msg'
-	site.errors << SiteError{
-		path: pathrelative
-		error: errormsg
-		cat: .duplicatefile
-	}
-	println(" - ERROR: $errormsg")
+	site.error(pathrelative,errormsg,.duplicatefile)
 	return file
 }
 
@@ -109,15 +104,11 @@ fn (mut site Site) file_remember_full_path(full_path string, mut publisher &Publ
 	return site.file_remember(mut path_, mut publisher)
 }
 
-fn (mut site Site) page_remember(path string, name string, mut publisher &Publisher) ?int {
+fn (mut site Site) page_remember(path string, name string, issidebar bool, mut publisher &Publisher) ?&Page {
 	mut namelower := publisher.name_fix_alias_page(name) or { panic(err) }
 	if namelower.trim(' ') == '' {
-		site.errors << SiteError{
-			path: path
-			error: 'empty page pagename'
-			cat: SiteErrorCategory.emptypage
-		}
-		// panic('empty page name:$path + $name')
+		site.error(path,'empty page pagename',.emptypage)
+		return none
 	}
 	if path.trim(" ") == ""{
 		panic("path cannot be empty")
@@ -131,40 +122,69 @@ fn (mut site Site) page_remember(path string, name string, mut publisher &Publis
 	}
 	pathrelative := pathfull[site.path.len..]
 
-	if namelower == "sidebar"{
+	if issidebar{
 		mut path_sidebar := os.join_path(path, namelower)
 		mut path_sidebar_relative := path_sidebar[site.path.len..]
 		path_sidebar_relative = path_sidebar_relative.replace("//","/").trim(" /")
 		namelower = path_sidebar_relative.replace("/","|")
 		// println(" - found sidebar: $namelower")
 		// path_sidebar_relative = texttools.name_fix(path_sidebar_relative)
-		// println(" ----- $pathrelative $path_sidebar_relative")
+		// println(" ----- $pathrelative $path_sidebar_relative"
+
 	}
 
 	if site.page_exists(namelower) {
 		// panic('duplicate path: ' + path + '/' + name)
-		new_error := SiteError{
-			path: pathrelative
-			error: 'duplicate page $pathrelative'
-			cat: SiteErrorCategory.duplicatepage
-		}
-		site.errors << new_error
-		return 0
+		pageduplicate := site.page_get(namelower,mut publisher)?
+		site.error(pathrelative,'duplicate page $pageduplicate.path',.duplicatepage)		
+		return none
 	} else {
+		mut sidebar_last_id:= 999999
 		if publisher.pages.len == 0 {
 			publisher.pages = []Page{}
 		}
+		if !issidebar{
+			if site.sidebars_last.len == 0{
+				site.error(path,"site $site.name needs to have sidebar in root of site.",.sidebar)
+				println(path)
+				panic("ssssd")	
+				return none
+			}
+			sidebar_last_id = site.sidebars_last.last().id
+		}
+
 		new_page := Page{
 			id: publisher.pages.len
 			site_id: site.id
 			name: namelower
 			path: pathrelative
-			sidebarid: site.sidebar_last
+			sidebarid: sidebar_last_id
 		}
 		publisher.pages << new_page
 		site.pages[namelower] = publisher.pages.len - 1		
 		// println(" ------- $new_page.sidebarid")
-		return publisher.pages.len - 1
+
+		mut lastpage := &publisher.pages[publisher.pages.len-1]
+
+		if issidebar{
+			// println(" --SIDEBAR- $new_page.path -- $site.path")
+			//needs to happen manually because otherwise the sidebar itself doesn't have the id
+			
+			lastpage.sidebarid = new_page.id			
+			site.sidebars_last << lastpage
+			
+			//CAN REMOVE THIS !!!
+			if publisher.pages.last().sidebarid == 999999{
+				println(new_page)
+				println(publisher.pages.last())
+				panic("just to check, should not be")
+			}
+			if lastpage.sidebarid == 999999{
+				panic("not be")
+			}
+		}
+
+		return lastpage
 	}
 	
 }
@@ -176,7 +196,7 @@ pub fn (mut site Site) reload(mut publisher &Publisher) ?{
 	site.errors = []SiteError{}
 	site.files_process(mut publisher)?
 	site.load(mut publisher)?
-	site.sidebar_last = 0
+	site.sidebars_last = []&Page{}
 }
 
 pub fn (mut site Site) load(mut publisher &Publisher) ? {
@@ -250,36 +270,52 @@ pub fn (mut site Site) process(mut publisher &Publisher)? {
 // process files in the site (find all files)
 // they will not be processed yet
 fn (mut site Site) files_process(mut publisher &Publisher) ? {
+	println(" - find files/pages for site: $site.path")
 	if !os.exists(site.path) {
 		return error("cannot find site on path:'$site.path'")
 	}
-	site.sidebar_last = 0
+	site.sidebars_last = []&Page{}
 	return site.files_process_recursive(site.path, mut publisher)
 }
 
-fn (mut site Site) files_process_recursive(path_ string, mut publisher &Publisher) ? {
-	items := os.ls(path_) ?
-	mut path_sidebar := "$path_/sidebar.md"
-	if os.exists(path_sidebar){
-		//means we are not in root of path
-		sidebar_last := site.page_remember(path_, "sidebar.md", mut publisher) ?
-		if path_ != site.path{
-			site.sidebar_last = sidebar_last
-			//needs to happen manually because otherwise the sidebar itself doesn't have the id
-			mut page_sidebar := publisher.page_get_by_id(site.sidebar_last) or { panic(err) }
-			page_sidebar.sidebarid = sidebar_last
-		}
-	}else{
-		if site.sidebar_last>0 {
-			page_sidebar_found := publisher.page_get_by_id(site.sidebar_last) or { panic(err) }
-			path_sidebar_found := os.dir(page_sidebar_found.path_get(mut publisher))+"/"
-			path2 := path_ + "/"
+fn (mut site Site) side_bar_fix(path_ string, mut publisher &Publisher){
+	if site.sidebars_last.len>0 {
+		path2:=path_+"/"
+		for sidebarpage in site.sidebars_last.reverse(){				
+			path_sidebar_found := os.dir(sidebarpage.path_get(mut publisher))+"/"
 			if ! path2.starts_with(path_sidebar_found){
-				//means is not subdir of previous sidebar
-				site.sidebar_last = 0
+				//remove last element of list because no longer the right path
+				site.sidebars_last.pop()
+				// println (" -- removed sidebar: $removed.path")
 			}
 		}
+		// println(" ---- sidebar now: ${site.sidebars_last.last().path}")
 	}
+}
+//path is the full path
+fn (mut site Site) files_process_recursive(path__ string, mut publisher &Publisher) ? {
+	mut path_ := path__
+	namefixed := texttools.name_fix(os.base(path_)).trim(" _")
+	if os.base(path_) != namefixed{
+		src := os.dir(path_)+"/"+os.base(path_)
+		dst := os.dir(path_)+"/"+namefixed
+		os.mv(src,dst+"_")? //this is to deal if we only have uppercase to lowercase
+		os.mv(dst+"_",dst)?
+		path_ = dst
+		// println(src)
+		// println(dst)
+		// panic("Sdssd")
+	}
+	items := os.ls(path_) ?
+	println(" - load: $path_")
+	mut path_sidebar := "$path_/sidebar.md"
+	println(" - sidebar check: $path_/sidebar.md")
+	if os.exists(path_sidebar){
+		//means we are not in root of path
+		p:= site.page_remember(path_, "sidebar.md", true, mut publisher) ?
+		println (" - Found sidebar: $p.path")
+	}	
+	site.side_bar_fix(path_,mut publisher)
 	// if path.contains("/farming"){
 	// 	println("\n - $path ($site.sidebar_last)")
 	// 	if site.sidebar_last>0 {
@@ -287,10 +323,6 @@ fn (mut site Site) files_process_recursive(path_ string, mut publisher &Publishe
 	// 		path_sidebar2 := os.dir(page_sidebar2.path_get(mut publisher))
 	// 		println(" - SIDEBAR: '$path_sidebar2'")
 	// 	}
-	// }
-	// if site.sidebar_last>0{
-	// 	page_sidebar2 := publisher.page_get_by_id(site.sidebar_last) or { panic(err) }
-	// 	// println("--R-- $path : $site.sidebar_last : ${page_sidebar2.path}")
 	// }
 	for item in items {
 		if os.is_dir(os.join_path(path_, item)) {
@@ -303,6 +335,7 @@ fn (mut site Site) files_process_recursive(path_ string, mut publisher &Publishe
 				continue
 			} else {
 				site.files_process_recursive(os.join_path(path_, item), mut publisher) ?
+				site.side_bar_fix(path_,mut publisher)
 			}
 		} else {
 			if item.starts_with('.') || item.to_lower() == 'defs.md' {
@@ -336,7 +369,9 @@ fn (mut site Site) files_process_recursive(path_ string, mut publisher &Publishe
 					// only process files which do have extension
 					ext2 := ext[1..]
 					if ext2 == 'md' {
-						_:= site.page_remember(path_, item2, mut publisher) ?
+						_:= site.page_remember(path_, item2, false, mut publisher) or {
+							continue
+						}
 
 						// if path.contains("/farming"){
 						// 	page4 := publisher.page_get_by_id(b) or { panic(err) }
@@ -354,4 +389,6 @@ fn (mut site Site) files_process_recursive(path_ string, mut publisher &Publishe
 			}
 		}
 	}
+	//here we also need to maybe go one lower in the stack, because we might return up
+	//TODO:...
 }

@@ -122,6 +122,10 @@ pub fn (mut image Image) identify() ? {
 	}
 	out = out.trim(" \n")
 	splitted := out.split(" ")
+	if splitted.len < 3{
+		println(out)
+		panic("splitting did not work")
+	}
 	size_str := splitted[2]
 	if ! size_str.contains("x"){
 		println(out)

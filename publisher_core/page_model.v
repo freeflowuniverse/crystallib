@@ -27,7 +27,7 @@ pub mut:
 	nrtimes_inluded int
 	categories      []string
 	replaced        bool
-	sidebarid		int
+	sidebarid		int = 999999
 }
 
 pub enum PageErrorCat {
