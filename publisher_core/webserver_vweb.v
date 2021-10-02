@@ -58,6 +58,15 @@ fn filetype_site_name_get(config publisher_config.ConfigRoot, site string, name_
 			return error('filename not well formatted. Needs to have 2 parts around "__". Now ${name}.')
 		}
 		sitename = parts[0].trim(' ')
+		if sitename == "tfgrid"{
+			sitename = "threefold"
+		}
+		if sitename == "tokens"{
+			sitename = "threefold"
+		}
+		if sitename == "cloud"{
+			sitename = "threefold"
+		}
 		name = parts[1].trim(' ')
 	}
 
