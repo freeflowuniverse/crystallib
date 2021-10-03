@@ -167,7 +167,8 @@ fn (mut publisher Publisher) page_find_(name2find string, page_id_source int) ?&
 }
 
 pub fn (mut publisher Publisher) healcheck() bool{
-	mut heal:= false
+	//TODO: lets for now always heal
+	mut heal:= true
 	if "HEAL" in os.environ(){
 		// println("#### WARNING HEALING MODE, CHECK CHANGES ###")
 		heal= true

@@ -132,7 +132,8 @@ fn (mut link Link) init_(mut publisher &Publisher, page &Page) {
 			// println(" ****  $link.page_id_source ${page.path}-> $link.filename")
 			// println('link, find page ($linktocheck): ${link.original_link}.')
 			item_linked := publisher.page_find(linktocheck, link.page_id_source) or {
-				link.error('link, cannot find page: ${link.original_link}.\n$err')
+				// println(link)
+				link.error("link, cannot find page: '$linktocheck' \n$err")
 				return
 			}
 			link.page_id_dest = item_linked.id
