@@ -41,11 +41,11 @@ fn init_magick() Images {
 	return images
 }
 
-const cache = init_magick()
+// const cache = init_magick()
 
-pub fn new() &Images {
-	return &imagemagick.cache
-}
+// pub fn new() &Images {
+// 	return &imagemagick.cache
+// }
 
 // pub fn add(pathin string) &Images {
 // 	mut path2 := path.get_dir(pathin,false)
