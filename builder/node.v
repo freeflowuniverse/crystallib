@@ -32,6 +32,7 @@ pub struct NodeArguments {
 	name   string
 	user   string = "root"
 	debug  bool
+	reset bool
 	
 }
 
@@ -60,6 +61,10 @@ pub fn node_get(args NodeArguments) ?Node {
 	//is a cache in redis
 	node.cache = rediscache.newcache("node:$node.name")
 
+	if args.reset{
+		node.cache.reset()?
+	}
+
 	node_env_txt := node.cache.get("env") or {
 		node.environment_load() ?
 		""
@@ -75,6 +80,11 @@ pub fn node_get(args NodeArguments) ?Node {
 	}
 	db.db_path = '$home_dir/.config/$db.db_dirname'
 	node.db = &db
+
+	if args.reset{
+		node.db.reset()?
+	}
+
 
 	if !node.cache.exists("env"){
 		node.cache.set("env",serializers.map_string_string_to_text(node.environment),3600)?

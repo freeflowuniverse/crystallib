@@ -298,7 +298,7 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 				// println(link)
 				// println( '[$link.description](/${path_sidebar1}/${link.filename}.md)')
 				// panic("sser")
-				return '[$link.description](/$path_sidebar1/${link.filename}.md)'
+				return '[$link.description](/$path_sidebar1/${link.filename}.md)'.replace("//","/")
 			}
 			if page_dest.sidebarid > 0 && link.filename.to_lower()!="readme" && link.filename.to_lower()!="defs"{
 				// return '[$link.description](${link.site}__${link.filename}.md)'	
@@ -323,7 +323,7 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 					// return '[$link.description](/info/${link.site}/#/$path_sidebar/${link.filename}.md)'	
 					// return '[$link.description](../${link.site}/$path_sidebar/${link.filename}.md)'	
 				}else{
-					return '[$link.description](/$path_sidebar/${link.filename}.md)'
+					return '[$link.description](/$path_sidebar/${link.filename}.md)'.replace("//","/")
 				}
 
 			}

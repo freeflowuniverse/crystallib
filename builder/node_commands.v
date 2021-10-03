@@ -1,6 +1,8 @@
 module builder
 
 import process
+import rand
+import texttools
 
 // check command exists on the platform, knows how to deal with different platforms
 pub fn (mut node Node) cmd_exists(cmd string) bool {
@@ -10,8 +12,30 @@ pub fn (mut node Node) cmd_exists(cmd string) bool {
 	return true
 }
 
+struct NodeExecCmd{
+	cmd string
+	period int
+}
+
+//cmd: cmd to execute
+//period in sec, e.g. if 3600, means will only execute this if not done yet within the hour
+pub fn (mut node Node) exec(args NodeExecCmd) ? {
+	mut cmd := args.cmd
+	if cmd.contains("\n"){
+		r_path := '/tmp/$rand.uuid_v4()'
+		cmd = texttools.dedent(cmd)
+		node.executor.file_write(r_path,cmd)?
+		cmd = "cd /tmp && bash $r_path && rm $r_path"
+	}
+	node.executor.exec_silent(cmd)?
+}
+
+
 pub fn (mut node Node) exec_ok(cmd string) bool {
 	//TODO: need to put in support for multiline text files
+	if cmd.contains("\n"){
+		panic("cannot have \\n in cmd. $cmd, use exec function instead")
+	}
 	node.executor.exec_silent(cmd) or {
 		// see if it executes ok, if cmd not found is false
 		return false
