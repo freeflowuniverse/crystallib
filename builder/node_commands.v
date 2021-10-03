@@ -1,11 +1,10 @@
 module builder
 
 import process
-import os
 
 // check command exists on the platform, knows how to deal with different platforms
 pub fn (mut node Node) cmd_exists(cmd string) bool {
-	res := node.executor.exec('which $cmd') or {
+	_ := node.executor.exec('which $cmd') or {
 		return false
 	}
 	return true
@@ -37,7 +36,11 @@ fn (mut node Node) platform_load() {
 }
 
 pub fn (mut node Node) platform_prepare() ? {
-	println(' - executor prepare')
+	println(' - $node.name: platform prepare')
+	if node.done_exists("platform_prepare"){
+		println("    $node.name: was already done")
+		return
+	}
 	if node.platform == PlatformType.osx {
 		if !node.cmd_exists('brew') {
 			process.execute_interactive('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"') or {
@@ -59,6 +62,7 @@ pub fn (mut node Node) platform_prepare() ? {
 	} else {
 		panic('only ubuntu and osx supported for now')
 	}
+	node.done_set("platform_prepare","OK")?
 }
 
 pub fn (mut node Node) package_install(package Package) ? {

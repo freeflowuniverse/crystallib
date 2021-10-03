@@ -47,7 +47,9 @@ pub fn (mut executor ExecutorSSH) debug_off() {
 
 pub fn (mut executor ExecutorSSH) exec(cmd string) ?string {
 	cmd2 := 'ssh $executor.user@$executor.ipaddr.addr -p $executor.ipaddr.port "$cmd"'
-	if executor.debug{println(" - $cmd2")}
+	if executor.debug{
+		println(" .. execute $executor.ipaddr.addr: $cmd")
+	}
 	res := process.execute_job(cmd: cmd2, stdout: true) ?
 	return res.output
 }
@@ -56,15 +58,15 @@ pub fn (mut executor ExecutorSSH) exec_silent(cmd string) ?string {
 	mut stdout := false
 	if executor.debug{
 		stdout = true
+		println(" .. execute $executor.ipaddr.addr: $cmd")
 	}
-	if executor.debug{println(" - $cmd")}
 	cmd2 := 'ssh $executor.user@$executor.ipaddr.addr -p $executor.ipaddr.port "$cmd"'
 	res := process.execute_job(cmd: cmd2, stdout: stdout) ?
 	return res.output
 }
 
 pub fn (mut executor ExecutorSSH) file_write(path string, text string) ? {
-	if executor.debug{println(" - file write: $path")}
+	if executor.debug{println(" - $executor.ipaddr.addr file write: $path")}
 	local_path := '/tmp/$rand.uuid_v4()'
 	os.write_file(local_path, text) ?
 	executor.upload(local_path, path) ?
@@ -72,7 +74,7 @@ pub fn (mut executor ExecutorSSH) file_write(path string, text string) ? {
 }
 
 pub fn (mut executor ExecutorSSH) file_read(path string) ?string {
-	if executor.debug{println(" - file read: $path")}
+	if executor.debug{println(" - $executor.ipaddr.addr file read: $path")}
 	local_path := '/tmp/$rand.uuid_v4()'
 	executor.download(path, local_path) ?
 	r := os.read_file(local_path) ?
@@ -81,7 +83,7 @@ pub fn (mut executor ExecutorSSH) file_read(path string) ?string {
 }
 
 pub fn (mut executor ExecutorSSH) file_exists(path string) bool {
-	if executor.debug{println(" - file exists: $path")}
+	if executor.debug{println(" - $executor.ipaddr.addr file exists: $path")}
 	output := executor.exec('test -f $path && echo found || echo not found') or { return false }
 	if output == 'found' {
 		return true
@@ -91,12 +93,14 @@ pub fn (mut executor ExecutorSSH) file_exists(path string) bool {
 
 // carefull removes everything
 pub fn (mut executor ExecutorSSH) remove(path string) ? {
+	if executor.debug{println(" - $executor.ipaddr.addr file remove: $path")}
 	executor.exec('rm -rf $path') or { panic(err) }
 }
 
 // upload from local FS to executor FS
 pub fn (mut executor ExecutorSSH) download(source string, dest string) ? {
 	port := executor.ipaddr.port
+	if executor.debug{println(" - $executor.ipaddr.addr file download: $source")}
 	process.execute_job(
 		cmd: 'rsync -avHPe "ssh -p$port" $executor.user@$executor.ipaddr.addr:$source $dest'
 	) ?
@@ -105,6 +109,7 @@ pub fn (mut executor ExecutorSSH) download(source string, dest string) ? {
 // download from executor FS to local FS
 pub fn (mut executor ExecutorSSH) upload(source string, dest string) ? {
 	port := executor.ipaddr.port
+	if executor.debug{println(" - $executor.ipaddr.addr file upload: $source")}
 	process.execute_job(
 		cmd: 'rsync -avHPe "ssh -p$port" $source -e ssh $executor.user@$executor.ipaddr.addr:$dest'
 	) ?
@@ -113,6 +118,7 @@ pub fn (mut executor ExecutorSSH) upload(source string, dest string) ? {
 // get environment variables from the executor
 pub fn (mut executor ExecutorSSH) environ_get() ?map[string]string {
 	env := executor.exec('env') or { return error('can not get environment') }
+	if executor.debug{println(" - $executor.ipaddr.addr env get")}
 	mut res := map[string]string{}
 	if env.contains("\n") {
 		for line in env.split('\n') {

@@ -18,7 +18,6 @@ pub mut:
 	develop   bool
 	replacer  ReplacerInstructions
 	config 	  publisher_config.ConfigRoot
-	imagemagick_installed bool
 }
 
 struct ReplacerInstructions {

@@ -1,20 +1,17 @@
 module builder
 
+
 pub struct DB {
 pub mut:
-	environment map[string]string
 	node        Node
 	db_dirname  string = 'builder'
+	db_path		string
 }
 
 struct DBArguments {
 pub mut:
 	node_args  NodeArguments
 	db_dirname string = 'builder'
-}
-
-fn (db DB) db_path() string {
-	return '${db.environment['HOME']}/.config/$db.db_dirname'
 }
 
 // get the node instance
@@ -26,19 +23,18 @@ fn (db DB) db_path() string {
 // 	}
 // 	db.environment_load() ?
 // 	// make sure the db path exists
-// 	db.node.executor.exec('mkdir -p $db.db_path()') ?
+// 	db.node.executor.exec('mkdir -p $db.db_path') ?
 // 	return db
 // }
 
 // get the path of the config db
 fn (mut db DB) db_key_path_get(key string) string {
-	return '$db.db_path()/${key}'
+	if db.db_path == ""{
+		panic("path canot be empty")
+	}
+	return '$db.db_path/${key}'
 }
 
-// get remote environment arguments in memory
-fn (mut db DB) environment_load() ? {
-	db.environment = db.node.executor.environ_get() or { return error('can not load env') }
-}
 
 // return info from the db
 pub fn (mut db DB) get(key string) ?string {
@@ -64,7 +60,7 @@ pub fn (mut db DB) set(key string, val string) ? {
 pub fn (mut db DB) delete(key string) ? {
 	if key.ends_with('*') {
 		prefix := key.trim_right('*')
-		files := db.node.executor.list(db.db_path()) ?
+		files := db.node.executor.list(db.db_path) ?
 		for file in files {
 			if file.starts_with(prefix) {
 				fpath := db.db_key_path_get(file)
@@ -73,7 +69,7 @@ pub fn (mut db DB) delete(key string) ? {
 		}
 	} else if key.starts_with('*') {
 		suffix := key.trim_left('*')
-		files := db.node.executor.list(db.db_path()) ?
+		files := db.node.executor.list(db.db_path) ?
 		for file in files {
 			if file.ends_with(suffix) {
 				fpath := db.db_key_path_get(file)
@@ -88,5 +84,5 @@ pub fn (mut db DB) delete(key string) ? {
 
 // reset
 pub fn (mut db DB) reset() ? {
-	db.node.executor.exec('rm -rf $db.db_path() && mkdir $db.db_path()') or { panic(err) }
+	db.node.executor.exec('rm -rf $db.db_path && mkdir $db.db_path') or { panic(err) }
 }

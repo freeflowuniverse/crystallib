@@ -4,7 +4,7 @@ import builder
 
 fn test_nodedb_local(args builder.DBArguments) ? {
 	mut db := builder.db_new(args) or { panic(err) }
-	path := db.db_path()
+	path := db.db_path
 
 	assert os.exists(path)
 	// get non existing key

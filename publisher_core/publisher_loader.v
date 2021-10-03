@@ -3,10 +3,8 @@ module publisher_core
 import texttools
 import os
 import publisher_config
-import imagemagick
 
 fn (mut publisher Publisher) load() ? {
-	publisher.imagemagick_installed = imagemagick.installed()
 	// remove code_wiki subdirs
 	cfg := publisher_config.get()
 	path_links := cfg.publish.paths.codewiki

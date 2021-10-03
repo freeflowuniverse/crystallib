@@ -18,7 +18,7 @@ pub enum ImagesStatus{
 	loaded
 }
 
-pub fn installed() bool {
+pub fn installed_() bool {
 	out := process.execute_silent("convert -version")or{
 		return false
 	}
@@ -27,6 +27,8 @@ pub fn installed() bool {
 	}
 	return true
 }
+
+pub const installed = installed_()
 
 fn init_magick() Images {
 	out := process.execute_silent("convert -version")or{

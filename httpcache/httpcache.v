@@ -47,3 +47,4 @@ pub fn (mut h HttpCache) getex(url string, expire int) ?string {
 	// println("[+] cache hit")
 	return hit
 }
+

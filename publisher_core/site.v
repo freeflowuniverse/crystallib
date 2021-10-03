@@ -58,9 +58,11 @@ fn (mut site Site) file_remember(mut patho path.Path, mut publisher &Publisher) 
 			}
 		}else{
 			//means the its a new one, lets add it, first see if it needs to be downsized
-			imagedownsized := imagemagick.image_downsize(patho.path)?
-			//after downsize it could be the path has been changed, need to set it on the file
-			file.pathrel = imagedownsized.path.path_relative(site.path)
+			if imagemagick.installed{
+				imagedownsized := imagemagick.image_downsize(patho.path)?
+				//after downsize it could be the path has been changed, need to set it on the file
+				file.pathrel = imagedownsized.path.path_relative(site.path)
+			}
 			mut file_out := file_add(mut file,mut publisher)
 			site.images[namelower] = file_out.id
 			return file_out
