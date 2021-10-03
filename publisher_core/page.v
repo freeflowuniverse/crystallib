@@ -308,7 +308,6 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 				state.error('link:' + link.error_msg)
 				continue
 			}
-
 			sourcelink := link.source_get(state.site, mut publisher)?
 
 			if link.original_get() != sourcelink {
