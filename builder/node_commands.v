@@ -1,7 +1,6 @@
 module builder
 
 import process
-import rand
 import texttools
 import crypto.md5
 import time
@@ -16,7 +15,7 @@ pub fn (mut node Node) cmd_exists(cmd string) bool {
 
 struct NodeExecCmd{
 	cmd string
-	period int = 0 //period in which we check when this was done last, if 0 then is for ever
+	period int //period in which we check when this was done last, if 0 then is for ever
 	reset bool
 }
 
@@ -36,7 +35,7 @@ pub fn (mut node Node) exec(args NodeExecCmd) ? {
 	hhash2 := md5.hexhash(cmd)
 	if node.done_exists("exec_$hhash2"){		
 		exec_last_time := node.done_get_str("exec_$hhash2").int()
-		if exec_last_time==0 || exec_last_time > now_epoch - args.period && !args.reset{
+		if exec_last_time==0 || (exec_last_time > now_epoch - args.period && !args.reset){
 			println("   - exec for cmd:$cmd on $node.name: was already done")
 			return
 		}

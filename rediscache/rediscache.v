@@ -57,8 +57,12 @@ pub fn (mut h RedisCache) exists(key string) bool {
 }
 
 pub fn (mut h RedisCache) reset() ? {
-	keys := h.redis.keys(h.namespace)?
+	key_check := "cache:"+h.namespace
+	// println(key_check)
+	keys := h.redis.keys(key_check)?
+	// println(keys)
 	for key in keys{
+		// println(key)
 		h.redis.del(key)?
 	}
 }

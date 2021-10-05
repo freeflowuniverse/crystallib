@@ -90,6 +90,8 @@ pub fn node_get(args NodeArguments) ?Node {
 		node.cache.set("env",serializers.map_string_string_to_text(node.environment),3600)?
 	}
 
+	node.cache.get("platform_type")?
+
 	init_platform_txt := node.cache.get("platform_type") or {
 		node.platform_load()	
 		if db.db_path==""{
