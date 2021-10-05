@@ -30,7 +30,7 @@ fn (mut node Node) swarm_prepare(args SwarmArgs) ?{
 		systemctl enable docker
 		'
 
-	// node.exec(docker_install)?
+	node.exec(cmd:docker_install,reset:args.reset)?
 
 	// >TODO: check that the ubuntu is focal
 

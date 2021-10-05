@@ -20,6 +20,24 @@ pub fn (mut node Node) done_get(key string) ?string {
 	return node.done[key]
 }
 
+//will return empty string if it doesnt exist
+pub fn (mut node Node) done_get_str(key string) string {
+	if ! (key in node.done){
+		return ""
+	}
+	return node.done[key]
+}
+
+//will return 0 if it doesnt exist
+pub fn (mut node Node) done_get_int(key string) int {
+	if ! (key in node.done){
+		return 0
+	}
+	return node.done[key].int()
+}
+
+
+
 pub fn (mut node Node) done_exists(key string) bool {
 	// println(node.done)
 	// println(key)

@@ -3,6 +3,8 @@ module builder
 import process
 import rand
 import texttools
+import crypto.md5
+import time
 
 // check command exists on the platform, knows how to deal with different platforms
 pub fn (mut node Node) cmd_exists(cmd string) bool {
@@ -14,20 +16,34 @@ pub fn (mut node Node) cmd_exists(cmd string) bool {
 
 struct NodeExecCmd{
 	cmd string
-	period int
+	period int = 0 //period in which we check when this was done last, if 0 then is for ever
+	reset bool
 }
 
 //cmd: cmd to execute
 //period in sec, e.g. if 3600, means will only execute this if not done yet within the hour
 pub fn (mut node Node) exec(args NodeExecCmd) ? {
 	mut cmd := args.cmd
+	mut now_epoch := time.now().unix_time()
+	mut now_str := now_epoch.str()
 	if cmd.contains("\n"){
-		r_path := '/tmp/$rand.uuid_v4()'
 		cmd = texttools.dedent(cmd)
-		node.executor.file_write(r_path,cmd)?
+		hhash := md5.hexhash(cmd)
+		r_path := '/tmp/${hhash}.sh'
+		node.executor.file_write(r_path,cmd)?		
 		cmd = "cd /tmp && bash $r_path && rm $r_path"
 	}
+	hhash2 := md5.hexhash(cmd)
+	if node.done_exists("exec_$hhash2"){		
+		exec_last_time := node.done_get_str("exec_$hhash2").int()
+		if exec_last_time==0 || exec_last_time > now_epoch - args.period && !args.reset{
+			println("   - exec for cmd:$cmd on $node.name: was already done")
+			return
+		}
+	}		
+	println("   - exec cmd:$cmd on $node.name")
 	node.executor.exec_silent(cmd)?
+	node.done_set("exec_$hhash2",now_str)?
 }
 
 
