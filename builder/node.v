@@ -66,6 +66,7 @@ pub fn node_get(args NodeArguments) ?Node {
 	}
 
 	node_env_txt := node.cache.get("env") or {
+		println( " - env load")
 		node.environment_load() ?
 		""
 	}
@@ -90,9 +91,8 @@ pub fn node_get(args NodeArguments) ?Node {
 		node.cache.set("env",serializers.map_string_string_to_text(node.environment),3600)?
 	}
 
-	node.cache.get("platform_type")?
-
 	init_platform_txt := node.cache.get("platform_type") or {
+		println( " - platform load")
 		node.platform_load()	
 		if db.db_path==""{
 			panic("db path cannot be empty")
@@ -114,7 +114,7 @@ pub fn node_get(args NodeArguments) ?Node {
 	println( " - $node.name: platform: $node.platform")
 
 	init_node_txt := node.cache.get("node_done") or {
-		println (" > $node.name: node done needs to be loaded")
+		println (" - $node.name: node done needs to be loaded")
 		node.done_load()?
 		node.cache.set("node_done",serializers.map_string_string_to_text(node.done),600)?
 		""

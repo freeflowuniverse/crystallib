@@ -5,43 +5,14 @@ import os
 import builder
 import publisher_config
 import process
-import nodejs
-import gittools
-
-pub fn web(doreset bool, clean bool) ? {
-
-	// println('INSTALLER:')
-	if doreset {
-		println(' - reset the full system')
-		reset() or { return error(' ** ERROR: cannot reset. Error was:\n$err') }
-	}
-	base() or { return error(' ** ERROR: cannot prepare system. Error was:\n$err') }
-
-	// sites_download( true) or {
-	// 	return error(' ** ERROR: cannot get web & wiki sites. Error was:\n$err')
-	// }
-	mut n := nodejs.get() or { return error(' ** ERROR: cannot install nodejs. Error was:\n$err') }
-	n.install() or { return error(' ** ERROR: cannot install nodejs. Error was:\n$err') }
-
-	if clean {
-		sites_cleanup([]) or { return error(' ** ERROR: cannot cleanup sites. Error was:\n$err') }
-	}
-
-	// make sure the config we are working with is refelected in ~/.publisher/config
-	// update_config() or { return error(' ** ERROR: cannot copy config files to ~publisher/config. Error was:\n$err') }
-
-	mut gt := gittools.new()
-		
-	gt.repo_get_from_url(url:"https://github.com/threefoldfoundation/threefold_data")? 
-	
-	sites_install([]) or { return error(' ** ERROR: cannot install sites. Error was:\n$err') }
-}
+// import nodejs
+// import gittools
 
 pub fn base() ? {
 	myconfig := publisher_config.get()
 	base := myconfig.publish.paths.base
 
-	mut node := builder.node_get(builder.NodeArguments{}) or {
+	mut node := builder.node_get(builder.NodeArguments{name:"local"}) or {
 		return error(' ** ERROR: cannot load node. Error was:\n$err')
 	}
 	node.platform_prepare() ?

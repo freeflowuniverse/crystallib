@@ -70,14 +70,14 @@ fn site_new(site_in SiteConfigRaw) ?SiteConfig{
 		"web" {
 			sc.cat = SiteCat.web
 		}
-		"wiki","" {
+		"wiki"{
 			sc.cat = SiteCat.wiki
 		}
 		"data" {
 			sc.cat = SiteCat.data
 		}
 		else{
-			return error("cannot find type of site, needs to be wiki, web or data, if undefined will be wiki")
+			return error("cannot find type of site, needs to be wiki, web or data")
 		}
 	}
 

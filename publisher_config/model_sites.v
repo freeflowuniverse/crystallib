@@ -85,6 +85,41 @@ pub fn (config ConfigRoot) sites_get(names []string) []SiteConfig {
 	return sites
 }
 
+// return sites, can specify one or more names
+pub fn (config ConfigRoot) sites_web_get(names []string) []SiteConfig {
+	mut names2 := []string{}
+	for name in names{
+		names2 << texttools.name_fix(name)
+	}
+	mut sites := []SiteConfig{}
+	for site in config.sites {
+		if texttools.name_fix(site.name) in names2 || names==[]{
+			if site.cat == .web{
+				sites << site
+			}
+		}
+	}
+	return sites
+}
+
+// return sites, can specify one or more names
+pub fn (config ConfigRoot) sites_wiki_get(names []string) []SiteConfig {
+	mut names2 := []string{}
+	for name in names{
+		names2 << texttools.name_fix(name)
+	}
+	mut sites := []SiteConfig{}
+	for site in config.sites {
+		if texttools.name_fix(site.name) in names2 || names==[]{
+			if site.cat == .wiki{
+				sites << site
+			}
+		}
+	}
+	return sites
+}
+
+
 pub fn (config ConfigRoot) reponame(name string) ?string {
 	mut site := config.site_get(name) or { return error('Cannot find site with configname: $name') }
 	if site.repo.addr.name == "" {

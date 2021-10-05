@@ -148,8 +148,6 @@ fn (mut site Site) page_remember(path string, name string, issidebar bool, mut p
 		if !issidebar{
 			if site.sidebars_last.len == 0{
 				site.error(path,"site $site.name needs to have sidebar in root of site.",.sidebar)
-				println(path)
-				panic("ssssd")	
 				return none
 			}
 			sidebar_last_id = site.sidebars_last.last().id
