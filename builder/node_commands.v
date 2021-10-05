@@ -122,3 +122,25 @@ pub fn (mut node Node) package_install(package Package) ? {
 		panic('only ubuntu, alpine and osx supported for now')
 	}
 }
+
+
+fn (mut node Node) upgrade() ?{
+	upgrade_cmds := '
+		sudo killall apt apt-get
+		rm -f /var/lib/apt/lists/lock
+		rm -f /var/cache/apt/archives/lock
+		rm -f /var/lib/dpkg/lock*		
+		export TERM=xterm
+		export DEBIAN_FRONTEND=noninteractive
+		dpkg --configure -a
+		set -ex
+		apt update
+		apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+		apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+		apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+		'
+
+	node.exec(cmd:upgrade_cmds,reset:true)?
+
+
+}
