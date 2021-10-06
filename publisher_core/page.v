@@ -261,8 +261,13 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 			}
 
 			// println(" -- include: '$page_name_include'")
+			mut moresites:=false
+			if page_name_include.starts_with("*"){
+				page_name_include = page_name_include.all_after("*")
+				moresites = true
+			}
 
-			mut page_linked := publisher.page_find(page_name_include, state.page.id) or {
+			mut page_linked := publisher.page_find(page_name_include, state.page.id, moresites) or {
 				state.error('include, cannot find page: ${page_name_include}.\n$err')
 				continue
 			}
@@ -314,12 +319,15 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 				state.sourceline_change(link.original_get(), sourcelink)
 				println(' >>>>  link replace source: $link.original_get() -> $sourcelink')
 			}
-			llink := link.server_get (mut &publisher)
+
+			llink := link.server_get (state.site, mut &publisher)
 			state.serverline_change(link.original_get(),llink)
-			if link.filename.contains("home_threefold_new"){
-				println(' >>>> link replace server: $link.original_get() -> $llink')
-			}
-			
+			// if link.original_link.contains("legal2"){
+			// 	println(' >>>> link replace server: $link.original_get() -> $llink')
+			// 	println(link)
+			// 	panic("ssss")
+			// }
+
 		} // end of the walk over all links
 	} // end of the line walk
 

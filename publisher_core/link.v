@@ -3,6 +3,23 @@ module publisher_core
 import texttools
 import os
 
+fn trim(t string) string{
+	mut done := false
+	mut res:=[]string
+	for x in t.split(""){		
+		check := " *@!".contains(x)
+		if check {
+			if done == false{
+				println("CONT")
+				continue
+			}
+		}
+		done = true
+		res << x
+	}
+	return res.join("")
+}
+
 
 fn (mut link Link) init_(mut publisher &Publisher, page &Page) {
 	// see if its an external link or internal
@@ -35,38 +52,34 @@ fn (mut link Link) init_(mut publisher &Publisher, page &Page) {
 	//AT THIS POINT LINK IS A PAGE OR A FILE
 	////////////////////////////////////////
 
-	if link.original_link.starts_with('!') {
+	if link.original_link.contains('!') {
 		link.newtab = true
 	}
 	
-	if link.original_link.starts_with('@') {
+	if link.original_link.contains('@') {
 		link.include = false
 	}
 
+	if link.original_link.contains('*') {
+		link.moresites = true
+	}
+
+
 	// deal with special cases where file is not the only thing in ()
-	if link.original_link.contains(' ') {
+	if link.original_link.trim(" ").contains(' ') {
 		// to support something like
 		//![](./img/license_threefoldfzc.png ':size=800x900')
-		splitted := link.original_link.split(' ')
+		splitted := link.original_link.trim(" ").split(' ')
 		link.filename = splitted[0]
 		link.extra = splitted[1]
 	} else {
 		link.filename = link.original_link
 	}
 
-	if link.original_link.starts_with("*"){
-		link.filename = link.filename.all_after('*')
-		//don't replace original link name, otherwise will not replace
-	}		
+	link.filename = trim(link.filename)
 
 	if link.filename != '' {
 		// lets now check if there is site info in there
-		if link.filename.starts_with("!"){
-			link.filename = link.filename.after('!')
-		}
-		if link.filename.starts_with("@"){
-			link.filename = link.filename.after('@')
-		}
 		if link.filename.contains(':') {
 			splitted2 := link.filename.split(':')
 			if splitted2.len == 2 {
@@ -125,13 +138,16 @@ fn (mut link Link) init_(mut publisher &Publisher, page &Page) {
 
 		if link.cat == LinkType.page {
 			mut linktocheck := link.filename
+			if link.site !=""{
+				linktocheck = "$link.site:$linktocheck"
+			}
 			if linktocheck.starts_with("!") || linktocheck.starts_with("@") {
 				println(linktocheck)
 				panic("should never be here")
 			}
-			// println(" ****  $link.page_id_source ${page.path}-> $link.filename")
+			println(" ****  $link.page_id_source ${page.path}-> $link.filename\n$link")
 			// println('link, find page ($linktocheck): ${link.original_link}.')
-			item_linked := publisher.page_find(linktocheck, link.page_id_source) or {
+			item_linked := publisher.page_find(linktocheck, link.page_id_source, link.moresites) or {
 				// println(link)
 				link.error("link, cannot find page: '$linktocheck' \n$err")
 				return
@@ -234,7 +250,7 @@ fn (mut link Link) debug_info(mut publisher Publisher, msg string)  {
 	mut site_source := link.site_source_get(mut publisher) or { panic(err) }
 	mut site_dest := link.site_dest_get(mut publisher) or { panic(err) }				
 	source_link := link.source_get(site_source, mut publisher) or {panic("ss")}
-	dest_link := link.server_get(mut publisher)
+	dest_link := link.server_get(site_source, mut publisher)
 	println(link)
 	println("    - sourcepage: ${page_source.path}")
 	println("    - sourcesite: ${site_source.name}")
@@ -266,7 +282,7 @@ fn (link Link) original_get_with_ignore() string {
 
 // return how to represent link on server
 // page is the page from where the link is on
-fn (mut link Link) server_get(mut publisher &Publisher) string {
+fn (mut link Link) server_get(site &Site, mut publisher &Publisher) string {
 
 	// println(link.original_link)
 	
@@ -288,6 +304,8 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 			panic(err) 
 		}
 
+		link_filename_server := "${link.site}__${link.filename}"
+
 		if link.newtab == false {
 			if link.include{
 				mut page_sidebar1 := page_source.sidebar_page_get(mut publisher) or { 
@@ -295,14 +313,9 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 					panic(err) 
 				}
 				mut path_sidebar1 := page_sidebar1.path_dir_relative_get(mut publisher).trim(" /")
-				// println(path_sidebar1)
-				// println(link)
-				// println( '[$link.description](/${path_sidebar1}/${link.filename}.md)')
-				// panic("sser")
-				return '[$link.description](/$path_sidebar1/${link.filename}.md)'.replace("//","/")
+				return '[$link.description](/$path_sidebar1/${link_filename_server}.md)'.replace("//","/")
 			}
 			if page_dest.sidebarid > 0 && link.filename.to_lower()!="readme" && link.filename.to_lower()!="defs"{
-				// return '[$link.description](${link.site}__${link.filename}.md)'	
 
 				mut page_sidebar := page_dest.sidebar_page_get(mut publisher) or { 
 					println( " cannot find sidebar for dest page:$page_dest.path for link:\n$link")
@@ -310,27 +323,18 @@ fn (mut link Link) server_get(mut publisher &Publisher) string {
 				}
 				mut path_sidebar := page_sidebar.path_dir_relative_get(mut publisher).trim(" /")
 
-				// println(" - serverget: path_sidebar:$path_sidebar $link.filename")
-
-
-				// if path_sidebar != ""{
-				// if link.original_link.to_lower().contains("threefold_home"){
-				// 	println(" - serverget: path_sidebar:$path_sidebar $link.filename")	
-				// 	println("    = $site_source.name $site_dest.name $link.site ")
-				// }
-
 				if site_source.name != site_dest.name{
-					return '<a href="/info/${link.site}/#/$path_sidebar/${link.filename}.md"> $link.description </a>'
+					return '<a href="/info/${link.site}/#/$path_sidebar/${link_filename_server}.md"> $link.description </a>'
 					// return '[$link.description](/info/${link.site}/#/$path_sidebar/${link.filename}.md)'	
 					// return '[$link.description](../${link.site}/$path_sidebar/${link.filename}.md)'	
 				}else{
-					return '[$link.description](/$path_sidebar/${link.filename}.md)'.replace("//","/")
+					return '[$link.description](/$path_sidebar/${link_filename_server}.md)'.replace("//","/")
 				}
 
 			}
 			if site_source.name != site_dest.name{
 			// return '<a href="/info/${link.site}/#/$link.filename"> $link.description </a>'
-				return '<a href="/info/${link.site}/#/$link.filename"> $link.description </a>'
+				return '<a href="/info/${link.site}/#/$link_filename_server"> $link.description </a>'
 			}else{
 				return '[$link.description](${link.site}__${link.filename}.md)'	
 			}
@@ -377,23 +381,21 @@ fn (mut link Link) source_get(site &Site, mut publisher &Publisher) ?string {
 			}			
 		}
 		sitename := site.name
-		if sitename == link.site {
-			if link.include{
-				return '[$link.description]($link.filename)'
-			}else if link.newtab{
-				return '[$link.description](!$link.filename)'
-			}else{
-				return '[$link.description](@$link.filename)'
-			}
-		} else {
-			if link.include{
-				return '[$link.description]($link.site:$link.filename)'
-			}else if link.newtab{
-				return '[$link.description](!$link.site:$link.filename)'
-			}else{
-				return '[$link.description](@$link.site:$link.filename)'
-			}
+		mut link_filename := link.filename
+		
+		if sitename != link.site {
+			link_filename = "${link.site}:$link_filename"
+
+		}				
+		if link.include == false{
+			link_filename ="@$link_filename"
 		}
+		if link.newtab{
+			link_filename ="!$link_filename"
+		}
+
+		return '[$link.description]($link_filename)'		
+
 	}
 	if link.cat == LinkType.file {
 		if link.filename.contains(':') {

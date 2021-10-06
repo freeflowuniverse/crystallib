@@ -177,6 +177,16 @@ pub fn (mut publisher Publisher) pages_find(namefull string) []&Page {
 	return res
 }
 
+pub fn (mut publisher Publisher) pages_find_name(namefull string) []string {
+	mut res := []string{}
+	pages := publisher.pages_find(namefull) 
+	for page in pages{
+		res << page.name
+	}
+	return res
+
+}
+
 // name in form: 'sitename:filename' or 'filename'
 pub fn (mut publisher Publisher) file_get(namefull string) ?&File {
 	sitename, itemname := publisher.name_split_alias(namefull) ?

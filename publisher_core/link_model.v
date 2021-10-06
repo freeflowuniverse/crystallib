@@ -27,6 +27,7 @@ pub mut:
 	isexternal  bool
 	include		bool = true //means we will not link to the remote location, will always keep on local sidebar
 	newtab		bool
+	moresites	bool
 	cat         LinkType
 	isimage     bool // means started with !
 	description string

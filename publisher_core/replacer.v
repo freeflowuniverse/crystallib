@@ -146,11 +146,11 @@ fn (mut publisher Publisher) file_find(name2find string, page_id_source int) ?&F
 // check if the page can be found over all sites
 // is used by page_find , page_find does for multiple name combinations, this one only for 1
 fn (mut publisher Publisher) page_find_(name2find string, page_id_source int) ?&Page {
-
+	println(" -- page find debug: '$name2find'")
 	mut res := publisher.pages_find(name2find)
 
 	if res.len == 0 {
-		return error('cannot find the page: $name2find')
+		return error('cannot find the page, 0: $name2find')
 	}
 	if res.len > 1 {
 		// we found more than 1 result, not ok cannot continue
@@ -168,7 +168,7 @@ fn (mut publisher Publisher) page_find_(name2find string, page_id_source int) ?&
 
 pub fn (mut publisher Publisher) healcheck() bool{
 	//TODO: lets for now always heal
-	mut heal:= true
+	mut heal:= false
 	if "HEAL" in os.environ(){
 		// println("#### WARNING HEALING MODE, CHECK CHANGES ###")
 		heal= true
@@ -178,8 +178,11 @@ pub fn (mut publisher Publisher) healcheck() bool{
 
 // check if we can find the page, page can be on another site|
 // we also check definitions because they can also lead to right page
-pub fn (mut publisher Publisher) page_find(name2find_ string, page_id_source int) ?&Page {
-	// println (" == page find: $name2find")
+pub fn (mut publisher Publisher) page_find(name2find string, page_id_source int, moresites_ bool) ?&Page {
+	println (" == page find debug: '$name2find' moresites:$moresites_")
+	if name2find.contains("*") || name2find.contains("!") || name2find.contains("@") {
+		panic("should not have !@* in pagename. Now: $name2find")
+	}
 	if page_id_source==999999{
 		panic("consumer page id cannot be 999999")
 	}
@@ -193,13 +196,7 @@ pub fn (mut publisher Publisher) page_find(name2find_ string, page_id_source int
 	heal := publisher.healcheck()
 
 	//if we heal then we look for moresites
-	mut moresites := heal
-	mut name2find := name2find_
-	if name2find.starts_with("*"){
-		//will look over multiple sites
-		name2find = name2find.all_after("*")
-		moresites = true		
-	}
+	mut moresites := heal || moresites_
 
 	sitename , objname := name_split(name2find) ?
 	// mut objname_replaced := publisher.replacer.file.replace(text:objname) or {
@@ -213,29 +210,23 @@ pub fn (mut publisher Publisher) page_find(name2find_ string, page_id_source int
 
 
 	// didn't find a better way how to do it, more complicated than it should I believe
-	for x in 0 .. 4 {
+	for x in 0 .. 3 {
+		println(x)
 
-		//check name can be found as mentioned with full name
-		if sitename != ''{
-			if x == 0  {
-				// first check if we can find the page with full original name, if not is error
-				zzz := publisher.page_find_('$sitename:$objname', page_id_source) or { continue }
+		if x == 0  {
+			// first check if we can find the page with full original name
+			if sitename == ''{		
+				//means sitename was not specified so need to check in internal site	
+				zzz := publisher.page_find_('$consumer_site.name:$objname', page_id_source) or { continue }
 				return zzz
 			}else{
-				if ! heal{
-					return error('cannot find the page: $name2find, looked on site \'$sitename\'.')
-				}
+				//now check with the fullname because site was specified
+				zzz := publisher.page_find_('$sitename:$objname', page_id_source) or { continue }
+				return zzz
 			}
 		}
 
-		//lets now check that we can find the name in the site itself, if yes is ok
-		if x == 1  {
-			// first check if we can find the page in the site itself
-			zzz := publisher.page_find_('$consumer_site.name:$objname', page_id_source) or { continue }
-			return zzz
-		}
-
-		if x == 2 && moresites {
+		if x == 1 && moresites {
 			// lets now check on name over all sites
 			// println(" -- find: '$sitename' '$objname' (moresites)")
 			zzz := publisher.page_find_(objname, page_id_source) or { continue }
@@ -243,11 +234,13 @@ pub fn (mut publisher Publisher) page_find(name2find_ string, page_id_source int
 			return zzz
 		}
 
-		if x == 3 {
+		if x == 2 {
 			// lets now try if we can get if from definitions
 			zzz := publisher.def_page_get(objname) or { continue }
 			return zzz
 		}
+
+
 
 		// if x == 3 && name2find != objname {
 		// 	// now check if we can find it more generic
@@ -268,5 +261,11 @@ pub fn (mut publisher Publisher) page_find(name2find_ string, page_id_source int
 		// }
 	}
 	// we did not manage to find a page
+
+	if name2find.contains("circles_remuneration"){
+		println(publisher.pages_find_name(name2find))		
+		panic("dsds:'$name2find'")
+	}
+
 	return error('cannot find the page: $name2find')
 }
