@@ -21,6 +21,9 @@ pub fn new(config &publisher_config.ConfigRoot) ?Publisher {
 
 // check all pages, try to find errors
 pub fn (mut publisher Publisher) check() ? {
+	if publisher.init{
+		return
+	}
 	for mut site in publisher.sites {
 		if site.config.cat != publisher_config.SiteCat.wiki{
 			continue
@@ -44,6 +47,8 @@ pub fn (mut publisher Publisher) check() ? {
 		}
 		site.process(mut publisher)?
 	}
+	publisher.init = true
+
 }
 
 // returns the found locations for the sites, will return [[name,path]]
@@ -57,19 +62,25 @@ pub fn (mut publisher Publisher) site_locations_get() [][]string {
 
 // replace in text the defs to a link
 fn (mut publisher Publisher) replace_defs_links(mut page &Page) ?string {
-
+	if page.name == "defs"{
+		return page.content
+	}
 	text := page.content
 	mut replacer := map[string]string{}
 
 	mut page_sidebar := page.sidebar_page_get(mut publisher) or { panic(err) }
 	mut path_sidebar := page_sidebar.path_dir_relative_get(mut publisher).trim(" /")
-	// println(" ==== $path_sidebar")
 
 	for defname, defid in publisher.def_names {
 		if page.name == defname{
 			continue
 		}
 		defobj := publisher.def_get_by_id(defid) ?
+		if defobj.pageid==999999{
+			println(" = skip def: $defname $defid")
+			panic("skip def")
+			continue
+		}		
 		page2 := defobj.page_get(mut publisher) ?
 		site2 := page2.site(mut publisher)
 		if path_sidebar == ""{
@@ -80,6 +91,9 @@ fn (mut publisher Publisher) replace_defs_links(mut page &Page) ?string {
 			replacer[defname+"s"] = '[${defobj.name}s](/$path_sidebar/${site2.name}__$page2.name)'
 		}
 	}
+	// println(text)
+	// println(replacer)
 	result := texttools.replace_items(text, replacer)
+	// println(result)
 	return result
 }

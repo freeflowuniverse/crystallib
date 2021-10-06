@@ -5,7 +5,7 @@ import os
 
 fn trim(t string) string{
 	mut done := false
-	mut res:=[]string
+	mut res:=[]string{}
 	for x in t.split(""){		
 		check := " *@!".contains(x)
 		if check {

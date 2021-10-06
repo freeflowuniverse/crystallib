@@ -123,7 +123,9 @@ pub fn replace_items(text string, replacer map[string]string) string {
 			char = ""
 		}
 		//println(" --- endline: lastchar:'$char' varsubst:${varsubst(char, var, replacer2)}")
-		line_out += varsubst(char, var, replacer2)
+		if var!=""{
+			line_out += varsubst(char, var, replacer2)
+		}
 		//println(" -> ${line_out}")
 		res << line_out
 	}

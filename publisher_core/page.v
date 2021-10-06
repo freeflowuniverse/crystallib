@@ -355,9 +355,9 @@ fn (mut page Page) title() string {
 
 // return a page where all definitions are replaced with link
 fn (mut page Page) replace_defs(mut publisher &Publisher) ? {
-	// if page.replaced {
-	// 	return
-	// }
+	if page.replaced {
+		return
+	}
 	new_content := publisher.replace_defs_links(mut &page) ?
 
 	page.content = new_content

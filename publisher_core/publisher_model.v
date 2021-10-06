@@ -18,6 +18,7 @@ pub mut:
 	develop   bool
 	replacer  ReplacerInstructions
 	config 	  publisher_config.ConfigRoot
+	init	  bool
 }
 
 struct ReplacerInstructions {
@@ -176,6 +177,7 @@ pub fn (mut publisher Publisher) pages_find(namefull string) []&Page {
 	}
 	return res
 }
+
 
 pub fn (mut publisher Publisher) pages_find_name(namefull string) []string {
 	mut res := []string{}
