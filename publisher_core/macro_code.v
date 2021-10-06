@@ -63,7 +63,7 @@ fn macro_code(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	out2 << texttools.dedent(out.join_lines()).split("\n")
 
 	// out2 <<""
-	out2 << "```"
+	out2 << "```\n<br>\n"
 
 	state.lines_server << out2
 }

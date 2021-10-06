@@ -15,6 +15,7 @@ pub fn replace_items(text string, replacer map[string]string) string {
 	mut keys := []string{}
 	mut var := ""
 	mut char := ""
+	mut skipline_format := ""
 	toskip := "/.|:'`"
 	// mut done := []string{}
 
@@ -54,9 +55,14 @@ pub fn replace_items(text string, replacer map[string]string) string {
 			continue
 		}
 		
-		if line.contains("'''") || line.contains('```') || line.contains('"""') {
-			skipline = !skipline
+		for skipsearch in ["'''",'```','"""']{
+			if line.contains(skipsearch){
+				skipline = !skipline
+				skipline_format = skipsearch
+				break
+			}
 		}
+
 		if skipline {
 			res << line
 			continue
@@ -128,6 +134,10 @@ pub fn replace_items(text string, replacer map[string]string) string {
 		}
 		//println(" -> ${line_out}")
 		res << line_out
+	}
+	if skipline{
+		res << skipline_format
+		res << "<br>"
 	}
 	final_res := res.join('\n')	
 

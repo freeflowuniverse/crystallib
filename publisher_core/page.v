@@ -193,6 +193,7 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 	}
 
 	mut debug := false
+	mut skipline_format := ""
 
 	// mut page_linked := Page{}
 
@@ -228,6 +229,20 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 
 		linestrip := line.trim(' ')
 
+
+		for skipsearch in ["'''",'```','"""']{
+			if linestrip.starts_with(skipsearch){
+				skipline_format = skipsearch
+			}
+		}
+
+		if skipline_format!=""{
+			state.lines_server << line
+			//no reason to continue
+			skipline_format = ""
+			continue
+		}
+
 		if linestrip.trim(' ').starts_with('> **ERROR') {
 			// these are error messages which will be rewritten if errors are still there
 			continue
@@ -242,6 +257,7 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 		}
 
 		state.lines_server << line
+
 
 		if linestrip.starts_with('!!!include') {
 			mut params := texttools.new_params()
@@ -333,6 +349,9 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 
 	// now we need to rewrite the source & server lines
 	page.content = state.lines_server.join('\n')
+	if skipline_format!=""{
+		page.content+="\n<br>\n"		
+	}
 
 	if state.changed_source {
 		os.write_file(page.path_get(mut publisher), state.lines_source.join('\n')) or { panic(err) }
