@@ -53,7 +53,7 @@ pub fn ipaddress_new(addr_string string) ?IPAddress {
 	return ip
 }
 
-pub fn (mut ipaddr IPAddress) ping(executor Executor) bool {
+pub fn (mut ipaddr IPAddress) ping(mut executor Executor) bool {
 	if ipaddr.cat == IpAddressType.ipv4 {
 		executor.exec('ping -c 3 $ipaddr.addr') or { return false }
 	} else {

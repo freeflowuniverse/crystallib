@@ -321,7 +321,7 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 			continue
 		}
 		// DEAL WITH LINKS
-		links_parser_result := link_parser(mut publisher, mut &page, line, state.nr)
+		mut links_parser_result := link_parser(mut publisher, mut &page, line, state.nr)
 
 		// there can be more than 1 link on 1 line
 		for mut link in links_parser_result.links {

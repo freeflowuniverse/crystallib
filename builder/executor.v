@@ -2,6 +2,7 @@ module builder
 
 [heap]
 interface Executor {
+mut:
 	exec(cmd string) ?string
 	exec_silent(cmd string) ?string
 	file_write(path string, text string) ?
