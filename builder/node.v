@@ -114,6 +114,7 @@ pub fn node_get(args NodeArguments) ?Node {
 	println( " - $node.name: platform: $node.platform")
 
 	init_node_txt := node.cache.get("node_done") or {
+		println(err)
 		println (" - $node.name: node done needs to be loaded")
 		node.done_load()?
 		node.cache.set("node_done",serializers.map_string_string_to_text(node.done),600)?

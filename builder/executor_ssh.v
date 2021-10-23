@@ -109,7 +109,7 @@ pub fn (mut executor ExecutorSSH) download(source string, dest string) ? {
 // download from executor FS to local FS
 pub fn (mut executor ExecutorSSH) upload(source string, dest string) ? {
 	port := executor.ipaddr.port
-	if executor.debug{println(" - $executor.ipaddr.addr file upload: $source")}
+	if executor.debug{println(" - $executor.ipaddr.addr file upload: $source -> $dest")}
 	process.execute_job(
 		cmd: 'rsync -avHPe "ssh -p$port" $source -e ssh $executor.user@$executor.ipaddr.addr:$dest'
 	) ?

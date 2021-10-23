@@ -15,34 +15,63 @@ pub fn (mut node Node) cmd_exists(cmd string) bool {
 
 struct NodeExecCmd{
 	cmd string
-	period int //period in which we check when this was done last, if 0 then is for ever
-	reset bool
+	period int //period in which we check when this was done last, if 0 then period is indefinite
+	reset bool = true
+	description string
 }
+
+pub fn (mut node Node) ipaddr_pub_get() ?string {
+	if ! node.done_exists("ipaddr"){
+		cmd := "dig @resolver4.opendns.com myip.opendns.com +short"
+		res := node.executor.exec(cmd)?
+		node.done_set("ipaddr",res.trim("\n").trim(" \n"))?
+	}
+	mut ipaddr := node.done_get("ipaddr")?
+	return ipaddr.trim("\n").trim(" \n")
+}
+	
 
 //cmd: cmd to execute
 //period in sec, e.g. if 3600, means will only execute this if not done yet within the hour
 pub fn (mut node Node) exec(args NodeExecCmd) ? {
+	// println(args)
 	mut cmd := args.cmd
 	mut now_epoch := time.now().unix_time()
 	mut now_str := now_epoch.str()
 	if cmd.contains("\n"){
 		cmd = texttools.dedent(cmd)
-		hhash := md5.hexhash(cmd)
-		r_path := '/tmp/${hhash}.sh'
-		node.executor.file_write(r_path,cmd)?		
-		cmd = "cd /tmp && bash $r_path && rm $r_path"
 	}
-	hhash2 := md5.hexhash(cmd)
-	if node.done_exists("exec_$hhash2"){		
-		exec_last_time := node.done_get_str("exec_$hhash2").int()
-		if exec_last_time==0 || (exec_last_time > now_epoch - args.period && !args.reset){
-			println("   - exec for cmd:$cmd on $node.name: was already done")
+	hhash := md5.hexhash(cmd)
+	mut description := args.description
+	if description == ""{
+		description = cmd
+		if description.contains("\n"){
+			description = "\n$description\n"
+		}
+	}
+	if !args.reset && node.done_exists("exec_$hhash"){	
+		if args.period 	== 0 {
+			println("   - exec cmd:$description on $node.name: was already done, period indefinite.")
+			return
+		}
+		exec_last_time := node.done_get_str("exec_$hhash").int()
+		assert exec_last_time > 10000
+		// println(args)
+		// println("   - check exec cmd:$cmd on $node.name: time:$exec_last_time")
+		if exec_last_time > now_epoch - args.period {
+			hours := args.period/3600
+			println("   - exec cmd:$description on $node.name: was already done, period $hours h")
 			return
 		}
 	}		
+	r_path := '/tmp/${hhash}.sh'
+	node.executor.file_write(r_path,cmd)?		
+	cmd = "cd /tmp && bash $r_path && rm $r_path"
 	println("   - exec cmd:$cmd on $node.name")
-	node.executor.exec_silent(cmd)?
-	node.done_set("exec_$hhash2",now_str)?
+	node.executor.exec_silent(cmd) or {
+		return error(err.msg+"\noriginal cmd:\n${args.cmd}")
+	}
+	node.done_set("exec_$hhash",now_str)?
 }
 
 
@@ -139,7 +168,7 @@ fn (mut node Node) upgrade() ?{
 		apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
 		'
 
-	node.exec(cmd:upgrade_cmds,reset:true)?
+	node.exec(cmd:upgrade_cmds,period:48*3600,reset:false,description:"upgrade operating system packages")?
 
 
 }
