@@ -11,7 +11,7 @@ pub mut:
 	project                int
 	project_extra_info     ProjectInfo
 	user_story             int
-	user_story_extra_info  UserStoryInfo
+	user_story_extra_info  StoryInfo
 	status                 int
 	status_extra_info      StatusInfo
 	assigned_to            int
@@ -26,7 +26,6 @@ pub mut:
 	is_blocked             bool
 	blocked_note           string
 	ref                    int
-	client                 TaigaConnection
 }
 
 struct NewTask {
@@ -40,9 +39,9 @@ fn (mut h TaigaConnection) tasks() ?[]Task {
 	return json.decode([]Task, data) or {}
 }
 
-fn (mut h TaigaConnection) task_create(subject string, project_id int) ?Task {
+pub fn (mut h TaigaConnection) task_create(subject string, project_id int) ?Task {
 	// TODO
-	// h.cache_drop() //to make sure all is consistent
+	h.cache_drop()? //to make sure all is consistent, too harsh need to be improved
 	task := NewTask{
 		subject: subject
 		project: project_id
@@ -50,14 +49,12 @@ fn (mut h TaigaConnection) task_create(subject string, project_id int) ?Task {
 	postdata := json.encode_pretty(task)
 	response := h.post_json_str('tasks', postdata, true, true) ?
 	mut result :=  json.decode(Task, response) ?
-	result.client = h
 	return result
 }
 
-fn (mut h TaigaConnection) task_get(id int) ?Task {
+pub fn (mut h TaigaConnection) task_get(id int) ?Task {
 	// TODO: Check Cache first (Mohammed Essam)
 	response := h.get_json_str('tasks/$id', "", true) ?
 	mut result := json.decode(Task, response) ?
-	result.client = h
 	return result
 }

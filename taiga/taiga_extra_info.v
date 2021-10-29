@@ -25,7 +25,7 @@ pub mut:
 	is_closed bool
 }
 
-struct UserStoryInfo {
+struct StoryInfo {
 pub mut:
 	id      int
 	ref     int

@@ -6,13 +6,13 @@ pub mut:
 	pages []string
 }
 
-fn init() WikiCreator {
+fn init2() WikiCreator {
 	mut wc := wikicreator.WikiCreator{}
 	return wc
 }
 
 
-const creator = init()
+const creator = init2()
 
 pub fn get() &WikiCreator {
 	return &wikicreator.creator

@@ -15,10 +15,10 @@ pub mut:
 	email             string
 	public_key        string
 	date_joined       string
-	client            TaigaConnection
 }
 
 fn (mut h TaigaConnection) users() ?[]User {
-	data := h.get_json_str('users', '', true) ?
+	mut conn := get()	
+	data := conn.get_json_str('users', '', true) ?
 	return json.decode([]User, data) or {}
 }

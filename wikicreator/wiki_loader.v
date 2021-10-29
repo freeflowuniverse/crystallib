@@ -1,6 +1,7 @@
 module wikicreator
 
 import os
+// import path
 // import texttools
 
 pub fn (mut creator WikiCreator) do(path string,path_out string) ? {
@@ -20,7 +21,7 @@ fn (mut creator WikiCreator) do_recursive(path_root string,path_out string) ? {
 	if path_root == '' {
 		return error("cannot load wiki processing for dest path, because empty")
 	}
-	if ! path.exists(path_out){
+	if ! os.exists(path_out){
 		os.mkdir_all(path_out) ?
 	}
 
@@ -43,7 +44,7 @@ fn (mut creator WikiCreator) do_recursive_(path string,path_out string) ? {
 			continue
 		}
 		if os.is_dir(os.join_path(path, item)) {
-			creator.files_process_recursive(pathnew,path_out) ?
+			creator.do_recursive_(pathnew,path_out) ?
 		} else {
 			if item.to_lower() == 'defs.md' {
 				continue

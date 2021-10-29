@@ -6,6 +6,8 @@ import net.http
 import redisclient
 import crypto.md5
 
+
+[heap]
 struct TaigaConnection {
 mut:
 	redis         redisclient.Redis
@@ -14,11 +16,22 @@ mut:
 	cache_timeout int
 }
 
-fn init_connection() TaigaConnection {
-	return TaigaConnection{
+fn init2() TaigaConnection {
+	mut conn := taiga.TaigaConnection{
 		redis: redisclient.connect('127.0.0.1:6379') or { redisclient.Redis{} }
-	}
+	}	
+	return conn
 }
+
+
+const connection = init2()
+
+//make sure to use new first, so that the connection has been initted
+//then you can get it everywhere
+fn get() &TaigaConnection {
+	return &taiga.connection
+}
+
 
 // const conn = init_connection()
 
@@ -36,7 +49,7 @@ mut:
 	uuid              string
 }
 
-pub fn new(url string, login string, passwd string, cache_timeout int) TaigaConnection {
+pub fn new(url string, login string, passwd string, cache_timeout int) &TaigaConnection {
 	/*
 	Create a new taiga client
 	Inputs:
@@ -48,7 +61,7 @@ pub fn new(url string, login string, passwd string, cache_timeout int) TaigaConn
 	Output:
 		TaigaConnection: Client contains taiga auth details, taiga url, redis cleint and cache timeout.
 	*/
-	mut conn := init_connection()
+	mut conn := get()
 	conn.auth(url, login, passwd) or {
 		panic("Could not connect to $url with $login and passwd:'$passwd'\n$err")
 	}
@@ -124,7 +137,7 @@ fn (mut h TaigaConnection) cache_set(prefix string, reqdata string, data string,
 	}
 }
 
-fn (mut h TaigaConnection) cache_drop() ? {
+pub fn (mut h TaigaConnection) cache_drop() ? {
 	/*
 	Drop all cache related to taiga
 	*/
@@ -325,5 +338,5 @@ fn (mut h TaigaConnection) auth(url string, login string, passwd string) ?AuthDe
 
 	h.auth = json.decode(AuthDetail, data) ?
 
-	return h
+	return h.auth
 }

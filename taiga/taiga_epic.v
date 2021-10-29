@@ -28,7 +28,6 @@ pub mut:
 	team_requirement       bool
 	ref                    int
 	user_stories_counts    UserStoriesCount
-	client                 TaigaConnection
 }
 
 struct UserStoriesCount {
@@ -49,7 +48,8 @@ fn (mut h TaigaConnection) epics() ?[]Epic {
 
 fn (mut h TaigaConnection) epic_create(subject string, project_id int) ?Epic {
 	// TODO
-	// h.cache_drop() //to make sure all is consistent
+	mut conn :=  get()
+	conn.cache_drop()?
 	epic := NewEpic{
 		subject: subject
 		project: project_id
@@ -57,14 +57,13 @@ fn (mut h TaigaConnection) epic_create(subject string, project_id int) ?Epic {
 	postdata := json.encode_pretty(epic)
 	response := h.post_json_str('epics', postdata, true, true) ?
 	mut result := json.decode(Epic, response) ?
-	result.client = h
 	return result
 }
 
 fn (mut h TaigaConnection) epic_get(id int) ?Epic {
 	// TODO: Check Cache first (Mohammed Essam)
-	response := h.get_json_str('epics/$id', "", true) ?
+	mut conn :=  get()
+	response := conn.get_json_str('epics/$id', "", true) ?
 	mut result := json.decode(Epic, response) ?
-	result.client = h
 	return result
 }

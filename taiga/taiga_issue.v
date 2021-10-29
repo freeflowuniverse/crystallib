@@ -31,7 +31,6 @@ pub mut:
 	is_blocked             bool
 	blocked_note           string
 	ref                    int
-	client                 TaigaConnection
 }
 
 struct NewIssue {
@@ -46,9 +45,10 @@ fn (mut h TaigaConnection) issues() ?[]Issue {
 }
 
 // create issue based on our standards
-fn (mut h TaigaConnection) issue_create(subject string, project_id int) ?Issue {
+pub fn (mut h TaigaConnection) issue_create(subject string, project_id int) ?Issue {
 	// TODO
-	// h.cache_drop() //to make sure all is consistent
+	mut conn :=  get()
+	conn.cache_drop()? //to make sure all is consistent, can do this more refined, now we drop all
 	issue := NewIssue{
 		subject: subject
 		project: project_id
@@ -56,14 +56,13 @@ fn (mut h TaigaConnection) issue_create(subject string, project_id int) ?Issue {
 	postdata := json.encode_pretty(issue)
 	response := h.post_json_str('issues', postdata, true, true) ?
 	mut result := json.decode(Issue, response) ?
-	result.client = h
 	return result
 }
 
-fn (mut h TaigaConnection) issue_get(id int) ?Issue {
-	// TODO: Check Cache first (Mohammed Essam)
-	response := h.get_json_str('issues/$id', "", true) ?
+pub fn (mut h TaigaConnection) issue_get(id int) ?Issue {
+	// TODO: Check Cache first (Mohammed Essam), cache should be on higher level
+	mut conn :=  get()
+	response := conn.get_json_str('issues/$id', "", true) ?
 	mut result := json.decode(Issue, response) ?
-	result.client = h
 	return result
 }

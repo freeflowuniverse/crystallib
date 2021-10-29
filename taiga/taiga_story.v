@@ -2,7 +2,7 @@ module taiga
 
 import json
 
-struct UserStory {
+struct Story {
 pub mut:
 	description            string
 	id                     int
@@ -27,38 +27,34 @@ pub mut:
 	client_requirement     bool
 	team_requirement       bool
 	tasks                  []Task
-	client                 TaigaConnection
 }
 
-struct NewUserStory {
+struct NewStory {
 pub mut:
 	subject string
 	project int
 }
 
-fn (mut h TaigaConnection) userstories() ?[]UserStory {
-	data := h.get_json_str('userstories', '', true) ?
-	return json.decode([]UserStory, data) or {}
+pub fn (mut h TaigaConnection) stories() ?[]Story {
+	data := h.get_json_str('stories', '', true) ?
+	return json.decode([]Story, data) or {}
 }
 
-fn (mut h TaigaConnection) userstory_create(subject string, project_id int) ?UserStory {
-	// TODO
-	// h.cache_drop() //to make sure all is consistent
-	userstory := NewUserStory{
+pub fn (mut h TaigaConnection) story_create(subject string, project_id int) ?Story {
+	h.cache_drop()? //to make sure all is consistent
+	story := NewStory{
 		subject: subject
 		project: project_id
 	}
-	postdata := json.encode_pretty(userstory)
-	response := h.post_json_str('userstories', postdata, true, true) ?
-	mut result := json.decode(UserStory, response) ?
-	result.client = h
+	postdata := json.encode_pretty(story)
+	response := h.post_json_str('stories', postdata, true, true) ?
+	mut result := json.decode(Story, response) ?
 	return result
 }
 
-fn (mut h TaigaConnection) userstory_get(id int) ?UserStory {
+pub fn (mut h TaigaConnection) story_get(id int) ?Story {
 	// TODO: Check Cache first (Mohammed Essam)
-	response := h.get_json_str('userstories/$id', "", true) ?
-	mut result := json.decode(UserStory, response) ?
-	result.client = h
+	response := h.get_json_str('stories/$id', "", true) ?
+	mut result := json.decode(Story, response) ?
 	return result
 }
