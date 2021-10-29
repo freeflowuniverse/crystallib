@@ -50,7 +50,13 @@ pub fn (mut p Project) comments() ?[]Comment {
 	//no cache for now, fix later
 	// data := conn.get_json_str('userstories?project=$p.id', '', false) ?
 	// return json.decode([]Story, data) or {}
-	panic("implement")
+
+	//for further development just fake
+	//TODO: implement
+
+	mut ps := []Comment{}
+	ps << Project{title:"have no idea",description:"A Description\n\nline1\nline2\n"}
+		
 }
 
 //get comments in lis from project

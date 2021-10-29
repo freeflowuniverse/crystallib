@@ -22,3 +22,31 @@ fn (mut h TaigaConnection) users() ?[]User {
 	data := conn.get_json_str('users', '', true) ?
 	return json.decode([]User, data) or {}
 }
+
+
+//get markdown for all projects per user
+fn (mut u User) projects() ?[]Project {
+
+	//for further development just fake
+	//TODO: implement
+
+	mut ps := []Project{}
+	ps << Project{name:"a name",description:"A Description\n\nline1\nline2\n"}
+	
+	return ps
+
+}
+
+
+
+//get markdown for all projects per user
+fn (mut u User) projects_per_user_md() string{
+
+
+	
+
+}
+
+
+
+projects_per_user.md
