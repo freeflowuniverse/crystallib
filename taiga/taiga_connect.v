@@ -14,6 +14,14 @@ mut:
 	url           string
 	auth          AuthDetail
 	cache_timeout int
+	//idea is to load all we have whenever we encounter it
+	//THE OBJECTS HERE NEED  BE THE CLEAN ONES !!! (not the raw ones)
+	users       map[int]&User
+	stories     map[int]&Story
+	tasks       map[int]&Task
+	epics       map[int]&Epic
+	comments    map[int]&Comment
+	issues      map[int]&Issue
 }
 
 //needed to get singleton

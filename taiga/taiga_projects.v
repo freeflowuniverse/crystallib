@@ -30,8 +30,13 @@ pub mut:
 pub fn (mut h TaigaConnection) projects() ?[]Project {
 	// List all Projects
 	mut conn := connection_get()
-	data := conn.get_json_str('projects', '', true) ?
-	return json.decode([]Project, data) or {}
+	data := conn.get_json_str('projects', '', true) ?	
+	mut projects := json.decode([]Project, data) or {}
+	//need to do this for all
+	for proj in projects{
+		h.project_remember(proj)
+	}
+	return projects
 }
 
 // get the project

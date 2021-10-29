@@ -42,11 +42,11 @@ fn (mut u User) projects() ?[]Project {
 //get markdown for all projects per user
 fn (mut u User) projects_per_user_md() string{
 
-
+	//TODO: implement template :projects_per_user.md
+	//walk over stories for user, show tasks, show comments
 	
 
 }
 
 
 
-projects_per_user.md
