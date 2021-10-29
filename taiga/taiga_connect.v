@@ -16,6 +16,7 @@ mut:
 	cache_timeout int
 }
 
+//needed to get singleton
 fn init2() TaigaConnection {
 	mut conn := taiga.TaigaConnection{
 		redis: redisclient.connect('127.0.0.1:6379') or { redisclient.Redis{} }
@@ -24,11 +25,12 @@ fn init2() TaigaConnection {
 }
 
 
+//singleton creation
 const connection = init2()
 
 //make sure to use new first, so that the connection has been initted
 //then you can get it everywhere
-fn get() &TaigaConnection {
+fn connection_get() &TaigaConnection {
 	return &taiga.connection
 }
 
@@ -61,7 +63,7 @@ pub fn new(url string, login string, passwd string, cache_timeout int) &TaigaCon
 	Output:
 		TaigaConnection: Client contains taiga auth details, taiga url, redis cleint and cache timeout.
 	*/
-	mut conn := get()
+	mut conn := connection_get()
 	conn.auth(url, login, passwd) or {
 		panic("Could not connect to $url with $login and passwd:'$passwd'\n$err")
 	}
@@ -76,7 +78,7 @@ fn (mut h TaigaConnection) header() http.Header {
 	Output:
 		header: http.Header with the needed headers
 	*/
-	mut header := http.new_header_from_map(map{
+	mut header := http.new_header_from_map({
 		http.CommonHeader.content_type:  'application/json'
 		http.CommonHeader.authorization: 'Bearer $h.auth.auth_token'
 	})
@@ -145,7 +147,6 @@ pub fn (mut h TaigaConnection) cache_drop() ? {
 	for key in all_keys {
 		h.redis.del(key) ?
 	}
-	// TODO:: maintain authentication & reconnect (Need More Info)
 }
 
 fn (mut h TaigaConnection) post_json(prefix string, postdata string, cache bool, authenticated bool) ?map[string]json2.Any {
@@ -162,12 +163,17 @@ fn (mut h TaigaConnection) post_json(prefix string, postdata string, cache bool,
 	*/
 	mut result := h.cache_get(prefix, postdata, cache)
 	// Post with auth header
+	url := '$h.url/api/v1/$prefix'
 	if result == '' && authenticated {
-		mut req := http.new_request(http.Method.post, '$h.url/api/v1/$prefix', postdata) ?
+		mut req := http.new_request(http.Method.post, url, postdata) ?
 		req.header = h.header()
 		println(req)
 		response := req.do() ?
-		result = response.text
+		if response.status_code == 200{
+			result = response.text
+		}else{
+			return error("could not post: $url\n$result")
+		}		
 	}
 	// Post without auth header
 	else {
@@ -195,11 +201,16 @@ fn (mut h TaigaConnection) post_json_str(prefix string, postdata string, cache b
 	mut result := h.cache_get(prefix, postdata, cache)
 	// Post with auth header
 	if result == '' && authenticated {
-		mut req := http.new_request(http.Method.post, '$h.url/api/v1/$prefix', postdata) ?
+		url := '$h.url/api/v1/$prefix'
+		mut req := http.new_request(http.Method.post, url , postdata) ?
 		req.header = h.header()
 		println(req)
 		response := req.do() ?
-		result = response.text
+		if response.status_code == 200{
+			result = response.text
+		}else{
+			return error("could not post: $url\n$result")
+		}			
 	}
 	// Post without auth header
 	else {
@@ -224,10 +235,17 @@ fn (mut h TaigaConnection) get_json(prefix string, data string, cache bool) ?map
 	mut result := h.cache_get(prefix, data, cache)
 	if result == '' {
 		// println("MISS1")
-		mut req := http.new_request(http.Method.get, '$h.url/api/v1/$prefix', data) ?
+		url := '$h.url/api/v1/$prefix'
+		println(url)
+		mut req := http.new_request(http.Method.get, url, data) ?
 		req.header = h.header()
 		res := req.do() ?
-		result = res.text
+		if res.status_code == 200{
+			result = res.text
+		}else{
+			return error("could not get: $url\n$res")
+		}		
+		println(result)
 	}
 	// means empty result from cache
 	if result == 'NULL' {
@@ -253,10 +271,16 @@ fn (mut h TaigaConnection) get_json_str(prefix string, data string, cache bool) 
 	mut result := h.cache_get(prefix, data, cache)
 	if result == '' {
 		// println("MISS1")
-		mut req := http.new_request(http.Method.get, '$h.url/api/v1/$prefix', data) ?
+		url := '$h.url/api/v1/$prefix'
+		println(' ... $url')
+		mut req := http.new_request(http.Method.get, url, data) ?
 		req.header = h.header()
 		res := req.do() ?
-		result = res.text
+		if res.status_code == 200{
+			result = res.text
+		}else{
+			return error("could not get: $url\n$res")
+		}
 	}
 	// means empty result from cache
 	if result == 'NULL' {
@@ -278,10 +302,16 @@ fn (mut h TaigaConnection) edit_json(prefix string, id int, data string, cache b
 	Output:
 		response: response Json2.Any map.
 	*/
-	mut req := http.new_request(http.Method.patch, '$h.url/api/v1/$prefix/$id', data) ?
+	url := '$h.url/api/v1/$prefix/$id'
+	mut req := http.new_request(http.Method.patch,url , data) ?
 	req.header = h.header()
-	res := req.do() ?
-	result := res.text
+	mut res := req.do() ?
+	mut result := ""
+	if res.status_code == 200{
+		result = res.text
+	}else{
+		return error("could not get: $url\n$res")
+	}		
 	h.cache_set(prefix, data, result, cache) ?
 	data_raw := json2.raw_decode(result) ?
 	data2 := data_raw.as_map()
@@ -299,9 +329,10 @@ fn (mut h TaigaConnection) delete(prefix string, id int, cache bool) ?bool {
 	Output:
 		bool: True if deleted successfully.
 	*/
-	mut req := http.new_request(http.Method.delete, '$h.url/api/v1/$prefix/$id', '') ?
+	url := '$h.url/api/v1/$prefix/$id'
+	mut req := http.new_request(http.Method.delete,  url , '') ?
 	req.header = h.header()
-	res := req.do() ?
+	mut res := req.do() ?
 	if res.status_code == 204 {
 		return true
 	} else {

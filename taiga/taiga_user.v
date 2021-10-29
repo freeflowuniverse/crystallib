@@ -18,7 +18,7 @@ pub mut:
 }
 
 fn (mut h TaigaConnection) users() ?[]User {
-	mut conn := get()	
+	mut conn := connection_get()	
 	data := conn.get_json_str('users', '', true) ?
 	return json.decode([]User, data) or {}
 }

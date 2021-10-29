@@ -1,6 +1,7 @@
 module taiga
 
 import json
+import time
 
 struct Task {
 pub mut:
@@ -38,6 +39,25 @@ fn (mut h TaigaConnection) tasks() ?[]Task {
 	data := h.get_json_str('tasks', '', true) ?
 	return json.decode([]Task, data) or {}
 }
+
+//get comments in lis from story
+pub fn (mut t Task) comments() ?[]Comment {
+	mut conn := connection_get()
+	//no cache for now, fix later
+	// data := conn.get_json_str('userstories?project=$p.id', '', false) ?
+	// return json.decode([]Story, data) or {}
+	panic("implement")
+}
+
+//return 
+pub fn (mut t Task) created_date_get() time.Time {
+	//panic if time doesn't work
+	//make the other one internal, no reason to have the string public
+	//do same for all dates
+	panic("implement")
+}
+
+
 
 pub fn (mut h TaigaConnection) task_create(subject string, project_id int) ?Task {
 	// TODO

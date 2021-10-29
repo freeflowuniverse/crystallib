@@ -1,6 +1,7 @@
 module taiga
 
 import json
+import time
 
 struct Epic {
 pub mut:
@@ -41,6 +42,16 @@ pub mut:
 	project int
 }
 
+//return vlang time obj
+pub fn (mut e Epic) created_date_get() time.Time {
+	//panic if time doesn't work
+	//make the other one internal, no reason to have the string public
+	//do same for all dates
+	panic("implement")
+}
+
+
+
 fn (mut h TaigaConnection) epics() ?[]Epic {
 	data := h.get_json_str('epics', '', true) ?
 	return json.decode([]Epic, data) or {}
@@ -48,7 +59,7 @@ fn (mut h TaigaConnection) epics() ?[]Epic {
 
 fn (mut h TaigaConnection) epic_create(subject string, project_id int) ?Epic {
 	// TODO
-	mut conn :=  get()
+	mut conn :=  connection_get()
 	conn.cache_drop()?
 	epic := NewEpic{
 		subject: subject
@@ -62,7 +73,7 @@ fn (mut h TaigaConnection) epic_create(subject string, project_id int) ?Epic {
 
 fn (mut h TaigaConnection) epic_get(id int) ?Epic {
 	// TODO: Check Cache first (Mohammed Essam)
-	mut conn :=  get()
+	mut conn :=  connection_get()
 	response := conn.get_json_str('epics/$id', "", true) ?
 	mut result := json.decode(Epic, response) ?
 	return result

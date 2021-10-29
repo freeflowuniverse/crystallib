@@ -1,7 +1,7 @@
 module taiga
 
-import texttools
 import json
+import time
 
 struct Project {
 pub mut:
@@ -32,16 +32,44 @@ pub enum TaigaElementTypes{
 }
 
 pub fn (mut p Project) delete() ?bool {
-	mut conn := get()
+	mut conn := connection_get()
 	return conn.delete('projects', p.id, false)
 }
 
 
 pub fn (mut p Project) stories() ?[]Story {
-	mut conn := get()
-	data := conn.get_json_str('stories', '', true) ?
+	mut conn := connection_get()
+	//no cache for now, fix later
+	data := conn.get_json_str('userstories?project=$p.id', '', false) ?
 	return json.decode([]Story, data) or {}
 }
+
+//get comments in lis from project
+pub fn (mut p Project) comments() ?[]Comment {
+	mut conn := connection_get()
+	//no cache for now, fix later
+	// data := conn.get_json_str('userstories?project=$p.id', '', false) ?
+	// return json.decode([]Story, data) or {}
+	panic("implement")
+}
+
+//get comments in lis from project
+pub fn (mut p Project) issues() ?[]Issue {
+	mut conn := connection_get()
+	//no cache for now, fix later
+	// data := conn.get_json_str('userstories?project=$p.id', '', false) ?
+	// return json.decode([]Story, data) or {}
+	panic("implement")
+}
+
+//return vlang time obj
+pub fn (mut p Project) created_date_get() time.Time {
+	//panic if time doesn't work
+	//make the other one internal, no reason to have the string public
+	//do same for all dates
+	panic("implement")
+}
+
 
 
 pub fn (mut p Project) copy (element_type TaigaElementTypes, element_id int, to_project_id int) ?TaigaElement {
@@ -54,7 +82,7 @@ pub fn (mut p Project) copy (element_type TaigaElementTypes, element_id int, to_
 	Output
 		new_element: return the new element casted as TaigaElement Type
 	*/
-	mut conn := get()
+	mut conn := connection_get()
 	mut new_element := TaigaElement(Issue{}) // Initialize with any empty element type
 	match element_type{
 		.story {
@@ -76,5 +104,7 @@ pub fn (mut p Project) copy (element_type TaigaElementTypes, element_id int, to_
 			new_element = conn.epic_create(element.subject, to_project_id) ?
 		}
 	}
+	//TODO: guess this is not finished??? we need to copy the content
+	panic("not implemented")
 	return new_element
 }

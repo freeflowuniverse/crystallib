@@ -29,7 +29,7 @@ pub mut:
 
 pub fn (mut h TaigaConnection) projects() ?[]Project {
 	// List all Projects
-	mut conn := get()
+	mut conn := connection_get()
 	data := conn.get_json_str('projects', '', true) ?
 	return json.decode([]Project, data) or {}
 }
@@ -38,7 +38,7 @@ pub fn (mut h TaigaConnection) projects() ?[]Project {
 pub fn (mut h TaigaConnection) project_get_by_name(name string) ?Project {
 	// Get project by name
 	// because we cache we can walk over it
-	mut conn := get()
+	mut conn := connection_get()
 	name2 := texttools.name_fix(name)
 	mut all_projects := conn.projects() ?
 	for mut proj in all_projects {
