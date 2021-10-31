@@ -5,6 +5,8 @@ import time
 
 struct Project {
 pub mut:
+	created_date  time.Time	[skip]
+	modified_date time.Time  [skip]
 	name          string
 	description   string
 	id            int
@@ -12,11 +14,10 @@ pub mut:
 	members       []int
 	tags          []string
 	slug          string
-	created_date  string
-	modified_date string
 	owner         UserInfo
 	projtype      Projectype
 }
+
 
 pub enum Projectype {
 	funnel
@@ -45,19 +46,19 @@ pub fn (mut p Project) stories() ?[]Story {
 }
 
 //get comments in lis from project
-pub fn (mut p Project) comments() ?[]Comment {
-	mut conn := connection_get()
-	//no cache for now, fix later
-	// data := conn.get_json_str('userstories?project=$p.id', '', false) ?
-	// return json.decode([]Story, data) or {}
+// pub fn (mut p Project) comments() ?[]Comment {
+// 	mut conn := connection_get()
+// 	//no cache for now, fix later
+// 	// data := conn.get_json_str('userstories?project=$p.id', '', false) ?
+// 	// return json.decode([]Story, data) or {}
 
-	//for further development just fake
-	//TODO: implement
+// 	//for further development just fake
+// 	//TODO: implement
 
-	mut ps := []Comment{}
-	ps << Project{title:"have no idea",description:"A Description\n\nline1\nline2\n"}
+// 	mut ps := []Comment{}
+// 	ps << Project{title:"have no idea",description:"A Description\n\nline1\nline2\n"}
 		
-}
+// }
 
 //get comments in lis from project
 pub fn (mut p Project) issues() ?[]Issue {
@@ -113,4 +114,13 @@ pub fn (mut p Project) copy (element_type TaigaElementTypes, element_id int, to_
 	//TODO: guess this is not finished??? we need to copy the content
 	panic("not implemented")
 	return new_element
+}
+
+// Testing purpose
+pub fn get_project(id int) ?Project{
+	mut conn := connection_get()
+	data := conn.get_json('projects', '$id', true)?	
+	mut project := json.decode(Project,data.str())?
+	project.created_date = parse_time(data["created_date"].str())
+	return project 
 }

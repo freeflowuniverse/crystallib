@@ -16,12 +16,12 @@ mut:
 	cache_timeout int
 	//idea is to load all we have whenever we encounter it
 	//THE OBJECTS HERE NEED  BE THE CLEAN ONES !!! (not the raw ones)
-	users       map[int]&User
-	stories     map[int]&Story
-	tasks       map[int]&Task
-	epics       map[int]&Epic
-	comments    map[int]&Comment
-	issues      map[int]&Issue
+	// users       map[int]&User
+	// stories     map[int]&Story
+	// tasks       map[int]&Task
+	// epics       map[int]&Epic
+	// comments    map[int]&Comment
+	// issues      map[int]&Issue
 }
 
 //needed to get singleton
@@ -72,6 +72,8 @@ pub fn new(url string, login string, passwd string, cache_timeout int) &TaigaCon
 		TaigaConnection: Client contains taiga auth details, taiga url, redis cleint and cache timeout.
 	*/
 	mut conn := connection_get()
+	print("connection suscced $conn")
+
 	conn.auth(url, login, passwd) or {
 		panic("Could not connect to $url with $login and passwd:'$passwd'\n$err")
 	}
@@ -86,7 +88,7 @@ fn (mut h TaigaConnection) header() http.Header {
 	Output:
 		header: http.Header with the needed headers
 	*/
-	mut header := http.new_header_from_map({
+	mut header := http.new_header_from_map(map{
 		http.CommonHeader.content_type:  'application/json'
 		http.CommonHeader.authorization: 'Bearer $h.auth.auth_token'
 	})
