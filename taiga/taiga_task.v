@@ -1,7 +1,8 @@
 module taiga
 
+import x.json2 {raw_decode}
 import json
-import time
+import time {Time}
 
 struct Task {
 pub mut:
@@ -19,9 +20,9 @@ pub mut:
 	assigned_to_extra_info UserInfo
 	owner                  int
 	owner_extra_info       UserInfo
-	created_date           string
-	modified_date          string
-	finished_date          string
+	created_date           Time [skip]
+	modified_date          Time [skip]
+	finished_date          Time [skip]
 	subject                string
 	is_closed              bool
 	is_blocked             bool
@@ -35,17 +36,25 @@ pub mut:
 	project int
 }
 
-fn (mut h TaigaConnection) tasks() ?[]Task {
-	data := h.get_json_str('tasks', '', true) ?
-	return json.decode([]Task, data) or {}
+fn tasks() ?[]Task {
+	mut conn := connection_get()
+	data := conn.get_json_str('tasks', '', true) ?
+	data_as_arr := (raw_decode(data) or {}).arr()
+	mut tasks := []Task{}
+	for t in data_as_arr {
+		task := task_decode(t.str()) ?
+		task_remember(task)
+		tasks << task
+	}
+	return tasks
 }
 
-//get comments in lis from story
+//get comments in lis from task
 pub fn (mut t Task) comments() ?[]Comment {
 	mut conn := connection_get()
 	//no cache for now, fix later
 	// data := conn.get_json_str('userstories?project=$p.id', '', false) ?
-	// return json.decode([]Story, data) or {}
+	// return json.decode([]task, data) or {}
 	panic("implement")
 }
 
@@ -77,4 +86,13 @@ pub fn (mut h TaigaConnection) task_get(id int) ?Task {
 	response := h.get_json_str('tasks/$id', "", true) ?
 	mut result := json.decode(Task, response) ?
 	return result
+}
+
+fn task_decode(data string) ? Task{
+	mut task := json.decode(Task, data) ?
+	data_as_map := (raw_decode(data) or {}).as_map()
+	task.created_date = parse_time(data_as_map["created_date"].str())
+	task.modified_date = parse_time(data_as_map["modified_date"].str())
+	task.finished_date = parse_time(data_as_map["finished_date"].str())
+	return task
 }

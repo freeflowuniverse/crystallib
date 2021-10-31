@@ -1,12 +1,13 @@
 module taiga
 
+import x.json2 {raw_decode}
 import json
-import time
+import time {Time}
 
 struct Project {
 pub mut:
-	created_date  time.Time	[skip]
-	modified_date time.Time  [skip]
+	created_date  Time  [skip]
+	modified_date Time  [skip]
 	name          string
 	description   string
 	id            int
@@ -46,19 +47,20 @@ pub fn (mut p Project) stories() ?[]Story {
 }
 
 //get comments in lis from project
-// pub fn (mut p Project) comments() ?[]Comment {
-// 	mut conn := connection_get()
-// 	//no cache for now, fix later
-// 	// data := conn.get_json_str('userstories?project=$p.id', '', false) ?
-// 	// return json.decode([]Story, data) or {}
+pub fn (mut p Project) comments() ?[]Comment {
+	// mut conn := connection_get()
+	//no cache for now, fix later
+	// data := conn.get_json_str('userstories?project=$p.id', '', false) ?
+	// return json.decode([]Story, data) or {}
 
 // 	//for further development just fake
 // 	//TODO: implement
 
 // 	mut ps := []Comment{}
 // 	ps << Project{title:"have no idea",description:"A Description\n\nline1\nline2\n"}
+	return []Comment{}
 		
-// }
+}
 
 //get comments in lis from project
 pub fn (mut p Project) issues() ?[]Issue {
@@ -116,11 +118,10 @@ pub fn (mut p Project) copy (element_type TaigaElementTypes, element_id int, to_
 	return new_element
 }
 
-// Testing purpose
-pub fn get_project(id int) ?Project{
-	mut conn := connection_get()
-	data := conn.get_json('projects', '$id', true)?	
-	mut project := json.decode(Project,data.str())?
-	project.created_date = parse_time(data["created_date"].str())
-	return project 
+fn project_decode(data string) ? Project{
+	mut project := json.decode(Project, data) ?
+	data_as_map := (raw_decode(data) or {}).as_map()
+	project.created_date = parse_time(data_as_map["created_date"].str())
+	project.modified_date = parse_time(data_as_map["modified_date"].str())
+	return project
 }

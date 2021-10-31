@@ -1,7 +1,8 @@
 module taiga
 
 import json
-import time
+import x.json2 {raw_decode}
+import time {Time}
 // struct IssueList {
 // pub mut:
 // 	issues []Issue
@@ -23,10 +24,10 @@ pub mut:
 	owner_extra_info       UserInfo
 	severity               int
 	priority               int
-	issue_type             int             [json: 'type']
-	created_date           string
-	modified_date          string
-	finished_date          string
+	issue_type             int  [json: 'type']
+	created_date           Time [skip]
+	modified_date          Time [skip]
+	finished_date          Time [skip]
 	subject                string
 	is_closed              bool
 	is_blocked             bool
@@ -41,20 +42,27 @@ pub mut:
 }
 
 
-//return vlang time obj
-pub fn (mut i Issue) created_date_get() time.Time {
-	//panic if time doesn't work
-	//make the other one internal, no reason to have the string public
-	//do same for all dates
-	panic("implement")
-}
+// //return vlang time obj
+// pub fn (mut i Issue) created_date_get() time.Time {
+// 	//panic if time doesn't work
+// 	//make the other one internal, no reason to have the string public
+// 	//do same for all dates
+// 	panic("implement")
+// }
 
 
 
 
-fn (mut h TaigaConnection) issues() ?[]Issue {
-	data := h.get_json_str('issues', '', true) ?
-	return json.decode([]Issue, data) or {}
+pub fn issues() ?[]Issue {
+	mut conn := connection_get()
+	data := conn.get_json_str('issues', '', true) ?
+	data_as_arr := (raw_decode(data) or {}).arr()
+	mut issues := []Issue{}
+	for i in data_as_arr {
+		issue := issue_decode(i.str()) ?
+		issue_remember(issue)
+	}
+	return issues
 }
 
 // create issue based on our standards
@@ -78,4 +86,13 @@ pub fn (mut h TaigaConnection) issue_get(id int) ?Issue {
 	response := conn.get_json_str('issues/$id', "", true) ?
 	mut result := json.decode(Issue, response) ?
 	return result
+}
+
+fn issue_decode(data string) ? Issue{
+	mut issue := json.decode(Issue, data) ?
+	data_as_map := (raw_decode(data) or {}).as_map()
+	issue.created_date = parse_time(data_as_map["created_date"].str())
+	issue.modified_date = parse_time(data_as_map["modified_date"].str())
+	issue.finished_date = parse_time(data_as_map["modified_date"].str())
+	return issue
 }

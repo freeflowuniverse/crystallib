@@ -1,6 +1,6 @@
 module taiga
 
-//all internal
+// // //all internal
 
 // fn (mut h TaigaConnection) user_get(id int)? &User{
 
@@ -22,11 +22,35 @@ module taiga
 
 // }
 
+// TODO: do same for other objects
+fn user_remember(obj User) {
+	// check obj exists in connection, if yes, update & return
+	// make sure to remeber the reference !!!
+	mut conn := connection_get()
+	conn.users[obj.id] = &obj
+}
 
-// fn (mut h TaigaConnection) user_remember(obj User){
-// 	//check obj exists in connection, if yes, update & return
-// 	//make sure to remeber the reference !!!
+fn project_remember(obj Project) {
+	mut conn := connection_get()
+	conn.projects[obj.id] = &obj
+}
 
-// }
+fn issue_remember(obj Issue) {
+	mut conn := connection_get()
+	conn.issues[obj.id] = &obj
+}
 
-// //TODO: do same for other objects
+fn epic_remember(obj Epic) {
+	mut conn := connection_get()
+	conn.epics[obj.id] = &obj
+}
+
+fn task_remember(obj Task) {
+	mut conn := connection_get()
+	conn.tasks[obj.id] = &obj
+}
+
+fn story_remember(obj Story) {
+	mut conn := connection_get()
+	conn.stories[obj.id] = &obj
+}

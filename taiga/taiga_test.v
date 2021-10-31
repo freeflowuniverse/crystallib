@@ -1,15 +1,14 @@
-import taiga
+import taiga {projects, issues, epics}
 
 fn test_main() {
-	// mut t := taiga.new('https://staging.circles.threefold.me', 'admin', '123123', 10000)
-	// mut projects := t.projects()or { panic('cannot fetch projects. $err')}
-	// mut project := taiga.get_project(24) or {panic(err)}
-	// print(projects)
-
+	mut t := taiga.new('https://staging.circles.threefold.me', 'admin', '123123', 10000)
 	// t.cache_drop() or {panic("Can't drop cache")}
 	// println('Taiga Client: $t')
-	// mut projects := t.projects() or { panic('cannot fetch projects. $err') }
+	mut projects := projects() or { panic('cannot fetch projects. $err') }
 	// println('Found $projects.len projects\nTaiga projects: $projects\n\n')
+	println("-----------------------------------------------------------")
+	println(t.projects)
+	// mut project := taiga.project_get(24)  or { panic('cannot fetch project. $err') }
 	// issues := t.issues() or { panic(('cannot fetch issues. $err')) }
 	// println('Found $issues.len issues\nTaiga issues: $issues\n\n')
 	// users := t.users() or { panic(('cannot fetch users. $err')) }

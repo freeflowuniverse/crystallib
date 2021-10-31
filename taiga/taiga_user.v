@@ -1,6 +1,8 @@
 module taiga
 
 import json
+import time {Time}
+import x.json2 {raw_decode}
 
 struct User {
 pub mut:
@@ -14,13 +16,20 @@ pub mut:
 	roles             []string
 	email             string
 	public_key        string
-	date_joined       string
+	date_joined       Time
 }
 
-fn (mut h TaigaConnection) users() ?[]User {
+pub fn users() ?[]User {
 	mut conn := connection_get()	
 	data := conn.get_json_str('users', '', true) ?
-	return json.decode([]User, data) or {}
+	data_as_arr := (raw_decode(data) or {}).arr()
+	mut users := []User{}
+	for u in data_as_arr {
+		user := user_decode(u.str()) ?
+		user_remember(user)
+		users << user
+	}
+	return users
 }
 
 
@@ -48,5 +57,10 @@ fn (mut u User) projects_per_user_md() string{
 	return ""
 }
 
-
+fn user_decode(data string) ?User{
+	mut user := json.decode(User, data) ?
+	data_as_map := (raw_decode(data) or {}).as_map()
+	user.date_joined = parse_time(data_as_map["date_joined"].str())
+	return user
+}
 

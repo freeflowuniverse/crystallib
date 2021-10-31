@@ -2,6 +2,7 @@ module taiga
 
 import texttools
 import json
+import x.json2 {raw_decode}
 
 type TaigaElement = Story | Issue | Task | Epic
 struct NewProject {
@@ -27,14 +28,16 @@ pub mut:
 	custom_fields   []string
 }
 
-pub fn (mut h TaigaConnection) projects() ?[]Project {
+pub fn projects() ?[]Project {
 	// List all Projects
 	mut conn := connection_get()
-	data := conn.get_json_str('projects', '', true) ?	
-	mut projects := json.decode([]Project, data)?
-	//need to do this for all
-	for proj in projects{
-		// h.project_remember(proj)
+	data := conn.get_json_str('projects', '', true) ?
+	data_as_arr := (raw_decode(data) or {}).arr()
+	mut projects := []Project{}
+	for proj in data_as_arr {
+		project := project_decode(proj.str()) ?
+		projects << project
+		project_remember(project)
 	}
 	return projects
 }
@@ -45,7 +48,7 @@ pub fn (mut h TaigaConnection) project_get_by_name(name string) ?Project {
 	// because we cache we can walk over it
 	mut conn := connection_get()
 	name2 := texttools.name_fix(name)
-	mut all_projects := conn.projects() ?
+	mut all_projects := projects() ?
 	for mut proj in all_projects {
 		if proj.name == name2 {
 			// proj.client = h

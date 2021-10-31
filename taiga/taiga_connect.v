@@ -16,12 +16,14 @@ mut:
 	cache_timeout int
 	//idea is to load all we have whenever we encounter it
 	//THE OBJECTS HERE NEED  BE THE CLEAN ONES !!! (not the raw ones)
-	// users       map[int]&User
-	// stories     map[int]&Story
-	// tasks       map[int]&Task
-	// epics       map[int]&Epic
-	// comments    map[int]&Comment
-	// issues      map[int]&Issue
+pub mut:
+	projects    map[int]&Project
+	users       map[int]&User
+	stories     map[int]&Story
+	tasks       map[int]&Task
+	epics       map[int]&Epic
+	comments    map[int]&Comment
+	issues      map[int]&Issue
 }
 
 //needed to get singleton
@@ -88,7 +90,7 @@ fn (mut h TaigaConnection) header() http.Header {
 	Output:
 		header: http.Header with the needed headers
 	*/
-	mut header := http.new_header_from_map(map{
+	mut header := http.new_header_from_map({
 		http.CommonHeader.content_type:  'application/json'
 		http.CommonHeader.authorization: 'Bearer $h.auth.auth_token'
 	})
@@ -255,7 +257,7 @@ fn (mut h TaigaConnection) get_json(prefix string, data string, cache bool) ?map
 		}else{
 			return error("could not get: $url\n$res")
 		}		
-		println(result)
+		// println(result)
 	}
 	// means empty result from cache
 	if result == 'NULL' {
