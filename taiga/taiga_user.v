@@ -16,48 +16,33 @@ pub mut:
 	roles             []string
 	email             string
 	public_key        string
-	date_joined       Time
+	date_joined       Time [skip]
 }
 
-pub fn users() ?[]User {
-	mut conn := connection_get()	
+pub fn users() ? {
+	mut conn := connection_get()
 	data := conn.get_json_str('users', '', true) ?
 	data_as_arr := (raw_decode(data) or {}).arr()
-	mut users := []User{}
 	for u in data_as_arr {
-		user := user_decode(u.str()) ?
+		user := decode_user(u.str()) ?
 		user_remember(user)
-		users << user
 	}
-	return users
 }
-
-
-//get markdown for all projects per user
-fn (mut u User) projects() ?[]Project {
-
-	//for further development just fake
-	//TODO: implement
-
-	mut ps := []Project{}
-	ps << Project{name:"a name",description:"A Description\n\nline1\nline2\n"}
-	
-	return ps
-
-}
-
-
 
 //get markdown for all projects per user
 fn (mut u User) projects_per_user_md() string{
-
-	//TODO: implement template :projects_per_user.md
-	//walk over stories for user, show tasks, show comments
-	
+	projects := projects_per_user(u.id)
+	for proj in projects {
+		stories := stories_per_project(proj.id)
+		issues := issues_per_project(proj.id)
+		tasks := tasks_per_project(proj.id)
+		epics := epics_per_project(proj.id)
+		println("Done!")
+	}
 	return ""
 }
 
-fn user_decode(data string) ?User{
+fn decode_user(data string) ?User{
 	mut user := json.decode(User, data) ?
 	data_as_map := (raw_decode(data) or {}).as_map()
 	user.date_joined = parse_time(data_as_map["date_joined"].str())

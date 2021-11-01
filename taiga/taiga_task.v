@@ -28,6 +28,7 @@ pub mut:
 	is_blocked             bool
 	blocked_note           string
 	ref                    int
+	comments               []Comment
 }
 
 struct NewTask {
@@ -36,13 +37,14 @@ pub mut:
 	project int
 }
 
-fn tasks() ?[]Task {
+pub fn tasks() ?[]Task {
 	mut conn := connection_get()
 	data := conn.get_json_str('tasks', '', true) ?
 	data_as_arr := (raw_decode(data) or {}).arr()
 	mut tasks := []Task{}
 	for t in data_as_arr {
-		task := task_decode(t.str()) ?
+		mut task := task_decode(t.str()) ?
+		task.get_task_comments() ?
 		task_remember(task)
 		tasks << task
 	}
@@ -50,20 +52,10 @@ fn tasks() ?[]Task {
 }
 
 //get comments in lis from task
-pub fn (mut t Task) comments() ?[]Comment {
-	mut conn := connection_get()
-	//no cache for now, fix later
-	// data := conn.get_json_str('userstories?project=$p.id', '', false) ?
-	// return json.decode([]task, data) or {}
-	panic("implement")
-}
+pub fn (mut t Task) get_task_comments() ?[]Comment {
+	t.comments = comments_get("task", t.id) ?
+	return t.comments
 
-//return 
-pub fn (mut t Task) created_date_get() time.Time {
-	//panic if time doesn't work
-	//make the other one internal, no reason to have the string public
-	//do same for all dates
-	panic("implement")
 }
 
 

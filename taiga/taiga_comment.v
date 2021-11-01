@@ -1,35 +1,45 @@
 module taiga
 
 import json
-import time
-
-//is what is used to query
-//we need to rework the other ones the same
-//they have the raw data, then you process to go from raw to the usable one in vlang
-struct CommentRaw {
-mut:
-	comment            string
-	date               string
-	// user			   UserRaw
-	//TODO:
-}
+import time { Time }
+import x.json2 {raw_decode}
 
 struct Comment {
 pub mut:
-	comment            string
-	date               time.Time
-	user			   &User
-	//TODO:
+	id                  string
+	comment             string
+	// user                &User
+	created_at          Time [skip]
+	commnet_type        int
+	key                 string
+	comment_html        string
+	delete_comment_date Time [skip]
+	delete_comment_user string
+	edit_comment_date   Time [skip]
+	is_hidden           bool
 }
 
-
-//return vlang clean object
-pub fn (mut c CommentRaw) get() Comment {
+// return vlang clean object
+pub fn comments_get(prefix string, prefix_id int) ? []Comment {
 	mut conn := connection_get()
-	//fill in times...
-	//if other objects look for them and get reference to them
-	//use conn.user_get(user_id) to get user  ...
-	panic("implement")
+	data := conn.get_json_str("history/$prefix/$prefix_id?type=comment", "", true) ?
+	data_as_arr := (raw_decode(data) or {}).arr()
+		mut comments := []Comment{}
+		for c in data_as_arr {
+			comment := comment_decode(c.str()) ?
+			comments << comment
+		}
+		return comments
+	// fill in times...
+	// if other objects look for them and get reference to them
+	// use conn.user_get(user_id) to get user  ...
 }
 
-
+fn comment_decode(data string) ?Comment{
+	mut comment := json.decode(Comment, data) ?
+	data_as_map := (raw_decode(data) or {}).as_map()
+	comment.created_at = parse_time(data_as_map["created_at"].str())
+	comment.delete_comment_date = parse_time(data_as_map["delete_comment_date"].str())
+	comment.edit_comment_date = parse_time(data_as_map["edit_comment_date"].str())
+	return comment
+}

@@ -1,22 +1,25 @@
-import taiga {projects, issues, epics}
+import taiga {projects, issues, epics, stories, tasks, load}
 
 fn test_main() {
-	mut t := taiga.new('https://staging.circles.threefold.me', 'admin', '123123', 10000)
+	mut singleton := taiga.new('https://staging.circles.threefold.me', 'admin', '123123', 10000)
 	// t.cache_drop() or {panic("Can't drop cache")}
 	// println('Taiga Client: $t')
-	mut projects := projects() or { panic('cannot fetch projects. $err') }
-	// println('Found $projects.len projects\nTaiga projects: $projects\n\n')
-	println("-----------------------------------------------------------")
-	println(t.projects)
+	load() or {panic(err)}
+	mut user := singleton.users[13]
+	user.projects_per_user_md()
+	// mut projects := projects() or { panic('cannot fetch projects. $err') }
+	// // println('Found $projects.len projects\nTaiga projects: $projects\n\n')
+	// println("-----------------------------------------------------------")
+	// println(t.projects)
 	// mut project := taiga.project_get(24)  or { panic('cannot fetch project. $err') }
-	// issues := t.issues() or { panic(('cannot fetch issues. $err')) }
-	// println('Found $issues.len issues\nTaiga issues: $issues\n\n')
+	// all_issues := issues() or { panic(('cannot fetch issues. $err')) }
+	// println('Found $t.issues.len issues\nTaiga issues: $t.issues\n\n')
 	// users := t.users() or { panic(('cannot fetch users. $err')) }
 	// println('Found $users.len users\nTaiga users: $users\n\n')
-	// stories := t.stories() or { panic(('cannot fetch stories. $err')) }
-	// println('Found $stories.len stories\nTaiga stories: $stories\n\n')
-	// tasks := t.tasks() or { panic(('cannot fetch tasks. $err')) }
-	// println('Found $tasks.len tasks\nTaiga tasks: $tasks\n\n')
+	// all_stories := stories() or { panic(('cannot fetch stories. $err')) }
+	// println('Found $t.stories.len stories\nTaiga stories: $t.stories\n\n')
+	// tasks := tasks() or { panic(('cannot fetch tasks. $err')) }
+	// println('Found $singleton.tasks.len tasks\nTaiga tasks: $singleton.tasks\n\n')
 	// epics := t.epics() or { panic(('cannot fetch epics. $err')) }
 	// println('Found $epics.len epics\nTaiga epics: $epics\n\n')
 

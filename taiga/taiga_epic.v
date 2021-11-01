@@ -43,16 +43,6 @@ pub mut:
 	project int
 }
 
-// //return vlang time obj
-// pub fn (mut e Epic) created_date_get() time.Time {
-// 	//panic if time doesn't work
-// 	//make the other one internal, no reason to have the string public
-// 	//do same for all dates
-// 	panic("implement")
-// }
-
-
-
 pub fn epics() ?[]Epic {
 	mut conn := connection_get()
 	data := conn.get_json_str('epics', '', true) ?

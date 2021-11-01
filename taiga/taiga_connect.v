@@ -74,7 +74,7 @@ pub fn new(url string, login string, passwd string, cache_timeout int) &TaigaCon
 		TaigaConnection: Client contains taiga auth details, taiga url, redis cleint and cache timeout.
 	*/
 	mut conn := connection_get()
-	print("connection suscced $conn")
+	println("Connection suscced \n$conn")
 
 	conn.auth(url, login, passwd) or {
 		panic("Could not connect to $url with $login and passwd:'$passwd'\n$err")

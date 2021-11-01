@@ -29,15 +29,13 @@ pub mut:
 	client_requirement     bool
 	team_requirement       bool
 	tasks                  []Task
+	comments               []Comment
 }
 
 //get comments in lis from story
-pub fn (mut s Story) comments() ?[]Comment {
-	mut conn := connection_get()
-	//no cache for now, fix later
-	// data := conn.get_json_str('userstories?project=$p.id', '', false) ?
-	// return json.decode([]Story, data) or {}
-	panic("implement")
+pub fn (mut s Story) get_story_comments() ?[]Comment {
+	s.comments = comments_get("userstory", s.id) ?
+	return s.comments
 }
 
 //get comments in lis from story
@@ -48,15 +46,6 @@ pub fn (mut s Story) tasks() ?[]Task {
 	// return json.decode([]Story, data) or {}
 	panic("implement")
 }
-
-//return vlang time obj
-pub fn (mut s Story) created_date_get() time.Time {
-	//panic if time doesn't work
-	//make the other one internal, no reason to have the string public
-	//do same for all dates
-	panic("implement")
-}
-
 
 struct NewStory {
 pub mut:
@@ -70,7 +59,9 @@ pub fn stories() ?[]Story {
 	data_as_arr := (raw_decode(data) or {}).arr()
 	mut stories := []Story{}
 	for s in data_as_arr {
-		story := story_decode(s.str()) ?
+		mut story := story_decode(s.str()) ?
+		story.get_story_comments() ?
+		// story.get_stroy_tasks() ?
 		story_remember(story)
 		stories << story
 	}

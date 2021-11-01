@@ -33,6 +33,7 @@ pub mut:
 	is_blocked             bool
 	blocked_note           string
 	ref                    int
+	comments               []Comment
 }
 
 struct NewIssue {
@@ -41,17 +42,11 @@ pub mut:
 	project int
 }
 
-
-// //return vlang time obj
-// pub fn (mut i Issue) created_date_get() time.Time {
-// 	//panic if time doesn't work
-// 	//make the other one internal, no reason to have the string public
-// 	//do same for all dates
-// 	panic("implement")
-// }
-
-
-
+//get comments in list from issue
+pub fn (mut i Issue) get_issue_comments() ?[]Comment {
+	i.comments = comments_get("issue", i.id) ?
+	return i.comments
+}
 
 pub fn issues() ?[]Issue {
 	mut conn := connection_get()
@@ -59,7 +54,8 @@ pub fn issues() ?[]Issue {
 	data_as_arr := (raw_decode(data) or {}).arr()
 	mut issues := []Issue{}
 	for i in data_as_arr {
-		issue := issue_decode(i.str()) ?
+		mut issue := issue_decode(i.str()) ?
+		issue.get_issue_comments() ?
 		issue_remember(issue)
 	}
 	return issues
