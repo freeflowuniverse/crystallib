@@ -11,48 +11,52 @@ pub fn load() ?{
 
 // // //all internal
 
-fn stories_per_project(project_id int) []Story{
-	mut conn := connection_get()
-	mut project_stories := []Story{}
-	for _, story in conn.stories{
-		if story.project == project_id{
-			project_stories << story
-		}
-	}
-	return project_stories
+pub fn stories_per_project(project_id int) []Story{
+  mut conn := connection_get()
+  mut project_stories := []Story{}
+  for id in conn.stories.keys(){
+    story :=  *conn.stories[id]
+    if story.project == project_id{
+      project_stories << story
+    }
+  }
+  return project_stories
 }
 
-fn issues_per_project(project_id int) []Issue{
-	mut conn := connection_get()
-	mut project_issues := []Issue{}
-	for _, issue in conn.issues{
-		if issue.project == project_id{
-			project_issues << issue
-		}
-	}
-	return project_issues
+pub fn issues_per_project(project_id int) []Issue{
+  mut conn := connection_get()
+  mut project_issues := []Issue{}
+  for id in conn.issues.keys(){
+    issue := *conn.issues[id]
+    if issue.project == project_id{
+      project_issues << issue
+    }
+  }
+  return project_issues
 }
 
-fn tasks_per_project(project_id int) []Task{
-	mut conn := connection_get()
-	mut project_tasks := []Task{}
-	for _, task in conn.tasks{
-		if task.project == project_id{
-			project_tasks << task
-		}
-	}
-	return project_tasks
+pub fn tasks_per_project(project_id int) []Task{
+  mut conn := connection_get()
+  mut project_tasks := []Task{}
+  for id in conn.tasks.keys(){
+    task := *conn.tasks[id]
+    if task.project == project_id{
+      project_tasks << task
+    }
+  }
+  return project_tasks
 }
 
-fn epics_per_project(project_id int) []Epic{
-	mut conn := connection_get()
-	mut project_epics := []Epic{}
-	for _, epic in conn.epics{
-		if epic.project == project_id{
-			project_epics << epic
-		}
-	}
-	return project_epics
+pub fn epics_per_project(project_id int) []Epic{
+  mut conn := connection_get()
+  mut project_epics := []Epic{}
+  for id in conn.epics.keys(){
+    epic := *conn.epics[id]
+    if epic.project == project_id{
+      project_epics << epic
+    }
+  }
+  return project_epics
 }
 
 fn projects_per_user(user_id int) []Project{

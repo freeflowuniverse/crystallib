@@ -377,7 +377,7 @@ fn (mut h TaigaConnection) auth(url string, login string, passwd string) ?AuthDe
 			"type": "normal",
 			"username": "$login"
 		}',
-		true, false) ?
+		false, false) ?
 
 	h.auth = json.decode(AuthDetail, data) ?
 

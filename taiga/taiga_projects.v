@@ -31,7 +31,7 @@ pub mut:
 pub fn projects() ?[]Project {
 	// List all Projects
 	mut conn := connection_get()
-	data := conn.get_json_str('projects', '', true) ?
+	data := conn.get_json_str('projects', '', false) ?
 	data_as_arr := (raw_decode(data) or {}).arr()
 	mut projects := []Project{}
 	for proj in data_as_arr {

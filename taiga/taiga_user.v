@@ -1,5 +1,5 @@
 module taiga
-
+import os
 import json
 import time {Time}
 import x.json2 {raw_decode}
@@ -30,15 +30,25 @@ pub fn users() ? {
 }
 
 //get markdown for all projects per user
-fn (mut u User) projects_per_user_md() string{
-	projects := projects_per_user(u.id)
+fn (mut user User) projects_per_user_md(export_directory string) string{
+	projects := projects_per_user(user.id)
+	mut projects_md := []string
+
 	for proj in projects {
-		stories := stories_per_project(proj.id)
-		issues := issues_per_project(proj.id)
-		tasks := tasks_per_project(proj.id)
-		epics := epics_per_project(proj.id)
-		println("Done!")
+		project := proj // For template rendering
+		stories := stories_per_project(project.id)
+		issues := issues_per_project(project.id)
+		tasks := tasks_per_project(project.id)
+		epics := epics_per_project(project.id)
+		// export template per project
+		projects_md << $tmpl("./templates/project.md")
 	}
+	user_md := $tmpl("./templates/user.md")
+	export_path := export_directory + "/" + user.username + ".md"
+	// export template for user
+	os.write_file(export_path,user_md) or {panic(err)}
+	println("Exporting Done!")
+
 	return ""
 }
 
