@@ -1,6 +1,6 @@
 module taiga
 
-import x.json2
+import x.json2 {raw_decode}
 import json
 import time {Time}
 
@@ -13,6 +13,7 @@ pub mut:
 	project                int
 	project_extra_info     ProjectInfo
 	user_story             int
+	user_story_extra_info  StoryInfo
 	status                 int
 	status_extra_info      StatusInfo
 	assigned_to            int
@@ -49,7 +50,9 @@ pub fn epics() ?[]Epic {
 	mut epics := []Epic{} // TODO: Can be removed
 	data_as_arr := (json2.raw_decode(data) or {}).arr()
 	for e in data_as_arr {
-		epic := epic_decode(e.str()) ?
+		temp := (raw_decode(e.str()) or {}).as_map()
+		id := temp["id"].int()
+		epic := conn.epic_get(id) ?
 		epics << epic
 		epic_remember(epic)
 	}
@@ -74,13 +77,13 @@ fn (mut h TaigaConnection) epic_get(id int) ?Epic {
 	// TODO: Check Cache first (Mohammed Essam)
 	mut conn :=  connection_get()
 	response := conn.get_json_str('epics/$id', "", true) ?
-	mut result := json.decode(Epic, response) ?
+	mut result := epic_decode(response) ?
 	return result
 }
 
 fn epic_decode(data string) ?Epic{
 	mut epic := json.decode(Epic, data) ?
-	data_as_map := (json2.raw_decode(data) or {}).as_map()
+	data_as_map := (raw_decode(data) or {}).as_map()
 	epic.created_date = parse_time(data_as_map["created_date"].str())
 	epic.modified_date = parse_time(data_as_map["modified_date"].str())
 	epic.finished_date = parse_time(data_as_map["modified_date"].str())

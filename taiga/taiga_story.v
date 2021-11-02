@@ -59,7 +59,9 @@ pub fn stories() ?[]Story {
 	data_as_arr := (raw_decode(data) or {}).arr()
 	mut stories := []Story{}
 	for s in data_as_arr {
-		mut story := story_decode(s.str()) ?
+		temp := (raw_decode(s.str()) or {}).as_map()
+		id := temp["id"].int()
+		mut story := conn.story_get(id) ?
 		story.get_story_comments() ?
 		// story.get_stroy_tasks() ?
 		story_remember(story)
@@ -83,13 +85,12 @@ pub fn (mut h TaigaConnection) story_create(subject string, project_id int) ?Sto
 pub fn (mut h TaigaConnection) story_get(id int) ?Story {
 	// TODO: Check Cache first (Mohammed Essam)
 	response := h.get_json_str('userstories/$id', "", true) ?
-	mut result := json.decode(Story, response) ?
-	return result
+	return  story_decode(response)
 }
 
 fn story_decode(data string) ? Story{
-	mut story := json.decode(Story, data) ?
 	data_as_map := (raw_decode(data) or {}).as_map()
+	mut story := json.decode(Story, data) ?
 	story.created_date = parse_time(data_as_map["created_date"].str())
 	story.modified_date = parse_time(data_as_map["modified_date"].str())
 	story.finish_date = parse_time(data_as_map["finish_date"].str())

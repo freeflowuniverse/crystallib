@@ -43,7 +43,9 @@ pub fn tasks() ?[]Task {
 	data_as_arr := (raw_decode(data) or {}).arr()
 	mut tasks := []Task{}
 	for t in data_as_arr {
-		mut task := task_decode(t.str()) ?
+		temp := (raw_decode(t.str()) or {}).as_map()
+		id := temp["id"].int()
+		mut task := conn.task_get(id) ?
 		task.get_task_comments() ?
 		task_remember(task)
 		tasks << task
@@ -76,7 +78,7 @@ pub fn (mut h TaigaConnection) task_create(subject string, project_id int) ?Task
 pub fn (mut h TaigaConnection) task_get(id int) ?Task {
 	// TODO: Check Cache first (Mohammed Essam)
 	response := h.get_json_str('tasks/$id', "", true) ?
-	mut result := json.decode(Task, response) ?
+	mut result := task_decode(response) ?
 	return result
 }
 

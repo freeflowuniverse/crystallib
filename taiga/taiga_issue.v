@@ -54,7 +54,9 @@ pub fn issues() ?[]Issue {
 	data_as_arr := (raw_decode(data) or {}).arr()
 	mut issues := []Issue{}
 	for i in data_as_arr {
-		mut issue := issue_decode(i.str()) ?
+		temp := (raw_decode(i.str()) or {}).as_map()
+		id := temp["id"].int()
+		mut issue := conn.issue_get(id) ?
 		issue.get_issue_comments() ?
 		issue_remember(issue)
 	}
@@ -80,7 +82,7 @@ pub fn (mut h TaigaConnection) issue_get(id int) ?Issue {
 	// TODO: Check Cache first (Mohammed Essam), cache should be on higher level
 	mut conn :=  connection_get()
 	response := conn.get_json_str('issues/$id', "", true) ?
-	mut result := json.decode(Issue, response) ?
+	mut result := issue_decode(response) ?
 	return result
 }
 
