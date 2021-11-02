@@ -1,4 +1,4 @@
-# @user.username
+# [@user.username](@url/profile/@user.username)
 - ID: @user.id
 - Full name: @user.full_name
 - Biography: @user.bio
