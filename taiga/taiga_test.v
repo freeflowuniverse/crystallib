@@ -2,12 +2,13 @@ import taiga {projects, issues, epics, stories, tasks, load}
 import vweb
 fn test_main() {
 	// mut test_template := "hello world for template"
-	mut singleton := taiga.new('https://staging.circles.threefold.me', 'admin', '123123', 10000)
+	url := 'https://staging.circles.threefold.me'
+	mut singleton := taiga.new(url, 'admin', '123123', 10)
 	// t.cache_drop() or {panic("Can't drop cache")}
 	// println('Taiga Client: $t')
 	load() or {panic(err)}
 	mut user := singleton.users[13]
-	user.projects_per_user_md("./")
+	user.projects_per_user_md("./", url)
 
 	// mut projects := projects() or { panic('cannot fetch projects. $err') }
 	// // println('Found $projects.len projects\nTaiga projects: $projects\n\n')

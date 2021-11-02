@@ -1,42 +1,74 @@
 
-## @project.name
-- ID: @project.id
-- Private: @project.is_private
-- Description: @project.description
-- Owner: @project.owner.username
+## [@project.name](@circles_url/project/@project.slug)
+|              |                         |
+| ------------ | ----------------------- |
+| ID           | @project.id             |
+| Private      | @project.is_private     |
+| Description  | @project.description    |
+| Owner        | @project.owner.username |
+| Type         | @project.projtype       |
+| Created at   | @project.created_date   |
+| Last Updates | @project.modified_date  |
 
 @if stories.len >0
 ### Stories
 @for story in stories
-#### $story.subject
-- ID: $story.id
-- Private: $story.is_private
-- Is closed: $story.is_closed
+#### [$story.subject](@circles_url/project/@project.slug/us/$story.ref)
+|              |                                        |
+| ------------ | -------------------------------------- |
+| ID           | $story.id                              |
+| Owner        | $story.owner_extra_info.username       |
+| Assigned to  | $story.assigned_to_extra_info.username |
+| Private      | $story.is_private                      |
+| Closed       | $story.is_closed                       |
+| Created at   | $story.created_date                    |
+| Last Updates | $story.modified_date                   |
+
+##### Description
+> Rendered as markdown
+
+$story.description
+
 @if story.comments.len >0
 ##### Comments
 @for comment in story.comments
-> <strong>$comment.user.name</strong>`$comment.created_at`
+
+> <strong>$comment.user.name</strong> `$comment.created_at`
 
 $comment.comment
-@end
-@end
+
+@end <!-- End Comments Loop -->
+@end <!-- End Comments Condition -->
 ---
-@end
-@end
+@end <!-- End Stories Loop -->
+@end <!-- End Stories Condition -->
 
 @if issues.len >0
 ### Issues
 @for issue in issues
-#### $issue.subject
-- ID: $issue.id
-- Private: $issue.is_private
-- Is closed: $issue.is_closed
+#### [$issue.subject](@circles_url/project/@project.slug/issue/$issue.ref)
+|              |                                        |
+| ------------ | -------------------------------------- |
+| ID           | $issue.id                              |
+| Owner        | $issue.owner_extra_info.username       |
+| Assigned to  | $issue.assigned_to_extra_info.username |
+| Private      | $issue.is_private                      |
+| Closed       | $issue.is_closed                       |
+| Created at   | $issue.created_date                    |
+| Last Updates | $issue.modified_date                   |
+
+##### Description
+> Rendered as markdown
+
+$issue.description
+
 @if issue.comments.len >0
 ##### Comments
 @for comment in issue.comments
-> <strong>$comment.user.name</strong>`$comment.created_at`
+> <strong>$comment.user.name</strong> `$comment.created_at`
 
 $comment.comment
+
 @end
 @end
 ---
@@ -46,16 +78,30 @@ $comment.comment
 @if tasks.len >0
 ### Tasks
 @for task in tasks
-#### $task.subject
-- ID: $task.id
-- Private: $task.is_private
-- Is closed: $task.is_closed
+#### [$task.subject](@circles_url/project/@project.slug/task/$task.ref)
+|              |                                       |
+| ------------ | ------------------------------------- |
+| ID           | $task.id                              |
+| Story        | [$task.user_story_extra_info.subject](#$task.user_story_extra_info.subject.replace(" ", "-").to_lower())   |
+| Owner        | $task.owner_extra_info.username       |
+| Assigned to  | $task.assigned_to_extra_info.username |
+| Private      | $task.is_private                      |
+| Closed       | $task.is_closed                       |
+| Created at   | $task.created_date                    |
+| Last Updates | $task.modified_date                   |
+
+##### Description
+> Rendered as markdown
+
+$task.description
+
 @if task.comments.len >0
 ##### Comments
 @for comment in task.comments
-> <strong>$comment.user.name</strong>`$comment.created_at`
+> <strong>$comment.user.name</strong> `$comment.created_at`
 
 $comment.comment
+
 @end
 @end
 ---
@@ -66,10 +112,23 @@ $comment.comment
 
 ### Epics
 @for epic in epics
-#### $epic.subject
-- ID: $epic.id
-- Private: $epic.is_private
-- Is closed: $epic.is_closed
+#### [$epic.subject](@circles_url/project/@project.slug/epic/$epic.ref)
+|              |                                       |
+| ------------ | ------------------------------------- |
+| ID           | $epic.id                              |
+| Story        | [$epic.user_story_extra_info.subject](#$epic.user_story_extra_info.subject.replace(" ", "-").to_lower())   |
+| Owner        | $epic.owner_extra_info.username       |
+| Assigned to  | $epic.assigned_to_extra_info.username |
+| Private      | $epic.is_private                      |
+| Closed       | $epic.is_closed                       |
+| Created at   | $epic.created_date                    |
+| Last Updates | $epic.modified_date                   |
+
+##### Description
+> Rendered as markdown
+
+$epic.description
+
 ---
 @end
 @end

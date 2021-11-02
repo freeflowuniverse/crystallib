@@ -30,11 +30,11 @@ pub fn users() ? {
 }
 
 //get markdown for all projects per user
-fn (mut user User) projects_per_user_md(export_directory string) string{
+fn (mut user User) projects_per_user_md(export_directory string, url string) string{
 	projects := projects_per_user(user.id)
 	mut projects_md := []string
-
 	for proj in projects {
+		circles_url := url
 		project := proj // For template rendering
 		stories := stories_per_project(project.id)
 		issues := issues_per_project(project.id)
