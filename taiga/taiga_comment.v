@@ -4,11 +4,19 @@ import json
 import time { Time }
 import x.json2 {raw_decode}
 
+struct Commentator{
+pub mut:
+	id int [json:pk]
+	name string
+	username string
+	is_active bool
+}
+
 struct Comment {
 pub mut:
 	id                  string
 	comment             string
-	// user                &User
+	user                Commentator
 	created_at          Time [skip]
 	commnet_type        int
 	key                 string
