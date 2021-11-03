@@ -44,41 +44,44 @@ pub mut:
 	project int
 }
 
-pub fn epics() ?[]Epic {
+pub fn epics() ? {
 	mut conn := connection_get()
 	data := conn.get_json_str('epics', '', true) ?
-	mut epics := []Epic{} // TODO: Can be removed
 	data_as_arr := (json2.raw_decode(data) or {}).arr()
 	for e in data_as_arr {
 		temp := (raw_decode(e.str()) or {}).as_map()
 		id := temp["id"].int()
-		epic := conn.epic_get(id) ?
-		epics << epic
-		epic_remember(epic)
+		epic := epic_get(id) ?
+		conn.epic_remember(epic)
 	}
-	return epics
 }
 
-fn (mut h TaigaConnection) epic_create(subject string, project_id int) ?Epic {
-	// TODO
+pub fn epic_create(subject string, project_id int) ?Epic {
 	mut conn :=  connection_get()
-	conn.cache_drop()?
 	epic := NewEpic{
 		subject: subject
 		project: project_id
 	}
 	postdata := json.encode_pretty(epic)
-	response := h.post_json_str('epics', postdata, true, true) ?
-	mut result := json.decode(Epic, response) ?
+	response := conn.post_json_str('epics', postdata, true, true) ?
+	mut result := epic_decode(response) ?
+	conn.epic_remember(result)
 	return result
 }
 
-fn (mut h TaigaConnection) epic_get(id int) ?Epic {
-	// TODO: Check Cache first (Mohammed Essam)
+fn epic_get(id int) ?Epic {
 	mut conn :=  connection_get()
 	response := conn.get_json_str('epics/$id', "", true) ?
 	mut result := epic_decode(response) ?
+	conn.epic_remember(result)
 	return result
+}
+
+pub fn epic_delete(id int) ?bool {
+	mut conn := connection_get()
+	response := conn.delete('epics', id) ?
+	conn.epic_forget(id)
+	return response
 }
 
 fn epic_decode(data string) ?Epic{

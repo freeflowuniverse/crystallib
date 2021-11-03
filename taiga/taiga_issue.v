@@ -48,42 +48,46 @@ pub fn (mut i Issue) get_issue_comments() ?[]Comment {
 	return i.comments
 }
 
-pub fn issues() ?[]Issue {
+pub fn issues() ? {
 	mut conn := connection_get()
 	data := conn.get_json_str('issues', '', true) ?
 	data_as_arr := (raw_decode(data) or {}).arr()
-	mut issues := []Issue{}
 	for i in data_as_arr {
 		temp := (raw_decode(i.str()) or {}).as_map()
 		id := temp["id"].int()
-		mut issue := conn.issue_get(id) ?
+		mut issue := issue_get(id) ?
 		issue.get_issue_comments() ?
-		issue_remember(issue)
+		conn.issue_remember(issue)
 	}
-	return issues
 }
 
 // create issue based on our standards
-pub fn (mut h TaigaConnection) issue_create(subject string, project_id int) ?Issue {
-	// TODO
+pub fn issue_create(subject string, project_id int) ?Issue {
 	mut conn :=  connection_get()
-	conn.cache_drop()? //to make sure all is consistent, can do this more refined, now we drop all
 	issue := NewIssue{
 		subject: subject
 		project: project_id
 	}
 	postdata := json.encode_pretty(issue)
-	response := h.post_json_str('issues', postdata, true, true) ?
-	mut result := json.decode(Issue, response) ?
+	response := conn.post_json_str('issues', postdata, true, true) ?
+	mut result := issue_decode(response) ?
+	conn.issue_remember(result)
 	return result
 }
 
-pub fn (mut h TaigaConnection) issue_get(id int) ?Issue {
-	// TODO: Check Cache first (Mohammed Essam), cache should be on higher level
+pub fn issue_get(id int) ?Issue {
 	mut conn :=  connection_get()
 	response := conn.get_json_str('issues/$id', "", true) ?
 	mut result := issue_decode(response) ?
+	conn.issue_remember(result)
 	return result
+}
+
+pub fn issue_delete(id int) ?bool {
+	mut conn := connection_get()
+	response := conn.delete('issues', id) ?
+	conn.issue_forget(id)
+	return response
 }
 
 fn issue_decode(data string) ? Issue{

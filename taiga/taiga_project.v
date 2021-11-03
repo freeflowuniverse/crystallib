@@ -16,7 +16,7 @@ pub mut:
 	tags          []string
 	slug          string
 	owner         UserInfo
-	projtype      Projectype
+	projtype      Projectype [skip]
 }
 
 
@@ -35,7 +35,7 @@ pub enum TaigaElementTypes{
 
 pub fn (mut p Project) delete() ?bool {
 	mut conn := connection_get()
-	return conn.delete('projects', p.id, false)
+	return conn.delete('projects', p.id)
 }
 
 
@@ -55,15 +55,6 @@ pub fn (mut p Project) stories() ?[]Story {
 // 	panic("implement")
 // }
 
-//return vlang time obj
-pub fn (mut p Project) created_date_get() time.Time {
-	//panic if time doesn't work
-	//make the other one internal, no reason to have the string public
-	//do same for all dates
-	panic("implement")
-}
-
-
 
 pub fn (mut p Project) copy (element_type TaigaElementTypes, element_id int, to_project_id int) ?TaigaElement {
 	/*
@@ -80,21 +71,21 @@ pub fn (mut p Project) copy (element_type TaigaElementTypes, element_id int, to_
 	match element_type{
 		.story {
 			//Get element
-			element := conn.story_get(element_id) ?
+			element := story_get(element_id) ?
 			// Create new element in the distination project
-			new_element = conn.story_create(element.subject, to_project_id) ?
+			new_element = story_create(element.subject, to_project_id) ?
 		}
 		.issue {
-			element := conn.issue_get(element_id) ?
-			new_element = conn.issue_create(element.subject, to_project_id) ?
+			element := issue_get(element_id) ?
+			new_element = issue_create(element.subject, to_project_id) ?
 		}
 		.task {
-			element := conn.task_get(element_id) ?
-			new_element = conn.task_create(element.subject, to_project_id) ?
+			element := task_get(element_id) ?
+			new_element = task_create(element.subject, to_project_id) ?
 		}
 		.epic {
-			element := conn.epic_get(element_id) ?
-			new_element = conn.epic_create(element.subject, to_project_id) ?
+			element := epic_get(element_id) ?
+			new_element = epic_create(element.subject, to_project_id) ?
 		}
 	}
 	//TODO: guess this is not finished??? we need to copy the content

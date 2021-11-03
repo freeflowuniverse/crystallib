@@ -24,13 +24,21 @@ pub fn users() ? {
 	data := conn.get_json_str('users', '', true) ?
 	data_as_arr := (raw_decode(data) or {}).arr()
 	for u in data_as_arr {
-		user := decode_user(u.str()) ?
-		user_remember(user)
+		user := user_decode(u.str()) ?
+		conn.user_remember(user)
 	}
 }
 
+pub fn user_get(id int) ?User {
+	mut conn :=  connection_get()
+	response := conn.get_json_str('users/$id', "", true) ?
+	mut result := user_decode(response) ?
+	conn.user_remember(result)
+	return result
+}
+
 //get markdown for all projects per user
-fn (mut user User) projects_per_user_md(export_directory string, url string) string{
+fn (mut user User) projects_per_user_md(export_directory string, url string){
 	projects := projects_per_user(user.id)
 	mut projects_md := []string
 	for proj in projects {
@@ -48,11 +56,16 @@ fn (mut user User) projects_per_user_md(export_directory string, url string) str
 	// export template for user
 	os.write_file(export_path,user_md) or {panic(err)}
 	println("Exporting Done!")
-
-	return ""
 }
 
-fn decode_user(data string) ?User{
+pub fn user_delete(id int) ?bool {
+	mut conn := connection_get()
+	response := conn.delete('users', id) ?
+	conn.user_forget(id)
+	return response
+}
+
+fn user_decode(data string) ?User{
 	mut user := json.decode(User, data) ?
 	data_as_map := (raw_decode(data) or {}).as_map()
 	user.date_joined = parse_time(data_as_map["date_joined"].str())

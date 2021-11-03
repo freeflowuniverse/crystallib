@@ -31,13 +31,13 @@ pub mut:
 pub fn projects() ?[]Project {
 	// List all Projects
 	mut conn := connection_get()
-	data := conn.get_json_str('projects', '', false) ?
+	data := conn.get_json_str('projects', '', true) ?
 	data_as_arr := (raw_decode(data) or {}).arr()
 	mut projects := []Project{}
 	for proj in data_as_arr {
 		project := project_decode(proj.str()) ?
 		projects << project
-		project_remember(project)
+		conn.project_remember(project)
 	}
 	return projects
 }
@@ -76,13 +76,14 @@ pub fn (mut h TaigaConnection) project_create_if_not_exist(name string, descript
 		project.projtype = projtype
 		return project
 	}
-	return h.project_create(name, description, projtype)
+	return project_create(name, description, projtype)
 }
 
 // create project based on predefined standards
 // return Project obj
-pub fn (mut h TaigaConnection) project_create(name string, description string, projtype Projectype) ?Project {
-	if h.project_exists(name) {
+pub fn project_create(name string, description string, projtype Projectype) ?Project {
+	mut conn := connection_get()
+	if conn.project_exists(name) {
 		return error("Cannot create project with name: '$name' because already exists.")
 	}
 	mut proj := NewProject{
@@ -142,11 +143,10 @@ pub fn (mut h TaigaConnection) project_create(name string, description string, p
 		}
 	}
 	postdata := json.encode_pretty(proj)
-	response := h.post_json_str('projects', postdata, true, true) ?
+	response := conn.post_json_str('projects', postdata, true, true) ?
 
-	h.cache_drop()? //to make sure all is consistent
-
-	mut result := json.decode(Project, response) ?
+	mut result := project_decode(response) ?
 	result.projtype = projtype
+	conn.project_remember(result)
 	return result
 }

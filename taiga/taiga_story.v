@@ -53,39 +53,46 @@ pub mut:
 	project int
 }
 
-pub fn stories() ?[]Story {
+pub fn stories() ? {
 	mut conn := connection_get()
 	data := conn.get_json_str('userstories', '', true) ?
 	data_as_arr := (raw_decode(data) or {}).arr()
-	mut stories := []Story{}
 	for s in data_as_arr {
 		temp := (raw_decode(s.str()) or {}).as_map()
 		id := temp["id"].int()
-		mut story := conn.story_get(id) ?
+		mut story := story_get(id) ?
 		story.get_story_comments() ?
 		// story.get_stroy_tasks() ?
-		story_remember(story)
-		stories << story
+		conn.story_remember(story)
 	}
-	return stories
 }
 
-pub fn (mut h TaigaConnection) story_create(subject string, project_id int) ?Story {
-	h.cache_drop()? //to make sure all is consistent
+pub fn story_create(subject string, project_id int) ?Story {
+	mut conn := connection_get()
 	story := NewStory{
 		subject: subject
 		project: project_id
 	}
 	postdata := json.encode_pretty(story)
-	response := h.post_json_str('userstories', postdata, true, true) ?
-	mut result := json.decode(Story, response) ?
+	response := conn.post_json_str('userstories', postdata, true, true) ?
+	mut result := story_decode(response) ?
+	conn.story_remember(result)
 	return result
 }
 
-pub fn (mut h TaigaConnection) story_get(id int) ?Story {
-	// TODO: Check Cache first (Mohammed Essam)
-	response := h.get_json_str('userstories/$id', "", true) ?
-	return  story_decode(response)
+pub fn story_get(id int) ?Story {
+	mut conn := connection_get()
+	response := conn.get_json_str('userstories/$id', "", true) ?
+	result := story_decode(response) ?
+	conn.story_remember(result)
+	return result
+}
+
+pub fn story_delete(id int) ?bool {
+	mut conn := connection_get()
+	response := conn.delete('userstories', id) ?
+	conn.story_forget(id)
+	return response
 }
 
 fn story_decode(data string) ? Story{
