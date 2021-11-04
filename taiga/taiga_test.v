@@ -9,9 +9,15 @@ fn test_main() {
 	create_epic()
 
 	// Export user projects as md
-	mut user := singleton.users[13]
+	user_id := 13
+	mut user := singleton.users[user_id]
 	export_dir_path := "."
-	user.projects_per_user_md(export_dir_path, url)
+	user.export_projects_per_user_md(export_dir_path, url)
+
+	// Export user projects as md
+	proj_id := 25
+	mut proj := *singleton.projects[proj_id]
+	proj.export_project_as_md(export_dir_path, url)
 }
 
 fn create_issue(){

@@ -2,6 +2,7 @@ module taiga
 
 import x.json2 {raw_decode}
 import json
+import os
 import time {Time}
 
 struct Project {
@@ -98,4 +99,11 @@ fn project_decode(data string) ? Project{
 	project.created_date = parse_time(data_as_map["created_date"].str())
 	project.modified_date = parse_time(data_as_map["modified_date"].str())
 	return project
+}
+
+fn (proj Project) export_project_as_md(export_directory string, url string){
+	md := project_as_md(proj, url)
+	export_path := export_directory + "/" + proj.name + ".md"
+	// export template for user
+	os.write_file(export_path, md) or {panic(err)}
 }
