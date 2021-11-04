@@ -24,10 +24,13 @@
 | Created at   | $story.created_date                    |
 | Last Updates | $story.modified_date                   |
 
+@if story.description != ""
 ##### Description
 > Rendered as markdown
 
 $story.description
+
+@end
 
 @if story.comments.len >0
 ##### Comments
@@ -57,10 +60,13 @@ $comment.comment
 | Created at   | $issue.created_date                    |
 | Last Updates | $issue.modified_date                   |
 
+@if issue.description != ""
 ##### Description
 > Rendered as markdown
 
 $issue.description
+
+@end
 
 @if issue.comments.len >0
 ##### Comments
@@ -90,10 +96,13 @@ $comment.comment
 | Created at   | $task.created_date                    |
 | Last Updates | $task.modified_date                   |
 
+@if task.description != ""
 ##### Description
 > Rendered as markdown
 
 $task.description
+
+@end
 
 @if task.comments.len >0
 ##### Comments
@@ -124,11 +133,13 @@ $comment.comment
 | Created at   | $epic.created_date                    |
 | Last Updates | $epic.modified_date                   |
 
+@if epic.description != ""
 ##### Description
 > Rendered as markdown
 
 $epic.description
 
+@end
 ---
 @end
 @end

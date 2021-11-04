@@ -4,7 +4,6 @@ import x.json2
 import json
 import net.http
 import redisclient
-import crypto.md5
 
 
 [heap]

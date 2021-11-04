@@ -41,7 +41,6 @@ pub fn (mut p Project) delete() ?bool {
 
 pub fn (mut p Project) stories() ?[]Story {
 	mut conn := connection_get()
-	//no cache for now, fix later
 	data := conn.get_json_str('userstories?project=$p.id', '', false) ?
 	return json.decode([]Story, data) or {}
 }

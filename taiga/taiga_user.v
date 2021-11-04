@@ -44,10 +44,10 @@ fn (mut user User) projects_per_user_md(export_directory string, url string){
 	for proj in projects {
 		circles_url := url
 		project := proj // For template rendering
-		stories := stories_per_project(project.id)
-		issues := issues_per_project(project.id)
-		tasks := tasks_per_project(project.id)
-		epics := epics_per_project(project.id)
+		stories := stories_per_project(project.id) // For template rendering
+		issues := issues_per_project(project.id) // For template rendering
+		tasks := tasks_per_project(project.id) // For template rendering
+		epics := epics_per_project(project.id) // For template rendering
 		// export template per project
 		projects_md << $tmpl("./templates/project.md")
 	}
