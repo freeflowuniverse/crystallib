@@ -1,7 +1,8 @@
 module taiga
 
+import x.json2 {raw_decode}
 import json
-import time
+import time {Time}
 
 struct Epic {
 pub mut:
@@ -12,15 +13,16 @@ pub mut:
 	project                int
 	project_extra_info     ProjectInfo
 	user_story             int
+	user_story_extra_info  StoryInfo
 	status                 int
 	status_extra_info      StatusInfo
 	assigned_to            int
 	assigned_to_extra_info UserInfo
 	owner                  int
 	owner_extra_info       UserInfo
-	created_date           string
-	modified_date          string
-	finished_date          string
+	created_date           Time [skip]
+	modified_date          Time [skip]
+	finished_date          Time [skip]
 	subject                string
 	is_closed              bool
 	is_blocked             bool
@@ -42,39 +44,51 @@ pub mut:
 	project int
 }
 
-//return vlang time obj
-pub fn (mut e Epic) created_date_get() time.Time {
-	//panic if time doesn't work
-	//make the other one internal, no reason to have the string public
-	//do same for all dates
-	panic("implement")
+pub fn epics() ? {
+	mut conn := connection_get()
+	data := conn.get_json_str('epics', '', true) ?
+	data_as_arr := (json2.raw_decode(data) or {}).arr()
+	for e in data_as_arr {
+		temp := (raw_decode(e.str()) or {}).as_map()
+		id := temp["id"].int()
+		epic := epic_get(id) ?
+		conn.epic_remember(epic)
+	}
 }
 
-
-
-fn (mut h TaigaConnection) epics() ?[]Epic {
-	data := h.get_json_str('epics', '', true) ?
-	return json.decode([]Epic, data) or {}
-}
-
-fn (mut h TaigaConnection) epic_create(subject string, project_id int) ?Epic {
-	// TODO
+pub fn epic_create(subject string, project_id int) ?Epic {
 	mut conn :=  connection_get()
-	conn.cache_drop()?
 	epic := NewEpic{
 		subject: subject
 		project: project_id
 	}
 	postdata := json.encode_pretty(epic)
-	response := h.post_json_str('epics', postdata, true, true) ?
-	mut result := json.decode(Epic, response) ?
+	response := conn.post_json_str('epics', postdata, true, true) ?
+	mut result := epic_decode(response) ?
+	conn.epic_remember(result)
 	return result
 }
 
-fn (mut h TaigaConnection) epic_get(id int) ?Epic {
-	// TODO: Check Cache first (Mohammed Essam)
+fn epic_get(id int) ?Epic {
 	mut conn :=  connection_get()
 	response := conn.get_json_str('epics/$id', "", true) ?
-	mut result := json.decode(Epic, response) ?
+	mut result := epic_decode(response) ?
+	conn.epic_remember(result)
 	return result
+}
+
+pub fn epic_delete(id int) ?bool {
+	mut conn := connection_get()
+	response := conn.delete('epics', id) ?
+	conn.epic_forget(id)
+	return response
+}
+
+fn epic_decode(data string) ?Epic{
+	mut epic := json.decode(Epic, data) ?
+	data_as_map := (raw_decode(data) or {}).as_map()
+	epic.created_date = parse_time(data_as_map["created_date"].str())
+	epic.modified_date = parse_time(data_as_map["modified_date"].str())
+	epic.finished_date = parse_time(data_as_map["modified_date"].str())
+	return epic
 }

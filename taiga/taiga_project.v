@@ -1,10 +1,14 @@
 module taiga
 
+import x.json2 {raw_decode}
 import json
-import time
+import os
+import time {Time}
 
 struct Project {
 pub mut:
+	created_date  Time  [skip]
+	modified_date Time  [skip]
 	name          string
 	description   string
 	id            int
@@ -12,11 +16,10 @@ pub mut:
 	members       []int
 	tags          []string
 	slug          string
-	created_date  string
-	modified_date string
 	owner         UserInfo
-	projtype      Projectype
+	projtype      Projectype [skip]
 }
+
 
 pub enum Projectype {
 	funnel
@@ -33,49 +36,24 @@ pub enum TaigaElementTypes{
 
 pub fn (mut p Project) delete() ?bool {
 	mut conn := connection_get()
-	return conn.delete('projects', p.id, false)
+	return conn.delete('projects', p.id)
 }
 
 
 pub fn (mut p Project) stories() ?[]Story {
 	mut conn := connection_get()
-	//no cache for now, fix later
 	data := conn.get_json_str('userstories?project=$p.id', '', false) ?
 	return json.decode([]Story, data) or {}
 }
 
-//get comments in lis from project
-pub fn (mut p Project) comments() ?[]Comment {
-	mut conn := connection_get()
-	//no cache for now, fix later
-	// data := conn.get_json_str('userstories?project=$p.id', '', false) ?
-	// return json.decode([]Story, data) or {}
-
-	//for further development just fake
-	//TODO: implement
-
-	mut ps := []Comment{}
-	ps << Project{title:"have no idea",description:"A Description\n\nline1\nline2\n"}
-		
-}
-
-//get comments in lis from project
-pub fn (mut p Project) issues() ?[]Issue {
-	mut conn := connection_get()
-	//no cache for now, fix later
-	// data := conn.get_json_str('userstories?project=$p.id', '', false) ?
-	// return json.decode([]Story, data) or {}
-	panic("implement")
-}
-
-//return vlang time obj
-pub fn (mut p Project) created_date_get() time.Time {
-	//panic if time doesn't work
-	//make the other one internal, no reason to have the string public
-	//do same for all dates
-	panic("implement")
-}
-
+// //get comments in lis from project
+// pub fn (mut p Project) issues() ?[]Issue {
+// 	mut conn := connection_get()
+// 	// no cache for now, fix later
+// 	data := conn.get_json_str('userstories?project=$p.id', '', false) ?
+// 	return json.decode([]Story, data) or {}
+// 	panic("implement")
+// }
 
 
 pub fn (mut p Project) copy (element_type TaigaElementTypes, element_id int, to_project_id int) ?TaigaElement {
@@ -93,24 +71,39 @@ pub fn (mut p Project) copy (element_type TaigaElementTypes, element_id int, to_
 	match element_type{
 		.story {
 			//Get element
-			element := conn.story_get(element_id) ?
+			element := story_get(element_id) ?
 			// Create new element in the distination project
-			new_element = conn.story_create(element.subject, to_project_id) ?
+			new_element = story_create(element.subject, to_project_id) ?
 		}
 		.issue {
-			element := conn.issue_get(element_id) ?
-			new_element = conn.issue_create(element.subject, to_project_id) ?
+			element := issue_get(element_id) ?
+			new_element = issue_create(element.subject, to_project_id) ?
 		}
 		.task {
-			element := conn.task_get(element_id) ?
-			new_element = conn.task_create(element.subject, to_project_id) ?
+			element := task_get(element_id) ?
+			new_element = task_create(element.subject, to_project_id) ?
 		}
 		.epic {
-			element := conn.epic_get(element_id) ?
-			new_element = conn.epic_create(element.subject, to_project_id) ?
+			element := epic_get(element_id) ?
+			new_element = epic_create(element.subject, to_project_id) ?
 		}
 	}
 	//TODO: guess this is not finished??? we need to copy the content
 	panic("not implemented")
 	return new_element
+}
+
+fn project_decode(data string) ? Project{
+	mut project := json.decode(Project, data) ?
+	data_as_map := (raw_decode(data) or {}).as_map()
+	project.created_date = parse_time(data_as_map["created_date"].str())
+	project.modified_date = parse_time(data_as_map["modified_date"].str())
+	return project
+}
+
+fn (proj Project) export_project_as_md(export_directory string, url string){
+	md := project_as_md(proj, url)
+	export_path := export_directory + "/" + proj.name + ".md"
+	// export template for user
+	os.write_file(export_path, md) or {panic(err)}
 }

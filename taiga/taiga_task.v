@@ -1,7 +1,8 @@
 module taiga
 
+import x.json2 {raw_decode}
 import json
-import time
+import time {Time}
 
 struct Task {
 pub mut:
@@ -19,14 +20,15 @@ pub mut:
 	assigned_to_extra_info UserInfo
 	owner                  int
 	owner_extra_info       UserInfo
-	created_date           string
-	modified_date          string
-	finished_date          string
+	created_date           Time [skip]
+	modified_date          Time [skip]
+	finished_date          Time [skip]
 	subject                string
 	is_closed              bool
 	is_blocked             bool
 	blocked_note           string
 	ref                    int
+	comments               []Comment
 }
 
 struct NewTask {
@@ -35,46 +37,60 @@ pub mut:
 	project int
 }
 
-fn (mut h TaigaConnection) tasks() ?[]Task {
-	data := h.get_json_str('tasks', '', true) ?
-	return json.decode([]Task, data) or {}
-}
-
-//get comments in lis from story
-pub fn (mut t Task) comments() ?[]Comment {
+pub fn tasks() ? {
 	mut conn := connection_get()
-	//no cache for now, fix later
-	// data := conn.get_json_str('userstories?project=$p.id', '', false) ?
-	// return json.decode([]Story, data) or {}
-	panic("implement")
+	data := conn.get_json_str('tasks', '', true) ?
+	data_as_arr := (raw_decode(data) or {}).arr()
+	for t in data_as_arr {
+		temp := (raw_decode(t.str()) or {}).as_map()
+		id := temp["id"].int()
+		mut task := task_get(id) ?
+		task.get_task_comments() ?
+		conn.task_remember(task)
+	}
 }
 
-//return 
-pub fn (mut t Task) created_date_get() time.Time {
-	//panic if time doesn't work
-	//make the other one internal, no reason to have the string public
-	//do same for all dates
-	panic("implement")
+//get comments in lis from task
+pub fn (mut t Task) get_task_comments() ?[]Comment {
+	t.comments = comments_get("task", t.id) ?
+	return t.comments
+
 }
 
 
 
-pub fn (mut h TaigaConnection) task_create(subject string, project_id int) ?Task {
-	// TODO
-	h.cache_drop()? //to make sure all is consistent, too harsh need to be improved
+pub fn task_create(subject string, project_id int) ?Task {
+	mut conn := connection_get()
 	task := NewTask{
 		subject: subject
 		project: project_id
 	}
 	postdata := json.encode_pretty(task)
-	response := h.post_json_str('tasks', postdata, true, true) ?
-	mut result :=  json.decode(Task, response) ?
+	response := conn.post_json_str('tasks', postdata, true, true) ?
+	mut result :=  task_decode(response) ?
+	conn.task_remember(result)
 	return result
 }
 
-pub fn (mut h TaigaConnection) task_get(id int) ?Task {
-	// TODO: Check Cache first (Mohammed Essam)
-	response := h.get_json_str('tasks/$id', "", true) ?
-	mut result := json.decode(Task, response) ?
+pub fn task_get(id int) ?Task {
+	mut conn := connection_get()
+	response := conn.get_json_str('tasks/$id', "", true) ?
+	mut result := task_decode(response) ?
+	conn.task_remember(result)
 	return result
+}
+pub fn task_delete(id int) ?bool {
+	mut conn := connection_get()
+	response := conn.delete('tasks', id) ?
+	conn.task_forget(id)
+	return response
+}
+
+fn task_decode(data string) ? Task{
+	mut task := json.decode(Task, data) ?
+	data_as_map := (raw_decode(data) or {}).as_map()
+	task.created_date = parse_time(data_as_map["created_date"].str())
+	task.modified_date = parse_time(data_as_map["modified_date"].str())
+	task.finished_date = parse_time(data_as_map["finished_date"].str())
+	return task
 }
