@@ -146,7 +146,7 @@ fn (mut publisher Publisher) file_find(name2find string, page_id_source int) ?&F
 // check if the page can be found over all sites
 // is used by page_find , page_find does for multiple name combinations, this one only for 1
 fn (mut publisher Publisher) page_find_(name2find string, page_id_source int) ?&Page {
-	println(" -- page find debug: '$name2find'")
+	// println(" -- page find debug: '$name2find'")
 	mut res := publisher.pages_find(name2find)
 
 	if res.len == 0 {
@@ -179,7 +179,7 @@ pub fn (mut publisher Publisher) healcheck() bool{
 // check if we can find the page, page can be on another site|
 // we also check definitions because they can also lead to right page
 pub fn (mut publisher Publisher) page_find(name2find string, page_id_source int, moresites_ bool) ?&Page {
-	println (" == page find debug: '$name2find' moresites:$moresites_")
+	// println (" == page find debug: '$name2find' moresites:$moresites_")
 	if name2find.contains("*") || name2find.contains("!") || name2find.contains("@") {
 		panic("should not have !@* in pagename. Now: $name2find")
 	}
@@ -211,7 +211,6 @@ pub fn (mut publisher Publisher) page_find(name2find string, page_id_source int,
 
 	// didn't find a better way how to do it, more complicated than it should I believe
 	for x in 0 .. 3 {
-		println(x)
 
 		if x == 0  {
 			// first check if we can find the page with full original name
@@ -262,10 +261,10 @@ pub fn (mut publisher Publisher) page_find(name2find string, page_id_source int,
 	}
 	// we did not manage to find a page
 
-	if name2find.contains("circles_remuneration"){
-		println(publisher.pages_find_name(name2find))		
-		panic("dsds:'$name2find'")
-	}
+	// if name2find.contains("circles_remuneration"){
+	// 	println(publisher.pages_find_name(name2find))		
+	// 	panic("dsds:'$name2find'")
+	// }
 
 	return error('cannot find the page: $name2find')
 }

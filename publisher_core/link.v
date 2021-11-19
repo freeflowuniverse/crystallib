@@ -10,7 +10,6 @@ fn trim(t string) string{
 		check := " *@!".contains(x)
 		if check {
 			if done == false{
-				println("CONT")
 				continue
 			}
 		}
@@ -142,10 +141,10 @@ fn (mut link Link) init_(mut publisher &Publisher, page &Page) {
 				linktocheck = "$link.site:$linktocheck"
 			}
 			if linktocheck.starts_with("!") || linktocheck.starts_with("@") {
-				println(linktocheck)
+				// println(linktocheck)
 				panic("should never be here")
 			}
-			println(" ****  $link.page_id_source ${page.path}-> $link.filename\n$link")
+			// println(" ****  $link.page_id_source ${page.path}-> $link.filename\n$link")
 			// println('link, find page ($linktocheck): ${link.original_link}.')
 			item_linked := publisher.page_find(linktocheck, link.page_id_source, link.moresites) or {
 				// println(link)
@@ -306,14 +305,30 @@ fn (mut link Link) server_get(site &Site, mut publisher &Publisher) string {
 
 		link_filename_server := "${link.site}__${link.filename}"
 
+
+
 		if link.newtab == false {
 			if link.include{
-				mut page_sidebar1 := page_source.sidebar_page_get(mut publisher) or { 
-					println( " cannot find sidebar for source page:$page_source.path for link:\n$link")
-					panic(err) 
+				//need to use the sidepath of the source page
+				if page_source.sidebarid > 0 && link.filename.to_lower()!="defs"{
+					mut page_sidebar1 := page_source.sidebar_page_get(mut publisher) or { 
+						println( " cannot find sidebar for source page:$page_source.path for link:\n$link")
+						panic(err) 
+					}
+					mut path_sidebar1 := page_sidebar1.path_dir_relative_get(mut publisher).trim(" /")
+
+					link0 := '[$link.description](/$path_sidebar1/${link_filename_server}.md)'.replace("//","/")
+					// if link.filename.contains("qsss2_home"){
+					// 	println(page_sidebar1.name)
+					// 	println("sitesource: ${site_source.name}....${site_dest.name}")
+					// 	println(link)
+					// 	println(link0)
+					// 	panic("Sss")
+					// }
+					return link0
+				}else{
+					return '[$link.description](${link_filename_server}.md)'.replace("//","/")
 				}
-				mut path_sidebar1 := page_sidebar1.path_dir_relative_get(mut publisher).trim(" /")
-				return '[$link.description](/$path_sidebar1/${link_filename_server}.md)'.replace("//","/")
 			}
 			if page_dest.sidebarid > 0 && link.filename.to_lower()!="readme" && link.filename.to_lower()!="defs"{
 

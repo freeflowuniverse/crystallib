@@ -167,10 +167,10 @@ fn site_www_deliver(config publisher_config.ConfigRoot, domain string, path stri
 
 fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path string, mut app App) ?vweb.Result {
 	mut path0 := path
-	debug := true
+	debug := false
 	if debug {
 		// println(' >>> Webserver >> config >> $config')
-		println(' >>> Webserver >> domain >> $domain')
+		// println(' >>> Webserver >> domain >> $domain')
 		println(' >>> Webserver >> path >> $path0')
 		// println(' >>> Webserver >> req >> $req')
 		// println(' >>> Webserver >> res >> $res')
@@ -368,7 +368,7 @@ pub fn (mut app App) handler(_path string) vweb.Result {
 	}
 	mut path := _path
 
-	println(" ++ $path")
+	// println(" ++ $path")
 
 	mut domain := ''
 	mut cat := publisher_config.SiteCat.web

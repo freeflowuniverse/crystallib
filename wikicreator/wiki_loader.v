@@ -33,7 +33,7 @@ fn (mut creator WikiCreator) do_recursive_(path string,path_out string) ? {
 	mut pathnew := ""
 	for item in items {
 		pathnew = os.join_path(path, item)
-		println(' - $item')
+		// println(' - $item')
 		if os.is_link(pathnew) {
 			continue
 		}
@@ -60,7 +60,7 @@ fn (mut creator WikiCreator) do_recursive_(path string,path_out string) ? {
 
 			if ext == '' || ext != "md" {continue}
 			
-			println(item2)
+			// println(item2)
 		}
 	}
 }

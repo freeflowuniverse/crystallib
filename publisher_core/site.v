@@ -243,7 +243,7 @@ pub fn (mut site Site) process(mut publisher &Publisher)? {
 	for _, id in site.pages {
 		mut p := publisher.page_get_by_id(id)?
 		p.process(mut publisher)?
-	}
+	}	
 	println(' - process file for site: $site.name')
 	for _, id in site.files {
 		mut f := publisher.file_get_by_id(id) or {
@@ -307,13 +307,13 @@ fn (mut site Site) files_process_recursive(path__ string, mut publisher &Publish
 		// panic("Sdssd")
 	}
 	items := os.ls(path_) ?
-	println(" - load: $path_")
+	// println(" - load: $path_")
 	mut path_sidebar := "$path_/sidebar.md"
-	println(" - sidebar check: $path_/sidebar.md")
+	// println(" - sidebar check: $path_/sidebar.md")
 	if os.exists(path_sidebar){
 		//means we are not in root of path
-		p:= site.page_remember(path_, "sidebar.md", true, mut publisher) ?
-		println (" - Found sidebar: $p.path")
+		_ := site.page_remember(path_, "sidebar.md", true, mut publisher) ?
+		// println (" - Found sidebar: $p.path")
 	}	
 	site.side_bar_fix(path_,mut publisher)
 	// if path.contains("/farming"){
