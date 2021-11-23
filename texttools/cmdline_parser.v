@@ -9,22 +9,22 @@ enum TextArgsStatus {
 pub fn text_remove_quotes(text string) string {
 	mut out := ''
 	mut inquote := false
-	mut char := ''
+	mut ch := ''
 	mut char_previous := ''
 	for i in 0 .. text.len {
-		char = text[i..i + 1]
-		if char in ['"', "'"] {
+		ch = text[i..i + 1]
+		if ch in ['"', "'"] {
 			if char_previous != '\\' {
 				inquote = !inquote
-				char_previous = char
+				char_previous = ch
 				continue
 			}
 		}
 		if !inquote {
 			// unmodified add, because we are in quote
-			out += char
+			out += ch
 		}
-		char_previous = char
+		char_previous = ch
 	}
 	return out
 }
@@ -48,7 +48,7 @@ pub fn cmd_line_args_parser(text string) ?[]string {
 	mut quote := ''
 	mut char_previous := ''
 	mut arg := ''
-	mut char := ''
+	mut ch := ''
 
 	if check_exists_outside_quotes(text, ['<', '>', '|']) {
 		if !(text.contains(' ')) {
@@ -58,13 +58,13 @@ pub fn cmd_line_args_parser(text string) ?[]string {
 		return [splitted[0], splitted[1]]
 	}
 	for i in 0 .. text.len {
-		char = text[i..i + 1]
+		ch = text[i..i + 1]
 		// skip spaces which are not escaped
-		if char == ' ' && arg == '' {
+		if ch == ' ' && arg == '' {
 			continue
 		}
 
-		if char in ['"', "'"] {
+		if ch in ['"', "'"] {
 			if char_previous != '\\' {
 				if quote == '' {
 					// beginning of quote need to close off previous arg
@@ -72,15 +72,15 @@ pub fn cmd_line_args_parser(text string) ?[]string {
 						res << arg.trim(' ')
 						arg = ''
 					}
-					quote = char
-					char_previous = char
+					quote = ch
+					char_previous = ch
 					continue
 				} else {
 					// end of quote
 					quote = ''
 					res << arg.trim(' ')
 					arg = ''
-					char_previous = char
+					char_previous = ch
 					continue
 				}
 			}
@@ -88,16 +88,16 @@ pub fn cmd_line_args_parser(text string) ?[]string {
 
 		if quote != '' {
 			// unmodified add, because we are in quote
-			arg += char
+			arg += ch
 		} else {
-			if char == ' ' && arg != '' {
+			if ch == ' ' && arg != '' {
 				res << arg.trim(' ')
 				arg = ''
 			} else {
-				arg += char
+				arg += ch
 			}
 		}
-		char_previous = char
+		char_previous = ch
 	}
 	if arg != '' {
 		res << arg.trim(' ')

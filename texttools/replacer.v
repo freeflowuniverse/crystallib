@@ -1,8 +1,8 @@
 module texttools
 
-//check the char is in a...Z0..9
-fn is_var_char(char string) bool{
-	if 'abcdefghijklmnopqrstuvwxyz0123456789_-'.contains(char.to_lower()){
+//check the ch is in a...Z0..9
+fn is_var_char(ch string) bool{
+	if 'abcdefghijklmnopqrstuvwxyz0123456789_-'.contains(ch.to_lower()){
 		return true
 	} 
 	return false
@@ -14,7 +14,7 @@ pub fn replace_items(text string, replacer map[string]string) string {
 	mut res := []string{}
 	mut keys := []string{}
 	mut var := ""
-	mut char := ""
+	mut ch := ""
 	mut skipline_format := ""
 	toskip := "/.|:'`"
 	// mut done := []string{}
@@ -76,61 +76,61 @@ pub fn replace_items(text string, replacer map[string]string) string {
 		mut line_out := ""
 		mut var_skip := false
 		for char_ in line.split('') {
-			char = char_
+			ch = char_
 
-			if toskip.contains(char){
+			if toskip.contains(ch){
 				//this means that the next var cannot be used
 				var_skip = true
 			}
-			if char == "["{
+			if ch == "["{
 				//println(" ++++ is_possible_link")
 				is_possible_link = true
 			}
-			if prevchar=="]" && char=="(" && is_possible_link{
+			if prevchar=="]" && ch=="(" && is_possible_link{
 				//println(" ++++ islink")
 				is_link = true
 			}
 			//end of link
-			if char==")" && is_link{
+			if ch==")" && is_link{
 				is_link = false
 				is_possible_link = false
-				line_out += char
+				line_out += ch
 				//println("++++ end link")
-				prevchar = char
-				char = ""
+				prevchar = ch
+				ch = ""
 				continue
 			}
 			if is_possible_link || is_link  || is_comment {
-				line_out += char
-				prevchar = char
+				line_out += ch
+				prevchar = ch
 				continue
 			}
-			//println(" -- char:'$char'")
-			if is_var_char(char){
+			//println(" -- char:'$ch'")
+			if is_var_char(ch){
 				if var_skip{
-					line_out += char
-					prevchar = char
-					char = ""
+					line_out += ch
+					prevchar = ch
+					ch = ""
 					continue					
 				}else{
-					var+=char
+					var+=ch
 					//println(" -- var:'$var'")
 				}
 			}else{				
-				//means we have potentially found a var, now char not part of var
-				//println(" -- varsubst:${varsubst(char, var, replacer2)}")
-				line_out += varsubst(char, var, replacer2)
+				//means we have potentially found a var, now ch not part of var
+				//println(" -- varsubst:${varsubst(ch, var, replacer2)}")
+				line_out += varsubst(ch, var, replacer2)
 				var = ""
-				if ! toskip.contains(char){
+				if ! toskip.contains(ch){
 					var_skip = false
 				}				
 			}
-			prevchar = char
-			char = ""
+			prevchar = ch
+			ch = ""
 		}
-		//println(" --- endline: lastchar:'$char' varsubst:${varsubst(char, var, replacer2)}")
+		//println(" --- endline: lastchar:'$ch' varsubst:${varsubst(ch, var, replacer2)}")
 		if var!=""{
-			line_out += varsubst(char, var, replacer2)
+			line_out += varsubst(ch, var, replacer2)
 		}
 		//println(" -> ${line_out}")
 		res << line_out
@@ -144,15 +144,15 @@ pub fn replace_items(text string, replacer map[string]string) string {
 	return final_res
 }
 
-fn varsubst(char string, var string, replacer map[string]string )string {
+fn varsubst(ch string, var string, replacer map[string]string )string {
 	if var.len>0{
 		//yes we found a var
 		var2 := texttools.name_fix_no_underscore_token(var)
 		if var2 in replacer{
-			return replacer[var2]+char
+			return replacer[var2]+ch
 		}
-		return var+char
+		return var+ch
 	}else{
-		return char
+		return ch
 	}
 }

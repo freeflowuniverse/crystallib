@@ -18,7 +18,7 @@ pub mut:
 // returns all the links
 pub fn link_parser(mut publisher &Publisher,mut page &Page, text string,linenr int) ParseResult {
 	mut charprev := ''
-	mut char := ''
+	mut ch := ''
 	mut state := ParseStatus.start
 	mut capturegroup_pre := '' // is in the []
 	mut capturegroup_post := '' // is in the ()
@@ -28,7 +28,7 @@ pub fn link_parser(mut publisher &Publisher,mut page &Page, text string,linenr i
 	if text.len > 2 {
 		charprev = ''
 		for i in 0 .. text.len {
-			char = text[i..i + 1]
+			ch = text[i..i + 1]
 			// check for comments end
 			if state == ParseStatus.comment {
 				if text[i - 3..i] == '-->' {
@@ -43,11 +43,11 @@ pub fn link_parser(mut publisher &Publisher,mut page &Page, text string,linenr i
 				capturegroup_post = ''
 				// check for end in link or file			
 			} else if state == ParseStatus.linkopen {
-				// original += char
+				// original += ch
 				if charprev == ']' {
 					// end of capture group
 					// next char needs to be ( otherwise ignore the capturing
-					if char == '(' {
+					if ch == '(' {
 						if state == ParseStatus.linkopen {
 							// remove the last 2 chars: ](  not needed in the capturegroup
 							state = ParseStatus.link
@@ -62,11 +62,11 @@ pub fn link_parser(mut publisher &Publisher,mut page &Page, text string,linenr i
 						capturegroup_pre = ''
 					}
 				} else {
-					capturegroup_pre += char
+					capturegroup_pre += ch
 				}
 				// is start, check to find links	
 			} else if state == ParseStatus.start {
-				if char == '[' {
+				if ch == '[' {
 					if charprev == '!' {
 						isimage = true
 					}
@@ -74,8 +74,8 @@ pub fn link_parser(mut publisher &Publisher,mut page &Page, text string,linenr i
 				}
 				// check for the end of the link/file
 			} else if state == ParseStatus.link {
-				// original += char
-				if char == ')' {
+				// original += ch
+				if ch == ')' {
 					// end of capture group
 					mut link := link_new(mut publisher, capturegroup_pre.trim(' '), capturegroup_post.trim(' '),isimage,&page)
 					//remember the consumer page
@@ -85,10 +85,10 @@ pub fn link_parser(mut publisher &Publisher,mut page &Page, text string,linenr i
 					isimage = false
 					state = ParseStatus.start
 				} else {
-					capturegroup_post += char
+					capturegroup_post += ch
 				}
 			}
-			charprev = char // remember the previous one
+			charprev = ch // remember the previous one
 		}
 	}
 	return parseresult

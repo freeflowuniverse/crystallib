@@ -185,71 +185,71 @@ pub fn text_to_params(text string) ?Params {
 
 	validchars := 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,'
 
-	mut char := ''
+	mut ch := ''
 	mut state := ParamStatus.start
 	mut result := Params{}
 	mut key := ''
 	mut value := ''
 
 	for i in 0 .. text2.len {
-		char = text2[i..i + 1]
-		// println(" - $char ${state}")
+		ch = text2[i..i + 1]
+		// println(" - $ch ${state}")
 		// check for comments end
 		if state == ParamStatus.start {
-			if char == ' ' {
+			if ch == ' ' {
 				continue
 			}
 			state = ParamStatus.name
 		}
 		if state == ParamStatus.name {
-			if char == ' ' && key == '' {
+			if ch == ' ' && key == '' {
 				continue
 			}
 			// waiting for :
-			if char == ':' {
+			if ch == ':' {
 				state = ParamStatus.value_wait
 				continue
-			} else if char == ' ' {
+			} else if ch == ' ' {
 				state = ParamStatus.start
 				result.arg_add(key)
 				key = ''
 				continue
-			} else if !validchars.contains(char) {
-				return error("parameters can only be A-Za-z0-9 and _, here found: '$key$char' in\n$text2")
+			} else if !validchars.contains(ch) {
+				return error("parameters can only be A-Za-z0-9 and _, here found: '$key$ch' in\n$text2")
 			} else {
-				key += char
+				key += ch
 				continue
 			}
 		}
 		if state == ParamStatus.value_wait {
-			if char == "'" {
+			if ch == "'" {
 				state = ParamStatus.quote
 				continue
 			}
 			// means the value started, we can go to next state
-			if char != ' ' {
+			if ch != ' ' {
 				state = ParamStatus.value
 			}
 		}
 		if state == ParamStatus.value {
-			if char == ' ' {
+			if ch == ' ' {
 				state = ParamStatus.start
 				result.kwarg_add(key, value)
 				key = ''
 				value = ''
 			} else {
-				value += char
+				value += ch
 			}
 			continue
 		}
 		if state == ParamStatus.quote {
-			if char == "'" {
+			if ch == "'" {
 				state = ParamStatus.start
 				result.kwarg_add(key, value)
 				key = ''
 				value = ''
 			} else {
-				value += char
+				value += ch
 			}
 			continue
 		}

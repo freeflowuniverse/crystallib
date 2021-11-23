@@ -27,8 +27,8 @@ fn (mut self ReplaceInstructions) get_regex_queries() []string {
 fn regex_rewrite(r string) ?string {
 	r2 := r.to_lower()
 	mut res := []string{}
-	for char in r2 {
-		mut c := char.ascii_str()
+	for ch in r2 {
+		mut c := ch.ascii_str()
 		if 'abcdefghijklmnopqrstuvwxyz'.contains(c) {
 			char_upper := c.to_upper()
 			res << '[' + c + char_upper + ']'

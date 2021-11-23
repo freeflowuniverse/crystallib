@@ -125,33 +125,33 @@ pub fn tokenize(text_ string) TokenizerResult {
 		word = ''
 		skip = false
 		splitted_line := line.split('')
-		for char in splitted_line {
-			if '[({'.contains(char) {
+		for ch in splitted_line {
+			if '[({'.contains(ch) {
 				skip = true
 				continue
 			}
 			if skip {
-				if ')]}'.contains(char) {
+				if ')]}'.contains(ch) {
 					skip = false
 					prev = ''
 					continue
 				}
 			} else {
 				if islink {
-					if char == ' ' {
+					if ch == ' ' {
 						islink = false
 					} else {
 						continue
 					}
 				}
-				if 'abcdefghijklmnopqrstuvwxyz0123456789_-'.contains(char.to_lower()) {
+				if 'abcdefghijklmnopqrstuvwxyz0123456789_-'.contains(ch.to_lower()) {
 					if word.len > 0 || prev == '' || '\t\n ,:;.?!#|'.contains(prev) {
-						word += char
+						word += ch
 					}
 					if word.starts_with('http') {
 						islink = true
 					}
-				} else if '\t\n ,:;.?!#|'.contains(char) {
+				} else if '\t\n ,:;.?!#|'.contains(ch) {
 					// only when end is newline tab or whitespace or ...
 					if word.len > 1 && !word_skip(word) && !(word in done) {
 						word_with_no_underscores := name_fix_no_underscore_token(word)
@@ -167,7 +167,7 @@ pub fn tokenize(text_ string) TokenizerResult {
 				} else {
 					word = ''
 				}
-				prev = char
+				prev = ch
 			}
 		}
 		if word.len > 1 && !word_skip(word) && !(word in done) {
