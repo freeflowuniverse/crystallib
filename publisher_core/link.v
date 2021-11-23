@@ -303,62 +303,56 @@ fn (mut link Link) server_get(site &Site, mut publisher &Publisher) string {
 			panic(err) 
 		}
 
-		link_filename_server := "${link.site}__${link.filename}"
+		link_short := "${link.site}__${link.filename}"
 
+		mut path_sidebar_dest := ""
+		if page_dest.sidebarid > 0 && link.filename.to_lower()!="readme" && link.filename.to_lower()!="defs"{
+			mut page_sidebar := page_dest.sidebar_page_get(mut publisher) or { 
+				println( " cannot find sidebar for dest page:$page_dest.path for link:\n$link")
+				panic(err) 
+			}
+			path_sidebar_dest = "/"+page_sidebar.path_dir_relative_get(mut publisher).trim(" /")+ "/"
+		}
 
+		mut path_sidebar_source := ""
+		if page_source.sidebarid > 0 && link.filename.to_lower()!="defs"{
+			mut page_sidebar_source := page_source.sidebar_page_get(mut publisher) or { 
+				println( " cannot find sidebar for source page:$page_source.path for link:\n$link")
+				panic(err) 
+			}
+			path_sidebar_source = "/"+page_sidebar_source.path_dir_relative_get(mut publisher).trim(" /")+ "/"
+		}
 
+		mut linkreplaced := ""
 		if link.newtab == false {
 			if link.include{
-				//need to use the sidepath of the source page
-				if page_source.sidebarid > 0 && link.filename.to_lower()!="defs"{
-					mut page_sidebar1 := page_source.sidebar_page_get(mut publisher) or { 
-						println( " cannot find sidebar for source page:$page_source.path for link:\n$link")
-						panic(err) 
-					}
-					mut path_sidebar1 := page_sidebar1.path_dir_relative_get(mut publisher).trim(" /")
-
-					link0 := '[$link.description](/$path_sidebar1/${link_filename_server}.md)'.replace("//","/")
-					// if link.filename.contains("qsss2_home"){
-					// 	println(page_sidebar1.name)
-					// 	println("sitesource: ${site_source.name}....${site_dest.name}")
-					// 	println(link)
-					// 	println(link0)
-					// 	panic("Sss")
-					// }
-					return link0
-				}else{
-					return '[$link.description](${link_filename_server}.md)'.replace("//","/")
-				}
-			}
-			if page_dest.sidebarid > 0 && link.filename.to_lower()!="readme" && link.filename.to_lower()!="defs"{
-
-				mut page_sidebar := page_dest.sidebar_page_get(mut publisher) or { 
-					println( " cannot find sidebar for dest page:$page_dest.path for link:\n$link")
-					panic(err) 
-				}
-				mut path_sidebar := page_sidebar.path_dir_relative_get(mut publisher).trim(" /")
-
-				if site_source.name != site_dest.name{
-					return '<a href="/info/${link.site}/#/$path_sidebar/${link_filename_server}.md"> $link.description </a>'
-					// return '[$link.description](/info/${link.site}/#/$path_sidebar/${link.filename}.md)'	
-					// return '[$link.description](../${link.site}/$path_sidebar/${link.filename}.md)'	
-				}else{
-					return '[$link.description](/$path_sidebar/${link_filename_server}.md)'.replace("//","/")
-				}
-
-			}
-			if site_source.name != site_dest.name{
-			// return '<a href="/info/${link.site}/#/$link.filename"> $link.description </a>'
-				return '<a href="/info/${link.site}/#/$link_filename_server"> $link.description </a>'
+				linkreplaced = '[$link.description](${path_sidebar_source}$link_short)'
 			}else{
-				return '[$link.description](${link.site}__${link.filename}.md)'	
+				if site_source.name != site_dest.name{
+					linkreplaced = '<a href="/info/${link.site}/#${path_sidebar_dest}$link_short"> $link.description </a>'
+				}else{
+					linkreplaced = '[$link.description](${path_sidebar_dest}$link_short)'
+				}
 			}
 		}else{
-			// return '[$link.description](/${link.site}/${link.filename}.md \':target=_blank\')'
-			return '<a href="/info/${link.site}/#/$link.filename" target="_blank"> $link.description </a>'
+			//is new tab so alwasy jump
+			if link.include{
+				linkreplaced = '<a href="/info/${link.site}/#/${path_sidebar_source}$link_short" target="_blank"> $link.description </a>'
+			}else {
+				linkreplaced = '<a href="/info/${link.site}/#/${path_sidebar_dest}$link_short" target="_blank"> $link.description </a>'
+			}
 		}
+		// if link.filename.contains("usp_secure") {
+		// 	println(link)
+		// 	println(linkreplaced)
+		// 	panic("ssss")
+		// }
+		linkreplaced = linkreplaced.replace("//","/")
+
+		return linkreplaced
 		
 	}
+	
 	if link.cat == LinkType.file {
 		if link.isimage {
 			// return '![$link.description](${link.site}__$link.filename  $link.extra)'

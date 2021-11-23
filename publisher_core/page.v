@@ -335,7 +335,8 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 				state.sourceline_change(link.original_get(), sourcelink)
 				println(' >>>>  link replace source: $link.original_get() -> $sourcelink')
 			}
-
+			// println(" ---- "+page.name+"/n$line")
+			// println(page)
 			llink := link.server_get (state.site, mut &publisher)
 			state.serverline_change(link.original_get(),llink)
 			// if link.original_link.contains("legal2"){
