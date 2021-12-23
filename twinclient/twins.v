@@ -2,20 +2,6 @@ module twinclient
 
 import json
 
-pub struct Twin {
-pub:
-	version    u32
-	id         u32
-	account_id string
-	ip         string
-	entities   []EntityProof
-}
-
-struct EntityProof {
-	entity_id u32
-	signature string
-}
-
 pub fn (mut tw Client) create_twin(ip string) ?Twin {
 	/*
 	Create a new twin

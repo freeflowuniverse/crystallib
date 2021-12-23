@@ -2,26 +2,6 @@ module twinclient
 
 import json
 
-pub struct StellarWallet {
-pub mut:
-	name    string
-	address string
-	secret  string
-}
-
-pub struct Balance{
-	asset string
-	amount f64
-}
-
-struct Transfer{
-	from_name string [json: "name"]
-	target_address string
-	amount f64
-	asset string
-	memo string
-}
-
 pub fn (mut tw Client) import_wallet(name string, secret string) ?StellarWallet {
 	mut imported_wallet := StellarWallet{
 		name: name

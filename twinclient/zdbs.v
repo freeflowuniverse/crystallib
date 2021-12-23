@@ -3,32 +3,11 @@ module twinclient
 import threefoldtech.info_specs_grid3.vlang.zos
 import json
 
-pub struct ZDB {
-pub mut:
-	deployment_name string
-	name            string
-	node_id         u32
-	mode            string
-	disk_size       u32
-	disk_type       string
-	public          bool
-	namespace       string
-	password        string
-}
-
-pub struct DeployZDBPayload {
-pub:
-	name        string
-	zdbs        []ZDB
-	metadata    string
-	description string
-}
-
-pub fn (mut tw Client) deploy_zdbs(payload DeployZDBPayload) ?ContractDeployResponse {
+pub fn (mut tw Client) deploy_zdbs(payload ZDBs) ?ContractDeployResponse {
 	/*
 	Deploy zdb workload
 		Input:
-			- payload (DeployZDBPayload): zdb payload
+			- payload (ZDBs): zdb payload
 		Output:
 			- response: List of contracts {created}.
 	*/
@@ -111,11 +90,11 @@ pub fn (mut tw Client) get_zdbs(name string) ?[]zos.Deployment {
 	return json.decode([]zos.Deployment, response.data) or {}
 }
 
-pub fn (mut tw Client) update_zdbs(payload DeployZDBPayload) ?ContractDeployResponse {
+pub fn (mut tw Client) update_zdbs(payload ZDBs) ?ContractDeployResponse {
 	/*
 	Update zdb with payload.
 		Input:
-			- payload (DeployZDBPayload): zdb instance with modified data.
+			- payload (ZDBs): zdb instance with modified data.
 		Output:
 			- response: List of contracts {updated}.
 	*/

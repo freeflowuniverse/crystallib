@@ -3,51 +3,19 @@ module twinclient
 import threefoldtech.info_specs_grid3.vlang.zos
 import json
 
-pub struct GenericMachine {
-pub:
-	node_id     u32
-	disks       []Disk
-	network     Network
-	public_ip   bool
-	cpu         u32
-	memory      u64
-	name        string
-	flist       string
-	entrypoint  string
-	metadata    string
-	description string
-	env         Env
-}
-
-pub struct Disk {
-	name       string
-	size       u32
-	mountpoint string
-}
-
-pub struct Network {
-	ip_range string
-	name     string
-}
-
-pub struct Env {
-	ssh_key string [json: 'SSH_KEY']
-}
-
-
-pub fn (mut tw Client) deploy_machine(payload GenericMachine) ?DeployResponse {
+pub fn (mut tw Client) deploy_machines(payload Machines) ?DeployResponse {
 	/*
 	Deploy generic machine workload
 		Input:
-			- payload (GenericMachine): generic machine payload
+			- payload (Machine): generic machine payload
 		Output:
 			- DeployResponse: list of contracts {created updated, deleted} and wireguard config.
 	*/
 	payload_encoded := json.encode_pretty(payload)
-	return tw.deploy_machine_with_encoded_payload(payload_encoded)
+	return tw.deploy_machines_with_encoded_payload(payload_encoded)
 }
 
-pub fn (mut tw Client) deploy_machine_with_encoded_payload(payload_encoded string) ?DeployResponse {
+pub fn (mut tw Client) deploy_machines_with_encoded_payload(payload_encoded string) ?DeployResponse {
 	/*
 	Deploy generic machine workload with encoded payload
 		Input:
@@ -55,7 +23,7 @@ pub fn (mut tw Client) deploy_machine_with_encoded_payload(payload_encoded strin
 		Output:
 			- DeployResponse: list of contracts {created updated, deleted} and wireguard config
 	*/
-	mut msg := tw.send('twinserver.machine.deploy', payload_encoded) ?
+	mut msg := tw.send('twinserver.machines.deploy', payload_encoded) ?
 	response := tw.read(msg)
 	if response.err != ''{
 		return error(response.err)
@@ -63,7 +31,7 @@ pub fn (mut tw Client) deploy_machine_with_encoded_payload(payload_encoded strin
 	return json.decode(DeployResponse, response.data) or {}
 }
 
-pub fn (mut tw Client) get_machine(name string) ?[]zos.Deployment {
+pub fn (mut tw Client) get_machines(name string) ?[]zos.Deployment {
 	/*
 	Get machine info using deployment name
 		Input:
@@ -71,7 +39,7 @@ pub fn (mut tw Client) get_machine(name string) ?[]zos.Deployment {
 		Output:
 			- Deployments: List of zos Deplyments
 	*/
-	mut msg := tw.send('twinserver.machine.get', '{"name": "$name"}') ?
+	mut msg := tw.send('twinserver.machines.get', '{"name": "$name"}') ?
 	response := tw.read(msg)
 	if response.err != ''{
 		return error(response.err)
@@ -79,11 +47,11 @@ pub fn (mut tw Client) get_machine(name string) ?[]zos.Deployment {
 	return json.decode([]zos.Deployment, response.data) or {}
 }
 
-pub fn (mut tw Client) update_machine(payload GenericMachine) ?DeployResponse {
+pub fn (mut tw Client) update_machine(payload Machine) ?DeployResponse {
 	/*
 	Update machine with payload.
 		Input:
-			- payload (GenericMachine): machine instance with modified data.
+			- payload (Machine): machine instance with modified data.
 		Output:
 			- DeployResponse: list of contracts {created updated, deleted} and wireguard config
 	*/

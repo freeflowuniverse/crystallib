@@ -2,36 +2,6 @@ module twinclient
 
 import json
 
-pub struct Contract {
-pub:
-	version         u32
-	contract_id     u64
-	twin_id         u32
-	node_id         u32
-	deploy_mentdata string
-	deployment_hash string
-	public_ips      u32
-	state           string
-	public_ips_list []PublicIP
-}
-
-struct PublicIP {
-	ip          string
-	gateway     string
-	contract_id u64
-}
-
-pub struct ContractDeployResponse {
-	created []Contract
-	updated []Contract
-	deleted []Contract
-}
-
-pub struct DeployResponse {
-	contracts        ContractDeployResponse
-	wireguard_config string
-}
-
 pub fn (mut tw Client) create_node_contract(node_id u32, hash string, data string, public_ip u32) ?Contract {
 	/*
 	Create new contract

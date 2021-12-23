@@ -3,29 +3,6 @@ module twinclient
 import threefoldtech.info_specs_grid3.vlang.zos
 import json
 
-pub struct K8S {
-pub:
-	name        string
-	secret      string
-	masters     []Node
-	workers     []Node
-	network     Network
-	metadata    string
-	description string
-	ssh_key     string
-}
-
-pub struct Node {
-pub mut:
-	deployment_name string
-	name            string
-	node_id         u32
-	cpu             u32
-	memory          u64
-	disk_size       u32
-	public_ip       bool
-}
-
 pub fn (mut tw Client) deploy_kubernetes(payload K8S) ?DeployResponse {
 	/*
 	Deploy kubernetes workload
@@ -70,18 +47,16 @@ pub fn (mut tw Client) get_kubernetes(name string) ?[]zos.Deployment {
 	return json.decode([]zos.Deployment, response.data) or {}
 }
 
-pub fn (mut tw Client) add_worker(deployment_name string, worker Node) ?DeployResponse {
+pub fn (mut tw Client) add_worker(worker AddKubernetesNode) ?DeployResponse {
 	/*
 	Add new worker to a kubernetes deployment
 		Input:
 			- deployment_name (string): Deployment name.
-			- worker (Node): Node object contains new worker info.
+			- worker (AddKubernetesNode): KubernetesNode object contains new worker info.
 		Output:
 			- DeployResponse: list of contracts {created updated, deleted} and wireguard config.
 	*/
-	mut add_payload := worker
-	add_payload.deployment_name = deployment_name
-	payload_encoded := json.encode_pretty(add_payload)
+	payload_encoded := json.encode_pretty(worker)
 	mut msg := tw.send('twinserver.k8s.add_worker', payload_encoded) ?
 	response := tw.read(msg)
 	if response.err != ''{
