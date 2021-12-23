@@ -5,7 +5,7 @@ import json
 
 pub fn (mut tw Client) deploy_machines(payload Machines) ?DeployResponse {
 	/*
-	Deploy generic machine workload
+	Deploy machines workload
 		Input:
 			- payload (Machine): generic machine payload
 		Output:
@@ -17,7 +17,7 @@ pub fn (mut tw Client) deploy_machines(payload Machines) ?DeployResponse {
 
 pub fn (mut tw Client) deploy_machines_with_encoded_payload(payload_encoded string) ?DeployResponse {
 	/*
-	Deploy generic machine workload with encoded payload
+	Deploy machines workload with encoded payload
 		Input:
 			- payload (string): generic machine encoded payload.
 		Output:
@@ -47,7 +47,7 @@ pub fn (mut tw Client) get_machines(name string) ?[]zos.Deployment {
 	return json.decode([]zos.Deployment, response.data) or {}
 }
 
-pub fn (mut tw Client) update_machine(payload Machine) ?DeployResponse {
+pub fn (mut tw Client) update_machines(payload Machines) ?DeployResponse {
 	/*
 	Update machine with payload.
 		Input:
@@ -56,10 +56,10 @@ pub fn (mut tw Client) update_machine(payload Machine) ?DeployResponse {
 			- DeployResponse: list of contracts {created updated, deleted} and wireguard config
 	*/
 	payload_encoded := json.encode_pretty(payload)
-	return tw.update_machine_with_encoded_payload(payload_encoded)
+	return tw.update_machines_with_encoded_payload(payload_encoded)
 }
 
-pub fn (mut tw Client) update_machine_with_encoded_payload(payload_encoded string) ?DeployResponse {
+pub fn (mut tw Client) update_machines_with_encoded_payload(payload_encoded string) ?DeployResponse {
 	/*
 	Get machine info using deployment name.
 		Input:
@@ -67,7 +67,7 @@ pub fn (mut tw Client) update_machine_with_encoded_payload(payload_encoded strin
 		Output:
 			- DeployResponse: list of contracts {created updated, deleted} and wireguard config
 	*/
-	mut msg := tw.send('twinserver.machine.update', payload_encoded) ?
+	mut msg := tw.send('twinserver.machines.update', payload_encoded) ?
 	response := tw.read(msg)
 	if response.err != ''{
 		return error(response.err)
@@ -81,7 +81,7 @@ pub fn (mut tw Client) list_machines() ?[]string {
 		Output:
 			- machines: Array of all current machines name for specifc twin.
 	*/
-	mut msg := tw.send('twinserver.machine.list', '{}') ?
+	mut msg := tw.send('twinserver.machines.list', '{}') ?
 	response := tw.read(msg)
 	if response.err != ''{
 		return error(response.err)
@@ -89,7 +89,7 @@ pub fn (mut tw Client) list_machines() ?[]string {
 	return json.decode([]string, response.data) or {}
 }
 
-pub fn (mut tw Client) delete_machine(name string) ?ContractDeployResponse {
+pub fn (mut tw Client) delete_machines(name string) ?ContractDeployResponse {
 	/*
 	Delete deployed machine.
 		Input:
@@ -97,7 +97,41 @@ pub fn (mut tw Client) delete_machine(name string) ?ContractDeployResponse {
 		Output:
 			- response: List of contracts {deleted}.
 	*/
-	mut msg := tw.send('twinserver.machine.delete', '{"name": "$name"}') ?
+	mut msg := tw.send('twinserver.machines.delete', '{"name": "$name"}') ?
+	response := tw.read(msg)
+	if response.err != ''{
+		return error(response.err)
+	}
+	return json.decode(ContractDeployResponse, response.data) or {}
+}
+
+pub fn (mut tw Client) add_machine(machine AddMachine) ?DeployResponse {
+	/*
+	Add new machine to a Machines deployment
+		Input:
+			- machine: AddMachine Object contains new machine info.
+		Output:
+			- DeployResponse: list of contracts {created updated, deleted} and wireguard config.
+	*/
+	payload_encoded := json.encode_pretty(machine)
+	mut msg := tw.send('twinserver.machines.add_machine', payload_encoded) ?
+	response := tw.read(msg)
+	if response.err != ''{
+		return error(response.err)
+	}
+	return json.decode(DeployResponse, response.data) or {}
+}
+
+pub fn (mut tw Client) delete_machine(machine_to_delete SingleDelete) ?ContractDeployResponse {
+	/*
+	Delete machine from a Machines deployment
+		Input:
+			- machine_to_delete (SingleDelete): struct contains name and deployment name.
+		Output:
+			- DeployResponse: list of contracts {created updated, deleted} and wireguard config.
+	*/
+	payload_encoded := json.encode_pretty(machine_to_delete)
+	mut msg := tw.send('twinserver.machines.delete_machine', payload_encoded) ?
 	response := tw.read(msg)
 	if response.err != ''{
 		return error(response.err)

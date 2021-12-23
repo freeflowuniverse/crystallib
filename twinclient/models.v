@@ -1,11 +1,18 @@
 module twinclient
 
+[params]
+pub struct SingleDelete{
+	name string [required]
+	deployment_name string [required]
+}
+
 pub struct Disk {
 	name       string [required]
 	size       u32 [required]
 	mountpoint string [required]
 }
 
+[params]
 pub struct QsfsDisk {
 	qsfs_zdbs_name string [required]
 	name string [required]
@@ -39,12 +46,25 @@ pub:
 	env         Env
 }
 
+[params]
 pub struct AddMachine {
 pub:
-	Machine
 	deployment_name string [required]
+	name        string [required]
+	node_id     u32 [required]
+	disks       []Disk
+	qsfs_disks  []QsfsDisk
+	public_ip   bool [required]
+	planetary   bool [required]
+	cpu         u32 [required]
+	memory      u64 [required]
+	rootfs_size u64 [required]
+	flist       string [required]
+	entrypoint  string [required]
+	env         Env
 }
 
+[params]
 pub struct Machines {
 	name        string [required]
 	network     Network [required]
@@ -66,12 +86,22 @@ pub:
 	planetary   bool [required]
 }
 
+[params]
 pub struct AddKubernetesNode {
 pub:
-	KubernetesNode
 	deployment_name string [required]
+	name            string [required]
+	node_id         u32 [required]
+	cpu             u32 [required]
+	memory          u64 [required]
+	rootfs_size     u32 [required]
+	disk_size       u32 [required]
+	qsfs_disks      []QsfsDisk
+	public_ip       bool [required]
+	planetary       bool [required]
 }
 
+[params]
 pub struct K8S {
 pub:
 	name        string [required]
@@ -85,20 +115,27 @@ pub:
 }
 
 pub struct ZDB {
-pub mut:
+pub:
 	name            string [required]
 	node_id         u32 [required]
 	mode            string [required]
 	disk_size       u32 [required]
-	publicNamespace bool [required]
+	public_namespace bool [required;json: 'publicNamespace']
 	password        string [required]
 }
 
+[params]
 pub struct AddZDB{
-	ZDB
 	deployment_name string [required]
+	name            string [required]
+	node_id         u32 [required]
+	mode            string [required]
+	disk_size       u32 [required]
+	public_namespace bool [required;json: 'publicNamespace']
+	password        string [required]
 }
 
+[params]
 pub struct ZDBs {
 pub:
 	name        string [required]
@@ -140,8 +177,6 @@ pub struct DeployResponse {
 pub struct Env {
 	ssh_key string [json: 'SSH_KEY']
 }
-
-
 
 pub struct StellarWallet {
 pub mut:

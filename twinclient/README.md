@@ -22,34 +22,36 @@ Client for twin_server_v2 using V Lang based on RMB
 # How to use it
 1. Init the Client
 ```V
-import despiegk.crystallib.twinclient {init, GenericMachine, Disk, Network, Env}
+import despiegk.crystallib.twinclient
 
 const redis_server = 'localhost:6379'
-mut twin_dest := 49 // ADD TWIN ID.
-mut tw := init(redis_server, twin_dest) or { panic(err) }
+mut twin_dest := 73 // ADD TWIN ID.
+mut tw := twinclient.init(redis_server, twin_dest) or { panic(err) }
 ```
-2. Create a payload ex. generic machine
+1. Create a payload ex. machines
 ```V
-payload := GenericMachine{
-    node_id: 2
-    public_ip: false
-    cpu: u32(1)
-    memory: u64(1024)
-    name: 'CHOSSE NAME'
-    flist: 'https://hub.grid.tf/tf-official-apps/base:latest.flist'
-    entrypoint: '/sbin/zinit init'
-    disks: [Disk{
-        name: 'CHOSSE DISK NAME'
-        size: 10
-        mountpoint: '/'
-    }]
+payload := Machines{
+    name: 'ms1'
     network: Network{
         ip_range: '10.200.0.0/16'
-        name: 'CHOSSE NETWORK NAME'
+        name: 'net'
     }
-    env: Env{
-        ssh_key: 'ADD YOUR SSH KEY'
-    }
+    machines: [
+        Machine{
+            name: 'm1'
+            node_id: 2
+            public_ip: false
+            planetary: true
+            cpu: 1
+            memory: 1024
+            rootfs_size: 10
+            flist: 'https://hub.grid.tf/tf-official-apps/base:latest.flist'
+            entrypoint: '/sbin/zinit init'
+            env: Env{
+                ssh_key: 'ADD_YOUR_SSH'
+            }
+        },
+    ]
 }
 ```
 3. Deploy machine using created client and payload
@@ -87,15 +89,17 @@ For each category there is a test that can help you to use the client, make sure
 
 ## Machine
 
-| Description                                         | Function                                                | Note                                   |
-| :-------------------------------------------------- | :------------------------------------------------------ | :------------------------------------- |
+| Description                                         | Function                                                 | Note                                   |
+| :-------------------------------------------------- | :------------------------------------------------------- | :------------------------------------- |
 | Deploy generic machine                              | `deploy_machines(<GenericMachine>)`                      |                                        |
 |                                                     | `deploy_machines_with_encoded_payload(<String Payload>)` | In case you have the payload as string |
-| Get generic machine deployment info                 | `get_machine(<MACHINE NAME>)`                           |
-| Update generic machine                              | `update_machine(<GenericMachine>)`                      |                                        |
-|                                                     | `update_machine_with_encoded_payload(<String Payload>)` | In case you have the payload as string |
-| List all deployed machines related to specific twin | `list_machines()`                                       |                                        |
-| Delete machine                                      | `delete_machine(<MACHINE NAME>)`                        |                                        |
+| Get generic machine deployment info                 | `get_machines(<MACHINE NAME>)`                           |
+| Update generic machine                              | `update_machines(<GenericMachine>)`                      |                                        |
+|                                                     | `update_machines_with_encoded_payload(<String Payload>)` | In case you have the payload as string |
+| List all deployed machines related to specific twin | `list_machines()`                                        |                                        |
+| Add machine                                         | `add_machine(<AddMachine>)`                              |                                        |
+| Delete machine                                      | `delete_machine(<SingleDelete>)`                         |                                        |
+| Delete machines                                     | `delete_machines(<MACHINE NAME>)`                        |                                        |
 
 ## Kubernetes
 
@@ -108,22 +112,22 @@ For each category there is a test that can help you to use the client, make sure
 |                                                       | `update_kubernetes_with_encoded_payload(<String Payload>)` | In case you have the payload as string |
 | List all deployed kubernetes related to specific twin | `list_kubernetes()`                                        |                                        |
 | Delete kubernetes                                     | `delete_kubernetes(<KUBE NAME>)`                           |                                        |
-| Add worker                                            | `add_worker(<DEPLOYMENT NAME>, <NODE>)`                    |                                        |
-| Delete worker                                         | `delete worker(<DEPLOYMENT NAME>, <NODE NAME>)`            |                                        |
+| Add worker                                            | `add_worker(<AddWorker>)`                                  |                                        |
+| Delete worker                                         | `delete_worker(<SingleDelete>)`                            |                                        |
 
 ## ZDB
 
 | Description                                     | Function                                             | Note                                   |
 | :---------------------------------------------- | :--------------------------------------------------- | :------------------------------------- |
-| Deploy zdbs                                     | `deploy_zdbs(<ZDBs>)`                    |                                        |
+| Deploy zdbs                                     | `deploy_zdbs(<ZDBs>)`                                |                                        |
 |                                                 | `deploy_zdbs_with_encoded_payload(<String Payload>)` | In case you have the payload as string |
 | Get zdbs deployment info                        | `get_zdbs(<ZDBS NAME>)`                              |                                        |
-| Update zdbs                                     | `update_zdbs(<ZDBs>)`                    |                                        |
+| Update zdbs                                     | `update_zdbs(<ZDBs>)`                                |                                        |
 |                                                 | `update_zdbs_with_encoded_payload(<String Payload>)` | In case you have the payload as string |
 | List all deployed zdbs related to specific twin | `list_zdbs()`                                        |                                        |
 | Delete zdbs                                     | `delete_zdbs(<ZDBS NAME>)`                           |                                        |
-| Add single zdb                                  | `add_zdb(<DEPLOYMENT NAME>, <ZDB>)`                  |                                        |
-| Delete single zdb                               | `delete worker(<DEPLOYMENT NAME>, <ZDB NAME>)`       |                                        |
+| Add single zdb                                  | `add_zdb(<AddZDB>)`                                  |                                        |
+| Delete single zdb                               | `delete worker(<SingleDelete>)`                      |                                        |
 
 ## Stellar
 

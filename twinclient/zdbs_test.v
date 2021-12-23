@@ -1,76 +1,104 @@
 module twinclient
 
-pub fn test_zdbs() {
-	// redis_server and twin_dest are const in client.v
-	mut tw := init(redis_server, twin_dest) or { panic(err) }
+struct ZDBsTestData {
+mut:
+	payload        ZDBs
+	update_payload ZDBs
+	new_zdb        AddZDB
+}
 
-	mut zdbs := []ZDB{}
-	zdbs << ZDB{
-		name: 'essamzdb1'
-		node_id: 3
-		mode: 'seq'
-		disk_size: 10
-		disk_type: 'hdd'
-		public: false
-		namespace: 'essamnamespace'
-		password: 'essam1234'
+pub fn setup_zdb_test() (Client, ZDBsTestData) {
+	redis_server := 'localhost:6379'
+	twin_id := 73
+	mut client := init(redis_server, twin_id) or {
+		panic('Fail in setup_zdb_test with error: $err')
 	}
-	zdbs << ZDB{
-		name: 'essamzdb2'
-		node_id: 3
-		mode: 'seq'
-		disk_size: 10
-		disk_type: 'hdd'
-		public: false
-		namespace: 'essamnamespace'
-		password: 'essam1234'
+	mut data := ZDBsTestData{
+		payload: ZDBs{
+			name: 'essamzdbs'
+			zdbs: [
+				ZDB{
+					name: 'essamzdb1'
+					node_id: 5
+					mode: 'seq'
+					disk_size: 10
+					public_namespace: false
+					password: 'essam1234'
+				},
+				ZDB{
+					name: 'essamzdb2'
+					node_id: 5
+					mode: 'seq'
+					disk_size: 10
+					public_namespace: false
+					password: 'essam1234'
+				},
+			]
+			description: 'This is v client trial'
+		}
 	}
-	payload := DeployZDBPayload{
-		name: 'essamzdbs'
-		zdbs: zdbs
-		metadata: ''
-		description: 'This is v client trial'
+	data.update_payload = ZDBs{
+		...data.payload
+		metadata: 'ZDBs'
 	}
-
-	// Deploy ZDBS
-	deploy_zdbs := tw.deploy_zdbs(payload) or { panic(err) }
-	println('--------- Deploy ZDB ---------')
-	println(deploy_zdbs)
-
-	// Add ZDB
-	add_zdb_instance := ZDB{
+	data.new_zdb = AddZDB{
+		deployment_name: data.payload.name
 		name: 'essamzdb3'
-		node_id: 3
+		node_id: 5
 		mode: 'seq'
 		disk_size: 10
-		disk_type: 'hdd'
-		public: false
-		namespace: 'essamnamespace'
+		public_namespace: false
 		password: 'essam1234'
 	}
-	add_zdb_result := tw.add_zdb(payload.name, add_zdb_instance) or { panic(err) }
-	println('--------- Add ZDB ---------')
-	println(add_zdb_result)
+	return client, data
+}
 
-	// Delete ZDB
-	delete_zdb_name := add_zdb_instance.name
-	delete_zdb_result := tw.delete_zdb(payload.name, delete_zdb_name) or { panic(err) }
-	println('--------- Delete ZDB ---------')
-	println(delete_zdb_result)
+pub fn test_deploy_zdbs() {
+	mut client, data := setup_zdb_test()
 
-	// Get ZDBS
-	get_zdbs_deployment := tw.get_zdbs(payload.name) or { panic(err) }
-	println('--------- Get ZDB ---------')
-	println(get_zdbs_deployment)
+	println('--------- Deploy ZDB ---------')
+	deploy_zdbs := client.deploy_zdbs(data.payload) or { panic(err) }
+	println(deploy_zdbs)
+}
 
-	// List Deployed Machines
-	all_my_zdbs := tw.list_zdbs() or { panic(err) }
-	assert payload.name in all_my_zdbs
-	println('--------- List Deployed ZDBs for Each User ---------')
+pub fn test_list_zdbs() {
+	mut client, data := setup_zdb_test()
+	println('--------- List Deployed ZDBs ---------')
+	all_my_zdbs := client.list_zdbs() or { panic(err) }
+	assert data.payload.name in all_my_zdbs
 	println(all_my_zdbs)
+}
 
-	// Delete Deployed Machine
-	delete_zdbs := tw.delete_zdbs(payload.name) or { panic(err) }
+pub fn test_get_zdbs() {
+	mut client, data := setup_zdb_test()
+	println('--------- Get ZDB ---------')
+	get_zdbs_deployment := client.get_zdbs(data.payload.name) or { panic(err) }
+	println(get_zdbs_deployment)
+}
+
+// pub fn test_update_zdbs() {
+// }
+
+pub fn test_add_zdb() {
+	mut client, data := setup_zdb_test()
+	println('--------- Add ZDB ---------')
+	add_zdb_result := client.add_zdb(data.new_zdb) or { panic(err) }
+	println(add_zdb_result)
+}
+
+pub fn test_delete_zdb() {
+	mut client, data := setup_zdb_test()
+	println('--------- Delete ZDB ---------')
+	delete_zdb_result := client.delete_zdb(
+		name: data.new_zdb.name
+		deployment_name: data.payload.name
+	) or { panic(err) }
+	println(delete_zdb_result)
+}
+
+pub fn test_delete_zdbs() {
+	mut client, data := setup_zdb_test()
 	println('--------- Delete ZDBs ---------')
+	delete_zdbs := client.delete_zdbs(data.payload.name) or { panic(err) }
 	println(delete_zdbs)
 }

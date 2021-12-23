@@ -28,6 +28,6 @@ pub fn test_twin() {
 	// TAKE CARE, YOUR TWIN WILL BE DELETED HERE
 	// COMMENT THIS PART IF YOU DON'T WANT TO DELETE IT
 	println('--------- Delete Twin ---------')
-	deleted_twin_id := tw.delete_twin(new_twin.id)
+	deleted_twin_id := tw.delete_twin(new_twin.id) or { panic(err) }
 	println('Twin [$deleted_twin_id] deleted')
 }

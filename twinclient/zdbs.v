@@ -31,18 +31,15 @@ pub fn (mut tw Client) deploy_zdbs_with_encoded_payload(payload_encoded string) 
 	return json.decode(ContractDeployResponse, response.data) or {}
 }
 
-pub fn (mut tw Client) add_zdb(deployment_name string, zdb ZDB) ?ContractDeployResponse {
+pub fn (mut tw Client) add_zdb(zdb AddZDB) ?ContractDeployResponse {
 	/*
 	Add new zdb to zdbs deployment
 		Input:
-			- deployment_name (string): Deployment name.
-			- zdb (Node): ZDB object contains new zdb info.
+			- zdb (AddZDB): ZDB object contains new zdb info and deployment name.
 		Output:
 			- DeployResponse: list of contracts {created updated, deleted} and wireguard config.
 	*/
-	mut add_payload := zdb
-	add_payload.deployment_name = deployment_name
-	payload_encoded := json.encode(add_payload)
+	payload_encoded := json.encode(zdb)
 	mut msg := tw.send('twinserver.zdbs.add_zdb', payload_encoded) ?
 	response := tw.read(msg)
 	if response.err != ''{
@@ -51,21 +48,15 @@ pub fn (mut tw Client) add_zdb(deployment_name string, zdb ZDB) ?ContractDeployR
 	return json.decode(ContractDeployResponse, response.data) or {}
 }
 
-pub fn (mut tw Client) delete_zdb(deployment_name string, zdb_name string) ?ContractDeployResponse {
+pub fn (mut tw Client) delete_zdb(zdb_to_delete SingleDelete) ?ContractDeployResponse {
 	/*
 	Delete zdb from a zdbs deployment
 		Input:
-			- deployment_name (string): Deployment name.
-			- name (string): zdb name to delete.
+			- zdb_to_delete (SingleDelete): struct contains name and deployment name.
 		Output:
 			- DeployResponse: list of contracts {created updated, deleted} and wireguard config.
 	*/
-	mut delete_payload := map[string]string{}
-	delete_payload = {
-		'deployment_name': deployment_name
-		'name':            zdb_name
-	}
-	payload_encoded := json.encode_pretty(delete_payload)
+	payload_encoded := json.encode_pretty(zdb_to_delete)
 	mut msg := tw.send('twinserver.zdbs.delete_zdb', payload_encoded) ?
 	response := tw.read(msg)
 	if response.err != ''{

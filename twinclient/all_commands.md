@@ -1,104 +1,139 @@
 # All Commands
-Here are all commands supported by twinserver
-> checked already implemented
+Here are all commands supported by twinserver and its status in twinclient
 
 ## Machines
-[x]machines.deploy
-[x]machines.list
-[x]machines.get
-[x]machines.delete
-[x]machines.update
-[]machines.add_machine
-[]machines.delete_machine
+
+| Command                 | Implement State | Test State |
+| :---------------------- | :-------------: | :--------: |
+| machines.deploy         |       [x]       |    [x]     |
+| machines.list           |       [x]       |    [x]     |
+| machines.get            |       [x]       |    [x]     |
+| machines.delete         |       [x]       |    [x]     |
+| machines.update         |       [x]       |    [ ]     |
+| machines.add_machine    |       [x]       |    [x]     |
+| machines.delete_machine |       [x]       |    [x]     |
 
 ## Kubernetes
-[x]k8s.deploy
-[x]k8s.list
-[x]k8s.get
-[x]k8s.delete
-[x]k8s.update
-[x]k8s.add_worker
-[x]k8s.delete_worker
+
+| Command           | Implement State | Test State |
+| :---------------- | :-------------: | :--------: |
+| k8s.deploy        |       [x]       |    [x]     |
+| k8s.list          |       [x]       |    [x]     |
+| k8s.get           |       [x]       |    [x]     |
+| k8s.delete        |       [x]       |    [x]     |
+| k8s.update        |       [x]       |    [ ]     |
+| k8s.add_worker    |       [x]       |    [x]     |
+| k8s.delete_worker |       [x]       |    [x]     |
 
 ## ZDBs
-[x]zdbs.deploy
-[x]zdbs.list
-[x]zdbs.get
-[x]zdbs.delete
-[x]zdbs.update
-[x]zdbs.add_zdb
-[x]zdbs.delete_zdb
+
+| Command         | Implement State | Test State |
+| :-------------- | :-------------: | :--------: |
+| zdbs.deploy     |       [x]       |    [ ]     |
+| zdbs.list       |       [x]       |    [ ]     |
+| zdbs.get        |       [x]       |    [ ]     |
+| zdbs.delete     |       [x]       |    [ ]     |
+| zdbs.update     |       [x]       |    [ ]     |
+| zdbs.add_zdb    |       [x]       |    [ ]     |
+| zdbs.delete_zdb |       [x]       |    [ ]     |
 
 ## Gateways
-[]gateway.deploy_fqdn
-[]gateway.deploy_name
-[]gateway.get_fqdn
-[]gateway.delete_fqdn
-[]gateway.get_name
-[]gateway.delete_name
+
+| Command             | Implement State | Test State |
+| :------------------ | :-------------: | :--------: |
+| gateway.deploy_fqdn |       [ ]       |    [ ]     |
+| gateway.deploy_name |       [ ]       |    [ ]     |
+| gateway.get_fqdn    |       [ ]       |    [ ]     |
+| gateway.delete_fqdn |       [ ]       |    [ ]     |
+| gateway.get_name    |       [ ]       |    [ ]     |
+| gateway.delete_name |       [ ]       |    [ ]     |
 
 ## QSFS
-[]qsfs_zdbs.deploy
-[]qsfs_zdbs.list
-[]qsfs_zdbs.get
-[]qsfs_zdbs.delete
+
+| Command          | Implement State | Test State |
+| :--------------- | :-------------: | :--------: |
+| qsfs_zdbs.deploy |       [ ]       |    [ ]     |
+| qsfs_zdbs.list   |       [ ]       |    [ ]     |
+| qsfs_zdbs.get    |       [ ]       |    [ ]     |
+| qsfs_zdbs.delete |       [ ]       |    [ ]     |
 
 ## ZOS
-[x]zos.deploy
+
+| Command    | Implement State | Test State |
+| :--------- | :-------------: | :--------: |
+| zos.deploy |       [x]       |    [ ]     |
 
 ## Contracts
-[x]contracts.create_node
-[]contracts.create_name
-[x]contracts.get
-[]contracts.get_contract_id_by_node_id_and_hash
-[]contracts.get_node_contracts
-[]contracts.get_name_contract
-[x]contracts.update_node
-[x]contracts.cancel
-[]contracts.listMyContracts
-[]contracts.listContractsByTwinId
-[]contracts.listContractsByAddress
-[]contracts.cancelMyContracts
-[]contracts.getConsumption
+
+| Command                                       | Implement State | Test State |
+| :-------------------------------------------- | :-------------: | :--------: |
+| contracts.create_node                         |       [x]       |    [ ]     |
+| contracts.create_name                         |       [ ]       |    [ ]     |
+| contracts.get                                 |       [x]       |    [ ]     |
+| contracts.get_contract_id_by_node_id_and_hash |       [ ]       |    [ ]     |
+| contracts.get_node_contracts                  |       [ ]       |    [ ]     |
+| contracts.get_name_contract                   |       [ ]       |    [ ]     |
+| contracts.update_node                         |       [x]       |    [ ]     |
+| contracts.cancel                              |       [x]       |    [ ]     |
+| contracts.listMyContracts                     |       [ ]       |    [ ]     |
+| contracts.listContractsByTwinId               |       [ ]       |    [ ]     |
+| contracts.listContractsByAddress              |       [ ]       |    [ ]     |
+| contracts.cancelMyContracts                   |       [ ]       |    [ ]     |
+| contracts.getConsumption                      |       [ ]       |    [ ]     |
 
 # Twins
-[x]twins.create
-[x]twins.get
-[]twins.get_my_twin_id
-[]twins.get_twin_id_by_account_id
-[x]twins.list
-[x]twins.delete
+
+| Command                         | Implement State | Test State |
+| :------------------------------ | :-------------: | :--------: |
+| twins.create                    |       [x]       |    [ ]     |
+| twins.get                       |       [x]       |    [x]     |
+| twins.get_my_twin_id            |       [ ]       |    [ ]     |
+| twins.get_twin_id_by_account_id |       [ ]       |    [ ]     |
+| twins.list                      |       [x]       |    [ ]     |
+| twins.delete                    |       [x]       |    [ ]     |
 
 ## kvstore
-[]kvstore.set
-[]kvstore.get
-[]kvstore.list
-[]kvstore.remove
-[]kvstore.removeAll
+
+| Command           | Implement State | Test State |
+| :---------------- | :-------------: | :--------: |
+| kvstore.set       |       [ ]       |    [ ]     |
+| kvstore.get       |       [ ]       |    [ ]     |
+| kvstore.list      |       [ ]       |    [ ]     |
+| kvstore.remove    |       [ ]       |    [ ]     |
+| kvstore.removeAll |       [ ]       |    [ ]     |
 
 ## Balance
-[]balance.get
-[]balance.transfer
-[]balance.getMyBalance
+
+| Command              | Implement State | Test State |
+| :------------------- | :-------------: | :--------: |
+| balance.get          |       [ ]       |    [ ]     |
+| balance.transfer     |       [ ]       |    [ ]     |
+| balance.getMyBalance |       [ ]       |    [ ]     |
 
 ## Capacity
-[]capacity.getFarms
-[]capacity.getNodes
-[]capacity.getAllFarms
-[]capacity.getAllNodes
-[]capacity.filterNodes
-[]capacity.checkFarmHasFreePublicIps
-[]capacity.getNodesByFarmId
-[]capacity.getNodeFreeResources
-[]capacity.getFarmIdFromFarmName
+
+| Command                            | Implement State | Test State |
+| :--------------------------------- | :-------------: | :--------: |
+| capacity.getFarms                  |       [ ]       |    [ ]     |
+| capacity.getNodes                  |       [ ]       |    [ ]     |
+| capacity.getAllFarms               |       [ ]       |    [ ]     |
+| capacity.getAllNodes               |       [ ]       |    [ ]     |
+| capacity.filterNodes               |       [ ]       |    [ ]     |
+| capacity.checkFarmHasFreePublicIps |       [ ]       |    [ ]     |
+| capacity.getNodesByFarmId          |       [ ]       |    [ ]     |
+| capacity.getNodeFreeResources      |       [ ]       |    [ ]     |
+| capacity.getFarmIdFromFarmName     |       [ ]       |    [ ]     |
 
 ## Stellar
-[x]stellar.import
-[x]stellar.get
-[x]stellar.update
-[x]stellar.exist
-[x]stellar.list
-[x]stellar.balance_by_name
-[x]stellar.balance_by_address
-[x]stellar.transfer
-[x]stellar.delete
+
+| Command                    | Implement State | Test State |
+| :------------------------- | :-------------: | :--------: |
+| stellar.import             |       [x]       |    [ ]     |
+| stellar.get                |       [x]       |    [ ]     |
+| stellar.update             |       [x]       |    [ ]     |
+| stellar.exist              |       [x]       |    [ ]     |
+| stellar.list               |       [x]       |    [ ]     |
+| stellar.balance_by_name    |       [x]       |    [ ]     |
+| stellar.balance_by_address |       [x]       |    [ ]     |
+| stellar.transfer           |       [x]       |    [ ]     |
+| stellar.delete             |       [x]       |    [ ]     |

@@ -51,8 +51,7 @@ pub fn (mut tw Client) add_worker(worker AddKubernetesNode) ?DeployResponse {
 	/*
 	Add new worker to a kubernetes deployment
 		Input:
-			- deployment_name (string): Deployment name.
-			- worker (AddKubernetesNode): KubernetesNode object contains new worker info.
+			- worker (AddKubernetesNode): AddKubernetesNode object contains new worker info.
 		Output:
 			- DeployResponse: list of contracts {created updated, deleted} and wireguard config.
 	*/
@@ -65,21 +64,15 @@ pub fn (mut tw Client) add_worker(worker AddKubernetesNode) ?DeployResponse {
 	return json.decode(DeployResponse, response.data) or {}
 }
 
-pub fn (mut tw Client) delete_worker(deployment_name string, worker_name string) ?DeployResponse {
+pub fn (mut tw Client) delete_worker(worker_to_delete SingleDelete) ?DeployResponse {
 	/*
 	Delete worker from a kubernetes deployment
 		Input:
-			- deployment_name (string): Deployment name.
-			- name (string): worker name to delete.
+			- worker_to_delete (SingleDelete): struct contains name and deployment name.
 		Output:
 			- DeployResponse: list of contracts {created updated, deleted} and wireguard config.
 	*/
-	mut delete_payload := map[string]string{}
-	delete_payload = {
-		'deployment_name': deployment_name
-		'name':            worker_name
-	}
-	payload_encoded := json.encode_pretty(delete_payload)
+	payload_encoded := json.encode_pretty(worker_to_delete)
 	mut msg := tw.send('twinserver.k8s.delete_worker', payload_encoded) ?
 	response := tw.read(msg)
 	if response.err != ''{
