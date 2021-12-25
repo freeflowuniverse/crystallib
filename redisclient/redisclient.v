@@ -35,6 +35,36 @@ pub enum KeyType {
 	t_unknown
 }
 
+[heap]
+struct RedisFactory {
+mut:
+	instances    map[string]&Redis
+}
+
+//needed to get singleton
+fn init2() RedisFactory {
+	mut f := redisclient.RedisFactory{
+	}	
+	return f
+}
+
+
+//singleton creation
+const factory = init2()
+
+//make sure to use new first, so that the connection has been initted
+//then you can get it everywhere
+pub fn get_local() ?&Redis {
+	name := 'local'
+	mut f := redisclient.factory
+	if ! (name in f.instances){
+		rediscl := redisclient.connect("localhost:6379")?
+		f.instances[name] = &rediscl
+	}
+	return f.instances[name]	
+}
+
+
 // https://redis.io/topics/protocol
 pub fn connect(addr string) ?Redis {
 	mut socket := net.dial_tcp(addr) or { return Redis{
