@@ -45,7 +45,7 @@ pub fn (mut node Node) install_portainer() ?{
 }
 
 
-pub fn (mut node Node) node_install_docker_swarm(args SwarmArgs) ?{
+pub fn (mut node Node) docker_swarm_install(args SwarmArgs) ?{
 	
 	node.install_swarm(args)?
 	ipaddr_master := node.ipaddr_pub_get()?
@@ -61,7 +61,7 @@ pub mut:
 }
 
 //specify which node is the master
-pub fn (mut node Node) node_install_docker_swarm_add(mut args SwarmArgsAdd) ?{
+pub fn (mut node Node) docker_swarm_install_add(mut args SwarmArgsAdd) ?{
 	args2 := SwarmArgs{args.reset}
 	ipaddr := args.master.ipaddr_pub_get()?
 

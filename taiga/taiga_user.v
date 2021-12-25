@@ -48,17 +48,16 @@ fn project_as_md (proj Project, url string) string {
 	return $tmpl("./templates/project.md")
 }
 
-<<<<<<< HEAD
-//get markdown for all projects per user	
-fn (mut u User) projects_per_user_md() string{
+// //get markdown for all projects per user	
+// fn (mut u User) projects_per_user_md() string{
 
-	//TODO: implement template :projects_per_user.md
-	//walk over stories for user, show tasks, show comments
+// 	//TODO: implement template :projects_per_user.md
+// 	//walk over stories for user, show tasks, show comments
 
-	//see: https://github.com/vlang/v/blob/master/doc/docs.md#tmpl-for-embedding-and-parsing-v-template-files
+// 	//see: https://github.com/vlang/v/blob/master/doc/docs.md#tmpl-for-embedding-and-parsing-v-template-files
 	
 
-=======
+
 //get markdown for all projects per user
 fn (mut user User) export_projects_per_user_md(export_directory string, url string){
 	projects := projects_per_user(user.id)
@@ -71,7 +70,6 @@ fn (mut user User) export_projects_per_user_md(export_directory string, url stri
 	// export template for user
 	os.write_file(export_path,user_md) or {panic(err)}
 	println("Exporting Done!")
->>>>>>> taiga_latest_specs
 }
 
 pub fn user_delete(id int) ?bool {

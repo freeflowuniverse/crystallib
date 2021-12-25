@@ -45,6 +45,3 @@ fn example() {
 	}
 }
 
-fn main() {
-	example()
-}

@@ -25,10 +25,3 @@ fn client_test() {
 	println('reach here')
 }
 
-fn main() {
-	go test_run_server()
-	println('server started...')
-	time.sleep(2)
-	client_test() // FIXME
-	return
-}

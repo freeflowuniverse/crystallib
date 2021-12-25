@@ -33,6 +33,16 @@ pub fn (mut node Node) ipaddr_pub_get() ?string {
 
 //cmd: cmd to execute
 //period in sec, e.g. if 3600, means will only execute this if not done yet within the hour
+//
+// ARGS:
+//```
+// struct NodeExecCmd{
+// 	cmd string
+// 	period int //period in which we check when this was done last, if 0 then period is indefinite
+// 	reset bool = true
+// 	description string
+// }
+// ```
 pub fn (mut node Node) exec(args NodeExecCmd) ? {
 	// println(args)
 	mut cmd := args.cmd
@@ -89,6 +99,19 @@ pub fn (mut node Node) exec_ok(cmd string) bool {
 }
 
 fn (mut node Node) platform_load() {
+
+	// pub fn is_osx() bool {
+	// 	return os.uname().sysname.to_lower() == 'darwin'
+	// }
+
+	// pub fn is_osx_arm() bool {
+	// 	if is_osx() {
+	// 		return os.uname().machine.to_lower() == 'x86_64'
+	// 	}
+	// 	return false
+	// }
+
+
 	println(' - platform load')
 	if node.platform == PlatformType.unknown {
 		if node.cmd_exists('sw_vers') {
@@ -119,7 +142,7 @@ pub fn (mut node Node) platform_prepare() ? {
 			}
 		} else if node.platform == PlatformType.ubuntu {
 			println(' - Ubuntu prepare')
-			for x in ['mc', 'git', 'rsync', 'curl'] {
+			for x in ['git', 'rsync', 'curl'] {
 				if !node.cmd_exists(x) {
 					node.package_install(name: x) ?
 				}
@@ -153,22 +176,22 @@ pub fn (mut node Node) package_install(package Package) ? {
 
 
 fn (mut node Node) upgrade() ?{
-	upgrade_cmds := '
-		sudo killall apt apt-get
-		rm -f /var/lib/apt/lists/lock
-		rm -f /var/cache/apt/archives/lock
-		rm -f /var/lib/dpkg/lock*		
-		export TERM=xterm
-		export DEBIAN_FRONTEND=noninteractive
-		dpkg --configure -a
-		set -ex
-		apt update
-		apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-		apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-		apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-		'
+	if node.platform == PlatformType.ubuntu {
+		upgrade_cmds := '
+			sudo killall apt apt-get
+			rm -f /var/lib/apt/lists/lock
+			rm -f /var/cache/apt/archives/lock
+			rm -f /var/lib/dpkg/lock*		
+			export TERM=xterm
+			export DEBIAN_FRONTEND=noninteractive
+			dpkg --configure -a
+			set -ex
+			apt update
+			apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+			apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+			apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+			'
 
-	node.exec(cmd:upgrade_cmds,period:48*3600,reset:false,description:"upgrade operating system packages")?
-
-
+		node.exec(cmd:upgrade_cmds,period:48*3600,reset:false,description:"upgrade operating system packages")?
+	}
 }

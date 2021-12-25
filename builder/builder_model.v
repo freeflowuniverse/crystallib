@@ -37,38 +37,3 @@ pub fn (mut package Package) version_get(platformtype PlatformType) string {
 	}
 	return package.version
 }
-
-// life cycle management things to code
-// is like install or prepare to start with a task
-pub fn (mut package Package) prepare(wish Wish) {
-}
-
-// not relevant
-pub fn (mut package Package) start(wish Wish) ? {
-}
-
-// check if it was done ok
-pub fn (mut package Package) check(wish Wish) bool {
-	return true
-}
-
-// check if we are in right state if not lets try to recover
-pub fn (mut package Package) recover(wish Wish) ? {
-	if !package.check(wish) {
-		package.delete(wish) or { panic(err) }
-		package.prepare(wish)
-		// package.start()
-	}
-}
-
-// return relevant info of the package
-pub fn (mut package Package) info(wish Wish) ? {
-}
-
-// not relevant for packages
-pub fn (mut package Package) halt(wish Wish) ? {
-}
-
-// remove from the system
-pub fn (mut package Package) delete(wish Wish) ? {
-}
