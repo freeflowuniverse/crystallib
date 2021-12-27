@@ -12,17 +12,6 @@ pub fn (mut tw Client) deploy_kubernetes(payload K8S) ?DeployResponse {
 			- DeployResponse: list of contracts {created updated, deleted} and wireguard config
 	*/
 	payload_encoded := json.encode_pretty(payload)
-	return tw.deploy_kubernetes_with_encoded_payload(payload_encoded)
-}
-
-pub fn (mut tw Client) deploy_kubernetes_with_encoded_payload(payload_encoded string) ?DeployResponse {
-	/*
-	Deploy kubernetes workload with encoded payload
-		Input:
-			- payload (string): kubernetes encoded payload.
-		Output:
-			- DeployResponse: list of contracts {created updated, deleted} and wireguard config.
-	*/
 	mut msg := tw.send('twinserver.k8s.deploy', payload_encoded) ?
 	response := tw.read(msg)
 	if response.err != ''{
@@ -90,17 +79,6 @@ pub fn (mut tw Client) update_kubernetes(payload K8S) ?DeployResponse {
 			- DeployResponse: list of contracts {created updated, deleted} and wireguard config
 	*/
 	payload_encoded := json.encode_pretty(payload)
-	return tw.update_kubernetes_with_encoded_payload(payload_encoded)
-}
-
-pub fn (mut tw Client) update_kubernetes_with_encoded_payload(payload_encoded string) ?DeployResponse {
-	/*
-	Get kubernetes info using deployment name.
-		Input:
-			- payload_encoded (string): encoded payload with modified data.
-		Output:
-			- DeployResponse: list of contracts {created updated, deleted} and wireguard config
-	*/
 	mut msg := tw.send('twinserver.k8s.update', payload_encoded) ?
 	response := tw.read(msg)
 	if response.err != ''{

@@ -71,7 +71,6 @@ Here are all commands supported by twinserver and its status in twinclient
 | contracts.create_name                         |       [ ]       |    [ ]     |
 | contracts.get                                 |       [x]       |    [ ]     |
 | contracts.get_contract_id_by_node_id_and_hash |       [ ]       |    [ ]     |
-| contracts.get_node_contracts                  |       [ ]       |    [ ]     |
 | contracts.get_name_contract                   |       [ ]       |    [ ]     |
 | contracts.update_node                         |       [x]       |    [ ]     |
 | contracts.cancel                              |       [x]       |    [ ]     |

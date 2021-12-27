@@ -12,17 +12,6 @@ pub fn (mut tw Client) deploy_machines(payload Machines) ?DeployResponse {
 			- DeployResponse: list of contracts {created updated, deleted} and wireguard config.
 	*/
 	payload_encoded := json.encode_pretty(payload)
-	return tw.deploy_machines_with_encoded_payload(payload_encoded)
-}
-
-pub fn (mut tw Client) deploy_machines_with_encoded_payload(payload_encoded string) ?DeployResponse {
-	/*
-	Deploy machines workload with encoded payload
-		Input:
-			- payload (string): generic machine encoded payload.
-		Output:
-			- DeployResponse: list of contracts {created updated, deleted} and wireguard config
-	*/
 	mut msg := tw.send('twinserver.machines.deploy', payload_encoded) ?
 	response := tw.read(msg)
 	if response.err != ''{
@@ -56,17 +45,6 @@ pub fn (mut tw Client) update_machines(payload Machines) ?DeployResponse {
 			- DeployResponse: list of contracts {created updated, deleted} and wireguard config
 	*/
 	payload_encoded := json.encode_pretty(payload)
-	return tw.update_machines_with_encoded_payload(payload_encoded)
-}
-
-pub fn (mut tw Client) update_machines_with_encoded_payload(payload_encoded string) ?DeployResponse {
-	/*
-	Get machine info using deployment name.
-		Input:
-			- payload_encoded (string): encoded payload with modified data.
-		Output:
-			- DeployResponse: list of contracts {created updated, deleted} and wireguard config
-	*/
 	mut msg := tw.send('twinserver.machines.update', payload_encoded) ?
 	response := tw.read(msg)
 	if response.err != ''{

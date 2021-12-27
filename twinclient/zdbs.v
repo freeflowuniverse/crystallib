@@ -12,17 +12,6 @@ pub fn (mut tw Client) deploy_zdbs(payload ZDBs) ?ContractDeployResponse {
 			- response: List of contracts {created}.
 	*/
 	payload_encoded := json.encode_pretty(payload)
-	return tw.deploy_zdbs_with_encoded_payload(payload_encoded)
-}
-
-pub fn (mut tw Client) deploy_zdbs_with_encoded_payload(payload_encoded string) ?ContractDeployResponse {
-	/*
-	Deploy zdb workload with encoded payload
-		Input:
-			- payload (string): zdb encoded payload.
-		Output:
-			- response: List of contracts {created}.
-	*/
 	mut msg := tw.send('twinserver.zdbs.deploy', payload_encoded) ?
 	response := tw.read(msg)
 	if response.err != ''{
@@ -90,17 +79,6 @@ pub fn (mut tw Client) update_zdbs(payload ZDBs) ?ContractDeployResponse {
 			- response: List of contracts {updated}.
 	*/
 	payload_encoded := json.encode_pretty(payload)
-	return tw.update_zdbs_with_encoded_payload(payload_encoded)
-}
-
-pub fn (mut tw Client) update_zdbs_with_encoded_payload(payload_encoded string) ?ContractDeployResponse {
-	/*
-	Get zdb info using deployment name.
-		Input:
-			- payload_encoded (string): encoded payload with modified data.
-		Output:
-			- response: List of contracts {created}.
-	*/
 	mut msg := tw.send('twinserver.zdbs.update', payload_encoded) ?
 	response := tw.read(msg)
 	if response.err != ''{
