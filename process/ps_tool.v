@@ -59,24 +59,24 @@ pub fn (mut pm ProcessMap) scan()? {
 		if pm.state == PMState.ok { return }
 	}
 
-	cmd := "ps ax -o pid,ppid,stat,\%cpu,%mem,rss,command"
-	res := execute_silent(cmd) or {
-		return error("Cannot get process info \n$cmd\n$err")
-	}
-	println("DID SCAN")
-	for line in res.split_into_lines() {
-		if ! line.contains('PPID') {
-			mut fields:=line.fields()
-			mut pi := ProcessInfo{}
-			pi.ppid=fields[0].int()
-			// pi.stat=fields[1]
-			pi.cpu_perc=fields[2].f32()
-			pi.mem_perc=fields[3].f32()
-			pi.rss=fields[4].int()
-			fields.delete_many(0,6)			
-			println(fields)
-		}
-	}
+	// cmd := "ps ax -o pid,ppid,stat,%cpu,%mem,rss,command"
+	// res := execute_silent(cmd) or {
+	// 	return error("Cannot get process info \n$cmd\n$err")
+	// }
+	// println("DID SCAN")
+	// for line in res.split_into_lines() {
+	// 	if ! line.contains('PPID') {
+	// 		mut fields:=line.fields()
+	// 		mut pi := ProcessInfo{}
+	// 		pi.ppid=fields[0].int()
+	// 		// pi.stat=fields[1]
+	// 		pi.cpu_perc=fields[2].f32()
+	// 		pi.mem_perc=fields[3].f32()
+	// 		pi.rss=fields[4].int()
+	// 		fields.delete_many(0,6)			
+	// 		println(fields)
+	// 	}
+	// }
 
 
 }
