@@ -185,16 +185,31 @@ pub mut:
 	secret  string
 }
 
-pub struct Balance{
+pub struct BalanceResult{
+	free f64
+	reserved f64
+	misc_frozen f64 [json: 'miscFrozen']
+	fee_frozen f64 [json: 'feeFrozen']
+}
+
+[params]
+pub struct BalanceTransfer{
+	address string [required]
+	amount  f64 [required]
+}
+
+
+pub struct StellarBalance{
 	asset string
 	amount f64
 }
 
-struct Transfer{
-	from_name string [json: "name"]
-	target_address string
-	amount f64
-	asset string
+[params]
+pub struct StellarTransfer{
+	from_name string [required;json: "name"]
+	target_address string [required]
+	amount f64 [required]
+	asset string = 'TFT'
 	memo string
 }
 

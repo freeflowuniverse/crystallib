@@ -3,15 +3,15 @@ Here are all commands supported by twinserver and its status in twinclient
 
 ## Machines
 
-| Command                 | Implement State | Test State |
-| :---------------------- | :-------------: | :--------: |
-| machines.deploy         |       [x]       |    [x]     |
-| machines.list           |       [x]       |    [x]     |
-| machines.get            |       [x]       |    [x]     |
-| machines.delete         |       [x]       |    [x]     |
-| machines.update         |       [x]       |    [ ]     |
-| machines.add_machine    |       [x]       |    [x]     |
-| machines.delete_machine |       [x]       |    [x]     |
+| Command                 | Implement State | Test State | Notes                   |
+| :---------------------- | :-------------: | :--------: | :---------------------- |
+| machines.deploy         |       [x]       |    [x]     |                         |
+| machines.list           |       [x]       |    [x]     |                         |
+| machines.get            |       [x]       |    [x]     |                         |
+| machines.delete         |       [x]       |    [x]     |                         |
+| machines.update         |       [x]       |    [ ]     | Need to verify it again |
+| machines.add_machine    |       [x]       |    [x]     |                         |
+| machines.delete_machine |       [x]       |    [x]     |                         |
 
 ## Kubernetes
 
@@ -27,15 +27,15 @@ Here are all commands supported by twinserver and its status in twinclient
 
 ## ZDBs
 
-| Command         | Implement State | Test State |
-| :-------------- | :-------------: | :--------: |
-| zdbs.deploy     |       [x]       |    [ ]     |
-| zdbs.list       |       [x]       |    [ ]     |
-| zdbs.get        |       [x]       |    [ ]     |
-| zdbs.delete     |       [x]       |    [ ]     |
-| zdbs.update     |       [x]       |    [ ]     |
-| zdbs.add_zdb    |       [x]       |    [ ]     |
-| zdbs.delete_zdb |       [x]       |    [ ]     |
+| Command         | Implement State | Test State | Notes                                                                                |
+| :-------------- | :-------------: | :--------: | :----------------------------------------------------------------------------------- |
+| zdbs.deploy     |       [x]       |    [ ]     | Can't test according to [zos/1517](https://github.com/threefoldtech/zos/issues/1517) |
+| zdbs.list       |       [x]       |    [ ]     | Same                                                                                 |
+| zdbs.get        |       [x]       |    [ ]     | Same                                                                                 |
+| zdbs.delete     |       [x]       |    [ ]     | Same                                                                                 |
+| zdbs.update     |       [x]       |    [ ]     | Same                                                                                 |
+| zdbs.add_zdb    |       [x]       |    [ ]     | Same                                                                                 |
+| zdbs.delete_zdb |       [x]       |    [ ]     | Same                                                                                 |
 
 ## Gateways
 
@@ -104,11 +104,11 @@ Here are all commands supported by twinserver and its status in twinclient
 
 ## Balance
 
-| Command              | Implement State | Test State |
-| :------------------- | :-------------: | :--------: |
-| balance.get          |       [ ]       |    [ ]     |
-| balance.transfer     |       [ ]       |    [ ]     |
-| balance.getMyBalance |       [ ]       |    [ ]     |
+| Command              | Implement State | Test State | Notes                                                                                                                                                                                          |
+| :------------------- | :-------------: | :--------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| balance.get          |       [x]       |    [x]     |                                                                                                                                                                                                |
+| balance.transfer     |       [x]       |    [ ]     | Transfer done but return error `[ERR_INVALID_ARG_TYPE]: The first argument must be of type string or an instance of Buffer, ArrayBuffer, or Array or an Array-like Object. Received undefined` |
+| balance.getMyBalance |       [x]       |    [x]     |                                                                                                                                                                                                |
 
 ## Capacity
 

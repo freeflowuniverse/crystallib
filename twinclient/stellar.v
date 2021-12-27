@@ -51,26 +51,25 @@ pub fn (mut tw Client) list_wallets() ?[]string{
 	return json.decode([]string, response.data) or {}
 }
 
-pub fn (mut tw Client) balance_by_address(address string) ?[]Balance {
+pub fn (mut tw Client) balance_by_address(address string) ?[]StellarBalance {
 	mut msg := tw.send('twinserver.stellar.balance_by_address', '{"address": $address}') ?
 	response := tw.read(msg)
 	if response.err != ''{
 		return error(response.err)
 	}
-	return json.decode([]Balance, response.data) or {}
+	return json.decode([]StellarBalance, response.data) or {}
 }
 
-pub fn (mut tw Client) balance_by_name(name string) ?[]Balance {
+pub fn (mut tw Client) balance_by_name(name string) ?[]StellarBalance {
 	mut msg := tw.send('twinserver.stellar.balance_by_name', '{"name": "$name"}') ?
 	response := tw.read(msg)
 	if response.err != ''{
 		return error(response.err)
 	}
-	return json.decode([]Balance, response.data) or {}
+	return json.decode([]StellarBalance, response.data) or {}
 }
 
-pub fn (mut tw Client) transfer (name string, to_address string, asset string, amount f64, memo string) ?string {
-	transfer := Transfer{from_name: name, target_address: to_address, amount:amount, asset:asset, memo:memo}
+pub fn (mut tw Client) stellar_transfer (transfer StellarTransfer) ?string {
 	payload_encoded := json.encode_pretty(transfer)
 	mut msg := tw.send('twinserver.stellar.transfer', payload_encoded) ?
 	response := tw.read(msg)
