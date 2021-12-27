@@ -144,6 +144,22 @@ pub:
 	description string
 }
 
+
+pub struct GatewayFQDN {
+	name string [required]
+	node_id u32 [required]
+	fqdn string [required]
+	tls_passthrough bool [required]
+	backends []string [required]
+}
+
+pub struct GatewayName {
+	name string [required]
+	node_id u32 [required]
+	tls_passthrough bool [required]
+	backends []string [required]
+}
+
 pub struct Contract {
 pub:
 	version         u32
