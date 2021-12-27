@@ -1,15 +1,14 @@
 # twinclient
-Client for twin_server_v2 using V Lang based on RMB
+Client for Twinserver using V Lang based on RMB
 
 # Prerequisites
 1. Running RMB server
 2. Running twinserver
 
 ## RMB Server Steps
-- Download msgbus from [latest release](https://github.com/threefoldtech/go-rmb/releases/)
-- Extract it
-- `./msgbus --twin <YOUR_TWIN_ID>`
-- for more info, follow instruction [here](https://github.com/threefoldtech/go-rmb/blob/master/README.md)
+- Download msgbusd binary from [latest release](https://github.com/threefoldtech/rmb/releases)
+- `./msgbusd --twin <YOUR_TWIN_ID>`
+- for more info, follow instruction [here](https://github.com/threefoldtech/rmb/blob/master/README.md)
 
 ## Twin Server Steps
 - Clone [repo](https://github.com/threefoldtech/grid3_client_ts.git)
