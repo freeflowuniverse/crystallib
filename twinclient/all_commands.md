@@ -41,21 +41,21 @@ Here are all commands supported by twinserver and its status in twinclient
 
 | Command             | Implement State | Test State |
 | :------------------ | :-------------: | :--------: |
-| gateway.deploy_fqdn |       [ ]       |    [ ]     |
-| gateway.deploy_name |       [ ]       |    [ ]     |
-| gateway.get_fqdn    |       [ ]       |    [ ]     |
-| gateway.delete_fqdn |       [ ]       |    [ ]     |
-| gateway.get_name    |       [ ]       |    [ ]     |
-| gateway.delete_name |       [ ]       |    [ ]     |
+| gateway.deploy_fqdn |       [x]       |    [ ]     |
+| gateway.deploy_name |       [x]       |    [ ]     |
+| gateway.get_fqdn    |       [x]       |    [ ]     |
+| gateway.delete_fqdn |       [x]       |    [ ]     |
+| gateway.get_name    |       [x]       |    [ ]     |
+| gateway.delete_name |       [x]       |    [ ]     |
 
 ## QSFS
 
 | Command          | Implement State | Test State |
 | :--------------- | :-------------: | :--------: |
-| qsfs_zdbs.deploy |       [ ]       |    [ ]     |
-| qsfs_zdbs.list   |       [ ]       |    [ ]     |
-| qsfs_zdbs.get    |       [ ]       |    [ ]     |
-| qsfs_zdbs.delete |       [ ]       |    [ ]     |
+| qsfs_zdbs.deploy |       [x]       |    [ ]     |
+| qsfs_zdbs.list   |       [x]       |    [ ]     |
+| qsfs_zdbs.get    |       [x]       |    [ ]     |
+| qsfs_zdbs.delete |       [x]       |    [ ]     |
 
 ## ZOS
 

@@ -144,7 +144,18 @@ pub:
 	description string
 }
 
+[params]
+pub struct QSFSZDBs {
+	name string [required]
+	count u32 [required]
+	node_ids []u32 [required]
+	disk_size u64 [required]
+	password string [required]
+	metadata string
+	description string
+}
 
+[params]
 pub struct GatewayFQDN {
 	name string [required]
 	node_id u32 [required]
@@ -153,6 +164,7 @@ pub struct GatewayFQDN {
 	backends []string [required]
 }
 
+[params]
 pub struct GatewayName {
 	name string [required]
 	node_id u32 [required]

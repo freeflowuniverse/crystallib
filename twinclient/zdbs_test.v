@@ -7,7 +7,7 @@ mut:
 	new_zdb        AddZDB
 }
 
-pub fn setup_zdb_test() (Client, ZDBsTestData) {
+fn setup_zdb_test() (Client, ZDBsTestData) {
 	redis_server := 'localhost:6379'
 	twin_id := 73
 	mut client := init(redis_server, twin_id) or {
