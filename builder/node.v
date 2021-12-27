@@ -111,7 +111,7 @@ pub fn node_get(args NodeArguments) ?Node {
 		}	
 	}
 
-	println( " - $node.name: platform: $node.platform")
+	// os.log( " - $node.name: platform: $node.platform")
 
 	init_node_txt := node.cache.get("node_done") or {
 		println(err)

@@ -152,7 +152,7 @@ pub fn temp_write(text string) ?string {
 		}
 		if i > 99 {
 			os.rmdir_all('$tmpdir/execscripts')?
-			temp_write(text)?
+			return temp_write(text)
 		}
 	}
 	os.write_file(tmppath, text) ?

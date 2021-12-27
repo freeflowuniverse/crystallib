@@ -10,34 +10,38 @@ pub mut:
 	id      int
 	active  bool
 	pid     int
+	paneid	int
+	cmd		string
+	env		map[string]string
 }
 
-fn init_window(session &Session, w_name string, id int, active bool, pid int) ?Window {
-	mut w := Window{
-		session: session
-		name: w_name.to_lower()
-		id: id
-		active: active
-		pid: pid
-	}
-	w.create()?
-	return w
+
+pub struct WindowArgs {
+pub mut:
+	name    string
+	cmd		string
+	env		map[string]string	
+	reset	bool
 }
 
 fn (mut w Window) create()? {
-	w.session.activate()?
+	//tmux new-window -P -c /tmp -e good=1 -e bad=0 -n koekoe -t main bash
 	if w.active == false {
-		w.session.tmux.node.executor.exec('tmux new-window -t $w.session.name -n $w.name') or {
-			return error("Can't create new window $w.name \n$err")
+		res_opt := "-P -F '#{session_name}|#{window_name}|#{window_id}|#{pane_active}|#{pane_id}|#{pane_pid}|#{pane_start_command}'"
+		cmd := "tmux new-window  $res_opt -t $w.session.name -n $w.name $w.cmd"
+		println(cmd)
+		res := w.session.tmux.node.executor.exec(cmd) or {
+			return error("Can't create new window $w.name \n$cmd\n$err")
 		}
-
-		get_pid := w.session.tmux.node.executor.exec("tmux list-windows -a -F '#{session_name}|#{window_name}|#{pane_pid}' | grep $w.session.name | grep $w.name") or {
-			'Test'
-		}
-		get_pid_arr := get_pid.split('|')
-		w.pid = get_pid_arr[2].int()
-		os.log('WINDOW - Window: $w.name created in session: $w.session.name')
+		w.session.tmux.scan_add(res)?
+		// os.log('WINDOW - Window: $w.name created in session: $w.session.name')
+	}else{
+		return error("cannot create window, it already exists.\n${w.name}:${w.id}:${w.cmd}")
 	}
+}
+
+fn (mut w Window) check()? {
+	//do some good checks if the window is still active
 }
 
 fn (mut w Window) restart()? {
@@ -46,47 +50,49 @@ fn (mut w Window) restart()? {
 }
 
 pub fn (mut w Window) stop()? {
-	if w.pid > 0 {
-		w.session.tmux.node.executor.exec('kill -9 $w.pid') or {
-			return error("Can't kill window with pid:$w.pid")
-		}
+	w.session.tmux.node.executor.exec('tmux kill-window -t @${w.id}') or {
+		return error("Can't kill window with id:$w.id")
 	}
 	w.pid = 0
 	w.active = false
+}
+
+pub fn (mut w Window) delete()? {
+	w.stop()?
 	w.session.windows.delete(w.name)
 }
 
-fn (mut w Window) activate()? {
-	key := '$w.session.name:$w.name'
-	active_window := w.session.tmux.redis.get('tmux:active_window') or { 'No active window found' }
-	if active_window != key || !w.active || w.pid == 0 {
-		if !w.active || (w.pid == 0) {
-			w.restart()?
-			w.active = true
-		} else {
-			w.session.activate()?
-		}
-		w.session.tmux.node.executor.exec('tmux select-window -t $w.id') or {
-			return error("Couldn't select window $w.name'")
-		}
-		w.session.tmux.redis.set('tmux:active_window', key) or { panic("Couldn't set tmux:active_window") }
-		os.log('WINDOW - Window: $w.name activated ')
-	} else {
-		os.log('WINDOW - Window $w.name already active')
-	}
+pub fn (window Window) repr() string {
+	return ' - ${window.session.name}:${window.name} wid:${window.id} active:${window.active} pid:${window.pid} cmd:${window.cmd}'
 }
 
-pub fn (mut w Window) execute(cmd string, check string, reset bool)? {
-	w.activate()?
-	if reset {
-		w.restart()?
-	}
-	w.session.tmux.node.executor.exec("tmux send-keys -t $w.session.name'.'$w.id '$cmd' Enter") or {
-		return error("Couldn't execute cmd: $cmd \n$err")
-	}
-	os.log('WINDOW - Window: $w.name execute: $cmd')
-	if check != '' {
-		return error('implement')
-		// w.session.tmux.node.executor.exec('tmux')?
-	}
+//will select the current window so with tmux a we can go there
+// if more than 1 session do `tmux a -s mysessionname`
+fn (mut w Window) activate()? {
+	cmd2 := "tmux select-window -t %${w.id}"
+		w.session.tmux.node.executor.exec(cmd2) or {
+			return error("Couldn't select window $w.name \n$cmd2\n$err")
+		}
 }
+
+//show the environment
+pub fn (mut w Window) environment_print()? {
+	res := w.session.tmux.node.executor.exec("tmux show-environment -t %${w.paneid}") or {
+		return error("Couldnt show enviroment cmd: $w.cmd \n$err")
+	}
+	os.log(res)
+}
+
+//capture the output
+pub fn (mut w Window) output_print()? {
+	//-S is start, minus means go in history, otherwise its only the active output
+	res := w.session.tmux.node.executor.exec("tmux capture-pane -t %${w.paneid} -S -10000") or {
+		return error("Couldnt show enviroment cmd: $w.cmd \n$err")
+	}
+	os.log(res)
+}
+
+
+// tmux capture-pane -t %5 -p -S -10000
+
+// tmux show-environment -t %5
