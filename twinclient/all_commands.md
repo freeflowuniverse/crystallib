@@ -3,15 +3,15 @@ Here are all commands supported by twinserver and its status in twinclient
 
 ## Machines
 
-| Command                 | Implement State | Test State | Notes                   |
-| :---------------------- | :-------------: | :--------: | :---------------------- |
-| machines.deploy         |       [x]       |    [x]     |                         |
-| machines.list           |       [x]       |    [x]     |                         |
-| machines.get            |       [x]       |    [x]     |                         |
-| machines.delete         |       [x]       |    [x]     |                         |
-| machines.update         |       [x]       |    [ ]     | Need to verify it again |
-| machines.add_machine    |       [x]       |    [x]     |                         |
-| machines.delete_machine |       [x]       |    [x]     |                         |
+| Command                 | Implement State | Test State |
+| :---------------------- | :-------------: | :--------: |
+| machines.deploy         |       [x]       |    [x]     |
+| machines.list           |       [x]       |    [x]     |
+| machines.get            |       [x]       |    [x]     |
+| machines.delete         |       [x]       |    [x]     |
+| machines.update         |       [x]       |    [ ]     |
+| machines.add_machine    |       [x]       |    [x]     |
+| machines.delete_machine |       [x]       |    [x]     |
 
 ## Kubernetes
 
@@ -27,15 +27,15 @@ Here are all commands supported by twinserver and its status in twinclient
 
 ## ZDBs
 
-| Command         | Implement State | Test State | Notes                                                                                |
-| :-------------- | :-------------: | :--------: | :----------------------------------------------------------------------------------- |
-| zdbs.deploy     |       [x]       |    [ ]     | Can't test according to [zos/1517](https://github.com/threefoldtech/zos/issues/1517) |
-| zdbs.list       |       [x]       |    [ ]     | Same                                                                                 |
-| zdbs.get        |       [x]       |    [ ]     | Same                                                                                 |
-| zdbs.delete     |       [x]       |    [ ]     | Same                                                                                 |
-| zdbs.update     |       [x]       |    [ ]     | Same                                                                                 |
-| zdbs.add_zdb    |       [x]       |    [ ]     | Same                                                                                 |
-| zdbs.delete_zdb |       [x]       |    [ ]     | Same                                                                                 |
+| Command         | Implement State | Test State |
+| :-------------- | :-------------: | :--------: |
+| zdbs.deploy     |       [x]       |    [x]     |
+| zdbs.list       |       [x]       |    [x]     |
+| zdbs.get        |       [x]       |    [x]     |
+| zdbs.delete     |       [x]       |    [x]     |
+| zdbs.update     |       [x]       |    [x]     |
+| zdbs.add_zdb    |       [x]       |    [x]     |
+| zdbs.delete_zdb |       [x]       |    [x]     |
 
 ## Gateways
 
@@ -52,10 +52,10 @@ Here are all commands supported by twinserver and its status in twinclient
 
 | Command          | Implement State | Test State |
 | :--------------- | :-------------: | :--------: |
-| qsfs_zdbs.deploy |       [x]       |    [ ]     |
-| qsfs_zdbs.list   |       [x]       |    [ ]     |
-| qsfs_zdbs.get    |       [x]       |    [ ]     |
-| qsfs_zdbs.delete |       [x]       |    [ ]     |
+| qsfs_zdbs.deploy |       [x]       |    [x]     |
+| qsfs_zdbs.list   |       [x]       |    [x]     |
+| qsfs_zdbs.get    |       [x]       |    [x]     |
+| qsfs_zdbs.delete |       [x]       |    [x]     |
 
 ## ZOS
 
@@ -68,46 +68,46 @@ Here are all commands supported by twinserver and its status in twinclient
 | Command                                       | Implement State | Test State |
 | :-------------------------------------------- | :-------------: | :--------: |
 | contracts.create_node                         |       [x]       |    [ ]     |
-| contracts.create_name                         |       [ ]       |    [ ]     |
+| contracts.create_name                         |       [x]       |    [ ]     |
 | contracts.get                                 |       [x]       |    [ ]     |
-| contracts.get_contract_id_by_node_id_and_hash |       [ ]       |    [ ]     |
-| contracts.get_name_contract                   |       [ ]       |    [ ]     |
+| contracts.get_contract_id_by_node_id_and_hash |       [x]       |    [ ]     |
+| contracts.get_name_contract                   |       [x]       |    [ ]     |
 | contracts.update_node                         |       [x]       |    [ ]     |
 | contracts.cancel                              |       [x]       |    [ ]     |
-| contracts.listMyContracts                     |       [ ]       |    [ ]     |
-| contracts.listContractsByTwinId               |       [ ]       |    [ ]     |
-| contracts.listContractsByAddress              |       [ ]       |    [ ]     |
-| contracts.cancelMyContracts                   |       [ ]       |    [ ]     |
-| contracts.getConsumption                      |       [ ]       |    [ ]     |
+| contracts.listMyContracts                     |       [x]       |    [ ]     |
+| contracts.listContractsByTwinId               |       [x]       |    [ ]     |
+| contracts.listContractsByAddress              |       [x]       |    [ ]     |
+| contracts.cancelMyContracts                   |       [x]       |    [ ]     |
+| contracts.getConsumption                      |       [x]       |    [ ]     |
 
 # Twins
 
-| Command                         | Implement State | Test State |
-| :------------------------------ | :-------------: | :--------: |
-| twins.create                    |       [x]       |    [ ]     |
-| twins.get                       |       [x]       |    [x]     |
-| twins.get_my_twin_id            |       [ ]       |    [ ]     |
-| twins.get_twin_id_by_account_id |       [ ]       |    [ ]     |
-| twins.list                      |       [x]       |    [ ]     |
-| twins.delete                    |       [x]       |    [ ]     |
+| Command                         | Implement State | Test State | Notes                        |
+| :------------------------------ | :-------------: | :--------: | :--------------------------- |
+| twins.create                    |       [x]       |    [ ]     | Need a new ip to test with   |
+| twins.get                       |       [x]       |    [x]     |                              |
+| twins.get_my_twin_id            |       [x]       |    [x]     |                              |
+| twins.get_twin_id_by_account_id |       [x]       |    [x]     |                              |
+| twins.list                      |       [x]       |    [x]     |                              |
+| twins.delete                    |       [x]       |    [ ]     | Need my twin can't delete it |
 
 ## kvstore
 
 | Command           | Implement State | Test State |
 | :---------------- | :-------------: | :--------: |
-| kvstore.set       |       [ ]       |    [ ]     |
-| kvstore.get       |       [ ]       |    [ ]     |
-| kvstore.list      |       [ ]       |    [ ]     |
-| kvstore.remove    |       [ ]       |    [ ]     |
-| kvstore.removeAll |       [ ]       |    [ ]     |
+| kvstore.set       |       [x]       |    [x]     |
+| kvstore.get       |       [x]       |    [x]     |
+| kvstore.list      |       [x]       |    [x]     |
+| kvstore.remove    |       [x]       |    [x]     |
+| kvstore.removeAll |       [x]       |    [x]     |
 
 ## Balance
 
-| Command              | Implement State | Test State | Notes                                                                                                                                                                                          |
-| :------------------- | :-------------: | :--------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| balance.get          |       [x]       |    [x]     |                                                                                                                                                                                                |
-| balance.transfer     |       [x]       |    [ ]     | Transfer done but return error `[ERR_INVALID_ARG_TYPE]: The first argument must be of type string or an instance of Buffer, ArrayBuffer, or Array or an Array-like Object. Received undefined` |
-| balance.getMyBalance |       [x]       |    [x]     |                                                                                                                                                                                                |
+| Command              | Implement State | Test State | Notes                                                                                    |
+| :------------------- | :-------------: | :--------: | :--------------------------------------------------------------------------------------- |
+| balance.get          |       [x]       |    [x]     |                                                                                          |
+| balance.transfer     |       [x]       |    [ ]     | Issue [grid3_client_ts/174](https://github.com/threefoldtech/grid3_client_ts/issues/174) |
+| balance.getMyBalance |       [x]       |    [x]     |                                                                                          |
 
 ## Capacity
 
