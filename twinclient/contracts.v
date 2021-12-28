@@ -2,71 +2,133 @@ module twinclient
 
 import json
 
-pub fn (mut tw Client) create_node_contract(node_id u32, hash string, data string, public_ip u32) ?Contract {
-	/*
-	Create new contract
-		Input:
-			- node_id (u32): zos node id
-			- hash (string): deployment challenge hash
-			- data (string): deployment data
-			- public_ip (u32): nutwer of public IPs
-		Output:
-			- Contract: new Contract instance with all contract info.
-	*/
-	mut msg := tw.send('twinserver.contracts.create_node', '{"node_id": $node_id, "hash": "$hash", "data": "$data", "public_ip": $public_ip}') ?
+// Create new node contract
+pub fn (mut tw Client) create_node_contract(payload NodeContractCreate) ?Contract {
+	payload_encoded := json.encode_pretty(payload)
+	mut msg := tw.send('twinserver.contracts.create_node', payload_encoded) ?
 	response := tw.read(msg)
-	if response.err != ''{
+	if response.err != '' {
 		return error(response.err)
 	}
 	return json.decode(Contract, response.data) or {}
 }
 
+// Create new name contract
+pub fn (mut tw Client) create_name_contract(name string) ?Contract {
+	mut msg := tw.send('twinserver.contracts.create_name', '{"name": "$name"}') ?
+	response := tw.read(msg)
+	if response.err != '' {
+		return error(response.err)
+	}
+	println(response.data) // FIXME: Just for debug
+	return json.decode(Contract, response.data) or {}
+}
+
+// Get contract by specific Id
 pub fn (mut tw Client) get_contract(id u64) ?Contract {
-	/*
-	Get contract info with id
-		Input:
-			- id: contract id
-		Output:
-			- Contract: Contract instance with all contract info.
-	*/
 	mut msg := tw.send('twinserver.contracts.get', '{"id": $id}') ?
 	response := tw.read(msg)
-	if response.err != ''{
+	if response.err != '' {
 		return error(response.err)
 	}
 	return json.decode(Contract, response.data) or {}
 }
 
-pub fn (mut tw Client) update_node_contract(id u64, hash string, data string) ?Contract {
-	/*
-	Update contract hash and data using contract id
-		Input:
-			- id: contract id
-			- hash: new deployment challenge hash
-			- date: new deployment data
-		Output:
-			- Contract: Contract instance with all contract info after update.
-	*/
-	mut msg := tw.send('twinserver.contracts.update_node', '{"id": $id, "hash": "$hash", "data": "$data"}') ?
+// Get contract id from node_id and hash
+pub fn (mut tw Client) get_contract_id_by_node_and_hash(payload ContractIdByNodeIdAndHash) ?Contract {
+	payload_encoded := json.encode_pretty(payload)
+	mut msg := tw.send('twinserver.contracts.get_contract_id_by_node_id_and_hash', payload_encoded) ?
 	response := tw.read(msg)
-	if response.err != ''{
+	if response.err != '' {
+		return error(response.err)
+	}
+	println(response.data)
+	return json.decode(Contract, response.data) or {}
+}
+
+// Get name contract by specific name
+pub fn (mut tw Client) get_name_contract(name string) ?Contract {
+	mut msg := tw.send('twinserver.contracts.get_name_contract', '{"name": "$name"}') ?
+	response := tw.read(msg)
+	if response.err != '' {
+		return error(response.err)
+	}
+	println(response.data) // FIXME: Just for debug
+	return json.decode(Contract, response.data) or {}
+}
+
+// Update contract hash and data using contract id
+pub fn (mut tw Client) update_node_contract(payload NodeContractUpdate) ?Contract {
+	payload_encoded := json.encode_pretty(payload)
+	mut msg := tw.send('twinserver.contracts.update_node', payload_encoded) ?
+	response := tw.read(msg)
+	if response.err != '' {
 		return error(response.err)
 	}
 	return json.decode(Contract, response.data) or {}
 }
 
+// Cancel contract using contract_id
 pub fn (mut tw Client) cancel_contract(id u64) ?u64 {
-	/*
-	Cancel contract
-		Input:
-			- id: contract id
-		Output:
-			- canceled id: return the cancled contract id
-	*/
 	mut msg := tw.send('twinserver.contracts.cancel', '{"id": $id}') ?
 	response := tw.read(msg)
-	if response.err != ''{
+	if response.err != '' {
 		return error(response.err)
 	}
+	return response.data.u64()
+}
+
+// List all my contracts
+pub fn (mut tw Client) list_my_contracts() ? {
+	mut msg := tw.send('twinserver.contracts.listMyContracts', '{}') ?
+	response := tw.read(msg)
+	if response.err != '' {
+		return error(response.err)
+	}
+	println(response.data) // FIXME: Add Return
+	// return response.data.u64()
+}
+
+// List all contracts for specific twin_id
+pub fn (mut tw Client) list_contracts_by_twin_id(twin_id u32) ? {
+	mut msg := tw.send('twinserver.contracts.listContractsByTwinId', '{"twindId": $twin_id}') ?
+	response := tw.read(msg)
+	if response.err != '' {
+		return error(response.err)
+	}
+	println(response.data) // FIXME: Add Return
+	// return response.data.u64()
+}
+
+// List all contracts for specific address
+pub fn (mut tw Client) list_contracts_by_address(address string) ? {
+	mut msg := tw.send('twinserver.contracts.listContractsByAddress', '{"address": "$address"}') ?
+	response := tw.read(msg)
+	if response.err != '' {
+		return error(response.err)
+	}
+	println(response.data) // FIXME: Add Return
+	// return response.data.u64()
+}
+
+// Cancel all my contracts
+pub fn (mut tw Client) cancel_my_contracts() ? {
+	mut msg := tw.send('twinserver.contracts.cancelMyContracts', '{}') ?
+	response := tw.read(msg)
+	if response.err != '' {
+		return error(response.err)
+	}
+	println(response.data) // FIXME: Add Return
+	// return response.data.u64()
+}
+
+// Get TFT consume for each contract per hour using contract_id
+pub fn (mut tw Client) get_consumption(id u64) ?u64 {
+	mut msg := tw.send('twinserver.contracts.getConsumption', '{"id": $id}') ?
+	response := tw.read(msg)
+	if response.err != '' {
+		return error(response.err)
+	}
+	println(response.data) // FIXME: Add Return
 	return response.data.u64()
 }

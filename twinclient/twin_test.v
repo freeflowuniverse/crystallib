@@ -1,33 +1,73 @@
 module twinclient
 
-pub fn test_twin() {
-	// redis_server and twin_dest are const in client.v
-	mut tw := init(redis_server, twin_dest) or { panic(err) }
+struct TwinTestData {
+	new_twin_ip       string
+	my_twin_id        u32
+	account_id        string
+	twin_id_to_delete u32
+}
 
-	// Create new twin
-	new_twin_ip := 'ADD_YOUR_IPV6 ADDRESS HERE'
-	println('--------- Create Twin ---------')
-	new_twin := tw.create_twin(new_twin_ip) or { panic(err) }
-	assert new_twin.ip == new_twin_ip
-	println(new_twin)
+fn setup_twin_test() (Client, TwinTestData) {
+	redis_server := 'localhost:6379'
+	twin_id := 73
+	mut client := init(redis_server, twin_id) or {
+		panic('Fail in setup_kvstore_test with error: $err')
+	}
 
-	// Get twin
+	data := TwinTestData{
+		my_twin_id: 73
+		account_id: '5Fk18xUkcFLTtURxa2aXb4SrLiHJoZEBt3McjbNERwSo548Q'
+	}
+	return client, data
+}
+
+// pub fn test_create_twin() {
+// 	mut client, data := setup_twin_test()
+// 	println('--------- Create Twin ---------')
+// 	new_twin := client.create_twin(data.new_twin_ip) or { panic(err) }
+// 	assert new_twin.ip == new_twin_ip
+// 	println(new_twin)
+// }
+
+pub fn test_get_twin() {
+	mut client, data := setup_twin_test()
 	println('--------- Get Twin ---------')
-	twin_49 := tw.get_twin(49) or { panic(err) }
-	assert twin_49.account_id == '5D2etsCt37ucdTvybV8PaeQzmoUsNp7RzxZQGJosmY8PUvKQ'
-	println(twin_49)
+	twin := client.get_twin(data.my_twin_id) or { panic(err) }
+	assert twin.account_id == data.account_id
+	println('Twin:: $twin')
+}
 
-	// List twins
+pub fn test_get_twin_by_account_id() {
+	mut client, data := setup_twin_test()
+	println('--------- Get Twin Id By Account Id ---------')
+	twin_id := client.get_twin_id_by_account_id(data.account_id) or { panic(err) }
+	assert twin_id == data.my_twin_id
+	println('Twin ID:: $twin_id')
+}
+
+pub fn test_get_my_twin() {
+	mut client, data := setup_twin_test()
+	println('--------- Get My Twin ---------')
+	my_twin_id := client.get_my_twin_id() or { panic(err) }
+	assert my_twin_id == data.my_twin_id
+	println('My Twin ID:: $my_twin_id')
+}
+
+pub fn test_list_twin() {
+	mut client, _ := setup_twin_test()
 	println('--------- List Twin ---------')
-	twins := tw.list_twins() or { panic(err) }
+	twins := client.list_twins() or { panic(err) }
 	assert twins != []Twin{}
 	println('Found $twins.len twins')
-	println(twins)
+}
 
-	// Delete Twin
-	// TAKE CARE, YOUR TWIN WILL BE DELETED HERE
-	// COMMENT THIS PART IF YOU DON'T WANT TO DELETE IT
+/*
+// TAKE CARE, YOUR TWIN WILL BE DELETED HERE
+// COMMENT THIS PART IF YOU DON'T WANT TO DELETE IT
+pub fn test_delete_twin{
+	mut client, data := setup_twin_test()
 	println('--------- Delete Twin ---------')
-	deleted_twin_id := tw.delete_twin(new_twin.id) or { panic(err) }
+	deleted_twin_id := client.delete_twin(data.twin_id_to_delete) or { panic(err) }
 	println('Twin [$deleted_twin_id] deleted')
 }
+*/

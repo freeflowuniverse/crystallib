@@ -249,6 +249,7 @@ pub struct Env {
 	ssh_key string [json: 'SSH_KEY']
 }
 
+[params]
 pub struct StellarWallet {
 pub mut:
 	name    string
