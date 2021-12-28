@@ -3,7 +3,8 @@ module twinclient
 import threefoldtech.info_specs_grid3.vlang.zos
 import json
 
-pub fn (mut tw Client) deploy_qsfs_zdbs(payload QSFSZDBs) ?ContractDeployResponse {
+// Deploy new qsfs_zdbs
+pub fn (mut tw Client) deploy_qsfs_zdbs(payload QSFSZDBs) ?DeployResponse {
 	/*
 	Deploy qsfs_zdbs workload
 		Input:
@@ -14,12 +15,13 @@ pub fn (mut tw Client) deploy_qsfs_zdbs(payload QSFSZDBs) ?ContractDeployRespons
 	payload_encoded := json.encode_pretty(payload)
 	mut msg := tw.send('twinserver.qsfs_zdbs.deploy', payload_encoded) ?
 	response := tw.read(msg)
-	if response.err != ''{
+	if response.err != '' {
 		return error(response.err)
 	}
-	return json.decode(ContractDeployResponse, response.data) or {}
+	return json.decode(DeployResponse, response.data) or {}
 }
 
+// Get deployed qsfs_zdbs by deployment name
 pub fn (mut tw Client) get_qsfs_zdbs(name string) ?[]zos.Deployment {
 	/*
 	Get qsfs_zdbs info using deployment name
@@ -30,12 +32,13 @@ pub fn (mut tw Client) get_qsfs_zdbs(name string) ?[]zos.Deployment {
 	*/
 	mut msg := tw.send('twinserver.qsfs_zdbs.get', '{"name": "$name"}') ?
 	response := tw.read(msg)
-	if response.err != ''{
+	if response.err != '' {
 		return error(response.err)
 	}
 	return json.decode([]zos.Deployment, response.data) or {}
 }
 
+// List all my qsfs_zdbs
 pub fn (mut tw Client) list_qsfs_zdbs() ?[]string {
 	/*
 	List all qsfs_zdbs
@@ -44,13 +47,14 @@ pub fn (mut tw Client) list_qsfs_zdbs() ?[]string {
 	*/
 	mut msg := tw.send('twinserver.qsfs_zdbs.list', '{}') ?
 	response := tw.read(msg)
-	if response.err != ''{
+	if response.err != '' {
 		return error(response.err)
 	}
 	return json.decode([]string, response.data) or {}
 }
 
-pub fn (mut tw Client) delete_qsfs_zdbs(name string) ?ContractDeployResponse {
+// Delete deployed qsfs_zdbs using deployment name
+pub fn (mut tw Client) delete_qsfs_zdbs(name string) ?ContractResponse {
 	/*
 	Delete deployed qsfs_zdbs.
 		Input:
@@ -60,8 +64,8 @@ pub fn (mut tw Client) delete_qsfs_zdbs(name string) ?ContractDeployResponse {
 	*/
 	mut msg := tw.send('twinserver.qsfs_zdbs.delete', '{"name": "$name"}') ?
 	response := tw.read(msg)
-	if response.err != ''{
+	if response.err != '' {
 		return error(response.err)
 	}
-	return json.decode(ContractDeployResponse, response.data) or {}
+	return json.decode(ContractResponse, response.data) or {}
 }

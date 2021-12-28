@@ -7,11 +7,11 @@ mut:
 	new_machine    AddMachine
 }
 
-pub fn setup_machines_test() (Client, MachinesTestData) {
+fn setup_machines_test() (Client, MachinesTestData) {
 	redis_server := 'localhost:6379'
 	twin_id := 73
 	mut client := init(redis_server, twin_id) or {
-		panic('Fail in setup_kubernetes_test with error: $err')
+		panic('Fail in setup_machines_test with error: $err')
 	}
 
 	mut data := MachinesTestData{

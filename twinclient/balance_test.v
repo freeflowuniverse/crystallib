@@ -8,7 +8,7 @@ fn setup_balance_test() (Client, BalanceTransfer) {
 	}
 	data := BalanceTransfer{
 		address: '5D2etsCt37ucdTvybV8PaeQzmoUsNp7RzxZQGJosmY8PUvKQ'
-		amount: 1
+		amount: 0.1
 	}
 	return client, data
 }
@@ -23,8 +23,8 @@ pub fn test_get_balance() {
 pub fn test_get_my_balance() {
 	mut client, _ := setup_balance_test()
 	println('--------- Get MyBalance ---------')
-	myBalance := client.get_my_balance() or { panic(err) }
-	println(myBalance)
+	my_balance := client.get_my_balance() or { panic(err) }
+	println(my_balance)
 }
 
 pub fn test_transfer_balance() {

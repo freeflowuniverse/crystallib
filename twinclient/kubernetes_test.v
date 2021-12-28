@@ -57,39 +57,38 @@ pub fn setup_kubernetes_test() (Client, KubernetesTestData) {
 	return client, data
 }
 
-// pub fn test_deploy_kubernetes() {
-// 	mut client, data := setup_kubernetes_test()
+pub fn test_deploy_kubernetes() {
+	mut client, data := setup_kubernetes_test()
 
-// 	println('--------- Deploy K8S ---------')
-// 	new_kube := client.deploy_kubernetes(data.payload) or { panic(err) }
-// 	println(new_kube)
-// }
+	println('--------- Deploy K8S ---------')
+	new_kube := client.deploy_kubernetes(data.payload) or { panic(err) }
+	println(new_kube)
+}
 
-// pub fn test_list_kubernetes() {
-// 	mut client, data := setup_kubernetes_test()
+pub fn test_list_kubernetes() {
+	mut client, data := setup_kubernetes_test()
 
-// 	println('--------- List Deployed K8S ---------')
-// 	all_my_kubes := client.list_kubernetes() or { panic(err) }
-// 	assert data.payload.name in all_my_kubes
-// 	println(all_my_kubes)
-// }
+	println('--------- List Deployed K8S ---------')
+	all_my_kubes := client.list_kubernetes() or { panic(err) }
+	assert data.payload.name in all_my_kubes
+	println(all_my_kubes)
+}
 
-// pub fn test_get_kubernetes() {
-// 	mut client, data := setup_kubernetes_test()
+pub fn test_get_kubernetes() {
+	mut client, data := setup_kubernetes_test()
 
-// 	println('--------- Get K8S ---------')
-// 	get_kube := client.get_kubernetes(data.payload.name) or { panic(err) }
-// 	println(get_kube)
-// }
+	println('--------- Get K8S ---------')
+	get_kube := client.get_kubernetes(data.payload.name) or { panic(err) }
+	println(get_kube)
+}
 
+pub fn test_update_kubernetes() {
+	mut client, data := setup_kubernetes_test()
 
-// pub fn test_update_kubernetes() {
-// 	mut client, data := setup_kubernetes_test()
-
-// 	println('--------- Update K8S ---------')
-// 	new_kube := client.update_kubernetes(data.update_payload) or { panic(err) }
-// 	println(new_kube)
-// }
+	println('--------- Update K8S ---------')
+	new_kube := client.update_kubernetes(data.update_payload) or { panic(err) }
+	println(new_kube)
+}
 
 pub fn test_add_worker() {
 	mut client, data := setup_kubernetes_test()

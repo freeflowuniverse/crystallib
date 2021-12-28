@@ -183,28 +183,28 @@ pub struct NodeContractCreate {
 [params]
 pub struct NodeContractUpdate {
 	id   u32    [required]
-	hash      string [required]
-	data      string [required]
+	hash string [required]
+	data string [required]
 }
 
 [params]
 pub struct ContractIdByNodeIdAndHash {
-	node_id   u32    [required]
-	hash      string [required]
+	node_id u32    [required]
+	hash    string [required]
 }
 
 pub struct Contract {
 pub:
-	version         u32
-	contract_id     u64
-	twin_id         u32
-	node_id         u32
-	contract_type   ContractTypes
-	state           ContractState
+	version       u32
+	contract_id   u64
+	twin_id       u32
+	node_id       u32
+	contract_type ContractTypes
+	state         ContractState
 }
 
 struct SimpleContract {
-	contract_id     u64
+	contract_id u64
 }
 
 struct ContractTypes {
@@ -223,10 +223,11 @@ struct NameContract {
 	name string
 }
 
-struct ContractState{
+struct ContractState {
 	created string
 	deleted string
 }
+
 struct PublicIP {
 	ip          string
 	gateway     string
