@@ -182,13 +182,14 @@ pub struct NodeContractCreate {
 
 [params]
 pub struct NodeContractUpdate {
-	id   u32    [required]
+	id   u64    [required]
 	hash string [required]
 	data string [required]
 }
 
 [params]
 pub struct ContractIdByNodeIdAndHash {
+mut:
 	node_id u32    [required]
 	hash    string [required]
 }
@@ -198,12 +199,15 @@ pub:
 	version       u32
 	contract_id   u64
 	twin_id       u32
-	node_id       u32
 	contract_type ContractTypes
 	state         ContractState
 }
 
-struct SimpleContract {
+pub struct SimpleContract {
+	contract_id u64 [json: 'contractId']
+}
+
+struct SimpleDeleteContract {
 	contract_id u64
 }
 
@@ -212,7 +216,13 @@ struct ContractTypes {
 	name_contract NameContract [json: 'nameContract']
 }
 
+pub struct ListContracts{
+	node_contracts []SimpleContract [json: 'nodeContracts']
+	name_contracts []SimpleContract [json: 'nameContracts']
+}
+
 struct NodeContract {
+	node_id         u32
 	deployment_data string
 	deployment_hash string
 	public_ips      u32
@@ -237,7 +247,7 @@ struct PublicIP {
 pub struct ContractResponse {
 	created []Contract
 	updated []Contract
-	deleted []SimpleContract
+	deleted []SimpleDeleteContract
 }
 
 pub struct DeployResponse {

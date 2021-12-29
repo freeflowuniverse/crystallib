@@ -33,7 +33,7 @@ Here are all commands supported by twinserver and its status in twinclient
 | zdbs.list       |       [x]       |    [x]     |
 | zdbs.get        |       [x]       |    [x]     |
 | zdbs.delete     |       [x]       |    [x]     |
-| zdbs.update     |       [x]       |    [x]     |
+| zdbs.update     |       [x]       |    [ ]     |
 | zdbs.add_zdb    |       [x]       |    [x]     |
 | zdbs.delete_zdb |       [x]       |    [x]     |
 
@@ -67,18 +67,18 @@ Here are all commands supported by twinserver and its status in twinclient
 
 | Command                                       | Implement State | Test State |
 | :-------------------------------------------- | :-------------: | :--------: |
-| contracts.create_node                         |       [x]       |    [ ]     |
-| contracts.create_name                         |       [x]       |    [ ]     |
-| contracts.get                                 |       [x]       |    [ ]     |
-| contracts.get_contract_id_by_node_id_and_hash |       [x]       |    [ ]     |
-| contracts.get_name_contract                   |       [x]       |    [ ]     |
-| contracts.update_node                         |       [x]       |    [ ]     |
-| contracts.cancel                              |       [x]       |    [ ]     |
-| contracts.listMyContracts                     |       [x]       |    [ ]     |
-| contracts.listContractsByTwinId               |       [x]       |    [ ]     |
-| contracts.listContractsByAddress              |       [x]       |    [ ]     |
-| contracts.cancelMyContracts                   |       [x]       |    [ ]     |
-| contracts.getConsumption                      |       [x]       |    [ ]     |
+| contracts.create_node                         |       [x]       |    [x]     |
+| contracts.create_name                         |       [x]       |    [x]     |
+| contracts.get                                 |       [x]       |    [x]     |
+| contracts.get_contract_id_by_node_id_and_hash |       [x]       |    [x]     |
+| contracts.get_name_contract                   |       [x]       |    [x]     |
+| contracts.update_node                         |       [x]       |    [x]     |
+| contracts.cancel                              |       [x]       |    [x]     |
+| contracts.listMyContracts                     |       [x]       |    [x]     |
+| contracts.listContractsByTwinId               |       [x]       |    [x]     |
+| contracts.listContractsByAddress              |       [x]       |    [x]     |
+| contracts.cancelMyContracts                   |       [x]       |    [x]     |
+| contracts.getConsumption                      |       [x]       |    [x]     |
 
 # Twins
 
