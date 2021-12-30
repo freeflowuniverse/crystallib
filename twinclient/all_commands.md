@@ -113,15 +113,15 @@ Here are all commands supported by twinserver and its status in twinclient
 
 | Command                            | Implement State | Test State |
 | :--------------------------------- | :-------------: | :--------: |
-| capacity.getFarms                  |       [ ]       |    [ ]     |
-| capacity.getNodes                  |       [ ]       |    [ ]     |
-| capacity.getAllFarms               |       [ ]       |    [ ]     |
-| capacity.getAllNodes               |       [ ]       |    [ ]     |
-| capacity.filterNodes               |       [ ]       |    [ ]     |
-| capacity.checkFarmHasFreePublicIps |       [ ]       |    [ ]     |
-| capacity.getNodesByFarmId          |       [ ]       |    [ ]     |
-| capacity.getNodeFreeResources      |       [ ]       |    [ ]     |
-| capacity.getFarmIdFromFarmName     |       [ ]       |    [ ]     |
+| capacity.getFarms                  |       [x]       |    [x]     |
+| capacity.getNodes                  |       [x]       |    [x]     |
+| capacity.getAllFarms               |       [x]       |    [x]     |
+| capacity.getAllNodes               |       [x]       |    [x]     |
+| capacity.filterNodes               |       [x]       |    [x]     |
+| capacity.checkFarmHasFreePublicIps |       [x]       |    [x]     |
+| capacity.getNodesByFarmId          |       [x]       |    [x]     |
+| capacity.getNodeFreeResources      |       [x]       |    [x]     |
+| capacity.getFarmIdFromFarmName     |       [x]       |    [x]     |
 
 ## Stellar
 

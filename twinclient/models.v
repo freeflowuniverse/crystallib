@@ -216,7 +216,7 @@ struct ContractTypes {
 	name_contract NameContract [json: 'nameContract']
 }
 
-pub struct ListContracts{
+pub struct ListContracts {
 	node_contracts []SimpleContract [json: 'nodeContracts']
 	name_contracts []SimpleContract [json: 'nameContracts']
 }
@@ -239,6 +239,7 @@ struct ContractState {
 }
 
 struct PublicIP {
+	id          string
 	ip          string
 	gateway     string
 	contract_id u64
@@ -306,4 +307,74 @@ pub:
 struct EntityProof {
 	entity_id u32
 	signature string
+}
+
+[params]
+pub struct PagePayload {
+	page       u32 = 1
+	max_result u32 [json: 'maxResult'] = 50
+}
+
+[params]
+pub struct FilterOptions {
+	cru            u32    [omitempty]
+	mru            u32    [omitempty]
+	sru            u32    [omitempty]
+	hru            u32    [omitempty]
+	public_ips     bool   [json: 'publicIPs'; omitempty]
+	access_node_v4 bool   [json: 'accessNodeV4'; omitempty]
+	access_node_v6 bool   [json: 'accessNodeV6'; omitempty]
+	gateway        bool   [omitempty]
+	farm_id        u32    [json: 'farmId'; omitempty]
+	farm_name      string [json: 'farmName']
+	country        string
+	city           string
+}
+
+pub struct Farm {
+	name              string
+	farm_id           u32        [json: 'farmId']
+	twin_id           u32        [json: 'twinId']
+	version           u32
+	pricing_policy_id u32        [json: 'pricingPolicyId']
+	stellar_address   string     [json: 'stellarAddress']
+	public_ips        []PublicIP [json: 'publicIPs']
+}
+
+pub struct Node {
+	version            u32
+	id                 string
+	node_id            u32          [json: 'nodeId']
+	farm_id            u32          [json: 'farmId']
+	twin_id            u32          [json: 'twinId']
+	country            string
+	city               string
+	grid_version       u32          [json: 'gridVersion']
+	uptime             u64
+	created            u64
+	farming_policy_id  u32          [json: 'farmingPolicyId']
+	updated_at         string       [json: 'updatedAt']
+	cru                string
+	mru                string
+	sru                string
+	hru                string
+	public_config      PublicConfig
+	status             string
+	certification_type string       [json: 'certificationType']
+}
+
+struct PublicConfig {
+	domain string
+	gw4    string
+	gw6    string
+	ipv4   string
+	ipv6   string
+}
+
+pub struct FreeResources {
+	cru   u32
+	mru   u64
+	hru   u64
+	sru   u64
+	ipv4u u32
 }
