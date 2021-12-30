@@ -70,7 +70,14 @@ new_machine := tw.deploy_machines(payload) or { panic(err) }
 ```
 # Tests
 
-For each category there is a test that can help you to use the client, make sure to edit it with your info.
+- For each module there are many tests that can help you to use the client, **MAKE SURE TO EDIT IT WITH YOUR INFO!**.
+- You have option to run single test, multiple tests or all tests using `--test or -t`
+  - Single test: `v run balance_test.v --test t1_get_my_balance`
+  - Multiple tests: `v run capacity_test.v -t t4_filter_nodes t5_check_farm_has_free_public_ips`
+  - All tests: `v run machines_test.v` or `v run machines_test.v --test all`
+  - if you enter a wrong value, list with the available tests will be printed to help you.
+- If you want to add a new test cases, Kindly make sure to update the test_<MODULE> function with your case.
+
 
 # Important Notes
 - In the next section

@@ -1,5 +1,8 @@
 module twinclient
 
+import os.cmdline
+import os
+
 struct KubernetesTestData {
 mut:
 	payload        K8S
@@ -7,7 +10,7 @@ mut:
 	new_worker     AddKubernetesNode
 }
 
-pub fn setup_kubernetes_test() (Client, KubernetesTestData) {
+fn setup_kubernetes_test() (Client, KubernetesTestData) {
 	redis_server := 'localhost:6379'
 	twin_id := 73
 	mut client := init(redis_server, twin_id) or {
@@ -57,50 +60,38 @@ pub fn setup_kubernetes_test() (Client, KubernetesTestData) {
 	return client, data
 }
 
-pub fn test_deploy_kubernetes() {
-	mut client, data := setup_kubernetes_test()
-
+fn t0_deploy_kubernetes(mut client Client, data KubernetesTestData) {
 	println('--------- Deploy K8S ---------')
 	new_kube := client.deploy_kubernetes(data.payload) or { panic(err) }
 	println(new_kube)
 }
 
-pub fn test_list_kubernetes() {
-	mut client, data := setup_kubernetes_test()
-
+fn t1_list_kubernetes(mut client Client, data KubernetesTestData) {
 	println('--------- List Deployed K8S ---------')
 	all_my_kubes := client.list_kubernetes() or { panic(err) }
 	assert data.payload.name in all_my_kubes
 	println(all_my_kubes)
 }
 
-pub fn test_get_kubernetes() {
-	mut client, data := setup_kubernetes_test()
-
+fn t2_get_kubernetes(mut client Client, data KubernetesTestData) {
 	println('--------- Get K8S ---------')
 	get_kube := client.get_kubernetes(data.payload.name) or { panic(err) }
 	println(get_kube)
 }
 
-pub fn test_update_kubernetes() {
-	mut client, data := setup_kubernetes_test()
-
+fn t3_update_kubernetes(mut client Client, data KubernetesTestData) {
 	println('--------- Update K8S ---------')
 	new_kube := client.update_kubernetes(data.update_payload) or { panic(err) }
 	println(new_kube)
 }
 
-pub fn test_add_worker() {
-	mut client, data := setup_kubernetes_test()
-
+fn t4_add_worker(mut client Client, data KubernetesTestData) {
 	println('--------- Add Worker ---------')
 	add_worker_result := client.add_worker(data.new_worker) or { panic(err) }
 	println(add_worker_result)
 }
 
-pub fn test_delete_worker() {
-	mut client, data := setup_kubernetes_test()
-
+fn t5_delete_worker(mut client Client, data KubernetesTestData) {
 	delete_worker_result := client.delete_worker(
 		name: data.new_worker.name
 		deployment_name: data.payload.name
@@ -109,10 +100,57 @@ pub fn test_delete_worker() {
 	println(delete_worker_result)
 }
 
-pub fn test_delete_kubernetes() {
-	mut client, data := setup_kubernetes_test()
-
+fn t6_delete_kubernetes(mut client Client, data KubernetesTestData) {
 	println('--------- Delete K8S ---------')
 	delete_kube := client.delete_kubernetes(data.payload.name) or { panic(err) }
 	println(delete_kube)
+}
+
+pub fn test_kubernetes() {
+	mut client, data := setup_kubernetes_test()
+	mut cmd_test := cmdline.options_after(os.args, ['--test', '-t'])
+	if cmd_test.len == 0 {
+		cmd_test << 'all'
+	}
+
+	test_cases := ['t0_deploy_kubernetes', 't1_list_kubernetes', 't2_get_kubernetes',
+		't3_update_kubernetes', 't4_add_worker', 't5_delete_worker', 't6_delete_kubernetes']
+
+	for tc in cmd_test {
+		match tc {
+			't0_deploy_kubernetes' {
+				t0_deploy_kubernetes(mut client, data)
+			}
+			't1_list_kubernetes' {
+				t1_list_kubernetes(mut client, data)
+			}
+			't2_get_kubernetes' {
+				t2_get_kubernetes(mut client, data)
+			}
+			't3_update_kubernetes' {
+				t3_update_kubernetes(mut client, data)
+			}
+			't4_add_worker' {
+				t4_add_worker(mut client, data)
+			}
+			't5_delete_worker' {
+				t5_delete_worker(mut client, data)
+			}
+			't6_delete_kubernetes' {
+				t6_delete_kubernetes(mut client, data)
+			}
+			'all' {
+				t0_deploy_kubernetes(mut client, data)
+				t1_list_kubernetes(mut client, data)
+				t2_get_kubernetes(mut client, data)
+				// t3_update_kubernetes(mut client, data)
+				t4_add_worker(mut client, data)
+				t5_delete_worker(mut client, data)
+				t6_delete_kubernetes(mut client, data)
+			}
+			else {
+				println('Available test case:\n$test_cases, or all to run all test cases')
+			}
+		}
+	}
 }

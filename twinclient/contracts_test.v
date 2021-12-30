@@ -1,5 +1,8 @@
 module twinclient
 
+import os.cmdline
+import os
+
 struct ContractTestData {
 	twin_id           u32
 	address           string
@@ -59,9 +62,7 @@ fn t1_create_name_contract(mut client Client, mut data ContractTestData) {
 
 fn t2_get_contract(mut client Client, data ContractTestData) {
 	println('--------- Get Contract ---------')
-	mut get_contract := client.get_contract(data.created_node_contract_id) or {
-		panic(err)
-	}
+	mut get_contract := client.get_contract(data.created_node_contract_id) or { panic(err) }
 	assert get_contract.twin_id == data.twin_id
 	println(get_contract)
 }
@@ -89,7 +90,7 @@ fn t5_get_name_contract(mut client Client, data ContractTestData) {
 	println('--------- Get Name Contract ---------')
 	mut get_contract := client.get_name_contract(data.new_name_contract) or { panic(err) }
 	assert get_contract == data.created_name_contract_id
-	println("Name contract id :: $get_contract")
+	println('Name contract id :: $get_contract')
 }
 
 fn t6_list_my_contracts(mut client Client, data ContractTestData) {
@@ -112,17 +113,13 @@ fn t8_list_contracts_by_address(mut client Client, data ContractTestData) {
 
 fn t9_get_consumption(mut client Client, data ContractTestData) {
 	println('--------- Get Contract Consumption ---------')
-	mut consumption := client.get_consumption(data.created_node_contract_id) or {
-		panic(err)
-	}
+	mut consumption := client.get_consumption(data.created_node_contract_id) or { panic(err) }
 	println(consumption)
 }
 
 fn t10_cancel_contract(mut client Client, data ContractTestData) {
 	println('--------- Cancel Contract ---------')
-	canceled_contract_id := client.cancel_contract(data.created_node_contract_id) or {
-		panic(err)
-	}
+	canceled_contract_id := client.cancel_contract(data.created_node_contract_id) or { panic(err) }
 	assert canceled_contract_id == data.created_node_contract_id
 	println('contract [$canceled_contract_id] cancelled')
 }
@@ -135,17 +132,74 @@ fn t11_cancel_my_contracts(mut client Client, data ContractTestData) {
 
 pub fn test_contracts() {
 	mut client, mut data := setup_contracts_test()
-	t0_create_node_contract(mut client, mut data)
-	t1_create_name_contract(mut client, mut data)
-	t2_get_contract(mut client, data)
-	t3_update_contract(mut client, mut data)
-	t4_get_contract_id_by_node_id_and_hash(mut client, data)
-	t5_get_name_contract(mut client, data)
-	t6_list_my_contracts(mut client, data)
-	t7_list_contracts_by_twin_id(mut client, data)
-	t8_list_contracts_by_address(mut client, data)
-	t9_get_consumption(mut client, data)
-	t10_cancel_contract(mut client, data)
-	// ATTENTION: DELETE ALL YOUR CONTRACTS!
-	t11_cancel_my_contracts(mut client, data)
+
+	mut cmd_test := cmdline.options_after(os.args, ['--test', '-t'])
+	if cmd_test.len == 0 {
+		cmd_test << 'all'
+	}
+
+	test_cases := ['t0_create_node_contract', 't1_create_name_contract', 't2_get_contract',
+		't3_update_contract', 't4_get_contract_id_by_node_id_and_hash', 't5_get_name_contract',
+		't6_list_my_contracts', 't7_list_contracts_by_twin_id', 't8_list_contracts_by_address',
+		't9_get_consumption', 't10_cancel_contract', 't11_cancel_my_contracts']
+
+	for tc in cmd_test {
+		match tc {
+			't0_create_node_contract' {
+				t0_create_node_contract(mut client, mut data)
+			}
+			't1_create_name_contract' {
+				t1_create_name_contract(mut client, mut data)
+			}
+			't2_get_contract' {
+				t2_get_contract(mut client, data)
+			}
+			't3_update_contract' {
+				t3_update_contract(mut client, mut data)
+			}
+			't4_get_contract_id_by_node_id_and_hash' {
+				t4_get_contract_id_by_node_id_and_hash(mut client, data)
+			}
+			't5_get_name_contract' {
+				t5_get_name_contract(mut client, data)
+			}
+			't6_list_my_contracts' {
+				t6_list_my_contracts(mut client, data)
+			}
+			't7_list_contracts_by_twin_id' {
+				t7_list_contracts_by_twin_id(mut client, data)
+			}
+			't8_list_contracts_by_address' {
+				t8_list_contracts_by_address(mut client, data)
+			}
+			't9_get_consumption' {
+				t9_get_consumption(mut client, data)
+			}
+			't10_cancel_contract' {
+				t10_cancel_contract(mut client, data)
+			}
+			't11_cancel_my_contracts' {
+				// ATTENTION: DELETE ALL YOUR CONTRACTS!
+				t11_cancel_my_contracts(mut client, data)
+			}
+			'all' {
+				t0_create_node_contract(mut client, mut data)
+				t1_create_name_contract(mut client, mut data)
+				t2_get_contract(mut client, data)
+				t3_update_contract(mut client, mut data)
+				t4_get_contract_id_by_node_id_and_hash(mut client, data)
+				t5_get_name_contract(mut client, data)
+				t6_list_my_contracts(mut client, data)
+				t7_list_contracts_by_twin_id(mut client, data)
+				t8_list_contracts_by_address(mut client, data)
+				t9_get_consumption(mut client, data)
+				t10_cancel_contract(mut client, data)
+				// ATTENTION: DELETE ALL YOUR CONTRACTS!
+				t11_cancel_my_contracts(mut client, data)
+			}
+			else {
+				println('Available test case:\n$test_cases, or all to run all test cases')
+			}
+		}
+	}
 }

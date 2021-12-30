@@ -1,5 +1,8 @@
 module twinclient
 
+import os.cmdline
+import os
+
 struct MachinesTestData {
 mut:
 	payload        Machines
@@ -47,7 +50,7 @@ fn setup_machines_test() (Client, MachinesTestData) {
 	data.new_machine = AddMachine{
 		deployment_name: data.payload.name
 		name: 'm2'
-		node_id: 3
+		node_id: 4
 		public_ip: false
 		planetary: true
 		cpu: 1
@@ -62,51 +65,38 @@ fn setup_machines_test() (Client, MachinesTestData) {
 	return client, data
 }
 
-pub fn test_deploy_machines() {
-	// redis_server and twin_dest are const in client.v
-	mut client, data := setup_machines_test()
-
+fn t0_deploy_machines(mut client Client, data MachinesTestData) {
 	println('--------- Deploy Machines ---------')
 	machines := client.deploy_machines(data.payload) or { panic(err) }
 	println(machines)
 }
 
-pub fn test_list_mahcines() {
-	mut client, data := setup_machines_test()
-
+fn t1_list_machines(mut client Client, data MachinesTestData) {
 	println('--------- List Deployed Machines ---------')
 	all_my_machines := client.list_machines() or { panic(err) }
 	assert data.payload.name in all_my_machines
 	println(all_my_machines)
 }
 
-pub fn test_get_machines() {
-	mut client, data := setup_machines_test()
-
+fn t2_get_machines(mut client Client, data MachinesTestData) {
 	println('--------- Get Machines ---------')
 	get_machines := client.get_machines(data.payload.name) or { panic(err) }
 	println(get_machines)
 }
 
-// pub fn test_update_machines() {
-// 	mut client, data := setup_machines_test()
+fn t3_update_machines(mut client Client, data MachinesTestData) {
+	println('--------- Update Machines ---------')
+	update_machines := client.update_machines(data.update_payload) or { panic(err) }
+	println(update_machines)
+}
 
-// 	println('--------- Update Machines ---------')
-// 	update_machines := client.update_machines(data.update_payload) or { panic(err) }
-// 	println(update_machines)
-// }
-
-pub fn test_add_machine() {
-	mut client, data := setup_machines_test()
-
+fn t4_add_machine(mut client Client, data MachinesTestData) {
 	println('--------- Add Machine ---------')
 	add_machine := client.add_machine(data.new_machine) or { panic(err) }
 	println(add_machine)
 }
 
-pub fn test_delete_machine() {
-	mut client, data := setup_machines_test()
-
+fn t5_delete_machine(mut client Client, data MachinesTestData) {
 	println('--------- Delete Machine ---------')
 	delete_machine := client.delete_machine(
 		name: data.new_machine.name
@@ -115,10 +105,57 @@ pub fn test_delete_machine() {
 	println(delete_machine)
 }
 
-pub fn test_delete_machines() {
-	mut client, data := setup_machines_test()
-
+fn t6_delete_machines(mut client Client, data MachinesTestData) {
 	println('--------- Delete Machines ---------')
 	delete_machine := client.delete_machines(data.payload.name) or { panic(err) }
 	println(delete_machine)
+}
+
+pub fn test_machines() {
+	mut client, data := setup_machines_test()
+	mut cmd_test := cmdline.options_after(os.args, ['--test', '-t'])
+	if cmd_test.len == 0 {
+		cmd_test << 'all'
+	}
+
+	test_cases := ['t0_deploy_machines', 't1_list_machines', 't2_get_machines', 't3_update_machines',
+		't4_add_machine', 't5_delete_machine', 't6_delete_machines']
+
+	for tc in cmd_test {
+		match tc {
+			't0_deploy_machines' {
+				t0_deploy_machines(mut client, data)
+			}
+			't1_list_machines' {
+				t1_list_machines(mut client, data)
+			}
+			't2_get_machines' {
+				t2_get_machines(mut client, data)
+			}
+			't3_update_machines' {
+				t3_update_machines(mut client, data)
+			}
+			't4_add_machine' {
+				t4_add_machine(mut client, data)
+			}
+			't5_delete_machine' {
+				t5_delete_machine(mut client, data)
+			}
+			't6_delete_machines' {
+				t6_delete_machines(mut client, data)
+			}
+			'all' {
+				t0_deploy_machines(mut client, data)
+				t1_list_machines(mut client, data)
+				t2_get_machines(mut client, data)
+				t3_update_machines(mut client, data)
+				t4_add_machine(mut client, data)
+				t5_delete_machine(mut client, data)
+				t6_delete_machines(mut client, data)
+			}
+			else {
+				println('Available test case:\n$test_cases, or all to run all test cases')
+			}
+		}
+	}
 }

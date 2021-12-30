@@ -1,5 +1,8 @@
 module twinclient
 
+import os.cmdline
+import os
+
 struct ZDBsTestData {
 mut:
 	payload        ZDBs
@@ -7,7 +10,7 @@ mut:
 	new_zdb        AddZDB
 }
 
-fn setup_zdb_test() (Client, ZDBsTestData) {
+fn setup_zdbs_test() (Client, ZDBsTestData) {
 	redis_server := 'localhost:6379'
 	twin_id := 73
 	mut client := init(redis_server, twin_id) or {
@@ -53,41 +56,38 @@ fn setup_zdb_test() (Client, ZDBsTestData) {
 	return client, data
 }
 
-pub fn test_deploy_zdbs() {
-	mut client, data := setup_zdb_test()
-
-	println('--------- Deploy ZDB ---------')
+fn t0_deploy_zdbs(mut client Client, data ZDBsTestData) {
+	println('--------- Deploy ZDBs ---------')
 	deploy_zdbs := client.deploy_zdbs(data.payload) or { panic(err) }
 	println(deploy_zdbs)
 }
 
-pub fn test_list_zdbs() {
-	mut client, data := setup_zdb_test()
+fn t1_list_zdbs(mut client Client, data ZDBsTestData) {
 	println('--------- List Deployed ZDBs ---------')
 	all_my_zdbs := client.list_zdbs() or { panic(err) }
 	assert data.payload.name in all_my_zdbs
 	println(all_my_zdbs)
 }
 
-pub fn test_get_zdbs() {
-	mut client, data := setup_zdb_test()
-	println('--------- Get ZDB ---------')
+fn t2_get_zdbs(mut client Client, data ZDBsTestData) {
+	println('--------- Get ZDBs ---------')
 	get_zdbs_deployment := client.get_zdbs(data.payload.name) or { panic(err) }
 	println(get_zdbs_deployment)
 }
 
-// pub fn test_update_zdbs() {
-// }
+fn t3_update_zdbs(mut client Client, data ZDBsTestData) {
+	println('--------- Update ZDBs ---------')
+	update_zdbs_deployment := client.update_zdbs(data.update_payload) or { panic(err) }
+	println(update_zdbs_deployment)
+}
 
-pub fn test_add_zdb() {
-	mut client, data := setup_zdb_test()
+fn t4_add_zdb(mut client Client, data ZDBsTestData) {
 	println('--------- Add ZDB ---------')
 	add_zdb_result := client.add_zdb(data.new_zdb) or { panic(err) }
 	println(add_zdb_result)
 }
 
-pub fn test_delete_zdb() {
-	mut client, data := setup_zdb_test()
+fn t5_delete_zdb(mut client Client, data ZDBsTestData) {
 	println('--------- Delete ZDB ---------')
 	delete_zdb_result := client.delete_zdb(
 		name: data.new_zdb.name
@@ -96,9 +96,57 @@ pub fn test_delete_zdb() {
 	println(delete_zdb_result)
 }
 
-pub fn test_delete_zdbs() {
-	mut client, data := setup_zdb_test()
+fn t6_delete_zdbs(mut client Client, data ZDBsTestData) {
 	println('--------- Delete ZDBs ---------')
 	delete_zdbs := client.delete_zdbs(data.payload.name) or { panic(err) }
 	println(delete_zdbs)
+}
+
+pub fn test_zdbs() {
+	mut client, data := setup_zdbs_test()
+	mut cmd_test := cmdline.options_after(os.args, ['--test', '-t'])
+	if cmd_test.len == 0 {
+		cmd_test << 'all'
+	}
+
+	test_cases := ['t0_deploy_zdbs', 't1_list_zdbs', 't2_get_zdbs',
+		't3_update_zdbs', 't4_add_zdb', 't5_delete_zdb', 't6_delete_zdbs']
+
+	for tc in cmd_test {
+		match tc {
+			't0_deploy_zdbs' {
+				t0_deploy_zdbs(mut client, data)
+			}
+			't1_list_zdbs' {
+				t1_list_zdbs(mut client, data)
+			}
+			't2_get_zdbs' {
+				t2_get_zdbs(mut client, data)
+			}
+			't3_update_zdbs' {
+				t3_update_zdbs(mut client, data)
+			}
+			't4_add_zdb' {
+				t4_add_zdb(mut client, data)
+			}
+			't5_delete_zdb' {
+				t5_delete_zdb(mut client, data)
+			}
+			't6_delete_zdbs' {
+				t6_delete_zdbs(mut client, data)
+			}
+			'all' {
+				t0_deploy_zdbs(mut client, data)
+				t1_list_zdbs(mut client, data)
+				t2_get_zdbs(mut client, data)
+				// t3_update_zdbs(mut client, data)
+				t4_add_zdb(mut client, data)
+				t5_delete_zdb(mut client, data)
+				t6_delete_zdbs(mut client, data)
+			}
+			else {
+				println('Available test case:\n$test_cases, or all to run all test cases')
+			}
+		}
+	}
 }

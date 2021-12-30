@@ -1,5 +1,8 @@
 module twinclient
 
+import os.cmdline
+import os
+
 struct CapacityTestData {
 	page_payload PagePayload
 	filters      FilterOptions
@@ -90,13 +93,59 @@ fn t8_get_farm_id_from_farm_name(mut client Client, data CapacityTestData) {
 
 pub fn test_capacity() {
 	mut client, data := setup_capacity_test()
-	t0_get_farms(mut client, data)
-	t1_get_nodes(mut client, data)
-	t2_get_all_farms(mut client, data)
-	t3_get_all_nodes(mut client, data)
-	t4_filter_nodes(mut client, data)
-	t5_check_farm_has_free_public_ips(mut client, data)
-	t6_get_nodes_by_farm_id(mut client, data)
-	t7_get_node_free_resources(mut client, data)
-	t8_get_farm_id_from_farm_name(mut client, data)
+
+	mut cmd_test := cmdline.options_after(os.args, ['--test', '-t'])
+	if cmd_test.len == 0 {
+		cmd_test << 'all'
+	}
+
+	test_cases := ['t0_get_farms', 't1_get_nodes', 't2_get_all_farms', 't3_get_all_nodes',
+		't4_filter_nodes', 't5_check_farm_has_free_public_ips', 't6_get_nodes_by_farm_id',
+		't7_get_node_free_resources', 't8_get_farm_id_from_farm_name']
+
+	for tc in cmd_test {
+		match tc {
+			't0_get_farms' {
+				t0_get_farms(mut client, data)
+			}
+			't1_get_nodes' {
+				t1_get_nodes(mut client, data)
+			}
+			't2_get_all_farms' {
+				t2_get_all_farms(mut client, data)
+			}
+			't3_get_all_nodes' {
+				t3_get_all_nodes(mut client, data)
+			}
+			't4_filter_nodes' {
+				t4_filter_nodes(mut client, data)
+			}
+			't5_check_farm_has_free_public_ips' {
+				t5_check_farm_has_free_public_ips(mut client, data)
+			}
+			't6_get_nodes_by_farm_id' {
+				t6_get_nodes_by_farm_id(mut client, data)
+			}
+			't7_get_node_free_resources' {
+				t7_get_node_free_resources(mut client, data)
+			}
+			't8_get_farm_id_from_farm_name' {
+				t8_get_farm_id_from_farm_name(mut client, data)
+			}
+			'all' {
+				t0_get_farms(mut client, data)
+				t1_get_nodes(mut client, data)
+				t2_get_all_farms(mut client, data)
+				t3_get_all_nodes(mut client, data)
+				t4_filter_nodes(mut client, data)
+				t5_check_farm_has_free_public_ips(mut client, data)
+				t6_get_nodes_by_farm_id(mut client, data)
+				t7_get_node_free_resources(mut client, data)
+				t8_get_farm_id_from_farm_name(mut client, data)
+			}
+			else {
+				println('Available test case:\n$test_cases, or all to run all test cases')
+			}
+		}
+	}
 }
