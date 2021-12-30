@@ -35,10 +35,10 @@ Client for Twinserver using V Lang based on RMB
 # How to use it
 ```v
 // 1. Init the Client
-import crystallib.twinclient
+import crystallib.twinclient {init, Machines, Machine, Network, Env}
 const redis_server = 'localhost:6379'
 mut twin_dest := 73 // ADD TWIN ID.
-mut tw := twinclient.init(redis_server, twin_dest) or { panic(err) }
+mut tw := init(redis_server, twin_dest) or { panic(err) }
 
 // 2. Create a payload ex. machines
 payload := Machines{
