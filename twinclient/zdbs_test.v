@@ -109,8 +109,8 @@ pub fn test_zdbs() {
 		cmd_test << 'all'
 	}
 
-	test_cases := ['t0_deploy_zdbs', 't1_list_zdbs', 't2_get_zdbs',
-		't3_update_zdbs', 't4_add_zdb', 't5_delete_zdb', 't6_delete_zdbs']
+	test_cases := ['t0_deploy_zdbs', 't1_list_zdbs', 't2_get_zdbs', 't3_update_zdbs', 't4_add_zdb',
+		't5_delete_zdb', 't6_delete_zdbs']
 
 	for tc in cmd_test {
 		match tc {
