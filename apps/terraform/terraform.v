@@ -36,3 +36,9 @@ pub fn (mut app Terraform) check()? {
 
 
 }
+
+
+pub fn (mut app Terraform) deploy(terrascript string)? {
+	
+
+}

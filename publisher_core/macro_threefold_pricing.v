@@ -28,6 +28,7 @@ fn tfprices_varf() map[string]f64 {
 	mut varf := map[string]f64{}
 
 	varf["TFTUSD"] = tft_usd_get()
+	varf["TFTFARMING"] = 0.08
 	varf["CU_MUSD"] = 30
 	varf["SU_MUSD"] = 15
 	varf["NU_MUSD"] = 0.10
@@ -47,10 +48,10 @@ fn tfprices_varf() map[string]f64 {
 	varf["NAME_MTFT"] = varf["NAME_MUSD"] / varf["TFTUSD"]
 	varf["DNAME_MTFT"] = varf["DNAME_MUSD"] / varf["TFTUSD"]
 
-	varf["REWARD_CU_TFT"] = varf["REWARD_CU_USD"] / varf["TFTUSD"]
-	varf["REWARD_SU_TFT"] = varf["REWARD_SU_USD"] / varf["TFTUSD"]
-	varf["REWARD_NU_TFT"] = varf["REWARD_NU_USD"] / varf["TFTUSD"]
-	varf["REWARD_IP_TFT"] = varf["REWARD_IP_USD"] / varf["TFTUSD"]
+	varf["REWARD_CU_TFT"] = varf["REWARD_CU_USD"] / varf["TFTFARMING"]
+	varf["REWARD_SU_TFT"] = varf["REWARD_SU_USD"] / varf["TFTFARMING"]
+	varf["REWARD_NU_TFT"] = varf["REWARD_NU_USD"] / varf["TFTFARMING"]
+	varf["REWARD_IP_TFT"] = varf["REWARD_IP_USD"] / varf["TFTFARMING"]
 
 	return varf
 
