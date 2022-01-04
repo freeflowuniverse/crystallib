@@ -29,25 +29,40 @@ fn tfprices_varf() map[string]f64 {
 
 	varf["TFTUSD"] = tft_usd_get()
 	varf["TFTFARMING"] = 0.08
-	varf["CU_MUSD"] = 30
-	varf["SU_MUSD"] = 15
-	varf["NU_MUSD"] = 0.10
-	varf["IP_MUSD"] = 5
-	varf["NAME_MUSD"] = 1
-	varf["DNAME_MUSD"] = 2
-	varf["REWARD_CU_USD"] = 16 * 0.15
-	varf["REWARD_SU_USD"] = 10 * 0.15
-	varf["REWARD_NU_USD"] = 0.2 * 0.15	//is per GB transfer (as customers use it)
+	varf["CU_USD_MONTH"] = 22
+	varf["SU_USD_MONTH"] = 14
+	varf["IP_USD_MONTH"] = 5
+	varf["NU_USD_GB"] = 0.05 //price per GB
+	varf["NAME_USD_MONTH"] = 1
+	varf["DNAME_USD_MONTH"] = 2
+	varf["REWARD_CU_USD"] = 2.4
+	varf["REWARD_SU_USD"] = 1
+	varf["REWARD_NU_USD"] = 0.03	//is per GB transfer (as customers use it)
 	varf["REWARD_IP_USD"] = 0.005 //is per IP address, calculated per hour
 
-	//calculate the dynamic price in TFT
-	varf["CU_MTFT"] = varf["CU_MUSD"] / varf["TFTUSD"]
-	varf["SU_MTFT"] = varf["SU_MUSD"] / varf["TFTUSD"]
-	varf["NU_MTFT"] = varf["NU_MUSD"] / varf["TFTUSD"]
-	varf["IP_MTFT"] = varf["IP_MUSD"] / varf["TFTUSD"]
-	varf["NAME_MTFT"] = varf["NAME_MUSD"] / varf["TFTUSD"]
-	varf["DNAME_MTFT"] = varf["DNAME_MUSD"] / varf["TFTUSD"]
+	//calculate mUSD per hour
+	varf["CU_MUSD_HOUR"] = (varf["CU_USD_MONTH"]*1000)/(30*24)
+	varf["SU_MUSD_HOUR"] = (varf["SU_USD_MONTH"]*1000)/(30*24)
+	varf["IP_MUSD_HOUR"] = (varf["IP_USD_MONTH"]*1000)/(30*24)
+	varf["NAME_MUSD_HOUR"] = (varf["NAME_USD_MONTH"]*1000)/(30*24)
+	varf["DNAME_MUSD_HOUR"] = (varf["DNAME_USD_MONTH"]*1000)/(30*24)
 
+	//calculate the dynamic price in TFT
+	varf["CU_MTFT_HOUR"] = varf["CU_MUSD_HOUR"] / varf["TFTUSD"]
+	varf["SU_MTFT_HOUR"] = varf["SU_MUSD_HOUR"] / varf["TFTUSD"]
+	varf["NU_MTFT_GB"] = 1000 * varf["NU_USD_GB"] / varf["TFTUSD"]
+	varf["IP_MTFT_HOUR"] = varf["IP_MUSD_HOUR"] / varf["TFTUSD"]
+	varf["NAME_MTFT_HOUR"] = varf["NAME_MUSD_HOUR"] / varf["TFTUSD"]
+	varf["DNAME_MTFT_HOUR"] = varf["DNAME_MUSD_HOUR"] / varf["TFTUSD"]
+
+
+	//calculate the dynamic price in USD per month after discount
+	varf["CU_USD_MONTH_DISCOUNT"] = varf["CU_USD_MONTH"] * 0.4 
+	varf["SU_USD_MONTH_DISCOUNT"] = varf["SU_USD_MONTH"] * 0.4 
+	varf["NU_USD_MONTH_DISCOUNT"] = varf["NU_USD_GB"] * 0.6 
+	varf["IP_USD_MONTH_DISCOUNT"] = varf["IP_USD_MONTH"] * 0.6 	
+
+	
 	varf["REWARD_CU_TFT"] = varf["REWARD_CU_USD"] / varf["TFTFARMING"]
 	varf["REWARD_SU_TFT"] = varf["REWARD_SU_USD"] / varf["TFTFARMING"]
 	varf["REWARD_NU_TFT"] = varf["REWARD_NU_USD"] / varf["TFTFARMING"]
@@ -76,11 +91,20 @@ fn macro_tfpriceinfo(mut state LineProcessorState, mut macro texttools.MacroObj)
 	varf := tfprices_varf()
 	vars := tfprices_vars()
 
+	mut fkeys := varf.keys()
+	mut skeys := vars.keys()
+	fkeys.sort()
+	fkeys.reverse_in_place()
+	skeys.sort()
+	skeys.reverse_in_place()
+
 	for mut line in state.lines_server{
-		for a,b in varf{
+		for a in fkeys{
+			b := varf[a]
 			line = line.replace("$"+a,'${b:.2f}')
 		}
-		for a2,b2 in vars{
+		for a2 in skeys{
+			b2 := vars[a2]
 			line = line.replace("$"+a2,b2)
 		}
 	}
