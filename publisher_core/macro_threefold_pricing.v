@@ -43,6 +43,7 @@ fn tfprices_varf() map[string]f64 {
 	//calculate mUSD per hour
 	varf["CU_MUSD_HOUR"] = (varf["CU_USD_MONTH"]*1000)/(30*24)
 	varf["SU_MUSD_HOUR"] = (varf["SU_USD_MONTH"]*1000)/(30*24)
+	varf["NU_MUSD_GB"] = (varf["NU_USD_GB"]*1000)
 	varf["IP_MUSD_HOUR"] = (varf["IP_USD_MONTH"]*1000)/(30*24)
 	varf["NAME_MUSD_HOUR"] = (varf["NAME_USD_MONTH"]*1000)/(30*24)
 	varf["DNAME_MUSD_HOUR"] = (varf["DNAME_USD_MONTH"]*1000)/(30*24)
@@ -50,7 +51,7 @@ fn tfprices_varf() map[string]f64 {
 	//calculate the dynamic price in TFT
 	varf["CU_MTFT_HOUR"] = varf["CU_MUSD_HOUR"] / varf["TFTUSD"]
 	varf["SU_MTFT_HOUR"] = varf["SU_MUSD_HOUR"] / varf["TFTUSD"]
-	varf["NU_MTFT_GB"] = 1000 * varf["NU_USD_GB"] / varf["TFTUSD"]
+	varf["NU_MTFT_GB"] = varf["NU_MUSD_GB"] / varf["TFTUSD"]
 	varf["IP_MTFT_HOUR"] = varf["IP_MUSD_HOUR"] / varf["TFTUSD"]
 	varf["NAME_MTFT_HOUR"] = varf["NAME_MUSD_HOUR"] / varf["TFTUSD"]
 	varf["DNAME_MTFT_HOUR"] = varf["DNAME_MUSD_HOUR"] / varf["TFTUSD"]
