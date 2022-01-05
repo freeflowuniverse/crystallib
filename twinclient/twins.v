@@ -1,8 +1,8 @@
 module twinclient
 
 import json
-// Create a new twin using your planetary ip or ipv6
 
+// Create a new twin using your planetary ip or ipv6
 pub fn (mut tw Client) create_twin(ip string) ?Twin {
 	mut msg := tw.send('twinserver.twins.create', '{"ip": "$ip"}') ?
 	response := tw.read(msg)

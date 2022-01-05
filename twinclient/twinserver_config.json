@@ -1,0 +1,7 @@
+{
+    "network": "<network environment dev or test or main>",
+    "mnemonic": "<your account mnemonics>",
+    "rmb_proxy": false,
+    "storeSecret": "secret",
+    "keypairType": "sr25519"
+}

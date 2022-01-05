@@ -1,6 +1,5 @@
 module twinclient
 
-import threefoldtech.info_specs_grid3.vlang.zos
 import json
 
 // Deploy kubernetes workload
@@ -15,13 +14,13 @@ pub fn (mut tw Client) deploy_kubernetes(payload K8S) ?DeployResponse {
 }
 
 // Get kubernetes deployment info using deployment name
-pub fn (mut tw Client) get_kubernetes(name string) ?[]zos.Deployment {
+pub fn (mut tw Client) get_kubernetes(name string) ?[]Deployment {
 	mut msg := tw.send('twinserver.k8s.get', '{"name": "$name"}') ?
 	response := tw.read(msg)
 	if response.err != '' {
 		return error(response.err)
 	}
-	return json.decode([]zos.Deployment, response.data) or {}
+	return json.decode([]Deployment, response.data) or {}
 }
 
 // Add new worker to a kubernetes deployment

@@ -1,6 +1,5 @@
 module twinclient
 
-import threefoldtech.info_specs_grid3.vlang.zos
 import json
 
 // Deploy machines workload
@@ -15,13 +14,13 @@ pub fn (mut tw Client) deploy_machines(payload Machines) ?DeployResponse {
 }
 
 // Get machines deployment info using deployment name
-pub fn (mut tw Client) get_machines(name string) ?[]zos.Deployment {
+pub fn (mut tw Client) get_machines(name string) ?[]Deployment {
 	mut msg := tw.send('twinserver.machines.get', '{"name": "$name"}') ?
 	response := tw.read(msg)
 	if response.err != '' {
 		return error(response.err)
 	}
-	return json.decode([]zos.Deployment, response.data) or {}
+	return json.decode([]Deployment, response.data) or {}
 }
 
 // Update deployed machines deployment with updated payload
