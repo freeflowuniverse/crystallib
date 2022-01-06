@@ -368,6 +368,9 @@ pub fn (mut app App) handler(_path string) vweb.Result {
 	}
 	mut path := _path
 
+	// enable CORS by default
+	app.add_header("Access-Control-Allow-Origin", "*")
+
 	// println(" ++ $path")
 
 	mut domain := ''
