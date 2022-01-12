@@ -1,4 +1,4 @@
-module docker
+module docker0
 
 import os
 import time
@@ -19,6 +19,7 @@ pub struct DockerNodeArguments {
 }
 
 // get a new docker engine
+// to use docker.new() -> returns DockerEngine for local machine
 // to use docker.new(node_ipaddr:"192.168..10:2222",node_name:"myremoteserver") -> returns DockerEngine for a remote machine, ssh-agent needs to be loaded
 // to use docker.new(node_ipaddr:"192.168..10",node_name:"myremoteserver") -> returns DockerEngine for a remote machine on default ssh port 22
 pub fn new(args DockerNodeArguments) ?DockerEngine {
@@ -39,19 +40,6 @@ pub fn new(args DockerNodeArguments) ?DockerEngine {
 	de.init()
 	return de
 }
-
-// // get a new docker engine
-// // to use docker.new_local() -> returns DockerEngine for local machine
-// pub fn new_local() ?DockerEngine {
-// 	mut node := builder.node_get(name: 'localnode') ?
-// 	mut de := DockerEngine{
-// 		node: node
-// 		sshkeys_allowed: args.sshkeys_allowed
-// 	}
-// 	de.init()
-// 	return de
-// }
-
 
 // return list of images
 pub fn (mut e DockerEngine) images_list() []DockerImage {
@@ -97,12 +85,12 @@ pub fn (mut e DockerEngine) images_list() []DockerImage {
 
 pub fn (mut e DockerEngine) init() {
 	/// Add predefined threefold docker ssh keys to the node
-	// e.node.executor.exec("echo '$pubkey' > ~/.ssh/threefold.pub && chmod 644 ~/.ssh/threefold.pub") or {
-	// 	panic(err)
-	// }
-	// e.node.executor.exec("echo '$privkey' > ~/.ssh/threefold && chmod 600 ~/.ssh/threefold") or {
-	// 	panic(err)
-	// }
+	e.node.executor.exec("echo '$pubkey' > ~/.ssh/threefold.pub && chmod 644 ~/.ssh/threefold.pub") or {
+		panic(err)
+	}
+	e.node.executor.exec("echo '$privkey' > ~/.ssh/threefold && chmod 600 ~/.ssh/threefold") or {
+		panic(err)
+	}
 }
 
 // return list of images
@@ -197,11 +185,11 @@ pub fn (mut e DockerEngine) container_create(args DockerContainerCreateArgs) ?Do
 		image = image + ':$args.image_tag'
 	}
 
-	// if image == 'threefold' || image == 'threefold:latest' || image == '' {
-	// 	img := e.build(false) or { panic(err) }
-	// 	image = '$img.repo:$img.tag'
-	// 	command = '/usr/local/bin/boot.sh'
-	// }
+	if image == 'threefold' || image == 'threefold:latest' || image == '' {
+		img := e.build(false) or { panic(err) }
+		image = '$img.repo:$img.tag'
+		command = '/usr/local/bin/boot.sh'
+	}
 
 	// if forwarded ports passed in the args not containing mapping tp ssh (22) create one
 	if !e.contains_ssh_port(args.forwarded_ports) {
@@ -214,19 +202,19 @@ pub fn (mut e DockerEngine) container_create(args DockerContainerCreateArgs) ?Do
 	e.node.executor.exec(cmd) or { panic(err) }
 
 	mut container := e.container_get(args.name) or { panic(err) }
-	// mut docker_pubkey := pubkey
-	// cmd = "docker exec $container.id sh -c 'echo \"$docker_pubkey\" >> ~/.ssh/authorized_keys'"
+	mut docker_pubkey := pubkey
+	cmd = "docker exec $container.id sh -c 'echo \"$docker_pubkey\" >> ~/.ssh/authorized_keys'"
 
-	// if container.node.executor is builder.ExecutorSSH {
-	// 	mut sshkey := container.node.executor.info()['sshkey'] + '.pub'
-	// 	sshkey = os.read_file(sshkey) or { panic(err) }
-	// 	// add pub sshkey on authorized keys of node and container
-	// 	cmd = "echo \"$sshkey\" >> ~/.ssh/authorized_keys && docker exec $container.id sh -c 'echo \"$docker_pubkey\" >> ~/.ssh/authorized_keys && echo \"$sshkey\" >> ~/.ssh/authorized_keys'"
-	// }
+	if container.node.executor is builder.ExecutorSSH {
+		mut sshkey := container.node.executor.info()['sshkey'] + '.pub'
+		sshkey = os.read_file(sshkey) or { panic(err) }
+		// add pub sshkey on authorized keys of node and container
+		cmd = "echo \"$sshkey\" >> ~/.ssh/authorized_keys && docker exec $container.id sh -c 'echo \"$docker_pubkey\" >> ~/.ssh/authorized_keys && echo \"$sshkey\" >> ~/.ssh/authorized_keys'"
+	}
 
 	// wait  making sure container started correctly
-	// time.sleep_ms(200)
-	// container.node.executor.exec(cmd) ?
+	time.sleep_ms(200)
+	container.node.executor.exec(cmd) ?
 	return container
 }
 
@@ -282,19 +270,19 @@ fn (mut e DockerEngine) parse_container_volumes(volumes string) []string {
 }
 
 fn (mut e DockerEngine) parse_container_state(state string) DockerContainerStatus {
-	if state.contains('Dead:true') {
+	if 'Dead:true' in state {
 		return DockerContainerStatus.dead
 	}
-	if state.contains('Paused:true') {
+	if 'Paused:true' in state {
 		return DockerContainerStatus.paused
 	}
-	if state.contains('Restarting:true') {
+	if 'Restarting:true' in state {
 		return DockerContainerStatus.restarting
 	}
-	if state.contains('Running:true') {
+	if 'Running:true' in state {
 		return DockerContainerStatus.up
 	}
-	if state.contains('Status:created') {
+	if 'Status:created' in state {
 		return DockerContainerStatus.created
 	}
 	return DockerContainerStatus.down
@@ -356,6 +344,6 @@ pub fn (mut e DockerEngine) get_free_port() int {
 			range << i
 		}
 	}
-	// arrays.shuffle<int>(mut range, 0)
+	arrays.shuffle<int>(mut range, 0)
 	return range[0]
 }

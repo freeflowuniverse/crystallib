@@ -1,4 +1,4 @@
-module docker
+module docker0
 
 import builder
 
@@ -90,7 +90,7 @@ pub fn (mut container DockerContainer) export(path string) ?string {
 
 // open ssh shell to the cobtainer
 pub fn (mut container DockerContainer) ssh_shell() ? {
-	container.node.executor.shell() ?
+	container.node.executor.ssh_shell(container.ssh_port) ?
 }
 
 // return the builder.node class which allows to remove executed, ...
