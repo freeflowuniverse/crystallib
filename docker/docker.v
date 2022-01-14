@@ -44,7 +44,7 @@ pub fn new(args DockerNodeArguments) ?DockerEngine {
 // // get a new docker engine
 // // to use docker.new_local() -> returns DockerEngine for local machine
 // pub fn new_local() ?DockerEngine {
-// 	mut node := builder.node_get(name: 'localnode') ?
+// 	mut node := builder.node_new(name: 'localnode') ?
 // 	mut de := DockerEngine{
 // 		node: node
 // 		sshkeys_allowed: args.sshkeys_allowed

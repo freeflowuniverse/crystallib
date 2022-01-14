@@ -13,7 +13,7 @@ pub mut:
 
 pub fn get()?NodeJS{
 	mut cfg := publisher_config.get()
-	mut n := builder.node_get(builder.NodeArguments{name:"main"})?
+	mut n := builder.node_new(builder.NodeArguments{name:"main"})?
 	return NodeJS{node:n, cfg:cfg}
 }
 

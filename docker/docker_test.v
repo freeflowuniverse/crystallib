@@ -28,7 +28,7 @@ fn test_docker1() {
 
 	// NOW DO SOME MORE TESTS,
 
-	// engine.node = builder.node_get(name: 'test')
+	// engine.node = builder.node_new(name: 'test')
 	println(engine.images_list())
 	panic('A')
 	// mut containers := engine.containers_list()
