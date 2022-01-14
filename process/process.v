@@ -8,7 +8,7 @@ pub struct Command {
 pub mut:
 	cmd        string
 	timeout    int = 1200
-	stdout     bool
+	stdout     bool = true
 	stdout_log bool = true
 	debug      bool
 	die        bool = true
@@ -77,12 +77,13 @@ pub fn execute_job(cmd Command) ?Job {
 		println('execute: $job')
 	}
 
+	println('execute: $job')
+
 	mut p := os.new_process(job.args[0])
 	p.set_redirect_stdio()
 
 	p.set_args(job.args[1..job.args.len])
 	p.run()
-
 	if p.is_alive() {
 		start := time.now().unix_time()
 		for {
