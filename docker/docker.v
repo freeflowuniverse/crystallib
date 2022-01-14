@@ -32,6 +32,7 @@ pub fn new(args DockerNodeArguments) ?DockerEngine {
 	}
 
 	mut node := builder.node_new(ipaddr: args.node_ipaddr, name: node_name, user: args.user) ?
+
 	mut de := DockerEngine{
 		node: node
 		sshkeys_allowed: args.sshkeys_allowed
@@ -97,28 +98,7 @@ pub fn (mut e DockerEngine) images_list() []DockerImage {
 
 pub fn (mut e DockerEngine) init()? {
 	e.node.install_docker(reset:false)?
-	for i in 0 .. 5 {
-		out := e.node.executor.exec('docker info') or {
-			if err.msg.contains("Cannot connect to the Docker daemon"){
-				"noconnection"
-			}
-			err.msg
-		}
-		if out == "noconnection" {
-			panic("SSSSS")
-		}
-		// if i > 10 {
-		// 	return error("tried to get docker to start, did not succeed. Check docker is installed?")
-		// }
-	}
 
-	/// Add predefined threefold docker ssh keys to the node
-	// e.node.executor.exec("echo '$pubkey' > ~/.ssh/threefold.pub && chmod 644 ~/.ssh/threefold.pub") or {
-	// 	panic(err)
-	// }
-	// e.node.executor.exec("echo '$privkey' > ~/.ssh/threefold && chmod 600 ~/.ssh/threefold") or {
-	// 	panic(err)
-	// }
 }
 
 // return list of images

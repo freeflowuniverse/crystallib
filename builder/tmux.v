@@ -87,9 +87,10 @@ pub fn (mut t Tmux) session_get_create(name string, restart bool) ?&Session {
 // 	reset	bool
 // }
 // ```
-pub fn (mut t Tmux) window_new(args WindowArgs)? {
-		mut s := t.session_get_create("main", false)?
-		s.window_new(args)?
+pub fn (mut t Tmux) window_new(args WindowArgs)?Window {
+	mut s := t.session_get_create("main", false)?
+	mut w:=s.window_new(args)?
+	return w
 }
 
 fn (mut t Tmux) scan_add(line string)? &Window {

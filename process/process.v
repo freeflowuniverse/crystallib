@@ -77,8 +77,6 @@ pub fn execute_job(cmd Command) ?Job {
 		println('execute: $job')
 	}
 
-	println('execute: $job')
-
 	mut p := os.new_process(job.args[0])
 	p.set_redirect_stdio()
 

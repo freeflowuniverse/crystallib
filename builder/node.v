@@ -130,7 +130,6 @@ pub fn node_new(args NodeArguments) ?&Node {
 		node.db.reset()?
 	}
 
-
 	if !node.cache.exists("env"){
 		node.cache.set("env",serializers.map_string_string_to_text(node.environment),3600)?
 	}
@@ -172,9 +171,10 @@ pub fn node_new(args NodeArguments) ?&Node {
 		os.log("TMUX - could not find tmux command, will try to install, can take a while.")
 		node.package_install(name:"tmux")?
 	}	
-	node.tmux.scan()?
 
 	builder.nodes_factory.nodes[args.name] = &node
+
+	node.tmux.scan()?
 
 	return builder.nodes_factory.nodes[args.name]
 

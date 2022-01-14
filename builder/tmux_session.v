@@ -71,7 +71,7 @@ fn (mut s Session) stop()? {
 // 	reset	bool
 // }
 // ```
-fn (mut s Session) window_new(args WindowArgs) ?{
+fn (mut s Session) window_new(args WindowArgs) ?Window{
 	// os.log(cmd)
 	// os.log(check)
 	namel := args.name.to_lower()
@@ -97,6 +97,7 @@ fn (mut s Session) window_new(args WindowArgs) ?{
 	// 	// os.log(" DELETE notused")
 	// 	s.windows["notused"].delete()?
 	// }
+	return w
 }
 
 fn (mut s Session) window_exist(name string) bool {

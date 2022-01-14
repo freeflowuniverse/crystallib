@@ -43,9 +43,19 @@ pub fn (mut node Node) install_docker(args SwarmArgs) ?{
 	// 	'
 	node.exec(cmd:docker_install,reset:args.reset,description:"install docker.")?
 
-	node.tmux.window_new(name:"docker",cmd:"dockerd",reset:true)?
-	panic('sssss')
+	mut w:= node.tmux.window_new(name:"docker",cmd:"dockerd",reset:true)?
 
+	for _ in 1..100 {
+		out := node.executor.exec('docker info') or {
+			if err.msg.contains("Cannot connect to the Docker daemon"){
+				"noconnection"
+			}
+			err.msg
+		}
+		if out == "noconnection" {
+			panic("SSSSS")
+		}	
+	}
 	// NOW WE NEED TO CHECK OF DOCKER ANSWERS
 
 }
