@@ -1,6 +1,9 @@
 module builder
 import rediscache
 import serializers
+import os
+
+
 
 pub enum PlatformType {
 	unknown
@@ -10,15 +13,15 @@ pub enum PlatformType {
 }
 
 pub struct Node {
-	name string = 'mymachine'
+	name string = 'mymachine'	
 pub mut:
 	executor &Executor // = ExecutorLocal{}
+	tmux 	&Tmux
 	platform PlatformType
 	db &DB [skip]
 	done map[string]string
 	cache  rediscache.RedisCache [skip]
-	environment map[string]string
-
+	environment map[string]string	
 }
 
 
@@ -36,26 +39,70 @@ pub struct NodeArguments {
 	
 }
 
+//get node connection to local machine 
+pub fn node_local() ?&Node {
+	return node_new(name:"localhost")
+}
+
+
+//retrieve node from the factory, will throw error if not there
+pub fn node_get(name string) ?&Node {
+
+	if name==""{
+		return error("need to specify name")
+	}
+	if name in builder.nodes_factory.nodes {
+		return builder.nodes_factory.nodes[name] 
+	}
+	return error("cannot find node $name in nodefactory, please init.")	
+
+}
+
 // the factory which returns an node, based on the arguments will chose ssh executor or the local one
-// ipaddr e.g. 192.12.2.2:44  (port is optionally specified in string)
-pub fn node_get(args NodeArguments) ?Node {
-	mut node:=Node{executor:&ExecutorLocal{},db:&DB{}}
+//- format ipaddr: localhost:7777
+//- format ipaddr: 192.168.6.6:7777
+//- format ipaddr: 192.168.6.6
+//- format ipaddr: any ipv6 addr
+//- if only name used then is localhost
+//
+//```
+// pub struct NodeArguments {
+// 	ipaddr string
+// 	name   string
+// 	user   string = "root"
+// 	debug  bool
+// 	reset bool
+// 	}
+//```
+pub fn node_new(args NodeArguments) ?&Node {
+
+
+	if args.name==""{
+		return error("need to specify name")
+	}
+
+
+	if args.name in builder.nodes_factory.nodes{
+		return builder.nodes_factory.nodes[args.name] 
+	}
+
+	mut node:=Node{executor:&ExecutorLocal{},db:&DB{},tmux: &Tmux{node:args.name}}
 	if args.ipaddr == '' || args.ipaddr.starts_with('localhost')
 		|| args.ipaddr.starts_with('127.0.0.1') {
-		node = Node{name:args.name,executor:&ExecutorLocal{debug: args.debug},db:&DB{}}
+		node = Node{name:args.name,db:&DB{},
+			executor:&ExecutorLocal{debug: args.debug},
+			tmux: &Tmux{node:args.name}
+		}
 	} else {
 		ipaddr := ipaddress_new(args.ipaddr) or { return error('can not initialize ip address') }
-		node = Node{name:args.name,db:&DB{},executor:
-			&ExecutorSSH{
+		node = Node{name:args.name,db:&DB{},
+			executor: &ExecutorSSH{
 				ipaddr: ipaddr
 				user: args.user
 				debug: args.debug
-			}
+			},
+			tmux: &Tmux{node:args.name}
 		}
-	}
-
-	if node.name==""{
-		return error("need to specify name")
 	}
 
 	//is a cache in redis
@@ -85,7 +132,6 @@ pub fn node_get(args NodeArguments) ?Node {
 	if args.reset{
 		node.db.reset()?
 	}
-
 
 	if !node.cache.exists("env"){
 		node.cache.set("env",serializers.map_string_string_to_text(node.environment),3600)?
@@ -124,16 +170,27 @@ pub fn node_get(args NodeArguments) ?Node {
 		node.done = serializers.text_to_map_string_string(init_node_txt)
 	}
 
-	return node
+	if !node.cmd_exists("tmux"){
+		os.log("TMUX - could not find tmux command, will try to install, can take a while.")
+		node.package_install(name:"tmux")?
+	}	
+
+	builder.nodes_factory.nodes[args.name] = &node
+
+	node.tmux.scan()?
+
+	return builder.nodes_factory.nodes[args.name]
 
 }
 
 
 // get remote environment arguments in memory
-fn (mut node Node) environment_load() ? {
+pub fn (mut node Node) environment_load() ? {
 	node.environment = node.executor.environ_get() or { return error('can not load env') }
 }
 
-fn (mut node Node) cache_clear() ? {
+pub fn (mut node Node) cache_clear() ? {
 	node.cache.reset()?
 }
+
+

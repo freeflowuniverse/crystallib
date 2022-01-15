@@ -1,17 +1,11 @@
 module builder
 
-pub enum Nodestate {
-	init
-	ok
-	old
-}
 
 
 [heap]
 pub struct NodesFactory {
 pub mut:
-	// lastscan	time.Time
-	state		Nodestate
+	nodes map[string]&Node
 }
 
 
@@ -22,12 +16,38 @@ fn init_singleton() &NodesFactory {
 }
 
 //singleton creation
-const nodesfactory = init_singleton()
+const nodes_factory = init_singleton()
 
 
-pub fn get() ?&NodesFactory {
-	mut obj := builder.nodesfactory
-	return obj
-}
+
+// pub enum Nodestate {
+// 	init
+// 	ok
+// 	old
+// }
+
+
+// [heap]
+// pub struct NodesFactory {
+// pub mut:
+// 	// lastscan	time.Time
+// 	state		Nodestate
+// }
+
+
+// //needed to get singleton
+// fn init_singleton() &NodesFactory {
+// 	mut f := builder.NodesFactory{}	
+// 	return &f
+// }
+
+// //singleton creation
+// const nodesfactory = init_singleton()
+
+
+// pub fn get() ?&NodesFactory {
+// 	mut obj := builder.nodesfactory
+// 	return obj
+// }
 
 

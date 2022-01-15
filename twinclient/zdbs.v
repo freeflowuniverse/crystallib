@@ -1,6 +1,5 @@
 module twinclient
 
-import threefoldtech.info_specs_grid3.vlang.zos
 import json
 
 // Deploy zdbs workload
@@ -37,13 +36,13 @@ pub fn (mut tw Client) delete_zdb(zdb_to_delete SingleDelete) ?ContractResponse 
 }
 
 // Get zdbs info using deployment name
-pub fn (mut tw Client) get_zdbs(name string) ?[]zos.Deployment {
+pub fn (mut tw Client) get_zdbs(name string) ?[]Deployment {
 	mut msg := tw.send('twinserver.zdbs.get', '{"name": "$name"}') ?
 	response := tw.read(msg)
 	if response.err != '' {
 		return error(response.err)
 	}
-	return json.decode([]zos.Deployment, response.data) or {}
+	return json.decode([]Deployment, response.data) or {}
 }
 
 // Update zdbs with updated payload.

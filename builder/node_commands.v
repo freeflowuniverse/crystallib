@@ -18,6 +18,7 @@ struct NodeExecCmd{
 	period int //period in which we check when this was done last, if 0 then period is indefinite
 	reset bool = true
 	description string
+	stdout bool = true
 }
 
 pub fn (mut node Node) ipaddr_pub_get() ?string {
@@ -78,7 +79,7 @@ pub fn (mut node Node) exec(args NodeExecCmd) ? {
 	node.executor.file_write(r_path,cmd)?		
 	cmd = "cd /tmp && bash $r_path && rm $r_path"
 	println("   - exec cmd:$cmd on $node.name")
-	node.executor.exec_silent(cmd) or {
+	node.executor.exec(cmd) or {
 		return error(err.msg+"\noriginal cmd:\n${args.cmd}")
 	}
 	node.done_set("exec_$hhash",now_str)?

@@ -11,7 +11,7 @@ pub mut:
 }
 
 pub fn (mut executor ExecutorLocal) exec(cmd string) ?string {
-	res := process.execute_job(cmd: cmd) ?
+	res := process.execute_job(cmd: cmd, stdout:true) ?
 	return res.output
 }
 
