@@ -39,18 +39,21 @@ pub struct NodeArguments {
 	
 }
 
+//get node connection to local machine 
+pub fn node_local() ?&Node {
+	return node_new(name:"localhost")
+}
 
+
+//retrieve node from the factory, will throw error if not there
 pub fn node_get(name string) ?&Node {
 
 	if name==""{
 		return error("need to specify name")
 	}
-
 	if name in builder.nodes_factory.nodes {
 		return builder.nodes_factory.nodes[name] 
 	}
-
-
 	return error("cannot find node $name in nodefactory, please init.")	
 
 }

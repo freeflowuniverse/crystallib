@@ -9,6 +9,16 @@ pub struct SwarmArgs{
 //installs docker & swarm
 pub fn (mut node Node) install_docker(args SwarmArgs) ?{
 
+	mut installed:=true
+	_ := node.executor.exec_silent('docker version') or {
+			installed=false
+			"ERROR:" + err.msg
+		}
+	
+	if installed{
+		return
+	}
+
 	node.platform_prepare()?
 	// was_done := node.crystaltools_install()?
 	// if was_done{
@@ -19,14 +29,14 @@ pub fn (mut node Node) install_docker(args SwarmArgs) ?{
 	docker_install := '
 		apt-get install ca-certificates curl sudo gnupg lsb-release screen -y
 
-		#curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-		curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+		curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+		#curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 
-		#echo \
-		#"deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-		#$(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+		echo \
+			"deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+			$(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-		add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+		#add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 
 		apt-get update
 		apt-get install docker-ce docker-ce-cli containerd.io -y
@@ -45,18 +55,25 @@ pub fn (mut node Node) install_docker(args SwarmArgs) ?{
 
 	mut w:= node.tmux.window_new(name:"docker",cmd:"dockerd",reset:true)?
 
-	for _ in 1..100 {
-		out := node.executor.exec('docker info') or {
-			if err.msg.contains("Cannot connect to the Docker daemon"){
-				"noconnection"
-			}
-			err.msg
+	for _ in 1..10 {
+		mut out:=""
+		out = node.executor.exec_silent('docker info') or {
+			// if err.msg.contains("Cannot connect to the Docker daemon"){
+			// 	"noconnection"
+			// }
+			"ERROR:" + err.msg
 		}
-		if out == "noconnection" {
-			panic("SSSSS")
-		}	
+		// println(out)
+		// if out == "noconnection" {
+		// 	panic("SSSSS")
+		// }else	
+		if ! out.starts_with("ERROR:"){
+			return
+		}
+
 	}
 	// NOW WE NEED TO CHECK OF DOCKER ANSWERS
+	return error("Could not start docker")
 
 }
 

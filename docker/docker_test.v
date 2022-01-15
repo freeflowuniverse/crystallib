@@ -3,12 +3,17 @@ import builder
 
 fn test_docker1() {
 	mut engine := docker.new({}) or { panic(err) }
+
 	engine.reset_all()
+
 
 	// TODO: HOW CAN WE CHECK THE LIST OF IMAGES IS EMPTY?
 	// NEXT IS NOT WORKING
-	// assert engine.images_list() == []
-	// assert engine.containers_list() == []
+	mut il:=engine.images_list() or {panic(err)}
+	mut cl:=engine.containers_list() or {panic(err)}
+
+	assert il == []
+	assert cl == []
 
 	// create an ssh enabled alpine container
 	// push to threefold docker hub
