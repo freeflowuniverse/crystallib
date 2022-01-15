@@ -36,30 +36,15 @@ pub struct DockerEngineArguments {
 }
 
 
-pub fn docker_get(name string) ?&DockerEngine {
-
-	if name==""{
-		return error("need to specify name of docker engine")
-	}
-
-	if name in docker.docker_factory.dockerengines {
-		docker.docker_factory.current = name
-		return docker.docker_factory.dockerengines[name] 
-	}
-
-
-	return error("cannot find dockerengine $name in docker_factory, please init.")	
-
-}
 
 //get current docker engine intance
-//if you want to switch uses docker_switch or docker_get
-pub fn docker_current() ?&DockerEngine {
+//if you want to switch uses engine_switch or docengine_geter_get
+pub fn engine_current() ?&DockerEngine {
 	return docker_get(	docker.docker_factory.current)
 }
 
 //switch you current docker engine
-pub fn docker_switch(name string) ? {
+pub fn engine_switch(name string) ? {
 
 	if name==""{
 		return error("need to specify name of docker engine")
@@ -73,7 +58,7 @@ pub fn docker_switch(name string) ? {
 
 
 //get docker engine directly linked to a name
-pub fn docker_get(name string) ?&DockerEngine {
+pub fn engine_get(name string) ?&DockerEngine {
 
 	if name==""{
 		return error("need to specify name of docker engine")
@@ -89,6 +74,12 @@ pub fn docker_get(name string) ?&DockerEngine {
 
 }
 
+//if sshkeys_allowed empty array will check the local machine for loaded sshkeys
+pub fn engine_local(sshkeys_allowed []string) ?&DockerEngine {
+	mut node := builder.node_local() ?
+	return engine_new(node_name:node.name,sshkeys_allowed:sshkeys_allowed)
+}
+
 // the factory which returns an  docker engine//
 //```
 // pub struct DockerEngineArguments {
@@ -97,9 +88,11 @@ pub fn docker_get(name string) ?&DockerEngine {
 //	node_name       string  	//name of the node on which the docker engine is running
 // 	}
 //```
-pub fn docker_new(args DockerEngineArguments) ?&DockerEngine {
+pub fn engine_new(args DockerEngineArguments) ?&DockerEngine {
 
-
+	if args.sshkeys_allowed == []{
+		panic(args)
+	}
 	if args.name==""{
 		return error("need to specify name")
 	}
