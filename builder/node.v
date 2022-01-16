@@ -13,6 +13,7 @@ pub enum PlatformType {
 }
 
 pub struct Node {
+pub:
 	name string = 'mymachine'	
 pub mut:
 	executor &Executor // = ExecutorLocal{}

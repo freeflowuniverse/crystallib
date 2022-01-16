@@ -16,7 +16,7 @@ fn size_mb (size string) int {
 
 
 //remove items we don't want from string array
-fn clear_str(s str) str {
+fn clear_str(s string) string {
 	if s.count(":")==2 && s.count("-")==2{
 		return 1000
 	}

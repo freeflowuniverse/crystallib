@@ -19,6 +19,10 @@ pub fn (mut node Node) install_docker(args SwarmArgs) ?{
 		return
 	}
 
+	if node.platform != PlatformType.ubuntu{
+		return error("cannot install docker, wrong platform, for now only ubuntu supported, make sure to unstall docker desktop before trying again.")
+	}
+
 	node.platform_prepare()?
 	// was_done := node.crystaltools_install()?
 	// if was_done{

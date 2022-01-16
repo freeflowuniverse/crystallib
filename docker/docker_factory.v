@@ -1,9 +1,6 @@
 module docker
 
-import os
-import time
 import builder
-import arrays
 
 
 [heap]
@@ -21,16 +18,22 @@ fn init_singleton() &DockerFactory {
 	return &f
 }
 
+
 //singleton creation
 const docker_factory = init_singleton()
 
+fn get() &DockerFactory {
+	return docker.docker_factory
+}
+
 struct DockerEngine {
 pub mut:
-	node            string "localhost"
+	node            string = "localhost"
 	sshkeys_allowed []string // all keys here have access over ssh into the machine, when ssh enabled
 }
 
 pub struct DockerEngineArguments {
+	name			string
 	sshkeys_allowed []string // all keys here have access over ssh into the machine, when ssh enabled
 	node_name       string
 }
@@ -40,7 +43,7 @@ pub struct DockerEngineArguments {
 //get current docker engine intance
 //if you want to switch uses engine_switch or docengine_geter_get
 pub fn engine_current() ?&DockerEngine {
-	return docker_get(	docker.docker_factory.current)
+	return engine_get(get().current)
 }
 
 //switch you current docker engine
@@ -49,8 +52,8 @@ pub fn engine_switch(name string) ? {
 	if name==""{
 		return error("need to specify name of docker engine")
 	}
-	if name in docker.docker_factory.dockerengines {
-		docker.docker_factory.current = name
+	if name in get().dockerengines {
+		get().current = name
 		return
 	}
 	return error("cannot find dockerengine $name in docker_factory, please init.")	
@@ -65,8 +68,8 @@ pub fn engine_get(name string) ?&DockerEngine {
 	}
 
 	if name in docker.docker_factory.dockerengines {
-		docker.docker_factory.current = name
-		return docker.docker_factory.dockerengines[name] 
+		get().current = name
+		return get().dockerengines[name] 
 	}
 
 
@@ -97,8 +100,8 @@ pub fn engine_new(args DockerEngineArguments) ?&DockerEngine {
 		return error("need to specify name")
 	}
 
-	if name in docker.docker_factory.dockerengines {
-		return docker.docker_factory.dockerengines[name] 
+	if args.name in docker.docker_factory.dockerengines {
+		return docker.docker_factory.dockerengines[args.name] 
 	}
 
 	//not really needed is to check it works
@@ -110,8 +113,8 @@ pub fn engine_new(args DockerEngineArguments) ?&DockerEngine {
 	}
 	de.init()?
 
-	docker.docker_factory.dockerengines[name] = &de
-	docker.docker_factory.current = name
+	get().dockerengines[args.name] = &de
+	get().current = args.name
 
-	return docker.docker_factory.dockerengines[name] 
+	return docker.docker_factory.dockerengines[args.name] 
 }
