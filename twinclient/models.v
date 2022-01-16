@@ -283,7 +283,7 @@ pub struct BalanceTransfer {
 
 pub struct StellarBalance {
 	asset  string
-	amount f64
+	amount string
 }
 
 [params]
