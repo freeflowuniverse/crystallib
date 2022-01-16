@@ -1,4 +1,4 @@
-module tmux
+module builder
 
 import os
 
@@ -24,20 +24,21 @@ fn init_session(mut tmux &Tmux, s_name string) ?Session {
 }
 
 fn (mut s Session) create()? {
+	mut e:= s.tmux.node().executor
 	res_opt := "-P -F '#{window_id}'"
 	cmd := "tmux new-session $res_opt -d -s $s.name 'sh'"
-	window_id_ := s.tmux.node.executor.exec(cmd) or {
+	window_id_ := e.exec(cmd) or {
 		return error("Can't create tmux session $s.name \n$cmd\n$err")
 	}
 
 	cmd3 := "tmux set-option remain-on-exit on"
-	s.tmux.node.executor.exec(cmd3) or {
+	e.exec(cmd3) or {
 		return error("Can't execute $cmd3\n$err")
 	}
 
 	window_id := window_id_.trim(" \n")
 	cmd2:="tmux rename-window -t $window_id 'notused'"
-	s.tmux.node.executor.exec(cmd2) or {
+	e.exec(cmd2) or {
 		return error("Can't rename window $window_id to notused \n$cmd2\n$err")
 	}
 
@@ -49,7 +50,8 @@ fn (mut s Session) restart()? {
 }
 
 fn (mut s Session) stop()? {
-	s.tmux.node.executor.exec('tmux kill-session -t $s.name') or {
+	mut e:= s.tmux.node().executor
+	e.exec('tmux kill-session -t $s.name') or {
 		// return error("Can't delete session $s.name - This happen when it is not found")
 		""
 	}
@@ -69,7 +71,7 @@ fn (mut s Session) stop()? {
 // 	reset	bool
 // }
 // ```
-fn (mut s Session) window_new(args WindowArgs) ?{
+fn (mut s Session) window_new(args WindowArgs) ?Window{
 	// os.log(cmd)
 	// os.log(check)
 	namel := args.name.to_lower()
@@ -95,6 +97,7 @@ fn (mut s Session) window_new(args WindowArgs) ?{
 	// 	// os.log(" DELETE notused")
 	// 	s.windows["notused"].delete()?
 	// }
+	return w
 }
 
 fn (mut s Session) window_exist(name string) bool {
@@ -116,10 +119,10 @@ pub fn (mut s Session) window_get(name string) ?&Window {
 // pub fn (mut s Session) activate()? {	
 // 	active_session := s.tmux.redis.get('tmux:active_session') or { 'No active session found' }
 // 	if active_session != 'No active session found' && s.name != active_session {
-// 		s.tmux.node.executor.exec('tmux attach-session -t $active_session') or {
+// 		s.tmux.node().executor.exec('tmux attach-session -t $active_session') or {
 // 			return error('Fail to attach to current active session: $active_session \n$err')
 // 		}
-// 		s.tmux.node.executor.exec('tmux switch -t $s.name') or {
+// 		s.tmux.node().executor.exec('tmux switch -t $s.name') or {
 // 			return error("Can't switch to session $s.name \n$err")
 // 		}
 // 		s.tmux.redis.set('tmux:active_session', s.name) or { panic('Failed to set tmux:active_session') }

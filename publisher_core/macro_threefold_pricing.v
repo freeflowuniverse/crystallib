@@ -29,9 +29,9 @@ fn tfprices_varf() map[string]f64 {
 
 	varf["TFTUSD"] = tft_usd_get()
 	varf["TFTFARMING"] = 0.08
-	varf["CU_USD_MONTH"] = 22
-	varf["SU_USD_MONTH"] = 14
-	varf["IP_USD_MONTH"] = 5
+	varf["CU_USD_MONTH"] = 20
+	varf["SU_USD_MONTH"] = 12
+	varf["IP_USD_MONTH"] = 4
 	varf["NU_USD_GB"] = 0.05 //price per GB
 	varf["NAME_USD_MONTH"] = 1
 	varf["DNAME_USD_MONTH"] = 2

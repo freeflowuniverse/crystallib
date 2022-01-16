@@ -1,51 +1,53 @@
-module tmux
+module builder
 
 import os
 // import redisclient
-import builder
 
 [heap]
-struct Tmux {
+pub struct Tmux {
 pub mut:
 	sessions map[string]&Session
-	node     builder.Node [skip]
-	// redis 	 &redisclient.Redis	[skip]
+	node     string
 }
 
-//tmux starts from a node and as such NodeArguments are needed
-//
-//- format ipaddr: localhost:7777
-//- format ipaddr: 192.168.6.6:7777
-//- format ipaddr: 192.168.6.6
-//- format ipaddr: any ipv6 addr
-//- if only name used then is localhost
-//
-//```
-// pub struct NodeArguments {
-// 	ipaddr string
-// 	name   string
-// 	user   string = "root"
-// 	debug  bool
-// 	reset bool
+// //tmux starts from a node and as such NodeArguments are needed
+// //
+// //- format ipaddr: localhost:7777
+// //- format ipaddr: 192.168.6.6:7777
+// //- format ipaddr: 192.168.6.6
+// //- format ipaddr: any ipv6 addr
+// //- if only name used then is localhost
+// //
+// //```
+// // pub struct NodeArguments {
+// // 	ipaddr string
+// // 	name   string
+// // 	user   string = "root"
+// // 	debug  bool
+// // 	reset bool
+// // 	}
+// //```
+// //
+// // will return a tmux object
+// pub fn new(args module dockerArguments) ?Tmux {
+// 	// mut redis := redisclient.get_local()?
+// 	// redis.selectdb(10)? //select redis DB 10
+// 	mut t := Tmux{
+// 		node: module docker_get(args)?
+// 		// redis: redis
 // 	}
-//```
-//
-// will return a tmux object
-//
-// a redis server is needed, will use DB 10
-pub fn new(args builder.NodeArguments) ?Tmux {
-	// mut redis := redisclient.get_local()?
-	// redis.selectdb(10)? //select redis DB 10
-	mut t := Tmux{
-		node: builder.node_get(args)?
-		// redis: redis
+// 	if !t.node().cmd_exists("tmux"){
+// 		os.log("TMUX - could not find tmux command, will try to install, can take a while.")
+// 		t.node().package_install(name:"tmux")?
+// 	}
+// 	t.scan()?
+// 	return t
+// }
+
+fn (mut t Tmux) node() &Node {
+	return node_get(t.node) or {
+		panic("cannot find node: $t.node")
 	}
-	if !t.node.cmd_exists("tmux"){
-		os.log("TMUX - could not find tmux command, will try to install, can take a while.")
-		t.node.package_install(name:"tmux")?
-	}
-	t.scan()?
-	return t
 }
 
 pub fn (mut t Tmux) session_get(name string) ?&Session {
@@ -85,9 +87,10 @@ pub fn (mut t Tmux) session_get_create(name string, restart bool) ?&Session {
 // 	reset	bool
 // }
 // ```
-pub fn (mut t Tmux) window_new(args WindowArgs)? {
-		mut s := t.session_get_create("main", false)?
-		s.window_new(args)?
+pub fn (mut t Tmux) window_new(args WindowArgs)?Window {
+	mut s := t.session_get_create("main", false)?
+	mut w:=s.window_new(args)?
+	return w
 }
 
 fn (mut t Tmux) scan_add(line string)? &Window {
@@ -137,8 +140,9 @@ fn (mut t Tmux) scan_add(line string)? &Window {
 //probably means a command did not start well
 pub fn (mut t Tmux) scan()?map[string]&Window {
 	// os.log('TMUX - Scanning ....')
+	mut e := t.node().executor
 	cmd_list_session := "tmux list-sessions -F '#{session_name}'"
-	exec_list := t.node.executor.exec(cmd_list_session) or { '1' }
+	exec_list := e.exec(cmd_list_session) or { '1' }
 
 	if exec_list == '1' {
 		// No server running
@@ -166,7 +170,7 @@ pub fn (mut t Tmux) scan()?map[string]&Window {
 
 	// mut done := map[string]bool{}
 	cmd := "tmux list-panes -a -F '#{session_name}|#{window_name}|#{window_id}|#{pane_active}|#{pane_id}|#{pane_pid}|#{pane_start_command}'"
-	out := t.node.executor.exec(cmd) or {
+	out := e.exec(cmd) or {
 		return error("Can't execute $cmd \n$err")
 	}
 
@@ -188,9 +192,10 @@ pub fn (mut t Tmux) scan()?map[string]&Window {
 }
 
 pub fn (mut t Tmux) stop()? {
+	mut e := t.node().executor
 	os.log('TMUX - Stop tmux')
 	cmd := "tmux kill-server"
-	_ := t.node.executor.exec(cmd) or {
+	_ := e.exec(cmd) or {
 		// return error("Can't execute $cmd \n$err")
 		""
 	}	

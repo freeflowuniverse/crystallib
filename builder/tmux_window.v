@@ -1,4 +1,4 @@
-module tmux
+module builder
 
 import os
 
@@ -25,12 +25,13 @@ pub mut:
 }
 
 fn (mut w Window) create()? {
+	mut e:= w.session.tmux.node().executor
 	//tmux new-window -P -c /tmp -e good=1 -e bad=0 -n koekoe -t main bash
 	if w.active == false {
 		res_opt := "-P -F '#{session_name}|#{window_name}|#{window_id}|#{pane_active}|#{pane_id}|#{pane_pid}|#{pane_start_command}'"
 		cmd := "tmux new-window  $res_opt -t $w.session.name -n $w.name $w.cmd"
 		println(cmd)
-		res := w.session.tmux.node.executor.exec(cmd) or {
+		res := e.exec(cmd) or {
 			return error("Can't create new window $w.name \n$cmd\n$err")
 		}
 		w.session.tmux.scan_add(res)?
@@ -50,7 +51,8 @@ fn (mut w Window) restart()? {
 }
 
 pub fn (mut w Window) stop()? {
-	w.session.tmux.node.executor.exec('tmux kill-window -t @${w.id}') or {
+	mut e:= w.session.tmux.node().executor
+	e.exec('tmux kill-window -t @${w.id}') or {
 		return error("Can't kill window with id:$w.id")
 	}
 	w.pid = 0
@@ -69,15 +71,17 @@ pub fn (window Window) repr() string {
 //will select the current window so with tmux a we can go there
 // if more than 1 session do `tmux a -s mysessionname`
 fn (mut w Window) activate()? {
+	mut e:= w.session.tmux.node().executor
 	cmd2 := "tmux select-window -t %${w.id}"
-		w.session.tmux.node.executor.exec(cmd2) or {
+		e.exec(cmd2) or {
 			return error("Couldn't select window $w.name \n$cmd2\n$err")
 		}
 }
 
 //show the environment
 pub fn (mut w Window) environment_print()? {
-	res := w.session.tmux.node.executor.exec("tmux show-environment -t %${w.paneid}") or {
+	mut e:= w.session.tmux.node().executor
+	res := e.exec("tmux show-environment -t %${w.paneid}") or {
 		return error("Couldnt show enviroment cmd: $w.cmd \n$err")
 	}
 	os.log(res)
@@ -85,8 +89,9 @@ pub fn (mut w Window) environment_print()? {
 
 //capture the output
 pub fn (mut w Window) output_print()? {
+	mut e:= w.session.tmux.node().executor
 	//-S is start, minus means go in history, otherwise its only the active output
-	res := w.session.tmux.node.executor.exec("tmux capture-pane -t %${w.paneid} -S -10000") or {
+	res := e.exec("tmux capture-pane -t %${w.paneid} -S -10000") or {
 		return error("Couldnt show enviroment cmd: $w.cmd \n$err")
 	}
 	os.log(res)
