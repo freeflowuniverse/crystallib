@@ -2,11 +2,13 @@ module twinclient
 
 [params]
 pub struct SingleDelete {
+pub:
 	name            string [required]
 	deployment_name string [required]
 }
 
 pub struct Disk {
+pub:
 	name       string [required]
 	size       u32    [required]
 	mountpoint string [required]
@@ -14,6 +16,7 @@ pub struct Disk {
 
 [params]
 pub struct QsfsDisk {
+pub:
 	qsfs_zdbs_name  string [required]
 	name            string [required]
 	prefix          string [required]
@@ -25,6 +28,7 @@ pub struct QsfsDisk {
 }
 
 pub struct Network {
+pub:
 	ip_range   string [required]
 	name       string [required]
 	add_access bool   [json: 'addAccess']
@@ -66,6 +70,7 @@ pub:
 
 [params]
 pub struct Machines {
+pub:
 	name        string    [required]
 	network     Network   [required]
 	machines    []Machine [required]
@@ -126,6 +131,7 @@ pub:
 
 [params]
 pub struct AddZDB {
+pub:
 	deployment_name  string [required]
 	name             string [required]
 	node_id          u32    [required]
@@ -146,6 +152,7 @@ pub:
 
 [params]
 pub struct QSFSZDBs {
+pub:
 	name        string [required]
 	count       u32    [required]
 	node_ids    []u32  [required]
@@ -157,6 +164,7 @@ pub struct QSFSZDBs {
 
 [params]
 pub struct GatewayFQDN {
+pub:
 	name            string   [required]
 	node_id         u32      [required]
 	fqdn            string   [required]
@@ -166,6 +174,7 @@ pub struct GatewayFQDN {
 
 [params]
 pub struct GatewayName {
+pub:
 	name            string   [required]
 	node_id         u32      [required]
 	tls_passthrough bool     [required]
@@ -174,6 +183,7 @@ pub struct GatewayName {
 
 [params]
 pub struct NodeContractCreate {
+pub:
 	node_id   u32    [required]
 	hash      string [required]
 	data      string [required]
@@ -182,6 +192,7 @@ pub struct NodeContractCreate {
 
 [params]
 pub struct NodeContractUpdate {
+pub:
 	id   u64    [required]
 	hash string [required]
 	data string [required]
@@ -189,7 +200,7 @@ pub struct NodeContractUpdate {
 
 [params]
 pub struct ContractIdByNodeIdAndHash {
-mut:
+pub mut:
 	node_id u32    [required]
 	hash    string [required]
 }
@@ -204,24 +215,29 @@ pub:
 }
 
 pub struct SimpleContract {
+pub:
 	contract_id u64 [json: 'contractId']
 }
 
 struct SimpleDeleteContract {
+pub:
 	contract_id u64
 }
 
 struct ContractTypes {
+pub:
 	node_contract NodeContract [json: 'nodeContract']
 	name_contract NameContract [json: 'nameContract']
 }
 
 pub struct ListContracts {
+pub:
 	node_contracts []SimpleContract [json: 'nodeContracts']
 	name_contracts []SimpleContract [json: 'nameContracts']
 }
 
 struct NodeContract {
+pub:
 	node_id         u32
 	deployment_data string
 	deployment_hash string
@@ -230,15 +246,18 @@ struct NodeContract {
 }
 
 struct NameContract {
+pub:
 	name string
 }
 
 struct ContractState {
+pub:
 	created string
 	deleted string
 }
 
 struct PublicIP {
+pub:
 	id          string
 	ip          string
 	gateway     string
@@ -246,17 +265,20 @@ struct PublicIP {
 }
 
 pub struct ContractResponse {
+pub:
 	created []Contract
 	updated []Contract
 	deleted []SimpleDeleteContract
 }
 
 pub struct DeployResponse {
+pub:
 	contracts        ContractResponse
 	wireguard_config string
 }
 
 pub struct Env {
+pub:
 	ssh_key string [json: 'SSH_KEY']
 }
 
@@ -269,6 +291,7 @@ pub mut:
 }
 
 pub struct BalanceResult {
+pub:
 	free        f64
 	reserved    f64
 	misc_frozen f64 [json: 'miscFrozen']
@@ -277,17 +300,20 @@ pub struct BalanceResult {
 
 [params]
 pub struct BalanceTransfer {
+pub:
 	address string [required]
 	amount  f64    [required]
 }
 
 pub struct StellarBalance {
+pub:
 	asset  string
 	amount string
 }
 
 [params]
 pub struct StellarTransfer {
+pub:
 	from_name      string [json: 'name'; required]
 	target_address string [required]
 	amount         f64    [required]
@@ -311,12 +337,14 @@ struct EntityProof {
 
 [params]
 pub struct PagePayload {
+pub:
 	page       u32 = 1
 	max_result u32 [json: 'maxResult'] = 50
 }
 
 [params]
 pub struct FilterOptions {
+pub:
 	cru            u32    [omitempty]
 	mru            u32    [omitempty]
 	sru            u32    [omitempty]
@@ -332,6 +360,7 @@ pub struct FilterOptions {
 }
 
 pub struct Farm {
+pub:
 	name              string
 	farm_id           u32        [json: 'farmId']
 	twin_id           u32        [json: 'twinId']
@@ -342,6 +371,7 @@ pub struct Farm {
 }
 
 pub struct Node {
+pub:
 	version            u32
 	id                 string
 	node_id            u32          [json: 'nodeId']
@@ -372,6 +402,7 @@ struct PublicConfig {
 }
 
 pub struct FreeResources {
+pub:
 	cru   u32
 	mru   u64
 	hru   u64
