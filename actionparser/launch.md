@@ -85,7 +85,7 @@ This should be in the found block. Since
 #lets now create another task which depends on the previous one
 !!task id:a1 name:'something else' assign:'kristof(50%),jan' effort:1d depends:a1 
 
-#following works as well (this allows us to put these things also in code and get it ignored)
+#following works as well (this allows us to put these things also in code and get it ignored but still parsed)
 //!!task id:b3 name:do1 
 #!!task id:b4 name:do1
 
