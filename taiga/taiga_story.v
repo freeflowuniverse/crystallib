@@ -21,6 +21,8 @@ pub mut:
 	created_date           Time [skip]
 	modified_date          Time [skip]
 	finish_date            Time [skip]
+	due_date               Time [skip]
+	due_date_reason        string
 	subject                string
 	is_closed              bool
 	is_blocked             bool
@@ -101,5 +103,6 @@ fn story_decode(data string) ? Story{
 	story.created_date = parse_time(data_as_map["created_date"].str())
 	story.modified_date = parse_time(data_as_map["modified_date"].str())
 	story.finish_date = parse_time(data_as_map["finish_date"].str())
+	story.due_date = parse_time(data_as_map["due_date"].str())
 	return story
 }

@@ -23,6 +23,8 @@ pub mut:
 	created_date           Time [skip]
 	modified_date          Time [skip]
 	finished_date          Time [skip]
+	due_date               Time [skip]
+	due_date_reason        string
 	subject                string
 	is_closed              bool
 	is_blocked             bool
@@ -92,5 +94,6 @@ fn task_decode(data string) ? Task{
 	task.created_date = parse_time(data_as_map["created_date"].str())
 	task.modified_date = parse_time(data_as_map["modified_date"].str())
 	task.finished_date = parse_time(data_as_map["finished_date"].str())
+	task.due_date = parse_time(data_as_map["due_date"].str())
 	return task
 }

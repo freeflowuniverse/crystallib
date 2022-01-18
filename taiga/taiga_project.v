@@ -34,6 +34,15 @@ pub enum TaigaElementTypes{
 	epic
 }
 
+pub struct ProjectElements {
+pub mut:
+	stories []Story
+	issues  []Issue
+	tasks   []Task
+	epics   []Epic
+}
+
+
 pub fn (mut p Project) delete() ?bool {
 	mut conn := connection_get()
 	return conn.delete('projects', p.id)

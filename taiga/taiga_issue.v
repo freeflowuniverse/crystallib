@@ -28,6 +28,8 @@ pub mut:
 	created_date           Time [skip]
 	modified_date          Time [skip]
 	finished_date          Time [skip]
+	due_date               Time [skip]
+	due_date_reason        string
 	subject                string
 	is_closed              bool
 	is_blocked             bool
@@ -95,6 +97,7 @@ fn issue_decode(data string) ? Issue{
 	data_as_map := (raw_decode(data) or {}).as_map()
 	issue.created_date = parse_time(data_as_map["created_date"].str())
 	issue.modified_date = parse_time(data_as_map["modified_date"].str())
-	issue.finished_date = parse_time(data_as_map["modified_date"].str())
+	issue.finished_date = parse_time(data_as_map["finished_date"].str())
+	issue.due_date = parse_time(data_as_map["due_date"].str())
 	return issue
 }

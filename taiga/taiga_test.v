@@ -1,18 +1,18 @@
-import taiga
+module taiga
 
 fn test_main() {
 	url := 'https://staging.circles.threefold.me'
 	mut singleton := taiga.new(url, 'admin', '123123', 1000)
-	create_issue()
-	create_story()
-	create_task()
-	create_epic()
+	// create_issue()
+	// create_story()
+	// create_task()
+	// create_epic()
 
 	// Export user projects as md
 	user_id := 13
 	mut user := singleton.users[user_id]
-	export_dir_path := "."
-	user.export_projects_per_user_md(export_dir_path, url)
+	export_dir_path := "./export/users"
+	user.export_user_md(export_dir_path, url)
 
 	// Export user projects as md
 	proj_id := 25

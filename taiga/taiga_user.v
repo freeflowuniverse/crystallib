@@ -1,8 +1,10 @@
 module taiga
+
 import os
 import json
-import time {Time}
-import x.json2 {raw_decode}
+import time { Time }
+import math { pow10 }
+import x.json2 { raw_decode }
 
 struct User {
 pub mut:
@@ -16,7 +18,7 @@ pub mut:
 	roles             []string
 	email             string
 	public_key        string
-	date_joined       Time [skip]
+	date_joined       Time     [skip]
 }
 
 pub fn users() ? {
@@ -30,14 +32,14 @@ pub fn users() ? {
 }
 
 pub fn user_get(id int) ?User {
-	mut conn :=  connection_get()
-	response := conn.get_json_str('users/$id', "", true) ?
+	mut conn := connection_get()
+	response := conn.get_json_str('users/$id', '', true) ?
 	mut result := user_decode(response) ?
 	conn.user_remember(result)
 	return result
 }
 
-fn project_as_md (proj Project, url string) string {
+fn project_as_md(proj Project, url string) string {
 	circles_url := url
 	project := proj // For template rendering
 	stories := stories_per_project(project.id) // For template rendering
@@ -45,7 +47,7 @@ fn project_as_md (proj Project, url string) string {
 	tasks := tasks_per_project(project.id) // For template rendering
 	epics := epics_per_project(project.id) // For template rendering
 	// export template per project
-	return $tmpl("./templates/project.md")
+	return $tmpl('./templates/project.md')
 }
 
 // //get markdown for all projects per user	
@@ -55,21 +57,125 @@ fn project_as_md (proj Project, url string) string {
 // 	//walk over stories for user, show tasks, show comments
 
 // 	//see: https://github.com/vlang/v/blob/master/doc/docs.md#tmpl-for-embedding-and-parsing-v-template-files
-	
 
+// get markdown for all projects per user
+fn (mut user User) export_user_md(export_directory string, url string) {
+	time_now := time.now()
+	// Init render variables
+	mut blocked := ProjectElements{} // For template rendering
+	mut overdue := ProjectElements{} // For template rendering
+	mut today := ProjectElements{} // For template rendering
+	mut in_two_days := ProjectElements{} // For template rendering
+	mut in_week := ProjectElements{} // For template rendering
+	mut in_month := ProjectElements{} // For template rendering
+	mut others := ProjectElements{} // For template rendering
+	mut old := ProjectElements{} // For template rendering
 
-//get markdown for all projects per user
-fn (mut user User) export_projects_per_user_md(export_directory string, url string){
+	// Init local variables
+	mut stories := []Story{}
+	mut issues := []Issue{}
+	mut tasks := []Task{}
+	mut epics := []Epic{}
+	mut projects_md := []string{}
+
+	// Get all user projects
 	projects := projects_per_user(user.id)
-	mut projects_md := []string
 	for proj in projects {
+		stories << stories_per_project(proj.id)
+		issues << issues_per_project(proj.id)
+		tasks << tasks_per_project(proj.id)
+		epics << epics_per_project(proj.id)
 		projects_md << project_as_md(proj, url)
 	}
-	user_md := $tmpl("./templates/user.md")
-	export_path := export_directory + "/" + user.username + ".md"
+
+	for story in stories {
+		if story.is_blocked {
+			blocked.stories << story
+		} else if story.due_date != Time{} {
+			d_time := (story.due_date - time_now) / (pow10(9) * 3600 * 24) // difference between story due_time and time now in days.
+			if d_time < -60 {
+				old.stories << story
+			} else if d_time < 0 {
+				overdue.stories << story
+			} else if d_time <= 1 {
+				today.stories << story
+			} else if d_time <= 2 {
+				in_two_days.stories << story
+			} else if d_time <= 7 {
+				in_week.stories << story
+			} else if d_time <= 30 {
+				in_month.stories << story
+			}
+		} else {
+			others.stories << story
+		}
+	}
+
+	for issue in issues {
+		if issue.is_blocked {
+			blocked.issues << issue
+		} else if issue.due_date != Time{} {
+			d_time := (issue.due_date - time_now) / (pow10(9) * 3600 * 24) // difference between issue due_time and time now in days.
+			if d_time < -60 {
+				old.issues << issue
+			} else if d_time < 0 {
+				overdue.issues << issue
+			} else if d_time <= 1 {
+				today.issues << issue
+			} else if d_time <= 2 {
+				in_two_days.issues << issue
+			} else if d_time <= 7 {
+				in_week.issues << issue
+			} else if d_time <= 30 {
+				in_month.issues << issue
+			}
+		} else {
+			others.issues << issue
+		}
+	}
+
+	for task in tasks {
+		if task.is_blocked {
+			blocked.tasks << task
+		} else if task.due_date != Time{} {
+			d_time := (task.due_date - time_now) / (pow10(9) * 3600 * 24) // difference between task due_time and time now in days.
+			if d_time < -60 {
+				old.tasks << task
+			} else if d_time < 0 {
+				overdue.tasks << task
+			} else if d_time <= 1 {
+				today.tasks << task
+			} else if d_time <= 2 {
+				in_two_days.tasks << task
+			} else if d_time <= 7 {
+				in_week.tasks << task
+			} else if d_time <= 30 {
+				in_month.tasks << task
+			}
+		} else {
+			others.tasks << task
+		}
+	}
+
+	mut user_md := $tmpl('./templates/user.md')
+	mut export_md := ''
+	for i, line in user_md.split_into_lines() {
+		if line.starts_with('#') {
+			if i == 0 {
+				export_md += line + '\n\n'
+			} else {
+				export_md += '\n' + line + '\n\n'
+			}
+		} else if line == '\n' || line == '\r' || line == '' {
+			continue
+		} else {
+			export_md += line + '\n'
+		}
+	}
+	export_path := export_directory + '/' + user.username + '.md'
 	// export template for user
-	os.write_file(export_path,user_md) or {panic(err)}
-	println("Exporting Done!")
+	os.write_file(export_path, export_md) or { panic(err) }
+	println('Exporting Done!')
 }
 
 pub fn user_delete(id int) ?bool {
@@ -79,10 +185,9 @@ pub fn user_delete(id int) ?bool {
 	return response
 }
 
-fn user_decode(data string) ?User{
+fn user_decode(data string) ?User {
 	mut user := json.decode(User, data) ?
 	data_as_map := (raw_decode(data) or {}).as_map()
-	user.date_joined = parse_time(data_as_map["date_joined"].str())
+	user.date_joined = parse_time(data_as_map['date_joined'].str())
 	return user
 }
-
