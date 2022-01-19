@@ -1,12 +1,11 @@
 module taiga
 
-import os
 import json
 import time { Time }
 import math { pow10 }
 import x.json2 { raw_decode }
 
-struct User {
+pub struct User {
 pub mut:
 	id                int
 	is_active         bool
@@ -49,7 +48,7 @@ pub fn user_get(id int) ?User {
 // 	//see: https://github.com/vlang/v/blob/master/doc/docs.md#tmpl-for-embedding-and-parsing-v-template-files
 
 // get markdown for all projects per user
-fn (user User) as_md (url string) string{
+pub fn (user User) as_md(url string) string {
 	time_now := time.now()
 	// Init render variables
 	mut blocked := ProjectElements{} // For template rendering
@@ -161,6 +160,6 @@ fn user_decode(data string) ?User {
 	mut user := json.decode(User, data) ?
 	data_as_map := (raw_decode(data) or {}).as_map()
 	user.date_joined = parse_time(data_as_map['date_joined'].str())
-	user.file_name = user.username + ".md"
+	user.file_name = user.username + '.md'
 	return user
 }

@@ -3,8 +3,7 @@ module taiga
 import x.json2
 import json
 import net.http
-import redisclient
-
+import despiegk.crystallib.redisclient
 
 [heap]
 struct TaigaConnection {
@@ -13,36 +12,34 @@ mut:
 	url           string
 	auth          AuthDetail
 	cache_timeout int
-	//idea is to load all we have whenever we encounter it
-	//THE OBJECTS HERE NEED  BE THE CLEAN ONES !!! (not the raw ones)
+	// idea is to load all we have whenever we encounter it
+	// THE OBJECTS HERE NEED  BE THE CLEAN ONES !!! (not the raw ones)
 pub mut:
-	projects    map[int]&Project
-	users       map[int]&User
-	stories     map[int]&Story
-	tasks       map[int]&Task
-	epics       map[int]&Epic
-	comments    map[int]&Comment
-	issues      map[int]&Issue
+	projects map[int]&Project
+	users    map[int]&User
+	stories  map[int]&Story
+	tasks    map[int]&Task
+	epics    map[int]&Epic
+	comments map[int]&Comment
+	issues   map[int]&Issue
 }
 
-//needed to get singleton
+// needed to get singleton
 fn init2() TaigaConnection {
-	mut conn := taiga.TaigaConnection{
+	mut conn := TaigaConnection{
 		redis: redisclient.connect('127.0.0.1:6379') or { redisclient.Redis{} }
-	}	
+	}
 	return conn
 }
 
-
-//singleton creation
+// singleton creation
 const connection = init2()
 
-//make sure to use new first, so that the connection has been initted
-//then you can get it everywhere
+// make sure to use new first, so that the connection has been initted
+// then you can get it everywhere
 pub fn connection_get() &TaigaConnection {
 	return &taiga.connection
 }
-
 
 // const conn = init_connection()
 
@@ -73,13 +70,13 @@ pub fn new(url string, login string, passwd string, cache_timeout int) &TaigaCon
 		TaigaConnection: Client contains taiga auth details, taiga url, redis cleint and cache timeout.
 	*/
 	mut conn := connection_get()
-	println("- Connection suscced!")
+	println('- Connection suscced!')
 
 	conn.auth(url, login, passwd) or {
 		panic("Could not connect to $url with $login and passwd:'$passwd'\n$err")
 	}
 	conn.cache_timeout = cache_timeout
-	load_data() or {panic("Can't load data, for details: $err")} //Must panic if load data not working
+	load_data() or { panic("Can't load data, for details: $err") } // Must panic if load data not working
 	return conn
 }
 
@@ -196,13 +193,13 @@ fn (mut h TaigaConnection) post_json_str(prefix string, postdata string, cache b
 	mut result := ''
 	if authenticated {
 		url := '$h.url/api/v1/$prefix'
-		mut req := http.new_request(http.Method.post, url , postdata) ?
+		mut req := http.new_request(http.Method.post, url, postdata) ?
 		req.header = h.header()
 		response := req.do() ?
-		if response.status_code == 201{
+		if response.status_code == 201 {
 			result = response.text
-		}else{
-			return error("could not post: $url\n$result")
+		} else {
+			return error('could not post: $url\n$result')
 		}
 	} else {
 		// Post without auth header
@@ -211,10 +208,10 @@ fn (mut h TaigaConnection) post_json_str(prefix string, postdata string, cache b
 	}
 	// Get Id to save result correctly in cache ex: taiga:issues/id
 	temp := (json2.raw_decode(result) or {}).as_map()
-	id := temp["id"].str()
+	id := temp['id'].str()
 	mut updated_prefix := prefix
 	if id != '' {
-		updated_prefix = prefix + "/" + id
+		updated_prefix = prefix + '/' + id
 	}
 	h.cache_set(updated_prefix, result, cache) ?
 	return result
@@ -256,10 +253,10 @@ fn (mut h TaigaConnection) get_json_str(prefix string, data string, cache bool) 
 		mut req := http.new_request(http.Method.get, url, data) ?
 		req.header = h.header()
 		res := req.do() ?
-		if res.status_code == 200{
+		if res.status_code == 200 {
 			result = res.text
-		}else{
-			return error("could not get: $url\n$res")
+		} else {
+			return error('could not get: $url\n$res')
 		}
 		h.cache_set(prefix, result, cache) ?
 	}
@@ -279,15 +276,15 @@ fn (mut h TaigaConnection) edit_json(prefix string, id int, data string, cache b
 		response: response Json2.Any map.
 	*/
 	url := '$h.url/api/v1/$prefix/$id'
-	mut req := http.new_request(http.Method.patch,url , data) ?
+	mut req := http.new_request(http.Method.patch, url, data) ?
 	req.header = h.header()
 	mut res := req.do() ?
-	mut result := ""
-	if res.status_code == 200{
+	mut result := ''
+	if res.status_code == 200 {
 		result = res.text
-	}else{
-		return error("could not get: $url\n$res")
-	}		
+	} else {
+		return error('could not get: $url\n$res')
+	}
 	h.cache_set(prefix, result, cache) ?
 	data_raw := json2.raw_decode(result) ?
 	data2 := data_raw.as_map()
@@ -306,11 +303,11 @@ fn (mut h TaigaConnection) delete(prefix string, id int) ?bool {
 		bool: True if deleted successfully.
 	*/
 	url := '$h.url/api/v1/$prefix/$id'
-	mut req := http.new_request(http.Method.delete,  url , '') ?
+	mut req := http.new_request(http.Method.delete, url, '') ?
 	req.header = h.header()
 	mut res := req.do() ?
 	if res.status_code == 204 {
-		h.cache_drop_key("$prefix/$id") ? // Drop from cache
+		h.cache_drop_key('$prefix/$id') ? // Drop from cache
 		return true
 	} else {
 		return false

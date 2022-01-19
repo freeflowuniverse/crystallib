@@ -1,11 +1,11 @@
 module taiga
 
-import x.json2 {raw_decode}
+import x.json2 { raw_decode }
 import json
-import time {Time}
-import math {min}
+import time { Time }
+import math { min }
 
-struct Epic {
+pub struct Epic {
 pub mut:
 	description            string
 	id                     int
@@ -21,10 +21,10 @@ pub mut:
 	assigned_to_extra_info UserInfo
 	owner                  int
 	owner_extra_info       UserInfo
-	created_date           Time [skip]
-	modified_date          Time [skip]
-	finished_date          Time [skip]
-	due_date               Time [skip]
+	created_date           Time             [skip]
+	modified_date          Time             [skip]
+	finished_date          Time             [skip]
+	due_date               Time             [skip]
 	due_date_reason        string
 	subject                string
 	is_closed              bool
@@ -34,7 +34,7 @@ pub mut:
 	team_requirement       bool
 	ref                    int
 	user_stories_counts    UserStoriesCount
-	file_name              string [skip]
+	file_name              string           [skip]
 }
 
 struct UserStoriesCount {
@@ -51,17 +51,17 @@ pub mut:
 pub fn epics() ? {
 	mut conn := connection_get()
 	data := conn.get_json_str('epics', '', true) ?
-	data_as_arr := (json2.raw_decode(data) or {}).arr()
+	data_as_arr := (raw_decode(data) or {}).arr()
 	for e in data_as_arr {
 		temp := (raw_decode(e.str()) or {}).as_map()
-		id := temp["id"].int()
+		id := temp['id'].int()
 		epic := epic_get(id) ?
 		conn.epic_remember(epic)
 	}
 }
 
 pub fn epic_create(subject string, project_id int) ?Epic {
-	mut conn :=  connection_get()
+	mut conn := connection_get()
 	epic := NewEpic{
 		subject: subject
 		project: project_id
@@ -74,8 +74,8 @@ pub fn epic_create(subject string, project_id int) ?Epic {
 }
 
 fn epic_get(id int) ?Epic {
-	mut conn :=  connection_get()
-	response := conn.get_json_str('epics/$id', "", true) ?
+	mut conn := connection_get()
+	response := conn.get_json_str('epics/$id', '', true) ?
 	mut result := epic_decode(response) ?
 	conn.epic_remember(result)
 	return result
@@ -88,14 +88,14 @@ pub fn epic_delete(id int) ?bool {
 	return response
 }
 
-fn epic_decode(data string) ?Epic{
+fn epic_decode(data string) ?Epic {
 	mut epic := json.decode(Epic, data) ?
 	data_as_map := (raw_decode(data) or {}).as_map()
-	epic.created_date = parse_time(data_as_map["created_date"].str())
-	epic.modified_date = parse_time(data_as_map["modified_date"].str())
-	epic.finished_date = parse_time(data_as_map["modified_date"].str())
+	epic.created_date = parse_time(data_as_map['created_date'].str())
+	epic.modified_date = parse_time(data_as_map['modified_date'].str())
+	epic.finished_date = parse_time(data_as_map['modified_date'].str())
 	epic.due_date = parse_time(data_as_map['due_date'].str())
-	epic.file_name = epic.subject[0..min(9, epic.subject.len)].to_lower().replace(' ', '-') + '_' +
-		epic.id.str() + ".md"
+	epic.file_name = epic.subject[0..min(15, epic.subject.len)].to_lower().replace(' ', '-') + '_' +
+		epic.id.str() + '.md'
 	return epic
 }

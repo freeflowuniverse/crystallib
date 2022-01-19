@@ -1,10 +1,11 @@
 module taiga
 
-import texttools
+import despiegk.crystallib.texttools
 import json
-import x.json2 {raw_decode}
+import x.json2 { raw_decode }
 
-type TaigaElement = Story | Issue | Task | Epic
+type TaigaElement = Epic | Issue | Story | Task
+
 struct NewProject {
 pub mut:
 	name                 string
@@ -106,11 +107,9 @@ pub fn project_create(name string, description string, projtype Projectype) ?Pro
 			proj_config.issues_statuses << ['New', 'Interested', 'Deal', 'Blocked', 'NeedInfo',
 				'Lost', 'Postponed', 'Won']
 			proj_config.story_statuses << ['New', 'Proposal', 'Contract', 'Blocked', 'NeedInfo',
-				'Closed',
-			]
+				'Closed']
 			proj_config.task_statuses << ['New', 'In progress', 'Verification', 'Needs info',
-				'Closed',
-			]
+				'Closed']
 			proj_config.custom_fields << ['bookings', 'commission']
 		}
 		.project {
