@@ -3,6 +3,7 @@ module taiga
 import x.json2 {raw_decode}
 import json
 import time {Time}
+import math {min}
 
 struct Epic {
 pub mut:
@@ -23,6 +24,8 @@ pub mut:
 	created_date           Time [skip]
 	modified_date          Time [skip]
 	finished_date          Time [skip]
+	due_date               Time [skip]
+	due_date_reason        string
 	subject                string
 	is_closed              bool
 	is_blocked             bool
@@ -31,6 +34,7 @@ pub mut:
 	team_requirement       bool
 	ref                    int
 	user_stories_counts    UserStoriesCount
+	file_name              string [skip]
 }
 
 struct UserStoriesCount {
@@ -90,5 +94,8 @@ fn epic_decode(data string) ?Epic{
 	epic.created_date = parse_time(data_as_map["created_date"].str())
 	epic.modified_date = parse_time(data_as_map["modified_date"].str())
 	epic.finished_date = parse_time(data_as_map["modified_date"].str())
+	epic.due_date = parse_time(data_as_map['due_date'].str())
+	epic.file_name = epic.subject[0..min(9, epic.subject.len)].to_lower().replace(' ', '-') + '_' +
+		epic.id.str() + ".md"
 	return epic
 }

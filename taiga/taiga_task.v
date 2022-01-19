@@ -1,8 +1,9 @@
 module taiga
 
-import x.json2 {raw_decode}
+import x.json2 { raw_decode }
 import json
-import time {Time}
+import time { Time }
+import math { min }
 
 struct Task {
 pub mut:
@@ -20,10 +21,10 @@ pub mut:
 	assigned_to_extra_info UserInfo
 	owner                  int
 	owner_extra_info       UserInfo
-	created_date           Time [skip]
-	modified_date          Time [skip]
-	finished_date          Time [skip]
-	due_date               Time [skip]
+	created_date           Time        [skip]
+	modified_date          Time        [skip]
+	finished_date          Time        [skip]
+	due_date               Time        [skip]
 	due_date_reason        string
 	subject                string
 	is_closed              bool
@@ -31,6 +32,7 @@ pub mut:
 	blocked_note           string
 	ref                    int
 	comments               []Comment
+	file_name              string      [skip]
 }
 
 struct NewTask {
@@ -45,21 +47,18 @@ pub fn tasks() ? {
 	data_as_arr := (raw_decode(data) or {}).arr()
 	for t in data_as_arr {
 		temp := (raw_decode(t.str()) or {}).as_map()
-		id := temp["id"].int()
+		id := temp['id'].int()
 		mut task := task_get(id) ?
 		task.get_task_comments() ?
 		conn.task_remember(task)
 	}
 }
 
-//get comments in lis from task
+// get comments in lis from task
 pub fn (mut t Task) get_task_comments() ?[]Comment {
-	t.comments = comments_get("task", t.id) ?
+	t.comments = comments_get('task', t.id) ?
 	return t.comments
-
 }
-
-
 
 pub fn task_create(subject string, project_id int) ?Task {
 	mut conn := connection_get()
@@ -69,18 +68,19 @@ pub fn task_create(subject string, project_id int) ?Task {
 	}
 	postdata := json.encode_pretty(task)
 	response := conn.post_json_str('tasks', postdata, true, true) ?
-	mut result :=  task_decode(response) ?
+	mut result := task_decode(response) ?
 	conn.task_remember(result)
 	return result
 }
 
 pub fn task_get(id int) ?Task {
 	mut conn := connection_get()
-	response := conn.get_json_str('tasks/$id', "", true) ?
+	response := conn.get_json_str('tasks/$id', '', true) ?
 	mut result := task_decode(response) ?
 	conn.task_remember(result)
 	return result
 }
+
 pub fn task_delete(id int) ?bool {
 	mut conn := connection_get()
 	response := conn.delete('tasks', id) ?
@@ -88,12 +88,14 @@ pub fn task_delete(id int) ?bool {
 	return response
 }
 
-fn task_decode(data string) ? Task{
+fn task_decode(data string) ?Task {
 	mut task := json.decode(Task, data) ?
 	data_as_map := (raw_decode(data) or {}).as_map()
-	task.created_date = parse_time(data_as_map["created_date"].str())
-	task.modified_date = parse_time(data_as_map["modified_date"].str())
-	task.finished_date = parse_time(data_as_map["finished_date"].str())
-	task.due_date = parse_time(data_as_map["due_date"].str())
+	task.created_date = parse_time(data_as_map['created_date'].str())
+	task.modified_date = parse_time(data_as_map['modified_date'].str())
+	task.finished_date = parse_time(data_as_map['finished_date'].str())
+	task.due_date = parse_time(data_as_map['due_date'].str())
+	task.file_name = task.subject[0..min(9, task.subject.len)].to_lower().replace(' ', '-') + '_' +
+		task.id.str() + ".md"
 	return task
 }

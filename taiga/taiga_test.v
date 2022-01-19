@@ -8,16 +8,10 @@ fn test_main() {
 	// create_task()
 	// create_epic()
 
-	// Export user projects as md
-	user_id := 13
-	mut user := singleton.users[user_id]
-	export_dir_path := "./export/users"
-	user.export_user_md(export_dir_path, url)
+	export_all_users("./export", url)
+	export_all_projects("./export", url)
+	export_all_stories("./export", url)
 
-	// Export user projects as md
-	proj_id := 25
-	mut proj := *singleton.projects[proj_id]
-	proj.export_project_as_md(export_dir_path, url)
 }
 
 fn create_issue(){

@@ -1,5 +1,7 @@
 # Users
 
-@for user in users_md
-//show table where we can see username, link to userpage
+| Name | Links |
+| ---- | ----- |
+@for user in all_users
+| $user.full_name | [link](@url/profile/$user.username) \| [md](./users/$user.file_name) |
 @end

@@ -19,6 +19,7 @@ pub mut:
 	email             string
 	public_key        string
 	date_joined       Time     [skip]
+	file_name         string   [skip]
 }
 
 pub fn users() ? {
@@ -39,17 +40,6 @@ pub fn user_get(id int) ?User {
 	return result
 }
 
-fn project_as_md(proj Project, url string) string {
-	circles_url := url
-	project := proj // For template rendering
-	stories := stories_per_project(project.id) // For template rendering
-	issues := issues_per_project(project.id) // For template rendering
-	tasks := tasks_per_project(project.id) // For template rendering
-	epics := epics_per_project(project.id) // For template rendering
-	// export template per project
-	return $tmpl('./templates/project.md')
-}
-
 // //get markdown for all projects per user	
 // fn (mut u User) projects_per_user_md() string{
 
@@ -59,7 +49,7 @@ fn project_as_md(proj Project, url string) string {
 // 	//see: https://github.com/vlang/v/blob/master/doc/docs.md#tmpl-for-embedding-and-parsing-v-template-files
 
 // get markdown for all projects per user
-fn (mut user User) export_user_md(export_directory string, url string) {
+fn (user User) as_md (url string) string{
 	time_now := time.now()
 	// Init render variables
 	mut blocked := ProjectElements{} // For template rendering
@@ -76,7 +66,6 @@ fn (mut user User) export_user_md(export_directory string, url string) {
 	mut issues := []Issue{}
 	mut tasks := []Task{}
 	mut epics := []Epic{}
-	mut projects_md := []string{}
 
 	// Get all user projects
 	projects := projects_per_user(user.id)
@@ -85,7 +74,6 @@ fn (mut user User) export_user_md(export_directory string, url string) {
 		issues << issues_per_project(proj.id)
 		tasks << tasks_per_project(proj.id)
 		epics << epics_per_project(proj.id)
-		projects_md << project_as_md(proj, url)
 	}
 
 	for story in stories {
@@ -158,24 +146,8 @@ fn (mut user User) export_user_md(export_directory string, url string) {
 	}
 
 	mut user_md := $tmpl('./templates/user.md')
-	mut export_md := ''
-	for i, line in user_md.split_into_lines() {
-		if line.starts_with('#') {
-			if i == 0 {
-				export_md += line + '\n\n'
-			} else {
-				export_md += '\n' + line + '\n\n'
-			}
-		} else if line == '\n' || line == '\r' || line == '' {
-			continue
-		} else {
-			export_md += line + '\n'
-		}
-	}
-	export_path := export_directory + '/' + user.username + '.md'
-	// export template for user
-	os.write_file(export_path, export_md) or { panic(err) }
-	println('Exporting Done!')
+	user_md = fix_empty_lines(user_md)
+	return user_md
 }
 
 pub fn user_delete(id int) ?bool {
@@ -189,5 +161,6 @@ fn user_decode(data string) ?User {
 	mut user := json.decode(User, data) ?
 	data_as_map := (raw_decode(data) or {}).as_map()
 	user.date_joined = parse_time(data_as_map['date_joined'].str())
+	user.file_name = user.username + ".md"
 	return user
 }

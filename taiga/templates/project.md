@@ -1,93 +1,45 @@
-
-## [@project.name](@circles_url/project/@project.slug)
+# [@project.name](@url/project/@project.slug)
 |              |                         |
 | ------------ | ----------------------- |
 | ID           | @project.id             |
 | Private      | @project.is_private     |
 | Description  | @project.description    |
 | Owner        | @project.owner.username |
-| Type         | @project.projtype       |
 | Created at   | @project.created_date   |
 | Last Updates | @project.modified_date  |
 
 @if stories.len >0
-### Stories
+## Stories
+| Subject | Owner | Assigned to | Created at | Last Update | Link |
+| ------- | ----- | ----------- | ---------- | ----------- | ---- |
 @for story in stories
-#### [$story.subject](@circles_url/project/@project.slug/us/$story.ref)
-|              |                                        |
-| ------------ | -------------------------------------- |
-| Owner        | $story.owner_extra_info.username       |
-| Assigned to  | $story.assigned_to_extra_info.username |
-| Created at   | $story.created_date                    |
-| Last Update | $story.modified_date                   |
-
-@if story.description != ""
-
-##### Description
-
-> Rendered as markdown
-
-$story.description
-
-@end
-
-@if story.comments.len >0
-##### Comments
-@for comment in story.comments
-
-> <strong>$comment.user.name</strong> `$comment.created_at`
-
-$comment.comment
-
-@end <!-- End Comments Loop -->
-@end <!-- End Comments Condition -->
----
+| $story.subject | $story.owner_extra_info.username | $story.assigned_to_extra_info.username | $story.created_date.ymmdd() | $story.modified_date.ymmdd() | [md](../stories/$story.file_name) \| [circle](@url/project/@project.slug/us/$story.ref) |
 @end <!-- End Stories Loop -->
 @end <!-- End Stories Condition -->
 
 @if issues.len >0
-
-### Issues
-
+## Issues
+| Subject | Owner | Assigned to | Created at | Last Update | Close Status | Link |
+| ------- | ----- | ----------- | ---------- | ----------- | ------------ | ---- |
 @for issue in issues
-#### [$issue.subject](@circles_url/project/@project.slug/issue/$issue.ref)
-|              |                                        |
-| ------------ | -------------------------------------- |
-| ID           | $issue.id                              |
-| Owner        | $issue.owner_extra_info.username       |
-| Assigned to  | $issue.assigned_to_extra_info.username |
-| Private      | $issue.is_private                      |
-| Closed       | $issue.is_closed                       |
-| Created at   | $issue.created_date                    |
-| Last Updates | $issue.modified_date                   |
+| $issue.subject | $issue.owner_extra_info.username | $issue.assigned_to_extra_info.username | $issue.created_date.ymmdd() | $issue.modified_date.ymmdd() | $issue.is_closed |[md](../issues/$issue.file_name) \| [circle](@url/project/@project.slug/issue/$issue.ref) |
+@end <!-- End Issues Loop -->
+@end <!-- End Issues Condition -->
 
-@if issue.description != ""
-##### Description
-> Rendered as markdown
-
-$issue.description
-
-@end
-
-@if issue.comments.len >0
-##### Comments
-@for comment in issue.comments
-> <strong>$comment.user.name</strong> `$comment.created_at`
-
-$comment.comment
-
-@end
-@end
----
-@end
-@end
-
+@if tasks.len >0
+## Tasks
+| Subject | Owner | Assigned to | Created at | Last Update | Close Status | Link |
+| ------- | ----- | ----------- | ---------- | ----------- | ------------ | ---- |
+@for task in tasks
+| $task.subject | $task.owner_extra_info.username | $task.assigned_to_extra_info.username | $task.created_date.ymmdd() | $task.modified_date.ymmdd() | $task.is_closed |[md](../tasks/$task.file_name) \| [circle](@url/project/@project.slug/task/$task.ref) |
+@end <!-- End Tasks Loop -->
+@end <!-- End Tasks Condition -->
 
 @if epics.len >0
-
-### Epics
+## Epics
+| Subject | Owner | Assigned to | Created at | Last Update | Close Status | Link |
+| ------- | ----- | ----------- | ---------- | ----------- | ------------ | ---- |
 @for epic in epics
-
-[$epic.subject](@circles_url/project/@project.slug/epic/$epic.ref)
-
-> TODO: as table, link to epic page (which can be done later if not enough time)
+| $epic.subject | $epic.owner_extra_info.username | $epic.assigned_to_extra_info.username | $epic.created_date.ymmdd() | $epic.modified_date.ymmdd() | $epic.is_closed |[md](../epics/$epic.file_name) \| [circle](@url/project/@project.slug/epic/$epic.ref) |
+@end  <!-- End Epics Loop -->
+@end <!-- End Epics Condition -->

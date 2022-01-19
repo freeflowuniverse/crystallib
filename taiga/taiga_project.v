@@ -18,6 +18,7 @@ pub mut:
 	slug          string
 	owner         UserInfo
 	projtype      Projectype [skip]
+	file_name     string     [skip]
 }
 
 
@@ -107,12 +108,17 @@ fn project_decode(data string) ? Project{
 	data_as_map := (raw_decode(data) or {}).as_map()
 	project.created_date = parse_time(data_as_map["created_date"].str())
 	project.modified_date = parse_time(data_as_map["modified_date"].str())
+	project.file_name = project.slug + ".md"
 	return project
 }
 
-fn (proj Project) export_project_as_md(export_directory string, url string){
-	md := project_as_md(proj, url)
-	export_path := export_directory + "/" + proj.name + ".md"
-	// export template for user
-	os.write_file(export_path, md) or {panic(err)}
+fn (project Project) as_md (url string) string {
+	stories := stories_per_project(project.id) // For template rendering
+	issues := issues_per_project(project.id) // For template rendering
+	tasks := tasks_per_project(project.id) // For template rendering
+	epics := epics_per_project(project.id) // For template rendering
+	// export template per project
+	mut proj_md := $tmpl('./templates/project.md')
+	proj_md = fix_empty_lines(proj_md)
+	return proj_md
 }

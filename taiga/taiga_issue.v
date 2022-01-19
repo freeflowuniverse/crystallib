@@ -3,10 +3,7 @@ module taiga
 import json
 import x.json2 {raw_decode}
 import time {Time}
-// struct IssueList {
-// pub mut:
-// 	issues []Issue
-// }
+import math {min}
 
 struct Issue {
 pub mut:
@@ -36,6 +33,7 @@ pub mut:
 	blocked_note           string
 	ref                    int
 	comments               []Comment
+	file_name              string [skip]
 }
 
 struct NewIssue {
@@ -99,5 +97,7 @@ fn issue_decode(data string) ? Issue{
 	issue.modified_date = parse_time(data_as_map["modified_date"].str())
 	issue.finished_date = parse_time(data_as_map["finished_date"].str())
 	issue.due_date = parse_time(data_as_map["due_date"].str())
+	issue.file_name = issue.subject[0..min(9, issue.subject.len)].to_lower().replace(' ', '-') +
+		'_' + issue.id.str() + ".md"
 	return issue
 }
