@@ -5,7 +5,7 @@ import json
 import time { Time }
 import math { min }
 
-struct Story {
+pub struct Story {
 pub mut:
 	description            string
 	id                     int
@@ -46,9 +46,10 @@ pub fn (mut s Story) get_story_comments() ?[]Comment {
 pub fn (s Story) get_story_tasks() ?[]Task {
 	mut conn := connection_get()
 	mut story_tasks := []Task{}
-	for id in s.tasks {
-		task := conn.task_get(id) ?
-		story_tasks << task
+	for _, task in conn.tasks {
+		if task.user_story_extra_info.id == s.id {
+			story_tasks << task
+		}
 	}
 	return story_tasks
 }
@@ -107,12 +108,13 @@ fn story_decode(data string) ?Story {
 	story.modified_date = parse_time(data_as_map['modified_date'].str())
 	story.finish_date = parse_time(data_as_map['finish_date'].str())
 	story.due_date = parse_time(data_as_map['due_date'].str())
-	story.file_name = story.subject[0..min(9, story.subject.len)].to_lower().replace(' ', '-') +
-		'_' + story.id.str() + ".md"
+	story.file_name = story.subject[0..min(15, story.subject.len)].to_lower().replace(' ', '-') +
+		'_' + story.id.str() + '.md'
+	story.project_extra_info.file_name = story.project_extra_info.slug + '.md'
 	return story
 }
 
-fn (story Story) as_md(url string) string {
+pub fn (story Story) as_md(url string) string {
 	tasks := story.get_story_tasks() or {
 		panic("Can't get tasks for story $story.id with error: $err")
 	} // For template rendering

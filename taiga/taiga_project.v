@@ -1,14 +1,13 @@
 module taiga
 
-import x.json2 {raw_decode}
+import x.json2 { raw_decode }
 import json
-import os
-import time {Time}
+import time { Time }
 
-struct Project {
+pub struct Project {
 pub mut:
-	created_date  Time  [skip]
-	modified_date Time  [skip]
+	created_date  Time       [skip]
+	modified_date Time       [skip]
 	name          string
 	description   string
 	id            int
@@ -21,14 +20,13 @@ pub mut:
 	file_name     string     [skip]
 }
 
-
 pub enum Projectype {
 	funnel
 	project
 	team
 }
 
-pub enum TaigaElementTypes{
+pub enum TaigaElementTypes {
 	story
 	issue
 	task
@@ -43,12 +41,10 @@ pub mut:
 	epics   []Epic
 }
 
-
 pub fn (mut p Project) delete() ?bool {
 	mut conn := connection_get()
 	return conn.delete('projects', p.id)
 }
-
 
 pub fn (mut p Project) stories() ?[]Story {
 	mut conn := connection_get()
@@ -65,8 +61,7 @@ pub fn (mut p Project) stories() ?[]Story {
 // 	panic("implement")
 // }
 
-
-pub fn (mut p Project) copy (element_type TaigaElementTypes, element_id int, to_project_id int) ?TaigaElement {
+pub fn (mut p Project) copy(element_type TaigaElementTypes, element_id int, to_project_id int) ?TaigaElement {
 	/*
 	Copy story, issue, task and epic from project to other one.
 	Inputs:
@@ -78,9 +73,9 @@ pub fn (mut p Project) copy (element_type TaigaElementTypes, element_id int, to_
 	*/
 	mut conn := connection_get()
 	mut new_element := TaigaElement(Issue{}) // Initialize with any empty element type
-	match element_type{
+	match element_type {
 		.story {
-			//Get element
+			// Get element
 			element := story_get(element_id) ?
 			// Create new element in the distination project
 			new_element = story_create(element.subject, to_project_id) ?
@@ -98,21 +93,21 @@ pub fn (mut p Project) copy (element_type TaigaElementTypes, element_id int, to_
 			new_element = epic_create(element.subject, to_project_id) ?
 		}
 	}
-	//TODO: guess this is not finished??? we need to copy the content
-	panic("not implemented")
+	// TODO: guess this is not finished??? we need to copy the content
+	panic('not implemented')
 	return new_element
 }
 
-fn project_decode(data string) ? Project{
+fn project_decode(data string) ?Project {
 	mut project := json.decode(Project, data) ?
 	data_as_map := (raw_decode(data) or {}).as_map()
-	project.created_date = parse_time(data_as_map["created_date"].str())
-	project.modified_date = parse_time(data_as_map["modified_date"].str())
-	project.file_name = project.slug + ".md"
+	project.created_date = parse_time(data_as_map['created_date'].str())
+	project.modified_date = parse_time(data_as_map['modified_date'].str())
+	project.file_name = project.slug + '.md'
 	return project
 }
 
-fn (project Project) as_md (url string) string {
+pub fn (project Project) as_md(url string) string {
 	stories := stories_per_project(project.id) // For template rendering
 	issues := issues_per_project(project.id) // For template rendering
 	tasks := tasks_per_project(project.id) // For template rendering

@@ -2,9 +2,10 @@ module taiga
 
 struct ProjectInfo {
 pub mut:
-	name string
-	slug string
-	id   int
+	name      string
+	slug      string
+	id        int
+	file_name string [skip]
 }
 
 struct UserInfo {
@@ -27,7 +28,8 @@ pub mut:
 
 struct StoryInfo {
 pub mut:
-	id      int
-	ref     int
-	subject string
+	id        int
+	ref       int
+	subject   string
+	file_name string [skip]
 }

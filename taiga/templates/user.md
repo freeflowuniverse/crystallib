@@ -11,13 +11,13 @@
 | Type | project | Subject | Created at | Blocked Note | Link |
 | ---- | ------- | ------- | ---------- | ------------ | ---- |
 @for story in blocked.stories
-| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | $story.blocked_note | [link](@url/project/$story.project_extra_info.slug/us/$story.ref) |
+| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | $story.blocked_note | [md](../stories/$story.file_name) \| [link](@url/project/$story.project_extra_info.slug/us/$story.ref) |
 @end
 @for issue in blocked.issues
-| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | $issue.blocked_note | [link](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
+| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | $issue.blocked_note | [md](../issues/$issue.file_name) \| [link](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
 @end
 @for task in blocked.tasks
-| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | $task.blocked_note | [link](@url/project/$task.project_extra_info.slug/task/$task.ref) |
+| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | $task.blocked_note | [md](../tasks/$task.file_name) \| [link](@url/project/$task.project_extra_info.slug/task/$task.ref) |
 @end
 @else
 - No blocked stories, issues and tasks.
@@ -27,13 +27,13 @@
 | Type | project | Subject | Created at | Deadline | Link |
 | ---- | ------- | ------- | ---------- | -------- | ---- |
 @for story in overdue.stories
-| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | $story.due_date.ymmdd() | [link](@url/project/$story.project_extra_info.slug/us/$story.ref) |
+| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | $story.due_date.ymmdd() | [md](../stories/$story.file_name) \| [link](@url/project/$story.project_extra_info.slug/us/$story.ref) |
 @end
 @for issue in overdue.issues
-| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | $issue.due_date.ymmdd() | [link](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
+| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | $issue.due_date.ymmdd() | [md](../issues/$issue.file_name) \| [link](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
 @end
 @for task in overdue.tasks
-| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | $task.due_date.ymmdd() | [link](@url/project/$task.project_extra_info.slug/task/$task.ref) |
+| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | $task.due_date.ymmdd() | [md](../tasks/$task.file_name) \| [link](@url/project/$task.project_extra_info.slug/task/$task.ref) |
 @end
 @else
 - No delayed stories, issues and tasks .
@@ -43,13 +43,13 @@
 | Type | project | Subject | Created at | Link |
 | ---- | ------- | ------- | ---------- | ---- |
 @for story in today.stories
-| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | [link](@url/project/$story.project_extra_info.slug/us/$story.ref) |
+| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | [md](../stories/$story.file_name) \| [link](@url/project/$story.project_extra_info.slug/us/$story.ref) |
 @end
 @for issue in today.issues
-| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | [link](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
+| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | [md](../issues/$issue.file_name) \| [link](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
 @end
 @for task in today.tasks
-| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | [link](@url/project/$task.project_extra_info.slug/task/$task.ref) |
+| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | [md](../tasks/$task.file_name) \| [link](@url/project/$task.project_extra_info.slug/task/$task.ref) |
 @end
 @else
 - No stories, issues and tasks to be delivered today .
@@ -59,13 +59,13 @@
 | Type | project | Subject | Created at | Link |
 | ---- | ------- | ------- | ---------- | ---- |
 @for story in in_two_days.stories
-| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | [link](@url/project/$story.project_extra_info.slug/us/$story.ref) |
+| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | [md](../stories/$story.file_name) \| [link](@url/project/$story.project_extra_info.slug/us/$story.ref) |
 @end
 @for issue in in_two_days.issues
-| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | [link](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
+| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | [md](../issues/$issue.file_name) \| [link](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
 @end
 @for task in in_two_days.tasks
-| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | [link](@url/project/$task.project_extra_info.slug/task/$task.ref) |
+| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | [md](../tasks/$task.file_name) \| [link](@url/project/$task.project_extra_info.slug/task/$task.ref) |
 @end
 @else
 - No stories, issues and tasks to be delivered in 2 days .
@@ -76,13 +76,13 @@
 | Type | project | Subject | Created at | Deadline | Link |
 | ---- | ------- | ------- | ---------- | -------- | ---- |
 @for story in in_week.stories
-| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | $story.due_date.ymmdd() | [link](@url/project/$story.project_extra_info.slug/us/$story.ref) |
+| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | $story.due_date.ymmdd() | [md](../stories/$story.file_name) \| [link](@url/project/$story.project_extra_info.slug/us/$story.ref) |
 @end
 @for issue in in_week.issues
-| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | $issue.due_date.ymmdd() | [link](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
+| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | $issue.due_date.ymmdd() | [md](../issues/$issue.file_name) \| [link](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
 @end
 @for task in in_week.tasks
-| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | $task.due_date.ymmdd() | [link](@url/project/$task.project_extra_info.slug/task/$task.ref) |
+| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | $task.due_date.ymmdd() | [md](../tasks/$task.file_name) \| [link](@url/project/$task.project_extra_info.slug/task/$task.ref) |
 @end
 @else
 - No stories, issues and tasks to be delivered in a week.
@@ -93,13 +93,13 @@
 | Type | project | Subject | Created at | Deadline | Link |
 | ---- | ------- | ------- | ---------- | -------- | ---- |
 @for story in in_month.stories
-| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | $story.due_date.ymmdd() | [link](@url/project/$story.project_extra_info.slug/us/$story.ref) |
+| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | $story.due_date.ymmdd() | [md](../stories/$story.file_name) \| [link](@url/project/$story.project_extra_info.slug/us/$story.ref) |
 @end
 @for issue in in_month.issues
-| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | $issue.due_date.ymmdd() | [link](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
+| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | $issue.due_date.ymmdd() | [md](../issues/$issue.file_name) \| [link](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
 @end
 @for task in in_month.tasks
-| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | $task.due_date.ymmdd() | [link](@url/project/$task.project_extra_info.slug/task/$task.ref) |
+| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | $task.due_date.ymmdd() | [md](../tasks/$task.file_name) \| [link](@url/project/$task.project_extra_info.slug/task/$task.ref) |
 @end
 @else
 - No stories, issues and tasks to be delivered in a month.
@@ -110,13 +110,13 @@
 | Type | project | Subject | Created at | Link |
 | ---- | ------- | ------- | ---------- | ---- |
 @for story in others.stories
-| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | [link](@url/project/$story.project_extra_info.slug/us/$story.ref) |
+| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | [md](../stories/$story.file_name) \| [link](@url/project/$story.project_extra_info.slug/us/$story.ref) |
 @end
 @for issue in others.issues
-| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | [link](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
+| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | [md](../issues/$issue.file_name) \| [link](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
 @end
 @for task in others.tasks
-| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | [link](@url/project/$task.project_extra_info.slug/task/$task.ref) |
+| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | [md](../tasks/$task.file_name) \| [link](@url/project/$task.project_extra_info.slug/task/$task.ref) |
 @end
 @end
 @if old.stories.len > 0 || old.issues.len > 0 || old.tasks.len > 0
@@ -124,13 +124,12 @@
 | Type | project | Subject | Created at | Deadline | Link |
 | ---- | ------- | ------- | ---------- | -------- | ---- |
 @for story in old.stories
-| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | $story.due_date.ymmdd() | [link](@url/project/$story.project_extra_info.slug/us/$story.ref) |
+| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | $story.due_date.ymmdd() | [md](../stories/$story.file_name) \| [link](@url/project/$story.project_extra_info.slug/us/$story.ref) |
 @end
 @for issue in old.issues
-| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | $issue.due_date.ymmdd() | [link](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
+| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | $issue.due_date.ymmdd() | [md](../issues/$issue.file_name) \| [link](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
 @end
 @for task in old.tasks
-| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | $task.due_date.ymmdd() | [link](@url/project/$task.project_extra_info.slug/task/$task.ref) |
+| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | $task.due_date.ymmdd() | [md](../tasks/$task.file_name) \| [link](@url/project/$task.project_extra_info.slug/task/$task.ref) |
 @end
 @end
-

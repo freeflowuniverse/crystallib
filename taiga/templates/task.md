@@ -1,31 +1,31 @@
+# [@task.subject](@url/project/@task.project_extra_info.slug/task/@task.ref)
 
-
-# [$task.subject](@circles_url/task/@task.slug/us/$task.ref)
-
-|             |                                        |
-| ----------- | -------------------------------------- |
-| Owner       | $task.owner_extra_info.username       |
-| Assigned to | $task.assigned_to_extra_info.username |
-| Created at  | $task.created_date                    |
-| Last Update | $task.modified_date                   |
+|             |                                                                                       |
+| ----------- | ------------------------------------------------------------------------------------- |
+| Owner       | @task.owner_extra_info.username                                                       |
+| Assigned to | @task.assigned_to_extra_info.username                                                 |
+| Created at  | @task.created_date                                                                    |
+| Last Update | @task.modified_date                                                                   |
+| Story       | [@task.user_story_extra_info.subject](../stories/@task.user_story_extra_info.file_name) |
+| Project     | [@task.project_extra_info.name](../projects/@task.project_extra_info.file_name)       |
 
 @if task.description != ""
 
-##### Description
+## Description
 
 > Rendered as markdown
 
-$task.description
+@task.description
 
 @end
 
-@if task.description != ""
-
-
 @if task.comments.len >0
-##### Comments
+## Comments
 @for comment in task.comments
 
 > <strong>$comment.user.name</strong> `$comment.created_at`
 
 $comment.comment
+
+@end
+@end

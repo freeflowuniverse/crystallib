@@ -1,36 +1,30 @@
+# [@issue.subject](@url/project/@issue.project_extra_info.slug/issue/$issue.ref)
 
-
-# [$issue.subject](@circles_url/issue/@issue.slug/us/$issue.ref)
-
-|             |                                        |
-| ----------- | -------------------------------------- |
-| Owner       | $issue.owner_extra_info.username       |
-| Assigned to | $issue.assigned_to_extra_info.username |
-| Created at  | $issue.created_date                    |
-| Last Update | $issue.modified_date                   |
+|             |                                                                                 |
+| ----------- | ------------------------------------------------------------------------------- |
+| Owner       | @issue.owner_extra_info.username                                                |
+| Assigned to | @issue.assigned_to_extra_info.username                                          |
+| Created at  | @issue.created_date.ymmdd()                                                     |
+| Last Update | @issue.modified_date.ymmdd()                                                    |
+| Project     | [@issue.project_extra_info.name](../projects/@issue.project_extra_info.file_name) |
 
 @if issue.description != ""
 
-##### Description
+## Description
 
 > Rendered as markdown
 
-$issue.description
+@issue.description
 
 @end
 
-@if task.description != ""
-
-
 @if issue.comments.len >0
-##### Comments
+## Comments
 @for comment in issue.comments
 
 > <strong>$comment.user.name</strong> `$comment.created_at`
 
 $comment.comment
 
-
-
-
-
+@end
+@end
