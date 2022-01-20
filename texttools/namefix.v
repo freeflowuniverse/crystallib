@@ -15,7 +15,7 @@ pub fn name_fix(name string) string {
 }
 
 pub fn name_fix_no_filesep(name string) string {
-	name1 := name.replace('/', '_')
+	mut name1 := name.replace('/', '_')
 	name1 = name.replace('\\', '_')
 	return name_fix(name1)
 }
