@@ -48,7 +48,7 @@ pub fn (mut h TaigaConnection) project_get_by_name(name string) ?Project {
 	// Get project by name
 	// because we cache we can walk over it
 	mut conn := connection_get()
-	name2 := texttools.name_fix(name)
+	name2 := texttools.name_fix_no_filesep(name)
 	mut all_projects := projects() ?
 	for mut proj in all_projects {
 		if proj.name == name2 {
@@ -96,7 +96,7 @@ pub fn project_create(name string, description string, projtype Projectype) ?Pro
 
 	match projtype {
 		.funnel {
-			proj.name = texttools.name_fix('FUNNEL_' + name)
+			proj.name = texttools.name_fix_no_filesep('FUNNEL_' + name)
 			proj.is_backlog_activated = false
 			proj.is_kanban_activated = true
 			proj.is_wiki_activated = true
@@ -113,7 +113,7 @@ pub fn project_create(name string, description string, projtype Projectype) ?Pro
 			proj_config.custom_fields << ['bookings', 'commission']
 		}
 		.project {
-			proj.name = texttools.name_fix('PROJECT_' + name)
+			proj.name = texttools.name_fix_no_filesep('PROJECT_' + name)
 			proj.is_backlog_activated = false
 			proj.is_kanban_activated = true
 			proj.is_wiki_activated = false
@@ -127,7 +127,7 @@ pub fn project_create(name string, description string, projtype Projectype) ?Pro
 				'Implemented', 'Closed', 'Rejected', 'Postponed', 'Archived']
 		}
 		.team {
-			proj.name = texttools.name_fix('TEAM_' + name)
+			proj.name = texttools.name_fix_no_filesep('TEAM_' + name)
 			proj.is_backlog_activated = true
 			proj.is_kanban_activated = false
 			proj.is_wiki_activated = true

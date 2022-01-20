@@ -14,6 +14,12 @@ pub fn name_fix(name string) string {
 	return res
 }
 
+pub fn name_fix_no_filesep(name string) string {
+	name1 := name.replace('/', '_')
+	name1 = name.replace('\\', '_')
+	return name_fix(name1)
+}
+
 pub fn name_fix_no_underscore(name string) string {
 	mut pagename := name_fix_keepext(name)
 	x := pagename.replace('_', '')
