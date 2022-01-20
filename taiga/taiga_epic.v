@@ -1,5 +1,6 @@
 module taiga
 
+import despiegk.crystallib.texttools
 import x.json2 { raw_decode }
 import json
 import time { Time }
@@ -95,7 +96,7 @@ fn epic_decode(data string) ?Epic {
 	epic.modified_date = parse_time(data_as_map['modified_date'].str())
 	epic.finished_date = parse_time(data_as_map['modified_date'].str())
 	epic.due_date = parse_time(data_as_map['due_date'].str())
-	epic.file_name = epic.subject[0..min(15, epic.subject.len)].to_lower().replace(' ', '-') + '_' +
-		epic.id.str() + '.md'
+	epic.file_name = texttools.name_fix_no_filesep(epic.subject[0..min(15, epic.subject.len)] +
+		'-' + epic.id.str()) + '.md'
 	return epic
 }

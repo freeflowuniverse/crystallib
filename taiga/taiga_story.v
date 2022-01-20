@@ -109,8 +109,10 @@ fn story_decode(data string) ?Story {
 	story.modified_date = parse_time(data_as_map['modified_date'].str())
 	story.finish_date = parse_time(data_as_map['finish_date'].str())
 	story.due_date = parse_time(data_as_map['due_date'].str())
-	story.file_name = texttools.name_fix_no_filesep(story.subject[0..min(15, story.subject.len)]) + '_' + story.id.str() + '.md'
-	story.project_extra_info.file_name = story.project_extra_info.slug + '.md'
+	story.file_name = texttools.name_fix_no_filesep(story.subject[0..min(15, story.subject.len)] +
+		'_' + story.id.str()) + '.md'
+	story.project_extra_info.file_name =
+		texttools.name_fix_no_filesep(story.project_extra_info.slug) + '.md'
 	return story
 }
 
