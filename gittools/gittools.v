@@ -159,5 +159,6 @@ fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []strin
 			gitstructure.load_recursive(pathnew, mut done) ?
 		}
 	}
+	// println(" - git exit: $path1")
 }
 

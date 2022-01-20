@@ -4,9 +4,9 @@ import os
 import math
 
 pub fn export(export_dir string, url string)? {
-	if os.exists(export_dir){
-		os.rmdir_all(export_dir)?
-	}
+	// if os.exists(export_dir){
+	// 	os.rmdir_all(export_dir)?
+	// }
 	export_all_users(export_dir, url)?
 	export_all_projects(export_dir, url)?
 	export_all_stories(export_dir, url)?
