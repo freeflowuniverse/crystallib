@@ -4,10 +4,10 @@
 | ----------- | --------------------------------------------------------------------------------------- |
 | Owner       | @task.owner_extra_info.username                                                         |
 | Assigned to | @task.assigned_to_extra_info.username                                                   |
-| Created at  | @task.created_date                                                                      |
-| Last Update | @task.modified_date                                                                     |
-| Story       | [@task.user_story_extra_info.subject](../stories/@task.user_story_extra_info.file_name) |
-| Project     | [@task.project_extra_info.name](../projects/@task.project_extra_info.file_name)         |
+| Created at  | @task.created_date.ymmdd()                                                              |
+| Last Update | @task.modified_date.ymmdd()                                                             |
+| Story       | [@task.user_story_extra_info.subject](@task.user_story_extra_info.file_name) |
+| Project     | [@task.project_extra_info.name](@task.project_extra_info.file_name)         |
 
 @if task.description != ""
 

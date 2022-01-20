@@ -6,7 +6,7 @@
 | Assigned to | @issue.assigned_to_extra_info.username                                          |
 | Created at  | @issue.created_date.ymmdd()                                                     |
 | Last Update | @issue.modified_date.ymmdd()                                                    |
-| Project     | [@issue.project_extra_info.name](../projects/@issue.project_extra_info.file_name) |
+| Project     | [@issue.project_extra_info.name](@issue.project_extra_info.file_name) |
 
 @if issue.description != ""
 
