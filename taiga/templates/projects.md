@@ -3,5 +3,5 @@
 | Name | Links |
 | ---- | ----- |
 @for project in all_projects
-| $project.name | [link](@url/project/$project.slug) \| [md](./projects/$project.file_name) |
+| $project.name | [wiki](./projects/$project.file_name) \| [web](@url/project/$project.slug) |
 @end

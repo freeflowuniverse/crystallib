@@ -13,7 +13,7 @@
 | Subject | Owner | Assigned to | Created at | Last Update | Link |
 | ------- | ----- | ----------- | ---------- | ----------- | ---- |
 @for story in stories
-| $story.subject | $story.owner_extra_info.username | $story.assigned_to_extra_info.username | $story.created_date.ymmdd() | $story.modified_date.ymmdd() | [md](../stories/$story.file_name) \| [circle](@url/project/@project.slug/us/$story.ref) |
+| $story.subject | $story.owner_extra_info.username | $story.assigned_to_extra_info.username | $story.created_date.ymmdd() | $story.modified_date.ymmdd() | [wiki](../stories/$story.file_name) \| [web](@url/project/@project.slug/us/$story.ref) |
 @end <!-- End Stories Loop -->
 @end <!-- End Stories Condition -->
 
@@ -22,7 +22,7 @@
 | Subject | Owner | Assigned to | Created at | Last Update | Close Status | Link |
 | ------- | ----- | ----------- | ---------- | ----------- | ------------ | ---- |
 @for issue in issues
-| $issue.subject | $issue.owner_extra_info.username | $issue.assigned_to_extra_info.username | $issue.created_date.ymmdd() | $issue.modified_date.ymmdd() | $issue.is_closed |[md](../issues/$issue.file_name) \| [circle](@url/project/@project.slug/issue/$issue.ref) |
+| $issue.subject | $issue.owner_extra_info.username | $issue.assigned_to_extra_info.username | $issue.created_date.ymmdd() | $issue.modified_date.ymmdd() | $issue.is_closed |[wiki](../issues/$issue.file_name) \| [web](@url/project/@project.slug/issue/$issue.ref) |
 @end <!-- End Issues Loop -->
 @end <!-- End Issues Condition -->
 
@@ -31,7 +31,7 @@
 | Subject | Owner | Assigned to | Created at | Last Update | Close Status | Link |
 | ------- | ----- | ----------- | ---------- | ----------- | ------------ | ---- |
 @for task in tasks
-| $task.subject | $task.owner_extra_info.username | $task.assigned_to_extra_info.username | $task.created_date.ymmdd() | $task.modified_date.ymmdd() | $task.is_closed |[md](../tasks/$task.file_name) \| [circle](@url/project/@project.slug/task/$task.ref) |
+| $task.subject | $task.owner_extra_info.username | $task.assigned_to_extra_info.username | $task.created_date.ymmdd() | $task.modified_date.ymmdd() | $task.is_closed |[wiki](../tasks/$task.file_name) \| [web](@url/project/@project.slug/task/$task.ref) |
 @end <!-- End Tasks Loop -->
 @end <!-- End Tasks Condition -->
 
@@ -40,6 +40,6 @@
 | Subject | Owner | Assigned to | Created at | Last Update | Close Status | Link |
 | ------- | ----- | ----------- | ---------- | ----------- | ------------ | ---- |
 @for epic in epics
-| $epic.subject | $epic.owner_extra_info.username | $epic.assigned_to_extra_info.username | $epic.created_date.ymmdd() | $epic.modified_date.ymmdd() | $epic.is_closed |[md](../epics/$epic.file_name) \| [circle](@url/project/@project.slug/epic/$epic.ref) |
+| $epic.subject | $epic.owner_extra_info.username | $epic.assigned_to_extra_info.username | $epic.created_date.ymmdd() | $epic.modified_date.ymmdd() | $epic.is_closed |[wiki](../epics/$epic.file_name) \| [web](@url/project/@project.slug/epic/$epic.ref) |
 @end  <!-- End Epics Loop -->
 @end <!-- End Epics Condition -->

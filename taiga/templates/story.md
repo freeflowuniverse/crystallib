@@ -34,6 +34,6 @@ $comment.comment
 | ------- | ----- | ----------- | ----------- | -------- | ------------ | ---------- | ---- |
 
 @for task in tasks
-| $task.subject | $task.owner_extra_info.username | $task.assigned_to_extra_info.username | $task.modified_date | $task.due_date | $task.is_closed | $task.comments.len| [md](../tasks/$task.file_name) \| [circle](@url/project/@story.project_extra_info.slug/task/$task.ref) |
+| $task.subject | $task.owner_extra_info.username | $task.assigned_to_extra_info.username | $task.modified_date | $task.due_date | $task.is_closed | $task.comments.len| [wiki](../tasks/$task.file_name) \| [web](@url/project/@story.project_extra_info.slug/task/$task.ref) |
 @end
 @end
