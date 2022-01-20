@@ -144,7 +144,6 @@ fn config_load() ?ConfigRoot {
 		txt := os.read_file(group_file) ?
 		config.groups << json.decode([]UserGroup, txt) ?
 	}
-
 	return config
 }
 

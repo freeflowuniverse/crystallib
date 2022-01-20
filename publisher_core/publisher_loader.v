@@ -6,9 +6,7 @@ import publisher_config
 
 fn (mut publisher Publisher) load() ? {
 	// remove code_wiki subdirs
-	println(1)
 	cfg := publisher_config.get()
-	println(2)
 	path_links := cfg.publish.paths.codewiki
 	path_links_list := os.ls(path_links) ?
 	for path_to_remove in path_links_list {
