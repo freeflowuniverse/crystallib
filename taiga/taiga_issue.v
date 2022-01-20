@@ -1,5 +1,7 @@
 module taiga
 
+import despiegk.crystallib.texttools
+
 import json
 import x.json2 { raw_decode }
 import time { Time }
@@ -97,8 +99,8 @@ fn issue_decode(data string) ?Issue {
 	issue.modified_date = parse_time(data_as_map['modified_date'].str())
 	issue.finished_date = parse_time(data_as_map['finished_date'].str())
 	issue.due_date = parse_time(data_as_map['due_date'].str())
-	issue.file_name = issue.subject[0..min(15, issue.subject.len)].to_lower().replace(' ', '-') +
-		'_' + issue.id.str() + '.md'
+	file_name := texttools.name_fix(issue.subject[0..min(15, issue.subject.len)])
+	issue.file_name =  file_name + '_' + issue.id.str() + '.md'
 	issue.project_extra_info.file_name = issue.project_extra_info.slug + '.md'
 	return issue
 }

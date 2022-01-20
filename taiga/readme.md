@@ -1,27 +1,16 @@
-# rich client for Taiga
+# Taiga Client
 
-## features
+Taiga client using VLang
 
-- [ ] easy to get projects, issues, stories, epics
-- [ ] create project with 3 predefined types
-- [ ] copy issues,stories,epics from one project to other
-- [ ] caching in redis (on api level, not for modifications ofcourse, for many of those empty cache)
+## Generate Wiki
 
+- Export user, project, story, issue and task as md files to generate a wiki
+- Export users, projects as md files to list them with a link for each element.
 
-## directory output for generation
-
-
-- projects
-  - $project_name
-    - stories.md
-    - issues.md
-    - epics.md
-    - epics
-      - $epicsname_$id.md
-    - issues
-      - $issuename_$id.md
-    - stories
-      - $storyname_$id.md
-
-
-
+### Steps
+1. Make sure to update [taiga_wiki_test.v](./taiga_wiki_test.v) with your info.
+2. Run it in your terminal:
+```sh
+v run taiga_wiki_test.v
+```
+3. Booom! Wiki generated :D
