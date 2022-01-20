@@ -3,25 +3,27 @@ module taiga
 import os
 import math
 
-pub fn export(export_dir string, url string)? {
+pub fn export(export_dir string, url string) ? {
 	// if os.exists(export_dir){
 	// 	os.rmdir_all(export_dir)?
 	// }
-	export_all_users(export_dir, url)?
-	export_all_projects(export_dir, url)?
-	export_all_stories(export_dir, url)?
-	export_all_issues(export_dir, url)?
-	export_all_tasks(export_dir, url)?
-	os.cp("readme.md", "$export_dir/readme.md") ?
-	side_bar := "[Home](readme)
+	export_all_users(export_dir, url) ?
+	export_all_projects(export_dir, url) ?
+	export_all_stories(export_dir, url) ?
+	export_all_issues(export_dir, url) ?
+	export_all_tasks(export_dir, url) ?
+	os.cp('readme.md', '$export_dir/readme.md') ?
+	side_bar := '[Home](readme)
 	[Users](users)
 	[Projects](projects)
-	"
-	os.write_file("$export_dir/sidebar.md", side_bar) ?
+	'
+	os.write_file('$export_dir/sidebar.md', side_bar) ?
 }
 
 pub fn export_all_users(export_dir string, url string) ? {
-	os.mkdir_all('$export_dir/users') or { return error("Can't mkdir $export_dir with error: $err") }
+	os.mkdir_all('$export_dir/users') or {
+		return error("Can't mkdir $export_dir with error: $err")
+	}
 	mut singleton := connection_get()
 	mut all_users := []User{}
 	for _, user in singleton.users {
@@ -41,7 +43,7 @@ pub fn export_all_users(export_dir string, url string) ? {
 	println('Users Exported!')
 }
 
-pub fn export_all_projects(export_dir string, url string)? {
+pub fn export_all_projects(export_dir string, url string) ? {
 	os.mkdir_all('$export_dir/projects') or { panic("Can't mkdir $export_dir with error: $err") }
 	mut singleton := connection_get()
 	mut all_projects := []Project{}
@@ -62,7 +64,7 @@ pub fn export_all_projects(export_dir string, url string)? {
 	println('Projects Exported!')
 }
 
-pub fn export_all_stories(export_dir string, url string)? {
+pub fn export_all_stories(export_dir string, url string) ? {
 	os.mkdir_all('$export_dir/stories') or { panic("Can't mkdir $export_dir with error: $err") }
 	mut singleton := connection_get()
 	mut all_stories := []Story{}
@@ -83,7 +85,7 @@ pub fn export_all_stories(export_dir string, url string)? {
 	println('Stories Exported!')
 }
 
-pub fn export_all_issues(export_dir string, url string)? {
+pub fn export_all_issues(export_dir string, url string) ? {
 	os.mkdir_all('$export_dir/issues') or { panic("Can't mkdir $export_dir with error: $err") }
 	mut singleton := connection_get()
 	mut all_issues := []Issue{}
@@ -104,7 +106,7 @@ pub fn export_all_issues(export_dir string, url string)? {
 	println('Issues Exported!')
 }
 
-pub fn export_all_tasks(export_dir string, url string)? {
+pub fn export_all_tasks(export_dir string, url string) ? {
 	os.mkdir_all('$export_dir/tasks') or { panic("Can't mkdir $export_dir with error: $err") }
 	mut singleton := connection_get()
 	mut all_tasks := []Task{}
