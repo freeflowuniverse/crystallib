@@ -3,6 +3,8 @@ module texttools
 
 import os
 
+const ignore="\\/[]()?!@#$%^&*"
+
 pub fn name_fix(name string) string {
 	pagename := name_fix_keepext(name)
 
@@ -18,6 +20,9 @@ pub fn ascii(r string) string {
 	mut res := []string{}
 	for ch in r {
 		mut c := ch.ascii_str()
+		if ignore.contains(c){
+			continue
+		}
 		res << c
 	}
 	return res.join('')
@@ -25,14 +30,7 @@ pub fn ascii(r string) string {
 
 pub fn name_fix_no_filesep(name string) string {
 	mut name1 := name.replace('/', '_')
-	name1 = name1.replace('\\', '_')
-	name1 = name1.replace('[', '')
-	name1 = name1.replace(']', '')
-	name1 = name1.replace('(', '')
-	name1 = name1.replace(')', '')
-	name1 = name1.replace('?', '')
 	name1 = ascii(name1)
-	//is there no better way to do this???? 
 	return name_fix(name1)
 }
 
