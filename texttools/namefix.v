@@ -22,7 +22,7 @@ pub fn name_fix_no_filesep(name string) string {
 	name1 = name1.replace('(', '')
 	name1 = name1.replace(')', '')
 	name1 = name1.replace('?', '')
-	// name1 = name1.ascii_str()
+	// name1 = name1.ascii_str() //TODO: find ascii
 	//is there no better way to do this???? 
 	return name_fix(name1)
 }
