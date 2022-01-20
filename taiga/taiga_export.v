@@ -12,9 +12,15 @@ pub fn export(export_dir string, url string)? {
 	export_all_stories(export_dir, url)?
 	export_all_issues(export_dir, url)?
 	export_all_tasks(export_dir, url)?
+	os.cp("readme.md", "$export_dir/readme.md") ?
+	side_bar := "[Home](readme)
+	[Users](users)
+	[Projects](projects)
+	"
+	os.write_file("$export_dir/sidebar.md", side_bar) ?
 }
 
-pub fn export_all_users(export_dir string, url string)? {
+pub fn export_all_users(export_dir string, url string) ? {
 	os.mkdir_all('$export_dir/users') or { return error("Can't mkdir $export_dir with error: $err") }
 	mut singleton := connection_get()
 	mut all_users := []User{}
@@ -24,14 +30,14 @@ pub fn export_all_users(export_dir string, url string)? {
 		// Export every user in a single page
 		export_path := '$export_dir/users/$user.file_name'
 		os.write_file(export_path, user_md) or {
-			panic("Can't write $user.username with error: $err")
+			return error("Can't write $user.username with error: $err")
 		}
 	}
 	// Export users.md page, contains a table with all users and links
 	mut users_md := $tmpl('./templates/users.md')
 	users_md = fix_empty_lines(users_md)
 	export_path := '$export_dir/users.md'
-	os.write_file(export_path, users_md) or { panic("Can't write users with error: $err") }
+	os.write_file(export_path, users_md) or { return error("Can't write users with error: $err") }
 	println('Users Exported!')
 }
 
