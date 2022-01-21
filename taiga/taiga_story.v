@@ -64,7 +64,8 @@ pub mut:
 pub fn stories() ? {
 	mut conn := connection_get()
 	data := conn.get_json_str('userstories', '', true) ?
-	data_as_arr := (raw_decode(data) or {}).arr()
+	clean_data := texttools.ascii_clean(data)
+	data_as_arr := (raw_decode(clean_data) or {}).arr()
 	println('[+] Loading $data_as_arr.len stories ...')
 	for s in data_as_arr {
 		mut story := Story{}
@@ -76,17 +77,19 @@ pub fn stories() ? {
 				eprintln(err)
 				Story{}
 			}
+			if story != Story{} {
+				story.get_story_comments() ?
+				conn.story_remember(story)
+			}
 		} else {
 			// Decode directly
 			story = story_decode(s.str()) or {
 				eprintln(err)
 				Story{}
 			}
-		}
-
-		if story != Story{} {
-			story.get_story_comments() ?
-			conn.story_remember(story)
+			if story != Story{} {
+				conn.story_remember(story)
+			}
 		}
 	}
 }

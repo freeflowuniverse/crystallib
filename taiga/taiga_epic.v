@@ -52,7 +52,8 @@ pub mut:
 pub fn epics() ? {
 	mut conn := connection_get()
 	data := conn.get_json_str('epics', '', true) ?
-	data_as_arr := (raw_decode(data) or {}).arr()
+	clean_data := texttools.ascii_clean(data)
+	data_as_arr := (raw_decode(clean_data) or {}).arr()
 	println('[+] Loading $data_as_arr.len epics ...')
 	for e in data_as_arr {
 		mut epic := Epic{}

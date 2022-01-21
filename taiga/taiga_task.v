@@ -45,7 +45,8 @@ pub mut:
 pub fn tasks() ? {
 	mut conn := connection_get()
 	data := conn.get_json_str('tasks', '', true) ?
-	data_as_arr := (raw_decode(data) or {}).arr()
+	clean_data := texttools.ascii_clean(data)
+	data_as_arr := (raw_decode(clean_data) or {}).arr()
 	println('[+] Loading $data_as_arr.len tasks ...')
 	for t in data_as_arr {
 		mut task := Task{}
@@ -56,15 +57,18 @@ pub fn tasks() ? {
 				eprintln(err)
 				Task{}
 			}
-		}else{
+			if task != Task{} {
+				task.get_task_comments() ?
+				conn.task_remember(task)
+			}
+		} else {
 			task = task_decode(t.str()) or {
 				eprintln(err)
 				Task{}
 			}
-		}
-		if task != Task{} {
-			task.get_task_comments() ?
-			conn.task_remember(task)
+			if task != Task{} {
+				conn.task_remember(task)
+			}
 		}
 	}
 }

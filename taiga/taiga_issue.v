@@ -52,7 +52,8 @@ pub fn (mut i Issue) get_issue_comments() ?[]Comment {
 pub fn issues() ? {
 	mut conn := connection_get()
 	data := conn.get_json_str('issues', '', true) ?
-	data_as_arr := (raw_decode(data) or {}).arr()
+	clean_data := texttools.ascii_clean(data)
+	data_as_arr := (raw_decode(clean_data) or {}).arr()
 	println('[+] Loading $data_as_arr.len issues ...')
 	for i in data_as_arr {
 		mut issue := Issue{}
@@ -63,15 +64,18 @@ pub fn issues() ? {
 				eprintln(err)
 				Issue{}
 			}
+			if issue != Issue{} {
+				issue.get_issue_comments() ?
+				conn.issue_remember(issue)
+			}
 		} else {
 			issue = issue_decode(i.str()) or {
 				eprintln(err)
 				Issue{}
 			}
-		}
-		if issue != Issue{} {
-			issue.get_issue_comments() ?
-			conn.issue_remember(issue)
+			if issue != Issue{} {
+				conn.issue_remember(issue)
+			}
 		}
 	}
 }

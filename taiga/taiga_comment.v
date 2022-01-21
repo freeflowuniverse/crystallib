@@ -1,5 +1,6 @@
 module taiga
 
+import despiegk.crystallib.texttools
 import json
 import time { Time }
 import x.json2 { raw_decode }
@@ -30,7 +31,8 @@ pub mut:
 pub fn comments_get(prefix string, prefix_id int) ?[]Comment {
 	mut conn := connection_get()
 	data := conn.get_json_str('history/$prefix/$prefix_id?type=comment', '', true) ?
-	data_as_arr := (raw_decode(data) or {}).arr()
+	clean_data := texttools.ascii_clean(data)
+	data_as_arr := (raw_decode(clean_data) or {}).arr()
 	mut comments := []Comment{}
 	for c in data_as_arr {
 		comment := comment_decode(c.str()) or{

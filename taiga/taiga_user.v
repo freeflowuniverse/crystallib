@@ -25,7 +25,8 @@ pub mut:
 pub fn users() ? {
 	mut conn := connection_get()
 	data := conn.get_json_str('users', '', true) ?
-	data_as_arr := (raw_decode(data) or {}).arr()
+	clean_data := texttools.ascii_clean(data)
+	data_as_arr := (raw_decode(clean_data) or {}).arr()
 	for u in data_as_arr {
 		user := user_decode(u.str()) or {
 			println(err)

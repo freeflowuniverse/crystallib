@@ -33,7 +33,8 @@ pub fn projects() ?[]Project {
 	// List all Projects
 	mut conn := connection_get()
 	data := conn.get_json_str('projects', '', true) ?
-	data_as_arr := (raw_decode(data) or {}).arr()
+	clean_data := texttools.ascii_clean(data)
+	data_as_arr := (raw_decode(clean_data) or {}).arr()
 	println('[+] Loading $data_as_arr.len projects ...')
 	mut projects := []Project{}
 	for proj in data_as_arr {
