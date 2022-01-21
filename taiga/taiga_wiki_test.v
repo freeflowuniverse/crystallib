@@ -1,13 +1,22 @@
-module taiga
+import despiegk.crystallib.taiga
+import os
 
 // Generate wikis with users, projects, stories, issues and tasks
-fn test_generate_wiki() {
-	url := 'https://staging.circles.threefold.me' // Add your taiga url
-	singleton := new(url, 'admin', '123123', 100000) // Connect with username and password and cache time in seconds
-	export_dir := '/tmp/taiga' // set export directory
-	export_all_users(export_dir, url)
-	export_all_projects(export_dir, url)
-	export_all_stories(export_dir, url)
-	export_all_issues(export_dir, url)
-	export_all_tasks(export_dir, url)
+fn test_generate_wiki() ? {
+	env := os.environ()
+	if 'TAIGA' !in env {
+		println('Please export your taiga credentials in form username:password')
+		exit(1)
+	}
+	taiga_cred := env['TAIGA'].split(':')
+	mut username := ''
+	mut password := ''
+	if taiga_cred.len != 2 {
+		println('Please export your taiga credentials in form username:password')
+		exit(1)
+	}
+	url := 'https://staging.circles.threefold.me'
+	mut t := taiga.new(url, taiga_cred[0], taiga_cred[1], 10000)
+	export_dir := './wiki' // set export directory
+	taiga.export(export_dir, url) ?
 }

@@ -1,5 +1,6 @@
 module taiga
 
+import despiegk.crystallib.texttools
 import x.json2 { raw_decode }
 import json
 import time { Time }
@@ -103,7 +104,7 @@ fn project_decode(data string) ?Project {
 	data_as_map := (raw_decode(data) or {}).as_map()
 	project.created_date = parse_time(data_as_map['created_date'].str())
 	project.modified_date = parse_time(data_as_map['modified_date'].str())
-	project.file_name = project.slug + '.md'
+	project.file_name = texttools.name_fix_no_filesep(project.slug) + '.md'
 	return project
 }
 

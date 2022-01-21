@@ -1,12 +1,12 @@
 # [@story.subject](@url/project/@story.project_extra_info.slug/us/$story.ref)
 
-|             |                                                                                   |
-| ----------- | --------------------------------------------------------------------------------- |
-| Owner       | @story.owner_extra_info.username                                                  |
-| Assigned to | @story.assigned_to_extra_info.username                                            |
-| Created at  | @story.created_date                                                               |
-| Last Update | @story.modified_date                                                              |
-| Project     | [@story.project_extra_info.name](../projects/@story.project_extra_info.file_name) |
+|             |                                                                       |
+| ----------- | --------------------------------------------------------------------- |
+| Owner       | @story.owner_extra_info.username                                      |
+| Assigned to | @story.assigned_to_extra_info.username                                |
+| Created at  | @story.created_date.ymmdd()                                           |
+| Last Update | @story.modified_date.ymmdd()                                          |
+| Project     | [@story.project_extra_info.name](@story.project_extra_info.file_name) |
 
 @if story.description != ""
 ## Description
@@ -34,6 +34,6 @@ $comment.comment
 | ------- | ----- | ----------- | ----------- | -------- | ------------ | ---------- | ---- |
 
 @for task in tasks
-| $task.subject | $task.owner_extra_info.username | $task.assigned_to_extra_info.username | $task.modified_date | $task.due_date | $task.is_closed | $task.comments.len| [wiki](../tasks/$task.file_name) \| [web](@url/project/@story.project_extra_info.slug/task/$task.ref) |
+| $task.subject | $task.owner_extra_info.username | $task.assigned_to_extra_info.username | $task.modified_date.ymmdd() | $task.due_date.ymmdd() | $task.is_closed | $task.comments.len| [wiki]($task.file_name) \| [web](@url/project/@story.project_extra_info.slug/task/$task.ref) |
 @end
 @end

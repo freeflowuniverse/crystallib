@@ -96,10 +96,13 @@ fn task_decode(data string) ?Task {
 	task.modified_date = parse_time(data_as_map['modified_date'].str())
 	task.finished_date = parse_time(data_as_map['finished_date'].str())
 	task.due_date = parse_time(data_as_map['due_date'].str())
-	task.file_name = texttools.name_fix_no_filesep(task.subject[0..min(15, task.subject.len)]) + '-' + task.id.str() + '.md'
-	task.user_story_extra_info.file_name = texttools.name_fix_no_filesep(task.user_story_extra_info.subject[0..min(15, task.user_story_extra_info.subject.len)]) +
-		'-' + task.user_story_extra_info.id.str() + '.md'
-	task.project_extra_info.file_name = task.project_extra_info.slug + '.md'
+	task.file_name = texttools.name_fix_no_filesep(task.subject[0..min(15, task.subject.len)] +
+		'-' + task.id.str()) + '.md'
+	task.user_story_extra_info.file_name =
+		texttools.name_fix_no_filesep(task.user_story_extra_info.subject[0..min(15, task.user_story_extra_info.subject.len)] +
+		'-' + task.user_story_extra_info.id.str()) + '.md'
+	task.project_extra_info.file_name =
+		texttools.name_fix_no_filesep(task.project_extra_info.slug) + '.md'
 	return task
 }
 

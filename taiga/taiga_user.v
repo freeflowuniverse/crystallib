@@ -1,5 +1,6 @@
 module taiga
 
+import despiegk.crystallib.texttools
 import json
 import time { Time }
 import math { pow10 }
@@ -160,6 +161,6 @@ fn user_decode(data string) ?User {
 	mut user := json.decode(User, data) ?
 	data_as_map := (raw_decode(data) or {}).as_map()
 	user.date_joined = parse_time(data_as_map['date_joined'].str())
-	user.file_name = user.username + '.md'
+	user.file_name = texttools.name_fix_no_filesep(user.username) + '.md'
 	return user
 }

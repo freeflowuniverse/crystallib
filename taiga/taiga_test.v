@@ -1,8 +1,22 @@
 module taiga
 
+import os
+
 fn test_main() {
+	env := os.environ()
+	if !'TAIGA' in env {
+		println('Please export your taiga credentials in form username:password')
+		exit(1)
+	}
+	taiga_cred := env['TAIGA'].split(':')
+	mut username := ''
+	mut password := ''
+	if taiga_cred.len != 2 {
+		println('Please export your taiga credentials in form username:password')
+		exit(1)
+	}
 	url := 'https://staging.circles.threefold.me'
-	mut singleton := new(url, 'admin', '123123', 100000)
+	mut singleton := new(url, taiga_cred[0], taiga_cred[1], 10000)
 	create_issue()
 	create_story()
 	create_task()
