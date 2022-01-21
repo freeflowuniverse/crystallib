@@ -3,7 +3,7 @@ module texttools
 
 import os
 
-const ignore="\\/[]()?!@#$%^&*"
+const ignore="\\/[]()?!@#$%^&*<>:;{}|~"
 
 pub fn name_fix(name string) string {
 	pagename := name_fix_keepext(name)
