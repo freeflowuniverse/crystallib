@@ -35,7 +35,7 @@ pub fn comments_get(prefix string, prefix_id int) ?[]Comment {
 	data_as_arr := (raw_decode(clean_data) or {}).arr()
 	mut comments := []Comment{}
 	for c in data_as_arr {
-		comment := comment_decode(c.str()) or{
+		comment := comment_decode(c.str()) or {
 			eprintln(err)
 			Comment{}
 		}

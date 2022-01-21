@@ -57,14 +57,14 @@ pub fn epics() ? {
 	println('[+] Loading $data_as_arr.len epics ...')
 	for e in data_as_arr {
 		mut epic := Epic{}
-		if conn.full{
+		if conn.full {
 			temp := (raw_decode(e.str()) or {}).as_map()
 			id := temp['id'].int()
 			epic = epic_get(id) or {
 				eprintln(err)
 				Epic{}
 			}
-		}else{
+		} else {
 			epic = epic_decode(e.str()) or {
 				eprintln(err)
 				Epic{}

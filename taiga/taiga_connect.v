@@ -255,7 +255,7 @@ fn (mut h TaigaConnection) get_json_str(prefix string, data string, cache bool) 
 		println(' ... $url')
 		mut req := http.new_request(http.Method.get, url, data) ?
 		req.header = h.header()
-		req.add_custom_header("x-disable-pagination", "True") ?
+		req.add_custom_header('x-disable-pagination', 'True') ?
 		res := req.do() ?
 		if res.status_code == 200 {
 			result = res.text
