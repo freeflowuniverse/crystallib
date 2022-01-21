@@ -12,6 +12,7 @@ mut:
 	url           string
 	auth          AuthDetail
 	cache_timeout int
+	full          bool
 	// idea is to load all we have whenever we encounter it
 	// THE OBJECTS HERE NEED  BE THE CLEAN ONES !!! (not the raw ones)
 pub mut:
@@ -57,7 +58,7 @@ mut:
 	uuid              string
 }
 
-pub fn new(url string, login string, passwd string, cache_timeout int) &TaigaConnection {
+pub fn new(url string, login string, passwd string, cache_timeout int, full bool) &TaigaConnection {
 	/*
 	Create a new taiga client
 	Inputs:
@@ -65,6 +66,7 @@ pub fn new(url string, login string, passwd string, cache_timeout int) &TaigaCon
 		login: Username that used in login
 		passwd: Username password
 		cache_timeout: Expire time in seconds for caching
+		full: flag to detect if we need to get the full data or not
 
 	Output:
 		TaigaConnection: Client contains taiga auth details, taiga url, redis cleint and cache timeout.
@@ -76,6 +78,7 @@ pub fn new(url string, login string, passwd string, cache_timeout int) &TaigaCon
 		panic("Could not connect to $url with $login and passwd:'$passwd'\n$err")
 	}
 	conn.cache_timeout = cache_timeout
+	conn.full = full
 	load_data() or { panic("Can't load data, for details: $err") } // Must panic if load data not working
 	return conn
 }
@@ -252,6 +255,7 @@ fn (mut h TaigaConnection) get_json_str(prefix string, data string, cache bool) 
 		println(' ... $url')
 		mut req := http.new_request(http.Method.get, url, data) ?
 		req.header = h.header()
+		req.add_custom_header("x-disable-pagination", "True") ?
 		res := req.do() ?
 		if res.status_code == 200 {
 			result = res.text

@@ -16,7 +16,7 @@ fn test_main() {
 		exit(1)
 	}
 	url := 'https://staging.circles.threefold.me'
-	mut singleton := new(url, taiga_cred[0], taiga_cred[1], 10000)
+	mut singleton := new(url, taiga_cred[0], taiga_cred[1], 10000, false)
 	create_issue()
 	create_story()
 	create_task()

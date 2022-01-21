@@ -27,8 +27,13 @@ pub fn users() ? {
 	data := conn.get_json_str('users', '', true) ?
 	data_as_arr := (raw_decode(data) or {}).arr()
 	for u in data_as_arr {
-		user := user_decode(u.str()) ?
-		conn.user_remember(user)
+		user := user_decode(u.str()) or {
+			println(err)
+			User{}
+		}
+		if user != User{} {
+			conn.user_remember(user)
+		}
 	}
 }
 
@@ -158,7 +163,9 @@ pub fn user_delete(id int) ?bool {
 }
 
 fn user_decode(data string) ?User {
-	mut user := json.decode(User, data) ?
+	mut user := json.decode(User, data) or {
+		return error('Error happen when decode user\nData: $data\nError:$err')
+	}
 	data_as_map := (raw_decode(data) or {}).as_map()
 	user.date_joined = parse_time(data_as_map['date_joined'].str())
 	user.file_name = texttools.name_fix_no_filesep(user.username) + '.md'

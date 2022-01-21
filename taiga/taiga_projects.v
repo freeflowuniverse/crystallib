@@ -34,11 +34,17 @@ pub fn projects() ?[]Project {
 	mut conn := connection_get()
 	data := conn.get_json_str('projects', '', true) ?
 	data_as_arr := (raw_decode(data) or {}).arr()
+	println('[+] Loading $data_as_arr.len projects ...')
 	mut projects := []Project{}
 	for proj in data_as_arr {
-		project := project_decode(proj.str()) ?
-		projects << project
-		conn.project_remember(project)
+		project := project_decode(proj.str()) or {
+			eprintln(err)
+			Project{}
+		}
+		if project != Project{} {
+			projects << project
+			conn.project_remember(project)
+		}
 	}
 	return projects
 }

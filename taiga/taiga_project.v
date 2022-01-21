@@ -100,7 +100,9 @@ pub fn (mut p Project) copy(element_type TaigaElementTypes, element_id int, to_p
 }
 
 fn project_decode(data string) ?Project {
-	mut project := json.decode(Project, data) ?
+	mut project := json.decode(Project, data) or {
+		return error('Error happen when decode project\nData: $data\nError:$err')
+	}
 	data_as_map := (raw_decode(data) or {}).as_map()
 	project.created_date = parse_time(data_as_map['created_date'].str())
 	project.modified_date = parse_time(data_as_map['modified_date'].str())
