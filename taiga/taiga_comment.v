@@ -18,7 +18,6 @@ pub mut:
 	comment             string
 	user                Commentator
 	created_at          Time        [skip]
-	commnet_type        int
 	key                 string
 	comment_html        string
 	delete_comment_date Time        [skip]
@@ -34,17 +33,21 @@ pub fn comments_get(prefix string, prefix_id int) ?[]Comment {
 	data_as_arr := (raw_decode(data) or {}).arr()
 	mut comments := []Comment{}
 	for c in data_as_arr {
-		comment := comment_decode(c.str()) ?
-		comments << comment
+		comment := comment_decode(c.str()) or{
+			eprintln(err)
+			Comment{}
+		}
+		if comment != Comment{} {
+			comments << comment
+		}
 	}
 	return comments
-	// fill in times...
-	// if other objects look for them and get reference to them
-	// use conn.user_get(user_id) to get user  ...
 }
 
 fn comment_decode(data string) ?Comment {
-	mut comment := json.decode(Comment, data) ?
+	mut comment := json.decode(Comment, data) or {
+		return error('Error happen when decode comment\nData: $data\nError:$err')
+	}
 	data_as_map := (raw_decode(data) or {}).as_map()
 	comment.created_at = parse_time(data_as_map['created_at'].str())
 	comment.delete_comment_date = parse_time(data_as_map['delete_comment_date'].str())

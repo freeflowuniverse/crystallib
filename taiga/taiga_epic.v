@@ -53,11 +53,25 @@ pub fn epics() ? {
 	mut conn := connection_get()
 	data := conn.get_json_str('epics', '', true) ?
 	data_as_arr := (raw_decode(data) or {}).arr()
+	println('[+] Loading $data_as_arr.len epics ...')
 	for e in data_as_arr {
-		temp := (raw_decode(e.str()) or {}).as_map()
-		id := temp['id'].int()
-		epic := epic_get(id) ?
-		conn.epic_remember(epic)
+		mut epic := Epic{}
+		if conn.full{
+			temp := (raw_decode(e.str()) or {}).as_map()
+			id := temp['id'].int()
+			epic = epic_get(id) or {
+				eprintln(err)
+				Epic{}
+			}
+		}else{
+			epic = epic_decode(e.str()) or {
+				eprintln(err)
+				Epic{}
+			}
+		}
+		if epic != Epic{} {
+			conn.epic_remember(epic)
+		}
 	}
 }
 
@@ -90,7 +104,9 @@ pub fn epic_delete(id int) ?bool {
 }
 
 fn epic_decode(data string) ?Epic {
-	mut epic := json.decode(Epic, data) ?
+	mut epic := json.decode(Epic, data) or {
+		return error('Error happen when decode epic\nData: $data\nError:$err')
+	}
 	data_as_map := (raw_decode(data) or {}).as_map()
 	epic.created_date = parse_time(data_as_map['created_date'].str())
 	epic.modified_date = parse_time(data_as_map['modified_date'].str())

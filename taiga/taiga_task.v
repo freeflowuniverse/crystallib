@@ -10,7 +10,6 @@ pub struct Task {
 pub mut:
 	description            string
 	id                     int
-	is_private             bool
 	tags                   []string
 	project                int
 	project_extra_info     ProjectInfo
@@ -32,7 +31,8 @@ pub mut:
 	is_blocked             bool
 	blocked_note           string
 	ref                    int
-	comments               []Comment
+	total_comments         int
+	comments               []Comment   [skip]
 	file_name              string      [skip]
 }
 
@@ -46,12 +46,26 @@ pub fn tasks() ? {
 	mut conn := connection_get()
 	data := conn.get_json_str('tasks', '', true) ?
 	data_as_arr := (raw_decode(data) or {}).arr()
+	println('[+] Loading $data_as_arr.len tasks ...')
 	for t in data_as_arr {
-		temp := (raw_decode(t.str()) or {}).as_map()
-		id := temp['id'].int()
-		mut task := task_get(id) ?
-		task.get_task_comments() ?
-		conn.task_remember(task)
+		mut task := Task{}
+		if conn.full {
+			temp := (raw_decode(t.str()) or {}).as_map()
+			id := temp['id'].int()
+			task = task_get(id) or {
+				eprintln(err)
+				Task{}
+			}
+		}else{
+			task = task_decode(t.str()) or {
+				eprintln(err)
+				Task{}
+			}
+		}
+		if task != Task{} {
+			task.get_task_comments() ?
+			conn.task_remember(task)
+		}
 	}
 }
 
@@ -90,7 +104,9 @@ pub fn task_delete(id int) ?bool {
 }
 
 fn task_decode(data string) ?Task {
-	mut task := json.decode(Task, data) ?
+	mut task := json.decode(Task, data) or {
+		return error('Error happen when decode task\nData: $data\nError:$err')
+	}
 	data_as_map := (raw_decode(data) or {}).as_map()
 	task.created_date = parse_time(data_as_map['created_date'].str())
 	task.modified_date = parse_time(data_as_map['modified_date'].str())

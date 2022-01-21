@@ -53,12 +53,26 @@ pub fn issues() ? {
 	mut conn := connection_get()
 	data := conn.get_json_str('issues', '', true) ?
 	data_as_arr := (raw_decode(data) or {}).arr()
+	println('[+] Loading $data_as_arr.len issues ...')
 	for i in data_as_arr {
-		temp := (raw_decode(i.str()) or {}).as_map()
-		id := temp['id'].int()
-		mut issue := issue_get(id) ?
-		issue.get_issue_comments() ?
-		conn.issue_remember(issue)
+		mut issue := Issue{}
+		if conn.full {
+			temp := (raw_decode(i.str()) or {}).as_map()
+			id := temp['id'].int()
+			issue = issue_get(id) or {
+				eprintln(err)
+				Issue{}
+			}
+		} else {
+			issue = issue_decode(i.str()) or {
+				eprintln(err)
+				Issue{}
+			}
+		}
+		if issue != Issue{} {
+			issue.get_issue_comments() ?
+			conn.issue_remember(issue)
+		}
 	}
 }
 
@@ -92,7 +106,9 @@ pub fn issue_delete(id int) ?bool {
 }
 
 fn issue_decode(data string) ?Issue {
-	mut issue := json.decode(Issue, data) ?
+	mut issue := json.decode(Issue, data) or {
+		return error('Error happen when decode issue\nData: $data\nError:$err')
+	}
 	data_as_map := (raw_decode(data) or {}).as_map()
 	issue.created_date = parse_time(data_as_map['created_date'].str())
 	issue.modified_date = parse_time(data_as_map['modified_date'].str())

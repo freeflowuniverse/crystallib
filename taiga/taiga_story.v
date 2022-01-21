@@ -37,7 +37,7 @@ pub mut:
 	file_name              string      [skip]
 }
 
-// get comments in lis from story
+// get comments in list from story
 pub fn (mut s Story) get_story_comments() ?[]Comment {
 	s.comments = comments_get('userstory', s.id) ?
 	return s.comments
@@ -65,12 +65,29 @@ pub fn stories() ? {
 	mut conn := connection_get()
 	data := conn.get_json_str('userstories', '', true) ?
 	data_as_arr := (raw_decode(data) or {}).arr()
+	println('[+] Loading $data_as_arr.len stories ...')
 	for s in data_as_arr {
-		temp := (raw_decode(s.str()) or {}).as_map()
-		id := temp['id'].int()
-		mut story := story_get(id) ?
-		story.get_story_comments() ?
-		conn.story_remember(story)
+		mut story := Story{}
+		if conn.full {
+			// Get every element, then decode it
+			temp := (raw_decode(s.str()) or {}).as_map()
+			id := temp['id'].int()
+			story = story_get(id) or {
+				eprintln(err)
+				Story{}
+			}
+		} else {
+			// Decode directly
+			story = story_decode(s.str()) or {
+				eprintln(err)
+				Story{}
+			}
+		}
+
+		if story != Story{} {
+			story.get_story_comments() ?
+			conn.story_remember(story)
+		}
 	}
 }
 
@@ -104,7 +121,9 @@ pub fn story_delete(id int) ?bool {
 
 fn story_decode(data string) ?Story {
 	data_as_map := (raw_decode(data) or {}).as_map()
-	mut story := json.decode(Story, data) ?
+	mut story := json.decode(Story, data) or {
+		return error('Error happen when decode story\nData: $data\nError:$err')
+	}
 	story.created_date = parse_time(data_as_map['created_date'].str())
 	story.modified_date = parse_time(data_as_map['modified_date'].str())
 	story.finish_date = parse_time(data_as_map['finish_date'].str())
