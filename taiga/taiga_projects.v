@@ -2,7 +2,8 @@ module taiga
 
 import despiegk.crystallib.texttools
 import json
-import x.json2 { raw_decode }
+// import x.json2 { raw_decode }
+import despiegk.crystallib.crystaljson
 
 type TaigaElement = Epic | Issue | Story | Task
 
@@ -29,22 +30,25 @@ pub mut:
 	custom_fields   []string
 }
 
+
+
 pub fn projects() ?[]Project {
 	// List all Projects
 	mut conn := connection_get()
-	data := conn.get_json_str('projects', '', true) ?
-	clean_data := texttools.ascii_clean(data)
-	data_as_arr := (raw_decode(clean_data) or {}).arr()
-	println('[+] Loading $data_as_arr.len projects ...')
+	blocks := conn.get_json_list('projects', '', true) ?
+	println('[+] Loading $blocks.len projects ...')
 	mut projects := []Project{}
-	for proj in data_as_arr {
-		project := project_decode(proj.str()) or {
+	for proj in blocks {
+		println("PROJECT:\n$proj")
+		project := project_decode(proj) or {
 			eprintln(err)
 			Project{}
 		}
 		if project != Project{} {
-			projects << project
-			conn.project_remember(project)
+			if ! project.name.to_lower().contains("archive"){
+				projects << project
+				conn.project_remember(project)
+			}
 		}
 	}
 	return projects
@@ -55,7 +59,7 @@ pub fn (mut h TaigaConnection) project_get_by_name(name string) ?Project {
 	// Get project by name
 	// because we cache we can walk over it
 	mut conn := connection_get()
-	name2 := texttools.name_fix_no_filesep(name)
+	name2 := texttools.name_clean(name)
 	mut all_projects := projects() ?
 	for mut proj in all_projects {
 		if proj.name == name2 {
@@ -103,7 +107,7 @@ pub fn project_create(name string, description string, projtype Projectype) ?Pro
 
 	match projtype {
 		.funnel {
-			proj.name = texttools.name_fix_no_filesep('FUNNEL_' + name)
+			proj.name = texttools.name_clean('FUNNEL_' + name)
 			proj.is_backlog_activated = false
 			proj.is_kanban_activated = true
 			proj.is_wiki_activated = true
@@ -120,7 +124,7 @@ pub fn project_create(name string, description string, projtype Projectype) ?Pro
 			proj_config.custom_fields << ['bookings', 'commission']
 		}
 		.project {
-			proj.name = texttools.name_fix_no_filesep('PROJECT_' + name)
+			proj.name = texttools.name_clean('PROJECT_' + name)
 			proj.is_backlog_activated = false
 			proj.is_kanban_activated = true
 			proj.is_wiki_activated = false
@@ -134,7 +138,7 @@ pub fn project_create(name string, description string, projtype Projectype) ?Pro
 				'Implemented', 'Closed', 'Rejected', 'Postponed', 'Archived']
 		}
 		.team {
-			proj.name = texttools.name_fix_no_filesep('TEAM_' + name)
+			proj.name = texttools.name_clean('TEAM_' + name)
 			proj.is_backlog_activated = true
 			proj.is_kanban_activated = false
 			proj.is_wiki_activated = true
@@ -149,7 +153,7 @@ pub fn project_create(name string, description string, projtype Projectype) ?Pro
 		}
 	}
 	postdata := json.encode_pretty(proj)
-	response := conn.post_json_str('projects', postdata, true, true) ?
+	response := conn.post_json_str('projects', postdata, true) ?
 
 	mut result := project_decode(response) ?
 	result.projtype = projtype

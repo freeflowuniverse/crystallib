@@ -1,9 +1,10 @@
 module taiga
-
+import despiegk.crystallib.crystaljson
 import despiegk.crystallib.texttools
-import x.json2 { raw_decode }
+// import x.json2 { raw_decode }
 import json
 import time { Time }
+import os
 
 pub struct Project {
 pub mut:
@@ -100,13 +101,18 @@ pub fn (mut p Project) copy(element_type TaigaElementTypes, element_id int, to_p
 }
 
 fn project_decode(data string) ?Project {
-	mut project := json.decode(Project, data) or {
+	// os.write_file("/tmp/data",data)?
+	print(data)
+	println("\n------------------\n\n")
+	data2 := texttools.ascii_clean(data)
+	mut project := json.decode(Project, data2	) or {
 		return error('Error happen when decode project\nData: $data\nError:$err')
 	}
-	data_as_map := (raw_decode(data) or {}).as_map()
+	data_as_map := crystaljson.json_dict_any(data,false,[],[])?
 	project.created_date = parse_time(data_as_map['created_date'].str())
 	project.modified_date = parse_time(data_as_map['modified_date'].str())
-	project.file_name = texttools.name_fix_no_filesep(project.slug) + '.md'
+	project.file_name = texttools.name_clean(project.name) + '.md'
+	project.file_name = texttools.ascii_clean(project.file_name)
 	return project
 }
 

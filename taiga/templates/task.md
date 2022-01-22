@@ -7,9 +7,9 @@
 | Created at  | @task.created_date.ymmdd()                                                              |
 | Last Update | @task.modified_date.ymmdd()                                                             |
 @if task.user_story != 0
-| Story       | [@task.user_story_extra_info.subject](@task.user_story_extra_info.file_name) |
+| Story       | [@task.user_story_extra_info.subject](@task.user_story_extra_info.file_name)            |
 @end
-| Project     | [@task.project_extra_info.name](@task.project_extra_info.file_name)         |
+| Project     | [@task.project_extra_info.name](@task.project_extra_info.file_name)                     |
 
 @if task.description != ""
 

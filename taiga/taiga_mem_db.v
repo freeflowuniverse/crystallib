@@ -1,11 +1,11 @@
 module taiga
 
 pub fn load_data() ? {
+	tasks() ?
 	projects() ?
 	stories() ?
 	issues() ?
 	epics() ?
-	tasks() ?
 	users() ?
 }
 

@@ -1,4 +1,7 @@
-# [@project.name](@url/project/@project.slug)
+# @project.name
+
+> [@project.name](@url/project/@project.slug)
+
 |              |                                |
 | ------------ | ------------------------------ |
 | ID           | @project.id                    |

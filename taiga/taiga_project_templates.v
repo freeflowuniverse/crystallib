@@ -337,8 +337,7 @@ fn create_project_templates(funnel bool, project bool, team bool) ?map[string]in
 		println(template)
 		encoded_data := json.encode_pretty(template)
 		println(encoded_data)
-		response := conn.post_json('project_templates', encoded_data, false, true) ?
-		println(response)
+		response := conn.post_json_dict('project_templates', encoded_data, false) ?
 		result[response['name'].str()] = response['id'].int()
 	}
 	return result

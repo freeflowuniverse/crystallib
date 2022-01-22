@@ -1,10 +1,11 @@
 module taiga
 
 import despiegk.crystallib.texttools
+import despiegk.crystallib.crystaljson
 import json
 import time { Time }
 import math { pow10 }
-import x.json2 { raw_decode }
+// import x.json2 { raw_decode }
 
 pub struct User {
 pub mut:
@@ -24,10 +25,8 @@ pub mut:
 
 pub fn users() ? {
 	mut conn := connection_get()
-	data := conn.get_json_str('users', '', true) ?
-	clean_data := texttools.ascii_clean(data)
-	data_as_arr := (raw_decode(clean_data) or {}).arr()
-	for u in data_as_arr {
+	blocks := conn.get_json_list('users', '', true) ?
+	for u in blocks {
 		user := user_decode(u.str()) or {
 			println(err)
 			User{}
@@ -167,8 +166,8 @@ fn user_decode(data string) ?User {
 	mut user := json.decode(User, data) or {
 		return error('Error happen when decode user\nData: $data\nError:$err')
 	}
-	data_as_map := (raw_decode(data) or {}).as_map()
+	data_as_map := crystaljson.json_dict_any(data,false,[],[])?
 	user.date_joined = parse_time(data_as_map['date_joined'].str())
-	user.file_name = texttools.name_fix_no_filesep(user.username) + '.md'
+	user.file_name = texttools.name_clean(user.username) + '.md'
 	return user
 }

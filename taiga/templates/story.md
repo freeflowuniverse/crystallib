@@ -1,4 +1,6 @@
-# [@story.subject](@url/project/@story.project_extra_info.slug/us/$story.ref)
+# @story.subject
+
+> [@story.subject](@url/project/@story.project_extra_info.slug/us/$story.ref)
 
 |             |                                                                       |
 | ----------- | --------------------------------------------------------------------- |

@@ -1,23 +1,33 @@
 module taiga
-
+import despiegk.crystallib.crystaljson
+import despiegk.crystallib.texttools
 import os
 import math
 
+const README='
+# Export for Taiga
+
+...
+
+'
+
+const SIDEBAR='
+[Home](readme)
+[Users](users)
+[Projects](projects)
+'
+
 pub fn export(export_dir string, url string) ? {
-	// if os.exists(export_dir){
-	// 	os.rmdir_all(export_dir)?
-	// }
+	if os.exists(export_dir){
+		os.rmdir_all(export_dir)?
+	}
 	export_all_users(export_dir, url) ?
 	export_all_projects(export_dir, url) ?
 	export_all_stories(export_dir, url) ?
 	export_all_issues(export_dir, url) ?
 	export_all_tasks(export_dir, url) ?
-	os.cp('readme.md', '$export_dir/readme.md') ?
-	side_bar := '[Home](readme)
-	[Users](users)
-	[Projects](projects)
-	'
-	os.write_file('$export_dir/sidebar.md', side_bar) ?
+	os.write_file('$export_dir/readme.md', README) ?
+	os.write_file('$export_dir/sidebar.md', SIDEBAR) ?
 }
 
 pub fn export_all_users(export_dir string, url string) ? {
@@ -30,7 +40,8 @@ pub fn export_all_users(export_dir string, url string) ? {
 		all_users << user
 		user_md := user.as_md(url)
 		// Export every user in a single page
-		export_path := '$export_dir/users/$user.file_name'
+		name:= texttools.name_fix(user.file_name)
+		export_path := '$export_dir/users/$name'
 		os.write_file(export_path, user_md) or {
 			return error("Can't write $user.username with error: $err")
 		}
@@ -51,7 +62,8 @@ pub fn export_all_projects(export_dir string, url string) ? {
 		all_projects << project
 		proj_md := project.as_md(url)
 		// Export every project in a single page
-		export_path := '$export_dir/projects/$project.file_name'
+		name:= texttools.name_fix(project.file_name)
+		export_path := '$export_dir/projects/$name'
 		os.write_file(export_path, proj_md) or {
 			panic("Can't write $project.name with error: $err")
 		}
@@ -72,7 +84,8 @@ pub fn export_all_stories(export_dir string, url string) ? {
 		all_stories << story
 		story_md := story.as_md(url)
 		// Export every story in a single page
-		export_path := '$export_dir/stories/$story.file_name'
+		name:= texttools.name_fix(story.file_name)
+		export_path := '$export_dir/stories/$name'
 		os.write_file(export_path, story_md) or {
 			panic("Can't write $story.file_name with error: $err")
 		}
@@ -93,7 +106,8 @@ pub fn export_all_issues(export_dir string, url string) ? {
 		all_issues << issue
 		issue_md := issue.as_md(url)
 		// Export every issue in a single page
-		export_path := '$export_dir/issues/$issue.file_name'
+		name:= texttools.name_fix(issue.file_name)
+		export_path := '$export_dir/issues/$name'
 		os.write_file(export_path, issue_md) or {
 			panic("Can't write $issue.file_name with error: $err")
 		}
@@ -109,12 +123,13 @@ pub fn export_all_issues(export_dir string, url string) ? {
 pub fn export_all_tasks(export_dir string, url string) ? {
 	os.mkdir_all('$export_dir/tasks') or { panic("Can't mkdir $export_dir with error: $err") }
 	mut singleton := connection_get()
-	mut all_tasks := []Task{}
+	// mut all_tasks := []Task{}
 	for _, task in singleton.tasks {
-		all_tasks << task
+		// all_tasks << task
 		task_md := task.as_md(url)
 		// Export every task in a single page
-		export_path := '$export_dir/tasks/$task.file_name'
+		name:= texttools.name_fix(task.file_name)
+		export_path := '$export_dir/tasks/$name'
 		os.write_file(export_path, task_md) or {
 			panic("Can't write $task.file_name with error: $err")
 		}
@@ -127,7 +142,3 @@ pub fn export_all_tasks(export_dir string, url string) ? {
 	println('Tasks Exported!')
 }
 
-// TODO: Later
-// pub fn export_all_epics(export_dir string, url string){
-
-// }

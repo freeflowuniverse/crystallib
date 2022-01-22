@@ -1,8 +1,8 @@
 module taiga
-
+import despiegk.crystallib.crystaljson
 import despiegk.crystallib.texttools
 import json
-import x.json2 { raw_decode }
+// import x.json2 { raw_decode }
 import time { Time }
 import math { min }
 
@@ -51,31 +51,16 @@ pub fn (mut i Issue) get_issue_comments() ?[]Comment {
 
 pub fn issues() ? {
 	mut conn := connection_get()
-	data := conn.get_json_str('issues', '', true) ?
-	clean_data := texttools.ascii_clean(data)
-	data_as_arr := (raw_decode(clean_data) or {}).arr()
-	println('[+] Loading $data_as_arr.len issues ...')
-	for i in data_as_arr {
+	blocks := conn.get_json_list('issues', '', true) ?
+	println('[+] Loading $blocks.len issues ...')
+	for i in blocks {
 		mut issue := Issue{}
-		if conn.full {
-			temp := (raw_decode(i.str()) or {}).as_map()
-			id := temp['id'].int()
-			issue = issue_get(id) or {
-				eprintln(err)
-				Issue{}
-			}
-			if issue != Issue{} {
-				issue.get_issue_comments() ?
-				conn.issue_remember(issue)
-			}
-		} else {
-			issue = issue_decode(i.str()) or {
-				eprintln(err)
-				Issue{}
-			}
-			if issue != Issue{} {
-				conn.issue_remember(issue)
-			}
+		issue = issue_decode(i.str()) or {
+			eprintln(err)
+			Issue{}
+		}
+		if issue != Issue{} {
+			conn.issue_remember(issue)
 		}
 	}
 }
@@ -88,7 +73,7 @@ pub fn issue_create(subject string, project_id int) ?Issue {
 		project: project_id
 	}
 	postdata := json.encode_pretty(issue)
-	response := conn.post_json_str('issues', postdata, true, true) ?
+	response := conn.post_json_str('issues', postdata, true) ?
 	mut result := issue_decode(response) ?
 	conn.issue_remember(result)
 	return result
@@ -113,15 +98,16 @@ fn issue_decode(data string) ?Issue {
 	mut issue := json.decode(Issue, data) or {
 		return error('Error happen when decode issue\nData: $data\nError:$err')
 	}
-	data_as_map := (raw_decode(data) or {}).as_map()
+	data_as_map := crystaljson.json_dict_any(data,false,[],[])?
 	issue.created_date = parse_time(data_as_map['created_date'].str())
 	issue.modified_date = parse_time(data_as_map['modified_date'].str())
 	issue.finished_date = parse_time(data_as_map['finished_date'].str())
 	issue.due_date = parse_time(data_as_map['due_date'].str())
-	issue.file_name = texttools.name_fix_no_filesep(issue.subject[0..min(15, issue.subject.len)] +
+	issue.file_name = texttools.name_clean(issue.subject[0..min(40, issue.subject.len)] +
 		'_' + issue.id.str()) + '.md'
+	issue.file_name = texttools.ascii_clean(issue.file_name)
 	issue.project_extra_info.file_name =
-		texttools.name_fix_no_filesep(issue.project_extra_info.slug) + '.md'
+		texttools.name_clean(issue.project_extra_info.slug) + '.md'
 	return issue
 }
 

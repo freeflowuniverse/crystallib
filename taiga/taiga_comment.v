@@ -1,9 +1,8 @@
 module taiga
-
-import despiegk.crystallib.texttools
+import despiegk.crystallib.crystaljson
+import texttools
 import json
 import time { Time }
-import x.json2 { raw_decode }
 
 struct Commentator {
 pub mut:
@@ -30,16 +29,15 @@ pub mut:
 // return vlang clean object
 pub fn comments_get(prefix string, prefix_id int) ?[]Comment {
 	mut conn := connection_get()
-	data := conn.get_json_str('history/$prefix/$prefix_id?type=comment', '', true) ?
-	clean_data := texttools.ascii_clean(data)
-	data_as_arr := (raw_decode(clean_data) or {}).arr()
+	blocks := conn.get_json_list('history/$prefix/$prefix_id?type=comment', '', true) ?
 	mut comments := []Comment{}
-	for c in data_as_arr {
+	for c in blocks {
 		comment := comment_decode(c.str()) or {
 			eprintln(err)
 			Comment{}
 		}
 		if comment != Comment{} {
+			println(comment)
 			comments << comment
 		}
 	}
@@ -50,7 +48,7 @@ fn comment_decode(data string) ?Comment {
 	mut comment := json.decode(Comment, data) or {
 		return error('Error happen when decode comment\nData: $data\nError:$err')
 	}
-	data_as_map := (raw_decode(data) or {}).as_map()
+	data_as_map := crystaljson.json_dict_any(data,false,[],[])?
 	comment.created_at = parse_time(data_as_map['created_at'].str())
 	comment.delete_comment_date = parse_time(data_as_map['delete_comment_date'].str())
 	comment.edit_comment_date = parse_time(data_as_map['edit_comment_date'].str())

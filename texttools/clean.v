@@ -1,8 +1,6 @@
 // make sure that the names are always normalized so its easy to find them back
 module texttools
 
-import os
-
 const ignore_for_name="\\/[]()?!@#$%^&*<>:;{}|~"
 const keep_ascii='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-+={}[]"\':;?/>.<,|\\~` '
 
@@ -30,3 +28,6 @@ pub fn ascii_clean(r string) string {
 	}
 	return res.join('')
 }
+
+
+//https://en.wikipedia.org/wiki/Unicode#Standardized_subsets

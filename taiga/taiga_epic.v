@@ -1,7 +1,7 @@
 module taiga
-
+import despiegk.crystallib.crystaljson
 import despiegk.crystallib.texttools
-import x.json2 { raw_decode }
+// import x.json2 { raw_decode }
 import json
 import time { Time }
 import math { min }
@@ -51,24 +51,13 @@ pub mut:
 
 pub fn epics() ? {
 	mut conn := connection_get()
-	data := conn.get_json_str('epics', '', true) ?
-	clean_data := texttools.ascii_clean(data)
-	data_as_arr := (raw_decode(clean_data) or {}).arr()
-	println('[+] Loading $data_as_arr.len epics ...')
-	for e in data_as_arr {
+	blocks := conn.get_json_list('epics', '', true) ?
+	println('[+] Loading $blocks.len epics ...')
+	for e in blocks {
 		mut epic := Epic{}
-		if conn.full {
-			temp := (raw_decode(e.str()) or {}).as_map()
-			id := temp['id'].int()
-			epic = epic_get(id) or {
-				eprintln(err)
-				Epic{}
-			}
-		} else {
-			epic = epic_decode(e.str()) or {
-				eprintln(err)
-				Epic{}
-			}
+		epic = epic_decode(e.str()) or {
+			eprintln(err)
+			Epic{}
 		}
 		if epic != Epic{} {
 			conn.epic_remember(epic)
@@ -83,7 +72,7 @@ pub fn epic_create(subject string, project_id int) ?Epic {
 		project: project_id
 	}
 	postdata := json.encode_pretty(epic)
-	response := conn.post_json_str('epics', postdata, true, true) ?
+	response := conn.post_json_str('epics', postdata, true) ?
 	mut result := epic_decode(response) ?
 	conn.epic_remember(result)
 	return result
@@ -108,12 +97,13 @@ fn epic_decode(data string) ?Epic {
 	mut epic := json.decode(Epic, data) or {
 		return error('Error happen when decode epic\nData: $data\nError:$err')
 	}
-	data_as_map := (raw_decode(data) or {}).as_map()
+	data_as_map := crystaljson.json_dict_any(data,false,[],[])?
 	epic.created_date = parse_time(data_as_map['created_date'].str())
 	epic.modified_date = parse_time(data_as_map['modified_date'].str())
 	epic.finished_date = parse_time(data_as_map['modified_date'].str())
 	epic.due_date = parse_time(data_as_map['due_date'].str())
-	epic.file_name = texttools.name_fix_no_filesep(epic.subject[0..min(15, epic.subject.len)] +
+	epic.file_name = texttools.name_clean(epic.subject[0..min(40, epic.subject.len)] +
 		'-' + epic.id.str()) + '.md'
+	epic.file_name = texttools.ascii_clean(epic.file_name)
 	return epic
 }

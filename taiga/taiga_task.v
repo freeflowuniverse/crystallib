@@ -1,7 +1,7 @@
 module taiga
-
+import despiegk.crystallib.crystaljson
 import despiegk.crystallib.texttools
-import x.json2 { raw_decode }
+// import x.json2 { raw_decode }
 import json
 import time { Time }
 import math { min }
@@ -44,31 +44,16 @@ pub mut:
 
 pub fn tasks() ? {
 	mut conn := connection_get()
-	data := conn.get_json_str('tasks', '', true) ?
-	clean_data := texttools.ascii_clean(data)
-	data_as_arr := (raw_decode(clean_data) or {}).arr()
-	println('[+] Loading $data_as_arr.len tasks ...')
-	for t in data_as_arr {
+	blocks := conn.get_json_list('tasks', '', true) ?
+	println('[+] Loading $blocks.len tasks ...')
+	for t in blocks {
 		mut task := Task{}
-		if conn.full {
-			temp := (raw_decode(t.str()) or {}).as_map()
-			id := temp['id'].int()
-			task = task_get(id) or {
-				eprintln(err)
-				Task{}
-			}
-			if task != Task{} {
-				task.get_task_comments() ?
-				conn.task_remember(task)
-			}
-		} else {
-			task = task_decode(t.str()) or {
-				eprintln(err)
-				Task{}
-			}
-			if task != Task{} {
-				conn.task_remember(task)
-			}
+		task = task_decode(t.str()) or {
+			eprintln(err)
+			Task{}
+		}
+		if task != Task{} {
+			conn.task_remember(task)
 		}
 	}
 }
@@ -86,7 +71,7 @@ pub fn task_create(subject string, project_id int) ?Task {
 		project: project_id
 	}
 	postdata := json.encode_pretty(task)
-	response := conn.post_json_str('tasks', postdata, true, true) ?
+	response := conn.post_json_str('tasks', postdata, true) ?
 	mut result := task_decode(response) ?
 	conn.task_remember(result)
 	return result
@@ -111,24 +96,30 @@ fn task_decode(data string) ?Task {
 	mut task := json.decode(Task, data) or {
 		return error('Error happen when decode task\nData: $data\nError:$err')
 	}
-	data_as_map := (raw_decode(data) or {}).as_map()
+	data_as_map := crystaljson.json_dict_any(data,false,[],[])?
 	task.created_date = parse_time(data_as_map['created_date'].str())
 	task.modified_date = parse_time(data_as_map['modified_date'].str())
 	task.finished_date = parse_time(data_as_map['finished_date'].str())
 	task.due_date = parse_time(data_as_map['due_date'].str())
-	task.file_name = texttools.name_fix_no_filesep(task.subject[0..min(15, task.subject.len)] +
+	task.file_name = texttools.name_clean(task.subject[0..min(40, task.subject.len)] +
 		'-' + task.id.str()) + '.md'
+	task.file_name = texttools.ascii_clean(task.file_name)
 	task.user_story_extra_info.file_name =
-		texttools.name_fix_no_filesep(task.user_story_extra_info.subject[0..min(15, task.user_story_extra_info.subject.len)] +
+		texttools.name_clean(task.user_story_extra_info.subject[0..min(40, task.user_story_extra_info.subject.len)] +
 		'-' + task.user_story_extra_info.id.str()) + '.md'
 	task.project_extra_info.file_name =
-		texttools.name_fix_no_filesep(task.project_extra_info.slug) + '.md'
+		texttools.name_clean(task.project_extra_info.slug) + '.md'
 	return task
 }
 
 // export template per task
 pub fn (task Task) as_md(url string) string {
+	println(1)
+	// println(task)
+	// println("1b")
 	mut task_md := $tmpl('./templates/task.md')
+	println(2)
 	task_md = fix_empty_lines(task_md)
+	println(3)
 	return task_md
 }

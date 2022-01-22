@@ -16,24 +16,6 @@ pub fn name_fix(name string) string {
 	return res
 }
 
-pub fn ascii(r string) string {
-	mut res := []string{}
-	for ch in r {
-		mut c := ch.ascii_str()
-		if ignore.contains(c){
-			continue
-		}
-		res << c
-	}
-	return res.join('')
-}
-
-pub fn name_fix_no_filesep(name string) string {
-	mut name1 := name.replace('/', '_')
-	name1 = ascii(name1)
-	return name_fix(name1)
-}
-
 pub fn name_fix_no_underscore(name string) string {
 	mut pagename := name_fix_keepext(name)
 	x := pagename.replace('_', '')

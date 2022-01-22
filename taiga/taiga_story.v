@@ -1,7 +1,8 @@
 module taiga
 
+import despiegk.crystallib.crystaljson
 import despiegk.crystallib.texttools
-import x.json2 { raw_decode }
+// import x.json2 { raw_decode }
 import json
 import time { Time }
 import math { min }
@@ -63,33 +64,17 @@ pub mut:
 
 pub fn stories() ? {
 	mut conn := connection_get()
-	data := conn.get_json_str('userstories', '', true) ?
-	clean_data := texttools.ascii_clean(data)
-	data_as_arr := (raw_decode(clean_data) or {}).arr()
-	println('[+] Loading $data_as_arr.len stories ...')
-	for s in data_as_arr {
+	blocks := conn.get_json_list('userstories', '', true) ?
+	println('[+] Loading $blocks.len stories ...')
+	for s in blocks {
+		println("STORY:\n$s")
 		mut story := Story{}
-		if conn.full {
-			// Get every element, then decode it
-			temp := (raw_decode(s.str()) or {}).as_map()
-			id := temp['id'].int()
-			story = story_get(id) or {
-				eprintln(err)
-				Story{}
-			}
-			if story != Story{} {
-				story.get_story_comments() ?
-				conn.story_remember(story)
-			}
-		} else {
-			// Decode directly
-			story = story_decode(s.str()) or {
-				eprintln(err)
-				Story{}
-			}
-			if story != Story{} {
-				conn.story_remember(story)
-			}
+		story = story_decode(s.str()) or {
+			eprintln(err)
+			Story{}
+		}
+		if story != Story{} {
+			conn.story_remember(story)
 		}
 	}
 }
@@ -101,7 +86,7 @@ pub fn story_create(subject string, project_id int) ?Story {
 		project: project_id
 	}
 	postdata := json.encode_pretty(story)
-	response := conn.post_json_str('userstories', postdata, true, true) ?
+	response := conn.post_json_str('userstories', postdata, true) ?
 	mut result := story_decode(response) ?
 	conn.story_remember(result)
 	return result
@@ -123,7 +108,7 @@ pub fn story_delete(id int) ?bool {
 }
 
 fn story_decode(data string) ?Story {
-	data_as_map := (raw_decode(data) or {}).as_map()
+	data_as_map := crystaljson.json_dict_any(data,false,[],[])?
 	mut story := json.decode(Story, data) or {
 		return error('Error happen when decode story\nData: $data\nError:$err')
 	}
@@ -131,10 +116,11 @@ fn story_decode(data string) ?Story {
 	story.modified_date = parse_time(data_as_map['modified_date'].str())
 	story.finish_date = parse_time(data_as_map['finish_date'].str())
 	story.due_date = parse_time(data_as_map['due_date'].str())
-	story.file_name = texttools.name_fix_no_filesep(story.subject[0..min(15, story.subject.len)] +
+	story.file_name = texttools.name_clean(story.subject[0..min(40, story.subject.len)] +
 		'_' + story.id.str()) + '.md'
+	story.file_name = texttools.ascii_clean(story.file_name)
 	story.project_extra_info.file_name =
-		texttools.name_fix_no_filesep(story.project_extra_info.slug) + '.md'
+		texttools.name_clean(story.project_extra_info.slug) + '.md'
 	return story
 }
 
