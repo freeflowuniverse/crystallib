@@ -1,22 +1,6 @@
 module taiga
-import despiegk.crystallib.crystaljson
-import texttools
-import json
-import time { Time }
 
-struct Comment {
-pub mut:
-	id                  string
-	comment             string
-	user_id             int //should just refer to the id of the user who did the comment
-	created_at          Time 
-	key                 string
-	comment_html        string
-	delete_comment_date Time 
-	delete_comment_user string
-	edit_comment_date   Time 
-	is_hidden           bool
-}
+import despiegk.crystallib.crystaljson
 
 // return vlang clean object
 pub fn comments_get(prefix string, prefix_id int) ?[]Comment {
@@ -37,18 +21,24 @@ pub fn comments_get(prefix string, prefix_id int) ?[]Comment {
 }
 
 fn comment_decode(data string) ?Comment {
-
-	//TODO: use raw json data_as_map feature to link to object, do all the others
-	//TODO: when a user, project, ... find it in the memdb to get right id
-
-	data_as_map := crystaljson.json_dict_any(data,false,[],[])?
+	data_as_map := crystaljson.json_dict_any(data, false, [], []) ?
 
 	mut comment := Comment{
-		//TODO:
+		id: data_as_map['id'].str()
+		comment: data_as_map['comment'].str()
+		key: data_as_map['key'].str()
+		comment_html: data_as_map['comment_html'].str()
+		delete_comment_user: data_as_map['delete_comment_user'].str()
+		is_hidden: data_as_map['is_hidden'].bool()
 	}
-
+	comment.user_id = data_as_map['user'].as_map()['pk'].int()
 	comment.created_at = parse_time(data_as_map['created_at'].str())
 	comment.delete_comment_date = parse_time(data_as_map['delete_comment_date'].str())
 	comment.edit_comment_date = parse_time(data_as_map['edit_comment_date'].str())
 	return comment
+}
+
+pub fn (comment Comment) user() User {
+	conn := connection_get()
+	return *conn.users[comment.user_id]
 }

@@ -2,77 +2,15 @@ module taiga
 
 import despiegk.crystallib.crystaljson
 import despiegk.crystallib.texttools
-// import x.json2 { raw_decode }
 import json
-import time { Time }
 import math { min }
-
-
-enum StoryStatus { 
-	//TODO: there will be many other statuses used, we have to fix, in taiga itself, make the story status as below eveywhere
-	unknown
-	new
-	accepted
-	inprogress
-	verification //is called ready for test in taiga
-	done
-}
-
-pub struct Story {
-pub mut:
-	description            string
-	id                     int
-	is_private             bool
-	tags                   []string
-	project                int
-	status                 StoryStatus //TODO: use an enumerator
-	assigned_to            int //cant we have more than 1 assignee? TODO:
-	owner                  int
-	created_date           Time 
-	modified_date          Time 
-	finish_date            Time 
-	due_date               Time 
-	due_date_reason        string
-	subject                string
-	is_closed              bool
-	is_blocked             bool
-	blocked_note           string
-	ref                    int
-	tasks                  []int
-	comments               []Comment
-	file_name              string      [skip]
-}
-
-// get comments in list from story
-pub fn (mut s Story) get_comments() ?[]Comment {
-	s.comments = comments_get('userstory', s.id) ?
-	return s.comments
-}
-
-// get tasks objects for each story
-pub fn (s Story) get_tasks() ?[]Task {
-	mut conn := connection_get()
-	mut story_tasks := []Task{}
-	for _, task in conn.tasks {
-		if task.user_story_extra_info.id == s.id {
-			story_tasks << task
-		}
-	}
-	return story_tasks
-}
-
-struct NewStory {
-pub mut:
-	subject string
-	project int
-}
 
 pub fn stories() ? {
 	mut conn := connection_get()
 	blocks := conn.get_json_list('userstories', '', true) ?
 	println('[+] Loading $blocks.len stories ...')
 	for s in blocks {
-		println("STORY:\n$s")
+		println('STORY:\n$s')
 		mut story := Story{}
 		story = story_decode(s.str()) or {
 			eprintln(err)
@@ -113,31 +51,86 @@ pub fn story_delete(id int) ?bool {
 }
 
 fn story_decode(data string) ?Story {
-	data_as_map := crystaljson.json_dict_any(data,false,[],[])?
+	data_as_map := crystaljson.json_dict_any(data, false, [], []) ?
 
 	mut story := Story{
-		//TODO:
+		description: data_as_map['description'].str()
+		id: data_as_map['id'].int()
+		is_private: data_as_map['is_private'].bool()
+		project: data_as_map['project'].int()
+		owner: data_as_map['owner'].int()
+		due_date_reason: data_as_map['due_date_reason'].str()
+		subject: data_as_map['subject'].str()
+		is_closed: data_as_map['is_closed'].bool()
+		is_blocked: data_as_map['is_blocked'].bool()
+		blocked_note: data_as_map['blocked_note'].str()
+		ref: data_as_map['ref'].int()
 	}
 
 	story.created_date = parse_time(data_as_map['created_date'].str())
 	story.modified_date = parse_time(data_as_map['modified_date'].str())
 	story.finish_date = parse_time(data_as_map['finish_date'].str())
 	story.due_date = parse_time(data_as_map['due_date'].str())
-	story.file_name = texttools.name_clean(story.subject[0..min(40, story.subject.len)] + '_' + story.id.str()) + '.md'
+	story.category = get_category(story)
+	for tag in data_as_map['tags'].arr() {
+		story.tags << tag.str()
+	}
+	for assign in data_as_map['assigned_to'].arr() {
+		story.assigned_to << assign.int()
+	}
+	// story.status = data_as_map["status_extra_info"]["name"].str() // TODO: Use Enum
+	story.file_name = texttools.name_clean(story.subject[0..min(40, story.subject.len)] + '_' +
+		story.id.str()) + '.md'
 	story.file_name = texttools.ascii_clean(story.file_name)
-	// story.project_extra_info
-	// TODO: fetch story id from here
 	mut conn := connection_get()
-	if conn.settings.comments_story{
-		story.get_comments()?
+	if conn.settings.comments_story {
+		story.comments() ?
 	}
 	return story
 }
 
+// get comments in list from story
+pub fn (mut s Story) comments() ?[]Comment {
+	s.comments = comments_get('userstory', s.id) ?
+	return s.comments
+}
+
+// get tasks objects for each story
+pub fn (s Story) tasks() []Task {
+	mut conn := connection_get()
+	mut story_tasks := []Task{}
+	for _, task in conn.tasks {
+		t_story := task.story()
+		if t_story.id == s.id {
+			story_tasks << task
+		}
+	}
+	return story_tasks
+}
+
+// Get project object
+pub fn (story Story) project() Project {
+	mut conn := connection_get()
+	project := conn.projects[story.project]
+	return *project
+}
+
+pub fn (story Story) owner() User {
+	mut conn := connection_get()
+	return *conn.users[story.owner]
+}
+
+pub fn (story Story) assigned() []User {
+	mut conn := connection_get()
+	mut assigned := []User{}
+	for i in story.assigned_to {
+		assigned << conn.users[i]
+	}
+	return assigned
+}
+
 pub fn (story Story) as_md(url string) string {
-	tasks := story.get_tasks() or {
-		panic("Can't get tasks for story $story.id with error: $err")
-	} // For template rendering
+	tasks := story.tasks()
 	// export template per story
 	mut story_md := $tmpl('./templates/story.md')
 	story_md = fix_empty_lines(story_md)
