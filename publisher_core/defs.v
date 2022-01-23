@@ -34,7 +34,7 @@ pub fn (def Def) page_get(mut publisher &Publisher) ?&Page {
 	return publisher.page_get_by_id(def.pageid)
 }
 
-pub fn (def Def) name_fixed() string {
+pub fn (def Def) name_fixed() ?string {
 	return texttools.name_fix_no_underscore(def.name)
 }
 

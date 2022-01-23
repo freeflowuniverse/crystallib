@@ -48,7 +48,7 @@ pub fn (mut publisher Publisher) errors_get(site Site) ?PublisherErrors {
 pub fn (mut publisher Publisher) flatten() ? {
 	mut dest_file := ''
 
-	mut config := publisher_config.get()
+	mut config := publisher_config.get()?
 
 	config.update_staticfiles(false) ?
 
@@ -59,8 +59,9 @@ pub fn (mut publisher Publisher) flatten() ? {
 	for defobj in publisher.defs {
 		page_def := publisher.page_get_by_id(defobj.pageid) ?
 		site_def := page_def.site_get(mut publisher) ?
+		name :=  defobj.name_fixed()?
 		pd.defs << PublisherDef{
-			def: defobj.name_fixed()
+			def: name
 			page: page_def.name
 			site: site_def.name
 		}
@@ -112,8 +113,9 @@ pub fn (mut publisher Publisher) flatten() ? {
 		os.write_file('$dest_dir/config_groups.json', the_config_group) ?
 
 		//the main index file for docsify
-		template_wiki_root_save(dest_dir, site.name, site_config.git_url(), site_config.trackingid,
-			site_config.opengraph)
+		giturl := site_config.git_url()
+		template_wiki_root_save(dest_dir, site.name, giturl, site_config.trackingid,
+			site_config.opengraph)?
 
 		mut special := ['readme.md', 'README.md', '_sidebar.md', '_navbar.md', 'sidebar.md',
 			'navbar.md', 'favicon.ico']
@@ -155,7 +157,8 @@ pub fn (mut publisher Publisher) flatten() ? {
 			dest_file = os.join_path(dest_dir, os.file_name(fileobj.pathrel))
 			file_counter++
 			trace_progress('    ${file_counter:4}, creating file $dest_file ...')
-			os.cp(fileobj.path_get(mut publisher), dest_file) ?
+			source_file := fileobj.path_get(mut publisher)?
+			os.cp(source_file, dest_file) ?
 		}
 	}
 

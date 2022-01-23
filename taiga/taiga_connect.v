@@ -7,6 +7,12 @@ import despiegk.crystallib.redisclient
 import despiegk.crystallib.crystaljson
 import crypto.md5
 
+struct TaigaConnectionSettings {
+	comments_story bool = true
+	comments_issue bool = true
+	comments_task bool = true
+}
+
 [heap]
 struct TaigaConnection {
 mut:
@@ -14,6 +20,7 @@ mut:
 	url           string
 	auth          AuthDetail
 	cache_timeout int
+	settings 	  TaigaConnectionSettings
 pub mut:
 	projects map[int]&Project
 	users    map[int]&User
@@ -289,7 +296,6 @@ fn (mut h TaigaConnection) get_json_list(prefix string, getdata string, cache bo
 	Output:
 		response: list of strings.
 	*/
-	println("GETJSONLIST: $prefix")
 	mut result := h.get_json_str(prefix, getdata, cache) ?
 	return crystaljson.json_list(result,false)
 }
@@ -310,7 +316,7 @@ fn (mut h TaigaConnection) get_json_str(prefix string, getdata string, cache boo
 	if result == '' {
 		// println("MISS1")
 		url := '$h.url/api/v1/$prefix'
-		println(' ... $url')
+		// println(' ... $url')
 		mut req := http.new_request(http.Method.get, url, getdata) ?
 		req.header = h.header()
 		req.add_custom_header('x-disable-pagination', 'True') ?

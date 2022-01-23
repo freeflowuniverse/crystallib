@@ -10,13 +10,13 @@ fn init_gitstructure() GitStructure {
 
 const codecache = init_gitstructure()
 
-pub fn get() &GitStructure {
+fn get_internal() &GitStructure {
 	return &gittools.codecache
 }
 
-pub fn new() &GitStructure {
-	mut gs := get()
-	gs.load() or {panic("cannot load gittools")}
+pub fn get() ? &GitStructure {
+	mut gs := get_internal()
+	gs.check()?
 	return gs
 }
 
@@ -80,7 +80,7 @@ pub fn (mut gitstructure GitStructure) list(args GSArgs)? {
 
 // the factory for getting the gitstructure
 // git is checked uderneith $/code
-pub fn (mut gitstructure GitStructure) load() ? {
+fn (mut gitstructure GitStructure) load() ? {
 	mut root2:=""
 	if 'DIR_CODE' in os.environ() {
 		dir_ct := os.environ()['DIR_CODE']
@@ -115,6 +115,9 @@ pub fn (mut gitstructure GitStructure) load() ? {
 
 	// print_backtrace()
 	println(' - SCAN GITSTRUCTURE FOR $root2 ')
+
+
+
 
 	gitstructure.root = root2
 	gitstructure.multibranch = multibranch

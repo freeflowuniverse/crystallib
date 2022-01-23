@@ -31,7 +31,7 @@ pub fn web(doreset bool, clean bool) ? {
 	// make sure the config we are working with is refelected in ~/.publisher/config
 	// update_config() or { return error(' ** ERROR: cannot copy config files to ~publisher/config. Error was:\n$err') }
 
-	mut gt := gittools.new()
+	mut gt := gittools.get()?
 		
 	gt.repo_get_from_url(url:"https://github.com/threefoldfoundation/threefold_data")? 
 	
@@ -44,7 +44,7 @@ pub fn web(doreset bool, clean bool) ? {
 // Initialize (load wikis) only once when server starts
 pub fn website_install(names []string, first bool) ? {
 
-    mut conf := publisher_config.get()
+    mut conf := publisher_config.get()?
 	for mut site in conf.sites_get(names) {
 
 		mut repo := site.repo_get()
@@ -54,7 +54,7 @@ pub fn website_install(names []string, first bool) ? {
 		
 		println(' - install website $site.name on $path')
 
-		mut gt := gittools.new()
+		mut gt := gittools.get()?
 
 		if conf.publish.reset || site.reset {
 			script6 := '
@@ -264,7 +264,7 @@ pub fn website_install(names []string, first bool) ? {
 
 pub fn wiki_install(names []string) ? {
 
-    mut conf := publisher_config.get()
+    mut conf := publisher_config.get()?
 	println(conf.sites_wiki_get(names) )
 	for mut site in conf.sites_wiki_get(names) {
 		mut repo := site.repo_get()

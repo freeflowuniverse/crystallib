@@ -7,14 +7,14 @@ import texttools
 // remember the file, so we know if we have duplicates
 // also fixes the name
 fn (mut site Site) file_remember(mut patho path.Path, mut publisher &Publisher) ?&File {
-	patho.normalize() or {panic("cannot normalize $patho")}
+	patho.normalize()?
 	pathrelative := patho.path_relative(site.path)
 
 	mut file := file_new(mut patho, site, mut publisher)?
 	
 	// println(' - File remember $file.pathrel')
 
-	mut namelower := file.name_fixed(mut publisher)
+	mut namelower := file.name_fixed(mut publisher)?
 
 	if patho.is_image(){		
 
@@ -102,24 +102,24 @@ fn (mut site Site) error_report_file(mut file &File, msg string) &File {
 // remember the file, so we know if we have duplicates
 // also fixes the name
 fn (mut site Site) file_remember_full_path(full_path string, mut publisher &Publisher)? &File {
-	mut path_ := path.get_file(full_path,false)
+	mut path_ := path.get_file(full_path,false)?
 	return site.file_remember(mut path_, mut publisher)
 }
 
 fn (mut site Site) page_remember(path string, name string, issidebar bool, mut publisher &Publisher) ?&Page {
-	mut namelower := publisher.name_fix_alias_page(name) or { panic(err) }
+	mut namelower := publisher.name_fix_alias_page(name)?
 	if namelower.trim(' ') == '' {
 		site.error(path,'empty page pagename',.emptypage)
 		return none
 	}
 	if path.trim(" ") == ""{
-		panic("path cannot be empty")
+		return error("path cannot be empty")
 	}
 	mut pathfull := os.join_path(path, name)
 	mut pathfull_fixed := os.join_path(path, namelower) + '.md'
 	if pathfull_fixed != pathfull {
 		println(" - mv page remember, because name not normalized: $pathfull to $pathfull_fixed")
-		os.mv(pathfull, pathfull_fixed) or { panic(err) }
+		os.mv(pathfull, pathfull_fixed)?
 		pathfull = pathfull_fixed
 	}
 	pathrelative := pathfull[site.path.len..]
@@ -319,7 +319,7 @@ fn (mut site Site) files_process_recursive(path__ string, mut publisher &Publish
 	// if path.contains("/farming"){
 	// 	println("\n - $path ($site.sidebar_last)")
 	// 	if site.sidebar_last>0 {
-	// 		page_sidebar2 := publisher.page_get_by_id(site.sidebar_last) or { panic(err) }
+	// 		page_sidebar2 := publisher.page_get_by_id(site.sidebar_last)?
 	// 		path_sidebar2 := os.dir(page_sidebar2.path_get(mut publisher))
 	// 		println(" - SIDEBAR: '$path_sidebar2'")
 	// 	}
@@ -374,7 +374,7 @@ fn (mut site Site) files_process_recursive(path__ string, mut publisher &Publish
 						}
 
 						// if path.contains("/farming"){
-						// 	page4 := publisher.page_get_by_id(b) or { panic(err) }
+						// 	page4 := publisher.page_get_by_id(b)?
 						// 	println(" - $page4.path $page4.sidebarid")
 						// }
 
@@ -382,7 +382,7 @@ fn (mut site Site) files_process_recursive(path__ string, mut publisher &Publish
 
 					if ext2 in ['jpg', 'png', 'svg', 'jpeg', 'gif', 'pdf', 'zip'] {
 						// println(path+"/"+item2)
-						mut fullpath := path.get_file("$path_/$item2",false)
+						mut fullpath := path.get_file("$path_/$item2",false)?
 						site.file_remember(mut fullpath, mut publisher)?
 					}
 				}

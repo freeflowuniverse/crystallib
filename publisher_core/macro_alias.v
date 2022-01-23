@@ -18,7 +18,7 @@ fn macro_alias(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 		hidden: true
 	}
 
-	defid := state.publisher.def_add(defobj)
+	defid := state.publisher.def_add(defobj)?
 
 	for alias in aliasses {
 		aliasname := texttools.name_fix_no_underscore(alias)

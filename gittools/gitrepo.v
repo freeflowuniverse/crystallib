@@ -6,7 +6,7 @@ import process
 
 
 fn (repo GitRepo) path_account_get() string {
-	mut gitstructure := gittools.new()
+	mut gitstructure := gittools.get() or {panic(err)}
 	mut provider := ''
 	addr := repo.addr
 	if addr.provider == 'github.com' {
@@ -38,7 +38,7 @@ pub fn (repo GitRepo) path_get() string {
 	if repo.path != ""{
 		return repo.path
 	}
-	mut gitstructure := gittools.new()
+	mut gitstructure := gittools.get() or {panic(err)}
 	if gitstructure.multibranch {
 		return '$repo.path_account_get()/$repo.addr.name/$repo.addr.branch'
 	} else {
@@ -47,7 +47,7 @@ pub fn (repo GitRepo) path_get() string {
 }
 
 pub fn (repo GitRepo) path_rel_get() string {
-	mut gitstructure := gittools.new()
+	mut gitstructure := gittools.get() or {panic(err)}
 	if gitstructure.multibranch {
 		return '$repo.addr.account/$repo.addr.name/$repo.addr.branch'
 	} else {
@@ -79,7 +79,7 @@ pub fn (mut repo GitRepo) changes() ?bool {
 }
 
 fn (mut repo GitRepo) get_clone_cmd(http bool) string {
-	mut gitstructure := gittools.new()
+	mut gitstructure := gittools.get() or {panic(err)}
 	url := repo.url_get(http)
 	mut cmd := ''
 
@@ -263,7 +263,7 @@ pub fn (mut repo GitRepo) branch_get() ?string {
 }
 
 pub fn (mut repo GitRepo) branch_switch(branchname string) ? {
-	mut gitstructure := gittools.new()
+	mut gitstructure := gittools.get()?
 	if gitstructure.multibranch {
 		return error('cannot do a branch switch if we are using multibranch strategy.')
 	}

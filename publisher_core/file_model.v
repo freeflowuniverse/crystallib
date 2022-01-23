@@ -53,25 +53,25 @@ pub fn (file File) site_get(mut publisher &Publisher) ?&Site {
 	return publisher.site_get_by_id(file.site_id)
 }
 
-pub fn (file File) site_path_get(mut publisher &Publisher) string {
-	site := file.site_get(mut publisher) or {panic("$err")}
+pub fn (file File) site_path_get(mut publisher &Publisher) ?string {
+	site := file.site_get(mut publisher)?
 	return site.path
 }
 
-pub fn (file File) site_name_get(mut publisher &Publisher) string {
-	site := file.site_get(mut publisher) or {panic("$err")}
+pub fn (file File) site_name_get(mut publisher &Publisher) ?string {
+	site := file.site_get(mut publisher)?
 	return site.name
 }
 
 
-pub fn (file File) path_get(mut publisher &Publisher) string {
-	sitepath := file.site_path_get(mut publisher)
+pub fn (file File) path_get(mut publisher &Publisher) ?string {
+	sitepath := file.site_path_get(mut publisher)?
 	return os.join_path(sitepath, file.pathrel)
 }
 
 
 pub fn (file File) path_object_get(mut publisher &Publisher) ?path.Path {
-	p := file.path_get(mut publisher)
+	p := file.path_get(mut publisher)?
 	return path.get_file(p,false)
 
 }
@@ -94,8 +94,8 @@ pub fn (file File) name_with_site(mut publisher &Publisher,site_id int) ?string 
 //returns name without extension and _ from image
 //returns name with extension for normal file
 //all is lower case & normalized
-pub fn (file File) name_fixed(mut publisher &Publisher) string {
-	mut patho := file.path_object_get(mut publisher) or {panic("err")}
+pub fn (file File) name_fixed(mut publisher &Publisher) ?string {
+	mut patho := file.path_object_get(mut publisher)?
 	return publisher.path_get_name_fix(patho.path)
 }
 

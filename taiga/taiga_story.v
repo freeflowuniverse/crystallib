@@ -39,13 +39,13 @@ pub mut:
 }
 
 // get comments in list from story
-pub fn (mut s Story) get_story_comments() ?[]Comment {
+pub fn (mut s Story) get_comments() ?[]Comment {
 	s.comments = comments_get('userstory', s.id) ?
 	return s.comments
 }
 
 // get tasks objects for each story
-pub fn (s Story) get_story_tasks() ?[]Task {
+pub fn (s Story) get_tasks() ?[]Task {
 	mut conn := connection_get()
 	mut story_tasks := []Task{}
 	for _, task in conn.tasks {
@@ -121,11 +121,15 @@ fn story_decode(data string) ?Story {
 	story.file_name = texttools.ascii_clean(story.file_name)
 	story.project_extra_info.file_name =
 		texttools.name_clean(story.project_extra_info.slug) + '.md'
+	mut conn := connection_get()
+	if conn.settings.comments_story{
+		story.get_comments()?
+	}
 	return story
 }
 
 pub fn (story Story) as_md(url string) string {
-	tasks := story.get_story_tasks() or {
+	tasks := story.get_tasks() or {
 		panic("Can't get tasks for story $story.id with error: $err")
 	} // For template rendering
 	// export template per story

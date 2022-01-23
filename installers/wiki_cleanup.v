@@ -7,7 +7,7 @@ import texttools
 
 pub fn wiki_cleanup(names []string) ? {
 
-	mut conf := publisher_config.get()
+	mut conf := publisher_config.get()?
 
 	for mut site in conf.sites_get(names) {
 		mut repo := site.repo_get()

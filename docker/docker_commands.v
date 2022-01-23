@@ -79,7 +79,7 @@ pub fn (mut e DockerEngine) containers_list() ?[]DockerContainer {
 }
 
 
-pub fn (mut e DockerEngine) container_create(args DockerContainer) ?DockerContainer {
+pub fn (mut e DockerEngine) container_create(args DockerContainerCreateArgs) ?DockerContainer {
 	mut ports := ''
 	mut mounts := ''
 	mut command := args.command
@@ -248,7 +248,7 @@ pub fn (mut e DockerEngine) image_get(name_or_id string) ?DockerImage {
 }
 
 // reset all images & containers, CAREFUL!
-pub fn (mut e DockerEngine) reset_all() {
+pub fn (mut e DockerEngine) reset_all()? {
 	mut node := builder.node_get(e.node)?
 	node.executor.exec_silent('docker container rm -f $(docker container ls -aq) 2>&1 && echo') or {""}
 	node.executor.exec_silent('docker image prune -a -f') or { panic(err) }

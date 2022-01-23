@@ -5,18 +5,19 @@ import texttools
 import json
 import gittools
 
-// fn config_dir_find(path string) string{
 
-// }
+fn config_init() ConfigRoot {
+	mut config := ConfigRoot{}
+	return config
+}
 
 // load the initial config from filesystem
-fn config_load() ?ConfigRoot {
-	mut config := ConfigRoot{}
+fn (mut config ConfigRoot) init()? {
 
 	envs := os.environ()
 
 	if 'PUBSITE' in envs && envs['PUBSITE'].trim(" ") != '' {
-		mut gt2 := gittools.new()
+		mut gt2 := gittools.get()?
 		url := envs['PUBSITE']
 		println(' - found PUBSITE in environment variables, will use this one for config dir.')
 		println(' - get git repo to fetch config for publ tools: $url')
@@ -46,6 +47,7 @@ fn config_load() ?ConfigRoot {
 		curdir := os.getwd()
 		return error('cannot find site files in current dir: $curdir, site files start with site_')
 	}
+
 
 	// will check if there are site_... files, if not is error
 
@@ -129,14 +131,17 @@ fn config_load() ?ConfigRoot {
 		// mut site_in := json.decode(SiteConfig, txt) ?
 		mut site_in_raw := json.decode(SiteConfigRaw, txt) or { panic(err) }
 		if site_in_raw.name == '' {
-			panic('site name should not be empty. Prob means error in json.\n$txt')
+			return error('site name should not be empty. Prob means error in json.\n$txt')
 		}
 		// make sure we normalize the name
 		site_in_raw.name = texttools.name_fix(site_in_raw.name)
 		// site_in.configroot = &config
+		println(site_in_raw)
 		mut site_in := site_new(site_in_raw)?
+		println(1111)
 		config.sites << site_in
 	}
+
 
 	// Load Groups
 	for group_file in groups_config_files {
@@ -144,7 +149,9 @@ fn config_load() ?ConfigRoot {
 		txt := os.read_file(group_file) ?
 		config.groups << json.decode([]UserGroup, txt) ?
 	}
-	return config
+
+	println(" - CONFIG LOADED FOR ${os.getwd()}")
+
 }
 
 pub fn (mut site SiteConfig) load() ? {
@@ -158,20 +165,20 @@ pub fn (mut site SiteConfig) load() ? {
 		return error('- Error Cannot find `$site.path.path` for \n$site\nin process site repo. Creating `$site.path.path`')
 	}
 
-	mut o := site.path.join('index.html')
+	mut o := site.path.join('index.html')?
 	o.delete()?
-	mut o2 := site.path.join('wikiconfig.json')
+	mut o2 := site.path.join('wikiconfig.json')?
 	o2.delete()?
 
 }
 
 // to create singleton
-const gconf = config_load() or {
-	println('Cannot load configuraton for publish tools.\n$err')
-	println('===ERROR===')
-	exit(1)
-}
+const gconf = config_init()
 
-pub fn get() &ConfigRoot {
-	return &publisher_config.gconf
+pub fn get() ?&ConfigRoot {
+	mut cr := publisher_config.gconf
+	if ! cr.loaded{
+		cr.init()?
+	}
+	return &cr
 }

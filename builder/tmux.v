@@ -142,7 +142,7 @@ pub fn (mut t Tmux) scan()?map[string]&Window {
 	// os.log('TMUX - Scanning ....')
 	mut e := t.node().executor
 	cmd_list_session := "tmux list-sessions -F '#{session_name}'"
-	exec_list := e.exec(cmd_list_session) or { '1' }
+	exec_list := e.exec_silent(cmd_list_session) or { '1' }
 
 	if exec_list == '1' {
 		// No server running
@@ -170,7 +170,7 @@ pub fn (mut t Tmux) scan()?map[string]&Window {
 
 	// mut done := map[string]bool{}
 	cmd := "tmux list-panes -a -F '#{session_name}|#{window_name}|#{window_id}|#{pane_active}|#{pane_id}|#{pane_pid}|#{pane_start_command}'"
-	out := e.exec(cmd) or {
+	out := e.exec_silent(cmd) or {
 		return error("Can't execute $cmd \n$err")
 	}
 
@@ -195,7 +195,7 @@ pub fn (mut t Tmux) stop()? {
 	mut e := t.node().executor
 	os.log('TMUX - Stop tmux')
 	cmd := "tmux kill-server"
-	_ := e.exec(cmd) or {
+	_ := e.exec_silent(cmd) or {
 		// return error("Can't execute $cmd \n$err")
 		""
 	}	

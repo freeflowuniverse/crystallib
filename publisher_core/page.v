@@ -321,7 +321,7 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 			continue
 		}
 		// DEAL WITH LINKS
-		mut links_parser_result := link_parser(mut publisher, mut &page, line, state.nr)
+		mut links_parser_result := link_parser(mut publisher, mut &page, line, state.nr)?
 
 		// there can be more than 1 link on 1 line
 		for mut link in links_parser_result.links {
@@ -337,7 +337,7 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 			}
 			// println(" ---- "+page.name+"/n$line")
 			// println(page)
-			llink := link.server_get (state.site, mut &publisher)
+			llink := link.server_get (state.site, mut &publisher)?
 			state.serverline_change(link.original_get(),llink)
 			// if link.original_link.contains("legal2"){
 			// 	println(' >>>> link replace server: $link.original_get() -> $llink')

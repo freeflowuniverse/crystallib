@@ -20,7 +20,7 @@ fn trim(t string) string{
 }
 
 
-fn (mut link Link) init_(mut publisher &Publisher, page &Page) {
+fn (mut link Link) init_(mut publisher &Publisher, page &Page)? {
 	// see if its an external link or internal
 	// mut linkstate := LinkState.init
 
@@ -161,7 +161,7 @@ fn (mut link Link) init_(mut publisher &Publisher, page &Page) {
 			}
 			link.filename = item_linked.name(mut publisher)
 			link.page_id_dest = item_linked.id
-			link.site = item_linked.site_name_get(mut publisher)
+			link.site = item_linked.site_name_get(mut publisher)?
 			//remember that the page has been used by a file
 			if !(page.id in item_linked.usedby) {
 				item_linked.usedby << page.id
@@ -248,8 +248,8 @@ fn (mut link Link) debug_info(mut publisher Publisher, msg string)  {
 	mut page_dest := link.page_dest_get(mut publisher) or { panic(err) }
 	mut site_source := link.site_source_get(mut publisher) or { panic(err) }
 	mut site_dest := link.site_dest_get(mut publisher) or { panic(err) }				
-	source_link := link.source_get(site_source, mut publisher) or {panic("ss")}
-	dest_link := link.server_get(site_source, mut publisher)
+	source_link := link.source_get(site_source, mut publisher) or {panic(err)}
+	dest_link := link.server_get(site_source, mut publisher) or {panic(err)}
 	println(link)
 	println("    - sourcepage: ${page_source.path}")
 	println("    - sourcesite: ${site_source.name}")
@@ -281,26 +281,20 @@ fn (link Link) original_get_with_ignore() string {
 
 // return how to represent link on server
 // page is the page from where the link is on
-fn (mut link Link) server_get(site &Site, mut publisher &Publisher) string {
+fn (mut link Link) server_get(site &Site, mut publisher &Publisher) ?string {
 
 	// println(link.original_link)
 	
 	if link.cat == LinkType.page {
 		mut page_source := link.page_source_get(mut publisher) or { 
-			println( " cannot find the page at source for link:\n$link")
-			panic(err) 
+			return error(" cannot find the page at source for link:\n$link \n$err") 
 		}
-		mut page_dest := link.page_dest_get(mut publisher) or { 
-			println( " cannot find the page at dest for link:\n$link")
-			panic(err) 
-		}
+		mut page_dest := link.page_dest_get(mut publisher)?
 		site_dest := page_dest.site_get(mut publisher) or { 
-			println( " cannot find site for destpage for link:\n$link")
-			panic(err) 
+			return error("cannot find site for destpage for link:\n$link \n$err") 
 		}
 		site_source := page_source.site_get(mut publisher) or { 
-			println( " cannot find site for source page for link:\n$link")
-			panic(err) 
+			return error("cannot find site for source page for link:\n$link \n$err") 
 		}
 
 		link_short := "${link.site}__${link.filename}"
@@ -308,8 +302,7 @@ fn (mut link Link) server_get(site &Site, mut publisher &Publisher) string {
 		mut path_sidebar_dest := ""
 		if page_dest.sidebarid > 0 && link.filename.to_lower()!="readme" && link.filename.to_lower()!="defs"{
 			mut page_sidebar := page_dest.sidebar_page_get(mut publisher) or { 
-				println( " cannot find sidebar for dest page:$page_dest.path for link:\n$link")
-				panic(err) 
+				return error("cannot find sidebar for dest page:$page_dest.path for link:\n$link  \n$err")
 			}
 			path_sidebar_dest = "/"+page_sidebar.path_dir_relative_get(mut publisher).trim(" /")+ "/"
 		}
@@ -317,8 +310,7 @@ fn (mut link Link) server_get(site &Site, mut publisher &Publisher) string {
 		mut path_sidebar_source := ""
 		if page_source.sidebarid > 0 && link.filename.to_lower()!="defs"{
 			mut page_sidebar_source := page_source.sidebar_page_get(mut publisher) or { 
-				println( " cannot find sidebar for source page:$page_source.path for link:\n$link")
-				panic(err) 
+				return error("cannot find sidebar for source page:$page_source.path for link:\n$link  \n$err")
 			}
 			path_sidebar_source = "/"+page_sidebar_source.path_dir_relative_get(mut publisher).trim(" /")+ "/"
 		}
@@ -342,11 +334,6 @@ fn (mut link Link) server_get(site &Site, mut publisher &Publisher) string {
 				linkreplaced = '<a href="/info/${link.site}/#/${path_sidebar_dest}$link_short" target="_blank"> $link.description </a>'
 			}
 		}
-		// if link.filename.contains("usp_secure") {
-		// 	println(link)
-		// 	println(linkreplaced)
-		// 	panic("ssss")
-		// }
 		linkreplaced = linkreplaced.replace("//","/")
 
 		return linkreplaced
@@ -378,13 +365,14 @@ fn (mut link Link) source_get(site &Site, mut publisher &Publisher) ?string {
 	// println(" >>< $sitename $link.site")
 	if link.cat == LinkType.page {
 		if link.filename.contains(':') {
-			panic("should not have ':' in link for page or file.\n$link")
+			return error("should not have ':' in link for page or file.\n$link")
 		}		
 		if link.isimage{
 			if site.image_exists(link.filename){
 				mut file := site.image_get(link.filename, mut publisher)?
-				if file.exists(mut publisher){
-					panic("file $file should exist.")
+				file_exists := file.exists(mut publisher)?
+				if file_exists {
+					return error("file $file should exist.")
 				}
 				return '[$link.description](${file.name(mut publisher)})'
 			}			
@@ -408,7 +396,7 @@ fn (mut link Link) source_get(site &Site, mut publisher &Publisher) ?string {
 	}
 	if link.cat == LinkType.file {
 		if link.filename.contains(':') {
-			panic('should not have in link for page or file.\n$link')
+			return error('should not have in link for page or file.\n$link')
 		}
 		mut filename := ''
 

@@ -22,9 +22,9 @@ pub fn (mut path Path) exists() bool {
 }
 
 //absolute path
-pub fn (path Path) absolute() Path {
+pub fn (path Path) absolute() {
 	if path.absolute {
-		return path
+		return 
 	}
 	mut p2 := Path{
 		path:path.path
@@ -33,7 +33,6 @@ pub fn (path Path) absolute() Path {
 	}
 	p2.path = p2.path_absolute()
 	p2.absolute = true
-	return p2
 }
 
 
@@ -56,11 +55,11 @@ pub fn (path Path) path_relative(sourcepath string) string {
 
 
 //find parent of path
-pub fn (path Path) parent() Path {
+pub fn (path Path) parent() ?Path {
 	mut p := path.path_absolute()
 	parent := os.dir(p) // get parent directory
-	if parent == "."{
-		panic("no parent for path $path.path")
+	if parent == "." || parent == "/"{
+		return error("no parent for path $path.path")
 	}else if parent == "" {
 		return Path{path:"/",cat:Category.dir, exists:PathExists.yes}
 	}
@@ -102,7 +101,7 @@ pub fn (path Path) parent_find(tofind string)  ?Path {
 	if os.exists(os.join_path(path.path,tofind)) {
 		return path
 	}
-	mut path2 := path.parent()
+	mut path2 := path.parent()?
 	return path2.parent_find(tofind)
 }
 

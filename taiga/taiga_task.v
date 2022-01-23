@@ -59,7 +59,7 @@ pub fn tasks() ? {
 }
 
 // get comments in lis from task
-pub fn (mut t Task) get_task_comments() ?[]Comment {
+pub fn (mut t Task) get_comments() ?[]Comment {
 	t.comments = comments_get('task', t.id) ?
 	return t.comments
 }
@@ -96,7 +96,12 @@ fn task_decode(data string) ?Task {
 	mut task := json.decode(Task, data) or {
 		return error('Error happen when decode task\nData: $data\nError:$err')
 	}
+	task.comments = []
 	data_as_map := crystaljson.json_dict_any(data,false,[],[])?
+	println(data_as_map)
+	if true{
+		panic('sss')
+	}
 	task.created_date = parse_time(data_as_map['created_date'].str())
 	task.modified_date = parse_time(data_as_map['modified_date'].str())
 	task.finished_date = parse_time(data_as_map['finished_date'].str())
@@ -109,17 +114,16 @@ fn task_decode(data string) ?Task {
 		'-' + task.user_story_extra_info.id.str()) + '.md'
 	task.project_extra_info.file_name =
 		texttools.name_clean(task.project_extra_info.slug) + '.md'
+	mut conn := connection_get()
+	if conn.settings.comments_task{
+		task.get_comments()?
+	}
 	return task
 }
 
 // export template per task
 pub fn (task Task) as_md(url string) string {
-	println(1)
-	// println(task)
-	// println("1b")
 	mut task_md := $tmpl('./templates/task.md')
-	println(2)
 	task_md = fix_empty_lines(task_md)
-	println(3)
 	return task_md
 }

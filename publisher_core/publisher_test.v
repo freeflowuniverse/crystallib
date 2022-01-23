@@ -7,7 +7,7 @@ fn test_get_content_basic() {
 
 	mut path := os.join_path(p.join('/'), '..', '..', 'examples')
 
-	mut config := publisher_config.get()
+	mut config := publisher_config.get()?
 
 	mut f := publisher_core.new(&config) }
 	f.check()
@@ -42,7 +42,7 @@ fn test_get_content1() {
 	mut p := @FILE.split('/')
 	p.pop()
 
-	mut config := publisher_config.get()
+	mut config := publisher_config.get()?
 
 	mut path := os.join_path(p.join('/'), '..', '..', 'examples')
 	mut f := publisher_core.new(&config) }
@@ -61,7 +61,7 @@ fn test_get_content2() {
 	mut p := @FILE.split('/')
 	p.pop()
 
-	mut config := publisher_config.get()
+	mut config := publisher_config.get()?
 	
 	mut path := os.join_path(p.join('/'), '..', '..', 'examples')
 

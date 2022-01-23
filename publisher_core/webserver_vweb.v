@@ -49,7 +49,7 @@ fn filetype_site_name_get(config publisher_config.ConfigRoot, site string, name_
 	extension := os.file_ext(name).trim('.')
 	mut sitename := site_config.name
 	if sitename.starts_with('wiki_') || sitename.starts_with('info_') {
-		panic('sitename short cannot start with wiki_ or info_.\n$site_config')
+		return error('sitename short cannot start with wiki_ or info_.\n$site_config')
 	}
 
 	if name.contains('__') {
@@ -226,7 +226,7 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path str
 			// 	res.send("index.html not found", 404)
 			// }
 			site_config := config.site_wiki_get(sitename2) ?
-			index_out := template_wiki_root(sitename, '', '', site_config.opengraph)
+			index_out := template_wiki_root(sitename, '', '', site_config.opengraph)?
 			return app.html(index_out)
 		} else if filetype == FileType.wiki {
 			if site2.page_exists(name2) {
@@ -248,7 +248,7 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path str
 		} else {
 			// now is a file
 			file3 := site2.file_get(name2, mut publisherobj) ?
-			path3 := file3.path_get(mut publisherobj)
+			path3 := file3.path_get(mut publisherobj)?
 			if debug {
 				println(' >> file get: $path3')
 			}

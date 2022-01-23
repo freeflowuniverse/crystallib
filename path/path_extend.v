@@ -1,7 +1,7 @@
 module path
 
 //join parts to a path and return path, returns a new path
-pub fn (mut p Path) join(parts ...string) Path {
+pub fn (mut p Path) join(parts ...string) ?Path {
 	mut p2 := Path{
 		path:p.path
 		exists:p.exists
@@ -9,11 +9,11 @@ pub fn (mut p Path) join(parts ...string) Path {
 
 	}
 	if ! p2.is_dir(){
-		panic("can only extend dir, $p2.path")
+		return error("can only extend dir, $p2.path")
 	}
 	for part in parts{
 		if part.contains("~"){
-			panic("cannot extend part $part if ~ in")
+			return error("cannot extend part $part if ~ in")
 		}
 		part2 := part.trim(" ")
 		p2.path += "/" + part2
@@ -43,7 +43,7 @@ pub fn (mut path Path) extend(parts ...string)? {
 		}
 	}
 	path.path = path.path.replace("//","/")
-	path.check()	
+	path.check()
 }
 
 // pub fn (path Path) extend_dir(relpath string) ? {

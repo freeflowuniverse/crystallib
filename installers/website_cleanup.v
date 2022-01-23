@@ -6,7 +6,7 @@ import process
 import texttools
 
 pub fn website_cleanup(name string) ? {
-	mut conf := publisher_config.get()
+	mut conf := publisher_config.get()?
 	mut site := conf.site_get(name) ?
 	mut repo := site.repo_get()
 	println(' - cleanup website $repo.path()')

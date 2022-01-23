@@ -57,7 +57,7 @@ pub fn (mut node Node) install_docker(args SwarmArgs) ?{
 	// 	'
 	node.exec(cmd:docker_install,reset:args.reset,description:"install docker.")?
 
-	mut w:= node.tmux.window_new(name:"docker",cmd:"dockerd",reset:true)?
+	node.tmux.window_new(name:"docker",cmd:"dockerd",reset:true)?
 
 	for _ in 1..10 {
 		mut out:=""

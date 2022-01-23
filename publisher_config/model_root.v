@@ -15,6 +15,7 @@ pub mut:
 	//what is purpose of this??? 
 	web_hostnames bool
 	staticfiles map[string]string
+	loaded bool
 }
 
 pub fn (config ConfigRoot) name_web_get(domain string) ?string {

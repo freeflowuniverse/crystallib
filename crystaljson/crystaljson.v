@@ -11,7 +11,6 @@ pub fn json_list(r string, clean bool) []string {
 	mut open_counter := 0
 	mut block := []string{}
 	mut blocks := []string
-	println("JSONLIST: ${r.len}")
 	for ch in r {
 		mut c := ch.ascii_str()
 		// //rough one to debug
@@ -36,7 +35,6 @@ pub fn json_list(r string, clean bool) []string {
 			block = []string{}
 		}
 	}
-	println("JSONLIST: DONE")
 	return blocks
 }
 

@@ -20,7 +20,7 @@ fn (mut file File) relocate(mut publisher &Publisher) ? {
 		panic('cannot find site: $file.site_id, not enough elements in list.')
 	}
 	mut site := publisher.sites[file.site_id]
-	mut path := file.path_get(mut publisher)
+	mut path := file.path_get(mut publisher)?
 	mut dest := ''
 	mut m := map[string]int{}
 	mut page_strings := []string{}
@@ -105,7 +105,7 @@ pub fn (mut file File) duplicate_from(mut publisher &Publisher, mut fileother Fi
 
 pub fn (mut file File) delete(mut publisher &Publisher) ? {
 	file.state = FileStatus.deleted
-	path := file.path_get(mut publisher)
+	path := file.path_get(mut publisher)?
 	if os.exists(path) {
 		os.rm(path) ?
 	}
@@ -114,20 +114,20 @@ pub fn (mut file File) delete(mut publisher &Publisher) ? {
 }
 
 pub fn (mut file File) mv(mut publisher &Publisher, dest string) ? {
-	path_file := file.path_get(mut publisher)
+	path_file := file.path_get(mut publisher)?
 	os.mkdir_all(os.dir(dest)) ?
-	mut desto := path.get_file_dir_create(dest)
+	mut desto := path.get_file_dir_create(dest)?
 	os.mv(path_file, desto.path_absolute()) or { return error('could not rename $path_file to ${desto.path_absolute()} .\n$err\n$file') }
 	site := file.site_get(mut publisher) ?
 	//need to get relative path in, in relation to site
 	file.pathrel = desto.path_relative(site.path)
 }
 
-pub fn (mut file File) exists(mut publisher &Publisher) bool {
+pub fn (mut file File) exists(mut publisher &Publisher) ?bool {
 	if file.state == FileStatus.deleted {
 		return false
 	}
 	//return the full path
-	path := file.path_get(mut publisher)
+	path := file.path_get(mut publisher)?
 	return os.exists(path)
 }

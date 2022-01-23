@@ -81,13 +81,13 @@ pub fn (mut publisher Publisher) file_exists(name string) bool {
 		}
 		return false
 	} else {
-		site := publisher.site_get(sitename) or { panic(err) }
+		site := publisher.site_get(sitename) or { return false }
 		return itemname in site.files
 	}
 }
 
 pub fn (mut publisher Publisher) page_exists(name string) bool {
-	mut sitename, itemname := name_split(name) or { return false }
+	mut sitename, itemname := name_split(name) or { panic(err) }
 	if sitename == '' {
 		for site in publisher.sites {
 			if itemname in site.pages {
@@ -132,11 +132,11 @@ pub fn (mut publisher Publisher) def_get(namefull string) ?&Def {
 }
 
 // namefull is name with : if needed
-pub fn (mut publisher Publisher) files_get(namefull string) []&File {
-	sitename, itemname := name_split(namefull) or { panic(err) }
+pub fn (mut publisher Publisher) files_get(namefull string) ?[]&File {
+	sitename, itemname := name_split(namefull)?
 	
 	//get name without extension and trailing _
-	filename_2 := publisher.path_get_name_fix(itemname)
+	filename_2 := publisher.path_get_name_fix(itemname)?
 
 	site_id := publisher.site_names[sitename]
 	mut res := []&File{}
@@ -147,8 +147,9 @@ pub fn (mut publisher Publisher) files_get(namefull string) []&File {
 			continue
 		}
 		//check if we can find _png
-		if file.name_fixed(mut publisher) == filename_2 {
-			file_found := publisher.file_get_by_id(x) or { panic(err) }
+		name_fixed := file.name_fixed(mut publisher)?
+		if  name_fixed == filename_2 {
+			file_found := publisher.file_get_by_id(x)?
 			if !(file_found in res) {
 				res << file_found
 			}
@@ -158,8 +159,8 @@ pub fn (mut publisher Publisher) files_get(namefull string) []&File {
 }
 
 // namefull is name with : if needed
-pub fn (mut publisher Publisher) pages_find(namefull string) []&Page {
-	sitename, itemname := name_split(namefull) or { panic(err) }
+pub fn (mut publisher Publisher) pages_find(namefull string) ?[]&Page {
+	sitename, itemname := name_split(namefull)?
 	site_id := publisher.site_names[sitename]
 	mut res := []&Page{}
 	for x in 0 .. publisher.pages.len {
@@ -169,7 +170,7 @@ pub fn (mut publisher Publisher) pages_find(namefull string) []&Page {
 			continue
 		}
 		if page.name == itemname {
-			page_found := publisher.page_get_by_id(x) or { panic(err) }
+			page_found := publisher.page_get_by_id(x) ?
 			if !(page_found in res) {
 				res << page_found
 			}
@@ -179,9 +180,9 @@ pub fn (mut publisher Publisher) pages_find(namefull string) []&Page {
 }
 
 
-pub fn (mut publisher Publisher) pages_find_name(namefull string) []string {
+pub fn (mut publisher Publisher) pages_find_name(namefull string) ?[]string {
 	mut res := []string{}
-	pages := publisher.pages_find(namefull) 
+	pages := publisher.pages_find(namefull)?
 	for page in pages{
 		res << page.name
 	}
@@ -197,7 +198,7 @@ pub fn (mut publisher Publisher) file_get(namefull string) ?&File {
 		site := publisher.site_get(sitename) ?
 		return site.file_get(itemname, mut publisher)
 	}
-	res := publisher.files_get(namefull)
+	res := publisher.files_get(namefull)?
 	if res.len == 0 {
 		return error("Could not find file: '$namefull'")
 	} else if res.len > 1 {
@@ -215,7 +216,7 @@ pub fn (mut publisher Publisher) page_get(namefull string) ?&Page {
 		site := publisher.site_get(sitename) ?
 		return site.page_get(itemname, mut publisher)
 	}
-	res := publisher.pages_find(namefull)
+	res := publisher.pages_find(namefull)?
 	if res.len == 0 {
 		return error("Could not find page: '$namefull'")
 	} else if res.len > 1 {
@@ -250,10 +251,11 @@ pub fn (mut publisher Publisher) page_exists_state(name string) ExistState {
 	return ExistState.ok
 }
 
-pub fn (mut publisher Publisher) def_add(def Def) int {
+pub fn (mut publisher Publisher) def_add(def Def) ?int {
 	publisher.defs << def
-	publisher.def_names[def.name_fixed()] = publisher.defs.len - 1
-	return publisher.def_names[def.name_fixed()]
+	name := def.name_fixed()?
+	publisher.def_names[name] = publisher.defs.len - 1
+	return publisher.def_names[name]
 }
 
 // try and get if file exists and return state of how it did exist

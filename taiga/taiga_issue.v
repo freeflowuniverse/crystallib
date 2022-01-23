@@ -44,7 +44,7 @@ pub mut:
 }
 
 // get comments in list from issue
-pub fn (mut i Issue) get_issue_comments() ?[]Comment {
+pub fn (mut i Issue) get_comments() ?[]Comment {
 	i.comments = comments_get('issue', i.id) ?
 	return i.comments
 }
@@ -108,6 +108,10 @@ fn issue_decode(data string) ?Issue {
 	issue.file_name = texttools.ascii_clean(issue.file_name)
 	issue.project_extra_info.file_name =
 		texttools.name_clean(issue.project_extra_info.slug) + '.md'
+	mut conn := connection_get()
+	if conn.settings.comments_issue{
+		issue.get_comments()?
+	}		
 	return issue
 }
 

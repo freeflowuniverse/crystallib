@@ -23,13 +23,13 @@ fn (mut publ Publisher) name_fix_alias_file(name string) ?string {
 //returns name without extension and _ from image
 //returns name with extension for normal file
 //all is lower case & normalized
-fn (mut publisher Publisher)  path_get_name_fix(pathin string) string {
-	mut patho := path.get_file(pathin,false)
+fn (mut publisher Publisher)  path_get_name_fix(pathin string) ?string {
+	mut patho := path.get_file(pathin,false)?
 	mut namelower := ""
 	if patho.is_image(){			
-		namelower = publisher.name_fix_no_underscore_no_ext(patho.name()) or {panic("cannot fix image name")}
+		namelower = publisher.name_fix_no_underscore_no_ext(patho.name())?
 	}else{
-		namelower = publisher.name_fix_alias_file(patho.name()) or {panic("cannot fix file name")}
+		namelower = publisher.name_fix_alias_file(patho.name())?
 	}
 	return namelower
 }
@@ -61,10 +61,10 @@ fn (mut publ Publisher) name_split_alias(name string) ?(string, string) {
 // check if the file can be found and add the file to the site if needed
 // it will also rename the file if needed
 fn (mut publisher Publisher) file_find_(name2find string, page_id_source int) ?&File {
-	consumer_page := publisher.page_get_by_id(page_id_source) or { panic(err) }
-	mut consumer_site := consumer_page.site_get(mut publisher) or { panic(err) }
+	consumer_page := publisher.page_get_by_id(page_id_source)?
+	mut consumer_site := consumer_page.site_get(mut publisher)?
 
-	mut filesres := publisher.files_get(name2find)
+	mut filesres := publisher.files_get(name2find)?
 	if filesres.len == 0 {
 		return error('cannot find the file: $name2find')
 	}
@@ -78,10 +78,10 @@ fn (mut publisher Publisher) file_find_(name2find string, page_id_source int) ?&
 	}
 	// means we found files but we don't have it in our site, we need to copy
 	mut file_source := filesres[0]
-	file_source_path := file_source.path_get(mut publisher)
+	file_source_path := file_source.path_get(mut publisher)?
 	dest := '$consumer_site.path/img_tosort/${os.base(file_source_path)}'
 	println(" - $consumer_page.name cp:$file_source_path $dest")
-	os.cp(file_source_path, dest) or { panic(err) }
+	os.cp(file_source_path, dest)?
 
 	// will remember new file and will make sure rename if needed happens, but should already be ok
 	file := consumer_site.file_remember_full_path(dest, mut publisher)?
@@ -94,19 +94,19 @@ fn (mut publisher Publisher) file_find_(name2find string, page_id_source int) ?&
 // we check the file based on name & replaced version of name
 fn (mut publisher Publisher) file_find(name2find string, page_id_source int) ?&File {
 	if page_id_source==999999{
-		mut consumer_page2 := publisher.page_get_by_id(page_id_source) or { panic(err) }
+		mut consumer_page2 := publisher.page_get_by_id(page_id_source)?
 		println(consumer_page2)
 		panic("consumer page id cannot be 999999")
 	}
 	// didn't find a better way how to do it, more complicated than it should I believe
-	mut consumer_page := publisher.page_get_by_id(page_id_source) or { panic(err) }
-	mut consumer_site := consumer_page.site_get(mut publisher) or { panic(err) }
-	_, mut objname := name_split(name2find) or { panic(err) }
+	mut consumer_page := publisher.page_get_by_id(page_id_source)?
+	mut consumer_site := consumer_page.site_get(mut publisher)?
+	_, mut objname := name_split(name2find)?
 	// mut objname_full := '$consumer_site.name:$objname'
 
 	//this is for when we have replacements to be done, normally this is not the case
 	//can be defined as metadata in config (or at least was like that)
-	objname_replaced := publisher.replacer.file.replace(text:objname) or { panic(err) }
+	objname_replaced := publisher.replacer.file.replace(text:objname)?
 
 	for x in 0 .. 4 {
 
@@ -147,14 +147,14 @@ fn (mut publisher Publisher) file_find(name2find string, page_id_source int) ?&F
 // is used by page_find , page_find does for multiple name combinations, this one only for 1
 fn (mut publisher Publisher) page_find_(name2find string, page_id_source int) ?&Page {
 	// println(" -- page find debug: '$name2find'")
-	mut res := publisher.pages_find(name2find)
+	mut res := publisher.pages_find(name2find)?
 
 	if res.len == 0 {
 		return error('cannot find the page, 0: $name2find')
 	}
 	if res.len > 1 {
 		// we found more than 1 result, not ok cannot continue
-		mut consumer_page := publisher.page_get_by_id(page_id_source) or { panic(err) }
+		mut consumer_page := publisher.page_get_by_id(page_id_source)?
 		mut msg := 'we found more than 1 page for $name2find in source page:$consumer_page.name, doubles found:\n '
 		for p in res {
 			msg += '<br> - ${p.path_get(mut publisher)}<br>'
@@ -186,10 +186,8 @@ pub fn (mut publisher Publisher) page_find(name2find string, page_id_source int,
 	if page_id_source==999999{
 		panic("consumer page id cannot be 999999")
 	}
-	mut consumer_page := publisher.page_get_by_id(page_id_source) or {
-		panic('page get by id:$page_id_source\n$err')
-	}
-	mut consumer_site := consumer_page.site_get(mut publisher) or { panic("site_get:'n$err") }
+	mut consumer_page := publisher.page_get_by_id(page_id_source)?
+	mut consumer_site := consumer_page.site_get(mut publisher)?
 
 	//if healing then will look for more files to fix, find files more easily
 	//can be dangerous !!!

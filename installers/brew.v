@@ -4,7 +4,7 @@ module installers
 import process
 
 pub fn brew_remove() ? {
-    // mut conf := publisher_config.get()
+    // mut conf := publisher_config.get()?
 
 	script := '
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh)"

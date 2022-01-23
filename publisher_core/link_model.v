@@ -44,14 +44,14 @@ pub mut:
 	page_id_dest 	int = 999999  //is the id of the page where the link points too
 }
 
-fn link_new(mut publisher &Publisher, original_descr string, original_link string, isimage bool,page &Page) Link {
+fn link_new(mut publisher &Publisher, original_descr string, original_link string, isimage bool,page &Page) ?Link {
 	mut link := Link{
 		original_descr: original_descr.trim(' ')
 		original_link: original_link.trim(' ')
 		isimage: isimage
 		page_id_source: page.id
 	}
-	link.init_(mut publisher, page)
+	link.init_(mut publisher, page)?
 	return link
 }
 

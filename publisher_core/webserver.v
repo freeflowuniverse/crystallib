@@ -38,7 +38,7 @@ module publisher_core
 
 // // Initialize (load wikis) only once when server starts
 // pub fn (mut app App) init_once() {
-// 	app.config = publisher_config.get()
+// 	app.config = publisher_config.get()?
 // 	// app.handle_static('.')
 // }
 

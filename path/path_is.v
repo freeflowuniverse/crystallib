@@ -29,13 +29,13 @@ fn (mut path Path) check(){
 				path.cat = Category.file
 			}
 		}else if os.is_dir(path.path){
-			if os.is_link(path.path){
+			if os.is_link(path.path) {
 				path.cat = Category.linkdir
 			}else{
 				path.cat = Category.dir
 			}
 		}else{
-			panic("cannot define type: $path.path")
+			panic("cannot define type: $path.path, is bug")
 		}		
 	}else{
 		path.exists = PathExists.no

@@ -8,9 +8,9 @@ import publisher_config
 import gittools
 
 pub fn digitaltwin_install(update bool) ? {
-	mut conf := publisher_config.get()
+	mut conf := publisher_config.get()?
 	base := conf.publish.paths.base	
-	mut gt := gittools.new()
+	mut gt := gittools.get()?
 	mut pull := update
 
 	url := 'https://github.com/threefoldtech/twin_server/'
@@ -49,12 +49,12 @@ pub fn digitaltwin_install(update bool) ? {
 
 pub fn digitaltwin_start(isproduction bool, update bool) ? {
 
-	mut conf := publisher_config.get()
+	mut conf := publisher_config.get()?
 
 	digitaltwin_install(update) ?
 	base := conf.publish.paths.base
 	
-	mut gt := gittools.new()
+	mut gt := gittools.get()?
 
 	url := 'https://github.com/threefoldtech/twin_server/'
 	mut repo := gt.repo_get_from_url(url: url, branch: 'main') or {
@@ -97,10 +97,10 @@ pub fn digitaltwin_start(isproduction bool, update bool) ? {
 
 pub fn digitaltwin_restart(isproduction bool) ? {
 
-	mut conf := publisher_config.get()
+	mut conf := publisher_config.get()?
 
 	base := conf.publish.paths.base
-	mut gt := gittools.new()
+	mut gt := gittools.get()?
 
 	url := 'https://github.com/threefoldtech/twin_server/'
 	mut repo := gt.repo_get_from_url(url: url, branch: 'main') or {
@@ -147,7 +147,7 @@ pub fn digitaltwin_restart(isproduction bool) ? {
 
 pub fn digitaltwin_reload( isproduction bool) ? {
 	println(' - will reload digitaltwin')
-	mut conf := publisher_config.get()
+	mut conf := publisher_config.get()?
 	base := conf.publish.paths.base
 	mut script := '
 				set -e

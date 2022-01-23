@@ -166,7 +166,7 @@ fn (mut images Images) load_recursive(p string, mut done []string) ? {
 			images.load_recursive(pathnew, mut done) ?
 			continue
 		}
-		mut p2 := path.get_file(pathnew, false)
+		mut p2 := path.get_file(pathnew, false)?
 		// println(p2)
 		if p2.is_image(){
 			// println(p2.path)

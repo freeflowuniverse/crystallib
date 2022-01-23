@@ -19,7 +19,7 @@ mut:
 // 	reset bool //this means will pull and reset all changes
 // }
 pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs) ?&GitRepo {
-	gitstructure.check() ?
+	
 
 	mut addr := addr_get_from_url(args.url) or {
 		return error('cannot get addr from url:$err')
@@ -66,7 +66,7 @@ pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr,args Repo
 //will return repo starting from a path
 //if .git not in the path will go for parent untill .git found
 pub fn (mut gitstructure GitStructure) repo_get_from_path(p string,pull bool, reset bool) ?&GitRepo {
-	gitstructure.check() ?
+	
 	mut pathobj := path.get(p)
 	path2 := pathobj.parent_find(".git")?
 
@@ -98,7 +98,7 @@ mut:
 // }
 // THIS FUNCTION DOES NOT EXECUTE THE CHECK !!!
 pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) ?&GitRepo {
-	gitstructure.check() ?
+	
 
 	mut res_ids := []int{}
 	for r in gitstructure.repos {
@@ -124,8 +124,6 @@ pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) ?&GitRepo {
 // to use gitstructure.repo_get({account:"something",name:"myname"})
 // or gitstructure.repo_get({name:"myname"})
 pub fn (mut gitstructure GitStructure) repo_exists(addr RepoGetArgs) bool {
-	gitstructure.check() or { panic('cannot check gitstructure, $err') }
-
 	for r in gitstructure.repos {
 		if r.addr.name == addr.name {
 			if addr.account == '' || addr.account == r.addr.account {

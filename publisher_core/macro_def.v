@@ -4,8 +4,8 @@ import texttools
 
 fn macro_def(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	mut categories := macro.params.get_list('category') ?
-	categories << macro.params.get_list('categories') ?
-	// println(categories)
+	categories2 := macro.params.get_list('categories') ?
+	categories << categories2
 	mut defname2 := macro.params.get_default('name', '') ?
 	defname2 = defname2.trim(' ')
 	// defname not defined, will get the title as the definition name
@@ -25,7 +25,7 @@ fn macro_def(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 		name: defname2
 	}
 
-	defid := state.publisher.def_add(defobj)
+	defid := state.publisher.def_add(defobj)?
 
 	mut aliasses := macro.params.get_list('alias') ?
 	for alias in aliasses {

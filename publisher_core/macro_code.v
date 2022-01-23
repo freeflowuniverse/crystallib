@@ -21,7 +21,7 @@ fn macro_code(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	from := macro.params.get('from')  or {""}
 	to := macro.params.get('to')  or {""}
 
-	mut gs := gittools.get()
+	mut gs := gittools.get()?
 
 	mut repo := gs.repo_get_from_url(url:url)?
 

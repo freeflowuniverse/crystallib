@@ -23,7 +23,7 @@ fn init_session(mut tmux &Tmux, s_name string) ?Session {
 	return s
 }
 
-fn (mut s Session) create()? {
+pub fn (mut s Session) create()? {
 	mut e:= s.tmux.node().executor
 	res_opt := "-P -F '#{window_id}'"
 	cmd := "tmux new-session $res_opt -d -s $s.name 'sh'"
@@ -44,12 +44,12 @@ fn (mut s Session) create()? {
 
 }
 
-fn (mut s Session) restart()? {
+pub fn (mut s Session) restart()? {
 	s.stop()?
 	s.create()?
 }
 
-fn (mut s Session) stop()? {
+pub fn (mut s Session) stop()? {
 	mut e:= s.tmux.node().executor
 	e.exec('tmux kill-session -t $s.name') or {
 		// return error("Can't delete session $s.name - This happen when it is not found")
@@ -71,7 +71,7 @@ fn (mut s Session) stop()? {
 // 	reset	bool
 // }
 // ```
-fn (mut s Session) window_new(args WindowArgs) ?Window{
+pub fn (mut s Session) window_new(args WindowArgs) ?Window{
 	// os.log(cmd)
 	// os.log(check)
 	namel := args.name.to_lower()

@@ -9,7 +9,7 @@ import process
 // import gittools
 
 pub fn base() ? {
-	myconfig := publisher_config.get()
+	myconfig := publisher_config.get()?
 	base := myconfig.publish.paths.base
 
 	mut node := builder.node_new(builder.NodeArguments{name:"local"}) or {
@@ -27,7 +27,7 @@ pub fn base() ? {
 }
 
 pub fn reset() ? {
-	myconfig := publisher_config.get()
+	myconfig := publisher_config.get()?
 	base := myconfig.publish.paths.base
 	assert base.len > 10 // just to make sure we don't erase all
 	script := '
@@ -50,7 +50,7 @@ pub fn publishtools_update() ? {
 }
 
 // pub fn update_config() ? {
-// 	cfg := publisher_config.get()
+// 	cfg := publisher_config.get()?
 // 	println(' - copying config files to ~/.publishtools/config')
 // 	res := os.ls('.') ?
 // 	for file in res {

@@ -6,7 +6,7 @@ import publisher_config
 
 fn (mut publisher Publisher) load() ? {
 	// remove code_wiki subdirs
-	cfg := publisher_config.get()
+	cfg := publisher_config.get()?
 	path_links := cfg.publish.paths.codewiki
 	path_links_list := os.ls(path_links) ?
 	for path_to_remove in path_links_list {
@@ -36,11 +36,11 @@ fn (mut publisher Publisher) load_site(name string) ? {
 	mysite_config.load()?
 	// link the dir in codewiki, makes it easy to edit
 	// remove code_wiki subdirs
-	cfg := publisher_config.get()
+	cfg := publisher_config.get()?
 	path_links := cfg.publish.paths.codewiki	
 
 	if mysite_name.trim(" ")==""{
-		panic("mysite_name should not be empty")
+		return error("mysite_name should not be empty")
 	}
 	target := '$path_links/$mysite_name'
 	if ! mysite_config.path.exists(){

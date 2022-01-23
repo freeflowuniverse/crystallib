@@ -16,13 +16,13 @@ fn test_get(){
 
 fn test_exists(){
 	println('************ TEST_exists ************')
-	mut p1:= path.get_file("$testpath/newfile1",false) 
+	mut p1:= path.get_file("$testpath/newfile1",false)  or {panic("$err")}
 	assert p1.exists()
 	println("File found")
-	mut p2:= path.get_file("$testpath/NotARealFile",false)
+	mut p2:= path.get_file("$testpath/NotARealFile",false) or {panic("$err")}
 	assert ! p2.exists()
 	println("File not found")
-	mut p3:= path.get_file("$testpath/NotARealFile2",true)
+	mut p3:= path.get_file("$testpath/NotARealFile2",true) or {panic("$err")}
 	assert p3.exists()
 	println("File found")
 	p3.delete() or {panic("$err")}

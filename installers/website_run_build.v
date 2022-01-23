@@ -8,7 +8,7 @@ import json
 import os
 
 pub fn website_develop( names []string) ? {
-	mut conf := publisher_config.get()
+	mut conf := publisher_config.get()?
 	for mut sc in conf.sites_get(names) {
 		mut repo := sc.repo_get()
 		println(' - start website: $repo.path()')
@@ -23,7 +23,7 @@ fn rewrite_config(path string, shortname string) {
 pub fn website_build(use_prefix bool, names []string) ? {
 	// save new config file
 	// publisher_config.save('') ?
-	mut conf := publisher_config.get()
+	mut conf := publisher_config.get()?
 	for mut sc in conf.sites_get(names) {
 		mut repo := sc.repo_get()
 		if sc.cat != publisher_config.SiteCat.web {

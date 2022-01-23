@@ -20,12 +20,12 @@ pub:
 	created     string
 	ssh_enabled bool // if yes make sure ssh is enabled to the container
 	ipaddr 		builder.IPAddress
-	image           DockerImage
 	forwarded_ports []string
 	mounted_volumes []string
 	ssh_port        int // ssh port on node that is used to get ssh
 	ports           []string	
 pub mut:
+	image           DockerImage
 	node            string
 	status          DockerContainerStatus
 }
@@ -52,44 +52,51 @@ pub mut:
 
 // create/start container (first need to get a dockercontainer before we can start)
 pub fn (mut container DockerContainer) start() ?string {
-	c := container.node.executor.exec_silent('docker start $container.id') ?
+	mut node := builder.node_get(container.node)?
+	c := node.executor.exec_silent('docker start $container.id') ?
 	container.status = DockerContainerStatus.up
 	return c
 }
 
 // delete docker container
 pub fn (mut container DockerContainer) halt() ?string {
-	c := container.node.executor.exec_silent('docker stop $container.id')or {""}
+	mut node := builder.node_get(container.node)?
+	c := node.executor.exec_silent('docker stop $container.id')or {""}
 	container.status = DockerContainerStatus.down
 	return c
 }
 
 // delete docker container
 pub fn (mut container DockerContainer) delete(force bool) ?string {
+	mut node := builder.node_get(container.node)?
 	if force {
-		return container.node.executor.exec_silent('docker rm -f $container.id')
+		return node.executor.exec_silent('docker rm -f $container.id')
 	}
-	return container.node.executor.exec_silent('docker rm $container.id')
+	return node.executor.exec_silent('docker rm $container.id')
 }
 
 // save the docker container to image
 pub fn (mut container DockerContainer) save2image(image_repo string, image_tag string) ?string {
-	id := container.node.executor.exec_silent('docker commit $container.id $image_repo:$image_tag')?
+	mut node := builder.node_get(container.node)?
+	id := node.executor.exec_silent('docker commit $container.id $image_repo:$image_tag')?
 	container.image.id = id
 	return id
 }
 
 // export docker to tgz
 pub fn (mut container DockerContainer) export(path string) ?string {
-	return container.node.executor.exec_silent('docker export $container.id > $path')
+	mut node := builder.node_get(container.node)?
+	return node.executor.exec_silent('docker export $container.id > $path')
 }
 
 // open ssh shell to the cobtainer
 pub fn (mut container DockerContainer) ssh_shell() ? {
-	container.node.executor.shell() ?
+	mut node := builder.node_get(container.node)?
+	node.executor.shell() ?
 }
 
 // return the builder.node class which allows to remove executed, ...
-pub fn (mut container DockerContainer) node_get() ?builder.Node {
-	return container.node
+pub fn (mut container DockerContainer) node_get() ?&builder.Node {
+	mut node := builder.node_get(container.node)?
+	return node
 }

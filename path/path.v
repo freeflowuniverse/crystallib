@@ -32,12 +32,12 @@ pub fn get(path string) Path {
 }
 
 //check if path obj exists, is file, link, dir, ...
-pub fn get_dir(path string, create bool) Path {
+pub fn get_dir(path string, create bool) ?Path {
 	mut p2 := get(path)
 	if create && !p2.exists() {
 		pp := p2.path_absolute()
 		os.mkdir_all(pp) or {
-			panic("cannot create path $pp")
+			return error("cannot create path $pp")
 		} // Make sure that all the needed paths created
 		p2.check()
 	}
@@ -45,24 +45,25 @@ pub fn get_dir(path string, create bool) Path {
 }
 
 //get file path object, make sure the dir exists
-pub fn get_file_dir_create(path string) Path {
+pub fn get_file_dir_create(path string) ?Path {
 	mut p2 := get(path)
-	os.mkdir_all(p2.parent().path_absolute()) or {
-		panic("cannot create path:$path")
+	parent_ := p2.parent()?
+	os.mkdir_all(parent_.path_absolute()) or {
+		return error("cannot create path:$path")
 	}
 	p2.check()
-	
 	return p2
 }
 
-pub fn get_file(path string, create bool) Path {
+pub fn get_file(path string, create bool) ?Path {
 	mut p2 := get(path)
 	if create && !p2.exists() {
-		os.mkdir_all(p2.parent().path_absolute()) or {
-			panic("cannot create path:$path")
+		parent_ := p2.parent()?
+		os.mkdir_all(parent_.path) or {
+			return error("cannot create path:$path")
 		}
 		os.write_file(path,"") or {
-			panic("cannot create empty file:$path")
+			return error("cannot create empty file:$path")
 		}
 		p2.check()
 	}
