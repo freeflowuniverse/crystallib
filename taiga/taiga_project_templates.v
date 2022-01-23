@@ -51,9 +51,9 @@ pub fn project_templates() ?map[string]int {
 		decoded_pt := (json2.raw_decode(pt.str()) or {}).as_map()
 		println(' - Decoded as Map')
 		template_name := decoded_pt['name'].str()
-		found_funnel = if template_name == Projectype.funnel.str() { true } else { false }
-		found_project = if template_name == Projectype.project.str() { true } else { false }
-		found_team = if template_name == Projectype.team.str() { true } else { false }
+		found_funnel = if template_name == ProjectType.funnel.str() { true } else { false }
+		found_project = if template_name == ProjectType.project.str() { true } else { false }
+		found_team = if template_name == ProjectType.team.str() { true } else { false }
 		result[decoded_pt['name'].str()] = decoded_pt['id'].int()
 	}
 	println(found_funnel)

@@ -7,6 +7,17 @@ import json
 import time { Time }
 import math { min }
 
+
+enum StoryStatus { 
+	//TODO: there will be many other statuses used, we have to fix, in taiga itself, make the story status as below eveywhere
+	unknown
+	new
+	accepted
+	inprogress
+	verification //is called ready for test in taiga
+	done
+}
+
 pub struct Story {
 pub mut:
 	description            string
@@ -14,25 +25,19 @@ pub mut:
 	is_private             bool
 	tags                   []string
 	project                int
-	project_extra_info     ProjectInfo
-	status                 int
-	status_extra_info      StatusInfo
-	assigned_to            int
-	assigned_to_extra_info UserInfo
+	status                 StoryStatus //TODO: use an enumerator
+	assigned_to            int //cant we have more than 1 assignee? TODO:
 	owner                  int
-	owner_extra_info       UserInfo
-	created_date           Time        [skip]
-	modified_date          Time        [skip]
-	finish_date            Time        [skip]
-	due_date               Time        [skip]
+	created_date           Time 
+	modified_date          Time 
+	finish_date            Time 
+	due_date               Time 
 	due_date_reason        string
 	subject                string
 	is_closed              bool
 	is_blocked             bool
 	blocked_note           string
 	ref                    int
-	client_requirement     bool
-	team_requirement       bool
 	tasks                  []int
 	comments               []Comment
 	file_name              string      [skip]
@@ -109,18 +114,19 @@ pub fn story_delete(id int) ?bool {
 
 fn story_decode(data string) ?Story {
 	data_as_map := crystaljson.json_dict_any(data,false,[],[])?
-	mut story := json.decode(Story, data) or {
-		return error('Error happen when decode story\nData: $data\nError:$err')
+
+	mut story := Story{
+		//TODO:
 	}
+
 	story.created_date = parse_time(data_as_map['created_date'].str())
 	story.modified_date = parse_time(data_as_map['modified_date'].str())
 	story.finish_date = parse_time(data_as_map['finish_date'].str())
 	story.due_date = parse_time(data_as_map['due_date'].str())
-	story.file_name = texttools.name_clean(story.subject[0..min(40, story.subject.len)] +
-		'_' + story.id.str()) + '.md'
+	story.file_name = texttools.name_clean(story.subject[0..min(40, story.subject.len)] + '_' + story.id.str()) + '.md'
 	story.file_name = texttools.ascii_clean(story.file_name)
-	story.project_extra_info.file_name =
-		texttools.name_clean(story.project_extra_info.slug) + '.md'
+	// story.project_extra_info
+	// TODO: fetch story id from here
 	mut conn := connection_get()
 	if conn.settings.comments_story{
 		story.get_comments()?

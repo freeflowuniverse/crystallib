@@ -40,8 +40,7 @@ pub fn export_all_users(export_dir string, url string) ? {
 		all_users << user
 		user_md := user.as_md(url)
 		// Export every user in a single page
-		name:= texttools.name_fix(user.file_name)
-		export_path := '$export_dir/users/$name'
+		export_path := '$export_dir/users/${user.file_name}'
 		os.write_file(export_path, user_md) or {
 			return error("Can't write $user.username with error: $err")
 		}
@@ -62,8 +61,7 @@ pub fn export_all_projects(export_dir string, url string) ? {
 		all_projects << project
 		proj_md := project.as_md(url)
 		// Export every project in a single page
-		name:= texttools.name_fix(project.file_name)
-		export_path := '$export_dir/projects/$name'
+		export_path := '$export_dir/projects/${project.file_name}'
 		os.write_file(export_path, proj_md) or {
 			panic("Can't write $project.name with error: $err")
 		}
@@ -84,8 +82,7 @@ pub fn export_all_stories(export_dir string, url string) ? {
 		all_stories << story
 		story_md := story.as_md(url)
 		// Export every story in a single page
-		name:= texttools.name_fix(story.file_name)
-		export_path := '$export_dir/stories/$name'
+		export_path := '$export_dir/stories/${story.file_name}'
 		os.write_file(export_path, story_md) or {
 			panic("Can't write $story.file_name with error: $err")
 		}
@@ -106,8 +103,7 @@ pub fn export_all_issues(export_dir string, url string) ? {
 		all_issues << issue
 		issue_md := issue.as_md(url)
 		// Export every issue in a single page
-		name:= texttools.name_fix(issue.file_name)
-		export_path := '$export_dir/issues/$name'
+		export_path := '$export_dir/issues/${issue.file_name}'
 		os.write_file(export_path, issue_md) or {
 			panic("Can't write $issue.file_name with error: $err")
 		}
@@ -128,8 +124,7 @@ pub fn export_all_tasks(export_dir string, url string) ? {
 		// all_tasks << task
 		task_md := task.as_md(url)
 		// Export every task in a single page
-		name:= texttools.name_fix(task.file_name)
-		export_path := '$export_dir/tasks/$name'
+		export_path := '$export_dir/tasks/${task.file_name}'
 		os.write_file(export_path, task_md) or {
 			panic("Can't write $task.file_name with error: $err")
 		}

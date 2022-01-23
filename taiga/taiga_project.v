@@ -6,42 +6,64 @@ import json
 import time { Time }
 import os
 
+enum MemberRole{
+	unknown
+	coordinator
+	stakeholder
+	member
+	contributor
+	follower
+	admin
+}
+
+pub struct Member {
+pub mut:
+	user  int //link to the user on memdb
+	role MemberRole //TODO: check, if not well configured, go into the project (circle), and change the names so it does reflect
+
+}
+
 pub struct Project {
 pub mut:
-	created_date  Time       [skip]
-	modified_date Time       [skip]
+	created_date  Time       
+	modified_date Time       
 	name          string
 	description   string
 	id            int
 	is_private    bool
-	members       []int
+	members       []Member
 	tags          []string
 	slug          string
-	owner         UserInfo
-	projtype      Projectype [skip]
-	file_name     string     [skip]
+	owner         int
+	projtype      ProjectType
+	file_name     string
 }
 
-pub enum Projectype {
+pub enum ProjectType {
+	unknown
 	funnel
 	project
 	team
+	coordination
 }
 
-pub enum TaigaElementTypes {
-	story
-	issue
-	task
-	epic
-}
 
-pub struct ProjectElements {
-pub mut:
-	stories []Story
-	issues  []Issue
-	tasks   []Task
-	epics   []Epic
-}
+
+// pub enum TaigaElementTypes {
+// 	story
+// 	issue
+// 	task
+// 	epic
+// }
+
+//TODO: WRONG WAY HOW TO DO THIS
+// pub struct ProjectElements {
+// pub mut:
+// 	stories []Story
+// 	issues  []Issue
+// 	tasks   []Task
+// 	epics   []Epic
+// }
 
 pub fn (mut p Project) delete() ?bool {
 	mut conn := connection_get()
@@ -101,14 +123,19 @@ pub fn (mut p Project) copy(element_type TaigaElementTypes, element_id int, to_p
 }
 
 fn project_decode(data string) ?Project {
-	// os.write_file("/tmp/data",data)?
-	print(data)
-	println("\n------------------\n\n")
-	data2 := texttools.ascii_clean(data)
-	mut project := json.decode(Project, data2	) or {
-		return error('Error happen when decode project\nData: $data\nError:$err')
-	}
+
+	//TODO: use raw json data_as_map feature to link to object
+
 	data_as_map := crystaljson.json_dict_any(data,false,[],[])?
+
+	mut project := Project{
+		//TODO:
+	}
+
+	if true{
+		panic("wer7")
+	}
+
 	project.created_date = parse_time(data_as_map['created_date'].str())
 	project.modified_date = parse_time(data_as_map['modified_date'].str())
 	project.file_name = texttools.name_clean(project.name) + '.md'

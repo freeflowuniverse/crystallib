@@ -6,35 +6,70 @@ import json
 import time { Time }
 import math { min }
 
+
+enum IssueSeverity {
+	unknown
+	wishlist
+	minor
+	normal
+	important
+	critical
+}
+
+enum IssuePriority {
+	unknown
+	low
+	normal
+	high
+}
+
+
+enum IssueStatus {
+	unknown
+	new
+	inprogress
+	verification //is called ready for test in taiga
+	closed
+	needsinfo
+	rejected
+	postponed
+}
+
+enum IssueType {
+	unknown
+	bug
+	question
+	enhancement	
+}
+
+//TODO: go in circles tool, is the types not well set on the project, change them yourself !!!
+
+
 pub struct Issue {
 pub mut:
 	description            string
 	id                     int
 	is_private             bool
 	tags                   []string
-	project                int
-	project_extra_info     ProjectInfo
-	status                 int
-	status_extra_info      StatusInfo
+	project                int						//if project not found use 0
+	status                 IssueStatus				//TODO: when decoding , be defensive, try to find what was meant in taiga
 	assigned_to            int
-	assigned_to_extra_info UserInfo
-	owner                  int
-	owner_extra_info       UserInfo
-	severity               int
-	priority               int
-	issue_type             int         [json: 'type']
-	created_date           Time        [skip]
-	modified_date          Time        [skip]
-	finished_date          Time        [skip]
-	due_date               Time        [skip]
+	owner                  int						//is this only assigned to one person? TODO
+	severity               IssueSeverity			//TODO: we need to create proper vlang enums, if not right set on source, use unknown
+	priority               IssuePriority			//TODO: we need to create proper vlang enums
+	issue_type             IssueType        		//TODO: 
+	created_date           Time 
+	modified_date          Time 
+	finished_date          Time 
+	due_date               Time 
 	due_date_reason        string
 	subject                string
 	is_closed              bool
 	is_blocked             bool
 	blocked_note           string
-	ref                    int
+	ref                    int						//TODO: is that the id of taiga, maybe we should use this on our mem db, and make it a map
 	comments               []Comment
-	file_name              string      [skip]
+	file_name              string					//need to make sure we always have ascii and namefix done
 }
 
 struct NewIssue {
@@ -95,10 +130,13 @@ pub fn issue_delete(id int) ?bool {
 }
 
 fn issue_decode(data string) ?Issue {
-	mut issue := json.decode(Issue, data) or {
-		return error('Error happen when decode issue\nData: $data\nError:$err')
-	}
+
 	data_as_map := crystaljson.json_dict_any(data,false,[],[])?
+
+	mut issue := Issue{
+		//TODO:
+	}
+
 	issue.created_date = parse_time(data_as_map['created_date'].str())
 	issue.modified_date = parse_time(data_as_map['modified_date'].str())
 	issue.finished_date = parse_time(data_as_map['finished_date'].str())
@@ -106,8 +144,8 @@ fn issue_decode(data string) ?Issue {
 	issue.file_name = texttools.name_clean(issue.subject[0..min(40, issue.subject.len)] +
 		'_' + issue.id.str()) + '.md'
 	issue.file_name = texttools.ascii_clean(issue.file_name)
-	issue.project_extra_info.file_name =
-		texttools.name_clean(issue.project_extra_info.slug) + '.md'
+	// issue.project_extra_info.file_name =
+	// 	texttools.name_clean(issue.project_extra_info.slug) + '.md'
 	mut conn := connection_get()
 	if conn.settings.comments_issue{
 		issue.get_comments()?
@@ -115,8 +153,21 @@ fn issue_decode(data string) ?Issue {
 	return issue
 }
 
-pub fn (issue Issue) as_md(url string) string {
+pub fn (issue Issue) project() ?Project {
+	//TODO:
+	return Project{}
+}
+
+pub fn (issue Issue) assigned() ?[]User {
+	//TODO:
+	return []User{}
+}
+
+
+
+pub fn (issue Issue) as_md(url string) ?string {
 	// export template per issue
+	project := issue.project()?
 	mut issue_md := $tmpl('./templates/issue.md')
 	issue_md = fix_empty_lines(issue_md)
 	return issue_md

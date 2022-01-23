@@ -1,4 +1,6 @@
-# [@issue.subject](@url/project/@issue.project_extra_info.slug/issue/$issue.ref)
+# @issue.subject
+
+[@issue.subject](@url/@{issue.file_name})
 
 |             |                                                                                 |
 | ----------- | ------------------------------------------------------------------------------- |
@@ -6,7 +8,7 @@
 | Assigned to | @issue.assigned_to_extra_info.username                                          |
 | Created at  | @issue.created_date.ymmdd()                                                     |
 | Last Update | @issue.modified_date.ymmdd()                                                    |
-| Project     | [@issue.project_extra_info.name](@issue.project_extra_info.file_name) |
+| Project     | [@{project.name}](@{project.file_name}) |
 
 @if issue.description != ""
 

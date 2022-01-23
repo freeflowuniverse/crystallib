@@ -4,25 +4,17 @@ import texttools
 import json
 import time { Time }
 
-struct Commentator {
-pub mut:
-	id        int    [json: pk]
-	name      string
-	username  string
-	is_active bool
-}
-
 struct Comment {
 pub mut:
 	id                  string
 	comment             string
-	user                Commentator
-	created_at          Time        [skip]
+	user_id             int //should just refer to the id of the user who did the comment
+	created_at          Time 
 	key                 string
 	comment_html        string
-	delete_comment_date Time        [skip]
+	delete_comment_date Time 
 	delete_comment_user string
-	edit_comment_date   Time        [skip]
+	edit_comment_date   Time 
 	is_hidden           bool
 }
 
@@ -45,10 +37,16 @@ pub fn comments_get(prefix string, prefix_id int) ?[]Comment {
 }
 
 fn comment_decode(data string) ?Comment {
-	mut comment := json.decode(Comment, data) or {
-		return error('Error happen when decode comment\nData: $data\nError:$err')
-	}
+
+	//TODO: use raw json data_as_map feature to link to object, do all the others
+	//TODO: when a user, project, ... find it in the memdb to get right id
+
 	data_as_map := crystaljson.json_dict_any(data,false,[],[])?
+
+	mut comment := Comment{
+		//TODO:
+	}
+
 	comment.created_at = parse_time(data_as_map['created_at'].str())
 	comment.delete_comment_date = parse_time(data_as_map['delete_comment_date'].str())
 	comment.edit_comment_date = parse_time(data_as_map['edit_comment_date'].str())

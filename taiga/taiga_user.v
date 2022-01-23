@@ -7,6 +7,9 @@ import time { Time }
 import math { pow10 }
 // import x.json2 { raw_decode }
 
+
+
+
 pub struct User {
 pub mut:
 	id                int
@@ -16,11 +19,11 @@ pub mut:
 	full_name_display string
 	bio               string
 	photo             string
-	roles             []string
+	roles             []string //TODO: SHOULD BE ENUM , don't understand where this comes from, seems odd to me
 	email             string
 	public_key        string
-	date_joined       Time     [skip]
-	file_name         string   [skip]
+	date_joined       Time   
+	file_name         string 
 }
 
 pub fn users() ? {
@@ -57,7 +60,9 @@ pub fn user_get(id int) ?User {
 pub fn (user User) as_md(url string) string {
 	time_now := time.now()
 	// Init render variables
-	mut blocked := ProjectElements{} // For template rendering
+	mut blocked := ProjectElements{} // For template rendering 
+	//TODO: not well done, this should have been done on story level, issue level, ...
+	//because we need to show this on each of the overviews e.g. on story level, project level
 	mut overdue := ProjectElements{} // For template rendering
 	mut today := ProjectElements{} // For template rendering
 	mut in_two_days := ProjectElements{} // For template rendering
@@ -163,10 +168,10 @@ pub fn user_delete(id int) ?bool {
 }
 
 fn user_decode(data string) ?User {
-	mut user := json.decode(User, data) or {
-		return error('Error happen when decode user\nData: $data\nError:$err')
-	}
 	data_as_map := crystaljson.json_dict_any(data,false,[],[])?
+	mut user := User{
+		//TODO
+	}
 	user.date_joined = parse_time(data_as_map['date_joined'].str())
 	user.file_name = texttools.name_clean(user.username) + '.md'
 	return user

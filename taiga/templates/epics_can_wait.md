@@ -5,16 +5,16 @@
 ### Epics
 @for epic in epics
 #### [$epic.subject](@circles_url/project/@project.slug/epic/$epic.ref)
-|              |                                       |
-| ------------ | ------------------------------------- |
-| ID           | $epic.id                              |
-| Story        | [$epic.user_story_extra_info.subject](#$epic.user_story_extra_info.subject.replace(" ", "-").to_lower())   |
-| Owner        | $epic.owner_extra_info.username       |
-| Assigned to  | $epic.assigned_to_extra_info.username |
-| Private      | $epic.is_private                      |
-| Closed       | $epic.is_closed                       |
-| Created at   | $epic.created_date                    |
-| Last Updates | $epic.modified_date                   |
+|              |                                        |
+| ------------ | -------------------------------------- |
+| ID           | $epic.id                               |
+| Story        | [${story.subject}](${story.file_name}) |
+| Owner        | $epic.owner_extra_info.username        |
+| Assigned to  | $epic.assigned_to_extra_info.username  |
+| Private      | $epic.is_private                       |
+| Closed       | $epic.is_closed                        |
+| Created at   | $epic.created_date                     |
+| Last Updates | $epic.modified_date                    |
 
 @if epic.description != ""
 ##### Description

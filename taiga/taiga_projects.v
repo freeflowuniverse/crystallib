@@ -82,7 +82,7 @@ pub fn (mut h TaigaConnection) project_exists(name string) bool {
 }
 
 // create project if it doesnt exist
-pub fn (mut h TaigaConnection) project_create_if_not_exist(name string, description string, projtype Projectype) ?Project {
+pub fn (mut h TaigaConnection) project_create_if_not_exist(name string, description string, projtype ProjectType) ?Project {
 	if h.project_exists(name) {
 		mut project := h.project_get_by_name(name) ?
 		project.projtype = projtype
@@ -93,7 +93,7 @@ pub fn (mut h TaigaConnection) project_create_if_not_exist(name string, descript
 
 // create project based on predefined standards
 // return Project obj
-pub fn project_create(name string, description string, projtype Projectype) ?Project {
+pub fn project_create(name string, description string, projtype ProjectType) ?Project {
 	mut conn := connection_get()
 	if conn.project_exists(name) {
 		return error("Cannot create project with name: '$name' because already exists.")

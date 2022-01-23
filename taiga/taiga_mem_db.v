@@ -1,16 +1,16 @@
 module taiga
 
 pub fn load_data() ? {
-	tasks() ?
 	projects() ?
 	stories() ?
+	tasks() ?
 	issues() ?
 	epics() ?
 	users() ?
 }
 
 // // //all internal
-
+//TODO: not clean, this should be method on project
 pub fn stories_per_project(project_id int) []Story {
 	mut conn := connection_get()
 	mut project_stories := []Story{}
@@ -23,6 +23,7 @@ pub fn stories_per_project(project_id int) []Story {
 	return project_stories
 }
 
+//TODO: not clean, this should be method on project
 pub fn issues_per_project(project_id int) []Issue {
 	mut conn := connection_get()
 	mut project_issues := []Issue{}
@@ -35,6 +36,7 @@ pub fn issues_per_project(project_id int) []Issue {
 	return project_issues
 }
 
+//TODO: not clean, this should be method on project
 pub fn tasks_per_project(project_id int) []Task {
 	mut conn := connection_get()
 	mut project_tasks := []Task{}
@@ -47,6 +49,7 @@ pub fn tasks_per_project(project_id int) []Task {
 	return project_tasks
 }
 
+//TODO: not clean, this should be method on project
 pub fn epics_per_project(project_id int) []Epic {
 	mut conn := connection_get()
 	mut project_epics := []Epic{}
@@ -59,6 +62,7 @@ pub fn epics_per_project(project_id int) []Epic {
 	return project_epics
 }
 
+//TODO: not clean, this should be method on user
 fn projects_per_user(user_id int) []Project {
 	mut conn := connection_get()
 	mut all_user_projects := []Project{}

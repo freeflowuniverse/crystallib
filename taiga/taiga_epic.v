@@ -13,29 +13,21 @@ pub mut:
 	is_private             bool
 	tags                   []string
 	project                int
-	project_extra_info     ProjectInfo
 	user_story             int
-	user_story_extra_info  StoryInfo
 	status                 int
-	status_extra_info      StatusInfo
 	assigned_to            int
-	assigned_to_extra_info UserInfo
 	owner                  int
-	owner_extra_info       UserInfo
-	created_date           Time             [skip]
-	modified_date          Time             [skip]
-	finished_date          Time             [skip]
-	due_date               Time             [skip]
+	created_date           Time 
+	modified_date          Time
+	finished_date          Time
+	due_date               Time
 	due_date_reason        string
 	subject                string
 	is_closed              bool
 	is_blocked             bool
-	blocked_note           string
-	client_requirement     bool
-	team_requirement       bool
 	ref                    int
 	user_stories_counts    UserStoriesCount
-	file_name              string           [skip]
+	file_name              string
 }
 
 struct UserStoriesCount {
@@ -94,10 +86,15 @@ pub fn epic_delete(id int) ?bool {
 }
 
 fn epic_decode(data string) ?Epic {
-	mut epic := json.decode(Epic, data) or {
-		return error('Error happen when decode epic\nData: $data\nError:$err')
-	}
+
 	data_as_map := crystaljson.json_dict_any(data,false,[],[])?
+
+	mut epic := Epic{
+		description : data_as_map["description."].str()
+	}
+	//TODO: use raw json data_as_map feature to link to object, do all the others
+	//TODO: when a user, project, ... find it in the memdb to get right id
+
 	epic.created_date = parse_time(data_as_map['created_date'].str())
 	epic.modified_date = parse_time(data_as_map['modified_date'].str())
 	epic.finished_date = parse_time(data_as_map['modified_date'].str())

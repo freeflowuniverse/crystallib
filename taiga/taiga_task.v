@@ -6,34 +6,41 @@ import json
 import time { Time }
 import math { min }
 
+
+enum TaskStatus { 
+	//TODO: there will be many other statuses used, we have to fix, in taiga itself, make the story status as below eveywhere
+	unknown
+	new
+	accepted
+	inprogress
+	verification //is called ready for test in taiga
+	done
+}
+
+
 pub struct Task {
 pub mut:
 	description            string
 	id                     int
 	tags                   []string
 	project                int
-	project_extra_info     ProjectInfo
 	user_story             int
-	user_story_extra_info  StoryInfo
-	status                 int
-	status_extra_info      StatusInfo
+	status                 TaskStatus
 	assigned_to            int
-	assigned_to_extra_info UserInfo
 	owner                  int
-	owner_extra_info       UserInfo
-	created_date           Time        [skip]
-	modified_date          Time        [skip]
-	finished_date          Time        [skip]
-	due_date               Time        [skip]
+	created_date           Time       
+	modified_date          Time        
+	finished_date          Time        
+	due_date               Time        
 	due_date_reason        string
 	subject                string
 	is_closed              bool
 	is_blocked             bool
 	blocked_note           string
 	ref                    int
-	total_comments         int
-	comments               []Comment   [skip]
-	file_name              string      [skip]
+	total_comments         int //TODO: why is this needed if we already have comments list? everyone can do count()?
+	comments               []Comment   
+	file_name              string
 }
 
 struct NewTask {
@@ -93,27 +100,40 @@ pub fn task_delete(id int) ?bool {
 }
 
 fn task_decode(data string) ?Task {
-	mut task := json.decode(Task, data) or {
-		return error('Error happen when decode task\nData: $data\nError:$err')
-	}
-	task.comments = []
+
+
 	data_as_map := crystaljson.json_dict_any(data,false,[],[])?
-	println(data_as_map)
-	if true{
-		panic('sss')
+
+	mut task:=Task{
+		//TODO: put properties in		
 	}
+
+	task.comments = []
+
+
+	projname:=data_as_map["project_extra_info"].as_map()["name"].str().to_upper()
+	if projname.contains("ARCHIVE"){
+		//this is a task linked to a project which is archived, no reason to process
+		return Task{}
+	}
+
+	// println(data_as_map)
+
 	task.created_date = parse_time(data_as_map['created_date'].str())
 	task.modified_date = parse_time(data_as_map['modified_date'].str())
 	task.finished_date = parse_time(data_as_map['finished_date'].str())
 	task.due_date = parse_time(data_as_map['due_date'].str())
-	task.file_name = texttools.name_clean(task.subject[0..min(40, task.subject.len)] +
-		'-' + task.id.str()) + '.md'
+	task.file_name = texttools.name_clean(task.subject[0..min(40, task.subject.len)] + '-' + task.id.str()) + '.md'
 	task.file_name = texttools.ascii_clean(task.file_name)
-	task.user_story_extra_info.file_name =
-		texttools.name_clean(task.user_story_extra_info.subject[0..min(40, task.user_story_extra_info.subject.len)] +
-		'-' + task.user_story_extra_info.id.str()) + '.md'
-	task.project_extra_info.file_name =
-		texttools.name_clean(task.project_extra_info.slug) + '.md'
+	if true{
+		println(task.file_name)
+		panic('sss')
+	}	
+	// task.user_story_extra_info.file_name =
+	// 	texttools.name_clean(task.user_story_extra_info.subject[0..min(40, task.user_story_extra_info.subject.len)] +
+	// 	'-' + task.user_story_extra_info.id.str()) + '.md'
+	// task.project_extra_info.file_name =
+	// 	texttools.name_clean(task.project_extra_info.slug) + '.md'
 	mut conn := connection_get()
 	if conn.settings.comments_task{
 		task.get_comments()?
