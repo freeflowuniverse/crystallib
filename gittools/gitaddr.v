@@ -1,10 +1,11 @@
 module gittools
 
 import os
+import sshagent
 
 
 pub fn (addr GitAddr) url_get() string {
-	if ssh_agent_loaded() {
+	if sshagent.loaded() {
 		return addr.url_ssh_get()
 	} else {
 		return addr.url_http_get()
