@@ -1,7 +1,9 @@
 module docker
 
 import builder
+import time
 
+[heap]
 pub struct DockerImage {
 pub mut:
 	repo    string
@@ -9,9 +11,10 @@ pub mut:
 	id      string
 	digest	string
 	size    int //size in MB
-	created string
+	created time.Time
 	node	string
 }
+
 
 // delete docker image
 pub fn (mut image DockerImage) delete(force bool) ?string {

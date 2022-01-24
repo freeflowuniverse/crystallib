@@ -85,8 +85,13 @@ pub fn (mut executor ExecutorLocal) download(source string, dest string) ? {
 	executor.exec('cp -r $source $dest') ?
 }
 
-pub fn (mut executor ExecutorLocal) shell() ? {
-	os.execvp('xterm',[]) ?
+pub fn (mut executor ExecutorLocal) shell(cmd string) ? {
+	if cmd.len>0{
+		os.execvp('/bin/bash',["-c '$cmd'"]) ?
+	}else{
+		os.execvp('/bin/bash',[]) ?
+	}
+	
 }
 
 pub fn (mut executor ExecutorLocal) list(path string) ?[]string {

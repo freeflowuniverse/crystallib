@@ -10,11 +10,20 @@ pub struct SwarmArgs{
 pub fn (mut node Node) install_docker(args SwarmArgs) ?{
 
 	mut installed:=true
-	_ := node.executor.exec_silent('docker version') or {
+	out2 := node.executor.exec_silent('docker version') or {
 			installed=false
+			println("ERROR:" + err.msg)
 			"ERROR:" + err.msg
 		}
 	
+	if out2.contains("Cannot connect to the Docker daemon"){
+		//means docker needs to be started
+		if node.platform != PlatformType.ubuntu{
+			return error("Make sure your docker daemon has been started")
+		}
+
+	}
+
 	if installed{
 		return
 	}
@@ -76,7 +85,6 @@ pub fn (mut node Node) install_docker(args SwarmArgs) ?{
 		}
 
 	}
-	// NOW WE NEED TO CHECK OF DOCKER ANSWERS
 	return error("Could not start docker")
 
 }

@@ -13,7 +13,7 @@ mut:
 	upload(source string, dest string) ?
 	environ_get() ?map[string]string
 	info() map[string]string
-	shell() ?
+	shell(cmd string) ?
 	list(path string) ?[]string
 	dir_exists(path string) bool
 	debug_off()
