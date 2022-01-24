@@ -5,11 +5,26 @@ import json
 
 fn project_decode(data string) ?Project {
 	data_as_map := crystaljson.json_dict_any(data, false, [], []) ?
-	mut project := json.decode(Project, data) ?
-
+	mut project := Project{
+		name: data_as_map["name"].str()
+		description: data_as_map["description"].str()
+		id: data_as_map["id"].int()
+		is_private: data_as_map["is_private"].bool()
+		slug: data_as_map["slug"].str()
+		owner: data_as_map["owner"].as_map()["id"].int()
+	}
+	for tag in data_as_map['tags'].arr() {
+		project.tags << tag.str()
+	}
+	for member in data_as_map['members'].arr() {
+		if member.int() != 0 {
+			project.members << member.int()
+		}
+	}
 	project.created_date = parse_time(data_as_map['created_date'].str())
 	project.modified_date = parse_time(data_as_map['modified_date'].str())
 	project.file_name = generate_file_name(project.name + '.md')
+	println(data_as_map)
 	return project
 }
 

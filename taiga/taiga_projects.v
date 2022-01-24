@@ -12,7 +12,6 @@ pub fn projects() ?[]Project {
 	println('[+] Loading $blocks.len projects ...')
 	mut projects := []Project{}
 	for proj in blocks {
-		// println('PROJECT:\n$proj')
 		project := project_decode(proj) or {
 			eprintln(err)
 			Project{}
