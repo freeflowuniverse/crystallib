@@ -1,7 +1,6 @@
 module taiga
 
 import despiegk.crystallib.crystaljson
-import json
 
 fn project_decode(data string) ?Project {
 	data_as_map := crystaljson.json_dict_any(data, false, [], []) ?

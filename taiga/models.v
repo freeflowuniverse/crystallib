@@ -249,12 +249,12 @@ pub mut:
 
 struct Comment {
 pub mut:
-	id                  string
-	comment             string
-	user_id             int // should just refer to the id of the user who did the comment
-	created_at          Time
-	key                 string
-	comment_html        string
+	id         string
+	comment    string
+	user_id    int // should just refer to the id of the user who did the comment
+	created_at Time
+	key        string
+	// comment_html        string
 	delete_comment_date Time
 	delete_comment_user string
 	edit_comment_date   Time

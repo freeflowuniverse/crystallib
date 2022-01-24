@@ -66,7 +66,6 @@ fn epic_decode(data string) ?Epic {
 	epic.due_date = parse_time(data_as_map['due_date'].str())
 	epic.file_name = generate_file_name(epic.subject[0..min(40, epic.subject.len)] + '-' +
 		epic.id.str() + '.md')
-	epic.file_name = texttools.ascii_clean(epic.file_name)
 	return epic
 }
 

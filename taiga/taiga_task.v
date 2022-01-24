@@ -1,7 +1,6 @@
 module taiga
 
 import despiegk.crystallib.crystaljson
-import despiegk.crystallib.texttools
 import json
 import math { min }
 
@@ -92,11 +91,11 @@ fn task_decode(data string) ?Task {
 	task.file_name = generate_file_name(task.subject[0..min(40, task.subject.len)] + '-' +
 		task.id.str() + '.md')
 
-	mut conn := connection_get()
-	task.comments = []Comment{}
-	if conn.settings.comments_task {
-		task.comments() ?
-	}
+	// TODO: Comments later
+	// mut conn := connection_get()
+	// if conn.settings.comments_task {
+	// 	task.comments() ?
+	// }
 	return task
 }
 

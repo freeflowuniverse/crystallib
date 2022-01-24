@@ -1,7 +1,6 @@
 module taiga
 
 import despiegk.crystallib.crystaljson
-import despiegk.crystallib.texttools
 import json
 import math { min }
 
@@ -83,10 +82,12 @@ fn story_decode(data string) ?Story {
 	// story.status = data_as_map["status_extra_info"]["name"].str() // TODO: Use Enum
 	story.file_name = generate_file_name(story.subject[0..min(40, story.subject.len)] + '_' +
 		story.id.str() + '.md')
-	mut conn := connection_get()
-	if conn.settings.comments_story {
-		story.comments() ?
-	}
+
+	// TODO: Comments later
+	// mut conn := connection_get()
+	// if conn.settings.comments_story {
+	// 	story.comments() ?
+	// }
 	return story
 }
 

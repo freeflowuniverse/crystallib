@@ -56,7 +56,6 @@ pub fn issue_delete(id int) ?bool {
 // Decode issue to get clean object from raw data
 fn issue_decode(data string) ?Issue {
 	data_as_map := crystaljson.json_dict_any(data, false, [], []) ?
-	mut conn := connection_get()
 	mut issue := Issue{
 		description: data_as_map['description'].str()
 		id: data_as_map['id'].int()
@@ -86,16 +85,19 @@ fn issue_decode(data string) ?Issue {
 	issue.file_name = generate_file_name(issue.subject[0..min(40, issue.subject.len)] + '_' +
 		issue.id.str() + '.md')
 	issue.category = get_category(issue)
-	if conn.settings.comments_issue {
-		issue.comments() ?
-	}
+
+	// TODO: Comments Later
+	// mut conn := connection_get()
+	// if conn.settings.comments_issue {
+	// 	issue.comments() ?
+	// }
 	return issue
 }
 
 // get comments in list from issue
-pub fn (mut i Issue) comments() ?[]Comment {
-	i.comments = comments_get('issue', i.id) ?
-	return i.comments
+pub fn (mut issue Issue) comments() ?[]Comment {
+	issue.comments = comments_get('issue', issue.id) ?
+	return issue.comments
 }
 
 // Get project object for each issue
