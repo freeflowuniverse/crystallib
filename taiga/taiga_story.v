@@ -76,7 +76,9 @@ fn story_decode(data string) ?Story {
 		story.tags << tag.str()
 	}
 	for assign in data_as_map['assigned_to'].arr() {
-		story.assigned_to << assign.int()
+		if assign.int() != 0 {
+			story.assigned_to << assign.int()
+		}
 	}
 	// story.status = data_as_map["status_extra_info"]["name"].str() // TODO: Use Enum
 	story.file_name = generate_file_name(story.subject[0..min(40, story.subject.len)] + '_' +
@@ -133,7 +135,7 @@ pub fn (story Story) assigned_as_str() string {
 	for u in assigned {
 		assigned_str << u.username
 	}
-	return assigned_str.join(", ")
+	return assigned_str.join(', ')
 }
 
 pub fn (story Story) as_md(url string) string {

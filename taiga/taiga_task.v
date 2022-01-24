@@ -79,7 +79,9 @@ fn task_decode(data string) ?Task {
 		task.tags << tag.str()
 	}
 	for assign in data_as_map['assigned_to'].arr() {
-		task.assigned_to << assign.int()
+		if assign.int() != 0 {
+			task.assigned_to << assign.int()
+		}
 	}
 	// task.status = data_as_map["status_extra_info"].as_map()["name"].str() // TODO: Use Enum
 	task.created_date = parse_time(data_as_map['created_date'].str())
@@ -129,7 +131,7 @@ pub fn (task Task) assigned_as_str() string {
 	for u in assignee {
 		assigned_str << u.username
 	}
-	return assigned_str.join(", ")
+	return assigned_str.join(', ')
 }
 
 // Get owner user object for each task

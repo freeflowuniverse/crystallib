@@ -74,7 +74,7 @@ fn issue_decode(data string) ?Issue {
 		issue.tags << tag.str()
 	}
 	for assign in data_as_map['assigned_to'].arr() {
-		if assign.int() != 0{
+		if assign.int() != 0 {
 			issue.assigned_to << assign.int()
 		}
 	}
@@ -89,7 +89,6 @@ fn issue_decode(data string) ?Issue {
 	if conn.settings.comments_issue {
 		issue.comments() ?
 	}
-	println(issue)
 	return issue
 }
 
@@ -119,13 +118,10 @@ pub fn (issue Issue) assigned() []User {
 pub fn (issue Issue) assigned_as_str() string {
 	assigned_users := issue.assigned()
 	mut assigned_str := []string{}
-	if assigned_users != []User{}{
-		for u in assigned_users {
-			assigned_str << u.username
-		}
-		return assigned_str.join(", ")
+	for u in assigned_users {
+		assigned_str << u.username
 	}
-	return ""
+	return assigned_str.join(', ')
 }
 
 // Get owner user object for each issue
@@ -136,9 +132,7 @@ pub fn (issue Issue) owner() User {
 }
 
 pub fn (issue Issue) as_md(url string) string {
-	println(issue.assigned_as_str())
-	return issue.assigned_as_str()
-	// mut issue_md := $tmpl('./templates/issue.md')
-	// issue_md = fix_empty_lines(issue_md)
-	// return issue_md
+	mut issue_md := $tmpl('./templates/issue.md')
+	issue_md = fix_empty_lines(issue_md)
+	return issue_md
 }
