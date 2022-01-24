@@ -1,16 +1,16 @@
-# [@task.subject](@url/project/@task.project_extra_info.slug/task/@task.ref)
+# @task.subject
 
-|             |                                                                                         |
-| ----------- | --------------------------------------------------------------------------------------- |
-| Owner       | @task.owner_extra_info.username                                                         |
-| Assigned to | @task.assigned_to_extra_info.username                                                   |
-| Created at  | @task.created_date.ymmdd()                                                              |
-| Last Update | @task.modified_date.ymmdd()                                                             |
-@if task.user_story != 0
-| Story       | [@task.user_story_extra_info.subject](@task.user_story_extra_info.file_name)            |
+> [@task.subject](@url/project/@task.project().slug/task/@task.ref)
+|             |                             |
+| ----------- | --------------------------- |
+| Owner       | @task.owner().username      |
+| Assigned to | @task.assigned_as_str()     |
+| Created at  | @task.created_date.ymmdd()  |
+| Last Update | @task.modified_date.ymmdd() |
+@if task.story().id != 0
+| Story       | [@task.story().subject](@task.story().file_name) |
 @end
-| Project     | [@task.project_extra_info.name](@task.project_extra_info.file_name)                     |
-
+| Project     | [@task.project().name](@task.project().file_name) |
 @if task.description != ""
 
 ## Description
@@ -25,7 +25,7 @@
 ## Comments
 @for comment in task.comments
 
-> <strong>$comment.user.name</strong> `$comment.created_at`
+> <strong>$comment.user().username</strong> `$comment.created_at`
 
 $comment.comment
 

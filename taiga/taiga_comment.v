@@ -13,7 +13,7 @@ pub fn comments_get(prefix string, prefix_id int) ?[]Comment {
 			Comment{}
 		}
 		if comment != Comment{} {
-			println(comment)
+			// println(comment)
 			comments << comment
 		}
 	}

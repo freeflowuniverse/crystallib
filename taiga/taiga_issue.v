@@ -74,20 +74,22 @@ fn issue_decode(data string) ?Issue {
 		issue.tags << tag.str()
 	}
 	for assign in data_as_map['assigned_to'].arr() {
-		issue.assigned_to << assign.int()
+		if assign.int() != 0{
+			issue.assigned_to << assign.int()
+		}
 	}
 	// issue.status = data_as_map["status_extra_info"]["name"].str() // TODO: Use Enum
 	issue.created_date = parse_time(data_as_map['created_date'].str())
 	issue.modified_date = parse_time(data_as_map['modified_date'].str())
 	issue.finished_date = parse_time(data_as_map['finished_date'].str())
 	issue.due_date = parse_time(data_as_map['due_date'].str())
-	issue.file_name = texttools.name_clean(issue.subject[0..min(40, issue.subject.len)] + '_' +
-		issue.id.str()) + '.md'
-	issue.file_name = texttools.ascii_clean(issue.file_name)
+	issue.file_name = generate_file_name(issue.subject[0..min(40, issue.subject.len)] + '_' +
+		issue.id.str() + '.md')
 	issue.category = get_category(issue)
 	if conn.settings.comments_issue {
 		issue.comments() ?
 	}
+	println(issue)
 	return issue
 }
 
@@ -107,11 +109,23 @@ pub fn (issue Issue) project() Project {
 // Get assigned users objects for each issue
 pub fn (issue Issue) assigned() []User {
 	mut conn := connection_get()
-	mut assigned := []User{}
+	mut assigned_users := []User{}
 	for i in issue.assigned_to {
-		assigned << conn.users[i]
+		assigned_users << conn.users[i]
 	}
-	return assigned
+	return assigned_users
+}
+
+pub fn (issue Issue) assigned_as_str() string {
+	assigned_users := issue.assigned()
+	mut assigned_str := []string{}
+	if assigned_users != []User{}{
+		for u in assigned_users {
+			assigned_str << u.username
+		}
+		return assigned_str.join(", ")
+	}
+	return ""
 }
 
 // Get owner user object for each issue
@@ -122,9 +136,9 @@ pub fn (issue Issue) owner() User {
 }
 
 pub fn (issue Issue) as_md(url string) string {
-	// export template per issue
-	project := issue.project()
-	mut issue_md := $tmpl('./templates/issue.md')
-	issue_md = fix_empty_lines(issue_md)
-	return issue_md
+	println(issue.assigned_as_str())
+	return issue.assigned_as_str()
+	// mut issue_md := $tmpl('./templates/issue.md')
+	// issue_md = fix_empty_lines(issue_md)
+	// return issue_md
 }

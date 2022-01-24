@@ -1,7 +1,6 @@
 module taiga
 
 import despiegk.crystallib.crystaljson
-import despiegk.crystallib.texttools
 import json
 
 fn project_decode(data string) ?Project {
@@ -10,8 +9,7 @@ fn project_decode(data string) ?Project {
 
 	project.created_date = parse_time(data_as_map['created_date'].str())
 	project.modified_date = parse_time(data_as_map['modified_date'].str())
-	project.file_name = texttools.name_clean(project.name) + '.md'
-	project.file_name = texttools.ascii_clean(project.file_name)
+	project.file_name = generate_file_name(project.name + '.md')
 	return project
 }
 
@@ -75,12 +73,6 @@ pub fn (project Project) owner() User {
 }
 
 pub fn (project Project) as_md(url string) string {
-	stories := project.stories()
-	issues := project.issues()
-	tasks := project.tasks()
-	epics := project.epics()
-	owner := project.owner()
-	// export template per project
 	mut proj_md := $tmpl('./templates/project.md')
 	proj_md = fix_empty_lines(proj_md)
 	return proj_md

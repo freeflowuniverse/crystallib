@@ -2,7 +2,7 @@ module taiga
 
 import time { Time }
 
-enum Category {
+pub enum Category {
 	blocked
 	overdue
 	today
@@ -107,6 +107,12 @@ enum TaskStatus {
 	inprogress
 	verification // is called ready for test in taiga
 	done
+}
+
+struct NewTask {
+pub mut:
+	subject string
+	project int
 }
 
 pub struct Task {

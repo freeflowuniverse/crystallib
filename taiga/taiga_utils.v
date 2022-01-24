@@ -1,5 +1,6 @@
 module taiga
 
+import despiegk.crystallib.texttools
 import time { Time, now, parse_iso8601 }
 import math { pow10 }
 
@@ -53,4 +54,11 @@ pub fn get_category(t TaigaElement) Category {
 		}
 	}
 	return .other
+}
+
+pub fn generate_file_name(s string) string {
+	mut file_name := texttools.name_clean(s)
+	file_name = texttools.ascii_clean(file_name)
+	file_name = file_name.replace(' ', '_').to_lower()
+	return file_name
 }

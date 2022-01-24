@@ -10,7 +10,7 @@ pub fn stories() ? {
 	blocks := conn.get_json_list('userstories', '', true) ?
 	println('[+] Loading $blocks.len stories ...')
 	for s in blocks {
-		println('STORY:\n$s')
+		// println('STORY:\n$s')
 		mut story := Story{}
 		story = story_decode(s.str()) or {
 			eprintln(err)
@@ -79,9 +79,8 @@ fn story_decode(data string) ?Story {
 		story.assigned_to << assign.int()
 	}
 	// story.status = data_as_map["status_extra_info"]["name"].str() // TODO: Use Enum
-	story.file_name = texttools.name_clean(story.subject[0..min(40, story.subject.len)] + '_' +
-		story.id.str()) + '.md'
-	story.file_name = texttools.ascii_clean(story.file_name)
+	story.file_name = generate_file_name(story.subject[0..min(40, story.subject.len)] + '_' +
+		story.id.str() + '.md')
 	mut conn := connection_get()
 	if conn.settings.comments_story {
 		story.comments() ?
@@ -96,13 +95,13 @@ pub fn (mut s Story) comments() ?[]Comment {
 }
 
 // get tasks objects for each story
-pub fn (s Story) tasks() []Task {
+pub fn (story Story) tasks() []Task {
 	mut conn := connection_get()
 	mut story_tasks := []Task{}
 	for _, task in conn.tasks {
-		t_story := task.story()
-		if t_story.id == s.id {
-			story_tasks << task
+		mut t_story := task.user_story
+		if t_story == story.id {
+			story_tasks << *task
 		}
 	}
 	return story_tasks
@@ -111,8 +110,7 @@ pub fn (s Story) tasks() []Task {
 // Get project object
 pub fn (story Story) project() Project {
 	mut conn := connection_get()
-	project := conn.projects[story.project]
-	return *project
+	return *conn.projects[story.project]
 }
 
 pub fn (story Story) owner() User {
@@ -129,9 +127,17 @@ pub fn (story Story) assigned() []User {
 	return assigned
 }
 
+pub fn (story Story) assigned_as_str() string {
+	assigned := story.assigned()
+	mut assigned_str := []string{}
+	for u in assigned {
+		assigned_str << u.username
+	}
+	return assigned_str.join(", ")
+}
+
 pub fn (story Story) as_md(url string) string {
 	tasks := story.tasks()
-	// export template per story
 	mut story_md := $tmpl('./templates/story.md')
 	story_md = fix_empty_lines(story_md)
 	return story_md

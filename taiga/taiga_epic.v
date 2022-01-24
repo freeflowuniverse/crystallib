@@ -1,7 +1,6 @@
 module taiga
 
 // Epics will be implemented later
-
 import despiegk.crystallib.crystaljson
 import despiegk.crystallib.texttools
 import json
@@ -65,8 +64,8 @@ fn epic_decode(data string) ?Epic {
 	epic.modified_date = parse_time(data_as_map['modified_date'].str())
 	epic.finished_date = parse_time(data_as_map['modified_date'].str())
 	epic.due_date = parse_time(data_as_map['due_date'].str())
-	epic.file_name = texttools.name_clean(epic.subject[0..min(40, epic.subject.len)] + '-' +
-		epic.id.str()) + '.md'
+	epic.file_name = generate_file_name(epic.subject[0..min(40, epic.subject.len)] + '-' +
+		epic.id.str() + '.md')
 	epic.file_name = texttools.ascii_clean(epic.file_name)
 	return epic
 }

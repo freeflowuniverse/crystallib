@@ -5,12 +5,6 @@ import despiegk.crystallib.texttools
 import json
 import math { min }
 
-struct NewTask {
-pub mut:
-	subject string
-	project int
-}
-
 pub fn tasks() ? {
 	mut conn := connection_get()
 	blocks := conn.get_json_list('tasks', '', true) ?
@@ -28,7 +22,7 @@ pub fn tasks() ? {
 }
 
 // get comments in lis from task
-pub fn (mut t Task) get_comments() ?[]Comment {
+pub fn (mut t Task) comments() ?[]Comment {
 	t.comments = comments_get('task', t.id) ?
 	return t.comments
 }
@@ -93,14 +87,13 @@ fn task_decode(data string) ?Task {
 	task.finished_date = parse_time(data_as_map['finished_date'].str())
 	task.due_date = parse_time(data_as_map['due_date'].str())
 	task.category = get_category(task)
-	task.file_name = texttools.name_clean(task.subject[0..min(40, task.subject.len)] + '-' +
-		task.id.str()) + '.md'
-	task.file_name = texttools.ascii_clean(task.file_name)
+	task.file_name = generate_file_name(task.subject[0..min(40, task.subject.len)] + '-' +
+		task.id.str() + '.md')
 
 	mut conn := connection_get()
 	task.comments = []Comment{}
 	if conn.settings.comments_task {
-		task.get_comments() ?
+		task.comments() ?
 	}
 	return task
 }
@@ -108,8 +101,7 @@ fn task_decode(data string) ?Task {
 // Get project object for each task
 pub fn (task Task) project() Project {
 	mut conn := connection_get()
-	project := conn.projects[task.project]
-	return *project
+	return *conn.projects[task.project]
 }
 
 // Get story object for each task
@@ -131,8 +123,17 @@ pub fn (task Task) assigned() []User {
 	return assigned
 }
 
+pub fn (task Task) assigned_as_str() string {
+	assignee := task.assigned()
+	mut assigned_str := []string{}
+	for u in assignee {
+		assigned_str << u.username
+	}
+	return assigned_str.join(", ")
+}
+
 // Get owner user object for each task
-pub fn (task Task) owner() ?User {
+pub fn (task Task) owner() User {
 	mut conn := connection_get()
 	return *conn.users[task.owner]
 }

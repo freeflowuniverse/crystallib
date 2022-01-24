@@ -12,7 +12,7 @@ pub fn projects() ?[]Project {
 	println('[+] Loading $blocks.len projects ...')
 	mut projects := []Project{}
 	for proj in blocks {
-		println('PROJECT:\n$proj')
+		// println('PROJECT:\n$proj')
 		project := project_decode(proj) or {
 			eprintln(err)
 			Project{}
@@ -124,9 +124,7 @@ pub fn project_create(name string, description string, projtype ProjectType) ?Pr
 			proj_config.issues_statuses << ['New', 'to-start', 'in-progress', 'Blocked',
 				'Implemented', 'Closed', 'Rejected', 'Postponed', 'Archived']
 		}
-		else{
-			
-		}
+		else {}
 	}
 	postdata := json.encode_pretty(proj)
 	response := conn.post_json_str('projects', postdata, true) ?
