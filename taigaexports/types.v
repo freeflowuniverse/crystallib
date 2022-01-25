@@ -239,24 +239,24 @@ pub mut:
 // Snapshot
 struct Snapshot {
 pub mut:
-	ref int
-	tags []string
-	type_ int [json: "type"]
-	owner string
-	status string
-	subject string
-	due_date string
-	priority int
-	severity int
-	milestone string
-	is_blocked bool
-	assigned_to string
-	attachments []Attachment
-	description string
-	blocked_note string
-	description_html string
-	blocked_note_html string
-	custom_attributes []string
+  ref int
+  tags []string
+  type_ int [json: "type"]
+  owner string
+  status string
+  subject string
+  due_date string
+  priority int
+  severity int
+  milestone string
+  is_blocked bool
+  assigned_to string
+  attachments []Attachment
+  description string
+  blocked_note string
+  description_html string
+  blocked_note_html string
+  custom_attributes []string
 }
 
 // IssueHistory
