@@ -33,13 +33,15 @@ mut:
 	username string
 	password string
 	auth_token string
+	project_slug string
 
 pub mut:
 	// async mode timeouts
-	// time to wait between download attempts
-	async_wait int = 2000 // in millisconds, defaults to 2 seconds
+	// time to wait between download/decode attempts
+	async_wait i64 = 2 // in seconds, defaults to 2 seconds
 	// time to wait until all download attempts are failed
-	async_timeout int = 30000 // in millisconds, defaults to 30 seconds
+	// or the download itself takes too much
+	async_timeout i64 = 10 // in minutes, defaults to 10 minutes
 }
 
 pub fn new(url string, username string, password string) ?&Exporter {
@@ -71,7 +73,6 @@ pub fn (mut exporter Exporter) do_req(method http.Method, url string, data strin
 	return req.do()
 }
 
-
 pub fn (mut exporter Exporter) authenticate()? {
 	mut auth := Auth{
 		username: exporter.username,
@@ -84,7 +85,7 @@ pub fn (mut exporter Exporter) authenticate()? {
 		http.CommonHeader.content_type:  'application/json'
 	})?
 
-	if resp.status_code == 200 {
+	if resp.status() == http.Status.ok {
 		result := json.decode(AuthResult, resp.text)?
 		exporter.auth_token = result.auth_token
 	} else {
@@ -101,57 +102,75 @@ pub fn (mut exporter Exporter) do_auth_req(method http.Method, url string, data 
 }
 
 pub fn (mut exporter Exporter) download(url string) ?string {
-	resp := exporter.do_auth_req(http.Method.get, url, '')?
-	if resp.status_code == 200 {
+	resp := exporter.do_req(http.Method.get, url, '', {})?
+	if resp.status() == http.Status.ok {
 		return resp.text
 	}
-
 	return error('could not download $url ($resp.status_code): $resp.text')
 }
 
 pub fn (mut exporter Exporter) export_project(id int, project_slug string) ?ProjectExport {
 	// request status need to be checked to decode the result accordingly
-	// if the taiga client is async, it will return 202, otherwise it will return 200
-
+	// if the taiga client is async, it will return http.Status.accepted, otherwise it will return http.Status.ok
 	url := '$exporter.api_url/exporter/$id'
 	resp := exporter.do_auth_req(http.Method.get, url, '')?
-	if resp.status_code == 200 {
+	if resp.status() == http.Status.ok {
 		result := json.decode(SyncExportResult, resp.text)?
 		data := exporter.download(result.url)?
 		return json.decode(ProjectExport, data)
 	}
 
-	ch := chan string{}
+	ch := chan ProjectExport{}
+	exporter.project_slug = project_slug
 
-	if resp.status_code == 202 {
+	if resp.status() == http.Status.accepted {
 		// here we get an export id, and try to poll the result
+		// we can get partial json if we tried too soon because of the async nature of this operation,
+		// and the lack of an api which tells the status of this export from taiga side
+		// we will just do download/decode/retry until we get a result
+
 		result := json.decode(AsyncExportResult, resp.text)?
 		export_url := '$exporter.url/media/exports/$id/$project_slug-${result.export_id}.json'
 
-		go fn (mut exporter Exporter, url string, download_chan chan string) {
+		go fn (mut exporter Exporter, url string, download_chan chan ProjectExport) {
 			mut attempts := 0
 			for {
 				attempts += 1
+				println("attempt #$attempts to download/decode $url")
 
-				println("attempt #$attempts to download $url")
-				download_chan <- exporter.download(url) or {
-					println("attempt #$attempts failed with: $err")
-					time.sleep(exporter.async_wait * time.millisecond)
+				data := exporter.download(url) or {
+					print("attempt #$attempts failed with: $err")
+					time.sleep(exporter.async_wait * time.second)
 					continue
 				}
 
+				export := json.decode(ProjectExport, data) or {
+					println("attempt #$attempts failed while decoding response")
+					time.sleep(exporter.async_wait * time.second)
+					continue
+				}
+
+				// if we reached here, we might get a data that can be decoded
+				// but it's still not the whole data, would get an empty export
+				// in this case, just compare the slug
+				if export.slug != exporter.project_slug {
+					println("attmpet #$attempts failed, got a partial response")
+					time.sleep(exporter.async_wait * time.second)
+					continue
+				}
+
+				download_chan <- export
 				break
 			}
 		}(mut exporter, export_url, ch)
 
-		timeout := exporter.async_timeout * time.millisecond
+		timeout := exporter.async_timeout * time.minute
 		select {
-			data := <- ch {
-				return json.decode(ProjectExport, data)
+			export := <- ch {
+				return export
 			}
 			timeout {
-				timeout_in_seconds := timeout / time.second
-				return error("timeout waiting for async export for $timeout_in_seconds second(s).")
+				return error("timeout waiting for async export for $timeout minutes(s).")
 			}
 		}
 	}
