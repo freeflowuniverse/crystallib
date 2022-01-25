@@ -6,6 +6,9 @@ import vweb
 import publisher_config
 import json
 
+import gittools
+import rest
+
 // this webserver is used for looking at the builded results
 
 struct MyContext {
@@ -14,6 +17,7 @@ pub:
 pub mut:
 	publisher 	&Publisher
 	webnames 		map[string]string
+	data_loader &rest.DataLoader
 }
 
 enum FileType {
@@ -69,7 +73,7 @@ fn filetype_site_name_get(config publisher_config.ConfigRoot, site string, name_
 		}
 		if sitename == "internet4"{
 			sitename = "threefold"
-		}		
+		}
 		name = parts[1].trim(' ')
 	}
 
@@ -182,11 +186,11 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path str
 		path0 = path0.replace("||","|")
 		path0 = path0.replace("_sidebar","sidebar")
 	}
-	name := os.base(path0)	
+	name := os.base(path0)
 	mut publisherobj := rlock app.ctx {
 		app.ctx.publisher
 	}
-	
+
 	if path.ends_with('errors') || path.ends_with('error') || path.ends_with('errors.md')
 		|| path.ends_with('error.md') {
 		app.set_content_type('text/html')
@@ -357,9 +361,123 @@ fn content_type_get(path string) ?string {
 
 struct App {
 	vweb.Context
+
 pub mut:
 	ctx shared MyContext
 }
+
+fn (mut app App) list<T>() ?[]T {
+	println("listing $T.name documents...")
+
+	mut data_loader := rlock app.ctx {
+		app.ctx.data_loader
+	}
+
+	// TODO: should pass page/page_count through query_params
+	// this will get all results
+	return data_loader.list<T>(1, 0)
+}
+
+fn (mut app App) get<T>(id string) ?T {
+	println("getting $T.name document with id of ${id}...")
+
+	mut data_loader := rlock app.ctx {
+		app.ctx.data_loader
+	}
+
+	return data_loader.get<T>(id)
+}
+
+["/api/data/blog"]
+pub fn (mut app App) list_blogs() vweb.Result {
+	result := app.list<rest.Blog>() or {
+		println(err)
+		return app.not_found()
+	}
+
+	return app.json_pretty<[]rest.Blog>(result)
+}
+
+["/api/data/news"]
+pub fn (mut app App) list_news() vweb.Result {
+	result := app.list<rest.News>() or {
+		println(err)
+		return app.not_found()
+	}
+
+	return app.json_pretty<[]rest.News>(result)
+}
+
+["/api/data/project"]
+pub fn (mut app App) list_projects() vweb.Result {
+	result := app.list<rest.Project>() or {
+		println(err)
+		return app.not_found()
+	}
+
+	return app.json_pretty<[]rest.Project>(result)
+}
+
+["/api/data/person"]
+pub fn (mut app App) list_persons() vweb.Result {
+	result := app.list<rest.Person>() or {
+		println(err)
+		return app.not_found()
+	}
+
+	return app.json_pretty<[]rest.Person>(result)
+}
+
+
+["/api/data/blog/:id"]
+pub fn (mut app App) get_blog(id string) vweb.Result {
+	result := app.get<rest.Blog>(id) or {
+		println(err)
+		return app.not_found()
+	}
+
+	return app.json_pretty<rest.Blog>(result)
+}
+
+["/api/data/news/:id"]
+pub fn (mut app App) get_news(id string) vweb.Result {
+	result := app.get<rest.News>(id) or {
+		println(err)
+		return app.not_found()
+	}
+
+	return app.json_pretty<rest.News>(result)
+}
+
+["/api/data/project/:id"]
+pub fn (mut app App) get_project(id string) vweb.Result {
+	result := app.get<rest.Project>(id) or {
+		println(err)
+		return app.not_found()
+	}
+
+	return app.json_pretty<rest.Project>(result)
+}
+
+["/api/data/person/:id"]
+pub fn (mut app App) get_person(id string) vweb.Result {
+	result := app.get<rest.Person>(id) or {
+		println(err)
+		return app.not_found()
+	}
+
+	return app.json_pretty<rest.Person>(result)
+}
+
+// ["/data/:doc_type/:id/:filename"]
+// pub fn (mut app App) get_data_static_file(doc_type string, id string, filename string) vweb.Result {
+// 	mut data_loader := rlock app.ctx {
+// 		app.ctx.data_loader
+// 	}
+
+// 	file := data_loader.get_file<rest.Blog>(id, filename) or { return app.not_found() }
+// 	return app.file(file)
+// }
 
 ['/:path...']
 pub fn (mut app App) handler(_path string) vweb.Result {
@@ -454,10 +572,15 @@ pub fn webserver_run(mut publisher &Publisher) ? {
 	publisher.check() ?
 	publisher.config.update_staticfiles(false) ?
 
+	mut gt := gittools.new()
+	mut repo := gt.repos_get(filter: "threefold_data")[0]
+	data_path := os.join_path(repo.path(), "content")
+
 	mut app := App{
 		ctx: MyContext{
 			publisher: publisher
 			config: &publisher.config
+			data_loader: rest.new_data_loader(data_path)
 		}
 	}
 	lock app.ctx {
