@@ -36,9 +36,9 @@ mut:
 
 pub mut:
 	// async mode timeouts
-	// time to wait between download trials
+	// time to wait between download attempts
 	async_wait int = 2000 // in millisconds, defaults to 2 seconds
-	// time to wait until all download trials are failed
+	// time to wait until all download attempts are failed
 	async_timeout int = 30000 // in millisconds, defaults to 30 seconds
 }
 
@@ -129,13 +129,13 @@ pub fn (mut exporter Exporter) export_project(id int, project_slug string) ?Proj
 		export_url := '$exporter.url/media/exports/$id/$project_slug-${result.export_id}.json'
 
 		go fn (mut exporter Exporter, url string, download_chan chan string) {
-			mut trials := 0
+			mut attempts := 0
 			for {
-				trials += 1
+				attempts += 1
 
-				println("trial #$trials to download $url")
+				println("attempt #$attempts to download $url")
 				download_chan <- exporter.download(url) or {
-					println("trial #$trials failed: $err")
+					println("attempt #$attempts failed with: $err")
 					time.sleep(exporter.async_wait * time.millisecond)
 					continue
 				}
