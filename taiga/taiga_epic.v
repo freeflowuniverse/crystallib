@@ -12,9 +12,9 @@ import math { min }
 pub fn epics() ? {
 	mut conn := connection_get()
 	resp := conn.get_json_str('epics', '', true) ?
-	raw_data := json2.raw_decode(resp.replace("\\\\", "")) ?
+	raw_data := json2.raw_decode(resp.replace('\\\\', '')) ?
 	blocks := raw_data.arr()
-	os.write_file("/tmp/taiga_blocks/epics", "$blocks") ?
+	os.write_file('/tmp/taiga_blocks/epics', '$blocks') ?
 	println('[+] Loading $blocks.len epics ...')
 	for e in blocks {
 		mut epic := Epic{}

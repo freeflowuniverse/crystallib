@@ -11,9 +11,9 @@ import math { min }
 pub fn issues() ? {
 	mut conn := connection_get()
 	resp := conn.get_json_str('issues', '', true) ?
-	raw_data := json2.raw_decode(resp.replace("\\\\", "")) ?
+	raw_data := json2.raw_decode(resp.replace('\\\\', '')) ?
 	blocks := raw_data.arr()
-	os.write_file("/tmp/taiga_blocks/issues", "$blocks") ?
+	os.write_file('/tmp/taiga_blocks/issues', '$blocks') ?
 	println('[+] Loading $blocks.len issues ...')
 	for i in blocks {
 		mut issue := Issue{}
@@ -106,18 +106,17 @@ pub fn (mut issue Issue) comments() ?[]Comment {
 }
 
 // Get project object for each issue
-pub fn (issue Issue) project() Project {
+pub fn (issue Issue) project() &Project {
 	mut conn := connection_get()
-	project := conn.projects[issue.project]
-	return *project
+	return conn.project_get(issue.project)
 }
 
 // Get assigned users objects for each issue
-pub fn (issue Issue) assigned() []User {
+pub fn (issue Issue) assigned() []&User {
 	mut conn := connection_get()
-	mut assigned_users := []User{}
+	mut assigned_users := []&User{}
 	for i in issue.assigned_to {
-		assigned_users << conn.users[i]
+		assigned_users << conn.user_get(i)
 	}
 	return assigned_users
 }
@@ -132,13 +131,15 @@ pub fn (issue Issue) assigned_as_str() string {
 }
 
 // Get owner user object for each issue
-pub fn (issue Issue) owner() User {
+pub fn (issue Issue) owner() &User {
 	mut conn := connection_get()
-	mut owner := conn.users[issue.owner]
-	return *owner
+	return conn.user_get(issue.owner)
 }
 
 pub fn (issue Issue) as_md(url string) string {
+	project := issue.project()
+	owner := issue.owner()
+	assigned_to := issue.assigned_as_str()
 	mut issue_md := $tmpl('./templates/issue.md')
 	issue_md = fix_empty_lines(issue_md)
 	return issue_md

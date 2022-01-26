@@ -8,9 +8,9 @@ import despiegk.crystallib.crystaljson
 pub fn users() ? {
 	mut conn := connection_get()
 	resp := conn.get_json_str('users', '', true) ?
-	raw_data := json2.raw_decode(resp.replace("\\\\", "")) ?
+	raw_data := json2.raw_decode(resp.replace('\\\\', '')) ?
 	blocks := raw_data.arr()
-	os.write_file("/tmp/taiga_blocks/users", "$blocks") ?
+	os.write_file('/tmp/taiga_blocks/users', '$blocks') ?
 	println('[+] Loading $blocks.len users ...')
 	for u in blocks {
 		user := user_decode(u.str()) or {
@@ -57,11 +57,11 @@ fn user_decode(data string) ?User {
 	return user
 }
 
-fn (user User) projects() []Project {
+fn (user User) projects() []&Project {
 	mut conn := connection_get()
-	mut all_user_projects := []Project{}
+	mut all_user_projects := []&Project{}
 	for id in conn.projects.keys() {
-		proj := *conn.projects[id]
+		proj := conn.projects[id]
 		if user.id in proj.members {
 			all_user_projects << proj
 		}
@@ -72,10 +72,10 @@ fn (user User) projects() []Project {
 // get markdown for all projects per user
 pub fn (user User) as_md(url string) string {
 	mut projects := user.projects()
-	mut stories := []Story{}
-	mut issues := []Issue{}
-	mut tasks := []Task{}
-	mut epics := []Epic{}
+	mut stories := []&Story{}
+	mut issues := []&Issue{}
+	mut tasks := []&Task{}
+	mut epics := []&Epic{}
 	for p in projects {
 		stories << p.stories()
 		issues << p.issues()

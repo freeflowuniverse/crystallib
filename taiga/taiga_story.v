@@ -9,9 +9,9 @@ import math { min }
 pub fn stories() ? {
 	mut conn := connection_get()
 	resp := conn.get_json_str('userstories', '', true) ?
-	raw_data := json2.raw_decode(resp.replace("\\\\", "")) ?
+	raw_data := json2.raw_decode(resp.replace('\\\\', '')) ?
 	blocks := raw_data.arr()
-	os.write_file("/tmp/taiga_blocks/stories", "$blocks") ?
+	os.write_file('/tmp/taiga_blocks/stories', '$blocks') ?
 	println('[+] Loading $blocks.len stories ...')
 	for s in blocks {
 		// println('STORY:\n$s')
@@ -20,7 +20,7 @@ pub fn stories() ? {
 			eprintln(err)
 			Story{}
 		}
-		if story != Story{} && story.project in conn.projects{
+		if story != Story{} && story.project in conn.projects {
 			conn.story_remember(story)
 		}
 	}
@@ -103,34 +103,34 @@ pub fn (mut s Story) comments() ?[]Comment {
 }
 
 // get tasks objects for each story
-pub fn (story Story) tasks() []Task {
+pub fn (story Story) tasks() []&Task {
 	mut conn := connection_get()
-	mut story_tasks := []Task{}
+	mut story_tasks := []&Task{}
 	for _, task in conn.tasks {
 		mut t_story := task.user_story
 		if t_story == story.id {
-			story_tasks << *task
+			story_tasks << task
 		}
 	}
 	return story_tasks
 }
 
 // Get project object
-pub fn (story Story) project() Project {
+pub fn (story Story) project() &Project {
 	mut conn := connection_get()
-	return *conn.projects[story.project]
+	return conn.project_get(story.project)
 }
 
-pub fn (story Story) owner() User {
+pub fn (story Story) owner() &User {
 	mut conn := connection_get()
-	return *conn.users[story.owner]
+	return conn.user_get(story.owner)
 }
 
-pub fn (story Story) assigned() []User {
+pub fn (story Story) assigned() []&User {
 	mut conn := connection_get()
-	mut assigned := []User{}
+	mut assigned := []&User{}
 	for i in story.assigned_to {
-		assigned << conn.users[i]
+		assigned << conn.user_get(i)
 	}
 	return assigned
 }
@@ -145,6 +145,10 @@ pub fn (story Story) assigned_as_str() string {
 }
 
 pub fn (story Story) as_md(url string) string {
+	owner := story.owner()
+	assigned_to := story.assigned_as_str()
+	project := story.project()
+	tasks := story.tasks()
 	mut story_md := $tmpl('./templates/story.md')
 	story_md = fix_empty_lines(story_md)
 	return story_md

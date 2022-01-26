@@ -10,9 +10,9 @@ pub fn projects() ?[]Project {
 	// List all Projects
 	mut conn := connection_get()
 	resp := conn.get_json_str('projects', '', true) ?
-	raw_data := json2.raw_decode(resp.replace("\\\\", "")) ?
+	raw_data := json2.raw_decode(resp.replace('\\\\', '')) ?
 	blocks := raw_data.arr()
-	os.write_file("/tmp/taiga_blocks/projects", "$blocks") ?
+	os.write_file('/tmp/taiga_blocks/projects', '$blocks') ?
 	println('[+] Loading $blocks.len projects ...')
 	mut projects := []Project{}
 	for proj in blocks {
