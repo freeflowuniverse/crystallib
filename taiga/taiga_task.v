@@ -102,14 +102,14 @@ fn task_decode(data string) ?Task {
 // Get project object for each task
 pub fn (task Task) project() Project {
 	mut conn := connection_get()
-	return *conn.projects[task.project] or { &Project{} }
+	return *conn.projects[task.project]
 }
 
 // Get story object for each task
 pub fn (task Task) story() Story {
 	mut conn := connection_get()
 	if task.user_story != 0 {
-		return *conn.stories[task.user_story] or { &Story{} }
+		return *conn.stories[task.user_story]
 	}
 	return Story{}
 }
@@ -119,8 +119,7 @@ pub fn (task Task) assigned() []User {
 	mut conn := connection_get()
 	mut assigned := []User{}
 	for i in task.assigned_to {
-		xx := *conn.users[i] or { &User{} }
-		assigned << xx
+		assigned << conn.users[i]
 	}
 	return assigned
 }

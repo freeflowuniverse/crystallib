@@ -103,7 +103,8 @@ pub fn (mut issue Issue) comments() ?[]Comment {
 // Get project object for each issue
 pub fn (issue Issue) project() Project {
 	mut conn := connection_get()
-	return *conn.projects[issue.project] or { &Project{} }
+	project := conn.projects[issue.project]
+	return *project
 }
 
 // Get assigned users objects for each issue
@@ -111,8 +112,7 @@ pub fn (issue Issue) assigned() []User {
 	mut conn := connection_get()
 	mut assigned_users := []User{}
 	for i in issue.assigned_to {
-		uu := *conn.users[i] or { &User{} }
-		assigned_users << uu
+		assigned_users << conn.users[i]
 	}
 	return assigned_users
 }
@@ -129,7 +129,8 @@ pub fn (issue Issue) assigned_as_str() string {
 // Get owner user object for each issue
 pub fn (issue Issue) owner() User {
 	mut conn := connection_get()
-	return *conn.users[issue.owner] or { &User{} }
+	mut owner := conn.users[issue.owner]
+	return *owner
 }
 
 pub fn (issue Issue) as_md(url string) string {
