@@ -19,7 +19,7 @@ pub fn tasks() ? {
 			eprintln(err)
 			Task{}
 		}
-		if task != Task{} {
+		if task != Task{} && task.project in conn.projects {
 			conn.task_remember(task)
 		}
 	}

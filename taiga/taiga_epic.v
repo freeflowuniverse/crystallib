@@ -22,7 +22,7 @@ pub fn epics() ? {
 			eprintln(err)
 			Epic{}
 		}
-		if epic != Epic{} {
+		if epic != Epic{} && epic.project in conn.projects {
 			conn.epic_remember(epic)
 		}
 	}

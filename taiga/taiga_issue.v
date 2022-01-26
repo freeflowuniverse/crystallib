@@ -21,7 +21,7 @@ pub fn issues() ? {
 			eprintln(err)
 			Issue{}
 		}
-		if issue != Issue{} {
+		if issue != Issue{} && issue.project in conn.projects {
 			conn.issue_remember(issue)
 		}
 	}

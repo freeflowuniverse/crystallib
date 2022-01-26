@@ -20,7 +20,7 @@ pub fn stories() ? {
 			eprintln(err)
 			Story{}
 		}
-		if story != Story{} {
+		if story != Story{} && story.project in conn.projects{
 			conn.story_remember(story)
 		}
 	}
