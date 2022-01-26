@@ -52,8 +52,7 @@ fn user_decode(data string) ?User {
 		public_key: data_as_map['public_key'].str()
 	}
 	user.date_joined = parse_time(data_as_map['date_joined'].str())
-	user.file_name = texttools.name_clean(user.username) + '.md'
-	user.file_name = texttools.ascii_clean(user.file_name)
+	user.file_name = generate_file_name(user.username + '.md') 
 	return user
 }
 
