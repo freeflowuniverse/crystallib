@@ -113,19 +113,20 @@ pub fn (story Story) tasks() []Task {
 // Get project object
 pub fn (story Story) project() Project {
 	mut conn := connection_get()
-	return *conn.projects[story.project]
+	return *conn.projects[story.project] or { &Project{} }
 }
 
 pub fn (story Story) owner() User {
 	mut conn := connection_get()
-	return *conn.users[story.owner]
+	return *conn.users[story.owner] or { &User{} }
 }
 
 pub fn (story Story) assigned() []User {
 	mut conn := connection_get()
 	mut assigned := []User{}
 	for i in story.assigned_to {
-		assigned << conn.users[i]
+		xxx := *conn.users[i] or { &User{} }
+		assigned << xxx
 	}
 	return assigned
 }
