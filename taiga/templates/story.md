@@ -30,15 +30,15 @@
 @end
 @end
 
-@if tasks.len > 0
+@if story.tasks().len > 0
 
 ## Tasks
 
 | Subject | Owner | Assigned to | Last Update | Deadline | Close Status | # Comments | Link |
 | ------- | ----- | ----------- | ----------- | -------- | ------------ | ---------- | ---- |
 
-@for task in tasks
-| $task.subject | $task.owner().username | $task.assigned_as_str() | $task.modified_date.ymmdd() | $task.due_date.ymmdd() | $task.is_closed | 0 | [wiki]($task.file_name) \| [web](@url/project/@story.project().slug/task/$task.ref) |
+@for task in story.tasks()
+| $task.subject | $task.owner().username | $task.assigned_as_str() | $task.modified_date.ymmdd() | $task.due_date.ymmdd() | $task.is_closed | $task.comments.len | [wiki]($task.file_name) \| [web](@url/project/@story.project().slug/task/$task.ref) |
 
 @end
 @end

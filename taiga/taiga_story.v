@@ -2,11 +2,16 @@ module taiga
 
 import despiegk.crystallib.crystaljson
 import json
+import x.json2
+import os
 import math { min }
 
 pub fn stories() ? {
 	mut conn := connection_get()
-	blocks := conn.get_json_list('userstories', '', true) ?
+	resp := conn.get_json_str('userstories', '', true) ?
+	raw_data := json2.raw_decode(resp.replace("\\\\", "")) ?
+	blocks := raw_data.arr()
+	os.write_file("/tmp/taiga_blocks/stories", "$blocks") ?
 	println('[+] Loading $blocks.len stories ...')
 	for s in blocks {
 		// println('STORY:\n$s')
@@ -140,7 +145,6 @@ pub fn (story Story) assigned_as_str() string {
 }
 
 pub fn (story Story) as_md(url string) string {
-	tasks := story.tasks()
 	mut story_md := $tmpl('./templates/story.md')
 	story_md = fix_empty_lines(story_md)
 	return story_md

@@ -3,12 +3,17 @@ module taiga
 import despiegk.crystallib.crystaljson
 import despiegk.crystallib.texttools
 import json
+import x.json2
+import os
 import math { min }
 
 // List all issues ( One request only )
 pub fn issues() ? {
 	mut conn := connection_get()
-	blocks := conn.get_json_list('issues', '', true) ?
+	resp := conn.get_json_str('issues', '', true) ?
+	raw_data := json2.raw_decode(resp.replace("\\\\", "")) ?
+	blocks := raw_data.arr()
+	os.write_file("/tmp/taiga_blocks/issues", "$blocks") ?
 	println('[+] Loading $blocks.len issues ...')
 	for i in blocks {
 		mut issue := Issue{}

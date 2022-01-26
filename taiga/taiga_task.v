@@ -2,11 +2,16 @@ module taiga
 
 import despiegk.crystallib.crystaljson
 import json
+import x.json2
+import os
 import math { min }
 
 pub fn tasks() ? {
 	mut conn := connection_get()
-	blocks := conn.get_json_list('tasks', '', true) ?
+	resp := conn.get_json_str('tasks', '', true) ?
+	raw_data := json2.raw_decode(resp.replace("\\\\", "")) ?
+	blocks := raw_data.arr()
+	os.write_file("/tmp/taiga_blocks/tasks", "$blocks") ?
 	println('[+] Loading $blocks.len tasks ...')
 	for t in blocks {
 		mut task := Task{}

@@ -2,17 +2,21 @@ module taiga
 
 import despiegk.crystallib.texttools
 import json
-// import x.json2 { raw_decode }
+import x.json2
+import os
 import despiegk.crystallib.crystaljson
 
 pub fn projects() ?[]Project {
 	// List all Projects
 	mut conn := connection_get()
-	blocks := conn.get_json_list('projects', '', true) ?
+	resp := conn.get_json_str('projects', '', true) ?
+	raw_data := json2.raw_decode(resp.replace("\\\\", "")) ?
+	blocks := raw_data.arr()
+	os.write_file("/tmp/taiga_blocks/projects", "$blocks") ?
 	println('[+] Loading $blocks.len projects ...')
 	mut projects := []Project{}
 	for proj in blocks {
-		project := project_decode(proj) or {
+		project := project_decode(proj.str()) or {
 			eprintln(err)
 			Project{}
 		}

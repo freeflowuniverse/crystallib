@@ -1,11 +1,17 @@
 module taiga
 
+import os
+import x.json2
 import despiegk.crystallib.texttools
 import despiegk.crystallib.crystaljson
 
 pub fn users() ? {
 	mut conn := connection_get()
-	blocks := conn.get_json_list('users', '', true) ?
+	resp := conn.get_json_str('users', '', true) ?
+	raw_data := json2.raw_decode(resp.replace("\\\\", "")) ?
+	blocks := raw_data.arr()
+	os.write_file("/tmp/taiga_blocks/users", "$blocks") ?
+	println('[+] Loading $blocks.len users ...')
 	for u in blocks {
 		user := user_decode(u.str()) or {
 			println(err)

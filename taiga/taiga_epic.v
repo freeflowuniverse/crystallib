@@ -4,12 +4,17 @@ module taiga
 import despiegk.crystallib.crystaljson
 import despiegk.crystallib.texttools
 import json
+import x.json2
+import os
 import time
 import math { min }
 
 pub fn epics() ? {
 	mut conn := connection_get()
-	blocks := conn.get_json_list('epics', '', true) ?
+	resp := conn.get_json_str('epics', '', true) ?
+	raw_data := json2.raw_decode(resp.replace("\\\\", "")) ?
+	blocks := raw_data.arr()
+	os.write_file("/tmp/taiga_blocks/epics", "$blocks") ?
 	println('[+] Loading $blocks.len epics ...')
 	for e in blocks {
 		mut epic := Epic{}
