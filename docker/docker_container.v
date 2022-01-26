@@ -82,9 +82,10 @@ pub fn (mut container DockerContainer) delete(force bool) ? {
 	println(" - CONTAINER DELETE: $container.name")
 	if force {
 		node.executor.exec_silent('docker rm -f $container.id')?
-
+	}else{
+		node.executor.exec_silent('docker rm $container.id')?
 	}
-	node.executor.exec_silent('docker rm $container.id')?
+	
 }
 
 // save the docker container to image
