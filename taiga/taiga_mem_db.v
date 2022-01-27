@@ -9,40 +9,53 @@ pub fn load_data() ? {
 	users() ?
 }
 
-// Get elements from singleton obj if found, else get it from API
-fn (mut conn TaigaConnection) user_get(id int) ?User {
+// Get elements from singleton obj if found
+fn (mut conn TaigaConnection) user_get(id int) &User {
 	if id in conn.users.keys() {
-		return *conn.users[id] // Get data from singleton obj
+		return conn.users[id] // Get data from singleton obj
 	}
-	return user_get(id) // Get data from API
+	eprintln("[-] Can't get user with id: $id from local memory") // print error
+	return &User{}
 }
 
-fn (mut conn TaigaConnection) story_get(id int) ?Story {
+fn (mut conn TaigaConnection) story_get(id int) &Story {
 	if id in conn.stories.keys() {
-		return *conn.stories[id] // Get data from singleton obj
+		return conn.stories[id] // Get data from singleton obj
 	}
-	return story_get(id) // Get data from API
+	eprintln("[-] Can't get story with id: $id from local memory") // print error
+	return &Story{}
 }
 
-fn (mut conn TaigaConnection) epic_get(id int) ?Epic {
+fn (mut conn TaigaConnection) epic_get(id int) &Epic {
 	if id in conn.epics.keys() {
-		return *conn.epics[id] // Get data from singleton obj
+		return conn.epics[id] // Get data from singleton obj
 	}
-	return epic_get(id) // Get data from API
+	eprintln("[-] Can't get epic with id: $id from local memory") // print error
+	return &Epic{}
 }
 
-fn (mut conn TaigaConnection) task_get(id int) ?Task {
+fn (mut conn TaigaConnection) task_get(id int) &Task {
 	if id in conn.tasks.keys() {
-		return *conn.tasks[id] // Get data from singleton obj
+		return conn.tasks[id] // Get data from singleton obj
 	}
-	return task_get(id) // Get data from API
+	eprintln("[-] Can't get task with id: $id from local memory") // print error
+	return &Task{}
 }
 
-fn (mut conn TaigaConnection) issue_get(id int) ?Issue {
+fn (mut conn TaigaConnection) issue_get(id int) &Issue {
 	if id in conn.issues.keys() {
-		return *conn.issues[id] // Get data from singleton obj
+		return conn.issues[id] // Get data from singleton obj
 	}
-	return issue_get(id) // Get data from API
+	eprintln("[-] Can't get issue with id: $id from local memory") // print error
+	return &Issue{}
+}
+
+fn (mut conn TaigaConnection) project_get(id int) &Project {
+	if id in conn.projects.keys() {
+		return conn.projects[id] // Get data from singleton obj
+	}
+	eprintln("[-] Can't get project with id: $id from local memory") // print error
+	return &Project{}
 }
 
 // Remember and update elements in singleton obj

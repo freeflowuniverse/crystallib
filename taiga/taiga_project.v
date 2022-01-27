@@ -31,11 +31,11 @@ pub fn (project Project) delete() ?bool {
 	return conn.delete('projects', project.id)
 }
 
-pub fn (project Project) stories() []Story {
+pub fn (project Project) stories() []&Story {
 	mut conn := connection_get()
-	mut project_stories := []Story{}
-	for id in conn.stories.keys() {
-		story := *conn.stories[id]
+	mut project_stories := []&Story{}
+	for id, _ in conn.stories {
+		story := conn.story_get(id)
 		if story.project == project.id {
 			project_stories << story
 		}
@@ -43,11 +43,11 @@ pub fn (project Project) stories() []Story {
 	return project_stories
 }
 
-pub fn (project Project) issues() []Issue {
+pub fn (project Project) issues() []&Issue {
 	mut conn := connection_get()
-	mut project_issues := []Issue{}
-	for id in conn.issues.keys() {
-		issue := *conn.issues[id]
+	mut project_issues := []&Issue{}
+	for id, _ in conn.issues {
+		issue := conn.issue_get(id)
 		if issue.project == project.id {
 			project_issues << issue
 		}
@@ -55,11 +55,11 @@ pub fn (project Project) issues() []Issue {
 	return project_issues
 }
 
-pub fn (project Project) tasks() []Task {
+pub fn (project Project) tasks() []&Task {
 	mut conn := connection_get()
-	mut project_tasks := []Task{}
-	for id in conn.tasks.keys() {
-		task := *conn.tasks[id]
+	mut project_tasks := []&Task{}
+	for id, _ in conn.tasks {
+		task := conn.task_get(id)
 		if task.project == project.id {
 			project_tasks << task
 		}
@@ -67,11 +67,11 @@ pub fn (project Project) tasks() []Task {
 	return project_tasks
 }
 
-pub fn (project Project) epics() []Epic {
+pub fn (project Project) epics() []&Epic {
 	mut conn := connection_get()
-	mut project_epics := []Epic{}
-	for id in conn.epics.keys() {
-		epic := *conn.epics[id]
+	mut project_epics := []&Epic{}
+	for id, _ in conn.epics {
+		epic := conn.epic_get(id)
 		if epic.project == project.id {
 			project_epics << epic
 		}
@@ -79,13 +79,17 @@ pub fn (project Project) epics() []Epic {
 	return project_epics
 }
 
-pub fn (project Project) owner() User {
+pub fn (project Project) owner() &User {
 	mut conn := connection_get()
-	user := conn.users[project.owner]
-	return *user
+	return conn.user_get(project.owner)
 }
 
 pub fn (project Project) as_md(url string) string {
+	stories := project.stories()
+	issues := project.issues()
+	tasks := project.tasks()
+	owner := project.owner()
+	// epics := project.epics() //TODO: Later
 	mut proj_md := $tmpl('./templates/project.md')
 	proj_md = fix_empty_lines(proj_md)
 	return proj_md

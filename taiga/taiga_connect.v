@@ -6,6 +6,7 @@ import net.http
 import despiegk.crystallib.redisclient
 import despiegk.crystallib.crystaljson
 
+// FIXME: Not Working
 struct TaigaConnectionSettings {
 	comments_story bool = true
 	comments_issue bool = true
@@ -30,24 +31,22 @@ pub mut:
 	issues   map[int]&Issue
 }
 
-// needed to get singleton
-fn init2() TaigaConnection {
+// Init connection for taiga singleton
+fn init_connection() TaigaConnection {
 	mut conn := TaigaConnection{
 		redis: redisclient.connect('127.0.0.1:6379') or { redisclient.Redis{} }
 	}
 	return conn
 }
 
-// singleton creation
-const connection = init2()
+// Singleton creation
+const connection = init_connection()
 
-// make sure to use new first, so that the connection has been initted
+// Make sure to use new first, so that the connection has been initiated
 // then you can get it everywhere
 pub fn connection_get() &TaigaConnection {
 	return &taiga.connection
 }
-
-// const conn = init_connection()
 
 struct AuthDetail {
 mut:
@@ -71,10 +70,9 @@ pub fn new(url string, login string, passwd string, cache_timeout int) &TaigaCon
 		login: Username that used in login
 		passwd: Username password
 		cache_timeout: Expire time in seconds for caching
-		full: flag to detect if we need to get the full data or not
 
 	Output:
-		TaigaConnection: Client contains taiga auth details, taiga url, redis cleint and cache timeout.
+		TaigaConnection: Client contains taiga auth details, taiga url, redis client and cache timeout.
 	*/
 	mut conn := connection_get()
 	println('- Connection Succeeded!')
@@ -101,24 +99,6 @@ fn (mut h TaigaConnection) header() http.Header {
 	return header
 }
 
-// fn (mut h TaigaConnection) post_json_dict_any(_amyprefix string, postdata string, cache bool) ?map[string]json2.Any {
-// 	/*
-// 	Post Request with Json Data
-// 	Inputs:
-// 		prefix: Taiga elements types, ex (projects, issues, tasks, ...).
-// 		postdata: Json encoded data.
-// 		cache: Flag to enable caching.
-// 		authenticated: Flag to add authorization flag with the request.
-
-// 	Output:
-// 		response: response as dict of json2 any
-// 	*/
-// 	mut result := h.post_json_str(prefix, postdata, cache) ?
-// 	data_raw := json2.raw_decode(result) ?
-// 	data := data_raw.as_map()
-// 	return crystaljson.json_dict(data,false)
-// }
-
 fn (mut h TaigaConnection) post_json_dict(prefix string, postdata string, cache bool) ?map[string]json2.Any {
 	/*
 	Post Request with Json Data
@@ -135,22 +115,7 @@ fn (mut h TaigaConnection) post_json_dict(prefix string, postdata string, cache 
 	return crystaljson.json_dict_any(result, false, [], [])
 }
 
-fn (mut h TaigaConnection) post_json_list(prefix string, postdata string, cache bool) ?[]string {
-	/*
-	Post Request with Json Data
-	Inputs:
-		prefix: Taiga elements types, ex (projects, issues, tasks, ...).
-		postdata: Json encoded data.
-		cache: Flag to enable caching.
-		authenticated: Flag to add authorization flag with the request.
-
-	Output:
-		response: response as list of json strings
-	*/
-	mut result := h.post_json_str(prefix, postdata, cache) ?
-	return crystaljson.json_list(result, false)
-}
-
+// Post request with json and return result as string
 // this is the method which calls to the service
 fn (mut h TaigaConnection) post_json_str(prefix string, postdata string, cache bool) ?string {
 	/*
@@ -191,23 +156,6 @@ fn (mut h TaigaConnection) post_json_str(prefix string, postdata string, cache b
 	return result
 }
 
-fn (mut h TaigaConnection) get_json_dict_any(prefix string, data string, cache bool) ?map[string]json2.Any {
-	/*
-	Get Request with Json Data
-	Inputs:
-		prefix: Taiga elements types, ex (projects, issues, tasks, ...).
-		data: Json encoded data.
-		cache: Flag to enable caching.
-
-	Output:
-		response: response as Json2.Any map.
-	*/
-	mut result := h.get_json_str(prefix, data, cache) ?
-	data_raw := json2.raw_decode(result) ?
-	data2 := data_raw.as_map()
-	return data2
-}
-
 fn (mut h TaigaConnection) get_json_list(prefix string, getdata string, cache bool) ?[]string {
 	/*
 	Get Request with Json Data
@@ -223,6 +171,7 @@ fn (mut h TaigaConnection) get_json_list(prefix string, getdata string, cache bo
 	return crystaljson.json_list(result, false)
 }
 
+// Get request with json data and return response as string
 fn (mut h TaigaConnection) get_json_str(prefix string, getdata string, cache bool) ?string {
 	/*
 	Get Request with Json Data
@@ -236,9 +185,7 @@ fn (mut h TaigaConnection) get_json_str(prefix string, getdata string, cache boo
 	*/
 	mut result := h.cache_get(prefix, getdata, cache)
 	if result == '' {
-		// println("MISS1")
 		url := '$h.url/api/v1/$prefix'
-		// println(' ... $url')
 		mut req := http.new_request(http.Method.get, url, getdata) ?
 		req.header = h.header()
 		req.add_custom_header('x-disable-pagination', 'True') ?
@@ -252,24 +199,6 @@ fn (mut h TaigaConnection) get_json_str(prefix string, getdata string, cache boo
 	}
 	return result
 }
-
-// fn (mut h TaigaConnection) edit_json_dict_any(prefix string, id int, data string, cache bool) ?map[string]json2.Any {
-// 	/*
-// 	Patch Request with Json Data
-// 	Inputs:
-// 		prefix: Taiga elements types, ex (projects, issues, tasks, ...).
-// 		id: id of the element.
-// 		data: Json encoded data.
-// 		cache: Flag to enable caching.
-
-// 	Output:
-// 		response: response Json2.Any map.
-// 	*/
-// 	result := h.edit_json(prefix,id,data,cache)?
-// 	data_raw := json2.raw_decode(result) ?
-// 	data2 := data_raw.as_map()
-// 	return data2
-// }
 
 fn (mut h TaigaConnection) edit_json(prefix string, id int, data string) ?string {
 	/*

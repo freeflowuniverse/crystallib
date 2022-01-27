@@ -1,5 +1,6 @@
 module taiga
 
+import x.json2
 import despiegk.crystallib.crystaljson
 
 // return vlang clean object

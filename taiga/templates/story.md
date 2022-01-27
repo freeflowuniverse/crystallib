@@ -1,14 +1,14 @@
 # @story.subject
 
-> [@story.subject](@url/project/@story.project().slug/us/@story.ref)
+> [@story.subject](@url/project/@project.slug/us/@story.ref)
 
-|             |                                                     |
-| ----------- | --------------------------------------------------- |
-| Owner       | @story.owner().username                             |
-| Assigned to | @story.assigned_as_str()                            |
-| Created at  | @story.created_date.ymmdd()                         |
-| Last Update | @story.modified_date.ymmdd()                        |
-| Project     | [@story.project().name](@story.project().file_name) |
+|             |                                     |
+| ----------- | ----------------------------------- |
+| Owner       | @owner.username                     |
+| Assigned to | @assigned_to                        |
+| Created at  | @story.created_date.ymmdd()         |
+| Last Update | @story.modified_date.ymmdd()        |
+| Project     | [@project.name](@project.file_name) |
 
 @if story.description != ""
 ## Description
@@ -38,7 +38,7 @@
 | ------- | ----- | ----------- | ----------- | -------- | ------------ | ---------- | ---- |
 
 @for task in tasks
-| $task.subject | $task.owner().username | $task.assigned_as_str() | $task.modified_date.ymmdd() | $task.due_date.ymmdd() | $task.is_closed | 0 | [wiki]($task.file_name) \| [web](@url/project/@story.project().slug/task/$task.ref) |
+| $task.subject | $task.owner().username | $task.assigned_as_str() | $task.modified_date.ymmdd() | $task.due_date.ymmdd() | $task.is_closed | $task.comments.len | [wiki]($task.file_name) \| [web](@url/project/@story.project().slug/task/$task.ref) |
 
 @end
 @end

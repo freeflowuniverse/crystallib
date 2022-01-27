@@ -2,11 +2,16 @@ module taiga
 
 import despiegk.crystallib.crystaljson
 import json
+import x.json2
+import os
 import math { min }
 
 pub fn tasks() ? {
 	mut conn := connection_get()
-	blocks := conn.get_json_list('tasks', '', true) ?
+	resp := conn.get_json_str('tasks', '', true) ?
+	raw_data := json2.raw_decode(resp.replace('\\\\', '')) ?
+	blocks := raw_data.arr()
+	os.write_file('/tmp/taiga_blocks/tasks', '$blocks') ?
 	println('[+] Loading $blocks.len tasks ...')
 	for t in blocks {
 		mut task := Task{}
@@ -14,7 +19,7 @@ pub fn tasks() ? {
 			eprintln(err)
 			Task{}
 		}
-		if task != Task{} {
+		if task != Task{} && task.project in conn.projects {
 			conn.task_remember(task)
 		}
 	}
@@ -100,26 +105,26 @@ fn task_decode(data string) ?Task {
 }
 
 // Get project object for each task
-pub fn (task Task) project() Project {
+pub fn (task Task) project() &Project {
 	mut conn := connection_get()
-	return *conn.projects[task.project]
+	return conn.project_get(task.project)
 }
 
 // Get story object for each task
-pub fn (task Task) story() Story {
+pub fn (task Task) story() &Story {
 	mut conn := connection_get()
 	if task.user_story != 0 {
-		return *conn.stories[task.user_story]
+		return conn.story_get(task.user_story)
 	}
-	return Story{}
+	return &Story{}
 }
 
 // Get assigned users objects for each task
-pub fn (task Task) assigned() []User {
+pub fn (task Task) assigned() []&User {
 	mut conn := connection_get()
-	mut assigned := []User{}
+	mut assigned := []&User{}
 	for i in task.assigned_to {
-		assigned << conn.users[i]
+		assigned << conn.user_get(i)
 	}
 	return assigned
 }
@@ -134,13 +139,17 @@ pub fn (task Task) assigned_as_str() string {
 }
 
 // Get owner user object for each task
-pub fn (task Task) owner() User {
+pub fn (task Task) owner() &User {
 	mut conn := connection_get()
-	return *conn.users[task.owner]
+	return conn.user_get(task.owner)
 }
 
 // export template per task
 pub fn (task Task) as_md(url string) string {
+	owner := task.owner()
+	assigned_to := task.assigned_as_str()
+	story := task.story()
+	project := task.project()
 	mut task_md := $tmpl('./templates/task.md')
 	task_md = fix_empty_lines(task_md)
 	return task_md

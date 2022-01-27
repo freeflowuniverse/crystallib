@@ -1,11 +1,17 @@
 module taiga
 
+import os
+import x.json2
 import despiegk.crystallib.texttools
 import despiegk.crystallib.crystaljson
 
 pub fn users() ? {
 	mut conn := connection_get()
-	blocks := conn.get_json_list('users', '', true) ?
+	resp := conn.get_json_str('users', '', true) ?
+	raw_data := json2.raw_decode(resp.replace('\\\\', '')) ?
+	blocks := raw_data.arr()
+	os.write_file('/tmp/taiga_blocks/users', '$blocks') ?
+	println('[+] Loading $blocks.len users ...')
 	for u in blocks {
 		user := user_decode(u.str()) or {
 			println(err)
@@ -46,16 +52,15 @@ fn user_decode(data string) ?User {
 		public_key: data_as_map['public_key'].str()
 	}
 	user.date_joined = parse_time(data_as_map['date_joined'].str())
-	user.file_name = texttools.name_clean(user.username) + '.md'
-	user.file_name = texttools.ascii_clean(user.file_name)
+	user.file_name = generate_file_name(user.username + '.md') 
 	return user
 }
 
-fn (user User) projects() []Project {
+fn (user User) projects() []&Project {
 	mut conn := connection_get()
-	mut all_user_projects := []Project{}
+	mut all_user_projects := []&Project{}
 	for id in conn.projects.keys() {
-		proj := *conn.projects[id]
+		proj := conn.projects[id]
 		if user.id in proj.members {
 			all_user_projects << proj
 		}
@@ -66,10 +71,10 @@ fn (user User) projects() []Project {
 // get markdown for all projects per user
 pub fn (user User) as_md(url string) string {
 	mut projects := user.projects()
-	mut stories := []Story{}
-	mut issues := []Issue{}
-	mut tasks := []Task{}
-	mut epics := []Epic{}
+	mut stories := []&Story{}
+	mut issues := []&Issue{}
+	mut tasks := []&Task{}
+	mut epics := []&Epic{}
 	for p in projects {
 		stories << p.stories()
 		issues << p.issues()

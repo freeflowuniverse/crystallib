@@ -1,14 +1,14 @@
 # @issue.subject
 
-> [@issue.subject](@url/project/@issue.project().slug/issue/@issue.ref)
+> [@issue.subject](@url/project/@project.slug/issue/@issue.ref)
 
-|             |                                         |
-| ----------- | --------------------------------------- |
-| Owner       | @issue.owner().username                 |
-| Assigned to | @issue.assigned_as_str()                |
-| Created at  | @issue.created_date.ymmdd()             |
-| Last Update | @issue.modified_date.ymmdd()            |
-| Project     | [@{issue.project().name}](@issue.project().file_name) |
+|             |                                       |
+| ----------- | ------------------------------------- |
+| Owner       | @owner.username                       |
+| Assigned to | @assigned_to                          |
+| Created at  | @issue.created_date.ymmdd()           |
+| Last Update | @issue.modified_date.ymmdd()          |
+| Project     | [@{project.name}](@project.file_name) |
 
 @if issue.description != ""
 
