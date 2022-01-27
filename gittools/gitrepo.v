@@ -167,7 +167,7 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ? {
 		// first check if path does not exist yet, if not need to clone
 		if !os.exists(repo.path()) {
 			println(' - missing repo, pull: $url-> $repo.path()')
-			if !needs_to_be_ssh && ssh_agent_loaded() {
+			if !needs_to_be_ssh && sshagent.loaded() {
 				needs_to_be_ssh = true
 			}
 			// get the url (http or ssh)
