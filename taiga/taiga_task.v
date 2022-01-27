@@ -1,53 +1,8 @@
 module taiga
+
 import despiegk.crystallib.crystaljson
-import despiegk.crystallib.texttools
-// import x.json2 { raw_decode }
 import json
-import time { Time }
 import math { min }
-
-
-enum TaskStatus { 
-	//TODO: there will be many other statuses used, we have to fix, in taiga itself, make the story status as below eveywhere
-	unknown
-	new
-	accepted
-	inprogress
-	verification //is called ready for test in taiga
-	done
-}
-
-
-pub struct Task {
-pub mut:
-	description            string
-	id                     int
-	tags                   []string
-	project                int
-	user_story             int
-	status                 TaskStatus
-	assigned_to            int
-	owner                  int
-	created_date           Time       
-	modified_date          Time        
-	finished_date          Time        
-	due_date               Time        
-	due_date_reason        string
-	subject                string
-	is_closed              bool
-	is_blocked             bool
-	blocked_note           string
-	ref                    int
-	total_comments         int //TODO: why is this needed if we already have comments list? everyone can do count()?
-	comments               []Comment   
-	file_name              string
-}
-
-struct NewTask {
-pub mut:
-	subject string
-	project int
-}
 
 pub fn tasks() ? {
 	mut conn := connection_get()
@@ -66,7 +21,7 @@ pub fn tasks() ? {
 }
 
 // get comments in lis from task
-pub fn (mut t Task) get_comments() ?[]Comment {
+pub fn (mut t Task) comments() ?[]Comment {
 	t.comments = comments_get('task', t.id) ?
 	return t.comments
 }
@@ -100,45 +55,88 @@ pub fn task_delete(id int) ?bool {
 }
 
 fn task_decode(data string) ?Task {
-
-
-	data_as_map := crystaljson.json_dict_any(data,false,[],[])?
-
-	mut task:=Task{
-		//TODO: put properties in		
-	}
-
-	task.comments = []
-
-
-	projname:=data_as_map["project_extra_info"].as_map()["name"].str().to_upper()
-	if projname.contains("ARCHIVE"){
-		//this is a task linked to a project which is archived, no reason to process
+	data_as_map := crystaljson.json_dict_any(data, false, [], []) ?
+	projname := data_as_map['project_extra_info'].as_map()['name'].str().to_upper()
+	if projname.contains('ARCHIVE') {
+		// this is a task linked to a project which is archived, no reason to process
 		return Task{}
 	}
-
-	// println(data_as_map)
-
+	mut task := Task{
+		description: data_as_map['description'].str()
+		id: data_as_map['id'].int()
+		project: data_as_map['project'].int()
+		user_story: data_as_map['user_story'].int()
+		owner: data_as_map['owner'].int()
+		due_date_reason: data_as_map['due_date_reason'].str()
+		subject: data_as_map['subject'].str()
+		is_closed: data_as_map['is_closed'].bool()
+		is_blocked: data_as_map['is_blocked'].bool()
+		blocked_note: data_as_map['blocked_note'].str()
+		ref: data_as_map['ref'].int()
+	}
+	for tag in data_as_map['tags'].arr() {
+		task.tags << tag.str()
+	}
+	for assign in data_as_map['assigned_to'].arr() {
+		if assign.int() != 0 {
+			task.assigned_to << assign.int()
+		}
+	}
+	// task.status = data_as_map["status_extra_info"].as_map()["name"].str() // TODO: Use Enum
 	task.created_date = parse_time(data_as_map['created_date'].str())
 	task.modified_date = parse_time(data_as_map['modified_date'].str())
 	task.finished_date = parse_time(data_as_map['finished_date'].str())
 	task.due_date = parse_time(data_as_map['due_date'].str())
-	task.file_name = texttools.name_clean(task.subject[0..min(40, task.subject.len)] + '-' + task.id.str()) + '.md'
-	task.file_name = texttools.ascii_clean(task.file_name)
-	if true{
-		println(task.file_name)
-		panic('sss')
-	}	
-	// task.user_story_extra_info.file_name =
-	// 	texttools.name_clean(task.user_story_extra_info.subject[0..min(40, task.user_story_extra_info.subject.len)] +
-	// 	'-' + task.user_story_extra_info.id.str()) + '.md'
-	// task.project_extra_info.file_name =
-	// 	texttools.name_clean(task.project_extra_info.slug) + '.md'
-	mut conn := connection_get()
-	if conn.settings.comments_task{
-		task.get_comments()?
-	}
+	task.category = get_category(task)
+	task.file_name = generate_file_name(task.subject[0..min(40, task.subject.len)] + '-' +
+		task.id.str() + '.md')
+
+	// TODO: Comments later
+	// mut conn := connection_get()
+	// if conn.settings.comments_task {
+	// 	task.comments() ?
+	// }
 	return task
+}
+
+// Get project object for each task
+pub fn (task Task) project() Project {
+	mut conn := connection_get()
+	return *conn.projects[task.project]
+}
+
+// Get story object for each task
+pub fn (task Task) story() Story {
+	mut conn := connection_get()
+	if task.user_story != 0 {
+		return *conn.stories[task.user_story]
+	}
+	return Story{}
+}
+
+// Get assigned users objects for each task
+pub fn (task Task) assigned() []User {
+	mut conn := connection_get()
+	mut assigned := []User{}
+	for i in task.assigned_to {
+		assigned << conn.users[i]
+	}
+	return assigned
+}
+
+pub fn (task Task) assigned_as_str() string {
+	assignee := task.assigned()
+	mut assigned_str := []string{}
+	for u in assignee {
+		assigned_str << u.username
+	}
+	return assigned_str.join(', ')
+}
+
+// Get owner user object for each task
+pub fn (task Task) owner() User {
+	mut conn := connection_get()
+	return *conn.users[task.owner]
 }
 
 // export template per task

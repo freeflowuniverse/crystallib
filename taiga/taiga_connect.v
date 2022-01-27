@@ -5,12 +5,11 @@ import json
 import net.http
 import despiegk.crystallib.redisclient
 import despiegk.crystallib.crystaljson
-import crypto.md5
 
 struct TaigaConnectionSettings {
 	comments_story bool = true
 	comments_issue bool = true
-	comments_task bool = true
+	comments_task  bool = true
 }
 
 [heap]
@@ -20,7 +19,7 @@ mut:
 	url           string
 	auth          AuthDetail
 	cache_timeout int
-	settings 	  TaigaConnectionSettings
+	settings      TaigaConnectionSettings
 pub mut:
 	projects map[int]&Project
 	users    map[int]&User
@@ -102,81 +101,6 @@ fn (mut h TaigaConnection) header() http.Header {
 	return header
 }
 
-//calculate the key for the cache starting from data and prefix
-fn cache_key(prefix string, postdata string) string {
-	/*
-	Create Cache Key
-	Inputs:
-		prefix: Taiga elements types, ex (projects, issues, tasks, ...).
-
-	Output:
-		cache_key: key that will be used in redis
-	*/
-	mut data2 := postdata
-	if data2.len>16{
-		data2 = md5.hexhash(data2)
-	}
-	if data2.len>0{
-		return 'taiga:' + prefix + ":" + data2
-	}
-	return 'taiga:' + prefix
-}
-
-fn (mut h TaigaConnection) cache_get(prefix string, postdata string, cache bool) string {
-	/*
-	Get from Cache
-	Inputs:
-		prefix: Taiga elements types, ex (projects, issues, tasks, ...).
-		reqdata: data used in the request.
-		cache: Flag to enable caching.
-	Output:
-		result: If cache ture and no thing stored or cache false will return empty string
-	*/
-	mut text := ''
-	if cache {
-		text = h.redis.get(cache_key(prefix,postdata)) or { '' }
-	}
-	return text
-}
-
-fn (mut h TaigaConnection) cache_set(prefix string, postdata string, data string, cache bool) ? {
-	/*
-	Set Cache
-	Inputs:
-		prefix: Taiga elements types, ex (projects, issues, tasks, ...).
-		reqdata: data used in the request.
-		data: Json encoded data.
-		cache: Flag to enable caching.
-	*/
-	if cache {
-		key := cache_key(prefix, postdata)
-		h.redis.set(key, data) ?
-		h.redis.expire(key, h.cache_timeout) or {
-			panic('should never get here, if redis worked expire should also work.$err')
-		}
-	}
-}
-
-pub fn (mut h TaigaConnection) cache_drop_all() ? {
-	/*
-	Drop all cache related to taiga
-	*/
-	all_keys := h.redis.keys('taiga:*') ?
-	for key in all_keys {
-		h.redis.del(key) ?
-	}
-}
-
-pub fn (mut h TaigaConnection) cache_drop(prefix string) ? {
-	/*
-	Drop specific key cache related to taiga
-	*/
-	all_keys := h.redis.keys('taiga:$prefix*') ?
-	for key in all_keys {
-		h.redis.del(key) ?
-	}
-}
-
 // fn (mut h TaigaConnection) post_json_dict_any(_amyprefix string, postdata string, cache bool) ?map[string]json2.Any {
 // 	/*
 // 	Post Request with Json Data
@@ -187,14 +111,13 @@ pub fn (mut h TaigaConnection) cache_drop(prefix string) ? {
 // 		authenticated: Flag to add authorization flag with the request.
 
 // 	Output:
-// 		response: response as dict of json2 any 
+// 		response: response as dict of json2 any
 // 	*/
 // 	mut result := h.post_json_str(prefix, postdata, cache) ?
 // 	data_raw := json2.raw_decode(result) ?
 // 	data := data_raw.as_map()
 // 	return crystaljson.json_dict(data,false)
 // }
-
 
 fn (mut h TaigaConnection) post_json_dict(prefix string, postdata string, cache bool) ?map[string]json2.Any {
 	/*
@@ -209,7 +132,7 @@ fn (mut h TaigaConnection) post_json_dict(prefix string, postdata string, cache 
 		response: response as dict of further json strings
 	*/
 	mut result := h.post_json_str(prefix, postdata, cache) ?
-	return crystaljson.json_dict_any(result,false,[],[])
+	return crystaljson.json_dict_any(result, false, [], [])
 }
 
 fn (mut h TaigaConnection) post_json_list(prefix string, postdata string, cache bool) ?[]string {
@@ -225,10 +148,10 @@ fn (mut h TaigaConnection) post_json_list(prefix string, postdata string, cache 
 		response: response as list of json strings
 	*/
 	mut result := h.post_json_str(prefix, postdata, cache) ?
-	return crystaljson.json_list(result,false)
+	return crystaljson.json_list(result, false)
 }
 
-//this is the method which calls to the service
+// this is the method which calls to the service
 fn (mut h TaigaConnection) post_json_str(prefix string, postdata string, cache bool) ?string {
 	/*
 	Post Request with Json Data
@@ -244,24 +167,24 @@ fn (mut h TaigaConnection) post_json_str(prefix string, postdata string, cache b
 	// Post with auth header
 	mut result := ''
 	cached_data := h.cache_get(prefix, postdata, cache)
-	if cached_data.len>0 {
+	if cached_data.len > 0 {
 		return cached_data
 	}
 	url := '$h.url/api/v1/$prefix'
 	mut req := http.new_request(http.Method.post, url, postdata) ?
 	// println(" --- $prefix\n$postdata")
-	if prefix.contains("auth"){
+	if prefix.contains('auth') {
 		response := http.post_json('$h.url/api/v1/$prefix', postdata) ?
-		result = response.text		
-	}else{
+		result = response.text
+	} else {
 		req.header = h.header()
-		req.add_custom_header('x-disable-pagination', 'True') ?	
+		req.add_custom_header('x-disable-pagination', 'True') ?
 		response := req.do() ?
 		if response.status_code == 201 {
 			result = response.text
 		} else {
 			return error('could not post: $url\n$response')
-		}	
+		}
 		result = response.text
 	}
 	h.cache_set(prefix, postdata, result, cache) ?
@@ -297,9 +220,8 @@ fn (mut h TaigaConnection) get_json_list(prefix string, getdata string, cache bo
 		response: list of strings.
 	*/
 	mut result := h.get_json_str(prefix, getdata, cache) ?
-	return crystaljson.json_list(result,false)
+	return crystaljson.json_list(result, false)
 }
-
 
 fn (mut h TaigaConnection) get_json_str(prefix string, getdata string, cache bool) ?string {
 	/*
@@ -330,6 +252,7 @@ fn (mut h TaigaConnection) get_json_str(prefix string, getdata string, cache boo
 	}
 	return result
 }
+
 // fn (mut h TaigaConnection) edit_json_dict_any(prefix string, id int, data string, cache bool) ?map[string]json2.Any {
 // 	/*
 // 	Patch Request with Json Data
@@ -391,7 +314,7 @@ fn (mut h TaigaConnection) delete(prefix string, id int) ?bool {
 		h.cache_drop(prefix) ? // Drop from cache, will drop too much but is ok
 		return true
 	} else {
-		return error("Could not delete $prefix:$id")
+		return error('Could not delete $prefix:$id')
 	}
 }
 

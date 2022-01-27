@@ -1,12 +1,14 @@
 module taiga
 
-import time
+import despiegk.crystallib.texttools
+import time { Time, now, parse_iso8601 }
+import math { pow10 }
 
-pub fn parse_time(date_time string) time.Time {
+pub fn parse_time(date_time string) Time {
 	if date_time == 'null' {
-		return time.Time{}
+		return Time{}
 	}
-	return time.parse_iso8601(date_time) or { time.Time{} }
+	return parse_iso8601(date_time) or { Time{} }
 }
 
 // Return md file with correct empty lines
@@ -29,4 +31,34 @@ pub fn fix_empty_lines(md string) string {
 		}
 	}
 	return export_md
+}
+
+pub fn get_category(t TaigaElement) Category {
+	time_now := now()
+	if t.is_blocked {
+		return .blocked
+	} else if t.due_date != Time{} {
+		difference := (t.due_date - time_now) / (pow10(9) * 3600 * 24)
+		if difference < -60 {
+			return .old
+		} else if difference < 0 {
+			return .overdue
+		} else if difference <= 1 {
+			return .today
+		} else if difference <= 2 {
+			return .in_two_days
+		} else if difference <= 7 {
+			return .in_week
+		} else if difference <= 30 {
+			return .in_month
+		}
+	}
+	return .other
+}
+
+pub fn generate_file_name(s string) string {
+	mut file_name := texttools.name_clean(s)
+	file_name = texttools.ascii_clean(file_name)
+	file_name = file_name.replace(' ', '_').to_lower()
+	return file_name
 }

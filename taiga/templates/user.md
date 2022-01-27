@@ -1,4 +1,7 @@
-# [@user.username](@url/profile/@user.username)
+# @user.username
+
+> [@user.username](@url/profile/@user.username)
+
 - ID: @user.id
 - Full name: @user.full_name
 - Biography: @user.bio
@@ -7,129 +10,129 @@
 
 # Priorities
 ## Blocked
-@if blocked.stories.len > 0 || blocked.issues.len > 0 || blocked.tasks.len > 0
+@if stories.filter(it.category == .blocked).len > 0 || issues.filter(it.category == .blocked).len > 0 || tasks.filter(it.category == .blocked).len > 0
 | Type | project | Subject | Created at | Blocked Note | Link |
 | ---- | ------- | ------- | ---------- | ------------ | ---- |
-@for story in blocked.stories
-| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | $story.blocked_note | [wiki]($story.file_name) \| [web](@url/project/$story.project_extra_info.slug/us/$story.ref) |
+@for story in stories.filter(it.category == .blocked)
+| UserStory |$story.project().name | $story.subject | $story.created_date.ymmdd() | $story.blocked_note | [wiki]($story.file_name) \| [web](@url/project/$story.project().slug/us/$story.ref) |
 @end
-@for issue in blocked.issues
-| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | $issue.blocked_note | [wiki]($issue.file_name) \| [web](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
+@for issue in issues.filter(it.category == .blocked)
+| Issue |$issue.project().name | $issue.subject | $issue.created_date.ymmdd() | $issue.blocked_note | [wiki]($issue.file_name) \| [web](@url/project/$issue.project().slug/issue/$issue.ref) |
 @end
-@for task in blocked.tasks
-| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | $task.blocked_note | [wiki]($task.file_name) \| [web](@url/project/$task.project_extra_info.slug/task/$task.ref) |
+@for task in tasks.filter(it.category == .blocked)
+| Task |$task.project().name | $task.subject | $task.created_date.ymmdd() | $task.blocked_note | [wiki]($task.file_name) \| [web](@url/project/$task.project().slug/task/$task.ref) |
 @end
 @else
 - No blocked stories, issues and tasks.
 @end
 ## Overdue
-@if overdue.stories.len > 0 || overdue.issues.len > 0 || overdue.tasks.len > 0
+@if stories.filter(it.category == .overdue).len > 0 || issues.filter(it.category == .overdue).len > 0 || tasks.filter(it.category == .overdue).len > 0
 | Type | project | Subject | Created at | Deadline | Link |
 | ---- | ------- | ------- | ---------- | -------- | ---- |
-@for story in overdue.stories
-| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | $story.due_date.ymmdd() | [wiki]($story.file_name) \| [web](@url/project/$story.project_extra_info.slug/us/$story.ref) |
+@for story in stories.filter(it.category == .overdue)
+| UserStory |$story.project().name | $story.subject | $story.created_date.ymmdd() | $story.due_date.ymmdd() | [wiki]($story.file_name) \| [web](@url/project/$story.project().slug/us/$story.ref) |
 @end
-@for issue in overdue.issues
-| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | $issue.due_date.ymmdd() | [wiki]($issue.file_name) \| [web](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
+@for issue in issues.filter(it.category == .overdue)
+| Issue |$issue.project().name | $issue.subject | $issue.created_date.ymmdd() | $issue.due_date.ymmdd() | [wiki]($issue.file_name) \| [web](@url/project/$issue.project().slug/issue/$issue.ref) |
 @end
-@for task in overdue.tasks
-| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | $task.due_date.ymmdd() | [wiki]($task.file_name) \| [web](@url/project/$task.project_extra_info.slug/task/$task.ref) |
+@for task in tasks.filter(it.category == .overdue)
+| Task |$task.project().name | $task.subject | $task.created_date.ymmdd() | $task.due_date.ymmdd() | [wiki]($task.file_name) \| [web](@url/project/$task.project().slug/task/$task.ref) |
 @end
 @else
 - No delayed stories, issues and tasks .
 @end
 ## Today
-@if today.stories.len > 0 || today.issues.len > 0 || today.tasks.len > 0
+@if stories.filter(it.category == .today).len > 0 || issues.filter(it.category == .today).len > 0 || tasks.filter(it.category == .today).len > 0
 | Type | project | Subject | Created at | Link |
 | ---- | ------- | ------- | ---------- | ---- |
-@for story in today.stories
-| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | [wiki]($story.file_name) \| [web](@url/project/$story.project_extra_info.slug/us/$story.ref) |
+@for story in stories.filter(it.category == .today)
+| UserStory |$story.project().name | $story.subject | $story.created_date.ymmdd() | [wiki]($story.file_name) \| [web](@url/project/$story.project().slug/us/$story.ref) |
 @end
-@for issue in today.issues
-| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | [wiki]($issue.file_name) \| [web](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
+@for issue in issues.filter(it.category == .today)
+| Issue |$issue.project().name | $issue.subject | $issue.created_date.ymmdd() | [wiki]($issue.file_name) \| [web](@url/project/$issue.project().slug/issue/$issue.ref) |
 @end
-@for task in today.tasks
-| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | [wiki]($task.file_name) \| [web](@url/project/$task.project_extra_info.slug/task/$task.ref) |
+@for task in tasks.filter(it.category == .today)
+| Task |$task.project().name | $task.subject | $task.created_date.ymmdd() | [wiki]($task.file_name) \| [web](@url/project/$task.project().slug/task/$task.ref) |
 @end
 @else
 - No stories, issues and tasks to be delivered today .
 @end
 ## In 2 Days
-@if in_two_days.stories.len > 0 || in_two_days.issues.len > 0 || in_two_days.tasks.len > 0
+@if stories.filter(it.category == .in_two_days).len > 0 || issues.filter(it.category == .in_two_days).len > 0 || tasks.filter(it.category == .in_two_days).len > 0
 | Type | project | Subject | Created at | Link |
 | ---- | ------- | ------- | ---------- | ---- |
-@for story in in_two_days.stories
-| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | [wiki]($story.file_name) \| [web](@url/project/$story.project_extra_info.slug/us/$story.ref) |
+@for story in stories.filter(it.category == .in_two_days)
+| UserStory |$story.project().name | $story.subject | $story.created_date.ymmdd() | [wiki]($story.file_name) \| [web](@url/project/$story.project().slug/us/$story.ref) |
 @end
-@for issue in in_two_days.issues
-| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | [wiki]($issue.file_name) \| [web](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
+@for issue in issues.filter(it.category == .in_two_days)
+| Issue |$issue.project().name | $issue.subject | $issue.created_date.ymmdd() | [wiki]($issue.file_name) \| [web](@url/project/$issue.project().slug/issue/$issue.ref) |
 @end
-@for task in in_two_days.tasks
-| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | [wiki]($task.file_name) \| [web](@url/project/$task.project_extra_info.slug/task/$task.ref) |
+@for task in tasks.filter(it.category == .in_two_days)
+| Task |$task.project().name | $task.subject | $task.created_date.ymmdd() | [wiki]($task.file_name) \| [web](@url/project/$task.project().slug/task/$task.ref) |
 @end
 @else
 - No stories, issues and tasks to be delivered in 2 days .
 @end
 
 ## In Week
-@if in_week.stories.len > 0 || in_week.issues.len > 0 || in_week.tasks.len > 0
+@if stories.filter(it.category == .in_week).len > 0 || issues.filter(it.category == .in_week).len > 0 || tasks.filter(it.category == .in_week).len > 0
 | Type | project | Subject | Created at | Deadline | Link |
 | ---- | ------- | ------- | ---------- | -------- | ---- |
-@for story in in_week.stories
-| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | $story.due_date.ymmdd() | [wiki]($story.file_name) \| [web](@url/project/$story.project_extra_info.slug/us/$story.ref) |
+@for story in stories.filter(it.category == .in_week)
+| UserStory |$story.project().name | $story.subject | $story.created_date.ymmdd() | $story.due_date.ymmdd() | [wiki]($story.file_name) \| [web](@url/project/$story.project().slug/us/$story.ref) |
 @end
-@for issue in in_week.issues
-| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | $issue.due_date.ymmdd() | [wiki]($issue.file_name) \| [web](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
+@for issue in issues.filter(it.category == .in_week)
+| Issue |$issue.project().name | $issue.subject | $issue.created_date.ymmdd() | $issue.due_date.ymmdd() | [wiki]($issue.file_name) \| [web](@url/project/$issue.project().slug/issue/$issue.ref) |
 @end
-@for task in in_week.tasks
-| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | $task.due_date.ymmdd() | [wiki]($task.file_name) \| [web](@url/project/$task.project_extra_info.slug/task/$task.ref) |
+@for task in tasks.filter(it.category == .in_week)
+| Task |$task.project().name | $task.subject | $task.created_date.ymmdd() | $task.due_date.ymmdd() | [wiki]($task.file_name) \| [web](@url/project/$task.project().slug/task/$task.ref) |
 @end
 @else
 - No stories, issues and tasks to be delivered in a week.
 @end
 
 ## In Month
-@if in_month.stories.len > 0 || in_month.issues.len > 0 || in_month.tasks.len > 0
+@if stories.filter(it.category == .in_month).len > 0 || issues.filter(it.category == .in_month).len > 0 || tasks.filter(it.category == .in_month).len > 0
 | Type | project | Subject | Created at | Deadline | Link |
 | ---- | ------- | ------- | ---------- | -------- | ---- |
-@for story in in_month.stories
-| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | $story.due_date.ymmdd() | [wiki]($story.file_name) \| [web](@url/project/$story.project_extra_info.slug/us/$story.ref) |
+@for story in stories.filter(it.category == .in_month)
+| UserStory |$story.project().name | $story.subject | $story.created_date.ymmdd() | $story.due_date.ymmdd() | [wiki]($story.file_name) \| [web](@url/project/$story.project().slug/us/$story.ref) |
 @end
-@for issue in in_month.issues
-| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | $issue.due_date.ymmdd() | [wiki]($issue.file_name) \| [web](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
+@for issue in issues.filter(it.category == .in_month)
+| Issue |$issue.project().name | $issue.subject | $issue.created_date.ymmdd() | $issue.due_date.ymmdd() | [wiki]($issue.file_name) \| [web](@url/project/$issue.project().slug/issue/$issue.ref) |
 @end
-@for task in in_month.tasks
-| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | $task.due_date.ymmdd() | [wiki]($task.file_name) \| [web](@url/project/$task.project_extra_info.slug/task/$task.ref) |
+@for task in tasks.filter(it.category == .in_month)
+| Task |$task.project().name | $task.subject | $task.created_date.ymmdd() | $task.due_date.ymmdd() | [wiki]($task.file_name) \| [web](@url/project/$task.project().slug/task/$task.ref) |
 @end
 @else
 - No stories, issues and tasks to be delivered in a month.
 @end
 
-@if others.stories.len > 0 || others.issues.len > 0 || others.tasks.len > 0
+@if stories.filter(it.category == .other).len > 0 || issues.filter(it.category == .other).len > 0 || tasks.filter(it.category == .other).len > 0
 ## Others
 | Type | project | Subject | Created at | Link |
 | ---- | ------- | ------- | ---------- | ---- |
-@for story in others.stories
-| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | [wiki]($story.file_name) \| [web](@url/project/$story.project_extra_info.slug/us/$story.ref) |
+@for story in stories.filter(it.category == .other)
+| UserStory |$story.project().name | $story.subject | $story.created_date.ymmdd() | [wiki]($story.file_name) \| [web](@url/project/$story.project().slug/us/$story.ref) |
 @end
-@for issue in others.issues
-| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | [wiki]($issue.file_name) \| [web](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
+@for issue in issues.filter(it.category == .other)
+| Issue |$issue.project().name | $issue.subject | $issue.created_date.ymmdd() | [wiki]($issue.file_name) \| [web](@url/project/$issue.project().slug/issue/$issue.ref) |
 @end
-@for task in others.tasks
-| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | [wiki]($task.file_name) \| [web](@url/project/$task.project_extra_info.slug/task/$task.ref) |
+@for task in tasks.filter(it.category == .other)
+| Task |$task.project().name | $task.subject | $task.created_date.ymmdd() | [wiki]($task.file_name) \| [web](@url/project/$task.project().slug/task/$task.ref) |
 @end
 @end
-@if old.stories.len > 0 || old.issues.len > 0 || old.tasks.len > 0
+@if stories.filter(it.category == .old).len > 0 || issues.filter(it.category == .old).len > 0 || tasks.filter(it.category == .old).len > 0
 ## Old
 | Type | project | Subject | Created at | Deadline | Link |
 | ---- | ------- | ------- | ---------- | -------- | ---- |
-@for story in old.stories
-| UserStory |$story.project_extra_info.name | $story.subject | $story.created_date.ymmdd() | $story.due_date.ymmdd() | [wiki](../stories/$story.file_name) \| [web](@url/project/$story.project_extra_info.slug/us/$story.ref) |
+@for story in stories.filter(it.category == .old)
+| UserStory |$story.project().name | $story.subject | $story.created_date.ymmdd() | $story.due_date.ymmdd() | [wiki](../stories/$story.file_name) \| [web](@url/project/$story.project().slug/us/$story.ref) |
 @end
-@for issue in old.issues
-| Issue |$issue.project_extra_info.name | $issue.subject | $issue.created_date.ymmdd() | $issue.due_date.ymmdd() | [wiki]($issue.file_name) \| [web](@url/project/$issue.project_extra_info.slug/issue/$issue.ref) |
+@for issue in issues.filter(it.category == .old)
+| Issue |$issue.project().name | $issue.subject | $issue.created_date.ymmdd() | $issue.due_date.ymmdd() | [wiki]($issue.file_name) \| [web](@url/project/$issue.project().slug/issue/$issue.ref) |
 @end
-@for task in old.tasks
-| Task |$task.project_extra_info.name | $task.subject | $task.created_date.ymmdd() | $task.due_date.ymmdd() | [wiki]($task.file_name) \| [web](@url/project/$task.project_extra_info.slug/task/$task.ref) |
+@for task in tasks.filter(it.category == .old)
+| Task |$task.project().name | $task.subject | $task.created_date.ymmdd() | $task.due_date.ymmdd() | [wiki]($task.file_name) \| [web](@url/project/$task.project().slug/task/$task.ref) |
 @end
 @end

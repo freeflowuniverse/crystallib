@@ -5,33 +5,6 @@ import json
 // import x.json2 { raw_decode }
 import despiegk.crystallib.crystaljson
 
-type TaigaElement = Epic | Issue | Story | Task
-
-struct NewProject {
-pub mut:
-	name                 string
-	description          string
-	is_issues_activated  bool
-	is_private           bool
-	is_backlog_activated bool
-	is_kanban_activated  bool
-	is_wiki_activated    bool
-}
-
-struct NewProjectConfig {
-pub mut:
-	severities      []string
-	priorities      []string
-	issues_types    []string
-	issues_statuses []string
-	story_statuses  []string
-	task_statuses   []string
-	item_statuses   []string
-	custom_fields   []string
-}
-
-
-
 pub fn projects() ?[]Project {
 	// List all Projects
 	mut conn := connection_get()
@@ -39,13 +12,12 @@ pub fn projects() ?[]Project {
 	println('[+] Loading $blocks.len projects ...')
 	mut projects := []Project{}
 	for proj in blocks {
-		println("PROJECT:\n$proj")
 		project := project_decode(proj) or {
 			eprintln(err)
 			Project{}
 		}
 		if project != Project{} {
-			if ! project.name.to_lower().contains("archive"){
+			if !project.name.to_lower().contains('archive') {
 				projects << project
 				conn.project_remember(project)
 			}
@@ -151,6 +123,7 @@ pub fn project_create(name string, description string, projtype ProjectType) ?Pr
 			proj_config.issues_statuses << ['New', 'to-start', 'in-progress', 'Blocked',
 				'Implemented', 'Closed', 'Rejected', 'Postponed', 'Archived']
 		}
+		else {}
 	}
 	postdata := json.encode_pretty(proj)
 	response := conn.post_json_str('projects', postdata, true) ?
