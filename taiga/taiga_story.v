@@ -1,17 +1,14 @@
 module taiga
 
-import despiegk.crystallib.crystaljson
-import json
-import x.json2
-import os
+import x.json2 { raw_decode }
 import math { min }
+import json
 
 pub fn stories() ? {
 	mut conn := connection_get()
 	resp := conn.get_json_str('userstories', '', true) ?
-	raw_data := json2.raw_decode(resp.replace('\\\\', '')) ?
+	raw_data := raw_decode(resp.replace('\\\\', '')) ?
 	blocks := raw_data.arr()
-	os.write_file('/tmp/taiga_blocks/stories', '$blocks') ?
 	println('[+] Loading $blocks.len stories ...')
 	for s in blocks {
 		// println('STORY:\n$s')
@@ -55,7 +52,8 @@ pub fn story_delete(id int) ?bool {
 }
 
 fn story_decode(data string) ?Story {
-	data_as_map := crystaljson.json_dict_any(data, false, [], []) ?
+	data_raw := raw_decode(data) ?
+	data_as_map := data_raw.as_map()
 
 	mut story := Story{
 		description: data_as_map['description'].str()
@@ -84,7 +82,7 @@ fn story_decode(data string) ?Story {
 			story.assigned_to << assign.int()
 		}
 	}
-	// story.status = data_as_map["status_extra_info"]["name"].str() // TODO: Use Enum
+	story.set_status()
 	story.file_name = generate_file_name(story.subject[0..min(40, story.subject.len)] + '_' +
 		story.id.str() + '.md')
 
@@ -94,6 +92,23 @@ fn story_decode(data string) ?Story {
 	// 	story.comments() ?
 	// }
 	return story
+}
+
+fn (story Story) set_status(st string) {
+	status := st.to_lower()
+	if status.contains('new') {
+		story.status = TaskStatus.new
+	} else if status.contains('accepted') {
+		story.status = TaskStatus.accepted
+	} else if status.contains('inprogress') {
+		story.status = TaskStatus.inprogress
+	} else if status.contains('verification') {
+		story.status = TaskStatus.verification
+	} else if status.contains('done') {
+		story.status = TaskStatus.done
+	} else {
+		story.status = TaskStatus.unknown
+	}
 }
 
 // get comments in list from story

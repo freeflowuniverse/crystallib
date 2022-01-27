@@ -1,9 +1,10 @@
 module taiga
 
-import despiegk.crystallib.crystaljson
+import x.json2 { raw_decode }
 
 fn project_decode(data string) ?Project {
-	data_as_map := crystaljson.json_dict_any(data, false, [], []) ?
+	data_raw := raw_decode(data) ?
+	data_as_map := data_raw.as_map()
 	mut project := Project{
 		name: data_as_map['name'].str()
 		description: data_as_map['description'].str()

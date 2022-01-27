@@ -5,6 +5,7 @@ import json
 import net.http
 import despiegk.crystallib.redisclient
 import despiegk.crystallib.crystaljson
+import despiegk.crystallib.taigaexports
 
 // FIXME: Not Working
 struct TaigaConnectionSettings {
@@ -22,13 +23,14 @@ mut:
 	cache_timeout int
 	settings      TaigaConnectionSettings
 pub mut:
-	projects map[int]&Project
-	users    map[int]&User
-	stories  map[int]&Story
-	tasks    map[int]&Task
-	epics    map[int]&Epic
-	comments map[int]&Comment
-	issues   map[int]&Issue
+	full_projects map[int]&taigaexports.ProjectExport
+	projects      map[int]&Project
+	users         map[int]&User
+	stories       map[int]&Story
+	tasks         map[int]&Task
+	epics         map[int]&Epic
+	comments      map[int]&Comment
+	issues        map[int]&Issue
 }
 
 // Init connection for taiga singleton
