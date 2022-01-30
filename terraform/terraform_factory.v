@@ -1,15 +1,9 @@
 module terraform
 
-import redisclient
+import builder
 import os
 
-[heap]
-struct TerraformFactory {
-mut:
-	instances    map[string]&TerraformInstance
-}
-
-enum TerraformInstanceStatus {
+enum TerraformFactoryStatus {
 	init
 	ok
 	error
@@ -17,52 +11,58 @@ enum TerraformInstanceStatus {
 
 
 [heap]
-struct TerraformInstance {
+struct TerraformFactory {
 pub mut:
-	path string
-	status TerraformInstanceStatus
+	deployments    map[string]&TerraformDeployment
+	status		 TerraformFactoryStatus
 }
 
 
+
 //needed to get singleton
-fn init2() TerraformFactory {
-	mut f := terraform.TerraformFactory{
-	}	
-	return f
+fn init2() &TerraformFactory {
+	mut f := terraform.TerraformFactory{}	
+	return &f
 }
 
 
 //singleton creation
 const factory = init2()
 
-//make sure to use new first, so that the connection has been initted
-//then you can get it everywhere
-pub fn get(name string) ?&TerraformInstance {
+pub fn get() ?&TerraformFactory {
+
 	mut f := terraform.factory
-	if ! (name in f.instances){
-		f.instances[name] = &TerraformInstance{path:"~/terraform/${name}"}
-	}
-	mut i := f.instances[name]
-	if i.status == TerraformInstanceStatus.error{
-		return error("$i is in error, cannot get terraform instance.")
-	}
-	if i.status  == TerraformInstanceStatus.init{
-		if i.path.contains("~"){
+
+	home2 := os.real_path(os.environ()["HOME"])
+
+	if f.status  == TerraformFactoryStatus.init{
+		mut n := builder.node_local()?
+		if ! os.exists("$home2/git3/terraform"){
+			mut url:=""
+			if n.platform == builder.PlatformType.osx{
+				if n.cputype == builder.CPUType.arm{
+					url = "https://releases.hashicorp.com/terraform/1.1.2/terraform_1.1.4_linux_amd64.zip"
+				}else{
+					url = "https://releases.hashicorp.com/terraform/1.1.4/terraform_1.1.4_darwin_amd64.zip"
+				}
+			}else if n.platform == builder.PlatformType.ubuntu{
+				url = "https://releases.hashicorp.com/terraform/1.1.4/terraform_1.1.4_linux_amd64.zip"
+			}else{
+				return error("platform not supported to install terraform")
+			}
+
 			home := os.real_path(os.environ()["HOME"])
-			i.path = i.path.replace("~",home)
+
+			mut cmd := $tmpl("install_terraform.sh")
+			println(cmd)
+
+			n.exec(cmd:cmd, period:0, reset:true, description:"install terraform",stdout:true,checkkey:"terraforminstall") or {
+				return error("cannot install terraform\n"+err.msg+"\noriginal cmd:\n${cmd}")
+			}
+		
 		}
-		if ! os.exists(i.path){
-			os.mkdir_all(i.path)?
-		}
-		i.status = TerraformInstanceStatus.ok
-	}
-	//download: https://releases.hashicorp.com/terraform/1.1.2/terraform_1.1.2_linux_amd64.zip 
-	
-	return i
+		f.status = TerraformFactoryStatus.ok
+	}	
+	return f
 }
 
-
-
-// fn (mut h TerraformFactory) post_json_str(prefix string, postdata string, cache bool, authenticated bool) ?string {
-// 	return result
-// }

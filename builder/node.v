@@ -12,6 +12,17 @@ pub enum PlatformType {
 	alpine
 }
 
+
+pub enum CPUType {
+	unknown
+	intel
+	arm
+}
+
+
+
+
+
 pub struct Node {
 pub:
 	name string = 'mymachine'	
@@ -19,6 +30,7 @@ pub mut:
 	executor &Executor // = ExecutorLocal{}
 	tmux 	&Tmux
 	platform PlatformType
+	cputype CPUType
 	db &DB [skip]
 	done map[string]string
 	cache  rediscache.RedisCache [skip]

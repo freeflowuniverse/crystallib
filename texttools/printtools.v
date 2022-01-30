@@ -48,6 +48,3 @@ fn expand(txt_ string, l int) string{
 	return txt
 }
 
-pub fn print_clear(){
-	print("\033[2J")
-}

@@ -8,6 +8,28 @@ fn is_var_char(ch string) bool{
 	return false
 }
 
+//check if string is a nr as int
+pub fn is_int(ch string) bool{
+	ch2 := ch.trim(" \n")
+	if ch2.len==1{
+		if '0123456789 '.contains(ch2){
+			return true
+		} 
+		return false
+	}else{
+		for x in ch2{
+			if ! ('0123456789 '.contains(x.str())){
+				panic(x.str())
+				return false
+			} 
+		}
+		return true
+	}
+}
+
+
+
+
 // the map has as key the normalized string (fix_name_no_underscore), the value is what to replace with
 pub fn replace_items(text string, replacer map[string]string) string {
 	mut skipline := false

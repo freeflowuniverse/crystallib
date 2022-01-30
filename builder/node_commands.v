@@ -4,6 +4,7 @@ import process
 import texttools
 import crypto.md5
 import time
+import os
 
 // check command exists on the platform, knows how to deal with different platforms
 pub fn (mut node Node) cmd_exists(cmd string) bool {
@@ -13,12 +14,14 @@ pub fn (mut node Node) cmd_exists(cmd string) bool {
 	return true
 }
 
-struct NodeExecCmd{
+pub struct NodeExecCmd{
+pub mut:
 	cmd string
 	period int //period in which we check when this was done last, if 0 then period is indefinite
 	reset bool = true
 	description string
 	stdout bool = true
+	checkkey string //if used will use this one in stead of hash of cmd, to check if was executed already
 }
 
 pub fn (mut node Node) ipaddr_pub_get() ?string {
@@ -42,6 +45,7 @@ pub fn (mut node Node) ipaddr_pub_get() ?string {
 // 	period int //period in which we check when this was done last, if 0 then period is indefinite
 // 	reset bool = true
 // 	description string
+//	checkkey string //if used will use this one in stead of hash of cmd, to check if was executed already
 // }
 // ```
 pub fn (mut node Node) exec(args NodeExecCmd) ? {
@@ -52,7 +56,12 @@ pub fn (mut node Node) exec(args NodeExecCmd) ? {
 	if cmd.contains("\n"){
 		cmd = texttools.dedent(cmd)
 	}
-	hhash := md5.hexhash(cmd)
+	mut hhash := ""
+	if args.checkkey.len>0{
+		hhash = args.checkkey
+	}else{
+		hhash = md5.hexhash(cmd)
+	}
 	mut description := args.description
 	if description == ""{
 		description = cmd
@@ -99,24 +108,20 @@ pub fn (mut node Node) exec_ok(cmd string) bool {
 	return true
 }
 
+
 fn (mut node Node) platform_load() {
-
-	// pub fn is_osx() bool {
-	// 	return os.uname().sysname.to_lower() == 'darwin'
-	// }
-
-	// pub fn is_osx_arm() bool {
-	// 	if is_osx() {
-	// 		return os.uname().machine.to_lower() == 'x86_64'
-	// 	}
-	// 	return false
-	// }
-
 
 	println(' - platform load')
 	if node.platform == PlatformType.unknown {
 		if node.cmd_exists('sw_vers') {
 			node.platform = PlatformType.osx
+			//TODO: does not work for remote !!!
+			if os.uname().machine.to_lower() == 'x86_64' {
+				node.cputype = CPUType.arm
+			}else{
+				node.cputype = CPUType.intel
+			}
+
 		} else if node.cmd_exists('apt') {
 			node.platform = PlatformType.ubuntu
 		} else if node.cmd_exists('apk') {
