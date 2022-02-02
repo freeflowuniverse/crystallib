@@ -2,6 +2,8 @@ module terraform
 
 import builder
 import os
+import crypto.md5
+
 
 enum TerraformFactoryStatus {
 	init
@@ -12,11 +14,12 @@ enum TerraformFactoryStatus {
 
 [heap]
 struct TerraformFactory {
-pub mut:
+mut:
 	deployments    map[string]&TerraformDeployment
 	status		 TerraformFactoryStatus
+pub mut:
+	tf_cmd		string
 }
-
 
 
 //needed to get singleton
@@ -31,13 +34,16 @@ const factory = init2()
 
 pub fn get() ?&TerraformFactory {
 
-	mut f := terraform.factory
+	mut f_ := terraform.factory
+	home_ := os.real_path(os.environ()["HOME"])
+	f_.tf_cmd = "$home_/git3/bin/terraform"
 
-	home2 := os.real_path(os.environ()["HOME"])
-
-	if f.status  == TerraformFactoryStatus.init{
-		mut n := builder.node_local()?
-		if ! os.exists("$home2/git3/terraform"){
+	if f_.status  == TerraformFactoryStatus.init{
+		if ! os.exists(f_.tf_cmd){
+			mut f := terraform.factory
+			home := os.real_path(os.environ()["HOME"])
+			f.tf_cmd = "$home/git3/bin/terraform"
+			mut n := builder.node_local()?
 			mut url:=""
 			if n.platform == builder.PlatformType.osx{
 				if n.cputype == builder.CPUType.arm{
@@ -51,18 +57,48 @@ pub fn get() ?&TerraformFactory {
 				return error("platform not supported to install terraform")
 			}
 
-			home := os.real_path(os.environ()["HOME"])
-
 			mut cmd := $tmpl("install_terraform.sh")
 			println(cmd)
 
-			n.exec(cmd:cmd, period:0, reset:true, description:"install terraform",stdout:true,checkkey:"terraforminstall") or {
+			n.exec(cmd:cmd, reset:true, description:"install terraform ; echo ok",stdout:true) or {
 				return error("cannot install terraform\n"+err.msg+"\noriginal cmd:\n${cmd}")
 			}
-		
-		}
-		f.status = TerraformFactoryStatus.ok
+		}		
+		f_.status = TerraformFactoryStatus.ok
 	}	
-	return f
+	return f_
 }
 
+//initialize terraform
+fn (mut tff TerraformFactory) tf_inialize(dir_path string) ? {
+	mut node := builder.node_local()?
+	if ! os.exists("$dir_path/.terraform"){
+		node.exec(cmd:"cd $dir_path && ${tff.tf_cmd} init",reset:true)?
+	}
+}
+
+//initialize terraform
+fn (mut tff TerraformFactory) tf_execute(dir_path string) ? {
+	tff.tf_inialize(dir_path)?	
+	mut tohash := ""
+	res := os.ls(dir_path) ?
+	for file in res {
+		filepath:="$dir_path/$file"
+		if !os.is_file(filepath) {
+			continue
+		}
+		if !filepath.ends_with(".tf") {
+			continue
+		}
+		mut fc := os.read_file(filepath)?
+		fc = fc.trim_space()
+		tohash+=fc
+	}
+	hhash := md5.hexhash(tohash)
+	hhash_check := "${dir_path}__tfexec_${hhash}"
+	mut node := builder.node_local()?
+	if ! node.done_exists(hhash_check){
+		node.exec(cmd:"cd $dir_path && ${tff.tf_cmd} apply -parallelism=1 -auto-approve",reset:true)?
+		node.done_set(hhash_check,"OK")?
+	}
+}
