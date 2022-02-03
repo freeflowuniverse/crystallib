@@ -99,8 +99,16 @@ pub fn (mut tfd TerraformDeployment) vm_ubuntu_add(name string, nodeid int) {
 
 //execute all available terraform objects
 pub fn (mut tfd TerraformDeployment) execute() ? {	
-	tfd.network.execute(mut &tfd)?
+	mut tff := get()?
+	tfd.network.write(mut &tfd)?
 	for mut vm in tfd.vms{
-		vm.execute(mut &tfd)?
+		vm.write(mut &tfd)?
 	}
+	tff.tf_execute(tfd.path)?
+}
+
+//execute all available terraform objects
+pub fn (mut tfd TerraformDeployment) destroy() ? {	
+	mut tff := get()?
+	tff.tf_destroy(tfd.path)?
 }

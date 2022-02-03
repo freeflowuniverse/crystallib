@@ -77,7 +77,7 @@ fn (mut tff TerraformFactory) tf_inialize(dir_path string) ? {
 	}
 }
 
-//initialize terraform
+//execute terraform
 fn (mut tff TerraformFactory) tf_execute(dir_path string) ? {
 	tff.tf_inialize(dir_path)?	
 	mut tohash := ""
@@ -102,3 +102,13 @@ fn (mut tff TerraformFactory) tf_execute(dir_path string) ? {
 		node.done_set(hhash_check,"OK")?
 	}
 }
+
+
+//destroy terraform
+fn (mut tff TerraformFactory) tf_destroy(dir_path string) ? {
+	tff.tf_inialize(dir_path)?	
+	mut node := builder.node_local()?
+	node.exec(cmd:"cd $dir_path && ${tff.tf_cmd} destroy -parallelism=1 -auto-approve",reset:true)?
+}
+
+

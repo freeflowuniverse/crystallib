@@ -7,12 +7,12 @@ pub mut:
 	description string
 	tfgrid_node_ids []int	
 	name string
-	iprange string = "10.1.0.0/16"
+	iprange string = "10.3.0.0/16"
 }
 
 
 //will put under ~/git3/terraform/$name
-fn (mut net TFNet) execute(mut deployment &TerraformDeployment)? {
+fn (mut net TFNet) write(mut deployment &TerraformDeployment)? {
 	mut tff := get()?
 	// mut tfscript := TF_NET
 	if net.tfgrid_node_ids.len==0{
@@ -24,13 +24,7 @@ fn (mut net TFNet) execute(mut deployment &TerraformDeployment)? {
 	net.name = deployment.guid+"_"+deployment.name //needs to be globally unique
 
 	tfscript := $tmpl("templates/net.tf")
-
-
-	dir_path := "${deployment.path}/net_${deployment.name}"
-	if ! os.exists(dir_path){
-		os.mkdir_all(dir_path)?
-	}
-	os.write_file("$dir_path/net.tf",tfscript)?
-
-	tff.tf_execute(dir_path)?
+	os.write_file("${deployment.path}/net.tf",tfscript)?
 }
+
+

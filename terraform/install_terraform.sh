@@ -4,7 +4,7 @@ pushd /tmp
 rm -f tform.zip
 rm -f terraform
 
-curl -L '@url' -o tform.zip
+curl -L '$url' -o tform.zip
 
 unzip tform.zip
 

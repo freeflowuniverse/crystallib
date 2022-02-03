@@ -13,7 +13,7 @@ provider "grid" {
 
 resource "grid_network" "net1" {
     nodes = [@nodeids]
-    ip_range = "10.1.0.0/16"
+    ip_range = "@deployment.network.iprange"
     name = "@net.name"
     description = "@net.description"
     add_wg_access = true

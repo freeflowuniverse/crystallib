@@ -1,20 +1,8 @@
- terraform {
-  required_providers {
-    grid = {
-      source = "threefoldtech/grid"
-    }
-  }
-}
-
-provider "grid" {
-    mnemonics = "@MNEMONIC"
-    network = "test" # or test to use testnet
-}
 
 resource "grid_deployment" "d1" {
-  node = @NODE_ID
-  network_name = @NETNAME
-  ip_range = @IPRANGE
+  node = @vm.tfgrid_node_id
+  network_name = "@deployment.network.name"
+  ip_range = "@deployment.network.iprange"
   disks {
     name = "root"
     size = 20
@@ -26,7 +14,7 @@ resource "grid_deployment" "d1" {
     description = "var"
   }
   vms {
-    name = "@VMNAME"
+    name = "@vm.name"
     flist = "https://hub.grid.tf/samehabouelsaad.3bot/abouelsaad-grid3_ubuntu20.04-latest.flist"
     # flist = "https://hub.grid.tf/omarabdul3ziz.3bot/omarabdul3ziz-ubuntu-20.04-devenv.flist"
     entrypoint = "/init.sh"
@@ -41,9 +29,9 @@ resource "grid_deployment" "d1" {
     }        
     cpu = 8
     memory = 8000
-    rootfs_size = 10000
+    # rootfs_size = 10000
     env_vars = {
-      SSH_KEY ="@SSHKEY"
+      SSH_KEY ="@deployment.sshkey"
     }
     planetary = true
   }
