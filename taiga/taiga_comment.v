@@ -23,7 +23,7 @@ pub fn comments_get(prefix string, prefix_id int) ?[]Comment {
 }
 
 fn comment_decode(data string) ?Comment {
-	data_as_map := crystaljson.json_dict_any(data, false, [], []) ?
+	data_as_map := crystaljson.json_dict_filter_any(data, false, [], []) ?
 
 	mut comment := Comment{
 		id: data_as_map['id'].str()

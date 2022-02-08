@@ -3,29 +3,34 @@ module terraform
 import builder
 import os
 import crypto.md5
+import despiegk.crystallib.redisclient
 
 
-enum TerraformFactoryStatus {
+pub enum TerraformFactoryStatus {
 	init
 	ok
 	error
 }
 
 
+
 [heap]
 struct TerraformFactory {
 mut:
-	deployments    map[string]&TerraformDeployment
-	status		 TerraformFactoryStatus
+	deployments    	map[string]&TerraformDeployment
+	status		 	TerraformFactoryStatus
+	redis  			redisclient.Redis	
 pub mut:
-	tf_cmd		string
+	tf_cmd			string
 }
 
 
 //needed to get singleton
-fn init2() &TerraformFactory {
-	mut f := terraform.TerraformFactory{}	
-	return &f
+fn init2() TerraformFactory {
+	mut f := terraform.TerraformFactory{
+		redis: redisclient.connect('127.0.0.1:6379') or { redisclient.Redis{} }
+	}	
+	return f
 }
 
 
@@ -37,6 +42,7 @@ pub fn get() ?&TerraformFactory {
 	mut f_ := terraform.factory
 	home_ := os.real_path(os.environ()["HOME"])
 	f_.tf_cmd = "$home_/git3/bin/terraform"
+
 
 	if f_.status  == TerraformFactoryStatus.init{
 		if ! os.exists(f_.tf_cmd){
@@ -66,8 +72,9 @@ pub fn get() ?&TerraformFactory {
 		}		
 		f_.status = TerraformFactoryStatus.ok
 	}	
-	return f_
+	return &f_
 }
+
 
 //initialize terraform
 fn (mut tff TerraformFactory) tf_inialize(dir_path string) ? {

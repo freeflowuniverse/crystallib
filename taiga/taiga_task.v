@@ -60,7 +60,7 @@ pub fn task_delete(id int) ?bool {
 }
 
 fn task_decode(data string) ?Task {
-	data_as_map := crystaljson.json_dict_any(data, false, [], []) ?
+	data_as_map := crystaljson.json_dict_filter_any(data, false, [], []) ?
 	projname := data_as_map['project_extra_info'].as_map()['name'].str().to_upper()
 	if projname.contains('ARCHIVE') {
 		// this is a task linked to a project which is archived, no reason to process

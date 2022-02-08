@@ -39,7 +39,7 @@ pub fn user_delete(id int) ?bool {
 }
 
 fn user_decode(data string) ?User {
-	data_as_map := crystaljson.json_dict_any(data, false, [], []) ?
+	data_as_map := crystaljson.json_dict_filter_any(data, false, [], []) ?
 	mut user := User{
 		id: data_as_map['id'].int()
 		is_active: data_as_map['is_active'].bool()

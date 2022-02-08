@@ -60,7 +60,7 @@ pub fn issue_delete(id int) ?bool {
 
 // Decode issue to get clean object from raw data
 fn issue_decode(data string) ?Issue {
-	data_as_map := crystaljson.json_dict_any(data, false, [], []) ?
+	data_as_map := crystaljson.json_dict_filter_any(data, false, [], []) ?
 	mut issue := Issue{
 		description: data_as_map['description'].str()
 		id: data_as_map['id'].int()

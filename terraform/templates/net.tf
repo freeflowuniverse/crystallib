@@ -8,7 +8,7 @@
 
 provider "grid" {
     mnemonics = "@deployment.mnemonic"
-    network = "test" # or test to use testnet
+    network = "@deployment.tfgrid_net_string()" 
 }
 
 resource "grid_network" "net1" {

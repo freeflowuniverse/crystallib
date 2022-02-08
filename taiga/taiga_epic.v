@@ -57,7 +57,7 @@ pub fn epic_delete(id int) ?bool {
 }
 
 fn epic_decode(data string) ?Epic {
-	data_as_map := crystaljson.json_dict_any(data, false, [], []) ?
+	data_as_map := crystaljson.json_dict_filter_any(data, false, [], []) ?
 
 	mut epic := Epic{
 		description: data_as_map['description.'].str()

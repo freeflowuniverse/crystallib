@@ -8,12 +8,18 @@ enum TerraformDeploymentStatus {
 	error
 }
 
+pub enum TFGridNet{
+	main
+	test
+	dev
+}
+
 
 pub struct TerraformDeploymentArgs {
 pub mut:
 	name 		string
 	mnemonic 	string
-	tfnet 		string
+	tfgridnet 		TFGridNet
 	guid		string
 	sshkey 		string
 }
@@ -24,13 +30,13 @@ pub:
 	name 		string
 	path 		string
 	mnemonic 	string
-	tfnet 		string
 	sshkey 		string
 	guid 		string
 pub mut:
-	status TerraformDeploymentStatus
-	vms []TFVM
-	network TFNet
+	status 		TerraformDeploymentStatus
+	vms 		[]TFVM
+	network 	TFNet
+	tfgridnet	TFGridNet //test, main or dev
 }
 
 
@@ -60,10 +66,6 @@ pub fn (mut f TerraformFactory) deployment_get(args_ TerraformDeploymentArgs) ?&
 		return error ("specify name for deployment")
 	}
 
-	if ! (args.tfnet in ["dev","main","test"]){
-		return error ("tfnet needs to be dev,main or test")
-	}
-
 	if args.name in f.deployments{
 		return f.deployments[args.name]
 	}
@@ -78,7 +80,7 @@ pub fn (mut f TerraformFactory) deployment_get(args_ TerraformDeploymentArgs) ?&
 			name:args.name, 
 			path:path,
 			mnemonic:args.mnemonic,
-			tfnet:args.tfnet, 
+			tfgridnet:args.tfgridnet
 			sshkey:args.sshkey, 
 			guid:args.guid
 			}
@@ -91,14 +93,10 @@ pub fn (mut f TerraformFactory) deployment_get(args_ TerraformDeploymentArgs) ?&
 
 }
 
-//execute all available terraform objects
-pub fn (mut tfd TerraformDeployment) vm_ubuntu_add(name string, nodeid int) {	
-	tfd.vms << TFVM{name:name,tfgrid_node_id:nodeid}
-}
 
 
 //execute all available terraform objects
-pub fn (mut tfd TerraformDeployment) execute() ? {	
+pub fn (mut tfd TerraformDeployment) deploy() ? {	
 	mut tff := get()?
 	tfd.network.write(mut &tfd)?
 	for mut vm in tfd.vms{
@@ -111,4 +109,13 @@ pub fn (mut tfd TerraformDeployment) execute() ? {
 pub fn (mut tfd TerraformDeployment) destroy() ? {	
 	mut tff := get()?
 	tff.tf_destroy(tfd.path)?
+}
+
+//return which net in string form
+pub fn (mut tfd TerraformDeployment) tfgrid_net_string() string {	
+	return match tfd.tfgridnet {
+		.main { 'main' }
+		.test { 'test' } 
+		.dev { 'def' }
+	}	
 }

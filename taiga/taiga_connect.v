@@ -112,7 +112,7 @@ fn (mut h TaigaConnection) post_json_dict(prefix string, postdata string, cache 
 		response: response as dict of further json strings
 	*/
 	mut result := h.post_json_str(prefix, postdata, cache) ?
-	return crystaljson.json_dict_any(result, false, [], [])
+	return crystaljson.json_dict_filter_any(result, false, [], [])
 }
 
 // Post request with json and return result as string

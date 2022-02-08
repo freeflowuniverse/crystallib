@@ -55,7 +55,7 @@ pub fn story_delete(id int) ?bool {
 }
 
 fn story_decode(data string) ?Story {
-	data_as_map := crystaljson.json_dict_any(data, false, [], []) ?
+	data_as_map := crystaljson.json_dict_filter_any(data, false, [], []) ?
 
 	mut story := Story{
 		description: data_as_map['description'].str()
