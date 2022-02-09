@@ -138,7 +138,6 @@ fn (mut config ConfigRoot) init()? {
 		// site_in.configroot = &config
 		println(site_in_raw)
 		mut site_in := site_new(site_in_raw)?
-		println(1111)
 		config.sites << site_in
 	}
 
