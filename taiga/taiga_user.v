@@ -1,16 +1,12 @@
 module taiga
 
-import os
-import x.json2
-import despiegk.crystallib.texttools
-import despiegk.crystallib.crystaljson
+import x.json2 { raw_decode }
 
 pub fn users() ? {
 	mut conn := connection_get()
 	resp := conn.get_json_str('users', '', true) ?
-	raw_data := json2.raw_decode(resp.replace('\\\\', '')) ?
+	raw_data := raw_decode(resp.replace('\\\\', '')) ?
 	blocks := raw_data.arr()
-	os.write_file('/tmp/taiga_blocks/users', '$blocks') ?
 	println('[+] Loading $blocks.len users ...')
 	for u in blocks {
 		user := user_decode(u.str()) or {
@@ -39,7 +35,12 @@ pub fn user_delete(id int) ?bool {
 }
 
 fn user_decode(data string) ?User {
+<<<<<<< HEAD
 	data_as_map := crystaljson.json_dict_filter_any(data, false, [], []) ?
+=======
+	data_raw := raw_decode(data) ?
+	data_as_map := data_raw.as_map()
+>>>>>>> development_taiga_new
 	mut user := User{
 		id: data_as_map['id'].int()
 		is_active: data_as_map['is_active'].bool()
@@ -52,7 +53,7 @@ fn user_decode(data string) ?User {
 		public_key: data_as_map['public_key'].str()
 	}
 	user.date_joined = parse_time(data_as_map['date_joined'].str())
-	user.file_name = generate_file_name(user.username + '.md') 
+	user.file_name = generate_file_name(user.username + '.md')
 	return user
 }
 

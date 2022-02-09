@@ -1,17 +1,14 @@
 module taiga
 
-import despiegk.crystallib.crystaljson
-import json
-import x.json2
-import os
+import x.json2 { raw_decode }
 import math { min }
+import json
 
 pub fn tasks() ? {
 	mut conn := connection_get()
 	resp := conn.get_json_str('tasks', '', true) ?
-	raw_data := json2.raw_decode(resp.replace('\\\\', '')) ?
+	raw_data := raw_decode(resp.replace('\\\\', '')) ?
 	blocks := raw_data.arr()
-	os.write_file('/tmp/taiga_blocks/tasks', '$blocks') ?
 	println('[+] Loading $blocks.len tasks ...')
 	for t in blocks {
 		mut task := Task{}
@@ -19,6 +16,7 @@ pub fn tasks() ? {
 			eprintln(err)
 			Task{}
 		}
+		// Add only tasks that belong to known project (Not Archived one)
 		if task != Task{} && task.project in conn.projects {
 			conn.task_remember(task)
 		}
@@ -60,12 +58,17 @@ pub fn task_delete(id int) ?bool {
 }
 
 fn task_decode(data string) ?Task {
+<<<<<<< HEAD
 	data_as_map := crystaljson.json_dict_filter_any(data, false, [], []) ?
 	projname := data_as_map['project_extra_info'].as_map()['name'].str().to_upper()
 	if projname.contains('ARCHIVE') {
 		// this is a task linked to a project which is archived, no reason to process
 		return Task{}
 	}
+=======
+	data_raw := raw_decode(data) ?
+	data_as_map := data_raw.as_map()
+>>>>>>> development_taiga_new
 	mut task := Task{
 		description: data_as_map['description'].str()
 		id: data_as_map['id'].int()
@@ -87,7 +90,7 @@ fn task_decode(data string) ?Task {
 			task.assigned_to << assign.int()
 		}
 	}
-	// task.status = data_as_map["status_extra_info"].as_map()["name"].str() // TODO: Use Enum
+	task.set_status()
 	task.created_date = parse_time(data_as_map['created_date'].str())
 	task.modified_date = parse_time(data_as_map['modified_date'].str())
 	task.finished_date = parse_time(data_as_map['finished_date'].str())
@@ -95,13 +98,29 @@ fn task_decode(data string) ?Task {
 	task.category = get_category(task)
 	task.file_name = generate_file_name(task.subject[0..min(40, task.subject.len)] + '-' +
 		task.id.str() + '.md')
-
 	// TODO: Comments later
 	// mut conn := connection_get()
 	// if conn.settings.comments_task {
 	// 	task.comments() ?
 	// }
 	return task
+}
+
+fn (task Task) set_status(st string) {
+	status := st.to_lower()
+	if status.contains('new') {
+		task.status = TaskStatus.new
+	} else if status.contains('accepted') {
+		task.status = TaskStatus.accepted
+	} else if status.contains('inprogress') {
+		task.status = TaskStatus.inprogress
+	} else if status.contains('verification') {
+		task.status = TaskStatus.verification
+	} else if status.contains('done') {
+		task.status = TaskStatus.done
+	} else {
+		task.status = TaskStatus.unknown
+	}
 }
 
 // Get project object for each task

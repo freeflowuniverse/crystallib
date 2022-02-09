@@ -1,5 +1,7 @@
 module taiga
 
+import despiegk.crystallib.taigaexports { ProjectExport }
+
 pub fn load_data() ? {
 	projects() ?
 	stories() ?
@@ -67,6 +69,10 @@ fn (mut conn TaigaConnection) user_remember(obj User) {
 
 fn (mut conn TaigaConnection) project_remember(obj Project) {
 	conn.projects[obj.id] = &obj
+}
+
+fn (mut conn TaigaConnection) full_project_remember(id int, obj ProjectExport) {
+	conn.full_projects[id] = &obj
 }
 
 fn (mut conn TaigaConnection) issue_remember(obj Issue) {

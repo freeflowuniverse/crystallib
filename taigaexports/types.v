@@ -1,14 +1,14 @@
 module taigaexports
 
 // AttachedFile
-struct AttachedFile {
+pub struct AttachedFile {
 pub mut:
   data string
   name string
 }
 
 // Attachment
-struct Attachment {
+pub struct Attachment {
 pub mut:
   attached_file string
   description string
@@ -21,7 +21,7 @@ pub mut:
 }
 
 // Attachments
-struct Attachments {
+pub struct Attachments {
 pub mut:
   changed []Attachment
   deleted []Attachment
@@ -30,7 +30,7 @@ pub mut:
 
 
 // StoryAttachment
-struct StoryAttachment {
+pub struct StoryAttachment {
 pub mut:
   attached_file AttachedFile
   created_date string
@@ -45,7 +45,7 @@ pub mut:
 }
 
 // CommentVersion
-struct CommentVersion {
+pub struct CommentVersion {
 pub mut:
   comment string
   comment_html string
@@ -54,18 +54,18 @@ pub mut:
 }
 
 // CommentVersionUser
-struct CommentVersionUser {
+pub struct CommentVersionUser {
 pub mut:
   id int
 }
 
 // CustomAttributesValues
-struct CustomAttributesValues {
+pub struct CustomAttributesValues {
 
 }
 
 // Data
-struct TimelineData {
+pub struct TimelineData {
 pub mut:
   comment string
   comment_edited bool
@@ -82,20 +82,20 @@ pub mut:
 }
 
 // DataRole
-struct DataRole {
+pub struct DataRole {
 pub mut:
   id int
   name string
 }
 
 // DataUser
-struct DataUser {
+pub struct DataUser {
 pub mut:
   email string
 }
 
 // Duedate
-struct Duedate {
+pub struct Duedate {
 pub mut:
   by_default bool
   color string
@@ -105,7 +105,7 @@ pub mut:
 }
 
 // EpicElement
-struct EpicElement {
+pub struct EpicElement {
 pub mut:
   assigned_to string
   attachments []Attachment
@@ -131,7 +131,7 @@ pub mut:
 }
 
 // EpicHistory
-struct EpicHistory {
+pub struct EpicHistory {
 pub mut:
   comment string
   comment_versions []CommentVersion
@@ -149,13 +149,13 @@ pub mut:
 }
 
 // UserStoryHistoryDiff
-struct UserStoryHistoryDiff {
+pub struct UserStoryHistoryDiff {
 pub mut:
   attachments []Attachment
 }
 
 // TaskHistorySnapshot
-struct TaskHistorySnapshot {
+pub struct TaskHistorySnapshot {
 pub mut:
   assigned_to string
   attachments []Attachment
@@ -182,14 +182,14 @@ pub mut:
 }
 
 // IssueHistoryValues
-struct IssueHistoryValues {
+pub struct IssueHistoryValues {
 pub mut:
   priority map[string]string
   users []string
 }
 
 // Issue
-struct Issue {
+pub struct Issue {
 pub mut:
   assigned_to string
   attachments []Attachment
@@ -218,7 +218,7 @@ pub mut:
   watchers []string
 }
 
-struct InnerTimelineDataItem {
+ pub struct InnerTimelineDataItem {
 pub mut:
   id int
   project Project
@@ -227,7 +227,7 @@ pub mut:
 }
 
 // TimelineDataItem
-struct TimelineDataItem {
+pub struct TimelineDataItem {
 pub mut:
   id int
   project Project
@@ -237,7 +237,7 @@ pub mut:
 }
 
 // Snapshot
-struct Snapshot {
+pub struct Snapshot {
 pub mut:
   ref int
   tags []string
@@ -260,7 +260,7 @@ pub mut:
 }
 
 // IssueHistory
-struct IssueHistory {
+pub struct IssueHistory {
 pub mut:
   comment string
   comment_versions []CommentVersion
@@ -278,7 +278,7 @@ pub mut:
 }
 
 // IssueType
-struct IssueType {
+pub struct IssueType {
 pub mut:
   color string
   name string
@@ -286,7 +286,7 @@ pub mut:
 }
 
 // Membership
-struct Membership {
+pub struct Membership {
 pub mut:
   created_at string
   email string
@@ -299,7 +299,7 @@ pub mut:
 }
 
 // Point
-struct Point {
+pub struct Point {
 pub mut:
   name string
   order int
@@ -307,7 +307,7 @@ pub mut:
 }
 
 // Project
-struct Project {
+pub struct Project {
 pub mut:
   description string
   id int
@@ -316,7 +316,7 @@ pub mut:
 }
 
 // IssueHistoryDiff
-struct IssueHistoryDiff {
+pub struct IssueHistoryDiff {
 pub mut:
   blocked_note []string
   blocked_note_html []string
@@ -326,7 +326,7 @@ pub mut:
 }
 
 // EpicHistorySnapshot
-struct EpicHistorySnapshot {
+pub struct EpicHistorySnapshot {
 pub mut:
   assigned_to string
   attachments []Attachment
@@ -348,27 +348,27 @@ pub mut:
 }
 
 // CommonValues
-struct CommonValues {
+pub struct CommonValues {
 pub mut:
   users []string
 }
 
 // RelatedUserStory
-struct RelatedUserStory {
+pub struct RelatedUserStory {
 pub mut:
   order int
   user_story int
 }
 
 // Relateduserstory
-struct Relateduserstory {
+pub struct Relateduserstory {
 pub mut:
   id int
   subject string
 }
 
 // RoleElement
-struct RoleElement {
+pub struct RoleElement {
 pub mut:
   computable bool
   name string
@@ -378,14 +378,14 @@ pub mut:
 }
 
 // RolePoint
-struct RolePoint {
+pub struct RolePoint {
 pub mut:
   points string
   role string
 }
 
 // Status
-struct Status {
+pub struct Status {
 pub mut:
   color string
   is_closed bool
@@ -395,7 +395,7 @@ pub mut:
 }
 
 // Task
-struct Task {
+pub struct Task {
 pub mut:
   assigned_to string
   attachments []Attachment
@@ -425,7 +425,7 @@ pub mut:
 }
 
 // TaskHistory
-struct TaskHistory {
+pub struct TaskHistory {
 pub mut:
   comment string
   comment_versions []CommentVersion
@@ -443,7 +443,7 @@ pub mut:
 }
 
 // UserStoryHistorySnapshot
-struct UserStoryHistorySnapshot {
+pub struct UserStoryHistorySnapshot {
 pub mut:
   assigned_to string
   assigned_users []int
@@ -478,7 +478,7 @@ pub mut:
 }
 
 // Timeline
-struct Timeline {
+pub struct Timeline {
 pub mut:
   created string
   data TimelineData
@@ -487,7 +487,7 @@ pub mut:
 }
 
 // UsStatus
-struct UsStatus {
+pub struct UsStatus {
 pub mut:
   color string
   is_archived bool
@@ -499,7 +499,7 @@ pub mut:
 }
 
 // UserStory
-struct UserStory {
+pub struct UserStory {
 pub mut:
   assigned_to string
   assigned_users []string
@@ -536,7 +536,7 @@ pub mut:
 }
 
 // UserStoryHistory
-struct UserStoryHistory {
+pub struct UserStoryHistory {
 pub mut:
   comment string
   comment_versions []CommentVersion
@@ -554,7 +554,7 @@ pub mut:
 }
 
 // ValuesDiff
-struct ValuesDiff {
+pub struct ValuesDiff {
 pub mut:
   anon_permissions [][]string
   attachments Attachments
@@ -570,7 +570,7 @@ pub mut:
 }
 
 
-struct ProjectExport {
+ pub struct ProjectExport {
 pub mut:
   anon_permissions []string
   blocked_code string

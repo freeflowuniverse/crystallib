@@ -1,19 +1,15 @@
 module taiga
 
-import despiegk.crystallib.crystaljson
-import despiegk.crystallib.texttools
-import json
-import x.json2
-import os
+import x.json2 { raw_decode }
 import math { min }
+import json
 
 // List all issues ( One request only )
 pub fn issues() ? {
 	mut conn := connection_get()
 	resp := conn.get_json_str('issues', '', true) ?
-	raw_data := json2.raw_decode(resp.replace('\\\\', '')) ?
+	raw_data := raw_decode(resp.replace('\\\\', '')) ?
 	blocks := raw_data.arr()
-	os.write_file('/tmp/taiga_blocks/issues', '$blocks') ?
 	println('[+] Loading $blocks.len issues ...')
 	for i in blocks {
 		mut issue := Issue{}
@@ -60,7 +56,12 @@ pub fn issue_delete(id int) ?bool {
 
 // Decode issue to get clean object from raw data
 fn issue_decode(data string) ?Issue {
+<<<<<<< HEAD
 	data_as_map := crystaljson.json_dict_filter_any(data, false, [], []) ?
+=======
+	data_raw := raw_decode(data) ?
+	data_as_map := data_raw.as_map()
+>>>>>>> development_taiga_new
 	mut issue := Issue{
 		description: data_as_map['description'].str()
 		id: data_as_map['id'].int()

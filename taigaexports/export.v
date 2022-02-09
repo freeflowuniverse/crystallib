@@ -25,17 +25,14 @@ struct SyncExportResult {
 	url string
 }
 
-struct Exporter {
-mut:
+[params]
+pub struct ExporterParams {
+pub mut:
 	url string
-	api_version string = "v1"
-	api_url	string
 	username string
 	password string
 	auth_token string
-	project_slug string
 
-pub mut:
 	// async mode timeouts
 	// time to wait between download/decode attempts
 	async_wait i64 = 2 // in seconds, defaults to 2 seconds
@@ -44,8 +41,17 @@ pub mut:
 	async_timeout i64 = 10 // in minutes, defaults to 10 minutes
 }
 
-pub fn new(url string, username string, password string) ?&Exporter {
-	parsed_url := urllib.parse(url)?
+pub struct Exporter {
+	ExporterParams
+
+mut:
+	api_version string = "v1"
+	api_url	string
+	project_slug string
+}
+
+pub fn new(args ExporterParams) ?&Exporter {
+	parsed_url := urllib.parse(args.url)?
 	mut path := ''
 	if parsed_url.path !in ['', '/'] {
 		path = parsed_url.path.trim('/')
@@ -53,15 +59,34 @@ pub fn new(url string, username string, password string) ?&Exporter {
 
 	base_url := 'https://$parsed_url.host/$path'.trim('/')
 
-	mut exporter := &Exporter{
-		url: base_url,
-		username: username,
-		password: password
+	mut exporter := &Exporter{}
+	exporter.url = base_url
+	exporter.api_url = '$base_url/api/$exporter.api_version'
+	exporter.username = args.username
+	exporter.password = args.password
+
+	if args.auth_token.len > 0 {
+		exporter.auth_token = args.auth_token
+	} else {
+		exporter.authenticate()?
 	}
 
-	exporter.api_url = '$base_url/api/$exporter.api_version'
-	exporter.authenticate()?
 	return exporter
+}
+
+pub fn new_from_credentials(url string, username string, password string) ?&Exporter {
+	return new(
+		url: url,
+		username: username,
+		password: password
+	)
+}
+
+pub fn new_from_token(url string, auth_token string) ?&Exporter {
+	return new(
+		url: url,
+		auth_token: auth_token
+	)
 }
 
 // do request and return the full response
