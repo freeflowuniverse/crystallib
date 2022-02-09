@@ -22,6 +22,7 @@ pub mut:
 	description string
 	stdout bool = true
 	checkkey string //if used will use this one in stead of hash of cmd, to check if was executed already
+	tmpdir string
 }
 
 pub fn (mut node Node) ipaddr_pub_get() ?string {
@@ -56,6 +57,7 @@ pub fn (mut node Node) exec(args NodeExecCmd) ? {
 	if cmd.contains("\n"){
 		cmd = texttools.dedent(cmd)
 	}
+
 	mut hhash := ""
 	if args.checkkey.len>0{
 		hhash = args.checkkey
@@ -85,8 +87,13 @@ pub fn (mut node Node) exec(args NodeExecCmd) ? {
 		}
 	}		
 	r_path := '/tmp/${hhash}.sh'
-	node.executor.file_write(r_path,cmd)?		
-	cmd = "cd /tmp && bash $r_path && rm $r_path"
+	node.executor.file_write(r_path,cmd)?
+	if args.tmpdir.len>2{		
+		cmd = "mkdir -p ${args.tmpdir} && cd ${args.tmpdir} && export TMPDIR='${args.tmpdir}' && bash $r_path && cd .. && rm -rf ${args.tmpdir}"
+	}else{
+		cmd = "cd /tmp && bash $r_path && rm $r_path"
+	}
+	
 	println("   - exec cmd:$cmd on $node.name")
 	node.executor.exec(cmd) or {
 		return error(err.msg+"\noriginal cmd:\n${args.cmd}")

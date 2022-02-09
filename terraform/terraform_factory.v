@@ -40,14 +40,14 @@ const factory = init2()
 pub fn get() ?&TerraformFactory {
 
 	mut f_ := terraform.factory
-	home_ := os.real_path(os.environ()["HOME"])
+	home_ := os.real_path(os.home_dir())
 	f_.tf_cmd = "$home_/git3/bin/terraform"
 
 
 	if f_.status  == TerraformFactoryStatus.init{
 		if ! os.exists(f_.tf_cmd){
 			mut f := terraform.factory
-			home := os.real_path(os.environ()["HOME"])
+			home := os.real_path(os.home_dir())
 			f.tf_cmd = "$home/git3/bin/terraform"
 			mut n := builder.node_local()?
 			mut url:=""

@@ -150,7 +150,7 @@ pub fn loaded() bool {
 
 //returns path to sshkey
 pub fn key_generate(name string, passphrase string)?string{
-	dest := "${os.environ()["HOME"]}/.ssh/$name"
+	dest := "${os.home_dir()}/.ssh/$name"
 	if os.exists(dest){
 		os.rm(dest)?
 	}
@@ -160,7 +160,7 @@ pub fn key_generate(name string, passphrase string)?string{
 	if ! (rc.exit_code == 0){
 		return error("Could not generated sshkey,\n$rc")
 	}
-	return "${os.environ()["HOME"]}/.ssh/$name"
+	return "${os.home_dir()}/.ssh/$name"
 }
 
 pub fn reset() ? {

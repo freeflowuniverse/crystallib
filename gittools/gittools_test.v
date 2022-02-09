@@ -9,7 +9,7 @@ fn test_url1() {
 	url := 'https://github.com/vlang/v/blob/master/doc/docs.md#maps'
 	obj := addr_get_from_url(url) or {panic("$err")}
 
-	home := os.real_path(os.environ()["HOME"])
+	home := os.real_path(os.home_dir())
 
 	tocompare := GitAddr{
 		root: '$home/code/'
@@ -33,7 +33,7 @@ fn test_url2() {
 
 	println(obj)
 
-	home := os.real_path(os.environ()["HOME"])
+	home := os.real_path(os.home_dir())
 
 	tocompare := GitAddr{
 		root: '$home/code/'

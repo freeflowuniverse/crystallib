@@ -72,7 +72,7 @@ pub fn (mut f TerraformFactory) deployment_get(args_ TerraformDeploymentArgs) ?&
 
 	mut path := "~/git3/terraform/$args.name"
 	if path.contains("~"){
-		home := os.real_path(os.environ()["HOME"])
+		home := os.real_path(os.home_dir())
 		path = path.replace("~",home)
 	}
 
