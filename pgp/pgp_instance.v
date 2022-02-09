@@ -29,36 +29,38 @@ fn (mut f PGPFactory) get (name string) ?&PGPInstance{
 
 
 
-fn (f PGPInstance) sign (content string) ?string{
+
+//sign a piece of content, return signature
+fn (f PGPInstance) sign (content string) ?Signature{
 }
 
 //encrypt for private usage (is this relevant)
-fn (f PGPInstance) encrypt_self (content string) ?string{
+fn (f PGPInstance) encrypt_self (content string) ?CryptData{
 }
 
 //encrypt for other person, so they can only decrypt
-fn (f PGPInstance) encrypt_other (pubkey string, content string) ?string{
+fn (f PGPInstance) encrypt_other (pubkey Pubkey, content string) ?CryptData{
 }
 
 //encrypt for other person, so they can only decrypt
 //sign using your own pgp key
-fn (f PGPInstance) encrypt_sign_other (pubkey string, content string) ?string{
+fn (f PGPInstance) encrypt_sign_other (pubkey Pubkey, content string) ?CryptData{
 }
 
 //verify agains own key
-fn (f PGPInstance) verify_self (pubkey string, content string) ?string{
+fn (f PGPInstance) verify_self (pubkey Pubkey, signature Signature, content string) ?string{
 }
 
 //verify with pub key of other
-fn (f PGPInstance) verify_other (pubkey string, content string) ?string{
+fn (f PGPInstance) verify_other (pubkey Pubkey, signature Signature, content string) ?string{
 }
 
 
 //decrypt with own key
-fn (f PGPInstance) decrypt (content string) ?string{
+fn (f PGPInstance) decrypt (content CryptData) ?string{
 }
 
 
 //decrypt with own key and also verify (is counterpart of encrypt_sign_other)
-fn (f PGPInstance) decrypt_verify (content string) ?string{
+fn (f PGPInstance) decrypt_verify (content CryptData) ?string{
 }

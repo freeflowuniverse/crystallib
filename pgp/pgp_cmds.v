@@ -5,6 +5,7 @@ import os
 
 
 
+//list all instances
 fn (pgp PGPFactory) list () ?[]&PGPInstance{
 	mut res :=[]&PGPInstance{}
 	
