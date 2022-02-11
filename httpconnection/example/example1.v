@@ -19,19 +19,30 @@ fn do()?{
 	conn.settings.retry = 3
 	conn.settings.cache_timeout = 7200 //make the cache timeout 2h
 	conn.settings.cache_enable = true
+	conn.settings.async = true
 
 	//make sure we empty cache
 	conn.cache_drop("")?
 
 	//subkey will get result of rest call & get subset of dict
-	mut r := conn.get_json_dict(mut prefix:"users")?
+	r := conn.get_json_dict(mut prefix:"users")?
+	println(r)
 
 	//will return as list but will start from subkey data
 	mut r2 := conn.get_json_list(mut prefix:"users", dict_key:"data")?
+	println(r2)
 
-	mut r3 := conn.get_json_str(mut prefix:"users", id:"1", dict_key:"data")?
 
-	println(r3)
+	t3 := go conn.get_json_str(mut prefix:"users", id:"1", dict_key:"data")
+	d3 := t3.wait()?
+	println(d3)
+
+	// mut rc3,r3 := conn.get_json_str(mut prefix:"users", id:"1", dict_key:"data")?
+
+	// println(rc3)
+	// println(r3)
+
+
 
 	// resp := conn.get_json_str('tasks', '', true) ?
 	// raw_data := json2.raw_decode(resp.replace('\\\\', '')) ?

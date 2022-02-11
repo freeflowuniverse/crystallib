@@ -22,12 +22,13 @@ fn (mut h HTTPConnection) url(mut args Request) string{
 		panic("cannot not havew empty url on httpconnection")
 	}
 	mut u := ""
+	mut prefix := args.prefix.trim("/ ")
 	if args.id.len>0{
-		u = '$h.url_get()/$args.prefix/$args.id'
+		u = '$h.url_get()/$prefix/$args.id'
 	}else{
-		u =  '$h.url_get()/$args.prefix'
+		u =  '$h.url_get()/$prefix'
 	}
-	println(u)
+	// println(u)
 	return u
 }
 
@@ -50,8 +51,9 @@ pub fn (mut h HTTPConnection) post_json_dict(mut args Request) ?map[string]json2
 	Output:
 		response: response as dict of further json strings
 	*/
-	mut result := h.post_json_str(mut args) ?
-	return crystaljson.json_dict_filter_any(result, false, [], [])
+	data_ := h.post_json_str(mut args)?
+	data := crystaljson.json_dict_filter_any(data_, false, [], [])?
+	return data
 }
 
 // Post request with json and return result as string
@@ -79,31 +81,50 @@ pub fn (mut h HTTPConnection) post_json_str(mut args Request) ?string {
 	// Post with auth header
 	args = h.args_header_update(mut args)
 	args = h.cache_get(mut args)
-	if args.result.len > 0 {
-		return args.result
-	}
-	url := h.url(mut args)
-	mut req := http.new_request(http.Method.post, url, args.postdata) ?
-	// println(" --- $prefix\n$postdata")
-	if args.prefix.contains('auth') {
-		response := http.post_json('$h.url_get()/$args.prefix', args.postdata) ?
-		args.result = response.text
-	} else {
-		response := req.do() ?
-		if response.status_code == 201 {
+	//if 999998 then not in cache, because otherwise can be an empty result from before
+	if args.result_code == 999998 {
+		args.result_code = 0
+		// url := h.url(mut args)
+		// mut req := http.new_request(http.Method.post, url, args.postdata) or { 
+		// 	//TODO: need to implement the retry
+		// 	return error("could not create http_new request.\n${args.json()}")
+		// }
+		// println(" --- $prefix\n$postdata")
+	
+		// if args.prefix.contains('auth') {
+		// 	response := http.post_json('${h.url_get()}/$args.prefix', args.postdata) ?
+		// 	args.result = response.text
+		// } else {
+		url := h.url_get()
+		response := http.post_json('$url/$args.prefix', args.postdata) ?
+		// response := req.do() or {
+		// 	http.Response{status_code:444}
+		// }
+		if response.status_code == 201 || response.status_code == 200 {
 			args.result = response.text
+		} else if response.status_code == 444 {
+			args.result = 'could not post: $url, connection issue.\n$response'
+			args.result_code = 2				
 		} else {
-			return error('could not post: $url\n$response')
+			args.result = 'could not post:$response\n${args.json()}'
+			args.result_code = 5
 		}
-		args.result = response.text
+		// }
+		args = h.cache_set(mut args) ?
 	}
-	args = h.cache_set(mut args) ?
+	if args.result_code>0{
+		return error(args.json())
+	}
 	return args.result
 }
 
-pub fn (mut h HTTPConnection) get_json_dict(mut args Request) ?map[string]json2.Any {
-	mut result := h.get_json_str(mut args) ?
-	return crystaljson.json_dict_filter_any(result, false, [], [])
+pub fn (mut h HTTPConnection) get_json_dict(mut args Request) ?map[string]json2.Any{
+	data_ := h.get_json_str(mut args) ?
+	mut data := map[string]json2.Any{}
+	if args.result_code==0{
+		data = crystaljson.json_dict_filter_any(data_, false, [], [])?
+	}
+	return data
 }
 
 //
@@ -126,12 +147,14 @@ pub fn (mut h HTTPConnection) get_json_list(mut args Request) ?[]string {
 	Output:
 		response: list of strings.
 	*/
-	mut result := h.get_json_str(mut args) ?
+	mut data_ := h.get_json_str(mut args) ?
 	if args.dict_key.len>0{
-		result = crystaljson.json_dict_get_string(result, false, args.dict_key)?
+		data_ = crystaljson.json_dict_get_string(data_, false, args.dict_key)?
 	}
-	return crystaljson.json_list(result, false)
+	data := crystaljson.json_list(data_, false)
+	return data
 }
+
 
 // Get request with json data and return response as string
 //
@@ -156,7 +179,9 @@ pub fn (mut h HTTPConnection) get_json_str(mut args Request) ?string {
 	*/
 	args = h.args_header_update(mut args)
 	args = h.cache_get(mut args)
-	if args.result == '' {
+	//if 999998 then not in cache, because otherwise can be an empty result from before
+	if args.result_code == 999998 {
+		args.result_code = 0
 		url := h.url(mut args)
 		mut req := http.new_request(http.Method.get, url, args.postdata) ?
 		req.add_custom_header('x-disable-pagination', 'True') ?
@@ -164,9 +189,13 @@ pub fn (mut h HTTPConnection) get_json_str(mut args Request) ?string {
 		if res.status_code == 200 {
 			args.result = res.text
 		} else {
-			return error('could not get: $url\n$res')
+			args.result = 'could not get: $url\n$res'
+			args.result_code = 1			
 		}
 		args = h.cache_set(mut args) ?
+	}
+	if args.result_code>0{
+		return error(args.json())
 	}
 	return args.result
 }
@@ -197,7 +226,7 @@ pub fn (mut h HTTPConnection) edit_json(mut args Request) ?string {
 	if res.status_code == 200 {
 		result = res.text
 	} else {
-		return error('could not get: $url\n$res')
+		return error('could not edit post: $url\n$res')
 	}
 	return result
 }

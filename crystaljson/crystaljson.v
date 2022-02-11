@@ -46,7 +46,12 @@ pub fn json_dict_get_any(r string, clean bool, key string) ?json2.Any {
 	if clean{
 		r2=texttools.ascii_clean(r2)
 	}
-	data_raw := json2.raw_decode(r2) ?
+	if r2.trim(" \n")==""{
+		return error("Cannot do json2 raw decode in json_dict_get_any.\ndata was empty.")
+	}
+	data_raw := json2.raw_decode(r2) or { 
+		return error("Cannot do json2 raw decode in json_dict_get_any.\ndata:\n$r2\nerror:$err")
+	}
 	mut res := data_raw.as_map()
 	if key in res{
 		return res[key]
@@ -67,7 +72,12 @@ pub fn json_dict_filter_any(r string, clean bool, include []string, exclude []st
 	if clean{
 		r2=texttools.ascii_clean(r2)
 	}
-	data_raw := json2.raw_decode(r2) ?
+	if r2.trim(" \n")==""{
+		return error("Cannot do json2 raw decode in json_dict_filter_any.\ndata was empty.")
+	}
+	data_raw := json2.raw_decode(r2) or { 
+		return error("Cannot do json2 raw decode in json_dict_filter_any.\ndata:\n$r2\nerror:$err")
+	}
 	mut res := data_raw.as_map()
 	if include != []{
 		for key in res.keys(){

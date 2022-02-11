@@ -64,6 +64,12 @@ pub fn get_local() ?&Redis {
 	return f.instances[name]	
 }
 
+//get a new one guaranteed, need for threads
+pub fn get_local_new() ?&Redis {
+	mut r := redisclient.connect("localhost:6379")?
+	return &r
+}
+
 
 // https://redis.io/topics/protocol
 pub fn connect(addr string) ?Redis {
