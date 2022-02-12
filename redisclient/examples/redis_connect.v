@@ -26,8 +26,6 @@ fn redistest() ? {
 
 fn redistest_nothreads() ? {
 
-	mut threads := []thread{}
-
 	for c in 0..10000{
 		println(c)
 		time.sleep(100*time.millisecond)
@@ -40,6 +38,6 @@ fn redistest_nothreads() ? {
 
 fn main() {
 	//THEY BOTH FAIL
-	redistest() or { panic(err) }
+	// redistest() or { panic(err) }
 	redistest_nothreads() or { panic(err) }
 }

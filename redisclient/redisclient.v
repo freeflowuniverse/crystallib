@@ -75,7 +75,7 @@ pub fn get(addr string) ?&Redis {
 pub fn get_local() &Redis {
 	addr := "localhost:6379"
 	return get(addr) or {
-		Redis{
+		&Redis{
 			connected: false,
 			addr: addr
 		}
