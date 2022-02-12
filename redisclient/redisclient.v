@@ -72,8 +72,14 @@ pub fn get(addr string) ?&Redis {
 
 //make sure to use new first, so that the connection has been initted
 //then you can get it everywhere
-pub fn get_local() ?&Redis {
-	return get("localhost:6379")
+pub fn get_local() &Redis {
+	addr := "localhost:6379"
+	return get(addr) or {
+		Redis{
+			connected: false,
+			addr: addr
+		}
+	}
 }
 
 //get a new one guaranteed, need for threads

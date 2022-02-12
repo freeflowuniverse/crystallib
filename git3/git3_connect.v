@@ -11,7 +11,7 @@ import os
 struct Git3Connection {
 mut:
 	url			  string = "https://api.git3.com"
-	redis         redisclient.Redis
+	redis         &redisclient.Redis
 	auth_token    string 
 	cache_timeout int
 // pub mut:
@@ -21,7 +21,7 @@ mut:
 // Init connection for git3 singleton
 fn init_connection() Git3Connection {
 	mut conn := Git3Connection{
-		redis: redisclient.get_local() or { redisclient.Redis{} }
+		redis: redisclient.get_local()
 	}
 	return conn
 }

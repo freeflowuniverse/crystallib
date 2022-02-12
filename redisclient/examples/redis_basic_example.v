@@ -2,7 +2,7 @@ module main
 import despiegk.crystallib.redisclient
 
 fn redistest() ? {
-	mut redis := redisclient.get_local() ?
+	mut redis := redisclient.get_local() 
 
 	redis.selectdb(10) ?
 

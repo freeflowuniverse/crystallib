@@ -25,7 +25,7 @@ struct EmptyHeader {}
 [heap]
 pub struct HTTPConnection {
 pub mut:
-	redis         redisclient.Redis
+	redis         &redisclient.Redis
 	//the base url, can be more than 1, useful in case of retry
 	url           		[]string
 	header_default      http.Header
@@ -57,7 +57,7 @@ pub fn new(name string, url string, cache bool) &HTTPConnection {
 		http.CommonHeader.content_type:  'application/json'
 	})
 	mut conn := HTTPConnection{
-		redis: redisclient.get_local() or { &redisclient.Redis{} }
+		redis: redisclient.get_local()
 		header_default: header
 	}
 

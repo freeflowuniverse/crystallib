@@ -19,7 +19,7 @@ struct TerraformFactory {
 mut:
 	deployments    	map[string]&TerraformDeployment
 	status		 	TerraformFactoryStatus
-	redis  			redisclient.Redis	
+	redis  			&redisclient.Redis	
 pub mut:
 	tf_cmd			string
 }
@@ -28,7 +28,7 @@ pub mut:
 //needed to get singleton
 fn init2() TerraformFactory {
 	mut f := terraform.TerraformFactory{
-		redis: redisclient.get_local() or { &redisclient.Redis{} }
+		redis: redisclient.get_local() 
 	}	
 	return f
 }

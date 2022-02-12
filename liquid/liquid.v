@@ -9,7 +9,7 @@ import crypto.md5
 
 struct LiquidConnection {
 mut:
-	redis         redisclient.Redis
+	redis         &redisclient.Redis
 	url           string
 	secret		  string
 	// auth          AuthDetail
@@ -18,7 +18,7 @@ mut:
 
 fn init_connection() LiquidConnection {
 	return LiquidConnection{
-		redis: redisclient.get_local() or { redisclient.Redis{} }
+		redis: redisclient.get_local()
 	}
 }
 

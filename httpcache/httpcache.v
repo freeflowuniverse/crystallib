@@ -5,12 +5,12 @@ import redisclient
 
 struct HttpCache {
 mut:
-	redis redisclient.Redis
+	redis &redisclient.Redis
 }
 
 fn init_single_cache() HttpCache {
 	return HttpCache{
-		redis: redisclient.get_local() or { redisclient.Redis{} }
+		redis: redisclient.get_local()
 	}
 }
 

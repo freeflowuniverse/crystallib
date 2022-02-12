@@ -6,12 +6,12 @@ import redisclient
 struct Planner {
 mut:
 	gitlevel int
-	redis    redisclient.Redis
+	redis    &redisclient.Redis
 }
 
 fn init_single_planner() Planner {
 	return Planner{
-		redis: redisclient.get_local() or { redisclient.Redis{} }
+		redis: redisclient.get_local()
 	}
 }
 

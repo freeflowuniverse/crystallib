@@ -13,7 +13,7 @@ mut:
 
 pub fn newcache(namespace string) RedisCache {
 	// reuse single object
-	mut r:=redisclient.get_local() or {panic(err)}
+	mut r:=redisclient.get_local()
 	return RedisCache{redis:r,namespace:namespace}
 }
 

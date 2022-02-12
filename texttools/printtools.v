@@ -1,6 +1,7 @@
 // make sure that the names are always normalized so its easy to find them back
 module texttools
 
+
 //print 2 dimensional array, delimeter is between columns
 pub fn print_array2(arr [][]string, delimiter string,sort bool) {
 	if arr.len == 0{
@@ -48,3 +49,6 @@ fn expand(txt_ string, l int) string{
 	return txt
 }
 
+pub fn print_clear() {
+	print("\033[2J")
+}

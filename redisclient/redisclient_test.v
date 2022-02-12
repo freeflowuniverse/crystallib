@@ -4,13 +4,13 @@ import time
 // credits see there as well (-:
 
 fn setup() &redisclient.Redis {
-	mut redis := redisclient.get_local() or { panic(err) }
+	mut redis := redisclient.get_local()
 	// Select db 10 to be away from default one '0'
 	redis.selectdb(10) or { panic(err) }
 	return redis
 }
 
-fn cleanup(mut redis redisclient.Redis) ? {
+fn cleanup(mut redis &redisclient.Redis) ? {
 	redis.flushall() ?
 	redis.disconnect()
 }
@@ -793,7 +793,7 @@ fn test_keys() {
 	assert r1.len == 2
 }
 
-fn helper_get_key_not_found(mut redis redisclient.Redis, key string) bool {
+fn helper_get_key_not_found(mut redis &redisclient.Redis, key string) bool {
 	redis.get(key) or {
 		if err.msg == 'key not found' || err.msg == '' {
 			return true
@@ -804,7 +804,7 @@ fn helper_get_key_not_found(mut redis redisclient.Redis, key string) bool {
 	return false
 }
 
-fn helper_randomkey_database_empty(mut redis redisclient.Redis) bool {
+fn helper_randomkey_database_empty(mut redis &redisclient.Redis) bool {
 	redis.randomkey() or {
 		if err.msg == 'database is empty' || err.msg == '' {
 			return true
@@ -815,12 +815,12 @@ fn helper_randomkey_database_empty(mut redis redisclient.Redis) bool {
 	return false
 }
 
-fn helper_renamenx_err_helper(mut redis redisclient.Redis, key string, newkey string) string {
+fn helper_renamenx_err_helper(mut redis &redisclient.Redis, key string, newkey string) string {
 	redis.renamenx(key, newkey) or { return 'no such key' }
 	return ''
 }
 
-fn helper_lpop_key_not_found(mut redis redisclient.Redis, key string) bool {
+fn helper_lpop_key_not_found(mut redis &redisclient.Redis, key string) bool {
 	redis.lpop(key) or {
 		if err.msg == 'key not found' || err.msg == '' {
 			return true
@@ -831,7 +831,7 @@ fn helper_lpop_key_not_found(mut redis redisclient.Redis, key string) bool {
 	return false
 }
 
-fn helper_rpop_key_not_found(mut redis redisclient.Redis, key string) bool {
+fn helper_rpop_key_not_found(mut redis &redisclient.Redis, key string) bool {
 	redis.rpop(key) or {
 		if err.msg == 'key not found' || err.msg == '' {
 			return true

@@ -9,7 +9,7 @@ import crypto.md5
 
 struct CoinMarketConnection {
 mut:
-	redis  redisclient.Redis
+	redis  &redisclient.Redis
 	url    string
 	secret string
 	// auth          AuthDetail
@@ -18,7 +18,7 @@ mut:
 
 fn init_connection() CoinMarketConnection {
 	return CoinMarketConnection{
-		redis: redisclient.get_local() or { redisclient.Redis{} }
+		redis: redisclient.get_local()
 	}
 }
 

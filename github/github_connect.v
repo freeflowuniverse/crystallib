@@ -11,7 +11,7 @@ import os
 struct GithubConnection {
 mut:
 	url			  string = "https://api.github.com"
-	redis         redisclient.Redis
+	redis         &redisclient.Redis
 	auth_token    string 
 	cache_timeout int
 // pub mut:
@@ -21,7 +21,7 @@ mut:
 // Init connection for github singleton
 fn init_connection() GithubConnection {
 	mut conn := GithubConnection{
-		redis: redisclient.get_local() or { redisclient.Redis{} }
+		redis: redisclient.get_local()
 	}
 	return conn
 }

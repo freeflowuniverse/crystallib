@@ -151,7 +151,7 @@ fn command_ttl(input resp2.RValue, mut srv RedisInstance) resp2.RValue {
 //
 // socket management
 //
-pub fn process_input(mut client redisclient.Redis, mut instance RedisInstance, value resp2.RValue) ?bool {
+pub fn process_input(mut client &redisclient.Redis, mut instance RedisInstance, value resp2.RValue) ?bool {
 	println('Inside process')
 	mut h := []RedisHandler{}
 
