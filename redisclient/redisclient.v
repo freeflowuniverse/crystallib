@@ -73,14 +73,14 @@ pub fn get(addr string) ?&Redis {
 //make sure to use new first, so that the connection has been initted
 //then you can get it everywhere
 pub fn get_local() ?&Redis {
-	return get("127.0.0.1:6379")
+	return get("localhost:6379")
 }
 
 //get a new one guaranteed, need for threads
 pub fn get_local_new() ?&Redis {
 	mut r := Redis{
 		connected: true,
-		addr: "127.0.0.1:6379"
+		addr: "localhost:6379"
 	}
 	r.socket_connect()?
 	return &r
