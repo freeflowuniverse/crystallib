@@ -1,6 +1,8 @@
 module terraform
 import os
 import texttools
+import threefoldtech.vgrid.gridproxy
+import rand
 
 
 [heap]
@@ -9,10 +11,9 @@ pub mut:
 	description 	string
 	tfgrid_node_id 	int
 	name 			string
-  memory    		int
-  public_ip 		bool
-//   tf_deployment      &TerraformDeployment
-  disks 			[]TFVMDisk
+	memory_gb    	f32
+	public_ip 		bool
+	disks 			[]TFVMDisk
 }
 
 [heap]
@@ -30,9 +31,10 @@ pub:
 	description 	string
 	tfgrid_node_id 	int
 	name 			string
-	memory    		int
+	memory_gb    	f32
 	public_ip 		bool
 	nodeid			int
+	nodes			[]gridproxy.NodeInfo
 }
 
 
@@ -47,18 +49,67 @@ fn (mut vm TFVM) write(mut deployment &TerraformDeployment)? {
 	os.write_file("${deployment.path}/vm_${vm.name}.tf",tfscript)?
 }
 
+//walk over all nodes available find a random one
+fn (mut vm TFVM) node_finder (mut deployment &TerraformDeployment, nodes []gridproxy.NodeInfo) ? {
+
+	mut gp := deployment.gridproxy()
+
+	mut res := []gridproxy.NodeInfo{}
+
+	if vm.tfgrid_node_id>0 {
+
+		//retrieve node, should give error if not right one
+		node := gp.node_info(vm.tfgrid_node_id)?
+
+		mru_available_gb := node.available_resources.mru - node.used_resources.mru
+		if vm.memory_gb > mru_available_gb{
+			return error("VM $vm needs more memory than available in $node")
+		}
+
+		if vm.public_ip && node.nr_pub_ipv4 == 0 {
+			return error("VM $vm public ip address, is not available in $node")
+		}
+
+	}else if nodes.len>0 {
+		for node in nodes{
+
+			// cru_available_gb := node.available_resources.cru - node.used_resources.cru
+			mru_available_gb := node.available_resources.mru - node.used_resources.mru
+			// hru_available_gb := node.available_resources.hru - node.used_resources.hru
+			// sru_available_gb := node.available_resources.sru - node.used_resources.sru
+
+			if vm.memory_gb > mru_available_gb{
+				continue
+			}
+			if vm.public_ip && node.nr_pub_ipv4 == 0 {
+				continue
+			}
+			res << node
+		}
+
+		if res.len==0{
+			return error("${gp.nodes_print(nodes)}\nVM $vm requirements cannot be found in available nodes.")
+		}
+
+		c := rand.int_in_range(0,res.len-1)
+		vm.tfgrid_node_id = nodes[c].id
+	}else{
+		return error("Cannot find node for vm:\n$vm")
+	}
+
+}
 
 
 //execute all available terraform objects
-pub fn (mut tfd TerraformDeployment) vm_ubuntu_add(args VMArgs) TFVM {	
+pub fn (mut tfd TerraformDeployment) vm_ubuntu_add(args VMArgs) ?TFVM {	
 	mut vm := TFVM{
 		name:args.name,
 		description:args.description,
 		tfgrid_node_id:args.nodeid,
-		memory: args.memory
+		memory_gb: args.memory_gb
 		public_ip: args.public_ip
-		// tf_deployment: &tfd
     }	
+	vm.node_finder (mut tfd, args.nodes)?
   	tfd.vms << vm
 	return vm
 }

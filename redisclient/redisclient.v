@@ -7,7 +7,9 @@ import net
 import time
 import resp2
 
-const default_read_timeout = net.infinite_timeout
+// const default_read_timeout = net.infinite_timeout
+const default_read_timeout = time.infinite
+
 
 pub struct Redis {
 pub mut:

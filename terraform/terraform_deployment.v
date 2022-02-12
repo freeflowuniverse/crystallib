@@ -1,6 +1,8 @@
 module terraform
 import os
 import crypto.md5
+import threefoldtech.vgrid.gridproxy
+import threefoldtech.vgrid.explorer
 
 enum TerraformDeploymentStatus {
 	init
@@ -19,7 +21,7 @@ pub struct TerraformDeploymentArgs {
 pub mut:
 	name 		string
 	mnemonic 	string
-	tfgridnet 		TFGridNet
+	tfgridnet 	TFGridNet
 	guid		string
 	sshkey 		string
 }
@@ -118,4 +120,35 @@ pub fn (mut tfd TerraformDeployment) tfgrid_net_string() string {
 		.test { 'test' } 
 		.dev { 'def' }
 	}	
+}
+
+
+//retrieve a gridproxy starting from terraform deployment
+pub fn (mut tfd TerraformDeployment) gridproxy() &gridproxy.GridproxyConnection {
+
+	net2 := match tfd.tfgridnet {
+		.main { gridproxy.TFGridNet.main }
+		.test { gridproxy.TFGridNet.test } 
+		.dev { gridproxy.TFGridNet.dev }
+	}	
+
+	mut gp := gridproxy.get(net2)
+
+	return gp
+	
+}
+
+//retrieve right explorer starting from terraform deployment
+pub fn (mut tfd TerraformDeployment) explorer() &explorer.ExplorerConnection {
+
+	net2 := match tfd.tfgridnet {
+		.main { explorer.TFGridNet.main }
+		.test { explorer.TFGridNet.test } 
+		.dev { explorer.TFGridNet.dev }
+	}	
+
+	mut explorer := explorer.get(net2)
+
+	return explorer
+	
 }
