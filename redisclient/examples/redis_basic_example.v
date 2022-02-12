@@ -2,7 +2,7 @@ module main
 import despiegk.crystallib.redisclient
 
 fn redistest() ? {
-	mut redis := redisclient.connect('localhost:6379') ?
+	mut redis := redisclient.get_local() ?
 
 	redis.selectdb(10) ?
 
@@ -15,8 +15,8 @@ fn redistest() ? {
 
 	rr := "a".repeat(100000)
 	for i in 0..20{
-		redis.set('test0', rr) or { panic(err) }
-		rr2 := redis.get('test0') or { panic(err) }
+		redis.set('test0', rr)?
+		rr2 := redis.get('test0')?
 		if rr!=rr2{
 
 			// println(rr)
@@ -24,7 +24,7 @@ fn redistest() ? {
 			// println(rr2)
 			// println("------")
 
-			println("DATA SEND TO REDIS & RECEIVED IS NOT SAME (test $i")
+			println("DATA SEND TO REDIS & RECEIVED IS NOT SAME (test $i)")
 			println("SIZE DATA SEND: ${rr.len}")
 			println("SIZE DATA RECEIVED: ${rr2.len}")
 			println(rr.count("a"))

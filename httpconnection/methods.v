@@ -82,7 +82,7 @@ pub fn (mut h HTTPConnection) post_json_str(mut args Request) ?string {
 	args = h.args_header_update(mut args)
 	args = h.cache_get(mut args)
 	//if 999998 then not in cache, because otherwise can be an empty result from before
-	if args.result_code == 999998 {
+	if args.result_code == 999998 || args.result==""{
 		args.result_code = 0
 		// url := h.url(mut args)
 		// mut req := http.new_request(http.Method.post, url, args.postdata) or { 

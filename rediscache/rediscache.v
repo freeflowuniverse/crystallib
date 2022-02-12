@@ -4,17 +4,6 @@ module rediscache
 
 import redisclient
 
-struct RedisConnection {
-mut:
-	redis redisclient.Redis
-}
-
-fn init_single_redis() RedisConnection {
-	return RedisConnection{
-		redis: redisclient.connect('127.0.0.1:6379') or { redisclient.Redis{} }
-	}
-}
-
 struct RedisCache {
 mut:
 	redis &redisclient.Redis
@@ -22,11 +11,10 @@ mut:
 	enabled bool = true
 }
 
-const redisconnection = init_single_redis()
-
 pub fn newcache(namespace string) RedisCache {
 	// reuse single object
-	return RedisCache{redis:&redisconnection.redis,namespace:namespace}
+	mut r:=redisclient.get_local() or {panic(err)}
+	return RedisCache{redis:r,namespace:namespace}
 }
 
 pub fn (mut h RedisCache) get(key string) ?string {

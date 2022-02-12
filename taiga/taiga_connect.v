@@ -36,7 +36,7 @@ pub mut:
 // Init connection for taiga singleton
 fn init_connection() TaigaConnection {
 	mut conn := TaigaConnection{
-		redis: redisclient.connect('127.0.0.1:6379') or { redisclient.Redis{} }
+		redis: redisclient.get_local() or { redisclient.Redis{} }
 	}
 	return conn
 }

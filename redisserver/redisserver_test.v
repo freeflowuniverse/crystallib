@@ -18,7 +18,7 @@ fn test_run_server() {
 }
 
 fn client_test() {
-	mut redis_client := redisclient.connect('localhost:5555') or { panic(err) }
+	mut redis_client := redisclient.get('localhost:5555') or { panic(err) }
 	redis_client.set('b', '5') or { panic(err) }
 	val := redis_client.get('b') or { panic(err) }
 	assert val == '5'

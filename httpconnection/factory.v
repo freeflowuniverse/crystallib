@@ -57,7 +57,7 @@ pub fn new(name string, url string, cache bool) &HTTPConnection {
 		http.CommonHeader.content_type:  'application/json'
 	})
 	mut conn := HTTPConnection{
-		redis: redisclient.connect('127.0.0.1:6379') or { redisclient.Redis{} }
+		redis: redisclient.get_local() or { &redisclient.Redis{} }
 		header_default: header
 	}
 

@@ -18,7 +18,7 @@ mut:
 
 fn init_connection() LiquidConnection {
 	return LiquidConnection{
-		redis: redisclient.connect('127.0.0.1:6379') or { redisclient.Redis{} }
+		redis: redisclient.get_local() or { redisclient.Redis{} }
 	}
 }
 

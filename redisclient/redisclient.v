@@ -15,6 +15,7 @@ pub struct Redis {
 pub mut:
 	connected bool
 	socket    net.TcpConn
+	addr    string
 }
 
 pub struct SetOpts {
@@ -39,7 +40,7 @@ pub enum KeyType {
 [heap]
 struct RedisFactory {
 mut:
-	instances    map[string]&Redis
+	instances    map[string]Redis
 }
 
 //needed to get singleton
@@ -53,43 +54,56 @@ fn init2() RedisFactory {
 //singleton creation
 const factory = init2()
 
+
+// https://redis.io/topics/protocol
+pub fn get(addr string) ?&Redis {
+	mut f := redisclient.factory
+	if ! (addr in f.instances){
+		mut r := Redis{
+			connected: true,
+			addr: addr
+		}
+		r.socket_connect()?
+		f.instances[addr] = r
+	}
+	mut r2:=f.instances[addr] 
+	return &r2
+}
+
 //make sure to use new first, so that the connection has been initted
 //then you can get it everywhere
 pub fn get_local() ?&Redis {
-	name := 'local'
-	mut f := redisclient.factory
-	if ! (name in f.instances){
-		rediscl := redisclient.connect("localhost:6379")?
-		f.instances[name] = &rediscl
-	}
-	return f.instances[name]	
+	return get("127.0.0.1:6379")
 }
 
 //get a new one guaranteed, need for threads
 pub fn get_local_new() ?&Redis {
-	mut r := redisclient.connect("localhost:6379")?
+	mut r := Redis{
+		connected: true,
+		addr: "127.0.0.1:6379"
+	}
+	r.socket_connect()?
 	return &r
 }
 
 
-// https://redis.io/topics/protocol
-pub fn connect(addr string) ?Redis {
-	mut socket := net.dial_tcp(addr) or { 
-		return Redis{
-			connected: false
-		} 
-	}
-	mut r := Redis{
-		connected: true,
-		socket: socket
-	}
-	r.set_read_timeout(time.Duration(10 * time.second))?
-	return r
+
+fn (mut r Redis) socket_connect()? {
+	r.socket = net.dial_tcp(r.addr)?
+	// mut socket := net.dial_tcp(addr) or { 
+	// 	r.connected = false
+	// }	
+	r.socket.set_read_timeout(time.Duration(10 * time.second))
+	r.socket.set_blocking(true)?
+	r.socket.peer_addr()?
 }
 
-pub fn (mut r Redis) set_read_timeout(timeout time.Duration)? {
-	r.socket.set_read_timeout(timeout)
-	r.socket.set_blocking(true)?
+//THIS IS A WORKAROUND, not sure why we need this.
+fn (mut r Redis) socket_check()? {
+	r.socket.peer_addr() or {
+		println(" - re-connect socket for redis")
+		r.socket_connect()?
+	}
 }
 
 // could not get it to work with buggered reader !!!, was blocking
@@ -118,21 +132,12 @@ pub fn (mut r Redis) read_line() ?string {
 }
 
 fn (mut r Redis) write_line(data_ []byte) ? {
-	// is there no more efficient way?
+	// is there no more efficient way, why do we do this?
 	mut data := data_.clone()
 	data << '\r'.bytes()
 	data << '\n'.bytes()
-	println(' >> ' + data.bytestr())
-
-	// mac os fix, this will fails if not connected
-	r.socket.peer_addr() or {
-		r.connected = false
-		println('[-] could not fetch peer address, socket not connected.')
-		return
-	}
-
-	// this will silently close software
-	// if socket is not connected (on macos)
+	// println(' >> ' + data.bytestr())
+	r.socket_check()?
 	r.socket.write(data) ?
 }
 
@@ -142,12 +147,7 @@ fn (mut r Redis) write(data []byte) ? {
 
 // write resp2 value to the redis channel
 pub fn (mut r Redis) write_rval(val resp2.RValue) ? {
-	// macos: needed to avoid silent exit
-	r.socket.peer_addr() or {
-		println('[-] could not fetch peer address')
-		return
-	}
-
+	r.socket_check()?
 	_ := r.socket.write(val.encode()) ?
 }
 

@@ -28,7 +28,7 @@ pub mut:
 //needed to get singleton
 fn init2() TerraformFactory {
 	mut f := terraform.TerraformFactory{
-		redis: redisclient.connect('127.0.0.1:6379') or { redisclient.Redis{} }
+		redis: redisclient.get_local() or { &redisclient.Redis{} }
 	}	
 	return f
 }

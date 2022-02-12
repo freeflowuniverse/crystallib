@@ -3,8 +3,8 @@ import time
 // original code see https://github.com/patrickpissurno/vredis/blob/master/vredis_test.v
 // credits see there as well (-:
 
-fn setup() redisclient.Redis {
-	mut redis := redisclient.connect('localhost:6379') or { panic(err) }
+fn setup() &redisclient.Redis {
+	mut redis := redisclient.get_local() or { panic(err) }
 	// Select db 10 to be away from default one '0'
 	redis.selectdb(10) or { panic(err) }
 	return redis
@@ -59,7 +59,6 @@ fn test_large_value() {
 		assert rr==rr4
 		redis.del('test${i4}') or { panic(err) }
 	}
-
 
 }
 

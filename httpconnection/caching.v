@@ -54,7 +54,7 @@ fn (mut h HTTPConnection) cache_get(mut args Request) Request{
 }
 
 fn (mut h HTTPConnection) cache_set(mut args Request) ?Request {
-	mut cache := h.settings.cache_enable
+	mut cache := h.settings.cache_enable	
 	if args.cache_disable{
 		cache = false
 	}
@@ -63,9 +63,12 @@ fn (mut h HTTPConnection) cache_set(mut args Request) ?Request {
 	}	
 	if cache {
 		key := h.cache_key(mut args)
+		println(" - cache: $key")
 		data := "${args.result_code}|${args.result}"
 		h.redis.set(key, data) ?
+		println(" - cache2: $key")
 		h.redis.expire(key, h.settings.cache_timeout) ?
+		println(" - cache3: $key")
 	}
 	return args
 }
