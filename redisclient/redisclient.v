@@ -6,16 +6,15 @@ import net
 // import strconv
 import time
 import resp2
+import io
 
-// const default_read_timeout = net.infinite_timeout
-const default_read_timeout = time.infinite
+const default_read_timeout = net.infinite_timeout
 
 
 pub struct Redis {
 pub mut:
 	connected bool
 	socket    net.TcpConn
-	// reader &io.BufferedReader
 }
 
 pub struct SetOpts {
@@ -75,56 +74,45 @@ pub fn get_local_new() ?&Redis {
 
 // https://redis.io/topics/protocol
 pub fn connect(addr string) ?Redis {
-	mut socket := net.dial_tcp(addr) or { return Redis{
-		connected: false
-	} }
-
-	socket.set_read_timeout(default_read_timeout)
-
-	return Redis{
+	mut socket := net.dial_tcp(addr) or { 
+		return Redis{
+			connected: false
+		} 
+	}
+	mut r := Redis{
 		connected: true,
 		socket: socket
 		// reader: io.new_buffered_reader(reader: io.make_reader(socket))
 	}
+	r.set_read_timeout(time.Duration(10 * time.second))?
+	return r
 }
 
-pub fn (mut r Redis) set_read_timeout(timeout time.Duration) {
+pub fn (mut r Redis) set_read_timeout(timeout time.Duration)? {
 	r.socket.set_read_timeout(timeout)
+	r.socket.set_blocking(true)?
 }
 
-// would be faster to do a buffered reader, but for now ok I guess
-pub fn (mut r Redis) read_line() ?[]byte {
-	mut buf := []byte{len: 1}
-	mut out := []byte{}
-	for {
-		r.socket.read(mut buf) ?
-		if buf == '\r'.bytes() {
-			continue
-		}
-		if buf == '\n'.bytes() {
-			// if out.bytestr() != '' {
-			// 	println("readline result:'$out.bytestr()'")
-			// }
-			return out
-		}
-		out << buf
-	}
-	// mut res := r.socket.read_line()
-	// // need to wait till something comes back, shouldn't this block? TODO:
-
-	// for _ in 0 .. 10000 {
-	// 	if res != '' {
-	// 		res = res.trim('\n\r')
-	// 		println("readline result:'$res'")
-	// 		return res.bytes()
+// would it be faster to do a buffered reader, but for now ok I guess
+pub fn (mut r Redis) read_line() ?string {
+	return r.socket.read_line().trim("\n\r")
+	// mut buf := []byte{len: 1}
+	// mut out := []byte{}
+	// for {
+	// 	// reader: io.new_buffered_reader(reader: io.make_reader(socket))
+	// 	// r.socket.read(mut buf) ?
+	// 	buffer.read(mut buf)?
+	
+	// 	if buf == '\r'.bytes() {
+	// 		continue
 	// 	}
-	// 	// ugly hack
-	// 	time.sleep(time.microsecond)
-	// 	res = r.socket.read_line()
-	// 	println(" -- '$res'")
+	// 	if buf == '\n'.bytes() {
+	// 		res := out.bytestr()
+	// 		return res
+	// 	}
+	// 	out << buf
 	// }
-
-	return error('timeout')
+	// return error('timeout')
 }
 
 fn (mut r Redis) write_line(data_ []byte) ? {
@@ -137,7 +125,7 @@ fn (mut r Redis) write_line(data_ []byte) ? {
 	// mac os fix, this will fails if not connected
 	r.socket.peer_addr() or {
 		r.connected = false
-		println('[-] could not fetch peer address')
+		println('[-] could not fetch peer address, socket not connected.')
 		return
 	}
 

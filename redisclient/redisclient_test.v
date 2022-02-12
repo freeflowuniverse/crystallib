@@ -1,6 +1,5 @@
 import redisclient
 import time
-import crypto.md5
 // original code see https://github.com/patrickpissurno/vredis/blob/master/vredis_test.v
 // credits see there as well (-:
 
@@ -46,27 +45,18 @@ fn test_large_value() {
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
-	//create unique string
-	mut r:=[]string
-	for x in 0..10000{
-		r<<x.str()
-	}
-	rr := r.join("")
-	// panic(rr.len)//is about 38kbyte	
-	check := md5.hexhash(rr)
+	rr := "a".repeat(40000)
 	for i in 0..20{
 		redis.set('test0', rr) or { panic(err) }
 		rr2 := redis.get('test0') or { panic(err) }
-		check2 := md5.hexhash(rr2)
-		assert check2==check
+		assert rr==rr2
 	}
 	for i3 in 0..100{
 		redis.set('test${i3}', rr) or { panic(err) }
 	}
 	for i4 in 0..100{
 		rr4 := redis.get('test${i4}') or { panic(err) }
-		check4 := md5.hexhash(rr4)
-		assert check4==check
+		assert rr==rr4
 		redis.del('test${i4}') or { panic(err) }
 	}
 

@@ -3,8 +3,7 @@ module redisclient
 import resp2
 
 pub fn (mut r Redis) get_response() ?resp2.RValue {
-	line_ := r.read_line() ?
-	line := line_.bytestr()
+	line := r.read_line() ?
 
 	if line.starts_with('-') {
 		return resp2.RError{
@@ -63,8 +62,7 @@ pub fn (mut r Redis) get_response() ?resp2.RValue {
 }
 
 pub fn (mut r Redis) get_int() ?int {
-	line_ := r.read_line() ?
-	line := line_.bytestr()
+	line := r.read_line() ?
 	if line.starts_with(':') {
 		return line[1..].int()
 	} else {
@@ -73,8 +71,7 @@ pub fn (mut r Redis) get_int() ?int {
 }
 
 pub fn (mut r Redis) get_list_int() ?[]int {
-	line_ := r.read_line() ?
-	line := line_.bytestr()
+	line := r.read_line() ?
 	mut res := []int{}
 
 	if line.starts_with('*') {
@@ -91,8 +88,7 @@ pub fn (mut r Redis) get_list_int() ?[]int {
 }
 
 pub fn (mut r Redis) get_list_str() ?[]string {
-	line_ := r.read_line() ?
-	line := line_.bytestr()
+	line := r.read_line() ?
 	mut res := []string{}
 
 	if line.starts_with('*') {
@@ -109,8 +105,7 @@ pub fn (mut r Redis) get_list_str() ?[]string {
 }
 
 pub fn (mut r Redis) get_string() ?string {
-	line_ := r.read_line() ?
-	line := line_.bytestr()
+	line := r.read_line() ?
 	if line.starts_with('+') {
 		// println("getstring:'${line[1..]}'")
 		return line[1..]
@@ -129,10 +124,9 @@ pub fn (mut r Redis) get_string_nil() ?string {
 }
 
 pub fn (mut r Redis) get_bytes_nil() ?[]byte {
-	line_ := r.read_line() ?
-	line := line_.bytestr()
+	line := r.read_line() ?
 	if line.starts_with('+') {
-		return line_[1..]
+		return line[1..].bytes()
 	}
 	if line.starts_with('$') {
 		return r.get_bytes_from_line(line)
@@ -147,8 +141,7 @@ pub fn (mut r Redis) get_bool() ?bool {
 }
 
 pub fn (mut r Redis) get_bytes() ?[]byte {
-	line_ := r.read_line() ?
-	line := line_.bytestr()
+	line := r.read_line() ?
 	if line.starts_with('$') {
 		return r.get_bytes_from_line(line)
 	} else {
