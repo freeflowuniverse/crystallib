@@ -82,7 +82,6 @@ pub fn connect(addr string) ?Redis {
 	mut r := Redis{
 		connected: true,
 		socket: socket
-		// reader: io.new_buffered_reader(reader: io.make_reader(socket))
 	}
 	r.set_read_timeout(time.Duration(10 * time.second))?
 	return r
@@ -93,26 +92,29 @@ pub fn (mut r Redis) set_read_timeout(timeout time.Duration)? {
 	r.socket.set_blocking(true)?
 }
 
-// would it be faster to do a buffered reader, but for now ok I guess
+// could not get it to work with buggered reader !!!, was blocking
 pub fn (mut r Redis) read_line() ?string {
-	return r.socket.read_line().trim("\n\r")
-	// mut buf := []byte{len: 1}
-	// mut out := []byte{}
-	// for {
-	// 	// reader: io.new_buffered_reader(reader: io.make_reader(socket))
-	// 	// r.socket.read(mut buf) ?
-	// 	buffer.read(mut buf)?
+	// return r.socket.read_line().trim("\n\r") //had to trim to get it to work, readline returned too quickly
+	mut buf := []byte{len: 1}
+	mut out := []byte{}
+	for {
+
+		//WITH BUFFERED READER COULDNT GET THERE, WAS BLOCKING FOR EVER
+		// mut buffer:= io.new_buffered_reader(reader:r.socket)
+		// buffer.read(mut buf)?
+
+		r.socket.read(mut buf) ?
 	
-	// 	if buf == '\r'.bytes() {
-	// 		continue
-	// 	}
-	// 	if buf == '\n'.bytes() {
-	// 		res := out.bytestr()
-	// 		return res
-	// 	}
-	// 	out << buf
-	// }
-	// return error('timeout')
+		if buf == '\r'.bytes() {
+			continue
+		}
+		if buf == '\n'.bytes() {
+			res := out.bytestr()
+			return res
+		}
+		out << buf
+	}
+	return error('timeout')
 }
 
 fn (mut r Redis) write_line(data_ []byte) ? {
