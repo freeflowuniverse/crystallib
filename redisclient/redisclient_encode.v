@@ -155,10 +155,9 @@ fn (mut r Redis) get_bytes_from_line(line string) ?[]byte {
 		return none
 	}
 	if bulkstring_size == 0 {
-		// extract final \r\n and not reading
-		// any payload
+		// extract final \r\n, there is no payload
 		r.read_line() ?
-		return ''.bytes()
+		return []
 	}
 	// read payload
 	buffer := r.read(bulkstring_size) ?

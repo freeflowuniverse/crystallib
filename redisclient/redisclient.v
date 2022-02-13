@@ -6,16 +6,14 @@ import net
 // import strconv
 import time
 import resp2
-import io
 
 const default_read_timeout = net.infinite_timeout
-
 
 pub struct Redis {
 pub mut:
 	connected bool
 	socket    net.TcpConn
-	addr    string
+	addr      string
 }
 
 pub struct SetOpts {
@@ -40,121 +38,94 @@ pub enum KeyType {
 [heap]
 struct RedisFactory {
 mut:
-	instances    map[string]Redis
+	instances map[string]Redis
 }
 
-//needed to get singleton
+// needed to get singleton
 fn init2() RedisFactory {
-	mut f := redisclient.RedisFactory{
-	}	
+	mut f := RedisFactory{}
 	return f
 }
 
-
-//singleton creation
+// singleton creation
 const factory = init2()
-
 
 // https://redis.io/topics/protocol
 pub fn get(addr string) ?&Redis {
 	mut f := redisclient.factory
-	if ! (addr in f.instances){
+	if addr !in f.instances {
 		mut r := Redis{
-			connected: true,
 			addr: addr
 		}
-		r.socket_connect()?
+		r.socket_connect() ?
 		f.instances[addr] = r
 	}
-	mut r2:=f.instances[addr] 
+	mut r2 := f.instances[addr]
 	return &r2
 }
 
-//make sure to use new first, so that the connection has been initted
-//then you can get it everywhere
+// make sure to use new first, so that the connection has been initted
+// then you can get it everywhere
 pub fn get_local() &Redis {
-	addr := "localhost:6379"
-	return get(addr) or {
-		&Redis{
-			connected: false,
-			addr: addr
-		}
-	}
+	addr := 'localhost:6379'
+	return get(addr) or { &Redis{
+		connected: false
+		addr: addr
+	} }
 }
 
-//get a new one guaranteed, need for threads
+// get a new one guaranteed, need for threads
 pub fn get_local_new() ?&Redis {
 	mut r := Redis{
-		connected: true,
-		addr: "localhost:6379"
+		addr: 'localhost:6379'
 	}
-	r.socket_connect()?
+	r.socket_connect() ?
 	return &r
 }
 
-
-
-fn (mut r Redis) socket_connect()? {
-	r.socket = net.dial_tcp(r.addr)?
-	// mut socket := net.dial_tcp(addr) or { 
-	// 	r.connected = false
-	// }	
-	r.socket.set_read_timeout(time.Duration(10 * time.second))
-	r.socket.set_blocking(true)?
-	r.socket.peer_addr()?
+fn (mut r Redis) socket_connect() ? {
+	r.socket = net.dial_tcp(r.addr) ?
+	r.socket.set_blocking(true) ?
+	r.socket.set_read_timeout(10 * time.second)
+	r.socket.peer_addr() ?
+	r.connected = true
 }
 
-//THIS IS A WORKAROUND, not sure why we need this.
-fn (mut r Redis) socket_check()? {
+// THIS IS A WORKAROUND, not sure why we need this.
+fn (mut r Redis) socket_check() ? {
 	r.socket.peer_addr() or {
-		println(" - re-connect socket for redis")
-		r.socket_connect()?
+		eprintln(' - re-connect socket for redis')
+		r.socket_connect() ?
 	}
 }
 
-// could not get it to work with buggered reader !!!, was blocking
 pub fn (mut r Redis) read_line() ?string {
-	// return r.socket.read_line().trim("\n\r") //had to trim to get it to work, readline returned too quickly
-	mut buf := []byte{len: 1}
-	mut out := []byte{}
-	for {
-
-		//WITH BUFFERED READER COULDNT GET THERE, WAS BLOCKING FOR EVER
-		// mut buffer:= io.new_buffered_reader(reader:r.socket)
-		// buffer.read(mut buf)?
-
-		r.socket.read(mut buf) ?
-	
-		if buf == '\r'.bytes() {
-			continue
-		}
-		if buf == '\n'.bytes() {
-			res := out.bytestr()
-			return res
-		}
-		out << buf
-	}
-	return error('timeout')
+	return r.socket.read_line().trim_right('\r\n')
 }
 
-fn (mut r Redis) write_line(data_ []byte) ? {
-	// is there no more efficient way, why do we do this?
-	mut data := data_.clone()
-	data << '\r'.bytes()
-	data << '\n'.bytes()
-	// println(' >> ' + data.bytestr())
-	r.socket_check()?
-	r.socket.write(data) ?
+const cr_lf_bytes = [byte(`\r`), `\n`]
+
+fn (mut r Redis) write_line(data []byte) ? {
+	r.socket_check() ?
+	r.write(data) ?
+	r.write(redisclient.cr_lf_bytes) ?
 }
 
+// write *all the data* into the socket
+// This function loops, till *everything is written*
+// (some of the socket write ops could be partial)
 fn (mut r Redis) write(data []byte) ? {
-	_ := r.socket.write(data) ?
+	mut remaining := data.len
+	for remaining > 0 {
+		written_bytes := r.socket.write(data[data.len - remaining..]) ?
+		remaining -= written_bytes
+	}
 }
 
 // write resp2 value to the redis channel
 pub fn (mut r Redis) write_rval(val resp2.RValue) ? {
-	r.socket_check()?
-	_ := r.socket.write(val.encode()) ?
+	r.socket_check() ?
+	r.write(val.encode()) ?
 }
 
 // write list of strings to redis challen
@@ -165,7 +136,11 @@ fn (mut r Redis) write_cmds(items []string) ? {
 
 fn (mut r Redis) read(size int) ?[]byte {
 	mut buf := []byte{len: size}
-	_ := r.socket.read(mut buf) ?
+	mut remaining := size
+	for remaining > 0 {
+		read_bytes := r.socket.read(mut buf[buf.len - remaining..]) ?
+		remaining -= read_bytes
+	}
 	return buf
 }
 
