@@ -67,7 +67,7 @@ pub fn get() ?&TerraformFactory {
 			println(cmd)
 
 			n.exec(cmd:cmd, reset:true, description:"install terraform ; echo ok",stdout:true) or {
-				return error("cannot install terraform\n"+err.msg+"\noriginal cmd:\n${cmd}")
+				return error("cannot install terraform\n"+err.msg()+"\noriginal cmd:\n${cmd}")
 			}
 		}		
 		f_.status = TerraformFactoryStatus.ok
