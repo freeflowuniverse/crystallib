@@ -2,7 +2,6 @@ module sshagent
 import console
 import os
 import path
-import process
 
 fn listsplit(key string) string{
 	if key.trim(" ")==""{

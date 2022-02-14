@@ -6,7 +6,7 @@ import net
 // import strconv
 import time
 import resp2
-import io
+// import io
 
 const default_read_timeout = net.infinite_timeout
 
