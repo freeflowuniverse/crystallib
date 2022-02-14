@@ -64,7 +64,7 @@ pub fn get(addr string) ?&Redis {
 	return &r2
 }
 
-// make sure to use new first, so that the connection has been initted
+// make sure to use new first, so that the connection has been init-ed
 // then you can get it everywhere
 pub fn get_local() &Redis {
 	addr := 'localhost:6379'
@@ -91,7 +91,7 @@ fn (mut r Redis) socket_connect() ? {
 	r.connected = true
 }
 
-// THIS IS A WORKAROUND, not sure why we need this.
+// THIS IS A WORKAROUND, not sure why we need this, shouldn't be here
 fn (mut r Redis) socket_check() ? {
 	r.socket.peer_addr() or {
 		eprintln(' - re-connect socket for redis')

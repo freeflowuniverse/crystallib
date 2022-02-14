@@ -14,7 +14,7 @@ fn redistest() ? {
 	assert r == 'some data'
 
 	rr := "a".repeat(100000)
-	for i in 0..20{
+	for i in 0..1{
 		redis.set('test0', rr)?
 		rr2 := redis.get('test0')?
 		if rr!=rr2{
