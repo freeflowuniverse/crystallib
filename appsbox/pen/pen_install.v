@@ -34,7 +34,7 @@ fn install()?{
 		mut cmd := $tmpl("pen_build.sh")
 
 		n.exec(cmd:cmd, reset:true, description:"install pen ; echo ok",stdout:true, tmpdir:"/tmp/pen") or {
-			return error("original cmd:\n${cmd}ERROR:\ncannot install pen\n"+err.msg+"\n")
+			return error("original cmd:\n${cmd}ERROR:\ncannot install pen\n"+err.msg()+"\n")
 		}
 
 		app.bin_register("pen")?

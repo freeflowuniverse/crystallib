@@ -49,7 +49,7 @@ fn vscode_install()?{
 		println(cmd)
 
 		n.exec(cmd:cmd, period:0, reset:false, description:"install vscode",stdout:true,checkkey:"vscodeinstall") or {
-			return error("cannot install vscode\n"+err.msg+"\noriginal cmd:\n${cmd}")
+			return error("cannot install vscode\n"+err.msg()+"\noriginal cmd:\n${cmd}")
 		}
 	
 	}
@@ -58,7 +58,7 @@ fn vscode_install()?{
 	println(cmd)
 
 	n.exec(cmd:cmd, period:0, reset:false, description:"install vscode",stdout:true,checkkey:"vscodeinstall") or {
-		return error("cannot install vscode\n"+err.msg+"\noriginal cmd:\n${cmd}")
+		return error("cannot install vscode\n"+err.msg()+"\noriginal cmd:\n${cmd}")
 	}
 
 

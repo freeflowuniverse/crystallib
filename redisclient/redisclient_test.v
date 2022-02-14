@@ -10,7 +10,7 @@ fn setup() &redisclient.Redis {
 	return redis
 }
 
-fn cleanup(mut redis &redisclient.Redis) ? {
+fn cleanup(mut redis redisclient.Redis) ? {
 	redis.flushall() ?
 	redis.disconnect()
 }
@@ -45,21 +45,22 @@ fn test_large_value() {
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
-	rr := "a".repeat(40000)
-	for i in 0..20{
-		redis.set('test0', rr) or { panic(err) }
-		rr2 := redis.get('test0') or { panic(err) }
-		assert rr==rr2
+	rr := 'SSS' + 'a'.repeat(40000) + 'EEE'
+	mut rr2 := ''
+	for i in 0 .. 50 {
+		redis.set('test_large_value0', rr) or { panic(err) }
+		rr2 = redis.get('test_large_value0') or { panic(err) }
+		assert rr.len == rr2.len
+		assert rr == rr2
 	}
-	for i3 in 0..100{
-		redis.set('test${i3}', rr) or { panic(err) }
+	for i3 in 0 .. 100 {
+		redis.set('test_large_value$i3', rr) or { panic(err) }
 	}
-	for i4 in 0..100{
-		rr4 := redis.get('test${i4}') or { panic(err) }
-		assert rr==rr4
-		redis.del('test${i4}') or { panic(err) }
+	for i4 in 0 .. 100 {
+		rr4 := redis.get('test_large_value$i4') or { panic(err) }
+		assert rr.len == rr4.len
+		redis.del('test_large_value$i4') or { panic(err) }
 	}
-
 }
 
 fn test_queue() {
@@ -793,9 +794,9 @@ fn test_keys() {
 	assert r1.len == 2
 }
 
-fn helper_get_key_not_found(mut redis &redisclient.Redis, key string) bool {
+fn helper_get_key_not_found(mut redis redisclient.Redis, key string) bool {
 	redis.get(key) or {
-		if err.msg == 'key not found' || err.msg == '' {
+		if err.msg() == 'key not found' || err.msg() == '' {
 			return true
 		} else {
 			return false
@@ -804,9 +805,9 @@ fn helper_get_key_not_found(mut redis &redisclient.Redis, key string) bool {
 	return false
 }
 
-fn helper_randomkey_database_empty(mut redis &redisclient.Redis) bool {
+fn helper_randomkey_database_empty(mut redis redisclient.Redis) bool {
 	redis.randomkey() or {
-		if err.msg == 'database is empty' || err.msg == '' {
+		if err.msg() == 'database is empty' || err.msg() == '' {
 			return true
 		} else {
 			return false
@@ -815,14 +816,14 @@ fn helper_randomkey_database_empty(mut redis &redisclient.Redis) bool {
 	return false
 }
 
-fn helper_renamenx_err_helper(mut redis &redisclient.Redis, key string, newkey string) string {
+fn helper_renamenx_err_helper(mut redis redisclient.Redis, key string, newkey string) string {
 	redis.renamenx(key, newkey) or { return 'no such key' }
 	return ''
 }
 
-fn helper_lpop_key_not_found(mut redis &redisclient.Redis, key string) bool {
+fn helper_lpop_key_not_found(mut redis redisclient.Redis, key string) bool {
 	redis.lpop(key) or {
-		if err.msg == 'key not found' || err.msg == '' {
+		if err.msg() == 'key not found' || err.msg() == '' {
 			return true
 		} else {
 			return false
@@ -831,9 +832,9 @@ fn helper_lpop_key_not_found(mut redis &redisclient.Redis, key string) bool {
 	return false
 }
 
-fn helper_rpop_key_not_found(mut redis &redisclient.Redis, key string) bool {
+fn helper_rpop_key_not_found(mut redis redisclient.Redis, key string) bool {
 	redis.rpop(key) or {
-		if err.msg == 'key not found' || err.msg == '' {
+		if err.msg() == 'key not found' || err.msg() == '' {
 			return true
 		} else {
 			return false

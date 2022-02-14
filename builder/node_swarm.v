@@ -12,8 +12,8 @@ pub fn (mut node Node) install_docker(args SwarmArgs) ?{
 	mut installed:=true
 	out2 := node.executor.exec_silent('docker version') or {
 			installed=false
-			println("ERROR:" + err.msg)
-			"ERROR:" + err.msg
+			println("ERROR:" + err.msg())
+			"ERROR:" + err.msg()
 		}
 	
 	if out2.contains("Cannot connect to the Docker daemon"){
@@ -71,10 +71,10 @@ pub fn (mut node Node) install_docker(args SwarmArgs) ?{
 	for _ in 1..10 {
 		mut out:=""
 		out = node.executor.exec_silent('docker info') or {
-			// if err.msg.contains("Cannot connect to the Docker daemon"){
+			// if err.msg().contains("Cannot connect to the Docker daemon"){
 			// 	"noconnection"
 			// }
-			"ERROR:" + err.msg
+			"ERROR:" + err.msg()
 		}
 		// println(out)
 		// if out == "noconnection" {

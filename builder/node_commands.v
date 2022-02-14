@@ -96,7 +96,7 @@ pub fn (mut node Node) exec(args NodeExecCmd) ? {
 	
 	println("   - exec cmd:$cmd on $node.name")
 	node.executor.exec(cmd) or {
-		return error(err.msg+"\noriginal cmd:\n${args.cmd}")
+		return error(err.msg()+"\noriginal cmd:\n${args.cmd}")
 	}
 	node.done_set("exec_$hhash",now_str)?
 }
