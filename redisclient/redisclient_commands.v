@@ -119,6 +119,10 @@ pub fn (mut r Redis) rpush(key string, element string) ?int {
 	return r.send_expect_int(['RPUSH', key, element])
 }
 
+pub fn (mut r Redis) lrange(key string, start int, end int) ?[]resp2.RValue{
+	return r.send_expect_list(['LRANGE', key, start.str(), end.str()])
+}
+
 pub fn (mut r Redis) expire(key string, seconds int) ?int {
 	return r.send_expect_int(['EXPIRE', key, seconds.str()])
 }
