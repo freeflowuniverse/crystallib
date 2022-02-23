@@ -27,7 +27,7 @@ pub fn (mut publisher Publisher) run() ? {
 					}
 				}
 				//now execute the flatten action
-				publisher.flatten2(dest:"")?
+				publisher.flatten2(dest:path)?
 			}
 		}
 	}
