@@ -135,5 +135,6 @@ pub fn (config ConfigRoot) domain_get(shortname string, cat SiteCat) ?string {
 			return s.domains[0]
 		}
 	}
-	return error('Cannot find $cat site with shortname: $shortname')
+	//default domain
+	return "${shortname}.domain"
 }

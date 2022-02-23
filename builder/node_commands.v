@@ -19,6 +19,7 @@ pub mut:
 	cmd string
 	period int //period in which we check when this was done last, if 0 then period is indefinite
 	reset bool = true
+	remove_installer bool = true //remove the installer
 	description string
 	stdout bool = true
 	checkkey string //if used will use this one in stead of hash of cmd, to check if was executed already
@@ -85,18 +86,34 @@ pub fn (mut node Node) exec(args NodeExecCmd) ? {
 			println("   - exec cmd:$description on $node.name: was already done, period $hours h")
 			return
 		}
-	}		
-	r_path := '/tmp/${hhash}.sh'
+	}	
+
+	if args.reset && args.tmpdir.len>2{	
+		node.executor.remove(args.tmpdir)?
+	}
+	mut r_path := '/tmp/${hhash}.sh'	
+	if args.tmpdir.len>2{	
+		r_path = '${args.tmpdir}/installer.sh'
+		node.executor.exec_silent("mkdir -p ${args.tmpdir}")?
+	}
 	node.executor.file_write(r_path,cmd)?
 	if args.tmpdir.len>2{		
-		cmd = "mkdir -p ${args.tmpdir} && cd ${args.tmpdir} && export TMPDIR='${args.tmpdir}' && bash $r_path && cd .. && rm -rf ${args.tmpdir}"
+		cmd = "mkdir -p ${args.tmpdir} && cd ${args.tmpdir} && export TMPDIR='${args.tmpdir}' && bash $r_path"
 	}else{
-		cmd = "cd /tmp && bash $r_path && rm $r_path"
+		cmd = "cd /tmp && bash $r_path"
 	}
-	
-	println("   - exec cmd:$cmd on $node.name")
+
+	// println("   - exec cmd:$cmd on $node.name")
 	node.executor.exec(cmd) or {
 		return error(err.msg()+"\noriginal cmd:\n${args.cmd}")
+	}
+
+	if args.remove_installer{
+		if args.tmpdir.len>2{	
+			node.executor.remove(args.tmpdir)?
+		}else{
+			node.executor.remove(r_path)?
+		}
 	}
 	node.done_set("exec_$hhash",now_str)?
 }

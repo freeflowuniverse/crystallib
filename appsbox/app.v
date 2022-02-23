@@ -3,19 +3,35 @@ module appsbox
 import os
 
 [heap]
-pub struct App {
-pub mut:
-	name    string
+pub interface App {
+mut:
+	instance 		AppInstance
+	name    		string
 	//binaries in ~/hub3/bin related to this app
-	bins 	[]string
-	//other pats related to this app
-	paths 	[]string
+	start() 		?
+	stop() 			?
+	install(bool) 	?
+	build() 		?
+	check() 		?bool
 }
 
-pub fn (mut app App) exists() bool{
+[heap]
+pub struct AppInstance {
+pub mut:
+	name    		string
+	//binaries in ~/hub3/bin related to this app
+	bins 			[]string
+	//other paths related to this app
+	paths 			[]string
+	tcpports 		[]int
+	unixsocketpath	string
+}
+
+pub fn (mut app AppInstance) exists() bool{
 	mut f:= appsbox.factory
 	for bin in app.bins{
 		path := "${f.bin_path}/$bin"
+		// println(" - check exists: $path")
 		if ! os.exists(path){
 			return false
 		}
@@ -27,7 +43,7 @@ pub fn (mut app App) exists() bool{
 
 
 //copy binary related to app to the sandbox (~/hub3/bin) & register in metadata
-pub fn (mut app App) bin_copy(path string, name_ string) ?{
+pub fn (mut app AppInstance) bin_copy(path string, name_ string) ?{
 	mut f:= appsbox.factory
 	mut name := name_
 
@@ -50,7 +66,7 @@ pub fn (mut app App) bin_copy(path string, name_ string) ?{
 }
 
 //register metadata
-pub fn (mut app App) bin_register(name string)?{
+pub fn (mut app AppInstance) bin_register(name string)?{
 	mut f:= appsbox.factory	
 	path_dest := "${f.bin_path}/$name"
 	if !os.exists(path_dest){

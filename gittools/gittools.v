@@ -114,7 +114,7 @@ fn (mut gitstructure GitStructure) load() ? {
 	}
 
 	// print_backtrace()
-	println(' - SCAN GITSTRUCTURE FOR $root2 ')
+	// println(' - SCAN GITSTRUCTURE FOR $root2 ')
 
 
 
@@ -128,11 +128,11 @@ fn (mut gitstructure GitStructure) load() ? {
 	gitstructure.load_recursive(gitstructure.root, mut done) ?
 	gitstructure.status = GitStructureStatus.loaded
 
-	println(" - SCAN done")
+	// println(" - SCAN done")
 }
 
 fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []string) ? {
-	println(" - git load: $path1")
+	// println(" - git load: $path1")
 	items := os.ls(path1) or { return error('cannot load gitstructure because cannot find $path1') }
 	mut pathnew := ''
 	for item in items {
@@ -143,7 +143,7 @@ fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []strin
 		// }
 		// done << pathnew
 		if os.is_dir(pathnew) {
-			println(" - $pathnew")		
+			// println(" - $pathnew")		
 			if os.exists(os.join_path(pathnew, '.git')) {
 				gitaddr := addr_get_from_path(pathnew) or { return err }
 				gitstructure.repos << GitRepo{

@@ -83,6 +83,15 @@ pub fn get_local_new() ?&Redis {
 	return &r
 }
 
+pub fn get_unixsocket_new() ?&Redis {
+	mut r := Redis{
+		addr: '/tmp/redis.sock'
+	}
+	r.socket_connect() ?
+	return &r
+}
+
+
 fn (mut r Redis) socket_connect() ? {
 	r.socket = net.dial_tcp(r.addr) ?
 	r.socket.set_blocking(true) ?

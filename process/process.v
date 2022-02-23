@@ -9,7 +9,7 @@ pub mut:
 	cmd        string
 	timeout    int = 1200
 	stdout     bool = true
-	stdout_log bool = true
+	stdout_log bool
 	debug      bool
 	die        bool = true
 	logcmd     bool

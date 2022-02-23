@@ -52,7 +52,7 @@ pub fn (mut executor ExecutorLocal) remove(path string) ? {
 	} else if os.is_dir(path) {
 		return os.rmdir_all(path)
 	}
-	return error('')
+	return 
 }
 
 // get environment variables from the executor

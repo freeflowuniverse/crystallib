@@ -15,6 +15,7 @@ pub mut:
 	//what is purpose of this??? 
 	web_hostnames bool
 	staticfiles map[string]string
+	markdown_configs []string	
 	loaded bool
 }
 

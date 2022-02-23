@@ -56,7 +56,7 @@ pub fn (mut node Node) done_save()?{
 	outtext := serializers.map_string_string_to_text(node.done)
 	node.db.set("done",outtext)?	
 	node.cache.set("node_done",outtext,600)?	
-	println(" . $node.name done set: \n$outtext")
+	// println(" . $node.name done set: \n$outtext")
 }
 
 pub fn (mut node Node) done_load()?{
@@ -78,7 +78,7 @@ pub fn (mut node Node) done_load()?{
 pub fn (mut node Node) done_reset()? {
 	node.done = map[string]string{}
 	node.db.delete("done")?
-	println(" . $node.name done delete")
+	// println(" . $node.name done delete")
 }
 
 

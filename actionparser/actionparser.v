@@ -17,12 +17,12 @@ enum ParseStatus {
 	comment // found // or # at end
 }
 
-struct ParseResult {
-mut:
+pub struct ParseResult {
+pub mut:
 	actions []ParseAction
 }
 
-struct ParseAction {
+pub struct ParseAction {
 pub:
 	name string
 pub mut:
@@ -113,7 +113,7 @@ fn parse_into_blocks(text string) ?Blocks {
 		block.clean()
 		blocks.blocks << block
 	}
-	println(blocks.blocks[13].content)
+	// println(blocks.blocks[13].content)
 	return blocks
 }
 

@@ -3,6 +3,8 @@ module publisher_core
 import texttools
 import os
 import publisher_config
+import actionparser
+
 
 fn (mut publisher Publisher) load() ? {
 	// remove code_wiki subdirs
@@ -19,7 +21,23 @@ fn (mut publisher Publisher) load() ? {
 		}
 		publisher.load_site(site.name)?
 	}
-	println( " - all sites loaded")
+	// println( " - all sites loaded")
+
+	//lets now find commands in config
+
+	res := actionparser.parse(md_file)?
+
+	for action in res.actions{
+		//flatten
+		if action.name == "publish"{
+			mut path:=""
+			for param in action.params{
+				if param.name=="path"{
+					path = param.value
+				}
+			}
+			//now execute the flatten action
+		}
 
 }
 
