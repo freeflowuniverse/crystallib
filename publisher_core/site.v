@@ -16,6 +16,8 @@ fn (mut site Site) file_remember(mut patho path.Path, mut publisher &Publisher) 
 
 	mut namelower := file.name_fixed(mut publisher)?
 
+	// $if debug {eprintln(@FN + ": - $patho.path")}
+
 	if patho.is_image(){		
 
 		if site.image_exists(namelower){
@@ -239,18 +241,19 @@ pub fn (mut site Site) process(mut publisher &Publisher)? {
 		panic('need to make sure site is always loaded before doing process')
 	}
 
-	println(' - process pages for site: $site.name')
+	println(' - process pages for site: $site.name (#${site.pages.len})')
 	for _, id in site.pages {
 		mut p := publisher.page_get_by_id(id)?
 		p.process(mut publisher)?
 	}	
-	println(' - process file for site: $site.name')
+	println(' - process files for site: $site.name (#${site.files.len})')
 	for _, id in site.files {
 		mut f := publisher.file_get_by_id(id) or {
 			eprintln(err)
 			continue
 		}
 		f.relocate(mut publisher)?
+		$if debug {eprintln( @FN + ": ${f.pathrel}")}
 	}
 	for _, id in site.images {
 		mut f := publisher.file_get_by_id(id) or {

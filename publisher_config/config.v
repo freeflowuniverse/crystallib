@@ -13,7 +13,7 @@ fn config_init() ConfigRoot {
 }
 
 // load the initial config from filesystem
-fn (mut config ConfigRoot) init()? {
+fn (mut config ConfigRoot) init_once()? {
 
 	envs := os.environ()
 
@@ -157,6 +157,8 @@ fn (mut config ConfigRoot) init()? {
 
 	for md_file in md_config_files {
 
+		config.markdown_configs << md_file
+
 		res := actionparser.parse(md_file)?
 
 		for action in res.actions{
@@ -180,7 +182,6 @@ fn (mut config ConfigRoot) init()? {
 				sc.cat = "wiki"
 				mut site_in := site_new(sc)?
 				config.sites << site_in	
-				config.markdown_configs << md_file
 			}
 
 		}
@@ -230,7 +231,7 @@ pub fn singleton() &ConfigRoot {
 pub fn get() ?&ConfigRoot {
 	mut cr := singleton()
 	if ! cr.loaded{
-		cr.init()?
+		cr.init_once()?
 		cr.loaded = true
 	}
 	return cr 
