@@ -53,7 +53,7 @@ pub fn get() ?&TerraformFactory {
 			mut url:=""
 			if n.platform == builder.PlatformType.osx{
 				if n.cputype == builder.CPUType.arm{
-					url = "https://releases.hashicorp.com/terraform/1.1.2/terraform_1.1.4_linux_amd64.zip"
+					url = "https://releases.hashicorp.com/terraform/1.1.2/terraform_1.1.4_darwin_arm64.zip"
 				}else{
 					url = "https://releases.hashicorp.com/terraform/1.1.4/terraform_1.1.4_darwin_amd64.zip"
 				}
