@@ -26,7 +26,7 @@ fn do()? {
 
 	// nodes_available := explorer.nodes_find(region:.europe_west,mem_min_gb:10,ssd_min_gb:100)?
 	nodes_available := explorer.nodes_find(region:.world)?
-	
+
 	mut vm1 := d.vm_ubuntu_add(
 			name:"kds1",
 			nodes:nodes_available,

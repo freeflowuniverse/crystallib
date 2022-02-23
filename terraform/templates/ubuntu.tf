@@ -1,5 +1,5 @@
 
-resource "grid_deployment" "d1" {
+resource "grid_deployment" "vm_@vm.name" {
   node = @vm.tfgrid_node_id
   network_name = "@deployment.network.name"
   ip_range = lookup(grid_network.net1.nodes_ip_range, @vm.tfgrid_node_id, "")
@@ -29,16 +29,16 @@ resource "grid_deployment" "d1" {
     }
     planetary = true
     @if public_ip
-    public = true
+    publicip = true
     @end
   }
 }
 
 
-output "node1_zmachine1_ip" {
-    value = grid_deployment.d1.vms[0].ip
+output "vm_@{vm.name}_ip" {
+    value = grid_deployment.vm_@{vm.name}.vms[0].ip
 }
 
-output "ygg_ip" {
-    value = grid_deployment.d1.vms[0].ygg_ip
+output "vm_@{vm.name}_ygg_ip" {
+    value = grid_deployment.vm_@{vm.name}.vms[0].ygg_ip
 }

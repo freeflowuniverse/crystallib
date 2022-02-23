@@ -93,6 +93,8 @@ fn (mut vm TFVM) node_finder (mut deployment &TerraformDeployment, nodes []gridp
 
 		c := rand.int_in_range(0,res.len-1)
 		vm.tfgrid_node_id = nodes[c].id
+
+		println("node selected: $vm.tfgrid_node_id")
 	}else{
 		return error("Cannot find node for vm:\n$vm")
 	}
@@ -101,16 +103,17 @@ fn (mut vm TFVM) node_finder (mut deployment &TerraformDeployment, nodes []gridp
 
 
 //execute all available terraform objects
-pub fn (mut tfd TerraformDeployment) vm_ubuntu_add(args VMArgs) ?TFVM {	
+pub fn (mut tfd TerraformDeployment) vm_ubuntu_add(args VMArgs) ?TFVM {
 	mut vm := TFVM{
 		name:args.name,
 		description:args.description,
 		tfgrid_node_id:args.nodeid,
 		memory_gb: args.memory_gb
 		public_ip: args.public_ip
-    }	
+    }
 	vm.node_finder (mut tfd, args.nodes)?
-  	tfd.vms << vm
+	tfd.vms << vm
+	tfd.network.tfgrid_node_ids << vm.tfgrid_node_id
 	return vm
 }
 

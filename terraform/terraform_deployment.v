@@ -85,7 +85,7 @@ pub fn (mut f TerraformFactory) deployment_get(args_ TerraformDeploymentArgs) ?&
 			tfgridnet:args.tfgridnet
 			sshkey:args.sshkey, 
 			guid:args.guid
-			}
+		}
 
 	if ! os.exists(path){
 		os.mkdir_all(path)?	
@@ -118,7 +118,7 @@ pub fn (mut tfd TerraformDeployment) tfgrid_net_string() string {
 	return match tfd.tfgridnet {
 		.main { 'main' }
 		.test { 'test' } 
-		.dev { 'def' }
+		.dev { 'dev' }
 	}	
 }
 
