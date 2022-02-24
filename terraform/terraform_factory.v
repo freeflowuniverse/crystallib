@@ -28,8 +28,9 @@ pub mut:
 //needed to get singleton
 fn init2() TerraformFactory {
 	mut f := terraform.TerraformFactory{
-		redis: redisclient.get_local() 
-	}	
+		// redis: redisclient.get_unixsocket_new_default() or { panic(err) }
+		redis: redisclient.get_local()
+	}
 	return f
 }
 
@@ -69,9 +70,10 @@ pub fn get() ?&TerraformFactory {
 			n.exec(cmd:cmd, reset:true, description:"install terraform ; echo ok",stdout:true) or {
 				return error("cannot install terraform\n"+err.msg()+"\noriginal cmd:\n${cmd}")
 			}
-		}		
+		}
+
 		f_.status = TerraformFactoryStatus.ok
-	}	
+	}
 	return &f_
 }
 
