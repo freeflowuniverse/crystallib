@@ -91,7 +91,7 @@ fn (mut vm TFVM) node_finder (mut deployment &TerraformDeployment, nodes []gridp
 			return error("${gp.nodes_print(nodes)}\nVM $vm requirements cannot be found in available nodes.")
 		}
 
-		c := rand.int_in_range(0,res.len-1)
+		c := rand.int_in_range(0,res.len-1)?
 		vm.tfgrid_node_id = nodes[c].id
 
 		println("node selected: $vm.tfgrid_node_id")
