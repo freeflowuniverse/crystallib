@@ -1,7 +1,7 @@
 module appsbox
 
 import os
-// import freeflowuniverse.crystallib.rootpath
+import freeflowuniverse.crystallib.rootpath
 
 
 [heap]
