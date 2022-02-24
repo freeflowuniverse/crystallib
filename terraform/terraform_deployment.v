@@ -73,11 +73,7 @@ pub fn (mut f TerraformFactory) deployment_get(args_ TerraformDeploymentArgs) ?&
 		return f.deployments[args.name]
 	}
 
-	mut path := "~/git3/terraform/$args.name"
-	if path.contains("~"){
-		home := os.real_path(os.home_dir())
-		path = path.replace("~",home)
-	}
+	mut path := rootpath.default_prefix("/terraform/$args.name")
 
 	f.deployments[args.name] = &TerraformDeployment{
 			name:args.name, 
