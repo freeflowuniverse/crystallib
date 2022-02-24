@@ -10,8 +10,8 @@ unzip tform.zip
 
 mkdir -p $home/git3/bin
 
-rm -f ${f.tf_cmd}
-mv terraform ${f.tf_cmd}
+rm -f ${a.tf_cmd}
+mv terraform ${a.tf_cmd}
 
 
 popd
