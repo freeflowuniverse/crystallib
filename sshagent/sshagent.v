@@ -20,7 +20,7 @@ fn listsplit(key string) string{
 // will return the key which will be used
 pub fn load_interactive() ?string {
 	mut pubkeys := pubkeys_get()
-	pubkeys.map(listsplit)	
+	pubkeys.map(listsplit)
 	if pubkeys.len == 1{
 		console.ask_yesno(description:"We found sshkey ${pubkeys[0]} in sshagent, want to use this one?"){
 			key_load(pubkeys[0])?
@@ -52,7 +52,7 @@ pub fn load_interactive() ?string {
 		}
 	}
 	if pubkeys.len > 1{
-		if console.ask_yesno(description:"We found more than 1 sshkey in ~/.ssh dir, want to use one of those?"){			
+		if console.ask_yesno(description:"We found more than 1 sshkey in ~/.ssh dir, want to use one of those?"){
 			keytouse := console.ask_dropdown(items:pubkeys, description:"Please choose the ssh key you want to use")
 			key_load(keytouse)?
 			return keytouse

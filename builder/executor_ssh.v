@@ -138,6 +138,7 @@ pub fn (mut executor ExecutorSSH) environ_get() ?map[string]string {
 			}
 		}
 	}
+
 	return res
 }
 
