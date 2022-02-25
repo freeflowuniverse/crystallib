@@ -90,3 +90,21 @@ pub fn (mut n NodePilot) pokt() ? {
 	rootdir := "/mnt/bc-pokt"
 	n.node.executor.exec("root=$rootdir bash -x $n.noderoot/pokt/pokt.sh")?
 }
+
+
+fn (mut n NodePilot) overlayfs(ropath string, rwpath string, tmp string, target string) ? {
+	n.node.executor.exec("mount -t overlay overlay -o lowerdir=$ropath,upperdir=$rwpath,workdir=$tmp $target")?
+}
+
+// make it easy by using the same password everywhere and the same host
+// only namespace names needs to be different
+fn (mut n NodePilot) zdbfs(host string, meta string, data string, temp string, password string, mountpoint string) ? {
+	mut zdbcmd := "zdbfs $mountpoint -o ro "
+	zdbcmd += "-o mh=$host -o mn=$meta -o ms=$password "
+	zdbcmd += "-o dh=$host -o dn=$data -o ds=$password "
+	zdbcmd += "-o th=$host -o tn=$temp -o ts=$password"
+
+	n.node.executor.exec(zdbcmd)?
+}
+
+// TODO: pokt chains
