@@ -19,6 +19,11 @@ pub fn nodepilot_new(name string, ipaddr string) ? NodePilot {
 }
 
 pub fn (mut n NodePilot) prepare() ? {
+	prepared := n.node.cache.get("nodepilot-prepare") or { "" }
+	if prepared != "" {
+		return
+	}
+
 	if ! n.node.cmd_exists("git") {
 		n.node.package_install(name: "git")?
 	}
@@ -43,4 +48,45 @@ pub fn (mut n NodePilot) prepare() ? {
 		// FIXME: repository is private
 		n.node.executor.exec("git clone $n.repository $n.noderoot")?
 	}
+
+	n.node.cache.set("nodepilot-prepare", "ready", 600)?
+}
+
+fn (mut n NodePilot) is_running(s string) bool {
+	test := n.node.executor.exec("docker ps | grep $s") or { return false }
+	return true
+}
+
+pub fn (mut n NodePilot) fuse_running() bool {
+	return n.is_running("fuse-000")
+}
+
+pub fn (mut n NodePilot) fuse() ? {
+	rootdir := "/mnt/bc-fuse"
+	n.node.executor.exec("root=$rootdir bash -x $n.noderoot/fuse/fuse.sh")?
+}
+
+
+pub fn (mut n NodePilot) harmony_running() bool {
+	return n.is_running("harmony")
+}
+
+pub fn (mut n NodePilot) harmony() ? {
+	rootdir := "/mnt/bc-harmony"
+	n.node.executor.exec("root=$rootdir bash -x $n.noderoot/harmony/harmony.sh")?
+}
+
+
+pub fn (mut n NodePilot) pokt_running() bool {
+	return n.is_running("pokt-000")
+}
+
+pub fn (mut n NodePilot) pokt() ? {
+	test := n.node.executor.exec("docker ps | grep pokt-000") or { "" }
+	if test != "" {
+		return error("Pokt instance already running")
+	}
+
+	rootdir := "/mnt/bc-pokt"
+	n.node.executor.exec("root=$rootdir bash -x $n.noderoot/pokt/pokt.sh")?
 }

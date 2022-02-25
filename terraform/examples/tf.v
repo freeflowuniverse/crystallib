@@ -37,7 +37,7 @@ fn do()? {
 	mut vm2 := d.vm_ubuntu_add(
 			name:"kds2",
 			nodes:nodes_available,
-			memory_gb: 8000,
+			memory_gb: 8,
 			public_ip: false
 			)?
 
