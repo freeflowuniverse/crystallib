@@ -182,7 +182,7 @@ pub fn (mut executor ExecutorSSH) list(path string) ?[]string {
 
 pub fn (mut executor ExecutorSSH) dir_exists(path string) bool {
 	output := executor.exec('test -d $path && echo found || echo not found') or { return false }
-	if output == 'found' {
+	if output.trim_space() == 'found' {
 		return true
 	}
 	return false
