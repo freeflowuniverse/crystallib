@@ -185,11 +185,12 @@ pub fn node_new(args NodeArguments) ?&Node {
 
 	if !node.cmd_exists("tmux"){
 		os.log("TMUX - could not find tmux command, will try to install, can take a while.")
-		node.package_install(name:"tmux")?
-	}	
+		node.package_install(name: "tmux")?
+	}
 
 	builder.nodes_factory.nodes[args.name] = &node
 
+	node.tmux.start()?
 	node.tmux.scan()?
 
 	return builder.nodes_factory.nodes[args.name]

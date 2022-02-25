@@ -139,15 +139,19 @@ fn (mut node Node) platform_load() {
 	if node.platform == PlatformType.unknown {
 		if node.cmd_exists('sw_vers') {
 			node.platform = PlatformType.osx
+
+			// node execute uname -m ?
 			//TODO: does not work for remote !!!
 			if os.uname().machine.to_lower() == 'x86_64' {
-				node.cputype = CPUType.arm
-			}else{
 				node.cputype = CPUType.intel
+			}else{
+				node.cputype = CPUType.arm
 			}
 
-		} else if node.cmd_exists('apt') {
+		} else if node.cmd_exists('apt-get') {
 			node.platform = PlatformType.ubuntu
+
+			node.executor.exec('apt-get update') or { }
 		} else if node.cmd_exists('apk') {
 			node.platform = PlatformType.alpine
 		} else {
@@ -172,6 +176,7 @@ pub fn (mut node Node) platform_prepare() ? {
 			}
 		} else if node.platform == PlatformType.ubuntu {
 			println(' - Ubuntu prepare')
+
 			for x in ['git', 'rsync', 'curl'] {
 				if !node.cmd_exists(x) {
 					node.package_install(name: x) ?
@@ -192,7 +197,7 @@ pub fn (mut node Node) package_install(package Package) ? {
 			return error('could not install package:$package.name\nerror:\n$err')
 		}
 	} else if node.platform == PlatformType.ubuntu {
-		node.executor.exec('apt install $name -y') or {
+		node.executor.exec('apt-get install -y $name') or {
 			return error('could not install package:$package.name\nerror:\n$err')
 		}
 	} else if node.platform == PlatformType.alpine {

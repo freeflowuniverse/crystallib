@@ -50,7 +50,7 @@ pub fn (mut executor ExecutorSSH) exec(cmd string) ?string {
 	if executor.debug{
 		println(" .. execute $executor.ipaddr.addr: $cmd")
 	}
-	res := process.execute_job(cmd: cmd2, stdout: true) ?
+	res := process.execute_job(cmd: cmd2, stdout: true, stdout_log: true) ?
 	return res.output
 }
 
@@ -101,8 +101,9 @@ pub fn (mut executor ExecutorSSH) remove(path string) ? {
 pub fn (mut executor ExecutorSSH) download(source string, dest string) ? {
 	port := executor.ipaddr.port
 	if executor.debug{println(" - $executor.ipaddr.addr file download: $source")}
+	// FIXME: maybe detection about ipv4/ipv6 is needed for use [] or not
 	process.execute_job(
-		cmd: 'rsync -avHPe "ssh -p$port" $executor.user@$executor.ipaddr.addr:$source $dest'
+		cmd: 'rsync -avHPe "ssh -p$port" $executor.user@[$executor.ipaddr.addr]:$source $dest'
 	) ?
 }
 
@@ -110,15 +111,22 @@ pub fn (mut executor ExecutorSSH) download(source string, dest string) ? {
 pub fn (mut executor ExecutorSSH) upload(source string, dest string) ? {
 	port := executor.ipaddr.port
 	if executor.debug{println(" - $executor.ipaddr.addr file upload: $source -> $dest")}
+	// FIXME: maybe detection about ipv4/ipv6 is needed for use [] or not
 	process.execute_job(
-		cmd: 'rsync -avHPe "ssh -p$port" $source -e ssh $executor.user@$executor.ipaddr.addr:$dest'
+		cmd: 'rsync -avHPe "ssh -p$port" $source -e ssh $executor.user@[$executor.ipaddr.addr]:$dest'
 	) ?
 }
 
 // get environment variables from the executor
 pub fn (mut executor ExecutorSSH) environ_get() ?map[string]string {
-	env := executor.exec('env') or { return error('can not get environment') }
-	if executor.debug{println(" - $executor.ipaddr.addr env get")}
+	env := executor.exec('env') or {
+		return error('can not get environment')
+	}
+
+	if executor.debug {
+		println(" - $executor.ipaddr.addr env get")
+	}
+
 	mut res := map[string]string{}
 	if env.contains("\n") {
 		for line in env.split('\n') {
