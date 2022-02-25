@@ -150,8 +150,8 @@ fn (mut node Node) platform_load() {
 
 		} else if node.cmd_exists('apt-get') {
 			node.platform = PlatformType.ubuntu
+			node.package_refresh() or { }
 
-			node.executor.exec('apt-get update') or { }
 		} else if node.cmd_exists('apk') {
 			node.platform = PlatformType.alpine
 		} else {
@@ -188,6 +188,14 @@ pub fn (mut node Node) platform_prepare() ? {
 		node.done_set("platform_prepare","OK")?
 	}
 	println (" - platform already prepared")
+}
+
+pub fn (mut node Node) package_refresh() ? {
+	if node.platform == PlatformType.ubuntu {
+		node.executor.exec('apt-get update') or {
+			return error('could not update packages list\nerror:\n$err')
+		}
+	}
 }
 
 pub fn (mut node Node) package_install(package Package) ? {
