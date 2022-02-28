@@ -65,11 +65,13 @@ pub fn (mut myapp PostgresApp) start() ?{
 }
 
 pub fn (mut myapp PostgresApp) stop() ?{
+	mut factory := appsbox.get()
 	mut bin_path := appsbox.get().bin_path
 	mut n := builder.node_local()?
-	mut tcpport := myapp.instance.tcpports[0]
-	//TODO, needs to be implemented, now copy from redis
-	cmd := "${bin_path}/postgres-cli -p $tcpport SHUTDOWN"
+	tcpport := myapp.instance.tcpports[0]
+	var_path := factory.var_path + "/postgres"
+
+	cmd := "${bin_path}/pg_ctl stop -D ${var_path}"
 	n.exec(cmd:cmd, reset:true, description:"stop postgres",stdout:true)?	
 }
 
