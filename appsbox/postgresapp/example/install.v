@@ -1,20 +1,15 @@
-
-
 module main
 
-import despiegk.crystallib.appsbox.postgresapp
+import freeflowuniverse.crystallib.appsbox.postgresapp
 
 
 fn do()?{
-	mut app := postgresapp.get()
+	mut app := postgresapp.get(name: "inst1")
 	app.start()?
-	app2.stop()?
-
-
+	app.stop()?
 }
 
+
 fn main() {
-
 	do() or {panic(err)}
-
 }
