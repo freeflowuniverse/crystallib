@@ -96,7 +96,7 @@ pub fn (mut myapp PostgresApp) install(reset bool)?{
 
 	if ! os.exists(var_path) {
 		//means we need to init a DB
-		cmd := "$bin_path/initdb -D '${var_path}'"
+		cmd := "$bin_path/initdb -D '${var_path}' --username=root"
 		n.executor.exec_silent(cmd)?
 	}
 
@@ -124,18 +124,30 @@ pub fn (mut myapp PostgresApp) build()?{
 }
 
 //create database, give admin user (postgres) all rights
-pub fn (mut myapp PostgresApp) create_db(db_name string)?{
-	//TODO:...
+pub fn (mut myapp PostgresApp) create_db(db_name string)? {
+	mut factory := appsbox.get()
+	bin_path := factory.bin_path
+
+	cmd := "${bin_path}/createdb --username=root ${db_name}"
+	n.executor.exec_silent(cmd)?
 }
 
 //export database to path (use compression)
-pub fn (mut myapp PostgresApp) export_db(db_name string, path string)?{
-	//TODO:...
+pub fn (mut myapp PostgresApp) export_db(db_name string, path string)? {
+	mut factory := appsbox.get()
+	bin_path := factory.bin_path
+
+	cmd := "${bin_path}/pg_dump -Fc --username=root -Z6 -v --dbname=${db_name} -f ${path}"
+	n.executor.exec_silent(cmd)?
 }
 
 //import db, drop before import
-pub fn (mut myapp PostgresApp) import_db(db_name string, path string)?{
-	//TODO:...
+pub fn (mut myapp PostgresApp) import_db(db_name string, path string)? {
+	mut factory := appsbox.get()
+	bin_path := factory.bin_path
+
+	cmd := "${bin_path}/pg_restore --username=root --dbname=${db_name} ${path}"
+	n.executor.exec_silent(cmd)?
 }
 
 
