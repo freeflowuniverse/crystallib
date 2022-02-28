@@ -81,7 +81,11 @@ pub fn (mut myapp PostgresApp) install(reset bool)?{
 
 	tcpport := myapp.instance.tcpports[0]
 	postgres_path := "${factory.apps_path}/postgres"
+	sysconfdir := postgres_path
 	bin_path := "${postgres_path}/bin"
+	var_path := "${postgres_path}/var"
+	libdir := "${postgres_path}/lib"
+	user := os.user_os()
 
 	if ! os.exists("${postgres_path}/var"){
 		//means we need to init a DB
