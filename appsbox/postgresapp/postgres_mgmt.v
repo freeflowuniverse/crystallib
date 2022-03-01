@@ -126,6 +126,7 @@ pub fn (mut myapp PostgresApp) build()?{
 //create database, give admin user (postgres) all rights
 pub fn (mut myapp PostgresApp) create_db(db_name string)? {
 	mut factory := appsbox.get()
+	mut n := builder.node_local()?
 	bin_path := factory.bin_path
 
 	cmd := "${bin_path}/createdb --username=root ${db_name}"
@@ -135,6 +136,7 @@ pub fn (mut myapp PostgresApp) create_db(db_name string)? {
 //export database to path (use compression)
 pub fn (mut myapp PostgresApp) export_db(db_name string, path string)? {
 	mut factory := appsbox.get()
+	mut n := builder.node_local()?
 	bin_path := factory.bin_path
 
 	cmd := "${bin_path}/pg_dump -Fc --username=root -Z6 -v --dbname=${db_name} -f ${path}"
@@ -144,6 +146,7 @@ pub fn (mut myapp PostgresApp) export_db(db_name string, path string)? {
 //import db, drop before import
 pub fn (mut myapp PostgresApp) import_db(db_name string, path string)? {
 	mut factory := appsbox.get()
+	mut n := builder.node_local()?
 	bin_path := factory.bin_path
 
 	cmd := "${bin_path}/pg_restore --username=root --dbname=${db_name} ${path}"
