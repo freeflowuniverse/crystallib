@@ -23,43 +23,37 @@ fn (mut h HTTPConnection)  cache_key(mut args Request) string {
 //resultcode >0 if error
 //resultcode = 999998 was not in cache, but we don't know on source
 //resultcode = 999999 if empty (from source or was in cache)
-fn (mut h HTTPConnection) cache_get(mut args Request) Request{
-	if !h.settings.cache_disable && !args.cache_disable {
-		//if not there then empty, not in cache
-		mut data := h.redis.get(h.cache_key(mut args)) or {
-			"999998|"
-			}
-		if data.trim(" \n")==""{
-			data = "999998|"
+fn (mut h HTTPConnection) cache_get(mut args Request) ?Request{
+	// if !h.settings.cache_disable && !args.cache_disable {
+	//if not there then empty, not in cache
+	mut data := h.redis.get(h.cache_key(mut args)) or {
+		return error("cache miss!")
 		}
-		if ! (data.contains("|")){
-			panic("bug, data should have |.\n***\n$data\n***")
-		}
-		// println("***$data***")
-		datasplitted := data.split_nth("|",2)
-		if datasplitted.len!=2{
-			panic("bug, data should always be 2 parts.\n$data")
-		}
-		args.result_code = datasplitted[0].int()
-		args.result = datasplitted[1]
+	if data.trim(" \n")==""{
+		return error("cache miss!")
 	}
+	if ! (data.contains("|")){
+		panic("bug, data should have |.\n***\n$data\n***")
+	}
+	// println("***$data***")
+	datasplitted := data.split_nth("|",2)
+	if datasplitted.len!=2{
+		panic("bug, data should always be 2 parts.\n$data")
+	}
+	args.result_code = datasplitted[0].int()
+	args.result = datasplitted[1]
 	return args
 }
 
 fn (mut h HTTPConnection) cache_set(mut args Request) ?Request {
-	mut cache := h.settings.cache_disable
-	if args.cache_disable{
-		cache = false
-	}
-	if cache {
-		key := h.cache_key(mut args)
-		println(" - cache key: $key")
-		data := "${args.result_code}|${args.result}"
-		h.redis.set(key, data) ?
-		// println(" - cache2: $key")
-		h.redis.expire(key, h.settings.cache_timeout) ?
-		// println(" - cache3: $key")
-	}
+
+	key := h.cache_key(mut args)
+	println(" - cache key: $key")
+	data := "${args.result_code}|${args.result}"
+	h.redis.set(key, data) ?
+	// println(" - cache2: $key")
+	h.redis.expire(key, h.settings.cache_timeout) ?
+	// println(" - cache3: $key")
 	return args
 }
 
@@ -76,5 +70,4 @@ pub fn (mut h HTTPConnection) cache_drop(prefix string) ? {
 		// println("delete subkey: $key")
 		h.redis.del(key) ?
 	}
-	
 }

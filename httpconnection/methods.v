@@ -80,7 +80,7 @@ pub fn (mut h HTTPConnection) post_json_str(mut args Request) ?string {
 	*/
 	// Post with auth header
 	args = h.args_header_update(mut args)
-	args = h.cache_get(mut args)
+	args = h.cache_get(mut args) ?
 	//if 999998 then not in cache, because otherwise can be an empty result from before
 	if args.result_code == 999998 || args.result==""{
 		args.result_code = 0
@@ -121,9 +121,8 @@ pub fn (mut h HTTPConnection) post_json_str(mut args Request) ?string {
 pub fn (mut h HTTPConnection) get_json_dict(mut args Request) ?map[string]json2.Any{
 	data_ := h.get_json_str(mut args) ?
 	mut data := map[string]json2.Any{}
-	if args.result_code==0{
-		data = crystaljson.json_dict_filter_any(data_, false, [], [])?
-	}
+
+	data = crystaljson.json_dict_filter_any(data_, false, [], [])?
 	return data
 }
 
@@ -177,27 +176,34 @@ pub fn (mut h HTTPConnection) get_json_str(mut args Request) ?string {
 	Output:
 		response: response as string.
 	*/
+	println('here')
 	args = h.args_header_update(mut args)
-	args = h.cache_get(mut args)
-	//if 999998 then not in cache, because otherwise can be an empty result from before
-	if args.result_code == 999998 {
-		args.result_code = 0
-		url := h.url(mut args)
-		mut req := http.new_request(http.Method.get, url, args.postdata) ?
-		req.add_custom_header('x-disable-pagination', 'True') ?
-		res := req.do() ?
-		if res.status_code == 200 {
-			args.result = res.text
-		} else {
-			args.result = 'could not get: $url\n$res'
-			args.result_code = 1			
+	if !h.settings.cache_disable && !args.cache_disable {
+		args = h.cache_get(mut args) or {
+			h.send(mut args) ?
 		}
-		args = h.cache_set(mut args) ?
+		h.cache_set(mut args) ?
 	}
-	if args.result_code>0{
-		return error(args.json())
+	else {
+		args = h.send(mut args) ?
 	}
-	return args.result
+	if args.result_code >= 200 && args.result_code <= 399 {
+		return args.result
+	} else {
+		url := h.url(mut args)
+		return error('could not get: $url\n$args.result_code')			
+	}
+}
+
+fn (mut h HTTPConnection) send(mut args Request) ?Request {
+	url := h.url(mut args)
+	println(h.url)
+	mut req := http.new_request(http.Method.get, url, args.postdata) ?
+	req.add_custom_header('x-disable-pagination', 'True') ?
+	res := req.do() ?
+	args.result = res.text
+	args.result_code = res.status_code
+	return args
 }
 
 //
