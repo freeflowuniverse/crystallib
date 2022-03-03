@@ -24,14 +24,7 @@ fn (mut h HTTPConnection)  cache_key(mut args Request) string {
 //resultcode = 999998 was not in cache, but we don't know on source
 //resultcode = 999999 if empty (from source or was in cache)
 fn (mut h HTTPConnection) cache_get(mut args Request) Request{
-	mut cache := h.settings.cache_enable
-	if args.cache_disable{
-		cache = false
-	}
-	if args.cache_enable{
-		cache = true
-	}
-	if cache {
+	if !h.settings.cache_disable && !args.cache_disable {
 		//if not there then empty, not in cache
 		mut data := h.redis.get(h.cache_key(mut args)) or {
 			"999998|"
@@ -54,13 +47,10 @@ fn (mut h HTTPConnection) cache_get(mut args Request) Request{
 }
 
 fn (mut h HTTPConnection) cache_set(mut args Request) ?Request {
-	mut cache := h.settings.cache_enable	
+	mut cache := h.settings.cache_disable
 	if args.cache_disable{
 		cache = false
 	}
-	if args.cache_enable{
-		cache = true
-	}	
 	if cache {
 		key := h.cache_key(mut args)
 		println(" - cache key: $key")

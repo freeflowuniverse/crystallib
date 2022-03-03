@@ -6,7 +6,7 @@ import net.http
 // import despiegk.crystallib.redisclient
 import despiegk.crystallib.crystaljson
 
-
+// FIXME: THIS FUNCTION DO NOTHING!!!!!!!!!!!!
 //see if header is empty, if yes set it
 fn (mut h HTTPConnection) args_header_update(mut args Request) Request{
 	//check if empty, if yes take the default
@@ -18,7 +18,7 @@ fn (mut h HTTPConnection) args_header_update(mut args Request) Request{
 }
 
 fn (mut h HTTPConnection) url(mut args Request) string{
-	if h.url[0].trim(" ") == ""{
+	if h.url[0].trim(" ") == "" {
 		panic("cannot not havew empty url on httpconnection")
 	}
 	mut u := ""
@@ -41,16 +41,16 @@ fn (mut h HTTPConnection) url(mut args Request) string{
 // 	header 		http.Header
 // }
 //
-pub fn (mut h HTTPConnection) post_json_dict(mut args Request) ?map[string]json2.Any {
-	/*
-	Post Request with Json Data
-	Inputs:
-		cache: Flag to enable caching.
-		authenticated: Flag to add authorization flag with the request.
 
+/*
+	Post Request with Json Data
+		Inputs:
+			cache: Flag to enable caching.
+			authenticated: Flag to add authorization flag with the request.
 	Output:
 		response: response as dict of further json strings
-	*/
+*/
+pub fn (mut h HTTPConnection) post_json_dict(mut args Request) ?map[string]json2.Any {
 	data_ := h.post_json_str(mut args)?
 	data := crystaljson.json_dict_filter_any(data_, false, [], [])?
 	return data
