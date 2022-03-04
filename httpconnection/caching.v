@@ -1,73 +1,55 @@
 module httpconnection
 
 import crypto.md5
+import json
 
 // calculate the key for the cache starting from data and prefix
-fn (mut h HTTPConnection)  cache_key(mut args Request) string {
-
-	mut data2 := args.postdata
-	if data2.len > 16 {
-		data2 = md5.hexhash(data2)
+fn (mut h HTTPConnection) cache_key(args RequestArgs) string {
+	mut key := 'http:$h.settings.cache_key:$args.prefix'
+	if args.id.len > 0 {
+		key += ':$args.id'
 	}
-	mut prefix := args.prefix
-	if args.id.len>0{
-		prefix += ":$args.id" 
+	if args.data.len > 0 {
+		key += if args.data.len > 16 { ':${md5.hexhash(args.data)}' } else { ':$args.data' }
 	}
-	if data2.len > 0 {
-		return 'http:${h.settings.cache_key}:' + prefix + ':' + data2
-	}
-	return 'http:${h.settings.cache_key}:' + prefix
+	return key
 }
 
-
-//resultcode >0 if error
-//resultcode = 999998 was not in cache, but we don't know on source
-//resultcode = 999999 if empty (from source or was in cache)
-fn (mut h HTTPConnection) cache_get(mut args Request) ?Request{
-	// if !h.settings.cache_disable && !args.cache_disable {
-	//if not there then empty, not in cache
-	mut data := h.redis.get(h.cache_key(mut args)) or {
-		return error("cache miss!")
+fn (mut h HTTPConnection) cache_get(mut args RequestArgs) ?Result {
+	key := h.cache_key(args)
+	mut data := h.redis.get(key) or {
+		if '$err'.contains('none') {
+			eprintln('cache miss!')
+			return Result{
+				code: -1
+			}
 		}
-	if data.trim(" \n")==""{
-		return error("cache miss!")
+		return error('$err')
 	}
-	if ! (data.contains("|")){
-		panic("bug, data should have |.\n***\n$data\n***")
+	result := json.decode(Result, data) or {
+		return error('failed to decode result with error: $err')
 	}
-	// println("***$data***")
-	datasplitted := data.split_nth("|",2)
-	if datasplitted.len!=2{
-		panic("bug, data should always be 2 parts.\n$data")
-	}
-	args.result_code = datasplitted[0].int()
-	args.result = datasplitted[1]
-	return args
+	return result
 }
 
-fn (mut h HTTPConnection) cache_set(mut args Request) ?Request {
-
-	key := h.cache_key(mut args)
-	println(" - cache key: $key")
-	data := "${args.result_code}|${args.result}"
-	h.redis.set(key, data) ?
-	// println(" - cache2: $key")
+fn (mut h HTTPConnection) cache_set(args RequestArgs, res Result) ? {
+	key := h.cache_key(args)
+	value := json.encode(res)
+	println('- cache key: $key')
+	println('- cache value: $value')
+	h.redis.set(key, value) ?
 	h.redis.expire(key, h.settings.cache_timeout) ?
-	// println(" - cache3: $key")
-	return args
 }
 
-//drop the cache, if you want full cache to be empty, use prefix == ""
+// drop the cache, if you want full cache to be empty, use prefix == ""
 pub fn (mut h HTTPConnection) cache_drop(prefix string) ? {
-	mut todrop := 'http:${h.settings.cache_key}:$prefix*'
-	if prefix==""{
-		todrop = 'http:${h.settings.cache_key}*'
-		// println("delete cache: $todrop")
-		h.redis.del('http:${h.settings.cache_key}') ?
+	todrop := if prefix == '' {
+		'http:$h.settings.cache_key*'
+	} else {
+		'http:$h.settings.cache_key:$prefix*'
 	}
 	all_keys := h.redis.keys(todrop) ?
 	for key in all_keys {
-		// println("delete subkey: $key")
 		h.redis.del(key) ?
 	}
 }
