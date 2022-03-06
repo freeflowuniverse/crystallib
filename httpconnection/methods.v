@@ -5,10 +5,10 @@ METHODS NOTES
  *
  * Flow will be:
  * 1 - Check cache if enabled try to get result from cache
- * 2 - TODO: Check result (Need to check this part with Sameh), for now will check if not cache
- * 3 - Based on 2, do request
+ * 2 - Check result
+ * 3 - Do request, if needed
  * 4 - Set in cache if enabled
- * 5 - Return result data
+ * 5 - Return result
  *
  * Suggest to use http code it will be useful, return -1 if not in cache
  * TODO: handling headers (Custom, Common)
@@ -38,41 +38,47 @@ fn (mut h HTTPConnection) url(args RequestArgs) string {
 	return u
 }
 
-//
-fn (h HTTPConnection) check_request_cache(args RequestArgs) bool {
+// Return if request cachable, depeds on connection settings and request arguments.
+fn (h HTTPConnection) is_cachable(args RequestArgs) bool {
 	return !(h.settings.cache_disable || args.cache_disable)
+		&& args.method in h.settings.cache_allowable_methods
+}
+
+// Core fucntion to be used in all other function
+pub fn (mut h HTTPConnection) send(args RequestArgs) ?Result {
+	mut result := Result{}
+	is_cachable := h.is_cachable(args)
+	// 1 - Check cache if enabled try to get result from cache
+	if is_cachable {
+		result = h.cache_get(args) ?
+	}
+	// 2 - Check result
+	if result.code in [0, -1] {
+		// 3 - Do request, if needed
+		url := h.url(args)
+		mut req := http.new_request(args.method, url, args.data) or {
+			return error('could not create http_new request.\n$args.json()')
+		}
+		response := req.do() ?
+		result.code = response.status_code
+		result.data = response.text
+	}
+
+	// 4 - Set in cache if enabled
+	if is_cachable && result.code in h.settings.cache_allowable_codes {
+		h.cache_set(args, result) ?
+	}
+
+	// 5 - Return result
+	return result
 }
 
 // Post request with json and return result as string
 // this is the method which calls to the service, not intended to update data !!!
 // if you want to update data make sure the cache flag is off
 pub fn (mut h HTTPConnection) post_json_str(mut args RequestArgs) ?string {
-	mut result := Result{}
-	cache := h.check_request_cache(args)
-	// 1 - Check cache if enabled try to get result from cache
-	if cache {
-		result = h.cache_get(mut args) ?
-	}
-	// 2 - Check result (Need to check this part with Sameh), for now will check if not cache
-	if result.code == -1 {
-		url := h.url(args)
-		mut req := http.new_request(.post, url, args.data) or {
-			return error('could not create http_new request.\n$args.json()')
-		}
-		response := req.do() ?
-		result.code = response.status_code
-		if response.status_code in success_responses {
-			result.data = response.text
-		} else {
-			error_msg := 'failed to post request\n' + args.json() + '\nresponse\n$response'
-			result.data = '{"message": "$error_msg"}'
-		}
-	}
-
-	if cache {
-		h.cache_set(args, result) ?
-	}
-
+	args.method = .post
+	result := h.send(args) ?
 	return result.data
 }
 
@@ -105,82 +111,30 @@ pub fn (mut h HTTPConnection) get_json_list(mut args RequestArgs) ?[]string {
 
 // Get RequestArgs with json data and return response as string
 pub fn (mut h HTTPConnection) get_json_str(mut args RequestArgs) ?string {
-	mut result := Result{}
-	cache := h.check_request_cache(args)
-	// 1 - Check cache if enabled try to get result from cache
-	if cache {
-		result = h.cache_get(mut args) ?
-	}
-	// 2 - Check result (Need to check this part with Sameh), for now will check if not cache
-	if result.code == -1 {
-		url := h.url(args)
-		mut req := http.new_request(.get, url, args.data) or {
-			return error('could not create http_new request.\n$args.json()')
-		}
-		response := req.do() ?
-		result.code = response.status_code
-		if response.status_code in success_responses {
-			result.data = response.text
-		} else {
-			error_msg := 'failed to get request\n' + args.json() + '\nresponse\n$response'
-			result.data = '{"message": "$error_msg"}'
-		}
-	}
-
-	if cache {
-		h.cache_set(args, result) ?
-	}
-
+	args.method = .get
+	result := h.send(args) ?
 	return result.data
 }
 
-fn (mut h HTTPConnection) send(mut args RequestArgs) ?Result {
-	url := h.url(args)
-	println(h.url)
-	mut req := http.new_request(http.Method.get, url, args.data) ?
-	req.add_custom_header('x-disable-pagination', 'True') ?
-	res := req.do() ?
-	return Result{
-		code: res.status_code
-		data: res.text
-	}
-}
-
 pub fn (mut h HTTPConnection) edit_json(mut args RequestArgs) ?string {
-	url := h.url(args)
-	mut req := http.new_request(http.Method.patch, url, args.data) ?
-	mut res := req.do() ?
-	mut result := ''
-	if res.status_code in success_responses {
-		result = res.text
-	} else {
-		return error('could not edit post: $url\n$res')
-	}
-	return result
+	args.method = .patch
+	result := h.send(args) ?
+	return result.data
 }
 
 pub fn (mut h HTTPConnection) delete(mut args RequestArgs) ?bool {
-	/*
-	Delete RequestArgs
-	Inputs:
-		url: id of the element.
-		cache: Flag to enable caching.
-
-	Output:
-		bool: True if deleted successfully.
-	*/
-	// args = h.args_header_update(mut args)
-	url := h.url(args)
-	mut req := http.new_request(http.Method.delete, url, '') ?
-	mut res := req.do() ?
-	if res.status_code == 204 {
-		h.cache_drop(args.prefix) ? // Drop from cache, will drop too much but is ok
-		return true
+	args.method = .delete
+	mut is_deleted := false
+	result := h.send(args) ?
+	if result.code in success_responses {
+		is_deleted = true
+		// h.cache_drop_key(args) ?
 	} else {
-		return error('Could not delete $args.prefix:$url')
+		eprintln('Could not delete $args.prefix:$h.url()')
 	}
+	return is_deleted
 }
 
-fn (mut r RequestArgs) json() string {
+fn (r RequestArgs) json() string {
 	return json.encode_pretty(r)
 }

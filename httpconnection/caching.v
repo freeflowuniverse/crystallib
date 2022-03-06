@@ -3,19 +3,15 @@ module httpconnection
 import crypto.md5
 import json
 
-// calculate the key for the cache starting from data and prefix
+// calculate the key for the cache starting from data and url
 fn (mut h HTTPConnection) cache_key(args RequestArgs) string {
-	mut key := 'http:$h.settings.cache_key:$args.prefix'
-	if args.id.len > 0 {
-		key += ':$args.id'
-	}
-	if args.data.len > 0 {
-		key += if args.data.len > 16 { ':${md5.hexhash(args.data)}' } else { ':$args.data' }
-	}
-	return key
+	encoded_url := md5.hexhash(h.url(args))
+	encoded_data := md5.hexhash(args.data)
+	return 'http:$h.settings.cache_key:$args.method:$encoded_url:$encoded_data'
 }
 
-fn (mut h HTTPConnection) cache_get(mut args RequestArgs) ?Result {
+// Get request result from cache, return -1 if missed.
+fn (mut h HTTPConnection) cache_get(args RequestArgs) ?Result {
 	key := h.cache_key(args)
 	mut data := h.redis.get(key) or {
 		if '$err'.contains('none') {
@@ -24,7 +20,7 @@ fn (mut h HTTPConnection) cache_get(mut args RequestArgs) ?Result {
 				code: -1
 			}
 		}
-		return error('$err')
+		return error('failed to get $key with error: $err')
 	}
 	result := json.decode(Result, data) or {
 		return error('failed to decode result with error: $err')
@@ -32,6 +28,7 @@ fn (mut h HTTPConnection) cache_get(mut args RequestArgs) ?Result {
 	return result
 }
 
+// Set response result in cache
 fn (mut h HTTPConnection) cache_set(args RequestArgs, res Result) ? {
 	key := h.cache_key(args)
 	value := json.encode(res)

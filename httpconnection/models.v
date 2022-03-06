@@ -3,14 +3,18 @@ module httpconnection
 import net.http { Header, Method }
 import despiegk.crystallib.redisclient { Redis }
 
+// Success response from 200 to 399
+const success_responses = []int{len: 200, init: it + 200}
+
 pub struct HTTPConnectionSettings {
 pub mut:
-	cache_key     string // as used to identity in redis
-	cache_disable bool   // Default false --> cache working
-	cache_error   bool   // if this is set it means we will cache the fact an error happened too
-	cache_timeout int = 3600 // default timeout is 1h
-	retry         int = 1 // retry, default only 1 time
-	async         bool   // if async threads will be used
+	cache_key               string // as used to identity in redis
+	cache_allowable_methods []Method = [.get, .head]
+	cache_allowable_codes   []int    = httpconnection.success_responses
+	cache_disable           bool // Default false --> cache working
+	cache_timeout           int = 3600 // default timeout is 1h
+	// retry         int = 1 // retry, default only 1 time
+	// async         bool   // if async threads will be used
 }
 
 [heap]
@@ -28,7 +32,7 @@ pub mut:
 	connections map[string]&HTTPConnection
 }
 
-[param]
+[params]
 pub struct RequestArgs {
 pub mut:
 	method        Method
@@ -37,8 +41,8 @@ pub mut:
 	data          string
 	cache_disable bool // if you need to disable cache, set req.cache_disable true
 	header        Header
-	retry         int
-	dict_key      string // TODO: Remove in my opinion
+	// retry         int
+	dict_key string // TODO: Remove in my opinion
 }
 
 [param]
@@ -47,5 +51,3 @@ pub mut:
 	code int
 	data string
 }
-
-const success_responses = [200, 201, 202, 204]
