@@ -5,9 +5,13 @@ import json
 
 // calculate the key for the cache starting from data and url
 fn (mut h HTTPConnection) cache_key(args RequestArgs) string {
-	encoded_url := md5.hexhash(h.url(args))
-	encoded_data := md5.hexhash(args.data)
-	return 'http:$h.settings.cache_key:$args.method:$encoded_url:$encoded_data'
+	mut key_parts := h.url(args) + args.data
+	if h.settings.match_headers {
+		key_parts += json.encode(h.header())
+	}
+	encoded_parts := md5.hexhash(key_parts)
+	mut key := 'http:$h.settings.cache_key:$args.method:$encoded_parts'
+	return key
 }
 
 // Get request result from cache, return -1 if missed.

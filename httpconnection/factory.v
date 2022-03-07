@@ -23,9 +23,9 @@ pub fn new(name string, url string, cache bool) &HTTPConnection {
 	}
 
 	// Init conenection
-	empty_redis := redisclient.Redis{}
+	// empty_redis := redisclient.Redis{}
 	mut conn := HTTPConnection{
-		redis: &empty_redis
+		redis: 0
 		header_default: header
 		settings: HTTPConnectionSettings{
 			cache_disable: !cache

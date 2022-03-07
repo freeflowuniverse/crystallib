@@ -35,7 +35,14 @@ fn (mut h HTTPConnection) url(args RequestArgs) string {
 	if args.id.len > 0 {
 		u += '/$args.id'
 	}
+	if args.params.len > 0 {
+		u += '?${http.url_encode_form_data(args.params)}'
+	}
 	return u
+}
+
+fn (mut h HTTPConnection) header(args RequestArgs) http.Header {
+	return h.header_default.join(args.header)
 }
 
 // Return if request cachable, depeds on connection settings and request arguments.
@@ -59,6 +66,8 @@ pub fn (mut h HTTPConnection) send(args RequestArgs) ?Result {
 		mut req := http.new_request(args.method, url, args.data) or {
 			return error('could not create http_new request.\n$args.json()')
 		}
+		// joining the header from the HTTPConnection with the one from RequestArgs
+		req.header = h.header()
 		response := req.do() ?
 		result.code = response.status_code
 		result.data = response.text
@@ -126,7 +135,7 @@ pub fn (mut h HTTPConnection) delete(mut args RequestArgs) ?bool {
 	args.method = .delete
 	mut is_deleted := false
 	result := h.send(args) ?
-	if result.code in success_responses {
+	if result.code in [200, 204] {
 		is_deleted = true
 		// h.cache_drop_key(args) ?
 	} else {
