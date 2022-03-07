@@ -5,12 +5,15 @@ import json
 
 // calculate the key for the cache starting from data and url
 fn (mut h HTTPConnection) cache_key(args RequestArgs) string {
-	mut key_parts := h.url(args) + args.data
+	url := h.url(args).split('?')
+	encoded_url := md5.hexhash(url[0]) // without params
+	mut key := 'http:$h.settings.cache_key:$args.method:$encoded_url'
+	mut req_data := args.data
 	if h.settings.match_headers {
-		key_parts += json.encode(h.header())
+		req_data += json.encode(h.header())
 	}
-	encoded_parts := md5.hexhash(key_parts)
-	mut key := 'http:$h.settings.cache_key:$args.method:$encoded_parts'
+	req_data += if url.len > 1 { url[1] } else { '' } // add url param if exist
+	key += if req_data.len > 0 { ':${md5.hexhash(req_data)}' } else { '' }
 	return key
 }
 
@@ -40,6 +43,16 @@ fn (mut h HTTPConnection) cache_set(args RequestArgs, res Result) ? {
 	println('- cache value: $value')
 	h.redis.set(key, value) ?
 	h.redis.expire(key, h.settings.cache_timeout) ?
+}
+
+fn (mut h HTTPConnection) cache_invalidate(args RequestArgs) ? {
+	url := h.url(args).split('?')
+	encoded_url := md5.hexhash(url[0])
+	to_drop := 'http:$h.settings.cache_key:*:$encoded_url*'
+	all_keys := h.redis.keys(to_drop) ?
+	for key in all_keys {
+		h.redis.del(key) ?
+	}
 }
 
 // drop the cache, if you want full cache to be empty, use prefix == ""

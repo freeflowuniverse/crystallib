@@ -7,11 +7,10 @@ METHODS NOTES
  * 1 - Check cache if enabled try to get result from cache
  * 2 - Check result
  * 3 - Do request, if needed
- * 4 - Set in cache if enabled
+ * 4 - Set in cache if enabled or invalidate cache
  * 5 - Return result
- *
- * Suggest to use http code it will be useful, return -1 if not in cache
- * TODO: handling headers (Custom, Common)
+
+ Suggestion: Send function now enough to do what we want, no need to any post*, get* additional functions
 */
 
 module httpconnection
@@ -20,14 +19,6 @@ import x.json2
 import json
 import net.http
 import despiegk.crystallib.crystaljson
-
-// FIXME:
-// WHY WE NEED THESE UNKNOWN CODES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// resultcode >0 if error
-// 2 -> if req.do() return error (use 444 error)
-// 5 -> if not sucess response
-// resultcode = 999998 was not in cache, but we don't know on source
-// resultcode = 999999 if empty (from source or was in cache)
 
 // Build url from RequestArgs and httpconnection
 fn (mut h HTTPConnection) url(args RequestArgs) string {
@@ -51,6 +42,13 @@ fn (h HTTPConnection) is_cachable(args RequestArgs) bool {
 		&& args.method in h.settings.cache_allowable_methods
 }
 
+// Return if request cachable, depeds on connection settings and request arguments.
+fn (h HTTPConnection) needs_invalidate(args RequestArgs, result_code int) bool {
+	return !(h.settings.cache_disable || args.cache_disable) && args.method in unsafe_http_methods
+		&& args.method !in h.settings.cache_allowable_methods && result_code >= 200
+		&& result_code <= 399
+}
+
 // Core fucntion to be used in all other function
 pub fn (mut h HTTPConnection) send(args RequestArgs) ?Result {
 	mut result := Result{}
@@ -63,9 +61,7 @@ pub fn (mut h HTTPConnection) send(args RequestArgs) ?Result {
 	if result.code in [0, -1] {
 		// 3 - Do request, if needed
 		url := h.url(args)
-		mut req := http.new_request(args.method, url, args.data) or {
-			return error('could not create http_new request.\n$args.json()')
-		}
+		mut req := http.new_request(args.method, url, args.data) ?
 		// joining the header from the HTTPConnection with the one from RequestArgs
 		req.header = h.header()
 		response := req.do() ?
@@ -76,6 +72,10 @@ pub fn (mut h HTTPConnection) send(args RequestArgs) ?Result {
 	// 4 - Set in cache if enabled
 	if is_cachable && result.code in h.settings.cache_allowable_codes {
 		h.cache_set(args, result) ?
+	}
+
+	if h.needs_invalidate(args, result.code) {
+		h.cache_invalidate(args) ?
 	}
 
 	// 5 - Return result
@@ -91,6 +91,7 @@ pub fn (mut h HTTPConnection) post_json_str(mut args RequestArgs) ?string {
 	return result.data
 }
 
+// FIXME: Not needed here in our opinion [Sameh, Essam]
 pub fn (mut h HTTPConnection) get_json_dict(mut args RequestArgs) ?map[string]json2.Any {
 	data_ := h.get_json_str(mut args) ?
 	mut data := map[string]json2.Any{}
@@ -99,17 +100,8 @@ pub fn (mut h HTTPConnection) get_json_dict(mut args RequestArgs) ?map[string]js
 	return data
 }
 
+// FIXME: Not needed here in our opinion [Sameh, Essam]
 pub fn (mut h HTTPConnection) get_json_list(mut args RequestArgs) ?[]string {
-	/*
-	Get RequestArgs with Json Data
-	Inputs:
-		prefix: HTTP elements types, ex (projects, issues, tasks, ...).
-		data: Json encoded data.
-		cache: Flag to enable caching.
-
-	Output:
-		response: list of strings.
-	*/
 	mut data_ := h.get_json_str(mut args) ?
 	if args.dict_key.len > 0 {
 		data_ = crystaljson.json_dict_get_string(data_, false, args.dict_key) ?
@@ -123,27 +115,4 @@ pub fn (mut h HTTPConnection) get_json_str(mut args RequestArgs) ?string {
 	args.method = .get
 	result := h.send(args) ?
 	return result.data
-}
-
-pub fn (mut h HTTPConnection) edit_json(mut args RequestArgs) ?string {
-	args.method = .patch
-	result := h.send(args) ?
-	return result.data
-}
-
-pub fn (mut h HTTPConnection) delete(mut args RequestArgs) ?bool {
-	args.method = .delete
-	mut is_deleted := false
-	result := h.send(args) ?
-	if result.code in [200, 204] {
-		is_deleted = true
-		// h.cache_drop_key(args) ?
-	} else {
-		eprintln('Could not delete $args.prefix:$h.url()')
-	}
-	return is_deleted
-}
-
-fn (r RequestArgs) json() string {
-	return json.encode_pretty(r)
 }
