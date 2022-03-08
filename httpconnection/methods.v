@@ -52,6 +52,8 @@ fn (h HTTPConnection) needs_invalidate(req Request, result_code int) bool {
 // Core fucntion to be used in all other function
 pub fn (mut h HTTPConnection) send(req Request) ?Result {
 	mut result := Result{}
+	mut response := http.Response{}
+	mut err_message := ''
 	mut from_cache := false // used to know if result came from cache
 	is_cacheable := h.is_cacheable(req)
 	// 1 - Check cache if enabled try to get result from cache
@@ -68,7 +70,17 @@ pub fn (mut h HTTPConnection) send(req Request) ?Result {
 		mut new_req := http.new_request(req.method, url, req.data) ?
 		// joining the header from the HTTPConnection with the one from Request
 		new_req.header = h.header()
-		response := new_req.do() ?
+		for i in 0..h.retry {
+			response = new_req.do() or {
+				err_message = "$err"
+				println(err_message)
+				continue
+			}
+			break
+		}
+		if response.status_code == 0 {
+			return error(err_message)
+		}
 		result.code = response.status_code
 		result.data = response.text
 	}

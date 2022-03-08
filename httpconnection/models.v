@@ -25,6 +25,7 @@ pub mut:
 	base_url            string // the base url
 	default_header 		Header
 	cache       		CacheConfig
+	retry				int = 5
 }
 
 [heap]
