@@ -4,11 +4,11 @@ import crypto.md5
 import json
 
 // calculate the key for the cache starting from data and url
-fn (mut h HTTPConnection) cache_key(args RequestArgs) string {
-	url := h.url(args).split('?')
+fn (mut h HTTPConnection) cache_key(req Request) string {
+	url := h.url(req).split('?')
 	encoded_url := md5.hexhash(url[0]) // without params
-	mut key := 'http:$h.settings.cache_key:$args.method:$encoded_url'
-	mut req_data := args.data
+	mut key := 'http:$h.settings.cache_key:$req.method:$encoded_url'
+	mut req_data := req.data
 	if h.settings.match_headers {
 		req_data += json.encode(h.header())
 	}
@@ -18,11 +18,10 @@ fn (mut h HTTPConnection) cache_key(args RequestArgs) string {
 }
 
 // Get request result from cache, return -1 if missed.
-fn (mut h HTTPConnection) cache_get(args RequestArgs) ?Result {
-	key := h.cache_key(args)
+fn (mut h HTTPConnection) cache_get(req Request) ?Result {
+	key := h.cache_key(req)
 	mut data := h.redis.get(key) or {
 		if '$err'.contains('none') {
-			eprintln('cache miss!')
 			return Result{
 				code: -1
 			}
@@ -36,17 +35,16 @@ fn (mut h HTTPConnection) cache_get(args RequestArgs) ?Result {
 }
 
 // Set response result in cache
-fn (mut h HTTPConnection) cache_set(args RequestArgs, res Result) ? {
-	key := h.cache_key(args)
+fn (mut h HTTPConnection) cache_set(req Request, res Result) ? {
+	key := h.cache_key(req)
 	value := json.encode(res)
-	println('- cache key: $key')
-	println('- cache value: $value')
 	h.redis.set(key, value) ?
 	h.redis.expire(key, h.settings.cache_timeout) ?
 }
 
-fn (mut h HTTPConnection) cache_invalidate(args RequestArgs) ? {
-	url := h.url(args).split('?')
+// Invalidate cache for specific url
+fn (mut h HTTPConnection) cache_invalidate(req Request) ? {
+	url := h.url(req).split('?')
 	encoded_url := md5.hexhash(url[0])
 	to_drop := 'http:$h.settings.cache_key:*:$encoded_url*'
 	all_keys := h.redis.keys(to_drop) ?
@@ -55,13 +53,9 @@ fn (mut h HTTPConnection) cache_invalidate(args RequestArgs) ? {
 	}
 }
 
-// drop the cache, if you want full cache to be empty, use prefix == ""
-pub fn (mut h HTTPConnection) cache_drop(prefix string) ? {
-	todrop := if prefix == '' {
-		'http:$h.settings.cache_key*'
-	} else {
-		'http:$h.settings.cache_key:$prefix*'
-	}
+// drop full cache for specific cache_key
+pub fn (mut h HTTPConnection) cache_drop() ? {
+	todrop := 'http:$h.settings.cache_key*'
 	all_keys := h.redis.keys(todrop) ?
 	for key in all_keys {
 		h.redis.del(key) ?

@@ -36,7 +36,7 @@ pub mut:
 }
 
 [params]
-pub struct RequestArgs {
+pub struct Request {
 pub mut:
 	method        Method
 	prefix        string
