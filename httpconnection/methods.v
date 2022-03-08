@@ -70,7 +70,7 @@ pub fn (mut h HTTPConnection) send(req Request) ?Result {
 		mut new_req := http.new_request(req.method, url, req.data) ?
 		// joining the header from the HTTPConnection with the one from Request
 		new_req.header = h.header()
-		for i in 0..h.retry {
+		for _ in 0..h.retry {
 			response = new_req.do() or {
 				err_message = "$err"
 				println(err_message)
