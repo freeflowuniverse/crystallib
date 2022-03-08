@@ -11,8 +11,8 @@ fn do() ? {
 
 	mut conn := httpconnection.new('example', 'https://reqres.in/api/', true)
 
-	// do the settings on the connection
-	conn.settings.cache_timeout = 7200 // make the cache timeout 2h
+	// do the cache on the connection
+	conn.cache.expire_after = 7200 // make the cache expire_after 2h
 
 	// make sure we empty cache
 	conn.cache_drop() ?

@@ -26,17 +26,17 @@ pub fn new(name string, url string, cache bool) &HTTPConnection {
 	// empty_redis := redisclient.Redis{}
 	mut conn := HTTPConnection{
 		redis: 0
-		header_default: header
-		settings: HTTPConnectionSettings{
-			cache_disable: !cache
+		default_header: header
+		cache: CacheConfig{
+			disable: !cache
 		}
-		url: [url.trim('/')]
+		base_url: url.trim('/')
 	}
 
 	// Check cache and init redis using unix_socket
 	if cache {
 		conn.redis = redisclient.get_unixsocket_new_default() or { panic(err) }
-		conn.settings.cache_key = name
+		conn.cache.key = name
 	}
 
 	// Store new connection

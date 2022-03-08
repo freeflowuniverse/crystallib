@@ -16,13 +16,12 @@ METHODS NOTES
 module httpconnection
 
 import x.json2
-import json
 import net.http
 import despiegk.crystallib.crystaljson
 
 // Build url from Request and httpconnection
 fn (mut h HTTPConnection) url(req Request) string {
-	mut u := '${h.url[0]}/${req.prefix.trim('/')}'
+	mut u := '$h.base_url/${req.prefix.trim('/')}'
 	if req.id.len > 0 {
 		u += '/$req.id'
 	}
@@ -34,19 +33,19 @@ fn (mut h HTTPConnection) url(req Request) string {
 
 // Join headers from httpconnection and Request
 fn (mut h HTTPConnection) header(req Request) http.Header {
-	return h.header_default.join(req.header)
+	return h.default_header.join(req.header)
 }
 
-// Return if request cachable, depeds on connection settings and request arguments.
-fn (h HTTPConnection) is_cachable(req Request) bool {
-	return !(h.settings.cache_disable || req.cache_disable)
-		&& req.method in h.settings.cache_allowable_methods
+// Return if request cacheable, depeds on connection cache and request arguments.
+fn (h HTTPConnection) is_cacheable(req Request) bool {
+	return !(h.cache.disable || req.cache_disable)
+		&& req.method in h.cache.allowable_methods
 }
 
 // Return true if we need to invalidate cache after unsafe method
 fn (h HTTPConnection) needs_invalidate(req Request, result_code int) bool {
-	return !(h.settings.cache_disable || req.cache_disable) && req.method in unsafe_http_methods
-		&& req.method !in h.settings.cache_allowable_methods && result_code >= 200
+	return !(h.cache.disable || req.cache_disable) && req.method in unsafe_http_methods
+		&& req.method !in h.cache.allowable_methods && result_code >= 200
 		&& result_code <= 399
 }
 
@@ -54,11 +53,13 @@ fn (h HTTPConnection) needs_invalidate(req Request, result_code int) bool {
 pub fn (mut h HTTPConnection) send(req Request) ?Result {
 	mut result := Result{}
 	mut from_cache := false // used to know if result came from cache
-	is_cachable := h.is_cachable(req)
+	is_cacheable := h.is_cacheable(req)
 	// 1 - Check cache if enabled try to get result from cache
-	if is_cachable {
+	if is_cacheable {
 		result = h.cache_get(req) ?
-		from_cache = true
+		if result.code != -1 {
+			from_cache = true
+		}
 	}
 	// 2 - Check result
 	if result.code in [0, -1] {
@@ -73,7 +74,7 @@ pub fn (mut h HTTPConnection) send(req Request) ?Result {
 	}
 
 	// 4 - Set in cache if enabled
-	if !from_cache && is_cachable && result.code in h.settings.cache_allowable_codes {
+	if !from_cache && is_cacheable && result.code in h.cache.allowable_codes {
 		h.cache_set(req, result) ?
 	}
 
@@ -83,6 +84,10 @@ pub fn (mut h HTTPConnection) send(req Request) ?Result {
 
 	// 5 - Return result
 	return result
+}
+
+pub fn (r Result) is_ok() bool {
+	return r.code >= 200 && r.code <= 399 
 }
 
 [deprecated]
