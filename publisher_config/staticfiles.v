@@ -64,6 +64,7 @@ fn staticfiles_config(mut c ConfigRoot) {
 		'docsify-charty.min.js':           'https://unpkg.com/@markbattistella/docsify-charty@1.0.5'
 		'docsify-charty.min.css':          'https://unpkg.com/@markbattistella/docsify-charty@1.0.5/dist/docsify-charty.min.css'
 		'charty-custom-style.css':         'https://raw.githubusercontent.com/markbattistella/docsify-charty/fa755c3e058ba1110fc6586a50207626d552b88f/docs/site/style.min.css'
+		'tf-tracker.js':                   'https://cdn.jsdelivr.net/gh/MohamedElmdary/tf-tracker@0.0.2/index.js'
 	}
 }
 
