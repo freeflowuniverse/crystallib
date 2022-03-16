@@ -1,4 +1,4 @@
-module core
+module crpgp
 
 struct C.KeyType {}
 struct KeyType {
@@ -22,7 +22,6 @@ struct SecretKeyParamsBuilder {
 }
 struct C.Signature {}
 struct Signature {
-    pub:
     internal &C.Signature
 }
 struct C.SignedPublicKey {}
@@ -37,9 +36,7 @@ struct C.SignedSecretKey {}
 struct SignedSecretKey {
     internal &C.SignedSecretKey
 }
-struct C.SubkeyParams {
-    can_encrypt bool
-}
+struct C.SubkeyParams {}
 struct SubkeyParams {
     internal &C.SubkeyParams
 }

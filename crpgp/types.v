@@ -1,4 +1,4 @@
-module core
+module crpgp
 
 pub fn new_secret_key_param_builder() ?SecretKeyParamsBuilder {
 	builder := C.params_builder_new()
@@ -10,7 +10,6 @@ pub fn new_secret_key_param_builder() ?SecretKeyParamsBuilder {
 		internal: builder
 	}
 }
-
 pub fn (b &SecretKeyParamsBuilder) primary_key_id(primary_key_id string) ? {
 	if C.params_builder_primary_user_id(b.internal, &char(primary_key_id.str)) != 0 {
 		construct_error()?
@@ -129,6 +128,7 @@ pub fn (s &SignedSecretKey) to_armored() ?string {
 	return res
 }
 
+
 pub fn signed_secret_key_from_armored(s string) ?SignedSecretKey {
 	ser := C.signed_secret_key_from_armored(s.str)
 	if u64(ser) == 0 {
@@ -139,6 +139,7 @@ pub fn signed_secret_key_from_armored(s string) ?SignedSecretKey {
 		internal: ser
 	}
 }
+
 
 pub fn (s &Signature) serialize() ?[]byte {
 	len := u64(0)

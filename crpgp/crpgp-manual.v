@@ -1,7 +1,7 @@
-module core
+module crpgp
 
 // Things that are hard to convert from the c header file automatically
-enum KeyType_Tag {
+pub enum KeyType_Tag {
   rsa
   ecdh
   ed_dsa

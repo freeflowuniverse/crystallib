@@ -1,4 +1,4 @@
-module core
+module crpgp
 
 fn construct_error() ?int {
 	// todo: call the func to get the error length
