@@ -1,7 +1,7 @@
 import core
 
 fn main() {
-	mut secret_key := core.generate_key()?
+	mut secret_key := core.generate_key(name: 'sameh', email: 'sameh@gmail.com')?
 	// --- serialization deserialization ---
 	mut armored := secret_key.to_armored()?
 	println("signed secret key")
