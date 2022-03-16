@@ -12,7 +12,7 @@ pub struct KeyParams {
 	name     string      [required]
 	email    string      [required]
 	key_type CipherSuite
-	length   u32
+	length   u32 = 3072
 	comment  string
 }
 

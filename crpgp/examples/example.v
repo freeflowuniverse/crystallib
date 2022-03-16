@@ -22,9 +22,15 @@ fn main() {
     println("✅ keys loaded!")
     test_pgp(imported_ssk, imported_spk) ?
 
-    // Test generate flow
-    generated_ssk := crpgp.generate_key(name: 'mohammed', email: 'mohamed@test.com') ?
-    generated_spk := generated_ssk.get_signed_public_key() ?
-    println("✅ keys genetated!")
-    test_pgp(generated_ssk, generated_spk) ?
+    // Test generate cv25519 keys flow
+    cv25519_ssk := crpgp.generate_key(name: 'mohammed', email: 'mohamed@test.com') ?
+    cv25519_spk := cv25519_ssk.get_signed_public_key() ?
+    println("✅ cv25519 keys genetated!")
+    test_pgp(cv25519_ssk, cv25519_spk) ?
+
+    // Test generate RSA flow
+    rsa_ssk := crpgp.generate_key(name: 'mohammed', email: 'mohamed@test.com', key_type: .rsa) ?
+    rsa_spk := rsa_ssk.get_signed_public_key() ?
+    println("✅ RSA keys genetated!")
+    test_pgp(rsa_ssk, rsa_spk) ?
 }
