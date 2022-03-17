@@ -93,6 +93,7 @@ fn template_wiki_root(reponame string, repourl string, trackingid string, opengr
      <script src="d3.min.js"></script>
     <script src="d3-flextree.js"></script>
     <script src="view.mindmap.js"></script>
+    <script src="tf-tracker.js"></script>
 
       <div id="app"></div>
       <script>
@@ -159,6 +160,7 @@ fn template_wiki_root(reponame string, repourl string, trackingid string, opengr
                         new SimpleLightbox(".gallery a");
                     });
                 },
+                tfTracker
             ],
 
             mindmap: {

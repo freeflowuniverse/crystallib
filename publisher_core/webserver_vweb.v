@@ -5,6 +5,8 @@ import os
 import vweb
 import publisher_config
 import json
+import time
+import redisclient
 
 // this webserver is used for looking at the builded results
 
@@ -14,6 +16,7 @@ pub:
 pub mut:
 	publisher 	&Publisher
 	webnames 		map[string]string
+	redis       &redisclient.Redis
 }
 
 enum FileType {
@@ -361,6 +364,42 @@ pub mut:
 	ctx shared MyContext
 }
 
+struct Tracker {
+mut:
+	id string
+	state string
+	url string
+	page string [json: 'hash']
+}
+
+['/tracker'; post]
+pub fn (mut app App) handle_tracker() vweb.Result{
+	mut tracker := json.decode(Tracker, app.req.data) or {
+		app.set_status(400, 'Bad Request')
+		return app.json('{"status": "error", "message": "failed to decode data with error: $err"}')
+	}
+	// trim / from id
+	tracker.id = tracker.id.trim('/')
+	tracker.page = tracker.page.trim('/')
+	// ip returned with a temp port, like [::1]:81152
+	mut user_ip := app.ip()
+	ind := user_ip.last_index(':') or {user_ip.len}
+	// In this line we take the ip part only with out port and replace ':' with ';', redis use ':' in namespaceing
+	user_ip = user_ip.substr(0, ind).replace(':', ';')
+	key := 'publish:$tracker.id:$user_ip:$tracker.page'
+	value := {
+		'state' : tracker.state
+		'time'  : time.now().unix_time().str() 
+	}
+	lock app.ctx {
+		app.ctx.redis.lpush(key, '$value') or {
+			app.set_status(500, 'Internal Error')
+			return app.json('{"status": "error", "message": "failed to push data with error: $err"}')
+		}
+	}
+	return app.ok('')
+}
+
 ['/:path...']
 pub fn (mut app App) handler(_path string) vweb.Result {
 	config, publisherobj := rlock app.ctx {
@@ -453,11 +492,12 @@ pub fn (mut app App) index() vweb.Result {
 pub fn webserver_run(mut publisher &Publisher) ? {
 	publisher.check() ?
 	publisher.config.update_staticfiles(false) ?
-
+	rc := redisclient.get_unixsocket_new_default()?
 	mut app := App{
 		ctx: MyContext{
 			publisher: publisher
 			config: &publisher.config
+			redis: rc
 		}
 	}
 	lock app.ctx {
