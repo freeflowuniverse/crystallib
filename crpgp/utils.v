@@ -10,6 +10,7 @@ pub fn cu8_to_vbytes(ptr &u8, l u64) []byte {
 	}
 	return res
 }
+
 pub fn str_to_bytes(s string) []byte {
 	mut res := []byte{}
 	for c in s {

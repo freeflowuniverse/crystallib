@@ -1,49 +1,71 @@
 module crpgp
 
 struct C.KeyType {}
+
 struct KeyType {
-    internal &C.KeyType
+	internal &C.KeyType
 }
+
 struct C.PublicKey {}
+
 struct PublicKey {
-    internal &C.PublicKey
+	internal &C.PublicKey
 }
+
 struct C.SecretKey {}
+
 struct SecretKey {
-    internal &C.SecretKey
+	internal &C.SecretKey
 }
+
 struct C.SecretKeyParams {}
+
 struct SecretKeyParams {
-    internal &C.SecretKeyParams
+	internal &C.SecretKeyParams
 }
+
 struct C.SecretKeyParamsBuilder {}
+
 struct SecretKeyParamsBuilder {
-    internal &C.SecretKeyParamsBuilder
+	internal &C.SecretKeyParamsBuilder
 }
+
 struct C.Signature {}
+
 struct Signature {
-    internal &C.Signature
+	internal &C.Signature
 }
+
 struct C.SignedPublicKey {}
+
 struct SignedPublicKey {
-    internal &C.SignedPublicKey
+	internal &C.SignedPublicKey
 }
+
 struct C.SignedPublicSubKey {}
+
 struct SignedPublicSubKey {
-    internal &C.SignedPublicSubKey
+	internal &C.SignedPublicSubKey
 }
+
 struct C.SignedSecretKey {}
+
 struct SignedSecretKey {
-    internal &C.SignedSecretKey
+	internal &C.SignedSecretKey
 }
+
 struct C.SubkeyParams {}
+
 struct SubkeyParams {
-    internal &C.SubkeyParams
+	internal &C.SubkeyParams
 }
+
 struct C.SubkeyParamsBuilder {}
+
 struct SubkeyParamsBuilder {
-    internal &C.SubkeyParamsBuilder
+	internal &C.SubkeyParamsBuilder
 }
+
 fn C.last_error_length() int
 fn C.error_message(&char, int) int
 fn C.public_key_verify(&C.PublicKey, &u8, u64, &C.Signature) char
