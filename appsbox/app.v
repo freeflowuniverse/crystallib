@@ -31,7 +31,7 @@ pub fn (mut app AppInstance) exists() bool{
 	mut f:= appsbox.factory
 	for bin in app.bins{
 		path := "${f.bin_path}/$bin"
-		// println(" - check exists: $path")
+		println(" - check exists: $path")
 		if ! os.exists(path){
 			return false
 		}

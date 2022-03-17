@@ -57,7 +57,7 @@ pub fn new(name string, url string, cache bool) &HTTPConnection {
 		http.CommonHeader.content_type:  'application/json'
 	})
 	mut conn := HTTPConnection{
-		redis: redisclient.get_local()
+		redis: redisclient.get_unixsocket_new_default() or { panic(err) }
 		header_default: header
 	}
 
@@ -115,7 +115,7 @@ fn (mut h HTTPConnection) request() Request {
 
 pub fn (mut h HTTPConnection) clone() ?&HTTPConnection {
 
-	mut r := redisclient.get_local_new()?
+	mut r := redisclient.get_unixsocket_new_default()?
 
 	mut header := http.new_header_from_map({
 		http.CommonHeader.content_type:  'application/json'

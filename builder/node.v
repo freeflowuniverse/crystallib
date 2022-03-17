@@ -88,15 +88,12 @@ pub fn node_get(name string) ?&Node {
 // 	}
 //```
 pub fn node_new(args NodeArguments) ?&Node {
-
-
 	if args.name==""{
 		return error("need to specify name")
 	}
 
-
 	if args.name in builder.nodes_factory.nodes{
-		return builder.nodes_factory.nodes[args.name] 
+		return builder.nodes_factory.nodes[args.name]
 	}
 
 	mut node:=Node{executor:&ExecutorLocal{},db:&DB{},tmux: &Tmux{node:args.name}}
@@ -127,14 +124,16 @@ pub fn node_new(args NodeArguments) ?&Node {
 
 	node_env_txt := node.cache.get("env") or {
 		println( " - env load")
-		node.environment_load() ?
+		node.environment_load()?
 		""
 	}
-	if node_env_txt!=""{
+
+	if node_env_txt != "" {
 		node.environment = serializers.text_to_map_string_string(node_env_txt)
-	}	
+	}
 
 	mut db := DB{node: &node}
+	println(node.environment)
 	home_dir := node.environment['HOME'].trim(" ")
 	if home_dir==""{
 		return error("HOME env cannot be empty for $node.name")
@@ -152,7 +151,7 @@ pub fn node_new(args NodeArguments) ?&Node {
 
 	init_platform_txt := node.cache.get("platform_type") or {
 		println( " - platform load")
-		node.platform_load()	
+		node.platform_load()
 		if db.db_path==""{
 			panic("db path cannot be empty")
 		}
@@ -167,7 +166,7 @@ pub fn node_new(args NodeArguments) ?&Node {
 			2 { node.platform = PlatformType.ubuntu}
 			3 { node.platform = PlatformType.alpine}
 			else {panic("should not be")}
-		}	
+		}
 	}
 
 	// os.log( " - $node.name: platform: $node.platform")
@@ -185,11 +184,12 @@ pub fn node_new(args NodeArguments) ?&Node {
 
 	if !node.cmd_exists("tmux"){
 		os.log("TMUX - could not find tmux command, will try to install, can take a while.")
-		node.package_install(name:"tmux")?
-	}	
+		node.package_install(name: "tmux")?
+	}
 
 	builder.nodes_factory.nodes[args.name] = &node
 
+	node.tmux.start()?
 	node.tmux.scan()?
 
 	return builder.nodes_factory.nodes[args.name]

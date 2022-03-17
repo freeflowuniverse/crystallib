@@ -207,6 +207,16 @@ pub fn (mut t Tmux) stop()? {
 	os.log('TMUX - All sessions stopped .')
 }
 
+pub fn (mut t Tmux) start()? {
+	mut e := t.node().executor
+	cmd := "tmux new-sess -d -s init"
+	_ := e.exec_silent(cmd) or {
+		// return error("Can't execute $cmd \n$err")
+		""
+	}
+}
+
+
 //print list of tmux sessions
 pub fn (mut t Tmux) list_print() {
 	// os.log('TMUX - Start listing  ....')

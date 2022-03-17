@@ -4,7 +4,7 @@ import builder
 import os
 import crypto.md5
 import despiegk.crystallib.redisclient
-
+import freeflowuniverse.crystallib.rootpath
 
 pub enum TerraformFactoryStatus {
 	init
@@ -14,7 +14,6 @@ pub enum TerraformFactoryStatus {
 
 
 
-[heap]
 struct TerraformFactory {
 mut:
 	deployments    	map[string]&TerraformDeployment
@@ -27,10 +26,10 @@ pub mut:
 
 //needed to get singleton
 fn init2() TerraformFactory {
-	mut f := terraform.TerraformFactory{
-		redis: redisclient.get_local() 
-	}	
-	return f
+	mut x := terraform.TerraformFactory{
+		redis: redisclient.get_unixsocket_new_default() or { panic(err) }
+	}
+	return x
 }
 
 
@@ -40,20 +39,23 @@ const factory = init2()
 pub fn get() ?&TerraformFactory {
 
 	mut f_ := terraform.factory
-	home_ := os.real_path(os.home_dir())
-	f_.tf_cmd = "$home_/git3/bin/terraform"
+	// home_ := os.real_path(os.home_dir())
+	// f_.tf_cmd = "$home_/git3/bin/terraform"
+	f_.tf_cmd = rootpath.default_prefix("/bin/terraform")
 
 
 	if f_.status  == TerraformFactoryStatus.init{
 		if ! os.exists(f_.tf_cmd){
-			mut f := terraform.factory
+			mut a := terraform.factory
 			home := os.real_path(os.home_dir())
-			f.tf_cmd = "$home/git3/bin/terraform"
+			// a.tf_cmd = "$home/git3/bin/terraform"
+			a.tf_cmd = rootpath.default_prefix("/bin/terraform")
+
 			mut n := builder.node_local()?
 			mut url:=""
 			if n.platform == builder.PlatformType.osx{
 				if n.cputype == builder.CPUType.arm{
-					url = "https://releases.hashicorp.com/terraform/1.1.2/terraform_1.1.4_linux_amd64.zip"
+					url = "https://releases.hashicorp.com/terraform/1.1.2/terraform_1.1.4_darwin_arm64.zip"
 				}else{
 					url = "https://releases.hashicorp.com/terraform/1.1.4/terraform_1.1.4_darwin_amd64.zip"
 				}
@@ -69,9 +71,10 @@ pub fn get() ?&TerraformFactory {
 			n.exec(cmd:cmd, reset:true, description:"install terraform ; echo ok",stdout:true) or {
 				return error("cannot install terraform\n"+err.msg()+"\noriginal cmd:\n${cmd}")
 			}
-		}		
+		}
+
 		f_.status = TerraformFactoryStatus.ok
-	}	
+	}
 	return &f_
 }
 

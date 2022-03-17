@@ -3,6 +3,7 @@ module process
 import os
 import time
 import texttools
+import io.util
 
 pub struct Command {
 pub mut:
@@ -137,25 +138,24 @@ pub fn temp_write(text string) ?string {
 			panic('cannot find TMPDIR in os.environment variables.')
 		}
 	}
+
 	mut tmppath := ''
 	if !os.exists('$tmpdir/execscripts/') {
 		os.mkdir('$tmpdir/execscripts') or {
 			return error('Cannot create $tmpdir/execscripts,$err')
 		}
 	}
-	for i in 1 .. 200 {
-		// println(i)
-		tmppath = '$tmpdir/execscripts/exec_${i}.sh'
-		if !os.exists(tmppath) {
-			break
-		}
-		if i > 99 {
-			os.rmdir_all('$tmpdir/execscripts')?
-			return temp_write(text)
-		}
+
+	opts := util.TempFileOptions{
+		path: "$tmpdir/execscripts",
+		pattern: "exec_*.sh",
 	}
-	os.write_file(tmppath, text) ?
-	return tmppath
+
+	mut file, tmpfile := util.temp_file(opts)?
+	file.write_string(text)?
+	file.close()
+
+	return tmpfile
 }
 
 fn check_write(text string) bool {

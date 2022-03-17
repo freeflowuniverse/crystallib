@@ -8,10 +8,10 @@ curl -L '$url' -o tform.zip
 
 unzip tform.zip
 
-mkdir -p $home/git3/bin
+mkdir -p $(dirname ${a.tf_cmd})
 
-rm -f ${f.tf_cmd}
-mv terraform ${f.tf_cmd}
+rm -f ${a.tf_cmd}
+mv terraform ${a.tf_cmd}
 
 
 popd

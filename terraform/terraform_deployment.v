@@ -1,6 +1,7 @@
 module terraform
 import os
 import crypto.md5
+import freeflowuniverse.crystallib.rootpath
 import threefoldtech.vgrid.gridproxy
 import threefoldtech.vgrid.explorer
 
@@ -72,11 +73,7 @@ pub fn (mut f TerraformFactory) deployment_get(args_ TerraformDeploymentArgs) ?&
 		return f.deployments[args.name]
 	}
 
-	mut path := "~/git3/terraform/$args.name"
-	if path.contains("~"){
-		home := os.real_path(os.home_dir())
-		path = path.replace("~",home)
-	}
+	mut path := rootpath.default_prefix("/terraform/$args.name")
 
 	f.deployments[args.name] = &TerraformDeployment{
 			name:args.name, 
@@ -85,7 +82,7 @@ pub fn (mut f TerraformFactory) deployment_get(args_ TerraformDeploymentArgs) ?&
 			tfgridnet:args.tfgridnet
 			sshkey:args.sshkey, 
 			guid:args.guid
-			}
+		}
 
 	if ! os.exists(path){
 		os.mkdir_all(path)?	
@@ -118,7 +115,7 @@ pub fn (mut tfd TerraformDeployment) tfgrid_net_string() string {
 	return match tfd.tfgridnet {
 		.main { 'main' }
 		.test { 'test' } 
-		.dev { 'def' }
+		.dev { 'dev' }
 	}	
 }
 

@@ -46,7 +46,7 @@ pub fn (mut node Node) done_exists(key string) bool {
 
 pub fn (mut node Node) done_print() {
 	println("   DONE: $node.name ")
-	for key,val in node.done{		
+	for key,val in node.done{
 		println("   . $key = $val")
 	}
 }
@@ -54,13 +54,13 @@ pub fn (mut node Node) done_print() {
 
 pub fn (mut node Node) done_save()?{
 	outtext := serializers.map_string_string_to_text(node.done)
-	node.db.set("done",outtext)?	
-	node.cache.set("node_done",outtext,600)?	
+	node.db.set("done",outtext)?
+	node.cache.set("node_done",outtext,600)?
 	// println(" . $node.name done set: \n$outtext")
 }
 
 pub fn (mut node Node) done_load()?{
-	if node.db.exists("done"){
+	if node.db.exists("done") {
 		res := node.db.get("done")?
 		for line in res.split("\n"){
 			if line.contains("="){
@@ -69,8 +69,8 @@ pub fn (mut node Node) done_load()?{
 				// println(" . $node.name done load: $key=$val")
 				node.done[key] = val
 			}
-		}	
-		node.cache.set("node_done",res,600)?	
+		}
+		node.cache.set("node_done",res,600)?
 	}
 }
 

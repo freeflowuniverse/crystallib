@@ -1,7 +1,6 @@
 module tokens
 
 import json
-import strconv
 import httpcache
 
 //
@@ -155,7 +154,7 @@ fn account_url(account string) string {
 
 fn parsef(f string) f64 {
 	x := f.replace(',', '')
-	return strconv.atof64(x) or { panic(err)}
+	return x.f64()
 }
 
 fn parse(tft Raw_StatsTFT, tfta Raw_StatsTFT, stellar Raw_StellarAccount) StatsTFT {

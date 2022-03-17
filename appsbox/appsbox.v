@@ -1,6 +1,7 @@
 module appsbox
 
 import os
+import freeflowuniverse.crystallib.rootpath
 
 
 [heap]
@@ -41,7 +42,8 @@ pub fn get() &AppsBox{
 fn (mut apps AppsBox) home_set (path_ string){
 	mut path:= path_
 	if path==""{
-		path="~/hub3"
+		// path="~/hub3"
+		path = rootpath.default_path()
 	}
 	if apps.apps_path == ""{
 		apps.apps_path = path

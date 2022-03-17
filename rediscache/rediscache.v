@@ -1,5 +1,3 @@
-
-
 module rediscache
 
 import redisclient
@@ -13,27 +11,30 @@ mut:
 
 pub fn newcache(namespace string) RedisCache {
 	// reuse single object
-	mut r:=redisclient.get_local()
-	return RedisCache{redis:r,namespace:namespace}
+	mut r := redisclient.get_unixsocket_new_default() or { panic(err) }
+	return RedisCache{redis: r, namespace: namespace}
 }
 
 pub fn (mut h RedisCache) get(key string) ?string {
 	if ! h.enabled {
 		return none
 	}
-	key2 := h.namespace+":"+key
+	key2 := h.namespace + ":" + key
 	hit := h.redis.get('cache:$key2') or {
-	    println(' [-] cache: cache miss, $key2')
+	    println('[-] cache: cache miss, $key2')
 		return none
 	}
+
+	println('[+] cache: cache hit: $key2')
 	return hit
 }
 
 pub fn (mut h RedisCache) set(key string, val string, expire int) ? {
 	if ! h.enabled {
 		return
-	}	
-	key2 := h.namespace+":"+key
+	}
+
+	key2 := h.namespace + ":" + key
 	h.redis.set_ex('cache:$key2', val, expire.str())?
 }
 
