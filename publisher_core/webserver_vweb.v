@@ -6,7 +6,6 @@ import vweb
 import publisher_config
 import json
 import time
-import redisclient
 
 // this webserver is used for looking at the builded results
 
@@ -16,7 +15,6 @@ pub:
 pub mut:
 	publisher 	&Publisher
 	webnames 		map[string]string
-	redis       &redisclient.Redis
 }
 
 enum FileType {
@@ -372,31 +370,78 @@ mut:
 	page string [json: 'hash']
 }
 
+fn wiki_name_from_url (url string) string {
+	url_splitted := url.split('/')
+	mut wiki_name := ''
+	for id, element in url_splitted {
+		if element == 'info' {
+			tmp := url_splitted[id + 1].split('?')
+			wiki_name = url_splitted[id + 1].split('?')[0]
+		}
+	}
+	return wiki_name
+}
+
+// Get user ip without temperory port
+fn (mut app App) user_ip() string{
+	// Get user ip returned with a temp port, like [::1]:81152
+	mut user_ip := app.ip()
+	ind := user_ip.last_index(':') or {user_ip.len}
+
+	// In this line we take the ip part only without port
+	user_ip = user_ip.substr(0, ind)
+	return user_ip
+}
+
 ['/tracker'; post]
 pub fn (mut app App) handle_tracker() vweb.Result{
 	mut tracker := json.decode(Tracker, app.req.data) or {
 		app.set_status(400, 'Bad Request')
 		return app.json('{"status": "error", "message": "failed to decode data with error: $err"}')
 	}
-	// trim / from id
+	// Time to be used in logs
+	time_now := time.now()
+	date := time_now.ymmdd().replace('-','_')
+	// Info from request
+	// trim / from id and page
 	tracker.id = tracker.id.trim('/')
-	tracker.page = tracker.page.trim('/')
-	// ip returned with a temp port, like [::1]:81152
-	mut user_ip := app.ip()
-	ind := user_ip.last_index(':') or {user_ip.len}
-	// In this line we take the ip part only with out port and replace ':' with ';', redis use ':' in namespaceing
-	user_ip = user_ip.substr(0, ind).replace(':', ';')
-	key := 'publish:$tracker.id:$user_ip:$tracker.page'
-	value := {
-		'state' : tracker.state
-		'time'  : time.now().unix_time().str() 
-	}
-	lock app.ctx {
-		app.ctx.redis.lpush(key, '$value') or {
+	tracker.page = if tracker.page.trim('/') == '' {'home'} else {tracker.page.trim('/')}
+	// Get wiki name from url
+	wiki_name := wiki_name_from_url(tracker.url)
+
+	// Get user ip
+	user_ip := app.user_ip()
+
+	// Constract file path
+	logs_dir := app.ctx.config.publish.paths.base + '/logs/' + wiki_name
+
+	// Make sure logs dir exists
+	if !os.exists(logs_dir) {
+		os.mkdir_all(logs_dir) or {
 			app.set_status(500, 'Internal Error')
-			return app.json('{"status": "error", "message": "failed to push data with error: $err"}')
+			return app.json('{"status": "error", "message": "failed to create log dir with error: $err"}')
 		}
 	}
+
+	file_path := logs_dir +'/' + tracker.id + '__${date}.log'
+	mut log_file := os.open_append(file_path) or {
+		app.set_status(500, 'Internal Error')
+		return app.json('{"status": "error", "message": "failed to open file with error: $err"}')
+	}
+
+	// Constract log value
+	value := '$time_now\t $user_ip\t $tracker.state\t $tracker.page'
+
+	// Append value to log file
+	log_file.writeln(value) or {
+		app.set_status(500, 'Internal Error')
+		return app.json('{"status": "error", "message": "failed to write log value with error: $err"}')
+	}
+
+	// Flush and close the file
+	log_file.flush()
+	log_file.close()
+
 	return app.ok('')
 }
 
@@ -492,12 +537,10 @@ pub fn (mut app App) index() vweb.Result {
 pub fn webserver_run(mut publisher &Publisher) ? {
 	publisher.check() ?
 	publisher.config.update_staticfiles(false) ?
-	rc := redisclient.get_unixsocket_new_default()?
 	mut app := App{
 		ctx: MyContext{
 			publisher: publisher
 			config: &publisher.config
-			redis: rc
 		}
 	}
 	lock app.ctx {
