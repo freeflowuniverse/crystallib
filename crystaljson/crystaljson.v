@@ -54,7 +54,7 @@ pub fn json_dict_get_any(r string, clean bool, key string) ?json2.Any {
 	}
 	mut res := data_raw.as_map()
 	if key in res{
-		return res[key]
+		return res[key] ?
 	}else{
 		return error("Could not find key:$key in $r")
 	}
@@ -97,7 +97,7 @@ pub fn json_dict_filter_string(r string, clean bool, include []string, exclude [
 	mut res := json_dict_filter_any(r,clean,include,exclude)?
 	mut res2 := map[string]string
 	for key in res.keys(){
-		res2[key]=res[key].json_str()
+		res2[key]= res[key]?.json_str()
 	}
 	return res2
 }
