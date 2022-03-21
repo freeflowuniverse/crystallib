@@ -1,5 +1,6 @@
 module builder
 
+import os
 
 pub struct DB {
 pub mut:
@@ -26,6 +27,10 @@ pub mut:
 // 	db.node.executor.exec('mkdir -p $db.db_path') ?
 // 	return db
 // }
+
+pub fn (mut db DB) init() {
+	os.mkdir_all(db.db_path) or { }
+}
 
 // get the path of the config db
 fn (mut db DB) db_key_path_get(key string) string {
