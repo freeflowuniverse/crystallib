@@ -52,13 +52,14 @@ pub fn (mut myapp GiteaApp) start() ?{
 
 	// start gitea
 
-	/*
 	mut tcpport := myapp.instance.tcpports[0]
 	bin_path := factory.bin_path
 
 	//set a start command for postgresql
-	cmd := "${bin_path}/postgres_start"
+	cmd := "${bin_path}/gitea"
 	n.exec(cmd:cmd, reset:true, description:"start postgres",stdout:true)?
+
+	/*
 	alive := myapp.check()?
 	if ! alive{
 		return error("Could not start postgres.")
@@ -75,7 +76,7 @@ pub fn (mut myapp GiteaApp) install(reset bool)?{
 
 	mut n := builder.node_local()?
 
-	myapp.instance.bins = ["gitea", "blabla"]
+	myapp.instance.bins = ["gitea"]
 
 	// check app is installed, if yes don't need to do anything
 	if reset || ! myapp.instance.exists() {
