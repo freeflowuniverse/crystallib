@@ -1,5 +1,8 @@
 set -ex
 
+export DEBIAN_FRONTEND=noninteractive
+export TZ=Etc/UTC
+
 apt-get update
 apt-get install -y build-essential curl gettext git openssh-server s6 \
     sqlite tzdata gnupg libsodium-dev nodejs npm pkg-config

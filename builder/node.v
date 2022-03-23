@@ -133,6 +133,8 @@ pub fn node_new(args NodeArguments) ?&Node {
 	}
 
 	mut db := DB{node: &node}
+	db.init()
+
 	println(node.environment)
 	home_dir := node.environment['HOME'].trim(" ")
 	if home_dir==""{

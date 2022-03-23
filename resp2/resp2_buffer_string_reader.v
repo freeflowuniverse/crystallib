@@ -18,7 +18,7 @@ fn (mut s StringReader) read(mut buf []byte) ?int {
 		// println('NONE')
 		return none
 	}
-	nrread := copy(buf, s.text[s.place..imin(s.place + buf.len, s.text.len)].bytes())
+	nrread := copy(mut buf, s.text[s.place..imin(s.place + buf.len, s.text.len)].bytes())
 	s.place += nrread
 	return nrread
 }

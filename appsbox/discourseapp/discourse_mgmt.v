@@ -1,24 +1,24 @@
-module giteapp
+module discourseapp
 
 import os
 import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.appsbox
 
 [heap]
-pub struct GiteaApp {
+pub struct DiscourseApp {
 pub mut:
 	name			string
 	instance		appsbox.AppInstance
 }
 
-pub struct GiteaAppArgs {
+pub struct DiscourseAppArgs {
 	name				string = "default"
 	port				int = 5432
 	unixsocketpath		string = ""
 	postgres_passwd	    string = "oursecret" //should be changed by user when init
 }
 
-pub fn get(args GiteaAppArgs) appsbox.App {
+pub fn get(args DiscourseAppArgs) appsbox.App {
 	mut factory := appsbox.get()
 
 	for item in factory.apps{
@@ -34,7 +34,7 @@ pub fn get(args GiteaAppArgs) appsbox.App {
 		tcpports: [args.port]
 	}
 
-	mut myapp := GiteaApp {
+	mut myapp := DiscourseApp {
 		name: args.name,
 		instance: i
 	}
@@ -43,7 +43,7 @@ pub fn get(args GiteaAppArgs) appsbox.App {
 	return myapp
 }
 
-pub fn (mut myapp GiteaApp) start() ?{
+pub fn (mut myapp DiscourseApp) start() ?{
 	mut factory := appsbox.get()
 
 	myapp.install(false)?
@@ -51,57 +51,47 @@ pub fn (mut myapp GiteaApp) start() ?{
 	mut n := builder.node_local()?
 
 	// start gitea
-
-	mut tcpport := myapp.instance.tcpports[0]
-	bin_path := factory.bin_path
-
-	//set a start command for postgresql
-	cmd := "${bin_path}/gitea"
-	n.exec(cmd:cmd, reset:true, description:"start postgres",stdout:true)?
-
-	/*
-	alive := myapp.check()?
-	if ! alive{
-		return error("Could not start postgres.")
-	}
-	*/
+	servername := "example.com"
+	// docker run -it --name $name -e DISCOURSE_HOSTNAME=$servername $imagename
 }
 
-pub fn (mut myapp GiteaApp) stop() ? {
+pub fn (mut myapp DiscourseApp) stop() ? {
 	println("stop")
 }
 
-pub fn (mut myapp GiteaApp) install(reset bool)?{
+pub fn (mut myapp DiscourseApp) install(reset bool)?{
 	mut factory := appsbox.get()
 
 	mut n := builder.node_local()?
 
-	myapp.instance.bins = ["gitea"]
+	myapp.instance.bins = ["discourse"]
 
 	// check app is installed, if yes don't need to do anything
-	if reset || ! myapp.instance.exists() {
+	// if reset || ! myapp.instance.exists() {
+	if reset { // CHECK FOR DOCKER IMAGE
 		myapp.build()?
 	}
 }
 
-pub fn (mut myapp GiteaApp) build() ? {
+pub fn (mut myapp DiscourseApp) build() ? {
 	mut factory := appsbox.get()
 
 	mut n := builder.node_local()?
 
-	tmpdir := "/tmp/gitea/"
+	tmpdir := "/tmp/discourse/"
 	binpath := factory.bin_path
-	gover := "1.15"
+	buildpath := tmpdir + "source"
+	imagename := "threefolddev/discourse_aio"
 
-	mut cmd := $tmpl("gitea_build.sh")
-	n.exec(cmd:cmd, reset:true, description:"install gitea; echo ok",stdout:true, tmpdir:tmpdir)?
+	mut cmd := $tmpl("discourse_build.sh")
+	n.exec(cmd:cmd, reset:true, description:"install discourse; echo ok",stdout:true, tmpdir:tmpdir)?
 }
 
-pub fn (mut myapp GiteaApp) check() ?bool {
+pub fn (mut myapp DiscourseApp) check() ?bool {
 	println("check")
 	return false
 }
 
-pub fn (mut myapp GiteaApp) client() ? {
+pub fn (mut myapp DiscourseApp) client() ? {
 	println("client")
 }
