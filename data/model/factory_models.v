@@ -1,7 +1,7 @@
 module model
 import os
 
-/////////// THIS IS THE TEMPLATE, THIS CAN BE MODIFIED
+
 
 ///////IMPORTANT DO NOT MODIFY THIS FILE, THIS FILE IS GENERATED FROM TEMPLATE 'data_factory.v', code changes need to be do there and re-run generate.v
 ///////JUST REMOVE THIS FILE IF YOU WANT IT TO BE REGENERATED
@@ -11,9 +11,8 @@ struct DataFactory {
 pub mut:
 	path_data string
 mut:
-@for name in model_names
-  ${name}s    map[int]&${name.capitalize()}
-@end
+
+  users    map[int]&User
 }
 
 pub struct ArgModelGet {
@@ -38,9 +37,8 @@ pub fn factory() &DataFactory {
 
 pub fn (mut df DataFactory) init(path_data string)?  {
 	df.path_data = path_data
-	@for name in model_names
-	@{"df."}${name}_init()?
-	@end	
+
+	df.user_init()?
 
 
 }
