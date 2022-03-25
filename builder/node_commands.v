@@ -88,9 +88,10 @@ pub fn (mut node Node) exec(args NodeExecCmd) ? {
 		}
 	}	
 
-	if args.reset && args.tmpdir.len>2{	
+	if args.reset && args.tmpdir.len > 2{
 		node.executor.remove(args.tmpdir)?
 	}
+
 	mut r_path := '/tmp/${hhash}.sh'	
 	if args.tmpdir.len>2{	
 		r_path = '${args.tmpdir}/installer.sh'

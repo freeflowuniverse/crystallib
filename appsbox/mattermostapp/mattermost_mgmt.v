@@ -90,6 +90,7 @@ pub fn (mut myapp MattermostApp) build() ? {
 
 	tmpdir := "/tmp/mattermost/"
 	binpath := factory.bin_path
+	varpath := factory.var_path + "/mattermost"
 	gover := "1.16.7"
 
 	mut cmd := $tmpl("mattermost_build.sh")

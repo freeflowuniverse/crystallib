@@ -29,7 +29,8 @@ pub mut:
 // }
 
 pub fn (mut db DB) init() {
-	os.mkdir_all(db.db_path) or { }
+	println(db.db_path)
+	os.mkdir_all(db.db_path) or { eprintln(err) }
 }
 
 // get the path of the config db

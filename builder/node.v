@@ -133,7 +133,6 @@ pub fn node_new(args NodeArguments) ?&Node {
 	}
 
 	mut db := DB{node: &node}
-	db.init()
 
 	println(node.environment)
 	home_dir := node.environment['HOME'].trim(" ")
@@ -141,6 +140,8 @@ pub fn node_new(args NodeArguments) ?&Node {
 		return error("HOME env cannot be empty for $node.name")
 	}
 	db.db_path = '$home_dir/.config/$db.db_dirname'
+	db.init()
+
 	node.db = &db
 
 	if args.reset{
@@ -150,6 +151,7 @@ pub fn node_new(args NodeArguments) ?&Node {
 	if !node.cache.exists("env"){
 		node.cache.set("env",serializers.map_string_string_to_text(node.environment),3600)?
 	}
+
 
 	init_platform_txt := node.cache.get("platform_type") or {
 		println( " - platform load")
@@ -161,6 +163,7 @@ pub fn node_new(args NodeArguments) ?&Node {
 		node.cache.set("platform_type",int(node.platform).str(),3600)?
 		""
 	}
+
 	if init_platform_txt!=""{
 		match init_platform_txt.int() {
 			0 { node.platform = PlatformType.unknown}
