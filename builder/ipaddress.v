@@ -64,6 +64,15 @@ pub fn (mut ipaddr IPAddress) ping(mut executor Executor) bool {
 
 // check if ipaddress is well formed
 pub fn (mut ipaddr IPAddress) check() ? {
+	return // FIXME
+
+	//
+	// query: ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
+	// err  : --------------------------^
+	// ERROR: err_invalid_or_with_cc
+	//
+
+	/*
 	mut query := r''
 	if ipaddr.cat == IpAddressType.ipv4 {
 		query = r'^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
@@ -77,6 +86,7 @@ pub fn (mut ipaddr IPAddress) check() ? {
 	if start < 0 {
 		error('Invalid Ip address string')
 	}
+	*/
 }
 
 fn (mut ipaddr IPAddress) address() string {

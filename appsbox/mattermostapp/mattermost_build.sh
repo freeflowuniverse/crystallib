@@ -24,7 +24,7 @@ cd freeflow_teams_backend && ln -nfs ../freeflow_teams_frontend/dist client
 cd ../freeflow_teams_frontend && make build
 cd ../freeflow_teams_backend &&  make build && make package
 
-mkdir ${varpath}
+mkdir -p ${varpath}
 tar -xf dist/mattermost-team-linux-amd64.tar.gz -C ${varpath}
 
 echo "MATTERMOST INSTALLED SUCCESFULLY"

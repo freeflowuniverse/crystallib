@@ -142,6 +142,7 @@ fn (mut node Node) platform_load() {
 			node.platform = PlatformType.osx
 
 			// node execute uname -m ?
+
 			//TODO: does not work for remote !!!
 			if os.uname().machine.to_lower() == 'x86_64' {
 				node.cputype = CPUType.intel

@@ -92,3 +92,4 @@ pub fn (mut db DB) delete(key string) ? {
 pub fn (mut db DB) reset() ? {
 	db.node.executor.exec('rm -rf $db.db_path && mkdir -p $db.db_path') or { panic(err) }
 }
+

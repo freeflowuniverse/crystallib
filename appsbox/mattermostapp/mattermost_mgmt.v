@@ -50,7 +50,7 @@ pub fn (mut myapp MattermostApp) start() ?{
 
 	mut n := builder.node_local()?
 
-	// start gitea
+	// start mattermost
 
 	/*
 	mut tcpport := myapp.instance.tcpports[0]
@@ -75,7 +75,7 @@ pub fn (mut myapp MattermostApp) install(reset bool)?{
 
 	mut n := builder.node_local()?
 
-	myapp.instance.bins = ["mattermost"]
+	myapp.instance.bins = ["../var/mattermost/bin/mattermost"]
 
 	// check app is installed, if yes don't need to do anything
 	if reset || ! myapp.instance.exists() {
@@ -90,7 +90,7 @@ pub fn (mut myapp MattermostApp) build() ? {
 
 	tmpdir := "/tmp/mattermost/"
 	binpath := factory.bin_path
-	varpath := factory.var_path + "/mattermost"
+	varpath := factory.var_path
 	gover := "1.16.7"
 
 	mut cmd := $tmpl("mattermost_build.sh")
