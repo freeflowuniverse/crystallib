@@ -8,7 +8,7 @@ import despiegk.crystallib.data.model
 fn do()?{
 
 	mut df := model.factory()	
-	df.init("/tmp/model_data")?
+	df.init("/tmp/model_data",true)?
 
 	mut user := df.user_get(id:1)?
 

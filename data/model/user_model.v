@@ -11,25 +11,12 @@ pub mut:
 	tags		[]string
 	remarks		[]int
 	contentkey	string
-	changed bool 	[skip]
+	changed bool 						[skip]
 	//last used from memory, this to let cache work
-	last	int		[skip]
+	access_last	int						[skip]
+	table 	&TableUser 	[skip]
 }
 
-[table: 'user']
-struct IndexUser {
-	id        int    [primary; sql: serial]
-	name      string
-	description string
-	tags string
-}
-
-[table: 'user_tags']
-struct IndexUserTags {
-	i_        int    [primary; sql: serial]
-	id        int    
-	tag      string
-}
 
 //produce the content on which the hash will be done to see if an object changed
 fn (mut obj User) content4hash() string {
@@ -44,3 +31,33 @@ fn (mut obj User) content4hash() string {
 	return out
 }
 
+//IF YOU WANT TO CREATE CUSTOM TABLE IN SQLITE
+// [table: 'user_someting']
+// struct IndexUserSomething {
+// 	id        int    [primary; sql: serial]
+//  obj_id	  int
+// 	otherproperty      string
+// }
+
+//put custom logic here e.g. init the sqlite index if needed, or other initialization
+pub fn (mut table TableUser)  init() ? {
+
+	//IF NEEDED WITH CUSTOM INDEX
+	// indexpath := df.path_data+"/user/index.db"
+	// mut db := sqlite.connect(indexpath) ?
+	// sql db {
+	// 	create table IndexUserSomething
+	// }	
+	// db.close()?
+
+}
+
+//index for 1 specific object
+fn (mut obj User) index_add() ? {
+
+}
+
+//index remove for 1 specific object
+fn (mut obj User) index_remove() ? {
+
+}

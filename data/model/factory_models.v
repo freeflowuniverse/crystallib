@@ -12,7 +12,7 @@ pub mut:
 	path_data string
 mut:
 
-  users    map[int]&User
+  user    &User
 }
 
 pub struct ArgModelGet {
@@ -35,10 +35,10 @@ pub fn factory() &DataFactory {
 	return datafactory
 }
 
-pub fn (mut df DataFactory) init(path_data string)?  {
+pub fn (mut df DataFactory) init(path_data string, reset bool)?  {
 	df.path_data = path_data
 
-	df.user_init()?
+	df.table_user_init(reset)?
 
 
 }
