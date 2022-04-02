@@ -2,8 +2,8 @@ module model
 
 import sqlite
 
-//Data object for $name
-pub struct ${name.capitalize()} {
+//Data object for user
+pub struct User {
 pub mut:
 	id          int
 	name        string
@@ -14,12 +14,12 @@ pub mut:
 	changed bool 						[skip]
 	//last used from memory, this to let cache work
 	access_last	int						[skip]
-	table 	&Table${name.capitalize()} 	[skip]
+	table 	&TableUser 	[skip]
 }
 
 
 //produce the content on which the hash will be done to see if an object changed
-fn (mut obj ${name.capitalize()}) content4hash() string {
+fn (mut obj User) content4hash() string {
 	mut out := obj.id.str()+obj.name+obj.description
 	for tag in obj.tags{
 		out+=tag
@@ -32,32 +32,32 @@ fn (mut obj ${name.capitalize()}) content4hash() string {
 }
 
 //IF YOU WANT TO CREATE CUSTOM TABLE IN SQLITE
-// [table: '${name}_someting']
-// struct Index${name.capitalize()}Something {
+// [table: 'user_someting']
+// struct IndexUserSomething {
 // 	id        int    [primary; sql: serial]
 //  obj_id	  int
 // 	otherproperty      string
 // }
 
 //put custom logic here e.g. init the sqlite index if needed, or other initialization
-pub fn (mut table Table${name.capitalize()})  init() ? {
+pub fn (mut table TableUser)  init() ? {
 
 	//IF NEEDED WITH CUSTOM INDEX
-	// indexpath := df.path_data+"/${name}/index.db"
+	// indexpath := df.path_data+"/user/index.db"
 	// mut db := sqlite.connect(indexpath) ?
 	// sql db {
-	// 	create table Index${name.capitalize()}Something
+	// 	create table IndexUserSomething
 	// }	
 	// db.close()?
 
 }
 
 //index for 1 specific object
-fn (mut obj ${name.capitalize()}) index_add() ? {
+fn (mut obj User) index_add() ? {
 
 }
 
 //index remove for 1 specific object
-fn (mut obj ${name.capitalize()}) index_remove() ? {
+fn (mut obj User) index_remove() ? {
 
 }

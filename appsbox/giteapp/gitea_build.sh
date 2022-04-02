@@ -7,6 +7,7 @@ apt-get update
 apt-get install -y build-essential curl gettext git openssh-server s6 \
     sqlite tzdata gnupg libsodium-dev nodejs npm pkg-config
 
+#here we install GOLANG in this package, this should be a separate one
 curl -L https://dl.google.com/go/go${gover}.linux-amd64.tar.gz > /tmp/go${gover}.linux-amd64.tar.gz
 tar -C /usr/local -xzf /tmp/go${gover}.linux-amd64.tar.gz
 mkdir -p /gopath
