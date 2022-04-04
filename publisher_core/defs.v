@@ -38,6 +38,8 @@ pub fn (def Def) name_fixed() ?string {
 	return texttools.name_fix_no_underscore(def.name)
 }
 
+//create a defs page, which is linked to site
+//the defs page has a macro which lists all defs as found in site
 fn (mut publisher Publisher) defs_init(categories []string, exclude []string, mut site Site, name_ string) {
 	mut name := name_
 	if name == '' {
@@ -76,7 +78,48 @@ fn (mut publisher Publisher) defs_init(categories []string, exclude []string, mu
 	}
 }
 
+
+
 fn (mut publisher Publisher) def_page_get(name string) ?&Page {
 	def := publisher.def_get(name) ?
 	return def.page_get(mut publisher)
+}
+
+
+// replace in text the defs to a link
+fn (mut publisher Publisher) replace_defs_links(mut page &Page, text string) ?string {
+	if page.name == "defs"{
+		return page.content
+	}
+	mut replacer := map[string]string{}
+
+	mut page_sidebar := page.sidebar_page_get(mut publisher) or { panic(err) }
+	mut path_sidebar := page_sidebar.path_dir_relative_get(mut publisher).trim(" /")
+
+	for defname, defid in publisher.def_names {
+		if page.name == defname{
+			continue
+		}
+		defobj := publisher.def_get_by_id(defid) ?
+		if defobj.pageid==999999{
+			println(" = skip def: $defname $defid")
+			panic("skip def")
+			continue
+		}		
+		page2 := defobj.page_get(mut publisher) ?
+		site2 := page2.site(mut publisher)
+		if path_sidebar == ""{
+			replacer[defname] = '[$defobj.name](${site2.name}__$page2.name)'
+			replacer[defname+"s"] = '[${defobj.name}s](${site2.name}__$page2.name)'
+		}else{
+			replacer[defname] = '[$defobj.name](/$path_sidebar/${site2.name}__$page2.name)'
+			replacer[defname+"s"] = '[${defobj.name}s](/$path_sidebar/${site2.name}__$page2.name)'
+		}
+	}
+	// println(text)
+	// println("=======================")
+	// println(replacer)
+	result := texttools.replace_items(text, replacer)
+	// println(result)
+	return result
 }

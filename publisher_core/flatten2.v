@@ -9,7 +9,7 @@ pub struct FlattenArgs{
 }
 
 // destination is the destination path for the flatten operation
-pub fn (mut publisher Publisher) flatten2(args FlattenArgs) ? {
+pub fn (mut publisher Publisher) flatten(args FlattenArgs) ? {
 
 	$if debug {eprintln(@MOD + ':' + @FN + ": - flatten\n$args")}
 
@@ -55,7 +55,7 @@ pub fn (mut publisher Publisher) flatten2(args FlattenArgs) ? {
 		
 		// src_path[site.id] = site.path
 		// mut dest_dir := config.path_publish_wiki_get(site.name) ?
-		println(' - flatten2: $site.name to $dest_dir')
+		println(' - flatten: $site.name to $dest_dir')
 		
 		// Remove destination directory to make sure no old content
 		if os.exists(dest_dir) {
@@ -105,7 +105,6 @@ pub fn (mut publisher Publisher) flatten2(args FlattenArgs) ? {
 			// trace_progress('    ${page_counter:4}, processing page $page.path ...')
 			// println(' >> $name: $page.path')
 			// write processed content
-			page.replace_defs(mut publisher) ?
 			site_page_path := page.path_get(mut publisher)
 			mut file_name_of_site_page_path := ""
 			// Handle Multi Sidebars
@@ -115,7 +114,9 @@ pub fn (mut publisher Publisher) flatten2(args FlattenArgs) ? {
 				file_name_of_site_page_path = os.file_name(site_page_path)
 			}
 			dest_file = os.join_path(dest_dir, file_name_of_site_page_path)
-			os.write_file(dest_file, page.content) ?
+			//get the content and get it prepared for flattening
+			content :=  page.content_get(mut publisher,true,true)?
+			os.write_file(dest_file,content) ?
 		}
 
 		mut file_counter := 0

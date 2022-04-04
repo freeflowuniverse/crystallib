@@ -24,6 +24,7 @@ fn (mut link Link) init_(mut publisher &Publisher, page &Page)? {
 	// see if its an external link or internal
 	// mut linkstate := LinkState.init
 
+
 	link.original_link = link.original_link.trim(" ")		
 	link.description = link.original_descr
 	link.page_id_source = page.id
@@ -97,7 +98,7 @@ fn (mut link Link) init_(mut publisher &Publisher, page &Page)? {
 
 
 		base_of_link_filename := os.base(link.filename.replace('\\', '/'))
-		link.filename = texttools.name_fix(base_of_link_filename)
+		link.filename = base_of_link_filename
 
 		// check which link type
 		ext := os.file_ext(link.filename).trim('.').to_lower()
@@ -137,7 +138,17 @@ fn (mut link Link) init_(mut publisher &Publisher, page &Page)? {
 
 		if link.cat == LinkType.page {
 			mut linktocheck := link.filename
-			if link.site !=""{
+
+			if linktocheck.contains("__"){
+				// link.error("link should not have __ in original_link: ${link.original_link}")
+				// return
+
+				//TODO: I will do quick fix but is not ok (despiegk)
+				panic("link should not have __ in link.filename: ${link.original_link}")
+
+			}	
+
+			if link.site != "" {
 				linktocheck = "$link.site:$linktocheck"
 			}
 			if linktocheck.starts_with("!") || linktocheck.starts_with("@") {
@@ -249,8 +260,8 @@ fn (mut link Link) debug_info(mut publisher Publisher, msg string)  {
 	mut site_source := link.site_source_get(mut publisher) or { panic(err) }
 	mut site_dest := link.site_dest_get(mut publisher) or { panic(err) }				
 	source_link := link.source_get(site_source, mut publisher) or {panic(err)}
-	dest_link := link.server_get(site_source, mut publisher) or {panic(err)}
-	println(link)
+	dest_link := link.server_get(site_source, mut publisher,false) or {panic(err)}
+	// println(link)
 	println("    - sourcepage: ${page_source.path}")
 	println("    - sourcesite: ${site_source.name}")
 	println("    - sourcelink: $source_link")
@@ -281,7 +292,8 @@ fn (link Link) original_get_with_ignore() string {
 
 // return how to represent link on server
 // page is the page from where the link is on
-fn (mut link Link) server_get(site &Site, mut publisher &Publisher) ?string {
+//if flatten then will prepare link for flattening situation
+fn (mut link Link) server_get(site &Site, mut publisher &Publisher, flatten bool) ?string {
 
 	// println(link.original_link)
 	
@@ -297,7 +309,24 @@ fn (mut link Link) server_get(site &Site, mut publisher &Publisher) ?string {
 			return error("cannot find site for source page for link:\n$link \n$err") 
 		}
 
-		link_short := "${link.site}__${link.filename}"
+		if flatten{
+			if ! link.filename.ends_with(".md"){
+				link.filename+=".md"
+			}
+			mut linkreplaced := ""
+			if site_source.name == site_dest.name{
+				linkreplaced = '[$link.description]($link.filename)'
+			}else{
+				linkreplaced = '[$link.description](../${link.site}/${link.filename})'
+			}
+			linkreplaced = linkreplaced.replace("//","/")
+			return linkreplaced
+		}
+
+		mut link_short := link.filename
+		if site_source.name != site_dest.name{
+			link_short = "${link.site}__${link.filename}"
+		}
 
 		mut path_sidebar_dest := ""
 		if page_dest.sidebarid > 0 && link.filename.to_lower()!="readme" && link.filename.to_lower()!="defs"{

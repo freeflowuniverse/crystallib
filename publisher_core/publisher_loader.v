@@ -22,6 +22,7 @@ fn (mut publisher Publisher) load() ? {
 		publisher.load_site(site.name)?
 	}
 	println( " - all sites loaded")
+	
 
 }
 

@@ -132,7 +132,9 @@ pub fn (config ConfigRoot) reponame(name string) ?string {
 pub fn (config ConfigRoot) domain_get(shortname string, cat SiteCat) ?string {
 	for s in config.sites {
 		if shortname == s.name && s.cat == cat {
-			return s.domains[0]
+			if s.domains.len>0{
+				return s.domains[0]
+			}
 		}
 	}
 	//default domain

@@ -1,5 +1,5 @@
 module publisher_config
-
+import texttools
 import os
 
 // the main config file as used for the publisher
@@ -21,7 +21,10 @@ pub mut:
 
 pub fn (config ConfigRoot) name_web_get(domain string) ?string {
 	for s in config.sites {
-		if domain in s.domains {
+		domain2 := texttools.name_fix(domain) 
+		println(s)
+		println("DOMAIN: $domain")
+		if domain in s.domains || domain2 == s.name{
 			return s.name
 		}
 	}

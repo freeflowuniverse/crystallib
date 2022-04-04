@@ -132,30 +132,32 @@ pub fn execute_job(cmd Command) ?Job {
 
 // write temp file and return path
 pub fn temp_write(text string) ?string {
-	mut tmpdir := '/tmp'
-	if !os.exists('/tmp') {
+	mut tmpdir := util.temp_dir()?
+	if "TMPDIR" in  os.environ(){
 		tmpdir = os.environ()['TMPDIR'] or {
 			panic('cannot find TMPDIR in os.environment variables.')
 		}
 	}
-
 	mut tmppath := ''
 	if !os.exists('$tmpdir/execscripts/') {
 		os.mkdir('$tmpdir/execscripts') or {
 			return error('Cannot create $tmpdir/execscripts,$err')
 		}
 	}
-
-	opts := util.TempFileOptions{
-		path: "$tmpdir/execscripts",
-		pattern: "exec_*.sh",
+	for i in 1 .. 200 {
+		// println(i)
+		tmppath = '$tmpdir/execscripts/exec_${i}.sh'
+		if !os.exists(tmppath) {
+			break
+		}
+		//TODO: would be better to remove older files, e.g. if older than 1 day, remove
+		if i > 99 {
+			os.rmdir_all('$tmpdir/execscripts')?
+			return temp_write(text)
+		}
 	}
-
-	mut file, tmpfile := util.temp_file(opts)?
-	file.write_string(text)?
-	file.close()
-
-	return tmpfile
+	os.write_file(tmppath, text) ?
+	return tmppath
 }
 
 fn check_write(text string) bool {

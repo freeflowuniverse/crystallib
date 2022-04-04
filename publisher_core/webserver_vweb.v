@@ -166,7 +166,8 @@ fn site_www_deliver(config publisher_config.ConfigRoot, domain string, path stri
 	}
 }
 
-fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path string, mut app App) ?vweb.Result {
+//sitename is name for site
+fn site_wiki_deliver(config publisher_config.ConfigRoot, sitename string, path string, mut app App) ?vweb.Result {
 	mut path0 := path
 	debug := false
 	if debug {
@@ -177,7 +178,7 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path str
 		// println(' >>> Webserver >> res >> $res')
 	}
 
-	mut sitename := config.name_web_get(domain) or { return app.not_found() }
+	// mut sitename := config.name_web_get(domain) or { return app.not_found() }
 	if path0.contains("/") && path0.contains("sidebar"){
 		path0 = path0.replace("/","|")
 		path0 = path0.replace("||","|")
@@ -232,19 +233,20 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path str
 		} else if filetype == FileType.wiki {
 			if site2.page_exists(name2) {
 				mut page := site2.page_get(name2, mut publisherobj) ?
-				page.replace_defs(mut publisherobj) or { return app.server_error(2) }
-				content := domain_replacer(rlock app.ctx {
-					app.ctx.webnames
-				}, page.content)
+				mut content :=  page.content_get(mut publisherobj,false,true) or { return app.server_error(2) }
+				// content = domain_replacer(rlock app.ctx {
+				// 	app.ctx.webnames
+				// }, content)
 				return app.ok(content)
 			} else {
 				mut page_def := publisherobj.def_page_get(name2) ?
-				page_def.replace_defs(mut publisherobj) or { return app.server_error(3) }
+				// content := page_def.replace_defs(mut publisherobj, page_def.content) or { return app.server_error(3) }
 				// if debug {println(" >> page send: $name2")}
-				content2 := domain_replacer(rlock app.ctx {
-					app.ctx.webnames
-				}, page_def.content)
-				return app.ok(content2)
+				// content2 := domain_replacer(rlock app.ctx {
+				// 	app.ctx.webnames
+				// }, page_def.content)
+				mut content :=  page_def.content_get(mut publisherobj,false,true) or { return app.server_error(2) }
+				return app.ok(content)
 			}
 		} else {
 			// now is a file
@@ -458,7 +460,10 @@ pub fn (mut app App) handler(_path string) vweb.Result {
 	// println(" ++ $path")
 
 	mut domain := ''
-	mut cat := publisher_config.SiteCat.web
+	// mut cat := publisher_config.SiteCat.web
+
+	mut sitename := ""
+	mut iswiki := false
 
 	if config.web_hostnames {
 		host := app.get_header('Host')
@@ -475,14 +480,15 @@ pub fn (mut app App) handler(_path string) vweb.Result {
 
 		if path.starts_with('info/') {
 			path = path[5..]
-			cat = publisher_config.SiteCat.wiki
-		} else {
-			cat = publisher_config.SiteCat.web
+			iswiki = true
+			// cat = publisher_config.SiteCat.wiki
+		// } else {
+		// 	cat = publisher_config.SiteCat.web
 		}
 
 		splitted := path.split('/')
 
-		sitename := splitted[0]
+		sitename = splitted[0]
 		path = splitted[1..].join('/').trim('/').trim(' ')
 		if splitted.len == 1 && (sitename.ends_with('.css') || sitename.ends_with('.js')) {
 			p := os.join_path(config.publish.paths.base, 'static', sitename)
@@ -491,33 +497,34 @@ pub fn (mut app App) handler(_path string) vweb.Result {
 			return app.ok(content)
 		}
 
-		if sitename == '' {
-			domain = 'localhost'
-		} else {
-			domain = config.domain_get(sitename, cat) or { return app.not_found() }
-			println('DOMAIN:$domain')
-		}
+		// if sitename == '' {
+		// 	domain = 'localhost'
+		// } else {
+		// 	domain = config.domain_get(sitename, cat) or { return app.not_found() }
+		// 	println('DOMAIN:$domain')
+		// }
 	}
 
-	if domain == 'localhost' {
+	if domain == 'localhost' || sitename == ''{
 		return app.html(index_template(config))
 	}
 
-	mut iswiki := true
-	mut domainfound := false
-	for siteconfig in config.sites {
-		if domain in siteconfig.domains {
-			domainfound = true
-			if siteconfig.cat == publisher_config.SiteCat.web {
-				iswiki = false
-			}
-			break
-		}
-	}
+	// 
+	// mut domainfound := false
+	// for siteconfig in config.sites {
+	// 	println(" ---- $sitename $siteconfig.name")
+	// 	if domain in siteconfig.domains || texttools.name_fix(sitename) == texttools.name_fix(siteconfig.name) {
+	// 		domainfound = true
+	// 		if siteconfig.cat == publisher_config.SiteCat.web {
+	// 			iswiki = false
+	// 		}
+	// 		break
+	// 	}
+	// }
 
-	if !domainfound {
-		return app.not_found()
-	}
+	// if !domainfound {
+	// 	return app.not_found()
+	// }
 
 	if !iswiki {
 		if publisherobj.develop {
@@ -525,7 +532,7 @@ pub fn (mut app App) handler(_path string) vweb.Result {
 		}
 		return site_www_deliver(config, domain, path, mut app) or { app.server_error(1) }
 	} else {
-		return site_wiki_deliver(config, domain, path, mut app) or { app.not_found() }
+		return site_wiki_deliver(config, sitename, path, mut app) or { app.not_found() }
 	}
 }
 

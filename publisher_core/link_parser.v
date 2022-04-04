@@ -16,7 +16,7 @@ pub mut:
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT REALITIES
 // returns all the links
-pub fn link_parser(mut publisher &Publisher,mut page &Page, text string,linenr int) ?ParseResult {
+pub fn link_parser(mut publisher &Publisher,mut page &Page, text string) ?ParseResult {
 	mut charprev := ''
 	mut ch := ''
 	mut state := ParseStatus.start

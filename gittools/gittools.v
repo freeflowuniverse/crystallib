@@ -117,10 +117,10 @@ fn (mut gitstructure GitStructure) load() ? {
 	// println(' - SCAN GITSTRUCTURE FOR $root2 ')
 
 
-
-
 	gitstructure.root = root2
 	gitstructure.multibranch = multibranch
+
+	// println(" -- multibranch: $multibranch")
 
 	gitstructure.repos = []GitRepo{}
 

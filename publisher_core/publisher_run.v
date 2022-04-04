@@ -15,7 +15,9 @@ pub fn (mut publisher Publisher) run() ? {
 
 		res := actionparser.parse(md_file)?
 
-		println(res)
+		// println(res)
+
+		mut didsomething := false
 
 		for action in res.actions{
 			//flatten
@@ -27,8 +29,18 @@ pub fn (mut publisher Publisher) run() ? {
 					}
 				}
 				//now execute the flatten action
-				publisher.flatten2(dest:path)?
+				publisher.flatten(dest:path)?
 			}
+		}
+
+		//if no actions specified will run development server for the wiki's
+		if didsomething == false{
+			publisher.develop = true
+			webserver_run(mut &publisher) or {
+				println('Could not run webserver for wiki.\nError:\n$err')
+				exit(1)
+			}
+
 		}
 	}
 

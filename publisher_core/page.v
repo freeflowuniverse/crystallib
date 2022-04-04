@@ -321,7 +321,7 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 			continue
 		}
 		// DEAL WITH LINKS
-		mut links_parser_result := link_parser(mut publisher, mut &page, line, state.nr)?
+		mut links_parser_result := link_parser(mut publisher, mut &page, line)?
 
 		// there can be more than 1 link on 1 line
 		for mut link in links_parser_result.links {
@@ -337,8 +337,8 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 			}
 			// println(" ---- "+page.name+"/n$line")
 			// println(page)
-			llink := link.server_get (state.site, mut &publisher)?
-			state.serverline_change(link.original_get(),llink)
+			// llink := link.server_get (state.site, mut &publisher)?
+			// state.serverline_change(link.original_get(),llink)
 			// if link.original_link.contains("legal2"){
 			// 	println(' >>>> link replace server: $link.original_get() -> $llink')
 			// 	println(link)
@@ -350,6 +350,7 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 
 	// now we need to rewrite the source & server lines
 	page.content = state.lines_server.join('\n')
+
 	if skipline_format!=""{
 		page.content+="\n<br>\n"		
 	}
@@ -359,7 +360,56 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 	}
 }
 
+
+//param flatten, if true will return links as can be used when flattening happens
+fn (mut page Page) content_get(mut publisher &Publisher, flatten bool, defsreplace bool) ?string {
+	mut out := []string
+	mut errors := []string
+	
+	site := page.site_get(mut publisher)?
+
+	for mut line in page.content.split_into_lines() {
+		// eprintln(' >> LINE: $line')
+
+		// linestrip := line.trim(' ')
+
+		mut links_parser_result := link_parser(mut publisher, mut &page, line)?
+
+
+		// there can be more than 1 link on 1 line
+		for mut link in links_parser_result.links {
+			if link.state != LinkState.ok {
+				out << '> ERROR LINK: ' + link.error_msg + "\n<br>\n"
+				continue
+			}			
+			llink := link.server_get (site, mut &publisher,flatten)?
+			// if link.original_get().contains("need to kno"){
+			// 	println(" --4 ${link.original_get()}")
+			// 	println(" --5 $llink")
+			// 	panic("ssds")
+			// }
+			// state.serverline_change(link.original_get(),llink)
+			line = line.replace(link.original_get(),llink)
+		} // end of the walk over all links
+
+		out << line
+
+	} // end of the line walk
+	// mut content := state.lines_server.join('\n')
+
+	mut content:= out.join('\n')
+
+	if defsreplace{
+		content = publisher.replace_defs_links(mut &page, content)?
+	}
+
+	return content
+
+}
+
 fn (mut page Page) title() string {
+
+
 	lines := page.content.split('\n')
 
 	for line in lines {
@@ -371,17 +421,6 @@ fn (mut page Page) title() string {
 		}
 	}
 	return 'NO TITLE'
-}
-
-// return a page where all definitions are replaced with link
-fn (mut page Page) replace_defs(mut publisher &Publisher) ? {
-	if page.replaced {
-		return
-	}
-	new_content := publisher.replace_defs_links(mut &page) ?
-
-	page.content = new_content
-	page.replaced = true
 }
 
 
