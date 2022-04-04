@@ -1,5 +1,6 @@
 module publisher_config
-import process
+
+import despiegk.crystallib.process
 import os
 // websites are under $ipaddr/$shortname
 // wiki are under $ipaddr/info/$shortname
@@ -32,6 +33,7 @@ import os
 //     "docsify-charty.min.css": "https: //unpkg.com/@markbattistella/docsify-charty@1.0.5/dist/docsify-charty.min.css",
 //     "charty-custom-style.css": "https: //raw.githubusercontent.com/markbattistella/docsify-charty/fa755c3e058ba1110fc6586a50207626d552b88f/docs/site/style.min.css"
 // }
+
 fn staticfiles_config(mut c ConfigRoot) {
 	c.staticfiles = {
 		'googletagmanager.js':             'https://www.googletagmanager.com/gtag/js?id=UA-100065546-4'
@@ -64,7 +66,10 @@ fn staticfiles_config(mut c ConfigRoot) {
 		'docsify-charty.min.js':           'https://unpkg.com/@markbattistella/docsify-charty@1.0.5'
 		'docsify-charty.min.css':          'https://unpkg.com/@markbattistella/docsify-charty@1.0.5/dist/docsify-charty.min.css'
 		'charty-custom-style.css':         'https://raw.githubusercontent.com/markbattistella/docsify-charty/fa755c3e058ba1110fc6586a50207626d552b88f/docs/site/style.min.css'
-		'tf-tracker.js':                   'https://cdn.jsdelivr.net/gh/MohamedElmdary/tf-tracker@0.0.2/index.js'
+		'tf-tracker.js':                   'https://cdn.jsdelivr.net/gh/threefoldtech/tf-tracker@development/index.js'
+		'pdf.min.js':                      'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.13.216/build/pdf.min.js'
+		'pdf.worker.min.js':               'https://cdn.jsdelivr.net/npm/pdfjs-dist@2.13.216/build/pdf.worker.min.js'
+		'tf-pdf.js':                       'https://cdn.jsdelivr.net/gh/MohamedElmdary/tf-pdf@0.0.1/tf-pdf.js'
 	}
 }
 
