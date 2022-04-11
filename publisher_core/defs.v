@@ -91,6 +91,7 @@ fn (mut publisher Publisher) replace_defs_links(mut page &Page, text string) ?st
 	if page.name == "defs"{
 		return page.content
 	}
+	site_source := page.site(mut publisher)
 	mut replacer := map[string]string{}
 
 	mut page_sidebar := page.sidebar_page_get(mut publisher) or { panic(err) }
@@ -108,12 +109,18 @@ fn (mut publisher Publisher) replace_defs_links(mut page &Page, text string) ?st
 		}		
 		page2 := defobj.page_get(mut publisher) ?
 		site2 := page2.site(mut publisher)
+
+		mut link := page2.name
+		if site2.name != site_source.name  {
+			link = "${site2.name}__$page2.name"
+		}
+
 		if path_sidebar == ""{
-			replacer[defname] = '[$defobj.name](${site2.name}__$page2.name)'
-			replacer[defname+"s"] = '[${defobj.name}s](${site2.name}__$page2.name)'
+			replacer[defname] = '[$defobj.name]($link)'
+			replacer[defname+"s"] = '[${defobj.name}s]($link)'
 		}else{
-			replacer[defname] = '[$defobj.name](/$path_sidebar/${site2.name}__$page2.name)'
-			replacer[defname+"s"] = '[${defobj.name}s](/$path_sidebar/${site2.name}__$page2.name)'
+			replacer[defname] = '[$defobj.name](/$path_sidebar/$link)'
+			replacer[defname+"s"] = '[${defobj.name}s](/$path_sidebar/$link)'
 		}
 	}
 	// println(text)
