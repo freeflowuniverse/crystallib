@@ -2,21 +2,47 @@
 Client for Twinserver using V Lang based on RMB
 
 # Prerequisites
-1. Running RMB server
-2. Running twinserver
+1. Install Dependencies (vgrid, rmb)
+2. Running RMB server
+3. Running twinserver
+
+## Install Dependencies
+
+- vgrid:
+
+```bash
+cd $HOME/.vmodules
+mkdir -p threefoldtech && cd threefoldtech #mkdir if not exist
+git clone https://github.com/threefoldtech/vgrid.git
+git checkout 2e708704ce2e4066b219047cd7fe2e8bf46aa7a0 # Checkout to working version
+```
+
+- rmb:
+
+```bash
+cd $HOME/.vmodules/threefoldtech
+git clone https://github.com/threefoldtech/rmb.git
+```
 
 ## RMB Server Steps
-- Download msgbusd binary from [latest release](https://github.com/threefoldtech/rmb/releases)
-- There is a network flag to choose your network environment [dev, test, main]
+- Download msgbusd zip from [latest release](https://github.com/threefoldtech/rmb_go/releases) and extract it.
+- There is a substrate option, choose on of:
+  - devnet: `wss://tfchain.dev.grid.tf`
+  - testnet: `wss://tfchain.test.grid.tf`
+  - mainnet: `wss://tfchain.grid.tf` - default
 - Open your terminal in the directory msgbusd downloaded, and run it.
-    - `./msgbusd --twin <YOUR_TWIN_ID>  # devnet by default`
+    - `./msgbusd --mnemonics <YOUR_MNEMONICS>  # mainnet by default`
 
-    - `./msgbusd --twin <YOUR_TWIN_ID>  --network test # Run on testnet`
+    - `./msgbusd --mnemonics <YOUR_MNEMONICS> --substrate wss://tfchain.dev.grid.tf  # Run on devnet`
 
-- for more info, follow instruction [here](https://github.com/threefoldtech/rmb/blob/master/README.md)
+- for more info, follow instruction [here](https://github.com/threefoldtech/rmb_go/blob/master/README.md)
 
 ## Twin Server Steps
-- Clone [repo](https://github.com/threefoldtech/grid3_client_ts.git)
+- Install twin server globally:
+```bash
+npm install -g grid3_client
+```
+
 - Create your configuration file and fill it with your data.
 ```json
 {
@@ -27,10 +53,9 @@ Client for Twinserver using V Lang based on RMB
     "keypairType": "sr25519" // keypair type for the account created on substrate
 }
 ```
-- `npm install`
-- `npm run server -- --config <YOUR_CONFIG_FILE_PATH>`
-- for more info, follow instruction [here](https://github.com/threefoldtech/grid3_client_ts/blob/development/docs/server.md)
 
+- `twinserver --config <YOUR_CONFIG_FILE_PATH>`
+- for more info, follow instruction [here](https://github.com/threefoldtech/grid3_client_ts/blob/development/docs/server.md)
 
 # How to use it
 ```v
