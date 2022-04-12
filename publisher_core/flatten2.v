@@ -84,8 +84,8 @@ pub fn (mut publisher Publisher) flatten(args FlattenArgs) ? {
 		os.write_file('$dest_dir/meta/config_groups.json', the_config_group) ?
 
 
-		mut special := ['readme.md', 'README.md', '_sidebar.md', '_navbar.md', 'sidebar.md',
-			'navbar.md', 'favicon.ico']
+		// mut special := ['readme.md', 'README.md', '_sidebar.md', '_navbar.md', 'sidebar.md',
+		// 	'navbar.md', 'favicon.ico']
 
 		// for file in special {
 		// 	dest_file = file

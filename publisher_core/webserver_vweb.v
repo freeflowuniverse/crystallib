@@ -377,7 +377,6 @@ fn wiki_name_from_url (url string) string {
 	mut wiki_name := ''
 	for id, element in url_splitted {
 		if element == 'info' {
-			tmp := url_splitted[id + 1].split('?')
 			wiki_name = url_splitted[id + 1].split('?')[0]
 		}
 	}

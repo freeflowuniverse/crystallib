@@ -71,14 +71,12 @@ fn parse_into_blocks(text string) ?Blocks {
 	mut blocks := Blocks{}
 	mut block := Block{}
 	mut pos := 0
-	mut line_strip := ''
 	mut line2 := ''
 	// no need to process files which are not at least 2 chars
 	for line_ in text.split_into_lines() {
 		line2 = line_
 		line2 = line2.replace('\t', '    ')
 		// println("line: '$line2'")
-		line_strip = line2.trim_space()
 		if state == ParseBlockStatus.action {
 			if line2.starts_with(' ') || line2 == '' {
 				// starts with tab or space, means block continues

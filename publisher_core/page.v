@@ -363,8 +363,7 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 
 //param flatten, if true will return links as can be used when flattening happens
 fn (mut page Page) content_get(mut publisher &Publisher, flatten bool, defsreplace bool) ?string {
-	mut out := []string
-	mut errors := []string
+	mut out := []string{}
 	
 	site := page.site_get(mut publisher)?
 
