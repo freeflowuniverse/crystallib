@@ -19,10 +19,16 @@ jobs:
         with:
           check-latest: true
 
+      - name: mkdir despiegk in .vmodules
+        run: mkdir -p ~/.vmodules/despiegk
+
       - name: Check out repository code
         uses: actions/checkout@v3
         with:
-          path: '$HOME/.vmodules/despiegk'
+          path: '~/.vmodules/despiegk'
+
+      - name: Just for debugging
+        run: ls ~/.vmodules/despiegk
 
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
