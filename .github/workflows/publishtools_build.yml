@@ -25,7 +25,7 @@ jobs:
       - name: Add crystallib at the expected path
         run: |
           mkdir -p ~/.vmodules/despiegk
-          cp crystallib ~/.vmodules/despiegk
+          cp ${{ github.workspace }} ~/.vmodules/despiegk
 
       - name: Just for debugging
         run: ls ~/.vmodules/despiegk
