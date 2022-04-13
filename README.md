@@ -1,3 +1,5 @@
+[![publishtools_build](https://github.com/freeflowuniverse/crystallib/actions/workflows/publishtools_build.yml/badge.svg)](https://github.com/freeflowuniverse/crystallib/actions/workflows/publishtools_build.yml)
+
 # set of libraries
 
 - [PLANNING HERE](https://circles.threefold.me/project/despiegk-product_publisher/issues)
