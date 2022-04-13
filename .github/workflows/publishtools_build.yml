@@ -19,13 +19,13 @@ jobs:
         with:
           check-latest: true
 
-      - name: mkdir despiegk in .vmodules
-        run: mkdir -p ~/.vmodules/despiegk
-
       - name: Check out repository code
         uses: actions/checkout@v3
-        with:
-          path: '~/.vmodules/despiegk'
+
+      - name: Add crystallib at the expected path
+        run: |
+          mkdir -p ~/.vmodules/despiegk
+          cp crystallib ~/.vmodules/despiegk
 
       - name: Just for debugging
         run: ls ~/.vmodules/despiegk
