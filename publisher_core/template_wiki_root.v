@@ -94,6 +94,9 @@ fn template_wiki_root(reponame string, repourl string, trackingid string, opengr
     <script src="d3-flextree.js"></script>
     <script src="view.mindmap.js"></script>
     <script src="tf-tracker.js"></script>
+    <script src="pdf.min.js"></script>
+    <script src="pdf.worker.min.js"></script>
+    <script src="tf-pdf.js"></script>
 
       <div id="app"></div>
       <script>

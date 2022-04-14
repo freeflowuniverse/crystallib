@@ -1,6 +1,6 @@
 module publisher_core
 
-import texttools
+import despiegk.crystallib.texttools
 
 // if return true, means macro found and was ok
 // format !!!$macroname $arg1 $arg2
@@ -8,16 +8,17 @@ import texttools
 // the args always need to come first
 fn macro_process(mut state LineProcessorState, line string) bool {
 	fns_map := {
-		'vimeo':    vimeo
-		'iframe':   iframe
-		'youtube':  youtube
-		'def':      macro_def
-		'def_list': macro_def_list
-		'alias':    macro_alias
-		'tokens':   macro_tokens
-		'time':     macro_time
-		'code':		macro_code
+		'vimeo':       vimeo
+		'iframe':      iframe
+		'youtube':     youtube
+		'def':         macro_def
+		'def_list':    macro_def_list
+		'alias':       macro_alias
+		'tokens':      macro_tokens
+		'time':        macro_time
+		'code':        macro_code
 		'tfpriceinfo': macro_tfpriceinfo
+		'pdf':         macro_pdf
 	}
 
 	if !line.starts_with('!!!') {
