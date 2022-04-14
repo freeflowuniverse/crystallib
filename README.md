@@ -1,4 +1,4 @@
-[![publishtools_build](https://github.com/freeflowuniverse/crystallib/actions/workflows/publishtools_build.yml/badge.svg)](https://github.com/freeflowuniverse/crystallib/actions/workflows/publishtools_build.yml)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/freeflowuniverse/crystallib/publishtools_build?label=publishtool_build&logo=github)
 
 # set of libraries
 
