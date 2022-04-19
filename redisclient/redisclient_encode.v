@@ -123,7 +123,7 @@ pub fn (mut r Redis) get_string_nil() ?string {
 	return r2.bytestr()
 }
 
-pub fn (mut r Redis) get_bytes_nil() ?[]byte {
+pub fn (mut r Redis) get_bytes_nil() ?[]u8 {
 	line := r.read_line() ?
 	if line.starts_with('+') {
 		return line[1..].bytes()
@@ -140,7 +140,7 @@ pub fn (mut r Redis) get_bool() ?bool {
 	return i == 1
 }
 
-pub fn (mut r Redis) get_bytes() ?[]byte {
+pub fn (mut r Redis) get_bytes() ?[]u8 {
 	line := r.read_line() ?
 	if line.starts_with('$') {
 		return r.get_bytes_from_line(line)
@@ -149,7 +149,7 @@ pub fn (mut r Redis) get_bytes() ?[]byte {
 	}
 }
 
-fn (mut r Redis) get_bytes_from_line(line string) ?[]byte {
+fn (mut r Redis) get_bytes_from_line(line string) ?[]u8 {
 	mut bulkstring_size := line[1..].int()
 	if bulkstring_size == -1 {
 		return none

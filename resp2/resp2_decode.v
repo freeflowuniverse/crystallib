@@ -68,7 +68,7 @@ pub fn (mut r StringLineReader) get_response() ?RValue {
 	return error('unsupported response type')
 }
 
-pub fn decode(data []byte) ?[]RValue {
+pub fn decode(data []u8) ?[]RValue {
 	mut r := new_line_reader(data)
 	mut res := []RValue{}
 	for {
@@ -121,7 +121,7 @@ pub fn (mut r StringLineReader) get_bool() ?bool {
 	return i == 1
 }
 
-pub fn (mut r StringLineReader) get_bytes() ?[]byte {
+pub fn (mut r StringLineReader) get_bytes() ?[]u8 {
 	line_ := r.read_line() ?
 	line := line_.bytestr()
 	if line.starts_with('$') {
