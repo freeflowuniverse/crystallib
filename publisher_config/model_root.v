@@ -1,6 +1,7 @@
 module publisher_config
 import texttools
 import os
+import actionparser
 
 // the main config file as used for the publisher
 [heap; params]
@@ -15,8 +16,8 @@ pub mut:
 	//what is purpose of this??? 
 	web_hostnames bool
 	staticfiles map[string]string
-	markdown_configs []string	
 	loaded bool
+	actions actionparser.Actions	
 }
 
 pub fn (config ConfigRoot) name_web_get(domain string) ?string {

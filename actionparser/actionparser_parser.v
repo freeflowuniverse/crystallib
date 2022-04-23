@@ -17,24 +17,6 @@ enum ParseStatus {
 	comment // found // or # at end
 }
 
-pub struct ParseResult {
-pub mut:
-	actions []ParseAction
-}
-
-pub struct ParseAction {
-pub:
-	name string
-pub mut:
-	params []ParseParam
-}
-
-struct ParseParam {
-pub:
-	name  string
-	value string
-}
-
 // first step is to get the blocks out
 struct Blocks {
 mut:
@@ -50,7 +32,7 @@ mut:
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 
-pub fn parse(path string) ?ParseResult {
+fn (mut actions Actions) file_parse(path string)? {
 	if !os.exists(path) {
 		return error("path: '$path' does not exist, cannot parse.")
 	}
@@ -58,11 +40,8 @@ pub fn parse(path string) ?ParseResult {
 
 	blocks := parse_into_blocks(content) ?
 
-	mut parseresult := ParseResult{}
+	actions.parse_actions(blocks)
 
-	parseresult.parse_actions(blocks)
-
-	return parseresult
 }
 
 // each block is name of action and the full content behind
@@ -120,25 +99,25 @@ fn (mut block Block) clean() {
 	block.content = texttools.dedent(block.content) // remove leading space
 }
 
-fn (mut result ParseResult) parse_block(block Block) {
+fn (mut actions Actions) parse_block(block Block) {
 	params := texttools.text_to_params(block.content) or { panic(err) }
 
-	mut action := ParseAction{
+	mut action := Action{
 		name: block.name
 	}
 
 	for param in params.params {
-		action.params << ParseParam{
+		action.params << Param{
 			name: param.key
 			value: param.value
 		}
 	}
 
-	result.actions << action
+	actions.actions << action
 }
 
-fn (mut results ParseResult) parse_actions(blocks Blocks) {
+fn (mut actions Actions) parse_actions(blocks Blocks) {
 	for block in blocks.blocks {
-		results.parse_block(block)
+		actions.parse_block(block)
 	}
 }

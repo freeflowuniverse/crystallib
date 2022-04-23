@@ -122,6 +122,26 @@ fn site_new(site_in SiteConfigRaw) ?SiteConfig{
 	return sc
 }
 
+
+pub fn (mut site SiteConfig) load() ? {
+	if site.state == SiteState.loaded {
+		return
+	}
+
+	// println(" - process site: $site.name")
+
+	if !site.path.exists() {
+		return error('- Error Cannot find `$site.path.path` for \n$site\nin process site repo. Creating `$site.path.path`')
+	}
+
+	mut o := site.path.join('index.html')?
+	o.delete()?
+	mut o2 := site.path.join('wikiconfig.json')?
+	o2.delete()?
+
+}
+
+
 pub fn (site SiteConfig) repo_get() gittools.GitRepo {
 	if site.repo.addr.name == ""{
 		panic("Cannot return repo, because was not initialized, name empty")

@@ -5,6 +5,8 @@ import publisher_config
 
 [heap]
 struct Publisher {
+pub:	
+	name	   string
 mut:
 	gitlevel int
 pub mut:

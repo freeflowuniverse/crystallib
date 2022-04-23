@@ -1,138 +1,141 @@
 module actionparser
 
 fn test_read() {
-	res := parse('actionparser/launch.md') or { panic('cannot parse,$err') }
 
-	res2 := ParseResult{
-    actions: [ParseAction{
+    actions.init()
+
+	res := actions.add('actionparser/launch.md') or { panic('cannot parse,$err') }
+
+	res2 := Actions{
+    actions: [Action{
         name: 'action.define'
-        params: [ParseParam{
+        params: [Param{
             name: 'name'
             value: 'download_git'
         }]
-    }, ParseAction{
+    }, Action{
         name: 'git.ensure'
-        params: [ParseParam{
+        params: [Param{
             name: 'url'
             value: 'https://github.com/threefoldfoundation/info_foundation'
-        }, ParseParam{
+        }, Param{
             name: 'autocommit'
             value: 'mychanges'
-        }, ParseParam{
+        }, Param{
             name: 'update'
             value: 'true'
         }]
-    }, ParseAction{
+    }, Action{
         name: 'git.ensure'
-        params: [ParseParam{
+        params: [Param{
             name: 'url'
             value: 'https://github.com/threefoldfoundation/legal'
-        }, ParseParam{
+        }, Param{
             name: 'autocommit'
             value: 'mychanges'
-        }, ParseParam{
+        }, Param{
             name: 'update'
             value: 'true'
-        }, ParseParam{
+        }, Param{
             name: 'name'
             value: 'legal'
         }]
-    }, ParseAction{
+    }, Action{
         name: 'git.ensure'
-        params: [ParseParam{
+        params: [Param{
             name: 'url'
             value: 'https://github.com/threefoldfoundation/info_gridmanual'
-        }, ParseParam{
+        }, Param{
             name: 'autocommit'
             value: 'mychanges'
-        }, ParseParam{
+        }, Param{
             name: 'update'
             value: 'true'
         }]
-    }, ParseAction{
+    }, Action{
         name: 'publisher.server.params'
-        params: [ParseParam{
+        params: [Param{
             name: 'port'
             value: '8082'
         }]
-    }, ParseAction{
+    }, Action{
         name: 'action.define'
-        params: [ParseParam{
+        params: [Param{
             name: 'name'
             value: 'server_start'
-        }, ParseParam{
+        }, Param{
             name: 'depends'
             value: 'download_git,get_content'
         }]
-    }, ParseAction{
+    }, Action{
         name: 'publisher.server.start'
         params: []
-    }, ParseAction{
+    }, Action{
         name: 'action.run'
-        params: [ParseParam{
+        params: [Param{
             name: 'name'
             value: 'server_start'
         }]
-    }, ParseAction{
+    }, Action{
         name: 'action.define'
-        params: [ParseParam{
+        params: [Param{
             name: 'name'
             value: 'get_content'
         }]
-    }, ParseAction{
+    }, Action{
         name: 'markdown.section.get'
-        params: [ParseParam{
+        params: [Param{
             name: 'start'
             value: '### git ensure'
-        }, ParseParam{
+        }, Param{
             name: 'name'
             value: 'testcontent.blue'
         }]
-    }, ParseAction{
+    }, Action{
         name: 'markdown.section.get'
-        params: [ParseParam{
+        params: [Param{
             name: 'start'
             value: '### git ensure'
-        }, ParseParam{
+        }, Param{
             name: 'end'
             value: '# end of'
-        }, ParseParam{
+        }, Param{
             name: 'name'
             value: 'testcontent.red'
-        }, ParseParam{
+        }, Param{
             name: 'trim_end'
             value: '+3'
-        }, ParseParam{
+        }, Param{
             name: 'trim_start'
             value: '+1'
         }]
-    }, ParseAction{
+    }, Action{
         name: 'markdown.section.get'
-        params: [ParseParam{
+        params: [Param{
             name: 'name'
             value: 'testcontent.pink'
-        }, ParseParam{
+        }, Param{
             name: 'gitrepo'
             value: 'info_foundation'
-        }, ParseParam{
+        }, Param{
             name: 'file'
             value: 'communication.md'
         }]
-    }, ParseAction{
+    }, Action{
         name: 'taskcontext'
-        params: [ParseParam{
+        params: [Param{
             name: 'name'
             value: 'myproject1'
         }]
-    }, ParseAction{
+    }, Action{
         name: 'task'
-        params: [ParseParam{
+        params: [Param{
             name: 'id'
             value: 'a1'
-        }, ParseParam{
+        }, Param{
             name: 'name'
             value: 'need to do something 1'
-        }, ParseParam{
+        }, Param{
             name: 'description'
             value: '## markdown works in it
 
@@ -151,39 +154,39 @@ fn test_read() {
   ```
 priority:10'
         }]
-    }, ParseAction{
+    }, Action{
         name: 'task'
-        params: [ParseParam{
+        params: [Param{
             name: 'id'
             value: 'a1'
-        }, ParseParam{
+        }, Param{
             name: 'name'
             value: 'something else'
-        }, ParseParam{
+        }, Param{
             name: 'assign'
             value: 'kristof(50%),jan'
-        }, ParseParam{
+        }, Param{
             name: 'effort'
             value: '1d'
-        }, ParseParam{
+        }, Param{
             name: 'depends'
             value: 'a1'
         }]
-    }, ParseAction{
+    }, Action{
         name: 'task'
-        params: [ParseParam{
+        params: [Param{
             name: 'id'
             value: 'b3'
-        }, ParseParam{
+        }, Param{
             name: 'name'
             value: 'do1'
         }]
-    }, ParseAction{
+    }, Action{
         name: 'task'
-        params: [ParseParam{
+        params: [Param{
             name: 'id'
             value: 'b4'
-        }, ParseParam{
+        }, Param{
             name: 'name'
             value: 'do1'
         }]

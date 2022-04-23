@@ -20,7 +20,7 @@ pub fn nodepilot_new(name string, ipaddr string) ? NodePilot {
 
 pub fn (mut n NodePilot) prepare() ? {
 
-	//not how its supposed to be used
+	//not how its supposed to be used, todo is the right way
 	prepared := n.node.cache.get("nodepilot-prepare") or { "" }
 	if prepared != "" {
 		return
