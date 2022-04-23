@@ -13,9 +13,8 @@ pub mut:
 	stdout_log bool
 	debug      bool
 	die        bool = true
-	logcmd     bool
 	args       map[string]string
-	node       string
+	node       string //not implemented
 }
 
 pub struct Job {
@@ -44,7 +43,7 @@ pub mut:
 //   timeout int = 600
 //   stdout bool = true
 //   die bool = true
-//	 logcmd bool  //if we keep the output in the job command
+//	 debug bool
 //	 node Node    //e.g. 192.13.3.3:2022 (is ip address)
 //   args map[string]string  // these arguments are replaced in the text given
 //
@@ -70,13 +69,10 @@ pub fn execute_job(cmd Command) ?Job {
 	cleanuppath, job.args = cmd_to_args(cmd_obj.cmd) ?
 
 	if cmd_obj.debug {
-		cmd_obj.logcmd = true
 		cmd_obj.stdout = true
-	}
-
-	if cmd_obj.logcmd {
 		println('execute: $job')
 	}
+
 
 	mut p := os.new_process(job.args[0])
 	p.set_redirect_stdio()
