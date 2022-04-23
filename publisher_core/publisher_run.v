@@ -1,7 +1,5 @@
 module publisher_core
 
-import texttools
-import os
 import publisher_config
 import actionparser
 

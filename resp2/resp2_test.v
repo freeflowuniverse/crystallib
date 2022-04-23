@@ -13,13 +13,13 @@ fn val_to_check(s string) string {
 fn test_readline() {
 	mut r := new_line_reader('123456'.bytes())
 
-	mut res := []byte{}
+	mut res := []u8{}
 	for _ in 0 .. 9 {
 		res << r.read(1) or { 'E'.bytes() }
 	}
 	assert res.bytestr() == '123456EEE'
 
-	res = []byte{}
+	res = []u8{}
 	r.reset()
 	for _ in 0 .. 7 {
 		res << r.read(2) or { 'E'.bytes() }
@@ -28,7 +28,7 @@ fn test_readline() {
 	assert res.bytestr() == '123456EEEE'
 
 	r = new_line_reader('12\n34\r\n56\r\n'.bytes())
-	res = []byte{}
+	res = []u8{}
 	for _ in 0 .. 4 {
 		line := r.read_line() or { 'E'.bytes() }
 		res << line
@@ -97,7 +97,7 @@ fn test_3() {
 
 // fn test_buffered_reader1() {
 // 	mut stream := buffered_string_reader('Hello')
-// 	mut buff := []byte{len: 1}
+// 	mut buff := []u8{len: 1}
 // 	assert buff.len == 1
 // 	for i in 0 .. 8 {
 // 		z := stream.read(mut buff) or { -1 }
@@ -111,7 +111,7 @@ fn test_3() {
 // 		text: 'Hello '
 // 	}
 // 	mut stream := io.new_buffered_reader(reader: io.make_reader(str), cap: 256)
-// 	mut buff := []byte{len: 1}
+// 	mut buff := []u8{len: 1}
 // 	assert buff.len == 1
 // 	for i in 0 .. 8 {
 // 		z := stream.read(mut buff) or { -1 }

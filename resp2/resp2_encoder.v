@@ -2,7 +2,7 @@ module resp2
 
 struct Builder {
 mut:
-	data []byte
+	data []u8
 }
 
 pub fn builder_new() Builder {
@@ -13,7 +13,7 @@ pub fn (mut b Builder) add(val RValue) {
 	b.data << val.encode()
 }
 
-pub fn (val RValue) encode() []byte {
+pub fn (val RValue) encode() []u8 {
 	match val {
 		RBString {
 			return '\$$val.value.len\r\n$val.value.bytestr()\r\n'.bytes()
@@ -56,7 +56,7 @@ pub fn r_array(value string) RValue {
 	return RValue(RArray{})
 }
 
-pub fn r_bytestring(value []byte) RValue {
+pub fn r_bytestring(value []u8) RValue {
 	return RValue(RBString{
 		value: value
 	})
@@ -108,7 +108,7 @@ pub fn r_error(value string) RValue {
 	})
 }
 
-pub fn encode(items []RValue) []byte {
+pub fn encode(items []RValue) []u8 {
 	mut b := builder_new()
 	for item in items {
 		b.add(item)

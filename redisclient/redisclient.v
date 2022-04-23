@@ -119,9 +119,9 @@ pub fn (mut r Redis) read_line() ?string {
 	return r.socket.read_line().trim_right('\r\n')
 }
 
-const cr_lf_bytes = [byte(`\r`), `\n`]
+const cr_lf_bytes = [u8(`\r`), `\n`]
 
-fn (mut r Redis) write_line(data []byte) ? {
+fn (mut r Redis) write_line(data []u8) ? {
 	r.socket_check() ?
 	r.write(data) ?
 	r.write(redisclient.cr_lf_bytes) ?
@@ -130,7 +130,7 @@ fn (mut r Redis) write_line(data []byte) ? {
 // write *all the data* into the socket
 // This function loops, till *everything is written*
 // (some of the socket write ops could be partial)
-fn (mut r Redis) write(data []byte) ? {
+fn (mut r Redis) write(data []u8) ? {
 	mut remaining := data.len
 	for remaining > 0 {
 		written_bytes := r.socket.write(data[data.len - remaining..]) ?
@@ -150,8 +150,8 @@ fn (mut r Redis) write_cmds(items []string) ? {
 	r.write_rval(a) ?
 }
 
-fn (mut r Redis) read(size int) ?[]byte {
-	mut buf := []byte{len: size}
+fn (mut r Redis) read(size int) ?[]u8 {
+	mut buf := []u8{len: size}
 	mut remaining := size
 	for remaining > 0 {
 		read_bytes := r.socket.read(mut buf[buf.len - remaining..]) ?

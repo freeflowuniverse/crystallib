@@ -21,7 +21,7 @@ pub mut:
 pub struct RBString {
 pub mut:
 	// Redis Bulk String
-	value []byte
+	value []u8
 }
 
 pub struct RNil {

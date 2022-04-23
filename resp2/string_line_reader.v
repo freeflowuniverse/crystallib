@@ -1,21 +1,21 @@
 module resp2
 
 struct StringLineReader {
-	data []byte
+	data []u8
 	y    int
 mut:
 	x int
 }
 
-pub fn new_line_reader(data []byte) StringLineReader {
+pub fn new_line_reader(data []u8) StringLineReader {
 	return StringLineReader{
 		data: data
 		y: data.len
 	}
 }
 
-fn (mut r StringLineReader) read_line() ?[]byte {
-	mut out := []byte{}
+fn (mut r StringLineReader) read_line() ?[]u8 {
+	mut out := []u8{}
 	mut c := ''.bytes()
 	for {
 		if r.x >= r.y {
@@ -39,8 +39,8 @@ fn (mut r StringLineReader) read_line() ?[]byte {
 	return error('should not get here')
 }
 
-fn (mut r StringLineReader) read(x int) ?[]byte {
-	mut out := []byte{}
+fn (mut r StringLineReader) read(x int) ?[]u8 {
+	mut out := []u8{}
 	for _ in 0 .. x {
 		if r.x > r.y - 1 {
 			return none

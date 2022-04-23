@@ -1,3 +1,5 @@
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/freeflowuniverse/crystallib/publishtools_build?label=publishtool_build&logo=github)
+
 # set of libraries
 
 - [PLANNING HERE](https://circles.threefold.me/project/despiegk-product_publisher/issues)
