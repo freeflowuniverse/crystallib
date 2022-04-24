@@ -1,20 +1,13 @@
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/freeflowuniverse/crystallib/publishtools_build?label=publishtool_build&logo=github)
-
-# set of libraries
-
-- [PLANNING HERE](https://circles.threefold.me/project/despiegk-product_publisher/issues)
-
-As used for Threefold and ...
 
 ## to install
 
 ```bash
-sh install.sh
+v install https://github.com/freeflowuniverse/crystallib
 ```
 
 ## to develop
 
-- go to ~/.vmodules/ checkout this repo under despiegk/crystallib
+- do ```v install https://github.com/freeflowuniverse/crystallib```
 - edit the code there
 - use `v run test.v` to run some ad hoc tests
 - use `v test vredis2/` to run tests of one module
