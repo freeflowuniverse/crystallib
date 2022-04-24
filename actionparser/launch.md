@@ -2,7 +2,7 @@
 
 Its our attempt to use markdown to execute a certain state.
 
-It allows us to specify actions which need to be done, only !! at start of line is executed.
+It allows us to specify parser which need to be done, only !! at start of line is executed.
 
 ```yaml
 !!action.define name:download_git

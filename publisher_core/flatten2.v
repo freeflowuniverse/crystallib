@@ -15,9 +15,7 @@ pub fn (mut publisher Publisher) flatten(args FlattenArgs) ? {
 
 	mut dest_file := ''
 
-	mut config := publisher_config.get()?
-
-	config.update_staticfiles(false) ?
+	publisher.config.update_staticfiles(false) ?
 
 	publisher.check()? // makes sure we checked all
 
@@ -72,7 +70,7 @@ pub fn (mut publisher Publisher) flatten(args FlattenArgs) ? {
 		the_defs := json.encode_pretty(pd)
 		os.write_file('$dest_dir/meta/defs.json', the_defs) ?
 
-		mut site_config := config.site_wiki_get(site.name) ?
+		mut site_config := publisher.config.site_wiki_get(site.name) ?
 
 		site_config.publish_path = dest_dir
 
@@ -80,7 +78,7 @@ pub fn (mut publisher Publisher) flatten(args FlattenArgs) ? {
 		os.write_file('$dest_dir/meta/config_main.json', the_config) ?	
 		os.write_file('$dest_dir/meta/config_'+site_config.name+'.json', the_config) ?		
 
-		the_config_group := json.encode_pretty(config.groups)
+		the_config_group := json.encode_pretty(publisher.config.groups)
 		os.write_file('$dest_dir/meta/config_groups.json', the_config_group) ?
 
 

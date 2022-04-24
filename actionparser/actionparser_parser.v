@@ -32,7 +32,7 @@ mut:
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 
-fn (mut actions Actions) file_parse(path string)? {
+fn (mut parser ActionsParser) file_parse(path string)? {
 	if !os.exists(path) {
 		return error("path: '$path' does not exist, cannot parse.")
 	}
@@ -40,7 +40,7 @@ fn (mut actions Actions) file_parse(path string)? {
 
 	blocks := parse_into_blocks(content) ?
 
-	actions.parse_actions(blocks)
+	parser.parse_actions(blocks)
 
 }
 
@@ -99,7 +99,7 @@ fn (mut block Block) clean() {
 	block.content = texttools.dedent(block.content) // remove leading space
 }
 
-fn (mut actions Actions) parse_block(block Block) {
+fn (mut parser ActionsParser) parse_block(block Block) {
 	params := texttools.text_to_params(block.content) or { panic(err) }
 
 	mut action := Action{
@@ -113,11 +113,11 @@ fn (mut actions Actions) parse_block(block Block) {
 		}
 	}
 
-	actions.actions << action
+	parser.actions << action
 }
 
-fn (mut actions Actions) parse_actions(blocks Blocks) {
+fn (mut parser ActionsParser) parse_actions(blocks Blocks) {
 	for block in blocks.blocks {
-		actions.parse_block(block)
+		parser.parse_block(block)
 	}
 }

@@ -2,12 +2,12 @@ module actionparser
 
 fn test_read() {
 
-    actions.init()
+    parser.init()
 
-	res := actions.add('actionparser/launch.md') or { panic('cannot parse,$err') }
+	res := parser.add('actionparser/launch.md') or { panic('cannot parse,$err') }
 
-	res2 := Actions{
-    actions: [Action{
+	res2 := ActionsParser{
+    parser: [Action{
         name: 'action.define'
         params: [Param{
             name: 'name'

@@ -17,7 +17,7 @@ pub mut:
 	web_hostnames bool
 	staticfiles map[string]string
 	loaded bool
-	actions actionparser.Actions	
+	actions actionparser.ActionsParser	
 }
 
 pub fn (config ConfigRoot) name_web_get(domain string) ?string {

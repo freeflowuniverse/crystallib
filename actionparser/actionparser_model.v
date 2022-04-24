@@ -1,7 +1,7 @@
 module actionparser
 
 
-pub struct Actions {
+pub struct ActionsParser {
 pub mut:
 	actions []Action
 }
