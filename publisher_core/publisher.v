@@ -39,7 +39,11 @@ pub fn get(args publisher_config.PublishConfigArgs) ?Publisher {
 }
 
 
-pub fn (mut publisher Publisher) run(args publisher_config.PublishConfigArgs) ? {
+pub fn run(args publisher_config.PublishConfigArgs) ?Publisher {
+
+	mut publisher := Publisher{name:"main"}
+
+	cfg := publisher_config.get(args)?
 
 	mut didsomething := false
 
@@ -68,6 +72,7 @@ pub fn (mut publisher Publisher) run(args publisher_config.PublishConfigArgs) ? 
 
 	}
 
+	return publisher
 
 }
 
