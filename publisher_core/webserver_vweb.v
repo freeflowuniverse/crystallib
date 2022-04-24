@@ -228,7 +228,7 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, sitename string, path s
 			// 	res.send("index.html not found", 404)
 			// }
 			site_config := config.site_wiki_get(sitename2) ?
-			index_out := template_wiki_root(sitename, '', '', site_config.opengraph)?
+			index_out := publisherobj.template_wiki_root(sitename, '', '', site_config.opengraph)?
 			return app.html(index_out)
 		} else if filetype == FileType.wiki {
 			if site2.page_exists(name2) {
