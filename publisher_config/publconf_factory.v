@@ -38,7 +38,7 @@ pub fn get(args PublishConfigArgs) ?ConfigRoot {
 
 	//check if compilation done with debug
 	$if debug {
-		config.debug = true
+		config.publish.debug = true
 	}
 
 	// Load Static config, is all the paths to the files as used in docsify

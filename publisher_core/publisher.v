@@ -18,7 +18,7 @@ pub fn get(args publisher_config.PublishConfigArgs) ?Publisher {
 	publisher.replacer.file = texttools.regex_instructions_new()
 	publisher.replacer.word = texttools.regex_instructions_new()
 	publisher.replacer.defs = texttools.regex_instructions_new()
-	publisher.config = config
+	publisher.config = cfg
 
 	// remove code_wiki subdirs
 	path_links := cfg.publish.paths.codewiki
