@@ -2,7 +2,7 @@
 
 module main
 
-import despiegk.crystallib.appsbox.redisapp
+import appsbox.redisapp
 
 
 fn do()?{

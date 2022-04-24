@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.appsbox.discourseapp
+import appsbox.discourseapp
 
 fn do() ? {
 	mut app := discourseapp.get(name: "d-main")

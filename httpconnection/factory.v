@@ -1,7 +1,7 @@
 module httpconnection
 
 import net.http
-import despiegk.crystallib.redisclient
+import redisclient
 
 fn init_factory() HTTPConnections {
 	mut htpc := HTTPConnections{}

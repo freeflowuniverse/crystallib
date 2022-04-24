@@ -1,8 +1,8 @@
 module penapp
 
 // import os
-import despiegk.crystallib.builder
-import despiegk.crystallib.appsbox
+import builder
+import appsbox
 
 const name="pen"
 

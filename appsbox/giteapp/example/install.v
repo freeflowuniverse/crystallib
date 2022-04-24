@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.appsbox.giteapp
+import appsbox.giteapp
 
 fn do() ? {
 	mut app := giteapp.get(name: "maingit")

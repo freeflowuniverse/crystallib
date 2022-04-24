@@ -1,7 +1,7 @@
 module httpconnection
 
 import net.http { Header, Method }
-import despiegk.crystallib.redisclient { Redis }
+import redisclient { Redis }
 
 // https://cassiomolin.com/2016/09/09/which-http-status-codes-are-cacheable/
 const default_cacheable_codes = [200, 203, 204, 206, 300, 404, 405, 410, 414, 501]

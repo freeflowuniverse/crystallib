@@ -2,7 +2,7 @@
 
 module main
 
-import despiegk.crystallib.appsbox.penapp
+import appsbox.penapp
 
 
 fn do()?{

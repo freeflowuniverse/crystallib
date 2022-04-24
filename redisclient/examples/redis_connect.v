@@ -1,5 +1,5 @@
 module main
-import despiegk.crystallib.redisclient
+import redisclient
 import time
 import net
 

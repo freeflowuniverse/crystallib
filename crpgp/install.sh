@@ -2,7 +2,7 @@
 TMP_DIR=/tmp/crpgp
 TMP_LIB_PATH=$TMP_DIR/libcrpgp.so
 TMP_HEADER_PATH=$TMP_DIR/crpgp.h
-CRPGP_DIR=$HOME/.vmodules/despiegk/crystallib/crpgp
+CRPGP_DIR=$HOME/.vmodules/freeflowuniverse/crystallib/crpgp
 V_CRPGP_PATH=$CRPGP_DIR/crpgp.v
 
 # mkdir TMP_DIR

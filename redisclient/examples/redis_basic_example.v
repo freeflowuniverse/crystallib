@@ -1,5 +1,5 @@
 module main
-import despiegk.crystallib.redisclient
+import redisclient
 
 fn redistest() ? {
 	mut redis := redisclient.get_local() 

@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.appsbox.mattermostapp
+import appsbox.mattermostapp
 
 fn do() ? {
 	mut app := mattermostapp.get(name: "mm-main")

@@ -1,6 +1,6 @@
 module nodepilot
 
-import freeflowuniverse.crystallib.builder
+import builder
 
 struct NodePilot {
 	noderoot string

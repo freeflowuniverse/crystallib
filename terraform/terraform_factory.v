@@ -3,8 +3,8 @@ module terraform
 import builder
 import os
 import crypto.md5
-import despiegk.crystallib.redisclient
-import freeflowuniverse.crystallib.rootpath
+import redisclient
+import rootpath
 
 pub enum TerraformFactoryStatus {
 	init

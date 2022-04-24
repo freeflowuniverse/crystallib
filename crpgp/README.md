@@ -37,7 +37,7 @@ All needed libs can be installed from [install.sh](./install.sh)
 - Import crpgp module
 
 ```v
-import despiegk.crystallib.crpgp
+import crpgp
 ```
 
 - We have **two** options here, generate a new key, or import

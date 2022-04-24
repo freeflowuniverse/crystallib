@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.appsbox.postgresapp
+import appsbox.postgresapp
 
 
 fn do()?{

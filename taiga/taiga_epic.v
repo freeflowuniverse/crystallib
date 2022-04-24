@@ -1,8 +1,8 @@
 module taiga
 
 // Epics will be implemented later
-import despiegk.crystallib.crystaljson
-import despiegk.crystallib.texttools
+import crystaljson
+import texttools
 import json
 import x.json2 { raw_decode }
 import time

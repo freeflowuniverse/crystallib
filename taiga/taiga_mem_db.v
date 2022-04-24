@@ -1,6 +1,6 @@
 module taiga
 
-import despiegk.crystallib.taigaexports { ProjectExport }
+import taigaexports { ProjectExport }
 
 pub fn load_data() ? {
 	projects() ?

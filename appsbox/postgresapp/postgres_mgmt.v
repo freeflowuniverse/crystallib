@@ -1,8 +1,8 @@
 module postgresapp
 
 import os
-import despiegk.crystallib.builder
-import despiegk.crystallib.appsbox
+import builder
+import appsbox
 
 [heap]
 pub struct PostgresApp {

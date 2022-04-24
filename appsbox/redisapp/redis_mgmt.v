@@ -1,9 +1,9 @@
 module redisapp
 
 import os
-import despiegk.crystallib.builder
-import despiegk.crystallib.appsbox
-import despiegk.crystallib.redisclient
+import builder
+import appsbox
+import redisclient
 
 [heap]
 pub struct RedisApp {

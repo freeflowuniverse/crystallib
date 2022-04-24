@@ -1,4 +1,4 @@
-import despiegk.crystallib.taiga
+import taiga
 import os
 
 // Generate wikis with users, projects, stories, issues and tasks

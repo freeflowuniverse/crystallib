@@ -1,7 +1,7 @@
 module crystaljson
 
 import x.json2
-import despiegk.crystallib.texttools
+import texttools
 
 const keep_ascii='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-+={}[]"\':;?/>.<,|\\~` '
 

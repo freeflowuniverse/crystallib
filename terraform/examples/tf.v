@@ -1,6 +1,6 @@
 module main
 
-import despiegk.crystallib.terraform
+import terraform
 import threefoldtech.vgrid.explorer
 import threefoldtech.vgrid.gridproxy
 

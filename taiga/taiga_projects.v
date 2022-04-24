@@ -1,7 +1,7 @@
 module taiga
 
-import despiegk.crystallib.texttools
-import despiegk.crystallib.taigaexports
+import texttools
+import taigaexports
 import json
 import x.json2
 

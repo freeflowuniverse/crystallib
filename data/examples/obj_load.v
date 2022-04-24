@@ -1,6 +1,6 @@
 module main
 
-import despiegk.crystallib.data.model
+import data.model
 
 
 

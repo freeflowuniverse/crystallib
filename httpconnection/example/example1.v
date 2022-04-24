@@ -1,7 +1,7 @@
 module main
 
-import despiegk.crystallib.httpconnection
-// import despiegk.crystallib.crystaljson
+import httpconnection
+// import crystaljson
 // import json
 // import x.json2
 // import os

@@ -1,7 +1,7 @@
 module taiga
 
 import x.json2
-import despiegk.crystallib.crystaljson
+import crystaljson
 
 // return vlang clean object
 pub fn comments_get(prefix string, prefix_id int) ?[]Comment {

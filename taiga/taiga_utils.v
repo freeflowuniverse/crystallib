@@ -1,6 +1,6 @@
 module taiga
 
-import despiegk.crystallib.texttools
+import texttools
 import time { Time, now, parse_iso8601 }
 import math { pow10 }
 

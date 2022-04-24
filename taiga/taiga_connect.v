@@ -3,9 +3,9 @@ module taiga
 import x.json2
 import json
 import net.http
-import despiegk.crystallib.redisclient
-import despiegk.crystallib.crystaljson
-import despiegk.crystallib.taigaexports
+import redisclient
+import crystaljson
+import taigaexports
 
 // FIXME: Not Working
 struct TaigaConnectionSettings {

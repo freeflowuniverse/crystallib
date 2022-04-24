@@ -2,7 +2,7 @@
 
 module main
 
-import despiegk.crystallib.appsbox.mdbookapp
+import appsbox.mdbookapp
 
 
 fn do()?{
