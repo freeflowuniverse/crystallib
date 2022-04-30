@@ -1,7 +1,6 @@
 module publisher_core
 
-import publisher_config
-import hostsfile
+// import hostsfile
 
 // pub fn dns_on(sudo bool)? {
 // 	mut domains := []string{}
