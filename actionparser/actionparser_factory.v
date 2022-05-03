@@ -31,3 +31,26 @@ pub fn (mut parser ActionsParser) add(path string)?  {
 	}
 }
 
+
+//
+pub fn content_parse(content string)?ActionsParser  {
+
+	mut parser:=init()
+
+	parser.content_parse(content)?
+
+	return parser
+
+
+}
+
+pub fn file_parse(path string)?ActionsParser  {
+
+	mut parser:=init()
+	parser.file_parse(path)?
+
+	return parser
+
+
+}
+

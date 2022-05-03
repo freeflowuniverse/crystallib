@@ -195,28 +195,28 @@ pub fn get(args PublishConfigArgs) ?ConfigRoot {
 		config.actions.add(actions_path)?
 	}
 
-	for action in config.actions.actions{
+	// for action in config.actions.actions{
 
-		if action.name == "wiki"{
-			mut sc := SiteConfigRaw{}
+	// 	if action.name == "wiki.load"{
+	// 		mut sc := SiteConfigRaw{}
 
-			//now walk over params
-			for param in action.params{
-				if param.name=="name"{
-					sc.name = texttools.name_fix(param.value)
-				}
-				if param.name=="path"{
-					sc.fs_path = param.value
-				}
-				if param.name=="url"{
-					sc.git_url = param.value
-				}
-			}
-			sc.cat = "wiki"
-			mut site_in := site_new(sc)?
-			config.sites << site_in	
-		}
-	}
+	// 		//now walk over params
+	// 		for param in action.params{
+	// 			if param.name=="name"{
+	// 				sc.name = texttools.name_fix(param.value)
+	// 			}
+	// 			if param.name=="path"{
+	// 				sc.fs_path = param.value
+	// 			}
+	// 			if param.name=="url"{
+	// 				sc.git_url = param.value
+	// 			}
+	// 		}
+	// 		sc.cat = "wiki"
+	// 		mut site_in := site_new(sc)?
+	// 		config.sites << site_in	
+	// 	}
+	// }
 
 	return config 
 }

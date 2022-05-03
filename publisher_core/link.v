@@ -109,8 +109,9 @@ fn (mut link Link) init_(mut publisher &Publisher, page &Page)? {
 			link.isimage = true
 			link.cat = LinkType.file			
 		} else if ext == 'md' {
-			panic('should not happen')
-			// link.cat = LinkType.page
+			// println(link)
+			// panic('should not happen')
+			link.cat = LinkType.page
 		} else if ext in ['html', 'htm'] {
 			link.cat = LinkType.html
 			return

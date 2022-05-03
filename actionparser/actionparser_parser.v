@@ -38,11 +38,19 @@ fn (mut parser ActionsParser) file_parse(path string)? {
 	}
 	content := os.read_file(path) or { panic('Failed to load file $path') }
 
-	blocks := parse_into_blocks(content) ?
+	parser.content_parse(content)?
 
+}
+
+
+fn (mut parser ActionsParser) content_parse(content string)? {
+
+	blocks := parse_into_blocks(content) ?
 	parser.parse_actions(blocks)
 
 }
+
+
 
 // each block is name of action and the full content behind
 fn parse_into_blocks(text string) ?Blocks {

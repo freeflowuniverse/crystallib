@@ -5,9 +5,13 @@ import os
 [heap]
 pub interface App {
 mut:
-	instance 		AppInstance
 	name    		string
 	//binaries in ~/hub3/bin related to this app
+	bins 			[]string
+	//other paths related to this app
+	paths 			[]string
+	tcpports 		[]int
+	unixsocketpath	string	
 	start() 		?
 	stop() 			?
 	install(bool) 	?
@@ -15,17 +19,12 @@ mut:
 	check() 		?bool
 }
 
-[heap]
-pub struct AppInstance {
-pub mut:
-	name    		string
-	//binaries in ~/hub3/bin related to this app
-	bins 			[]string
-	//other paths related to this app
-	paths 			[]string
-	tcpports 		[]int
-	unixsocketpath	string
-}
+// [heap]
+// pub struct AppInstance {
+// pub mut:
+// 	name    		string
+
+// }
 
 pub fn (mut app AppInstance) exists() bool{
 	mut f:= appsbox.factory

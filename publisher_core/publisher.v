@@ -3,6 +3,7 @@ module publisher_core
 import texttools
 import publisher_config
 import os
+import actionparser
 
 //
 pub fn get(args publisher_config.PublishConfigArgs) ?Publisher {
@@ -11,7 +12,7 @@ pub fn get(args publisher_config.PublishConfigArgs) ?Publisher {
 
 	cfg := publisher_config.get(args)?
 
-	println(cfg)
+	// println(cfg)
 
 	// publisher.gitlevel = 0
 	publisher.replacer.site = texttools.regex_instructions_new()
@@ -20,8 +21,14 @@ pub fn get(args publisher_config.PublishConfigArgs) ?Publisher {
 	publisher.replacer.defs = texttools.regex_instructions_new()
 	publisher.config = cfg
 
+	
+	return publisher
+}
+
+fn (mut publisher Publisher) load() ? {
+
 	// remove code_wiki subdirs
-	path_links := cfg.publish.paths.codewiki
+	path_links := publisher.config.publish.paths.codewiki
 	path_links_list := os.ls(path_links) ?
 	for path_to_remove in path_links_list {
 		os.execute_or_panic('rm -f $path_links/$path_to_remove')
@@ -33,35 +40,84 @@ pub fn get(args publisher_config.PublishConfigArgs) ?Publisher {
 		}
 		publisher.load_site(site.name)?
 	}
-	println( " - all sites loaded")
-	
-	return publisher
+	println( " - all sites loaded")	
+
+	publisher.check()?
+
 }
 
+//find all actions & process, this works inclusive
+fn (mut publisher Publisher) actions_process(actions actionparser.ActionsParser)? []string {
+	// println("+++++")
+	// println(actions)
+	// println("-----")
 
+	mut actions_done := []string{}
+
+	for action in actions.actions{
+		// println( " -- $action")
+
+		//flatten
+		if action.name == "publish"{
+			path := action.param_path_get("path")?
+			//now execute the flatten action
+			publisher.flatten(dest:path)?
+			actions_done << "publisher.flatten $path"
+		}
+
+		//recursive behavior, include other files and also process
+		if action.name == "actions.include"{
+			path := action.param_path_get("path")? //will also check path exists
+			mut ap := actionparser.file_parse(path)?
+			publisher.actions_process(ap)?
+			actions_done << "actions.include $path"
+		}		
+
+		if action.name == "wiki.load"{
+			mut sc := publisher_config.SiteConfigRaw{}
+
+			//now walk over params
+			for param in action.params{
+				if param.name=="name"{
+					sc.name = texttools.name_fix(param.value)
+				}
+				if param.name=="path"{
+					sc.fs_path = param.value
+				}
+				if param.name=="url"{
+					sc.git_url = param.value
+				}
+			}
+			sc.cat = "wiki"
+			mut site_in := publisher_config.site_new(sc)?
+			publisher.config.sites << site_in	
+		}
+
+		if action.name == "wiki.run"{
+			publisher.develop = true
+			publisher.load()?
+			publisher_core.webserver_run(mut &publisher) or {
+				return error('Could not run webserver for wiki.\nError:\n$err')
+			}
+			exit(0)
+		}
+
+	}
+	return actions_done
+
+}
+
+//this is also the place where we process the different actions
 pub fn run(args publisher_config.PublishConfigArgs) ?Publisher {
 
 	mut publisher := get(args)?
 
-	mut didsomething := false
+	mut actions_done := []string{}
 
-	for action in publisher.config.actions.actions{
-
-		//flatten
-		if action.name == "publish"{
-			mut path:=""
-			for param in action.params{
-				if param.name=="path"{
-					path = param.value
-				}
-			}
-			//now execute the flatten action
-			publisher.flatten(dest:path)?
-		}
-	}
+	actions_done << publisher.actions_process(publisher.config.actions)?
 
 	//if no actions specified will run development server for the wiki's
-	if didsomething == false{
+	if actions_done.len == 0{
 		publisher.develop = true
 		webserver_run(mut &publisher) or {
 			println('Could not run webserver for wiki.\nError:\n$err')
@@ -69,6 +125,8 @@ pub fn run(args publisher_config.PublishConfigArgs) ?Publisher {
 		}
 
 	}
+
+	publisher.load()?
 
 	return publisher
 

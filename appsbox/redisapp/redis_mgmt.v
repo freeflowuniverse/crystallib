@@ -23,7 +23,7 @@ pub struct RedisAppArgs{
 pub fn get(args RedisAppArgs) appsbox.App{
 	mut factory := appsbox.get()
 	for item in factory.apps{
-		if item.instance.tcpports == [args.port] && item.instance.name == args.name {
+		if item.instance.tcpports == [args.port] && item.instance.name == args.name  && item.instance.cat == "redis"{
 			return item
 		}
 	}
@@ -32,7 +32,7 @@ pub fn get(args RedisAppArgs) appsbox.App{
 			tcpports:[args.port]
 		}
 	mut myapp := RedisApp{
-			name:args.name,
+			name:"redis",
 			instance:i
 		}
 	factory.apps << myapp

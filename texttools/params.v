@@ -183,7 +183,7 @@ pub fn text_to_params(text string) ?Params {
 	text2 = text2.replace('\\n', '<<BR>>')
 	text2 = text2.replace('\n', ' ')
 
-	validchars := 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,'
+	validchars := 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,.'
 
 	mut ch := ''
 	mut state := ParamStatus.start
@@ -215,7 +215,7 @@ pub fn text_to_params(text string) ?Params {
 				key = ''
 				continue
 			} else if !validchars.contains(ch) {
-				return error("parameters can only be A-Za-z0-9 and _, here found: '$key$ch' in\n$text2")
+				return error("parameters can only be A-Za-z0-9 and _., here found: '$key$ch' in\n$text2\n\n")
 			} else {
 				key += ch
 				continue

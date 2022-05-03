@@ -49,7 +49,7 @@ pub enum SiteState {
 	processed
 }
 
-fn site_new(site_in SiteConfigRaw) ?SiteConfig{
+pub fn site_new(site_in SiteConfigRaw) ?SiteConfig{
 
 	mut gt := gittools.get()?
 
