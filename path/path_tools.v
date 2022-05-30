@@ -341,7 +341,7 @@ pub fn (mut path Path) backup_name_find(source string, dest string) ?Path{
 		if i ==0 {
 			path_str = "$dest/$rel${path.name_no_ext()}.${path.extension()}"
 		}else{
-			path_str = "$dest/$rel${path.name_no_ext()}_${i{}.${path.extension()}"
+			path_str = "$dest/$rel${path.name_no_ext()}_${i}.${path.extension()}"
 		}
 		path_found = Path{path:path_str}
 		if ! path_found.exists(){
