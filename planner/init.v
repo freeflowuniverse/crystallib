@@ -1,6 +1,7 @@
 module planner
 
 import redisclient
+import redisclientcore
 
 [heap]
 struct Planner {
@@ -11,7 +12,7 @@ mut:
 
 fn init_single_planner() Planner {
 	return Planner{
-		redis: redisclient.get_local()
+		redis: redisclientcore.get()
 	}
 }
 

@@ -97,7 +97,7 @@ pub fn (mut myapp RedisApp) build()?{
 	mut factory := appsbox.get()
 	mut bin_path := factory.bin_path
 	mut cmd := $tmpl("redis_build.sh")
-	mut tmpdir:="/tmp/redis"
+	// mut tmpdir:="/tmp/redis"
 	process.execute_job(cmd:cmd)?
 }
 

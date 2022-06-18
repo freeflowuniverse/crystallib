@@ -2,6 +2,7 @@ module httpconnection
 
 import net.http
 import redisclient
+import redisclientcore
 
 fn init_factory() HTTPConnections {
 	mut htpc := HTTPConnections{}
@@ -35,7 +36,7 @@ pub fn new(name string, url string, cache bool) &HTTPConnection {
 
 	// Check cache and init redis using unix_socket
 	if cache {
-		conn.redis = redisclient.get_unixsocket_new_default() or { panic(err) }
+		conn.redis = redisclientcore.get()
 		conn.cache.key = name
 	}
 
@@ -53,6 +54,6 @@ pub fn get(name string) ?&HTTPConnection {
 
 pub fn (mut h HTTPConnection) clone() &HTTPConnection {
 	mut new_conn := h
-	new_conn.redis = redisclient.get_unixsocket_new_default() or { panic(err) }
+	new_conn.redis = redisclientcore.get()
 	return &new_conn
 }

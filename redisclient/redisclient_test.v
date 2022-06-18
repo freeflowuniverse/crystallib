@@ -1,10 +1,11 @@
 import redisclient
+import redisclientcore
 import time
 // original code see https://github.com/patrickpissurno/vredis/blob/master/vredis_test.v
 // credits see there as well (-:
 
 fn setup() &redisclient.Redis {
-	mut redis := redisclient.get_local()
+	mut redis := redisclientcore.get()
 	// Select db 10 to be away from default one '0'
 	redis.selectdb(10) or { panic(err) }
 	return redis

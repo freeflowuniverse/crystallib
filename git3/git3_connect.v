@@ -21,7 +21,7 @@ mut:
 // Init connection for git3 singleton
 fn init_connection() Git3Connection {
 	mut conn := Git3Connection{
-		redis: redisclient.get_local()
+		redis: redisclientcore.get()
 	}
 	return conn
 }

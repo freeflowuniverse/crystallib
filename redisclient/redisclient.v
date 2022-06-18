@@ -51,6 +51,9 @@ fn init2() RedisFactory {
 const factory = init2()
 
 // https://redis.io/topics/protocol
+// examples:
+//   localhost:6379 
+//   /tmp/redis-default.sock
 pub fn get(addr string) ?&Redis {
 	mut f := redisclient.factory
 	if addr !in f.instances {
@@ -62,45 +65,6 @@ pub fn get(addr string) ?&Redis {
 	}
 	mut r2 := f.instances[addr]
 	return &r2
-}
-
-// make sure to use new first, so that the connection has been init-ed
-// then you can get it everywhere
-pub fn get_local() &Redis {
-	addr := 'localhost:6379'
-	return get(addr) or { &Redis{
-		connected: false
-		addr: addr
-	} }
-}
-
-// get a new one guaranteed, need for threads
-pub fn get_local_new() ?&Redis {
-	// tcpport := 7777
-	// mut r := Redis{
-	// 	addr: '/tmp/redis_${tcpport}.sock'
-	// }
-	mut r := Redis{
-		addr: 'localhost:6379'
-	}
-	r.socket_connect() ?
-	return &r
-}
-
-pub fn get_unixsocket_new() ?&Redis {
-	mut r := Redis{
-		addr: '/tmp/redis.sock'
-	}
-	r.socket_connect() ?
-	return &r
-}
-
-pub fn get_unixsocket_new_default() ?&Redis {
-	mut r := Redis{
-		addr: '/tmp/redis-default.sock'
-	}
-	r.socket_connect() ?
-	return &r
 }
 
 fn (mut r Redis) socket_connect() ? {

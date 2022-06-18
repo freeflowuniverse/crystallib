@@ -1,10 +1,10 @@
 module main
-import redisclient
+import redisclientcore
 
 fn redistest() ? {
-	mut redis := redisclient.get_local_new() 
+	mut redis := redisclientcore.get()?
 
-	redis.selectdb(10) ?
+	redis.selectdb(0) ?
 
 	redis.set('test', 'some data') ?
 

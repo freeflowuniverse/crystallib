@@ -1,10 +1,9 @@
 module main
-import redisclient
+import redisclientcore
 import time
-import net
 
 fn conn(c int) ?bool{
-	// mut redis := redisclient.get_local_new()?
+	// mut redis := redisclientcore.get()
 	// redis.set('test', 'some data')   or { panic("set"+err.str()+"\n"+c.str())}
 	// redis.get('test')  or{ panic("get"+err.str()+"\n"+c.str())}
 	return true
@@ -21,7 +20,7 @@ fn conn2(c int)?bool{
 
 	//ONCE THIS WORKS, WE SHOULD TEST NEXT AS well, ENABLE REDIS CLIENT ABOVE
 	
-	mut redis := redisclient.get_unixsocket_new()  or { panic(err.str()+"\n"+c.str())}
+	mut redis := redisclientcore.get()
 	redis.set('test', 'some data')   or { panic("set"+err.str()+"\n"+c.str())}
 	redis.get('test')  or{ panic("get"+err.str()+"\n"+c.str())}
 	return true

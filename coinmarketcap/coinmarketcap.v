@@ -4,6 +4,7 @@ import os
 import x.json2
 import json
 import net.http
+import redisclientcore
 import redisclient
 import crypto.md5
 
@@ -18,7 +19,7 @@ mut:
 
 fn init_connection() CoinMarketConnection {
 	return CoinMarketConnection{
-		redis: redisclient.get_local()
+		redis: redisclientcore.get()
 	}
 }
 

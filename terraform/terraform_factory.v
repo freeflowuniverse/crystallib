@@ -27,7 +27,7 @@ pub mut:
 //needed to get singleton
 fn init2() TerraformFactory {
 	mut x := terraform.TerraformFactory{
-		redis: redisclient.get_unixsocket_new_default() or { panic(err) }
+		redis: redisclientcore.get()
 	}
 	return x
 }
