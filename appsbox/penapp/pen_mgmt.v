@@ -11,22 +11,22 @@ const name="pen"
 pub struct PenApp {
 pub mut:
 	name		string
-	instance 	appsbox.AppInstance
+	appconfig 	appsbox.AppConfig
 }
 
 pub fn get() appsbox.App{
 	mut factory := appsbox.get()
 	for item in factory.apps{
-		if item.instance.name == name {
+		if item.appconfig.name == name {
 			return item
 		}
 	}
-	mut i := appsbox.AppInstance{
+	mut i := appsbox.AppConfig{
 			name:name
 		}
 	mut myapp := PenApp{
 			name:name,
-			instance:i
+			appconfig:i
 		}
 	factory.apps << myapp
 	return myapp
@@ -36,10 +36,10 @@ pub fn (mut myapp PenApp) install(reset bool)?{
 	mut factory := appsbox.get()
 
 	// mut n := builder.node_local()?
-	myapp.instance.bins = ["pen"]
+	myapp.appconfig.bins = ["pen"]
 
 	//check app is installed, if yes don't need to do anything
-	if reset || ! myapp.instance.exists(){
+	if reset || ! myapp.appconfig.exists(){
 		myapp.build()?
 	}
 }

@@ -1,6 +1,6 @@
 module rediscache
 
-import redisclient
+import appsbox.redisapp
 
 struct RedisCache {
 mut:
@@ -11,7 +11,8 @@ mut:
 
 pub fn newcache(namespace string) RedisCache {
 	// reuse single object
-	mut r := redisclient.get_unixsocket_new_default() or { panic(err) }
+	mut r := redisapp.client_local_get()  or { panic(err) }
+	// mut r := redisclient.get_unixsocket_new_default() or { panic(err) }
 	return RedisCache{redis: r, namespace: namespace}
 }
 

@@ -9,7 +9,7 @@ pub struct PostgresApp {
 pub mut:
 	name 			string 
 	postgres_passwd string
-	instance 		appsbox.AppInstance
+	appconfig 		appsbox.AppConfig
 }
 
 pub struct PostgresAppArgs{
@@ -24,21 +24,21 @@ pub struct PostgresAppArgs{
 pub fn get(args PostgresAppArgs) appsbox.App{
 	mut factory := appsbox.get()
 	for item in factory.apps{
-		if item.instance.tcpports == [args.port] && item.instance.name == args.name {
+		if item.appconfig.tcpports == [args.port] && item.appconfig.name == args.name {
 			return item
 		}
 	}
 
-	println("[-] instance not found, creating a new one")
+	println("[-] appconfig not found, creating a new one")
 
-	mut i := appsbox.AppInstance{
+	mut i := appsbox.AppConfig{
 		name: args.name
 		tcpports: [args.port]
 	}
 
 	mut myapp := PostgresApp{
 		name: args.name,
-		instance: i
+		appconfig: i
 		postgres_passwd: args.postgres_passwd
 	}
 
@@ -52,7 +52,7 @@ pub fn (mut myapp PostgresApp) start() ?{
 	myapp.install(false)?
 
 	mut n := builder.node_local()?
-	mut tcpport := myapp.instance.tcpports[0]
+	mut tcpport := myapp.appconfig.tcpports[0]
 	bin_path := factory.bin_path
 
 	//set a start command for postgresql
@@ -68,7 +68,7 @@ pub fn (mut myapp PostgresApp) stop() ?{
 	mut factory := appsbox.get()
 	mut bin_path := appsbox.get().bin_path
 	mut n := builder.node_local()?
-	tcpport := myapp.instance.tcpports[0]
+	tcpport := myapp.appconfig.tcpports[0]
 	var_path := factory.var_path + "/postgres"
 
 	cmd := "${bin_path}/pg_ctl stop -D ${var_path}"
@@ -79,14 +79,14 @@ pub fn (mut myapp PostgresApp) install(reset bool)?{
 	mut factory := appsbox.get()
 
 	mut n := builder.node_local()?
-	myapp.instance.bins = ["postgres", "postgres_start"]
+	myapp.appconfig.bins = ["postgres", "postgres_start"]
 
 	// check app is installed, if yes don't need to do anything
-	if reset || ! myapp.instance.exists() {
+	if reset || ! myapp.appconfig.exists() {
 		myapp.build()?
 	}
 
-	tcpport := myapp.instance.tcpports[0]
+	tcpport := myapp.appconfig.tcpports[0]
 	postgres_path := "${factory.apps_path}"
 	sysconfdir := postgres_path
 	bin_path := factory.bin_path
@@ -116,7 +116,7 @@ pub fn (mut myapp PostgresApp) install(reset bool)?{
 pub fn (mut myapp PostgresApp) build()?{
 	mut factory := appsbox.get()
 	mut n := builder.node_local()?
-	tcpport := myapp.instance.tcpports[0]
+	tcpport := myapp.appconfig.tcpports[0]
 	postgres_path := "${factory.apps_path}"
 	mut cmd := $tmpl("postgres_build.sh")
 	mut tmpdir:="/tmp/postgres"
@@ -167,6 +167,6 @@ pub fn (mut myapp PostgresApp) check()?bool{
 }
 
 pub fn (mut myapp PostgresApp) client()?{
-	// mut tcpport := myapp.instance.tcpports[0]
+	// mut tcpport := myapp.appconfig.tcpports[0]
 	// return postgresclient.get("/tmp/postgres_${tcpport}.sock")
 }

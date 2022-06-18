@@ -1,15 +1,15 @@
 module redisapp
 
 import os
-import builder
 import appsbox
 import redisclient
+import process
+import time
 
 [heap]
 pub struct RedisApp {
 pub mut:
-	name    	string = "default"
-	instance 	appsbox.AppInstance
+	appconfig 	appsbox.AppConfig
 }
 
 pub struct RedisAppArgs{
@@ -20,20 +20,20 @@ pub struct RedisAppArgs{
 
 //get a redis app based on port & name, are optional both
 // default is name:default port:6666
-pub fn get(args RedisAppArgs) appsbox.App{
+pub fn get(args RedisAppArgs) RedisApp{
 	mut factory := appsbox.get()
-	for item in factory.apps{
-		if item.instance.tcpports == [args.port] && item.instance.name == args.name  && item.instance.cat == "redis"{
-			return item
-		}
-	}
-	mut i := appsbox.AppInstance{
+	// for item in factory.apps{
+	// 	if item.appconfig.tcpports == [args.port] && item.appconfig.name == args.name  && item.appconfig.category == "redis"{
+	// 		return item
+	// 	}
+	// }
+	mut i := appsbox.AppConfig{
 			name:args.name
+			category:"redis"
 			tcpports:[args.port]
 		}
 	mut myapp := RedisApp{
-			name:"redis",
-			instance:i
+			appconfig:i
 		}
 	factory.apps << myapp
 	return myapp
@@ -41,14 +41,24 @@ pub fn get(args RedisAppArgs) appsbox.App{
 
 pub fn (mut myapp RedisApp) start() ?{
 	mut factory := appsbox.get()
+	mut alive := myapp.check()?
+	if alive{
+		// println(" - REDIS IS ALREADY RUNNING")
+		return
+	}	
 	myapp.install(false)?
-	mut bin_path := appsbox.get().bin_path
-	mut n := builder.node_local()?
-	mut tcpport := myapp.instance.tcpports[0]
+	
+	
+	// mut bin_path := appsbox.get().bin_path
+	mut tcpport := myapp.appconfig.tcpports[0]
+
+	process.execute_job(cmd:"rm -f /tmp/redis_${tcpport}.sock")? //dont throw error
 	mut var_path := "${factory.var_path}/redis/$tcpport"
+
 	cmd := "${var_path}/redis_start"
-	n.exec(cmd:cmd, reset:true, description:"start redis",stdout:true)?	
-	alive := myapp.check()?
+	process.execute_job(cmd:cmd)?
+	time.sleep(500000000) //0.5 sec
+	alive = myapp.check()?
 	if ! alive{
 		return error("Could not start redis. Check failed.")
 	}
@@ -56,54 +66,60 @@ pub fn (mut myapp RedisApp) start() ?{
 
 pub fn (mut myapp RedisApp) stop() ?{
 	mut bin_path := appsbox.get().bin_path
-	mut n := builder.node_local()?
-	mut tcpport := myapp.instance.tcpports[0]
+	mut tcpport := myapp.appconfig.tcpports[0]
 	cmd := "${bin_path}/redis-cli -p $tcpport SHUTDOWN"
-	n.exec(cmd:cmd, reset:true, description:"stop redis",stdout:true)?	
+	process.execute_job(cmd:cmd)?	
 }
 
 pub fn (mut myapp RedisApp) install(reset bool)?{
+	//REMARK: cannot use node construct because needs redis server, chicken and the egg
 	mut factory := appsbox.get()
 
-	mut n := builder.node_local()?
-	myapp.instance.bins = ["redis-server","redis-cli"]
+	myapp.appconfig.bins = ["redis-server","redis-cli"]
 
 	//check app is installed, if yes don't need to do anything
-	if reset || ! myapp.instance.exists(){
+	if reset || ! myapp.appconfig.exists(){
 		myapp.build()?
 	}
 
-	mut tcpport := myapp.instance.tcpports[0]
+	mut tcpport := myapp.appconfig.tcpports[0]
 	mut var_path := "${factory.var_path}/redis/$tcpport"
 	if ! os.exists(var_path){
 		os.mkdir_all(var_path)?
 	}
 	mut redis_conf := $tmpl("redis.conf")	
-	n.executor.file_write("${var_path}/redis.conf",redis_conf)?
-	n.executor.file_write("${var_path}/redis_start","${factory.bin_path}/redis-server ${var_path}/redis.conf")?
-	n.executor.exec_silent("chmod 770 ${var_path}/redis_start")?
+	os.write_file("${var_path}/redis.conf",redis_conf)?
+	os.write_file("${var_path}/redis_start","${factory.bin_path}/redis-server ${var_path}/redis.conf")?
+	process.execute_job(cmd:"chmod 770 ${var_path}/redis_start")?
 }
 
 pub fn (mut myapp RedisApp) build()?{
 	mut factory := appsbox.get()
-	mut n := builder.node_local()?
 	mut bin_path := factory.bin_path
 	mut cmd := $tmpl("redis_build.sh")
 	mut tmpdir:="/tmp/redis"
-	n.exec(cmd:cmd, reset:true, description:"install redis ; echo ok",stdout:true, tmpdir:tmpdir)?
+	process.execute_job(cmd:cmd)?
 }
 
 pub fn (mut myapp RedisApp) check()?bool{
-	mut rediscl := myapp.client()?
+	mut rediscl := myapp.client() or {
+		return false
+	}
 	result := rediscl.ping()?	
 	if result=="PONG"{
 		return true
 	}
-	panic(result)
 	return false
 }
 
 pub fn (mut myapp RedisApp) client() ?&redisclient.Redis {
-	mut tcpport := myapp.instance.tcpports[0]
+	mut tcpport := myapp.appconfig.tcpports[0]
 	return redisclient.get("/tmp/redis_${tcpport}.sock")
+	// return redisclient.get("127.0.0.1:${tcpport}")
+}
+
+pub fn client_local_get() ?&redisclient.Redis {
+	mut app := redisapp.get(port:7777)
+	app.start()?
+	return app.client()
 }

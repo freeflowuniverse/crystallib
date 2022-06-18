@@ -51,3 +51,17 @@ pub fn (action Action) param_path_get(name_ string) ?string {
 	return path
 }
 
+
+
+//will get path and check it exists if not will create
+pub fn (action Action) param_path_get_create(name_ string) ?string {
+
+	path := action.param_get(name_)?
+
+	if ! os.exists(path){
+		os.mkdir_all(path)?
+	}
+
+	return path
+}
+

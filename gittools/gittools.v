@@ -14,11 +14,6 @@ fn get_internal() &GitStructure {
 	return &gittools.codecache
 }
 
-pub fn get() ? &GitStructure {
-	mut gs := get_internal()
-	gs.check()?
-	return gs
-}
 
 fn (mut gitstructure GitStructure) check() ? {
 	if gitstructure.status == GitStructureStatus.loaded {
@@ -27,6 +22,38 @@ fn (mut gitstructure GitStructure) check() ? {
 	gitstructure.load() ?
 }
 
+pub fn get() ? &GitStructure {
+	mut gs := get_internal()	
+
+	//initial step
+	if gs.status == GitStructureStatus.new {
+
+		if 'MULTIBRANCH' in os.environ() {
+			gs.multibranch = true
+		}
+
+		if 'DIR_CODE' in os.environ() {
+			gs.root = os.environ()['DIR_CODE']+"/"
+		} else {
+			gs.root = '$os.home_dir()/code/'
+		}
+
+		gs.root = gs.root.replace('~', os.home_dir()).trim_right("/")
+
+		if !os.exists(gs.root) {
+			os.mkdir_all(gs.root) ?
+		}
+
+		gs.status = GitStructureStatus.init //step2
+
+	}
+
+	gs.check()?
+	return gs
+}
+
+
+
 pub struct GSArgs{
 pub mut:
 	filter string
@@ -34,6 +61,20 @@ pub mut:
 	force bool
 	show bool
 	pull bool
+}
+
+
+pub fn (mut gitstructure GitStructure) multibranch_set()? {
+
+	if gitstructure.multibranch {
+		return
+	}
+
+	gitstructure.multibranch = true
+	gitstructure.root = '$os.home_dir()/codemulti/'
+	
+	gitstructure.reload()?
+
 }
 
 pub fn (mut gitstructure GitStructure) repos_get(args GSArgs) []GitRepo  {
@@ -78,36 +119,21 @@ pub fn (mut gitstructure GitStructure) list(args GSArgs)? {
 }
 
 
+//reload the full git tree
+fn (mut gitstructure GitStructure) reload() ? {
+
+	gitstructure.status = GitStructureStatus.init
+
+	if !os.exists(gitstructure.root) {
+		os.mkdir_all(gitstructure.root) ?
+	}
+
+	gitstructure.check()?
+}
+
 // the factory for getting the gitstructure
 // git is checked uderneith $/code
 fn (mut gitstructure GitStructure) load() ? {
-	mut root2:=""
-	if 'DIR_CODE' in os.environ() {
-		dir_ct := os.environ()['DIR_CODE']
-		root2 = '$dir_ct/'
-	} else {
-		root2 = '$os.home_dir()/code/'
-		if !os.exists(root2) {
-			os.mkdir_all(root2) ?
-		}
-	}
-
-	mut multibranch := false
-	if 'MULTIBRANCH' in os.environ() {
-		multibranch = true
-	}
-
-	root2 = root2.replace('~', os.home_dir()).trim_right("/")
-
-	// check if there are other arguments used as the ones loaded
-	if gitstructure.status == GitStructureStatus.loaded {
-		if root2 != gitstructure.root {
-			gitstructure.status = GitStructureStatus.init
-		}
-		if multibranch != gitstructure.multibranch {
-			gitstructure.status = GitStructureStatus.init
-		}
-	}
 
 	if gitstructure.status == GitStructureStatus.loaded {
 		return
@@ -115,10 +141,6 @@ fn (mut gitstructure GitStructure) load() ? {
 
 	// print_backtrace()
 	// println(' - SCAN GITSTRUCTURE FOR $root2 ')
-
-
-	gitstructure.root = root2
-	gitstructure.multibranch = multibranch
 
 	// println(" -- multibranch: $multibranch")
 

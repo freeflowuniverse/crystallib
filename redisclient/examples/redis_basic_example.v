@@ -2,7 +2,7 @@ module main
 import redisclient
 
 fn redistest() ? {
-	mut redis := redisclient.get_local() 
+	mut redis := redisclient.get_local_new() 
 
 	redis.selectdb(10) ?
 

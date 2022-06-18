@@ -1,6 +1,7 @@
 module gittools
 
 pub enum GitStructureStatus {
+	new	
 	init
 	loaded
 	error

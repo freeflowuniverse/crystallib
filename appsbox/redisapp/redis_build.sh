@@ -1,6 +1,7 @@
 set -ex
 
-wget http://download.redis.io/redis-stable.tar.gz
+rm -f redis-stable.tar.gz
+curl http://download.redis.io/redis-stable.tar.gz > redis-stable.tar.gz
 tar xvzf redis-stable.tar.gz
 cd redis-stable
 make

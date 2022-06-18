@@ -1,6 +1,7 @@
 module httpcache
 
 import net.http
+import appsbox.redisapp
 import redisclient
 
 struct HttpCache {
@@ -9,8 +10,10 @@ mut:
 }
 
 fn init_single_cache() HttpCache {
+	mut r := redisapp.client_local_get() or {panic(error)}
 	return HttpCache{
-		redis: redisclient.get_local()
+		// redis: redisclient.get_local()
+		redis : r
 	}
 }
 

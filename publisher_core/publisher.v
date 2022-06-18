@@ -4,6 +4,7 @@ import texttools
 import publisher_config
 import os
 import actionparser
+import gittools
 
 //
 pub fn get(args publisher_config.PublishConfigArgs) ?Publisher {
@@ -54,6 +55,9 @@ fn (mut publisher Publisher) actions_process(actions actionparser.ActionsParser)
 
 	mut actions_done := []string{}
 
+	mut gt := gittools.get()?
+
+
 	for action in actions.actions{
 		// println( " -- $action")
 
@@ -72,6 +76,18 @@ fn (mut publisher Publisher) actions_process(actions actionparser.ActionsParser)
 			publisher.actions_process(ap)?
 			actions_done << "actions.include $path"
 		}		
+
+		if action.name == "git.params.multibranch" {
+			$if debug {eprintln( @FN + ": multibranch set")}
+			gt.multibranch_set()?
+		}
+
+		if action.name == "git.pull"{
+			url := action.param_get("url")?			
+			$if debug {eprintln( @FN + ": git pull: $url")}
+			mut repo := gt.repo_get_from_url(url:url)? 
+			repo.pull()?
+		}
 
 		if action.name == "wiki.load"{
 			mut sc := publisher_config.SiteConfigRaw{}
@@ -101,6 +117,17 @@ fn (mut publisher Publisher) actions_process(actions actionparser.ActionsParser)
 			}
 			exit(0)
 		}
+
+		if action.name == "wiki.publish"{
+			publisher.develop = true
+			publisher.load()?
+			path := action.param_path_get_create("path")? //will also check path exists
+			publisher.flatten(dest:path)?
+			exit(0)
+		}
+
+
+
 
 	}
 	return actions_done

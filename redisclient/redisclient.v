@@ -76,6 +76,10 @@ pub fn get_local() &Redis {
 
 // get a new one guaranteed, need for threads
 pub fn get_local_new() ?&Redis {
+	// tcpport := 7777
+	// mut r := Redis{
+	// 	addr: '/tmp/redis_${tcpport}.sock'
+	// }
 	mut r := Redis{
 		addr: 'localhost:6379'
 	}
@@ -100,6 +104,7 @@ pub fn get_unixsocket_new_default() ?&Redis {
 }
 
 fn (mut r Redis) socket_connect() ? {
+	// println(" CONNECT TCP: ${r.addr}")
 	r.socket = net.dial_tcp(r.addr) ?
 	r.socket.set_blocking(true) ?
 	r.socket.set_read_timeout(10 * time.second)
@@ -109,10 +114,10 @@ fn (mut r Redis) socket_connect() ? {
 
 // THIS IS A WORKAROUND, not sure why we need this, shouldn't be here
 fn (mut r Redis) socket_check() ? {
-	r.socket.peer_addr() or {
-		eprintln(' - re-connect socket for redis')
-		r.socket_connect() ?
-	}
+	// r.socket.peer_addr() or {
+	// 	eprintln(' - re-connect socket for redis')
+	// 	r.socket_connect() ?
+	// }
 }
 
 pub fn (mut r Redis) read_line() ?string {

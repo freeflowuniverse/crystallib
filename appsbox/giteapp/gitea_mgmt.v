@@ -8,7 +8,7 @@ import appsbox
 pub struct GiteaApp {
 pub mut:
 	name			string
-	instance		appsbox.AppInstance
+	appconfig		appsbox.AppConfig
 }
 
 pub struct GiteaAppArgs {
@@ -22,21 +22,21 @@ pub fn get(args GiteaAppArgs) appsbox.App {
 	mut factory := appsbox.get()
 
 	for item in factory.apps{
-		if item.instance.tcpports == [args.port] && item.instance.name == args.name {
+		if item.appconfig.tcpports == [args.port] && item.appconfig.name == args.name {
 			return item
 		}
 	}
 
-	println("[-] instance not found, creating a new one")
+	println("[-] appconfig not found, creating a new one")
 
-	mut i := appsbox.AppInstance {
+	mut i := appsbox.AppConfig {
 		name: args.name
 		tcpports: [args.port]
 	}
 
 	mut myapp := GiteaApp {
 		name: args.name,
-		instance: i
+		appconfig: i
 	}
 
 	factory.apps << myapp
@@ -52,7 +52,7 @@ pub fn (mut myapp GiteaApp) start() ?{
 
 	// start gitea
 
-	mut tcpport := myapp.instance.tcpports[0]
+	mut tcpport := myapp.appconfig.tcpports[0]
 	bin_path := factory.bin_path
 
 	//set a start command for postgresql
@@ -76,10 +76,10 @@ pub fn (mut myapp GiteaApp) install(reset bool)?{
 
 	mut n := builder.node_local()?
 
-	myapp.instance.bins = ["gitea"]
+	myapp.appconfig.bins = ["gitea"]
 
 	// check app is installed, if yes don't need to do anything
-	if reset || ! myapp.instance.exists() {
+	if reset || ! myapp.appconfig.exists() {
 		myapp.build()?
 	}
 }

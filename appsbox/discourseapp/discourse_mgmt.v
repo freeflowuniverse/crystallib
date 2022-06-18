@@ -8,7 +8,7 @@ import appsbox
 pub struct DiscourseApp {
 pub mut:
 	name			string
-	instance		appsbox.AppInstance
+	appconfig		appsbox.AppConfig
 }
 
 pub struct DiscourseAppArgs {
@@ -22,21 +22,21 @@ pub fn get(args DiscourseAppArgs) appsbox.App {
 	mut factory := appsbox.get()
 
 	for item in factory.apps{
-		if item.instance.tcpports == [args.port] && item.instance.name == args.name {
+		if item.appconfig.tcpports == [args.port] && item.appconfig.name == args.name {
 			return item
 		}
 	}
 
-	println("[-] instance not found, creating a new one")
+	println("[-] appconfig not found, creating a new one")
 
-	mut i := appsbox.AppInstance {
+	mut i := appsbox.AppConfig {
 		name: args.name
 		tcpports: [args.port]
 	}
 
 	mut myapp := DiscourseApp {
 		name: args.name,
-		instance: i
+		appconfig: i
 	}
 
 	factory.apps << myapp
@@ -64,10 +64,10 @@ pub fn (mut myapp DiscourseApp) install(reset bool)?{
 
 	mut n := builder.node_local()?
 
-	myapp.instance.bins = ["discourse"]
+	myapp.appconfig.bins = ["discourse"]
 
 	// check app is installed, if yes don't need to do anything
-	// if reset || ! myapp.instance.exists() {
+	// if reset || ! myapp.appconfig.exists() {
 	if reset { // CHECK FOR DOCKER IMAGE
 		myapp.build()?
 	}
