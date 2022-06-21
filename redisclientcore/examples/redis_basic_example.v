@@ -2,7 +2,7 @@ module main
 import redisclientcore
 
 fn redistest() ? {
-	mut redis := redisclientcore.get()?
+	mut redis := redisclientcore.get()
 
 	redis.selectdb(0) ?
 
