@@ -52,6 +52,9 @@ pub fn get(name string) ?&HTTPConnection {
 }
 
 pub fn (mut h HTTPConnection) clone() &HTTPConnection {
+	if h.cache.disable {
+		return h
+	}
 	mut new_conn := h
 	new_conn.redis = redisclientcore.get()
 	return &new_conn
