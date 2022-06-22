@@ -52,6 +52,9 @@ pub fn get(name string) ?&HTTPConnection {
 }
 
 pub fn (mut h HTTPConnection) clone() &HTTPConnection {
+	if h.cache.disable {
+		return h
+	}
 	mut new_conn := h
 	new_conn.redis = redisclient.get_unixsocket_new_default() or { panic(err) }
 	return &new_conn
