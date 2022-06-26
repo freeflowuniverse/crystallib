@@ -1,7 +1,6 @@
 module httpconnection
 
 import net.http
-import redisclient
 import redisclientcore
 
 fn init_factory() HTTPConnections {
