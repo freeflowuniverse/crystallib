@@ -31,9 +31,9 @@ pub mut:
 
 
 //needed to get singleton
-fn init3() &ProcessMap {
+fn init3() ProcessMap {
 	mut f := process.ProcessMap{}	
-	return &f
+	return f
 }
 
 
@@ -45,7 +45,7 @@ const processmap = init3()
 pub fn processmap_get() ?&ProcessMap {
 	mut pm := process.processmap
 	pm.scan()?
-	return pm
+	return &pm
 }
 
 
