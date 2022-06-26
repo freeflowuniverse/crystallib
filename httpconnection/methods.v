@@ -82,7 +82,7 @@ pub fn (mut h HTTPConnection) send(req Request) ?Result {
 			return error(err_message)
 		}
 		result.code = response.status_code
-		result.data = response.text
+		result.data = response.body
 	}
 
 	// 4 - Set in cache if enabled
