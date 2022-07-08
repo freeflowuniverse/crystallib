@@ -1,16 +1,16 @@
 module taiga
 
-import texttools
-import taigaexports
+import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.taigaexports
 import json
 import x.json2
 
 pub fn projects() ?[]Project {
 	// List all Projects
 	mut conn := connection_get()
-	mut exporter := taigaexports.new_from_token(conn.url, conn.auth.auth_token) ?
-	resp := conn.get_json_str('projects', '', true) ?
-	raw_data := json2.raw_decode(resp.replace('\\\\', '')) ?
+	mut exporter := taigaexports.new_from_token(conn.url, conn.auth.auth_token)?
+	resp := conn.get_json_str('projects', '', true)?
+	raw_data := json2.raw_decode(resp.replace('\\\\', ''))?
 	blocks := raw_data.arr()
 	println('[+] Loading $blocks.len projects ...')
 	mut projects := []Project{}
@@ -22,7 +22,7 @@ pub fn projects() ?[]Project {
 		if project != Project{} && !project.name.to_lower().contains('archive') {
 			projects << project
 			conn.project_remember(project)
-			full_project := exporter.export_project(project.id, project.slug) ?
+			full_project := exporter.export_project(project.id, project.slug)?
 			conn.full_project_remember(project.id, full_project)
 		}
 	}
@@ -35,7 +35,7 @@ pub fn (mut h TaigaConnection) project_get_by_name(name string) ?Project {
 	// because we cache we can walk over it
 	mut conn := connection_get()
 	name2 := texttools.name_clean(name)
-	mut all_projects := projects() ?
+	mut all_projects := projects()?
 	for mut proj in all_projects {
 		if proj.name == name2 {
 			// proj.client = h
@@ -59,7 +59,7 @@ pub fn (mut h TaigaConnection) project_exists(name string) bool {
 // create project if it doesnt exist
 pub fn (mut h TaigaConnection) project_create_if_not_exist(name string, description string, projtype ProjectType) ?Project {
 	if h.project_exists(name) {
-		mut project := h.project_get_by_name(name) ?
+		mut project := h.project_get_by_name(name)?
 		project.projtype = projtype
 		return project
 	}
@@ -129,9 +129,9 @@ pub fn project_create(name string, description string, projtype ProjectType) ?Pr
 		else {}
 	}
 	postdata := json.encode_pretty(proj)
-	response := conn.post_json_str('projects', postdata, true) ?
+	response := conn.post_json_str('projects', postdata, true)?
 
-	mut result := project_decode(response) ?
+	mut result := project_decode(response)?
 	result.projtype = projtype
 	conn.project_remember(result)
 	return result

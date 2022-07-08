@@ -91,3 +91,19 @@ This should be in the found block. Since
 
 ```
 
+
+```yaml
+!!dao.deposit currency:usdc amount:10
+!!dao.withdraw currency:usdc amount:10
+
+!!dao.pool.deposit currency:usdc amount:10
+!!dao.pool.withdraw currency:usdc amount:10
+
+!!dao.pool.buy  currency:tft amount:100
+
+!!dao.wallets.info currency:usdc 
+!!dao.wallets.info 
+
+!!dao.exchange.buy currency:tft amount:100 price_max_usd:0.05 deadline:10h
+
+```

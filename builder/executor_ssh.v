@@ -2,7 +2,7 @@ module builder
 
 import os
 import rand
-import process
+import freeflowuniverse.crystallib.process
 
 [heap]
 pub struct ExecutorSSH {
@@ -13,7 +13,7 @@ mut:
 	initialized bool
 	retry       int = 1 // nr of times something will be retried before failing, need to check also what error is, only things which should be retried need to be done
 pub mut:
-	debug 		bool
+	debug bool
 }
 
 fn (mut executor ExecutorSSH) init() ? {
@@ -24,7 +24,7 @@ fn (mut executor ExecutorSSH) init() ? {
 			return error('Could not start ssh-agent, error was: $err')
 		}
 		if executor.sshkey != '' {
-			process.execute_job(cmd: 'ssh-add $executor.sshkey') ?
+			process.execute_job(cmd: 'ssh-add $executor.sshkey')?
 		}
 		mut addr := executor.ipaddr.addr
 		if addr == '' {
@@ -44,46 +44,51 @@ pub fn (mut executor ExecutorSSH) debug_off() {
 	executor.debug = false
 }
 
-
 pub fn (mut executor ExecutorSSH) exec(cmd string) ?string {
 	cmd2 := 'ssh $executor.user@$executor.ipaddr.addr -p $executor.ipaddr.port "$cmd"'
-	if executor.debug{
-		println(" .. execute $executor.ipaddr.addr: $cmd")
+	if executor.debug {
+		println(' .. execute $executor.ipaddr.addr: $cmd')
 	}
-	res := process.execute_job(cmd: cmd2, stdout: true, stdout_log: true) ?
+	res := process.execute_job(cmd: cmd2, stdout: true, stdout_log: true)?
 	return res.output
 }
 
 pub fn (mut executor ExecutorSSH) exec_silent(cmd string) ?string {
 	mut stdout := false
-	if executor.debug{
+	if executor.debug {
 		stdout = true
-		println(" .. execute $executor.ipaddr.addr: $cmd")
+		println(' .. execute $executor.ipaddr.addr: $cmd')
 	}
 	cmd2 := 'ssh $executor.user@$executor.ipaddr.addr -p $executor.ipaddr.port "$cmd"'
-	res := process.execute_job(cmd: cmd2, stdout: stdout) ?
+	res := process.execute_job(cmd: cmd2, stdout: stdout)?
 	return res.output
 }
 
 pub fn (mut executor ExecutorSSH) file_write(path string, text string) ? {
-	if executor.debug{println(" - $executor.ipaddr.addr file write: $path")}
+	if executor.debug {
+		println(' - $executor.ipaddr.addr file write: $path')
+	}
 	local_path := '/tmp/$rand.uuid_v4()'
-	os.write_file(local_path, text) ?
-	executor.upload(local_path, path) ?
-	os.rm(local_path) ?
+	os.write_file(local_path, text)?
+	executor.upload(local_path, path)?
+	os.rm(local_path)?
 }
 
 pub fn (mut executor ExecutorSSH) file_read(path string) ?string {
-	if executor.debug{println(" - $executor.ipaddr.addr file read: $path")}
+	if executor.debug {
+		println(' - $executor.ipaddr.addr file read: $path')
+	}
 	local_path := '/tmp/$rand.uuid_v4()'
-	executor.download(path, local_path) ?
-	r := os.read_file(local_path) ?
+	executor.download(path, local_path)?
+	r := os.read_file(local_path)?
 	os.rm(local_path) or { panic(err) }
 	return r
 }
 
 pub fn (mut executor ExecutorSSH) file_exists(path string) bool {
-	if executor.debug{println(" - $executor.ipaddr.addr file exists: $path")}
+	if executor.debug {
+		println(' - $executor.ipaddr.addr file exists: $path')
+	}
 	output := executor.exec('test -f $path && echo found || echo not found') or { return false }
 	if output == 'found' {
 		return true
@@ -93,47 +98,51 @@ pub fn (mut executor ExecutorSSH) file_exists(path string) bool {
 
 // carefull removes everything
 pub fn (mut executor ExecutorSSH) remove(path string) ? {
-	if executor.debug{println(" - $executor.ipaddr.addr file remove: $path")}
+	if executor.debug {
+		println(' - $executor.ipaddr.addr file remove: $path')
+	}
 	executor.exec('rm -rf $path') or { panic(err) }
 }
 
 // upload from local FS to executor FS
 pub fn (mut executor ExecutorSSH) download(source string, dest string) ? {
 	port := executor.ipaddr.port
-	if executor.debug{println(" - $executor.ipaddr.addr file download: $source")}
+	if executor.debug {
+		println(' - $executor.ipaddr.addr file download: $source')
+	}
 	// FIXME: maybe detection about ipv4/ipv6 is needed for use [] or not
 	process.execute_job(
 		cmd: 'rsync -avHPe "ssh -p$port" $executor.user@[$executor.ipaddr.addr]:$source $dest'
-	) ?
+	)?
 }
 
 // download from executor FS to local FS
 pub fn (mut executor ExecutorSSH) upload(source string, dest string) ? {
 	port := executor.ipaddr.port
-	if executor.debug{println(" - $executor.ipaddr.addr file upload: $source -> $dest")}
+	if executor.debug {
+		println(' - $executor.ipaddr.addr file upload: $source -> $dest')
+	}
 	// FIXME: maybe detection about ipv4/ipv6 is needed for use [] or not
 	process.execute_job(
 		cmd: 'rsync -avHPe "ssh -p$port" $source -e ssh $executor.user@[$executor.ipaddr.addr]:$dest'
-	) ?
+	)?
 }
 
 // get environment variables from the executor
 pub fn (mut executor ExecutorSSH) environ_get() ?map[string]string {
-	env := executor.exec('env') or {
-		return error('can not get environment')
-	}
+	env := executor.exec('env') or { return error('can not get environment') }
 
 	if executor.debug {
-		println(" - $executor.ipaddr.addr env get")
+		println(' - $executor.ipaddr.addr env get')
 	}
 
 	mut res := map[string]string{}
-	if env.contains("\n") {
+	if env.contains('\n') {
 		for line in env.split('\n') {
-			if line.contains("="){
+			if line.contains('=') {
 				splitted := line.split('=')
-				key := splitted[0].trim(" ")
-				val := splitted[1].trim(" ")
+				key := splitted[0].trim(' ')
+				val := splitted[1].trim(' ')
 				res[key] = val
 			}
 		}
@@ -162,10 +171,10 @@ pub fn (mut executor ExecutorSSH) info() map[string]string {
 
 pub fn (mut executor ExecutorSSH) shell(cmd string) ? {
 	mut p := '$executor.ipaddr.port'
-	if cmd.len>0{
-		panic("TODO IMPLEMENT SHELL EXEC OVER SSH")
+	if cmd.len > 0 {
+		panic('TODO IMPLEMENT SHELL EXEC OVER SSH')
 	}
-	os.execvp('ssh', ['$executor.user@$executor.ipaddr.addr', '-p $p']) ?
+	os.execvp('ssh', ['$executor.user@$executor.ipaddr.addr', '-p $p'])?
 }
 
 pub fn (mut executor ExecutorSSH) list(path string) ?[]string {
@@ -173,7 +182,7 @@ pub fn (mut executor ExecutorSSH) list(path string) ?[]string {
 		panic('Dir Not found')
 	}
 	mut res := []string{}
-	output := executor.exec('ls $path') ?
+	output := executor.exec('ls $path')?
 	for line in output.split('\n') {
 		res << line
 	}

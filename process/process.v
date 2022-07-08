@@ -2,19 +2,19 @@ module process
 
 import os
 import time
-import texttools
+import freeflowuniverse.crystallib.texttools
 import io.util
 
 pub struct Command {
 pub mut:
 	cmd        string
-	timeout    int = 1200
+	timeout    int  = 1200
 	stdout     bool = true
 	stdout_log bool
 	debug      bool
 	die        bool = true
 	args       map[string]string
-	node       string //not implemented
+	node       string // not implemented
 }
 
 pub struct Job {
@@ -66,13 +66,12 @@ pub fn execute_job(cmd Command) ?Job {
 	job.cmd = cmd
 	job.start = time.now()
 	mut cleanuppath := ''
-	cleanuppath, job.args = cmd_to_args(cmd_obj.cmd) ?
+	cleanuppath, job.args = cmd_to_args(cmd_obj.cmd)?
 
 	if cmd_obj.debug {
 		cmd_obj.stdout = true
 		println('execute: $job')
 	}
-
 
 	mut p := os.new_process(job.args[0])
 	p.set_redirect_stdio()
@@ -129,7 +128,7 @@ pub fn execute_job(cmd Command) ?Job {
 // write temp file and return path
 pub fn temp_write(text string) ?string {
 	mut tmpdir := util.temp_dir()?
-	if "TMPDIR" in  os.environ(){
+	if 'TMPDIR' in os.environ() {
 		tmpdir = os.environ()['TMPDIR'] or {
 			panic('cannot find TMPDIR in os.environment variables.')
 		}
@@ -146,13 +145,13 @@ pub fn temp_write(text string) ?string {
 		if !os.exists(tmppath) {
 			break
 		}
-		//TODO: would be better to remove older files, e.g. if older than 1 day, remove
+		// TODO: would be better to remove older files, e.g. if older than 1 day, remove
 		if i > 99 {
 			os.rmdir_all('$tmpdir/execscripts')?
 			return temp_write(text)
 		}
 	}
-	os.write_file(tmppath, text) ?
+	os.write_file(tmppath, text)?
 	return tmppath
 }
 
@@ -223,12 +222,12 @@ pub fn cmd_to_args(cmd string) ?(string, []string) {
 }
 
 pub fn execute_silent(cmd string) ?string {
-	job := execute_job(cmd: cmd, stdout: false) ?
+	job := execute_job(cmd: cmd, stdout: false)?
 	return job.output
 }
 
 pub fn execute_stdout(cmd string) ?string {
-	job := execute_job(cmd: cmd, stdout: true) ?
+	job := execute_job(cmd: cmd, stdout: true)?
 	return job.output
 }
 
@@ -236,9 +235,9 @@ pub fn execute_interactive(cmd string) ? {
 	mut cleanuppath := ''
 	mut args := []string{}
 
-	cleanuppath, args = cmd_to_args(cmd) ?
+	cleanuppath, args = cmd_to_args(cmd)?
 
-	os.execvp(args[0], args[1..args.len]) ?
+	os.execvp(args[0], args[1..args.len])?
 
 	if cleanuppath != '' {
 		os.rm(cleanuppath) or {}

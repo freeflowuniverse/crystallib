@@ -1,6 +1,6 @@
 module gittools
 
-import path
+import freeflowuniverse.crystallib.path
 
 pub struct RepoGetFromUrlArgs {
 mut:
@@ -19,11 +19,7 @@ mut:
 // 	reset bool //this means will pull and reset all changes
 // }
 pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs) ?&GitRepo {
-	
-
-	mut addr := addr_get_from_url(args.url) or {
-		return error('cannot get addr from url:$err')
-	}
+	mut addr := addr_get_from_url(args.url) or { return error('cannot get addr from url:$err') }
 
 	if addr.branch != '' && args.branch != '' && addr.branch != args.branch {
 		return error('conflict in branch names.\naddr:\n$addr\nargs:\n$args')
@@ -31,17 +27,17 @@ pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs
 	if addr.branch == '' {
 		addr.branch = args.branch
 	}
-	return gitstructure.repo_get_from_addr(addr,args)
+	return gitstructure.repo_get_from_addr(addr, args)
 }
 
-pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr,args RepoGetFromUrlArgs) ?&GitRepo {
+pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr, args RepoGetFromUrlArgs) ?&GitRepo {
 	args2 := RepoGetArgs{
 		name: addr.name
 		account: addr.account
 	}
 	if !gitstructure.repo_exists(args2) {
 		// repo does not exist yet
-		println (" - repo does not exist yet")
+		println(' - repo does not exist yet')
 		gitstructure.repos << GitRepo{
 			addr: addr
 			id: gitstructure.repos.len
@@ -49,37 +45,35 @@ pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr,args Repo
 		mut r0 := gitstructure.repo_get(args2) or {
 			// means could not pull need to remove the repo from the list again
 			gitstructure.repos.delete_last()
-			return error('Could not find repo ${args2.account}.${args2.name} \nError:$err')
+			return error('Could not find repo ${args2.account}.$args2.name \nError:$err')
 		}
 		// println (" GIT REPO GET URL: PULL:$args.pull, RESET: $args.reset\n$r0.addr")
-		r0.check(args.pull, args.reset) ?
+		r0.check(args.pull, args.reset)?
 		return r0
 	} else {
 		mut r := gitstructure.repo_get(args2) or { return error('cannot load git $args.url\n$err') }
 		r.addr = addr
 		// println (" GIT REPO GET PULL:$args.pull, RESET: $args.reset")
-		r.check(args.pull, args.reset) ?
+		r.check(args.pull, args.reset)?
 		return r
 	}
 }
 
-//will return repo starting from a path
-//if .git not in the path will go for parent untill .git found
-pub fn (mut gitstructure GitStructure) repo_get_from_path(p string,pull bool, reset bool) ?&GitRepo {
-	
+// will return repo starting from a path
+// if .git not in the path will go for parent untill .git found
+pub fn (mut gitstructure GitStructure) repo_get_from_path(p string, pull bool, reset bool) ?&GitRepo {
 	mut pathobj := path.get(p)
-	path2 := pathobj.parent_find(".git")?
+	path2 := pathobj.parent_find('.git')?
 
-	mut addr := addr_get_from_path(path2.path) or {
-		return error('cannot get addr from path:$err')
-	}
+	mut addr := addr_get_from_path(path2.path) or { return error('cannot get addr from path:$err') }
 	// println(" - pull:$pull reset:$reset")
-	args := RepoGetFromUrlArgs{pull:pull, reset:reset}
+	args := RepoGetFromUrlArgs{
+		pull: pull
+		reset: reset
+	}
 	// println(addr)
-	return gitstructure.repo_get_from_addr(addr,args)
+	return gitstructure.repo_get_from_addr(addr, args)
 }
-
-
 
 pub struct RepoGetArgs {
 mut:
@@ -98,8 +92,6 @@ mut:
 // }
 // THIS FUNCTION DOES NOT EXECUTE THE CHECK !!!
 pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) ?&GitRepo {
-	
-
 	mut res_ids := []int{}
 	for r in gitstructure.repos {
 		if r.addr.name == args.name {
@@ -112,8 +104,8 @@ pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) ?&GitRepo {
 		return &gitstructure.repos[res_ids[0]]
 	}
 	if res_ids.len > 1 {
-		for idd in res_ids{
-			println(" --- duplicate: " + gitstructure.repos[idd].path)
+		for idd in res_ids {
+			println(' --- duplicate: ' + gitstructure.repos[idd].path)
 		}
 		return error("Found too many repo's for account:'$args.account' name:'$args.name'")
 	}

@@ -1,32 +1,31 @@
 module docker
-import builder
 
-//https://docs.docker.com/reference/
+import freeflowuniverse.crystallib.builder
+
+// https://docs.docker.com/reference/
 
 [heap]
 struct DockerEngine {
-	name			string
-pub mut:	
-	node            string = "localhost"
+	name string
+pub mut:
+	node            string = 'localhost'
 	sshkeys_allowed []string // all keys here have access over ssh into the machine, when ssh enabled
-	images []&DockerImage
-	containers map[string]&DockerContainer
+	images          []&DockerImage
+	containers      map[string]&DockerContainer
 }
 
-
-//check docker has been installed & enabled on node
-pub fn (mut e DockerEngine) init()? {
+// check docker has been installed & enabled on node
+pub fn (mut e DockerEngine) init() ? {
 	mut node := builder.node_get(e.node)?
-	node.install_docker(reset:false)?
+	node.install_docker(reset: false)?
 	e.load()?
 }
 
-//reload the state from system
-pub fn (mut e DockerEngine) load()? {
+// reload the state from system
+pub fn (mut e DockerEngine) load() ? {
 	e.images_load()?
 	e.containers_load()?
 }
-
 
 // return list of containers
 // pub enum DockerContainerStatus {
@@ -58,44 +57,46 @@ pub fn (mut e DockerEngine) load()? {
 pub fn (mut e DockerEngine) containers_load() ? {
 	mut node := builder.node_get(e.node)?
 	mut lines := node.executor.exec_silent("docker ps -a --no-trunc --format '{{.ID}}|{{.Names}}|{{.Image}}|{{.Command}}|{{.CreatedAt}}|{{.Ports}}|{{.State}}|{{.Size}}|{{.Mounts}}|{{.Networks}}|{{.Labels}}'")?
-	
-	for line in lines.split_into_lines(){
-		fields := line.split("|").map(clear_str)
+
+	for line in lines.split_into_lines() {
+		fields := line.split('|').map(clear_str)
 		println(fields)
 		id := fields[0]
-		if ! (id in e.containers){
-			mut dc := DockerContainer{image:&DockerImage{}}			
+		if id !in e.containers {
+			mut dc := DockerContainer{
+				image: &DockerImage{}
+			}
 			e.containers[id] = &dc
 		}
-		mut	container := e.containers[id]
+		mut container := e.containers[id]
 		container.id = id
 		container.name = fields[1]
 		container.image = e.image_get_from_name(fields[2])
 		container.command = fields[3]
-		container.created =  parse_time(fields[4])?
+		container.created = parse_time(fields[4])?
 		container.ports = parse_ports(fields[5])?
 		container.status = parse_container_state(fields[6])?
 		container.memsize = parse_size_mb(fields[7])?
 		// container.mounts = parse_mounts(fields[8])?
 		container.networks = parse_networks(fields[9])?
 		container.labels = parse_labels(fields[10])?
-		container.ssh_enabled =contains_ssh_port(container.ports)
+		container.ssh_enabled = contains_ssh_port(container.ports)
 		container.node = node.name
 		container.engine = e.name
 	}
 }
 
 pub fn (mut e DockerEngine) containers_get() ?[]&DockerContainer {
-	mut res:=[]&DockerContainer{}
-	for _,container in e.containers{
-		res<<container
+	mut res := []&DockerContainer{}
+	for _, container in e.containers {
+		res << container
 	}
 	return res
 }
 
-//get container from memory
+// get container from memory
 pub fn (mut e DockerEngine) container_get(name_or_id string) ?&DockerContainer {
-	for _,c in e.containers {
+	for _, c in e.containers {
 		if c.name == name_or_id || c.id == name_or_id {
 			return c
 		}
@@ -103,28 +104,26 @@ pub fn (mut e DockerEngine) container_get(name_or_id string) ?&DockerContainer {
 	return error('Cannot find container with name $name_or_id')
 }
 
-pub fn (mut e DockerEngine) container_delete(name_or_id string)? {
-	for _,mut c in e.containers {
+pub fn (mut e DockerEngine) container_delete(name_or_id string) ? {
+	for _, mut c in e.containers {
 		if c.name == name_or_id || c.id == name_or_id {
 			c.delete(true)?
 		}
-	}	
+	}
 }
-
-
 
 // return list of images
 pub fn (mut e DockerEngine) images_load() ? {
 	mut node := builder.node_get(e.node)?
 	mut lines := node.executor.exec_silent("docker images --format '{{.ID}}|{{.Repository}}|{{.Tag}}|{{.Digest}}|{{.Size}}|{{.CreatedAt}}'")?
-	for line in lines.split_into_lines(){
-		fields := line.split("|").map(clear_str)
-		mut obj := e.image_get(fields[1],fields[2])
+	for line in lines.split_into_lines() {
+		fields := line.split('|').map(clear_str)
+		mut obj := e.image_get(fields[1], fields[2])
 		obj.id = fields[0]
 		obj.digest = parse_digest(fields[3])?
 		obj.size = parse_size_mb(fields[4])?
 		obj.created = parse_time(fields[5])?
-		obj.node= node.name
+		obj.node = node.name
 	}
 }
 
@@ -133,47 +132,50 @@ pub fn (mut e DockerEngine) image_get_from_id(id string) ?&DockerImage {
 		if i.id == id {
 			return i
 		}
-	}	
+	}
 	return error('Cannot find image with id: $id')
 }
 
-//name is e.g. docker/getting-started:latest
+// name is e.g. docker/getting-started:latest
 pub fn (mut e DockerEngine) image_get_from_name(name string) &DockerImage {
-	if name.contains(":"){
-		splitted := name.split(":").map(clear_str)
+	if name.contains(':') {
+		splitted := name.split(':').map(clear_str)
 		repo := splitted[0]
-		tag := splitted[1]		
-		return e.image_get(repo,tag)
-	}else{
-		return e.image_get(name,"")
+		tag := splitted[1]
+		return e.image_get(repo, tag)
+	} else {
+		return e.image_get(name, '')
 	}
 }
 
-
-//find image based on repo and optional tag
+// find image based on repo and optional tag
 // if not found will initialize the image object and add to collection
 pub fn (mut e DockerEngine) image_get(repo string, tag string) &DockerImage {
 	for i in e.images {
-		if i.repo == repo && i.tag == tag{
+		if i.repo == repo && i.tag == tag {
 			return i
 		}
-		if i.repo == repo && i.tag == "latest" && tag==""{
+		if i.repo == repo && i.tag == 'latest' && tag == '' {
 			return i
-		}		
-		if i.repo == repo && i.tag == "" && tag=="latest"{
+		}
+		if i.repo == repo && i.tag == '' && tag == 'latest' {
 			return i
-		}		
+		}
 	}
 	mut di := DockerImage{}
-	if tag.len>0{
-		di = DockerImage{repo:repo,tag:tag}
-	}else{
-		di = DockerImage{repo:repo}
+	if tag.len > 0 {
+		di = DockerImage{
+			repo: repo
+			tag: tag
+		}
+	} else {
+		di = DockerImage{
+			repo: repo
+		}
 	}
 	e.images << &di
 	return &di
 }
-
 
 // import a container into an image, run docker container with it
 // image_repo examples ['myimage', 'myimage:latest']
@@ -191,11 +193,12 @@ pub fn (mut e DockerEngine) container_import(path string, mut args DockerContain
 	return e.container_create(args)
 }
 
-
 // reset all images & containers, CAREFUL!
-pub fn (mut e DockerEngine) reset_all()? {
+pub fn (mut e DockerEngine) reset_all() ? {
 	mut node := builder.node_get(e.node)?
-	node.executor.exec_silent('docker container rm -f $(docker container ls -aq) 2>&1 && echo') or {""}
+	node.executor.exec_silent('docker container rm -f $(docker container ls -aq) 2>&1 && echo') or {
+		''
+	}
 	node.executor.exec_silent('docker image prune -a -f') or { panic(err) }
 	node.executor.exec_silent('docker builder prune -a -f') or { panic(err) }
 	e.images = []&DockerImage{}
@@ -203,13 +206,12 @@ pub fn (mut e DockerEngine) reset_all()? {
 	e.load()?
 }
 
-
 // Get free port
 pub fn (mut e DockerEngine) get_free_port() ?int {
 	mut used_ports := []int{}
 	mut range := []int{}
 
-	mut cl:=e.containers_get()?
+	mut cl := e.containers_get()?
 
 	for c in cl {
 		for p in c.forwarded_ports {
@@ -218,7 +220,7 @@ pub fn (mut e DockerEngine) get_free_port() ?int {
 	}
 
 	for i in 20000 .. 40000 {
-		if !(i in used_ports) {
+		if i !in used_ports {
 			range << i
 		}
 	}

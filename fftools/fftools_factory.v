@@ -1,10 +1,10 @@
 module fftools
 
-import builder
-import sshagent
+import freeflowuniverse.crystallib.builder
+import freeflowuniverse.crystallib.sshagent
 import os
 
-enum FFToolsState{
+enum FFToolsState {
 	init
 	ok
 	error
@@ -13,55 +13,58 @@ enum FFToolsState{
 [heap]
 pub struct FFTools {
 pub mut:
-	vscode_extensions_dir		string	
-	github_username				string
-	state 						FFToolsState
+	vscode_extensions_dir string
+	github_username       string
+	state                 FFToolsState
 }
 
-
-//needed to get singleton
+// needed to get singleton
 fn init_singleton() &FFTools {
-	mut f := fftools.FFTools{}	
+	mut f := FFTools{}
 	return &f
 }
 
-
-//singleton creation
+// singleton creation
 const factory = init_singleton()
 
-fn vscode_install()?{
+fn vscode_install() ? {
 	mut n := builder.node_local()?
 
-	//check code is installed, if yes don't need to do anything
-	if ! n.cmd_exists("code"){
+	// check code is installed, if yes don't need to do anything
+	if !n.cmd_exists('code') {
+		mut url := ''
 
-		
-		mut url:=""
-
-		if n.platform == builder.PlatformType.osx{
-			if n.cputype == builder.CPUType.arm{
-				url = "https://code.visualstudio.com/sha/download?build=stable&os=darwin-arm64"
-			}else{
-				url = "https://code.visualstudio.com/sha/download?build=stable&os=darwin"
+		if n.platform == builder.PlatformType.osx {
+			if n.cputype == builder.CPUType.arm {
+				url = 'https://code.visualstudio.com/sha/download?build=stable&os=darwin-arm64'
+			} else {
+				url = 'https://code.visualstudio.com/sha/download?build=stable&os=darwin'
 			}
 		}
-		mut cmd := $tmpl("install_vscode.sh")
+		mut cmd := $tmpl('install_vscode.sh')
 		println(cmd)
 
-		n.exec(cmd:cmd, period:0, reset:false, description:"install vscode",stdout:true,checkkey:"vscodeinstall") or {
-			return error("cannot install vscode\n"+err.msg()+"\noriginal cmd:\n${cmd}")
-		}
-	
+		n.exec(
+			cmd: cmd
+			period: 0
+			reset: false
+			description: 'install vscode'
+			stdout: true
+			checkkey: 'vscodeinstall'
+		) or { return error('cannot install vscode\n' + err.msg() + '\noriginal cmd:\n$cmd') }
 	}
 
-	mut cmd := $tmpl("plugins_vscode.sh")
+	mut cmd := $tmpl('plugins_vscode.sh')
 	println(cmd)
 
-	n.exec(cmd:cmd, period:0, reset:false, description:"install vscode",stdout:true,checkkey:"vscodeinstall") or {
-		return error("cannot install vscode\n"+err.msg()+"\noriginal cmd:\n${cmd}")
-	}
-
-
+	n.exec(
+		cmd: cmd
+		period: 0
+		reset: false
+		description: 'install vscode'
+		stdout: true
+		checkkey: 'vscodeinstall'
+	) or { return error('cannot install vscode\n' + err.msg() + '\noriginal cmd:\n$cmd') }
 
 	// #have to do this workaround on osx, can't do infile -i
 	// sed '/Visual Studio/d' ~/.zprofile > /tmp/1 && mv /tmp/1 ~/.zprofile
@@ -79,26 +82,24 @@ fn vscode_install()?{
 
 	// # export PATH="\$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"	
 
-	println(" - visual studio code installed OK")
-
+	println(' - visual studio code installed OK')
 }
 
-fn vscode_uninstall(){
+fn vscode_uninstall() {
 	// "${os.env("HOME")}/Library/Application Support/Code"
 	// "~/.vscode"
-	//TODO
+	// TODO
 
 	//$HOME/.config/Code and ~/.vscode.
 }
 
-//install fftools (based on ms visual studio code)
+// install fftools (based on ms visual studio code)
 pub fn install() ? {
 	f := fftools.factory
-	if f.state == .init{
+	if f.state == .init {
 		vscode_install()?
-		//make sure we have ssh key initialized
+		// make sure we have ssh key initialized
 		sshkey_path := sshagent.load_interactive()?
 		println(sshkey_path)
 	}
 }
-

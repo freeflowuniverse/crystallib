@@ -1,5 +1,4 @@
-
-import twinclient
+import freeflowuniverse.crystallib.twinclient
 
 pub struct MachinesTestData {
 pub mut:
@@ -46,7 +45,7 @@ pub fn setup_machines_test() (twinclient.Client, MachinesTestData) {
 	}
 
 	data.new_machine = twinclient.AddMachine{
-		deployment_name: "testdep"
+		deployment_name: 'testdep'
 		name: 'm2'
 		node_id: 4
 		public_ip: false
@@ -62,7 +61,6 @@ pub fn setup_machines_test() (twinclient.Client, MachinesTestData) {
 	}
 	return client, data
 }
-
 
 pub fn test_deploy_vm() {
 	mut client, data := setup_machines_test()

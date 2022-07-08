@@ -3,18 +3,18 @@ module github
 import x.json2
 import json
 import net.http
-import redisclient
-import crystaljson
+import freeflowuniverse.crystallib.redisclient
+import freeflowuniverse.crystallib.crystaljson
 import os
 
 [heap]
 struct GithubConnection {
 mut:
-	url			  string = "https://api.github.com"
+	url           string = 'https://api.github.com'
 	redis         &redisclient.Redis
-	auth_token    string 
+	auth_token    string
 	cache_timeout int
-// pub mut:
+	// pub mut:
 	// projects map[int]&Project
 }
 
@@ -35,14 +35,13 @@ pub fn connection_get() &GithubConnection {
 	return &github.connection
 }
 
-
 pub fn new(cache_timeout int) ?&GithubConnection {
 	mut conn := connection_get()
 
-	if ! ("GITHUBKEY" in os.environ()) {
+	if 'GITHUBKEY' !in os.environ() {
 		return error("make sure 'export GITHUBKEY=...' has been done.")
-	}else{
-		conn.auth_token = os.environ()["GITHUBKEY"]
+	} else {
+		conn.auth_token = os.environ()['GITHUBKEY']
 	}
 
 	// conn.auth(url, login, passwd) or {
@@ -67,20 +66,19 @@ pub fn (mut h GithubConnection) get_json_str(prefix string, getdata string, cach
 	mut result := h.cache_get(prefix, getdata, cache)
 	if result == '' {
 		url := '$h.url/$prefix'
-		mut req := http.new_request(http.Method.get, url, getdata) ?
+		mut req := http.new_request(http.Method.get, url, getdata)?
 		req.header = h.header()
-		req.add_custom_header('x-disable-pagination', 'True') ?
-		res := req.do() ?
+		req.add_custom_header('x-disable-pagination', 'True')?
+		res := req.do()?
 		if res.status_code == 200 {
 			result = res.text
 		} else {
 			return error('could not get: $url\n$res')
 		}
-		h.cache_set(prefix, getdata, result, cache) ?
+		h.cache_set(prefix, getdata, result, cache)?
 	}
 	return result
 }
-
 
 fn (mut h GithubConnection) header() http.Header {
 	/*
@@ -167,7 +165,6 @@ fn (mut h GithubConnection) header() http.Header {
 // 	mut result := h.get_json_str(prefix, getdata, cache) ?
 // 	return crystaljson.json_list(result, false)
 // }
-
 
 // fn (mut h GithubConnection) edit_json(prefix string, id int, data string) ?string {
 // 	/*

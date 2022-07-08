@@ -1,4 +1,4 @@
-import twinclient
+import freeflowuniverse.crystallib.twinclient
 
 struct GatewayTestData {
 	fqdn twinclient.GatewayFQDN
@@ -29,7 +29,6 @@ fn setup_gateway_test() (twinclient.Client, GatewayTestData) {
 	}
 	return client, data
 }
-
 
 pub fn test_deploy_gateway_fqdn() {
 	mut client, data := setup_gateway_test()

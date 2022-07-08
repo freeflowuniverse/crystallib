@@ -1,6 +1,6 @@
 module redisclient
 
-import resp2
+import freeflowuniverse.crystallib.resp2
 import time
 
 pub fn (mut r Redis) ping() ?string {
@@ -51,7 +51,7 @@ pub fn (mut r Redis) get(key string) ?string {
 }
 
 pub fn (mut r Redis) exists(key string) ?bool {
-	r2 := r.send_expect_int(['EXISTS', key]) ?
+	r2 := r.send_expect_int(['EXISTS', key])?
 	return r2 == 1
 }
 
@@ -60,7 +60,7 @@ pub fn (mut r Redis) del(key string) ?int {
 }
 
 pub fn (mut r Redis) hset(key string, skey string, value string) ? {
-	r.send_expect_int(['HSET', key, skey, value]) ?
+	r.send_expect_int(['HSET', key, skey, value])?
 }
 
 pub fn (mut r Redis) hget(key string, skey string) ?string {
@@ -98,7 +98,7 @@ pub fn (mut r Redis) decrby(key string, decrement int) ?int {
 }
 
 pub fn (mut r Redis) incrbyfloat(key string, increment f64) ?f64 {
-	res := r.send_expect_str(['INCRBYFLOAT', key, increment.str()]) ?
+	res := r.send_expect_str(['INCRBYFLOAT', key, increment.str()])?
 	count := res.f64()
 	return count
 }
@@ -119,7 +119,7 @@ pub fn (mut r Redis) rpush(key string, element string) ?int {
 	return r.send_expect_int(['RPUSH', key, element])
 }
 
-pub fn (mut r Redis) lrange(key string, start int, end int) ?[]resp2.RValue{
+pub fn (mut r Redis) lrange(key string, start int, end int) ?[]resp2.RValue {
 	return r.send_expect_list(['LRANGE', key, start.str(), end.str()])
 }
 
@@ -154,7 +154,7 @@ pub fn (mut r Redis) getrange(key string, start int, end int) ?string {
 pub fn (mut r Redis) keys(pattern string) ?[]string {
 	response := r.send_expect_list(['KEYS', pattern])?
 	mut result := []string{}
-	for item in response{
+	for item in response {
 		result << resp2.get_redis_value(item)
 	}
 	return result
@@ -233,7 +233,7 @@ pub fn (mut r Redis) selectdb(database int) ? {
 }
 
 pub fn (mut r Redis) scan(cursor int) ?(string, []string) {
-	res := r.send_expect_list(['SCAN', cursor.str()]) ?
+	res := r.send_expect_list(['SCAN', cursor.str()])?
 	if res[0] !is resp2.RBString {
 		return error('Redis SCAN wrong response type (cursor)')
 	}

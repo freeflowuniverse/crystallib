@@ -1,9 +1,9 @@
 module redisclient
 
-import resp2
+import freeflowuniverse.crystallib.resp2
 
 pub fn (mut r Redis) get_response() ?resp2.RValue {
-	line := r.read_line() ?
+	line := r.read_line()?
 
 	if line.starts_with('-') {
 		return resp2.RError{
@@ -28,7 +28,7 @@ pub fn (mut r Redis) get_response() ?resp2.RValue {
 		if bulkstring_size == 0 {
 			// extract final \r\n and not reading
 			// any payload
-			r.read_line() ?
+			r.read_line()?
 			return resp2.RString{
 				value: ''
 			}
@@ -36,7 +36,7 @@ pub fn (mut r Redis) get_response() ?resp2.RValue {
 		// read payload
 		buffer := r.read(bulkstring_size) or { panic(err) }
 		// extract final \r\n
-		r.read_line() ?
+		r.read_line()?
 		// println("readline result:'$buffer.bytestr()'")
 		return resp2.RBString{
 			value: buffer
@@ -51,7 +51,7 @@ pub fn (mut r Redis) get_response() ?resp2.RValue {
 
 		// proceed each entries, they can be of any types
 		for _ in 0 .. items {
-			value := r.get_response() ?
+			value := r.get_response()?
 			arr.values << value
 		}
 
@@ -62,7 +62,7 @@ pub fn (mut r Redis) get_response() ?resp2.RValue {
 }
 
 pub fn (mut r Redis) get_int() ?int {
-	line := r.read_line() ?
+	line := r.read_line()?
 	if line.starts_with(':') {
 		return line[1..].int()
 	} else {
@@ -71,14 +71,14 @@ pub fn (mut r Redis) get_int() ?int {
 }
 
 pub fn (mut r Redis) get_list_int() ?[]int {
-	line := r.read_line() ?
+	line := r.read_line()?
 	mut res := []int{}
 
 	if line.starts_with('*') {
 		items := line[1..].int()
 		// proceed each entries, they can be of any types
 		for _ in 0 .. items {
-			value := r.get_int() ?
+			value := r.get_int()?
 			res << value
 		}
 		return res
@@ -88,14 +88,14 @@ pub fn (mut r Redis) get_list_int() ?[]int {
 }
 
 pub fn (mut r Redis) get_list_str() ?[]string {
-	line := r.read_line() ?
+	line := r.read_line()?
 	mut res := []string{}
 
 	if line.starts_with('*') {
 		items := line[1..].int()
 		// proceed each entries, they can be of any types
 		for _ in 0 .. items {
-			value := r.get_string() ?
+			value := r.get_string()?
 			res << value
 		}
 		return res
@@ -105,13 +105,13 @@ pub fn (mut r Redis) get_list_str() ?[]string {
 }
 
 pub fn (mut r Redis) get_string() ?string {
-	line := r.read_line() ?
+	line := r.read_line()?
 	if line.starts_with('+') {
 		// println("getstring:'${line[1..]}'")
 		return line[1..]
 	}
 	if line.starts_with('$') {
-		r2 := r.get_bytes_from_line(line) ?
+		r2 := r.get_bytes_from_line(line)?
 		return r2.bytestr()
 	} else {
 		return error("Did not find string, did find:'$line'")
@@ -119,12 +119,12 @@ pub fn (mut r Redis) get_string() ?string {
 }
 
 pub fn (mut r Redis) get_string_nil() ?string {
-	r2 := r.get_bytes_nil() ?
+	r2 := r.get_bytes_nil()?
 	return r2.bytestr()
 }
 
 pub fn (mut r Redis) get_bytes_nil() ?[]u8 {
-	line := r.read_line() ?
+	line := r.read_line()?
 	if line.starts_with('+') {
 		return line[1..].bytes()
 	}
@@ -136,12 +136,12 @@ pub fn (mut r Redis) get_bytes_nil() ?[]u8 {
 }
 
 pub fn (mut r Redis) get_bool() ?bool {
-	i := r.get_int() ?
+	i := r.get_int()?
 	return i == 1
 }
 
 pub fn (mut r Redis) get_bytes() ?[]u8 {
-	line := r.read_line() ?
+	line := r.read_line()?
 	if line.starts_with('$') {
 		return r.get_bytes_from_line(line)
 	} else {
@@ -156,12 +156,12 @@ fn (mut r Redis) get_bytes_from_line(line string) ?[]u8 {
 	}
 	if bulkstring_size == 0 {
 		// extract final \r\n, there is no payload
-		r.read_line() ?
+		r.read_line()?
 		return []
 	}
 	// read payload
-	buffer := r.read(bulkstring_size) ?
+	buffer := r.read(bulkstring_size)?
 	// extract final \r\n
-	r.read_line() ?
+	r.read_line()?
 	return buffer
 }

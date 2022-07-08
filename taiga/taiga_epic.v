@@ -1,8 +1,8 @@
 module taiga
 
 // Epics will be implemented later
-import crystaljson
-import texttools
+import freeflowuniverse.crystallib.crystaljson
+import freeflowuniverse.crystallib.texttools
 import json
 import x.json2 { raw_decode }
 import time
@@ -10,8 +10,8 @@ import math { min }
 
 pub fn epics() ? {
 	mut conn := connection_get()
-	resp := conn.get_json_str('epics', '', true) ?
-	raw_data := raw_decode(resp.replace('\\\\', '')) ?
+	resp := conn.get_json_str('epics', '', true)?
+	raw_data := raw_decode(resp.replace('\\\\', ''))?
 	blocks := raw_data.arr()
 	println('[+] Loading $blocks.len epics ...')
 	for e in blocks {
@@ -33,29 +33,29 @@ pub fn epic_create(subject string, project_id int) ?Epic {
 		project: project_id
 	}
 	postdata := json.encode_pretty(epic)
-	response := conn.post_json_str('epics', postdata, true) ?
-	mut result := epic_decode(response) ?
+	response := conn.post_json_str('epics', postdata, true)?
+	mut result := epic_decode(response)?
 	conn.epic_remember(result)
 	return result
 }
 
 fn epic_get(id int) ?Epic {
 	mut conn := connection_get()
-	response := conn.get_json_str('epics/$id', '', true) ?
-	mut result := epic_decode(response) ?
+	response := conn.get_json_str('epics/$id', '', true)?
+	mut result := epic_decode(response)?
 	conn.epic_remember(result)
 	return result
 }
 
 pub fn epic_delete(id int) ?bool {
 	mut conn := connection_get()
-	response := conn.delete('epics', id) ?
+	response := conn.delete('epics', id)?
 	conn.epic_forget(id)
 	return response
 }
 
 fn epic_decode(data string) ?Epic {
-	data_as_map := crystaljson.json_dict_filter_any(data, false, [], []) ?
+	data_as_map := crystaljson.json_dict_filter_any(data, false, [], [])?
 
 	mut epic := Epic{
 		description: data_as_map['description.'].str()

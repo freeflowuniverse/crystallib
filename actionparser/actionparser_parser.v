@@ -1,7 +1,7 @@
 module actionparser
 
 import os
-import texttools
+import freeflowuniverse.crystallib.texttools
 
 enum ParseBlockStatus {
 	start
@@ -32,25 +32,19 @@ mut:
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 
-fn (mut parser ActionsParser) file_parse(path string)? {
+fn (mut parser ActionsParser) file_parse(path string) ? {
 	if !os.exists(path) {
 		return error("path: '$path' does not exist, cannot parse.")
 	}
 	content := os.read_file(path) or { panic('Failed to load file $path') }
 
 	parser.content_parse(content)?
-
 }
 
-
-fn (mut parser ActionsParser) content_parse(content string)? {
-
-	blocks := parse_into_blocks(content) ?
+fn (mut parser ActionsParser) content_parse(content string) ? {
+	blocks := parse_into_blocks(content)?
 	parser.parse_actions(blocks)
-
 }
-
-
 
 // each block is name of action and the full content behind
 fn parse_into_blocks(text string) ?Blocks {

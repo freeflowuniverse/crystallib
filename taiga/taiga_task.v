@@ -6,8 +6,8 @@ import json
 
 pub fn tasks() ? {
 	mut conn := connection_get()
-	resp := conn.get_json_str('tasks', '', true) ?
-	raw_data := raw_decode(resp.replace('\\\\', '')) ?
+	resp := conn.get_json_str('tasks', '', true)?
+	raw_data := raw_decode(resp.replace('\\\\', ''))?
 	blocks := raw_data.arr()
 	println('[+] Loading $blocks.len tasks ...')
 	for t in blocks {
@@ -25,7 +25,7 @@ pub fn tasks() ? {
 
 // get comments in lis from task
 pub fn (mut t Task) comments() ?[]Comment {
-	t.comments = comments_get('task', t.id) ?
+	t.comments = comments_get('task', t.id)?
 	return t.comments
 }
 
@@ -36,39 +36,36 @@ pub fn task_create(subject string, project_id int) ?Task {
 		project: project_id
 	}
 	postdata := json.encode_pretty(task)
-	response := conn.post_json_str('tasks', postdata, true) ?
-	mut result := task_decode(response) ?
+	response := conn.post_json_str('tasks', postdata, true)?
+	mut result := task_decode(response)?
 	conn.task_remember(result)
 	return result
 }
 
 pub fn task_get(id int) ?Task {
 	mut conn := connection_get()
-	response := conn.get_json_str('tasks/$id', '', true) ?
-	mut result := task_decode(response) ?
+	response := conn.get_json_str('tasks/$id', '', true)?
+	mut result := task_decode(response)?
 	conn.task_remember(result)
 	return result
 }
 
 pub fn task_delete(id int) ?bool {
 	mut conn := connection_get()
-	response := conn.delete('tasks', id) ?
+	response := conn.delete('tasks', id)?
 	conn.task_forget(id)
 	return response
 }
 
 fn task_decode(data string) ?Task {
-<<<<<<< HEAD
-	data_as_map := crystaljson.json_dict_filter_any(data, false, [], []) ?
+	data_as_map := crystaljson.json_dict_filter_any(data, false, [], [])?
 	projname := data_as_map['project_extra_info'].as_map()['name'].str().to_upper()
 	if projname.contains('ARCHIVE') {
 		// this is a task linked to a project which is archived, no reason to process
 		return Task{}
 	}
-=======
-	data_raw := raw_decode(data) ?
-	data_as_map := data_raw.as_map()
->>>>>>> development_taiga_new
+	// data_raw := raw_decode(data) ?
+	// data_as_map := data_raw.as_map()
 	mut task := Task{
 		description: data_as_map['description'].str()
 		id: data_as_map['id'].int()

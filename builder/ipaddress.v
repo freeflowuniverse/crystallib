@@ -21,7 +21,7 @@ pub enum IpAddressType {
 pub fn ipaddress_new(addr_string string) ?IPAddress {
 	mut cat := IpAddressType.ipv4
 	mut addr := addr_string
-	mut port := "22"
+	mut port := '22'
 	if addr_string.starts_with('localhost') {
 		addr = addr_string.replace('localhost', '127.0.0.1')
 	}
@@ -64,14 +64,12 @@ pub fn (mut ipaddr IPAddress) ping(mut executor Executor) bool {
 
 // check if ipaddress is well formed
 pub fn (mut ipaddr IPAddress) check() ? {
-	return // FIXME
-
+	// FIXME
 	//
 	// query: ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
 	// err  : --------------------------^
 	// ERROR: err_invalid_or_with_cc
 	//
-
 	/*
 	mut query := r''
 	if ipaddr.cat == IpAddressType.ipv4 {
@@ -87,6 +85,7 @@ pub fn (mut ipaddr IPAddress) check() ? {
 		error('Invalid Ip address string')
 	}
 	*/
+	return
 }
 
 fn (mut ipaddr IPAddress) address() string {

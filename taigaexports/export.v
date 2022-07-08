@@ -10,7 +10,7 @@ import time
 struct Auth {
 	username string
 	password string
-	type_ string [json: "type"] = "normal"
+	type_    string [json: 'type'] = 'normal'
 }
 
 struct AuthResult {
@@ -28,11 +28,10 @@ struct SyncExportResult {
 [params]
 pub struct ExporterParams {
 pub mut:
-	url string
-	username string
-	password string
+	url        string
+	username   string
+	password   string
 	auth_token string
-
 	// async mode timeouts
 	// time to wait between download/decode attempts
 	async_wait i64 = 2 // in seconds, defaults to 2 seconds
@@ -43,10 +42,9 @@ pub mut:
 
 pub struct Exporter {
 	ExporterParams
-
 mut:
-	api_version string = "v1"
-	api_url	string
+	api_version  string = 'v1'
+	api_url      string
 	project_slug string
 }
 
@@ -76,15 +74,15 @@ pub fn new(args ExporterParams) ?&Exporter {
 
 pub fn new_from_credentials(url string, username string, password string) ?&Exporter {
 	return new(
-		url: url,
-		username: username,
+		url: url
+		username: username
 		password: password
 	)
 }
 
 pub fn new_from_token(url string, auth_token string) ?&Exporter {
 	return new(
-		url: url,
+		url: url
 		auth_token: auth_token
 	)
 }
@@ -98,16 +96,16 @@ pub fn (mut exporter Exporter) do_req(method http.Method, url string, data strin
 	return req.do()
 }
 
-pub fn (mut exporter Exporter) authenticate()? {
+pub fn (mut exporter Exporter) authenticate() ? {
 	mut auth := Auth{
-		username: exporter.username,
+		username: exporter.username
 		password: exporter.password
 	}
 
 	url := '$exporter.api_url/auth'
 	data := json.encode(auth)
 	resp := exporter.do_req(http.Method.post, url, data, {
-		http.CommonHeader.content_type:  'application/json'
+		http.CommonHeader.content_type: 'application/json'
 	})?
 
 	if resp.status() == http.Status.ok {
@@ -161,16 +159,16 @@ pub fn (mut exporter Exporter) export_project(id int, project_slug string) ?Proj
 			mut attempts := 0
 			for {
 				attempts += 1
-				println("attempt #$attempts to download/decode $url")
+				println('attempt #$attempts to download/decode $url')
 
 				data := exporter.download(url) or {
-					print("attempt #$attempts failed with: $err")
+					print('attempt #$attempts failed with: $err')
 					time.sleep(exporter.async_wait * time.second)
 					continue
 				}
 
 				export := json.decode(ProjectExport, data) or {
-					println("attempt #$attempts failed while decoding response")
+					println('attempt #$attempts failed while decoding response')
 					time.sleep(exporter.async_wait * time.second)
 					continue
 				}
@@ -179,7 +177,7 @@ pub fn (mut exporter Exporter) export_project(id int, project_slug string) ?Proj
 				// but it's still not the whole data, would get an empty export
 				// in this case, just compare the slug
 				if export.slug != exporter.project_slug {
-					println("attmpet #$attempts failed, got a partial response")
+					println('attmpet #$attempts failed, got a partial response')
 					time.sleep(exporter.async_wait * time.second)
 					continue
 				}
@@ -191,14 +189,14 @@ pub fn (mut exporter Exporter) export_project(id int, project_slug string) ?Proj
 
 		timeout := exporter.async_timeout * time.minute
 		select {
-			export := <- ch {
+			export := <-ch {
 				return export
 			}
 			timeout {
-				return error("timeout waiting for async export for $timeout minutes(s).")
+				return error('timeout waiting for async export for $timeout minutes(s).')
 			}
 		}
 	}
 
-	return error("exporting error ($resp.status_code): $resp.text")
+	return error('exporting error ($resp.status_code): $resp.text')
 }

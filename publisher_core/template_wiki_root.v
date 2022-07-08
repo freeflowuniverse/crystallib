@@ -1,11 +1,9 @@
 module publisher_core
 
 import os
-import publisher_config
+import freeflowuniverse.crystallib.publisher_config
 
 fn (mut publisher Publisher) template_wiki_root(reponame string, repourl string, trackingid string, opengraph publisher_config.OpenGraph) ?string {
-
-
 	mut p := os.join_path(publisher.config.publish.paths.base, 'static')
 	mut crispwebsiteid := '1a5a5241-91cb-4a41-8323-5ba5ec574da0'
 	if reponame == 'twin' {
@@ -240,7 +238,7 @@ fn (mut publisher Publisher) template_wiki_root(reponame string, repourl string,
 	return out
 }
 
-fn (mut publisher Publisher)  template_wiki_root_save(destdir string, reponame string, repourl string, trackingid string, opengraph publisher_config.OpenGraph)? {
+fn (mut publisher Publisher) template_wiki_root_save(destdir string, reponame string, repourl string, trackingid string, opengraph publisher_config.OpenGraph) ? {
 	out := publisher.template_wiki_root(reponame, repourl, trackingid, opengraph)?
 	os.write_file('$destdir/index.html', out)?
 }

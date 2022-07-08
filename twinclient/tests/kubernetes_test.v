@@ -1,4 +1,4 @@
-import twinclient
+import freeflowuniverse.crystallib.twinclient
 
 struct KubernetesTestData {
 mut:
@@ -56,7 +56,6 @@ fn setup_kubernetes_test() (twinclient.Client, KubernetesTestData) {
 
 	return client, data
 }
-
 
 pub fn test_deploy_k8s() {
 	mut client, data := setup_kubernetes_test()

@@ -1,5 +1,5 @@
-import redisclient
-import redisclientcore
+import freeflowuniverse.crystallib.redisclient
+import freeflowuniverse.crystallib.redisclientcore
 import time
 // original code see https://github.com/patrickpissurno/vredis/blob/master/vredis_test.v
 // credits see there as well (-:
@@ -12,7 +12,7 @@ fn setup() &redisclient.Redis {
 }
 
 fn cleanup(mut redis redisclient.Redis) ? {
-	redis.flushall() ?
+	redis.flushall()?
 	redis.disconnect()
 }
 

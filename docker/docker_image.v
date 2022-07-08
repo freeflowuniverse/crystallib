@@ -1,6 +1,6 @@
 module docker
 
-import builder
+import freeflowuniverse.crystallib.builder
 import time
 
 [heap]
@@ -9,12 +9,11 @@ pub mut:
 	repo    string
 	tag     string
 	id      string
-	digest	string
-	size    int //size in MB
+	digest  string
+	size    int // size in MB
 	created time.Time
-	node	string
+	node    string
 }
-
 
 // delete docker image
 pub fn (mut image DockerImage) delete(force bool) ?string {

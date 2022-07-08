@@ -1,19 +1,18 @@
 // make sure that the names are always normalized so its easy to find them back
 module texttools
 
-
-//print 2 dimensional array, delimeter is between columns
-pub fn print_array2(arr [][]string, delimiter string,sort bool) {
-	if arr.len == 0{
+// print 2 dimensional array, delimeter is between columns
+pub fn print_array2(arr [][]string, delimiter string, sort bool) {
+	if arr.len == 0 {
 		return
 	}
 
 	mut maxwidth := []int{len: arr[0].len, cap: arr[0].len, init: 3}
-	mut x:=0
-	mut y:=0
-	for y < arr.len{
+	mut x := 0
+	mut y := 0
+	for y < arr.len {
 		for x < arr[y].len {
-			if maxwidth[x]<arr[y][x].len{
+			if maxwidth[x] < arr[y][x].len {
 				maxwidth[x] = arr[y][x].len
 			}
 			x++
@@ -22,33 +21,33 @@ pub fn print_array2(arr [][]string, delimiter string,sort bool) {
 		y++
 	}
 
-	x=0
-	y=0
+	x = 0
+	y = 0
 	mut res := []string{}
-	for y < arr.len{
-		mut row := ""
+	for y < arr.len {
+		mut row := ''
 		for x < arr[y].len {
-			row += expand(arr[y][x],maxwidth[x]) + delimiter
+			row += expand(arr[y][x], maxwidth[x]) + delimiter
 			x++
 		}
-		res<<row
-		x = 0		
+		res << row
+		x = 0
 		y++
 	}
-	if sort{
+	if sort {
 		res.sort_ignore_case()
 	}
 	// println(res)
 	println(res.join_lines())
 }
 
-fn expand(txt_ string, l int) string{
-	mut txt:=txt_
+fn expand(txt_ string, l int) string {
+	mut txt := txt_
 	extra := l - txt.len
-	txt+=" ".repeat(extra)
+	txt += ' '.repeat(extra)
 	return txt
 }
 
 pub fn print_clear() {
-	print("\033[2J")
+	print('\033[2J')
 }

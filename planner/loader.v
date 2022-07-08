@@ -2,12 +2,12 @@ module planner
 
 import os
 import json
-import texttools
+import freeflowuniverse.crystallib.texttools
 
 // use path="" if you want to go from os.home_dir()/code/	
 pub fn (mut planner Planner) load(path string) ? {
 	planner.gitlevel = -3 // we do this gitlevel to make sure we don't go too deep in the directory level
-	planner.find_sites_recursive(path) ?
+	planner.find_sites_recursive(path)?
 }
 
 ///////////////////////////////////////////////////////// INTERNAL BELOW ////////////////
@@ -23,7 +23,7 @@ fn (mut planner Planner) load_site(repoconfig PlannerSiteConfig, path string) ? 
 		planner: &planner
 	}
 	site.path = path
-	site.files_process() ?
+	site.files_process()?
 
 	// mut myconfig_site := cfg.site_get(repoconfig_site) or {
 	// 	if '$err'.contains('Cannot find wiki site') {
@@ -112,7 +112,7 @@ fn (mut site PlannerSite) files_process() ? {
 }
 
 fn (mut site PlannerSite) files_process_recursive(path string) ? {
-	items := os.ls(path) ?
+	items := os.ls(path)?
 	for item in items {
 		println(' - $item')
 		if os.is_dir(os.join_path(path, item)) {
@@ -121,13 +121,13 @@ fn (mut site PlannerSite) files_process_recursive(path string) ? {
 			} else if item.starts_with('_') {
 				continue
 			} else {
-				site.files_process_recursive(os.join_path(path, item)) ?
+				site.files_process_recursive(os.join_path(path, item))?
 			}
 		} else {
 			if item.starts_with('.') || item.to_lower() == 'defs.md' {
 				continue
 			} else if item.contains('.test') {
-				os.rm(os.join_path(path, item)) ?
+				os.rm(os.join_path(path, item))?
 			} else if item.starts_with('_') {
 				continue
 			} else {
@@ -151,7 +151,7 @@ fn (mut site PlannerSite) files_process_recursive(path string) ? {
 					// only process files which do have extension
 					ext2 := ext[1..]
 					if ext2 == 'md' {
-						site.page_remember(path, item2) ?
+						site.page_remember(path, item2)?
 					}
 
 					// if ext2 in ['jpg', 'png', 'svg', 'jpeg', 'gif', 'pdf', 'zip'] {
@@ -168,7 +168,7 @@ fn (mut site PlannerSite) page_remember(path string, name string) ? {
 	println(' - page remember:$path/$name')
 	name2 := texttools.name_fix_keepext(name)
 	if name2.starts_with('story') {
-		o := obj_new<Story>('$path/$name') ?
+		o := obj_new<Story>('$path/$name')?
 		println(o)
 	}
 }

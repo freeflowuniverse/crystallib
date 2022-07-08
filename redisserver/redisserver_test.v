@@ -1,5 +1,5 @@
-import redisserver
-import redisclient
+import freeflowuniverse.crystallib.redisserver
+import freeflowuniverse.crystallib.redisclient
 import time
 
 fn setup() redisserver.RedisSrv {
@@ -24,4 +24,3 @@ fn client_test() {
 	assert val == '5'
 	println('reach here')
 }
-

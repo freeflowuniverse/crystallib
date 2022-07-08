@@ -7,7 +7,7 @@ fn test_url1() {
 	mut gs := get()
 
 	url := 'https://github.com/vlang/v/blob/master/doc/docs.md#maps'
-	obj := addr_get_from_url(url) or {panic("$err")}
+	obj := addr_get_from_url(url) or { panic('$err') }
 
 	home := os.real_path(os.home_dir())
 
@@ -26,10 +26,10 @@ fn test_url1() {
 }
 
 fn test_url2() {
-	mut gs := new("",false) or {panic("cannot load")}
+	mut gs := new('', false) or { panic('cannot load') }
 
 	url := 'git@github.com:crystaluniverse/publishtools/tree/development/doc'
-	obj := addr_get_from_url(url) or {panic("$err")}
+	obj := addr_get_from_url(url) or { panic('$err') }
 
 	println(obj)
 

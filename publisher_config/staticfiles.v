@@ -1,6 +1,6 @@
 module publisher_config
 
-import process
+import freeflowuniverse.crystallib.process
 import os
 // websites are under $ipaddr/$shortname
 // wiki are under $ipaddr/info/$shortname

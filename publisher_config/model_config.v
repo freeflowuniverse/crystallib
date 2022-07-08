@@ -1,7 +1,5 @@
 module publisher_config
 
-
-
 // the main config file for a publishing environment
 // name of the json needs to be config.json
 // EXAMPLE JSON:
@@ -20,13 +18,12 @@ module publisher_config
 // }
 pub struct PublishConfig {
 pub mut:
-	reset bool
-	pull  bool
-	debug bool
-	redis bool
-	port  int = 9998
-	paths Paths
+	reset       bool
+	pull        bool
+	debug       bool
+	redis       bool
+	port        int = 9998
+	paths       Paths
 	multibranch bool
 	// publish_servers []string
-
 }

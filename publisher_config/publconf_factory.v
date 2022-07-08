@@ -1,11 +1,9 @@
 module publisher_config
 
 import os
-import texttools
+import freeflowuniverse.crystallib.texttools
 import json
-import gittools
-
-
+import freeflowuniverse.crystallib.gittools
 
 pub struct PublishConfigArgs {
 pub:
@@ -15,7 +13,6 @@ pub:
 
 // load the initial config from filesystem
 pub fn get(args PublishConfigArgs) ?ConfigRoot {
-
 	mut configs_path := args.configs_path
 	mut actions_path := args.actions_path
 	envs := os.environ()
@@ -36,7 +33,7 @@ pub fn get(args PublishConfigArgs) ?ConfigRoot {
 		redis: true
 	}
 
-	//check if compilation done with debug
+	// check if compilation done with debug
 	$if debug {
 		config.publish.debug = true
 	}
@@ -44,18 +41,17 @@ pub fn get(args PublishConfigArgs) ?ConfigRoot {
 	// Load Static config, is all the paths to the files as used in docsify
 	staticfiles_config(mut &config)
 
-
 	///// see if PUBSITE is defined, if yes will use that one as argument for getting configs from
-	if 'PUBSITE' in envs && envs['PUBSITE'].trim(" ") != '' {
+	if 'PUBSITE' in envs && envs['PUBSITE'].trim(' ') != '' {
 		mut gt2 := gittools.get()?
 		url := envs['PUBSITE']
 		// println(' - found PUBSITE in environment variables, will use this one for config dir.')
 		$if debug {
 			eprintln(' - get git repo to fetch configuration for publ tools: $url')
 		}
-		r := gt2.repo_get_from_url(url: url, pull: false) ?
+		r := gt2.repo_get_from_url(url: url, pull: false)?
 		// println(' - changedir for config: $r.path_content_get()')
-		
+
 		configs_path = r.path_content_get()
 	}
 
@@ -93,9 +89,7 @@ pub fn get(args PublishConfigArgs) ?ConfigRoot {
 		}
 	}
 
-
-	if configs_path!="" {
-
+	if configs_path != '' {
 		// Load Site & Group config files
 		mut sites_config_files := []string{}
 		mut groups_config_files := []string{}
@@ -113,14 +107,12 @@ pub fn get(args PublishConfigArgs) ?ConfigRoot {
 			if file.starts_with('groups_') && file.ends_with('.json') {
 				groups_config_files << file
 			}
-
 		}
 
-		if sites_config_files.len==0 && md_config_files.len==0{
+		if sites_config_files.len == 0 && md_config_files.len == 0 {
 			curdir := os.getwd()
 			return error('cannot find site files in current dir: $curdir, site files start with site_ or there needs to be an .md file')
 		}
-
 
 		// will check if there are site_... files, if not is error
 
@@ -129,8 +121,8 @@ pub fn get(args PublishConfigArgs) ?ConfigRoot {
 			$if debug {
 				println(' - Found config file for publish tools.')
 			}
-			txt := os.read_file('config.json') ?
-			config.publish = json.decode(PublishConfig, txt) ?
+			txt := os.read_file('config.json')?
+			config.publish = json.decode(PublishConfig, txt)?
 		}
 
 		// Load nodejs config
@@ -138,8 +130,8 @@ pub fn get(args PublishConfigArgs) ?ConfigRoot {
 			$if debug {
 				println(' - Found config file for NodeJS.')
 			}
-			txt := os.read_file('nodejs.json') ?
-			fsnodejs := json.decode(NodejsConfigFS, txt) ?
+			txt := os.read_file('nodejs.json')?
+			fsnodejs := json.decode(NodejsConfigFS, txt)?
 			if fsnodejs.version == 'lts' {
 				config.nodejs.version = NodejsCat.lts
 			} else {
@@ -149,49 +141,45 @@ pub fn get(args PublishConfigArgs) ?ConfigRoot {
 		}
 		config.init_nodejs() // Init nodejs configurations
 
-
-
 		config.web_hostnames = false
-
 
 		for site_file in sites_config_files {
 			// println(' - found $site_file as a config file for sites.')
-			txt := os.read_file(site_file) ?
+			txt := os.read_file(site_file)?
 			// mut site_in := json.decode(SiteConfig, txt) ?
 			mut site_in_raw := json.decode(SiteConfigRaw, txt) or { panic(err) }
 			if site_in_raw.name == '' {
-				site_in_raw.name = site_file.to_lower().replace(".json","").replace("site_","")
-				if site_in_raw.name == "wiki"{
-					return error("wiki is not allowed as name for a wiki site")
+				site_in_raw.name = site_file.to_lower().replace('.json', '').replace('site_',
+					'')
+				if site_in_raw.name == 'wiki' {
+					return error('wiki is not allowed as name for a wiki site')
 				}
 			}
-			//default is wiki
+			// default is wiki
 			if site_in_raw.cat == '' {
-				site_in_raw.cat = "wiki"
-			}		
+				site_in_raw.cat = 'wiki'
+			}
 			// make sure we normalize the name
 			site_in_raw.name = texttools.name_fix(site_in_raw.name)
 			// site_in.configroot = &config
 			// println(site_in_raw)
 			mut site_in := site_new(site_in_raw)?
 			config.sites << site_in
-		}		
-
+		}
 
 		// Load Groups
 		for group_file in groups_config_files {
 			$if debug {
 				println(' - found $group_file as a config file for group.')
 			}
-			txt := os.read_file(group_file) ?
-			config.groups << json.decode([]UserGroup, txt) ?
+			txt := os.read_file(group_file)?
+			config.groups << json.decode([]UserGroup, txt)?
 		}
 
 		config.actions.add(configs_path)?
-
 	}
 
-	if actions_path != "" {
+	if actions_path != '' {
 		config.actions.add(actions_path)?
 	}
 
@@ -218,5 +206,5 @@ pub fn get(args PublishConfigArgs) ?ConfigRoot {
 	// 	}
 	// }
 
-	return config 
+	return config
 }

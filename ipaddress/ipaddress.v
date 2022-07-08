@@ -2,7 +2,7 @@ module ipaddress
 
 import regex
 import os
-import process
+import freeflowuniverse.crystallib.process
 
 pub struct IPAddress {
 pub:
@@ -71,7 +71,7 @@ pub fn ipaddress_new(addr_string string) ?IPAddress {
 		mask: mask
 	}
 
-	ip.check() ?
+	ip.check()?
 
 	return ip
 }

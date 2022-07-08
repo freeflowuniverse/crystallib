@@ -12,11 +12,10 @@ pub mut:
 	links []Link
 }
 
-
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT REALITIES
 // returns all the links
-pub fn link_parser(mut publisher &Publisher,mut page &Page, text string) ?ParseResult {
+pub fn link_parser(mut publisher Publisher, mut page Page, text string) ?ParseResult {
 	mut charprev := ''
 	mut ch := ''
 	mut state := ParseStatus.start
@@ -77,8 +76,9 @@ pub fn link_parser(mut publisher &Publisher,mut page &Page, text string) ?ParseR
 				// original += ch
 				if ch == ')' {
 					// end of capture group
-					mut link := link_new(mut publisher, capturegroup_pre.trim(' '), capturegroup_post.trim(' '),isimage,&page)?
-					//remember the consumer page
+					mut link := link_new(mut publisher, capturegroup_pre.trim(' '), capturegroup_post.trim(' '),
+						isimage, &page)?
+					// remember the consumer page
 					parseresult.links << link
 					capturegroup_pre = ''
 					capturegroup_post = ''

@@ -1,6 +1,6 @@
 module taiga
 
-import texttools
+import freeflowuniverse.crystallib.texttools
 import time { Time, now, parse_iso8601 }
 import math { pow10 }
 

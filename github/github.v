@@ -1,3 +1,3 @@
 module github
 
-//https://github.com/settings/tokens
+// https://github.com/settings/tokens

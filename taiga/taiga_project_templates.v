@@ -44,7 +44,7 @@ pub fn project_templates() ?map[string]int {
 	mut found_project := false
 	mut found_team := false
 
-	response := conn.get_json_str('project-templates', '', true) ?
+	response := conn.get_json_str('project-templates', '', true)?
 	response_as_arr := (json2.raw_decode(response) or {}).arr()
 	println('Decoded as Arr')
 	for pt in response_as_arr {
@@ -60,7 +60,7 @@ pub fn project_templates() ?map[string]int {
 	println(found_project)
 	println(found_team)
 
-	create_result := create_project_templates(found_funnel, found_project, found_team) ?
+	create_result := create_project_templates(found_funnel, found_project, found_team)?
 	for k, v in create_result {
 		result[k] = v
 	}
@@ -337,7 +337,7 @@ fn create_project_templates(funnel bool, project bool, team bool) ?map[string]in
 		println(template)
 		encoded_data := json.encode_pretty(template)
 		println(encoded_data)
-		response := conn.post_json_dict('project_templates', encoded_data, false) ?
+		response := conn.post_json_dict('project_templates', encoded_data, false)?
 		result[response['name'].str()] = response['id'].int()
 	}
 	return result

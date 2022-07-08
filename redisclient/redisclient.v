@@ -5,7 +5,7 @@ module redisclient
 import net
 // import strconv
 import time
-import resp2
+import freeflowuniverse.crystallib.resp2
 
 const default_read_timeout = net.infinite_timeout
 
@@ -52,7 +52,7 @@ const factory = init2()
 
 // https://redis.io/topics/protocol
 // examples:
-//   localhost:6379 
+//   localhost:6379
 //   /tmp/redis-default.sock
 pub fn get(addr string) ?&Redis {
 	mut f := redisclient.factory
@@ -60,7 +60,7 @@ pub fn get(addr string) ?&Redis {
 		mut r := Redis{
 			addr: addr
 		}
-		r.socket_connect() ?
+		r.socket_connect()?
 		f.instances[addr] = r
 	}
 	mut r2 := f.instances[addr]
@@ -69,10 +69,10 @@ pub fn get(addr string) ?&Redis {
 
 fn (mut r Redis) socket_connect() ? {
 	// println(" CONNECT TCP: ${r.addr}")
-	r.socket = net.dial_tcp(r.addr) ?
-	r.socket.set_blocking(true) ?
+	r.socket = net.dial_tcp(r.addr)?
+	r.socket.set_blocking(true)?
 	r.socket.set_read_timeout(10 * time.second)
-	r.socket.peer_addr() ?
+	r.socket.peer_addr()?
 	r.connected = true
 }
 
@@ -91,9 +91,9 @@ pub fn (mut r Redis) read_line() ?string {
 const cr_lf_bytes = [u8(`\r`), `\n`]
 
 fn (mut r Redis) write_line(data []u8) ? {
-	r.socket_check() ?
-	r.write(data) ?
-	r.write(redisclient.cr_lf_bytes) ?
+	r.socket_check()?
+	r.write(data)?
+	r.write(redisclient.cr_lf_bytes)?
 }
 
 // write *all the data* into the socket
@@ -102,28 +102,28 @@ fn (mut r Redis) write_line(data []u8) ? {
 fn (mut r Redis) write(data []u8) ? {
 	mut remaining := data.len
 	for remaining > 0 {
-		written_bytes := r.socket.write(data[data.len - remaining..]) ?
+		written_bytes := r.socket.write(data[data.len - remaining..])?
 		remaining -= written_bytes
 	}
 }
 
 // write resp2 value to the redis channel
 pub fn (mut r Redis) write_rval(val resp2.RValue) ? {
-	r.socket_check() ?
-	r.write(val.encode()) ?
+	r.socket_check()?
+	r.write(val.encode())?
 }
 
 // write list of strings to redis challen
 fn (mut r Redis) write_cmds(items []string) ? {
 	a := resp2.r_list_bstring(items)
-	r.write_rval(a) ?
+	r.write_rval(a)?
 }
 
 fn (mut r Redis) read(size int) ?[]u8 {
 	mut buf := []u8{len: size}
 	mut remaining := size
 	for remaining > 0 {
-		read_bytes := r.socket.read(mut buf[buf.len - remaining..]) ?
+		read_bytes := r.socket.read(mut buf[buf.len - remaining..])?
 		remaining -= read_bytes
 	}
 	return buf

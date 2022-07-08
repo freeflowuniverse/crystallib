@@ -1,6 +1,6 @@
 module publisher_core
 
-import publisher_config
+import freeflowuniverse.crystallib.publisher_config
 
 // replace the text from domain name to localhost url
 fn domain_replacer(webnames map[string]string, text_ string) string {

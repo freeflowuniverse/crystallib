@@ -1,4 +1,4 @@
-import builder
+import freeflowuniverse.crystallib.builder
 
 // hello_test.v
 fn test_ping() {

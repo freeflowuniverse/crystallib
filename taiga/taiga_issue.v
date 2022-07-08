@@ -7,8 +7,8 @@ import json
 // List all issues ( One request only )
 pub fn issues() ? {
 	mut conn := connection_get()
-	resp := conn.get_json_str('issues', '', true) ?
-	raw_data := raw_decode(resp.replace('\\\\', '')) ?
+	resp := conn.get_json_str('issues', '', true)?
+	raw_data := raw_decode(resp.replace('\\\\', ''))?
 	blocks := raw_data.arr()
 	println('[+] Loading $blocks.len issues ...')
 	for i in blocks {
@@ -31,8 +31,8 @@ pub fn issue_create(subject string, project_id int) ?Issue {
 		project: project_id
 	}
 	postdata := json.encode_pretty(issue)
-	response := conn.post_json_str('issues', postdata, true) ?
-	mut result := issue_decode(response) ?
+	response := conn.post_json_str('issues', postdata, true)?
+	mut result := issue_decode(response)?
 	conn.issue_remember(result)
 	return result
 }
@@ -40,8 +40,8 @@ pub fn issue_create(subject string, project_id int) ?Issue {
 // Get issue details using api
 pub fn issue_get(id int) ?Issue {
 	mut conn := connection_get()
-	response := conn.get_json_str('issues/$id', '', true) ?
-	mut result := issue_decode(response) ?
+	response := conn.get_json_str('issues/$id', '', true)?
+	mut result := issue_decode(response)?
 	conn.issue_remember(result)
 	return result
 }
@@ -49,19 +49,16 @@ pub fn issue_get(id int) ?Issue {
 // Delete issue using api, and forget it from cache and singleton object
 pub fn issue_delete(id int) ?bool {
 	mut conn := connection_get()
-	response := conn.delete('issues', id) ?
+	response := conn.delete('issues', id)?
 	conn.issue_forget(id)
 	return response
 }
 
 // Decode issue to get clean object from raw data
 fn issue_decode(data string) ?Issue {
-<<<<<<< HEAD
-	data_as_map := crystaljson.json_dict_filter_any(data, false, [], []) ?
-=======
-	data_raw := raw_decode(data) ?
+	// data_as_map := crystaljson.json_dict_filter_any(data, false, [], []) ?
+	data_raw := raw_decode(data)?
 	data_as_map := data_raw.as_map()
->>>>>>> development_taiga_new
 	mut issue := Issue{
 		description: data_as_map['description'].str()
 		id: data_as_map['id'].int()
@@ -102,7 +99,7 @@ fn issue_decode(data string) ?Issue {
 
 // get comments in list from issue
 pub fn (mut issue Issue) comments() ?[]Comment {
-	issue.comments = comments_get('issue', issue.id) ?
+	issue.comments = comments_get('issue', issue.id)?
 	return issue.comments
 }
 

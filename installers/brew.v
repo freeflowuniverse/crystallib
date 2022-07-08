@@ -1,10 +1,10 @@
 module installers
 
 // import publisher_config
-import process
+import freeflowuniverse.crystallib.process
 
 pub fn brew_remove() ? {
-    // mut conf := publisher_config.get()?
+	// mut conf := publisher_config.get()?
 
 	script := '
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh)"
@@ -23,7 +23,7 @@ pub fn brew_remove() ? {
 	rm -rf /usr/local/var/
 	'
 
-	process.execute_silent(script) ?
+	process.execute_silent(script)?
 }
 
 pub fn brew_install() ? {
@@ -31,5 +31,5 @@ pub fn brew_install() ? {
 	echo ... to be done
 	exit 1
 	'
-	process.execute_silent(script) ?
+	process.execute_silent(script)?
 }

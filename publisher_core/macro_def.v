@@ -1,12 +1,12 @@
 module publisher_core
 
-import texttools
+import freeflowuniverse.crystallib.texttools
 
 fn macro_def(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
-	mut categories := macro.params.get_list('category') ?
-	categories2 := macro.params.get_list('categories') ?
+	mut categories := macro.params.get_list('category')?
+	categories2 := macro.params.get_list('categories')?
 	categories << categories2
-	mut defname2 := macro.params.get_default('name', '') ?
+	mut defname2 := macro.params.get_default('name', '')?
 	defname2 = defname2.trim(' ')
 	// defname not defined, will get the title as the definition name
 	if defname2 == '' {
@@ -27,7 +27,7 @@ fn macro_def(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 
 	defid := state.publisher.def_add(defobj)?
 
-	mut aliasses := macro.params.get_list('alias') ?
+	mut aliasses := macro.params.get_list('alias')?
 	for alias in aliasses {
 		aliasname := texttools.name_fix_no_underscore(alias)
 		if aliasname == '' {
@@ -64,8 +64,8 @@ fn def_list_check(defobj Def, categories []string, exclude []string) bool {
 }
 
 fn macro_def_list(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
-	mut categories := macro.params.get_list('category') ?
-	mut exclude := macro.params.get_list('exclude') ?
+	mut categories := macro.params.get_list('category')?
+	mut exclude := macro.params.get_list('exclude')?
 	exclude = exclude.map(texttools.name_fix_no_underscore(it))
 	categories = categories.map(texttools.name_fix_no_underscore(it))
 
@@ -90,7 +90,7 @@ fn macro_def_list(mut state LineProcessorState, mut macro texttools.MacroObj) ? 
 
 	for defname in def_names {
 		// println(" >>> $defname")
-		defobj := state.publisher.def_get(defname) ?
+		defobj := state.publisher.def_get(defname)?
 		if defobj.pageid in done {
 			continue
 		}

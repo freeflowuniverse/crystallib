@@ -1,18 +1,12 @@
-
-
 module main
 
-import appsbox.redisapp
+import freeflowuniverse.crystallib.appsbox.redisapp
 
-
-fn do()?{
-	//get local client to redis
+fn do() ? {
+	// get local client to redis
 	mut client := redisapp.client_local_get()?
-
 }
 
 fn main() {
-
-	do() or {panic(err)}
-
+	do() or { panic(err) }
 }

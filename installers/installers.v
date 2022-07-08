@@ -1,10 +1,9 @@
 module installers
 
-
 import os
-import builder
-import publisher_config
-import process
+import freeflowuniverse.crystallib.builder
+import freeflowuniverse.crystallib.publisher_config
+import freeflowuniverse.crystallib.process
 // import nodejs
 // import gittools
 
@@ -12,10 +11,10 @@ pub fn base() ? {
 	myconfig := publisher_config.get()?
 	base := myconfig.publish.paths.base
 
-	mut node := builder.node_new(builder.NodeArguments{name:"local"}) or {
+	mut node := builder.node_new(builder.NodeArguments{ name: 'local' }) or {
 		return error(' ** ERROR: cannot load node. Error was:\n$err')
 	}
-	node.platform_prepare() ?
+	node.platform_prepare()?
 
 	if !os.exists(base) {
 		os.mkdir(base) or { return err }
@@ -45,7 +44,7 @@ pub fn publishtools_update() ? {
 	script := '
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/crystaluniverse/publishtools/development/scripts/install.sh)"
 	'
-	process.execute_silent(script) ?
+	process.execute_silent(script)?
 	println(' -update done')
 }
 

@@ -5,7 +5,7 @@ import json
 // Deploy machines workload
 pub fn (mut tw Client) deploy_machines(payload Machines) ?DeployResponse {
 	payload_encoded := json.encode_pretty(payload)
-	mut msg := tw.send('twinserver.machines.deploy', payload_encoded) ?
+	mut msg := tw.send('twinserver.machines.deploy', payload_encoded)?
 	response := tw.read(msg)
 	if response.err != '' {
 		return error(response.err)
@@ -15,7 +15,7 @@ pub fn (mut tw Client) deploy_machines(payload Machines) ?DeployResponse {
 
 // Get machines deployment info using deployment name
 pub fn (mut tw Client) get_machines(name string) ?[]Deployment {
-	mut msg := tw.send('twinserver.machines.get', '{"name": "$name"}') ?
+	mut msg := tw.send('twinserver.machines.get', '{"name": "$name"}')?
 	response := tw.read(msg)
 	if response.err != '' {
 		return error(response.err)
@@ -26,7 +26,7 @@ pub fn (mut tw Client) get_machines(name string) ?[]Deployment {
 // Update deployed machines deployment with updated payload
 pub fn (mut tw Client) update_machines(payload Machines) ?DeployResponse {
 	payload_encoded := json.encode_pretty(payload)
-	mut msg := tw.send('twinserver.machines.update', payload_encoded) ?
+	mut msg := tw.send('twinserver.machines.update', payload_encoded)?
 	response := tw.read(msg)
 	if response.err != '' {
 		return error(response.err)
@@ -36,7 +36,7 @@ pub fn (mut tw Client) update_machines(payload Machines) ?DeployResponse {
 
 // List all my machines deployments
 pub fn (mut tw Client) list_machines() ?[]string {
-	mut msg := tw.send('twinserver.machines.list', '{}') ?
+	mut msg := tw.send('twinserver.machines.list', '{}')?
 	response := tw.read(msg)
 	if response.err != '' {
 		return error(response.err)
@@ -46,7 +46,7 @@ pub fn (mut tw Client) list_machines() ?[]string {
 
 // Delete a deployed machines using deployment name
 pub fn (mut tw Client) delete_machines(name string) ?ContractResponse {
-	mut msg := tw.send('twinserver.machines.delete', '{"name": "$name"}') ?
+	mut msg := tw.send('twinserver.machines.delete', '{"name": "$name"}')?
 	response := tw.read(msg)
 	if response.err != '' {
 		return error(response.err)
@@ -57,7 +57,7 @@ pub fn (mut tw Client) delete_machines(name string) ?ContractResponse {
 // Add new machine to a machines deployment
 pub fn (mut tw Client) add_machine(machine AddMachine) ?DeployResponse {
 	payload_encoded := json.encode_pretty(machine)
-	mut msg := tw.send('twinserver.machines.add_machine', payload_encoded) ?
+	mut msg := tw.send('twinserver.machines.add_machine', payload_encoded)?
 	response := tw.read(msg)
 	if response.err != '' {
 		return error(response.err)
@@ -68,7 +68,7 @@ pub fn (mut tw Client) add_machine(machine AddMachine) ?DeployResponse {
 // Delete machine from a machines deployment
 pub fn (mut tw Client) delete_machine(machine_to_delete SingleDelete) ?ContractResponse {
 	payload_encoded := json.encode_pretty(machine_to_delete)
-	mut msg := tw.send('twinserver.machines.delete_machine', payload_encoded) ?
+	mut msg := tw.send('twinserver.machines.delete_machine', payload_encoded)?
 	response := tw.read(msg)
 	if response.err != '' {
 		return error(response.err)

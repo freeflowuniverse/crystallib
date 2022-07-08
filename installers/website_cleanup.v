@@ -1,13 +1,13 @@
 module installers
 
 import os
-import publisher_config
-import process
-import texttools
+import freeflowuniverse.crystallib.publisher_config
+import freeflowuniverse.crystallib.process
+import freeflowuniverse.crystallib.texttools
 
 pub fn website_cleanup(name string) ? {
 	mut conf := publisher_config.get()?
-	mut site := conf.site_get(name) ?
+	mut site := conf.site_get(name)?
 	mut repo := site.repo_get()
 	println(' - cleanup website $repo.path()')
 

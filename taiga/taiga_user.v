@@ -4,8 +4,8 @@ import x.json2 { raw_decode }
 
 pub fn users() ? {
 	mut conn := connection_get()
-	resp := conn.get_json_str('users', '', true) ?
-	raw_data := raw_decode(resp.replace('\\\\', '')) ?
+	resp := conn.get_json_str('users', '', true)?
+	raw_data := raw_decode(resp.replace('\\\\', ''))?
 	blocks := raw_data.arr()
 	println('[+] Loading $blocks.len users ...')
 	for u in blocks {
@@ -21,26 +21,23 @@ pub fn users() ? {
 
 pub fn user_get(id int) ?User {
 	mut conn := connection_get()
-	response := conn.get_json_str('users/$id', '', true) ?
-	mut result := user_decode(response) ?
+	response := conn.get_json_str('users/$id', '', true)?
+	mut result := user_decode(response)?
 	conn.user_remember(result)
 	return result
 }
 
 pub fn user_delete(id int) ?bool {
 	mut conn := connection_get()
-	response := conn.delete('users', id) ?
+	response := conn.delete('users', id)?
 	conn.user_forget(id)
 	return response
 }
 
 fn user_decode(data string) ?User {
-<<<<<<< HEAD
-	data_as_map := crystaljson.json_dict_filter_any(data, false, [], []) ?
-=======
-	data_raw := raw_decode(data) ?
-	data_as_map := data_raw.as_map()
->>>>>>> development_taiga_new
+	data_as_map := crystaljson.json_dict_filter_any(data, false, [], [])?
+	// data_raw := raw_decode(data) ?
+	// data_as_map := data_raw.as_map()
 	mut user := User{
 		id: data_as_map['id'].int()
 		is_active: data_as_map['is_active'].bool()

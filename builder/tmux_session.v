@@ -5,15 +5,14 @@ import os
 [heap]
 struct Session {
 pub mut:
-	tmux    &Tmux [skip]		//reference back
-	windows map[string]&Window	//session has windows
+	tmux    &Tmux              [skip] // reference back
+	windows map[string]&Window // session has windows
 	name    string
-
 }
 
-fn init_session(mut tmux &Tmux, s_name string) ?Session {
+fn init_session(mut tmux Tmux, s_name string) ?Session {
 	mut s := Session{
-		tmux: tmux						//reference back
+		tmux: tmux // reference back
 		windows: map[string]&Window{}
 		name: s_name.to_lower()
 	}
@@ -23,45 +22,37 @@ fn init_session(mut tmux &Tmux, s_name string) ?Session {
 	return s
 }
 
-pub fn (mut s Session) create()? {
-	mut e:= s.tmux.node().executor
+pub fn (mut s Session) create() ? {
+	mut e := s.tmux.node().executor
 	res_opt := "-P -F '#{window_id}'"
 	cmd := "tmux new-session $res_opt -d -s $s.name 'sh'"
-	window_id_ := e.exec(cmd) or {
-		return error("Can't create tmux session $s.name \n$cmd\n$err")
-	}
+	window_id_ := e.exec(cmd) or { return error("Can't create tmux session $s.name \n$cmd\n$err") }
 
-	cmd3 := "tmux set-option remain-on-exit on"
-	e.exec(cmd3) or {
-		return error("Can't execute $cmd3\n$err")
-	}
+	cmd3 := 'tmux set-option remain-on-exit on'
+	e.exec(cmd3) or { return error("Can't execute $cmd3\n$err") }
 
-	window_id := window_id_.trim(" \n")
-	cmd2:="tmux rename-window -t $window_id 'notused'"
-	e.exec(cmd2) or {
-		return error("Can't rename window $window_id to notused \n$cmd2\n$err")
-	}
-
+	window_id := window_id_.trim(' \n')
+	cmd2 := "tmux rename-window -t $window_id 'notused'"
+	e.exec(cmd2) or { return error("Can't rename window $window_id to notused \n$cmd2\n$err") }
 }
 
-pub fn (mut s Session) restart()? {
+pub fn (mut s Session) restart() ? {
 	s.stop()?
 	s.create()?
 }
 
-pub fn (mut s Session) stop()? {
-	mut e:= s.tmux.node().executor
+pub fn (mut s Session) stop() ? {
+	mut e := s.tmux.node().executor
 	e.exec('tmux kill-session -t $s.name') or {
 		// return error("Can't delete session $s.name - This happen when it is not found")
-		""
+		''
 	}
 }
 
-
-//window_name is the name of the window in session main (will always be called session main)
-//cmd to execute e.g. bash file
-//environment arguments to use
-//reset, if reset it will create window even if it does already exist, will destroy it
+// window_name is the name of the window in session main (will always be called session main)
+// cmd to execute e.g. bash file
+// environment arguments to use
+// reset, if reset it will create window even if it does already exist, will destroy it
 // ```
 // struct WindowArgs {
 // pub mut:
@@ -71,17 +62,17 @@ pub fn (mut s Session) stop()? {
 // 	reset	bool
 // }
 // ```
-pub fn (mut s Session) window_new(args WindowArgs) ?Window{
+pub fn (mut s Session) window_new(args WindowArgs) ?Window {
 	// os.log(cmd)
 	// os.log(check)
 	namel := args.name.to_lower()
 
-	if s.window_exist(namel){
-		if args.reset{
+	if s.window_exist(namel) {
+		if args.reset {
 			mut w_to_stop := s.window_get(namel)?
 			w_to_stop.stop()?
-		}else{
-			return error("cannot kill window it already exists, window $namel in session:${s.name}")
+		} else {
+			return error('cannot kill window it already exists, window $namel in session:$s.name')
 		}
 	}
 	mut w := Window{
@@ -91,8 +82,8 @@ pub fn (mut s Session) window_new(args WindowArgs) ?Window{
 		env: args.env
 	}
 	s.windows[namel] = &w
-	w.create()?	
-	//remove the notused one if there is at least one new one
+	w.create()?
+	// remove the notused one if there is at least one new one
 	// if namel != "notused" && "notused" in s.windows.keys(){
 	// 	// os.log(" DELETE notused")
 	// 	s.windows["notused"].delete()?
@@ -106,15 +97,11 @@ fn (mut s Session) window_exist(name string) bool {
 
 pub fn (mut s Session) window_get(name string) ?&Window {
 	name_l := name.to_lower()
-	if ! (name_l in s.windows) {
-		return error("Cannot find window $name in session:${s.name}")
+	if name_l !in s.windows {
+		return error('Cannot find window $name in session:$s.name')
 	}
 	return s.windows[name_l]
 }
-
-
-
-
 
 // pub fn (mut s Session) activate()? {	
 // 	active_session := s.tmux.redis.get('tmux:active_session') or { 'No active session found' }

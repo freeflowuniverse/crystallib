@@ -3,9 +3,9 @@ module taiga
 import x.json2
 import json
 import net.http
-import redisclient
-import crystaljson
-import taigaexports
+import freeflowuniverse.crystallib.redisclient
+import freeflowuniverse.crystallib.crystaljson
+import freeflowuniverse.crystallib.taigaexports
 
 // FIXME: Not Working
 struct TaigaConnectionSettings {
@@ -113,7 +113,7 @@ fn (mut h TaigaConnection) post_json_dict(prefix string, postdata string, cache 
 	Output:
 		response: response as dict of further json strings
 	*/
-	mut result := h.post_json_str(prefix, postdata, cache) ?
+	mut result := h.post_json_str(prefix, postdata, cache)?
 	return crystaljson.json_dict_filter_any(result, false, [], [])
 }
 
@@ -138,15 +138,15 @@ fn (mut h TaigaConnection) post_json_str(prefix string, postdata string, cache b
 		return cached_data
 	}
 	url := '$h.url/api/v1/$prefix'
-	mut req := http.new_request(http.Method.post, url, postdata) ?
+	mut req := http.new_request(http.Method.post, url, postdata)?
 	// println(" --- $prefix\n$postdata")
 	if prefix.contains('auth') {
-		response := http.post_json('$h.url/api/v1/$prefix', postdata) ?
+		response := http.post_json('$h.url/api/v1/$prefix', postdata)?
 		result = response.text
 	} else {
 		req.header = h.header()
-		req.add_custom_header('x-disable-pagination', 'True') ?
-		response := req.do() ?
+		req.add_custom_header('x-disable-pagination', 'True')?
+		response := req.do()?
 		if response.status_code == 201 {
 			result = response.text
 		} else {
@@ -154,7 +154,7 @@ fn (mut h TaigaConnection) post_json_str(prefix string, postdata string, cache b
 		}
 		result = response.text
 	}
-	h.cache_set(prefix, postdata, result, cache) ?
+	h.cache_set(prefix, postdata, result, cache)?
 	return result
 }
 
@@ -169,7 +169,7 @@ fn (mut h TaigaConnection) get_json_list(prefix string, getdata string, cache bo
 	Output:
 		response: list of strings.
 	*/
-	mut result := h.get_json_str(prefix, getdata, cache) ?
+	mut result := h.get_json_str(prefix, getdata, cache)?
 	return crystaljson.json_list(result, false)
 }
 
@@ -188,16 +188,16 @@ fn (mut h TaigaConnection) get_json_str(prefix string, getdata string, cache boo
 	mut result := h.cache_get(prefix, getdata, cache)
 	if result == '' {
 		url := '$h.url/api/v1/$prefix'
-		mut req := http.new_request(http.Method.get, url, getdata) ?
+		mut req := http.new_request(http.Method.get, url, getdata)?
 		req.header = h.header()
-		req.add_custom_header('x-disable-pagination', 'True') ?
-		res := req.do() ?
+		req.add_custom_header('x-disable-pagination', 'True')?
+		res := req.do()?
 		if res.status_code == 200 {
 			result = res.text
 		} else {
 			return error('could not get: $url\n$res')
 		}
-		h.cache_set(prefix, getdata, result, cache) ?
+		h.cache_set(prefix, getdata, result, cache)?
 	}
 	return result
 }
@@ -214,9 +214,9 @@ fn (mut h TaigaConnection) edit_json(prefix string, id int, data string) ?string
 		response: response Json2.Any map.
 	*/
 	url := '$h.url/api/v1/$prefix/$id'
-	mut req := http.new_request(http.Method.patch, url, data) ?
+	mut req := http.new_request(http.Method.patch, url, data)?
 	req.header = h.header()
-	mut res := req.do() ?
+	mut res := req.do()?
 	mut result := ''
 	if res.status_code == 200 {
 		result = res.text
@@ -238,11 +238,11 @@ fn (mut h TaigaConnection) delete(prefix string, id int) ?bool {
 		bool: True if deleted successfully.
 	*/
 	url := '$h.url/api/v1/$prefix/$id'
-	mut req := http.new_request(http.Method.delete, url, '') ?
+	mut req := http.new_request(http.Method.delete, url, '')?
 	req.header = h.header()
-	mut res := req.do() ?
+	mut res := req.do()?
 	if res.status_code == 204 {
-		h.cache_drop(prefix) ? // Drop from cache, will drop too much but is ok
+		h.cache_drop(prefix)? // Drop from cache, will drop too much but is ok
 		return true
 	} else {
 		return error('Could not delete $prefix:$id')
@@ -274,9 +274,9 @@ fn (mut h TaigaConnection) auth(url string, login string, passwd string) ?AuthDe
 			"type": "normal",
 			"username": "$login"
 		}',
-		false) ?
+		false)?
 
-	h.auth = json.decode(AuthDetail, data) ?
+	h.auth = json.decode(AuthDetail, data)?
 
 	return h.auth
 }

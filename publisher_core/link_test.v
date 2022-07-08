@@ -1,4 +1,4 @@
-import publisher_core
+import freeflowuniverse.crystallib.publisher_core
 
 fn test_link1() {
 	text := ' ![ some text    ]( http://something.com/?hi&yo  )'

@@ -1,13 +1,12 @@
 module main
 
-import appsbox.discourseapp
+import freeflowuniverse.crystallib.appsbox.discourseapp
 
 fn do() ? {
-	mut app := discourseapp.get(name: "d-main")
+	mut app := discourseapp.get(name: 'd-main')
 	app.build()?
 }
 
-
 fn main() {
-	do() or {panic(err)}
+	do() or { panic(err) }
 }

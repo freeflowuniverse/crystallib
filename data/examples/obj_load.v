@@ -1,16 +1,12 @@
 module main
 
-import data.model
+import freeflowuniverse.crystallib.data.model
 
+fn do() ? {
+	mut df := model.factory()
+	df.init('/tmp/model_data', true)?
 
-
-
-fn do()?{
-
-	mut df := model.factory()	
-	df.init("/tmp/model_data",true)?
-
-	mut user := df.user_get(id:1)?
+	mut user := df.user_get(id: 1)?
 
 	// mut user := model.user_new()?
 	// user.name = "test"
@@ -20,11 +16,8 @@ fn do()?{
 	// println(user.changed())
 	// user.save()?
 	println(user)
-
 }
 
 fn main() {
-
-	do() or {panic(err)}
-
+	do() or { panic(err) }
 }

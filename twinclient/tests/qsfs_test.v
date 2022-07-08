@@ -1,4 +1,4 @@
-import twinclient
+import freeflowuniverse.crystallib.twinclient
 
 fn setup_qsfs_zdbs_test() (twinclient.Client, twinclient.QSFSZDBs) {
 	redis_server := 'localhost:6379'
@@ -15,7 +15,6 @@ fn setup_qsfs_zdbs_test() (twinclient.Client, twinclient.QSFSZDBs) {
 	}
 	return client, data
 }
-
 
 pub fn test_deploy_vm() {
 	mut client, data := setup_qsfs_zdbs_test()

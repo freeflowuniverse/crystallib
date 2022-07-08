@@ -6,8 +6,8 @@ import json
 
 pub fn stories() ? {
 	mut conn := connection_get()
-	resp := conn.get_json_str('userstories', '', true) ?
-	raw_data := raw_decode(resp.replace('\\\\', '')) ?
+	resp := conn.get_json_str('userstories', '', true)?
+	raw_data := raw_decode(resp.replace('\\\\', ''))?
 	blocks := raw_data.arr()
 	println('[+] Loading $blocks.len stories ...')
 	for s in blocks {
@@ -30,34 +30,31 @@ pub fn story_create(subject string, project_id int) ?Story {
 		project: project_id
 	}
 	postdata := json.encode_pretty(story)
-	response := conn.post_json_str('userstories', postdata, true) ?
-	mut result := story_decode(response) ?
+	response := conn.post_json_str('userstories', postdata, true)?
+	mut result := story_decode(response)?
 	conn.story_remember(result)
 	return result
 }
 
 pub fn story_get(id int) ?Story {
 	mut conn := connection_get()
-	response := conn.get_json_str('userstories/$id', '', true) ?
-	result := story_decode(response) ?
+	response := conn.get_json_str('userstories/$id', '', true)?
+	result := story_decode(response)?
 	conn.story_remember(result)
 	return result
 }
 
 pub fn story_delete(id int) ?bool {
 	mut conn := connection_get()
-	response := conn.delete('userstories', id) ?
+	response := conn.delete('userstories', id)?
 	conn.story_forget(id)
 	return response
 }
 
 fn story_decode(data string) ?Story {
-<<<<<<< HEAD
-	data_as_map := crystaljson.json_dict_filter_any(data, false, [], []) ?
-=======
-	data_raw := raw_decode(data) ?
-	data_as_map := data_raw.as_map()
->>>>>>> development_taiga_new
+	data_as_map := crystaljson.json_dict_filter_any(data, false, [], [])?
+	data_raw := raw_decode(data)?
+	// data_as_map := data_raw.as_map()
 
 	mut story := Story{
 		description: data_as_map['description'].str()
@@ -117,7 +114,7 @@ fn (story Story) set_status(st string) {
 
 // get comments in list from story
 pub fn (mut s Story) comments() ?[]Comment {
-	s.comments = comments_get('userstory', s.id) ?
+	s.comments = comments_get('userstory', s.id)?
 	return s.comments
 }
 

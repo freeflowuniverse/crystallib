@@ -1,56 +1,48 @@
 module actionparser
+
 import os
 
 pub fn init() ActionsParser {
 	return ActionsParser{}
 }
 
-//path can be a directory or a file
-pub fn (mut parser ActionsParser) add(path string)?  {
-
-	//recursive behavior for when dir
-	if os.is_dir(path){
+// path can be a directory or a file
+pub fn (mut parser ActionsParser) add(path string) ? {
+	// recursive behavior for when dir
+	if os.is_dir(path) {
 		mut items := os.ls(path)?
-		items.sort() //make sure we sort the items before we go in
-		//process dirs first, make sure we go deepest possible
-		for path0 in items{
-			if os.is_dir(path0){
+		items.sort() // make sure we sort the items before we go in
+		// process dirs first, make sure we go deepest possible
+		for path0 in items {
+			if os.is_dir(path0) {
 				parser.add(path0)?
 			}
 		}
-		//now process files in order
-		for path1 in items{
-			if os.is_file(path1) && path.to_lower().ends_with(".md"){
+		// now process files in order
+		for path1 in items {
+			if os.is_file(path1) && path.to_lower().ends_with('.md') {
 				parser.add(path1)?
 			}
 		}
-	}		
-	//make sure we only process markdown files
-	if os.is_file(path) && path.to_lower().ends_with(".md") {
+	}
+	// make sure we only process markdown files
+	if os.is_file(path) && path.to_lower().ends_with('.md') {
 		parser.file_parse(path)?
 	}
 }
 
-
 //
-pub fn content_parse(content string)?ActionsParser  {
-
-	mut parser:=init()
+pub fn content_parse(content string) ?ActionsParser {
+	mut parser := init()
 
 	parser.content_parse(content)?
 
 	return parser
-
-
 }
 
-pub fn file_parse(path string)?ActionsParser  {
-
-	mut parser:=init()
+pub fn file_parse(path string) ?ActionsParser {
+	mut parser := init()
 	parser.file_parse(path)?
 
 	return parser
-
-
 }
-

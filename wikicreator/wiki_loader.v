@@ -4,33 +4,33 @@ import os
 // import path
 // import texttools
 
-pub fn (mut creator WikiCreator) do(path string,path_out string) ? {
+pub fn (mut creator WikiCreator) do(path string, path_out string) ? {
 	mut path2 := path.replace('~', os.home_dir())
 	mut path_out2 := path.replace('~', os.home_dir())
-	return creator.do_recursive(path2,path_out2)
+	return creator.do_recursive(path2, path_out2)
 }
 
 ///////////////////////////////////////////////////////// INTERNAL BELOW ////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
 // find all wiki's, this goes very fast, no reason to cache
-fn (mut creator WikiCreator) do_recursive(path_root string,path_out string) ? {
-	if path_root == '' || ! os.exists(path_root){
-		return error("cannot load wiki processing from path: $path_root, does not exist")
+fn (mut creator WikiCreator) do_recursive(path_root string, path_out string) ? {
+	if path_root == '' || !os.exists(path_root) {
+		return error('cannot load wiki processing from path: $path_root, does not exist')
 	}
 	if path_root == '' {
-		return error("cannot load wiki processing for dest path, because empty")
+		return error('cannot load wiki processing for dest path, because empty')
 	}
-	if ! os.exists(path_out){
-		os.mkdir_all(path_out) ?
+	if !os.exists(path_out) {
+		os.mkdir_all(path_out)?
 	}
 
-	return creator.do_recursive_(path_root,path_out)
+	return creator.do_recursive_(path_root, path_out)
 }
 
-fn (mut creator WikiCreator) do_recursive_(path string,path_out string) ? {
-	items := os.ls(path) ?
-	mut pathnew := ""
+fn (mut creator WikiCreator) do_recursive_(path string, path_out string) ? {
+	items := os.ls(path)?
+	mut pathnew := ''
 	for item in items {
 		pathnew = os.join_path(path, item)
 		// println(' - $item')
@@ -44,22 +44,24 @@ fn (mut creator WikiCreator) do_recursive_(path string,path_out string) ? {
 			continue
 		}
 		if os.is_dir(os.join_path(path, item)) {
-			creator.do_recursive_(pathnew,path_out) ?
+			creator.do_recursive_(pathnew, path_out)?
 		} else {
 			if item.to_lower() == 'defs.md' {
 				continue
 			} else if item.contains('.test') {
-				os.rm(pathnew) ?
+				os.rm(pathnew)?
 				continue
-			} 
+			}
 			// for names we do everything case insensitive
 			mut itemlower := item.to_lower()
-			mut ext := os.file_ext(itemlower).trim(".")
+			mut ext := os.file_ext(itemlower).trim('.')
 
 			mut item2 := item
 
-			if ext == '' || ext != "md" {continue}
-			
+			if ext == '' || ext != 'md' {
+				continue
+			}
+
 			// println(item2)
 		}
 	}

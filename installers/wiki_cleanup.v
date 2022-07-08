@@ -1,12 +1,11 @@
 module installers
 
 import os
-import publisher_config
-import process
-import texttools
+import freeflowuniverse.crystallib.publisher_config
+import freeflowuniverse.crystallib.process
+import freeflowuniverse.crystallib.texttools
 
 pub fn wiki_cleanup(names []string) ? {
-
 	mut conf := publisher_config.get()?
 
 	for mut site in conf.sites_get(names) {
@@ -60,7 +59,9 @@ pub fn wiki_cleanup(names []string) ? {
 		rm -f .installed
 		'
 
-		process.execute_stdout(script_cleanup) or { return error('cannot cleanup for ${name}.\n$err') }
+		process.execute_stdout(script_cleanup) or {
+			return error('cannot cleanup for ${name}.\n$err')
+		}
 
 		script_commit := '
 		cd $repo.path()

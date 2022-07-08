@@ -5,7 +5,7 @@ import json
 // Deploy zdbs workload
 pub fn (mut tw Client) deploy_zdbs(payload ZDBs) ?DeployResponse {
 	payload_encoded := json.encode_pretty(payload)
-	mut msg := tw.send('twinserver.zdbs.deploy', payload_encoded) ?
+	mut msg := tw.send('twinserver.zdbs.deploy', payload_encoded)?
 	response := tw.read(msg)
 	if response.err != '' {
 		return error(response.err)
@@ -16,7 +16,7 @@ pub fn (mut tw Client) deploy_zdbs(payload ZDBs) ?DeployResponse {
 // Add new zdb to zdbs deployment
 pub fn (mut tw Client) add_zdb(zdb AddZDB) ?DeployResponse {
 	payload_encoded := json.encode(zdb)
-	mut msg := tw.send('twinserver.zdbs.add_zdb', payload_encoded) ?
+	mut msg := tw.send('twinserver.zdbs.add_zdb', payload_encoded)?
 	response := tw.read(msg)
 	if response.err != '' {
 		return error(response.err)
@@ -27,7 +27,7 @@ pub fn (mut tw Client) add_zdb(zdb AddZDB) ?DeployResponse {
 // Delete single zdb from a zdbs deployment
 pub fn (mut tw Client) delete_zdb(zdb_to_delete SingleDelete) ?ContractResponse {
 	payload_encoded := json.encode_pretty(zdb_to_delete)
-	mut msg := tw.send('twinserver.zdbs.delete_zdb', payload_encoded) ?
+	mut msg := tw.send('twinserver.zdbs.delete_zdb', payload_encoded)?
 	response := tw.read(msg)
 	if response.err != '' {
 		return error(response.err)
@@ -37,7 +37,7 @@ pub fn (mut tw Client) delete_zdb(zdb_to_delete SingleDelete) ?ContractResponse 
 
 // Get zdbs info using deployment name
 pub fn (mut tw Client) get_zdbs(name string) ?[]Deployment {
-	mut msg := tw.send('twinserver.zdbs.get', '{"name": "$name"}') ?
+	mut msg := tw.send('twinserver.zdbs.get', '{"name": "$name"}')?
 	response := tw.read(msg)
 	if response.err != '' {
 		return error(response.err)
@@ -48,7 +48,7 @@ pub fn (mut tw Client) get_zdbs(name string) ?[]Deployment {
 // Update zdbs with updated payload.
 pub fn (mut tw Client) update_zdbs(payload ZDBs) ?DeployResponse {
 	payload_encoded := json.encode_pretty(payload)
-	mut msg := tw.send('twinserver.zdbs.update', payload_encoded) ?
+	mut msg := tw.send('twinserver.zdbs.update', payload_encoded)?
 	response := tw.read(msg)
 	if response.err != '' {
 		return error(response.err)
@@ -58,7 +58,7 @@ pub fn (mut tw Client) update_zdbs(payload ZDBs) ?DeployResponse {
 
 // List all my zdbs deployments
 pub fn (mut tw Client) list_zdbs() ?[]string {
-	mut msg := tw.send('twinserver.zdbs.list', '{}') ?
+	mut msg := tw.send('twinserver.zdbs.list', '{}')?
 	response := tw.read(msg)
 	if response.err != '' {
 		return error(response.err)
@@ -68,7 +68,7 @@ pub fn (mut tw Client) list_zdbs() ?[]string {
 
 // Delete zdbs deployment
 pub fn (mut tw Client) delete_zdbs(name string) ?ContractResponse {
-	mut msg := tw.send('twinserver.zdbs.delete', '{"name": "$name"}') ?
+	mut msg := tw.send('twinserver.zdbs.delete', '{"name": "$name"}')?
 	response := tw.read(msg)
 	if response.err != '' {
 		return error(response.err)

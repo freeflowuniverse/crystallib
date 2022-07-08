@@ -1,20 +1,23 @@
 module nodejs
 
 import os
-import builder
-import process
-import publisher_config
+import freeflowuniverse.crystallib.builder
+import freeflowuniverse.crystallib.process
+import freeflowuniverse.crystallib.publisher_config
 
-struct NodeJS{
+struct NodeJS {
 pub mut:
 	node builder.Node
-	cfg &publisher_config.ConfigRoot
+	cfg  &publisher_config.ConfigRoot
 }
 
-pub fn get()?NodeJS{
+pub fn get() ?NodeJS {
 	mut cfg := publisher_config.get()?
-	mut n := builder.node_new(builder.NodeArguments{name:"main"})?
-	return NodeJS{node:n, cfg:cfg}
+	mut n := builder.node_new(builder.NodeArguments{ name: 'main' })?
+	return NodeJS{
+		node: n
+		cfg: cfg
+	}
 }
 
 pub fn (mut n NodeJS) install() ? {
@@ -22,10 +25,10 @@ pub fn (mut n NodeJS) install() ? {
 	base := n.cfg.publish.paths.base
 	nodejspath := n.cfg.nodejs.path
 
-	n.node.platform_prepare() ?
+	n.node.platform_prepare()?
 
-	println(" - base dir: $base")
-	println(" - nodejs dir: $nodejspath")
+	println(' - base dir: $base')
+	println(' - nodejs dir: $nodejspath')
 
 	if n.cfg.nodejs.nvm {
 		if !os.exists('$base/nvm.sh') {
@@ -40,15 +43,14 @@ pub fn (mut n NodeJS) install() ? {
 			}
 		}
 
+		mut nodev := ''
 
-		mut nodev := ""
-
-		if n.cfg.nodejs.version == publisher_config.NodejsCat.latest{
+		if n.cfg.nodejs.version == publisher_config.NodejsCat.latest {
 			// nodev = "node"
-			nodev = "$n.cfg.nodejs.versionnr"
-		}else{
+			nodev = '$n.cfg.nodejs.versionnr'
+		} else {
 			// nodev = "--lts"
-			nodev = "$n.cfg.nodejs.versionnr"
+			nodev = '$n.cfg.nodejs.versionnr'
 		}
 
 		if !os.exists('$nodejspath/bin/node') {
@@ -66,16 +68,15 @@ pub fn (mut n NodeJS) install() ? {
 				exit(1)
 			}
 
-			n.npm_install('@gridsome/cli', true) ?
-
+			n.npm_install('@gridsome/cli', true)?
 		}
 	} else {
 		if n.cfg.nodejs.version == publisher_config.NodejsCat.latest {
-			n.node.package_install(name: 'node') ?
-		} 
+			n.node.package_install(name: 'node')?
+		}
 
 		if n.node.platform == builder.PlatformType.osx {
-			n.node.package_install(name: 'node@14') ?
+			n.node.package_install(name: 'node@14')?
 			// node.executor.exec('brew install $name') or {
 			// 	return error('could not install package:$package.name\nerror:\n$err')
 			// }
@@ -87,15 +88,13 @@ pub fn (mut n NodeJS) install() ? {
 			panic('implement for other platforms')
 		}
 
-		n.npm_install('@gridsome/cli', true) ?
+		n.npm_install('@gridsome/cli', true)?
 	}
 
 	println(' - nodejs installed')
-
-	
 }
 
-pub fn (mut n NodeJS) npm_install(name string,global bool) ? {
+pub fn (mut n NodeJS) npm_install(name string, global bool) ? {
 	mut script := ''
 
 	base := n.cfg.publish.paths.base
@@ -124,7 +123,6 @@ fn (mut n NodeJS) check() ? {
 }
 
 pub fn (mut n NodeJS) npm_install_all(path string) ? {
-
 	base := n.cfg.publish.paths.base
 
 	n.check()?
@@ -133,7 +131,6 @@ pub fn (mut n NodeJS) npm_install_all(path string) ? {
 		return error("cannot find path: $path to do 'npm install' in")
 	}
 	mut script := ''
-
 
 	if n.cfg.nodejs.nvm {
 		script = 'source $base/nvm.sh\n'
@@ -145,7 +142,5 @@ pub fn (mut n NodeJS) npm_install_all(path string) ? {
 	// 	script += 'npm install $name\n'
 	// }
 
-	process.execute_stdout(script) or {
-		return error('could not do npm install:\n$err')
-	}
+	process.execute_stdout(script) or { return error('could not do npm install:\n$err') }
 }
