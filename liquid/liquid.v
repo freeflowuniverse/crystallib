@@ -159,12 +159,12 @@ fn (mut h LiquidConnection) post_json(prefix string, postdata string, cache bool
 		req.header = h.header()
 		println(req)
 		response := req.do()?
-		result = response.text
+		result = response.body
 	}
 	// Post without auth header
 	else {
 		response := http.post_json('$h.url/$prefix', postdata)?
-		result = response.text
+		result = response.body
 	}
 	h.cache_set(prefix, postdata, result, cache)?
 	data_raw := json2.raw_decode(result)?
@@ -191,12 +191,12 @@ fn (mut h LiquidConnection) post_json_str(prefix string, postdata string, cache 
 		req.header = h.header()
 		println(req)
 		response := req.do()?
-		result = response.text
+		result = response.body
 	}
 	// Post without auth header
 	else {
 		response := http.post_json('$h.url/$prefix', postdata)?
-		result = response.text
+		result = response.body
 	}
 	h.cache_set(prefix, postdata, result, cache)?
 	return result
@@ -219,7 +219,7 @@ fn (mut h LiquidConnection) get_json(prefix string, data string, cache bool) ?ma
 		mut req := http.new_request(http.Method.get, '$h.url/$prefix', data)?
 		req.header = h.header()
 		res := req.do()?
-		result = res.text
+		result = res.body
 	}
 	// means empty result from cache
 	if result == 'NULL' {
@@ -248,7 +248,7 @@ fn (mut h LiquidConnection) get_json_str(prefix string, data string, cache bool)
 		mut req := http.new_request(http.Method.get, '$h.url/$prefix', data)?
 		req.header = h.header()
 		res := req.do()?
-		result = res.text
+		result = res.body
 	}
 	// means empty result from cache
 	if result == 'NULL' {
@@ -273,7 +273,7 @@ fn (mut h LiquidConnection) edit_json(prefix string, id int, data string, cache 
 	mut req := http.new_request(http.Method.patch, '$h.url/$prefix/$id', data)?
 	req.header = h.header()
 	res := req.do()?
-	result := res.text
+	result := res.body
 	h.cache_set(prefix, data, result, cache)?
 	data_raw := json2.raw_decode(result)?
 	data2 := data_raw.as_map()

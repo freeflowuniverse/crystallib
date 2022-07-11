@@ -71,7 +71,7 @@ pub fn (mut h GithubConnection) get_json_str(prefix string, getdata string, cach
 		req.add_custom_header('x-disable-pagination', 'True')?
 		res := req.do()?
 		if res.status_code == 200 {
-			result = res.text
+			result = res.body
 		} else {
 			return error('could not get: $url\n$res')
 		}
@@ -135,17 +135,17 @@ fn (mut h GithubConnection) header() http.Header {
 // 	// println(" --- $prefix\n$postdata")
 // 	if prefix.contains('auth') {
 // 		response := http.post_json('$h.url/api/v1/$prefix', postdata) ?
-// 		result = response.text
+// 		result = response.body
 // 	} else {
 // 		req.header = h.header()
 // 		req.add_custom_header('x-disable-pagination', 'True') ?
 // 		response := req.do() ?
 // 		if response.status_code == 201 {
-// 			result = response.text
+// 			result = response.body
 // 		} else {
 // 			return error('could not post: $url\n$response')
 // 		}
-// 		result = response.text
+// 		result = response.body
 // 	}
 // 	h.cache_set(prefix, postdata, result, cache) ?
 // 	return result
@@ -183,7 +183,7 @@ fn (mut h GithubConnection) header() http.Header {
 // 	mut res := req.do() ?
 // 	mut result := ''
 // 	if res.status_code == 200 {
-// 		result = res.text
+// 		result = res.body
 // 	} else {
 // 		return error('could not get: $url\n$res')
 // 	}

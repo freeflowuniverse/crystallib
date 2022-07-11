@@ -3,7 +3,7 @@ module main
 import freeflowuniverse.crystallib.appsbox.postgresapp
 
 fn do() ? {
-	mut app := postgresapp.get(port: 7777)
+	mut app := postgresapp.get(port: 1144)
 	app.build()?
 }
 

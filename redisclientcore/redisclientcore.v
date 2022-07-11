@@ -8,7 +8,7 @@ pub fn get() &redisclient.Redis {
 	// mut r := Redis{
 	// 	addr: '/tmp/redis_${tcpport}.sock'
 	// }
-	mut r := redisclient.get('localhost:6379') or {
+	mut r := redisclient.get('127.0.0.1:6379') or {
 		panic(err)
 		// println('$err')
 		// make sure redis starts

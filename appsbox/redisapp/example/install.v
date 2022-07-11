@@ -3,7 +3,7 @@ module main
 import freeflowuniverse.crystallib.appsbox.redisapp
 
 fn do() ? {
-	mut app := redisapp.get(port: 7777)
+	mut app := redisapp.get(port: 7788)
 	app.start()?
 	// TODO: does not work, can't make 2 connections
 	// mut app2 := redisapp.get(port:7778)

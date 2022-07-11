@@ -15,7 +15,7 @@ pub fn (client Client) get_vdc_info() (VDC, int) {
 	full_url := client.url + '/api/controller/vdc'
 
 	response := get(full_url, auth_cred)
-	return json.decode(VDC, response.text) or {}, response.status_code
+	return json.decode(VDC, response.body) or {}, response.status_code
 }
 
 pub fn (client Client) list_kubernetes_nodes() ([]Kubernetes, int) {
@@ -23,7 +23,7 @@ pub fn (client Client) list_kubernetes_nodes() ([]Kubernetes, int) {
 	full_url := client.url + '/api/controller/node'
 
 	response := get(full_url, auth_cred)
-	return json.decode([]Kubernetes, response.text) or {}, response.status_code
+	return json.decode([]Kubernetes, response.body) or {}, response.status_code
 }
 
 pub fn (client Client) add_kubernetes_node(flavor string) ([]int, int) {
@@ -34,7 +34,7 @@ pub fn (client Client) add_kubernetes_node(flavor string) ([]int, int) {
 	full_url := client.url + '/api/controller/node'
 
 	response := post(full_url, auth_cred, body)
-	return json.decode([]int, response.text) or {}, response.status_code
+	return json.decode([]int, response.body) or {}, response.status_code
 }
 
 pub fn (client Client) delete_kubernetes_node(wid int) (DeleteResponse, int) {
@@ -45,7 +45,7 @@ pub fn (client Client) delete_kubernetes_node(wid int) (DeleteResponse, int) {
 	full_url := client.url + '/api/controller/node'
 
 	response := delete(full_url, auth_cred, body)
-	return json.decode(DeleteResponse, response.text) or {}, response.status_code
+	return json.decode(DeleteResponse, response.body) or {}, response.status_code
 }
 
 pub fn (client Client) list_storage_nodes() ([]ZDB, int) {
@@ -53,7 +53,7 @@ pub fn (client Client) list_storage_nodes() ([]ZDB, int) {
 	full_url := client.url + '/api/controller/zdb'
 
 	response := get(full_url, auth_cred)
-	return json.decode([]ZDB, response.text) or {}, response.status_code
+	return json.decode([]ZDB, response.body) or {}, response.status_code
 }
 
 pub fn (client Client) add_storage_node(capacity int, farm string) ([]int, int) {
@@ -65,7 +65,7 @@ pub fn (client Client) add_storage_node(capacity int, farm string) ([]int, int) 
 	full_url := client.url + '/api/controller/zdb'
 
 	response := post(full_url, auth_cred, body)
-	return json.decode([]int, response.text) or {}, response.status_code
+	return json.decode([]int, response.body) or {}, response.status_code
 }
 
 pub fn (client Client) delete_storage_node(wid int) (DeleteResponse, int) {
@@ -76,7 +76,7 @@ pub fn (client Client) delete_storage_node(wid int) (DeleteResponse, int) {
 	full_url := client.url + '/api/controller/zdb'
 
 	response := delete(full_url, auth_cred, body)
-	return json.decode(DeleteResponse, response.text) or {}, response.status_code
+	return json.decode(DeleteResponse, response.body) or {}, response.status_code
 }
 
 pub fn (client Client) get_vdc_wallet() (Wallet, int) {
@@ -84,7 +84,7 @@ pub fn (client Client) get_vdc_wallet() (Wallet, int) {
 	full_url := client.url + '/api/controller/wallet'
 
 	response := get(full_url, auth_cred)
-	return json.decode(Wallet, response.text) or {}, response.status_code
+	return json.decode(Wallet, response.body) or {}, response.status_code
 }
 
 pub fn (client Client) get_used_pools() ([]Pool, int) {
@@ -92,7 +92,7 @@ pub fn (client Client) get_used_pools() ([]Pool, int) {
 	full_url := client.url + '/api/controller/pools'
 
 	response := get(full_url, auth_cred)
-	return json.decode([]Pool, response.text) or {}, response.status_code
+	return json.decode([]Pool, response.body) or {}, response.status_code
 }
 
 pub fn (client Client) get_alerts(application string) ([]Alert, int) {
@@ -101,7 +101,7 @@ pub fn (client Client) get_alerts(application string) ([]Alert, int) {
 	full_url := client.url + '/api/controller/alerts/' + application
 
 	response := get(full_url, auth_cred)
-	return json.decode([]Alert, response.text) or {}, response.status_code
+	return json.decode([]Alert, response.body) or {}, response.status_code
 }
 
 pub fn (client Client) get_kubeconfig() (string, int) {
@@ -109,7 +109,7 @@ pub fn (client Client) get_kubeconfig() (string, int) {
 	full_url := client.url + '/api/controller/kubeconfig'
 	response := get(full_url, auth_cred)
 
-	return response.text, response.status_code
+	return response.body, response.status_code
 }
 
 pub fn (client Client) get_zstor_config(ip_version int) (string, int) {
@@ -120,7 +120,7 @@ pub fn (client Client) get_zstor_config(ip_version int) (string, int) {
 	full_url := client.url + '/api/controller/zstor_config'
 
 	response := get_with_body_param(full_url, auth_cred, body)
-	return response.text, response.status_code
+	return response.body, response.status_code
 }
 
 pub fn (client Client) get_status() (Status, int) {
@@ -128,7 +128,7 @@ pub fn (client Client) get_status() (Status, int) {
 	full_url := client.url + '/api/controller/status'
 
 	response := get(full_url, auth_cred)
-	return json.decode(Status, response.text) or {}, response.status_code
+	return json.decode(Status, response.body) or {}, response.status_code
 }
 
 pub fn (client Client) get_backup() ([]Backup, int) {
@@ -136,7 +136,7 @@ pub fn (client Client) get_backup() ([]Backup, int) {
 	full_url := client.url + '/api/controller/backup'
 
 	response := get(full_url, auth_cred)
-	return json.decode([]Backup, response.text) or {}, response.status_code
+	return json.decode([]Backup, response.body) or {}, response.status_code
 }
 
 pub fn (client Client) list_vms() ([]VM, int) {
@@ -144,7 +144,7 @@ pub fn (client Client) list_vms() ([]VM, int) {
 	full_url := client.url + '/api/controller/vmachine'
 
 	response := get(full_url, auth_cred)
-	return json.decode([]VM, response.text) or {}, response.status_code
+	return json.decode([]VM, response.body) or {}, response.status_code
 }
 
 pub fn (client Client) add_vm(add_vm_request_body AddVM) ([]int, int) {
@@ -153,7 +153,7 @@ pub fn (client Client) add_vm(add_vm_request_body AddVM) ([]int, int) {
 	full_url := client.url + '/api/controller/vmachine'
 
 	response := post(full_url, auth_cred, body)
-	return json.decode([]int, response.text) or {}, response.status_code
+	return json.decode([]int, response.body) or {}, response.status_code
 }
 
 pub fn (client Client) delete_vm(wid int) (DeleteResponse, int) {
@@ -164,5 +164,5 @@ pub fn (client Client) delete_vm(wid int) (DeleteResponse, int) {
 	full_url := client.url + '/api/controller/vmachine'
 
 	response := delete(full_url, auth_cred, body)
-	return json.decode(DeleteResponse, response.text) or {}, response.status_code
+	return json.decode(DeleteResponse, response.body) or {}, response.status_code
 }

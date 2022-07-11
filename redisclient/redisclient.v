@@ -3,6 +3,7 @@ module redisclient
 // original code see https://github.com/patrickpissurno/vredis/blob/master/vredis_test.v
 // credits see there as well (-:
 import net
+import sync
 // import strconv
 import time
 import freeflowuniverse.crystallib.resp2
@@ -52,10 +53,10 @@ const factory = init2()
 
 //make sure we reset the factory
 // needed e.g. in threads
-pub fn reset(){
+pub fn reset(){	
 	mut f := redisclient.factory
 	f.instances =  map[string]Redis{}
-	println(f.instances)
+	// println("reset: ${sync.thread_id()} -- ${f.instances}" )
 }
 
 // https://redis.io/topics/protocol
@@ -64,8 +65,12 @@ pub fn reset(){
 //   /tmp/redis-default.sock
 pub fn get(addr string) ?&Redis {
 	mut f := redisclient.factory
-	if  false && addr in f.instances {
-		println("cache")
+	// println("reset after: ${sync.thread_id()} -- ${f.instances}" )
+	// println("${ addr in f.instances}")
+	println(f.instances)
+	if addr in f.instances {
+		// println("${f.instances[addr]}")
+		println("redis from cache: ${sync.thread_id()}")
 		mut r2 := f.instances[addr]
 		return &r2
 	}
@@ -78,7 +83,7 @@ pub fn get(addr string) ?&Redis {
 }
 
 fn (mut r Redis) socket_connect() ? {
-	// println(" CONNECT TCP: ${r.addr}")
+	println(" CONNECT TCP: ${r.addr}")
 	r.socket = net.dial_tcp(r.addr)?
 	r.socket.set_blocking(true)?
 	r.socket.set_read_timeout(10 * time.second)
@@ -110,6 +115,7 @@ fn (mut r Redis) write_line(data []u8) ? {
 // This function loops, till *everything is written*
 // (some of the socket write ops could be partial)
 fn (mut r Redis) write(data []u8) ? {
+	r.socket_check()?
 	mut remaining := data.len
 	for remaining > 0 {
 		written_bytes := r.socket.write(data[data.len - remaining..])?
@@ -130,6 +136,7 @@ fn (mut r Redis) write_cmds(items []string) ? {
 }
 
 fn (mut r Redis) read(size int) ?[]u8 {
+	r.socket_check()?
 	mut buf := []u8{len: size}
 	mut remaining := size
 	for remaining > 0 {

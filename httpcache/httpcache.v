@@ -1,18 +1,18 @@
 module httpcache
 
 import net.http
-import freeflowuniverse.crystallib.appsbox.redisapp
+import freeflowuniverse.crystallib.redisclientcore
 import freeflowuniverse.crystallib.redisclient
 
+[heap]
 struct HttpCache {
 mut:
 	redis &redisclient.Redis
 }
 
 fn init_single_cache() HttpCache {
-	mut r := redisapp.client_local_get() or { panic(error) }
+	mut r := redisclientcore.get()
 	return HttpCache{
-		// redis: redisclientcore.get()
 		redis: r
 	}
 }
@@ -26,12 +26,13 @@ pub fn newcache() HttpCache {
 
 pub fn (mut h HttpCache) getex(url string, expire int) ?string {
 	// println("[+] cache: request url: " + url)
+	// mut redis := redisclientcore.get()
 
 	hit := h.redis.get('httpcache:' + url) or {
 		println('[-] cache: cache miss, downloading: ' + url)
 
 		r := http.get(url)?
-		data := r.text
+		data := r.body
 
 		status := http.status_from_int(r.status_code)
 		println(r)

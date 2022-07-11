@@ -6,13 +6,11 @@ import freeflowuniverse.crystallib.publisher_config
 import os
 import freeflowuniverse.crystallib.actionparser
 import freeflowuniverse.crystallib.gittools
-
 //
 pub fn get(args publisher_config.PublishConfigArgs) ?Publisher {
 	mut publisher := Publisher{
 		name: 'main'
 	}
-
 	cfg := publisher_config.get(args)?
 
 	// println(cfg)

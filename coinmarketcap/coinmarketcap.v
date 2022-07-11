@@ -183,7 +183,7 @@ fn (mut h CoinMarketConnection) get_json(prefix string, data string, query strin
 		}
 		req.header = h.header()?
 		res := req.do()?
-		result = res.text
+		result = res.body
 	}
 	// means empty result from cache
 	if result == 'NULL' {
@@ -217,7 +217,7 @@ fn (mut h CoinMarketConnection) get_json_str(prefix string, data string, query s
 		}
 		req.header = h.header()?
 		res := req.do()?
-		result = res.text
+		result = res.body
 	}
 	// means empty result from cache
 	if result == 'NULL' {
