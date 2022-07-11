@@ -3,11 +3,14 @@ module main
 import freeflowuniverse.crystallib.redisclientcore
 import time
 
-fn conn(c int) ?bool {
-	// mut redis := redisclientcore.get()
-	// redis.set('test', 'some data')   or { panic("set"+err.str()+"\n"+c.str())}
-	// redis.get('test')  or{ panic("get"+err.str()+"\n"+c.str())}
-	return true
+fn conn_for_thread(c int) {
+	println("thread $c")
+	redisclientcore.reset() //important to let threading work, need to remove the existing socket connections
+	time.sleep(100 * time.millisecond)
+	mut redis := redisclientcore.get()
+	println("ok $c")
+	redis.set('test', 'some data')   or { panic("set "+err.str()+"\n"+c.str())}
+	redis.get('test')  or { panic("get "+err.str()+"\n"+c.str())}
 }
 
 fn conn2(c int) ?bool {
@@ -22,30 +25,32 @@ fn conn2(c int) ?bool {
 
 	mut redis := redisclientcore.get()
 	redis.set('test', 'some data') or { panic('set' + err.str() + '\n' + c.str()) }
-	redis.get('test') or { panic('get' + err.str() + '\n' + c.str()) }
+	r := redis.get('test')?
+	if r!= "some data"{
+		 panic('get error different result.' + '\n' + c.str())
+	}
 	return true
 }
 
-// fn redistest() ? {
+fn redistest() ? {
 
-// 	mut threads := []thread{}
+	mut threads := []thread{}
 
-// 	for c in 0..10000{
-// 		//even if going slower does not work?
-// 		time.sleep(100*time.millisecond)
-// 		println(c)
-// 		threads << go conn(c)
-// 	}
-// 	threads.wait()
+	for c in 0..10000{
+		//even if going slower does not work?
+		// time.sleep(10*time.millisecond)
+		threads << go conn_for_thread(c)
+	}
+	threads.wait()
 
-// 	println("TEST OK")
+	println("TEST OK THREADS")
 
-// }
+}
 
 fn redistest_nothreads() ? {
 	for c in 0 .. 10000 {
 		println(c)
-		time.sleep(10 * time.millisecond)
+		// time.sleep(1 * time.millisecond)
 		// test with conn as well
 		res := conn2(c) or { false }
 		if res {
@@ -58,7 +63,6 @@ fn redistest_nothreads() ? {
 }
 
 fn main() {
-	// THEY BOTH FAIL
-	// redistest() or { panic(err) }
-	redistest_nothreads() or { panic(err) }
+	redistest() or { panic(err) }
+	// redistest_nothreads() or { panic(err) }
 }

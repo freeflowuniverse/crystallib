@@ -42,7 +42,7 @@ fn (mut apps AppsBox) home_set(path_ string) {
 	mut path := path_
 	if path == '' {
 		// path="~/hub3"
-		path = rootpath.default_path()
+		path = rootpath.rootdir()
 	}
 	if apps.apps_path == '' {
 		apps.apps_path = path

@@ -3,7 +3,7 @@ module texttools
 import regex
 import os
 
-struct ReplaceInstructions {
+pub struct ReplaceInstructions {
 pub mut:
 	instructions []ReplaceInstruction
 }

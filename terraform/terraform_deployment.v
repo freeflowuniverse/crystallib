@@ -4,7 +4,7 @@ import os
 import crypto.md5
 import freeflowuniverse.crystallib.rootpath
 import threefoldtech.vgrid.gridproxy
-import threefoldtech.vgrid.explorer
+// import threefoldtech.vgrid.explorer
 
 enum TerraformDeploymentStatus {
 	init
@@ -70,7 +70,7 @@ pub fn (mut f TerraformFactory) deployment_get(args_ TerraformDeploymentArgs) ?&
 		return f.deployments[args.name]
 	}
 
-	mut path := rootpath.default_prefix('/terraform/$args.name')
+	mut path := rootpath.path_ensure('/terraform/$args.name')
 
 	f.deployments[args.name] = &TerraformDeployment{
 		name: args.name

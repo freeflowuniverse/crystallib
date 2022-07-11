@@ -50,21 +50,31 @@ fn init2() RedisFactory {
 // singleton creation
 const factory = init2()
 
+//make sure we reset the factory
+// needed e.g. in threads
+pub fn reset(){
+	mut f := redisclient.factory
+	f.instances =  map[string]Redis{}
+	println(f.instances)
+}
+
 // https://redis.io/topics/protocol
 // examples:
 //   localhost:6379
 //   /tmp/redis-default.sock
 pub fn get(addr string) ?&Redis {
 	mut f := redisclient.factory
-	if addr !in f.instances {
-		mut r := Redis{
-			addr: addr
-		}
-		r.socket_connect()?
-		f.instances[addr] = r
+	if  false && addr in f.instances {
+		println("cache")
+		mut r2 := f.instances[addr]
+		return &r2
 	}
-	mut r2 := f.instances[addr]
-	return &r2
+	mut r := Redis{
+		addr: addr
+	}
+	r.socket_connect()?
+	f.instances[addr] = r
+	return &r
 }
 
 fn (mut r Redis) socket_connect() ? {
@@ -78,10 +88,10 @@ fn (mut r Redis) socket_connect() ? {
 
 // THIS IS A WORKAROUND, not sure why we need this, shouldn't be here
 fn (mut r Redis) socket_check() ? {
-	// r.socket.peer_addr() or {
-	// 	eprintln(' - re-connect socket for redis')
-	// 	r.socket_connect() ?
-	// }
+	r.socket.peer_addr() or {
+		eprintln(' - re-connect socket for redis')
+		r.socket_connect() ?
+	}
 }
 
 pub fn (mut r Redis) read_line() ?string {

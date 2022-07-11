@@ -36,14 +36,14 @@ pub fn get() ?&TerraformFactory {
 	mut f_ := terraform.factory
 	// home_ := os.real_path(os.home_dir())
 	// f_.tf_cmd = "$home_/git3/bin/terraform"
-	f_.tf_cmd = rootpath.default_prefix('/bin/terraform')
+	f_.tf_cmd = rootpath.path_ensure('/bin/terraform')
 
 	if f_.status == TerraformFactoryStatus.init {
 		if !os.exists(f_.tf_cmd) {
 			mut a := terraform.factory
 			home := os.real_path(os.home_dir())
 			// a.tf_cmd = "$home/git3/bin/terraform"
-			a.tf_cmd = rootpath.default_prefix('/bin/terraform')
+			a.tf_cmd = rootpath.path_ensure('/bin/terraform')
 
 			mut n := builder.node_local()?
 			mut url := ''
