@@ -3,16 +3,16 @@ module nodejs
 import os
 import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.process
-import freeflowuniverse.crystallib.publisher_config
+import freeflowuniverse.crystallib.publisher.config
 
 struct NodeJS {
 pub mut:
 	node builder.Node
-	cfg  &publisher_config.ConfigRoot
+	cfg  &config.ConfigRoot
 }
 
 pub fn get() ?NodeJS {
-	mut cfg := publisher_config.get()?
+	mut cfg := config.get()?
 	mut n := builder.node_new(builder.NodeArguments{ name: 'main' })?
 	return NodeJS{
 		node: n
@@ -45,7 +45,7 @@ pub fn (mut n NodeJS) install() ? {
 
 		mut nodev := ''
 
-		if n.cfg.nodejs.version == publisher_config.NodejsCat.latest {
+		if n.cfg.nodejs.version == config.NodejsCat.latest {
 			// nodev = "node"
 			nodev = '$n.cfg.nodejs.versionnr'
 		} else {
@@ -71,7 +71,7 @@ pub fn (mut n NodeJS) install() ? {
 			n.npm_install('@gridsome/cli', true)?
 		}
 	} else {
-		if n.cfg.nodejs.version == publisher_config.NodejsCat.latest {
+		if n.cfg.nodejs.version == config.NodejsCat.latest {
 			n.node.package_install(name: 'node')?
 		}
 

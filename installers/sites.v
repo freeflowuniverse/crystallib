@@ -1,11 +1,11 @@
 module installers
 
-import freeflowuniverse.crystallib.publisher_config
-import freeflowuniverse.crystallib.publisher_core
+import freeflowuniverse.crystallib.publisher.config
+import freeflowuniverse.crystallib.publisher
 import os
 
 pub fn sites_list(names []string) ? {
-	mut conf := publisher_config.get()?
+	mut conf := config.get()?
 	println('\033[2J')
 	println('\n ===== list of sites =====\n')
 	for mut site in conf.sites_get(names) {
@@ -23,22 +23,22 @@ pub fn sites_list(names []string) ? {
 }
 
 pub fn sites_install(names []string) ? {
-	mut conf := publisher_config.get()?
+	mut conf := config.get()?
 	println(' - sites install.')
 	mut first := true
 	for mut sc in conf.sites_get(names) {
 		// println(sc)
-		if sc.cat == publisher_config.SiteCat.web {
+		if sc.cat == config.SiteCat.web {
 			website_install([sc.name], first)?
 			first = false
-		} else if sc.cat == publisher_config.SiteCat.wiki {
+		} else if sc.cat == config.SiteCat.wiki {
 			wiki_install([sc.name])?
 		}
 	}
 }
 
 pub fn sites_pull(names []string, reset bool) ? {
-	mut conf := publisher_config.get()?
+	mut conf := config.get()?
 	println(' - sites pull.')
 	for mut sc in conf.sites_get(names) {
 		mut repo := sc.repo_get()
@@ -52,7 +52,7 @@ pub fn sites_pull(names []string, reset bool) ? {
 }
 
 pub fn sites_push(names []string) ? {
-	mut conf := publisher_config.get()?
+	mut conf := config.get()?
 	println(' - sites push.')
 	for mut sc in conf.sites_get(names) {
 		mut repo := sc.repo_get()
@@ -70,7 +70,7 @@ pub fn sites_push(names []string) ? {
 }
 
 pub fn sites_commit(msg string, names []string) ? {
-	mut conf := publisher_config.get()?
+	mut conf := config.get()?
 	println(' - sites commit.')
 	for mut sc in conf.sites_get(names) {
 		mut repo := sc.repo_get()
@@ -89,7 +89,7 @@ pub fn sites_commit(msg string, names []string) ? {
 }
 
 pub fn sites_discard(names []string) ? {
-	mut conf := publisher_config.get()?
+	mut conf := config.get()?
 	println(' - sites discard.')
 	for mut sc in conf.sites_get(names) {
 		mut repo := sc.repo_get()
@@ -100,7 +100,7 @@ pub fn sites_discard(names []string) ? {
 }
 
 pub fn sites_pushcommit(msg string, names []string) ? {
-	mut conf := publisher_config.get()?
+	mut conf := config.get()?
 	println(' - sites commit, pull, push')
 	for mut sc in conf.sites_get(names) {
 		mut repo := sc.repo_get()
@@ -122,22 +122,22 @@ pub fn sites_pushcommit(msg string, names []string) ? {
 }
 
 pub fn sites_cleanup(names []string) ? {
-	mut conf := publisher_config.get()?
+	mut conf := config.get()?
 	println(' - cleanup wiki.')
-	mut publisher := publisher_core.new(conf)?
+	mut publisher := publisher.new(conf)?
 	publisher.check()?
 	println(' - cleanup websites.')
 	for mut sc in conf.sites_get(names) {
-		if sc.cat == publisher_config.SiteCat.web {
+		if sc.cat == config.SiteCat.web {
 			website_cleanup(sc.name)?
-		} else if sc.cat == publisher_config.SiteCat.wiki {
+		} else if sc.cat == config.SiteCat.wiki {
 			wiki_cleanup([sc.name])?
 		}
 	}
 }
 
 pub fn sites_removechanges(names []string) ? {
-	mut conf := publisher_config.get()?
+	mut conf := config.get()?
 	println(' - remove changes')
 	for mut sc in conf.sites_get(names) {
 		mut repo := sc.repo_get()
@@ -159,7 +159,7 @@ pub fn sites_removechanges(names []string) ? {
 }
 
 pub fn site_edit(name string) ? {
-	mut conf := publisher_config.get()?
+	mut conf := config.get()?
 	for mut sc in conf.sites_get([name]) {
 		mut repo := sc.repo_get()
 		// println(' - $repo.path()')

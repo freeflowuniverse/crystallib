@@ -4,11 +4,11 @@ module installers
 // import nodejs
 import os
 import freeflowuniverse.crystallib.process
-import freeflowuniverse.crystallib.publisher_config
+import freeflowuniverse.crystallib.publisher.config
 import freeflowuniverse.crystallib.gittools
 
 pub fn digitaltwin_install(update bool) ? {
-	mut conf := publisher_config.get()?
+	mut conf := config.get()?
 	base := conf.publish.paths.base
 	mut gt := gittools.get()?
 	mut pull := update
@@ -48,7 +48,7 @@ pub fn digitaltwin_install(update bool) ? {
 }
 
 pub fn digitaltwin_start(isproduction bool, update bool) ? {
-	mut conf := publisher_config.get()?
+	mut conf := config.get()?
 
 	digitaltwin_install(update)?
 	base := conf.publish.paths.base
@@ -95,7 +95,7 @@ pub fn digitaltwin_start(isproduction bool, update bool) ? {
 }
 
 pub fn digitaltwin_restart(isproduction bool) ? {
-	mut conf := publisher_config.get()?
+	mut conf := config.get()?
 
 	base := conf.publish.paths.base
 	mut gt := gittools.get()?
@@ -144,7 +144,7 @@ pub fn digitaltwin_restart(isproduction bool) ? {
 
 pub fn digitaltwin_reload(isproduction bool) ? {
 	println(' - will reload digitaltwin')
-	mut conf := publisher_config.get()?
+	mut conf := config.get()?
 	base := conf.publish.paths.base
 	mut script := '
 				set -e

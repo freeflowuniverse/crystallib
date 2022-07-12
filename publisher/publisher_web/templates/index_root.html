@@ -1,0 +1,12 @@
+<h1>WIKIs</h1>
+
+@for site in sites
+	<div>		
+		@if site.cat == .wiki		
+		<a href="info/@{site.name}/">@{site.name}</a>
+		&nbsp;&nbsp;
+		<a href="info/@{site.name}/errors">errors check</a>
+		@end	
+	</div>
+@end
+
