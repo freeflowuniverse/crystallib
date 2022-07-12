@@ -1,7 +1,8 @@
-module publisher_core
+module publisher_macros
 
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.gittools
+import freeflowuniverse.crystallib.publisher_core
 import os
 
 enum State {
@@ -10,7 +11,7 @@ enum State {
 	end
 }
 
-fn macro_code(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn macro_code(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	mut out := []string{}
 	mut out2 := []string{}
 

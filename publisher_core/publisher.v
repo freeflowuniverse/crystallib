@@ -58,12 +58,20 @@ fn (mut publisher Publisher) actions_process(actions actionparser.ActionsParser)
 		// println( " -- $action")
 
 		// flatten
-		if action.name == 'publish' {
-			path := action.param_path_get('path')?
-			// now execute the flatten action
+		// if action.name == 'publish' {
+		// 	path := action.param_path_get('path')?
+		// 	// now execute the flatten action
+		// 	publisher.flatten(dest: path)?
+		// 	actions_done << 'publisher.flatten $path'
+		// }
+
+		if action.name == 'wiki.publish' {
+			publisher.develop = true
+			publisher.load()?
+			path := action.param_path_get_create('path')? // will also check path exists
 			publisher.flatten(dest: path)?
-			actions_done << 'publisher.flatten $path'
-		}
+			exit(0)
+		}		
 
 		// recursive behavior, include other files and also process
 		if action.name == 'actions.include' {
@@ -118,13 +126,7 @@ fn (mut publisher Publisher) actions_process(actions actionparser.ActionsParser)
 			exit(0)
 		}
 
-		if action.name == 'wiki.publish' {
-			publisher.develop = true
-			publisher.load()?
-			path := action.param_path_get_create('path')? // will also check path exists
-			publisher.flatten(dest: path)?
-			exit(0)
-		}
+
 	}
 	return actions_done
 }

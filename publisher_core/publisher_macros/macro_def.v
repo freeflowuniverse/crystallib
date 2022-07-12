@@ -1,8 +1,9 @@
-module publisher_core
+module publisher_macros
 
 import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.publisher_core
 
-fn macro_def(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn macro_def(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	mut categories := macro.params.get_list('category')?
 	categories2 := macro.params.get_list('categories')?
 	categories << categories2
@@ -63,7 +64,7 @@ fn def_list_check(defobj Def, categories []string, exclude []string) bool {
 	return false
 }
 
-fn macro_def_list(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn macro_def_list(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	mut categories := macro.params.get_list('category')?
 	mut exclude := macro.params.get_list('exclude')?
 	exclude = exclude.map(texttools.name_fix_no_underscore(it))
@@ -118,8 +119,9 @@ fn macro_def_list(mut state LineProcessorState, mut macro texttools.MacroObj) ? 
 
 		deftitle := page.title()
 
-		out << '| [$defobj.name](${site.name}__${page.name}.md) | $deftitle |'
-
+		if state.site.name == page.site_name_get(mut state.publisher){
+			out << '| [$defobj.name](${page.name}.md) | $deftitle |'
+		}
 		done << defobj.pageid
 	}
 

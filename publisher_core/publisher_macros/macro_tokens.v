@@ -1,9 +1,10 @@
-module publisher_core
+module publisher_macros
 
 import json
 import strconv
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.tokens
+import freeflowuniverse.crystallib.publisher_core
 
 struct ChartData {
 	label string
@@ -65,7 +66,7 @@ fn address_defined(a string) string {
 	return '[$trunc](tft_account_$trunc2)'
 }
 
-fn macro_tokens_values(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn macro_tokens_values(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	s := tokens.load_tokens()?
 
 	mut id := macro.params.get('id')?
@@ -86,7 +87,7 @@ fn macro_tokens_values(mut state LineProcessorState, mut macro texttools.MacroOb
 	}
 }
 
-fn macro_tokens_distribution(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn macro_tokens_distribution(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	s := tokens.load_tokens()?
 
 	mut out := []string{}
@@ -131,7 +132,7 @@ fn macro_tokens_distribution(mut state LineProcessorState, mut macro texttools.M
 	state.lines_server << out
 }
 
-fn macro_tokens_locked_table(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn macro_tokens_locked_table(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	s := tokens.load_tokens()?
 
 	mut out := []string{}
@@ -147,7 +148,7 @@ fn macro_tokens_locked_table(mut state LineProcessorState, mut macro texttools.M
 	state.lines_server << out
 }
 
-fn macro_tokens_locked_chart(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn macro_tokens_locked_chart(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	s := tokens.load_tokens()?
 	mut out := []string{}
 
@@ -194,7 +195,7 @@ fn macro_tokens_locked_chart(mut state LineProcessorState, mut macro texttools.M
 	state.lines_server << out
 }
 
-fn macro_tokens_account_info(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn macro_tokens_account_info(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	accid := macro.params.get('id')?
 	s := tokens.load_account(accid)?
 
@@ -228,7 +229,7 @@ fn macro_tokens_account_info(mut state LineProcessorState, mut macro texttools.M
 	state.lines_server << out
 }
 
-fn macro_tokens_account_vesting(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn macro_tokens_account_vesting(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	accid := macro.params.get('id')?
 	s := tokens.load_account(accid)?
 
@@ -251,7 +252,7 @@ fn macro_tokens_account_vesting(mut state LineProcessorState, mut macro texttool
 	state.lines_server << out
 }
 
-fn macro_tokens_account_locked(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn macro_tokens_account_locked(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	accid := macro.params.get('id')?
 	s := tokens.load_account(accid)?
 
@@ -273,7 +274,7 @@ fn macro_tokens_account_locked(mut state LineProcessorState, mut macro texttools
 	state.lines_server << out
 }
 
-fn macro_tokens_current_distribution(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn macro_tokens_current_distribution(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	s := tokens.parse_special(tokens.load_tokens()?)
 
 	mut out := []string{}
@@ -297,7 +298,7 @@ fn macro_tokens_current_distribution(mut state LineProcessorState, mut macro tex
 	state.lines_server << out
 }
 
-fn macro_tokens_total_distribution(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn macro_tokens_total_distribution(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	s := tokens.parse_special(tokens.load_tokens()?)
 
 	mut out := []string{}
@@ -327,7 +328,7 @@ fn macro_tokens_total_distribution(mut state LineProcessorState, mut macro textt
 	state.lines_server << out
 }
 
-fn macro_tokens_total_liquid(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn macro_tokens_total_liquid(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	s := tokens.load_tokens()?
 	price := macro.params.get('tftprice')?
 
@@ -346,7 +347,7 @@ fn macro_tokens_total_liquid(mut state LineProcessorState, mut macro texttools.M
 	state.lines_server << out
 }
 
-fn macro_tokens_total_liquid_chart(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn macro_tokens_total_liquid_chart(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	s := tokens.load_tokens()?
 
 	mut out := []string{}
@@ -382,7 +383,7 @@ fn macro_tokens_total_liquid_chart(mut state LineProcessorState, mut macro textt
 	state.lines_server << out
 }
 
-fn macro_tokens_special_wallets_table(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn macro_tokens_special_wallets_table(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	s := tokens.load_tokens()?
 
 	mut out := []string{}
@@ -407,7 +408,7 @@ fn macro_tokens_special_wallets_table(mut state LineProcessorState, mut macro te
 	state.lines_server << out
 }
 
-fn macro_tokens(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn macro_tokens(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	mut tokentype := macro.params.get('type')?
 
 	if tokentype == 'value' {

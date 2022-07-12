@@ -1,8 +1,9 @@
-module publisher_core
+module publisher_macros
 
 import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.publisher_core
 
-fn iframe(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn iframe(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	mut width := macro.params.get_int_default('width', 800)?
 	mut height := macro.params.get_int_default('height', 450)?
 
@@ -32,7 +33,7 @@ fn iframe(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	state.lines_server << out
 }
 
-fn vimeo(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn vimeo(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	id := macro.params.get_int('id')?
 	if id < 10000 {
 		return error('vimeo id, corrupt, is $id, needs to be at least 10000. ${macro.params}.')
@@ -42,7 +43,7 @@ fn vimeo(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	iframe(mut state, mut macro)?
 }
 
-fn youtube(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn youtube(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	id := macro.params.get('id')?
 	url := 'https://www.youtube.com/embed/$id'
 	macro.params.kwarg_add('url', url)

@@ -138,7 +138,7 @@ fn (mut link Link) init_(mut publisher Publisher, page &Page) ? {
 				// return
 
 				// TODO: I will do quick fix but is not ok (despiegk)
-				panic('link should not have __ in link.filename: $link.original_link')
+				panic("link should not have __ in link.filename: $link.original_link \n $link")
 			}
 
 			if link.site != '' {
@@ -245,6 +245,7 @@ fn (mut link Link) init_(mut publisher Publisher, page &Page) ? {
 fn (mut link Link) debug_info(mut publisher Publisher, msg string) {
 	println('  ######### DEBUG: $msg')
 	mut page_source := link.page_source_get(mut publisher) or { panic(err) }
+	println('67')
 	mut page_dest := link.page_dest_get(mut publisher) or { panic(err) }
 	mut site_source := link.site_source_get(mut publisher) or { panic(err) }
 	mut site_dest := link.site_dest_get(mut publisher) or { panic(err) }

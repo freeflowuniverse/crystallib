@@ -1,8 +1,9 @@
-module publisher_core
+module publisher_macros
 
 import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.publisher_core
 
-fn macro_alias(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn macro_alias(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	if macro.params.args.len < 1 {
 		return error('need to have at least 1 alias name (use comma separation).')
 	}
@@ -12,7 +13,7 @@ fn macro_alias(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 
 	// state.page.categories_add(categories)
 
-	mut defobj := Def{
+	mut defobj := publisher_core.Def{
 		pageid: state.page.id
 		name: state.page.name
 		hidden: true

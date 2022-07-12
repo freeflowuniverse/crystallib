@@ -1,12 +1,13 @@
-module publisher_core
+module publisher_macros
 
 import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.publisher_core
 
 // if return true, means macro found and was ok
 // format !!!$macroname $arg1 $arg2
 // arg's can be one or more, can also be $name:$val then keyvalue which will become params
 // the args always need to come first
-fn macro_process(mut state LineProcessorState, line string) bool {
+fn macro_process(mut state publisher_core.LineProcessorState, line string) bool {
 	fns_map := {
 		'vimeo':       vimeo
 		'iframe':      iframe

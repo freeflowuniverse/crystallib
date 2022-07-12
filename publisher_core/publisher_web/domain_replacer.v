@@ -1,6 +1,9 @@
-module publisher_core
+module publisher_web
 
 import freeflowuniverse.crystallib.publisher_config
+
+//TODO: I don't think we need this any more
+
 
 // replace the text from domain name to localhost url
 fn domain_replacer(webnames map[string]string, text_ string) string {
@@ -18,9 +21,9 @@ fn domain_replacer(webnames map[string]string, text_ string) string {
 }
 
 // init's the replacement instructions we need to do
-fn (mut ctx MyContext) domain_replacer_init() {
+fn (mut ctx WebServerContext) domain_replacer_init() {
 	mut alias := ''
-	for site in ctx.config.sites {
+	for site in ctx.publisher.config.sites {
 		if site.cat == publisher_config.SiteCat.web {
 			alias = site.name
 		} else {

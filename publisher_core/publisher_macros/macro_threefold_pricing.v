@@ -1,9 +1,10 @@
-module publisher_core
+module publisher_macros
 
 import freeflowuniverse.crystallib.coinmarketcap
 import freeflowuniverse.crystallib.liquid
 import time
 import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.publisher_core
 
 const cmckey = '92be9b29-7f6c-48e4-9ef2-d6aa0550f620'
 
@@ -92,7 +93,7 @@ fn tfprices_vars() map[string]string {
 	return vars
 }
 
-fn macro_tfpriceinfo(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
+fn macro_tfpriceinfo(mut state publisher_core.LineProcessorState, mut macro texttools.MacroObj) ? {
 	// mut out := []string{}
 
 	varf := tfprices_varf()

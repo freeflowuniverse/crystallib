@@ -1,6 +1,7 @@
 module publisher_core
 
 import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.publisher_core.publisher_macros
 import os
 
 pub fn (page Page) write(mut publisher Publisher, content string) {
@@ -85,8 +86,8 @@ pub fn (mut page Page) process(mut publisher Publisher) ?bool {
 	return true
 }
 
-struct LineProcessorState {
-mut:
+pub struct LineProcessorState {
+pub mut:
 	nr             int
 	lines_source   []string // needs to be written to the file where we loaded from, is returned as string
 	lines_server   []string // the return of the process, will go back to page.content
@@ -251,7 +252,7 @@ fn (mut page Page) process_lines(mut publisher Publisher) ? {
 			continue // ignore the line, was already processed
 		}
 
-		if macro_process(mut state, line) {
+		if publisher_macros.macro_process(mut state, line) {
 			continue
 		}
 
@@ -377,11 +378,9 @@ fn (mut page Page) content_get(mut publisher Publisher, flatten bool, defsreplac
 				continue
 			}
 			llink := link.server_get(site, mut &publisher, flatten)?
-			// if link.original_get().contains("need to kno"){
-			// 	println(" --4 ${link.original_get()}")
-			// 	println(" --5 $llink")
-			// 	panic("ssds")
-			// }
+			if llink.contains("threefold__"){
+				link.debug_info(mut publisher,"abcdepp")
+			}
 			// state.serverline_change(link.original_get(),llink)
 			line = line.replace(link.original_get(), llink)
 		} // end of the walk over all links

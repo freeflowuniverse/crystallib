@@ -1,19 +1,12 @@
-module publisher_core
+module publisher
 
-import freeflowuniverse.crystallib.texttools
-import os
 import vweb
-import freeflowuniverse.crystallib.publisher_config
-import json
 import time
 
 // this webserver is used for looking at the builded results
 
 struct MyContext {
-pub:
-	config &publisher_config.ConfigRoot
 pub mut:
-	publisher &Publisher
 	webnames  map[string]string
 }
 
