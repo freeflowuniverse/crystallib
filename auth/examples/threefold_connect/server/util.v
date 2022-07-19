@@ -18,11 +18,18 @@ struct SignedAttempt {
     double_name    string
 }
 
+struct ResultData {
+    double_name    	string
+    state    		string
+	nonce	    	string
+	ciphertext    	string
+}
+
 fn (c CustomResponse) to_json() string {
     return json.encode(c)
 }
 
-fn (s SignedAttempt) load(data map[string]string)? SignedAttempt {
+fn (s SignedAttempt) load (data map[string]string)? SignedAttempt {
     data_ 			:= json2.raw_decode(data['signedAttempt'])?
 	signed_attempt 	:= data_.as_map()["signedAttempt"].str()
 	double_name 	:= data_.as_map()["doubleName"].str()
@@ -31,9 +38,9 @@ fn (s SignedAttempt) load(data map[string]string)? SignedAttempt {
 }
 
 const (
+    signed_attempt_missing  = 'signedAttempt parameter is missing.'
     invalid_json   			= 'Invalid JSON Payload.'
-    signedAttemptMissing   	= 'signedAttempt parameter is missing.'
-    noDoubleName   			= 'DoubleName is missing.'
+    no_double_name   		= 'DoubleName is missing.'
 )
 
 pub fn create_keys() string {
