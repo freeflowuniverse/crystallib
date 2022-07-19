@@ -20,7 +20,7 @@ Also, there is `basic_auth` middleware to decode users, you have to send it when
                 "<Username1>":"<Password1>",
                 "<Username2>":"<Password2>",
             } 
-            ,app.Context.req
+            ,app
         ) or {
             panic(err)
         }
