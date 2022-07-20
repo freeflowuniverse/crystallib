@@ -13,14 +13,15 @@ import libsodium
 const (
 	redirect_url = "https://login.threefold.me"
 	callback_url = "/callback"
-	login_url = "/auth/login"
 	sign_len = 64
+	server_public_key = "EI/xFXcF5GjkRQOLxBNjY8eC0eO9ylM+sNcPNEJkAAY="
+	server_private_key = "VwgmwdoJQ4+L65nWy35nuzi8dsfnJ89C+ejxT1M2pnI="
 )
 
 
 
 
-["/auth/login"]
+["/login"]
 fn (mut app App) login()? vweb.Result {
 	/*
 	 	List available providers for login and redirect to the selected provider (ThreeFold Connect)
@@ -35,11 +36,10 @@ fn (mut app App) login()? vweb.Result {
         "appid": app_id,
         "scope": json.encode({"user": true, "email": true}),
         "redirecturl": callback_url,
-        "publickey": "Tz3vDdNcnTuIUJCfndHsHzopyWCjmH+ew9bI23owPwM=",
-        // "publickey": create_keys(),
+        "publickey": server_public_key,
     }
 	app.redirect("$redirect_url?${url_encode(params)}")
-	return app.text('Login page')
+	return app.text("")
 }
 
 ["/callback"]
@@ -62,9 +62,9 @@ fn (mut app App) callback()? vweb.Result {
 	}
 
 	body 			:= json2.raw_decode(res.body)?
-	public_key 		:= body.as_map()['publicKey']
+	public_key_ 	:= body.as_map()['publicKey']
 	buf 			:= [32]u8{}
-	_ 				:= base64.decode_in_buffer_bytes(public_key.str().bytes(), &buf)
+	_ 				:= base64.decode_in_buffer_bytes(public_key_.str().bytes(), &buf)
 	signed_data 	:= initial_data.signed_attempt
 	verify_key 		:= libsodium.VerifyKey{buf}
 	verifed 		:= verify_key.verify(base64.decode(signed_data))
@@ -83,8 +83,12 @@ fn (mut app App) callback()? vweb.Result {
 	ciphertext 		:= data_.as_map()['ciphertext'].str()
 
 	end_data 		:= ResultData{double_name, state, nonce, ciphertext}
-	nonce_decode 	:= base64.decode(end_data.nonce)
-	ciptxt_decode 	:= base64.decode(end_data.ciphertext)
+	ciptxt_decoded 	:= base64.decode(end_data.ciphertext)
+
+	nonce_decoded 	:= base64.decode(end_data.nonce)
+
+	nonce_bff := [24]u8{}
+	unsafe { vmemcpy(&nonce_bff[0], nonce_decoded.data, 24) }
 
 	if end_data.double_name == ""{
 		app.abort(400, "Decrypted data does not contain (doubleName).")
@@ -98,11 +102,19 @@ fn (mut app App) callback()? vweb.Result {
 		app.abort(400, "username mismatch!")
 	}
 
-	key_alice 		:= libsodium.new_private_key()
-	key_bob 		:= libsodium.new_private_key()
-	box 			:= libsodium.new_box(key_bob, key_alice.public_key)
-	dec_nonce, dec_ciptxt := box.decrypt(nonce_decode), box.decrypt(ciptxt_decode) 
-	println(data_)
-	println(dec_ciptxt)
+	public_key := base64.decode(server_public_key)
+	secret_key := base64.decode(server_private_key)
+
+	mut new_private_key := libsodium.PrivateKey{
+		public_key: public_key
+		secret_key: secret_key
+	}
+
+	v_public_key := verify_key.public_key
+	mut new_v_public_key := []u8{}
+	new_v_public_key = v_public_key[..].clone()
+	box := libsodium.new_box(new_private_key, new_v_public_key)
+
+	println(box.decrypt(ciptxt_decoded, nonce_bff))
 	return app.text('World')
 }

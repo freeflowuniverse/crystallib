@@ -43,11 +43,12 @@ const (
     no_double_name   		= 'DoubleName is missing.'
 )
 
-pub fn create_keys() string {
-	signing_key := libsodium.generate_signing_key()
-	encoded := base64.encode("$signing_key".bytes())
-	return encoded
-}
+// pub fn create_keys() string {
+// 	signing_key := libsodium.generate_signing_key()
+// 	encoded := base64.encode("$signing_key.verify_key.public_key")
+// 	println(encoded)
+// 	return encoded
+// }
 
 pub fn url_encode(map_ map[string]string) string {
 	mut formated := ""
