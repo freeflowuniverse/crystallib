@@ -38,7 +38,7 @@ fn redistest() ? {
 
 	for c in 0..10000{
 		//even if going slower does not work?
-		time.sleep(1000*time.millisecond)
+		// time.sleep(1000*time.millisecond)
 		threads << go conn_for_thread(c)
 	}
 	threads.wait()
@@ -63,6 +63,6 @@ fn redistest_nothreads() ? {
 }
 
 fn main() {
-	// redistest() or { panic(err) }
-	redistest_nothreads() or { panic(err) }
+	redistest() or { panic(err) }
+	// redistest_nothreads() or { panic(err) }
 }
