@@ -11,39 +11,43 @@ import libsodium
 
 
 const (
-	redirect_url = "https://login.threefold.me"
-	callback_url = "/callback"
-	sign_len = 64
-	server_public_key = "EI/xFXcF5GjkRQOLxBNjY8eC0eO9ylM+sNcPNEJkAAY="
-	server_private_key = "VwgmwdoJQ4+L65nWy35nuzi8dsfnJ89C+ejxT1M2pnI="
+	redirect_url 		= "https://login.threefold.me"
+	app_id 				= "localhost:8080"
+	sign_len 			= 64
 )
-
 
 
 
 ["/login"]
 fn (mut app App) login()? vweb.Result {
-	/*
-	 	List available providers for login and redirect to the selected provider (ThreeFold Connect)
-		Returns:
-        	Renders the template of login page
-    */
+	server_public_key 	:= "iB0HY/EVuebM/gADfouMEaUGK7ULTtT8TWqkC2jrkXw="
 	state := rand.uuid_v4().replace("-", "")
-	app_id := "localhost:8080"
-	
 	params := {
         "state": state,
         "appid": app_id,
         "scope": json.encode({"user": true, "email": true}),
-        "redirecturl": callback_url,
+        "redirecturl": "/callback",
         "publickey": server_public_key,
     }
 	app.redirect("$redirect_url?${url_encode(params)}")
-	return app.text("")
+	return app.text('Login Page...')
 }
 
 ["/callback"]
 fn (mut app App) callback()? vweb.Result {
+	server_public_key 	:= "iB0HY/EVuebM/gADfouMEaUGK7ULTtT8TWqkC2jrkXw="
+	server_private_key 	:= "aw1t0vrRnBlBsH1WFcGBQDwRl7si9USwJm6lik1xNmA="
+
+	server_pk_decoded_32 := [32]u8{}
+	server_sk_decoded_64 := [32]u8{}
+
+	len_server_pk := base64.decode_in_buffer(&server_public_key, &server_pk_decoded_32)
+	len_server_sk := base64.decode_in_buffer(&server_private_key, &server_sk_decoded_64)
+
+	server_pk_decoded := server_pk_decoded_32[..]
+	server_sk_decoded := server_sk_decoded_64[..]
+
+
 	data := SignedAttempt{}
 	query := app.query.clone()
 
@@ -62,9 +66,9 @@ fn (mut app App) callback()? vweb.Result {
 	}
 
 	body 			:= json2.raw_decode(res.body)?
-	public_key_ 	:= body.as_map()['publicKey']
+	user_pk 		:= body.as_map()['publicKey'].str()
 	buf 			:= [32]u8{}
-	_ 				:= base64.decode_in_buffer_bytes(public_key_.str().bytes(), &buf)
+	_ 				:= base64.decode_in_buffer(&user_pk, &buf)
 	signed_data 	:= initial_data.signed_attempt
 	verify_key 		:= libsodium.VerifyKey{buf}
 	verifed 		:= verify_key.verify(base64.decode(signed_data))
@@ -77,44 +81,57 @@ fn (mut app App) callback()? vweb.Result {
 	data_obj 		:= json2.raw_decode(verified_data[sign_len..].bytestr())?
 	data_			:= json2.raw_decode(data_obj.as_map()['data'].str())?
 
-	double_name 	:= data_obj.as_map()['doubleName'].str()
-	state 			:= data_obj.as_map()['signedState'].str()
-	nonce 			:= data_.as_map()['nonce'].str()
-	ciphertext 		:= data_.as_map()['ciphertext'].str()
+	res_data_struct := ResultData{
+		data_obj.as_map()['doubleName'].str(), 
+		data_obj.as_map()['signedState'].str(), 
+		data_.as_map()['nonce'].str(), 
+		data_.as_map()['ciphertext'].str()
+	}
 
-	end_data 		:= ResultData{double_name, state, nonce, ciphertext}
-	ciptxt_decoded 	:= base64.decode(end_data.ciphertext)
-
-	nonce_decoded 	:= base64.decode(end_data.nonce)
-
-	nonce_bff := [24]u8{}
-	unsafe { vmemcpy(&nonce_bff[0], nonce_decoded.data, 24) }
-
-	if end_data.double_name == ""{
+	if res_data_struct.double_name == ""{
 		app.abort(400, "Decrypted data does not contain (doubleName).")
 	}
 
-	if end_data.state == ""{
+	if res_data_struct.state == ""{
 		app.abort(400, "Decrypted data does not contain (state).")
 	}
 
-	if end_data.double_name != initial_data.double_name{
+	if res_data_struct.double_name != initial_data.double_name{
 		app.abort(400, "username mismatch!")
 	}
 
-	public_key := base64.decode(server_public_key)
-	secret_key := base64.decode(server_private_key)
+	nonce 		:= base64.decode(res_data_struct.nonce)
+	ciphertext 	:= base64.decode(res_data_struct.ciphertext)
+	nonce_bff := [24]u8{}
+	unsafe { vmemcpy(&nonce_bff[0], nonce.data, 24) }
+
+	user_curve_pk 	:= []u8{len: 32}
+	server_curve_sk := []u8{len: 32}
+	server_curve_pk := []u8{len: 32}
+
+	res_ := libsodium.crypto_sign_ed25519_pk_to_curve25519(user_curve_pk.data, &verify_key.public_key)
+	res_server_pk := libsodium.crypto_sign_ed25519_pk_to_curve25519(server_curve_pk.data, &server_pk_decoded_32[0])
+	res_server_sk := libsodium.crypto_sign_ed25519_sk_to_curve25519(server_curve_sk.data, &server_sk_decoded_64[0])
 
 	mut new_private_key := libsodium.PrivateKey{
-		public_key: public_key
-		secret_key: secret_key
+		public_key: server_curve_pk
+		secret_key: server_curve_sk
 	}
 
-	v_public_key := verify_key.public_key
-	mut new_v_public_key := []u8{}
-	new_v_public_key = v_public_key[..].clone()
-	box := libsodium.new_box(new_private_key, new_v_public_key)
+	mut box := libsodium.Box{
+		nonce: nonce_bff
+		public_key: user_curve_pk
+		key: new_private_key
+	}
 
-	println(box.decrypt(ciptxt_decoded, nonce_bff))
+	println(server_pk_decoded_32[..].map(it.hex()))
+	println(server_sk_decoded_64[..].map(it.hex()))
+
+	// println(ciphertext)
+
+	decrypted_bytes := box.decrypt(ciphertext)
+	// println(box)
+	// println(decrypted_bytes)
+
 	return app.text('World')
 }
