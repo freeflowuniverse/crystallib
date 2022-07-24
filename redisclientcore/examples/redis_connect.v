@@ -6,7 +6,7 @@ import time
 fn conn_for_thread(c int) {
 	println("thread $c")
 	redisclientcore.reset() //important to let threading work, need to remove the existing socket connections
-	time.sleep(100 * time.millisecond)
+	// time.sleep(100 * time.millisecond)
 	mut redis := redisclientcore.get()
 	println("ok $c")
 	redis.set('test', 'some data')   or { panic("set "+err.str()+"\n"+c.str())}
