@@ -11,9 +11,9 @@ import libsodium
 
 
 const (
-	redirect_url 		= "https://login.threefold.me"
-	app_id 				= "localhost:8080"
-	sign_len 			= 64
+	redirect_url = "https://login.threefold.me"
+	app_id = "localhost:8080"
+	sign_len = 64
 )
 
 
@@ -21,13 +21,19 @@ const (
 ["/login"]
 fn (mut app App) login()? vweb.Result {
 	server_public_key 	:= "iB0HY/EVuebM/gADfouMEaUGK7ULTtT8TWqkC2jrkXw="
+	server_pk_decoded_32 := [32]u8{}
+	server_curve_pk := []u8{len: 32}
+
+	len_server_pk := base64.decode_in_buffer(&server_public_key, &server_pk_decoded_32)
+	res_server_pk := libsodium.crypto_sign_ed25519_pk_to_curve25519(server_curve_pk.data, &server_pk_decoded_32[0])
+
 	state := rand.uuid_v4().replace("-", "")
 	params := {
         "state": state,
         "appid": app_id,
         "scope": json.encode({"user": true, "email": true}),
         "redirecturl": "/callback",
-        "publickey": server_public_key,
+        "publickey": base64.encode(server_curve_pk[..]),
     }
 	app.redirect("$redirect_url?${url_encode(params)}")
 	return app.text('Login Page...')
@@ -39,14 +45,13 @@ fn (mut app App) callback()? vweb.Result {
 	server_private_key 	:= "aw1t0vrRnBlBsH1WFcGBQDwRl7si9USwJm6lik1xNmA="
 
 	server_pk_decoded_32 := [32]u8{}
-	server_sk_decoded_64 := [32]u8{}
+	server_sk_decoded_64 := [64]u8{}
 
 	len_server_pk := base64.decode_in_buffer(&server_public_key, &server_pk_decoded_32)
 	len_server_sk := base64.decode_in_buffer(&server_private_key, &server_sk_decoded_64)
 
 	server_pk_decoded := server_pk_decoded_32[..]
-	server_sk_decoded := server_sk_decoded_64[..]
-
+	server_sk_decoded := server_sk_decoded_64[..32]
 
 	data := SignedAttempt{}
 	query := app.query.clone()
@@ -102,6 +107,7 @@ fn (mut app App) callback()? vweb.Result {
 
 	nonce 		:= base64.decode(res_data_struct.nonce)
 	ciphertext 	:= base64.decode(res_data_struct.ciphertext)
+
 	nonce_bff := [24]u8{}
 	unsafe { vmemcpy(&nonce_bff[0], nonce.data, 24) }
 
@@ -124,14 +130,8 @@ fn (mut app App) callback()? vweb.Result {
 		key: new_private_key
 	}
 
-	println(server_pk_decoded_32[..].map(it.hex()))
-	println(server_sk_decoded_64[..].map(it.hex()))
-
-	// println(ciphertext)
-
 	decrypted_bytes := box.decrypt(ciphertext)
-	// println(box)
-	// println(decrypted_bytes)
+	println(decrypted_bytes)
 
 	return app.text('World')
 }
