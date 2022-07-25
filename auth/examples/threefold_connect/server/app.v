@@ -1,13 +1,19 @@
 module main
-
 import vweb
 
 
 
-struct App {
+struct ServerApp {
 	vweb.Context
 }
 
 fn main() {
-    vweb.run(&App{}, 8080)
+	println("Server app started")
+    vweb.run(&ServerApp{}, 8000)
+}
+
+pub fn (mut server ServerApp)abort(status int, message string){
+	server.set_status(status, message)
+	er := CustomResponse{status, message}
+	server.json(er.to_json())
 }

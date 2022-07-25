@@ -1,11 +1,6 @@
 module main
-
-import libsodium
-import encoding.base64
-import json
-import x.json2
 import net.http
-
+import json
 
 
 struct CustomResponse {
@@ -25,43 +20,17 @@ struct ResultData {
 	ciphertext    	string
 }
 
-fn (c CustomResponse) to_json() string {
-    return json.encode(c)
-}
-
-fn (s SignedAttempt) load (data map[string]string)? SignedAttempt {
-    data_ 			:= json2.raw_decode(data['signedAttempt'])?
-	signed_attempt 	:= data_.as_map()["signedAttempt"].str()
-	double_name 	:= data_.as_map()["doubleName"].str()
-	initial_data 	:= SignedAttempt{signed_attempt, double_name}
-	return initial_data
-}
-
 const (
     signed_attempt_missing  = 'signedAttempt parameter is missing.'
     invalid_json   			= 'Invalid JSON Payload.'
     no_double_name   		= 'DoubleName is missing.'
+	data_verfication_field 	= 'Data verfication failed!.'
+	not_contain_doublename 	= 'Decrypted data does not contain (doubleName).'
+	not_contain_state 		= 'Decrypted data does not contain (state).'
+	username_mismatch 		= 'username mismatch!'
+	data_decrypting_error 	= 'Error decrypting data!'
+	email_not_verified 		= 'Email is not verified'
 )
-
-// pub fn create_keys() string {
-// 	signing_key := libsodium.generate_signing_key()
-// 	encoded := base64.encode("$signing_key.verify_key.public_key")
-// 	println(encoded)
-// 	return encoded
-// }
-
-pub fn url_encode(map_ map[string]string) string {
-	mut formated := ""
-
-	for k, v in map_ {
-		if formated != "" {
-			formated += "&" + k + "=" + v
-		} else {
-			formated = k + "=" + v
-		}
-	}
-	return formated
-}
 
 pub fn request_to_get_pub_key(username string)? http.Response{
 	mut header := http.new_header_from_map({
@@ -77,8 +46,21 @@ pub fn request_to_get_pub_key(username string)? http.Response{
 	return resp
 }
 
-pub fn (mut app App)abort(status int, message string){
-	app.set_status(status, message)
-	er := CustomResponse{status, message}
-	app.json(er.to_json())
+pub fn request_to_verify_sei(sei string)? http.Response{
+	header := http.new_header_from_map({
+		http.CommonHeader.content_type: 'application/json',
+	})
+
+	request := http.Request{
+		url: "https://openkyc.live/verification/verify-sei"
+		method: http.Method.post
+		header: header,
+		data: json.encode({"signedEmailIdentifier": sei}),
+	}
+	result := request.do() ?
+	return result
+}
+
+fn (c CustomResponse) to_json() string {
+    return json.encode(c)
 }
