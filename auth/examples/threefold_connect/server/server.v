@@ -3,14 +3,15 @@ import vweb
 import x.json2
 import encoding.base64
 import libsodium
+import toml
 
 
 
 ["/verify"; post]
 fn (mut server ServerApp) verify()? vweb.Result {
-	server_public_key 	:= "iB0HY/EVuebM/gADfouMEaUGK7ULTtT8TWqkC2jrkXw="
-	server_private_key 	:= "aw1t0vrRnBlBsH1WFcGBQDwRl7si9USwJm6lik1xNmA="
-
+	keys := toml.parse_file(kyes_file_path) or {panic("Couldn't parse kyes_file_path")}
+	server_public_key 	:= keys.value('server.SERVER_PUBLIC_KEY').string()
+	server_private_key 	:= keys.value('server.SERVER_SECRET_KEY').string()
 	server_pk_decoded_32 := [32]u8{}
 	server_sk_decoded_64 := [64]u8{}
 
@@ -37,7 +38,10 @@ fn (mut server ServerApp) verify()? vweb.Result {
 	user_pk_buff 	:= [32]u8{}
 	_ 				:= base64.decode_in_buffer(&user_pk, &user_pk_buff)
 	signed_data 	:= data.signed_attempt
-	verify_key 		:= libsodium.VerifyKey{public_key: user_pk_buff}
+
+	// This is just workaround becouse we need to access pub key inside verify key and we can not do it while this struct is private.
+	signing_key 	:= libsodium.new_signing_key(user_pk_buff, [32]u8{})
+	verify_key 		:= signing_key.verify_key
 	verifed 		:= verify_key.verify(base64.decode(signed_data))
 
 	if verifed == false{

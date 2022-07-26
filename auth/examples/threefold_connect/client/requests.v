@@ -5,6 +5,7 @@ import json
 import rand
 import encoding.base64
 import libsodium
+import toml
 
 
 
@@ -19,13 +20,15 @@ const (
 
 ["/login"]
 fn (mut clinet ClientApp) login()? vweb.Result {
-	server_public_key 	:= "iB0HY/EVuebM/gADfouMEaUGK7ULTtT8TWqkC2jrkXw="
+	mut server_public_key := ""
+	keys := toml.parse_file(kyes_file_path)?
+	if keys.value("server") == toml.Any(toml.Null{}){
+		clinet.abort(400, file_dose_not_exist)
+	} else {
+		server_public_key = keys.value('server.SERVER_PUBLIC_KEY').string()
+	}
 	server_pk_decoded_32 := [32]u8{}
 	server_curve_pk := []u8{len: 32}
-
-	// create_keys() 
-	// TODO: will handle this function to create a new keys and save them into file.
-	// then if the file contains the key, will take it from file, otherways will genrate new one.
 
 	_ := base64.decode_in_buffer(&server_public_key, &server_pk_decoded_32)
 	_ := libsodium.crypto_sign_ed25519_pk_to_curve25519(server_curve_pk.data, &server_pk_decoded_32[0])

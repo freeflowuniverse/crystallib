@@ -1,10 +1,11 @@
 module main
 
-// import libsodium
-// import encoding.base64
+import libsodium
+import encoding.base64
 import json
 import x.json2
 import net.http
+
 
 
 
@@ -31,18 +32,11 @@ fn (s SignedAttempt) load (data map[string]string)? SignedAttempt {
 }
 
 const (
+	file_dose_not_exist    	= "Couldn't parse kyes file, just make sure that you have kyes.toml by running create_keys.v file"
+	kyes_file_path 			= '../keys.toml'
     signed_attempt_missing  = 'signedAttempt parameter is missing.'
 	server_host				= "http://localhost:8000"
 )
-
-// pub fn create_keys() {
-// 	generate_signing_key()
-// 	encoded_secret := base64.encode(signing_key.bytes())
-// 	// encoded_public := base64.encode("$signing_key.verify_key.public_key")
-// 	println(encoded_secret)
-// 	// println(encoded_public)
-// 	// return encoded
-// }
 
 pub fn url_encode(map_ map[string]string) string {
 	mut formated := ""

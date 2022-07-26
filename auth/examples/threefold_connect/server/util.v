@@ -21,6 +21,7 @@ struct ResultData {
 }
 
 const (
+	kyes_file_path 			= '../keys.toml'
     signed_attempt_missing  = 'signedAttempt parameter is missing.'
     invalid_json   			= 'Invalid JSON Payload.'
     no_double_name   		= 'DoubleName is missing.'
