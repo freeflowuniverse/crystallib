@@ -81,7 +81,7 @@ fn (mut server ServerApp) verify()? vweb.Result {
 	server_curve_sk := []u8{len: 32}
 	server_curve_pk := []u8{len: 32}
 
-	_ := libsodium.crypto_sign_ed25519_pk_to_curve25519(user_curve_pk.data, &verify_key.public_key)
+	_ := libsodium.crypto_sign_ed25519_pk_to_curve25519(user_curve_pk.data, &user_pk_buff)
 	_ := libsodium.crypto_sign_ed25519_pk_to_curve25519(server_curve_pk.data, &server_pk_decoded_32[0])
 	_ := libsodium.crypto_sign_ed25519_sk_to_curve25519(server_curve_sk.data, &server_sk_decoded_64[0])
 
