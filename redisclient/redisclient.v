@@ -51,11 +51,11 @@ fn init2() RedisFactory {
 // singleton creation
 const factory = init2()
 
-//make sure we reset the factory
+// make sure we reset the factory
 // needed e.g. in threads
-pub fn reset(){	
+pub fn reset() {
 	mut f := redisclient.factory
-	f.instances =  map[string]Redis{}
+	f.instances = map[string]Redis{}
 	// println("reset: ${sync.thread_id()} -- ${f.instances}" )
 }
 
@@ -70,7 +70,7 @@ pub fn get(addr string) ?&Redis {
 	println(f.instances)
 	if addr in f.instances {
 		// println("${f.instances[addr]}")
-		println("redis from cache: ${sync.thread_id()}")
+		println('redis from cache: $sync.thread_id()')
 		mut r2 := f.instances[addr]
 		return &r2
 	}
@@ -82,8 +82,8 @@ pub fn get(addr string) ?&Redis {
 	return &r
 }
 
-fn (mut r Redis) socket_connect() ? {
-	println(" CONNECT TCP: ${r.addr}")
+pub fn (mut r Redis) socket_connect() ? {
+	println(' CONNECT TCP: $r.addr')
 	r.socket = net.dial_tcp(r.addr)?
 	r.socket.set_blocking(true)?
 	r.socket.set_read_timeout(10 * time.second)
@@ -95,7 +95,7 @@ fn (mut r Redis) socket_connect() ? {
 fn (mut r Redis) socket_check() ? {
 	r.socket.peer_addr() or {
 		eprintln(' - re-connect socket for redis')
-		r.socket_connect() ?
+		r.socket_connect()?
 	}
 }
 
