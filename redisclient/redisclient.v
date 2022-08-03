@@ -6,7 +6,7 @@ import net
 import sync
 // import strconv
 import time
-import freeflowuniverse.crystallib.resp2
+import freeflowuniverse.crystallib.resp
 
 const default_read_timeout = net.infinite_timeout
 
@@ -36,49 +36,16 @@ pub enum KeyType {
 	t_unknown
 }
 
-[heap]
-struct RedisFactory {
-mut:
-	instances map[string]Redis
-}
-
-// needed to get singleton
-fn init2() RedisFactory {
-	mut f := RedisFactory{}
-	return f
-}
-
-// singleton creation
-const factory = init2()
-
-// make sure we reset the factory
-// needed e.g. in threads
-pub fn reset() {
-	mut f := redisclient.factory
-	f.instances = map[string]Redis{}
-	// println("reset: ${sync.thread_id()} -- ${f.instances}" )
-}
 
 // https://redis.io/topics/protocol
 // examples:
 //   localhost:6379
 //   /tmp/redis-default.sock
 pub fn get(addr string) ?&Redis {
-	mut f := redisclient.factory
-	// println("reset after: ${sync.thread_id()} -- ${f.instances}" )
-	// println("${ addr in f.instances}")
-	println(f.instances)
-	if addr in f.instances {
-		// println("${f.instances[addr]}")
-		println('redis from cache: $sync.thread_id()')
-		mut r2 := f.instances[addr]
-		return &r2
-	}
 	mut r := Redis{
 		addr: addr
 	}
 	r.socket_connect()?
-	f.instances[addr] = r
 	return &r
 }
 
@@ -123,15 +90,15 @@ fn (mut r Redis) write(data []u8) ? {
 	}
 }
 
-// write resp2 value to the redis channel
-pub fn (mut r Redis) write_rval(val resp2.RValue) ? {
+// write resp value to the redis channel
+pub fn (mut r Redis) write_rval(val resp.RValue) ? {
 	r.socket_check()?
 	r.write(val.encode())?
 }
 
 // write list of strings to redis challen
 fn (mut r Redis) write_cmds(items []string) ? {
-	a := resp2.r_list_bstring(items)
+	a := resp.r_list_bstring(items)
 	r.write_rval(a)?
 }
 

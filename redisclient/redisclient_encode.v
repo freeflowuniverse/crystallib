@@ -1,35 +1,35 @@
 module redisclient
 
-import freeflowuniverse.crystallib.resp2
+import freeflowuniverse.crystallib.resp
 
-pub fn (mut r Redis) get_response() ?resp2.RValue {
+pub fn (mut r Redis) get_response() ?resp.RValue {
 	line := r.read_line()?
 
 	if line.starts_with('-') {
-		return resp2.RError{
+		return resp.RError{
 			value: line[1..]
 		}
 	}
 	if line.starts_with(':') {
-		return resp2.RInt{
+		return resp.RInt{
 			value: line[1..].int()
 		}
 	}
 	if line.starts_with('+') {
-		return resp2.RString{
+		return resp.RString{
 			value: line[1..]
 		}
 	}
 	if line.starts_with('$') {
 		mut bulkstring_size := line[1..].int()
 		if bulkstring_size == -1 {
-			return resp2.RNil{}
+			return resp.RNil{}
 		}
 		if bulkstring_size == 0 {
 			// extract final \r\n and not reading
 			// any payload
 			r.read_line()?
-			return resp2.RString{
+			return resp.RString{
 				value: ''
 			}
 		}
@@ -38,14 +38,14 @@ pub fn (mut r Redis) get_response() ?resp2.RValue {
 		// extract final \r\n
 		r.read_line()?
 		// println("readline result:'$buffer.bytestr()'")
-		return resp2.RBString{
+		return resp.RBString{
 			value: buffer
 		} // TODO: won't support binary (afaik), need to fix		
 	}
 
 	if line.starts_with('*') {
-		mut arr := resp2.RArray{
-			values: []resp2.RValue{}
+		mut arr := resp.RArray{
+			values: []resp.RValue{}
 		}
 		items := line[1..].int()
 
@@ -60,6 +60,8 @@ pub fn (mut r Redis) get_response() ?resp2.RValue {
 
 	return error('unsupported response type')
 }
+
+//TODO: needs to use the resp library
 
 pub fn (mut r Redis) get_int() ?int {
 	line := r.read_line()?

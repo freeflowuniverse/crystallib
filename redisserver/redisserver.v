@@ -2,7 +2,7 @@ module redisserver
 
 // NEED TO USE RESP2
 import net
-import freeflowuniverse.crystallib.resp2
+import freeflowuniverse.crystallib.resp
 import freeflowuniverse.crystallib.redisclient
 
 pub struct RedisInstance {
@@ -15,7 +15,7 @@ pub mut:
 	socket net.TcpListener
 }
 
-type RedisCallback = fn (resp2.RValue, mut RedisInstance) resp2.RValue
+type RedisCallback = fn (resp.RValue, mut RedisInstance) resp.RValue
 
 struct RedisHandler {
 	command string
@@ -31,56 +31,56 @@ pub fn listen(addr string, port int) ?RedisSrv {
 	}
 }
 
-fn command_ping(input resp2.RValue, mut _ RedisInstance) resp2.RValue {
-	if resp2.get_redis_array_len(input) > 1 {
-		return resp2.get_redis_array(input)[1]
+fn command_ping(input resp.RValue, mut _ RedisInstance) resp.RValue {
+	if resp.get_redis_array_len(input) > 1 {
+		return resp.get_redis_array(input)[1]
 	}
 
-	return resp2.r_string('PONG')
+	return resp.r_string('PONG')
 }
 
-fn command_set(input resp2.RValue, mut srv RedisInstance) resp2.RValue {
-	if resp2.get_redis_array_len(input) != 3 {
-		return resp2.r_error('Invalid arguments')
+fn command_set(input resp.RValue, mut srv RedisInstance) resp.RValue {
+	if resp.get_redis_array_len(input) != 3 {
+		return resp.r_error('Invalid arguments')
 	}
 
-	key := resp2.get_redis_value_by_index(input, 1)
-	value := resp2.get_redis_value_by_index(input, 2)
+	key := resp.get_redis_value_by_index(input, 1)
+	value := resp.get_redis_value_by_index(input, 2)
 
 	srv.db[key] = value
 
-	return resp2.r_ok()
+	return resp.r_ok()
 }
 
-fn command_get(input resp2.RValue, mut srv RedisInstance) resp2.RValue {
-	if resp2.get_redis_array_len(input) != 2 {
-		return resp2.r_error('Invalid arguments')
+fn command_get(input resp.RValue, mut srv RedisInstance) resp.RValue {
+	if resp.get_redis_array_len(input) != 2 {
+		return resp.r_error('Invalid arguments')
 	}
 
-	key := resp2.get_redis_value_by_index(input, 1)
+	key := resp.get_redis_value_by_index(input, 1)
 
 	if key !in srv.db {
-		return resp2.r_nil()
+		return resp.r_nil()
 	}
 
-	return resp2.r_string(srv.db[key])
+	return resp.r_string(srv.db[key])
 }
 
-fn command_del(input resp2.RValue, mut srv RedisInstance) resp2.RValue {
-	if resp2.get_redis_array_len(input) != 2 {
-		return resp2.r_error('Invalid arguments')
+fn command_del(input resp.RValue, mut srv RedisInstance) resp.RValue {
+	if resp.get_redis_array_len(input) != 2 {
+		return resp.r_error('Invalid arguments')
 	}
 
-	key := resp2.get_redis_value_by_index(input, 1)
+	key := resp.get_redis_value_by_index(input, 1)
 
 	if key !in srv.db {
-		return resp2.r_nil()
+		return resp.r_nil()
 	}
 	panic('implement del')
-	return resp2.r_string(srv.db[key])
+	return resp.r_string(srv.db[key])
 }
 
-fn command_info(input resp2.RValue, mut srv RedisInstance) resp2.RValue {
+fn command_info(input resp.RValue, mut srv RedisInstance) resp.RValue {
 	mut lines := []string{}
 
 	lines << '# Server'
@@ -89,39 +89,39 @@ fn command_info(input resp2.RValue, mut srv RedisInstance) resp2.RValue {
 	lines << '# Keyspace'
 	lines << 'db0:keys=$srv.db.len,expires=0,avg_ttl=0'
 
-	return resp2.r_string(lines.join('\r\n'))
+	return resp.r_string(lines.join('\r\n'))
 }
 
-fn command_select(input resp2.RValue, mut srv RedisInstance) resp2.RValue {
-	if resp2.get_redis_array_len(input) != 2 {
-		return resp2.r_error('Invalid arguments')
+fn command_select(input resp.RValue, mut srv RedisInstance) resp.RValue {
+	if resp.get_redis_array_len(input) != 2 {
+		return resp.r_error('Invalid arguments')
 	}
 
 	// only support db0
-	if resp2.get_redis_value_by_index(input, 1) != '0' {
-		return resp2.r_error('Incorrect database')
+	if resp.get_redis_value_by_index(input, 1) != '0' {
+		return resp.r_error('Incorrect database')
 	}
 
-	return resp2.r_ok()
+	return resp.r_ok()
 }
 
-fn command_scan(input resp2.RValue, mut srv RedisInstance) resp2.RValue {
-	if resp2.get_redis_array_len(input) < 2 {
+fn command_scan(input resp.RValue, mut srv RedisInstance) resp.RValue {
+	if resp.get_redis_array_len(input) < 2 {
 		panic('Invalid arguments')
 	}
 
-	mut root := resp2.RArray{
-		values: []resp2.RValue{}
+	mut root := resp.RArray{
+		values: []resp.RValue{}
 	}
-	root.values << resp2.r_string('0')
+	root.values << resp.r_string('0')
 
-	mut new_arr := resp2.RArray{
-		values: []resp2.RValue{}
+	mut new_arr := resp.RArray{
+		values: []resp.RValue{}
 	}
 
 	// we ignore cursor and reply the full list
 	for k, _ in srv.db {
-		new_arr.values << resp2.r_string(k)
+		new_arr.values << resp.r_string(k)
 	}
 
 	root.values << new_arr
@@ -129,29 +129,29 @@ fn command_scan(input resp2.RValue, mut srv RedisInstance) resp2.RValue {
 	return root
 }
 
-fn command_type(input resp2.RValue, mut srv RedisInstance) resp2.RValue {
-	if resp2.get_redis_array_len(input) != 2 {
-		return resp2.r_error('Invalid arguments')
+fn command_type(input resp.RValue, mut srv RedisInstance) resp.RValue {
+	if resp.get_redis_array_len(input) != 2 {
+		return resp.r_error('Invalid arguments')
 	}
 
-	key := resp2.get_redis_value_by_index(input, 1)
+	key := resp.get_redis_value_by_index(input, 1)
 
 	if key !in srv.db {
-		return resp2.r_nil()
+		return resp.r_nil()
 	}
 
 	// only support string value
-	return resp2.r_string('string')
+	return resp.r_string('string')
 }
 
-fn command_ttl(input resp2.RValue, mut srv RedisInstance) resp2.RValue {
-	return resp2.r_int(0)
+fn command_ttl(input resp.RValue, mut srv RedisInstance) resp.RValue {
+	return resp.r_int(0)
 }
 
 //
 // socket management
 //
-pub fn process_input(mut client redisclient.Redis, mut instance RedisInstance, value resp2.RValue) ?bool {
+pub fn process_input(mut client redisclient.Redis, mut instance RedisInstance, value resp.RValue) ?bool {
 	println('Inside process')
 	mut h := []RedisHandler{}
 
@@ -191,7 +191,7 @@ pub fn process_input(mut client redisclient.Redis, mut instance RedisInstance, v
 		command: 'DEL'
 		handler: command_del
 	}
-	command := resp2.get_redis_value_by_index(value, 0).to_upper()
+	command := resp.get_redis_value_by_index(value, 0).to_upper()
 
 	for rh in h {
 		if command == rh.command {
@@ -204,13 +204,13 @@ pub fn process_input(mut client redisclient.Redis, mut instance RedisInstance, v
 
 	// debug
 	print('Error: unknown command: ')
-	for cmd in resp2.get_redis_array(value) {
-		mut cmd_value := resp2.get_redis_value(cmd)
+	for cmd in resp.get_redis_array(value) {
+		mut cmd_value := resp.get_redis_value(cmd)
 		print('cmd value >> $cmd_value ')
 	}
 	println('')
 
-	err := resp2.r_error('Unknown command')
+	err := resp.r_error('Unknown command')
 	client.write_rval(err)?
 
 	return false
@@ -232,7 +232,7 @@ pub fn new_client(mut conn net.TcpConn, mut main RedisInstance) ? {
 		// continue
 		// }
 		println('.... here')
-		if value !is resp2.RArray {
+		if value !is resp.RArray {
 			// should not receive anything else than
 			// array with commands and args
 			println('Wrong request from client, rejecting')
@@ -240,7 +240,7 @@ pub fn new_client(mut conn net.TcpConn, mut main RedisInstance) ? {
 			return
 		}
 
-		if resp2.get_redis_array(value)[0] !is resp2.RBString {
+		if resp.get_redis_array(value)[0] !is resp.RBString {
 			println('Wrong request from client, rejecting rbstring')
 			conn.close()?
 			return

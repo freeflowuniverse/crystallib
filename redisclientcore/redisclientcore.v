@@ -22,7 +22,7 @@ pub fn get() &redisclient.Redis {
 
 // make sure that we don't reuse same socket, we need to create new one in each subprocess
 pub fn reset() {
-	redisclient.reset()
+	// redisclient.reset()
 }
 
 pub fn get_unixsocket_new() ?&redisclient.Redis {

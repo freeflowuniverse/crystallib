@@ -1,6 +1,6 @@
 module redisclient
 
-import freeflowuniverse.crystallib.resp2
+import freeflowuniverse.crystallib.resp
 
 // send list of strings, expect OK back
 pub fn (mut r Redis) send_expect_ok(items []string) ? {
@@ -41,8 +41,8 @@ pub fn (mut r Redis) send_expect_list_str(items []string) ?[]string {
 	return r.get_list_str()
 }
 
-pub fn (mut r Redis) send_expect_list(items []string) ?[]resp2.RValue {
+pub fn (mut r Redis) send_expect_list(items []string) ?[]resp.RValue {
 	r.write_cmds(items)?
 	res := r.get_response()?
-	return resp2.get_redis_array(res)
+	return resp.get_redis_array(res)
 }

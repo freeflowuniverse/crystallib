@@ -6,7 +6,7 @@ import time
 fn do()?{
 	for i in 0 .. 10000{
 		println(i)
-		time.sleep(1000 * time.millisecond)
+		// time.sleep(1 * time.millisecond)
 		mut socket := net.dial_tcp("127.0.0.1:6379")?
 	}
 }
