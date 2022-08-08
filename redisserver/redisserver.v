@@ -24,7 +24,7 @@ struct RedisHandler {
 
 // https://redis.io/topics/protocol
 pub fn listen(addr string, port int) ?RedisSrv {
-	mut socket := net.listen_tcp(port)?
+	mut socket := net.listen_tcp(.ip, ":$port")?
 	// socket.set_read_timeout(2 * time.second)
 	return RedisSrv{
 		socket: socket
@@ -196,7 +196,7 @@ pub fn process_input(mut client redisclient.Redis, mut instance RedisInstance, v
 	for rh in h {
 		if command == rh.command {
 			println('Process: $command')
-			data := rh.handler(value, instance)
+			data := rh.handler(value, mut instance)
 			client.write_rval(data)?
 			return true
 		}
@@ -223,7 +223,7 @@ pub fn new_client(mut conn net.TcpConn, mut main RedisInstance) ? {
 	}
 
 	for {
-		// fetch command from client (process incoming buffer)
+		// fetch command (process incoming buffer)
 		value := client.get_response()?
 		// if err == "no data in socket" {
 		// 	// FIXME
