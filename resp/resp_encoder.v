@@ -1,10 +1,22 @@
-module resp2
+module resp
 
-struct Builder {
-mut:
+pub struct Builder {
+pub mut:
 	data []u8
 }
 
+//build a new resp string
+//import freeflowuniverse.crystallib.resp
+// mut b := resp.builder_new()
+// b.add(resp.r_list_string(['a', 'b']))
+// b.add(resp.r_int(10))
+// b.add(resp.r_ok())
+// //b.data now has the info as binary data
+// // println(b.data)
+// println(b.data.bytestr())
+
+// lr := resp.decode(b.data)?
+// println(lr)
 pub fn builder_new() Builder {
 	return Builder{}
 }
@@ -12,6 +24,12 @@ pub fn builder_new() Builder {
 pub fn (mut b Builder) add(val RValue) {
 	b.data << val.encode()
 }
+
+//add the data at the beginning
+pub fn (mut b Builder) prepend(val RValue) {
+	b.data = val.encode() + b.data
+}
+
 
 pub fn (val RValue) encode() []u8 {
 	match val {
@@ -72,6 +90,13 @@ pub fn r_int(value int) RValue {
 	})
 }
 
+//might be that this does no exist for redis, lets check 
+//if it doesn't exist lets create it
+pub fn r_float(value f64) RValue {
+	panic("not implemented")
+}
+
+
 pub fn r_list_int(values []int) RValue {
 	mut ll := []RValue{}
 	for v in values {
@@ -108,6 +133,8 @@ pub fn r_error(value string) RValue {
 	})
 }
 
+//encode list of RArray | RBString | RError | RInt | RNil | RString
+//bytestring is result
 pub fn encode(items []RValue) []u8 {
 	mut b := builder_new()
 	for item in items {

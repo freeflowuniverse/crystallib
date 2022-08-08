@@ -1,4 +1,4 @@
-module resp2
+module resp
 
 pub struct RString {
 pub mut:

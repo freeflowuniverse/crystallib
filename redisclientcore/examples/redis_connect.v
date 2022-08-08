@@ -5,8 +5,7 @@ import time
 
 fn conn_for_thread(c int) {
 	println("thread $c")
-	redisclientcore.reset() //important to let threading work, need to remove the existing socket connections
-	time.sleep(100 * time.millisecond)
+	// time.sleep(100 * time.millisecond)
 	mut redis := redisclientcore.get()
 	println("ok $c")
 	redis.set('test', 'some data')   or { panic("set "+err.str()+"\n"+c.str())}
@@ -36,9 +35,9 @@ fn redistest() ? {
 
 	mut threads := []thread{}
 
-	for c in 0..10000{
+	for c in 0..200{
 		//even if going slower does not work?
-		time.sleep(1000*time.millisecond)
+		time.sleep(1*time.millisecond)
 		threads << go conn_for_thread(c)
 	}
 	threads.wait()
@@ -63,6 +62,6 @@ fn redistest_nothreads() ? {
 }
 
 fn main() {
-	// redistest() or { panic(err) }
-	redistest_nothreads() or { panic(err) }
+	redistest() or { panic(err) }
+	// redistest_nothreads() or { panic(err) }
 }

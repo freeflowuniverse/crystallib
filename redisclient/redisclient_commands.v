@@ -1,6 +1,6 @@
 module redisclient
 
-import freeflowuniverse.crystallib.resp2
+import freeflowuniverse.crystallib.resp
 import time
 
 pub fn (mut r Redis) ping() ?string {
@@ -68,7 +68,7 @@ pub fn (mut r Redis) hget(key string, skey string) ?string {
 	return r.send_expect_strnil(['HGET', key, skey])
 }
 
-pub fn (mut r Redis) hgetall(key string) ?[]resp2.RValue {
+pub fn (mut r Redis) hgetall(key string) ?[]resp.RValue {
 	// mut key2 := key.trim("\"'")
 	return r.send_expect_list(['HGETALL', key])
 }
@@ -119,7 +119,7 @@ pub fn (mut r Redis) rpush(key string, element string) ?int {
 	return r.send_expect_int(['RPUSH', key, element])
 }
 
-pub fn (mut r Redis) lrange(key string, start int, end int) ?[]resp2.RValue {
+pub fn (mut r Redis) lrange(key string, start int, end int) ?[]resp.RValue {
 	return r.send_expect_list(['LRANGE', key, start.str(), end.str()])
 }
 
@@ -155,7 +155,7 @@ pub fn (mut r Redis) keys(pattern string) ?[]string {
 	response := r.send_expect_list(['KEYS', pattern])?
 	mut result := []string{}
 	for item in response {
-		result << resp2.get_redis_value(item)
+		result << resp.get_redis_value(item)
 	}
 	return result
 }
@@ -172,7 +172,7 @@ pub fn (mut r Redis) lpop(key string) ?string {
 	return r.send_expect_strnil(['LPOP', key])
 }
 
-pub fn (mut r Redis) blpop(keys []string, timeout string) ?[]resp2.RValue {
+pub fn (mut r Redis) blpop(keys []string, timeout string) ?[]resp.RValue {
 	mut cmds := ['BLPOP']
 	cmds << keys
 	cmds << timeout
@@ -234,19 +234,19 @@ pub fn (mut r Redis) selectdb(database int) ? {
 
 pub fn (mut r Redis) scan(cursor int) ?(string, []string) {
 	res := r.send_expect_list(['SCAN', cursor.str()])?
-	if res[0] !is resp2.RBString {
+	if res[0] !is resp.RBString {
 		return error('Redis SCAN wrong response type (cursor)')
 	}
 
-	if res[1] !is resp2.RArray {
+	if res[1] !is resp.RArray {
 		return error('Redis SCAN wrong response type (list content)')
 	}
 
 	mut values := []string{}
 
-	for i in 0 .. resp2.get_redis_array_len(res[1]) {
-		values << resp2.get_redis_value_by_index(res[1], i)
+	for i in 0 .. resp.get_redis_array_len(res[1]) {
+		values << resp.get_redis_value_by_index(res[1], i)
 	}
 
-	return resp2.get_redis_value(res[0]), values
+	return resp.get_redis_value(res[0]), values
 }

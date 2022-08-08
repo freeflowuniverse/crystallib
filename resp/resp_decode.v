@@ -1,4 +1,4 @@
-module resp2
+module resp
 
 // 	mut r := io.new_buffered_reader(reader: io.make_reader(conn))
 // 	for {
