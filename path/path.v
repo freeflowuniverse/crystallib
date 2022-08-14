@@ -5,9 +5,8 @@ import os
 pub struct Path {
 pub mut:
 	path     string
-	exists   PathExists
+	exists   bool
 	cat      Category
-	absolute bool
 }
 
 pub enum Category {
@@ -16,12 +15,6 @@ pub enum Category {
 	dir
 	linkdir
 	linkfile
-}
-
-pub enum PathExists {
-	unknown
-	yes
-	no
 }
 
 // gets Path object, will check if it exists, is dir_file, ...
@@ -33,13 +26,14 @@ pub fn get(path string) Path {
 	return p2
 }
 
-// check if path obj exists, is file, link, dir, ...
+// get a directory
 pub fn get_dir(path string, create bool) ?Path {
 	mut p2 := get(path)
+	if ! p2.is_dir(){
+		return error("Path $path is not a dir.")
+	}
 	if create && !p2.exists() {
-		pp := p2.path_absolute()
-		os.mkdir_all(pp) or { return error('cannot create path $pp') } // Make sure that all the needed paths created
-		p2.check()
+		os.mkdir_all(p2.absolute()) or { return error('cannot create path $p2') } // Make sure that all the needed paths created
 	}
 	return p2
 }
@@ -48,7 +42,7 @@ pub fn get_dir(path string, create bool) ?Path {
 pub fn get_file_dir_create(path string) ?Path {
 	mut p2 := get(path)
 	parent_ := p2.parent()?
-	os.mkdir_all(parent_.path_absolute()) or { return error('cannot create path:$path') }
+	os.mkdir_all(parent_.absolute()) or { return error('cannot create path:$path') }
 	p2.check()
 	return p2
 }
@@ -74,7 +68,7 @@ fn new_dir_empty(path string) ?Path {
 	return Path{
 		path: path
 		cat: Category.dir
-		exists: PathExists.yes
+		exists: true
 	}
 }
 
@@ -89,19 +83,48 @@ fn get_dir_exists(path string) ?Path {
 	return Path{
 		path: path
 		cat: Category.dir
-		exists: PathExists.yes
+		exists: true
 	}
 }
 
-pub fn (mut path Path) size_kb() int {
-	// println(" - filesize: $path.path")
-	return (os.file_size(path.path) / 1000).str().int()
+
+//return absolute path
+pub fn (path Path) absolute() string {
+	mut p := path.path.replace('~', os.home_dir())
+	return os.real_path(p)
 }
 
-pub fn (mut path Path) size() f64 {
-	// println(" - filesize: $path.path")
-	return os.file_size(path.path)
+fn (mut path Path) check() {
+
+	if os.exists(path.path) {
+		path.exists = true
+		if os.is_file(path.path) {
+			if os.is_link(path.path) {
+				path.cat = Category.linkfile
+			} else {
+				path.cat = Category.file
+			}
+		} else if os.is_dir(path.path) {
+			if os.is_link(path.path) {
+				path.cat = Category.linkdir
+			} else {
+				path.cat = Category.dir
+			}
+		} else {
+			panic('cannot define type: $path.path, is bug')
+		}
+	} else {
+		path.exists = false
+	}
 }
+
+
+fn (mut path Path) check_exists()? {
+	if ! path.exists{
+		return error("Path $path needs to exist, error")
+	}
+}
+
 
 pub fn (mut path Path) name() string {
 	return os.base(path.path)

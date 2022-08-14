@@ -1,4 +1,5 @@
-module texttools
+module markdown
+
 
 pub fn markdown_min_header(text string, minlevel int) string {
 	mut nrhash := 100

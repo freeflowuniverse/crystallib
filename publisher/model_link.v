@@ -26,9 +26,9 @@ pub mut:
 	isexternal  bool
 	include     bool = true // means we will not link to the remote location, will always keep on local sidebar
 	newtab      bool
-	moresites   bool
+	moresites   bool		//this means we can look for the content on multiple source sites
 	cat         LinkType
-	isimage     bool // means started with !
+	isimage     bool 		// means started with !
 	description string
 	url         string
 	// identification of link:
@@ -38,19 +38,22 @@ pub mut:
 	// internal
 	state     LinkState
 	error_msg string
-	// page links
-	page_id_source int = 999999 // is the id of the page which has the link, the source
-	page_id_dest   int = 999999 // is the id of the page where the link points too
+	page_source &Page [str: skip]
+
 }
 
-fn link_new(mut publisher Publisher, original_descr string, original_link string, isimage bool, page &Page) ?Link {
+
+//add link to the page
+fn (mut page Page) link_new(original_descr string, original_link string, isimage bool ) ?Link {
 	mut link := Link{
 		original_descr: original_descr.trim(' ')
 		original_link: original_link.trim(' ')
 		isimage: isimage
-		page_id_source: page.id
+		page: &page
 	}
-	link.init_(mut publisher, page)?
+	
+
+	
 	return link
 }
 
@@ -59,12 +62,12 @@ fn (mut link Link) error(msg string) {
 	link.error_msg = msg
 }
 
-fn (mut link Link) site_source_get(mut publisher Publisher) ?&Site {
+fn (mut link Link) site_source_get() ?&Site {
 	page := link.page_source_get(mut publisher)?
 	return page.site_get(mut publisher)
 }
 
-fn (mut link Link) site_dest_get(mut publisher Publisher) ?&Site {
+fn (mut link Link) site_dest_get() ?&Site {
 	page := link.page_dest_get(mut publisher)?
 	mut site := page.site_get(mut publisher)?
 	if link.site != site.name {
@@ -74,7 +77,7 @@ fn (mut link Link) site_dest_get(mut publisher Publisher) ?&Site {
 }
 
 // get the page where is linked too
-pub fn (mut link Link) page_dest_get(mut publisher Publisher) ?&Page {
+pub fn (mut link Link) page_dest_get() ?&Page {
 	if link.page_id_dest == 999999 {
 		return error('destpage id cannot be 999999./n$link')
 	}
@@ -85,17 +88,14 @@ pub fn (mut link Link) page_dest_get(mut publisher Publisher) ?&Page {
 }
 
 // get the page which has the link
-pub fn (mut link Link) page_source_get(mut publisher Publisher) ?&Page {
+pub fn (mut link Link) page_source_get() ?&Page {
 	if link.page_id_source == 999999 {
 		return error('sourcepage id cannot be 999999./n$link')
 	}
-	if link.cat == LinkType.page {
-		return publisher.page_get_by_id(link.page_id_source)
-	}
-	return error('can only return Page (source).\n$link')
+	return publisher.page_get_by_id(link.page_id_source)
 }
 
-fn (mut link Link) file_get(mut publisher Publisher) ?&File {
+fn (mut link Link) file_get() ?&File {
 	if link.page_id_dest == 999999 {
 		return error('file id cannot be 999999./n$link')
 	}

@@ -6,16 +6,14 @@ import freeflowuniverse.crystallib.publisher.config
 
 [heap]
 struct Site {
-	id int [skip]
 pub mut: // id and index in the Publisher.sites array
 	// not in json if we would serialize
 	errors []SiteError
 	path   string
 	name   string // is the shortname!!!
-	files  map[string]int
-	images map[string]int
-	pages  map[string]int
-	// sitebars map[string]int
+	pages       map[string]Page
+	files       map[string]File
+	defs        map[string]Def
 	state         SiteState
 	config        &config.SiteConfig
 	sidebars_last []&Page
@@ -72,7 +70,7 @@ fn (mut site Site) error(pathrelative string, errormsg string, cat SiteErrorCate
 	println(' - SITE ERROR: $pathrelative -> $errormsg')
 }
 
-pub fn (site Site) page_get(name string, mut publisher Publisher) ?&Page {
+pub fn (site Site) page_get(name string) ?&Page {
 	mut namelower := texttools.name_fix(name)
 	if namelower in site.pages {
 		return publisher.page_get_by_id(site.pages[namelower])
@@ -80,7 +78,7 @@ pub fn (site Site) page_get(name string, mut publisher Publisher) ?&Page {
 	return error('cannot find page with name $name')
 }
 
-pub fn (site Site) file_get(name string, mut publisher Publisher) ?&File {
+pub fn (site Site) file_get(name string) ?&File {
 	if name.ends_with('.png') || name.ends_with('.jpeg') || name.ends_with('.jpg') {
 		return site.image_get(name, mut publisher)
 	}
@@ -92,7 +90,7 @@ pub fn (site Site) file_get(name string, mut publisher Publisher) ?&File {
 	return error('cannot find file with name $name')
 }
 
-pub fn (site Site) image_get(name string, mut publisher Publisher) ?&File {
+pub fn (site Site) image_get(name string) ?&File {
 	namelower := texttools.name_fix_no_underscore_no_ext(name)
 	if namelower in site.images {
 		file := publisher.file_get_by_id(site.images[namelower])?

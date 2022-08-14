@@ -46,16 +46,19 @@ fn (mut publisher Publisher) load() ? {
 
 // find all actions & process, this works inclusive
 fn (mut publisher Publisher) actions_process(actions actionparser.ActionsParser) ?[]string {
-	// println("+++++")
-	// println(actions)
-	// println("-----")
-
+	// $if debug {
+	// 	println("+++++")
+	// 	println(actions)
+	// 	println("-----")
+	// }
 	mut actions_done := []string{}
 
 	mut gt := gittools.get()?
 
 	for action in actions.actions {
-		// println( " -- $action")
+		$if debug {
+			println( " --------ACTION:\n$action\n--------")
+		}
 
 		// flatten
 		// if action.name == 'publish' {
@@ -69,7 +72,9 @@ fn (mut publisher Publisher) actions_process(actions actionparser.ActionsParser)
 			publisher.develop = true
 			publisher.load()?
 			path := action.param_path_get_create('path')? // will also check path exists
-			publisher.flatten(dest: path)?
+			prefix := action.param_get_default('prefix',"")
+			reset := action.param_get_default_false('reset')
+			publisher.flatten(dest: path, prefix: prefix, reset:reset)?
 			exit(0)
 		}		
 
@@ -98,6 +103,9 @@ fn (mut publisher Publisher) actions_process(actions actionparser.ActionsParser)
 		}
 
 		if action.name == 'wiki.load' {
+			$if debug {
+				eprintln(@FN + ': wiki.load \n$action.params')
+			}			
 			mut sc := config.SiteConfigRaw{}
 
 			// now walk over params
@@ -112,6 +120,13 @@ fn (mut publisher Publisher) actions_process(actions actionparser.ActionsParser)
 					sc.git_url = param.value
 				}
 			}
+			if sc.name == "" {
+				return error("name param needs to be set in wiki.load")
+			}
+			if sc.fs_path == "" && sc.git_url == "" {
+				return error("name url or path needs to be set in wiki.load")
+			}
+
 			sc.cat = 'wiki'
 			mut site_in := config.site_new(sc)?
 			publisher.config.sites << site_in
@@ -214,7 +229,7 @@ fn (mut publisher Publisher) load_site(name string) ? {
 	if !mysite_config.path.exists() {
 		return error('$mysite_config \nCould not find config path (load site).\n   site: $mysite_name >> site path: $mysite_config.path\n')
 	}
-	os.symlink(mysite_config.path.path_absolute(), target) or {
+	os.symlink(mysite_config.path.absolute(), target) or {
 		return error('cannot symlink for load site in publtools: $mysite_config.path.path to $target \nERROR:\n$err')
 	}
 

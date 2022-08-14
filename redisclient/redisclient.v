@@ -3,7 +3,7 @@ module redisclient
 // original code see https://github.com/patrickpissurno/vredis/blob/master/vredis_test.v
 // credits see there as well (-:
 import net
-import sync
+// import sync
 // import strconv
 import time
 import freeflowuniverse.crystallib.resp

@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.texttools
 
 // remember the file, so we know if we have duplicates
 // also fixes the name
-fn (mut site Site) file_remember(mut patho path.Path, mut publisher Publisher) ?&File {
+fn (mut site Site) file_remember(mut patho path.Path) ?&File {
 	patho.normalize()?
 	pathrelative := patho.path_relative(site.path)
 
@@ -98,12 +98,12 @@ fn (mut site Site) error_report_file(mut file File, msg string) &File {
 
 // remember the file, so we know if we have duplicates
 // also fixes the name
-fn (mut site Site) file_remember_full_path(full_path string, mut publisher Publisher) ?&File {
+fn (mut site Site) file_remember_full_path(full_path string) ?&File {
 	mut path_ := path.get_file(full_path, false)?
 	return site.file_remember(mut path_, mut publisher)
 }
 
-fn (mut site Site) page_remember(path string, name string, issidebar bool, mut publisher Publisher) ?&Page {
+fn (mut site Site) page_remember(path string, name string, issidebar bool) ?&Page {
 	mut namelower := publisher.name_fix_alias_page(name)?
 	if namelower.trim(' ') == '' {
 		site.error(path, 'empty page pagename', .emptypage)
@@ -185,7 +185,7 @@ fn (mut site Site) page_remember(path string, name string, issidebar bool, mut p
 	}
 }
 
-pub fn (mut site Site) reload(mut publisher Publisher) ? {
+pub fn (mut site Site) reload() ? {
 	site.state = SiteState.init
 	site.pages = map[string]int{}
 	site.files = map[string]int{}
@@ -195,7 +195,7 @@ pub fn (mut site Site) reload(mut publisher Publisher) ? {
 	site.sidebars_last = []&Page{}
 }
 
-pub fn (mut site Site) load(mut publisher Publisher) ? {
+pub fn (mut site Site) load() ? {
 	if site.state == SiteState.ok {
 		return
 	}
@@ -226,7 +226,7 @@ pub fn (mut site Site) load(mut publisher Publisher) ? {
 	site.state = SiteState.loaded
 }
 
-pub fn (mut site Site) process(mut publisher Publisher) ? {
+pub fn (mut site Site) process() ? {
 	if site.state == SiteState.ok {
 		return
 	}
@@ -268,7 +268,7 @@ pub fn (mut site Site) process(mut publisher Publisher) ? {
 
 // process files in the site (find all files)
 // they will not be processed yet
-fn (mut site Site) files_process(mut publisher Publisher) ? {
+fn (mut site Site) files_process() ? {
 	println(' - find files/pages for site: $site.path')
 	if !os.exists(site.path) {
 		return error("cannot find site on path:'$site.path'")
@@ -277,7 +277,7 @@ fn (mut site Site) files_process(mut publisher Publisher) ? {
 	return site.files_process_recursive(site.path, mut publisher)
 }
 
-fn (mut site Site) side_bar_fix(path_ string, mut publisher Publisher) {
+fn (mut site Site) side_bar_fix(path_ string) {
 	if site.sidebars_last.len > 0 {
 		path2 := path_ + '/'
 		for sidebarpage in site.sidebars_last.reverse() {
@@ -293,7 +293,7 @@ fn (mut site Site) side_bar_fix(path_ string, mut publisher Publisher) {
 }
 
 // path is the full path
-fn (mut site Site) files_process_recursive(path__ string, mut publisher Publisher) ? {
+fn (mut site Site) files_process_recursive(path__ string) ? {
 	mut path_ := path__
 	namefixed := texttools.name_fix(os.base(path_)).trim(' _')
 	if os.base(path_) != namefixed {

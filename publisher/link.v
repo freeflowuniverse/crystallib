@@ -19,7 +19,7 @@ fn trim(t string) string {
 	return res.join('')
 }
 
-fn (mut link Link) init_(mut publisher Publisher, page &Page) ? {
+fn (mut link Link) init_( page &Page) ? {
 	// see if its an external link or internal
 	// mut linkstate := LinkState.init
 
@@ -242,21 +242,23 @@ fn (mut link Link) init_(mut publisher Publisher, page &Page) ? {
 	}
 }
 
-fn (mut link Link) debug_info(mut publisher Publisher, msg string) {
+fn (mut link Link) debug_info(msg string) {
 	println('  ######### DEBUG: $msg')
-	mut page_source := link.page_source_get(mut publisher) or { panic(err) }
-	println('67')
-	mut page_dest := link.page_dest_get(mut publisher) or { panic(err) }
-	mut site_source := link.site_source_get(mut publisher) or { panic(err) }
-	mut site_dest := link.site_dest_get(mut publisher) or { panic(err) }
-	source_link := link.source_get(site_source, mut publisher) or { panic(err) }
-	dest_link := link.server_get(site_source, mut publisher, false) or { panic(err) }
+	mut page_source := link.page
+	mut site_source := link.page.site
+	source_link := link.source_get() or { panic(err) }
+	dest_link := link.server_get() or { panic(err) }
 	// println(link)
 	println('    - sourcepage: $page_source.path')
-	println('    - sourcesite: $site_source.name')
+	println('    - sourcesite: $site_source.name $site_source.path')
+	println(site_source)
 	println('    - sourcelink: $source_link')
-	println('    - destpage: $page_dest.path')
-	println('    - destsite: $site_dest.name')
+	if link.cat == LinkType.page {
+		mut page_dest := link.page_dest_get(mut publisher) or { panic(err) }
+		println('    - destpage: $page_dest.path')
+		mut site_dest := link.site_dest_get(mut publisher) or { panic(err) }
+		println('    - destsite: $site_dest.name')
+	}
 	println('    - serverlink: $dest_link')
 	panic('link debug info')
 }
@@ -282,7 +284,7 @@ fn (link Link) original_get_with_ignore() string {
 // return how to represent link on server
 // page is the page from where the link is on
 // if flatten then will prepare link for flattening situation
-fn (mut link Link) server_get(site &Site, mut publisher Publisher, flatten bool) ?string {
+fn (mut link Link) server_get(site &Site) ?string {
 	// println(link.original_link)
 
 	if link.cat == LinkType.page {
@@ -297,15 +299,17 @@ fn (mut link Link) server_get(site &Site, mut publisher Publisher, flatten bool)
 			return error('cannot find site for source page for link:\n$link \n$err')
 		}
 
-		if flatten {
-			if !link.filename.ends_with('.md') {
-				link.filename += '.md'
-			}
+		if !link.filename.ends_with('.md') {
+			link.filename += '.md'
+		}		
+		pagepath := "/${publisher.config.prefix}/${site.name}//$link.filename"
+
+
 			mut linkreplaced := ''
 			if site_source.name == site_dest.name {
 				linkreplaced = '[$link.description]($link.filename)'
 			} else {
-				linkreplaced = '[$link.description](../$link.site/$link.filename)'
+				linkreplaced = '[$link.description]($pagepath)'
 			}
 			linkreplaced = linkreplaced.replace('//', '/')
 			return linkreplaced
@@ -358,28 +362,27 @@ fn (mut link Link) server_get(site &Site, mut publisher Publisher, flatten bool)
 
 		return linkreplaced
 	}
-
+	filepath := "/${publisher.config.prefix}/${site_source.name}/img/$link.filename"
 	if link.cat == LinkType.file {
 		if link.isimage {
 			// return '![$link.description](${link.site}__$link.filename  $link.extra)'
-			if link.extra == '' {
-				return '![$link.description](${link.site}__$link.filename)'
+			if link.extra != '' {
+				return '![$link.description]($filepath))'
 			} else {
-				return '![$link.description](${link.site}__$link.filename $link.extra)'
+				return '![$link.description]($filepath $link.extra)'
 			}
-		}
-		// return '[$link.description](/${link.site}__$link.filename  $link.extra)'
+		}		
 		if link.extra == '' {
-			return '<a href="${link.site}__$link.filename"> $link.description </a>'
+			return '<a href="$filepath"> $link.description </a>'
 		} else {
-			return '<a href="${link.site}__$link.filename $link.extra"> $link.description </a>'
+			return '<a href="$filepath $link.extra"> $link.description </a>'
 		}
 	}
 	return link.original_get_with_ignore()
 }
 
 // return how to represent link on source
-fn (mut link Link) source_get(site &Site, mut publisher Publisher) ?string {
+fn (mut link Link) source_get(site &Site) ?string {
 	// println(" >>< $sitename $link.site")
 	if link.cat == LinkType.page {
 		if link.filename.contains(':') {

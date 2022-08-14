@@ -5,49 +5,45 @@ import freeflowuniverse.crystallib.texttools
 
 // check path exists
 pub fn (mut path Path) exists() bool {
-	if path.exists == PathExists.yes {
+	if path.exists == true {
 		return true
 	}
-	if path.exists == PathExists.no {
+	if path.exists == false {
 		return false
 	}
 	if os.exists(path.path) {
-		path.exists = PathExists.yes
+		path.exists = true
 		return true
 	} else {
-		path.exists = PathExists.no
+		path.exists = false
 		return false
 	}
 	return false
 }
 
-// absolute path
-pub fn (path Path) absolute() {
-	if path.absolute {
-		return
+//will rewrite the path to lower_case if not the case yet
+//will also remove weird chars
+//if changed will return true
+pub fn (mut path Path) namefix()?bool {
+	if ! path.exists(){
+		return error("path $path does not exist, cannot namefix")
 	}
-	mut p2 := Path{
-		path: path.path
-		exists: path.exists
-		cat: path.cat
+	if texttools.name_fix(path.name()) != path.name(){
+		pathnew := os.join_path(os.dir(path.path),texttools.name_fix(path.name()))
+		os.mv(path.path,pathnew)?
+		path.path = pathnew
+		return true
 	}
-	p2.path = p2.path_absolute()
-	p2.absolute = true
+	return false
 }
 
-// absolute path
-pub fn (path Path) path_absolute() string {
-	// Check if the link is read --> Working with links but return the origin path
-	p2 := path.path.replace('~', os.home_dir())
-	return os.real_path(p2)
-}
 
 // get relative path in relation to sourcepath
 pub fn (path Path) path_relative(sourcepath string) string {
-	path_abs := path.path_absolute()
+	path_abs := path.absolute()
 	sourcepath_abs := Path{
 		path: sourcepath
-	}.path_absolute()
+	}.absolute()
 	if path_abs.starts_with(sourcepath_abs) {
 		return path_abs[sourcepath_abs.len..]
 	}
@@ -56,7 +52,7 @@ pub fn (path Path) path_relative(sourcepath string) string {
 
 // find parent of path
 pub fn (path Path) parent() ?Path {
-	mut p := path.path_absolute()
+	mut p := path.absolute()
 	parent := os.dir(p) // get parent directory
 	if parent == '.' || parent == '/' {
 		return error('no parent for path $path.path')
@@ -64,13 +60,13 @@ pub fn (path Path) parent() ?Path {
 		return Path{
 			path: '/'
 			cat: Category.dir
-			exists: PathExists.yes
+			exists: true
 		}
 	}
 	return Path{
 		path: parent
 		cat: Category.dir
-		exists: PathExists.yes
+		exists: true
 	}
 }
 
@@ -124,7 +120,7 @@ pub fn (mut path Path) delete() ? {
 				return error('Path cannot be unknown type')
 			}
 		}
-		path.exists = PathExists.no
+		path.exists = false
 	}
 }
 
@@ -150,7 +146,7 @@ pub fn (mut path Path) dir_find(tofind string) ?Path {
 		return Path{
 			path: dir_path
 			cat: Category.dir
-			exists: PathExists.yes
+			exists: true
 		}
 	}
 	return error('$tofind is not in $path.path')
@@ -179,7 +175,7 @@ pub fn (mut path Path) file_find(tofind string) ?Path {
 		return Path{
 			path: file_path
 			cat: Category.file
-			exists: PathExists.yes
+			exists: true
 		}
 	}
 	return error('$tofind is not in $path.path')
@@ -211,7 +207,7 @@ pub fn (mut path Path) list(tofind string, recursive bool) ?[]Path {
 				mut rec_path := Path{
 					path: p
 					cat: new_path.cat
-					exists: PathExists.yes
+					exists: true
 				}
 				mut rec_list := rec_path.list(tofind, recursive)?
 				all_list << rec_list
@@ -230,7 +226,7 @@ pub fn (mut path Path) list(tofind string, recursive bool) ?[]Path {
 			continue
 		}
 		new_path.path = p
-		new_path.exists = PathExists.yes
+		new_path.exists = true
 		all_list << new_path
 	}
 	return all_list
@@ -272,7 +268,7 @@ pub fn (mut path Path) write(content string) ? {
 pub fn (mut path Path) read() ?string {
 	match path.cat {
 		.file, .linkfile {
-			p := path.path_absolute()
+			p := path.absolute()
 			if !os.exists(p) {
 				return error('File is not exist, $p is a wrong path')
 			}
@@ -306,13 +302,13 @@ pub fn (mut path Path) copy(mut dest Path) ?Path {
 		return Path{
 			path: dest_path
 			cat: Category.file
-			exists: PathExists.yes
+			exists: true
 		}
 	}
 	return Path{
 		path: dest.path
 		cat: dest.cat
-		exists: PathExists.yes
+		exists: true
 	}
 }
 
@@ -328,14 +324,14 @@ pub fn (mut path Path) link(mut dest Path) ?Path {
 			return Path{
 				path: dest.path
 				cat: Category.linkdir
-				exists: PathExists.yes
+				exists: true
 			}
 		}
 		.file, .linkfile {
 			return Path{
 				path: dest.path
 				cat: Category.linkfile
-				exists: PathExists.yes
+				exists: true
 			}
 		}
 		.unknown {
@@ -355,10 +351,10 @@ pub fn (mut path Path) backup_name_find(source string, dest string) ?Path {
 	mut path_found := Path{}
 	mut rel := ''
 	if source != '' {
-		path_abs := path.path_absolute()
+		path_abs := path.absolute()
 		mut source_path := Path{
 			path: source
-		}.path_absolute()
+		}.absolute()
 		if path_abs.starts_with(source_path) {
 			rel = os.dir(path_abs.substr(source_path.len + 1, path_abs.len)) + '/'
 		}

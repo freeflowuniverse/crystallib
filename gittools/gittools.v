@@ -72,7 +72,7 @@ pub fn (mut gitstructure GitStructure) multibranch_set() ? {
 pub fn (mut gitstructure GitStructure) repos_get(args GSArgs) []GitRepo {
 	mut res := []GitRepo{}
 	for mut g in gitstructure.repos {
-		relpath := g.path_rel_get()
+		relpath := g.path_relative()
 		if args.filter != '' {
 			if relpath.contains(args.filter) {
 				// println("$g.addr.name")
@@ -92,10 +92,10 @@ pub fn (mut gitstructure GitStructure) repos_print(args GSArgs) {
 		// println(g)
 		changed := g.changes() or { panic('issue in repo changes. $err') }
 		if changed {
-			r << ['- $g.path_rel_get()', '$g.addr.branch', 'CHANGED']
+			r << ['- $g.path_relative()', '$g.addr.branch', 'CHANGED']
 		} else {
-			// println( " - ${g.path_rel_get()} - $g.addr.branch")
-			r << ['- $g.path_rel_get()', '$g.addr.branch', '']
+			// println( " - ${g.path_relative()} - $g.addr.branch")
+			r << ['- $g.path_relative()', '$g.addr.branch', '']
 		}
 	}
 	texttools.print_array2(r, '  ', true)

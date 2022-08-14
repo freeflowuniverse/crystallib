@@ -66,7 +66,7 @@ pub mut:
 // pub fn (mut images Images) repos_get(args ImageFindArgs) []GitRepo  {
 // 	mut res := []GitRepo{}
 // 	for mut g in images.repos {
-// 		relpath := g.path_rel_get()
+// 		relpath := g.path_relative()
 // 		if args.filter != "" {
 // 			if relpath.contains(args.filter){
 // 				// println("$g.addr.name")
@@ -86,10 +86,10 @@ pub mut:
 // 		// println(g)
 // 		changed:=g.changes()or {panic("issue in repo changes. $err")}
 // 		if changed{
-// 			r << ["- ${g.path_rel_get()}","$g.addr.branch","CHANGED"]
+// 			r << ["- ${g.path_relative()}","$g.addr.branch","CHANGED"]
 // 		}else{
-// 			// println( " - ${g.path_rel_get()} - $g.addr.branch")
-// 			r << ["- ${g.path_rel_get()}","$g.addr.branch",""]
+// 			// println( " - ${g.path_relative()} - $g.addr.branch")
+// 			r << ["- ${g.path_relative()}","$g.addr.branch",""]
 // 		}
 // 	}
 // 	texttools.print_array2(r,"  ",true)

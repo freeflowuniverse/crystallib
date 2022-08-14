@@ -89,7 +89,7 @@ pub fn site_new(site_in SiteConfigRaw) ?SiteConfig {
 		}
 
 		sc.path = path.get(site_in.fs_path)
-		sc.path.path = sc.path.path_absolute()
+		sc.path.path = sc.path.absolute()
 		// println(" - path: $sc.path.path")
 		gitpath := sc.path.parent_find('.git') or { path.Path{} }
 		if gitpath.path.len > 1 {

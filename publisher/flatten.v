@@ -18,7 +18,7 @@ struct PublisherDef {
 	site string
 }
 
-pub fn (mut publisher Publisher) errors_get(site Site) ?PublisherErrors {
+pub fn () errors_get(site Site) ?PublisherErrors {
 	mut errors := PublisherErrors{}
 
 	// collect all errors in a datastruct

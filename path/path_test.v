@@ -66,7 +66,7 @@ fn test_dir_find() {
 	println('************ TEST_dir_find ************')
 	mut test_path_dir := path.get('$testpath')
 	mut test_parent_dir := test_path_dir.dir_find('test_parent') or { panic(err) }
-	assert test_parent_dir.exists == path.PathExists.yes
+	assert test_parent_dir.exists == path.true
 	println('Dir found: $test_parent_dir')
 
 	// assert test_path_dir.dir_find("test_parent_2")
@@ -87,7 +87,7 @@ fn test_file_find() {
 	println('************ TEST_file_find ************')
 	mut test_path_dir := path.get('$testpath')
 	mut file := test_path_dir.file_find('newfile1') or { panic(err) }
-	assert file.exists == path.PathExists.yes
+	assert file.exists == path.true
 	println('file $file found')
 
 	// assert test_path_dir.file_find("newfile2")
@@ -146,12 +146,12 @@ fn test_copy() {
 // TODO need other test
 // fn test_link(){
 // 	println('************ TEST_link ************')
-// 	mut dest_p:= path.Path{path:"$testpath/linkdir1", cat:path.Category.linkdir, exists:path.PathExists.no}
-// 	mut lp := path.Path{path:"/workspace/crystallib/path", cat:path.Category.dir, exists:path.PathExists.yes}
+// 	mut dest_p:= path.Path{path:"$testpath/linkdir1", cat:path.Category.linkdir, exists:path.false}
+// 	mut lp := path.Path{path:"/workspace/crystallib/path", cat:path.Category.dir, exists:path.true}
 // 	lp.link(mut dest_p) or {panic(err)}
 // 	mut get_link := path.get("$testpath/linkdir1")
 // 	assert get_link.exists()
 // 	println("Link path: $get_link.path")
-// 	real:= get_link.path_absolute()
+// 	real:= get_link.absolute()
 // 	println("Real path: $real")
 // }

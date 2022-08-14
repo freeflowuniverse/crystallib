@@ -6,10 +6,12 @@ import freeflowuniverse.crystallib.publisher.config
 
 pub struct FlattenArgs {
 	dest string
+	prefix string
+	reset bool
 }
 
 // destination is the destination path for the flatten operation
-pub fn (mut publisher Publisher) flatten(args FlattenArgs) ? {
+pub fn () flatten(args FlattenArgs) ? {
 	$if debug {
 		eprintln(@MOD + ':' + @FN + ': - flatten\n$args')
 	}
@@ -17,6 +19,8 @@ pub fn (mut publisher Publisher) flatten(args FlattenArgs) ? {
 	mut dest_file := ''
 
 	publisher.config.update_staticfiles(false)?
+
+	publisher.config.prefix = args.prefix
 
 	publisher.check()? // makes sure we checked all
 
@@ -38,6 +42,12 @@ pub fn (mut publisher Publisher) flatten(args FlattenArgs) ? {
 		export_dir = '~/publisher/export/'
 	}
 	export_dir = export_dir.replace('~', os.home_dir())
+
+	if args.reset{
+		if os.exists(export_dir) {
+			os.rmdir_all(export_dir)?
+		}		
+	}
 
 	for mut site in publisher.sites {
 		sc := site.config

@@ -25,5 +25,6 @@ pub mut:
 	port        int = 9998
 	paths       Paths
 	multibranch bool
+	prefix		string
 	// publish_servers []string
 }

@@ -49,9 +49,9 @@ fn (mut app App) handle_wiki(siteroot_ string, relpath string) ?vweb.Result {
 	// 	println(' - ERROR: could not get path for: $sitename:$name\n$err')
 	// 	return app.not_found()
 	// }
-	$if debug {
-		eprintln(" - '${wl.sitename}:${wl.name}' -> $pathfull")
-	}
+	// $if debug {
+	// 	eprintln(" - '${wl.sitename}:${wl.name}' -> $pathfull")
+	// }
 	if wl.filetype == FileType.wiki {
 		content := os.read_file(pathfull) or { return app.not_found() }
 		return app.html(content)

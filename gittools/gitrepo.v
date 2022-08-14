@@ -83,7 +83,7 @@ pub fn (repo GitRepo) path_get() string {
 	}
 }
 
-pub fn (repo GitRepo) path_rel_get() string {
+pub fn (repo GitRepo) path_relative() string {
 	mut gitstructure := get() or { panic(err) }
 	if gitstructure.multibranch {
 		return '$repo.addr.account/$repo.addr.name/$repo.addr.branch'

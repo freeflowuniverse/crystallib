@@ -115,7 +115,7 @@ fn macro_def_list(mut state LineProcessorState, mut macro texttools.MacroObj) ? 
 		}
 		mut page := state.publisher.page_get_by_id(defobj.pageid) or { panic(err) }
 
-		site := page.site_get(mut state.publisher) or { panic(err) }
+		// site := page.site_get(mut state.publisher) or { panic(err) }
 
 		deftitle := page.title()
 

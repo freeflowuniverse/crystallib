@@ -19,9 +19,9 @@ fn (mut app App) handle_www(siteroot_ string, relpath_ string ) ?vweb.Result {
 	mut wl := wiki_location_parser(siteroot,relpath)?
 	mut pathfull := os.join_path(siteroot.path,relpath)
 
-	$if debug {
-		eprintln(" - '${wl.sitename}:${wl.name}' -> $pathfull")
-	}	
+	// $if debug {
+	// 	eprintln(" - '${wl.sitename}:${wl.name}' -> $pathfull")
+	// }	
 
 	if !os.exists(pathfull) {
 		println(' - ERROR: cannot find path:$pathfull')

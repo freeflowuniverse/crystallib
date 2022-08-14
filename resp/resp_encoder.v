@@ -27,7 +27,8 @@ pub fn (mut b Builder) add(val RValue) {
 
 //add the data at the beginning
 pub fn (mut b Builder) prepend(val RValue) {
-	b.data = val.encode() + b.data
+	b.data << val.encode()
+	b.data << b.data
 }
 
 

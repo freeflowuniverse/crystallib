@@ -11,9 +11,6 @@ mut:
 	gitlevel int
 pub mut:
 	sites      []Site
-	pages      []Page
-	files      []File
-	defs       []Def
 	site_names map[string]int
 	// maps definition name to page id
 	def_names map[string]int
@@ -31,35 +28,35 @@ pub mut:
 	defs texttools.ReplaceInstructions
 }
 
-pub fn (mut publisher Publisher) site_get_by_id(id int) ?&Site {
-	if id > publisher.sites.len {
-		return error('cannot get site with id: $id because not enough sites in the list')
-	}
-	return &publisher.sites[id]
-}
+// pub fn (mut publisher Publisher) site_get_by_id(id int) ?&Site {
+// 	if id > publisher.sites.len {
+// 		return error('cannot get site with id: $id because not enough sites in the list')
+// 	}
+// 	return &publisher.sites[id]
+// }
 
-pub fn (mut publisher Publisher) def_get_by_id(id int) ?&Def {
-	if id > publisher.defs.len {
-		return error('cannot get def with id: $id because not enough defs in the list')
-	}
-	return &publisher.defs[id]
-}
+// pub fn (mut publisher Publisher) def_get_by_id(id int) ?&Def {
+// 	if id > publisher.defs.len {
+// 		return error('cannot get def with id: $id because not enough defs in the list')
+// 	}
+// 	return &publisher.defs[id]
+// }
 
-pub fn (mut publisher Publisher) page_get_by_id(id int) ?&Page {
-	// println("page get by id: '$id'")
-	if id > publisher.pages.len {
-		return error('cannot get page with id: $id because not enough pages in the list')
-	}
-	// println(publisher.pages[id])
-	return &publisher.pages[id]
-}
+// pub fn (mut publisher Publisher) page_get_by_id(id int) ?&Page {
+// 	// println("page get by id: '$id'")
+// 	if id > publisher.pages.len {
+// 		return error('cannot get page with id: $id because not enough pages in the list')
+// 	}
+// 	// println(publisher.pages[id])
+// 	return &publisher.pages[id]
+// }
 
-pub fn (mut publisher Publisher) file_get_by_id(id int) ?&File {
-	if id > publisher.files.len {
-		return error('cannot get file with id: $id because not enough files in the list')
-	}
-	return &publisher.files[id]
-}
+// pub fn (mut publisher Publisher) file_get_by_id(id int) ?&File {
+// 	if id > publisher.files.len {
+// 		return error('cannot get file with id: $id because not enough files in the list')
+// 	}
+// 	return &publisher.files[id]
+// }
 
 ////////////////////////////////////////////////////////////////
 
@@ -138,7 +135,7 @@ pub fn (mut publisher Publisher) files_get(namefull string) ?[]&File {
 	sitename, itemname := name_split(namefull)?
 
 	// get name without extension and trailing _
-	filename_2 := publisher.path_get_name_fix(itemname)?
+	filename_2 := texttools.name_fix_no_underscore_no_ext(itemname)?
 
 	site_id := publisher.site_names[sitename]
 	mut res := []&File{}
