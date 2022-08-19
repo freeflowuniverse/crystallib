@@ -76,15 +76,26 @@ pub fn (mut tcl TwinClient) send(functionPath string, args string) ?Message {
 
 	tcl.ws.write(payload, .text_frame)?
 	println('waiting for result...')
-	return tcl.wait(id)
+	return tcl.wait(id, 20) // won't wait more than 20 seconds
 }
 
-fn (mut tcl TwinClient) wait(id string) ?Message {
+fn (mut tcl TwinClient) wait(id string, timeout u32) ?Message {
 	if channel := tcl.channels[id] {
-		res := <-channel
-		channel.close()
-		tcl.channels.delete(id)
-		return res
+		select {
+			res := <-channel {
+				channel.close()
+				tcl.channels.delete(id)
+				return res
+			}
+			timeout * time.second {
+				er := "requets with id $id was timed out!"
+				channel.close()
+				tcl.channels.delete(id)
+				return error(er)
+			}
+		}
+		
+		
 	}
 
 	return error('wait channel of $id is not present')
