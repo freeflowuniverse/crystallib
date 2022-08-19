@@ -38,17 +38,15 @@ pub fn init_client(mut ws ws.Client) TwinClient {
 			return
 		}
 
-		// println("got a raw msg: $raw_msg")
 		msg := json.decode(Message, raw_msg.payload.bytestr()) or {
-			// msgstr := raw_msg.payload.bytestr()
-			println('cannot decode message payload')
+			eprintln('cannot decode message payload')
 			return
 		}
 
 		if msg.event == 'invoke_result' {
-			println('processing invoke request')
+			println('processing invoke response: $msg')
 			channel := tcl.channels[msg.id] or {
-				println('channel for $msg.id is not there')
+				eprintln('channel for $msg.id is not there')
 				return
 			}
 
