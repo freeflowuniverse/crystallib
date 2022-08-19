@@ -3,6 +3,14 @@ module twinclient2
 import net.websocket as ws
 import json
 import rand
+import time
+
+pub const factory = Factory{}
+
+struct Factory {
+	mut:
+	clients map[string]TwinClient
+}
 
 pub struct TwinClient {
 pub mut:
@@ -15,6 +23,11 @@ pub type ResultHandler = fn (Message)
 pub type RawMessage = ws.Message
 
 pub fn init_client(mut ws ws.Client) TwinClient {
+	mut f :=  twinclient2.factory
+	if ws.id in f.clients {
+		return twinclient2.factory.clients[ws.id]
+	}
+
 	mut tcl := TwinClient{
 		ws: ws
 		channels: map[string]chan Message{}
@@ -43,7 +56,7 @@ pub fn init_client(mut ws ws.Client) TwinClient {
 			channel <- msg
 		}
 	})
-
+	f.clients[ws.id] = tcl
 	return tcl
 }
 
