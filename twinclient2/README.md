@@ -1,7 +1,7 @@
 # TwinClient2 (GridClient over ws)
 
 ## Overview:
-this demonstrate how we can call use custom JSON_RPC functionality over ws protocol to allow p2p communications (both ends can send requests and receive responses) between Vlang ws server/node and grid3_client js library (running in user browser).
+this demonstrate how we can use custom JSON_RPC functionality over ws protocol to allow p2p communications (both ends can send requests and receive responses) between Vlang ws server and grid3_client js library (running in user browser).
 
 - we start a server that hosts a SPA (single page application) that do two things:
     - loads grid3_client js library (https://github.com/threefoldtech/grid3_client_ts) to enable functionality to interact with threefold gird.
@@ -11,27 +11,23 @@ this demonstrate how we can call use custom JSON_RPC functionality over ws proto
 
 ## What is TwinClient2:
 
-TwinClient2(tw2) isn't a ws server.
-
 tw2 is a Vlang library to be imported and used from a ws server to enable developers access the functionality of grid3_client js library with ease. you can think of it as a V wrapper around grid3_client js library.
 
 ## how to use TwinClient2:
 
 - it is expected that you will have a ws server which from you can import `tw2` within it.
 - it is expected that you will interact with a js ws client that will (at least) forward the requests the the grid3_client `invoke` method.
+
 for these requirmenets, you can use the server and client(SPA) in this repo as a starter.
 https://github.com/freeflowuniverse/twinactions/tree/development_tfgrid_websocket_server_wip_gridclient
 
-Note: this SPA is still under development, and serve no purpose yet.
-Note: you need to patch your v websocket source code , see this https://github.com/vlang/v/pull/15453
-Note: the server it is not stable yet, it keeps crashes randomly.
 Note: the models was ported from `crystallib/twinclient` and need to be tested and verified that they are updated. only subset of the models was tested.
 
 ```v
 // importing tw2
 import twinclient2 as tw2
 // initialize the client with the ws client:
-mut tw2_client := tw2.init_client(mut ws_client)
+mut tw2_client := tw2.init_client(mut ws_client) // repeated calls to init_client will return the same twin client if the ws_client is the same.
 ```
 
 ### call a high-level method:
@@ -48,32 +44,42 @@ id := tw2_client.send('twin.get_my_twin_id', '{}') or { // handle the error }
 ## examples:
 ```v 
 import freeflowuniverse.crystallib.twinclient2 as tw2
-mut tw2_client := tw2.init_client(ws_client)
-payload := Machines{
-    name: 'ms1'
-    network: Network{
-        ip_range: '10.200.0.0/16'
-        name: 'net'
-        add_access: false
-        }
-    machines: [
-        Machine{
-            name: 'm1'
-            node_id: 2
-            public_ip: false
-            planetary: true
-            cpu: 1
-            memory: 1024
-            rootfs_size: 1
-            flist: 'https://hub.grid.tf/tf-official-apps/base:latest.flist'
-            entrypoint: '/sbin/zinit init'
-            env: Env{
-                ssh_key: 'ADD_YOUR_SSH'
+mut tw2_client := tw2.init_client(mut ws_client)
+go fn [mut tw2_client]() {
+    payload := Machines{
+        name: 'ms1'
+        network: Network{
+            ip_range: '10.200.0.0/16'
+            name: 'net'
+            add_access: false
             }
-        },
-    ]
-}
-response := client.deploy_machines(machines)? 
+        machines: [
+            Machine{
+                name: 'm1'
+                node_id: 2
+                public_ip: false
+                planetary: true
+                cpu: 1
+                memory: 1024
+                rootfs_size: 1
+                flist: 'https://hub.grid.tf/tf-official-apps/base:latest.flist'
+                entrypoint: '/sbin/zinit init'
+                env: Env{
+                    ssh_key: 'ADD_YOUR_SSH'
+                }
+            },
+        ]
+    }
+    response := client.deploy_machines(machines)?
+}()
+```
+wrapping the sync code that interact with the grid3_client in a separated thread is a must, otherwise the ws client will be blocked.
+
+```v
+go fn [mut client]() {
+    // do something with the twin client
+    // or the underneath ws client methods
+}()
 ```
 
 ## Supported Commands
