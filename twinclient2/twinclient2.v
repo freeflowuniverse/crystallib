@@ -54,6 +54,9 @@ pub fn init_client(mut ws ws.Client) TwinClient {
 			channel <- msg
 		}
 	})
+	ws.on_close(fn [mut f] (mut c ws.Client, code int, reason string) ?{
+		f.clients.delete(c.id)
+	})
 	f.clients[ws.id] = tcl
 	return tcl
 }
