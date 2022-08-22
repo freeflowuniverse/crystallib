@@ -294,8 +294,8 @@ pub struct BalanceResult {
 pub:
 	free        f64
 	reserved    f64
-	misc_frozen f64 [json: 'miscFrozen']
-	fee_frozen  f64 [json: 'feeFrozen']
+	misc_frozen f64
+	fee_frozen  f64
 }
 
 [params]
@@ -408,4 +408,19 @@ pub:
 	hru   u64
 	sru   u64
 	ipv4u u32
+}
+
+pub struct TfChain {
+	mut:
+		client &TwinClient
+}
+
+pub struct TfchainWalletNameModel {
+	mut:
+		name string
+}
+
+pub struct TfchainWalletAddressModel {
+	mut:
+		address string
 }
