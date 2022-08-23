@@ -410,17 +410,29 @@ pub:
 	ipv4u u32
 }
 
-pub struct TfChain {
+pub struct TfChain{
 	mut:
 		client &TwinClient
 }
 
-pub struct TfchainWalletNameModel {
+pub struct TfchainWalletImportModel{
+	name string
+	mnemonics string
+}
+
+pub struct TfchainWalletNameModel{
 	mut:
 		name string
 }
 
-pub struct TfchainWalletAddressModel {
+pub struct TfchainWalletAddressModel{
 	mut:
 		address string
+}
+
+pub struct TfchainWalletTransferModel{
+	mut:
+		name string
+		target_address string
+		amount f64
 }

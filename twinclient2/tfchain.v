@@ -9,27 +9,31 @@ fn new_tfchain(mut client TwinClient) TfChain {
 	}
 }
 
-pub fn (mut c TfChain) import_(options string)?{
-	// options: {name, mnemonics}
-	c.client.send('tfchain.import', options)?
+pub fn (mut c TfChain) import_(options TfchainWalletImportModel)?{
+	// options: TfchainWalletImportModel{name, mnemonics}
+	options_encoded := json.encode(options)
+	c.client.send('tfchain.import', "$options_encoded")?
 }
 
-pub fn (mut c TfChain) get(options string)? TfchainWalletAddressModel{
+pub fn (mut c TfChain) get(options TfchainWalletNameModel)? TfchainWalletAddressModel{
 	// options: {name}
 	// Returns address as string.
-	response := c.client.send('tfchain.get', options)?
+	options_encoded := json.encode(options)
+	response := c.client.send('tfchain.get', "$options_encoded")?
 	return json.decode(TfchainWalletAddressModel, response.data) or {}
 }
 
-pub fn (mut c TfChain) update(options string)?{
+pub fn (mut c TfChain) update(options TfchainWalletImportModel)?{
 	// options: {name, mnemonics}
-	c.client.send('tfchain.update', options)?
+	options_encoded := json.encode(options)
+	c.client.send('tfchain.update', "$options_encoded")?
 }
 
-pub fn (mut c TfChain) exist(options string)? string{
+pub fn (mut c TfChain) exist(options TfchainWalletNameModel)? string{
 	// options: {name}
 	// Returns bool as string.
-	response := c.client.send('tfchain.exist', options)?
+	options_encoded := json.encode(options)
+	response := c.client.send('tfchain.exist', "$options_encoded")?
 	return response.data
 }
 
@@ -39,26 +43,30 @@ pub fn (mut c TfChain) list()? []string {
 	return json.decode([]string, response.data)
 }
 
-pub fn (mut c TfChain) balance_by_name(options string)? BalanceResult {
+pub fn (mut c TfChain) balance_by_name(options TfchainWalletNameModel)? BalanceResult {
 	// options: {name}
 	// Returns BalanceResult{free, feeFrozen, miscFrozen, reserved}
-	response := c.client.send('tfchain.balanceByName', options)?
+	options_encoded := json.encode(options)
+	response := c.client.send('tfchain.balanceByName', "$options_encoded")?
 	return json.decode(BalanceResult, response.data)
 }
 
-pub fn (mut c TfChain) balance_by_address(options string)? BalanceResult {
+pub fn (mut c TfChain) balance_by_address(options TfchainWalletAddressModel)? BalanceResult {
 	// options: {address}
 	// Returns BalanceResult{free, feeFrozen, miscFrozen, reserved}
-	response := c.client.send('tfchain.balanceByAddress', options)?
+	options_encoded := json.encode(options)
+	response := c.client.send('tfchain.balanceByAddress', "$options_encoded")?
 	return json.decode(BalanceResult, response.data)
 }
 
-pub fn (mut c TfChain) transfer(options string)? {
+pub fn (mut c TfChain) transfer(options TfchainWalletTransferModel)? {
 	// options: {"name", "target_address", "amount"}
-	c.client.send('tfchain.transfer', options)?
+	options_encoded := json.encode(options)
+	c.client.send('tfchain.transfer', "$options_encoded")?
 }
 
-pub fn (mut c TfChain) delete(options string)? {
+pub fn (mut c TfChain) delete(options TfchainWalletNameModel)? {
 	// options: {name}
-	c.client.send('tfchain.delete', options)?
+	options_encoded := json.encode(options)
+	c.client.send('tfchain.delete', "$options_encoded")?
 }
