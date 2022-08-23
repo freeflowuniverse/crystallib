@@ -72,8 +72,6 @@ pub fn (mut c TfChain) transfer(name string, target_address string, amount f64)?
 		target_address: target_address,
 		amount: amount
 	}
-	println("Here")
-	// println(json.encode(data))
 	c.client.send('tfchain.transfer', "${json.encode(data)}")?
 }
 
