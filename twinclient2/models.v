@@ -419,3 +419,10 @@ pub struct TfchainWalletAddressModel{
 	mut:
 		address string
 }
+
+pub struct TFChainBalanceTransfer {
+pub:
+	name string
+	target_address string 
+	amount  f64    
+}
