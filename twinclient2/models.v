@@ -415,6 +415,11 @@ pub struct TfChain{
 		client &TwinClient
 }
 
+pub struct Algorand{
+	mut:
+		client &TwinClient
+}
+
 pub struct TfchainWalletAddressModel{
 	mut:
 		address string
@@ -425,4 +430,32 @@ pub:
 	name string
 	target_address string 
 	amount  f64    
+}
+pub struct AlgorandBalanceTransfer {
+pub:
+	sender string
+	receiver string
+	amount  f64  
+	text string
+}
+
+pub struct AlgorandAccountImportResponseModel{
+	name string
+	address string
+	mnemonic string
+}
+
+pub struct AlgorandAccountAddressModel{
+	mut:
+		address string
+}
+
+pub struct AlgorandAccountMnemonicsModel{
+	mut:
+		mnemonics string
+}
+
+pub struct AlgorandAccountSignBytesResponse{
+	mut:
+		message string
 }

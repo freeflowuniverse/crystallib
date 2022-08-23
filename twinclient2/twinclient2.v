@@ -17,6 +17,7 @@ pub mut:
 	ws       ws.Client
 	channels map[string]chan Message
 	tfchain  TfChain
+	algorand  Algorand
 }
 
 pub type ResultHandler = fn (Message)
@@ -35,6 +36,7 @@ pub fn init_client(mut ws ws.Client) TwinClient {
 	}
 	// Initialize the tfchain.
 	tcl.tfchain = new_tfchain(mut tcl)
+	tcl.algorand = new_algorand(mut tcl)
 
 	ws.on_message(fn [mut tcl] (mut c ws.Client, raw_msg &RawMessage) ? {
 		if raw_msg.payload.len == 0 {
