@@ -70,7 +70,7 @@ go fn [mut tw2_client]() {
             },
         ]
     }
-    response := client.deploy_machines(machines)?
+    response := client.machines.deploy(machines)?
 }()
 ```
 wrapping the sync code that interact with the grid3_client in a separated thread is a must, otherwise the ws client will be blocked.
@@ -108,29 +108,29 @@ setPerson(id:1, name:"Essam")
 
 | Description                | Function                                  |
 | :------------------------- | :---------------------------------------- |
-| Create a new twin          | `create_twin("IPV6")`                     |
-| Get info of a twin with id | `get_twin(<TWIN_ID>)`                     |
+| Create a new twin          | `create("IPV6")`                          |
+| Get info of a twin with id | `get(<TWIN_ID>)`                          |
 | Get my twin id             | `get_my_twin()`                           |
 | Get twin id by account id  | `get_twin_id_by_account_id("ACCOUNT_ID")` |
-| List all twins             | `list_twins()`                            |
-| Delete twin with id        | `delete_twin(<TWIN_ID>`                   |
+| List all twins             | `list()`                                  |
+| Delete twin with id        | `delete(<TWIN_ID>`                        |
 
 ### Contracts
 
-| Description                           | Function                                                        |
-| :------------------------------------ | :-------------------------------------------------------------- |
-| Create a new node contract            | `create_node_contract({NodeContractCreate})`                    |
-| Create a new name contract            | `create_name_contract("NAME")`                                  |
-| Get info of a contract with id        | `get_contract(<CONTRACT_ID>)`                                   |
-| Get contract id from node id and hash | `get_contract_id_by_node_and_hash({ContractIdByNodeIdAndHash})` |
-| Get name contract using name          | `get_name_contract("NAME")`                                     |
-| Update node contract                  | `update_node_contract({NodeContractUpdate})`                    |
-| List my contracts                     | `list_my_contracts()`                                           |
-| List contracts for specific twin      | `list_contracts_by_twin_id(<TWIN_ID>)`                          |
-| List contracts using address          | `list_contracts_by_address("ADDRESS")`                          |
-| Cancel contract                       | `cancel_contract(<CONTRACT_ID>)`                                |
-| Cancel all my contracts               | `cancel_my_contracts()`                                         |
-| Get contract consumption `TFT/hour`   | `get_consumption(<CONTRACT_ID>)`                                |
+| Description                           | Function                                                              |
+| :------------------------------------ | :---------------------------------------------------------------------|
+| Create a new node contract            | `create_node({NodeContractCreate})`                                   |
+| Create a new name contract            | `create_name("NAME")`                                                 |
+| Get info of a contract with id        | `get(<CONTRACT_ID>)`                                                  |
+| Get contract id from node id and hash | `get_contract_id_by_node_id_and_hash({ContractIdByNodeIdAndHash})`    |
+| Get name contract using name          | `get_name_contract("NAME")`                                           |
+| Update node contract                  | `update_node_contract({NodeContractUpdate})`                          |
+| List my contracts                     | `list_my_contracts()`                                                 |
+| List contracts for specific twin      | `list_contracts_by_twin_id(<TWIN_ID>)`                                |
+| List contracts using address          | `list_contracts_by_address("ADDRESS")`                                |
+| Cancel contract                       | `cancel(<CONTRACT_ID>)`                                               |
+| Cancel all my contracts               | `cancel_my_contracts()`                                               |
+| Get contract consumption `TFT/hour`   | `get_consumption(<CONTRACT_ID>)`                                      |
 
 ### ZOS
 
@@ -142,86 +142,115 @@ setPerson(id:1, name:"Essam")
 
 | Description                                         | Function                           |
 | :-------------------------------------------------- | :--------------------------------- |
-| Deploy machines -- *can have more than one machine* | `deploy_machines({Machines})`      |
-| Get machines deployment info                        | `get_machines("MACHINES_NAME")`    |
-| Update machines                                     | `update_machines({Machines})`      |
-| List all my deployed machines                       | `list_machines()`                  |
+| Deploy machines -- *can have more than one machine* | `deploy({Machines})`               |
+| Get machines deployment info                        | `get("MACHINES_NAME")`             |
+| Update machines                                     | `update({Machines})`               |
+| List all my deployed machines                       | `list()`                           |
 | Add machine -- *single machine*                     | `add_machine({AddMachine})`        |
 | Delete machine  -- *single machine*                 | `delete_machine({SingleDelete})`   |
-| Delete machines -- *All machines in the deployment* | `delete_machines("MACHINES_NAME")` |
+| Delete machines -- *All machines in the deployment* | `delete("MACHINES_NAME")`          |
 
 ### Kubernetes
 
 | Description                     | Function                          |
 | :------------------------------ | :-------------------------------- |
-| Deploy kubernetes               | `deploy_kubernetes({K8S})`        |
-| Get kubernetes deployment info  | `get_kubernetes("KUBE_NAME")`     |
-| Update kubernetes               | `update_kubernetes({K8S})`        |
-| List all my deployed kubernetes | `list_kubernetes()`               |
+| Deploy kubernetes               | `deploy({K8S})`                   |
+| Get kubernetes deployment info  | `get("KUBE_NAME")`                |
+| Update kubernetes               | `update({K8S})`                   |
+| List all my deployed kubernetes | `list()`                          |
 | Add worker                      | `add_worker({AddKubernetesNode})` |
 | Delete worker                   | `delete_worker({SingleDelete})`   |
-| Delete kubernetes               | `delete_kubernetes("KUBE_NAME")`  |
+| Delete kubernetes               | `delete("KUBE_NAME")`             |
 
 ### ZDB
 
 | Description                                  | Function                        |
 | :------------------------------------------- | :------------------------------ |
-| Deploy zdbs  -- *can have more than one zdb* | `deploy_zdbs({ZDBs})`           |
-| Get zdbs deployment info                     | `get_zdbs("ZDBS_NAME")`         |
-| Update zdbs                                  | `update_zdbs({ZDBs})`           |
-| List all my deployed zdbs                    | `list_zdbs()`                   |
+| Deploy zdbs  -- *can have more than one zdb* | `deploy({ZDBs})`                |
+| Get zdbs deployment info                     | `get("ZDBS_NAME")`              |
+| Update zdbs                                  | `update({ZDBs})`                |
+| List all my deployed zdbs                    | `list()`                        |
 | Add zdb -- *single zdb*                      | `add_zdb({AddZDB})`             |
-| Delete zdb -- *single zdb*                   | `delete worker({SingleDelete})` |
-| Delete zdbs -- *All zdbs in the deployment*  | `delete_zdbs("ZDBS_NAME")`      |
+| Delete zdb -- *single zdb*                   | `delete_zdb({SingleDelete})`    |
+| Delete zdbs -- *All zdbs in the deployment*  | `delete("ZDBS_NAME")`           |
 
 ### QSFS
 
-| Description                    | Function                        |
-| :----------------------------- | :------------------------------ |
-| Deploy QSFS Zdbs               | `deploy_qsfs_zdbs({QSFSZDBs})`  |
-| List all my deployed QSFS Zdbs | `list_qsfs_zdbs()`              |
-| Get QSFS Zdbs deployment info  | `get_qsfs_zdbs("QSFS_NAME")`    |
-| Delete QSFS Zdbs               | `delete_qsfs_zdbs("QSFS_NAME")` |
+| Description                    | Function                         |
+| :----------------------------- | :--------------------------------|
+| Deploy QSFS Zdbs               | `deploy({QSFSZDBs})`             |
+| List all my deployed QSFS Zdbs | `list()`                         |
+| Get QSFS Zdbs deployment info  | `get("QSFS_NAME")`               |
+| Delete QSFS Zdbs               | `delete("QSFS_NAME")`            |
 
 ### Gateways
 
-| Description                                          | Function                             |
-| :--------------------------------------------------- | :----------------------------------- |
-| Deploy a fully qualified domain -- *ex: site.com*    | `deploy_gateway_fqdn({GatewayFQDN})` |
-| Deploy a prefix domain -- *ex: name.gateway.grid.tf* | `deploy_gateway_name({GatewayName})` |
-| Get fqdn deployment info                             | `get_gateway_fqdn("FQDN_Name")`      |
-| Get prefix domain deployment info                    | `get_gateway_name("PREFIX_NAME")`    |
-| Delete deployed fqdn                                 | `delete_gateway_fqdn("FQDN_Name")`   |
-| Delete deployed prefix domain                        | `delete_gateway_name("PREFIX_NAME")` |
+| Description                                          | Function                       |
+| :--------------------------------------------------- | :------------------------------|
+| Deploy a fully qualified domain -- *ex: site.com*    | `deploy_fqdn({GatewayFQDN})`   |
+| Deploy a prefix domain -- *ex: name.gateway.grid.tf* | `deploy_name({GatewayName})`   |
+| Get fqdn deployment info                             | `get_fqdn("FQDN_Name")`        |
+| Get prefix domain deployment info                    | `get_name("PREFIX_NAME")`      |
+| Delete deployed fqdn                                 | `delete_fqdn("FQDN_Name")`     |
+| Delete deployed prefix domain                        | `delete_name("PREFIX_NAME")`   |
 
 ### KVStore
 
-| Description                        | Function                      |
-| :--------------------------------- | :---------------------------- |
-| Set a record in KVStore            | `set_kvstore("KEY", "VALUE")` |
-| Get a record in KVStore            | `get_kvstore("KEY")`          |
-| List all records in my KVStore     | `list_kvstore()`              |
-| Remove a record from KVStore       | `remove_kvstore("KEY")`       |
-| Remove all records from my KVStore | `remove_all_kvstore()`        |
+| Description                        | Function                 |
+| :--------------------------------- | :------------------------|
+| Set a record in KVStore            | `set("KEY", "VALUE")`    |
+| Get a record in KVStore            | `get("KEY")`             |
+| List all records in my KVStore     | `list()`                 |
+| Remove a record from KVStore       | `remove("KEY")`          |
+| Remove all records from my KVStore | `remove_all_kvstore()`   |
 
 ### Balance
 
-| Description                                  | Function                              |
-| :------------------------------------------- | :------------------------------------ |
-| Get current balance for specific address     | `get_balance("ADDRESS")`              |
-| Get my current balance                       | `get_my_balance()`                    |
-| Transfer from my account to specific address | `transfer_balance({BalanceTransfer})` |
+| Description                                  | Function                      |
+| :------------------------------------------- | :-----------------------------|
+| Get current balance for specific address     | `get("ADDRESS")`              |
+| Get my current balance                       | `get_my_balance()`            |
+| Transfer from my account to specific address | `transfer({BalanceTransfer})` |
 
 ### Stellar
 
 | Description                           | Function                         |
 | :------------------------------------ | :------------------------------- |
-| Import Wallet                         | `import_wallet({StellarWallet})` |
-| Get Wallet by name                    | `get_wallet("NAME")`             |
-| List wallets related to specific twin | `list_wallets()`                 |
-| Update wallet secret                  | `update_wallet({StellarWallet})` |
+| Import Wallet                         | `import_({StellarWallet})`       |
+| Get Wallet by name                    | `get("NAME")`                    |
+| List wallets related to specific twin | `list()`                         |
+| Update wallet secret                  | `update({StellarWallet})`        |
 | Get balance by name                   | `balance_by_name("NAME")`        |
 | Get balance by address                | `balance_by_address("ADDRESS")`  |
 | Transfer from account to another      | `transfer({StellarTransfer})`    |
-| Delete a wallet from server           | `delete_wallet("NAME")`          |
-| Check if wallet exists in the server  | `is_wallet_exist("NAME")`        |
+| Delete a wallet from server           | `delete("NAME")`                 |
+| Check if wallet exists in the server  | `exist("NAME")`                  |
+
+### Algorand
+
+| Description                           | Function                                      |
+| :------------------------------------ | :---------------------------------------------|
+| Import Wallet                         | `import_(name, mnemonics)`                    |
+| Sign Bytes                            | `sign_bytes("NAME", "MSG")`                   |
+| Get Wallet by name                    | `get("NAME")`                                 |
+| Get all of assets by name             | `assets_by_name("NAME")`                      |
+| Get all of assets by address          | `assets_by_address("ADDRESS")`                |
+| Check if wallet exists in the server  | `exist("NAME")`                               |
+| List wallets related to specific twin | `list()`                                      |
+| Delete a wallet from server           | `delete("NAME")`                              |
+| Create a new wallet                   | `create("NAME")`                              |
+| Transfer from account to another      | `transfer(SENDER, RECEIVER, AMOUNT, TEXT)`    |
+
+### TFChain
+
+| Description                           | Function                                      |
+| :------------------------------------ | :---------------------------------------------|
+| Import Wallet                         | `import_(name, mnemonics)`                    |
+| Get Wallet by name                    | `get("NAME")`                                 |
+| Check if wallet exists in the server  | `exist("NAME")`                               |
+| Update wallet secret                  | `update(NAME, MNEMONICS)`                     |
+| Get all of assets by name             | `assets_by_name("NAME")`                      |
+| Get all of assets by address          | `assets_by_address("ADDRESS")`                |
+| List wallets related to specific twin | `list()`                                      |
+| Delete a wallet from server           | `delete("NAME")`                              |
+| Transfer from account to another      | `transfer(NAME, TARGET_ADDRESS, AMOUNT)`      |
