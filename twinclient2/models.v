@@ -460,6 +460,11 @@ pub struct Contracts{
 		client &TwinClient
 }
 
+pub struct Capacity{
+	mut:
+		client &TwinClient
+}
+
 pub struct TfchainWalletAddressModel{
 	mut:
 		address string

@@ -17,6 +17,7 @@ pub mut:
 	ws       	ws.Client
 	channels 	map[string]chan Message
 	contracts	Contracts
+	capacity 	Capacity
 	qsfs_zdbs	QsfsZdbs
 	machines	Machines
 	gateways	GateWays
@@ -48,6 +49,7 @@ pub fn init_client(mut ws ws.Client) TwinClient {
 	tcl.contracts	= new_contracts(mut tcl)
 	tcl.qsfs_zdbs 	= new_qsfs_zdbs(mut tcl)
 	tcl.machines 	= new_machines(mut tcl)
+	tcl.capacity 	= new_capacity(mut tcl)
 	tcl.gateways	= new_gateways(mut tcl)
 	tcl.algorand 	= new_algorand(mut tcl)
 	tcl.kvstore 	= new_kvstore(mut tcl)
