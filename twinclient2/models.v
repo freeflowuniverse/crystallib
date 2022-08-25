@@ -440,12 +440,22 @@ pub struct KVstore{
 		client &TwinClient
 }
 
+pub struct ZDBS{
+	mut:
+		client &TwinClient
+}
+
 pub struct QsfsZdbs{
 	mut:
 		client &TwinClient
 }
 
 pub struct K8S{
+	mut:
+		client &TwinClient
+}
+
+pub struct Balance{
 	mut:
 		client &TwinClient
 }
