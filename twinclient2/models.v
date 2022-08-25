@@ -455,6 +455,11 @@ pub struct GateWays{
 		client &TwinClient
 }
 
+pub struct Contracts{
+	mut:
+		client &TwinClient
+}
+
 pub struct TfchainWalletAddressModel{
 	mut:
 		address string

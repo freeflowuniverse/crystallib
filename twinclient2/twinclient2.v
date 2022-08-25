@@ -16,6 +16,7 @@ pub struct TwinClient {
 pub mut:
 	ws       	ws.Client
 	channels 	map[string]chan Message
+	contracts	Contracts
 	qsfs_zdbs	QsfsZdbs
 	machines	Machines
 	gateways	GateWays
@@ -44,14 +45,15 @@ pub fn init_client(mut ws ws.Client) TwinClient {
 	}
 
 	// Initialize the TwinClient modules.
-	tcl.tfchain 	= new_tfchain(mut tcl)
-	tcl.algorand 	= new_algorand(mut tcl)
-	tcl.stellar 	= new_stellar(mut tcl)
-	tcl.twins 		= new_twins(mut tcl)
+	tcl.contracts	= new_contracts(mut tcl)
 	tcl.qsfs_zdbs 	= new_qsfs_zdbs(mut tcl)
 	tcl.machines 	= new_machines(mut tcl)
-	tcl.kvstore 	= new_kvstore(mut tcl)
 	tcl.gateways	= new_gateways(mut tcl)
+	tcl.algorand 	= new_algorand(mut tcl)
+	tcl.kvstore 	= new_kvstore(mut tcl)
+	tcl.tfchain 	= new_tfchain(mut tcl)
+	tcl.stellar 	= new_stellar(mut tcl)
+	tcl.twins 		= new_twins(mut tcl)
 	tcl.k8s 		= new_k8s(mut tcl)
 	tcl.zos 		= new_zos(mut tcl)
 
