@@ -5,7 +5,7 @@ import json
 
 
 fn new_zos(mut client TwinClient) Zos {
-	// Initialize new stellar.
+	// Initialize new zos.
 	return Zos{
 		client: unsafe {client}
 	}
