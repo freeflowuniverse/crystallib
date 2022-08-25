@@ -23,6 +23,7 @@ pub mut:
 	qsfs_zdbs	QsfsZdbs
 	machines	Machines
 	kvstore		KVstore
+	k8s			K8S
 	zos 		Zos
 }
 
@@ -49,6 +50,7 @@ pub fn init_client(mut ws ws.Client) TwinClient {
 	tcl.qsfs_zdbs 	= new_qsfs_zdbs(mut tcl)
 	tcl.machines 	= new_machines(mut tcl)
 	tcl.kvstore 	= new_kvstore(mut tcl)
+	tcl.k8s 		= new_k8s(mut tcl)
 	tcl.zos 		= new_zos(mut tcl)
 
 	ws.on_message(fn [mut tcl] (mut c ws.Client, raw_msg &RawMessage) ? {

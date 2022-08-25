@@ -107,7 +107,7 @@ pub:
 }
 
 [params]
-pub struct K8S {
+pub struct K8SModel {
 pub:
 	name        string           [required]
 	secret      string           [required]
@@ -441,6 +441,11 @@ pub struct KVstore{
 }
 
 pub struct QsfsZdbs{
+	mut:
+		client &TwinClient
+}
+
+pub struct K8S{
 	mut:
 		client &TwinClient
 }
