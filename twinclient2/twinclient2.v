@@ -14,10 +14,11 @@ struct Factory {
 
 pub struct TwinClient {
 pub mut:
-	ws       ws.Client
-	channels map[string]chan Message
-	tfchain  TfChain
-	algorand  Algorand
+	ws       	ws.Client
+	channels 	map[string]chan Message
+	tfchain  	TfChain
+	algorand  	Algorand
+	stellar 	Stellar
 }
 
 pub type ResultHandler = fn (Message)
@@ -34,9 +35,11 @@ pub fn init_client(mut ws ws.Client) TwinClient {
 		ws: ws
 		channels: map[string]chan Message{}
 	}
-	// Initialize the tfchain.
-	tcl.tfchain = new_tfchain(mut tcl)
-	tcl.algorand = new_algorand(mut tcl)
+
+	// Initialize the TwinClient modules.
+	tcl.tfchain 	= new_tfchain(mut tcl)
+	tcl.algorand 	= new_algorand(mut tcl)
+	tcl.stellar 	= new_stellar(mut tcl)
 
 	ws.on_message(fn [mut tcl] (mut c ws.Client, raw_msg &RawMessage) ? {
 		if raw_msg.payload.len == 0 {

@@ -420,6 +420,11 @@ pub struct Algorand{
 		client &TwinClient
 }
 
+pub struct Stellar{
+	mut:
+		client &TwinClient
+}
+
 pub struct TfchainWalletAddressModel{
 	mut:
 		address string

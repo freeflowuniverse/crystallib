@@ -2,82 +2,95 @@ module twinclient2
 
 import json
 
-// Import wallet using secret
-pub fn (mut tw TwinClient) import_wallet(wallet StellarWallet) ?StellarWallet {
-	payload_encoded := json.encode_pretty(wallet)
-	response := tw.send('stellar.import', payload_encoded)?
 
-	return StellarWallet{
-		...wallet
-		address: response.data
+fn new_stellar(mut client TwinClient) Stellar {
+	// Initialize new stellar.
+	return Stellar{
+		client: unsafe {client}
 	}
 }
 
-// Get wallet using it's name
-pub fn (mut tw TwinClient) get_wallet(name string) ?StellarWallet {
-	mut get_wallet := StellarWallet{
-		name: name
-	}
-	response := tw.send('stellar.get', '{"name": "$name"}')?
 
-	get_wallet.address = response.data
-
-	return get_wallet
+pub fn (mut st Stellar) import_(name string, mnemonics string) ?StellarWallet {
+	// Import wallet using secret.
+	response := st.client.send(
+		'stellar.import', 
+		json.encode(
+			{
+				"name": name,
+				"mnemonics": mnemonics
+			}
+		)
+	)?
+	return json.decode(StellarWallet, response.data)
 }
 
-// Update imported wallet secret
-pub fn (mut tw TwinClient) update_wallet(wallet StellarWallet) ?StellarWallet {
-	payload_encoded := json.encode_pretty(wallet)
-	response := tw.send('stellar.update', payload_encoded)?
-
-	return StellarWallet{
-		...wallet
-		address: response.data
-	}
+pub fn (mut st Stellar) get(name string) ?StellarWallet {
+	// Get wallet using it's name.
+	response := st.client.send('stellar.get', json.encode({"name": name}))?
+	return json.decode(StellarWallet, response.data)
 }
 
-// List all imported wallets
-pub fn (mut tw TwinClient) list_wallets() ?[]string {
-	response := tw.send('stellar.list', '{}')?
-
-	return json.decode([]string, response.data) or {}
+pub fn (mut st Stellar) update(name string, secret string)?string{
+	// Update imported wallet secret
+	response := st.client.send(
+		'stellar.update', 
+		json.encode(
+			{
+				"name": name,
+				"secret": secret
+			}
+		)
+	)?
+	return response.data
+	// return StellarWallet{
+	// 	...wallet
+	// 	address: response.data
+	// }
 }
 
-// Get balance using wallet address
-pub fn (mut tw TwinClient) balance_by_address(address string) ?[]StellarBalance {
-	response := tw.send('stellar.balance_by_address', '{"address": $address}')?
-
-	return json.decode([]StellarBalance, response.data) or {}
+pub fn (mut st Stellar) list() ?[]string {
+	// List all imported wallets
+	response := st.client.send('stellar.list', '{}')?
+	return json.decode([]string, response.data)
 }
 
-// Get balance using wallet name
-pub fn (mut tw TwinClient) balance_by_name(name string) ?[]StellarBalance {
-	response := tw.send('stellar.balance_by_name', '{"name": "$name"}')?
-
-	return json.decode([]StellarBalance, response.data) or {}
+pub fn (mut st Stellar) balance_by_address(address string) ?[]StellarBalance {
+	// Get balance using wallet address
+	response := st.client.send(
+		'stellar.balance_by_address', 
+		json.encode({"address": address})
+	)?
+	return json.decode([]StellarBalance, response.data)
 }
 
-// Transfer from wallet to another
-pub fn (mut tw TwinClient) stellar_transfer(transfer StellarTransfer) ?string {
+pub fn (mut st Stellar) balance_by_name(name string) ?[]StellarBalance {
+	// Get balance using wallet name
+	response := st.client.send(
+		'stellar.balance_by_name',
+		json.encode({"name": name})
+	)?
+	return json.decode([]StellarBalance, response.data)
+}
+
+pub fn (mut st Stellar) transfer(transfer StellarTransfer) ?string {
+	// Transfer from wallet to another
 	payload_encoded := json.encode_pretty(transfer)
-	response := tw.send('stellar.transfer', payload_encoded)?
-
+	response := st.client.send('stellar.transfer', payload_encoded)?
 	return response.data
 }
 
-// Delete wallet using wallet name
-pub fn (mut tw TwinClient) delete_wallet(name string) ?bool {
-	response := tw.send('stellar.delete', '{"name": "$name"}')?
-
+pub fn (mut st Stellar) delete(name string) ?bool {
+	// Delete wallet using wallet name
+	response := st.client.send('stellar.delete', '{"name": "$name"}')?
 	if response.data == 'Deleted' {
 		return true
 	}
 	return false
 }
 
-// Check if wallet imported before using wallet name
-pub fn (mut tw TwinClient) is_wallet_exist(name string) ?bool {
-	response := tw.send('stellar.exist', '{"name": "$name"}')?
-
+pub fn (mut st Stellar) exist(name string) ?bool {
+	// Check if wallet imported before using wallet name
+	response := st.client.send('stellar.exist', '{"name": "$name"}')?
 	return response.data.bool()
 }
