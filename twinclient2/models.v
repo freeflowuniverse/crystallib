@@ -425,6 +425,11 @@ pub struct Stellar{
 		client &TwinClient
 }
 
+pub struct Zos{
+	mut:
+		client &TwinClient
+}
+
 pub struct TfchainWalletAddressModel{
 	mut:
 		address string
