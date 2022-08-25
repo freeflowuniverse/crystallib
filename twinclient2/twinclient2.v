@@ -21,6 +21,7 @@ pub mut:
 	stellar 	Stellar
 	twins	 	Twins
 	qsfs_zdbs	QsfsZdbs
+	machines	Machines
 	zos 		Zos
 }
 
@@ -45,6 +46,7 @@ pub fn init_client(mut ws ws.Client) TwinClient {
 	tcl.stellar 	= new_stellar(mut tcl)
 	tcl.twins 		= new_twins(mut tcl)
 	tcl.qsfs_zdbs 	= new_qsfs_zdbs(mut tcl)
+	tcl.machines 	= new_machines(mut tcl)
 	tcl.zos 		= new_zos(mut tcl)
 
 	ws.on_message(fn [mut tcl] (mut c ws.Client, raw_msg &RawMessage) ? {

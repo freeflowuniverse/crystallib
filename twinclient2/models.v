@@ -69,7 +69,7 @@ pub:
 }
 
 [params]
-pub struct Machines {
+pub struct MachinesModel {
 pub:
 	name        string    [required]
 	network     Network   [required]
@@ -426,6 +426,11 @@ pub struct Stellar{
 }
 
 pub struct Twins{
+	mut:
+		client &TwinClient
+}
+
+pub struct Machines{
 	mut:
 		client &TwinClient
 }
