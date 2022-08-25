@@ -48,20 +48,7 @@ pub fn init_client(mut ws ws.Client) TwinClient {
 	}
 
 	// Initialize the TwinClient modules.
-	tcl.contracts	= new_contracts(mut tcl)
-	tcl.qsfs_zdbs 	= new_qsfs_zdbs(mut tcl)
-	tcl.machines 	= new_machines(mut tcl)
-	tcl.capacity 	= new_capacity(mut tcl)
-	tcl.balance 	= new_balance(mut tcl)
-	tcl.gateways	= new_gateways(mut tcl)
-	tcl.algorand 	= new_algorand(mut tcl)
-	tcl.kvstore 	= new_kvstore(mut tcl)
-	tcl.tfchain 	= new_tfchain(mut tcl)
-	tcl.stellar 	= new_stellar(mut tcl)
-	tcl.twins 		= new_twins(mut tcl)
-	tcl.zdbs 		= new_zdbs(mut tcl)
-	tcl.k8s 		= new_k8s(mut tcl)
-	tcl.zos 		= new_zos(mut tcl)
+	initialize_modules(mut tcl)
 
 	ws.on_message(fn [mut tcl] (mut c ws.Client, raw_msg &RawMessage) ? {
 		if raw_msg.payload.len == 0 {
@@ -132,4 +119,22 @@ fn (mut tcl TwinClient) wait(id string, timeout u32) ?Message {
 	}
 
 	return error('wait channel of $id is not present')
+}
+
+pub fn initialize_modules(mut tcl TwinClient) TwinClient {
+	tcl.contracts	= new_contracts(mut tcl)
+	tcl.qsfs_zdbs 	= new_qsfs_zdbs(mut tcl)
+	tcl.machines 	= new_machines(mut tcl)
+	tcl.capacity 	= new_capacity(mut tcl)
+	tcl.balance 	= new_balance(mut tcl)
+	tcl.gateways	= new_gateways(mut tcl)
+	tcl.algorand 	= new_algorand(mut tcl)
+	tcl.kvstore 	= new_kvstore(mut tcl)
+	tcl.tfchain 	= new_tfchain(mut tcl)
+	tcl.stellar 	= new_stellar(mut tcl)
+	tcl.twins 		= new_twins(mut tcl)
+	tcl.zdbs 		= new_zdbs(mut tcl)
+	tcl.k8s 		= new_k8s(mut tcl)
+	tcl.zos 		= new_zos(mut tcl)
+	return tcl
 }
