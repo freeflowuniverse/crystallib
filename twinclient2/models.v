@@ -430,6 +430,11 @@ pub struct Twins{
 		client &TwinClient
 }
 
+pub struct QsfsZdbs{
+	mut:
+		client &TwinClient
+}
+
 pub struct TfchainWalletAddressModel{
 	mut:
 		address string
