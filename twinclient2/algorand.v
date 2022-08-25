@@ -32,20 +32,22 @@ pub fn (mut alg Algorand) sign_bytes(name string, msg string)? AlgorandAccountSi
 	return json.decode(AlgorandAccountSignBytesResponse, response.data)
 }
 
-pub fn (mut alg Algorand) assets_by_name(name string)? string{
-	response := alg.client.send(
+pub fn (mut alg Algorand) assets_by_name(name string)?{
+	alg.client.send(
 		'algorand.assetsByName', 
 		json.encode({"name": name})
 	)?
-	return response.data
+	// TODO: This method will return more than one struct, so will handle it after we done.
+	// return response.data
 }
 
-pub fn (mut alg Algorand) assets_by_address(address string)? string{
-	response := alg.client.send(
+pub fn (mut alg Algorand) assets_by_address(address string)?{
+	alg.client.send(
 		'algorand.assetsByAddress', 
 		json.encode({"address": address})
 	)?
-	return response.data
+	// TODO: This method will return more than one struct, so will handle it after we done.
+	// return response.data
 }
 
 pub fn (mut alg Algorand) exist(name string)? bool{
@@ -63,8 +65,9 @@ pub fn (mut alg Algorand) delete(name string)?{
 	alg.client.send('algorand.delete', json.encode({"name": name}))?
 }
 
-pub fn (mut alg Algorand) create(name string)? {
-	alg.client.send('algorand.create', json.encode({"name": name}))?
+pub fn (mut alg Algorand) create(name string)? AlgorandAccountImportResponseModel{
+	response := alg.client.send('algorand.create', json.encode({"name": name}))?
+	return json.decode(AlgorandAccountImportResponseModel, response.data)
 }
 
 pub fn (mut alg Algorand) transfer(sender string, receiver string, amount f64, text string)? {
