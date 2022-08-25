@@ -321,7 +321,7 @@ pub:
 	memo           string
 }
 
-pub struct Twin {
+pub struct TwinModel {
 pub:
 	version    u32
 	id         u32
@@ -425,6 +425,10 @@ pub struct Stellar{
 		client &TwinClient
 }
 
+pub struct Twins{
+	mut:
+		client &TwinClient
+}
 
 pub struct TfchainWalletAddressModel{
 	mut:

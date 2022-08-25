@@ -19,6 +19,7 @@ pub mut:
 	tfchain  	TfChain
 	algorand  	Algorand
 	stellar 	Stellar
+	twins	 	Twins
 	zos 		Zos
 }
 
@@ -41,6 +42,7 @@ pub fn init_client(mut ws ws.Client) TwinClient {
 	tcl.tfchain 	= new_tfchain(mut tcl)
 	tcl.algorand 	= new_algorand(mut tcl)
 	tcl.stellar 	= new_stellar(mut tcl)
+	tcl.twins 		= new_twins(mut tcl)
 	tcl.zos 		= new_zos(mut tcl)
 
 	ws.on_message(fn [mut tcl] (mut c ws.Client, raw_msg &RawMessage) ? {
