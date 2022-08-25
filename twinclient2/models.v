@@ -450,6 +450,11 @@ pub struct K8S{
 		client &TwinClient
 }
 
+pub struct GateWays{
+	mut:
+		client &TwinClient
+}
+
 pub struct TfchainWalletAddressModel{
 	mut:
 		address string
