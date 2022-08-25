@@ -435,6 +435,11 @@ pub struct Machines{
 		client &TwinClient
 }
 
+pub struct KVstore{
+	mut:
+		client &TwinClient
+}
+
 pub struct QsfsZdbs{
 	mut:
 		client &TwinClient

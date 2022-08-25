@@ -4,6 +4,7 @@ import json
 
 
 fn new_tfchain(mut client TwinClient) TfChain {
+	// Initialize new tfchain.
 	return TfChain{
 		client: unsafe {client}
 	}
