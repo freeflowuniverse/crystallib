@@ -1,5 +1,11 @@
 module twinclient2
 
+
+pub struct Zos{
+	mut:
+		client &TwinClient
+}
+
 pub struct SignatureRequest {
 pub mut:
 	twin_id  u32

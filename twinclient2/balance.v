@@ -2,21 +2,36 @@ module twinclient2
 
 import json
 
-// Get balance for specific address
-pub fn (mut tw TwinClient) get_balance(address string) ?BalanceResult {
-	response := tw.send('balance.get', '{"address": "$address"}')?
-	return json.decode(BalanceResult, response.data) or {}
+
+
+fn new_balance(mut client TwinClient) Balance {
+	// Initialize new tfchain.
+	return Balance{
+		client: unsafe {client}
+	}
 }
 
-// Get balance for my account
-pub fn (mut tw TwinClient) get_my_balance() ?BalanceResult {
-	response := tw.send('balance.getMyBalance', '{}')?
-	return json.decode(BalanceResult, response.data) or {}
+pub fn (mut blnc Balance) get(address string) ?BalanceResult {
+	// Get balance for specific address
+	response := blnc.client.send('balance.get', json.encode({"address": address}))?
+	return json.decode(BalanceResult, response.data)
 }
 
-// // Transfer balance from my account to specific address
-// pub fn (mut tw TwinClient) transfer_balance(address string, amount u64) ?u64 {
-// 	response := tw.send('balance.transfer', '{"address": "$address", "amount": $amount}')?
-// 	println(response)
-// 	// return json.decode(DeployResponse, response.data) or {}
-// }
+pub fn (mut blnc Balance) get_my_balance() ?BalanceResult {
+	// Get balance for my account
+	response := blnc.client.send('balance.getMyBalance', '{}')?
+	return json.decode(BalanceResult, response.data)
+}
+
+pub fn (mut blnc Balance) transfer(address string, amount f64)?{
+	// Transfer balance from my account to specific address
+	// This is just workaround for transfer method because in the grid client
+	// transfare method exepected receive amount argument as f64 so there is no
+	// way to have a map with multiple types so we have a model then we can encode it.
+	// Hint: json2.Any used and dont work with json.encode(), server crashes.
+	data := BalanceTransfer{
+		address: address
+		amount: amount
+	}
+	blnc.client.send('balance.transfer', "${json.encode(data)}")?
+}
