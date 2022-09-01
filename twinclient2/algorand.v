@@ -83,8 +83,6 @@ pub fn (mut alg Algorand)pay(name string, address_dest string, amount f64, descr
 		amount: amount,
 		description: description
 	}
-	println(json.encode(data).str())
 	response := alg.client.send('algorand.pay', json.encode(data).str())?
-	println(response.data)
-	// x := json.decode(AlgorandPayResponseModel, response.data)?
+	return json.decode(AlgorandPayResponseModel, response.data)?
 }
