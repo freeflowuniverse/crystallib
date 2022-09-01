@@ -9,73 +9,82 @@ fn new_algorand(mut client TwinClient) Algorand {
 	}
 }
 
-pub fn (mut alg Algorand) import_(name string, mnemonic string)? AlgorandAccountImportResponseModel{
-	response := alg.client.send(
-		'algorand.import',
-		json.encode({"name": name, "mnemonic": mnemonic})
-	)?
-	return json.decode(AlgorandAccountImportResponseModel, response.data)
-}
-
-pub fn (mut alg Algorand) get(name string)? AlgorandAccountMnemonicsModel{
-	response := alg.client.send(
-		'algorand.get', json.encode({"name": name})
-	)?
-	return json.decode(AlgorandAccountMnemonicsModel, response.data)
-}
-
-pub fn (mut alg Algorand) sign_bytes(name string, msg string)? AlgorandAccountSignBytesResponse{
-	response := alg.client.send(
-		'algorand.signBytes',
-		json.encode({"name": name, "msg": msg})
-	)?
-	return json.decode(AlgorandAccountSignBytesResponse, response.data)
-}
-
-pub fn (mut alg Algorand) assets_by_name(name string)?{
-	alg.client.send(
-		'algorand.assetsByName', 
-		json.encode({"name": name})
-	)?
-	// TODO: This method will return more than one struct, so will handle it after we done.
-	// return response.data
-}
-
-pub fn (mut alg Algorand) assets_by_address(address string)?{
-	alg.client.send(
-		'algorand.assetsByAddress', 
-		json.encode({"address": address})
-	)?
-	// TODO: This method will return more than one struct, so will handle it after we done.
-	// return response.data
+pub fn (mut alg Algorand) list()? []BlockChainModel {
+	response := alg.client.send('algorand.list', "{}")?
+	return json.decode([]BlockChainModel, response.data)
 }
 
 pub fn (mut alg Algorand) exist(name string)? bool{
-	response := alg.client.send('algorand.exist', json.encode({"name": name}))?
+	data := NameModel{name: name}
+	response := alg.client.send('algorand.exist', json.encode(data).str())?
 	return response.data.bool()
 }
 
-pub fn (mut alg Algorand) list()? []string {
-	// Returns array of string.
-	response := alg.client.send('algorand.list', "{}")?
-	return json.decode([]string, response.data)
-}
-
-pub fn (mut alg Algorand) delete(name string)?{
-	alg.client.send('algorand.delete', json.encode({"name": name}))?
-}
-
-pub fn (mut alg Algorand) create(name string)? AlgorandAccountImportResponseModel{
-	response := alg.client.send('algorand.create', json.encode({"name": name}))?
-	return json.decode(AlgorandAccountImportResponseModel, response.data)
-}
-
-pub fn (mut alg Algorand) transfer(sender string, receiver string, amount f64, text string)? {
-	data := AlgorandBalanceTransfer{
-		sender: sender,
-		receiver: receiver,
-		amount: amount,
-		text: text,
+pub fn (mut alg Algorand) delete(name string)?bool{
+	data := NameModel{name: name}
+	response := alg.client.send('algorand.delete', json.encode(data).str())?
+	if response.data == "Deleted" {
+		return true
+	} else {
+		return false
 	}
-	alg.client.send('algorand.transfer', "${json.encode(data)}")?
+}
+
+pub fn (mut alg Algorand)create(name string)? BlockChainCreateModel{
+	data := NameModel{name: name}
+	response := alg.client.send('algorand.create', json.encode(data).str())?
+	return json.decode(BlockChainCreateModel, response.data)
+}
+
+pub fn (mut alg Algorand)init(name string, secret string)? NameAddressMnemonicModel{
+	data := NameSecretModel{
+		name: name, secret: secret
+	}
+	response := alg.client.send(
+		'algorand.init',
+		json.encode(json.encode(data).str())
+	)?
+	return json.decode(NameAddressMnemonicModel, response.data)
+}
+
+pub fn (mut alg Algorand)assets(name string)?BlockChainAssetsModel{
+	data := NameModel{name: name}
+	response := alg.client.send('algorand.assets', json.encode(data).str())?
+	return json.decode(BlockChainAssetsModel, response.data)
+}
+
+pub fn (mut alg Algorand)assets_by_address(address string)?AssetsModel{
+	data := AddressModel{address: address}
+	response := alg.client.send(
+		'algorand.assetsByAddress',
+		json.encode(data).str()
+	)?
+	return json.decode(AssetsModel, response.data)
+}
+
+pub fn (mut alg Algorand)get(name string)?BlockChainCreateModel{
+	data := NameModel{name: name}
+	response := alg.client.send(
+		'algorand.get', json.encode(data).str()
+	)?
+	return json.decode(BlockChainCreateModel, response.data)
+}
+
+pub fn (mut alg Algorand)sign(name string, content string)? AlgorandAccountSignBytesResponse{
+	data := BlockchainSignModel{name: name, content: content}
+	response := alg.client.send('algorand.signBytes',json.encode(data).str())?
+	return json.decode(AlgorandAccountSignBytesResponse, response.data)
+}
+
+pub fn (mut alg Algorand)pay(name string, address_dest string, amount f64, description string )?{
+	data := AlgorandPayModel{
+		name: name,
+		address_dest: address_dest,
+		amount: amount,
+		description: description
+	}
+	println(json.encode(data).str())
+	response := alg.client.send('algorand.pay', json.encode(data).str())?
+	println(response.data)
+	// x := json.decode(AlgorandPayResponseModel, response.data)?
 }

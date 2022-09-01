@@ -479,77 +479,104 @@ pub struct AddressModel{
 		address string
 }
 
-pub struct TFChainPay {
+pub struct TFChainPayModel {
 pub:
 	name string
 	target_address string 
 	amount  f64    
 }
-pub struct AlgorandBalanceTransfer {
+
+pub struct AlgorandPayModel {
 pub:
-	sender string
-	receiver string
-	amount  f64  
-	text string
+	name string
+	address_dest string
+	amount f64
+	description string  
 }
 
-pub struct AlgorandAccountImportResponseModel{
-	name string
-	address string
-	mnemonic string
+pub struct AlgorandPayResponseModel {
+pub:
+	txid string [json: 'txId']
 }
 
 pub struct AlgorandAccountAddressModel{
-	mut:
-		address string
+pub:
+	address string
 }
 
 pub struct AlgorandAccountMnemonicsModel{
-	mut:
-		mnemonics string
+pub:
+	mnemonics string
 }
 
 pub struct AlgorandAccountSignBytesResponse{
-	mut:
-		message string
+pub:
+	message string
 }
 
 pub struct NameMnemonicModel{
+pub:
 	name string
 	mnemonic string
 }
 
 pub struct NameSecretModel{
+pub:
 	name    string
 	secret  string
 }
 
 pub struct NameIPModel{
+pub:
 	name    string
 	ip  	string
 }
 
 pub struct BlockChainSignModel{
+pub:
 	name    string
 	content string
 }
 
 pub struct AssetsModel{
+pub:
 	amount f64
 	asset string
 }
 
-pub struct TFChainAssetsModel{
+pub struct BlockChainAssetsModel{
+pub:
 	name string
 	public_key string
 	blockchain_type string
 	assets []AssetsModel
 }
 
-pub struct TfChainCreateModel{
+pub struct BlockChainCreateModel{
+pub:
 	name string
 	public_key string
 	mnemonic string
 	blockchain_type string
 	twin_id string
+}
+
+pub struct BlockChainModel{
+pub:
+	name string
+	public_key string
+	blockchain_type string
+}
+
+pub struct NameAddressMnemonicModel{
+pub:
+	name    string
+	address string
+	mnemonic string
+}
+
+pub struct BlockchainSignModel{
+pub:
+	name string
+	content string
 }
