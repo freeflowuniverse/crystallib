@@ -494,6 +494,15 @@ pub:
 	description string  
 }
 
+pub struct StellarPayModel{
+pub:
+	name string
+	address_dest string
+	amount f64
+	asset string
+	description string
+}
+
 pub struct AlgorandPayResponseModel {
 pub:
 	txid string [json: 'txId']
@@ -509,7 +518,7 @@ pub:
 	mnemonics string
 }
 
-pub struct AlgorandAccountSignBytesResponse{
+pub struct BlockChainSignResponseModel{
 pub:
 	message string
 }
@@ -579,4 +588,11 @@ pub struct BlockchainSignModel{
 pub:
 	name string
 	content string
+}
+
+pub struct StellarWalletVerifyModel{
+pub:
+	public_key string
+	content string
+	signed_content string
 }

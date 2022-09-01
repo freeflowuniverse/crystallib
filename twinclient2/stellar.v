@@ -10,79 +10,72 @@ fn new_stellar(mut client TwinClient) Stellar {
 	}
 }
 
-
-pub fn (mut st Stellar) import_(name string, mnemonics string) ?StellarWallet {
-	// Import wallet using secret.
-	response := st.client.send(
-		'stellar.import', 
-		json.encode(
-			{
-				"name": name,
-				"mnemonics": mnemonics
-			}
-		)
-	)?
-	return json.decode(StellarWallet, response.data)
+pub fn (mut st Stellar)create(name string)?BlockChainCreateModel{
+	data := NameModel{name: name}
+	response := st.client.send('stellar.create', json.encode(data).str())?
+	return json.decode(BlockChainCreateModel, response.data)
 }
 
-pub fn (mut st Stellar) get(name string) ?StellarWallet {
-	// Get wallet using it's name.
-	response := st.client.send('stellar.get', json.encode({"name": name}))?
-	return json.decode(StellarWallet, response.data)
+pub fn (mut st Stellar)sign(name string, content string)? BlockChainSignResponseModel{
+	data := BlockchainSignModel{name: name, content: content}
+	response := st.client.send('stellar.sign', json.encode(data).str())?
+	return json.decode(BlockChainSignResponseModel, response.data)
 }
 
-pub fn (mut st Stellar) update(name string, secret string)?string{
-	// Update imported wallet secret
-	response := st.client.send(
-		'stellar.update', 
-		json.encode(
-			{
-				"name": name,
-				"secret": secret
-			}
-		)
-	)?
-	return response.data
-	// return StellarWallet{
-	// 	...wallet
-	// 	address: response.data
-	// }
-}
-
-pub fn (mut st Stellar) list() ?[]string {
-	// List all imported wallets
-	response := st.client.send('stellar.list', '{}')?
-	return json.decode([]string, response.data)
-}
-
-pub fn (mut st Stellar) balance_by_address(address string) ?[]StellarBalance {
-	// Get balance using wallet address
-	response := st.client.send(
-		'stellar.balance_by_address', 
-		json.encode({"address": address})
-	)?
-	return json.decode([]StellarBalance, response.data)
-}
-
-pub fn (mut st Stellar) balance_by_name(name string) ?[]StellarBalance {
-	// Get balance using wallet name
-	response := st.client.send(
-		'stellar.balance_by_name',
-		json.encode({"name": name})
-	)?
-	return json.decode([]StellarBalance, response.data)
-}
-
-pub fn (mut st Stellar) transfer(transfer StellarTransfer) ?string {
-	// Transfer from wallet to another
-	payload_encoded := json.encode_pretty(transfer)
-	response := st.client.send('stellar.transfer', payload_encoded)?
+pub fn (mut st Stellar)init(name string, secret string) ?string {
+	// Returns pub key.
+	data := NameSecretModel{name: name, secret: secret}
+	response := st.client.send('stellar.init', json.encode(data).str())?
 	return response.data
 }
 
-pub fn (mut st Stellar) delete(name string) ?bool {
-	// Delete wallet using wallet name
-	response := st.client.send('stellar.delete', '{"name": "$name"}')?
+pub fn (mut st Stellar)get(name string) ?StellarWallet {
+	data := NameModel{name: name}
+	response := st.client.send('stellar.get', json.encode(data).str())?
+	return json.decode(StellarWallet, response.data)
+}
+
+pub fn (mut st Stellar)update(name string, secret string)?NameSecretModel{
+	data := NameSecretModel{name: name, secret: secret}
+	st.client.send('stellar.update', json.encode(data).str())?
+	return data
+}
+
+pub fn (mut st Stellar)list()?[]BlockChainModel {
+	response := st.client.send('stellar.list', "{}")?
+	return json.decode([]BlockChainModel, response.data)
+}
+
+pub fn (mut st Stellar)assets(name string)?BlockChainAssetsModel{
+	data := NameModel{name: name}
+	response := st.client.send('stellar.assets', json.encode(data).str())?
+	return json.decode(BlockChainAssetsModel, response.data)
+}
+
+pub fn (mut st Stellar)balance_by_address(address string) ?[]StellarBalance {
+	data := AddressModel{address: address}
+	response := st.client.send('stellar.balance_by_address', json.encode(data).str())?
+	return json.decode([]StellarBalance, response.data)
+}
+
+pub fn (mut st Stellar)pay(name string, address_dest string, 
+	amount f64, asset string,
+	description string
+	)?string{
+	data := StellarPayModel{
+		name: name,
+		address_dest: address_dest,
+		amount: amount,
+		asset: asset,
+		description: description
+	}
+	response := st.client.send('stellar.pay', json.encode(data).str())?
+	return response.data
+}
+
+pub fn (mut st Stellar)delete(name string)?bool{
+	data := NameModel{name: name}
+	response := st.client.send('stellar.delete', json.encode(data).str())?
 	if response.data == 'Deleted' {
 		return true
 	}
@@ -90,7 +83,7 @@ pub fn (mut st Stellar) delete(name string) ?bool {
 }
 
 pub fn (mut st Stellar) exist(name string) ?bool {
-	// Check if wallet imported before using wallet name
-	response := st.client.send('stellar.exist', '{"name": "$name"}')?
+	data := NameModel{name: name}
+	response := st.client.send('stellar.exist', json.encode(data).str())?
 	return response.data.bool()
 }

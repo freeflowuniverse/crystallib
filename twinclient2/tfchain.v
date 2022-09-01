@@ -77,7 +77,6 @@ pub fn (mut c TfChain) delete(name string)?bool{
 	response := c.client.send('tfchain.delete', json.encode(data).str())?
 	if response.data == "Deleted" {
 		return true
-	} else {
-		return false
 	}
+	return false
 }
