@@ -227,13 +227,13 @@ pub:
 struct ContractTypes {
 pub:
 	node_contract NodeContract [json: 'nodeContract']
-	name_contract NameContract [json: 'nameContract']
+	name_contract NameModel [json: 'NameModel']
 }
 
 pub struct ListContracts {
 pub:
 	node_contracts []SimpleContract [json: 'nodeContracts']
-	name_contracts []SimpleContract [json: 'nameContracts']
+	name_contracts []SimpleContract [json: 'NameModels']
 }
 
 struct NodeContract {
@@ -245,7 +245,7 @@ pub:
 	public_ips_list []PublicIP
 }
 
-struct NameContract {
+struct NameModel {
 pub:
 	name string
 }

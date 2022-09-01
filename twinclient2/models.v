@@ -53,7 +53,6 @@ pub:
 [params]
 pub struct AddMachine {
 pub:
-	deployment_name string     [required]
 	name            string     [required]
 	node_id         u32        [required]
 	disks           []Disk
@@ -227,13 +226,13 @@ pub:
 struct ContractTypes {
 pub:
 	node_contract NodeContract [json: 'nodeContract']
-	name_contract NameContract [json: 'nameContract']
+	name_contract NameModel [json: 'NameModel']
 }
 
 pub struct ListContracts {
 pub:
 	node_contracts []SimpleContract [json: 'nodeContracts']
-	name_contracts []SimpleContract [json: 'nameContracts']
+	name_contracts []SimpleContract [json: 'NameModels']
 }
 
 struct NodeContract {
@@ -245,7 +244,7 @@ pub:
 	public_ips_list []PublicIP [json: 'publicIpsList']
 }
 
-struct NameContract {
+struct NameModel {
 pub:
 	name string
 }
@@ -475,12 +474,12 @@ pub struct Capacity{
 		client &TwinClient
 }
 
-pub struct TfchainWalletAddressModel{
+pub struct AddressModel{
 	mut:
 		address string
 }
 
-pub struct TFChainBalanceTransfer {
+pub struct TFChainPay {
 pub:
 	name string
 	target_address string 
@@ -513,4 +512,44 @@ pub struct AlgorandAccountMnemonicsModel{
 pub struct AlgorandAccountSignBytesResponse{
 	mut:
 		message string
+}
+
+pub struct NameMnemonicModel{
+	name string
+	mnemonic string
+}
+
+pub struct NameSecretModel{
+	name    string
+	secret  string
+}
+
+pub struct NameIPModel{
+	name    string
+	ip  	string
+}
+
+pub struct BlockChainSignModel{
+	name    string
+	content string
+}
+
+pub struct AssetsModel{
+	amount f64
+	asset string
+}
+
+pub struct TFChainAssetsModel{
+	name string
+	public_key string
+	blockchain_type string
+	assets []AssetsModel
+}
+
+pub struct TfChainCreateModel{
+	name string
+	public_key string
+	mnemonic string
+	blockchain_type string
+	twin_id string
 }
