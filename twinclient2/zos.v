@@ -4,14 +4,7 @@ import json
 // Deploy zos workload
 
 
-fn new_zos(mut client TwinClient) Zos {
-	// Initialize new zos.
-	return Zos{
-		client: unsafe {client}
-	}
-}
-
-pub fn (mut zos Zos) deploy(payload string) ?Contract {
-	response := zos.client.send('zos.deploy', payload)?
+pub fn (mut client TwinClient) zos_deploy(payload string) ?Contract {
+	response := client.send('zos.deploy', payload)?
 	return json.decode(Contract, response.data) or {}
 }
