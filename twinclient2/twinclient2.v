@@ -14,8 +14,8 @@ struct Factory {
 
 pub struct TwinClient {
 pub mut:
-	ws       ws.Client
-	channels map[string]chan Message
+	ws       	ws.Client
+	channels 	map[string]chan Message
 }
 
 pub type ResultHandler = fn (Message)
@@ -79,7 +79,7 @@ pub fn (mut tcl TwinClient) send(functionPath string, args string) ?Message {
 
 	tcl.ws.write(payload, .text_frame)?
 	println('waiting for result...')
-	return tcl.wait(id, 20) // won't wait more than 20 seconds
+	return tcl.wait(id, 300) // won't wait more than 300 seconds
 }
 
 fn (mut tcl TwinClient) wait(id string, timeout u32) ?Message {

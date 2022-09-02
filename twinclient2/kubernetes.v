@@ -2,55 +2,56 @@ module twinclient2
 
 import json
 
-// Deploy kubernetes workload
-pub fn (mut tw TwinClient) deploy_kubernetes(payload K8S) ?DeployResponse {
-	payload_encoded := json.encode_pretty(payload)
-	response := tw.send('k8s.deploy', payload_encoded)?
 
-	return json.decode(DeployResponse, response.data) or {}
+// Deploy kubernetes workload
+pub fn (mut client TwinClient) kubernetes_deploy(payload K8SModel) ?DeployResponse {
+	payload_encoded := json.encode_pretty(payload)
+	response := client.send('k8s.deploy', payload_encoded)?
+
+	return json.decode(DeployResponse, response.data)
 }
 
 // Get kubernetes deployment info using deployment name
-pub fn (mut tw TwinClient) get_kubernetes(name string) ?[]Deployment {
-	response := tw.send('k8s.get', '{"name": "$name"}')?
+pub fn (mut client TwinClient) kubernetes_get(name string) ?[]Deployment {
+	response := client.send('k8s.get', json.encode({"name": name}))?
 
-	return json.decode([]Deployment, response.data) or {}
+	return json.decode([]Deployment, response.data)
 }
 
 // Add new worker to a kubernetes deployment
-pub fn (mut tw TwinClient) add_worker(worker AddKubernetesNode) ?DeployResponse {
+pub fn (mut client TwinClient) kubernetes_add_worker(worker AddKubernetesNode) ?DeployResponse {
 	payload_encoded := json.encode_pretty(worker)
-	response := tw.send('k8s.add_worker', payload_encoded)?
+	response := client.send('k8s.add_worker', payload_encoded)?
 
-	return json.decode(DeployResponse, response.data) or {}
+	return json.decode(DeployResponse, response.data)
 }
 
 // Delete worker from a kubernetes deployment
-pub fn (mut tw TwinClient) delete_worker(worker_to_delete SingleDelete) ?ContractResponse {
+pub fn (mut client TwinClient) kubernetes_delete_worker(worker_to_delete SingleDelete) ?ContractResponse {
 	payload_encoded := json.encode_pretty(worker_to_delete)
-	response := tw.send('k8s.delete_worker', payload_encoded)?
+	response := client.send('k8s.delete_worker', payload_encoded)?
 
-	return json.decode(ContractResponse, response.data) or {}
+	return json.decode(ContractResponse, response.data)
 }
 
 // Update deployed kubernetes with updated payload.
-pub fn (mut tw TwinClient) update_kubernetes(payload K8S) ?DeployResponse {
+pub fn (mut client TwinClient) kubernetes_update(payload K8SModel) ?DeployResponse {
 	payload_encoded := json.encode_pretty(payload)
-	response := tw.send('k8s.update', payload_encoded)?
+	response := client.send('k8s.update', payload_encoded)?
 
-	return json.decode(DeployResponse, response.data) or {}
+	return json.decode(DeployResponse, response.data)
 }
 
 // List all my kubernetes deployments
-pub fn (mut tw TwinClient) list_kubernetes() ?[]string {
-	response := tw.send('k8s.list', '{}')?
+pub fn (mut client TwinClient) kubernetes_list() ?[]string {
+	response := client.send('k8s.list', '{}')?
 
-	return json.decode([]string, response.data) or {}
+	return json.decode([]string, response.data)
 }
 
 // Delete deployed kubernetes using deployment name
-pub fn (mut tw TwinClient) delete_kubernetes(name string) ?ContractResponse {
-	response := tw.send('k8s.delete', '{"name": "$name"}')?
+pub fn (mut client TwinClient) kubernetes_delete(name string) ?ContractResponse {
+	response := client.send('k8s.delete', json.encode({"name": name}))?
 
-	return json.decode(ContractResponse, response.data) or {}
+	return json.decode(ContractResponse, response.data)
 }
