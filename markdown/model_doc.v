@@ -6,30 +6,78 @@ pub mut:
 }
 
 
-type DocItem = Text | Table | Link | Action | Macro | Header
+type DocItem = DocStart | Text | Table  | Action | Actions  | Header | Paragraph | Html | Comment | CodeBlock
 
 
-pub struct Text{
+// fn (mut o DocItem) str() string{
+// 	return "$o"
+// }
+
+
+
+
+pub struct DocStart{
 pub mut:
 	content string
 }
 
-pub struct Table{
-pub mut:
-	content string
+fn (mut o DocStart) process()?{
+	
 }
 
-pub struct Action{
-pub mut:
-	content string
+fn ( o DocStart) wiki() string{
+	return o.content
+	
 }
 
-pub struct Macro{
-pub mut:
-	content string
+fn ( o DocStart) html() string{
+	return o.wiki()
 }
 
-pub struct Header{
-pub mut:
-	content string
+fn ( o DocStart) str() string{
+	return "**** DOCSTART\n"
 }
+
+
+fn (mut doc Doc) process()?{
+	for mut item in doc.items{
+		match mut item {
+			DocStart {item.process()?}
+			Text {item.process()?}
+			Table {item.process()?}
+			Action {item.process()?}
+			Actions {item.process()?}
+			Header {item.process()?}
+			Paragraph {item.process()?}
+			Html {item.process()?}
+			Comment {item.process()?}
+			CodeBlock {item.process()?}
+		}
+	}
+}
+
+
+
+
+fn ( doc Doc) str()string{
+	mut out := ""
+	for item in doc.items{
+		match item {
+			DocStart {out+=item.str()}
+			Text {out+=item.str()}
+			Table {out+=item.str()}
+			Action {out+=item.str()}
+			Actions {out+=item.str()}
+			Header {out+=item.str()}
+			Paragraph {out+=item.str()}
+			Html {out+=item.str()}
+			Comment {out+=item.str()}
+			CodeBlock {out+=item.str()}
+		}
+	}
+	return out
+	
+}
+
+
+

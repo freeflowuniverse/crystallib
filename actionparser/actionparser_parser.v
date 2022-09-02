@@ -1,7 +1,7 @@
 module actionparser
 
 import os
-import freeflowuniverse.crystallib.texttools
+import texttools
 
 enum ParseBlockStatus {
 	start
@@ -106,13 +106,7 @@ fn (mut parser ActionsParser) parse_block(block Block) {
 
 	mut action := Action{
 		name: block.name
-	}
-
-	for param in params.params {
-		action.params << Param{
-			name: param.key
-			value: param.value
-		}
+		params: params
 	}
 
 	parser.actions << action

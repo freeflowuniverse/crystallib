@@ -211,7 +211,7 @@ fn (link Link) replace(text string, replacewith string) string {
 
 
 
-enum ParseStatus {
+enum LinkParseStatus {
 	start
 	linkopen
 	link
@@ -229,7 +229,7 @@ pub mut:
 pub fn link_parser(text string) ?LinkParseResult {
 	mut charprev := ''
 	mut ch := ''
-	mut state := ParseStatus.start
+	mut state := LinkParseStatus.start
 	mut capturegroup_pre := '' // is in the []
 	mut capturegroup_post := '' // is in the ()
 	mut parseresult := LinkParseResult{}
@@ -240,50 +240,50 @@ pub fn link_parser(text string) ?LinkParseResult {
 		for i in 0 .. text.len {
 			ch = text[i..i + 1]
 			// check for comments end
-			if state == ParseStatus.comment {
+			if state == LinkParseStatus.comment {
 				if text[i - 3..i] == '-->' {
-					state = ParseStatus.start
+					state = LinkParseStatus.start
 					capturegroup_pre = ''
 					capturegroup_post = ''
 				}
 				// check for comments start
 			} else if i > 3 && text[i - 4..i] == '<!--' {
-				state = ParseStatus.comment
+				state = LinkParseStatus.comment
 				capturegroup_pre = ''
 				capturegroup_post = ''
 				// check for end in link or file			
-			} else if state == ParseStatus.linkopen {
+			} else if state == LinkParseStatus.linkopen {
 				// original += ch
 				if charprev == ']' {
 					// end of capture group
 					// next char needs to be ( otherwise ignore the capturing
 					if ch == '(' {
-						if state == ParseStatus.linkopen {
+						if state == LinkParseStatus.linkopen {
 							// remove the last 2 chars: ](  not needed in the capturegroup
-							state = ParseStatus.link
+							state = LinkParseStatus.link
 							capturegroup_pre = capturegroup_pre[0..capturegroup_pre.len - 1]
 						} else {
-							state = ParseStatus.start
+							state = LinkParseStatus.start
 							capturegroup_pre = ''
 						}
 					} else {
 						// cleanup was wrong match, was not file nor link
-						state = ParseStatus.start
+						state = LinkParseStatus.start
 						capturegroup_pre = ''
 					}
 				} else {
 					capturegroup_pre += ch
 				}
 				// is start, check to find links	
-			} else if state == ParseStatus.start {
+			} else if state == LinkParseStatus.start {
 				if ch == '[' {
 					if charprev == '!' {
 						isimage = true
 					}
-					state = ParseStatus.linkopen
+					state = LinkParseStatus.linkopen
 				}
 				// check for the end of the link/file
-			} else if state == ParseStatus.link {
+			} else if state == LinkParseStatus.link {
 				// original += ch
 				if ch == ')' {
 					// end of capture group
@@ -293,7 +293,7 @@ pub fn link_parser(text string) ?LinkParseResult {
 					capturegroup_pre = ''
 					capturegroup_post = ''
 					isimage = false
-					state = ParseStatus.start
+					state = LinkParseStatus.start
 				} else {
 					capturegroup_post += ch
 				}

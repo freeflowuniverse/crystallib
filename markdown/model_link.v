@@ -24,6 +24,7 @@ mut:
 	// original string //how link was put in the document
 	original string	
 pub mut:
+	content string
 	cat         LinkType
 	isexternal  bool		//is not linked to a wiki (sites)
 	include     bool = true // means we will not link to the remote location, content will be shown in context of local site
@@ -47,3 +48,22 @@ fn (mut link Link) error(msg string) {
 	link.state = LinkState.error
 	link.error_msg = msg
 }
+
+// fn (mut o Link) process()?{
+// 	return
+// }
+
+// fn ( o Link) wiki() string{
+// 	return o.content
+	
+// }
+
+// fn ( o Link) html() string{
+// 	return o.wiki()
+// }
+
+// fn ( o Link) str() string{
+// 	return "**** Link\n"
+// }
+
+

@@ -1,7 +1,18 @@
 module texttools
 
-// remove all leading spaces at same level
+pub fn indent(text string, prefix string) string {
+	mut res := []string{}
+	for line in text.split_into_lines(){
+		res << prefix+line
+	}	
+	mut t:= res.join_lines()
+	if ! t.ends_with("\n"){
+		t+="\n"
+	}
+	return t
+}
 
+// remove all leading spaces at same level
 pub fn dedent(text string) string {
 	mut pre := 999
 	mut pre_current := 0

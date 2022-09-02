@@ -17,7 +17,7 @@ pub:
 	value string
 }
 
-pub fn new_params() Params {
+fn new_params() Params {
 	return Params{}
 }
 
@@ -29,128 +29,7 @@ enum ParamStatus {
 	quote // quote found means value in between ''
 }
 
-// return string, will be trimmed
-// get kwarg return as string, ifn't exist return the defval
-// line:
-//    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
-// arg1 is an arg
-// description is a kwarg
-pub fn (mut tp Params) get(key_ string) ?string {
-	key := key_.to_lower()
-	for p in tp.params {
-		if p.key == key {
-			return p.value.trim(' ')
-		}
-	}
-	return error('Did not find key:$key in $tp')
-}
-
-// get kwarg return as string, ifn't exist return the defval
-// line:
-//    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
-// arg1 is an arg
-// description is a kwarg
-pub fn (mut tp Params) get_default(key string, defval string) ?string {
-	if tp.exists(key) {
-		valuestr := tp.get(key)?
-		return valuestr.trim(' ')
-	}
-	return defval
-}
-
-// get kwarg return as int
-// line:
-//    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
-// arg1 is an arg
-// description is a kwarg
-pub fn (mut tp Params) get_int(key string) ?int {
-	valuestr := tp.get(key)?
-	return valuestr.int()
-}
-
-// get kwarg return as int, if it doesnt' exist return a default
-// line:
-//    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
-// arg1 is an arg
-// description is a kwarg
-pub fn (mut tp Params) get_int_default(key string, defval int) ?int {
-	if tp.exists(key) {
-		valuestr := tp.get(key)?
-		return valuestr.int()
-	}
-	return defval
-}
-
-// get kwarg, and return list of string
-// line:
-//    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
-// arg1 is an arg
-// description is a kwarg
-pub fn (mut tp Params) get_list(key string) ?[]string {
-	mut res := []string{}
-	if tp.exists(key) {
-		mut valuestr := tp.get(key)?
-		if valuestr.contains(',') {
-			valuestr = valuestr.trim(' ,')
-			res = valuestr.split(',').map(it.trim(' \'"'))
-		} else {
-			res = [valuestr.trim(' \'"')]
-		}
-	}
-	return res
-}
-
-// get kwarg, and return list of ints
-// line:
-//    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
-// arg1 is an arg
-// description is a kwarg
-pub fn (mut tp Params) get_list_int(key string) ?[]int {
-	mut res := []int{}
-	if tp.exists(key) {
-		mut valuestr := tp.get(key)?
-		if valuestr.contains(',') {
-			valuestr = valuestr.trim(' ,')
-			res = valuestr.split(',').map(it.trim(' \'"').int())
-		} else {
-			res = [valuestr.trim(' \'"').int()]
-		}
-	}
-	return res
-}
-
-// check if kwarg exist
-// line:
-//    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
-// arg1 is an arg
-// description is a kwarg
-
-pub fn (mut tp Params) exists(key_ string) bool {
-	key := key_.to_lower()
-	for p in tp.params {
-		if p.key == key {
-			return true
-		}
-	}
-	return false
-}
-
-// check if arg exist (arg is just a value in the string e.g. red, not value:something)
-// line:
-//    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
-// arg1 is an arg
-// description is a kwarg
-pub fn (mut tp Params) arg_exists(key_ string) bool {
-	key := key_.to_lower()
-	for p in tp.args {
-		if p.value == key {
-			return true
-		}
-	}
-	return false
-}
-
-pub fn (mut result Params) kwarg_add(key string, value string) {
+fn (mut result Params) kwarg_add(key string, value string) {
 	mut key2 := ''
 	mut value2 := ''
 
@@ -165,7 +44,7 @@ pub fn (mut result Params) kwarg_add(key string, value string) {
 	}
 }
 
-pub fn (mut result Params) arg_add(value string) {
+fn (mut result Params) arg_add(value string) {
 	mut value2 := value.trim(" '")
 	value2 = value2.replace('<<BR>>', '\n')
 

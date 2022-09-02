@@ -2,7 +2,7 @@ module actionparser
 
 import os
 
-pub fn init() ActionsParser {
+pub fn get() ActionsParser {
 	return ActionsParser{}
 }
 
@@ -33,7 +33,7 @@ pub fn (mut parser ActionsParser) add(path string) ? {
 
 //
 pub fn content_parse(content string) ?ActionsParser {
-	mut parser := init()
+	mut parser := get()
 
 	parser.content_parse(content)?
 
@@ -41,7 +41,7 @@ pub fn content_parse(content string) ?ActionsParser {
 }
 
 pub fn file_parse(path string) ?ActionsParser {
-	mut parser := init()
+	mut parser := get()
 	parser.file_parse(path)?
 
 	return parser
