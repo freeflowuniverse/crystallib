@@ -345,7 +345,7 @@ pub fn (mut path Path) backup_name_find(source string, dest string) ?Path {
 	if !path.exists() {
 		return path
 	}
-	size := path.size()
+	size := path.size()?
 
 	mut path_str := ''
 	mut path_found := Path{}
@@ -373,7 +373,8 @@ pub fn (mut path Path) backup_name_find(source string, dest string) ?Path {
 			return path_found
 		}
 		if size > 0 {
-			if path_found.size() == size {
+			size2 := path_found.size()?
+			if size2 == size {
 				// means we found the last one which is same as the one we are trying to backup
 				return path_found
 			}
