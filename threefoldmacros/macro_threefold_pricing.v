@@ -1,4 +1,4 @@
-module publisher
+module threefoldmacros
 
 import freeflowuniverse.crystallib.coinmarketcap
 import freeflowuniverse.crystallib.liquid

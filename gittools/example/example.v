@@ -13,7 +13,7 @@ fn do() ? {
 
 	gs.repos_print(filter: '')
 
-	println(gr)
+	// println(gr)
 
 	// this will show the exact path of the manual
 	println(gr.path_content_get())

@@ -24,14 +24,14 @@ fn image_new(mut path pathlib.Path) ?Image {
 	return i
 }
 
-pub fn image_downsize(mut path pathlib.Path, mut params params.Param) ?Image {
+pub fn image_downsize(mut path pathlib.Path, mut params params.Params) ?Image {
 	mut image := image_new(mut path)?
 	image.downsize(mut params)?
 	return image
 }
 
 // will downsize to reasonable size based on x
-fn (mut image Image) downsize(mut params params.Param) ? {
+fn (mut image Image) downsize(mut params params.Params) ? {
 	image.init()?
 	if image.skip() {
 		return

@@ -4,8 +4,8 @@ import freeflowuniverse.crystallib.pathlib
 import params
 import freeflowuniverse.crystallib.process
 
-pub fn installed_() bool {
-	println(' - init imagemagick')
+pub fn installed() bool {
+	// println(' - init imagemagick')
 	out := process.execute_silent('convert -version') or { return false }
 	if !out.contains('ImageMagick') {
 		return false
@@ -13,21 +13,8 @@ pub fn installed_() bool {
 	return true
 }
 
-pub const installed = installed_()
-
-fn init_magick() Images {
-	out := process.execute_silent('convert -version') or {
-		panic('Imagemagick probably not installed, error:$err')
-	}
-	if !out.contains('ImageMagick') {
-		panic('Imagemagick probably not installed, could not find string ImageMagic but:\n$out')
-	}
-	mut images := Images{}
-	return images
-}
-
 // scan a directory
-pub fn scan(path_ string, mut params params.Params) params.Params {
+pub fn filter_imagemagic(path_ string, mut params params.Params) ?bool {
 	mut path := pathlib.get_dir(path_, false)?
 	if !imagemagick.installed {
 		panic('cannot scan because imagemagic not installed.')
@@ -51,8 +38,8 @@ pub fn scan(path_ string, mut params params.Params) params.Params {
 }
 
 fn executor_imagemagic(mut path pathlib.Path, mut params params.Params) ?params.Params {
-	if mut image := image_downsize(path) {
-		params.kwarg_add(path.path, '$err')
+	if mut _ := image_downsize(mut path, mut &params) {
+		params.kwarg_add(path.path, '$error')
 	} else {
 		params.kwarg_add(path.path, 'OK')
 	}

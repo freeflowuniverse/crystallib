@@ -30,7 +30,6 @@ pub mut:
 // light       bool  // if set then will clone only last history for all branches		
 // }
 pub fn get(config GSConfig) ?GitStructure {
-	println('*************')
 	mut gs := GitStructure{
 		config: config
 	}
@@ -101,7 +100,6 @@ pub fn (mut gitstructure GitStructure) repos_get(args GSArgs) []GitRepo {
 pub fn (mut gitstructure GitStructure) repos_print(args GSArgs) {
 	mut r := [][]string{}
 	for mut g in gitstructure.repos_get(args) {
-		// println(g)
 		changed := g.changes() or { panic('issue in repo changes. $err') }
 		if changed {
 			r << ['- $g.path_relative()', '$g.addr.branch', 'CHANGED']

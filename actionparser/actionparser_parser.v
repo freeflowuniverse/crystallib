@@ -2,7 +2,7 @@ module actionparser
 
 import os
 import freeflowuniverse.crystallib.params
-import texttools
+import freeflowuniverse.crystallib.texttools
 
 enum ParseBlockStatus {
 	start

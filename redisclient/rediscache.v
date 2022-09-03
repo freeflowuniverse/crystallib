@@ -3,19 +3,16 @@ module rediscache
 // import appsbox.redisapp
 import freeflowuniverse.crystallib.redisclient
 
-struct RedisCache {
+pub struct RedisCache {
 mut:
 	redis     &redisclient.Redis
 	namespace string
 	enabled   bool = true
 }
 
-pub fn newcache(namespace string) RedisCache {
-	// reuse single object
-	mut r := redisapp.client_local_get() or { panic(err) }
-	// mut r := redisclientcore.get() or { panic(err) }
+pub fn (mut r redisclient.Redis )cache(namespace string) RedisCache {
 	return RedisCache{
-		redis: r
+		redis: &r
 		namespace: namespace
 	}
 }

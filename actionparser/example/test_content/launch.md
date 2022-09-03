@@ -4,7 +4,7 @@ Its our attempt to use markdown to execute a certain state.
 
 It allows us to specify parser which need to be done, only !! at start of line is executed.
 
-```yaml
+
 !!action.define name:download_git
 !!git.ensure url:'https://github.com/threefoldfoundation/info_foundation' autocommit:'mychanges' update:true
 !!git.ensure url:https://github.com/threefoldfoundation/legal autocommit:'mychanges' update:true
@@ -25,7 +25,7 @@ It allows us to specify parser which need to be done, only !! at start of line i
 !!publisher.server.start
 
 !!action.run name:server_start
-```
+
 
 can be in code block or without, it does not matter
 
@@ -42,7 +42,7 @@ makes sure a git repo is on system.
 
 !!action.define name:get_content
 
-```yaml
+
 #if we don't specify source of content, then its the document itself
 !!markdown.section.get start:'### git ensure' name:testcontent.blue
 
@@ -52,7 +52,7 @@ makes sure a git repo is on system.
 #fetch a full document, there will be no start/stop
 !!markdown.section.get name:testcontent.pink gitrepo:info_foundation 
     file:'communication.md'
-```
+
 
 ### end of block
 
@@ -60,7 +60,7 @@ This should be in the found block. Since
 
 ### we can even do task management with it
 
-```yaml
+
 !!taskcontext name:myproject1
 !!task id:a1 
   name:'need to do something 1'
@@ -89,10 +89,7 @@ This should be in the found block. Since
 //!!task id:b3 name:do1 
 #!!task id:b4 name:do1
 
-```
 
-
-```yaml
 !!dao.deposit currency:usdc amount:10
 !!dao.withdraw currency:usdc amount:10
 
@@ -106,4 +103,3 @@ This should be in the found block. Since
 
 !!dao.exchange.buy currency:tft amount:100 price_max_usd:0.05 deadline:10h
 
-```

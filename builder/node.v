@@ -1,6 +1,6 @@
 module builder
 
-import freeflowuniverse.crystallib.rediscache
+import freeflowuniverse.crystallib.redisclient
 import freeflowuniverse.crystallib.serializers
 import os
 
@@ -21,13 +21,13 @@ pub struct Node {
 pub:
 	name string = 'mymachine'
 pub mut:
-	executor    &Executor // = ExecutorLocal{}
-	tmux        &Tmux
+	executor    &Executor  [str: skip] 
+	tmux        &Tmux [str: skip] 
 	platform    PlatformType
 	cputype     CPUType
-	db          &DB                   [skip]
+	db          &DB                   [str: skip] 
 	done        map[string]string
-	cache       rediscache.RedisCache [skip]
+	cache       redisclient.RedisCache [str: skip] 
 	environment map[string]string
 }
 

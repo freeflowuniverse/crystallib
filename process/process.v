@@ -10,8 +10,8 @@ pub mut:
 	cmd        string
 	timeout    int  = 1200
 	stdout     bool = true
-	stdout_log bool
-	debug      bool
+	stdout_log bool = true
+	debug      bool 
 	die        bool = true
 	args       map[string]string
 	node       string // not implemented
@@ -151,6 +151,7 @@ pub fn temp_write(text string) ?string {
 			return temp_write(text)
 		}
 	}
+	// println(" -- $tmppath")
 	os.write_file(tmppath, text)?
 	return tmppath
 }

@@ -1,11 +1,11 @@
-module actionparser
+module books
 
 import params
 
 pub struct MacroObj {
 pub mut:
 	cmd    string
-	params Params
+	params params.Params
 }
 
 // fix cmd to remain lower case and dots only

@@ -1,4 +1,4 @@
-module publisher
+module threefoldmacros
 
 import time
 import freeflowuniverse.crystallib.texttools

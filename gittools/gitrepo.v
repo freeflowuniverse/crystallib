@@ -92,22 +92,27 @@ pub fn (mut repo GitRepo) path_relative() string {
 // if there are changes then will return 'true', otherwise 'false'
 pub fn (mut repo GitRepo) changes() ?bool {
 	cmd := 'cd $repo.path() && git status'
+	// println(cmd)
 	out := process.execute_silent(cmd) or {
 		return error('Could not execute command to check git status on $repo.path()\ncannot execute $cmd')
 	}
-	// println(out)
 	if out.contains('Untracked files') {
+		// println(1)
 		return true
 	} else if out.contains('Your branch is ahead of') {
+		// println(2)
 		return true
 	} else if out.contains('Changes not staged for commit') {
+		// println(3)
 		return true
 	} else if out.contains('nothing to commit') {
+		// println(4)
 		return false
 	} else {
+		// println(5)
 		return true
 	}
-	// println(out)
+
 	return true
 }
 
@@ -254,6 +259,7 @@ pub fn (mut repo GitRepo) commit(msg string) ? {
 	}
 }
 
+//remove all changes of the repo, be careful
 pub fn (mut repo GitRepo) remove_changes() ? {
 	change := repo.changes() or {
 		return error('cannot detect if there are changes on repo.\n$err')

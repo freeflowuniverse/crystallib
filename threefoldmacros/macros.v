@@ -1,4 +1,4 @@
-module publisher
+module threefoldmacros
 
 import freeflowuniverse.crystallib.texttools
 

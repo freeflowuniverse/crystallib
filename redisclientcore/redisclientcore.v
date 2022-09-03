@@ -1,7 +1,7 @@
 module redisclientcore
 
 import freeflowuniverse.crystallib.redisclient
-import freeflowuniverse.crystallib.appsbox.redisapp
+// import freeflowuniverse.crystallib.appsbox.redisapp
 
 pub fn get() &redisclient.Redis {
 	// tcpport := 7777
@@ -25,15 +25,15 @@ pub fn reset() {
 	// redisclient.reset()
 }
 
-pub fn get_unixsocket_new() ?&redisclient.Redis {
-	// 	//make sure redis starts
-	_ := redisapp.client_local_get()?
-	mut r := redisclient.Redis{
-		addr: '/tmp/redis.sock'
-	}
-	r.socket_connect()?
-	return &r
-}
+// pub fn get_unixsocket_new() ?&redisclient.Redis {
+// 	// 	//make sure redis starts
+// 	_ := redisapp.client_local_get()?
+// 	mut r := redisclient.Redis{
+// 		addr: '/tmp/redis.sock'
+// 	}
+// 	r.socket_connect()?
+// 	return &r
+// }
 
 // pub fn get_unixsocket() ?&redisclient.Redis {
 // 	mut r := redisclient.get('/tmp/redis-default.sock')or {

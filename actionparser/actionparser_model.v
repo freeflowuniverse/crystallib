@@ -1,6 +1,6 @@
 module actionparser
 
-import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.params
 
 pub struct ActionsParser {
 pub mut:
@@ -11,7 +11,7 @@ pub struct Action {
 pub:
 	name string
 pub mut:
-	params texttools.Params
+	params params.Params
 }
 
 // get the param as string, if it does not exist will throw error
