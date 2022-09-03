@@ -5,4 +5,3 @@ struct MDBookInstance {
 mut:
 	name string
 }
-

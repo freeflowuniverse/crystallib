@@ -2,7 +2,6 @@ module twinclient2
 
 import json
 
-
 pub fn (mut client TwinClient) zdb_deploy(payload ZDBs) ?DeployResponse {
 	// Deploy zdbs workload
 	payload_encoded := json.encode_pretty(payload)
@@ -26,7 +25,9 @@ pub fn (mut client TwinClient) zdb_delete_zdb(zdb_to_delete SingleDelete) ?Contr
 
 pub fn (mut client TwinClient) zdb_get(name string) ?[]Deployment {
 	// Get zdbs info using deployment name
-	response := client.send('zdbs.get', json.encode({"name": name}))?
+	response := client.send('zdbs.get', json.encode({
+		'name': name
+	}))?
 	return json.decode([]Deployment, response.data)
 }
 
@@ -45,6 +46,8 @@ pub fn (mut client TwinClient) zdb_list() ?[]string {
 
 pub fn (mut client TwinClient) zdb_delete(name string) ?ContractResponse {
 	// Delete zdbs deployment
-	response := client.send('zdbs.delete', json.encode({"name": name}))?
+	response := client.send('zdbs.delete', json.encode({
+		'name': name
+	}))?
 	return json.decode(ContractResponse, response.data)
 }

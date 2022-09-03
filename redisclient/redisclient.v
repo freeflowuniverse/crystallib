@@ -36,7 +36,6 @@ pub enum KeyType {
 	t_unknown
 }
 
-
 // https://redis.io/topics/protocol
 // examples:
 //   localhost:6379

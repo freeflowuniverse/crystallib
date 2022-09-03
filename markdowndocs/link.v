@@ -3,16 +3,14 @@ module markdowndocs
 import freeflowuniverse.crystallib.texttools
 import os
 
-
-//add link to the page
-fn link_new(original_descr_ string, original_link_ string, isimage bool ) ?Link {
-
+// add link to the page
+fn link_new(original_descr_ string, original_link_ string, isimage bool) ?Link {
 	mut link := Link{
-		//this will be the exact way how the link is done in the paragraph
-		original: "[${original_descr_}](${original_link_})"
+		// this will be the exact way how the link is done in the paragraph
+		original: '[$original_descr_]($original_link_)'
 	}
 	if isimage {
-		link.original = "!"+link.original 
+		link.original = '!' + link.original
 		link.cat = LinkType.image
 	}
 	original_descr := original_descr_.trim(' ')
@@ -32,7 +30,7 @@ fn link_new(original_descr_ string, original_link_ string, isimage bool ) ?Link 
 	// 	return
 	// }
 
-	if original_link.starts_with('http'){
+	if original_link.starts_with('http') {
 		link.cat = LinkType.html
 		return link
 	}
@@ -56,18 +54,25 @@ fn link_new(original_descr_ string, original_link_ string, isimage bool ) ?Link 
 		link.filename = original_link
 	}
 
-
-
-	//find the prefix
+	// find the prefix
 	mut prefix_done := false
 	mut filename := []string{}
-	for x in link.filename.trim(" ").split('') {
-		if ! prefix_done {
-				if x == '!' {link.newtab = true continue}
-				if x == '@' {link.include = true continue}
-				if x == '*' {link.moresites = true continue}
+	for x in link.filename.trim(' ').split('') {
+		if !prefix_done {
+			if x == '!' {
+				link.newtab = true
+				continue
+			}
+			if x == '@' {
+				link.include = true
+				continue
+			}
+			if x == '*' {
+				link.moresites = true
+				continue
+			}
 		} else {
-			prefix_done=true			
+			prefix_done = true
 		}
 		filename << x
 	}
@@ -86,25 +91,23 @@ fn link_new(original_descr_ string, original_link_ string, isimage bool ) ?Link 
 			link.error('link can only have 1 x ":"/n$link')
 			return link
 		} else {
-				('should never be here')
+			('should never be here')
 		}
 	}
-
 
 	link.path = os.dir(link.filename)
 	link.filename = os.base(link.filename)
 
-	if link.path.starts_with("./"){
-		x := link.path.after("./")
+	if link.path.starts_with('./') {
+		x := link.path.after('./')
 		link.path = string(x)
 	}
-	if link.path.starts_with("."){
-		x := link.path.after(".")
+	if link.path.starts_with('.') {
+		x := link.path.after('.')
 		link.path = string(x)
 	}
 
 	if link.filename != '' {
-
 		link.filename = os.base(link.filename.replace('\\', '/'))
 
 		// check which link type
@@ -112,7 +115,7 @@ fn link_new(original_descr_ string, original_link_ string, isimage bool ) ?Link 
 
 		if ext == '' {
 			link.cat = LinkType.page
-			link.filename += ".md"
+			link.filename += '.md'
 		} else if ext in ['jpg', 'png', 'svg', 'jpeg', 'gif'] {
 			link.cat = LinkType.image
 		} else if ext == 'md' {
@@ -143,17 +146,16 @@ fn link_new(original_descr_ string, original_link_ string, isimage bool ) ?Link 
 		if link.filename.contains(':') {
 			panic("should not have ':' in link for page or file (2).\n$link")
 		}
-	}else{
-		//filename empty
+	} else {
+		// filename empty
 		if !original_link.trim(' ').starts_with('#') {
 			link.state = LinkState.error
-			link.error("EMPTY LINK.")
+			link.error('EMPTY LINK.')
 			return link
 		}
 	}
 
 	return link
-
 }
 
 //###########################################################################
@@ -181,7 +183,7 @@ fn (mut link Link) source_get() ?string {
 		} else {
 			return '[$link.description]($link.filename $link.extra)'
 		}
-	}		
+	}
 	if link.cat == LinkType.page {
 		if link.filename.contains(':') {
 			return error("should not have ':' in link for page or file.\n$link")
@@ -189,8 +191,8 @@ fn (mut link Link) source_get() ?string {
 
 		mut link_filename := link.filename
 
-		if link.site != "" {
-			link_filename = '${link.site}:${link_filename}'
+		if link.site != '' {
+			link_filename = '$link.site:$link_filename'
 		}
 		if link.include == false {
 			link_filename = '@$link_filename'
@@ -208,8 +210,6 @@ fn (mut link Link) source_get() ?string {
 fn (link Link) replace(text string, replacewith string) string {
 	return text.replace(link.original, replacewith)
 }
-
-
 
 enum LinkParseStatus {
 	start
@@ -287,7 +287,7 @@ pub fn link_parser(text string) ?LinkParseResult {
 				// original += ch
 				if ch == ')' {
 					// end of capture group
-					mut link := link_new(capturegroup_pre, capturegroup_post,isimage)?
+					mut link := link_new(capturegroup_pre, capturegroup_post, isimage)?
 					// remember the consumer page
 					parseresult.links << link
 					capturegroup_pre = ''
@@ -303,4 +303,3 @@ pub fn link_parser(text string) ?LinkParseResult {
 	}
 	return parseresult
 }
-

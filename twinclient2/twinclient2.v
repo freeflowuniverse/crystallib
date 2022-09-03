@@ -8,14 +8,14 @@ import time
 pub const factory = Factory{}
 
 struct Factory {
-	mut:
+mut:
 	clients map[string]TwinClient
 }
 
 pub struct TwinClient {
 pub mut:
-	ws       	ws.Client
-	channels 	map[string]chan Message
+	ws       ws.Client
+	channels map[string]chan Message
 }
 
 pub type ResultHandler = fn (Message)
@@ -23,7 +23,7 @@ pub type ResultHandler = fn (Message)
 pub type RawMessage = ws.Message
 
 pub fn init_client(mut ws ws.Client) TwinClient {
-	mut f :=  twinclient2.factory
+	mut f := twinclient2.factory
 	if ws.id in f.clients {
 		return twinclient2.factory.clients[ws.id]
 	}
@@ -54,7 +54,7 @@ pub fn init_client(mut ws ws.Client) TwinClient {
 			channel <- msg
 		}
 	})
-	ws.on_close(fn [mut f] (mut c ws.Client, code int, reason string) ?{
+	ws.on_close(fn [mut f] (mut c ws.Client, code int, reason string) ? {
 		f.clients.delete(c.id)
 	})
 	f.clients[ws.id] = tcl
@@ -91,14 +91,12 @@ fn (mut tcl TwinClient) wait(id string, timeout u32) ?Message {
 				return res
 			}
 			timeout * time.second {
-				er := "requets with id $id was timed out!"
+				er := 'requets with id $id was timed out!'
 				channel.close()
 				tcl.channels.delete(id)
 				return error(er)
 			}
 		}
-		
-		
 	}
 
 	return error('wait channel of $id is not present')

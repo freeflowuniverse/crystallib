@@ -2,7 +2,6 @@ module twinclient2
 
 import json
 
-
 // Deploy new qsfs_zdbs
 pub fn (mut client TwinClient) qsfs_zbd_deploy(payload QSFSZDBs) ?DeployResponse {
 	payload_encoded := json.encode_pretty(payload)
@@ -13,7 +12,9 @@ pub fn (mut client TwinClient) qsfs_zbd_deploy(payload QSFSZDBs) ?DeployResponse
 
 // Get deployed qsfs_zdbs by deployment name
 pub fn (mut client TwinClient) qsfs_zbd_get(name string) ?[]Deployment {
-	response := client.send('qsfs_zdbs.get', json.encode({"name": name}))?
+	response := client.send('qsfs_zdbs.get', json.encode({
+		'name': name
+	}))?
 
 	return json.decode([]Deployment, response.data)
 }
@@ -27,7 +28,9 @@ pub fn (mut client TwinClient) qsfs_zbd_list() ?[]string {
 
 // Delete deployed qsfs_zdbs using deployment name
 pub fn (mut client TwinClient) qsfs_zbd_delete(name string) ?ContractResponse {
-	response := client.send('qsfs_zdbs.delete', json.encode({"name": name}))?
+	response := client.send('qsfs_zdbs.delete', json.encode({
+		'name': name
+	}))?
 
 	return json.decode(ContractResponse, response.data)
 }

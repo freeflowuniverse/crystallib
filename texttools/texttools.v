@@ -2,12 +2,12 @@ module texttools
 
 pub fn indent(text string, prefix string) string {
 	mut res := []string{}
-	for line in text.split_into_lines(){
-		res << prefix+line
-	}	
-	mut t:= res.join_lines()
-	if ! t.ends_with("\n"){
-		t+="\n"
+	for line in text.split_into_lines() {
+		res << prefix + line
+	}
+	mut t := res.join_lines()
+	if !t.ends_with('\n') {
+		t += '\n'
 	}
 	return t
 }

@@ -24,7 +24,7 @@ struct RedisHandler {
 
 // https://redis.io/topics/protocol
 pub fn listen(addr string, port int) ?RedisSrv {
-	mut socket := net.listen_tcp(.ip, ":$port")?
+	mut socket := net.listen_tcp(.ip, ':$port')?
 	// socket.set_read_timeout(2 * time.second)
 	return RedisSrv{
 		socket: socket

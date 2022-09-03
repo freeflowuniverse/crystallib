@@ -1,6 +1,5 @@
 module markdowndocs
 
-
 pub fn markdown_min_header(text string, minlevel int) string {
 	mut nrhash := 100
 	mut out := []string{}

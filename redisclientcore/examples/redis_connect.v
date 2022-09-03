@@ -4,12 +4,12 @@ import freeflowuniverse.crystallib.redisclientcore
 import time
 
 fn conn_for_thread(c int) {
-	println("thread $c")
+	println('thread $c')
 	// time.sleep(100 * time.millisecond)
 	mut redis := redisclientcore.get()
-	println("ok $c")
-	redis.set('test', 'some data')   or { panic("set "+err.str()+"\n"+c.str())}
-	redis.get('test')  or { panic("get "+err.str()+"\n"+c.str())}
+	println('ok $c')
+	redis.set('test', 'some data') or { panic('set ' + err.str() + '\n' + c.str()) }
+	redis.get('test') or { panic('get ' + err.str() + '\n' + c.str()) }
 }
 
 fn conn2(c int) ?bool {
@@ -25,25 +25,23 @@ fn conn2(c int) ?bool {
 	mut redis := redisclientcore.get()
 	redis.set('test', 'some data') or { panic('set' + err.str() + '\n' + c.str()) }
 	r := redis.get('test')?
-	if r!= "some data"{
-		 panic('get error different result.' + '\n' + c.str())
+	if r != 'some data' {
+		panic('get error different result.' + '\n' + c.str())
 	}
 	return true
 }
 
 fn redistest() ? {
-
 	mut threads := []thread{}
 
-	for c in 0..200{
-		//even if going slower does not work?
-		time.sleep(1*time.millisecond)
+	for c in 0 .. 200 {
+		// even if going slower does not work?
+		time.sleep(1 * time.millisecond)
 		threads << go conn_for_thread(c)
 	}
 	threads.wait()
 
-	println("TEST OK THREADS")
-
+	println('TEST OK THREADS')
 }
 
 fn redistest_nothreads() ? {

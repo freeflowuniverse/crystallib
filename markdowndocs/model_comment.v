@@ -1,33 +1,30 @@
 module markdowndocs
-import texttools
 
-enum CommentPrefix{
+import freeflowuniverse.crystallib.texttools
+
+enum CommentPrefix {
 	short
 	multi
 }
 
-pub struct Comment{
+pub struct Comment {
 pub mut:
 	content string
-	prefix CommentPrefix
+	prefix  CommentPrefix
 }
 
-
-fn (mut o Comment) process()?{
+fn (mut o Comment) process() ? {
 	return
 }
 
-fn ( o Comment) wiki() string{
+fn (o Comment) wiki() string {
 	return o.content
-	
 }
 
-fn ( o Comment) html() string{
+fn (o Comment) html() string {
 	return o.wiki()
 }
 
-fn ( o Comment) str() string{
-	return "**** Comment\n${texttools.indent(o.content,"    ")}"
+fn (o Comment) str() string {
+	return '**** Comment\n${texttools.indent(o.content, '    ')}'
 }
-
-

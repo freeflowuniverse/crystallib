@@ -2,7 +2,6 @@ module publisher
 
 import freeflowuniverse.crystallib.texttools
 
-
 fn macro_def(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	mut categories := macro.params.get_list('category')?
 	categories2 := macro.params.get_list('categories')?
@@ -119,7 +118,7 @@ fn macro_def_list(mut state LineProcessorState, mut macro texttools.MacroObj) ? 
 
 		deftitle := page.title()
 
-		if state.site.name == page.site_name_get(mut state.publisher){
+		if state.site.name == page.site_name_get(mut state.publisher) {
 			out << '| [$defobj.name](${page.name}.md) | $deftitle |'
 		}
 		done << defobj.pageid

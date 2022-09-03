@@ -32,9 +32,6 @@ pub fn (mut params Params) arg_exists(key_ string) bool {
 	return false
 }
 
-
-
-
 // return string, will be trimmed
 // get kwarg return as string, ifn't exist return the defval
 // line:
@@ -42,7 +39,7 @@ pub fn (mut params Params) arg_exists(key_ string) bool {
 // arg1 is an arg
 // description is a kwarg
 pub fn (mut params Params) get(key_ string) ?string {
-	key := name_fix(key_)	
+	key := name_fix(key_)
 	for p in params.params {
 		if p.key == key {
 			return p.value.trim(' ')
@@ -125,27 +122,26 @@ pub fn (mut params Params) get_list_int(key string) ?[]int {
 	return res
 }
 
-
-pub fn (mut params Params)  get_default_true(key string) bool {
-	mut r := params.get(key) or {""}
+pub fn (mut params Params) get_default_true(key string) bool {
+	mut r := params.get(key) or { '' }
 	r = name_fix_no_underscore(r)
-	if r=="" || r=="1" || r=="true" || r=="y"{
+	if r == '' || r == '1' || r == 'true' || r == 'y' {
 		return true
 	}
 	return false
 }
 
 pub fn (mut params Params) get_default_false(key string) bool {
-	mut r := params.get(key) or {""}
+	mut r := params.get(key) or { '' }
 	r = name_fix_no_underscore(r)
-	if r=="" || r=="0" || r=="false" || r=="n"{
+	if r == '' || r == '0' || r == 'false' || r == 'n' {
 		return false
 	}
 	return true
 }
 
 // will get path and check it exists
-pub fn (mut params Params)  get_path(key string) ?string {
+pub fn (mut params Params) get_path(key string) ?string {
 	path := params.get(key)?
 
 	if !os.exists(path) {
@@ -156,7 +152,7 @@ pub fn (mut params Params)  get_path(key string) ?string {
 }
 
 // will get path and check it exists if not will create
-pub fn (mut params Params)  get_path_create(key string) ?string {
+pub fn (mut params Params) get_path_create(key string) ?string {
 	path := params.get(key)?
 
 	if !os.exists(path) {
@@ -165,5 +161,3 @@ pub fn (mut params Params)  get_path_create(key string) ?string {
 
 	return path
 }
-
-

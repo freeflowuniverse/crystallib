@@ -2,7 +2,7 @@ module twinclient2
 
 // general message between client <-> server
 pub struct Message {
-	pub:
+pub:
 	id string
 	// event type
 	event string

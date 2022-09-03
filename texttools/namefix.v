@@ -1,7 +1,7 @@
 // make sure that the names are always normalized so its easy to find them back
 module texttools
-import os
 
+import os
 
 const ignore = '\\/[]()?!@#$%^&*<>:;{}|'
 
@@ -11,19 +11,18 @@ pub fn name_fix(name string) string {
 	return res
 }
 
-//get name back keep extensions and underscores, but when end on .md then remove extension
+// get name back keep extensions and underscores, but when end on .md then remove extension
 pub fn name_fix_no_md(name string) string {
 	pagename := name_fix_keepext(name)
 
 	if pagename.ends_with('.md') {
 		fixed_pagename := pagename[0..pagename.len - 3]
-		res2:= fixed_pagename.clone()
+		res2 := fixed_pagename.clone()
 		return res2
 	}
 	res := pagename.clone()
 	return res
 }
-
 
 pub fn name_fix_no_underscore(name string) string {
 	mut pagename := name_fix_keepext(name)
@@ -32,11 +31,10 @@ pub fn name_fix_no_underscore(name string) string {
 	return x
 }
 
-//remove underscores and extension
+// remove underscores and extension
 pub fn name_fix_no_underscore_no_ext(name_ string) string {
-	return name_fix_keepext(name_).all_before_last('.').replace("_","")
+	return name_fix_keepext(name_).all_before_last('.').replace('_', '')
 }
-
 
 pub fn name_fix_keepext(name_ string) string {
 	mut name := name_.to_lower()
@@ -62,14 +60,14 @@ pub fn name_fix_keepext(name_ string) string {
 	name = name.replace('__', '_')
 	name = name.replace('__', '_') // needs to be 2x because can be 3 to 2 to 1
 
-	for c in ignore{
-		if name.contains(c.str()){
-			name = name.replace(c.str(),"")
+	for c in texttools.ignore {
+		if name.contains(c.str()) {
+			name = name.replace(c.str(), '')
 		}
 	}
 
-	//to make sure that future garbage collection works
-	name = name.clone()	
+	// to make sure that future garbage collection works
+	name = name.clone()
 
 	return name
 }

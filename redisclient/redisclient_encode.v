@@ -61,7 +61,7 @@ pub fn (mut r Redis) get_response() ?resp.RValue {
 	return error('unsupported response type')
 }
 
-//TODO: needs to use the resp library
+// TODO: needs to use the resp library
 
 pub fn (mut r Redis) get_int() ?int {
 	line := r.read_line()?

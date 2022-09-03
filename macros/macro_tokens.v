@@ -5,7 +5,6 @@ import strconv
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.tokens
 
-
 struct ChartData {
 	label string
 	value i64

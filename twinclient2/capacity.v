@@ -2,8 +2,6 @@ module twinclient2
 
 import json
 
-
-
 pub fn (mut client TwinClient) capacity_get_farms(payload PagePayload) ?[]Farm {
 	payload_encoded := json.encode_pretty(payload)
 	response := client.send('capacity.getFarms', payload_encoded)?
@@ -33,30 +31,29 @@ pub fn (mut client TwinClient) capacity_filter_nodes(filters FilterOptions) ?[]N
 }
 
 pub fn (mut client TwinClient) capacity_check_farm_has_free_public_ips(farm_id u32) ?bool {
-	response := client.send(
-		'capacity.checkFarmHasFreePublicIps',
-		json.encode({"farmId": farm_id})
-	)?
+	response := client.send('capacity.checkFarmHasFreePublicIps', json.encode({
+		'farmId': farm_id
+	}))?
 	return response.data.bool()
 }
 
 pub fn (mut client TwinClient) capacity_get_nodes_by_farm_id(farm_id u32) ?[]Node {
-	response := client.send('capacity.getNodesByFarmId', json.encode({"farmId": farm_id}))?
+	response := client.send('capacity.getNodesByFarmId', json.encode({
+		'farmId': farm_id
+	}))?
 	return json.decode([]Node, response.data)
 }
 
 pub fn (mut client TwinClient) capacity_get_node_free_resources(node_id u32) ?FreeResources {
-	response := client.send(
-		'capacity.getNodeFreeResources',
-		json.encode({"nodeId": node_id})
-	)?
+	response := client.send('capacity.getNodeFreeResources', json.encode({
+		'nodeId': node_id
+	}))?
 	return json.decode(FreeResources, response.data)
 }
 
 pub fn (mut client TwinClient) capacity_get_farm_id_from_farm_name(farm_name string) ?u32 {
-	response := client.send(
-		'capacity.getFarmIdFromFarmName',
-		json.encode({"farmName": "$farm_name"})
-	)?
+	response := client.send('capacity.getFarmIdFromFarmName', json.encode({
+		'farmName': '$farm_name'
+	}))?
 	return response.data.u32()
 }

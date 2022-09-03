@@ -2,7 +2,6 @@ module publisher
 
 import freeflowuniverse.crystallib.texttools
 
-
 // if return true, means macro found and was ok
 // format !!!$macroname $arg1 $arg2
 // arg's can be one or more, can also be $name:$val then keyvalue which will become params

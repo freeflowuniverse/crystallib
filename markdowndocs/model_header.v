@@ -1,27 +1,23 @@
 module markdowndocs
 
-pub struct Header{
+pub struct Header {
 pub mut:
 	content string
-	depth int
+	depth   int
 }
 
-
-fn (mut o Header) process()?{
+fn (mut o Header) process() ? {
 	return
 }
 
-fn ( o Header) wiki() string{
+fn (o Header) wiki() string {
 	return o.content
-	
 }
 
-fn ( o Header) html() string{
+fn (o Header) html() string {
 	return o.wiki()
 }
 
-fn ( o Header) str() string{
-	return "**** Header $o.depth: $o.content\n"
+fn (o Header) str() string {
+	return '**** Header $o.depth: $o.content\n'
 }
-
-

@@ -109,7 +109,7 @@ pub fn (mut myapp RedisApp) check() ?bool {
 }
 
 pub fn (mut myapp RedisApp) client() ?&redisclient.Redis {
-	panic("redis app, should not get here for now")
+	panic('redis app, should not get here for now')
 	mut tcpport := myapp.appconfig.tcpports[0]
 	return redisclient.get('/tmp/redis_${tcpport}.sock')
 	// return redisclient.get("127.0.0.1:${tcpport}")

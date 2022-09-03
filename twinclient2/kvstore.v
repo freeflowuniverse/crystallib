@@ -2,7 +2,6 @@ module twinclient2
 
 import json
 
-
 // Set a new record in my kvstore as key and value, if success return account_id
 pub fn (mut client TwinClient) kvstore_set(key string, value string) ?string {
 	response := client.send('kvstore.set', '{"key": "$key", "value": "$value"}')?
