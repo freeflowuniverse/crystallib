@@ -1,6 +1,7 @@
 module imagemagick
 
 import freeflowuniverse.crystallib.pathlib
+import params
 import freeflowuniverse.crystallib.process
 import os
 
@@ -15,24 +16,71 @@ pub mut:
 	transparent  bool
 }
 
-pub fn image_new(path0 string) ?Image {
-	mut p := pathlib.Path{
-		path: path0
-	}
+fn image_new(mut path pathlib.Path) ?Image {
 	mut i := Image{
-		path: p
+		path: path
 	}
 	i.init()?
 	return i
 }
 
-pub fn image_downsize(path0 string) ?Image {
-	mut image := image_new(path0)?
-	image.downsize('', '')?
+pub fn image_downsize(mut path pathlib.Path, mut params params.Param) ?Image {
+	mut image := image_new(mut path)?
+	image.downsize(mut params)?
 	return image
 }
 
-pub fn (mut image Image) init() ? {
+// will downsize to reasonable size based on x
+fn (mut image Image) downsize(mut params params.Param) ? {
+	image.init()?
+	if image.skip() {
+		return
+	}
+	println(' - PROCESS DOWNSIZE $image.path')
+	if image.is_png() {
+		image.identify_verbose()?
+	} else {
+		image.identify()?
+	}
+	// check in params
+	if params.exists('backupdir') {
+		backupdir := params.get('backupdir')?
+		mut dest := image.path.backup_name_find('', backupdir)?
+		image.path.copy(mut dest)?
+	}
+
+	if image.size_x > 2400 {
+		image.size_kbyte = 0
+		println('   - convert image resize 50%: $image.path')
+		process.execute_silent("convert '$image.path' -resize 50% '$image.path'")?
+		// println(image)
+		image.init()?
+	} else if image.size_kbyte > 300 && image.size_x > 1800 {
+		image.size_kbyte = 0
+		println('   - convert image resize 75%: $image.path')
+		process.execute_silent("convert '$image.path' -resize 75% '$image.path'")?
+		image.init()?
+	}
+
+	if image.is_png() {
+		if image.size_kbyte > 400 && !image.transparent {
+			path_dest := image.path.path_no_ext() + '.jpg'
+			println('   - convert image jpg: $path_dest')
+			process.execute_silent("convert '$image.path' '$path_dest'")?
+			if os.exists(path_dest) {
+				os.rm(image.path.path)?
+			}
+			image.path = pathlib.get(path_dest)
+		}
+	}
+	// means we should not process next time, we do this by adding _ at end of name
+	path_dest2 := image.path.path_get_name_with_underscore()
+	println('    - add _ at end of image: $path_dest2')
+	os.mv(image.path.path, path_dest2)?
+	image.path = pathlib.get(path_dest2)
+}
+
+fn (mut image Image) init() ? {
 	if image.size_kbyte == 0 {
 		// println(" - $image.path")
 		image.size_kbyte = image.path.size_kb()?
@@ -40,7 +88,7 @@ pub fn (mut image Image) init() ? {
 	}
 }
 
-pub fn (mut image Image) identify_verbose() ? {
+fn (mut image Image) identify_verbose() ? {
 	if image.size_y != 0 {
 		// means was already done
 		return
@@ -117,7 +165,7 @@ pub fn (mut image Image) identify_verbose() ? {
 	// }
 }
 
-pub fn (mut image Image) identify() ? {
+fn (mut image Image) identify() ? {
 	if image.size_y != 0 {
 		// means was already done
 		return
@@ -158,52 +206,4 @@ fn (mut image Image) skip() bool {
 		return true
 	}
 	return false
-}
-
-// will downsize to reasonable size based on x
-fn (mut image Image) downsize(sourcedir string, backupdir string) ? {
-	image.init()?
-	if image.skip() {
-		return
-	}
-	println(' - PROCESS DOWNSIZE $image.path')
-	if image.is_png() {
-		image.identify_verbose()?
-	} else {
-		image.identify()?
-	}
-	if backupdir != '' {
-		mut dest := image.path.backup_name_find(sourcedir, backupdir)?
-		image.path.copy(mut dest)?
-	}
-
-	if image.size_x > 2400 {
-		image.size_kbyte = 0
-		println('   - convert image resize 50%: $image.path')
-		process.execute_silent("convert '$image.path' -resize 50% '$image.path'")?
-		// println(image)
-		image.init()?
-	} else if image.size_kbyte > 300 && image.size_x > 1800 {
-		image.size_kbyte = 0
-		println('   - convert image resize 75%: $image.path')
-		process.execute_silent("convert '$image.path' -resize 75% '$image.path'")?
-		image.init()?
-	}
-
-	if image.is_png() {
-		if image.size_kbyte > 400 && !image.transparent {
-			path_dest := image.path.path_no_ext() + '.jpg'
-			println('   - convert image jpg: $path_dest')
-			process.execute_silent("convert '$image.path' '$path_dest'")?
-			if os.exists(path_dest) {
-				os.rm(image.path.path)?
-			}
-			image.path = pathlib.get(path_dest)
-		}
-	}
-	// means we should not process next time, we do this by adding _ at end of name
-	path_dest2 := image.path.path_get_name_with_underscore()
-	println('    - add _ at end of image: $path_dest2')
-	os.mv(image.path.path, path_dest2)?
-	image.path = pathlib.get(path_dest2)
 }

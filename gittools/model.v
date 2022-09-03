@@ -17,18 +17,18 @@ pub enum GitStatus {
 [heap]
 pub struct GitStructure {
 pub mut:
-	multibranch bool
-	root        string
-	repos       []GitRepo
-	status      GitStructureStatus
-	light       bool = true // if set then will clone only last history for all branches	
+	config GSConfig
+	repos  []GitRepo
+	status GitStructureStatus
 }
 
 pub struct GitRepo {
 	id int [skip]
+pub:
 	// only use when custom path
 	path string
 pub mut:
+	gs    &GitStructure [skip]
 	addr  GitAddr
 	state GitStatus
 }

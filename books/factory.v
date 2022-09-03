@@ -1,5 +1,7 @@
 module books
 
 pub fn new() Sites {
-	return Sites{}
+	mut sites := Sites{}
+	sites.config = Config{}
+	return sites
 }

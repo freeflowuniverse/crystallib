@@ -1,13 +1,14 @@
 module markdowndocs
 
 import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.params
 
 pub struct Action {
 pub mut:
 	content string
 	remarks string
 	name    string
-	params  texttools.Params
+	params  params.Params
 }
 
 fn (mut action Action) process() ? {

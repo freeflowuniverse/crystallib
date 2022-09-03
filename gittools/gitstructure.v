@@ -3,7 +3,7 @@ module gittools
 import freeflowuniverse.crystallib.pathlib
 
 pub struct RepoGetFromUrlArgs {
-mut:
+pub mut:
 	url    string
 	branch string
 	pull   bool // will pull if this is set
@@ -30,6 +30,22 @@ pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs
 	return gitstructure.repo_get_from_addr(addr, args)
 }
 
+// get gitrepo from gitaddress struct
+// struct RepoGetFromUrlArgs {
+// 	url    string
+// 	branch string
+// 	pull   bool // will pull if this is set
+// 	reset bool //this means will pull and reset all changes
+// }
+// pub struct GitAddr {
+// 	provider string
+// 	account  string
+// 	name     string // is the name of the repository
+// 	path     string // path in the repo (not on filesystem)
+// 	branch   string
+// 	anker    string // position in the file
+// 	depth    int    // 0 means we have all depth
+// }
 pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr, args RepoGetFromUrlArgs) ?&GitRepo {
 	args2 := RepoGetArgs{
 		name: addr.name
@@ -41,6 +57,7 @@ pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr, args Rep
 		gitstructure.repos << GitRepo{
 			addr: addr
 			id: gitstructure.repos.len
+			gs: &gitstructure
 		}
 		mut r0 := gitstructure.repo_get(args2) or {
 			// means could not pull need to remove the repo from the list again

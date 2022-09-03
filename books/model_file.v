@@ -9,32 +9,44 @@ pub enum FileStatus {
 	error
 }
 
+pub enum FileType {
+	file
+	image
+}
+
 [heap]
 pub struct File {
 pub:
-	name string // received a name fix
-	site &Site  [str: skip]
+	site &Site [str: skip]
 pub mut: // pointer to site
+	name         string // received a name fix
 	path         pathlib.Path
 	pathrel      string
 	state        FileStatus
 	pages_linked []&Page      [str: skip] // pointer to pages which use this file
+	ftype        FileType
 }
 
 // only way how to get to a new file
-pub fn (mut site Site) file_new(fpath string) ?File {
-	mut p := pathlib.get_file(fpath, false)? // makes sure we have the right path
+pub fn (mut site Site) file_new(mut p pathlib.Path) ?File {
 	if !p.exists() {
-		return error('cannot find file for path in site: $fpath')
+		return error('cannot find file for path in site: $p.path')
 	}
 	p.namefix()? // make sure its all lower case and name is proper
 	mut ff := File{
-		name: p.name()
 		path: p
-		pathrel: p.path_relative(site.path.path)
 		site: &site
 	}
+	ff.init()
 	return ff
+}
+
+fn (mut file File) init() {
+	file.name = file.path.name()
+	if file.path.is_image() {
+		file.ftype = .image
+	}
+	file.pathrel = file.path.path_relative(file.site.path.path)
 }
 
 pub fn (mut file File) delete() ? {

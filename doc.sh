@@ -1,7 +1,10 @@
 set -ex
 rm -rf _docs
 v fmt -w .
-v doc -f html -m . -readme
+#pushd src
+v doc -f html -m . -readme -comments -no-timestamp 
+#-o ../
+#popd
 
 open _docs/index.html
 

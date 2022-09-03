@@ -16,18 +16,42 @@ pub:
 	sites    &Sites   [str: skip] // pointer to sites
 	sitetype SiteType
 pub mut:
-	pages map[string]Page
-	files map[string]File
-	path  pathlib.Path
+	pages  map[string]Page
+	files  map[string]File
+	path   pathlib.Path
+	errors []SiteError
 }
 
 // walk over one specific site, find all files and pages
 pub fn (mut site Site) scan() ? {
-	site.scan_internal(site.path)?
+	site.scan_internal(mut site.path)?
 }
 
-fn (mut site Site) scan_internal(path pathlib.Path) ? {
-	panic('sitescan')
+enum ErrorCat {
+	unknown
+	doubleimage
+	doublefile
+	sidebar
+}
+
+struct SiteErrorArgs {
+	path pathlib.Path
+	msg  string
+	cat  ErrorCat
+}
+
+struct SiteError {
+	path pathlib.Path
+	msg  string
+	cat  ErrorCat
+}
+
+pub fn (mut site Site) error(args SiteErrorArgs) {
+	site.errors << SiteError{
+		path: args.path
+		msg: args.msg
+		cat: args.cat
+	}
 }
 
 pub fn (site Site) page_get(name string) ?&Page {
@@ -46,7 +70,11 @@ pub fn (site Site) file_get(name string) ?&File {
 	mut namelower := texttools.name_fix(name)
 	if namelower in site.files {
 		file := site.files[namelower]
-		return &file
+		if file.ftype == .file {
+			return &file
+		} else {
+			return error('did find file, but not an file for name:$name')
+		}
 	}
 	return error('cannot find file with name $name')
 }
@@ -55,7 +83,11 @@ pub fn (site Site) image_get(name string) ?&File {
 	namelower := texttools.name_fix_no_underscore_no_ext(name)
 	if namelower in site.files {
 		file := site.files[namelower]
-		return &file
+		if file.ftype == .image {
+			return &file
+		} else {
+			return error('did find file, but not an image for name:$name')
+		}
 	}
 	return error('cannot find image with name $name')
 }
@@ -66,11 +98,11 @@ pub fn (site Site) page_exists(name string) bool {
 }
 
 pub fn (site Site) image_exists(name string) bool {
-	namelower := texttools.name_fix_no_underscore_no_ext(name)
-	return namelower in site.files
+	_ := site.image_get(name) or { return false }
+	return true
 }
 
 pub fn (site Site) file_exists(name string) bool {
-	namelower := texttools.name_fix(name)
-	return namelower in site.files
+	_ := site.file_get(name) or { return false }
+	return true
 }

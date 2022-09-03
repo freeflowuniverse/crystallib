@@ -1,4 +1,6 @@
-module texttools
+module params
+
+import texttools
 
 pub struct Params {
 pub mut:
@@ -29,7 +31,7 @@ enum ParamStatus {
 	quote // quote found means value in between ''
 }
 
-fn (mut result Params) kwarg_add(key string, value string) {
+pub fn (mut result Params) kwarg_add(key string, value string) {
 	mut key2 := ''
 	mut value2 := ''
 
@@ -44,7 +46,7 @@ fn (mut result Params) kwarg_add(key string, value string) {
 	}
 }
 
-fn (mut result Params) arg_add(value string) {
+pub fn (mut result Params) arg_add(value string) {
 	mut value2 := value.trim(" '")
 	value2 = value2.replace('<<BR>>', '\n')
 
@@ -56,9 +58,23 @@ fn (mut result Params) arg_add(value string) {
 // convert text with e.g. color:red or color:'red' to arguments
 // multiline is supported
 // result is params object which allows you to query the info you need
+// params is following:
+//
+// struct Params {
+// 	params []Param
+// 	args   []Arg
+// }
+// struct Arg {
+// 	value string
+// }
+// struct Param {
+// 	key   string
+// 	value string
+// }
+// it has nice methods to query the params
 pub fn text_to_params(text string) ?Params {
-	mut text2 := dedent(text)
-	text2 = multiline_to_single(text2)?
+	mut text2 := texttools.dedent(text)
+	text2 = texttools.multiline_to_single(text2)?
 	text2 = text2.replace('\\n', '<<BR>>')
 	text2 = text2.replace('\n', ' ')
 

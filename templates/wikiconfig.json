@@ -1,6 +1,0 @@
-{
-  "name": "foundation",
-  "depends": ["https://github.com/threefoldtech/info_tftech", "https://github.com/threefoldfoundation/legal"],
-  "alias": [],
-  "replace": []  
-}

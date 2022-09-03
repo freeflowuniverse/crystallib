@@ -1,4 +1,6 @@
-module texttools
+module actionparser
+
+import params
 
 fn test_macro() {
 	mut text := "Command.1.X arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok'"
@@ -7,7 +9,7 @@ fn test_macro() {
 
 	r := MacroObj{
 		cmd: 'command.1.x'
-		params: Params{
+		params: params.Params{
 			params: [Param{
 				key: 'color'
 				value: 'red'

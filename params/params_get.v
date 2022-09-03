@@ -1,5 +1,6 @@
-module texttools
+module params
 
+import texttools
 import os
 
 // check if kwarg exist
@@ -32,14 +33,10 @@ pub fn (mut params Params) arg_exists(key_ string) bool {
 	return false
 }
 
-// return string, will be trimmed
-// get kwarg return as string, ifn't exist return the defval
-// line:
-//    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
-// arg1 is an arg
-// description is a kwarg
+// see if the kwarg with the key exists
+// if yes return as string trimmed
 pub fn (mut params Params) get(key_ string) ?string {
-	key := name_fix(key_)
+	key := texttools.name_fix(key_)
 	for p in params.params {
 		if p.key == key {
 			return p.value.trim(' ')
@@ -124,7 +121,7 @@ pub fn (mut params Params) get_list_int(key string) ?[]int {
 
 pub fn (mut params Params) get_default_true(key string) bool {
 	mut r := params.get(key) or { '' }
-	r = name_fix_no_underscore(r)
+	r = texttools.name_fix_no_underscore(r)
 	if r == '' || r == '1' || r == 'true' || r == 'y' {
 		return true
 	}
@@ -133,7 +130,7 @@ pub fn (mut params Params) get_default_true(key string) bool {
 
 pub fn (mut params Params) get_default_false(key string) bool {
 	mut r := params.get(key) or { '' }
-	r = name_fix_no_underscore(r)
+	r = texttools.name_fix_no_underscore(r)
 	if r == '' || r == '0' || r == 'false' || r == 'n' {
 		return false
 	}

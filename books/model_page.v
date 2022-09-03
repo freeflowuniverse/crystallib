@@ -12,9 +12,9 @@ pub enum PageStatus {
 [heap]
 pub struct Page {
 pub:
-	name string // received a name fix
-	site &Site  [str: skip]
+	site &Site [str: skip]
 pub mut: // pointer to site
+	name           string // received a name fix
 	path           pathlib.Path
 	pathrel        string
 	state          PageStatus
@@ -26,16 +26,13 @@ pub mut: // pointer to site
 }
 
 // only way how to get to a new page
-pub fn (mut site Site) page_new(fpath string) ?Page {
-	mut p := pathlib.get_file(fpath, false)? // makes sure we have the right path
+pub fn (mut site Site) page_new(mut p pathlib.Path) ?Page {
 	if !p.exists() {
-		return error('cannot find page with path $fpath')
+		return error('cannot find page with path $p.path')
 	}
 	p.namefix()? // make sure its all lower case and name is proper
 	mut page := Page{
-		name: p.name()
 		path: p
-		pathrel: p.path_relative(site.path.path)
 		site: &site
 	}
 	if !page.name.ends_with('.md') {
@@ -47,4 +44,9 @@ pub fn (mut site Site) page_new(fpath string) ?Page {
 	page.doc = parser.doc
 
 	return page
+}
+
+fn (mut page Page) init() {
+	page.name = page.path.name_no_ext()
+	page.pathrel = page.path.path_relative(page.site.path.path)
 }

@@ -6,7 +6,8 @@ import freeflowuniverse.crystallib.texttools
 [heap]
 struct Sites {
 pub mut:
-	sites map[string]Site
+	sites  map[string]Site
+	config Config
 }
 
 pub struct SiteNewArgs {

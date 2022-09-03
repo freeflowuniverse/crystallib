@@ -50,7 +50,7 @@ pub fn load_interactive() ?string {
 
 	pubkeys = []string{}
 
-	for p in sshdirpath.file_list('.pub', false)? {
+	for p in sshdirpath.file_list(tofind: '.pub', recursive: false)? {
 		pubkeys << p.path.replace('.pub', '')
 	}
 	// println(keypaths)
@@ -119,7 +119,7 @@ pub fn pubkey_guess() ?string {
 	// now means nothing in ssh-agent, lets see if we find 1 key in .ssh directory
 	mut sshdirpath := pathlib.get_dir('$os.home_dir()/.ssh', true)?
 
-	mut keypaths := sshdirpath.file_list('.pub', false)?
+	mut keypaths := sshdirpath.file_list(tofind: '.pub')?
 	// println(keypaths)
 
 	if keypaths.len == 1 {

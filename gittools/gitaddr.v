@@ -30,6 +30,7 @@ fn (addr GitAddr) url_http_with_branch_get() string {
 }
 
 // return provider e.g. github, account is the name of the account, name of the repo, path if any
+// this function will not checkout the code
 // deals with quite some different formats Returns
 // ```
 // struct GitAddr{

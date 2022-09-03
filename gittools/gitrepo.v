@@ -8,7 +8,7 @@ import freeflowuniverse.crystallib.sshagent
 // check if sshkey for a repo exists in the homedir/.ssh
 // we check on name, if nameof repo is same as name of key we will load
 // will return true if the key did exist, which means we need to connect over ssh !!!
-pub fn (mut repo GitRepo) ssh_key_load_if_exists() ?bool {
+fn (mut repo GitRepo) ssh_key_load_if_exists() ?bool {
 	mut key_path := '$os.home_dir()/.ssh/$repo.addr.name'
 	if !os.exists(key_path) {
 		key_path = '.ssh/$repo.addr.name'
@@ -43,8 +43,7 @@ pub fn (mut repo GitRepo) ssh_key_load_if_exists() ?bool {
 	}
 }
 
-fn (repo GitRepo) path_account_get() string {
-	mut gitstructure := get() or { panic(err) }
+fn (mut repo GitRepo) path_account_get() string {
 	mut provider := ''
 	addr := repo.addr
 	if addr.provider == 'github.com' {
@@ -52,13 +51,13 @@ fn (repo GitRepo) path_account_get() string {
 	} else {
 		provider = addr.provider
 	}
-	if gitstructure.root == '' {
+	if repo.gs.codepath() == '' {
 		panic('cannot be empty')
 	}
-	return '$gitstructure.root/$provider/$addr.account'
+	return '$repo.gs.codepath()/$provider/$addr.account'
 }
 
-pub fn (repo GitRepo) path_content_get() string {
+pub fn (mut repo GitRepo) path_content_get() string {
 	mut p := repo.path()
 	if repo.addr.path == '' {
 		return p
@@ -67,25 +66,23 @@ pub fn (repo GitRepo) path_content_get() string {
 	}
 }
 
-pub fn (repo GitRepo) path() string {
+pub fn (mut repo GitRepo) path() string {
 	return repo.path_get()
 }
 
-pub fn (repo GitRepo) path_get() string {
+pub fn (mut repo GitRepo) path_get() string {
 	if repo.path != '' {
 		return repo.path
 	}
-	mut gitstructure := get() or { panic(err) }
-	if gitstructure.multibranch {
+	if repo.gs.config.multibranch {
 		return '$repo.path_account_get()/$repo.addr.name/$repo.addr.branch'
 	} else {
 		return '$repo.path_account_get()/$repo.addr.name'
 	}
 }
 
-pub fn (repo GitRepo) path_relative() string {
-	mut gitstructure := get() or { panic(err) }
-	if gitstructure.multibranch {
+pub fn (mut repo GitRepo) path_relative() string {
+	if repo.gs.config.multibranch {
 		return '$repo.addr.account/$repo.addr.name/$repo.addr.branch'
 	} else {
 		return '$repo.addr.account/$repo.addr.name'
@@ -115,16 +112,15 @@ pub fn (mut repo GitRepo) changes() ?bool {
 }
 
 fn (mut repo GitRepo) get_clone_cmd(http bool) string {
-	mut gitstructure := get() or { panic(err) }
 	url := repo.url_get(http)
 	mut cmd := ''
 
 	mut light := ''
-	if gitstructure.light {
+	if repo.gs.config.light {
 		light = ' --depth 1 --no-single-branch'
 	}
 
-	if gitstructure.multibranch {
+	if repo.gs.config.multibranch {
 		cmd = 'mkdir -p $repo.path_account_get()/$repo.addr.name && cd $repo.path_account_get()/$repo.addr.name && git clone $light $url $repo.addr.branch'
 	} else {
 		cmd = 'mkdir -p $repo.path_account_get() && cd $repo.path_account_get() && git clone $light $url'
@@ -299,8 +295,7 @@ pub fn (mut repo GitRepo) branch_get() ?string {
 }
 
 pub fn (mut repo GitRepo) branch_switch(branchname string) ? {
-	mut gitstructure := get()?
-	if gitstructure.multibranch {
+	if repo.gs.config.multibranch {
 		return error('cannot do a branch switch if we are using multibranch strategy.')
 	}
 	changes := repo.changes()?

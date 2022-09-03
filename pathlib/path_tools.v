@@ -5,10 +5,10 @@ import freeflowuniverse.crystallib.texttools
 
 // check path exists
 pub fn (mut path Path) exists() bool {
-	if path.exist == .unknown{
-		if os.exists(path.path){
+	if path.exist == .unknown {
+		if os.exists(path.path) {
 			path.exist = .yes
-		}else{
+		} else {
 			path.exist = .no
 		}
 	}
@@ -334,6 +334,7 @@ pub fn (mut path Path) link(mut dest Path) ?Path {
 }
 
 // start from existing name and look for name_$nr.$ext, nr need to be unique, ideal for backups
+// TODO: what is purpose of source?
 pub fn (mut path Path) backup_name_find(source string, dest string) ?Path {
 	if !path.exists() {
 		return path

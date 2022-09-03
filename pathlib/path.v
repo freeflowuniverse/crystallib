@@ -4,8 +4,8 @@ import os
 
 pub struct Path {
 pub mut:
-	path string
-	cat  Category
+	path  string
+	cat   Category
 	exist UYN
 }
 
@@ -22,7 +22,6 @@ enum UYN {
 	yes
 	no
 }
-
 
 // gets Path object, will check if it exists, is dir_file, ...
 pub fn get(path string) Path {
@@ -100,7 +99,7 @@ pub fn (path Path) absolute() string {
 
 fn (mut path Path) check() {
 	if os.exists(path.path) {
-		path.exist=.yes
+		path.exist = .yes
 		if os.is_file(path.path) {
 			if os.is_link(path.path) {
 				path.cat = Category.linkfile
@@ -116,8 +115,8 @@ fn (mut path Path) check() {
 		} else {
 			panic('cannot define type: $path.path, is bug')
 		}
-	}else{
-		path.exist=.no
+	} else {
+		path.exist = .no
 	}
 }
 
@@ -155,4 +154,8 @@ pub fn (mut path Path) path_get_name_with_underscore() string {
 	} else {
 		return path.path.all_before_last('.') + '_.' + path.extension()
 	}
+}
+
+pub fn (mut path Path) str() string {
+	return 'path: $path.path'
 }

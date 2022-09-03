@@ -24,7 +24,7 @@ pub fn ask_dropdown_int(args DropDownArgs) int {
 		println('\n')
 	}
 	println('\nChoices:\n')
-	mut items2 := args.items
+	mut items2 := args.items.clone()
 	items2.sort()
 	mut nr := 0
 	for item in items2 {

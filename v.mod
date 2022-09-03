@@ -6,6 +6,7 @@ Module {
     repo_url: 'https://github.com/freeflowuniverse/crystallib'
     deps: []
     vcs: 'git'
+    license: 'apache2'
 }
 
 

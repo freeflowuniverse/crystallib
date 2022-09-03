@@ -1,4 +1,6 @@
-module texttools
+module actionparser
+
+import params
 
 pub struct MacroObj {
 pub mut:
@@ -41,7 +43,7 @@ pub fn macro_parse(line_ string) ?MacroObj {
 	if splitted.len > 1 {
 		line = splitted[1..].join(' ')
 	}
-	params := text_to_params(line)?
+	params := params.text_to_params(line)?
 	r.params = params
 
 	return r
