@@ -1,7 +1,7 @@
 module imagemagick
 
 // import os
-// import path
+// import pathlib
 // import process
 
 pub fn (mut images Images) downsize(sourcedir string, backupdir string) ? {

@@ -1,7 +1,7 @@
 module books
 
-import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.texttools
+import pathlib
+import texttools
 
 enum SiteType {
 	book

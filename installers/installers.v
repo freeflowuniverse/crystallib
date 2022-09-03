@@ -1,9 +1,9 @@
 module installers
 
 import os
-import freeflowuniverse.crystallib.builder
-import freeflowuniverse.crystallib.publisher.config
-import freeflowuniverse.crystallib.process
+import builder
+import publisher.config
+import process
 // import nodejs
 // import gittools
 

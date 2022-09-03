@@ -1,8 +1,8 @@
 module mattermostapp
 
 import os
-import freeflowuniverse.crystallib.builder
-import freeflowuniverse.crystallib.appsbox
+import builder
+import appsbox
 
 [heap]
 pub struct MattermostApp {

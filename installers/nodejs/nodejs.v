@@ -1,9 +1,9 @@
 module nodejs
 
 import os
-import freeflowuniverse.crystallib.builder
-import freeflowuniverse.crystallib.process
-import freeflowuniverse.crystallib.publisher.config
+import builder
+import process
+import publisher.config
 
 struct NodeJS {
 pub mut:

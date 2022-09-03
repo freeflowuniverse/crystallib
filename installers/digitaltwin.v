@@ -3,9 +3,9 @@ module installers
 // import builder
 // import nodejs
 import os
-import freeflowuniverse.crystallib.process
-import freeflowuniverse.crystallib.publisher.config
-import freeflowuniverse.crystallib.gittools
+import process
+import publisher.config
+import gittools
 
 pub fn digitaltwin_install(update bool) ? {
 	mut conf := config.get()?

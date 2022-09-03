@@ -1,8 +1,8 @@
 module installers
 
-import freeflowuniverse.crystallib.publisher.config
-import freeflowuniverse.crystallib.process
-// import path
+import publisher.config
+import process
+// import pathlib
 import json
 import os
 

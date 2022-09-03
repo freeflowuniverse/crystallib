@@ -1,6 +1,6 @@
 module builder
 
-import freeflowuniverse.crystallib.process
+import process
 import os
 
 [heap]

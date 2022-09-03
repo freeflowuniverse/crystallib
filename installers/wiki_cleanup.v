@@ -1,9 +1,9 @@
 module installers
 
 import os
-import freeflowuniverse.crystallib.publisher.config
-import freeflowuniverse.crystallib.process
-import freeflowuniverse.crystallib.texttools
+import publisher.config
+import process
+import texttools
 
 pub fn wiki_cleanup(names []string) ? {
 	mut conf := config.get()?

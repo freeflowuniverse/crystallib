@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.httpconnection
+import httpconnection
 // import crystaljson
 // import json
 // import x.json2

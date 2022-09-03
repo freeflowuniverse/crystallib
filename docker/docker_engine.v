@@ -1,6 +1,6 @@
 module docker
 
-import freeflowuniverse.crystallib.builder
+import builder
 
 // https://docs.docker.com/reference/
 

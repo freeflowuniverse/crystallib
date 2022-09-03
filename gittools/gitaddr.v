@@ -1,7 +1,7 @@
 module gittools
 
 import os
-import freeflowuniverse.crystallib.sshagent
+import sshagent
 
 pub fn (addr GitAddr) url_get() string {
 	if sshagent.loaded() {

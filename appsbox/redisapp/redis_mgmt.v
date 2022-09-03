@@ -1,9 +1,9 @@
 module redisapp
 
 import os
-import freeflowuniverse.crystallib.appsbox
-import freeflowuniverse.crystallib.redisclient
-import freeflowuniverse.crystallib.process
+import appsbox
+import redisclient
+import process
 import time
 
 [heap]

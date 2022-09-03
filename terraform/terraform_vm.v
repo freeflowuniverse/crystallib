@@ -1,7 +1,7 @@
 module terraform
 
 import os
-import freeflowuniverse.crystallib.texttools
+import texttools
 import threefoldtech.vgrid.gridproxy
 import rand
 

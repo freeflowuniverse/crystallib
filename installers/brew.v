@@ -1,7 +1,7 @@
 module installers
 
 // import config
-import freeflowuniverse.crystallib.process
+import process
 
 pub fn brew_remove() ? {
 	// mut conf := config.get()?

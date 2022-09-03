@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.appsbox.mdbookapp
+import appsbox.mdbookapp
 
 fn do() ? {
 	mut app := mdbookapp.get()

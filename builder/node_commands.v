@@ -1,7 +1,7 @@
 module builder
 
-import freeflowuniverse.crystallib.process
-import freeflowuniverse.crystallib.texttools
+import process
+import texttools
 import crypto.md5
 import time
 import os

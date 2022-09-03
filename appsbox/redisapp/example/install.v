@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.appsbox.redisapp
+import appsbox.redisapp
 
 fn do() ? {
 	mut app := redisapp.get(port: 7788)

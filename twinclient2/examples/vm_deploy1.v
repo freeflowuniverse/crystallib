@@ -1,4 +1,4 @@
-import freeflowuniverse.crystallib.twinclient2 as tw2
+import twinclient2 as tw2
 
 mut tw2_client := tw2.init_client(mut ws_client)
 

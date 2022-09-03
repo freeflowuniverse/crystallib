@@ -1,7 +1,7 @@
 module docker
 
 import time
-import freeflowuniverse.crystallib.builder
+import builder
 
 pub enum DockerContainerStatus {
 	up

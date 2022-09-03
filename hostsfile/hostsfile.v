@@ -1,7 +1,7 @@
 module hostsfile
 
 import os
-import freeflowuniverse.crystallib.process
+import process
 
 [heap]
 pub struct HostsFile {

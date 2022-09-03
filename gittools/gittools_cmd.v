@@ -1,6 +1,6 @@
 module gittools
 
-import freeflowuniverse.crystallib.texttools
+import texttools
 
 pub fn (mut gitstructure GitStructure) pushcommit(args GSArgs) ? {
 	texttools.print_clear()

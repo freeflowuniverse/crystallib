@@ -1,7 +1,7 @@
 module planner
 
-import freeflowuniverse.crystallib.redisclient
-import freeflowuniverse.crystallib.redisclientcore
+import redisclient
+import redisclientcore
 
 [heap]
 struct Planner {

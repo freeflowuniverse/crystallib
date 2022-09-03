@@ -1,9 +1,9 @@
 module publisher
 
-import freeflowuniverse.crystallib.coinmarketcap
-import freeflowuniverse.crystallib.liquid
+import coinmarketcap
+import liquid
 import time
-import freeflowuniverse.crystallib.texttools
+import texttools
 
 const cmckey = '92be9b29-7f6c-48e4-9ef2-d6aa0550f620'
 

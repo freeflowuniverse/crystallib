@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.books
+import books
 import os
 
 const testpath = os.dir(@FILE) + '/book1'

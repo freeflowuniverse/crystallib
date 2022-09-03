@@ -1,6 +1,6 @@
 module markdowndocs
 
-import freeflowuniverse.crystallib.texttools
+import texttools
 
 enum CommentPrefix {
 	short

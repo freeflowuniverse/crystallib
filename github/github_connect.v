@@ -3,8 +3,8 @@ module github
 import x.json2
 import json
 import net.http
-import freeflowuniverse.crystallib.redisclient
-import freeflowuniverse.crystallib.crystaljson
+import redisclient
+import crystaljson
 import os
 
 [heap]

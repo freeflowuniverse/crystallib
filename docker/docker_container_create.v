@@ -1,6 +1,6 @@
 module docker
 
-import freeflowuniverse.crystallib.builder
+import builder
 
 pub fn (mut e DockerEngine) container_create(args DockerContainerCreateArgs) ?&DockerContainer {
 	mut ports := ''

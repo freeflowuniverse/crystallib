@@ -1,7 +1,7 @@
 module pathlib
 
 import os
-import freeflowuniverse.crystallib.texttools
+import texttools
 
 // check path exists
 pub fn (mut path Path) exists() bool {
@@ -49,13 +49,13 @@ pub fn (path Path) parent() ?Path {
 		return Path{
 			path: '/'
 			cat: Category.dir
-			exists: true
+			
 		}
 	}
 	return Path{
 		path: parent
 		cat: Category.dir
-		exists: true
+		
 	}
 }
 
@@ -109,7 +109,6 @@ pub fn (mut path Path) delete() ? {
 				return error('Path cannot be unknown type')
 			}
 		}
-		path.exists = false
 	}
 }
 
@@ -135,7 +134,7 @@ pub fn (mut path Path) dir_find(tofind string) ?Path {
 		return Path{
 			path: dir_path
 			cat: Category.dir
-			exists: true
+			
 		}
 	}
 	return error('$tofind is not in $path.path')
@@ -164,13 +163,13 @@ pub fn (mut path Path) file_find(tofind string) ?Path {
 		return Path{
 			path: file_path
 			cat: Category.file
-			exists: true
+			
 		}
 	}
 	return error('$tofind is not in $path.path')
 }
 
-struct ListArgs{
+pub struct ListArgs{
 	tofind string //if we look for certain filter
 	recursive bool //std off, means we recursive not over dirs by default
 
@@ -225,21 +224,21 @@ pub fn (mut path Path) list(args ListArgs) ?[]Path {
 }
 
 // find dir underneith path,
-pub fn (mut path Path) dir_list(args) ?[]Path {
+pub fn (mut path Path) dir_list(args ListArgs) ?[]Path {
 	list_all := path.list(args)?
 	mut list_dirs := list_all.filter(it.cat == Category.dir)
 	return list_dirs
 }
 
 // find file underneith path,
-pub fn (mut path Path) file_list(args) ?[]Path {
+pub fn (mut path Path) file_list(args ListArgs) ?[]Path {
 	list_all := path.list(args)?
 	mut list_files := list_all.filter(it.cat == Category.file)
 	return list_files
 }
 
 // find links (don't follow)
-pub fn (mut path Path) link_list(args) ?[]Path {
+pub fn (mut path Path) link_list(args ListArgs) ?[]Path {
 	list_all := path.list(args)?
 	mut list_links := list_all.filter(it.cat in [Category.linkdir, Category.linkfile])
 	return list_links
@@ -294,13 +293,13 @@ pub fn (mut path Path) copy(mut dest Path) ?Path {
 		return Path{
 			path: dest_path
 			cat: Category.file
-			exists: true
+			
 		}
 	}
 	return Path{
 		path: dest.path
 		cat: dest.cat
-		exists: true
+		
 	}
 }
 
@@ -316,14 +315,14 @@ pub fn (mut path Path) link(mut dest Path) ?Path {
 			return Path{
 				path: dest.path
 				cat: Category.linkdir
-				exists: true
+				
 			}
 		}
 		.file, .linkfile {
 			return Path{
 				path: dest.path
 				cat: Category.linkfile
-				exists: true
+				
 			}
 		}
 		.unknown {

@@ -1,6 +1,6 @@
 module console
 
-import freeflowuniverse.crystallib.texttools
+import texttools
 import os
 
 pub struct DropDownArgs {

@@ -1,6 +1,6 @@
 module books
 
-import freeflowuniverse.crystallib.pathlib
+import pathlib
 import os
 
 pub enum FileStatus {

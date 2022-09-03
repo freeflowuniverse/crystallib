@@ -2,8 +2,8 @@ module publisher
 
 import json
 import strconv
-import freeflowuniverse.crystallib.texttools
-import freeflowuniverse.crystallib.tokens
+import texttools
+import tokens
 
 struct ChartData {
 	label string

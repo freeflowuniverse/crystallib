@@ -1,7 +1,7 @@
 module publisher
 
-import freeflowuniverse.crystallib.texttools
-import freeflowuniverse.crystallib.gittools
+import texttools
+import gittools
 import os
 
 enum State {

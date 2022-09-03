@@ -1,8 +1,8 @@
 module mdbookapp
 
 // import os
-import freeflowuniverse.crystallib.builder
-import freeflowuniverse.crystallib.appsbox
+import builder
+import appsbox
 
 const name = 'mdbook'
 

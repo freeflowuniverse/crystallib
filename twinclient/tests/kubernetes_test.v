@@ -1,4 +1,4 @@
-import freeflowuniverse.crystallib.twinclient
+import twinclient
 
 struct KubernetesTestData {
 mut:

@@ -1,7 +1,7 @@
 module rediscache
 
-// import freeflowuniverse.crystallib.appsbox.redisapp
-import freeflowuniverse.crystallib.redisclient
+// import appsbox.redisapp
+import redisclient
 
 struct RedisCache {
 mut:

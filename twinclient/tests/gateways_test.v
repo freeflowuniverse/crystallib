@@ -1,4 +1,4 @@
-import freeflowuniverse.crystallib.twinclient
+import twinclient
 
 struct GatewayTestData {
 	fqdn twinclient.GatewayFQDN

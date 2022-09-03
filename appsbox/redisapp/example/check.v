@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.appsbox.redisapp
+import appsbox.redisapp
 
 fn do() ? {
 	// get local client to redis

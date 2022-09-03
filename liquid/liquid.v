@@ -4,8 +4,8 @@ import os
 import x.json2
 import json
 import net.http
-import freeflowuniverse.crystallib.redisclient
-import freeflowuniverse.crystallib.redisclientcore
+import redisclient
+import redisclientcore
 import crypto.md5
 
 struct LiquidConnection {

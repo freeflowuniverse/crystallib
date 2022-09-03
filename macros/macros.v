@@ -1,6 +1,6 @@
 module publisher
 
-import freeflowuniverse.crystallib.texttools
+import texttools
 
 // if return true, means macro found and was ok
 // format !!!$macroname $arg1 $arg2

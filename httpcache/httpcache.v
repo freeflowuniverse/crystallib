@@ -1,8 +1,8 @@
 module httpcache
 
 import net.http
-import freeflowuniverse.crystallib.redisclientcore
-import freeflowuniverse.crystallib.redisclient
+import redisclientcore
+import redisclient
 
 [heap]
 struct HttpCache {

@@ -4,7 +4,7 @@ example
 
 ```go
 module main
-import freeflowuniverse.crystallib.resp
+import resp
 import crypto.ed25519
 
 fn do()?{

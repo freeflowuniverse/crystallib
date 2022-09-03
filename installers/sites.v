@@ -1,7 +1,7 @@
 module installers
 
-import freeflowuniverse.crystallib.publisher.config
-import freeflowuniverse.crystallib.publisher
+import publisher.config
+import publisher
 import os
 
 pub fn sites_list(names []string) ? {

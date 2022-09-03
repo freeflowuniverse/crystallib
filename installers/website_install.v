@@ -1,11 +1,11 @@
 module installers
 
 import os
-import freeflowuniverse.crystallib.publisher.config
-import freeflowuniverse.crystallib.process
-import freeflowuniverse.crystallib.gittools
-import freeflowuniverse.crystallib.texttools
-import freeflowuniverse.crystallib.installers.nodejs
+import publisher.config
+import process
+import gittools
+import texttools
+import installers.nodejs
 
 // is the one coming from command line
 pub fn web(doreset bool, clean bool) ? {

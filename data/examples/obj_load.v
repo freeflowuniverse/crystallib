@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.data.model
+import data.model
 
 fn do() ? {
 	mut df := model.factory()

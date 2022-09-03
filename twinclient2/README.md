@@ -43,7 +43,7 @@ id := tw2_client.send('twin.get_my_twin_id', '{}') or { // handle the error }
 
 ## examples:
 ```v 
-import freeflowuniverse.crystallib.twinclient2 as tw2
+import twinclient2 as tw2
 mut tw2_client := tw2.init_client(mut ws_client)
 go fn [mut tw2_client]() {
     payload := Machines{

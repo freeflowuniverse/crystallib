@@ -2,7 +2,7 @@ module ipaddress
 
 import regex
 import os
-import freeflowuniverse.crystallib.process
+import process
 
 pub struct IPAddress {
 pub:

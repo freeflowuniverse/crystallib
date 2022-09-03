@@ -67,7 +67,7 @@ fn new_dir_empty(path string) ?Path {
 	return Path{
 		path: path
 		cat: Category.dir
-		exists: true
+		
 	}
 }
 
@@ -82,7 +82,7 @@ fn get_dir_exists(path string) ?Path {
 	return Path{
 		path: path
 		cat: Category.dir
-		exists: true
+		
 	}
 }
 
@@ -94,7 +94,6 @@ pub fn (path Path) absolute() string {
 
 fn (mut path Path) check() {
 	if os.exists(path.path) {
-		path.exists = true
 		if os.is_file(path.path) {
 			if os.is_link(path.path) {
 				path.cat = Category.linkfile
@@ -110,13 +109,11 @@ fn (mut path Path) check() {
 		} else {
 			panic('cannot define type: $path.path, is bug')
 		}
-	} else {
-		path.exists = false
 	}
 }
 
 fn (mut path Path) check_exists() ? {
-	if !path.exists {
+	if !path.exists() {
 		return error('Path $path needs to exist, error')
 	}
 }

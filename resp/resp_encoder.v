@@ -6,7 +6,7 @@ pub mut:
 }
 
 // build a new resp string
-// import freeflowuniverse.crystallib.resp
+// import resp
 // mut b := resp.builder_new()
 // b.add(resp.r_list_string(['a', 'b']))
 // b.add(resp.r_int(10))

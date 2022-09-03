@@ -1,6 +1,6 @@
 module gittools
 
-import freeflowuniverse.crystallib.path
+import pathlib
 
 pub struct RepoGetFromUrlArgs {
 mut:

@@ -1,7 +1,7 @@
 module books
 
-import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.markdowndocs
+import pathlib
+import markdowndocs
 
 pub enum PageStatus {
 	unknown

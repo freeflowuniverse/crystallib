@@ -1,4 +1,4 @@
-import freeflowuniverse.crystallib.httpconnection
+import httpconnection
 import json
 
 // used for testing

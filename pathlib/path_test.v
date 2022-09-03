@@ -1,4 +1,4 @@
-import freeflowuniverse.crystallib.path
+import pathlib
 import os
 
 const testpath = os.dir(@FILE) + '/test_path'
@@ -7,10 +7,10 @@ fn test_get() {
 	println('************ TEST_Get ************')
 	println(testpath)
 	fp := pathlib.get('$testpath/newfile1')
-	assert fp.cat == path.Category.file
+	assert fp.cat == pathlib.Category.file
 	println('File Result: $fp')
 	dp := pathlib.get('$testpath')
-	assert dp.cat == path.Category.dir
+	assert dp.cat == pathlib.Category.dir
 	println('Dir Result: $dp')
 }
 
@@ -33,7 +33,7 @@ fn test_parent() {
 	println('************ TEST_test_parent ************')
 	mut test_path_dir := pathlib.get('$testpath')
 	mut p := pathlib.get('$testpath/newfile1')
-	parent_dir := p.parent()
+	parent_dir := p.parent() or {panic(err)}
 	assert parent_dir == test_path_dir
 	println('Parent Function working correctly')
 }
@@ -95,28 +95,28 @@ fn test_file_find() {
 fn test_list() {
 	println('************ TEST_list ************')
 	mut test_path_dir := pathlib.get('$testpath')
-	result := test_path_dir.list('', true) or { panic(err) }
+	result := test_path_dir.list(recursive:true) or { panic(err) }
 	println(result)
 }
 
 fn test_list_dirs() {
 	println('************ TEST_list_dir ************')
 	mut test_path_dir := pathlib.get('$testpath')
-	result := test_path_dir.dir_list('', true) or { panic(err) }
+	result := test_path_dir.dir_list(recursive:true) or { panic(err) }
 	println(result)
 }
 
 fn test_list_files() {
 	println('************ TEST_list_files ************')
 	mut test_path_dir := pathlib.get('$testpath')
-	result := test_path_dir.file_list('', true) or { panic(err) }
+	result := test_path_dir.file_list(recursive:true) or { panic(err) }
 	println(result)
 }
 
 fn test_list_links() {
 	println('************ TEST_list_link ************')
 	mut test_path_dir := pathlib.get('$testpath')
-	result := test_path_dir.link_list('') or { panic(err) }
+	result := test_path_dir.link_list(pathlib.ListArgs{}) or { panic(err) }
 	println(result)
 }
 
@@ -136,7 +136,7 @@ fn test_copy() {
 	//- Copy /test_path/newfile1 to /test_path/test_parent
 	mut dest_dir := pathlib.get('$testpath/test_parent')
 	mut src_f := pathlib.get('$testpath/newfile1')
-	dest_file := src_f.copy(dest_dir) or { panic(err) }
+	dest_file := src_f.copy(mut dest_dir) or { panic(err) }
 	assert dest_file.path == '$testpath/test_parent/newfile1'
 	println('Copy function works correctly')
 }
@@ -144,8 +144,8 @@ fn test_copy() {
 // TODO need other test
 // fn test_link(){
 // 	println('************ TEST_link ************')
-// 	mut dest_p:= path.Path{path:"$testpath/linkdir1", cat:path.Category.linkdir, exists:path.false}
-// 	mut lp := path.Path{path:"/workspace/crystallib/path", cat:path.Category.dir, exists:path.true}
+// 	mut dest_p:= path.Path{path:"$testpath/linkdir1", cat:pathlib.Category.linkdir, exists:path.false}
+// 	mut lp := path.Path{path:"/workspace/crystallib/path", cat:pathlib.Category.dir, exists:path.true}
 // 	lp.link(mut dest_p) or {panic(err)}
 // 	mut get_link := pathlib.get("$testpath/linkdir1")
 // 	assert get_link.exists()

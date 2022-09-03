@@ -1,5 +1,5 @@
-import freeflowuniverse.crystallib.docker
-import freeflowuniverse.crystallib.builder
+import docker
+import builder
 
 fn test_docker1() {
 	mut engine := engine_local() or { panic(err) }

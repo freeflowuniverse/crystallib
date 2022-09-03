@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.appsbox.penapp
+import appsbox.penapp
 
 fn do() ? {
 	mut app := penapp.get()

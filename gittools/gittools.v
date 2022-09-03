@@ -1,6 +1,6 @@
 module gittools
 
-import freeflowuniverse.crystallib.texttools
+import texttools
 import os
 
 fn init_gitstructure() GitStructure {

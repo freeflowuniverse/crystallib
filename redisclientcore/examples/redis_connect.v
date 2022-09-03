@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.redisclientcore
+import redisclientcore
 import time
 
 fn conn_for_thread(c int) {

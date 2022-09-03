@@ -2,8 +2,8 @@ module redisserver
 
 // NEED TO USE RESP2
 import net
-import freeflowuniverse.crystallib.resp
-import freeflowuniverse.crystallib.redisclient
+import resp
+import redisclient
 
 pub struct RedisInstance {
 pub mut:

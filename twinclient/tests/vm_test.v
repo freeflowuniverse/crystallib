@@ -1,4 +1,4 @@
-import freeflowuniverse.crystallib.twinclient
+import twinclient
 
 pub struct MachinesTestData {
 pub mut:

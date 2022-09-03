@@ -4,8 +4,8 @@ import os
 import x.json2
 import json
 import net.http
-import freeflowuniverse.crystallib.redisclientcore
-import freeflowuniverse.crystallib.redisclient
+import redisclientcore
+import redisclient
 import crypto.md5
 
 struct CoinMarketConnection {
