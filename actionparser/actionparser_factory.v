@@ -31,11 +31,11 @@ pub fn (mut parser ActionsParser) add(path string) ? {
 	}
 }
 
-//
-pub fn content_parse(content string) ?ActionsParser {
+// parse text to actions struct
+pub fn text_parse(content string) ?ActionsParser {
 	mut parser := get()
 
-	parser.content_parse(content)?
+	parser.text_parse(content)?
 
 	return parser
 }

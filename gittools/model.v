@@ -28,7 +28,7 @@ pub:
 	// only use when custom path
 	path string
 pub mut:
-	gs    &GitStructure [skip]
+	gs    &GitStructure [str: skip]
 	addr  GitAddr
 	state GitStatus
 }

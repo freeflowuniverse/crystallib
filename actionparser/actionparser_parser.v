@@ -1,7 +1,8 @@
 module actionparser
 
 import os
-import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.params
+import texttools
 
 enum ParseBlockStatus {
 	start
@@ -38,10 +39,10 @@ fn (mut parser ActionsParser) file_parse(path string) ? {
 	}
 	content := os.read_file(path) or { panic('Failed to load file $path') }
 
-	parser.content_parse(content)?
+	parser.text_parse(content)?
 }
 
-fn (mut parser ActionsParser) content_parse(content string) ? {
+fn (mut parser ActionsParser) text_parse(content string) ? {
 	blocks := parse_into_blocks(content)?
 	parser.parse_actions(blocks)
 }
@@ -102,7 +103,7 @@ fn (mut block Block) clean() {
 }
 
 fn (mut parser ActionsParser) parse_block(block Block) {
-	params := texttools.text_to_params(block.content) or { panic(err) }
+	params := params.text_to_params(block.content) or { panic(err) }
 
 	mut action := Action{
 		name: block.name

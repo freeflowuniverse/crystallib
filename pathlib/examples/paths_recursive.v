@@ -1,7 +1,7 @@
 module main
 
 import freeflowuniverse.crystallib.pathlib
-import texttools
+import params
 import os
 
 const testpath = os.dir(@FILE) + '/test_path'

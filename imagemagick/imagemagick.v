@@ -1,6 +1,5 @@
 module imagemagick
 
-import os
 import freeflowuniverse.crystallib.pathlib
 import params
 import freeflowuniverse.crystallib.process

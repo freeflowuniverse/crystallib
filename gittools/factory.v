@@ -18,6 +18,7 @@ pub mut:
 	pull        bool   // means we will pull even if the directory exists
 	reset       bool   // be careful, this means we will reset when pulling
 	light       bool   // if set then will clone only last history for all branches		
+	log         bool   // means we log the git statements
 }
 
 // struct GSConfig{
@@ -29,6 +30,7 @@ pub mut:
 // light       bool  // if set then will clone only last history for all branches		
 // }
 pub fn get(config GSConfig) ?GitStructure {
+	println('*************')
 	mut gs := GitStructure{
 		config: config
 	}
@@ -187,9 +189,12 @@ fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []strin
 }
 
 pub fn (mut gs GitStructure) codepath() string {
+	mut p := ''
 	if gs.config.multibranch {
-		return gs.config.root + '/multi'
+		p = gs.config.root + '/multi'
 	} else {
-		return gs.config.root
+		p = gs.config.root
 	}
+	// println(" ***** $p")
+	return p
 }
