@@ -1,7 +1,7 @@
 module fftools
 
-import builder
-import sshagent
+import freeflowuniverse.crystallib.builder
+import freeflowuniverse.crystallib.sshagent
 import os
 
 enum FFToolsState {

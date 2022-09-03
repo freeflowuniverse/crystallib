@@ -1,8 +1,8 @@
 module gittools
 
 import os
-import process
-import sshagent
+import freeflowuniverse.crystallib.process
+import freeflowuniverse.crystallib.sshagent
 // import pathlib
 
 // check if sshkey for a repo exists in the homedir/.ssh

@@ -1,8 +1,8 @@
 module sshagent
 
-import console
+import freeflowuniverse.crystallib.console
 import os
-import pathlib
+import freeflowuniverse.crystallib.pathlib
 
 fn listsplit(key string) string {
 	if key.trim(' ') == '' {

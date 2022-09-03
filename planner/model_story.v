@@ -1,6 +1,6 @@
 module planner
 
-import texttools
+import freeflowuniverse.crystallib.texttools
 
 pub enum StoryStatus {
 	suggested

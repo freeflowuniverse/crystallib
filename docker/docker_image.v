@@ -1,6 +1,6 @@
 module docker
 
-import builder
+import freeflowuniverse.crystallib.builder
 import time
 
 [heap]

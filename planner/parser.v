@@ -1,7 +1,7 @@
 module planner
 
 import time
-import texttools
+import freeflowuniverse.crystallib.texttools
 
 fn line_parser_params(line string) ?(bool, texttools.Params) {
 	if line.starts_with('?') {

@@ -2,7 +2,9 @@ module pathlib
 
 // join parts to a path and return path, returns a new path
 pub fn (mut p Path) join(parts ...string) ?Path {
-	mut p2 := Path{path: p.path}
+	mut p2 := Path{
+		path: p.path
+	}
 	if !p2.is_dir() {
 		return error('can only extend dir, $p2.path')
 	}

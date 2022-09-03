@@ -1,6 +1,6 @@
 module markdowndocs
 
-import texttools
+import freeflowuniverse.crystallib.texttools
 
 pub struct Action {
 pub mut:

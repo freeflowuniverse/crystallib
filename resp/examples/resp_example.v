@@ -1,6 +1,6 @@
 module main
 
-import resp
+import freeflowuniverse.crystallib.resp
 import crypto.ed25519
 
 fn do() ? {

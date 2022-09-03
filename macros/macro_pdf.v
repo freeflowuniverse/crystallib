@@ -1,6 +1,6 @@
 module publisher
 
-import texttools
+import freeflowuniverse.crystallib.texttools
 
 pub fn macro_pdf(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	url := macro.params.get('url')?

@@ -2,7 +2,7 @@ module planner
 
 import os
 import json
-import texttools
+import freeflowuniverse.crystallib.texttools
 
 // use path="" if you want to go from os.home_dir()/code/	
 pub fn (mut planner Planner) load(path string) ? {

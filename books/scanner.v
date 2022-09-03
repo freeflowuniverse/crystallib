@@ -1,7 +1,7 @@
 module books
 
-import texttools
-import pathlib
+import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.pathlib
 import os
 
 // remember the file, so we know if we have duplicates

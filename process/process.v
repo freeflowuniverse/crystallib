@@ -2,7 +2,7 @@ module process
 
 import os
 import time
-import texttools
+import freeflowuniverse.crystallib.texttools
 import io.util
 
 pub struct Command {

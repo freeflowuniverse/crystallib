@@ -1,7 +1,7 @@
 module tokens
 
 import json
-import httpcache
+import freeflowuniverse.crystallib.httpcache
 
 //
 // Raw JSON struct

@@ -1,7 +1,7 @@
 module docker
 
-import builder
-import sshagent
+import freeflowuniverse.crystallib.builder
+import freeflowuniverse.crystallib.sshagent
 
 [heap]
 pub struct DockerFactory {

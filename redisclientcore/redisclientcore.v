@@ -1,7 +1,7 @@
 module redisclientcore
 
-import redisclient
-import appsbox.redisapp
+import freeflowuniverse.crystallib.redisclient
+import freeflowuniverse.crystallib.appsbox.redisapp
 
 pub fn get() &redisclient.Redis {
 	// tcpport := 7777

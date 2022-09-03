@@ -1,7 +1,7 @@
 module httpconnection
 
 import net.http
-import redisclientcore
+import freeflowuniverse.crystallib.redisclientcore
 
 fn init_factory() HTTPConnections {
 	mut htpc := HTTPConnections{}

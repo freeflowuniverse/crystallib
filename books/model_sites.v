@@ -1,7 +1,7 @@
 module books
 
-import pathlib
-import texttools
+import freeflowuniverse.crystallib.pathlib
+import freeflowuniverse.crystallib.texttools
 
 [heap]
 struct Sites {

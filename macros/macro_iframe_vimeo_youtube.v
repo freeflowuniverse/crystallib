@@ -1,6 +1,6 @@
 module publisher
 
-import texttools
+import freeflowuniverse.crystallib.texttools
 
 fn iframe(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	mut width := macro.params.get_int_default('width', 800)?

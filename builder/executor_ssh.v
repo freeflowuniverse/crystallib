@@ -2,7 +2,7 @@ module builder
 
 import os
 import rand
-import process
+import freeflowuniverse.crystallib.process
 
 [heap]
 pub struct ExecutorSSH {

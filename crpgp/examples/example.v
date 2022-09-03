@@ -1,4 +1,4 @@
-import crpgp
+import freeflowuniverse.crystallib.crpgp
 
 fn test_pgp(ssk crpgp.SignedSecretKey, spk crpgp.SignedPublicKey) ? {
 	message := 'these are my secrets\n12345'

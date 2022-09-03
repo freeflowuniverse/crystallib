@@ -1,6 +1,6 @@
 module redisclient
 
-import resp
+import freeflowuniverse.crystallib.resp
 import time
 
 pub fn (mut r Redis) ping() ?string {

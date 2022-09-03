@@ -1,6 +1,6 @@
 module publisher
 
-import texttools
+import freeflowuniverse.crystallib.texttools
 
 fn macro_def(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	mut categories := macro.params.get_list('category')?

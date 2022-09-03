@@ -1,8 +1,8 @@
 module imagemagick
 
 import os
-import pathlib
-import process
+import freeflowuniverse.crystallib.pathlib
+import freeflowuniverse.crystallib.process
 
 pub struct Images {
 pub mut:

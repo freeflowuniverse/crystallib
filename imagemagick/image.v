@@ -1,12 +1,12 @@
 module imagemagick
 
-import pathlib
-import process
+import freeflowuniverse.crystallib.pathlib
+import freeflowuniverse.crystallib.process
 import os
 
 pub struct Image {
 pub mut:
-	path         path.Path
+	path         pathlib.Path
 	size_x       int
 	size_y       int
 	resolution_x int
@@ -16,7 +16,7 @@ pub mut:
 }
 
 pub fn image_new(path0 string) ?Image {
-	mut p := path.Path{
+	mut p := pathlib.Path{
 		path: path0
 	}
 	mut i := Image{
@@ -34,8 +34,8 @@ pub fn image_downsize(path0 string) ?Image {
 
 pub fn (mut image Image) init() ? {
 	if image.size_kbyte == 0 {
-		// println(" - $image.path.path")
-		image.size_kbyte = image.path.size_kb()
+		// println(" - $image.path")
+		image.size_kbyte = image.path.size_kb()?
 		image.path.normalize()?
 	}
 }
@@ -45,8 +45,8 @@ pub fn (mut image Image) identify_verbose() ? {
 		// means was already done
 		return
 	}
-	println(' - identify: $image.path.path')
-	out := process.execute_silent("identify -verbose '$image.path.path'") or {
+	println(' - identify: $image.path')
+	out := process.execute_silent("identify -verbose '$image.path'") or {
 		return error('Could not get info from image, error:$err')
 	}
 	mut channel_stats := false
@@ -122,8 +122,8 @@ pub fn (mut image Image) identify() ? {
 		// means was already done
 		return
 	}
-	println(' - identify: $image.path.path')
-	mut out := process.execute_silent("identify -ping '$image.path.path'") or {
+	println(' - identify: $image.path')
+	mut out := process.execute_silent("identify -ping '$image.path'") or {
 		return error('Could not get info from image, error:$err')
 	}
 	out = out.trim(' \n')
@@ -154,7 +154,7 @@ fn (mut image Image) skip() bool {
 		return true
 	}
 	if image.size_kbyte < 400 {
-		// println("SMALLER  $image.path.path (size: $image.size_kbyte)")
+		// println("SMALLER  $image.path (size: $image.size_kbyte)")
 		return true
 	}
 	return false
@@ -166,7 +166,7 @@ fn (mut image Image) downsize(sourcedir string, backupdir string) ? {
 	if image.skip() {
 		return
 	}
-	println(' - PROCESS DOWNSIZE $image.path.path')
+	println(' - PROCESS DOWNSIZE $image.path')
 	if image.is_png() {
 		image.identify_verbose()?
 	} else {
@@ -179,14 +179,14 @@ fn (mut image Image) downsize(sourcedir string, backupdir string) ? {
 
 	if image.size_x > 2400 {
 		image.size_kbyte = 0
-		println('   - convert image resize 50%: $image.path.path')
-		process.execute_silent("convert '$image.path.path' -resize 50% '$image.path.path'")?
+		println('   - convert image resize 50%: $image.path')
+		process.execute_silent("convert '$image.path' -resize 50% '$image.path'")?
 		// println(image)
 		image.init()?
 	} else if image.size_kbyte > 300 && image.size_x > 1800 {
 		image.size_kbyte = 0
-		println('   - convert image resize 75%: $image.path.path')
-		process.execute_silent("convert '$image.path.path' -resize 75% '$image.path.path'")?
+		println('   - convert image resize 75%: $image.path')
+		process.execute_silent("convert '$image.path' -resize 75% '$image.path'")?
 		image.init()?
 	}
 
@@ -194,16 +194,16 @@ fn (mut image Image) downsize(sourcedir string, backupdir string) ? {
 		if image.size_kbyte > 400 && !image.transparent {
 			path_dest := image.path.path_no_ext() + '.jpg'
 			println('   - convert image jpg: $path_dest')
-			process.execute_silent("convert '$image.path.path' '$path_dest'")?
+			process.execute_silent("convert '$image.path' '$path_dest'")?
 			if os.exists(path_dest) {
 				os.rm(image.path.path)?
 			}
-			image.path.path = path_dest
+			image.path = pathlib.get(path_dest)
 		}
 	}
 	// means we should not process next time, we do this by adding _ at end of name
 	path_dest2 := image.path.path_get_name_with_underscore()
 	println('    - add _ at end of image: $path_dest2')
 	os.mv(image.path.path, path_dest2)?
-	image.path.path = path_dest2
+	image.path = pathlib.get(path_dest2)
 }

@@ -1,6 +1,6 @@
 module builder
 
-import serializers
+import freeflowuniverse.crystallib.serializers
 
 pub fn (mut node Node) done_set(key string, val string) ? {
 	if key in node.done {

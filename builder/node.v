@@ -1,7 +1,7 @@
 module builder
 
-import rediscache
-import serializers
+import freeflowuniverse.crystallib.rediscache
+import freeflowuniverse.crystallib.serializers
 import os
 
 pub enum PlatformType {

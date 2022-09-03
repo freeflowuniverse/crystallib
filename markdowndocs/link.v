@@ -1,6 +1,6 @@
 module markdowndocs
 
-import texttools
+import freeflowuniverse.crystallib.texttools
 import os
 
 // add link to the page

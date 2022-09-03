@@ -1,31 +1,37 @@
 module pathlib
 
 import os
-import texttools
+import freeflowuniverse.crystallib.texttools
 
 // check path exists
 pub fn (mut path Path) exists() bool {
-	return os.exists(path.path)
+	if path.exist == .unknown{
+		if os.exists(path.path){
+			path.exist = .yes
+		}else{
+			path.exist = .no
+		}
+	}
+	return path.exist == .yes
 }
 
-//will rewrite the path to lower_case if not the case yet
-//will also remove weird chars
-//if changed will return true
-pub fn (mut path Path) namefix()?bool {
-	if path.cat == .file || path.cat == .dir{
-		if ! path.exists(){
-			return error("path $path does not exist, cannot namefix")
-		}		
-		if texttools.name_fix(path.name()) != path.name(){
-			pathnew := os.join_path(os.dir(path.path),texttools.name_fix(path.name()))
-			os.mv(path.path,pathnew)?
+// will rewrite the path to lower_case if not the case yet
+// will also remove weird chars
+// if changed will return true
+pub fn (mut path Path) namefix() ?bool {
+	if path.cat == .file || path.cat == .dir {
+		if !path.exists() {
+			return error('path $path does not exist, cannot namefix')
+		}
+		if texttools.name_fix(path.name()) != path.name() {
+			pathnew := os.join_path(os.dir(path.path), texttools.name_fix(path.name()))
+			os.mv(path.path, pathnew)?
 			path.path = pathnew
 			return true
 		}
 	}
 	return false
 }
-
 
 // get relative path in relation to sourcepath
 pub fn (path Path) path_relative(sourcepath string) string {
@@ -49,13 +55,13 @@ pub fn (path Path) parent() ?Path {
 		return Path{
 			path: '/'
 			cat: Category.dir
-			
+			exist: .yes
 		}
 	}
 	return Path{
 		path: parent
 		cat: Category.dir
-		
+		exist: .yes
 	}
 }
 
@@ -109,6 +115,7 @@ pub fn (mut path Path) delete() ? {
 				return error('Path cannot be unknown type')
 			}
 		}
+		path.exist = .no
 	}
 }
 
@@ -134,7 +141,6 @@ pub fn (mut path Path) dir_find(tofind string) ?Path {
 		return Path{
 			path: dir_path
 			cat: Category.dir
-			
 		}
 	}
 	return error('$tofind is not in $path.path')
@@ -163,17 +169,17 @@ pub fn (mut path Path) file_find(tofind string) ?Path {
 		return Path{
 			path: file_path
 			cat: Category.file
-			
+			exist: .yes
 		}
 	}
 	return error('$tofind is not in $path.path')
 }
 
-pub struct ListArgs{
-	tofind string //if we look for certain filter
-	recursive bool //std off, means we recursive not over dirs by default
-
+pub struct ListArgs {
+	tofind    string // if we look for certain filter
+	recursive bool   // std off, means we recursive not over dirs by default
 }
+
 // list all files & dirs, follow symlinks
 // return as list of Paths
 // param tofind: part of name (relative to string)
@@ -293,13 +299,11 @@ pub fn (mut path Path) copy(mut dest Path) ?Path {
 		return Path{
 			path: dest_path
 			cat: Category.file
-			
 		}
 	}
 	return Path{
 		path: dest.path
 		cat: dest.cat
-		
 	}
 }
 
@@ -315,14 +319,12 @@ pub fn (mut path Path) link(mut dest Path) ?Path {
 			return Path{
 				path: dest.path
 				cat: Category.linkdir
-				
 			}
 		}
 		.file, .linkfile {
 			return Path{
 				path: dest.path
 				cat: Category.linkfile
-				
 			}
 		}
 		.unknown {

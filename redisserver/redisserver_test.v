@@ -1,5 +1,5 @@
-import redisserver
-import redisclient
+import freeflowuniverse.crystallib.redisserver
+import freeflowuniverse.crystallib.redisclient
 import time
 
 fn setup() redisserver.RedisSrv {

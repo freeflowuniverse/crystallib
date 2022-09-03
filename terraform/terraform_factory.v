@@ -1,10 +1,10 @@
 module terraform
 
-import builder
+import freeflowuniverse.crystallib.builder
 import os
 import crypto.md5
-import redisclient
-import rootpath
+import freeflowuniverse.crystallib.redisclient
+import freeflowuniverse.crystallib.rootpath
 
 pub enum TerraformFactoryStatus {
 	init

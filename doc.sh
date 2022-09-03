@@ -1,3 +1,5 @@
+set -ex
+rm -rf _docs
 v fmt -w .
 v doc -f html -m . -readme
 

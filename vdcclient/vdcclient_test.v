@@ -1,4 +1,4 @@
-import vdcclient
+import freeflowuniverse.crystallib.vdcclient
 
 fn setup() vdcclient.Client {
 	return vdcclient.Client{

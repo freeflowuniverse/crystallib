@@ -1,4 +1,4 @@
-import pathlib
+import freeflowuniverse.crystallib.pathlib
 import os
 
 const testpath = os.dir(@FILE) + '/test_path'
@@ -33,7 +33,7 @@ fn test_parent() {
 	println('************ TEST_test_parent ************')
 	mut test_path_dir := pathlib.get('$testpath')
 	mut p := pathlib.get('$testpath/newfile1')
-	parent_dir := p.parent() or {panic(err)}
+	parent_dir := p.parent() or { panic(err) }
 	assert parent_dir == test_path_dir
 	println('Parent Function working correctly')
 }
@@ -95,21 +95,21 @@ fn test_file_find() {
 fn test_list() {
 	println('************ TEST_list ************')
 	mut test_path_dir := pathlib.get('$testpath')
-	result := test_path_dir.list(recursive:true) or { panic(err) }
+	result := test_path_dir.list(recursive: true) or { panic(err) }
 	println(result)
 }
 
 fn test_list_dirs() {
 	println('************ TEST_list_dir ************')
 	mut test_path_dir := pathlib.get('$testpath')
-	result := test_path_dir.dir_list(recursive:true) or { panic(err) }
+	result := test_path_dir.dir_list(recursive: true) or { panic(err) }
 	println(result)
 }
 
 fn test_list_files() {
 	println('************ TEST_list_files ************')
 	mut test_path_dir := pathlib.get('$testpath')
-	result := test_path_dir.file_list(recursive:true) or { panic(err) }
+	result := test_path_dir.file_list(recursive: true) or { panic(err) }
 	println(result)
 }
 
@@ -144,8 +144,8 @@ fn test_copy() {
 // TODO need other test
 // fn test_link(){
 // 	println('************ TEST_link ************')
-// 	mut dest_p:= path.Path{path:"$testpath/linkdir1", cat:pathlib.Category.linkdir, exists:path.false}
-// 	mut lp := path.Path{path:"/workspace/crystallib/path", cat:pathlib.Category.dir, exists:path.true}
+// 	mut dest_p:= path.path{path:"$testpath/linkdir1", cat:pathlib.Category.linkdir, exists:path.false}
+// 	mut lp := path.path{path:"/workspace/crystallib/path", cat:pathlib.Category.dir, exists:path.true}
 // 	lp.link(mut dest_p) or {panic(err)}
 // 	mut get_link := pathlib.get("$testpath/linkdir1")
 // 	assert get_link.exists()

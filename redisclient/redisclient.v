@@ -6,7 +6,7 @@ import net
 // import sync
 // import strconv
 import time
-import resp
+import freeflowuniverse.crystallib.resp
 
 const default_read_timeout = net.infinite_timeout
 

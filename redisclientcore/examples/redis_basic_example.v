@@ -1,6 +1,6 @@
 module main
 
-import redisclientcore
+import freeflowuniverse.crystallib.redisclientcore
 
 fn redistest() ? {
 	mut redis := redisclientcore.get()

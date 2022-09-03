@@ -2,7 +2,7 @@ module terraform
 
 import os
 import crypto.md5
-import rootpath
+import freeflowuniverse.crystallib.rootpath
 import threefoldtech.vgrid.gridproxy
 // import threefoldtech.vgrid.explorer
 
@@ -126,15 +126,15 @@ pub fn (mut tfd TerraformDeployment) gridproxy() &gridproxy.GridproxyConnection 
 	return gp
 }
 
-// retrieve right explorer starting from terraform deployment
-pub fn (mut tfd TerraformDeployment) explorer() &explorer.ExplorerConnection {
-	net2 := match tfd.tfgridnet {
-		.main { explorer.TFGridNet.main }
-		.test { explorer.TFGridNet.test }
-		.dev { explorer.TFGridNet.dev }
-	}
+// // retrieve right explorer starting from terraform deployment
+// pub fn (mut tfd TerraformDeployment) explorer() &explorer.ExplorerConnection {
+// 	net2 := match tfd.tfgridnet {
+// 		.main { explorer.TFGridNet.main }
+// 		.test { explorer.TFGridNet.test }
+// 		.dev { explorer.TFGridNet.dev }
+// 	}
 
-	mut explorer := explorer.get(net2)
+// 	mut explorer := explorer.get(net2)
 
-	return explorer
-}
+// 	return explorer
+// }

@@ -3,7 +3,7 @@ module github
 import x.json2
 import json
 import net.http
-import redisclient
+import freeflowuniverse.crystallib.redisclient
 import crystaljson
 import os
 

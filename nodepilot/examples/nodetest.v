@@ -1,6 +1,6 @@
 module main
 
-import nodepilot
+import freeflowuniverse.crystallib.nodepilot
 
 fn main() {
 	nodeip := '300:c282:7f31:4aa4:7af6:297:a65a:28f4'

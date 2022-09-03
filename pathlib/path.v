@@ -6,6 +6,7 @@ pub struct Path {
 pub mut:
 	path string
 	cat  Category
+	exist UYN
 }
 
 pub enum Category {
@@ -15,6 +16,13 @@ pub enum Category {
 	linkdir
 	linkfile
 }
+
+enum UYN {
+	unknown
+	yes
+	no
+}
+
 
 // gets Path object, will check if it exists, is dir_file, ...
 pub fn get(path string) Path {
@@ -67,7 +75,6 @@ fn new_dir_empty(path string) ?Path {
 	return Path{
 		path: path
 		cat: Category.dir
-		
 	}
 }
 
@@ -82,7 +89,6 @@ fn get_dir_exists(path string) ?Path {
 	return Path{
 		path: path
 		cat: Category.dir
-		
 	}
 }
 
@@ -94,6 +100,7 @@ pub fn (path Path) absolute() string {
 
 fn (mut path Path) check() {
 	if os.exists(path.path) {
+		path.exist=.yes
 		if os.is_file(path.path) {
 			if os.is_link(path.path) {
 				path.cat = Category.linkfile
@@ -109,6 +116,8 @@ fn (mut path Path) check() {
 		} else {
 			panic('cannot define type: $path.path, is bug')
 		}
+	}else{
+		path.exist=.no
 	}
 }
 
