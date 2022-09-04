@@ -41,12 +41,12 @@ pub enum KeyType {
 // examples:
 //   localhost:6379
 //   /tmp/redis-default.sock
-pub fn get(addr string) ?&Redis {
+pub fn get(addr string) ?Redis {
 	mut r := Redis{
 		addr: addr
 	}
 	r.socket_connect()?
-	return &r
+	return r
 }
 
 pub fn (mut r Redis) socket_connect() ? {

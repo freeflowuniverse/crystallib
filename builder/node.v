@@ -17,31 +17,36 @@ pub enum CPUType {
 	arm
 }
 
+
+[heap]
 pub struct Node {
+mut:
+	executor    Executor
 pub:
 	name string = 'mymachine'
-pub mut:
-	executor    &Executor              [str: skip]
-	tmux        &Tmux                  [str: skip]
+pub mut:      
+	cache       redisclient.RedisCache 
 	platform    PlatformType
 	cputype     CPUType
-	db          &DB                    [str: skip]
-	done        map[string]string
-	cache       redisclient.RedisCache [str: skip]
+	done        map[string]string	
 	environment map[string]string
+	db_path    string="/var/builderdb"
+	db_state 	   DBState
 }
+
 
 // format ipaddr: localhost:7777
 // format ipaddr: 192.168.6.6:7777
 // format ipaddr: 192.168.6.6
 // format ipaddr: any ipv6 addr
+// format ipaddr: if only name used then is localhost
 pub struct NodeArguments {
 	ipaddr      string
 	name        string
 	user        string = 'root'
 	debug       bool
 	reset       bool
-	redisclient redisclient.Redis
+	// redis 		&redisclient.Redis //if not specified will be local redisclient	
 }
 
 // get node connection to local machine
@@ -66,7 +71,7 @@ pub fn (mut builder BuilderFactory) node_get(name string) ?&Node {
 //- format ipaddr: 192.168.6.6:7777
 //- format ipaddr: 192.168.6.6
 //- format ipaddr: any ipv6 addr
-//- if only name used then is localhost
+//- if only name used then is localhost with localhost executor
 //
 //```
 // pub struct NodeArguments {
@@ -75,6 +80,7 @@ pub fn (mut builder BuilderFactory) node_get(name string) ?&Node {
 // 	user   string = "root"
 // 	debug  bool
 // 	reset bool
+//	redisclient &redisclient.Redis
 // 	}
 //```
 pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
@@ -86,46 +92,20 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
 		return builder.nodes[args.name]
 	}
 
+	eargs := ExecutorNewArguments {
+		ipaddr:args.ipaddr
+		user:args.user
+		debug:args.debug
+	}
+	mut executor:=executor_new(eargs)?
 	mut node := Node{
-		executor: &ExecutorLocal{}
-		db: &DB{}
-		tmux: &Tmux{
-			node: args.name
-		}
+		executor: &executor
+		cache: builder.redis.cache('node:$args.name')
 	}
-	if args.ipaddr == '' || args.ipaddr.starts_with('localhost')
-		|| args.ipaddr.starts_with('127.0.0.1') {
-		node = Node{
-			name: args.name
-			db: &DB{}
-			executor: &ExecutorLocal{
-				debug: args.debug
-			}
-			tmux: &Tmux{
-				node: args.name
-			}
-		}
-	} else {
-		ipaddr := ipaddress_new(args.ipaddr) or { return error('can not initialize ip address') }
-		node = Node{
-			name: args.name
-			db: &DB{}
-			executor: &ExecutorSSH{
-				ipaddr: ipaddr
-				user: args.user
-				debug: args.debug
-			}
-			tmux: &Tmux{
-				node: args.name
-			}
-		}
-	}
-
-	// is a cache in redis
-	node.cache = builder.redis.cache('node:$node.name')?
 
 	if args.reset {
 		node.cache.reset()?
+		node.db_reset()?
 	}
 
 	node_env_txt := node.cache.get('env') or {
@@ -138,22 +118,11 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
 		node.environment = serializers.text_to_map_string_string(node_env_txt)
 	}
 
-	mut db := DB{
-		node: &node
-	}
-
+	
 	// println(node.environment)
 	home_dir := node.environment['HOME'].trim(' ')
 	if home_dir == '' {
 		return error('HOME env cannot be empty for $node.name')
-	}
-	db.db_path = '$home_dir/.config/$db.db_dirname'
-	db.init()
-
-	node.db = &db
-
-	if args.reset {
-		node.db.reset()?
 	}
 
 	if !node.cache.exists('env') {
@@ -164,10 +133,7 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
 	init_platform_txt := node.cache.get('platform_type') or {
 		println(' - platform load')
 		node.platform_load()
-		if db.db_path == '' {
-			panic('db path cannot be empty')
-		}
-		node.executor.exec('mkdir -p $db.db_path')?
+		node.db_check()?
 		node.cache.set('platform_type', int(node.platform).str(), 3600)?
 		''
 	}
@@ -203,15 +169,12 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
 
 	builder.nodes[args.name] = &node
 
-	node.tmux.start()?
-	node.tmux.scan()?
-
 	return builder.nodes[args.name]
 }
 
 // get remote environment arguments in memory
 pub fn (mut node Node) environment_load() ? {
-	node.environment = node.executor.environ_get() or { return error('can not load env') }
+	node.environment = node.environ_get() or { return error('can not load env') }
 }
 
 pub fn (mut node Node) cache_clear() ? {

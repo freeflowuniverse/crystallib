@@ -1,11 +1,11 @@
-module builder
+module tmux
 
 import os
 
 [heap]
 struct Session {
 pub mut:
-	tmux    &Tmux              [skip] // reference back
+	tmux    &Tmux              [str: skip] // reference back
 	windows map[string]&Window // session has windows
 	name    string
 }
@@ -22,8 +22,9 @@ fn init_session(mut tmux Tmux, s_name string) ?Session {
 	return s
 }
 
+
 pub fn (mut s Session) create() ? {
-	mut e := s.tmux.node().executor
+	mut e := s.tmuxexecutor.db
 	res_opt := "-P -F '#{window_id}'"
 	cmd := "tmux new-session $res_opt -d -s $s.name 'sh'"
 	window_id_ := e.exec(cmd) or { return error("Can't create tmux session $s.name \n$cmd\n$err") }
@@ -42,12 +43,13 @@ pub fn (mut s Session) restart() ? {
 }
 
 pub fn (mut s Session) stop() ? {
-	mut e := s.tmux.node().executor
+	mut e := s.tmuxexecutor.db
 	e.exec('tmux kill-session -t $s.name') or {
 		// return error("Can't delete session $s.name - This happen when it is not found")
 		''
 	}
 }
+
 
 // window_name is the name of the window in session main (will always be called session main)
 // cmd to execute e.g. bash file
@@ -83,7 +85,7 @@ pub fn (mut s Session) window_new(args WindowArgs) ?Window {
 	}
 	s.windows[namel] = &w
 	w.create()?
-	// remove the notused one if there is at least one new one
+	// delete the notused one if there is at least one new one
 	// if namel != "notused" && "notused" in s.windows.keys(){
 	// 	// os.log(" DELETE notused")
 	// 	s.windows["notused"].delete()?
@@ -106,10 +108,10 @@ pub fn (mut s Session) window_get(name string) ?&Window {
 // pub fn (mut s Session) activate()? {	
 // 	active_session := s.tmux.redis.get('tmux:active_session') or { 'No active session found' }
 // 	if active_session != 'No active session found' && s.name != active_session {
-// 		s.tmux.node().executor.exec('tmux attach-session -t $active_session') or {
+// 		s.tmuxexecutor.db.exec('tmux attach-session -t $active_session') or {
 // 			return error('Fail to attach to current active session: $active_session \n$err')
 // 		}
-// 		s.tmux.node().executor.exec('tmux switch -t $s.name') or {
+// 		s.tmuxexecutor.db.exec('tmux switch -t $s.name') or {
 // 			return error("Can't switch to session $s.name \n$err")
 // 		}
 // 		s.tmux.redis.set('tmux:active_session', s.name) or { panic('Failed to set tmux:active_session') }

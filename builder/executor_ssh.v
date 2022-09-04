@@ -18,8 +18,8 @@ pub mut:
 
 fn (mut executor ExecutorSSH) init() ? {
 	if !executor.initialized {
-		// todo : don't load if already running
 
+		//TODO: need to call code from SSHAGENT do not reimplement here
 		process.execute_job(cmd: 'pgrep -x ssh-agent || eval `ssh-agent -s`') or {
 			return error('Could not start ssh-agent, error was: $err')
 		}
@@ -97,9 +97,9 @@ pub fn (mut executor ExecutorSSH) file_exists(path string) bool {
 }
 
 // carefull removes everything
-pub fn (mut executor ExecutorSSH) remove(path string) ? {
+pub fn (mut executor ExecutorSSH) delete(path string) ? {
 	if executor.debug {
-		println(' - $executor.ipaddr.addr file remove: $path')
+		println(' - $executor.ipaddr.addr file delete: $path')
 	}
 	executor.exec('rm -rf $path') or { panic(err) }
 }

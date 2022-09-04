@@ -2,6 +2,8 @@ module builder
 
 // import regex
 
+//TODO double with module IPADDRESS
+
 pub struct IPAddress {
 pub:
 	addr string
@@ -53,11 +55,11 @@ pub fn ipaddress_new(addr_string string) ?IPAddress {
 	return ip
 }
 
-pub fn (mut ipaddr IPAddress) ping(mut executor Executor) bool {
+pub fn (mut ipaddr IPAddress) ping(mut node Node) bool {
 	if ipaddr.cat == IpAddressType.ipv4 {
-		executor.exec('ping -c 3 $ipaddr.addr') or { return false }
+		node.exec('ping -c 3 $ipaddr.addr') or { return false }
 	} else {
-		executor.exec('ping -6 -c 3 $ipaddr.addr') or { return false }
+		node.exec('ping -6 -c 3 $ipaddr.addr') or { return false }
 	}
 	return true
 }

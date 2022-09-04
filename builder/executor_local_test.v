@@ -13,7 +13,7 @@ fn test_file_operations() {
 	assert text == 'abc'
 	mut exists := e.file_exists('/tmp/abc.txt')
 	assert exists == true
-	e.remove('/tmp/abc.txt') or { panic(err) }
+	e.delete('/tmp/abc.txt') or { panic(err) }
 	exists = e.file_exists('/tmp/abc.txt')
 	assert exists == false
 }

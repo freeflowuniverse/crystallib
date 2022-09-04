@@ -1,4 +1,4 @@
-module builder
+module swarm
 
 pub struct SwarmArgs {
 	reset bool

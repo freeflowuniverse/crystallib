@@ -41,7 +41,7 @@ fn test_file_operations() {
 	assert text == 'ssh'
 	mut exists := e.file_exists(filepath)
 	assert exists == true
-	e.remove(filepath) or { panic(err) }
+	e.delete(filepath) or { panic(err) }
 	exists = e.file_exists(filepath)
 	assert exists == false
 }

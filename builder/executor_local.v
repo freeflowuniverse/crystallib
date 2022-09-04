@@ -45,7 +45,7 @@ pub fn (mut executor ExecutorLocal) debug_off() {
 }
 
 // carefull removes everything
-pub fn (mut executor ExecutorLocal) remove(path string) ? {
+pub fn (mut executor ExecutorLocal) delete(path string) ? {
 	if os.is_file(path) || os.is_link(path) {
 		return os.rm(path)
 	} else if os.is_dir(path) {

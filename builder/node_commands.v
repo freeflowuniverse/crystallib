@@ -8,7 +8,7 @@ import os
 
 // check command exists on the platform, knows how to deal with different platforms
 pub fn (mut node Node) cmd_exists(cmd string) bool {
-	_ := node.executor.exec('which $cmd') or { return false }
+	_ := node.exec('which $cmd') or { return false }
 	return true
 }
 
@@ -17,7 +17,7 @@ pub mut:
 	cmd              string
 	period           int // period in which we check when this was done last, if 0 then period is indefinite
 	reset            bool = true
-	remove_installer bool = true // remove the installer
+	remove_installer bool = true // delete the installer
 	description      string
 	stdout           bool = true
 	checkkey         string // if used will use this one in stead of hash of cmd, to check if was executed already
@@ -27,7 +27,7 @@ pub mut:
 pub fn (mut node Node) ipaddr_pub_get() ?string {
 	if !node.done_exists('ipaddr') {
 		cmd := 'dig @resolver4.opendns.com myip.opendns.com +short'
-		res := node.executor.exec(cmd)?
+		res := node.exec(cmd)?
 		node.done_set('ipaddr', res.trim('\n').trim(' \n'))?
 	}
 	mut ipaddr := node.done_get('ipaddr')?
@@ -47,7 +47,7 @@ pub fn (mut node Node) ipaddr_pub_get() ?string {
 //	checkkey string //if used will use this one in stead of hash of cmd, to check if was executed already
 // }
 // ```
-pub fn (mut node Node) exec(args NodeExecCmd) ? {
+pub fn (mut node Node) exec_cmd(args NodeExecCmd) ? {
 	// println(args)
 	mut cmd := args.cmd
 	mut now_epoch := time.now().unix_time()
@@ -86,15 +86,15 @@ pub fn (mut node Node) exec(args NodeExecCmd) ? {
 	}
 
 	if args.reset && args.tmpdir.len > 2 {
-		node.executor.remove(args.tmpdir)?
+		node.delete(args.tmpdir)?
 	}
 
 	mut r_path := '/tmp/${hhash}.sh'
 	if args.tmpdir.len > 2 {
 		r_path = '$args.tmpdir/installer.sh'
-		node.executor.exec_silent('mkdir -p $args.tmpdir')?
+		node.exec_silent('mkdir -p $args.tmpdir')?
 	}
-	node.executor.file_write(r_path, cmd)?
+	node.file_write(r_path, cmd)?
 	if args.tmpdir.len > 2 {
 		cmd = "mkdir -p $args.tmpdir && cd $args.tmpdir && export TMPDIR='$args.tmpdir' && bash $r_path"
 	} else {
@@ -102,13 +102,13 @@ pub fn (mut node Node) exec(args NodeExecCmd) ? {
 	}
 
 	// println("   - exec cmd:$cmd on $node.name")
-	node.executor.exec(cmd) or { return error(err.msg() + '\noriginal cmd:\n$args.cmd') }
+	node.exec(cmd) or { return error(err.msg() + '\noriginal cmd:\n$args.cmd') }
 
 	if args.remove_installer {
 		if args.tmpdir.len > 2 {
-			node.executor.remove(args.tmpdir)?
+			node.delete(args.tmpdir)?
 		} else {
-			node.executor.remove(r_path)?
+			node.delete(r_path)?
 		}
 	}
 	node.done_set('exec_$hhash', now_str)?
@@ -119,7 +119,7 @@ pub fn (mut node Node) exec_ok(cmd string) bool {
 	if cmd.contains('\n') {
 		panic('cannot have \\n in cmd. $cmd, use exec function instead')
 	}
-	node.executor.exec_silent(cmd) or {
+	node.exec_silent(cmd) or {
 		// see if it executes ok, if cmd not found is false
 		return false
 	}
@@ -162,7 +162,7 @@ pub fn (mut node Node) platform_prepare() ? {
 				}
 			}
 			if !node.cmd_exists('clang') {
-				node.executor.exec('xcode-select --install') or {
+				node.exec('xcode-select --install') or {
 					return error('cannot install xcode-select --install, something went wrong.\n$err')
 				}
 			}
@@ -184,7 +184,7 @@ pub fn (mut node Node) platform_prepare() ? {
 
 pub fn (mut node Node) package_refresh() ? {
 	if node.platform == PlatformType.ubuntu {
-		node.executor.exec('apt-get update') or {
+		node.exec('apt-get update') or {
 			return error('could not update packages list\nerror:\n$err')
 		}
 	}
@@ -193,15 +193,15 @@ pub fn (mut node Node) package_refresh() ? {
 pub fn (mut node Node) package_install(package Package) ? {
 	name := package.name
 	if node.platform == PlatformType.osx {
-		node.executor.exec('brew install $name') or {
+		node.exec('brew install $name') or {
 			return error('could not install package:$package.name\nerror:\n$err')
 		}
 	} else if node.platform == PlatformType.ubuntu {
-		node.executor.exec('apt-get install -y $name') or {
+		node.exec('apt-get install -y $name') or {
 			return error('could not install package:$package.name\nerror:\n$err')
 		}
 	} else if node.platform == PlatformType.alpine {
-		node.executor.exec('apk install $name') or {
+		node.exec('apk install $name') or {
 			return error('could not install package:$package.name\nerror:\n$err')
 		}
 	} else {
@@ -226,7 +226,7 @@ fn (mut node Node) upgrade() ? {
 			apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
 			'
 
-		node.exec(
+		node.exec_cmd(
 			cmd: upgrade_cmds
 			period: 48 * 3600
 			reset: false

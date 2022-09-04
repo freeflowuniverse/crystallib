@@ -9,8 +9,10 @@ pub mut:
 	redis &redisclient.Redis
 }
 
-fn new(redisclient redisclient.Redis) BuilderFactory {
+pub fn new() BuilderFactory {
+	mut r:=redisclient.core_get()
 	mut bf := BuilderFactory{
-		redisclient: redisclient
+		redis: &r
 	}
+	return bf
 }

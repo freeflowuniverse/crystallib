@@ -3,7 +3,7 @@ module redisclient
 import freeflowuniverse.crystallib.redisclient
 // import freeflowuniverse.crystallib.appsbox.redisapp
 
-pub fn core_get() &redisclient.Redis {
+pub fn core_get() redisclient.Redis {
 	// tcpport := 7777
 	// mut r := Redis{
 	// 	addr: '/tmp/redis_${tcpport}.sock'
