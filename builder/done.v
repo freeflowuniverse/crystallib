@@ -2,6 +2,7 @@ module builder
 
 import freeflowuniverse.crystallib.serializers
 
+
 pub fn (mut node Node) done_set(key string, val string) ? {
 	if key in node.done {
 		if node.done[key] == val {
@@ -50,12 +51,14 @@ pub fn (mut node Node) done_print() {
 
 pub fn (mut node Node) done_save() ? {
 	outtext := serializers.map_string_string_to_text(node.done)
+	// print(" . $node.name done set: \n$outtext\n***")
 	node.db_set('done', outtext)?
 	node.cache.set('node_done', outtext, 600)?
-	// println(" . $node.name done set: \n$outtext")
+	// println(" OK")
 }
 
 pub fn (mut node Node) done_load() ? {
+	// println("DONE LOAD")
 	if node.db_exists('done') {
 		res := node.db_get('done')?
 		for line in res.split('\n') {
@@ -67,6 +70,8 @@ pub fn (mut node Node) done_load() ? {
 			}
 		}
 		node.cache.set('node_done', res, 600)?
+	}else{
+		node.done_save()?
 	}
 }
 

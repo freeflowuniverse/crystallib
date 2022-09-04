@@ -20,6 +20,8 @@ pub enum CPUType {
 pub struct Node {
 mut:
 	executor Executor
+	db_state    DBState
+	db_path     string = '~/builderdb'
 pub:
 	name string = 'mymachine'
 pub mut:
@@ -28,8 +30,6 @@ pub mut:
 	cputype     CPUType
 	done        map[string]string
 	environment map[string]string
-	db_path     string = '~/builderdb'
-	db_state    DBState
 }
 
 // format ipaddr: localhost:7777
@@ -105,20 +105,16 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
 		node.db_reset()?
 	}
 
+
 	node_env_txt := node.cache.get('env') or {
-		println(' - env load')
+		// println(' - env load')
 		node.environment_load()?
 		''
 	}
 
+
 	if node_env_txt != '' {
 		node.environment = serializers.text_to_map_string_string(node_env_txt)
-	}
-
-	// println(node.environment)
-	home_dir := node.environment['HOME'].trim(' ')
-	if home_dir == '' {
-		return error('HOME env cannot be empty for $node.name')
 	}
 
 	if !node.cache.exists('env') {
@@ -126,8 +122,15 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
 			3600)?
 	}
 
+	// println(node.environment)
+	home_dir := node.environment['HOME'].trim(' ')
+	if home_dir == '' {
+		return error('HOME env cannot be empty for $node.name')
+	}
+	node.db_path = node.db_path.replace("~",home_dir)
+
 	init_platform_txt := node.cache.get('platform_type') or {
-		println(' - platform load')
+		// println(' - platform load')
 		node.platform_load()
 		node.db_check()?
 		node.cache.set('platform_type', int(node.platform).str(), 3600)?
@@ -155,6 +158,7 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
 		''
 	}
 	if init_node_txt != '' {
+		node.done_load()?
 		node.done = serializers.text_to_map_string_string(init_node_txt)
 	}
 

@@ -1,15 +1,4 @@
-# Installers
-
-This is a set of installers, they are all using the builder functionality.
-
-> TODO: need to finish & create examples
-
-
-## A simple example using brew
-
-see imagemagick
-
-```golang
+module imagemagick
 import os
 import builder
 import installers.base
@@ -33,6 +22,8 @@ pub fn (mut i Installer) install() ? {
 	println(' - ${installername} already done')
 }
 
-```
-
-typically the factory is always the same, in this case we did the trick with installername to reuse even more
+// pub fn (mut i Installer) update() ? {
+// 	mut node := i.node
+// 	panic("to implement")
+// 	node.done_set('update_crystaltools', 'OK')?
+// }
