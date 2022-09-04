@@ -16,7 +16,7 @@ pub fn installed() bool {
 // scan a directory
 pub fn filter_imagemagic(path_ string, mut params params.Params) ?bool {
 	mut path := pathlib.get_dir(path_, false)?
-	if !imagemagick.installed {
+	if !installed {
 		panic('cannot scan because imagemagic not installed.')
 	}
 	// print(" - check $path.path")

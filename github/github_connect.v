@@ -21,7 +21,7 @@ mut:
 // Init connection for github singleton
 fn init_connection() GithubConnection {
 	mut conn := GithubConnection{
-		redis: redisclientcore.get()
+		redis: redisclient.core_get()
 	}
 	return conn
 }

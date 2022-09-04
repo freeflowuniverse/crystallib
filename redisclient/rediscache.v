@@ -1,16 +1,14 @@
-module rediscache
-
-// import appsbox.redisapp
-import freeflowuniverse.crystallib.redisclient
+module redisclient
 
 pub struct RedisCache {
 mut:
-	redis     &redisclient.Redis
+	redis     &Redis
 	namespace string
 	enabled   bool = true
 }
 
-pub fn (mut r redisclient.Redis )cache(namespace string) RedisCache {
+// return a cache object starting from a redis connection
+pub fn (mut r Redis) cache(namespace string) RedisCache {
 	return RedisCache{
 		redis: &r
 		namespace: namespace

@@ -5,7 +5,6 @@ import x.json2
 import json
 import net.http
 import freeflowuniverse.crystallib.redisclient
-import freeflowuniverse.crystallib.redisclientcore
 import crypto.md5
 
 struct LiquidConnection {
@@ -19,7 +18,7 @@ mut:
 
 fn init_connection() LiquidConnection {
 	return LiquidConnection{
-		redis: redisclientcore.get()
+		redis: redisclient.core_get()
 	}
 }
 

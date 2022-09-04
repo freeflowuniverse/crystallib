@@ -21,13 +21,13 @@ pub struct Node {
 pub:
 	name string = 'mymachine'
 pub mut:
-	executor    &Executor  [str: skip] 
-	tmux        &Tmux [str: skip] 
+	executor    &Executor              [str: skip]
+	tmux        &Tmux                  [str: skip]
 	platform    PlatformType
 	cputype     CPUType
-	db          &DB                   [str: skip] 
+	db          &DB                    [str: skip]
 	done        map[string]string
-	cache       redisclient.RedisCache [str: skip] 
+	cache       redisclient.RedisCache [str: skip]
 	environment map[string]string
 }
 
@@ -36,25 +36,27 @@ pub mut:
 // format ipaddr: 192.168.6.6
 // format ipaddr: any ipv6 addr
 pub struct NodeArguments {
-	ipaddr string
-	name   string
-	user   string = 'root'
-	debug  bool
-	reset  bool
+	ipaddr      string
+	name        string
+	user        string = 'root'
+	debug       bool
+	reset       bool
+	redisclient redisclient.Redis
 }
 
 // get node connection to local machine
-pub fn node_local() ?&Node {
-	return node_new(name: 'localhost')
+// pass your redis client there
+pub fn (mut builder BuilderFactory) node_local() ?&Node {
+	return builder.node_new(name: 'localhost')
 }
 
 // retrieve node from the factory, will throw error if not there
-pub fn node_get(name string) ?&Node {
+pub fn (mut builder BuilderFactory) node_get(name string) ?&Node {
 	if name == '' {
 		return error('need to specify name')
 	}
-	if name in nodes_factory.nodes {
-		return nodes_factory.nodes[name]
+	if name in builder.nodes {
+		return builder.nodes[name]
 	}
 	return error('cannot find node $name in nodefactory, please init.')
 }
@@ -75,13 +77,13 @@ pub fn node_get(name string) ?&Node {
 // 	reset bool
 // 	}
 //```
-pub fn node_new(args NodeArguments) ?&Node {
+pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
 	if args.name == '' {
 		return error('need to specify name')
 	}
 
-	if args.name in nodes_factory.nodes {
-		return nodes_factory.nodes[args.name]
+	if args.name in builder.nodes {
+		return builder.nodes[args.name]
 	}
 
 	mut node := Node{
@@ -120,7 +122,7 @@ pub fn node_new(args NodeArguments) ?&Node {
 	}
 
 	// is a cache in redis
-	node.cache = rediscache.newcache('node:$node.name')
+	node.cache = builder.redis.cache('node:$node.name')?
 
 	if args.reset {
 		node.cache.reset()?
@@ -140,7 +142,7 @@ pub fn node_new(args NodeArguments) ?&Node {
 		node: &node
 	}
 
-	println(node.environment)
+	// println(node.environment)
 	home_dir := node.environment['HOME'].trim(' ')
 	if home_dir == '' {
 		return error('HOME env cannot be empty for $node.name')
@@ -199,12 +201,12 @@ pub fn node_new(args NodeArguments) ?&Node {
 		node.package_install(name: 'tmux')?
 	}
 
-	nodes_factory.nodes[args.name] = &node
+	builder.nodes[args.name] = &node
 
 	node.tmux.start()?
 	node.tmux.scan()?
 
-	return nodes_factory.nodes[args.name]
+	return builder.nodes[args.name]
 }
 
 // get remote environment arguments in memory

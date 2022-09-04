@@ -30,7 +30,7 @@ pub mut:
 // //
 // // will return a tmux object
 // pub fn new(args module dockerArguments) ?Tmux {
-// 	// mut redis := redisclientcore.get()
+// 	// mut redis := redisclient.core_get()
 // 	// redis.selectdb(10)? //select redis DB 10
 // 	mut t := Tmux{
 // 		node: module docker_get(args)?

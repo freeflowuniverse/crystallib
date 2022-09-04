@@ -1,6 +1,6 @@
-# TMUX
+# BUILDER
 
-Process manager which uses TMUX.
+## Initialization
 
 ```vlang
 

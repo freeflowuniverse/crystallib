@@ -7,9 +7,6 @@ import os
 const testpath = os.dir(@FILE) + '/test_content'
 
 fn do() ? {
-
-
-
 }
 
 fn main() {

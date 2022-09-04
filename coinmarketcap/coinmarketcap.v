@@ -4,7 +4,6 @@ import os
 import x.json2
 import json
 import net.http
-import freeflowuniverse.crystallib.redisclientcore
 import freeflowuniverse.crystallib.redisclient
 import crypto.md5
 
@@ -19,7 +18,7 @@ mut:
 
 fn init_connection() CoinMarketConnection {
 	return CoinMarketConnection{
-		redis: redisclientcore.get()
+		redis: redisclient.core_get()
 	}
 }
 

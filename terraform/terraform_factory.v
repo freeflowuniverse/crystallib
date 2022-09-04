@@ -24,7 +24,7 @@ pub mut:
 // needed to get singleton
 fn init2() TerraformFactory {
 	mut x := TerraformFactory{
-		redis: redisclientcore.get()
+		redis: redisclient.core_get()
 	}
 	return x
 }

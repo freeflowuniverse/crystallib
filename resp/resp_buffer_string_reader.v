@@ -1,7 +1,5 @@
 module resp
 
-import io
-
 pub struct StringReader {
 	text string
 mut:

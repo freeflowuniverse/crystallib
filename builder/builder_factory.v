@@ -1,4 +1,5 @@
 module builder
+
 import redisclient
 
 [heap]
@@ -8,12 +9,8 @@ pub mut:
 	redis &redisclient.Redis
 }
 
-
-fn new() BuilderFactory{
-	mut bf := BuilderFactory{}
-}
-
-//return local node
-fn (mut BuilderFactory) node_local(){
-
+fn new(redisclient redisclient.Redis) BuilderFactory {
+	mut bf := BuilderFactory{
+		redisclient: redisclient
+	}
 }

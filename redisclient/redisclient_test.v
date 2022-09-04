@@ -1,11 +1,10 @@
 import freeflowuniverse.crystallib.redisclient
-import freeflowuniverse.crystallib.redisclientcore
 import time
 // original code see https://github.com/patrickpissurno/vredis/blob/master/vredis_test.v
 // credits see there as well (-:
 
 fn setup() &redisclient.Redis {
-	mut redis := redisclientcore.get()
+	mut redis := redisclient.core_get()
 	// Select db 10 to be away from default one '0'
 	redis.selectdb(10) or { panic(err) }
 	return redis

@@ -10,6 +10,7 @@ import freeflowuniverse.crystallib.resp
 
 const default_read_timeout = net.infinite_timeout
 
+[heap]
 pub struct Redis {
 pub mut:
 	connected bool

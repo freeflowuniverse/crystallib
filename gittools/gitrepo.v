@@ -259,7 +259,7 @@ pub fn (mut repo GitRepo) commit(msg string) ? {
 	}
 }
 
-//remove all changes of the repo, be careful
+// remove all changes of the repo, be careful
 pub fn (mut repo GitRepo) remove_changes() ? {
 	change := repo.changes() or {
 		return error('cannot detect if there are changes on repo.\n$err')

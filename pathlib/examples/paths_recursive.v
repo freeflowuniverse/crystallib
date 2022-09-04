@@ -29,9 +29,7 @@ fn executor_1(mut patho pathlib.Path, mut params params.Params) ?params.Params {
 
 fn do() ? {
 	mut p := pathlib.get_dir(testpath, false)?
-	mut params := params.Params
-	{
-	}
+	mut params := params.Params{}
 	mut params2 := p.scan(mut params, [filter_1], [executor_1])?
 	println(params2)
 }

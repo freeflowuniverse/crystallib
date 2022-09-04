@@ -1,14 +1,14 @@
 module main
 
 import builder
-import os
-
+import redisclient
 
 fn do() ? {
-
-	n := node.node_get({}) or { panic(err) }
+	mut rc := redisclient.core_get()?
+	mut builder := builder.new(rc)?
+	n := builder.node_local()?
 	res := n.executor.execute('ls /')
-
+	println(res)
 }
 
 fn main() {
