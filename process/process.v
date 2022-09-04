@@ -244,3 +244,9 @@ pub fn execute_interactive(cmd string) ? {
 		os.rm(cleanuppath) or {}
 	}
 }
+
+pub fn is_osx()bool{
+	p:=os.user_os()
+	println(p)
+	panic("s")
+}

@@ -1,5 +1,5 @@
 module builder
-
+import ipaddress
 // [heap]
 // interface Executor {
 // mut:
@@ -45,7 +45,7 @@ fn executor_new(args ExecutorNewArguments)?Executor{
 		{
 			return ExecutorLocal{debug:args.debug}
 		}else{
-			ipaddr := ipaddress_new(args.ipaddr) or { return error('can not initialize ip address') }
+			ipaddr := ipaddress.ipaddress_new(args.ipaddr) or { return error('can not initialize ip address') }
 			return ExecutorSSH{
 					ipaddr: ipaddr
 					user: args.user

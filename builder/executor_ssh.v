@@ -3,16 +3,16 @@ module builder
 import os
 import rand
 import freeflowuniverse.crystallib.process
+import ipaddress
 
 [heap]
-pub struct ExecutorSSH {
+struct ExecutorSSH {
 mut:
-	ipaddr      IPAddress
+	ipaddr      ipaddress.IPAddress
 	sshkey      string
 	user        string = 'root' // default will be root
 	initialized bool
 	retry       int = 1 // nr of times something will be retried before failing, need to check also what error is, only things which should be retried need to be done
-pub mut:
 	debug bool
 }
 
@@ -36,15 +36,15 @@ fn (mut executor ExecutorSSH) init() ? {
 	}
 }
 
-pub fn (mut executor ExecutorSSH) debug_on() {
+fn (mut executor ExecutorSSH) debug_on() {
 	executor.debug = true
 }
 
-pub fn (mut executor ExecutorSSH) debug_off() {
+fn (mut executor ExecutorSSH) debug_off() {
 	executor.debug = false
 }
 
-pub fn (mut executor ExecutorSSH) exec(cmd string) ?string {
+fn (mut executor ExecutorSSH) exec(cmd string) ?string {
 	cmd2 := 'ssh $executor.user@$executor.ipaddr.addr -p $executor.ipaddr.port "$cmd"'
 	if executor.debug {
 		println(' .. execute $executor.ipaddr.addr: $cmd')
@@ -53,7 +53,7 @@ pub fn (mut executor ExecutorSSH) exec(cmd string) ?string {
 	return res.output
 }
 
-pub fn (mut executor ExecutorSSH) exec_silent(cmd string) ?string {
+fn (mut executor ExecutorSSH) exec_silent(cmd string) ?string {
 	mut stdout := false
 	if executor.debug {
 		stdout = true
@@ -64,7 +64,7 @@ pub fn (mut executor ExecutorSSH) exec_silent(cmd string) ?string {
 	return res.output
 }
 
-pub fn (mut executor ExecutorSSH) file_write(path string, text string) ? {
+fn (mut executor ExecutorSSH) file_write(path string, text string) ? {
 	if executor.debug {
 		println(' - $executor.ipaddr.addr file write: $path')
 	}
@@ -74,7 +74,7 @@ pub fn (mut executor ExecutorSSH) file_write(path string, text string) ? {
 	os.rm(local_path)?
 }
 
-pub fn (mut executor ExecutorSSH) file_read(path string) ?string {
+fn (mut executor ExecutorSSH) file_read(path string) ?string {
 	if executor.debug {
 		println(' - $executor.ipaddr.addr file read: $path')
 	}
@@ -85,7 +85,7 @@ pub fn (mut executor ExecutorSSH) file_read(path string) ?string {
 	return r
 }
 
-pub fn (mut executor ExecutorSSH) file_exists(path string) bool {
+fn (mut executor ExecutorSSH) file_exists(path string) bool {
 	if executor.debug {
 		println(' - $executor.ipaddr.addr file exists: $path')
 	}
@@ -97,7 +97,7 @@ pub fn (mut executor ExecutorSSH) file_exists(path string) bool {
 }
 
 // carefull removes everything
-pub fn (mut executor ExecutorSSH) delete(path string) ? {
+fn (mut executor ExecutorSSH) delete(path string) ? {
 	if executor.debug {
 		println(' - $executor.ipaddr.addr file delete: $path')
 	}
@@ -105,7 +105,7 @@ pub fn (mut executor ExecutorSSH) delete(path string) ? {
 }
 
 // upload from local FS to executor FS
-pub fn (mut executor ExecutorSSH) download(source string, dest string) ? {
+fn (mut executor ExecutorSSH) download(source string, dest string) ? {
 	port := executor.ipaddr.port
 	if executor.debug {
 		println(' - $executor.ipaddr.addr file download: $source')
@@ -117,7 +117,7 @@ pub fn (mut executor ExecutorSSH) download(source string, dest string) ? {
 }
 
 // download from executor FS to local FS
-pub fn (mut executor ExecutorSSH) upload(source string, dest string) ? {
+fn (mut executor ExecutorSSH) upload(source string, dest string) ? {
 	port := executor.ipaddr.port
 	if executor.debug {
 		println(' - $executor.ipaddr.addr file upload: $source -> $dest')
@@ -129,7 +129,7 @@ pub fn (mut executor ExecutorSSH) upload(source string, dest string) ? {
 }
 
 // get environment variables from the executor
-pub fn (mut executor ExecutorSSH) environ_get() ?map[string]string {
+fn (mut executor ExecutorSSH) environ_get() ?map[string]string {
 	env := executor.exec('env') or { return error('can not get environment') }
 
 	if executor.debug {
@@ -156,7 +156,7 @@ Executor info or meta data
 accessing type Executor won't allow to access the
 fields of the struct, so this is workaround
 */
-pub fn (mut executor ExecutorSSH) info() map[string]string {
+fn (mut executor ExecutorSSH) info() map[string]string {
 	return {
 		'category':  'ssh'
 		'sshkey':    executor.sshkey
@@ -169,7 +169,7 @@ pub fn (mut executor ExecutorSSH) info() map[string]string {
 // ssh shell on the node default ssh port, or any custom port that may be
 // forwarding ssh traffic to certain container
 
-pub fn (mut executor ExecutorSSH) shell(cmd string) ? {
+fn (mut executor ExecutorSSH) shell(cmd string) ? {
 	mut p := '$executor.ipaddr.port'
 	if cmd.len > 0 {
 		panic('TODO IMPLEMENT SHELL EXEC OVER SSH')
@@ -177,7 +177,7 @@ pub fn (mut executor ExecutorSSH) shell(cmd string) ? {
 	os.execvp('ssh', ['$executor.user@$executor.ipaddr.addr', '-p $p'])?
 }
 
-pub fn (mut executor ExecutorSSH) list(path string) ?[]string {
+fn (mut executor ExecutorSSH) list(path string) ?[]string {
 	if !executor.dir_exists(path) {
 		panic('Dir Not found')
 	}
@@ -189,7 +189,7 @@ pub fn (mut executor ExecutorSSH) list(path string) ?[]string {
 	return res
 }
 
-pub fn (mut executor ExecutorSSH) dir_exists(path string) bool {
+fn (mut executor ExecutorSSH) dir_exists(path string) bool {
 	output := executor.exec('test -d $path && echo found || echo not found') or { return false }
 	if output.trim_space() == 'found' {
 		return true

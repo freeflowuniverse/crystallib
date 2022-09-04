@@ -10,7 +10,7 @@ pub:
 	// e.g. 24, default not specified
 	mask int
 	port int
-	cat  IpAddressType = IpAddressType.ipv4
+	cat  IpAddressType = .ipv4
 }
 
 pub enum IpAddressType {

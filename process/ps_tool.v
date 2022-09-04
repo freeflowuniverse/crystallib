@@ -28,19 +28,12 @@ pub mut:
 	rss int
 }
 
-// needed to get singleton
-fn init3() ProcessMap {
-	mut f := ProcessMap{}
-	return f
-}
 
-// singleton creation
-const processmap = init3()
 
 // make sure to use new first, so that the connection has been initted
 // then you can get it everywhere
 pub fn processmap_get() ?&ProcessMap {
-	mut pm := process.processmap
+	mut pm := ProcessMap{}
 	pm.scan()?
 	return &pm
 }

@@ -30,7 +30,7 @@ pub mut:
 	cputype     CPUType
 	done        map[string]string	
 	environment map[string]string
-	db_path    string="/var/builderdb"
+	db_path    string="~/builderdb"
 	db_state 	   DBState
 }
 
