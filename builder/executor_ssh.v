@@ -13,13 +13,12 @@ mut:
 	user        string = 'root' // default will be root
 	initialized bool
 	retry       int = 1 // nr of times something will be retried before failing, need to check also what error is, only things which should be retried need to be done
-	debug bool
+	debug       bool
 }
 
 fn (mut executor ExecutorSSH) init() ? {
 	if !executor.initialized {
-
-		//TODO: need to call code from SSHAGENT do not reimplement here
+		// TODO: need to call code from SSHAGENT do not reimplement here
 		process.execute_job(cmd: 'pgrep -x ssh-agent || eval `ssh-agent -s`') or {
 			return error('Could not start ssh-agent, error was: $err')
 		}

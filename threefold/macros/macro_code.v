@@ -1,4 +1,4 @@
-module threefoldmacros
+module macros
 
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.gittools

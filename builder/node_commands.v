@@ -1,6 +1,5 @@
 module builder
 
-import freeflowuniverse.crystallib.process
 import freeflowuniverse.crystallib.texttools
 import crypto.md5
 import time
@@ -24,6 +23,8 @@ pub mut:
 	tmpdir           string
 }
 
+// return the ipaddress as known on the public side
+// is using resolver4.opendns.com
 pub fn (mut node Node) ipaddr_pub_get() ?string {
 	if !node.done_exists('ipaddr') {
 		cmd := 'dig @resolver4.opendns.com myip.opendns.com +short'
@@ -114,6 +115,7 @@ pub fn (mut node Node) exec_cmd(args NodeExecCmd) ? {
 	node.done_set('exec_$hhash', now_str)?
 }
 
+// check if we can execute and there is not errorcode
 pub fn (mut node Node) exec_ok(cmd string) bool {
 	// TODO: need to put in support for multiline text files
 	if cmd.contains('\n') {
@@ -150,36 +152,6 @@ fn (mut node Node) platform_load() {
 			panic('only ubuntu, alpine and osx supported for now')
 		}
 	}
-}
-
-pub fn (mut node Node) platform_prepare() ? {
-	println(' - $node.name: platform prepare')
-	if !node.done_exists('platform_prepare') {
-		if node.platform == PlatformType.osx {
-			if !node.cmd_exists('brew') {
-				process.execute_interactive('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"') or {
-					return error('cannot install brew, something went wrong.\n$err')
-				}
-			}
-			if !node.cmd_exists('clang') {
-				node.exec('xcode-select --install') or {
-					return error('cannot install xcode-select --install, something went wrong.\n$err')
-				}
-			}
-		} else if node.platform == PlatformType.ubuntu {
-			println(' - Ubuntu prepare')
-
-			for x in ['git', 'rsync', 'curl'] {
-				if !node.cmd_exists(x) {
-					node.package_install(name: x)?
-				}
-			}
-		} else {
-			panic('only ubuntu and osx supported for now')
-		}
-		node.done_set('platform_prepare', 'OK')?
-	}
-	println(' - platform already prepared')
 }
 
 pub fn (mut node Node) package_refresh() ? {

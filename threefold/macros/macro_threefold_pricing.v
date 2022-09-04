@@ -1,4 +1,4 @@
-module threefoldmacros
+module macros
 
 import freeflowuniverse.crystallib.coinmarketcap
 import freeflowuniverse.crystallib.liquid

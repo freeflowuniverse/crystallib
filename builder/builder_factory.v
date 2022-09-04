@@ -10,7 +10,7 @@ pub mut:
 }
 
 pub fn new() BuilderFactory {
-	mut r:=redisclient.core_get()
+	mut r := redisclient.core_get()
 	mut bf := BuilderFactory{
 		redis: &r
 	}

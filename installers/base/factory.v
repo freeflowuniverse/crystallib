@@ -1,4 +1,4 @@
-module crystaltools
+module base
 
 import builder
 
@@ -13,7 +13,7 @@ struct Installer {
 	state State
 }
 
-// install crystaltools will return true if it was already installed
+// install base will return true if it was already installed
 pub fn get(mut node builder.Node) ?Installer {
 	mut i := Installer{
 		node: &node

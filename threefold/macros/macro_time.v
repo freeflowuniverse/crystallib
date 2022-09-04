@@ -1,4 +1,4 @@
-module threefoldmacros
+module macros
 
 import time
 import freeflowuniverse.crystallib.texttools

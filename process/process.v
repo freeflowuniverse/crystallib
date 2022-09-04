@@ -245,8 +245,14 @@ pub fn execute_interactive(cmd string) ? {
 	}
 }
 
-pub fn is_osx()bool{
-	p:=os.user_os()
+pub fn is_osx() bool {
+	p := os.user_os()
 	println(p)
-	panic("s")
+	panic('is_osx needs to be implemented')
+}
+
+pub fn is_ubuntu() bool {
+	p := os.user_os()
+	println(p)
+	panic('is_osx needs to be implemented')
 }

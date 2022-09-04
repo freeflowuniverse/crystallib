@@ -1,21 +1,21 @@
 module builder
 
-enum DBState{
+enum DBState {
 	init
 	ok
 }
 
-fn (mut node Node) db_check()? {
-	if node.db_state==.init{
+fn (mut node Node) db_check() ? {
+	if node.db_state == .init {
 		// make sure the db path exists
-		node.exec('mkdir -p $node.db_path') ?
+		node.exec('mkdir -p $node.db_path')?
 		node.db_state = .ok
 	}
 }
 
 // get the path of the config db
 fn (mut node Node) db_key_path_get(key string) string {
-	node.db_check() or {panic(err)}
+	node.db_check() or { panic(err) }
 	if node.db_path == '' {
 		panic('path canot be empty')
 	}

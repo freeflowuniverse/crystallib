@@ -38,7 +38,7 @@ pub fn ipaddress_new(addr_string string) ?IPAddress {
 		addr = addr_string.replace('localhost', '127.0.0.1')
 	}
 
-	if addr.contains("/") {
+	if addr.contains('/') {
 		splitted := addr.split(addr)
 		if splitted.len == 2 {
 			mask = splitted[1].int()
@@ -48,17 +48,17 @@ pub fn ipaddress_new(addr_string string) ?IPAddress {
 		}
 	}
 
-	if addr.contains("::") && addr.count('::') == 1 {
+	if addr.contains('::') && addr.count('::') == 1 {
 		cat = IpAddressType.ipv6
 		s := addr.split('::')
 		addr, port = s[0], s[1]
-	} else if addr.contains(":") && addr.count(':') == 1 {
+	} else if addr.contains(':') && addr.count(':') == 1 {
 		cat = IpAddressType.ipv4
 		s := addr.split(':')
 		addr, port = s[0], s[1]
-	} else if addr.contains(":") && addr.count(':') > 1 {
+	} else if addr.contains(':') && addr.count(':') > 1 {
 		cat = IpAddressType.ipv6
-	} else if addr.contains(".") && addr.count('.') == 3 {
+	} else if addr.contains('.') && addr.count('.') == 3 {
 		cat = IpAddressType.ipv4
 	} else {
 		return error('Invalid Ip address string')

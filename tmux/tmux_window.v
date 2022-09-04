@@ -23,7 +23,6 @@ pub mut:
 	reset bool
 }
 
-
 // window_name is the name of the window in session main (will always be called session main)
 // cmd to execute e.g. bash file
 // environment arguments to use
@@ -61,16 +60,16 @@ pub fn (mut w Window) create() ? {
 // do some good checks if the window is still active
 // not implemented yet
 pub fn (mut w Window) check() ? {
-	panic("not implemented yet")
+	panic('not implemented yet')
 }
 
-//restart the window
+// restart the window
 pub fn (mut w Window) restart() ? {
 	w.stop()?
 	w.create()?
 }
 
-//stop the window
+// stop the window
 pub fn (mut w Window) stop() ? {
 	mut e := w.session.tmuxexecutor.db
 	e.exec_silent('tmux kill-window -t @$w.id') or {
@@ -80,7 +79,7 @@ pub fn (mut w Window) stop() ? {
 	w.active = false
 }
 
-//delete the window
+// delete the window
 pub fn (mut w Window) delete() ? {
 	w.stop()?
 	w.session.windows.delete(w.name)

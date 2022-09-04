@@ -28,8 +28,6 @@ pub mut:
 	rss int
 }
 
-
-
 // make sure to use new first, so that the connection has been initted
 // then you can get it everywhere
 pub fn processmap_get() ?&ProcessMap {

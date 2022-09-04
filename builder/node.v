@@ -2,7 +2,6 @@ module builder
 
 import freeflowuniverse.crystallib.redisclient
 import freeflowuniverse.crystallib.serializers
-import os
 
 pub enum PlatformType {
 	unknown
@@ -17,23 +16,21 @@ pub enum CPUType {
 	arm
 }
 
-
 [heap]
 pub struct Node {
 mut:
-	executor    Executor
+	executor Executor
 pub:
 	name string = 'mymachine'
-pub mut:      
-	cache       redisclient.RedisCache 
+pub mut:
+	cache       redisclient.RedisCache
 	platform    PlatformType
 	cputype     CPUType
-	done        map[string]string	
+	done        map[string]string
 	environment map[string]string
-	db_path    string="~/builderdb"
-	db_state 	   DBState
+	db_path     string = '~/builderdb'
+	db_state    DBState
 }
-
 
 // format ipaddr: localhost:7777
 // format ipaddr: 192.168.6.6:7777
@@ -41,11 +38,11 @@ pub mut:
 // format ipaddr: any ipv6 addr
 // format ipaddr: if only name used then is localhost
 pub struct NodeArguments {
-	ipaddr      string
-	name        string
-	user        string = 'root'
-	debug       bool
-	reset       bool
+	ipaddr string
+	name   string
+	user   string = 'root'
+	debug  bool
+	reset  bool
 	// redis 		&redisclient.Redis //if not specified will be local redisclient	
 }
 
@@ -92,12 +89,12 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
 		return builder.nodes[args.name]
 	}
 
-	eargs := ExecutorNewArguments {
-		ipaddr:args.ipaddr
-		user:args.user
-		debug:args.debug
+	eargs := ExecutorNewArguments{
+		ipaddr: args.ipaddr
+		user: args.user
+		debug: args.debug
 	}
-	mut executor:=executor_new(eargs)?
+	mut executor := executor_new(eargs)?
 	mut node := Node{
 		executor: &executor
 		cache: builder.redis.cache('node:$args.name')
@@ -118,7 +115,6 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
 		node.environment = serializers.text_to_map_string_string(node_env_txt)
 	}
 
-	
 	// println(node.environment)
 	home_dir := node.environment['HOME'].trim(' ')
 	if home_dir == '' {
@@ -160,11 +156,6 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
 	}
 	if init_node_txt != '' {
 		node.done = serializers.text_to_map_string_string(init_node_txt)
-	}
-
-	if !node.cmd_exists('tmux') {
-		os.log('TMUX - could not find tmux command, will try to install, can take a while.')
-		node.package_install(name: 'tmux')?
 	}
 
 	builder.nodes[args.name] = &node

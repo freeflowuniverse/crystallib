@@ -10,6 +10,28 @@ pub mut:
 	name    string
 }
 
+pub fn (mut t Tmux) session_get(name string) ?&Session {
+	if name in t.sessions {
+		return t.sessions[name]
+	}
+	return error('could not find session $name')
+}
+
+pub fn (mut t Tmux) session_get_create(name string, restart bool) ?&Session {
+	name_l := name.to_lower()
+	if name_l !in t.sessions {
+		os.log('TMUX - Session $name will be created')
+		init_session(mut t, name_l)?
+		t.scan()?
+	}
+	mut session := t.sessions[name_l]
+	if restart {
+		os.log('TMUX - Session $name will be restarted.')
+		session.restart()?
+	}
+	return session
+}
+
 fn init_session(mut tmux Tmux, s_name string) ?Session {
 	mut s := Session{
 		tmux: tmux // reference back
@@ -21,7 +43,6 @@ fn init_session(mut tmux Tmux, s_name string) ?Session {
 	tmux.sessions[s_name] = &s
 	return s
 }
-
 
 pub fn (mut s Session) create() ? {
 	mut e := s.tmuxexecutor.db
@@ -49,7 +70,6 @@ pub fn (mut s Session) stop() ? {
 		''
 	}
 }
-
 
 // window_name is the name of the window in session main (will always be called session main)
 // cmd to execute e.g. bash file
