@@ -106,3 +106,9 @@ pub fn (site Site) file_exists(name string) bool {
 	_ := site.file_get(name) or { return false }
 	return true
 }
+
+pub fn (mut site Site) fix() ? {
+	for _, mut page in site.pages {
+		page.fix()?
+	}
+}

@@ -54,6 +54,8 @@ fn link_new(original_descr_ string, original_link_ string, isimage bool) ?Link {
 		link.filename = original_link
 	}
 
+	link.path = link.filename.all_before_last("/").trim_right("/") //just to make sure it wasn't // 
+
 	// find the prefix
 	mut prefix_done := false
 	mut filename := []string{}
@@ -95,15 +97,10 @@ fn link_new(original_descr_ string, original_link_ string, isimage bool) ?Link {
 		}
 	}
 
-	link.path = os.dir(link.filename)
 	link.filename = os.base(link.filename)
 
 	if link.path.starts_with('./') {
 		x := link.path.after('./')
-		link.path = string(x)
-	}
-	if link.path.starts_with('.') {
-		x := link.path.after('.')
 		link.path = string(x)
 	}
 

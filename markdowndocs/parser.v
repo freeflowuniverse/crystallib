@@ -179,7 +179,7 @@ fn (mut parser Parser) file_parse(path string) ? {
 		}
 		// go out of loop if end of file
 		line := parser.line_current()
-		println("line ($parser.state()): '$line'")
+		// println("line ($parser.state()): '$line'")	
 
 		if mut llast is Comment {
 			if llast.prefix == .short {

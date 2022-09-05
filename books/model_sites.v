@@ -41,3 +41,11 @@ pub fn (mut sites Sites) scan() ? {
 		site.scan()?
 	}
 }
+
+pub fn (mut sites Sites) fix() ? {
+	for _, mut site in sites.sites {
+		site.fix()?
+	}
+}
+
+

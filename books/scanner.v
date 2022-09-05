@@ -145,11 +145,12 @@ fn (mut site Site) scan_internal(mut p pathlib.Path) ? {
 			} else if p_in.path.starts_with('sidebar') {
 				continue
 			} else {
-				ext := p_in.extension()
+				ext := p_in.extension().to_lower()
 				if ext != '' {
 					// only process files which do have extension
-					ext2 := ext[1..]
-					if ext2 == 'md' {
+					// ext2 := ext[1..]
+					// println("----- $p_in ($ext)")
+					if ext == 'md' {
 						site.page_remember(mut p_in, false)?
 					} else {
 						// println(path+"/"+item2)
@@ -159,4 +160,5 @@ fn (mut site Site) scan_internal(mut p pathlib.Path) ? {
 			}
 		}
 	}
+	site.fix()?
 }

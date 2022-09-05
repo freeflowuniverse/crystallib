@@ -1,6 +1,6 @@
 module markdowndocs
 
-enum LinkType {
+pub enum LinkType {
 	file
 	image
 	page
@@ -12,18 +12,17 @@ enum LinkType {
 	code
 }
 
-enum LinkState {
+pub enum LinkState {
 	ok
 	missing
 	error
 }
 
 // support for quite some types
-struct Link {
-mut:
+pub struct Link {
+pub mut:
 	// original string //how link was put in the document
 	original string
-pub mut:
 	content     string
 	cat         LinkType
 	isexternal  bool // is not linked to a wiki (sites)

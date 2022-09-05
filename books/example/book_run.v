@@ -9,7 +9,7 @@ fn do() ? {
 	mut s := books.new()
 	s.site_new(path: testpath)?
 	s.scan()?
-	println(s)
+	// println(s)
 }
 
 fn main() {
