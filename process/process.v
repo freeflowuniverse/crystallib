@@ -12,7 +12,7 @@ pub mut:
 	timeout    int  = 1200
 	stdout     bool = true
 	stdout_log bool = true
-	debug      bool
+	debug      bool 
 	die        bool = true
 }
 
@@ -109,14 +109,21 @@ pub fn execute_job(cmd Command) ?Job {
 		}
 		errorpath := cleanuppath.all_before_last('.sh') + '.json'
 		errorjson := json.encode_pretty(job)
-		os.write_file(errorpath, errorjson)?
+		os.write_file(errorpath, errorjson) or {
+			msg := "cannot write errorjson to $errorpath"
+			return error(msg)
+		}
 		if cmd_obj.die {
 			// if cleanuppath!=""{os.rm(cleanuppath) or {}}
-			return error('Cannot execute:\n$job')
+			msg := 'Cannot execute:\n$job'
+			println(msg)
+			return error(msg)
 		}
 	} else {
 		if cleanuppath != '' {
-			os.rm(cleanuppath) or {}
+			if os.exists(cleanuppath){
+				os.rm(cleanuppath)?
+			}
 		}
 	}
 	return job

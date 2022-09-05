@@ -51,11 +51,13 @@ fn (mut site Site) file_remember(mut patho pathlib.Path) ? {
 			}
 		} else {
 			// means the its a new one, lets add it, first see if it needs to be downsized
-			if imagemagick.installed {
-				imagedownsized := imagemagick.image_downsize(patho)?
+			if imagemagick.installed() {
+				imagedownsized := imagemagick.image_downsize(mut patho,"")?
 				// after downsize it could be the path has been changed, need to set it on the file
-				patho.path = imagedownsized.path
-				patho.init()
+				if patho.path != imagedownsized.path.path{
+					patho.path = imagedownsized.path.path
+					patho.check()
+				}
 			}
 			site.file_new(mut patho)?
 		}

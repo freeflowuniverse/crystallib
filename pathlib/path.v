@@ -98,7 +98,8 @@ pub fn (path Path) absolute() string {
 	return os.real_path(p)
 }
 
-fn (mut path Path) check() {
+//check the inside of pathobject, is like an init function
+pub fn (mut path Path) check() {
 	if os.exists(path.path) {
 		path.exist = .yes
 		if os.is_file(path.path) {

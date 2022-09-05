@@ -1,4 +1,4 @@
-module books
+module markdowndocs
 
 import params
 

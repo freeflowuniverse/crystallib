@@ -1,7 +1,7 @@
 module markdowndocs
 
-import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.params
+import freeflowuniverse.crystallib.texttools
 
 pub struct Action {
 pub mut:
@@ -12,7 +12,7 @@ pub mut:
 }
 
 fn (mut action Action) process() ? {
-	mo := texttools.macro_parse(action.content)?
+	mo := macro_parse(action.content)?
 	action.name = mo.cmd
 	action.params = mo.params
 }

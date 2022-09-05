@@ -56,23 +56,23 @@ pub fn (mut image Image) downsize(backupdir string) ? {
 	// check in params
 	if backupdir != '' {
 		mut dest := image.path.backup_name_find('', backupdir) or {
-			return error("cannot find backupname for $image.path . \n$error")
+			return error("cannot find backupname for $image.path.path . \n$error")
 		}
 		image.path.copy(mut dest)?
 	}
-	if image.size_kbyte > 400 && image.size_x > 2400 {
+	if image.size_kbyte > 600 && image.size_x > 2400 {
 		image.size_kbyte = 0
-		println('   - convert image resize 50%: $image.path')
-		cmd := "convert '$image.path' -resize 50% '$image.path'"
+		println('   - convert image resize 50%: $image.path.path')
+		cmd := "convert '$image.path.path' -resize 50% '$image.path.path'"
 		process.execute_silent(cmd)or {
 				return error("could not convert png to png --resize 50%.\n$cmd .\n$error")
 			}
 		// println(image)
 		image.init_()?
-	} else if image.size_kbyte > 400 && image.size_x > 1800 {
+	} else if image.size_kbyte > 600 && image.size_x > 1800 {
 		image.size_kbyte = 0
-		println('   - convert image resize 75%: $image.path')
-		cmd:="convert '$image.path' -resize 75% '$image.path'"
+		println('   - convert image resize 75%: $image.path.path')
+		cmd:="convert '$image.path.path' -resize 75% '$image.path.path'"
 		process.execute_silent(cmd) or {
 				return error("could not convert png to png --resize 75%.\n$cmd \n$error")
 			}
@@ -83,14 +83,17 @@ pub fn (mut image Image) downsize(backupdir string) ? {
 		if image.size_kbyte > 400 && !image.transparent {
 			path_dest := image.path.path_no_ext() + '.jpg'
 			println('   - convert image jpg: $path_dest')
-			cmd := "convert '$image.path' '$path_dest'"
+			cmd := "convert '$image.path.path' '$path_dest'"
+			if os.exists(path_dest) {
+				os.rm(path_dest)?
+			}			
 			process.execute_silent(cmd) or {
 				return error("could not convert png to jpg.\n$cmd \n$error")
 			}
-			if os.exists(path_dest) {
+			if os.exists(image.path.path) {
 				os.rm(image.path.path)?
-			}
-			image.path = pathlib.get(path_dest)
+			}	
+			image.path = pathlib.get(path_dest)			
 		}
 	}
 	// means we should not process next time, we do this by adding _ at end of name
