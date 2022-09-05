@@ -2,7 +2,6 @@ module builder
 
 import freeflowuniverse.crystallib.serializers
 
-
 pub fn (mut node Node) done_set(key string, val string) ? {
 	if key in node.done {
 		if node.done[key] == val {
@@ -70,7 +69,7 @@ pub fn (mut node Node) done_load() ? {
 			}
 		}
 		node.cache.set('node_done', res, 600)?
-	}else{
+	} else {
 		node.done_save()?
 	}
 }

@@ -15,15 +15,26 @@ pub mut:
 	transparent  bool
 }
 
-fn image_new(mut path pathlib.Path) ?Image {
+fn (mut image Image) init_() ? {
+	// println(" -+-+- $image.path")
+	if image.size_kbyte == 0 {
+		image.size_kbyte = image.path.size_kb() or {
+			return error("cannot define size file in kb.\n$error")
+		}
+		image.path.normalize() or {panic("normalize: $error")}
+	}
+}
+
+
+pub fn image_new(mut path pathlib.Path) ?Image {	
 	mut i := Image{
 		path: path
 	}
-	i.init()?
+	// i.init_()?
 	return i
 }
 
-//backupdir, put on empty if not used
+// backupdir, put on empty if not used
 pub fn image_downsize(mut path pathlib.Path, backupdir string) ?Image {
 	mut image := image_new(mut path)?
 	image.downsize(backupdir)?
@@ -31,45 +42,51 @@ pub fn image_downsize(mut path pathlib.Path, backupdir string) ?Image {
 }
 
 // will downsize to reasonable size based on x
-fn (mut image Image) downsize(backupdir string) ? {
-	image.init()?
+pub fn (mut image Image) downsize(backupdir string) ? {
+	image.init_()?
 	if image.skip() {
 		return
 	}
 	println(' - PROCESS DOWNSIZE $image.path')
 	if image.is_png() {
 		image.identify_verbose()?
-		println(image)
-		panic("a")
 	} else {
 		image.identify()?
-		println(image)
-		panic("b")
 	}
 	// check in params
-	if backupdir != "" {
-		mut dest := image.path.backup_name_find('', backupdir)?
+	if backupdir != '' {
+		mut dest := image.path.backup_name_find('', backupdir) or {
+			return error("cannot find backupname for $image.path . \n$error")
+		}
 		image.path.copy(mut dest)?
 	}
-
-	if image.size_x > 2400 {
+	if image.size_kbyte > 400 && image.size_x > 2400 {
 		image.size_kbyte = 0
 		println('   - convert image resize 50%: $image.path')
-		process.execute_silent("convert '$image.path' -resize 50% '$image.path'")?
+		cmd := "convert '$image.path' -resize 50% '$image.path'"
+		process.execute_silent(cmd)or {
+				return error("could not convert png to png --resize 50%.\n$cmd .\n$error")
+			}
 		// println(image)
-		image.init()?
-	} else if image.size_kbyte > 300 && image.size_x > 1800 {
+		image.init_()?
+	} else if image.size_kbyte > 400 && image.size_x > 1800 {
 		image.size_kbyte = 0
 		println('   - convert image resize 75%: $image.path')
-		process.execute_silent("convert '$image.path' -resize 75% '$image.path'")?
-		image.init()?
+		cmd:="convert '$image.path' -resize 75% '$image.path'"
+		process.execute_silent(cmd) or {
+				return error("could not convert png to png --resize 75%.\n$cmd \n$error")
+			}
+		image.init_()?
 	}
 
 	if image.is_png() {
 		if image.size_kbyte > 400 && !image.transparent {
 			path_dest := image.path.path_no_ext() + '.jpg'
 			println('   - convert image jpg: $path_dest')
-			process.execute_silent("convert '$image.path' '$path_dest'")?
+			cmd := "convert '$image.path' '$path_dest'"
+			process.execute_silent(cmd) or {
+				return error("could not convert png to jpg.\n$cmd \n$error")
+			}
 			if os.exists(path_dest) {
 				os.rm(image.path.path)?
 			}
@@ -78,29 +95,22 @@ fn (mut image Image) downsize(backupdir string) ? {
 	}
 	// means we should not process next time, we do this by adding _ at end of name
 	path_dest2 := image.path.path_get_name_with_underscore()
-	println('    - add _ at end of image: $path_dest2')
+	println(' - add _ at end of image: $path_dest2')
 	os.mv(image.path.path, path_dest2)?
 	image.path = pathlib.get(path_dest2)
+	// println(image)
 }
 
-fn (mut image Image) init() ? {
-	if image.size_kbyte == 0 {
-		// println(" - $image.path")
-		image.size_kbyte = image.path.size_kb()?
-		image.path.normalize()?
-	}
-}
 
 fn (mut image Image) identify_verbose() ? {
 	if image.size_y != 0 {
 		// means was already done
 		return
 	}
-	println(' - identify: $image.path')
+	// println(' - identify: $image.path')
 	out := process.execute_silent("identify -verbose '$image.path.path'") or {
 		return error('Could not get info from image $image.path.path \nError:$err')
 	}
-	println(out)
 	mut channel_stats := false
 	// mut channel_state := false
 	mut channel_alpha := false
@@ -193,7 +203,7 @@ fn (mut image Image) identify() ? {
 	image.size_y = size_str.split('x')[1].int()
 }
 
-fn (mut image Image) is_png() bool {
+pub fn (mut image Image) is_png() bool {
 	if image.path.extension().to_lower() == 'png' {
 		return true
 	}

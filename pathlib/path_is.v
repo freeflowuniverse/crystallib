@@ -1,6 +1,7 @@
 module pathlib
 
 const image_exts = ['jpg', 'jpeg', 'png', 'gif', 'svg']
+const image_exts_basic = ['jpg', 'jpeg', 'png']
 
 pub fn (mut path Path) is_dir() bool {
 	if path.cat == Category.unknown {
@@ -17,6 +18,14 @@ pub fn (mut path Path) is_file() bool {
 }
 
 pub fn (path Path) is_image() bool {
-	// println(path.extension())
-	return path.extension().to_lower() in pathlib.image_exts
+	e := path.extension().to_lower()
+	// println("is image: $e")
+	return pathlib.image_exts.contains(e)
 }
+
+pub fn (path Path) is_image_jpg_png() bool {
+	e := path.extension().to_lower()
+	// println("is image: $e")
+	return pathlib.image_exts_basic.contains(e)
+}
+

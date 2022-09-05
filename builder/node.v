@@ -20,8 +20,8 @@ pub enum CPUType {
 pub struct Node {
 mut:
 	executor Executor
-	db_state    DBState
-	db_path     string = '~/builderdb'
+	db_state DBState
+	db_path  string = '~/builderdb'
 pub:
 	name string = 'mymachine'
 pub mut:
@@ -105,13 +105,11 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
 		node.db_reset()?
 	}
 
-
 	node_env_txt := node.cache.get('env') or {
 		// println(' - env load')
 		node.environment_load()?
 		''
 	}
-
 
 	if node_env_txt != '' {
 		node.environment = serializers.text_to_map_string_string(node_env_txt)
@@ -127,7 +125,7 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
 	if home_dir == '' {
 		return error('HOME env cannot be empty for $node.name')
 	}
-	node.db_path = node.db_path.replace("~",home_dir)
+	node.db_path = node.db_path.replace('~', home_dir)
 
 	init_platform_txt := node.cache.get('platform_type') or {
 		// println(' - platform load')

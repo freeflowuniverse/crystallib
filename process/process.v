@@ -60,7 +60,7 @@ pub fn execute_job(cmd Command) ?Job {
 	job.cmd = cmd
 	job.start = time.now()
 	mut cleanuppath := ''
-	mut args:=[]string{}
+	mut args := []string{}
 	cleanuppath, args = cmd_to_args(cmd_obj.cmd)?
 
 	if cmd_obj.debug {
@@ -106,8 +106,8 @@ pub fn execute_job(cmd Command) ?Job {
 	if job.exit_code > 0 {
 		if job.error == '' {
 			job.error = 'unknown'
-		}		
-		errorpath:=cleanuppath.all_before_last(".sh")+".json"	
+		}
+		errorpath := cleanuppath.all_before_last('.sh') + '.json'
 		errorjson := json.encode_pretty(job)
 		os.write_file(errorpath, errorjson)?
 		if cmd_obj.die {
@@ -124,20 +124,20 @@ pub fn execute_job(cmd Command) ?Job {
 
 // write temp file and return path
 fn temp_write(text string) ?string {
-	mut tmpdir:="/tmp"
+	mut tmpdir := '/tmp'
 	// if 'TMPDIR' in os.environ() {
 	// 	tmpdir = os.environ()['TMPDIR'] or {
 	// 		panic('cannot find TMPDIR in os.environment variables.')
 	// 	}
 	// }
-	t := time.now().format_ss_milli().replace(" ","-")
+	t := time.now().format_ss_milli().replace(' ', '-')
 	mut tmppath := '$tmpdir/execscripts/${t}.sh'
 	if !os.exists('$tmpdir/execscripts/') {
 		os.mkdir('$tmpdir/execscripts') or {
 			return error('Cannot create $tmpdir/execscripts,$err')
 		}
 	}
-	if os.exists(tmppath){
+	if os.exists(tmppath) {
 		for i in 1 .. 200 {
 			// println(i)
 			tmppath = '$tmpdir/execscripts/{$t}_${i}.sh'
@@ -152,7 +152,6 @@ fn temp_write(text string) ?string {
 			}
 		}
 	}
-	println(tmppath)
 	os.write_file(tmppath, text)?
 	return tmppath
 }
@@ -169,7 +168,7 @@ fn check_write(text string) bool {
 
 // process commands to arguments which can be given to a process manager
 // will return temporary path and args
-pub fn cmd_to_args(cmd string) ?(string, []string) {
+fn cmd_to_args(cmd string) ?(string, []string) {
 	mut cleanuppath := ''
 	mut text := cmd
 
@@ -246,13 +245,13 @@ pub fn execute_interactive(cmd string) ? {
 	}
 }
 
-//check if platform is osx
+// check if platform is osx
 pub fn is_osx() bool {
 	p := os.user_os()
-	return p.contains("macos")
+	return p.contains('macos')
 }
 
-//check if platform is ubuntu
+// check if platform is ubuntu
 pub fn is_ubuntu() bool {
 	p := os.user_os()
 	println(p)
