@@ -14,11 +14,7 @@ pub fn installed() bool {
 }
 
 // scan a directory
-pub fn filter_imagemagic(path_ string, mut params params.Params) ?bool {
-	mut path := pathlib.get_dir(path_, false)?
-	if !installed {
-		panic('cannot scan because imagemagic not installed.')
-	}
+pub fn filter_imagemagic(mut path pathlib.Path, mut params params.Params) ?bool {
 	// print(" - check $path.path")
 	if path.name().starts_with('.') {
 		// println(" FALSE")
@@ -29,7 +25,7 @@ pub fn filter_imagemagic(path_ string, mut params params.Params) ?bool {
 	} else if path.name_no_ext().ends_with('_') {
 		// println(" FALSE")
 		return false
-	} else if !path.is_image() {
+	} else if path.is_file() && !path.is_image() {
 		// println(" FALSE")
 		return false
 	}
@@ -38,7 +34,13 @@ pub fn filter_imagemagic(path_ string, mut params params.Params) ?bool {
 }
 
 fn executor_imagemagic(mut path pathlib.Path, mut params params.Params) ?params.Params {
-	if mut _ := image_downsize(mut path, mut &params) {
+	mut backupdir := ""
+	if params.exists("backupdir"){
+		backupdir=params.get("backupdir")?
+	}
+	mut _ := image_downsize(mut path, backupdir)?
+	if mut _ := image_downsize(mut path, backupdir) {
+		println("** ERROR: could not downsize: $path.path \n$error")
 		params.kwarg_add(path.path, '$error')
 	} else {
 		params.kwarg_add(path.path, 'OK')
@@ -46,7 +48,8 @@ fn executor_imagemagic(mut path pathlib.Path, mut params params.Params) ?params.
 	return params
 }
 
-struct ScanArgs {
+pub struct ScanArgs {
+pub:
 	path      string
 	backupdir string
 }
@@ -56,7 +59,10 @@ struct ScanArgs {
 // 	backupdir string //if you want a backup dir
 // }
 // will return params with OK and ERROR if it was not ok
-pub fn scan(args ScanArgs) ? {
+pub fn scan(args ScanArgs) ?params.Params {
+	if !installed() {
+		panic('cannot scan because imagemagic not installed.')
+	}	
 	mut path := pathlib.get_dir(args.path, false)?
 	mut params := params.Params{}
 	if args.backupdir != '' {

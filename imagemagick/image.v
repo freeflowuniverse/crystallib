@@ -1,7 +1,6 @@
 module imagemagick
 
 import freeflowuniverse.crystallib.pathlib
-import params
 import freeflowuniverse.crystallib.process
 import os
 
@@ -24,14 +23,15 @@ fn image_new(mut path pathlib.Path) ?Image {
 	return i
 }
 
-pub fn image_downsize(mut path pathlib.Path, mut params params.Params) ?Image {
+//backupdir, put on empty if not used
+pub fn image_downsize(mut path pathlib.Path, backupdir string) ?Image {
 	mut image := image_new(mut path)?
-	image.downsize(mut params)?
+	image.downsize(backupdir)?
 	return image
 }
 
 // will downsize to reasonable size based on x
-fn (mut image Image) downsize(mut params params.Params) ? {
+fn (mut image Image) downsize(backupdir string) ? {
 	image.init()?
 	if image.skip() {
 		return
@@ -39,12 +39,15 @@ fn (mut image Image) downsize(mut params params.Params) ? {
 	println(' - PROCESS DOWNSIZE $image.path')
 	if image.is_png() {
 		image.identify_verbose()?
+		println(image)
+		panic("a")
 	} else {
 		image.identify()?
+		println(image)
+		panic("b")
 	}
 	// check in params
-	if params.exists('backupdir') {
-		backupdir := params.get('backupdir')?
+	if backupdir != "" {
 		mut dest := image.path.backup_name_find('', backupdir)?
 		image.path.copy(mut dest)?
 	}
@@ -94,9 +97,10 @@ fn (mut image Image) identify_verbose() ? {
 		return
 	}
 	println(' - identify: $image.path')
-	out := process.execute_silent("identify -verbose '$image.path'") or {
-		return error('Could not get info from image, error:$err')
+	out := process.execute_silent("identify -verbose '$image.path.path'") or {
+		return error('Could not get info from image $image.path.path \nError:$err')
 	}
+	println(out)
 	mut channel_stats := false
 	// mut channel_state := false
 	mut channel_alpha := false

@@ -7,7 +7,7 @@ import os
 const testpath = os.dir(@FILE) + '/test_path'
 
 // if we return True then it means the dir or file is processed
-fn filter_1(mut path pathlib.Path, mut params params.Params) bool {
+fn filter_1(mut path pathlib.Path, mut params params.Params) ?bool {
 	// print(" - check $path.path")
 	if path.name().starts_with('.') {
 		// println(" FALSE")

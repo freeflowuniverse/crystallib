@@ -3,7 +3,8 @@ module process
 import os
 import time
 import freeflowuniverse.crystallib.texttools
-import io.util
+// import io.util
+import json
 
 pub struct Command {
 pub mut:
@@ -13,8 +14,6 @@ pub mut:
 	stdout_log bool = true
 	debug      bool
 	die        bool = true
-	args       map[string]string
-	node       string // not implemented
 }
 
 pub struct Job {
@@ -22,7 +21,6 @@ pub mut:
 	start     time.Time
 	end       time.Time
 	cmd       Command
-	args      []string
 	output    string
 	error     string
 	exit_code int
@@ -35,8 +33,7 @@ pub mut:
 //
 // if cmd starts with find or ls, will give to bash -c so it can execute
 // if cmd has no path, path will be found
-// $... are remplaced by environment arguments
-// e.g. $TMPDIR will replace to the temp directory  (needs to be uppercase !) TODO:IMPLEMENT
+// $... are remplaced by environment arguments TODO:implement
 //
 // Command argument:
 //   cmd string
@@ -44,14 +41,11 @@ pub mut:
 //   stdout bool = true
 //   die bool = true
 //	 debug bool
-//	 node Node    //e.g. 192.13.3.3:2022 (is ip address)
-//   args map[string]string  // these arguments are replaced in the text given
 //
 // returns Job:
 //     start time.Time
 //     end time.Time
 //     cmd Command (links to the Command argument)
-//     args []string (args as given to the process)
 //     output string
 //     error string
 //     exit_code int  (return code)
@@ -66,17 +60,18 @@ pub fn execute_job(cmd Command) ?Job {
 	job.cmd = cmd
 	job.start = time.now()
 	mut cleanuppath := ''
-	cleanuppath, job.args = cmd_to_args(cmd_obj.cmd)?
+	mut args:=[]string{}
+	cleanuppath, args = cmd_to_args(cmd_obj.cmd)?
 
 	if cmd_obj.debug {
 		cmd_obj.stdout = true
 		println('execute: $job')
 	}
 
-	mut p := os.new_process(job.args[0])
+	mut p := os.new_process(args[0])
 	p.set_redirect_stdio()
 
-	p.set_args(job.args[1..job.args.len])
+	p.set_args(args[1..args.len])
 	p.run()
 	if p.is_alive() {
 		start := time.now().unix_time()
@@ -109,13 +104,15 @@ pub fn execute_job(cmd Command) ?Job {
 	job.end = time.now()
 
 	if job.exit_code > 0 {
+		if job.error == '' {
+			job.error = 'unknown'
+		}		
+		errorpath:=cleanuppath.all_before_last(".sh")+".json"	
+		errorjson := json.encode_pretty(job)
+		os.write_file(errorpath, errorjson)?
 		if cmd_obj.die {
 			// if cleanuppath!=""{os.rm(cleanuppath) or {}}
 			return error('Cannot execute:\n$job')
-		} else {
-			if job.error == '' {
-				job.error = 'unknown'
-			}
 		}
 	} else {
 		if cleanuppath != '' {
@@ -126,32 +123,36 @@ pub fn execute_job(cmd Command) ?Job {
 }
 
 // write temp file and return path
-pub fn temp_write(text string) ?string {
-	mut tmpdir := util.temp_dir()?
-	if 'TMPDIR' in os.environ() {
-		tmpdir = os.environ()['TMPDIR'] or {
-			panic('cannot find TMPDIR in os.environment variables.')
-		}
-	}
-	mut tmppath := ''
+fn temp_write(text string) ?string {
+	mut tmpdir:="/tmp"
+	// if 'TMPDIR' in os.environ() {
+	// 	tmpdir = os.environ()['TMPDIR'] or {
+	// 		panic('cannot find TMPDIR in os.environment variables.')
+	// 	}
+	// }
+	t := time.now().format_ss_milli().replace(" ","-")
+	mut tmppath := '$tmpdir/execscripts/${t}.sh'
 	if !os.exists('$tmpdir/execscripts/') {
 		os.mkdir('$tmpdir/execscripts') or {
 			return error('Cannot create $tmpdir/execscripts,$err')
 		}
 	}
-	for i in 1 .. 200 {
-		// println(i)
-		tmppath = '$tmpdir/execscripts/exec_${i}.sh'
-		if !os.exists(tmppath) {
-			break
-		}
-		// TODO: would be better to remove older files, e.g. if older than 1 day, remove
-		if i > 99 {
-			os.rmdir_all('$tmpdir/execscripts')?
-			return temp_write(text)
+	if os.exists(tmppath){
+		for i in 1 .. 200 {
+			// println(i)
+			tmppath = '$tmpdir/execscripts/{$t}_${i}.sh'
+			if !os.exists(tmppath) {
+				break
+			}
+			// TODO: would be better to remove older files, e.g. if older than 1 day, remove
+			if i > 99 {
+				// os.rmdir_all('$tmpdir/execscripts')?
+				// return temp_write(text)
+				panic("should not get here, can't find temp file to write for process job.")
+			}
 		}
 	}
-	// println(" -- $tmppath")
+	println(tmppath)
 	os.write_file(tmppath, text)?
 	return tmppath
 }
@@ -245,12 +246,13 @@ pub fn execute_interactive(cmd string) ? {
 	}
 }
 
+//check if platform is osx
 pub fn is_osx() bool {
 	p := os.user_os()
-	println(p)
-	panic('is_osx needs to be implemented')
+	return p.contains("macos")
 }
 
+//check if platform is ubuntu
 pub fn is_ubuntu() bool {
 	p := os.user_os()
 	println(p)

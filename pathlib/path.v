@@ -2,6 +2,7 @@ module pathlib
 
 import os
 
+[heap]
 pub struct Path {
 pub mut:
 	path  string

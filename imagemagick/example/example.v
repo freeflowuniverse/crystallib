@@ -4,17 +4,21 @@ import freeflowuniverse.crystallib.imagemagick
 import gittools
 
 fn do() ? {
-	imagemagick.install()?
+	if !imagemagick.installed(){
+		panic("need imagemagick")
+	}
 
 	mut gs := gittools.get(root: '/tmp/code')?
 
-	url := 'https://github.com/threefoldfoundation/www_examplesite/tree/development/manual'
+	url := 'https://github.com/threefoldfoundation/www_examplesite/tree/development/src'
 	mut gr := gs.repo_get_from_url(url: url, pull: false, reset: false)?
 
 	path := gr.path_content_get() // path of the manual
 
+	imagemagick.scan(path:path)?
+
 	// remove changes so we can do again
-	gr.remove_changes()?
+	// gr.remove_changes()?
 }
 
 fn main() {

@@ -60,7 +60,7 @@ pub fn procesinfo_get(pid int) ?&ProcessInfo {
 	return error('Cannot find process with pid: $pid, to get process info from.')
 }
 
-pub fn (mut pm ProcessMap) scan() ? {
+fn (mut pm ProcessMap) scan() ? {
 	now := time.now().unix_time()
 	// only scan if we didn't do in last 5 seconds
 	if pm.lastscan.unix_time() > now - 5 {
