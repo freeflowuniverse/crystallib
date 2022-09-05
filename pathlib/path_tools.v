@@ -45,6 +45,23 @@ pub fn (path Path) path_relative(sourcepath string) string {
 	return path_abs
 }
 
+
+pub fn path_relative(source_ string, dest_ string) ?string{
+	mut source:=source_.trim_right("/")
+	mut dest:=dest_.replace("//","/").trim_right("/")
+	// println("path relative: '$source' '$dest' ")
+	if source.starts_with("/") && ! dest.starts_with("/"){
+		return error("if source starts with / then dest needs to start with / as well")
+	}
+	if ! source.starts_with("/") && dest.starts_with("/"){
+		return error("if source starts with / then dest needs to start with / as well")
+	}
+	if dest.starts_with(source){
+		return dest[source.len..]
+	}
+	return dest
+}
+
 // find parent of path
 pub fn (path Path) parent() ?Path {
 	mut p := path.absolute()
@@ -251,13 +268,19 @@ pub fn (mut path Path) link_list(args ListArgs) ?[]Path {
 }
 
 // write content to the file, check is file
+// if the path is a link to a file then will change the content of the file represented by the link
 pub fn (mut path Path) write(content string) ? {
-	if path.cat != Category.file {
-		return error('Path must be a file')
+
+	if !os.exists(path.path_dir()) {
+		os.mkdir_all(path.path_dir())?
 	}
-	if !os.exists(path.path) {
-		os.mkdir_all(path.path)?
-	}
+	if path.exists() && path.cat == Category.linkfile{
+		mut pathlinked:=path.readlink()?
+		pathlinked.write(content)?
+	}		
+	if path.exists() && path.cat != Category.file && path.cat != Category.linkfile{
+		return error('Path must be a file for $path')
+	}	
 	os.write_file(path.path, content)?
 }
 
@@ -333,46 +356,17 @@ pub fn (mut path Path) link(mut dest Path) ?Path {
 	}
 }
 
-// start from existing name and look for name_$nr.$ext, nr need to be unique, ideal for backups
-// TODO: what is purpose of source?
-pub fn (mut path Path) backup_name_find(source string, dest string) ?Path {
-	if !path.exists() {
-		return path
+//return path object for the link this one is pointing too
+pub fn (mut path Path) readlink() ?Path {
+	if path.is_link(){
+		cmd:="readlink ${path.absolute()}"
+		res := os.execute(cmd)
+		if res.exit_code>0{
+			return error("cannot define result for link of $path \n$error")
+		}
+		return get(res.output.trim_space())
+	}else{
+		return error("can only read link info when the path is a filelink or dirlink. $path")
 	}
-	size := path.size()?
-
-	mut path_str := ''
-	mut path_found := Path{}
-	mut rel := ''
-	if source != '' {
-		path_abs := path.absolute()
-		mut source_path := Path{
-			path: source
-		}.absolute()
-		if path_abs.starts_with(source_path) {
-			rel = os.dir(path_abs.substr(source_path.len + 1, path_abs.len)) + '/'
-		}
-	}
-	os.mkdir_all('$dest/$rel')?
-	for i in 0 .. 20 {
-		if i == 0 {
-			path_str = '$dest/$rel${path.name_no_ext()}.$path.extension()'
-		} else {
-			path_str = '$dest/$rel${path.name_no_ext()}_${i}.$path.extension()'
-		}
-		path_found = Path{
-			path: path_str
-		}
-		if !path_found.exists() {
-			return path_found
-		}
-		if size > 0 {
-			size2 := path_found.size()?
-			if size2 == size {
-				// means we found the last one which is same as the one we are trying to backup
-				return path_found
-			}
-		}
-	}
-	return error('cannot find path for backup, last one was: $path_found.path')
 }
+

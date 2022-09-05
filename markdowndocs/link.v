@@ -4,10 +4,11 @@ import freeflowuniverse.crystallib.texttools
 import os
 
 // add link to the page
-fn link_new(original_descr_ string, original_link_ string, isimage bool) ?Link {
+fn (mut para Paragraph) link_new(original_descr_ string, original_link_ string, isimage bool) ?Link {
 	mut link := Link{
 		// this will be the exact way how the link is done in the paragraph
 		original: '[$original_descr_]($original_link_)'
+		paragraph: &para
 	}
 	if isimage {
 		link.original = '!' + link.original
@@ -223,7 +224,7 @@ pub mut:
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT REALITIES
 // returns all the links
-pub fn link_parser(text string) ?LinkParseResult {
+pub fn (mut para Paragraph) link_parser(text string) ?LinkParseResult {
 	mut charprev := ''
 	mut ch := ''
 	mut state := LinkParseStatus.start
@@ -284,7 +285,7 @@ pub fn link_parser(text string) ?LinkParseResult {
 				// original += ch
 				if ch == ')' {
 					// end of capture group
-					mut link := link_new(capturegroup_pre, capturegroup_post, isimage)?
+					mut link := para.link_new(capturegroup_pre, capturegroup_post, isimage)?
 					// remember the consumer page
 					parseresult.links << link
 					capturegroup_pre = ''

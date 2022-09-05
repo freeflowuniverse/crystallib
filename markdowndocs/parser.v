@@ -1,6 +1,7 @@
 module markdowndocs
 
 import os
+import pathlib
 
 // error while parsing
 pub struct ParserError {
@@ -164,7 +165,10 @@ fn (mut parser Parser) file_parse(path string) ? {
 	if !os.exists(path) {
 		return error("path: '$path' does not exist, cannot parse.")
 	}
+	
 	mut content := os.read_file(path) or { panic('Failed to load file $path') }
+	parser.doc.content = content
+	parser.doc.path = pathlib.get_file(path,false)?
 	parser.lines = content.split_into_lines()
 	parser.lines.map(it.replace('\t', '    ')) // remove the tabs
 	parser.linenr = 0
@@ -226,6 +230,7 @@ fn (mut parser Parser) file_parse(path string) ? {
 			if line.starts_with('!!') {
 				parser.doc.items << Action{
 					content: line.all_after_first('!!')
+					doc : &parser.doc
 				}
 				parser.next()
 				continue
@@ -235,6 +240,7 @@ fn (mut parser Parser) file_parse(path string) ? {
 			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
 				parser.doc.items << CodeBlock{
 					category: line.substr(3, line.len).to_lower().trim_space()
+					doc : &parser.doc
 				}
 				parser.next()
 				continue
@@ -250,6 +256,7 @@ fn (mut parser Parser) file_parse(path string) ? {
 				parser.doc.items << Header{
 					content: line.all_after_first('#####').trim_space()
 					depth: 5
+					doc : &parser.doc
 				}
 				parser.next_start()
 				continue
@@ -258,6 +265,7 @@ fn (mut parser Parser) file_parse(path string) ? {
 				parser.doc.items << Header{
 					content: line.all_after_first('####').trim_space()
 					depth: 4
+					doc : &parser.doc
 				}
 				parser.next_start()
 				continue
@@ -266,6 +274,7 @@ fn (mut parser Parser) file_parse(path string) ? {
 				parser.doc.items << Header{
 					content: line.all_after_first('###').trim_space()
 					depth: 3
+					doc : &parser.doc
 				}
 				parser.next_start()
 				continue
@@ -274,6 +283,7 @@ fn (mut parser Parser) file_parse(path string) ? {
 				parser.doc.items << Header{
 					content: line.all_after_first('##').trim_space()
 					depth: 2
+					doc : &parser.doc
 				}
 				parser.next_start()
 				continue
@@ -282,6 +292,7 @@ fn (mut parser Parser) file_parse(path string) ? {
 				parser.doc.items << Header{
 					content: line.all_after_first('#').trim_space()
 					depth: 1
+					doc : &parser.doc
 				}
 				parser.next_start()
 				continue
@@ -291,6 +302,7 @@ fn (mut parser Parser) file_parse(path string) ? {
 				parser.doc.items << Comment{
 					content: line.all_after_first('//').trim_space() + '\n'
 					prefix: .short
+					doc : &parser.doc
 				}
 				parser.next()
 				continue
@@ -299,6 +311,7 @@ fn (mut parser Parser) file_parse(path string) ? {
 				parser.doc.items << Comment{
 					content: line.all_after_first('<!--').trim_space() + '\n'
 					prefix: .multi
+					doc : &parser.doc
 				}
 				parser.next()
 				continue
@@ -310,6 +323,7 @@ fn (mut parser Parser) file_parse(path string) ? {
 		} else {
 			parser.doc.items << Paragraph{
 				content: line
+				doc : &parser.doc
 			}
 		}
 

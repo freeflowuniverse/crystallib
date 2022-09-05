@@ -39,12 +39,41 @@ pub mut:
 	// internal
 	state     LinkState
 	error_msg string
+	paragraph &Paragraph [str: skip]
 }
+
+//return path of the filename in the site
+pub fn (mut link Link) pathfull()string {
+	mut r:="${link.path}/${link.filename}"
+	r=r.trim_right("/")
+	return r
+}
+
+
 
 fn (mut link Link) error(msg string) {
 	link.state = LinkState.error
 	link.error_msg = msg
 }
+
+
+
+//needs to be the relative path in the site, important!
+//will return true if there was change
+pub fn (mut link Link) link_update(path_ string) bool {
+	mut path:=path_.trim_left("/")
+	linkoriginal:=link.original.replace(link.pathfull(),path)
+	if linkoriginal != link.original{
+		link.path=path.all_before_last("/")
+		link.filename=path.all_after_last("/")
+		link.original=linkoriginal
+		link.paragraph.content.replace(linkoriginal,link.original)
+		link.paragraph.changed = true
+		return true
+	}
+	return false
+}
+
 
 // fn (mut o Link) process()?{
 // 	return

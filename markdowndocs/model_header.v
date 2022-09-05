@@ -4,6 +4,7 @@ pub struct Header {
 pub mut:
 	content string
 	depth   int
+	doc 	&Doc[str: skip]
 }
 
 fn (mut o Header) process() ? {

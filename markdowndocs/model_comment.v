@@ -11,6 +11,7 @@ pub struct Comment {
 pub mut:
 	content string
 	prefix  CommentPrefix
+	doc 	&Doc[str: skip]
 }
 
 fn (mut o Comment) process() ? {

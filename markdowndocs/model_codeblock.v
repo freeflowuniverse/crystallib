@@ -4,6 +4,7 @@ pub struct CodeBlock {
 pub mut:
 	content  string
 	category string
+	doc 	&Doc[str: skip]
 }
 
 fn (mut o CodeBlock) process() ? {

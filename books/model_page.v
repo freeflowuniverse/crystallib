@@ -2,6 +2,7 @@ module books
 
 import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.markdowndocs
+import os
 
 pub enum PageStatus {
 	unknown
@@ -57,15 +58,24 @@ fn (mut page Page) fix()? {
 
 //walk over all links and fix them with location
 fn (mut page Page) links_fix()? {
-	for item in page.doc.items{
-		if item is markdowndocs.Paragraph{
-			for link in item.links{		
+	mut changed := false
+	for mut item in page.doc.items{
+		if mut item is markdowndocs.Paragraph{
+			for mut link in item.links{		
 				name:= link.filename.all_before_last(".").trim_right("_").to_lower()
 				println(link)
-				println(page.site)
 				if link.cat==.image{
 					if name in page.site.files{
 						image:=page.site.files[name]
+						
+						mut source:=page.pathrel.all_before_last("/") //this is the relative path of where the page is in relation to site root
+						mut imagelink_rel := pathlib.path_relative(source,image.pathrel)?
+
+						if link.link_update(imagelink_rel){
+							changed=true
+						}
+						println(changed)
+						println(link)
 						println(image)
 						panic("sss")
 					}else{

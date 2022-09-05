@@ -9,6 +9,7 @@ pub mut:
 	remarks string
 	name    string
 	params  params.Params
+	doc 	&Doc[str: skip]
 }
 
 fn (mut action Action) process() ? {

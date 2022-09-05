@@ -1,8 +1,11 @@
 module markdowndocs
+import pathlib
 
 pub struct Doc {
 pub mut:
 	items []DocItem
+	path pathlib.Path
+	content string
 }
 
 type DocItem = Action
@@ -74,4 +77,11 @@ fn (doc Doc) str() string {
 		}
 	}
 	return out
+}
+
+
+fn (doc Doc) save(backup bool)? {
+
+
+
 }

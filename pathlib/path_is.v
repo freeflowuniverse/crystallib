@@ -29,3 +29,9 @@ pub fn (path Path) is_image_jpg_png() bool {
 	return pathlib.image_exts_basic.contains(e)
 }
 
+pub fn (mut path Path) is_link() bool {
+	if path.cat == Category.unknown {
+		path.check()
+	}
+	return path.cat == Category.linkfile || path.cat == Category.linkdir 
+}
