@@ -2,6 +2,7 @@ module vault
 
 import pathlib
 import os
+import crypto.sha256
 
 pub struct Vault {
 pub mut:
@@ -94,4 +95,28 @@ pub fn (mut vault Vault) delete() ? {
 	for mut shelve in vault.shelves {
 		shelve.delete()?
 	}
+}
+
+// walk over the vault and re-shelve all dir's as owned by the vault
+pub fn (mut vault Vault) superlist() string {
+	mut out:="${vault.name}\n"
+	for mut shelve in vault.shelves {
+		out+="${shelve.superlist()}\n"
+	}
+	return out
+}
+
+// walk over the vault and re-shelve all dir's as owned by the vault
+pub fn (mut vault Vault) hash() string {
+	return sha256.hexhash(vault.superlist())
+}
+
+
+//restore to the unixtime state
+//only implemented to go to 0, which is the first state
+// TODO: implement restore on other times
+pub fn (mut vault Vault) restore(unixtime int )? {
+	for mut shelve in vault.shelves {
+		shelve.restore(unixtime)?
+	}	
 }

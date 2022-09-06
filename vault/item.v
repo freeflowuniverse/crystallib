@@ -15,7 +15,7 @@ pub:
 
 // save the metadata for the backups
 pub fn (i Item) meta() string {
-	return '$i.sha256|$i.time.unix_time()|$i.nr|$i.name'
+	return '$i.sha256|$i.nr|$i.name'
 }
 
 // get path object representing the vaulted item
