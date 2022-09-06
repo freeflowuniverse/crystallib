@@ -74,13 +74,9 @@ fn (mut page Page) links_fix() ? {
 						}
 						if changed{
 							page.doc.content=page.doc.content.replace(originalfilename,link.filename)
+							page.doc.save()?
 							println(page.doc.content)
 						}
-						// println(changed)
-						// println(link)
-						// println(image)
-						
-						panic('sss')
 					} else {
 						panic('ssssse:$name')
 					}

@@ -80,5 +80,6 @@ fn (doc Doc) str() string {
 	return out
 }
 
-fn (doc Doc) save(backup bool) ? {
+pub fn (mut doc Doc) save() ? {
+	doc.path.write(doc.content)?
 }
