@@ -11,6 +11,13 @@ pub fn get(path string) Path {
 	return p2
 }
 
+pub fn get_no_check(path string) Path {
+	mut p2 := Path{
+		path: path
+	}
+	return p2
+}
+
 // get a directory
 pub fn get_dir(path string, create bool) ?Path {
 	mut p2 := get(path)
@@ -27,7 +34,7 @@ pub fn get_dir(path string, create bool) ?Path {
 // get file path object, make sure the dir exists
 pub fn get_file_dir_create(path string) ?Path {
 	mut p2 := get(path)
-	parent_ := p2.parent()?
+	mut parent_ := p2.parent()?
 	os.mkdir_all(parent_.absolute()) or { return error('cannot create path:$path') }
 	p2.check()
 	return p2
@@ -51,7 +58,7 @@ fn new_dir_empty(path string) ?Path {
 		os.rmdir_all(path)? // delete dir with its content
 	}
 	os.mkdir_all(path)? // create dir and make sure it is empty dir
-	mut p:= Path{
+	mut p := Path{
 		path: path
 		cat: Category.dir
 	}
@@ -67,7 +74,7 @@ fn get_dir_exists(path string) ?Path {
 	if !os.is_dir(path) {
 		return error('cannot create new dir obj, because dir existed and was not dir type. $path')
 	}
-	mut p:= Path{
+	mut p := Path{
 		path: path
 		cat: Category.dir
 	}

@@ -1,6 +1,7 @@
 module pathlib
 
 const image_exts = ['jpg', 'jpeg', 'png', 'gif', 'svg']
+
 const image_exts_basic = ['jpg', 'jpeg', 'png']
 
 pub fn (mut path Path) is_dir() bool {
@@ -33,5 +34,5 @@ pub fn (mut path Path) is_link() bool {
 	if path.cat == Category.unknown {
 		path.check()
 	}
-	return path.cat == Category.linkfile || path.cat == Category.linkdir 
+	return path.cat == Category.linkfile || path.cat == Category.linkdir
 }

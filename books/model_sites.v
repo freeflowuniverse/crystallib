@@ -31,7 +31,7 @@ pub fn (mut sites Sites) site_new(args SiteNewArgs) ?Site {
 		path: p
 		sites: &sites
 	}
-	sites.sites[site.name]=site
+	sites.sites[site.name] = site
 	return site
 }
 
@@ -47,5 +47,3 @@ pub fn (mut sites Sites) fix() ? {
 		site.fix()?
 	}
 }
-
-

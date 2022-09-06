@@ -1,10 +1,10 @@
 module main
 
 import freeflowuniverse.crystallib.pathlib
-import params
+import freeflowuniverse.crystallib.params
 import os
 
-const testpath = os.dir(@FILE) + '/test_path'
+const testpath3 = os.dir(@FILE) + '/test_path'
 
 // if we return True then it means the dir or file is processed
 fn filter_1(mut path pathlib.Path, mut params params.Params) ?bool {
@@ -28,7 +28,7 @@ fn executor_1(mut patho pathlib.Path, mut params params.Params) ?params.Params {
 }
 
 fn do() ? {
-	mut p := pathlib.get_dir(testpath, false)?
+	mut p := pathlib.get_dir(testpath3, false)?
 	mut params := params.Params{}
 	mut params2 := p.scan(mut params, [filter_1], [executor_1])?
 	println(params2)

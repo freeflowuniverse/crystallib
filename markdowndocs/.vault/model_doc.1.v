@@ -9,6 +9,7 @@ pub mut:
 	content string
 }
 
+
 type DocItem = Action
 	| Actions
 	| CodeBlock

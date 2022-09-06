@@ -16,7 +16,7 @@ fn do() ? {
 
 	path := gr.path_content_get() // path of the manual
 
-	imagemagick.scan(path: path,backupdir:"/tmp/backupimages")?
+	imagemagick.scan(path: path, backupdir: '/tmp/backupimages')?
 
 	// remove changes so we can do again
 	// gr.remove_changes()?

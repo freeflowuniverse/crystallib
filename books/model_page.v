@@ -19,9 +19,9 @@ pub mut: // pointer to site
 	path           pathlib.Path
 	pathrel        string
 	state          PageStatus
-	pages_included []&Page [str: skip]
-	pages_linked   []&Page [str: skip]
-	files_linked   []&File [str: skip]
+	pages_included []&Page          [str: skip]
+	pages_linked   []&Page          [str: skip]
+	files_linked   []&File          [str: skip]
 	categories     []string
 	doc            markdowndocs.Doc [str: skip]
 }
@@ -44,42 +44,40 @@ pub fn (mut site Site) page_new(mut p pathlib.Path) ?Page {
 	mut parser := markdowndocs.get(p.path) or { panic('cannot parse,$err') }
 	page.doc = parser.doc
 	page.name = p.name_no_ext()
-	page.pathrel = p.path_relative(site.path.path).trim("/")
+	page.pathrel = p.path_relative(site.path.path).trim('/')
 	site.pages[page.name] = page
 
 	return page
 }
 
-
-fn (mut page Page) fix()? {
+fn (mut page Page) fix() ? {
 	page.links_fix()?
 }
 
-
-//walk over all links and fix them with location
-fn (mut page Page) links_fix()? {
+// walk over all links and fix them with location
+fn (mut page Page) links_fix() ? {
 	mut changed := false
-	for mut item in page.doc.items{
-		if mut item is markdowndocs.Paragraph{
-			for mut link in item.links{		
-				name:= link.filename.all_before_last(".").trim_right("_").to_lower()
+	for mut item in page.doc.items {
+		if mut item is markdowndocs.Paragraph {
+			for mut link in item.links {
+				name := link.filename.all_before_last('.').trim_right('_').to_lower()
 				println(link)
-				if link.cat==.image{
-					if name in page.site.files{
-						image:=page.site.files[name]
-						
-						mut source:=page.pathrel.all_before_last("/") //this is the relative path of where the page is in relation to site root
-						mut imagelink_rel := pathlib.path_relative(source,image.pathrel)?
+				if link.cat == .image {
+					if name in page.site.files {
+						image := page.site.files[name]
 
-						if link.link_update(imagelink_rel){
-							changed=true
+						mut source := page.pathrel.all_before_last('/') // this is the relative path of where the page is in relation to site root
+						mut imagelink_rel := pathlib.path_relative(source, image.pathrel)?
+
+						if link.link_update(imagelink_rel) {
+							changed = true
 						}
 						println(changed)
 						println(link)
 						println(image)
-						panic("sss")
-					}else{
-						panic("ssssse:$name")
+						panic('sss')
+					} else {
+						panic('ssssse:$name')
 					}
 				}
 			}

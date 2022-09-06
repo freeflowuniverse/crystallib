@@ -34,36 +34,36 @@ pub fn (mut path Path) namefix() ?bool {
 }
 
 // get relative path in relation to sourcepath
-pub fn (path Path) path_relative(sourcepath string) string {
+pub fn (mut path Path) path_relative(sourcepath string) string {
 	path_abs := path.absolute()
-	sourcepath_abs := Path{
+	mut sourcepath_abs := Path{
 		path: sourcepath
-	}.absolute()
-	if path_abs.starts_with(sourcepath_abs) {
-		return path_abs[sourcepath_abs.len..]
+	}
+	sourcepath_abs.absolute()
+	if path_abs.starts_with(sourcepath_abs.path) {
+		return path_abs[sourcepath_abs.path.len..]
 	}
 	return path_abs
 }
 
-
-pub fn path_relative(source_ string, dest_ string) ?string{
-	mut source:=source_.trim_right("/")
-	mut dest:=dest_.replace("//","/").trim_right("/")
+pub fn path_relative(source_ string, dest_ string) ?string {
+	mut source := source_.trim_right('/')
+	mut dest := dest_.replace('//', '/').trim_right('/')
 	// println("path relative: '$source' '$dest' ")
-	if source.starts_with("/") && ! dest.starts_with("/"){
-		return error("if source starts with / then dest needs to start with / as well")
+	if source.starts_with('/') && !dest.starts_with('/') {
+		return error('if source starts with / then dest needs to start with / as well')
 	}
-	if ! source.starts_with("/") && dest.starts_with("/"){
-		return error("if source starts with / then dest needs to start with / as well")
+	if !source.starts_with('/') && dest.starts_with('/') {
+		return error('if source starts with / then dest needs to start with / as well')
 	}
-	if dest.starts_with(source){
+	if dest.starts_with(source) {
 		return dest[source.len..]
 	}
 	return dest
 }
 
 // find parent of path
-pub fn (path Path) parent() ?Path {
+pub fn (mut path Path) parent() ?Path {
 	mut p := path.absolute()
 	parent := os.dir(p) // get parent directory
 	if parent == '.' || parent == '/' {
@@ -105,7 +105,7 @@ pub fn (mut path Path) normalize() ? {
 
 // walk upwards starting from path untill dir or file tofind is found
 // works recursive
-pub fn (path Path) parent_find(tofind string) ?Path {
+pub fn (mut path Path) parent_find(tofind string) ?Path {
 	if os.exists(os.join_path(path.path, tofind)) {
 		return path
 	}
@@ -270,17 +270,16 @@ pub fn (mut path Path) link_list(args ListArgs) ?[]Path {
 // write content to the file, check is file
 // if the path is a link to a file then will change the content of the file represented by the link
 pub fn (mut path Path) write(content string) ? {
-
 	if !os.exists(path.path_dir()) {
 		os.mkdir_all(path.path_dir())?
 	}
-	if path.exists() && path.cat == Category.linkfile{
-		mut pathlinked:=path.readlink()?
+	if path.exists() && path.cat == Category.linkfile {
+		mut pathlinked := path.readlink()?
 		pathlinked.write(content)?
-	}		
-	if path.exists() && path.cat != Category.file && path.cat != Category.linkfile{
+	}
+	if path.exists() && path.cat != Category.file && path.cat != Category.linkfile {
 		return error('Path must be a file for $path')
-	}	
+	}
 	os.write_file(path.path, content)?
 }
 
@@ -356,17 +355,16 @@ pub fn (mut path Path) link(mut dest Path) ?Path {
 	}
 }
 
-//return path object for the link this one is pointing too
+// return path object for the link this one is pointing too
 pub fn (mut path Path) readlink() ?Path {
-	if path.is_link(){
-		cmd:="readlink ${path.absolute()}"
+	if path.is_link() {
+		cmd := 'readlink $path.absolute()'
 		res := os.execute(cmd)
-		if res.exit_code>0{
-			return error("cannot define result for link of $path \n$error")
+		if res.exit_code > 0 {
+			return error('cannot define result for link of $path \n$error')
 		}
 		return get(res.output.trim_space())
-	}else{
-		return error("can only read link info when the path is a filelink or dirlink. $path")
+	} else {
+		return error('can only read link info when the path is a filelink or dirlink. $path')
 	}
 }
-

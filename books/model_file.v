@@ -38,16 +38,16 @@ pub fn (mut site Site) file_new(mut p pathlib.Path) ?File {
 		site: &site
 	}
 	ff.init()
-	site.files[ff.name]=ff
+	site.files[ff.name] = ff
 	return ff
 }
 
 fn (mut file File) init() {
-	file.name = file.path.name_no_ext().trim("_")
+	file.name = file.path.name_no_ext().trim('_')
 	if file.path.is_image() {
 		file.ftype = .image
 	}
-	file.pathrel = file.path.path_relative(file.site.path.path).trim("/")
+	file.pathrel = file.path.path_relative(file.site.path.path).trim('/')
 }
 
 pub fn (mut file File) delete() ? {

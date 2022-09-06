@@ -37,7 +37,7 @@ fn filter_imagemagic(mut path pathlib.Path, mut params params.Params) ?bool {
 fn executor_imagemagic(mut path pathlib.Path, mut params params.Params) ?params.Params {
 	mut backupdir := ''
 	if params.exists('backupdir') {
-		backupdir = params.get('backupdir')or {panic(error)}
+		backupdir = params.get('backupdir') or { panic(error) }
 	}
 	image_downsize(mut path, backupdir)?
 	// if mut _ := image_downsize(mut path, backupdir) {
