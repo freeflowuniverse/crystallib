@@ -8,6 +8,7 @@ const testdir2 = os.dir(@FILE) + '/../../pathlib/examples/test_path'
 fn do() ? {
 	mut v := vault.do(testdir2)?
 	println(v)
+	v.delete()?
 }
 
 fn main() {
