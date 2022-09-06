@@ -61,7 +61,7 @@ fn (mut page Page) links_fix() ? {
 		if mut item is markdowndocs.Paragraph {
 			for mut link in item.links {
 				name := link.filename.all_before_last('.').trim_right('_').to_lower()
-				println(link)
+				originalfilename:=link.filename
 				if link.cat == .image {
 					if name in page.site.files {
 						image := page.site.files[name]
@@ -72,9 +72,14 @@ fn (mut page Page) links_fix() ? {
 						if link.link_update(imagelink_rel) {
 							changed = true
 						}
-						println(changed)
-						println(link)
-						println(image)
+						if changed{
+							page.doc.content=page.doc.content.replace(originalfilename,link.filename)
+							println(page.doc.content)
+						}
+						// println(changed)
+						// println(link)
+						// println(image)
+						
 						panic('sss')
 					} else {
 						panic('ssssse:$name')

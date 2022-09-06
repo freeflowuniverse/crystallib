@@ -53,12 +53,12 @@ pub fn (mut image Image) downsize(backupdir string) ? {
 		image.identify()?
 	}
 	// check in params
-	if backupdir != '' {
-		mut dest := image.path.backup_name_find('', backupdir) or {
-			return error('cannot find backupname for $image.path.path . \n$error')
-		}
-		image.path.copy(mut dest)?
-	}
+	// if backupdir != '' {
+	// 	mut dest := image.path.backup_name_find('', backupdir) or {
+	// 		return error('cannot find backupname for $image.path.path . \n$error')
+	// 	}
+	// 	image.path.copy(mut dest)?
+	// }
 	if image.size_kbyte > 600 && image.size_x > 2400 {
 		image.size_kbyte = 0
 		println('   - convert image resize 50%: $image.path.path')
