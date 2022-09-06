@@ -25,7 +25,7 @@ fn (mut site Site) file_remember(mut patho pathlib.Path) ? {
 						site.error(
 							path: pathdouble
 							msg: 'found 2 images with _ at end'
-							cat: .doubleimage
+							cat: .image_double
 						)
 					}
 					prio_double = true
@@ -47,7 +47,7 @@ fn (mut site Site) file_remember(mut patho pathlib.Path) ? {
 				}
 			} else {
 				// no automatic check
-				site.error(path: pathdouble, msg: 'duplicate file', cat: .doubleimage)
+				site.error(path: pathdouble, msg: 'duplicate file', cat: .image_double)
 			}
 		} else {
 			// means the its a new one, lets add it, first see if it needs to be downsized
@@ -66,7 +66,7 @@ fn (mut site Site) file_remember(mut patho pathlib.Path) ? {
 		if site.file_exists(patho.name()) {
 			mut filedouble := site.file_get(patho.name())?
 			mut pathdouble := filedouble.path
-			site.error(path: pathdouble, msg: 'duplicate file', cat: .doubleimage)
+			site.error(path: pathdouble, msg: 'duplicate file', cat: .image_double)
 		} else {
 			site.file_new(mut patho)?
 		}

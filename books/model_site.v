@@ -29,8 +29,10 @@ pub fn (mut site Site) scan() ? {
 
 enum ErrorCat {
 	unknown
-	doubleimage
-	doublefile
+	image_double
+	file_double
+	file_not_found
+	page_not_found
 	sidebar
 }
 

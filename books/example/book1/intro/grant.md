@@ -1,4 +1,4 @@
-![](img/casper_devxdao.png)  
+![](img/casper_devxdao_.jpg)  
 
 # Grant
 

@@ -32,3 +32,6 @@ ThreeFold brings a technology stack that undoes a lot of the (unnecessary) compl
 - the use of (any) blockchain to do value transactions and smart contracts for operational IT workloads descriptions.  Today they use the Stellar Network and Polkadot substrate as the main two blockchains. Their strategy is to become a multichain platform and provide decentralized smart contracting capabilities for IT architectures that can run any IT workload currently supported on market leading clouds but then 100% decentralized. The most well known cloud interfaces to orchestrate a cloud infrastructure are supported (Kubernetes, Docker, terraform, typescript etc.)
 
 In order reach their goal ThreeFold has developed a large number of building blocks that can be molded into an architecture that can achieve blockchain pruning functions without much (if at all) impact to the blockchain operations.
+
+
+[Link to](casperlabs_deployment.md)

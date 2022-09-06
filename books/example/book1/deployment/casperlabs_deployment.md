@@ -2,10 +2,10 @@
 
 {{#include missing_layer.md}}
 
-![](img/deployment.png)  
+![](img/deployment_.jpg)  
 
 ### Smart contract for IT....
 
-![](img/smart_contract_it.png)  
+![](img/smart_contract_it_.png)  
 
 > TODO complete
