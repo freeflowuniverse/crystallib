@@ -14,8 +14,8 @@ pub mut:
 }
 
 // save the metadata for the backups
-fn (mut shelve Shelve) meta_data(current_time time.Time) string {	
-	mut out := ["time:${current_time.unix_time()}"]
+fn (mut shelve Shelve) meta_data(current_time time.Time) string {
+	mut out := ['time:$current_time.unix_time()']
 	for item in shelve.items {
 		out << item.meta()
 	}
@@ -25,7 +25,7 @@ fn (mut shelve Shelve) meta_data(current_time time.Time) string {
 // save the metadata for the backups
 pub fn (mut shelve Shelve) save() ? {
 	mut mpath := shelve.path_meta()?
-	out := shelve.meta_data()
+	out := shelve.meta_data(time.now())
 	mpath.write(out)?
 }
 
@@ -163,18 +163,18 @@ pub fn (mut shelve Shelve) delete() ? {
 
 // walk over the vault and re-shelve all dir's as owned by the vault
 pub fn (mut shelve Shelve) superlist() string {
-	mut out:="SHELVE:${shelve.path.path}\n"
+	mut out := 'SHELVE:$shelve.path.path\n'
 	for mut item in shelve.items {
-		out+="${item.meta()}\n"
+		out += '$item.meta()\n'
 	}
 	return out
 }
 
-//restore to the unixtime state
-//only implemented to go to 0, which is the first state
+// restore to the unixtime state
+// only implemented to go to 0, which is the first state
 // TODO: implement restore on other times
-pub fn (mut shelve Shelve) restore(unixtime int )? {
-	for mut item in shelve.items {
-		item.restore(unixtime int)?
-	}
-}
+// pub fn (mut shelve Shelve) restore(unixtime int )? {
+// 	for mut item in shelve.items {
+// 		item.restore(unixtime int)?
+// 	}
+// }

@@ -11,6 +11,13 @@ pub fn (mut path Path) is_dir() bool {
 	return path.cat == Category.dir || path.cat == Category.linkdir
 }
 
+pub fn (mut path Path) is_dir_link() bool {
+	if path.cat == Category.unknown {
+		path.check()
+	}
+	return path.cat == Category.linkdir
+}
+
 pub fn (mut path Path) is_file() bool {
 	if path.cat == Category.unknown {
 		path.check()

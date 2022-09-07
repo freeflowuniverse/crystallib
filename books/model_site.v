@@ -10,7 +10,7 @@ enum SiteType {
 }
 
 [heap]
-struct Site {
+pub struct Site {
 pub:
 	name     string
 	sites    &Sites   [str: skip] // pointer to sites

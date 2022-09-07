@@ -22,11 +22,13 @@ pub mut:
 	status GitStructureStatus
 }
 
+[heap]
 pub struct GitRepo {
 	id int [skip]
 pub:
 	// only use when custom path
 	path string
+	name string
 pub mut:
 	gs    &GitStructure [str: skip]
 	addr  GitAddr

@@ -8,6 +8,7 @@ pub mut:
 	branch string
 	pull   bool // will pull if this is set
 	reset  bool // this means will pull and reset all changes
+	name   string
 }
 
 // will get repo starting from url, if the repo does not exist, only then will pull
@@ -36,6 +37,7 @@ pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs
 // 	branch string
 // 	pull   bool // will pull if this is set
 // 	reset bool //this means will pull and reset all changes
+//	name   string
 // }
 // pub struct GitAddr {
 // 	provider string
@@ -58,6 +60,7 @@ pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr, args Rep
 			addr: addr
 			id: gitstructure.repos.len
 			gs: &gitstructure
+			name: args.name
 		}
 		mut r0 := gitstructure.repo_get(args2) or {
 			// means could not pull need to remove the repo from the list again
@@ -111,6 +114,10 @@ mut:
 pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) ?&GitRepo {
 	mut res_ids := []int{}
 	for r in gitstructure.repos {
+		if r.name != '' && r.name == args.name {
+			res_ids << r.id
+			continue
+		}
 		if r.addr.name == args.name {
 			if args.account == '' || args.account == r.addr.account {
 				res_ids << r.id
@@ -134,6 +141,9 @@ pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) ?&GitRepo {
 // or gitstructure.repo_get({name:"myname"})
 pub fn (mut gitstructure GitStructure) repo_exists(addr RepoGetArgs) bool {
 	for r in gitstructure.repos {
+		if r.name != '' && r.name == addr.name {
+			return true
+		}
 		if r.addr.name == addr.name {
 			if addr.account == '' || addr.account == r.addr.account {
 				return true

@@ -1,14 +1,13 @@
 module actionparser
 
-fn execute(path string)?{
-	mut parser := actionparser.get()
-	actionparser.file_parse(path)?
+pub fn execute(path string) ? {
+	mut parser := get()
+	file_parse(path)?
 
 	println(parser.actions)
 
-	//these are the std actions as understood by the action parser
+	// these are the std actions as understood by the action parser
 	result := parser.actions_process()?
 
 	println(result)
-
 }

@@ -3,6 +3,7 @@ module actionparser
 import os
 import freeflowuniverse.crystallib.params
 import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.pathtools
 
 enum ParseBlockStatus {
 	start
@@ -30,8 +31,32 @@ mut:
 	content string
 }
 
+
+//TODO/ add recursive
+// fn file_includes(path string) ?string {
+// 	path0 := pathtools.get(path)
+// 	content := path0.read()?
+// 	out=[]string{}
+// 	for line in content.split_into_lines(){
+// 		if line.starts_with("!!include"){
+// 			//now we can do the include
+// 			params := params.text_to_params(line.all_after_first(" ")) or { panic(err) }
+// 			path_to_include := params.get_path("path")? //checks it exists
+// 			path_included := pathtools.get(path_to_include)?
+// 			content := path_included.read()?
+// 			for line in content.split_into_lines(){
+// 				out << line
+// 			}
+// 			continue
+// 		}
+// 		out << line
+// 	}
+// }
+
+
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
+
 
 fn (mut parser ActionsParser) file_parse(path string) ? {
 	if !os.exists(path) {
