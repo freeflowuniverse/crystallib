@@ -1,6 +1,6 @@
 module gittools
 
-import freeflowuniverse.crystallib.pathlib
+import freeflowuniverse.crystallib.pathlib { Path }
 
 pub struct RepoGetFromUrlArgs {
 pub mut:
@@ -81,9 +81,8 @@ pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr, args Rep
 
 // will return repo starting from a path
 // if .git not in the path will go for parent untill .git found
-pub fn (mut gitstructure GitStructure) repo_get_from_path(p string, pull bool, reset bool) ?&GitRepo {
-	mut pathobj := pathlib.get(p)
-	path2 := pathobj.parent_find('.git')?
+pub fn (mut gitstructure GitStructure) repo_get_from_path(path Path, pull bool, reset bool) ?&GitRepo {
+	path2 := path.parent_find('.git')?
 
 	mut addr := addr_get_from_path(path2.path) or { return error('cannot get addr from path:$err') }
 	// println(" - pull:$pull reset:$reset")

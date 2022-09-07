@@ -10,10 +10,10 @@ pub fn (mut i Installer) install() ? {
 	rust.install()?
 	println(' - $node.name: install mdbook')
 	if !node.done_exists('install_mdbook') {
-		cmd:=```
+		cmd := "
 		cargo install mdbook
     	cargo install mdbook-mermaid
-		```
+		"
 		node.exec(cmd) or {
 		return error('Cannot install mdbook.\n$err')
 	}		
