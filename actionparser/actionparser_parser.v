@@ -3,7 +3,7 @@ module actionparser
 import os
 import freeflowuniverse.crystallib.params
 import freeflowuniverse.crystallib.texttools
-import freeflowuniverse.crystallib.pathtools
+import freeflowuniverse.crystallib.pathlib
 
 enum ParseBlockStatus {
 	start
@@ -30,7 +30,6 @@ mut:
 	name    string
 	content string
 }
-
 
 //TODO/ add recursive
 // fn file_includes(path string) ?string {

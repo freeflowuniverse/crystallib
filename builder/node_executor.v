@@ -53,6 +53,18 @@ pub fn (mut node Node) file_exists(path string) bool {
 	panic('did not find right executor')
 }
 
+// checks if given executable exists in node 
+pub fn (mut node Node) command_exists(cmd string) bool {
+	output := node.exec_silent("
+		if command -v $cmd &> /dev/null
+		then
+			echo 0
+		fi"
+	) or { panic("can't execute command") }
+	return output.contains('0')
+}
+
+
 pub fn (mut node Node) delete(path string) ? {
 	if mut node.executor is ExecutorLocal {
 		return node.executor.delete(path)

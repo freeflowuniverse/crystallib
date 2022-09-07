@@ -37,7 +37,10 @@ pub fn get(config GSConfig) ?GitStructure {
 		gs.config.root = '$os.home_dir()/code/'
 	}
 
+
 	gs.config.root = gs.config.root.replace('~', os.home_dir()).trim_right('/')
+
+	println("debugy 2 $gs.config.root")
 
 	if !os.exists(gs.config.root) {
 		os.mkdir_all(gs.config.root)?
@@ -46,5 +49,6 @@ pub fn get(config GSConfig) ?GitStructure {
 	gs.status = GitStructureStatus.init // step2
 
 	gs.check()?
+		
 	return gs
 }

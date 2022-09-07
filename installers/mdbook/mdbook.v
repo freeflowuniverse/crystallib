@@ -9,7 +9,7 @@ pub fn (mut i Installer) install() ? {
 	mut node := i.node
 	rust.install()?
 	println(' - $node.name: install mdbook')
-	if !node.done_exists('install_mdbook') {
+	if !node.done_exists('install_mdbook') && !node.command_exists('mdbook') {
 		cmd := "
 		cargo install mdbook
     	cargo install mdbook-mermaid

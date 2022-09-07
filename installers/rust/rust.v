@@ -9,9 +9,17 @@ pub fn (mut i Installer) install() ? {
 		println('    $node.name: was already done')
 		return
 	}
+
+	if node.command_exists("rustup") {
+		println('Rust was already installed.')
+		return
+		//? should we set rust as done here ?
+	}
+
 	node.exec("curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh") or {
 		return error('Cannot install rust.\n$err')
 	}
+
 	node.done_set('install rust', 'OK')?
 	return
 }

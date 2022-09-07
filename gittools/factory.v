@@ -98,7 +98,9 @@ fn (mut gitstructure GitStructure) load() ? {
 	gitstructure.repos = []GitRepo{}
 
 	mut done := []string{}
+
 	gitstructure.load_recursive(gitstructure.codepath(), mut done)?
+
 	gitstructure.status = GitStructureStatus.loaded
 
 	// println(" - SCAN done")
@@ -106,6 +108,7 @@ fn (mut gitstructure GitStructure) load() ? {
 
 fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []string) ? {
 	// println(" - git load: $path1")
+	println("debugy 3 $path1")
 	items := os.ls(path1) or { return error('cannot load gitstructure because cannot find $path1') }
 	mut pathnew := ''
 	for item in items {
@@ -147,5 +150,6 @@ pub fn (mut gs GitStructure) codepath() string {
 		p = gs.config.root
 	}
 	// println(" ***** $p")
+	println("codepath: $p")
 	return p
 }
