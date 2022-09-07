@@ -63,7 +63,7 @@ pub fn path_relative(source_ string, dest_ string) ?string {
 }
 
 // find parent of path
-pub fn (mut path Path) parent() ?Path {
+pub fn (path Path) parent() ?Path {
 	mut p := path.absolute()
 	parent := os.dir(p) // get parent directory
 	if parent == '.' || parent == '/' {
@@ -105,11 +105,11 @@ pub fn (mut path Path) normalize() ? {
 
 // walk upwards starting from path untill dir or file tofind is found
 // works recursive
-pub fn (mut path Path) parent_find(tofind string) ?Path {
+pub fn (path Path) parent_find(tofind string) ?Path {
 	if os.exists(os.join_path(path.path, tofind)) {
 		return path
 	}
-	mut path2 := path.parent()?
+	path2 := path.parent()?
 	return path2.parent_find(tofind)
 }
 

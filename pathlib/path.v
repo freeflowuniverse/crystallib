@@ -25,10 +25,9 @@ enum UYN {
 }
 
 // return absolute path
-pub fn (mut path Path) absolute() string {
+pub fn (path Path) absolute() string {
 	mut p := path.path.replace('~', os.home_dir())
-	path.path = os.real_path(p)
-	return path.path
+	return os.real_path(p)
 }
 
 // check the inside of pathobject, is like an init function
