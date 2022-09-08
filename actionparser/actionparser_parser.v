@@ -15,7 +15,7 @@ enum ParseStatus {
 	actionstart // found !! or #!! or //!!, now we need to find action name
 	param_name // need to get params out
 	param_value_quote // found ' need to find ending '
-	param_valua_multiline // busy finding the multiline
+	param_value_multiline // busy finding the multiline
 	comment // found // or # at end
 }
 
