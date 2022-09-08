@@ -9,8 +9,8 @@ fn do() ? {
 	mut s := books.new()
 	site := s.site_new(path: testpath)?
 	s.scan()?
+	site.mdbook_export() ?
 	site.mdbook_develop() ?
-	// println(s)
 }
 
 fn main() {
