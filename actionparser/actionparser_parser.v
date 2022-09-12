@@ -62,7 +62,6 @@ fn (mut parser ActionsParser) file_parse(path string) ? {
 		return error("path: '$path' does not exist, cannot parse.")
 	}
 	content := os.read_file(path) or { panic('Failed to load file $path') }
-
 	parser.text_parse(content)?
 }
 
@@ -133,7 +132,6 @@ fn (mut parser ActionsParser) parse_block(block Block) {
 		name: block.name
 		params: params
 	}
-
 	parser.actions << action
 }
 

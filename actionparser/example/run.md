@@ -1,7 +1,7 @@
 ## Get Our Code Repositories
 
-!!git.pull url:'https://github.com/ourworld-tsc/ourworld_books/tree/development/content name:'owb'
-!!git.pull url:'https://github.com/threefoldfoundation/books/tree/main/books name:'books'
+!!git.pull url:'https://github.com/ourworld-tsc/ourworld_books/tree/development/content' name:'owb'
+!!git.pull url:'https://github.com/threefoldfoundation/books/tree/main/books' name:'books'
 
 //needs to include the content, not as macro
 !!include path:'run_include.md' 
@@ -9,12 +9,12 @@
     gitsource:owb 
     gitdest:books
     source:'feasibility_study/Capabilities' 
-    to:'feasibility_study_internet/src/capabilities2'
+    dest:'feasibility_study_internet/src/capabilities2'
 
 <!-- is same as above -->
 !!git.link 
     source:'https://github.com/ourworld-tsc/ourworld_books/tree/development/content/feasibility_study/Capabilities' 
-    to:'https://github.com/threefoldfoundation/books/tree/main/books/feasibility_study_internet/src/capabilities'
+    dest:'https://github.com/threefoldfoundation/books/tree/main/books/feasibility_study_internet/src/capabilities'
 
 <!-- if name not specified, will use the name of the directory -->
 !!books.add 
@@ -35,6 +35,6 @@
 <!-- export all books -->
 <!-- //!!books.mdbook_export name:* -->
 
-!!books.mdbook_develop name:myname
+!!books.mdbook_develop name:feasibility_study_internet
 
 <!-- !!publishtools.publish server:'ourserver.com' -->

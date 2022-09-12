@@ -186,7 +186,7 @@ fn (mut image Image) identify() ? {
 		return
 	}
 	println(' - identify: $image.path')
-	mut out := process.execute_silent("identify -ping '$image.path'") or {
+	mut out := process.execute_silent("identify -ping '$image.path.path'") or {
 		return error('Could not get info from image, error:$err')
 	}
 	out = out.trim(' \n')

@@ -64,13 +64,10 @@ pub fn (site Site) mdbook_develop() ? {
 	os.execute('sh develop.sh')
 }
 
-
-
 //export an mdbook to its html representation
-pub fn (site Site) mdbook_export() ? {	
-	println('running running')
+pub fn (site Site) mdbook_export(path string) ? {	
 	mdbook.install()?
 	site.mdbook_update()?
-	os.chdir("/tmp/mdbooks/$site.name") ?	
+	os.chdir(path) ?	
 	os.execute('mdbook build')
 }

@@ -15,6 +15,8 @@ fn (mut parser ActionsParser) actions_process() ?[]string {
 	// go to default structure on ~/code
 	mut gt := gittools.get(root: '')?
 
+	mut books := books.new()
+
 	for mut action in parser.actions {
 		$if debug {
 			println(' --------ACTION:\n$action\n--------')
@@ -35,6 +37,8 @@ fn (mut parser ActionsParser) actions_process() ?[]string {
 			gt.config.multibranch = true
 		}
 
+		// TODO: if local repo is at local branch that has no upstream produces following error
+		// ! 'Your configuration specifies to merge with the ref 'refs/heads/branch'from the remote, but no such ref was fetched.
 		if action.name == 'git.pull' {
 			url := action.params.get('url')?
 			name := action.params.get_default('url', '')?
@@ -53,6 +57,7 @@ fn (mut parser ActionsParser) actions_process() ?[]string {
 		// 	pull bool			//means we will pull source & destination
 		// 	reset bool			//means we will reset changes, they will be overwritten
 		// }
+		//? Maybe we can have one src and dest field to simplify?
 		if action.name == 'git.link' {
 			gitlinkargs := gittools.GitLinkArgs{
 				gitsource: action.params.get_default('gitsource', '')?
@@ -63,12 +68,10 @@ fn (mut parser ActionsParser) actions_process() ?[]string {
 				reset: action.params.get_default_false('reset')
 			}
 			$if debug {
-				eprintln(@FN + args)
+				eprintln(@FN + gitlinkargs.str())
 			}
 			gt.link(gitlinkargs)?
 		}
-
-		mut books := books.new()
 
 		if action.name == 'books.add' {
 			book_url := action.params.get('url')?
@@ -76,7 +79,7 @@ fn (mut parser ActionsParser) actions_process() ?[]string {
 			book_pull := action.params.get_default_false('pull')
 			book_reset := action.params.get_default_false('reset')
 			$if debug {
-				eprintln(@FN + ': books add pull: $url')
+				eprintln(@FN + ': books add pull: $book_url')
 			}
 			mut gr := gt.repo_get_from_url(
 				url: book_url
@@ -85,7 +88,6 @@ fn (mut parser ActionsParser) actions_process() ?[]string {
 				name: book_name
 			)?
 			book_path := gr.path_content_get()
-
 			books.site_new(path: book_path, name: book_name)?
 		}
 
@@ -96,18 +98,22 @@ fn (mut parser ActionsParser) actions_process() ?[]string {
 			book.mdbook_develop()?
 		}
 
-		// if action.name == 'books.mdbook_export' {
-		// 	books.scan()?
-		// 	name := action.params.get('name')?
-		// 	export_url := action.params.get('url')?
-		// 	$if debug {
-		// 		eprintln(@FN + ': books add pull: $url')
-		// 	}
-		// 	mut gr := gt.repo_get_from_url(url: book_url, pull: book_pull, reset: book_reset)?
-		// 	book_path := gr.path_content_get()
-		// 	mut book := s.get(name)?
-		// 	book.mdbook_export(book_path)?
-		// }
+		//? Currently can only export book by name, is that ok?
+		if action.name == 'books.mdbook_export' {
+		 	books.scan()?
+		 	name := action.params.get('name')?
+		 	export_url := action.params.get('url')?
+			
+			mut book := books.get(name)?
+			//? What do book_pull and book_reset do?
+		 	//mut gr := gt.repo_get_from_url(url: export_url, pull: book_pull, reset: book_reset)?
+		 	mut export_repo := gt.repo_get_from_url(url: export_url)?
+		 	export_path := export_repo.path_content_get()
+
+			println(book)
+			site := books.site_new(path: book.path.path)?
+			site.mdbook_export(export_path) ?
+		}
 
 	}
 	return actions_done
