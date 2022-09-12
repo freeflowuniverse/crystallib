@@ -235,6 +235,7 @@ pub fn (mut path Path) list(args ListArgs) ?[]Path {
 				new_path.cat = Category.file
 			}
 		}
+		
 		// Check if tofound is a part of the path
 		if args.tofind != '' && !p.contains(args.tofind) {
 			continue
@@ -358,7 +359,9 @@ pub fn (mut path Path) link(mut dest Path) ?Path {
 // return path object for the link this one is pointing too
 pub fn (mut path Path) readlink() ?Path {
 	if path.is_link() {
-		cmd := 'readlink $path.absolute()'
+		//? readlink path.absolute will always fail because absolute returns symlinks resolved
+		// cmd := 'readlink $path.absolute()'
+		cmd := 'readlink $path.path'
 		res := os.execute(cmd)
 		if res.exit_code > 0 {
 			return error('cannot define result for link of $path \n$error')
