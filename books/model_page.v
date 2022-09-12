@@ -97,11 +97,12 @@ fn (mut page Page) links_fix() ? {
 								// println(originalfilename)
 								// println(link)
 								if original_link.trim_space() != filelink_rel.trim_space() {
-									// page.doc.content=page.doc.content.replace(originalfilename,link.filename)
+									page.doc.content=page.doc.content.replace(originalfilename,link.filename)
 									println('change: $original_link -> $filelink_rel')
 								}
-								// page.doc.save()?
-								panic('to do link update')
+								page.doc.save()?
+								//? There use to be panic here, does this work as it's supposed to? 
+								//panic('to do link update')
 							}
 						} else {
 							page.site.error(
