@@ -39,7 +39,6 @@ fn (site Site) mdbook_create() ? {
 }
 
 fn (site Site) mdbook_update() ? {
-
 	if !os.exists('/tmp/mdbooks/$site.name') {
 		site.mdbook_create()?
 	}
@@ -47,13 +46,10 @@ fn (site Site) mdbook_update() ? {
 	mut gt := gittools.get(root: '')?
 	mut books_repo := gt.repo_get_from_url(url: 'https://github.com/threefoldfoundation/books/tree/main/template/books/template')?
 	books_repo.pull()?
-
 }
-
 
 //open the development tool and the browser to show the book you are working on
 pub fn (site Site) mdbook_develop() ? {	
-	
 	mdbook.install()?
 	site.mdbook_update()?
 
@@ -65,9 +61,9 @@ pub fn (site Site) mdbook_develop() ? {
 }
 
 //export an mdbook to its html representation
-pub fn (site Site) mdbook_export(path string) ? {	
+pub fn (site Site) mdbook_export(dest_path string) ? {	
 	mdbook.install()?
 	site.mdbook_update()?
-	os.chdir(path) ?	
-	os.execute('mdbook build')
+	book_path := "/tmp/mdbooks/$site.name"
+	os.execute('mdbook build $book_path --dest-dir $dest_path')
 }

@@ -49,6 +49,64 @@ pub fn (mut site Site) page_new(mut p pathlib.Path) ?Page {
 	return page
 }
 
+fn (mut page Page) fix_img_link(mut link &markdowndocs.Link) ? {
+	name := link.filename.all_before_last('.').trim_right('_').to_lower()
+	if name in page.site.files {
+		originalfilename := link.filename
+		image := page.site.files[name]
+
+		mut source := page.pathrel.all_before_last('/') // this is the relative path of where the page is in relation to site root
+		mut imagelink_rel := pathlib.path_relative(source, image.pathrel)?
+
+		if link.link_update(imagelink_rel) {
+			//SHORTCUT
+			page.doc.content = page.doc.content.replace(originalfilename,
+				link.filename)
+			println('change: $originalfilename -> $link.filename')
+			page.doc.save()?
+		}
+	} else {
+		page.site.error(
+			path: page.path
+			msg: 'could not find image: $name in site:$page.site.name'
+			cat: .file_not_found
+		)
+	}
+}
+
+fn (mut page Page) fix_file_link(mut link &markdowndocs.Link) ? {
+	name := link.filename.all_before_last('.').trim_right('_').to_lower()
+	if name in page.site.pages {
+		originalfilename := link.filename
+		original_link := '$link.path/$link.filename'
+		page_linked := page.site.pages[name]
+		mut source := page.pathrel.all_before_last('/') // this is the relative path of where the page is in relation to site root
+		mut filelink_rel := pathlib.path_relative(source, page_linked.pathrel)?
+		if link.link_update(filelink_rel) {
+			if original_link.trim_space() != filelink_rel.trim_space() {
+				page.doc.content=page.doc.content.replace(originalfilename,link.filename)
+				println('change: $original_link -> $filelink_rel')
+			}
+			page.doc.save()?
+			//? There use to be panic here, does this work as it's supposed to? 
+			//panic('to do link update')
+		}
+	} else {
+		page.site.error(
+			path: page.path
+			msg: 'could not find page: $name in site:$page.site.name'
+			cat: .page_not_found
+		)
+	}
+}
+
+// checks if external link returns 404
+// if so, prompts user to replace with new link
+fn (mut page Page) fix_external_link(mut link &markdowndocs.Link) ? {
+	// TODO: check if external links works
+	// TODO: prompt user for new link
+}
+
 fn (mut page Page) fix() ? {
 	page.links_fix()?
 }
@@ -59,59 +117,12 @@ fn (mut page Page) links_fix() ? {
 	for mut item in page.doc.items {
 		if mut item is markdowndocs.Paragraph {
 			for mut link in item.links {
-				name := link.filename.all_before_last('.').trim_right('_').to_lower()
-				originalfilename := link.filename
-				if link.cat == .image {
-					if name in page.site.files {
-						image := page.site.files[name]
-
-						mut source := page.pathrel.all_before_last('/') // this is the relative path of where the page is in relation to site root
-						mut imagelink_rel := pathlib.path_relative(source, image.pathrel)?
-
-						if link.link_update(imagelink_rel) {
-							changed = true
-							//SHORTCUT
-							page.doc.content = page.doc.content.replace(originalfilename,
-								link.filename)
-							println('change: $originalfilename -> $link.filename')
-							page.doc.save()?
-						}
-					} else {
-						page.site.error(
-							path: page.path
-							msg: 'could not find image: $name in site:$page.site.name'
-							cat: .file_not_found
-						)
-					}
-				} else {
-					if !link.isexternal {
-						if name in page.site.pages {
-							original_link := '$link.path/$link.filename'
-							page_linked := page.site.pages[name]
-							// println(link)
-							// println(page_linked)
-							mut source := page.pathrel.all_before_last('/') // this is the relative path of where the page is in relation to site root
-							mut filelink_rel := pathlib.path_relative(source, page_linked.pathrel)?
-							if link.link_update(filelink_rel) {
-								changed = true
-								// println(originalfilename)
-								// println(link)
-								if original_link.trim_space() != filelink_rel.trim_space() {
-									page.doc.content=page.doc.content.replace(originalfilename,link.filename)
-									println('change: $original_link -> $filelink_rel')
-								}
-								page.doc.save()?
-								//? There use to be panic here, does this work as it's supposed to? 
-								//panic('to do link update')
-							}
-						} else {
-							page.site.error(
-								path: page.path
-								msg: 'could not find page: $name in site:$page.site.name'
-								cat: .page_not_found
-							)
-						}
-					}
+				if link.isexternal {
+					page.fix_external_link(mut link) ?
+				} else if link.cat == .image {
+					page.fix_img_link(mut link) ?
+				} else if link.cat == .file {
+					page.fix_file_link(mut link) ?
 				}
 			}
 		}
