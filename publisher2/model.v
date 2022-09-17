@@ -25,6 +25,7 @@ pub mut:
 	sites map[string]Site //the key is the prefix as used on webserver
 	groups map[string]Group
 	users map[string]User
+	acls map[string]ACL
 }
 
 fn (mut p Publisher) user_add(name_ string) &User{
@@ -50,6 +51,13 @@ fn (mut p Publisher) site_add(name_ string, type_ SiteType) &Site{
 	return &u
 }
 
+fn (mut p Publisher) acl_add(name_ string) &ACL{
+	mut name:=texttools.name_fix(name_)
+	mut u:=ACL{name:name}
+	p.acls[name]=u
+	return &u
+}
+
 
 [heap]
 pub struct Site {
@@ -71,7 +79,7 @@ pub:
 	email_required bool			//if true means users need to give their email address (just a form)
 	email_authenticated bool 	//if true, means user needs to give email address and verify the correctness with email client
 	tfconnect bool		//not used now for future
-	kyc	bool			//not used now for future
+	kyc	bool			//not used now for future (KYC/AML)
 	acl	   []ACL		//list of people who have access, can be empty if empty there can be passwd
 }
 
@@ -79,6 +87,7 @@ pub:
 [heap]
 pub struct ACL {
 pub mut:
+	name string
 	entries []ACE
 }
 
