@@ -80,7 +80,7 @@ pub:
 	email_authenticated bool 	//if true, means user needs to give email address and verify the correctness with email client
 	tfconnect bool		//not used now for future
 	kyc	bool			//not used now for future (KYC/AML)
-	acl	   []ACL		//list of people who have access, can be empty if empty there can be passwd
+	acl	   []&ACL		//list of people who have access, can be empty if empty there can be passwd
 }
 
 //Access Control List
