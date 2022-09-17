@@ -1,7 +1,7 @@
 module publisher2
 
 import freeflowuniverse.crystallib.pathlib
-// import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.texttools
 
 enum SiteType {
 	book //mdbook
@@ -17,7 +17,9 @@ enum State {
 	reset
 }
 
-struct Publisher {
+[heap]
+pub struct Publisher {
+pub mut:
 	// node  &builder.Node
 	state State
 	sites map[string]Site //the key is the prefix as used on webserver
@@ -25,12 +27,35 @@ struct Publisher {
 	users map[string]User
 }
 
+fn (mut p Publisher) user_add(name_ string) &User{
+	mut name:=texttools.name_fix(name_)
+	mut u:=User{name:name}
+	p.users[name]=u
+	return &u
+
+}
+
+fn (mut p Publisher) group_add(name_ string) &Group{
+	mut name:=texttools.name_fix(name_)
+	mut u:=Group{name:name}
+	p.groups[name]=u
+	return &u
+
+}
+
+fn (mut p Publisher) site_add(name_ string, type_ SiteType) &Site{
+	mut name:=texttools.name_fix(name_)
+	mut u:=Site{name:name,publisher:&p,sitetype:type_}
+	p.sites[name]=u
+	return &u
+}
+
 
 [heap]
 pub struct Site {
 pub:
 	name     string //correspond to key, uses namefix from texttoolsmap[string]Page
-	sites    &Publisher   [str: skip] // pointer to sites
+	publisher    &Publisher   [str: skip] // pointer to sites
 	sitetype SiteType
 pub mut:
 	path   pathlib.Path //path where site can be found
