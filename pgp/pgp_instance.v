@@ -1,6 +1,6 @@
 module pgp
 
-// import builder
+// import freeflowuniverse.crystallib.builder
 import os
 
 [heap]

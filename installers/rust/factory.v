@@ -1,6 +1,6 @@
 module rust
 
-import builder
+import freeflowuniverse.crystallib.builder
 
 enum State {
 	ok

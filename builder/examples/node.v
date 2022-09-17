@@ -1,6 +1,6 @@
 module main
 
-import builder
+import freeflowuniverse.crystallib.builder
 
 fn do() ? {
 	mut builder := builder.new()

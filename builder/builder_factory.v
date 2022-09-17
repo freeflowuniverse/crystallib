@@ -1,6 +1,6 @@
 module builder
 
-import redisclient
+import freeflowuniverse.crystallib.redisclient
 
 [heap]
 pub struct BuilderFactory {

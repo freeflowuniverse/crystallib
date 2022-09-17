@@ -1,6 +1,6 @@
 module tmux
 
-import builder
+import freeflowuniverse.crystallib.builder
 // if !node.cmd_exists('tmux') {
 // 	os.log('TMUX - could not find tmux command, will try to install, can take a while.')
 // 	node.package_install(name: 'tmux')?

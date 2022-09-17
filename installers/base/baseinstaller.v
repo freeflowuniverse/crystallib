@@ -1,6 +1,6 @@
 module base
 
-import builder
+import freeflowuniverse.crystallib.builder
 import process
 
 // install base will return true if it was already installed

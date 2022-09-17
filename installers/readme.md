@@ -11,7 +11,7 @@ see imagemagick
 
 ```golang
 import os
-import builder
+import freeflowuniverse.crystallib.builder
 import installers.base
 import process
 

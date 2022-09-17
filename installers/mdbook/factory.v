@@ -1,6 +1,6 @@
 module mdbook
 
-import builder
+import freeflowuniverse.crystallib.builder
 
 enum State {
 	ok
