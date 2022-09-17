@@ -2,9 +2,8 @@ module publisher2
 
 
 // install mdbook will return true if it was already installed
-pub fn get(mut node builder.Node) ?Installer {
-	mut i := Installer{
-		node: &node
+pub fn get() ?Publisher {
+	mut p := Publisher{
 	}
-	return i
+	return p
 }
