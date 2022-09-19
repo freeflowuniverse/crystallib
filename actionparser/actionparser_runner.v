@@ -100,19 +100,18 @@ fn (mut parser ActionsParser) actions_process() ?[]string {
 
 		//? Currently can only export book by name, is that ok?
 		if action.name == 'books.mdbook_export' {
-		 	books.scan()?
-		 	name := action.params.get('name')?
-		 	dest_path := action.params.get('path')?
-			
+			books.scan()?
+			name := action.params.get('name')?
+			dest_path := action.params.get('path')?
+
 			mut book := books.get(name)?
 			//? What do book_pull and book_reset do?
-		 	//mut gr := gt.repo_get_from_url(url: export_url, pull: book_pull, reset: book_reset)?
-		 	//mut export_repo := gt.repo_get_from_url(url: export_url)?
-		 	//export_path := export_repo.path_content_get()
+			// mut gr := gt.repo_get_from_url(url: export_url, pull: book_pull, reset: book_reset)?
+			// mut export_repo := gt.repo_get_from_url(url: export_url)?
+			// export_path := export_repo.path_content_get()
 			site := books.site_new(path: book.path.path)?
-			site.mdbook_export(dest_path) ?
+			site.mdbook_export(dest_path)?
 		}
-
 	}
 	return actions_done
 }

@@ -31,7 +31,7 @@ mut:
 	content string
 }
 
-//TODO/ add recursive
+// TODO/ add recursive
 // fn file_includes(path string) ?string {
 // 	path0 := pathtools.get(path)
 // 	content := path0.read()?
@@ -52,10 +52,8 @@ mut:
 // 	}
 // }
 
-
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
-
 
 fn (mut parser ActionsParser) file_parse(path string) ? {
 	if !os.exists(path) {
