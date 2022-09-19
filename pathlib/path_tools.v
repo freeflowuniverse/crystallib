@@ -46,6 +46,7 @@ pub fn (mut path Path) path_relative(sourcepath string) string {
 	return path_abs
 }
 
+// TODO: implement support for relative paths beginning with ../
 pub fn path_relative(source_ string, dest_ string) ?string {
 	mut source := source_.trim_right('/')
 	mut dest := dest_.replace('//', '/').trim_right('/')
@@ -58,8 +59,31 @@ pub fn path_relative(source_ string, dest_ string) ?string {
 	}
 	if dest.starts_with(source) {
 		return dest[source.len..]
+	} else {
+		return error("Destination path is not in source directory")
 	}
-	return dest
+}
+
+// recursively finds the least common ancestor of array of paths
+// in a target directory.
+// TODO: Maybe use absolute paths for flexibility
+pub fn find_common_ancestor(paths []string, target string) ?string {
+	if paths.len < 2 {
+		return error('Function expects at least two paths')
+	}
+
+	rel_paths := paths.map(path_relative(target, it)?.trim_left('/'))
+	// if rel_paths.any(it.starts_with('../')) {
+	// 	return error('Provided paths have no common ancestor in target directory')
+	// }
+
+	root := rel_paths[0].all_before('/')
+	if rel_paths.any(!it.starts_with(root)) {
+		return target
+	} else {
+		child_target := target + '/' + root
+		return find_common_ancestor(paths, child_target)
+	}
 }
 
 // find parent of path
@@ -235,7 +259,7 @@ pub fn (mut path Path) list(args ListArgs) ?[]Path {
 				new_path.cat = Category.file
 			}
 		}
-		
+
 		// Check if tofound is a part of the path
 		if args.tofind != '' && !p.contains(args.tofind) {
 			continue

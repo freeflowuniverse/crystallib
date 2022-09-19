@@ -63,6 +63,7 @@ pub fn (mut image Image) downsize(backupdir string) ? {
 		image.size_kbyte = 0
 		println('   - convert image resize 50%: $image.path.path')
 		cmd := "convert '$image.path.path' -resize 50% '$image.path.path'"
+		// TODO:
 		process.execute_silent(cmd) or {
 			return error('could not convert png to png --resize 50%.\n$cmd .\n$error')
 		}

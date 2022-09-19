@@ -153,3 +153,10 @@ fn test_copy() {
 // 	real:= get_link.absolute()
 // 	println("Real path: $real")
 // }
+
+fn test_find_common_ancestor() {
+	println('************ TEST_find_common_ancestor ************')
+		mut dest_dir := pathlib.get('$testpath/test_parent')
+
+
+}
