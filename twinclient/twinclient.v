@@ -6,7 +6,7 @@ import json
 import time
 import rand
 
-pub fn new_twin_client(transport ITwinTransport) ?TwinClient {
+pub fn grid_client(transport ITwinTransport) ?TwinClient {
 	return TwinClient{
 		transport: transport
 	}

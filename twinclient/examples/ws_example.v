@@ -34,16 +34,16 @@ fn handle_events(raw_msg &tw.RawMessage, mut ws_client ws.Client)? {
 
 	mut transport := tw.WSTwinClient{}
 	transport.init(mut ws_client)?
-	mut twin := tw.new_twin_client(transport)?
+	mut grid := tw.grid_client(transport)?
 	msg := json.decode(tw.Message, raw_msg.payload.bytestr()) or {
 		println("cannot decode message")
 		return
 	}
 
 	if msg.event == "sum_balances" {
-		go fn [mut twin]()? {
+		go fn [mut grid]()? {
 			// List all algorand accounts.
-			twin.algorand_list()?
+			grid.algorand_list()?
 
 			// Deploy new machine
 			machines := tw.MachinesModel{
