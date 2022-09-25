@@ -525,9 +525,55 @@ pub:
 	content string
 }
 
+pub struct BlockchainSignNoNameModel{
+pub:
+	content string
+}
+
 pub struct StellarWalletVerifyModel{
 pub:
 	public_key string
 	content string
 	signed_content string
+}
+
+pub struct BlockchainCreateModel{
+pub:
+	name string
+	blockchain_type string
+	ip string
+}
+
+pub struct BlockchainInitModel{
+pub:
+	name string
+	blockchain_type string
+	secret string
+}
+
+pub struct BlockchainCreateResultModel{
+pub:
+	mnemonic string
+	twin_id string
+}
+
+pub struct BlockchainListModel{
+pub:
+	blockchain_type string
+}
+
+pub struct BlockchainPayNoNameModel{
+	pub:
+	blockchain_type_dest string
+	description string
+	address_dest string
+	amount f64
+	asset string
+}
+
+
+pub enum BlockChainType {
+    algorand
+    stellar
+    tfchain
 }
