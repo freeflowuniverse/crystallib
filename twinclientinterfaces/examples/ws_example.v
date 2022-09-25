@@ -46,7 +46,7 @@ fn handle_events(raw_msg &tw.RawMessage, mut ws_client ws.Client)? {
 			println(list)
 		}()
 	} else {
-		// println("got a new message: $msg.event")
+		println("got a new message: $msg.event")
 	}
 
 }
