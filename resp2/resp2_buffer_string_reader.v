@@ -1,6 +1,6 @@
 module resp2
 
-import io
+// import io
 
 pub struct StringReader {
 	text string

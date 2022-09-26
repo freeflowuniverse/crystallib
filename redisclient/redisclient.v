@@ -107,7 +107,7 @@ fn (mut r Redis) read(size int) ?[]u8 {
 	mut buf := []u8{len: size}
 	mut remaining := size
 	for remaining > 0 {
-		read_bytes := r.socket.read(mut buf[buf.len - remaining..])?
+		read_bytes := r.socket.read(mut buf[buf.len - remaining..]) or {panic(err)}
 		remaining -= read_bytes
 	}
 	return buf
