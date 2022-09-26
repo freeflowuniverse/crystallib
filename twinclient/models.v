@@ -25,7 +25,7 @@ pub struct HttpTwinClient{
 pub struct RmbTwinClient{
 	pub mut:
 		client redisclient.Redis
-		message RmbMessage
+		message Message
 }
 
 pub struct Message {
