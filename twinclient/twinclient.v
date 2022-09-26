@@ -46,7 +46,7 @@ pub fn (htp HttpTwinClient) send(functionPath string, args string)? Message{
 	}
 }
 
-// WebSocket
+// WebSocket Client
 pub const factory = Factory{}
 pub fn (mut tcl WSTwinClient) init(mut ws_client ws.Client)? WSTwinClient {
 	mut f := factory
@@ -123,9 +123,10 @@ fn (mut tcl WSTwinClient) wait(id string, timeout u32)? Message {
 	return error('wait channel of $id is not present')
 }
 
-// rmb
+// RMB Client
 pub fn (mut rmb RmbTwinClient) init(dst []int, exp int, num_retry int)? RmbTwinClient {
 	msg := Message{
+		id: rand.uuid_v4()
 		version: 1
 		command: "twinserver"
 		expiration: exp
@@ -140,26 +141,26 @@ pub fn (mut rmb RmbTwinClient) init(dst []int, exp int, num_retry int)? RmbTwinC
 	return rmb
 }
 
-pub fn (mut rmb RmbTwinClient) send(functionPath string, args string)? Message{
-	rmb.data = base64.encode_str(payload)
-	rmb.command = rmb.command + functionPath
-	request := json.encode_pretty(update)
-	bus.client.lpush("msgbus.system.local", request)?
-	response_stellar := rmb.read(msg_stellar)
-	for result in response_stellar {
-		println(result)
-	}
-}
+// pub fn (mut rmb RmbTwinClient) send(functionPath string, args string)? Message{
+// 	rmb.data = base64.encode_str(payload)
+// 	rmb.command = rmb.command + functionPath
+// 	request := json.encode_pretty(update)
+// 	bus.client.lpush("msgbus.system.local", request)?
+// 	response_stellar := rmb.read(msg_stellar)
+// 	for result in response_stellar {
+// 		println(result)
+// 	}
+// }
 
-pub fn (mut bus MessageBusClient) read(msg Message) []Message {
-	println('Waiting reply $msg.retqueue')
-	mut responses := []Message{}
-	for responses.len < msg.twin_dst.len {
-		results := bus.client.blpop([msg.retqueue], '0')?
-		response_json := resp2.get_redis_value(results[1])
-		mut response_msg := json.decode(Message, response_json)?
-		response_msg.data = base64.decode_str(response_msg.data)
-		responses << response_msg
-	}
-	return responses
-}
+// pub fn (mut bus MessageBusClient) read(msg Message) []Message {
+// 	println('Waiting reply $msg.retqueue')
+// 	mut responses := []Message{}
+// 	for responses.len < msg.twin_dst.len {
+// 		results := bus.client.blpop([msg.retqueue], '0')?
+// 		response_json := resp2.get_redis_value(results[1])
+// 		mut response_msg := json.decode(Message, response_json)?
+// 		response_msg.data = base64.decode_str(response_msg.data)
+// 		responses << response_msg
+// 	}
+// 	return responses
+// }

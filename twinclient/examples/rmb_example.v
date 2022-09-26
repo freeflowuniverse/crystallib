@@ -3,7 +3,8 @@ import crystallib.twinclient as tw
 
 fn main() {
 	mut transport := tw.RmbTwinClient{}
-	transport.init()?
-	mut grid := tw.grid_client(transport)?
-	grid.algorand_list()?
+	rmb := transport.init()?
+	println(rmb.message)
+	// mut grid := tw.grid_client(transport)?
+	// grid.algorand_list()?
 }
