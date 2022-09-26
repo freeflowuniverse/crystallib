@@ -1,11 +1,13 @@
 module twinclient
 import freeflowuniverse.crystallib.redisclient
+import freeflowuniverse.crystallib.resp2
 import net.websocket as ws
 import net.http
 import x.json2
 import json
 import time
 import rand
+import encoding.base64
 
 pub fn grid_client(transport ITwinTransport) ?TwinClient {
 	return TwinClient{
@@ -142,26 +144,19 @@ pub fn (mut rmb RmbTwinClient) init(dst []int, exp int, num_retry int)? RmbTwinC
 	return rmb
 }
 
-// pub fn (mut rmb RmbTwinClient) send(functionPath string, args string)? Message{
-// 	rmb.data = base64.encode_str(payload)
-// 	rmb.command = rmb.command + functionPath
-// 	request := json.encode_pretty(update)
-// 	bus.client.lpush("msgbus.system.local", request)?
-// 	response_stellar := rmb.read(msg_stellar)
-// 	for result in response_stellar {
-// 		println(result)
-// 	}
-// }
+pub fn (mut rmb RmbTwinClient) send(functionPath string, args string)? Message{
+	rmb.message.data = base64.encode_str(args)
+	rmb.message.command = "twinserver." + functionPath
+	request := json.encode_pretty(rmb.message)
+	rmb.client.lpush("msgbus.system.local", request)?
+	return rmb.read(rmb.message)
+}
 
-// pub fn (mut bus MessageBusClient) read(msg Message) []Message {
-// 	println('Waiting reply $msg.retqueue')
-// 	mut responses := []Message{}
-// 	for responses.len < msg.twin_dst.len {
-// 		results := bus.client.blpop([msg.retqueue], '0')?
-// 		response_json := resp2.get_redis_value(results[1])
-// 		mut response_msg := json.decode(Message, response_json)?
-// 		response_msg.data = base64.decode_str(response_msg.data)
-// 		responses << response_msg
-// 	}
-// 	return responses
-// }
+pub fn (mut rmb RmbTwinClient) read(msg Message)? Message {
+	println('Waiting reply $msg.retqueue')
+	results := rmb.client.blpop([msg.retqueue], '0')?
+	response_json := resp2.get_redis_value(results[1])
+	mut response := json.decode(Message, response_json)?
+	response.data = base64.decode_str(response.data)
+	return response
+}
