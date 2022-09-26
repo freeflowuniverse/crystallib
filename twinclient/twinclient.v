@@ -13,7 +13,7 @@ pub fn grid_client(transport ITwinTransport) ?TwinClient {
 }
 
 // Http Client
-pub fn (mut htp HttpTwinClient)init()? HttpTwinClient {
+pub fn (mut htp HttpTwinClient) init()? HttpTwinClient {
 	header := http.new_header_from_map({
 		http.CommonHeader.content_type: 'application/json',
 	})
@@ -48,7 +48,7 @@ pub fn (htp HttpTwinClient) send(functionPath string, args string)? Message{
 
 // WebSocket
 pub const factory = Factory{}
-pub fn (mut tcl WSTwinClient)init(mut ws_client ws.Client)? WSTwinClient {
+pub fn (mut tcl WSTwinClient) init(mut ws_client ws.Client)? WSTwinClient {
 	mut f := factory
 
 	if tcl.ws.id in f.clients {
@@ -84,7 +84,7 @@ pub fn (mut tcl WSTwinClient)init(mut ws_client ws.Client)? WSTwinClient {
 	return tcl
 }
 
-pub fn (mut tcl WSTwinClient)send(functionPath string, args string)? Message {
+pub fn (mut tcl WSTwinClient) send(functionPath string, args string)? Message {
 	id := rand.uuid_v4()
 	channel := chan Message{}
 	tcl.channels[id] = channel
@@ -123,3 +123,43 @@ fn (mut tcl WSTwinClient) wait(id string, timeout u32)? Message {
 	return error('wait channel of $id is not present')
 }
 
+// rmb
+pub fn (mut rmb RmbTwinClient) init(dst []int, exp int, num_retry int)? RmbTwinClient {
+	msg := Message{
+		version: 1
+		command: "twinserver"
+		expiration: exp
+		retry: num_retry
+		twin_src: 0
+		twin_dst: dst
+		retqueue: rand.uuid_v4()
+		epoch: time.now().unix_time()
+	}
+	rmb.client 	= redisclient.get('localhost:6379')?
+	rmb.message = msg
+	return rmb
+}
+
+pub fn (mut rmb RmbTwinClient) send(functionPath string, args string)? Message{
+	rmb.data = base64.encode_str(payload)
+	rmb.command = rmb.command + functionPath
+	request := json.encode_pretty(update)
+	bus.client.lpush("msgbus.system.local", request)?
+	response_stellar := rmb.read(msg_stellar)
+	for result in response_stellar {
+		println(result)
+	}
+}
+
+pub fn (mut bus MessageBusClient) read(msg Message) []Message {
+	println('Waiting reply $msg.retqueue')
+	mut responses := []Message{}
+	for responses.len < msg.twin_dst.len {
+		results := bus.client.blpop([msg.retqueue], '0')?
+		response_json := resp2.get_redis_value(results[1])
+		mut response_msg := json.decode(Message, response_json)?
+		response_msg.data = base64.decode_str(response_msg.data)
+		responses << response_msg
+	}
+	return responses
+}

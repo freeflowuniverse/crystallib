@@ -6,7 +6,7 @@ import net
 // import sync
 // import strconv
 import time
-import freeflowuniverse.crystallib.resp
+import freeflowuniverse.crystallib.resp2
 
 const default_read_timeout = net.infinite_timeout
 
@@ -91,14 +91,14 @@ fn (mut r Redis) write(data []u8) ? {
 }
 
 // write resp value to the redis channel
-pub fn (mut r Redis) write_rval(val resp.RValue) ? {
+pub fn (mut r Redis) write_rval(val resp2.RValue) ? {
 	r.socket_check()?
 	r.write(val.encode())?
 }
 
 // write list of strings to redis challen
 fn (mut r Redis) write_cmds(items []string) ? {
-	a := resp.r_list_bstring(items)
+	a := resp2.r_list_bstring(items)
 	r.write_rval(a)?
 }
 
