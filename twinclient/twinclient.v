@@ -16,11 +16,10 @@ pub fn grid_client(transport ITwinTransport) ?TwinClient {
 }
 
 // Http Client
-pub fn (mut htp HttpTwinClient) init()? HttpTwinClient {
+pub fn (mut htp HttpTwinClient) init(url string)? HttpTwinClient {
 	header := http.new_header_from_map({
 		http.CommonHeader.content_type: 'application/json',
 	})
-	url := "http://localhost:3000"
 	htp.header = header
 	htp.url = url
 	htp.method = http.Method.post
@@ -55,7 +54,6 @@ pub fn (mut tcl WSTwinClient) init(mut ws_client ws.Client)? WSTwinClient {
 	mut f := factory
 
 	if tcl.ws.id in f.clients {
-		println("ana hena")
 		return factory.clients[tcl.ws.id]
 	}
 	tcl.ws = ws_client
