@@ -11,7 +11,7 @@ pub fn (mut i Installer) install() ? {
 		return
 	}
 
-	if node.command_exists('caddyup') {
+	if node.command_exists('caddy') {
 		println('Rust was already installed.')
 		//? should we set caddy as done here ?
 		return
