@@ -29,8 +29,8 @@
 
 
 <!-- export to a chosen path or url -->
-!!books.export name:technology path:'/tmp/exportedbook'
-!!books.export name:technology url:'https://github.com/test/test/test'
+!!books.mdbook_export name:feasibility_study_internet path:'/tmp/exportedbook'
+<!--!!books.export name:myname url:'https://github.com/threefoldfoundation/home'-->
 
 <!-- export all books -->
 <!-- //!!books.mdbook_export name:* -->

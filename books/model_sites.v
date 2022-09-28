@@ -51,9 +51,9 @@ pub fn (mut sites Sites) fix() ? {
 // walk over the sites and scan for files and markdown docs
 pub fn (mut sites Sites) get(name string) ?&Site {
 	for _, mut site in sites.sites {
-		if site.name == name{
+		if site.name == name {
 			return site
 		}
 	}
-	return error("could not find site with name:$name")
+	return error('could not find site with name:$name')
 }

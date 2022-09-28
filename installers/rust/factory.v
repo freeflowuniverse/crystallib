@@ -28,4 +28,3 @@ pub fn install() ?Installer {
 	i.install()?
 	return i
 }
-

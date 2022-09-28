@@ -65,6 +65,7 @@ pub fn (mut link Link) link_update(path_ string) bool {
 		link.original = linkoriginal
 		link.paragraph.content.replace(linkoriginal, link.original)
 		link.paragraph.changed = true
+		println('$linkoriginal $link.original')
 		return true
 	}
 	return false
