@@ -1,4 +1,4 @@
-module rust
+module vlang
 
 import freeflowuniverse.crystallib.builder
 
@@ -13,7 +13,7 @@ struct Installer {
 	state State
 }
 
-// install rust will return true if it was already installed
+// install vlang will return true if it was already installed
 pub fn get(mut node builder.Node) ?Installer {
 	mut i := Installer{
 		node: &node

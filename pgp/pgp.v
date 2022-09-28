@@ -19,7 +19,7 @@ mut:
 // needed to get singleton
 fn init2() PGPFactory {
 	mut f := PGPFactory{}
-	// untill we have pgp bindings to the rust module, we prob need to use command line
+	// untill we have pgp bindings to the vlang module, we prob need to use command line
 	f.path = '...'
 	f.cmd = '...'
 	return f

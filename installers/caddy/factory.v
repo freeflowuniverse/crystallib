@@ -1,4 +1,4 @@
-module vlang
+module caddy
 
 import freeflowuniverse.crystallib.builder
 
@@ -13,7 +13,7 @@ struct Installer {
 	state State
 }
 
-// install vlang will return true if it was already installed
+// install caddy will return true if it was already installed
 pub fn get(mut node builder.Node) ?Installer {
 	mut i := Installer{
 		node: &node

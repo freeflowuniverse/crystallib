@@ -1,26 +1,26 @@
-module vlang
+module caddy
 
-// install vlang will return true if it was already installed
+// install caddy will return true if it was already installed
 pub fn (mut i Installer) install() ? {
 	mut node := i.node
-	// install vlang if it was already done will return true
+	// install caddy if it was already done will return true
 	panic("implement")
-	println(' - $node.name: install vlang')
-	if !(i.state == .reset) && node.done_exists('install_vlang') {
+	println(' - $node.name: install caddy')
+	if !(i.state == .reset) && node.done_exists('install_caddy') {
 		println('    $node.name: was already done')
 		return
 	}
 
-	if node.command_exists('vlangup') {
+	if node.command_exists('caddyup') {
 		println('Rust was already installed.')
-		//? should we set vlang as done here ?
+		//? should we set caddy as done here ?
 		return
 	}
 
-	node.exec("curl --proto '=https' --tlsv1.2 -sSf https://sh.vlangup.rs | sh") or {
-		return error('Cannot install vlang.\n$err')
+	node.exec("curl --proto '=https' --tlsv1.2 -sSf https://sh.caddyup.rs | sh") or {
+		return error('Cannot install caddy.\n$err')
 	}
 
-	node.done_set('install vlang', 'OK')?
+	node.done_set('install_caddy', 'OK')?
 	return
 }

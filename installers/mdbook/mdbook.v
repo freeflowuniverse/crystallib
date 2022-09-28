@@ -1,11 +1,11 @@
 module mdbook
 
-import freeflowuniverse.crystallib.installers.rust
+import freeflowuniverse.crystallib.installers.vlang
 
 // install mdbook will return true if it was already installed
 pub fn (mut i Installer) install() ? {
 	mut node := i.node
-	rust.get_install(mut node)?
+	vlang.get_install(mut node)?
 	println(' - $node.name: install mdbook')
 	if !node.done_exists('install_mdbook') && !node.command_exists('mdbook') {
 		cmd := '

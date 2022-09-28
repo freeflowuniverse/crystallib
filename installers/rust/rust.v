@@ -20,6 +20,6 @@ pub fn (mut i Installer) install() ? {
 		return error('Cannot install rust.\n$err')
 	}
 
-	node.done_set('install rust', 'OK')?
+	node.done_set('install_rust', 'OK')?
 	return
 }
