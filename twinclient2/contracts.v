@@ -89,3 +89,8 @@ pub fn (mut client TwinClient) contracts_get_consumption(id u64) ?f64 {
 
 	return response.data.f64()
 }
+
+pub fn (mut client TwinClient) get_deletion_time(id u64)? u64{
+	response := client.send('contracts.getDeletionTime', json.encode({"id": id}))?
+	return response.data.u64()
+}
