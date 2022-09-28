@@ -17,7 +17,11 @@ mut:
 }
 
 fn (mut executor ExecutorSSH) init() ? {
+
 	if !executor.initialized {
+		if executor.ipaddr.port == 0{
+			executor.ipaddr.port = 22
+		}		
 		// TODO: need to call code from SSHAGENT do not reimplement here
 		process.execute_job(cmd: 'pgrep -x ssh-agent || eval `ssh-agent -s`') or {
 			return error('Could not start ssh-agent, error was: $err')

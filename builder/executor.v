@@ -32,10 +32,12 @@ fn executor_new(args ExecutorNewArguments) ?Executor {
 		ipaddr := ipaddress.ipaddress_new(args.ipaddr) or {
 			return error('can not initialize ip address.\n $err')
 		}
-		return ExecutorSSH{
+		mut e := ExecutorSSH{
 			ipaddr: ipaddr
 			user: args.user
 			debug: args.debug
 		}
+		e.init()?
+		return e
 	}
 }
