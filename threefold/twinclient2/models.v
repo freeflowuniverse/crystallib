@@ -53,18 +53,18 @@ pub:
 [params]
 pub struct AddMachine {
 pub:
-	name        string     [required]
-	node_id     u32        [required]
-	disks       []Disk
-	qsfs_disks  []QsfsDisk
-	public_ip   bool       [required]
-	planetary   bool       [required]
-	cpu         u32        [required]
-	memory      u64        [required]
-	rootfs_size u64        [required]
-	flist       string     [required]
-	entrypoint  string     [required]
-	env         Env
+	name            string     [required]
+	node_id         u32        [required]
+	disks           []Disk
+	qsfs_disks      []QsfsDisk
+	public_ip       bool       [required]
+	planetary       bool       [required]
+	cpu             u32        [required]
+	memory          u64        [required]
+	rootfs_size     u64        [required]
+	flist           string     [required]
+	entrypoint      string     [required]
+	env             Env
 }
 
 [params]
@@ -207,8 +207,8 @@ pub mut:
 pub struct Contract {
 pub:
 	version       u32
-	contract_id   u64           [json: 'contractId']
-	twin_id       u32           [json: 'twinId']
+	contract_id   u64	[json: 'contractId']
+	twin_id       u32   [json: 'twinId']
 	contract_type ContractTypes [json: 'contractType']
 	state         ContractState
 }
@@ -226,7 +226,7 @@ pub:
 struct ContractTypes {
 pub:
 	node_contract NodeContract [json: 'nodeContract']
-	name_contract NameModel    [json: 'NameModel']
+	name_contract NameModel [json: 'NameModel']
 }
 
 pub struct ListContracts {
@@ -237,10 +237,10 @@ pub:
 
 struct NodeContract {
 pub:
-	node_id         u32        [json: 'nodeId']
-	deployment_data string     [json: 'deploymentData']
-	deployment_hash string     [json: 'deploymentHash']
-	public_ips      u32        [json: 'publicIps']
+	node_id         u32 [json: 'nodeId']
+	deployment_data string [json: 'deploymentData']
+	deployment_hash string [json: 'deploymentHash']
+	public_ips      u32 [json: 'publicIps']
 	public_ips_list []PublicIP [json: 'publicIpsList']
 }
 
@@ -260,7 +260,7 @@ pub:
 	id          string
 	ip          string
 	gateway     string
-	contract_id u64    [json: 'contractId']
+	contract_id u64 [json: 'contractId']
 }
 
 pub struct ContractResponse {
@@ -409,33 +409,33 @@ pub:
 	ipv4u u32
 }
 
-pub struct AddressModel {
-mut:
-	address string
+pub struct AddressModel{
+	mut:
+		address string
 }
 
 pub struct TFChainPayModel {
 pub:
-	name           string
-	target_address string
-	amount         f64
+	name string
+	target_address string 
+	amount  f64    
 }
 
 pub struct AlgorandPayModel {
 pub:
-	name         string
+	name string
 	address_dest string
-	amount       f64
-	description  string
+	amount f64
+	description string  
 }
 
-pub struct StellarPayModel {
+pub struct StellarPayModel{
 pub:
-	name         string
+	name string
 	address_dest string
-	amount       f64
-	asset        string
-	description  string
+	amount f64
+	asset string
+	description string
 }
 
 pub struct AlgorandPayResponseModel {
@@ -443,91 +443,137 @@ pub:
 	txid string [json: 'txId']
 }
 
-pub struct AlgorandAccountAddressModel {
+pub struct AlgorandAccountAddressModel{
 pub:
 	address string
 }
 
-pub struct AlgorandAccountMnemonicsModel {
+pub struct AlgorandAccountMnemonicsModel{
 pub:
 	mnemonics string
 }
 
-pub struct BlockChainSignResponseModel {
+pub struct BlockChainSignResponseModel{
 pub:
 	message string
 }
 
-pub struct NameMnemonicModel {
+pub struct NameMnemonicModel{
 pub:
-	name     string
+	name string
 	mnemonic string
 }
 
-pub struct NameSecretModel {
+pub struct NameSecretModel{
 pub:
-	name   string
+	name    string
+	secret  string
+}
+
+pub struct NameIPModel{
+pub:
+	name    string
+	ip  	string
+}
+
+pub struct BlockChainSignModel{
+pub:
+	name    string
+	content string
+}
+
+pub struct AssetsModel{
+pub:
+	amount f64
+	asset string
+}
+
+pub struct BlockChainAssetsModel{
+pub:
+	name string
+	public_key string
+	blockchain_type string
+	assets []AssetsModel
+}
+
+pub struct BlockChainCreateModel{
+pub:
+	name string
+	public_key string
+	mnemonic string
+	blockchain_type string
+	twin_id string
+}
+
+pub struct BlockChainModel{
+pub:
+	name string
+	public_key string
+	blockchain_type string
+}
+
+pub struct NameAddressMnemonicModel{
+pub:
+	name    string
+	address string
+	mnemonic string
+}
+
+pub struct BlockchainSignModel{
+pub:
+	name string
+	content string
+}
+
+pub struct BlockchainSignNoNameModel{
+pub:
+	content string
+}
+
+pub struct StellarWalletVerifyModel{
+pub:
+	public_key string
+	content string
+	signed_content string
+}
+
+pub struct BlockchainCreateModel{
+pub:
+	name string
+	blockchain_type string
+	ip string
+}
+
+pub struct BlockchainInitModel{
+pub:
+	name string
+	blockchain_type string
 	secret string
 }
 
-pub struct NameIPModel {
+pub struct BlockchainCreateResultModel{
 pub:
-	name string
-	ip   string
-}
-
-pub struct BlockChainSignModel {
-pub:
-	name    string
-	content string
-}
-
-pub struct AssetsModel {
-pub:
-	amount f64
-	asset  string
-}
-
-pub struct BlockChainAssetsModel {
-pub:
-	name            string
-	public_key      string
-	blockchain_type string
-	assets          []AssetsModel
-}
-
-pub struct BlockChainCreateModel {
-pub:
-	name            string
-	public_key      string
-	mnemonic        string
-	blockchain_type string
-	twin_id         string
-}
-
-pub struct BlockChainModel {
-pub:
-	name            string
-	public_key      string
-	blockchain_type string
-}
-
-pub struct NameAddressMnemonicModel {
-pub:
-	name     string
-	address  string
 	mnemonic string
+	twin_id string
 }
 
-pub struct BlockchainSignModel {
+pub struct BlockchainListModel{
 pub:
-	name    string
-	content string
+	blockchain_type string
 }
 
-pub struct StellarWalletVerifyModel {
-pub:
-	public_key     string
-	content        string
-	signed_content string
+pub struct BlockchainPayNoNameModel{
+	pub:
+	blockchain_type_dest string
+	description string
+	address_dest string
+	amount f64
+	asset string
+}
+
+
+pub enum BlockChainType {
+    algorand
+    stellar
+    tfchain
 }

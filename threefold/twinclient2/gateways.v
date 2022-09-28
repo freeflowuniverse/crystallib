@@ -10,6 +10,10 @@ pub fn (mut client TwinClient) gateways_deploy_fqdn(payload GatewayFQDN) ?Deploy
 	return json.decode(DeployResponse, response.data)
 }
 
+pub fn (mut client TwinClient) gateways_list()?{
+	client.send('gateway.list', "{}")?
+}
+
 // Deploy name domain on gateway ex: name.gateway.com
 pub fn (mut client TwinClient) gateways_deploy_name(payload GatewayName) ?DeployResponse {
 	payload_encoded := json.encode_pretty(payload)
