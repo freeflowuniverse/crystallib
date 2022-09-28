@@ -22,7 +22,7 @@ pub fn (mut i Installer) install() ? {
 		} else if node.platform == builder.PlatformType.ubuntu {
 			println(' - Ubuntu prepare')
 
-			for x in ['git', 'rsync', 'curl'] {
+			for x in ['git', 'rsync', 'curl','mc'] {
 				if !node.cmd_exists(x) {
 					node.package_install(name: x)?
 				}
