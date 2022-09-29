@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.installers.rust
 import freeflowuniverse.crystallib.installers.mdbook
 import freeflowuniverse.crystallib.installers.vlang
 import freeflowuniverse.crystallib.installers.caddy
+import freeflowuniverse.crystallib.installers.repository
 
 fn do() ? {
 	mut builder := builder.new()
@@ -15,6 +16,9 @@ fn do() ? {
 	mdbook.get_install(mut node) or {panic("error: $err")}
 	vlang.get_install(mut node) or {panic("error: $err")}
 	caddy.get_install(mut node) or {panic("error: $err")}
+	repository.get_install(mut node, 'https://github.com/timurgordon/publisher_ui.git') or {panic("error: $err")}
+	repository.get_install(mut node, 'https://github.com/freeflowuniverse/crystallib.git') or {panic("error: $err")}
+	repository.get_install(mut node, 'https://github.com/ourworld-tsc/ourworld_books.git') or {panic("error: $err")}
 	
 }
 

@@ -21,19 +21,18 @@ pub fn get(mut node builder.Node) ?Installer {
 	return i
 }
 
-pub fn get_install(mut node builder.Node) ?Installer {
+pub fn get_install(mut node builder.Node, repo_url string) ?Installer {
 	mut i := Installer{
 		node: &node
 	}
-	i.install()?
+	i.install(repo_url)?
 	return i
 }
 
-
-pub fn install() ?Installer {
+pub fn install(repo_url string) ?Installer {
 	mut builder := builder.new()
 	mut node := builder.node_local()?
 	mut i := get(mut node)?
-	i.install()?
+	i.install(repo_url)?
 	return i
 }
