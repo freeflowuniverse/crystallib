@@ -24,6 +24,14 @@ pub fn (mut i Installer) install() ? {
 		return error('Cannot setup rust.\n$err')
 	}
 
+	// path := "export PATH='/usr/bin:/bin:/root/.cargo/bin'"
+	// node.exec("echo $path >> .bash_profile") or {
+	// 	return error('Cannot add path to .bash_profile: $err')
+	// }
+	// node.exec("echo $path >> .bashrc") or {
+	// 	return error('Cannot add path to .bashrc: $err')
+	// }
+
 	node.done_set('install_rust', 'OK')?
 	return
 }

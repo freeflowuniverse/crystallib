@@ -10,15 +10,11 @@ fn do() ? {
 	mut builder := builder.new()
 
 	mut node := builder.node_new(name:"test", ipaddr:"185.206.122.151", debug:true)?
-
-	ls := node.exec("ls -a")?
-	profile := node.exec("cat .bash_profile")?
-	cargo_v := node.exec("cargo --version")?
 	
 	rust.get_install(mut node) or {panic("error: $err")}
-	// says cargo not found, but when ssh into vm cargo command is found.
-	// also added cargo path to .bash_profile and ran source .cargo/env
 	mdbook.get_install(mut node) or {panic("error: $err")}
+	vlang.get_install(mut node) or {panic("error: $err")}
+	caddy.get_install(mut node) or {panic("error: $err")}
 	
 }
 
