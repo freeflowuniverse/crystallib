@@ -9,6 +9,12 @@ pub struct WSTwinClient{
 		channels 	map[string]chan Message
 }
 
+pub enum TwinClientTypeEnum{
+	http
+	rmb
+	ws
+}
+
 pub struct TwinClient {
 	pub mut:
 		transport ITwinTransport

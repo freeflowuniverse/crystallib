@@ -17,7 +17,7 @@ pub fn (mut client TwinClient) algorand_exist(name string)? bool{
 pub fn (mut client TwinClient) algorand_delete(name string)?bool{
 	data := NameModel{name: name}
 	response := client.transport.send('algorand.delete', json.encode(data).str())?
-	if response.data == "Deleted" {
+	if response.data.replace('"', '') == "Deleted" {
 		return true
 	}
 	return false

@@ -1,33 +1,6 @@
+module tests
 import freeflowuniverse.crystallib.twinclient as tw
 
-const mnemonics = [
-	"muscle file pear damp essence manage initial identify identify choose curtain move design stereo mom combine dish cabin neither limit dentist maximum sense absorb capital",
-	"tooth lumber general mechanic census erupt raw color maze bone ball egg unfold omit poverty salt define setup asthma jeans carpet flavor awkward absent ride",
-	"below library secret olympic clutch debris radio easy humble punch sock ocean axis lock consider hope can torch table old orbit address quality abandon disagree"
-]
-
-struct AlgorandDummeyData{
-	// Dummey data for algorand wallets
-	mut:
-		user1 tw.BlockChainCreateModel
-		user2 tw.BlockChainCreateModel
-		user3 tw.BlockChainCreateModel
-}
-
-fn setup_http_algorand_tests()? (tw.TwinClient, AlgorandDummeyData) {
-	mut transport 	:= tw.HttpTwinClient{}
-	mut client 		:= tw.grid_client(transport)?
-	mut alice 		:= tw.BlockChainCreateModel{name: "alice", mnemonic: mnemonics[0]}
-	mut bob 		:= tw.BlockChainCreateModel{name: "bob", mnemonic: mnemonics[1]}
-	mut baz 		:= tw.BlockChainCreateModel{name: "baz", mnemonic: mnemonics[2]}
-	transport.init("http://localhost:3000")?
-	data := AlgorandDummeyData{
-		user1: alice,
-		user2: bob,
-		user3: baz,
-	}
-	return client, data
-}
 
 fn test_http_algorand_list_no_accounts()? {
 	// List empty [] => there are no algorand accounts.
