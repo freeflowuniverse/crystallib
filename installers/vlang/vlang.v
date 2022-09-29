@@ -16,14 +16,14 @@ pub fn (mut i Installer) install() ? {
 		//? should we set vlang as done here ?
 		return
 	}
-	cmd := '''
+	cmd := '
 	apt install make build-essential -y
 	cd /root
 	git clone https://github.com/vlang/v
 	cd v
 	make
 	./v symlink
-	'''
+	'
 
 	node.exec(cmd) or {
 		return error('Cannot install vlang.\n$err')

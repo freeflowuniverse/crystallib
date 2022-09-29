@@ -33,6 +33,7 @@ fn (mut executor ExecutorSSH) init() ? {
 		if addr == '' {
 			addr = 'localhost'
 		}
+		// TODO: doesn't work with ipv6 after working with ipv4
 		cmd := "sh -c 'ssh-keyscan -H $executor.ipaddr.addr -p $executor.ipaddr.port -t ecdsa-sha2-nistp256 2>/dev/null >> ~/.ssh/known_hosts'"
 		process.execute_silent(cmd) or { return error('cannot add the ssh keys to known hosts') }
 		executor.initialized = true
@@ -113,9 +114,13 @@ fn (mut executor ExecutorSSH) download(source string, dest string) ? {
 	if executor.debug {
 		println(' - $executor.ipaddr.addr file download: $source')
 	}
-	// FIXME: maybe detection about ipv4/ipv6 is needed for use [] or not
+	// detection about ipv4/ipv6 for use [] or not
+	mut cmd_ipaddr := '$executor.ipaddr.addr'
+	if executor.ipaddr.cat == .ipv6 {
+		cmd_ipaddr = '[$executor.ipaddr.addr]'
+	}
 	process.execute_job(
-		cmd: 'rsync -avHPe "ssh -p$port" $executor.user@[$executor.ipaddr.addr]:$source $dest'
+		cmd: 'rsync -avHPe "ssh -p$port" $executor.user@$cmd_ipaddr:$source $dest'
 	)?
 }
 
@@ -125,9 +130,13 @@ fn (mut executor ExecutorSSH) upload(source string, dest string) ? {
 	if executor.debug {
 		println(' - $executor.ipaddr.addr file upload: $source -> $dest')
 	}
-	// FIXME: maybe detection about ipv4/ipv6 is needed for use [] or not
+	// detection about ipv4/ipv6 for use [] or not
+	mut cmd_ipaddr := '$executor.ipaddr.addr'
+	if executor.ipaddr.cat == .ipv6 {
+		cmd_ipaddr = '[$executor.ipaddr.addr]'
+	}
 	process.execute_job(
-		cmd: 'rsync -avHPe "ssh -p$port" $source -e ssh $executor.user@[$executor.ipaddr.addr]:$dest'
+		cmd: 'rsync -avHPe "ssh -p$port" $source -e ssh $executor.user@$cmd_ipaddr:$dest'
 	)?
 }
 
