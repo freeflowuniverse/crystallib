@@ -9,7 +9,7 @@ pub struct WSTwinClient{
 		channels 	map[string]chan Message
 }
 
-struct TwinClient {
+pub struct TwinClient {
 	pub mut:
 		transport ITwinTransport
 }
@@ -562,7 +562,7 @@ pub struct BlockChainAssetsModel{
 }
 
 pub struct BlockChainCreateModel{
-	pub:
+	pub mut:
 		name string
 		public_key string
 		mnemonic string
@@ -578,7 +578,7 @@ pub struct BlockChainModel{
 }
 
 pub struct NameAddressMnemonicModel{
-	pub:
+	pub mut:
 		name    string
 		address string
 		mnemonic string

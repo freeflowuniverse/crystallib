@@ -35,9 +35,11 @@ pub fn (mut client TwinClient) algorand_init(name string, secret string)? NameAd
 	}
 	response := client.transport.send(
 		'algorand.init',
-		json.encode(json.encode(data).str())
+		json.encode(data).str()
 	)?
-	return json.decode(NameAddressMnemonicModel, response.data)
+	mut result := NameAddressMnemonicModel{}
+	result.address = response.data
+	return result
 }
 
 pub fn (mut client TwinClient) algorand_assets(name string)?BlockChainAssetsModel{
