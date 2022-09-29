@@ -45,14 +45,15 @@ pub fn (htp HttpTwinClient) send(functionPath string, args string)? Message{
 	}
 	resp := request.do()?
 	mut message := Message{}
+	mut decoded := json2.raw_decode(resp.body)?
 	if resp.status_code == 200{
-		raw_body := json2.raw_decode(resp.body)?
-		body := raw_body.as_map()["result"]?
-		message.data = body.str()
-	} else {
-		message.err = resp.status_msg
+		result := decoded.as_map()["result"]?
+		message.data = result.str()
+		return message
+	}else{
+		err := decoded.as_map()["error"]?
+	    return error(err.str())
 	}
-	return message
 }
 
 // WebSocket Client
