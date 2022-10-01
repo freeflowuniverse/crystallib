@@ -62,7 +62,7 @@ fn (mut page Page) fix_img_location(mut link Link) ? bool {
 
 fn (mut page Page) fix_img_link(mut link Link) ? {
 	name := link.filename.all_before_last('.').trim_right('_').to_lower()
-	println('fixing image: $name  $link')
+	$if debug {println('fixing image: $name  $link')}
 	if name in page.site.files {
 		originalfilename := link.filename
 		image := page.site.files[name]
@@ -74,7 +74,7 @@ fn (mut page Page) fix_img_link(mut link Link) ? {
 		if link.link_update(imagelink_rel) {
 			// SHORTCUT
 			page.doc.content = page.doc.content.replace(originalfilename, link.filename)
-			println('change: $originalfilename -> $link.filename')
+			$if debug {println('change: $originalfilename -> $link.filename')}
 			page.doc.save()?
 		}
 	} else {
@@ -120,7 +120,7 @@ fn (mut page Page) fix_external_link(mut link Link) ? {
 }
 
 fn (mut page Page) fix() ? {
-	page.links_fix()?
+	// page.links_fix()?
 }
 
 // walk over all links and fix them with location

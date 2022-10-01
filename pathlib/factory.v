@@ -3,7 +3,11 @@ module pathlib
 import os
 
 // gets Path object, will check if it exists, is dir_file, ...
-pub fn get(path string) Path {
+pub fn get(path_ string) Path {
+	mut path:=path_
+	if path.contains("~"){
+		path=path.replace("~",os.home_dir())
+	}
 	mut p2 := Path{
 		path: path
 	}

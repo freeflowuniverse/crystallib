@@ -13,7 +13,7 @@ fn (site Site) mdbook_create() ? {
 		url: 'https://github.com/threefoldfoundation/books/tree/main/template/books/template'
 	)?
 	mut dest_repo := gt.repo_get_from_path(site.path, true, false)?
-	books_repo.pull()?
+	// books_repo.pull()?
 
 	//? ok to use os module or should use executor?
 	tmp := '/tmp/mdbooks/'

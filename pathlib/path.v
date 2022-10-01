@@ -25,13 +25,27 @@ enum UYN {
 }
 
 // return absolute path
+// careful symlinks will not be resolved
 pub fn (path Path) absolute() string {
+	mut p := path.path.replace('~', os.home_dir())
+	if ! path.is_link(){
+		//is not a link so we can return, will not resolve the links
+		return os.real_path(p)
+	}
+	return os.resource_abs_path(p)
+}
+
+// return absolute path
+// careful the symlinks will be followed !!!
+pub fn (path Path) realpath() string {
 	mut p := path.path.replace('~', os.home_dir())
 	return os.real_path(p)
 }
 
+
 // check the inside of pathobject, is like an init function
 pub fn (mut path Path) check() {
+	// println(path)
 	if os.exists(path.path) {
 		path.exist = .yes
 		if os.is_file(path.path) {
@@ -52,6 +66,7 @@ pub fn (mut path Path) check() {
 	} else {
 		path.exist = .no
 	}
+	println(path)
 }
 
 fn (mut path Path) check_exists() ? {

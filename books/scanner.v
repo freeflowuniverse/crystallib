@@ -7,9 +7,8 @@ import os
 // remember the file, so we know if we have duplicates
 // also fixes the name
 fn (mut site Site) file_remember(mut patho pathlib.Path) ? {
-	// println(' - File remember $file.pathrel')
 	patho.namefix()?
-	// $if debug {eprintln(@FN + ": - $patho.path")}
+	$if debug {eprintln(" - file remember : $patho.path")}
 	if patho.is_image() {
 		if site.image_exists(patho.name()) {
 			mut filedouble := site.image_get(patho.name())?
@@ -17,19 +16,16 @@ fn (mut site Site) file_remember(mut patho pathlib.Path) ? {
 
 			// get config item to see if we can heal
 			if site.sites.config.heal {
-				println(' - try to heal, double file: $patho.path')
-				println(pathdouble.path)
+				println(" - try to heal, double file: '$patho.path' and '$pathdouble.path'")
 				mut prio_double := false
-				if pathdouble.name_ends_with_underscore() {
-					if patho.name_ends_with_underscore() {
-						site.error(
-							path: pathdouble
-							msg: 'found 2 images with _ at end'
-							cat: .image_double
-						)
-					}
+				if patho.extension() == 'jpg' && pathdouble.extension() == 'png'{
 					prio_double = true
-				} else if patho.extension() == 'jpg' && pathdouble.extension() == 'png' {
+				} else if pathdouble.name_ends_with_underscore() && patho.name_ends_with_underscore() {
+					if patho.path.len > pathdouble.path.len{
+						//this means double path is on shorter location than the one here
+						prio_double = true
+					}
+				} else  {
 					// means are both jpg but the double one has underscore so prio
 					prio_double = true
 				}
@@ -98,9 +94,9 @@ fn (mut site Site) page_remember(mut patho pathlib.Path, issidebar bool) ? {
 	// 	// path_sidebar_relative = texttools.name_fix(path_sidebar_relative)
 	// 	// println(" ----- $pathrelative $path_sidebar_relative"
 	// }
-
+	patho.namefix()?
 	if site.page_exists(patho.name()) {
-		panic('duplicate path: ' + patho.path)
+		site.error(path:patho,msg:"double page in site",cat:.page_double)
 	}
 	site.page_new(mut patho)?
 }
@@ -109,15 +105,14 @@ fn (mut site Site) page_remember(mut patho pathlib.Path, issidebar bool) ? {
 fn (mut site Site) scan_internal(mut p pathlib.Path) ? {
 	p.namefix()?
 	println(' - load: $p.path')
-	mut path_sidebar := '$p.path/sidebar.md'
+	// mut path_sidebar := '$p.path/sidebar.md'
 	// println(" - sidebar check: $path_/sidebar.md")
-	if os.exists(path_sidebar) {
-		// means we are not in root of path
-		mut p2 := pathlib.get_file(path_sidebar, false)?
-		site.page_remember(mut p2, true)?
-		println(' - Found sidebar: $p.path')
-	}
-	// site.side_bar_fix(path_, mut publisher)
+	// if os.exists(path_sidebar) {
+	// 	// means we are not in root of path
+	// 	mut p2 := pathlib.get_file(path_sidebar, false)?
+	// 	site.page_remember(mut p2, true)?
+	// 	println(' - Found sidebar: $p.path')
+	// }
 	mut llist := p.list(recursive: false)?
 	for mut p_in in llist {
 		p_name := p_in.name_no_ext()
@@ -148,12 +143,9 @@ fn (mut site Site) scan_internal(mut p pathlib.Path) ? {
 				ext := p_in.extension().to_lower()
 				if ext != '' {
 					// only process files which do have extension
-					// ext2 := ext[1..]
-					// println("----- $p_in ($ext)")
 					if ext == 'md' {
 						site.page_remember(mut p_in, false)?
 					} else {
-						// println(path+"/"+item2)
 						site.file_remember(mut p_in)?
 					}
 				}

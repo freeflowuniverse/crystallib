@@ -34,14 +34,12 @@ pub fn (mut path Path) namefix() ?bool {
 }
 
 // get relative path in relation to sourcepath
+// will not resolve symlinks
 pub fn (mut path Path) path_relative(sourcepath string) string {
 	path_abs := path.absolute()
-	mut sourcepath_abs := Path{
-		path: sourcepath
-	}
-	sourcepath_abs.absolute()
-	if path_abs.starts_with(sourcepath_abs.path) {
-		return path_abs[sourcepath_abs.path.len..]
+	sourcepath_abs := get(sourcepath).absolute()
+	if path_abs.starts_with(sourcepath_abs) {
+		return path_abs[sourcepath_abs.len..]
 	}
 	return path_abs
 }
@@ -60,7 +58,8 @@ pub fn path_relative(source_ string, dest_ string) ?string {
 	if dest.starts_with(source) {
 		return dest[source.len..]
 	} else {
-		return error("Destination path is not in source directory")
+		msg := "Destination path is not in source directory: $source_ $dest_"
+		return error(msg)
 	}
 }
 
@@ -176,12 +175,13 @@ pub fn (mut path Path) dir_exists(tofind string) bool {
 }
 
 // find dir underneith path, return as Path
-pub fn (mut path Path) dir_find(tofind string) ?Path {
+pub fn (mut path Path) dir_get(tofind string) ?Path {
 	if path.dir_exists(tofind) {
 		dir_path := os.join_path(path.path, tofind)
 		return Path{
 			path: dir_path
 			cat: Category.dir
+			exist:.yes
 		}
 	}
 	return error('$tofind is not in $path.path')
@@ -201,6 +201,22 @@ pub fn (mut path Path) file_exists(tofind string) bool {
 	}
 	return false
 }
+
+// find file underneith path, if exists return as Path, otherwise error
+pub fn (mut path Path) file_get(tofind string) ?Path {
+	if path.cat != Category.dir {
+		return error("is not a dir: $path.path")
+	}
+	files := os.ls(path.path) or { []string{} }
+	if tofind in files {
+		file_path := os.join_path(path.path, tofind)
+		if os.is_file(file_path) {
+			return get_file(file_path,false)
+		}
+	}	
+	return error("")
+}
+
 
 // find file underneith path, return as Path, can only be one
 // tofind is part of file name
@@ -232,40 +248,20 @@ pub fn (mut path Path) list(args ListArgs) ?[]Path {
 	ls_result := os.ls(path.path) or { []string{} }
 	mut all_list := []Path{}
 	for item in ls_result {
-		mut new_path := Path{}
 		p := os.join_path(path.path, item)
+		mut new_path := get(p)
 		// Check for dir and linkdir
-		if os.is_dir(p) {
-			if os.is_link(p) {
-				new_path.cat = Category.linkdir
-			} else {
-				new_path.cat = Category.dir
-			}
+		if new_path.is_dir(){			
 			// If recusrive
 			if args.recursive {
-				mut rec_path := Path{
-					path: p
-					cat: new_path.cat
-				}
-				mut rec_list := rec_path.list(args)?
+				mut rec_list := new_path.list(args)?
 				all_list << rec_list
 			}
 		}
-		// Check if linkfile
-		else if os.is_file(p) {
-			if os.is_link(p) {
-				new_path.cat = Category.linkfile
-			} else {
-				new_path.cat = Category.file
-			}
-		}
-
 		// Check if tofound is a part of the path
 		if args.tofind != '' && !p.contains(args.tofind) {
 			continue
 		}
-		new_path.path = p
-		// new_path.exists = true
 		all_list << new_path
 	}
 	return all_list
@@ -346,11 +342,13 @@ pub fn (mut path Path) copy(mut dest Path) ?Path {
 		return Path{
 			path: dest_path
 			cat: Category.file
+			exist: .yes
 		}
 	}
 	return Path{
 		path: dest.path
 		cat: dest.cat
+		exist: .yes
 	}
 }
 
@@ -366,12 +364,14 @@ pub fn (mut path Path) link(mut dest Path) ?Path {
 			return Path{
 				path: dest.path
 				cat: Category.linkdir
+				exist: .yes
 			}
 		}
 		.file, .linkfile {
 			return Path{
 				path: dest.path
 				cat: Category.linkfile
+				exist: .yes
 			}
 		}
 		.unknown {
@@ -383,8 +383,6 @@ pub fn (mut path Path) link(mut dest Path) ?Path {
 // return path object for the link this one is pointing too
 pub fn (mut path Path) readlink() ?Path {
 	if path.is_link() {
-		//? readlink path.absolute will always fail because absolute returns symlinks resolved
-		// cmd := 'readlink $path.absolute()'
 		cmd := 'readlink $path.path'
 		res := os.execute(cmd)
 		if res.exit_code > 0 {

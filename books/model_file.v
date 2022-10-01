@@ -28,9 +28,27 @@ pub mut: // pointer to site
 }
 
 // only way how to get to a new file
-pub fn (mut site Site) file_new(mut p pathlib.Path) ?File {
+// needs to process links
+fn (mut site Site) file_new(mut p pathlib.Path) ? {
 	if !p.exists() {
 		return error('cannot find file for path in site: $p.path')
+	}
+	if p.is_link(){
+		link_real_path := p.realpath() //this is with the symlink resolved
+		link_abs_path := p.absolute()
+		site_abs_path := site.path.absolute()
+		$if debug{println(" - @FN IS LINK: \n    abs:'$link_abs_path' \n    real:'$link_real_path'\n    site:'$site_abs_path'")}
+		if link_real_path.starts_with(site_abs_path){
+			//means link is inside the site so ok to leave and ignore
+			$if debug{println(" - means link is inside the site so ok to leave and ignore: $p.path")}
+			return
+		}
+		//now we know the file is outside of the site, so need to copy inside
+		p.delete()? //remove the file which is link
+		$if debug{println(" - copy source file:'$link_real_path' of link to link loc:$link_abs_path")}
+		os.cp(link_real_path,link_abs_path)?
+		println(p)
+		panic("sfdsds")
 	}
 	p.namefix()? // make sure its all lower case and name is proper
 	mut ff := File{
@@ -39,7 +57,6 @@ pub fn (mut site Site) file_new(mut p pathlib.Path) ?File {
 	}
 	ff.init()
 	site.files[ff.name] = ff
-	return ff
 }
 
 fn (mut file File) init() {
@@ -54,7 +71,7 @@ pub fn (mut file File) delete() ? {
 	file.path.delete()?
 }
 
-pub fn (mut file File) mv(dest string) ? {
+fn (mut file File) mv(dest string) ? {
 	os.mkdir_all(os.dir(dest))?
 	mut desto := pathlib.get_file_dir_create(dest)?
 	os.mv(file.path.path, desto.path) or {
