@@ -1,24 +1,31 @@
 module main
 
 import freeflowuniverse.crystallib.builder
+import freeflowuniverse.crystallib.installers.rust
+import freeflowuniverse.crystallib.installers.mdbook
+import freeflowuniverse.crystallib.installers.vlang
+import freeflowuniverse.crystallib.installers.caddy
+import freeflowuniverse.crystallib.installers.tailwind
+import freeflowuniverse.crystallib.installers.repository
 
 fn do() ? {
 	mut builder := builder.new()
 
-	// pub struct NodeArguments {
-	// 	ipaddr string
-	// 	name   string
-	// 	user   string = "root"
-	// 	debug  bool
-	// 	reset bool
-	//	redisclient &redisclient.Redis
-	// 	}
-	//```
-	mut node := builder.node_new(name:"test",ipaddr:"185.206.122.153")?
+	mut node := builder.node_new(name:"test", ipaddr:"185.206.122.151", debug:true)?
+	
+	rust.get_install(mut node) or {panic("error: $err")}
+	mdbook.get_install(mut node) or {panic("error: $err")}
+	vlang.get_install(mut node) or {panic("error: $err")}
+	caddy.get_install(mut node) or {panic("error: $err")}
+	tailwind.get_install(mut node) or {panic("error: $err")}
+	repository.get_install(mut node, 'https://github.com/timurgordon/publisher_ui.git') or {panic("error: $err")}
+	repository.get_install(mut node, 'https://github.com/freeflowuniverse/crystallib.git') or {panic("error: $err")}
+	repository.get_install(mut node, 'https://github.com/ourworld-tsc/ourworld_books.git') or {panic("error: $err")}
 
-	res := node.exec("ls /")?
-	println(res)
+	node.exec('ln -s /root/tailwindcss code/github/timurgordon/publisher_ui/tailwindcss')
+
 }
+
 
 fn main() {
 	do() or { panic(err) }

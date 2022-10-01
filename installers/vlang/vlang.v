@@ -5,7 +5,6 @@ pub fn (mut i Installer) install() ? {
 	mut node := i.node
 	// install vlang if it was already done will return true
 	println(' - $node.name: install vlang')
-	panic("implement")
 	if !(i.state == .reset) && node.done_exists('install_vlang') {
 		println('    $node.name: was already done')
 		return
@@ -13,7 +12,6 @@ pub fn (mut i Installer) install() ? {
 
 	if node.command_exists('v') {
 		println('Vlang was already installed.')
-		//? should we set vlang as done here ?
 		return
 	}
 	cmd := '
