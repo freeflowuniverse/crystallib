@@ -17,6 +17,7 @@ pub:
 	sites    &Sites   [str: skip] // pointer to sites
 	sitetype SiteType
 pub mut:
+	title 	 string
 	pages  map[string]Page
 	files  map[string]File
 	path   pathlib.Path

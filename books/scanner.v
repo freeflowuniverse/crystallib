@@ -2,7 +2,6 @@ module books
 
 import freeflowuniverse.crystallib.pathlib
 import imagemagick
-import os
 
 // remember the file, so we know if we have duplicates
 // also fixes the name

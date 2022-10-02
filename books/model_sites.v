@@ -4,12 +4,17 @@ import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.params
 
+enum SitesState{
+	init
+	ok
+}
 
 [heap]
 pub struct Sites {
 pub mut:
 	sites  map[string]Site
 	config Config
+	state SitesState
 }
 
 pub struct SiteNewArgs {

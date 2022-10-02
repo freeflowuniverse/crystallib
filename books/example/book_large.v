@@ -8,7 +8,7 @@ const testpath = os.dir(@FILE) + '/book1'
 fn do() ? {
 	mut books := books.new()
 	books.scan("~/code4/books/content")?
-	// site.mdbook_export()?
+	books.mdbook_export()?
 	// site.mdbook_develop()?
 }
 
