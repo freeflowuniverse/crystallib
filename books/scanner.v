@@ -122,6 +122,24 @@ fn (mut site Site) scan_internal(mut p pathlib.Path) ? {
 			continue
 		}
 
+		if mut p_in.is_link(){
+			//should support dir's and files
+			link_real_path := p_in.realpath() //this is with the symlink resolved
+			site_abs_path := site.path.absolute()
+			if  p.extension_lower() == "md" {
+				//means we are linking pages,this should not be done, need or change 
+				site.error(path: p_in, msg: 'duplicate page', cat: .page_double)
+				return
+			}
+			if !link_real_path.starts_with(site_abs_path){
+				//means we are not in the site so we need to copy
+				// $if debug{println(" - @FN IS LINK: \n    abs:'$link_abs_path' \n    real:'$link_real_path'\n    site:'$site_abs_path'")}
+				p_in.unlink()? //will transform link to become the file or dir it points too
+			}else{
+				p_in.relink()? //will check that the link is on the file with the shortest path
+			}
+		}	
+
 		if p_in.is_dir() {
 			if p_name.starts_with('gallery_') {
 				// TODO: need to be implemented by macro
@@ -131,23 +149,6 @@ fn (mut site Site) scan_internal(mut p pathlib.Path) ? {
 				// site.side_bar_fix(path_, mut publisher)
 			}
 		} else {
-
-			if mut p_in.is_link(){
-				link_real_path := p_in.realpath() //this is with the symlink resolved
-				link_abs_path := p_in.absolute()
-				// site_abs_path := site.path.absolute()
-				if ! p_in.is_image() {
-					//means we are linking pages,this should not be done, need or change 
-					site.error(path: p_in, msg: 'duplicate page', cat: .page_double)
-					return
-				}
-				// $if debug{println(" - @FN IS LINK: \n    abs:'$link_abs_path' \n    real:'$link_real_path'\n    site:'$site_abs_path'")}
-				p_in.delete()? //remove the file which is link
-				// $if debug{println(" - copy source file:'$link_real_path' of link to link loc:'$link_abs_path'")}
-				os.cp(link_real_path,link_abs_path)?
-				p_in.path = link_abs_path
-				p_in.check()
-			}	
 
 			if p_name.to_lower() == 'defs.md' {
 				continue

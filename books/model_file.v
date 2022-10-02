@@ -33,9 +33,6 @@ fn (mut site Site) file_new(mut p pathlib.Path) ? {
 	if !p.exists() {
 		return error('cannot find file for path in site: $p.path')
 	}
-	if p.is_link(){
-		return error("no support for links: $p.path")
-	}
 	if p.name().starts_with("."){
 		panic("should not start with . \n$p")
 	}

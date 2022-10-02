@@ -16,7 +16,6 @@ pub mut:
 }
 
 fn (mut image Image) init_() ? {
-	// println(" -+-+- $image.path")
 	if image.size_kbyte == 0 {
 		image.size_kbyte = image.path.size_kb() or {
 			return error('cannot define size file in kb.\n$error')
@@ -114,14 +113,12 @@ pub fn (mut image Image) downsize(backupdir string) ? {
 	// means we should not process next time, we do this by adding _ at end of name
 	path_dest2 := image.path.path_get_name_with_underscore()
 	image.init_()?
-	if image.size_kbyte < 601{
-		println('   - add _ at end of image: $path_dest2')
-		if os.exists(path_dest2){
-			os.rm(path_dest2)?
-		}
-		os.mv(image.path.path, path_dest2)?
-		image.path = pathlib.get(path_dest2)
+	// println('   - add _ at end of image: $path_dest2')
+	if os.exists(path_dest2){
+		os.rm(path_dest2)?
 	}
+	os.mv(image.path.path, path_dest2)?
+	image.path = pathlib.get(path_dest2)
 }
 
 fn (mut image Image) identify_verbose() ? {

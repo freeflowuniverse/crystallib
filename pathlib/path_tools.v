@@ -33,6 +33,25 @@ pub fn (mut path Path) namefix() ?bool {
 	return false
 }
 
+//rename the file or directory
+pub fn (mut path Path) rename(name string) ? {
+	if name.contains("/"){
+		return error("should only be a name no dir inside: '$name'")
+	}
+	mut dest := ""
+	if path.path.contains("/"){
+		before:=path.path.all_before_last("/")
+		dest = before+"/"+name
+	}else{
+		dest = name
+	}
+	os.mv(path.path,dest)?
+	path.path = dest
+	path.check()
+}
+
+
+
 // get relative path in relation to sourcepath
 // will not resolve symlinks
 pub fn (mut path Path) path_relative(sourcepath string) string {
@@ -105,8 +124,14 @@ pub fn (path Path) parent() ?Path {
 	}
 }
 
+//returns extension without .
 pub fn (path Path) extension() string {
 	return os.file_ext(path.path).trim('.')
+}
+
+//returns extension without and all lower case
+pub fn (path Path) extension_lower() string {
+	return path.extension().to_lower()
 }
 
 // make sure name is normalized and jpeg becomes jpg
@@ -382,6 +407,49 @@ pub fn (mut path Path) link(mut dest Path) ?Path {
 			return error('Path cannot be unknown type')
 		}
 	}
+}
+
+//will make sure that the link goes from file with largest path to smalles
+//good to make sure we have links always done in same way
+pub fn (mut path Path) relink() ? {
+	if ! path.is_link(){
+		return
+	}
+	
+	link_abs_path := path.absolute()
+	if !link_abs_path.starts_with("/"){
+		panic("bug, needs to be absolute")
+	}
+	link_real_path := path.realpath() //this is with the symlink resolved
+	if compare_strings(link_abs_path,link_real_path)>=0{
+		//means the shortest path is the target
+		return
+	}
+	//need to switch link with the real content
+	mut linked:=get(link_real_path)
+	path.unlink()? //make sure both are files now (the link is the file)
+	linked.delete()?
+	path.link(mut linked)? //re-link
+
+}
+
+//resolve link to the real content
+//copy the target of the link to the link
+pub fn (mut path Path) unlink() ? {
+	if !path.is_link(){
+		//nothing to do because not link, will not giver error
+		return
+	}
+	link_abs_path := path.absolute()
+	link_real_path := path.realpath() //this is with the symlink resolved
+	mut link_path := get(link_real_path)
+	$if debug{println(" - copy source file:'$link_real_path' of link to link loc:'$link_abs_path'")}
+	mut destpath := get(link_abs_path+".temp") //lets first copy to the .temp location
+	link_path.copy(mut destpath)? //copy to the temp location
+	path.delete()? //remove the file or dir which is link
+	destpath.rename(path.name())? //rename to the new path
+	path.path = destpath.path //put path back
+	path.check()
 }
 
 // return path object for the link this one is pointing too

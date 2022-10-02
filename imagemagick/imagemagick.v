@@ -4,13 +4,20 @@ import freeflowuniverse.crystallib.pathlib
 import params
 import freeflowuniverse.crystallib.process
 
-pub fn installed() bool {
-	// println(' - init imagemagick')
+fn installed0() bool {
+	println(' - init imagemagick')
 	out := process.execute_silent('convert -version') or { return false }
 	if !out.contains('ImageMagick') {
 		return false
 	}
 	return true
+}
+
+// singleton creation
+const installed1 = installed0()
+
+pub fn installed() bool {
+	return installed1
 }
 
 // scan a directory

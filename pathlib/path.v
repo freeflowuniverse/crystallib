@@ -85,9 +85,6 @@ pub fn (mut path Path) path_dir() string {
 }
 
 pub fn (mut path Path) name_no_ext() string {
-	if !path.is_file(){
-		panic("$path.path should be file")
-	}
 	mut name := path.name()
 	if name.contains("."){
 		name= name.all_before_last('.')
