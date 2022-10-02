@@ -246,11 +246,15 @@ pub fn (mut path Path) list(args ListArgs) ?[]Path {
 		return error('Path must be directory or link to directory')
 	}
 	ls_result := os.ls(path.path) or { []string{} }
-	mut all_list := []Path{}
+	mut all_list := []Path
 	for item in ls_result {
 		p := os.join_path(path.path, item)
 		mut new_path := get(p)
 		// Check for dir and linkdir
+		if !new_path.exists() {
+			//to deal with broken link
+			continue
+		}
 		if new_path.is_dir(){			
 			// If recusrive
 			if args.recursive {
@@ -352,7 +356,7 @@ pub fn (mut path Path) copy(mut dest Path) ?Path {
 	}
 }
 
-// create symlink on dest (which is Path wich is non existing)
+// create symlink on dest (which is path wich is non existing, the to be created link)
 // return Path of the symlink
 pub fn (mut path Path) link(mut dest Path) ?Path {
 	if dest.exists() {
@@ -391,5 +395,14 @@ pub fn (mut path Path) readlink() ?Path {
 		return get(res.output.trim_space())
 	} else {
 		return error('can only read link info when the path is a filelink or dirlink. $path')
+	}
+}
+
+//return path object which is the result of the link
+pub fn (mut path Path) getlink() ?Path {
+	if path.is_link() {
+		return get(path.realpath())
+	} else {
+		return error('can only get link when the path is a filelink or dirlink. $path')
 	}
 }

@@ -32,14 +32,15 @@ pub fn (path Path) absolute() string {
 		//is not a link so we can return, will not resolve the links
 		return os.real_path(p)
 	}
-	return os.resource_abs_path(p)
+	return os.abs_path(p)
 }
 
 // return absolute path
 // careful the symlinks will be followed !!!
 pub fn (path Path) realpath() string {
 	mut p := path.path.replace('~', os.home_dir())
-	return os.real_path(p)
+	p2:=  os.real_path(p)
+	return p2
 }
 
 
@@ -66,7 +67,6 @@ pub fn (mut path Path) check() {
 	} else {
 		path.exist = .no
 	}
-	println(path)
 }
 
 fn (mut path Path) check_exists() ? {
@@ -85,7 +85,17 @@ pub fn (mut path Path) path_dir() string {
 }
 
 pub fn (mut path Path) name_no_ext() string {
-	return path.name().all_before_last('.')
+	if !path.is_file(){
+		panic("$path.path should be file")
+	}
+	mut name := path.name()
+	if name.contains("."){
+		name= name.all_before_last('.')
+	}
+	if name == ""{
+		return path.name()
+	}
+	return name
 }
 
 pub fn (mut path Path) path_no_ext() string {

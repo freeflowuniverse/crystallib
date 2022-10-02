@@ -6,22 +6,22 @@ import os
 
 // remember the file, so we know if we have duplicates
 // also fixes the name
-fn (mut site Site) file_remember(mut patho pathlib.Path) ? {
-	patho.namefix()?
-	$if debug {eprintln(" - file remember : $patho.path")}
-	if patho.is_image() {
-		if site.image_exists(patho.name()) {
-			mut filedouble := site.image_get(patho.name())?
+fn (mut site Site) file_remember(mut p pathlib.Path) ? {
+	// $if debug {eprintln(" - file remember : $p.path")}
+	p.namefix()?
+	if p.is_image() {
+		if site.image_exists(p.name()) {
+			mut filedouble := site.image_get(p.name())?
 			mut pathdouble := filedouble.path
 
 			// get config item to see if we can heal
 			if site.sites.config.heal {
-				println(" - try to heal, double file: '$patho.path' and '$pathdouble.path'")
+				println(" - try to heal, double file: '$p.path' and '$pathdouble.path'")
 				mut prio_double := false
-				if patho.extension() == 'jpg' && pathdouble.extension() == 'png'{
+				if p.extension() == 'jpg' && pathdouble.extension() == 'png'{
 					prio_double = true
-				} else if pathdouble.name_ends_with_underscore() && patho.name_ends_with_underscore() {
-					if patho.path.len > pathdouble.path.len{
+				} else if pathdouble.name_ends_with_underscore() && p.name_ends_with_underscore() {
+					if p.path.len > pathdouble.path.len{
 						//this means double path is on shorter location than the one here
 						prio_double = true
 					}
@@ -33,13 +33,13 @@ fn (mut site Site) file_remember(mut patho pathlib.Path) ? {
 					// means we have to put the path on this one				
 					filedouble.path = pathdouble
 					filedouble.init()
-					println(' - delete original: $patho.path')
+					println(' - delete original: $p.path')
 					// patho.delete()?
 				} else {
 					println(' - delete double: $pathdouble.path')
 					// pathdouble.delete()?
 					// TODO: need to do the actual deletes
-					site.file_new(mut patho)?
+					site.file_new(mut p)?
 				}
 			} else {
 				// no automatic check
@@ -48,23 +48,23 @@ fn (mut site Site) file_remember(mut patho pathlib.Path) ? {
 		} else {
 			// means the its a new one, lets add it, first see if it needs to be downsized
 			if imagemagick.installed() {
-				imagedownsized := imagemagick.image_downsize(mut patho, '')?
+				imagedownsized := imagemagick.image_downsize(mut p, '')?
 				// after downsize it could be the path has been changed, need to set it on the file
-				if patho.path != imagedownsized.path.path {
-					patho.path = imagedownsized.path.path
-					patho.check()
+				if p.path != imagedownsized.path.path {
+					p.path = imagedownsized.path.path
+					p.check()
 				}
 			}
-			site.file_new(mut patho)?
+			site.file_new(mut p)?
 		}
 	} else {
 		// now we are working on non image
-		if site.file_exists(patho.name()) {
-			mut filedouble := site.file_get(patho.name())?
+		if site.file_exists(p.name()) {
+			mut filedouble := site.file_get(p.name())?
 			mut pathdouble := filedouble.path
 			site.error(path: pathdouble, msg: 'duplicate file', cat: .image_double)
 		} else {
-			site.file_new(mut patho)?
+			site.file_new(mut p)?
 		}
 	}
 }
@@ -103,8 +103,7 @@ fn (mut site Site) page_remember(mut patho pathlib.Path, issidebar bool) ? {
 
 // path is the full path
 fn (mut site Site) scan_internal(mut p pathlib.Path) ? {
-	p.namefix()?
-	println(' - load: $p.path')
+	// println(' - load: $p.path')
 	// mut path_sidebar := '$p.path/sidebar.md'
 	// println(" - sidebar check: $path_/sidebar.md")
 	// if os.exists(path_sidebar) {
@@ -115,13 +114,16 @@ fn (mut site Site) scan_internal(mut p pathlib.Path) ? {
 	// }
 	mut llist := p.list(recursive: false)?
 	for mut p_in in llist {
-		p_name := p_in.name_no_ext()
+
+		p_name := p_in.name()
+		if p_name.starts_with('.') {
+			continue
+		} else if p_name.starts_with('_') {
+			continue
+		}
+
 		if p_in.is_dir() {
-			if p_name.starts_with('.') {
-				continue
-			} else if p_name.starts_with('_') {
-				continue
-			} else if p_name.starts_with('gallery_') {
+			if p_name.starts_with('gallery_') {
 				// TODO: need to be implemented by macro
 				continue
 			} else {
@@ -129,20 +131,41 @@ fn (mut site Site) scan_internal(mut p pathlib.Path) ? {
 				// site.side_bar_fix(path_, mut publisher)
 			}
 		} else {
-			if p_name.starts_with('.') || p_name.to_lower() == 'defs.md' {
+
+			if mut p_in.is_link(){
+				link_real_path := p_in.realpath() //this is with the symlink resolved
+				link_abs_path := p_in.absolute()
+				// site_abs_path := site.path.absolute()
+				if ! p_in.is_image() {
+					//means we are linking pages,this should not be done, need or change 
+					site.error(path: p_in, msg: 'duplicate page', cat: .page_double)
+					return
+				}
+				// $if debug{println(" - @FN IS LINK: \n    abs:'$link_abs_path' \n    real:'$link_real_path'\n    site:'$site_abs_path'")}
+				p_in.delete()? //remove the file which is link
+				// $if debug{println(" - copy source file:'$link_real_path' of link to link loc:'$link_abs_path'")}
+				os.cp(link_real_path,link_abs_path)?
+				p_in.path = link_abs_path
+				p_in.check()
+			}	
+
+			if p_name.to_lower() == 'defs.md' {
 				continue
 			} else if p_name.contains('.test') {
 				p_in.delete()?
-			} else if p_name.starts_with('_') && !(p_name.starts_with('_sidebar'))
-				&& !(p_name.starts_with('_glossary')) && !(p_name.starts_with('_navbar')) {
-				// println('SKIP: $item')
 				continue
+			// } else if p_name.starts_with('_'){
+			//  && !(p_name.starts_with('_sidebar'))
+			// 	&& !(p_name.starts_with('_glossary')) && !(p_name.starts_with('_navbar')) {
+			// 	// println('SKIP: $item')
+				// continue
 			} else if p_in.path.starts_with('sidebar') {
 				continue
 			} else {
 				ext := p_in.extension().to_lower()
 				if ext != '' {
 					// only process files which do have extension
+					p_in.namefix()? //make sure name is proper on filesystem
 					if ext == 'md' {
 						site.page_remember(mut p_in, false)?
 					} else {

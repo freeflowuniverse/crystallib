@@ -36,17 +36,32 @@ pub fn image_new(mut path pathlib.Path) ?Image {
 // backupdir, put on empty if not used
 pub fn image_downsize(mut path pathlib.Path, backupdir string) ?Image {
 	mut image := image_new(mut path)?
-	image.downsize(backupdir)?
+	if path.is_link(){
+		mut path_linked:=path.getlink()?
+		mut image_linked := image_new(mut path_linked)?
+		image_linked.downsize(backupdir)?
+		if image.path.path != image_linked.path.path{
+			//means downsize worked, now we need to re-link
+			image.path.delete()?
+			image.path.path = image.path.path_dir()+"/"+ image_linked.path.name()
+			image.path = image_linked.path.link(mut image.path)?
+		}
+	}else{
+		image.downsize(backupdir)?
+	}
 	return image
 }
 
 // will downsize to reasonable size based on x
 pub fn (mut image Image) downsize(backupdir string) ? {
+	if image.path.is_link(){
+		return error("use image_downsize function if file is a link:\n$image")
+	}
 	image.init_()?
 	if image.skip() {
 		return
 	}
-	println(' - PROCESS DOWNSIZE $image.path')
+	// $if debug{println(' - downsize $image.path')}
 	if image.is_png() {
 		image.identify_verbose()?
 	} else {
@@ -80,7 +95,7 @@ pub fn (mut image Image) downsize(backupdir string) ? {
 	}
 
 	if image.is_png() {
-		if image.size_kbyte > 400 && !image.transparent {
+		if image.size_kbyte > 600 && !image.transparent {
 			path_dest := image.path.path_no_ext() + '.jpg'
 			println('   - convert image jpg: $path_dest')
 			cmd := "convert '$image.path.path' '$path_dest'"
@@ -98,10 +113,15 @@ pub fn (mut image Image) downsize(backupdir string) ? {
 	}
 	// means we should not process next time, we do this by adding _ at end of name
 	path_dest2 := image.path.path_get_name_with_underscore()
-	println(' - add _ at end of image: $path_dest2')
-	os.mv(image.path.path, path_dest2)?
-	image.path = pathlib.get(path_dest2)
-	// println(image)
+	image.init_()?
+	if image.size_kbyte < 601{
+		println('   - add _ at end of image: $path_dest2')
+		if os.exists(path_dest2){
+			os.rm(path_dest2)?
+		}
+		os.mv(image.path.path, path_dest2)?
+		image.path = pathlib.get(path_dest2)
+	}
 }
 
 fn (mut image Image) identify_verbose() ? {
@@ -186,7 +206,7 @@ fn (mut image Image) identify() ? {
 		// means was already done
 		return
 	}
-	println(' - identify: $image.path')
+	// println(' - identify: $image.path')
 	mut out := process.execute_silent("identify -ping '$image.path.path'") or {
 		return error('Could not get info from image, error:$err')
 	}
@@ -217,7 +237,7 @@ fn (mut image Image) skip() bool {
 	if image.path.name_no_ext().ends_with('_') {
 		return true
 	}
-	if image.size_kbyte < 400 {
+	if image.size_kbyte < 601 {
 		// println("SMALLER  $image.path (size: $image.size_kbyte)")
 		return true
 	}

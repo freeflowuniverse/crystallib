@@ -10,7 +10,7 @@ pub struct Command {
 pub mut:
 	cmd        string
 	timeout    int  = 1200
-	stdout     bool = true
+	stdout     bool
 	stdout_log bool = true
 	debug      bool
 	die        bool = true
@@ -54,7 +54,7 @@ pub mut:
 // out is the output
 pub fn execute_job(cmd Command) ?Job {
 	mut cmd_obj := cmd
-	// println("CMD:$cmd_obj.cmd")
+	println(" - CMD:$cmd_obj.cmd")
 	mut out := ''
 	mut job := Job{}
 	job.cmd = cmd
@@ -111,12 +111,14 @@ pub fn execute_job(cmd Command) ?Job {
 		errorjson := json.encode_pretty(job)
 		os.write_file(errorpath, errorjson) or {
 			msg := 'cannot write errorjson to $errorpath'
+			p.close()
 			return error(msg)
 		}
 		if cmd_obj.die {
 			// if cleanuppath!=""{os.rm(cleanuppath) or {}}
 			msg := 'Cannot execute:\n$job'
 			println(msg)
+			p.close()
 			return error(msg)
 		}
 	} else {
@@ -126,6 +128,7 @@ pub fn execute_job(cmd Command) ?Job {
 			}
 		}
 	}
+	p.close()
 	return job
 }
 

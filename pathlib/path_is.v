@@ -39,7 +39,7 @@ pub fn (path Path) is_image_jpg_png() bool {
 
 pub fn (path Path) is_link() bool {
 	if path.cat == .unknown {
-		println(path)
+		// println(path)
 		panic("did not check path yet.")
 	}
 	return path.cat == Category.linkfile || path.cat == Category.linkdir

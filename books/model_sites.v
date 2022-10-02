@@ -39,7 +39,7 @@ pub fn (mut sites Sites) site_new(args SiteNewArgs) ?Site {
 
 
 fn (mut sites Sites) scan_recursive (mut path pathlib.Path) ?{
-	$if debug{println(" - sites recursive: $path")}
+	// $if debug{println(" - sites scan recursive: $path.path")}
 	if path.is_dir() {
 		if path.file_exists(".site"){
 			mut name:=path.name()
