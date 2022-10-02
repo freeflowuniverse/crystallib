@@ -3,10 +3,17 @@ import json
 
 
 
-pub fn (mut client TwinClient) tfchain_init(name string, secret string)?NameSecretModel{
-	data := NameSecretModel{name: name, secret: secret}
-	client.transport.send('tfchain.init', json.encode(data).str())?
-	return data
+pub fn (mut client TwinClient) tfchain_init(name string, secret string)?NameAddressMnemonicModel{
+	data := NameSecretModel{
+		name: name, secret: secret
+	}
+	response := client.transport.send(
+		'tfchain.init',
+		json.encode(data).str()
+	)?
+	mut result := NameAddressMnemonicModel{}
+	result.address = response.data
+	return result
 }
 
 pub fn (mut client TwinClient) tfchain_get(name string)?BlockChainModel{
