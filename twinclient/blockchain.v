@@ -11,7 +11,7 @@ pub fn (mut client TwinClient)blockchain_select(name string)?{
 pub fn (mut client TwinClient)blockchain_create(
 		name string, blockchain_type string, ip string
 	)? BlockChainCreateModel{
-	data := BlockchainCreateModel{name: name, blockchain_type: blockchain_type, ip: ip}
+	data := BlockChainCreateModel{name: name, blockchain_type: blockchain_type, ip: ip}
 	response := client.transport.send('blockchain.create', json.encode(data).str())?
 	println(json.decode(BlockChainCreateModel, response.data)?)
 	return json.decode(BlockChainCreateModel, response.data)

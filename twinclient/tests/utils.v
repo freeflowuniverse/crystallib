@@ -2,30 +2,46 @@ module tests
 import freeflowuniverse.crystallib.twinclient as tw
 import os
 
-const mnemonics = [
-	"muscle file pear damp essence manage initial identify identify choose curtain move design stereo mom combine dish cabin neither limit dentist maximum sense absorb capital",
-	"tooth lumber general mechanic census erupt raw color maze bone ball egg unfold omit poverty salt define setup asthma jeans carpet flavor awkward absent ride",
-	"below library secret olympic clutch debris radio easy humble punch sock ocean axis lock consider hope can torch table old orbit address quality abandon disagree"
+const random_ip = [
+	"201:8090:6444:a4fa:f600:ab10:cf16:b75a",
+	"202:8091:6445:a5fa:f700:ab20:cf17:b76a",
+	"203:8092:6446:a6fa:f800:ab30:cf18:b77a",
+	"204:8093:6447:a7fa:f900:ab40:cf19:b78a"
 ]
 
-struct AlgorandDummeyData{
-	// Dummey data for algorand wallets
+struct Users{
 	mut:
-		user1 tw.BlockChainCreateModel
-		user2 tw.BlockChainCreateModel
-		user3 tw.BlockChainCreateModel
+		all map[string]tw.BlockChainCreateModel
 }
 
-fn genrate_dummey_data() AlgorandDummeyData {
-	mut alice 		:= tw.BlockChainCreateModel{name: "alice", mnemonic: mnemonics[0]}
-	mut bob 		:= tw.BlockChainCreateModel{name: "bob", mnemonic: mnemonics[1]}
-	mut baz 		:= tw.BlockChainCreateModel{name: "baz", mnemonic: mnemonics[2]}
-	data := AlgorandDummeyData{
-		user1: alice,
-		user2: bob,
-		user3: baz,
+const users = Users{}
+
+enum BlockChainFields{
+	blockchain_type
+	public_key
+	mnemonic
+	name
+}
+
+fn (mut usr Users) set(username string, field BlockChainFields, value string)tw.BlockChainCreateModel{
+	match field{
+		.blockchain_type{usr.all[username].blockchain_type = value}
+		.public_key{usr.all[username].public_key = value}
+		.mnemonic{usr.all[username].mnemonic = value}
+		.name{usr.all[username].name = value}
 	}
-	return data
+	return usr.all[username]
+}
+
+
+fn genrate_dummey_data(username string) tw.BlockChainCreateModel {
+	mut u := users
+	if username in u.all{
+		return users.all[username]
+	}
+	user := tw.BlockChainCreateModel{name: username}
+	u.all[username] = user
+	return user
 }
 
 fn init_http_client()? tw.TwinClient{
@@ -42,9 +58,10 @@ fn init_rmb_client()? tw.TwinClient{
 	return client
 }
 
-fn setup_http_algorand_tests()? (tw.TwinClient, AlgorandDummeyData) {
+fn setup_tests(username string)? (tw.TwinClient, tw.BlockChainCreateModel) {
 	env_value := os.getenv("TWIN_CLIENT_TYPE").to_lower()
-	data := genrate_dummey_data()
+	data := genrate_dummey_data(username)
+
 	match env_value{
 		"rmb" {client := init_rmb_client()? return client, data}
 		"http" {client := init_http_client()? return client, data} 
@@ -53,4 +70,3 @@ fn setup_http_algorand_tests()? (tw.TwinClient, AlgorandDummeyData) {
 		}
 	}
 }
-

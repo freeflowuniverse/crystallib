@@ -574,6 +574,7 @@ pub struct BlockChainCreateModel{
 		mnemonic string
 		blockchain_type string
 		twin_id string
+		ip string
 }
 
 pub struct BlockChainModel{
@@ -608,7 +609,7 @@ pub struct StellarWalletVerifyModel{
 		signed_content string
 }
 
-pub struct BlockchainCreateModel{
+pub struct BlockChainCreateModel{
 	pub:
 		name string
 		blockchain_type string
