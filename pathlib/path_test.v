@@ -1,7 +1,10 @@
 import freeflowuniverse.crystallib.pathlib
+import freeflowuniverse.crystallib.process
 import os
 
 const testpath = os.dir(@FILE) + '/test_path'
+
+//TODO: need to restore the test directory (timur)
 
 fn test_get() {
 	println('************ TEST_Get ************')
@@ -65,10 +68,10 @@ fn test_dir_exists() {
 fn test_dir_find() {
 	println('************ TEST_dir_find ************')
 	mut test_path_dir := pathlib.get('$testpath')
-	mut test_parent_dir := test_path_dir.dir_find('test_parent') or { panic(err) }
+	mut test_parent_dir := test_path_dir.dir_get('test_parent') or { panic(err) }
 	println('Dir found: $test_parent_dir')
 
-	// assert test_path_dir.dir_find("test_parent_2")
+	// assert test_path_dir.dir_get("test_parent_2")
 	// println("Dir test_parent_2 not found")
 }
 
@@ -156,7 +159,13 @@ fn test_copy() {
 
 fn test_find_common_ancestor() {
 	println('************ TEST_find_common_ancestor ************')
-		mut dest_dir := pathlib.get('$testpath/test_parent')
 
+	mut test:=[]pathlib.Path{}
+	test << pathlib.get("/test/a/b/c/d")
+	test << pathlib.get("/test/a/")
+	res:=pathlib.find_common_ancestor(test) or {panic("test anncestor.$err")}
+	println(res)
+	panic("s")
+	
 
 }

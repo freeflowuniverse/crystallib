@@ -39,7 +39,8 @@ pub fn (path Path) absolute() string {
 // careful the symlinks will be followed !!!
 pub fn (path Path) realpath() string {
 	mut p := path.path.replace('~', os.home_dir())
-	p2:=  os.real_path(p)
+	mut p2:=  os.real_path(p)
+	p2 = os.abs_path(p2)
 	return p2
 }
 

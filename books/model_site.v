@@ -157,7 +157,7 @@ pub fn (site Site) image_get(name string,look_in_sites bool) ?&File {
 //param look_in_sites means we will look in all sites
 pub fn (site Site) image_exists(name string,look_in_sites bool) bool {
 	namelower := texttools.name_fix_no_underscore_no_ext(name)
-	print(" -- image_exists: ${site.name}:$namelower")
+	println(" -- image_exists: ${site.name}:$namelower")
 	if namelower in site.files {
 		file := site.files[namelower]
 		if file.ftype == .image {

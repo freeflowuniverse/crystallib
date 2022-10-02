@@ -138,10 +138,17 @@ fn (mut site Site) scan_internal(mut p pathlib.Path) ? {
 				//means we are not in the site so we need to copy
 				// $if debug{println(" - @FN IS LINK: \n    abs:'$link_abs_path' \n    real:'$link_real_path'\n    site:'$site_abs_path'")}
 				p_in.unlink()? //will transform link to become the file or dir it points too
+				assert !p_in.is_link()
 			}else{
 				p_in.relink()? //will check that the link is on the file with the shortest path
+				println(p_in)
+				panic("78gybh")
 			}
 		}	
+		if p_in.cat == .linkfile{
+			//means we link to a file which is in the folder, so can be loaded later, nothing to do here
+			return
+		}
 
 		if p_in.is_dir() {
 			if p_name.starts_with('gallery_') {

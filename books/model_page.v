@@ -37,14 +37,18 @@ fn (mut page Page) fix_location(mut link Link) ?bool  {
 		if page.site.image_exists(file_name,page.site.sites.config.heal){
 			fileobj = page.site.image_get(file_name,page.site.sites.config.heal)?
 		}else{
-			page.site.error(path: page.path, msg: 'image:$file_name not found for page:${page.path.path}', cat: .file_not_found)
+			msg := 'image:$file_name not found for page:${page.path.path}'
+			page.site.error(path: page.path, msg:msg , cat: .file_not_found)
+			$if debug{println(msg)}
 			return false
 		}
 	}else{
 		if page.site.file_exists(file_name,page.site.sites.config.heal){
 			fileobj = page.site.file_get(file_name,page.site.sites.config.heal)?
 		}else{
-			page.site.error(path: page.path, msg: 'file:$file_name not found for page:${page.path.path}', cat: .file_not_found)
+			msg := 'file:$file_name not found for page:${page.path.path}'
+			$if debug{println(msg)}
+			page.site.error(path: page.path, msg:msg , cat: .file_not_found)
 			return false
 		}
 	}
@@ -61,7 +65,9 @@ fn (mut page Page) fix_location(mut link Link) ?bool  {
 		println(fileobj.path)
 		panic("bug: the file always needs to be a real one not a link")
 	}
-	dest := "$dir_path_real/"+fileobj.path.name()
+	println(fileobj)
+	dest := "$dir_path_real"+fileobj.path.name()
+	println(dest)
 	mut dest_obj := pathlib.get(dest)
 	mut file_path_real_obj := pathlib.get(file_path_real)
 	if dest_obj.exists() && file_path_real_obj.exists(){
@@ -69,7 +75,9 @@ fn (mut page Page) fix_location(mut link Link) ?bool  {
 		dest_obj.delete()?
 	}
 	if ! dest_obj.exists(){
+		println("1:$file_path_real_obj")
 		file_path_real_obj.link(mut dest_obj)?
+		println(2)
 	}
 	return true
 }
