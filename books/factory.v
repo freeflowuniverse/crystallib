@@ -16,10 +16,12 @@ pub fn new() Sites {
 pub fn (mut sites Sites) init() ? {
 	if sites.state == .init{
 		mdbook.install()?
-		// mut gt := gittools.get(root:gittools_root)?
-		// mut books_repo := gt.repo_get_from_url(url: template_url)?
-		// sites.config.mdbook_template_path = books_repo.path_content_get() //is the link to the template
-		sites.state = .ok
+		sites.embedded_files << $embed_file("template/theme/css/print.css")
+		sites.embedded_files << $embed_file("template/theme/css/variables.css")
+		sites.embedded_files << $embed_file("template/mermaid-init.js")
+		sites.embedded_files << $embed_file("template/mermaid.min.js")
+
+		sites.state = .initdone
 	}
 }
 

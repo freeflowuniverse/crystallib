@@ -12,7 +12,7 @@ import freeflowuniverse.crystallib.pathlib
 // }
 
 // export an mdbook to its html representation
-pub fn (site Site) mdbook_export() ? {
+pub fn (mut site Site) mdbook_export() ? {
 	site.template_install()? //make sure all required template files are in site
 	dest:=site.sites.config.dest
 	book_path := '$dest/books/$site.name'
@@ -27,7 +27,8 @@ pub fn (site Site) mdbook_export() ? {
 //export the mdbooks to html
 pub fn (mut sites Sites) mdbook_export() ? {
 	sites.reset()? //make sure we start from scratch
-	for _,site in sites.sites{
+	sites.fix()?
+	for _,mut site in sites.sites{
 		site.mdbook_export()?
 	}
 

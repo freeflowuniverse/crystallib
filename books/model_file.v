@@ -27,28 +27,13 @@ pub mut: // pointer to site
 	ftype        FileType
 }
 
-// only way how to get to a new file
-// needs to process links
-fn (mut site Site) file_new(mut p pathlib.Path) ? {
-	if !p.exists() {
-		return error('cannot find file for path in site: $p.path')
-	}
-	if p.name().starts_with("."){
-		panic("should not start with . \n$p")
-	}
-	p.namefix()? // make sure its all lower case and name is proper
-	mut ff := File{
-		path: p
-		site: &site
-	}
-	ff.init()
-	site.files[ff.name] = ff
-}
-
 fn (mut file File) init() {
-	file.name = file.path.name_no_ext().trim('_')
+	
 	if file.path.is_image() {
+		file.name = file.path.name_fix_no_underscore_no_ext()	
 		file.ftype = .image
+	}else{
+		file.name = file.path.name_fix_no_underscore()	
 	}
 	file.pathrel = file.path.path_relative(file.site.path.path).trim('/')
 }

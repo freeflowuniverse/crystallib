@@ -1,21 +1,24 @@
 module books
 
 import freeflowuniverse.crystallib.pathlib
-import imagemagick
+import freeflowuniverse.crystallib.imagemagick
+import freeflowuniverse.crystallib.texttools
 
 // remember the file, so we know if we have duplicates
 // also fixes the name
 fn (mut site Site) file_remember(mut p pathlib.Path) ? {
 	// $if debug {eprintln(" - file remember : $p.path")}
 	p.namefix()?
+	namelower := p.name_fix_no_underscore_no_ext()
 	if p.is_image() {
-		if site.image_exists(p.name()) {
-			mut filedouble := site.image_get(p.name())?
+		if site.image_exists(namelower,false) {
+			mut filedouble := site.image_get(namelower,false)?
 			mut pathdouble := filedouble.path
 
 			// get config item to see if we can heal
-			if site.sites.config.heal {
-				println(" - try to heal, double file: '$p.path' and '$pathdouble.path'")
+			if false && site.sites.config.heal {
+				//TODO implement
+				println(" - try to heal, double file: '$p.path' and '$pathdouble.path'")				
 				mut prio_double := false
 				if p.extension() == 'jpg' && pathdouble.extension() == 'png'{
 					prio_double = true
@@ -58,8 +61,8 @@ fn (mut site Site) file_remember(mut p pathlib.Path) ? {
 		}
 	} else {
 		// now we are working on non image
-		if site.file_exists(p.name()) {
-			mut filedouble := site.file_get(p.name())?
+		if site.file_exists(namelower,false) {
+			mut filedouble := site.file_get(namelower,false)?
 			mut pathdouble := filedouble.path
 			site.error(path: pathdouble, msg: 'duplicate file', cat: .image_double)
 		} else {
@@ -94,7 +97,8 @@ fn (mut site Site) page_remember(mut patho pathlib.Path, issidebar bool) ? {
 	// 	// println(" ----- $pathrelative $path_sidebar_relative"
 	// }
 	patho.namefix()?
-	if site.page_exists(patho.name()) {
+	namelower := patho.name_fix_no_underscore_no_ext()
+	if site.page_exists(namelower,false) {
 		site.error(path:patho,msg:"double page in site",cat:.page_double)
 	}
 	site.page_new(mut patho)?
@@ -102,7 +106,7 @@ fn (mut site Site) page_remember(mut patho pathlib.Path, issidebar bool) ? {
 
 // path is the full path
 fn (mut site Site) scan_internal(mut p pathlib.Path) ? {
-	// println(' - load: $p.path')
+	// println(' - load site:$site.name - $p.path')
 	// mut path_sidebar := '$p.path/sidebar.md'
 	// println(" - sidebar check: $path_/sidebar.md")
 	// if os.exists(path_sidebar) {
@@ -143,12 +147,14 @@ fn (mut site Site) scan_internal(mut p pathlib.Path) ? {
 			if p_name.starts_with('gallery_') {
 				// TODO: need to be implemented by macro
 				continue
+			} else if p_name=="books"  {
+				p_in.delete()?
+				continue
 			} else {
 				site.scan_internal(mut p_in)?
 				// site.side_bar_fix(path_, mut publisher)
 			}
 		} else {
-
 			if p_name.to_lower() == 'defs.md' {
 				continue
 			} else if p_name.contains('.test') {
@@ -175,5 +181,4 @@ fn (mut site Site) scan_internal(mut p pathlib.Path) ? {
 			}
 		}
 	}
-	site.fix()?
 }

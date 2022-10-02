@@ -6,22 +6,18 @@ import os
 const ignore = '\\/[]()?!@#$%^&*<>:;{}|'
 
 pub fn name_fix(name string) string {
-	pagename := name_fix_keepext(name)
-	res := pagename.clone()
-	return res
+	name2 := name_fix_keepext(name)
+	return name2
 }
 
 // get name back keep extensions and underscores, but when end on .md then remove extension
 pub fn name_fix_no_md(name string) string {
 	pagename := name_fix_keepext(name)
-
 	if pagename.ends_with('.md') {
 		fixed_pagename := pagename[0..pagename.len - 3]
-		res2 := fixed_pagename.clone()
-		return res2
+		return fixed_pagename
 	}
-	res := pagename.clone()
-	return res
+	return pagename
 }
 
 pub fn name_fix_no_underscore(name string) string {

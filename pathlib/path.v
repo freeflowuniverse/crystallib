@@ -1,5 +1,5 @@
 module pathlib
-
+import freeflowuniverse.crystallib.texttools
 import os
 
 [heap]
@@ -79,6 +79,17 @@ pub fn (mut path Path) name() string {
 	return os.base(path.path)
 }
 
+//return name with all lowercase_special chars done and also no extension
+pub fn (mut path Path) name_fix_no_underscore_no_ext() string {
+	return texttools.name_fix_no_underscore_no_ext(path.name_no_ext())
+}
+
+//return name with all lowercase_special chars done but keep extension
+pub fn (mut path Path) name_fix_no_underscore() string {
+	return texttools.name_fix_no_underscore(path.name())
+}
+
+
 // full path of dir
 pub fn (mut path Path) path_dir() string {
 	return os.dir(path.path)
@@ -96,7 +107,7 @@ pub fn (mut path Path) name_no_ext() string {
 }
 
 pub fn (mut path Path) path_no_ext() string {
-	return path.path.all_before_last('.')
+	return path.path_dir()+"/"+path.name_no_ext()
 }
 
 pub fn (mut path Path) name_ends_with_underscore() bool {

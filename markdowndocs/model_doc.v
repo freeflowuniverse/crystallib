@@ -9,8 +9,8 @@ pub mut:
 	content string
 }
 
-type DocItem = Action
-	| Actions
+type DocItem = Actions
+	| Action
 	| CodeBlock
 	| Comment
 	| DocStart

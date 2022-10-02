@@ -1,24 +1,27 @@
 module books
 
-import freeflowuniverse.crystallib.pathlib
-
 
 fn (site Site) template_write(path string, content string)?{
-	mut dest_path := pathlib.get('${site.path.path}/books/$site.name/$path')
+	mut dest_path := site.book_path(path)
 	dest_path.write(content)?
 }
 
-fn (site Site) template_install()?{
+fn (mut site Site) template_install()?{
 
 	if site.title == ""{
 		site.title = site.name
 	}
 
-	site.template_write("theme/css/print.css",$tmpl("template/theme/css/print.css"))?
-	site.template_write("theme/css/variables.css",$tmpl("template/theme/css/variables.css"))?
-	site.template_write("book.toml",$tmpl("template/book.toml"))?
-	site.template_write("mermaid-init.js",$tmpl("template/mermaid-init.js"))?
-	site.template_write("mermaid.min.js",$tmpl("template/mermaid.min.js"))?
+	//get embedded files to the mdbook dir
+	for item in site.sites.embedded_files{		
+		book_path := item.path.all_after_first("/")
+		site.template_write(book_path,item.to_string() )?
+	}
+
+	c:=$tmpl("template/book.toml")
+	site.template_write("book.toml",c)?
+
+
 
 
 }

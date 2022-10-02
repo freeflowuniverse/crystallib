@@ -64,7 +64,7 @@ body {
     font-size: 1.25rem !important;
 }
 
-@media print {
+\@media print {
     h1 { 
       page-break-before: always;
     }
