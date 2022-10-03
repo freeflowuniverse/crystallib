@@ -1,4 +1,4 @@
-import freeflowuniverse.crystallib.pathlib
+import freeflowuniverse.crystallib.pathlib { Path }
 import os
 
 const testpath = os.dir(@FILE) + '/examples/test_path'
@@ -95,7 +95,7 @@ fn test_link_path_relative() {
 	a2 := pathlib.path_relative('/a/b/c/d.txt', '/d.txt')
 	assert a2 == '../../../d.txt'
 	a3 := pathlib.path_relative('/a/b/c/d.txt', '/a/b/c/e.txt')
-	assert a3 == 'e.txt' // TODO: is wrong this should give error I guess
+	assert a3 == './e.txt' // ? is this the correct path?
 	a4 := pathlib.path_relative('/a/b/c/d.txt', '/a/b/d/e.txt')
 	assert a4 == '../d/e.txt'
 	a5 := pathlib.path_relative('/a/b/c/d.txt', '/a/b/c/d/e/e.txt')
@@ -107,16 +107,25 @@ fn test_link_path_relative() {
 	assert a7 == 'e.txt'
 	a8 := pathlib.path_relative('/a/b/c', '/a/b/c/d/e/e.txt')
 	assert a8 == 'd/e/e.txt'
-	panic('sss')
 }
 
 fn test_symlink() {
-	println('************ SYMLINK ************')
+	println('************ TEST_link ************')
 	mut p := pathlib.get('$testpath/test_parent/readme.md')
 	assert p.exists()
-	mut p2 := p.link('$testpath/link_remove', true) or { panic('no link') }
-	println(p2)
-	panic('sww')
+	mut p2 := p.link('$testpath/link_remove', true) or { panic('no link: $err') }
+	assert p2.path == '../link_remove'
+
+	mut p3 := pathlib.get('$testpath/newfile1')
+	mut p4 := p3.link('$testpath/link_remove', true) or { panic('no link $err') }
+	assert p4.path == './link_remove'
+
+	// test delete_exists
+	mut p5 := pathlib.get('$testpath/symlink_test')
+	mut p6 := p5.link('$testpath/to_delete', true) or { panic('no link $err') }
+	assert p6.path == './to_delete'
+
+	println('Link function working correctly')
 }
 
 fn test_list() {
@@ -206,4 +215,5 @@ fn test_find_common_ancestor() {
 
 	b7 := pathlib.find_common_ancestor(['/', '/a/b/c/d.txt'])
 	assert b7 == '/'
+	println('Find common ancestor function works correctly')
 }
