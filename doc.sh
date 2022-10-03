@@ -2,7 +2,7 @@ set -ex
 rm -rf _docs
 v fmt -w .
 #pushd src
-v doc -f html -m . -readme -comments -no-timestamp 
+v doc -m -f html . -readme -comments -no-timestamp 
 #-o ../
 #popd
 

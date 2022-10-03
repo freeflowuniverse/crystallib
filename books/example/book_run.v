@@ -7,7 +7,7 @@ const testpath = os.dir(@FILE) + '/book1'
 
 fn do() ? {
 	mut s := books.new()
-	site := s.site_new(path: main.testpath)?
+	site := s.site_new(path: testpath)?
 	s.scan()?
 	site.mdbook_export()?
 	site.mdbook_develop()?
