@@ -28,10 +28,6 @@ enum UYN {
 // careful symlinks will not be resolved
 pub fn (path Path) absolute() string {
 	mut p := path.path.replace('~', os.home_dir())
-	if ! path.is_link(){
-		//is not a link so we can return, will not resolve the links
-		return os.real_path(p)
-	}
 	return os.abs_path(p)
 }
 

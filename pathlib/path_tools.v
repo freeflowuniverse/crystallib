@@ -52,66 +52,27 @@ pub fn (mut path Path) rename(name string) ? {
 
 
 
-// get relative path in relation to sourcepath
+// get relative path in relation to destpath
 // will not resolve symlinks
-pub fn (mut path Path) path_relative(sourcepath string) string {
-	path_abs := path.absolute()
-	sourcepath_abs := get(sourcepath).absolute()
-	if path_abs.starts_with(sourcepath_abs) {
-		return path_abs[sourcepath_abs.len..]
-	}
-	return path_abs
-}
-
-// TODO: implement support for relative paths beginning with ../
-pub fn path_relative(source_ string, dest_ string) ?string {
-	mut source := source_.trim_right('/')
-	mut dest := dest_.replace('//', '/').trim_right('/')
-	// println("path relative: '$source' '$dest' ")
-	if source !="" {
-		if source.starts_with('/') && !dest.starts_with('/') {
-			return error('if source starts with / then dest needs to start with / as well.\n - $source\n - $dest')
-		}
-		if !source.starts_with('/') && dest.starts_with('/') {
-			return error('if source starts with / then dest needs to start with / as well\n - $source\n - $dest')
-		}
-	}
-	if dest.starts_with(source) {
-		return dest[source.len..]
-	} else {
-		msg := "Destination path is not in source directory: $source_ $dest_"
-		return error(msg)
-	}
+pub fn (mut path Path) path_relative(destpath string) string {
+	return path_relative(path.path,destpath)
 }
 
 
 // recursively finds the least common ancestor of array of paths
-pub fn find_common_ancestor(paths []Path) ?string {
-	paths2 := paths.map(it.realpath().trim_right("/")) //get the real path (symlinks... resolved)
-	println(paths2)
-	return find_common_ancestor2(paths2,"")
-}
-
-// recursively finds the least common ancestor of array of paths
-// in a target directory.
-// TODO: Maybe use absolute paths for flexibility
-fn find_common_ancestor2(paths []string, target string) ?string {
-	if paths.len < 2 {
-		return error('Function expects at least two paths')
+// will always return the absolute path (relative gets changed to absolute)
+pub fn find_common_ancestor(paths_ []string) string {
+	paths := paths_.map(os.abs_path(os.real_path(it).trim_right("/"))) //get the real path (symlinks... resolved)
+	parts := paths[0].split("/")
+	mut totest_prev:="/"
+	for i in 1 .. parts.len {
+		totest:=parts[0..i+1].join("/")
+		if paths.any(!it.starts_with(totest)) {
+			return totest_prev
+		}
+		totest_prev=totest
 	}
-
-	rel_paths := paths.map(path_relative(target, it)?.trim_left('/'))
-	// if rel_paths.any(it.starts_with('../')) {
-	// 	return error('Provided paths have no common ancestor in target directory')
-	// }
-
-	root := rel_paths[0].all_before('/')
-	if rel_paths.any(!it.starts_with(root)) {
-		return target
-	} else {
-		child_target := target + '/' + root
-		return find_common_ancestor2(paths, child_target)
-	}
+	return totest_prev
 }
 
 // find parent of path
@@ -392,57 +353,91 @@ pub fn (mut path Path) copy(mut dest Path) ?Path {
 }
 
 //recalc path between target & source
-fn link_calculator_relative(mut source Path, mut linkpath Path) ?string{
-	//make sure both is 
-	mut source_dir:=source.realpath()
-	mut linkpath_dir:=linkpath.realpath()
+//does not touch the filesystem, is all done on string level
+pub fn path_relative(source_ string, linkpath_ string) string{
+	mut source:=os.abs_path(source_)
+	mut linkpath:=os.abs_path(linkpath_)
 	//now both start with /
-	if source_dir.len>linkpath_dir.len{
-		println(source)
-		println(linkpath)
-		panic("calc relative, source should always be smaller")
-	}
-	common := find_common_ancestor([source,linkpath])?
-	source_dir=source_dir[common.len..]
-	linkpath_dir=linkpath_dir[common.len..]
-	println(common)
-	println(source_dir.count("/"))
-	println(linkpath_dir.count("/"))
-	if true{
-		panic("s")
+	common := find_common_ancestor([source,linkpath])
+	source_short:=source[(common.len+1)..]
+	linkpath_short:=linkpath[(common.len+1)..]
+
+	source_count:=source_short.count("/")
+	mut dest:=''
+	if source_count>0{
+		go_up:=["../"].repeat(source_count).join("")
+		dest="${go_up}${linkpath_short}"
+	}else{
+		dest=linkpath_short
 	}
 
-	return ""
+	println("source:$source linkpath:$linkpath")
+	println("source_short:$source_short linkpath_short:$linkpath_short")
+	println("path_relative $dest" )
+
+	return dest
 }
+
+
+
+// pub fn path_relative(source_ string, dest_ string) ?string {
+// 	mut source := source_.trim_right('/')
+// 	mut dest := dest_.replace('//', '/').trim_right('/')
+// 	// println("path relative: '$source' '$dest' ")
+// 	if source !="" {
+// 		if source.starts_with('/') && !dest.starts_with('/') {
+// 			return error('if source starts with / then dest needs to start with / as well.\n - $source\n - $dest')
+// 		}
+// 		if !source.starts_with('/') && dest.starts_with('/') {
+// 			return error('if source starts with / then dest needs to start with / as well\n - $source\n - $dest')
+// 		}
+// 	}
+// 	if dest.starts_with(source) {
+// 		return dest[source.len..]
+// 	} else {
+// 		msg := "Destination path is not in source directory: $source_ $dest_"
+// 		return error(msg)
+// 	}
+// }
+
 
 // create symlink on dest (which is path wich is non existing, the to be created link)
 // return Path of the symlink
-pub fn (mut path Path) link(mut dest Path) ?Path {
+// if delete_exists then it will remove the destination if it exists
+// the symlink is always done relative to each other
+pub fn (mut path Path) link(dest string, delete_exists bool) ?Path {
 	if !path.exists() {
 		return error("cannot link because source $path.path does not exist")
 	}
 	if !(path.cat == .file || path.cat == .dir){
 		return error("cannot link because source $path.path can only be dir or file")
 	}
-	if dest.exists() {
-		return error('cannot link $path.path to $dest.path, because dest exists.')
+	if os.exists(dest) {
+		if delete_exists{
+			os.rm(dest)?
+		}else{
+			return error('cannot link $path.path to $dest, because dest exists.')
+		}
 	}
-	if ! os.exists(dest.path_dir()){
-		os.mkdir_all(dest.path_dir())?
+	//create dir if it would not exist yet
+	dest_dir := os.dir(path.path)
+	if ! os.exists(dest_dir){
+		os.mkdir_all(dest_dir)?
 	}
-	dest_path := link_calculator_relative(mut path,mut dest)?
+	//calculate relative link between source and dest
+	dest_path := path_relative(path.path,dest)
 	os.symlink(path.path, dest_path)?
 	match path.cat {
 		.dir, .linkdir {
 			return Path{
-				path: dest.path
+				path: dest_path
 				cat: Category.linkdir
 				exist: .yes
 			}
 		}
 		.file, .linkfile {
 			return Path{
-				path: dest.path
+				path: dest_path
 				cat: Category.linkfile
 				exist: .yes
 			}
@@ -460,25 +455,15 @@ pub fn (mut path Path) relink() ? {
 		return
 	}
 	
-	link_abs_path := path.absolute()
-	if !link_abs_path.starts_with("/"){
-		panic("bug, needs to be absolute")
-	}
+	link_abs_path := path.absolute() //symlink not followed
 	link_real_path := path.realpath() //this is with the symlink resolved
-	if path.path.contains("metaverse4"){
-		println(link_real_path)
-		println(link_abs_path)
-		panic("fyghjfvmb")
-	}
-	if compare_strings(link_real_path,link_abs_path)>=0{
+	if compare_strings(link_abs_path,link_real_path)>=0{
 		//means the shortest path is the target
 		return
 	}
 	//need to switch link with the real content
-	mut linked:=get(link_real_path)
 	path.unlink()? //make sure both are files now (the link is the file)
-	linked.delete()?
-	path.link(mut linked)? //re-link
+	path.link(link_real_path,true)? //re-link
 	path.check()
 
 }
