@@ -119,9 +119,20 @@ fn (mut executor ExecutorSSH) download(source string, dest string) ? {
 	if executor.ipaddr.cat == .ipv6 {
 		cmd_ipaddr = '[$executor.ipaddr.addr]'
 	}
-	process.execute_job(
-		cmd: 'rsync -avHPe "ssh -p$port" $executor.user@$cmd_ipaddr:$source $dest'
-	)?
+	mut job:=process.Job{}
+	job=process.execute_job(cmd: 'rsync -avHPe "ssh -p$port" $executor.user@$cmd_ipaddr:$source $dest',die:false)?
+	if job.exit_code>0{
+		if job.output.contains("rsync: command not found"){
+			executor.exec("apt update && apt install rsync -y") or {
+				//TODO, not good enough because we need to check which platform
+				return error("could install rsync, was maybe not ubuntu.\n$executor")
+			}
+			job=process.execute_job(cmd: 'rsync -avHPe "ssh -p$port" $executor.user@$cmd_ipaddr:$source $dest',die:false)?
+		}
+	}
+	if job.exit_code>0{
+		return error("could rsync.\n$job")
+	}
 }
 
 // download from executor FS to local FS

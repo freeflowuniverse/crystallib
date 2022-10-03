@@ -7,8 +7,7 @@ import os
 
 // check command exists on the platform, knows how to deal with different platforms
 pub fn (mut node Node) cmd_exists(cmd string) bool {
-	_ := node.exec('which $cmd') or { return false }
-	return true
+	return node.exec_ok('which $cmd')
 }
 
 pub struct NodeExecCmd {
@@ -169,7 +168,7 @@ pub fn (mut node Node) package_install(package Package) ? {
 			return error('could not install package:$package.name\nerror:\n$err')
 		}
 	} else if node.platform == PlatformType.ubuntu {
-		node.exec('apt-get install -y $name') or {
+		node.exec('apt install -y $name') or {
 			return error('could not install package:$package.name\nerror:\n$err')
 		}
 	} else if node.platform == PlatformType.alpine {

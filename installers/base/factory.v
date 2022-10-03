@@ -21,6 +21,15 @@ pub fn get(mut node builder.Node) ?Installer {
 	return i
 }
 
+pub fn get_install(mut node builder.Node) ?Installer {
+	mut i := Installer{
+		node: &node
+	}
+	i.install()?
+	return i
+}
+
+
 pub fn install() ?Installer {
 	mut builder := builder.new()
 	mut node := builder.node_local()?

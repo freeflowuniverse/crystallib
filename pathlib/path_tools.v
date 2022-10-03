@@ -458,13 +458,15 @@ pub fn (mut path Path) relink() ? {
 	link_abs_path := path.absolute() //symlink not followed
 	link_real_path := path.realpath() //this is with the symlink resolved
 	if compare_strings(link_abs_path,link_real_path)>=0{
-		//means the shortest path is the target
+		//means the shortest path is the target (or if same size its sorted and the first)
 		return
 	}
 	//need to switch link with the real content
 	path.unlink()? //make sure both are files now (the link is the file)
 	path.link(link_real_path,true)? //re-link
 	path.check()
+
+	//TODO: in test script
 
 }
 
@@ -485,6 +487,7 @@ pub fn (mut path Path) unlink() ? {
 	destpath.rename(path.name())? //rename to the new path
 	path.path = destpath.path //put path back
 	path.check()
+	//TODO: in test script
 }
 
 // return path object for the link this one is pointing too
