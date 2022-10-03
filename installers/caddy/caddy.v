@@ -1,4 +1,5 @@
 module caddy
+
 import installers.base
 
 // install caddy will return true if it was already installed
@@ -11,9 +12,8 @@ pub fn (mut i Installer) install() ? {
 		return
 	}
 
-
- 	if node.platform != .ubuntu {
-		return error("only support ubuntu for now")
+	if node.platform != .ubuntu {
+		return error('only support ubuntu for now')
 	}
 
 	base.get_install(mut node)?
@@ -23,7 +23,6 @@ pub fn (mut i Installer) install() ? {
 		//? should we set caddy as done here ?
 		return
 	}
-
 
 	node.exec("
 		sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https gpg sudo
@@ -36,5 +35,14 @@ pub fn (mut i Installer) install() ? {
 	}
 
 	node.done_set('install_caddy', 'OK')?
+	return
+}
+
+// configure caddy as default webserver & start
+pub fn (mut i Installer) configure_webserver_default(path string) ? {
+	mut node := i.node
+
+	mut config_file := $tmpl('templates/caddyfile_default')
+
 	return
 }

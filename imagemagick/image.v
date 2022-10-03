@@ -35,17 +35,17 @@ pub fn image_new(mut path pathlib.Path) ?Image {
 // backupdir, put on empty if not used
 pub fn image_downsize(mut path pathlib.Path, backupdir string) ?Image {
 	mut image := image_new(mut path)?
-	if path.is_link(){
-		mut path_linked:=path.getlink()?
+	if path.is_link() {
+		mut path_linked := path.getlink()?
 		mut image_linked := image_new(mut path_linked)?
 		image_linked.downsize(backupdir)?
-		if image.path.path != image_linked.path.path{
-			//means downsize worked, now we need to re-link
+		if image.path.path != image_linked.path.path {
+			// means downsize worked, now we need to re-link
 			image.path.delete()?
-			image.path.path = image.path.path_dir()+"/"+ image_linked.path.name()
+			image.path.path = image.path.path_dir() + '/' + image_linked.path.name()
 			image.path = image_linked.path.link(mut image.path)?
 		}
-	}else{
+	} else {
 		image.downsize(backupdir)?
 	}
 	return image
@@ -53,8 +53,8 @@ pub fn image_downsize(mut path pathlib.Path, backupdir string) ?Image {
 
 // will downsize to reasonable size based on x
 pub fn (mut image Image) downsize(backupdir string) ? {
-	if image.path.is_link(){
-		return error("use image_downsize function if file is a link:\n$image")
+	if image.path.is_link() {
+		return error('use image_downsize function if file is a link:\n$image')
 	}
 	image.init_()?
 	if image.skip() {
@@ -114,7 +114,7 @@ pub fn (mut image Image) downsize(backupdir string) ? {
 	path_dest2 := image.path.path_get_name_with_underscore()
 	image.init_()?
 	// println('   - add _ at end of image: $path_dest2')
-	if os.exists(path_dest2){
+	if os.exists(path_dest2) {
 		os.rm(path_dest2)?
 	}
 	os.mv(image.path.path, path_dest2)?

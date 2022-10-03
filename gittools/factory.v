@@ -151,5 +151,5 @@ pub fn (mut gs GitStructure) codepath() string {
 		p = gs.config.root
 	}
 	// println(" ***** $p")
-	return p 
+	return p
 }

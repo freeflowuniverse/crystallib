@@ -1,4 +1,5 @@
 module markdowndocs
+
 import freeflowuniverse.crystallib.texttools
 
 pub enum LinkType {
@@ -72,10 +73,10 @@ pub fn (mut link Link) link_update(path_ string) bool {
 	return false
 }
 
-//return the name of the link
+// return the name of the link
 pub fn (mut link Link) name_fix_no_underscore_no_ext() string {
 	return texttools.name_fix_no_underscore_no_ext(link.filename)
- 	// return link.filename.all_before_last('.').trim_right('_').to_lower()
+	// return link.filename.all_before_last('.').trim_right('_').to_lower()
 }
 
 // fn (mut o Link) process()?{

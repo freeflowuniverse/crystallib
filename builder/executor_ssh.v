@@ -17,11 +17,10 @@ mut:
 }
 
 fn (mut executor ExecutorSSH) init() ? {
-
 	if !executor.initialized {
-		if executor.ipaddr.port == 0{
+		if executor.ipaddr.port == 0 {
 			executor.ipaddr.port = 22
-		}		
+		}
 		// TODO: need to call code from SSHAGENT do not reimplement here
 		process.execute_job(cmd: 'pgrep -x ssh-agent || eval `ssh-agent -s`') or {
 			return error('Could not start ssh-agent, error was: $err')
@@ -119,19 +118,25 @@ fn (mut executor ExecutorSSH) download(source string, dest string) ? {
 	if executor.ipaddr.cat == .ipv6 {
 		cmd_ipaddr = '[$executor.ipaddr.addr]'
 	}
-	mut job:=process.Job{}
-	job=process.execute_job(cmd: 'rsync -avHPe "ssh -p$port" $executor.user@$cmd_ipaddr:$source $dest',die:false)?
-	if job.exit_code>0{
-		if job.output.contains("rsync: command not found"){
-			executor.exec("apt update && apt install rsync -y") or {
-				//TODO, not good enough because we need to check which platform
-				return error("could install rsync, was maybe not ubuntu.\n$executor")
+	mut job := process.Job{}
+	job = process.execute_job(
+		cmd: 'rsync -avHPe "ssh -p$port" $executor.user@$cmd_ipaddr:$source $dest'
+		die: false
+	)?
+	if job.exit_code > 0 {
+		if job.output.contains('rsync: command not found') {
+			executor.exec('apt update && apt install rsync -y') or {
+				// TODO, not good enough because we need to check which platform
+				return error('could install rsync, was maybe not ubuntu.\n$executor')
 			}
-			job=process.execute_job(cmd: 'rsync -avHPe "ssh -p$port" $executor.user@$cmd_ipaddr:$source $dest',die:false)?
+			job = process.execute_job(
+				cmd: 'rsync -avHPe "ssh -p$port" $executor.user@$cmd_ipaddr:$source $dest'
+				die: false
+			)?
 		}
 	}
-	if job.exit_code>0{
-		return error("could rsync.\n$job")
+	if job.exit_code > 0 {
+		return error('could rsync.\n$job')
 	}
 }
 

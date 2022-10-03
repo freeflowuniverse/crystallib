@@ -9,7 +9,7 @@ import json
 pub struct Command {
 pub mut:
 	cmd        string
-	timeout    int  = 1200
+	timeout    int = 1200
 	stdout     bool
 	stdout_log bool = true
 	debug      bool
@@ -54,7 +54,7 @@ pub mut:
 // out is the output
 pub fn execute_job(cmd Command) ?Job {
 	mut cmd_obj := cmd
-	println(" - CMD:$cmd_obj.cmd")
+	println(' - CMD:$cmd_obj.cmd')
 	mut out := ''
 	mut job := Job{}
 	job.cmd = cmd

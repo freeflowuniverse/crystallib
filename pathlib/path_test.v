@@ -66,8 +66,8 @@ fn test_dir_find() {
 	mut test_path_dir := pathlib.get('$testpath')
 	mut test_parent_dir := test_path_dir.dir_get('test_parent') or { panic(err) }
 	println('Dir found: $test_parent_dir')
-	mut test_parent_dir2 :=test_path_dir.dir_get("test_parent_2") or { return }
-	panic("should not get here")
+	mut test_parent_dir2 := test_path_dir.dir_get('test_parent_2') or { return }
+	panic('should not get here')
 }
 
 fn test_file_exists() {
@@ -85,41 +85,39 @@ fn test_file_find() {
 	mut test_path_dir := pathlib.get('$testpath')
 	mut file := test_path_dir.file_find('newfile1') or { panic(err) }
 	println('file $file found')
-	test_path_dir.file_find("newfile2") or {return}
-	panic("should not get here")
+	test_path_dir.file_find('newfile2') or { return }
+	panic('should not get here')
 }
 
 fn test_link_path_relative() {
-	a1:=pathlib.path_relative("/a/b/c/d.txt","/a/d.txt")
-	assert a1=="../../d.txt"
-	a2:=pathlib.path_relative("/a/b/c/d.txt","/d.txt")
-	assert a2=="../../../d.txt"
-	a3:=pathlib.path_relative("/a/b/c/d.txt","/a/b/c/e.txt")
-	assert a3=="e.txt"// TODO: is wrong this should give error I guess
-	a4:=pathlib.path_relative("/a/b/c/d.txt","/a/b/d/e.txt")
-	assert a4=="../d/e.txt"
-	a5:=pathlib.path_relative("/a/b/c/d.txt","/a/b/c/d/e/e.txt")
+	a1 := pathlib.path_relative('/a/b/c/d.txt', '/a/d.txt')
+	assert a1 == '../../d.txt'
+	a2 := pathlib.path_relative('/a/b/c/d.txt', '/d.txt')
+	assert a2 == '../../../d.txt'
+	a3 := pathlib.path_relative('/a/b/c/d.txt', '/a/b/c/e.txt')
+	assert a3 == 'e.txt' // TODO: is wrong this should give error I guess
+	a4 := pathlib.path_relative('/a/b/c/d.txt', '/a/b/d/e.txt')
+	assert a4 == '../d/e.txt'
+	a5 := pathlib.path_relative('/a/b/c/d.txt', '/a/b/c/d/e/e.txt')
 	println(a5)
 	// assert a5=="d/e/e.txt"
-	a6:=pathlib.path_relative("/a/b/c/","/a/b/c/e.txt")
-	assert a6=="e.txt"
-	a7:=pathlib.path_relative("/a/b/c","/a/b/c/e.txt")
-	assert a7=="e.txt"
-	a8:=pathlib.path_relative("/a/b/c","/a/b/c/d/e/e.txt")
-	assert a8=="d/e/e.txt"	
-	panic("sss")
+	a6 := pathlib.path_relative('/a/b/c/', '/a/b/c/e.txt')
+	assert a6 == 'e.txt'
+	a7 := pathlib.path_relative('/a/b/c', '/a/b/c/e.txt')
+	assert a7 == 'e.txt'
+	a8 := pathlib.path_relative('/a/b/c', '/a/b/c/d/e/e.txt')
+	assert a8 == 'd/e/e.txt'
+	panic('sss')
 }
 
 fn test_symlink() {
 	println('************ SYMLINK ************')
 	mut p := pathlib.get('$testpath/test_parent/readme.md')
 	assert p.exists()
-	mut p2:=p.link("$testpath/link_remove",true) or {panic("no link")}
+	mut p2 := p.link('$testpath/link_remove', true) or { panic('no link') }
 	println(p2)
-	panic("sww")
+	panic('sww')
 }
-
-
 
 fn test_list() {
 	println('************ TEST_list ************')
@@ -185,28 +183,27 @@ fn test_copy() {
 
 fn test_find_common_ancestor() {
 	println('************ TEST_find_common_ancestor ************')
-	res:=pathlib.find_common_ancestor(["/test/a/b/c/d","/test/a/"])
-	assert res=="/test/a"
+	res := pathlib.find_common_ancestor(['/test/a/b/c/d', '/test/a/'])
+	assert res == '/test/a'
 
-	b1:=pathlib.find_common_ancestor(["/a/b/c/d.txt","/a/d.txt"])
-	assert b1=="/a"
+	b1 := pathlib.find_common_ancestor(['/a/b/c/d.txt', '/a/d.txt'])
+	assert b1 == '/a'
 
-	b2:=pathlib.find_common_ancestor(["/a/b/c/d.txt","/c/d.txt"])
-	assert b2=="/"
+	b2 := pathlib.find_common_ancestor(['/a/b/c/d.txt', '/c/d.txt'])
+	assert b2 == '/'
 
-	b3:=pathlib.find_common_ancestor(["/a/b/c/d.txt","/a/b/c/e.txt"])
-	assert b3=="/a/b/c"
+	b3 := pathlib.find_common_ancestor(['/a/b/c/d.txt', '/a/b/c/e.txt'])
+	assert b3 == '/a/b/c'
 
-	b4:=pathlib.find_common_ancestor(["/a/b/c/d.txt","/a/b/c/d.txt"])
-	assert b4=="/a/b/c/d.txt"
+	b4 := pathlib.find_common_ancestor(['/a/b/c/d.txt', '/a/b/c/d.txt'])
+	assert b4 == '/a/b/c/d.txt'
 
-	b5:=pathlib.find_common_ancestor(["","/a/b/c/d.txt"])
-	assert b5=="/"
+	b5 := pathlib.find_common_ancestor(['', '/a/b/c/d.txt'])
+	assert b5 == '/'
 
-	b6:=pathlib.find_common_ancestor(["/a/b/c/d.txt",""])
-	assert b6=="/"
+	b6 := pathlib.find_common_ancestor(['/a/b/c/d.txt', ''])
+	assert b6 == '/'
 
-	b7:=pathlib.find_common_ancestor(["/","/a/b/c/d.txt"])
-	assert b7=="/"	
-
+	b7 := pathlib.find_common_ancestor(['/', '/a/b/c/d.txt'])
+	assert b7 == '/'
 }

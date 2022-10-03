@@ -28,12 +28,11 @@ pub mut: // pointer to site
 }
 
 fn (mut file File) init() {
-	
 	if file.path.is_image() {
-		file.name = file.path.name_fix_no_underscore_no_ext()	
+		file.name = file.path.name_fix_no_underscore_no_ext()
 		file.ftype = .image
-	}else{
-		file.name = file.path.name_fix_no_underscore()	
+	} else {
+		file.name = file.path.name_fix_no_underscore()
 	}
 	file.pathrel = file.path.path_relative(file.site.path.path).trim('/')
 }

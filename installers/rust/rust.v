@@ -15,14 +15,12 @@ pub fn (mut i Installer) install() ? {
 		println('Rust was already installed.')
 		return
 	}
-// curl --proto '=https' --tlsv1.2 https://sh.rustup.rs | sh -s -- -y
+	// curl --proto '=https' --tlsv1.2 https://sh.rustup.rs | sh -s -- -y
 	node.exec("curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y") or {
 		return error('Cannot install rust.\n$err')
 	}
 
-	node.exec("source .cargo/env") or {
-		return error('Cannot setup rust.\n$err')
-	}
+	node.exec('source .cargo/env') or { return error('Cannot setup rust.\n$err') }
 
 	// path := "export PATH='/usr/bin:/bin:/root/.cargo/bin'"
 	// node.exec("echo $path >> .bash_profile") or {

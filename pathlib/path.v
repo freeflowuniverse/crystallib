@@ -1,4 +1,5 @@
 module pathlib
+
 import freeflowuniverse.crystallib.texttools
 import os
 
@@ -35,11 +36,10 @@ pub fn (path Path) absolute() string {
 // careful the symlinks will be followed !!!
 pub fn (path Path) realpath() string {
 	mut p := path.path.replace('~', os.home_dir())
-	mut p2:=  os.real_path(p)
+	mut p2 := os.real_path(p)
 	p2 = os.abs_path(p2)
 	return p2
 }
-
 
 // check the inside of pathobject, is like an init function
 pub fn (mut path Path) check() {
@@ -76,16 +76,15 @@ pub fn (mut path Path) name() string {
 	return os.base(path.path)
 }
 
-//return name with all lowercase_special chars done and also no extension
+// return name with all lowercase_special chars done and also no extension
 pub fn (mut path Path) name_fix_no_underscore_no_ext() string {
 	return texttools.name_fix_no_underscore_no_ext(path.name_no_ext())
 }
 
-//return name with all lowercase_special chars done but keep extension
+// return name with all lowercase_special chars done but keep extension
 pub fn (mut path Path) name_fix_no_underscore() string {
 	return texttools.name_fix_no_underscore(path.name())
 }
-
 
 // full path of dir
 pub fn (mut path Path) path_dir() string {
@@ -94,17 +93,17 @@ pub fn (mut path Path) path_dir() string {
 
 pub fn (mut path Path) name_no_ext() string {
 	mut name := path.name()
-	if name.contains("."){
-		name= name.all_before_last('.')
+	if name.contains('.') {
+		name = name.all_before_last('.')
 	}
-	if name == ""{
+	if name == '' {
 		return path.name()
 	}
 	return name
 }
 
 pub fn (mut path Path) path_no_ext() string {
-	return path.path_dir()+"/"+path.name_no_ext()
+	return path.path_dir() + '/' + path.name_no_ext()
 }
 
 pub fn (mut path Path) name_ends_with_underscore() bool {

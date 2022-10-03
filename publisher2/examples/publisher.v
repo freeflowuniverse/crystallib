@@ -19,7 +19,7 @@
 // 	mut publisher := publisher2.get()?
 // 	user_timur := publisher.user_add('timur@threefold.io')
 
-// 	// new site zanzibar that is accessible to with email 
+// 	// new site zanzibar that is accessible to with email
 // 	sitename1 := 'zanzibar'
 // 	site1 := publisher.site_add(sitename1, .book)
 // 	site_path1 := Path {
@@ -49,7 +49,6 @@
 // 	if ! os.exists('sites/$sitename2') {
 // 		os.symlink(site_path1.path, 'sites/$sitename2')?
 // 	}
-
 
 // 	os.chdir('/Users/timurgordon/code/github/timurgordon/publisher_ui')?
 // 	go publisher_ui.run(publisher)

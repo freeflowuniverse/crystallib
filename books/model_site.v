@@ -1,7 +1,7 @@
 module books
 
 // import os
-import freeflowuniverse.crystallib.pathlib { Path, find_common_ancestor }
+import freeflowuniverse.crystallib.pathlib { Path }
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.markdowndocs
 
@@ -25,13 +25,13 @@ pub:
 	name     string
 	sitetype SiteType
 pub mut:
-	title 	 string
-	sites    &Sites   [str: skip] // pointer to sites
+	title  string
+	sites  &Sites           [str: skip] // pointer to sites
 	pages  map[string]&Page
 	files  map[string]&File
-	path   pathlib.Path
+	path   Path
 	errors []SiteError
-	site SiteState
+	site   SiteState
 }
 
 // walk over one specific site, find all files and pages
@@ -50,13 +50,13 @@ enum ErrorCat {
 }
 
 struct SiteErrorArgs {
-	path pathlib.Path
+	path Path
 	msg  string
 	cat  ErrorCat
 }
 
 struct SiteError {
-	path pathlib.Path
+	path Path
 	msg  string
 	cat  ErrorCat
 }
@@ -69,9 +69,8 @@ pub fn (mut site Site) error(args SiteErrorArgs) {
 	}
 }
 
-
-//param look_in_sites means we will look in all sites
-pub fn (site Site) file_exists(name string,look_in_sites bool) bool {
+// param look_in_sites means we will look in all sites
+pub fn (site Site) file_exists(name string, look_in_sites bool) bool {
 	mut namelower := texttools.name_fix_keepext(name)
 	if namelower in site.files {
 		file := site.files[namelower]
@@ -79,22 +78,22 @@ pub fn (site Site) file_exists(name string,look_in_sites bool) bool {
 			return true
 		}
 	}
-	if look_in_sites{
-		for _,site2 in site.sites.sites{
-			if namelower in site2.files{
+	if look_in_sites {
+		for _, site2 in site.sites.sites {
+			if namelower in site2.files {
 				file := site2.files[namelower]
 				if file.ftype == .file {
 					return true
-				} 
+				}
 			}
-		}	
-	}	
+		}
+	}
 	return false
 }
 
-//return file (can be regular file or image)
-//param look_in_sites means we will look in all sites
-pub fn (site Site) file_get(name string,look_in_sites bool) ?&File {
+// return file (can be regular file or image)
+// param look_in_sites means we will look in all sites
+pub fn (site Site) file_get(name string, look_in_sites bool) ?&File {
 	mut namelower := texttools.name_fix_keepext(name)
 	if namelower in site.files {
 		file := site.files[namelower]
@@ -104,9 +103,9 @@ pub fn (site Site) file_get(name string,look_in_sites bool) ?&File {
 			return error('did find file, but not an file for name:$name\n$file')
 		}
 	}
-	if look_in_sites{
-		for _,site2 in site.sites.sites{
-			if namelower in site2.files{
+	if look_in_sites {
+		for _, site2 in site.sites.sites {
+			if namelower in site2.files {
 				file := site2.files[namelower]
 				if file.ftype == .file {
 					return file
@@ -114,13 +113,13 @@ pub fn (site Site) file_get(name string,look_in_sites bool) ?&File {
 					return error('did find file, but not an file for name:$name\n$file')
 				}
 			}
-		}	
-	}	
+		}
+	}
 	return error('cannot find file with name $name')
 }
 
-//param look_in_sites means we will look in all sites
-pub fn (site Site) image_get(name string,look_in_sites bool) ?&File {
+// param look_in_sites means we will look in all sites
+pub fn (site Site) image_get(name string, look_in_sites bool) ?&File {
 	namelower := texttools.name_fix_no_underscore_no_ext(name)
 	// print(" -- image_get: ${site.name}:$namelower")
 	if namelower in site.files {
@@ -133,9 +132,9 @@ pub fn (site Site) image_get(name string,look_in_sites bool) ?&File {
 			return error('did find file, but not an image for name:$name\n$file')
 		}
 	}
-	if look_in_sites{
-		for _,site2 in site.sites.sites{
-			if namelower in site2.files{
+	if look_in_sites {
+		for _, site2 in site.sites.sites {
+			if namelower in site2.files {
 				file := site2.files[namelower]
 				if file.ftype == .image {
 					// println(" + ${site.name}:OK")
@@ -145,48 +144,48 @@ pub fn (site Site) image_get(name string,look_in_sites bool) ?&File {
 					return error('did find file, but not an image for name:$name\n$file')
 				}
 			}
-		}	
+		}
 	}
 	// println(" + NOTFOUND")
-	if name=="videoconferencedecentral"{
-		panic("456yhb")
+	if name == 'videoconferencedecentral' {
+		panic('456yhb')
 	}
 	return error('cannot find image with name $name ($namelower) lookinsites:$look_in_sites site:$site.name')
 }
 
-//param look_in_sites means we will look in all sites
-pub fn (site Site) image_exists(name string,look_in_sites bool) bool {
+// param look_in_sites means we will look in all sites
+pub fn (site Site) image_exists(name string, look_in_sites bool) bool {
 	namelower := texttools.name_fix_no_underscore_no_ext(name)
-	println(" -- image_exists: ${site.name}:$namelower")
+	println(' -- image_exists: $site.name:$namelower')
 	if namelower in site.files {
 		file := site.files[namelower]
 		if file.ftype == .image {
 			return true
 		}
 	}
-	if look_in_sites{
-		for _,site2 in site.sites.sites{
-			if namelower in site2.files{
+	if look_in_sites {
+		for _, site2 in site.sites.sites {
+			if namelower in site2.files {
 				file := site2.files[namelower]
 				if file.ftype == .image {
 					return true
 				}
 			}
-		}	
+		}
 	}
 	return false
 }
 
-//param look_in_sites means we will look in all sites
-pub fn (site Site) page_exists(name string,look_in_sites bool) bool {
+// param look_in_sites means we will look in all sites
+pub fn (site Site) page_exists(name string, look_in_sites bool) bool {
 	mut namelower := texttools.name_fix_no_md(name)
 	// println(" -- page exists: $namelower")
-	if namelower in site.pages{
+	if namelower in site.pages {
 		return true
 	}
-	if look_in_sites{
-		for _,site2 in site.sites.sites{
-			if namelower in site2.pages{
+	if look_in_sites {
+		for _, site2 in site.sites.sites {
+			if namelower in site2.pages {
 				return true
 			}
 		}
@@ -194,16 +193,16 @@ pub fn (site Site) page_exists(name string,look_in_sites bool) bool {
 	return false
 }
 
-//param look_in_sites means we will look in all sites
-pub fn (site Site) page_get(name string,look_in_sites bool) ?&Page {
+// param look_in_sites means we will look in all sites
+pub fn (site Site) page_get(name string, look_in_sites bool) ?&Page {
 	mut namelower := texttools.name_fix_no_md(name)
 	// println(" -- page get: $namelower")
-	if namelower in site.pages{
+	if namelower in site.pages {
 		mut page := site.pages[namelower]
 		return page
 	}
-	for _,site2 in site.sites.sites{
-		if namelower in site2.pages{
+	for _, site2 in site.sites.sites {
+		if namelower in site2.pages {
 			mut page2 := site2.pages[namelower]
 			return page2
 		}
@@ -211,9 +210,8 @@ pub fn (site Site) page_get(name string,look_in_sites bool) ?&Page {
 	return error('cannot find page with name $name')
 }
 
-
 // only way how to get to a new page
-pub fn (mut site Site) page_new(mut p pathlib.Path) ?&Page {
+pub fn (mut site Site) page_new(mut p Path) ?&Page {
 	if !p.exists() {
 		return error('cannot find page with path $p.path')
 	}
@@ -237,12 +235,12 @@ pub fn (mut site Site) page_new(mut p pathlib.Path) ?&Page {
 
 // only way how to get to a new file
 // needs to process links
-fn (mut site Site) file_new(mut p pathlib.Path) ? {
+fn (mut site Site) file_new(mut p Path) ? {
 	if !p.exists() {
 		return error('cannot find file for path in site: $p.path')
 	}
-	if p.name().starts_with("."){
-		panic("should not start with . \n$p")
+	if p.name().starts_with('.') {
+		panic('should not start with . \n$p')
 	}
 	p.namefix()? // make sure its all lower case and name is proper
 	mut ff := File{
@@ -253,18 +251,14 @@ fn (mut site Site) file_new(mut p pathlib.Path) ? {
 	site.files[ff.name] = &ff
 }
 
-
 pub fn (mut site Site) fix() ? {
 	for _, mut page in site.pages {
 		page.fix()?
-		
 	}
 }
 
-//return path where the book will be created (exported and built from)
-pub fn (site Site) book_path(path string) pathlib.Path {
-	dest0:=site.sites.config.dest
-	return pathlib.get('$dest0/books/$site.name/$path')	
+// return path where the book will be created (exported and built from)
+pub fn (site Site) book_path(path string) Path {
+	dest0 := site.sites.config.dest
+	return pathlib.get('$dest0/books/$site.name/$path')
 }
-
-

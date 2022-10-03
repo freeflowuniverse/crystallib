@@ -1,4 +1,4 @@
-module main
+module main3
 
 pub struct StructB {
 pub mut:
@@ -30,6 +30,6 @@ fn do() ? {
 	println(a)
 }
 
-fn main() {
+fn main3() {
 	do() or { panic(err) }
 }

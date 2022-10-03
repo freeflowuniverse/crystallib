@@ -23,9 +23,7 @@ pub fn (mut i Installer) install() ? {
 	./v symlink
 	'
 
-	node.exec(cmd) or {
-		return error('Cannot install vlang.\n$err')
-	}
+	node.exec(cmd) or { return error('Cannot install vlang.\n$err') }
 
 	node.done_set('install_vlang', 'OK')?
 	return

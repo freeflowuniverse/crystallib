@@ -1,8 +1,9 @@
-module main
+module main2
 
-import os.cmdline
-import os
+// import os.cmdline
+// import os
 import freeflowuniverse.crystallib.actionparser
+import os
 
 fn do() ? {
 	options := cmdline.only_non_options(os.args)
@@ -26,6 +27,6 @@ fn do() ? {
 	actionparser.execute(options[1])?
 }
 
-fn main() {
+fn main2() {
 	do() or { panic(err) }
 }

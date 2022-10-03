@@ -1,7 +1,6 @@
 module books
 
 import os
-
 import freeflowuniverse.crystallib.gittools
 import freeflowuniverse.crystallib.pathlib
 
@@ -13,24 +12,22 @@ import freeflowuniverse.crystallib.pathlib
 
 // export an mdbook to its html representation
 pub fn (mut site Site) mdbook_export() ? {
-	site.template_install()? //make sure all required template files are in site
-	dest:=site.sites.config.dest
+	site.template_install()? // make sure all required template files are in site
+	dest := site.sites.config.dest
 	book_path := '$dest/books/$site.name'
 	html_path := '$dest/html/$site.name'
 
-	//lets now walk over images & pages and we need to export it to there
+	// lets now walk over images & pages and we need to export it to there
 
-	//lets now build
+	// lets now build
 	os.execute('mdbook build $book_path --dest-dir $html_path')
 }
 
-//export the mdbooks to html
+// export the mdbooks to html
 pub fn (mut sites Sites) mdbook_export() ? {
-	sites.reset()? //make sure we start from scratch
+	sites.reset()? // make sure we start from scratch
 	sites.fix()?
-	for _,mut site in sites.sites{
+	for _, mut site in sites.sites {
 		site.mdbook_export()?
 	}
-
 }
-

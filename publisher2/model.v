@@ -5,9 +5,9 @@ import freeflowuniverse.crystallib.pathlib { Path }
 import freeflowuniverse.crystallib.texttools
 
 pub enum SiteType {
-	book //mdbook
+	book // mdbook
 	wiki
-	web //just html
+	web // just html
 }
 
 enum State {
@@ -20,45 +20,55 @@ enum State {
 pub struct Publisher {
 pub mut:
 	// node  &builder.Node
-	state State
-	sites map[string]Site //the key is the prefix as used on webserver
+	state  State
+	sites  map[string]Site // the key is the prefix as used on webserver
 	groups map[string]Group
-	users map[string]User
-	acls map[string]ACL
+	users  map[string]User
+	acls   map[string]ACL
 }
 
-pub fn (mut p Publisher) user_add(name_ string) &User{
-	mut name:=texttools.name_fix(name_)
-	
+pub fn (mut p Publisher) user_add(name_ string) &User {
+	mut name := texttools.name_fix(name_)
+
 	// returns existing user if user with given name exists
 	if p.users.keys().contains(name) {
-		panic("User already exists")
+		panic('User already exists')
 	}
-	mut u:=User{name:name}
-	p.users[name]=u
+	mut u := User{
+		name: name
+	}
+	p.users[name] = u
 	return &u
 }
 
-fn (mut p Publisher) group_add(name_ string) &Group{
-	mut name:=texttools.name_fix(name_)
-	mut u:=Group{name:name}
-	p.groups[name]=u
+fn (mut p Publisher) group_add(name_ string) &Group {
+	mut name := texttools.name_fix(name_)
+	mut u := Group{
+		name: name
+	}
+	p.groups[name] = u
 	return &u
 }
 
-// pub fn (p Publisher) get_user_sites(user User) 
+// pub fn (p Publisher) get_user_sites(user User)
 
-pub fn (mut p Publisher) site_add(name_ string, type_ SiteType) &Site{
-	mut name:=texttools.name_fix(name_)
-	mut u:=Site{name:name,publisher:&p,sitetype:type_}
-	p.sites[name]=u
+pub fn (mut p Publisher) site_add(name_ string, type_ SiteType) &Site {
+	mut name := texttools.name_fix(name_)
+	mut u := Site{
+		name: name
+		publisher: &p
+		sitetype: type_
+	}
+	p.sites[name] = u
 	return &u
 }
 
-pub fn (mut p Publisher) acl_add(name_ string) &ACL{
-	mut name:=texttools.name_fix(name_)
-	mut u:=ACL{name:name}
-	p.acls[name]=u
+pub fn (mut p Publisher) acl_add(name_ string) &ACL {
+	mut name := texttools.name_fix(name_)
+	mut u := ACL{
+		name: name
+	}
+	p.acls[name] = u
 	return &u
 }
 
@@ -67,24 +77,23 @@ pub fn (mut p Publisher) site_acl_add(site_ string, acl &ACL) {
 }
 
 pub fn (mut p Publisher) auth_add(email_req bool, email_auth bool) &Authentication {
-	mut auth:=Authentication{
+	mut auth := Authentication{
 		email_required: email_req
 		email_authenticated: email_auth
 	}
 	return &auth
 }
 
-
 [heap]
 pub struct Site {
 pub:
-	name     string //correspond to key, uses namefix from texttoolsmap[string]Page
-	publisher    &Publisher   [str: skip] // pointer to sites
-	sitetype SiteType
+	name      string // correspond to key, uses namefix from texttoolsmap[string]Page
+	publisher &Publisher [str: skip] // pointer to sites
+	sitetype  SiteType
 pub mut:
-	path   pathlib.Path //path where site can be found
+	path           Path // path where site can be found
 	authentication Authentication
-	logs []AccessLog = []
+	logs           []AccessLog = []
 }
 
 pub struct AccessLog {
@@ -100,7 +109,7 @@ pub fn (p Publisher) get_sites_accessible(username string) map[string]Site {
 		user_access := p.get_access(p.users[username], name)
 		if user_access.right == Right.read || user_access.right == Right.write {
 			accesible_sites[name] = site
-		}	
+		}
 	}
 	return accesible_sites
 }
@@ -113,10 +122,11 @@ pub enum AccessStatus {
 }
 
 pub struct Access {
-	pub:
-	right Right
+pub:
+	right  Right
 	status AccessStatus
 }
+
 //? get highest or lowest right?
 // returns the right a user has to a given authentication struct
 pub fn (user User) get_access(site Site) Access {
@@ -139,7 +149,7 @@ pub fn (user User) get_access(site Site) Access {
 			return Access{
 				right: Right.block
 				status: .no_access
-			}		
+			}
 		}
 	} else {
 		// returns read if user meets email requirements and there is no acl
@@ -163,7 +173,7 @@ pub fn (user User) get_access(site Site) Access {
 			}
 		}
 	}
-	return Access {
+	return Access{
 		right: right
 		status: AccessStatus.ok
 	}
@@ -192,7 +202,7 @@ pub fn (p Publisher) get_access(user User, sitename string) Access {
 			return Access{
 				right: Right.block
 				status: .no_access
-			}		
+			}
 		}
 	} else {
 		// returns read if user meets email requirements and there is no acl
@@ -216,7 +226,7 @@ pub fn (p Publisher) get_access(user User, sitename string) Access {
 			}
 		}
 	}
-	return Access {
+	return Access{
 		right: right
 		status: .ok
 	}
@@ -229,18 +239,20 @@ pub fn (p Publisher) get_access(user User, sitename string) Access {
 // }
 
 pub fn (mut p Publisher) ace_add(acl string, right Right) &ACE {
-	mut ace := ACE{right: right}
+	mut ace := ACE{
+		right: right
+	}
 	p.acls[acl].entries << ace
 	return &ace
 }
 
-pub fn (mut p Publisher) ace_add_user(mut ace &ACE, user &User) &ACE {
+pub fn (mut p Publisher) ace_add_user(mut ace ACE, user &User) &ACE {
 	ace.users << user
 	return ace
 }
 
 pub fn (site Site) auth_add(email_required bool, email_authenticated bool, acl &ACL) &Authentication {
-	mut auth := Authentication {
+	mut auth := Authentication{
 		email_required: email_required
 		email_authenticated: email_authenticated
 	}
@@ -266,11 +278,11 @@ pub fn (p Publisher) get_right(username string, sitename string) Right {
 				}
 			}
 		}
-	} 
+	}
 	if auth.email_required {
 		if user.emails.len > 0 {
 			right = .read
-		} 
+		}
 		if auth.email_authenticated {
 			if user.emails.any(it.authenticated) {
 				right = .read
@@ -280,34 +292,34 @@ pub fn (p Publisher) get_right(username string, sitename string) Right {
 	return right
 }
 
-//if acl not empty then is obliged to use, if email required email need to match USER and the ACE/ACL
-//if in combination with email_authenticated, it means we make sure that email is correct, so becomes string
-//in future will be compatible with TFConnect
+// if acl not empty then is obliged to use, if email required email need to match USER and the ACE/ACL
+// if in combination with email_authenticated, it means we make sure that email is correct, so becomes string
+// in future will be compatible with TFConnect
 [heap]
 pub struct Authentication {
 pub mut:
-	email_required bool			//if true means users need to give their email address (just a form)
-	email_authenticated bool 	//if true, means user needs to give email address and verify the correctness with email client
-	tfconnect bool		//not used now for future
-	kyc	bool			//not used now for future (KYC/AML)
-	acl	   []&ACL		//list of people who have access, can be empty if empty there can be passwd
+	email_required      bool   // if true means users need to give their email address (just a form)
+	email_authenticated bool   // if true, means user needs to give email address and verify the correctness with email client
+	tfconnect           bool   // not used now for future
+	kyc                 bool   // not used now for future (KYC/AML)
+	acl                 []&ACL // list of people who have access, can be empty if empty there can be passwd
 }
 
-//Access Control List
+// Access Control List
 [heap]
 pub struct ACL {
 pub mut:
-	name string
+	name    string
 	entries []ACE
 }
 
-//Access Control Entry
+// Access Control Entry
 [heap]
 pub struct ACE {
 pub mut:
-	groups []&Group  //pointer to the object as is in the publisher one
-	users []&User   //can be or a user or a group
-	right Right
+	groups []&Group // pointer to the object as is in the publisher one
+	users  []&User  // can be or a user or a group
+	right  Right
 }
 
 [heap]
@@ -323,21 +335,20 @@ pub struct User {
 pub:
 	name string
 pub mut:
-	emails []Email
-	pubkeys []string //optional
-	sshkeys []string //optional
+	emails  []Email
+	pubkeys []string // optional
+	sshkeys []string // optional
 }
 
 pub struct Email {
 pub mut:
-	address string
+	address       string
 	authenticated bool
 }
 
-//we just go for these 2 for now
+// we just go for these 2 for now
 pub enum Right {
 	read
 	write
 	block
 }
-

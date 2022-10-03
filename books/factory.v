@@ -1,4 +1,5 @@
 module books
+
 import freeflowuniverse.crystallib.installers.mdbook
 // import freeflowuniverse.crystallib.gittools
 import freeflowuniverse.crystallib.pathlib
@@ -12,27 +13,27 @@ pub fn new() Sites {
 	return sites
 }
 
-//make sure all initialization has been done e.g. installing mdbook
+// make sure all initialization has been done e.g. installing mdbook
 pub fn (mut sites Sites) init() ? {
-	if sites.state == .init{
+	if sites.state == .init {
 		mdbook.install()?
-		sites.embedded_files << $embed_file("template/theme/css/print.css")
-		sites.embedded_files << $embed_file("template/theme/css/variables.css")
-		sites.embedded_files << $embed_file("template/mermaid-init.js")
-		sites.embedded_files << $embed_file("template/mermaid.min.js")
+		sites.embedded_files << $embed_file('template/theme/css/print.css')
+		sites.embedded_files << $embed_file('template/theme/css/variables.css')
+		sites.embedded_files << $embed_file('template/mermaid-init.js')
+		sites.embedded_files << $embed_file('template/mermaid.min.js')
 
 		sites.state = .initdone
 	}
 }
 
-//reset all, just to make sure we regenerate fresh
+// reset all, just to make sure we regenerate fresh
 pub fn (mut sites Sites) reset() ? {
-	//delete where the books are created
-	for item in ["books","html"]{
-		mut a := pathlib.get(sites.config.dest+"/$item")
+	// delete where the books are created
+	for item in ['books', 'html'] {
+		mut a := pathlib.get(sites.config.dest + '/$item')
 		a.delete()?
 	}
-	sites.state = .init //makes sure we re-init
+	sites.state = .init // makes sure we re-init
 	sites.init()?
 }
 

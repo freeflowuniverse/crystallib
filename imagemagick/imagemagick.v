@@ -17,7 +17,7 @@ fn installed0() bool {
 const installed1 = installed0()
 
 pub fn installed() bool {
-	return installed1
+	return imagemagick.installed1
 }
 
 // scan a directory

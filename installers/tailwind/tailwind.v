@@ -14,16 +14,14 @@ pub fn (mut i Installer) install() ? {
 		println('tailwind was already installed.')
 		return
 	}
-	
+
 	cmd := '
 		curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64
 		chmod +x tailwindcss-linux-x64
 		mv tailwindcss-linux-x64 tailwindcss
 	'
 
-	node.exec(cmd) or {
-		return error('Cannot install tailwind.\n$err')
-	}
+	node.exec(cmd) or { return error('Cannot install tailwind.\n$err') }
 
 	node.done_set('install_tailwind', 'OK')?
 	return
