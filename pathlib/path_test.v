@@ -111,20 +111,27 @@ fn test_link_path_relative() {
 
 fn test_symlink() {
 	println('************ TEST_link ************')
-	// test delete exists with different paths
+	// test delete exists with nonexistent dest
 	mut p := pathlib.get('$testpath/test_parent/readme.md')
 	assert p.exists()
-	mut p2 := p.link('$testpath/link_remove', true) or { panic('no link: $err') }
+	mut dest1 := pathlib.get('$testpath/link_remove')
+	assert !dest1.exists()
+	mut p2 := p.link(dest1.path, true) or { panic('no link: $err') }
 	assert p2.path == '../link_remove'
 
+	// test delete exists with existing dest
 	mut p3 := pathlib.get('$testpath/newfile1')
+	assert p3.exists()
 	mut p4 := p3.link('$testpath/link_remove', true) or { panic('no link $err') }
 	assert p4.path == './link_remove'
+	// assert !p3.exists()
 
 	// test dont delete_exists
 	mut p5 := pathlib.get('$testpath/dont_delete')
+	assert p5.exists()
 	mut p6 := p5.link('$testpath/symlink_test3', false) or { panic('no link $err') }
 	assert p6.path == './symlink_test3'
+	assert p5.exists()
 
 	println('Link function working correctly')
 }
