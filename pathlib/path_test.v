@@ -136,6 +136,7 @@ fn test_symlink() {
 }
 
 fn test_readlink() {
+	println('************ TEST_readlink ************')
 	// test with none link path
 	mut p := pathlib.get('$testpath/test_parent/readme.md')
 	path := p.readlink() or { Path{} }
@@ -149,6 +150,20 @@ fn test_readlink() {
 	assert path2.cat == .file
 	assert path2.path.ends_with('pathlib/examples/test_path/test_parent/readme.md')
 	println('Readlink function working correctly')
+}
+
+fn test_unlink() {
+	println('************ TEST_unlink ************')
+	// test with filelink path
+	mut p := pathlib.get('$testpath/test_parent/readme.md')
+	mut link_p := p.link('$testpath/pathlib/examples/test_path/readme_link2.md', false) or {panic("error: $err")}
+	assert link_p.cat == .linkfile
+	link_p.unlink() or { panic("Failed to unlink: $err") }
+	assert link_p.exists()
+	assert link_p.cat == .file
+
+	// TODO: maybe more edge cases?
+	println('Unlink function working correctly')
 }
 
 fn test_list() {
