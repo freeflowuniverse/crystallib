@@ -16,18 +16,24 @@ fn (mut site Site) file_remember(mut p pathlib.Path) ? {
 			mut pathdouble := filedouble.path
 
 			// get config item to see if we can heal
-			if false && site.sites.config.heal {
-				//TODO implement
+			if site.sites.config.heal {
 				println(" - try to heal, double file: '$p.path' and '$pathdouble.path'")				
 				mut prio_double := false
-				if p.extension() == 'jpg' && pathdouble.extension() == 'png'{
-					prio_double = true
-				} else if pathdouble.name_ends_with_underscore() && p.name_ends_with_underscore() {
+				if p.extension() == 'png'{
+					if pathdouble.extension() == 'jpg'{
+						println("prio jpg")
+						prio_double = true
+					}else if pathdouble.extension() == 'jpg'{
+				
+				
+				
+				
+				else if pathdouble.name_ends_with_underscore() && p.name_ends_with_underscore() {
 					if p.path.len > pathdouble.path.len{
 						//this means double path is on shorter location than the one here
 						prio_double = true
 					}
-				} else  {
+				} else if p.extension() == 'jpg' && pathdouble.extension() == 'jpg'{{
 					// means are both jpg but the double one has underscore so prio
 					prio_double = true
 				}
