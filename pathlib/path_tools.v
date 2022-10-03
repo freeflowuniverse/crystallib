@@ -355,16 +355,39 @@ pub fn path_relative(source_ string, linkpath_ string) string {
 	mut linkpath := os.abs_path(linkpath_)
 	// now both start with /
 	common := find_common_ancestor([source, linkpath])
-	source_short := source[(common.len + 1)..]
-	linkpath_short := linkpath[(common.len + 1)..]
+
+	// if source is common, returns source
+	if source_.len <= common.len + 1 {
+		path := linkpath_.trim_string_left(source_)
+		if path.starts_with('/') {
+			return path[1..]
+		} else {
+			return path
+		}
+	}
+
+	mut source_short := source[(common.len + 1)..]
+	if source_.count('/') == 1 {
+		source_short = source[(common.len)..]
+	}
+
+	mut linkpath_short := linkpath[(common.len + 1)..]
+	if linkpath_.count('/') == 1 {
+		linkpath_short = linkpath[(common.len)..]
+	}
 
 	source_count := source_short.count('/')
+	// link_count := linkpath_short.count('/')
 	mut dest := ''
 	if source_count > 0 {
 		go_up := ['../'].repeat(source_count).join('')
 		dest = '$go_up$linkpath_short'
 	} else {
-		dest = linkpath_short
+		if source_short != linkpath_short {
+			dest = './' + linkpath_short
+		} else {
+			dest = linkpath_short
+		}
 	}
 
 	println('source:$source linkpath:$linkpath')
@@ -418,6 +441,7 @@ pub fn (mut path Path) link(dest string, delete_exists bool) ?Path {
 		os.mkdir_all(dest_dir)?
 	}
 	// calculate relative link between source and dest
+	println("debugz: $path \n$dest")
 	dest_path := path_relative(path.path, dest)
 	os.symlink(path.path, dest_path)?
 	match path.cat {
