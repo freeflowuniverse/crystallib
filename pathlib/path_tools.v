@@ -510,7 +510,9 @@ pub fn (mut path Path) unlink() ? {
 
 // return path object for the link this one is pointing too
 pub fn (mut path Path) readlink() ?Path {
+	println('path: $path')
 	if path.is_link() {
+		println('path2: $path')
 		cmd := 'readlink $path.path'
 		res := os.execute(cmd)
 		if res.exit_code > 0 {

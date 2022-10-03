@@ -136,6 +136,22 @@ fn test_symlink() {
 	println('Link function working correctly')
 }
 
+fn test_readlink() {
+	// test with none link path
+	mut p := pathlib.get('$testpath/test_parent/readme.md')
+	path := p.readlink() or { Path{} }
+	assert path == Path{}
+
+	// test with filelink path
+	mut link_p := p.link('$testpath/pathlib/examples/test_path/readme_link.md', false) or {panic("error: $err")}
+	assert link_p.cat == .linkfile
+	assert link_p.path == '../pathlib/examples/test_path/readme_link.md'
+	path2 := link_p.readlink() or { Path{} }
+	assert path2.cat == .file
+	assert path2.path.ends_with('pathlib/examples/test_path/test_parent/readme.md')
+	println('Readlink function working correctly')
+}
+
 fn test_list() {
 	println('************ TEST_list ************')
 	mut test_path_dir := pathlib.get('$testpath')
