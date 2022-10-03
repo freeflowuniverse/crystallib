@@ -99,8 +99,7 @@ fn test_link_path_relative() {
 	a4 := pathlib.path_relative('/a/b/c/d.txt', '/a/b/d/e.txt')
 	assert a4 == '../d/e.txt'
 	a5 := pathlib.path_relative('/a/b/c/d.txt', '/a/b/c/d/e/e.txt')
-	println(a5)
-	// assert a5=="d/e/e.txt"
+	assert a5=="d/e/e.txt"
 	a6 := pathlib.path_relative('/a/b/c/', '/a/b/c/e.txt')
 	assert a6 == 'e.txt'
 	a7 := pathlib.path_relative('/a/b/c', '/a/b/c/e.txt')

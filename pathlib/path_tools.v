@@ -377,17 +377,15 @@ pub fn path_relative(source_ string, linkpath_ string) string {
 	}
 
 	source_count := source_short.count('/')
-	// link_count := linkpath_short.count('/')
+	link_count := linkpath_short.count('/')
 	mut dest := ''
 	if source_count > 0 {
 		go_up := ['../'].repeat(source_count).join('')
 		dest = '$go_up$linkpath_short'
+	} else if (link_count == 0) && (source_short != linkpath_short) {
+		dest = './' + linkpath_short
 	} else {
-		if source_short != linkpath_short {
-			dest = './' + linkpath_short
-		} else {
-			dest = linkpath_short
-		}
+		dest = linkpath_short
 	}
 
 	println('source:$source linkpath:$linkpath')
