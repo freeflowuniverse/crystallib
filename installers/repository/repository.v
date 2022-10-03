@@ -4,7 +4,6 @@ module repository
 pub fn (mut i Installer) install(repo_url string) ? {
 	mut node := i.node
 	split_url := repo_url.split('/')
-	println("debugz: $split_url")
 	mut repo_name := split_url[split_url.len-1].trim_string_right('.git')
 	mut repo_owner := split_url[split_url.len-2]
 	// install repository if it was already done will return true
