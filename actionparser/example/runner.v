@@ -1,4 +1,4 @@
-module main2
+module main
 
 // import os.cmdline
 // import os
@@ -27,6 +27,6 @@ fn do() ? {
 	actionparser.execute(options[1])?
 }
 
-fn main2() {
+fn main() {
 	do() or { panic(err) }
 }

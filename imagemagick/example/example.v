@@ -1,4 +1,4 @@
-module main2
+module main
 
 import freeflowuniverse.crystallib.imagemagick
 import gittools
@@ -22,6 +22,6 @@ fn do() ? {
 	// gr.remove_changes()?
 }
 
-fn main2() {
+fn main() {
 	do() or { panic(err) }
 }

@@ -1,4 +1,4 @@
-module main2
+module main
 
 type Executor = ExecutorLocal | ExecutorSSH
 
@@ -34,6 +34,6 @@ fn do() ? {
 	println(ssh.ping())
 }
 
-fn main2() {
+fn main() {
 	do() or { panic(err) }
 }

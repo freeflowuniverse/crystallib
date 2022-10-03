@@ -1,4 +1,4 @@
-module main2
+module main
 
 import freeflowuniverse.crystallib.builder
 import installers.mdbook
@@ -12,6 +12,6 @@ fn do() ? {
 	// mdbook.get_install(mut node)?
 }
 
-fn main2() {
+fn main() {
 	do() or { panic(err) }
 }

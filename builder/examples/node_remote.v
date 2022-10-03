@@ -1,4 +1,4 @@
-module main3
+module main
 
 import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.installers.rust
@@ -41,6 +41,6 @@ fn do() ? {
 	node.exec('cd code/github/timurgordon/publisher_ui; sh run.sh')?
 }
 
-fn main3() {
+fn main() {
 	do() or { panic(err) }
 }

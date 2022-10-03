@@ -1,4 +1,4 @@
-module main2
+module main
 
 import freeflowuniverse.crystallib.builder { NodeArguments }
 
@@ -15,6 +15,6 @@ fn do() ? {
 	println(node)
 }
 
-fn main2() {
+fn main() {
 	do() or { panic(err) }
 }

@@ -1,4 +1,4 @@
-module main3
+module main
 
 import installers.imagemagick
 
@@ -8,6 +8,6 @@ fn do() ? {
 	println(i)
 }
 
-fn main3() {
+fn main() {
 	do() or { panic(err) }
 }
