@@ -22,7 +22,17 @@ fn do() ? {
 	repository.get_install(mut node, 'https://github.com/freeflowuniverse/crystallib.git') or {panic("error: $err")}
 	repository.get_install(mut node, 'https://github.com/ourworld-tsc/ourworld_books.git') or {panic("error: $err")}
 
-	node.exec('ln -s /root/tailwindcss code/github/timurgordon/publisher_ui/tailwindcss')
+	node.exec('cd code/github/timurgordon/publisher_ui; git checkout development') ?
+	node.exec('cd code/github/timurgordon/publisher_ui; git pull') ?
+
+	node.exec('cd code/github/freeflowuniverse/crystallib; git checkout development_publisher3_kristof') ?
+	node.exec('cd code/github/freeflowuniverse/crystallib; git pull') ?
+
+	node.exec('ln -sf /root/tailwindcss code/github/timurgordon/publisher_ui/tailwindcss') or {
+		return error('Failed to link tailwind binary to project: $err')
+	}
+
+	node.exec('cd code/github/timurgordon/publisher_ui; sh run.sh') ?
 
 }
 
