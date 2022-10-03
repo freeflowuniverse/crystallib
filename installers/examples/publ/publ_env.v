@@ -10,7 +10,7 @@ fn install() ? {
 	mut node := builder.node_new(ipaddr: '185.69.166.150', name: 'kds')?
 	mut caddy:=caddy.get_install(mut node)?
 
-	caddy.configure_webserver_default("/var/www","d.threefold.me")?
+	caddy.configure_webserver_default("/var/www","d.threefold.me i.threefold.me")?
 
 	c:=caddy.configuration_get()?
 	println(c)
@@ -29,6 +29,6 @@ fn reload() ? {
 
 
 fn main() {
-	// install() or { panic(err) }
-	reload() or { panic(err) }
+	install() or { panic(err) }
+	// reload() or { panic(err) }
 }
