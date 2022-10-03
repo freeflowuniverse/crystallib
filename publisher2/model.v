@@ -62,6 +62,10 @@ pub fn (mut p Publisher) acl_add(name_ string) &ACL{
 	return &u
 }
 
+pub fn (mut p Publisher) site_acl_add(site_ string, acl &ACL) {
+	p.sites[site_].authentication.acl << acl
+}
+
 pub fn (mut p Publisher) auth_add(email_req bool, email_auth bool) &Authentication {
 	mut auth:=Authentication{
 		email_required: email_req
@@ -93,7 +97,7 @@ pub struct AccessLog {
 pub fn (p Publisher) get_sites_accessible(username string) map[string]Site {
 	mut accesible_sites := map[string]Site{}
 	for name, site in p.sites {
-		user_access := p.get_access(username, name)
+		user_access := p.get_access(p.users[username], name)
 		if user_access.right == Right.read || user_access.right == Right.write {
 			accesible_sites[name] = site
 		}	
@@ -118,7 +122,6 @@ pub struct Access {
 pub fn (user User) get_access(site Site) Access {
 	mut right := Right.block
 	auth := site.authentication
-	println(site)
 
 	if auth.acl.len > 0 {
 		// sets the users right according to the acl.
@@ -168,12 +171,10 @@ pub fn (user User) get_access(site Site) Access {
 
 //? get highest or lowest right?
 // returns the right a user has to a given authentication struct
-pub fn (p Publisher) get_access(username string, sitename string) Access {
-	user := p.users[username]
+pub fn (p Publisher) get_access(user User, sitename string) Access {
 	site := p.sites[sitename]
 	mut right := Right.block
 	auth := site.authentication
-	println(site)
 
 	if auth.acl.len > 0 {
 		// sets the users right according to the acl.
@@ -217,20 +218,25 @@ pub fn (p Publisher) get_access(username string, sitename string) Access {
 	}
 	return Access {
 		right: right
-		status: AccessStatus.ok
+		status: .ok
 	}
 }
 
-pub fn (mut p Publisher) ace_add(right Right, acl_name string) &ACE {
-	ace := ACE{right: right}
-	p.acls[acl_name].entries << ace
+// pub fn (mut p Publisher) ace_add(right Right, acl_name string) &ACE {
+// 	ace := ACE{right: right}
+// 	p.acls[acl_name].entries << ace
+// 	return &ace
+// }
+
+pub fn (mut p Publisher) ace_add(acl string, right Right) &ACE {
+	mut ace := ACE{right: right}
+	p.acls[acl].entries << ace
 	return &ace
 }
 
-pub fn (mut acl ACL) ace_add(right Right) &ACE {
-	mut ace := ACE{right: right}
-	acl.entries << ace
-	return &ace
+pub fn (mut p Publisher) ace_add_user(mut ace &ACE, user &User) &ACE {
+	ace.users << user
+	return ace
 }
 
 pub fn (site Site) auth_add(email_required bool, email_authenticated bool, acl &ACL) &Authentication {
@@ -248,7 +254,6 @@ pub fn (p Publisher) get_right(username string, sitename string) Right {
 	mut right := Right.block
 	auth := p.sites[sitename].authentication
 	user := p.users[username]
-	println("debugz: \n$p $user\n $auth")
 	if auth.acl.len > 0 {
 		// loops acl to find user or user_group entry
 		for list in auth.acl {
