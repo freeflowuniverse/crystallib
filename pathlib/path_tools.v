@@ -439,9 +439,10 @@ pub fn (mut path Path) link(dest string, delete_exists bool) ?Path {
 		os.mkdir_all(dest_dir)?
 	}
 	// calculate relative link between source and dest
-	println("debugz: $path \n$dest")
+	origin_path := path_relative(dest, path.path)
 	dest_path := path_relative(path.path, dest)
-	os.symlink(path.path, dest_path)?
+	println("origin: $origin_path")
+	os.symlink(origin_path, dest) or { return error("hereing: $err")}
 	match path.cat {
 		.dir, .linkdir {
 			return Path{
