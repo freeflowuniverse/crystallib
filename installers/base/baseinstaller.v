@@ -21,12 +21,10 @@ pub fn (mut i Installer) install() ? {
 			}
 		} else if node.platform == builder.PlatformType.ubuntu {
 			println(' - Ubuntu prepare')
-
-			for x in ['git', 'rsync', 'curl', 'mc'] {
-				if !node.cmd_exists(x) {
-					node.package_install(name: x)?
-				}
-			}
+			node.exec_silent('
+			apt update
+			apt install iputils-ping net-tools git rsync curl mc -y
+			')?
 		} else {
 			panic('only ubuntu and osx supported for now')
 		}
