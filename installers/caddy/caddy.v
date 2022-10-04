@@ -1,4 +1,5 @@
 module caddy
+
 import installers.base
 // import freeflowuniverse.crystallib.pathlib
 
@@ -12,9 +13,8 @@ pub fn (mut i Installer) install() ? {
 		return
 	}
 
-
- 	if node.platform != .ubuntu {
-		return error("only support ubuntu for now")
+	if node.platform != .ubuntu {
+		return error('only support ubuntu for now')
 	}
 
 	base.get_install(mut node)?
@@ -24,7 +24,6 @@ pub fn (mut i Installer) install() ? {
 		//? should we set caddy as done here ?
 		return
 	}
-
 
 	node.exec("
 		sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https gpg sudo
@@ -41,12 +40,12 @@ pub fn (mut i Installer) install() ? {
 }
 
 // configure caddy as default webserver & start
-pub fn (mut i Installer) configure_webserver_default(path string,domain string) ? {
+pub fn (mut i Installer) configure_webserver_default(path string, domain string) ? {
 	mut node := i.node
 	mut config_file := $tmpl('templates/caddyfile_default')
-	node.exec("mkdir -p $path")?
+	node.exec('mkdir -p $path')?
 
-	default_html :='
+	default_html := '
 	<!DOCTYPE html>
 	<html>
 		<head>
@@ -57,38 +56,33 @@ pub fn (mut i Installer) configure_webserver_default(path string,domain string) 
 		</body>
 	</html>
 	'
-	node.file_write("$path/index.html",default_html)?
+	node.file_write('$path/index.html', default_html)?
 
 	i.configuration_set(config_file)?
-
-
 }
-
 
 pub fn (mut i Installer) configuration_get() ?string {
 	mut node := i.node
-	c:=node.file_read("/etc/caddy/Caddyfile")?
+	c := node.file_read('/etc/caddy/Caddyfile')?
 	return c
 }
 
-
 pub fn (mut i Installer) configuration_set(config_file string) ? {
 	mut node := i.node
-	node.file_write("/etc/caddy/Caddyfile",config_file)?
+	node.file_write('/etc/caddy/Caddyfile', config_file)?
 	i.restart()?
 }
-
 
 // start caddy
 pub fn (mut i Installer) start() ? {
 	mut node := i.node
-	node.exec_silent("caddy start --config /etc/caddy/Caddyfile")?
+	node.exec_silent('caddy start --config /etc/caddy/Caddyfile')?
 }
 
 pub fn (mut i Installer) stop() ? {
 	mut node := i.node
-	node.exec_silent("caddy stop") or {}
-	//TODO: should do some better test to check if caddy is really stopped
+	node.exec_silent('caddy stop') or {}
+	// TODO: should do some better test to check if caddy is really stopped
 }
 
 pub fn (mut i Installer) restart() ? {

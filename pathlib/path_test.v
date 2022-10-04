@@ -92,14 +92,28 @@ fn test_file_find() {
 fn test_real_path() {
 	println('************ TEST_real_path ************')
 	mut source := pathlib.get('$testpath/test_parent/readme.md')
-	mut dest_ := '$testpath/test_real_path.md'
-	mut link := source.link(dest_, false) or {panic("error: $err")}
+	mut dest_ := '$testpath/link_remove_rp.md'
+	mut link := source.link(dest_, true) or { panic('error: $err') }
 	mut dest := pathlib.get(dest_)
 
 	link_real := dest.realpath()
 	assert link_real == '$testpath/test_parent/readme.md'
+	dest.delete()?
 	println('Real path function working correctly')
 }
+
+fn test_real_path2() {
+	println('************ TEST_real_path ************')
+	mut source := pathlib.get('$testpath/newfile1')
+	mut dest_ := '$testpath/test_parent/link_remove_rp2.md'
+	mut link := source.link(dest_, true) or { panic('error: $err') }
+	mut dest := pathlib.get(dest_)
+	link_real := dest.realpath()
+	assert link_real == '$testpath/newfile1'
+	dest.delete()?
+	println('Real path2 function working correctly')
+}
+
 
 fn test_link_path_relative() {
 	println('************ TEST_link_path_relative ************')
@@ -112,7 +126,7 @@ fn test_link_path_relative() {
 	a4 := pathlib.path_relative('/a/b/c/d.txt', '/a/b/d/e.txt')
 	assert a4 == '../d/e.txt'
 	a5 := pathlib.path_relative('/a/b/c/d.txt', '/a/b/c/d/e/e.txt')
-	assert a5=="d/e/e.txt"
+	assert a5 == 'd/e/e.txt'
 	a6 := pathlib.path_relative('/a/b/c/', '/a/b/c/e.txt')
 	assert a6 == 'e.txt'
 	a7 := pathlib.path_relative('/a/b/c', '/a/b/c/e.txt')
@@ -130,8 +144,10 @@ fn test_link() {
 	assert p.exists()
 	mut dest1 := pathlib.get('$testpath/link_remove')
 	assert !dest1.exists()
-	mut p2 := p.link(dest1.path, true) or { panic('no link: $err') }
-	assert p2.path == '../link_remove'
+	mut p2 := p.link('$testpath/link_remove', true) or { panic('no link: $err') }
+	// assert p2.path == '../link_remove'
+
+	panic("s")
 
 	// test delete exists with existing dest
 	mut p3 := pathlib.get('$testpath/newfile1')
@@ -159,7 +175,7 @@ fn test_readlink() {
 	assert path == Path{}
 
 	// test with filelink path
-	mut link := source.link(dest_, false) or {panic("error: $err")}
+	mut link := source.link(dest_, true) or { panic('error: $err') }
 	mut dest := pathlib.get(dest_)
 
 	assert dest.cat == .linkfile
@@ -178,15 +194,17 @@ fn test_unlink() {
 	mut source := pathlib.get('$testpath/test_parent/readme.md')
 	mut dest_ := '$testpath/test_unlink.md'
 
-	mut link := source.link(dest_, false) or {panic("error: $err")}
+	mut link := source.link(dest_, true) or { panic('error: $err') }
 	mut dest := pathlib.get(dest_)
 
 	// TODO: check if content is from source
 
 	assert dest.cat == .linkfile
-	dest.unlink() or { panic("Failed to unlink: $err") }
+	dest.unlink() or { panic('Failed to unlink: $err') }
 	assert dest.exists()
 	assert dest.cat == .file
+
+	dest.delete()?
 
 	// TODO: maybe more edge cases?
 	println('Unlink function working correctly')
@@ -194,16 +212,16 @@ fn test_unlink() {
 
 fn test_relink() {
 	println('************ TEST_relink ************')
-	
+
 	mut source := pathlib.get('$testpath/test_parent/readme.md')
 	mut dest_ := '$testpath/test_relink.md'
-	mut link := source.link(dest_, false) or {panic("error: $err")}
+	mut link := source.link(dest_, true) or { panic('error: $err') }
 	mut dest := pathlib.get(dest_)
 
 	// linked correctly so doesn't change
 	assert source.cat == .file
 	assert dest.cat == .linkfile
-	dest.relink() or { panic("Failed to relink: $err") }
+	dest.relink() or { panic('Failed to relink: $err') }
 	source_new := pathlib.get(source.path)
 	assert source_new.cat == .file
 	assert dest.cat == .linkfile
@@ -214,14 +232,16 @@ fn test_relink() {
 	mut dest2_ := source.path
 
 	// linked incorrectly so should relink
-	mut link2 := source2.link(dest2_, true) or {panic("error: $err")}
+	mut link2 := source2.link(dest2_, true) or { panic('error: $err') }
 	mut dest2 := pathlib.get(dest2_)
 	assert source2.cat == .file
 	assert dest2.cat == .linkfile
-	dest2.relink() or { panic("Failed to relink: $err") }
+	dest2.relink() or { panic('Failed to relink: $err') }
 	source2_new := pathlib.get(source2.path)
 	assert source2_new.cat == .linkfile
 	assert dest2.cat == .file
+
+	dest.delete()?
 }
 
 fn test_list() {

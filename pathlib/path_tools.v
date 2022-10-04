@@ -388,9 +388,9 @@ pub fn path_relative(source_ string, linkpath_ string) string {
 		dest = linkpath_short
 	}
 
-	println('source:$source linkpath:$linkpath')
-	println('source_short:$source_short linkpath_short:$linkpath_short')
-	println('path_relative $dest')
+	// println('source:$source linkpath:$linkpath')
+	// println('source_short:$source_short linkpath_short:$linkpath_short')
+	// println('path_relative $dest')
 
 	return dest
 }
@@ -439,29 +439,12 @@ pub fn (mut path Path) link(dest string, delete_exists bool) ?Path {
 		os.mkdir_all(dest_dir)?
 	}
 	// calculate relative link between source and dest
-	origin_path := path_relative(dest, path.path)
-	dest_path := path_relative(path.path, dest)
-	println("origin: $origin_path")
-	os.symlink(origin_path, dest) or { return error("hereing: $err")}
-	match path.cat {
-		.dir, .linkdir {
-			return Path{
-				path: dest_path
-				cat: Category.linkdir
-				exist: .yes
-			}
-		}
-		.file, .linkfile {
-			return Path{
-				path: dest_path
-				cat: Category.linkfile
-				exist: .yes
-			}
-		}
-		.unknown {
-			return error('Path cannot be unknown type')
-		}
-	}
+	// origin_path := path_relative(dest, path.path)
+	source_path_rel := path_relative(dest, path.path)
+	msg:='link to origin (source): $path.path  \nthe link:$dest \nlink rel: $source_path_rel'
+	$if debug{println(msg)}
+	os.symlink(source_path_rel,dest) or { return error('cant symlink $msg\n$err') }
+	return get(dest)
 }
 
 // will make sure that the link goes from file with largest path to smalles
