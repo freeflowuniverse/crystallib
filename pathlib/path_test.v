@@ -139,30 +139,35 @@ fn test_link_path_relative() {
 
 fn test_link() {
 	println('************ TEST_link ************')
-	// test delete exists with nonexistent dest
-	mut p := pathlib.get('$testpath/test_parent/readme.md')
-	assert p.exists()
-	mut dest1 := pathlib.get('$testpath/link_remove')
-	assert !dest1.exists()
-	mut p2 := p.link('$testpath/link_remove', true) or { panic('no link: $err') }
-	// assert p2.path == '../link_remove'
+	mut source1 := pathlib.get('$testpath/test_parent/readme.md')
+	mut source2 := pathlib.get('$testpath/test_parent/readme2.md')
+	assert source1.exists()
+	assert source2.exists()
 
-	panic("s")
+	// test delete exists with nonexistent dest
+	mut dest := pathlib.get('$testpath/test_link.md')
+	assert !dest.exists()
+	mut link1 := source1.link(dest.path, true) or { panic('no link: $err') }
+	assert link1.path == '$testpath/test_link.md'
+	dest = pathlib.get('$testpath/test_link.md')
+	assert dest.exists()
 
 	// test delete exists with existing dest
-	mut p3 := pathlib.get('$testpath/newfile1')
-	assert p3.exists()
-	mut p4 := p3.link('$testpath/link_remove', true) or { panic('no link $err') }
-	assert p4.path == './link_remove'
-	// assert !p3.exists()
+	assert dest.realpath() == source1.path
+	mut link2 := source2.link(dest.path, true) or { panic('no link $err') }
+	assert link2.path == '$testpath/test_link.md'
+	assert link2.realpath() != source1.path
+	assert link2.realpath() == source2.path
 
-	// test dont delete_exists
-	mut p5 := pathlib.get('$testpath/dont_delete')
-	assert p5.exists()
-	mut p6 := p5.link('$testpath/symlink_test3', false) or { panic('no link $err') }
-	assert p6.path == './symlink_test3'
-	assert p5.exists()
+	// test delete_exists false with existing dest
+	dest = pathlib.get('$testpath/test_link.md')
+	assert dest.realpath() == source2.path
+	mut link3 := source1.link(dest.path, false) or { Path{} }
+	assert link3.path == '' // link should error so check empty path obj
+	dest = pathlib.get('$testpath/test_link.md')
+	assert dest.realpath() == source2.path // dest reamins unchanged
 
+	dest.delete()?
 	println('Link function working correctly')
 }
 
