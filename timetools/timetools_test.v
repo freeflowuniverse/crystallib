@@ -3,8 +3,8 @@ import time
 
 fn check_input(input_string string, seconds int) {
 	nnow := time.now().unix_time()
-	e := timetools.expiration_new(input_string) or { panic('cannot get expiration for $input_string') }
-	assert e.expiration == (nnow + seconds), 'expiration was incorrect for $input_string'
+	exp := timetools.get_expiration_from_timestring(input_string) or { panic('cannot get expiration for $input_string') }
+	assert exp.expiration == (nnow + seconds), 'expiration was incorrect for $input_string'
 }
 
 // check every period
@@ -84,6 +84,16 @@ fn test_input_variations () {
 	}
 }
 
-// check that standard formats can be inputted
 
+// check that standard formats can be inputted
+fn test_absolute_time() {
+	input_strings := {
+	'2022-12-5 20:14:35': 1670260475
+	'2022-12-5': 1670187600
+	}
+	for key, value in input_strings {
+		exp := timetools.get_expiration_from_timestring(key) or { panic('cannot get expiration for $key') }
+		assert exp.expiration == value, 'expiration was incorrect for $key'
+	}
+}
 
