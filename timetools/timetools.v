@@ -14,7 +14,7 @@ fn (mut exp Expiration) epoch() i64 {
 }
 
 // Get Time object from Expiration object
-fn (mut exp Expiration) time() time.Time {
+pub fn (mut exp Expiration) to_time() time.Time {
 	return time.unix(exp.expiration)
 }
 
