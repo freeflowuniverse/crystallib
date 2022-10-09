@@ -3,10 +3,24 @@ import os
 
 const testpath = os.dir(@FILE) + '/examples/test_path'
 
+fn testsuite_begin() {
+	os.rmdir_all(testpath) or {}
+	assert !os.is_dir(testpath)
+	os.mkdir_all(testpath)?
+	os.mkdir_all('$testpath/test_parent') or {}
+	os.create('$testpath/testfile1') or {}
+	os.create('$testpath/test_parent/testfile2') or {}
+	os.create('$testpath/test_parent/testfile3') or {}
+}
+
+fn testsuite_end() {
+	os.rmdir_all(testpath) or {}
+}
+
 fn test_get() {
 	println('************ TEST_Get ************')
 	println(testpath)
-	fp := pathlib.get('$testpath/newfile1')
+	fp := pathlib.get('$testpath/testfile1')
 	assert fp.cat == pathlib.Category.file
 	println('File Result: $fp')
 	dp := pathlib.get('$testpath')
@@ -16,7 +30,7 @@ fn test_get() {
 
 fn test_exists() {
 	println('************ TEST_exists ************')
-	mut p1 := pathlib.get_file('$testpath/newfile1', false) or { panic('$err') }
+	mut p1 := pathlib.get_file('$testpath/testfile1', false) or { panic('$err') }
 	assert p1.exists()
 	println('File found')
 	mut p2 := pathlib.get_file('$testpath/NotARealFile', false) or { panic('$err') }
@@ -32,7 +46,7 @@ fn test_exists() {
 fn test_parent() {
 	println('************ TEST_test_parent ************')
 	mut test_path_dir := pathlib.get('$testpath')
-	mut p := pathlib.get('$testpath/newfile1')
+	mut p := pathlib.get('$testpath/testfile1')
 	parent_dir := p.parent() or { panic(err) }
 	assert parent_dir == test_path_dir
 	println('Parent Function working correctly')
@@ -40,14 +54,12 @@ fn test_parent() {
 
 fn test_parent_find() {
 	println('************ TEST_test_parent_find ************')
-	// - newfile1 is located in test_path
+	// - testfile1 is located in test_path
 	// - will start search from test_parent that is inside test_path
 	// - Result must be test_path
 	mut test_path_dir := pathlib.get('$testpath')
 	mut p := pathlib.get('$testpath/test_parent')
-	mut p2 := pathlib.get('$testpath/test_parent/newfile1')
-	p2.delete() or { panic(err) }
-	parent_dir := p.parent_find('newfile1') or { panic(err) }
+	parent_dir := p.parent_find('testfile1') or { panic(err) }
 	assert parent_dir.path == test_path_dir.path
 	println('Find Parent Function working correctly')
 }
@@ -70,20 +82,20 @@ fn test_dir_find() {
 	panic('should not get here')
 }
 
-fn test_file_exists() {
-	println('************ TEST_file_exists ************')
+fn testfile1_exists() {
+	println('************ testfile1_exists ************')
 	mut test_path_dir := pathlib.get('$testpath')
-	assert test_path_dir.file_exists('newfile1')
-	println('newfile1 found in $test_path_dir.path')
+	assert test_path_dir.file_exists('testfile1')
+	println('testfile1 found in $test_path_dir.path')
 
 	assert !test_path_dir.file_exists('newfile2')
 	println('newfile2 not found in $test_path_dir.path')
 }
 
-fn test_file_find() {
-	println('************ TEST_file_find ************')
+fn testfile1_find() {
+	println('************ testfile1_find ************')
 	mut test_path_dir := pathlib.get('$testpath')
-	mut file := test_path_dir.file_find('newfile1') or { panic(err) }
+	mut file := test_path_dir.file_find('testfile1') or { panic(err) }
 	println('file $file found')
 	test_path_dir.file_find('newfile2') or { return }
 	panic('should not get here')
@@ -91,25 +103,25 @@ fn test_file_find() {
 
 fn test_real_path() {
 	println('************ TEST_real_path ************')
-	mut source := pathlib.get('$testpath/test_parent/readme.md')
+	mut source := pathlib.get('$testpath/test_parent/testfile2')
 	mut dest_ := '$testpath/link_remove_rp.md'
 	mut link := source.link(dest_, true) or { panic('error: $err') }
 	mut dest := pathlib.get(dest_)
 
 	link_real := dest.realpath()
-	assert link_real == '$testpath/test_parent/readme.md'
+	assert link_real == '$testpath/test_parent/testfile2'
 	dest.delete()?
 	println('Real path function working correctly')
 }
 
 fn test_real_path2() {
 	println('************ TEST_real_path ************')
-	mut source := pathlib.get('$testpath/newfile1')
+	mut source := pathlib.get('$testpath/testfile1')
 	mut dest_ := '$testpath/test_parent/link_remove_rp2.md'
 	mut link := source.link(dest_, true) or { panic('error: $err') }
 	mut dest := pathlib.get(dest_)
 	link_real := dest.realpath()
-	assert link_real == '$testpath/newfile1'
+	assert link_real == '$testpath/testfile1'
 	dest.delete()?
 	println('Real path2 function working correctly')
 }
@@ -139,32 +151,32 @@ fn test_link_path_relative() {
 
 fn test_link() {
 	println('************ TEST_link ************')
-	mut source1 := pathlib.get('$testpath/test_parent/readme.md')
-	mut source2 := pathlib.get('$testpath/test_parent/readme2.md')
+	mut source1 := pathlib.get('$testpath/test_parent/testfile2')
+	mut source2 := pathlib.get('$testpath/test_parent/testfile3')
 	assert source1.exists()
 	assert source2.exists()
 
 	// test delete exists with nonexistent dest
-	mut dest := pathlib.get('$testpath/test_link.md')
+	mut dest := pathlib.get('$testpath/test_link')
 	assert !dest.exists()
 	mut link1 := source1.link(dest.path, true) or { panic('no link: $err') }
-	assert link1.path == '$testpath/test_link.md'
-	dest = pathlib.get('$testpath/test_link.md')
+	assert link1.path == '$testpath/test_link'
+	dest = pathlib.get('$testpath/test_link')
 	assert dest.exists()
 
 	// test delete exists with existing dest
 	assert dest.realpath() == source1.path
 	mut link2 := source2.link(dest.path, true) or { panic('no link $err') }
-	assert link2.path == '$testpath/test_link.md'
+	assert link2.path == '$testpath/test_link'
 	assert link2.realpath() != source1.path
 	assert link2.realpath() == source2.path
 
 	// test delete_exists false with existing dest
-	dest = pathlib.get('$testpath/test_link.md')
+	dest = pathlib.get('$testpath/test_link')
 	assert dest.realpath() == source2.path
 	mut link3 := source1.link(dest.path, false) or { Path{} }
 	assert link3.path == '' // link should error so check empty path obj
-	dest = pathlib.get('$testpath/test_link.md')
+	dest = pathlib.get('$testpath/test_link')
 	assert dest.realpath() == source2.path // dest reamins unchanged
 
 	dest.delete()?
@@ -174,7 +186,7 @@ fn test_link() {
 fn test_readlink() {
 	println('************ TEST_readlink ************')
 	// test with none link path
-	mut source := pathlib.get('$testpath/test_parent/readme.md')
+	mut source := pathlib.get('$testpath/test_parent/testfile2')
 	mut dest_ := '$testpath/test_readlink.md'
 	path := source.readlink() or { Path{} }
 	assert path == Path{}
@@ -187,8 +199,9 @@ fn test_readlink() {
 	assert dest.path == dest_
 
 	link_source := dest.readlink() or { Path{} }
-	assert link_source.path == 'test_parent/readme.md'
+	assert link_source.path == 'test_parent/testfile2'
 
+	dest.delete()?
 	println('Readlink function working correctly')
 }
 
@@ -196,7 +209,7 @@ fn test_unlink() {
 	println('************ TEST_unlink ************')
 	// test with filelink path
 
-	mut source := pathlib.get('$testpath/test_parent/readme.md')
+	mut source := pathlib.get('$testpath/test_parent/testfile2')
 	mut dest_ := '$testpath/test_unlink.md'
 
 	mut link := source.link(dest_, true) or { panic('error: $err') }
@@ -218,7 +231,7 @@ fn test_unlink() {
 fn test_relink() {
 	println('************ TEST_relink ************')
 
-	mut source := pathlib.get('$testpath/test_parent/readme.md')
+	mut source := pathlib.get('$testpath/test_parent/testfile2')
 	mut dest_ := '$testpath/test_relink.md'
 	mut link := source.link(dest_, true) or { panic('error: $err') }
 	mut dest := pathlib.get(dest_)
@@ -279,7 +292,7 @@ fn test_list_links() {
 
 fn test_write_and_read() {
 	println('************ TEST_write_and_read ************')
-	mut fp := pathlib.get('$testpath/newfile1')
+	mut fp := pathlib.get('$testpath/testfile1')
 	fp.write('Test Write Function') or { panic(err) }
 	fcontent := fp.read() or { panic(err) }
 	assert fcontent == 'Test Write Function'
@@ -290,11 +303,12 @@ fn test_write_and_read() {
 
 fn test_copy() {
 	println('************ TEST_copy ************')
-	//- Copy /test_path/newfile1 to /test_path/test_parent
+	//- Copy /test_path/testfile1 to /test_path/test_parent
 	mut dest_dir := pathlib.get('$testpath/test_parent')
-	mut src_f := pathlib.get('$testpath/newfile1')
-	dest_file := src_f.copy(mut dest_dir) or { panic(err) }
-	assert dest_file.path == '$testpath/test_parent/newfile1'
+	mut src_f := pathlib.get('$testpath/testfile1')
+	mut dest_file := src_f.copy(mut dest_dir) or { panic(err) }
+	assert dest_file.path == '$testpath/test_parent/testfile1'
+	dest_file.delete()?
 	println('Copy function works correctly')
 }
 
