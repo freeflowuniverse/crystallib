@@ -18,6 +18,12 @@ pub fn (mut exp Expiration) to_time() time.Time {
 	return time.unix(exp.expiration)
 }
 
+pub fn time_from_string (timestr string) ?time.Time {
+	mut exp_ := get_expiration_from_timestring(timestr)?
+	time_object := exp_.to_time()
+	return time_object
+}
+
 // Get Expiration object from time string input
 // input can be either relative or absolute
 // ## Relative time
@@ -45,11 +51,11 @@ pub fn get_expiration_from_timestring(exp_ string) ?Expiration {	// TODO: functi
 	} 
 
 	if relative_bool == true{
-		time_unix := get_unix_from_relative(exp_)?
+		time_unix := get_unix_from_relative(exp_) or {return error("Failed to get unix from relative time: $err")}
 		return Expiration{expiration: time_unix}
 	}
 	else{
-		time_unix := get_unix_from_absolute(exp_)?
+		time_unix := get_unix_from_absolute(exp_) or {return error("Failed to get unix from absolute time: $err")}
 		return Expiration{expiration: time_unix}
 	}
 }
@@ -112,11 +118,10 @@ pub fn get_unix_from_absolute(timestr string) ?i64{
 	components := timestr.split_any(' :-')
 	mut full_string := timestr
 	if components.len == 3 {
-		full_string = timestr + " 00:00:00"
+		full_string = timestr.replace(':', '-') + " 00:00:00"
 	}
 
-	time_struct := time.parse(full_string)?
-		
+	time_struct := time.parse(full_string) or {return error("could not parse time string: $err")}
 	return time_struct.unix_time() - 10_800
 
 }
