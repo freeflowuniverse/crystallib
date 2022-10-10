@@ -54,11 +54,11 @@ pub fn (mut gitstructure GitStructure) repos_print(args GSArgs) {
 	mut r := [][]string{}
 	for mut g in gitstructure.repos_get(args) {
 		changed := g.changes() or { panic('issue in repo changes. $err') }
+		pr:=g.path_relative()
 		if changed {
-			r << ['- $g.path_relative()', '$g.addr.branch', 'CHANGED']
+			r << ['- $pr', '$g.addr.branch', 'CHANGED']
 		} else {
-			// println( " - ${g.path_relative()} - $g.addr.branch")
-			r << ['- $g.path_relative()', '$g.addr.branch', '']
+			r << ['- $pr', '$g.addr.branch', '']
 		}
 	}
 	texttools.print_array2(r, '  ', true)

@@ -80,7 +80,7 @@ pub fn (mut gs GitStructure) link(args GitLinkArgs) ? {
 					return error('cannot link to a dir:$dest_path, it exists and is not a link to a dir.')
 				}
 			}
-			source_path_object.link(mut dest_path_object)?
+			source_path_object.link(dest_path_object.path,true)?
 		}
 	}
 }

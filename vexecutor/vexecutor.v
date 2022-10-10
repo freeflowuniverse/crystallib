@@ -20,7 +20,8 @@ fn scan (mut path pathlib.Path)?{
 }
 
 
-pub fn (mut action VAction) do()?{
+//combine all found actions into 1 big compile step
+pub fn (mut action VAction) combine()?{
 
 }
 

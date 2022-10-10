@@ -43,7 +43,7 @@ pub fn image_downsize(mut path pathlib.Path, backupdir string) ?Image {
 			// means downsize worked, now we need to re-link
 			image.path.delete()?
 			image.path.path = image.path.path_dir() + '/' + image_linked.path.name()
-			image.path = image_linked.path.link(mut image.path)?
+			image.path = image_linked.path.link(image.path.path,true)?
 		}
 	} else {
 		image.downsize(backupdir)?

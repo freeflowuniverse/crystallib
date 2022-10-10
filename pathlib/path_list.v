@@ -19,7 +19,7 @@ mut:
 // }
 
 // //return relative path of path in relation to root in PathList
-// pub fn (mut pathlist PathList) path_relative_get(path Path)?string{
+// pub fn (mut pathlist PathList) path_relative()?_get(path Path)?string{
 // }
 
 // pub fn (mut pathlist PathList) path_abs_get(path Path)?string{

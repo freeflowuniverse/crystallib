@@ -34,7 +34,7 @@ fn (mut file File) init() {
 	} else {
 		file.name = file.path.name_fix_no_underscore()
 	}
-	file.pathrel = file.path.path_relative(file.site.path.path).trim('/')
+	file.pathrel = file.path.path_relative(file.site.path.path).trim('/')?
 }
 
 pub fn (mut file File) delete() ? {
@@ -48,7 +48,7 @@ fn (mut file File) mv(dest string) ? {
 		return error('could not rename $file.path.path to $desto.path .\n$err\n$file')
 	}
 	// need to get relative path in, in relation to site
-	file.pathrel = desto.path_relative(file.site.path.path)
+	file.pathrel = desto.path_relative(file.site.path.path)?
 	file.path = desto
 }
 

@@ -228,7 +228,8 @@ pub fn (mut site Site) page_new(mut p Path) ?&Page {
 	mut parser := markdowndocs.get(p.path) or { panic('cannot parse,$err') }
 	page.doc = parser.doc
 	page.name = p.name_fix_no_underscore_no_ext()
-	page.pathrel = p.path_relative(site.path.path).trim('/')
+	page.pathrel = p.path_relative(site.path.path)?
+	page.pathrel = page.pathrel.trim('/')
 	site.pages[page.name] = &page
 	return &page
 }

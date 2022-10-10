@@ -52,14 +52,21 @@ pub fn (mut path Path) rename(name string) ? {
 
 // get relative path in relation to destpath
 // will not resolve symlinks
-pub fn (mut path Path) path_relative(destpath string) string {
+pub fn (mut path Path) path_relative(destpath string) ?string {
+	println(" - path relative: '$path.path' '$destpath'")
 	return path_relative(path.path, destpath)
 }
 
 // recursively finds the least common ancestor of array of paths
 // will always return the absolute path (relative gets changed to absolute)
 pub fn find_common_ancestor(paths_ []string) string {
-	paths := paths_.map(os.abs_path(os.real_path(it).trim_right('/'))) // get the real path (symlinks... resolved)
+	for p in paths_{
+		if p.trim_space()==""{
+			panic("cannot find commone ancestors if any of items in paths is empty.\n$paths_")
+		}
+	}
+	paths := paths_.map(os.abs_path(os.real_path(it))) // get the real path (symlinks... resolved)
+	println(paths)
 	parts := paths[0].split('/')
 	mut totest_prev := '/'
 	for i in 1 .. parts.len {
@@ -350,11 +357,20 @@ pub fn (mut path Path) copy(mut dest Path) ?Path {
 
 // recalc path between target & source
 // does not touch the filesystem, is all done on string level
-pub fn path_relative(source_ string, linkpath_ string) string {
+// we only support if source_ is an existing dir, links will not be supported
+pub fn path_relative(source_ string, linkpath_ string) ?string {
 	mut source := os.abs_path(source_)
 	mut linkpath := os.abs_path(linkpath_)
 	// now both start with /
+	mut p:=get(source_)
+	if p.cat != .linkdir || ! p.exists(){
+		return error("Cannot do path_relative()? if source is not a dir and exists. Now:$source_")
+	}
+
+	println(" + source:$source compare:$linkpath")
+	
 	common := find_common_ancestor([source, linkpath])
+	println(" + common:$common")
 
 	// if source is common, returns source
 	if source_.len <= common.len + 1 {
@@ -366,18 +382,29 @@ pub fn path_relative(source_ string, linkpath_ string) string {
 		}
 	}
 
-	mut source_short := source[(common.len + 1)..]
-	if source_.count('/') == 1 {
-		source_short = source[(common.len)..]
-	}
+	mut source_short := source[(common.len )..]
+	// if source_.count('/') == 1 { //dont understand this
+	// 	source_short = source[(common.len)..]
+	// }
 
-	mut linkpath_short := linkpath[(common.len + 1)..]
-	if linkpath_.count('/') == 1 {
-		linkpath_short = linkpath[(common.len)..]
-	}
+	mut linkpath_short := linkpath[(common.len)..]
 
+	source_short=source_short.trim_string_left("/")
+	linkpath_short=linkpath_short.trim_string_left("/")
+
+	// mut linkpath_short := ""
+	// if ! (linkpath.len <= common.len + 1) {
+	// 	 linkpath_short= linkpath[(common.len)..]
+	// }
+	// if linkpath_.count('/') == 1 {
+	// 	linkpath_short = linkpath[(common.len)..]
+	// }
+
+	
 	source_count := source_short.count('/')
 	link_count := linkpath_short.count('/')
+	println (" + source_short:$source_short ($source_count)")
+	println (" + linkpath_short:$linkpath_short ($link_count)")
 	mut dest := ''
 	if source_count > 0 {
 		go_up := ['../'].repeat(source_count).join('')
@@ -390,7 +417,9 @@ pub fn path_relative(source_ string, linkpath_ string) string {
 
 	// println('source:$source linkpath:$linkpath')
 	// println('source_short:$source_short linkpath_short:$linkpath_short')
-	// println('path_relative $dest')
+	// println('path_relative()? $dest')
+
+	dest = dest.replace("//","/")
 
 	return dest
 }
@@ -440,7 +469,7 @@ pub fn (mut path Path) link(dest string, delete_exists bool) ?Path {
 	}
 	// calculate relative link between source and dest
 	// origin_path := path_relative(dest, path.path)
-	source_path_rel := path_relative(dest, path.path)
+	source_path_rel := path_relative(dest, path.path)?
 	msg:='link to origin (source): $path.path  \nthe link:$dest \nlink rel: $source_path_rel'
 	$if debug{println(msg)}
 	os.symlink(source_path_rel,dest) or { return error('cant symlink $msg\n$err') }
