@@ -53,7 +53,7 @@ pub fn (mut path Path) rename(name string) ? {
 // get relative path in relation to destpath
 // will not resolve symlinks
 pub fn (mut path Path) path_relative(destpath string) ?string {
-	println(" - path relative: '$path.path' '$destpath'")
+	// println(" - path relative: '$path.path' '$destpath'")
 	return path_relative(path.path, destpath)
 }
 
@@ -66,7 +66,7 @@ pub fn find_common_ancestor(paths_ []string) string {
 		}
 	}
 	paths := paths_.map(os.abs_path(os.real_path(it))) // get the real path (symlinks... resolved)
-	println(paths)
+	// println(paths)
 	parts := paths[0].split('/')
 	mut totest_prev := '/'
 	for i in 1 .. parts.len {
@@ -318,10 +318,10 @@ pub fn path_relative(source_ string, linkpath_ string) ?string {
 		return error("Cannot do path_relative()? if source is not a dir and exists. Now:$source_")
 	}
 
-	println(" + source:$source compare:$linkpath")
+	// println(" + source:$source compare:$linkpath")
 	
 	common := find_common_ancestor([source, linkpath])
-	println(" + common:$common")
+	// println(" + common:$common")
 
 	// if source is common, returns source
 	if source.len <= common.len + 1 {
@@ -341,8 +341,8 @@ pub fn path_relative(source_ string, linkpath_ string) ?string {
 	
 	source_count := source_short.count('/')
 	link_count := linkpath_short.count('/')
-	println (" + source_short:$source_short ($source_count)")
-	println (" + linkpath_short:$linkpath_short ($link_count)")
+	// println (" + source_short:$source_short ($source_count)")
+	// println (" + linkpath_short:$linkpath_short ($link_count)")
 	mut dest := ''
 
 	if source_short == '' { // source folder is common ancestor

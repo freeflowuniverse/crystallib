@@ -10,7 +10,7 @@ fn (mut site Site) file_remember(mut p pathlib.Path) ? {
 	// $if debug {eprintln(" - file remember : $p.path")}
 	p.namefix()?
 	namelower := p.name_fix_no_underscore_no_ext()
-	if false && p.is_image() {
+	if p.is_image() {
 		if site.image_exists(namelower, false) {
 			mut filedouble := site.image_get(namelower, false)?
 			mut pathdouble := filedouble.path

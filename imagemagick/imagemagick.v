@@ -17,6 +17,7 @@ fn installed0() bool {
 const installed1 = installed0()
 
 pub fn installed() bool {
+	// println("imagemagick installed: $imagemagick.installed1")
 	return imagemagick.installed1
 }
 

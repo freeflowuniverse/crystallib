@@ -74,9 +74,9 @@ fn (mut page Page) fix_location(mut link Link) ?bool {
 		println(fileobj.path)
 		panic('bug: the file always needs to be a real one not a link')
 	}
-	println(fileobj)
+	// println(fileobj)
 	dest := '$dir_path_real' + fileobj.path.name()
-	println(dest)
+	// println(dest)
 	mut dest_obj := pathlib.get(dest)
 	mut file_path_real_obj := pathlib.get(file_path_real)
 	if dest_obj.exists() && file_path_real_obj.exists() {
@@ -84,9 +84,9 @@ fn (mut page Page) fix_location(mut link Link) ?bool {
 		dest_obj.delete()?
 	}
 	if !dest_obj.exists() {
-		println('1:$file_path_real_obj')
+		// println('1:$file_path_real_obj')
 		file_path_real_obj.link(dest_obj.path,true)?
-		println(2)
+		// println(2)
 	}
 	return true
 }
@@ -130,6 +130,7 @@ fn (mut page Page) fix_external_link(mut link Link) ? {
 }
 
 fn (mut page Page) fix() ? {
+	println(" --- fix links: $page.path.path")
 	page.fix_links()?
 }
 
@@ -144,7 +145,7 @@ fn (mut page Page) fix_links() ? {
 					page.fix_external_link(mut link)?
 				} else if link.cat == .image || link.cat == .file {
 					page.fix_location(mut link)?
-					// page.fix_link(mut link)?
+					page.fix_link(mut link)?
 				}
 			}
 		}
