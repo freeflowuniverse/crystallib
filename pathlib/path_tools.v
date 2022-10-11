@@ -231,66 +231,6 @@ pub fn (mut path Path) file_find(tofind string) ?Path {
 	return error('$tofind is not in $path.path')
 }
 
-pub struct ListArgs {
-	tofind    string // if we look for certain filter
-	recursive bool   // std off, means we recursive not over dirs by default
-}
-
-// list all files & dirs, follow symlinks
-// return as list of Paths
-// param tofind: part of name (relative to string)
-// param recursive: if recursive behaviour
-pub fn (mut path Path) list(args ListArgs) ?[]Path {
-	if path.cat !in [Category.dir, Category.linkdir] {
-		return error('Path must be directory or link to directory')
-	}
-	ls_result := os.ls(path.path) or { []string{} }
-	mut all_list := []Path{}
-	for item in ls_result {
-		p := os.join_path(path.path, item)
-		mut new_path := get(p)
-		// Check for dir and linkdir
-		if !new_path.exists() {
-			// to deal with broken link
-			continue
-		}
-		if new_path.is_dir() {
-			// If recusrive
-			if args.recursive {
-				mut rec_list := new_path.list(args)?
-				all_list << rec_list
-			}
-		}
-		// Check if tofound is a part of the path
-		if args.tofind != '' && !p.contains(args.tofind) {
-			continue
-		}
-		all_list << new_path
-	}
-	return all_list
-}
-
-// find dir underneith path,
-pub fn (mut path Path) dir_list(args ListArgs) ?[]Path {
-	list_all := path.list(args)?
-	mut list_dirs := list_all.filter(it.cat == Category.dir)
-	return list_dirs
-}
-
-// find file underneith path,
-pub fn (mut path Path) file_list(args ListArgs) ?[]Path {
-	list_all := path.list(args)?
-	mut list_files := list_all.filter(it.cat == Category.file)
-	return list_files
-}
-
-// find links (don't follow)
-pub fn (mut path Path) link_list(args ListArgs) ?[]Path {
-	list_all := path.list(args)?
-	mut list_links := list_all.filter(it.cat in [Category.linkdir, Category.linkfile])
-	return list_links
-}
-
 // write content to the file, check is file
 // if the path is a link to a file then will change the content of the file represented by the link
 pub fn (mut path Path) write(content string) ? {
@@ -362,8 +302,19 @@ pub fn path_relative(source_ string, linkpath_ string) ?string {
 	mut source := os.abs_path(source_)
 	mut linkpath := os.abs_path(linkpath_)
 	// now both start with /
+
 	mut p:=get(source_)
-	if p.cat != .linkdir || ! p.exists(){
+	
+	// converts file source to dir source
+	if source.all_after_last('/').contains('.') {
+		source = source.all_before_last('/')
+		p = p.parent() or {
+			return error("Parent of source $source_ doesn't exist")
+		}
+	}
+	p.check()
+
+	if p.cat != .dir || !p.exists() {
 		return error("Cannot do path_relative()? if source is not a dir and exists. Now:$source_")
 	}
 
@@ -373,8 +324,8 @@ pub fn path_relative(source_ string, linkpath_ string) ?string {
 	println(" + common:$common")
 
 	// if source is common, returns source
-	if source_.len <= common.len + 1 {
-		path := linkpath_.trim_string_left(source_)
+	if source.len <= common.len + 1 {
+		path := linkpath_.trim_string_left(source)
 		if path.starts_with('/') {
 			return path[1..]
 		} else {
@@ -383,44 +334,25 @@ pub fn path_relative(source_ string, linkpath_ string) ?string {
 	}
 
 	mut source_short := source[(common.len )..]
-	// if source_.count('/') == 1 { //dont understand this
-	// 	source_short = source[(common.len)..]
-	// }
-
 	mut linkpath_short := linkpath[(common.len)..]
 
 	source_short=source_short.trim_string_left("/")
 	linkpath_short=linkpath_short.trim_string_left("/")
-
-	// mut linkpath_short := ""
-	// if ! (linkpath.len <= common.len + 1) {
-	// 	 linkpath_short= linkpath[(common.len)..]
-	// }
-	// if linkpath_.count('/') == 1 {
-	// 	linkpath_short = linkpath[(common.len)..]
-	// }
-
 	
 	source_count := source_short.count('/')
 	link_count := linkpath_short.count('/')
 	println (" + source_short:$source_short ($source_count)")
 	println (" + linkpath_short:$linkpath_short ($link_count)")
 	mut dest := ''
-	if source_count > 0 {
-		go_up := ['../'].repeat(source_count).join('')
-		dest = '$go_up$linkpath_short'
-	} else if (link_count == 0) && (source_short != linkpath_short) {
-		dest = './' + linkpath_short
-	} else {
+
+	if source_short == '' { // source folder is common ancestor
 		dest = linkpath_short
+	} else {
+		go_up := ['../'].repeat(source_count + 1).join('')
+		dest = '$go_up$linkpath_short'
 	}
 
-	// println('source:$source linkpath:$linkpath')
-	// println('source_short:$source_short linkpath_short:$linkpath_short')
-	// println('path_relative()? $dest')
-
 	dest = dest.replace("//","/")
-
 	return dest
 }
 
@@ -444,102 +376,4 @@ pub fn path_relative(source_ string, linkpath_ string) ?string {
 // 	}
 // }
 
-// create symlink on dest (which is path wich is non existing, the to be created link)
-// return Path of the symlink
-// if delete_exists then it will remove the destination if it exists
-// the symlink is always done relative to each other
-pub fn (mut path Path) link(dest string, delete_exists bool) ?Path {
-	if !path.exists() {
-		return error('cannot link because source $path.path does not exist')
-	}
-	if !(path.cat == .file || path.cat == .dir) {
-		return error('cannot link because source $path.path can only be dir or file')
-	}
-	if os.exists(dest) {
-		if delete_exists {
-			os.rm(dest)?
-		} else {
-			return error('cannot link $path.path to $dest, because dest exists.')
-		}
-	}
-	// create dir if it would not exist yet
-	dest_dir := os.dir(path.path)
-	if !os.exists(dest_dir) {
-		os.mkdir_all(dest_dir)?
-	}
-	// calculate relative link between source and dest
-	// origin_path := path_relative(dest, path.path)
-	source_path_rel := path_relative(dest, path.path)?
-	msg:='link to origin (source): $path.path  \nthe link:$dest \nlink rel: $source_path_rel'
-	$if debug{println(msg)}
-	os.symlink(source_path_rel,dest) or { return error('cant symlink $msg\n$err') }
-	return get(dest)
-}
 
-// will make sure that the link goes from file with largest path to smalles
-// good to make sure we have links always done in same way
-pub fn (mut path Path) relink() ? {
-	if !path.is_link() {
-		return
-	}
-
-	link_abs_path := path.absolute() // symlink not followed
-	link_real_path := path.realpath() // this is with the symlink resolved
-	if compare_strings(link_abs_path, link_real_path) >= 0 {
-		// means the shortest path is the target (or if same size its sorted and the first)
-		return
-	}
-	// need to switch link with the real content
-	path.unlink()? // make sure both are files now (the link is the file)
-	path.link(link_real_path, true)? // re-link
-	path.check()
-
-	// TODO: in test script
-}
-
-// resolve link to the real content
-// copy the target of the link to the link
-pub fn (mut path Path) unlink() ? {
-	if !path.is_link() {
-		// nothing to do because not link, will not giver error
-		return
-	}
-	link_abs_path := path.absolute()
-	link_real_path := path.realpath() // this is with the symlink resolved
-	mut link_path := get(link_real_path)
-	$if debug {
-		println(" - copy source file:'$link_real_path' of link to link loc:'$link_abs_path'")
-	}
-	mut destpath := get(link_abs_path + '.temp') // lets first copy to the .temp location
-	link_path.copy(mut destpath)? // copy to the temp location
-	path.delete()? // remove the file or dir which is link
-	destpath.rename(path.name())? // rename to the new path
-	path.path = destpath.path // put path back
-	path.check()
-	// TODO: in test script
-}
-
-// return path object for the link this one is pointing too
-pub fn (mut path Path) readlink() ?Path {
-	println('path: $path')
-	if path.is_link() {
-		println('path2: $path')
-		cmd := 'readlink $path.path'
-		res := os.execute(cmd)
-		if res.exit_code > 0 {
-			return error('cannot define result for link of $path \n$error')
-		}
-		return get(res.output.trim_space())
-	} else {
-		return error('can only read link info when the path is a filelink or dirlink. $path')
-	}
-}
-
-// return path object which is the result of the link
-pub fn (mut path Path) getlink() ?Path {
-	if path.is_link() {
-		return get(path.realpath())
-	} else {
-		return error('can only get link when the path is a filelink or dirlink. $path')
-	}
-}
