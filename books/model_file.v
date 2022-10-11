@@ -34,7 +34,12 @@ fn (mut file File) init() {
 	} else {
 		file.name = file.path.name_fix_no_underscore()
 	}
-	file.pathrel = file.path.path_relative(file.site.path.path).trim('/')?
+	
+	path_rel := file.path.path_relative(file.site.path.path) or {
+		panic("cannot get relative path")
+	}
+
+	file.pathrel = path_rel.trim('/')
 }
 
 pub fn (mut file File) delete() ? {

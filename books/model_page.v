@@ -60,16 +60,13 @@ fn (mut page Page) fix_location(mut link Link) ?bool {
 		}
 	}
 
-	if true{
-		panic('sdsdsd')
-	}
-
 	// means we found a file can be in this site or any other site from this sites collection
 	file_path_real := fileobj.path.realpath()
 	dir_path_real := pathlib.get(page.path.path_dir() + '/img').realpath() + '/'.replace('//', '/')
 	if file_path_real.starts_with(dir_path_real) {
 		return true
 	}
+
 	if fileobj.path.is_link() {
 		println(page)
 		println(file_path_real)

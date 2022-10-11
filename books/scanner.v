@@ -144,7 +144,7 @@ fn (mut site Site) scan_internal(mut p pathlib.Path) ? {
 			} else {
 				p_in.relink()? // will check that the link is on the file with the shortest path
 				println(p_in)
-				panic('78gybh')
+				// panic('78gybh')
 			}
 		}
 		if p_in.cat == .linkfile {
