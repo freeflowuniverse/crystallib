@@ -3,13 +3,15 @@ module main
 import freeflowuniverse.crystallib.books
 import os
 
-const testpath = os.dir(@FILE) + '/book1'
+// const testpath = os.dir(@FILE) + '/book1'
+const path = '~/code/github/threefoldfoundation/books/content'
 
 fn do() ? {
 	mut books := books.new()
-	books.scan('~/code4/books/content')?
-	println(books.sites["mytwin"])
-	books.mdbook_export()?
+	books.scan(path)?
+	books.fix()?
+	// println(books.sites["mytwin"])
+	// books.mdbook_export()?
 	// site.mdbook_develop()?
 }
 
