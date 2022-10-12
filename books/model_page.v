@@ -35,6 +35,7 @@ fn (mut page Page) fix_location(mut link Link) ?bool {
 	mut fileobj := &File{
 		site: page.site
 	}
+
 	// it refers to an image
 	if link.cat == .image {
 		if page.site.image_exists(file_name, page.site.sites.config.heal) {
@@ -74,9 +75,9 @@ fn (mut page Page) fix_location(mut link Link) ?bool {
 		println(fileobj.path)
 		panic('bug: the file always needs to be a real one not a link')
 	}
-	// println(fileobj)
+	println(fileobj)
 	dest := '$dir_path_real' + fileobj.path.name()
-	// println(dest)
+	println(dest)
 	mut dest_obj := pathlib.get(dest)
 	mut file_path_real_obj := pathlib.get(file_path_real)
 	if dest_obj.exists() && file_path_real_obj.exists() {
@@ -84,24 +85,28 @@ fn (mut page Page) fix_location(mut link Link) ?bool {
 		dest_obj.delete()?
 	}
 	if !dest_obj.exists() {
-		// println('1:$file_path_real_obj')
-		file_path_real_obj.link(dest_obj.path,true)?
-		// println(2)
+		println('1:$file_path_real_obj')
+		file_path_real_obj.link(dest_obj.path, true)?
+		println(2)
 	}
 	return true
 }
 
 fn (mut page Page) fix_link(mut link Link) ? {
-	name := link.filename.all_before_last('.').trim_right('_').to_lower()
+	name := link.filename.all_before_last('.').trim_right('_').to_lower().replace('_', '')
 	$if debug {
-		println('fixing image: $name  $link')
+		println('fixing image link: $name $link')
 	}
+	// TODO: page.site.files to save filename using namefix with underscores
 	if name in page.site.files {
 		originalfilename := link.filename
 		image := page.site.files[name]
 
 		mut source := page.pathrel.all_before_last('/') // this is the relative path of where the page is in relation to site root
-		mut imagelink_rel := pathlib.path_relative(source, image.pathrel)?
+		$if debug {
+			println('getting relative link: $source  $image.pathrel')
+		}
+		mut imagelink_rel := pathlib.path_relative(page.path.path, image.path.path)?
 
 		// updates the link to the image correctly
 		if link.link_update(imagelink_rel) {
@@ -130,7 +135,6 @@ fn (mut page Page) fix_external_link(mut link Link) ? {
 }
 
 fn (mut page Page) fix() ? {
-	println(" --- fix links: $page.path.path")
 	page.fix_links()?
 }
 
@@ -138,6 +142,7 @@ fn (mut page Page) fix() ? {
 // TODO: inquire about use of filter below
 fn (mut page Page) fix_links() ? {
 	// mut changed := false
+
 	for mut item in page.doc.items.filter(it is markdowndocs.Paragraph) {
 		if mut item is markdowndocs.Paragraph { //? interestingly necessary despite filter
 			for mut link in item.links {
@@ -176,4 +181,5 @@ fn (mut page Page) fix_links() ? {
 // 			cat: .page_not_found
 // 		)
 // 	}
+// }
 // }

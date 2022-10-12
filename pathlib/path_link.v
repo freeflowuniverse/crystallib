@@ -10,7 +10,9 @@ pub fn (mut path Path) link(dest string, delete_exists bool) ?Path {
 	if !(path.cat == .file || path.cat == .dir) {
 		return error('cannot link because source $path.path can only be dir or file')
 	}
-	if os.exists(dest) {
+	// TODO: add test to confirm existing faulty link also  are removed
+	// os.exists for faulty links returns false so also checks if path is link
+	if os.exists(dest) || os.is_link(dest) {
 		if delete_exists {
 			os.rm(dest)?
 		} else {
