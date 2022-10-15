@@ -3,21 +3,25 @@ module books
 import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.params
-import v.embed_file
 
 enum SitesState {
 	init
 	initdone
 	ok
 }
+[heap]
+pub struct SitesConfig {
+pub mut: // pointer to site
+	heal bool   = true
+}
+
 
 [heap]
 pub struct Sites {
 pub mut:
 	sites          map[string]&Site
-	config         Config
 	state          SitesState
-	embedded_files []embed_file.EmbedFileData
+	config         SitesConfig	
 }
 
 pub struct SiteNewArgs {
@@ -46,7 +50,6 @@ pub fn (mut sites Sites) site_new(args SiteNewArgs) ?&Site {
 }
 
 fn (mut sites Sites) scan_recursive(mut path pathlib.Path) ? {
-	sites.init()?
 	// $if debug{println(" - sites scan recursive: $path.path")}
 	if path.is_dir() {
 		if path.file_exists('.site') {

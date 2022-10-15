@@ -39,7 +39,7 @@ pub fn (mut site Site) scan() ? {
 	site.scan_internal(mut site.path)?
 }
 
-enum ErrorCat {
+enum SiteErrorCat {
 	unknown
 	image_double
 	file_double
@@ -52,13 +52,13 @@ enum ErrorCat {
 struct SiteErrorArgs {
 	path Path
 	msg  string
-	cat  ErrorCat
+	cat  SiteErrorCat
 }
 
 struct SiteError {
 	path Path
 	msg  string
-	cat  ErrorCat
+	cat  SiteErrorCat
 }
 
 pub fn (mut site Site) error(args SiteErrorArgs) {
@@ -258,8 +258,5 @@ pub fn (mut site Site) fix() ? {
 	}
 }
 
-// return path where the book will be created (exported and built from)
-pub fn (site Site) book_path(path string) Path {
-	dest0 := site.sites.config.dest
-	return pathlib.get('$dest0/books/$site.name/$path')
-}
+
+
