@@ -90,6 +90,8 @@ fn test_absolute_time() {
 	input_strings := {
 	'2022-12-5 20:14:35': 1670260475
 	'2022-12-5': 1670187600
+	'2022-12': 1669842000 // Should be the beginning of december
+	'2022': 1640984400 // should be beginning of 2022
 	}
 	for key, value in input_strings {
 		exp := timetools.get_expiration_from_timestring(key) or { panic('cannot get expiration for $key') }
