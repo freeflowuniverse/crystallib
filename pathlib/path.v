@@ -19,7 +19,7 @@ pub enum Category {
 	linkfile
 }
 
-enum UYN {
+pub enum UYN {
 	unknown
 	yes
 	no
