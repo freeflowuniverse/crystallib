@@ -3,7 +3,10 @@ module pathlib
 import os
 import freeflowuniverse.crystallib.texttools
 
-pub fn (mut path Path) link(dest string, delete_exists bool) ?Path {
+
+//path needs to be existing
+//linkpath is where the link will be pointing to path
+pub fn (mut path Path) link(linkpath string, delete_exists bool) ?Path {
 	if !path.exists() {
 		return error('cannot link because source $path.path does not exist')
 	}
@@ -12,28 +15,26 @@ pub fn (mut path Path) link(dest string, delete_exists bool) ?Path {
 	}
 	// TODO: add test to confirm existing faulty link also  are removed
 	// os.exists for faulty links returns false so also checks if path is link
-	if os.exists(dest) || os.is_link(dest) {
+	if os.exists(linkpath) || os.is_link(linkpath) {
 		if delete_exists {
-			os.rm(dest)?
+			os.rm(linkpath)?
 		} else {
-			return error('cannot link $path.path to $dest, because dest exists.')
+			return error('cannot link $path.path to $linkpath, because dest exists.')
 		}
 	}
 
 	// create dir if it would not exist yet
-	dest_dir := os.dir(dest)
+	dest_dir := os.dir(linkpath)
 	if !os.exists(dest_dir) {
 		os.mkdir_all(dest_dir)?
 	}
-	// calculate relative link between source and dest
-	// origin_path := path_relative(dest, path.path)
-
-	// because path_relative doesn't support non-dir or non-existing source, 
-	source_path_rel := path_relative(dest, path.path)?
-	msg:='link to origin (source): $path.path  \nthe link:$dest \nlink rel: $source_path_rel'
-	$if debug{println(msg)}
-	os.symlink(source_path_rel,dest) or { return error('cant symlink $msg\n$err') }
-	return get(dest)
+	origin_path := path_relative(dest_dir,path.path)?
+	msg := 'link to origin (source): $path.path  \nthe link:$linkpath \nlink rel: $origin_path'
+	// $if debug {
+	// 	println(msg)
+	// }	
+	os.symlink(origin_path,linkpath) or { return error('cant symlink $msg\n$err') }
+	return get(linkpath)
 }
 
 // will make sure that the link goes from file with largest path to smalles
@@ -67,9 +68,9 @@ pub fn (mut path Path) unlink() ? {
 	link_abs_path := path.absolute()
 	link_real_path := path.realpath() // this is with the symlink resolved
 	mut link_path := get(link_real_path)
-	$if debug {
-		println(" - copy source file:'$link_real_path' of link to link loc:'$link_abs_path'")
-	}
+	// $if debug {
+	// 	println(" - copy source file:'$link_real_path' of link to link loc:'$link_abs_path'")
+	// }
 	mut destpath := get(link_abs_path + '.temp') // lets first copy to the .temp location
 	link_path.copy(mut destpath)? // copy to the temp location
 	path.delete()? // remove the file or dir which is link
@@ -79,23 +80,23 @@ pub fn (mut path Path) unlink() ? {
 	// TODO: in test script
 }
 
-// return path object for the link this one is pointing too
-pub fn (mut path Path) readlink() ?Path {
-	println('path: $path')
+// return string 
+pub fn (mut path Path) readlink() ?string {
+	// println('path: $path')
 	if path.is_link() {
-		println('path2: $path')
+		// println('path2: $path')
 		cmd := 'readlink $path.path'
 		res := os.execute(cmd)
 		if res.exit_code > 0 {
 			return error('cannot define result for link of $path \n$error')
 		}
-		return get(res.output.trim_space())
+		return res.output.trim_space()
 	} else {
 		return error('can only read link info when the path is a filelink or dirlink. $path')
 	}
 }
 
-// return path object which is the result of the link
+// return path object which is the result of the link (path link points too)
 pub fn (mut path Path) getlink() ?Path {
 	if path.is_link() {
 		return get(path.realpath())

@@ -5,33 +5,12 @@ import freeflowuniverse.crystallib.texttools
 
 // check path exists
 pub fn (mut path Path) exists() bool {
-	if path.exist == .unknown {
-		if os.exists(path.path) {
-			path.exist = .yes
-		} else {
-			path.exist = .no
-		}
+	if path.cat == .unknown || path.exist == .unknown {
+		path.check()
 	}
 	return path.exist == .yes
 }
 
-// will rewrite the path to lower_case if not the case yet
-// will also remove weird chars
-// if changed will return true
-pub fn (mut path Path) namefix() ?bool {
-	if path.cat == .file || path.cat == .dir {
-		if !path.exists() {
-			return error('path $path does not exist, cannot namefix')
-		}
-		if texttools.name_fix(path.name()) != path.name() {
-			pathnew := os.join_path(os.dir(path.path), texttools.name_fix(path.name()))
-			os.mv(path.path, pathnew)?
-			path.path = pathnew
-			return true
-		}
-	}
-	return false
-}
 
 // rename the file or directory
 pub fn (mut path Path) rename(name string) ? {
@@ -54,15 +33,15 @@ pub fn (mut path Path) rename(name string) ? {
 // will not resolve symlinks
 pub fn (mut path Path) path_relative(destpath string) ?string {
 	// println(" - path relative: '$path.path' '$destpath'")
-	return path_relative(path.path, destpath)
+	return path_relative(destpath,path.path)
 }
 
 // recursively finds the least common ancestor of array of paths
 // will always return the absolute path (relative gets changed to absolute)
 pub fn find_common_ancestor(paths_ []string) string {
-	for p in paths_{
-		if p.trim_space()==""{
-			panic("cannot find commone ancestors if any of items in paths is empty.\n$paths_")
+	for p in paths_ {
+		if p.trim_space() == '' {
+			panic('cannot find commone ancestors if any of items in paths is empty.\n$paths_')
 		}
 	}
 	paths := paths_.map(os.abs_path(os.real_path(it))) // get the real path (symlinks... resolved)
@@ -109,22 +88,36 @@ pub fn (path Path) extension_lower() string {
 	return path.extension().to_lower()
 }
 
-// make sure name is normalized and jpeg becomes jpg
-pub fn (mut path Path) normalize() ? {
-	// println(path.extension())
+
+// will rewrite the path to lower_case if not the case yet
+// will also remove weird chars
+// if changed will return true
+// the file will be moved to the new location
+pub fn (mut path Path) path_normalize() ?bool {
+
+	path_original := path.path+"" //make sure is copy, needed?
+
+	// if path.cat == .file || path.cat == .dir || !path.exists() {
+	// 		return error('path $path does not exist, cannot namefix (only support file and dir)')
+	// }
+
 	if path.extension().to_lower() == 'jpeg' {
-		dest := path.path_no_ext() + '.jpg'
-		println(' - RENAME: $path.path to $dest')
-		os.mv(path.path, dest)?
-		path.path = dest
+		path.path = path.path_no_ext() + '.jpg'
 	}
-	if texttools.name_fix_keepext(path.name()) != path.name() {
-		dest := path.path_dir() + '/' + texttools.name_fix_keepext(path.name())
-		println(' - RENAME: $path.path to $dest')
-		os.mv(path.path, dest)?
-		path.path = dest
+
+	namenew:=texttools.name_fix_keepext(path.name())
+	if namenew!=path.name(){
+		path.path = os.join_path(os.dir(path.path), namenew)
 	}
+	
+	if path.path != path_original{
+		os.mv(path_original,path.path)?
+		path.check()
+		return true
+	}
+	return false
 }
+
 
 // walk upwards starting from path untill dir or file tofind is found
 // works recursive
@@ -188,13 +181,14 @@ pub fn (mut path Path) dir_get(tofind string) ?Path {
 }
 
 // find file underneith path, if exists return True
+// is case insensitive
 pub fn (mut path Path) file_exists(tofind string) bool {
 	if path.cat != Category.dir {
 		return false
 	}
 	files := os.ls(path.path) or { []string{} }
 	if tofind in files {
-		file_path := os.join_path(path.path, tofind)
+		file_path := os.join_path(path.path.to_lower(), tofind.to_lower())
 		if os.is_file(file_path) {
 			return true
 		}
@@ -238,7 +232,7 @@ pub fn (mut path Path) write(content string) ? {
 		os.mkdir_all(path.path_dir())?
 	}
 	if path.exists() && path.cat == Category.linkfile {
-		mut pathlinked := path.readlink()?
+		mut pathlinked := path.getlink()?
 		pathlinked.write(content)?
 	}
 	if path.exists() && path.cat != Category.file && path.cat != Category.linkfile {
@@ -277,49 +271,52 @@ pub fn (mut path Path) copy(mut dest Path) ?Path {
 			return error("Can't copy directory to file")
 		}
 	}
-	os.cp_all(path.path, dest.path, true)? // Always overwite if needed
 	if path.cat == .file && dest.cat == .dir {
 		// In case src is a file and dest is dir, we need to join the file name to the dest file
 		file_name := os.base(path.path)
-		dest_path := os.join_path(dest.path, file_name)
-		return Path{
-			path: dest_path
-			cat: Category.file
-			exist: .yes
-		}
+		dest.path = os.join_path(dest.path, file_name)
+
 	}
-	return Path{
-		path: dest.path
-		cat: dest.cat
-		exist: .yes
+
+	if ! os.exists(dest.path_dir()){
+		os.mkdir_all(dest.path_dir())?
 	}
+
+	os.cp_all(path.path, dest.path, true)? // Always overwite if needed
+
+
+	dest.check()
+	return dest
 }
 
 // recalc path between target & source
-// does not touch the filesystem, is all done on string level
 // we only support if source_ is an existing dir, links will not be supported
+// a0 := pathlib.path_relative('$testpath/a/b/c', '$testpath/a/d.txt') or { panic(err) }
+// assert a0 == '../../d.txt'
+// a2 := pathlib.path_relative('$testpath/a/b/c', '$testpath/d.txt') or { panic(err) }
+// assert a2 == '../../../d.txt'
+// a8 := pathlib.path_relative('$testpath/a/b/c', '$testpath/a/b/c/d/e/e.txt') or { panic(err) }
+// assert a8 == 'd/e/e.txt'
 pub fn path_relative(source_ string, linkpath_ string) ?string {
 	mut source := os.abs_path(source_)
 	mut linkpath := os.abs_path(linkpath_)
 	// now both start with /
 
-	mut p:=get(source_)
-	
+	mut p := get(source_)
+
 	// converts file source to dir source
 	if source.all_after_last('/').contains('.') {
 		source = source.all_before_last('/')
-		p = p.parent() or {
-			return error("Parent of source $source_ doesn't exist")
-		}
+		p = p.parent() or { return error("Parent of source $source_ doesn't exist") }
 	}
 	p.check()
 
 	if p.cat != .dir || !p.exists() {
-		return error("Cannot do path_relative()? if source is not a dir and exists. Now:$source_")
+		return error('Cannot do path_relative()? if source is not a dir and exists. Now:$source_')
 	}
 
 	// println(" + source:$source compare:$linkpath")
-	
+
 	common := find_common_ancestor([source, linkpath])
 	// println(" + common:$common")
 
@@ -333,12 +330,12 @@ pub fn path_relative(source_ string, linkpath_ string) ?string {
 		}
 	}
 
-	mut source_short := source[(common.len )..]
+	mut source_short := source[(common.len)..]
 	mut linkpath_short := linkpath[(common.len)..]
 
-	source_short=source_short.trim_string_left("/")
-	linkpath_short=linkpath_short.trim_string_left("/")
-	
+	source_short = source_short.trim_string_left('/')
+	linkpath_short = linkpath_short.trim_string_left('/')
+
 	source_count := source_short.count('/')
 	link_count := linkpath_short.count('/')
 	// println (" + source_short:$source_short ($source_count)")
@@ -352,7 +349,7 @@ pub fn path_relative(source_ string, linkpath_ string) ?string {
 		dest = '$go_up$linkpath_short'
 	}
 
-	dest = dest.replace("//","/")
+	dest = dest.replace('//', '/')
 	return dest
 }
 
@@ -375,5 +372,3 @@ pub fn path_relative(source_ string, linkpath_ string) ?string {
 // 		return error(msg)
 // 	}
 // }
-
-

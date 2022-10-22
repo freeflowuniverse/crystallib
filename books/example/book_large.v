@@ -6,16 +6,14 @@ const path = '~/code/github/threefoldfoundation/books'
 
 fn do() ? {
 	mut sites := books.sites_new()
-	sites.scan(path+"/content")?
+	sites.scan(path + '/content')?
 
 	mut books := books.books_new(&sites)
-	books.scan(path+"/books")?
-	sites.fix()?
+	books.scan(path + '/books')?
+
+	// println(sites.sites["ppp"])
+
 	books.mdbook_export()?
-
-
-
-
 }
 
 fn main() {
@@ -23,5 +21,4 @@ fn main() {
 	do() or { panic(err) }
 }
 
-
-//git reset --hard && git clean -fxd
+// git reset --hard && git clean -fxd

@@ -82,8 +82,12 @@ pub fn (mut path Path) name_fix_no_underscore_no_ext() string {
 }
 
 // return name with all lowercase_special chars done but keep extension
-pub fn (mut path Path) name_fix_no_underscore() string {
-	return texttools.name_fix_no_underscore(path.name())
+pub fn (mut path Path) name_fix_keepext() string {
+	return texttools.name_fix_keepext(path.name())
+}
+
+pub fn (mut path Path) name_fix_no_ext() string {
+	return texttools.name_fix_no_ext(path.name())
 }
 
 // full path of dir

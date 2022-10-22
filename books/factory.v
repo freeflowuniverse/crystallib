@@ -8,11 +8,10 @@ pub fn sites_new() Sites {
 	return sites
 }
 
-
-
 pub fn books_new(sites &Sites) Books {
-	mut books := Books{sites:sites}
+	mut books := Books{
+		sites: sites
+	}
 	books.config = BooksConfig{}
 	return books
 }
-

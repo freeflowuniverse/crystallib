@@ -20,7 +20,7 @@ fn (mut image Image) init_() ? {
 		image.size_kbyte = image.path.size_kb() or {
 			return error('cannot define size file in kb.\n$error')
 		}
-		image.path.normalize() or { panic('normalize: $error') }
+		image.path.path_normalize() or { panic('normalize: $error') }
 	}
 }
 
@@ -43,7 +43,7 @@ pub fn image_downsize(mut path pathlib.Path, backupdir string) ?Image {
 			// means downsize worked, now we need to re-link
 			image.path.delete()?
 			image.path.path = image.path.path_dir() + '/' + image_linked.path.name()
-			image.path = image_linked.path.link(image.path.path,true)?
+			image.path = image_linked.path.link(image.path.path, true)?
 		}
 	} else {
 		image.downsize(backupdir)?
