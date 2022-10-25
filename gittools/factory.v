@@ -54,7 +54,7 @@ pub fn (mut gitstructure GitStructure) repos_print(args GSArgs) {
 	mut r := [][]string{}
 	for mut g in gitstructure.repos_get(args) {
 		changed := g.changes() or { panic('issue in repo changes. $err') }
-		pr:=g.path_relative()
+		pr := g.path_relative()
 		if changed {
 			r << ['- $pr', '$g.addr.branch', 'CHANGED']
 		} else {

@@ -25,6 +25,15 @@ pub fn (path Path) is_file() bool {
 	return path.cat == Category.file
 }
 
+
+pub fn is_image(path string) bool {
+	if path.contains("."){
+		ext:=path.all_after_last(".").to_lower()
+		return pathlib.image_exts.contains(ext)
+	}
+	return false
+}
+
 pub fn (path Path) is_image() bool {
 	e := path.extension().to_lower()
 	// println("is image: $e")

@@ -18,7 +18,7 @@ pub fn (mut exp Expiration) to_time() time.Time {
 	return time.unix(exp.expiration)
 }
 
-pub fn time_from_string (timestr string) ?time.Time {
+pub fn time_from_string(timestr string) ?time.Time {
 	mut exp_ := get_expiration_from_timestring(timestr)?
 	time_object := exp_.to_time()
 	return time_object
@@ -39,35 +39,42 @@ pub fn time_from_string (timestr string) ?time.Time {
 // input string example: "+1w +2d -4h"
 // ## Absolute time
 // inputs must be of the form: "YYYY-MM-DD HH:mm:ss" or "YYYY-MM-DD"
-// input string examples: 
+// input string examples:
 //'2022-12-5 20:14:35'
 //'2022-12-5' - sets hours, mins, seconds to 00
 // TODO: do error handling
-pub fn get_expiration_from_timestring(exp_ string) ?Expiration {	// TODO: function to determine if relative or absolute time
+pub fn get_expiration_from_timestring(exp_ string) ?Expiration { // TODO: function to determine if relative or absolute time
 	trimmed := exp_.trim_space()
 	mut relative_bool := false
-	if trimmed.starts_with("+") || trimmed.starts_with("-") {
+	if trimmed.starts_with('+') || trimmed.starts_with('-') {
 		relative_bool = true
-	} 
-
-	if relative_bool == true{
-		time_unix := get_unix_from_relative(exp_) or {return error("Failed to get unix from relative time: $err")}
-		return Expiration{expiration: time_unix}
 	}
-	else{
-		time_unix := get_unix_from_absolute(exp_) or {return error("Failed to get unix from absolute time: $err")}
-		return Expiration{expiration: time_unix}
+
+	if relative_bool == true {
+		time_unix := get_unix_from_relative(exp_) or {
+			return error('Failed to get unix from relative time: $err')
+		}
+		return Expiration{
+			expiration: time_unix
+		}
+	} else {
+		time_unix := get_unix_from_absolute(exp_) or {
+			return error('Failed to get unix from absolute time: $err')
+		}
+		return Expiration{
+			expiration: time_unix
+		}
 	}
 }
-	
-pub fn get_unix_from_relative(exp_ string) ?i64{
-// removes all spaces from the string
-	mut full_exp:= exp_.replace(' ', '')
+
+pub fn get_unix_from_relative(exp_ string) ?i64 {
+	// removes all spaces from the string
+	mut full_exp := exp_.replace(' ', '')
 
 	// If input is empty or contains just a 0
 	if full_exp == '' || full_exp.trim(' ') == '0' {
-	time_unix := time.now().unix_time()
-	return time_unix
+		time_unix := time.now().unix_time()
+		return time_unix
 	}
 
 	// duplicates the + and - signs
@@ -85,17 +92,17 @@ pub fn get_unix_from_relative(exp_ string) ?i64{
 		} else if exp.ends_with('m') {
 			mult = 60
 		} else if exp.ends_with('h') {
-			mult = 60*60
+			mult = 60 * 60
 		} else if exp.ends_with('d') {
 			mult = 60 * 60 * 24
 		} else if exp.ends_with('w') {
-			mult = 60 * 60 * 24 * 7	
+			mult = 60 * 60 * 24 * 7
 		} else if exp.ends_with('M') {
-			mult = 60 * 60 * 24 * 30	
+			mult = 60 * 60 * 24 * 30
 		} else if exp.ends_with('Q') {
-			mult = 60 * 60 * 24 * 30 * 3	
+			mult = 60 * 60 * 24 * 30 * 3
 		} else if exp.ends_with('Y') {
-			mult = 60 * 60 * 24 * 365	
+			mult = 60 * 60 * 24 * 365
 		} else {
 			return error('could not parse time suffix for: $exp')
 		}
@@ -107,14 +114,12 @@ pub fn get_unix_from_relative(exp_ string) ?i64{
 		// multiplies the value by the multiplier
 		exp_int := exp.int() * mult
 		total += exp_int
-
 	}
 	time_unix := total + time.now().unix_time()
 	return time_unix
 }
 
-
-pub fn get_unix_from_absolute(timestr string) ?i64{
+pub fn get_unix_from_absolute(timestr string) ?i64 {
 	components := timestr.split_any(' :-')
 	mut full_string := timestr
 	if components.len == 3 {
@@ -125,7 +130,6 @@ pub fn get_unix_from_absolute(timestr string) ?i64{
 		full_string = timestr.replace(':', '-') + "-01-01 00:00:00"
 	}
 
-	time_struct := time.parse(full_string) or {return error("could not parse time string: $err")}
+	time_struct := time.parse(full_string) or { return error('could not parse time string: $err') }
 	return time_struct.unix_time() - 10_800
-
 }

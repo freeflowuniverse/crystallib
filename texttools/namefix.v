@@ -32,6 +32,14 @@ pub fn name_fix_no_underscore_no_ext(name_ string) string {
 	return name_fix_keepext(name_).all_before_last('.').replace('_', '')
 }
 
+// remove underscores and extension
+pub fn name_fix_no_ext(name_ string) string {
+	return name_fix_keepext(name_).all_before_last('.').trim_right('_')
+}
+
+
+
+
 pub fn name_fix_keepext(name_ string) string {
 	mut name := name_.to_lower()
 	if name.contains('#') {

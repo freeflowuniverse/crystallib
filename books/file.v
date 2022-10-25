@@ -16,9 +16,8 @@ pub enum FileType {
 
 [heap]
 pub struct File {
-pub:
+pub mut: 
 	site &Site [str: skip]
-pub mut: // pointer to site
 	name         string // received a name fix
 	path         pathlib.Path
 	pathrel      string
@@ -29,14 +28,13 @@ pub mut: // pointer to site
 
 fn (mut file File) init() {
 	if file.path.is_image() {
-		file.name = file.path.name_fix_no_underscore_no_ext()
 		file.ftype = .image
-	} else {
-		file.name = file.path.name_fix_no_underscore()
 	}
-	
+
+	file.name = file.path.name_fix_no_ext()
+
 	path_rel := file.path.path_relative(file.site.path.path) or {
-		panic("cannot get relative path")
+		panic('cannot get relative path.\n$err')
 	}
 
 	file.pathrel = path_rel.trim('/')
@@ -59,4 +57,10 @@ fn (mut file File) mv(dest string) ? {
 
 pub fn (mut file File) exists() ?bool {
 	return file.path.exists()
+}
+
+
+fn (mut file File) copy(dest string) ? {
+	mut dest2:= pathlib.get(dest)
+	file.path.copy(mut dest2)?
 }
