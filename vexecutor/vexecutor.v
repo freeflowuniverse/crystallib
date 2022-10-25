@@ -129,10 +129,10 @@ pub fn (mut v_executor VExecutor) compile() ? {
 // Executes the file 
 pub fn (mut v_executor VExecutor) do () ? {
 	println('v run $v_executor.execution_file_path.path')
-	result := os.execute('v run $v_executor.execution_file_path.path')
+	result := os.execute_or_panic('v run $v_executor.execution_file_path.path')
 	println('Exit Code: $result.exit_code')
 	if result.exit_code == 1 {
-		panic(error("Failed to run executor file! There are issues with the code."))
+		return error("Failed to run executor file! There are issues with the code.")
 	}
 }
 
