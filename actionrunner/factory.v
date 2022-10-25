@@ -14,7 +14,5 @@ pub fn execute(path string) ? {
 	actions_done = actions_process(mut parser actionparser.ActionsParser, actions_done)?
 	actions_done = books.actions_process(mut parser actionparser.ActionsParser, actions_done)?
 
-
-
-	println(result)
+	println(actions_done)
 }
