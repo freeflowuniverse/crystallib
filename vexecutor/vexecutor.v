@@ -40,14 +40,14 @@ pub fn new_executor (initial_file_path_ string, execution_file_path_ string, fin
 	if execution_file_path.exist == .yes {
 		os.rm(execution_file_path.path)?
 	} 
-	execution_file := os.create(execution_file_path.path)?
+	execution_file := os.create(execution_file_path.path) or {return error("Failed to create execution file at "+@FN+" : $err")}
 
 	if initial_file_path.exist == .no {
 		return error("Initial file does not exist at path: $initial_file_path.path")
 	}
 
 	// convert the initial file into an action
-	initial_action := scan_file(mut initial_file_path)?
+	initial_action := scan_file(mut initial_file_path) or {return error("Failed to scan initial file path at "+@FN+" : $err")}
 
 	// create an VExecutor object
 	mut v_executor := VExecutor {
@@ -68,7 +68,7 @@ pub fn (mut v_executor VExecutor) add_dir_to_end (directory_path_ string) ? {
 	mut directory_path := pathlib.get(directory_path_)
 	directory_path.check()
 
-	mut file_paths := directory_path.file_list(pathlib.ListArgs{})?
+	mut file_paths := directory_path.file_list(pathlib.ListArgs{})  or {return error("Failed to get file_paths of directory at "+@FN+" : $err")}
 
 	for mut file_path in file_paths {
 		v_executor.actions << scan_file(mut file_path)?
@@ -85,7 +85,7 @@ fn scan_file (mut path pathlib.Path) ?VAction {
 	}
 
 	// read all the lines in the file into an array of lines
-	mut lines := os.read_lines(path.path)?
+	mut lines := os.read_lines(path.path)  or {return error("Failed to readlines of file at "+@FN+" : $err")}
 	// remove lines until '// BEGINNING' is reached
 	mut beginning_found := false
 
@@ -112,7 +112,7 @@ fn scan_file (mut path pathlib.Path) ?VAction {
 //combine all actions in VExecutor into one file
 pub fn (mut v_executor VExecutor) compile() ? {
 	
-	v_executor.actions << scan_file(mut v_executor.final_file_path)?
+	v_executor.actions << scan_file(mut v_executor.final_file_path) or {return error("Failed to scan file at "+@FN+" : $err")}
 	
 	mut all_lines := []string
 	for action in v_executor.actions {
@@ -122,16 +122,17 @@ pub fn (mut v_executor VExecutor) compile() ? {
 	}
 
 	for line in all_lines {
-		v_executor.execution_file.writeln(line)?
+		v_executor.execution_file.writeln(line)  or {return error("Failed to write line to execution file at "+@FN+" : $err")}
 	}
 }
 
 // Executes the file 
 pub fn (mut v_executor VExecutor) do () ? {
 	println('v run $v_executor.execution_file_path.path')
-	result := os.execute('v run $v_executor.execution_file_path.path')
+	result := os.execute_or_panic('v run $v_executor.execution_file_path.path')
+	println('Exit Code: $result.exit_code')
 	if result.exit_code == 1 {
-		panic(error("Failed to run executor file! There are issues with the code."))
+		return error("Failed to run executor file! There are issues with the code.")
 	}
 }
 
@@ -144,6 +145,6 @@ pub fn (mut v_executor VExecutor) info () {
 
 // Cleans up VExecutors impact on the file system
 pub fn (mut v_executor VExecutor) clean () ? {
-	os.rm(v_executor.execution_file_path.path)?
+	os.rm(v_executor.execution_file_path.path) or {return error("Failed to delete execution file at "+@FN+" : $err")}
 }
 

@@ -123,7 +123,11 @@ pub fn get_unix_from_absolute(timestr string) ?i64 {
 	components := timestr.split_any(' :-')
 	mut full_string := timestr
 	if components.len == 3 {
-		full_string = timestr.replace(':', '-') + ' 00:00:00'
+		full_string = timestr.replace(':', '-') + " 00:00:00"
+	} else if components.len == 2 {
+		full_string = timestr.replace(':', '-') + "-01 00:00:00"
+	} else if components.len == 1 {
+		full_string = timestr.replace(':', '-') + "-01-01 00:00:00"
 	}
 
 	time_struct := time.parse(full_string) or { return error('could not parse time string: $err') }
