@@ -8,12 +8,14 @@ fn do() ? {
 	mut sites := books.sites_new()
 	sites.scan(path + '/content')?
 
+
 	mut books := books.books_new(&sites)
 	books.scan(path + '/books')?
 
 	// println(sites.sites["ppp"])
+	mut b:=books.get("abundance_internet")?
 
-	books.mdbook_export()?
+	b.mdbook_export()?
 }
 
 fn main() {

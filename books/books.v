@@ -47,18 +47,19 @@ pub fn (mut books Books) book_new(args BookNewArgs) ?&Book {
 		name = p.name()
 	}
 
+	//is case insensitive
 	mut summarypath:=p.file_find("summary.md") or {return error("cannot find summary path")}
 
 	mut parser := markdowndocs.get(summarypath.path) or { panic('cannot book parse $summarypath ,$err') }
 
 	mut book := Book{
-		name: texttools.name_fix_no_underscore_no_ext(name)
+		name: texttools.name_fix_no_ext(name)
 		path: p
 		books: &books
 		doc:&parser.doc
 	}
-	books.books[book.name] = &book
-	return books.books[book.name]
+	books.books[book.name.replace("_","")] = &book
+	return &book
 }
 
 fn (mut books Books) scan_recursive(mut path pathlib.Path) ? {
@@ -103,6 +104,7 @@ fn (mut books Books) scan_recursive(mut path pathlib.Path) ? {
 pub fn (mut books Books) scan(path string) ? {
 	mut p := pathlib.get_dir(path, false)?
 	books.scan_recursive(mut p)?
+	books.fix()?	
 }
 
 pub fn (mut books Books) get(name string) ?&Book {

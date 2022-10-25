@@ -75,7 +75,7 @@ pub fn (mut site Site) error(args SiteErrorArgs) {
 
 
 pub fn (mut site Site) file_get(name string) ?&File {
-	sitename,namelower := get_site_and_obj_name(name,false)?
+	mut sitename,namelower := get_site_and_obj_name(name,false)?
 	namesmallest:=namelower.replace("_","")
 	if sitename==""{
 		if namesmallest in site.files {

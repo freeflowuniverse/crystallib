@@ -57,6 +57,7 @@ fn (mut link Link) error(msg string) {
 	link.error_msg = msg
 }
 
+
 // needs to be the relative path in the site, important!
 // will return true if there was change
 pub fn (mut link Link) link_update(linkpath_new string,save bool) ? {	

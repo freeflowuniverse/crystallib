@@ -8,7 +8,7 @@ fn get_site_and_obj_name(txt_ string, ismage bool) ?(string,string) {
 	mut a:=""
 	mut b:=texttools.name_fix_keepext(txt)
 	if b.contains(":"){
-		a = txt.all_before(":")
+		a = txt.all_before(":").replace("_","")
 		b = txt.all_after_first(":")
 		if b.contains(":"){
 			return error("can only have 1 : in txt:'$txt'")

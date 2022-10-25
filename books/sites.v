@@ -41,12 +41,12 @@ pub fn (mut sites Sites) site_new(args SiteNewArgs) ?&Site {
 		name = p.name()
 	}
 	mut site := Site{
-		name: texttools.name_fix_no_underscore_no_ext(name)
+		name: texttools.name_fix_no_ext(name)
 		path: p
 		sites: &sites
 	}
-	sites.sites[site.name] = &site
-	return sites.sites[site.name]
+	sites.sites[site.name.replace("_","")] = &site
+	return &site
 }
 
 fn (mut sites Sites) scan_recursive(mut path pathlib.Path) ? {

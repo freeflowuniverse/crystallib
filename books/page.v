@@ -50,21 +50,23 @@ fn (mut page Page) fix_link(mut link Link) ? {
 			page.site.error(path: page.path, msg:  "file $msg", cat: .file_not_found)
 			return
 		}
-		fileobj = page.site.file_get(file_name)?
+		fileobj = page.site.file_get(file_name)or {panic(err)}//should never get here
 	}else{
 		if ! page.site.image_exists(file_name){
 			file_name2 := page.site.sites.image_find(file_name)?
 			if file_name2==""{
 				//we could not find the filename not even in other sites
 				msg := "'$file_name' not found for page:$page.path.path"
-				if file_name.contains("ghost_hack"){panic(msg)}
 				page.site.error(path: page.path, msg:  "image $msg", cat: .image_not_found)
+				link.description = "not found: ${link.filename}"
+				page.doc.content = link.replace(page.doc.content,"")?
+				page.doc.save()?
 				return
 			}else{
 				file_name=file_name2
 			}
 		}
-		fileobj = page.site.image_get(file_name) or {panic(err)}
+		fileobj = page.site.image_get(file_name) or {panic(err)}//should never get here
 		//copy the file if it exists in other site than from this page
 		if page.site.name != fileobj.site.name {
 			if !(file_name.contains(":")) && page.site.image_exists(file_name){
@@ -92,8 +94,8 @@ fn (mut page Page) fix_link(mut link Link) ? {
 	//means we now found the file or image
 	page.files_linked << &fileobj
 
-	// imagelink_rel:=fileobj.path.path_relative(page.path.path_dir())?
 	imagelink_rel := pathlib.path_relative(page.path.path_dir(), fileobj.path.path)?
+	link.description = ""
 	link.link_update(imagelink_rel,true)?
 
 

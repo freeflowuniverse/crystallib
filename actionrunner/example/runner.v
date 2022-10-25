@@ -1,8 +1,8 @@
 module main
 
-// import os.cmdline
+import os.cmdline
 // import os
-import freeflowuniverse.crystallib.actionparser
+import freeflowuniverse.crystallib.actionrunner
 import os
 
 fn do() ? {
@@ -10,7 +10,7 @@ fn do() ? {
 
 	if options.len == 1 {
 		if os.exists('run.md') {
-			actionparser.execute('run.md')?
+			actionrunner.execute('run.md')?
 		}
 		exit(0)
 	}
@@ -24,7 +24,7 @@ fn do() ? {
 		return error(" ERROR: could not find path for the input actions file (md): '${options[1]}'")
 	}
 
-	actionparser.execute(options[1])?
+	actionrunner.execute(options[1])?
 }
 
 fn main() {

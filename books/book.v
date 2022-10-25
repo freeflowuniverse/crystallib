@@ -77,7 +77,7 @@ pub fn (mut book Book) fix() ? {
 					book.error(cat:.unknown,msg:msge)
 				} else { 
 					$if debug{
-						println(" -- book link: $link.filename")
+						println(" - book $book.name summary:$link.pathfull()")
 					}
 					sitename:=link.path.all_before("/")
 					if book.books.sites.exists(sitename){
@@ -199,16 +199,9 @@ pub fn (mut book Book) mdbook_export() ? {
 	//write summary
 	pathsummary.write(book.doc.content)?
 
-
-
-
-	// lets now walk over images & pages and we need to export it to there
-	if true{
-		panic("TODO implement mdbook export")
-	}
-
 	// lets now build
-	// os.execute('mdbook build $book_path --dest-dir $html_path')
+	os.execute_or_panic('mdbook build ${book.book_path("").path} --dest-dir $html_path')
+	os.execute_or_panic('open $html_path/index.html')
 }
 
 
