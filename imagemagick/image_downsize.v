@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.process
 import os
 
+
 // backupdir, put on empty if not used
 pub fn image_downsize(mut path pathlib.Path, backupdir string) ?Image {
 	mut image := image_new(mut path)?
@@ -30,14 +31,9 @@ pub fn (mut image Image) downsize(backupdir string) ? {
 		return error('use image_downsize function if file is a link:\n$image')
 	}
 	image.init_()?
-	if image.path.path.contains('3nodea.png') {
-		println('wow2 \n$image')
-		panic('damn')
-	}
 	if image.skip() {
 		return
 	}
-
 	// $if debug{println(' - downsize $image.path')}
 	if image.is_png() {
 		image.identify_verbose()?
@@ -51,7 +47,6 @@ pub fn (mut image Image) downsize(backupdir string) ? {
 	// 	}
 	// 	image.path.copy(mut dest)?
 	// }
-
 	if image.size_kbyte > 600 && image.size_x > 2400 {
 		image.size_kbyte = 0
 		println('   - convert image resize 50%: $image.path.path')
@@ -89,7 +84,6 @@ pub fn (mut image Image) downsize(backupdir string) ? {
 			image.path = pathlib.get(path_dest)
 		}
 	}
-
 	// means we should not process next time, we do this by adding _ at end of name
 	path_dest2 := image.path.path_get_name_with_underscore()
 	image.init_()?
