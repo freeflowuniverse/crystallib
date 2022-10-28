@@ -166,6 +166,8 @@ fn (mut para Paragraph) link_new(original_descr_ string, original_link_ string, 
 // 	return l
 // }
 
+
+
 // return how to represent link on source
 fn (mut link Link) source_get() ?string {
 	if link.cat == LinkType.image {
@@ -205,9 +207,15 @@ fn (mut link Link) source_get() ?string {
 }
 
 // replace original link content in text with $replacewith
-fn (link Link) replace(text string, replacewith string) string {
+// if replacewith is empty then will recreate the link as source_get()?
+pub fn (mut link Link) replace(text string, replacewith_ string) ?string {
+	mut replacewith:=replacewith_
+	if replacewith==""{
+		replacewith = link.source_get()?
+	}
 	return text.replace(link.original, replacewith)
 }
+
 
 enum LinkParseStatus {
 	start

@@ -5,6 +5,9 @@ pub fn (mut p Path) join(parts ...string) ?Path {
 	mut p2 := Path{
 		path: p.path
 	}
+	//TODO Add tests
+	p2.check()
+
 	if !p2.is_dir() {
 		return error('can only extend dir, $p2.path')
 	}

@@ -1,4 +1,4 @@
-import freeflowuniverse.crystallib.pathlib { Path }
+import freeflowuniverse.crystallib.pathlib
 import os
 
 const testpath = os.dir(@FILE) + '/examples/test_path'
@@ -6,8 +6,8 @@ const testpath = os.dir(@FILE) + '/examples/test_path'
 fn testsuite_begin() {
 	os.rmdir_all(testpath) or {}
 	assert !os.is_dir(testpath)
-	os.mkdir_all(testpath) or {panic(err)}
-	os.mkdir_all('$testpath/test_parent') or {panic(err)}
+	os.mkdir_all(testpath) or { panic(err) }
+	os.mkdir_all('$testpath/test_parent') or { panic(err) }
 }
 
 fn testsuite_end() {

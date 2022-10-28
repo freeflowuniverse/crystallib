@@ -6,9 +6,6 @@ fn do() ? {
 	// a2 := pathlib.path_relative('/a/b/c/d.txt', '/d.txt')
 	// assert a2 == '../../../d.txt'
 
-
-
-
 	println(c)
 
 	// b1:=pathlib.find_common_ancestor(["/a/b/c/d.txt","/a/d.txt"])

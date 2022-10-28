@@ -3,7 +3,6 @@ module books
 import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.params
-import v.embed_file
 
 enum SitesState {
 	init
@@ -12,12 +11,17 @@ enum SitesState {
 }
 
 [heap]
+pub struct SitesConfig {
+pub mut: // pointer to site
+	heal bool = true
+}
+
+[heap]
 pub struct Sites {
 pub mut:
-	sites          map[string]&Site
-	config         Config
-	state          SitesState
-	embedded_files []embed_file.EmbedFileData
+	sites  map[string]&Site
+	state  SitesState
+	config SitesConfig
 }
 
 pub struct SiteNewArgs {
@@ -31,22 +35,21 @@ pub fn (mut sites Sites) site_new(args SiteNewArgs) ?&Site {
 	if !p.exists() {
 		return error('cannot find site on path: $args.path')
 	}
-	p.namefix()? // make sure its all lower case and name is proper
+	p.path_normalize()? // make sure its all lower case and name is proper
 	mut name := args.name
 	if name == '' {
 		name = p.name()
 	}
 	mut site := Site{
-		name: texttools.name_fix_no_underscore_no_ext(name)
+		name: texttools.name_fix_no_ext(name)
 		path: p
 		sites: &sites
 	}
-	sites.sites[site.name] = &site
-	return sites.sites[site.name]
+	sites.sites[site.name.replace("_","")] = &site
+	return &site
 }
 
 fn (mut sites Sites) scan_recursive(mut path pathlib.Path) ? {
-	sites.init()?
 	// $if debug{println(" - sites scan recursive: $path.path")}
 	if path.is_dir() {
 		if path.file_exists('.site') {
@@ -91,6 +94,14 @@ pub fn (mut sites Sites) scan(path string) ? {
 	sites.scan_recursive(mut p)?
 }
 
+pub fn (mut sites Sites) exists(name string) bool {
+	namelower := texttools.name_fix_no_underscore_no_ext(name)
+	if namelower in sites.sites {
+		return true
+	}
+	return false
+}
+
 pub fn (mut sites Sites) get(name string) ?&Site {
 	namelower := texttools.name_fix_no_underscore_no_ext(name)
 	if namelower in sites.sites {
@@ -98,6 +109,7 @@ pub fn (mut sites Sites) get(name string) ?&Site {
 	}
 	return error('could not find site with name:$name')
 }
+
 
 // fix all loaded sites
 pub fn (mut sites Sites) fix() ? {
@@ -108,3 +120,34 @@ pub fn (mut sites Sites) fix() ? {
 		site.fix()?
 	}
 }
+
+
+
+pub fn (mut sites Sites) sitenames() []string {
+	mut res:=[]string{}
+	for key,_ in sites.sites{
+		res << key
+	}
+	res.sort()
+	return res
+}
+
+
+
+
+//walk over all sites see if we can find the image
+//return string if it exists otherwise empty
+//the string name is the image with the site in form sitename:imagename
+fn (mut sites Sites) image_find(name string) ?string {
+	sitename, namelower := get_site_and_obj_name(name,true)?
+	if sitename!=""{
+		panic("should not happen, sitename need to be empty")
+	}
+	for _,mut site2 in sites.sites{
+		if site2.image_exists(namelower){
+			return "${site2.name}:${name}"
+		}
+	}
+	return ""
+}
+

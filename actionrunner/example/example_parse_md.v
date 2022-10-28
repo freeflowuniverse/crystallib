@@ -1,12 +1,11 @@
 module main
 
-import actionparser
+import freeflowuniverse.crystallib.actionrunner
 import os
-
 const testpath = os.dir(@FILE) + '/test_content'
 
 fn do() ? {
-	mut parser := actionparser.get()
+	mut parser := actionrunner.get()
 
 	actionparser.file_parse('$testpath/launch.md') or { panic('cannot parse,$err') }
 

@@ -55,7 +55,7 @@ mut:
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 
-fn (mut parser ActionsParser) file_parse(path string) ? {
+pub fn (mut parser ActionsParser) file_parse(path string) ? {
 	if !os.exists(path) {
 		return error("path: '$path' does not exist, cannot parse.")
 	}

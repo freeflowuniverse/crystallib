@@ -1,6 +1,7 @@
 module markdowndocs
 
 import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.pathlib
 
 pub enum LinkType {
 	file
@@ -56,21 +57,31 @@ fn (mut link Link) error(msg string) {
 	link.error_msg = msg
 }
 
+
 // needs to be the relative path in the site, important!
 // will return true if there was change
-pub fn (mut link Link) link_update(path_ string) bool {
-	mut path := path_.trim_left('/')
-	linkoriginal := link.original.replace(link.pathfull(), path)
-	if linkoriginal != link.original {
-		link.path = path.all_before_last('/')
-		link.filename = path.all_after_last('/')
-		link.original = linkoriginal
-		link.paragraph.content.replace(linkoriginal, link.original)
-		link.paragraph.changed = true
-		println('$linkoriginal $link.original')
-		return true
+pub fn (mut link Link) link_update(linkpath_new string,save bool) ? {	
+	linkpath_old := link.pathfull()
+	linkoriginal_old := link.original
+	mut linkoriginal_new := linkoriginal_old.replace(linkpath_old,linkpath_new)
+	if link.cat == .image{
+		//remove description if image, is not needed
+		if link.description != ""{
+			linkoriginal_new = linkoriginal_new.replace(link.description,"")
+			link.description = ""
+		}
 	}
-	return false
+	if linkoriginal_new != linkoriginal_old{
+		link.paragraph.doc.content=link.paragraph.doc.content.replace(linkoriginal_old,linkoriginal_new)
+		if save {
+			link.paragraph.doc.save()?
+		}
+		link.paragraph.content.replace(linkoriginal_old,linkoriginal_new)
+		link.path = linkpath_new.all_before_last('/')
+		link.filename = linkpath_new.all_after_last('/')
+		link.original = linkoriginal_new
+		link.paragraph.changed = true
+	}
 }
 
 // return the name of the link

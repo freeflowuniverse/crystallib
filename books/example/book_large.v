@@ -1,18 +1,21 @@
 module main
 
 import freeflowuniverse.crystallib.books
-import os
 
-// const testpath = os.dir(@FILE) + '/book1'
-const path = '~/code/github/threefoldfoundation/books/content'
+const path = '~/code/github/threefoldfoundation/books'
 
 fn do() ? {
-	mut books := books.new()
-	books.scan(path)?
-	books.fix()?
-	// println(books.sites["mytwin"])
-	// books.mdbook_export()?
-	// site.mdbook_develop()?
+	mut sites := books.sites_new()
+	sites.scan(path + '/content')?
+
+
+	mut books := books.books_new(&sites)
+	books.scan(path + '/books')?
+
+	// println(sites.sites["ppp"])
+	mut b:=books.get("abundance_internet")?
+
+	b.mdbook_export()?
 }
 
 fn main() {
@@ -20,5 +23,4 @@ fn main() {
 	do() or { panic(err) }
 }
 
-
-//git reset --hard && git clean -fxd
+// git reset --hard && git clean -fxd

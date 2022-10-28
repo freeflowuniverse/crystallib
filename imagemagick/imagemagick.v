@@ -34,8 +34,10 @@ fn filter_imagemagic(mut path pathlib.Path, mut params params.Params) ?bool {
 	} else if path.name_no_ext().ends_with('_') {
 		// println(" FALSE")
 		return false
-	} else if path.is_file() && !path.is_image_jpg_png() {
+	} else if !path.is_file() {
 		// println(" FALSE")
+		return false
+	}else if !path.is_image_jpg_png() {
 		return false
 	}
 	// println(" TRUE")
