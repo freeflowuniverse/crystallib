@@ -162,7 +162,9 @@ fn (mut r Redis) get_bytes_from_line(line string) ?[]u8 {
 		return []
 	}
 	// read payload
-	buffer := r.read(bulkstring_size)?
+	buffer := r.read(bulkstring_size) or {
+		return error("Could not read payload: $err")
+	}
 	// extract final \r\n
 	r.read_line()?
 	return buffer

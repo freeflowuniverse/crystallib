@@ -79,7 +79,7 @@ fn (mut books Books) scan_recursive(mut path pathlib.Path) ? {
 				}
 			}
 			println(' - book new: $path.path name:$name')
-			mut s := books.book_new(path: path.path, name: name)?
+			books.book_new(path: path.path, name: name)?
 			return
 		}
 		mut llist := path.list(recursive: false) or {

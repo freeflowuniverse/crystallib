@@ -1,8 +1,6 @@
 module pathlib
 
 import os
-import freeflowuniverse.crystallib.texttools
-
 
 //path needs to be existing
 //linkpath is where the link will be pointing to path

@@ -102,12 +102,12 @@ fn (mut r Redis) write_cmds(items []string) ? {
 	r.write_rval(a)?
 }
 
-fn (mut r Redis) read(size int) ?[]u8 {
-	r.socket_check()?
+fn (mut r Redis) read(size int) ![]u8 {
+	r.socket_check() or {}
 	mut buf := []u8{len: size}
 	mut remaining := size
 	for remaining > 0 {
-		read_bytes := r.socket.read(mut buf[buf.len - remaining..])?
+		read_bytes := r.socket.read(mut buf[buf.len - remaining..])!
 		remaining -= read_bytes
 	}
 	return buf

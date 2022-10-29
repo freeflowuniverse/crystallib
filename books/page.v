@@ -2,7 +2,6 @@ module books
 
 import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.markdowndocs { Link }
-import os
 
 pub enum PageStatus {
 	unknown
@@ -41,7 +40,7 @@ fn (mut page Page) fix_link(mut link Link) ? {
 	// 	println(' - fix link $link.original with name:$file_name for page: $page.path.path')
 	// }
 	//empty just to fill in on next 
-	mut fileobj:=File{site:page.site}
+	mut fileobj := &File{site:page.site}
 
 	//if its not an image, we can only check if it exists, if not return and report error
 	if link.cat == .file{			
@@ -81,7 +80,7 @@ fn (mut page Page) fix_link(mut link Link) ? {
 				pathlib.get_dir("${page.path.path_dir()}/img",true)? //make sure it exists
 				fileobj.path.copy(mut dest)?
 				page.site.image_new(mut dest)? //make sure site news about the new file
-				fileobj =  page.site.image_get(fileobj.name)? //get the file now from the site we are in from this pager
+				fileobj = page.site.image_get(fileobj.name)? //get the file now from the site we are in from this pager
 
 			}
 		}		
@@ -92,7 +91,7 @@ fn (mut page Page) fix_link(mut link Link) ? {
 	}			
 
 	//means we now found the file or image
-	page.files_linked << &fileobj
+	page.files_linked << fileobj
 
 	imagelink_rel := pathlib.path_relative(page.path.path_dir(), fileobj.path.path)?
 	link.description = ""

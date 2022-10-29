@@ -1,8 +1,6 @@
 module imagemagick
 
-import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.process
-import os
 
 fn (mut image Image) identify_verbose() ? {
 	if image.size_y != 0 {

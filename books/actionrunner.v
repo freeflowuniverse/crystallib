@@ -13,7 +13,7 @@ pub fn actions_process(mut parser actionparser.ActionsParser, actions_done map[s
 
 	mut sites := books.sites_new()
 
-	mut books := books.books_new(&sites)
+	books.books_new(&sites)
 
 	// sites.scan(path + '/content')?
 	// books.scan(path + '/books')?

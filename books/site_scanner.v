@@ -1,7 +1,6 @@
 module books
 
 import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.imagemagick
 
 // remember the file, so we know if we have duplicates

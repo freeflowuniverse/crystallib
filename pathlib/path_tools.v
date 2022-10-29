@@ -337,7 +337,7 @@ pub fn path_relative(source_ string, linkpath_ string) ?string {
 	linkpath_short = linkpath_short.trim_string_left('/')
 
 	source_count := source_short.count('/')
-	link_count := linkpath_short.count('/')
+	// link_count := linkpath_short.count('/')
 	// println (" + source_short:$source_short ($source_count)")
 	// println (" + linkpath_short:$linkpath_short ($link_count)")
 	mut dest := ''

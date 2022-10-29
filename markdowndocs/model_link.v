@@ -1,7 +1,6 @@
 module markdowndocs
 
 import freeflowuniverse.crystallib.texttools
-import freeflowuniverse.crystallib.pathlib
 
 pub enum LinkType {
 	file

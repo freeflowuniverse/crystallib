@@ -1,8 +1,6 @@
 module imagemagick
 
 import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.process
-import os
 
 pub struct Image {
 pub mut:
