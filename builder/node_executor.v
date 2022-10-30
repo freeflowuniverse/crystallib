@@ -1,13 +1,13 @@
 module builder
 
-// 	exec(cmd string) ?string
-// 	exec_silent(cmd string) ?string
-// 	file_write(path string, text string) ?
-// 	file_read(path string) ?string
+// 	exec(cmd string) !string
+// 	exec_silent(cmd string) !string
+// 	file_write(path string, text string) !
+// 	file_read(path string) !string
 // 	file_exists(path string) bool
-// 	delete(path string) ?
+// 	delete(path string) !
 
-pub fn (mut node Node) exec(cmd string) ?string {
+pub fn (mut node Node) exec(cmd string) !string {
 	if mut node.executor is ExecutorLocal {
 		return node.executor.exec(cmd)
 	} else if mut node.executor is ExecutorSSH {
@@ -17,7 +17,7 @@ pub fn (mut node Node) exec(cmd string) ?string {
 }
 
 // silently execute a command
-pub fn (mut node Node) exec_silent(cmd string) ?string {
+pub fn (mut node Node) exec_silent(cmd string) !string {
 	if mut node.executor is ExecutorLocal {
 		return node.executor.exec_silent(cmd)
 	} else if mut node.executor is ExecutorSSH {
@@ -26,7 +26,7 @@ pub fn (mut node Node) exec_silent(cmd string) ?string {
 	panic('did not find right executor')
 }
 
-pub fn (mut node Node) file_write(path string, text string) ? {
+pub fn (mut node Node) file_write(path string, text string) ! {
 	if mut node.executor is ExecutorLocal {
 		return node.executor.file_write(path, text)
 	} else if mut node.executor is ExecutorSSH {
@@ -35,7 +35,7 @@ pub fn (mut node Node) file_write(path string, text string) ? {
 	panic('did not find right executor')
 }
 
-pub fn (mut node Node) file_read(path string) ?string {
+pub fn (mut node Node) file_read(path string) !string {
 	if mut node.executor is ExecutorLocal {
 		return node.executor.file_read(path)
 	} else if mut node.executor is ExecutorSSH {
@@ -65,7 +65,7 @@ pub fn (mut node Node) command_exists(cmd string) bool {
 	return output.contains('0')
 }
 
-pub fn (mut node Node) delete(path string) ? {
+pub fn (mut node Node) delete(path string) ! {
 	if mut node.executor is ExecutorLocal {
 		return node.executor.delete(path)
 	} else if mut node.executor is ExecutorSSH {
@@ -74,13 +74,13 @@ pub fn (mut node Node) delete(path string) ? {
 	panic('did not find right executor')
 }
 
-// 	download(source string, dest string) ?
-// 	upload(source string, dest string) ?
-// 	environ_get() ?map[string]string
+// 	download(source string, dest string) !
+// 	upload(source string, dest string) !
+// 	environ_get() !map[string]string
 // 	info() map[string]string
-// 	shell(cmd string) ?
+// 	shell(cmd string) !
 
-pub fn (mut node Node) download(source string, dest string) ? {
+pub fn (mut node Node) download(source string, dest string) ! {
 	if mut node.executor is ExecutorLocal {
 		return node.executor.download(source, dest)
 	} else if mut node.executor is ExecutorSSH {
@@ -89,7 +89,7 @@ pub fn (mut node Node) download(source string, dest string) ? {
 	panic('did not find right executor')
 }
 
-pub fn (mut node Node) upload(source string, dest string) ? {
+pub fn (mut node Node) upload(source string, dest string) ! {
 	if mut node.executor is ExecutorLocal {
 		return node.executor.upload(source, dest)
 	} else if mut node.executor is ExecutorSSH {
@@ -98,7 +98,7 @@ pub fn (mut node Node) upload(source string, dest string) ? {
 	panic('did not find right executor')
 }
 
-pub fn (mut node Node) environ_get() ?map[string]string {
+pub fn (mut node Node) environ_get() !map[string]string {
 	if mut node.executor is ExecutorLocal {
 		return node.executor.environ_get()
 	} else if mut node.executor is ExecutorSSH {
@@ -116,7 +116,7 @@ pub fn (mut node Node) info() map[string]string {
 	panic('did not find right executor')
 }
 
-pub fn (mut node Node) shell(cmd string) ? {
+pub fn (mut node Node) shell(cmd string) ! {
 	if mut node.executor is ExecutorLocal {
 		return node.executor.shell(cmd)
 	} else if mut node.executor is ExecutorSSH {
@@ -125,11 +125,11 @@ pub fn (mut node Node) shell(cmd string) ? {
 	panic('did not find right executor')
 }
 
-// 	list(path string) ?[]string
+// 	list(path string) ![]string
 // 	dir_exists(path string) bool
 // 	debug_off()
 // 	debug_on()
-pub fn (mut node Node) list(path string) ?[]string {
+pub fn (mut node Node) list(path string) ![]string {
 	if mut node.executor is ExecutorLocal {
 		return node.executor.list(path)
 	} else if mut node.executor is ExecutorSSH {

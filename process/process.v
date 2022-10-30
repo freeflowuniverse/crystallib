@@ -52,7 +52,7 @@ pub mut:
 //
 // return Job
 // out is the output
-pub fn execute_job(cmd Command) ?Job {
+pub fn execute_job(cmd Command) !Job {
 	mut cmd_obj := cmd
 	println(' - CMD:$cmd_obj.cmd')
 	mut out := ''
@@ -61,7 +61,7 @@ pub fn execute_job(cmd Command) ?Job {
 	job.start = time.now()
 	mut cleanuppath := ''
 	mut args := []string{}
-	cleanuppath, args = cmd_to_args(cmd_obj.cmd)?
+	cleanuppath, args = cmd_to_args(cmd_obj.cmd)!
 
 	if cmd_obj.debug {
 		cmd_obj.stdout = true
@@ -124,7 +124,7 @@ pub fn execute_job(cmd Command) ?Job {
 	} else {
 		if cleanuppath != '' {
 			if os.exists(cleanuppath) {
-				os.rm(cleanuppath)?
+				os.rm(cleanuppath)!
 			}
 		}
 	}
@@ -133,7 +133,7 @@ pub fn execute_job(cmd Command) ?Job {
 }
 
 // write temp file and return path
-fn temp_write(text string) ?string {
+fn temp_write(text string) !string {
 	mut tmpdir := '/tmp'
 	// if 'TMPDIR' in os.environ() {
 	// 	tmpdir = os.environ()['TMPDIR'] or {
@@ -156,13 +156,13 @@ fn temp_write(text string) ?string {
 			}
 			// TODO: would be better to remove older files, e.g. if older than 1 day, remove
 			if i > 99 {
-				// os.rmdir_all('$tmpdir/execscripts')?
+				// os.rmdir_all('$tmpdir/execscripts')!
 				// return temp_write(text)
 				panic("should not get here, can't find temp file to write for process job.")
 			}
 		}
 	}
-	os.write_file(tmppath, text)?
+	os.write_file(tmppath, text)!
 	return tmppath
 }
 
@@ -178,7 +178,7 @@ fn check_write(text string) bool {
 
 // process commands to arguments which can be given to a process manager
 // will return temporary path and args
-fn cmd_to_args(cmd string) ?(string, []string) {
+fn cmd_to_args(cmd string) !(string, []string) {
 	mut cleanuppath := ''
 	mut text := cmd
 
@@ -220,35 +220,35 @@ fn cmd_to_args(cmd string) ?(string, []string) {
 	// }
 
 	// is still giving issues prob easier for now to only use first part and then all the rest together, lets see what happens now
-	// mut args := texttools.cmd_line_args_parser(text)?
+	// mut args := texttools.cmd_line_args_parser(text)!
 
 	// splitted := text.split_nth(' ', 2)
 	// mut args := [splitted[0], splitted[1]]
 
 	// // get the path of the file
 	// if !args[0].starts_with('/') {
-	// 	args[0] = os.find_abs_path_of_executable(args[0]) ?
+	// 	args[0] = os.find_abs_path_of_executable(args[0]) !
 	// }
 	// return cleanuppath, args
 }
 
-pub fn execute_silent(cmd string) ?string {
-	job := execute_job(cmd: cmd, stdout: false)?
+pub fn execute_silent(cmd string) !string {
+	job := execute_job(cmd: cmd, stdout: false)!
 	return job.output
 }
 
-pub fn execute_stdout(cmd string) ?string {
-	job := execute_job(cmd: cmd, stdout: true)?
+pub fn execute_stdout(cmd string) !string {
+	job := execute_job(cmd: cmd, stdout: true)!
 	return job.output
 }
 
-pub fn execute_interactive(cmd string) ? {
+pub fn execute_interactive(cmd string) ! {
 	mut cleanuppath := ''
 	mut args := []string{}
 
-	cleanuppath, args = cmd_to_args(cmd)?
+	cleanuppath, args = cmd_to_args(cmd)!
 
-	os.execvp(args[0], args[1..args.len])?
+	os.execvp(args[0], args[1..args.len])!
 
 	if cleanuppath != '' {
 		os.rm(cleanuppath) or {}

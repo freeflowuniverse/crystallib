@@ -10,26 +10,26 @@ mut:
 	debug bool
 }
 
-fn (mut executor ExecutorLocal) exec(cmd string) ?string {
-	res := process.execute_job(cmd: cmd, stdout: true)?
+fn (mut executor ExecutorLocal) exec(cmd string) !string {
+	res := process.execute_job(cmd: cmd, stdout: true)!
 	return res.output
 }
 
-fn (mut executor ExecutorLocal) exec_silent(cmd string) ?string {
+fn (mut executor ExecutorLocal) exec_silent(cmd string) !string {
 	mut stdout := false
 	if executor.debug {
 		stdout = true
 	}
-	res := process.execute_job(cmd: cmd, stdout: stdout)?
+	res := process.execute_job(cmd: cmd, stdout: stdout)!
 	return res.output
 }
 
-fn (mut executor ExecutorLocal) file_write(path string, text string) ? {
+fn (mut executor ExecutorLocal) file_write(path string, text string) ! {
 	println('local write $path')
 	return os.write_file(path, text)
 }
 
-fn (mut executor ExecutorLocal) file_read(path string) ?string {
+fn (mut executor ExecutorLocal) file_read(path string) !string {
 	return os.read_file(path)
 }
 
@@ -46,7 +46,7 @@ fn (mut executor ExecutorLocal) debug_off() {
 }
 
 // carefull removes everything
-fn (mut executor ExecutorLocal) delete(path string) ? {
+fn (mut executor ExecutorLocal) delete(path string) ! {
 	if os.is_file(path) || os.is_link(path) {
 		return os.rm(path)
 	} else if os.is_dir(path) {
@@ -56,7 +56,7 @@ fn (mut executor ExecutorLocal) delete(path string) ? {
 }
 
 // get environment variables from the executor
-fn (mut executor ExecutorLocal) environ_get() ?map[string]string {
+fn (mut executor ExecutorLocal) environ_get() !map[string]string {
 	env := os.environ()
 	if false {
 		return error('can never happen')
@@ -76,24 +76,24 @@ fn (mut executor ExecutorLocal) info() map[string]string {
 }
 
 // upload from local FS to executor FS
-fn (mut executor ExecutorLocal) upload(source string, dest string) ? {
-	executor.exec('cp -r $source $dest')?
+fn (mut executor ExecutorLocal) upload(source string, dest string) ! {
+	executor.exec('cp -r $source $dest')!
 }
 
 // download from executor FS to local FS
-fn (mut executor ExecutorLocal) download(source string, dest string) ? {
-	executor.exec('cp -r $source $dest')?
+fn (mut executor ExecutorLocal) download(source string, dest string) ! {
+	executor.exec('cp -r $source $dest')!
 }
 
-fn (mut executor ExecutorLocal) shell(cmd string) ? {
+fn (mut executor ExecutorLocal) shell(cmd string) ! {
 	if cmd.len > 0 {
-		os.execvp('/bin/bash', ["-c '$cmd'"])?
+		os.execvp('/bin/bash', ["-c '$cmd'"])!
 	} else {
-		os.execvp('/bin/bash', [])?
+		os.execvp('/bin/bash', [])!
 	}
 }
 
-fn (mut executor ExecutorLocal) list(path string) ?[]string {
+fn (mut executor ExecutorLocal) list(path string) ![]string {
 	if !executor.dir_exists(path) {
 		panic('Dir Not found')
 	}

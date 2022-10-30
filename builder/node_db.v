@@ -23,7 +23,7 @@ fn (mut node Node) db_key_path_get(key string) string {
 }
 
 // return info from the db
-pub fn (mut node Node) db_get(key string) ?string {
+pub fn (mut node Node) db_get(key string) !string {
 	fpath := node.db_key_path_get(key)
 	return node.file_read(fpath)
 }
