@@ -18,8 +18,8 @@ pub fn (mut exp Expiration) to_time() time.Time {
 	return time.unix(exp.expiration)
 }
 
-pub fn time_from_string(timestr string) ?time.Time {
-	mut exp_ := get_expiration_from_timestring(timestr)?
+pub fn time_from_string(timestr string) !time.Time {
+	mut exp_ := get_expiration_from_timestring(timestr)!
 	time_object := exp_.to_time()
 	return time_object
 }
@@ -43,7 +43,7 @@ pub fn time_from_string(timestr string) ?time.Time {
 //'2022-12-5 20:14:35'
 //'2022-12-5' - sets hours, mins, seconds to 00
 // TODO: do error handling
-pub fn get_expiration_from_timestring(exp_ string) ?Expiration { // TODO: function to determine if relative or absolute time
+pub fn get_expiration_from_timestring(exp_ string) !Expiration { // TODO: function to determine if relative or absolute time
 	trimmed := exp_.trim_space()
 	mut relative_bool := false
 	if trimmed.starts_with('+') || trimmed.starts_with('-') {
@@ -67,7 +67,7 @@ pub fn get_expiration_from_timestring(exp_ string) ?Expiration { // TODO: functi
 	}
 }
 
-pub fn get_unix_from_relative(exp_ string) ?i64 {
+pub fn get_unix_from_relative(exp_ string) !i64 {
 	// removes all spaces from the string
 	mut full_exp := exp_.replace(' ', '')
 
@@ -119,7 +119,7 @@ pub fn get_unix_from_relative(exp_ string) ?i64 {
 	return time_unix
 }
 
-pub fn get_unix_from_absolute(timestr string) ?i64 {
+pub fn get_unix_from_absolute(timestr string) !i64 {
 	components := timestr.split_any(' :-')
 	mut full_string := timestr
 	if components.len == 3 {
