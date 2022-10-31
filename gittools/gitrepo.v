@@ -8,7 +8,7 @@ import freeflowuniverse.crystallib.sshagent
 // check if sshkey for a repo exists in the homedir/.ssh
 // we check on name, if nameof repo is same as name of key we will load
 // will return true if the key did exist, which means we need to connect over ssh !!!
-fn (mut repo GitRepo) ssh_key_load_if_exists() ?bool {
+fn (mut repo GitRepo) ssh_key_load_if_exists() bool {
 	mut key_path := '$os.home_dir()/.ssh/$repo.addr.name'
 	if !os.exists(key_path) {
 		key_path = '.ssh/$repo.addr.name'
@@ -31,8 +31,8 @@ fn (mut repo GitRepo) ssh_key_load_if_exists() ?bool {
 	if (!exists) || nrkeys > 0 {
 		// means we did not find the key but there were other keys loaded
 		// only choice we have now is to reset and use this key
-		sshagent.reset()?
-		sshagent.key_load(key_path)?
+		sshagent.reset()
+		sshagent.key_load(key_path)
 		return true
 	} else if exists && nrkeys == 1 {
 		// means the right key was loaded
@@ -90,7 +90,7 @@ pub fn (mut repo GitRepo) path_relative() string {
 }
 
 // if there are changes then will return 'true', otherwise 'false'
-pub fn (mut repo GitRepo) changes() ?bool {
+pub fn (mut repo GitRepo) changes() !bool {
 	cmd := 'cd $repo.path() && git status'
 	// println(cmd)
 	out := process.execute_silent(cmd) or {
@@ -143,7 +143,7 @@ fn (mut repo GitRepo) get_clone_cmd(http bool) string {
 }
 
 // this is the main git functionality to get git repo, update, reset, ...
-pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ? {
+pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ! {
 	mut pull_soft := pull_soft_ || reset_force_
 	mut reset_force := reset_force_
 	url := repo.addr.url_http_with_branch_get()
@@ -156,7 +156,7 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ? {
 		mut needs_to_be_ssh := false
 
 		// check if there is a custom key to be used (sshkey)
-		needs_to_be_ssh0 := repo.ssh_key_load_if_exists()?
+		needs_to_be_ssh0 := repo.ssh_key_load_if_exists()
 		if needs_to_be_ssh0 {
 			needs_to_be_ssh = true
 		}
@@ -193,18 +193,18 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ? {
 
 		if reset_force {
 			println(' - remove git changes: $repo.path()')
-			repo.remove_changes()?
+			repo.remove_changes()!
 		}
 
 		// println(repo.addr)
 		// print_backtrace()
 		if repo.addr.branch != '' {
-			mut branchname := repo.branch_get()?
+			mut branchname := repo.branch_get()!
 			// println( " - branch detected: $branchname, branch on repo obj:'$repo.addr.branch'")
 			branchname = branchname.trim('\n ')
 			if branchname != repo.addr.branch && pull_soft {
 				println(' - branch switch $branchname -> $repo.addr.branch for $url')
-				repo.branch_switch(repo.addr.branch)?
+				repo.branch_switch(repo.addr.branch)!
 				// need to pull now
 				pull_soft = true
 			}
@@ -213,7 +213,7 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ? {
 		}
 
 		if pull_soft {
-			repo.pull()?
+			repo.pull()!
 		}
 
 		repo.state = GitStatus.ok
@@ -223,12 +223,12 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ? {
 
 // pulls remote content in, will fail if there are local changes
 // when using force:true it means we reset, overwrite all changes
-pub fn (mut repo GitRepo) pull() ? {
+pub fn (mut repo GitRepo) pull() ! {
 	println('   - PULL: ${repo.url_get(true)}')
 	if !os.exists(repo.path()) {
-		repo.check(false, false)?
+		repo.check(false, false)!
 	} else {
-		// changes := repo.changes()?
+		// changes := repo.changes()!
 		// if changes{
 		// 	return error('Cannot pull repo: ${repo.path()} because there are changes in the dir.')
 		// }
@@ -240,7 +240,7 @@ pub fn (mut repo GitRepo) pull() ? {
 	}
 }
 
-pub fn (mut repo GitRepo) commit(msg string) ? {
+pub fn (mut repo GitRepo) commit(msg string) ! {
 	change := repo.changes() or {
 		return error('cannot detect if there are changes on repo.\n$err')
 	}
@@ -260,7 +260,7 @@ pub fn (mut repo GitRepo) commit(msg string) ? {
 }
 
 // remove all changes of the repo, be careful
-pub fn (mut repo GitRepo) remove_changes() ? {
+pub fn (mut repo GitRepo) remove_changes() ! {
 	change := repo.changes() or {
 		return error('cannot detect if there are changes on repo.\n$err')
 	}
@@ -284,7 +284,7 @@ pub fn (mut repo GitRepo) remove_changes() ? {
 	}
 }
 
-pub fn (mut repo GitRepo) push() ? {
+pub fn (mut repo GitRepo) push() ! {
 	println('   - PUSH: ${repo.url_get(true)}')
 	cmd := 'cd $repo.path() && git push'
 	process.execute_silent(cmd) or {
@@ -292,7 +292,7 @@ pub fn (mut repo GitRepo) push() ? {
 	}
 }
 
-pub fn (mut repo GitRepo) branch_get() ?string {
+pub fn (mut repo GitRepo) branch_get() !string {
 	cmd := 'cd $repo.path() && git rev-parse --abbrev-ref HEAD'
 	branch := process.execute_silent(cmd) or {
 		return error('Cannot get branch name from repo: ${repo.path()}. Error was $err for cmd $cmd')
@@ -300,26 +300,26 @@ pub fn (mut repo GitRepo) branch_get() ?string {
 	return branch.trim(' \n')
 }
 
-pub fn (mut repo GitRepo) branch_switch(branchname string) ? {
+pub fn (mut repo GitRepo) branch_switch(branchname string) ! {
 	if repo.gs.config.multibranch {
 		return error('cannot do a branch switch if we are using multibranch strategy.')
 	}
-	changes := repo.changes()?
+	changes := repo.changes()!
 	if changes {
 		return error('Cannot branch switch repo: $repo.path() because there are changes in the dir.')
 	}
 	// Fetch repo before checkout, in case a new branch added.
-	repo.fetch_all()?
+	repo.fetch_all()!
 	cmd := 'cd $repo.path() && git checkout $branchname'
 	process.execute_silent(cmd) or {
 		// println('GIT CHECKOUT FAILED: $cmd_checkout')
 		return error('Cannot branch switch repo: ${repo.path()}. Error was $err \n cmd: $cmd')
 	}
 	// println(cmd)
-	repo.pull()?
+	repo.pull()!
 }
 
-pub fn (mut repo GitRepo) fetch_all() ? {
+pub fn (mut repo GitRepo) fetch_all() ! {
 	cmd := 'cd $repo.path() && git fetch --all'
 	process.execute_silent(cmd) or {
 		// println('GIT FETCH FAILED: $cmd_checkout')

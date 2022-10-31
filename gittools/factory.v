@@ -3,11 +3,11 @@ module gittools
 import freeflowuniverse.crystallib.texttools
 import os
 
-fn (mut gitstructure GitStructure) check() ? {
+fn (mut gitstructure GitStructure) check() ! {
 	if gitstructure.status == GitStructureStatus.loaded {
 		return
 	}
-	gitstructure.load()?
+	gitstructure.load()!
 }
 
 pub struct GSArgs {
@@ -64,7 +64,7 @@ pub fn (mut gitstructure GitStructure) repos_print(args GSArgs) {
 	texttools.print_array2(r, '  ', true)
 }
 
-pub fn (mut gitstructure GitStructure) list(args GSArgs) ? {
+pub fn (mut gitstructure GitStructure) list(args GSArgs) {
 	texttools.print_clear()
 	println(' #### overview of repositories:')
 	println('')
@@ -73,19 +73,19 @@ pub fn (mut gitstructure GitStructure) list(args GSArgs) ? {
 }
 
 // reload the full git tree
-fn (mut gitstructure GitStructure) reload() ? {
+fn (mut gitstructure GitStructure) reload() ! {
 	gitstructure.status = GitStructureStatus.init
 
 	if !os.exists(gitstructure.codepath()) {
-		os.mkdir_all(gitstructure.codepath())?
+		os.mkdir_all(gitstructure.codepath())!
 	}
 
-	gitstructure.check()?
+	gitstructure.check()!
 }
 
 // the factory for getting the gitstructure
 // git is checked uderneith $/code
-fn (mut gitstructure GitStructure) load() ? {
+fn (mut gitstructure GitStructure) load() ! {
 	if gitstructure.status == GitStructureStatus.loaded {
 		return
 	}
@@ -101,14 +101,14 @@ fn (mut gitstructure GitStructure) load() ? {
 
 	// path which git repos will be recursively loaded
 	git_path := gitstructure.codepath() + '/github'
-	gitstructure.load_recursive(git_path, mut done)?
+	gitstructure.load_recursive(git_path, mut done)!
 
 	gitstructure.status = GitStructureStatus.loaded
 
 	// println(" - SCAN done")
 }
 
-fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []string) ? {
+fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []string) ! {
 	// println(" - git load: $path1")
 	items := os.ls(path1) or { return error('cannot load gitstructure because cannot find $path1') }
 	mut pathnew := ''
@@ -137,7 +137,7 @@ fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []strin
 			if item.starts_with('_') {
 				continue
 			}
-			gitstructure.load_recursive(pathnew, mut done)?
+			gitstructure.load_recursive(pathnew, mut done)!
 		}
 	}
 	// println(" - git exit: $path1")

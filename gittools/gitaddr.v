@@ -43,7 +43,7 @@ fn (addr GitAddr) url_http_with_branch_get() string {
 // 		anker string //position in the file
 // }
 // ```
-pub fn addr_get_from_url(url string) ?GitAddr {
+pub fn addr_get_from_url(url string) !GitAddr {
 	// println(" ** URL: $url **")
 	mut urllower := url.to_lower()
 	urllower = urllower.trim_space()
@@ -121,7 +121,7 @@ pub fn addr_get_from_url(url string) ?GitAddr {
 // 		anker string //position in the file
 // }
 // ```
-pub fn addr_get_from_path(path string) ?GitAddr {
+pub fn addr_get_from_path(path string) !GitAddr {
 	mut path2 := path.replace('~', os.home_dir())
 	if !os.exists(os.join_path(path2, '.git')) {
 		return error("path: '$path2' is not a git dir, missed a .git directory")
@@ -137,7 +137,7 @@ pub fn addr_get_from_path(path string) ?GitAddr {
 	cmd2 := 'cd $path && git rev-parse --abbrev-ref HEAD'
 	branch := os.execute_or_panic(cmd2).output.trim(' \n')
 
-	mut addr := addr_get_from_url(url)?
+	mut addr := addr_get_from_url(url)!
 	addr.branch = branch
 
 	// println(addr)

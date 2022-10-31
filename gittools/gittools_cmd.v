@@ -2,7 +2,7 @@ module gittools
 
 import freeflowuniverse.crystallib.texttools
 
-pub fn (mut gitstructure GitStructure) pushcommit(args GSArgs) ? {
+pub fn (mut gitstructure GitStructure) pushcommit(args GSArgs) ! {
 	texttools.print_clear()
 	println(" #### push pull commit repo's:")
 	println('')
@@ -19,21 +19,21 @@ pub fn (mut gitstructure GitStructure) pushcommit(args GSArgs) ? {
 		} else {
 			println(' - COMMIT, PUSH: $g.addr.name')
 		}
-		changes := g.changes()?
+		changes := g.changes()!
 		if changes {
-			g.commit(args.message)?
+			g.commit(args.message)!
 		}
 		if args.pull {
-			g.pull()?
-			g.commit(args.message)?
+			g.pull()!
+			g.commit(args.message)!
 		}
 		if changes {
-			g.push()?
+			g.push()!
 		}
 	}
 }
 
-pub fn (mut gitstructure GitStructure) commit(args GSArgs) ? {
+pub fn (mut gitstructure GitStructure) commit(args GSArgs) ! {
 	texttools.print_clear()
 	println(" #### commit repo's:")
 	println('')
@@ -50,18 +50,18 @@ pub fn (mut gitstructure GitStructure) commit(args GSArgs) ? {
 		} else {
 			println(' - COMMIT: $g.addr.name')
 		}
-		changes := g.changes()?
+		changes := g.changes()!
 		if changes {
-			g.commit(args.message)?
+			g.commit(args.message)!
 		}
 		if args.pull {
-			g.pull()?
-			g.commit(args.message)?
+			g.pull()!
+			g.commit(args.message)!
 		}
 	}
 }
 
-pub fn (mut gitstructure GitStructure) push(args GSArgs) ? {
+pub fn (mut gitstructure GitStructure) push(args GSArgs) ! {
 	texttools.print_clear()
 	println(" #### push repo's:")
 	println('')
@@ -70,14 +70,14 @@ pub fn (mut gitstructure GitStructure) push(args GSArgs) ? {
 
 	for mut g in gitstructure.repos_get(args) {
 		println(' - push: $g.addr.name')
-		changes := g.changes()?
+		changes := g.changes()!
 		if changes {
-			g.push()?
+			g.push()!
 		}
 	}
 }
 
-pub fn (mut gitstructure GitStructure) pull(args GSArgs) ? {
+pub fn (mut gitstructure GitStructure) pull(args GSArgs) ! {
 	texttools.print_clear()
 	println(" #### pull repo's:")
 	println('')
@@ -86,6 +86,6 @@ pub fn (mut gitstructure GitStructure) pull(args GSArgs) ? {
 
 	for mut g in gitstructure.repos_get(args) {
 		println(' - push: $g.addr.name')
-		g.pull()?
+		g.pull()!
 	}
 }

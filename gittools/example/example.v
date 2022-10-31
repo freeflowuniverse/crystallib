@@ -5,11 +5,11 @@ import os
 
 const testpath = os.dir(@FILE) + '/book1'
 
-fn do() ? {
-	mut gs := gittools.get(root: '/tmp/code')?
+fn do() ! {
+	mut gs := gittools.get(root: '/tmp/code')!
 
 	url := 'https://github.com/threefoldfoundation/www_examplesite/tree/development/manual'
-	mut gr := gs.repo_get_from_url(url: url, pull: false, reset: false)?
+	mut gr := gs.repo_get_from_url(url: url, pull: false, reset: false)!
 
 	gs.repos_print(filter: '')
 

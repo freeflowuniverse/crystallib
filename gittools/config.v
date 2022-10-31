@@ -21,7 +21,7 @@ pub mut:
 // reset bool  //be careful, this means we will reset when pulling
 // light       bool  // if set then will clone only last history for all branches		
 // }
-pub fn get(config GSConfig) ?GitStructure {
+pub fn get(config GSConfig) !GitStructure {
 	mut gs := GitStructure{
 		config: config
 	}
@@ -40,12 +40,12 @@ pub fn get(config GSConfig) ?GitStructure {
 	gs.config.root = gs.config.root.replace('~', os.home_dir()).trim_right('/')
 
 	if !os.exists(gs.config.root) {
-		os.mkdir_all(gs.config.root)?
+		os.mkdir_all(gs.config.root)!
 	}
 
 	gs.status = GitStructureStatus.init // step2
 
-	gs.check()?
+	gs.check()!
 
 	return gs
 }

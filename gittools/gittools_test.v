@@ -50,7 +50,7 @@ fn test_url2() {
 }
 
 // fn test_url2() {
-// 	gs := new("",false)?
+// 	gs := new("",false)!
 
 // 	url := 'https://github.com/vlang/v/blob/master/doc/docs.md'
 // 	obj := addr_get_from_url(url)
@@ -67,7 +67,7 @@ fn test_url2() {
 // }
 
 // fn test_url3() {
-// 	gs := new("",false)?
+// 	gs := new("",false)!
 
 // 	url := 'https://github.com/vlang/v/blob/master/'
 // 	obj := addr_get_from_url(url)
@@ -84,7 +84,7 @@ fn test_url2() {
 // }
 
 // fn test_url4() {
-// 	gs := new("",false)?
+// 	gs := new("",false)!
 
 // 	url := 'https://github.com/vlang/v'
 // 	obj := addr_get_from_url(url)
@@ -101,7 +101,7 @@ fn test_url2() {
 // }
 
 // fn test_url4b() {
-// 	gs := new("",false)?
+// 	gs := new("",false)!
 
 // 	url := 'https://github.com/vlang/v.git'
 // 	obj := addr_get_from_url(url)
@@ -118,7 +118,7 @@ fn test_url2() {
 // }
 
 // fn test_url4c() {
-// 	gs := new("",false)?
+// 	gs := new("",false)!
 
 // 	url := 'http://github.com/vlang/v.git'
 // 	obj := addr_get_from_url(url)
@@ -135,7 +135,7 @@ fn test_url2() {
 // }
 
 // fn test_url5() {
-// 	gs := new("",false)?
+// 	gs := new("",false)!
 
 // 	url := 'git@github.com:vlang/v.git'
 // 	obj := addr_get_from_url(url)
@@ -152,7 +152,7 @@ fn test_url2() {
 // }
 
 // fn test_url6() {
-// 	gs := new("",false)?
+// 	gs := new("",false)!
 
 // 	url := 'github.com:vlang/v.git'
 // 	obj := addr_get_from_url(url)
@@ -169,7 +169,7 @@ fn test_url2() {
 // }
 
 // fn test_url7() {
-// 	gs := new("",false)?
+// 	gs := new("",false)!
 
 // 	url := 'github.com:vlang/v'
 // 	obj := addr_get_from_url(url)
@@ -186,7 +186,7 @@ fn test_url2() {
 // }
 
 // fn test_path1() {
-// 	mut s := new("",false)?
+// 	mut s := new("",false)!
 
 // 	addr := s.addr_get_from_url('https://github.com/freeflowuniverse/crystaltools')
 // 	mut r := s.repo_get(addr) or { panic('cannot load git $addr.url\n$err\n') }
@@ -214,7 +214,7 @@ fn test_url2() {
 // }
 
 // fn test_changes() {
-// 	mut s := new("",false)?
+// 	mut s := new("",false)!
 
 // 	addr := s.addr_get_from_url('https://github.com/freeflowuniverse/crystaltools')
 // 	mut r := s.repo_get(addr) or { panic('cannot load git repo:\n$err\n$addr') }
