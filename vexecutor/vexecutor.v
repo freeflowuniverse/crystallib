@@ -69,9 +69,12 @@ pub fn (mut v_executor VExecutor) add_dir_to_end (directory_path_ string) ! {
 	directory_path.check()
 
 	mut file_paths := directory_path.file_list(pathlib.ListArgs{})  or {return error("Failed to get file_paths of directory at "+@FN+" : $err")}
-
+	// mut count := 0
 	for mut file_path in file_paths {
-		v_executor.actions << scan_file(mut file_path)!
+		// if count <= 10 {
+			v_executor.actions << scan_file(mut file_path)!
+			// count += 1
+		// }
 	}
 }
 
@@ -104,8 +107,6 @@ fn scan_file (mut path pathlib.Path) !VAction {
 		trimmed_lines = lines[count .. lines.len]
 	}
 
-
-
 	return VAction {
 		lines: trimmed_lines
 		path: path
@@ -133,9 +134,10 @@ pub fn (mut v_executor VExecutor) compile() ! {
 // Executes the file 
 pub fn (mut v_executor VExecutor) do () ! {
 	println('v run $v_executor.execution_file_path.path')
-	result := vexecutor.execute_large_or_panic('v run $v_executor.execution_file_path.path')
+	result := os.execute('v run $v_executor.execution_file_path.path')
 	println('Exit Code: $result.exit_code')
-	if result.exit_code == 1 {
+	if result.exit_code != 0 {
+		println(result)
 		return error("Failed to run executor file! There are issues with the code.")
 	}
 }

@@ -242,7 +242,7 @@ pub fn (mut path Path) write(content string) ? {
 }
 
 // read content from file
-pub fn (mut path Path) read() ?string {
+pub fn (mut path Path) read() !string {
 	match path.cat {
 		.file, .linkfile {
 			p := path.absolute()
