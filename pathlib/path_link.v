@@ -4,7 +4,7 @@ import os
 
 //path needs to be existing
 //linkpath is where the link will be pointing to path
-pub fn (mut path Path) link(linkpath string, delete_exists bool) ?Path {
+pub fn (mut path Path) link(linkpath string, delete_exists bool) !Path {
 	if !path.exists() {
 		return error('cannot link because source $path.path does not exist')
 	}
@@ -15,7 +15,7 @@ pub fn (mut path Path) link(linkpath string, delete_exists bool) ?Path {
 	// os.exists for faulty links returns false so also checks if path is link
 	if os.exists(linkpath) || os.is_link(linkpath) {
 		if delete_exists {
-			os.rm(linkpath)?
+			os.rm(linkpath)!
 		} else {
 			return error('cannot link $path.path to $linkpath, because dest exists.')
 		}
@@ -24,9 +24,9 @@ pub fn (mut path Path) link(linkpath string, delete_exists bool) ?Path {
 	// create dir if it would not exist yet
 	dest_dir := os.dir(linkpath)
 	if !os.exists(dest_dir) {
-		os.mkdir_all(dest_dir)?
+		os.mkdir_all(dest_dir)!
 	}
-	origin_path := path_relative(dest_dir,path.path)?
+	origin_path := path_relative(dest_dir,path.path)!
 	msg := 'link to origin (source): $path.path  \nthe link:$linkpath \nlink rel: $origin_path'
 	// $if debug {
 	// 	println(msg)
@@ -37,7 +37,7 @@ pub fn (mut path Path) link(linkpath string, delete_exists bool) ?Path {
 
 // will make sure that the link goes from file with largest path to smalles
 // good to make sure we have links always done in same way
-pub fn (mut path Path) relink() ? {
+pub fn (mut path Path) relink() ! {
 	if !path.is_link() {
 		return
 	}
@@ -49,8 +49,8 @@ pub fn (mut path Path) relink() ? {
 		return
 	}
 	// need to switch link with the real content
-	path.unlink()? // make sure both are files now (the link is the file)
-	path.link(link_real_path, true)? // re-link
+	path.unlink()! // make sure both are files now (the link is the file)
+	path.link(link_real_path, true)! // re-link
 	path.check()
 
 	// TODO: in test script
@@ -58,7 +58,7 @@ pub fn (mut path Path) relink() ? {
 
 // resolve link to the real content
 // copy the target of the link to the link
-pub fn (mut path Path) unlink() ? {
+pub fn (mut path Path) unlink() ! {
 	if !path.is_link() {
 		// nothing to do because not link, will not giver error
 		return
@@ -70,16 +70,16 @@ pub fn (mut path Path) unlink() ? {
 	// 	println(" - copy source file:'$link_real_path' of link to link loc:'$link_abs_path'")
 	// }
 	mut destpath := get(link_abs_path + '.temp') // lets first copy to the .temp location
-	link_path.copy(mut destpath)? // copy to the temp location
-	path.delete()? // remove the file or dir which is link
-	destpath.rename(path.name())? // rename to the new path
+	link_path.copy(mut destpath)! // copy to the temp location
+	path.delete()! // remove the file or dir which is link
+	destpath.rename(path.name())! // rename to the new path
 	path.path = destpath.path // put path back
 	path.check()
 	// TODO: in test script
 }
 
 // return string 
-pub fn (mut path Path) readlink() ?string {
+pub fn (mut path Path) readlink() !string {
 	// println('path: $path')
 	if path.is_link() {
 		// println('path2: $path')
@@ -95,7 +95,7 @@ pub fn (mut path Path) readlink() ?string {
 }
 
 // return path object which is the result of the link (path link points too)
-pub fn (mut path Path) getlink() ?Path {
+pub fn (mut path Path) getlink() !Path {
 	if path.is_link() {
 		return get(path.realpath())
 	} else {

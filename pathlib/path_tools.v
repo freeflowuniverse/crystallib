@@ -13,7 +13,7 @@ pub fn (mut path Path) exists() bool {
 
 
 // rename the file or directory
-pub fn (mut path Path) rename(name string) ? {
+pub fn (mut path Path) rename(name string) ! {
 	if name.contains('/') {
 		return error("should only be a name no dir inside: '$name'")
 	}
@@ -24,14 +24,14 @@ pub fn (mut path Path) rename(name string) ? {
 	} else {
 		dest = name
 	}
-	os.mv(path.path, dest)?
+	os.mv(path.path, dest)!
 	path.path = dest
 	path.check()
 }
 
 // get relative path in relation to destpath
 // will not resolve symlinks
-pub fn (mut path Path) path_relative(destpath string) ?string {
+pub fn (mut path Path) path_relative(destpath string) !string {
 	// println(" - path relative: '$path.path' '$destpath'")
 	return path_relative(destpath,path.path)
 }
@@ -59,7 +59,7 @@ pub fn find_common_ancestor(paths_ []string) string {
 }
 
 // find parent of path
-pub fn (path Path) parent() ?Path {
+pub fn (path Path) parent() !Path {
 	mut p := path.absolute()
 	parent := os.dir(p) // get parent directory
 	if parent == '.' || parent == '/' {
@@ -93,7 +93,7 @@ pub fn (path Path) extension_lower() string {
 // will also remove weird chars
 // if changed will return true
 // the file will be moved to the new location
-pub fn (mut path Path) path_normalize() ?bool {
+pub fn (mut path Path) path_normalize() !bool {
 
 	path_original := path.path+"" //make sure is copy, needed?
 
@@ -111,7 +111,7 @@ pub fn (mut path Path) path_normalize() ?bool {
 	}
 	
 	if path.path != path_original{
-		os.mv(path_original,path.path)?
+		os.mv(path_original,path.path)!
 		path.check()
 		return true
 	}
@@ -121,28 +121,28 @@ pub fn (mut path Path) path_normalize() ?bool {
 
 // walk upwards starting from path untill dir or file tofind is found
 // works recursive
-pub fn (path Path) parent_find(tofind string) ?Path {
+pub fn (path Path) parent_find(tofind string) !Path {
 	if os.exists(os.join_path(path.path, tofind)) {
 		return path
 	}
-	path2 := path.parent()?
+	path2 := path.parent()!
 	return path2.parent_find(tofind)
 }
 
 // delete
-pub fn (mut path Path) rm() ? {
+pub fn (mut path Path) rm() ! {
 	return path.delete()
 }
 
 // delete
-pub fn (mut path Path) delete() ? {
+pub fn (mut path Path) delete() ! {
 	if path.exists() {
 		match path.cat {
 			.file, .linkfile, .linkdir {
-				os.rm(path.path)?
+				os.rm(path.path)!
 			}
 			.dir {
-				os.rmdir_all(path.path)?
+				os.rmdir_all(path.path)!
 			}
 			.unknown {
 				return error('Path cannot be unknown type')
@@ -168,7 +168,7 @@ pub fn (mut path Path) dir_exists(tofind string) bool {
 }
 
 // find dir underneith path, return as Path
-pub fn (mut path Path) dir_get(tofind string) ?Path {
+pub fn (mut path Path) dir_get(tofind string) !Path {
 	if path.dir_exists(tofind) {
 		dir_path := os.join_path(path.path, tofind)
 		return Path{
@@ -197,7 +197,7 @@ pub fn (mut path Path) file_exists(tofind string) bool {
 }
 
 // find file underneith path, if exists return as Path, otherwise error
-pub fn (mut path Path) file_get(tofind string) ?Path {
+pub fn (mut path Path) file_get(tofind string) !Path {
 	if path.cat != Category.dir {
 		return error('is not a dir: $path.path')
 	}
@@ -213,7 +213,7 @@ pub fn (mut path Path) file_get(tofind string) ?Path {
 
 // find file underneith path, return as Path, can only be one
 // tofind is part of file name
-pub fn (mut path Path) file_find(tofind string) ?Path {
+pub fn (mut path Path) file_find(tofind string) !Path {
 	if path.file_exists(tofind) {
 		file_path := os.join_path(path.path, tofind)
 		return Path{
@@ -227,18 +227,18 @@ pub fn (mut path Path) file_find(tofind string) ?Path {
 
 // write content to the file, check is file
 // if the path is a link to a file then will change the content of the file represented by the link
-pub fn (mut path Path) write(content string) ? {
+pub fn (mut path Path) write(content string) ! {
 	if !os.exists(path.path_dir()) {
-		os.mkdir_all(path.path_dir())?
+		os.mkdir_all(path.path_dir())!
 	}
 	if path.exists() && path.cat == Category.linkfile {
-		mut pathlinked := path.getlink()?
-		pathlinked.write(content)?
+		mut pathlinked := path.getlink()!
+		pathlinked.write(content)!
 	}
 	if path.exists() && path.cat != Category.file && path.cat != Category.linkfile {
 		return error('Path must be a file for $path')
 	}
-	os.write_file(path.path, content)?
+	os.write_file(path.path, content)!
 }
 
 // read content from file
@@ -261,7 +261,7 @@ pub fn (mut path Path) read() !string {
 // dest needs to be a directory or file
 // need to check than only valid items can be done
 // return Path of the destination file or dir
-pub fn (mut path Path) copy(mut dest Path) ?Path {
+pub fn (mut path Path) copy(mut dest Path) !Path {
 	dest.check()
 	if dest.exists() {
 		if !(path.cat in [.file, .dir] && dest.cat in [.file, .dir]) {
@@ -279,10 +279,10 @@ pub fn (mut path Path) copy(mut dest Path) ?Path {
 	}
 
 	if ! os.exists(dest.path_dir()){
-		os.mkdir_all(dest.path_dir())?
+		os.mkdir_all(dest.path_dir())!
 	}
 
-	os.cp_all(path.path, dest.path, true)? // Always overwite if needed
+	os.cp_all(path.path, dest.path, true)! // Always overwite if needed
 
 
 	dest.check()
@@ -297,7 +297,7 @@ pub fn (mut path Path) copy(mut dest Path) ?Path {
 // assert a2 == '../../../d.txt'
 // a8 := pathlib.path_relative('$testpath/a/b/c', '$testpath/a/b/c/d/e/e.txt') or { panic(err) }
 // assert a8 == 'd/e/e.txt'
-pub fn path_relative(source_ string, linkpath_ string) ?string {
+pub fn path_relative(source_ string, linkpath_ string) !string {
 	mut source := os.abs_path(source_)
 	mut linkpath := os.abs_path(linkpath_)
 	// now both start with /
@@ -312,7 +312,7 @@ pub fn path_relative(source_ string, linkpath_ string) ?string {
 	p.check()
 
 	if p.cat != .dir || !p.exists() {
-		return error('Cannot do path_relative()? if source is not a dir and exists. Now:$source_')
+		return error('Cannot do path_relative()! if source is not a dir and exists. Now:$source_')
 	}
 
 	// println(" + source:$source compare:$linkpath")
@@ -353,7 +353,7 @@ pub fn path_relative(source_ string, linkpath_ string) ?string {
 	return dest
 }
 
-// pub fn path_relative(source_ string, dest_ string) ?string {
+// pub fn path_relative(source_ string, dest_ string) !string {
 // 	mut source := source_.trim_right('/')
 // 	mut dest := dest_.replace('//', '/').trim_right('/')
 // 	// println("path relative: '$source' '$dest' ")

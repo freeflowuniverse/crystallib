@@ -128,7 +128,7 @@ fn test_real_path2() {
 
 fn test_link_path_relative() {
 	os.mkdir_all('$testpath/a/b/c') or { panic(err) }
-	println('************ TEST_link_path_relative()? ************')
+	println('************ TEST_link_path_relative()! ************')
 	a0 := pathlib.path_relative('$testpath/a/b/c', '$testpath/a/d.txt') or { panic(err) }
 	assert a0 == '../../d.txt'
 	a2 := pathlib.path_relative('$testpath/a/b/c', '$testpath/d.txt') or { panic(err) }
@@ -176,7 +176,7 @@ fn test_copy() {
 	mut src_f := pathlib.get('$testpath/testfile1')
 	mut dest_file := src_f.copy(mut dest_dir) or { panic(err) }
 	assert dest_file.path == '$testpath/test_parent/testfile1'
-	dest_file.delete()?
+	dest_file.delete()!
 	println('Copy function works correctly')
 }
 

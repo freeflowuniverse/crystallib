@@ -2,7 +2,7 @@ module main
 
 import freeflowuniverse.crystallib.pathlib
 
-fn do() ? {
+fn do() ! {
 	// a2 := pathlib.path_relative('/a/b/c/d.txt', '/d.txt')
 	// assert a2 == '../../../d.txt'
 

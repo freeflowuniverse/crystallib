@@ -55,7 +55,7 @@ fn test_link() {
 	dest = pathlib.get('$testpath/test_link.md')
 	assert dest.realpath() == source2.path // dest reamins unchanged
 
-	dest.delete()?
+	dest.delete()!
 	println('Link function working correctly')
 }
 
@@ -77,7 +77,7 @@ fn test_readlink() {
 	link_source := dest.readlink() or { panic(err)}
 	assert link_source == 'test_parent/testfile2.md'
 
-	dest.delete()?
+	dest.delete()!
 	println('Readlink function working correctly')
 }
 
@@ -98,7 +98,7 @@ fn test_unlink() {
 	assert dest.exists()
 	assert dest.cat == .file
 
-	dest.delete()?
+	dest.delete()!
 
 	// TODO: maybe more edge cases?
 	println('Unlink function working correctly')
@@ -135,5 +135,5 @@ fn test_relink() {
 	assert source2_new.cat == .linkfile
 	assert dest2.cat == .file
 
-	dest.delete()?
+	dest.delete()!
 }

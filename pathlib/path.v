@@ -66,7 +66,7 @@ pub fn (mut path Path) check() {
 	}
 }
 
-fn (mut path Path) check_exists() ? {
+fn (mut path Path) check_exists() ! {
 	if !path.exists() {
 		return error('Path $path needs to exist, error')
 	}

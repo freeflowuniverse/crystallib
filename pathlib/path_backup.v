@@ -25,11 +25,11 @@ pub struct BackupArgs {
 // // 	overwrite bool
 // // }
 // // if overwrite this means will overwrite the last one in the directory
-// pub fn (mut path Path) backup_path(args BackupArgs) ?Path {
+// pub fn (mut path Path) backup_path(args BackupArgs) !Path {
 // 	if !path.exists() {
 // 		error("cannot find path, so cannot create backup for $path")
 // 	}
-// 	size := path.size()?
+// 	size := path.size()!
 // 	mut dest := ""
 // 	mut rel:= ""
 // 	mut path_str := ''
@@ -39,7 +39,7 @@ pub struct BackupArgs {
 // 		dest = path.path_dir()+"/.backup"
 // 	}	
 // 	if !os.exists(dest){
-// 		os.mkdir_all(dest)?
+// 		os.mkdir_all(dest)!
 // 	}
 
 // 	if args.dest!="" || args.root!=""{
@@ -55,7 +55,7 @@ pub struct BackupArgs {
 // 	// 		rel = os.dir(path_abs.substr(source_path.len + 1, path_abs.len)) + '/'
 // 	// 	}
 // 	// }
-// 	// os.mkdir_all('$dest/$rel')?
+// 	// os.mkdir_all('$dest/$rel')!
 
 // 	for i in 0 .. 1000 {
 // 		if i == 0 {
@@ -73,7 +73,7 @@ pub struct BackupArgs {
 // 		}
 // 		//TODO: wrong logic, we should only return the last one if the same, this might give an earlier one
 // 		if size > 0 {
-// 			size2 := path_found.size()?
+// 			size2 := path_found.size()!
 // 			if size2 == size {
 // 				// means we found the last one which is same as the one we are trying to backup
 // 				path_found.exist=.yes
@@ -87,26 +87,26 @@ pub struct BackupArgs {
 // // write content to the file and make a backup, check is file
 // // check backup_path() to see where the file will be backed up
 // // will return the backed up file
-// pub fn (mut path Path) write_backup(content string) ?Path {
-// 	mut pathbackup := path.backup()?
-// 	path.write(content)?
+// pub fn (mut path Path) write_backup(content string) !Path {
+// 	mut pathbackup := path.backup()!
+// 	path.write(content)!
 // 	return pathbackup
 // }
 
 // // create a backup, will maintain the extension
-// pub fn (mut path Path) backup() ?Path {
+// pub fn (mut path Path) backup() !Path {
 // 	println(path.path)
-// 	mut pbackup:=path.backup_path(overwrite:false)?
-// 	content:=path.read()?
-// 	pbackup.write(content)?
+// 	mut pbackup:=path.backup_path(overwrite:false)!
+// 	content:=path.read()!
+// 	pbackup.write(content)!
 // 	return pbackup
 // }
 
-// pub fn (mut path Path) backups_remove() ? {
-// 	for mut p in path.list(recursive:true)?{
+// pub fn (mut path Path) backups_remove() ! {
+// 	for mut p in path.list(recursive:true)!{
 // 		if p.is_dir(){
 // 			if p.name() == ".backup"{
-// 				p.delete()?
+// 				p.delete()!
 // 			}
 // 		}
 // 	}
@@ -133,18 +133,18 @@ pub struct BackupArgs {
 // }	
 
 // //save the metadata for the backups
-// pub fn (mut backupdir BackupDir) metadate_save() ? {
+// pub fn (mut backupdir BackupDir) metadate_save() ! {
 // 	mut out :=[]string{}
 // 	for item in backupdir.items{
 // 		out << item.metadata()
 // 	}
 // }
 
-// pub fn (mut path Path) backups_get() ? {
-// 	for mut p in path.list(recursive:true)?{
+// pub fn (mut path Path) backups_get() ! {
+// 	for mut p in path.list(recursive:true)!{
 // 		if p.is_dir(){
 // 			if p.name() == ".backup"{
-// 				p.delete()?
+// 				p.delete()!
 // 			}
 // 		}
 // 	}
