@@ -3,9 +3,7 @@ module vexecutor
 import freeflowuniverse.crystallib.pathlib
 import os
 
-/*
-
-*/
+// TODO make sure each function opens and closes the executor.vsh file, no file should be open across functions
 
 struct VExecutor{
 mut:
@@ -25,7 +23,7 @@ struct VAction{
 // path string - /directory/filename.v
 // cat Category - unknown, file, dir, linkdir, linkfile (enum)
 // exist UYN - unknown, yes, no (enum)
-pub fn new_executor (initial_file_path_ string, execution_file_path_ string, final_file_path_ string) ?VExecutor {
+pub fn new_executor (initial_file_path_ string, execution_file_path_ string, final_file_path_ string) !VExecutor {
 	// create a execution file at execution_file_path and fill out
 	mut execution_file_path := pathlib.get(execution_file_path_)
 	execution_file_path.check()
@@ -38,7 +36,7 @@ pub fn new_executor (initial_file_path_ string, execution_file_path_ string, fin
 
 	// ensure that the execution file is an empty file
 	if execution_file_path.exist == .yes {
-		os.rm(execution_file_path.path)?
+		os.rm(execution_file_path.path) or {return error('Failed to remove execution file: $err')}
 	} 
 	execution_file := os.create(execution_file_path.path) or {return error("Failed to create execution file at "+@FN+" : $err")}
 
@@ -64,14 +62,17 @@ pub fn new_executor (initial_file_path_ string, execution_file_path_ string, fin
 // Adds all the top level files in a directory to the VExecutor.actions list
 //ARGS:
 // directory_path string
-pub fn (mut v_executor VExecutor) add_dir_to_end (directory_path_ string) ? {
+pub fn (mut v_executor VExecutor) add_dir_to_end (directory_path_ string) ! {
 	mut directory_path := pathlib.get(directory_path_)
 	directory_path.check()
 
 	mut file_paths := directory_path.file_list(pathlib.ListArgs{})  or {return error("Failed to get file_paths of directory at "+@FN+" : $err")}
-
+	// mut count := 0
 	for mut file_path in file_paths {
-		v_executor.actions << scan_file(mut file_path)?
+		// if count <= 10 {
+			v_executor.actions << scan_file(mut file_path)!
+			// count += 1
+		// }
 	}
 }
 
@@ -79,13 +80,15 @@ pub fn (mut v_executor VExecutor) add_dir_to_end (directory_path_ string) ? {
 // cuts out all content prior to // BEGINNING
 // ARGS:
 // path string - path to file
-fn scan_file (mut path pathlib.Path) ?VAction {
+fn scan_file (mut path pathlib.Path) !VAction {
 	if ! path.exists(){
 		return error("cannot find path: $path.path to scan for vlang files.")
 	}
 
 	// read all the lines in the file into an array of lines
-	mut lines := os.read_lines(path.path)  or {return error("Failed to readlines of file at "+@FN+" : $err")}
+	mut file := os.open(path.path) or {return error('Failed to open file: $err')}
+	mut lines := os.read_lines(path.path) or {return error("Failed to readlines of file at "+@FN+" : $err")}
+	file.close()
 	// remove lines until '// BEGINNING' is reached
 	mut beginning_found := false
 
@@ -110,7 +113,7 @@ fn scan_file (mut path pathlib.Path) ?VAction {
 
 
 //combine all actions in VExecutor into one file
-pub fn (mut v_executor VExecutor) compile() ? {
+pub fn (mut v_executor VExecutor) compile() ! {
 	
 	v_executor.actions << scan_file(mut v_executor.final_file_path) or {return error("Failed to scan file at "+@FN+" : $err")}
 	
@@ -124,14 +127,17 @@ pub fn (mut v_executor VExecutor) compile() ? {
 	for line in all_lines {
 		v_executor.execution_file.writeln(line)  or {return error("Failed to write line to execution file at "+@FN+" : $err")}
 	}
+
+	v_executor.execution_file.close()
 }
 
 // Executes the file 
-pub fn (mut v_executor VExecutor) do () ? {
+pub fn (mut v_executor VExecutor) do () ! {
 	println('v run $v_executor.execution_file_path.path')
-	result := os.execute_or_panic('v run $v_executor.execution_file_path.path')
+	result := os.execute('v run $v_executor.execution_file_path.path')
 	println('Exit Code: $result.exit_code')
-	if result.exit_code == 1 {
+	if result.exit_code != 0 {
+		println(result)
 		return error("Failed to run executor file! There are issues with the code.")
 	}
 }
@@ -144,7 +150,7 @@ pub fn (mut v_executor VExecutor) info () {
 }
 
 // Cleans up VExecutors impact on the file system
-pub fn (mut v_executor VExecutor) clean () ? {
+pub fn (mut v_executor VExecutor) clean () ! {
 	os.rm(v_executor.execution_file_path.path) or {return error("Failed to delete execution file at "+@FN+" : $err")}
 }
 
