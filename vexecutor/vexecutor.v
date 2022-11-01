@@ -3,9 +3,7 @@ module vexecutor
 import freeflowuniverse.crystallib.pathlib
 import os
 
-/*
-
-*/
+// TODO make sure each function opens and closes the executor.vsh file, no file should be open across functions
 
 struct VExecutor{
 mut:
@@ -129,6 +127,8 @@ pub fn (mut v_executor VExecutor) compile() ! {
 	for line in all_lines {
 		v_executor.execution_file.writeln(line)  or {return error("Failed to write line to execution file at "+@FN+" : $err")}
 	}
+
+	v_executor.execution_file.close()
 }
 
 // Executes the file 
