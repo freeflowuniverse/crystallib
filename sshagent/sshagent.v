@@ -19,7 +19,7 @@ fn listsplit(key string) string {
 // or if not, if there is 1 ssh key in ~/.ssh/ if yes will load
 // if we were able to define the key to use, it will be returned here
 // will return the key which will be used
-pub fn load_interactive() ?string {
+pub fn load_interactive() !string {
 	mut pubkeys := pubkeys_get()
 	pubkeys.map(listsplit)
 	if pubkeys.len == 1 {
@@ -27,30 +27,30 @@ pub fn load_interactive() ?string {
 			description: 'We found sshkey ${pubkeys[0]} in sshagent, want to use this one?'
 		)
 		{
-			key_load(pubkeys[0])?
+			key_load(pubkeys[0])
 			return pubkeys[0]
 		}
 	}
 	if pubkeys.len > 1 {
 		if console.ask_yesno(
-			description: 'We found more than 1 sshkey in sshagent, want to use one of those?'
+			description: 'We found more than 1 sshkey in sshagent, want to use one of those!'
 		)
 		{
 			keytouse := console.ask_dropdown(
 				items: pubkeys
 				description: 'Please choose the ssh key you want to use'
 			)
-			key_load(keytouse)?
+			key_load(keytouse)
 			return keytouse
 		}
 	}
 
 	// now means nothing in ssh-agent, lets see if we find 1 key in .ssh directory
-	mut sshdirpath := pathlib.get_dir('$os.home_dir()/.ssh', true)?
+	mut sshdirpath := pathlib.get_dir('$os.home_dir()/.ssh', true)!
 
 	pubkeys = []string{}
 
-	for p in sshdirpath.file_list(tofind: '.pub', recursive: false)? {
+	for p in sshdirpath.file_list(tofind: '.pub', recursive: false)! {
 		pubkeys << p.path.replace('.pub', '')
 	}
 	// println(keypaths)
@@ -60,7 +60,7 @@ pub fn load_interactive() ?string {
 			description: 'We found sshkey ${pubkeys[0]} in ~/.ssh dir, want to use this one?'
 		)
 		{
-			key_load(pubkeys[0])?
+			key_load(pubkeys[0])
 			return pubkeys[0]
 		}
 	}
@@ -73,7 +73,7 @@ pub fn load_interactive() ?string {
 				items: pubkeys
 				description: 'Please choose the ssh key you want to use'
 			)
-			key_load(keytouse)?
+			key_load(keytouse)
 			return keytouse
 		}
 	}
@@ -82,7 +82,7 @@ pub fn load_interactive() ?string {
 		name := console.ask_question(question: 'name', minlen: 3)
 		passphrase := console.ask_question(question: 'passphrase', minlen: 5)
 
-		keytouse := key_generate(name, passphrase)?
+		keytouse := key_generate(name, passphrase)!
 
 		// if console.ask_yesno(description:"Please acknowledge you will remember your passphrase for ever (-: ?"){
 		// 	key_load(keytouse)?
@@ -90,7 +90,7 @@ pub fn load_interactive() ?string {
 		// }else{
 		// 	return error("Cannot continue, did not find sshkey to use")
 		// }
-		key_load_with_passphrase(keytouse, passphrase)?
+		key_load_with_passphrase(keytouse, passphrase)
 	}
 	return error('Cannot continue, did not find sshkey to use')
 
@@ -108,7 +108,7 @@ pub fn load_interactive() ?string {
 // will see if there is one ssh key in sshagent
 // or if not, if there is 1 ssh key in ~/.ssh/ if yes will return
 // if we were able to define the key to use, it will be returned here
-pub fn pubkey_guess() ?string {
+pub fn pubkey_guess() !string {
 	pubkeys := pubkeys_get()
 	if pubkeys.len == 1 {
 		return pubkeys[0]
@@ -117,15 +117,15 @@ pub fn pubkey_guess() ?string {
 		return error('There is more than 1 ssh-key loaded in ssh-agent, cannot identify which one to use.')
 	}
 	// now means nothing in ssh-agent, lets see if we find 1 key in .ssh directory
-	mut sshdirpath := pathlib.get_dir('$os.home_dir()/.ssh', true)?
+	mut sshdirpath := pathlib.get_dir('$os.home_dir()/.ssh', true)!
 
-	mut keypaths := sshdirpath.file_list(tofind: '.pub')?
+	mut keypaths := sshdirpath.file_list(tofind: '.pub')!
 	// println(keypaths)
 
 	if keypaths.len == 1 {
-		keycontent := keypaths[0].read()?
+		keycontent := keypaths[0].read()!
 		privkeypath := keypaths[0].path.replace('.pub', '')
-		key_load(privkeypath)?
+		key_load(privkeypath)
 		return keycontent
 	}
 	if keypaths.len > 1 {
@@ -163,10 +163,10 @@ pub fn loaded() bool {
 }
 
 // returns path to sshkey
-pub fn key_generate(name string, passphrase string) ?string {
+pub fn key_generate(name string, passphrase string) !string {
 	dest := '$os.home_dir()/.ssh/$name'
 	if os.exists(dest) {
-		os.rm(dest)?
+		os.rm(dest)!
 	}
 	cmd := 'ssh-keygen -t ed25519 -f $dest -P $passphrase -q'
 	println(cmd)
@@ -177,15 +177,15 @@ pub fn key_generate(name string, passphrase string) ?string {
 	return '$os.home_dir()/.ssh/$name'
 }
 
-pub fn reset() ? {
+pub fn reset() {
 	_ := os.execute('ssh-add -D')
 }
 
-pub fn key_load(keypath string) ? {
+pub fn key_load(keypath string) {
 	_ := os.execute('ssh-add $keypath')
 }
 
-pub fn key_load_with_passphrase(keypath string, passphrase string) ? {
+pub fn key_load_with_passphrase(keypath string, passphrase string) {
 	_ := os.execute('ssh-add $keypath')
 }
 
