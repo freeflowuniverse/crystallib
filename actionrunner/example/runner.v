@@ -7,7 +7,6 @@ import os
 
 fn do() ? {
 	options := cmdline.only_non_options(os.args)
-
 	if options.len == 1 {
 		if os.exists('run.md') {
 			actionrunner.execute('run.md')?
