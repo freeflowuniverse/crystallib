@@ -2,7 +2,7 @@ module imagemagick
 
 import freeflowuniverse.crystallib.process
 
-fn (mut image Image) identify_verbose() ? {
+fn (mut image Image) identify_verbose() ! {
 	if image.size_y != 0 {
 		// means was already done
 		return
@@ -79,7 +79,7 @@ fn (mut image Image) identify_verbose() ? {
 	// }
 }
 
-fn (mut image Image) identify() ? {
+fn (mut image Image) identify() ! {
 	if image.size_y != 0 {
 		// means was already done
 		return

@@ -13,7 +13,7 @@ pub mut:
 	transparent  bool
 }
 
-fn (mut image Image) init_() ? {
+fn (mut image Image) init_() ! {
 	if image.size_kbyte == 0 {
 		image.size_kbyte = image.path.size_kb() or {
 			return error('cannot define size file in kb.\n$error')
@@ -22,11 +22,11 @@ fn (mut image Image) init_() ? {
 	}
 }
 
-pub fn image_new(mut path pathlib.Path) ?Image {
+pub fn image_new(mut path pathlib.Path) !Image {
 	mut i := Image{
 		path: path
 	}
-	// i.init_()?
+	// i.init_()!
 	return i
 }
 
