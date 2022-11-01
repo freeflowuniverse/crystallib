@@ -7,7 +7,7 @@ fn setup() &redisclient.Redis {
 	mut redis := redisclient.core_get()
 	// Select db 10 to be away from default one '0'
 	redis.selectdb(10) or { panic(err) }
-	return redis
+	return &redis
 }
 
 fn cleanup(mut redis redisclient.Redis) ? {

@@ -10,7 +10,7 @@ pub mut:
 	db map[string]string
 }
 
-struct RedisSrv {
+pub struct RedisSrv {
 pub mut:
 	socket net.TcpListener
 }
