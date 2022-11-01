@@ -27,7 +27,6 @@ fn actions_process(mut parser actionparser.ActionsParser, actions_done map[strin
 			println(' --------ACTION:\n$action\n--------')
 		}
 		if action.name.starts_with('git.') {
-			println("entering: $action")
 			msg := ActionMessage {
 				name: action.name
 				params: action.params
@@ -36,7 +35,6 @@ fn actions_process(mut parser actionparser.ActionsParser, actions_done map[strin
 			for {
 				res := <- gitrunner.channel
 				if res.name == msg.name && res.params == msg.params && res.complete {
-					println("Breaking: $res")
 					break
 				}
 			}

@@ -1,6 +1,7 @@
 module actionrunner 
 
 import freeflowuniverse.crystallib.actionparser { Action }
+import freeflowuniverse.crystallib.params { Params }
 
 struct ActionMessage {
 mut:
@@ -11,11 +12,14 @@ mut:
 
 pub interface Runner {
 	channel chan ActionMessage
-	run()?
+	run()
 }
 
-fn (runner Runner) action_complete(msg ActionMessage) {
-	mut response := msg
-	response.complete = true
+fn (runner Runner) action_complete(action Action) {
+	mut response := ActionMessage {
+		name: action.name
+		params: action.params
+		complete: true
+	}
 	runner.channel <- response
 }
