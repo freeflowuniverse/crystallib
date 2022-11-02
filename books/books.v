@@ -107,7 +107,7 @@ pub fn (mut books Books) scan(path string) ? {
 	books.fix()?	
 }
 
-pub fn (mut books Books) get(name string) ?&Book {
+pub fn (mut books Books) get(name string) !&Book {
 	namelower := texttools.name_fix_no_underscore_no_ext(name)
 	if namelower in books.books {
 		return books.books[namelower]

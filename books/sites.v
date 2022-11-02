@@ -30,12 +30,12 @@ pub struct SiteNewArgs {
 }
 
 // only way how to get to a new page
-pub fn (mut sites Sites) site_new(args SiteNewArgs) ?&Site {
-	mut p := pathlib.get_file(args.path, false)? // makes sure we have the right path
+pub fn (mut sites Sites) site_new(args SiteNewArgs) !&Site {
+	mut p := pathlib.get_file(args.path, false)! // makes sure we have the right path
 	if !p.exists() {
 		return error('cannot find site on path: $args.path')
 	}
-	p.path_normalize()? // make sure its all lower case and name is proper
+	p.path_normalize()! // make sure its all lower case and name is proper
 	mut name := args.name
 	if name == '' {
 		name = p.name()
