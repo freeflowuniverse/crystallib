@@ -12,11 +12,11 @@ fn imin(a int, b int) int {
 	return if a < b { a } else { b }
 }
 
-fn (mut s StringReader) read(mut buf []u8) ?int {
+fn (mut s StringReader) read(mut buf []u8) !int {
 	// println(' - consumer buff len $buf.len ($s.place | ${imin(s.place + buf.len, s.text.len)} | $s.text.len)')
 	if s.place >= s.text.len {
 		// println('NONE')
-		return none
+		return -1
 	}
 	nrread := copy(mut buf, s.text[s.place..imin(s.place + buf.len, s.text.len)].bytes())
 	s.place += nrread

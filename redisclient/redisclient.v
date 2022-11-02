@@ -51,13 +51,13 @@ fn init2() RedisFactory {
 const factory = init2()
 
 // https://redis.io/topics/protocol
-pub fn get(addr string) ?&Redis {
+pub fn get(addr string) ! &Redis {
 	mut f := redisclient.factory
 	if addr !in f.instances {
 		mut r := Redis{
 			addr: addr
 		}
-		r.socket_connect() ?
+		r.socket_connect()!
 		f.instances[addr] = r
 	}
 	mut r2 := f.instances[addr]
@@ -75,86 +75,86 @@ pub fn get_local() &Redis {
 }
 
 // get a new one guaranteed, need for threads
-pub fn get_local_new() ?&Redis {
+pub fn get_local_new() !&Redis {
 	mut r := Redis{
 		addr: 'localhost:6379'
 	}
-	r.socket_connect() ?
+	r.socket_connect()!
 	return &r
 }
 
-pub fn get_unixsocket_new() ?&Redis {
+pub fn get_unixsocket_new() !&Redis {
 	mut r := Redis{
 		addr: '/tmp/redis.sock'
 	}
-	r.socket_connect() ?
+	r.socket_connect()!
 	return &r
 }
 
-pub fn get_unixsocket_new_default() ?&Redis {
+pub fn get_unixsocket_new_default() !&Redis {
 	mut r := Redis{
 		addr: '/tmp/redis-default.sock'
 	}
-	r.socket_connect() ?
+	r.socket_connect()!
 	return &r
 }
 
-fn (mut r Redis) socket_connect() ? {
-	r.socket = net.dial_tcp(r.addr) ?
-	r.socket.set_blocking(true) ?
+fn (mut r Redis) socket_connect() ! {
+	r.socket = net.dial_tcp(r.addr)!
+	r.socket.set_blocking(true)!
 	r.socket.set_read_timeout(10 * time.second)
-	r.socket.peer_addr() ?
+	r.socket.peer_addr()!
 	r.connected = true
 }
 
 // THIS IS A WORKAROUND, not sure why we need this, shouldn't be here
-fn (mut r Redis) socket_check() ? {
+fn (mut r Redis) socket_check() ! {
 	r.socket.peer_addr() or {
 		eprintln(' - re-connect socket for redis')
-		r.socket_connect() ?
+		r.socket_connect()!
 	}
 }
 
-pub fn (mut r Redis) read_line() ?string {
+pub fn (mut r Redis) read_line() !string {
 	return r.socket.read_line().trim_right('\r\n')
 }
 
 const cr_lf_bytes = [u8(`\r`), `\n`]
 
-fn (mut r Redis) write_line(data []u8) ? {
-	r.socket_check() ?
-	r.write(data) ?
-	r.write(redisclient.cr_lf_bytes) ?
+fn (mut r Redis) write_line(data []u8) ! {
+	r.socket_check()!
+	r.write(data)!
+	r.write(redisclient.cr_lf_bytes)!
 }
 
 // write *all the data* into the socket
 // This function loops, till *everything is written*
 // (some of the socket write ops could be partial)
-fn (mut r Redis) write(data []u8) ? {
+fn (mut r Redis) write(data []u8) ! {
 	mut remaining := data.len
 	for remaining > 0 {
-		written_bytes := r.socket.write(data[data.len - remaining..]) ?
+		written_bytes := r.socket.write(data[data.len - remaining..])!
 		remaining -= written_bytes
 	}
 }
 
 // write resp2 value to the redis channel
-pub fn (mut r Redis) write_rval(val resp2.RValue) ? {
-	r.socket_check() ?
-	r.write(val.encode()) ?
+pub fn (mut r Redis) write_rval(val resp2.RValue) ! {
+	r.socket_check()!
+	r.write(val.encode())!
 }
 
 // write list of strings to redis challen
-fn (mut r Redis) write_cmds(items []string) ? {
+fn (mut r Redis) write_cmds(items []string) ! {
 	a := resp2.r_list_bstring(items)
-	r.write_rval(a) ?
+	r.write_rval(a)!
 }
 
-fn (mut r Redis) read(size int) ?[]u8 {
+fn (mut r Redis) read(size int) ![]u8 {
 	mut buf := []u8{len: size}
 	mut remaining := size
 	for remaining > 0 {
-		read_bytes := r.socket.read(mut buf[buf.len - remaining..]) ?
+		read_bytes := r.socket.read(mut buf[buf.len - remaining..])!
 		remaining -= read_bytes
 	}
 	return buf
