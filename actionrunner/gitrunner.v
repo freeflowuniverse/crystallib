@@ -1,34 +1,40 @@
 module actionrunner
 
 import freeflowuniverse.crystallib.actionparser { Action }
-import freeflowuniverse.crystallib.gittools {GitStructure}
+import freeflowuniverse.crystallib.gittools { GitStructure }
 
 struct GitRunner {
-mut:
 	channel chan ActionMessage
+mut:
+	gt GitStructure
 }
 
-pub fn new_gitrunner() Runner {
-	mut runner := Runner(GitRunner{})
-	return runner
+pub fn new_gitrunner() &GitRunner {
+	mut gt := gittools.get(root: '') or { panic("Can't get gittools: $err") }
+	mut runner := GitRunner{
+		gt: gt
+	}
+	return &runner
 }
 
-fn (runner GitRunner) run() {
+fn (mut runner GitRunner) run() {
 	mut msg := ActionMessage{}
-	mut gt := gittools.get(root: '') or { panic("Can't get gittools: $err")}
 	for {
-		msg = <- runner.channel
-		mut action := Action { name: msg.name, params: msg.params}
+		msg = <-runner.channel
+		mut action := Action{
+			name: msg.name
+			params: msg.params
+		}
 		match action.name {
-			'git.params.multibranch' { runner.run_multibranch(mut gt, mut action) }
-			'git.pull' { runner.run_pull(mut gt, mut action) }
-			'git.link' { runner.run_link(mut gt, mut action) }
-			else { panic("Gitrunner received unhandled action") }
+			'git.params.multibranch' { runner.run_multibranch(mut action) }
+			'git.pull' { runner.run_pull(mut action) }
+			'git.link' { runner.run_link(mut action) }
+			else { panic('Gitrunner received unhandled action') }
 		}
 	}
 }
 
-fn (runner GitRunner) run_pull (mut gt GitStructure, mut action Action) {
+fn (mut runner GitRunner) run_pull(mut action Action) {
 	// TODO: if local repo is at local branch that has no upstream produces following error
 	// ! 'Your configuration specifies to merge with the ref 'refs/heads/branch'from the remote, but no such ref was fetched.
 	url := action.params.get('url') or { panic("Couldn't get params") }
@@ -36,14 +42,14 @@ fn (runner GitRunner) run_pull (mut gt GitStructure, mut action Action) {
 	$if debug {
 		eprintln(@FN + ': git pull: $url')
 	}
-	mut repo := gt.repo_get_from_url(url: url, name: name) or {
-		panic("Could not get repo from url: $err")
+	mut repo := runner.gt.repo_get_from_url(url: url, name: name) or {
+		panic('Could not get repo from url: $err')
 	}
-	repo.pull() or { panic("Could not pull repo: $err") }
+	repo.pull() or { panic('Could not pull repo: $err') }
 	Runner(runner).action_complete(action)
 }
 
-fn (runner GitRunner) run_link (mut gt GitStructure, mut action Action) {
+fn (mut runner GitRunner) run_link(mut action Action) {
 	//? Maybe we can have one src and dest field to simplify?
 	// struct GitLinkArgs {
 	// 	gitsource string   // the name of the git repo as used in gittools from the source
@@ -66,14 +72,14 @@ fn (runner GitRunner) run_link (mut gt GitStructure, mut action Action) {
 	$if debug {
 		eprintln(@FN + gitlinkargs.str())
 	}
-	gt.link(gitlinkargs) or { panic("Could not link: $err") }
+	runner.gt.link(gitlinkargs) or { panic('Could not link: $err') }
 	Runner(runner).action_complete(action)
 }
 
-fn (runner GitRunner) run_multibranch(mut gt GitStructure, mut action Action) {
+fn (mut runner GitRunner) run_multibranch(mut action Action) {
 	$if debug {
 		eprintln(@FN + ': multibranch set')
 	}
-	gt.config.multibranch = true
+	runner.gt.config.multibranch = true
 	Runner(runner).action_complete(action)
 }
