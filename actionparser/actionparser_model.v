@@ -15,6 +15,6 @@ pub mut:
 }
 
 // get the param as string, if it does not exist will throw error
-pub fn (mut action Action) param_get(name_ string) ?string {
+pub fn (mut action Action) param_get(name_ string) !string {
 	return action.params.get(name_)
 }
