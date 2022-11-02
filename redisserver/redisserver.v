@@ -10,7 +10,7 @@ pub mut:
 	db map[string]string
 }
 
-struct RedisSrv {
+pub struct RedisSrv {
 pub mut:
 	socket net.TcpListener
 }
@@ -151,8 +151,35 @@ fn command_ttl(input resp2.RValue, mut srv RedisInstance) resp2.RValue {
 //
 // socket management
 //
-pub fn process_input(mut client &redisclient.Redis, mut instance RedisInstance, value resp2.RValue) !bool {
+pub fn process_input(mut client &redisclient.Redis, mut instance RedisInstance, value resp2.RValue, h []RedisHandler) !bool {
 	println('Inside process')
+
+	command := resp2.get_redis_value_by_index(value, 0).to_upper()
+
+	for rh in h {
+		if command == rh.command {
+			println('Process: $command')
+			data := rh.handler(value, mut instance)
+			client.write_rval(data) !
+			return true
+		}
+	}
+
+	// debug
+	print('Error: unknown command: ')
+	for cmd in resp2.get_redis_array(value) {
+		mut cmd_value := resp2.get_redis_value(cmd)
+		print('cmd value >> $cmd_value ')
+	}
+	println('')
+
+	err := resp2.r_error('Unknown command')
+	client.write_rval(err) !
+
+	return false
+}
+
+pub fn default_handler() []RedisHandler {
 	mut h := []RedisHandler{}
 
 	h << RedisHandler{
@@ -191,32 +218,11 @@ pub fn process_input(mut client &redisclient.Redis, mut instance RedisInstance, 
 		command: 'DEL'
 		handler: command_del
 	}
-	command := resp2.get_redis_value_by_index(value, 0).to_upper()
 
-	for rh in h {
-		if command == rh.command {
-			println('Process: $command')
-			data := rh.handler(value, mut instance)
-			client.write_rval(data) !
-			return true
-		}
-	}
-
-	// debug
-	print('Error: unknown command: ')
-	for cmd in resp2.get_redis_array(value) {
-		mut cmd_value := resp2.get_redis_value(cmd)
-		print('cmd value >> $cmd_value ')
-	}
-	println('')
-
-	err := resp2.r_error('Unknown command')
-	client.write_rval(err) !
-
-	return false
+	return h
 }
 
-pub fn new_client(mut conn net.TcpConn, mut main RedisInstance) ! {
+pub fn new_client_custom(mut conn net.TcpConn, mut main RedisInstance, h []RedisHandler) ! {
 	// create a client on the existing socket
 	mut client := redisclient.Redis{
 		socket: conn
@@ -245,6 +251,12 @@ pub fn new_client(mut conn net.TcpConn, mut main RedisInstance) ! {
 			conn.close() !
 			return
 		}
-		process_input(mut client, mut main, value) !
+
+		process_input(mut client, mut main, value, h)!
 	}
+}
+
+pub fn new_client(mut conn net.TcpConn, mut main RedisInstance) ! {
+	h := default_handler()
+	return new_client_custom(mut conn, mut main, h)
 }
