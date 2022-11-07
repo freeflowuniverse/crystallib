@@ -71,7 +71,7 @@ fn (mut parser ActionsParser) text_parse(content string) ? {
 // most ide's auto dedent indented markdown so is necessary
 // TODO: figure out way to apply to all possible params
 fn contains_params(line string) bool {
-	param_keys := ['gitsource', 'gitdest', 'source', 'dest', 'name', 'url']
+	param_keys := ['gitsource', 'gitdest', 'source', 'dest', 'name', 'url', 'path']
 	return param_keys.any(line.contains('$it:'))
 }
 
@@ -88,7 +88,6 @@ fn parse_into_blocks(text string) ?Blocks {
 		line2 = line2.replace('\t', '    ')
 		// println("line: '$line2'")
 		if state == ParseBlockStatus.action {
-			println("Here: $line2")
 			if (line2.starts_with(' ') || line2 == '' || contains_params(line2)) && !line2.contains('!!') {
 				// starts with tab or space, means block continues
 				block.content += '\n'
