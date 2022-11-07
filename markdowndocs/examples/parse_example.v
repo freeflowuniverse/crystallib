@@ -5,7 +5,7 @@ import os
 
 const testpath = os.dir(@FILE) + '/content'
 
-fn do() ? {
+fn do() ! {
 	mut parser := markdowndocs.get('$testpath/launch.md') or { panic('cannot parse,$err') }
 
 	mut o := parser.doc.items[1]

@@ -7,7 +7,7 @@ pub mut:
 	doc     &Doc   [str: skip]
 }
 
-fn (mut o Header) process() ? {
+fn (mut o Header) process() ! {
 	return
 }
 

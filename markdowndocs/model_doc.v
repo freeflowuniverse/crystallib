@@ -29,7 +29,7 @@ pub mut:
 	content string
 }
 
-fn (mut o DocStart) process() ? {
+fn (mut o DocStart) process() ! {
 }
 
 fn (o DocStart) wiki() string {
@@ -44,19 +44,19 @@ fn (o DocStart) str() string {
 	return '**** DOCSTART\n'
 }
 
-fn (mut doc Doc) process() ? {
+fn (mut doc Doc) process() ! {
 	for mut item in doc.items {
 		match mut item {
-			DocStart { item.process()? }
-			Text { item.process()? }
-			Table { item.process()? }
-			Action { item.process()? }
-			Actions { item.process()? }
-			Header { item.process()? }
-			Paragraph { item.process()? }
-			Html { item.process()? }
-			Comment { item.process()? }
-			CodeBlock { item.process()? }
+			DocStart { item.process()! }
+			Text { item.process()! }
+			Table { item.process()! }
+			Action { item.process()! }
+			Actions { item.process()! }
+			Header { item.process()! }
+			Paragraph { item.process()! }
+			Html { item.process()! }
+			Comment { item.process()! }
+			CodeBlock { item.process()! }
 		}
 	}
 }
@@ -99,6 +99,6 @@ pub fn (doc Doc) html() string {
 	return out
 }
 
-pub fn (mut doc Doc) save() ? {
-	doc.path.write(doc.content)?
+pub fn (mut doc Doc) save() ! {
+	doc.path.write(doc.content)!
 }
