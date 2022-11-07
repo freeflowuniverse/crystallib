@@ -3,7 +3,7 @@ module docker
 import time
 
 // convert strings as used by format from docker to MB in int
-fn parse_size_mb(size_ string) ?int {
+fn parse_size_mb(size_ string) !int {
 	mut size := size_.to_lower()
 	if size.contains('(') {
 		size = size.split('(')[0].trim(' ')
@@ -23,7 +23,7 @@ fn parse_size_mb(size_ string) ?int {
 	return s
 }
 
-fn parse_digest(s string) ?string {
+fn parse_digest(s string) !string {
 	mut s2 := s
 	if s.starts_with('sha256:') {
 		s2 = s2[7..]
@@ -31,30 +31,30 @@ fn parse_digest(s string) ?string {
 	return s2
 }
 
-fn parse_time(s string) ?time.Time {
+fn parse_time(s string) !time.Time {
 	mut s2 := s
 	s3 := s2.split('+')[0].trim(' ')
 	return time.parse(s3)
 }
 
-fn parse_ports(s string) ?[]string {
+fn parse_ports(s string) ![]string {
 	s3 := s.split(',').map(clear_str)
 	return s3
 }
 
-fn parse_labels(s string) ?map[string]string {
+fn parse_labels(s string) !map[string]string {
 	mut res := map[string]string{}
 	// TODO: need to do
 	return res
 }
 
-fn parse_networks(s string) ?[]string {
+fn parse_networks(s string) ![]string {
 	mut res := []string{}
 	// TODO: need to do
 	return res
 }
 
-fn parse_mounts(s string) ?[]DockerContainerVolume {
+fn parse_mounts(s string) ![]DockerContainerVolume {
 	mut res := []DockerContainerVolume{}
 	// TODO: need to do
 	println(s)
@@ -64,7 +64,7 @@ fn parse_mounts(s string) ?[]DockerContainerVolume {
 	return res
 }
 
-fn parse_container_state(state string) ?DockerContainerStatus {
+fn parse_container_state(state string) !DockerContainerStatus {
 	if state.contains('Dead:true') || state.contains('dead') {
 		return DockerContainerStatus.dead
 	}

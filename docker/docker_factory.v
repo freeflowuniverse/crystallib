@@ -33,12 +33,12 @@ pub mut:
 
 // get current docker engine intance
 // if you want to switch uses engine_switch or docengine_geter_get
-pub fn engine_current() ?&DockerEngine {
+pub fn engine_current() !&DockerEngine {
 	return engine_get(get().current)
 }
 
 // switch you current docker engine
-pub fn engine_switch(name string) ? {
+pub fn engine_switch(name string) ! {
 	if name == '' {
 		return error('need to specify name of docker engine')
 	}
@@ -50,7 +50,7 @@ pub fn engine_switch(name string) ? {
 }
 
 // get docker engine directly linked to a name
-pub fn engine_get(name string) ?&DockerEngine {
+pub fn engine_get(name string) !&DockerEngine {
 	if name == '' {
 		return error('need to specify name of docker engine')
 	}
@@ -64,8 +64,9 @@ pub fn engine_get(name string) ?&DockerEngine {
 }
 
 // if sshkeys_allowed empty array will check the local machine for loaded sshkeys
-pub fn engine_local(sshkeys_allowed []string) ?&DockerEngine {
-	mut node := builder.node_local()?
+pub fn engine_local(sshkeys_allowed []string) !&DockerEngine {
+	mut factory := builder.new() 
+	mut node := factory.node_local()!
 	return engine_new(name: 'local', node_name: node.name, sshkeys_allowed: sshkeys_allowed)
 }
 
@@ -77,11 +78,11 @@ pub fn engine_local(sshkeys_allowed []string) ?&DockerEngine {
 //	node_name       string  	//name of the node on which the docker engine is running
 // 	}
 //```
-pub fn engine_new(args DockerEngineArguments) ?&DockerEngine {
+pub fn engine_new(args DockerEngineArguments) !&DockerEngine {
 	mut args2 := args
 
 	if args2.sshkeys_allowed == [] {
-		args2.sshkeys_allowed << sshagent.pubkey_guess()?
+		args2.sshkeys_allowed << sshagent.pubkey_guess()!
 	}
 	if args2.name == '' {
 		return error('need to specify name')
@@ -92,14 +93,15 @@ pub fn engine_new(args DockerEngineArguments) ?&DockerEngine {
 	}
 
 	// not really needed is to check it works
-	_ := builder.node_get(args2.node_name)?
+	mut factory := builder.new() 
+	_ := factory.node_get(args2.node_name)!
 
 	mut de := DockerEngine{
 		name: args2.name
 		node: args2.node_name
 		sshkeys_allowed: args2.sshkeys_allowed
 	}
-	de.init()?
+	de.init()!
 
 	get().dockerengines[args2.name] = &de
 	get().current = args2.name
