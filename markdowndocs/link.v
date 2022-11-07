@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.texttools
 import os
 
 // add link to the page
-fn (mut para Paragraph) link_new(original_descr_ string, original_link_ string, isimage bool) ?Link {
+fn (mut para Paragraph) link_new(original_descr_ string, original_link_ string, isimage bool) !Link {
 	mut link := Link{
 		// this will be the exact way how the link is done in the paragraph
 		original: '[$original_descr_]($original_link_)'
@@ -55,7 +55,11 @@ fn (mut para Paragraph) link_new(original_descr_ string, original_link_ string, 
 		link.filename = original_link
 	}
 
-	link.path = link.filename.all_before_last('/').trim_right('/') // just to make sure it wasn't //
+	if link.filename.contains('/')  {
+		link.path = link.filename.all_before_last('/').trim_right('/') // just to make sure it wasn't //
+	} else {
+		link.path = ''
+	}
 
 	// find the prefix
 	mut prefix_done := false
@@ -80,6 +84,9 @@ fn (mut para Paragraph) link_new(original_descr_ string, original_link_ string, 
 		filename << x
 	}
 	link.filename = filename.join('')
+	
+	// trims prefixes from path
+	link.path = link.path.trim_left('!@*') 
 
 	// lets now check if there is site info in there
 	if link.filename.contains(':') {
@@ -97,6 +104,9 @@ fn (mut para Paragraph) link_new(original_descr_ string, original_link_ string, 
 			('should never be here')
 		}
 	}
+
+	// lets strip site info from link path
+	link.path = link.path.trim_string_left('$link.site:')
 
 	link.filename = os.base(link.filename)
 
@@ -133,7 +143,7 @@ fn (mut para Paragraph) link_new(original_descr_ string, original_link_ string, 
 		} else if original_link.starts_with('mailto:') {
 			link.cat = LinkType.email
 			return link
-		} else if !original_link.contains_any('./?&;') {
+		} else if !original_link.contains_any('./!&;') {
 			// link.cat = LinkType.page
 			panic('need to figure out what to do with $original_link ')
 		} else {
@@ -169,7 +179,7 @@ fn (mut para Paragraph) link_new(original_descr_ string, original_link_ string, 
 
 
 // return how to represent link on source
-fn (mut link Link) source_get() ?string {
+fn (mut link Link) source_get() !string {
 	if link.cat == LinkType.image {
 		if link.extra == '' {
 			return '![$link.description]($link.filename)'
@@ -207,11 +217,11 @@ fn (mut link Link) source_get() ?string {
 }
 
 // replace original link content in text with $replacewith
-// if replacewith is empty then will recreate the link as source_get()?
-pub fn (mut link Link) replace(text string, replacewith_ string) ?string {
+// if replacewith is empty then will recreate the link as source_get()!
+pub fn (mut link Link) replace(text string, replacewith_ string) !string {
 	mut replacewith:=replacewith_
 	if replacewith==""{
-		replacewith = link.source_get()?
+		replacewith = link.source_get()!
 	}
 	return text.replace(link.original, replacewith)
 }
@@ -232,7 +242,7 @@ pub mut:
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT REALITIES
 // returns all the links
-pub fn (mut para Paragraph) link_parser(text string) ?LinkParseResult {
+pub fn (mut para Paragraph) link_parser(text string) !LinkParseResult {
 	mut charprev := ''
 	mut ch := ''
 	mut state := LinkParseStatus.start
@@ -293,7 +303,7 @@ pub fn (mut para Paragraph) link_parser(text string) ?LinkParseResult {
 				// original += ch
 				if ch == ')' {
 					// end of capture group
-					mut link := para.link_new(capturegroup_pre, capturegroup_post, isimage)?
+					mut link := para.link_new(capturegroup_pre, capturegroup_post, isimage)!
 					// remember the consumer page
 					parseresult.links << link
 					capturegroup_pre = ''
