@@ -1,7 +1,7 @@
 module golang
 
 // install golang will return true if it was already installed
-pub fn (mut i Installer) install() ? {
+pub fn (mut i Installer) install() ! {
 	mut node := i.node
 	// install golang if it was already done will return true
 	println(' - $node.name: install golang')
@@ -12,7 +12,7 @@ pub fn (mut i Installer) install() ? {
 
 	if node.command_exists('go') {
 		println('Golang was already installed.')
-		node.done_set('install_golang', 'OK')?
+		node.done_set('install_golang', 'OK')!
 		return
 	}
 
@@ -45,6 +45,6 @@ pub fn (mut i Installer) install() ? {
 
 	node.exec(cmd) or { return error('Cannot install golang.\n$err') }
 
-	node.done_set('install_golang', 'OK')?
+	node.done_set('install_golang', 'OK')!
 	return
 }

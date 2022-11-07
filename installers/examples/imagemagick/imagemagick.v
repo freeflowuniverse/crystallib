@@ -2,9 +2,9 @@ module main
 
 import installers.imagemagick
 
-fn do() ? {
+fn do() ! {
 	// shortcut to install the base
-	mut i := imagemagick.install()?
+	mut i := imagemagick.install()!
 	println(i)
 }
 

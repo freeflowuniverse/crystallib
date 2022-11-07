@@ -33,8 +33,8 @@ pub fn (mut i Installer) install() ! {
 	println(' - platform already prepared')
 }
 
-// pub fn (mut i Installer) update() ? {
+// pub fn (mut i Installer) update() ! {
 // 	mut node := i.node
 // 	panic("to implement")
-// 	node.done_set('update_crystaltools', 'OK')?
+// 	node.done_set('update_crystaltools', 'OK')!
 // }

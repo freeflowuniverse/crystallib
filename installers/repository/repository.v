@@ -1,7 +1,7 @@
 module repository
 
 // install repository will return true if it was already installed
-pub fn (mut i Installer) install(repo_url string) ? {
+pub fn (mut i Installer) install(repo_url string) ! {
 	mut node := i.node
 	split_url := repo_url.split('/')
 	mut repo_name := split_url[split_url.len - 1].trim_string_right('.git')
@@ -27,6 +27,6 @@ pub fn (mut i Installer) install(repo_url string) ? {
 
 	node.exec(cmd) or { return error('Cannot install repository: $repo_owner/$repo_name \n $err') }
 
-	node.done_set('install_$repo_owner/$repo_name', 'OK')?
+	node.done_set('install_$repo_owner/$repo_name', 'OK')!
 	return
 }

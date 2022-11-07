@@ -1,7 +1,7 @@
 module vlang
 
 // install vlang will return true if it was already installed
-pub fn (mut i Installer) install() ? {
+pub fn (mut i Installer) install() ! {
 	mut node := i.node
 	// install vlang if it was already done will return true
 	println(' - $node.name: install vlang')
@@ -25,6 +25,6 @@ pub fn (mut i Installer) install() ? {
 
 	node.exec(cmd) or { return error('Cannot install vlang.\n$err') }
 
-	node.done_set('install_vlang', 'OK')?
+	node.done_set('install_vlang', 'OK')!
 	return
 }

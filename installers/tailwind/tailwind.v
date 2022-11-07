@@ -1,7 +1,7 @@
 module tailwind
 
 // install tailwind will return true if it was already installed
-pub fn (mut i Installer) install() ? {
+pub fn (mut i Installer) install() ! {
 	mut node := i.node
 	// install tailwind if it was already done will return true
 	println(' - $node.name: install tailwind')
@@ -23,6 +23,6 @@ pub fn (mut i Installer) install() ? {
 
 	node.exec(cmd) or { return error('Cannot install tailwind.\n$err') }
 
-	node.done_set('install_tailwind', 'OK')?
+	node.done_set('install_tailwind', 'OK')!
 	return
 }
