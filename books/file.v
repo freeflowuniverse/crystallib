@@ -40,27 +40,27 @@ fn (mut file File) init() {
 	file.pathrel = path_rel.trim('/')
 }
 
-pub fn (mut file File) delete() ? {
-	file.path.delete()?
+pub fn (mut file File) delete() ! {
+	file.path.delete()!
 }
 
-fn (mut file File) mv(dest string) ? {
-	os.mkdir_all(os.dir(dest))?
-	mut desto := pathlib.get_file_dir_create(dest)?
+fn (mut file File) mv(dest string) ! {
+	os.mkdir_all(os.dir(dest))!
+	mut desto := pathlib.get_file_dir_create(dest)!
 	os.mv(file.path.path, desto.path) or {
 		return error('could not rename $file.path.path to $desto.path .\n$err\n$file')
 	}
 	// need to get relative path in, in relation to site
-	file.pathrel = desto.path_relative(file.site.path.path)?
+	file.pathrel = desto.path_relative(file.site.path.path)!
 	file.path = desto
 }
 
-pub fn (mut file File) exists() ?bool {
+pub fn (mut file File) exists() !bool {
 	return file.path.exists()
 }
 
 
-fn (mut file File) copy(dest string) ? {
+fn (mut file File) copy(dest string) ! {
 	mut dest2:= pathlib.get(dest)
-	file.path.copy(mut dest2)?
+	file.path.copy(mut dest2)!
 }

@@ -3,7 +3,7 @@ import freeflowuniverse.crystallib.texttools
 
 //return sitename if any (otherwise empty string) and page or filename
 //if is image will remove extension and last _ (before extension)
-fn get_site_and_obj_name(txt_ string, ismage bool) ?(string,string) {	
+fn get_site_and_obj_name(txt_ string, ismage bool) !(string,string) {	
 	mut txt:= txt_.trim_space().replace("\\","/").replace("//","/").all_after_last("/")
 	mut a:=""
 	mut b:=texttools.name_fix_keepext(txt)
