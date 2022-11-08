@@ -48,12 +48,12 @@ pub struct NodeArguments {
 
 // get node connection to local machine
 // pass your redis client there
-pub fn (mut builder BuilderFactory) node_local() ?&Node {
+pub fn (mut builder BuilderFactory) node_local() !&Node {
 	return builder.node_new(name: 'localhost')
 }
 
 // retrieve node from the factory, will throw error if not there
-pub fn (mut builder BuilderFactory) node_get(name string) ?&Node {
+pub fn (mut builder BuilderFactory) node_get(name string) !&Node {
 	if name == '' {
 		return error('need to specify name')
 	}
@@ -80,7 +80,7 @@ pub fn (mut builder BuilderFactory) node_get(name string) ?&Node {
 //	redisclient &redisclient.Redis
 // 	}
 //```
-pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
+pub fn (mut builder BuilderFactory) node_new(args NodeArguments) !&Node {
 	if args.name == '' {
 		return error('need to specify name')
 	}
@@ -94,20 +94,20 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
 		user: args.user
 		debug: args.debug
 	}
-	mut executor := executor_new(eargs)?
+	mut executor := executor_new(eargs)!
 	mut node := Node{
 		executor: &executor
 		cache: builder.redis.cache('node:$args.name')
 	}
 
 	if args.reset {
-		node.cache.reset()?
-		node.db_reset()?
+		node.cache.reset()!
+		node.db_reset()!
 	}
 
 	node_env_txt := node.cache.get('env') or {
 		// println(' - env load')
-		node.environment_load()?
+		node.environment_load()!
 		''
 	}
 
@@ -117,7 +117,7 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
 
 	if !node.cache.exists('env') {
 		node.cache.set('env', serializers.map_string_string_to_text(node.environment),
-			3600)?
+			3600)!
 	}
 
 	// println(node.environment)
@@ -130,8 +130,8 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
 	init_platform_txt := node.cache.get('platform_type') or {
 		// println(' - platform load')
 		node.platform_load()
-		node.db_check()?
-		node.cache.set('platform_type', int(node.platform).str(), 3600)?
+		node.db_check()!
+		node.cache.set('platform_type', int(node.platform).str(), 3600)!
 		''
 	}
 
@@ -150,13 +150,13 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
 	init_node_txt := node.cache.get('node_done') or {
 		println(err)
 		println(' - $node.name: node done needs to be loaded')
-		node.done_load()?
+		node.done_load()!
 		node.cache.set('node_done', serializers.map_string_string_to_text(node.done),
-			600)?
+			600)!
 		''
 	}
 	if init_node_txt != '' {
-		node.done_load()?
+		node.done_load()!
 		node.done = serializers.text_to_map_string_string(init_node_txt)
 	}
 
@@ -166,10 +166,10 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) ?&Node {
 }
 
 // get remote environment arguments in memory
-pub fn (mut node Node) environment_load() ? {
+pub fn (mut node Node) environment_load() ! {
 	node.environment = node.environ_get() or { return error('can not load env') }
 }
 
-pub fn (mut node Node) cache_clear() ? {
-	node.cache.reset()?
+pub fn (mut node Node) cache_clear() ! {
+	node.cache.reset()!
 }

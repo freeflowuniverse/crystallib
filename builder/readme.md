@@ -18,18 +18,18 @@ We have executors implemented to work over SSH or for the LOCAL machine.
 
 Each executor implements the following methods
 
-- exec(cmd string) ?string
-- exec_silent(cmd string) ?string
-- file_write(path string, text string) ?
-- file_read(path string) ?string
+- exec(cmd string) !string
+- exec_silent(cmd string) !string
+- file_write(path string, text string) !
+- file_read(path string) !string
 - file_exists(path string) bool
-- delete(path string) ?
-- download(source string, dest string) ?
-- upload(source string, dest string) ?
-- environ_get() ?map[string]string
+- delete(path string) !
+- download(source string, dest string) !
+- upload(source string, dest string) !
+- environ_get() !map[string]string
 - info() map[string]string
-- shell(cmd string) ?
-- list(path string) ?[]string
+- shell(cmd string) !
+- list(path string) ![]string
 - dir_exists(path string) bool
 - debug_off()
 - debug_on()
@@ -52,4 +52,3 @@ A cool feature is that we can run TMUX remote over an SSH node.
 - tmux = is the factory, it represents the tmux process manager, linked to a node
 - session = is a set of windows, it has a name and groups windows
 - window = is typically one process running (you can have panes but in our implementation we skip this)
-

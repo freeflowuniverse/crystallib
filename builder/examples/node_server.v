@@ -2,7 +2,7 @@ module main
 
 import freeflowuniverse.crystallib.builder { NodeArguments }
 
-fn do() ? {
+fn do() ! {
 	mut builder := builder.new()
 
 	node_args := NodeArguments{
