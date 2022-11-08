@@ -81,7 +81,8 @@ pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr, args Rep
 
 // will return repo starting from a path
 // if .git not in the path will go for parent untill .git found
-pub fn (mut gitstructure GitStructure) repo_get_from_path(path Path, pull bool, reset bool) !&GitRepo {
+// TODO: maybe refactor to implement fn like repo_get_from_url
+pub fn (mut gitstructure GitStructure) repo_get_from_path(name string, path Path, pull bool, reset bool) !&GitRepo {
 	path2 := path.parent_find('.git')!
 
 	mut addr := addr_get_from_path(path2.path) or { return error('cannot get addr from path:$err') }
@@ -89,6 +90,7 @@ pub fn (mut gitstructure GitStructure) repo_get_from_path(path Path, pull bool, 
 	args := RepoGetFromUrlArgs{
 		pull: pull
 		reset: reset
+		name: name
 	}
 	// println(addr)
 	return gitstructure.repo_get_from_addr(addr, args)
