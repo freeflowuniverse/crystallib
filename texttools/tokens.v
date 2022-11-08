@@ -14,13 +14,13 @@ pub mut:
 	matchstring string
 }
 
-pub fn text_token_replace(text string, tofind string, replacewith string) ?string {
+pub fn text_token_replace(text string, tofind string, replacewith string) !string {
 	mut tr := tokenize(text)
-	text2 := tr.replace(text, tofind, replacewith)?
+	text2 := tr.replace(text, tofind, replacewith)!
 	return text2
 }
 
-pub fn (mut tr TokenizerResult) replace(text string, tofind string, replacewith string) ?string {
+pub fn (mut tr TokenizerResult) replace(text string, tofind string, replacewith string) !string {
 	tofind2 := name_fix_no_underscore_token(tofind)
 	mut text2 := text
 	for item in tr.items {

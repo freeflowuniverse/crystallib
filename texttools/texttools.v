@@ -61,7 +61,7 @@ pub enum MultiLineStatus {
 // multiline to 'line1\\nline2\\n'
 // dedent also done before putting in '...'
 // tabs also replaced to 4x space
-pub fn multiline_to_single(text string) ?string {
+pub fn multiline_to_single(text string) !string {
 	mut multiline_first := ''
 	mut multiline := ''
 	mut line2 := ''
@@ -165,7 +165,7 @@ fn multiline_end(multiline_first string, multiline string) string {
 // }
 
 // //find variables which is $[a...zA...Z0...9]
-// pub fn template_replace_args(text string, args map[string]string )?string{
+// pub fn template_replace_args(text string, args map[string]string )!string{
 //     mut args2 := map[string]string{}
 //     mut text2 := text
 //     for key in args.key_values{

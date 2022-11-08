@@ -4,7 +4,7 @@ import os
 
 // return (sitename,pagename)
 // sitename will be empty string if not specified with site:... or site__...
-pub fn name_split(name string) ?(string, string) {
+pub fn name_split(name string) !(string, string) {
 	mut objname := name.trim(' ')
 	objname = objname.trim_left('.')
 
