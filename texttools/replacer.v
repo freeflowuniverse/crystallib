@@ -44,9 +44,11 @@ pub fn replace_items(text string, replacer map[string]string) string {
 		keys << key
 	}
 
+	// also replaces underscored and plural words
 	for key in keys {
 		key2 := name_fix_no_underscore_token(key)
 		replacer2[key2] = replacer[key]
+		replacer2['${key2}s'] = '${replacer[key]}s'
 	}
 
 	text_lines := text.split('\n')
