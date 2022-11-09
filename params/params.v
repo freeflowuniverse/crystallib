@@ -72,9 +72,9 @@ pub fn (mut result Params) arg_add(value string) {
 // 	value string
 // }
 // it has nice methods to query the params
-pub fn text_to_params(text string) ?Params {
+pub fn text_to_params(text string) !Params {
 	mut text2 := texttools.dedent(text)
-	text2 = texttools.multiline_to_single(text2)?
+	text2 = texttools.multiline_to_single(text2)!
 	text2 = text2.replace('\\n', '<<BR>>')
 	text2 = text2.replace('\n', ' ')
 
