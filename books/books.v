@@ -48,7 +48,12 @@ pub fn (mut books Books) book_new(args BookNewArgs) !&Book {
 	}
 
 	//is case insensitive
-	mut summarypath:=p.file_find("summary.md") or {return error("cannot find summary path")}
+	//? checks for both summary.md files and links
+	mut summarypath:=p.file_find("summary.md") or {
+		p.link_find("summary.md") or {
+			return error("cannot find summary path: $err")
+		}
+	}
 
 	mut parser := markdowndocs.get(summarypath.path) or { panic('cannot book parse $summarypath ,$err') }
 
