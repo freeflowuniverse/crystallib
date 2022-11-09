@@ -59,7 +59,6 @@ fn (mut runner GitRunner) run_link(mut action Action) {
 	// 	pull bool			//means we will pull source & destination
 	// 	reset bool			//means we will reset changes, they will be overwritten
 	// }
-	println('params: $action.params')
 	gitlinkargs := gittools.GitLinkArgs{
 		gitsource: action.params.get_default('gitsource', '') or { panic("Can't get param") }
 		gitdest: action.params.get_default('gitdest', '') or { panic("Can't get param") }
