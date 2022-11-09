@@ -49,25 +49,25 @@ pub fn (mut sites Sites) site_new(args SiteNewArgs) !&Site {
 	return &site
 }
 
-fn (mut sites Sites) scan_recursive(mut path pathlib.Path) ? {
+fn (mut sites Sites) scan_recursive(mut path pathlib.Path) ! {
 	// $if debug{println(" - sites scan recursive: $path.path")}
 	if path.is_dir() {
 		if path.file_exists('.site') {
 			mut name := path.name()
-			mut sitefilepath := path.file_get('.site')?
+			mut sitefilepath := path.file_get('.site')!
 			// now we found a site we need to add
-			content := sitefilepath.read()?
+			content := sitefilepath.read()!
 			if content.trim_space() != '' {
 				// means there are params in there
-				mut params_ := params.text_to_params(content)?
+				mut params_ := params.text_to_params(content)!
 				if params_.exists('name') {
-					name = params_.get('name')?
+					name = params_.get('name')!
 				}
 			}
 			println(' - site new: $path.path name:$name')
-			mut s := sites.site_new(path: path.path, name: name)?
+			mut s := sites.site_new(path: path.path, name: name)!
 			// find all files in the site
-			s.scan()?
+			s.scan()!
 			return
 		}
 		mut llist := path.list(recursive: false) or {
@@ -89,9 +89,9 @@ fn (mut sites Sites) scan_recursive(mut path pathlib.Path) ? {
 	}
 }
 
-pub fn (mut sites Sites) scan(path string) ? {
-	mut p := pathlib.get_dir(path, false)?
-	sites.scan_recursive(mut p)?
+pub fn (mut sites Sites) scan(path string) ! {
+	mut p := pathlib.get_dir(path, false)!
+	sites.scan_recursive(mut p)!
 }
 
 pub fn (mut sites Sites) exists(name string) bool {
@@ -102,7 +102,7 @@ pub fn (mut sites Sites) exists(name string) bool {
 	return false
 }
 
-pub fn (mut sites Sites) get(name string) ?&Site {
+pub fn (mut sites Sites) get(name string) !&Site {
 	namelower := texttools.name_fix_no_underscore_no_ext(name)
 	if namelower in sites.sites {
 		return sites.sites[namelower]
@@ -112,12 +112,12 @@ pub fn (mut sites Sites) get(name string) ?&Site {
 
 
 // fix all loaded sites
-pub fn (mut sites Sites) fix() ? {
+pub fn (mut sites Sites) fix() ! {
 	if sites.state == .ok {
 		return
 	}
 	for _, mut site in sites.sites {
-		site.fix()?
+		site.fix()!
 	}
 }
 
@@ -138,8 +138,8 @@ pub fn (mut sites Sites) sitenames() []string {
 //walk over all sites see if we can find the image
 //return string if it exists otherwise empty
 //the string name is the image with the site in form sitename:imagename
-fn (mut sites Sites) image_find(name string) ?string {
-	sitename, namelower := get_site_and_obj_name(name,true)?
+fn (mut sites Sites) image_find(name string) !string {
+	sitename, namelower := get_site_and_obj_name(name,true)!
 	if sitename!=""{
 		panic("should not happen, sitename need to be empty")
 	}

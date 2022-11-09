@@ -1,7 +1,7 @@
 module rust
 
 // install rust will return true if it was already installed
-pub fn (mut i Installer) install() ? {
+pub fn (mut i Installer) install() ! {
 	mut node := i.node
 	// install rust if it was already done will return true
 	println(' - $node.name: install rust')
@@ -30,6 +30,6 @@ pub fn (mut i Installer) install() ? {
 	// 	return error('Cannot add path to .bashrc: $err')
 	// }
 
-	node.done_set('install_rust', 'OK')?
+	node.done_set('install_rust', 'OK')!
 	return
 }

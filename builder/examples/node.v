@@ -2,9 +2,9 @@ module main
 
 import freeflowuniverse.crystallib.builder
 
-fn do() ? {
+fn do() ! {
 	mut builder := builder.new()
-	mut node := builder.node_local()?
+	mut node := builder.node_local()!
 
 	println(node)
 }

@@ -6,7 +6,7 @@ pub mut:
 	doc     &Doc   [str: skip]
 }
 
-fn (mut o Table) process() ? {
+fn (mut o Table) process() ! {
 	return
 }
 

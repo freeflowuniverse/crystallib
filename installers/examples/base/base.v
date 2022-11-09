@@ -2,9 +2,9 @@ module main
 
 import installers.base
 
-fn do() ? {
+fn do() ! {
 	// shortcut to install the base
-	mut i := base.install()?
+	mut i := base.install()!
 	println(i)
 }
 

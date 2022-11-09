@@ -7,7 +7,7 @@ pub mut:
 	doc      &Doc   [str: skip]
 }
 
-fn (mut o CodeBlock) process() ? {
+fn (mut o CodeBlock) process() ! {
 	return
 }
 

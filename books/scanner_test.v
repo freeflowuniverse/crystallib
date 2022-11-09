@@ -1,13 +1,13 @@
-import freeflowuniverse.crystallib.books { new }
+import freeflowuniverse.crystallib.books { sites_new }
 
 const path = '~/code/github/threefoldfoundation/books/content/abundance_internet'
 
 fn test_scan_internal() {
-	sites := new()
-	site_args := SiteNewArgs {
-		name: TestSite
+	mut sites := sites_new()
+	site_args := books.SiteNewArgs {
+		name: 'TestSite'
 		path: path
 	}
-	site := sites.new_site(site_args)
-	site.scan()
+	mut site := sites.site_new(site_args) or { panic('Error creating site: $err') }
+	site.scan() or { panic('Error scanning site: $err') }
 }

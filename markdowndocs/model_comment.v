@@ -14,7 +14,7 @@ pub mut:
 	doc     &Doc          [str: skip]
 }
 
-fn (mut o Comment) process() ? {
+fn (mut o Comment) process() ! {
 	return
 }
 

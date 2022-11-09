@@ -22,7 +22,7 @@ struct ExecutorNewArguments {
 //- format ipaddr: 192.168.6.6
 //- format ipaddr: any ipv6 addr
 //- if ipaddr is empty or starts with localhost or 127.0.0.1 -> will be the ExecutorLocal
-fn executor_new(args ExecutorNewArguments) ?Executor {
+fn executor_new(args ExecutorNewArguments) !Executor {
 	if args.ipaddr == '' || args.ipaddr.starts_with('localhost')
 		|| args.ipaddr.starts_with('127.0.0.1') {
 		return ExecutorLocal{
@@ -37,7 +37,7 @@ fn executor_new(args ExecutorNewArguments) ?Executor {
 			user: args.user
 			debug: args.debug
 		}
-		e.init()?
+		e.init()!
 		return e
 	}
 }

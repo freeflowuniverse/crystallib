@@ -24,13 +24,13 @@ pub mut:
 
 // return the ipaddress as known on the public side
 // is using resolver4.opendns.com
-pub fn (mut node Node) ipaddr_pub_get() ?string {
+pub fn (mut node Node) ipaddr_pub_get() !string {
 	if !node.done_exists('ipaddr') {
 		cmd := 'dig @resolver4.opendns.com myip.opendns.com +short'
-		res := node.exec(cmd)?
-		node.done_set('ipaddr', res.trim('\n').trim(' \n'))?
+		res := node.exec(cmd)!
+		node.done_set('ipaddr', res.trim('\n').trim(' \n'))!
 	}
-	mut ipaddr := node.done_get('ipaddr')?
+	mut ipaddr := node.done_get('ipaddr') or { return('Error: ipaddr is none') }
 	return ipaddr.trim('\n').trim(' \n')
 }
 
@@ -47,7 +47,7 @@ pub fn (mut node Node) ipaddr_pub_get() ?string {
 //	checkkey string //if used will use this one in stead of hash of cmd, to check if was executed already
 // }
 // ```
-pub fn (mut node Node) exec_cmd(args NodeExecCmd) ? {
+pub fn (mut node Node) exec_cmd(args NodeExecCmd) ! {
 	// println(args)
 	mut cmd := args.cmd
 	mut now_epoch := time.now().unix_time()
@@ -86,15 +86,15 @@ pub fn (mut node Node) exec_cmd(args NodeExecCmd) ? {
 	}
 
 	if args.reset && args.tmpdir.len > 2 {
-		node.delete(args.tmpdir)?
+		node.delete(args.tmpdir)!
 	}
 
 	mut r_path := '/tmp/${hhash}.sh'
 	if args.tmpdir.len > 2 {
 		r_path = '$args.tmpdir/installer.sh'
-		node.exec_silent('mkdir -p $args.tmpdir')?
+		node.exec_silent('mkdir -p $args.tmpdir')!
 	}
-	node.file_write(r_path, cmd)?
+	node.file_write(r_path, cmd)!
 	if args.tmpdir.len > 2 {
 		cmd = "mkdir -p $args.tmpdir && cd $args.tmpdir && export TMPDIR='$args.tmpdir' && bash $r_path"
 	} else {
@@ -106,12 +106,12 @@ pub fn (mut node Node) exec_cmd(args NodeExecCmd) ? {
 
 	if args.remove_installer {
 		if args.tmpdir.len > 2 {
-			node.delete(args.tmpdir)?
+			node.delete(args.tmpdir)!
 		} else {
-			node.delete(r_path)?
+			node.delete(r_path)!
 		}
 	}
-	node.done_set('exec_$hhash', now_str)?
+	node.done_set('exec_$hhash', now_str)!
 }
 
 // check if we can execute and there is not errorcode
@@ -134,7 +134,7 @@ fn (mut node Node) platform_load() {
 		if node.cmd_exists('sw_vers') {
 			node.platform = PlatformType.osx
 
-			// node execute uname -m ?
+			// node execute uname -m !
 
 			// TODO: does not work for remote !!!
 			if os.uname().machine.to_lower() == 'x86_64' {
@@ -153,7 +153,7 @@ fn (mut node Node) platform_load() {
 	}
 }
 
-pub fn (mut node Node) package_refresh() ? {
+pub fn (mut node Node) package_refresh() ! {
 	if node.platform == PlatformType.ubuntu {
 		node.exec('apt-get update') or {
 			return error('could not update packages list\nerror:\n$err')
@@ -161,7 +161,7 @@ pub fn (mut node Node) package_refresh() ? {
 	}
 }
 
-pub fn (mut node Node) package_install(package Package) ? {
+pub fn (mut node Node) package_install(package Package) ! {
 	name := package.name
 	if node.platform == PlatformType.osx {
 		node.exec('brew install $name') or {
@@ -180,7 +180,7 @@ pub fn (mut node Node) package_install(package Package) ? {
 	}
 }
 
-fn (mut node Node) upgrade() ? {
+fn (mut node Node) upgrade() ! {
 	if node.platform == PlatformType.ubuntu {
 		upgrade_cmds := '
 			sudo killall apt apt-get
@@ -202,6 +202,6 @@ fn (mut node Node) upgrade() ? {
 			period: 48 * 3600
 			reset: false
 			description: 'upgrade operating system packages'
-		)?
+		)!
 	}
 }

@@ -2,9 +2,10 @@ module markdowndocs
 
 fn test_link1() {
 	mut lp := LinkParseResult{}
-	lp = link_parser('[Architecture](architecture/architecture.md)') or { panic(err) }
+	mut para := Paragraph{}
+	lp = para.link_parser('[Architecture](architecture/architecture.md)') or { panic(err) }
 
-	assert lp == LinkParseResult{
+	correct_lp := LinkParseResult{
 		links: [
 			Link{
 				original: '[Architecture](architecture/architecture.md)'
@@ -24,13 +25,16 @@ fn test_link1() {
 			},
 		]
 	}
+
+	assert lp.str() == correct_lp.str()
 }
 
 fn test_link2() {
 	mut lp := LinkParseResult{}
-	lp = link_parser('[Architecture](@*!architecture/architecture.md)') or { panic(err) }
+	mut para := Paragraph{}
+	lp = para.link_parser('[Architecture](@*!architecture/architecture.md)') or { panic(err) }
 
-	assert lp == LinkParseResult{
+	correct_lp := LinkParseResult{
 		links: [
 			Link{
 				original: '[Architecture](@*!architecture/architecture.md)'
@@ -50,13 +54,15 @@ fn test_link2() {
 			},
 		]
 	}
+	assert lp.str() == correct_lp.str() 
 }
 
 fn test_link3() {
 	mut lp := LinkParseResult{}
-	lp = link_parser('[AArchitecture](@*!architecture.md)') or { panic(err) }
+	mut para := Paragraph{}
+	lp = para.link_parser('[AArchitecture](@*!architecture.md)') or { panic(err) }
 
-	assert lp == LinkParseResult{
+	assert lp.str() == LinkParseResult{
 		links: [
 			Link{
 				original: '[AArchitecture](@*!architecture.md)'
@@ -75,16 +81,17 @@ fn test_link3() {
 				error_msg: ''
 			},
 		]
-	}
+	}.str()
 }
 
 fn test_link4() {
 	mut lp := LinkParseResult{}
-	lp = link_parser("[AArchitecture](./img/license_threefoldfzc.png ':size=800x900')") or {
+	mut para := Paragraph{}
+	lp = para.link_parser("[AArchitecture](./img/license_threefoldfzc.png ':size=800x900')") or {
 		panic(err)
 	}
 
-	assert lp == LinkParseResult{
+	assert lp.str() == LinkParseResult{
 		links: [
 			Link{
 				original: "[AArchitecture](./img/license_threefoldfzc.png ':size=800x900')"
@@ -103,14 +110,15 @@ fn test_link4() {
 				error_msg: ''
 			},
 		]
-	}
+	}.str()
 }
 
 fn test_link5() {
 	mut lp := LinkParseResult{}
-	lp = link_parser('[Architecture](@*!testsite:architecture/architecture.md)') or { panic(err) }
+	mut para := Paragraph{}
+	lp = para.link_parser('[Architecture](@*!testsite:architecture/architecture.md)') or { panic(err) }
 
-	assert lp == LinkParseResult{
+	assert lp.str() == LinkParseResult{
 		links: [
 			Link{
 				original: '[Architecture](@*!testsite:architecture/architecture.md)'
@@ -129,16 +137,17 @@ fn test_link5() {
 				error_msg: ''
 			},
 		]
-	}
+	}.str()
 }
 
 fn test_link6() {
 	mut lp := LinkParseResult{}
-	lp = link_parser('[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)') or {
+	mut para := Paragraph{}
+	lp = para.link_parser('[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)') or {
 		panic(err)
 	}
 
-	assert lp == LinkParseResult{
+	correct_lp := LinkParseResult{
 		links: [
 			Link{
 				original: '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)'
@@ -158,11 +167,14 @@ fn test_link6() {
 			},
 		]
 	}
+	// direct object comparison fails, so compare strings
+	assert lp.str() == correct_lp.str()
 }
 
 fn test_link7() {
 	mut lp := LinkParseResult{}
-	lp = link_parser('
+	mut para := Paragraph{}
+	lp = para.link_parser('
 		hi [Architecture](mysite:new/newer.md) is something else [Something](yes/start.md) 
 		line
 		 [Something](yes/start.md) 
@@ -170,7 +182,7 @@ fn test_link7() {
 		panic(err)
 	}
 
-	assert lp == LinkParseResult{
+	correct_lp := LinkParseResult{
 		links: [
 			Link{
 				original: '[Architecture](mysite:new/newer.md)'
@@ -222,4 +234,6 @@ fn test_link7() {
 			},
 		]
 	}
+
+	assert lp.str() == correct_lp.str()
 }

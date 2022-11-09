@@ -8,10 +8,10 @@ import freeflowuniverse.crystallib.installers.caddy
 import freeflowuniverse.crystallib.installers.tailwind
 import freeflowuniverse.crystallib.installers.repository
 
-fn do() ? {
+fn do() ! {
 	mut builder := builder.new()
 
-	mut node := builder.node_new(name: 'test', ipaddr: '185.206.122.151', debug: true)?
+	mut node := builder.node_new(name: 'test', ipaddr: '185.206.122.151', debug: true)!
 
 	rust.get_install(mut node) or { panic('error: $err') }
 	mdbook.get_install(mut node) or { panic('error: $err') }
@@ -28,17 +28,8 @@ fn do() ? {
 		panic('error: $err')
 	}
 
-	node.exec('cd code/github/timurgordon/publisher_ui; git checkout development')?
-	node.exec('cd code/github/timurgordon/publisher_ui; git pull')?
-
-	node.exec('cd code/github/freeflowuniverse/crystallib; git checkout development_publisher3_kristof')?
-	node.exec('cd code/github/freeflowuniverse/crystallib; git pull')?
-
-	node.exec('ln -sf /root/tailwindcss code/github/timurgordon/publisher_ui/tailwindcss') or {
-		return error('Failed to link tailwind binary to project: $err')
-	}
-
-	node.exec('cd code/github/timurgordon/publisher_ui; sh run.sh')?
+	node.exec('cd code/github/freeflowuniverse/crystallib; git checkout development_publisher3_kristof')!
+	node.exec('cd code/github/freeflowuniverse/crystallib; git pull')!
 }
 
 fn main() {

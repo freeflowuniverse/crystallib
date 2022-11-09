@@ -27,7 +27,7 @@ pub enum IpAddressType {
 // format ipv6: [x:x:x:x:x:x:x:x]:p TODO: implement
 // format ipv6: x:x:x:x:x:x:x:x
 // format ipv6: x::x/96
-pub fn ipaddress_new(addr_string string) ?IPAddress {
+pub fn ipaddress_new(addr_string string) !IPAddress {
 	mut cat := IpAddressType.ipv4
 	mut addr := addr_string
 	mut port := ''
@@ -70,7 +70,7 @@ pub fn ipaddress_new(addr_string string) ?IPAddress {
 		mask: mask
 	}
 
-	ip.check()?
+	ip.check()!
 
 	return ip
 }
@@ -120,7 +120,7 @@ pub fn (mut ipaddr IPAddress) ping(args_ PingArgs) bool {
 }
 
 // check if ipaddress is well formed
-pub fn (mut ipaddr IPAddress) check() ? {
+pub fn (mut ipaddr IPAddress) check() ! {
 	// mut query := r''
 	// if ipaddr.cat == IpAddressType.ipv4 {
 	// 	query = r'^(?:(?:25[0-5]|2[0-5][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
@@ -136,7 +136,7 @@ pub fn (mut ipaddr IPAddress) check() ? {
 	// }
 }
 
-fn (mut ipaddr IPAddress) address() ?string {
+fn (mut ipaddr IPAddress) address() !string {
 	if ipaddr.cat == IpAddressType.ipv4 {
 		if ipaddr.port > 0 {
 			if ipaddr.mask > 0 {

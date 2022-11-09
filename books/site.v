@@ -36,8 +36,8 @@ pub mut:
 }
 
 // walk over one specific site, find all files and pages
-pub fn (mut site Site) scan() ? {
-	site.scan_internal(mut site.path)?
+pub fn (mut site Site) scan() ! {
+	site.scan_internal(mut site.path)!
 }
 
 pub enum SiteErrorCat {
@@ -74,8 +74,8 @@ pub fn (mut site Site) error(args SiteErrorArgs) {
 }
 
 
-pub fn (mut site Site) file_get(name string) ?&File {
-	mut sitename,namelower := get_site_and_obj_name(name,false)?
+pub fn (mut site Site) file_get(name string) !&File {
+	mut sitename,namelower := get_site_and_obj_name(name,false)!
 	namesmallest:=namelower.replace("_","")
 	if sitename==""{
 		if namesmallest in site.files {
@@ -94,8 +94,8 @@ pub fn (mut site Site) file_get(name string) ?&File {
 	return error('Could not find file with name: $namelower for site:${site.name}')
 }
 
-pub fn (mut site Site) image_get(name string) ?&File {
-	sitename, namelower := get_site_and_obj_name(name,true)?
+pub fn (mut site Site) image_get(name string) !&File {
+	sitename, namelower := get_site_and_obj_name(name,true)!
 	namesmallest:=namelower.replace("_","")
 	//make sure we look for images independent of extension and ending _
 	if sitename==""{
@@ -129,9 +129,9 @@ pub fn (mut site Site) file_exists(name string) bool {
 }
 
 // param look_in_sites means we will look in all sites
-pub fn (mut site Site) page_get(name string) ?&Page {
+pub fn (mut site Site) page_get(name string) !&Page {
 
-	sitename,mut namelower := get_site_and_obj_name(name,true)?
+	sitename,mut namelower := get_site_and_obj_name(name,true)!
 	namelower = namelower.trim_string_right(".md")
 	namesmallest:=namelower.replace("_","")
 	
@@ -161,11 +161,11 @@ pub fn (mut site Site) page_exists(name string) bool {
 
 
 // only way how to get to a new page
-pub fn (mut site Site) page_new(mut p Path) ?&Page {
+pub fn (mut site Site) page_new(mut p Path) !&Page {
 	if !p.exists() {
 		return error('cannot find page with path $p.path')
 	}
-	p.path_normalize()? // make sure its all lower case and name is proper
+	p.path_normalize()! // make sure its all lower case and name is proper
 	mut page := Page{
 		path: p
 		site: &site
@@ -178,24 +178,24 @@ pub fn (mut site Site) page_new(mut p Path) ?&Page {
 	mut parser := markdowndocs.get(p.path) or { panic('cannot parse,$err') }
 	page.doc = parser.doc
 	page.name = p.name_fix_no_ext()
-	page.pathrel = p.path_relative(site.path.path)?
+	page.pathrel = p.path_relative(site.path.path)!
 	page.pathrel = page.pathrel.trim('/')
-	_,namelower := get_site_and_obj_name(p.path,false)?
+	_,namelower := get_site_and_obj_name(p.path,false)!
 	namesmallest:=namelower.replace("_","")
 	site.pages[namesmallest] = &page
 	return site.pages[namesmallest]
 }
 
 // only way how to get to a new file
-fn (mut site Site) file_new(mut p Path) ? {
-	p.path_normalize()? // make sure its all lower case and name is proper
+fn (mut site Site) file_new(mut p Path) ! {
+	p.path_normalize()! // make sure its all lower case and name is proper
 	if !p.exists() {
 		return error('cannot find file for path in site: $p')
 	}
 	if p.name().starts_with('.') {
 		panic('should not start with . \n$p')
 	}
-	_,namelower := get_site_and_obj_name(p.path,false)?
+	_,namelower := get_site_and_obj_name(p.path,false)!
 	mut ff := File{
 		path: p
 		site: &site
@@ -206,7 +206,7 @@ fn (mut site Site) file_new(mut p Path) ? {
 }
 
 // only way how to get to a new image
-fn (mut site Site) image_new(mut p Path) ? {
+fn (mut site Site) image_new(mut p Path) ! {
 	if !p.exists() {
 		return error('cannot find image for path in site: $p.path')
 	}
@@ -216,19 +216,19 @@ fn (mut site Site) image_new(mut p Path) ? {
 
 	if site.image_exists(p.name()){
 		//remove this one
-		mut file_double :=  site.image_get(p.name())?
+		mut file_double :=  site.image_get(p.name())!
 		mut path_double := file_double.path
 		if p.path.len > path_double.path.len {
-			p.delete()?
+			p.delete()!
 		}else{
-			path_double.delete()?
+			path_double.delete()!
 			file_double.path = p //reset the path so the shortest one remains
 		}
 		
 		return
 	}
 
-	_,namelower := get_site_and_obj_name(p.path,true)?
+	_,namelower := get_site_and_obj_name(p.path,true)!
 	mut ff := File{
 		path: p
 		site: &site
@@ -238,11 +238,11 @@ fn (mut site Site) image_new(mut p Path) ? {
 	site.images[namesmallest] = &ff
 }
 
-pub fn (mut site Site) fix() ? {
+pub fn (mut site Site) fix() ! {
 	for _, mut page in site.pages {
-		page.fix()?
+		page.fix()!
 	}
-	site.errors_report()?
+	site.errors_report()!
 }
 
 
@@ -255,12 +255,12 @@ pub fn (mut site Site) pagenames() []string {
 	return res
 }
 
-pub fn (mut site Site) errors_report() ? {
+pub fn (mut site Site) errors_report() ! {
 	mut p:=pathlib.get("${site.path.path}/errors.md")
 	if site.errors.len==0{
-		p.delete()?
+		p.delete()!
 		return
 	}
 	c := $tmpl('template/errors_site.md')
-	p.write(c)?
+	p.write(c)!
 }

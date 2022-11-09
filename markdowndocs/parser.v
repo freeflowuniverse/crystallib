@@ -20,9 +20,9 @@ pub mut:
 }
 
 // get a parser
-pub fn get(path string) ?Parser {
+pub fn get(path string) !Parser {
 	mut parser := Parser{}
-	parser.file_parse(path)?
+	parser.file_parse(path)!
 	return parser
 }
 
@@ -36,7 +36,7 @@ fn (mut parser Parser) error_add(msg string) {
 }
 
 // return a specific line
-fn (mut parser Parser) line(nr int) ?string {
+fn (mut parser Parser) line(nr int) !string {
 	if nr < 0 {
 		return error('before file')
 	}
@@ -161,14 +161,14 @@ fn (mut parser Parser) eof() bool {
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 
-fn (mut parser Parser) file_parse(path string) ? {
+fn (mut parser Parser) file_parse(path string) ! {
 	if !os.exists(path) {
 		return error("path: '$path' does not exist, cannot parse.")
 	}
 
 	mut content := os.read_file(path) or { panic('Failed to load file $path') }
 	parser.doc.content = content
-	parser.doc.path = pathlib.get_file(path, false)?
+	parser.doc.path = pathlib.get_file(path, false)!
 	parser.lines = content.split_into_lines()
 	parser.lines.map(it.replace('\t', '    ')) // remove the tabs
 	parser.linenr = 0
@@ -348,5 +348,5 @@ fn (mut parser Parser) file_parse(path string) ? {
 		parser.doc.items.delete(nr2)
 	}
 
-	parser.doc.process()?
+	parser.doc.process()!
 }

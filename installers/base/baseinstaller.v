@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.builder
 import process
 
 // install base will return true if it was already installed
-pub fn (mut i Installer) install() ? {
+pub fn (mut i Installer) install() ! {
 	mut node := i.node
 	println(' - $node.name: platform prepare')
 	if !node.done_exists('platform_prepare') {
@@ -24,17 +24,17 @@ pub fn (mut i Installer) install() ? {
 			node.exec_silent('
 			apt update
 			apt install iputils-ping net-tools git rsync curl mc -y
-			')?
+			')!
 		} else {
 			panic('only ubuntu and osx supported for now')
 		}
-		node.done_set('platform_prepare', 'OK')?
+		node.done_set('platform_prepare', 'OK')!
 	}
 	println(' - platform already prepared')
 }
 
-// pub fn (mut i Installer) update() ? {
+// pub fn (mut i Installer) update() ! {
 // 	mut node := i.node
 // 	panic("to implement")
-// 	node.done_set('update_crystaltools', 'OK')?
+// 	node.done_set('update_crystaltools', 'OK')!
 // }

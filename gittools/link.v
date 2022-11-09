@@ -32,7 +32,6 @@ pub:
 pub fn (mut gs GitStructure) link(args GitLinkArgs) ! {
 	if args.source.starts_with('http') || args.source.starts_with('get') {
 		// means its a git repo
-
 		mut source_path := ''
 		if args.gitsource != '' {
 			// means we need to get gitrepo from gitstructure
@@ -70,6 +69,10 @@ pub fn (mut gs GitStructure) link(args GitLinkArgs) ! {
 
 		mut source_path_object := pathlib.get(source_path)
 		mut dest_path_object := pathlib.get(dest_path)
+		source_path_object.check()
+		if !source_path_object.exists() {
+			return error('Cannot link from unexisting source')
+		}
 		if source_path_object.is_dir() {
 			if dest_path_object.exists() {
 				if dest_path_object.is_dir_link() {

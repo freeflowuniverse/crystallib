@@ -18,7 +18,7 @@ pub mut:
 	nr      int
 }
 
-fn do() ? {
+fn do() ! {
 	mut doc := Doc{}
 	doc.items << Text{
 		content: '1'

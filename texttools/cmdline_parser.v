@@ -43,7 +43,7 @@ pub fn check_exists_outside_quotes(text string, items []string) bool {
 // convert text string to arguments
 // \n supported but will be \\n and only supported within '' or ""
 // \' not modified, same for \"
-pub fn cmd_line_args_parser(text string) ?[]string {
+pub fn cmd_line_args_parser(text string) ![]string {
 	mut res := []string{}
 	mut quote := ''
 	mut char_previous := ''

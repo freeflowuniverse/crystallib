@@ -1,6 +1,7 @@
 module builder
 
 import rand
+import ipaddress { IPAddress }
 
 // Assuming this function runs first (which is the case)
 // This generates ssh keys on local machine to use for
@@ -33,7 +34,7 @@ fn test_file_operations() {
 	e.ipaddr = IPAddress{
 		addr: '127.0.0.1'
 		port: 22
-		cat: IpAddressType.ipv4
+		cat: .ipv4
 	}
 	mut filepath := '/tmp/$rand.uuid_v4()'
 	e.file_write(filepath, 'ssh') or { panic('error writing file') }
@@ -53,7 +54,7 @@ fn test_environ_get() {
 	e.ipaddr = IPAddress{
 		addr: '127.0.0.1'
 		port: 22
-		cat: IpAddressType.ipv4
+		cat: .ipv4
 	}
 	mut env := e.environ_get() or { panic(err) }
 	println(env)

@@ -12,8 +12,8 @@ pub mut:
 	doc     &Doc          [str: skip]
 }
 
-fn (mut action Action) process() ? {
-	mo := macro_parse(action.content)?
+fn (mut action Action) process() ! {
+	mo := macro_parse(action.content)!
 	action.name = mo.cmd
 	action.params = mo.params
 }
@@ -38,9 +38,9 @@ pub mut:
 	actions []Action
 }
 
-fn (mut actions Actions) process() ? {
+fn (mut actions Actions) process() ! {
 	for mut action in actions.actions {
-		action.process()?
+		action.process()!
 	}
 }
 

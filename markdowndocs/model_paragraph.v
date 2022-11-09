@@ -11,8 +11,8 @@ pub mut:
 	doc     &Doc   [str: skip]
 }
 
-fn (mut o Paragraph) process() ? {
-	mut lpr := o.link_parser(o.content)?
+fn (mut o Paragraph) process() ! {
+	mut lpr := o.link_parser(o.content)!
 	o.links = lpr.links
 	return
 }

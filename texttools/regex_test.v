@@ -47,12 +47,12 @@ fn test_dirreplace() {
 
 	// get path where to look for text
 	mut p := @FILE.split('/')
-	p = p[0..p.len - 2]
-	mut path := os.real_path(os.join_path(p.join('/'), 'examples'))
+	p = p[0..p.len - 1]
+	mut path := os.real_path(os.join_path(p.join('/'), 'testdata'))
 
 	mut ri := regex_instructions_new()
 
-	ri.add(['key_bob:KEY_BOB', 'GitStatus:GITSTATUS']) or { panic(err) }
+	ri.add(['key_bob:KEY_BOB', 'key_alice:KEY_ALICE']) or { panic(err) }
 
 	count := ri.replace_in_dir(path: path, extensions: ['v'], dryrun: true) or { panic(err) }
 

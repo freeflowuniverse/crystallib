@@ -1,13 +1,16 @@
 module swarm
 
+import freeflowuniverse.crystallib.builder { Node }
+import freeflowuniverse.crystallib.installers.base
+
 pub struct SwarmArgs {
 	reset bool
 }
 
 // installs docker & swarm
-pub fn (mut node Node) install_docker(args SwarmArgs) ? {
+pub fn (mut i Installer) install_docker(args SwarmArgs) ! {
 	mut installed := true
-	out2 := node.executor.exec_silent('docker version') or {
+	out2 := i.node.exec_silent('docker version') or {
 		installed = false
 		println('ERROR:' + err.msg())
 		'ERROR:' + err.msg()
@@ -15,7 +18,7 @@ pub fn (mut node Node) install_docker(args SwarmArgs) ? {
 
 	if out2.contains('Cannot connect to the Docker daemon') {
 		// means docker needs to be started
-		if node.platform != PlatformType.ubuntu {
+		if i.node.platform != builder.PlatformType.ubuntu {
 			return error('Make sure your docker daemon has been started')
 		}
 	}
@@ -24,11 +27,19 @@ pub fn (mut node Node) install_docker(args SwarmArgs) ? {
 		return
 	}
 
-	if node.platform != PlatformType.ubuntu {
+	if i.node.platform != builder.PlatformType.ubuntu {
 		return error('cannot install docker, wrong platform, for now only ubuntu supported, make sure to unstall docker desktop before trying again.')
-	}
+	} 
 
-	node.platform_prepare()?
+
+	// node.platform_prepare()?
+	// ? below prepares platform?
+	mut base_installer := base.get_install(mut i.node) or {
+		panic("Couldn't get base installer")
+	}
+	base_installer.install()!
+
+
 	// was_done := node.crystaltools_install()?
 	// if was_done{
 	// 	node.crystaltools_update(reset:args.reset)?
@@ -59,13 +70,18 @@ pub fn (mut node Node) install_docker(args SwarmArgs) ? {
 	// 	systemctl start docker
 	// 	systemctl enable docker
 	// 	'
-	node.exec(cmd: docker_install, reset: args.reset, description: 'install docker.')?
 
-	node.tmux.window_new(name: 'docker', cmd: 'dockerd', reset: true)?
+
+	// ? cannot find exec function with args, 
+	// i.node.exec(cmd: docker_install, reset: args.reset, description: 'install docker.')?
+	i.node.exec(docker_install)!
+
+	// ? Where to get tmux from
+	// i.node.tmux.window_new(name: 'docker', cmd: 'dockerd', reset: true)?
 
 	for _ in 1 .. 10 {
 		mut out := ''
-		out = node.executor.exec_silent('docker info') or {
+		out = i.node.exec_silent('docker info') or {
 			// if err.msg().contains("Cannot connect to the Docker daemon"){
 			// 	"noconnection"
 			// }
@@ -83,23 +99,23 @@ pub fn (mut node Node) install_docker(args SwarmArgs) ? {
 }
 
 // install swarm management solution
-pub fn (mut node Node) install_portainer() ? {
+pub fn (mut installer Installer) install_portainer() ! {
 	install := '
 		set -ex
 		cd /tmp
 		curl -L https://downloads.portainer.io/portainer-agent-stack.yml -o portainer-agent-stack.yml
 		docker stack deploy -c portainer-agent-stack.yml portainer
 		'
-	node.exec(cmd: install, reset: false, description: 'install portainer.')?
+	installer.node.exec(install)!
 
 	// >TODO: check that the ubuntu is focal
 }
 
-pub fn (mut node Node) docker_swarm_install(args SwarmArgs) ? {
-	node.install_docker(args)?
-	ipaddr_master := node.ipaddr_pub_get()?
+pub fn (mut i Installer) docker_swarm_install(args SwarmArgs) ! {
+	i.install_docker(args)!
+	ipaddr_master := i.node.ipaddr_pub_get()!
 	cmd := 'docker swarm init --advertise-addr $ipaddr_master'
-	node.exec(cmd: cmd, reset: args.reset, description: 'swarm init.')?
+	i.node.exec(cmd)!
 }
 
 pub struct SwarmArgsAdd {
@@ -109,16 +125,16 @@ pub mut:
 }
 
 // specify which node is the master
-pub fn (mut node Node) docker_swarm_install_add(mut args SwarmArgsAdd) ? {
+pub fn (mut installer Installer) docker_swarm_install_add(mut args SwarmArgsAdd) ! {
 	args2 := SwarmArgs{args.reset}
-	ipaddr := args.master.ipaddr_pub_get()?
+	ipaddr := args.master.ipaddr_pub_get()!
 
-	mut token := args.master.executor.exec('docker swarm join-token worker -q')?
+	mut token := args.master.exec('docker swarm join-token worker -q')!
 	token = token.trim('\n').trim(' \n')
 
-	node.install_docker(args2)?
+	installer.install_docker(args2)!
 
 	cmd := 'docker swarm leave && docker swarm join --token  $token $ipaddr:2377'
 	println(cmd)
-	node.exec(cmd: cmd, reset: args.reset, description: 'swarm init.')?
+	installer.node.exec(cmd)!
 }

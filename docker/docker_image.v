@@ -16,22 +16,25 @@ pub mut:
 }
 
 // delete docker image
-pub fn (mut image DockerImage) delete(force bool) ?string {
-	mut node := builder.node_get(image.node)?
+pub fn (mut image DockerImage) delete(force bool) !string {
+	mut factory := builder.new()
+	mut node := factory.node_get(image.node)!
 	if force {
-		return node.executor.exec_silent('docker rmi -f $image.id')
+		return node.exec_silent('docker rmi -f $image.id')
 	}
-	return node.executor.exec_silent('docker rmi $image.id')
+	return node.exec_silent('docker rmi $image.id')
 }
 
 // export docker image to tar.gz
-pub fn (mut image DockerImage) export(path string) ?string {
-	mut node := builder.node_get(image.node)?
-	return node.executor.exec_silent('docker save $image.id > $path')
+pub fn (mut image DockerImage) export(path string) !string {
+	mut factory := builder.new()
+	mut node := factory.node_get(image.node)!
+	return node.exec_silent('docker save $image.id > $path')
 }
 
 // import docker image back into the local env
-pub fn (mut image DockerImage) load(path string) ?string {
-	mut node := builder.node_get(image.node)?
-	return node.executor.exec_silent('docker load < $path')
+pub fn (mut image DockerImage) load(path string) !string {
+	mut factory := builder.new()
+	mut node := factory.node_get(image.node)!
+	return node.exec_silent('docker load < $path')
 }

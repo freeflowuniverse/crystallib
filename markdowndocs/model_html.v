@@ -6,7 +6,7 @@ pub mut:
 	doc     &Doc   [str: skip]
 }
 
-fn (mut o Html) process() ? {
+fn (mut o Html) process() ! {
 	return
 }
 

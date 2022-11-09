@@ -43,7 +43,6 @@ pub fn (path Path) realpath() string {
 
 // check the inside of pathobject, is like an init function
 pub fn (mut path Path) check() {
-	// println(path)
 	if os.exists(path.path) {
 		path.exist = .yes
 		if os.is_file(path.path) {
