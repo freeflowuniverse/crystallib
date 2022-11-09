@@ -9,7 +9,7 @@ fn test_gitrunner() {
 }
 
 fn test_booksrunner() {
-	execute('$actionrunner.testpath/gitrunner/run.md')?
+	execute('$actionrunner.testpath/booksrunner/run.md')?
 }
 
 fn test_actionrunner() {

@@ -34,13 +34,13 @@ name:technology2
 
 <!-- export to a chosen path or url -->
 
-!!books.mdbook_export name:feasibility_study_internet path:'/tmp/exportedbook'
+!!books.mdbook_export name:technology path:'/tmp/exportedbook'
 
 <!--!!books.export name:myname url:'https://github.com/threefoldfoundation/home'-->
 
 <!-- export all books -->
 <!-- //!!books.mdbook_export name:* -->
 
-!!books.mdbook_develop name:feasibility_study_internet
+!!books.mdbook_develop name:technology
 
 <!-- !!publishtools.publish server:'ourserver.com' -->
