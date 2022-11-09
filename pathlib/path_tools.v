@@ -187,9 +187,25 @@ pub fn (mut path Path) file_exists(tofind string) bool {
 		return false
 	}
 	files := os.ls(path.path) or { []string{} }
-	if tofind in files {
+	if tofind.to_lower() in files.map(it.to_lower()) {
 		file_path := os.join_path(path.path.to_lower(), tofind.to_lower())
 		if os.is_file(file_path) {
+			return true
+		}
+	}
+	return false
+}
+
+// find link underneith path, if exists return True
+// is case insensitive
+pub fn (mut path Path) link_exists(tofind string) bool {
+	if path.cat != Category.dir {
+		return false
+	}
+	files := os.ls(path.path) or { []string{} }
+	if tofind.to_lower() in files.map(it.to_lower()) {
+		file_path := os.join_path(path.path.to_lower(), tofind.to_lower())
+		if os.is_link(file_path) {
 			return true
 		}
 	}
@@ -219,6 +235,20 @@ pub fn (mut path Path) file_find(tofind string) !Path {
 		return Path{
 			path: file_path
 			cat: Category.file
+			exist: .yes
+		}
+	}
+	return error('$tofind is not in $path.path')
+}
+
+// find link underneith path, return as Path, can only be one
+// tofind is part of link name
+pub fn (mut path Path) link_find(tofind string) !Path {
+	if path.link_exists(tofind) {
+		file_path := os.join_path(path.path, tofind)
+		return Path{
+			path: file_path
+			cat: Category.linkfile
 			exist: .yes
 		}
 	}
