@@ -23,3 +23,9 @@ fn test_environ_get() {
 	mut env := e.environ_get() or { panic(err) }
 	println(env)
 }
+
+fn test_node_new() {
+	mut factory := new()
+	mut node := factory.node_new(name: 'localhost') or { panic("Can't get new node: $err") }
+	println(node)
+}
