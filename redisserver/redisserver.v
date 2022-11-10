@@ -1,9 +1,9 @@
 module redisserver
 
-// NEED TO USE RESP2
+// NEED TO USE resp
 import net
 import freeflowuniverse.crystallib.resp
-import freeflowuniverse.crystallib.redisclient
+import redisclient
 
 pub struct RedisInstance {
 pub mut:
@@ -23,8 +23,8 @@ struct RedisHandler {
 }
 
 // https://redis.io/topics/protocol
-pub fn listen(addr string, port int) ?RedisSrv {
-	mut socket := net.listen_tcp(.ip, ':$port')?
+pub fn listen(addr string, port int) !RedisSrv {
+	mut socket := net.listen_tcp(net.AddrFamily.ip, '$addr:$port')!
 	// socket.set_read_timeout(2 * time.second)
 	return RedisSrv{
 		socket: socket
@@ -151,8 +151,35 @@ fn command_ttl(input resp.RValue, mut srv RedisInstance) resp.RValue {
 //
 // socket management
 //
-pub fn process_input(mut client redisclient.Redis, mut instance RedisInstance, value resp.RValue) ?bool {
+pub fn process_input(mut client redisclient.Redis, mut instance RedisInstance, value resp.RValue, h []RedisHandler) !bool {
 	println('Inside process')
+
+	command := resp.get_redis_value_by_index(value, 0).to_upper()
+
+	for rh in h {
+		if command == rh.command {
+			println('Process: $command')
+			data := rh.handler(value, mut instance)
+			client.write_rval(data)!
+			return true
+		}
+	}
+
+	// debug
+	print('Error: unknown command: ')
+	for cmd in resp.get_redis_array(value) {
+		mut cmd_value := resp.get_redis_value(cmd)
+		print('cmd value >> $cmd_value ')
+	}
+	println('')
+
+	err := resp.r_error('Unknown command')
+	client.write_rval(err)!
+
+	return false
+}
+
+pub fn default_handler() []RedisHandler {
 	mut h := []RedisHandler{}
 
 	h << RedisHandler{
@@ -191,40 +218,19 @@ pub fn process_input(mut client redisclient.Redis, mut instance RedisInstance, v
 		command: 'DEL'
 		handler: command_del
 	}
-	command := resp.get_redis_value_by_index(value, 0).to_upper()
 
-	for rh in h {
-		if command == rh.command {
-			println('Process: $command')
-			data := rh.handler(value, mut instance)
-			client.write_rval(data)?
-			return true
-		}
-	}
-
-	// debug
-	print('Error: unknown command: ')
-	for cmd in resp.get_redis_array(value) {
-		mut cmd_value := resp.get_redis_value(cmd)
-		print('cmd value >> $cmd_value ')
-	}
-	println('')
-
-	err := resp.r_error('Unknown command')
-	client.write_rval(err)?
-
-	return false
+	return h
 }
 
-pub fn new_client(mut conn net.TcpConn, mut main RedisInstance) ? {
+pub fn new_client_custom(mut conn net.TcpConn, mut main RedisInstance, h []RedisHandler) ! {
 	// create a client on the existing socket
 	mut client := redisclient.Redis{
 		socket: conn
 	}
 
 	for {
-		// fetch command (process incoming buffer)
-		value := client.get_response()?
+		// fetch command from client (process incoming buffer)
+		value := client.get_response()!
 		// if err == "no data in socket" {
 		// 	// FIXME
 		// 	time.sleep_ms(1)
@@ -236,15 +242,21 @@ pub fn new_client(mut conn net.TcpConn, mut main RedisInstance) ? {
 			// should not receive anything else than
 			// array with commands and args
 			println('Wrong request from client, rejecting')
-			conn.close()?
+			conn.close()!
 			return
 		}
 
 		if resp.get_redis_array(value)[0] !is resp.RBString {
 			println('Wrong request from client, rejecting rbstring')
-			conn.close()?
+			conn.close()!
 			return
 		}
-		process_input(mut client, mut main, value)?
+
+		process_input(mut client, mut main, value, h)!
 	}
+}
+
+pub fn new_client(mut conn net.TcpConn, mut main RedisInstance) ! {
+	h := default_handler()
+	return new_client_custom(mut conn, mut main, h)
 }
