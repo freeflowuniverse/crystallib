@@ -76,6 +76,7 @@ pub fn (mut book Book) fix() ! {
 						println(' - book $book.name summary:$link.pathfull()')
 					}
 					sitename := link.path.all_before('/')
+					panic("yo $book.books.sites")
 					if book.books.sites.exists(sitename) {
 						mut site := book.books.sites.get(sitename)!
 						dest := '$book.path.path/$sitename'
@@ -114,7 +115,6 @@ pub fn (mut book Book) fix() ! {
 			}
 		}
 	}
-	// println(book.pages)
 	for key, _ in book.pages {
 		mut page := book.pages[key]
 		for mut item in page.doc.items.filter(it is markdowndocs.Paragraph) {
@@ -168,7 +168,6 @@ pub fn (mut book Book) mdbook_export() ! {
 	book.template_install()! // make sure all required template files are in site
 	book_path := book.book_path('').path + '/src'
 	html_path := book.html_path('').path
-
 	for key, _ in book.pages {
 		mut page := book.pages[key]
 		dest := '$book_path/$page.site.name/$page.pathrel'
