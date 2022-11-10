@@ -12,7 +12,7 @@
 
 #### In case you want to run tests you have to export which type you will use then run the tests
 
-#### HINT: tests support `Http` and `Rmb` types, ws still in progress
+#### HINT: tests support `Http` and `Rmb` types, `ws` still in progress
 
 ```sh
     export TWIN_CLIENT_TYPE=http
