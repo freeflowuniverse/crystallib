@@ -104,6 +104,16 @@ pub fn r_list_string(values []string) RValue {
 	})
 }
 
+pub fn r_list_bytestring(values [][]u8) RValue {
+	mut ll := []RValue{}
+	for v in values {
+		ll << r_bytestring(v)
+	}
+	return RValue(RArray{
+		values: ll
+	})
+}
+
 pub fn r_list_bstring(values []string) RValue {
 	mut ll := []RValue{}
 	for v in values {

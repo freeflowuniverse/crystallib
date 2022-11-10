@@ -62,47 +62,43 @@ fn main () {
 		]
 	}
 
-	mut bytes := input.to_resp()
+	mut bytes := input.to_resp()!
+	// println(bytes)
 
-	params.from_resp(bytes)
+	mut p := params.from_resp(bytes)?
+	println(p.str())
+	// expected result shown below
 }
-
-
 
 
 /*
 expected_result := "
-		id:a1 name6:aaaaa
-		name:'need to do something 1' 
-		description:
-			## markdown works in it
+		id: 'a1' 
+		name6: 'aaaaa'
+		name: 'need to do something 1' 
+		description: '## markdown works in it
 
-			description can be multiline
-			lets see what happens
+		description can be multiline
+		lets see what happens
 
-			- a
-			- something else
+		- a
+		- something else
 
-			### subtitle
+		### subtitle
 
-			```python
-			#even code block in the other block, crazy parsing for sure
-			def test():
-				print()
-			```
-
-		name2:   test
-		name3: hi name10:'this is with space'  name11:aaa11
-
-		#some comment
-
+		```python
+		#even code block in the other block, crazy parsing for sure
+		def test():
+		print()
+		```
+		'
+		name2: 'test'
+		name3: 'hi' 
+		name10: 'this is with space'  
+		name11: 'aaa11'
 		name4: 'aaa'
-
-		//somecomment
-		name5:   'aab' 
-
+		name5: 'aab' 
 		args:
-
 		'111'
 		'222'
 		'333'

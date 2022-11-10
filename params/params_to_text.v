@@ -17,7 +17,7 @@ pub fn (mut result Params) str() string {
 	return string_array.join('\n')
 }
 
-
+/*
 pub fn (mut p Params) to_resp () []u8 {
 
 	mut param_array := resp.RArray{}
@@ -86,3 +86,67 @@ pub fn from_resp (bytes []u8) Params {
 
 	return params
 }
+*/
+/*
+RArray {
+	values: [
+		RArray { // params
+			values: [
+				RArray { //param
+					values: [
+						RString, // key,
+						RString // value
+					]
+				},
+				RArray { //param
+					values: [
+						RString, // key,
+						RString // value
+					]
+				},
+				RArray { //param
+					values: [
+						RString, // key,
+						RString // value
+					]
+				}
+			]
+		},
+		RArray { //args
+			values: [
+				RString, // arg
+				RString, // arg
+				RString // arg
+			]
+		}
+	]
+}
+
+Params {
+	params: [
+		Param {
+			key: string,
+			value: string
+		},
+		Param {
+			key: string,
+			value: string
+		},
+		Param {
+			key: string,
+			value: string
+		}
+	],
+	args: [
+		Arg {
+			value: string
+		},
+		Arg {
+			value: string
+		},
+		Arg {
+			value: string
+		}
+	]
+}
+*/
