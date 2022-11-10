@@ -7,7 +7,6 @@ mut:
 	x int
 }
 
-// converts data to a reader
 pub fn new_line_reader(data []u8) StringLineReader {
 	return StringLineReader{
 		data: data

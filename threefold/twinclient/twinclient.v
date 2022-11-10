@@ -1,6 +1,6 @@
 module twinclient
 import freeflowuniverse.crystallib.redisclient
-import freeflowuniverse.crystallib.resp2
+import freeflowuniverse.crystallib.resp
 import net.websocket as ws
 import net.http
 import x.json2
@@ -161,7 +161,7 @@ pub fn (mut rmb RmbTwinClient) send(functionPath string, args string)? Message{
 pub fn (mut rmb RmbTwinClient) read(msg Message)? Message {
 	println('Waiting reply $msg.retqueue')
 	results := rmb.client.blpop([msg.retqueue], '0')?
-	response_json := resp2.get_redis_value(results[1])
+	response_json := resp.get_redis_value(results[1])
 	mut response := json.decode(Message, response_json)?
 	response.data = base64.decode_str(response.data)
 	return response

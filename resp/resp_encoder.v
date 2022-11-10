@@ -1,22 +1,10 @@
 module resp
 
-pub struct Builder {
-pub mut:
+struct Builder {
+mut:
 	data []u8
 }
 
-// build a new resp string
-// import resp
-// mut b := resp.builder_new()
-// b.add(resp.r_list_string(['a', 'b']))
-// b.add(resp.r_int(10))
-// b.add(resp.r_ok())
-// //b.data now has the info as binary data
-// // println(b.data)
-// println(b.data.bytestr())
-
-// lr := resp.decode(b.data)?
-// println(lr)
 pub fn builder_new() Builder {
 	return Builder{}
 }
