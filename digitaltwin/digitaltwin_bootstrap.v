@@ -49,7 +49,7 @@ pub fn bootstrap_test_generate() {
 }
 
 // put the digital twin info in the redis, this means we will not have to go to the explorer, for tests
-pub fn bootstrap_test_populate(mut redis &redisclient.Redis) {
+pub fn bootstrap_test_populate(mut redis redisclient.Redis) {
 	data := '
         {
         "twins":        [{

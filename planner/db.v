@@ -4,9 +4,9 @@ import os
 
 // Note: T should be passed a struct name only
 fn obj_new<T>(path string) ?T {
-	lines := os.read_lines(path) ?
+	lines := os.read_lines(path)?
 	mut obj := T{}
-	obj.load(lines) ?
+	obj.load(lines)?
 	// println('$T')
 	panic('s')
 	// compile-time `for` loop

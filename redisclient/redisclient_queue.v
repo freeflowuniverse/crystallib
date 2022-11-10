@@ -16,7 +16,7 @@ pub fn (mut r Redis) queue_get(key string) RedisQueue {
 }
 
 pub fn (mut q RedisQueue) add(val string) ! {
-	q.redis.lpush(q.key, val) !
+	q.redis.lpush(q.key, val)!
 }
 
 // timeout in msec

@@ -17,8 +17,8 @@ pub mut:
 	def_names map[string]int
 	develop   bool
 	replacer  ReplacerInstructions
-	config 	  publisher_config.ConfigRoot
-	init	  bool
+	config    publisher_config.ConfigRoot
+	init      bool
 }
 
 struct ReplacerInstructions {
@@ -134,8 +134,8 @@ pub fn (mut publisher Publisher) def_get(namefull string) ?&Def {
 // namefull is name with : if needed
 pub fn (mut publisher Publisher) files_get(namefull string) ?[]&File {
 	sitename, itemname := name_split(namefull)?
-	
-	//get name without extension and trailing _
+
+	// get name without extension and trailing _
 	filename_2 := publisher.path_get_name_fix(itemname)?
 
 	site_id := publisher.site_names[sitename]
@@ -146,11 +146,11 @@ pub fn (mut publisher Publisher) files_get(namefull string) ?[]&File {
 			// no need to check more, check next file
 			continue
 		}
-		//check if we can find _png
+		// check if we can find _png
 		name_fixed := file.name_fixed(mut publisher)?
-		if  name_fixed == filename_2 {
+		if name_fixed == filename_2 {
 			file_found := publisher.file_get_by_id(x)?
-			if !(file_found in res) {
+			if file_found !in res {
 				res << file_found
 			}
 		}
@@ -170,8 +170,8 @@ pub fn (mut publisher Publisher) pages_find(namefull string) ?[]&Page {
 			continue
 		}
 		if page.name == itemname {
-			page_found := publisher.page_get_by_id(x) ?
-			if !(page_found in res) {
+			page_found := publisher.page_get_by_id(x)?
+			if page_found !in res {
 				res << page_found
 			}
 		}
@@ -179,23 +179,21 @@ pub fn (mut publisher Publisher) pages_find(namefull string) ?[]&Page {
 	return res
 }
 
-
 pub fn (mut publisher Publisher) pages_find_name(namefull string) ?[]string {
 	mut res := []string{}
 	pages := publisher.pages_find(namefull)?
-	for page in pages{
+	for page in pages {
 		res << page.name
 	}
 	return res
-
 }
 
 // name in form: 'sitename:filename' or 'filename'
 pub fn (mut publisher Publisher) file_get(namefull string) ?&File {
-	sitename, itemname := publisher.name_split_alias(namefull) ?
+	sitename, itemname := publisher.name_split_alias(namefull)?
 	// println(" >> file_get:'$sitename':'$itemname'")
 	if sitename != '' {
-		site := publisher.site_get(sitename) ?
+		site := publisher.site_get(sitename)?
 		return site.file_get(itemname, mut publisher)
 	}
 	res := publisher.files_get(namefull)?
@@ -210,10 +208,10 @@ pub fn (mut publisher Publisher) file_get(namefull string) ?&File {
 
 // name in form: 'sitename:pagename' or 'pagename'
 pub fn (mut publisher Publisher) page_get(namefull string) ?&Page {
-	sitename, itemname := publisher.name_split_alias(namefull) ?
+	sitename, itemname := publisher.name_split_alias(namefull)?
 	// println(" >> page_get:'$sitename':'$itemname'")
 	if sitename != '' {
-		site := publisher.site_get(sitename) ?
+		site := publisher.site_get(sitename)?
 		return site.page_get(itemname, mut publisher)
 	}
 	res := publisher.pages_find(namefull)?

@@ -51,7 +51,7 @@ fn init2() RedisFactory {
 const factory = init2()
 
 // https://redis.io/topics/protocol
-pub fn get(addr string) ! &Redis {
+pub fn get(addr string) !&Redis {
 	mut f := redisclient.factory
 	if addr !in f.instances {
 		mut r := Redis{

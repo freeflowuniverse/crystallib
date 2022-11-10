@@ -9,9 +9,9 @@ import crypto.md5
 
 struct LiquidConnection {
 mut:
-	redis         &redisclient.Redis
-	url           string
-	secret		  string
+	redis  &redisclient.Redis
+	url    string
+	secret string
 	// auth          AuthDetail
 	cache_timeout int
 }
@@ -23,10 +23,9 @@ fn init_connection() LiquidConnection {
 }
 
 pub struct LiquidArgs {
-pub mut:	
-	secret string
+pub mut:
+	secret        string
 	cache_timeout int
-	
 }
 
 struct LiquidResult {
@@ -44,19 +43,19 @@ pub fn new(args LiquidArgs) LiquidConnection {
 		LiquidConnection: Client contains taiga auth details, taiga url, redis cleint and cache timeout.
 	*/
 	mut updated_args := args
-	if args.secret=="" && "LIQUIDKEY" in os.environ(){
-		updated_args.secret = os.environ()["LIQUIDKEY"]
+	if args.secret == '' && 'LIQUIDKEY' in os.environ() {
+		updated_args.secret = os.environ()['LIQUIDKEY']
 	}
-	if args.cache_timeout==0{
-		updated_args.cache_timeout = 3600*12
+	if args.cache_timeout == 0 {
+		updated_args.cache_timeout = 3600 * 12
 	}
 	mut conn := init_connection()
-	conn.url = "https://api.liquid.com"
+	conn.url = 'https://api.liquid.com'
 	conn.secret = updated_args.secret
 	conn.cache_timeout = updated_args.cache_timeout
 
-	if conn.secret == "" {
-		panic("secret not specified, use env arg for LIQUIDKEY")
+	if conn.secret == '' {
+		panic('secret not specified, use env arg for LIQUIDKEY')
 	}
 
 	return conn
@@ -70,7 +69,7 @@ fn (mut h LiquidConnection) header() http.Header {
 		header: http.Header with the needed headers
 	*/
 	mut header := http.new_header_from_map({
-		http.CommonHeader.content_type:  'application/json'
+		http.CommonHeader.content_type: 'application/json'
 	})
 	return header
 }
@@ -122,7 +121,7 @@ fn (mut h LiquidConnection) cache_set(prefix string, reqdata string, data string
 	*/
 	if cache {
 		key := cache_key(prefix, reqdata)
-		h.redis.set(key, data) ?
+		h.redis.set(key, data)?
 		h.redis.expire(key, h.cache_timeout) or {
 			panic('should never get here, if redis worked expire should also work.$err')
 		}
@@ -133,9 +132,9 @@ fn (mut h LiquidConnection) cache_drop() ? {
 	/*
 	Drop all cache related to taiga
 	*/
-	all_keys := h.redis.keys('taiga:*') ?
+	all_keys := h.redis.keys('taiga:*')?
 	for key in all_keys {
-		h.redis.del(key) ?
+		h.redis.del(key)?
 	}
 	// TODO:: maintain authentication & reconnect (Need More Info)
 }
@@ -155,19 +154,19 @@ fn (mut h LiquidConnection) post_json(prefix string, postdata string, cache bool
 	mut result := h.cache_get(prefix, postdata, cache)
 	// Post with auth header
 	if result == '' && authenticated {
-		mut req := http.new_request(http.Method.post, '$h.url/$prefix', postdata) ?
+		mut req := http.new_request(http.Method.post, '$h.url/$prefix', postdata)?
 		req.header = h.header()
 		println(req)
-		response := req.do() ?
+		response := req.do()?
 		result = response.text
 	}
 	// Post without auth header
 	else {
-		response := http.post_json('$h.url/$prefix', postdata) ?
+		response := http.post_json('$h.url/$prefix', postdata)?
 		result = response.text
 	}
-	h.cache_set(prefix, postdata, result, cache) ?
-	data_raw := json2.raw_decode(result) ?
+	h.cache_set(prefix, postdata, result, cache)?
+	data_raw := json2.raw_decode(result)?
 	data := data_raw.as_map()
 	return data
 }
@@ -187,18 +186,18 @@ fn (mut h LiquidConnection) post_json_str(prefix string, postdata string, cache 
 	mut result := h.cache_get(prefix, postdata, cache)
 	// Post with auth header
 	if result == '' && authenticated {
-		mut req := http.new_request(http.Method.post, '$h.url/$prefix', postdata) ?
+		mut req := http.new_request(http.Method.post, '$h.url/$prefix', postdata)?
 		req.header = h.header()
 		println(req)
-		response := req.do() ?
+		response := req.do()?
 		result = response.text
 	}
 	// Post without auth header
 	else {
-		response := http.post_json('$h.url/$prefix', postdata) ?
+		response := http.post_json('$h.url/$prefix', postdata)?
 		result = response.text
 	}
-	h.cache_set(prefix, postdata, result, cache) ?
+	h.cache_set(prefix, postdata, result, cache)?
 	return result
 }
 
@@ -216,17 +215,17 @@ fn (mut h LiquidConnection) get_json(prefix string, data string, cache bool) ?ma
 	mut result := h.cache_get(prefix, data, cache)
 	if result == '' {
 		// println("MISS1")
-		mut req := http.new_request(http.Method.get, '$h.url/$prefix', data) ?
+		mut req := http.new_request(http.Method.get, '$h.url/$prefix', data)?
 		req.header = h.header()
-		res := req.do() ?
+		res := req.do()?
 		result = res.text
 	}
 	// means empty result from cache
 	if result == 'NULL' {
 		result = ''
 	}
-	h.cache_set(prefix, data, result, cache) ?
-	data_raw := json2.raw_decode(result) ?
+	h.cache_set(prefix, data, result, cache)?
+	data_raw := json2.raw_decode(result)?
 	data2 := data_raw.as_map()
 	return data2
 }
@@ -245,16 +244,16 @@ fn (mut h LiquidConnection) get_json_str(prefix string, data string, cache bool)
 	mut result := h.cache_get(prefix, data, cache)
 	if result == '' {
 		// println("MISS1")
-		mut req := http.new_request(http.Method.get, '$h.url/$prefix', data) ?
+		mut req := http.new_request(http.Method.get, '$h.url/$prefix', data)?
 		req.header = h.header()
-		res := req.do() ?
+		res := req.do()?
 		result = res.text
 	}
 	// means empty result from cache
 	if result == 'NULL' {
 		result = ''
 	}
-	h.cache_set(prefix, data, result, cache) ?
+	h.cache_set(prefix, data, result, cache)?
 	return result
 }
 
@@ -270,12 +269,12 @@ fn (mut h LiquidConnection) edit_json(prefix string, id int, data string, cache 
 	Output:
 		response: response Json2.Any map.
 	*/
-	mut req := http.new_request(http.Method.patch, '$h.url/$prefix/$id', data) ?
+	mut req := http.new_request(http.Method.patch, '$h.url/$prefix/$id', data)?
 	req.header = h.header()
-	res := req.do() ?
+	res := req.do()?
 	result := res.text
-	h.cache_set(prefix, data, result, cache) ?
-	data_raw := json2.raw_decode(result) ?
+	h.cache_set(prefix, data, result, cache)?
+	data_raw := json2.raw_decode(result)?
 	data2 := data_raw.as_map()
 	return data2
 }
@@ -291,9 +290,9 @@ fn (mut h LiquidConnection) delete(prefix string, id int, cache bool) ?bool {
 	Output:
 		bool: True if deleted successfully.
 	*/
-	mut req := http.new_request(http.Method.delete, '$h.url/$prefix/$id', '') ?
+	mut req := http.new_request(http.Method.delete, '$h.url/$prefix/$id', '')?
 	req.header = h.header()
-	res := req.do() ?
+	res := req.do()?
 	if res.status_code == 204 {
 		return true
 	} else {
@@ -301,16 +300,16 @@ fn (mut h LiquidConnection) delete(prefix string, id int, cache bool) ?bool {
 	}
 }
 
-pub fn (mut h LiquidConnection) token_price_usdt () ?f64{
-	prefix := "products/638"
-	result := h.get_json_str(prefix, "", true) ?
-	r := json.decode(LiquidResult, result) ?
+pub fn (mut h LiquidConnection) token_price_usdt() ?f64 {
+	prefix := 'products/638'
+	result := h.get_json_str(prefix, '', true)?
+	r := json.decode(LiquidResult, result)?
 	return r.last_price_24h.f64()
 }
 
-pub fn (mut h LiquidConnection) token_price_btc () ?f64{
-	prefix := "products/637"
-	result := h.get_json_str(prefix, "", true) ?
-	r := json.decode(LiquidResult, result) ?
+pub fn (mut h LiquidConnection) token_price_btc() ?f64 {
+	prefix := 'products/637'
+	result := h.get_json_str(prefix, '', true)?
+	r := json.decode(LiquidResult, result)?
 	return r.last_price_24h.f64()
 }

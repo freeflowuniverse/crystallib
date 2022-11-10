@@ -1,5 +1,6 @@
+import json
 
-//SERVES AS EXAMPLE
+// SERVES AS EXAMPLE
 
 struct AuthDetail {
 mut:
@@ -14,9 +15,6 @@ mut:
 	username          string
 	uuid              string
 }
-
-
-
 
 fn (mut h HTTPConnection) auth(url string, login string, passwd string) ?AuthDetail {
 	/*
@@ -37,14 +35,17 @@ fn (mut h HTTPConnection) auth(url string, login string, passwd string) ?AuthDet
 		h.url = 'https://$h.url'
 	}
 
-	data := h.post_json_str(prefix:'auth', postdata:'{
+	data := h.post_json_str(
+		prefix: 'auth'
+		postdata: '{
 			"password": "$passwd",
 			"type": "normal",
 			"username": "$login"
-		}',
-		cache_disable:false) ?
+		}'
+		cache_disable: false
+	)?
 
-	h.auth = json.decode(AuthDetail, data) ?
+	h.auth = json.decode(AuthDetail, data)?
 
 	return h.auth
 }

@@ -1,7 +1,6 @@
 module model
+
 import os
-
-
 
 ///////IMPORTANT DO NOT MODIFY THIS FILE, THIS FILE IS GENERATED FROM TEMPLATE 'data_factory.v', code changes need to be do there and re-run generate.v
 ///////JUST REMOVE THIS FILE IF YOU WANT IT TO BE REGENERATED
@@ -11,16 +10,14 @@ struct DataFactory {
 pub mut:
 	path_data string
 mut:
-
-  user    &User
+	user &User
 }
 
 pub struct ArgModelGet {
 pub mut:
-	id 	 int
+	id   int
 	name string
 }
-
 
 fn init_data() &DataFactory {
 	mut df := DataFactory{}
@@ -29,17 +26,14 @@ fn init_data() &DataFactory {
 
 const datafactory = init_data()
 
-//init instance of planner
+// init instance of planner
 pub fn factory() &DataFactory {
 	// reuse single object
-	return datafactory
+	return model.datafactory
 }
 
-pub fn (mut df DataFactory) init(path_data string, reset bool)?  {
+pub fn (mut df DataFactory) init(path_data string, reset bool) ? {
 	df.path_data = path_data
 
 	df.table_user_init(reset)?
-
-
 }
-

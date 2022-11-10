@@ -4,12 +4,11 @@ import texttools
 import os
 import publisher_config
 
-
 fn (mut publisher Publisher) load() ? {
 	// remove code_wiki subdirs
 	cfg := publisher_config.get()?
 	path_links := cfg.publish.paths.codewiki
-	path_links_list := os.ls(path_links) ?
+	path_links_list := os.ls(path_links)?
 	for path_to_remove in path_links_list {
 		os.execute_or_panic('rm -f $path_links/$path_to_remove')
 	}
@@ -20,9 +19,7 @@ fn (mut publisher Publisher) load() ? {
 		}
 		publisher.load_site(site.name)?
 	}
-	println( " - all sites loaded")
-	
-
+	println(' - all sites loaded')
 }
 
 ///////////////////////////////////////////////////////// INTERNAL BELOW ////////////////
@@ -31,25 +28,24 @@ fn (mut publisher Publisher) load() ? {
 // load a site into the publishing tools
 // name of the site needs to be unique
 fn (mut publisher Publisher) load_site(name string) ? {
-	
 	mysite_name := texttools.name_fix(name)
-	mut mysite_config := publisher.config.site_get(mysite_name) ?
+	mut mysite_config := publisher.config.site_get(mysite_name)?
 
 	mysite_config.load()?
 	// link the dir in codewiki, makes it easy to edit
 	// remove code_wiki subdirs
 	cfg := publisher_config.get()?
-	path_links := cfg.publish.paths.codewiki	
+	path_links := cfg.publish.paths.codewiki
 
-	if mysite_name.trim(" ")==""{
-		return error("mysite_name should not be empty")
+	if mysite_name.trim(' ') == '' {
+		return error('mysite_name should not be empty')
 	}
 	target := '$path_links/$mysite_name'
-	if ! mysite_config.path.exists(){
-		return error("$mysite_config \nCould not find config path (load site).\n   site: $mysite_name >> site path: $mysite_config.path\n")
+	if !mysite_config.path.exists() {
+		return error('$mysite_config \nCould not find config path (load site).\n   site: $mysite_name >> site path: $mysite_config.path\n')
 	}
 	os.symlink(mysite_config.path.path_absolute(), target) or {
-		return error("cannot symlink for load site in publtools: $mysite_config.path.path to $target \nERROR:\n$err")
+		return error('cannot symlink for load site in publtools: $mysite_config.path.path to $target \nERROR:\n$err')
 	}
 
 	println(' - load publisher: $mysite_config.name - $mysite_config.path.path')

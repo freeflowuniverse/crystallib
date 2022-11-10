@@ -23,8 +23,8 @@ fn (mut h HTTPConnection) cache_get(req Request) ?Result {
 	mut data := h.redis.get(key) or {
 		assert '$err' == 'none'
 		return Result{
-			code: -1	
-			}
+			code: -1
+		}
 	}
 	result := json.decode(Result, data) or {
 		return error('failed to decode result with error: $err')
@@ -36,8 +36,8 @@ fn (mut h HTTPConnection) cache_get(req Request) ?Result {
 fn (mut h HTTPConnection) cache_set(req Request, res Result) ? {
 	key := h.cache_key(req)
 	value := json.encode(res)
-	h.redis.set(key, value) ?
-	h.redis.expire(key, h.cache.expire_after) ?
+	h.redis.set(key, value)?
+	h.redis.expire(key, h.cache.expire_after)?
 }
 
 // Invalidate cache for specific url
@@ -52,9 +52,9 @@ fn (mut h HTTPConnection) cache_invalidate(req Request) ? {
 		to_drop << 'http:$h.cache.key:*:$encoded_url_no_id*'
 	}
 	for pattern in to_drop {
-		all_keys := h.redis.keys(pattern) ?
+		all_keys := h.redis.keys(pattern)?
 		for key in all_keys {
-			h.redis.del(key) ?
+			h.redis.del(key)?
 		}
 	}
 }
@@ -62,8 +62,8 @@ fn (mut h HTTPConnection) cache_invalidate(req Request) ? {
 // drop full cache for specific cache_key
 pub fn (mut h HTTPConnection) cache_drop() ? {
 	todrop := 'http:$h.cache.key*'
-	all_keys := h.redis.keys(todrop) ?
+	all_keys := h.redis.keys(todrop)?
 	for key in all_keys {
-		h.redis.del(key) ?
+		h.redis.del(key)?
 	}
 }

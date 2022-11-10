@@ -71,7 +71,7 @@ pub fn ipaddress_new(addr_string string) ?IPAddress {
 		mask: mask
 	}
 
-	ip.check() ?
+	ip.check()?
 
 	return ip
 }

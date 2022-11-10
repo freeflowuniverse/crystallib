@@ -18,12 +18,12 @@ module publisher_config
 // }
 pub struct PublishConfig {
 pub mut:
-	reset bool
-	pull  bool
-	debug bool = true
-	redis bool
-	port  int = 9998
-	paths Paths
-	multibranch bool
+	reset           bool
+	pull            bool
+	debug           bool = true
+	redis           bool
+	port            int = 9998
+	paths           Paths
+	multibranch     bool
 	publish_servers []string
 }

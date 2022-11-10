@@ -1,8 +1,9 @@
 module texttools
-import os
-fn test_stdtext() {
 
-	//this is test without much fancyness, just rext replace, no regex, all case sensitive
+import os
+
+fn test_stdtext() {
+	// this is test without much fancyness, just rext replace, no regex, all case sensitive
 
 	text := '
 
@@ -31,7 +32,7 @@ fn test_stdtext() {
 	ri.add_item('test_1', 'TTT') or { panic(err) }
 	ri.add_item('test 1', 'TTT') or { panic(err) }
 
-	mut text_out2 := ri.replace(text:text,dedent:true) or { panic(err) }
+	mut text_out2 := ri.replace(text: text, dedent: true) or { panic(err) }
 
 	// println('!' + dedent(text) + '!')
 	// println('!' + dedent(text_out) + '!')
@@ -41,25 +42,23 @@ fn test_stdtext() {
 	// panic('s')
 }
 
-
 fn test_dirreplace() {
+	// this is test without much fancyness, just rext replace, no regex, all case sensitive
 
-	//this is test without much fancyness, just rext replace, no regex, all case sensitive
-
-	//get path where to look for text
+	// get path where to look for text
 	mut p := @FILE.split('/')
-	p = p[0..p.len-2]
+	p = p[0..p.len - 2]
 	mut path := os.real_path(os.join_path(p.join('/'), 'examples'))
 
 	mut ri := regex_instructions_new()
 
-	ri.add(['key_bob:KEY_BOB','GitStatus:GITSTATUS']) or { panic(err) }
-	
-	count := ri.replace_in_dir(path:path,extensions:["v"],dryrun:true) or { panic(err) }
-	
-	assert count == 2
+	ri.add(['key_bob:KEY_BOB', 'GitStatus:GITSTATUS']) or { panic(err) }
 
+	count := ri.replace_in_dir(path: path, extensions: ['v'], dryrun: true) or { panic(err) }
+
+	assert count == 2
 }
+
 // fn test_regex1() {
 // 	text := '
 

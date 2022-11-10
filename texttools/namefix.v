@@ -3,7 +3,7 @@ module texttools
 
 import os
 
-const ignore="\\/[]()?!@#$%^&*<>:;{}|~"
+const ignore = '\\/[]()?!@#$%^&*<>:;{}|~'
 
 pub fn name_fix(name string) string {
 	pagename := name_fix_keepext(name)
@@ -24,7 +24,7 @@ pub fn name_fix_no_underscore(name string) string {
 }
 
 pub fn name_fix_no_underscore_no_ext(name_ string) string {
-	return name_fix_keepext(name_).all_before_last(".").trim_right("_")
+	return name_fix_keepext(name_).all_before_last('.').trim_right('_')
 }
 
 pub fn name_fix_keepext(name_ string) string {

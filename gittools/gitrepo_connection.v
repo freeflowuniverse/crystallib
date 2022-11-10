@@ -2,7 +2,6 @@ module gittools
 
 import os
 
-
 // get the url for the git repo, in http or ssh format
 fn (mut repo GitRepo) url_get(http bool) string {
 	if http {

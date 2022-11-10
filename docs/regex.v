@@ -44,4 +44,3 @@ fn example() {
 		println('')
 	}
 }
-

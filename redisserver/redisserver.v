@@ -24,7 +24,7 @@ struct RedisHandler {
 
 // https://redis.io/topics/protocol
 pub fn listen(addr string, port int) !RedisSrv {
-	mut socket := net.listen_tcp(net.AddrFamily.ip, '$addr:$port') !
+	mut socket := net.listen_tcp(net.AddrFamily.ip, '$addr:$port')!
 	// socket.set_read_timeout(2 * time.second)
 	return RedisSrv{
 		socket: socket
@@ -151,7 +151,7 @@ fn command_ttl(input resp2.RValue, mut srv RedisInstance) resp2.RValue {
 //
 // socket management
 //
-pub fn process_input(mut client &redisclient.Redis, mut instance RedisInstance, value resp2.RValue, h []RedisHandler) !bool {
+pub fn process_input(mut client redisclient.Redis, mut instance RedisInstance, value resp2.RValue, h []RedisHandler) !bool {
 	println('Inside process')
 
 	command := resp2.get_redis_value_by_index(value, 0).to_upper()
@@ -160,7 +160,7 @@ pub fn process_input(mut client &redisclient.Redis, mut instance RedisInstance, 
 		if command == rh.command {
 			println('Process: $command')
 			data := rh.handler(value, mut instance)
-			client.write_rval(data) !
+			client.write_rval(data)!
 			return true
 		}
 	}
@@ -174,7 +174,7 @@ pub fn process_input(mut client &redisclient.Redis, mut instance RedisInstance, 
 	println('')
 
 	err := resp2.r_error('Unknown command')
-	client.write_rval(err) !
+	client.write_rval(err)!
 
 	return false
 }
@@ -230,7 +230,7 @@ pub fn new_client_custom(mut conn net.TcpConn, mut main RedisInstance, h []Redis
 
 	for {
 		// fetch command from client (process incoming buffer)
-		value := client.get_response() !
+		value := client.get_response()!
 		// if err == "no data in socket" {
 		// 	// FIXME
 		// 	time.sleep_ms(1)
@@ -242,13 +242,13 @@ pub fn new_client_custom(mut conn net.TcpConn, mut main RedisInstance, h []Redis
 			// should not receive anything else than
 			// array with commands and args
 			println('Wrong request from client, rejecting')
-			conn.close() !
+			conn.close()!
 			return
 		}
 
 		if resp2.get_redis_array(value)[0] !is resp2.RBString {
 			println('Wrong request from client, rejecting rbstring')
-			conn.close() !
+			conn.close()!
 			return
 		}
 

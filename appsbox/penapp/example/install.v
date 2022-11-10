@@ -1,19 +1,12 @@
-
-
 module main
 
 import despiegk.crystallib.appsbox.penapp
 
-
-fn do()?{
-
+fn do() ? {
 	mut app := penapp.get()
-	app.install(false)?	
-
+	app.install(false)?
 }
 
 fn main() {
-
-	do() or {panic(err)}
-
+	do() or { panic(err) }
 }

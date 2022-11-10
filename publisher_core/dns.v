@@ -3,7 +3,7 @@ module publisher_core
 import publisher_config
 import hostsfile
 
-pub fn dns_on(sudo bool)? {
+pub fn dns_on(sudo bool) ? {
 	mut domains := []string{}
 	mut myconfig := publisher_config.get()?
 	for site in myconfig.sites {
@@ -19,7 +19,7 @@ pub fn dns_on(sudo bool)? {
 	hostsfile.save(sudo)
 }
 
-pub fn dns_off(sudo bool)? {
+pub fn dns_off(sudo bool) ? {
 	mut domains := []string{}
 	mut myconfig := publisher_config.get()?
 	for site in myconfig.sites {

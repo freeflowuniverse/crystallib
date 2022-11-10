@@ -31,13 +31,13 @@ pub mut:
 
 // get path for wiki site
 pub fn (config ConfigRoot) path_publish_wiki_get(name string) ?string {
-	config_site := config.site_wiki_get(name) ?
+	config_site := config.site_wiki_get(name)?
 	return '$config.publish.paths.publish/wiki_$config_site.name'
 }
 
 // get path for website
 pub fn (config ConfigRoot) path_publish_web_get(name string) ?string {
-	config_web := config.site_web_get(name) ?
+	config_web := config.site_web_get(name)?
 	return '$config.publish.paths.publish/$config_web.name'
 }
 

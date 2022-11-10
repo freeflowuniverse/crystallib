@@ -117,7 +117,6 @@ fn multiline_end(multiline_first string, multiline string) string {
 	return multiline2
 }
 
-
 // //find variables which is $[a...zA...Z0...9]
 // pub fn template_find_args(text string)[]string{
 //     mut var := ""

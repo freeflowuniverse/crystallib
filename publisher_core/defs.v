@@ -24,13 +24,13 @@ pub fn (def Def) category_prefix_exists(prefix_ string) bool {
 pub fn (mut def Def) categories_add(categories []string) {
 	for cat_ in categories {
 		cat := texttools.name_fix_no_underscore(cat_)
-		if !(cat in def.categories) {
+		if cat !in def.categories {
 			def.categories << cat
 		}
 	}
 }
 
-pub fn (def Def) page_get(mut publisher &Publisher) ?&Page {
+pub fn (def Def) page_get(mut publisher Publisher) ?&Page {
 	return publisher.page_get_by_id(def.pageid)
 }
 
@@ -38,8 +38,8 @@ pub fn (def Def) name_fixed() ?string {
 	return texttools.name_fix_no_underscore(def.name)
 }
 
-//create a defs page, which is linked to site
-//the defs page has a macro which lists all defs as found in site
+// create a defs page, which is linked to site
+// the defs page has a macro which lists all defs as found in site
 fn (mut publisher Publisher) defs_init(categories []string, exclude []string, mut site Site, name_ string) {
 	mut name := name_
 	if name == '' {
@@ -56,7 +56,7 @@ fn (mut publisher Publisher) defs_init(categories []string, exclude []string, mu
 	// 	// }
 	// }
 
-	if !(name in site.pages) {
+	if name !in site.pages {
 		categories2 := categories.join(',')
 		exclude2 := exclude.join(',')
 		content := "!!!def_list categories:'$categories2' exclude:'$exclude2'\n"
@@ -78,49 +78,46 @@ fn (mut publisher Publisher) defs_init(categories []string, exclude []string, mu
 	}
 }
 
-
-
 fn (mut publisher Publisher) def_page_get(name string) ?&Page {
-	def := publisher.def_get(name) ?
+	def := publisher.def_get(name)?
 	return def.page_get(mut publisher)
 }
 
-
 // replace in text the defs to a link
-fn (mut publisher Publisher) replace_defs_links(mut page &Page, text string) ?string {
-	if page.name == "defs"{
+fn (mut publisher Publisher) replace_defs_links(mut page Page, text string) ?string {
+	if page.name == 'defs' {
 		return page.content
 	}
 	site_source := page.site(mut publisher)
 	mut replacer := map[string]string{}
 
 	mut page_sidebar := page.sidebar_page_get(mut publisher) or { panic(err) }
-	mut path_sidebar := page_sidebar.path_dir_relative_get(mut publisher).trim(" /")
+	mut path_sidebar := page_sidebar.path_dir_relative_get(mut publisher).trim(' /')
 
 	for defname, defid in publisher.def_names {
-		if page.name == defname{
+		if page.name == defname {
 			continue
 		}
-		defobj := publisher.def_get_by_id(defid) ?
-		if defobj.pageid==999999{
-			println(" = skip def: $defname $defid")
-			panic("skip def")
+		defobj := publisher.def_get_by_id(defid)?
+		if defobj.pageid == 999999 {
+			println(' = skip def: $defname $defid')
+			panic('skip def')
 			continue
-		}		
-		page2 := defobj.page_get(mut publisher) ?
+		}
+		page2 := defobj.page_get(mut publisher)?
 		site2 := page2.site(mut publisher)
 
 		mut link := page2.name
-		if site2.name != site_source.name  {
-			link = "${site2.name}__$page2.name"
+		if site2.name != site_source.name {
+			link = '${site2.name}__$page2.name'
 		}
 
-		if path_sidebar == ""{
+		if path_sidebar == '' {
 			replacer[defname] = '[$defobj.name]($link)'
-			replacer[defname+"s"] = '[${defobj.name}s]($link)'
-		}else{
+			replacer[defname + 's'] = '[${defobj.name}s]($link)'
+		} else {
 			replacer[defname] = '[$defobj.name](/$path_sidebar/$link)'
-			replacer[defname+"s"] = '[${defobj.name}s](/$path_sidebar/$link)'
+			replacer[defname + 's'] = '[${defobj.name}s](/$path_sidebar/$link)'
 		}
 	}
 	// println(text)

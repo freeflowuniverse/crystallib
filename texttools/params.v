@@ -52,7 +52,7 @@ pub fn (mut tp Params) get(key_ string) ?string {
 // description is a kwarg
 pub fn (mut tp Params) get_default(key string, defval string) ?string {
 	if tp.exists(key) {
-		valuestr := tp.get(key) ?
+		valuestr := tp.get(key)?
 		return valuestr.trim(' ')
 	}
 	return defval
@@ -64,7 +64,7 @@ pub fn (mut tp Params) get_default(key string, defval string) ?string {
 // arg1 is an arg
 // description is a kwarg
 pub fn (mut tp Params) get_int(key string) ?int {
-	valuestr := tp.get(key) ?
+	valuestr := tp.get(key)?
 	return valuestr.int()
 }
 
@@ -75,7 +75,7 @@ pub fn (mut tp Params) get_int(key string) ?int {
 // description is a kwarg
 pub fn (mut tp Params) get_int_default(key string, defval int) ?int {
 	if tp.exists(key) {
-		valuestr := tp.get(key) ?
+		valuestr := tp.get(key)?
 		return valuestr.int()
 	}
 	return defval
@@ -89,7 +89,7 @@ pub fn (mut tp Params) get_int_default(key string, defval int) ?int {
 pub fn (mut tp Params) get_list(key string) ?[]string {
 	mut res := []string{}
 	if tp.exists(key) {
-		mut valuestr := tp.get(key) ?
+		mut valuestr := tp.get(key)?
 		if valuestr.contains(',') {
 			valuestr = valuestr.trim(' ,')
 			res = valuestr.split(',').map(it.trim(' \'"'))
@@ -108,7 +108,7 @@ pub fn (mut tp Params) get_list(key string) ?[]string {
 pub fn (mut tp Params) get_list_int(key string) ?[]int {
 	mut res := []int{}
 	if tp.exists(key) {
-		mut valuestr := tp.get(key) ?
+		mut valuestr := tp.get(key)?
 		if valuestr.contains(',') {
 			valuestr = valuestr.trim(' ,')
 			res = valuestr.split(',').map(it.trim(' \'"').int())
@@ -179,7 +179,7 @@ pub fn (mut result Params) arg_add(value string) {
 // result is params object which allows you to query the info you need
 pub fn text_to_params(text string) ?Params {
 	mut text2 := dedent(text)
-	text2 = multiline_to_single(text2) ?
+	text2 = multiline_to_single(text2)?
 	text2 = text2.replace('\\n', '<<BR>>')
 	text2 = text2.replace('\n', ' ')
 

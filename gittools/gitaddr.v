@@ -3,7 +3,6 @@ module gittools
 import os
 import sshagent
 
-
 pub fn (addr GitAddr) url_get() string {
 	if sshagent.loaded() {
 		return addr.url_ssh_get()
@@ -49,7 +48,7 @@ pub fn addr_get_from_url(url string) ?GitAddr {
 	urllower = urllower.trim_space()
 	if urllower.starts_with('ssh://') {
 		urllower = urllower[6..]
-	}	
+	}
 	if urllower.starts_with('git@') {
 		urllower = urllower[4..]
 	}
@@ -122,7 +121,6 @@ pub fn addr_get_from_url(url string) ?GitAddr {
 // }
 // ```
 pub fn addr_get_from_path(path string) ?GitAddr {
-
 	mut path2 := path.replace('~', os.home_dir())
 	if !os.exists(os.join_path(path2, '.git')) {
 		return error("path: '$path2' is not a git dir, missed a .git directory")
@@ -132,16 +130,14 @@ pub fn addr_get_from_path(path string) ?GitAddr {
 		return error("path: '$path2' is not a git dir, missed a .git/config file")
 	}
 
-	cmd := "cd $path && git config --get remote.origin.url"
-	url := os.execute_or_panic(cmd).output.trim(" \n")
+	cmd := 'cd $path && git config --get remote.origin.url'
+	url := os.execute_or_panic(cmd).output.trim(' \n')
 
-	cmd2 := "cd $path && git rev-parse --abbrev-ref HEAD"
-	branch := os.execute_or_panic(cmd2).output.trim(" \n")
-	
-	mut addr := addr_get_from_url(url) ?
+	cmd2 := 'cd $path && git rev-parse --abbrev-ref HEAD'
+	branch := os.execute_or_panic(cmd2).output.trim(' \n')
+
+	mut addr := addr_get_from_url(url)?
 	addr.branch = branch
-
-	
 
 	// println(addr)
 	return addr
