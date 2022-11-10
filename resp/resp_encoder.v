@@ -1,7 +1,7 @@
 module resp
 
-struct Builder {
-mut:
+pub struct Builder {
+pub mut:
 	data []u8
 }
 
