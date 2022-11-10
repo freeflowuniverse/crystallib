@@ -35,7 +35,7 @@ pub fn (mut params Params) arg_exists(key_ string) bool {
 
 // see if the kwarg with the key exists
 // if yes return as string trimmed
-pub fn (mut params Params) get(key_ string) ?string {
+pub fn (mut params Params) get(key_ string) !string {
 	key := texttools.name_fix(key_)
 	for p in params.params {
 		if p.key == key {
@@ -50,9 +50,9 @@ pub fn (mut params Params) get(key_ string) ?string {
 //    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
 // arg1 is an arg
 // description is a kwarg
-pub fn (mut params Params) get_default(key string, defval string) ?string {
+pub fn (mut params Params) get_default(key string, defval string) !string {
 	if params.exists(key) {
-		valuestr := params.get(key)?
+		valuestr := params.get(key)!
 		return valuestr.trim(' ')
 	}
 	return defval
