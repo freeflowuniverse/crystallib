@@ -17,7 +17,7 @@ pub mut:
 
 type RedisCallback = fn (resp.RValue, mut RedisInstance) resp.RValue
 
-struct RedisHandler {
+pub struct RedisHandler {
 	command string
 	handler RedisCallback
 }
