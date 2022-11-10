@@ -609,13 +609,6 @@ pub struct StellarWalletVerifyModel{
 		signed_content string
 }
 
-pub struct BlockChainCreateModel{
-	pub:
-		name string
-		blockchain_type string
-		ip string
-}
-
 pub struct BlockchainInitModel{
 	pub:
 		name string

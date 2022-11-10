@@ -1,110 +1,148 @@
-# TwinClient2 (GridClient over ws)
+## Twin Client Module
 
-## Overview:
-this demonstrate how we can use custom JSON_RPC functionality over ws protocol to allow p2p communications (both ends can send requests and receive responses) between Vlang ws server and grid3_client js library (running in user browser).
+* Now twinclient supporting 3 diffrent inter faces
+  * `Http`
+  * `Rmb`
+  * `Ws`: Websocket
 
-- we start a server that hosts a SPA (single page application) that do two things:
-    - loads grid3_client js library (https://github.com/threefoldtech/grid3_client_ts) to enable functionality to interact with threefold gird.
-    - start a websocket connection to the Vlang server.
-- when the user access this SPA, and provide the mnemonics, etc, the SPA will initialize the grid3_client.
-- now both the SPA and our backend can communicate with each other using JSON_RPC over the established ws connection.
+* In case you want to run tests you have to export which type you will use then run the tests, tests support `Http` and `Rmb` types, ws still in progress.
 
-## What is TwinClient2:
+    ```bash
+        export TWIN_CLIENT_TYPE=http
+        # Go to https://github.com/threefoldtech/grid3_client_ts/blob/development/docs/http_server.md and follow the instructions to run the server.
+        # once the server is running.
+        v test twinclient/
+    ```
 
-tw2 is a Vlang library to be imported and used from a ws server to enable developers access the functionality of grid3_client js library with ease. you can think of it as a V wrapper around grid3_client js library.
+### So you have to choice which type you want to use
 
-## how to use TwinClient2:
+### `Rmb`
 
-- it is expected that you will have a ws server which from you can import `tw2` within it.
-- it is expected that you will interact with a js ws client that will (at least) forward the requests the the grid3_client `invoke` method.
-
-for these requirmenets, you can use the server and client(SPA) in this repo as a starter.
-https://github.com/freeflowuniverse/twinactions/tree/development_tfgrid_websocket_server_wip_gridclient
-
-Note: the models was ported from `crystallib/twinclient` and need to be tested and verified that they are updated. only subset of the models was tested.
-
-```v
-// importing tw2
-import twinclient2 as tw2
-// initialize the client with the ws client:
-mut tw2_client := tw2.init_client(mut ws_client) // repeated calls to init_client will return the same twin client if the ws_client is the same.
-```
-
-### call a high-level method:
-```v
-id := tw2_client.get_my_twin_id() or { // handle the error }
-```
-
-### call a low level `send` method:
-```v
-// execute arbitrary JSON_RPC request if supported by the grid3 client
-id := tw2_client.send('twin.get_my_twin_id', '{}') or { // handle the error }
-```
-
-## examples:
-```v 
-import freeflowuniverse.crystallib.twinclient2 as tw2
-mut tw2_client := tw2.init_client(mut ws_client)
-go fn [mut tw2_client]() {
-    payload := Machines{
-        name: 'ms1'
-        network: Network{
-            ip_range: '10.200.0.0/16'
-            name: 'net'
-            add_access: false
-            }
-        machines: [
-            Machine{
-                name: 'm1'
-                node_id: 2
-                public_ip: false
-                planetary: true
-                cpu: 1
-                memory: 1024
-                rootfs_size: 1
-                flist: 'https://hub.grid.tf/tf-official-apps/base:latest.flist'
-                entrypoint: '/sbin/zinit init'
-                env: Env{
-                    ssh_key: 'ADD_YOUR_SSH'
-                }
-            },
-        ]
-    }
-    response := client.machines.deploy(machines)?
-}()
-```
-wrapping the sync code that interact with the grid3_client in a separated thread is a must, otherwise the ws client will be blocked.
+* to use and test it see [examples](https://github.com/freeflowuniverse/crystallib/tree/development/twinclient/examples)
+  * dependencies:
+    * Redis server running
+    * RMB server running .e.g. [rmb_go](https://github.com/threefoldtech/rmb_go) read [docs](https://github.com/threefoldtech/rmb_go/blob/master/README.md)
+    * grid3 RMB server .e.g. [grid3_client_ts](https://github.com/threefoldtech/grid3_client_ts) read [docs](https://github.com/threefoldtech/grid3_client_ts/blob/development/docs/rmb_server.md)
 
 ```v
-go fn [mut client]() {
-    // do something with the twin client
-    // or the underneath ws client methods
-}()
+import freeflowuniverse.crystallib.twinclient as tw
+
+
+fn main() {
+ mut transport := tw.RmbTwinClient{}
+ transport.init([143], 5, 5)?
+ mut grid := tw.grid_client(transport)?
+        // Now you can invoke any function below.
+ grid.algorand_list()?
+}
 ```
 
-## Supported Commands
+### `Http`
 
-- In this section
-  - Anything between `{}`  will be a struct in [models.v](./models.v) file.
-  - Anything between `""`  will be a string.
-  - Anything between `<>` will be a number.
-- if any struct tagged with `[params]` you can pass it to function as parameters.
+* to use and test it see [examples](https://github.com/freeflowuniverse/crystallib/tree/development/twinclient/examples)
+* dependencies:
+  * grid3 Http server running see [Http server](https://github.com/threefoldtech/grid3_client_ts/blob/development/docs/http_server.md)
 
 ```v
-[params]
-struct Person{
-    id   int
-    name string
+import crystallib.twinclient as tw
+
+fn main() {
+ mut transport := tw.HttpTwinClient{}
+ transport.init("http://localhost:3000")?
+ mut grid := tw.grid_client(transport)?
+        // Now you can invoke any function below.
+        grid.algorand_list()?
+}
+```
+
+### `WS`
+
+* In this case you have to invoke grid functions inside the WebSocket server, so you have to initialize the server first and then pass the client of this server as a parameter, see [examples](https://github.com/freeflowuniverse/crystallib/tree/development/twinclient/examples)
+
+```v
+import crystallib.twinclient as tw
+import net.websocket as ws
+import term
+import json
+
+
+
+
+fn main() {
+ mut s := ws.new_server(.ip6, 8081, '/')
+ s.on_connect(fn (mut s ws.ServerClient) ?bool {
+  if s.resource_name != '/' {
+   return false
+  }
+  println('Client has connected...')
+  return true
+ })?
+ s.on_message(fn (mut ws_client ws.Client, msg &tw.RawMessage) ? {
+  handle_events(msg, mut ws_client)?
+ })
+ s.on_close(fn (mut ws ws.Client, code int, reason string) ? {
+  println(term.green('client ($ws.id) closed connection'))
+ })
+ s.listen() or { println(term.red('error on server listen: $err')) }
+ unsafe {
+  s.free()
+ }
 }
 
-pub fn setPerson(p Person){
-    /// Anything
+fn handle_events(raw_msg &tw.RawMessage, mut ws_client ws.Client)? {
+ if raw_msg.payload.len == 0 {
+  return
+ }
+
+ mut transport := tw.WSTwinClient{}
+ transport.init(mut ws_client)?
+ mut grid := tw.grid_client(transport)?
+ msg := json.decode(tw.Message, raw_msg.payload.bytestr()) or {
+  println("cannot decode message")
+  return
+ }
+
+ if msg.event == "sum_balances" {
+  go fn [mut grid]()? {
+   // List all algorand accounts.
+   grid.algorand_list()?
+
+   // Deploy new machine
+   machines := tw.MachinesModel{
+    name: 'ms1'
+    network: tw.Network{
+     ip_range: '10.200.0.0/16'
+     name: 'net'
+     add_access: false
+     }
+    machines: [
+     tw.Machine{
+      name: 'm1'
+      node_id: 2
+      public_ip: false
+      planetary: true
+      cpu: 1
+      memory: 1024
+      rootfs_size: 1
+      flist: 'https://hub.grid.tf/tf-official-apps/base:latest.flist'
+      entrypoint: '/sbin/zinit init'
+      env: tw.Env{
+       ssh_key: 'ADD_YOUR_SSH'
+      }
+     },
+    ]
+   }
+   twin.machines_deploy(machines)?
+  }()
+ } else {
+  println("got a new message: $msg.event")
+ }
+
 }
 
-setPerson(id:1, name:"Essam")
 ```
 
-### Twins
+### `Twins`
 
 | Description                | Function                                  |
 | :------------------------- | :---------------------------------------- |
