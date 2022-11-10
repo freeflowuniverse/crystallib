@@ -1,9 +1,9 @@
-module twinclient2
+module twinclient
 
 import json
 
 pub fn (mut client TwinClient) algorand_list() ?[]BlockChainModel {
-	response := client.send('algorand.list', '{}')?
+	response := client.transport.send('algorand.list', '{}')?
 	return json.decode([]BlockChainModel, response.data)
 }
 
@@ -11,7 +11,7 @@ pub fn (mut client TwinClient) algorand_exist(name string) ?bool {
 	data := NameModel{
 		name: name
 	}
-	response := client.send('algorand.exist', json.encode(data).str())?
+	response := client.transport.send('algorand.exist', json.encode(data).str())?
 	return response.data.bool()
 }
 
@@ -19,8 +19,8 @@ pub fn (mut client TwinClient) algorand_delete(name string) ?bool {
 	data := NameModel{
 		name: name
 	}
-	response := client.send('algorand.delete', json.encode(data).str())?
-	if response.data == 'Deleted' {
+	response := client.transport.send('algorand.delete', json.encode(data).str())?
+	if response.data.replace('"', '') == 'Deleted' {
 		return true
 	}
 	return false
@@ -30,7 +30,7 @@ pub fn (mut client TwinClient) algorand_create(name string) ?BlockChainCreateMod
 	data := NameModel{
 		name: name
 	}
-	response := client.send('algorand.create', json.encode(data).str())?
+	response := client.transport.send('algorand.create', json.encode(data).str())?
 	return json.decode(BlockChainCreateModel, response.data)
 }
 
@@ -39,15 +39,17 @@ pub fn (mut client TwinClient) algorand_init(name string, secret string) ?NameAd
 		name: name
 		secret: secret
 	}
-	response := client.send('algorand.init', json.encode(json.encode(data).str()))?
-	return json.decode(NameAddressMnemonicModel, response.data)
+	response := client.transport.send('algorand.init', json.encode(data).str())?
+	mut result := NameAddressMnemonicModel{}
+	result.address = response.data
+	return result
 }
 
 pub fn (mut client TwinClient) algorand_assets(name string) ?BlockChainAssetsModel {
 	data := NameModel{
 		name: name
 	}
-	response := client.send('algorand.assets', json.encode(data).str())?
+	response := client.transport.send('algorand.assets', json.encode(data).str())?
 	return json.decode(BlockChainAssetsModel, response.data)
 }
 
@@ -55,7 +57,7 @@ pub fn (mut client TwinClient) algorand_assets_by_address(address string) ?Asset
 	data := AddressModel{
 		address: address
 	}
-	response := client.send('algorand.assetsByAddress', json.encode(data).str())?
+	response := client.transport.send('algorand.assetsByAddress', json.encode(data).str())?
 	return json.decode(AssetsModel, response.data)
 }
 
@@ -63,7 +65,7 @@ pub fn (mut client TwinClient) algorand_get(name string) ?BlockChainCreateModel 
 	data := NameModel{
 		name: name
 	}
-	response := client.send('algorand.get', json.encode(data).str())?
+	response := client.transport.send('algorand.get', json.encode(data).str())?
 	return json.decode(BlockChainCreateModel, response.data)
 }
 
@@ -72,7 +74,7 @@ pub fn (mut client TwinClient) algorand_sign(name string, content string) ?Block
 		name: name
 		content: content
 	}
-	response := client.send('algorand.sign', json.encode(data).str())?
+	response := client.transport.send('algorand.sign', json.encode(data).str())?
 	return json.decode(BlockChainSignResponseModel, response.data)
 }
 
@@ -83,6 +85,6 @@ pub fn (mut client TwinClient) algorand_pay(name string, address_dest string, am
 		amount: amount
 		description: description
 	}
-	response := client.send('algorand.pay', json.encode(data).str())?
+	response := client.transport.send('algorand.pay', json.encode(data).str())?
 	return json.decode(AlgorandPayResponseModel, response.data)
 }

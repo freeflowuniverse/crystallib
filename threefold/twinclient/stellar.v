@@ -1,4 +1,4 @@
-module twinclient2
+module twinclient
 
 import json
 
@@ -6,7 +6,7 @@ pub fn (mut client TwinClient) stellar_create(name string) ?BlockChainCreateMode
 	data := NameModel{
 		name: name
 	}
-	response := client.send('stellar.create', json.encode(data).str())?
+	response := client.transport.send('stellar.create', json.encode(data).str())?
 	return json.decode(BlockChainCreateModel, response.data)
 }
 
@@ -15,7 +15,7 @@ pub fn (mut client TwinClient) stellar_sign(name string, content string) ?BlockC
 		name: name
 		content: content
 	}
-	response := client.send('stellar.sign', json.encode(data).str())?
+	response := client.transport.send('stellar.sign', json.encode(data).str())?
 	return json.decode(BlockChainSignResponseModel, response.data)
 }
 
@@ -25,7 +25,7 @@ pub fn (mut client TwinClient) stellar_init(name string, secret string) ?string 
 		name: name
 		secret: secret
 	}
-	response := client.send('stellar.init', json.encode(data).str())?
+	response := client.transport.send('stellar.init', json.encode(data).str())?
 	return response.data
 }
 
@@ -33,7 +33,7 @@ pub fn (mut client TwinClient) stellar_get(name string) ?StellarWallet {
 	data := NameModel{
 		name: name
 	}
-	response := client.send('stellar.get', json.encode(data).str())?
+	response := client.transport.send('stellar.get', json.encode(data).str())?
 	return json.decode(StellarWallet, response.data)
 }
 
@@ -42,12 +42,12 @@ pub fn (mut client TwinClient) stellar_update(name string, secret string) ?NameS
 		name: name
 		secret: secret
 	}
-	client.send('stellar.update', json.encode(data).str())?
+	client.transport.send('stellar.update', json.encode(data).str())?
 	return data
 }
 
 pub fn (mut client TwinClient) stellar_list() ?[]BlockChainModel {
-	response := client.send('stellar.list', '{}')?
+	response := client.transport.send('stellar.list', '{}')?
 	return json.decode([]BlockChainModel, response.data)
 }
 
@@ -55,7 +55,7 @@ pub fn (mut client TwinClient) stellar_assets(name string) ?BlockChainAssetsMode
 	data := NameModel{
 		name: name
 	}
-	response := client.send('stellar.assets', json.encode(data).str())?
+	response := client.transport.send('stellar.assets', json.encode(data).str())?
 	return json.decode(BlockChainAssetsModel, response.data)
 }
 
@@ -63,7 +63,7 @@ pub fn (mut client TwinClient) stellar_balance_by_address(address string) ?[]Ste
 	data := AddressModel{
 		address: address
 	}
-	response := client.send('stellar.balance_by_address', json.encode(data).str())?
+	response := client.transport.send('stellar.balance_by_address', json.encode(data).str())?
 	return json.decode([]StellarBalance, response.data)
 }
 
@@ -75,7 +75,7 @@ pub fn (mut client TwinClient) stellar_pay(name string, address_dest string, amo
 		asset: asset
 		description: description
 	}
-	response := client.send('stellar.pay', json.encode(data).str())?
+	response := client.transport.send('stellar.pay', json.encode(data).str())?
 	return response.data
 }
 
@@ -83,7 +83,7 @@ pub fn (mut client TwinClient) stellar_delete(name string) ?bool {
 	data := NameModel{
 		name: name
 	}
-	response := client.send('stellar.delete', json.encode(data).str())?
+	response := client.transport.send('stellar.delete', json.encode(data).str())?
 	if response.data == 'Deleted' {
 		return true
 	}
@@ -94,6 +94,6 @@ pub fn (mut client TwinClient) stellar_exist(name string) ?bool {
 	data := NameModel{
 		name: name
 	}
-	response := client.send('stellar.exist', json.encode(data).str())?
+	response := client.transport.send('stellar.exist', json.encode(data).str())?
 	return response.data.bool()
 }
