@@ -16,7 +16,8 @@ mut:
 pub fn new_booksrunner() &BooksRunner {
 	gt := gittools.get(root: '') or { panic('Cannot get git: $err') }
 	sites := books.sites_new()
-	books := books_new(&sites)
+	mut books := books_new(&sites)
+	books.init() or { panic("Can't initiate books: $err") }
 	// sites.scan(path + '/content')?
 	// books.scan(path + '/books')?
 	runner := BooksRunner{
@@ -83,13 +84,11 @@ fn (mut runner BooksRunner) run_add(mut action Action) {
 	} else {
 		path_str := action.params.get('path') or { panic("Can't get url param: $err") }
 		book_path_obj := pathlib.get(book_path)
-		println("yoyoyo: $path_str 'n $book_path_obj")
 		book_repo = runner.gt.repo_get_from_path(book_name, book_path_obj, book_pull,
 			book_reset) or { panic("Can't get repo from url: $err") }
 	}
-	println('repo $book_repo')
-	println('path $book_path')
-	runner.books.book_new(path: book_path, name: book_name) or { panic("Can't get new site: $err") }
+	runner.books.scan(book_path) or { panic("Can't scan book: $err") }
+	runner.books.book_new(path: book_path, name: book_name) or { panic("Can't get new book: $err") }
 }
 
 fn (mut runner BooksRunner) run_develop(mut action Action) {
@@ -103,18 +102,5 @@ fn (mut runner BooksRunner) run_export(mut action Action) {
 	name := action.params.get('name') or { panic('Cant get params') }
 	mut book := runner.books.get(name) or { panic('Cant get book: $action \n $runner.sites') }
 	book.mdbook_export() or { panic('Cant export book: $book \nError: $err') }
-
-	// TODO: needs to be implemented
 	// //? Currently can only export book by name, is that ok?
-	// books.scan()?
-	// name := action.params.get('name')!
-	// dest_path := action.params.get('path')!
-	// mut book := books.get(name)?
-	// site := sites.site_new(path: book.path.path)?
-	// books.mdbook_export(dest_path)?
-
-	//? What do book_pull and book_reset do?
-	// mut gr := gt.repo_get_from_url(url: export_url, pull: book_pull, reset: book_reset)?
-	// mut export_repo := gt.repo_get_from_url(url: export_url)?
-	// export_path := export_repo.path_content_get()
 }
