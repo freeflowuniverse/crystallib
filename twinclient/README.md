@@ -1,28 +1,31 @@
 ## Twin Client Module
 
-* Now twinclient supporting 3 diffrent inter faces
-  * `Http`
-  * `Rmb`
-  * `Ws`: Websocket
+#### TwinClient is a Vlang module that can do something like communication with grid3_ts, so you just start a server in which type you chose, then you take an instance from the base interface and pass the type of TC, then you call a helper method to invoke on the grid3
 
-* In case you want to run tests you have to export which type you will use then run the tests, tests support `Http` and `Rmb` types, ws still in progress.
+#### Get more about [usage](https://github.com/freeflowuniverse/crystallib/tree/development/twinclient/examples)
 
-    ```bash
-        export TWIN_CLIENT_TYPE=http
-        # Go to https://github.com/threefoldtech/grid3_client_ts/blob/development/docs/http_server.md and follow the instructions to run the server.
-        # once the server is running.
-        v test twinclient/
-    ```
+#### Allowed types
 
-### So you have to choice which type you want to use
+- `Http`
+- `Rmb`
+- `Ws -> Websocket`
+
+#### In case you want to run tests you have to export which type you will use then run the tests, tests support `Http` and `Rmb` types, ws still in progress
+
+```sh
+    export TWIN_CLIENT_TYPE=http
+    # Go to https://github.com/threefoldtech/grid3_client_ts/blob/development/docs/http_server.md and follow the instructions to run the server.
+    # once the server is running.
+    v test twinclient/
+```
 
 ### `Rmb`
 
-* to use and test it see [examples](https://github.com/freeflowuniverse/crystallib/tree/development/twinclient/examples)
-  * dependencies:
-    * Redis server running
-    * RMB server running .e.g. [rmb_go](https://github.com/threefoldtech/rmb_go) read [docs](https://github.com/threefoldtech/rmb_go/blob/master/README.md)
-    * grid3 RMB server .e.g. [grid3_client_ts](https://github.com/threefoldtech/grid3_client_ts) read [docs](https://github.com/threefoldtech/grid3_client_ts/blob/development/docs/rmb_server.md)
+dependencies:
+
+- Redis server running
+- RMB server running .e.g. [rmb_go](https://github.com/threefoldtech/rmb_go) read [docs](https://github.com/threefoldtech/rmb_go/blob/master/README.md)
+- grid3 RMB server .e.g. [grid3_client_ts](https://github.com/threefoldtech/grid3_client_ts) read [docs](https://github.com/threefoldtech/grid3_client_ts/blob/development/docs/rmb_server.md)
 
 ```v
 import freeflowuniverse.crystallib.twinclient as tw
@@ -39,9 +42,9 @@ fn main() {
 
 ### `Http`
 
-* to use and test it see [examples](https://github.com/freeflowuniverse/crystallib/tree/development/twinclient/examples)
-* dependencies:
-  * grid3 Http server running see [Http server](https://github.com/threefoldtech/grid3_client_ts/blob/development/docs/http_server.md)
+dependencies:
+
+- grid3 Http server running see [Http server](https://github.com/threefoldtech/grid3_client_ts/blob/development/docs/http_server.md)
 
 ```v
 import crystallib.twinclient as tw
@@ -57,7 +60,7 @@ fn main() {
 
 ### `WS`
 
-* In this case you have to invoke grid functions inside the WebSocket server, so you have to initialize the server first and then pass the client of this server as a parameter, see [examples](https://github.com/freeflowuniverse/crystallib/tree/development/twinclient/examples)
+- In this case you have to invoke grid functions inside the WebSocket server, so you have to initialize the server first and then pass the client of this server as a parameter, see [examples](https://github.com/freeflowuniverse/crystallib/tree/development/twinclient/examples)
 
 ```v
 import crystallib.twinclient as tw
