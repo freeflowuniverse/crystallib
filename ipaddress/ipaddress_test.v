@@ -4,12 +4,12 @@ fn test_ping() {
 	mut addr := IPAddress{
 		addr: '127.0.0.1'
 	}
-	assert addr.ping(ipaddress.PingArgs{})
+	assert addr.ping(PingArgs{})
 
 	mut addr2 := IPAddress{
 		addr: '22.22.22.22'
 	}
-	assert addr2.ping(ipaddress.PingArgs{}) == false
+	assert addr2.ping(PingArgs{}) == false
 }
 
 fn test_ipv6() {

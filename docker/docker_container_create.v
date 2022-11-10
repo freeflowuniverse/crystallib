@@ -30,7 +30,7 @@ pub fn (mut e DockerEngine) container_create(args DockerContainerCreateArgs) !&D
 	// if forwarded ports passed in the args not containing mapping tp ssh (22) create one
 	if !contains_ssh_port(args.forwarded_ports) {
 		// find random free port in the node
-		mut port := e.get_free_port() or { panic("No free node.") }
+		mut port := e.get_free_port() or { panic('No free node.') }
 		ports += '-p $port:22/tcp'
 	}
 

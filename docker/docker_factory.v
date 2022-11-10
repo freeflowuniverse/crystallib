@@ -65,7 +65,7 @@ pub fn engine_get(name string) !&DockerEngine {
 
 // if sshkeys_allowed empty array will check the local machine for loaded sshkeys
 pub fn engine_local(sshkeys_allowed []string) !&DockerEngine {
-	mut factory := builder.new() 
+	mut factory := builder.new()
 	mut node := factory.node_local()!
 	return engine_new(name: 'local', node_name: node.name, sshkeys_allowed: sshkeys_allowed)
 }
@@ -93,7 +93,7 @@ pub fn engine_new(args DockerEngineArguments) !&DockerEngine {
 	}
 
 	// not really needed is to check it works
-	mut factory := builder.new() 
+	mut factory := builder.new()
 	_ := factory.node_get(args2.node_name)!
 
 	mut de := DockerEngine{

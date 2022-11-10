@@ -54,7 +54,7 @@ fn test_link2() {
 			},
 		]
 	}
-	assert lp.str() == correct_lp.str() 
+	assert lp.str() == correct_lp.str()
 }
 
 fn test_link3() {
@@ -116,7 +116,9 @@ fn test_link4() {
 fn test_link5() {
 	mut lp := LinkParseResult{}
 	mut para := Paragraph{}
-	lp = para.link_parser('[Architecture](@*!testsite:architecture/architecture.md)') or { panic(err) }
+	lp = para.link_parser('[Architecture](@*!testsite:architecture/architecture.md)') or {
+		panic(err)
+	}
 
 	assert lp.str() == LinkParseResult{
 		links: [

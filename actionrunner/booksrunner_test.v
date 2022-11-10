@@ -4,7 +4,7 @@ import os
 import freeflowuniverse.crystallib.params { Param, Params }
 import freeflowuniverse.crystallib.pathlib
 
-//test adding book with url as a path
+// test adding book with url as a path
 fn test_run_add() {
 	mut booksrunner := new_booksrunner()
 	go booksrunner.run()
@@ -86,7 +86,9 @@ fn test_run_develop() {
 		name: 'technology'
 	) or { panic('Could not get repository from url') }
 	book_path := gr.path_content_get()
-	booksrunner.books.book_new(path: book_path, name: 'technology') or { panic("Can't get new site: $err") }
+	booksrunner.books.book_new(path: book_path, name: 'technology') or {
+		panic("Can't get new site: $err")
+	}
 
 	// sending runner message to develop book
 	msg := ActionMessage{
@@ -96,13 +98,13 @@ fn test_run_develop() {
 				Param{
 					key: 'name'
 					value: 'technology'
-				}
+				},
 			]
 			args: []
 		}
 	}
 	booksrunner.channel <- msg
-	
+
 	// testing is complete response from channel
 	for {
 		res := <-booksrunner.channel

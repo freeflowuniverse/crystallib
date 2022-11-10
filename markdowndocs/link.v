@@ -55,7 +55,7 @@ fn (mut para Paragraph) link_new(original_descr_ string, original_link_ string, 
 		link.filename = original_link
 	}
 
-	if link.filename.contains('/')  {
+	if link.filename.contains('/') {
 		link.path = link.filename.all_before_last('/').trim_right('/') // just to make sure it wasn't //
 	} else {
 		link.path = ''
@@ -84,9 +84,9 @@ fn (mut para Paragraph) link_new(original_descr_ string, original_link_ string, 
 		filename << x
 	}
 	link.filename = filename.join('')
-	
+
 	// trims prefixes from path
-	link.path = link.path.trim_left('!@*') 
+	link.path = link.path.trim_left('!@*')
 
 	// lets now check if there is site info in there
 	if link.filename.contains(':') {
@@ -176,8 +176,6 @@ fn (mut para Paragraph) link_new(original_descr_ string, original_link_ string, 
 // 	return l
 // }
 
-
-
 // return how to represent link on source
 fn (mut link Link) source_get() !string {
 	if link.cat == LinkType.image {
@@ -219,13 +217,12 @@ fn (mut link Link) source_get() !string {
 // replace original link content in text with $replacewith
 // if replacewith is empty then will recreate the link as source_get()!
 pub fn (mut link Link) replace(text string, replacewith_ string) !string {
-	mut replacewith:=replacewith_
-	if replacewith==""{
+	mut replacewith := replacewith_
+	if replacewith == '' {
 		replacewith = link.source_get()!
 	}
 	return text.replace(link.original, replacewith)
 }
-
 
 enum LinkParseStatus {
 	start

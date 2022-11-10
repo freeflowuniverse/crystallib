@@ -2,8 +2,8 @@ module pathlib
 
 import os
 
-//path needs to be existing
-//linkpath is where the link will be pointing to path
+// path needs to be existing
+// linkpath is where the link will be pointing to path
 pub fn (mut path Path) link(linkpath string, delete_exists bool) !Path {
 	if !path.exists() {
 		return error('cannot link because source $path.path does not exist')
@@ -26,12 +26,12 @@ pub fn (mut path Path) link(linkpath string, delete_exists bool) !Path {
 	if !os.exists(dest_dir) {
 		os.mkdir_all(dest_dir)!
 	}
-	origin_path := path_relative(dest_dir,path.path)!
+	origin_path := path_relative(dest_dir, path.path)!
 	msg := 'link to origin (source): $path.path  \nthe link:$linkpath \nlink rel: $origin_path'
 	// $if debug {
 	// 	println(msg)
 	// }	
-	os.symlink(origin_path,linkpath) or { return error('cant symlink $msg\n$err') }
+	os.symlink(origin_path, linkpath) or { return error('cant symlink $msg\n$err') }
 	return get(linkpath)
 }
 
@@ -78,7 +78,7 @@ pub fn (mut path Path) unlink() ! {
 	// TODO: in test script
 }
 
-// return string 
+// return string
 pub fn (mut path Path) readlink() !string {
 	// println('path: $path')
 	if path.is_link() {

@@ -153,7 +153,7 @@ fn (mut executor ExecutorSSH) upload(source string, dest string) ! {
 	}
 	process.execute_job(
 		cmd: 'rsync -avHPe "ssh -p$port" $source -e ssh $executor.user@$cmd_ipaddr:$dest'
-	) or {panic(@FN + ": Cannot execute job")}
+	) or { panic(@FN + ': Cannot execute job') }
 }
 
 // get environment variables from the executor

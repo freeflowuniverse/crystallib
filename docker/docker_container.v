@@ -57,7 +57,7 @@ pub fn (mut container DockerContainer) node() &builder.Node {
 	mut e := engine_get(container.engine) or {
 		panic('bug: should always find this engine: $container.engine')
 	}
-	mut factory := builder.new() 
+	mut factory := builder.new()
 	mut node := factory.node_get(e.node) or { panic('bug: should always find this node: $e.node') }
 	return node
 }
@@ -126,7 +126,7 @@ pub fn (mut container DockerContainer) shell(cmd string) ! {
 
 // return the builder.node class which allows to remove executed, ...
 pub fn (mut container DockerContainer) node_container_get() !&builder.Node {
-	mut factory := builder.new() 
+	mut factory := builder.new()
 	mut node := factory.node_get(container.node)!
 	return node
 }

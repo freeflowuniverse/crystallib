@@ -16,8 +16,8 @@ fn test_replacer() {
 	'
 
 	replacer := {
-		'Lagoon':'Green Lagoon'
-		'blue_lagoon':'Red Lagoon'		
+		'Lagoon':      'Green Lagoon'
+		'blue_lagoon': 'Red Lagoon'
 	}
 
 	mut result_required := '
@@ -33,13 +33,12 @@ fn test_replacer() {
 	&redlagoon
 	'
 
-	r := replace_items(dedent(text),replacer)
+	r := replace_items(dedent(text), replacer)
 
 	a := dedent(r).trim(' \n')
 	b := dedent(result_required).trim(' \n')
 
-	assert a==b
-
+	assert a == b
 }
 
 // fn test_replacer2() {

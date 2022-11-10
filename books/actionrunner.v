@@ -12,14 +12,12 @@ module books
 // 	// 	println("-----")
 // 	// }
 
-
 // 	mut sites := books.sites_new()
 
 // 	books.books_new(&sites)
 
 // 	// sites.scan(path + '/content')?
 // 	// books.scan(path + '/books')?
-
 
 // 	for mut action in parser.actions {
 // 		$if debug {

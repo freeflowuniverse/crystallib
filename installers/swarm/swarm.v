@@ -29,16 +29,12 @@ pub fn (mut i Installer) install_docker(args SwarmArgs) ! {
 
 	if i.node.platform != builder.PlatformType.ubuntu {
 		return error('cannot install docker, wrong platform, for now only ubuntu supported, make sure to unstall docker desktop before trying again.')
-	} 
-
+	}
 
 	// node.platform_prepare()?
 	// ? below prepares platform?
-	mut base_installer := base.get_install(mut i.node) or {
-		panic("Couldn't get base installer")
-	}
+	mut base_installer := base.get_install(mut i.node) or { panic("Couldn't get base installer") }
 	base_installer.install()!
-
 
 	// was_done := node.crystaltools_install()?
 	// if was_done{
@@ -71,8 +67,7 @@ pub fn (mut i Installer) install_docker(args SwarmArgs) ! {
 	// 	systemctl enable docker
 	// 	'
 
-
-	// ? cannot find exec function with args, 
+	// ? cannot find exec function with args,
 	// i.node.exec(cmd: docker_install, reset: args.reset, description: 'install docker.')?
 	i.node.exec(docker_install)!
 

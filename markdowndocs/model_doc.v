@@ -83,14 +83,14 @@ fn (doc Doc) str() string {
 pub fn (doc Doc) html() string {
 	mut out := ''
 	for item in doc.items {
-		match item {			
+		match item {
 			DocStart { out += item.str() }
 			Text { out += item.str() }
 			Table { out += item.str() }
 			Action { out += item.str() }
 			Actions { out += item.str() }
-			Header { out += '<h$item.depth>${item.content}</h$item.depth>\n' }
-			Paragraph { out += '<p>${item.content}</p>\n' }
+			Header { out += '<h$item.depth>$item.content</h$item.depth>\n' }
+			Paragraph { out += '<p>$item.content</p>\n' }
 			Html { out += item.str() }
 			Comment { out += item.str() }
 			CodeBlock { out += item.str() }

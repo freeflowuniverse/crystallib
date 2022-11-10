@@ -37,15 +37,14 @@ fn actions_process(mut parser actionparser.ActionsParser, actions_done map[strin
 					break
 				}
 			}
-		}
-		else if action.name.starts_with('books.') {
-			msg := ActionMessage {
+		} else if action.name.starts_with('books.') {
+			msg := ActionMessage{
 				name: action.name
 				params: action.params
 			}
 			booksrunner.channel <- msg
 			for {
-				res := <- booksrunner.channel
+				res := <-booksrunner.channel
 				if res.name == msg.name && res.params == msg.params && res.complete {
 					break
 				}

@@ -88,7 +88,8 @@ fn parse_into_blocks(text string) ?Blocks {
 		line2 = line2.replace('\t', '    ')
 		// println("line: '$line2'")
 		if state == ParseBlockStatus.action {
-			if (line2.starts_with(' ') || line2 == '' || contains_params(line2)) && !line2.contains('!!') {
+			if (line2.starts_with(' ') || line2 == '' || contains_params(line2))
+				&& !line2.contains('!!') {
 				// starts with tab or space, means block continues
 				block.content += '\n'
 				block.content += line2

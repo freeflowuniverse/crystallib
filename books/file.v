@@ -16,8 +16,8 @@ pub enum FileType {
 
 [heap]
 pub struct File {
-pub mut: 
-	site &Site [str: skip]
+pub mut:
+	site         &Site        [str: skip]
 	name         string // received a name fix
 	path         pathlib.Path
 	pathrel      string
@@ -59,8 +59,7 @@ pub fn (mut file File) exists() !bool {
 	return file.path.exists()
 }
 
-
 fn (mut file File) copy(dest string) ! {
-	mut dest2:= pathlib.get(dest)
+	mut dest2 := pathlib.get(dest)
 	file.path.copy(mut dest2)!
 }

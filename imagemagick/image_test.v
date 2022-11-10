@@ -1,4 +1,4 @@
-import freeflowuniverse.crystallib.imagemagick { image_new, image_downsize }
+import freeflowuniverse.crystallib.imagemagick { image_new }
 import freeflowuniverse.crystallib.pathlib
 import os
 
@@ -16,15 +16,10 @@ const testpath = os.dir(@FILE) + '/example'
 
 fn test_init_() {
 	mut img_path := pathlib.get('$testpath/small_png.png')
-	mut image := image_new(mut img_path) or {
-		panic('Cannot get new image:\n $err')
-	}
+	mut image := image_new(mut img_path) or { panic('Cannot get new image:\n $err') }
 
 	assert image.path.path == img_path.path
 	assert image.size_kbyte == 0
-	image.init_() or {
-		panic('Could not initialize image: $err')
-	}
+	image.init_() or { panic('Could not initialize image: $err') }
 	assert image.size_kbyte == 175
 }
-

@@ -9,7 +9,7 @@ enum State {
 }
 
 struct Installer {
-	mut:
+mut:
 	node  &builder.Node
 	state State
 }

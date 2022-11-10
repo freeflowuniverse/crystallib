@@ -107,14 +107,14 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) !&Node {
 
 	node_env_txt := node.cache.get('env') or {
 		println(' - env load')
-		node.environment_load() or {return error(@FN +  "Cannot load environment: $err")}
+		node.environment_load() or { return error(@FN + 'Cannot load environment: $err') }
 		''
 	}
 
 	if node_env_txt != '' {
 		node.environment = serializers.text_to_map_string_string(node_env_txt)
 	} else {
-		node.environment_load() or {return error(@FN +  "Cannot load environment: $err")}
+		node.environment_load() or { return error(@FN + 'Cannot load environment: $err') }
 	}
 
 	if !node.cache.exists('env') {

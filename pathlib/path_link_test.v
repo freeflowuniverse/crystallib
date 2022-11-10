@@ -22,14 +22,14 @@ fn test_link() {
 	mut source1 := pathlib.get('$testpath/test_parent/testfile2.md')
 	mut source2 := pathlib.get('$testpath/test_parent/testfile3.md')
 	mut source3 := pathlib.get('$testpath/testfile1.md')
-	
+
 	assert source1.exists()
 	assert source2.exists()
 
-	//link to a parent
-	mut link11 := source3.link("$testpath/test_parent/uplink", true) or { panic('no uplink: $err') }
-	mut link11_link := pathlib.get("$testpath/test_parent/uplink")
-	path11 := link11_link.readlink() or {panic(err)}
+	// link to a parent
+	mut link11 := source3.link('$testpath/test_parent/uplink', true) or { panic('no uplink: $err') }
+	mut link11_link := pathlib.get('$testpath/test_parent/uplink')
+	path11 := link11_link.readlink() or { panic(err) }
 	assert path11 == '../testfile1.md'
 
 	// test delete exists with nonexistent dest
@@ -64,8 +64,8 @@ fn test_readlink() {
 	// test with none link path
 	mut source := pathlib.get('$testpath/test_parent/testfile2.md')
 	mut dest_ := '$testpath/test_readlink.md'
-	path := source.readlink() or {"" }
-	assert path == "" //is not a link so cannot read
+	path := source.readlink() or { '' }
+	assert path == '' // is not a link so cannot read
 
 	// test with filelink path
 	mut link := source.link(dest_, true) or { panic('error: $err') }
@@ -74,7 +74,7 @@ fn test_readlink() {
 	assert dest.cat == .linkfile
 	assert dest.path == dest_
 
-	link_source := dest.readlink() or { panic(err)}
+	link_source := dest.readlink() or { panic(err) }
 	assert link_source == 'test_parent/testfile2.md'
 
 	dest.delete()!

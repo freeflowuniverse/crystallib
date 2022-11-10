@@ -1,6 +1,6 @@
 module actionparser
 
-import os 
+import os
 import freeflowuniverse.crystallib.texttools
 
 const testpath = os.dir(@FILE) + '/testdata'
@@ -18,7 +18,7 @@ dest:'https://github.com/threefoldfoundation/books/tree/main/books/feasibility_s
 }
 
 fn test_file_parse() {
-	mut parser := actionparser.get()
-	parser.file_parse('$testpath/testfile.md')?
+	mut parser := get()
+	parser.file_parse('$actionparser.testpath/testfile.md')?
 	assert parser.actions.len == 10
 }

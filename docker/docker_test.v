@@ -20,7 +20,7 @@ fn test_docker1() {
 	// have a default sshkey in, which is known to our docker classes here
 	// the following NEW method gets this container with the default SSH key understood in node
 	mut container := engine.container_get('test_container') or {
-		panic("Cannot get test container")
+		panic('Cannot get test container')
 	}
 	container.start()!
 
@@ -37,7 +37,7 @@ fn test_docker1() {
 	// NOW DO SOME MORE TESTS,
 
 	// engine.node = builder.node_new(name: 'test')
-	println(engine.images_list() or {[]&DockerImage})
+	println(engine.images_list() or { []&DockerImage{} })
 	panic('A')
 	// mut containers := engine.containers_list()
 	// mut container := containers[0]

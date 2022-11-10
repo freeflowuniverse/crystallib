@@ -30,7 +30,7 @@ pub fn (mut node Node) ipaddr_pub_get() !string {
 		res := node.exec(cmd)!
 		node.done_set('ipaddr', res.trim('\n').trim(' \n'))!
 	}
-	mut ipaddr := node.done_get('ipaddr') or { return('Error: ipaddr is none') }
+	mut ipaddr := node.done_get('ipaddr') or { return 'Error: ipaddr is none' }
 	return ipaddr.trim('\n').trim(' \n')
 }
 

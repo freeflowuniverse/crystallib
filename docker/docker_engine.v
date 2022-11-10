@@ -17,7 +17,7 @@ pub mut:
 }
 
 // check docker has been installed & enabled on node
-pub fn (mut e DockerEngine) init()! {
+pub fn (mut e DockerEngine) init() ! {
 	mut factory := builder.new()
 	mut node := factory.node_get(e.node)!
 	mut installer := swarm.get(mut node)
@@ -95,7 +95,9 @@ pub fn (mut e DockerEngine) containers_load() ! {
 
 pub fn (mut e DockerEngine) containers_get() ?[]&DockerContainer {
 	mut res := []&DockerContainer{}
-	if e.containers.len == 0 { return none }
+	if e.containers.len == 0 {
+		return none
+	}
 	for _, container in e.containers {
 		res << container
 	}
@@ -227,7 +229,7 @@ pub fn (mut e DockerEngine) get_free_port() ?int {
 	mut used_ports := []int{}
 	mut range := []int{}
 
-	mut cl := e.containers_get() or {[]&DockerContainer{}}
+	mut cl := e.containers_get() or { []&DockerContainer{} }
 
 	for c in cl {
 		for p in c.forwarded_ports {
@@ -241,6 +243,8 @@ pub fn (mut e DockerEngine) get_free_port() ?int {
 		}
 	}
 	// arrays.shuffle<int>(mut range, 0)
-	if range.len == 0 { return none }
+	if range.len == 0 {
+		return none
+	}
 	return range[0]
 }

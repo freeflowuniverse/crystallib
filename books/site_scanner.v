@@ -23,11 +23,11 @@ fn (mut site Site) file_image_remember(mut p pathlib.Path) ! {
 			mut filedouble := site.image_get(namesmallest)!
 			mut pathdouble := filedouble.path.path
 			mut pathsource := p.path
-			if pathsource.len < pathdouble.len+1{
-				//nothing to be done, because the already existing file is shortest or equal
+			if pathsource.len < pathdouble.len + 1 {
+				// nothing to be done, because the already existing file is shortest or equal
 				return
 			}
-			//file double is the one who already existed, need to change the path and can delete original
+			// file double is the one who already existed, need to change the path and can delete original
 			filedouble.path = filedouble.path
 			filedouble.init()
 			println(' - delete double image: $p.path')

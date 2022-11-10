@@ -88,7 +88,6 @@ fn test_tokens() {
 // }
 
 fn test_tokens3() {
-
 	mut text := r'
     - [Definitions](tftech:definitions)
     (koekoe)

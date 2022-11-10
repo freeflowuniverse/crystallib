@@ -11,7 +11,6 @@ pub fn (mut path Path) exists() bool {
 	return path.exist == .yes
 }
 
-
 // rename the file or directory
 pub fn (mut path Path) rename(name string) ! {
 	if name.contains('/') {
@@ -33,7 +32,7 @@ pub fn (mut path Path) rename(name string) ! {
 // will not resolve symlinks
 pub fn (mut path Path) path_relative(destpath string) !string {
 	// println(" - path relative: '$path.path' '$destpath'")
-	return path_relative(destpath,path.path)
+	return path_relative(destpath, path.path)
 }
 
 // recursively finds the least common ancestor of array of paths
@@ -88,14 +87,12 @@ pub fn (path Path) extension_lower() string {
 	return path.extension().to_lower()
 }
 
-
 // will rewrite the path to lower_case if not the case yet
 // will also remove weird chars
 // if changed will return true
 // the file will be moved to the new location
 pub fn (mut path Path) path_normalize() !bool {
-
-	path_original := path.path+"" //make sure is copy, needed?
+	path_original := path.path + '' // make sure is copy, needed?
 
 	// if path.cat == .file || path.cat == .dir || !path.exists() {
 	// 		return error('path $path does not exist, cannot namefix (only support file and dir)')
@@ -105,19 +102,18 @@ pub fn (mut path Path) path_normalize() !bool {
 		path.path = path.path_no_ext() + '.jpg'
 	}
 
-	namenew:=texttools.name_fix_keepext(path.name())
-	if namenew!=path.name(){
+	namenew := texttools.name_fix_keepext(path.name())
+	if namenew != path.name() {
 		path.path = os.join_path(os.dir(path.path), namenew)
 	}
-	
-	if path.path != path_original{
-		os.mv(path_original,path.path)!
+
+	if path.path != path_original {
+		os.mv(path_original, path.path)!
 		path.check()
 		return true
 	}
 	return false
 }
-
 
 // walk upwards starting from path untill dir or file tofind is found
 // works recursive
@@ -305,15 +301,13 @@ pub fn (mut path Path) copy(mut dest Path) !Path {
 		// In case src is a file and dest is dir, we need to join the file name to the dest file
 		file_name := os.base(path.path)
 		dest.path = os.join_path(dest.path, file_name)
-
 	}
 
-	if ! os.exists(dest.path_dir()){
+	if !os.exists(dest.path_dir()) {
 		os.mkdir_all(dest.path_dir())!
 	}
 
 	os.cp_all(path.path, dest.path, true)! // Always overwite if needed
-
 
 	dest.check()
 	return dest

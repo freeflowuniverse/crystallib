@@ -1,10 +1,8 @@
-
 module imagemagick
 
 import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.process
 import os
-
 
 // backupdir, put on empty if not used
 pub fn image_downsize(mut path pathlib.Path, backupdir string) !Image {

@@ -51,17 +51,21 @@ fn (mut runner BooksRunner) run() {
 
 fn (mut runner BooksRunner) run_add(mut action Action) {
 	book_name := action.params.get_default('name', '') or { panic("Can't get name param: $err") }
-	mut book_path := action.params.get('path') or { panic("Can't get path param: $err \n for action $action") }
+	mut book_path := action.params.get('path') or {
+		panic("Can't get path param: $err \n for action $action")
+	}
 	book_pull := action.params.get_default_false('pull')
 	book_reset := action.params.get_default_false('reset')
 	mut book_repo := gittools.GitRepo{}
-	
+
 	// prepends gitsource to path if exists
 	// ? should books be added to path by default here?
 	if action.params.exists('gitsource') {
-		gitsource := action.params.get_default('gitsource', '') or { panic("Can't get gitsource param: $err") }
+		gitsource := action.params.get_default('gitsource', '') or {
+			panic("Can't get gitsource param: $err")
+		}
 		book_repo = runner.gt.repo_get(name: gitsource) or { panic("Can't get param: $err") }
-		book_path = book_repo.path + '/books/' + book_path 
+		book_path = book_repo.path + '/books/' + book_path
 	}
 
 	$if debug {
@@ -80,9 +84,8 @@ fn (mut runner BooksRunner) run_add(mut action Action) {
 		path_str := action.params.get('path') or { panic("Can't get url param: $err") }
 		book_path_obj := pathlib.get(book_path)
 		println("yoyoyo: $path_str 'n $book_path_obj")
-		book_repo = runner.gt.repo_get_from_path(book_name, book_path_obj, book_pull, book_reset) or { 
-			panic("Can't get repo from url: $err") 
-		}
+		book_repo = runner.gt.repo_get_from_path(book_name, book_path_obj, book_pull,
+			book_reset) or { panic("Can't get repo from url: $err") }
 	}
 	println('repo $book_repo')
 	println('path $book_path')

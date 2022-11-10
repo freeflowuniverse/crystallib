@@ -4,7 +4,7 @@ const path = '~/code/github/threefoldfoundation/books/content/abundance_internet
 
 fn test_scan_internal() {
 	mut sites := sites_new()
-	site_args := books.SiteNewArgs {
+	site_args := books.SiteNewArgs{
 		name: 'TestSite'
 		path: path
 	}

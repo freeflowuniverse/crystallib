@@ -45,7 +45,7 @@ pub fn (mut sites Sites) site_new(args SiteNewArgs) !&Site {
 		path: p
 		sites: &sites
 	}
-	sites.sites[site.name.replace("_","")] = &site
+	sites.sites[site.name.replace('_', '')] = &site
 	return &site
 }
 
@@ -110,7 +110,6 @@ pub fn (mut sites Sites) get(name string) !&Site {
 	return error('could not find site with name:$name')
 }
 
-
 // fix all loaded sites
 pub fn (mut sites Sites) fix() ! {
 	if sites.state == .ok {
@@ -121,33 +120,27 @@ pub fn (mut sites Sites) fix() ! {
 	}
 }
 
-
-
 pub fn (mut sites Sites) sitenames() []string {
-	mut res:=[]string{}
-	for key,_ in sites.sites{
+	mut res := []string{}
+	for key, _ in sites.sites {
 		res << key
 	}
 	res.sort()
 	return res
 }
 
-
-
-
-//walk over all sites see if we can find the image
-//return string if it exists otherwise empty
-//the string name is the image with the site in form sitename:imagename
+// walk over all sites see if we can find the image
+// return string if it exists otherwise empty
+// the string name is the image with the site in form sitename:imagename
 fn (mut sites Sites) image_find(name string) !string {
-	sitename, namelower := get_site_and_obj_name(name,true)!
-	if sitename!=""{
-		panic("should not happen, sitename need to be empty")
+	sitename, namelower := get_site_and_obj_name(name, true)!
+	if sitename != '' {
+		panic('should not happen, sitename need to be empty')
 	}
-	for _,mut site2 in sites.sites{
-		if site2.image_exists(namelower){
-			return "${site2.name}:${name}"
+	for _, mut site2 in sites.sites {
+		if site2.image_exists(namelower) {
+			return '$site2.name:$name'
 		}
 	}
-	return ""
+	return ''
 }
-

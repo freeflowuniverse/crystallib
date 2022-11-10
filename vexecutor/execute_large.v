@@ -1,7 +1,7 @@
 module vexecutor
 
 import strings
-import os {Result, fileno}
+import os { Result, fileno }
 
 fn vpopen(path string) voidptr {
 	// *C.FILE {

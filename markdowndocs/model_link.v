@@ -56,26 +56,26 @@ fn (mut link Link) error(msg string) {
 	link.error_msg = msg
 }
 
-
 // needs to be the relative path in the site, important!
 // will return true if there was change
-pub fn (mut link Link) link_update(linkpath_new string,save bool) ! {	
+pub fn (mut link Link) link_update(linkpath_new string, save bool) ! {
 	linkpath_old := link.pathfull()
 	linkoriginal_old := link.original
-	mut linkoriginal_new := linkoriginal_old.replace(linkpath_old,linkpath_new)
-	if link.cat == .image{
-		//remove description if image, is not needed
-		if link.description != ""{
-			linkoriginal_new = linkoriginal_new.replace(link.description,"")
-			link.description = ""
+	mut linkoriginal_new := linkoriginal_old.replace(linkpath_old, linkpath_new)
+	if link.cat == .image {
+		// remove description if image, is not needed
+		if link.description != '' {
+			linkoriginal_new = linkoriginal_new.replace(link.description, '')
+			link.description = ''
 		}
 	}
-	if linkoriginal_new != linkoriginal_old{
-		link.paragraph.doc.content=link.paragraph.doc.content.replace(linkoriginal_old,linkoriginal_new)
+	if linkoriginal_new != linkoriginal_old {
+		link.paragraph.doc.content = link.paragraph.doc.content.replace(linkoriginal_old,
+			linkoriginal_new)
 		if save {
 			link.paragraph.doc.save()!
 		}
-		link.paragraph.content.replace(linkoriginal_old,linkoriginal_new)
+		link.paragraph.content.replace(linkoriginal_old, linkoriginal_new)
 		link.path = linkpath_new.all_before_last('/')
 		link.filename = linkpath_new.all_after_last('/')
 		link.original = linkoriginal_new
