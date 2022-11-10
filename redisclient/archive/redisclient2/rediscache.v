@@ -1,4 +1,4 @@
-module redisclient
+module redisclient2
 
 pub struct RedisCache {
 mut:
@@ -29,13 +29,13 @@ pub fn (mut h RedisCache) get(key string) ?string {
 	return hit
 }
 
-pub fn (mut h RedisCache) set(key string, val string, expire int) ! {
+pub fn (mut h RedisCache) set(key string, val string, expire int) ? {
 	if !h.enabled {
 		return
 	}
 
 	key2 := h.namespace + ':' + key
-	h.redis.set_ex('cache:$key2', val, expire.str())!
+	h.redis.set_ex('cache:$key2', val, expire.str())?
 }
 
 pub fn (mut h RedisCache) exists(key string) bool {
@@ -43,13 +43,13 @@ pub fn (mut h RedisCache) exists(key string) bool {
 	return true
 }
 
-pub fn (mut h RedisCache) reset() ! {
+pub fn (mut h RedisCache) reset() ? {
 	key_check := 'cache:' + h.namespace
 	// println(key_check)
-	keys := h.redis.keys(key_check)!
+	keys := h.redis.keys(key_check)?
 	// println(keys)
 	for key in keys {
 		// println(key)
-		h.redis.del(key)!
+		h.redis.del(key)?
 	}
 }

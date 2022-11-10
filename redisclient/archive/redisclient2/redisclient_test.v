@@ -10,8 +10,8 @@ fn setup() &redisclient.Redis {
 	return &redis
 }
 
-fn cleanup(mut redis redisclient.Redis) ! {
-	redis.flushall()!
+fn cleanup(mut redis redisclient.Redis) ? {
+	redis.flushall()?
 	redis.disconnect()
 }
 

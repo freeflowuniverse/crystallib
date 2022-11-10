@@ -1,9 +1,9 @@
-module redisclient
+module redisclient2
 
 import freeflowuniverse.crystallib.resp
 
-pub fn (mut r Redis) get_response() !resp.RValue {
-	line := r.read_line()!
+pub fn (mut r Redis) get_response() ?resp.RValue {
+	line := r.read_line()?
 
 	if line.starts_with('-') {
 		return resp.RError{
@@ -28,7 +28,7 @@ pub fn (mut r Redis) get_response() !resp.RValue {
 		if bulkstring_size == 0 {
 			// extract final \r\n and not reading
 			// any payload
-			r.read_line()!
+			r.read_line()?
 			return resp.RString{
 				value: ''
 			}
@@ -36,7 +36,7 @@ pub fn (mut r Redis) get_response() !resp.RValue {
 		// read payload
 		buffer := r.read(bulkstring_size) or { panic(err) }
 		// extract final \r\n
-		r.read_line()!
+		r.read_line()?
 		// println("readline result:'$buffer.bytestr()'")
 		return resp.RBString{
 			value: buffer
@@ -51,7 +51,7 @@ pub fn (mut r Redis) get_response() !resp.RValue {
 
 		// proceed each entries, they can be of any types
 		for _ in 0 .. items {
-			value := r.get_response()!
+			value := r.get_response()?
 			arr.values << value
 		}
 
@@ -63,8 +63,8 @@ pub fn (mut r Redis) get_response() !resp.RValue {
 
 // TODO: needs to use the resp library
 
-pub fn (mut r Redis) get_int() !int {
-	line := r.read_line()!
+pub fn (mut r Redis) get_int() ?int {
+	line := r.read_line()?
 	if line.starts_with(':') {
 		return line[1..].int()
 	} else {
@@ -72,15 +72,15 @@ pub fn (mut r Redis) get_int() !int {
 	}
 }
 
-pub fn (mut r Redis) get_list_int() ![]int {
-	line := r.read_line()!
+pub fn (mut r Redis) get_list_int() ?[]int {
+	line := r.read_line()?
 	mut res := []int{}
 
 	if line.starts_with('*') {
 		items := line[1..].int()
 		// proceed each entries, they can be of any types
 		for _ in 0 .. items {
-			value := r.get_int()!
+			value := r.get_int()?
 			res << value
 		}
 		return res
@@ -89,15 +89,15 @@ pub fn (mut r Redis) get_list_int() ![]int {
 	}
 }
 
-pub fn (mut r Redis) get_list_str() ![]string {
-	line := r.read_line()!
+pub fn (mut r Redis) get_list_str() ?[]string {
+	line := r.read_line()?
 	mut res := []string{}
 
 	if line.starts_with('*') {
 		items := line[1..].int()
 		// proceed each entries, they can be of any types
 		for _ in 0 .. items {
-			value := r.get_string()!
+			value := r.get_string()?
 			res << value
 		}
 		return res
@@ -106,27 +106,27 @@ pub fn (mut r Redis) get_list_str() ![]string {
 	}
 }
 
-pub fn (mut r Redis) get_string() !string {
-	line := r.read_line()!
+pub fn (mut r Redis) get_string() ?string {
+	line := r.read_line()?
 	if line.starts_with('+') {
 		// println("getstring:'${line[1..]}'")
 		return line[1..]
 	}
 	if line.starts_with('$') {
-		r2 := r.get_bytes_from_line(line)!
+		r2 := r.get_bytes_from_line(line)?
 		return r2.bytestr()
 	} else {
 		return error("Did not find string, did find:'$line'")
 	}
 }
 
-pub fn (mut r Redis) get_string_nil() !string {
-	r2 := r.get_bytes_nil()!
+pub fn (mut r Redis) get_string_nil() ?string {
+	r2 := r.get_bytes_nil()?
 	return r2.bytestr()
 }
 
-pub fn (mut r Redis) get_bytes_nil() ![]u8 {
-	line := r.read_line()!
+pub fn (mut r Redis) get_bytes_nil() ?[]u8 {
+	line := r.read_line()?
 	if line.starts_with('+') {
 		return line[1..].bytes()
 	}
@@ -137,13 +137,13 @@ pub fn (mut r Redis) get_bytes_nil() ![]u8 {
 	}
 }
 
-pub fn (mut r Redis) get_bool() !bool {
-	i := r.get_int()!
+pub fn (mut r Redis) get_bool() ?bool {
+	i := r.get_int()?
 	return i == 1
 }
 
-pub fn (mut r Redis) get_bytes() ![]u8 {
-	line := r.read_line()!
+pub fn (mut r Redis) get_bytes() ?[]u8 {
+	line := r.read_line()?
 	if line.starts_with('$') {
 		return r.get_bytes_from_line(line)
 	} else {
@@ -151,20 +151,19 @@ pub fn (mut r Redis) get_bytes() ![]u8 {
 	}
 }
 
-fn (mut r Redis) get_bytes_from_line(line string) ![]u8 {
+fn (mut r Redis) get_bytes_from_line(line string) ?[]u8 {
 	mut bulkstring_size := line[1..].int()
 	if bulkstring_size == -1 {
-		// return none
-		return error('bulkstring_size  is -1')
+		return none
 	}
 	if bulkstring_size == 0 {
 		// extract final \r\n, there is no payload
-		r.read_line()!
+		r.read_line()?
 		return []
 	}
 	// read payload
-	buffer := r.read(bulkstring_size) or { panic('Could not read payload: $err') }
+	buffer := r.read(bulkstring_size) or { return error('Could not read payload: $err') }
 	// extract final \r\n
-	r.read_line()!
+	r.read_line()?
 	return buffer
 }
