@@ -44,27 +44,27 @@ fn genrate_dummey_data(username string) tw.BlockChainCreateModel {
 	return user
 }
 
-fn init_http_client()? tw.TwinClient{
+fn init_http_client()! tw.TwinClient{
 	mut transport 	:= tw.HttpTwinClient{}
-	transport.init("http://localhost:3000")?
-	client := tw.grid_client(transport)?
+	transport.init("http://localhost:3000")!
+	client := tw.grid_client(transport)!
 	return client
 }
 
-fn init_rmb_client()? tw.TwinClient{
+fn init_rmb_client()! tw.TwinClient{
 	mut transport 	:= tw.RmbTwinClient{}
-	transport.init([143], 5, 5)?
-	client := tw.grid_client(transport)?
+	transport.init([143], 5, 5)!
+	client := tw.grid_client(transport)!
 	return client
 }
 
-fn setup_tests(username string)? (tw.TwinClient, tw.BlockChainCreateModel) {
+fn setup_tests(username string)! (tw.TwinClient, tw.BlockChainCreateModel) {
 	env_value := os.getenv("TWIN_CLIENT_TYPE").to_lower()
 	data := genrate_dummey_data(username)
 
 	match env_value{
-		"rmb" {client := init_rmb_client()? return client, data}
-		"http" {client := init_http_client()? return client, data} 
+		"rmb" {client := init_rmb_client()! return client, data}
+		"http" {client := init_http_client()! return client, data} 
 		else {
 			panic("You have to set the `TWIN_CLIENT_TYPE` variable into your environment, choices are: rmb,ws,http.")
 		}

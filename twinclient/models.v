@@ -64,8 +64,8 @@ pub struct InvokeRequest {
 
 pub interface ITwinTransport {
 	mut:
-		send(functionPath string, args string)? Message
-		// wait(id string, timeout u32)? CustomResponse
+		send(functionPath string, args string)! Message
+		// wait(id string, timeout u32)! CustomResponse
 }
 
 pub type TwinClientType = WSTwinClient | RmbTwinClient | HttpTwinClient
