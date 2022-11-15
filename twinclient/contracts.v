@@ -4,22 +4,22 @@ import json
 
 
 // Create new node contract
-pub fn (mut client TwinClient) contracts_create_node(payload NodeContractCreate) ?Contract {
+pub fn (mut client TwinClient) contracts_create_node(payload NodeContractCreate) !Contract {
 	payload_encoded := json.encode_pretty(payload)
-	response := client.transport.send('contracts.create_node', payload_encoded)?
+	response := client.transport.send('contracts.create_node', payload_encoded)!
 
 	return json.decode(Contract, response.data)
 }
 
 // Create new name contract
-pub fn (mut client TwinClient) contracts_create_name(name string) ?Contract {
+pub fn (mut client TwinClient) contracts_create_name(name string) !Contract {
 	response := client.transport.send('contracts.create_name', json.encode({"name": name}))?
 
 	return json.decode(Contract, response.data)
 }
 
 // Get contract by specific Id
-pub fn (mut client TwinClient) contracts_get(id u64) ?Contract {
+pub fn (mut client TwinClient) contracts_get(id u64) !Contract {
 	response := client.transport.send('contracts.get', json.encode({"id": id}))?
 
 	return json.decode(Contract, response.data)
@@ -41,7 +41,7 @@ pub fn (mut client TwinClient) contracts_get_name_contract(name string) ?u64 {
 }
 
 // Update contract hash and data using contract id
-pub fn (mut client TwinClient) contracts_update_node_contract(payload NodeContractUpdate) ?Contract {
+pub fn (mut client TwinClient) contracts_update_node_contract(payload NodeContractUpdate) !Contract {
 	payload_encoded := json.encode_pretty(payload)
 	response := client.transport.send('contracts.update_node', payload_encoded)?
 
@@ -56,28 +56,28 @@ pub fn (mut client TwinClient) contracts_cancel(id u64) ?u64 {
 }
 
 // List all my contracts
-pub fn (mut client TwinClient) contracts_list_my_contracts() ?ListContracts {
+pub fn (mut client TwinClient) contracts_list_my_contracts() !ListContracts {
 	response := client.transport.send('contracts.listMyContracts', '{}')?
 
 	return json.decode(ListContracts, response.data)
 }
 
 // List all contracts for specific twin_id
-pub fn (mut client TwinClient) contracts_list_contracts_by_twin_id(twin_id u32) ?ListContracts {
+pub fn (mut client TwinClient) contracts_list_contracts_by_twin_id(twin_id u32) !ListContracts {
 	response := client.transport.send('contracts.listContractsByTwinId', json.encode({"twinId": twin_id}))?
 
 	return json.decode(ListContracts, response.data)
 }
 
 // List all contracts for specific address
-pub fn (mut client TwinClient) contracts_list_contracts_by_address(address string) ?ListContracts {
+pub fn (mut client TwinClient) contracts_list_contracts_by_address(address string) !ListContracts {
 	response := client.transport.send('contracts.listContractsByAddress', json.encode({"address": address}))?
 
 	return json.decode(ListContracts, response.data)
 }
 
 // Cancel all my contracts
-pub fn (mut client TwinClient) contracts_cancel_my_contracts() ?[]SimpleContract {
+pub fn (mut client TwinClient) contracts_cancel_my_contracts() ![]SimpleContract {
 	response := client.transport.send('contracts.cancelMyContracts', '{}')?
 
 	return json.decode([]SimpleContract, response.data)

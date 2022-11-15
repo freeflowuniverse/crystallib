@@ -12,7 +12,13 @@ import os
 pub struct Tmux {
 pub mut:
 	sessions map[string]&Session
-	node     string
+	node     builder.Node
+}
+
+pub fn get_local()!Tmux{
+	mut builder := builder.new()
+	mut node := builder.node_local()!	
+	return Tmux{node:node}
 }
 
 // check tmux is installed, if not install it

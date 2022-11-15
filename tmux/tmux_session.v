@@ -45,10 +45,10 @@ fn init_session(mut tmux Tmux, s_name string) ?Session {
 }
 
 pub fn (mut s Session) create() ? {
-	mut e := s.tmuxexecutor.db
-	res_opt := "-P -F '#{window_id}'"
+	mut e := s.tmux.node.executor
+	res_opt := "-P -F '#\{window_id\}'"
 	cmd := "tmux new-session $res_opt -d -s $s.name 'sh'"
-	window_id_ := e.exec(cmd) or { return error("Can't create tmux session $s.name \n$cmd\n$err") }
+	window_id_ := s.tmux.node.exec(cmd) or { return error("Can't create tmux session $s.name \n$cmd\n$err") }
 
 	cmd3 := 'tmux set-option remain-on-exit on'
 	e.exec(cmd3) or { return error("Can't execute $cmd3\n$err") }

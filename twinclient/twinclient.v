@@ -1,6 +1,6 @@
 module twinclient
 import freeflowuniverse.crystallib.redisclient
-import freeflowuniverse.crystallib.resp2
+import freeflowuniverse.crystallib.resp
 import net.websocket as ws
 import net.http
 import x.json2
@@ -16,31 +16,31 @@ pub fn grid_client(transport ITwinTransport) ?TwinClient {
 }
 
 // Http Client
-pub fn (mut htp HttpTwinClient) init(url string)? HttpTwinClient {
+pub fn (mut http HttpTwinClient) init(url string)? HttpTwinClient {
 	header := http.new_header_from_map({
 		http.CommonHeader.content_type: 'application/json',
 	})
-	htp.header = header
-	htp.url = url
-	htp.method = http.Method.post
+	http.header = header
+	http.url = url
+	http.method = http.Method.post
 	// request := http.Request{
-	// 	url: "$htp.url/ping"
+	// 	url: "$http.url/ping"
 	// 	method: http.Method.get
-	// 	header: htp.header,
+	// 	header: http.header,
 	// }
 	// response := request.do()?
 	// if response.body != "pong"{
 	// 	panic("You have to intialize the http server first.") 
 	// }
-	return htp
+	return http
 }
 
-pub fn (htp HttpTwinClient) send(functionPath string, args string)? Message{
+pub fn (http HttpTwinClient) send(functionPath string, args string)? Message{
 	function := functionPath.replace('.', '/')
 	request := http.Request{
-		url: "$htp.url/$function"
-		method: htp.method
-		header: htp.header,
+		url: "$http.url/$function"
+		method: http.method
+		header: http.header,
 		data: args,
 	}
 	resp := request.do()?

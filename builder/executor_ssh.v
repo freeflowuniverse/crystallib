@@ -6,8 +6,8 @@ import freeflowuniverse.crystallib.process
 import ipaddress
 
 [heap]
-struct ExecutorSSH {
-mut:
+pub struct ExecutorSSH {
+pub mut:
 	ipaddr      ipaddress.IPAddress
 	sshkey      string
 	user        string = 'root' // default will be root
@@ -39,15 +39,15 @@ fn (mut executor ExecutorSSH) init() ! {
 	}
 }
 
-fn (mut executor ExecutorSSH) debug_on() {
+pub fn (mut executor ExecutorSSH) debug_on() {
 	executor.debug = true
 }
 
-fn (mut executor ExecutorSSH) debug_off() {
+pub fn (mut executor ExecutorSSH) debug_off() {
 	executor.debug = false
 }
 
-fn (mut executor ExecutorSSH) exec(cmd string) !string {
+pub fn (mut executor ExecutorSSH) exec(cmd string) !string {
 	cmd2 := 'ssh $executor.user@$executor.ipaddr.addr -p $executor.ipaddr.port "$cmd"'
 	if executor.debug {
 		println(' .. execute $executor.ipaddr.addr: $cmd')
@@ -56,7 +56,7 @@ fn (mut executor ExecutorSSH) exec(cmd string) !string {
 	return res.output
 }
 
-fn (mut executor ExecutorSSH) exec_silent(cmd string) !string {
+pub fn (mut executor ExecutorSSH) exec_silent(cmd string) !string {
 	mut stdout := false
 	if executor.debug {
 		stdout = true
@@ -67,7 +67,7 @@ fn (mut executor ExecutorSSH) exec_silent(cmd string) !string {
 	return res.output
 }
 
-fn (mut executor ExecutorSSH) file_write(path string, text string) ! {
+pub fn (mut executor ExecutorSSH) file_write(path string, text string) ! {
 	if executor.debug {
 		println(' - $executor.ipaddr.addr file write: $path')
 	}
@@ -77,7 +77,7 @@ fn (mut executor ExecutorSSH) file_write(path string, text string) ! {
 	os.rm(local_path)!
 }
 
-fn (mut executor ExecutorSSH) file_read(path string) !string {
+pub fn (mut executor ExecutorSSH) file_read(path string) !string {
 	if executor.debug {
 		println(' - $executor.ipaddr.addr file read: $path')
 	}
@@ -88,7 +88,7 @@ fn (mut executor ExecutorSSH) file_read(path string) !string {
 	return r
 }
 
-fn (mut executor ExecutorSSH) file_exists(path string) bool {
+pub fn (mut executor ExecutorSSH) file_exists(path string) bool {
 	if executor.debug {
 		println(' - $executor.ipaddr.addr file exists: $path')
 	}
@@ -100,7 +100,7 @@ fn (mut executor ExecutorSSH) file_exists(path string) bool {
 }
 
 // carefull removes everything
-fn (mut executor ExecutorSSH) delete(path string) ! {
+pub fn (mut executor ExecutorSSH) delete(path string) ! {
 	if executor.debug {
 		println(' - $executor.ipaddr.addr file delete: $path')
 	}
@@ -108,7 +108,7 @@ fn (mut executor ExecutorSSH) delete(path string) ! {
 }
 
 // upload from local FS to executor FS
-fn (mut executor ExecutorSSH) download(source string, dest string) ! {
+pub fn (mut executor ExecutorSSH) download(source string, dest string) ! {
 	port := executor.ipaddr.port
 	if executor.debug {
 		println(' - $executor.ipaddr.addr file download: $source')
@@ -141,7 +141,7 @@ fn (mut executor ExecutorSSH) download(source string, dest string) ! {
 }
 
 // download from executor FS to local FS
-fn (mut executor ExecutorSSH) upload(source string, dest string) ! {
+pub fn (mut executor ExecutorSSH) upload(source string, dest string) ! {
 	port := executor.ipaddr.port
 	if executor.debug {
 		println(' - $executor.ipaddr.addr file upload: $source -> $dest')
@@ -157,7 +157,7 @@ fn (mut executor ExecutorSSH) upload(source string, dest string) ! {
 }
 
 // get environment variables from the executor
-fn (mut executor ExecutorSSH) environ_get() !map[string]string {
+pub fn (mut executor ExecutorSSH) environ_get() !map[string]string {
 	env := executor.exec('env') or { return error('can not get environment') }
 
 	if executor.debug {
@@ -184,7 +184,7 @@ Executor info or meta data
 accessing type Executor won't allow to access the
 fields of the struct, so this is workaround
 */
-fn (mut executor ExecutorSSH) info() map[string]string {
+pub fn (mut executor ExecutorSSH) info() map[string]string {
 	return {
 		'category':  'ssh'
 		'sshkey':    executor.sshkey
@@ -197,7 +197,7 @@ fn (mut executor ExecutorSSH) info() map[string]string {
 // ssh shell on the node default ssh port, or any custom port that may be
 // forwarding ssh traffic to certain container
 
-fn (mut executor ExecutorSSH) shell(cmd string) ! {
+pub fn (mut executor ExecutorSSH) shell(cmd string) ! {
 	mut p := '$executor.ipaddr.port'
 	if cmd.len > 0 {
 		panic('TODO IMPLEMENT SHELL EXEC OVER SSH')
@@ -205,7 +205,7 @@ fn (mut executor ExecutorSSH) shell(cmd string) ! {
 	os.execvp('ssh', ['$executor.user@$executor.ipaddr.addr', '-p $p'])!
 }
 
-fn (mut executor ExecutorSSH) list(path string) ![]string {
+pub fn (mut executor ExecutorSSH) list(path string) ![]string {
 	if !executor.dir_exists(path) {
 		panic('Dir Not found')
 	}
@@ -217,7 +217,7 @@ fn (mut executor ExecutorSSH) list(path string) ![]string {
 	return res
 }
 
-fn (mut executor ExecutorSSH) dir_exists(path string) bool {
+pub fn (mut executor ExecutorSSH) dir_exists(path string) bool {
 	output := executor.exec('test -d $path && echo found || echo not found') or { return false }
 	if output.trim_space() == 'found' {
 		return true

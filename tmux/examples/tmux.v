@@ -3,12 +3,12 @@ module main
 import tmux
 import redisclient
 
-fn do() ? {
-	mut b_local := tmux.executor_new(local: true)
-	mut b_ssh := tmux.executor_new(ipaddr: '212.2.3.3')
+fn do()! {
+	mut t := tmux.get_local()!
 
-	println(b_local)
-	println(b_ssh)
+	t.window_new(name: 'test', cmd: 'mc', reset: true)?
+
+
 }
 
 fn main() {
