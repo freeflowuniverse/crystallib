@@ -15,8 +15,7 @@ pub fn (mut p Params) to_resp() ![]u8 {
 		b_arg.add(resp.r_string(arg.value))
 	}
 	b_main.add(resp.r_list_bytestring([b_param.data, b_arg.data]))
-	//find a way how we can generic serialize & deserlize from and to resp
-	//TODO: Jonathan, do a test we can go from one to other & back, so can be used as serialization
+
 	return b_main.data
 }
 

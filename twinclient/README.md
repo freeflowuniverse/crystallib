@@ -35,10 +35,10 @@ import freeflowuniverse.crystallib.twinclient as tw
 
 fn main() {
  mut transport := tw.RmbTwinClient{}
- transport.init([143], 5, 5)?
- mut grid := tw.grid_client(transport)?
+ transport.init([143], 5, 5)!
+ mut grid := tw.grid_client(transport)!
         // Now you can invoke any function below.
- grid.algorand_list()?
+ grid.algorand_list()!
 }
 ```
 
@@ -53,10 +53,10 @@ import crystallib.twinclient as tw
 
 fn main() {
  mut transport := tw.HttpTwinClient{}
- transport.init("http://localhost:3000")?
- mut grid := tw.grid_client(transport)?
+ transport.init("http://localhost:3000")!
+ mut grid := tw.grid_client(transport)!
         // Now you can invoke any function below.
-        grid.algorand_list()?
+        grid.algorand_list()!
 }
 ```
 
@@ -75,17 +75,17 @@ import json
 
 fn main() {
  mut s := ws.new_server(.ip6, 8081, '/')
- s.on_connect(fn (mut s ws.ServerClient) ?bool {
+ s.on_connect(fn (mut s ws.ServerClient) !bool {
   if s.resource_name != '/' {
    return false
   }
   println('Client has connected...')
   return true
- })?
- s.on_message(fn (mut ws_client ws.Client, msg &tw.RawMessage) ? {
-  handle_events(msg, mut ws_client)?
+ })!
+ s.on_message(fn (mut ws_client ws.Client, msg &tw.RawMessage) ! {
+  handle_events(msg, mut ws_client)!
  })
- s.on_close(fn (mut ws ws.Client, code int, reason string) ? {
+ s.on_close(fn (mut ws ws.Client, code int, reason string) ! {
   println(term.green('client ($ws.id) closed connection'))
  })
  s.listen() or { println(term.red('error on server listen: $err')) }
@@ -94,23 +94,23 @@ fn main() {
  }
 }
 
-fn handle_events(raw_msg &tw.RawMessage, mut ws_client ws.Client)? {
+fn handle_events(raw_msg &tw.RawMessage, mut ws_client ws.Client)! {
  if raw_msg.payload.len == 0 {
   return
  }
 
  mut transport := tw.WSTwinClient{}
- transport.init(mut ws_client)?
- mut grid := tw.grid_client(transport)?
+ transport.init(mut ws_client)!
+ mut grid := tw.grid_client(transport)!
  msg := json.decode(tw.Message, raw_msg.payload.bytestr()) or {
   println("cannot decode message")
   return
  }
 
  if msg.event == "sum_balances" {
-  go fn [mut grid]()? {
+  go fn [mut grid]()! {
    // List all algorand accounts.
-   grid.algorand_list()?
+   grid.algorand_list()!
 
    // Deploy new machine
    machines := tw.MachinesModel{
@@ -137,7 +137,7 @@ fn handle_events(raw_msg &tw.RawMessage, mut ws_client ws.Client)? {
      },
     ]
    }
-   twin.machines_deploy(machines)?
+   twin.machines_deploy(machines)!
   }()
  } else {
   println("got a new message: $msg.event")
@@ -160,20 +160,20 @@ fn handle_events(raw_msg &tw.RawMessage, mut ws_client ws.Client)? {
 
 ### Contracts
 
-| Description                           | Function                                                              |
-| :------------------------------------ | :---------------------------------------------------------------------|
-| Create a new node contract            | `create_node({NodeContractCreate})`                                   |
-| Create a new name contract            | `create_name("NAME")`                                                 |
-| Get info of a contract with id        | `get(<CONTRACT_ID>)`                                                  |
-| Get contract id from node id and hash | `get_contract_id_by_node_id_and_hash({ContractIdByNodeIdAndHash})`    |
-| Get name contract using name          | `get_name_contract("NAME")`                                           |
-| Update node contract                  | `update_node_contract({NodeContractUpdate})`                          |
-| List my contracts                     | `list_my_contracts()`                                                 |
-| List contracts for specific twin      | `list_contracts_by_twin_id(<TWIN_ID>)`                                |
-| List contracts using address          | `list_contracts_by_address("ADDRESS")`                                |
-| Cancel contract                       | `cancel(<CONTRACT_ID>)`                                               |
-| Cancel all my contracts               | `cancel_my_contracts()`                                               |
-| Get contract consumption `TFT/hour`   | `get_consumption(<CONTRACT_ID>)`                                      |
+| Description                           | Function                                                           |
+| :------------------------------------ | :----------------------------------------------------------------- |
+| Create a new node contract            | `create_node({NodeContractCreate})`                                |
+| Create a new name contract            | `create_name("NAME")`                                              |
+| Get info of a contract with id        | `get(<CONTRACT_ID>)`                                               |
+| Get contract id from node id and hash | `get_contract_id_by_node_id_and_hash({ContractIdByNodeIdAndHash})` |
+| Get name contract using name          | `get_name_contract("NAME")`                                        |
+| Update node contract                  | `update_node_contract({NodeContractUpdate})`                       |
+| List my contracts                     | `list_my_contracts()`                                              |
+| List contracts for specific twin      | `list_contracts_by_twin_id(<TWIN_ID>)`                             |
+| List contracts using address          | `list_contracts_by_address("ADDRESS")`                             |
+| Cancel contract                       | `cancel(<CONTRACT_ID>)`                                            |
+| Cancel all my contracts               | `cancel_my_contracts()`                                            |
+| Get contract consumption `TFT/hour`   | `get_consumption(<CONTRACT_ID>)`                                   |
 
 ### ZOS
 
@@ -183,15 +183,15 @@ fn handle_events(raw_msg &tw.RawMessage, mut ws_client ws.Client)? {
 
 ### Machine
 
-| Description                                         | Function                           |
-| :-------------------------------------------------- | :--------------------------------- |
-| Deploy machines -- *can have more than one machine* | `deploy({Machines})`               |
-| Get machines deployment info                        | `get("MACHINES_NAME")`             |
-| Update machines                                     | `update({Machines})`               |
-| List all my deployed machines                       | `list()`                           |
-| Add machine -- *single machine*                     | `add_machine({AddMachine})`        |
-| Delete machine  -- *single machine*                 | `delete_machine({SingleDelete})`   |
-| Delete machines -- *All machines in the deployment* | `delete("MACHINES_NAME")`          |
+| Description                                         | Function                         |
+| :-------------------------------------------------- | :------------------------------- |
+| Deploy machines -- _can have more than one machine_ | `deploy({Machines})`             |
+| Get machines deployment info                        | `get("MACHINES_NAME")`           |
+| Update machines                                     | `update({Machines})`             |
+| List all my deployed machines                       | `list()`                         |
+| Add machine -- _single machine_                     | `add_machine({AddMachine})`      |
+| Delete machine -- _single machine_                  | `delete_machine({SingleDelete})` |
+| Delete machines -- _All machines in the deployment_ | `delete("MACHINES_NAME")`        |
 
 ### Kubernetes
 
@@ -207,93 +207,93 @@ fn handle_events(raw_msg &tw.RawMessage, mut ws_client ws.Client)? {
 
 ### ZDB
 
-| Description                                  | Function                        |
-| :------------------------------------------- | :------------------------------ |
-| Deploy zdbs  -- *can have more than one zdb* | `deploy({ZDBs})`                |
-| Get zdbs deployment info                     | `get("ZDBS_NAME")`              |
-| Update zdbs                                  | `update({ZDBs})`                |
-| List all my deployed zdbs                    | `list()`                        |
-| Add zdb -- *single zdb*                      | `add_zdb({AddZDB})`             |
-| Delete zdb -- *single zdb*                   | `delete_zdb({SingleDelete})`    |
-| Delete zdbs -- *All zdbs in the deployment*  | `delete("ZDBS_NAME")`           |
+| Description                                 | Function                     |
+| :------------------------------------------ | :--------------------------- |
+| Deploy zdbs -- _can have more than one zdb_ | `deploy({ZDBs})`             |
+| Get zdbs deployment info                    | `get("ZDBS_NAME")`           |
+| Update zdbs                                 | `update({ZDBs})`             |
+| List all my deployed zdbs                   | `list()`                     |
+| Add zdb -- _single zdb_                     | `add_zdb({AddZDB})`          |
+| Delete zdb -- _single zdb_                  | `delete_zdb({SingleDelete})` |
+| Delete zdbs -- _All zdbs in the deployment_ | `delete("ZDBS_NAME")`        |
 
 ### QSFS
 
-| Description                    | Function                         |
-| :----------------------------- | :--------------------------------|
-| Deploy QSFS Zdbs               | `deploy({QSFSZDBs})`             |
-| List all my deployed QSFS Zdbs | `list()`                         |
-| Get QSFS Zdbs deployment info  | `get("QSFS_NAME")`               |
-| Delete QSFS Zdbs               | `delete("QSFS_NAME")`            |
+| Description                    | Function              |
+| :----------------------------- | :-------------------- |
+| Deploy QSFS Zdbs               | `deploy({QSFSZDBs})`  |
+| List all my deployed QSFS Zdbs | `list()`              |
+| Get QSFS Zdbs deployment info  | `get("QSFS_NAME")`    |
+| Delete QSFS Zdbs               | `delete("QSFS_NAME")` |
 
 ### Gateways
 
-| Description                                          | Function                       |
-| :--------------------------------------------------- | :------------------------------|
-| Deploy a fully qualified domain -- *ex: site.com*    | `deploy_fqdn({GatewayFQDN})`   |
-| Deploy a prefix domain -- *ex: name.gateway.grid.tf* | `deploy_name({GatewayName})`   |
-| Get fqdn deployment info                             | `get_fqdn("FQDN_Name")`        |
-| Get prefix domain deployment info                    | `get_name("PREFIX_NAME")`      |
-| Delete deployed fqdn                                 | `delete_fqdn("FQDN_Name")`     |
-| Delete deployed prefix domain                        | `delete_name("PREFIX_NAME")`   |
+| Description                                          | Function                     |
+| :--------------------------------------------------- | :--------------------------- |
+| Deploy a fully qualified domain -- _ex: site.com_    | `deploy_fqdn({GatewayFQDN})` |
+| Deploy a prefix domain -- _ex: name.gateway.grid.tf_ | `deploy_name({GatewayName})` |
+| Get fqdn deployment info                             | `get_fqdn("FQDN_Name")`      |
+| Get prefix domain deployment info                    | `get_name("PREFIX_NAME")`    |
+| Delete deployed fqdn                                 | `delete_fqdn("FQDN_Name")`   |
+| Delete deployed prefix domain                        | `delete_name("PREFIX_NAME")` |
 
 ### KVStore
 
-| Description                        | Function                 |
-| :--------------------------------- | :------------------------|
-| Set a record in KVStore            | `set("KEY", "VALUE")`    |
-| Get a record in KVStore            | `get("KEY")`             |
-| List all records in my KVStore     | `list()`                 |
-| Remove a record from KVStore       | `remove("KEY")`          |
-| Remove all records from my KVStore | `remove_all_kvstore()`   |
+| Description                        | Function               |
+| :--------------------------------- | :--------------------- |
+| Set a record in KVStore            | `set("KEY", "VALUE")`  |
+| Get a record in KVStore            | `get("KEY")`           |
+| List all records in my KVStore     | `list()`               |
+| Remove a record from KVStore       | `remove("KEY")`        |
+| Remove all records from my KVStore | `remove_all_kvstore()` |
 
 ### Balance
 
 | Description                                  | Function                      |
-| :------------------------------------------- | :-----------------------------|
+| :------------------------------------------- | :---------------------------- |
 | Get current balance for specific address     | `get("ADDRESS")`              |
 | Get my current balance                       | `get_my_balance()`            |
 | Transfer from my account to specific address | `transfer({BalanceTransfer})` |
 
 ### Stellar
 
-| Description                           | Function                         |
-| :------------------------------------ | :------------------------------- |
-| Import Wallet                         | `import_({StellarWallet})`       |
-| Get Wallet by name                    | `get("NAME")`                    |
-| List wallets related to specific twin | `list()`                         |
-| Update wallet secret                  | `update({StellarWallet})`        |
-| Get balance by name                   | `balance_by_name("NAME")`        |
-| Get balance by address                | `balance_by_address("ADDRESS")`  |
-| Transfer from account to another      | `transfer({StellarTransfer})`    |
-| Delete a wallet from server           | `delete("NAME")`                 |
-| Check if wallet exists in the server  | `exist("NAME")`                  |
+| Description                           | Function                        |
+| :------------------------------------ | :------------------------------ |
+| Import Wallet                         | `import_({StellarWallet})`      |
+| Get Wallet by name                    | `get("NAME")`                   |
+| List wallets related to specific twin | `list()`                        |
+| Update wallet secret                  | `update({StellarWallet})`       |
+| Get balance by name                   | `balance_by_name("NAME")`       |
+| Get balance by address                | `balance_by_address("ADDRESS")` |
+| Transfer from account to another      | `transfer({StellarTransfer})`   |
+| Delete a wallet from server           | `delete("NAME")`                |
+| Check if wallet exists in the server  | `exist("NAME")`                 |
 
 ### Algorand
 
-| Description                           | Function                                      |
-| :------------------------------------ | :---------------------------------------------|
-| Import Wallet                         | `import_(name, mnemonics)`                    |
-| Sign Bytes                            | `sign_bytes("NAME", "MSG")`                   |
-| Get Wallet by name                    | `get("NAME")`                                 |
-| Get all of assets by name             | `assets_by_name("NAME")`                      |
-| Get all of assets by address          | `assets_by_address("ADDRESS")`                |
-| Check if wallet exists in the server  | `exist("NAME")`                               |
-| List wallets related to specific twin | `list()`                                      |
-| Delete a wallet from server           | `delete("NAME")`                              |
-| Create a new wallet                   | `create("NAME")`                              |
-| Transfer from account to another      | `transfer(SENDER, RECEIVER, AMOUNT, TEXT)`    |
+| Description                           | Function                                   |
+| :------------------------------------ | :----------------------------------------- |
+| Import Wallet                         | `import_(name, mnemonics)`                 |
+| Sign Bytes                            | `sign_bytes("NAME", "MSG")`                |
+| Get Wallet by name                    | `get("NAME")`                              |
+| Get all of assets by name             | `assets_by_name("NAME")`                   |
+| Get all of assets by address          | `assets_by_address("ADDRESS")`             |
+| Check if wallet exists in the server  | `exist("NAME")`                            |
+| List wallets related to specific twin | `list()`                                   |
+| Delete a wallet from server           | `delete("NAME")`                           |
+| Create a new wallet                   | `create("NAME")`                           |
+| Transfer from account to another      | `transfer(SENDER, RECEIVER, AMOUNT, TEXT)` |
 
 ### TFChain
 
-| Description                           | Function                                      |
-| :------------------------------------ | :---------------------------------------------|
-| Import Wallet                         | `import_(name, mnemonics)`                    |
-| Get Wallet by name                    | `get("NAME")`                                 |
-| Check if wallet exists in the server  | `exist("NAME")`                               |
-| Update wallet secret                  | `update(NAME, MNEMONICS)`                     |
-| Get all of assets by name             | `assets_by_name("NAME")`                      |
-| Get all of assets by address          | `assets_by_address("ADDRESS")`                |
-| List wallets related to specific twin | `list()`                                      |
-| Delete a wallet from server           | `delete("NAME")`                              |
-| Transfer from account to another      | `transfer(NAME, TARGET_ADDRESS, AMOUNT)`      |
+| Description                           | Function                                 |
+| :------------------------------------ | :--------------------------------------- |
+| Import Wallet                         | `import_(name, mnemonics)`               |
+| Get Wallet by name                    | `get("NAME")`                            |
+| Check if wallet exists in the server  | `exist("NAME")`                          |
+| Update wallet secret                  | `update(NAME, MNEMONICS)`                |
+| Get all of assets by name             | `assets_by_name("NAME")`                 |
+| Get all of assets by address          | `assets_by_address("ADDRESS")`           |
+| List wallets related to specific twin | `list()`                                 |
+| Delete a wallet from server           | `delete("NAME")`                         |
+| Transfer from account to another      | `transfer(NAME, TARGET_ADDRESS, AMOUNT)` |
