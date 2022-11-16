@@ -47,9 +47,9 @@ pub fn basic_auth(users map[string]string, mut app App)?{
 		value = app.Context.req.header.get_custom(headers_keys[headers_keys.index("Authorization")])?
 	}
 	if processed_users[value] == ''{
-		app.set_status(403, 'ForbiddenXYZ')
+		app.set_status(403, wrong_credential)
 		app.add_header("WWW-Authenticate", 'Basic realm="private"')
-        er := CustomResponse{403, 'ForbiddenXYZ'}
+        er := CustomResponse{403, wrong_credential}
         app.json(er.to_json())
 	}
 }
