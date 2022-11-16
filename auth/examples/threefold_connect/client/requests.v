@@ -6,13 +6,13 @@ import rand
 import encoding.base64
 import libsodium
 import toml
+import os
 
 
 
 
 const (
 	redirect_url = "https://login.threefold.me"
-	app_id = "localhost:8080"
 	sign_len = 64
 )
 
@@ -20,8 +20,14 @@ const (
 
 ["/login"]
 fn (mut clinet ClientApp) login()! vweb.Result {
+	app_id := clinet.get_header('Host')
 	mut server_public_key := ""
-	keys := parse_keys()!
+	mut file_path := os.args_after(".")
+	if file_path.len <= 1{
+		clinet.abort(400, file_dose_not_exist)
+	}
+	file_path << "."
+	keys := parse_keys(file_path[1])!
 	if keys.value("server") == toml.Any(toml.Null{}){
 		clinet.abort(400, file_dose_not_exist)
 	} else {

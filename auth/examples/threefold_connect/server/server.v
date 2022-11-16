@@ -3,13 +3,19 @@ import vweb
 import x.json2
 import encoding.base64
 import libsodium
+import os
 
 
 
 
 ["/verify"; post]
 fn (mut server ServerApp) verify()! vweb.Result {
-	keys := parse_keys()!
+	mut file_path := os.args_after(".")
+	if file_path.len <= 1{
+		server.abort(400, file_dose_not_exist)
+	}
+	file_path << "."
+	keys := parse_keys(file_path[1])!
 	server_public_key 	:= keys.value('server.SERVER_PUBLIC_KEY').string()
 	server_private_key 	:= keys.value('server.SERVER_SECRET_KEY').string()
 	server_pk_decoded_32 := [32]u8{}

@@ -2,7 +2,7 @@ module main
 import net.http
 import json
 import toml
-import os
+
 
 
 struct CustomResponse {
@@ -23,6 +23,7 @@ struct ResultData {
 }
 
 const (
+	file_dose_not_exist    	= "Couldn't parse kyes file, just make sure that you have kyes.toml by running create_keys.v file, then send its path when you running the client app."
     signed_attempt_missing  = 'signedAttempt parameter is missing.'
     invalid_json   			= 'Invalid JSON Payload.'
     no_double_name   		= 'DoubleName is missing.'
@@ -34,9 +35,8 @@ const (
 	email_not_verified 		= 'Email is not verified'
 )
 
-pub fn parse_keys()!toml.Doc{
-	file_path := os.args_after(".")
-	return toml.parse_file(file_path[1])!
+pub fn parse_keys(file_path string)!toml.Doc{
+	return toml.parse_file(file_path)!
 }
 
 pub fn request_to_get_pub_key(username string)! http.Response{

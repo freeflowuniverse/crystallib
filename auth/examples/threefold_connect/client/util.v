@@ -4,9 +4,6 @@ import json
 import x.json2
 import net.http
 import toml
-import os
-
-
 
 
 struct CustomResponse {
@@ -37,9 +34,8 @@ const (
 	server_host				= "http://localhost:8000"
 )
 
-pub fn parse_keys()!toml.Doc{
-	file_path := os.args_after(".")
-	return toml.parse_file(file_path[1])!
+pub fn parse_keys(file_path string)!toml.Doc{
+	return toml.parse_file(file_path)!
 }
 
 pub fn url_encode(map_ map[string]string) string {
