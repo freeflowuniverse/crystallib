@@ -1,5 +1,6 @@
 module main
 import vweb
+import term
 
 
 
@@ -8,7 +9,7 @@ struct ServerApp {
 }
 
 fn main() {
-	println("Server app started")
+	println(term.green("Server app started"))
     vweb.run(&ServerApp{}, 8000)
 }
 

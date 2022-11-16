@@ -1,6 +1,6 @@
 module main
 import vweb
-
+import term
 
 // To run client app
 struct ClientApp {
@@ -14,6 +14,6 @@ pub fn (mut client ClientApp)abort(status int, message string){
 }
 
 fn main() {
-	println("Client app started")
+	println(term.green('Client app started'))
 	vweb.run(&ClientApp{}, 8080)
 }

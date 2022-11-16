@@ -1,6 +1,8 @@
 module main
 import net.http
 import json
+import toml
+import os
 
 
 struct CustomResponse {
@@ -21,7 +23,6 @@ struct ResultData {
 }
 
 const (
-	kyes_file_path 			= '../keys.toml'
     signed_attempt_missing  = 'signedAttempt parameter is missing.'
     invalid_json   			= 'Invalid JSON Payload.'
     no_double_name   		= 'DoubleName is missing.'
@@ -33,7 +34,12 @@ const (
 	email_not_verified 		= 'Email is not verified'
 )
 
-pub fn request_to_get_pub_key(username string)? http.Response{
+pub fn parse_keys()!toml.Doc{
+	file_path := os.args_after(".")
+	return toml.parse_file(file_path[1])!
+}
+
+pub fn request_to_get_pub_key(username string)! http.Response{
 	mut header := http.new_header_from_map({
 		http.CommonHeader.content_type: 'application/json'
 	})
@@ -43,11 +49,12 @@ pub fn request_to_get_pub_key(username string)? http.Response{
 
 	}
 	url := "https://login.threefold.me/api/users/$username"
-	resp := http.fetch(http.FetchConfig{ ...config, url: url })?
+	resp := http.fetch(http.FetchConfig{ ...config, url: url })!
+	println(resp)
 	return resp
 }
 
-pub fn request_to_verify_sei(sei string)? http.Response{
+pub fn request_to_verify_sei(sei string)! http.Response{
 	header := http.new_header_from_map({
 		http.CommonHeader.content_type: 'application/json',
 	})
@@ -58,7 +65,7 @@ pub fn request_to_verify_sei(sei string)? http.Response{
 		header: header,
 		data: json.encode({"signedEmailIdentifier": sei}),
 	}
-	result := request.do() ?
+	result := request.do()!
 	return result
 }
 

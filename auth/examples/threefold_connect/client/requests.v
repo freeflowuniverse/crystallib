@@ -19,9 +19,9 @@ const (
 
 
 ["/login"]
-fn (mut clinet ClientApp) login()? vweb.Result {
+fn (mut clinet ClientApp) login()! vweb.Result {
 	mut server_public_key := ""
-	keys := toml.parse_file(kyes_file_path)?
+	keys := parse_keys()!
 	if keys.value("server") == toml.Any(toml.Null{}){
 		clinet.abort(400, file_dose_not_exist)
 	} else {
@@ -41,12 +41,11 @@ fn (mut clinet ClientApp) login()? vweb.Result {
         "redirecturl": "/callback",
         "publickey": base64.encode(server_curve_pk[..]),
     }
-	clinet.redirect("$redirect_url?${url_encode(params)}")
-	return clinet.text('Login Page...')
+	return clinet.redirect("$redirect_url?${url_encode(params)}")
 }
 
 ["/callback"]
-fn (mut clinet ClientApp) callback()? vweb.Result {
+fn (mut clinet ClientApp) callback()! vweb.Result {
 	data := SignedAttempt{}
 	query := clinet.query.clone()
 
@@ -54,7 +53,7 @@ fn (mut clinet ClientApp) callback()? vweb.Result {
         clinet.abort(400, signed_attempt_missing)
 	}
 
-	initial_data := data.load(query)?
-	res := request_to_server_to_verify(initial_data)?
+	initial_data := data.load(query)!
+	res := request_to_server_to_verify(initial_data)!
 	return clinet.text("${res.body}")
 }

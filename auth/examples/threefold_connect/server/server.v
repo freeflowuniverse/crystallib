@@ -3,13 +3,13 @@ import vweb
 import x.json2
 import encoding.base64
 import libsodium
-import toml
+
 
 
 
 ["/verify"; post]
-fn (mut server ServerApp) verify()? vweb.Result {
-	keys := toml.parse_file(kyes_file_path) or {panic("Couldn't parse kyes_file_path")}
+fn (mut server ServerApp) verify()! vweb.Result {
+	keys := parse_keys()!
 	server_public_key 	:= keys.value('server.SERVER_PUBLIC_KEY').string()
 	server_private_key 	:= keys.value('server.SERVER_SECRET_KEY').string()
 	server_pk_decoded_32 := [32]u8{}
@@ -18,23 +18,23 @@ fn (mut server ServerApp) verify()? vweb.Result {
 	_ := base64.decode_in_buffer(&server_public_key, &server_pk_decoded_32)
 	_ := base64.decode_in_buffer(&server_private_key, &server_sk_decoded_64)
 
-	request_data := json2.raw_decode(server.Context.req.data)?
+	request_data := json2.raw_decode(server.Context.req.data)!
 	data := SignedAttempt{
-		signed_attempt: request_data.as_map()['signed_attempt']?.str(), 
-		double_name: request_data.as_map()['double_name']?.str(),
+		signed_attempt: request_data.as_map()['signed_attempt']!.str(), 
+		double_name: request_data.as_map()['double_name']!.str(),
 	}
 
 	if data.double_name == ""{
 		server.abort(400, no_double_name)
 	}
 
-	res := request_to_get_pub_key(data.double_name)?
+	res := request_to_get_pub_key(data.double_name)!
 	if res.status_code != 200{
 		server.abort(400, "Error getting user pub key")
 	}
 
-	body 			:= json2.raw_decode(res.body)?
-	user_pk 		:= body.as_map()['publicKey']?.str()
+	body 			:= json2.raw_decode(res.body)!
+	user_pk 		:= body.as_map()['publicKey']!.str()
 	user_pk_buff 	:= [32]u8{}
 	_ 				:= base64.decode_in_buffer(&user_pk, &user_pk_buff)
 	signed_data 	:= data.signed_attempt
@@ -49,14 +49,14 @@ fn (mut server ServerApp) verify()? vweb.Result {
 	}
 
 	verified_data 	:= base64.decode(signed_data)
-	data_obj 		:= json2.raw_decode(verified_data[64..].bytestr())?
-	data_			:= json2.raw_decode(data_obj.as_map()['data']?.str())?
+	data_obj 		:= json2.raw_decode(verified_data[64..].bytestr())!
+	data_			:= json2.raw_decode(data_obj.as_map()['data']!.str())!
 
 	res_data_struct := ResultData{
-		data_obj.as_map()['doubleName']?.str(), 
-		data_obj.as_map()['signedState']?.str(), 
-		data_.as_map()['nonce']?.str(), 
-		data_.as_map()['ciphertext']?.str()
+		data_obj.as_map()['doubleName']!.str(), 
+		data_obj.as_map()['signedState']!.str(), 
+		data_.as_map()['nonce']!.str(), 
+		data_.as_map()['ciphertext']!.str()
 	}
 
 	if res_data_struct.double_name == ""{
@@ -97,15 +97,15 @@ fn (mut server ServerApp) verify()? vweb.Result {
 	}
 
 	decrypted_bytes := box.decrypt(ciphertext)
-	response_email := json2.raw_decode(decrypted_bytes.bytestr())?
-	response := json2.raw_decode(response_email.as_map()['email']?.str())?
+	response_email := json2.raw_decode(decrypted_bytes.bytestr())!
+	response := json2.raw_decode(response_email.as_map()['email']!.str())!
 
-	if response.as_map()['email']?.str() == "" {
+	if response.as_map()['email']!.str() == "" {
 		server.abort(400, data_decrypting_error)
 	}
 
-    sei 		:= response.as_map()["sei"]?
-	verify_sei 	:= request_to_verify_sei(sei.str())?
+    sei 		:= response.as_map()["sei"]!
+	verify_sei 	:= request_to_verify_sei(sei.str())!
 
 	if verify_sei.status_code != 200{
         server.abort(400, email_not_verified)
