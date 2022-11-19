@@ -31,17 +31,17 @@ mut:
 }
 
 // TODO/ add recursive
-// fn file_includes(path string) ?string {
+// fn file_includes(path string) !string {
 // 	path0 := pathtools.get(path)
-// 	content := path0.read()?
+// 	content := path0.read()!
 // 	out=[]string{}
 // 	for line in content.split_into_lines(){
 // 		if line.starts_with("!!include"){
 // 			//now we can do the include
 // 			params := params.text_to_params(line.all_after_first(" ")) or { panic(err) }
-// 			path_to_include := params.get_path("path")? //checks it exists
-// 			path_included := pathtools.get(path_to_include)?
-// 			content := path_included.read()?
+// 			path_to_include := params.get_path("path")! //checks it exists
+// 			path_included := pathtools.get(path_to_include)!
+// 			content := path_included.read()!
 // 			for line in content.split_into_lines(){
 // 				out << line
 // 			}
@@ -54,16 +54,16 @@ mut:
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 
-pub fn (mut parser ActionsParser) file_parse(path string) ? {
+pub fn (mut parser ActionsParser) file_parse(path string) ! {
 	if !os.exists(path) {
 		return error("path: '$path' does not exist, cannot parse.")
 	}
 	content := os.read_file(path) or { panic('Failed to load file $path') }
-	parser.text_parse(content)?
+	parser.text_parse(content)!
 }
 
-fn (mut parser ActionsParser) text_parse(content string) ? {
-	blocks := parse_into_blocks(content)?
+pub fn (mut parser ActionsParser) text_parse(content string) ! {
+	blocks := parse_into_blocks(content)!
 	parser.parse_actions(blocks)
 }
 
@@ -76,7 +76,7 @@ fn contains_params(line string) bool {
 }
 
 // each block is name of action and the full content behind
-fn parse_into_blocks(text string) ?Blocks {
+fn parse_into_blocks(text string) !Blocks {
 	mut state := ParseBlockStatus.start
 	mut blocks := Blocks{}
 	mut block := Block{}

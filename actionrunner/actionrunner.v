@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.actionparser
 import time
 
 // find all actions & process, this works inclusive
-fn actions_process(mut parser actionparser.ActionsParser, actions_done map[string]string) ?map[string]string {
+fn actions_process(mut parser actionparser.ActionsParser, actions_done map[string]string) !map[string]string {
 	// $if debug {
 	// 	println("+++++")
 	// 	println(actions)
@@ -13,11 +13,11 @@ fn actions_process(mut parser actionparser.ActionsParser, actions_done map[strin
 
 	mut gitrunner := new_gitrunner()
 	go gitrunner.run()
-	time.sleep(500 * time.millisecond)
 
 	mut booksrunner := new_booksrunner()
 	go booksrunner.run()
-	time.sleep(500 * time.millisecond)
+
+	time.sleep(200 * time.millisecond) //wait 0.2 sec to make sure its operational
 
 	for mut action in parser.actions {
 		$if debug {

@@ -221,8 +221,13 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ! {
 	return
 }
 
+// pulls remote content in, will reset changes
+pub fn (mut repo GitRepo) pull_reset() ! {
+	repo.remove_changes()!
+	repo.pull()!
+}
+
 // pulls remote content in, will fail if there are local changes
-// when using force:true it means we reset, overwrite all changes
 pub fn (mut repo GitRepo) pull() ! {
 	println('   - PULL: ${repo.url_get(true)}')
 	if !os.exists(repo.path()) {

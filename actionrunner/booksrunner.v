@@ -82,7 +82,6 @@ fn (mut runner BooksRunner) run_add(mut action Action) {
 		) or { panic("Can't get repo from url: $err") }
 		book_path = book_repo.path_content_get()
 	} else {
-		path_str := action.params.get('path') or { panic("Can't get url param: $err") }
 		book_path_obj := pathlib.get(book_path)
 		book_repo = runner.gt.repo_get_from_path(book_name, book_path_obj, book_pull,
 			book_reset) or { panic("Can't get repo from url: $err") }

@@ -7,7 +7,7 @@ struct ActionMessage {
 mut:
 	name     string
 	params   Params
-	complete bool = false
+	complete bool
 }
 
 pub interface Runner {
