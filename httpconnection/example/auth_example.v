@@ -16,7 +16,7 @@ mut:
 	uuid              string
 }
 
-fn (mut h HTTPConnection) auth(url string, login string, passwd string) ?AuthDetail {
+fn (mut h HTTPConnection) auth(url string, login string, passwd string) !AuthDetail {
 	/*
 	Get authorization token by verifing username and password
 	Inputs:
@@ -43,9 +43,9 @@ fn (mut h HTTPConnection) auth(url string, login string, passwd string) ?AuthDet
 			"username": "$login"
 		}'
 		cache_disable: false
-	)?
+	)!
 
-	h.auth = json.decode(AuthDetail, data)?
+	h.auth = json.decode(AuthDetail, data)!
 
 	return h.auth
 }
