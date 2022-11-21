@@ -25,7 +25,7 @@ fn do() ? {
 	mut r2 := conn.get_json_list(mut prefix: 'users', dict_key: 'data')?
 	println(r2)
 
-	t3 := go conn.get_json_str(mut prefix: 'users', id: '1', dict_key: 'data')
+	t3 := spawn conn.get_json_str(mut prefix: 'users', id: '1', dict_key: 'data')
 	d3 := t3.wait()?
 	println(d3)
 

@@ -1,10 +1,9 @@
 module main
 
-import freeflowuniverse.crystallib.params {Params, Param, Arg}
+import freeflowuniverse.crystallib.params { Arg, Param, Params }
 import freeflowuniverse.crystallib.resp
 
-fn main () {
-
+fn main() {
 	mut input := Params{
 		params: [Param{
 			key: 'id'
@@ -51,15 +50,14 @@ fn main () {
 		}, Param{
 			key: 'name5'
 			value: 'aab'
-		}],
+		}]
 		args: [Arg{
 			value: '111'
-		}, Arg {
+		}, Arg{
 			value: '222'
-		}, Arg {
+		}, Arg{
 			value: '333'
-		}
-		]
+		}]
 	}
 
 	mut bytes := input.to_resp()!
@@ -70,12 +68,11 @@ fn main () {
 	// expected result shown below
 }
 
-
 /*
 expected_result := "
-		id: 'a1' 
+		id: 'a1'
 		name6: 'aaaaa'
-		name: 'need to do something 1' 
+		name: 'need to do something 1'
 		description: '## markdown works in it
 
 		description can be multiline
@@ -93,11 +90,11 @@ expected_result := "
 		```
 		'
 		name2: 'test'
-		name3: 'hi' 
-		name10: 'this is with space'  
+		name3: 'hi'
+		name10: 'this is with space'
 		name11: 'aaa11'
 		name4: 'aaa'
-		name5: 'aab' 
+		name5: 'aab'
 		args:
 		'111'
 		'222'
