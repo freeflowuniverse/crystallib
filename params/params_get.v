@@ -63,8 +63,8 @@ pub fn (mut params Params) get_default(key string, defval string) !string {
 //    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
 // arg1 is an arg
 // description is a kwarg
-pub fn (mut params Params) get_int(key string) ?int {
-	valuestr := params.get(key)?
+pub fn (mut params Params) get_int(key string) !int {
+	valuestr := params.get(key)!
 	return valuestr.int()
 }
 
@@ -73,9 +73,9 @@ pub fn (mut params Params) get_int(key string) ?int {
 //    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
 // arg1 is an arg
 // description is a kwarg
-pub fn (mut params Params) get_int_default(key string, defval int) ?int {
+pub fn (mut params Params) get_int_default(key string, defval int) !int {
 	if params.exists(key) {
-		valuestr := params.get(key)?
+		valuestr := params.get(key)!
 		return valuestr.int()
 	}
 	return defval
@@ -86,10 +86,10 @@ pub fn (mut params Params) get_int_default(key string, defval int) ?int {
 //    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
 // arg1 is an arg
 // description is a kwarg
-pub fn (mut params Params) get_list(key string) ?[]string {
+pub fn (mut params Params) get_list(key string) ![]string {
 	mut res := []string{}
 	if params.exists(key) {
-		mut valuestr := params.get(key)?
+		mut valuestr := params.get(key)!
 		if valuestr.contains(',') {
 			valuestr = valuestr.trim(' ,')
 			res = valuestr.split(',').map(it.trim(' \'"'))
@@ -105,10 +105,10 @@ pub fn (mut params Params) get_list(key string) ?[]string {
 //    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
 // arg1 is an arg
 // description is a kwarg
-pub fn (mut params Params) get_list_int(key string) ?[]int {
+pub fn (mut params Params) get_list_int(key string) ![]int {
 	mut res := []int{}
 	if params.exists(key) {
-		mut valuestr := params.get(key)?
+		mut valuestr := params.get(key)!
 		if valuestr.contains(',') {
 			valuestr = valuestr.trim(' ,')
 			res = valuestr.split(',').map(it.trim(' \'"').int())
@@ -138,8 +138,8 @@ pub fn (mut params Params) get_default_false(key string) bool {
 }
 
 // will get path and check it exists
-pub fn (mut params Params) get_path(key string) ?string {
-	path := params.get(key)?
+pub fn (mut params Params) get_path(key string) !string {
+	path := params.get(key)!
 
 	if !os.exists(path) {
 		return error('Cannot find path: $key')
@@ -149,11 +149,11 @@ pub fn (mut params Params) get_path(key string) ?string {
 }
 
 // will get path and check it exists if not will create
-pub fn (mut params Params) get_path_create(key string) ?string {
-	path := params.get(key)?
+pub fn (mut params Params) get_path_create(key string) !string {
+	path := params.get(key)!
 
 	if !os.exists(path) {
-		os.mkdir_all(path)?
+		os.mkdir_all(path)!
 	}
 
 	return path
