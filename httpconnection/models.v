@@ -21,7 +21,7 @@ pub mut:
 [heap]
 pub struct HTTPConnection {
 pub mut:
-	redis          &Redis
+	redis          Redis
 	base_url       string // the base url
 	default_header Header
 	cache          CacheConfig

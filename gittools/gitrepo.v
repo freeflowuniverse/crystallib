@@ -8,7 +8,7 @@ import freeflowuniverse.crystallib.sshagent
 // check if sshkey for a repo exists in the homedir/.ssh
 // we check on name, if nameof repo is same as name of key we will load
 // will return true if the key did exist, which means we need to connect over ssh !!!
-fn (mut repo GitRepo) ssh_key_load_if_exists() bool {
+fn (mut repo GitRepo) ssh_key_load_if_exists() !bool {
 	mut key_path := '$os.home_dir()/.ssh/$repo.addr.name'
 	if !os.exists(key_path) {
 		key_path = '.ssh/$repo.addr.name'
@@ -31,8 +31,8 @@ fn (mut repo GitRepo) ssh_key_load_if_exists() bool {
 	if (!exists) || nrkeys > 0 {
 		// means we did not find the key but there were other keys loaded
 		// only choice we have now is to reset and use this key
-		sshagent.reset()
-		sshagent.key_load(key_path)
+		sshagent.reset()!
+		sshagent.key_load(key_path)!
 		return true
 	} else if exists && nrkeys == 1 {
 		// means the right key was loaded
@@ -156,7 +156,7 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ! {
 		mut needs_to_be_ssh := false
 
 		// check if there is a custom key to be used (sshkey)
-		needs_to_be_ssh0 := repo.ssh_key_load_if_exists()
+		needs_to_be_ssh0 := repo.ssh_key_load_if_exists()!
 		if needs_to_be_ssh0 {
 			needs_to_be_ssh = true
 		}
@@ -221,8 +221,13 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ! {
 	return
 }
 
+// pulls remote content in, will reset changes
+pub fn (mut repo GitRepo) pull_reset() ! {
+	repo.remove_changes()!
+	repo.pull()!
+}
+
 // pulls remote content in, will fail if there are local changes
-// when using force:true it means we reset, overwrite all changes
 pub fn (mut repo GitRepo) pull() ! {
 	println('   - PULL: ${repo.url_get(true)}')
 	if !os.exists(repo.path()) {

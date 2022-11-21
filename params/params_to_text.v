@@ -2,7 +2,11 @@ module params
 
 pub fn (mut result Params) str() string {
 	mut string_array := []string{}
+<<<<<<< HEAD
 	string_array << 'params:'
+=======
+	string_array << "params:"
+>>>>>>> ebb33075538a32a1773f9900c05591c4f6be37c8
 	for param in result.params {
 		string_array << '$param.key: "$param.value",'
 	}

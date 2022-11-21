@@ -19,11 +19,15 @@ pub fn (mut i Installer) install() ! {
 					return error('cannot install xcode-select --install, something went wrong.\n$err')
 				}
 			}
+			println(' - Ubuntu prepare')
+			node.exec_silent('
+			brew install mc tmux git rsync curl tmux
+			')!
 		} else if node.platform == builder.PlatformType.ubuntu {
 			println(' - Ubuntu prepare')
 			node.exec_silent('
 			apt update
-			apt install iputils-ping net-tools git rsync curl mc -y
+			apt install iputils-ping net-tools git rsync curl mc tmux -y
 			')!
 		} else {
 			panic('only ubuntu and osx supported for now')
@@ -33,8 +37,3 @@ pub fn (mut i Installer) install() ! {
 	println(' - platform already prepared')
 }
 
-// pub fn (mut i Installer) update() ! {
-// 	mut node := i.node
-// 	panic("to implement")
-// 	node.done_set('update_crystaltools', 'OK')!
-// }
