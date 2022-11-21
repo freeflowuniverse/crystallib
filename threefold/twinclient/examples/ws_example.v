@@ -38,7 +38,7 @@ fn handle_events(raw_msg &tw.RawMessage, mut ws_client ws.Client) ! {
 	}
 
 	if msg.event == 'sum_balances' {
-		go fn [mut grid] () ! {
+		spawn fn [mut grid] () ! {
 			// List all algorand accounts.
 			grid.algorand_list()!
 
