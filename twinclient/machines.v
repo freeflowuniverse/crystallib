@@ -2,7 +2,6 @@ module twinclient
 
 import json
 
-
 // Deploy machines workload
 pub fn (mut client TwinClient) machines_deploy(payload MachinesModel) !DeployResponse {
 	payload_encoded := json.encode_pretty(payload)
@@ -13,7 +12,9 @@ pub fn (mut client TwinClient) machines_deploy(payload MachinesModel) !DeployRes
 
 // Get machines deployment info using deployment name
 pub fn (mut client TwinClient) machines_get(name string) ![]Deployment {
-	response := client.transport.send('machines.get', json.encode({"name": name}))!
+	response := client.transport.send('machines.get', json.encode({
+		'name': name
+	}))!
 
 	return json.decode([]Deployment, response.data)
 }
@@ -35,7 +36,9 @@ pub fn (mut client TwinClient) machines_list() ![]string {
 
 // Delete a deployed machines using deployment name
 pub fn (mut client TwinClient) machines_delete(name string) !ContractResponse {
-	response := client.transport.send('machines.delete', json.encode({"name": name}))!
+	response := client.transport.send('machines.delete', json.encode({
+		'name': name
+	}))!
 
 	return json.decode(ContractResponse, response.data)
 }

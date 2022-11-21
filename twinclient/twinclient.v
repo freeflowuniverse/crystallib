@@ -1,4 +1,5 @@
 module twinclient
+
 import freeflowuniverse.crystallib.redisclient
 import freeflowuniverse.crystallib.resp
 import net.websocket as ws
@@ -16,9 +17,9 @@ pub fn grid_client(transport ITwinTransport) !TwinClient {
 }
 
 // Http Client
-pub fn (mut htp HttpTwinClient) init(url string)! HttpTwinClient {
+pub fn (mut htp HttpTwinClient) init(url string) !HttpTwinClient {
 	header := http.new_header_from_map({
-		http.CommonHeader.content_type: 'application/json',
+		http.CommonHeader.content_type: 'application/json'
 	})
 	htp.header = header
 	htp.url = url
@@ -30,39 +31,40 @@ pub fn (mut htp HttpTwinClient) init(url string)! HttpTwinClient {
 	// }
 	// response := request.do()!
 	// if response.body != "pong"{
-	// 	panic("You have to intialize the http server first.") 
+	// 	panic("You have to intialize the http server first.")
 	// }
 	return htp
 }
 
-pub fn (htp HttpTwinClient) send(functionPath string, args string)! Message{
+pub fn (htp HttpTwinClient) send(functionPath string, args string) !Message {
 	function := functionPath.replace('.', '/')
 	request := http.Request{
-		url: "$htp.url/$function"
+		url: '$htp.url/$function'
 		method: htp.method
-		header: htp.header,
-		data: args,
+		header: htp.header
+		data: args
 	}
 	resp := request.do()!
 	mut message := Message{}
 	mut decoded := json2.raw_decode(resp.body)!
-	if resp.status_code == 200{
-		result := decoded.as_map()["result"] !
+	if resp.status_code == 200 {
+		result := decoded.as_map()['result']!
 		message.data = result.str()
 		return message
-	}else{
-		err := decoded.as_map()["error"]!
-	    return error(err.str())
+	} else {
+		err := decoded.as_map()['error']!
+		return error(err.str())
 	}
 }
 
 // WebSocket Client
 pub const factory = Factory{}
-pub fn (mut tcl WSTwinClient) init(mut ws_client ws.Client)! WSTwinClient {
-	mut f := factory
+
+pub fn (mut tcl WSTwinClient) init(mut ws_client ws.Client) !WSTwinClient {
+	mut f := twinclient.factory
 
 	if tcl.ws.id in f.clients {
-		return factory.clients[tcl.ws.id]
+		return twinclient.factory.clients[tcl.ws.id]
 	}
 	tcl.ws = ws_client
 	tcl.channels = map[string]chan Message{}
@@ -86,14 +88,14 @@ pub fn (mut tcl WSTwinClient) init(mut ws_client ws.Client)! WSTwinClient {
 		}
 	})
 
-	ws_client.on_close(fn [mut f] (mut c ws.Client, code int, reason string) !{
+	ws_client.on_close(fn [mut f] (mut c ws.Client, code int, reason string) ! {
 		f.clients.delete(c.id)
 	})
 	f.clients[tcl.ws.id] = tcl
 	return tcl
 }
 
-pub fn (mut tcl WSTwinClient) send(functionPath string, args string)! Message {
+pub fn (mut tcl WSTwinClient) send(functionPath string, args string) !Message {
 	id := rand.uuid_v4()
 	channel := chan Message{}
 	tcl.channels[id] = channel
@@ -113,7 +115,7 @@ pub fn (mut tcl WSTwinClient) send(functionPath string, args string)! Message {
 	return tcl.wait(id, 5) // won't wait more than 300 seconds
 }
 
-fn (mut tcl WSTwinClient) wait(id string, timeout u32)! Message {
+fn (mut tcl WSTwinClient) wait(id string, timeout u32) !Message {
 	if channel := tcl.channels[id] {
 		select {
 			res := <-channel {
@@ -122,7 +124,7 @@ fn (mut tcl WSTwinClient) wait(id string, timeout u32)! Message {
 				return res
 			}
 			timeout * time.second {
-				er := "requets with id $id was timed out!"
+				er := 'requets with id $id was timed out!'
 				channel.close()
 				tcl.channels.delete(id)
 				return error(er)
@@ -133,11 +135,11 @@ fn (mut tcl WSTwinClient) wait(id string, timeout u32)! Message {
 }
 
 // RMB Client
-pub fn (mut rmb RmbTwinClient) init(dst []int, exp int, num_retry int)! RmbTwinClient {
+pub fn (mut rmb RmbTwinClient) init(dst []int, exp int, num_retry int) !RmbTwinClient {
 	msg := Message{
 		id: rand.uuid_v4()
 		version: 1
-		command: "twinserver"
+		command: 'twinserver'
 		expiration: exp
 		retry: num_retry
 		twin_src: 0
@@ -145,20 +147,20 @@ pub fn (mut rmb RmbTwinClient) init(dst []int, exp int, num_retry int)! RmbTwinC
 		retqueue: rand.uuid_v4()
 		epoch: time.now().unix_time()
 	}
-	rmb.client 	= redisclient.get('localhost:6379')!
+	rmb.client = redisclient.get('localhost:6379')!
 	rmb.message = msg
 	return rmb
 }
 
-pub fn (mut rmb RmbTwinClient) send(functionPath string, args string)! Message{
+pub fn (mut rmb RmbTwinClient) send(functionPath string, args string) !Message {
 	rmb.message.data = base64.encode_str(args)
-	rmb.message.command = "twinserver." + functionPath
+	rmb.message.command = 'twinserver.' + functionPath
 	request := json.encode_pretty(rmb.message)
-	rmb.client.lpush("msgbus.system.local", request)!
+	rmb.client.lpush('msgbus.system.local', request)!
 	return rmb.read(rmb.message)
 }
 
-pub fn (mut rmb RmbTwinClient) read(msg Message)! Message {
+pub fn (mut rmb RmbTwinClient) read(msg Message) !Message {
 	println('Waiting reply $msg.retqueue')
 	results := rmb.client.blpop([msg.retqueue], '0')!
 	response_json := resp.get_redis_value(results[1])
