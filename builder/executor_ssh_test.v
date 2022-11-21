@@ -6,13 +6,12 @@ import ipaddress { IPAddress }
 // Assuming this function runs first (which is the case)
 // This generates ssh keys on local machine to use for
 // connecting to local host over ssh and test executor
-fn test_init() {
+fn testsuite_begin() {
 	mut e := ExecutorLocal{}
-	e.exec("yes '' | ssh-keygen -t rsa  -f ~/.ssh/id_rsa_test -N ''") or { panic(err) }
+	e.exec("yes | ssh-keygen -t rsa  -f ~/.ssh/id_rsa_test -N ''") or { panic(err) }
 	e.exec('chmod 0600 ~/.ssh/id_rsa_test && chmod 0644 ~/.ssh/id_rsa_test.pub') or { panic(err) }
 	e.exec('cat ~/.ssh/id_rsa_test.pub >> ~/.ssh/authorized_keys') or { panic(err) }
 	e.exec('chmod og-wx ~/.ssh/authorized_keys') or { panic(err) }
-	println('x')
 }
 
 fn test_exec() {
