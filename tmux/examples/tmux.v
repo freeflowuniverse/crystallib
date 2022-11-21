@@ -1,14 +1,23 @@
 module main
 
-import tmux
-import redisclient
+import freeflowuniverse.crystallib.builder
+import freeflowuniverse.crystallib.installers.tmux
 
-fn do() ? {
-	mut b_local := tmux.executor_new(local: true)
-	mut b_ssh := tmux.executor_new(ipaddr: '212.2.3.3')
+fn do() ! {
+	mut builder := builder.new()
 
-	println(b_local)
-	println(b_ssh)
+	// create local and remote nodes
+	mut node_local := builder.node_local()!
+	mut node_ssh := builder.node_new(name: 'test', ipaddr: '185.69.166.152', debug: true)!
+
+	// install tmux to nodes
+	installer := tmux.get_install(mut node_ssh) or {
+		return error('could not install tmux to node: $err')
+	}
+
+	// print node info
+	println(node_local)
+	println(node_ssh)
 }
 
 fn main() {

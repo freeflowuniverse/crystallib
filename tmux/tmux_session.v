@@ -10,62 +10,64 @@ pub mut:
 	name    string
 }
 
-pub fn (mut t Tmux) session_get(name string) ?&Session {
+pub fn (mut t Tmux) session_get(name string) !&Session {
 	if name in t.sessions {
 		return t.sessions[name]
 	}
 	return error('could not find session $name')
 }
 
-pub fn (mut t Tmux) session_get_create(name string, restart bool) ?&Session {
+pub fn (mut t Tmux) session_get_create(name string, restart bool) !&Session {
 	name_l := name.to_lower()
 	if name_l !in t.sessions {
 		os.log('TMUX - Session $name will be created')
-		init_session(mut t, name_l)?
-		t.scan()?
+		init_session(mut t, name_l)!
+		t.scan()!
 	}
 	mut session := t.sessions[name_l]
 	if restart {
 		os.log('TMUX - Session $name will be restarted.')
-		session.restart()?
+		session.restart()!
 	}
 	return session
 }
 
-fn init_session(mut tmux Tmux, s_name string) ?Session {
+fn init_session(mut tmux Tmux, s_name string) !Session {
 	mut s := Session{
 		tmux: tmux // reference back
 		windows: map[string]&Window{}
 		name: s_name.to_lower()
 	}
 	os.log('SESSION - Initialize session: $s.name')
-	s.create()?
+	s.create()!
 	tmux.sessions[s_name] = &s
 	return s
 }
 
-pub fn (mut s Session) create() ? {
-	mut e := s.tmuxexecutor.db
+pub fn (mut s Session) create() ! {
+	mut node := s.tmux.node
 	res_opt := "-P -F '#{window_id}'"
 	cmd := "tmux new-session $res_opt -d -s $s.name 'sh'"
-	window_id_ := e.exec(cmd) or { return error("Can't create tmux session $s.name \n$cmd\n$err") }
+	window_id_ := node.exec(cmd) or {
+		return error("Can't create tmux session $s.name \n$cmd\n$err")
+	}
 
 	cmd3 := 'tmux set-option remain-on-exit on'
-	e.exec(cmd3) or { return error("Can't execute $cmd3\n$err") }
+	node.exec(cmd3) or { return error("Can't execute $cmd3\n$err") }
 
 	window_id := window_id_.trim(' \n')
 	cmd2 := "tmux rename-window -t $window_id 'notused'"
-	e.exec(cmd2) or { return error("Can't rename window $window_id to notused \n$cmd2\n$err") }
+	node.exec(cmd2) or { return error("Can't rename window $window_id to notused \n$cmd2\n$err") }
 }
 
-pub fn (mut s Session) restart() ? {
-	s.stop()?
-	s.create()?
+pub fn (mut s Session) restart() ! {
+	s.stop()!
+	s.create()!
 }
 
-pub fn (mut s Session) stop() ? {
-	mut e := s.tmuxexecutor.db
-	e.exec('tmux kill-session -t $s.name') or {
+pub fn (mut s Session) stop() ! {
+	mut node := s.tmux.node
+	node.exec('tmux kill-session -t $s.name') or {
 		// return error("Can't delete session $s.name - This happen when it is not found")
 		''
 	}
@@ -84,15 +86,15 @@ pub fn (mut s Session) stop() ? {
 // 	reset	bool
 // }
 // ```
-pub fn (mut s Session) window_new(args WindowArgs) ?Window {
+pub fn (mut s Session) window_new(args WindowArgs) !Window {
 	// os.log(cmd)
 	// os.log(check)
 	namel := args.name.to_lower()
 
 	if s.window_exist(namel) {
 		if args.reset {
-			mut w_to_stop := s.window_get(namel)?
-			w_to_stop.stop()?
+			mut w_to_stop := s.window_get(namel)!
+			w_to_stop.stop()!
 		} else {
 			return error('cannot kill window it already exists, window $namel in session:$s.name')
 		}
@@ -104,11 +106,11 @@ pub fn (mut s Session) window_new(args WindowArgs) ?Window {
 		env: args.env
 	}
 	s.windows[namel] = &w
-	w.create()?
+	w.create()!
 	// delete the notused one if there is at least one new one
 	// if namel != "notused" && "notused" in s.windows.keys(){
 	// 	// os.log(" DELETE notused")
-	// 	s.windows["notused"].delete()?
+	// 	s.windows["notused"].delete()!
 	// }
 	return w
 }
@@ -117,7 +119,7 @@ fn (mut s Session) window_exist(name string) bool {
 	return name.to_lower() in s.windows
 }
 
-pub fn (mut s Session) window_get(name string) ?&Window {
+pub fn (mut s Session) window_get(name string) !&Window {
 	name_l := name.to_lower()
 	if name_l !in s.windows {
 		return error('Cannot find window $name in session:$s.name')
@@ -125,7 +127,7 @@ pub fn (mut s Session) window_get(name string) ?&Window {
 	return s.windows[name_l]
 }
 
-// pub fn (mut s Session) activate()? {	
+// pub fn (mut s Session) activate()! {	
 // 	active_session := s.tmux.redis.get('tmux:active_session') or { 'No active session found' }
 // 	if active_session != 'No active session found' && s.name != active_session {
 // 		s.tmuxexecutor.db.exec('tmux attach-session -t $active_session') or {
