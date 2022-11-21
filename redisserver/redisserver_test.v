@@ -11,7 +11,7 @@ fn test_run_server() {
 	for {
 		println('still looping...')
 		mut conn := redis_server.socket.accept() or { continue }
-		go redisserver.new_client(mut conn, mut main)
+		spawn redisserver.new_client(mut conn, mut main)
 		println('After GO...')
 	}
 }

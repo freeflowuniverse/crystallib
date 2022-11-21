@@ -209,5 +209,5 @@ pub fn get_redis_array_len(rv RValue) int {
 }
 
 pub fn get_array_value(rv RValue, index int) string {
-	return  get_redis_value(get_redis_array(rv)[index])
+	return get_redis_value(get_redis_array(rv)[index])
 }
