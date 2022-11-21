@@ -8,9 +8,6 @@ import os
 pub struct Tmux {
 pub mut:
 	sessions map[string]&Session
-<<<<<<< HEAD
-	node     &builder.Node
-=======
 	node     builder.Node
 }
 
@@ -18,7 +15,6 @@ pub fn get_local()!Tmux{
 	mut builder := builder.new()
 	mut node := builder.node_local()!	
 	return Tmux{node:node}
->>>>>>> ebb33075538a32a1773f9900c05591c4f6be37c8
 }
 
 fn (mut t Tmux) scan_add(line string) !&Window {

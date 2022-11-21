@@ -25,13 +25,8 @@ fn do() ! {
 	mut r2 := conn.get_json_list(mut prefix: 'users', dict_key: 'data')!
 	println(r2)
 
-<<<<<<< HEAD
 	t3 := spawn conn.get_json_str(mut prefix: 'users', id: '1', dict_key: 'data')
 	d3 := t3.wait()?
-=======
-	t3 := go conn.get_json_str(mut prefix: 'users', id: '1', dict_key: 'data')
-	d3 := t3.wait()!
->>>>>>> ebb33075538a32a1773f9900c05591c4f6be37c8
 	println(d3)
 
 	// mut rc3,r3 := conn.get_json_str(mut prefix:"users", id:"1", dict_key:"data")!
