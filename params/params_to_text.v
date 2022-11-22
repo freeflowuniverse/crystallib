@@ -1,17 +1,14 @@
 module params
 
-import freeflowuniverse.crystallib.resp
-
-
 pub fn (mut result Params) str() string {
-	mut string_array := []string
-	string_array << "params:"
+	mut string_array := []string{}
+	string_array << 'params:'
 	for param in result.params {
-		string_array << '${param.key}: "${param.value}",'
+		string_array << '$param.key: "$param.value",'
 	}
-	string_array << "args:"
+	string_array << 'args:'
 	for arg in result.args {
-		string_array << '"${arg.value}",'
+		string_array << '"$arg.value",'
 	}
 
 	return string_array.join('\n')

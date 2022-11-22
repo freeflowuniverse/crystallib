@@ -1,10 +1,6 @@
 module tmux
 
 import freeflowuniverse.crystallib.builder
-// if !node.cmd_exists('tmux') {
-// 	os.log('TMUX - could not find tmux command, will try to install, can take a while.')
-// 	node.package_install(name: 'tmux')?
-// }
 import os
 // import redisclient
 
@@ -21,19 +17,11 @@ pub fn get_local()!Tmux{
 	return Tmux{node:node}
 }
 
-// check tmux is installed, if not install it
-pub fn install() {
-	mut builder := builder.new()
-	mut node := builder.node_local()?
-	if !node.cmd_exists('tmux') {
-		os.log('TMUX - could not find tmux command, will try to install, can take a while.')
-		node.package_install(name: 'tmux')?
-	}
-}
-
-fn (mut t Tmux) scan_add(line string) ?&Window {
+fn (mut t Tmux) scan_add(line string) !&Window {
 	// println(" -- scan add")
-
+	if line.count('|') < 4 {
+		return error(@FN + 'expects line with at least 5 params separated by |')
+	}
 	line_arr := line.split('|')
 	session_name := line_arr[0]
 	window_name := line_arr[1]
@@ -44,7 +32,7 @@ fn (mut t Tmux) scan_add(line string) ?&Window {
 	pane_start_command := line_arr[6] or { '' }
 
 	// os.log('TMUX FOUND: $line\n    ++ $session_name:$window_name wid:$window_id pid:$pane_pid entrypoint:$pane_start_command')
-	mut session := t.session_get(session_name)?
+	mut session := t.session_get(session_name)!
 
 	// if key in done {
 	// 	return error('Duplicated window name: $key')
@@ -77,11 +65,11 @@ fn (mut t Tmux) scan_add(line string) ?&Window {
 
 // scan and return which ones where in struct but not found in the system
 // probably means a command did not start well
-pub fn (mut t Tmux) scan() ?map[string]&Window {
+pub fn (mut t Tmux) scan() !map[string]&Window {
 	// os.log('TMUX - Scanning ....')
-	mut e := t.node().executor
+	mut node := t.node
 	cmd_list_session := "tmux list-sessions -F '#{session_name}'"
-	exec_list := e.exec_silent(cmd_list_session) or { '1' }
+	exec_list := node.exec_silent(cmd_list_session) or { '1' }
 
 	if exec_list == '1' {
 		// No server running
@@ -89,6 +77,8 @@ pub fn (mut t Tmux) scan() ?map[string]&Window {
 		// os.log('TMUX: Server not running, cannot find sessions')
 		return map[string]&Window{}
 	}
+
+	println('execlist out: $exec_list')
 
 	// make sure we have all sessions
 	for line in exec_list.split_into_lines() {
@@ -109,13 +99,17 @@ pub fn (mut t Tmux) scan() ?map[string]&Window {
 
 	// mut done := map[string]bool{}
 	cmd := "tmux list-panes -a -F '#{session_name}|#{window_name}|#{window_id}|#{pane_active}|#{pane_id}|#{pane_pid}|#{pane_start_command}'"
-	out := e.exec_silent(cmd) or { return error("Can't execute $cmd \n$err") }
+	out := node.exec_silent(cmd) or { return error("Can't execute $cmd \n$err") }
+
+	println('node out: $out')
 
 	mut windows := t.windows_get()
 
+	println('windows out: $windows.keys()')
+
 	for line in out.split_into_lines() {
 		if line.contains('|') {
-			w := t.scan_add(line)?
+			w := t.scan_add(line)!
 			if w.name in windows {
 				windows.delete(w.name)
 			}
@@ -123,31 +117,39 @@ pub fn (mut t Tmux) scan() ?map[string]&Window {
 	}
 
 	for _, mut w2 in windows {
-		w2.check()?
+		w2.check()!
 	}
 	return windows
 }
 
-pub fn (mut t Tmux) stop() ? {
-	mut e := t.node().executor
+// loads tmux session, from running tmux server to struct
+pub fn (mut tmux Tmux) load() ! {
+	if !tmux.is_running() {
+		return
+	}
+	tmux_ls := tmux.node.exec('tmux ls')!
+	println('Tmux: $tmux_ls')
+}
+
+pub fn (mut t Tmux) stop() ! {
+	mut node := t.node
 	os.log('TMUX - Stop tmux')
 	cmd := 'tmux kill-server'
-	_ := e.exec_silent(cmd) or {
+	_ := node.exec_silent(cmd) or {
 		// return error("Can't execute $cmd \n$err")
 		''
 	}
 	t.sessions = map[string]&Session{}
-	// for _, mut session in t.sessions {
-	// 	session.stop()?
-	// }	
-	t.scan()?
+	t.scan()!
+	for _, mut session in t.sessions {
+		session.stop()!
+	}
 	os.log('TMUX - All sessions stopped .')
 }
 
-pub fn (mut t Tmux) start() ? {
-	mut e := t.node().executor
+pub fn (mut t Tmux) start() ! {
 	cmd := 'tmux new-sess -d -s init'
-	_ := e.exec_silent(cmd) or {
+	_ := t.node.exec_silent(cmd) or {
 		// return error("Can't execute $cmd \n$err")
 		''
 	}
@@ -158,7 +160,7 @@ pub fn (mut t Tmux) list_print() {
 	// os.log('TMUX - Start listing  ....')
 	for _, session in t.sessions {
 		for _, window in session.windows {
-			println(window.repr())
+			println(window)
 		}
 	}
 }
@@ -173,4 +175,10 @@ pub fn (mut t Tmux) windows_get() map[string]&Window {
 		}
 	}
 	return res
+}
+
+// checks whether tmux server is running
+pub fn (mut t Tmux) is_running() bool {
+	res := t.node.exec_silent('tmux info') or { err.msg() }
+	return !res.contains('no server running on /tmp/tmux-0/default')
 }

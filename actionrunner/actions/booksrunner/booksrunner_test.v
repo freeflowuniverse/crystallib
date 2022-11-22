@@ -8,7 +8,7 @@ import freeflowuniverse.crystallib.pathlib
 fn test_run_add() {
 	mut booksrunner := new_booksrunner()
 	go booksrunner.run()
-	msg := ActionMessage{
+	msg := ActionJob{
 		name: 'books.add'
 		params: Params{
 			params: [
@@ -41,7 +41,7 @@ fn test_run_add() {
 fn test_run_add1() {
 	mut booksrunner := new_booksrunner()
 	go booksrunner.run()
-	msg := ActionMessage{
+	msg := ActionJob{
 		name: 'books.add'
 		params: Params{
 			params: [
@@ -91,7 +91,7 @@ fn test_run_develop() {
 	}
 
 	// sending runner message to develop book
-	msg := ActionMessage{
+	msg := ActionJob{
 		name: 'books.mdbook_develop'
 		params: Params{
 			params: [
@@ -121,7 +121,7 @@ fn test_run_develop() {
 // fn test_run_link() {
 // 	mut booksrunner := new_booksrunner()
 // 	go booksrunner.run()
-// 	msg := ActionMessage{
+// 	msg := ActionJob{
 // 		name: 'git.link'
 // 		params: Params{
 // 			params: [
@@ -158,7 +158,7 @@ fn test_run_develop() {
 // fn test_run_multibranch() {
 // 	mut booksrunner := new_booksrunner()
 // 	go booksrunner.run()
-// 	msg := ActionMessage{
+// 	msg := ActionJob{
 // 		name: 'git.params.multibranch'
 // 		params: Params{
 // 			params: [

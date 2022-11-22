@@ -19,6 +19,6 @@ dest:'https://github.com/threefoldfoundation/books/tree/main/books/feasibility_s
 
 fn test_file_parse() {
 	mut parser := get()
-	parser.file_parse('$actionparser.testpath/testfile.md')?
+	parser.file_parse('$actionparser.testpath/testfile.md') or {panic(err)}
 	assert parser.actions.len == 10
 }
