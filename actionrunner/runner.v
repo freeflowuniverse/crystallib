@@ -1,6 +1,5 @@
 module actionrunner
 
-
 //is the one running in a thred
 [heap]
 pub struct Runner {
@@ -9,7 +8,6 @@ mut:
 	channel_log chan string
 	jobcurrent []ActionJob
 }
-
 
 //return reference to the current job
 pub fn (mut runner Runner) job() ActionJob {
@@ -26,11 +24,13 @@ pub fn (mut runner Runner) error(msg string) {
 	runner.done()
 }
 
+// ? returns job when job is done
 pub fn (mut runner Runner) done() {
-	// runner.channel <- runner.jobcurrent[0]
+	// runner.channel <- &runner.jobcurrent[0]
+	runner.channel_log <- "${runner.job().id}:done"
 	runner.jobcurrent = []ActionJob{} //empty
 }
 
 pub fn (mut runner Runner) log(msg string) {
-	// runner.channel_log <- "${runner.job().id}:${msg}"
+	runner.channel_log <- "${runner.job().id}:${msg}"
 }

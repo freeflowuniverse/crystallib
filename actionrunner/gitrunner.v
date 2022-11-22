@@ -8,40 +8,48 @@ mut:
 	gt GitStructure [str: skip] 
 }
 
-pub fn new_gitrunner() GitRunner {
+pub fn new_gitrunner() &GitRunner {
 	mut gt := gittools.get(root: '') or { panic("Can't get gittools: $err") }
 	mut runner := GitRunner{
 		gt: gt
-		channel: chan &ActionJob{}
-		channel_log: chan string{}
+		channel: chan &ActionJob{cap: 100}
+		channel_log: chan string{cap: 100}
 	}
-	return runner
+	return &runner
 }
 
-
 fn (mut runner GitRunner) run() {
+	$if debug {
+		eprintln('Running gitrunner...')
+	}
+	mut job := &ActionJob{}
 	for {
-		println("323232")
-		mut job := <-runner.channel
-		println(job)
-		if true{
-			panic("runner.channel")
+
+		// currentjob buffer only has 1 job at a time
+		if runner.jobcurrent.len == 0 {
+			job = <- runner.channel
+			runner.jobcurrent << job
 		}
-		
-		// runner.jobcurrent<<job
-		match job.actionname {
+
+		$if debug {
+			eprintln('-- received job: $job.actionname')
+		}
+
+		runner.log('running') // set job state to running
+		match runner.jobcurrent[0].actionname {
 			'git.params.multibranch' { runner.run_multibranch() or {runner.error("$err")} }
 			// 'git.pull' { runner.run_pull(mut job) }
 			// 'git.link' { runner.run_link(mut job) }
 			else { 					
-					runner.error("could not find action for job:\n$job")
-				}
+				runner.error("could not find action for job:\n$job")
+			}
 		}
+		// if true{
+		// 	panic("runner.channel")
+		// }
 		runner.done()
 	}
 }
-
-
 
 // fn (mut runner GitRunner) run_pull(mut job ActionJob)! {
 // 	// TODO: if local repo is at local branch that has no upstream produces following error
@@ -86,8 +94,8 @@ fn (mut runner GitRunner) run() {
 
 fn (mut runner GitRunner) run_multibranch()! {
 	runner.gt.config.multibranch = true	
-	runner.log(@FN + ': multibranch set')
-	$if debug {
-		runner.log("${runner.job()}")
-	}	
+	// runner.log(@FN + ': multibranch set')
+	// $if debug {
+	// 	runner.log("running multibranch")
+	// }	
 }
