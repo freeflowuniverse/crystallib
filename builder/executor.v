@@ -4,7 +4,7 @@ import ipaddress
 
 type Executor = ExecutorLocal | ExecutorSSH
 
-struct ExecutorNewArguments {
+pub struct ExecutorNewArguments {
 	local  bool // if this set then will always be the local machine
 	ipaddr string
 	user   string = 'root'

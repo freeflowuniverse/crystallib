@@ -1,9 +1,8 @@
-
-
 module params
+
 import freeflowuniverse.crystallib.resp
 
-//encode using resp (redis procotol)
+// encode using resp (redis procotol)
 pub fn (mut p Params) to_resp() ![]u8 {
 	mut b_main := resp.builder_new()
 	mut b_param := resp.builder_new()
@@ -19,9 +18,8 @@ pub fn (mut p Params) to_resp() ![]u8 {
 	return b_main.data
 }
 
-pub fn  from_resp (data []u8) ?Params {
-
-	mut p := params.Params{}
+pub fn from_resp(data []u8) ?Params {
+	mut p := Params{}
 
 	mut top_array_ := resp.decode(data)?[0]
 	top_array := top_array_ as resp.RArray
@@ -51,4 +49,3 @@ pub fn  from_resp (data []u8) ?Params {
 
 	return p
 }
-

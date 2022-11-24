@@ -37,7 +37,7 @@ fn redistest() ? {
 	for c in 0 .. 200 {
 		// even if going slower does not work?
 		time.sleep(1 * time.millisecond)
-		threads << go conn_for_thread(c)
+		threads << spawn conn_for_thread(c)
 	}
 	threads.wait()
 

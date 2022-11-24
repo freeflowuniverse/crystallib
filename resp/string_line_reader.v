@@ -14,12 +14,12 @@ pub fn new_line_reader(data []u8) StringLineReader {
 	}
 }
 
-fn (mut r StringLineReader) read_line() ?[]u8 {
+fn (mut r StringLineReader) read_line() []u8 {
 	mut out := []u8{}
 	mut c := ''.bytes()
 	for {
 		if r.x >= r.y {
-			return none
+			return []
 		}
 		c = [r.data[r.x]]
 		if c == '\t'.bytes() {
@@ -36,7 +36,7 @@ fn (mut r StringLineReader) read_line() ?[]u8 {
 		out << c
 		r.x++
 	}
-	return error('should not get here')
+	panic('should not get here')
 }
 
 fn (mut r StringLineReader) read(x int) ?[]u8 {

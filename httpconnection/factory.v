@@ -25,18 +25,13 @@ pub fn new(name string, url string, cache bool) &HTTPConnection {
 	// Init conenection
 	// empty_redis := redisclient.Redis{}
 	mut conn := HTTPConnection{
-		redis: 0
+		redis: redisclient.core_get()
 		default_header: header
 		cache: CacheConfig{
 			disable: !cache
+			key:name
 		}
 		base_url: url.trim('/')
-	}
-
-	// Check cache and init redis using unix_socket
-	if cache {
-		conn.redis = redisclient.core_get()
-		conn.cache.key = name
 	}
 
 	// Store new connection
@@ -45,7 +40,7 @@ pub fn new(name string, url string, cache bool) &HTTPConnection {
 	return f.connections[name]
 }
 
-pub fn get(name string) ?&HTTPConnection {
+pub fn get(name string) !&HTTPConnection {
 	mut f := httpconnection.factory
 	mut r := f.connections[name] or { return error('cannot find httpconnection with name $name .') }
 	return r

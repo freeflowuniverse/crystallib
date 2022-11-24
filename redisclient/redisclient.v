@@ -50,7 +50,7 @@ pub fn get(addr string) !Redis {
 }
 
 pub fn (mut r Redis) socket_connect() ! {
-	println(' CONNECT TCP: $r.addr')
+	println(' REDIS CONNECT: $r.addr')
 	r.socket = net.dial_tcp(r.addr)!
 	r.socket.set_blocking(true)!
 	r.socket.set_read_timeout(10 * time.second)
@@ -85,6 +85,7 @@ fn (mut r Redis) write(data []u8) ! {
 	r.socket_check()!
 	mut remaining := data.len
 	for remaining > 0 {
+		// zdbdata[data.len - remaining..].bytestr())
 		written_bytes := r.socket.write(data[data.len - remaining..])!
 		remaining -= written_bytes
 	}
@@ -97,9 +98,20 @@ pub fn (mut r Redis) write_rval(val resp.RValue) ! {
 }
 
 // write list of strings to redis challen
-fn (mut r Redis) write_cmds(items []string) ! {
-	a := resp.r_list_bstring(items)
+fn (mut r Redis) write_cmd(item string) ! {
+	a := resp.r_bytestring(item.bytes())
 	r.write_rval(a)!
+}
+
+// write list of strings to redis challen
+fn (mut r Redis) write_cmds(items []string) ! {
+	// if items.len==1{
+	// 	a := resp.r_bytestring(items[0].bytes())
+	// 	r.write_rval(a)!
+	// }{
+		a := resp.r_list_bstring(items)
+		r.write_rval(a)!
+	// }	
 }
 
 fn (mut r Redis) read(size int) ![]u8 {

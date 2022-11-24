@@ -1,14 +1,11 @@
 module main
 
-import tmux
-import redisclient
+import freeflowuniverse.crystallib.builder
+import freeflowuniverse.crystallib.installers.tmux
 
-fn do() ? {
-	mut b_local := tmux.executor_new(local: true)
-	mut b_ssh := tmux.executor_new(ipaddr: '212.2.3.3')
-
-	println(b_local)
-	println(b_ssh)
+fn do()! {
+	mut t := tmux.get_local()!
+	t.window_new(name: 'test', cmd: 'mc', reset: true)?
 }
 
 fn main() {

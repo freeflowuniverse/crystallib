@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.params { Param, Params }
 fn test_run_pull() {
 	mut gitrunner := new_gitrunner()
 	go gitrunner.run()
-	msg := ActionMessage{
+	msg := ActionJob{
 		name: 'git.pull'
 		params: Params{
 			params: [
@@ -38,7 +38,7 @@ fn test_run_pull() {
 fn test_run_link() {
 	mut gitrunner := new_gitrunner()
 	go gitrunner.run()
-	msg := ActionMessage{
+	msg := ActionJob{
 		name: 'git.link'
 		params: Params{
 			params: [
@@ -75,7 +75,7 @@ fn test_run_link() {
 fn test_run_multibranch() {
 	mut gitrunner := new_gitrunner()
 	go gitrunner.run()
-	msg := ActionMessage{
+	msg := ActionJob{
 		name: 'git.params.multibranch'
 		params: Params{
 			params: [

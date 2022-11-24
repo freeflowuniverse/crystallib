@@ -110,6 +110,9 @@ fn (mut gitstructure GitStructure) load() ! {
 
 fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []string) ! {
 	// println(" - git load: $path1")
+	if ! (os.exists(path1)){
+		os.mkdir_all(path1)!
+	}
 	items := os.ls(path1) or { return error('cannot load gitstructure because cannot find $path1') }
 	mut pathnew := ''
 	for item in items {

@@ -3,6 +3,7 @@ module sshagent
 import freeflowuniverse.crystallib.console
 import os
 import freeflowuniverse.crystallib.pathlib
+import crypto.sha256
 
 fn listsplit(key string) string {
 	if key.trim(' ') == '' {
@@ -27,7 +28,7 @@ pub fn load_interactive() !string {
 			description: 'We found sshkey ${pubkeys[0]} in sshagent, want to use this one?'
 		)
 		{
-			key_load(pubkeys[0])
+			key_load(pubkeys[0])!
 			return pubkeys[0]
 		}
 	}
@@ -40,7 +41,7 @@ pub fn load_interactive() !string {
 				items: pubkeys
 				description: 'Please choose the ssh key you want to use'
 			)
-			key_load(keytouse)
+			key_load(keytouse)!
 			return keytouse
 		}
 	}
@@ -60,7 +61,7 @@ pub fn load_interactive() !string {
 			description: 'We found sshkey ${pubkeys[0]} in ~/.ssh dir, want to use this one?'
 		)
 		{
-			key_load(pubkeys[0])
+			key_load(pubkeys[0])!
 			return pubkeys[0]
 		}
 	}
@@ -73,7 +74,7 @@ pub fn load_interactive() !string {
 				items: pubkeys
 				description: 'Please choose the ssh key you want to use'
 			)
-			key_load(keytouse)
+			key_load(keytouse)!
 			return keytouse
 		}
 	}
@@ -90,7 +91,7 @@ pub fn load_interactive() !string {
 		// }else{
 		// 	return error("Cannot continue, did not find sshkey to use")
 		// }
-		key_load_with_passphrase(keytouse, passphrase)
+		key_load_with_passphrase(keytouse, passphrase)!
 	}
 	return error('Cannot continue, did not find sshkey to use')
 
@@ -125,7 +126,7 @@ pub fn pubkey_guess() !string {
 	if keypaths.len == 1 {
 		keycontent := keypaths[0].read()!
 		privkeypath := keypaths[0].path.replace('.pub', '')
-		key_load(privkeypath)
+		key_load(privkeypath)!
 		return keycontent
 	}
 	if keypaths.len > 1 {
@@ -135,9 +136,10 @@ pub fn pubkey_guess() !string {
 }
 
 // see which sshkeys are loaded in ssh-agent
+// will ignore errors, if there is an error will just return empty list
 pub fn pubkeys_get() []string {
 	mut pubkeys := []string{}
-	res := os.execute('ssh-add -L')
+	res := os.execute('ssh-add -L')	
 	if res.exit_code == 0 {
 		for line in res.output.split('\n') {
 			if line.trim(' ') == '' {
@@ -169,7 +171,7 @@ pub fn key_generate(name string, passphrase string) !string {
 		os.rm(dest)!
 	}
 	cmd := 'ssh-keygen -t ed25519 -f $dest -P $passphrase -q'
-	println(cmd)
+	// println(cmd)
 	rc := os.execute(cmd)
 	if !(rc.exit_code == 0) {
 		return error('Could not generated sshkey,\n$rc')
@@ -177,16 +179,37 @@ pub fn key_generate(name string, passphrase string) !string {
 	return '$os.home_dir()/.ssh/$name'
 }
 
-pub fn reset() {
-	_ := os.execute('ssh-add -D')
+pub fn reset()! {
+	res := os.execute('ssh-add -D')
+	if res.exit_code>0{
+		return error("cannot reset sshkeys.")
+	}		
 }
 
-pub fn key_load(keypath string) {
-	_ := os.execute('ssh-add $keypath')
+//load the key, they key is content, other keys will be unloaded
+pub fn key_load_single(key string)! {
+	hash:=sha256.hexhash(key)
+	reset()!
+	path:="~/.ssh/${hash}"
+	if os.exists(path){
+		os.rm(path)!
+	}
+	os.write_file(path,key)!
+	key_load(path)!	
 }
 
-pub fn key_load_with_passphrase(keypath string, passphrase string) {
-	_ := os.execute('ssh-add $keypath')
+pub fn key_load(keypath string)! {
+	res := os.execute('ssh-add $keypath')
+	if res.exit_code>0{
+		return error("cannot add ssh-key with path $keypath")
+	}
+}
+
+pub fn key_load_with_passphrase(keypath string, passphrase string)! {
+	res := os.execute('ssh-add $keypath')
+	if res.exit_code>0{
+		return error("cannot add key_load_with_passphrase with path $keypath")
+	}	
 }
 
 // pub fn ssh_agent_keys() []string{
