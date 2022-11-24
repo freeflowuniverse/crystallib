@@ -35,7 +35,7 @@ pub fn (mut htp HttpTwinClient) init(url string)? HttpTwinClient {
 	return htp
 }
 
-pub fn (htp HttpTwinClient) send(functionPath string, args string)? Message{
+pub fn (htp HttpTwinClient) send(functionPath string, args string)! Message{
 	function := functionPath.replace('.', '/')
 	request := http.Request{
 		url: "$htp.url/$function"

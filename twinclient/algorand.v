@@ -2,7 +2,8 @@ module twinclient
 import json
 
 
-
+//? There is no sum type or anything for TwinClient, so i dont think it has a send function
+//? This issues is the case for all client.transport.send() used in all of the following
 pub fn (mut client TwinClient) algorand_list()? []BlockChainModel {
 	response := client.transport.send('algorand.list', "{}")?
 	return json.decode([]BlockChainModel, response.data)
