@@ -85,9 +85,21 @@ pub fn (mut job ActionJob) state_ok()! {
 	job.state = .ok
 }
 
-
 pub fn (mut job ActionJob) error( msg string) {
 	job.state = .error
 	job.error = "$msg"
-	
+}
+
+// update state changes job state 
+// upon receiving state update message from channel
+pub fn (mut job ActionJob) update_state(state string)! {
+	match state {
+		'running' {
+			job.state_running()! 	
+		}
+		'done' {
+			job.state_ok()! 	
+		}
+		else {}
+	}
 }

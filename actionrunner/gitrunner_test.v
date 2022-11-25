@@ -6,8 +6,10 @@ import freeflowuniverse.crystallib.params { Param, Params }
 fn test_run_pull() {
 	mut gitrunner := new_gitrunner()
 	go gitrunner.run()
-	msg := ActionJob{
-		name: 'git.pull'
+
+	// run job
+	job := ActionJob{
+		actionname: 'git.pull'
 		params: Params{
 			params: [
 				Param{
@@ -22,7 +24,7 @@ fn test_run_pull() {
 			args: []
 		}
 	}
-	gitrunner.channel <- msg
+	gitrunner.channel <- &job
 	for {
 		res := <-gitrunner.channel
 		if res.name == msg.name && res.params == msg.params {
@@ -38,8 +40,8 @@ fn test_run_pull() {
 fn test_run_link() {
 	mut gitrunner := new_gitrunner()
 	go gitrunner.run()
-	msg := ActionJob{
-		name: 'git.link'
+	job := ActionJob{
+		actionname: 'git.link'
 		params: Params{
 			params: [
 				Param{
@@ -62,7 +64,7 @@ fn test_run_link() {
 			args: []
 		}
 	}
-	gitrunner.channel <- msg
+	gitrunner.channel <- &job
 	for {
 		res := <-gitrunner.channel
 		if res.name == msg.name && res.params == msg.params {
@@ -75,8 +77,8 @@ fn test_run_link() {
 fn test_run_multibranch() {
 	mut gitrunner := new_gitrunner()
 	go gitrunner.run()
-	msg := ActionJob{
-		name: 'git.params.multibranch'
+	job := ActionJob{
+		actionname: 'git.params.multibranch'
 		params: Params{
 			params: [
 				Param{
@@ -87,7 +89,7 @@ fn test_run_multibranch() {
 			args: []
 		}
 	}
-	gitrunner.channel <- msg
+	gitrunner.channel <- &job
 	for {
 		res := <-gitrunner.channel
 		if res.name == msg.name && res.params == msg.params {

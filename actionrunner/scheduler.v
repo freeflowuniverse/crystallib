@@ -1,6 +1,7 @@
 module actionrunner
 
 import freeflowuniverse.crystallib.actionparser
+import freeflowuniverse.crystallib.console
 import freeflowuniverse.crystallib.texttools
 import time
 
@@ -10,6 +11,7 @@ import time
 pub struct Scheduler {
 pub mut:
 	sessions map[string]SchedulerSession
+	logger console.Logger
 }
 
 [heap]
@@ -24,6 +26,12 @@ pub mut:
 pub fn scheduler_new() Scheduler {
 	return Scheduler{}
 }
+
+// // load runners checks runner file content and loads necessary runners into scheduler
+// fn (mut scheduler Scheduler) load_runners(name string) !SchedulerSession{
+
+// }
+
 
 fn (mut scheduler Scheduler) session_new(name string) !SchedulerSession{
 	scheduler.sessions[name] = SchedulerSession{name:name}
@@ -83,22 +91,27 @@ fn (mut session SchedulerSession) run(content string)! {
 	mut somethingtodo := true
 	for {
 
+		if session.jobs.all(it.state == .ok) {
+			println('All jobs are done!')
+			break
+		}
+
 		if somethingtodo == false{
 			return error("we run out of things to do")
 		}
 
 		for mut job in session.jobs {
 			$if debug {
-				println('--Scheduling job: $job.actionname')
+				println('-- Scheduling job: $job.actionname, state: $job.state')
 			}
 
 			somethingtodo=false //now anything which is still something which needs to be done will put this on true
-			//now select the channel to see which one has a return
 
 			$if debug {
 				eprint(texttools.indent(@FN + 'job actions select', '|  '))
 			}
 
+			//now select the channel to see which one has a return
 			if select {
 				//! This causes scheduler to receive back it's own job (without sleep)
 				//? Can we keep this channel unidirectional?
@@ -110,22 +123,16 @@ fn (mut session SchedulerSession) run(content string)! {
 				// }
 				git_log := <- session.gitrunner.channel_log {
 					// ? is id always index + 1?
-					mut log_job := session.jobs[git_log.split(':')[0].int()-1]
+					mut job_index := git_log.split(':')[0].int()-1
 					mut log_msg := git_log.split(':')[1]
 
 					$if debug {
-						eprintln("GIT LOG RETURN")
-						eprintln(git_log)
+						eprint(texttools.indent('GitRunner log: $git_log', '|  '))
 						somethingtodo = true
 					}
 
 					// todo: separate channel for state updates?
-					if log_msg == 'running' {
-						session.jobs[git_log.split(':')[0].int()-1].state_running()! 	
-					}
-					if log_msg == 'done' {
-						session.jobs[git_log.split(':')[0].int()-1].state_ok()! 	
-					}
+					session.jobs[job_index].update_state(log_msg)! 	
 				}		
 				500 * time.millisecond {
 					// do something if no channel has become ready within 0.5s
@@ -138,7 +145,7 @@ fn (mut session SchedulerSession) run(content string)! {
 				// }
 			} {} else {
 				panic('all channels are closed')
-			}	
+			}
 
 			if ! job.check_dependencies_done(){
 				//means this job is not ready to be processed yet
@@ -153,7 +160,10 @@ fn (mut session SchedulerSession) run(content string)! {
 			}
 
 			if job.state == .ok{
-				$if debug {eprintln(@FN + 'job ok')}
+
+				$if debug { 
+					eprint(texttools.indent(@FN + 'job ok', '|  '))
+				}
 				//means job is done
 				continue
 			}
@@ -184,7 +194,6 @@ fn (mut session SchedulerSession) run(content string)! {
 			
 			if job.state == .scheduled{
 				$if debug {eprintln(@FN + 'job scheduled')}
-				$if debug {eprintln(@FN + '\n$job')}
 				//need to check timeout
 				if ! job.check_timeout_ok(){
 					job.error("timeout on job in scheduled state")
@@ -204,32 +213,6 @@ fn (mut session SchedulerSession) run(content string)! {
 				somethingtodo=true		
 				continue
 			}
-
-			// } else if action.name.starts_with('books.') {
-			// 	msg := ActionJob{
-			// 		name: action.name
-			// 		params: action.params
-			// 	}
-			// 	booksrunner.channel <- msg
-			// 	for {
-			// 		res := <-booksrunner.channel
-			// 		if res.name == msg.name && res.params == msg.params && res.complete {
-			// 			break
-			// 		}
-			// 	}
-			// }else{
-			// 	msg := ActionJob{
-			// 		name: action.name
-			// 		params: action.params
-			// 	}
-			// 	booksrunner.channel <- msg
-			// 	for {
-			// 		res := <-booksrunner.channel
-			// 		if res.name == msg.name && res.params == msg.params && res.complete {
-			// 			break
-			// 		}
-			// 	}
-			// }
 
 		}//end of walking over all jobs
 	}

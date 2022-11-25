@@ -17,11 +17,17 @@ pub fn (mut runner Runner) job() ActionJob {
 	return runner.jobcurrent[0]
 }
 
+// ? should running and done also be implemented this way?
 pub fn (mut runner Runner) error(msg string) {
 	mut job := runner.job()
 	job.state = .error
 	job.error = "$msg"
-	runner.done()
+	// runner.done()
+}
+
+// messages that current job is running
+pub fn (mut runner Runner) running() {
+	runner.channel_log <- "${runner.job().id}:running"
 }
 
 // ? returns job when job is done
