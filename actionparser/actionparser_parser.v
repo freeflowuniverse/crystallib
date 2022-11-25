@@ -71,7 +71,7 @@ pub fn (mut parser ActionsParser) text_parse(content string) ! {
 // most ide's auto dedent indented markdown so is necessary
 // TODO: figure out way to apply to all possible params
 fn contains_params(line string) bool {
-	param_keys := ['gitsource', 'gitdest', 'source', 'dest', 'name', 'url', 'path']
+	param_keys := ['gitsource', 'gitdest', 'source', 'dest', 'name', 'url', 'path', 'message']
 	return param_keys.any(line.contains('$it:'))
 }
 

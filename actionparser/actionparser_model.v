@@ -1,7 +1,6 @@
 module actionparser
 
 import freeflowuniverse.crystallib.params
-import freeflowuniverse.crystallib.texttools
 
 pub struct ActionsParser {
 pub mut:
