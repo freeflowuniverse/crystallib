@@ -9,13 +9,8 @@ __global(
 )
 
 fn init() {
-	mut builder := builder.new()
-	mut node := builder.node_new(name: 'test', ipaddr: '185.69.166.152', debug: true) or {
-		panic("Can't get new node: $err")
-	}
-	tmux = Tmux{
-		node: node
-	}
+	tmux = get_remote('185.69.166.152')!
+
 	// reset tmux for tests
 	if tmux.is_running() {
 		tmux.stop() or {
@@ -34,6 +29,7 @@ fn testsuite_end() {
 fn test_window_new() {
 	tmux.start() or { panic("can't start tmux: $err") }
 
+	// test window new with only name arg
 	window_args := WindowArgs {
 		name: 'TestWindow'
 	}

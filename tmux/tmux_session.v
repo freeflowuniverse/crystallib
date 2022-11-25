@@ -44,18 +44,17 @@ fn init_session(mut tmux Tmux, s_name string) !Session {
 	return s
 }
 
-pub fn (mut s Session) create() ? {
-	mut e := s.tmux.node.executor
+pub fn (mut s Session) create() ! {
 	res_opt := "-P -F '#\{window_id\}'"
 	cmd := "tmux new-session $res_opt -d -s $s.name 'sh'"
 	window_id_ := s.tmux.node.exec(cmd) or { return error("Can't create tmux session $s.name \n$cmd\n$err") }
 
 	cmd3 := 'tmux set-option remain-on-exit on'
-	node.exec(cmd3) or { return error("Can't execute $cmd3\n$err") }
+	s.tmux.node.exec(cmd3) or { return error("Can't execute $cmd3\n$err") }
 
 	window_id := window_id_.trim(' \n')
 	cmd2 := "tmux rename-window -t $window_id 'notused'"
-	node.exec(cmd2) or { return error("Can't rename window $window_id to notused \n$cmd2\n$err") }
+	s.tmux.node.exec(cmd2) or { return error("Can't rename window $window_id to notused \n$cmd2\n$err") }
 }
 
 pub fn (mut s Session) restart() ! {
@@ -66,8 +65,7 @@ pub fn (mut s Session) restart() ! {
 pub fn (mut s Session) stop() ! {
 	mut node := s.tmux.node
 	node.exec('tmux kill-session -t $s.name') or {
-		// return error("Can't delete session $s.name - This happen when it is not found")
-		''
+		return error("Can't delete session $s.name - This may happen when session is not found: $err")
 	}
 }
 

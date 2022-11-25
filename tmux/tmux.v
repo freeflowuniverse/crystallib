@@ -17,6 +17,12 @@ pub fn get_local()!Tmux{
 	return Tmux{node:node}
 }
 
+pub fn get_remote(ipaddr string)!Tmux{
+	mut builder := builder.new()
+	mut node := builder.node_new(name: 'test', ipaddr: ipaddr, debug: true)!
+	return Tmux{node: node}
+}
+
 fn (mut t Tmux) scan_add(line string) !&Window {
 	// println(" -- scan add")
 	if line.count('|') < 4 {
@@ -69,14 +75,14 @@ pub fn (mut t Tmux) scan() !map[string]&Window {
 	// os.log('TMUX - Scanning ....')
 	mut node := t.node
 	cmd_list_session := "tmux list-sessions -F '#{session_name}'"
-	exec_list := node.exec_silent(cmd_list_session) or { '1' }
+	exec_list := node.exec_silent(cmd_list_session)!
 
-	if exec_list == '1' {
-		// No server running
-		// TODO: need to do better, is too rough
-		// os.log('TMUX: Server not running, cannot find sessions')
-		return map[string]&Window{}
-	}
+	// if exec_list == '1' {
+	// 	// No server running
+	// 	// TODO: need to do better, is too rough
+	// 	// os.log('TMUX: Server not running, cannot find sessions')
+	// 	return map[string]&Window{}
+	// }
 
 	println('execlist out: $exec_list')
 
@@ -132,18 +138,20 @@ pub fn (mut tmux Tmux) load() ! {
 }
 
 pub fn (mut t Tmux) stop() ! {
-	mut node := t.node
-	os.log('TMUX - Stop tmux')
-	cmd := 'tmux kill-server'
-	_ := node.exec_silent(cmd) or {
-		// return error("Can't execute $cmd \n$err")
-		''
+	$if debug {
+		eprintln('Stopping tmux...')
 	}
+
 	t.sessions = map[string]&Session{}
 	t.scan()!
+
+	mut node := t.node
 	for _, mut session in t.sessions {
 		session.stop()!
 	}
+
+	cmd := 'tmux kill-server'
+	_ := t.node.exec_silent(cmd) or {''}
 	os.log('TMUX - All sessions stopped .')
 }
 
@@ -153,6 +161,8 @@ pub fn (mut t Tmux) start() ! {
 		// return error("Can't execute $cmd \n$err")
 		''
 	}
+	// scan and add default bash window created with session init
+	t.scan()!
 }
 
 // print list of tmux sessions
