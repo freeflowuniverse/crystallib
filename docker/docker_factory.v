@@ -3,51 +3,7 @@ module docker
 import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.sshagent
 
-[heap]
-pub struct DockerFactory {
-pub mut:
-	dockerengines map[string]&DockerEngine
-	// current engine
-	current string
-}
 
-// needed to get singleton
-fn init_singleton() &DockerFactory {
-	mut f := DockerFactory{}
-	return &f
-}
-
-// singleton creation
-const docker_factory = init_singleton()
-
-fn get() &DockerFactory {
-	return docker.docker_factory
-}
-
-pub struct DockerEngineArguments {
-	name      string
-	node_name string
-pub mut:
-	sshkeys_allowed []string // all keys here have access over ssh into the machine, when ssh enabled
-}
-
-// get current docker engine intance
-// if you want to switch uses engine_switch or docengine_geter_get
-pub fn engine_current() !&DockerEngine {
-	return engine_get(get().current)
-}
-
-// switch you current docker engine
-pub fn engine_switch(name string) ! {
-	if name == '' {
-		return error('need to specify name of docker engine')
-	}
-	if name in get().dockerengines {
-		get().current = name
-		return
-	}
-	return error('cannot find dockerengine $name in docker_factory, please init.')
-}
 
 // get docker engine directly linked to a name
 pub fn engine_get(name string) !&DockerEngine {
@@ -65,8 +21,10 @@ pub fn engine_get(name string) !&DockerEngine {
 
 // if sshkeys_allowed empty array will check the local machine for loaded sshkeys
 pub fn engine_local(sshkeys_allowed []string) !&DockerEngine {
-	mut factory := builder.new()
-	mut node := factory.node_local()!
+
+	mut builder := builder.new()
+	mut node := builder.node_local()!	
+
 	return engine_new(name: 'local', node_name: node.name, sshkeys_allowed: sshkeys_allowed)
 }
 
