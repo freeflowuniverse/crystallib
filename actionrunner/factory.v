@@ -2,6 +2,7 @@ module actionrunner
 
 import os
 import net.http
+
 // struct ActionRunner{
 // pub mut:
 
@@ -31,6 +32,17 @@ pub fn run_env() ! {
 	}
 
 }
+
+//run from a path
+pub fn run(path string) ! {
+	if !os.exists(path){
+		return error("cannot find path:$path for actionrunner")
+	}
+	mut s:=scheduler_new()
+	mut session:=s.session_new(name)!
+	return session.run_from_dir(path)!
+}
+
 
 //parse an actionrunner file
 pub fn run_file(name string, path string) ! {

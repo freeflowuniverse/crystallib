@@ -57,11 +57,27 @@ fn (mut scheduler Scheduler) session_get(name string) !SchedulerSession{
 	return scheduler.sessions[name]
 }
 
+
+//look for all actionrunner files in a dir and run them
+pub fn (mut session SchedulerSession) run_from_dir(path string)! {
+
+	mut parser := actionparser.get()
+	parser.add(path)!
+
+	return session.run_from_parser(parser)!
+}
+
+
 //parse the content and run it
-fn (mut session SchedulerSession) run(content string)! {
+pub fn (mut session SchedulerSession) run(content string)! {
 
 	mut parser := actionparser.get()
 	parser.text_parse(content)!
+
+	return session.run_from_parser(parser)!
+}
+
+fn (mut session SchedulerSession) run_from_parser(parser actionparser.ActionsParser)! {
 
 	$if debug {
 		println('Loading actions...\n|')
