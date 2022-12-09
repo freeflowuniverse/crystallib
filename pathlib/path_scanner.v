@@ -61,7 +61,7 @@ fn scan_recursive(mut path Path, mut params params.Params, filters []Filter0, ex
 		}
 	}
 	if path.is_dir() {
-		mut llist := path.list(recursive: false) or {
+		mut llist := path.list(mut recursive: false) or {
 			return error('cannot list: $path.path \n$error')
 		}
 		for mut p_in in llist {
