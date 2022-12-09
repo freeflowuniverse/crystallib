@@ -39,8 +39,8 @@ pub fn run(path string) ! {
 		return error("cannot find path:$path for actionrunner")
 	}
 	mut s:=scheduler_new()
-	mut session:=s.session_new(name)!
-	return session.run_from_dir(path)!
+	mut session:=s.session_new(path)!
+	session.run_from_dir(path)!
 }
 
 

@@ -7,7 +7,8 @@ import time
 
 enum ActionJobState{
 	init
-	scheduled
+	tostart
+	recurring
 	running
 	ok
 	error
@@ -62,18 +63,16 @@ pub fn (mut job ActionJob) check_timeout_ok() bool {
 	return true
 }
 
-
-
-pub fn (mut job ActionJob) state_scheduled()! {
+pub fn (mut job ActionJob) state_tostart()! {
 	if job.state != .init{
 		return error("state should be init of $job")
 	}
-	job.state = .scheduled
+	job.state = .tostart
 }
 
 pub fn (mut job ActionJob) state_running()! {
-	if job.state != .scheduled{
-		return error("state should be scheduled of $job")
+	if job.state != .tostart{
+		return error("state should be tostart of $job")
 	}
 	job.state = .running
 }

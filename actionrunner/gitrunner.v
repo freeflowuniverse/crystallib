@@ -2,6 +2,7 @@ module actionrunner
 
 import freeflowuniverse.crystallib.gittools { GitStructure, GitRepo }
 import freeflowuniverse.crystallib.params { Params }
+import freeflowuniverse.crystallib.sshagent
 
 struct GitRunner {
 	Runner
@@ -47,7 +48,7 @@ fn (mut runner GitRunner) run() {
 		match runner.jobcurrent[0].actionname {
 			'git.init' { runner.run_init(mut job) or {runner.error("$err")} }
 			'git.params.multibranch' { runner.run_multibranch() or {runner.error("$err")} }
-			'git.pull' { runner.run_pull(mut job) or {runner.error("$err")}}
+			'git.get' { runner.run_get(mut job) or {runner.error("$err")}}
 			'git.link' { runner.run_link(mut job) or {runner.error("$err")}}
 			'git.commit' { runner.run_commit(mut job) or {runner.error("$err")}}
 			else { 					
@@ -69,7 +70,7 @@ fn (mut runner GitRunner) run_init(mut job ActionJob)! {
 fn (mut runner GitRunner) run_get(mut job ActionJob)! {
 	// TODO: if local repo is at local branch that has no upstream produces following error
 	// ! 'Your configuration specifies to merge with the ref 'refs/heads/branch'from the remote, but no such ref was fetched.
-	if !ssh.loaded() {
+	if !sshagent.loaded() {
 		return error('ssh key must be loaded')
 	}
 	url := job.params.get('url') or { return error("Couldn't get url.\n$err") }

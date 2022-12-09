@@ -21,6 +21,7 @@ pub mut:
 	// jobs Jobs //needs to be shared between threads 
 	jobs []ActionJob 	//all jobs
 	gitrunner GitRunner	
+	filesystem bool // actionrunner will use filesystem or not
 }
 
 pub fn scheduler_new() Scheduler {
@@ -64,7 +65,7 @@ pub fn (mut session SchedulerSession) run_from_dir(path string)! {
 	mut parser := actionparser.get()
 	parser.add(path)!
 
-	return session.run_from_parser(parser)!
+	session.run_from_parser(mut parser)!
 }
 
 
@@ -74,10 +75,10 @@ pub fn (mut session SchedulerSession) run(content string)! {
 	mut parser := actionparser.get()
 	parser.text_parse(content)!
 
-	return session.run_from_parser(parser)!
+	session.run_from_parser(mut parser)!
 }
 
-fn (mut session SchedulerSession) run_from_parser(parser actionparser.ActionsParser)! {
+fn (mut session SchedulerSession) run_from_parser(mut parser actionparser.ActionsParser)! {
 
 	$if debug {
 		println('Loading actions...\n|')
@@ -93,6 +94,7 @@ fn (mut session SchedulerSession) run_from_parser(parser actionparser.ActionsPar
 			params : action.params
 			start : time.now()
 			id : u32(session.jobs.len + 1)
+			state: .init
 		}
 		
 		//load the jobs
@@ -176,10 +178,6 @@ fn (mut session SchedulerSession) run_from_parser(parser actionparser.ActionsPar
 			}
 
 			if job.state == .ok{
-
-				$if debug { 
-					eprint(texttools.indent(@FN + 'job ok', '|  '))
-				}
 				//means job is done
 				continue
 			}
@@ -194,7 +192,7 @@ fn (mut session SchedulerSession) run_from_parser(parser actionparser.ActionsPar
 				$if debug {eprint(texttools.indent(@FN + 'job init', '|  '))}
 				if job.actionname.starts_with('git.') {
 					$if debug {eprint(texttools.indent(@FN + 'job init git', '|  '))}
-					job.state_scheduled()!
+					job.state_tostart()!
 					// eprintln(session.gitrunner.channel)
 					session.gitrunner.channel <- &job
 					$if debug {eprint(texttools.indent(@FN + 'job init git done', '|  '))}
@@ -208,11 +206,11 @@ fn (mut session SchedulerSession) run_from_parser(parser actionparser.ActionsPar
 				}
 			}
 			
-			if job.state == .scheduled{
-				$if debug {eprintln(@FN + 'job scheduled')}
+			if job.state == .tostart{
+				$if debug {eprintln(@FN + 'job tostart')}
 				//need to check timeout
 				if ! job.check_timeout_ok(){
-					job.error("timeout on job in scheduled state")
+					job.error("timeout on job in tostart state")
 					continue
 				}				
 				somethingtodo=true
