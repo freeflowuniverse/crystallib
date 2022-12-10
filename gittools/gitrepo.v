@@ -331,3 +331,17 @@ pub fn (mut repo GitRepo) fetch_all() ! {
 		return error('Cannot fetch repo: ${repo.path()}. Error was $err \n cmd: $cmd')
 	}
 }
+
+// deletes git repository
+pub fn (mut repo GitRepo) delete() ! {
+	println('   - DELETE: ${repo.url_get(true)}')
+	if !os.exists(repo.path()) {
+		repo.check(false, false)!
+	} else {
+		cmd2 := 'cd $repo.path() && git pull'
+		process.execute_silent(cmd2) or {
+			println(' GIT DELETE FAILED: $cmd2')
+			return error('Cannot delete repo: ${repo.path()}. Error was $err')
+		}
+	}
+}
