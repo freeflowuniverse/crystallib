@@ -1,6 +1,6 @@
 module actionrunner
 
-//is the one running in a thred
+//is the one active in a thred
 [heap]
 pub struct Runner {
 mut:
@@ -17,7 +17,7 @@ pub fn (mut runner Runner) job() ActionJob {
 	return runner.jobcurrent[0]
 }
 
-// ? should running and done also be implemented this way?
+// ? should active and done also be implemented this way?
 pub fn (mut runner Runner) error(msg string) {
 	mut job := runner.job()
 	job.state = .error
@@ -25,9 +25,9 @@ pub fn (mut runner Runner) error(msg string) {
 	// runner.done()
 }
 
-// messages that current job is running
-pub fn (mut runner Runner) running() {
-	runner.channel_log <- "${runner.job().id}:running"
+// messages that current job is active
+pub fn (mut runner Runner) active() {
+	runner.channel_log <- "${runner.job().id}:active"
 }
 
 // ? returns job when job is done

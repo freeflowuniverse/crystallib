@@ -145,7 +145,7 @@ fn (mut session SchedulerSession) run_from_parser(mut parser actionparser.Action
 					mut log_msg := git_log.split(':')[1]
 
 					$if debug {
-						eprint(texttools.indent('GitRunner log: $git_log', '|  '))
+						eprint(texttools.indent('LOG gitrunner:action$git_log', '|  '))
 						somethingtodo = true
 					}
 
@@ -192,7 +192,7 @@ fn (mut session SchedulerSession) run_from_parser(mut parser actionparser.Action
 				$if debug {eprint(texttools.indent(@FN + 'job init', '|  '))}
 				if job.actionname.starts_with('git.') {
 					$if debug {eprint(texttools.indent(@FN + 'job init git', '|  '))}
-					job.state_tostart()!
+					job.state_tostart(ToStartArgs{})!
 					// eprintln(session.gitrunner.channel)
 					session.gitrunner.channel <- &job
 					$if debug {eprint(texttools.indent(@FN + 'job init git done', '|  '))}
@@ -217,11 +217,11 @@ fn (mut session SchedulerSession) run_from_parser(mut parser actionparser.Action
 				continue
 			}
 
-			if job.state == .running{
-				$if debug {eprintln(@FN + 'job running')}
+			if job.state == .active{
+				$if debug {eprintln(@FN + 'job active')}
 				//need to check timeout
 				if ! job.check_timeout_ok(){
-					job.error("timeout on job in running state")
+					job.error("timeout on job in active state")
 					continue
 				}		
 				somethingtodo=true		

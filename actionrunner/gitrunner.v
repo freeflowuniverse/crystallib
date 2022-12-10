@@ -23,7 +23,7 @@ pub fn new_gitrunner() &GitRunner {
 
 fn (mut runner GitRunner) run() {
 	$if debug {
-		eprintln('Running gitrunner...')
+		eprintln('active gitrunner...')
 	}
 	// used to initialize gitstructure by default
 	// if git init action isn't the first job
@@ -44,7 +44,7 @@ fn (mut runner GitRunner) run() {
 			first_job = false
 		}
 
-		runner.running()
+		runner.active()
 		match runner.jobcurrent[0].actionname {
 			'git.init' { runner.run_init(mut job) or {runner.error("$err")} }
 			'git.params.multibranch' { runner.run_multibranch() or {runner.error("$err")} }
@@ -129,7 +129,7 @@ fn (mut runner GitRunner) run_multibranch()! {
 	runner.gt.config.multibranch = true	
 	runner.log(@FN + ': multibranch set')
 	$if debug {
-		runner.log("running multibranch")
+		runner.log("active multibranch")
 	}	
 }
 
@@ -137,7 +137,7 @@ fn (mut runner GitRunner) run_repo_delete()! {
 	runner.gt.config.multibranch = true	
 	runner.log(@FN + ': multibranch set')
 	$if debug {
-		runner.log("running multibranch")
+		runner.log("active multibranch")
 	}	
 }
 
