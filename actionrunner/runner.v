@@ -5,6 +5,7 @@ module actionrunner
 pub struct Runner {
 mut:
 	channel chan &ActionJob
+	channel_ret chan &ActionJobReturn
 	channel_log chan string
 	jobcurrent []ActionJob
 }
@@ -27,16 +28,19 @@ pub fn (mut runner Runner) error(msg string) {
 
 // messages that current job is active
 pub fn (mut runner Runner) active() {
-	runner.channel_log <- "${runner.job().id}:active"
+	runner.channel_log <- "${runner.job().guid}:active"
 }
 
 // ? returns job when job is done
 pub fn (mut runner Runner) done() {
-	// runner.channel <- &runner.jobcurrent[0]
-	runner.channel_log <- "${runner.job().id}:done"
+	return_obj := ActionJobReturn {
+		job: runner.job()
+		state: .ok
+	} //? no result if done
+	runner.channel_ret <- &return_obj
 	runner.jobcurrent = []ActionJob{} //empty
 }
 
 pub fn (mut runner Runner) log(msg string) {
-	runner.channel_log <- "${runner.job().id}:${msg}"
+	runner.channel_log <- "${runner.job().guid}:${msg}"
 }

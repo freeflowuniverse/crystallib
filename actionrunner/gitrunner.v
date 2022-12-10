@@ -16,6 +16,7 @@ pub fn new_gitrunner() &GitRunner {
 	mut runner := GitRunner{
 		gt: gt
 		channel: chan &ActionJob{cap: 100}
+		channel_ret: chan &ActionJobReturn{cap: 100} // return channel for actionjob returns
 		channel_log: chan string{cap: 100}
 	}
 	return &runner
@@ -47,7 +48,7 @@ fn (mut runner GitRunner) run() {
 		runner.active()
 		match runner.jobcurrent[0].actionname {
 			'git.init' { runner.run_init(mut job) or {runner.error("$err")} }
-			'git.params.multibranch' { runner.run_multibranch() or {runner.error("$err")} }
+			'git.params.multibranch' { runner.run_multibranch(mut job) or {runner.error("$err")} }
 			'git.get' { runner.run_get(mut job) or {runner.error("$err")}}
 			'git.link' { runner.run_link(mut job) or {runner.error("$err")}}
 			'git.commit' { runner.run_commit(mut job) or {runner.error("$err")}}
@@ -125,19 +126,7 @@ fn (mut runner GitRunner) run_commit(mut job ActionJob) !{
 	}
 }
 
-fn (mut runner GitRunner) run_multibranch()! {
+fn (mut runner GitRunner) run_multibranch(mut job ActionJob)! {
 	runner.gt.config.multibranch = true	
-	runner.log(@FN + ': multibranch set')
-	$if debug {
-		runner.log("active multibranch")
-	}	
+	runner.log('$job.guid:multibranch set')
 }
-
-fn (mut runner GitRunner) run_repo_delete()! {
-	runner.gt.config.multibranch = true	
-	runner.log(@FN + ': multibranch set')
-	$if debug {
-		runner.log("active multibranch")
-	}	
-}
-

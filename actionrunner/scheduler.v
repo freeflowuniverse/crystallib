@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.actionparser
 import freeflowuniverse.crystallib.console
 import freeflowuniverse.crystallib.texttools
 import time
-
+import os
 
 //the main process which coordinate alls
 [heap]
@@ -80,6 +80,16 @@ pub fn (mut session SchedulerSession) run(content string)! {
 
 fn (mut session SchedulerSession) run_from_parser(mut parser actionparser.ActionsParser)! {
 
+	// set up filesystem
+	os.mkdir_all(os.dir(@FILE) + '/filesystem/init')!
+	os.mkdir_all(os.dir(@FILE) + '/filesystem/tostart')!
+	os.mkdir_all(os.dir(@FILE) + '/filesystem/active')!
+	os.mkdir_all(os.dir(@FILE) + '/filesystem/done')!
+	os.mkdir_all(os.dir(@FILE) + '/filesystem/state/ok')!
+	os.mkdir_all(os.dir(@FILE) + '/filesystem/state/error')!
+	os.mkdir_all(os.dir(@FILE) + '/filesystem/state/restart')!
+	os.mkdir_all(os.dir(@FILE) + '/filesystem/logs')!
+
 	$if debug {
 		println('Loading actions...\n|')
 	}
@@ -96,6 +106,8 @@ fn (mut session SchedulerSession) run_from_parser(mut parser actionparser.Action
 			id : u32(session.jobs.len + 1)
 			state: .init
 		}
+		// load the filesystem
+		job.state_init()!
 		
 		//load the jobs
 		session.jobs << job
@@ -131,26 +143,19 @@ fn (mut session SchedulerSession) run_from_parser(mut parser actionparser.Action
 
 			//now select the channel to see which one has a return
 			if select {
-				//! This causes scheduler to receive back it's own job (without sleep)
-				//? Can we keep this channel unidirectional?
-				// git_obj := <- session.gitrunner.channel {
-				// 	println("GIT CHANNEL RETURN")
-				// 	println(git_obj)
-				// 	panic("s17")
-				// 	somethingtodo = true
-				// }
+				mut return_obj := <- session.gitrunner.channel_ret {
+					return_obj.job.handle_return(return_obj.state, return_obj.result)!
+					somethingtodo = true
+				}
 				git_log := <- session.gitrunner.channel_log {
-					// ? is id always index + 1?
-					mut job_index := git_log.split(':')[0].int()-1
-					mut log_msg := git_log.split(':')[1]
-
 					$if debug {
-						eprint(texttools.indent('LOG gitrunner:action$git_log', '|  '))
-						somethingtodo = true
+						eprint(texttools.indent('LOG gitrunner:$git_log', '|  '))
 					}
-
-					// todo: separate channel for state updates?
-					session.jobs[job_index].update_state(log_msg)! 	
+					mut job_guid := git_log.split(':')[0]
+					mut log_msg := git_log.split(':')[1]
+					// ? should we use a job getter function here
+					mut actionjob := ActionJob{ guid: job_guid }
+					actionjob.log(log_msg) // logs message to folder
 				}		
 				500 * time.millisecond {
 					// do something if no channel has become ready within 0.5s
@@ -194,8 +199,7 @@ fn (mut session SchedulerSession) run_from_parser(mut parser actionparser.Action
 					$if debug {eprint(texttools.indent(@FN + 'job init git', '|  '))}
 					job.state_tostart(ToStartArgs{})!
 					// eprintln(session.gitrunner.channel)
-					session.gitrunner.channel <- &job
-					$if debug {eprint(texttools.indent(@FN + 'job init git done', '|  '))}
+					// $if debug {eprint(texttools.indent(@FN + 'job init git done', '|  '))}
 					//now we can continue with next job
 					somethingtodo=true
 					continue
@@ -212,7 +216,10 @@ fn (mut session SchedulerSession) run_from_parser(mut parser actionparser.Action
 				if ! job.check_timeout_ok(){
 					job.error("timeout on job in tostart state")
 					continue
-				}				
+				}
+				// pass job to runner
+				job.state_active()!	
+				session.gitrunner.channel <- &job
 				somethingtodo=true
 				continue
 			}
