@@ -61,16 +61,37 @@ fn scan_recursive(mut path Path, mut params params.Params, filters []Filter0, ex
 		}
 	}
 	if path.is_dir() {
-		mut llist := path.list(mut recursive: false) or {
-			return error('cannot list: $path.path \n$error')
-		}
-		for mut p_in in llist {
-			scan_recursive(mut p_in, mut params, filters, executors) or {
-				msg := 'Cannot process recursive on $p_in.path\n$error'
+		for e in executors {
+			params = e(mut path, mut params) or {
+				msg := 'Cannot process execution on dir $path.path\n$error'
 				// println(msg)
 				return error(msg)
 			}
+		}		
+		mut llist := path.list(mut recursive: false) or {
+			return error('cannot list: $path.path \n$error')
 		}
+		llist.sort()
+		//first process the files and link
+		for mut p_in in llist {
+			if ! p_in.is_dir(){
+				scan_recursive(mut p_in, mut params, filters, executors) or {
+					msg := 'Cannot process recursive on $p_in.path\n$error'
+					// println(msg)
+					return error(msg)
+				}
+			}
+		}
+		//now process the dirs
+		for mut p_in in llist {
+			if p_in.is_dir(){
+				scan_recursive(mut p_in, mut params, filters, executors) or {
+					msg := 'Cannot process recursive on $p_in.path\n$error'
+					// println(msg)
+					return error(msg)
+				}
+			}
+		}		
 	} else {
 		for e in executors {
 			params = e(mut path, mut params) or {
