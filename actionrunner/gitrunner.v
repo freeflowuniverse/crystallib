@@ -45,7 +45,7 @@ fn (mut runner GitRunner) run() {
 			first_job = false
 		}
 
-		runner.active()
+		runner.running()
 		match runner.jobcurrent[0].actionname {
 			'git.init' { runner.run_init(mut job) or {runner.error("$err")} }
 			'git.params.multibranch' { runner.run_multibranch(mut job) or {runner.error("$err")} }
@@ -54,6 +54,7 @@ fn (mut runner GitRunner) run() {
 			'git.commit' { runner.run_commit(mut job) or {runner.error("$err")}}
 			else { 					
 				runner.error("could not find action for job:\n$job")
+				return
 			}
 		}
 		runner.done()

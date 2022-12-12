@@ -6,7 +6,7 @@ multibranch: 'false'
 
 !!git.params.multibranch
 
-!!git.pull url:'https://github.com/ourworld-tsc/ourworld_books/tree/development/content' name:'owb'
+!!git.get url:'https://github.com/ourworld-tsc/ourworld_books/tree/development/content' name:'owb'
 
 !!git.link
 source:'https://github.com/ourworld-tsc/ourworld_books/tree/development/content/tanzania_feasibility/technology'

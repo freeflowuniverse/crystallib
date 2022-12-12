@@ -11,31 +11,38 @@ mut:
 }
 
 //return reference to the current job
-pub fn (mut runner Runner) job() ActionJob {
+pub fn (mut runner Runner) job() &ActionJob {
 	if runner.jobcurrent.len != 1{
 		panic("current jobs in runner should be 1 when calling log")
 	}
-	return runner.jobcurrent[0]
+	return &runner.jobcurrent[0]
 }
 
 // ? should active and done also be implemented this way?
 pub fn (mut runner Runner) error(msg string) {
-	mut job := runner.job()
-	job.state = .error
-	job.error = "$msg"
-	// runner.done()
+	return_obj := ActionJobReturn {
+		job_guid: runner.job().guid
+		event: .error
+		error: msg
+	}
+	runner.channel_ret <- &return_obj
 }
 
-// messages that current job is active
-pub fn (mut runner Runner) active() {
-	runner.channel_log <- "${runner.job().guid}:active"
+// sends event to schedulersession alongside actionjob
+pub fn (mut runner Runner) running() {
+	// todo: maybe its best to only return guid since this requires updating state in both places
+	return_obj := ActionJobReturn {
+		job_guid: runner.job().guid
+		event: .running
+	}
+	runner.channel_ret <- &return_obj
 }
 
 // ? returns job when job is done
 pub fn (mut runner Runner) done() {
 	return_obj := ActionJobReturn {
-		job: runner.job()
-		state: .ok
+		job_guid: runner.job().guid
+		event: .ok
 	} //? no result if done
 	runner.channel_ret <- &return_obj
 	runner.jobcurrent = []ActionJob{} //empty

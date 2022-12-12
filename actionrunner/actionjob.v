@@ -8,23 +8,24 @@ import json
 import rand
 
 // the path of the directory in which the action job files will be located
-const dirpath = os.dir(@FILE) + '/filesystem'
+const dirpath = os.dir(@FILE) + '/example/filesystem'
 
 enum ActionJobState{
 	init
 	tostart
 	recurring
+	scheduled
 	active
-	ok
+	done
 	error
 }
 
-// change action runner to be able to have 3 states + result as return: 
-// ok, error, restart 
-enum ActionJobReturnState{
-	ok
-	error
-	restart
+enum ActionJobEvent{
+	schedule // job has been pushed to the runner channel
+	running // job has begun being run by runner
+	ok // job has been successfully complete
+	error // job has produced an error
+	restart // job has produced an error and must restart
 }
 
 [heap]
@@ -37,34 +38,27 @@ pub mut:
 	state ActionJobState
 	start time.Time
 	end time.Time
+	grace_period time.Duration
 	error string
 	db map[string]string 		//used to keep state between
 	dependencies []ActionJob 	//list the dependencies
 	timeout u16					//time in seconds, 0 means we wait for ever
 }
 
-// change action runner to be able to have 3 states + result as return: 
+// an actionjob can have 5 events + error msg as return: 
+// schedule, running, ok, error, restart 
 [heap]
 pub struct ActionJobReturn {
 pub mut:
-	job ActionJob
-	state ActionJobReturnState
-	result string // action runner gets result field as params json (is dict of strings)
+	job_guid string
+	event ActionJobEvent
+	error string
 }
-
-// returns actionjob object from filesystem
-// // todo: maybe also keep a map so can be retreived from state?
-// pub fn get(guid string) ActionJob {
-// 	for folder in ['init', 'tostart', ''] {
-		
-// 	}
-// 	if os.exists()
-// }
 
 //return true if all dependencies are done
 pub fn (mut job ActionJob) check_dependencies_done() bool {
 	for jopdep in job.dependencies{
-		if jopdep.state != .ok && jopdep.state != .error{
+		if jopdep.state == .active {
 			return false //means is still active
 		}
 	}
@@ -94,75 +88,100 @@ pub fn (mut job ActionJob) check_timeout_ok() bool {
 	return true
 }
 
-struct ToStartArgs{
-	grace_period int = 0// grace period is in seconds, if not specified is immediate
+// creates new actionjob
+pub fn new_actionjob(name string, params Params) ActionJob {
+	return ActionJob{
+		actionname : name
+		params : params
+		start : time.now()
+		guid: rand.uuid_v4()
+	}
 }
 
-pub fn (mut job ActionJob) state_init()! {
-	// todo: perform checks
-	job.state = .init
-	job.guid = rand.uuid_v4()
-	os.write_file('$dirpath/init/$job.guid', json.encode(job)) or {panic('cannt write actionfile: $err')}
-	job.log('Action job initialized.')
+struct StateArgs {
+	state ActionJobState
+	grace_period time.Duration = 0 * time.second
 }
 
-// if grace specified job will only start X seconds later as last moddate of the job file
-pub fn (mut job ActionJob) state_tostart(args ToStartArgs)! {
-
-	// todo: should also except other cases
-	if job.state != .init {
-		return error("state should be init of $job")
+// used for creating state files on session load or recovery
+// NOT used for state updates, only individual event handlers update state
+fn (mut job ActionJob) load_state(args StateArgs)! {
+	job.state = args.state
+	os.write_file('$dirpath/${args.state}/$job.guid', '') or {
+		panic('Cannot create actionfile for job: $err')
 	}
-
-	os.mv('$dirpath/init/$job.guid', '$dirpath/tostart') or {
-		panic('Cannot move actionfile from init to tostart: $err')
-	}
-	job.state = .tostart
-	job.log('Action job tostart.')
+	job.log('Action job loaded with state $args.state')
 }
 
-// if grace specified job will only start X seconds later as last moddate of the job file
-pub fn (mut job ActionJob) state_recurring(args ToStartArgs)! {
-	if job.state != .init{
-		return error("state should be init of $job")
+// schedule event handler, updates state and filesystem to scheduled
+pub fn (mut job ActionJob) event_schedule()! {
+	if job.state != .tostart && job.state != .recurring {
+		return error("Schedule event can only be emmitted by a job that is recurring or tostart")
 	}
-	job.state = .recurring
-	job.log('Action job recurring.')
+
+	// copies job instead of moving if recurring
+	if job.state == .recurring {
+		os.cp('$dirpath/recurring/$job.guid', '$dirpath/scheduled/$job.guid') or {
+			panic('Failed to copy actionfile from recurring to tostart: $err')
+		}
+	} else {
+		os.mv('$dirpath/tostart/$job.guid', '$dirpath/scheduled/$job.guid') or {
+			panic('Failed to move actionfile from scheduled to active: $err')
+		}
+	}
+
+	job.state = .scheduled
+	job.log('Action job is scheduled')
 }
 
-pub fn (mut job ActionJob) state_active()! {
-	if job.state != .tostart{
-		return error("state should be tostart of $job")
+// running event handler, updates state and filesystem from scheduled to active
+pub fn (mut job ActionJob) event_running()! {
+	if job.state != .scheduled{
+		return error("Running event can only be emmitted by a scheduled job")
 	}
-	os.mv('$dirpath/tostart/$job.guid', '$dirpath/active') or {
-		panic('Cannot move actionfile from tostart to active: $err')
+	os.mv('$dirpath/scheduled/$job.guid', '$dirpath/active/$job.guid') or {
+		panic('Failed to move actionfile from scheduled to active: $err')
 	}
 	job.state = .active
-	job.log('Action job active.')
+	job.log('Action job is active')
 }
 
-pub fn (mut job ActionJob) state_ok()! {
-	if job.state != .active{
-		return error("state should be active of $job")
+// ok event handler, updates state and filesystem from active to done
+pub fn (mut job ActionJob) event_ok()! {
+	if job.state != .active {
+		return error("Ok event can only be emmitted by an active job")
 	}
-	os.mv('$dirpath/active/$job.guid', '$dirpath/done') or {
-		panic('Cannot move actionfile from active to done: $err')
+	os.mv('$dirpath/active/$job.guid', '$dirpath/done/$job.guid') or {
+		panic('Failed to move actionfile from active to done: $err')
 	}
-	job.state = .ok
-	job.log('Action job done.')
+	job.state = .done
+	job.log('Action job is done')
 }
 
-pub fn (mut job ActionJob) state_error()! {
-	if job.state != .active{
-		return error("state should be active of $job")
+// ok event handler, updates state and filesystem from active to error
+pub fn (mut job ActionJob) event_error()! {
+	if job.state != .active {
+		return error("Error event can only be emmitted by an active job")
+	}
+	os.mv('$dirpath/active/$job.guid', '$dirpath/error/$job.guid') or {
+		panic('Failed to move actionfile from active to error: $job.error')
 	}
 	job.state = .error
-	job.log('Action job error.')
+	job.log('Action job has returned an error: $job.error')
 }
 
-pub fn (mut job ActionJob) error(msg string) {
-	job.state = .error
-	job.error = "$msg"
+// there can be errors e.g. not reaching a service, which can be retried, 
+// moves the action back to 'tostart' with a 2s grace period
+pub fn (mut job ActionJob) event_restart()! {
+	if job.state != .active {
+		return error("Restart event can only be emmitted by an active job")
+	}
+	os.mv('$dirpath/active/$job.guid', '$dirpath/tostart/$job.guid') or {
+		panic('Failed to move actionfile from active to tostart: $err')
+	}
+	job.state = .tostart
+	job.grace_period = 2 * time.second
+	job.log('Action job has returned an error and will restart')
 }
 
 pub fn (mut job ActionJob) log(msg string) {
@@ -174,37 +193,31 @@ pub fn (mut job ActionJob) log(msg string) {
 	}
 }
 
-// update state changes job state 
-// upon receiving state update message from channel
-pub fn (mut job ActionJob) update_state(state string)! {
-	match state {
-		'active' {
-			job.state_active()! 	
-		}
-		'done' {
-			job.state_ok()! 	
-		}
-		else {}
-	}
+// shorthand for throwing job errors with messages
+pub fn (mut job ActionJob) error(msg string) {
+	job.error = msg
+	job.handle_event(.error) or  {panic('Error')}
 }
 
-// handles the returned actionjob depending on return state, 
-// writes response to state dir, updates state accordingly
-pub fn (mut job ActionJob) handle_return(state ActionJobReturnState, result string) ! {
+// writes response to state fs database, updates state accordingly
+pub fn (mut job ActionJob) handle_event(event ActionJobEvent) ! {
 
+	match event {
+		.schedule { job.event_schedule()! }
+		.running { job.event_running()! }
+		.error { job.event_error()! }
+		.ok { job.event_ok()! }
+		.restart { job.event_restart()! }
+	}
+	
 	// on every state change of params/job items store as 
 	// state/$jobguid_letter1_letter2/$jobguid_letter3_letter4/$jobguid.json 
-	os.mkdir_all('$dirpath/state/$state/${job.guid[..2]}/${job.guid[2..4]}')!
-	filepath := '$dirpath/state/$state/${job.guid[..2]}/${job.guid[2..4]}/${job.guid}.json'
+	os.mkdir_all('$dirpath/state/${job.guid[..2]}/${job.guid[2..4]}')!
+	filepath := '$dirpath/state/${job.guid[..2]}/${job.guid[2..4]}/${job.guid}.json'
 
-	// action runner gets result field as params json (is dict of strings) that gets stored in state folder
-	os.write_file(filepath, result) or { panic('cannot write result to state: $err') }
+	// todo: convert intoo params first
+	// action runner gets returned job as params 
+	// encodes into json that gets stored in state folder
+	os.write_file(filepath, json.encode(job)) or { panic('cannot write result to state: $err') }
 
-	match state {
-		.error { job.state_error()! }
-		.ok { job.state_ok()! }
-		// there can be errors e.g. not reaching a service, which can be retried, 
-		// moves the action back to 'tostart' with a 2s grace period
-		.restart { job.state_tostart(grace_period: 2)! } // 2s grace period
-	}
 }
