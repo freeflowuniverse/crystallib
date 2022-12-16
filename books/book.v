@@ -22,6 +22,7 @@ enum BookState {
 pub enum BookErrorCat {
 	unknown
 	file_not_found
+	image_not_found
 	page_not_found
 	site_not_found
 	sidebar
@@ -54,7 +55,7 @@ pub mut:
 	path   Path
 	errors []BookError
 	book   BookState
-	doc    &markdowndocs.Doc [str: skip]
+	doc_summary    &markdowndocs.Doc [str: skip]
 }
 
 pub fn (mut book Book) error(args BookErrorArgs) {
@@ -64,8 +65,18 @@ pub fn (mut book Book) error(args BookErrorArgs) {
 	}
 }
 
+// fix summary
+// walk over pages find broken links
+// report on the errors
 pub fn (mut book Book) fix() ! {
-	for mut item in book.doc.items.filter(it is markdowndocs.Paragraph) {
+	book.fix_summary()!
+	book.find_broken_links()!
+	book.errors_report()!
+}
+
+//fixes the summary doc for the book
+pub fn (mut book Book) fix_summary() ! {
+	for mut item in book.doc_summary.items.filter(it is markdowndocs.Paragraph) {
 		if mut item is markdowndocs.Paragraph {
 			for mut link in item.links {
 				if link.isexternal {
@@ -76,7 +87,7 @@ pub fn (mut book Book) fix() ! {
 						println(' - book $book.name summary:$link.pathfull()')
 					}
 					sitename := link.path.all_before('/')
-					panic("yo $book.books.sites")
+					// panic("yosss")
 					if book.books.sites.exists(sitename) {
 						mut site := book.books.sites.get(sitename)!
 						dest := '$book.path.path/$sitename'
@@ -92,9 +103,9 @@ pub fn (mut book Book) fix() ! {
 								// $if debug {
 								// 	println('change: $link.original -> $newlink')
 								// }
-								book.doc.content = book.doc.content.replace(link.original,
+								book.doc_summary.content = book.doc_summary.content.replace(link.original,
 									newlink)
-								book.doc.save()!
+								book.doc_summary.save()!
 							}
 						} else {
 							book.error(
@@ -115,30 +126,51 @@ pub fn (mut book Book) fix() ! {
 			}
 		}
 	}
+
+}
+
+//all images, files and pages found need to be linked to the book
+//find which files,pages, images are not found
+pub fn (mut book Book) find_broken_links() ! {
 	for key, _ in book.pages {
 		mut page := book.pages[key]
 		for mut item in page.doc.items.filter(it is markdowndocs.Paragraph) {
 			if mut item is markdowndocs.Paragraph { //! interestingly necessary despite filter
 				for mut link in item.links {
 					if link.cat == .page && page.site.page_exists(link.filename) {
-						// println(page.doc)
-						pageobj := page.site.page_get(link.filename)!
-						book.pages['$pageobj.site.name:$pageobj.name'] = page
+						pageobj := page.site.page_get(link.filename) or{
+							book.error(
+								cat: .page_not_found
+								msg: 'Cannot find page: ${link.filename} in $page.name'
+							)
+							continue
+						}
+						book.pages['$pageobj.site.name:$pageobj.name'] = pageobj
 					}
 					if link.cat == .image && page.site.file_exists(link.filename) {
-						fileobj := page.site.file_get(link.filename)!
+						fileobj := page.site.file_get(link.filename) or{
+							book.error(
+								cat: .file_not_found
+								msg: 'Cannot find file: ${link.filename} in $page.name'
+							)
+							continue							
+						}
 						book.files['$fileobj.site.name:$fileobj.name'] = fileobj
 					}
 					if link.cat == .image && page.site.image_exists(link.filename) {
-						imageobj := page.site.image_get(link.filename)!
+						imageobj := page.site.image_get(link.filename) or {
+							book.error(
+								cat: .image_not_found
+								msg: 'Cannot find image: ${link.filename} in $page.name'
+							)
+							continue							
+						}
 						book.images['$imageobj.site.name:$imageobj.name'] = imageobj
 					}
 				}
 			}
 		}
 	}
-
-	book.errors_report()!
 }
 
 pub fn (mut book Book) errors_report() ! {
@@ -191,7 +223,7 @@ pub fn (mut book Book) mdbook_export() ! {
 
 	mut pathsummary := pathlib.get('$book_path/SUMMARY.md')
 	// write summary
-	pathsummary.write(book.doc.content)!
+	pathsummary.write(book.doc_summary.content)!
 
 	// lets now build
 	os.execute_or_panic('mdbook build ${book.book_path('').path} --dest-dir $html_path')

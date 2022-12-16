@@ -93,31 +93,46 @@ pub fn (mut site Site) file_get(name string) !&File {
 }
 
 pub fn (mut site Site) image_get(name string) !&File {
-	sitename, namelower := get_site_and_obj_name(name, true)!
-	namesmallest := namelower.replace('_', '')
+	sitename, mut namelower := get_site_and_obj_name(name, true)!
+	namelower = namelower.replace('_', '')
 	// make sure we look for images independent of extension and ending _
 	if sitename == '' {
-		if namesmallest in site.images {
-			return site.images[namesmallest]
+		if namelower in site.images {
+			return site.images[namelower]
 		}
 	} else {
 		if sitename in site.sites.sites {
 			// means site exists
 			mut site2 := site.sites.sites[sitename]
-			return site2.image_get(namelower)
+			return site2.image_get(namelower)!
 		} else {
 			sitenames := site.sites.sitenames().join('\n- ')
 			msg := 'Cannot find site with name:$sitename \nKnown sitenames are:\n\n$sitenames'
 			return error(msg)
 		}
 	}
-	msg2 := 'Could not find image with name: $namelower for site:$site.name'
+	msg2 := 'Could not find image with name: $namelower'
 	return error(msg2)
 }
 
 pub fn (mut site Site) image_exists(name string) bool {
-	site.image_get(name) or { return false }
-	return true
+	sitename, mut namelower := get_site_and_obj_name(name, true) or{
+		return false
+	}
+	namelower = namelower.replace('_', '')
+	// make sure we look for images independent of extension and ending _
+	if sitename == '' {
+		if namelower in site.images {
+			return true
+		}
+	} else {
+		if sitename in site.sites.sites {
+			// means site exists
+			mut site2 := site.sites.sites[sitename]
+			return site2.image_exists(namelower)
+		}
+	}
+	return false
 }
 
 pub fn (mut site Site) file_exists(name string) bool {

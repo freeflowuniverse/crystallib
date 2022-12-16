@@ -61,7 +61,7 @@ pub fn (mut books Books) book_new(args BookNewArgs) !&Book {
 		name: texttools.name_fix_no_ext(name)
 		path: p
 		books: &books
-		doc: &parser.doc
+		doc_summary: &parser.doc
 	}
 	books.books[book.name.replace('_', '')] = &book
 	return &book
