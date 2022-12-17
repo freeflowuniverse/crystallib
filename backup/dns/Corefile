@@ -1,0 +1,15 @@
+.:53 {
+    forward . 8.8.8.8 9.9.9.9
+    log
+    errors
+    health :6666
+    prometheus 0.0.0.0:9153
+}
+
+play.refit.earth {
+    file /root/code/github/despiegk/gridstarter/poc/1_dns/coredns/zones/play.refit.earth.db
+    log {
+        class all
+    }
+    errors
+}
