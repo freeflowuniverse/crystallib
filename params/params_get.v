@@ -42,7 +42,7 @@ pub fn (mut params Params) get(key_ string) !string {
 			return p.value.trim(' ')
 		}
 	}
-	return error('Did not find key:$key in $params')
+	return error('Did not find key:${key} in $params')
 }
 
 // get kwarg return as string, ifn't exist return the defval

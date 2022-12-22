@@ -132,7 +132,7 @@ pub fn (mut sites Sites) sitenames() []string {
 // walk over all sites see if we can find the image
 // return string if it exists otherwise empty
 // the string name is the image with the site in form sitename:imagename
-fn (mut sites Sites) image_find(name string) !string {
+fn (mut sites Sites) image_name_find(name string) !string {
 	sitename, namelower := get_site_and_obj_name(name, true)!
 	if sitename != '' {
 		panic('should not happen, sitename need to be empty')
@@ -143,4 +143,48 @@ fn (mut sites Sites) image_find(name string) !string {
 		}
 	}
 	return ''
+}
+
+//will find image, if no site specified will look for all sites
+pub fn (mut sites Sites) image_get(name string) !&File {
+	sitename, namelower := get_site_and_obj_name(name, true)!
+	errormsg := 'Could not find image with name: $name'	
+	if sitename == '' {
+		for _, mut site2 in sites.sites {
+			if site2.image_exists(namelower) {
+				return site2.image_get(namelower)!
+			}
+		}
+		return error(errormsg) 
+	} 
+	if sitename in sites.sites {
+		// means site exists
+		mut site3 := sites.sites[sitename]
+		return site3.image_get(namelower)!
+	} else {
+		sitenames := sites.sitenames().join('\n- ')
+		msg := 'Cannot find site with name:$sitename \nKnown sitenames are:\n\n$sitenames'
+		return error(errormsg)
+	}
+	return error(errormsg)
+}
+
+pub fn (mut sites Sites) image_exists(name string) bool {
+	sitename, mut namelower := get_site_and_obj_name(name, true) or{
+		return false
+	}
+	if sitename == '' {
+		for _, mut site2 in sites.sites {
+			if site2.image_exists(namelower) {
+				return true
+			}
+		}
+		return false
+	} 
+	if sitename in sites.sites {
+		// means site exists
+		mut site2 := sites.sites[sitename]
+		return site2.image_exists(namelower)
+	}
+	return false
 }

@@ -104,6 +104,9 @@ fn (mut para Paragraph) link_new(original_descr_ string, original_link_ string, 
 			('should never be here')
 		}
 	}
+	if link.site.contains("/"){
+		link.site = link.site.all_after_last("/")
+	}
 
 	// lets strip site info from link path
 	link.path = link.path.trim_string_left('$link.site:')

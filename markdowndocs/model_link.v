@@ -59,6 +59,7 @@ fn (mut link Link) error(msg string) {
 // needs to be the relative path in the site, important!
 // will return true if there was change
 pub fn (mut link Link) link_update(linkpath_new string, save bool) ! {
+	// println("   ****** linkupdate: $linkpath_new")
 	linkpath_old := link.pathfull()
 	linkoriginal_old := link.original
 	mut linkoriginal_new := linkoriginal_old.replace(linkpath_old, linkpath_new)
@@ -70,9 +71,12 @@ pub fn (mut link Link) link_update(linkpath_new string, save bool) ! {
 		}
 	}
 	if linkoriginal_new != linkoriginal_old {
+		// println("   ****** linkupdate:changed")
 		link.paragraph.doc.content = link.paragraph.doc.content.replace(linkoriginal_old,
 			linkoriginal_new)
 		if save {
+			// println("   ****** linkupdate:save")
+			// println(link)
 			link.paragraph.doc.save()!
 		}
 		link.paragraph.content.replace(linkoriginal_old, linkoriginal_new)
