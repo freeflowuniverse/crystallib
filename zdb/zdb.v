@@ -12,7 +12,7 @@ pub mut:
 //   localhost:6379
 //   /tmp/redis-default.sock
 pub fn get(addr string, auth string, namespace string) !ZDB {
-	println(" - ZDB get: $addr")
+	// println(" - ZDB get: $addr")
 	mut redis := redisclient.get(addr)!
 	mut zdb := ZDB{
 		redis: redis
@@ -31,6 +31,7 @@ pub fn (mut zdb ZDB) ping() !string {
 	return zdb.redis.send_expect_str(['PING'])!
 }
 
+//if key not specified will get incremental key
 pub fn (mut zdb ZDB) set(key string, val string) !string {
 	return zdb.redis.send_expect_str(['SET', key, val])!
 }

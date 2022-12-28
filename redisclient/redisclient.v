@@ -7,6 +7,7 @@ import net
 // import strconv
 import time
 import freeflowuniverse.crystallib.resp
+import os
 
 const default_read_timeout = net.infinite_timeout
 
@@ -49,13 +50,15 @@ pub fn get(addr string) !Redis {
 	return r
 }
 
-pub fn (mut r Redis) socket_connect() ! {
-	println(' REDIS CONNECT: ${r.addr}')
-	r.socket = net.dial_tcp(r.addr)!
+pub fn (mut r Redis) socket_connect() ! {	
+	addr := os.expand_tilde_to_home(r.addr)
+	// println(' - REDIS CONNECT: ${addr}')
+	r.socket = net.dial_tcp(addr)!
 	r.socket.set_blocking(true)!
 	r.socket.set_read_timeout(10 * time.second)
 	r.socket.peer_addr()!
 	r.connected = true
+	// println(" - connect ok")
 }
 
 // THIS IS A WORKAROUND, not sure why we need this, shouldn't be here
