@@ -17,11 +17,18 @@ pub fn get(addr string, auth string, namespace string) !ZDB {
 	mut zdb := ZDB{
 		redis: redis
 	}
-	zdb.redis.send_expect_ok(['AUTH', auth])!
-	mut namespaces := zdb.redis.send_expect_list_str(['NSLIST'])!
-	namespaces.map(it.to_lower())
-	if namespace.to_lower() !in namespaces {
-		zdb.redis.send_expect_ok(['NSNEW', 'test'])!
+
+	if auth != '' {
+		zdb.redis.send_expect_ok(['AUTH', auth])!
+	}
+
+	if namespace != '' {
+		mut namespaces := zdb.redis.send_expect_list_str(['NSLIST'])!
+		namespaces.map(it.to_lower())
+
+		if namespace.to_lower() !in namespaces {
+			zdb.redis.send_expect_ok(['NSNEW', namespace])!
+		}
 	}
 
 	return zdb
