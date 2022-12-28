@@ -29,7 +29,7 @@ pub fn ask_dropdown_int(args DropDownArgs) int {
 	mut nr := 0
 	for item in items2 {
 		nr += 1
-		println(' - $nr : $item')
+		println(' - ${nr} : ${item}')
 	}
 	if args.all {
 		println(' - all : *')

@@ -4,9 +4,9 @@ import time
 fn check_input(input_string string, seconds int) {
 	nnow := time.now().unix_time()
 	exp := timetools.get_expiration_from_timestring(input_string) or {
-		panic('cannot get expiration for $input_string')
+		panic('cannot get expiration for ${input_string}')
 	}
-	assert exp.expiration == (nnow + seconds), 'expiration was incorrect for $input_string'
+	assert exp.expiration == (nnow + seconds), 'expiration was incorrect for ${input_string}'
 }
 
 // check every period
@@ -94,8 +94,8 @@ fn test_absolute_time() {
 	}
 	for key, value in input_strings {
 		exp := timetools.get_expiration_from_timestring(key) or {
-			panic('cannot get expiration for $key')
+			panic('cannot get expiration for ${key}')
 		}
-		assert exp.expiration == value, 'expiration was incorrect for $key'
+		assert exp.expiration == value, 'expiration was incorrect for ${key}'
 	}
 }

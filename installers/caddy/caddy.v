@@ -7,9 +7,9 @@ import installers.base
 pub fn (mut i Installer) install() ! {
 	mut node := i.node
 	// install caddy if it was already done will return true
-	println(' - $node.name: install caddy')
+	println(' - ${node.name}: install caddy')
 	if !(i.state == .reset) && node.done_exists('install_caddy') {
-		println('    $node.name: was already done')
+		println('    ${node.name}: was already done')
 		return
 	}
 
@@ -32,7 +32,7 @@ pub fn (mut i Installer) install() ! {
 		apt update
 		apt install caddy
 	") or {
-		return error('Cannot install caddy.\n$err')
+		return error('Cannot install caddy.\n${err}')
 	}
 
 	node.done_set('install_caddy', 'OK')!
@@ -43,7 +43,7 @@ pub fn (mut i Installer) install() ! {
 pub fn (mut i Installer) configure_webserver_default(path string, domain string) ! {
 	mut node := i.node
 	mut config_file := $tmpl('templates/caddyfile_default')
-	node.exec('mkdir -p $path')!
+	node.exec('mkdir -p ${path}')!
 
 	default_html := '
 	<!DOCTYPE html>
@@ -56,7 +56,7 @@ pub fn (mut i Installer) configure_webserver_default(path string, domain string)
 		</body>
 	</html>
 	'
-	node.file_write('$path/index.html', default_html)!
+	node.file_write('${path}/index.html', default_html)!
 
 	i.configuration_set(config_file)!
 }

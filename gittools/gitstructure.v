@@ -20,10 +20,10 @@ pub mut:
 // 	reset bool //this means will pull and reset all changes
 // }
 pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs) !&GitRepo {
-	mut addr := addr_get_from_url(args.url) or { return error('cannot get addr from url:$err') }
+	mut addr := addr_get_from_url(args.url) or { return error('cannot get addr from url:${err}') }
 
 	if addr.branch != '' && args.branch != '' && addr.branch != args.branch {
-		return error('conflict in branch names.\naddr:\n$addr\nargs:\n$args')
+		return error('conflict in branch names.\naddr:\n${addr}\nargs:\n${args}')
 	}
 	if addr.branch == '' {
 		addr.branch = args.branch
@@ -65,13 +65,15 @@ pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr, args Rep
 		mut r0 := gitstructure.repo_get(args2) or {
 			// means could not pull need to remove the repo from the list again
 			gitstructure.repos.delete_last()
-			return error('Could not find repo ${args2.account}.$args2.name \nError:$err')
+			return error('Could not find repo ${args2.account}.${args2.name} \nError:${err}')
 		}
 		// println (" GIT REPO GET URL: PULL:$args.pull, RESET: $args.reset\n$r0.addr")
 		r0.check(args.pull, args.reset)!
 		return r0
 	} else {
-		mut r := gitstructure.repo_get(args2) or { return error('cannot load git $args.url\n$err') }
+		mut r := gitstructure.repo_get(args2) or {
+			return error('cannot load git ${args.url}\n${err}')
+		}
 		r.addr = addr
 		// println (" GIT REPO GET PULL:$args.pull, RESET: $args.reset")
 		r.check(args.pull, args.reset)!
@@ -85,7 +87,9 @@ pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr, args Rep
 pub fn (mut gitstructure GitStructure) repo_get_from_path(name string, path Path, pull bool, reset bool) !&GitRepo {
 	path2 := path.parent_find('.git')!
 
-	mut addr := addr_get_from_path(path2.path) or { return error('cannot get addr from path:$err') }
+	mut addr := addr_get_from_path(path2.path) or {
+		return error('cannot get addr from path:${err}')
+	}
 	// println(" - pull:$pull reset:$reset")
 	args := RepoGetFromUrlArgs{
 		pull: pull
@@ -132,10 +136,10 @@ pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) !&GitRepo {
 		for idd in res_ids {
 			println(' --- duplicate: ' + gitstructure.repos[idd].path)
 		}
-		return error("Found too many repo's for account:'$args.account' name:'$args.name'")
+		return error("Found too many repo's for account:'${args.account}' name:'${args.name}'")
 	}
 	// print_backtrace()
-	return error("Could not find repo for account:'$args.account' name:'$args.name'")
+	return error("Could not find repo for account:'${args.account}' name:'${args.name}'")
 }
 
 // to use gitstructure.repo_get({account:"something",name:"myname"})

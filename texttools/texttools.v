@@ -74,7 +74,7 @@ pub fn multiline_to_single(text string) !string {
 		if state == MultiLineStatus.multiline {
 			// println("LINE2:'$line2'")
 			if line2.starts_with(' ') {
-				multiline += '$line2\n'
+				multiline += '${line2}\n'
 				continue
 			} else if line2.trim_space() == '' {
 				multiline += '\n'
@@ -124,7 +124,7 @@ fn multiline_end(multiline_first string, multiline string) string {
 	multiline2 = dedent(multiline2)
 	multiline2 = multiline2.replace('\n', '\\n')
 	multiline2 = multiline2.replace("'", '"')
-	multiline2 = "$multiline_first'$multiline2'"
+	multiline2 = "${multiline_first}'${multiline2}'"
 	return multiline2
 }
 

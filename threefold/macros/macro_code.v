@@ -43,7 +43,7 @@ fn macro_code(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 
 	mut state_lines := State.start
 
-	lines := os.read_lines(path) or { return error('COULD NOT FIND PATH: $path') }
+	lines := os.read_lines(path) or { return error('COULD NOT FIND PATH: ${path}') }
 	for line in lines {
 		if from != '' && !line.contains(from) && state_lines == State.start {
 			continue

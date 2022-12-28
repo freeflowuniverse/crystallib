@@ -89,8 +89,8 @@ pub fn (doc Doc) html() string {
 			Table { out += item.str() }
 			Action { out += item.str() }
 			Actions { out += item.str() }
-			Header { out += '<h$item.depth>$item.content</h$item.depth>\n' }
-			Paragraph { out += '<p>$item.content</p>\n' }
+			Header { out += '<h${item.depth}>${item.content}</h${item.depth}>\n' }
+			Paragraph { out += '<p>${item.content}</p>\n' }
 			Html { out += item.str() }
 			Comment { out += item.str() }
 			CodeBlock { out += item.str() }

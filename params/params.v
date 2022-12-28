@@ -110,7 +110,7 @@ pub fn text_to_params(text string) !Params {
 				key = ''
 				continue
 			} else if !validchars.contains(ch) {
-				return error("text to params processor: parameters can only be A-Za-z0-9 and _., here found: '$key$ch' in\n$text2\n\n")
+				return error("text to params processor: parameters can only be A-Za-z0-9 and _., here found: '${key}${ch}' in\n${text2}\n\n")
 			} else {
 				key += ch
 				continue

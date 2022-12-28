@@ -52,7 +52,7 @@ pub fn cmd_line_args_parser(text string) ![]string {
 
 	if check_exists_outside_quotes(text, ['<', '>', '|']) {
 		if !(text.contains(' ')) {
-			return error("cannot convert text '$text' to args because no space to split")
+			return error("cannot convert text '${text}' to args because no space to split")
 		}
 		splitted := text.split_nth(' ', 2)
 		return [splitted[0], splitted[1]]

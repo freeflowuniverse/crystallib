@@ -57,7 +57,7 @@ pub fn procesinfo_get(pid int) ?&ProcessInfo {
 			return pi
 		}
 	}
-	return error('Cannot find process with pid: $pid, to get process info from.')
+	return error('Cannot find process with pid: ${pid}, to get process info from.')
 }
 
 fn (mut pm ProcessMap) scan() ? {
@@ -71,7 +71,7 @@ fn (mut pm ProcessMap) scan() ? {
 	}
 
 	cmd := 'ps ax -o pid,ppid,stat,%cpu,%mem,rss,command'
-	res := execute_silent(cmd) or { return error('Cannot get process info \n$cmd\n$err') }
+	res := execute_silent(cmd) or { return error('Cannot get process info \n${cmd}\n${err}') }
 
 	pm.processes = []&ProcessInfo{}
 

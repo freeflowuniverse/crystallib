@@ -50,7 +50,7 @@ pub fn get(addr string) ?Redis {
 }
 
 pub fn (mut r Redis) socket_connect() ? {
-	println(' CONNECT TCP: $r.addr')
+	println(' CONNECT TCP: ${r.addr}')
 	r.socket = net.dial_tcp(r.addr)?
 	r.socket.set_blocking(true)?
 	r.socket.set_read_timeout(10 * time.second)

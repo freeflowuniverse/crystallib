@@ -18,7 +18,7 @@ fn parse_size_mb(size_ string) !int {
 	} else if size.ends_with('b') {
 		s = int(size.replace('b', '').f64() / 1000000)
 	} else {
-		panic("@TODO for other sizes, '$size'")
+		panic("@TODO for other sizes, '${size}'")
 	}
 	return s
 }
@@ -83,7 +83,7 @@ fn parse_container_state(state string) !DockerContainerStatus {
 	if state.contains('exited') {
 		return DockerContainerStatus.down
 	}
-	return error('Could not find docker status: $state')
+	return error('Could not find docker status: ${state}')
 }
 
 fn clear_str(s string) string {

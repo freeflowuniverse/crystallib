@@ -56,7 +56,7 @@ pub fn (mut node Node) file_exists(path string) bool {
 // checks if given executable exists in node
 pub fn (mut node Node) command_exists(cmd string) bool {
 	output := node.exec_silent('
-		if command -v $cmd &> /dev/null
+		if command -v ${cmd} &> /dev/null
 		then
 			echo 0
 		fi') or {

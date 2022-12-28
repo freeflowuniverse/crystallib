@@ -9,7 +9,7 @@ fn do() ! {
 	options := cmdline.only_non_options(os.args)
 	if options.len == 1 {
 		if os.exists('run.md') {
-			actionrunner.run_file("default",'run.md')!
+			actionrunner.run_file('default', 'run.md')!
 		}
 		exit(0)
 	}
@@ -23,7 +23,7 @@ fn do() ! {
 		return error(" ERROR: could not find path for the input actions file (md): '${options[1]}'")
 	}
 
-	actionrunner.run_file("default",options[1])!
+	actionrunner.run_file('default', options[1])!
 }
 
 fn main() {

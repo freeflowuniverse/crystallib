@@ -52,19 +52,19 @@ const (
 		'reverse':   7
 		'hidden':    8
 	}
-	reset = '${prefix}0$suffix'
+	reset = '${prefix}0${suffix}'
 )
 
 pub fn color_fg(text string, color string) string {
-	return '$console.prefix${console.foreground_colors[color]}$console.suffix$text$console.reset'
+	return '${console.prefix}${console.foreground_colors[color]}${console.suffix}${text}${console.reset}'
 }
 
 pub fn color_bg(text string, color string) string {
-	return '$console.prefix${console.background_colors[color]}$console.suffix$text$console.reset'
+	return '${console.prefix}${console.background_colors[color]}${console.suffix}${text}${console.reset}'
 }
 
 pub fn style(text string, color string) string {
-	return '$console.prefix${console.style[color]}$console.suffix$text$console.reset'
+	return '${console.prefix}${console.style[color]}${console.suffix}${text}${console.reset}'
 }
 
 pub fn reset() string {

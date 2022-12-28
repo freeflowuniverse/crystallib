@@ -36,7 +36,7 @@ pub fn (mut gs GitStructure) link(args GitLinkArgs) ! {
 		if args.gitsource != '' {
 			// means we need to get gitrepo from gitstructure
 			mut source_repo := gs.repo_get(name: args.gitsource)!
-			source_path = '$source_repo.path()/$args.source'
+			source_path = '${source_repo.path()}/${args.source}'
 			if args.reset {
 				source_repo.remove_changes()!
 			}
@@ -55,7 +55,7 @@ pub fn (mut gs GitStructure) link(args GitLinkArgs) ! {
 		if args.gitdest != '' {
 			// means we need to get gitrepo from gitstructure
 			mut dest_repo := gs.repo_get(name: args.gitdest)!
-			dest_path = '$dest_repo.path()/$args.dest'
+			dest_path = '${dest_repo.path()}/${args.dest}'
 			if args.reset {
 				dest_repo.remove_changes()!
 			}
@@ -80,7 +80,7 @@ pub fn (mut gs GitStructure) link(args GitLinkArgs) ! {
 					dest_path_object.delete()!
 				}
 				if dest_path_object.exists() {
-					return error('cannot link to a dir:$dest_path, it exists and is not a link to a dir.')
+					return error('cannot link to a dir:${dest_path}, it exists and is not a link to a dir.')
 				}
 			}
 			source_path_object.link(dest_path_object.path, true)!

@@ -111,7 +111,7 @@ pub fn (mut e DockerEngine) container_get(name_or_id string) !&DockerContainer {
 			return c
 		}
 	}
-	return error('Cannot find container with name $name_or_id')
+	return error('Cannot find container with name ${name_or_id}')
 }
 
 pub fn (mut e DockerEngine) container_delete(name_or_id string) ! {
@@ -149,7 +149,7 @@ pub fn (mut e DockerEngine) image_get_from_id(id string) !&DockerImage {
 			return i
 		}
 	}
-	return error('Cannot find image with id: $id')
+	return error('Cannot find image with id: ${id}')
 }
 
 // name is e.g. docker/getting-started:latest
@@ -202,10 +202,10 @@ pub fn (mut e DockerEngine) container_import(path string, mut args DockerContain
 	mut node := factory.node_get(e.node)!
 
 	if args.image_tag != '' {
-		image = image + ':$args.image_tag'
+		image = image + ':${args.image_tag}'
 	}
 
-	node.exec_silent('docker import  $path $image')!
+	node.exec_silent('docker import  ${path} ${image}')!
 	// make sure we start from loaded image
 	return e.container_create(args)
 }

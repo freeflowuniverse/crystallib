@@ -54,12 +54,12 @@ fn test_large_value() {
 		assert rr == rr2
 	}
 	for i3 in 0 .. 100 {
-		redis.set('test_large_value$i3', rr) or { panic(err) }
+		redis.set('test_large_value${i3}', rr) or { panic(err) }
 	}
 	for i4 in 0 .. 100 {
-		rr4 := redis.get('test_large_value$i4') or { panic(err) }
+		rr4 := redis.get('test_large_value${i4}') or { panic(err) }
 		assert rr.len == rr4.len
-		redis.del('test_large_value$i4') or { panic(err) }
+		redis.del('test_large_value${i4}') or { panic(err) }
 	}
 }
 

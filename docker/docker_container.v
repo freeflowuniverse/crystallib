@@ -55,17 +55,19 @@ pub mut:
 // get the node from docker engine
 pub fn (mut container DockerContainer) node() &builder.Node {
 	mut e := engine_get(container.engine) or {
-		panic('bug: should always find this engine: $container.engine')
+		panic('bug: should always find this engine: ${container.engine}')
 	}
 	mut factory := builder.new()
-	mut node := factory.node_get(e.node) or { panic('bug: should always find this node: $e.node') }
+	mut node := factory.node_get(e.node) or {
+		panic('bug: should always find this node: ${e.node}')
+	}
 	return node
 }
 
 // create/start container (first need to get a dockercontainer before we can start)
 pub fn (mut container DockerContainer) start() !string {
 	mut node := container.node()
-	c := node.exec_silent('docker start $container.id')!
+	c := node.exec_silent('docker start ${container.id}')!
 	container.status = DockerContainerStatus.up
 	return c
 }
@@ -73,7 +75,7 @@ pub fn (mut container DockerContainer) start() !string {
 // delete docker container
 pub fn (mut container DockerContainer) halt() !string {
 	mut node := container.node()
-	c := node.exec_silent('docker stop $container.id') or { '' }
+	c := node.exec_silent('docker stop ${container.id}') or { '' }
 	container.status = DockerContainerStatus.down
 	return c
 }
@@ -81,18 +83,18 @@ pub fn (mut container DockerContainer) halt() !string {
 // delete docker container
 pub fn (mut container DockerContainer) delete(force bool) ! {
 	mut node := container.node()
-	println(' - CONTAINER DELETE: $container.name')
+	println(' - CONTAINER DELETE: ${container.name}')
 	if force {
-		node.exec_silent('docker rm -f $container.id')!
+		node.exec_silent('docker rm -f ${container.id}')!
 	} else {
-		node.exec_silent('docker rm $container.id')!
+		node.exec_silent('docker rm ${container.id}')!
 	}
 }
 
 // save the docker container to image
 pub fn (mut container DockerContainer) save2image(image_repo string, image_tag string) !string {
 	mut node := container.node()
-	id := node.exec_silent('docker commit $container.id $image_repo:$image_tag')!
+	id := node.exec_silent('docker commit ${container.id} ${image_repo}:${image_tag}')!
 	container.image.id = id
 	return id
 }
@@ -100,7 +102,7 @@ pub fn (mut container DockerContainer) save2image(image_repo string, image_tag s
 // export docker to tgz
 pub fn (mut container DockerContainer) export(path string) !string {
 	mut node := container.node()
-	return node.exec_silent('docker export $container.id > $path')
+	return node.exec_silent('docker export ${container.id} > ${path}')
 }
 
 // open ssh shell to the cobtainer
@@ -114,9 +116,9 @@ pub fn (mut container DockerContainer) shell(cmd string) ! {
 	mut node := container.node()
 	mut cmd2 := ''
 	if cmd.len == 0 {
-		cmd2 = 'docker exec -ti $container.id /bin/bash'
+		cmd2 = 'docker exec -ti ${container.id} /bin/bash'
 	} else {
-		cmd2 = "docker exec -ti $container.id /bin/bash -c '$cmd'"
+		cmd2 = "docker exec -ti ${container.id} /bin/bash -c '${cmd}'"
 	}
 	println(cmd2)
 	node.shell(cmd2)!
@@ -133,7 +135,7 @@ pub fn (mut container DockerContainer) node_container_get() !&builder.Node {
 
 pub fn (mut container DockerContainer) execute(cmd_ string, silent bool) ! {
 	mut node := container.node()
-	cmd := 'docker exec $container.id $cmd_'
+	cmd := 'docker exec ${container.id} ${cmd_}'
 	if silent {
 		node.exec_silent(cmd)!
 	} else {

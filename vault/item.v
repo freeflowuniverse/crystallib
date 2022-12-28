@@ -15,12 +15,12 @@ pub:
 
 // save the metadata for the backups
 pub fn (i Item) meta() string {
-	return '$i.sha256|$i.nr|$i.name'
+	return '${i.sha256}|${i.nr}|${i.name}'
 }
 
 // get path object representing the vaulted item
 fn (i Item) path() ?pathlib.Path {
-	pathstr := '$i.shelve.path.path/.vault/$i.name_nr'
+	pathstr := '${i.shelve.path.path}/.vault/${i.name_nr}'
 	return pathlib.get_file(pathstr, true)
 }
 
@@ -44,8 +44,8 @@ pub fn (i Item) name_nr() string {
 	} else if i.name.contains('.') {
 		nameext := i.name.all_after_last('.')
 		name3 := i.name.all_before_last('.')
-		return '${name3}.${i.nr}.$nameext'
+		return '${name3}.${i.nr}.${nameext}'
 	} else {
-		return '${i.name}.$i.nr'
+		return '${i.name}.${i.nr}'
 	}
 }

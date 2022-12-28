@@ -1,6 +1,6 @@
 module booksrunner
 
-import freeflowuniverse.crystallib.actionparser { Action }
+import freeflowuniverse.crystallib.actionparser
 import freeflowuniverse.crystallib.books { books_new }
 import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.gittools { GitStructure }
@@ -14,10 +14,10 @@ mut:
 }
 
 pub fn new_booksrunner() BooksRunner {
-	gt := gittools.get(root: '') or { panic('Cannot get git: $err') }
+	gt := gittools.get(root: '') or { panic('Cannot get git: ${err}') }
 	sites := books.sites_new()
 	mut books := books_new(&sites)
-	books.init() or { panic("Can't initiate books: $err") }
+	books.init() or { panic("Can't initiate books: ${err}") }
 	// sites.scan(path + '/content')?
 	// books.scan(path + '/books')?
 	runner := BooksRunner{

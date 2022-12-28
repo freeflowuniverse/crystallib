@@ -109,7 +109,7 @@ pub fn (mut installer Installer) install_portainer() ! {
 pub fn (mut i Installer) docker_swarm_install(args SwarmArgs) ! {
 	i.install_docker(args)!
 	ipaddr_master := i.node.ipaddr_pub_get()!
-	cmd := 'docker swarm init --advertise-addr $ipaddr_master'
+	cmd := 'docker swarm init --advertise-addr ${ipaddr_master}'
 	i.node.exec(cmd)!
 }
 
@@ -129,7 +129,7 @@ pub fn (mut installer Installer) docker_swarm_install_add(mut args SwarmArgsAdd)
 
 	installer.install_docker(args2)!
 
-	cmd := 'docker swarm leave && docker swarm join --token  $token $ipaddr:2377'
+	cmd := 'docker swarm leave && docker swarm join --token  ${token} ${ipaddr}:2377'
 	println(cmd)
 	installer.node.exec(cmd)!
 }

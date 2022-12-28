@@ -144,7 +144,7 @@ fn (mut h CoinMarketConnection) cache_set(prefix string, reqdata string, data st
 		key := cache_key(prefix, reqdata)
 		h.redis.set(key, data)?
 		h.redis.expire(key, h.cache_timeout) or {
-			panic('should never get here, if redis worked expire should also work.$err')
+			panic('should never get here, if redis worked expire should also work.${err}')
 		}
 	}
 }
@@ -176,9 +176,9 @@ fn (mut h CoinMarketConnection) get_json(prefix string, data string, query strin
 		// println("MISS1")
 		mut req := http.Request{}
 		if query != '' {
-			req = http.new_request(http.Method.get, '$h.url/$prefix?$query', data)?
+			req = http.new_request(http.Method.get, '${h.url}/${prefix}?${query}', data)?
 		} else {
-			req = http.new_request(http.Method.get, '$h.url/$prefix', data)?
+			req = http.new_request(http.Method.get, '${h.url}/${prefix}', data)?
 		}
 		req.header = h.header()?
 		res := req.do()?
@@ -210,9 +210,9 @@ fn (mut h CoinMarketConnection) get_json_str(prefix string, data string, query s
 		// println("MISS1")
 		mut req := http.Request{}
 		if query != '' {
-			req = http.new_request(http.Method.get, '$h.url/$prefix?$query', data)?
+			req = http.new_request(http.Method.get, '${h.url}/${prefix}?${query}', data)?
 		} else {
-			req = http.new_request(http.Method.get, '$h.url/$prefix', data)?
+			req = http.new_request(http.Method.get, '${h.url}/${prefix}', data)?
 		}
 		req.header = h.header()?
 		res := req.do()?

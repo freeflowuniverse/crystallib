@@ -31,7 +31,7 @@ fn macro_def(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	for alias in aliasses {
 		aliasname := texttools.name_fix_no_underscore(alias)
 		if aliasname == '' {
-			panic("cannot be empty:'$aliasses'")
+			panic("cannot be empty:'${aliasses}'")
 		}
 		if !state.publisher.def_exists(aliasname) {
 			state.publisher.def_names[aliasname] = defid
@@ -106,7 +106,7 @@ fn macro_def_list(mut state LineProcessorState, mut macro texttools.MacroObj) ? 
 		firstletter_found = defname[0].ascii_str()
 		if firstletter_found != firstletter {
 			out << ''
-			out << '## $firstletter_found'
+			out << '## ${firstletter_found}'
 			out << ''
 			out << '| def | description |'
 			out << '| ---- | ---- |'
@@ -119,7 +119,7 @@ fn macro_def_list(mut state LineProcessorState, mut macro texttools.MacroObj) ? 
 		deftitle := page.title()
 
 		if state.site.name == page.site_name_get(mut state.publisher) {
-			out << '| [$defobj.name](${page.name}.md) | $deftitle |'
+			out << '| [${defobj.name}](${page.name}.md) | ${deftitle} |'
 		}
 		done << defobj.pageid
 	}

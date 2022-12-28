@@ -15,7 +15,7 @@ pub mut:
 
 // save the metadata for the backups
 fn (mut shelve Shelve) meta_data(current_time time.Time) string {
-	mut out := ['time:$current_time.unix_time()']
+	mut out := ['time:${current_time.unix_time()}']
 	for item in shelve.items {
 		out << item.meta()
 	}
@@ -31,7 +31,7 @@ pub fn (mut shelve Shelve) save() ? {
 
 // get the data from the directory
 fn (mut shelve Shelve) path_meta() ?pathlib.Path {
-	pathmeta := '$shelve.path.path/.vault/meta'
+	pathmeta := '${shelve.path.path}/.vault/meta'
 	return pathlib.get_file(pathmeta, true)
 }
 
@@ -46,7 +46,7 @@ pub fn (mut shelve Shelve) load() ? {
 			}
 			splitted := line.split('|')
 			if splitted.len != 4 {
-				panic('format shelve data is wrong, not enough parts on $line')
+				panic('format shelve data is wrong, not enough parts on ${line}')
 			}
 			// "${i.sha256()}|${i.time.unix_time()}|${i.nr}|${i.name}"
 			mut item := Item{
@@ -118,9 +118,9 @@ pub fn (mut shelve Shelve) latest(name string) Item {
 
 // add a file to the shelve
 pub fn (mut shelve Shelve) add(mut path pathlib.Path) ?Item {
-	println(' - shelve: $path')
+	println(' - shelve: ${path}')
 	if !path.exists() {
-		error("cannot find path to add to shell: '$path'")
+		error("cannot find path to add to shell: '${path}'")
 	}
 	if !path.is_file() {
 		return error('only support file and filelink')
@@ -144,8 +144,8 @@ pub fn (mut shelve Shelve) add(mut path pathlib.Path) ?Item {
 		shelve: &shelve
 	}
 	newname := item_new.name_nr()
-	mut dest := pathlib.get_no_check('$shelve.path.path/.vault/$newname')
-	println('------ $dest')
+	mut dest := pathlib.get_no_check('${shelve.path.path}/.vault/${newname}')
+	println('------ ${dest}')
 	path.copy(mut dest)?
 	shelve.items << item_new
 	shelve.changed = true
@@ -154,7 +154,7 @@ pub fn (mut shelve Shelve) add(mut path pathlib.Path) ?Item {
 
 // delete the shelve info
 pub fn (mut shelve Shelve) delete() ? {
-	pp := '$shelve.path.path/.vault'
+	pp := '${shelve.path.path}/.vault'
 	if os.exists(pp) {
 		os.rmdir_all(pp)?
 	}
@@ -163,9 +163,9 @@ pub fn (mut shelve Shelve) delete() ? {
 
 // walk over the vault and re-shelve all dir's as owned by the vault
 pub fn (mut shelve Shelve) superlist() string {
-	mut out := 'SHELVE:$shelve.path.path\n'
+	mut out := 'SHELVE:${shelve.path.path}\n'
 	for mut item in shelve.items {
-		out += '$item.meta()\n'
+		out += '${item.meta()}\n'
 	}
 	return out
 }

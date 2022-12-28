@@ -36,7 +36,7 @@ pub fn (mut n NodePilot) prepare() ? {
 		arch := n.node.executor.exec('dpkg --print-architecture')?.trim_space()
 		release := n.node.executor.exec('lsb_release -cs')?.trim_space()
 
-		n.node.executor.exec('echo "deb [arch=$arch signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $release stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null')?
+		n.node.executor.exec('echo "deb [arch=${arch} signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu ${release} stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null')?
 
 		n.node.package_refresh()?
 		n.node.package_install(name: 'docker-ce docker-ce-cli containerd.io')?
@@ -47,14 +47,14 @@ pub fn (mut n NodePilot) prepare() ? {
 
 	if !n.node.executor.dir_exists(n.noderoot) {
 		// FIXME: repository is private
-		n.node.executor.exec('git clone $n.repository $n.noderoot')?
+		n.node.executor.exec('git clone ${n.repository} ${n.noderoot}')?
 	}
 
 	n.node.cache.set('nodepilot-prepare', 'ready', 600)?
 }
 
 fn (mut n NodePilot) is_running(s string) bool {
-	test := n.node.executor.exec('docker ps | grep $s') or { return false }
+	test := n.node.executor.exec('docker ps | grep ${s}') or { return false }
 	return true
 }
 
@@ -64,7 +64,7 @@ pub fn (mut n NodePilot) fuse_running() bool {
 
 pub fn (mut n NodePilot) fuse() ? {
 	rootdir := '/mnt/bc-fuse'
-	n.node.executor.exec('root=$rootdir bash -x $n.noderoot/fuse/fuse.sh')?
+	n.node.executor.exec('root=${rootdir} bash -x ${n.noderoot}/fuse/fuse.sh')?
 }
 
 pub fn (mut n NodePilot) harmony_running() bool {
@@ -73,7 +73,7 @@ pub fn (mut n NodePilot) harmony_running() bool {
 
 pub fn (mut n NodePilot) harmony() ? {
 	rootdir := '/mnt/bc-harmony'
-	n.node.executor.exec('root=$rootdir bash -x $n.noderoot/harmony/harmony.sh')?
+	n.node.executor.exec('root=${rootdir} bash -x ${n.noderoot}/harmony/harmony.sh')?
 }
 
 pub fn (mut n NodePilot) pokt_running() bool {
@@ -87,20 +87,20 @@ pub fn (mut n NodePilot) pokt() ? {
 	}
 
 	rootdir := '/mnt/bc-pokt'
-	n.node.executor.exec('root=$rootdir bash -x $n.noderoot/pokt/pokt.sh')?
+	n.node.executor.exec('root=${rootdir} bash -x ${n.noderoot}/pokt/pokt.sh')?
 }
 
 fn (mut n NodePilot) overlayfs(ropath string, rwpath string, tmp string, target string) ? {
-	n.node.executor.exec('mount -t overlay overlay -o lowerdir=$ropath,upperdir=$rwpath,workdir=$tmp $target')?
+	n.node.executor.exec('mount -t overlay overlay -o lowerdir=${ropath},upperdir=${rwpath},workdir=${tmp} ${target}')?
 }
 
 // make it easy by using the same password everywhere and the same host
 // only namespace names needs to be different
 fn (mut n NodePilot) zdbfs(host string, meta string, data string, temp string, password string, mountpoint string) ? {
-	mut zdbcmd := 'zdbfs $mountpoint -o ro '
-	zdbcmd += '-o mh=$host -o mn=$meta -o ms=$password '
-	zdbcmd += '-o dh=$host -o dn=$data -o ds=$password '
-	zdbcmd += '-o th=$host -o tn=$temp -o ts=$password'
+	mut zdbcmd := 'zdbfs ${mountpoint} -o ro '
+	zdbcmd += '-o mh=${host} -o mn=${meta} -o ms=${password} '
+	zdbcmd += '-o dh=${host} -o dn=${data} -o ds=${password} '
+	zdbcmd += '-o th=${host} -o tn=${temp} -o ts=${password}'
 
 	n.node.executor.exec(zdbcmd)?
 }

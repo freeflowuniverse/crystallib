@@ -10,7 +10,7 @@ fn do() ! {
 		name: 'VMa05bdc33'
 	}
 
-	mut node := builder.node_new(node_args) or { return error('Failed to create node: $err') }
+	mut node := builder.node_new(node_args) or { return error('Failed to create node: ${err}') }
 
 	println(node)
 }

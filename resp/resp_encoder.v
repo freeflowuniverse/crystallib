@@ -22,22 +22,22 @@ pub fn (mut b Builder) prepend(val RValue) {
 pub fn (val RValue) encode() []u8 {
 	match val {
 		RBString {
-			return '\$$val.value.len\r\n$val.value.bytestr()\r\n'.bytes()
+			return '\$${val.value.len}\r\n${val.value.bytestr()}\r\n'.bytes()
 		}
 		RInt {
-			return ':$val.value\r\n'.bytes()
+			return ':${val.value}\r\n'.bytes()
 		}
 		RString {
-			return '+$val.value\r\n'.bytes()
+			return '+${val.value}\r\n'.bytes()
 		}
 		RError {
-			return '-$val.value\r\n'.bytes()
+			return '-${val.value}\r\n'.bytes()
 		}
 		RNil {
 			return '$-1\r\n'.bytes()
 		}
 		RArray {
-			mut buffer := '*$val.values.len\r\n'.bytes()
+			mut buffer := '*${val.values.len}\r\n'.bytes()
 
 			for val2 in val.values {
 				buffer << val2.encode()

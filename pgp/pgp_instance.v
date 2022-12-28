@@ -20,7 +20,7 @@ fn (mut f PGPFactory) new(name string) ?&PGPInstance {
 
 fn (mut f PGPFactory) get(name string) ?&PGPInstance {
 	if name !in f.instances {
-		return error('cannot find pgp instance with name $name')
+		return error('cannot find pgp instance with name ${name}')
 	}
 
 	return f.instances[name]

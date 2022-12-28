@@ -49,13 +49,13 @@ pub fn json_dict_get_any(r string, clean bool, key string) !json2.Any {
 		return error('Cannot do json2 raw decode in json_dict_get_any.\ndata was empty.')
 	}
 	data_raw := json2.raw_decode(r2) or {
-		return error('Cannot do json2 raw decode in json_dict_get_any.\ndata:\n$r2\nerror:$err')
+		return error('Cannot do json2 raw decode in json_dict_get_any.\ndata:\n${r2}\nerror:${err}')
 	}
 	mut res := data_raw.as_map()
 	if key in res {
 		return res[key]!
 	} else {
-		return error('Could not find key:$key in $r')
+		return error('Could not find key:${key} in ${r}')
 	}
 }
 
@@ -75,7 +75,7 @@ pub fn json_dict_filter_any(r string, clean bool, include []string, exclude []st
 		return error('Cannot do json2 raw decode in json_dict_filter_any.\ndata was empty.')
 	}
 	data_raw := json2.raw_decode(r2) or {
-		return error('Cannot do json2 raw decode in json_dict_filter_any.\ndata:\n$r2\nerror:$err')
+		return error('Cannot do json2 raw decode in json_dict_filter_any.\ndata:\n${r2}\nerror:${err}')
 	}
 	mut res := data_raw.as_map()
 	if include != [] {

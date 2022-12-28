@@ -24,7 +24,7 @@ pub struct RedisHandler {
 
 // https://redis.io/topics/protocol
 pub fn listen(addr string, port int) !RedisSrv {
-	mut socket := net.listen_tcp(net.AddrFamily.ip, '$addr:$port')!
+	mut socket := net.listen_tcp(net.AddrFamily.ip, '${addr}:${port}')!
 	// socket.set_read_timeout(2 * time.second)
 	return RedisSrv{
 		socket: socket
@@ -87,7 +87,7 @@ fn command_info(input resp.RValue, mut srv RedisInstance) resp.RValue {
 	lines << 'redis_version: vredis 0.1 custom'
 
 	lines << '# Keyspace'
-	lines << 'db0:keys=$srv.db.len,expires=0,avg_ttl=0'
+	lines << 'db0:keys=${srv.db.len},expires=0,avg_ttl=0'
 
 	return resp.r_string(lines.join('\r\n'))
 }
@@ -158,7 +158,7 @@ pub fn process_input(mut client redisclient.Redis, mut instance RedisInstance, v
 
 	for rh in h {
 		if command == rh.command {
-			println('Process: $command')
+			println('Process: ${command}')
 			data := rh.handler(value, mut instance)
 			client.write_rval(data)!
 			return true
@@ -169,7 +169,7 @@ pub fn process_input(mut client redisclient.Redis, mut instance RedisInstance, v
 	print('Error: unknown command: ')
 	for cmd in resp.get_redis_array(value) {
 		mut cmd_value := resp.get_redis_value(cmd)
-		print('cmd value >> $cmd_value ')
+		print('cmd value >> ${cmd_value} ')
 	}
 	println('')
 

@@ -70,7 +70,7 @@ pub fn (mut f TerraformFactory) deployment_get(args_ TerraformDeploymentArgs) ?&
 		return f.deployments[args.name]
 	}
 
-	mut path := rootpath.path_ensure('/terraform/$args.name')
+	mut path := rootpath.path_ensure('/terraform/${args.name}')
 
 	f.deployments[args.name] = &TerraformDeployment{
 		name: args.name

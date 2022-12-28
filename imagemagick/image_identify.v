@@ -8,8 +8,8 @@ fn (mut image Image) identify_verbose() ! {
 		return
 	}
 	// println(' - identify: $image.path')
-	out := process.execute_silent("identify -verbose '$image.path.path'") or {
-		return error('Could not get info from image $image.path.path \nError:$err')
+	out := process.execute_silent("identify -verbose '${image.path.path}'") or {
+		return error('Could not get info from image ${image.path.path} \nError:${err}')
 	}
 	mut channel_stats := false
 	// mut channel_state := false
@@ -85,8 +85,8 @@ fn (mut image Image) identify() ! {
 		return
 	}
 	// println(' - identify: $image.path')
-	mut out := process.execute_silent("identify -ping '$image.path.path'") or {
-		return error('Could not get info from image, error:$err')
+	mut out := process.execute_silent("identify -ping '${image.path.path}'") or {
+		return error('Could not get info from image, error:${err}')
 	}
 	out = out.trim(' \n')
 	splitted := out.split(' ')
@@ -97,7 +97,7 @@ fn (mut image Image) identify() ! {
 	size_str := splitted[2]
 	if !size_str.contains('x') {
 		println(out)
-		panic('error in parsing. $size_str')
+		panic('error in parsing. ${size_str}')
 	}
 	image.size_x = size_str.split('x')[0].int()
 	image.size_y = size_str.split('x')[1].int()

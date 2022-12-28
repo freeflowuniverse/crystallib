@@ -63,7 +63,7 @@ pub fn get() ?&TerraformFactory {
 			println(cmd)
 
 			n.exec(cmd: cmd, reset: true, description: 'install terraform ; echo ok', stdout: true) or {
-				return error('cannot install terraform\n' + err.msg() + '\noriginal cmd:\n$cmd')
+				return error('cannot install terraform\n' + err.msg() + '\noriginal cmd:\n${cmd}')
 			}
 		}
 
@@ -75,8 +75,8 @@ pub fn get() ?&TerraformFactory {
 // initialize terraform
 fn (mut tff TerraformFactory) tf_inialize(dir_path string) ? {
 	mut node := builder.node_local()?
-	if !os.exists('$dir_path/.terraform') {
-		node.exec(cmd: 'cd $dir_path && $tff.tf_cmd init', reset: true)?
+	if !os.exists('${dir_path}/.terraform') {
+		node.exec(cmd: 'cd ${dir_path} && ${tff.tf_cmd} init', reset: true)?
 	}
 }
 
@@ -86,7 +86,7 @@ fn (mut tff TerraformFactory) tf_execute(dir_path string) ? {
 	mut tohash := ''
 	res := os.ls(dir_path)?
 	for file in res {
-		filepath := '$dir_path/$file'
+		filepath := '${dir_path}/${file}'
 		if !os.is_file(filepath) {
 			continue
 		}
@@ -98,10 +98,13 @@ fn (mut tff TerraformFactory) tf_execute(dir_path string) ? {
 		tohash += fc
 	}
 	hhash := md5.hexhash(tohash)
-	hhash_check := '${dir_path}__tfexec_$hhash'
+	hhash_check := '${dir_path}__tfexec_${hhash}'
 	mut node := builder.node_local()?
 	if !node.done_exists(hhash_check) {
-		node.exec(cmd: 'cd $dir_path && $tff.tf_cmd apply -parallelism=1 -auto-approve', reset: true)?
+		node.exec(
+			cmd: 'cd ${dir_path} && ${tff.tf_cmd} apply -parallelism=1 -auto-approve'
+			reset: true
+		)?
 		node.done_set(hhash_check, 'OK')?
 	}
 }
@@ -110,5 +113,8 @@ fn (mut tff TerraformFactory) tf_execute(dir_path string) ? {
 fn (mut tff TerraformFactory) tf_destroy(dir_path string) ? {
 	tff.tf_inialize(dir_path)?
 	mut node := builder.node_local()?
-	node.exec(cmd: 'cd $dir_path && $tff.tf_cmd destroy -parallelism=1 -auto-approve', reset: true)?
+	node.exec(
+		cmd: 'cd ${dir_path} && ${tff.tf_cmd} destroy -parallelism=1 -auto-approve'
+		reset: true
+	)?
 }

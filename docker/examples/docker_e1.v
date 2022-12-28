@@ -15,7 +15,6 @@ fn do() ! {
 	mut il := engine.images_list() or { panic(err) }
 	mut cl := engine.containers_get() or { panic(err) }
 
-
 	println(node)
 }
 

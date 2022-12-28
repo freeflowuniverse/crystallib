@@ -41,7 +41,7 @@ fn regex_rewrite(r string) !string {
 		} else if '\'"'.contains(c) {
 			continue
 		} else if '^&![]'.contains(c) {
-			return error('cannot rewrite regex: $r, found illegal char ^&![]')
+			return error('cannot rewrite regex: ${r}, found illegal char ^&![]')
 		}
 	}
 	return res.join('')
@@ -93,7 +93,7 @@ pub fn (mut ri ReplaceInstructions) add(replacelist []string) ! {
 		replace_with := splitted[splitted.len - 1]
 		// last one not to be used
 		if splitted.len < 2 {
-			return error("Cannot add $i because needs to have 2 parts, wrong syntax, to regex instructions:\n\"$replacelist\"")
+			return error("Cannot add ${i} because needs to have 2 parts, wrong syntax, to regex instructions:\n\"${replacelist}\"")
 		}
 		for item in splitted[0..(splitted.len - 1)] {
 			ri.add_item(item, replace_with)!
@@ -190,7 +190,7 @@ pub fn (mut self ReplaceInstructions) replace_in_dir(args ReplaceDirArgs) !int {
 // returns how many files changed
 fn (mut self ReplaceInstructions) replace_in_dir_recursive(path1 string, extensions []string, dryrun bool, mut done []string) !int {
 	items := os.ls(path1) or {
-		return error('cannot load folder for replace because cannot find $path1')
+		return error('cannot load folder for replace because cannot find ${path1}')
 	}
 	mut pathnew := ''
 	mut count := 0
@@ -220,9 +220,9 @@ fn (mut self ReplaceInstructions) replace_in_dir_recursive(path1 string, extensi
 				txtold := os.read_file(pathnew)!
 				txtnew := self.replace(text: txtold, dedent: false)!
 				if txtnew.trim(' \n') == txtold.trim(' \n') {
-					println(' - nothing to do : $pathnew')
+					println(' - nothing to do : ${pathnew}')
 				} else {
-					println(' - replace done  : $pathnew')
+					println(' - replace done  : ${pathnew}')
 					count++
 					if !dryrun {
 						// now write the file back

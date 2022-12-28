@@ -53,12 +53,12 @@ pub fn (mut gitstructure GitStructure) repos_get(args GSArgs) []GitRepo {
 pub fn (mut gitstructure GitStructure) repos_print(args GSArgs) {
 	mut r := [][]string{}
 	for mut g in gitstructure.repos_get(args) {
-		changed := g.changes() or { panic('issue in repo changes. $err') }
+		changed := g.changes() or { panic('issue in repo changes. ${err}') }
 		pr := g.path_relative()
 		if changed {
-			r << ['- $pr', '$g.addr.branch', 'CHANGED']
+			r << ['- ${pr}', '${g.addr.branch}', 'CHANGED']
 		} else {
-			r << ['- $pr', '$g.addr.branch', '']
+			r << ['- ${pr}', '${g.addr.branch}', '']
 		}
 	}
 	texttools.print_array2(r, '  ', true)
@@ -110,10 +110,12 @@ fn (mut gitstructure GitStructure) load() ! {
 
 fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []string) ! {
 	// println(" - git load: $path1")
-	if ! (os.exists(path1)){
+	if !(os.exists(path1)) {
 		os.mkdir_all(path1)!
 	}
-	items := os.ls(path1) or { return error('cannot load gitstructure because cannot find $path1') }
+	items := os.ls(path1) or {
+		return error('cannot load gitstructure because cannot find ${path1}')
+	}
 	mut pathnew := ''
 	for item in items {
 		pathnew = os.join_path(path1, item)

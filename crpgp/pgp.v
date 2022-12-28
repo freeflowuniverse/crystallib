@@ -22,8 +22,8 @@ pub enum CipherSuite {
 }
 
 fn (self KeyParams) id() string {
-	comment := if self.comment != '' { '($self.comment) ' } else { '' }
-	return '$self.name $comment<$self.email>'
+	comment := if self.comment != '' { '(${self.comment}) ' } else { '' }
+	return '${self.name} ${comment}<${self.email}>'
 }
 
 pub fn generate_key(k KeyParams) ?SignedSecretKey {

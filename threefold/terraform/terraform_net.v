@@ -22,7 +22,7 @@ fn (mut net TFNet) write(mut deployment TerraformDeployment) ? {
 	mut tff := get()?
 	// mut tfscript := TF_NET
 	if net.tfgrid_node_ids.len == 0 {
-		return error('tfgrid_node_ids cannot be empty in $net')
+		return error('tfgrid_node_ids cannot be empty in ${net}')
 	}
 
 	nodeids := net.tfgrid_node_ids.map(it.str()).join(',')
@@ -30,5 +30,5 @@ fn (mut net TFNet) write(mut deployment TerraformDeployment) ? {
 	net.name = deployment.guid + '_' + deployment.name // needs to be globally unique
 
 	tfscript := $tmpl('templates/net.tf')
-	os.write_file('$deployment.path/net.tf', tfscript)?
+	os.write_file('${deployment.path}/net.tf', tfscript)?
 }

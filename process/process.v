@@ -54,7 +54,7 @@ pub mut:
 // out is the output
 pub fn execute_job(cmd Command) !Job {
 	mut cmd_obj := cmd
-	println(' - CMD:$cmd_obj.cmd')
+	println(' - CMD:${cmd_obj.cmd}')
 	mut out := ''
 	mut job := Job{}
 	job.cmd = cmd
@@ -65,7 +65,7 @@ pub fn execute_job(cmd Command) !Job {
 
 	if cmd_obj.debug {
 		cmd_obj.stdout = true
-		println('execute: $job')
+		println('execute: ${job}')
 	}
 
 	mut p := os.new_process(args[0])
@@ -110,13 +110,13 @@ pub fn execute_job(cmd Command) !Job {
 		errorpath := cleanuppath.all_before_last('.sh') + '.json'
 		errorjson := json.encode_pretty(job)
 		os.write_file(errorpath, errorjson) or {
-			msg := 'cannot write errorjson to $errorpath'
+			msg := 'cannot write errorjson to ${errorpath}'
 			p.close()
 			return error(msg)
 		}
 		if cmd_obj.die {
 			// if cleanuppath!=""{os.rm(cleanuppath) or {}}
-			msg := 'Cannot execute:\n$job'
+			msg := 'Cannot execute:\n${job}'
 			println(msg)
 			p.close()
 			return error(msg)
@@ -141,16 +141,16 @@ fn temp_write(text string) !string {
 	// 	}
 	// }
 	t := time.now().format_ss_milli().replace(' ', '-')
-	mut tmppath := '$tmpdir/execscripts/${t}.sh'
-	if !os.exists('$tmpdir/execscripts/') {
-		os.mkdir('$tmpdir/execscripts') or {
-			return error('Cannot create $tmpdir/execscripts,$err')
+	mut tmppath := '${tmpdir}/execscripts/${t}.sh'
+	if !os.exists('${tmpdir}/execscripts/') {
+		os.mkdir('${tmpdir}/execscripts') or {
+			return error('Cannot create ${tmpdir}/execscripts,${err}')
 		}
 	}
 	if os.exists(tmppath) {
 		for i in 1 .. 200 {
 			// println(i)
-			tmppath = '$tmpdir/execscripts/{$t}_${i}.sh'
+			tmppath = '${tmpdir}/execscripts/{${t}}_${i}.sh'
 			if !os.exists(tmppath) {
 				break
 			}
@@ -187,9 +187,9 @@ fn cmd_to_args(cmd string) !(string, []string) {
 	if !text.ends_with('\n') {
 		text += '\n'
 	}
-	text = '#!/bin/bash\nset -e\n$text'
-	cleanuppath = temp_write(text) or { return error('error: cannot write $err') }
-	return cleanuppath, ['/bin/bash', '-c', '/bin/bash $cleanuppath 2>&1']
+	text = '#!/bin/bash\nset -e\n${text}'
+	cleanuppath = temp_write(text) or { return error('error: cannot write ${err}') }
+	return cleanuppath, ['/bin/bash', '-c', '/bin/bash ${cleanuppath} 2>&1']
 
 	// if text.contains('&&') && !check_write(text) {
 	// 	text = text.replace('&&', '\n')

@@ -7,7 +7,7 @@ import os
 
 // check command exists on the platform, knows how to deal with different platforms
 pub fn (mut node Node) cmd_exists(cmd string) bool {
-	return node.exec_ok('which $cmd')
+	return node.exec_ok('which ${cmd}')
 }
 
 pub struct NodeExecCmd {
@@ -66,21 +66,21 @@ pub fn (mut node Node) exec_cmd(args NodeExecCmd) ! {
 	if description == '' {
 		description = cmd
 		if description.contains('\n') {
-			description = '\n$description\n'
+			description = '\n${description}\n'
 		}
 	}
-	if !args.reset && node.done_exists('exec_$hhash') {
+	if !args.reset && node.done_exists('exec_${hhash}') {
 		if args.period == 0 {
-			println('   - exec cmd:$description on $node.name: was already done, period indefinite.')
+			println('   - exec cmd:${description} on ${node.name}: was already done, period indefinite.')
 			return
 		}
-		exec_last_time := node.done_get_str('exec_$hhash').int()
+		exec_last_time := node.done_get_str('exec_${hhash}').int()
 		assert exec_last_time > 10000
 		// println(args)
 		// println("   - check exec cmd:$cmd on $node.name: time:$exec_last_time")
 		if exec_last_time > now_epoch - args.period {
 			hours := args.period / 3600
-			println('   - exec cmd:$description on $node.name: was already done, period $hours h')
+			println('   - exec cmd:${description} on ${node.name}: was already done, period ${hours} h')
 			return
 		}
 	}
@@ -91,18 +91,18 @@ pub fn (mut node Node) exec_cmd(args NodeExecCmd) ! {
 
 	mut r_path := '/tmp/${hhash}.sh'
 	if args.tmpdir.len > 2 {
-		r_path = '$args.tmpdir/installer.sh'
-		node.exec_silent('mkdir -p $args.tmpdir')!
+		r_path = '${args.tmpdir}/installer.sh'
+		node.exec_silent('mkdir -p ${args.tmpdir}')!
 	}
 	node.file_write(r_path, cmd)!
 	if args.tmpdir.len > 2 {
-		cmd = "mkdir -p $args.tmpdir && cd $args.tmpdir && export TMPDIR='$args.tmpdir' && bash $r_path"
+		cmd = "mkdir -p ${args.tmpdir} && cd ${args.tmpdir} && export TMPDIR='${args.tmpdir}' && bash ${r_path}"
 	} else {
-		cmd = 'cd /tmp && bash $r_path'
+		cmd = 'cd /tmp && bash ${r_path}'
 	}
 
 	// println("   - exec cmd:$cmd on $node.name")
-	node.exec(cmd) or { return error(err.msg() + '\noriginal cmd:\n$args.cmd') }
+	node.exec(cmd) or { return error(err.msg() + '\noriginal cmd:\n${args.cmd}') }
 
 	if args.remove_installer {
 		if args.tmpdir.len > 2 {
@@ -111,14 +111,14 @@ pub fn (mut node Node) exec_cmd(args NodeExecCmd) ! {
 			node.delete(r_path)!
 		}
 	}
-	node.done_set('exec_$hhash', now_str)!
+	node.done_set('exec_${hhash}', now_str)!
 }
 
 // check if we can execute and there is not errorcode
 pub fn (mut node Node) exec_ok(cmd string) bool {
 	// TODO: need to put in support for multiline text files
 	if cmd.contains('\n') {
-		panic('cannot have \\n in cmd. $cmd, use exec function instead')
+		panic('cannot have \\n in cmd. ${cmd}, use exec function instead')
 	}
 	node.exec_silent(cmd) or {
 		// see if it executes ok, if cmd not found is false
@@ -156,7 +156,7 @@ fn (mut node Node) platform_load() {
 pub fn (mut node Node) package_refresh() ! {
 	if node.platform == PlatformType.ubuntu {
 		node.exec('apt-get update') or {
-			return error('could not update packages list\nerror:\n$err')
+			return error('could not update packages list\nerror:\n${err}')
 		}
 	}
 }
@@ -164,16 +164,16 @@ pub fn (mut node Node) package_refresh() ! {
 pub fn (mut node Node) package_install(package Package) ! {
 	name := package.name
 	if node.platform == PlatformType.osx {
-		node.exec('brew install $name') or {
-			return error('could not install package:$package.name\nerror:\n$err')
+		node.exec('brew install ${name}') or {
+			return error('could not install package:${package.name}\nerror:\n${err}')
 		}
 	} else if node.platform == PlatformType.ubuntu {
-		node.exec('apt install -y $name') or {
-			return error('could not install package:$package.name\nerror:\n$err')
+		node.exec('apt install -y ${name}') or {
+			return error('could not install package:${package.name}\nerror:\n${err}')
 		}
 	} else if node.platform == PlatformType.alpine {
-		node.exec('apk install $name') or {
-			return error('could not install package:$package.name\nerror:\n$err')
+		node.exec('apk install ${name}') or {
+			return error('could not install package:${package.name}\nerror:\n${err}')
 		}
 	} else {
 		panic('only ubuntu, alpine and osx supported for now')

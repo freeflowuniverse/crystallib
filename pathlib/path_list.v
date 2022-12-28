@@ -1,18 +1,18 @@
 module pathlib
 
 import os
-import regex {RE}
-pub struct EmptyRegex {
+import regex { RE }
 
+pub struct EmptyRegex {
 }
 
-type OurRegex = RE | EmptyRegex
+type OurRegex = EmptyRegex | RE
 
 pub struct ListArgs {
 pub mut:
-	regex	  OurRegex
-	recursive bool   // std off, means we recursive not over dirs by default
-	ignoredefault bool=true //ignore files starting with . and _
+	regex         OurRegex
+	recursive     bool // std off, means we recursive not over dirs by default
+	ignoredefault bool = true // ignore files starting with . and _
 }
 
 // list all files & dirs, follow symlinks
@@ -43,15 +43,15 @@ pub fn (mut path Path) list(args ListArgs) ![]Path {
 			}
 		}
 		// Check if tofound is a part of the path
-		mut r:=args.regex
+		mut r := args.regex
 		mut continuebool := false
-		if r is RE{
+		if r is RE {
 			// println(r)
 			// panic("s")
 			// continuebool = r.matches_string(item) //returns true if it matches
 		}
-		if args.ignoredefault{
-			if item.starts_with("_") ||  item.starts_with(".") {
+		if args.ignoredefault {
+			if item.starts_with('_') || item.starts_with('.') {
 				continuebool = true
 			}
 		}

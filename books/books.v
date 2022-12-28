@@ -39,7 +39,7 @@ pub struct BookNewArgs {
 pub fn (mut books Books) book_new(args BookNewArgs) !&Book {
 	mut p := pathlib.get_file(args.path, false)! // makes sure we have the right path
 	if !p.exists() {
-		return error('cannot find book on path: $args.path')
+		return error('cannot find book on path: ${args.path}')
 	}
 	p.path_normalize()! // make sure its all lower case and name is proper
 	mut name := args.name
@@ -50,11 +50,11 @@ pub fn (mut books Books) book_new(args BookNewArgs) !&Book {
 	// is case insensitive
 	//? checks for both summary.md files and links
 	mut summarypath := p.file_find('summary.md') or {
-		p.link_find('summary.md') or { return error('cannot find summary path: $err') }
+		p.link_find('summary.md') or { return error('cannot find summary path: ${err}') }
 	}
 
 	mut parser := markdowndocs.get(summarypath.path) or {
-		panic('cannot book parse $summarypath ,$err')
+		panic('cannot book parse ${summarypath} ,${err}')
 	}
 
 	mut book := Book{
@@ -83,12 +83,12 @@ fn (mut books Books) scan_recursive(mut path pathlib.Path) ! {
 					name = params_.get('name')!
 				}
 			}
-			println(' - book new: $path.path name:$name')
+			println(' - book new: ${path.path} name:${name}')
 			books.book_new(path: path.path, name: name)!
 			return
 		}
 		mut llist := path.list(recursive: false) or {
-			return error('cannot list: $path.path \n$error')
+			return error('cannot list: ${path.path} \n${error}')
 		}
 		for mut p_in in llist {
 			if p_in.is_dir() {
@@ -97,7 +97,7 @@ fn (mut books Books) scan_recursive(mut path pathlib.Path) ! {
 				}
 
 				books.scan_recursive(mut p_in) or {
-					msg := 'Cannot process recursive on $p_in.path\n$err'
+					msg := 'Cannot process recursive on ${p_in.path}\n${err}'
 					// println(msg)
 					return error(msg)
 				}
@@ -117,7 +117,7 @@ pub fn (mut books Books) get(name string) !&Book {
 	if namelower in books.books {
 		return books.books[namelower]
 	}
-	return error('could not find book with name:$name')
+	return error('could not find book with name:${name}')
 }
 
 // fix all loaded books
@@ -151,7 +151,7 @@ pub fn (mut books Books) init() ! {
 pub fn (mut books Books) reset() ! {
 	// delete where the books are created
 	for item in ['books', 'html'] {
-		mut a := pathlib.get(books.config.dest + '/$item')
+		mut a := pathlib.get(books.config.dest + '/${item}')
 		a.delete()!
 	}
 	books.state = .init // makes sure we re-init

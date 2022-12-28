@@ -40,7 +40,7 @@ fn macro_process(mut state LineProcessorState, line string) bool {
 			return true
 		}
 	} else {
-		state.error('cannot find macro:$macro.cmd in line:${line}.')
+		state.error('cannot find macro:${macro.cmd} in line:${line}.')
 	}
 	return true
 }

@@ -47,7 +47,7 @@ pub fn load_interactive() !string {
 	}
 
 	// now means nothing in ssh-agent, lets see if we find 1 key in .ssh directory
-	mut sshdirpath := pathlib.get_dir('$os.home_dir()/.ssh', true)!
+	mut sshdirpath := pathlib.get_dir('${os.home_dir()}/.ssh', true)!
 
 	pubkeys = []string{}
 
@@ -120,7 +120,7 @@ pub fn pubkey_guess() !string {
 		return error('There is more than 1 ssh-key loaded in ssh-agent, cannot identify which one to use.')
 	}
 	// now means nothing in ssh-agent, lets see if we find 1 key in .ssh directory
-	mut sshdirpath := pathlib.get_dir('$os.home_dir()/.ssh', true)!
+	mut sshdirpath := pathlib.get_dir('${os.home_dir()}/.ssh', true)!
 
 	// todo: use ourregex field to nly list .pub files
 	mut sshfiles := sshdirpath.file_list(mut pathlib.ListArgs{})!
@@ -143,7 +143,7 @@ pub fn pubkey_guess() !string {
 // will ignore errors, if there is an error will just return empty list
 pub fn pubkeys_get() []string {
 	mut pubkeys := []string{}
-	res := os.execute('ssh-add -L')	
+	res := os.execute('ssh-add -L')
 	if res.exit_code == 0 {
 		for line in res.output.split('\n') {
 			if line.trim(' ') == '' {
@@ -170,50 +170,50 @@ pub fn loaded() bool {
 
 // returns path to sshkey
 pub fn key_generate(name string, passphrase string) !string {
-	dest := '$os.home_dir()/.ssh/$name'
+	dest := '${os.home_dir()}/.ssh/${name}'
 	if os.exists(dest) {
 		os.rm(dest)!
 	}
-	cmd := 'ssh-keygen -t ed25519 -f $dest -P $passphrase -q'
+	cmd := 'ssh-keygen -t ed25519 -f ${dest} -P ${passphrase} -q'
 	// println(cmd)
 	rc := os.execute(cmd)
 	if !(rc.exit_code == 0) {
-		return error('Could not generated sshkey,\n$rc')
+		return error('Could not generated sshkey,\n${rc}')
 	}
-	return '$os.home_dir()/.ssh/$name'
+	return '${os.home_dir()}/.ssh/${name}'
 }
 
-pub fn reset()! {
+pub fn reset() ! {
 	res := os.execute('ssh-add -D')
-	if res.exit_code>0{
-		return error("cannot reset sshkeys.")
-	}		
+	if res.exit_code > 0 {
+		return error('cannot reset sshkeys.')
+	}
 }
 
-//load the key, they key is content, other keys will be unloaded
-pub fn key_load_single(key string)! {
-	hash:=sha256.hexhash(key)
+// load the key, they key is content, other keys will be unloaded
+pub fn key_load_single(key string) ! {
+	hash := sha256.hexhash(key)
 	reset()!
-	path:="~/.ssh/${hash}"
-	if os.exists(path){
+	path := '~/.ssh/${hash}'
+	if os.exists(path) {
 		os.rm(path)!
 	}
-	os.write_file(path,key)!
-	key_load(path)!	
+	os.write_file(path, key)!
+	key_load(path)!
 }
 
-pub fn key_load(keypath string)! {
-	res := os.execute('ssh-add $keypath')
-	if res.exit_code>0{
-		return error("cannot add ssh-key with path $keypath")
+pub fn key_load(keypath string) ! {
+	res := os.execute('ssh-add ${keypath}')
+	if res.exit_code > 0 {
+		return error('cannot add ssh-key with path ${keypath}')
 	}
 }
 
-pub fn key_load_with_passphrase(keypath string, passphrase string)! {
-	res := os.execute('ssh-add $keypath')
-	if res.exit_code>0{
-		return error("cannot add key_load_with_passphrase with path $keypath")
-	}	
+pub fn key_load_with_passphrase(keypath string, passphrase string) ! {
+	res := os.execute('ssh-add ${keypath}')
+	if res.exit_code > 0 {
+		return error('cannot add key_load_with_passphrase with path ${keypath}')
+	}
 }
 
 // pub fn ssh_agent_keys() []string{
@@ -241,7 +241,7 @@ pub fn key_loaded(name string) (bool, int) {
 				continue
 			}
 			counter++
-			if line.contains('.ssh/$name ') {
+			if line.contains('.ssh/${name} ') {
 				// space at end is needed because then we know its not partial part of ssh key
 				exists = true
 			}

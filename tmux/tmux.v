@@ -11,16 +11,20 @@ pub mut:
 	node     builder.Node
 }
 
-pub fn get_local()!Tmux{
+pub fn get_local() !Tmux {
 	mut builder := builder.new()
-	mut node := builder.node_local()!	
-	return Tmux{node:node}
+	mut node := builder.node_local()!
+	return Tmux{
+		node: node
+	}
 }
 
-pub fn get_remote(ipaddr string)!Tmux{
+pub fn get_remote(ipaddr string) !Tmux {
 	mut builder := builder.new()
 	mut node := builder.node_new(name: 'test', ipaddr: ipaddr, debug: true)!
-	return Tmux{node: node}
+	return Tmux{
+		node: node
+	}
 }
 
 fn (mut t Tmux) scan_add(line string) !&Window {
@@ -84,7 +88,7 @@ pub fn (mut t Tmux) scan() !map[string]&Window {
 	// 	return map[string]&Window{}
 	// }
 
-	println('execlist out: $exec_list')
+	println('execlist out: ${exec_list}')
 
 	// make sure we have all sessions
 	for line in exec_list.split_into_lines() {
@@ -105,13 +109,13 @@ pub fn (mut t Tmux) scan() !map[string]&Window {
 
 	// mut done := map[string]bool{}
 	cmd := "tmux list-panes -a -F '#{session_name}|#{window_name}|#{window_id}|#{pane_active}|#{pane_id}|#{pane_pid}|#{pane_start_command}'"
-	out := node.exec_silent(cmd) or { return error("Can't execute $cmd \n$err") }
+	out := node.exec_silent(cmd) or { return error("Can't execute ${cmd} \n${err}") }
 
-	println('node out: $out')
+	println('node out: ${out}')
 
 	mut windows := t.windows_get()
 
-	println('windows out: $windows.keys()')
+	println('windows out: ${windows.keys()}')
 
 	for line in out.split_into_lines() {
 		if line.contains('|') {
@@ -134,7 +138,7 @@ pub fn (mut tmux Tmux) load() ! {
 		return
 	}
 	tmux_ls := tmux.node.exec('tmux ls')!
-	println('Tmux: $tmux_ls')
+	println('Tmux: ${tmux_ls}')
 }
 
 pub fn (mut t Tmux) stop() ! {
@@ -151,7 +155,7 @@ pub fn (mut t Tmux) stop() ! {
 	}
 
 	cmd := 'tmux kill-server'
-	_ := t.node.exec_silent(cmd) or {''}
+	_ := t.node.exec_silent(cmd) or { '' }
 	os.log('TMUX - All sessions stopped .')
 }
 

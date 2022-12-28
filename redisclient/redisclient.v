@@ -50,7 +50,7 @@ pub fn get(addr string) !Redis {
 }
 
 pub fn (mut r Redis) socket_connect() ! {
-	println(' REDIS CONNECT: $r.addr')
+	println(' REDIS CONNECT: ${r.addr}')
 	r.socket = net.dial_tcp(r.addr)!
 	r.socket.set_blocking(true)!
 	r.socket.set_read_timeout(10 * time.second)
@@ -109,8 +109,8 @@ fn (mut r Redis) write_cmds(items []string) ! {
 	// 	a := resp.r_bytestring(items[0].bytes())
 	// 	r.write_rval(a)!
 	// }{
-		a := resp.r_list_bstring(items)
-		r.write_rval(a)!
+	a := resp.r_list_bstring(items)
+	r.write_rval(a)!
 	// }	
 }
 

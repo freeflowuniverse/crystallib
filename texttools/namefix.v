@@ -56,7 +56,7 @@ pub fn name_fix_keepext(name_ string) string {
 	if extension != '' {
 		name = name[..(name.len - extension.len - 1)]
 		name = name.replace('.', '_')
-		name = name + '.$extension'
+		name = name + '.${extension}'
 	}
 	name = name.replace('__', '_')
 	name = name.replace('__', '_') // needs to be 2x because can be 3 to 2 to 1

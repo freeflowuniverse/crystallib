@@ -14,7 +14,7 @@ fn test_tfchain_create_alice_account() ? {
 	// Create new tfchain account for alice.
 	mut client, user := setup_tests('alice')?
 	mut u := users
-	ip := rand.choose<string>(random_ip, 1) or { [random_ip[0]] }
+	ip := rand.choose[string](random_ip, 1) or { [random_ip[0]] }
 	created := client.tfchain_create(user.name, ip[0])?
 	assert created.name == user.name
 	u.set('alice', .name, created.name)
@@ -38,7 +38,7 @@ fn test_tfchain_init_alice_account() ? {
 	mut client, user := setup_tests('alice')?
 	assert user.mnemonic != ''
 	client.tfchain_init(user.name, user.mnemonic) or {
-		assert err.msg() == 'An account with the same name $user.name already exists'
+		assert err.msg() == 'An account with the same name ${user.name} already exists'
 		return
 	}
 }
@@ -72,7 +72,7 @@ fn test_tfchain_create_bob_account() ? {
 	// Create new tfchain account for bob.
 	mut client, user := setup_tests('bob')?
 	mut u := users
-	ip := rand.choose<string>(random_ip, 1) or { [random_ip[0]] }
+	ip := rand.choose[string](random_ip, 1) or { [random_ip[0]] }
 	created := client.tfchain_create(user.name, ip[0])?
 	assert created.name == user.name
 	u.set('bob', .name, created.name)
@@ -85,7 +85,7 @@ fn test_tfchain_delete_account_not_exist() ? {
 	// Delete acount not exist.
 	mut client, user := setup_tests('mando')?
 	client.tfchain_delete(user.name) or {
-		assert err.msg() == "Couldn't find an account with name $user.name"
+		assert err.msg() == "Couldn't find an account with name ${user.name}"
 		return
 	}
 }
@@ -93,7 +93,7 @@ fn test_tfchain_delete_account_not_exist() ? {
 fn test_tfchain_init_baz_account() ? {
 	// initialize baz account
 	mut client, user := setup_tests('baz')?
-	ip := rand.choose<string>(random_ip, 1) or { [random_ip[0]] }
+	ip := rand.choose[string](random_ip, 1) or { [random_ip[0]] }
 	fake_account := client.tfchain_create('fake', ip[0])?
 	created := client.tfchain_init(user.name, fake_account.mnemonic)?
 	assert created.address != ''

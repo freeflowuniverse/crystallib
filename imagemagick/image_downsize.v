@@ -26,7 +26,7 @@ pub fn image_downsize(mut path pathlib.Path, backupdir string) !Image {
 // will downsize to reasonable size based on x
 pub fn (mut image Image) downsize(backupdir string) ! {
 	if image.path.is_link() {
-		return error('use image_downsize function if file is a link:\n$image')
+		return error('use image_downsize function if file is a link:\n${image}')
 	}
 	image.init_()!
 	if image.skip() {
@@ -47,20 +47,20 @@ pub fn (mut image Image) downsize(backupdir string) ! {
 	// }
 	if image.size_kbyte > 600 && image.size_x > 2400 {
 		image.size_kbyte = 0
-		println('   - convert image resize 50%: $image.path.path')
-		cmd := "convert '$image.path.path' -resize 50% '$image.path.path'"
+		println('   - convert image resize 50%: ${image.path.path}')
+		cmd := "convert '${image.path.path}' -resize 50% '${image.path.path}'"
 		// TODO:
 		process.execute_silent(cmd) or {
-			return error('could not convert png to png --resize 50%.\n$cmd .\n$error')
+			return error('could not convert png to png --resize 50%.\n${cmd} .\n${error}')
 		}
 		// println(image)
 		image.init_()!
 	} else if image.size_kbyte > 600 && image.size_x > 1800 {
 		image.size_kbyte = 0
-		println('   - convert image resize 75%: $image.path.path')
-		cmd := "convert '$image.path.path' -resize 75% '$image.path.path'"
+		println('   - convert image resize 75%: ${image.path.path}')
+		cmd := "convert '${image.path.path}' -resize 75% '${image.path.path}'"
 		process.execute_silent(cmd) or {
-			return error('could not convert png to png --resize 75%.\n$cmd \n$error')
+			return error('could not convert png to png --resize 75%.\n${cmd} \n${error}')
 		}
 		image.init_()!
 	}
@@ -68,13 +68,13 @@ pub fn (mut image Image) downsize(backupdir string) ! {
 	if image.is_png() {
 		if image.size_kbyte > 600 && !image.transparent {
 			path_dest := image.path.path_no_ext() + '.jpg'
-			println('   - convert image jpg: $path_dest')
-			cmd := "convert '$image.path.path' '$path_dest'"
+			println('   - convert image jpg: ${path_dest}')
+			cmd := "convert '${image.path.path}' '${path_dest}'"
 			if os.exists(path_dest) {
 				os.rm(path_dest)!
 			}
 			process.execute_silent(cmd) or {
-				return error('could not convert png to jpg.\n$cmd \n$error')
+				return error('could not convert png to jpg.\n${cmd} \n${error}')
 			}
 			if os.exists(image.path.path) {
 				os.rm(image.path.path)!

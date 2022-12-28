@@ -4,16 +4,16 @@ pub fn (mut result Params) str() string {
 	mut string_array := []string{}
 	string_array << 'params:'
 	for param in result.params {
-		string_array << '        = $param.key: "$param.value",'
+		string_array << '        = ${param.key}: "${param.value}",'
 	}
-	if result.args.len>0{
+	if result.args.len > 0 {
 		string_array << '        = args::::'
 		for arg in result.args {
-			string_array << '"            + $arg.value",'
-		}		
+			string_array << '"            + ${arg.value}",'
+		}
 	}
 
-	return string_array.join('\n').replace("\"\"","\"")
+	return string_array.join('\n').replace('""', '"')
 }
 
 /*

@@ -20,12 +20,12 @@ pub fn (mut h RedisCache) get(key string) ?string {
 		return none
 	}
 	key2 := h.namespace + ':' + key
-	hit := h.redis.get('cache:$key2') or {
-		println('[-] cache: cache miss, $key2')
+	hit := h.redis.get('cache:${key2}') or {
+		println('[-] cache: cache miss, ${key2}')
 		return none
 	}
 
-	println('[+] cache: cache hit: $key2')
+	println('[+] cache: cache hit: ${key2}')
 	return hit
 }
 
@@ -35,7 +35,7 @@ pub fn (mut h RedisCache) set(key string, val string, expire int) ? {
 	}
 
 	key2 := h.namespace + ':' + key
-	h.redis.set_ex('cache:$key2', val, expire.str())?
+	h.redis.set_ex('cache:${key2}', val, expire.str())?
 }
 
 pub fn (mut h RedisCache) exists(key string) bool {

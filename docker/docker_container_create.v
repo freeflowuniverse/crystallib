@@ -10,16 +10,16 @@ pub fn (mut e DockerEngine) container_create(args DockerContainerCreateArgs) !&D
 	mut node := factory.node_get(e.node)!
 
 	for port in args.forwarded_ports {
-		ports = ports + '-p $port '
+		ports = ports + '-p ${port} '
 	}
 
 	for mount in args.mounted_volumes {
-		mounts += '-v $mount '
+		mounts += '-v ${mount} '
 	}
-	mut image := '$args.image_repo'
+	mut image := '${args.image_repo}'
 
 	if args.image_tag != '' {
-		image = image + ':$args.image_tag'
+		image = image + ':${args.image_tag}'
 	}
 
 	if image == 'threefold' || image == 'threefold:latest' || image == '' {
@@ -31,10 +31,10 @@ pub fn (mut e DockerEngine) container_create(args DockerContainerCreateArgs) !&D
 	if !contains_ssh_port(args.forwarded_ports) {
 		// find random free port in the node
 		mut port := e.get_free_port() or { panic('No free node.') }
-		ports += '-p $port:22/tcp'
+		ports += '-p ${port}:22/tcp'
 	}
 
-	mut cmd := 'docker run --hostname $args.hostname --name $args.name $ports $mounts -d  -t $image $command'
+	mut cmd := 'docker run --hostname ${args.hostname} --name ${args.name} ${ports} ${mounts} -d  -t ${image} ${command}'
 	node.exec(cmd)!
 	e.load()!
 	mut container := e.container_get(args.name)!

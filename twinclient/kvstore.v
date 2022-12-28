@@ -4,13 +4,13 @@ import json
 
 // Set a new record in my kvstore as key and value, if success return account_id
 pub fn (mut client TwinClient) kvstore_set(key string, value string) !string {
-	response := client.transport.send('kvstore.set', '{"key": "$key", "value": "$value"}')!
+	response := client.transport.send('kvstore.set', '{"key": "${key}", "value": "${value}"}')!
 	return response.data
 }
 
 // Get a record from my kvstore using key
 pub fn (mut client TwinClient) kvstore_get(key string) !string {
-	response := client.transport.send('kvstore.get', '{"key": "$key"}')!
+	response := client.transport.send('kvstore.get', '{"key": "${key}"}')!
 	return response.data
 }
 
@@ -22,7 +22,7 @@ pub fn (mut client TwinClient) kvstore_list() ![]string {
 
 // Remove a record from my kvstore using key, if success return account_id
 pub fn (mut client TwinClient) kvstore_remove(key string) !string {
-	response := client.transport.send('kvstore.remove', '{"key": "$key"}')!
+	response := client.transport.send('kvstore.remove', '{"key": "${key}"}')!
 	return response.data
 }
 

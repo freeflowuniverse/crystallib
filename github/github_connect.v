@@ -65,7 +65,7 @@ pub fn (mut h GithubConnection) get_json_str(prefix string, getdata string, cach
 	*/
 	mut result := h.cache_get(prefix, getdata, cache)
 	if result == '' {
-		url := '$h.url/$prefix'
+		url := '${h.url}/${prefix}'
 		mut req := http.new_request(http.Method.get, url, getdata)?
 		req.header = h.header()
 		req.add_custom_header('x-disable-pagination', 'True')?
@@ -73,7 +73,7 @@ pub fn (mut h GithubConnection) get_json_str(prefix string, getdata string, cach
 		if res.status_code == 200 {
 			result = res.body
 		} else {
-			return error('could not get: $url\n$res')
+			return error('could not get: ${url}\n${res}')
 		}
 		h.cache_set(prefix, getdata, result, cache)?
 	}
@@ -89,7 +89,7 @@ fn (mut h GithubConnection) header() http.Header {
 	*/
 	mut header := http.new_header_from_map({
 		http.CommonHeader.content_type:  'application/json'
-		http.CommonHeader.authorization: 'Bearer $h.auth_token'
+		http.CommonHeader.authorization: 'Bearer ${h.auth_token}'
 	})
 	return header
 }

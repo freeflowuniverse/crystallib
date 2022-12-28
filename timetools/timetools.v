@@ -52,14 +52,14 @@ pub fn get_expiration_from_timestring(exp_ string) !Expiration { // TODO: functi
 
 	if relative_bool == true {
 		time_unix := get_unix_from_relative(exp_) or {
-			return error('Failed to get unix from relative time: $err')
+			return error('Failed to get unix from relative time: ${err}')
 		}
 		return Expiration{
 			expiration: time_unix
 		}
 	} else {
 		time_unix := get_unix_from_absolute(exp_) or {
-			return error('Failed to get unix from absolute time: $err')
+			return error('Failed to get unix from absolute time: ${err}')
 		}
 		return Expiration{
 			expiration: time_unix
@@ -104,7 +104,7 @@ pub fn get_unix_from_relative(exp_ string) !i64 {
 		} else if exp.ends_with('Y') {
 			mult = 60 * 60 * 24 * 365
 		} else {
-			return error('could not parse time suffix for: $exp')
+			return error('could not parse time suffix for: ${exp}')
 		}
 		if exp.starts_with('-') {
 			mult *= -1
@@ -130,6 +130,8 @@ pub fn get_unix_from_absolute(timestr string) !i64 {
 		full_string = timestr.replace(':', '-') + '-01-01 00:00:00'
 	}
 
-	time_struct := time.parse(full_string) or { return error('could not parse time string: $err') }
+	time_struct := time.parse(full_string) or {
+		return error('could not parse time string: ${err}')
+	}
 	return time_struct.unix_time() - 10_800
 }

@@ -30,7 +30,7 @@ fn executor_new(args ExecutorNewArguments) !Executor {
 		}
 	} else {
 		ipaddr := ipaddress.ipaddress_new(args.ipaddr) or {
-			return error('can not initialize ip address.\n $err')
+			return error('can not initialize ip address.\n ${err}')
 		}
 		mut e := ExecutorSSH{
 			ipaddr: ipaddr

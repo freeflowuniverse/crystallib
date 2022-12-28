@@ -7,7 +7,7 @@ import os
 fn (mut para Paragraph) link_new(original_descr_ string, original_link_ string, isimage bool) !Link {
 	mut link := Link{
 		// this will be the exact way how the link is done in the paragraph
-		original: '[$original_descr_]($original_link_)'
+		original: '[${original_descr_}](${original_link_})'
 		paragraph: &para
 	}
 	if isimage {
@@ -98,18 +98,18 @@ fn (mut para Paragraph) link_new(original_descr_ string, original_link_ string, 
 			}
 			link.filename = splitted2[1]
 		} else if splitted2.len > 2 {
-			link.error('link can only have 1 x ":"/n$link')
+			link.error('link can only have 1 x ":"/n${link}')
 			return link
 		} else {
 			('should never be here')
 		}
 	}
-	if link.site.contains("/"){
-		link.site = link.site.all_after_last("/")
+	if link.site.contains('/') {
+		link.site = link.site.all_after_last('/')
 	}
 
 	// lets strip site info from link path
-	link.path = link.path.trim_string_left('$link.site:')
+	link.path = link.path.trim_string_left('${link.site}:')
 
 	link.filename = os.base(link.filename)
 
@@ -148,14 +148,14 @@ fn (mut para Paragraph) link_new(original_descr_ string, original_link_ string, 
 			return link
 		} else if !original_link.contains_any('./!&;') {
 			// link.cat = LinkType.page
-			panic('need to figure out what to do with $original_link ')
+			panic('need to figure out what to do with ${original_link} ')
 		} else {
-			link.error("$original_link (no match), ext was:'$ext'")
+			link.error("${original_link} (no match), ext was:'${ext}'")
 			return link
 		}
 
 		if link.filename.contains(':') {
-			panic("should not have ':' in link for page or file (2).\n$link")
+			panic("should not have ':' in link for page or file (2).\n${link}")
 		}
 	} else {
 		// filename empty
@@ -183,36 +183,36 @@ fn (mut para Paragraph) link_new(original_descr_ string, original_link_ string, 
 fn (mut link Link) source_get() !string {
 	if link.cat == LinkType.image {
 		if link.extra == '' {
-			return '![$link.description]($link.filename)'
+			return '![${link.description}](${link.filename})'
 		} else {
-			return '![$link.description]($link.filename $link.extra)'
+			return '![${link.description}](${link.filename} ${link.extra})'
 		}
 	}
 	if link.cat == LinkType.file {
 		if link.extra == '' {
-			return '[$link.description]($link.filename)'
+			return '[${link.description}](${link.filename})'
 		} else {
-			return '[$link.description]($link.filename $link.extra)'
+			return '[${link.description}](${link.filename} ${link.extra})'
 		}
 	}
 	if link.cat == LinkType.page {
 		if link.filename.contains(':') {
-			return error("should not have ':' in link for page or file.\n$link")
+			return error("should not have ':' in link for page or file.\n${link}")
 		}
 
 		mut link_filename := link.filename
 
 		if link.site != '' {
-			link_filename = '$link.site:$link_filename'
+			link_filename = '${link.site}:${link_filename}'
 		}
 		if link.include == false {
-			link_filename = '@$link_filename'
+			link_filename = '@${link_filename}'
 		}
 		if link.newtab {
-			link_filename = '!$link_filename'
+			link_filename = '!${link_filename}'
 		}
 
-		return '[$link.description]($link_filename)'
+		return '[${link.description}](${link_filename})'
 	}
 	return link.original
 }

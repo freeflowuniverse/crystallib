@@ -8,27 +8,22 @@ import libsodium
 import toml
 import os
 
-
-
-
 const (
-	redirect_url = "https://login.threefold.me"
-	sign_len = 64
+	redirect_url = 'https://login.threefold.me'
+	sign_len     = 64
 )
 
-
-
-["/login"]
-fn (mut clinet ClientApp) login()! vweb.Result {
+['/login']
+fn (mut clinet ClientApp) login() !vweb.Result {
 	app_id := clinet.get_header('Host')
-	mut server_public_key := ""
-	mut file_path := os.args_after(".")
-	if file_path.len <= 1{
+	mut server_public_key := ''
+	mut file_path := os.args_after('.')
+	if file_path.len <= 1 {
 		clinet.abort(400, file_dose_not_exist)
 	}
-	file_path << "."
+	file_path << '.'
 	keys := parse_keys(file_path[1])!
-	if keys.value("server") == toml.Any(toml.Null{}){
+	if keys.value('server') == toml.Any(toml.Null{}) {
 		clinet.abort(400, file_dose_not_exist)
 	} else {
 		server_public_key = keys.value('server.SERVER_PUBLIC_KEY').string()
@@ -39,27 +34,30 @@ fn (mut clinet ClientApp) login()! vweb.Result {
 	_ := base64.decode_in_buffer(&server_public_key, &server_pk_decoded_32)
 	_ := libsodium.crypto_sign_ed25519_pk_to_curve25519(server_curve_pk.data, &server_pk_decoded_32[0])
 
-	state := rand.uuid_v4().replace("-", "")
+	state := rand.uuid_v4().replace('-', '')
 	params := {
-        "state": state,
-        "appid": app_id,
-        "scope": json.encode({"user": true, "email": true}),
-        "redirecturl": "/callback",
-        "publickey": base64.encode(server_curve_pk[..]),
-    }
-	return clinet.redirect("$redirect_url?${url_encode(params)}")
+		'state':       state
+		'appid':       app_id
+		'scope':       json.encode({
+			'user':  true
+			'email': true
+		})
+		'redirecturl': '/callback'
+		'publickey':   base64.encode(server_curve_pk[..])
+	}
+	return clinet.redirect('${redirect_url}?${url_encode(params)}')
 }
 
-["/callback"]
-fn (mut clinet ClientApp) callback()! vweb.Result {
+['/callback']
+fn (mut clinet ClientApp) callback() !vweb.Result {
 	data := SignedAttempt{}
 	query := clinet.query.clone()
 
 	if query == {} {
-        clinet.abort(400, signed_attempt_missing)
+		clinet.abort(400, signed_attempt_missing)
 	}
 
 	initial_data := data.load(query)!
 	res := request_to_server_to_verify(initial_data)!
-	return clinet.text("${res.body}")
+	return clinet.text('${res.body}')
 }

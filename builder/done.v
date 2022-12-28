@@ -42,9 +42,9 @@ pub fn (mut node Node) done_exists(key string) bool {
 }
 
 pub fn (mut node Node) done_print() {
-	println('   DONE: $node.name ')
+	println('   DONE: ${node.name} ')
 	for key, val in node.done {
-		println('   . $key = $val')
+		println('   . ${key} = ${val}')
 	}
 }
 

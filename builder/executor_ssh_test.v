@@ -35,7 +35,7 @@ fn test_file_operations() {
 		port: 22
 		cat: .ipv4
 	}
-	mut filepath := '/tmp/$rand.uuid_v4()'
+	mut filepath := '/tmp/${rand.uuid_v4()}'
 	e.file_write(filepath, 'ssh') or { panic('error writing file') }
 	mut text := e.file_read(filepath) or { panic('can not read file') }
 	assert text == 'ssh'

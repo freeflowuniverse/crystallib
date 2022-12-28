@@ -123,7 +123,7 @@ fn (mut h LiquidConnection) cache_set(prefix string, reqdata string, data string
 		key := cache_key(prefix, reqdata)
 		h.redis.set(key, data)?
 		h.redis.expire(key, h.cache_timeout) or {
-			panic('should never get here, if redis worked expire should also work.$err')
+			panic('should never get here, if redis worked expire should also work.${err}')
 		}
 	}
 }
@@ -154,7 +154,7 @@ fn (mut h LiquidConnection) post_json(prefix string, postdata string, cache bool
 	mut result := h.cache_get(prefix, postdata, cache)
 	// Post with auth header
 	if result == '' && authenticated {
-		mut req := http.new_request(http.Method.post, '$h.url/$prefix', postdata)?
+		mut req := http.new_request(http.Method.post, '${h.url}/${prefix}', postdata)?
 		req.header = h.header()
 		println(req)
 		response := req.do()?
@@ -162,7 +162,7 @@ fn (mut h LiquidConnection) post_json(prefix string, postdata string, cache bool
 	}
 	// Post without auth header
 	else {
-		response := http.post_json('$h.url/$prefix', postdata)?
+		response := http.post_json('${h.url}/${prefix}', postdata)?
 		result = response.body
 	}
 	h.cache_set(prefix, postdata, result, cache)?
@@ -186,7 +186,7 @@ fn (mut h LiquidConnection) post_json_str(prefix string, postdata string, cache 
 	mut result := h.cache_get(prefix, postdata, cache)
 	// Post with auth header
 	if result == '' && authenticated {
-		mut req := http.new_request(http.Method.post, '$h.url/$prefix', postdata)?
+		mut req := http.new_request(http.Method.post, '${h.url}/${prefix}', postdata)?
 		req.header = h.header()
 		println(req)
 		response := req.do()?
@@ -194,7 +194,7 @@ fn (mut h LiquidConnection) post_json_str(prefix string, postdata string, cache 
 	}
 	// Post without auth header
 	else {
-		response := http.post_json('$h.url/$prefix', postdata)?
+		response := http.post_json('${h.url}/${prefix}', postdata)?
 		result = response.body
 	}
 	h.cache_set(prefix, postdata, result, cache)?
@@ -215,7 +215,7 @@ fn (mut h LiquidConnection) get_json(prefix string, data string, cache bool) ?ma
 	mut result := h.cache_get(prefix, data, cache)
 	if result == '' {
 		// println("MISS1")
-		mut req := http.new_request(http.Method.get, '$h.url/$prefix', data)?
+		mut req := http.new_request(http.Method.get, '${h.url}/${prefix}', data)?
 		req.header = h.header()
 		res := req.do()?
 		result = res.body
@@ -244,7 +244,7 @@ fn (mut h LiquidConnection) get_json_str(prefix string, data string, cache bool)
 	mut result := h.cache_get(prefix, data, cache)
 	if result == '' {
 		// println("MISS1")
-		mut req := http.new_request(http.Method.get, '$h.url/$prefix', data)?
+		mut req := http.new_request(http.Method.get, '${h.url}/${prefix}', data)?
 		req.header = h.header()
 		res := req.do()?
 		result = res.body
@@ -269,7 +269,7 @@ fn (mut h LiquidConnection) edit_json(prefix string, id int, data string, cache 
 	Output:
 		response: response Json2.Any map.
 	*/
-	mut req := http.new_request(http.Method.patch, '$h.url/$prefix/$id', data)?
+	mut req := http.new_request(http.Method.patch, '${h.url}/${prefix}/${id}', data)?
 	req.header = h.header()
 	res := req.do()?
 	result := res.body
@@ -290,7 +290,7 @@ fn (mut h LiquidConnection) delete(prefix string, id int, cache bool) ?bool {
 	Output:
 		bool: True if deleted successfully.
 	*/
-	mut req := http.new_request(http.Method.delete, '$h.url/$prefix/$id', '')?
+	mut req := http.new_request(http.Method.delete, '${h.url}/${prefix}/${id}', '')?
 	req.header = h.header()
 	res := req.do()?
 	if res.status_code == 204 {

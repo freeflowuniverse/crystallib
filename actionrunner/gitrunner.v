@@ -1,13 +1,13 @@
 module actionrunner
 
-import freeflowuniverse.crystallib.gittools { GitStructure, GitRepo }
-import freeflowuniverse.crystallib.params { Params }
+import freeflowuniverse.crystallib.gittools { GitRepo, GitStructure }
+import freeflowuniverse.crystallib.params
 import freeflowuniverse.crystallib.sshagent
 
 struct GitRunner {
 	Runner
 mut:
-	gt GitStructure [str: skip] 
+	gt GitStructure [str: skip]
 }
 
 pub fn new_gitrunner() &GitRunner {
@@ -32,28 +32,37 @@ fn (mut runner GitRunner) run() {
 
 	mut job := &ActionJob{}
 	for {
-
 		// currentjob buffer only has 1 job at a time
 		if runner.jobcurrent.len == 0 {
-			job = <- runner.channel
+			job = <-runner.channel
 			runner.jobcurrent << job
 		}
 
 		// initialize gitstructure by default
 		if first_job && job.actionname != 'git.init' {
-			runner.gt = gittools.get(root: '') or { panic("Can't get gittools: $err") }
+			runner.gt = gittools.get(root: '') or { panic("Can't get gittools: ${err}") }
 			first_job = false
 		}
 
 		runner.running()
 		match runner.jobcurrent[0].actionname {
-			'git.init' { runner.run_init(mut job) or {runner.error("$err")} }
-			'git.params.multibranch' { runner.run_multibranch(mut job) or {runner.error("$err")} }
-			'git.get' { runner.run_get(mut job) or {runner.error("$err")}}
-			'git.link' { runner.run_link(mut job) or {runner.error("$err")}}
-			'git.commit' { runner.run_commit(mut job) or {runner.error("$err")}}
-			else { 					
-				runner.error("could not find action for job:\n$job")
+			'git.init' {
+				runner.run_init(mut job) or { runner.error('${err}') }
+			}
+			'git.params.multibranch' {
+				runner.run_multibranch(mut job) or { runner.error('${err}') }
+			}
+			'git.get' {
+				runner.run_get(mut job) or { runner.error('${err}') }
+			}
+			'git.link' {
+				runner.run_link(mut job) or { runner.error('${err}') }
+			}
+			'git.commit' {
+				runner.run_commit(mut job) or { runner.error('${err}') }
+			}
+			else {
+				runner.error('could not find action for job:\n${job}')
 				return
 			}
 		}
@@ -61,33 +70,36 @@ fn (mut runner GitRunner) run() {
 	}
 }
 
-fn (mut runner GitRunner) run_init(mut job ActionJob)! {
-
+fn (mut runner GitRunner) run_init(mut job ActionJob) ! {
 	path := job.params.get('path') or { '' }
 	multibranch := job.params.get('multibranch') or { '' }
 
-	runner.gt = gittools.get(root: path, multibranch: multibranch == 'true') or { panic("Can't get gittools: $err") }
+	runner.gt = gittools.get(root: path, multibranch: multibranch == 'true') or {
+		panic("Can't get gittools: ${err}")
+	}
 }
 
-fn (mut runner GitRunner) run_get(mut job ActionJob)! {
+fn (mut runner GitRunner) run_get(mut job ActionJob) ! {
 	// TODO: if local repo is at local branch that has no upstream produces following error
 	// ! 'Your configuration specifies to merge with the ref 'refs/heads/branch'from the remote, but no such ref was fetched.
 	if !sshagent.loaded() {
 		return error('ssh key must be loaded')
 	}
-	url := job.params.get('url') or { return error("Couldn't get url.\n$err") }
-	
-	name := job.params.get_default('name', '') or { return error("Couldn't get params name.\n$err") }
+	url := job.params.get('url') or { return error("Couldn't get url.\n${err}") }
+
+	name := job.params.get_default('name', '') or {
+		return error("Couldn't get params name.\n${err}")
+	}
 	$if debug {
-		eprintln(@FN + ': git pull: $url')
+		eprintln(@FN + ': git pull: ${url}')
 	}
 	mut repo := runner.gt.repo_get_from_url(url: url, name: name) or {
-		return error('Could not get repo from url $url\n$err')
+		return error('Could not get repo from url ${url}\n${err}')
 	}
-	repo.pull() or { return error('Could not pull repo $url\n$err') }
+	repo.pull() or { return error('Could not pull repo ${url}\n${err}') }
 }
 
-fn (mut runner GitRunner) run_link(mut job ActionJob) !{
+fn (mut runner GitRunner) run_link(mut job ActionJob) ! {
 	gitlinkargs := gittools.GitLinkArgs{
 		gitsource: job.params.get_default('gitsource', '') or { panic("Can't get param") }
 		gitdest: job.params.get_default('gitdest', '') or { panic("Can't get param") }
@@ -97,12 +109,11 @@ fn (mut runner GitRunner) run_link(mut job ActionJob) !{
 		reset: job.params.get_default_false('reset')
 	}
 
-	runner.gt.link(gitlinkargs) or { return error('Could not link \n$gitlinkargs\n$err') }
+	runner.gt.link(gitlinkargs) or { return error('Could not link \n${gitlinkargs}\n${err}') }
 }
 
-fn (mut runner GitRunner) run_commit(mut job ActionJob) !{
-
-	url := job.params.get('url') or { '' } 
+fn (mut runner GitRunner) run_commit(mut job ActionJob) ! {
+	url := job.params.get('url') or { '' }
 	name := job.params.get_default('name', '') or { '' }
 	msg := job.params.get('message') or { return error('message cannot be empty') }
 	push := job.params.get_default('push', '') or { '' }
@@ -111,23 +122,23 @@ fn (mut runner GitRunner) run_commit(mut job ActionJob) !{
 	mut repo := GitRepo{}
 	if url != '' {
 		repo = runner.gt.repo_get_from_url(url: url, name: name) or {
-			return error('Could not get repo from url $url\n$err')
-		} 
+			return error('Could not get repo from url ${url}\n${err}')
+		}
 	} else if name != '' {
 		repo = runner.gt.repo_get(name: name) or {
-			return error('Could not get repo from name $name\n$err')
-		} 
+			return error('Could not get repo from name ${name}\n${err}')
+		}
 	} else {
-		return error("Can't get repo without name or url") 
+		return error("Can't get repo without name or url")
 	}
 
-	repo.commit(msg) or { return error('Could not commit repo $repo\n$err') }
+	repo.commit(msg) or { return error('Could not commit repo ${repo}\n${err}') }
 	if push == 'true' {
-		repo.push() or { return error('Could not push repo $repo\n$err') }
+		repo.push() or { return error('Could not push repo ${repo}\n${err}') }
 	}
 }
 
-fn (mut runner GitRunner) run_multibranch(mut job ActionJob)! {
-	runner.gt.config.multibranch = true	
-	runner.log('$job.guid:multibranch set')
+fn (mut runner GitRunner) run_multibranch(mut job ActionJob) ! {
+	runner.gt.config.multibranch = true
+	runner.log('${job.guid}:multibranch set')
 }

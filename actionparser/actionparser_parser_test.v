@@ -9,7 +9,7 @@ fn test_parse_into_blocks() {
 	text := "!!git.link
 source:'https://github.com/ourworld-tsc/ourworld_books/tree/development/content/feasibility_study/Capabilities'
 dest:'https://github.com/threefoldfoundation/books/tree/main/books/feasibility_study_internet/src/capabilities'"
-	
+
 	mut blocks := parse_into_blocks(text) or { panic('cant parse') }
 	assert blocks.blocks.len == 1
 	assert blocks.blocks[0].name == 'git.link'
@@ -32,6 +32,6 @@ dest:'https://github.com/threefoldfoundation/books/tree/main/books/feasibility_s
 
 fn test_file_parse() {
 	mut parser := get()
-	parser.file_parse('$actionparser.testpath/testfile.md') or {panic(err)}
+	parser.file_parse('${actionparser.testpath}/testfile.md') or { panic(err) }
 	assert parser.actions.len == 10
 }

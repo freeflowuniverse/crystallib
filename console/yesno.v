@@ -32,7 +32,7 @@ pub fn ask_yesno(args YesNoArgs) bool {
 	if question == '' {
 		question = 'Yes or No, default is Yes (y/n)'
 	}
-	print('$question: ')
+	print('${question}: ')
 	choice := os.get_raw_line().trim(' \n').to_lower()
 	if choice == '' {
 		return true

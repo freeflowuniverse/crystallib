@@ -8,7 +8,7 @@ enum DBState {
 fn (mut node Node) db_check() ! {
 	if node.db_state == .init {
 		// make sure the db path exists
-		node.exec('mkdir -p $node.db_path')!
+		node.exec('mkdir -p ${node.db_path}')!
 		node.db_state = .ok
 	}
 }
@@ -19,7 +19,7 @@ fn (mut node Node) db_key_path_get(key string) string {
 	if node.db_path == '' {
 		panic('path canot be empty')
 	}
-	return '$node.db_path/$key'
+	return '${node.db_path}/${key}'
 }
 
 // return info from the db
@@ -49,7 +49,7 @@ pub fn (mut node Node) db_delete(key string) ! {
 		for file in files {
 			if file.starts_with(prefix) {
 				fpath := node.db_key_path_get(file)
-				node.exec('rm $fpath')!
+				node.exec('rm ${fpath}')!
 			}
 		}
 	} else if key.starts_with('*') {
@@ -69,5 +69,5 @@ pub fn (mut node Node) db_delete(key string) ! {
 
 // reset
 pub fn (mut node Node) db_reset() ! {
-	node.exec('rm -rf $node.db_path && mkdir -p $node.db_path') or { panic(err) }
+	node.exec('rm -rf ${node.db_path} && mkdir -p ${node.db_path}') or { panic(err) }
 }

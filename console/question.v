@@ -33,7 +33,7 @@ pub fn ask_question(args QuestionArgs) string {
 	if question == '' {
 		question = 'Please provide answer: '
 	}
-	print('$question: ')
+	print('${question}: ')
 	choice := os.get_raw_line().trim(' \n')
 	if args.regex.len > 0 {
 		panic('need to implement regex check')
@@ -42,7 +42,7 @@ pub fn ask_question(args QuestionArgs) string {
 		return ask_question(
 			reset: args.reset
 			description: args.description
-			warning: 'Min lenght of answer is: $args.minlen'
+			warning: 'Min lenght of answer is: ${args.minlen}'
 			question: args.question
 		)
 	}

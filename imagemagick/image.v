@@ -16,9 +16,9 @@ pub mut:
 fn (mut image Image) init_() ! {
 	if image.size_kbyte == 0 {
 		image.size_kbyte = image.path.size_kb() or {
-			return error('cannot define size file in kb.\n$error')
+			return error('cannot define size file in kb.\n${error}')
 		}
-		image.path.path_normalize() or { panic('normalize: $error') }
+		image.path.path_normalize() or { panic('normalize: ${error}') }
 	}
 }
 

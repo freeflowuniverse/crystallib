@@ -25,7 +25,7 @@ pub fn (mut executor ExecutorLocal) exec_silent(cmd string) !string {
 }
 
 pub fn (mut executor ExecutorLocal) file_write(path string, text string) ! {
-	println('local write $path')
+	println('local write ${path}')
 	return os.write_file(path, text)
 }
 
@@ -77,17 +77,17 @@ pub fn (mut executor ExecutorLocal) info() map[string]string {
 
 // upload from local FS to executor FS
 pub fn (mut executor ExecutorLocal) upload(source string, dest string) ! {
-	executor.exec('cp -r $source $dest')!
+	executor.exec('cp -r ${source} ${dest}')!
 }
 
 // download from executor FS to local FS
 pub fn (mut executor ExecutorLocal) download(source string, dest string) ! {
-	executor.exec('cp -r $source $dest')!
+	executor.exec('cp -r ${source} ${dest}')!
 }
 
 pub fn (mut executor ExecutorLocal) shell(cmd string) ! {
 	if cmd.len > 0 {
-		os.execvp('/bin/bash', ["-c '$cmd'"])!
+		os.execvp('/bin/bash', ["-c '${cmd}'"])!
 	} else {
 		os.execvp('/bin/bash', [])!
 	}

@@ -4,9 +4,9 @@ module vlang
 pub fn (mut i Installer) install() ! {
 	mut node := i.node
 	// install vlang if it was already done will return true
-	println(' - $node.name: install vlang')
+	println(' - ${node.name}: install vlang')
 	if !(i.state == .reset) && node.done_exists('install_vlang') {
-		println('    $node.name: was already done')
+		println('    ${node.name}: was already done')
 		return
 	}
 
@@ -23,7 +23,7 @@ pub fn (mut i Installer) install() ! {
 	./v symlink
 	'
 
-	node.exec(cmd) or { return error('Cannot install vlang.\n$err') }
+	node.exec(cmd) or { return error('Cannot install vlang.\n${err}') }
 
 	node.done_set('install_vlang', 'OK')!
 	return

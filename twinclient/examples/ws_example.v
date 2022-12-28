@@ -16,9 +16,9 @@ fn main() {
 		handle_events(msg, mut ws_client)!
 	})
 	s.on_close(fn (mut ws ws.Client, code int, reason string) ! {
-		println(term.green('client ($ws.id) closed connection'))
+		println(term.green('client (${ws.id}) closed connection'))
 	})
-	s.listen() or { println(term.red('error on server listen: $err')) }
+	s.listen() or { println(term.red('error on server listen: ${err}')) }
 	unsafe {
 		s.free()
 	}
@@ -70,6 +70,6 @@ fn handle_events(raw_msg &tw.RawMessage, mut ws_client ws.Client) ! {
 			grid.machines_deploy(machines)!
 		}()
 	} else {
-		println('got a new message: $msg.event')
+		println('got a new message: ${msg.event}')
 	}
 }

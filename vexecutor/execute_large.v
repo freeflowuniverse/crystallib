@@ -47,7 +47,7 @@ pub fn execute_large(cmd string) Result {
 	// if cmd.contains(';') || cmd.contains('&&') || cmd.contains('||') || cmd.contains('\n') {
 	// return Result{ exit_code: -1, output: ';, &&, || and \\n are not allowed in shell commands' }
 	// }
-	pcmd := if cmd.contains('2>') { cmd.clone() } else { '$cmd 2>&1' }
+	pcmd := if cmd.contains('2>') { cmd.clone() } else { '${cmd} 2>&1' }
 	defer {
 		unsafe { pcmd.free() }
 	}
@@ -55,7 +55,7 @@ pub fn execute_large(cmd string) Result {
 	if isnil(f) {
 		return Result{
 			exit_code: -1
-			output: 'exec("$cmd") failed'
+			output: 'exec("${cmd}") failed'
 		}
 	}
 	fd := fileno(f)
@@ -85,8 +85,8 @@ pub fn execute_large(cmd string) Result {
 pub fn execute_large_or_panic(cmd string) Result {
 	res := execute_large(cmd)
 	if res.exit_code != 0 {
-		eprintln('failed    cmd: $cmd')
-		eprintln('failed   code: $res.exit_code')
+		eprintln('failed    cmd: ${cmd}')
+		eprintln('failed   code: ${res.exit_code}')
 		panic(res.output)
 	}
 	return res

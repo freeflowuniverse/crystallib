@@ -21,9 +21,9 @@ import crystaljson
 
 // Build url from Request and httpconnection
 fn (mut h HTTPConnection) url(req Request) string {
-	mut u := '$h.base_url/${req.prefix.trim('/')}'
+	mut u := '${h.base_url}/${req.prefix.trim('/')}'
 	if req.id.len > 0 {
-		u += '/$req.id'
+		u += '/${req.id}'
 	}
 	if req.params.len > 0 {
 		u += '!${http.url_encode_form_data(req.params)}'
@@ -65,12 +65,14 @@ pub fn (mut h HTTPConnection) send(req Request) !Result {
 	if result.code in [0, -1] {
 		// 3 - Do request, if needed
 		url := h.url(req)
-		mut new_req := http.new_request(req.method, url, req.data) or {return error("cannot do http new_request for $req \n$err")}
+		mut new_req := http.new_request(req.method, url, req.data) or {
+			return error('cannot do http new_request for ${req} \n${err}')
+		}
 		// joining the header from the HTTPConnection with the one from Request
 		new_req.header = h.header()
 		for _ in 0 .. h.retry {
 			response = new_req.do() or {
-				err_message = '$err'
+				err_message = '${err}'
 				println(err_message)
 				continue
 			}

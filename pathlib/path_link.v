@@ -6,10 +6,10 @@ import os
 // linkpath is where the link will be pointing to path
 pub fn (mut path Path) link(linkpath string, delete_exists bool) !Path {
 	if !path.exists() {
-		return error('cannot link because source $path.path does not exist')
+		return error('cannot link because source ${path.path} does not exist')
 	}
 	if !(path.cat == .file || path.cat == .dir) {
-		return error('cannot link because source $path.path can only be dir or file')
+		return error('cannot link because source ${path.path} can only be dir or file')
 	}
 	// TODO: add test to confirm existing faulty link also  are removed
 	// os.exists for faulty links returns false so also checks if path is link
@@ -17,7 +17,7 @@ pub fn (mut path Path) link(linkpath string, delete_exists bool) !Path {
 		if delete_exists {
 			os.rm(linkpath)!
 		} else {
-			return error('cannot link $path.path to $linkpath, because dest exists.')
+			return error('cannot link ${path.path} to ${linkpath}, because dest exists.')
 		}
 	}
 
@@ -27,11 +27,11 @@ pub fn (mut path Path) link(linkpath string, delete_exists bool) !Path {
 		os.mkdir_all(dest_dir)!
 	}
 	origin_path := path_relative(dest_dir, path.path)!
-	msg := 'link to origin (source): $path.path  \nthe link:$linkpath \nlink rel: $origin_path'
+	msg := 'link to origin (source): ${path.path}  \nthe link:${linkpath} \nlink rel: ${origin_path}'
 	// $if debug {
 	// 	println(msg)
 	// }	
-	os.symlink(origin_path, linkpath) or { return error('cant symlink $msg\n$err') }
+	os.symlink(origin_path, linkpath) or { return error('cant symlink ${msg}\n${err}') }
 	return get(linkpath)
 }
 
@@ -83,14 +83,14 @@ pub fn (mut path Path) readlink() !string {
 	// println('path: $path')
 	if path.is_link() {
 		// println('path2: $path')
-		cmd := 'readlink $path.path'
+		cmd := 'readlink ${path.path}'
 		res := os.execute(cmd)
 		if res.exit_code > 0 {
-			return error('cannot define result for link of $path \n$error')
+			return error('cannot define result for link of ${path} \n${error}')
 		}
 		return res.output.trim_space()
 	} else {
-		return error('can only read link info when the path is a filelink or dirlink. $path')
+		return error('can only read link info when the path is a filelink or dirlink. ${path}')
 	}
 }
 
@@ -99,6 +99,6 @@ pub fn (mut path Path) getlink() !Path {
 	if path.is_link() {
 		return get(path.realpath())
 	} else {
-		return error('can only get link when the path is a filelink or dirlink. $path')
+		return error('can only get link when the path is a filelink or dirlink. ${path}')
 	}
 }

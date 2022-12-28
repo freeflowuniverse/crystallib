@@ -9,9 +9,9 @@ import freeflowuniverse.crystallib.sshagent
 // we check on name, if nameof repo is same as name of key we will load
 // will return true if the key did exist, which means we need to connect over ssh !!!
 fn (mut repo GitRepo) ssh_key_load_if_exists() !bool {
-	mut key_path := '$os.home_dir()/.ssh/$repo.addr.name'
+	mut key_path := '${os.home_dir()}/.ssh/${repo.addr.name}'
 	if !os.exists(key_path) {
-		key_path = '.ssh/$repo.addr.name'
+		key_path = '.ssh/${repo.addr.name}'
 	}
 	if !os.exists(key_path) {
 		// tried local path to where we are, no key as well
@@ -54,7 +54,7 @@ fn (mut repo GitRepo) path_account_get() string {
 	if repo.gs.codepath() == '' {
 		panic('cannot be empty')
 	}
-	return '$repo.gs.codepath()/$provider/$addr.account'
+	return '${repo.gs.codepath()}/${provider}/${addr.account}'
 }
 
 pub fn (mut repo GitRepo) path_content_get() string {
@@ -62,7 +62,7 @@ pub fn (mut repo GitRepo) path_content_get() string {
 	if repo.addr.path == '' {
 		return p
 	} else {
-		return '$p/$repo.addr.path'
+		return '${p}/${repo.addr.path}'
 	}
 }
 
@@ -75,26 +75,26 @@ pub fn (mut repo GitRepo) path_get() string {
 		return repo.path
 	}
 	if repo.gs.config.multibranch {
-		return '$repo.path_account_get()/$repo.addr.name/$repo.addr.branch'
+		return '${repo.path_account_get()}/${repo.addr.name}/${repo.addr.branch}'
 	} else {
-		return '$repo.path_account_get()/$repo.addr.name'
+		return '${repo.path_account_get()}/${repo.addr.name}'
 	}
 }
 
 pub fn (mut repo GitRepo) path_relative() string {
 	if repo.gs.config.multibranch {
-		return '$repo.addr.account/$repo.addr.name/$repo.addr.branch'
+		return '${repo.addr.account}/${repo.addr.name}/${repo.addr.branch}'
 	} else {
-		return '$repo.addr.account/$repo.addr.name'
+		return '${repo.addr.account}/${repo.addr.name}'
 	}
 }
 
 // if there are changes then will return 'true', otherwise 'false'
 pub fn (mut repo GitRepo) changes() !bool {
-	cmd := 'cd $repo.path() && git status'
+	cmd := 'cd ${repo.path()} && git status'
 	// println(cmd)
 	out := process.execute_silent(cmd) or {
-		return error('Could not execute command to check git status on $repo.path()\ncannot execute $cmd')
+		return error('Could not execute command to check git status on ${repo.path()}\ncannot execute ${cmd}')
 	}
 	if out.contains('Untracked files') {
 		// println(1)
@@ -126,15 +126,15 @@ fn (mut repo GitRepo) get_clone_cmd(http bool) string {
 	}
 
 	if repo.gs.config.multibranch {
-		cmd = 'mkdir -p $repo.path_account_get()/$repo.addr.name && cd $repo.path_account_get()/$repo.addr.name && git clone $light $url $repo.addr.branch'
+		cmd = 'mkdir -p ${repo.path_account_get()}/${repo.addr.name} && cd ${repo.path_account_get()}/${repo.addr.name} && git clone ${light} ${url} ${repo.addr.branch}'
 	} else {
-		cmd = 'mkdir -p $repo.path_account_get() && cd $repo.path_account_get() && git clone $light $url'
+		cmd = 'mkdir -p ${repo.path_account_get()} && cd ${repo.path_account_get()} && git clone ${light} ${url}'
 	}
 	if repo.addr.branch != '' {
-		cmd += ' -b $repo.addr.branch'
+		cmd += ' -b ${repo.addr.branch}'
 	}
 	if repo.addr.depth != 0 {
-		cmd += ' --depth=$repo.addr.depth'
+		cmd += ' --depth=${repo.addr.depth}'
 		//  && cd $repo.addr.name && git fetch
 		// why was this there?
 	}
@@ -163,7 +163,7 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ! {
 
 		// first check if path does not exist yet, if not need to clone
 		if !os.exists(repo.path()) {
-			println(' - missing repo, pull: $url-> $repo.path()')
+			println(' - missing repo, pull: ${url}-> ${repo.path()}')
 			if !needs_to_be_ssh && sshagent.loaded() {
 				needs_to_be_ssh = true
 			}
@@ -180,8 +180,8 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ! {
 			}
 
 			process.execute_silent(cmd) or {
-				println(' GIT FAILED: $cmd')
-				return error('Cannot pull repo: ${repo.path()}. Error was $err')
+				println(' GIT FAILED: ${cmd}')
+				return error('Cannot pull repo: ${repo.path()}. Error was ${err}')
 			}
 			// println(' - GIT PULL OK')
 			// can return safely, because pull did work			
@@ -192,7 +192,7 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ! {
 		// check the branch, see if branch on FS is same as what is required if set
 
 		if reset_force {
-			println(' - remove git changes: $repo.path()')
+			println(' - remove git changes: ${repo.path()}')
 			repo.remove_changes()!
 		}
 
@@ -203,7 +203,7 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ! {
 			// println( " - branch detected: $branchname, branch on repo obj:'$repo.addr.branch'")
 			branchname = branchname.trim('\n ')
 			if branchname != repo.addr.branch && pull_soft {
-				println(' - branch switch $branchname -> $repo.addr.branch for $url')
+				println(' - branch switch ${branchname} -> ${repo.addr.branch} for ${url}')
 				repo.branch_switch(repo.addr.branch)!
 				// need to pull now
 				pull_soft = true
@@ -237,27 +237,27 @@ pub fn (mut repo GitRepo) pull() ! {
 		// if changes{
 		// 	return error('Cannot pull repo: ${repo.path()} because there are changes in the dir.')
 		// }
-		cmd2 := 'cd $repo.path() && git pull'
+		cmd2 := 'cd ${repo.path()} && git pull'
 		process.execute_silent(cmd2) or {
-			println(' GIT PULL FAILED: $cmd2')
-			return error('Cannot pull repo: ${repo.path()}. Error was $err')
+			println(' GIT PULL FAILED: ${cmd2}')
+			return error('Cannot pull repo: ${repo.path()}. Error was ${err}')
 		}
 	}
 }
 
 pub fn (mut repo GitRepo) commit(msg string) ! {
 	change := repo.changes() or {
-		return error('cannot detect if there are changes on repo.\n$err')
+		return error('cannot detect if there are changes on repo.\n${err}')
 	}
 	if change {
 		cmd := "
-		cd $repo.path()
+		cd ${repo.path()}
 		set +e
 		git add . -A
-		git commit -m \"$msg\"
+		git commit -m \"${msg}\"
 		echo "
 		process.execute_silent(cmd) or {
-			return error('Cannot commit repo: ${repo.path()}. Error was $err')
+			return error('Cannot commit repo: ${repo.path()}. Error was ${err}')
 		}
 	} else {
 		println('     > no change')
@@ -267,12 +267,12 @@ pub fn (mut repo GitRepo) commit(msg string) ! {
 // remove all changes of the repo, be careful
 pub fn (mut repo GitRepo) remove_changes() ! {
 	change := repo.changes() or {
-		return error('cannot detect if there are changes on repo.\n$err')
+		return error('cannot detect if there are changes on repo.\n${err}')
 	}
 	if change {
-		println(' - remove change $repo.path()')
+		println(' - remove change ${repo.path()}')
 		cmd := '
-		cd $repo.path()
+		cd ${repo.path()}
 		set +e
 		#checkout . -f
 		git reset HEAD --hard
@@ -282,25 +282,25 @@ pub fn (mut repo GitRepo) remove_changes() ! {
 		echo ""
 		'
 		process.execute_silent(cmd) or {
-			return error('Cannot commit repo: ${repo.path()}. Error was $err')
+			return error('Cannot commit repo: ${repo.path()}. Error was ${err}')
 		}
 	} else {
-		println('     > no change  $repo.path()')
+		println('     > no change  ${repo.path()}')
 	}
 }
 
 pub fn (mut repo GitRepo) push() ! {
 	println('   - PUSH: ${repo.url_get(true)}')
-	cmd := 'cd $repo.path() && git push'
+	cmd := 'cd ${repo.path()} && git push'
 	process.execute_silent(cmd) or {
-		return error('Cannot push repo: ${repo.path()}. Error was $err')
+		return error('Cannot push repo: ${repo.path()}. Error was ${err}')
 	}
 }
 
 pub fn (mut repo GitRepo) branch_get() !string {
-	cmd := 'cd $repo.path() && git rev-parse --abbrev-ref HEAD'
+	cmd := 'cd ${repo.path()} && git rev-parse --abbrev-ref HEAD'
 	branch := process.execute_silent(cmd) or {
-		return error('Cannot get branch name from repo: ${repo.path()}. Error was $err for cmd $cmd')
+		return error('Cannot get branch name from repo: ${repo.path()}. Error was ${err} for cmd ${cmd}')
 	}
 	return branch.trim(' \n')
 }
@@ -311,24 +311,24 @@ pub fn (mut repo GitRepo) branch_switch(branchname string) ! {
 	}
 	changes := repo.changes()!
 	if changes {
-		return error('Cannot branch switch repo: $repo.path() because there are changes in the dir.')
+		return error('Cannot branch switch repo: ${repo.path()} because there are changes in the dir.')
 	}
 	// Fetch repo before checkout, in case a new branch added.
 	repo.fetch_all()!
-	cmd := 'cd $repo.path() && git checkout $branchname'
+	cmd := 'cd ${repo.path()} && git checkout ${branchname}'
 	process.execute_silent(cmd) or {
 		// println('GIT CHECKOUT FAILED: $cmd_checkout')
-		return error('Cannot branch switch repo: ${repo.path()}. Error was $err \n cmd: $cmd')
+		return error('Cannot branch switch repo: ${repo.path()}. Error was ${err} \n cmd: ${cmd}')
 	}
 	// println(cmd)
 	repo.pull()!
 }
 
 pub fn (mut repo GitRepo) fetch_all() ! {
-	cmd := 'cd $repo.path() && git fetch --all'
+	cmd := 'cd ${repo.path()} && git fetch --all'
 	process.execute_silent(cmd) or {
 		// println('GIT FETCH FAILED: $cmd_checkout')
-		return error('Cannot fetch repo: ${repo.path()}. Error was $err \n cmd: $cmd')
+		return error('Cannot fetch repo: ${repo.path()}. Error was ${err} \n cmd: ${cmd}')
 	}
 }
 
@@ -338,10 +338,10 @@ pub fn (mut repo GitRepo) delete() ! {
 	if !os.exists(repo.path()) {
 		repo.check(false, false)!
 	} else {
-		cmd2 := 'cd $repo.path() && git pull'
+		cmd2 := 'cd ${repo.path()} && git pull'
 		process.execute_silent(cmd2) or {
-			println(' GIT DELETE FAILED: $cmd2')
-			return error('Cannot delete repo: ${repo.path()}. Error was $err')
+			println(' GIT DELETE FAILED: ${cmd2}')
+			return error('Cannot delete repo: ${repo.path()}. Error was ${err}')
 		}
 	}
 }

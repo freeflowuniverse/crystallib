@@ -8,8 +8,6 @@ pub mut:
 	nodes map[string]&Node
 }
 
-
-
 // get node connection to local machine
 // pass your redis client there
 pub fn (mut builder BuilderFactory) node_local() !&Node {
@@ -24,7 +22,7 @@ pub fn (mut builder BuilderFactory) node_get(name string) !&Node {
 	if name in builder.nodes {
 		return builder.nodes[name]
 	}
-	return error('cannot find node $name in nodefactory, please init.')
+	return error('cannot find node ${name} in nodefactory, please init.')
 }
 
 // the factory which returns an node, based on the arguments will chose ssh executor or the local one
@@ -61,7 +59,7 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) !&Node {
 	mut executor := executor_new(eargs)!
 	mut node := Node{
 		executor: &executor
-		cache: builder.redis.cache('node:$args.name')
+		cache: builder.redis.cache('node:${args.name}')
 	}
 
 	if args.reset {
@@ -71,14 +69,14 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) !&Node {
 
 	node_env_txt := node.cache.get('env') or {
 		println(' - env load')
-		node.environment_load() or { return error(@FN + 'Cannot load environment: $err') }
+		node.environment_load() or { return error(@FN + 'Cannot load environment: ${err}') }
 		''
 	}
 
 	if node_env_txt != '' {
 		node.environment = serializers.text_to_map_string_string(node_env_txt)
 	} else {
-		node.environment_load() or { return error(@FN + 'Cannot load environment: $err') }
+		node.environment_load() or { return error(@FN + 'Cannot load environment: ${err}') }
 	}
 
 	if !node.cache.exists('env') {
@@ -88,7 +86,7 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) !&Node {
 
 	home_dir := node.environment['HOME'].trim(' ')
 	if home_dir == '' {
-		return error('HOME env cannot be empty for $node.name')
+		return error('HOME env cannot be empty for ${node.name}')
 	}
 	node.db_path = node.db_path.replace('~', home_dir)
 
@@ -114,7 +112,7 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) !&Node {
 
 	init_node_txt := node.cache.get('node_done') or {
 		println(err)
-		println(' - $node.name: node done needs to be loaded')
+		println(' - ${node.name}: node done needs to be loaded')
 		node.done_load()!
 		node.cache.set('node_done', serializers.map_string_string_to_text(node.done),
 			600)!

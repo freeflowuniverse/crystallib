@@ -7,7 +7,7 @@ pub fn (mut r Redis) send_expect_ok(items []string) ? {
 	r.write_cmds(items)?
 	res := r.get_string()?
 	if res != 'OK' {
-		println("'$res'")
+		println("'${res}'")
 		return error('did not get ok back')
 	}
 }

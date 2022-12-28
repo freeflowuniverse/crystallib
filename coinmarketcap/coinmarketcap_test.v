@@ -9,5 +9,5 @@ fn test_get_tft_price() {
 
 	// TFT/USD price
 	price := c.token_price_usd() or { panic(err) }
-	println(' 1 TFT = $price USD')
+	println(' 1 TFT = ${price} USD')
 }

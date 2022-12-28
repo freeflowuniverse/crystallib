@@ -40,7 +40,7 @@ pub fn (mut h HttpCache) getex(url string, expire int) ?string {
 			// println("[+] cache: caching response (${data.len} bytes)")
 			h.redis.set_ex('httpcache:' + url, data, expire.str()) or { eprintln(err) }
 		} else {
-			msg := 'error in http request.\n$data'
+			msg := 'error in http request.\n${data}'
 			println(msg)
 			return error(msg)
 		}

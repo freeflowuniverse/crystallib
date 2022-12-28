@@ -29,7 +29,7 @@ pub fn new(name string, url string, cache bool) &HTTPConnection {
 		default_header: header
 		cache: CacheConfig{
 			disable: !cache
-			key:name
+			key: name
 		}
 		base_url: url.trim('/')
 	}
@@ -42,7 +42,9 @@ pub fn new(name string, url string, cache bool) &HTTPConnection {
 
 pub fn get(name string) !&HTTPConnection {
 	mut f := httpconnection.factory
-	mut r := f.connections[name] or { return error('cannot find httpconnection with name $name .') }
+	mut r := f.connections[name] or {
+		return error('cannot find httpconnection with name ${name} .')
+	}
 	return r
 }
 

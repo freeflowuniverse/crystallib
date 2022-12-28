@@ -20,5 +20,5 @@ fn (o Header) html() string {
 }
 
 fn (o Header) str() string {
-	return '**** Header $o.depth: $o.content\n'
+	return '**** Header ${o.depth}: ${o.content}\n'
 }

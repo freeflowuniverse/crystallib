@@ -14,19 +14,19 @@ pub fn (mut t Tmux) session_get(name string) !&Session {
 	if name in t.sessions {
 		return t.sessions[name]
 	}
-	return error('could not find session $name')
+	return error('could not find session ${name}')
 }
 
 pub fn (mut t Tmux) session_get_create(name string, restart bool) !&Session {
 	name_l := name.to_lower()
 	if name_l !in t.sessions {
-		os.log('TMUX - Session $name will be created')
+		os.log('TMUX - Session ${name} will be created')
 		init_session(mut t, name_l)!
 		t.scan()!
 	}
 	mut session := t.sessions[name_l]
 	if restart {
-		os.log('TMUX - Session $name will be restarted.')
+		os.log('TMUX - Session ${name} will be restarted.')
 		session.restart()!
 	}
 	return session
@@ -38,7 +38,7 @@ fn init_session(mut tmux Tmux, s_name string) !Session {
 		windows: map[string]&Window{}
 		name: s_name.to_lower()
 	}
-	os.log('SESSION - Initialize session: $s.name')
+	os.log('SESSION - Initialize session: ${s.name}')
 	s.create()!
 	tmux.sessions[s_name] = &s
 	return s
@@ -46,15 +46,19 @@ fn init_session(mut tmux Tmux, s_name string) !Session {
 
 pub fn (mut s Session) create() ! {
 	res_opt := "-P -F '#\{window_id\}'"
-	cmd := "tmux new-session $res_opt -d -s $s.name 'sh'"
-	window_id_ := s.tmux.node.exec(cmd) or { return error("Can't create tmux session $s.name \n$cmd\n$err") }
+	cmd := "tmux new-session ${res_opt} -d -s ${s.name} 'sh'"
+	window_id_ := s.tmux.node.exec(cmd) or {
+		return error("Can't create tmux session ${s.name} \n${cmd}\n${err}")
+	}
 
 	cmd3 := 'tmux set-option remain-on-exit on'
-	s.tmux.node.exec(cmd3) or { return error("Can't execute $cmd3\n$err") }
+	s.tmux.node.exec(cmd3) or { return error("Can't execute ${cmd3}\n${err}") }
 
 	window_id := window_id_.trim(' \n')
-	cmd2 := "tmux rename-window -t $window_id 'notused'"
-	s.tmux.node.exec(cmd2) or { return error("Can't rename window $window_id to notused \n$cmd2\n$err") }
+	cmd2 := "tmux rename-window -t ${window_id} 'notused'"
+	s.tmux.node.exec(cmd2) or {
+		return error("Can't rename window ${window_id} to notused \n${cmd2}\n${err}")
+	}
 }
 
 pub fn (mut s Session) restart() ! {
@@ -64,8 +68,8 @@ pub fn (mut s Session) restart() ! {
 
 pub fn (mut s Session) stop() ! {
 	mut node := s.tmux.node
-	node.exec('tmux kill-session -t $s.name') or {
-		return error("Can't delete session $s.name - This may happen when session is not found: $err")
+	node.exec('tmux kill-session -t ${s.name}') or {
+		return error("Can't delete session ${s.name} - This may happen when session is not found: ${err}")
 	}
 }
 
@@ -92,7 +96,7 @@ pub fn (mut s Session) window_new(args WindowArgs) !Window {
 			mut w_to_stop := s.window_get(namel)!
 			w_to_stop.stop()!
 		} else {
-			return error('cannot kill window it already exists, window $namel in session:$s.name')
+			return error('cannot kill window it already exists, window ${namel} in session:${s.name}')
 		}
 	}
 	mut w := Window{
@@ -118,7 +122,7 @@ fn (mut s Session) window_exist(name string) bool {
 pub fn (mut s Session) window_get(name string) !&Window {
 	name_l := name.to_lower()
 	if name_l !in s.windows {
-		return error('Cannot find window $name in session:$s.name')
+		return error('Cannot find window ${name} in session:${s.name}')
 	}
 	return s.windows[name_l]
 }

@@ -51,7 +51,7 @@ fn vscode_install() ? {
 			description: 'install vscode'
 			stdout: true
 			checkkey: 'vscodeinstall'
-		) or { return error('cannot install vscode\n' + err.msg() + '\noriginal cmd:\n$cmd') }
+		) or { return error('cannot install vscode\n' + err.msg() + '\noriginal cmd:\n${cmd}') }
 	}
 
 	mut cmd := $tmpl('plugins_vscode.sh')
@@ -64,7 +64,7 @@ fn vscode_install() ? {
 		description: 'install vscode'
 		stdout: true
 		checkkey: 'vscodeinstall'
-	) or { return error('cannot install vscode\n' + err.msg() + '\noriginal cmd:\n$cmd') }
+	) or { return error('cannot install vscode\n' + err.msg() + '\noriginal cmd:\n${cmd}') }
 
 	// #have to do this workaround on osx, can't do infile -i
 	// sed '/Visual Studio/d' ~/.zprofile > /tmp/1 && mv /tmp/1 ~/.zprofile

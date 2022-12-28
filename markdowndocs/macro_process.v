@@ -15,7 +15,7 @@ pub fn cmd_fix(name string) !string {
 	item = item.replace('!', '')
 	for x in ':;[]{}' {
 		if item.contains(x.str()) {
-			return error('cannot have \'$x.str()\' in cmd: $item')
+			return error('cannot have \'${x.str()}\' in cmd: ${item}')
 		}
 	}
 	item = item.replace('-', '.')
@@ -35,7 +35,7 @@ pub fn macro_parse(line_ string) !MacroObj {
 	splitted := line.split(' ')
 
 	if splitted.len < 1 {
-		return error('cannot parse macro, need to be at least cmd, now "$line"')
+		return error('cannot parse macro, need to be at least cmd, now "${line}"')
 	}
 
 	r.cmd = cmd_fix(splitted[0])!

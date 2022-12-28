@@ -2,7 +2,6 @@ module builder
 
 import freeflowuniverse.crystallib.redisclient
 
-
 pub enum PlatformType {
 	unknown
 	osx

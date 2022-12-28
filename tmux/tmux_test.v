@@ -27,20 +27,20 @@ fn test_start() ! {
 	mut tmux := get_remote('185.69.166.152')!
 
 	// test server is running after start()
-	tmux.start() or { panic('cannot start tmux: $err') }
-	mut tmux_ls := tmux.node.exec('tmux ls') or { panic('Cannot execute tmux ls: $err') }
+	tmux.start() or { panic('cannot start tmux: ${err}') }
+	mut tmux_ls := tmux.node.exec('tmux ls') or { panic('Cannot execute tmux ls: ${err}') }
 	// test started tmux contains windows
 	assert tmux_ls.contains('init: 1 windows')
-	tmux.stop() or { panic('cannot stop tmux: $err') }
+	tmux.stop() or { panic('cannot stop tmux: ${err}') }
 }
 
 fn test_stop() ! {
 	mut tmux := get_remote('185.69.166.152')!
 
 	// test server is running after start()
-	tmux.start() or { panic('cannot start tmux: $err') }
+	tmux.start() or { panic('cannot start tmux: ${err}') }
 	assert tmux.is_running()
-	tmux.stop() or { panic('cannot stop tmux: $err') }
+	tmux.stop() or { panic('cannot stop tmux: ${err}') }
 	assert !tmux.is_running()
 }
 
@@ -68,19 +68,17 @@ fn test_scan() ! {
 	println('-----Testing scan------')
 	mut tmux := get_remote('185.69.166.152')!
 	tmux.start()!
-	
+
 	// check bash window is initialized
 	mut new_windows := tmux.windows_get()
 	unsafe {
 		assert new_windows.keys() == ['bash']
 	}
-
 	// test scan, should return no windows
 	mut windows := tmux.windows_get()
 	unsafe {
 		assert windows.keys().len == 0
 	}
-	
 	// test scan with window in tmux but not in tmux struct
 	// mocking a failed command to see if scan identifies
 	tmux.sessions['init'].windows['test'] = &Window{
@@ -96,8 +94,6 @@ fn test_scan() ! {
 	tmux.stop()!
 }
 
-
-
 // //TODO: fix test
 // fn test_scan_add() ! {
 // 	println("-----Testing scan_add------")
@@ -109,16 +105,13 @@ fn test_scan() ! {
 
 // remaining tests are run synchronously to avoid conflicts
 fn test_tmux_window() {
-	res := os.execute('${os.quoted_path(@VEXE)} test $testpath/tmux_window_test.v')
+	res := os.execute('${os.quoted_path(@VEXE)} test ${tmux.testpath}/tmux_window_test.v')
 	// assert res.exit_code == 1
 	// assert res.output.contains('other_test.v does not exist')
 }
 
 fn test_tmux_scan() {
-	res := os.execute('${os.quoted_path(@VEXE)} test $testpath/tmux_window_test.v')
+	res := os.execute('${os.quoted_path(@VEXE)} test ${tmux.testpath}/tmux_window_test.v')
 	// assert res.exit_code == 1
 	// assert res.output.contains('other_test.v does not exist')
 }
-
-
-

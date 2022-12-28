@@ -62,7 +62,7 @@ fn address_trunc(a string) string {
 fn address_defined(a string) string {
 	trunc := a[0..12] + '...'
 	trunc2 := a[0..6].to_lower()
-	return '[$trunc](tft_account_$trunc2)'
+	return '[${trunc}](tft_account_${trunc2})'
 }
 
 fn macro_tokens_values(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
@@ -117,7 +117,7 @@ fn macro_tokens_distribution(mut state LineProcessorState, mut macro texttools.M
 
 	out << '```charty'
 	out << '{'
-	out << '  "title":  "TFT Distribution (Total: $total_tokens)",'
+	out << '  "title":  "TFT Distribution (Total: ${total_tokens})",'
 	out << '  "config": {'
 	out << '    "type":    "doughnut",'
 	out << '    "labels":  true,'
@@ -141,7 +141,7 @@ fn macro_tokens_locked_table(mut state LineProcessorState, mut macro texttools.M
 
 	for locked in s.locked_tokens_info {
 		amount := i64(locked.amount).str()
-		out << '| Locked | $amount | `$locked.until` |'
+		out << '| Locked | ${amount} | `${locked.until}` |'
 	}
 
 	state.lines_server << out
@@ -201,7 +201,7 @@ fn macro_tokens_account_info(mut state LineProcessorState, mut macro texttools.M
 	mut out := []string{}
 
 	out << ''
-	out << '> [$accid](https://stellar.expert/explorer/public/account/$accid)'
+	out << '> [${accid}](https://stellar.expert/explorer/public/account/${accid})'
 	out << ''
 	out << '### Balance\n'
 	out << '| Asset | Balance |'
@@ -210,14 +210,14 @@ fn macro_tokens_account_info(mut state LineProcessorState, mut macro texttools.M
 		balance := thousand(bal.amount)
 		addr := address(bal.asset)
 
-		out << '| $addr | $balance |'
+		out << '| ${addr} | ${balance} |'
 	}
 
-	mut raw := '$s'
+	mut raw := '${s}'
 	raw = raw.replace('crystallib.tokens.', '')
 
 	out << ''
-	out << '**[stellar link](https://stellar.expert/explorer/public/account/$accid)**'
+	out << '**[stellar link](https://stellar.expert/explorer/public/account/${accid})**'
 	out << ''
 	out << '### Raw Data\n'
 	out << '```'
@@ -236,7 +236,7 @@ fn macro_tokens_account_vesting(mut state LineProcessorState, mut macro texttool
 
 	for vest in s.vesting_accounts {
 		out << '#### Account ' + vest.address
-		out << '**Scheme:** `$vest.vestingscheme`'
+		out << '**Scheme:** `${vest.vestingscheme}`'
 		out << ''
 
 		out << '| Balance Asset | Balance |'
@@ -244,7 +244,7 @@ fn macro_tokens_account_vesting(mut state LineProcessorState, mut macro texttool
 		for bal in vest.balances {
 			// balance := strconv.f64_to_str_l(bal.amount)
 			balance := thousand(bal.amount)
-			out << '| $bal.asset | $balance |'
+			out << '| ${bal.asset} | ${balance} |'
 		}
 	}
 
@@ -259,14 +259,14 @@ fn macro_tokens_account_locked(mut state LineProcessorState, mut macro texttools
 
 	for locked in s.locked_amounts {
 		out << '#### Address ' + locked.address
-		out << '**Locked until:** `$locked.locked_until`'
+		out << '**Locked until:** `${locked.locked_until}`'
 		out << ''
 
 		out << '| Balance Asset | Balance |'
 		out << '| --- | --- |'
 		for bal in locked.balances {
 			balance := thousand(bal.amount)
-			out << '| $bal.asset | $balance |'
+			out << '| ${bal.asset} | ${balance} |'
 		}
 	}
 
@@ -288,11 +288,11 @@ fn macro_tokens_current_distribution(mut state LineProcessorState, mut macro tex
 		done := strconv.f64_to_str_l(special.done / 1000000).before('.')
 		total += special.done
 
-		out << '| $special.name | $distribution% | $done M |'
+		out << '| ${special.name} | ${distribution}% | ${done} M |'
 	}
 
 	total_found := strconv.f64_to_str_l(total / 1000000).before('.')
-	out << '| **Total** | **100%** | **$total_found M** |'
+	out << '| **Total** | **100%** | **${total_found} M** |'
 
 	state.lines_server << out
 }
@@ -340,8 +340,8 @@ fn macro_tokens_total_liquid(mut state LineProcessorState, mut macro texttools.M
 	cap := price.f64() * s.total_liquid_tokens
 	capth := thousand(cap)
 
-	out << '| Total Liquid Tokens | $total |'
-	out << '| TFT Marketcap at **$price USD** | $capth USD |'
+	out << '| Total Liquid Tokens | ${total} |'
+	out << '| TFT Marketcap at **${price} USD** | ${capth} USD |'
 
 	state.lines_server << out
 }
@@ -391,7 +391,7 @@ fn macro_tokens_special_wallets_table(mut state LineProcessorState, mut macro te
 		category := info.category.title()
 
 		out << ''
-		out << '## $category'
+		out << '## ${category}'
 		out << ''
 
 		out << '| Address | Description | Balance |'
@@ -400,7 +400,7 @@ fn macro_tokens_special_wallets_table(mut state LineProcessorState, mut macro te
 		for wallet in info.wallets {
 			addr := address_defined(wallet.address)
 			amount := thousand(wallet.amount)
-			out << '| $addr | `$wallet.description` | $amount |'
+			out << '| ${addr} | `${wallet.description}` | ${amount} |'
 		}
 	}
 

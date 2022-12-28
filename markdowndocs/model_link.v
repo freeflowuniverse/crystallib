@@ -46,7 +46,7 @@ pub mut:
 
 // return path of the filename in the site
 pub fn (mut link Link) pathfull() string {
-	mut r := '$link.path/$link.filename'
+	mut r := '${link.path}/${link.filename}'
 	r = r.trim_right('/')
 	return r
 }

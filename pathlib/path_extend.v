@@ -9,11 +9,11 @@ pub fn (mut p Path) join(parts ...string) !Path {
 	p2.check()
 
 	if !p2.is_dir() {
-		return error('can only extend dir, $p2.path')
+		return error('can only extend dir, ${p2.path}')
 	}
 	for part in parts {
 		if part.contains('~') {
-			return error('cannot extend part $part if ~ in')
+			return error('cannot extend part ${part} if ~ in')
 		}
 		part2 := part.trim(' ')
 		p2.path += '/' + part2
@@ -28,11 +28,11 @@ pub fn (mut p Path) join(parts ...string) !Path {
 // anything else fails
 pub fn (mut path Path) extend(parts ...string) ! {
 	if !path.is_dir() {
-		return error('can only extend dir, $path')
+		return error('can only extend dir, ${path}')
 	}
 	for part in parts {
 		if part.contains('~') {
-			return error('cannot extend part to $part if ~ in')
+			return error('cannot extend part to ${part} if ~ in')
 		}
 		part2 := part.trim(' ')
 		path.path += '/' + part2

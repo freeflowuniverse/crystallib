@@ -84,7 +84,7 @@ pub fn (mut r StringLineReader) get_int() ?int {
 	if line.starts_with(':') {
 		return line[1..].int()
 	} else {
-		return error("Did not find int, did find:'$line'")
+		return error("Did not find int, did find:'${line}'")
 	}
 }
 
@@ -102,7 +102,7 @@ pub fn (mut r StringLineReader) get_list_int() ?[]int {
 		}
 		return res
 	} else {
-		return error("Did not find int, did find:'$line'")
+		return error("Did not find int, did find:'${line}'")
 	}
 }
 
@@ -112,7 +112,7 @@ pub fn (mut r StringLineReader) get_string() ?string {
 	if line.starts_with('+') {
 		return line[1..]
 	} else {
-		return error("Did not find string, did find:'$line'")
+		return error("Did not find string, did find:'${line}'")
 	}
 }
 
@@ -140,14 +140,14 @@ pub fn (mut r StringLineReader) get_bytes() ?[]u8 {
 		// extract final \r\n
 		return buffer
 	} else {
-		return error("Did not find bulkstring, did find:'$line'")
+		return error("Did not find bulkstring, did find:'${line}'")
 	}
 }
 
 pub fn get_redis_value(rv RValue) string {
 	if rv is RArray || rv is RNil {
 		rv_type := rv.type_name()
-		panic("Can't get value for $rv_type")
+		panic("Can't get value for ${rv_type}")
 	}
 	return match rv {
 		RInt {

@@ -3,7 +3,7 @@ module serializers
 pub fn map_string_string_to_text(toserialize map[string]string) string {
 	mut out := []string{}
 	for key, val in toserialize {
-		out << '$key = $val'
+		out << '${key} = ${val}'
 	}
 	mut outtext := out.join('\n')
 	outtext += '\n'

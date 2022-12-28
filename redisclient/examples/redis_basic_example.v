@@ -24,9 +24,9 @@ fn redistest() ? {
 			// println(rr2)
 			// println("------")
 
-			println('DATA SEND TO REDIS & RECEIVED IS NOT SAME (test $i)')
-			println('SIZE DATA SEND: $rr.len')
-			println('SIZE DATA RECEIVED: $rr2.len')
+			println('DATA SEND TO REDIS & RECEIVED IS NOT SAME (test ${i})')
+			println('SIZE DATA SEND: ${rr.len}')
+			println('SIZE DATA RECEIVED: ${rr2.len}')
 			println(rr.count('a'))
 			println(rr2.count('a'))
 

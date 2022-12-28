@@ -24,7 +24,7 @@ pub fn markdown_min_header(text string, minlevel int) string {
 		}
 		for mut line2 in text.split('\n') {
 			if line2.starts_with('#') {
-				line2 = addhashstring + '$line2'
+				line2 = addhashstring + '${line2}'
 			}
 			out << line2
 		}

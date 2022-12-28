@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.pathlib
 // test adding book with url as a path
 fn test_run_add() {
 	mut booksrunner := new_booksrunner()
-	go booksrunner.run()
+	spawn booksrunner.run()
 	msg := ActionJob{
 		name: 'books.add'
 		params: Params{
@@ -40,7 +40,7 @@ fn test_run_add() {
 // test adding book with gitsource and relative path in repo
 fn test_run_add1() {
 	mut booksrunner := new_booksrunner()
-	go booksrunner.run()
+	spawn booksrunner.run()
 	msg := ActionJob{
 		name: 'books.add'
 		params: Params{
@@ -76,7 +76,7 @@ fn test_run_add1() {
 
 fn test_run_develop() {
 	mut booksrunner := new_booksrunner()
-	go booksrunner.run()
+	spawn booksrunner.run()
 
 	// manually adding book for test
 	mut gr := booksrunner.gt.repo_get_from_url(
@@ -87,7 +87,7 @@ fn test_run_develop() {
 	) or { panic('Could not get repository from url') }
 	book_path := gr.path_content_get()
 	booksrunner.books.book_new(path: book_path, name: 'technology') or {
-		panic("Can't get new site: $err")
+		panic("Can't get new site: ${err}")
 	}
 
 	// sending runner message to develop book

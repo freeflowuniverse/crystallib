@@ -1,37 +1,34 @@
 module main
 
-import regex {RE,regex_opt}
+import regex { RE, regex_opt }
 
 pub struct EmptyRegex {
 }
 
-type OurRegex = RE | EmptyRegex
+type OurRegex = EmptyRegex | RE
 
 pub struct ListArgs {
 pub mut:
-	regex	  OurRegex
+	regex OurRegex
 }
 
-
-fn main(){
-
+fn main() {
 	query := r'(c(pa)+z ?)+'
 	mut re := regex_opt(query) or { panic(err) }
 
-	item := "sss"
+	item := 'sss'
 	mut la := ListArgs{
-		regex:re
+		regex: re
 	}
 
-	mut r:=la.regex
-	if r is RE{
+	mut r := la.regex
+	if r is RE {
 		println(r)
 		println(r.matches_string(item))
 	}
 
-    // match r {
-    //     RE { r.matches_string(item) }
-    //     else {}
-    // }	
-
+	// match r {
+	//     RE { r.matches_string(item) }
+	//     else {}
+	// }	
 }

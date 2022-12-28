@@ -12,7 +12,7 @@ fn get_site_and_obj_name(txt_ string, ismage bool) !(string, string) {
 		a = txt.all_before(':').replace('_', '')
 		b = txt.all_after_first(':')
 		if b.contains(':') {
-			return error("can only have 1 : in txt:'$txt'")
+			return error("can only have 1 : in txt:'${txt}'")
 		}
 	}
 	if ismage {

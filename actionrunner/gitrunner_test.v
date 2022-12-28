@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.params { Param, Params }
 
 fn test_run_pull() {
 	mut gitrunner := new_gitrunner()
-	go gitrunner.run()
+	spawn gitrunner.run()
 
 	// run job
 	job := ActionJob{
@@ -32,14 +32,14 @@ fn test_run_pull() {
 			break
 		}
 	}
-	pull_cmd := 'cd $os.home_dir()/code/github/threefoldfoundation/books && git pull'
+	pull_cmd := 'cd ${os.home_dir()}/code/github/threefoldfoundation/books && git pull'
 	output := os.execute(pull_cmd).output.trim_string_right('\n')
 	assert output == 'Already up to date.'
 }
 
 fn test_run_link() {
 	mut gitrunner := new_gitrunner()
-	go gitrunner.run()
+	spawn gitrunner.run()
 	job := ActionJob{
 		actionname: 'git.link'
 		params: Params{
@@ -76,7 +76,7 @@ fn test_run_link() {
 
 fn test_run_multibranch() {
 	mut gitrunner := new_gitrunner()
-	go gitrunner.run()
+	spawn gitrunner.run()
 	job := ActionJob{
 		actionname: 'git.params.multibranch'
 		params: Params{
@@ -101,5 +101,5 @@ fn test_run_multibranch() {
 
 fn test_run() {
 	mut gitrunner := new_gitrunner()
-	go gitrunner.run()
+	spawn gitrunner.run()
 }

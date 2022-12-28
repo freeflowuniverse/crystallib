@@ -36,19 +36,21 @@ pub fn new_executor(initial_file_path_ string, execution_file_path_ string, fina
 
 	// ensure that the execution file is an empty file
 	if execution_file_path.exist == .yes {
-		os.rm(execution_file_path.path) or { return error('Failed to remove execution file: $err') }
+		os.rm(execution_file_path.path) or {
+			return error('Failed to remove execution file: ${err}')
+		}
 	}
 	execution_file := os.create(execution_file_path.path) or {
-		return error('Failed to create execution file at ' + @FN + ' : $err')
+		return error('Failed to create execution file at ' + @FN + ' : ${err}')
 	}
 
 	if initial_file_path.exist == .no {
-		return error('Initial file does not exist at path: $initial_file_path.path')
+		return error('Initial file does not exist at path: ${initial_file_path.path}')
 	}
 
 	// convert the initial file into an action
 	initial_action := scan_file(mut initial_file_path) or {
-		return error('Failed to scan initial file path at ' + @FN + ' : $err')
+		return error('Failed to scan initial file path at ' + @FN + ' : ${err}')
 	}
 
 	// create an VExecutor object
@@ -70,7 +72,7 @@ pub fn (mut v_executor VExecutor) add_dir_to_end(directory_path_ string) ! {
 	directory_path.check()
 
 	mut file_paths := directory_path.file_list(pathlib.ListArgs{}) or {
-		return error('Failed to get file_paths of directory at ' + @FN + ' : $err')
+		return error('Failed to get file_paths of directory at ' + @FN + ' : ${err}')
 	}
 	// mut count := 0
 	for mut file_path in file_paths {
@@ -87,13 +89,13 @@ pub fn (mut v_executor VExecutor) add_dir_to_end(directory_path_ string) ! {
 // path string - path to file
 fn scan_file(mut path pathlib.Path) !VAction {
 	if !path.exists() {
-		return error('cannot find path: $path.path to scan for vlang files.')
+		return error('cannot find path: ${path.path} to scan for vlang files.')
 	}
 
 	// read all the lines in the file into an array of lines
-	mut file := os.open(path.path) or { return error('Failed to open file: $err') }
+	mut file := os.open(path.path) or { return error('Failed to open file: ${err}') }
 	mut lines := os.read_lines(path.path) or {
-		return error('Failed to readlines of file at ' + @FN + ' : $err')
+		return error('Failed to readlines of file at ' + @FN + ' : ${err}')
 	}
 	file.close()
 	// remove lines until '// BEGINNING' is reached
@@ -121,7 +123,7 @@ fn scan_file(mut path pathlib.Path) !VAction {
 // combine all actions in VExecutor into one file
 pub fn (mut v_executor VExecutor) compile() ! {
 	v_executor.actions << scan_file(mut v_executor.final_file_path) or {
-		return error('Failed to scan file at ' + @FN + ' : $err')
+		return error('Failed to scan file at ' + @FN + ' : ${err}')
 	}
 
 	mut all_lines := []string{}
@@ -133,7 +135,7 @@ pub fn (mut v_executor VExecutor) compile() ! {
 
 	for line in all_lines {
 		v_executor.execution_file.writeln(line) or {
-			return error('Failed to write line to execution file at ' + @FN + ' : $err')
+			return error('Failed to write line to execution file at ' + @FN + ' : ${err}')
 		}
 	}
 
@@ -142,9 +144,9 @@ pub fn (mut v_executor VExecutor) compile() ! {
 
 // Executes the file
 pub fn (mut v_executor VExecutor) do() ! {
-	println('v run $v_executor.execution_file_path.path')
-	result := os.execute('v run $v_executor.execution_file_path.path')
-	println('Exit Code: $result.exit_code')
+	println('v run ${v_executor.execution_file_path.path}')
+	result := os.execute('v run ${v_executor.execution_file_path.path}')
+	println('Exit Code: ${result.exit_code}')
 	if result.exit_code != 0 {
 		println(result)
 		return error('Failed to run executor file! There are issues with the code.')
@@ -154,13 +156,13 @@ pub fn (mut v_executor VExecutor) do() ! {
 // prints out all the file paths accessed
 pub fn (mut v_executor VExecutor) info() {
 	for action in v_executor.actions {
-		println('action_path: $action.path.path')
+		println('action_path: ${action.path.path}')
 	}
 }
 
 // Cleans up VExecutors impact on the file system
 pub fn (mut v_executor VExecutor) clean() ! {
 	os.rm(v_executor.execution_file_path.path) or {
-		return error('Failed to delete execution file at ' + @FN + ' : $err')
+		return error('Failed to delete execution file at ' + @FN + ' : ${err}')
 	}
 }

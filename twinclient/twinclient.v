@@ -39,7 +39,7 @@ pub fn (mut htp HttpTwinClient) init(url string) !HttpTwinClient {
 pub fn (htp HttpTwinClient) send(functionPath string, args string) !Message {
 	function := functionPath.replace('.', '/')
 	request := http.Request{
-		url: '$htp.url/$function'
+		url: '${htp.url}/${function}'
 		method: htp.method
 		header: htp.header
 		data: args
@@ -77,13 +77,13 @@ pub fn (mut tcl WSTwinClient) init(mut ws_client ws.Client) !WSTwinClient {
 			return
 		}
 		if msg.event == 'invoke_result' {
-			println('processing invoke response: $msg')
+			println('processing invoke response: ${msg}')
 			channel := tcl.channels[msg.id] or {
-				eprintln('channel for $msg.id is not there')
+				eprintln('channel for ${msg.id} is not there')
 				return
 			}
 
-			println('pushing msg to channel: $msg.id')
+			println('pushing msg to channel: ${msg.id}')
 			channel <- msg
 		}
 	})
@@ -124,14 +124,14 @@ fn (mut tcl WSTwinClient) wait(id string, timeout u32) !Message {
 				return res
 			}
 			timeout * time.second {
-				er := 'requets with id $id was timed out!'
+				er := 'requets with id ${id} was timed out!'
 				channel.close()
 				tcl.channels.delete(id)
 				return error(er)
 			}
 		}
 	}
-	return error('wait channel of $id is not present')
+	return error('wait channel of ${id} is not present')
 }
 
 // RMB Client
@@ -161,7 +161,7 @@ pub fn (mut rmb RmbTwinClient) send(functionPath string, args string) !Message {
 }
 
 pub fn (mut rmb RmbTwinClient) read(msg Message) !Message {
-	println('Waiting reply $msg.retqueue')
+	println('Waiting reply ${msg.retqueue}')
 	results := rmb.client.blpop([msg.retqueue], '0')!
 	response_json := resp.get_redis_value(results[1])
 	mut response := json.decode(Message, response_json)!

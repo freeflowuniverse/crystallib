@@ -56,9 +56,9 @@ mut:
 
 pub fn (mut parser ActionsParser) file_parse(path string) ! {
 	if !os.exists(path) {
-		return error("path: '$path' does not exist, cannot parse.")
+		return error("path: '${path}' does not exist, cannot parse.")
 	}
-	content := os.read_file(path) or { panic('Failed to load file $path') }
+	content := os.read_file(path) or { panic('Failed to load file ${path}') }
 	parser.text_parse(content)!
 }
 
@@ -72,7 +72,7 @@ pub fn (mut parser ActionsParser) text_parse(content string) ! {
 // TODO: figure out way to apply to all possible params
 fn contains_params(line string) bool {
 	param_keys := ['gitsource', 'gitdest', 'source', 'dest', 'name', 'url', 'path', 'message']
-	return param_keys.any(line.contains('$it:'))
+	return param_keys.any(line.contains('${it}:'))
 }
 
 // each block is name of action and the full content behind
@@ -86,8 +86,8 @@ fn parse_into_blocks(text string) !Blocks {
 	for line_ in text.split_into_lines() {
 		line2 = line_
 		line2 = line2.replace('\t', '    ')
-		if line2.contains("#"){
-			line2=line2.all_before("#")
+		if line2.contains('#') {
+			line2 = line2.all_before('#')
 		}
 		// println("line: '$line2'")
 		if state == ParseBlockStatus.action {

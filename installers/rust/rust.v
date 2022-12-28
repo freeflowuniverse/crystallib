@@ -4,10 +4,10 @@ module rust
 pub fn (mut i Installer) install() ! {
 	mut node := i.node
 	// install rust if it was already done will return true
-	println(' - $node.name: install rust')
+	println(' - ${node.name}: install rust')
 	// TODO: install_rust was in done_exists
 	if !(i.state == .reset) && node.done_exists('install_rust') {
-		println('    $node.name: was already done')
+		println('    ${node.name}: was already done')
 		return
 	}
 
@@ -17,10 +17,10 @@ pub fn (mut i Installer) install() ! {
 	}
 	// curl --proto '=https' --tlsv1.2 https://sh.rustup.rs | sh -s -- -y
 	node.exec("curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y") or {
-		return error('Cannot install rust.\n$err')
+		return error('Cannot install rust.\n${err}')
 	}
 
-	node.exec('source .cargo/env') or { return error('Cannot setup rust.\n$err') }
+	node.exec('source .cargo/env') or { return error('Cannot setup rust.\n${err}') }
 
 	// path := "export PATH='/usr/bin:/bin:/root/.cargo/bin'"
 	// node.exec("echo $path >> .bash_profile") or {

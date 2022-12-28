@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.installers.tmux
 
 // uses single tmux instance for all tests
-__global(
+__global (
 	tmux Tmux
 )
 
@@ -13,12 +13,9 @@ fn init() {
 
 	// reset tmux for tests
 	if tmux.is_running() {
-		tmux.stop() or {
-			panic('Cannot stop tmux')
-		}
+		tmux.stop() or { panic('Cannot stop tmux') }
 	}
 }
-
 
 fn testsuite_end() {
 	if tmux.is_running() {
@@ -27,20 +24,18 @@ fn testsuite_end() {
 }
 
 fn test_window_new() {
-	tmux.start() or { panic("can't start tmux: $err") }
+	tmux.start() or { panic("can't start tmux: ${err}") }
 
 	// test window new with only name arg
-	window_args := WindowArgs {
+	window_args := WindowArgs{
 		name: 'TestWindow'
 	}
 
 	assert !tmux.sessions.keys().contains('main')
 
-	mut window := tmux.window_new(window_args) or {
-		panic("Can't create new window: $err")
-	}
+	mut window := tmux.window_new(window_args) or { panic("Can't create new window: ${err}") }
 	assert tmux.sessions.keys().contains('main')
-	window.delete() or { panic("Cant delete window") }
+	window.delete() or { panic('Cant delete window') }
 }
 
 // // tests creating duplicate windows

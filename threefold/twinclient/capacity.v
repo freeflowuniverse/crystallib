@@ -53,7 +53,7 @@ pub fn (mut client TwinClient) capacity_get_node_free_resources(node_id u32) ?Fr
 
 pub fn (mut client TwinClient) capacity_get_farm_id_from_farm_name(farm_name string) ?u32 {
 	response := client.transport.send('capacity.getFarmIdFromFarmName', json.encode({
-		'farmName': '$farm_name'
+		'farmName': '${farm_name}'
 	}))?
 	return response.data.u32()
 }

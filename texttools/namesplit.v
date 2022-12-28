@@ -30,7 +30,7 @@ pub fn name_split(name string) !(string, string) {
 		sitename = splitted[0]
 		objname = splitted[1]
 	} else {
-		return error("name needs to be in format 'sitename:filename' or 'filename', now '$objname'")
+		return error("name needs to be in format 'sitename:filename' or 'filename', now '${objname}'")
 	}
 	objname = objname.trim_left('.')
 	if objname.contains('/') {
@@ -41,13 +41,13 @@ pub fn name_split(name string) !(string, string) {
 	}
 	// make sure we don't have the e.g. img/ in
 	if objname.trim('/ ') == '' {
-		return error('objname empty: $name')
+		return error('objname empty: ${name}')
 	}
 	if objname.ends_with('/') {
-		return error("objname cannot end with /: now '$name'")
+		return error("objname cannot end with /: now '${name}'")
 	}
 	if objname.trim(' ') == '' {
-		return error('objname empty: $name')
+		return error('objname empty: ${name}')
 	}
 
 	// eprintln(" >> namesplit: '$sitename' '$objname'")

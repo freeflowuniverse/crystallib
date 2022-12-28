@@ -34,7 +34,7 @@ pub fn get(config GSConfig) !GitStructure {
 		gs.config.root = os.environ()['DIR_CODE'] + '/'
 	}
 	if gs.config.root == '' {
-		gs.config.root = '$os.home_dir()/code/'
+		gs.config.root = '${os.home_dir()}/code/'
 	}
 
 	gs.config.root = gs.config.root.replace('~', os.home_dir()).trim_right('/')

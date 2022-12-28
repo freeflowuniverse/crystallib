@@ -58,7 +58,7 @@ pub fn (mut path Path) check() {
 				path.cat = Category.dir
 			}
 		} else {
-			panic('cannot define type: $path.path, is bug')
+			panic('cannot define type: ${path.path}, is bug')
 		}
 	} else {
 		path.exist = .no
@@ -67,7 +67,7 @@ pub fn (mut path Path) check() {
 
 fn (mut path Path) check_exists() ! {
 	if !path.exists() {
-		return error('Path $path needs to exist, error')
+		return error('Path ${path} needs to exist, error')
 	}
 }
 

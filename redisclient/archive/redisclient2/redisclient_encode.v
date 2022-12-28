@@ -68,7 +68,7 @@ pub fn (mut r Redis) get_int() ?int {
 	if line.starts_with(':') {
 		return line[1..].int()
 	} else {
-		return error("Did not find int, did find:'$line'")
+		return error("Did not find int, did find:'${line}'")
 	}
 }
 
@@ -85,7 +85,7 @@ pub fn (mut r Redis) get_list_int() ?[]int {
 		}
 		return res
 	} else {
-		return error("Did not find int, did find:'$line'")
+		return error("Did not find int, did find:'${line}'")
 	}
 }
 
@@ -102,7 +102,7 @@ pub fn (mut r Redis) get_list_str() ?[]string {
 		}
 		return res
 	} else {
-		return error("Did not find int, did find:'$line'")
+		return error("Did not find int, did find:'${line}'")
 	}
 }
 
@@ -116,7 +116,7 @@ pub fn (mut r Redis) get_string() ?string {
 		r2 := r.get_bytes_from_line(line)?
 		return r2.bytestr()
 	} else {
-		return error("Did not find string, did find:'$line'")
+		return error("Did not find string, did find:'${line}'")
 	}
 }
 
@@ -133,7 +133,7 @@ pub fn (mut r Redis) get_bytes_nil() ?[]u8 {
 	if line.starts_with('$') {
 		return r.get_bytes_from_line(line)
 	} else {
-		return error("Did not find string or nil, did find:'$line'")
+		return error("Did not find string or nil, did find:'${line}'")
 	}
 }
 
@@ -147,7 +147,7 @@ pub fn (mut r Redis) get_bytes() ?[]u8 {
 	if line.starts_with('$') {
 		return r.get_bytes_from_line(line)
 	} else {
-		return error("Did not find bulkstring, did find:'$line'")
+		return error("Did not find bulkstring, did find:'${line}'")
 	}
 }
 
@@ -162,7 +162,7 @@ fn (mut r Redis) get_bytes_from_line(line string) ?[]u8 {
 		return []
 	}
 	// read payload
-	buffer := r.read(bulkstring_size) or { return error('Could not read payload: $err') }
+	buffer := r.read(bulkstring_size) or { return error('Could not read payload: ${err}') }
 	// extract final \r\n
 	r.read_line()?
 	return buffer

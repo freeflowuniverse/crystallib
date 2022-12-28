@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.installers.base
 pub fn (mut i Installer) install() ! {
 	base.install()!
 	mut node := i.node
-	println(' - $node.name: install zdb')
+	println(' - ${node.name}: install zdb')
 	if !node.done_exists('install_zdb') && !node.command_exists('zdb') {
 		mut gs := gittools.get(root: '/tmp/code')!
 		url := 'git@github.com:threefoldtech/0-db.git'
@@ -18,7 +18,7 @@ pub fn (mut i Installer) install() ! {
 		make
 		sudo rsync -rav ${gr.path}/bin/zdb* /usr/local/bin/
 		'
-		node.exec(cmd) or { return error('Cannot install zdb.\n$err') }
+		node.exec(cmd) or { return error('Cannot install zdb.\n${err}') }
 		node.done_set('install_zdb', 'OK')!
 	}
 }

@@ -86,10 +86,10 @@ pub fn (mut site Site) file_get(name string) !&File {
 			return site2.file_get(namelower)
 		} else {
 			sitenames := site.sites.sitenames().join('\n- ')
-			return error('Cannot find site with name:$sitename \nKnown sitenames are:\n\n$sitenames')
+			return error('Cannot find site with name:${sitename} \nKnown sitenames are:\n\n${sitenames}')
 		}
 	}
-	return error('Could not find file with name: $namelower for site:$site.name')
+	return error('Could not find file with name: ${namelower} for site:${site.name}')
 }
 
 pub fn (mut site Site) image_get(name string) !&File {
@@ -107,18 +107,16 @@ pub fn (mut site Site) image_get(name string) !&File {
 			return site2.image_get(namelower)!
 		} else {
 			sitenames := site.sites.sitenames().join('\n- ')
-			msg := 'Cannot find site with name:$sitename \nKnown sitenames are:\n\n$sitenames'
+			msg := 'Cannot find site with name:${sitename} \nKnown sitenames are:\n\n${sitenames}'
 			return error(msg)
 		}
 	}
-	msg2 := 'Could not find image with name: $namelower'
+	msg2 := 'Could not find image with name: ${namelower}'
 	return error(msg2)
 }
 
 pub fn (mut site Site) image_exists(name string) bool {
-	sitename, mut namelower := get_site_and_obj_name(name, true) or{
-		return false
-	}
+	sitename, mut namelower := get_site_and_obj_name(name, true) or { return false }
 	namelower = namelower.replace('_', '')
 	// make sure we look for images independent of extension and ending _
 	if sitename == '' {
@@ -158,10 +156,10 @@ pub fn (mut site Site) page_get(name string) !&Page {
 			return site2.page_get(namelower)
 		} else {
 			sitenames := site.sites.sitenames().join('\n- ')
-			return error("Cannot find site with name:'$sitename' \nKnown sitenames are:\n\n$sitenames")
+			return error("Cannot find site with name:'${sitename}' \nKnown sitenames are:\n\n${sitenames}")
 		}
 	}
-	return error("Could not find page with name: '$namelower' for site:'$site.name'")
+	return error("Could not find page with name: '${namelower}' for site:'${site.name}'")
 }
 
 // param look_in_sites means we will look in all sites
@@ -173,7 +171,7 @@ pub fn (mut site Site) page_exists(name string) bool {
 // only way how to get to a new page
 pub fn (mut site Site) page_new(mut p Path) !&Page {
 	if !p.exists() {
-		return error('cannot find page with path $p.path')
+		return error('cannot find page with path ${p.path}')
 	}
 	p.path_normalize()! // make sure its all lower case and name is proper
 	mut page := Page{
@@ -181,11 +179,11 @@ pub fn (mut site Site) page_new(mut p Path) !&Page {
 		site: &site
 	}
 	if !page.path.path.ends_with('.md') {
-		return error('page $page needs to end with .md')
+		return error('page ${page} needs to end with .md')
 	}
 	// println(" ---------- $page.path.path")
 	// parse the markdown of the page
-	mut parser := markdowndocs.get(p.path) or { panic('cannot parse,$err') }
+	mut parser := markdowndocs.get(p.path) or { panic('cannot parse,${err}') }
 	page.doc = parser.doc
 	page.name = p.name_fix_no_ext()
 	page.pathrel = p.path_relative(site.path.path)!
@@ -200,10 +198,10 @@ pub fn (mut site Site) page_new(mut p Path) !&Page {
 fn (mut site Site) file_new(mut p Path) ! {
 	p.path_normalize()! // make sure its all lower case and name is proper
 	if !p.exists() {
-		return error('cannot find file for path in site: $p')
+		return error('cannot find file for path in site: ${p}')
 	}
 	if p.name().starts_with('.') {
-		panic('should not start with . \n$p')
+		panic('should not start with . \n${p}')
 	}
 	_, namelower := get_site_and_obj_name(p.path, false)!
 	mut ff := File{
@@ -218,10 +216,10 @@ fn (mut site Site) file_new(mut p Path) ! {
 // only way how to get to a new image
 fn (mut site Site) image_new(mut p Path) ! {
 	if !p.exists() {
-		return error('cannot find image for path in site: $p.path')
+		return error('cannot find image for path in site: ${p.path}')
 	}
 	if p.name().starts_with('.') {
-		panic('should not start with . \n$p')
+		panic('should not start with . \n${p}')
 	}
 
 	if site.image_exists(p.name()) {
@@ -265,7 +263,7 @@ pub fn (mut site Site) pagenames() []string {
 }
 
 pub fn (mut site Site) errors_report() ! {
-	mut p := pathlib.get('$site.path.path/errors.md')
+	mut p := pathlib.get('${site.path.path}/errors.md')
 	if site.errors.len == 0 {
 		p.delete()!
 		return

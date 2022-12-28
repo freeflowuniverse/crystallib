@@ -30,17 +30,17 @@ fn (mut h HTTPConnection) auth(url string, login string, passwd string) !AuthDet
 	h.url = url
 	if !h.url.starts_with('http') {
 		if h.url.contains('http') {
-			return error('url needs to start with http or not contain http. $h.url ')
+			return error('url needs to start with http or not contain http. ${h.url} ')
 		}
-		h.url = 'https://$h.url'
+		h.url = 'https://${h.url}'
 	}
 
 	data := h.post_json_str(
 		prefix: 'auth'
 		postdata: '{
-			"password": "$passwd",
+			"password": "${passwd}",
 			"type": "normal",
-			"username": "$login"
+			"username": "${login}"
 		}'
 		cache_disable: false
 	)!

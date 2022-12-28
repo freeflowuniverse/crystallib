@@ -42,7 +42,7 @@ pub fn (mut params Params) get(key_ string) !string {
 			return p.value.trim(' ')
 		}
 	}
-	return error('Did not find key:${key} in $params')
+	return error('Did not find key:${key} in ${params}')
 }
 
 // get kwarg return as string, ifn't exist return the defval
@@ -67,6 +67,18 @@ pub fn (mut params Params) get_int(key string) !int {
 	valuestr := params.get(key)!
 	return valuestr.int()
 }
+
+pub fn (mut params Params) get_u32(key string) !u32 {
+	valuestr := params.get(key)!
+	return valuestr.u32()
+}
+
+pub fn (mut params Params) get_u8(key string) !u8 {
+	valuestr := params.get(key)!
+	return valuestr.u8()
+}
+
+
 
 // get kwarg return as int, if it doesnt' exist return a default
 // line:
@@ -142,7 +154,7 @@ pub fn (mut params Params) get_path(key string) !string {
 	path := params.get(key)!
 
 	if !os.exists(path) {
-		return error('Cannot find path: $key')
+		return error('Cannot find path: ${key}')
 	}
 
 	return path

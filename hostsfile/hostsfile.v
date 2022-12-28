@@ -39,18 +39,18 @@ pub fn (mut hostsfile HostsFile) save(sudo bool) &HostsFile {
 	mut str := ''
 	for section, items in hostsfile.hosts {
 		if section != '' {
-			str = str + '# $section\n\n'
+			str = str + '# ${section}\n\n'
 		}
 
 		for item in items {
 			for ip, domain in item {
-				str = str + '$ip\t$domain\n'
+				str = str + '${ip}\t${domain}\n'
 			}
 		}
 		str = str + '\n\n'
 	}
 	if sudo {
-		process.execute_interactive('sudo -- sh -c -e "echo \'$str\' > /etc/hosts"') or {
+		process.execute_interactive('sudo -- sh -c -e "echo \'${str}\' > /etc/hosts"') or {
 			panic(err)
 		}
 	} else {

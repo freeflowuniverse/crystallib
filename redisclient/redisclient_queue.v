@@ -32,5 +32,5 @@ pub fn (mut q RedisQueue) get(timeout u64) !string {
 		}
 		time.sleep(time.microsecond)
 	}
-	return error('timeout on $q.key')
+	return error('timeout on ${q.key}')
 }

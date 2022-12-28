@@ -43,7 +43,7 @@ pub fn ipaddress_new(addr_string string) !IPAddress {
 			mask = splitted[1].int()
 			addr = splitted[0]
 		} else {
-			return error('syntax error in ipaddr: $addr, should only have one /')
+			return error('syntax error in ipaddr: ${addr}, should only have one /')
 		}
 	}
 
@@ -100,12 +100,12 @@ pub fn (mut ipaddr IPAddress) ping(args_ PingArgs) bool {
 
 	mut cmd := ''
 	if ipaddr.cat == IpAddressType.ipv4 {
-		cmd = 'ping -c 1 -W $args.timeout $ipaddr.addr'
+		cmd = 'ping -c 1 -W ${args.timeout} ${ipaddr.addr}'
 	} else {
 		if process.is_osx() {
-			cmd = 'ping6 -c 1 -i $timeout $ipaddr.addr'
+			cmd = 'ping6 -c 1 -i ${timeout} ${ipaddr.addr}'
 		} else {
-			cmd = 'ping -6 -c 1 -W $args.timeout $ipaddr.addr'
+			cmd = 'ping -6 -c 1 -W ${args.timeout} ${ipaddr.addr}'
 		}
 	}
 	for _ in 0 .. args.retry {
@@ -142,12 +142,12 @@ fn (mut ipaddr IPAddress) address() !string {
 			if ipaddr.mask > 0 {
 				return error('cannot have mask when port specified')
 			}
-			return '$ipaddr.addr:$ipaddr.port'
+			return '${ipaddr.addr}:${ipaddr.port}'
 		} else {
 			if ipaddr.mask > 0 {
-				return '$ipaddr.addr/$ipaddr.mask'
+				return '${ipaddr.addr}/${ipaddr.mask}'
 			} else {
-				return '$ipaddr.addr'
+				return '${ipaddr.addr}'
 			}
 		}
 	} else {
@@ -155,12 +155,12 @@ fn (mut ipaddr IPAddress) address() !string {
 			if ipaddr.mask > 0 {
 				return error('cannot have mask when port specified')
 			}
-			return '[$ipaddr.addr]:$ipaddr.port'
+			return '[${ipaddr.addr}]:${ipaddr.port}'
 		} else {
 			if ipaddr.mask > 0 {
-				return '$ipaddr.addr/$ipaddr.mask'
+				return '${ipaddr.addr}/${ipaddr.mask}'
 			} else {
-				return '$ipaddr.addr'
+				return '${ipaddr.addr}'
 			}
 		}
 	}

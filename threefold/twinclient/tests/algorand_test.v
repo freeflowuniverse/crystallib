@@ -29,7 +29,7 @@ fn test_algorand_init_alice_account() {
 	mut client, mut user := setup_tests('alice')?
 	assert user.mnemonic != ''
 	client.algorand_init(user.name, user.mnemonic) or {
-		assert err.msg() == 'A wallet with the same name $user.name already exists'
+		assert err.msg() == 'A wallet with the same name ${user.name} already exists'
 		return
 	}
 }
@@ -61,7 +61,7 @@ fn test_algorand_init_bob_account() {
 	mut client, mut user := setup_tests('bob')?
 	assert user.mnemonic != ''
 	client.algorand_init(user.name, user.mnemonic) or {
-		assert err.msg() == 'A wallet with the same name $user.name already exists'
+		assert err.msg() == 'A wallet with the same name ${user.name} already exists'
 		return
 	}
 }
@@ -133,7 +133,7 @@ fn test_algorand_delete_account_not_exist() ? {
 	// Delete acount not exist.
 	mut client, user := setup_tests('alice')?
 	client.algorand_delete(user.name) or {
-		assert err.msg() == "Couldn't find a wallet with name $user.name"
+		assert err.msg() == "Couldn't find a wallet with name ${user.name}"
 		return
 	}
 }

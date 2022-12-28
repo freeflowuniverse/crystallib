@@ -13,19 +13,19 @@ fn do() ! {
 
 	mut node := builder.node_new(name: 'test', ipaddr: '185.206.122.151', debug: true)!
 
-	rust.get_install(mut node) or { panic('error: $err') }
-	mdbook.get_install(mut node) or { panic('error: $err') }
-	vlang.get_install(mut node) or { panic('error: $err') }
-	caddy.get_install(mut node) or { panic('error: $err') }
-	tailwind.get_install(mut node) or { panic('error: $err') }
+	rust.get_install(mut node) or { panic('error: ${err}') }
+	mdbook.get_install(mut node) or { panic('error: ${err}') }
+	vlang.get_install(mut node) or { panic('error: ${err}') }
+	caddy.get_install(mut node) or { panic('error: ${err}') }
+	tailwind.get_install(mut node) or { panic('error: ${err}') }
 	repository.get_install(mut node, 'https://github.com/timurgordon/publisher_ui.git') or {
-		panic('error: $err')
+		panic('error: ${err}')
 	}
 	repository.get_install(mut node, 'https://github.com/freeflowuniverse/crystallib.git') or {
-		panic('error: $err')
+		panic('error: ${err}')
 	}
 	repository.get_install(mut node, 'https://github.com/ourworld-tsc/ourworld_books.git') or {
-		panic('error: $err')
+		panic('error: ${err}')
 	}
 
 	node.exec('cd code/github/freeflowuniverse/crystallib; git checkout development_publisher3_kristof')!

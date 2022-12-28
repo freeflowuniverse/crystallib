@@ -30,7 +30,7 @@ fn (mut site Site) file_image_remember(mut p pathlib.Path) ! {
 			// file double is the one who already existed, need to change the path and can delete original
 			filedouble.path = filedouble.path
 			filedouble.init()
-			println(' - delete double image: $p.path')
+			println(' - delete double image: ${p.path}')
 			p.delete()!
 			return
 		} else {

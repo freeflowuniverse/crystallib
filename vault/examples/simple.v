@@ -11,7 +11,7 @@ fn do() ? {
 
 	remember := v.hash()
 
-	mut p := pathlib.get('$testdir2/subdir/subsudir/test3.md')
+	mut p := pathlib.get('${testdir2}/subdir/subsudir/test3.md')
 	p.write('5')?
 	mut v2 := vault.do(testdir2)? // will remember the change
 	p.write('a')?

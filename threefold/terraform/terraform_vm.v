@@ -42,7 +42,7 @@ fn (mut vm TFVM) write(mut deployment TerraformDeployment) ? {
 	disks := vm.disks
 	public_ip := vm.public_ip
 	tfscript := $tmpl('templates/ubuntu.tf')
-	os.write_file('$deployment.path/vm_${vm.name}.tf', tfscript)?
+	os.write_file('${deployment.path}/vm_${vm.name}.tf', tfscript)?
 }
 
 // walk over all nodes available find a random one
@@ -57,11 +57,11 @@ fn (mut vm TFVM) node_finder(mut deployment TerraformDeployment, nodes []gridpro
 
 		mru_available_gb := node.available_resources.mru - node.used_resources.mru
 		if vm.memory_gb > mru_available_gb {
-			return error('VM $vm needs more memory than available in $node')
+			return error('VM ${vm} needs more memory than available in ${node}')
 		}
 
 		if vm.public_ip && node.nr_pub_ipv4 == 0 {
-			return error('VM $vm public ip address, is not available in $node')
+			return error('VM ${vm} public ip address, is not available in ${node}')
 		}
 	} else if nodes.len > 0 {
 		for node in nodes {
@@ -80,15 +80,15 @@ fn (mut vm TFVM) node_finder(mut deployment TerraformDeployment, nodes []gridpro
 		}
 
 		if res.len == 0 {
-			return error('${gp.nodes_print(nodes)}\nVM $vm requirements cannot be found in available nodes.')
+			return error('${gp.nodes_print(nodes)}\nVM ${vm} requirements cannot be found in available nodes.')
 		}
 
 		c := rand.int_in_range(0, res.len - 1)?
 		vm.tfgrid_node_id = nodes[c].id
 
-		println('node selected: $vm.tfgrid_node_id')
+		println('node selected: ${vm.tfgrid_node_id}')
 	} else {
-		return error('Cannot find node for vm:\n$vm')
+		return error('Cannot find node for vm:\n${vm}')
 	}
 }
 

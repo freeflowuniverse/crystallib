@@ -8,6 +8,6 @@ fn test_scan_internal() {
 		name: 'TestSite'
 		path: path
 	}
-	mut site := sites.site_new(site_args) or { panic('Error creating site: $err') }
-	site.scan() or { panic('Error scanning site: $err') }
+	mut site := sites.site_new(site_args) or { panic('Error creating site: ${err}') }
+	site.scan() or { panic('Error scanning site: ${err}') }
 }

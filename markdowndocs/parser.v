@@ -163,10 +163,10 @@ fn (mut parser Parser) eof() bool {
 
 fn (mut parser Parser) file_parse(path string) ! {
 	if !os.exists(path) {
-		return error("path: '$path' does not exist, cannot parse.")
+		return error("path: '${path}' does not exist, cannot parse.")
 	}
 
-	mut content := os.read_file(path) or { panic('Failed to load file $path') }
+	mut content := os.read_file(path) or { panic('Failed to load file ${path}') }
 	parser.doc.content = content
 	parser.doc.path = pathlib.get_file(path, false)!
 	parser.lines = content.split_into_lines()
@@ -208,7 +208,7 @@ fn (mut parser Parser) file_parse(path string) ! {
 		if mut llast is Action {
 			if line.starts_with(' ') || line.starts_with('\t') {
 				// starts with tab or space, means block continues for action
-				llast.content += '$line\n'
+				llast.content += '${line}\n'
 			} else {
 				parser.doc.items << DocStart{}
 			}
@@ -220,7 +220,7 @@ fn (mut parser Parser) file_parse(path string) ! {
 			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
 				parser.doc.items << DocStart{}
 			} else {
-				llast.content += '$line\n'
+				llast.content += '${line}\n'
 			}
 			parser.next()
 			continue

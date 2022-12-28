@@ -4,9 +4,9 @@ module tmux
 pub fn (mut i Installer) install() ! {
 	mut node := i.node
 	// install tmux if it was already done will return true
-	println(' - $node.name: install tmux')
+	println(' - ${node.name}: install tmux')
 	if !(i.state == .reset) && node.done_exists('install_tmux') {
-		println('    $node.name: was already done')
+		println('    ${node.name}: was already done')
 		return
 	}
 
@@ -15,7 +15,7 @@ pub fn (mut i Installer) install() ! {
 	}
 
 	// installs tmux and answers first prompt yes
-	node.exec('yes Y | apt install tmux') or { return error('Cannot install tmux.\n$err') }
+	node.exec('yes Y | apt install tmux') or { return error('Cannot install tmux.\n${err}') }
 
 	node.done_set('install_tmux', 'OK')!
 	return

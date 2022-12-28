@@ -33,7 +33,7 @@ pub struct SiteNewArgs {
 pub fn (mut sites Sites) site_new(args SiteNewArgs) !&Site {
 	mut p := pathlib.get_file(args.path, false)! // makes sure we have the right path
 	if !p.exists() {
-		return error('cannot find site on path: $args.path')
+		return error('cannot find site on path: ${args.path}')
 	}
 	p.path_normalize()! // make sure its all lower case and name is proper
 	mut name := args.name
@@ -64,14 +64,14 @@ fn (mut sites Sites) scan_recursive(mut path pathlib.Path) ! {
 					name = params_.get('name')!
 				}
 			}
-			println(' - site new: $path.path name:$name')
+			println(' - site new: ${path.path} name:${name}')
 			mut s := sites.site_new(path: path.path, name: name)!
 			// find all files in the site
 			s.scan()!
 			return
 		}
 		mut llist := path.list(recursive: false) or {
-			return error('cannot list: $path.path \n$error')
+			return error('cannot list: ${path.path} \n${error}')
 		}
 		for mut p_in in llist {
 			if p_in.is_dir() {
@@ -80,7 +80,7 @@ fn (mut sites Sites) scan_recursive(mut path pathlib.Path) ! {
 				}
 
 				sites.scan_recursive(mut p_in) or {
-					msg := 'Cannot process recursive on $p_in.path\n$err'
+					msg := 'Cannot process recursive on ${p_in.path}\n${err}'
 					// println(msg)
 					return error(msg)
 				}
@@ -107,7 +107,7 @@ pub fn (mut sites Sites) get(name string) !&Site {
 	if namelower in sites.sites {
 		return sites.sites[namelower]
 	}
-	return error('could not find site with name:$name')
+	return error('could not find site with name:${name}')
 }
 
 // fix all loaded sites
@@ -139,40 +139,38 @@ fn (mut sites Sites) image_name_find(name string) !string {
 	}
 	for _, mut site2 in sites.sites {
 		if site2.image_exists(namelower) {
-			return '$site2.name:$name'
+			return '${site2.name}:${name}'
 		}
 	}
 	return ''
 }
 
-//will find image, if no site specified will look for all sites
+// will find image, if no site specified will look for all sites
 pub fn (mut sites Sites) image_get(name string) !&File {
 	sitename, namelower := get_site_and_obj_name(name, true)!
-	errormsg := 'Could not find image with name: $name'	
+	errormsg := 'Could not find image with name: ${name}'
 	if sitename == '' {
 		for _, mut site2 in sites.sites {
 			if site2.image_exists(namelower) {
 				return site2.image_get(namelower)!
 			}
 		}
-		return error(errormsg) 
-	} 
+		return error(errormsg)
+	}
 	if sitename in sites.sites {
 		// means site exists
 		mut site3 := sites.sites[sitename]
 		return site3.image_get(namelower)!
 	} else {
 		sitenames := sites.sitenames().join('\n- ')
-		msg := 'Cannot find site with name:$sitename \nKnown sitenames are:\n\n$sitenames'
+		msg := 'Cannot find site with name:${sitename} \nKnown sitenames are:\n\n${sitenames}'
 		return error(errormsg)
 	}
 	return error(errormsg)
 }
 
 pub fn (mut sites Sites) image_exists(name string) bool {
-	sitename, mut namelower := get_site_and_obj_name(name, true) or{
-		return false
-	}
+	sitename, mut namelower := get_site_and_obj_name(name, true) or { return false }
 	if sitename == '' {
 		for _, mut site2 in sites.sites {
 			if site2.image_exists(namelower) {
@@ -180,7 +178,7 @@ pub fn (mut sites Sites) image_exists(name string) bool {
 			}
 		}
 		return false
-	} 
+	}
 	if sitename in sites.sites {
 		// means site exists
 		mut site2 := sites.sites[sitename]

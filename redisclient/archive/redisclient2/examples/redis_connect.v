@@ -4,10 +4,10 @@ import freeflowuniverse.crystallib.redisclient
 import time
 
 fn conn_for_thread(c int) {
-	println('thread $c')
+	println('thread ${c}')
 	// time.sleep(100 * time.millisecond)
 	mut redis := redisclient.core_get()
-	println('ok $c')
+	println('ok ${c}')
 	redis.set('test', 'some data') or { panic('set ' + err.str() + '\n' + c.str()) }
 	redis.get('test') or { panic('get ' + err.str() + '\n' + c.str()) }
 }
@@ -53,7 +53,7 @@ fn redistest_nothreads() ? {
 		if res {
 			continue
 		}
-		println('connect failed $c')
+		println('connect failed ${c}')
 	}
 
 	println('TEST NO THREADS OK')

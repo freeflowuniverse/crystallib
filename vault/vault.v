@@ -34,10 +34,10 @@ pub fn scan(name string, mut path pathlib.Path) ?Vault {
 	}
 	// now means we don't have the shelve yet, so need to create/load
 	if !path.exists() {
-		error('cannot find path, so cannot create shelve for $path.path')
+		error('cannot find path, so cannot create shelve for ${path.path}')
 	}
 	if !path.is_dir() {
-		return error('Can only create a shelve for a dir, now: $path.path')
+		return error('Can only create a shelve for a dir, now: ${path.path}')
 	}
 	vault.scan_recursive(mut path)?
 	return vault
@@ -67,10 +67,10 @@ pub fn (mut vault Vault) shelve_get(mut path pathlib.Path) ?Shelve {
 
 	// now means we don't have the shelve yet, so need to create/load
 	if !path.exists() {
-		error('cannot find path, so cannot create shelve for $path.path')
+		error('cannot find path, so cannot create shelve for ${path.path}')
 	}
 	if !path.is_dir() {
-		return error('Can only create a shelve for a dir, now: $path.path')
+		return error('Can only create a shelve for a dir, now: ${path.path}')
 	}
 
 	mut shelve := Shelve{
@@ -99,9 +99,9 @@ pub fn (mut vault Vault) delete() ? {
 
 // walk over the vault and re-shelve all dir's as owned by the vault
 pub fn (mut vault Vault) superlist() string {
-	mut out := '$vault.name\n'
+	mut out := '${vault.name}\n'
 	for mut shelve in vault.shelves {
-		out += '$shelve.superlist()\n'
+		out += '${shelve.superlist()}\n'
 	}
 	return out
 }

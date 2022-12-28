@@ -27,8 +27,8 @@ fn (action Action) html() string {
 }
 
 fn (action Action) str() string {
-	p := '$action.params'
-	return '**** ACTION $action.name\n${texttools.indent(p, '    ')}'
+	p := '${action.params}'
+	return '**** ACTION ${action.name}\n${texttools.indent(p, '    ')}'
 }
 
 // is set of actions in a codeblock
@@ -55,7 +55,7 @@ fn (actions Actions) html() string {
 fn (actions Actions) str() string {
 	mut out := '**** ACTIONS\n'
 	for action in actions.actions {
-		out += '  ** ACTION $action.name\n'
+		out += '  ** ACTION ${action.name}\n'
 	}
 	return out
 }
