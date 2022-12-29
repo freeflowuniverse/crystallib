@@ -1,4 +1,4 @@
-module resp
+module encoder
 import time
 
 pub struct Encoder {

@@ -2,6 +2,8 @@
 
 Made for performance and smallest possible binary size
 
+Its a very simple implementation, it just follows the order of the object and concatenate binary representations of the original information. This should lead in very fast serialization and smalles possible binary format
+
 downsides
 
 - if mistakes are made in encoding, data will be lost, its very minimal

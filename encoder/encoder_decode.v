@@ -1,4 +1,4 @@
-module resp
+module encoder
 
 
 pub struct Decoder {
@@ -18,8 +18,10 @@ pub fn decoder_new(data []u8) Decoder {
 
 
 //adds u16 length of string in bytes + the bytes
-pub fn (mut b Encoder) get_u8() u8 {
+pub fn (mut d Decoder) get_u8() u8 {
 	//remove first  byte, this corresponds to u8, so the data bytestring becomes 1 byte shorter	
 }
 
-//TODO: implement
+//TODO: implement all other types
+
+
