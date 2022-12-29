@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.resp
+import freeflowuniverse.crystallib.encoder
 import crypto.ed25519
 
 struct AStruct{
@@ -8,7 +8,7 @@ struct AStruct{
 	nr int
 }
 
-fn do() ? {
+fn do1() ? {
 	mut b := encoder.encoder_new()
 	a:=AStruct{
 		items:(['a', 'b']
@@ -31,8 +31,29 @@ fn do() ? {
 
 }
 
+fn do1() ? {
+
+	a:=AStruct{
+		items:(['a', 'b']
+		nr: 10
+		privkey: []u8
+	}
+
+	serialize_data:=encoder.encode(a)
+
+	b := encoder.decode(AStruct, serialize_data) or {
+	eprintln('Failed to decode, error: ${err}')
+	return
+}
+
+
+
+}
+
+
 fn main() {
-	do() or { panic(err) }
+	do1() or { panic(err) }
+	do2() or { panic(err) }
 }
 
 
