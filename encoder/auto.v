@@ -2,7 +2,7 @@ module encoder
 
 //example see https://github.com/vlang/v/blob/master/examples/compiletime/reflection.v
 
-fn encode[T](obj T) {
+pub fn encode[T](obj T) {
 	mut d:=encode_new()
 	// compile-time `for` loop
 	// T.fields gives an array of a field metadata type
@@ -18,7 +18,7 @@ fn encode[T](obj T) {
 }
 
 
-fn decode[T](data []u8) T {
+pub fn decode[T](data []u8) T {
 	mut d:=decoder_new(data)
 	mut result := T{}
 	// compile-time `for` loop
@@ -34,4 +34,4 @@ fn decode[T](data []u8) T {
 	return result
 }
 
->>TODO: complete, the recursive behavior will be little tricky
+//TODO: complete, the recursive behavior will be little tricky

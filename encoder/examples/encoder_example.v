@@ -11,9 +11,9 @@ struct AStruct{
 fn do1() ? {
 	mut b := encoder.encoder_new()
 	a:=AStruct{
-		items:(['a', 'b']
+		items: ['a', 'b']
 		nr: 10
-		privkey: []u8
+		privkey: []u8{}
 	}
 	b.add_list_string(a.items)
 	b.add_int(a.nr)
@@ -28,15 +28,17 @@ fn do1() ? {
 	a2.privkey = b.get_bytes()
 
 	//TODO: do an assert and copy the code to the autotests
-
+	// assert a.items == a2.items
+    // assert a.nr == a2.nr
+	// assert a.privkey == a2.privkey
 }
 
-fn do1() ? {
+fn do2() ? {
 
 	a:=AStruct{
-		items:(['a', 'b']
+		items: ['a', 'b']
 		nr: 10
-		privkey: []u8
+		privkey: []u8{}
 	}
 
 	serialize_data:=encoder.encode(a)
@@ -57,4 +59,4 @@ fn main() {
 }
 
 
->TODO: adjust
+//TODO: adjust

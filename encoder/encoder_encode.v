@@ -3,13 +3,14 @@ import time
 
 pub struct Encoder {
 pub mut:
-	version: u8=1 //is important
+	version u8=1 //is important
 	data []u8
 }
 
 pub fn encoder_new() Encoder {
 	mut e:=Encoder{}
 	e.add_u8(e.version) //make sure when we decode, we need to check that version corresponds !
+	return e
 }
 
 
@@ -51,7 +52,7 @@ pub fn (mut b Encoder) add_list_string(data []string) {
 	}
 	b.add_u16(data.len.u16())
 	for item in data{
-		v.add_string(item)
+		b.add_string(item)
 	}
 }
 
@@ -61,7 +62,7 @@ pub fn (mut b Encoder) add_list_int(data []int) {
 	}
 	b.add_u16(data.len.u16())//how many items in list
 	for item in data{
-		v.add_int(item)
+		b.add_int(item)
 	}
 }
 
@@ -71,7 +72,7 @@ pub fn (mut b Encoder) add_list_u8(data []u8) {
 	}
 	b.add_u16(data.len.u16())//how many items in list
 	for item in data{
-		v.add_u8(item)
+		b.add_u8(item)
 	}
 }
 
@@ -81,7 +82,7 @@ pub fn (mut b Encoder) add_list_u16(data []u16) {
 	}
 	b.add_u16(data.len.u16())//how many items in list
 	for item in data{
-		v.add_u16(item)
+		b.add_u16(item)
 	}
 }
 
@@ -91,7 +92,7 @@ pub fn (mut b Encoder) add_list_u32(data []u32) {
 	}
 	b.add_u16(data.len.u16())//how many items in list
 	for item in data{
-		v.add_u32(item)
+		b.add_u32(item)
 	}
 }
 
@@ -100,9 +101,9 @@ pub fn (mut b Encoder) add_map_bytes(data map[string][]u8) {
 	b.add_u16(data.len.u16()) //max nr of items in the map
 	for key,val in data{
 		b.add_u16(key.len.u16())
-		v.add_string(key)
+		b.add_string(key)
 		b.add_u16(val.len.u16())
-		v.add_bytes(val)
+		b.add_bytes(val)
 	}
 }
 
@@ -111,8 +112,8 @@ pub fn (mut b Encoder) add_map_string(data map[string]string) {
 	b.add_u16(data.len.u16()) //max nr of items in the map
 	for key,val in data{
 		b.add_u16(key.len.u16())
-		v.add_string(key)
+		b.add_string(key)
 		b.add_u16(val.len.u16())
-		v.add_string(val)
+		b.add_string(val)
 	}
 }
