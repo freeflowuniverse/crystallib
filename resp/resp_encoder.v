@@ -78,6 +78,13 @@ pub fn r_int(value int) RValue {
 	})
 }
 
+pub fn r_u32(value u32) RValue {
+	return RValue(RInt{
+		value: int(value)
+	})
+}
+
+
 // might be that this does no exist for redis, lets check
 // if it doesn't exist lets create it
 pub fn r_float(value f64) RValue {
@@ -93,6 +100,17 @@ pub fn r_list_int(values []int) RValue {
 		values: ll
 	})
 }
+
+pub fn r_list_u32(values []u32) RValue {
+	mut ll := []RValue{}
+	for v in values {
+		ll << r_u32(v)
+	}
+	return RValue(RArray{
+		values: ll
+	})
+}
+
 
 pub fn r_list_string(values []string) RValue {
 	mut ll := []RValue{}

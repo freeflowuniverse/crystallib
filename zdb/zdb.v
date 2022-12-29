@@ -12,12 +12,14 @@ pub mut:
 //   localhost:6379
 //   /tmp/redis-default.sock
 pub fn get(addr string, auth string, namespace string) !ZDB {
-	// println(" - ZDB get: $addr")
+	println(" - ZDB get: addr:$addr namespace:$namespace")
 	mut redis := redisclient.get(addr)!
 	mut zdb := ZDB{
 		redis: redis
 	}
-	zdb.redis.send_expect_ok(['AUTH', auth])!
+	if auth!=""{
+		zdb.redis.send_expect_ok(['AUTH', auth])!
+	}
 	mut namespaces := zdb.redis.send_expect_list_str(['NSLIST'])!
 	namespaces.map(it.to_lower())
 	if namespace.to_lower() !in namespaces {
@@ -80,9 +82,23 @@ pub fn (mut zdb ZDB) nsdel(namespace string) !string {
 	return i
 }
 
-pub fn (mut zdb ZDB) nsinfo(namespace string) !string {
+pub fn (mut zdb ZDB) nsinfo(namespace string) !map[string]string {
 	i := zdb.redis.send_expect_str(['NSINFO', namespace])!
-	return i
+	mut res:= map[string]string{}
+
+	for line in i.split_into_lines(){
+		if line.starts_with("#"){
+			continue
+		}
+		if !(line.contains(":")){
+			continue
+		}
+		splitted := line.split(":")
+		key := splitted[0]
+		val := splitted[1]
+		res[key.trim_space()] = val.trim_space()
+	}
+	return res
 }
 
 pub fn (mut zdb ZDB) nslist() ![]string {
