@@ -27,4 +27,12 @@ pub fn (mut d Decoder) get_u8() u8 {
 
 //TODO: implement all other types
 
+pub fn (mut d Decoder) get_string() !string {
+	//TODO
+	return ""
+}
 
+pub fn (mut d Decoder) get_int() !int {
+	//TODO
+	return 0
+}
