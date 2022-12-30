@@ -46,9 +46,9 @@ pub fn decode[T](data []u8) !T {
 	$for field in T.fields {
 		$if field.typ is string {
 			// $(string_expr) produces an identifier
-			result.$(field.name) = d.get_string()!
+			result.$(field.name) = d.get_string()
 		} $else $if field.typ is int {
-			result.$(field.name) = d.get_int()!
+			result.$(field.name) = d.get_int()
 		}
 	}
 	return result

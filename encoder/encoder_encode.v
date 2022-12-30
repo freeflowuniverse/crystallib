@@ -35,11 +35,15 @@ pub fn (mut b Encoder) add_u8(data u8) {
 }
 
 pub fn (mut b Encoder) add_u16(data u16) {
-	bin.little_endian_put_u16(mut b.data, data)
+	mut d:= []u8{len: 2}
+	bin.little_endian_put_u16(mut d, data)
+	b.data << d
 }
 
 pub fn (mut b Encoder) add_u32(data u32) {
-	bin.little_endian_put_u32(mut b.data, data)
+	mut d:= []u8{len: 4}
+	bin.little_endian_put_u32(mut d, data)
+	b.data << d
 }
 
 pub fn (mut b Encoder) add_int(data int) {
