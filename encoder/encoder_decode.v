@@ -48,3 +48,48 @@ pub fn (mut d Decoder) get_u32() u32 {
 	d.data.delete_many(0, 4)
 	return bin.little_endian_u32(v)
 }
+
+pub fn (mut d Decoder) get_list_string() []string {
+	n:=d.get_u16()
+	mut v:=[]string{len: int(n)}
+	for i in 0..n {
+		v[i] = d.get_string()
+	}
+	return v
+}
+
+pub fn (mut d Decoder) get_list_int() []int {
+	n:=d.get_u16()
+	mut v:=[]int{len: int(n)}
+	for i in 0..n {
+		v[i] = d.get_int()
+	}
+	return v
+}
+
+pub fn (mut d Decoder) get_list_u8() []u8 {
+	n:=d.get_u16()
+	mut v:=[]u8{len: int(n)}
+	for i in 0..n {
+		v[i] = d.get_u8()
+	}
+	return v
+}
+
+pub fn (mut d Decoder) get_list_u16() []u16 {
+	n:=d.get_u16()
+	mut v:=[]u16{len: int(n)}
+	for i in 0..n {
+		v[i] = d.get_u16()
+	}
+	return v
+}
+
+pub fn (mut d Decoder) get_list_u32() []u32 {
+	n:=d.get_u16()
+	mut v:=[]u32{len: int(n)}
+	for i in 0..n {
+		v[i] = d.get_u32()
+	}
+	return v
+}

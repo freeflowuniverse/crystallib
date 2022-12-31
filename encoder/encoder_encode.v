@@ -24,6 +24,10 @@ pub fn (mut b Encoder) add_string(data string) {
 	b.data << data.bytes()
 }
 
+pub fn (mut b Encoder) add_int(data int) {
+	b.add_u32(u32(data))
+}
+
 //add bytes or bytestring
 pub fn (mut b Encoder) add_bytes(data []u8) {
 	b.add_u32(u32(data.len))
@@ -44,10 +48,6 @@ pub fn (mut b Encoder) add_u32(data u32) {
 	mut d:= []u8{len: 4}
 	bin.little_endian_put_u32(mut d, data)
 	b.data << d
-}
-
-pub fn (mut b Encoder) add_int(data int) {
-	b.add_u32(u32(data))
 }
 
 pub fn (mut b Encoder) add_time(data time.Time) {
