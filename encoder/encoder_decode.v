@@ -98,3 +98,25 @@ pub fn (mut d Decoder) get_list_u32() []u32 {
 	}
 	return v
 }
+
+pub fn (mut d Decoder) get_map_string() map[string]string {
+	n := d.get_u16()
+	mut v := map[string]string{}
+	for _ in 0..n {
+		key := d.get_string()
+		val := d.get_string()
+		v[key] = val
+	}
+	return v
+}
+
+pub fn (mut d Decoder)get_map_bytes() map[string][]u8 {
+	n:=d.get_u16()
+	mut v:=map[string][]u8{}
+	for _ in 0..n {
+		key:=d.get_string()
+		val:=d.get_bytes()
+		v[key] = val
+	}
+	return v
+}
