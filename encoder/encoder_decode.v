@@ -18,6 +18,16 @@ pub fn decoder_new(data []u8) Decoder {
 	return e
 }
 
+pub fn (mut d Decoder) get_string() string {
+	n:=d.get_u16()
+	v:=d.data[..n]
+	d.data.delete_many(0, n)
+	return v.bytestr()
+}
+
+pub fn (mut d Decoder) get_int() int {
+	return int(d.get_u32())
+}
 
 //adds u16 length of string in bytes + the bytes
 pub fn (mut d Decoder) get_u8() u8 {
@@ -27,25 +37,14 @@ pub fn (mut d Decoder) get_u8() u8 {
 	return v
 }
 
-//TODO: implement all other types
-
-pub fn (mut d Decoder) get_string() string {
-	//TODO
-	return ""
-}
-
-pub fn (mut d Decoder) get_int() int {
-	return int(d.get_u32())
-}
-
 pub fn (mut d Decoder) get_u16() u16 {
-	v:=d.data[0..1]
+	v:=d.data[..2]
 	d.data.delete_many(0, 2)
 	return bin.little_endian_u16(v)
 }
 
 pub fn (mut d Decoder) get_u32() u32 {
-	v:=d.data[0..3]
+	v:=d.data[..4]
 	d.data.delete_many(0, 4)
 	return bin.little_endian_u32(v)
 }

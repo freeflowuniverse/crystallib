@@ -1,7 +1,19 @@
 module encoder
 
-// fn test_string() {
-// }
+fn test_string() {
+	mut e := encoder.encoder_new()
+	e.add_string('a')
+	assert e.data == [e.version, 1, 0, 97]
+	e.add_string('bc')
+	assert e.data == [e.version, 1, 0, 97, 2, 0, 98, 99]
+	e.add_string('def')
+	assert e.data == [e.version, 1, 0, 97, 2, 0, 98, 99, 3, 0, 100, 101, 102]
+
+	mut d := encoder.decoder_new(e.data)
+	assert d.get_string() == 'a'
+	assert d.get_string() == 'bc'
+	assert d.get_string() == 'def'
+}
 
 fn test_int() {
 	mut e := encoder.encoder_new()
