@@ -29,6 +29,13 @@ pub fn (mut d Decoder) get_int() int {
 	return int(d.get_u32())
 }
 
+pub fn (mut d Decoder) get_bytes() []u8 {
+	n:=int(d.get_u32())
+	v:=d.data[..n]
+	d.data.delete_many(0, n)
+	return v
+}
+
 //adds u16 length of string in bytes + the bytes
 pub fn (mut d Decoder) get_u8() u8 {
 	//remove first  byte, this corresponds to u8, so the data bytestring becomes 1 byte shorter	
@@ -69,10 +76,8 @@ pub fn (mut d Decoder) get_list_int() []int {
 
 pub fn (mut d Decoder) get_list_u8() []u8 {
 	n:=d.get_u16()
-	mut v:=[]u8{len: int(n)}
-	for i in 0..n {
-		v[i] = d.get_u8()
-	}
+	v:=d.data[..n]
+	d.data.delete_many(0, n)
 	return v
 }
 

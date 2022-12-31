@@ -79,9 +79,7 @@ pub fn (mut b Encoder) add_list_u8(data []u8) {
 		panic("list cannot have more than 64000 items.")
 	}
 	b.add_u16(u16(data.len))//how many items in list
-	for item in data{
-		b.add_u8(item)
-	}
+	b.data << data
 }
 
 pub fn (mut b Encoder) add_list_u16(data []u16) {

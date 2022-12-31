@@ -30,6 +30,17 @@ fn test_int() {
 	assert d.get_int() == 0xfdf2e68f
 }
 
+fn test_bytes() {
+	list := 'abcdef'.bytes()
+
+	mut e := encoder.encoder_new()
+	e.add_list_u8(list)
+	assert e.data == [e.version, 6, 0, 97, 98, 99, 100, 101, 102]
+
+	mut d := encoder.decoder_new(e.data)
+	assert d.get_list_u8() == list
+}
+
 fn test_u8() {
 	mut e := encoder.encoder_new()
 	e.add_u8(153)
