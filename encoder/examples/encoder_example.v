@@ -1,53 +1,55 @@
 module main
 
-import freeflowuniverse.crystallib.encoder
+import encoder
 import crypto.ed25519
 
 struct AStruct{
+mut:
 	items []string
 	nr int
+	privkey []u8
 }
 
-fn do1() ? {
-	mut b := encoder.encoder_new()
+fn do1() ! {
+	mut e := encoder.encoder_new()
 	a:=AStruct{
-		items:(['a', 'b']
+		items: ['a', 'b']
 		nr: 10
-		privkey: []u8
+		privkey: []u8{len: 5, init: u8(0xf8)}
 	}
-	b.add_list_string(a.items)
-	b.add_int(a.nr)
-	pubkey, privkey := ed25519.generate_key()?
-	b.add_bytes(privkey)
+	e.add_list_string(a.items)
+	e.add_int(a.nr)
+	_, privkey := ed25519.generate_key()!
+	e.add_bytes(privkey)
 
-	println(b.data)
-	a2:=AStruct{}
-	//TODO: needs to be implemented
-	a2.items = b.get_list_string()
-	a2.nr = b.get_int()
-	a2.privkey = b.get_bytes()
+	println(e.data)
+	mut d := encoder.decoder_new(e.data)
+	mut aa:=AStruct{}
+	aa.items = d.get_list_string()
+	aa.nr = d.get_int()
+	aa.privkey = d.get_bytes()
+
+	assert a == aa
 
 	//TODO: do an assert and copy the code to the autotests
-
+	assert a.items == aa.items
+    assert a.nr == aa.nr
+	assert a.privkey == aa.privkey
 }
 
-fn do1() ? {
-
+fn do2() ! {
 	a:=AStruct{
-		items:(['a', 'b']
+		items: ['a', 'b']
 		nr: 10
-		privkey: []u8
+		privkey: []u8{len: 5, init: u8(0xf8)}
 	}
 
 	serialize_data:=encoder.encode(a)
 
-	b := encoder.decode(AStruct, serialize_data) or {
-	eprintln('Failed to decode, error: ${err}')
-	return
-}
-
-
-
+	_ := encoder.decode[AStruct](serialize_data) or {
+		eprintln('Failed to decode, error: ${err}')
+		return
+	}
 }
 
 
@@ -57,4 +59,4 @@ fn main() {
 }
 
 
->TODO: adjust
+//TODO: adjust
