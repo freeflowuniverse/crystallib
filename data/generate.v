@@ -1,6 +1,6 @@
 module data
 
-import os
+// import os
 
 const codepath_file = @FILE
 
@@ -15,6 +15,7 @@ fn clean(txt string) string {
 pub fn generate(path_in string, path_out string)! CodeGenerator {
 	mut generator:=new(path_in,path_out)!
 	generator.scan()!
+	generator.process()!
 	generator.generate()!
 	return generator
 }

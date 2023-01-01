@@ -115,7 +115,7 @@ fn (mut generator CodeGenerator) parse(mut p pathlib.Path,mut domain &Domain, mu
 			mut params := params.text_to_params(line)!
 			model_last=Model{root:true}
 			if params.exists("inherit"){
-				model_last.inherit:=params.get("inherit")!
+				model_last.inherit=params.get("inherit")!
 			}
 			parserstate=.modelfound
 			continue
@@ -193,22 +193,24 @@ fn (mut generator CodeGenerator) parse(mut p pathlib.Path,mut domain &Domain, mu
 			model_last.fields<<field
 
 		}
-
 	}
 }
 
-fn (mut generator CodeGenerator) porcess() ! {
-	for mut domain in generator.domains{
-		mut domain_path:=generator.path_out.dir_get_new(domain.name)! //make sure path for 
+fn (mut generator CodeGenerator) process() ! {
+	for mut domain in generator.domains{		
 		for mut actor in domain.actors{
-			mut actor_path:=domain_path.dir_get_new(actor.name)!
 			for mut model in actor.models{
+				//resolve the inherited models
 				if model.inherit.len>0{
-					mut model_inherit:=domain.model_get(modelname_inherit)!
-					for _,field in model_inherit.fields{
+					actor.model_get_priority(mut generator, mut domain, model.inherit)! //will look over multiple levels to find it
+					for _,field in model.fields{
 						//always needs to be inserted at beginning, this to minimize chance on corruption
-						model_last.fields.prepend(field)
+						model.fields.prepend(field)
 					}					
+				}
+				//resolve the linked models & other types
+				for mut field in model.fields{
+					field.crtype = generator.typerecognizer(mut domain,mut actor,field)!
 				}
 			}
 		}

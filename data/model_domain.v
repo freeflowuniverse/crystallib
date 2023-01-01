@@ -12,7 +12,7 @@ pub mut:
 pub fn (mut d Domain) model_find(name0 string) []Model{
 	name:=texttools.name_fix(name0)
 	mut res := []Model{}
-	for _,actor in d.actors{
+	for actor in d.actors{
 		for model in actor.models{
 			if model.name_lower == name{
 			res << model

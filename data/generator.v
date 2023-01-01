@@ -1,7 +1,7 @@
 module data
-import freeflowuniverse.crystallib.texttools
-import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.params
+// import freeflowuniverse.crystallib.texttools
+// import freeflowuniverse.crystallib.pathlib
+// import freeflowuniverse.crystallib.params
 
 
 fn (mut generator CodeGenerator) generate() ! {
