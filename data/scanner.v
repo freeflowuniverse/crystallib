@@ -100,10 +100,14 @@ fn (mut generator CodeGenerator) parse(mut p pathlib.Path,mut domain &Domain, mu
 	mut ispub:=false
 	mut ismut:=false
 	mut comments:=[]string{}
+	mut imports:=[]string{}
 	for mut line in content.split_into_lines(){
 		// println(" -- $line $parserstate commentslen:${comments.len}")
 		if line.starts_with("//"){
 			comments<<line.all_after_first("//").trim_space()
+		}
+		if line.starts_with("import "){
+			imports << line
 		}
 		if line.starts_with("[root"){
 			// example [root ; domain:'generic' ; actor:'usermanager' ; features:'remarks,timestamps,tags,guid' ; index:'tags,name']
@@ -111,11 +115,7 @@ fn (mut generator CodeGenerator) parse(mut p pathlib.Path,mut domain &Domain, mu
 			mut params := params.text_to_params(line)!
 			model_last=Model{root:true}
 			if params.exists("inherit"){
-				modelname_inherit:=params.get("inherit")!
-				mut model_inherit:=domain.model_get(modelname_inherit)!
-				for _,field in model_inherit.fields{
-					model_last.fields<<field
-				}
+				model_last.inherit:=params.get("inherit")!
 			}
 			parserstate=.modelfound
 			continue
@@ -154,12 +154,9 @@ fn (mut generator CodeGenerator) parse(mut p pathlib.Path,mut domain &Domain, mu
 				model_last.domain = domain.name
 				model_last.actor = actor.name
 				model_last.path = p
+				model_last.imports = imports
 				comments=[]string{}
-				actor.models<<&model_last
-				// if actor.models.last().name_lower=="user"{
-				// 	println(actor.models.last())
-				// 	panic("sdsd")
-				// }				
+				actor.models<<&model_last		
 				model_last = Model{}
 				parserstate=.init
 				continue
@@ -174,6 +171,7 @@ fn (mut generator CodeGenerator) parse(mut p pathlib.Path,mut domain &Domain, mu
 			field.name=parts[0]
 			field.name_lower=texttools.name_fix(field.name)
 			field.typestr=parts[1]
+			line = parts[2..].join(" ") //needed to go after the type and then see for rest of line
 			if line.contains("//"){
 				field.comments = line.all_after_first("//")
 			}
@@ -185,6 +183,9 @@ fn (mut generator CodeGenerator) parse(mut p pathlib.Path,mut domain &Domain, mu
 				field.tag=params.exists("tag")
 				field.index=params.exists("index")
 				field.strskip=params.exists("strskip")
+				if params.exists("model"){
+					field.modellocation=params.get("model")!
+				}
 				if line.contains("str: skip") || line.contains("str:skip"){
 					field.strskip=true
 				}
@@ -196,3 +197,22 @@ fn (mut generator CodeGenerator) parse(mut p pathlib.Path,mut domain &Domain, mu
 	}
 }
 
+fn (mut generator CodeGenerator) porcess() ! {
+	for mut domain in generator.domains{
+		mut domain_path:=generator.path_out.dir_get_new(domain.name)! //make sure path for 
+		for mut actor in domain.actors{
+			mut actor_path:=domain_path.dir_get_new(actor.name)!
+			for mut model in actor.models{
+				if model.inherit.len>0{
+					mut model_inherit:=domain.model_get(modelname_inherit)!
+					for _,field in model_inherit.fields{
+						//always needs to be inserted at beginning, this to minimize chance on corruption
+						model_last.fields.prepend(field)
+					}					
+				}
+			}
+		}
+	}
+
+
+}
