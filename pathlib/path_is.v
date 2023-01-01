@@ -6,7 +6,7 @@ const image_exts_basic = ['jpg', 'jpeg', 'png']
 
 pub fn (path Path) is_dir() bool {
 	if path.cat == Category.unknown {
-		panic('did not check path yet')
+		panic('did not check path yet, category unknown')
 	}
 	return path.cat == Category.dir || path.cat == Category.linkdir
 }

@@ -1,44 +1,53 @@
 module actionrunner
 
-import freeflowuniverse.crystallib.actionparser
+// import freeflowuniverse.crystallib.actionparser
+import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.console
-import freeflowuniverse.crystallib.texttools
+// import freeflowuniverse.crystallib.texttools
 import time
 import os
+import rand
 
 // the main process which coordinate alls
 [heap]
 pub struct Scheduler {
 pub mut:
-	sessions map[string]SchedulerSession
 	logger   console.Logger
+	path pathlib.Path
 }
 
-pub fn scheduler_new() Scheduler {
-	return Scheduler{}
+pub fn scheduler_new(path string) !Scheduler {
+	mut p:=pathlib.get_dir(path,true)!
+	mut scheduler:= Scheduler{path:p}
+	scheduler.init()!
+	// scheduler.start()!
+	return scheduler
 }
 
-fn (mut scheduler Scheduler) session_new(name string) !SchedulerSession {
-	scheduler.sessions[name] = SchedulerSession{
-		name: name
+// creates folders necessary for actionrunner
+fn (mut s Scheduler) init()! {
+	folders := ['init', 'tostart', 'recurring', 'scheduled', 'active', 'done', 'state', 'logs',
+		'error']
+	for folder in folders {
+		os.mkdir_all('${s.path.path}/${folder}')!
 	}
-	mut session := scheduler.sessions[name]
-	mut gitrunner := new_gitrunner()
-	session.gitrunner = gitrunner
-	spawn gitrunner.run()
-
-	// mut booksrunner := new_booksrunner()
-	// session.channels["books"] = gitrunner
-	// go booksrunner.run()
-
-	time.sleep(200 * time.millisecond) // wait 0.2 sec to make sure its operational
-	return session
 }
 
-fn (mut scheduler Scheduler) session_get(name string) !SchedulerSession {
-	// TODO: more checks
-	if !scheduler.sessions.keys().contains('name') {
-		return error("Session with name '${name}' not found.")
+//give a action file
+//timeout in seconds
+fn (mut s Scheduler) job_start(content string, dependencies []string, timeout u16)! {
+
+	mut job:= ActionJob {
+		domain:
+		actor:
+		action: name
+		params: params
+		start: time.now()
+		guid: rand.uuid_v4()
+		state: ActionJobState{}
+		// grace_period:time.Duration
+		dependencies:dependencies
+		timeout:timeout
 	}
-	return scheduler.sessions[name]
+
 }

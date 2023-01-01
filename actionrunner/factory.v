@@ -31,31 +31,31 @@ pub fn run_env() ! {
 	}
 }
 
-// run from a path
-pub fn run(path string) ! {
-	if !os.exists(path) {
-		return error('cannot find path:${path} for actionrunner')
-	}
-	mut s := scheduler_new()
-	mut session := s.session_new(path)!
-	session.run_from_dir(path)!
-}
+// // run from a path
+// pub fn run(path string) ! {
+// 	if !os.exists(path) {
+// 		return error('cannot find path:${path} for actionrunner')
+// 	}
+// 	mut s := scheduler_new()
+// 	mut session := s.session_new(path)!
+// 	session.run_from_dir(path)!
+// }
 
-// parse an actionrunner file
-pub fn run_file(name string, path string) ! {
-	if !os.exists(path) {
-		return error('cannot find path:${path} for actionrunner')
-	}
-	content := os.read_file(path)!
-	mut s := run_content(name, content)!
-	println(s)
-}
+// // parse an actionrunner file
+// pub fn run_file(name string, path string) ! {
+// 	if !os.exists(path) {
+// 		return error('cannot find path:${path} for actionrunner')
+// 	}
+// 	content := os.read_file(path)!
+// 	mut s := run_content(name, content)!
+// 	println(s)
+// }
 
-// do it all in one go
-// create scheduler, create session, run the content, and return the session at the end
-pub fn run_content(name string, content string) !SchedulerSession {
-	mut s := scheduler_new()
-	mut session := s.session_new(name)!
-	session.run(content)!
-	return session
-}
+// // do it all in one go
+// // create scheduler, create session, run the content, and return the session at the end
+// pub fn run_content(name string, content string) !SchedulerSession {
+// 	mut s := scheduler_new()
+// 	mut session := s.session_new(name)!
+// 	session.run(content)!
+// 	return session
+// }

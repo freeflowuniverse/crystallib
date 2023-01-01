@@ -81,7 +81,7 @@ fn (mut site Site) scan_internal(mut p pathlib.Path) ! {
 			// should support dirs only
 			link_real_path := p_in.realpath() // this is with the symlink resolved
 			site_abs_path := site.path.absolute()
-			if p.extension_lower() == 'md' {
+			if p_in.extension_lower() == 'md' {
 				// means we are linking pages,this should not be done, need or change
 				site.error(path: p_in, msg: 'a markdown file should not be linked', cat: .unknown)
 				continue

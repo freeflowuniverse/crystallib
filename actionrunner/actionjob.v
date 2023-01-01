@@ -41,7 +41,7 @@ pub mut:
 	grace_period time.Duration
 	error        string
 	db           map[string]string // used to keep state between
-	dependencies []guid       // list the dependencies
+	dependencies []string       // list the dependencies
 	timeout      u16 // time in seconds, 0 means we wait for ever
 }
 
