@@ -54,7 +54,7 @@ pub fn (mut path Path) file_get_new(tofind string) !Path {
 		return error('is not a dir or dir does not exist: ${path.path}')
 	}			
 	mut p:=path.file_get(tofind) or {
-		return pathlib.get_file(path.path,true)!
+		return pathlib.get_file("${path.path}/$tofind",true)!
 	}
 	return p
 }
@@ -167,7 +167,7 @@ pub fn (mut path Path) dir_get_new(tofind string) !Path {
 		return error('is not a dir or dir does not exist: ${path.path}')
 	}	
 	mut p:=path.dir_get(tofind) or {
-		return pathlib.get_dir(path.path,true)!
+		return pathlib.get_dir("${path.path}/$tofind",true)!
 	}
 	return p
 }

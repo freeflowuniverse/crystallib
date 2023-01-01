@@ -12,6 +12,8 @@ pub mut:
 	fields	[]Field
 	path pathlib.Path
 	comments []string
+	imports []string
+	inherit string //to see which fields we need to add from inheritance
 
 }
 
@@ -36,6 +38,9 @@ pub fn (mut m Model) field_get(name0 string) !Field{
 }
 
 pub fn (mut m Model) comments_str() string{
+	if m.comments.len==0{
+		return ""
+	}
 	mut out:=[]string{}
 	for c in m.comments{
 		out << "// $c"

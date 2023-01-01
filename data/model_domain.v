@@ -9,9 +9,9 @@ pub mut:
 	actors []&Actor	
 }
 
-pub fn (mut d Domain) model_find(name0 string) []&Model{
+pub fn (mut d Domain) model_find(name0 string) []Model{
 	name:=texttools.name_fix(name0)
-	mut res := []&Model{}
+	mut res := []Model{}
 	for _,actor in d.actors{
 		for model in actor.models{
 			if model.name_lower == name{
@@ -22,7 +22,7 @@ pub fn (mut d Domain) model_find(name0 string) []&Model{
 	return res
 }
 
-pub fn (mut d Domain) model_get(name0 string) !&Model{
+pub fn (mut d Domain) model_get(name0 string) !Model{
 	mut res:=d.model_find(name0)
 	if res.len==1{
 		return res[0]

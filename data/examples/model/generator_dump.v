@@ -9,14 +9,14 @@ data.CodeGenerator{
         cat: dir
         exist: yes
     }
-    domains: {'usermgmt': data.Domain{
+    domains: [data.Domain{
         name: 'usermgmt'
         path: pathlib.Path{
             path: '/Users/despiegk1/code/github/freeflowuniverse/crystallib/data/examples/model_in/domain_usermgmt'
             cat: dir
             exist: yes
         }
-        actors: {'generic': data.Actor{
+        actors: [data.Actor{
             name: 'generic'
             models: [data.Model{
                 root: false
@@ -59,7 +59,7 @@ data.CodeGenerator{
                     ismut: true
                     name: 'timestamp_creation'
                     name_lower: 'timestamp_creation'
-                    typestr: 'u32'
+                    typestr: 'time.Time'
                     tag: false
                     index: false
                     strskip: false
@@ -69,7 +69,7 @@ data.CodeGenerator{
                     ismut: true
                     name: 'timestamp_modified'
                     name_lower: 'timestamp_modified'
-                    typestr: 'u32'
+                    typestr: 'time.Time'
                     tag: false
                     index: false
                     strskip: false
@@ -90,14 +90,15 @@ data.CodeGenerator{
                     cat: file
                     exist: yes
                 }
-                comments: ''
+                comments: []
+                imports: ['import time']
             }]
             path: pathlib.Path{
                 path: '/Users/despiegk1/code/github/freeflowuniverse/crystallib/data/examples/model_in/domain_usermgmt/actor_generic'
                 cat: dir
                 exist: yes
             }
-        }, 'usermanager': data.Actor{
+        }, data.Actor{
             name: 'usermanager'
             models: [data.Model{
                 root: true
@@ -140,7 +141,7 @@ data.CodeGenerator{
                     ismut: true
                     name: 'timestamp_creation'
                     name_lower: 'timestamp_creation'
-                    typestr: 'u32'
+                    typestr: 'time.Time'
                     tag: false
                     index: false
                     strskip: false
@@ -150,7 +151,7 @@ data.CodeGenerator{
                     ismut: true
                     name: 'timestamp_modified'
                     name_lower: 'timestamp_modified'
-                    typestr: 'u32'
+                    typestr: 'time.Time'
                     tag: false
                     index: false
                     strskip: false
@@ -181,7 +182,8 @@ data.CodeGenerator{
                     cat: file
                     exist: yes
                 }
-                comments: 'Data object for user'
+                comments: ['Data object for user']
+                imports: []
             }, data.Model{
                 root: false
                 name: 'Contact'
@@ -204,7 +206,8 @@ data.CodeGenerator{
                     cat: file
                     exist: yes
                 }
-                comments: ''
+                comments: []
+                imports: []
             }, data.Model{
                 root: true
                 name: 'Group'
@@ -246,7 +249,7 @@ data.CodeGenerator{
                     ismut: true
                     name: 'timestamp_creation'
                     name_lower: 'timestamp_creation'
-                    typestr: 'u32'
+                    typestr: 'time.Time'
                     tag: false
                     index: false
                     strskip: false
@@ -256,7 +259,7 @@ data.CodeGenerator{
                     ismut: true
                     name: 'timestamp_modified'
                     name_lower: 'timestamp_modified'
-                    typestr: 'u32'
+                    typestr: 'time.Time'
                     tag: false
                     index: false
                     strskip: false
@@ -287,13 +290,14 @@ data.CodeGenerator{
                     cat: file
                     exist: yes
                 }
-                comments: ''
+                comments: []
+                imports: []
             }]
             path: pathlib.Path{
                 path: '/Users/despiegk1/code/github/freeflowuniverse/crystallib/data/examples/model_in/domain_usermgmt/actor_usermanager'
                 cat: dir
                 exist: yes
             }
-        }}
-    }}
+        }]
+    }]
 }

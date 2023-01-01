@@ -5,6 +5,16 @@ import json
 import sqlite
 
 
+@{model.comments_str()}
+pub struct @{model.name}Serialized {
+pub mut:
+@for mut field in model.fields
+	@field.name @{field.typestr_primitive()}
+@end
+}
+
+
+
 ///////////FACTORY FUNCTIONALITY
 
 

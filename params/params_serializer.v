@@ -18,14 +18,14 @@ pub fn (mut p Params) to_resp() ![]u8 {
 	return b_main.data
 }
 
-pub fn from_resp(data []u8) ?Params {
+pub fn from_resp(data []u8) !Params {
 	mut p := Params{}
 
-	mut top_array_ := resp.decode(data)?[0]
+	mut top_array_ := resp.decode(data)![0]
 	top_array := top_array_ as resp.RArray
 
 	params_string := top_array.values[0] as resp.RBString
-	params_array := resp.decode(params_string.value)?
+	params_array := resp.decode(params_string.value)!
 
 	for param_string_ in params_array {
 		param_string := param_string_ as resp.RArray
@@ -38,7 +38,7 @@ pub fn from_resp(data []u8) ?Params {
 	}
 
 	args_string := top_array.values[1] as resp.RBString
-	args_array := resp.decode(args_string.value)?
+	args_array := resp.decode(args_string.value)!
 
 	for arg_string_ in args_array {
 		arg_string := arg_string_ as resp.RString

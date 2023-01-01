@@ -4,7 +4,7 @@ module model
 [root ; inherit:'base']
 pub struct User {
 pub mut:
-	contacts	[]Contact //list of contacts for a user
+	contacts	[]Contact [model:usermgmt.usermanager] //list of contacts for a user
 }
 
 

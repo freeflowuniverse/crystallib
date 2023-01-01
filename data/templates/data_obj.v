@@ -1,10 +1,13 @@
 module @actor.name
+@for mut item in model.imports
+@item
+@end
 
 @{model.comments_str()}
 pub struct @{model.name} {
 pub mut:
-@for field in model.fields
-	@field.name @field.typestr 
+@for mut field in model.fields
+	@field.name @field.typestr @{field.comments_str()}
 @end
 }
 

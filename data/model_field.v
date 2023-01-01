@@ -11,5 +11,17 @@ pub mut:
 	index bool
 	strskip bool
 	comments string
+	modellocation string
+	crtype CRType
+	
 }
+
+
+pub fn (mut f Field) comments_str() string{
+	if f.comments.len==0{
+		return ""
+	}
+	return "//${f.comments}"
+}
+
 
