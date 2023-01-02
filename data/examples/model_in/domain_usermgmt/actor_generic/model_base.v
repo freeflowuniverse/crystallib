@@ -3,6 +3,7 @@ import time
 
 pub struct Base {
 pub mut:
+	id			u32
 	name        string [tag;index]
 	description string
 	remarks		string 
