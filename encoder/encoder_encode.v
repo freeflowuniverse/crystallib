@@ -27,7 +27,7 @@ pub fn (mut b Encoder) add_string(data string) {
 }
 
 pub fn (mut b Encoder) add_int(data int) {
-	b.add_u32(u32(data))
+	b.add_u32(u32(data)) //TODO: think this is wrong, int can be negative
 }
 
 //add bytes or bytestring

@@ -112,6 +112,13 @@ pub fn (mut params Params) get_list(key string) ![]string {
 	return res
 }
 
+pub fn (mut params Params) get_list_namefix(key string) ![]string {
+	mut res:= params.get_list(key)!
+	res = res.map(texttools.name_fix(it))
+	return res
+}
+
+
 // get kwarg, and return list of ints
 // line:
 //    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok

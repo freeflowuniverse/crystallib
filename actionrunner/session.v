@@ -31,16 +31,7 @@ pub fn (mut session SchedulerSession) run(content string) ! {
 	session.run_from_parser(mut parser)!
 }
 
-// creates folders necessary for actionrunner
-fn (mut session SchedulerSession) setup_filesystem() {
-	folders := ['init', 'tostart', 'recurring', 'scheduled', 'active', 'done', 'state', 'logs',
-		'error']
-	for folder in folders {
-		os.mkdir_all(os.dir(@FILE) + '/example/filesystem/${folder}') or {
-			panic('Cannot create dir: ${err}')
-		}
-	}
-}
+
 
 // loads scheduler session from filesystem
 fn (mut session SchedulerSession) load_session(fspath string) {

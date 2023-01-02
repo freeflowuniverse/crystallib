@@ -22,16 +22,26 @@ pub fn get_no_check(path string) Path {
 	return p2
 }
 
-// get a directory
+// get a directory, or needs to be created or it exists
 pub fn get_dir(path string, create bool) !Path {
 	mut p2 := get(path)
-	if p2.exist == .no && create {
-		os.mkdir_all(p2.absolute()) or { return error('cannot create path ${p2}') } // Make sure that all the needed paths created
-		p2.check()
-		return p2
-	}
-	if !p2.is_dir() {
-		return error('Path ${path} is not a dir.')
+	p2.check()
+	// println(p2)
+	if create{
+		if p2.exist == .no  {
+			os.mkdir_all(p2.absolute()) or { return error('cannot create path ${p2}') } // Make sure that all the needed paths created		
+			// println(p2)
+			p2.check()
+			// println(p2)
+			return p2
+		}
+		if !p2.is_dir() {
+			return error('Path ${path} is not a dir.')
+		}
+	}else{
+		if p2.exist == .no  {
+			return error("dir $path does not exist, it should.")
+		}
 	}
 	return p2
 }

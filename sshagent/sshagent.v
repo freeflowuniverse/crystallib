@@ -51,7 +51,7 @@ pub fn load_interactive() !string {
 
 	pubkeys = []string{}
 
-	for p in sshdirpath.file_list(mut recursive: false)! {
+	for p in sshdirpath.file_list(recursive: false)! {
 		if p.path.ends_with('.pub') {
 			pubkeys << p.path.replace('.pub', '')
 		}
@@ -123,7 +123,7 @@ pub fn pubkey_guess() !string {
 	mut sshdirpath := pathlib.get_dir('${os.home_dir()}/.ssh', true)!
 
 	// todo: use ourregex field to nly list .pub files
-	mut sshfiles := sshdirpath.file_list(mut pathlib.ListArgs{})!
+	mut sshfiles := sshdirpath.file_list(pathlib.ListArgs{})!
 	mut keypaths := sshfiles.filter(it.path.ends_with('.pub'))
 	// println(keypaths)
 
