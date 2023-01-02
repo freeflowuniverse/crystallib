@@ -1,4 +1,5 @@
 module encoder
+
 import time
 import encoding.binary as bin
 
@@ -16,7 +17,6 @@ pub fn encoder_new() Encoder {
 	return e
 }
 
-
 //adds u16 length of string in bytes + the bytes
 pub fn (mut b Encoder) add_string(data string) {
 	if data.len>64*kb {
@@ -26,8 +26,10 @@ pub fn (mut b Encoder) add_string(data string) {
 	b.data << data.bytes()
 }
 
+// Please note that unlike C and Go, int is always a 32 bit integer.
+// We borrow the add_u32() function to handle the encoding of a 32 bit type
 pub fn (mut b Encoder) add_int(data int) {
-	b.add_u32(u32(data)) //TODO: think this is wrong, int can be negative
+	b.add_u32(u32(data))
 }
 
 //add bytes or bytestring
@@ -52,8 +54,15 @@ pub fn (mut b Encoder) add_u32(data u32) {
 	b.data << d
 }
 
+pub fn (mut b Encoder) add_u64(data u64) {
+	mut d:= []u8{len: 8}
+	bin.little_endian_put_u64(mut d, data)
+	b.data << d
+}
+
 pub fn (mut b Encoder) add_time(data time.Time) {
-	bin.little_endian_put_u32(mut b.data, u32(data.unix_time())) //TODO, add as epoch time
+	b.add_u64(u64(data.unix_time())) // add as epoch time
+	b.add_int(data.microsecond)
 }
 
 pub fn (mut b Encoder) add_list_string(data []string) {

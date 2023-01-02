@@ -30,11 +30,6 @@ fn do1() ! {
 	aa.privkey = d.get_bytes()
 
 	assert a == aa
-
-	//TODO: do an assert and copy the code to the autotests
-	assert a.items == aa.items
-    assert a.nr == aa.nr
-	assert a.privkey == aa.privkey
 }
 
 fn do2() ! {
@@ -44,9 +39,9 @@ fn do2() ! {
 		privkey: []u8{len: 5, init: u8(0xf8)}
 	}
 
-	serialize_data:=encoder.encode(a)
+	serialize_data := encoder.encode(a)!
 
-	_ := encoder.decode[AStruct](serialize_data) or {
+    _ := encoder.decode[AStruct](serialize_data) or {
 		eprintln('Failed to decode, error: ${err}')
 		return
 	}

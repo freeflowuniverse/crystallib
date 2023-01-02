@@ -1,5 +1,7 @@
 module encoder
+
 import encoding.binary as bin
+import time
 
 pub struct Decoder {
 pub mut:
@@ -54,6 +56,16 @@ pub fn (mut d Decoder) get_u32() u32 {
 	v:=d.data[..4]
 	d.data.delete_many(0, 4)
 	return bin.little_endian_u32(v)
+}
+
+pub fn (mut d Decoder) get_u64() u64 {
+	v:=d.data[..8]
+	d.data.delete_many(0, 8)
+	return bin.little_endian_u64(v)
+}
+
+pub fn (mut d Decoder) get_time() time.Time {
+	return time.unix2(i64(d.get_u64()), d.get_int())
 }
 
 pub fn (mut d Decoder) get_list_string() []string {
