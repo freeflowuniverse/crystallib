@@ -40,7 +40,7 @@ fn (mut file File) init() {
 	file.pathrel = path_rel.trim('/')
 }
 
-pub fn (mut file File) delete() ! {
+fn (mut file File) delete() ! {
 	file.path.delete()!
 }
 
@@ -55,11 +55,13 @@ fn (mut file File) mv(dest string) ! {
 	file.path = desto
 }
 
-pub fn (mut file File) exists() !bool {
+fn (mut file File) exists() !bool {
 	return file.path.exists()
 }
 
 fn (mut file File) copy(dest string) ! {
 	mut dest2 := pathlib.get(dest)
-	file.path.copy(mut dest2)!
+	file.path.copy(mut dest2) or {
+		return error('Could not copy file: ${file.path.path} to $dest .\n${err}\n${file}')	
+	}
 }

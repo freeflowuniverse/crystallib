@@ -65,7 +65,7 @@ pub fn (mut book Book) error(args BookErrorArgs) {
 	}
 }
 
-// fix summary
+// fix summary (this means summary will put the )
 // walk over pages find broken links
 // report on the errors
 pub fn (mut book Book) fix() ! {
@@ -74,8 +74,8 @@ pub fn (mut book Book) fix() ! {
 	book.errors_report()!
 }
 
-// fixes the summary doc for the book
-pub fn (mut book Book) fix_summary() ! {
+// fixes the summary doc for the book 
+fn (mut book Book) fix_summary() ! {
 	for mut item in book.doc_summary.items.filter(it is markdowndocs.Paragraph) {
 		if mut item is markdowndocs.Paragraph {
 			for mut link in item.links {
@@ -87,7 +87,6 @@ pub fn (mut book Book) fix_summary() ! {
 						println(' - book ${book.name} summary:${link.pathfull()}')
 					}
 					sitename := link.path.all_before('/')
-					// panic("yosss")
 					if book.books.sites.exists(sitename) {
 						mut site := book.books.sites.get(sitename)!
 						dest := '${book.path.path}/${sitename}'
@@ -183,13 +182,13 @@ pub fn (mut book Book) errors_report() ! {
 }
 
 // return path where the book will be created (exported and built from)
-pub fn (book Book) book_path(path string) Path {
+fn (book Book) book_path(path string) Path {
 	dest0 := book.books.config.dest
 	return pathlib.get('${dest0}/books/${book.name}/${path}')
 }
 
 // return path where the book will be created (exported and built from)
-pub fn (book Book) html_path(path string) Path {
+fn (book Book) html_path(path string) Path {
 	dest0 := book.books.config.dest
 	return pathlib.get('${dest0}/html/${book.name}/${path}')
 }

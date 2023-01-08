@@ -40,47 +40,37 @@ fn (mut page Page) fix_link(mut link Link) ! {
 	$if debug {
 		println(' - fix link ${link.original} with name:${file_name} for page: ${page.path.path}')
 	}
-	// empty just to fill in on next
-	mut fileobj := &File{
-		site: page.site
+
+	// check if the file or image is there, if yes we can return, nothing to do
+	if link.cat == .image {
+		if page.site.image_exists(file_name){return}
+	}else{
+		if page.site.file_exists(file_name){return}
 	}
 
-	// if its not an image, we can only check if it exists, if not return and report error
-	if link.cat == .file {
-		if link.site != '' {
-			return error('do not support link.site:filename for files.')
-		}
-		if !page.site.file_exists(file_name) {
-			msg := "'${file_name}' not found for page:${page.path.path}"
-			page.site.error(path: page.path, msg: 'file ${msg}', cat: .file_not_found)
-			return
-		}
-		fileobj = page.site.file_get(file_name) or { panic(err) } // should never get here
-	} else {
-		if link.site != '' || !page.site.image_exists(file_name) {
-			println(" *** image needs to be in other site, lets check: '${file_name}'")
-			file_name2 := page.site.sites.image_name_find(file_name)!
-			if file_name2 == '' {
-				// we could not find the filename not even in other sites
-				println("     * we couldnt find image: '${file_name}'")
-				msg := "'${file_name}' not found for page:${page.path.path}"
-				page.site.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
-				return
-			}
-			// we found the image should copy to the site now
-			file_name = file_name2
-			fileobj = page.site.image_get(file_name) or { panic(err) } // should never get here
-			println("     * image found: '${fileobj}'")
-			mut dest := pathlib.get('${page.path.path_dir()}/img/${fileobj.path.name()}')
-			pathlib.get_dir('${page.path.path_dir()}/img', true)! // make sure it exists
-			println(' *** COPY: ${fileobj.path.path} to ${dest.path}')
-			fileobj.path.copy(mut dest)!
-			page.site.image_new(mut dest)! // make sure site knows about the new file
-			fileobj.path = dest
-		} else {
-			fileobj = page.site.image_get(file_name) or { panic(err) } // should never get here
-		}
+	//if the site is filled in then it means we need to copy the file here, 
+	//or the image is not found, then we need to try and find it somewhere else
+	//we need to copy the image here
+	mut fileobj:=page.site.sites.image_file_find_over_sites(file_name) or {
+		msg := "'${file_name}' not found for page:${page.path.path}, we looked over all sites."
+		println("    * $msg")
+		page.site.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
+		return
 	}
+	// we found the image should copy to the site now
+	println("     * image or file found in other site: '${fileobj}'")
+	println(link)
+	mut dest := pathlib.get('${page.path.path_dir()}/img/${fileobj.path.name()}')
+	pathlib.get_dir('${page.path.path_dir()}/img', true)! // make sure it exists
+	println(' *** COPY: ${fileobj.path.path} to ${dest.path}')
+	if fileobj.path.path == dest.path{
+		println(fileobj)
+		panic("source and destination is same when trying to fix link.")
+	}
+	fileobj.path.copy(mut dest)!
+	page.site.image_new(mut dest)! // make sure site knows about the new file
+	fileobj.path = dest
+
 	fileobj.path.check()
 	if fileobj.path.is_link() {
 		fileobj.path.unlink()! // make a real file, not a link
@@ -93,11 +83,6 @@ fn (mut page Page) fix_link(mut link Link) ! {
 	link.description = ''
 	// last arg is if we need to save when link changed, only change when page is not readonly
 	link.link_update(imagelink_rel, !page.readonly)!
-	if link.filename.contains('crisis_waves') {
-		println(link)
-		println(page)
-		panic('Sdsd')
-	}
 }
 
 // checks if external link returns 404

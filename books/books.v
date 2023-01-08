@@ -35,7 +35,9 @@ pub struct BookNewArgs {
 	path string
 }
 
-// only way how to get to a new page
+// add a book to the book collection
+// 		name string
+// 		path string
 pub fn (mut books Books) book_new(args BookNewArgs) !&Book {
 	mut p := pathlib.get_file(args.path, false)! // makes sure we have the right path
 	if !p.exists() {
@@ -49,8 +51,8 @@ pub fn (mut books Books) book_new(args BookNewArgs) !&Book {
 
 	// is case insensitive
 	//? checks for both summary.md files and links
-	mut summarypath := p.file_find('summary.md') or {
-		p.link_find('summary.md') or { return error('cannot find summary path: ${err}') }
+	mut summarypath := p.file_get('summary.md') or {
+		p.link_get('summary.md') or { return error('cannot find summary path: ${err}') }
 	}
 
 	mut parser := markdowndocs.get(summarypath.path) or {

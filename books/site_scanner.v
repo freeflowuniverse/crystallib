@@ -20,7 +20,8 @@ fn (mut site Site) file_image_remember(mut p pathlib.Path) ! {
 			}
 		}
 		if site.image_exists(namesmallest) {
-			mut filedouble := site.image_get(namesmallest)!
+			mut filedouble := site.image_get(namesmallest) or {
+				panic("if image exists, I should be able to get it. \n$err")}
 			mut pathdouble := filedouble.path.path
 			mut pathsource := p.path
 			if pathsource.len < pathdouble.len + 1 {

@@ -202,11 +202,15 @@ fn (mut generator CodeGenerator) process() ! {
 			for mut model in actor.models{
 				//resolve the inherited models
 				if model.inherit.len>0{
-					actor.model_get_priority(mut generator, mut domain, model.inherit)! //will look over multiple levels to find it
-					for _,field in model.fields{
+					mut modelinherit:=actor.model_get_priority(mut generator, mut domain, model.inherit)! //will look over multiple levels to find it
+					for field in modelinherit.fields{
 						//always needs to be inserted at beginning, this to minimize chance on corruption
 						model.fields.prepend(field)
 					}					
+					for toimport in modelinherit.imports{
+						//always needs to be inserted at beginning, this to minimize chance on corruption
+						model.imports.prepend(toimport)
+					}						
 				}
 				//resolve the linked models & other types
 				for mut field in model.fields{
