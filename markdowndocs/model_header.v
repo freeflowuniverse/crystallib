@@ -4,7 +4,6 @@ pub struct Header {
 pub mut:
 	content string
 	depth   int
-	doc     &Doc   [str: skip]
 }
 
 fn (mut o Header) process() ! {
@@ -12,7 +11,12 @@ fn (mut o Header) process() ! {
 }
 
 fn (o Header) wiki() string {
-	return o.content
+	mut h:=""
+	for _ in 0..o.depth{
+		h+="#"
+	}
+	h+=" "
+	return "$h ${o.content}\n\n"
 }
 
 fn (o Header) html() string {

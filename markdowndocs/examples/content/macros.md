@@ -15,7 +15,9 @@ yes = 2
 comments allowed, the next thing is not useful but good for testing, it specifies name argument on git.ensure, its the same anyhow
 
 !!action.define name:download_git
+
 !!git.ensure url:'https://github.com/threefoldfoundation/info_foundation' autocommit:'mychanges' update:true
+
 !!git.ensure url:https://github.com/threefoldfoundation/legal autocommit:'mychanges' update:true  
   name:legal
 

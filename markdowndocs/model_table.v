@@ -3,7 +3,6 @@ module markdowndocs
 pub struct Table {
 pub mut:
 	content string
-	doc     &Doc   [str: skip]
 }
 
 fn (mut o Table) process() ! {

@@ -70,15 +70,16 @@ pub fn (mut book Book) error(args BookErrorArgs) {
 // report on the errors
 pub fn (mut book Book) fix() ! {
 	book.fix_summary()!
-	book.find_broken_links()!
+	book.link_pages_files_images()!
+	//TODO: check the links on pages
 	book.errors_report()!
 }
 
 // fixes the summary doc for the book 
 fn (mut book Book) fix_summary() ! {
-	for mut item in book.doc_summary.items.filter(it is markdowndocs.Paragraph) {
-		if mut item is markdowndocs.Paragraph {
-			for mut link in item.links {
+	for mut paragraph in book.doc_summary.items.filter(it is markdowndocs.Paragraph) {
+		if mut paragraph is markdowndocs.Paragraph {
+			for mut link in paragraph.links {
 				if link.isexternal {
 					msge := 'external link not supported yet in summary for:\n ${book}'
 					book.error(cat: .unknown, msg: msge)
@@ -86,7 +87,11 @@ fn (mut book Book) fix_summary() ! {
 					$if debug {
 						println(' - book ${book.name} summary:${link.pathfull()}')
 					}
-					sitename := link.path.all_before('/')
+					mut sitename := link.path.all_before('/')
+					if link.path == ""{
+						//means site has not been specified
+						return error("site needs to be specified in summary, is the first part of path e.g. sitename/...")
+					}
 					if book.books.sites.exists(sitename) {
 						mut site := book.books.sites.get(sitename)!
 						dest := '${book.path.path}/${sitename}'
@@ -102,9 +107,9 @@ fn (mut book Book) fix_summary() ! {
 								// $if debug {
 								// 	println('change: $link.original -> $newlink')
 								// }
-								book.doc_summary.content = book.doc_summary.content.replace(link.original,
-									newlink)
-								book.doc_summary.save()!
+								paragraph.content = paragraph.content.replace(link.original,newlink)
+								// paragraph.doc.save_wiki()!
+								panic("not implemented save wiki")
 							}
 						} else {
 							book.error(
@@ -129,13 +134,13 @@ fn (mut book Book) fix_summary() ! {
 
 // all images, files and pages found need to be linked to the book
 // find which files,pages, images are not found
-pub fn (mut book Book) find_broken_links() ! {
+fn (mut book Book) link_pages_files_images() ! {
 	for key, _ in book.pages {
 		mut page := book.pages[key]
-		for mut item in page.doc.items.filter(it is markdowndocs.Paragraph) {
-			if mut item is markdowndocs.Paragraph { //! interestingly necessary despite filter
-				for mut link in item.links {
-					if link.cat == .page && page.site.page_exists(link.filename) {
+		for mut paragraph in page.doc.items.filter(it is markdowndocs.Paragraph) {
+			if mut paragraph is markdowndocs.Paragraph {
+				for mut link in paragraph.links {
+					if link.cat == .page {
 						pageobj := page.site.page_get(link.filename) or {
 							book.error(
 								cat: .page_not_found
@@ -145,7 +150,7 @@ pub fn (mut book Book) find_broken_links() ! {
 						}
 						book.pages['${pageobj.site.name}:${pageobj.name}'] = pageobj
 					}
-					if link.cat == .image && page.site.file_exists(link.filename) {
+					if link.cat == .file {
 						fileobj := page.site.file_get(link.filename) or {
 							book.error(
 								cat: .file_not_found
@@ -155,7 +160,7 @@ pub fn (mut book Book) find_broken_links() ! {
 						}
 						book.files['${fileobj.site.name}:${fileobj.name}'] = fileobj
 					}
-					if link.cat == .image && page.site.image_exists(link.filename) {
+					if link.cat == .image  {
 						imageobj := page.site.image_get(link.filename) or {
 							book.error(
 								cat: .image_not_found
@@ -221,7 +226,7 @@ pub fn (mut book Book) mdbook_export() ! {
 
 	mut pathsummary := pathlib.get('${book_path}/SUMMARY.md')
 	// write summary
-	pathsummary.write(book.doc_summary.content)!
+	pathsummary.write(book.doc_summary.wiki())!
 
 	// lets now build
 	os.execute_or_panic('mdbook build ${book.book_path('').path} --dest-dir ${html_path}')

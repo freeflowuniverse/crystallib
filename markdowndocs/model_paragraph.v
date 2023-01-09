@@ -2,31 +2,73 @@ module markdowndocs
 
 import freeflowuniverse.crystallib.texttools
 
+type ParagraphItem = Text | Link | Comment
+
 [heap]
 pub struct Paragraph {
 pub mut:
 	content string
-	links   []Link
+	items   []ParagraphItem
 	changed bool
-	doc     &Doc   [str: skip]
 }
 
-fn (mut o Paragraph) process() ! {
-	mut lpr := o.link_parser(o.content)!
-	o.links = lpr.links
-	return
+
+fn (paragraph Paragraph) wiki() string {
+	mut out := ''
+	for item in paragraph.items {
+		match mut item{
+			Text {out += item.wiki()}
+			Link {out += item.wiki()}
+			Comment {out += item.wiki()}
+		}
+	}
+	return out
 }
 
-fn (o Paragraph) wiki() string {
-	return o.content
+fn (paragraph Paragraph) html() string {
+	mut out := ''
+	for item in paragraph.items {
+		match mut item{
+			Text {out += item.html()}
+			Link {out += item.html()}
+			Comment {out += item.html()}
+		}
+	}
+	return out
 }
 
-fn (o Paragraph) html() string {
-	return o.wiki()
+fn (paragraph Paragraph) str() string {
+	mut out := ''
+	for item in paragraph.items {
+		match mut item{
+			Text {out += item.str()}
+			Link {out += item.str()}
+			Comment {out += item.str()}
+		}
+	}
+	return out
 }
 
-fn (o Paragraph) str() string {
-	// links := '$o.links'
-	// return "**** Paragraph\n${texttools.indent(o.content,"    ")}\n${texttools.indent(links,"    - ")}"
-	return '**** Paragraph\n${texttools.indent(o.content, '    ')}\n'
+fn (paragraph Paragraph) process() ! {
+	for item in paragraph.items {
+		match mut item{
+			Text {item.process()!}
+			Link {item.process()!}
+			Comment {item.process()!}
+		}
+	}
 }
+
+
+
+// fn (mut paragraph Paragraph) last_item_name() string {
+// 	return parser.doc.items.last().type_name().all_after_last('.').to_lower()
+// }
+
+// // if state is this name will return true
+// fn (mut paragraph Paragraph) last_item_name_check(tocheck string) bool {
+// 	if paragraph.last_item_name() == tocheck.to_lower().trim_space() {
+// 		return true
+// 	}
+// 	return false
+// }

@@ -4,7 +4,6 @@ pub struct CodeBlock {
 pub mut:
 	content  string
 	category string
-	doc      &Doc   [str: skip]
 }
 
 fn (mut o CodeBlock) process() ! {
@@ -12,7 +11,11 @@ fn (mut o CodeBlock) process() ! {
 }
 
 fn (o CodeBlock) wiki() string {
-	return o.content
+	mut out:=""
+	out+="```$o.category\n"
+	out+=o.content.trim_space()
+	out+="\n```\n\n"
+	return out
 }
 
 fn (o CodeBlock) html() string {

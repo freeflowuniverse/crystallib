@@ -54,17 +54,17 @@ pub fn (mut books Books) book_new(args BookNewArgs) !&Book {
 	mut summarypath := p.file_get('summary.md') or {
 		p.link_get('summary.md') or { return error('cannot find summary path: ${err}') }
 	}
-
-	mut parser := markdowndocs.get(summarypath.path) or {
+	mut doc := markdowndocs.get(summarypath.path) or {
 		panic('cannot book parse ${summarypath} ,${err}')
 	}
-
+	
 	mut book := Book{
 		name: texttools.name_fix_no_ext(name)
 		path: p
 		books: &books
-		doc_summary: &parser.doc
+		doc_summary: &doc
 	}
+	
 	books.books[book.name.replace('_', '')] = &book
 	return &book
 }

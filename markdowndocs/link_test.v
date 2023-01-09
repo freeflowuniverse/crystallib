@@ -8,7 +8,7 @@ fn test_link1() {
 	correct_lp := LinkParseResult{
 		links: [
 			Link{
-				original: '[Architecture](architecture/architecture.md)'
+				content: '[Architecture](architecture/architecture.md)'
 				cat: .page
 				isexternal: false
 				include: true
@@ -37,7 +37,7 @@ fn test_link2() {
 	correct_lp := LinkParseResult{
 		links: [
 			Link{
-				original: '[Architecture](@*!architecture/architecture.md)'
+				content: '[Architecture](@*!architecture/architecture.md)'
 				cat: .page
 				isexternal: false
 				include: true
@@ -65,7 +65,7 @@ fn test_link3() {
 	assert lp.str() == LinkParseResult{
 		links: [
 			Link{
-				original: '[AArchitecture](@*!architecture.md)'
+				content: '[AArchitecture](@*!architecture.md)'
 				cat: .page
 				isexternal: false
 				include: true
@@ -94,7 +94,7 @@ fn test_link4() {
 	assert lp.str() == LinkParseResult{
 		links: [
 			Link{
-				original: "[AArchitecture](./img/license_threefoldfzc.png ':size=800x900')"
+				content: "[AArchitecture](./img/license_threefoldfzc.png ':size=800x900')"
 				cat: .image
 				isexternal: false
 				include: true
@@ -123,7 +123,7 @@ fn test_link5() {
 	assert lp.str() == LinkParseResult{
 		links: [
 			Link{
-				original: '[Architecture](@*!testsite:architecture/architecture.md)'
+				content: '[Architecture](@*!testsite:architecture/architecture.md)'
 				cat: .page
 				isexternal: false
 				include: true
@@ -152,7 +152,7 @@ fn test_link6() {
 	correct_lp := LinkParseResult{
 		links: [
 			Link{
-				original: '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)'
+				content: '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)'
 				cat: .html
 				isexternal: true
 				include: true
@@ -187,7 +187,7 @@ fn test_link7() {
 	correct_lp := LinkParseResult{
 		links: [
 			Link{
-				original: '[Architecture](mysite:new/newer.md)'
+				content: '[Architecture](mysite:new/newer.md)'
 				cat: .page
 				isexternal: false
 				include: true
@@ -203,7 +203,7 @@ fn test_link7() {
 				error_msg: ''
 			},
 			Link{
-				original: '[Something](yes/start.md)'
+				content: '[Something](yes/start.md)'
 				cat: .page
 				isexternal: false
 				include: true
@@ -219,7 +219,7 @@ fn test_link7() {
 				error_msg: ''
 			},
 			Link{
-				original: '[Something](yes/start.md)'
+				content: '[Something](yes/start.md)'
 				cat: .page
 				isexternal: false
 				include: true

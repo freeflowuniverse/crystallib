@@ -9,7 +9,7 @@ pub mut:
 	remarks string
 	name    string
 	params  params.Params
-	doc     &Doc          [str: skip]
+	result  string
 }
 
 fn (mut action Action) process() ! {
@@ -19,7 +19,7 @@ fn (mut action Action) process() ! {
 }
 
 fn (action Action) wiki() string {
-	return action.content
+	return "!!"+action.content.trim_space()+"\n\n"
 }
 
 fn (action Action) html() string {

@@ -1,7 +1,7 @@
 module books
 
 import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.markdowndocs { Link }
+import freeflowuniverse.crystallib.markdowndocs { Link, Paragraph }
 import freeflowuniverse.crystallib.texttools
 
 pub enum PageStatus {
@@ -22,58 +22,65 @@ pub mut: // pointer to site
 	pages_linked   []&Page          [str: skip]
 	files_linked   []&File          [str: skip]
 	categories     []string
-	doc            markdowndocs.Doc [str: skip]
+	doc            &markdowndocs.Doc [str: skip]
 	readonly       bool
 }
 
-// //relative path in the site
-// fn (mut page Page) path_in_site(mut link Link) ! {
 
-// 	imagelink_rel := pathlib.path_relative(page.site.path.path, fileobj.path.path)!
+fn (mut page Page) fix_link(mut paragraph &Paragraph, mut link &Link) ! {
 
-// 	return page.site
-
-// }
-
-fn (mut page Page) fix_link(mut link Link) ! {
+	println(1)
+	println(link)
+	println(2)
 	mut file_name := link.filename
 	$if debug {
-		println(' - fix link ${link.original} with name:${file_name} for page: ${page.path.path}')
+		println(' - fix link ${link.original} with name:\'${file_name}\' for page: ${page.path.path}')
 	}
 
 	// check if the file or image is there, if yes we can return, nothing to do
+	mut file_search:=true
+	mut fileoj0 := File{site:page.site}
+	mut fileobj := &fileoj0
+
 	if link.cat == .image {
-		if page.site.image_exists(file_name){return}
+		if page.site.image_exists(file_name){
+				file_search=false
+				fileobj=page.site.image_get(file_name) or{panic(err)}
+			}
 	}else{
-		if page.site.file_exists(file_name){return}
+		if page.site.file_exists(file_name){
+				file_search=false
+				fileobj=page.site.file_get(file_name) or{panic(err)}
+			}
 	}
+	if file_search {
+		//if the site is filled in then it means we need to copy the file here, 
+		//or the image is not found, then we need to try and find it somewhere else
+		//we need to copy the image here
+		fileobj=page.site.sites.image_file_find_over_sites(file_name) or {
+			msg := "'${file_name}' not found for page:${page.path.path}, we looked over all sites."
+			println("    * $msg")
+			page.site.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
+			return
+		}
+		// we found the image should copy to the site now
+		println("     * image or file found in other site: '${fileobj}'")
+		println(link)
+		mut dest := pathlib.get('${page.path.path_dir()}/img/${fileobj.path.name()}')
+		pathlib.get_dir('${page.path.path_dir()}/img', true)! // make sure it exists
+		println(' *** COPY: ${fileobj.path.path} to ${dest.path}')
+		if fileobj.path.path == dest.path{
+			println(fileobj)
+			panic("source and destination is same when trying to fix link (copy).")
+		}
+		fileobj.path.copy(mut dest)!
+		page.site.image_new(mut dest)! // make sure site knows about the new file
+		fileobj.path = dest
 
-	//if the site is filled in then it means we need to copy the file here, 
-	//or the image is not found, then we need to try and find it somewhere else
-	//we need to copy the image here
-	mut fileobj:=page.site.sites.image_file_find_over_sites(file_name) or {
-		msg := "'${file_name}' not found for page:${page.path.path}, we looked over all sites."
-		println("    * $msg")
-		page.site.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
-		return
-	}
-	// we found the image should copy to the site now
-	println("     * image or file found in other site: '${fileobj}'")
-	println(link)
-	mut dest := pathlib.get('${page.path.path_dir()}/img/${fileobj.path.name()}')
-	pathlib.get_dir('${page.path.path_dir()}/img', true)! // make sure it exists
-	println(' *** COPY: ${fileobj.path.path} to ${dest.path}')
-	if fileobj.path.path == dest.path{
-		println(fileobj)
-		panic("source and destination is same when trying to fix link.")
-	}
-	fileobj.path.copy(mut dest)!
-	page.site.image_new(mut dest)! // make sure site knows about the new file
-	fileobj.path = dest
-
-	fileobj.path.check()
-	if fileobj.path.is_link() {
-		fileobj.path.unlink()! // make a real file, not a link
+		fileobj.path.check()
+		if fileobj.path.is_link() {
+			fileobj.path.unlink()! // make a real file, not a link
+		}
 	}
 
 	// means we now found the file or image
@@ -82,7 +89,15 @@ fn (mut page Page) fix_link(mut link Link) ! {
 	imagelink_rel := pathlib.path_relative(page.path.path_dir(), fileobj.path.path)!
 	link.description = ''
 	// last arg is if we need to save when link changed, only change when page is not readonly
-	link.link_update(imagelink_rel, !page.readonly)!
+
+	link.link_update(mut paragraph, imagelink_rel, !page.readonly)!
+	if fileobj.path.path.contains("today_internet"){
+		println(link)
+		println(paragraph.doc.wiki())
+		// println(fileobj)
+		println(imagelink_rel)
+		panic('sdsdsd')
+	}	
 }
 
 // checks if external link returns 404
@@ -98,15 +113,13 @@ fn (mut page Page) fix() ! {
 
 // walk over all links and fix them with location
 fn (mut page Page) fix_links() ! {
-	// mut changed := false
-
-	for mut item in page.doc.items.filter(it is markdowndocs.Paragraph) {
-		if mut item is markdowndocs.Paragraph {
-			for mut link in item.links {
+	for mut paragraph in page.doc.items.filter(it is markdowndocs.Paragraph) {
+		if mut paragraph is markdowndocs.Paragraph {
+			for mut link in paragraph.links {
 				if link.isexternal {
 					page.fix_external_link(mut link)!
 				} else if link.cat == .image || link.cat == .file {
-					page.fix_link(mut link)!
+					page.fix_link(mut &paragraph, mut link)!
 				}
 			}
 		}
@@ -135,14 +148,12 @@ fn (mut page Page) process_macro_include(content string) !string {
 			page_include.path = page.path // we need to operate in path from where we include from
 
 			line = ''
-			for line_include in page_include.doc.content.split_into_lines() {
-				result << line_include
-			}
+			// for line_include in page_include.doc.content.split_into_lines() {
+			// 	result << line_include
+			// }
+			panic("implement include")
 			if page_include.files_linked.len > 0 {
 				page_include.fix()!
-				println(page_include)
-				println(page_include.files_linked)
-				panic('sdsds')
 			}
 		}
 		if line != '' {
@@ -152,12 +163,12 @@ fn (mut page Page) process_macro_include(content string) !string {
 	return result.join('\n')
 }
 
-// will process the macro's and return string
-fn (mut page Page) process_macros() !string {
-	mut out := page.doc.content
-	out = page.process_macro_include(out)!
-	return out
-}
+// // will process the macro's and return string
+// fn (mut page Page) process_macros() !string {
+// 	mut out := page.doc.content
+// 	out = page.process_macro_include(out)!
+// 	return out
+// }
 
 // save the page on the requested dest
 // make sure the macro's are being executed
@@ -166,7 +177,8 @@ pub fn (mut page Page) save(dest0 string) ! {
 	if dest == '' {
 		dest = page.path.path
 	}
-	out := page.process_macros()!
+	// out := page.process_macros()!
+	panic("implement save macro")
 	mut p := pathlib.get_file(dest, true)!
-	p.write(out)!
+	// p.write(out)!
 }

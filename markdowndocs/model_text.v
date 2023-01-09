@@ -3,7 +3,6 @@ module markdowndocs
 pub struct Text {
 pub mut:
 	content string
-	doc     &Doc   [str: skip]
 }
 
 fn (mut o Text) process() ! {
@@ -20,4 +19,9 @@ fn (o Text) html() string {
 
 fn (o Text) str() string {
 	return '**** Text\n'
+}
+
+
+fn text_new(content string) !Text {
+	return Text{content:content}
 }

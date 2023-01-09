@@ -196,14 +196,15 @@ pub fn (mut site Site) page_new(mut p Path) !&Page {
 	mut page := Page{
 		path: p
 		site: &site
+		readonly: false
 	}
 	if !page.path.path.ends_with('.md') {
 		return error('page ${page} needs to end with .md')
 	}
 	// println(" ---------- $page.path.path")
 	// parse the markdown of the page
-	mut parser := markdowndocs.get(p.path) or { panic('cannot parse,${err}') }
-	page.doc = parser.doc
+	mut doc := markdowndocs.get(p.path) or { panic('cannot parse,${err}') }
+	page.doc = &doc
 	page.name = p.name_fix_no_ext()
 	page.pathrel = p.path_relative(site.path.path)!
 	page.pathrel = page.pathrel.trim('/')
@@ -267,6 +268,7 @@ fn (mut site Site) image_new(mut p Path) ! {
 
 //go over all pages, fix the links, check the images are there
 pub fn (mut site Site) fix() ! {
+	$if debug {println(" --- site fix: $site.name")}
 	for _, mut page in site.pages {
 		page.fix()!
 	}

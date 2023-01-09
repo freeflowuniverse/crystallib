@@ -11,7 +11,7 @@ pub struct Comment {
 pub mut:
 	content string
 	prefix  CommentPrefix
-	doc     &Doc          [str: skip]
+	singleline bool
 }
 
 fn (mut o Comment) process() ! {
@@ -19,7 +19,15 @@ fn (mut o Comment) process() ! {
 }
 
 fn (o Comment) wiki() string {
-	return o.content
+	mut out:=""
+	if o.content.trim_space().contains("\n"){
+		out+="<!-- "
+		out+=o.content.trim_space()
+		out+="\n-->\n\n"
+	}else{
+		out+="<!-- ${o.content.trim_space()} -->\n\n"
+	}
+	return out
 }
 
 fn (o Comment) html() string {
@@ -28,4 +36,8 @@ fn (o Comment) html() string {
 
 fn (o Comment) str() string {
 	return '**** Comment\n${texttools.indent(o.content, '    ')}'
+}
+
+fn comment_new() Comment{
+	return Comment{}
 }
