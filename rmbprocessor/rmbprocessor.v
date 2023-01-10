@@ -30,9 +30,13 @@ fn (mut rmbp RMBProcessor) process()!{
 		if guid.len>0{		
 			println("FOUND OUTGOING GUID:$guid")
 			mut job:=rmb.job_get(guid)!
-			rmb.redis.lpush("jobs.queue.in","${job.guid}")!
-			now:=time.now().unix_time()
-			rmb.redis.hset("rmb.jobs.in","${job.guid}","$now")!
+			if job.twinid==u32(0) || job.twinid==rmb. {
+				rmb.redis.lpush("jobs.queue.in","${job.guid}")!
+				now:=time.now().unix_time()
+				rmb.redis.hset("rmb.jobs.in","${job.guid}","$now")!
+			}else{
+
+			}
 			println(job)
 		}
 		println("sleep")
