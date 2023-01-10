@@ -28,59 +28,22 @@ enum ActionJobEvent {
 	restart // job has produced an error and must restart
 }
 
-//actionjob as how its being send & received from bus
-pub struct ActionJobPublic {
+[heap]
+pub struct ActionJob {
 pub mut:
-	src_jobid        u32 	//unique jobid (unique per actor which is unique per twin)
-	src_twinid		 u32    //which twin is responsible for executing on behalf of actor
-	src_actorid      u16	//unique actor id, runs on top of twin
-	src_rmbids		 []u32  //how do we find our way back, if 0 is local, can be more than 1
+	// id           u32 // unique id
+	guid         string
 	domain		 string
 	actor		 string	
-	action   	 string 	//actionname
-	params       string
-	state        string
-	start        u64		//epoch
-	end          u64		//epoch
-	grace_period u32 		//wait till next run, in seconds
-	error        string		//string description of what went wrong
-	timeout      u32 		//time in seconds, 2h is maximum
-}
-
-pub struct ActionJobV {
-pub mut:
-	src_jobid        u32 	//unique jobid (unique per actor which is unique per twin)
-	src_twinid		 u32    //which twin is responsible for executing on behalf of actor
-	src_actorid      u16	//unique actor id, runs on top of twin
-	src_rmbids		 []u32    //how do we find our way back, if 0 is local
-	domain		 string
-	actor		 string	
-	action   	 string // actionname
+	actionname   string // actionname
 	params       Params
 	state        ActionJobState
 	start        time.Time
 	end          time.Time
-	grace_period time.Duration  //wait till next run
+	grace_period time.Duration
 	error        string
-	timeout      time.Duration // time in seconds, 2h is maximum
-}
-
-fn (mut job ActionJobV) serialize() !string{
-	params_data:=json.encode(job.params)
-
-	mut job:=ActionJobPublic{
-		src_jobid:src_jobid
-		src_twinid:src_twinid
-		src_actorid:src_actorid
-		src_rmbid:src_rmbid
-		domain:domain
-		actor:actor
-		action:action
-		params:params_data
-
-
-	}
-
+	dependencies []string       // list the dependencies
+	timeout      u16 // time in seconds, 0 means we wait for ever
 }
 
 // an actionjob can have 5 events + error msg as return:

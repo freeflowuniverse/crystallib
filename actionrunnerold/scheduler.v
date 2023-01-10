@@ -1,4 +1,4 @@
-module actionrunner
+module actionrunnerold
 
 // import freeflowuniverse.crystallib.actionparser
 import freeflowuniverse.crystallib.pathlib
@@ -37,17 +37,17 @@ fn (mut s Scheduler) init()! {
 //timeout in seconds
 fn (mut s Scheduler) job_start(content string, dependencies []string, timeout u16)! {
 
-	mut job:= ActionJob {
-		domain:
-		actor:
-		action: name
-		params: params
-		start: time.now()
-		guid: rand.uuid_v4()
-		state: ActionJobState{}
-		// grace_period:time.Duration
-		dependencies:dependencies
-		timeout:timeout
-	}
+	// mut job:= ActionJob {
+	// 	domain:
+	// 	actor:
+	// 	action: name
+	// 	params: params
+	// 	start: time.now()
+	// 	guid: rand.uuid_v4()
+	// 	state: ActionJobState{}
+	// 	// grace_period:time.Duration
+	// 	dependencies:dependencies
+	// 	timeout:timeout
+	// }
 
 }

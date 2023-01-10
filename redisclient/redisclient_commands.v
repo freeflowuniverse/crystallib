@@ -81,6 +81,7 @@ pub fn (mut r Redis) hdel(key string, skey string) !int {
 	return r.send_expect_int(['HDEL', key, skey])
 }
 
+
 pub fn (mut r Redis) incrby(key string, increment int) !int {
 	return r.send_expect_int(['INCRBY', key, increment.str()])
 }
@@ -160,6 +161,17 @@ pub fn (mut r Redis) keys(pattern string) ![]string {
 	return result
 }
 
+pub fn (mut r Redis) hkeys(key string) ![]string {
+	response := r.send_expect_list(['HKEYS', key])!
+	mut result := []string{}
+	for item in response {
+		result << resp.get_redis_value(item)
+	}
+	return result
+}
+
+
+
 pub fn (mut r Redis) randomkey() !string {
 	return r.send_expect_strnil(['RANDOMKEY'])
 }
@@ -172,12 +184,16 @@ pub fn (mut r Redis) lpop(key string) !string {
 	return r.send_expect_strnil(['LPOP', key])
 }
 
-pub fn (mut r Redis) blpop(keys []string, timeout string) ![]resp.RValue {
-	mut cmds := ['BLPOP']
-	cmds << keys
-	cmds << timeout
-	return r.send_expect_list(cmds)
+pub fn (mut r Redis) blpop(key string,timeout int) !string {
+	res:= r.send_expect_list(['BLPOP', key,"$timeout"])!
+	return resp.get_redis_value(res[1])
 }
+
+pub fn (mut r Redis) brpop(key string,timeout int) !string {
+	res:=r.send_expect_list(['BRPOP', key,"$timeout"])!
+	return resp.get_redis_value(res[1])
+}
+
 
 pub fn (mut r Redis) rpop(key string) !string {
 	return r.send_expect_strnil(['RPOP', key])

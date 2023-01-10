@@ -130,6 +130,9 @@ pub fn (mut r Redis) get_bytes_nil() ![]u8 {
 	if line.starts_with('+') {
 		return line[1..].bytes()
 	}
+	if line.starts_with('$-1') {
+		return []u8{}
+	}
 	if line.starts_with('$') {
 		return r.get_bytes_from_line(line)
 	} else {

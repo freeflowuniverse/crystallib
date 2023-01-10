@@ -11,7 +11,7 @@ fn do()! {
 	taskletmanager.generate(taskletspath)!
 	mut tm:=taskletmanager.new(taskletspath)!
 	println(tm)
-	actionrunner.scheduler_new(jobspath)!
+	// actionrunner.scheduler_new(jobspath)!
 
 }
 

@@ -34,6 +34,9 @@ fn test_multiline_to_params() {
 		name5:   'aab' 
 	"
 
+	params := text_to_params(text) or { panic(err) }
+
+
 	expectedresult := Params{
 		params: [Param{
 			key: 'id'
@@ -85,7 +88,6 @@ def test():
 
 	// expectedresult
 
-	params := text_to_params(text) or { panic(err) }
 
 	// need to replace /t because of the way how I put the expected result in code here
 	assert json.encode(params) == json.encode(expectedresult).replace('\\t', '    ')

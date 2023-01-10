@@ -1,4 +1,4 @@
-module actionrunner
+module actionrunnerold
 
 import freeflowuniverse.crystallib.actionparser
 import freeflowuniverse.crystallib.console
@@ -68,51 +68,51 @@ fn (mut session SchedulerSession) get_actionjob(guid string) !int {
 	return error('Failed to find job with guid: ${guid} in session.')
 }
 
-// handles returns from log and return channels
-// if receives ActionJobReturn sets somethingtodo to true
-fn (mut session SchedulerSession) listen_channels() !bool {
-	// now select the channel to see which one has a return
-	$if debug {
-		eprint(texttools.indent(@FN + 'job actions select', '|  '))
-	}
+// // handles returns from log and return channels
+// // if receives ActionJobReturn sets somethingtodo to true
+// fn (mut session SchedulerSession) listen_channels() !bool {
+// 	// now select the channel to see which one has a return
+// 	$if debug {
+// 		eprint(texttools.indent(@FN + 'job actions select', '|  '))
+// 	}
 
-	mut somethingtodo := false
-	if select {
-		mut return_obj := <-session.gitrunner.channel_ret {
-			// means runner emmited event and returned job
-			// gets jobs' index in session.jobs in order to mutate in place
-			mut job_index := session.get_actionjob(return_obj.job_guid)!
-			session.jobs[job_index].handle_event(return_obj.event)!
-			somethingtodo = true
-		}
-		git_log := <-session.gitrunner.channel_log {
-			// ? Maybe the log listener should run concurrently, outside of the loop?
-			$if debug {
-				eprint(texttools.indent('LOG gitrunner:${git_log}', '|  '))
-			}
-			mut job_guid := git_log.split(':')[0]
-			mut log_msg := git_log.split(':')[1]
-			// ? should we use a job getter function here
-			mut actionjob := ActionJob{
-				guid: job_guid
-			}
-			actionjob.log(log_msg) // logs message to folder
-		}
-		500 * time.millisecond {
-			// do something if no channel has become ready within 0.5s
-			eprint(texttools.indent('> more than 0.5s passed without a channel being ready',
-				'|  '))
-		}
-	} {
-	} else {
-		panic('all channels are closed')
-	}
-	return somethingtodo
-}
+// 	mut somethingtodo := false
+// 	if select {
+// 		mut return_obj := <-session.gitrunner.channel_ret {
+// 			// means runner emmited event and returned job
+// 			// gets jobs' index in session.jobs in order to mutate in place
+// 			mut job_index := session.get_actionjob(return_obj.job_guid)!
+// 			session.jobs[job_index].handle_event(return_obj.event)!
+// 			somethingtodo = true
+// 		}
+// 		git_log := <-session.gitrunner.channel_log {
+// 			// ? Maybe the log listener should run concurrently, outside of the loop?
+// 			$if debug {
+// 				eprint(texttools.indent('LOG gitrunner:${git_log}', '|  '))
+// 			}
+// 			mut job_guid := git_log.split(':')[0]
+// 			mut log_msg := git_log.split(':')[1]
+// 			// ? should we use a job getter function here
+// 			mut actionjob := ActionJob{
+// 				guid: job_guid
+// 			}
+// 			actionjob.log(log_msg) // logs message to folder
+// 		}
+// 		500 * time.millisecond {
+// 			// do something if no channel has become ready within 0.5s
+// 			eprint(texttools.indent('> more than 0.5s passed without a channel being ready',
+// 				'|  '))
+// 		}
+// 	} {
+// 	} else {
+// 		panic('all channels are closed')
+// 	}
+// 	return somethingtodo
+// }
 
 fn (mut session SchedulerSession) run_from_parser(mut parser actionparser.ActionsParser) ! {
-	session.setup_filesystem()
-	session.load_jobs(mut parser.actions)!
+	// session.setup_filesystem()
+	// session.load_jobs(mut parser.actions)!
 
 	$if debug {
 		println('Running scheduler session...')

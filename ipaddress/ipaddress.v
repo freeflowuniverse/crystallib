@@ -75,6 +75,7 @@ pub fn ipaddress_new(addr_string string) !IPAddress {
 	return ip
 }
 
+[params]
 pub struct PingArgs {
 pub mut:
 	retry   int
