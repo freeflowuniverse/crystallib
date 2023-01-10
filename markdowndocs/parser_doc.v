@@ -28,7 +28,7 @@ fn doc_parse(path string) ! {
 					parser.next()
 					continue
 				}
-				doc.items << DocItem{} // make sure we restart from scratch because is not comment
+				doc.items << DocStart{} // make sure we restart from scratch because is not comment
 			} else {
 				if line.trim_space().ends_with('-->') {
 					llast.content += line.all_before_last('-->') + '\n'
@@ -46,7 +46,7 @@ fn doc_parse(path string) ! {
 				// starts with tab or space, means block continues for action
 				llast.content += '${line}\n'
 			} else {
-				doc.items << DocItem{}
+				doc.items << DocStart{}
 			}
 			parser.next()
 			continue
@@ -54,7 +54,7 @@ fn doc_parse(path string) ! {
 
 		if mut llast is CodeBlock {
 			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
-				doc.items << DocItem{}
+				doc.items << DocStart{}
 			} else {
 				llast.content += '${line}\n'
 			}
@@ -154,7 +154,7 @@ fn doc_parse(path string) ! {
 			}
 		}
 
-		if parser.line_current('paragraph') {
+		if parser.state_check('paragraph') {
 			mut lastitem:=doc.items.last()
 			if mut lastitem is Paragraph {
 				lastitem.content += line + '\n'
