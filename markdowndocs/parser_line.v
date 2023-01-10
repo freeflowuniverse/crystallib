@@ -13,6 +13,11 @@ mut:
 	line   string
 }
 
+pub struct DocStart {
+pub mut:
+  content string
+}
+
 struct Parser {
 mut:
 	doc Doc
@@ -58,6 +63,14 @@ fn (mut parser Parser) line(nr int) !string {
 // will return error if out of scope
 fn (mut parser Parser) line_current() string {
 	return parser.line(parser.linenr) or { panic(err) }
+}
+
+// if state is this name will return true
+fn (mut parser Parser) state_check(tocheck string) bool {
+  if parser.state() == tocheck.to_lower().trim_space() {
+    return true
+  }
+  return false
 }
 
 // get next line, if end of file will return **EOF**
