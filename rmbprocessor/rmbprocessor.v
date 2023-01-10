@@ -30,12 +30,14 @@ fn (mut rmbp RMBProcessor) process()!{
 		if guid.len>0{		
 			println("FOUND OUTGOING GUID:$guid")
 			mut job:=rmb.job_get(guid)!
-			if job.twinid==u32(0) || job.twinid==rmb. {
+			if job.twinid==u32(0) || job.twinid==rmb.rmbclient.iam.twinid {
 				rmb.redis.lpush("jobs.queue.in","${job.guid}")!
 				now:=time.now().unix_time()
 				rmb.redis.hset("rmb.jobs.in","${job.guid}","$now")!
 			}else{
-
+				// TODO should we put the guid in redis and let Proxy iterate over it? 
+				now:=time.now().unix_time()
+				rmb.redis.hset("rmb.jobs.clients.${}", "${job.guid}", "$now")!
 			}
 			println(job)
 		}

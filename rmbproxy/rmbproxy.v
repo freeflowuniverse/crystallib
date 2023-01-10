@@ -1,7 +1,9 @@
 module rmbproxy
+import freeflowuniverse.crystallib.encoder
 import freeflowuniverse.crystallib.rmbclient
 import freeflowuniverse.crystallib.resp
 
+import json
 import net.websocket
 import time
 
@@ -28,42 +30,26 @@ pub fn new(client &rmbclient.RMBClient) !RMBProxy {
 	return rmbp
 }
 
+pub fn (mut rmbp RMBProxy) send_action_job(action_job &rmbclient.ActionJob) ! {
+	action_json := action_job.dumps()
+	// TODO ecrypt data with public key of twin id who has to execute job
+	action_json_encrypted := action_json
+	mut data := maps[string]string {}
+	data["cmd"] = "job.send"
+	data["signature"] = "//TODO!!!"
+	data["payload"] = action_json_encrypted
 
-//if rmbid is 0, means we work in local mode
-// 		src_twinid		 u32    //which twin is responsible for executing on behalf of actor (0 is local)
-// 		src_rmbids		 []u32  //how do we find our way back, if 0 is local, can be more than 1
-// 		ipaddr			 string
-fn (mut rmbp RMBProxy) process() ! {
-	t_wsserver := spawn rmbp.wsserver.listen()
+	encoder := encoder.encoder_new()
+	encoder.add_map_string(data)
 
-	mut rmb := &rmbp.rmbc
-	mut guid := ""
-	for {
-		guid = rmb.redis.rpop("jobs.queue.out") or {
-			println(err)
-			panic("error in jobs queue")
+	for rmb_proxy in rmbp.rmbc.rmb_proxy_ips {
+		rmbp.send_message(rmb_proxy, encoder.data) or {
+			println("RMBProxy: Failed sending to rmb proxy ${rmb_proxy}: $err")
+			// lets try the next one
+			continue
 		}
-		if guid.len > 0 {		
-			println("FOUND OUTGOING GUID:$guid")
-			mut job := rmb.job_get(guid)!
-			if job.twinid == u32(0) || job.twinid == u32(0) {
-				rmb.redis.lpush("jobs.queue.in", "${job.guid}")!
-				now := time.now().unix_time()
-				rmb.redis.hset("rmb.jobs.in", "${job.guid}", "$now")!
-			} else {
-				rmb.jobs.clients.$rmbclientid
-			}
-			println(job)
-		}
-		println("sleep")
-		time.sleep(time.second)
-		// mut job4:=rmb.job_get(qout)!
-		// println(job4)
-	}
-	rmbp.wsserver.close()
-	t_wsserver.wait() or {
-		println(err)
-		panic("error while waiting for the server") 
+		// we were able to send the message => return
+		return
 	}
 }
 
@@ -84,10 +70,8 @@ fn (mut rmbp RMBProxy) send_message(address string, data string) ! {
 
 fn (mut rmbp RMBProxy) on_message(mut client websocket.Client, msg &websocket.Message) ! {
 	if msg.opcode == .binary_frame {
-		data := json.decode(map[string]string, msg.payload) or {
-			println("RMBProxy: Failed to decode payload")
-			return 
-		}
+		decoder := encoder.decoder_new(msg.payload)
+		data := decoder.get_map_string()
 
 		if not "cmd" in data {
 			println("RMBProxy: Invalid message <${data}>: Does not contain cmd")
