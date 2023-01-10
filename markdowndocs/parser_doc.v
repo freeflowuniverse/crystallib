@@ -1,6 +1,5 @@
 module markdowndocs
 
-import os
 import pathlib
 
 

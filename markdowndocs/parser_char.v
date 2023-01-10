@@ -1,7 +1,6 @@
 module markdowndocs
 
 import os
-import pathlib
 
 //is a char parser
 
@@ -33,6 +32,13 @@ pub fn parser_char_new(path string)! ParserChar{
 	mut parser:=ParserChar{group:ParserCharGroup{}}
 	mut content := os.read_file(path) or { panic('Failed to load file ${path}') }
 	parser.chars = content
+	parser.charnr = 0
+	return parser
+}
+
+pub fn parser_char_new_text(text string)ParserChar{
+	mut parser:=ParserChar{group:ParserCharGroup{}}
+	parser.chars = text
 	parser.charnr = 0
 	return parser
 }
