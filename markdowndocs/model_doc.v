@@ -23,10 +23,10 @@ type DocItem = Action
 // }
 
 
-pub fn (doc Doc) wiki() string {
+pub fn (mut doc Doc) wiki() string {
 	mut out := ''
-	for item in doc.items {
-		match item {
+	for mut item in doc.items {
+		match mut item {
 			Table { out += item.wiki() }
 			Action { out += item.wiki() }
 			Actions { out += item.wiki() }
@@ -56,7 +56,7 @@ fn (mut doc Doc) process() ! {
 	}
 }
 
-fn (doc Doc) str() string {
+fn (mut doc Doc) str() string {
 	mut out := ''
 	for mut item in doc.items {
 		match mut item {
@@ -73,7 +73,7 @@ fn (doc Doc) str() string {
 	return out
 }
 
-pub fn (doc Doc) html() string {
+pub fn (mut doc Doc) html() string {
 	mut out := ''
 	for mut item in doc.items {
 		match mut item {

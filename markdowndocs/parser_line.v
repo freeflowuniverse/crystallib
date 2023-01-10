@@ -15,6 +15,7 @@ mut:
 
 struct Parser {
 mut:
+	doc Doc
 	linenr int
 	lines  []string
 	errors []ParserError

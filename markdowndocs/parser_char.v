@@ -53,7 +53,7 @@ fn (mut parser ParserChar) char(nr int) !string {
 	if nr == parser.chars.len || nr > parser.chars.len {
 		return error('end of file')
 	}
-	return parser.chars[nr]
+	return parser.chars[nr].str()
 }
 
 // get current char
@@ -79,7 +79,7 @@ fn (mut parser ParserChar) char_prev() string {
 }
 
 //create a group, can be e.g. a link
-fn (mut parser ParserChar) group_new(char string) {
+fn (mut parser ParserChar) group_new() {
 	parser.group = ParserCharGroup{charnr:parser.charnr}
 }
 
@@ -89,13 +89,13 @@ fn (mut parser ParserChar) group_add() {
 
 //check if starting from position the next is the exact string (starts at position itself)
 fn (mut parser ParserChar) text_next_is(tofind string) bool{
-	text := parser.substr(parser.nr,parser.nr+tofind.len)
+	text := parser.char_next().substr(parser.charnr, parser.charnr + tofind.len)
 	return text == tofind
 }
 
 //check if previous text was, current possition does not count
 fn (mut parser ParserChar) text_previous_was(tofind string) bool{
-	text := parser.substr(parser.nr-tofind-1.len,parser.nr-1)
+	text := parser.char_prev().substr(parser.charnr - tofind.len - 1, parser.charnr - 1)
 	return text == tofind
 }
 

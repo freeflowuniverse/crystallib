@@ -7,7 +7,7 @@ import pathlib
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 fn doc_parse(path string) ! {
-	path2 = pathlib.get_file(path, false)!
+	path2 := pathlib.get_file(path, false)!
 	mut doc:=Doc{path:path2}
 	mut parser:=parser_new(path)!
 	
@@ -28,7 +28,7 @@ fn doc_parse(path string) ! {
 					parser.next()
 					continue
 				}
-				doc.items << DocStart{} // make sure we restart from scratch because is not comment
+				doc.items << DocItem{} // make sure we restart from scratch because is not comment
 			} else {
 				if line.trim_space().ends_with('-->') {
 					llast.content += line.all_before_last('-->') + '\n'
@@ -46,7 +46,7 @@ fn doc_parse(path string) ! {
 				// starts with tab or space, means block continues for action
 				llast.content += '${line}\n'
 			} else {
-				doc.items << DocStart{}
+				doc.items << DocItem{}
 			}
 			parser.next()
 			continue
@@ -54,7 +54,7 @@ fn doc_parse(path string) ! {
 
 		if mut llast is CodeBlock {
 			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
-				doc.items << DocStart{}
+				doc.items << DocItem{}
 			} else {
 				llast.content += '${line}\n'
 			}
@@ -154,7 +154,7 @@ fn doc_parse(path string) ! {
 			}
 		}
 
-		if parser.state_check('paragraph') {
+		if parser.line_current('paragraph') {
 			mut lastitem:=doc.items.last()
 			if mut lastitem is Paragraph {
 				lastitem.content += line + '\n'
