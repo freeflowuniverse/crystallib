@@ -224,7 +224,7 @@ fn doc_parse(path string) ! {
 // 		break
 // 	}
 // 	// print(" *NO\n")
-// 	return &DocStart{}
+// 	return &Doc{}
 // }
 
 // // go further over lines, see if we can find one which has one of the to_find items in but we didn't get tostop item before
