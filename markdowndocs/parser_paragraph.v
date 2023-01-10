@@ -8,26 +8,27 @@ import os
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT REALITIES
 // adds the found links, text, comments to the paragraph
-fn paragraph_parse(text string) !Paragraph {
+fn paragraph_parse(path string) !Paragraph {
 	mut para := Paragraph{}
-	mut parser := parser_char_new()
+	mut parser := parser_char_new(path)!
 	for {		
 		if parser.eof() {
-			if parser.group.len>0{
-				para.items<<text_new(parser.group)
+			if parser.group.content.len > 0 {
+				para.items << text_new(parser.group.content)!
 			}
 			break
 		}
 		parser.group_add()
 
+		mut doc := get(path)!
 		mut llast := doc.items.last()
 
 		// go out of loop if end of file
-		char := parser.char_current()	
+		char_ := parser.char_current()	
 
 		// check for comments end
 		if mut llast is Comment {
-			if char=="\n"{
+			if char_ == "\n"{
 				if llast.singleline{
 					//means we are at end of line of a single line comment
 					parser.next_start()
@@ -46,7 +47,7 @@ fn paragraph_parse(text string) !Paragraph {
 		}
 
 		if mut llast is Link {
-			if char == ']' {
+			if char_ == ']' {
 				if ! parser.text_next_is("("){
 					//means is not link
 					para.items.delete_last()
@@ -54,7 +55,7 @@ fn paragraph_parse(text string) !Paragraph {
 					continue
 				}
 			}
-			if char == ')' {
+			if char_ == ')' {
 				// end of link
 				llast.content=parser.group.content
 				parser.group_new() //restart the group
@@ -69,11 +70,13 @@ fn paragraph_parse(text string) !Paragraph {
 			for totry in ['<!--','//']{
 				if parser.text_previous_was(totry) {
 					//we are now in comment
-					normaltext := parser.group.substr(0,parser.group.len-totry.len)
-					para.items<<text_new(normaltext)//means what is captured till now is text
+					normaltext := parser.group.content.substr(0,parser.group.content.len - totry.len)
+					para.items<<text_new(normaltext.str())!//means what is captured till now is text
 					para.items<<comment_new()
 					if totry == "//"{
-						para.items.last().singleline = true
+						if mut llast is Comment {
+							llast.singleline = true
+						}
 					}					
 					parser.group_new()//lets start capturing from now again
 					parser.next()
@@ -81,14 +84,15 @@ fn paragraph_parse(text string) !Paragraph {
 				}			
 			}
 			//means we have empty sheet to check what has to come
-			if ch == '[' {
+			if char_ == '[' {
 				mut l:= link_new()
 				parser.group_new() //restart the group
+				charprev := parser.char_prev()
 				if charprev == '!' {
-					l.cat=.image
-					parser.group='!['
+					l.cat =	.image
+					parser.group.content = '!['
 				}else{
-					parser.group='['
+					parser.group.content = '['
 				}
 				para.items << l
 				parser.next()
@@ -97,6 +101,7 @@ fn paragraph_parse(text string) !Paragraph {
 		}
 
 	}
+	return para
 }
 
 

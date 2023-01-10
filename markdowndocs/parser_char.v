@@ -37,6 +37,13 @@ pub fn parser_char_new(path string)! ParserChar{
 	return parser
 }
 
+pub fn parser_char_new_text(text string)ParserChar{
+	mut parser:=ParserChar{group:ParserCharGroup{}}
+	parser.chars = text
+	parser.charnr = 0
+	return parser
+}
+
 // return a specific char
 fn (mut parser ParserChar) error_add(msg string) {
 	parser.errors << ParserCharError{

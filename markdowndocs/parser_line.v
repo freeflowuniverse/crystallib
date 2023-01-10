@@ -13,11 +13,6 @@ mut:
 	line   string
 }
 
-pub struct DocStart {
-pub mut:
-  content string
-}
-
 struct Parser {
 mut:
 	doc Doc
@@ -33,6 +28,7 @@ pub fn parser_new(path string)! Parser{
 	}
 	mut parser:=Parser{}
 	mut content := os.read_file(path) or { panic('Failed to load file ${path}') }
+	println(content)
 	parser.lines = content.split_into_lines()
 	parser.lines.map(it.replace('\t', '    ')) // remove the tabs
 	parser.linenr = 0
@@ -71,6 +67,10 @@ fn (mut parser Parser) state_check(tocheck string) bool {
     return true
   }
   return false
+}
+
+fn (mut parser Parser) state() string {
+  return parser.doc.items.last().type_name().all_after_last('.').to_lower()
 }
 
 // get next line, if end of file will return **EOF**
