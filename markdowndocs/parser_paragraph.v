@@ -28,7 +28,7 @@ fn paragraph_parse(path string) !Paragraph {
 				if llast.singleline{
 					//means we are at end of line of a single line comment
 					parser.next_start()
-					continue	
+					continue
 				}else{
 					//now we know for sure comment is not single line
 					llast.singleline=false
