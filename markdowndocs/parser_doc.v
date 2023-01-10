@@ -154,7 +154,7 @@ fn doc_parse(path string) ! {
 			}
 		}
 
-		if parser.line_current('paragraph') {
+		if parser.state_check('paragraph') {
 			mut lastitem:=doc.items.last()
 			if mut lastitem is Paragraph {
 				lastitem.content += line + '\n'
