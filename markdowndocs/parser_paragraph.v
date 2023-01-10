@@ -1,9 +1,5 @@
 module markdowndocs
 
-import freeflowuniverse.crystallib.texttools
-import os
-
-
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT REALITIES

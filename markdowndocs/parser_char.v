@@ -1,7 +1,6 @@
 module markdowndocs
 
 import os
-import pathlib
 
 //is a char parser
 

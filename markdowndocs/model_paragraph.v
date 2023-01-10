@@ -1,7 +1,5 @@
 module markdowndocs
 
-import freeflowuniverse.crystallib.texttools
-
 type ParagraphItem = Text | Link | Comment
 
 [heap]
