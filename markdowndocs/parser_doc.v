@@ -2,6 +2,9 @@ module markdowndocs
 
 import pathlib
 
+struct Line{
+	content string
+}
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
@@ -16,174 +19,37 @@ fn doc_parse(path string) !Doc {
 			break
 		}
 
-		line := parser.line_current()
+		this_line := parser.line_current()
+		line := Line{content: this_line}
 
-		if parser.atstart  {
-			if line.starts_with('!!') {
-				doc.items << Action{
-					content: line.all_after_first('!!')
-
-				}
-				parser.next()
-				continue
-			}
-
-			// find codeblock or actions
-			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
-				doc.items << CodeBlock{
-					category: line.substr(3, line.len).to_lower().trim_space()
-
-				}
-				parser.next()
-				continue
-			}
-
-			// process headers
-			if line.starts_with('######') {
-				parser.error_add('header should be max 5 deep')
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('#####') {
-				doc.items << Header{
-					content: line.all_after_first('#####').trim_space()
-					depth: 5
-
-				}
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('####') {
-				doc.items << Header{
-					content: line.all_after_first('####').trim_space()
-					depth: 4
-
-				}
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('###') {
-				doc.items << Header{
-					content: line.all_after_first('###').trim_space()
-					depth: 3
-
-				}
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('##') {
-				doc.items << Header{
-					content: line.all_after_first('##').trim_space()
-					depth: 2
-
-				}
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('#') {
-				doc.items << Header{
-					content: line.all_after_first('#').trim_space()
-					depth: 1
-
-				}
-				parser.next_start()
-				continue
-			}
-
-			if line.trim_space().starts_with('//') {
-				doc.items << Comment{
-					content: line.all_after_first('//').trim_space() + '\n'
-					prefix: .short
-
-				}
-				parser.next()
-				continue
-			}
-			if line.trim_space().starts_with('<!--') {
-				doc.items << Comment{
-					content: line.all_after_first('<!--').trim_space() + '\n'
-					prefix: .multi
-
-				}
-				parser.next()
-				continue
-			}
-			if line.trim_space().starts_with('<p>') || line.trim_space().starts_with(''){
-				doc.items << Paragraph{
-					content: line.all_after_first('<p>').all_before_last('</p>').trim_space() + '\n'
-				}
-				parser.next()
-				continue
-			}
-		}
-
-		mut llast := doc.items.last()
-		// if parser.eof() {
-		// 	break
-		// }
-		// go out of loop if end of file
-		// line := parser.line_current()
-		// println("line ($parser.state()): '$line'")	
-
-		if mut llast is Comment {
-			if llast.prefix == .short {
-				if line.trim_space().starts_with('//') {
-					llast.content += line.all_after_first('//') + '\n'
-					parser.next()
-					continue
-				}
-				doc.items << DocStart{} // make sure we restart from scratch because is not comment
-			} else {
-				if line.trim_space().ends_with('-->') {
-					llast.content += line.all_before_last('-->') + '\n'
-					parser.next_start()
-				} else {
-					llast.content += line + '\n'
-					parser.next()
-				}
-				continue
-			}
-		}
-
-		if mut llast is Action {
-			if line.starts_with(' ') || line.starts_with('\t') {
-				// starts with tab or space, means block continues for action
-				llast.content += '${line}\n'
-			} else {
-				doc.items << DocStart{}
-			}
-			parser.next()
+		if line.is_heading(){
+			heading_line := line.get_header()
+			doc.items << heading_line
+			parser.next_start()
 			continue
 		}
 
-		if mut llast is CodeBlock {
-			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
-				doc.items << DocStart{}
-			} else {
-				llast.content += '${line}\n'
+		if line.is_comment(){
+			mut comment_line := line.get_comment()
+			match comment_line.prefix{
+				.multi{
+					// Searching for the end of the comment.
+					for{
+						parser.next()
+						new_line := parser.line_current()
+						if new_line.starts_with("-->") || new_line.ends_with("-->"){
+							break
+						} else {
+							comment_line.content += "\n" + new_line
+						}
+					}
+				}
+				.short{}
 			}
-			parser.next()
+			doc.items << comment_line
+			parser.next_start()
 			continue
 		}
-
-		if mut llast is Paragraph{
-			llast.content += line.all_before_last('</p>').trim_space() + '\n'
-			parser.next()
-			continue
-		}
-
-		// if parser.state_check('paragraph') {
-		// 	mut lastitem:=doc.items.last()
-		// 	if mut lastitem is Paragraph {
-		// 		lastitem.content += line + '\n'
-		// 	}
-		// } else {
-		// 	doc.items << Paragraph{
-		// 		content: line
-
-		// 	}
-		// }
-
 		parser.next()
 	}
 
@@ -191,7 +57,77 @@ fn doc_parse(path string) !Doc {
 	return doc
 }
 
+fn (lin Line)is_heading()bool{
+	if lin.content.starts_with('#') || 
+		lin.content.starts_with('##') || 
+		lin.content.starts_with('###')|| 
+		lin.content.starts_with('####') || 
+		lin.content.starts_with('#####'){
+		return true
+	}
+	return false
+}
 
+fn (lin Line)is_comment()bool{
+	if lin.content.starts_with('<!--') || lin.content.starts_with('//'){
+		return true
+	}
+	return false
+}
+
+fn (lin Line)get_comment()Comment{
+	mut singleline := false
+	mut prefix := CommentPrefix.short
+	mut content := ""
+
+	if lin.content.trim_space().starts_with('//'){
+		content = lin.content.all_after_first('//').trim_space() + '\n'
+		prefix = CommentPrefix.short
+		singleline = true
+	}
+
+	if lin.content.starts_with('<!--') && !lin.content.ends_with('-->'){
+		content = lin.content.all_after_first('<!--')
+		prefix = CommentPrefix.multi
+		singleline = false
+	}
+
+	return Comment{
+		content: content
+		prefix: prefix
+		singleline: singleline
+	}
+}
+
+fn (lin Line)get_header()Header{
+	mut depth := 0
+	mut content := ""
+	if lin.content.starts_with('#'){
+		content = lin.content.all_after_first('#').trim_space()
+		depth = 1
+	}
+	if lin.content.starts_with('##'){
+		content = lin.content.all_after_first('##').trim_space()
+		depth = 2
+	}
+	if lin.content.starts_with('###'){
+		content = lin.content.all_after_first('###').trim_space()
+		depth = 3
+	}
+	if lin.content.starts_with('####'){
+		content = lin.content.all_after_first('####').trim_space()
+		depth = 4
+	}
+	if lin.content.starts_with('#####'){
+		content = lin.content.all_after_first('#####').trim_space()
+		depth = 5
+	}
+
+	return Header{
+		content: content
+		depth: depth
+	}
+}
 
 
 
