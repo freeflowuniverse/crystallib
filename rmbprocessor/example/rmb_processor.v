@@ -20,7 +20,8 @@ fn do() ! {
 	rmb.reset()!
 
 	//schedule a job
-	mut ajob:=rmb.action_new_schedule(u32(0),"mydomain.myactor.myaction", param,"sourcedomain.sourceactor.soureaction")!
+	mut ajob:=rmb.action_new_schedule(u32(0),"mydomain.myactor.myaction", param,
+												"sourcedomain.sourceactor.soureaction")!
 
 	rmbprocessor.process()!
 }
