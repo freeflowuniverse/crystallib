@@ -27,7 +27,7 @@ fn (mut cl RMBProxyClient) rpc(data map[string]string)! map[string]string{
 }
 
 
-//this needs to go to a thread, so it can be executing at backgroupd
+//this needs to go to a thread, so it can be executing at background
 pub fn proxy_processor(twinid u32, proxyipaddrs []string){
 	mut rmb :=rmbclient.new()!
 	mut cl:=RMBProxyClient{rmb:rmb,twinid:twinid,proxyipaddrs:proxyipaddrs}
