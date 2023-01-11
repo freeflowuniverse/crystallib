@@ -6,7 +6,7 @@ pub interface RMBProxyHandler {
 mut:
 	rmbc &rmbclient.RMBClient
 
-	handle(string) !string
+	handle(data map[string]string) !string
 }
 
 pub struct JobSendHandler {
@@ -14,11 +14,11 @@ mut:
 	rmbc &rmbclient.RMBClient
 }
 
-pub fn (mut h JobSendHandler) handle(data [string]string) !string {
-	if not "signature" in data {
+pub fn (mut h JobSendHandler) handle(data map[string]string) !string {
+	if !("signature" in data) {
 		return error("Invalid data: missing signature")
 	}
-	if not "payload" in data {
+	if !("payload" in data) {
 		return error("Invalid data: missing payload")
 	}
 
@@ -41,8 +41,8 @@ mut:
 	rmbc &rmbclient.RMBClient
 }
 
-pub fn (mut h TwinSetHandler) handle(data [string]string) !string {
-	if not "meta" in data {
+pub fn (mut h TwinSetHandler) handle(data map[string]string) !string {
+	if !("meta" in data) {
 		return error("Invalid data: missing meta")
 	}
 
@@ -62,14 +62,16 @@ mut:
 	rmbc &rmbclient.RMBClient
 }
 
-pub fn (mut h TwinDelHandler) handle(data [string]string) !string {
-	if not "twinid" in data {
+pub fn (mut h TwinDelHandler) handle(data map[string]string) !string {
+	if !("twinid" in data) {
 		return error("Invalid data: missing twinid")
 	}
 
 	twinid := data["twinid"].u32()
 
 	// TODO add function in client to delete 
+	h.rmbc.delete(twinid)
+
 	return ""
 }
 
@@ -80,15 +82,17 @@ mut:
 	rmbc &rmbclient.RMBClient
 }
 
-pub fn (mut h TwinGetHandler) handle(data [string]string) !string {
-	if not "twinid" in data {
+pub fn (mut h TwinGetHandler) handle(data map[string]string) !string {
+	if !("twinid" in data) {
 		return error("Invalid data: missing twinid")
 	}
 
 	twinid := data["twinid"].u32()
 
 	// TODO add function in client to get a specific client 
-	return 
+	client_twin := h.rmbc.get_twin(twinid)
+
+	return json.encode(client_twin)
 }
 
 
@@ -98,13 +102,14 @@ mut:
 	rmbc &rmbclient.RMBClient
 }
 
-pub fn (mut h TwinIdNewHandler) handle(data [string]string) !string {
-	if not "twinid" in data {
+pub fn (mut h TwinIdNewHandler) handle(data map[string]string) !string {
+	if !("twinid" in data) {
 		return error("Invalid data: missing twinid")
 	}
 
 	// TODO add function in client to get new ID
-	twinid := 
+	twinid := 10
+	
 	return twinid
 }
 
@@ -114,6 +119,6 @@ mut:
 	rmbc &rmbclient.RMBClient
 }
 
-pub fn (mut h ProxiesGetHandler) handle(data [string]string) !string {
+pub fn (mut h ProxiesGetHandler) handle(data map[string]string) !string {
 	return h.rmbc.iam.rmb_proxy_ips
 }

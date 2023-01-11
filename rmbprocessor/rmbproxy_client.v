@@ -10,20 +10,50 @@ pub mut:
 	rmb rmbclient.RMBClient
 	twinid u32
 	proxyipaddrs []string
-	websocketclients []string //in reality its not string, its webdav clients, is more than 1
+	websocketclients []&websocket.Client //in reality its not string, its webdav clients, is more than 1
 	websocketclient_active u8 //the current webdavclient which is being used, the one which is active
 }
 
+fn (mut cl RMBProxyClient) next_websocketclient() {
+	cl.websocketclient_active += 1
+	if cl.websocketclient_active >= cl.websocketclients.len {
+		cl.websocketclient_active = 0
+	}
+}
+
+fn (mut cl RMBProxyClient) write_first_successful(data []u8) !int {
+	// we keep the amount of tries and we try all of the websocket clients in the worst case
+	// but we always start from the last websocketclient that was successfull during the last call
+	mut nbr_tries := 0
+	for nbr_tries < cl.websocketclients.len {
+		mut websocketclient:=cl.websocketclients[cl.websocketclient_active]
+		if websocketclient.state != .open {
+			websocketclient.connect() or {
+				// failed to connect lets try the second one
+				cl.next_websocketclient()
+				nbr_tries += 1
+				continue
+			}
+		}
+		written_length := websocketclient.write(data, .binary_frame) or {
+			// failed writing lets try the next one
+			cl.next_websocketclient()
+			nbr_tries += 1
+			continue
+		}
+		// success
+		return written_length
+	}
+	// failure
+	return error("failed to connect to any of the rmb proxies")
+}
+
 //call first webdavclient first, if it doesn't work use next one, ...
-fn (mut cl RMBProxyClient) rpc(data map[string]string)! map[string]string{
-	//todo: check the webdavclient is ok (phase 2)
-	//todo: implement how do we know what is working and what not (phase 2)
-	mut webdavclient:=cl.webdavclients[webdavclient_active]
-	//todo: implement the call over the client
-	encoder := encoder.encoder_new()
+fn (mut cl RMBProxyClient) rpc(data map[string]string) ! {
+	mut encoder := encoder.encoder_new()
 	encoder.add_map_string(data)
-	encoder.data //todo: this needs to be send over the rpc to proxy 
-	return map[string]string{}
+
+	_ := cl.write_first_successful(encoder.data)!
 }
 
 
@@ -39,7 +69,7 @@ pub fn proxy_processor(twinid u32, proxyipaddrs []string){
 }
 
 
-pub fn (mut cl RMBProxyClient) job_send(args rmbclient.ActionJob)!{
+pub fn (mut cl RMBProxyClient) job_send(action_job rmbclient.ActionJob) ! {
 	mut rmb:=rmbp.rmbc
 	
 	mut ipaddr0:=args.ipaddr
@@ -55,5 +85,15 @@ pub fn (mut cl RMBProxyClient) job_send(args rmbclient.ActionJob)!{
 	data:=twin.dumps()!
 	rmb.redis.set("rmb.iam",data)!
 	rmb.iam=twin
+
+	action_json := action_job.dumps()
+	// TODO ecrypt data with public key of twin id who has to execute job
+	action_json_encrypted := action_json
+	mut data := maps[string]string {}
+	data["cmd"] = "job.send"
+	data["signature"] = "//TODO!!!"
+	data["payload"] = action_json_encrypted
+
+	cl.rpc(data)!
 }
 
