@@ -3,7 +3,9 @@
 // 		src_twinid		 u32    //which twin is responsible for executing on behalf of actor (0 is local)
 // 		src_rmbids		 []u32  //how do we find our way back, if 0 is local, can be more than 1
 // 		ipaddr			 string
-pub fn (mut rmb RMBClient) iam_register(args MyTwin)!{
+pub fn (mut rmbp RMBProcessor) iam_register(args MyTwin)!{
+	mut rmb:=rmbp.rmbc
+	
 	mut ipaddr0:=args.ipaddr
 	if ipaddr0==""{
 		ipaddr0="localhost"
@@ -18,3 +20,4 @@ pub fn (mut rmb RMBClient) iam_register(args MyTwin)!{
 	rmb.redis.set("rmb.iam",data)!
 	rmb.iam=twin
 }
+

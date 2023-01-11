@@ -10,17 +10,14 @@ import rand
 pub struct RMBClient{
 pub mut:
 	redis redisclient.Redis
-	iam MyTwin
+	twinid u32
 }
 
 pub fn new() !RMBClient{
 	mut redis := redisclient.core_get()
 	mut rmb:=RMBClient{redis:redis,iam:MyTwin{}}
-	iamdata:=rmb.redis.get("rmb.iam")!
-	if !(iamdata.len==0){
-		iamo:=json.decode(MyTwin,iamdata)!
-		rmb.iam=iamo
-	}
+	twinid:=rmb.redis.get("rmb.mytwin.id")!
+	rmb.twinid=twinid.u32()
 	return rmb
 }
 

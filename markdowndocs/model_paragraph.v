@@ -1,7 +1,5 @@
 module markdowndocs
 
-import freeflowuniverse.crystallib.texttools
-
 type ParagraphItem = Text | Link | Comment
 
 [heap]
@@ -13,9 +11,9 @@ pub mut:
 }
 
 
-fn (paragraph Paragraph) wiki() string {
+fn (mut paragraph Paragraph) wiki() string {
 	mut out := ''
-	for item in paragraph.items {
+	for mut item in paragraph.items {
 		match mut item{
 			Text {out += item.wiki()}
 			Link {out += item.wiki()}
@@ -25,9 +23,9 @@ fn (paragraph Paragraph) wiki() string {
 	return out
 }
 
-fn (paragraph Paragraph) html() string {
+fn (mut paragraph Paragraph) html() string {
 	mut out := ''
-	for item in paragraph.items {
+	for mut item in paragraph.items {
 		match mut item{
 			Text {out += item.html()}
 			Link {out += item.html()}
@@ -37,9 +35,9 @@ fn (paragraph Paragraph) html() string {
 	return out
 }
 
-fn (paragraph Paragraph) str() string {
+fn (mut paragraph Paragraph) str() string {
 	mut out := ''
-	for item in paragraph.items {
+	for mut item in paragraph.items {
 		match mut item{
 			Text {out += item.str()}
 			Link {out += item.str()}
@@ -49,8 +47,8 @@ fn (paragraph Paragraph) str() string {
 	return out
 }
 
-fn (paragraph Paragraph) process() ! {
-	for item in paragraph.items {
+fn (mut paragraph Paragraph) process() ! {
+	for mut item in paragraph.items {
 		match mut item{
 			Text {item.process()!}
 			Link {item.process()!}

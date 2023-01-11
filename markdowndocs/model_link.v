@@ -1,6 +1,7 @@
 module markdowndocs
 
 import freeflowuniverse.crystallib.texttools
+import os
 
 pub enum LinkType {
 	file
@@ -104,7 +105,7 @@ fn (mut o Link) process()!{
 
 
 // return how to represent link on source
-fn (mut link Link) wiki() !string {
+fn (mut link Link) wiki() string {
 	if link.cat == LinkType.image {
 		if link.extra == '' {
 			return '![${link.description}](${link.filename})'
@@ -121,7 +122,7 @@ fn (mut link Link) wiki() !string {
 	}
 	if link.cat == LinkType.page {
 		if link.filename.contains(':') {
-			return error("should not have ':' in link for page or file.\n${link}")
+			return "should not have ':' in link for page or file.\n${link}"
 		}
 
 		mut link_filename := link.filename
@@ -142,7 +143,7 @@ fn (mut link Link) wiki() !string {
 }
 
 
-fn (mut o Link) html() !string{
+fn (mut o Link) html() string{
 	return o.wiki()
 }
 
@@ -164,7 +165,7 @@ fn (mut o Link) html() !string{
 pub fn (mut link Link) replace(text string, replacewith_ string) !string {
 	mut replacewith := replacewith_
 	if replacewith == '' {
-		replacewith = link.wiki()!
+		replacewith = link.wiki()
 	}
 	return text.replace(link.content, replacewith)
 }
@@ -195,12 +196,12 @@ fn (mut link Link) parse() Link {
 
 	if link.url.starts_with('http') {
 		link.cat = LinkType.html
-		return
+		return link
 	}
 
 	if link.url.starts_with('#') {
 		link.cat = LinkType.anchor
-		return
+		return link
 	}
 
 	// AT THIS POINT LINK IS A PAGE OR A FILE
@@ -261,7 +262,7 @@ fn (mut link Link) parse() Link {
 			link.filename = splitted2[1]
 		} else if splitted2.len > 2 {
 			link.error('link can only have 1 x ":"/n${link}')
-			return
+			return link
 		} else {
 			('should never be here')
 		}
@@ -295,25 +296,25 @@ fn (mut link Link) parse() Link {
 			link.cat = LinkType.page
 		} else if ext in ['html', 'htm'] {
 			link.cat = LinkType.html
-			return
+			return link
 		} else if ext in ['v', 'py', 'js', 'c', 'sh'] {
 			link.cat = LinkType.code
-			return
+			return link
 		} else if ext in ['doc', 'docx', 'zip', 'xls', 'pdf', 'xlsx', 'ppt', 'pptx'] {
 			link.cat = LinkType.file
-			return
+			return link
 		} else if ext in ['json', 'yaml', 'yml', 'toml'] {
 			link.cat = LinkType.data
-			return
+			return link
 		} else if link.url.starts_with('mailto:') {
 			link.cat = LinkType.email
-			return
+			return link
 		} else if !link.url.contains_any('./!&;') {
 			// link.cat = LinkType.page
 			panic('need to figure out what to do with ${link.url} ')
 		} else {
 			link.error("${link.url} (no match), ext was:'${ext}'")
-			return
+			return link
 		}
 		if link.filename.contains(':') {
 			panic("should not have ':' in link for page or file (2).\n${link}")
@@ -323,7 +324,8 @@ fn (mut link Link) parse() Link {
 		if !link.url.trim(' ').starts_with('#') {
 			link.state = LinkState.error
 			link.error('EMPTY LINK.')
-			return
+			return link
 		}
 	}
+	return link
 }

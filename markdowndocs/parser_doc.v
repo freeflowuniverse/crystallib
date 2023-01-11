@@ -1,13 +1,12 @@
 module markdowndocs
 
-import os
 import pathlib
 
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 fn doc_parse(path string) ! {
-	path2 = pathlib.get_file(path, false)!
+	path2 := pathlib.get_file(path, false)!
 	mut doc:=Doc{path:path2}
 	mut parser:=parser_new(path)!
 	
@@ -224,7 +223,7 @@ fn doc_parse(path string) ! {
 // 		break
 // 	}
 // 	// print(" *NO\n")
-// 	return &DocStart{}
+// 	return &Doc{}
 // }
 
 // // go further over lines, see if we can find one which has one of the to_find items in but we didn't get tostop item before

@@ -1,7 +1,6 @@
 module markdowndocs
 
 import os
-import pathlib
 
 //is a line parser
 
@@ -15,6 +14,7 @@ mut:
 
 struct Parser {
 mut:
+	doc Doc
 	linenr int
 	lines  []string
 	errors []ParserError
@@ -27,6 +27,7 @@ pub fn parser_new(path string)! Parser{
 	}
 	mut parser:=Parser{}
 	mut content := os.read_file(path) or { panic('Failed to load file ${path}') }
+	println(content)
 	parser.lines = content.split_into_lines()
 	parser.lines.map(it.replace('\t', '    ')) // remove the tabs
 	parser.linenr = 0
@@ -57,6 +58,18 @@ fn (mut parser Parser) line(nr int) !string {
 // will return error if out of scope
 fn (mut parser Parser) line_current() string {
 	return parser.line(parser.linenr) or { panic(err) }
+}
+
+// if state is this name will return true
+fn (mut parser Parser) state_check(tocheck string) bool {
+  if parser.state() == tocheck.to_lower().trim_space() {
+    return true
+  }
+  return false
+}
+
+fn (mut parser Parser) state() string {
+  return parser.doc.items.last().type_name().all_after_last('.').to_lower()
 }
 
 // get next line, if end of file will return **EOF**
@@ -133,7 +146,7 @@ fn (mut parser Parser) eof() bool {
 // 		break
 // 	}
 // 	// print(" *NO\n")
-// 	return &DocStart{}
+// 	return &Doc{}
 // }
 
 // // go further over lines, see if we can find one which has one of the to_find items in but we didn't get tostop item before

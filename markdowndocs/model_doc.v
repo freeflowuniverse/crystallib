@@ -12,21 +12,38 @@ type DocItem = Action
 	| Actions
 	| CodeBlock
 	| Comment
-
+	| DocStart
 	| Header
 	| Html
 	| Paragraph
 	| Table
+	| Link
 
-// fn (mut o DocItem) str() string{
-// 	return "$o"
-// }
+pub struct DocStart {
+pub mut:
+  content string
+}
 
+fn (mut o DocStart) process() ! {
+}
 
-pub fn (doc Doc) wiki() string {
+fn (o DocStart) wiki() string {
+  return o.content
+}
+
+fn (o DocStart) html() string {
+  return o.wiki()
+}
+
+fn (o DocStart) str() string {
+  return '**** DOCSTART\n'
+}
+
+pub fn (mut doc Doc) wiki() string {
 	mut out := ''
-	for item in doc.items {
-		match item {
+	for mut item in doc.items {
+		match mut item {
+			DocStart { out += item.wiki() }
 			Table { out += item.wiki() }
 			Action { out += item.wiki() }
 			Actions { out += item.wiki() }
@@ -35,6 +52,7 @@ pub fn (doc Doc) wiki() string {
 			Html { out += item.wiki() }
 			Comment { out += item.wiki() }
 			CodeBlock { out += item.wiki() }
+			Link { out += item.wiki() }
 		}
 	}
 	return out
@@ -44,6 +62,7 @@ pub fn (doc Doc) wiki() string {
 fn (mut doc Doc) process() ! {
 	for mut item in doc.items {
 		match mut item {
+			DocStart { item.process()! }
 			Table { item.process()! }
 			Action { item.process()! }
 			Actions { item.process()! }
@@ -52,14 +71,16 @@ fn (mut doc Doc) process() ! {
 			Html { item.process()! }
 			Comment { item.process()! }
 			CodeBlock { item.process()! }
+			Link { item.process()! }
 		}
 	}
 }
 
-fn (doc Doc) str() string {
+fn (mut doc Doc) str() string {
 	mut out := ''
 	for mut item in doc.items {
 		match mut item {
+			DocStart { out += item.str() }
 			Table { out += item.str() }
 			Action { out += item.str() }
 			Actions { out += item.str() }
@@ -68,23 +89,26 @@ fn (doc Doc) str() string {
 			Html { out += item.str() }
 			Comment { out += item.str() }
 			CodeBlock { out += item.str() }
+			Link { out += item.str() }
 		}
 	}
 	return out
 }
 
-pub fn (doc Doc) html() string {
+pub fn (mut doc Doc) html() string {
 	mut out := ''
 	for mut item in doc.items {
 		match mut item {
-			Table { out += item.str() }
-			Action { out += item.str() }
-			Actions { out += item.str() }
+			DocStart { out += item.html() }
+			Table { out += item.html() }
+			Action { out += item.html() }
+			Actions { out += item.html() }
 			Header { out += '<h${item.depth}>${item.content}</h${item.depth}>\n' } //todo: should be moved to item.html()
 			Paragraph { out += '<p>${item.content}</p>\n' }
-			Html { out += item.str() }
-			Comment { out += item.str() }
-			CodeBlock { out += item.str() }
+			Html { out += item.html() }
+			Comment { out += item.html() }
+			CodeBlock { out += item.html() }
+			Link { out += item.html() }
 		}
 	}
 	return out

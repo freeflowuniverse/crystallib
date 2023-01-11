@@ -10,10 +10,16 @@ pub mut:
 	rmbc rmbclient.RMBClient
 }
 
-pub fn new() !RMBProcessor {
+//twinid, is my id for me as twin
+//list of proxyipaddr is the proxies I can connect too, the first one is most priority
+pub fn new(twinid u32,proxyipaddr[]string) !RMBProcessor{
 	mut rmbclient := rmbclient.new()!
+	rmbclient.twinid=twinid
 	mut rmbp := RMBProcessor{ rmbc:rmbclient }
+	rmbp.twinid=twinid
 	mut rmbproxy := rmbproxy.new()
+
+	//TODO: call towards rmbproxy
 	return rmbp
 }
 

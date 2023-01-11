@@ -24,24 +24,26 @@ struct ActionJobPublic {
 	guid        string 	//unique jobid (unique per actor which is unique per twin)
 	twinid		 u32    //which twin needs to execute the action
 	action   	 string 	//actionname in long form includes domain & actor
-	params       string
+	args       	 Params
+	result       Params
 	state        string
 	start        i64		//epoch
 	end          i64		//epoch
 	grace_period u32 		//wait till next run, in seconds
 	error        string		//string description of what went wrong
 	timeout      u32 		//time in seconds, 2h is maximum
-	src_twinid		 u32    //which twin was sending the job
-	src_action      string	//unique actor id, runs on top of twin
+	src_twinid	 u32    //which twin was sending the job
+	src_action   string	//unique actor id, runs on top of twin
 	dependencies []string
 }
 
 pub struct ActionJob {
 pub mut:
-	guid        string 	//unique jobid (unique per actor which is unique per twin)
+	guid         string 	//unique jobid (unique per actor which is unique per twin)
 	twinid		 u32    //which twin needs to execute the action
 	action   	 string //actionname in long form includes domain & actor $domain.$actor.$action
-	params       Params
+	args       	 Params
+	result       Params
 	state        ActionJobState
 	start        time.Time
 	end          time.Time
@@ -54,7 +56,7 @@ pub mut:
 }
 
 pub fn (job ActionJob) dumps() string{
-	params_data:=json.encode(job.params)
+	// params_data:=json.encode(job.params)
 	mut statestr:=""
 	match job.state{
 		.init {statestr="init"}
@@ -68,7 +70,8 @@ pub fn (job ActionJob) dumps() string{
 	mut job2:=ActionJobPublic{
 		twinid:job.twinid
 		action:job.action
-		params:params_data
+		args:job.args
+		result:job.result
 		state:statestr
 		start:job.start.unix_time() 
 		end:job.end.unix_time()
@@ -101,7 +104,7 @@ pub fn (job ActionJob) dumps() string{
 //
 pub fn job_load(data string)! ActionJob{
 	job:=json.decode(ActionJobPublic,data) or {return error("Could not json decode: $data .\nError:$err")}
-	params:=json.decode(Params,job.params) or {return error("Could not json decode for params: $job.params \nError:$err")}
+	// params:=json.decode(Params,job.params) or {return error("Could not json decode for params: $job.params \nError:$err")}
 	mut statecat:=ActionJobState.init	
 	match job.state{
 		"init" 		{statecat=.init}
@@ -116,7 +119,8 @@ pub fn job_load(data string)! ActionJob{
 	mut jobout:=ActionJob{
 		twinid:job.twinid
 		action:job.action
-		params:params
+		args:job.args
+		result:job.result
 		state:statecat
 		start:time.unix(job.start)
 		end:time.unix(job.end)
