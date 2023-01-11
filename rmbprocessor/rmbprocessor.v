@@ -1,5 +1,6 @@
 module rmbprocessor
 import freeflowuniverse.crystallib.rmbclient
+import freeflowuniverse.crystallib.rmbproxy
 import freeflowuniverse.crystallib.resp
 
 import time
@@ -9,9 +10,10 @@ pub mut:
 	rmbc rmbclient.RMBClient
 }
 
-pub fn new() !RMBProcessor{
-	mut rmbclient :=rmbclient.new()!
-	mut rmbp:=RMBProcessor{rmbc:rmbclient}
+pub fn new() !RMBProcessor {
+	mut rmbclient := rmbclient.new()!
+	mut rmbp := RMBProcessor{ rmbc:rmbclient }
+	mut rmbproxy := rmbproxy.new()
 	return rmbp
 }
 
