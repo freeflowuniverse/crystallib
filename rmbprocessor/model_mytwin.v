@@ -16,19 +16,10 @@ pub:
 	publickey		 []u8     	//nacl publickey	
 	twinid			 u32    	//who am i
 	rmb_proxy_ips    []string  	//how do we find our way back, if empty list, then is local, are ip addresses
-	ipaddr	     	 string     //
+	ipaddr	     	 string     //if relevant what is our IP address
 	signature		 string     //signature of encoded list of: signignkey, publickey, twinid, rmb_proxy_ips, ipaddr
 }
 
-//should never be sent outside of the local machine
-//is kept on the local
-pub struct TwinMetaPrivate {
-pub:
-	twinid			 u32    	//who am i
-	rmb_proxy_ips    []string  	//how do we find our way back, if empty list, then is local, are ip addresses
-	ipaddr	     	 string     //if relevant what is my ipaddr
-
-}
 
 
 //is the struct as we use it in our V process
@@ -40,16 +31,14 @@ pub:
 	privkey			 keysafe.PrivKey  //is link to all required info to do encryption, signing, ...
 }
 
-pub fn (twin MyTwin) dumps() !string{
-	data:=json.encode(twin)	
-	return data
-}
 
-pub fn twinmeta_load(data string)! MyTwin{
-	mytwin:=json.decode(TwinMetaPub,data)!
-	MyTwin
-	return mytwin
-}
+twinid:=rmb.redis.get("rmb.mytwin.id")!
+
+// pub fn twinmeta_load(data string)! MyTwin{
+// 	mytwin:=json.decode(TwinMetaPub,data)!
+// 	MyTwin
+// 	return mytwin
+// }
 
 
 //ulimit
