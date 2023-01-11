@@ -5,61 +5,18 @@ import pathlib
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
-fn doc_parse(path string) ! {
+fn doc_parse(path string) !Doc {
 	path2 := pathlib.get_file(path, false)!
 	mut doc:=Doc{path:path2}
 	mut parser:=parser_new(path)!
 	
 	// no need to process files which are not at least 2 chars
 	for {
-		mut llast := doc.items.last()
 		if parser.eof() {
 			break
 		}
-		// go out of loop if end of file
+
 		line := parser.line_current()
-		// println("line ($parser.state()): '$line'")	
-
-		if mut llast is Comment {
-			if llast.prefix == .short {
-				if line.trim_space().starts_with('//') {
-					llast.content += line.all_after_first('//') + '\n'
-					parser.next()
-					continue
-				}
-				doc.items << DocStart{} // make sure we restart from scratch because is not comment
-			} else {
-				if line.trim_space().ends_with('-->') {
-					llast.content += line.all_before_last('-->') + '\n'
-					parser.next_start()
-				} else {
-					llast.content += line + '\n'
-					parser.next()
-				}
-				continue
-			}
-		}
-
-		if mut llast is Action {
-			if line.starts_with(' ') || line.starts_with('\t') {
-				// starts with tab or space, means block continues for action
-				llast.content += '${line}\n'
-			} else {
-				doc.items << DocStart{}
-			}
-			parser.next()
-			continue
-		}
-
-		if mut llast is CodeBlock {
-			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
-				doc.items << DocStart{}
-			} else {
-				llast.content += '${line}\n'
-			}
-			parser.next()
-			continue
-		}
 
 		if parser.atstart  {
 			if line.starts_with('!!') {
@@ -151,24 +108,87 @@ fn doc_parse(path string) ! {
 				parser.next()
 				continue
 			}
-		}
-
-		if parser.state_check('paragraph') {
-			mut lastitem:=doc.items.last()
-			if mut lastitem is Paragraph {
-				lastitem.content += line + '\n'
-			}
-		} else {
-			doc.items << Paragraph{
-				content: line
-
+			if line.trim_space().starts_with('<p>') || line.trim_space().starts_with(''){
+				doc.items << Paragraph{
+					content: line.all_after_first('<p>').all_before_last('</p>').trim_space() + '\n'
+				}
+				parser.next()
+				continue
 			}
 		}
+
+		mut llast := doc.items.last()
+		// if parser.eof() {
+		// 	break
+		// }
+		// go out of loop if end of file
+		// line := parser.line_current()
+		// println("line ($parser.state()): '$line'")	
+
+		if mut llast is Comment {
+			if llast.prefix == .short {
+				if line.trim_space().starts_with('//') {
+					llast.content += line.all_after_first('//') + '\n'
+					parser.next()
+					continue
+				}
+				doc.items << DocStart{} // make sure we restart from scratch because is not comment
+			} else {
+				if line.trim_space().ends_with('-->') {
+					llast.content += line.all_before_last('-->') + '\n'
+					parser.next_start()
+				} else {
+					llast.content += line + '\n'
+					parser.next()
+				}
+				continue
+			}
+		}
+
+		if mut llast is Action {
+			if line.starts_with(' ') || line.starts_with('\t') {
+				// starts with tab or space, means block continues for action
+				llast.content += '${line}\n'
+			} else {
+				doc.items << DocStart{}
+			}
+			parser.next()
+			continue
+		}
+
+		if mut llast is CodeBlock {
+			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
+				doc.items << DocStart{}
+			} else {
+				llast.content += '${line}\n'
+			}
+			parser.next()
+			continue
+		}
+
+		if mut llast is Paragraph{
+			llast.content += line.all_before_last('</p>').trim_space() + '\n'
+			parser.next()
+			continue
+		}
+
+		// if parser.state_check('paragraph') {
+		// 	mut lastitem:=doc.items.last()
+		// 	if mut lastitem is Paragraph {
+		// 		lastitem.content += line + '\n'
+		// 	}
+		// } else {
+		// 	doc.items << Paragraph{
+		// 		content: line
+
+		// 	}
+		// }
 
 		parser.next()
 	}
 
 	doc.process()!
+	return doc
 }
 
 
