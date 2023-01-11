@@ -53,7 +53,7 @@ pub mut:
 	dependencies []string
 }
 
-pub fn (job ActionJob) dumps() !string{
+pub fn (job ActionJob) dumps() string{
 	params_data:=json.encode(job.params)
 	mut statestr:=""
 	match job.state{
