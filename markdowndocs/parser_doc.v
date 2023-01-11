@@ -71,7 +71,8 @@ fn doc_parse(path string) !Doc {
 					for{
 						parser.next()
 						new_line := parser.line_current()
-						if new_line.starts_with("-->") || new_line.ends_with("-->"){
+						if new_line.ends_with("-->"){
+							comment_line.content += "\n" + new_line.all_before_last("-->")
 							break
 						} else {
 							comment_line.content += "\n" + new_line
@@ -134,11 +135,7 @@ fn (lin Line)get_paragraph()Paragraph{
 }
 
 fn (lin Line)is_heading()bool{
-	if lin.content.starts_with('#') || 
-		lin.content.starts_with('##') || 
-		lin.content.starts_with('###')|| 
-		lin.content.starts_with('####') || 
-		lin.content.starts_with('#####'){
+	if lin.content.starts_with('#'){
 		return true
 	}
 	return false
