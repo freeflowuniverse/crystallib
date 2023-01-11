@@ -29,6 +29,24 @@ fn doc_parse(path string) !Doc {
 			continue
 		}
 
+		if line.is_codeblock(){
+			mut codeblock := line.get_codeblock()
+			for{
+				parser.next()
+				new_line := parser.line_current()
+				if new_line.starts_with("'''") || 
+					new_line.starts_with('"""') || 
+					new_line.starts_with("```"){
+					break
+				} else {
+					codeblock.content += "\n" + new_line
+				}
+			}
+			doc.items << codeblock
+			parser.next_start()
+			continue
+		}
+
 		if line.is_comment(){
 			mut comment_line := line.get_comment()
 			match comment_line.prefix{
@@ -55,6 +73,22 @@ fn doc_parse(path string) !Doc {
 
 	doc.process()!
 	return doc
+}
+
+fn (lin Line)is_codeblock()bool{
+	if lin.content.starts_with("```") || 
+		lin.content.starts_with("'''") || 
+		lin.content.starts_with('"""') {
+		return true
+	}
+	return false
+}
+
+fn (lin Line)get_codeblock()CodeBlock{
+	return CodeBlock{
+		category: lin.content.substr(3, lin.content.len).to_lower().trim_space()
+		content: ""
+	}
 }
 
 fn (lin Line)is_heading()bool{
