@@ -1,6 +1,7 @@
 module markdowndocs
 
 import pathlib
+import regex
 
 struct Line{
 	content string
@@ -29,6 +30,20 @@ fn doc_parse(path string) !Doc {
 			continue
 		}
 
+		// if line.is_link(){
+		// 	link_line := line.get_link()
+		// 	doc.items << link_line
+		// 	parser.next_start()
+		// 	continue
+		// }
+		
+		if line.is_paragraph(){
+			paragraph := line.get_paragraph()
+			doc.items << paragraph
+			parser.next_start()
+			continue
+		}
+
 		if line.is_codeblock(){
 			mut codeblock := line.get_codeblock()
 			for{
@@ -42,6 +57,7 @@ fn doc_parse(path string) !Doc {
 					codeblock.content += "\n" + new_line
 				}
 			}
+
 			doc.items << codeblock
 			parser.next_start()
 			continue
@@ -64,6 +80,7 @@ fn doc_parse(path string) !Doc {
 				}
 				.short{}
 			}
+
 			doc.items << comment_line
 			parser.next_start()
 			continue
@@ -73,6 +90,25 @@ fn doc_parse(path string) !Doc {
 
 	doc.process()!
 	return doc
+}
+
+fn (lin Line)is_link()bool{
+	if (lin.content.starts_with("[") && lin.content.ends_with(")")) ||
+		(lin.content.starts_with("https://") && lin.content.starts_with("http://")){
+		return true
+	}
+	return false
+}
+
+fn (lin Line)is_paragraph()bool{
+	query := r"([a-zA-Z0-9_])"
+	mut re := regex.regex_opt(query) or { return false }
+	start, _ := re.match_string(lin.content)
+	if start >= 0 || lin.content.starts_with("<p>"){
+		return true
+    } else {
+        return false
+    }
 }
 
 fn (lin Line)is_codeblock()bool{
@@ -88,6 +124,12 @@ fn (lin Line)get_codeblock()CodeBlock{
 	return CodeBlock{
 		category: lin.content.substr(3, lin.content.len).to_lower().trim_space()
 		content: ""
+	}
+}
+
+fn (lin Line)get_paragraph()Paragraph{
+	return Paragraph{
+		content: lin.content
 	}
 }
 
@@ -109,7 +151,13 @@ fn (lin Line)is_comment()bool{
 	return false
 }
 
+fn (lin Line)get_link(){
+	// Get link implementation.
+	// return Link{}
+}
+
 fn (lin Line)get_comment()Comment{
+	// Get comment implementation.
 	mut singleline := false
 	mut prefix := CommentPrefix.short
 	mut content := ""
@@ -134,6 +182,7 @@ fn (lin Line)get_comment()Comment{
 }
 
 fn (lin Line)get_header()Header{
+	// Get header[h1, h2, h3]..etc implementation.
 	mut depth := 0
 	mut content := ""
 	if lin.content.starts_with('#'){
