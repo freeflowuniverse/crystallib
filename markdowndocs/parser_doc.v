@@ -165,6 +165,12 @@ fn (lin Line)get_comment()Comment{
 		singleline = true
 	}
 
+	if lin.content.starts_with('<!--') && lin.content.ends_with('-->'){
+		content = lin.content.all_after_first('<!--').replace("-->", "")
+		prefix = CommentPrefix.short
+		singleline = true
+	}
+
 	if lin.content.starts_with('<!--') && !lin.content.ends_with('-->'){
 		content = lin.content.all_after_first('<!--')
 		prefix = CommentPrefix.multi
