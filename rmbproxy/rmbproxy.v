@@ -54,18 +54,23 @@ fn (mut rmbp RMBProxy) on_message(mut client websocket.Client, msg &websocket.Me
 		data := decoder.get_map_string()
 
 		if !("cmd" in data) {
-			rmbp.logger.error("RMBProxy: Invalid message <${data}>: Does not contain cmd")
+			rmbp.logger.error("Invalid message <${data}>: Does not contain cmd")
 			return 
 		}
 
 		if !(data["cmd"] in rmbp.handlers) {
-			rmbp.logger.error("RMBProxy: Invalid message <${data}>: Unknown command ${data['cmd']}")
+			rmbp.logger.error("Invalid message <${data}>: Unknown command ${data['cmd']}")
 			return 
 		}
 
-		rmbp.handlers[data["cmd"]].handle(data) or {
-			rmbp.logger.error("RMBProxy: Error while handeling message <${data}>: $err")
+		response := rmbp.handlers[data["cmd"]].handle(data) or {
+			rmbp.logger.error("Error while handeling message <${data}>: $err")
 			return
+		}
+		if response != "" {
+			client.write(response.bytes(), .binary_frame) or {
+				rmbp.logger.error("Failed to send response to client: $err")
+			}
 		}
 		rmbp.logger.info("Successfully handled message of type: ${data["cmd"]}")
 	}
