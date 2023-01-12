@@ -3,13 +3,14 @@ module main
 import freeflowuniverse.crystallib.markdowndocs
 import os
 
-const testpath = os.dir(@FILE) + '/content'
+const testpath = os.dir(@FILE) + '/../content'
 
-fn do() ! {
+fn do2() ! {
 	mut doc := markdowndocs.get('${testpath}/launch.md') or { panic('cannot parse,${err}') }
 	println(doc)
 	mut o := doc.items[1]
-	println(doc.items[0].content)
+    println(o)
+	// println(doc.items[0].content)
 
 	if mut o is markdowndocs.Paragraph {
 		eprintln(o.items)
@@ -17,7 +18,7 @@ fn do() ! {
 
 	for mut item in doc.items {
 		match mut item {
-			markdowndocs.Paragraph { 
+			markdowndocs.Paragraph {
 				for mut item_ in item.items{
 					if mut item_ is markdowndocs.Link {
 						item_.extra = "SEE IF THERE"
@@ -30,7 +31,7 @@ fn do() ! {
 
 	for mut item in doc.items {
 		match mut item {
-			markdowndocs.Paragraph { 
+			markdowndocs.Paragraph {
 				for mut item_ in item.items{
 					if mut item_ is markdowndocs.Link {
 						item_.extra = "SEE IF THERE"
@@ -40,12 +41,12 @@ fn do() ! {
 			}
 			else {}
 		}
-	}	
+	}
 	println("==================")
 	println(doc.wiki())
 
 }
 
 fn main() {
-	do() or { panic(err) }
+	do2() or { panic("ERROR:$err") }
 }

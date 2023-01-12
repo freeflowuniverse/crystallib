@@ -1,6 +1,6 @@
 module markdowndocs
 
-import pathlib
+import freeflowuniverse.crystallib.pathlib
 import regex
 
 struct Line{
@@ -23,6 +23,8 @@ fn doc_parse(path string) !Doc {
 		this_line := parser.line_current()
 		line := Line{content: this_line}
 
+		//the full line thing is wrong, need to keep track of state
+
 		if line.is_heading(){
 			heading_line := line.get_header()
 			doc.items << heading_line
@@ -36,7 +38,8 @@ fn doc_parse(path string) !Doc {
 		// 	parser.next_start()
 		// 	continue
 		// }
-		
+
+		//TODO: this is wrong, this will onl catch paragraphs which are one line
 		if line.is_paragraph(){
 			paragraph := line.get_paragraph()
 			doc.items << paragraph
@@ -101,6 +104,8 @@ fn (lin Line)is_link()bool{
 	return false
 }
 
+// a paragraph can be multiple lines, thats the full point, its not 1 line
+// also you cannot do this with such a regex, there can be much more inside
 fn (lin Line)is_paragraph()bool{
 	query := r"([a-zA-Z0-9_])"
 	mut re := regex.regex_opt(query) or { return false }
@@ -146,11 +151,6 @@ fn (lin Line)is_comment()bool{
 		return true
 	}
 	return false
-}
-
-fn (lin Line)get_link(){
-	// Get link implementation.
-	// return Link{}
 }
 
 fn (lin Line)get_comment()Comment{
