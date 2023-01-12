@@ -1,177 +1,213 @@
 module markdowndocs
 
 import pathlib
+import regex
 
+struct Line{
+	content string
+}
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
-fn doc_parse(path string) ! {
+fn doc_parse(path string) !Doc {
 	path2 := pathlib.get_file(path, false)!
 	mut doc:=Doc{path:path2}
 	mut parser:=parser_new(path)!
 	
 	// no need to process files which are not at least 2 chars
 	for {
-		mut llast := doc.items.last()
 		if parser.eof() {
 			break
 		}
-		// go out of loop if end of file
-		line := parser.line_current()
-		// println("line ($parser.state()): '$line'")	
 
-		if mut llast is Comment {
-			if llast.prefix == .short {
-				if line.trim_space().starts_with('//') {
-					llast.content += line.all_after_first('//') + '\n'
-					parser.next()
-					continue
-				}
-				doc.items << DocStart{} // make sure we restart from scratch because is not comment
-			} else {
-				if line.trim_space().ends_with('-->') {
-					llast.content += line.all_before_last('-->') + '\n'
-					parser.next_start()
+		this_line := parser.line_current()
+		line := Line{content: this_line}
+
+		if line.is_heading(){
+			heading_line := line.get_header()
+			doc.items << heading_line
+			parser.next_start()
+			continue
+		}
+
+		// if line.is_link(){
+		// 	link_line := line.get_link()
+		// 	doc.items << link_line
+		// 	parser.next_start()
+		// 	continue
+		// }
+		
+		if line.is_paragraph(){
+			paragraph := line.get_paragraph()
+			doc.items << paragraph
+			parser.next_start()
+			continue
+		}
+
+		if line.is_codeblock(){
+			mut codeblock := line.get_codeblock()
+			for{
+				parser.next()
+				new_line := parser.line_current()
+				if new_line.starts_with("'''") || 
+					new_line.starts_with('"""') || 
+					new_line.starts_with("```"){
+					break
 				} else {
-					llast.content += line + '\n'
-					parser.next()
+					codeblock.content += "\n" + new_line
 				}
-				continue
 			}
-		}
 
-		if mut llast is Action {
-			if line.starts_with(' ') || line.starts_with('\t') {
-				// starts with tab or space, means block continues for action
-				llast.content += '${line}\n'
-			} else {
-				doc.items << DocStart{}
-			}
-			parser.next()
+			doc.items << codeblock
+			parser.next_start()
 			continue
 		}
 
-		if mut llast is CodeBlock {
-			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
-				doc.items << DocStart{}
-			} else {
-				llast.content += '${line}\n'
+		if line.is_comment(){
+			mut comment_line := line.get_comment()
+			match comment_line.prefix{
+				.multi{
+					// Searching for the end of the comment.
+					for{
+						parser.next()
+						new_line := parser.line_current()
+						if new_line.ends_with("-->"){
+							comment_line.content += "\n" + new_line.all_before_last("-->")
+							break
+						} else {
+							comment_line.content += "\n" + new_line
+						}
+					}
+				}
+				.short{}
 			}
-			parser.next()
+
+			doc.items << comment_line
+			parser.next_start()
 			continue
 		}
-
-		if parser.atstart  {
-			if line.starts_with('!!') {
-				doc.items << Action{
-					content: line.all_after_first('!!')
-
-				}
-				parser.next()
-				continue
-			}
-
-			// find codeblock or actions
-			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
-				doc.items << CodeBlock{
-					category: line.substr(3, line.len).to_lower().trim_space()
-
-				}
-				parser.next()
-				continue
-			}
-
-			// process headers
-			if line.starts_with('######') {
-				parser.error_add('header should be max 5 deep')
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('#####') {
-				doc.items << Header{
-					content: line.all_after_first('#####').trim_space()
-					depth: 5
-
-				}
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('####') {
-				doc.items << Header{
-					content: line.all_after_first('####').trim_space()
-					depth: 4
-
-				}
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('###') {
-				doc.items << Header{
-					content: line.all_after_first('###').trim_space()
-					depth: 3
-
-				}
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('##') {
-				doc.items << Header{
-					content: line.all_after_first('##').trim_space()
-					depth: 2
-
-				}
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('#') {
-				doc.items << Header{
-					content: line.all_after_first('#').trim_space()
-					depth: 1
-
-				}
-				parser.next_start()
-				continue
-			}
-
-			if line.trim_space().starts_with('//') {
-				doc.items << Comment{
-					content: line.all_after_first('//').trim_space() + '\n'
-					prefix: .short
-
-				}
-				parser.next()
-				continue
-			}
-			if line.trim_space().starts_with('<!--') {
-				doc.items << Comment{
-					content: line.all_after_first('<!--').trim_space() + '\n'
-					prefix: .multi
-
-				}
-				parser.next()
-				continue
-			}
-		}
-
-		if parser.state_check('paragraph') {
-			mut lastitem:=doc.items.last()
-			if mut lastitem is Paragraph {
-				lastitem.content += line + '\n'
-			}
-		} else {
-			doc.items << Paragraph{
-				content: line
-
-			}
-		}
-
 		parser.next()
 	}
 
 	doc.process()!
+	return doc
 }
 
+fn (lin Line)is_link()bool{
+	if (lin.content.starts_with("[") && lin.content.ends_with(")")) ||
+		(lin.content.starts_with("https://") && lin.content.starts_with("http://")){
+		return true
+	}
+	return false
+}
 
+fn (lin Line)is_paragraph()bool{
+	query := r"([a-zA-Z0-9_])"
+	mut re := regex.regex_opt(query) or { return false }
+	start, _ := re.match_string(lin.content)
+	if start >= 0 || lin.content.starts_with("<p>"){
+		return true
+    } else {
+        return false
+    }
+}
+
+fn (lin Line)is_codeblock()bool{
+	if lin.content.starts_with("```") || 
+		lin.content.starts_with("'''") || 
+		lin.content.starts_with('"""') {
+		return true
+	}
+	return false
+}
+
+fn (lin Line)get_codeblock()CodeBlock{
+	return CodeBlock{
+		category: lin.content.substr(3, lin.content.len).to_lower().trim_space()
+		content: ""
+	}
+}
+
+fn (lin Line)get_paragraph()Paragraph{
+	return Paragraph{
+		content: lin.content
+	}
+}
+
+fn (lin Line)is_heading()bool{
+	if lin.content.starts_with('#'){
+		return true
+	}
+	return false
+}
+
+fn (lin Line)is_comment()bool{
+	if lin.content.starts_with('<!--') || lin.content.starts_with('//'){
+		return true
+	}
+	return false
+}
+
+fn (lin Line)get_link(){
+	// Get link implementation.
+	// return Link{}
+}
+
+fn (lin Line)get_comment()Comment{
+	// Get comment implementation.
+	mut singleline := false
+	mut prefix := CommentPrefix.short
+	mut content := ""
+
+	if lin.content.trim_space().starts_with('//'){
+		content = lin.content.all_after_first('//').trim_space() + '\n'
+		prefix = CommentPrefix.short
+		singleline = true
+	}
+
+	if lin.content.starts_with('<!--') && !lin.content.ends_with('-->'){
+		content = lin.content.all_after_first('<!--')
+		prefix = CommentPrefix.multi
+		singleline = false
+	}
+
+	return Comment{
+		content: content
+		prefix: prefix
+		singleline: singleline
+	}
+}
+
+fn (lin Line)get_header()Header{
+	// Get header[h1, h2, h3]..etc implementation.
+	mut depth := 0
+	mut content := ""
+	if lin.content.starts_with('#'){
+		content = lin.content.all_after_first('#').trim_space()
+		depth = 1
+	}
+	if lin.content.starts_with('##'){
+		content = lin.content.all_after_first('##').trim_space()
+		depth = 2
+	}
+	if lin.content.starts_with('###'){
+		content = lin.content.all_after_first('###').trim_space()
+		depth = 3
+	}
+	if lin.content.starts_with('####'){
+		content = lin.content.all_after_first('####').trim_space()
+		depth = 4
+	}
+	if lin.content.starts_with('#####'){
+		content = lin.content.all_after_first('#####').trim_space()
+		depth = 5
+	}
+
+	return Header{
+		content: content
+		depth: depth
+	}
+}
 
 
 

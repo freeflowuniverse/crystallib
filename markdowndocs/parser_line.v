@@ -14,7 +14,7 @@ mut:
 
 struct Parser {
 mut:
-	doc Doc
+	// doc Doc
 	linenr int
 	lines  []string
 	errors []ParserError
@@ -27,7 +27,7 @@ pub fn parser_new(path string)! Parser{
 	}
 	mut parser:=Parser{}
 	mut content := os.read_file(path) or { panic('Failed to load file ${path}') }
-	println(content)
+	// println(content)
 	parser.lines = content.split_into_lines()
 	parser.lines.map(it.replace('\t', '    ')) // remove the tabs
 	parser.linenr = 0
@@ -61,16 +61,16 @@ fn (mut parser Parser) line_current() string {
 }
 
 // if state is this name will return true
-fn (mut parser Parser) state_check(tocheck string) bool {
-  if parser.state() == tocheck.to_lower().trim_space() {
-    return true
-  }
-  return false
-}
+// fn (mut parser Parser) state_check(tocheck string) bool {
+//   if parser.state() == tocheck.to_lower().trim_space() {
+//     return true
+//   }
+//   return false
+// }
 
-fn (mut parser Parser) state() string {
-  return parser.doc.items.last().type_name().all_after_last('.').to_lower()
-}
+// fn (mut parser Parser) state() string {
+//   return parser.doc.items.last().type_name().all_after_last('.').to_lower()
+// }
 
 // get next line, if end of file will return **EOF**
 fn (mut parser Parser) line_next() string {
