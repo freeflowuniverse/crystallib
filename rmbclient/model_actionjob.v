@@ -1,11 +1,8 @@
 module rmbclient
 
-import freeflowuniverse.crystallib.actionparser
 import freeflowuniverse.crystallib.params { Params }
 import time
-import os
 import json
-import rand
 
 
 enum ActionJobState {
@@ -17,7 +14,6 @@ enum ActionJobState {
 	done
 	error
 }
-
 
 //actionjob as how its being send & received from bus
 struct ActionJobPublic {
@@ -55,10 +51,10 @@ pub mut:
 	dependencies []string
 }
 
-pub fn (job ActionJob) dumps() string{
+pub fn (job ActionJob) dumps() string {
 	// params_data:=json.encode(job.params)
-	mut statestr:=""
-	match job.state{
+	mut statestr := ""
+	match job.state {
 		.init {statestr="init"}
 		.tostart{statestr="tostart"}
 		.recurring{statestr="recurring"}
@@ -67,22 +63,22 @@ pub fn (job ActionJob) dumps() string{
 		.done{statestr="done"}
 		.error{statestr="error"}
 	}		
-	mut job2:=ActionJobPublic{
-		twinid:job.twinid
-		action:job.action
-		args:job.args
-		result:job.result
-		state:statestr
-		start:job.start.unix_time() 
-		end:job.end.unix_time()
-		grace_period:job.grace_period
-		error:job.error
-		timeout:job.timeout
-		guid:job.guid
-		src_twinid:job.src_twinid
-		src_action:job.src_action	
+	mut job2 := ActionJobPublic {
+		twinid: job.twinid
+		action: job.action
+		args: job.args
+		result: job.result
+		state: statestr
+		start: job.start.unix_time() 
+		end: job.end.unix_time()
+		grace_period: job.grace_period
+		error: job.error
+		timeout: job.timeout
+		guid: job.guid
+		src_twinid: job.src_twinid
+		src_action: job.src_action	
 	}
-	job2_data:=json.encode(job2)
+	job2_data := json.encode(job2)
 	return job2_data
 }
 
@@ -102,8 +98,8 @@ pub fn (job ActionJob) dumps() string{
 //     src_twinid		 u32    //which twin is responsible for executing on behalf of actor (0 is local)
 //     src_action      u16	//unique actor id, runs on top of twin
 //
-pub fn job_load(data string)! ActionJob{
-	job:=json.decode(ActionJobPublic,data) or {return error("Could not json decode: $data .\nError:$err")}
+pub fn job_load(data string) !ActionJob {
+	job := json.decode(ActionJobPublic, data) or { return error("Could not json decode: $data .\nError:$err") }
 	// params:=json.decode(Params,job.params) or {return error("Could not json decode for params: $job.params \nError:$err")}
 	mut statecat:=ActionJobState.init	
 	match job.state{
@@ -116,20 +112,20 @@ pub fn job_load(data string)! ActionJob{
 		"error" 	{statecat=.error}
 		else{	return error("Could not find job state, needs to be init, tostart, recurring, scheduled, active, done, error")}
 	}
-	mut jobout:=ActionJob{
-		twinid:job.twinid
-		action:job.action
-		args:job.args
-		result:job.result
-		state:statecat
-		start:time.unix(job.start)
-		end:time.unix(job.end)
-		grace_period:job.grace_period
-		error:job.error
-		timeout:job.timeout
-		guid:job.guid
-		src_twinid:job.src_twinid
-		src_action:job.src_action
+	mut jobout := ActionJob {
+		twinid: job.twinid
+		action: job.action
+		args: job.args
+		result: job.result
+		state: statecat
+		start: time.unix(job.start)
+		end: time.unix(job.end)
+		grace_period: job.grace_period
+		error: job.error
+		timeout: job.timeout
+		guid: job.guid
+		src_twinid: job.src_twinid
+		src_action: job.src_action
 	}
 	return jobout
 }

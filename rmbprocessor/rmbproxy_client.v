@@ -1,17 +1,21 @@
 
 module rmbprocessor
+
 import freeflowuniverse.crystallib.rmbclient
 import freeflowuniverse.crystallib.encoder
+
+import log
 import net.websocket
 
 //client to the rmb proxy
-pub struct RMBProxyClient{
+pub struct RMBProxyClient {
 pub mut:
-	rmb rmbclient.RMBClient
+	rmbc rmbclient.RMBClient
 	twinid u32
 	proxyipaddrs []string
 	websocketclients []&websocket.Client //in reality its not string, its webdav clients, is more than 1
 	websocketclient_active u8 //the current webdavclient which is being used, the one which is active
+	logger &log.Logger
 }
 
 fn (mut cl RMBProxyClient) next_websocketclient() {
@@ -26,10 +30,11 @@ fn (mut cl RMBProxyClient) write_first_successful(data []u8) !int {
 	// but we always start from the last websocketclient that was successfull during the last call
 	mut nbr_tries := 0
 	for nbr_tries < cl.websocketclients.len {
-		mut websocketclient:=cl.websocketclients[cl.websocketclient_active]
+		mut websocketclient := cl.websocketclients[cl.websocketclient_active]
 		if websocketclient.state != .open {
 			websocketclient.connect() or {
 				// failed to connect lets try the second one
+				cl.logger.error("failed to connect to ${cl.proxyipaddrs[cl.websocketclient_active]}")
 				cl.next_websocketclient()
 				nbr_tries += 1
 				continue
@@ -37,6 +42,7 @@ fn (mut cl RMBProxyClient) write_first_successful(data []u8) !int {
 		}
 		written_length := websocketclient.write(data, .binary_frame) or {
 			// failed writing lets try the next one
+			cl.logger.error("failed to send to ${cl.proxyipaddrs[cl.websocketclient_active]}")
 			cl.next_websocketclient()
 			nbr_tries += 1
 			continue
@@ -56,40 +62,12 @@ fn (mut cl RMBProxyClient) rpc(data map[string]string) ! {
 	_ := cl.write_first_successful(encoder.data)!
 }
 
-
-//this needs to go to a thread, so it can be executing at background
-pub fn proxy_processor(twinid u32, proxyipaddrs []string){
-	mut rmb :=rmbclient.new()!
-	mut cl:=RMBProxyClient{rmb:rmb,twinid:twinid,proxyipaddrs:proxyipaddrs}
-	for proxyipaddr in cl.proxyipaddrs{
-		mut wscl:=websocket.new_client(proxyipaddr,ClientOpt{})!
-		cl.websocketclients<<wscl
-	}
-	
-}
-
-
 pub fn (mut cl RMBProxyClient) job_send(action_job rmbclient.ActionJob) ! {
-	mut rmb:=rmbp.rmbc
-	
-	mut ipaddr0:=args.ipaddr
-	if ipaddr0==""{
-		ipaddr0="localhost"
-	}
-	ipaddr:=ipaddress.ipaddress_new(ipaddr0)!
-	twin:=MyTwin {
-		src_twinid: args.src_twinid
-		src_rmbids:args.src_rmbids
-		ipaddr:ipaddr0
-	}
-	data:=twin.dumps()!
-	rmb.redis.set("rmb.iam",data)!
-	rmb.iam=twin
-
+	cl.logger.info("Sending job to RMBProxy: $action_job")
 	action_json := action_job.dumps()
 	// TODO ecrypt data with public key of twin id who has to execute job
 	action_json_encrypted := action_json
-	mut data := maps[string]string {}
+	mut data := map[string]string {}
 	data["cmd"] = "job.send"
 	data["signature"] = "//TODO!!!"
 	data["payload"] = action_json_encrypted
@@ -97,3 +75,37 @@ pub fn (mut cl RMBProxyClient) job_send(action_job rmbclient.ActionJob) ! {
 	cl.rpc(data)!
 }
 
+pub fn (mut cl RMBProxyClient) run(ch chan rmbclient.ActionJob) ! {
+	for !ch.closed {
+		if select {
+    		job := <-ch {
+				// channel is ready and has received a job
+				cl.job_send(job) or {
+					cl.logger.error("Failed to send job: $err")
+				}
+    		}
+		}{} else {
+			// need to add else statement to proceed directly if channel is not ready
+			// this could be due to channel that is closed too but the next for loop will break then
+		}
+	}
+}
+
+
+//this needs to go to a thread, so it can be executing at background
+pub fn new_rmbproxyclient(twinid u32, proxyipaddrs []string, logger &log.Logger) !RMBProxyClient {
+	mut rmbc := rmbclient.new()!
+	mut rmbpc := RMBProxyClient { 
+		rmbc: &rmbc,
+		twinid: twinid,
+		proxyipaddrs: proxyipaddrs
+		logger: unsafe { logger }
+	}
+	for proxyipaddr in rmbpc.proxyipaddrs {
+		mut wscl := websocket.new_client(proxyipaddr, websocket.ClientOpt{}) or {
+			return error("failed to create client for $proxyipaddr: $err")
+		}
+		rmbpc.websocketclients << wscl
+	}
+	return rmbpc
+}

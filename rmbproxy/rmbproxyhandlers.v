@@ -1,6 +1,9 @@
 module rmbproxy
 
-import rmbclient
+import freeflowuniverse.crystallib.rmbclient
+import freeflowuniverse.crystallib.rmbprocessor
+
+import json
 
 pub interface RMBProxyHandler {
 mut:
@@ -25,11 +28,11 @@ pub fn (mut h JobSendHandler) handle(data map[string]string) !string {
 	// TODO decrypt payload using private key
 	payload := data["payload"]
 
-	action_job := rmbclient.job_load(payload) or {
+	mut action_job := rmbclient.job_load(payload) or {
 		return error("Invalid data: $err")
 	}
 
-	h.rmbc.action_schedule(action_job)!
+	h.rmbc.action_schedule(mut action_job)!
 
 	return ""
 }
@@ -46,12 +49,12 @@ pub fn (mut h TwinSetHandler) handle(data map[string]string) !string {
 		return error("Invalid data: missing meta")
 	}
 
-	twin_meta_pub := rmbclient.twinmeta_load(data["meta"]) or {
+	twin_meta_pub := json.decode(rmbprocessor.TwinMetaPub, data["meta"]) or {
 		return error("Invalid data: $err")
 	}
 
-	// TODO add function in client to keep TwinMetaPub info in redis db
-	// TODO if twin received has ID higher than the highest, update in DB
+	h.rmbc.set_twin(twin_meta_pub.twinid, data["meta"])!
+
 	return ""
 }
 
@@ -69,8 +72,7 @@ pub fn (mut h TwinDelHandler) handle(data map[string]string) !string {
 
 	twinid := data["twinid"].u32()
 
-	// TODO add function in client to delete 
-	h.rmbc.delete(twinid)
+	h.rmbc.del_twin(twinid)!
 
 	return ""
 }
@@ -89,10 +91,9 @@ pub fn (mut h TwinGetHandler) handle(data map[string]string) !string {
 
 	twinid := data["twinid"].u32()
 
-	// TODO add function in client to get a specific client 
-	client_twin := h.rmbc.get_twin(twinid)
+	twin := h.rmbc.get_twin(twinid)!
 
-	return json.encode(client_twin)
+	return twin
 }
 
 
@@ -107,10 +108,9 @@ pub fn (mut h TwinIdNewHandler) handle(data map[string]string) !string {
 		return error("Invalid data: missing twinid")
 	}
 
-	// TODO add function in client to get new ID
-	twinid := 10
+	twinid := h.rmbc.new_twin_id()!
 	
-	return twinid
+	return twinid.str()
 }
 
 
@@ -120,5 +120,5 @@ mut:
 }
 
 pub fn (mut h ProxiesGetHandler) handle(data map[string]string) !string {
-	return h.rmbc.iam.rmb_proxy_ips
+	return json.encode(h.rmbc.rmb_proxy_ips)
 }

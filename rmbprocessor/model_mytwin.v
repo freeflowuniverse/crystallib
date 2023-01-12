@@ -1,13 +1,6 @@
-module rmbclient
+module rmbprocessor
 
-import freeflowuniverse.crystallib.actionparser
 import freeflowuniverse.crystallib.keysafe
-import freeflowuniverse.crystallib.params { Params }
-import time
-import os
-import json
-import rand
-import crypto.ed25519 
 
 //the metadata as we need to remember for all other clients
 pub struct TwinMetaPub {
@@ -30,15 +23,3 @@ pub:
 	ipaddr	     	 string
 	privkey			 keysafe.PrivKey  //is link to all required info to do encryption, signing, ...
 }
-
-
-twinid:=rmb.redis.get("rmb.mytwin.id")!
-
-// pub fn twinmeta_load(data string)! MyTwin{
-// 	mytwin:=json.decode(TwinMetaPub,data)!
-// 	MyTwin
-// 	return mytwin
-// }
-
-
-//ulimit
