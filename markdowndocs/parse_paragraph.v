@@ -4,7 +4,7 @@ module markdowndocs
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT REALITIES
 // adds the found links, text, comments to the paragraph
-fn paragraph_parse(path string) !Paragraph {
+fn parse_paragraph(path string) !Paragraph {
 	mut para := Paragraph{}
 	mut parser := parser_char_new(path)!
 	for {		

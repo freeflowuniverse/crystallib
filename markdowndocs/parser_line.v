@@ -14,24 +14,27 @@ mut:
 
 struct Parser {
 mut:
-	// doc Doc
+	doc    &Doc
 	linenr int
 	lines  []string
 	errors []ParserError
-	atstart bool = true //if true means we start from scratch, looking for new elements
 }
 
-pub fn parser_new(path string)! Parser{
+pub fn parser_new(path string, mut doc &Doc)! Parser{
 	if !os.exists(path) {
 		return error("path: '${path}' does not exist, cannot parse.")
 	}
-	mut parser:=Parser{}
+	mut parser:=Parser{doc:doc}
+	parser.doc.items<<Paragraph{}
 	mut content := os.read_file(path) or { panic('Failed to load file ${path}') }
-	// println(content)
 	parser.lines = content.split_into_lines()
 	parser.lines.map(it.replace('\t', '    ')) // remove the tabs
 	parser.linenr = 0
 	return parser
+}
+
+fn (mut parser Parser) lastitem() DocItem {
+	return parser.doc.items.last()
 }
 
 // return a specific line
@@ -60,17 +63,13 @@ fn (mut parser Parser) line_current() string {
 	return parser.line(parser.linenr) or { panic(err) }
 }
 
-// if state is this name will return true
-// fn (mut parser Parser) state_check(tocheck string) bool {
-//   if parser.state() == tocheck.to_lower().trim_space() {
-//     return true
-//   }
-//   return false
-// }
-
-// fn (mut parser Parser) state() string {
-//   return parser.doc.items.last().type_name().all_after_last('.').to_lower()
-// }
+//get name of the element
+fn (mut parser Parser) elementname() string {
+	if parser.doc.items.len==0{
+		return "start"
+	}
+  	return parser.doc.items.last().type_name().all_after_last('.').to_lower()
+}
 
 // get next line, if end of file will return **EOF**
 fn (mut parser Parser) line_next() string {
@@ -90,12 +89,17 @@ fn (mut parser Parser) line_prev() string {
 
 // move further
 fn (mut parser Parser) next() {
+	println("line old (${parser.elementname()}): '${parser.line_current()}'")	
 	parser.linenr += 1
+	println("line new (${parser.elementname()}): '${parser.line_current()}'")	
 }
 
 // move further and reset the state
 fn (mut parser Parser) next_start() {
-	parser.atstart = true
+	//means we need to add paragraph because we don't know what comes next
+	if ! (parser.doc.items.last() is Paragraph){
+		parser.doc.items<<Paragraph{}
+	}
 	parser.next()
 }
 

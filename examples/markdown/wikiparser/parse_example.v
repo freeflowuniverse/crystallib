@@ -3,7 +3,7 @@ module main
 import freeflowuniverse.crystallib.markdowndocs
 import os
 
-const testpath = os.dir(@FILE) + '/../content'
+const testpath = os.dir(@FILE) + '/content'
 
 fn do2() ! {
 	mut doc := markdowndocs.get('${testpath}/launch.md') or { panic('cannot parse,${err}') }

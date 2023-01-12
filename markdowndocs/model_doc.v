@@ -12,38 +12,18 @@ type DocItem = Action
 	| Actions
 	| CodeBlock
 	| Comment
-	| DocStart
 	| Header
 	| Html
 	| Paragraph
 	| Table
 	| Link
 
-pub struct DocStart {
-pub mut:
-  content string
-}
 
-fn (mut o DocStart) process() ! {
-}
-
-fn (o DocStart) wiki() string {
-  return o.content
-}
-
-fn (o DocStart) html() string {
-  return o.wiki()
-}
-
-fn (o DocStart) str() string {
-  return '**** DOCSTART\n'
-}
 
 pub fn (mut doc Doc) wiki() string {
 	mut out := ''
 	for mut item in doc.items {
 		match mut item {
-			DocStart { out += item.wiki() }
 			Table { out += item.wiki() }
 			Action { out += item.wiki() }
 			Actions { out += item.wiki() }
@@ -62,7 +42,6 @@ pub fn (mut doc Doc) wiki() string {
 fn (mut doc Doc) process() ! {
 	for mut item in doc.items {
 		match mut item {
-			DocStart { item.process()! }
 			Table { item.process()! }
 			Action { item.process()! }
 			Actions { item.process()! }
@@ -80,7 +59,6 @@ fn (mut doc Doc) str() string {
 	mut out := ''
 	for mut item in doc.items {
 		match mut item {
-			DocStart { out += item.str() }
 			Table { out += item.str() }
 			Action { out += item.str() }
 			Actions { out += item.str() }
@@ -99,7 +77,6 @@ pub fn (mut doc Doc) html() string {
 	mut out := ''
 	for mut item in doc.items {
 		match mut item {
-			DocStart { out += item.html() }
 			Table { out += item.html() }
 			Action { out += item.html() }
 			Actions { out += item.html() }
