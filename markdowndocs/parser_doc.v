@@ -30,59 +30,30 @@ fn doc_parse(path string) !Doc {
 			continue
 		}
 
-		// if line.is_link(){
-		// 	link_line := line.get_link()
-		// 	doc.items << link_line
-		// 	parser.next_start()
-		// 	continue
-		// }
-		
-		if line.is_paragraph(){
-			paragraph := line.get_paragraph()
-			doc.items << paragraph
+		if line.is_link(){
+			link := line.get_link()
+			doc.items << link
 			parser.next_start()
 			continue
 		}
+		
+		// if line.is_paragraph(){
+		// 	paragraph := line.get_paragraph()
+		// 	doc.items << paragraph
+		// 	parser.next_start()
+		// 	continue
+		// }
 
 		if line.is_codeblock(){
-			mut codeblock := line.get_codeblock()
-			for{
-				parser.next()
-				new_line := parser.line_current()
-				if new_line.starts_with("'''") || 
-					new_line.starts_with('"""') || 
-					new_line.starts_with("```"){
-					break
-				} else {
-					codeblock.content += "\n" + new_line
-				}
-			}
-
+			mut codeblock := line.get_codeblock(mut parser)
 			doc.items << codeblock
 			parser.next_start()
 			continue
 		}
 
 		if line.is_comment(){
-			mut comment_line := line.get_comment()
-			match comment_line.prefix{
-				.multi{
-					// Searching for the end of the comment.
-					for{
-						parser.next()
-						new_line := parser.line_current()
-						if new_line.ends_with("-->"){
-							comment_line.content += "\n" + new_line.all_before_last("-->")
-							break
-						} else {
-							comment_line.content += "\n" + new_line
-						}
-					}
-				}
-				.short{}
-			}
-
-			doc.items << comment_line
+			mut comment := line.get_comment(mut parser)
+			doc.items << comment
 			parser.next_start()
 			continue
 		}
@@ -93,9 +64,12 @@ fn doc_parse(path string) !Doc {
 	return doc
 }
 
+// is_link identifies a line as a link if it starts with any number of spaces, followed by []()
 fn (lin Line)is_link()bool{
-	if (lin.content.starts_with("[") && lin.content.ends_with(")")) ||
-		(lin.content.starts_with("https://") && lin.content.starts_with("http://")){
+	query := r"^ *\[.*\]\(.*\)$"
+	mut re := regex.regex_opt(query) or { return false }
+	start, _ := re.match_string(lin.content)
+	if start == 0{
 		return true
 	}
 	return false
@@ -121,11 +95,24 @@ fn (lin Line)is_codeblock()bool{
 	return false
 }
 
-fn (lin Line)get_codeblock()CodeBlock{
-	return CodeBlock{
+fn (lin Line) get_codeblock(mut parser Parser)CodeBlock{
+	ending :=lin.content.substr(0, 3)
+	mut codeblock := CodeBlock{
 		category: lin.content.substr(3, lin.content.len).to_lower().trim_space()
 		content: ""
 	}
+
+	for{
+		parser.next()
+		new_line := parser.line_current()
+		if new_line.starts_with(ending){
+			break
+		} else {
+			codeblock.content += "\n" + new_line
+		}
+	}
+
+	return codeblock
 }
 
 fn (lin Line)get_paragraph()Paragraph{
@@ -135,7 +122,10 @@ fn (lin Line)get_paragraph()Paragraph{
 }
 
 fn (lin Line)is_heading()bool{
-	if lin.content.starts_with('#'){
+	query := r"^#{1,5} {1,}"
+	mut re := regex.regex_opt(query) or { return false }
+	start, _ := re.match_string(lin.content)
+	if start == 0{
 		return true
 	}
 	return false
@@ -148,40 +138,53 @@ fn (lin Line)is_comment()bool{
 	return false
 }
 
-fn (lin Line)get_link(){
+fn (lin Line)get_link() Link{
 	// Get link implementation.
 	// return Link{}
+	mut unparsed_link := Link{
+	content: lin.content
+	}
+	parsed_link := unparsed_link.parse()
+	return parsed_link
 }
 
-fn (lin Line)get_comment()Comment{
+fn (lin Line)get_comment(mut parser Parser)Comment{
 	// Get comment implementation.
-	mut singleline := false
-	mut prefix := CommentPrefix.short
-	mut content := ""
+	mut comment := Comment{
+		singleline: false,
+		prefix: CommentPrefix.short,
+		content: "",
+	}
 
 	if lin.content.trim_space().starts_with('//'){
-		content = lin.content.all_after_first('//').trim_space() + '\n'
-		prefix = CommentPrefix.short
-		singleline = true
+		comment.content = lin.content.all_after_first('//').trim_space() + '\n'
+		comment.prefix = CommentPrefix.short
+		comment.singleline = true
 	}
 
 	if lin.content.starts_with('<!--') && lin.content.ends_with('-->'){
-		content = lin.content.all_after_first('<!--').replace("-->", "")
-		prefix = CommentPrefix.short
-		singleline = true
+		comment.content = lin.content.all_after_first('<!--').replace("-->", "")
+		comment.prefix = CommentPrefix.short
+		comment.singleline = true
 	}
 
 	if lin.content.starts_with('<!--') && !lin.content.ends_with('-->'){
-		content = lin.content.all_after_first('<!--')
-		prefix = CommentPrefix.multi
-		singleline = false
+		comment.content = lin.content.all_after_first('<!--')
+		comment.prefix = CommentPrefix.multi
+		comment.singleline = false
+		for{
+			parser.next()
+			new_line := parser.line_current()
+			if new_line.ends_with("-->"){
+				comment.content += "\n" + new_line.all_before_last("-->")
+				break
+			} else {
+				comment.content += "\n" + new_line
+			}
+		}
 	}
 
-	return Comment{
-		content: content
-		prefix: prefix
-		singleline: singleline
-	}
+	return comment
 }
 
 fn (lin Line)get_header()Header{

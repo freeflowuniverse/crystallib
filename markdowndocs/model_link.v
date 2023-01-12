@@ -147,9 +147,9 @@ fn (mut o Link) html() string{
 	return o.wiki()
 }
 
-// fn ( o Link) str() string{
-// 	return "**** Link\n"
-// }
+fn ( o Link) str() string{
+	return "**** Link: " + o.content + "\n"
+}
 
 
 // fn (link Link) original_get_with_ignore() string {
