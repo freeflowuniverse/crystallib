@@ -7,17 +7,13 @@ import time
 pub struct RMBProcessor{
 pub mut:
 	rmbc rmbclient.RMBClient
+	rmbpc RMBProxyClient
 }
 
-//twinid, is my id for me as twin
-//list of proxyipaddr is the proxies I can connect too, the first one is most priority
-pub fn new(twinid u32,proxyipaddr[]string) !RMBProcessor{
-	mut rmbclient :=rmbclient.new()!
-	rmbclient.twinid=twinid
-	mut rmbp:=RMBProcessor{rmbc:rmbclient}
-	rmbp.twinid=twinid
-
-	//TODO: call towards rmbproxy
+pub fn new() !RMBProcessor {
+	mut rmbclient := rmbclient.new()!
+	mut rmbp := RMBProcessor{ rmbc:rmbclient }
+	// todo create RMBProxyClient
 	return rmbp
 }
 
@@ -41,9 +37,8 @@ fn (mut rmbp RMBProcessor) process()!{
 				now:=time.now().unix_time()
 				rmb.redis.hset("rmb.jobs.in","${job.guid}","$now")!
 			}else{
-				// TODO should we put the guid in redis and let Proxy iterate over it? 
-				now:=time.now().unix_time()
-				rmb.redis.hset("rmb.jobs.clients.${}", "${job.guid}", "$now")!
+				// todo decide what to do with errors
+				rmbp.rmbpc.job_send(job)!
 			}
 			println(job)
 		}

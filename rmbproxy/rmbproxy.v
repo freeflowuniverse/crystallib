@@ -1,70 +1,35 @@
 module rmbproxy
 import freeflowuniverse.crystallib.encoder
 import freeflowuniverse.crystallib.rmbclient
-import freeflowuniverse.crystallib.resp
 
+import log
 import net.websocket
-import time
 
 pub struct RMBProxy {
 pub mut:
 	rmbc &rmbclient.RMBClient
 	wsserver &websocket.Server
+	logger &log.Logger
 }
 
-pub fn new(client &rmbclient.RMBClient) !RMBProxy {
-	mut wsserver := websocket.new_server(.ip, port, "", websocket.ServerOpt{})
+pub fn new(port int, log_level log.Level) !RMBProxy {
+	mut rmbc := rmbclient.new()!
+	mut logger := log.Logger(&log.Log{ level: log_level })
+	mut wsserver := websocket.new_server(.ip, port, "", websocket.ServerOpt{logger: &logger})
 	mut handlers := map[string]RMBProxyHandler{}
-	handlers["job.send"] = JobSendHandler { rmbc: client }
-	handlers["twin.set"] = TwinSetHandler { rmbc: client }
-	handlers["twin.del"] = TwinDelHandler { rmbc: client }
-	handlers["twin.get"] = TwinGetHandler { rmbc: client }
-	handlers["twinid.new"] = TwinIdNewHandler { rmbc: client }
-	handlers["proxies.get"] = ProxiesGetHandler { rmbc: client }
+	handlers["job.send"] = JobSendHandler { rmbc: &rmbc }
+	handlers["twin.set"] = TwinSetHandler { rmbc: &rmbc }
+	handlers["twin.del"] = TwinDelHandler { rmbc: &rmbc }
+	handlers["twin.get"] = TwinGetHandler { rmbc: &rmbc }
+	handlers["twinid.new"] = TwinIdNewHandler { rmbc: &rmbc }
+	handlers["proxies.get"] = ProxiesGetHandler { rmbc: &rmbc }
 	mut rmbp := RMBProxy {
-		rmbc: client
+		rmbc: &rmbc
 		wsserver: wsserver
+		logger: &logger
 	}
 	wsserver.on_message(RMBProxy.on_message)
 	return rmbp
-}
-
-pub fn (mut rmbp RMBProxy) send_action_job(action_job &rmbclient.ActionJob) ! {
-	action_json := action_job.dumps()
-	// TODO ecrypt data with public key of twin id who has to execute job
-	action_json_encrypted := action_json
-	mut data := maps[string]string {}
-	data["cmd"] = "job.send"
-	data["signature"] = "//TODO!!!"
-	data["payload"] = action_json_encrypted
-
-	encoder := encoder.encoder_new()
-	encoder.add_map_string(data)
-
-	for rmb_proxy in rmbp.rmbc.rmb_proxy_ips {
-		rmbp.send_message(rmb_proxy, encoder.data) or {
-			println("RMBProxy: Failed sending to rmb proxy ${rmb_proxy}: $err")
-			// lets try the next one
-			continue
-		}
-		// we were able to send the message => return
-		return
-	}
-}
-
-fn (mut rmbp RMBProxy) send_message(address string, data string) ! {
-	client := websocket.new_client(address, websocket.ClientOpt{}) or {
-		return error("Failed to create websocket client: $err")
-	}
-	client.connect() or {
-		return error("Failed to connect to server: $err")
-	}
-
-	_ := client.write(data.bytes(), .binary_frame) or {
-		return error("Failed to write to server: $err")
-	}
-
-	client.close(0, "Closing connection")!
 }
 
 fn (mut rmbp RMBProxy) on_message(mut client websocket.Client, msg &websocket.Message) ! {
@@ -72,12 +37,12 @@ fn (mut rmbp RMBProxy) on_message(mut client websocket.Client, msg &websocket.Me
 		decoder := encoder.decoder_new(msg.payload)
 		data := decoder.get_map_string()
 
-		if not "cmd" in data {
+		if !("cmd" in data) {
 			println("RMBProxy: Invalid message <${data}>: Does not contain cmd")
 			return 
 		}
 
-		if not data["cmd"] in rmbp.handlers {
+		if !(data["cmd"] in rmbp.handlers) {
 			println("RMBProxy: Invalid message <${data}>: Unknown command ${data['cmd']}")
 			return 
 		}
@@ -90,9 +55,12 @@ fn (mut rmbp RMBProxy) on_message(mut client websocket.Client, msg &websocket.Me
 }
 
 
-
 //run the rmb processor
-pub fn process() ! {
-	mut rmbp := new()!
-	rmbp.process()!
+pub fn run(port int, debug bool) ! {
+	level := match debug {
+		true { .debug }
+		else { .info }
+	}
+	mut rmbproxy := new(port, level)!
+	rmbproxy.wsserver.listen()
 }
