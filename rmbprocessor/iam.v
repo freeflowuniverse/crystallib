@@ -24,6 +24,5 @@ pub fn (mut rmbp RMBProcessor) iam_register(args MyTwin) ! {
 
 	//rmb.redis.set("rmb.iam", json.encode(twin))!
 	rmb.twinid = twin.twinid
-	rmb.rmb_proxy_ips = twin.rmb_proxy_ips
 }
 

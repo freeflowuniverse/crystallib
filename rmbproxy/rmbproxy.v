@@ -1,6 +1,6 @@
 module rmbproxy
 import freeflowuniverse.crystallib.encoder
-import freeflowuniverse.crystallib.rmbclient
+import freeflowuniverse.crystallib.redisclient
 
 import log
 import net.websocket
@@ -8,30 +8,30 @@ import net.websocket
 [heap]
 pub struct RMBProxy {
 pub mut:
-	rmbc &rmbclient.RMBClient
+	redis redisclient.Redis
 	wsserver &websocket.Server
 	logger &log.Logger
-	handlers map[string]RMBProxyHandler
+	handlers map[string]RMBProxyMessageHandler
+	clients [u32]&websocket.ServerClient
 }
 
 pub fn new(port int, logger &log.Logger) !RMBProxy {
-	mut rmbc := rmbclient.new() or { 
-		return error("Failed creating client: $err")
-	}
+	mut redis := redisclient.core_get()
 	mut wsserver := websocket.new_server(.ip, port, "", websocket.ServerOpt{ logger: unsafe { logger } })
-	mut handlers := map[string]RMBProxyHandler{}
-	handlers["job.send"] = JobSendHandler { rmbc: &rmbc }
-	handlers["twin.set"] = TwinSetHandler { rmbc: &rmbc }
-	handlers["twin.del"] = TwinDelHandler { rmbc: &rmbc }
-	handlers["twin.get"] = TwinGetHandler { rmbc: &rmbc }
-	handlers["twinid.new"] = TwinIdNewHandler { rmbc: &rmbc }
-	handlers["proxies.get"] = ProxiesGetHandler { rmbc: &rmbc }
 	mut rmbp := RMBProxy {
-		rmbc: &rmbc
+		redis: redis
 		wsserver: wsserver
 		logger: unsafe { logger }
-		handlers: handlers
 	}
+	mut handlers := map[string]RMBProxyMessageHandler{}
+	handlers["job.send"] = JobSendHandler { rmbp: &rmbp }
+	handlers["twin.set"] = TwinSetHandler { rmbp: &rmbp }
+	handlers["twin.del"] = TwinDelHandler { rmbp: &rmbp }
+	handlers["twin.get"] = TwinGetHandler { rmbp: &rmbp }
+	handlers["twinid.new"] = TwinIdNewHandler { rmbp: &rmbp }
+	handlers["proxies.get"] = ProxiesGetHandler { rmbp: &rmbp }
+	rmbp.handlers = handlers
+
 	wsserver.on_connect(rmbp.on_connect)!
 	wsserver.on_message(rmbp.on_message)
 	wsserver.on_close(rmbp.on_close)
@@ -44,6 +44,7 @@ fn (mut rmbp RMBProxy) on_close(mut client websocket.Client, code int, reason st
 
 fn (mut rmbp RMBProxy) on_connect(mut client websocket.ServerClient) !bool {
 	rmbp.logger.info("New client connection")
+
 	return true
 }
 
@@ -63,14 +64,9 @@ fn (mut rmbp RMBProxy) on_message(mut client websocket.Client, msg &websocket.Me
 			return 
 		}
 
-		response := rmbp.handlers[data["cmd"]].handle(data) or {
+		response := rmbp.handlers[data["cmd"]].handle(mut &client, data) or {
 			rmbp.logger.error("Error while handeling message <${data}>: $err")
 			return
-		}
-		if response != "" {
-			client.write(response.bytes(), .binary_frame) or {
-				rmbp.logger.error("Failed to send response to client: $err")
-			}
 		}
 		rmbp.logger.info("Successfully handled message of type: ${data["cmd"]}")
 	}
