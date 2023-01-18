@@ -18,6 +18,7 @@ For now its kind of shortcut to get things to work
 - actionname = job.send
 - data map: 
     - cmd: "job.send"
+    - twinid: ...
     - signature: bytes for ed25519 signed with priv key twin who sends
     - payload: encrypted jsonserialized for job see ActionJobPublic of rmbclient, encrypted with pubkey dest twin
 - purpose: send job to destination of proxy

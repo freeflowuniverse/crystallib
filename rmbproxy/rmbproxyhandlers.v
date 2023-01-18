@@ -1,124 +1,121 @@
 module rmbproxy
 
-import rmbclient
+import freeflowuniverse.crystallib.redisclient
 
-pub interface RMBProxyHandler {
+import json
+
+pub interface RMBProxyMessageHandler {
 mut:
-	rmbc &rmbclient.RMBClient
-
-	handle(data map[string]string) !string
+	rmbp &RMBProxy
+	handle(mut client &websocket.Client, data map[string]string) !
 }
 
 pub struct JobSendHandler {
 mut:
-	rmbc &rmbclient.RMBClient
+	rmbp &RMBProxy
 }
 
-pub fn (mut h JobSendHandler) handle(data map[string]string) !string {
+pub fn (mut h JobSendHandler) handle(mut client &websocket.Client, data map[string]string) ! {
 	if !("signature" in data) {
 		return error("Invalid data: missing signature")
 	}
 	if !("payload" in data) {
 		return error("Invalid data: missing payload")
 	}
-
-	// TODO decrypt payload using private key
-	payload := data["payload"]
-
-	action_job := rmbclient.job_load(payload) or {
-		return error("Invalid data: $err")
+	if !("dsttwinid" in data) {
+		return error("Invalid data: dsttwinid not set")
 	}
 
-	h.rmbc.action_schedule(action_job)!
+	dsttwinid := data["dsttwinid"].u32()
 
-	return ""
+	if !(dsttwinid in h.rmbp.clients) {
+		return error("Unknown client with twinid ${dsttwinid}")
+	}
+
+	h.rmbp.clients[dsttwinid].write(data, .binary_frame)!
 }
-
-
 
 pub struct TwinSetHandler {
-mut:
-	rmbc &rmbclient.RMBClient
+mut: 
+	rmbp &RMBProxy
 }
 
-pub fn (mut h TwinSetHandler) handle(data map[string]string) !string {
+pub fn (mut h TwinSetHandler) handle(mut client &websocket.Client, data map[string]string) ! {
 	if !("meta" in data) {
 		return error("Invalid data: missing meta")
 	}
-
-	twin_meta_pub := rmbclient.twinmeta_load(data["meta"]) or {
-		return error("Invalid data: $err")
+	if !("twinid" in data) {
+		return error("Invalid data: missing twinid")
 	}
 
-	// TODO add function in client to keep TwinMetaPub info in redis db
-	// TODO if twin received has ID higher than the highest, update in DB
-	return ""
+	twinid := data["twinid"].u32()
+	max_twinid := h.rmbp.redis.get("rmb.twins.max_twin_id")!.u32()
+	if max_twinid < twinid {
+		h.rmbp.redis.set("rmb.twins.max_twin_id", data["twinid"])!
+	}
+	h.rmbp.redis.hset("rmb.twins", data["twinid"], data["meta"])!
+	rmbp.clients[twinid] = client
 }
 
 
 
 pub struct TwinDelHandler {
 mut:
-	rmbc &rmbclient.RMBClient
+	rmbp &RMBProxy
 }
 
-pub fn (mut h TwinDelHandler) handle(data map[string]string) !string {
+pub fn (mut h TwinDelHandler) handle(mut client &websocket.Client, data map[string]string) ! {
 	if !("twinid" in data) {
 		return error("Invalid data: missing twinid")
 	}
 
-	twinid := data["twinid"].u32()
-
-	// TODO add function in client to delete 
-	h.rmbc.delete(twinid)
-
-	return ""
+	h.rmbp.redis.hdel("rmb.twins", data["twinid"])!	
+	rmbp.clients.delete(data["twinid"].u32())
 }
 
 
 
 pub struct TwinGetHandler {
 mut:
-	rmbc &rmbclient.RMBClient
+	rmbp &RMBProxy
 }
 
-pub fn (mut h TwinGetHandler) handle(data map[string]string) !string {
+pub fn (mut h TwinGetHandler) handle(mut client &websocket.Client, data map[string]string) ! {
 	if !("twinid" in data) {
 		return error("Invalid data: missing twinid")
 	}
 
-	twinid := data["twinid"].u32()
+	meta := h.rmbp.redis.hget("rmb.twins", data["twinid"])!
 
-	// TODO add function in client to get a specific client 
-	client_twin := h.rmbc.get_twin(twinid)
-
-	return json.encode(client_twin)
+	client.write(meta, .binary_frame)!
 }
 
 
 
 pub struct TwinIdNewHandler {
 mut:
-	rmbc &rmbclient.RMBClient
+	rmbp &RMBProxy
 }
 
-pub fn (mut h TwinIdNewHandler) handle(data map[string]string) !string {
+pub fn (mut h TwinIdNewHandler) handle(mut client &websocket.Client, data map[string]string) ! {
 	if !("twinid" in data) {
 		return error("Invalid data: missing twinid")
 	}
 
-	// TODO add function in client to get new ID
-	twinid := 10
-	
-	return twinid
+	mut max_twinid := h.rmbp.redis.get("rmb.twins.max_twin_id")!.u32()
+	max_twinid += 1
+
+	// send back max_twin_id
 }
 
 
 pub struct ProxiesGetHandler {
 mut:
-	rmbc &rmbclient.RMBClient
+	rmbp &RMBProxy
 }
 
-pub fn (mut h ProxiesGetHandler) handle(data map[string]string) !string {
-	return h.rmbc.iam.rmb_proxy_ips
+pub fn (mut h ProxiesGetHandler) handle(mut client &websocket.Client, data map[string]string) ! {
+	// todo send proxies
+	//return json.encode(h.rmbc.rmb_proxy_ips)
+
 }
