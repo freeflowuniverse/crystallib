@@ -23,6 +23,16 @@ pub fn new(logger &log.Logger) !RMBProcessor {
 	return rmbp
 }
 
+
+fn (mut rmbp RMBProcessor) reschedule_to_actor(job rmbclient.ActionJob) {
+	for actor, queue in rmbp.rmbc.actor_coordinates {
+		if job.action.starts_with(actor) {
+			rmb.redis.lpush(queue, "${job.guid}")!
+			now := time.now().unix_time()
+			rmb.redis.hset("rmb.jobs.in", "${job.guid}", "$now")!
+		}
+	}
+}
 //if rmbid is 0, means we work in local mode
 // 		src_twinid		 u32    //which twin is responsible for executing on behalf of actor (0 is local)
 // 		src_rmbids		 []u32  //how do we find our way back, if 0 is local, can be more than 1
@@ -33,10 +43,21 @@ fn (mut rmbp RMBProcessor) process() ! {
 	mut guid := ""
 	
 	// run proxyclient on new thread
-	job_channel := chan rmbclient.ActionJob{}
-	t_proxy_client := spawn rmbpc.run(job_channel)
+	send_job_channel := chan rmbclient.ActionJob{}
+	receive_job_channel := chan rmbclient.ActionJob{}
+	t_proxy_client := spawn rmbpc.run(send_job_channel, receive_job_channel)
 
 	for {
+		if select {
+    		job := <-receive_job_channel {
+				// channel is ready and has received a job
+				rmbc.action_schedule(mut job)!
+    		}
+		}{} else {
+			// need to add else statement to proceed directly if channel is not ready
+			// this could be due to channel that is closed too but the next for loop will break then
+		}
+
 		guid = rmbc.next_job_guid() or {
 			rmbp.logger.error("$err")
 			return error("error in jobs queue")
@@ -46,10 +67,10 @@ fn (mut rmbp RMBProcessor) process() ! {
 			mut job := rmbc.job_get(guid)!
 			rmbp.logger.debug("$job")
 			if job.twinid==u32(0) || job.twinid==rmbc.twinid {
-				rmbp.logger.info("Job is meant for me, lets handle it")
-				rmbc.reschedule_in(guid)!
+				rmbp.logger.info("Job is meant for our twinid, lets handle it")
+				rmbc.reschedule_to_actor(job)!
 			} else {
-				rmbp.logger.info("Job is meant for someone else, lets send it to the proxy")
+				rmbp.logger.info("Job is meant for other twinid, lets send it to the proxy")
 				job_channel <- job
 			}
 		}

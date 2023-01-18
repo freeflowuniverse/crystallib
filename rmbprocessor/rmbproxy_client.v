@@ -10,12 +10,12 @@ import net.websocket
 //client to the rmb proxy
 pub struct RMBProxyClient {
 pub mut:
-	rmbc rmbclient.RMBClient
 	twinid u32
 	proxyipaddrs []string
 	websocketclients []&websocket.Client //in reality its not string, its webdav clients, is more than 1
 	websocketclient_active u8 //the current webdavclient which is being used, the one which is active
 	logger &log.Logger
+	ch_receive chan rmbclient.ActionJob
 }
 
 fn (mut cl RMBProxyClient) next_websocketclient() {
@@ -69,16 +69,17 @@ pub fn (mut cl RMBProxyClient) job_send(action_job rmbclient.ActionJob) ! {
 	action_json_encrypted := action_json
 	mut data := map[string]string {}
 	data["cmd"] = "job.send"
+	data["dsttwinid"] = action_job.twinid
 	data["signature"] = "//TODO!!!"
 	data["payload"] = action_json_encrypted
 
 	cl.rpc(data)!
 }
 
-pub fn (mut cl RMBProxyClient) run(ch chan rmbclient.ActionJob) ! {
-	for !ch.closed {
+fn (mut cl RMBProxyClient) sending(ch chan rmbclient.ActionJob) {
+	for !ch_send.closed {
 		if select {
-    		job := <-ch {
+    		job := <-ch_send {
 				// channel is ready and has received a job
 				cl.job_send(job) or {
 					cl.logger.error("Failed to send job: $err")
@@ -91,12 +92,44 @@ pub fn (mut cl RMBProxyClient) run(ch chan rmbclient.ActionJob) ! {
 	}
 }
 
+fn (mut cl RMBProxyClient) listening(ch chan rmbclient.ActionJob) {
+	cl.ch_receive = ch
+	for {
+		mut websocketclient := cl.websocketclients[cl.websocketclient_active]
+		if websocketclient.state != .open {
+			websocketclient.connect() or {
+				// failed to connect lets try the second one
+				cl.logger.error("Failed to connect to ${cl.proxyipaddrs[cl.websocketclient_active]}")
+				cl.next_websocketclient()
+				continue
+			}
+		}
 
-//this needs to go to a thread, so it can be executing at background
+		// lets start listening and process incoming messages in a new thread
+		// we wait for the thread to return which then means we have lost connection
+		// so try again in the next iteration (if needed try the next websocketclient)
+		websocketclient.listen() or {
+			cl.logger.error("Lost connection to RMBProxy ${cl.proxyipaddrs[cl.websocketclient_active]}")
+		}
+	}
+}
+
+fn (mut cl RMBProxyClient) on_message(mut client websocket.Client, msg &websocket.Message) ! {
+	// Process messages received from Proxy
+	// if its job pass it through the channel to the processor
+}
+
+// starts listening and sending messages received through channels to the RMBProxy 
+pub fn (mut cl RMBProxyClient) run(ch_send chan rmbclient.ActionJob, ch_receive chan rmbclient.ActionJob) ! {
+	t_listen := spawn cl.sending(ch_send)
+	t_sending := spawn cl.listening(ch_receive)
+
+	t_listen.wait()
+	t_sending.wait()
+}
+
 pub fn new_rmbproxyclient(twinid u32, proxyipaddrs []string, logger &log.Logger) !RMBProxyClient {
-	mut rmbc := rmbclient.new()!
-	mut rmbpc := RMBProxyClient { 
-		rmbc: &rmbc,
+	mut rmbpc := RMBProxyClient {
 		twinid: twinid,
 		proxyipaddrs: proxyipaddrs
 		logger: unsafe { logger }
@@ -105,6 +138,7 @@ pub fn new_rmbproxyclient(twinid u32, proxyipaddrs []string, logger &log.Logger)
 		mut wscl := websocket.new_client(proxyipaddr, websocket.ClientOpt{}) or {
 			return error("failed to create client for $proxyipaddr: $err")
 		}
+		wscl.on_message(rmbpc.on_message)
 		rmbpc.websocketclients << wscl
 	}
 	return rmbpc

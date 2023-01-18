@@ -11,7 +11,8 @@ pub struct RMBClient{
 pub mut:
 	redis redisclient.Redis
 	twinid u32
-	rmb_proxy_ips []string
+	// A map from jobaction to queue name. The jobaction can be domain, domain.actor or even domain.actor.method
+	actor_coordinates map[string]string
 }
 
 pub fn new() !RMBClient {
@@ -21,19 +22,16 @@ pub fn new() !RMBClient {
 	twinid := rmb.redis.get("rmb.mytwin.id") or {
 		return error("rmb.mytwin.id not set")
 	}
-	if twinid == "" {
-		return error("rmb.mytwin.id not set")
-	}
-	rmb.twinid = twinid.u32()
+	rmb.twinid = twinid
 
-	rmb_proxy_ips := rmb.redis.get("rmb.mytwin.proxyips") or {
-		return error("rmb.mytwin.proxyips not set")
+	actor_coordinates_data := rmb.redis.hgetall("rmb.actorcoordinates") or {
+		return error("rmb.actorcoordinates not set")
 	}
-	if rmb_proxy_ips == "" {
-		return error("rmb.mytwin.proxyips not set")
-	}
-	rmb.rmb_proxy_ips = json.decode([]string, rmb_proxy_ips) or {
-		return error("failed decoding \"${rmb_proxy_ips}\" to []string")
+	// TODO maybe we can hget when rescheduling so that actors can be added at runtime
+	for actor in actor_coordinates_data {
+		rmb.actor_coordinates[actor] = rmb.redis.hget("rmb.actorcoordinates", actor) or  !
+			return error("failed to hget rmb.actorcoordinates $actor")
+		}
 	}
 	return rmb
 }
@@ -92,32 +90,15 @@ pub fn (mut rmb RMBClient) next_job_guid() !string {
 	return guid
 }
 
-pub fn (mut rmb RMBClient) reschedule_in(guid string) ! {
-	rmb.redis.lpush("jobs.queue.in", "${guid}")!
-	now := time.now().unix_time()
-	rmb.redis.hset("rmb.jobs.in", "${guid}", "$now")!
-}
-
-pub fn (mut rmb RMBClient) del_twin(twin_id u32) ! {
-	rmb.redis.del("rmb.twins.${twin_id}")!
-}
-
-pub fn (mut rmb RMBClient) set_twin(twin_id u32, twin string) ! {
-	max_twin_id := rmb.redis.get("rmb.twins.max_twin_id")!.u32()
-	if max_twin_id < twin_id {
-		rmb.redis.set("rmb.twins.max_twin_id", twin_id.str())!
+// put the job in the first queue of the first actor that matches the action of the job
+pub fn (mut rmb RMBClient) reschedule_to_actor(job ActionJob) {
+	for actor, queue in rmb.actor_coordinates {
+		if job.action.starts_with(actor) {
+			rmb.redis.lpush(queue, "${job.guid}")!
+			now := time.now().unix_time()
+			rmb.redis.hset("rmb.jobs.in", "${job.guid}", "$now")!
+		}
 	}
-	rmb.redis.set("rmb.twins.${twin_id}", twin)!
-}
-
-pub fn (mut rmb RMBClient) get_twin(twin_id u32) !string {
-	twin := rmb.redis.get("rmb.twins.${twin_id}")!
-	return twin
-}
-
-pub fn (mut rmb RMBClient) new_twin_id() !u32 {
-	max_twin_id := rmb.redis.get("rmb.twins.max_twin_id")!.u32()
-	return max_twin_id + 1
 }
 
 //schedules the job to be executed and then wait on return
@@ -136,4 +117,7 @@ pub fn (mut rmb RMBClient) reset() ! {
 
 	//need to save the info we still have in mem to redis
 	rmb.redis.set("rmb.mytwin.id", rmb.twinid.str())!
+	for k, v in rmb.actor_coordinates {
+		rmb.redis.hset("rmb.actorcoordinates", k, v)!
+	}
 }
