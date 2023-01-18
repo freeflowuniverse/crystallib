@@ -7,11 +7,11 @@
 
 //needs to include the content, not as macro
 !!include path:'run_include.md'
-!!git.link
-gitsource:owb
-gitdest:books
-source:'feasibility_study/Capabilities'
-dest:'feasibility_study_internet/src/capabilities2'
+
+!!git.link gitsource:owb
+    gitdest:books
+    source:'feasibility_study/Capabilities'
+    dest:'feasibility_study_internet/src/capabilities2'
 
 <!-- is same as above -->
 
@@ -22,8 +22,8 @@ dest:'https://github.com/threefoldfoundation/books/tree/main/books/feasibility_s
 <!-- if name not specified, will use the name of the directory -->
 
 !!books.add
-path:'https://github.com/threefoldfoundation/books/tree/main/books/technology/src'
-name:technology
+    path:'https://github.com/threefoldfoundation/books/tree/main/books/technology/src'
+    name:technology
 
 <!-- path can be a path or url, if gitsource specified will append to the git it points too -->
 
