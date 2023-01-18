@@ -8,6 +8,7 @@ import log
 import net.websocket
 
 //client to the rmb proxy
+[heap]
 pub struct RMBProxyClient {
 pub mut:
 	twinid u32
@@ -69,7 +70,7 @@ pub fn (mut cl RMBProxyClient) job_send(action_job rmbclient.ActionJob) ! {
 	action_json_encrypted := action_json
 	mut data := map[string]string {}
 	data["cmd"] = "job.send"
-	data["dsttwinid"] = action_job.twinid
+	data["dsttwinid"] = action_job.twinid.str()
 	data["signature"] = "//TODO!!!"
 	data["payload"] = action_json_encrypted
 
@@ -77,9 +78,9 @@ pub fn (mut cl RMBProxyClient) job_send(action_job rmbclient.ActionJob) ! {
 }
 
 fn (mut cl RMBProxyClient) sending(ch chan rmbclient.ActionJob) {
-	for !ch_send.closed {
+	for !ch.closed {
 		if select {
-    		job := <-ch_send {
+    		job := <-ch {
 				// channel is ready and has received a job
 				cl.job_send(job) or {
 					cl.logger.error("Failed to send job: $err")

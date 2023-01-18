@@ -12,9 +12,9 @@ pub mut:
 	logger &log.Logger
 }
 
-pub fn new(logger &log.Logger) !RMBProcessor {
+pub fn new(rmb_proxy_ips []string, logger &log.Logger) !RMBProcessor {
 	mut rmbc := rmbclient.new()!
-	mut rmbpc := new_rmbproxyclient(rmbc.twinid, rmbc.rmb_proxy_ips, logger)!
+	mut rmbpc := new_rmbproxyclient(rmbc.twinid, rmb_proxy_ips, logger)!
 	mut rmbp := RMBProcessor {
 		rmbc: rmbc
 		rmbpc: rmbpc
@@ -23,16 +23,6 @@ pub fn new(logger &log.Logger) !RMBProcessor {
 	return rmbp
 }
 
-
-fn (mut rmbp RMBProcessor) reschedule_to_actor(job rmbclient.ActionJob) {
-	for actor, queue in rmbp.rmbc.actor_coordinates {
-		if job.action.starts_with(actor) {
-			rmb.redis.lpush(queue, "${job.guid}")!
-			now := time.now().unix_time()
-			rmb.redis.hset("rmb.jobs.in", "${job.guid}", "$now")!
-		}
-	}
-}
 //if rmbid is 0, means we work in local mode
 // 		src_twinid		 u32    //which twin is responsible for executing on behalf of actor (0 is local)
 // 		src_rmbids		 []u32  //how do we find our way back, if 0 is local, can be more than 1
@@ -49,7 +39,7 @@ fn (mut rmbp RMBProcessor) process() ! {
 
 	for {
 		if select {
-    		job := <-receive_job_channel {
+    		mut job := <-receive_job_channel {
 				// channel is ready and has received a job
 				rmbc.action_schedule(mut job)!
     		}
@@ -71,7 +61,7 @@ fn (mut rmbp RMBProcessor) process() ! {
 				rmbc.reschedule_to_actor(job)!
 			} else {
 				rmbp.logger.info("Job is meant for other twinid, lets send it to the proxy")
-				job_channel <- job
+				send_job_channel <- job
 			}
 		}
 		rmbp.logger.debug("Sleep")
@@ -82,7 +72,7 @@ fn (mut rmbp RMBProcessor) process() ! {
 }
 
 //run the rmb processor
-pub fn process(logger &log.Logger)!{
-	mut rmbp := new(logger)!
+pub fn process(proxy_addresses []string, logger &log.Logger)!{
+	mut rmbp := new(proxy_addresses, logger)!
 	rmbp.process()!
 }
