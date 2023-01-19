@@ -8,147 +8,133 @@ import json
 import log
 import net.http
 import net.websocket
+import rand
 import time
-
-//MSG <subject> <sid> [reply-to] <#bytes>␍␊[payload]␍␊
-pub struct MSG {
-	subject string
-	sid string
-	payload string
-}
-
-pub struct CONNECT_MESSAGE {
-	verbose bool
-	pedantic bool
-	tls_required bool
-	name string
-	lang string
-	version string
-	protocol int
-	echo bool
-}
-pub struct StreamConfig {
-	name string
-	subjects []string
-}
-
-pub struct ConsumerInnerConfig {
-	ack_policy string
-	deliver_policy string
-	deliver_subject string
-	durable_name string
-	max_deliver int
-	replay_policy string
-	num_replicas int
-}
-
-pub struct ConsumerConfig {
-	stream_name string
-	config ConsumerInnerConfig
-}
-
-pub struct ConsumerNextMSG {
-	// A duration from now when the pull should expire, stated in nanoseconds, 0 for no expiry
-	expires int
-	// How many messages the server should deliver to the requestor
-	batch int
-	// Sends at most this many bytes to the requestor, limited by consumer configuration max_bytes
-    max_bytes int
-	// When true a response with a 404 status header will be returned when no messages are available
-    no_wait bool
-	// When not 0 idle heartbeats will be sent on this interval
-	idle_heartbeat int
-}
 
 
 [heap]
 pub struct NATSClient {
 pub mut:
+	pull_frequency int = 5 // pull every 5 seconds
 	address string
 	websocket &websocket.Client
 	logger &log.Logger
 }
 
 fn (mut cl NATSClient) on_message(mut client websocket.Client, msg &websocket.Message) ! {
+	//INFO
+	//MSG
+	//PING
+	//PONG
+	//HMSG
+	//+OK
+	//-ERR
+	
 	message_string := msg.payload.bytestr()
-	cl.logger.info("New message: <$message_string>")
-	if message_string == "PING\r\n" {
-		cl.send_pong()
-	}
-	if message_string.starts_with("INFO") {
-		cl.subscribe_consumer_response()
-	}
+	cl.logger.debug("New message: <$message_string>")
+	i := 0
+	match message_string[0] {
+		73 { //"INFO"
+			// TODO do something with INFO object
+			cl.subscribe("RESPONSE") or {
+				cl.logger.error("Failed to subscribe: $err")
+			}
+		}
+		77 { // MSG
+			cl.parse_msg(message_string) or {
+				cl.logger.error("$err")
+			}
+		}
+		80 { // PING or PONG
+			if message_string == "PING\r\n" {
+				cl.send_pong()
+			}
+		}
+		43 { // +OK
 
-// 	MSG ORDERS.NEW 1 $JS.ACK.my_stream.my_consumer.5.7.55.1674053106828565451.0 41
-// agaiiiiiiiiiiiiiiiiiiin another new order
-// MSG RESPONSE 1  0
+		}
+		45 { // -ERR
 
-
-	if message_string.starts_with("MSG") {
-		// MSG <subject> <sid> [reply-to] <#bytes>␍␊[payload]␍␊
-		d := message_string.split("\r\n")
-		data := d[0].split(" ")
-		subject := data[1]
-		sid := data[2]
-		reply_to := data[3]
-		if reply_to != "" {
-			cl.aknowledge_message(reply_to)
+		}
+		else {
+			cl.logger.error("Message <$message_string> not supported!")
 		}
 	}
 }
 
+fn (mut cl NATSClient) parse_msg(payload string) ! {
+	mut natsmsgparser := NATSMessageParser{}
+	messages := natsmsgparser.parse(payload) or {
+		return error("Parse MSG: failed to parse messages")
+	}
+	cl.logger.info("New batch of messages: ${messages.len}")
+	cl.logger.debug("$messages")
+	if messages.len == 1 && message[0].message == "" {
+		// Server tells us there are no more messages to pull
+		return 
+	}
+	// todo add channel or push message to redis
+	cl.aknowledge_message(messages[messages.len-1].reply_to)
+}
+
 fn (mut cl NATSClient) aknowledge_message(reply_to string) {
-	//$JS.ACK.ORDERS.test.1.2.2
 	data := "PUB ${reply_to} 0\r\n\r\n"
-	cl.logger.info("Anknowledge: $data")
+	cl.logger.debug("Sending: $data")
 	cl.websocket.write(data.bytes(), .binary_frame) or {
-		cl.logger.error("Failed to send message")
+		cl.logger.error("Aknowledge message: Failed to send message")
 	}
 }
 
-fn (mut cl NATSClient) create_stream() {
-	// stream_config := StreamConfig{
-	// 	name: "a_new_stream"
-	// 	subjects: ["ORDERS2.*"]
-	// }
-	// stream_config_json := json.encode(stream_config)
-	// data := "PUB \$JS.API.STREAM.CREATE.a_new_stream ${stream_config_json.len}\r\n${stream_config_json}\r\n"
-
-	// consumer_config := ConsumerConfig{
-	// 	stream_name: "my_stream"
-	// 	config: ConsumerInnerConfig {
-	// 		durable_name: "my_consumer"
-	// 		deliver_subject: "push"
-	// 	}
-	// }
-	// consumer_config_json := json.encode(consumer_config)
-	// data := "PUB \$JS.API.CONSUMER.CREATE.my_stream.my_consumer ${consumer_config_json.len}\r\n${consumer_config_json}\r\n"
-	//data := "SUB ORDERS.* 1\r\n"
-
-	cl.logger.info("Asking for next message")
-	next_msg := ConsumerNextMSG {
-		batch: 1
-		expires: 0
-		max_bytes: 5000000000
-		no_wait: true
-		idle_heartbeat: 5
-	}
-	next_msg_json := json.encode(next_msg)
-	json_data := '{"batch":1,"no_wait":true}'
-	data := "PUB \$JS.API.CONSUMER.MSG.NEXT.my_stream.my_consumer RESPONSE ${json_data.len}\r\n${json_data}\r\n"
-	//json_d := '{}'
-	//data := "PUB \$JS.API.STREAM.MSG.GET.my_stream RESPONSE ${json_d.len}\r\n${json_d}\r\n"
-	cl.logger.info("$data")
+pub fn (mut cl NATSClient) create_stream(name string, subjects []string) ! {
+	stream_config := json.encode(StreamConfig{
+		name: name
+		subjects: subjects
+	})
+	data := "PUB \$JS.API.STREAM.CREATE.${name} ${stream_config.len}\r\n${stream_config}\r\n"
+	cl.logger.debug("Sending: $data")
 	cl.websocket.write(data.bytes(), .binary_frame) or {
-		cl.logger.error("Failed to send message")
+		return error("Create stream: failed to send message: $err")
 	}
 }
 
-fn (mut cl NATSClient) subscribe_consumer_response() {
-	data := "SUB RESPONSE 1\r\n"
+pub fn (mut cl NATSClient) create_consumer(name string, stream string, description string) ! {
+	consumer_config := json.encode(ConsumerConfig {
+		stream_name: stream
+		config: ConsumerInnerConfig {
+			name: name
+			description: description
+			// TODO experiment with all => this would only require us to acknowledge the last message of a batch of messages
+			ack_policy: "explicit"
+		}
+	})
+	data := "PUB \$JS.API.CONSUMER.CREATE.${stream}.${name} ${consumer_config.len}\r\n${consumer_config}\r\n"
+	cl.logger.debug("Sending: $data")
 	cl.websocket.write(data.bytes(), .binary_frame) or {
-		cl.logger.error("Failed to send message")
+		return error("Create consumer: failed to send message: $err")
 	}
+}
+
+fn (mut cl NATSClient) pull_messages(batch_size int, expires i64) {
+ 	next_msg := json.encode(ConsumerNextMSG {
+		expires: expires * time.second
+		batch: batch_size
+		no_wait: false
+	})
+	data := "PUB \$JS.API.CONSUMER.MSG.NEXT.my_stream.my_consumer RESPONSE ${next_msg.len}\r\n${next_msg}\r\n"
+	cl.logger.debug("Sending: $data")
+	cl.websocket.write(data.bytes(), .binary_frame) or {
+		cl.logger.error("Pull messages: Failed to send message")
+	}
+}
+
+pub fn (mut cl NATSClient) subscribe(subject string) !string {
+	sid := rand.uuid_v4()
+	data := "SUB $subject $sid\r\n"
+	cl.logger.debug("Sending: $data")
+	cl.websocket.write(data.bytes(), .binary_frame) or {
+		return error("Subscribe: Failed to send message")
+	}
+	return sid
 }
 
 fn (mut cl NATSClient) send_ping() {
@@ -164,7 +150,7 @@ fn (mut cl NATSClient) send_pong() {
 }
 
 fn (mut cl NATSClient) send_connect() {
-	message_data := CONNECT_MESSAGE{
+	message_data := json.encode(CONNECT_MESSAGE{
 		verbose: false
 		pedantic: true
 		tls_required: false
@@ -173,18 +159,20 @@ fn (mut cl NATSClient) send_connect() {
 		version: "2.9.11"
 		protocol: 1
 		echo: true
-	}
-	message_data_encoded := json.encode(message_data)
-	data := "CONNECT ${message_data_encoded}\r\n"
+	})
+	data := "CONNECT ${message_data}\r\n"
 	cl.websocket.write(data.bytes(), .binary_frame) or {
 		cl.logger.error("Failed to send message")
 	}
 }
+
 pub fn (mut cl NATSClient) listen() ! {
 	t := spawn cl.websocket.listen()
 	for {
-		cl.create_stream()
-		time.sleep(5 * time.second)
+		cl.pull_messages(20, cl.pull_frequency)
+		// keep connection alive
+		cl.send_ping()
+		time.sleep(cl.pull_frequency * time.second)
 	}
 	t.wait()!
 }
