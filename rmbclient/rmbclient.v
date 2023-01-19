@@ -22,14 +22,14 @@ pub fn new() !RMBClient {
 	twinid := rmb.redis.get("rmb.mytwin.id") or {
 		return error("rmb.mytwin.id not set")
 	}
-	rmb.twinid = twinid
+	rmb.twinid = twinid.u32()
 
 	actor_coordinates_data := rmb.redis.hgetall("rmb.actorcoordinates") or {
 		return error("rmb.actorcoordinates not set")
 	}
 	// TODO maybe we can hget when rescheduling so that actors can be added at runtime
 	for actor in actor_coordinates_data {
-		rmb.actor_coordinates[actor] = rmb.redis.hget("rmb.actorcoordinates", actor) or  !
+		rmb.actor_coordinates["$actor"] = rmb.redis.hget("rmb.actorcoordinates", "$actor") or {
 			return error("failed to hget rmb.actorcoordinates $actor")
 		}
 	}
@@ -91,7 +91,7 @@ pub fn (mut rmb RMBClient) next_job_guid() !string {
 }
 
 // put the job in the first queue of the first actor that matches the action of the job
-pub fn (mut rmb RMBClient) reschedule_to_actor(job ActionJob) {
+pub fn (mut rmb RMBClient) reschedule_to_actor(job ActionJob) ! {
 	for actor, queue in rmb.actor_coordinates {
 		if job.action.starts_with(actor) {
 			rmb.redis.lpush(queue, "${job.guid}")!
