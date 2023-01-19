@@ -1,5 +1,7 @@
 module markdowndocs
 
+//TODO: needs to be redone using the paragraph parser
+
 fn test_link1() {
 	mut lp := LinkParseResult{}
 	mut para := Paragraph{}

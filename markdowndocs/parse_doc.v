@@ -5,20 +5,19 @@ import pathlib
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
-fn doc_parse(path string) ! {
+fn parse_doc(path string) !Doc {
 	path2 := pathlib.get_file(path, false)!
 	mut doc:=Doc{path:path2}
-	mut parser:=parser_new(path)!
+	mut parser:=parser_new(path,mut &doc)!
 	
-	// no need to process files which are not at least 2 chars
 	for {
-		mut llast := doc.items.last()
 		if parser.eof() {
 			break
 		}
 		// go out of loop if end of file
 		line := parser.line_current()
-		// println("line ($parser.state()): '$line'")	
+
+		mut llast:=parser.lastitem()
 
 		if mut llast is Comment {
 			if llast.prefix == .short {
@@ -27,7 +26,7 @@ fn doc_parse(path string) ! {
 					parser.next()
 					continue
 				}
-				doc.items << DocStart{} // make sure we restart from scratch because is not comment
+				parser.next_start()
 			} else {
 				if line.trim_space().ends_with('-->') {
 					llast.content += line.all_before_last('-->') + '\n'
@@ -45,15 +44,24 @@ fn doc_parse(path string) ! {
 				// starts with tab or space, means block continues for action
 				llast.content += '${line}\n'
 			} else {
-				doc.items << DocStart{}
+				parser.next_start()
+				continue
 			}
 			parser.next()
 			continue
 		}
 
+		if mut llast is Html {
+			if line.trim_space().to_lower().starts_with('</html'){
+				parser.next_start()
+				continue				
+			}
+		}
+
 		if mut llast is CodeBlock {
 			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
-				doc.items << DocStart{}
+				parser.next_start()
+				continue				
 			} else {
 				llast.content += '${line}\n'
 			}
@@ -61,11 +69,10 @@ fn doc_parse(path string) ! {
 			continue
 		}
 
-		if parser.atstart  {
+		if mut llast is Paragraph{
 			if line.starts_with('!!') {
 				doc.items << Action{
 					content: line.all_after_first('!!')
-
 				}
 				parser.next()
 				continue
@@ -75,19 +82,18 @@ fn doc_parse(path string) ! {
 			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
 				doc.items << CodeBlock{
 					category: line.substr(3, line.len).to_lower().trim_space()
-
 				}
 				parser.next()
 				continue
 			}
 
 			// process headers
-			if line.starts_with('######') {
+			if line.starts_with('###### ') {
 				parser.error_add('header should be max 5 deep')
 				parser.next_start()
 				continue
 			}
-			if line.starts_with('#####') {
+			if line.starts_with('##### ') {
 				doc.items << Header{
 					content: line.all_after_first('#####').trim_space()
 					depth: 5
@@ -96,7 +102,7 @@ fn doc_parse(path string) ! {
 				parser.next_start()
 				continue
 			}
-			if line.starts_with('####') {
+			if line.starts_with('#### ') {
 				doc.items << Header{
 					content: line.all_after_first('####').trim_space()
 					depth: 4
@@ -105,7 +111,7 @@ fn doc_parse(path string) ! {
 				parser.next_start()
 				continue
 			}
-			if line.starts_with('###') {
+			if line.starts_with('### ') {
 				doc.items << Header{
 					content: line.all_after_first('###').trim_space()
 					depth: 3
@@ -114,7 +120,7 @@ fn doc_parse(path string) ! {
 				parser.next_start()
 				continue
 			}
-			if line.starts_with('##') {
+			if line.starts_with('## ') {
 				doc.items << Header{
 					content: line.all_after_first('##').trim_space()
 					depth: 2
@@ -123,7 +129,7 @@ fn doc_parse(path string) ! {
 				parser.next_start()
 				continue
 			}
-			if line.starts_with('#') {
+			if line.starts_with('# ') {
 				doc.items << Header{
 					content: line.all_after_first('#').trim_space()
 					depth: 1
@@ -131,6 +137,12 @@ fn doc_parse(path string) ! {
 				}
 				parser.next_start()
 				continue
+			}
+
+			if line.trim_space().to_lower().starts_with('<html'){
+				doc.items << Html{}
+				parser.next()
+				continue				
 			}
 
 			if line.trim_space().starts_with('//') {
@@ -153,22 +165,33 @@ fn doc_parse(path string) ! {
 			}
 		}
 
-		if parser.state_check('paragraph') {
-			mut lastitem:=doc.items.last()
-			if mut lastitem is Paragraph {
-				lastitem.content += line + '\n'
-			}
+		if mut llast is Paragraph || mut llast is Html || mut llast is Comment || mut llast is CodeBlock{
+			llast.content += line + '\n'
 		} else {
-			doc.items << Paragraph{
-				content: line
-
-			}
+			println(line)
+			println(llast)
+			panic("parser error, means we got element which is not supported")
 		}
 
 		parser.next()
 	}
 
+	mut toremovelist:=[]int{}
+	mut counter:=0
+	for item in doc.items{
+		if item is Paragraph{
+			if item.content=="" {
+				toremovelist << counter
+			}
+		}
+		counter+=1
+	}
+	for toremove in toremovelist.reverse(){
+		doc.items.delete(toremove)
+	}
+
 	doc.process()!
+	return doc
 }
 
 

@@ -40,7 +40,7 @@ pub fn (mut r Redis) get_response() !resp.RValue {
 		// println("readline result:'$buffer.bytestr()'")
 		return resp.RBString{
 			value: buffer
-		} // TODO: won't support binary (afaik), need to fix		
+		} // TODO: won't support binary (afaik), need to fix?  WHY not (despiegk)?
 	}
 
 	if line.starts_with('*') {

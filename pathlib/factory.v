@@ -12,6 +12,10 @@ pub fn get(path_ string) Path {
 		path: path
 	}
 	p2.check()
+	if p2.path.contains('..') {
+		p2.path=p2.absolute()
+	}
+
 	return p2
 }
 

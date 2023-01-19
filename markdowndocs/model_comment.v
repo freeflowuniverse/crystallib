@@ -20,12 +20,19 @@ fn (mut o Comment) process() ! {
 
 fn (o Comment) wiki() string {
 	mut out:=""
+	if o.singleline{
+		return "//${o.content}\n"
+	}	
 	if o.content.trim_space().contains("\n"){
 		out+="<!-- "
 		out+=o.content.trim_space()
 		out+="\n-->\n\n"
 	}else{
-		out+="<!-- ${o.content.trim_space()} -->\n\n"
+		if o.singleline{
+			out+="<!-- ${o.content.trim_space()} -->\n"
+		}else{
+			out+="<!-- ${o.content.trim_space()} -->\n\n"
+		}
 	}
 	return out
 }
@@ -34,10 +41,10 @@ fn (o Comment) html() string {
 	return o.wiki()
 }
 
-fn (o Comment) str() string {
-	return '**** Comment\n${texttools.indent(o.content, '    ')}'
-}
+// fn (o Comment) str() string {
+// 	return '**** Comment\n${texttools.indent(o.content, '    ')}'
+// }
 
-fn comment_new() Comment{
-	return Comment{}
+fn comment_new(text string) Comment{
+	return Comment{content:text}
 }

@@ -35,19 +35,24 @@ fn (mut paragraph Paragraph) html() string {
 	return out
 }
 
-fn (mut paragraph Paragraph) str() string {
-	mut out := ''
-	for mut item in paragraph.items {
-		match mut item{
-			Text {out += item.str()}
-			Link {out += item.str()}
-			Comment {out += item.str()}
-		}
-	}
-	return out
-}
+// fn (mut paragraph Paragraph) str() string {
+// 	mut out := ''
+// 	for mut item in paragraph.items {
+// 		match mut item{
+// 			Text {out += item.str()}
+// 			Link {out += item.str()}
+// 			Comment {out += item.str()}
+// 		}
+// 	}
+// 	return out
+// }
 
 fn (mut paragraph Paragraph) process() ! {
+	if paragraph.items.len>0{
+		panic("bug, cannot call process twise on paragraph")
+	}
+	println("process paragraph: $paragraph.content")
+	paragraph.parse()!
 	for mut item in paragraph.items {
 		match mut item{
 			Text {item.process()!}

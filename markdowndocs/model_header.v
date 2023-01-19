@@ -23,6 +23,6 @@ fn (o Header) html() string {
 	return o.wiki()
 }
 
-fn (o Header) str() string {
-	return '**** Header ${o.depth}: ${o.content}\n'
-}
+// fn (o Header) str() string {
+// 	return '**** Header ${o.depth}: ${o.content}\n'
+// }

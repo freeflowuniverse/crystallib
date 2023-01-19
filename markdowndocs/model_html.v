@@ -10,13 +10,13 @@ fn (mut o Html) process() ! {
 }
 
 fn (o Html) wiki() string {
-	return o.content
+	return "<html>\n${o.content}\n</html>\n"
 }
 
 fn (o Html) html() string {
 	return o.wiki()
 }
 
-fn (o Html) str() string {
-	return '**** Html\n'
-}
+// fn (o Html) str() string {
+// 	return '**** html\n${o.content}'
+// }

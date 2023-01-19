@@ -22,6 +22,6 @@ fn (o CodeBlock) html() string {
 	return o.wiki()
 }
 
-fn (o CodeBlock) str() string {
-	return '**** CodeBlock\n'
-}
+// fn (o CodeBlock) str() string {
+// 	return '**** CodeBlock\n'
+// }
