@@ -49,6 +49,7 @@ fn (mut paragraph Paragraph) str() string {
 
 fn (mut paragraph Paragraph) process() ! {
 	println("process paragraph: $paragraph.content")
+	paragraph.parse()!
 	for mut item in paragraph.items {
 		match mut item{
 			Text {item.process()!}

@@ -38,6 +38,6 @@ fn (o Comment) str() string {
 	return '**** Comment\n${texttools.indent(o.content, '    ')}'
 }
 
-fn comment_new() Comment{
-	return Comment{}
+fn comment_new(text string) Comment{
+	return Comment{content:text}
 }

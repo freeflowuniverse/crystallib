@@ -165,7 +165,7 @@ fn parse_doc(path string) !Doc {
 			}
 		}
 
-		if mut llast is Paragraph || mut llast is Comment || mut llast is CodeBlock{
+		if mut llast is Paragraph || mut llast is Html || mut llast is Comment || mut llast is CodeBlock{
 			llast.content += line + '\n'
 		} else {
 			println(line)
@@ -180,13 +180,13 @@ fn parse_doc(path string) !Doc {
 	mut counter:=0
 	for item in doc.items{
 		if item is Paragraph{
-			if item.content==""{
-				toremovelist<<counter
+			if item.content=="" {
+				toremovelist << counter
 			}
 		}
 		counter+=1
 	}
-	for toremove in toremovelist{
+	for toremove in toremovelist.reverse(){
 		doc.items.delete(toremove)
 	}
 

@@ -51,7 +51,7 @@ fn (mut parser Parser) line(nr int) !string {
 	if nr < 0 {
 		return error('before file')
 	}
-	if nr == parser.lines.len || nr > parser.lines.len {
+	if parser.eof() {
 		return error('end of file')
 	}
 	return parser.lines[nr]
@@ -88,10 +88,13 @@ fn (mut parser Parser) line_prev() string {
 }
 
 // move further
-fn (mut parser Parser) next() {
+fn (mut parser Parser) next() {	
 	println("line old (${parser.elementname()}): '${parser.line_current()}'")	
 	parser.linenr += 1
-	println("line new (${parser.elementname()}): '${parser.line_current()}'")	
+	if ! parser.eof(){
+		println("line new (${parser.elementname()}): '${parser.line_current()}'")	
+	}
+	
 }
 
 // move further and reset the state
@@ -107,69 +110,9 @@ fn (mut parser Parser) next_start() {
 
 // return true if end of file
 fn (mut parser Parser) eof() bool {
-	if parser.linenr == parser.lines.len || parser.linenr > parser.lines.len {
+	if parser.linenr > (parser.lines.len-1) {
 		return true
 	}
 	return false
 }
 
-
-
-
-
-// // walk backwards over the objects, if equal with what we have we keep on walking back
-// // if we find one which is same type as specified will return
-// fn (mut parser Parser) item_get_previous(tocheck_ string, ignore_ []string) &DocItem {
-// 	mut ignore := ignore_.clone()
-// 	mut itemnr := parser.doc.items.len - 1
-// 	mut itemname_start := parser.doc.items[itemnr].type_name().all_after_last('.').to_lower()
-// 	tocheck := tocheck_.to_lower().trim_space()
-// 	// walk backwards till previous state is not the current
-// 	// the original itemname
-// 	// print(" .. previous $tocheck $ignore")
-// 	if itemname_start == tocheck {
-// 		// print(" *R0.$itemname_start\n")
-// 		return &parser.doc.items[itemnr]
-// 	}
-// 	for {
-// 		mut itemname_current := parser.doc.items[itemnr].type_name().all_after_last('.').to_lower()
-// 		if itemnr == 0 {
-// 			// print(" *B.$itemname_current")
-// 			break
-// 		}
-// 		if itemname_current in ignore {
-// 			itemnr -= 1
-// 			// print(" *I.$itemname_current")
-// 			continue
-// 		}
-// 		if itemname_current == tocheck {
-// 			// print(" *R.$itemname_current\n")
-// 			return &parser.doc.items[itemnr]
-// 		}
-// 		// print(" *B.$itemname_current")
-// 		break
-// 	}
-// 	// print(" *NO\n")
-// 	return &Doc{}
-// }
-
-// // go further over lines, see if we can find one which has one of the to_find items in but we didn't get tostop item before
-// fn (mut parser Parser) look_forward_find(tofind []string, tostop []string) bool {
-// 	mut found := false
-// 	for line in parser.lines[parser.linenr + 1..parser.lines.len] {
-// 		// println(" +++ " +line)
-// 		for item in tostop {
-// 			if line.trim_space().starts_with(item) {
-// 				// println("found:$found")
-// 				return found
-// 			}
-// 		}
-// 		for item2 in tofind {
-// 			if line.trim_space().starts_with(item2) {
-// 				found = true
-// 			}
-// 		}
-// 	}
-// 	// println("NOTFOUND")
-// 	return false
-// }
