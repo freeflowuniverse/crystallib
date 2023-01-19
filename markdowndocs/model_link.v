@@ -100,12 +100,12 @@ pub fn (mut link Link) name_fix_no_underscore_no_ext() string {
 }
 
 fn (mut o Link) process()!{
-	return
+	o.parse()
 }
 
 
 // return how to represent link on source
-fn (mut link Link) wiki() string {
+fn (link Link) wiki() string {
 	if link.cat == LinkType.image {
 		if link.extra == '' {
 			return '![${link.description}](${link.filename})'
@@ -143,12 +143,12 @@ fn (mut link Link) wiki() string {
 }
 
 
-fn (mut o Link) html() string{
+fn (o Link) html() string{
 	return o.wiki()
 }
 
 // fn ( o Link) str() string{
-// 	return "**** Link\n"
+// 	return "**** Link: ${o.wiki()}\n"
 // }
 
 

@@ -2,7 +2,7 @@
 
 Some normal text //somecomment at end
 - [this is link](something.md)
-- ![this is link2](something.jpg)
+- ![this is link2](/r/something.jpg)
 Some normal text behind
 
 //somecomment at start

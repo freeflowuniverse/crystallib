@@ -54,7 +54,7 @@ fn (mut parser ParserChar) char(nr int) !string {
 	if parser.eof() {
 		return error('end of charstring')
 	}
-	return parser.chars.substr(parser.charnr,parser.charnr+1)
+	return parser.chars.substr(nr,nr+1)
 }
 
 // get current char
@@ -62,6 +62,14 @@ fn (mut parser ParserChar) char(nr int) !string {
 fn (mut parser ParserChar) char_current() string {
 	return parser.char(parser.charnr) or { panic(err) }
 }
+
+
+fn (mut parser ParserChar) forward(nr int) {
+	parser.charnr+=nr
+}
+
+
+
 
 // get next char, if end of file will return empty char
 fn (mut parser ParserChar) char_next() string {
@@ -80,59 +88,35 @@ fn (mut parser ParserChar) char_prev() string {
 }
 
 
-// check if starting from position +1 , current not in
-fn (mut parser ParserChar) text_next_is(tofind string) bool {
-	startpos:=parser.charnr+1
-	if startpos >  parser.chars.len{
+// check if starting from position we are on, offset is to count further
+fn (mut parser ParserChar) text_next_is(tofind string, offset int) bool {
+	startpos:=parser.charnr + offset
+	if startpos + tofind.len >  parser.chars.len{
 		return false
 	}
 	text := parser.chars.substr(startpos, startpos + tofind.len).replace("\n","\\n")
-	print(" -NT($tofind):'$text'")
-	return text == tofind
-}
-
-//starts from position itself
-fn (mut parser ParserChar) text_is(tofind string) bool {
-	startpos:=parser.charnr
-	if startpos >  parser.chars.len{
-		return false
-	}
-	text := parser.chars.substr(startpos, startpos + tofind.len).replace("\n","\\n")
-	print(" -NT($tofind):'$text'")
-	return text == tofind
+	didfind:= (text == tofind)
+	print(" -NT${offset}($tofind):'$text':$didfind .. ")
+	return didfind
 }
 
 
 // check if previous text was, current possition does not count
-fn (mut parser ParserChar) text_previous_is(tofind string) bool {
-	startpos:=parser.charnr - tofind.len
-	if startpos <0 {
-		return false
-	}
-	text := parser.chars.substr(startpos, startpos + tofind.len).replace("\n","\\n")
-	print(" -PT($tofind):'$text'")
-	return text == tofind
-}
-
-//same as text_previous_is but includes the current position
-fn (mut parser ParserChar) text_last_is(tofind string) bool {
-	startpos:=parser.charnr - tofind.len +1
-	if startpos <0 {
-		return false
-	}
-	text := parser.chars.substr(startpos, startpos + tofind.len).replace("\n","\\n")
-	print(" -LT($tofind):'$text'")
-	return text == tofind
-}
-
+// offset can be used to include current one (1 means current is last)
+// fn (mut parser ParserChar) text_previous_is(tofind string, offset int) bool {
+// 	startpos:=parser.charnr - tofind.len + offset
+// 	if startpos <0 {
+// 		return false
+// 	}
+// 	text := parser.chars.substr(startpos, startpos + tofind.len).replace("\n","\\n")
+// 	print(" -PT${offset}($tofind):'$text'")
+// 	return text == tofind
+// }
+// FOR NOW NOT USED, IS BETTER TO FORCE EVERYONE TO USE text_next_is
 
 // move further
 fn (mut parser ParserChar) next() {
-	// print(parser.char_current())
 	parser.charnr += 1
-	// if !parser.eof() {
-	// 	print(parser.char_current())
-	// }
 }
 
 // return true if end of file

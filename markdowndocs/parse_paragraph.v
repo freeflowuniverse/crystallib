@@ -15,18 +15,18 @@ fn (mut para Paragraph) parse()! {
 		}
 
 		mut llast := para.items.last()
-		char_ := parser.char_current()	
+		mut char_ := parser.char_current()	
 		char_debug := char_.replace("\n","\\n")
 		println("")
 		match llast {
 			Link{
-				print(" ---- L : $char_debug ")
+				print(" ---- L :'$char_debug' ")
 			}
 			Text{
-				print(" ---- T : $char_debug ")
+				print(" ---- T :'$char_debug' ")
 			}
 			Comment{
-				print(" ---- C : $char_debug ")
+				print(" ---- C :'$char_debug' ")
 			}
 		}
 
@@ -37,24 +37,28 @@ fn (mut para Paragraph) parse()! {
 					//means we are at end of line of a single line comment
 					para.items << Text{}
 					parser.next()
+					char_=""
 					continue
 				}else{
 					//now we know for sure comment is not single line
 					llast.singleline=false
 				}
 			}
-			if parser.text_next_is('-->'){
+			if parser.text_next_is('-->',1){
 				//means is end of comment
 				llast.content+=char_ //need to add current content
+				//need to move forward not to have the 3 next
+				parser.forward(3)
 				para.items << Text{}
 				parser.next()
+				char_=""
 				continue	
 			}
 		}
 
 		if mut llast is Link {
 			if char_ == ']' {
-				if ! parser.text_next_is("("){
+				if ! parser.text_next_is("(",1){
 					//means is not link, need to convert link to normal text
 					mut c:=llast.content
 					para.items.delete_last() //remove the link
@@ -63,6 +67,8 @@ fn (mut para Paragraph) parse()! {
 					llast.content+=char_ //need to add current content
 					para.items << Text{}
 					parser.next()
+					// println("\n!!!!!!!!!!!!!!!!!!!!!\n")
+					char_=""
 					continue
 				}
 			}
@@ -71,39 +77,44 @@ fn (mut para Paragraph) parse()! {
 				llast.content+=char_ //need to add current content
 				para.items << Text{}
 				parser.next()
+				char_=""
 				continue				
 			} 
 		} 
 		
-		// check for comments start
-		for totry in ['<!--','//']{
-			if parser.text_last_is(totry) {
-				//we are now in comment
-				para.items<<comment_new("")
-				llast = para.items.last()
-				if totry == "//"{
-					if mut llast is Comment {
-						llast.singleline = true
-					}
-				}					
-				parser.next()
-				continue
-			}			
-		}
-		//could be link
-		if char_ == '[' {
-			mut l:= link_new()				
-			if parser.char_prev() == '!' {
-				l.cat =	.image
-				l.content = '!['
-			}else{
-				l.content = '['
+		if mut llast is Text {
+			if char_!="" {
+				// check for comments start
+				for totry in ['<!--','//']{
+					if parser.text_next_is(totry,0) {
+						//we are now in comment
+						para.items<<comment_new("")
+						mut llast2 := para.items.last()
+						if totry == "//"{
+							if mut llast2 is Comment {
+								llast2.singleline = true
+							}
+						}
+						parser.forward(totry.len-1)
+						char_=""
+						break
+					}			
+				}
 			}
-			para.items << l
-			parser.next()
-			continue				
+			if char_!="" {
+				//try to find link
+				for totry in ['![','[']{
+					if parser.text_next_is(totry,0) {
+						mut l:= link_new()			
+						l.content = totry
+						para.items << l
+						parser.forward(totry.len-1)
+						char_=""
+						break				
+					}
+				}
+			}
 		}
-
 		llast.content+=char_
 
 		// match llast {
