@@ -1,4 +1,12 @@
-module rmbprocessor
+module natsclient
+
+pub struct NATSMessage {
+pub mut:
+	subject string
+	sid string
+	reply_to string
+	message string
+}
 
 pub struct NATSMessageParser {
 mut:
@@ -13,7 +21,6 @@ mut:
 
 pub fn (mut n NATSMessageParser) parse(data string) ![]NATSMessage {
 	n.data = data
-	mut c := 0
 	mut messages := []NATSMessage {}
 	for n.i < data.len {
 		n.subject = ""
