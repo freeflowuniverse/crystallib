@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.rmbprocessor
+import freeflowuniverse.crystallib.rmbproxy
 import freeflowuniverse.crystallib.params
 
 
@@ -13,17 +13,16 @@ fn do() ! {
 		name2:   test
 		name3: hi name10:'this is with space'  name11:aaa11
 	"
-	param := params.text_to_params(text) or { panic(err) }
+	param := params.parser(text) or { panic(err) }
 
-	mut rmbp:=rmbprocessor.new()!
+	mut rmbp:=rmbproxy.new()!
 	mut rmb:=&rmbp.rmbc
 	rmb.reset()!
 
 	//schedule a job
-	mut ajob:=rmb.action_new_schedule(u32(0),"mydomain.myactor.myaction", param,
-												"sourcedomain.sourceactor.soureaction")!
+	mut ajob:=rmb.action_new_schedule(u32(0),"mydomain.myactor.myaction", param,"sourcedomain.sourceactor.soureaction")!
 
-	rmbprocessor.process()!
+	rmbproxy.process()!
 }
 
 fn main() {

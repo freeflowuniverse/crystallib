@@ -112,7 +112,7 @@ fn (mut generator CodeGenerator) parse(mut p pathlib.Path,mut domain &Domain, mu
 		if line.starts_with("[root"){
 			// example [root ; domain:'generic' ; actor:'usermanager' ; features:'remarks,timestamps,tags,guid' ; index:'tags,name']
 			line=line.all_after_first("root").all_before_last("]").replace(";","")
-			mut params := params.text_to_params(line)!
+			mut params := params.parser(line)!
 			model_last=Model{root:true}
 			if params.exists("inherit"){
 				model_last.inherit=params.get("inherit")!
@@ -179,7 +179,7 @@ fn (mut generator CodeGenerator) parse(mut p pathlib.Path,mut domain &Domain, mu
 				if !(line.contains("]")){return error("Found [ but no ] in: \n$line\nIN:\n$content")}
 				//means we have [...] part
 				tags:=line.all_after_first("[").all_before_last("]").replace(";","")
-				mut params := params.text_to_params(tags)!
+				mut params := params.parser(tags)!
 				field.tag=params.exists("tag")
 				field.index=params.exists("index")
 				field.strskip=params.exists("strskip")

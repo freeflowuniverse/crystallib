@@ -26,7 +26,7 @@ pub fn (mut params Params) exists(key_ string) bool {
 pub fn (mut params Params) arg_exists(key_ string) bool {
 	key := key_.to_lower()
 	for p in params.args {
-		if p.value == key {
+		if p == key {
 			return true
 		}
 	}

@@ -2,6 +2,8 @@ module params
 
 import freeflowuniverse.crystallib.resp
 
+//TODO: better to use the binary one
+
 // encode using resp (redis procotol)
 pub fn (mut p Params) to_resp() ![]u8 {
 	mut b_main := resp.builder_new()
@@ -11,7 +13,7 @@ pub fn (mut p Params) to_resp() ![]u8 {
 	}
 	mut b_arg := resp.builder_new()
 	for arg in p.args {
-		b_arg.add(resp.r_string(arg.value))
+		b_arg.add(resp.r_string(arg))
 	}
 	b_main.add(resp.r_list_bytestring([b_param.data, b_arg.data]))
 
@@ -42,9 +44,7 @@ pub fn from_resp(data []u8) !Params {
 
 	for arg_string_ in args_array {
 		arg_string := arg_string_ as resp.RString
-		p.args << Arg{
-			value: arg_string.value
-		}
+		p.args << arg_string.value
 	}
 
 	return p
