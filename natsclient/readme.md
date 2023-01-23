@@ -57,3 +57,8 @@ There is still a lot to experiment with:
 - We could either use redis or a channel to pass the received messages to the user of NATSClient. Redis would make it more persistent while a channel would be more performant. The choice will depend on the user of the NATSClient. Maybe we can provide both.
 - Many of the publish messages in NATSClient do not use a reply_to subject, meaning NATS will not send a response on the request. We should experiment with the reply_to subject. This might help introducing failsafes (sending the acknowledgement again if it failed, etc).
 - Testing the NATSClient
+- Opening up a key value store to the user. The nats-cli is doing this using a stream with specific settings (you can see some logs below). They set the max_msgs_per_subject to 1. Adding a key-value to the store boils down to publishing a message (value) to a subject (key). The logs when running the command ```nats kv add mykvstore```:
+```
+    PUB $JS.API.STREAM.CREATE.KV_mykvstore _INBOX.XOYl5CWiVL1vUPwgo8WAvh.lsgIf50w 378
+    {\"name\":\"KV_mykvstore\",\"subjects\":[\"$KV.mykvstore.\\u003e\"],\"retention\":\"limits\",\"max_consumers\":-1,\"max_msgs\":-1,\"max_bytes\":-1,\"discard\":\"new\",\"max_age\":0,\"max_msgs_per_subject\":1,\"max_msg_size\":-1,\"storage\":\"file\",\"num_replicas\":1,\"duplicate_window\":120000000000,\"placement\":{\"cluster\":\"\"},\"deny_delete\":true,\"allow_rollup_hdrs\":true,\"allow_direct\":true,\"mirror_direct\":false}
+```

@@ -6,6 +6,19 @@ import log
 import flag
 import os
 
+fn process_messages(ch_receive_message chan natsclient.NATSMessage, mut natsclient natsclient.NATSClient, mut logger log.Logger) {
+	for !ch_receive_message.closed {
+		if select {
+    		msg := <-ch_receive_message {
+				// do something with the message here
+				logger.info("MSG: $msg.message")
+				natsclient.ack_message(msg.reply_to)
+				logger.info("ACK message ${msg.sid} from subject ${msg.subject}")
+    		}
+		}{} else { }
+	}
+}
+
 fn main() {
 	mut fp := flag.new_flag_parser(os.args)
 	fp.application('Example natsclient')
@@ -19,18 +32,23 @@ fn main() {
 		return
 	}
 
+	ch_receive_message := chan natsclient.NATSMessage{}
 	mut logger := log.Logger(&log.Log{ level: if debug_log { .debug } else { .info } })
-	mut natsclient := natsclient.new_natsclient("ws://127.0.0.1:8880", &logger) or {
+	mut natsclient := natsclient.new_natsclient("ws://127.0.0.1:8880", ch_receive_message, &logger) or {
 		logger.error(err.msg())
 		return
 	}
 	natsclient.create_stream("mystream", ["ORDERS.*"]) or {
 		logger.error("$err")
 	}
+	
 	natsclient.create_consumer("myconsumer", "mystream", "This is a consumer for the stream mystream") or {
 		logger.error("$err")
 	}
+
+	_ := spawn process_messages(ch_receive_message, mut &natsclient, mut &logger)
 	natsclient.listen() or {
 		logger.error("$err")
 	}
+	ch_receive_message.close()
 }
