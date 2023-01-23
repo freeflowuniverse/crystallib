@@ -43,7 +43,7 @@ pub fn macro_parse(line_ string) !MacroObj {
 	if splitted.len > 1 {
 		line = splitted[1..].join(' ')
 	}
-	params := params.text_to_params(line)!
+	params := params.parser(line)!
 	r.params = params
 
 	return r

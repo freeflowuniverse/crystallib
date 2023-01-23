@@ -17,17 +17,13 @@ pub fn dedent(text string) string {
 	mut pre := 999
 	mut pre_current := 0
 	mut res := []string{}
-
-	//
 	text_lines := text.split_into_lines()
 
-	//
 	for line2 in text_lines {
-		line2_trimmed := line2.trim_space()
-		if line2_trimmed == '' {
+		// println("'$line2' $pre")
+		if line2.trim_space()==""{
 			continue
 		}
-		// println("'$line2' $pre")
 		line2_expanded_tab := line2.replace('\t', '    ')
 		line2_expanded_tab_trimmed := line2_expanded_tab.trim_left(' ')
 		pre_current = line2_expanded_tab.len - line2_expanded_tab_trimmed.len

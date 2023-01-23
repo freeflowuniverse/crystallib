@@ -13,7 +13,7 @@ fn do() ! {
 		name2:   test
 		name3: hi name10:'this is with space'  name11:aaa11
 	"
-	param := params.text_to_params(text) or { panic(err) }
+	param := params.parser(text) or { panic(err) }
 
 	mut rmbp:=rmbprocessor.new()!
 	mut rmb:=&rmbp.rmbc
