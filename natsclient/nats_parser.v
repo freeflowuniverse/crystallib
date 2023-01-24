@@ -22,9 +22,11 @@ mut:
 	reply_to string
 	message_length int
 	message string
+	header_length int
+	headers map[string]string
 
 pub mut: 
-	on_nats_message fn (message NATSMessage) =  fn (message NATSMessage) { }
+	on_nats_message fn (message NATSMessage, headers map[string]string) = fn (message NATSMessage, headers map[string]string) { }
 	on_nats_info fn (data string) = fn (data string) {}
 	on_nats_ping fn () = fn () { }
 	on_nats_pong fn () = fn () { }
@@ -35,15 +37,37 @@ pub fn (mut n NATSMessageParser) parse(data string) ! {
 	n.data = data
 	n.i = 0
 	for n.i < n.data.len {
+		n.subject = ""
+		n.sid = ""
+		n.reply_to = ""
+		n.message_length = 0
+		n.message = ""
+		n.header_length = 0
+		n.headers = map[string]string{}
 		match n.data[n.i] {
+			72 { // "HMSG"
+				n.parse_hmsg()!
+				n.on_nats_message(NATSMessage {
+						subject: n.subject
+						sid: n.sid
+						reply_to: n.reply_to
+						message: n.message
+					}, n.headers)
+			}
 			73 { //"INFO"
 				// TODO parse to actual info object
 				info := n.parse_info()!
 				n.on_nats_info(info)
 			}
+
 			77 { // MSG
-				message := n.parse_msg()!
-				n.on_nats_message(message)
+				n.parse_msg()!
+				n.on_nats_message(NATSMessage {
+						subject: n.subject
+						sid: n.sid
+						reply_to: n.reply_to
+						message: n.message
+					}, n.headers)
 			}
 			80 { // PING or PONG
 				if n.data[n.i .. ].starts_with(msg_ping) {
@@ -104,45 +128,89 @@ fn (mut n NATSMessageParser) should_find_info() ! {
 	n.i = n.i + 5
 }
 
-// -------------------------------------------------------------
-pub fn (mut n NATSMessageParser) parse_msg() !NATSMessage {
-	n.subject = ""
-	n.sid = ""
-	n.reply_to = ""
-	n.message_length = -1
-	n.message = ""
-
-	n.should_find_msg()!
-	n.parse_subject()!
-	n.parse_sid()!
-	n.try_parse_reply_to()!
-	n.parse_message()!
-
-	return NATSMessage {
-			subject: n.subject
-			sid: n.sid
-			reply_to: n.reply_to
-			message: n.message
+pub fn (mut n NATSMessageParser) parse_hmsg() ! {
+	n.eat_hmsg()!
+	n.eat_spaces()!
+	n.subject = n.eat_data_till_space_or_newline()!
+	n.eat_spaces()!
+	n.sid = n.eat_data_till_space_or_newline()!
+	n.eat_spaces()!
+	// can be reply_to or payload length
+	data1 := n.eat_data_till_space_or_newline()!
+	n.eat_spaces()!
+	mut data2 := n.eat_data_till_space_or_newline()!
+	if n.try_eat_spaces() {
+		// we were able to eat spaces which means prior data1 was reply_to
+		n.reply_to = data1
+		n.header_length = data2.int()
+		data2 = n.eat_data_till_space_or_newline()!
+	} else {
+		n.header_length = data1.int()
 	}
+	n.message_length = data2.int()-n.header_length
+	n.eat_newline()!
+	header_raw := n.eat_n_bytes(n.header_length)!
+	n.parse_header(header_raw)
+	n.message = n.eat_n_bytes(n.message_length)!
+	n.eat_newline()!
 }
 
-fn (mut n NATSMessageParser) should_find_msg() ! {
-	if n.i+4 >= n.data.len || n.data[n.i .. n.i+4] != "MSG " {
-		return error("invalid: should_find_msg: not starting with MSG")
+fn (mut n NATSMessageParser) eat_hmsg() ! {
+	if n.i+4 >= n.data.len || n.data[n.i .. n.i+4] != "HMSG" {
+		return error("invalid: should_find_hmsg: not starting with HMSG")
 	}
 	n.i = n.i + 4
 }
 
-fn (mut n NATSMessageParser) parse_subject() ! {
-	j := n.find_next_space()!
-	n.subject = n.data[n.i .. j]
-	n.i = j+1
+fn (mut n NATSMessageParser) parse_header(header_raw string) {
+	headers := header_raw.split("\r\n")
+	if headers.len == 0 {
+		return
+	}
+	for header in headers[1 .. ] {
+		if header != "" {
+			key_val := header.split_nth(": ", 2)
+			n.headers[key_val[0]] = if key_val.len == 2 { key_val[1] } else { "" }
+		}
+	}
 }
 
-fn (mut n NATSMessageParser) parse_sid() ! {
-	j := n.find_next_space()!
-	n.sid = n.data[n.i .. j]
-	n.i = j+1
+// -------------------------------------------------------------
+pub fn (mut n NATSMessageParser) parse_msg() ! {
+	n.eat_msg()!
+	n.eat_spaces()!
+	n.subject = n.eat_data_till_space_or_newline()!
+	n.eat_spaces()!
+	n.sid = n.eat_data_till_space_or_newline()!
+	n.eat_spaces()!
+	// can be reply_to or payload length
+	mut data := n.eat_data_till_space_or_newline()!
+	if n.try_eat_spaces() {
+		// we were able to eat spaces which means prior data was the reply_to
+		n.reply_to = data
+		data = n.eat_data_till_space_or_newline()!
+	}
+	n.message_length = data.int()
+	n.eat_newline()!
+	n.message = n.eat_n_bytes(n.message_length)!
+	n.eat_newline()!
+}
+
+fn (mut n NATSMessageParser) eat_msg() ! {
+	if n.i+3 >= n.data.len || n.data[n.i .. n.i+3] != "MSG" {
+		return error("invalid: eat_msg: not starting with MSG")
+	}
+	n.i = n.i + 3
+}
+
+fn (mut n NATSMessageParser) eat_data_till_space_or_newline() !string {
+	mut j := n.i
+	for j+1 < n.data.len && n.data[j] != 32 && n.data[j .. j+2] != "\r\n" {
+		j += 1
+	}
+	data := n.data[n.i .. j]
+	n.i = j
+	return data
 }
 
 fn (mut n NATSMessageParser) try_parse_reply_to() ! {
@@ -171,6 +239,11 @@ fn (mut n NATSMessageParser) try_parse_reply_to() ! {
 		n.message_length = n.data[n.i .. location_new_line].int()
 		n.i = location_new_line + 2
 	}
+	// j := n.find_next_space()!
+	// if n.i < j {
+	// 	n.reply_to = n.data[n.i .. j]
+	// }
+	// n.i = j + 1
 }
 
 fn (mut n NATSMessageParser) parse_message() ! {
@@ -204,6 +277,39 @@ fn (mut n NATSMessageParser) find_next_space() !int {
 		return error("invalid: find_next_space: no space found")
 	}
 	return j
+}
+
+fn (mut n NATSMessageParser) eat_spaces() ! {
+	mut i := n.i
+	for i < n.data.len && n.data[i] == 32 {
+		i += 1
+	}
+	if i == n.i {
+		return error("invalid: eat_spaces: no spaces found at location ${n.i}")
+	}
+	n.i = i
+}
+
+fn (mut n NATSMessageParser) try_eat_spaces() bool {
+	n.eat_spaces() or {
+		return false
+	}
+	return true
+}
+
+fn (mut n NATSMessageParser) eat_newline() ! {
+	if n.i+1 >= n.data.len || n.data[n.i .. n.i+2] != "\r\n" {
+		return error("invalid: eat_newline: no new line found: ${n}")
+	}
+	n.i += 2
+}
+fn (mut n NATSMessageParser) eat_n_bytes(l int) !string {
+	if n.i+l >= n.data.len {
+		return error("invalid: eat_n_bytes: not enough data left")
+	}
+	data := n.data[n.i .. n.i+l]
+	n.i += l
+	return data
 }
 
 fn (mut n NATSMessageParser) find_next_new_line() !int {

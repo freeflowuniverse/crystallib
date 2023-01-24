@@ -11,6 +11,13 @@ const (
 	natsclient_version_major = u8(0)
 	natsclient_version_minor = u8(0)
 	natsclient_version_patch = u8(1)
+	inbox_stream_create = "stream.create"
+	inbox_consumer_create = "consumer.create"
+	inbox_message = "message"
+	inbox_kv_create = "kv.create"
+	inbox_kv_add = "kv.add"
+	inbox_kv_get = "kv.get"
+	inbox_kv_set = "kv.set"
 )
 
 pub const natsclient_version = "${natsclient_version_major}.${natsclient_version_minor}.${natsclient_version_patch}"
@@ -20,7 +27,7 @@ type ConsumerList = []string
 [heap]
 pub struct NATSClient {
 mut:
-	uid string
+	uuid string
 	myinbox string
 	websocket &websocket.Client
 	address string
@@ -61,7 +68,7 @@ pub fn (mut cl NATSClient) create_stream(name string, subjects []string) ! {
 	})
 	// TODO we receive that message in our inbox: we should parse it and if its an error
 	// handle it
-	cl.publish("\$JS.API.STREAM.CREATE.${name}", cl.myinbox, stream_config) or {
+	cl.publish("\$JS.API.STREAM.CREATE.${name}", "${cl.myinbox}.${inbox_stream_create}", stream_config) or {
 		return error("Create stream: failed to send message")
 	}
 	cl.stream_to_consumers[name] = []string{}
@@ -84,7 +91,7 @@ pub fn (mut cl NATSClient) create_consumer(name string, stream string, descripti
 			ack_policy: "explicit"
 		}
 	})
-	cl.publish("\$JS.API.CONSUMER.CREATE.${stream}.${name}", cl.myinbox, consumer_config)!
+	cl.publish("\$JS.API.CONSUMER.CREATE.${stream}.${name}", "${cl.myinbox}.${inbox_consumer_create}", consumer_config)!
 	cl.stream_to_consumers[stream] << name
 }
 
@@ -100,7 +107,7 @@ fn (mut cl NATSClient) pull_messages(batch_size int, expires i64) {
 			// Passing the reply_to results in getting a response message from the server. This can be an 
 			// error or the configuration that the server used (with all default params too). We should 
 			// handle the error and or parse the object
-			cl.publish("\$JS.API.CONSUMER.MSG.NEXT.${stream}.${consumer}", cl.myinbox, next_msg) or {
+			cl.publish("\$JS.API.CONSUMER.MSG.NEXT.${stream}.${consumer}", "${cl.myinbox}.${inbox_message}", next_msg) or {
 				cl.logger.error("Failed to pull messages")
 			}
 		}
@@ -132,6 +139,72 @@ pub fn (mut cl NATSClient) publish(subject string, reply_to string, message stri
 	}
 }
 
+pub fn (mut cl NATSClient) hpublish(subject string, headers map[string]string, reply_to string, message string) ! {
+	mut header_payload := "NATS/1.0\r\n"
+	for header, val in headers {
+		header_payload += "${header}: ${val}\r\n"
+	}
+	header_payload += "\r\n"
+	total_payload_len := header_payload.len + message.len
+	data := if reply_to == "" {
+		"HPUB ${subject} ${header_payload.len} ${total_payload_len}\r\n${header_payload}${message}\r\n"
+	} else {
+		"HPUB ${subject} ${reply_to} ${header_payload.len} ${total_payload_len}\r\n${header_payload}${message}\r\n"
+	}
+	cl.logger.debug("Sending: ${data.trim_space()}")
+	cl.websocket.write(data.bytes(), .binary_frame) or {
+		return error("HPublish: Failed to send message")
+	}
+}
+
+pub fn (mut cl NATSClient) create_keyvalue_store(name string) ! {
+	stream_config := json.encode(StreamConfig{
+		name: "KV_${name}"
+		subjects: [ "\$KV.${name}.>" ]
+		retention: "limits"
+		max_consumers: -1
+		max_msgs: -1
+		max_bytes: -1
+		discard: "new"
+		max_age: 0
+		max_msgs_per_subject: 1
+		max_msg_size: -1
+		storage: "file"
+		num_replicas: 1
+		duplicate_window: 120000000000
+		placement: struct {
+			cluster: ""
+		}
+		deny_delete: true
+		allow_rollup_hdrs: true
+		allow_direct: true
+		mirror_direct: false
+	})
+	cl.publish("\$JS.API.STREAM.CREATE.KV_${name}", "${cl.myinbox}.${inbox_kv_create}", stream_config) or {
+		return error("Create KeyValue store: failed to send message")
+	}
+}
+
+pub fn (mut cl NATSClient) add_keyvalue(store string, key string, value string) ! {
+	mut headers := map[string]string{}
+	headers["Nats-Expected-Last-Subject-Sequence"] = "0"
+	cl.hpublish("\$KV.${store}.${key}", headers, "${cl.myinbox}.${inbox_kv_add}", value) or {
+		return error("Add Key-Value: failed to send message")
+	}
+}
+
+pub fn (mut cl NATSClient) set_value(store string, key string, value string) ! {
+	cl.publish("\$KV.${store}.${key}", "${cl.myinbox}.${inbox_kv_set}", value) or {
+		return error("Set Value: failed to send message")
+	}
+}
+
+pub fn (mut cl NATSClient) get_value(store string, key string) ! {
+	cl.publish("\$JS.API.DIRECT.GET.KV_${store}.\$KV.${store}.${key}", "${cl.myinbox}.${inbox_kv_get}", "") or {
+		return error("Get Value: failed to send message")
+	}
+}
+
 fn (mut cl NATSClient) send_ping() {
 	cl.logger.debug("PING >")
 	cl.websocket.write("PING\r\n".bytes(), .binary_frame) or {
@@ -152,11 +225,13 @@ fn (mut cl NATSClient) send_connect() {
 		verbose: false
 		pedantic: true
 		tls_required: false
-		name: "v_client_${cl.uid}"
+		name: "v_client_${cl.uuid}"
 		lang: "V"
 		version: natsclient_version
 		protocol: 1
 		echo: true
+		headers: true
+		no_responders: true
 	})
 	data := "CONNECT ${message_data}\r\n"
 	cl.logger.debug("Sending data: ${data}")
@@ -165,21 +240,44 @@ fn (mut cl NATSClient) send_connect() {
 	}
 }
 
-fn (mut cl NATSClient) nats_message(message NATSMessage) {
-	if message.message == "" {
-		// Empty messages can mean no more messages to process or an empty response from an 
-		// executed request => we should maybe handle it more properly
-		return
-	}
-
+fn (mut cl NATSClient) nats_message(message NATSMessage, headers map[string]string) {
 	cl.logger.info("New message for subject ${message.subject}")
 	cl.logger.debug("$message")
 
 	if !cl.ch_messages.closed {
-		if message.subject != cl.myinbox {
-			cl.ch_messages <- message
+		if message.subject.starts_with(cl.myinbox) {
+			match message.subject {
+				"${cl.myinbox}.${inbox_kv_get}" {
+					cl.logger.info("${headers['Nats-Subject']} = \"${message.message}\"")	
+				}
+				"${cl.myinbox}.${inbox_kv_add}" {
+					// inbox for adding a key value pair in the store
+					cl.logger.info("$message\n$headers")
+				}
+				"${cl.myinbox}.${inbox_kv_set}" {
+					// inbox for creating a setting a value of a key
+				}
+				"${cl.myinbox}.${inbox_kv_create}" {
+					// inbox for creating a key value store
+					// TODO parse errors
+				}
+				"${cl.myinbox}.${inbox_stream_create}" {
+					// inbox for creating a stream
+					// TODO parse errors
+				}			
+				"${cl.myinbox}.${inbox_consumer_create}" {
+					// inbox for creating a consumer
+					// TODO parse errors
+				}
+				"${cl.myinbox}.${inbox_message}" {
+					// inbox for pulling messages telling us it is empty					
+				}
+				else {
+					cl.logger.info("$message\n$headers")
+				}
+			}
 		} else {
-			cl.logger.info("$message.message")
+			cl.ch_messages <- message
 		}
 	}
 }
@@ -208,10 +306,10 @@ pub fn new_natsclient(address string, ch_messages chan NATSMessage, logger &log.
 		return error("failed to create client for $address: $err")
 	}
 	mut natsmsgparser := NATSMessageParser{}
-	uid := rand.uuid_v4()
+	uuid := rand.uuid_v4()
 	mut natsclient := NATSClient {
-		uid: uid
-		myinbox: "myinbox" + uid
+		uuid: uuid
+		myinbox: "myinbox.${uuid}"
 		address: address
 		logger: unsafe { logger }
 		websocket: websocket
@@ -226,9 +324,9 @@ pub fn new_natsclient(address string, ch_messages chan NATSMessage, logger &log.
 	websocket.on_message(natsclient.on_message)
 	websocket.connect()!
 
-	// myinbox is used to get messages back for consumers (should be unique)
 	natsclient.send_connect()
-	natsclient.subscribe(natsclient.myinbox) or {
+	// myinbox is used to get messages back for consumers (should be unique)
+	natsclient.subscribe("${natsclient.myinbox}.>") or {
 		natsclient.logger.error("Failed to subscribe to our inbox")
 	}
 
