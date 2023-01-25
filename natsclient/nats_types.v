@@ -1,5 +1,13 @@
 module natsclient
 
+pub struct NATSKeyValue {
+pub mut:
+	store string
+	key string
+	value string
+	timestamp string
+}
+
 // Configuration of all possible publish messages can be found at:
 // https://github.com/nats-io/jsm.go/tree/main/schemas/jetstream/api/v1
 
