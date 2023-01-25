@@ -3,13 +3,20 @@ module keysafe
 import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.mnemonic
 import libsodium
+import json
+import os
 
 pub struct KeysSafe {
 pub mut:
-	path    pathlib.Path
-	secret  string
-	keys    []PrivKey
-	name2id map[string]u16
+	path    pathlib.Path          // file path of keys
+	loaded  bool                  // flag to know if keysafe is loaded or loading
+	secret  string                // secret to encrypt local file
+	keys    map[string]PrivKey    // list of keys
+}
+
+pub struct PersistantKeysSafe {
+pub mut:
+	keys    map[string]string     // store name/mnemonics only
 }
 
 // note: root key needs to be 'SigningKey' from libsodium
@@ -22,9 +29,12 @@ pub fn keysafe_get(path0 string, secret string) !KeysSafe {
 		secret: secret
 	}
 
-	// TODO: if the file is and right size there it needs to be loaded
-	// loading is reverse of serialization
-	// it needs to also encrypt / decrypt the file
+	if os.exists(path.absolute()) {
+		println("[+] key file already exists, loading it")
+		safe.load()
+	}
+
+	safe.loaded = true
 
 	return safe
 }
@@ -36,12 +46,22 @@ pub fn (mut ks KeysSafe) generate_multiple(count int) ! {
 	}
 }
 
+// generate a new key is just importing a key with a random seed
 pub fn (mut ks KeysSafe) key_generate_add(name string) !PrivKey {
 	mut seed := []u8{}
 
 	// generate a new random seed
 	for _ in 0 .. 32 {
 		seed << u8(libsodium.randombytes_random())
+	}
+
+	return ks.key_import_add(name, seed)
+}
+
+// import based on an existing seed
+pub fn (mut ks KeysSafe) key_import_add(name string, seed []u8) !PrivKey {
+	if name in ks.keys {
+		return error("A key with that name already exists")
 	}
 
 	mnemonic := mnemonic.dumps(seed)
@@ -59,23 +79,75 @@ pub fn (mut ks KeysSafe) key_generate_add(name string) !PrivKey {
 	return pk
 }
 
-pub fn (mut ks KeysSafe) key_add(pk PrivKey) ! {
-	ks.keys << pk
-	ks.name2id[pk.name] = u16(ks.keys.len)
+pub fn (mut ks KeysSafe) exists(name string) bool {
+	return (name in ks.keys)
 }
 
-pub fn (mut ks KeysSafe) serialize() []u8 {
-	// mut out := []u8{}
-	// mut e := encoder.encoder_new()
-	// e.add_u16(u16(ks.keys.len))
-	// for pk in ks.keys {
-	// 	e.add_string(pk.name)
-	// 	println(pk.privkey)
-	// 	e.add_bytes(pk.privkey.public_key.data)
-	// 	e.add_bytes(pk.privkey.secret_key.data)
-	// 	e.add_bytes(pk.signkey)
-	// }
-	// TODO: now we need to encrypt using the secret on keysafe
-	// return e.data
-	return []u8{}
+pub fn (mut ks KeysSafe) key_add(pk PrivKey) ! {
+	ks.keys[pk.name] = pk
+
+	// do not persist keys if keysafe is not loaded
+	// this mean we are probably loading keys from file
+	if ks.loaded {
+		ks.persist()
+	}
+}
+
+pub fn (mut ks KeysSafe) persist() {
+	println("[+] saving keys to $ks.path.absolute()")
+	serialized := ks.serialize()
+	println(serialized)
+
+	encrypted := symmetric_encrypt_blocks(serialized.bytes(), ks.secret)
+
+	mut f := os.create(ks.path.absolute()) or { panic(err) }
+	f.write(encrypted) or { panic(err) }
+	f.close()
+}
+
+pub fn (mut ks KeysSafe) serialize() string {
+	mut pks := PersistantKeysSafe{}
+
+	// serializing mnemonics only
+	for key, val in ks.keys {
+		pks.keys[key] = val.mnemonic
+	}
+
+	export := json.encode(pks)
+
+	return export
+}
+
+pub fn (mut ks KeysSafe) load() {
+	println("[+] loading keys from $ks.path.absolute()")
+
+	mut f := os.open(ks.path.absolute()) or { panic(err) }
+
+	// read encrypted file
+	filesize := os.file_size(ks.path.absolute())
+	mut encrypted := []u8{len: int(filesize)}
+
+	f.read(mut encrypted) or { panic(err) }
+	f.close()
+
+	// decrypt file using ks secret
+	plaintext := symmetric_decrypt_blocks(encrypted, ks.secret)
+
+	// (try to) decode the json and load keys
+	ks.deserialize(plaintext.bytestr())
+}
+
+pub fn (mut ks KeysSafe) deserialize(input string) {
+	mut pks := json.decode(PersistantKeysSafe, input) or {
+		eprintln('Failed to decode json, wrong secret or corrupted file: ${err}')
+		return
+	}
+
+	// serializing mnemonics only
+	for name, mnemo in pks.keys {
+		println("[+] loading key: $name")
+		ks.key_import_add(name, mnemonic.parse(mnemo)) or { panic(err) }
+	}
+
+	println(ks)
 }
