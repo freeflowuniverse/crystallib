@@ -100,6 +100,14 @@ pub fn (mut ks KeysSafe) key_import_add(name string, seed []u8) !PrivKey {
 	return pk
 }
 
+pub fn (mut ks KeysSafe) get(name string) !PrivKey {
+	if ! ks.exists(name) {
+		return error("key not found")
+	}
+
+	return ks.keys[name]
+}
+
 pub fn (mut ks KeysSafe) exists(name string) bool {
 	return (name in ks.keys)
 }
@@ -117,7 +125,7 @@ pub fn (mut ks KeysSafe) key_add(pk PrivKey) ! {
 pub fn (mut ks KeysSafe) persist() {
 	println("[+] saving keys to $ks.path.absolute()")
 	serialized := ks.serialize()
-	println(serialized)
+	// println(serialized)
 
 	encrypted := symmetric_encrypt_blocks(serialized.bytes(), ks.secret)
 
@@ -170,5 +178,5 @@ pub fn (mut ks KeysSafe) deserialize(input string) {
 		ks.key_import_add(name, mnemonic.parse(mnemo)) or { panic(err) }
 	}
 
-	println(ks)
+	// println(ks)
 }

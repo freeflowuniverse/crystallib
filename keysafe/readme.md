@@ -35,3 +35,12 @@ fn main() {
 	}
 }
 ```
+
+## Keys
+
+Note about keys: when generating a new key, the "master key" is a SigningKey Ed25519 key. From
+that key, we can derivate a PrivateKey (encrypting key) X25519.
+
+We can convert public-key only as well. On public key exchange, please always exchange the public SigningKey
+(aka the master key for us). Based on that SignigKey, we can derivate the Encyption PublicKey and KeysSafe
+does it for you.
