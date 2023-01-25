@@ -113,6 +113,16 @@ pub fn (mut b Encoder) add_list_u32(data []u32) {
 	}
 }
 
+pub fn (mut b Encoder) add_list_u64(data []u64) {
+	if data.len>64*kb{
+		panic("list cannot have more than 64kb items.")
+	}
+	b.add_u16(u16(data.len))//how many items in list
+	for item in data{
+		b.add_u64(item)
+	}
+}
+
 //when complicated hash e.g. map of other object need to serialize each sub object
 pub fn (mut b Encoder) add_map_string(data map[string]string) {
 	if data.len>64*kb{
