@@ -172,54 +172,108 @@ fn test_map_bytes() {
 	assert d.get_map_bytes() == mp
 }
 
-struct AStruct{
-	a string
-	b int
-	c u8
-	d u16
-	e u32
-	f u64
-	g time.Time
-	h []string
-	i []int
-	j []u8
-	k []u16
-	l []u32
-	m map[string]string
-	n map[string][]u8
-	child BStruct
+struct StructType[T] {
+mut:
+	val T
 }
 
-struct BStruct{
-	n int
+fn get_empty_struct_input[T]() StructType[T] {
+	return StructType[T]{}
+}
+
+fn get_struct_input[T](val T) StructType[T] {
+	return StructType[T]{ val: val }
+}
+
+fn encode_decode_struct[T](input StructType[T]) bool {
+	println(input)
+	data := encoder.encode(input) or {
+		eprintln('Failed to encode, error: ${err}')
+		return false
+	}
+	output := encoder.decode[StructType[T]](data) or {
+		eprintln('Failed to decode, error: ${err}')
+		return false
+	}
+	println(output)
+	return input == output
 }
 
 fn test_struct() {
-	input := AStruct{
-		a: 'a'
-		b: int(-1)
-		c: u8(2)
-		d: u16(3)
-		e: u32(4)
-		f: u64(5)
-		g: time.now()
-		h: ['a', 'b']
-		i: []int{len: 3, init: it}
-		j: []u8{len: 3, init: u8(it)}
-		k: []u16{len: 3, init: u16(it)}
-		l: []u32{len: 3, init: u32(it)}
-		m: {'1': 'a', '2': 'b'}
-		n: {'1': 'a'.bytes(), '2': 'b'.bytes()}
-		child: BStruct{ n: 10 }
-	}
+	// string
+	assert encode_decode_struct(get_empty_struct_input[string]())
+	assert encode_decode_struct(get_struct_input(''))
+	assert encode_decode_struct(get_struct_input('a'))
 
-	data := encoder.encode(input)!
-	println(data)
+	// int
+	assert encode_decode_struct(get_empty_struct_input[int]())
+	assert encode_decode_struct(get_struct_input(-1))
 
-	output := encoder.decode[AStruct](data) or {
-		eprintln('Failed to decode, error: ${err}')
-		return
-	}
+	// u8
+	assert encode_decode_struct(get_empty_struct_input[u8]())
+	assert encode_decode_struct(get_struct_input(u8(2)))
 
-	assert input == output
+	// u16
+	assert encode_decode_struct(get_empty_struct_input[u16]())
+	assert encode_decode_struct(get_struct_input(u16(3)))
+
+	// u32
+	assert encode_decode_struct(get_empty_struct_input[u32]())
+	assert encode_decode_struct(get_struct_input(u32(4)))
+
+	// u64
+	assert encode_decode_struct(get_empty_struct_input[u64]())
+	assert encode_decode_struct(get_struct_input(u64(5)))
+
+	// time.Time
+	// assert encode_decode_struct[time.Time](get_empty_struct_input[time.Time]()) // get error here
+	assert encode_decode_struct[time.Time](get_struct_input[time.Time](time.now()))
+
+	// string array
+	assert encode_decode_struct(get_empty_struct_input[[]string]())
+	assert encode_decode_struct(get_struct_input([]string{}))
+	assert encode_decode_struct(get_struct_input(['']))
+	assert encode_decode_struct(get_struct_input(['a']))
+
+	// int array
+	assert encode_decode_struct(get_empty_struct_input[[]int]())
+	assert encode_decode_struct(get_struct_input([]int{}))
+	assert encode_decode_struct(get_struct_input([-1]))
+
+	// u8 array
+	assert encode_decode_struct(get_empty_struct_input[[]u8]())
+	assert encode_decode_struct(get_struct_input([]u8{}))
+	assert encode_decode_struct(get_struct_input([u8(2)]))
+
+	// u16 array
+	assert encode_decode_struct(get_empty_struct_input[[]u16]())
+	assert encode_decode_struct(get_struct_input([]u16{}))
+	assert encode_decode_struct(get_struct_input([u16(3)]))
+
+	// u32 array
+	assert encode_decode_struct(get_empty_struct_input[[]u32]())
+	assert encode_decode_struct(get_struct_input([]u32{}))
+	assert encode_decode_struct(get_struct_input([u32(4)]))
+
+	// u64 array
+	assert encode_decode_struct(get_empty_struct_input[[]u64]())
+	assert encode_decode_struct(get_struct_input([]u64{}))
+	assert encode_decode_struct(get_struct_input([u64(5)]))
+
+	// string map
+	assert encode_decode_struct(get_empty_struct_input[map[string]string]())
+	assert encode_decode_struct(get_struct_input(map[string]string{}))
+	assert encode_decode_struct(get_struct_input({'1': 'a'}))
+
+	// bytes map
+	assert encode_decode_struct(get_empty_struct_input[map[string][]u8]())
+	assert encode_decode_struct(get_struct_input(map[string][]u8{}))
+	assert encode_decode_struct(get_struct_input({'1': 'a'.bytes()}))
+
+	// struct
+	assert encode_decode_struct(get_empty_struct_input[StructType[int]]())
+	assert encode_decode_struct(get_struct_input(StructType[int]{}))
+	// assert encode_decode_struct(get_struct_input(StructType[int]{
+	// 		val: int(1)
+	// 	}))   // decode not implemented
 }

@@ -111,6 +111,15 @@ pub fn (mut d Decoder) get_list_u32() []u32 {
 	return v
 }
 
+pub fn (mut d Decoder) get_list_u64() []u64 {
+	n:=d.get_u16()
+	mut v:=[]u64{len: int(n)}
+	for i in 0..n {
+		v[i] = d.get_u64()
+	}
+	return v
+}
+
 pub fn (mut d Decoder) get_map_string() map[string]string {
 	n := d.get_u16()
 	mut v := map[string]string{}

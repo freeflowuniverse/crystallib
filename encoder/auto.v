@@ -1,6 +1,7 @@
 module encoder 
 
 import time
+import x.json2 as json
 
 //example see https://github.com/vlang/v/blob/master/examples/compiletime/reflection.v
 
@@ -37,6 +38,8 @@ pub fn encode[T](obj T) ![]u8 {
 			d.add_list_u16(obj.$(field.name)[..])
 		} $else $if field.typ is []u32 {
 			d.add_list_u32(obj.$(field.name)[..])
+		} $else $if field.typ is []u64 {
+			d.add_list_u64(obj.$(field.name)[..])
 		// Maps of primitive types
 		} $else $if field.typ is map[string]string {
 			d.add_map_string(obj.$(field.name).clone())
@@ -61,8 +64,9 @@ pub fn decode[T](data []u8) !T {
 	// T.fields gives an array of a field metadata type
 	$for field in T.fields {
 
-		println(field.name)
-		println(typeof(result.$(field.name)).name)
+		// println(field.name)
+		// println(typeof(result.$(field.name)).name)
+		// println(result.$(field.name))
 
 		// Primitive types
 		$if field.typ is string {
@@ -91,6 +95,8 @@ pub fn decode[T](data []u8) !T {
 			result.$(field.name) = d.get_list_u16()
 		} $else $if field.typ is []u32 {
 			result.$(field.name) = d.get_list_u32()
+		} $else $if field.typ is []u64 {
+			result.$(field.name) = d.get_list_u64()
 		// Maps of primitive types
 		} $else $if field.typ is map[string]string {
 			result.$(field.name) = d.get_map_string()

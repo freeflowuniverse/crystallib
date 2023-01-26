@@ -1,32 +1,42 @@
 module keysafe
 
-import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.encoder
-import encoding.binary as bin
-import crypto.ed25519
 import libsodium
+import encoding.hex
 
 pub struct PubKey {
 pub:
 	name   string
-	pubkey []u8
-	// TODO:...
+	source PrivKey   // ourself (private key, to sign message)
+	remote []u8      // target public key (to encrypt)
+}
+
+pub fn pubkey_new(name string, myself PrivKey, remote string) !PubKey {
+	parsed := hex.decode(remote.substr(2, remote.len))!
+
+	// convert SigningKey to PrivateKey (ed25519 > x25519)
+	// to allow encryption and decryption
+
+	target := []u8{len: libsodium.public_key_size}
+	libsodium.crypto_sign_ed25519_pk_to_curve25519(target.data, parsed[0])
+
+	return PubKey{
+		name: name
+		source: myself
+		remote: target
+	}
 }
 
 // this will encrypt bytes so that only the owner of this pubkey can decrypt it
-fn (mut key PubKey) encrypt(data []u8) ![]u8 {
-	// TODO, this pub key is remembered per twin, this needs to be enough
-	return data
+pub fn (key PubKey) encrypt(data []u8) ![]u8 {
+	box := libsodium.new_box(key.source.privkey, key.remote)
+	return box.encrypt(data)
 }
 
-// verify the data, return true if ok
-fn (mut key PubKey) verify(data []u8) !bool {
-	// TODO: complication is one is ed... otherone libsodium, we should see how we can go from one to other
-	return true
+// verify a signed data
+pub fn (key PubKey) decrypt(data []u8) []u8 {
+	box := libsodium.new_box(key.source.privkey, key.remote)
+	decrypted := box.decrypt(data)
+
+	return decrypted
 }
 
-// return data we need to remember on twin level (in blockchain)
-fn (mut key PubKey) serialize() ![]u8 {
-	// TODO: complication is one is ed... otherone libsodium, we should see how we can go from one to other
-	return []u8{}
-}
