@@ -1,7 +1,8 @@
 module keysafe
 
 import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.mnemonic
+// import freeflowuniverse.crystallib.mnemonic // buggy for now
+import encoding.hex
 import libsodium
 import json
 import os
@@ -79,15 +80,28 @@ pub fn (mut ks KeysSafe) key_generate_add(name string) !PrivKey {
 	return ks.key_import_add(name, seed)
 }
 
+fn internal_key_encode(key []u8) string {
+	return "0x" + hex.encode(key)
+}
+
+fn internal_key_decode(key string) []u8 {
+	parsed := hex.decode(key.substr(2, key.len)) or { panic(err) }
+	return parsed
+}
+
 // import based on an existing seed
 pub fn (mut ks KeysSafe) key_import_add(name string, seed []u8) !PrivKey {
 	if name in ks.keys {
 		return error("A key with that name already exists")
 	}
 
-	mnemonic := mnemonic.dumps(seed)
+	mnemonic := internal_key_encode(seed) // mnemonic(seed)
 	signkey := libsodium.new_ed25519_signing_key_seed(seed)
 	privkey := libsodium.new_private_key_from_signing_ed25519(signkey)
+
+	// println("===== SEED ====")
+	// println(seed)
+	// println(mnemonic)
 
 	pk := PrivKey{
 		name: name
@@ -175,7 +189,13 @@ pub fn (mut ks KeysSafe) deserialize(input string) {
 	// serializing mnemonics only
 	for name, mnemo in pks.keys {
 		println("[+] loading key: $name")
-		ks.key_import_add(name, mnemonic.parse(mnemo)) or { panic(err) }
+		seed := internal_key_decode(mnemo) // mnemonic.parse(mnemo)
+
+		// println("==== SEED ====")
+		// println(mnemo)
+		// println(seed)
+
+		ks.key_import_add(name, seed) or { panic(err) }
 	}
 
 	// println(ks)
