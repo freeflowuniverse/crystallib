@@ -50,6 +50,25 @@ There are a lot of settings that can modify the behavior of NATS, the file nats_
 - whether we acknowledge all messages (default) or only the last of a batch which will acknowledge all of the messages before that
 - etc.
 
+## Run the example
+You need two things in order to run the example. First you need to run a natsserver using the nats configuration that you can find in example/nats_configuration.json. You can specify that you want to enable jetstream using the -js argument. 
+
+```
+nats-server -c example/nats_configuration.json -js -DV
+```
+
+Now you can run the example:
+```
+v run example/test_natsclient.v
+```
+
+This test consumes messages send to "ORDERS.*". It will also create a key-value store, add a key and fetch it. To test the incoming messages you can run:
+```
+nats publish ORDERS.NEW "this is my message"
+```
+If you want to test batch messages you can add the argument --count=\<SOMEVALUE\>
+
+
 ## How to contribute
 There is still a lot to experiment with:
 - For now the messages are being acknowledged after receiving them. We might want to change that behavior. We could allow users of the NATSClient class to acknowledge them themselves. This could introduce only acknowledge messages when they have been fully processed by the user.
