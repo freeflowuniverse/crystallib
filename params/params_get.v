@@ -68,6 +68,11 @@ pub fn (mut params Params) get_int(key string) !int {
 	return valuestr.int()
 }
 
+pub fn (mut params Params) get_u64(key string) !u64 {
+	valuestr := params.get(key)!
+	return valuestr.u64()
+}
+
 pub fn (mut params Params) get_u32(key string) !u32 {
 	valuestr := params.get(key)!
 	return valuestr.u32()
@@ -78,7 +83,28 @@ pub fn (mut params Params) get_u8(key string) !u8 {
 	return valuestr.u8()
 }
 
+pub fn (mut params Params) get_kilobytes(key string) !u64 {
+	valuestr := params.get(key)!
+	mut times := 1
+	if valuestr.len > 2 && !valuestr[valuestr.len-2].is_digit() && !valuestr[valuestr.len-1].is_digit() {
+		times = match valuestr[valuestr.len-2 .. ].to_upper() {
+			"GB" {
+				1024 * 2024
+			}
+			"MB" {
+				1024
+			}
+			"KB" {
+				1
+			}
+			else {
+				return error("not valid: should end with kb, mb or gb")
+			}
+		}
+	}
+	return valuestr.u64() * u64(times)
 
+}
 
 // get kwarg return as int, if it doesnt' exist return a default
 // line:
