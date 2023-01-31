@@ -73,6 +73,14 @@ pub fn (mut params Params) get_u64(key string) !u64 {
 	return valuestr.u64()
 }
 
+pub fn (mut params Params) get_u64_default(key string, defval u64) !u64 {
+	if params.exists(key) {
+		valuestr := params.get(key)!
+		return valuestr.u64()
+	}
+	return defval
+}
+
 pub fn (mut params Params) get_u32(key string) !u32 {
 	valuestr := params.get(key)!
 	return valuestr.u32()
@@ -106,6 +114,13 @@ pub fn (mut params Params) get_kilobytes(key string) !u64 {
 
 }
 
+pub fn (mut params Params) get_kilobytes_default(key string, defval u64) !u64 {
+	if params.exists(key) {
+		return params.get_kilobytes(key)!
+	}
+	return defval
+}
+
 // get kwarg return as int, if it doesnt' exist return a default
 // line:
 //    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
@@ -136,6 +151,11 @@ pub fn (mut params Params) get_list(key string) ![]string {
 		}
 	}
 	return res
+}
+
+pub fn (mut params Params) get_list_u32(key string) ![]u32 {
+	mut res := params.get_list(key)!
+	return res.map(it.u32())
 }
 
 pub fn (mut params Params) get_list_namefix(key string) ![]string {
