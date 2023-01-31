@@ -426,6 +426,7 @@ pub:
 	gateway        bool   [omitempty]
 	farm_id        u32    [json: 'farmId'; omitempty]
 	farm_name      string [json: 'farmName']
+	available_for  u32 	  [json: 'availableFor']
 	country        string
 	city           string
 }
