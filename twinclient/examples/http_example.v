@@ -2,7 +2,6 @@ import freeflowuniverse.crystallib.twinclient as tw
 // This is an example that will deploy a machie for you.
 // This file containes [get_machine, delete_machine, deploy_machine] methods which let you interact with Grid3-client.
 // This script require the `ts-http-server` which you'll find it in `https://github.com/threefoldtech/grid3_client_ts/blob/development/docs/http_server.md`.
-// Run this script by using -d option to manage the debuging just excute `v -d net_blocking_sockets run examples/http_example.v` inside twinclient modle.
 
 pub struct Grid3{
 	mut:

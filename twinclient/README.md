@@ -51,7 +51,7 @@ dependencies:
 run the example:
 
 ```sh
-v -d net_blocking_sockets run examples/http_example.v 
+v run examples/http_example.v 
 ```
 
 ### `WS`
