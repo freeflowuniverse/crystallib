@@ -34,6 +34,8 @@ pub fn (htp HttpTwinClient) send(functionPath string, args string) !Message {
 		method: htp.method
 		header: htp.header
 		data: args
+		read_timeout: 120 * time.second
+        write_timeout: 120 * time.second
 	}
 	resp := request.do()!
 
