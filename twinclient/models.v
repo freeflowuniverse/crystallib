@@ -579,6 +579,15 @@ pub mut:
 	ip              string
 }
 
+pub struct BlockChainCreateResponseModel {
+pub mut:
+	name            string
+	public_key      string
+	mnemonic        string
+	blockchain_type string
+	twin_id         string	[json: 'twinId']
+}
+
 pub struct BlockChainModel {
 pub:
 	name            string
