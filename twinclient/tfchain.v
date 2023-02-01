@@ -64,10 +64,7 @@ pub fn (mut client TwinClient) tfchain_create(name string, ip string) !BlockChai
 		name: name
 		ip: ip
 	}
-	println("Here")
 	response := client.transport.send('tfchain.create', json.encode(data).str())!
-	println(response.data)
-	println(json.decode[BlockChainCreateResponseModel](response.data)!)
 	return json.decode[BlockChainCreateResponseModel](response.data)!
 }
 
