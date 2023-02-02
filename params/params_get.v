@@ -8,7 +8,7 @@ import os
 //    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
 // arg1 is an arg
 // description is a kwarg
-pub fn (mut params Params) exists(key_ string) bool {
+pub fn (params &Params) exists(key_ string) bool {
 	key := key_.to_lower()
 	for p in params.params {
 		if p.key == key {
@@ -23,7 +23,7 @@ pub fn (mut params Params) exists(key_ string) bool {
 //    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
 // arg1 is an arg
 // description is a kwarg
-pub fn (mut params Params) arg_exists(key_ string) bool {
+pub fn (params &Params) arg_exists(key_ string) bool {
 	key := key_.to_lower()
 	for p in params.args {
 		if p == key {
@@ -35,7 +35,7 @@ pub fn (mut params Params) arg_exists(key_ string) bool {
 
 // see if the kwarg with the key exists
 // if yes return as string trimmed
-pub fn (mut params Params) get(key_ string) !string {
+pub fn (params &Params) get(key_ string) !string {
 	key := texttools.name_fix(key_)
 	for p in params.params {
 		if p.key == key {
@@ -50,7 +50,7 @@ pub fn (mut params Params) get(key_ string) !string {
 //    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
 // arg1 is an arg
 // description is a kwarg
-pub fn (mut params Params) get_default(key string, defval string) !string {
+pub fn (params &Params) get_default(key string, defval string) !string {
 	if params.exists(key) {
 		valuestr := params.get(key)!
 		return valuestr.trim(' ')
@@ -63,17 +63,17 @@ pub fn (mut params Params) get_default(key string, defval string) !string {
 //    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
 // arg1 is an arg
 // description is a kwarg
-pub fn (mut params Params) get_int(key string) !int {
+pub fn (params &Params) get_int(key string) !int {
 	valuestr := params.get(key)!
 	return valuestr.int()
 }
 
-pub fn (mut params Params) get_u64(key string) !u64 {
+pub fn (params &Params) get_u64(key string) !u64 {
 	valuestr := params.get(key)!
 	return valuestr.u64()
 }
 
-pub fn (mut params Params) get_u64_default(key string, defval u64) !u64 {
+pub fn (params &Params) get_u64_default(key string, defval u64) !u64 {
 	if params.exists(key) {
 		valuestr := params.get(key)!
 		return valuestr.u64()
@@ -81,17 +81,17 @@ pub fn (mut params Params) get_u64_default(key string, defval u64) !u64 {
 	return defval
 }
 
-pub fn (mut params Params) get_u32(key string) !u32 {
+pub fn (params &Params) get_u32(key string) !u32 {
 	valuestr := params.get(key)!
 	return valuestr.u32()
 }
 
-pub fn (mut params Params) get_u8(key string) !u8 {
+pub fn (params &Params) get_u8(key string) !u8 {
 	valuestr := params.get(key)!
 	return valuestr.u8()
 }
 
-pub fn (mut params Params) get_kilobytes(key string) !u64 {
+pub fn (params &Params) get_kilobytes(key string) !u64 {
 	valuestr := params.get(key)!
 	mut times := 1
 	if valuestr.len > 2 && !valuestr[valuestr.len-2].is_digit() && !valuestr[valuestr.len-1].is_digit() {
@@ -114,7 +114,7 @@ pub fn (mut params Params) get_kilobytes(key string) !u64 {
 
 }
 
-pub fn (mut params Params) get_kilobytes_default(key string, defval u64) !u64 {
+pub fn (params &Params) get_kilobytes_default(key string, defval u64) !u64 {
 	if params.exists(key) {
 		return params.get_kilobytes(key)!
 	}
@@ -126,7 +126,7 @@ pub fn (mut params Params) get_kilobytes_default(key string, defval u64) !u64 {
 //    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
 // arg1 is an arg
 // description is a kwarg
-pub fn (mut params Params) get_int_default(key string, defval int) !int {
+pub fn (params &Params) get_int_default(key string, defval int) !int {
 	if params.exists(key) {
 		valuestr := params.get(key)!
 		return valuestr.int()
@@ -139,7 +139,7 @@ pub fn (mut params Params) get_int_default(key string, defval int) !int {
 //    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
 // arg1 is an arg
 // description is a kwarg
-pub fn (mut params Params) get_list(key string) ![]string {
+pub fn (params &Params) get_list(key string) ![]string {
 	mut res := []string{}
 	if params.exists(key) {
 		mut valuestr := params.get(key)!
@@ -153,12 +153,12 @@ pub fn (mut params Params) get_list(key string) ![]string {
 	return res
 }
 
-pub fn (mut params Params) get_list_u32(key string) ![]u32 {
+pub fn (params &Params) get_list_u32(key string) ![]u32 {
 	mut res := params.get_list(key)!
 	return res.map(it.u32())
 }
 
-pub fn (mut params Params) get_list_namefix(key string) ![]string {
+pub fn (params &Params) get_list_namefix(key string) ![]string {
 	mut res:= params.get_list(key)!
 	res = res.map(texttools.name_fix(it))
 	return res
@@ -170,7 +170,7 @@ pub fn (mut params Params) get_list_namefix(key string) ![]string {
 //    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
 // arg1 is an arg
 // description is a kwarg
-pub fn (mut params Params) get_list_int(key string) ![]int {
+pub fn (params &Params) get_list_int(key string) ![]int {
 	mut res := []int{}
 	if params.exists(key) {
 		mut valuestr := params.get(key)!
@@ -184,7 +184,7 @@ pub fn (mut params Params) get_list_int(key string) ![]int {
 	return res
 }
 
-pub fn (mut params Params) get_default_true(key string) bool {
+pub fn (params &Params) get_default_true(key string) bool {
 	mut r := params.get(key) or { '' }
 	r = texttools.name_fix_no_underscore(r)
 	if r == '' || r == '1' || r == 'true' || r == 'y' {
@@ -193,7 +193,7 @@ pub fn (mut params Params) get_default_true(key string) bool {
 	return false
 }
 
-pub fn (mut params Params) get_default_false(key string) bool {
+pub fn (params &Params) get_default_false(key string) bool {
 	mut r := params.get(key) or { '' }
 	r = texttools.name_fix_no_underscore(r)
 	if r == '' || r == '0' || r == 'false' || r == 'n' {
@@ -203,7 +203,7 @@ pub fn (mut params Params) get_default_false(key string) bool {
 }
 
 // will get path and check it exists
-pub fn (mut params Params) get_path(key string) !string {
+pub fn (params &Params) get_path(key string) !string {
 	path := params.get(key)!
 
 	if !os.exists(path) {
@@ -214,7 +214,7 @@ pub fn (mut params Params) get_path(key string) !string {
 }
 
 // will get path and check it exists if not will create
-pub fn (mut params Params) get_path_create(key string) !string {
+pub fn (params &Params) get_path_create(key string) !string {
 	path := params.get(key)!
 
 	if !os.exists(path) {
