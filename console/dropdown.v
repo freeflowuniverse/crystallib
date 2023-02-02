@@ -3,6 +3,7 @@ module console
 import freeflowuniverse.crystallib.texttools
 import os
 
+[params]
 pub struct DropDownArgs {
 pub mut:
 	all         bool // means user can choose all of them
