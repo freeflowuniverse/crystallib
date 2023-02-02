@@ -13,6 +13,8 @@ pub mut:
 	reset       bool = true
 }
 
+
+
 pub fn ask_dropdown_int(args DropDownArgs) int {
 	if args.reset {
 		clear() // clears the screen
