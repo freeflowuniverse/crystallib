@@ -1,16 +1,8 @@
 module console
 
 import os
-
-pub struct QuestionArgs {
-pub mut:
-	description string
-	question    string
-	warning     string
-	clear       bool = true
-	regex       string
-	minlen      int
-}
+import freeflowuniverse.crystallib.ui.uimodel {QuestionArgs}
+import freeflowuniverse.crystallib.console {style,color_fg}
 
 // args:
 // - description string

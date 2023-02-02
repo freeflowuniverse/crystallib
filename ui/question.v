@@ -1,16 +1,7 @@
 module console
 
-import os
-
-pub struct QuestionArgs {
-pub mut:
-	description string
-	question    string
-	warning     string
-	clear       bool = true
-	regex       string
-	minlen      int
-}
+import freeflowuniverse.crystallib.ui.console {UIConsole}
+import freeflowuniverse.crystallib.ui.uimodel {QuestionArgs}
 
 // args:
 // - description string
@@ -20,6 +11,10 @@ pub mut:
 // - regex: to check what result need to be part of
 // - minlen: min nr of chars
 //
-pub fn (mut c UIChannel) ask_question(args QuestionArgs) string {
+pub fn (mut c UserInterface) ask_question(args QuestionArgs) string {
+	return match mut c.channel {
+		UIConsole { return c.ask_question(args) }
+		else{ return error("can't find channel")}
+	}	
 
 }

@@ -1,18 +1,9 @@
 module console
 
 import freeflowuniverse.crystallib.texttools
-import freeflowuniverse.crystallib.console {style}
+import freeflowuniverse.crystallib.console {style,color_fg}
+import freeflowuniverse.crystallib.ui.uimodel {DropDownArgs}
 import os
-
-[params]
-pub struct DropDownArgs {
-pub mut:
-	description string
-	items       []string
-	warning     string
-	clear       bool = true
-}
-
 
 //return the dropdown as an int
 // 	description string

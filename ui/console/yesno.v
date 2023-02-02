@@ -1,14 +1,8 @@
 module console
 
+import freeflowuniverse.crystallib.ui.uimodel {YesNoArgs}
+import freeflowuniverse.crystallib.console {style,color_fg}
 import os
-
-pub struct YesNoArgs {
-pub mut:
-	description string
-	question    string
-	warning     string
-	clear       bool = true
-}
 
 // yes is true, no is false
 // args:
