@@ -1,26 +1,20 @@
 module console
 
 import os
-
-pub struct QuestionArgs {
-pub mut:
-	description string
-	question    string
-	warning     string
-	reset       bool = true
-	regex       string
-	minlen      int
-}
+import freeflowuniverse.crystallib.ui.uimodel {QuestionArgs}
+import freeflowuniverse.crystallib.console {style,color_fg}
 
 // args:
 // - description string
 // - question string
-// - warning string
+// - warning: string (if it goes wrong, which message to use)
 // - reset bool = true
+// - regex: to check what result need to be part of
+// - minlen: min nr of chars
 //
-pub fn ask_question(args QuestionArgs) string {
+pub fn (mut c UIConsole) ask_question(args QuestionArgs) string {
 	mut question := args.question
-	if args.reset {
+	if args.clear {
 		clear() // clears the screen
 	}
 	if args.description.len > 0 {

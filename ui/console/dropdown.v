@@ -1,19 +1,17 @@
 module console
 
 import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.console {style,color_fg}
+import freeflowuniverse.crystallib.ui.uimodel {DropDownArgs}
 import os
 
-pub struct DropDownArgs {
-pub mut:
-	all         bool // means user can choose all of them
-	description string
-	items       []string
-	warning     string
-	reset       bool = true
-}
-
-pub fn ask_dropdown_int(args DropDownArgs) int {
-	if args.reset {
+//return the dropdown as an int
+// 	description string
+// 	items       []string
+// 	warning     string
+// 	clear       bool = true
+pub fn (mut c UIConsole) ask_dropdown(args DropDownArgs) int {
+	if args.clear {
 		clear() // clears the screen
 	}
 	if args.description.len > 0 {
@@ -63,8 +61,12 @@ pub fn ask_dropdown_int(args DropDownArgs) int {
 	return choice_int
 }
 
-// means we can return all
-pub fn ask_dropdown_all(args DropDownArgs) []string {
+// result can be multiple, aloso can select all
+// 	description string
+// 	items       []string
+// 	warning     string
+// 	clear       bool = true
+pub fn (mut c UIConsole) ask_dropdown_multiple(args DropDownArgs) []string {
 	res := ask_dropdown_int(
 		reset: args.reset
 		description: args.description
@@ -79,8 +81,12 @@ pub fn ask_dropdown_all(args DropDownArgs) []string {
 	}
 }
 
-// means we can return all
-pub fn ask_dropdown(args DropDownArgs) string {
+// will return the string as given as response
+// 	description string
+// 	items       []string
+// 	warning     string
+// 	clear       bool = true
+pub fn ask_dropdown_string(args DropDownArgs) string {
 	res := ask_dropdown_int(
 		reset: args.reset
 		description: args.description
