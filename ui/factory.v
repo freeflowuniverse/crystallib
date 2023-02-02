@@ -1,4 +1,4 @@
-module v
+module ui
 import freeflowuniverse.crystallib.ui.console {UIConsole}
 
 //need to do this for each type of UI channel e.g. console, telegram, ...
@@ -13,8 +13,7 @@ enum ChannelType{
 	console
 }
 
-
-pub fn new(channeltype ChannelType)!UserInterface{
+pub fn new(channeltype ChannelType)UserInterface{
 	//TODO: implement telegram
 	if channeltype == .console{
 		mut channel:=UIConsole{}

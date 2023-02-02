@@ -1,4 +1,4 @@
-module console
+module ui
 
 import freeflowuniverse.crystallib.ui.console {UIConsole}
 import freeflowuniverse.crystallib.ui.uimodel {QuestionArgs}
