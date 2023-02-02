@@ -8,16 +8,16 @@ struct RoomOrderFlow {
 }
 
 fn (mut f RoomOrderFlow) room_select() ! {
-	i := console.ask_dropdown_int(
+	i := f.ui.ask_dropdown_int(
 		description: 'Which type of room do you want?'
 		items: ['penthouse', 'normal', 'single', 'appartment_room']
 		warning: 'Please select your right type of room'
 		reset: true
 	)
 	// match	
-	smoker := console.ask_yesno(description: 'Are you a smoker?')
+	smoker := f.ui.ask_yesno(description: 'Are you a smoker?')
 	if smoker {
-		smoke := console.ask_yesno(description: 'Do you want to smoke in your room?')
+		smoke := f.ui.ask_yesno(description: 'Do you want to smoke in your room?')
 		if smoke == false {
 			println('Please realize if we detect you have smoked in your room we will charge 100USD to deep clean the room.')
 		}
