@@ -1,6 +1,7 @@
 module console
 
 import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.console {style}
 import os
 
 [params]
