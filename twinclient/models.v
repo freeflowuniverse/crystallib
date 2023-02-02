@@ -426,6 +426,7 @@ pub:
 	gateway        bool   [omitempty]
 	farm_id        u32    [json: 'farmId'; omitempty]
 	farm_name      string [json: 'farmName']
+	available_for  u32 	  [json: 'availableFor']
 	country        string
 	city           string
 }
@@ -576,6 +577,15 @@ pub mut:
 	blockchain_type string
 	twin_id         string
 	ip              string
+}
+
+pub struct BlockChainCreateResponseModel {
+pub mut:
+	name            string
+	public_key      string
+	mnemonic        string
+	blockchain_type string
+	twin_id         string	[json: 'twinId']
 }
 
 pub struct BlockChainModel {

@@ -48,16 +48,10 @@ dependencies:
 
 - grid3 Http server running see [Http server](https://github.com/threefoldtech/grid3_client_ts/blob/development/docs/http_server.md)
 
-```v
-import crystallib.twinclient as tw
+run the example:
 
-fn main() {
- mut transport := tw.HttpTwinClient{}
- transport.init("http://localhost:3000")!
- mut grid := tw.grid_client(transport)!
-        // Now you can invoke any function below.
-        grid.algorand_list()!
-}
+```sh
+v run examples/http_example.v 
 ```
 
 ### `WS`

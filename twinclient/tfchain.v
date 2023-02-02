@@ -1,6 +1,6 @@
 module twinclient
 
-import json
+import x.json2 as json
 
 pub fn (mut client TwinClient) tfchain_init(name string, secret string) !NameAddressMnemonicModel {
 	data := NameSecretModel{
@@ -18,7 +18,7 @@ pub fn (mut client TwinClient) tfchain_get(name string) !BlockChainModel {
 		name: name
 	}
 	response := client.transport.send('tfchain.get', json.encode(data).str())!
-	return json.decode(BlockChainModel, response.data)
+	return json.decode[BlockChainModel](response.data)!
 }
 
 pub fn (mut client TwinClient) tfchain_update(name string, secret string) !NameSecretModel {
@@ -40,7 +40,7 @@ pub fn (mut client TwinClient) tfchain_exist(name string) !bool {
 
 pub fn (mut client TwinClient) tfchain_list() ![]BlockChainModel {
 	response := client.transport.send('tfchain.list', '{}')!
-	return json.decode([]BlockChainModel, response.data)
+	return json.decode[[]BlockChainModel](response.data)!
 }
 
 pub fn (mut client TwinClient) tfchain_balance_by_address(address string) !BalanceResult {
@@ -48,7 +48,7 @@ pub fn (mut client TwinClient) tfchain_balance_by_address(address string) !Balan
 		address: address
 	}
 	response := client.transport.send('tfchain.balanceByAddress', json.encode(data).str())!
-	return json.decode(BalanceResult, response.data)
+	return json.decode[BalanceResult](response.data)!
 }
 
 pub fn (mut client TwinClient) tfchain_assets(address string) !BlockChainAssetsModel {
@@ -56,16 +56,16 @@ pub fn (mut client TwinClient) tfchain_assets(address string) !BlockChainAssetsM
 		address: address
 	}
 	response := client.transport.send('tfchain.assets', json.encode(data).str())!
-	return json.decode(BlockChainAssetsModel, response.data)
+	return json.decode[BlockChainAssetsModel](response.data)!
 }
 
-pub fn (mut client TwinClient) tfchain_create(name string, ip string) !BlockChainCreateModel {
+pub fn (mut client TwinClient) tfchain_create(name string, ip string) !BlockChainCreateResponseModel {
 	data := NameIPModel{
 		name: name
 		ip: ip
 	}
 	response := client.transport.send('tfchain.create', json.encode(data).str())!
-	return json.decode(BlockChainCreateModel, response.data)
+	return json.decode[BlockChainCreateResponseModel](response.data)!
 }
 
 pub fn (mut client TwinClient) tfchain_pay(name string, target_address string, amount f64) ! {

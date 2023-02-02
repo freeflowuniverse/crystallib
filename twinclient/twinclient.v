@@ -24,15 +24,6 @@ pub fn (mut htp HttpTwinClient) init(url string) !HttpTwinClient {
 	htp.header = header
 	htp.url = url
 	htp.method = http.Method.post
-	// request := http.Request{
-	// 	url: "$htp.url/ping"
-	// 	method: http.Method.get
-	// 	header: htp.header,
-	// }
-	// response := request.do()!
-	// if response.body != "pong"{
-	// 	panic("You have to intialize the http server first.")
-	// }
 	return htp
 }
 
@@ -43,18 +34,22 @@ pub fn (htp HttpTwinClient) send(functionPath string, args string) !Message {
 		method: htp.method
 		header: htp.header
 		data: args
+		read_timeout: 120 * time.second
+        write_timeout: 120 * time.second
 	}
 	resp := request.do()!
+
 	mut message := Message{}
 	mut decoded := json2.raw_decode(resp.body)!
+
 	if resp.status_code == 200 {
 		result := decoded.as_map()['result']!
 		message.data = result.str()
-		return message
 	} else {
 		err := decoded.as_map()['error']!
-		return error(err.str())
+		message.err = err.str()
 	}
+	return message
 }
 
 // WebSocket Client
