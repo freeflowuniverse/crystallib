@@ -1,7 +1,7 @@
 module telegram
 
 import os
-import freeflowuniverse.crystallib.ui.uimodel {QuestionArgs}
+import freeflowuniverse.crystallib.ui.uimodel {QuestionArgs, YesNoArgs, DropDownArgs}
 
 
 // args:
@@ -16,6 +16,38 @@ import freeflowuniverse.crystallib.ui.uimodel {QuestionArgs}
 struct Output {
 	message string
 	response_channel chan string
+}
+
+pub fn (mut ui UITelegram) ask_dropdown (args DropDownArgs) !string {
+
+	mut description := '$args.description \n\nChoices: \n'
+	mut count := 1
+	for item in args.items {
+		description += '$count - $item\n'
+		count += 1
+	}
+
+	question := 'Please send your choice by entering a number from 1 to $count:'
+
+	q_args := QuestionArgs{
+		question: question
+		description: description
+		warning: args.warning
+		clear: args.clear
+		user_id: args.user_id
+	}
+	return ui.ask_question(q_args) or {return error("Failed to ask question: $err")}
+}
+
+pub fn (mut ui UITelegram) ask_yesno (args YesNoArgs) !string {
+	q_args := QuestionArgs{
+		question: args.question
+		description: args.description
+		warning: args.warning
+		clear: args.clear
+		user_id: args.user_id
+	}
+	return ui.ask_question(q_args) or {return error("Failed to ask question: $err")}
 }
 
 pub fn (mut ui UITelegram) ask_question (args QuestionArgs) !string {
@@ -69,3 +101,4 @@ fn make_safe(text string) string {
 	}
 	return new_text
 }
+

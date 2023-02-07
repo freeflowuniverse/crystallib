@@ -13,7 +13,7 @@ import json
 
 pub fn (mut ui UITelegram) run () {
 	// Ensures that we dont respond to any old messages	
-	mut last_offset := 1
+	mut last_offset := 0
 	mut updates := bot.bot.get_updates(timeout: 0, allowed_updates: json.encode(["message"]), offset: last_offset, limit: 100)
 	for update in updates {
 		if last_offset < update.update_id {
