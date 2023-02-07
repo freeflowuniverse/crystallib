@@ -1,7 +1,7 @@
 module console
 
 import freeflowuniverse.crystallib.texttools
-import freeflowuniverse.crystallib.console {style,color_fg}
+import freeflowuniverse.crystallib.console {color_fg}
 import freeflowuniverse.crystallib.ui.uimodel {DropDownArgs}
 import os
 
@@ -10,12 +10,12 @@ import os
 // 	items       []string
 // 	warning     string
 // 	clear       bool = true
-pub fn (mut c UIConsole) ask_dropdown(args DropDownArgs) int {
+pub fn (mut c UIConsole) ask_dropdown_int(args DropDownArgs) int {
 	if args.clear {
 		clear() // clears the screen
 	}
 	if args.description.len > 0 {
-		println(style(args.description, 'bold'))
+		println(console.style(args.description, 'bold'))
 	}
 	if args.warning.len > 0 {
 		println(color_fg(args.warning, 'red'))
@@ -40,8 +40,8 @@ pub fn (mut c UIConsole) ask_dropdown(args DropDownArgs) int {
 		return 999999
 	}
 	if !texttools.is_int(choice) {
-		return ask_dropdown_int(
-			reset: true
+		return c.ask_dropdown_int(
+			clear: true
 			description: args.description
 			all: args.all
 			items: args.items
@@ -50,8 +50,8 @@ pub fn (mut c UIConsole) ask_dropdown(args DropDownArgs) int {
 	}
 	choice_int := choice.int()
 	if choice_int < 1 || choice_int > nr {
-		return ask_dropdown_int(
-			reset: true
+		return c.ask_dropdown_int(
+			clear: true
 			description: args.description
 			all: args.all
 			items: args.items
@@ -67,8 +67,8 @@ pub fn (mut c UIConsole) ask_dropdown(args DropDownArgs) int {
 // 	warning     string
 // 	clear       bool = true
 pub fn (mut c UIConsole) ask_dropdown_multiple(args DropDownArgs) []string {
-	res := ask_dropdown_int(
-		reset: args.reset
+	res := c.ask_dropdown_int(
+		clear: args.clear
 		description: args.description
 		all: args.all
 		items: args.items
@@ -86,9 +86,9 @@ pub fn (mut c UIConsole) ask_dropdown_multiple(args DropDownArgs) []string {
 // 	items       []string
 // 	warning     string
 // 	clear       bool = true
-pub fn ask_dropdown_string(args DropDownArgs) string {
-	res := ask_dropdown_int(
-		reset: args.reset
+pub fn (mut c UIConsole) ask_dropdown_string(args DropDownArgs) string {
+	res := c.ask_dropdown_int(
+		clear: args.clear
 		description: args.description
 		all: args.all
 		items: args.items

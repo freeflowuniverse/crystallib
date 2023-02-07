@@ -4,18 +4,19 @@ import freeflowuniverse.crystallib.console
 
 struct RoomOrderFlow{
 	current_product string
+	ui UserInterface
 }
 
 
 fn (mut f RoomOrderFlow) room_choice()!{
-	console := UIConsole{}
 
-	i:=ask_dropdown_int(
+	i:= ui.ask_dropdown_int(
 		description:"Which type of room do you want?"
 		items:["penthouse","normal","single","appartment_room"]
 		warning:"Please select your right type of room"
 		reset:true
-	)	
+	)
+
 	//match	
 	smoker:=console.ask_yesno(description:"Are you a smoker?")
 	if smoker{

@@ -7,6 +7,7 @@ pub mut:
 	items       []string
 	warning     string
 	clear       bool = true
+	all bool
 }
 
 
@@ -18,6 +19,7 @@ pub mut:
 	clear       bool = true
 	regex       string
 	minlen      int
+	reset bool
 }
 
 pub struct YesNoArgs {
@@ -26,6 +28,7 @@ pub mut:
 	question    string
 	warning     string
 	clear       bool = true
+	reset bool
 }
 
 
