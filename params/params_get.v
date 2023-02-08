@@ -86,9 +86,25 @@ pub fn (params &Params) get_u32(key string) !u32 {
 	return valuestr.u32()
 }
 
+pub fn (params &Params) get_u32_default(key string, defval u32) !u32 {
+	if params.exists(key) {
+		valuestr := params.get(key)!
+		return valuestr.u32()
+	}
+	return defval
+}
+
 pub fn (params &Params) get_u8(key string) !u8 {
 	valuestr := params.get(key)!
 	return valuestr.u8()
+}
+
+pub fn (params &Params) get_u8_default(key string, defval u8) !u8 {
+	if params.exists(key) {
+		valuestr := params.get(key)!
+		return valuestr.u8()
+	}
+	return defval
 }
 
 pub fn (params &Params) get_kilobytes(key string) !u64 {
