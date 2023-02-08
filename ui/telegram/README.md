@@ -45,7 +45,11 @@ struct TelegramClient {
   
 }
 
-
-TelegramClient
-- needs to have an actionrunner
-- receives messages from users
+Contents
+- 1 processor
+- 1 actionrunner
+- 1 telegram client
+- 1 actor
+  - many flows
+  - many questions
+  - flow supervisor
