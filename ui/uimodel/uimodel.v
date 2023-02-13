@@ -21,8 +21,10 @@ pub mut:
 	regex       string
 	minlen      int
 	reset       bool
-	validation  fn (string) bool
+	validation  fn (string) bool = fn (s string) bool {return true}
 }
+
+// validation responds with either true or an error message
 
 pub struct YesNoArgs {
 pub mut:
@@ -31,7 +33,7 @@ pub mut:
 	warning     string
 	clear       bool = true
 	reset       bool
-	validation  fn (string) string
+	validation  fn (string) bool = fn (s string) bool {return true}
 }
 
 

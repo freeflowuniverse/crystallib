@@ -9,9 +9,7 @@ import dariotarantini.vgram
 struct TelegramClient {
 	bot vgram.Bot
 	baobab  client.Client // Baobab client
-	flow_supervisor redisclient.RedisQueue
 	waiting_qs map[string]RedisQueue // where string is user_id
-	redis redisclient.Redis
 }
 
 

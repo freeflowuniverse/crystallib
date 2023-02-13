@@ -13,10 +13,10 @@ import freeflowuniverse.crystallib.ui.uimodel {QuestionArgs, YesNoArgs, DropDown
 // - minlen: min nr of chars
 //
 
-struct Output {
-	message string
-	response_channel chan string
-}
+// ! struct Output {
+// 	message string
+// 	response_channel chan string
+// }
 
 pub fn (mut ui UITelegram) ask_dropdown (args DropDownArgs) !string {
 
@@ -36,7 +36,7 @@ pub fn (mut ui UITelegram) ask_dropdown (args DropDownArgs) !string {
 		clear: args.clear
 		user_id: args.user_id
 	}
-	return ui.ask_question(q_args) or {return error("Failed to ask question: $err")}
+	return ui.ask_question(q_args) or {return error("Failed to ask dropdown: $err")}
 }
 
 pub fn (mut ui UITelegram) ask_yesno (args YesNoArgs) !string {
@@ -47,51 +47,37 @@ pub fn (mut ui UITelegram) ask_yesno (args YesNoArgs) !string {
 		clear: args.clear
 		user_id: args.user_id
 	}
-	return ui.ask_question(q_args) or {return error("Failed to ask question: $err")}
+	return ui.ask_question(q_args) or {return error("Failed to ask yesno: $err")}
 }
 
 pub fn (mut ui UITelegram) ask_question (args QuestionArgs) !string {
 	mut message := ''
-	
-	if args.description.len > 0 {
-		message += '${make_safe(args.description)}\n'
-	}
-	if args.warning.len > 0 {
-		message += '__${make_safe(args.warning)}__\n'
-	}
-	mut question := 'Please provide an answer:'
-	if args.question != '' {
-		question = args.question
-	}
-	message += '*bold \*${make_safe(question)}*\n'
 
-	response_channel := chan string{}
+	mut warning := args.warning
 
-	// TODO figure out how I am going to pass around user_ids
-	ui.to_user <- Output{
-		message: message
-		response_channel: response_channel
-	}
-
-	select {
-		choice := <- response_channel {
-			if args.minlen > 0 && choice.len < args.minlen {
-				return ui.ask_question(
-					reset: args.reset
-					description: args.description
-					warning: 'Min length of answer is: ${args.minlen}'
-					question: args.question
-				)
-			} else {
-				return choice
-			}
+	for {
+		if args.description.len > 0 {
+			message += '${make_safe(args.description)}\n'
 		}
-		3600 * time.second {
-			return error("Timeout!")
+		if args.warning.len > 0 {
+			message += '__${make_safe(args.warning)}__\n'
+		}
+		mut question := 'Please provide an answer:'
+		if args.question != '' {
+			question = args.question
+		}
+		message += '*bold \*${make_safe(question)}*\n'
+
+		warning = args.warning
+
+		answer := ui.send_question(message)!
+
+		if args.validation(answer) {
+			return answer
+		} else {
+			warning += '\n $err'
 		}
 	}
-
-	return choice
 }
 
 fn make_safe(text string) string {
