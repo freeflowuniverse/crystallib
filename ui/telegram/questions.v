@@ -2,7 +2,7 @@ module telegram
 
 import os
 import freeflowuniverse.crystallib.ui.uimodel {QuestionArgs, YesNoArgs, DropDownArgs}
-
+import freeflowuniverse.crystallib.timetools
 
 // args:
 // - description string
@@ -79,6 +79,31 @@ pub fn (mut ui UITelegram) ask_question (args QuestionArgs) !string {
 		}
 	}
 }
+
+pub fn (mut ui TelegramBot) ask_date (args QuestionArgs) !map[string]int {
+	mut warning := args.warning
+	for {
+		date_string := ui.ask_question(args)
+		args.warning = warning
+		if date := timetools.parse_date(date_string) {
+			return date
+		}
+		args.warning = warning + "\n Failed to parse date, please input a date of the format: '28 feb'" 
+	}
+}
+
+pub fn (mut ui TelegramBot) ask_time (args QuestionArgs) !map[string]int {
+	mut warning := args.warning
+	for {
+		time_string := ui.ask_question(args)
+		args.warning = warning
+		if time := timetools.parse_time(time_string) {
+			return time
+		}
+		args.warning = warning + "\n Failed to parse time, please input a time of the format: 'HH:MM'" 
+	}
+}
+
 
 fn make_safe(text string) string {
 	mut new_text := ''

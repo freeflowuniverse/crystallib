@@ -1,4 +1,4 @@
-module telegram
+module client
 
 import freeflowuniverse.baobab.client
 import freeflowuniverse.crystallib.redisclient
@@ -11,8 +11,6 @@ struct TelegramClient {
 	baobab  client.Client // Baobab client
 	waiting_qs map[string]RedisQueue // where string is user_id
 }
-
-
 
 // factory for telegram client initializes baobab client and redis queues
 pub fn new_client(bot_token string, supervisor_key string) !TelegramClient {

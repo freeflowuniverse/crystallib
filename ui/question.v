@@ -14,7 +14,8 @@ import freeflowuniverse.crystallib.ui.uimodel {QuestionArgs}
 pub fn (mut c UserInterface) ask_question(args QuestionArgs) string {
 	return match mut c.channel {
 		UIConsole { return c.ask_question(args) }
+		UITelegram { return c.ask_question(args)}
 		else{ return error("can't find channel")}
 	}	
-
 }
+
