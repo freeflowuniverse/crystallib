@@ -1,7 +1,8 @@
 module ui
 
 import freeflowuniverse.crystallib.ui.console {UIConsole}
-import freeflowuniverse.crystallib.ui.uimodel {YesNoArgs}
+import freeflowuniverse.crystallib.ui.telegram {UITelegram}
+import freeflowuniverse.crystallib.ui.uimodel {QuestionArgs}
 
 // yes is true, no is false
 // args:

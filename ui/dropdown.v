@@ -1,6 +1,7 @@
 module ui
 
 import freeflowuniverse.crystallib.ui.console {UIConsole}
+import freeflowuniverse.crystallib.ui.telegram {UITelegram}
 import freeflowuniverse.crystallib.ui.uimodel {DropDownArgs}
 
 //return the dropdown as an int
@@ -11,6 +12,7 @@ import freeflowuniverse.crystallib.ui.uimodel {DropDownArgs}
 pub fn (mut c UserInterface) ask_dropdown(args DropDownArgs) int {
 	return match mut c.channel {
 		UIConsole { return c.ask_dropdown(args) }
+		UITelegram { return c.ask_dropdown(args)}
 		else{ return error("can't find channel")}
 	}	
 
