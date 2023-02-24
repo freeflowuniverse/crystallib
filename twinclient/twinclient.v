@@ -50,7 +50,7 @@ pub fn (htp HttpTwinClient) send(functionPath string, args string) !Message {
 				err := decoded.as_map()['error']!
 				err.str()
 			} else if "message" in decoded.as_map() {
-				err := decoded.as_map()['message']
+				err := decoded.as_map()['message']!
 				err.str()
 			} else {
 				""
