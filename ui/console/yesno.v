@@ -1,7 +1,7 @@
 module console
 
 import freeflowuniverse.crystallib.ui.uimodel {YesNoArgs}
-import freeflowuniverse.crystallib.console
+import freeflowuniverse.crystallib.console {color_fg}
 import os
 
 // yes is true, no is false
@@ -20,7 +20,7 @@ pub fn (mut c UIConsole) ask_yesno(args YesNoArgs) bool {
 		println(console.style(args.description, 'bold'))
 	}
 	if args.warning.len > 0 {
-		println(console.color_fg(args.warning, 'red'))
+		println(color_fg(args.warning, 'red'))
 		println('\n')
 	}
 	if question == '' {
@@ -47,6 +47,6 @@ pub fn (mut c UIConsole) ask_yesno(args YesNoArgs) bool {
 		description: args.description
 		question: args.question
 		warning: "Please choose 'y' or 'n', then enter."
-		clear: true
+		reset: true
 	)
 }

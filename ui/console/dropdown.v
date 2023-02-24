@@ -1,7 +1,7 @@
 module console
 
 import freeflowuniverse.crystallib.texttools
-import freeflowuniverse.crystallib.console
+import freeflowuniverse.crystallib.console {color_fg}
 import freeflowuniverse.crystallib.ui.uimodel {DropDownArgs}
 import os
 
@@ -10,7 +10,7 @@ import os
 // 	items       []string
 // 	warning     string
 // 	clear       bool = true
-pub fn (mut c UIConsole) ask_dropdown(args DropDownArgs) int {
+pub fn (mut c UIConsole) ask_dropdown_int(args DropDownArgs) int {
 	if args.clear {
 		clear() // clears the screen
 	}
@@ -18,7 +18,7 @@ pub fn (mut c UIConsole) ask_dropdown(args DropDownArgs) int {
 		println(console.style(args.description, 'bold'))
 	}
 	if args.warning.len > 0 {
-		println(console.color_fg(args.warning, 'red'))
+		println(color_fg(args.warning, 'red'))
 		println('\n')
 	}
 	println('\nChoices:\n')
@@ -29,6 +29,9 @@ pub fn (mut c UIConsole) ask_dropdown(args DropDownArgs) int {
 		nr += 1
 		println(' - ${nr} : ${item}')
 	}
+	if args.all {
+		println(' - all : *')
+	}
 	println('')
 	print(' - Make your choice:  ')
 	choice := os.get_raw_line().trim(' \n')
@@ -37,18 +40,20 @@ pub fn (mut c UIConsole) ask_dropdown(args DropDownArgs) int {
 		return 999999
 	}
 	if !texttools.is_int(choice) {
-		return c.ask_dropdown(
+		return c.ask_dropdown_int(
 			clear: true
 			description: args.description
+			all: args.all
 			items: args.items
 			warning: 'Choice needs to be a number (0...99).'
 		)
 	}
 	choice_int := choice.int()
 	if choice_int < 1 || choice_int > nr {
-		return c.ask_dropdown(
+		return c.ask_dropdown_int(
 			clear: true
 			description: args.description
+			all: args.all
 			items: args.items
 			warning: 'Choice needs to be a number larger than 0 and smaller than ${nr + 1}'
 		)
@@ -62,9 +67,10 @@ pub fn (mut c UIConsole) ask_dropdown(args DropDownArgs) int {
 // 	warning     string
 // 	clear       bool = true
 pub fn (mut c UIConsole) ask_dropdown_multiple(args DropDownArgs) []string {
-	res := c.ask_dropdown(
+	res := c.ask_dropdown_int(
 		clear: args.clear
 		description: args.description
+		all: args.all
 		items: args.items
 		warning: ''
 	)
@@ -81,9 +87,10 @@ pub fn (mut c UIConsole) ask_dropdown_multiple(args DropDownArgs) []string {
 // 	warning     string
 // 	clear       bool = true
 pub fn (mut c UIConsole) ask_dropdown_string(args DropDownArgs) string {
-	res := c.ask_dropdown(
+	res := c.ask_dropdown_int(
 		clear: args.clear
 		description: args.description
+		all: args.all
 		items: args.items
 		warning: ''
 	)

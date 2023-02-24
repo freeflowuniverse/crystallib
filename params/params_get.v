@@ -122,9 +122,11 @@ pub fn (params &Params) get_kilobytes(key string) !u64 {
 			"KB" {
 				1
 			}
-			else {
-				return error("not valid: should end with kb, mb or gb")
+			else { 0
 			}
+		}
+		if times == 0 {
+			return error("not valid: should end with kb, mb or gb")
 		}
 	}
 	return valuestr.u64() * u64(times)

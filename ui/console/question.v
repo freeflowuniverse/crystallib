@@ -2,7 +2,7 @@ module console
 
 import os
 import freeflowuniverse.crystallib.ui.uimodel {QuestionArgs}
-import freeflowuniverse.crystallib.console
+import freeflowuniverse.crystallib.console {color_fg}
 
 // args:
 // - description string
@@ -21,7 +21,7 @@ pub fn (mut c UIConsole) ask_question(args QuestionArgs) string {
 		println(console.style(args.description, 'bold'))
 	}
 	if args.warning.len > 0 {
-		println(console.color_fg(args.warning, 'red'))
+		println(color_fg(args.warning, 'red'))
 		println('\n')
 	}
 	if question == '' {
@@ -34,7 +34,7 @@ pub fn (mut c UIConsole) ask_question(args QuestionArgs) string {
 	}
 	if args.minlen > 0 && choice.len < args.minlen {
 		return c.ask_question(
-			clear: args.clear
+			reset: args.reset
 			description: args.description
 			warning: 'Min lenght of answer is: ${args.minlen}'
 			question: args.question
