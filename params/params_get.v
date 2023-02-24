@@ -2,6 +2,7 @@ module params
 
 import texttools
 import os
+import time { Duration }
 
 // check if kwarg exist
 // line:
@@ -127,12 +128,65 @@ pub fn (params &Params) get_kilobytes(key string) !u64 {
 		}
 	}
 	return valuestr.u64() * u64(times)
-
 }
 
 pub fn (params &Params) get_kilobytes_default(key string, defval u64) !u64 {
 	if params.exists(key) {
 		return params.get_kilobytes(key)!
+	}
+	return defval
+}
+
+fn (params &Params) parse_time(value string) !Duration {
+	is_am := value.ends_with("AM")
+	is_pm := value.ends_with("PM")
+	is_am_pm := is_am || is_pm
+	data := if is_am_pm { value[ .. value.len-2].split(":") } else { value.split(":") }
+	if data.len > 2 {
+		return error("Invalid duration value")
+	}
+	minute := if data.len == 2 { data[1].int() } else { 0 }
+	mut hour := data[0].int()
+	if is_am || is_pm {
+		if hour < 0 || hour > 12 {
+				return error("Invalid duration value")
+		}
+		if is_pm {
+			hour += 12
+		}
+	} else {
+		if hour < 0 || hour > 24 {
+			return error("Invalid duration value")
+		}
+	}
+	if minute < 0 || minute > 60 {
+		return error("Invalid duration value")
+	}
+	return time.Duration(time.hour * hour + time.minute * minute)
+}
+
+pub fn (params &Params) get_time_interval(key string) !(Duration, Duration) {
+	valuestr := params.get(key)!
+	data := valuestr.split("-")
+	if data.len != 2 {
+		return error("Invalid time interval: begin and end time required")
+	}
+	start := params.parse_time(data[0])!
+	end := params.parse_time(data[1])!
+	if end < start {
+		return error("Invalid time interval: begin time cannot be after end time")
+	}
+	return start, end
+}
+
+pub fn (params &Params) get_time(key string) !Duration {
+	valuestr := params.get(key)!
+	return params.parse_time(valuestr)!
+}
+
+pub fn (params &Params) get_time_default(key string, defval Duration) !Duration {
+	if params.exists(key) {
+		return params.get_time(key)!
 	}
 	return defval
 }
