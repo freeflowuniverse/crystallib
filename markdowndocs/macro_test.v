@@ -1,6 +1,6 @@
 module markdowndocs
 
-import freeflowuniverse.crystallib.params { Arg, Param }
+import freeflowuniverse.crystallib.params
 
 fn test_macro() {
 	mut text := "Command.1.X arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok'"
@@ -10,19 +10,19 @@ fn test_macro() {
 	r := MacroObj{
 		cmd: 'command.1.x'
 		params: params.Params{
-			params: [Param{
+			params: [params.Param{
 				key: 'color'
 				value: 'red'
-			}, Param{
+			}, params.Param{
 				key: 'priority'
 				value: 'incredible'
-			}, Param{
+			}, params.Param{
 				key: 'description'
 				value: 'with spaces, lets see if ok'
 			}]
-			args: [Arg{
+			args: [params.Arg{
 				value: 'arg1'
-			}, Arg{
+			}, params.Arg{
 				value: 'arg2'
 			}]
 		}

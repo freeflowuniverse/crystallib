@@ -80,7 +80,7 @@ fn (mut books Books) scan_recursive(mut path pathlib.Path) ! {
 			content := bookfilepath.read()!
 			if content.trim_space() != '' {
 				// means there are params in there
-				mut params_ := params.parser(content)!
+				mut params_ := params.parse(content)!
 				if params_.exists('name') {
 					name = params_.get('name')!
 				}

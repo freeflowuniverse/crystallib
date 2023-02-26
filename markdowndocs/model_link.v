@@ -85,7 +85,7 @@ pub fn (mut link Link) link_update(mut paragraph &Paragraph, linkpath_new string
 	// 	paragraph.content.replace(linkoriginal_old, linkoriginal_new)
 	// 	link.path = linkpath_new.all_before_last('/')
 	// 	link.filename = linkpath_new.all_after_last('/')
-	// 	link.original = linkoriginal_new
+	// 	link.content = linkoriginal_new
 	// 	paragraph.changed = true
 	// 	return true
 	// }

@@ -1,10 +1,26 @@
 module main
 
 import freeflowuniverse.crystallib.books
+import freeflowuniverse.crystallib.gittools
+import os
 
-const path = '~/code/github/threefoldfoundation/books'
+const path0 = '~/code/github/threefoldfoundation/books'
+const reset = true
 
 fn do() ! {
+
+	mut path:=""
+
+	if reset || (! os.exists(path)){
+		mut gs := gittools.get(root:"/tmp/code")!
+
+		url := 'git@github.com:threefoldfoundation/books.git'
+		mut gr := gs.repo_get_from_url(url: url, pull: false, reset: reset)!
+		path = gr.path
+	}else{
+		path = path0
+	}
+
 	mut sites := books.sites_new()
 	sites.scan(path + '/content')!
 

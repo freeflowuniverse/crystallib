@@ -38,7 +38,7 @@ mut:
 // 	for line in content.split_into_lines(){
 // 		if line.starts_with("!!include"){
 // 			//now we can do the include
-// 			params := params.parser(line.all_after_first(" ")) or { panic(err) }
+// 			params := params.parse(line.all_after_first(" ")) or { panic(err) }
 // 			path_to_include := params.get_path("path")! //checks it exists
 // 			path_included := pathtools.get(path_to_include)!
 // 			content := path_included.read()!
@@ -135,7 +135,7 @@ fn (mut block Block) clean() {
 }
 
 fn (mut parser ActionsParser) parse_block(block Block) {
-	params := params.parser(block.content) or { panic(err) }
+	params := params.parse(block.content) or { panic(err) }
 
 	mut action := Action{
 		name: block.name

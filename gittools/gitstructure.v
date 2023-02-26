@@ -2,6 +2,7 @@ module gittools
 
 import freeflowuniverse.crystallib.pathlib { Path }
 
+[params]
 pub struct RepoGetFromUrlArgs {
 pub mut:
 	url    string

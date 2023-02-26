@@ -10,6 +10,7 @@ fn (mut gitstructure GitStructure) check() ! {
 	gitstructure.load()!
 }
 
+[params]
 pub struct GSArgs {
 pub mut:
 	filter  string // if used will only show the repo's which have the filter string inside

@@ -2,6 +2,7 @@ module gittools
 
 import os
 
+[params]
 pub struct GSConfig {
 pub mut:
 	filter      string

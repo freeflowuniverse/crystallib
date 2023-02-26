@@ -28,16 +28,16 @@ fn do2() ! {
 
 	for mut item in doc.items {
 		println(item)
-		match mut item {
-			markdowndocs.Paragraph {
-				for mut item2 in item.items{
-					if mut item2 is markdowndocs.Link {
-						// println(item2)
-					}
-				}
-			}
-			else {}
-		}
+		// match mut item {
+		// 	markdowndocs.Paragraph {
+		// 		for mut item2 in item.items{
+		// 			if mut item2 is markdowndocs.Link {
+		// 				// println(item2)
+		// 			}
+		// 		}
+		// 	}
+		// 	else {}
+		// }
 	}
 
 	println("==================")
@@ -45,6 +45,56 @@ fn do2() ! {
 
 }
 
+
+fn do3() ! {
+	mut doc := markdowndocs.get('${testpath}/doc.md') or { panic('cannot parse,${err}') }
+	// mut o := doc.items[1]
+	// println("\n\n\n")
+
+	for mut item in doc.items {
+		println(item)
+		// match mut item {
+		// 	markdowndocs.Paragraph {
+		// 		for mut item2 in item.items{
+		// 			if mut item2 is markdowndocs.Link {
+		// 				// println(item2)
+		// 			}
+		// 		}
+		// 	}
+		// 	else {}
+		// }
+	}
+
+	println("==================")
+	println(doc.wiki())
+
+}
+
+fn do4() ! {
+	mut doc := markdowndocs.get('${testpath}/macros.md') or { panic('cannot parse,${err}') }
+	// mut o := doc.items[1]
+	// println("\n\n\n")
+
+	for mut item in doc.items {
+		println(item)
+		// match mut item {
+		// 	markdowndocs.Paragraph {
+		// 		for mut item2 in item.items{
+		// 			if mut item2 is markdowndocs.Link {
+		// 				// println(item2)
+		// 			}
+		// 		}
+		// 	}
+		// 	else {}
+		// }
+	}
+
+	println("==================")
+	println(doc.wiki())
+
+}
+
+
 fn main() {
-	do2() or { panic("ERROR:$err") }
+	do4() or { panic("ERROR:$err") }
 }

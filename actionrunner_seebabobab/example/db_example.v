@@ -39,7 +39,7 @@ fn do() ! {
 		name5:   'aab' 
 	"
 
-	params := params.parser(text) or { panic(err) }
+	params := params.parse(text) or { panic(err) }
 
 	model:="test"
 

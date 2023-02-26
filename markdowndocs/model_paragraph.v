@@ -11,7 +11,7 @@ pub mut:
 }
 
 
-fn (mut paragraph Paragraph) wiki() string {
+pub fn (mut paragraph Paragraph) wiki() string {
 	mut out := ''
 	for mut item in paragraph.items {
 		match mut item{
@@ -23,7 +23,7 @@ fn (mut paragraph Paragraph) wiki() string {
 	return out
 }
 
-fn (mut paragraph Paragraph) html() string {
+pub fn (mut paragraph Paragraph) html() string {
 	mut out := ''
 	for mut item in paragraph.items {
 		match mut item{

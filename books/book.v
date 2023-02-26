@@ -72,59 +72,62 @@ pub fn (mut book Book) fix() ! {
 	book.fix_summary()!
 	book.link_pages_files_images()!
 	//TODO: check the links on pages
-	book.errors_report()!
+	// book.errors_report()!
 }
 
 // fixes the summary doc for the book 
 fn (mut book Book) fix_summary() ! {
 	for mut paragraph in book.doc_summary.items.filter(it is markdowndocs.Paragraph) {
 		if mut paragraph is markdowndocs.Paragraph {
-			for mut link in paragraph.links {
-				if link.isexternal {
-					msge := 'external link not supported yet in summary for:\n ${book}'
-					book.error(cat: .unknown, msg: msge)
-				} else {
-					$if debug {
-						println(' - book ${book.name} summary:${link.pathfull()}')
-					}
-					mut sitename := link.path.all_before('/')
-					if link.path == ""{
-						//means site has not been specified
-						return error("site needs to be specified in summary, is the first part of path e.g. sitename/...")
-					}
-					if book.books.sites.exists(sitename) {
-						mut site := book.books.sites.get(sitename)!
-						dest := '${book.path.path}/${sitename}'
-						site.path.link(dest, true)!
+			for mut item in paragraph.items {
+				if mut item is markdowndocs.Link {
+					mut link := item
+					if link.isexternal {
+						msge := 'external link not supported yet in summary for:\n ${book}'
+						book.error(cat: .unknown, msg: msge)
+					} else {
+						$if debug {
+							println(' - book ${book.name} summary:${link.pathfull()}')
+						}
+						mut sitename := link.path.all_before('/')
+						if link.path == ""{
+							//means site has not been specified
+							return error("site needs to be specified in summary, is the first part of path e.g. sitename/...")
+						}
+						if book.books.sites.exists(sitename) {
+							mut site := book.books.sites.get(sitename)!
+							dest := '${book.path.path}/${sitename}'
+							site.path.link(dest, true)!
 
-						// now  we can process the page where the link goes to
-						pagename := link.filename
-						if site.page_exists(pagename) {
-							page := site.page_get(pagename)!
-							newlink := '[${link.description}](${sitename}/${page.pathrel})'
-							book.pages['${site.name}:${page.name}'] = page
-							if newlink != link.original {
-								// $if debug {
-								// 	println('change: $link.original -> $newlink')
-								// }
-								paragraph.content = paragraph.content.replace(link.original,newlink)
-								// paragraph.doc.save_wiki()!
-								panic("not implemented save wiki")
+							// now  we can process the page where the link goes to
+							pagename := link.filename
+							if site.page_exists(pagename) {
+								page := site.page_get(pagename)!
+								newlink := '[${link.description}](${sitename}/${page.pathrel})'
+								book.pages['${site.name}:${page.name}'] = page
+								if newlink != link.content {
+									// $if debug {
+									// 	println('change: $link.content -> $newlink')
+									// }
+									paragraph.content = paragraph.content.replace(link.content,newlink)
+									// paragraph.doc.save_wiki()!
+									panic("not implemented save wiki")
+								}
+							} else {
+								book.error(
+									cat: .page_not_found
+									msg: "Cannot find page:'${pagename}' in site:'${sitename}'"
+								)
+								continue
 							}
 						} else {
+							sitenames := book.books.sites.sitenames().join('\n- ')
 							book.error(
-								cat: .page_not_found
-								msg: "Cannot find page:'${pagename}' in site:'${sitename}'"
+								cat: .site_not_found
+								msg: 'Cannot find site: ${sitename} \n\nsitenames known::\n\n${sitenames} '
 							)
 							continue
 						}
-					} else {
-						sitenames := book.books.sites.sitenames().join('\n- ')
-						book.error(
-							cat: .site_not_found
-							msg: 'Cannot find site: ${sitename} \n\nsitenames known::\n\n${sitenames} '
-						)
-						continue
 					}
 				}
 			}
@@ -139,7 +142,9 @@ fn (mut book Book) link_pages_files_images() ! {
 		mut page := book.pages[key]
 		for mut paragraph in page.doc.items.filter(it is markdowndocs.Paragraph) {
 			if mut paragraph is markdowndocs.Paragraph {
-				for mut link in paragraph.links {
+			for mut item in paragraph.items {
+				if mut item is markdowndocs.Link {
+					mut link := item
 					if link.cat == .page {
 						pageobj := page.site.page_get(link.filename) or {
 							book.error(
@@ -171,6 +176,7 @@ fn (mut book Book) link_pages_files_images() ! {
 						book.images['${imageobj.site.name}:${imageobj.name}'] = imageobj
 					}
 				}
+			}
 			}
 		}
 	}

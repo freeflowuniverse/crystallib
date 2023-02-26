@@ -34,7 +34,7 @@ fn (mut page Page) fix_link(mut paragraph &Paragraph, mut link &Link) ! {
 	println(2)
 	mut file_name := link.filename
 	$if debug {
-		println(' - fix link ${link.original} with name:\'${file_name}\' for page: ${page.path.path}')
+		println(' - fix link ${link.content} with name:\'${file_name}\' for page: ${page.path.path}')
 	}
 
 	// check if the file or image is there, if yes we can return, nothing to do
@@ -93,7 +93,7 @@ fn (mut page Page) fix_link(mut paragraph &Paragraph, mut link &Link) ! {
 	link.link_update(mut paragraph, imagelink_rel, !page.readonly)!
 	if fileobj.path.path.contains("today_internet"){
 		println(link)
-		println(paragraph.doc.wiki())
+		println(paragraph.wiki())
 		// println(fileobj)
 		println(imagelink_rel)
 		panic('sdsdsd')
@@ -115,11 +115,14 @@ fn (mut page Page) fix() ! {
 fn (mut page Page) fix_links() ! {
 	for mut paragraph in page.doc.items.filter(it is markdowndocs.Paragraph) {
 		if mut paragraph is markdowndocs.Paragraph {
-			for mut link in paragraph.links {
-				if link.isexternal {
-					page.fix_external_link(mut link)!
-				} else if link.cat == .image || link.cat == .file {
-					page.fix_link(mut &paragraph, mut link)!
+			for mut item in paragraph.items {
+				if mut item is markdowndocs.Link {
+					mut link := item
+					if link.isexternal {
+						page.fix_external_link(mut link)!
+					} else if link.cat == .image || link.cat == .file {
+						page.fix_link(mut &paragraph, mut link)!
+					}
 				}
 			}
 		}
