@@ -3,7 +3,7 @@ module markdowndocs
 import pathlib
 
 fn test_wiki1() {
-	mut docs:=new(content:'
+	content := '
 	
 # TMUX
 
@@ -20,15 +20,16 @@ To initialize tmux on a local or [remote node](mysite:page.md), simply build the
 
 ### something else
 	
-	')!
+	'
+	mut docs := new(content:content)!
 
-	println(docs)
 	
 	//TODO: doesn't work properly yet, many mistakes
 
 	//TODO: need to test wiki input vs wiki output, so it renders properly, we need to do quite some more tests for this
+	println("WIKI is: ${docs.wiki()}")
+	assert content == docs.wiki() 
 
-	panic('error, should not get here')
 }
 
 
