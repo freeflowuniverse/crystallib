@@ -26,10 +26,10 @@ fn (action Action) html() string {
 	return action.wiki()
 }
 
-fn (action Action) str() string {
-	p := '${action.params}'
-	return '**** ACTION ${action.name}\n${texttools.indent(p, '    ')}'
-}
+// fn (action Action) str() string {
+// 	p := '${action.params}'
+// 	return '**** ACTION ${action.name}\n${texttools.indent(p, '    ')}'
+// }
 
 // is set of actions in a codeblock
 pub struct Actions {

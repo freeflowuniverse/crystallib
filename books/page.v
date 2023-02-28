@@ -90,7 +90,7 @@ fn (mut page Page) fix_link(mut paragraph &Paragraph, mut link &Link) ! {
 	link.description = ''
 	// last arg is if we need to save when link changed, only change when page is not readonly
 
-	link.link_update(mut paragraph, imagelink_rel, !page.readonly)!
+	// link.link_update(mut paragraph, imagelink_rel, !page.readonly)!
 	if fileobj.path.path.contains("today_internet"){
 		println(link)
 		println(paragraph.wiki())
@@ -181,7 +181,7 @@ pub fn (mut page Page) save(dest0 string) ! {
 		dest = page.path.path
 	}
 	// out := page.process_macros()!
-	panic("implement save macro")
+	out := page.doc.wiki()!
 	mut p := pathlib.get_file(dest, true)!
-	// p.write(out)!
+	p.write(out)!
 }

@@ -7,7 +7,7 @@ fn test_macro() {
 	result := macro_parse(text) or { panic(err) }
 	println(result)
 
-	r := MacroObj{
+	r:=markdowndocs.MacroObj{
 		cmd: 'command.1.x'
 		params: params.Params{
 			params: [params.Param{
@@ -20,13 +20,9 @@ fn test_macro() {
 				key: 'description'
 				value: 'with spaces, lets see if ok'
 			}]
-			args: [params.Arg{
-				value: 'arg1'
-			}, params.Arg{
-				value: 'arg2'
-			}]
+			args: ['arg1', 'arg2']
 		}
 	}
-
 	assert r == result
+
 }

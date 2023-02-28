@@ -1,7 +1,5 @@
 module markdowndocs
 
-import os
-
 //is a line parser
 
 // error while parsing
@@ -18,16 +16,16 @@ mut:
 	linenr int
 	lines  []string
 	errors []ParserError
+	endlf bool //if there is a linefeed or \n at end
 }
 
-pub fn parser_new(path string, mut doc &Doc)! Parser{
-	if !os.exists(path) {
-		return error("path: '${path}' does not exist, cannot parse.")
-	}
+fn parser_line_new(mut doc &Doc)! Parser{
 	mut parser:=Parser{doc:doc}
 	parser.doc.items<<Paragraph{}
-	mut content := os.read_file(path) or { panic('Failed to load file ${path}') }
-	parser.lines = content.split_into_lines()
+	parser.lines = doc.content.split_into_lines()
+	if doc.content.ends_with("\n"){
+		parser.endlf=true
+	}
 	parser.lines.map(it.replace('\t', '    ')) // remove the tabs
 	parser.linenr = 0
 	return parser
@@ -89,11 +87,11 @@ fn (mut parser Parser) line_prev() string {
 
 // move further
 fn (mut parser Parser) next() {	
-	println("line old (${parser.elementname()}): '${parser.line_current()}'")	
+	// println("line old (${parser.elementname()}): '${parser.line_current()}'")	
 	parser.linenr += 1
-	if ! parser.eof(){
-		println("line new (${parser.elementname()}): '${parser.line_current()}'")	
-	}
+	// if ! parser.eof(){
+	// 	println("line new (${parser.elementname()}): '${parser.line_current()}'")	
+	// }
 	
 }
 

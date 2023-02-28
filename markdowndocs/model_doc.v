@@ -4,6 +4,7 @@ import pathlib
 
 pub struct Doc {
 pub mut:
+	content string
 	items   []DocItem
 	path    pathlib.Path
 }
@@ -40,6 +41,7 @@ pub fn (mut doc Doc) wiki() string {
 
 
 fn (mut doc Doc) process() ! {
+	doc.parse()!
 	for mut item in doc.items {
 		match mut item {
 			Table { item.process()! }
@@ -53,24 +55,6 @@ fn (mut doc Doc) process() ! {
 			Link { item.process()! }
 		}
 	}
-}
-
-fn (mut doc Doc) str() string {
-	mut out := ''
-	for mut item in doc.items {
-		match mut item {
-			Table { out += item.str() }
-			Action { out += item.str() }
-			Actions { out += item.str() }
-			Header { out += item.str() }
-			Paragraph { out += item.str() }
-			Html { out += item.str() }
-			Comment { out += item.str() }
-			CodeBlock { out += item.str() }
-			Link { out += item.str() }
-		}
-	}
-	return out
 }
 
 pub fn (mut doc Doc) html() string {

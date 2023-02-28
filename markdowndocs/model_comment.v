@@ -1,16 +1,10 @@
 module markdowndocs
 
 
-enum CommentPrefix {
-	short
-	multi
-}
 
 pub struct Comment {
 pub mut:
-	content string
-	prefix  CommentPrefix
-	singleline bool
+	lines []string
 }
 
 fn (mut o Comment) process() ! {
@@ -19,19 +13,19 @@ fn (mut o Comment) process() ! {
 
 fn (o Comment) wiki() string {
 	mut out:=""
-	if o.singleline{
-		return "//${o.content}\n"
+	if o.lines.len==1{
+		return "//${o.lines[0]}\n"
 	}	
-	if o.content.trim_space().contains("\n"){
+	for line in o.lines{
 		out+="<!-- "
-		out+=o.content.trim_space()
+		out+=line.trim_space()
 		out+="\n-->\n\n"
-	}else{
-		if o.singleline{
-			out+="<!-- ${o.content.trim_space()} -->\n"
-		}else{
-			out+="<!-- ${o.content.trim_space()} -->\n\n"
-		}
+	// }else{
+	// 	if o.singleline{
+	// 		out+="<!-- ${o.content.trim_space()} -->\n"
+	// 	}else{
+	// 		out+="<!-- ${o.content.trim_space()} -->\n\n"
+	// 	}
 	}
 	return out
 }
@@ -39,10 +33,6 @@ fn (o Comment) wiki() string {
 fn (o Comment) html() string {
 	return o.wiki()
 }
-
-// fn (o Comment) str() string {
-// 	return '**** Comment\n${texttools.indent(o.content, '    ')}'
-// }
 
 fn comment_new(text string) Comment{
 	return Comment{content:text}

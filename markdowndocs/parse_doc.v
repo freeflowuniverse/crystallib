@@ -1,14 +1,12 @@
 module markdowndocs
 
-import pathlib
 
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
-fn parse_doc(path string) !Doc {
-	path2 := pathlib.get_file(path, false)!
-	mut doc:=Doc{path:path2}
-	mut parser:=parser_new(path,mut &doc)!
+fn (mut doc Doc) parse2() ! {
+
+	mut parser:=parser_line_new(mut &doc)!
 	
 	for {
 		if parser.eof() {
@@ -176,22 +174,20 @@ fn parse_doc(path string) !Doc {
 		parser.next()
 	}
 
-	mut toremovelist:=[]int{}
-	mut counter:=0
-	for item in doc.items{
-		if item is Paragraph{
-			if item.content=="" {
-				toremovelist << counter
-			}
-		}
-		counter+=1
-	}
-	for toremove in toremovelist.reverse(){
-		doc.items.delete(toremove)
-	}
+	// mut toremovelist:=[]int{}
+	// mut counter:=0
+	// for item in doc.items{
+	// 	if item is Paragraph{
+	// 		if item.content.trim(" \n")=="" {
+	// 			toremovelist << counter
+	// 		}
+	// 	}
+	// 	counter+=1
+	// }
+	// for toremove in toremovelist.reverse(){
+	// 	doc.items.delete(toremove)
+	// }
 
-	doc.process()!
-	return doc
 }
 
 

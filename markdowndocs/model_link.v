@@ -55,44 +55,6 @@ fn (mut link Link) error(msg string) {
 	link.error_msg = msg
 }
 
-// needs to be the relative path in the site, important!
-// will return true if there was change
-pub fn (mut link Link) link_update(mut paragraph &Paragraph, linkpath_new string, save bool) ! {
-
-	paragr_content := link.replace(paragraph.content,"")!
-	if paragr_content != paragraph.content{
-		//means there was change
-		paragraph.content = paragr_content
-		paragraph.changed = true
-		if save{
-			// println("   ****** linkupdate:save")
-			// println(link)
-			// link.paragraph.doc.save()!			
-			panic('sdsssae')
-		}
-
-	}
-
-	// if linkoriginal_new != linkoriginal_old {
-	// 	// println("   ****** linkupdate:changed")
-	// 	paragraph.doc.content = paragraph.doc.content.replace(linkoriginal_old,
-	// 		linkoriginal_new)
-	// 	if save {
-	// 		// println("   ****** linkupdate:save")
-	// 		// println(link)
-	// 		paragraph.doc.save()!
-	// 	}
-	// 	paragraph.content.replace(linkoriginal_old, linkoriginal_new)
-	// 	link.path = linkpath_new.all_before_last('/')
-	// 	link.filename = linkpath_new.all_after_last('/')
-	// 	link.content = linkoriginal_new
-	// 	paragraph.changed = true
-	// 	return true
-	// }
-	// return false
-}
-
-
 // return the name of the link
 pub fn (mut link Link) name_fix_no_underscore_no_ext() string {
 	return texttools.name_fix_no_underscore_no_ext(link.filename)
@@ -107,14 +69,14 @@ fn (mut o Link) process()!{
 // return how to represent link on source
 fn (link Link) wiki() string {
 	if link.cat == LinkType.image {
-		if link.extra == '' {
+		if link.extra.trim_space() == '' {
 			return '![${link.description}](${link.filename})'
 		} else {
 			return '![${link.description}](${link.filename} ${link.extra})'
 		}
 	}
 	if link.cat == LinkType.file {
-		if link.extra == '' {
+		if link.extra.trim_space() == '' {
 			return '[${link.description}](${link.filename})'
 		} else {
 			return '[${link.description}](${link.filename} ${link.extra})'
@@ -126,6 +88,8 @@ fn (link Link) wiki() string {
 		}
 
 		mut link_filename := link.filename
+
+		println("------ '${link.filename}'")
 
 		if link.site != '' {
 			link_filename = '${link.site}:${link_filename}'
@@ -159,16 +123,6 @@ fn (o Link) html() string{
 // 	}
 // 	return l
 // }
-
-// replace original link content in text with $replacewith
-// if replacewith is empty then will recreate the link as source_get()!
-pub fn (mut link Link) replace(text string, replacewith_ string) !string {
-	mut replacewith := replacewith_
-	if replacewith == '' {
-		replacewith = link.wiki()
-	}
-	return text.replace(link.content, replacewith)
-}
 
 fn link_new() Link {
 	return Link{}

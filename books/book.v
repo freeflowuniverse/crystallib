@@ -69,8 +69,8 @@ pub fn (mut book Book) error(args BookErrorArgs) {
 // walk over pages find broken links
 // report on the errors
 pub fn (mut book Book) fix() ! {
-	book.fix_summary()!
-	book.link_pages_files_images()!
+	// book.fix_summary()!
+	// book.link_pages_files_images()!
 	//TODO: check the links on pages
 	// book.errors_report()!
 }

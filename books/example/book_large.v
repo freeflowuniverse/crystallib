@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.gittools
 import os
 
 const path0 = '~/code/github/threefoldfoundation/books'
-const reset = true
+const reset = false
 
 fn do() ! {
 

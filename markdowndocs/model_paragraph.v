@@ -47,20 +47,6 @@ pub fn (mut paragraph Paragraph) html() string {
 // 	return out
 // }
 
-fn (mut paragraph Paragraph) process() ! {
-	if paragraph.items.len>0{
-		panic("bug, cannot call process twise on paragraph")
-	}
-	println("process paragraph: $paragraph.content")
-	paragraph.parse()!
-	for mut item in paragraph.items {
-		match mut item{
-			Text {item.process()!}
-			Link {item.process()!}
-			Comment {item.process()!}
-		}
-	}
-}
 
 
 

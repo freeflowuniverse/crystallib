@@ -1,38 +1,35 @@
 module markdowndocs
 
+
 fn test_link1() {
-}		
+	mut docs:=new(content:'[Architecture](architecture/architecture.md)')!
 
-//TODO: needs to be redone using the paragraph parser
+	println(docs)
+	
 
-// fn test_link1() {
-// 	mut lp := LinkParseResult{}
-// 	mut para := Paragraph{}
-// 	lp = para.link_parser('[Architecture](architecture/architecture.md)') or { panic(err) }
-
-// 	correct_lp := LinkParseResult{
-// 		links: [
-// 			Link{
-// 				content: '[Architecture](architecture/architecture.md)'
-// 				cat: .page
-// 				isexternal: false
-// 				include: true
-// 				newtab: false
-// 				moresites: false
-// 				description: 'Architecture'
-// 				url: ''
-// 				filename: 'architecture.md'
-// 				path: 'architecture'
-// 				site: ''
-// 				extra: ''
-// 				state: .ok
-// 				error_msg: ''
-// 			},
-// 		]
-// 	}
-
-// 	assert lp.str() == correct_lp.str()
-// }
+	r:=markdowndocs.Paragraph{
+		content: '[Architecture](architecture/architecture.md)'
+		items: [markdowndocs.ParagraphItem(markdowndocs.Link{
+			content: '[Architecture](architecture/architecture.md)'
+			cat: .page
+			isexternal: false
+			include: true
+			newtab: false
+			moresites: false
+			description: 'Architecture'
+			url: 'architecture/architecture.md'
+			filename: 'architecture.md'
+			path: 'architecture'
+			site: ''
+			extra: ''
+			state: .ok
+			error_msg: ''
+		})]
+		changed: false
+	}
+	// assert r == docs
+	panic('s')
+}
 
 // fn test_link2() {
 // 	mut lp := LinkParseResult{}

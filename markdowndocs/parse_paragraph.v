@@ -16,19 +16,19 @@ fn (mut para Paragraph) parse()! {
 
 		mut llast := para.items.last()
 		mut char_ := parser.char_current()	
-		char_debug := char_.replace("\n","\\n")
-		println("")
-		match llast {
-			Link{
-				print(" ---- L :'$char_debug' ")
-			}
-			Text{
-				print(" ---- T :'$char_debug' ")
-			}
-			Comment{
-				print(" ---- C :'$char_debug' ")
-			}
-		}
+		// char_debug := char_.replace("\n","\\n")
+		// println("")
+		// match llast {
+		// 	Link{
+		// 		print(" ---- L :'$char_debug' ")
+		// 	}
+		// 	Text{
+		// 		print(" ---- T :'$char_debug' ")
+		// 	}
+		// 	Comment{
+		// 		print(" ---- C :'$char_debug' ")
+		// 	}
+		// }
 
 		// check for comments end
 		if mut llast is Comment {
@@ -147,6 +147,22 @@ fn (mut para Paragraph) parse()! {
 	}
 
 
+}
+
+//does the parsing and process each item
+fn (mut paragraph Paragraph) process() ! {
+	if paragraph.items.len>0{
+		panic("bug, cannot call process twise on paragraph")
+	}
+	println("process paragraph: $paragraph.content")
+	paragraph.parse()!
+	for mut item in paragraph.items {
+		match mut item{
+			Text {item.process()!}
+			Link {item.process()!}
+			Comment {item.process()!}
+		}
+	}
 }
 
 

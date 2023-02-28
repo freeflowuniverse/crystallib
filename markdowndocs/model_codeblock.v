@@ -21,7 +21,3 @@ fn (o CodeBlock) wiki() string {
 fn (o CodeBlock) html() string {
 	return o.wiki()
 }
-
-// fn (o CodeBlock) str() string {
-// 	return '**** CodeBlock\n'
-// }
