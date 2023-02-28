@@ -2,139 +2,139 @@ module markdowndocs
 
 import pathlib
 
-// fn test_link1() {
-// 	mut docs:=new(content:'[Architecture](architecture/architecture.md)')!
+fn test_link1() {
+	mut docs:=new(content:'[Architecture](architecture/architecture.md)')!
 
-// 	println(docs)
+	println(docs)
 		
-// 	docscompare:=markdowndocs.Doc{
-// 		content: '[Architecture](architecture/architecture.md)'
-// 		items: [markdowndocs.DocItem(markdowndocs.Paragraph{
-// 			content: '[Architecture](architecture/architecture.md)'
-// 			items: [markdowndocs.ParagraphItem(markdowndocs.Link{
-// 				content: '[Architecture](architecture/architecture.md)'
-// 				cat: .page
-// 				isexternal: false
-// 				include: true
-// 				newtab: false
-// 				moresites: false
-// 				description: 'Architecture'
-// 				url: 'architecture/architecture.md'
-// 				filename: 'architecture.md'
-// 				path: 'architecture'
-// 				site: ''
-// 				extra: ''
-// 				state: .ok
-// 				error_msg: ''
-// 			})]
-// 			changed: false
-// 		})]
-// 		path: pathlib.Path{
-// 			path: ''
-// 			cat: .unknown
-// 			exist: .unknown
-// 		}
-// 	}
+	docscompare:=markdowndocs.Doc{
+		content: '[Architecture](architecture/architecture.md)'
+		items: [markdowndocs.DocItem(markdowndocs.Paragraph{
+			content: '[Architecture](architecture/architecture.md)'
+			items: [markdowndocs.ParagraphItem(markdowndocs.Link{
+				content: '[Architecture](architecture/architecture.md)'
+				cat: .page
+				isexternal: false
+				include: true
+				newtab: false
+				moresites: false
+				description: 'Architecture'
+				url: 'architecture/architecture.md'
+				filename: 'architecture.md'
+				path: 'architecture'
+				site: ''
+				extra: ''
+				state: .ok
+				error_msg: ''
+			})]
+			changed: false
+		})]
+		path: pathlib.Path{
+			path: ''
+			cat: .unknown
+			exist: .unknown
+		}
+	}
 
 
-// 	assert  docscompare == docs
+	assert  docscompare == docs
 
-// 	paragr := docs.items[0]
-// 	if paragr is Paragraph{
-// 		link := paragr.items[0]
-// 		if link is Link{
-// 			println(link)
-// 			assert link == markdowndocs.Link{
-// 				content: '[Architecture](architecture/architecture.md)'
-// 				cat: .page
-// 				isexternal: false
-// 				include: true
-// 				newtab: false
-// 				moresites: false
-// 				description: 'Architecture'
-// 				url: 'architecture/architecture.md'
-// 				filename: 'architecture.md'
-// 				path: 'architecture'
-// 				site: ''
-// 				extra: ''
-// 				state: .ok
-// 				error_msg: ''
-// 			}
-// 			return
-// 		}
-// 	}
+	paragr := docs.items[0]
+	if paragr is Paragraph{
+		link := paragr.items[0]
+		if link is Link{
+			println(link)
+			assert link == markdowndocs.Link{
+				content: '[Architecture](architecture/architecture.md)'
+				cat: .page
+				isexternal: false
+				include: true
+				newtab: false
+				moresites: false
+				description: 'Architecture'
+				url: 'architecture/architecture.md'
+				filename: 'architecture.md'
+				path: 'architecture'
+				site: ''
+				extra: ''
+				state: .ok
+				error_msg: ''
+			}
+			return
+		}
+	}
 
-// 	panic('error, should not get here')
-// }
-
-
-
-// fn test_link2() {
-// 	mut docs:=new(content:'[Architecture](@*!architecture/architecture.md)')!
-
-// 	paragr := docs.items[0]
-// 	if paragr is Paragraph{
-// 		link := paragr.items[0]
-// 		if link is Link{
-// 			println(link)
-// 			assert "[Architecture](*!@architecture/architecture.md)"==link.wiki()
-// 			assert link == markdowndocs.Link{
-// 				content: '[Architecture](@*!architecture/architecture.md)'
-// 				cat: .page
-// 				isexternal: false
-// 				include: true
-// 				newtab: true
-// 				moresites: true
-// 				description: 'Architecture'
-// 				url: '@*!architecture/architecture.md'
-// 				filename: 'architecture.md'
-// 				path: 'architecture'
-// 				site: ''
-// 				extra: ''
-// 				state: .ok
-// 				error_msg: ''
-// 			}
-// 			return
-// 		}
-// 	}
-
-// 	panic('error, should not get here')
-// }
+	panic('error, should not get here')
+}
 
 
 
-// fn test_link3() {
-// 	mut docs:=new(content:'[AArchitecture](./img/license_threefoldfzc.png \':size=800x900\')')!
+fn test_link2() {
+	mut docs:=new(content:'[Architecture](@*!architecture/architecture.md)')!
 
-// 	paragr := docs.items[0]
-// 	if paragr is Paragraph{
-// 		link := paragr.items[0]
-// 		if link is Link{
-// 			println(link)
-// 			println(link.wiki())
-// 			assert "![AArchitecture](img/license_threefoldfzc.png ':size=800x900')"==link.wiki()
-// 			assert link == markdowndocs.Link{
-// 				content: '[AArchitecture](./img/license_threefoldfzc.png \':size=800x900\')'
-// 				cat: .image
-// 				isexternal: false
-// 				include: true
-// 				newtab: false
-// 				moresites: false
-// 				description: 'AArchitecture'
-// 				url: './img/license_threefoldfzc.png \':size=800x900\''
-// 				filename: 'license_threefoldfzc.png'
-// 				path: 'img'
-// 				site: ''
-// 				extra: '\':size=800x900\''
-// 				state: .ok
-// 				error_msg: ''
-// 			}
-// 			return
-// 		}
-// 	}
+	paragr := docs.items[0]
+	if paragr is Paragraph{
+		link := paragr.items[0]
+		if link is Link{
+			println(link)
+			assert "[Architecture](*!@architecture/architecture.md)"==link.wiki()
+			assert link == markdowndocs.Link{
+				content: '[Architecture](@*!architecture/architecture.md)'
+				cat: .page
+				isexternal: false
+				include: true
+				newtab: true
+				moresites: true
+				description: 'Architecture'
+				url: '@*!architecture/architecture.md'
+				filename: 'architecture.md'
+				path: 'architecture'
+				site: ''
+				extra: ''
+				state: .ok
+				error_msg: ''
+			}
+			return
+		}
+	}
 
-// 	panic('error, should not get here')
-// }
+	panic('error, should not get here')
+}
+
+
+
+fn test_link3() {
+	mut docs:=new(content:'[AArchitecture](./img/license_threefoldfzc.png \':size=800x900\')')!
+
+	paragr := docs.items[0]
+	if paragr is Paragraph{
+		link := paragr.items[0]
+		if link is Link{
+			println(link)
+			println(link.wiki())
+			assert "![AArchitecture](img/license_threefoldfzc.png ':size=800x900')"==link.wiki()
+			assert link == markdowndocs.Link{
+				content: '[AArchitecture](./img/license_threefoldfzc.png \':size=800x900\')'
+				cat: .image
+				isexternal: false
+				include: true
+				newtab: false
+				moresites: false
+				description: 'AArchitecture'
+				url: './img/license_threefoldfzc.png \':size=800x900\''
+				filename: 'license_threefoldfzc.png'
+				path: 'img'
+				site: ''
+				extra: '\':size=800x900\''
+				state: .ok
+				error_msg: ''
+			}
+			return
+		}
+	}
+
+	panic('error, should not get here')
+}
 
 fn test_link4() {
 	mut docs:=new(content:'[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)')!
@@ -169,6 +169,7 @@ fn test_link4() {
 	panic('error, should not get here')
 }
 
+//> TODO: some more tests like below with mutliple links in 1 line ...
 
 
 // fn test_link7() {

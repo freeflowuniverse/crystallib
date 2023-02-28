@@ -20,6 +20,7 @@ fn (mut action Action) process() ! {
 
 fn (action Action) wiki() string {
 	return "!!"+action.content.trim_space()+"\n\n"
+	//TODO: BUILD out of action name and params, not from content
 }
 
 fn (action Action) html() string {
@@ -52,13 +53,13 @@ fn (actions Actions) html() string {
 	return actions.wiki()
 }
 
-fn (actions Actions) str() string {
-	mut out := '**** ACTIONS\n'
-	for action in actions.actions {
-		out += '  ** ACTION ${action.name}\n'
-	}
-	return out
-}
+// fn (actions Actions) str() string {
+// 	mut out := '**** ACTIONS\n'
+// 	for action in actions.actions {
+// 		out += '  ** ACTION ${action.name}\n'
+// 	}
+// 	return out
+// }
 
 // fn (mut actions Actions) action_add(a Action){
 // 	println(a)
