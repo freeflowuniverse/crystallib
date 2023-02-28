@@ -68,43 +68,46 @@ fn (mut o Link) process()!{
 
 // return how to represent link on source
 fn (link Link) wiki() string {
+	mut link_filename:=link.filename
+	if link.path  != '' {
+		link_filename = '${link.path}/${link_filename}'
+	}			
 	if link.cat == LinkType.image {
 		if link.extra.trim_space() == '' {
-			return '![${link.description}](${link.filename})'
+			return '![${link.description}](${link_filename})'
 		} else {
-			return '![${link.description}](${link.filename} ${link.extra})'
+			return '![${link.description}](${link_filename} ${link.extra})'
 		}
 	}
 	if link.cat == LinkType.file {
 		if link.extra.trim_space() == '' {
-			return '[${link.description}](${link.filename})'
+			return '[${link.description}](${link_filename})'
 		} else {
-			return '[${link.description}](${link.filename} ${link.extra})'
+			return '[${link.description}](${link_filename} ${link.extra})'
 		}
 	}
 	if link.cat == LinkType.page {
 		if link.filename.contains(':') {
 			return "should not have ':' in link for page or file.\n${link}"
 		}
-
-		mut link_filename := link.filename
-
-		println("------ '${link.filename}'")
-
 		if link.site != '' {
 			link_filename = '${link.site}:${link_filename}'
 		}
-		if link.include == false {
+		if link.include {
 			link_filename = '@${link_filename}'
 		}
 		if link.newtab {
 			link_filename = '!${link_filename}'
+		}
+		if link.moresites {
+			link_filename = '*${link_filename}'
 		}
 
 		return '[${link.description}](${link_filename})'
 	}
 	return link.content
 }
+
 
 
 fn (o Link) html() string{
@@ -160,6 +163,9 @@ fn (mut link Link) parse() Link {
 
 	// AT THIS POINT LINK IS A PAGE OR A FILE
 	////////////////////////////////////////
+
+
+	link.url = link.url.trim_left(" ")
 
 	// deal with special cases where file is not the only thing in ()
 	if link.url.contains(' ') {

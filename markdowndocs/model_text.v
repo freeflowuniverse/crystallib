@@ -3,6 +3,7 @@ module markdowndocs
 pub struct Text {
 pub mut:
 	content string
+	endlf bool //if there is a linefeed or \n at end	
 }
 
 fn (mut o Text) process() ! {

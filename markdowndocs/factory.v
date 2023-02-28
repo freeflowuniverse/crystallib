@@ -26,10 +26,7 @@ pub fn new(args NewDocArgs) !Doc {
 		doc.path = path2
 		doc.content = os.read_file(args.path) or { return error('Failed to load file ${args.path}') }
 	}
-	println("------88888")
-	doc.process()!
-	println(doc)
-	if true{panic("Sdsd")}
+	doc.parse()!
 	return doc
 }
 

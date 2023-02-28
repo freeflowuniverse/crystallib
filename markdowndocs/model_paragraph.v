@@ -10,6 +10,12 @@ pub mut:
 	changed bool
 }
 
+fn (mut paragraph Paragraph) process() ! {
+	if paragraph.items.len==0{
+		paragraph.parse()!
+	}	
+}
+
 
 pub fn (mut paragraph Paragraph) wiki() string {
 	mut out := ''

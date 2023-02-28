@@ -4,38 +4,40 @@ module markdowndocs
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
-fn (mut doc Doc) parse2() ! {
-
+fn (mut doc Doc) parse() ! {
 	mut parser:=parser_line_new(mut &doc)!
 	
 	for {
 		if parser.eof() {
+			// println("---end")
 			break
 		}
 		// go out of loop if end of file
 		line := parser.line_current()
+		// println(line)
 
 		mut llast:=parser.lastitem()
+		// println(llast)
 
-		if mut llast is Comment {
-			if llast.prefix == .short {
-				if line.trim_space().starts_with('//') {
-					llast.content += line.all_after_first('//') + '\n'
-					parser.next()
-					continue
-				}
-				parser.next_start()
-			} else {
-				if line.trim_space().ends_with('-->') {
-					llast.content += line.all_before_last('-->') + '\n'
-					parser.next_start()
-				} else {
-					llast.content += line + '\n'
-					parser.next()
-				}
-				continue
-			}
-		}
+		// if mut llast is Comment {
+		// 	if llast.prefix == .short {
+		// 		if line.trim_space().starts_with('//') {
+		// 			llast.content += line.all_after_first('//') + '\n'
+		// 			parser.next()
+		// 			continue
+		// 		}
+		// 		parser.next_start()
+		// 	} else {
+		// 		if line.trim_space().ends_with('-->') {
+		// 			llast.content += line.all_before_last('-->') + '\n'
+		// 			parser.next_start()
+		// 		} else {
+		// 			llast.content += line + '\n'
+		// 			parser.next()
+		// 		}
+		// 		continue
+		// 	}
+		// }
 
 		if mut llast is Action {
 			if line.starts_with(' ') || line.starts_with('\t') {
@@ -143,28 +145,33 @@ fn (mut doc Doc) parse2() ! {
 				continue				
 			}
 
-			if line.trim_space().starts_with('//') {
-				doc.items << Comment{
-					content: line.all_after_first('//').trim_space() + '\n'
-					prefix: .short
+			// if line.trim_space().starts_with('//') {
+			// 	doc.items << Comment{
+			// 		content: line.all_after_first('//').trim_space() + '\n'
+			// 		// prefix: .short
 
-				}
-				parser.next()
-				continue
-			}
-			if line.trim_space().starts_with('<!--') {
-				doc.items << Comment{
-					content: line.all_after_first('<!--').trim_space() + '\n'
-					prefix: .multi
+			// 	}
+			// 	parser.next()
+			// 	continue
+			// }
+			// if line.trim_space().starts_with('<!--') {
+			// 	doc.items << Comment{
+			// 		content: line.all_after_first('<!--').trim_space() + '\n'
+			// 		prefix: .multi
 
-				}
-				parser.next()
-				continue
-			}
+			// 	}
+			// 	parser.next()
+			// 	continue
+			// }
 		}
 
-		if mut llast is Paragraph || mut llast is Html || mut llast is Comment || mut llast is CodeBlock{
-			llast.content += line + '\n'
+		if mut llast is Paragraph || mut llast is Html || mut llast is CodeBlock{
+			if parser.endlf==false && parser.next_is_eof(){
+				llast.content += line
+			}else{
+				llast.content += line + '\n'
+			}
+			
 		} else {
 			println(line)
 			println(llast)
@@ -174,19 +181,35 @@ fn (mut doc Doc) parse2() ! {
 		parser.next()
 	}
 
-	// mut toremovelist:=[]int{}
-	// mut counter:=0
-	// for item in doc.items{
-	// 	if item is Paragraph{
-	// 		if item.content.trim(" \n")=="" {
-	// 			toremovelist << counter
-	// 		}
-	// 	}
-	// 	counter+=1
-	// }
-	// for toremove in toremovelist.reverse(){
-	// 	doc.items.delete(toremove)
-	// }
+	//paragraph is used as separator so the empty ones need to be removed
+
+
+	mut toremovelist:=[]int{}
+	mut counter:=0
+	for mut item in doc.items{
+		match mut item {
+			Table { item.process()! }
+			Action { item.process()! }
+			Actions { item.process()! }
+			Header { item.process()! }
+			Paragraph {
+				item.process()!
+				if item.content.trim(" \n")=="" {
+					toremovelist << counter
+				}else if item.items.len==0{
+					toremovelist << counter
+				}			
+			}
+			Html { item.process()! }
+			// Comment { item.process()! }
+			CodeBlock { item.process()! }
+			Link { item.process()! }
+		}		
+		counter+=1
+	}
+	for toremove in toremovelist.reverse(){
+		doc.items.delete(toremove)
+	}
 
 }
 

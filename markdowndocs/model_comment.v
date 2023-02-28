@@ -1,10 +1,16 @@
 module markdowndocs
 
 
+// enum CommentPrefix {
+// 	short
+// 	multi
+// }
 
 pub struct Comment {
 pub mut:
-	lines []string
+	content string
+	// prefix  CommentPrefix
+	singleline bool
 }
 
 fn (mut o Comment) process() ! {
@@ -13,19 +19,19 @@ fn (mut o Comment) process() ! {
 
 fn (o Comment) wiki() string {
 	mut out:=""
-	if o.lines.len==1{
-		return "//${o.lines[0]}\n"
+	if o.singleline{
+		return "//${o.content}\n"
 	}	
-	for line in o.lines{
+	if o.content.trim_space().contains("\n"){
 		out+="<!-- "
-		out+=line.trim_space()
+		out+=o.content.trim_space()
 		out+="\n-->\n\n"
-	// }else{
-	// 	if o.singleline{
-	// 		out+="<!-- ${o.content.trim_space()} -->\n"
-	// 	}else{
-	// 		out+="<!-- ${o.content.trim_space()} -->\n\n"
-	// 	}
+	}else{
+		if o.singleline{
+			out+="<!-- ${o.content.trim_space()} -->\n"
+		}else{
+			out+="<!-- ${o.content.trim_space()} -->\n\n"
+		}
 	}
 	return out
 }

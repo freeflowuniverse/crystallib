@@ -12,7 +12,6 @@ pub mut:
 type DocItem = Action
 	| Actions
 	| CodeBlock
-	| Comment
 	| Header
 	| Html
 	| Paragraph
@@ -31,7 +30,7 @@ pub fn (mut doc Doc) wiki() string {
 			Header { out += item.wiki() }
 			Paragraph { out += item.wiki() }
 			Html { out += item.wiki() }
-			Comment { out += item.wiki() }
+			// Comment { out += item.wiki() }
 			CodeBlock { out += item.wiki() }
 			Link { out += item.wiki() }
 		}
@@ -39,23 +38,6 @@ pub fn (mut doc Doc) wiki() string {
 	return out
 }
 
-
-fn (mut doc Doc) process() ! {
-	doc.parse()!
-	for mut item in doc.items {
-		match mut item {
-			Table { item.process()! }
-			Action { item.process()! }
-			Actions { item.process()! }
-			Header { item.process()! }
-			Paragraph { item.process()! }
-			Html { item.process()! }
-			Comment { item.process()! }
-			CodeBlock { item.process()! }
-			Link { item.process()! }
-		}
-	}
-}
 
 pub fn (mut doc Doc) html() string {
 	mut out := ''
@@ -67,7 +49,7 @@ pub fn (mut doc Doc) html() string {
 			Header { out += '<h${item.depth}>${item.content}</h${item.depth}>\n' } //todo: should be moved to item.html()
 			Paragraph { out += '<p>${item.content}</p>\n' }
 			Html { out += item.html() }
-			Comment { out += item.html() }
+			// Comment { out += item.html() }
 			CodeBlock { out += item.html() }
 			Link { out += item.html() }
 		}

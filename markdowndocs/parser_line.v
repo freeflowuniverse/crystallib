@@ -114,3 +114,10 @@ fn (mut parser Parser) eof() bool {
 	return false
 }
 
+fn (mut parser Parser) next_is_eof() bool {
+	if parser.linenr > (parser.lines.len-2) {
+		return true
+	}
+	return false
+}
+

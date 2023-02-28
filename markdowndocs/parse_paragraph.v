@@ -88,7 +88,7 @@ fn (mut para Paragraph) parse()! {
 				for totry in ['<!--','//']{
 					if parser.text_next_is(totry,0) {
 						//we are now in comment
-						para.items<<comment_new("")
+						para.items << Comment{}
 						mut llast2 := para.items.last()
 						if totry == "//"{
 							if mut llast2 is Comment {
@@ -134,12 +134,17 @@ fn (mut para Paragraph) parse()! {
 
 	mut toremovelist:=[]int{}
 	mut counter:=0
-	for item in para.items{
-		if item is Text{
-			if item.content=="" {
-				toremovelist << counter
+	for mut item in para.items{
+		match mut item{
+			Text {
+				item.process()!
+				if item.content.trim("\n ")=="" {
+					toremovelist << counter
+				}
 			}
-		}
+			Link {item.process()!}
+			Comment {item.process()!}
+		}		
 		counter+=1
 	}
 	for toremove in toremovelist.reverse(){
@@ -147,22 +152,6 @@ fn (mut para Paragraph) parse()! {
 	}
 
 
-}
-
-//does the parsing and process each item
-fn (mut paragraph Paragraph) process() ! {
-	if paragraph.items.len>0{
-		panic("bug, cannot call process twise on paragraph")
-	}
-	println("process paragraph: $paragraph.content")
-	paragraph.parse()!
-	for mut item in paragraph.items {
-		match mut item{
-			Text {item.process()!}
-			Link {item.process()!}
-			Comment {item.process()!}
-		}
-	}
 }
 
 
