@@ -61,7 +61,7 @@ pub fn (mut link Link) name_fix_no_underscore_no_ext() string {
 	// return link.filename.all_before_last('.').trim_right('_').to_lower()
 }
 
-fn (mut o Link) process()!{
+fn (mut o Link) process() ! {
 	o.parse()
 }
 
@@ -130,8 +130,8 @@ fn link_new() Link {
 
 // add link to a paragraph of a doc
 fn (mut link Link) parse() Link {
-	link.content=link.content.trim_space()
-	if link.content.starts_with("!"){
+	link.content = link.content.trim_space()
+	if link.content.starts_with("!") {
 		link.cat = LinkType.image
 	}
 	link.description = link.content.all_after("[").all_before("]").trim_space()

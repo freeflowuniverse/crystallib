@@ -32,53 +32,53 @@ fn (mut para Paragraph) parse()! {
 
 		// check for comments end
 		if mut llast is Comment {
-			if char_ == "\n"{
-				if llast.singleline{
+			if char_ == "\n" {
+				if llast.singleline {
 					//means we are at end of line of a single line comment
 					para.items << Text{}
 					parser.next()
-					char_=""
+					char_ = ""
 					continue
 				}else{
 					//now we know for sure comment is not single line
-					llast.singleline=false
+					llast.singleline = false
 				}
 			}
-			if parser.text_next_is('-->',1){
+			if parser.text_next_is('-->',1) {
 				//means is end of comment
-				llast.content+=char_ //need to add current content
+				llast.content += char_ //need to add current content
 				//need to move forward not to have the 3 next
 				parser.forward(3)
 				para.items << Text{}
 				parser.next()
-				char_=""
+				char_ = ""
 				continue	
 			}
 		}
 
 		if mut llast is Link {
 			if char_ == ']' {
-				if ! parser.text_next_is("(",1){
+				if !parser.text_next_is("(",1) {
 					//means is not link, need to convert link to normal text
-					mut c:=llast.content
+					mut c := llast.content
 					para.items.delete_last() //remove the link
-					para.items << Text{content:c} //we need to re-add the content
+					para.items << Text{ content:c } //we need to re-add the content
 					llast = para.items.last() //fetch last again
-					llast.content+=char_ //need to add current content
+					llast.content += char_ //need to add current content
 					para.items << Text{}
 					parser.next()
 					// println("\n!!!!!!!!!!!!!!!!!!!!!\n")
-					char_=""
+					char_ = ""
 					continue
 				}
 			}
 			if char_ == ')' {
 				// end of link
-				llast.content+=char_ //need to add current content
+				llast.content += char_ //need to add current content
 				para.items << Text{}
 				parser.next()
-				char_=""
-				continue				
+				char_ = ""
+				continue			
 			} 
 		} 
 		
@@ -103,19 +103,19 @@ fn (mut para Paragraph) parse()! {
 			}
 			if char_ != "" {
 				//try to find link
-				for totry in ['![','[']{
+				for totry in ['![','['] {
 					if parser.text_next_is(totry,0) {
-						mut l:= link_new()			
+						mut l := link_new()
 						l.content = totry
 						para.items << l
 						parser.forward(totry.len-1)
-						char_=""
-						break				
+						char_ = ""
+						break
 					}
 				}
 			}
 		}
-		llast.content+=char_
+		llast.content += char_
 		// match llast {
 		// 	Link{
 
@@ -128,30 +128,24 @@ fn (mut para Paragraph) parse()! {
 		// 	}
 
 		parser.next()
-
 	}
 
-	mut toremovelist:=[]int{}
-	mut counter:=0
-	for mut item in para.items{
-		match mut item{
+	mut toremovelist := []int{}
+	mut counter := 0
+	for mut item in para.items {
+		match mut item {
 			Text {
 				item.process()!
-				if item.content.trim("\n ")=="" {
+				if item.content.trim("\n ") == "" {
 					toremovelist << counter
 				}
 			}
 			Link {item.process()!}
 			Comment {item.process()!}
-		}		
-		counter+=1
+		}
+		counter += 1
 	}
-	for toremove in toremovelist.reverse(){
+	for toremove in toremovelist.reverse() {
 		para.items.delete(toremove)
 	}
-
-
 }
-
-
-

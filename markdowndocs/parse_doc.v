@@ -4,7 +4,7 @@ module markdowndocs
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 fn (mut doc Doc) parse() ! {
-	mut parser:=parser_line_new(mut &doc)!
+	mut parser := parser_line_new(mut &doc)!
 	
 	for {
 		if parser.eof() {
@@ -15,7 +15,7 @@ fn (mut doc Doc) parse() ! {
 		line := parser.line_current()
 		// println(line)
 
-		mut llast:=parser.lastitem()
+		mut llast := parser.lastitem()
 		// println(llast)
 
 		// if mut llast is Comment {
@@ -51,7 +51,7 @@ fn (mut doc Doc) parse() ! {
 		}
 
 		if mut llast is Html {
-			if line.trim_space().to_lower().starts_with('</html'){
+			if line.trim_space().to_lower().starts_with('</html') {
 				parser.next_start()
 				continue				
 			}
@@ -79,7 +79,7 @@ fn (mut doc Doc) parse() ! {
 
 			// find codeblock or actions
 			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
-				doc.items << CodeBlock{
+				doc.items << CodeBlock {
 					category: line.substr(3, line.len).to_lower().trim_space()
 				}
 				parser.next()
@@ -107,10 +107,10 @@ fn (mut doc Doc) parse() ! {
 				}
 			}
 
-			if line.trim_space().to_lower().starts_with('<html'){
+			if line.trim_space().to_lower().starts_with('<html') {
 				doc.items << Html{}
 				parser.next()
-				continue				
+				continue
 			}
 
 			// if line.trim_space().starts_with('//') {
@@ -133,10 +133,10 @@ fn (mut doc Doc) parse() ! {
 			// }
 		}
 
-		if mut llast is Paragraph || mut llast is Html || mut llast is CodeBlock{
-			if parser.endlf==false && parser.next_is_eof(){
+		if mut llast is Paragraph || mut llast is Html || mut llast is CodeBlock {
+			if parser.endlf == false && parser.next_is_eof() {
 				llast.content += line
-			}else{
+			} else {
 				llast.content += line + '\n'
 			}			
 		} else {
@@ -149,11 +149,9 @@ fn (mut doc Doc) parse() ! {
 	}
 
 	//paragraph is used as separator so the empty ones need to be removed
-
-
-	mut toremovelist:=[]int{}
-	mut counter:=0
-	for mut item in doc.items{
+	mut toremovelist := []int{}
+	mut counter := 0
+	for mut item in doc.items {
 		match mut item {
 			Table { item.process()! }
 			Action { item.process()! }
@@ -161,9 +159,9 @@ fn (mut doc Doc) parse() ! {
 			Header { item.process()! }
 			Paragraph {
 				item.process()!
-				if item.content.trim(" \r\n")=="" {
+				if item.content.trim(" \r\n") == "" {
 					toremovelist << counter
-				}else if item.items.len==0{
+				}else if item.items.len == 0 {
 					toremovelist << counter
 				}
 
@@ -173,12 +171,11 @@ fn (mut doc Doc) parse() ! {
 			CodeBlock { item.process()! }
 			Link { item.process()! }
 		}		
-		counter+=1
+		counter += 1
 	}
-	for toremove in toremovelist.reverse(){
+	for toremove in toremovelist.reverse() {
 		doc.items.delete(toremove)
 	}
-
 }
 
 

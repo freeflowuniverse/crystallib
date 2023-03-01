@@ -92,7 +92,7 @@ fn (mut parser ParserChar) text_next_is(tofind string, offset int) bool {
 		return false
 	}
 	text := parser.chars.substr(startpos, startpos + tofind.len).replace("\n", "\\n")
-	didfind:= (text == tofind)
+	didfind := (text == tofind)
 	//print(" -NT${offset}($tofind):'$text':$didfind .. ")
 	return didfind
 }

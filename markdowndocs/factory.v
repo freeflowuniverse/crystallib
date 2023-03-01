@@ -11,14 +11,14 @@ pub:
 
 //get a parsed document, path is the path to the file, if not given content is needed
 pub fn new(args NewDocArgs) !Doc {
-	mut doc:=Doc{}	
-	if args.path == ""{
-		if args.content.trim_space()==""{
+	mut doc := Doc{}	
+	if args.path == "" {
+		if args.content.trim_space() == "" {
 			return error("cannot process doc where content is empty if path not given. \n$args")
 		}
 		doc.content = args.content
 	}else{
-		if args.path.trim_space()==""{
+		if args.path.trim_space() == "" {
 			return error("cannot process doc where path is empty and content empty \n$args")
 		}
 		

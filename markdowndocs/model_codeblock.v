@@ -11,10 +11,10 @@ fn (mut o CodeBlock) process() ! {
 }
 
 fn (o CodeBlock) wiki() string {
-	mut out:=""
-	out+="```$o.category\n"
-	out+=o.content.trim_space()
-	out+="\n```\n\n"
+	mut out := ""
+	out += "```$o.category\n"
+	out += o.content.trim_space()
+	out += "\n```\n\n"
 	return out
 }
 
