@@ -1,7 +1,6 @@
 module markdowndocs
 
 
-
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 fn (mut doc Doc) parse() ! {
@@ -69,9 +68,9 @@ fn (mut doc Doc) parse() ! {
 			continue
 		}
 
-		if mut llast is Paragraph{
+		if mut llast is Paragraph {
 			if line.starts_with('!!') {
-				doc.items << Action{
+				doc.items << Action {
 					content: line.all_after_first('!!')
 				}
 				parser.next()
@@ -87,56 +86,25 @@ fn (mut doc Doc) parse() ! {
 				continue
 			}
 
-			// process headers
-			if line.starts_with('###### ') {
-				parser.error_add('header should be max 5 deep')
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('##### ') {
-				doc.items << Header{
-					content: line.all_after_first('#####').trim_space()
-					depth: 5
-
+			// process headers (# is 35)
+			if line.len > 0 && line[0] == 35 {
+				mut d := 0
+				for d < line.len && line[d] == 35 {
+					d += 1
 				}
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('#### ') {
-				doc.items << Header{
-					content: line.all_after_first('####').trim_space()
-					depth: 4
-
+				if d < line.len && line[d] == 32 {
+					if d >= 6 {
+						parser.error_add('header should be max 5 deep')
+						parser.next_start()
+						continue
+					}
+					doc.items << Header {
+						content: line.all_after_first(line[..d]).trim_space()
+						depth: d
+					}
+					parser.next_start()
+					continue
 				}
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('### ') {
-				doc.items << Header{
-					content: line.all_after_first('###').trim_space()
-					depth: 3
-
-				}
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('## ') {
-				doc.items << Header{
-					content: line.all_after_first('##').trim_space()
-					depth: 2
-
-				}
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('# ') {
-				doc.items << Header{
-					content: line.all_after_first('#').trim_space()
-					depth: 1
-
-				}
-				parser.next_start()
-				continue
 			}
 
 			if line.trim_space().to_lower().starts_with('<html'){
@@ -170,8 +138,7 @@ fn (mut doc Doc) parse() ! {
 				llast.content += line
 			}else{
 				llast.content += line + '\n'
-			}
-			
+			}			
 		} else {
 			println(line)
 			println(llast)
@@ -194,11 +161,12 @@ fn (mut doc Doc) parse() ! {
 			Header { item.process()! }
 			Paragraph {
 				item.process()!
-				if item.content.trim(" \n")=="" {
+				if item.content.trim(" \r\n")=="" {
 					toremovelist << counter
 				}else if item.items.len==0{
 					toremovelist << counter
-				}			
+				}
+
 			}
 			Html { item.process()! }
 			// Comment { item.process()! }

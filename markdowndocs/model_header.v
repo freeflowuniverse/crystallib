@@ -15,7 +15,6 @@ fn (o Header) wiki() string {
 	for _ in 0 .. o.depth {
 		h += "#"
 	}
-	println("<$h ${o.content}\n\n>")
 	return "$h ${o.content}\n\n"
 }
 

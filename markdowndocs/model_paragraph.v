@@ -11,7 +11,7 @@ pub mut:
 }
 
 fn (mut paragraph Paragraph) process() ! {
-	if paragraph.items.len==0{
+	if paragraph.items.len == 0 {
 		paragraph.parse()!
 	}	
 }
@@ -20,22 +20,22 @@ fn (mut paragraph Paragraph) process() ! {
 pub fn (mut paragraph Paragraph) wiki() string {
 	mut out := ''
 	for mut item in paragraph.items {
-		match mut item{
-			Text {out += item.wiki()}
-			Link {out += item.wiki()}
-			Comment {out += item.wiki()}
+		match mut item {
+			Text { out += item.wiki() }
+			Link { out += item.wiki() }
+			Comment { out += item.wiki() }
 		}
 	}
-	return out
+	return out + "\n\n"
 }
 
 pub fn (mut paragraph Paragraph) html() string {
 	mut out := ''
 	for mut item in paragraph.items {
 		match mut item{
-			Text {out += item.html()}
-			Link {out += item.html()}
-			Comment {out += item.html()}
+			Text { out += item.html() }
+			Link { out += item.html() }
+			Comment { out += item.html() }
 		}
 	}
 	return out

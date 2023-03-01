@@ -5,7 +5,7 @@ module markdowndocs
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT REALITIES
 // adds the found links, text, comments to the paragraph
 fn (mut para Paragraph) parse()! {
-	mut parser := parser_char_new_text(para.content)
+	mut parser := parser_char_new_text(para.content.trim_space())
 
 	para.items << Text{}
 
@@ -83,25 +83,25 @@ fn (mut para Paragraph) parse()! {
 		} 
 		
 		if mut llast is Text {
-			if char_!="" {
+			if char_ != "" {
 				// check for comments start
-				for totry in ['<!--','//']{
-					if parser.text_next_is(totry,0) {
+				for totry in ['<!--','//'] {
+					if parser.text_next_is(totry, 0) {
 						//we are now in comment
 						para.items << Comment{}
 						mut llast2 := para.items.last()
-						if totry == "//"{
+						if totry == "//" {
 							if mut llast2 is Comment {
 								llast2.singleline = true
 							}
 						}
 						parser.forward(totry.len-1)
-						char_=""
+						char_ = ""
 						break
 					}			
 				}
 			}
-			if char_!="" {
+			if char_ != "" {
 				//try to find link
 				for totry in ['![','[']{
 					if parser.text_next_is(totry,0) {
@@ -116,7 +116,6 @@ fn (mut para Paragraph) parse()! {
 			}
 		}
 		llast.content+=char_
-
 		// match llast {
 		// 	Link{
 
