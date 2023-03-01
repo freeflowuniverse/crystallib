@@ -120,6 +120,9 @@ fn test_wiki_header_too_long() {
 '
 ##### Is ok
 '
+
+	assert docs.items.len == 1
+	assert docs.items[0] is Header
 	assert expected_wiki.trim_space() == docs.wiki().trim_space()
 }
 
@@ -175,5 +178,6 @@ Example:
 '
 	mut docs := new(content:content)!
 
+	// TODO
 	assert content.trim_space() == docs.wiki().trim_space()
 }
