@@ -26,7 +26,7 @@ pub fn dumps(buffer []u8) string {
 }
 
 fn test() {
-	source := "turtle soda patrol vacuum turn fault bracket border angry rookie okay anger"
+	source := 'turtle soda patrol vacuum turn fault bracket border angry rookie okay anger'
 	data := parse(source)
 	println(data)
 

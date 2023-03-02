@@ -8,30 +8,28 @@ import freeflowuniverse.crystallib.pathlib
 
 // }pathlib.Path
 
-struct ArchiverConfig{
-	pathstor		""
-	pathmeta		""
-	compress 	    true
+struct ArchiverConfig {
+	pathstor string
+	pathmeta string
+	compress bool = true
 }
 
-struct Archiver{
-	pathstor		pathlib.Path
-	pathmeta		pathlib.Path
+struct Archiver {
+	pathstor pathlib.Path
+	pathmeta pathlib.Path
 }
 
-
-pub fn new(args ArchiverConfig) !Archiver{
-	if args.pathstor == ""{
-		args.pathstor = "${os.home_dir}/stor/data"
+pub fn new(args ArchiverConfig) !Archiver {
+	if args.pathstor == '' {
+		args.pathstor = '${os.home_dir}/stor/data'
 	}
-	if args.pathmeta == ""{
-		args.pathmeta = "${os.home_dir}/stor/meta"
+	if args.pathmeta == '' {
+		args.pathmeta = '${os.home_dir}/stor/meta'
 	}
-	mut archiver:=Archiver{
-		pathstor:pathlib.get_dir(args.pathstor,true)!
-		pathmeta:pathlib.get_dir(args.pathmeta,true)!
+	mut archiver := Archiver{
+		pathstor: pathlib.get_dir(args.pathstor, true)!
+		pathmeta: pathlib.get_dir(args.pathmeta, true)!
 	}
 
 	return archiver
-
 }

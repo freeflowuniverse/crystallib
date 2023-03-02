@@ -1,11 +1,11 @@
 module console
 
 import freeflowuniverse.crystallib.texttools
-import freeflowuniverse.crystallib.console {color_fg}
-import freeflowuniverse.crystallib.ui.uimodel {DropDownArgs}
+import freeflowuniverse.crystallib.console { color_fg }
+import freeflowuniverse.crystallib.ui.uimodel { DropDownArgs }
 import os
 
-//return the dropdown as an int
+// return the dropdown as an int
 // 	description string
 // 	items       []string
 // 	warning     string

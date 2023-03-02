@@ -25,7 +25,8 @@ pub mut:
 fn (v RInt) int() int {
 	return v.value
 }
-fn (v RInt) u32() u32{
+
+fn (v RInt) u32() u32 {
 	return u32(v.value)
 }
 
@@ -46,23 +47,24 @@ pub mut:
 }
 
 fn (v RArray) intlist() []int {
-	mut res :=[]int{}
-	for item in v.values{
+	mut res := []int{}
+	for item in v.values {
 		res << item.int()
 	}
 	return res
 }
-fn (v RArray) u32list() []u32{
-	mut res :=[]u32{}
-	for item in v.values{
+
+fn (v RArray) u32list() []u32 {
+	mut res := []u32{}
+	for item in v.values {
 		res << item.u32()
 	}
 	return res
 }
 
-fn (v RArray) strlist() []string{
-	mut res :=[]string{}
-	for item in v.values{
+fn (v RArray) strlist() []string {
+	mut res := []string{}
+	for item in v.values {
 		res << item.strget()
 	}
 	return res
@@ -70,74 +72,72 @@ fn (v RArray) strlist() []string{
 
 type RValue = RArray | RBString | RError | RInt | RNil | RString
 
-
 pub fn (v RValue) int() int {
 	match v {
-		RInt{
+		RInt {
 			return v.int()
 		}
 		// RArray{
 		// 	return v.int()
 		// }
-		else{
-			panic("could not find type")
+		else {
+			panic('could not find type')
 		}
 	}
 }
-pub fn (v RValue) u32() u32{
+
+pub fn (v RValue) u32() u32 {
 	match v {
-		RInt{
+		RInt {
 			return v.u32()
 		}
 		// RArray{
 		// 	return v.u32()
 		// }
-		else{
-			panic("could not find type")
+		else {
+			panic('could not find type')
 		}
 	}
 }
 
-pub fn (v RValue) strget() string{
+pub fn (v RValue) strget() string {
 	match v {
-		RInt{
+		RInt {
 			return v.str()
 		}
 		// RArray{
 		// 	return v.str()
 		// }
-		RString{
+		RString {
 			return v.str()
 		}
-		else{
-			panic("could not find type")
+		else {
+			panic('could not find type')
 		}
 	}
 }
 
-pub fn (v RValue) strlist() []string{
+pub fn (v RValue) strlist() []string {
 	match v {
-		RArray{
+		RArray {
 			return v.strlist()
 		}
-		else{
-			panic("could not find type")
+		else {
+			panic('could not find type')
 		}
 	}
 }
 
-pub fn (v RValue) u32list() []u32{
+pub fn (v RValue) u32list() []u32 {
 	match v {
-		RArray{
+		RArray {
 			return v.u32list()
 		}
-		else{
-			panic("could not find type")
+		else {
+			panic('could not find type')
 		}
 	}
 }
-
-
 
 pub const crlf = '\r\n'
 

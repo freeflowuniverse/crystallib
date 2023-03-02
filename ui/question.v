@@ -1,8 +1,8 @@
 module ui
 
-import freeflowuniverse.crystallib.ui.console {UIConsole}
-import freeflowuniverse.crystallib.ui.telegram {UITelegram}
-import freeflowuniverse.crystallib.ui.uimodel {QuestionArgs}
+import freeflowuniverse.crystallib.ui.console { UIConsole }
+import freeflowuniverse.crystallib.ui.telegram { UITelegram }
+import freeflowuniverse.crystallib.ui.uimodel { QuestionArgs }
 
 // args:
 // - description string
@@ -15,15 +15,7 @@ import freeflowuniverse.crystallib.ui.uimodel {QuestionArgs}
 pub fn (mut c UserInterface) ask_question(args QuestionArgs) string {
 	return match mut c.channel {
 		UIConsole { return c.ask_question(args) }
-		UITelegram { return c.ask_question(args)}
-		else{ return error("can't find channel")}
-	}	
+		UITelegram { return c.ask_question(args) }
+		else { return error("can't find channel") }
+	}
 }
-
-
-
-
-
-
-
-

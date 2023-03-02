@@ -1,9 +1,7 @@
 module markdowndocs
 
-
 fn test_wiki_headers_paragraphs() {
-	content := 
-'
+	content := '
 # TMUX
 
 tmux library provides functions for managing local / remote tmux sessions
@@ -20,7 +18,7 @@ To initialize tmux on a local or [remote node](mysite:page.md), simply build the
 ### something else
 
 '
-	mut docs := new(content:content)!
+	mut docs := new(content: content)!
 
 	assert docs.items.len == 5
 	assert docs.items[0] is Header
@@ -42,8 +40,7 @@ To initialize tmux on a local or [remote node](mysite:page.md), simply build the
 }
 
 fn test_wiki_code() {
-	content := 
-'
+	content := '
 # This is some code
 
 ```v
@@ -62,23 +59,21 @@ for x in list {
 	has_public_config:1
 ```
 '
-	mut docs := new(content:content)!
+	mut docs := new(content: content)!
 
 	assert docs.items.len == 4
 	assert docs.items[0] is Header
 	assert docs.items[1] is CodeBlock
 	codeblock1 := docs.items[1] as CodeBlock
-	assert codeblock1.category == "v"
+	assert codeblock1.category == 'v'
 	assert docs.items[2] is Header
 	assert docs.items[3] is CodeBlock
 	codeblock2 := docs.items[3] as CodeBlock
 	assert content.trim_space() == docs.wiki().trim_space()
 }
 
-
 fn test_wiki_links() {
-	content := 
-'
+	content := '
 # this is a test
 
 - [this is link](something.md)
@@ -108,16 +103,14 @@ fn test_wiki_links() {
 }
 
 fn test_wiki_header_too_long() {
-	content := 
-'
+	content := '
 ##### Is ok
 
 ###### Should not be ok
 '
 	mut docs := new(content: content)!
-	
-	expected_wiki := 
-'
+
+	expected_wiki := '
 ##### Is ok
 '
 
@@ -127,8 +120,7 @@ fn test_wiki_header_too_long() {
 }
 
 fn test_wiki_all_together() {
-	content := 
-'
+	content := "
 # Farmerbot
 
 Welcome to the farmerbot. The farmerbot is a service that a farmer can run allowing him to automatically manage the nodes of his farm.
@@ -145,7 +137,7 @@ The first actor is the nodemanager which is in charge of executing jobs related 
 
 Actors can schedule the execution of jobs for other actors which might or might not be running on the same system. For example, the nodemanager might schedule the execution of a job to power on a node (which is meant for the powermanager). The repository [baobab](https://github.com/freeflowuniverse/baobab) contains the logic for scheduling jobs.
 
-Jobs don\'t have to originate from the system running the farmerbot. It may as well be scheduled from another system (with another twin id). The job to find a suitable node for example will come from the TSClient (which is located on another system). These jobs will be send from the TSClient to the farmerbot via [RMB](https://github.com/threefoldtech/rmb-rs).
+Jobs don't have to originate from the system running the farmerbot. It may as well be scheduled from another system (with another twin id). The job to find a suitable node for example will come from the TSClient (which is located on another system). These jobs will be send from the TSClient to the farmerbot via [RMB](https://github.com/threefoldtech/rmb-rs).
 
 ## Configuration
 
@@ -175,8 +167,8 @@ Example:
 	certified:yes
 	cpuoverprovision:1
 ```
-'
-	mut docs := new(content:content)!
+"
+	mut docs := new(content: content)!
 
 	// TODO
 	assert content.trim_space() == docs.wiki().trim_space()

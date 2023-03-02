@@ -2,7 +2,7 @@ module params
 
 import freeflowuniverse.crystallib.resp
 
-//TODO: better to use the binary one
+// TODO: better to use the binary one
 
 // encode using resp (redis procotol)
 pub fn (mut p Params) to_resp() ![]u8 {

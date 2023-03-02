@@ -11,14 +11,14 @@ pub fn (mut node Node) cmd_exists(cmd string) bool {
 
 pub struct NodeExecCmd {
 pub mut:
-	cmd              string
-	period           int // period in which we check when this was done last, if 0 then period is indefinite
-	reset            bool = true //means do again or not
-	remove_installer bool = true // delete the installer
-	description      string
-	stdout           bool = true
-	checkkey         string // if used will use this one in stead of hash of cmd, to check if was executed already
-	tmpdir           string
+	cmd                string
+	period             int  // period in which we check when this was done last, if 0 then period is indefinite
+	reset              bool = true // means do again or not
+	remove_installer   bool = true // delete the installer
+	description        string
+	stdout             bool = true
+	checkkey           string // if used will use this one in stead of hash of cmd, to check if was executed already
+	tmpdir             string
 	ignore_error_codes []int
 }
 
@@ -49,7 +49,7 @@ pub fn (mut node Node) ipaddr_pub_get() !string {
 // ```
 pub fn (mut node Node) exec_cmd(args_ NodeExecCmd) !string {
 	// println(args)
-	mut args:=args_
+	mut args := args_
 	mut cmd := args.cmd
 	mut now_epoch := time.now().unix_time()
 	mut now_str := now_epoch.str()
@@ -73,12 +73,12 @@ pub fn (mut node Node) exec_cmd(args_ NodeExecCmd) !string {
 	if !args.reset && node.done_exists('exec_${hhash}') {
 		if args.period == 0 {
 			println('   - exec cmd:${description} on ${node.name}: was already done, period indefinite.')
-			return node.done_get('exec_${hhash}') or {""}
+			return node.done_get('exec_${hhash}') or { '' }
 		}
 		nodedone := node.done_get_str('exec_${hhash}')
-		splitted:=nodedone.split("|")
-		if splitted.len!=2 {
-			panic("Cannot return from done on exec needs to have |, now \n'$nodedone' ")
+		splitted := nodedone.split('|')
+		if splitted.len != 2 {
+			panic("Cannot return from done on exec needs to have |, now \n'${nodedone}' ")
 		}
 		exec_last_time := splitted[0].int()
 		lastoutput := splitted[1]
@@ -93,23 +93,21 @@ pub fn (mut node Node) exec_cmd(args_ NodeExecCmd) !string {
 	}
 
 	if args.tmpdir.len == 0 {
-		if ! ("TMPDIR" in node.environment){
+		if 'TMPDIR' !in node.environment {
 			return error("Couldn't find TMPDIR.")
 		}
-		args.tmpdir = node.environment["TMPDIR"]		
+		args.tmpdir = node.environment['TMPDIR']
 	}
 	r_path := '${args.tmpdir}/installer.sh'
 	node.file_write(r_path, cmd)!
 	cmd = "mkdir -p ${args.tmpdir} && cd ${args.tmpdir} && export TMPDIR='${args.tmpdir}' && bash ${r_path}"
 	if args.remove_installer {
-		cmd+= " && rm -f ${r_path}"
+		cmd += ' && rm -f ${r_path}'
 	}
 	// println("   - exec cmd:$cmd on $node.name")
-	res:=node.exec(cmd) or {  
-		return error(err.msg() + '\noriginal cmd:\n${args.cmd}') 
-	}
+	res := node.exec(cmd) or { return error(err.msg() + '\noriginal cmd:\n${args.cmd}') }
 
-	node.done_set('exec_${hhash}', "$now_str|$res")!
+	node.done_set('exec_${hhash}', '${now_str}|${res}')!
 	return res
 }
 
@@ -127,14 +125,14 @@ pub fn (mut node Node) exec_ok(cmd string) bool {
 	return true
 }
 
-fn (mut node Node) platform_load()! {
-	//TODO: should rewrite this with one bash script, which gets the required info & returns e.g. env, platform, ... is much faster
+fn (mut node Node) platform_load() ! {
+	// TODO: should rewrite this with one bash script, which gets the required info & returns e.g. env, platform, ... is much faster
 	println(' - platform load')
 	if node.platform == PlatformType.unknown {
 		if node.cmd_exists('sw_vers') {
 			node.platform = PlatformType.osx
-			mut cputype:=node.exec_silent("uname -m")!
-			cputype=cputype.to_lower().trim_space()
+			mut cputype := node.exec_silent('uname -m')!
+			cputype = cputype.to_lower().trim_space()
 			if cputype == 'x86_64' {
 				node.cputype = CPUType.intel
 			} else if cputype == 'arm64' {

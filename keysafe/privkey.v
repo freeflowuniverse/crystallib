@@ -12,7 +12,7 @@ pub:
 }
 
 pub fn key_encode(key []u8) string {
-	return "0x" + hex.encode(key)
+	return '0x' + hex.encode(key)
 }
 
 // retrieve the master public key from PrivKey object
@@ -29,4 +29,3 @@ pub fn (key PrivKey) master_public() string {
 pub fn (key PrivKey) sign(data []u8) []u8 {
 	return key.signkey.sign(data)
 }
-

@@ -1,16 +1,16 @@
-module encoder 
+module encoder
 
 import time
 import x.json2 as json
 
-//example see https://github.com/vlang/v/blob/master/examples/compiletime/reflection.v
+// example see https://github.com/vlang/v/blob/master/examples/compiletime/reflection.v
 
 pub fn encode[T](obj T) ![]u8 {
 	mut d := encoder_new()
 	// compile-time `for` loop
 	// T.fields gives an array of a field metadata type
 	$for field in T.fields {
-        // Primitive types
+		// Primitive types
 		$if field.typ is string {
 			// $(string_expr) produces an identifier
 			d.add_string(obj.$(field.name).str())
@@ -26,7 +26,7 @@ pub fn encode[T](obj T) ![]u8 {
 			d.add_u64(u64(obj.$(field.name)))
 		} $else $if field.typ is time.Time {
 			d.add_time(time.new_time(obj.$(field.name)))
-		// Arrays of primitive types
+			// Arrays of primitive types
 		} $else $if field.typ is []string {
 			// d.add_list_string(obj.$(field.name)) why error??
 			d.add_list_string(obj.$(field.name)[..])
@@ -40,12 +40,12 @@ pub fn encode[T](obj T) ![]u8 {
 			d.add_list_u32(obj.$(field.name)[..])
 		} $else $if field.typ is []u64 {
 			d.add_list_u64(obj.$(field.name)[..])
-		// Maps of primitive types
+			// Maps of primitive types
 		} $else $if field.typ is map[string]string {
 			d.add_map_string(obj.$(field.name).clone())
 		} $else $if field.typ is map[string][]u8 {
 			d.add_map_bytes(obj.$(field.name).clone())
-		// Structs
+			// Structs
 		} $else $if field.is_struct {
 			e := encode(obj.$(field.name))!
 			d.add_list_u8(e)
@@ -58,12 +58,11 @@ pub fn encode[T](obj T) ![]u8 {
 }
 
 pub fn decode[T](data []u8) !T {
-	mut d:=decoder_new(data)
+	mut d := decoder_new(data)
 	mut result := T{}
 	// compile-time `for` loop
 	// T.fields gives an array of a field metadata type
 	$for field in T.fields {
-
 		// println(field.name)
 		// println(typeof(result.$(field.name)).name)
 		// println(result.$(field.name))
@@ -84,7 +83,7 @@ pub fn decode[T](data []u8) !T {
 			result.$(field.name) = d.get_u64()
 		} $else $if field.typ is time.Time {
 			result.$(field.name) = d.get_time()
-		// Arrays of primitive types
+			// Arrays of primitive types
 		} $else $if field.typ is []string {
 			result.$(field.name) = d.get_list_string()
 		} $else $if field.typ is []int {
@@ -97,14 +96,14 @@ pub fn decode[T](data []u8) !T {
 			result.$(field.name) = d.get_list_u32()
 		} $else $if field.typ is []u64 {
 			result.$(field.name) = d.get_list_u64()
-		// Maps of primitive types
+			// Maps of primitive types
 		} $else $if field.typ is map[string]string {
 			result.$(field.name) = d.get_map_string()
 		} $else $if field.typ is map[string][]u8 {
-			result.$(field.name) = d.get_map_bytes()	
-		// Structs
+			result.$(field.name) = d.get_map_bytes()
+			// Structs
 		} $else $if field.is_struct {
-			//TODO handle recursive behavior
+			// TODO handle recursive behavior
 		} $else {
 			typ_name := typeof(result.$(field.name)).name
 			return error("The type `${typ_name}` of field `${field.name}` can't be decoded")
@@ -113,4 +112,4 @@ pub fn decode[T](data []u8) !T {
 	return result
 }
 
-//TODO: complete, the recursive behavior will be little tricky
+// TODO: complete, the recursive behavior will be little tricky

@@ -1,4 +1,5 @@
 module params
+
 import json
 
 // pub struct ParamsPub {
@@ -13,11 +14,10 @@ import json
 // 	value string
 // }
 
-
-pub fn (mut params Params) json_export()string {
+pub fn (mut params Params) json_export() string {
 	return json.encode(params)
 }
 
-pub fn json_import(data string)!Params {
-	return json.decode(Params,data)
+pub fn json_import(data string) !Params {
+	return json.decode(Params, data)
 }

@@ -3,13 +3,13 @@ import freeflowuniverse.crystallib.twinclient as tw
 // This file containes [get_machine, delete_machine, deploy_machine] methods which let you interact with Grid3-client.
 // This script require the `ts-http-server` which you'll find it in `https://github.com/threefoldtech/grid3_client_ts/blob/development/docs/http_server.md`.
 
-pub struct Grid3{
-	mut:
-		grid tw.TwinClient
-		host string
+pub struct Grid3 {
+mut:
+	grid tw.TwinClient
+	host string
 }
 
-pub fn (mut grd Grid3)connect()! Grid3 {
+pub fn (mut grd Grid3) connect() !Grid3 {
 	mut transport := tw.HttpTwinClient{}
 	transport.init(grd.host)!
 	mut grid := tw.grid_client(transport)!
@@ -17,19 +17,19 @@ pub fn (mut grd Grid3)connect()! Grid3 {
 	return grd
 }
 
-pub fn (mut grd Grid3)machines_get(name string) ![]tw.Deployment {
+pub fn (mut grd Grid3) machines_get(name string) ![]tw.Deployment {
 	return grd.grid.machines_get(name)!
 }
 
-pub fn (mut grd Grid3)machines_delete(name string) !tw.ContractResponse {
+pub fn (mut grd Grid3) machines_delete(name string) !tw.ContractResponse {
 	return grd.grid.machines_delete(name)!
 }
 
-pub fn (mut grd Grid3)filter_nodes() ![]tw.Node {
+pub fn (mut grd Grid3) filter_nodes() ![]tw.Node {
 	filters := tw.FilterOptions{
-		country: "Belgium",
-		cru: 50,
-		sru: 50,
+		country: 'Belgium'
+		cru: 50
+		sru: 50
 		available_for: 143
 	}
 	nodes := grd.grid.capacity_filter_nodes(filters)!
@@ -65,24 +65,26 @@ pub fn (mut grd Grid3) machines_deploy(node tw.Node, name string) !tw.DeployResp
 }
 
 fn main() {
-	mut grid := Grid3{host: 'http://localhost:3000'}
+	mut grid := Grid3{
+		host: 'http://localhost:3000'
+	}
 	grid.connect()!
 	machine_name := 'TestVM'
-	found := grid.machines_get(machine_name) or {panic(err)}
+	found := grid.machines_get(machine_name) or { panic(err) }
 	if found.len > 0 {
-		eprintln("Will delete node {$machine_name}.")
+		eprintln('Will delete node {${machine_name}}.')
 		deleted := grid.machines_delete(machine_name)!
 		eprintln(deleted)
 	} else {
-		eprintln("No deployments were found with name > `$machine_name`.")
+		eprintln('No deployments were found with name > `${machine_name}`.')
 	}
 	mut nodes := grid.filter_nodes()!
 	if nodes.len > 0 {
-		eprintln("Node ${nodes[0].node_id} were found!.")
-		eprintln("Deploying on node id ${nodes[0].node_id}.")
+		eprintln('Node ${nodes[0].node_id} were found!.')
+		eprintln('Deploying on node id ${nodes[0].node_id}.')
 		deplyment := grid.machines_deploy(nodes[0], machine_name)!
 		eprintln(deplyment)
-	}else {
-		eprintln("No nodes were found, Maybe invalid filter, try to change the filter and try again.")
+	} else {
+		eprintln('No nodes were found, Maybe invalid filter, try to change the filter and try again.')
 	}
 }

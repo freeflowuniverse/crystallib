@@ -13,26 +13,24 @@ mut:
 
 struct ParserChar {
 mut:
-	charnr  int
-	chars   string
-	errors  []ParserCharError
+	charnr int
+	chars  string
+	errors []ParserCharError
 }
 
 pub fn parser_char_new_path(path string) !ParserChar {
 	if !os.exists(path) {
 		return error("path: '${path}' does not exist, cannot parse.")
 	}
-	mut content := os.read_file(path) or { 
-		return error('Failed to load file ${path}')
-	}
-	return ParserChar {
+	mut content := os.read_file(path) or { return error('Failed to load file ${path}') }
+	return ParserChar{
 		chars: content
 		charnr: 0
 	}
 }
 
 pub fn parser_char_new_text(text string) ParserChar {
-	return ParserChar {
+	return ParserChar{
 		chars: text
 		charnr: 0
 	}
@@ -40,7 +38,7 @@ pub fn parser_char_new_text(text string) ParserChar {
 
 // return a specific char
 fn (mut parser ParserChar) error_add(msg string) {
-	parser.errors << ParserCharError {
+	parser.errors << ParserCharError{
 		error: msg
 		charnr: parser.charnr
 	}
@@ -54,7 +52,7 @@ fn (mut parser ParserChar) char(nr int) !string {
 	if parser.eof() {
 		return error('end of charstring')
 	}
-	return parser.chars.substr(nr, nr+1)
+	return parser.chars.substr(nr, nr + 1)
 }
 
 // get current char
@@ -62,7 +60,6 @@ fn (mut parser ParserChar) char(nr int) !string {
 fn (mut parser ParserChar) char_current() string {
 	return parser.char(parser.charnr) or { panic(err) }
 }
-
 
 fn (mut parser ParserChar) forward(nr int) {
 	parser.charnr += nr
@@ -84,19 +81,17 @@ fn (mut parser ParserChar) char_prev() string {
 	return parser.char(parser.charnr - 1) or { panic(err) }
 }
 
-
 // check if starting from position we are on, offset is to count further
 fn (mut parser ParserChar) text_next_is(tofind string, offset int) bool {
 	startpos := parser.charnr + offset
 	if startpos + tofind.len > parser.chars.len {
 		return false
 	}
-	text := parser.chars.substr(startpos, startpos + tofind.len).replace("\n", "\\n")
+	text := parser.chars.substr(startpos, startpos + tofind.len).replace('\n', '\\n')
 	didfind := (text == tofind)
-	//print(" -NT${offset}($tofind):'$text':$didfind .. ")
+	// print(" -NT${offset}($tofind):'$text':$didfind .. ")
 	return didfind
 }
-
 
 // check if previous text was, current possition does not count
 // offset can be used to include current one (1 means current is last)

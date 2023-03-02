@@ -4,9 +4,9 @@ import crypto.sha256
 import freeflowuniverse.crystallib.keysafe.secp256k1
 
 fn main() {
-	message := "Hello world, this is my awesome message"
+	message := 'Hello world, this is my awesome message'
 
-	println("Coucou")
+	println('Coucou')
 	println(sha256.hexhash(message))
 
 	secp256k1.init()

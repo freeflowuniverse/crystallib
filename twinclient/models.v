@@ -426,7 +426,7 @@ pub:
 	gateway        bool   [omitempty]
 	farm_id        u32    [json: 'farmId'; omitempty]
 	farm_name      string [json: 'farmName']
-	available_for  u32 	  [json: 'availableFor']
+	available_for  u32    [json: 'availableFor']
 	country        string
 	city           string
 }
@@ -585,7 +585,7 @@ pub mut:
 	public_key      string
 	mnemonic        string
 	blockchain_type string
-	twin_id         string	[json: 'twinId']
+	twin_id         string [json: 'twinId']
 }
 
 pub struct BlockChainModel {
@@ -717,20 +717,20 @@ pub enum BlockChainType {
 }
 
 pub struct ZOSGetDeployment {
-	pub mut:
-		node_id u32 [json: 'nodeId']
+pub mut:
+	node_id u32 [json: 'nodeId']
 }
 
-struct ZOSNodeStatisticsResources{
-	cru u32
-	sru u32
-	hru u32
-	mru u32
+struct ZOSNodeStatisticsResources {
+	cru   u32
+	sru   u32
+	hru   u32
+	mru   u32
 	ipv4u u32
 }
 
-pub struct ZOSNodeStatisticsResponse{
-	pub mut:
-		total ZOSNodeStatisticsResources
-		used ZOSNodeStatisticsResources
+pub struct ZOSNodeStatisticsResponse {
+pub mut:
+	total ZOSNodeStatisticsResources
+	used  ZOSNodeStatisticsResources
 }

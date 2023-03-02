@@ -28,7 +28,7 @@ pub mut:
 	networks        []string
 	labels          map[string]string
 	image           &DockerImage
-	engine 			&DockerEngine [str: skip]
+	engine          &DockerEngine           [str: skip]
 	status          DockerContainerStatus
 	memsize         int // in MB
 	command         string
@@ -58,7 +58,7 @@ pub fn (mut container DockerContainer) start() !string {
 }
 
 // delete docker container
-pub fn (mut container DockerContainer) halt() !string {	
+pub fn (mut container DockerContainer) halt() !string {
 	c := container.engine.node.exec_silent('docker stop ${container.id}') or { '' }
 	container.status = DockerContainerStatus.down
 	return c
@@ -67,17 +67,17 @@ pub fn (mut container DockerContainer) halt() !string {
 // delete docker container
 pub fn (mut container DockerContainer) delete(force bool) ! {
 	println(' - CONTAINER DELETE: ${container.name}')
-	mut forcestr:=""
+	mut forcestr := ''
 	if force {
-		forcestr="-f"
+		forcestr = '-f'
 	}
-	container.engine.node.exec_silent('docker rm ${container.id} $forcestr')!
-	mut x:=0
-	for container2 in container.engine.containers{
-		if container2.name == container.name{
+	container.engine.node.exec_silent('docker rm ${container.id} ${forcestr}')!
+	mut x := 0
+	for container2 in container.engine.containers {
+		if container2.name == container.name {
 			container.engine.containers.delete(x)
 		}
-		x+=1
+		x += 1
 	}
 }
 
@@ -110,14 +110,12 @@ pub fn (mut container DockerContainer) shell(cmd string) ! {
 	container.engine.node.shell(cmd2)!
 }
 
-
-
 pub fn (mut container DockerContainer) execute(cmd_ string, silent bool) ! {
 	cmd := 'docker exec ${container.id} ${cmd_}'
 	if silent {
-	container.engine.node.exec_silent(cmd)!
+		container.engine.node.exec_silent(cmd)!
 	} else {
-	container.engine.node.exec(cmd)!
+		container.engine.node.exec(cmd)!
 	}
 }
 
@@ -135,5 +133,4 @@ pub fn (mut container DockerContainer) ssh_enable() ! {
 	// wait  making sure container started correctly
 	// time.sleep_ms(200)
 	// container.engine.node.executor.exec(cmd) !	
-
 }

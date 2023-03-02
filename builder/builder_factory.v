@@ -18,12 +18,12 @@ pub fn new() BuilderFactory {
 }
 
 [params]
-pub struct NodeLocalArgs{
+pub struct NodeLocalArgs {
 pub:
 	reload bool
 }
 
 pub fn node_local(args NodeLocalArgs) !&Node {
 	mut builder := new()
-	return builder.node_new(name: 'localhost', reload:args.reload)
+	return builder.node_new(name: 'localhost', reload: args.reload)
 }

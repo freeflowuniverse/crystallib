@@ -111,22 +111,24 @@ pub fn (params &Params) get_u8_default(key string, defval u8) !u8 {
 pub fn (params &Params) get_kilobytes(key string) !u64 {
 	valuestr := params.get(key)!
 	mut times := 1
-	if valuestr.len > 2 && !valuestr[valuestr.len-2].is_digit() && !valuestr[valuestr.len-1].is_digit() {
-		times = match valuestr[valuestr.len-2 .. ].to_upper() {
-			"GB" {
+	if valuestr.len > 2 && !valuestr[valuestr.len - 2].is_digit()
+		&& !valuestr[valuestr.len - 1].is_digit() {
+		times = match valuestr[valuestr.len - 2..].to_upper() {
+			'GB' {
 				1024 * 2024
 			}
-			"MB" {
+			'MB' {
 				1024
 			}
-			"KB" {
+			'KB' {
 				1
 			}
-			else { 0
+			else {
+				0
 			}
 		}
 		if times == 0 {
-			return error("not valid: should end with kb, mb or gb")
+			return error('not valid: should end with kb, mb or gb')
 		}
 	}
 	return valuestr.u64() * u64(times)
@@ -140,43 +142,43 @@ pub fn (params &Params) get_kilobytes_default(key string, defval u64) !u64 {
 }
 
 fn (params &Params) parse_time(value string) !Duration {
-	is_am := value.ends_with("AM")
-	is_pm := value.ends_with("PM")
+	is_am := value.ends_with('AM')
+	is_pm := value.ends_with('PM')
 	is_am_pm := is_am || is_pm
-	data := if is_am_pm { value[ .. value.len-2].split(":") } else { value.split(":") }
+	data := if is_am_pm { value[..value.len - 2].split(':') } else { value.split(':') }
 	if data.len > 2 {
-		return error("Invalid duration value")
+		return error('Invalid duration value')
 	}
 	minute := if data.len == 2 { data[1].int() } else { 0 }
 	mut hour := data[0].int()
 	if is_am || is_pm {
 		if hour < 0 || hour > 12 {
-				return error("Invalid duration value")
+			return error('Invalid duration value')
 		}
 		if is_pm {
 			hour += 12
 		}
 	} else {
 		if hour < 0 || hour > 24 {
-			return error("Invalid duration value")
+			return error('Invalid duration value')
 		}
 	}
 	if minute < 0 || minute > 60 {
-		return error("Invalid duration value")
+		return error('Invalid duration value')
 	}
-	return time.Duration(time.hour * hour + time.minute * minute)
+	return Duration(time.hour * hour + time.minute * minute)
 }
 
 pub fn (params &Params) get_time_interval(key string) !(Duration, Duration) {
 	valuestr := params.get(key)!
-	data := valuestr.split("-")
+	data := valuestr.split('-')
 	if data.len != 2 {
-		return error("Invalid time interval: begin and end time required")
+		return error('Invalid time interval: begin and end time required')
 	}
 	start := params.parse_time(data[0])!
 	end := params.parse_time(data[1])!
 	if end < start {
-		return error("Invalid time interval: begin time cannot be after end time")
+		return error('Invalid time interval: begin time cannot be after end time')
 	}
 	return start, end
 }
@@ -231,11 +233,10 @@ pub fn (params &Params) get_list_u32(key string) ![]u32 {
 }
 
 pub fn (params &Params) get_list_namefix(key string) ![]string {
-	mut res:= params.get_list(key)!
+	mut res := params.get_list(key)!
 	res = res.map(texttools.name_fix(it))
 	return res
 }
-
 
 // get kwarg, and return list of ints
 // line:

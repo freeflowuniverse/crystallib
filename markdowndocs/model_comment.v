@@ -1,6 +1,5 @@
 module markdowndocs
 
-
 // enum CommentPrefix {
 // 	short
 // 	multi
@@ -18,19 +17,19 @@ fn (mut o Comment) process() ! {
 }
 
 fn (o Comment) wiki() string {
-	mut out := ""
+	mut out := ''
 	if o.singleline {
-		return "//${o.content}\n"
-	}	
-	if o.content.trim_space().contains("\n") {
-		out += "<!-- "
+		return '//${o.content}\n'
+	}
+	if o.content.trim_space().contains('\n') {
+		out += '<!-- '
 		out += o.content.trim_space()
-		out += "\n-->\n\n"
+		out += '\n-->\n\n'
 	} else {
 		if o.singleline {
-			out += "<!-- ${o.content.trim_space()} -->\n"
+			out += '<!-- ${o.content.trim_space()} -->\n'
 		} else {
-			out += "<!-- ${o.content.trim_space()} -->\n\n"
+			out += '<!-- ${o.content.trim_space()} -->\n\n'
 		}
 	}
 	return out
@@ -41,5 +40,7 @@ fn (o Comment) html() string {
 }
 
 fn comment_new(text string) Comment {
-	return Comment{ content:text }
+	return Comment{
+		content: text
+	}
 }

@@ -71,11 +71,11 @@ pub fn (mut book Book) error(args BookErrorArgs) {
 pub fn (mut book Book) fix() ! {
 	// book.fix_summary()!
 	// book.link_pages_files_images()!
-	//TODO: check the links on pages
+	// TODO: check the links on pages
 	// book.errors_report()!
 }
 
-// fixes the summary doc for the book 
+// fixes the summary doc for the book
 fn (mut book Book) fix_summary() ! {
 	for mut paragraph in book.doc_summary.items.filter(it is markdowndocs.Paragraph) {
 		if mut paragraph is markdowndocs.Paragraph {
@@ -90,9 +90,9 @@ fn (mut book Book) fix_summary() ! {
 							println(' - book ${book.name} summary:${link.pathfull()}')
 						}
 						mut sitename := link.path.all_before('/')
-						if link.path == ""{
-							//means site has not been specified
-							return error("site needs to be specified in summary, is the first part of path e.g. sitename/...")
+						if link.path == '' {
+							// means site has not been specified
+							return error('site needs to be specified in summary, is the first part of path e.g. sitename/...')
 						}
 						if book.books.sites.exists(sitename) {
 							mut site := book.books.sites.get(sitename)!
@@ -109,9 +109,10 @@ fn (mut book Book) fix_summary() ! {
 									// $if debug {
 									// 	println('change: $link.content -> $newlink')
 									// }
-									paragraph.content = paragraph.content.replace(link.content,newlink)
+									paragraph.content = paragraph.content.replace(link.content,
+										newlink)
 									// paragraph.doc.save_wiki()!
-									panic("not implemented save wiki")
+									panic('not implemented save wiki')
 								}
 							} else {
 								book.error(
@@ -142,41 +143,41 @@ fn (mut book Book) link_pages_files_images() ! {
 		mut page := book.pages[key]
 		for mut paragraph in page.doc.items.filter(it is markdowndocs.Paragraph) {
 			if mut paragraph is markdowndocs.Paragraph {
-			for mut item in paragraph.items {
-				if mut item is markdowndocs.Link {
-					mut link := item
-					if link.cat == .page {
-						pageobj := page.site.page_get(link.filename) or {
-							book.error(
-								cat: .page_not_found
-								msg: 'Cannot find page: ${link.filename} in ${page.name}'
-							)
-							continue
+				for mut item in paragraph.items {
+					if mut item is markdowndocs.Link {
+						mut link := item
+						if link.cat == .page {
+							pageobj := page.site.page_get(link.filename) or {
+								book.error(
+									cat: .page_not_found
+									msg: 'Cannot find page: ${link.filename} in ${page.name}'
+								)
+								continue
+							}
+							book.pages['${pageobj.site.name}:${pageobj.name}'] = pageobj
 						}
-						book.pages['${pageobj.site.name}:${pageobj.name}'] = pageobj
-					}
-					if link.cat == .file {
-						fileobj := page.site.file_get(link.filename) or {
-							book.error(
-								cat: .file_not_found
-								msg: 'Cannot find file: ${link.filename} in ${page.name}'
-							)
-							continue
+						if link.cat == .file {
+							fileobj := page.site.file_get(link.filename) or {
+								book.error(
+									cat: .file_not_found
+									msg: 'Cannot find file: ${link.filename} in ${page.name}'
+								)
+								continue
+							}
+							book.files['${fileobj.site.name}:${fileobj.name}'] = fileobj
 						}
-						book.files['${fileobj.site.name}:${fileobj.name}'] = fileobj
-					}
-					if link.cat == .image  {
-						imageobj := page.site.image_get(link.filename) or {
-							book.error(
-								cat: .image_not_found
-								msg: 'Cannot find image: ${link.filename} in ${page.name}'
-							)
-							continue
+						if link.cat == .image {
+							imageobj := page.site.image_get(link.filename) or {
+								book.error(
+									cat: .image_not_found
+									msg: 'Cannot find image: ${link.filename} in ${page.name}'
+								)
+								continue
+							}
+							book.images['${imageobj.site.name}:${imageobj.name}'] = imageobj
 						}
-						book.images['${imageobj.site.name}:${imageobj.name}'] = imageobj
 					}
 				}
-			}
 			}
 		}
 	}

@@ -17,7 +17,9 @@ pub fn verifykey_new(name string, remote string) !VerifyKey {
 
 	return VerifyKey{
 		name: name
-		remote: libsodium.VerifyKey{public_key: v}
+		remote: libsodium.VerifyKey{
+			public_key: v
+		}
 	}
 }
 
@@ -25,4 +27,3 @@ pub fn verifykey_new(name string, remote string) !VerifyKey {
 pub fn (key VerifyKey) verify(data []u8) bool {
 	return key.remote.verify(data)
 }
-

@@ -50,7 +50,7 @@ pub fn get(addr string) !Redis {
 	return r
 }
 
-pub fn (mut r Redis) socket_connect() ! {	
+pub fn (mut r Redis) socket_connect() ! {
 	addr := os.expand_tilde_to_home(r.addr)
 	// println(' - REDIS CONNECT: ${addr}')
 	r.socket = net.dial_tcp(addr)!

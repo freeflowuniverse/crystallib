@@ -3,7 +3,7 @@ import os
 
 /////////// THIS IS THE TEMPLATE, THIS CAN BE MODIFIED
 
-///////IMPORTANT DO NOT MODIFY THIS FILE, THIS FILE IS GENERATED FROM TEMPLATE 'data_factory.v'
+///////IMPORTANT DO NOT MODIFY THIS FILE, THIS FILE IS GENERATED FROM TEMPLATE 'data_factory.vtemplate'
 ///////code changes need to be do there and re-run generate.v
 ///////JUST REMOVE THIS FILE IF YOU WANT IT TO BE REGENERATED
 

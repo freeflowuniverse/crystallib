@@ -2,7 +2,7 @@ module main
 
 import freeflowuniverse.crystallib.markdowndocs
 import os
-import markdown
+import examples.markdown
 
 const testpath = os.dir(@FILE) + '/content'
 
@@ -10,21 +10,21 @@ const testpath = os.dir(@FILE) + '/content'
 // 	c:=os.read_file('${testpath}/launch.md') or { panic('cannot parse,${err}') }
 // 	mut m:=markdown.to_md(c)!
 // 	println(m)
-	
+
 // }
 
 fn do2() ! {
 	mut doc := markdowndocs.get('${testpath}/launch.md') or { panic('cannot parse,${err}') }
 	// println(doc)
 	mut o := doc.items[1]
-    // println(o)
+	// println(o)
 	// println(doc.items[0].content)
 
 	// if mut o is markdowndocs.Paragraph {
 	// 	eprintln(o.items)
 	// }
 
-	println("\n\n\n")
+	println('\n\n\n')
 
 	for mut item in doc.items {
 		println(item)
@@ -40,11 +40,9 @@ fn do2() ! {
 		// }
 	}
 
-	println("==================")
+	println('==================')
 	println(doc.wiki())
-
 }
-
 
 fn do3() ! {
 	mut doc := markdowndocs.get('${testpath}/doc.md') or { panic('cannot parse,${err}') }
@@ -65,9 +63,8 @@ fn do3() ! {
 		// }
 	}
 
-	println("==================")
+	println('==================')
 	println(doc.wiki())
-
 }
 
 fn do4() ! {
@@ -89,12 +86,10 @@ fn do4() ! {
 		// }
 	}
 
-	println("==================")
+	println('==================')
 	println(doc.wiki())
-
 }
 
-
 fn main() {
-	do4() or { panic("ERROR:$err") }
+	do4() or { panic('ERROR:${err}') }
 }

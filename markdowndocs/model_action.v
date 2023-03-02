@@ -1,7 +1,7 @@
 module markdowndocs
 
 import freeflowuniverse.crystallib.params
-//import freeflowuniverse.crystallib.texttools
+// import freeflowuniverse.crystallib.texttools
 
 pub struct Action {
 pub mut:
@@ -19,8 +19,8 @@ fn (mut action Action) process() ! {
 }
 
 fn (action Action) wiki() string {
-	return "!!" + action.content.trim_space() + "\n\n"
-	//TODO: BUILD out of action name and params, not from content
+	return '!!' + action.content.trim_space() + '\n\n'
+	// TODO: BUILD out of action name and params, not from content
 }
 
 fn (action Action) html() string {

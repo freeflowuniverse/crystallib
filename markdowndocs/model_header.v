@@ -11,11 +11,11 @@ fn (mut o Header) process() ! {
 }
 
 fn (o Header) wiki() string {
-	mut h := ""
+	mut h := ''
 	for _ in 0 .. o.depth {
-		h += "#"
+		h += '#'
 	}
-	return "$h ${o.content}\n\n"
+	return '${h} ${o.content}\n\n'
 }
 
 fn (o Header) html() string {

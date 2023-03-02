@@ -1,11 +1,10 @@
 module markdowndocs
 
-
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 fn (mut doc Doc) parse() ! {
 	mut parser := parser_line_new(mut &doc)!
-	
+
 	for {
 		if parser.eof() {
 			// println("---end")
@@ -53,14 +52,14 @@ fn (mut doc Doc) parse() ! {
 		if mut llast is Html {
 			if line.trim_space().to_lower().starts_with('</html') {
 				parser.next_start()
-				continue				
+				continue
 			}
 		}
 
 		if mut llast is CodeBlock {
 			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
 				parser.next_start()
-				continue				
+				continue
 			} else {
 				llast.content += '${line}\n'
 			}
@@ -70,7 +69,7 @@ fn (mut doc Doc) parse() ! {
 
 		if mut llast is Paragraph {
 			if line.starts_with('!!') {
-				doc.items << Action {
+				doc.items << Action{
 					content: line.all_after_first('!!')
 				}
 				parser.next()
@@ -79,7 +78,7 @@ fn (mut doc Doc) parse() ! {
 
 			// find codeblock or actions
 			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
-				doc.items << CodeBlock {
+				doc.items << CodeBlock{
 					category: line.substr(3, line.len).to_lower().trim_space()
 				}
 				parser.next()
@@ -98,7 +97,7 @@ fn (mut doc Doc) parse() ! {
 						parser.next_start()
 						continue
 					}
-					doc.items << Header {
+					doc.items << Header{
 						content: line.all_after_first(line[..d]).trim_space()
 						depth: d
 					}
@@ -138,64 +137,58 @@ fn (mut doc Doc) parse() ! {
 				llast.content += line
 			} else {
 				llast.content += line + '\n'
-			}			
+			}
 		} else {
 			println(line)
 			println(llast)
-			panic("parser error, means we got element which is not supported")
+			panic('parser error, means we got element which is not supported')
 		}
 
 		parser.next()
 	}
 
-	//paragraph is used as separator so the empty ones need to be removed
+	// paragraph is used as separator so the empty ones need to be removed
 	mut toremovelist := []int{}
 	mut counter := 0
 	for mut item in doc.items {
 		match mut item {
-			Table { item.process()! }
-			Action { item.process()! }
-			Actions { item.process()! }
-			Header { item.process()! }
+			Table {
+				item.process()!
+			}
+			Action {
+				item.process()!
+			}
+			Actions {
+				item.process()!
+			}
+			Header {
+				item.process()!
+			}
 			Paragraph {
 				item.process()!
-				if item.content.trim(" \r\n") == "" {
+				if item.content.trim(' \r\n') == '' {
 					toremovelist << counter
-				}else if item.items.len == 0 {
+				} else if item.items.len == 0 {
 					toremovelist << counter
 				}
-
 			}
-			Html { item.process()! }
+			Html {
+				item.process()!
+			}
 			// Comment { item.process()! }
-			CodeBlock { item.process()! }
-			Link { item.process()! }
-		}		
+			CodeBlock {
+				item.process()!
+			}
+			Link {
+				item.process()!
+			}
+		}
 		counter += 1
 	}
 	for toremove in toremovelist.reverse() {
 		doc.items.delete(toremove)
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // // walk backwards over the objects, if equal with what we have we keep on walking back
 // // if we find one which is same type as specified will return

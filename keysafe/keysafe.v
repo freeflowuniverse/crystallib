@@ -7,16 +7,15 @@ import libsodium
 import json
 import os
 
-
 /*
- * KeysSafe
+* KeysSafe
  *
  * This module implement a secure keys manager.
  *
  * When loading a keysafe object, you can specify a directory and a secret.
  * In that directory, a file called '.keys' will be created and encrypted using
  * the 'secret' provided (AES-CBC).
- * 
+ *
  * Content of that file is a JSON dictionnary of key-name and it's mnemonic,
  * a single mnemonic is enough to derivate ed25519 and x25519 keys.
  *
@@ -25,20 +24,20 @@ import os
  *
  * key_generate_add() generate a new key and store is as specified name
  * key_import_add() import an existing key based on it's seed and specified name
- * 
- */
+ *
+*/
 
 pub struct KeysSafe {
 pub mut:
-	path    pathlib.Path          // file path of keys
-	loaded  bool                  // flag to know if keysafe is loaded or loading
-	secret  string                // secret to encrypt local file
-	keys    map[string]PrivKey    // list of keys
+	path   pathlib.Path // file path of keys
+	loaded bool   // flag to know if keysafe is loaded or loading
+	secret string // secret to encrypt local file
+	keys   map[string]PrivKey // list of keys
 }
 
 pub struct PersistantKeysSafe {
 pub mut:
-	keys    map[string]string     // store name/mnemonics only
+	keys map[string]string // store name/mnemonics only
 }
 
 // note: root key needs to be 'SigningKey' from libsodium
@@ -52,7 +51,7 @@ pub fn keysafe_get(path0 string, secret string) !KeysSafe {
 	}
 
 	if os.exists(path.absolute()) {
-		println("[+] key file already exists, loading it")
+		println('[+] key file already exists, loading it')
 		safe.load()
 	}
 
@@ -81,7 +80,7 @@ pub fn (mut ks KeysSafe) key_generate_add(name string) !PrivKey {
 }
 
 fn internal_key_encode(key []u8) string {
-	return "0x" + hex.encode(key)
+	return '0x' + hex.encode(key)
 }
 
 fn internal_key_decode(key string) []u8 {
@@ -92,7 +91,7 @@ fn internal_key_decode(key string) []u8 {
 // import based on an existing seed
 pub fn (mut ks KeysSafe) key_import_add(name string, seed []u8) !PrivKey {
 	if name in ks.keys {
-		return error("A key with that name already exists")
+		return error('A key with that name already exists')
 	}
 
 	mnemonic := internal_key_encode(seed) // mnemonic(seed)
@@ -115,15 +114,15 @@ pub fn (mut ks KeysSafe) key_import_add(name string, seed []u8) !PrivKey {
 }
 
 pub fn (mut ks KeysSafe) get(name string) !PrivKey {
-	if ! ks.exists(name) {
-		return error("key not found")
+	if !ks.exists(name) {
+		return error('key not found')
 	}
 
 	return ks.keys[name]
 }
 
 pub fn (mut ks KeysSafe) exists(name string) bool {
-	return (name in ks.keys)
+	return name in ks.keys
 }
 
 pub fn (mut ks KeysSafe) key_add(pk PrivKey) ! {
@@ -137,7 +136,7 @@ pub fn (mut ks KeysSafe) key_add(pk PrivKey) ! {
 }
 
 pub fn (mut ks KeysSafe) persist() {
-	println("[+] saving keys to $ks.path.absolute()")
+	println('[+] saving keys to ${ks.path.absolute()}')
 	serialized := ks.serialize()
 	// println(serialized)
 
@@ -162,7 +161,7 @@ pub fn (mut ks KeysSafe) serialize() string {
 }
 
 pub fn (mut ks KeysSafe) load() {
-	println("[+] loading keys from $ks.path.absolute()")
+	println('[+] loading keys from ${ks.path.absolute()}')
 
 	mut f := os.open(ks.path.absolute()) or { panic(err) }
 
@@ -188,7 +187,7 @@ pub fn (mut ks KeysSafe) deserialize(input string) {
 
 	// serializing mnemonics only
 	for name, mnemo in pks.keys {
-		println("[+] loading key: $name")
+		println('[+] loading key: ${name}')
 		seed := internal_key_decode(mnemo) // mnemonic.parse(mnemo)
 
 		// println("==== SEED ====")

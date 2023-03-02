@@ -1,10 +1,10 @@
 module ui
 
-import freeflowuniverse.crystallib.ui.console {UIConsole}
-import freeflowuniverse.crystallib.ui.telegram {UITelegram}
-import freeflowuniverse.crystallib.ui.uimodel {DropDownArgs}
+import freeflowuniverse.crystallib.ui.console { UIConsole }
+import freeflowuniverse.crystallib.ui.telegram { UITelegram }
+import freeflowuniverse.crystallib.ui.uimodel { DropDownArgs }
 
-//return the dropdown as an int
+// return the dropdown as an int
 // 	description string
 // 	items       []string
 // 	warning     string
@@ -12,10 +12,9 @@ import freeflowuniverse.crystallib.ui.uimodel {DropDownArgs}
 pub fn (mut c UserInterface) ask_dropdown(args DropDownArgs) int {
 	return match mut c.channel {
 		UIConsole { return c.ask_dropdown(args) }
-		UITelegram { return c.ask_dropdown(args)}
-		else{ return error("can't find channel")}
-	}	
-
+		UITelegram { return c.ask_dropdown(args) }
+		else { return error("can't find channel") }
+	}
 }
 
 // result can be multiple, aloso can select all
@@ -26,9 +25,8 @@ pub fn (mut c UserInterface) ask_dropdown(args DropDownArgs) int {
 pub fn (mut c UserInterface) ask_dropdown_multiple(args DropDownArgs) []string {
 	return match mut c.channel {
 		UIConsole { return c.ask_dropdown_multiple(args) }
-		else{ return error("can't find channel")}
-	}	
-
+		else { return error("can't find channel") }
+	}
 }
 
 // will return the string as given as response
@@ -39,6 +37,6 @@ pub fn (mut c UserInterface) ask_dropdown_multiple(args DropDownArgs) []string {
 pub fn (mut c UserInterface) ask_dropdown_string(args DropDownArgs) string {
 	return match mut c.channel {
 		UIConsole { return c.ask_dropdown_string(args) }
-		else{ return error("can't find channel")}
-	}	
+		else { return error("can't find channel") }
+	}
 }

@@ -3,47 +3,51 @@ module markdowndocs
 import pathlib
 
 fn test_link1() {
-	mut docs := new(content:'[Architecture](architecture/architecture.md)')!
+	mut docs := new(content: '[Architecture](architecture/architecture.md)')!
 
 	println(docs)
-		
-	docscompare := markdowndocs.Doc {
+
+	docscompare := Doc{
 		content: '[Architecture](architecture/architecture.md)'
-		items: [markdowndocs.DocItem(markdowndocs.Paragraph {
-			content: '[Architecture](architecture/architecture.md)'
-			items: [markdowndocs.ParagraphItem(markdowndocs.Link {
+		items: [
+			DocItem(Paragraph{
 				content: '[Architecture](architecture/architecture.md)'
-				cat: .page
-				isexternal: false
-				include: true
-				newtab: false
-				moresites: false
-				description: 'Architecture'
-				url: 'architecture/architecture.md'
-				filename: 'architecture.md'
-				path: 'architecture'
-				site: ''
-				extra: ''
-				state: .ok
-				error_msg: ''
-			})]
-			changed: false
-		})]
-		path: pathlib.Path {
+				items: [
+					ParagraphItem(Link{
+						content: '[Architecture](architecture/architecture.md)'
+						cat: .page
+						isexternal: false
+						include: true
+						newtab: false
+						moresites: false
+						description: 'Architecture'
+						url: 'architecture/architecture.md'
+						filename: 'architecture.md'
+						path: 'architecture'
+						site: ''
+						extra: ''
+						state: .ok
+						error_msg: ''
+					}),
+				]
+				changed: false
+			}),
+		]
+		path: pathlib.Path{
 			path: ''
 			cat: .unknown
 			exist: .unknown
 		}
 	}
 
-	assert  docscompare == docs
+	assert docscompare == docs
 
 	paragr := docs.items[0]
 	if paragr is Paragraph {
 		link := paragr.items[0]
 		if link is Link {
 			println(link)
-			assert link == markdowndocs.Link {
+			assert link == Link{
 				content: '[Architecture](architecture/architecture.md)'
 				cat: .page
 				isexternal: false
@@ -66,18 +70,16 @@ fn test_link1() {
 	panic('error, should not get here')
 }
 
-
-
 fn test_link2() {
-	mut docs := new(content:'[Architecture](@*!architecture/architecture.md)')!
+	mut docs := new(content: '[Architecture](@*!architecture/architecture.md)')!
 
 	paragr := docs.items[0]
 	if paragr is Paragraph {
 		link := paragr.items[0]
 		if link is Link {
 			println(link)
-			assert "[Architecture](*!@architecture/architecture.md)" == link.wiki()
-			assert link == markdowndocs.Link {
+			assert '[Architecture](*!@architecture/architecture.md)' == link.wiki()
+			assert link == Link{
 				content: '[Architecture](@*!architecture/architecture.md)'
 				cat: .page
 				isexternal: false
@@ -100,10 +102,8 @@ fn test_link2() {
 	panic('error, should not get here')
 }
 
-
-
 fn test_link3() {
-	mut docs := new(content:'[AArchitecture](./img/license_threefoldfzc.png \':size=800x900\')')!
+	mut docs := new(content: "[AArchitecture](./img/license_threefoldfzc.png ':size=800x900')")!
 
 	paragr := docs.items[0]
 	if paragr is Paragraph {
@@ -112,19 +112,19 @@ fn test_link3() {
 			println(link)
 			println(link.wiki())
 			assert "![AArchitecture](img/license_threefoldfzc.png ':size=800x900')" == link.wiki()
-			assert link == markdowndocs.Link {
-				content: '[AArchitecture](./img/license_threefoldfzc.png \':size=800x900\')'
+			assert link == Link{
+				content: "[AArchitecture](./img/license_threefoldfzc.png ':size=800x900')"
 				cat: .image
 				isexternal: false
 				include: true
 				newtab: false
 				moresites: false
 				description: 'AArchitecture'
-				url: './img/license_threefoldfzc.png \':size=800x900\''
+				url: "./img/license_threefoldfzc.png ':size=800x900'"
 				filename: 'license_threefoldfzc.png'
 				path: 'img'
 				site: ''
-				extra: '\':size=800x900\''
+				extra: "':size=800x900'"
 				state: .ok
 				error_msg: ''
 			}
@@ -136,7 +136,9 @@ fn test_link3() {
 }
 
 fn test_link4() {
-	mut docs := new(content:'[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)')!
+	mut docs := new(
+		content: '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)'
+	)!
 
 	paragr := docs.items[0]
 	if paragr is Paragraph {
@@ -145,7 +147,7 @@ fn test_link4() {
 			println(link)
 			println(link.wiki())
 			assert '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)' == link.wiki()
-			assert link == markdowndocs.Link {
+			assert link == Link{
 				content: '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)'
 				cat: .html
 				isexternal: true
@@ -170,14 +172,13 @@ fn test_link4() {
 
 //> TODO: some more tests like below with mutliple links in 1 line ...
 
-
 // fn test_link7() {
 // 	mut lp := LinkParseResult{}
 // 	mut para := Paragraph{}
 // 	lp = para.link_parser('
-// 		hi [Architecture](mysite:new/newer.md) is something else [Something](yes/start.md) 
+// 		hi [Architecture](mysite:new/newer.md) is something else [Something](yes/start.md)
 // 		line
-// 		 [Something](yes/start.md) 
+// 		 [Something](yes/start.md)
 // 	') or {
 // 		panic(err)
 // 	}

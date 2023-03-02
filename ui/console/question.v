@@ -1,8 +1,8 @@
 module console
 
 import os
-import freeflowuniverse.crystallib.ui.uimodel {QuestionArgs}
-import freeflowuniverse.crystallib.console {color_fg}
+import freeflowuniverse.crystallib.ui.uimodel { QuestionArgs }
+import freeflowuniverse.crystallib.console { color_fg }
 
 // args:
 // - description string

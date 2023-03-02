@@ -7,16 +7,16 @@ fn test_macro() {
 	result := macro_parse(text) or { panic(err) }
 	println(result)
 
-	r := markdowndocs.MacroObj {
+	r := MacroObj{
 		cmd: 'command.1.x'
-		params: params.Params {
-			params: [params.Param {
+		params: params.Params{
+			params: [params.Param{
 				key: 'color'
 				value: 'red'
-			}, params.Param {
+			}, params.Param{
 				key: 'priority'
 				value: 'incredible'
-			}, params.Param {
+			}, params.Param{
 				key: 'description'
 				value: 'with spaces, lets see if ok'
 			}]

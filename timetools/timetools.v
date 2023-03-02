@@ -3,26 +3,24 @@ module timetools
 import time
 
 const (
-	numbers = ['0','1','2','3','4','5','6','7','8','9','0']
-	letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+	numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+	letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+		'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
-
-	months = {
-		'january' : 1
-		'february' : 2
-		'march' : 3
-		'april' : 4
-		'may' : 5
-		'june' : 6
-		'july' : 7
-		'august' : 8
-		'september' : 9
-		'october' : 10
-		'november' : 11
-		'december' : 12
+	months  = {
+		'january':   1
+		'february':  2
+		'march':     3
+		'april':     4
+		'may':       5
+		'june':      6
+		'july':      7
+		'august':    8
+		'september': 9
+		'october':   10
+		'november':  11
+		'december':  12
 	}
-
-
 )
 
 pub struct Expiration {
@@ -159,9 +157,8 @@ pub fn get_unix_from_absolute(timestr string) !i64 {
 	return time_struct.unix_time() - 10_800
 }
 
-pub fn parse_date (datestr_ string) !map[string]int {
-	
-	mut datestr_list := datestr_.to_lower().replace(' ','').split('')
+pub fn parse_date(datestr_ string) !map[string]int {
+	mut datestr_list := datestr_.to_lower().replace(' ', '').split('')
 
 	mut day := ''
 	mut month_str := ''
@@ -184,22 +181,21 @@ pub fn parse_date (datestr_ string) !map[string]int {
 	}
 
 	if month_found == false {
-		return error("Month could not be identified")
+		return error('Month could not be identified')
 	}
 
 	if day.int() > 31 {
-		return error("Day value too large")
+		return error('Day value too large')
 	}
 
 	return {
 		'month': month_int
-		'day': day.int()
+		'day':   day.int()
 	}
 }
 
-pub fn parse_time (timestr_ string) !map[string]int {
-
-	mut clean_time := timestr_.replace_each([';', ':', '.', ':', ',', ':', ' ','']).to_lower()
+pub fn parse_time(timestr_ string) !map[string]int {
+	mut clean_time := timestr_.replace_each([';', ':', '.', ':', ',', ':', ' ', '']).to_lower()
 	mut identifier := ''
 	mut no_letter_time := ''
 
@@ -225,13 +221,13 @@ pub fn parse_time (timestr_ string) !map[string]int {
 	}
 
 	if hour > 24 {
-		return error("Hour given is too great")
+		return error('Hour given is too great')
 	} else if minute > 59 {
-		return error("Minute given is too great")
+		return error('Minute given is too great')
 	}
 
 	return {
-		'hour': hour
+		'hour':   hour
 		'minute': minute
 	}
 }

@@ -13,10 +13,9 @@ fn C.secp256k1_new() &Secp256k1_t
 
 pub fn init() string {
 	a := C.secp256k1_new()
-	return "LOL"
+	return 'LOL'
 }
 
 fn test() {
-	println("Hello World")
-
+	println('Hello World')
 }
