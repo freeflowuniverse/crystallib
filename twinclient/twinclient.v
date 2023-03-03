@@ -1,7 +1,6 @@
 module twinclient
 
 import freeflowuniverse.crystallib.redisclient
-import freeflowuniverse.crystallib.resp
 import net.websocket as ws
 import net.http
 import x.json2
@@ -37,11 +36,11 @@ pub fn (htp HttpTwinClient) send(functionPath string, args string) !Message {
 		read_timeout: 120 * time.second
         write_timeout: 120 * time.second
 	}
-	resp := request.do()!
+	response := request.do()!
 
 	mut message := Message{}
-	mut decoded := json2.raw_decode(resp.body)!
-	if resp.status_code == 200 {
+	mut decoded := json2.raw_decode(response.body)!
+	if response.status_code == 200 {
 		result := decoded.as_map()['result']!
 		message.data = result.str()
 	} else {
