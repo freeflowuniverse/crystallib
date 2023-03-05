@@ -8,7 +8,7 @@ pub fn (mut client TwinClient) zos_deploy(payload string) !Contract {
 	return json.decode(Contract, response.data)!
 }
 
-pub fn (mut client TwinClient) zos_get_node_statistics(node_id u32) !ZOSNodeStatisticsResponse{
+pub fn (mut client TwinClient) zos_get_node_statistics(node_id u32) !ZOSNodeStatisticsResponse {
 	// ZOSGetDeployment
 	data := ZOSGetDeployment{
 		node_id: node_id
@@ -17,7 +17,7 @@ pub fn (mut client TwinClient) zos_get_node_statistics(node_id u32) !ZOSNodeStat
 	return json.decode(ZOSNodeStatisticsResponse, response.data)!
 }
 
-pub fn (mut client TwinClient) zos_ping_node(node_id u32) !Message{
+pub fn (mut client TwinClient) zos_ping_node(node_id u32) !Message {
 	// ZOSGetDeployment
 	data := ZOSGetDeployment{
 		node_id: node_id

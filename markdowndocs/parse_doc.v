@@ -1,12 +1,10 @@
 module markdowndocs
 
-
-
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 fn (mut doc Doc) parse() ! {
-	mut parser:=parser_line_new(mut &doc)!
-	
+	mut parser := parser_line_new(mut &doc)!
+
 	for {
 		if parser.eof() {
 			// println("---end")
@@ -16,7 +14,7 @@ fn (mut doc Doc) parse() ! {
 		line := parser.line_current()
 		// println(line)
 
-		mut llast:=parser.lastitem()
+		mut llast := parser.lastitem()
 		// println(llast)
 
 		// if mut llast is Comment {
@@ -52,16 +50,16 @@ fn (mut doc Doc) parse() ! {
 		}
 
 		if mut llast is Html {
-			if line.trim_space().to_lower().starts_with('</html'){
+			if line.trim_space().to_lower().starts_with('</html') {
 				parser.next_start()
-				continue				
+				continue
 			}
 		}
 
 		if mut llast is CodeBlock {
 			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
 				parser.next_start()
-				continue				
+				continue
 			} else {
 				llast.content += '${line}\n'
 			}
@@ -69,7 +67,7 @@ fn (mut doc Doc) parse() ! {
 			continue
 		}
 
-		if mut llast is Paragraph{
+		if mut llast is Paragraph {
 			if line.starts_with('!!') {
 				doc.items << Action{
 					content: line.all_after_first('!!')
@@ -97,7 +95,6 @@ fn (mut doc Doc) parse() ! {
 				doc.items << Header{
 					content: line.all_after_first('#####').trim_space()
 					depth: 5
-
 				}
 				parser.next_start()
 				continue
@@ -106,7 +103,6 @@ fn (mut doc Doc) parse() ! {
 				doc.items << Header{
 					content: line.all_after_first('####').trim_space()
 					depth: 4
-
 				}
 				parser.next_start()
 				continue
@@ -115,7 +111,6 @@ fn (mut doc Doc) parse() ! {
 				doc.items << Header{
 					content: line.all_after_first('###').trim_space()
 					depth: 3
-
 				}
 				parser.next_start()
 				continue
@@ -124,7 +119,6 @@ fn (mut doc Doc) parse() ! {
 				doc.items << Header{
 					content: line.all_after_first('##').trim_space()
 					depth: 2
-
 				}
 				parser.next_start()
 				continue
@@ -133,16 +127,15 @@ fn (mut doc Doc) parse() ! {
 				doc.items << Header{
 					content: line.all_after_first('#').trim_space()
 					depth: 1
-
 				}
 				parser.next_start()
 				continue
 			}
 
-			if line.trim_space().to_lower().starts_with('<html'){
+			if line.trim_space().to_lower().starts_with('<html') {
 				doc.items << Html{}
 				parser.next()
-				continue				
+				continue
 			}
 
 			// if line.trim_space().starts_with('//') {
@@ -165,72 +158,64 @@ fn (mut doc Doc) parse() ! {
 			// }
 		}
 
-		if mut llast is Paragraph || mut llast is Html || mut llast is CodeBlock{
-			if parser.endlf==false && parser.next_is_eof(){
+		if mut llast is Paragraph || mut llast is Html || mut llast is CodeBlock {
+			if parser.endlf == false && parser.next_is_eof() {
 				llast.content += line
-			}else{
+			} else {
 				llast.content += line + '\n'
 			}
-			
 		} else {
 			println(line)
 			println(llast)
-			panic("parser error, means we got element which is not supported")
+			panic('parser error, means we got element which is not supported')
 		}
 
 		parser.next()
 	}
 
-	//paragraph is used as separator so the empty ones need to be removed
+	// paragraph is used as separator so the empty ones need to be removed
 
-
-	mut toremovelist:=[]int{}
-	mut counter:=0
-	for mut item in doc.items{
+	mut toremovelist := []int{}
+	mut counter := 0
+	for mut item in doc.items {
 		match mut item {
-			Table { item.process()! }
-			Action { item.process()! }
-			Actions { item.process()! }
-			Header { item.process()! }
+			Table {
+				item.process()!
+			}
+			Action {
+				item.process()!
+			}
+			Actions {
+				item.process()!
+			}
+			Header {
+				item.process()!
+			}
 			Paragraph {
 				item.process()!
-				if item.content.trim(" \n")=="" {
+				if item.content.trim(' \n') == '' {
 					toremovelist << counter
-				}else if item.items.len==0{
+				} else if item.items.len == 0 {
 					toremovelist << counter
-				}			
+				}
 			}
-			Html { item.process()! }
+			Html {
+				item.process()!
+			}
 			// Comment { item.process()! }
-			CodeBlock { item.process()! }
-			Link { item.process()! }
-		}		
-		counter+=1
+			CodeBlock {
+				item.process()!
+			}
+			Link {
+				item.process()!
+			}
+		}
+		counter += 1
 	}
-	for toremove in toremovelist.reverse(){
+	for toremove in toremovelist.reverse() {
 		doc.items.delete(toremove)
 	}
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // // walk backwards over the objects, if equal with what we have we keep on walking back
 // // if we find one which is same type as specified will return

@@ -31,7 +31,7 @@ fn (mut f RoomOrderFlow) room_select() ! {
 }
 
 fn do() ! {
-	//open your flow and attach the required channel to it
+	// open your flow and attach the required channel to it
 	mut f := RoomOrderFlow{
 		ui: ui.new(.console)
 	}

@@ -145,11 +145,11 @@ pub fn (mut sites Sites) sitenames() []string {
 // 	return ''
 // }
 
-//internal function
+// internal function
 fn (mut sites Sites) site_get_from_object_name(name string) !&Site {
 	sitename, _ := get_site_and_obj_name(name, true)!
 	if sitename == '' {
-		return error("Specify the site name, format to use is: 'site:object', specified:'$name")
+		return error("Specify the site name, format to use is: 'site:object', specified:'${name}")
 	}
 	if sitename in sites.sites {
 		// means site exists
@@ -161,42 +161,40 @@ fn (mut sites Sites) site_get_from_object_name(name string) !&Site {
 	return error(msg)
 }
 
-// get the page 
+// get the page
 // the site name needs to be specified
 pub fn (mut sites Sites) page_get(name string) !&Page {
 	_, namelower := get_site_and_obj_name(name, true)!
-	mut site :=sites.site_get_from_object_name(name)!
+	mut site := sites.site_get_from_object_name(name)!
 	return site.page_get(namelower)!
 }
 
-// get the image 
+// get the image
 // the site name needs to be specified
 pub fn (mut sites Sites) image_get(name string) !&File {
 	_, namelower := get_site_and_obj_name(name, true)!
-	mut site :=sites.site_get_from_object_name(name)!
+	mut site := sites.site_get_from_object_name(name)!
 	return site.image_get(namelower)!
 }
 
-
-//will walk over all sites, untill it finds the image or the file
+// will walk over all sites, untill it finds the image or the file
 pub fn (mut sites Sites) image_file_find_over_sites(name string) !&File {
-	mut _, namelower := get_site_and_obj_name(name, false)!	
-	for _,mut site in sites.sites{
-		if site.image_exists(namelower){
+	_, namelower := get_site_and_obj_name(name, false)!
+	for _, mut site in sites.sites {
+		if site.image_exists(namelower) {
 			return site.image_get(namelower)
 		}
-		if site.file_exists(namelower){
+		if site.file_exists(namelower) {
 			return site.file_get(namelower)
-		}		
+		}
 	}
-	return error("could not find image over all sites: $name")
+	return error('could not find image over all sites: ${name}')
 }
 
-
-// get the file 
+// get the file
 // the site name needs to be specified
 pub fn (mut sites Sites) file_get(name string) !&File {
 	_, namelower := get_site_and_obj_name(name, true)!
-	mut site :=sites.site_get_from_object_name(name)!
+	mut site := sites.site_get_from_object_name(name)!
 	return site.file_get(namelower)!
 }

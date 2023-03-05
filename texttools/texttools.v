@@ -21,7 +21,7 @@ pub fn dedent(text string) string {
 
 	for line2 in text_lines {
 		// println("'$line2' $pre")
-		if line2.trim_space()==""{
+		if line2.trim_space() == '' {
 			continue
 		}
 		line2_expanded_tab := line2.replace('\t', '    ')

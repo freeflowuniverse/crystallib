@@ -5,19 +5,19 @@ import freeflowuniverse.crystallib.gittools
 import os
 
 const path0 = '~/code/github/threefoldfoundation/books'
+
 const reset = false
 
 fn do() ! {
+	mut path := ''
 
-	mut path:=""
-
-	if reset || (! os.exists(path)){
-		mut gs := gittools.get(root:"/tmp/code")!
+	if reset || (!os.exists(path)) {
+		mut gs := gittools.get(root: '/tmp/code')!
 
 		url := 'git@github.com:threefoldfoundation/books.git'
 		mut gr := gs.repo_get_from_url(url: url, pull: false, reset: reset)!
 		path = gr.path
-	}else{
+	} else {
 		path = path0
 	}
 

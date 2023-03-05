@@ -7,7 +7,7 @@ fn test_macro() {
 	result := macro_parse(text) or { panic(err) }
 	println(result)
 
-	r:=markdowndocs.MacroObj{
+	r := MacroObj{
 		cmd: 'command.1.x'
 		params: params.Params{
 			params: [params.Param{
@@ -24,5 +24,4 @@ fn test_macro() {
 		}
 	}
 	assert r == result
-
 }

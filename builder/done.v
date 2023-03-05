@@ -1,6 +1,5 @@
 module builder
 
-
 pub fn (mut node Node) done_set(key string, val string) ! {
 	if key in node.done {
 		if node.done[key] == val {

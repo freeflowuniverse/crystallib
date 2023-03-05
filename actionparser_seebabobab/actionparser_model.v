@@ -25,21 +25,20 @@ pub fn (action Action) str() string {
 	return p
 }
 
-//return list of names
-//the names are normalized (no special chars, lowercase, ... )
+// return list of names
+// the names are normalized (no special chars, lowercase, ... )
 pub fn (action Action) names() []string {
 	mut names := []string{}
-	for name in action.name.split("."){
+	for name in action.name.split('.') {
 		names << texttools.name_fix(name)
 	}
 	return names
 }
 
-
 enum ActionState {
-	init //first state
-	next //will continue with next steps
+	init // first state
+	next // will continue with next steps
 	restart
 	error
-	done //means we don't process the next ones
+	done // means we don't process the next ones
 }

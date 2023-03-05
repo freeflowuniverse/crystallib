@@ -2,7 +2,7 @@ module zdb
 
 fn test_get() {
 	// must set unix domain with --socket argument when running zdb
-	// run zdb as following:  
+	// run zdb as following:
 	//		mkdir -p ~/.zdb/ && zdb --socket ~/.zdb/socket --admin 1234
 	mut zdb := get('~/.zdb/socket', '1234', 'test')!
 

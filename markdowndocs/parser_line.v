@@ -1,6 +1,6 @@
 module markdowndocs
 
-//is a line parser
+// is a line parser
 
 // error while parsing
 struct ParserError {
@@ -16,15 +16,17 @@ mut:
 	linenr int
 	lines  []string
 	errors []ParserError
-	endlf bool //if there is a linefeed or \n at end
+	endlf  bool // if there is a linefeed or \n at end
 }
 
-fn parser_line_new(mut doc &Doc)! Parser{
-	mut parser:=Parser{doc:doc}
-	parser.doc.items<<Paragraph{}
+fn parser_line_new(mut doc Doc) !Parser {
+	mut parser := Parser{
+		doc: doc
+	}
+	parser.doc.items << Paragraph{}
 	parser.lines = doc.content.split_into_lines()
-	if doc.content.ends_with("\n"){
-		parser.endlf=true
+	if doc.content.ends_with('\n') {
+		parser.endlf = true
 	}
 	parser.lines.map(it.replace('\t', '    ')) // remove the tabs
 	parser.linenr = 0
@@ -61,12 +63,12 @@ fn (mut parser Parser) line_current() string {
 	return parser.line(parser.linenr) or { panic(err) }
 }
 
-//get name of the element
+// get name of the element
 fn (mut parser Parser) elementname() string {
-	if parser.doc.items.len==0{
-		return "start"
+	if parser.doc.items.len == 0 {
+		return 'start'
 	}
-  	return parser.doc.items.last().type_name().all_after_last('.').to_lower()
+	return parser.doc.items.last().type_name().all_after_last('.').to_lower()
 }
 
 // get next line, if end of file will return **EOF**
@@ -86,38 +88,34 @@ fn (mut parser Parser) line_prev() string {
 }
 
 // move further
-fn (mut parser Parser) next() {	
+fn (mut parser Parser) next() {
 	// println("line old (${parser.elementname()}): '${parser.line_current()}'")	
 	parser.linenr += 1
 	// if ! parser.eof(){
 	// 	println("line new (${parser.elementname()}): '${parser.line_current()}'")	
 	// }
-	
 }
 
 // move further and reset the state
 fn (mut parser Parser) next_start() {
-	//means we need to add paragraph because we don't know what comes next
-	if ! (parser.doc.items.last() is Paragraph){
-		parser.doc.items<<Paragraph{}
+	// means we need to add paragraph because we don't know what comes next
+	if parser.doc.items.last() !is Paragraph {
+		parser.doc.items << Paragraph{}
 	}
 	parser.next()
 }
 
-
-
 // return true if end of file
 fn (mut parser Parser) eof() bool {
-	if parser.linenr > (parser.lines.len-1) {
+	if parser.linenr > (parser.lines.len - 1) {
 		return true
 	}
 	return false
 }
 
 fn (mut parser Parser) next_is_eof() bool {
-	if parser.linenr > (parser.lines.len-2) {
+	if parser.linenr > (parser.lines.len - 2) {
 		return true
 	}
 	return false
 }
-

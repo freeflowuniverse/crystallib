@@ -1,8 +1,8 @@
 module model
 
-[root ; inherit:'base']
+[inherit: 'base']
+[root]
 pub struct Group {
 pub mut:
-	users	[]u32
+	users []u32
 }
-

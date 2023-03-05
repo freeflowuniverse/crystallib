@@ -9,16 +9,7 @@ pub mut:
 	path    pathlib.Path
 }
 
-type DocItem = Action
-	| Actions
-	| CodeBlock
-	| Header
-	| Html
-	| Paragraph
-	| Table
-	| Link
-
-
+type DocItem = Action | Actions | CodeBlock | Header | Html | Link | Paragraph | Table
 
 pub fn (mut doc Doc) wiki() string {
 	mut out := ''
@@ -38,7 +29,6 @@ pub fn (mut doc Doc) wiki() string {
 	return out
 }
 
-
 pub fn (mut doc Doc) html() string {
 	mut out := ''
 	for mut item in doc.items {
@@ -46,7 +36,7 @@ pub fn (mut doc Doc) html() string {
 			Table { out += item.html() }
 			Action { out += item.html() }
 			Actions { out += item.html() }
-			Header { out += '<h${item.depth}>${item.content}</h${item.depth}>\n' } //todo: should be moved to item.html()
+			Header { out += '<h${item.depth}>${item.content}</h${item.depth}>\n' } // todo: should be moved to item.html()
 			Paragraph { out += '<p>${item.content}</p>\n' }
 			Html { out += item.html() }
 			// Comment { out += item.html() }
@@ -60,7 +50,6 @@ pub fn (mut doc Doc) html() string {
 pub fn (mut doc Doc) save_wiki() ! {
 	doc.path.write(doc.wiki())!
 }
-
 
 // fn (mut doc Doc) last_item_name() string {
 // 	return parser.doc.items.last().type_name().all_after_last('.').to_lower()

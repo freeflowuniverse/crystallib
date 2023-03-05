@@ -13,17 +13,16 @@ mut:
 
 struct ParserChar {
 mut:
-	charnr  int
-	chars   string
-	errors  []ParserCharError
+	charnr int
+	chars  string
+	errors []ParserCharError
 }
 
 pub fn parser_char_new_path(path string) !ParserChar {
 	if !os.exists(path) {
 		return error("path: '${path}' does not exist, cannot parse.")
 	}
-	mut parser := ParserChar{
-	}
+	mut parser := ParserChar{}
 	mut content := os.read_file(path) or { panic('Failed to load file ${path}') }
 	parser.chars = content
 	parser.charnr = 0
@@ -31,8 +30,7 @@ pub fn parser_char_new_path(path string) !ParserChar {
 }
 
 pub fn parser_char_new_text(text string) ParserChar {
-	mut parser := ParserChar{
-	}
+	mut parser := ParserChar{}
 	parser.chars = text
 	parser.charnr = 0
 	return parser
@@ -54,7 +52,7 @@ fn (mut parser ParserChar) char(nr int) !string {
 	if parser.eof() {
 		return error('end of charstring')
 	}
-	return parser.chars.substr(nr,nr+1)
+	return parser.chars.substr(nr, nr + 1)
 }
 
 // get current char
@@ -63,13 +61,9 @@ fn (mut parser ParserChar) char_current() string {
 	return parser.char(parser.charnr) or { panic(err) }
 }
 
-
 fn (mut parser ParserChar) forward(nr int) {
-	parser.charnr+=nr
+	parser.charnr += nr
 }
-
-
-
 
 // get next char, if end of file will return empty char
 fn (mut parser ParserChar) char_next() string {
@@ -87,19 +81,17 @@ fn (mut parser ParserChar) char_prev() string {
 	return parser.char(parser.charnr - 1) or { panic(err) }
 }
 
-
 // check if starting from position we are on, offset is to count further
 fn (mut parser ParserChar) text_next_is(tofind string, offset int) bool {
-	startpos:=parser.charnr + offset
-	if startpos + tofind.len >  parser.chars.len{
+	startpos := parser.charnr + offset
+	if startpos + tofind.len > parser.chars.len {
 		return false
 	}
-	text := parser.chars.substr(startpos, startpos + tofind.len).replace("\n","\\n")
-	didfind:= (text == tofind)
-	print(" -NT${offset}($tofind):'$text':$didfind .. ")
+	text := parser.chars.substr(startpos, startpos + tofind.len).replace('\n', '\\n')
+	didfind := (text == tofind)
+	print(" -NT${offset}(${tofind}):'${text}':${didfind} .. ")
 	return didfind
 }
-
 
 // check if previous text was, current possition does not count
 // offset can be used to include current one (1 means current is last)

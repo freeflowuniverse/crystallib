@@ -12,11 +12,9 @@ pub:
 	value string
 }
 
-
 pub fn new_params() Params {
 	return Params{}
 }
-
 
 pub fn (mut result Params) kwarg_add(key string, value string) {
 	mut key2 := ''
@@ -27,7 +25,7 @@ pub fn (mut result Params) kwarg_add(key string, value string) {
 	value2 = value.trim(" '")
 	value2 = value2.replace('<<BR>>', '\n')
 	value2 = value2.replace('\\n', '\n')
-	value2 = value2.trim_right(" ")
+	value2 = value2.trim_right(' ')
 
 	result.params << Param{
 		key: key2
@@ -41,12 +39,9 @@ pub fn (mut result Params) arg_add(value string) {
 	result.args << value2
 }
 
-
-
 pub fn (mut p Params) empty() bool {
-	if p.params.len==0 &&  p.args.len==0  {
+	if p.params.len == 0 && p.args.len == 0 {
 		return true
 	}
 	return false
 }
-

@@ -1,18 +1,17 @@
 module main
+
 import freeflowuniverse.crystallib.taskletmanager
 import freeflowuniverse.crystallib.actionrunner
 
+const taskletspath = '~/code/github/threefoldtech/farmerbot/tasklets'
 
-const taskletspath = "~/code/github/threefoldtech/farmerbot/tasklets"
-const jobspath = "~/code/github/threefoldtech/farmerbot/jobsexamples"
+const jobspath = '~/code/github/threefoldtech/farmerbot/jobsexamples'
 
-
-fn do()! {
+fn do() ! {
 	taskletmanager.generate(taskletspath)!
-	mut tm:=taskletmanager.new(taskletspath)!
+	mut tm := taskletmanager.new(taskletspath)!
 	println(tm)
 	// actionrunner.scheduler_new(jobspath)!
-
 }
 
 fn main() {

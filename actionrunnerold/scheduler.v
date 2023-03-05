@@ -12,20 +12,22 @@ import rand
 [heap]
 pub struct Scheduler {
 pub mut:
-	logger   console.Logger
-	path pathlib.Path
+	logger console.Logger
+	path   pathlib.Path
 }
 
 pub fn scheduler_new(path string) !Scheduler {
-	mut p:=pathlib.get_dir(path,true)!
-	mut scheduler:= Scheduler{path:p}
+	mut p := pathlib.get_dir(path, true)!
+	mut scheduler := Scheduler{
+		path: p
+	}
 	scheduler.init()!
 	// scheduler.start()!
 	return scheduler
 }
 
 // creates folders necessary for actionrunner
-fn (mut s Scheduler) init()! {
+fn (mut s Scheduler) init() ! {
 	folders := ['init', 'tostart', 'recurring', 'scheduled', 'active', 'done', 'state', 'logs',
 		'error']
 	for folder in folders {
@@ -33,10 +35,9 @@ fn (mut s Scheduler) init()! {
 	}
 }
 
-//give a action file
-//timeout in seconds
-fn (mut s Scheduler) job_start(content string, dependencies []string, timeout u16)! {
-
+// give a action file
+// timeout in seconds
+fn (mut s Scheduler) job_start(content string, dependencies []string, timeout u16) ! {
 	// mut job:= ActionJob {
 	// 	domain:
 	// 	actor:
@@ -49,5 +50,4 @@ fn (mut s Scheduler) job_start(content string, dependencies []string, timeout u1
 	// 	dependencies:dependencies
 	// 	timeout:timeout
 	// }
-
 }

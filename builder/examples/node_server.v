@@ -12,7 +12,7 @@ fn do() ! {
 
 	mut node := builder.node_new(node_args) or { return error('Failed to get node: ${err}') }
 
-	res:=node.exec("ls /")!
+	res := node.exec('ls /')!
 
 	println(node)
 	println(res)

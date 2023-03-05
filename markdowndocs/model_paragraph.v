@@ -1,6 +1,6 @@
 module markdowndocs
 
-type ParagraphItem = Text | Link | Comment
+type ParagraphItem = Comment | Link | Text
 
 [heap]
 pub struct Paragraph {
@@ -11,19 +11,18 @@ pub mut:
 }
 
 fn (mut paragraph Paragraph) process() ! {
-	if paragraph.items.len==0{
+	if paragraph.items.len == 0 {
 		paragraph.parse()!
-	}	
+	}
 }
-
 
 pub fn (mut paragraph Paragraph) wiki() string {
 	mut out := ''
 	for mut item in paragraph.items {
-		match mut item{
-			Text {out += item.wiki()}
-			Link {out += item.wiki()}
-			Comment {out += item.wiki()}
+		match mut item {
+			Text { out += item.wiki() }
+			Link { out += item.wiki() }
+			Comment { out += item.wiki() }
 		}
 	}
 	return out
@@ -32,10 +31,10 @@ pub fn (mut paragraph Paragraph) wiki() string {
 pub fn (mut paragraph Paragraph) html() string {
 	mut out := ''
 	for mut item in paragraph.items {
-		match mut item{
-			Text {out += item.html()}
-			Link {out += item.html()}
-			Comment {out += item.html()}
+		match mut item {
+			Text { out += item.html() }
+			Link { out += item.html() }
+			Comment { out += item.html() }
 		}
 	}
 	return out
@@ -52,9 +51,6 @@ pub fn (mut paragraph Paragraph) html() string {
 // 	}
 // 	return out
 // }
-
-
-
 
 // fn (mut paragraph Paragraph) last_item_name() string {
 // 	return parser.doc.items.last().type_name().all_after_last('.').to_lower()

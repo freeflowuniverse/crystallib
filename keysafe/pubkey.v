@@ -6,8 +6,8 @@ import encoding.hex
 pub struct PubKey {
 pub:
 	name   string
-	source PrivKey   // ourself (private key, to sign message)
-	remote []u8      // target public key (to encrypt)
+	source PrivKey // ourself (private key, to sign message)
+	remote []u8    // target public key (to encrypt)
 }
 
 pub fn pubkey_new(name string, myself PrivKey, remote string) !PubKey {
@@ -39,4 +39,3 @@ pub fn (key PubKey) decrypt(data []u8) []u8 {
 
 	return decrypted
 }
-

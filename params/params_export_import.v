@@ -25,12 +25,12 @@ pub fn (p Params) export(args ExportArgs) !string {
 		mut val := keys_val[keyname]
 		val = val.replace('\n', '\\n')
 		val = val.replace('\t', '    ')
-		if val.contains(" "){
-			val="'$val'"
+		if val.contains(' ') {
+			val = "'${val}'"
 		}
 		out << '${keyname}:${val}'
 	}
-	mut args2:=p.args.clone()
+	mut args2 := p.args.clone()
 	args2.sort()
 	for arg in args2 {
 		if arg.contains('\n') {
@@ -49,17 +49,17 @@ pub fn importparams(txt string) !Params {
 	return parse(txt)
 }
 
-pub fn (p Params) equal(p2 Params) !bool{
-	a:=p.export()!
-	b:=p2.export()!
+pub fn (p Params) equal(p2 Params) !bool {
+	a := p.export()!
+	b := p2.export()!
 	// println("----------------\n$a")
 	// println("================\n$b")
 	// println("----------------")
-	return a==b
+	return a == b
 }
 
-//returns a unique sha256 in hex, will allways return the same independent of order of params
-pub fn (p Params) hexhash() !string{
-	a:=p.export()!
+// returns a unique sha256 in hex, will allways return the same independent of order of params
+pub fn (p Params) hexhash() !string {
+	a := p.export()!
 	return sha256.hexhash(a)
 }

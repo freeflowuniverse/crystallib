@@ -73,7 +73,7 @@ pub fn (mut h HTTPConnection) send(req Request) !Result {
 		for _ in 0 .. h.retry {
 			response = new_req.do() or {
 				err_message = '${err}'
-				println(err_message)
+				// println(err_message)
 				continue
 			}
 			break
@@ -108,16 +108,18 @@ pub fn (mut h HTTPConnection) post_json_str(mut req Request) !string {
 	return result.data
 }
 
+//do a request with certain prefix on the already specified url
+// parse as json
 pub fn (mut h HTTPConnection) get_json_dict(mut req Request) !map[string]json2.Any {
-	data_ := h.get_json_str(mut req)!
+	data_ := h.get(mut req)!
 	mut data := map[string]json2.Any{}
-
+	println(data)
 	data = crystaljson.json_dict_filter_any(data_, false, [], [])!
 	return data
 }
 
 pub fn (mut h HTTPConnection) get_json_list(mut req Request) ![]string {
-	mut data_ := h.get_json_str(mut req)!
+	mut data_ := h.get(mut req)!
 	if req.dict_key.len > 0 {
 		data_ = crystaljson.json_dict_get_string(data_, false, req.dict_key)!
 	}
@@ -126,7 +128,7 @@ pub fn (mut h HTTPConnection) get_json_list(mut req Request) ![]string {
 }
 
 // Get Request with json data and return response as string
-pub fn (mut h HTTPConnection) get_json_str(mut req Request) !string {
+pub fn (mut h HTTPConnection) get(mut req Request) !string {
 	req.method = .get
 	result := h.send(req)!
 	return result.data

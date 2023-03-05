@@ -1,6 +1,5 @@
 module builder
 
-
 // get node connection to local machine
 // pass your redis client there
 pub fn (mut builder BuilderFactory) node_local() !&Node {
@@ -13,11 +12,11 @@ pub fn (mut builder BuilderFactory) node_get(name string) !&Node {
 		return error('need to specify name')
 	}
 	for node in builder.nodes {
-		if node.name == name{
+		if node.name == name {
 			return &node
 		}
 	}
-	return error("can't find node '${name}'")	
+	return error("can't find node '${name}'")
 }
 
 // the factory which returns an node, based on the arguments will chose ssh executor or the local one
@@ -42,7 +41,7 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) !&Node {
 	}
 
 	for node in builder.nodes {
-		if node.name == args.name{
+		if node.name == args.name {
 			return &node
 		}
 	}
@@ -59,7 +58,7 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) !&Node {
 		factory: &builder
 	}
 
-	wasincache:=node.load()!
+	wasincache := node.load()!
 
 	if wasincache && args.reload {
 		node.readfromsystem()!

@@ -93,7 +93,7 @@ pub fn load_interactive() !string {
 		// }else{
 		// 	return error("Cannot continue, did not find sshkey to use")
 		// }
-		//key_load_with_passphrase(keytouse, passphrase)!
+		// key_load_with_passphrase(keytouse, passphrase)!
 	}
 	return error('Cannot continue, did not find sshkey to use')
 

@@ -4,9 +4,9 @@ import dariotarantini.vgram
 import freeflowuniverse.baobab.client
 import freeflowuniverse.crystallib.params
 
-pub struct UITelegram{
+pub struct UITelegram {
 pub mut:
-	baobab client.Client
+	baobab  client.Client
 	user_id string
 }
 
@@ -17,8 +17,7 @@ pub fn new(user_id string) UITelegram {
 	}
 }
 
-fn (ui UITelegram) send_question (msg string) !string {
-
+fn (ui UITelegram) send_question(msg string) !string {
 	mut j_params := params.Params{}
 	j_params.kwarg_add('question', msg)
 
@@ -26,7 +25,7 @@ fn (ui UITelegram) send_question (msg string) !string {
 		// todo twinid
 		action: 'ui.telegramclient.send_question'
 		params: j_params
-		// todo actionsource 
+		// todo actionsource
 	)
 
 	response := ui.baobab.job_schedule_wait(job, 0)!
@@ -34,8 +33,7 @@ fn (ui UITelegram) send_question (msg string) !string {
 	return response.result.get('answer')
 }
 
-fn (ui UITelegram) send_exit_message (msg string) ! {
-
+fn (ui UITelegram) send_exit_message(msg string) ! {
 	mut j_params := params.Params{}
 	j_params.kwarg_add('message', msg)
 
@@ -43,16 +41,12 @@ fn (ui UITelegram) send_exit_message (msg string) ! {
 		// todo twinid
 		action: 'ui.telegramclient.exit_message'
 		params: j_params
-		// todo actionsource 
+		// todo actionsource
 	)
 
 	response := ui.baobab.job_schedule(job)!
 }
 
-
 /*
 needs to schedule new jobs and wait
-
 */
-
-

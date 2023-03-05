@@ -31,8 +31,6 @@ pub fn (mut session SchedulerSession) run(content string) ! {
 	session.run_from_parser(mut parser)!
 }
 
-
-
 // loads scheduler session from filesystem
 fn (mut session SchedulerSession) load_session(fspath string) {
 	folders := ['init', 'tostart', 'recurring', 'scheduled', 'active', 'done', 'state', 'logs']

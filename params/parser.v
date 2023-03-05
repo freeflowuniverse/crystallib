@@ -10,7 +10,6 @@ enum ParamStatus {
 	quote // quote found means value in between ''
 }
 
-
 // convert text with e.g. color:red or color:'red' to arguments
 // multiline is supported
 // result is params object which allows you to query the info you need

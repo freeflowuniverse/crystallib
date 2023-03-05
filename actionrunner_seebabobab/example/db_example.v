@@ -3,10 +3,10 @@ module main
 import freeflowuniverse.crystallib.actionrunner
 import freeflowuniverse.crystallib.params
 
-const domain="mydomain"
+const domain = 'mydomain'
 
 fn do() ! {
-	mut db:=actionrunner.new_db()!
+	mut db := actionrunner.new_db()!
 
 	mut text := "
 		id:a1 name6:aaaaa
@@ -41,28 +41,25 @@ fn do() ! {
 
 	params := params.parse(text) or { panic(err) }
 
-	model:="test"
+	model := 'test'
 
+	db.set(domain, model, 3, params)!
+	db.set(domain, model, 4, params)!
+	params2 := db.get(domain, model, 3)!
 
-	db.set(domain,model,3,params)!
-	db.set(domain,model,4,params)!
-	params2:=db.get(domain,model,3)!
+	db.key_set(domain, model, 'name.myname', 3)!
+	db.key_set(domain, model, 'name.myname2', 4)!
+	id := db.key_get(domain, model, 'name.myname')!
+	assert id == 3
 
+	ks := db.keys_get(domain, model, 'name.')!
+	assert ks == [u32(3), u32(4)]
 
-	db.key_set(domain,model,"name.myname",3)!
-	db.key_set(domain,model,"name.myname2",4)!
-	id:=db.key_get(domain,model,"name.myname")!
-	assert id==3
-
-	ks:=db.keys_get(domain,model, "name.")!
-	assert ks==[u32(3), u32(4)]
-
-	db.delete_model(domain,model)!
-	ks2:=db.keys_get(domain,model, "name.")!
-	assert ks2==[]
+	db.delete_model(domain, model)!
+	ks2 := db.keys_get(domain, model, 'name.')!
+	assert ks2 == []
 
 	// println(params2)
-
 }
 
 fn main() {

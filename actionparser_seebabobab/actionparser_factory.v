@@ -47,8 +47,7 @@ pub fn file_parse(path string) !ActionsParser {
 	return parser
 }
 
-
-//walk over all files of a dir and return list of actions with its parameters
+// walk over all files of a dir and return list of actions with its parameters
 pub fn dir_parse(path string) !ActionsParser {
 	mut parser := get()
 	parser.add(path)!

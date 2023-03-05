@@ -13,7 +13,7 @@ pub fn get(path_ string) Path {
 	}
 	p2.check()
 	if p2.path.contains('..') {
-		p2.path=p2.absolute()
+		p2.path = p2.absolute()
 	}
 
 	return p2
@@ -31,8 +31,8 @@ pub fn get_dir(path string, create bool) !Path {
 	mut p2 := get(path)
 	p2.check()
 	// println(p2)
-	if create{
-		if p2.exist == .no  {
+	if create {
+		if p2.exist == .no {
 			os.mkdir_all(p2.absolute()) or { return error('cannot create path ${p2}') } // Make sure that all the needed paths created		
 			// println(p2)
 			p2.check()
@@ -42,9 +42,9 @@ pub fn get_dir(path string, create bool) !Path {
 		if !p2.is_dir() {
 			return error('Path ${path} is not a dir.')
 		}
-	}else{
-		if p2.exist == .no  {
-			return error("dir $path does not exist, it should.")
+	} else {
+		if p2.exist == .no {
+			return error('dir ${path} does not exist, it should.')
 		}
 	}
 	return p2

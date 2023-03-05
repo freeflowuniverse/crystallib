@@ -1,12 +1,11 @@
 module hoteldb
 
-type Product = Beverage | Food | Room | Boat
+type Product = Beverage | Boat | Food | Room
 
-pub enum ProductState{
+pub enum ProductState {
 	ok
 	planned
 	unavailable
 	endoflife
 	error
 }
-

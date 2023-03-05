@@ -1,7 +1,6 @@
 module main
 
 import freeflowuniverse.crystallib.rmbprocessor
-
 import log
 import flag
 import os
@@ -18,7 +17,9 @@ fn main() {
 		return
 	}
 
-	mut logger := log.Logger(&log.Log{ level: .debug })
+	mut logger := log.Logger(&log.Log{
+		level: .debug
+	})
 
 	rmbprocessor.process(&logger)!
 }

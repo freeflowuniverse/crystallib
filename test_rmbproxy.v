@@ -1,7 +1,6 @@
 module main
 
 import freeflowuniverse.crystallib.rmbproxy
-
 import log
 import flag
 import os
@@ -19,9 +18,9 @@ fn main() {
 		return
 	}
 
-	mut logger := log.Logger(&log.Log{ level: .debug })
+	mut logger := log.Logger(&log.Log{
+		level: .debug
+	})
 
-	rmbproxy.run(port, &logger) or {
-		panic(err)
-	}
+	rmbproxy.run(port, &logger) or { panic(err) }
 }

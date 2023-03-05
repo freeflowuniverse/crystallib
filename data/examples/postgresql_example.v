@@ -23,8 +23,8 @@ fn do() ? {
 	}
 	for i in 0 .. 99000 {
 		new_customer := Customer{
-			name: 'Bob$i'
-			description: 'Bosssssb$i'
+			name: 'Bob${i}'
+			description: 'Bosssssb${i}'
 			nr_orders: i
 		}
 		sql db {

@@ -3,19 +3,17 @@ module main
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.console
 
-struct RoomOrderFlow{
+struct RoomOrderFlow {
 	current_product string
-	ui ui.UserInterface
+	ui              ui.UserInterface
 }
 
-
-fn (mut f RoomOrderFlow) room_choice()!{
-
+fn (mut f RoomOrderFlow) room_choice() ! {
 	i := ui.ask_dropdown_int(
-		description:"Which type of room do you want?"
-		items:["penthouse","normal","single","appartment_room"]
-		warning:"Please select your right type of room"
-		reset:true
+		description: 'Which type of room do you want?'
+		items: ['penthouse', 'normal', 'single', 'appartment_room']
+		warning: 'Please select your right type of room'
+		reset: true
 	)
 
 	println(i)
@@ -33,13 +31,11 @@ fn (mut f RoomOrderFlow) room_choice()!{
 	// 	if false{
 	// 		println("We are very sorry, we didn't find a non smoking room, do you want another room or you are ok.")
 	// 	}
-		
-	// }
 
+	// }
 }
 
 fn do() ! {
-
 	// all         bool // means user can choose all of them
 	// description string
 	// items       []string
@@ -48,15 +44,11 @@ fn do() ! {
 
 	ui := UserInterface{}
 
-	mut f:=RoomOrderFlow{}
+	mut f := RoomOrderFlow{}
 	f.room_choice()!
 	f.room_availiblei()!
 
-
-
 	// println(i)
-
-
 }
 
 fn main() {

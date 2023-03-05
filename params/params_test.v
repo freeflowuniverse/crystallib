@@ -1,4 +1,5 @@
 module params
+
 import freeflowuniverse.crystallib.texttools
 import json
 
@@ -33,7 +34,6 @@ const textin = "
 	name5:   'aab' 
 "
 
-
 const textin2 = "
 	zz
 	id:a1 name6:aaaaa
@@ -53,10 +53,8 @@ const textin2 = "
 	name5:   'aab' 
 "
 
-
 fn test_multiline_to_params() {
-
-	params := parse(textin) or { panic(err) }
+	params := parse(params.textin) or { panic(err) }
 
 	expectedresult := Params{
 		params: [Param{
@@ -109,7 +107,6 @@ def test():
 
 	// expectedresult
 
-
 	// need to replace /t because of the way how I put the expected result in code here
 	assert json.encode(params) == json.encode(expectedresult).replace('\\t', '    ')
 }
@@ -130,7 +127,7 @@ fn test_macro_args() {
 			key: 'description'
 			value: 'with spaces, lets see if ok'
 		}]
-		args: ['arg1','arg2']
+		args: ['arg1', 'arg2']
 	}
 
 	assert expexted_res == params
@@ -162,7 +159,6 @@ fn test_args_get() {
 	assert y == '2'
 }
 
-
 // fn test_json() {
 
 // 	mut params := parse(textin) or { panic(err) }
@@ -179,38 +175,35 @@ fn test_args_get() {
 // }
 
 fn test_export() {
+	mut params := parse(params.textin) or { panic(err) }
 
-	mut params := parse(textin) or { panic(err) }
-
-	d:=params.export() or {panic(err)}
+	d := params.export() or { panic(err) }
 	// println(d)
-	mut out:='
-	description:\'## markdown works in it\\n\\ndescription can be multiline\\nlets see what happens\\n\\n- a\\n- something else\\n\\n### subtitle\\n\\n```python\\n#even code block in the other block, crazy parsing for sure\\ndef test():\\n    print()\\n```\'
+	mut out := "
+	description:'## markdown works in it\\n\\ndescription can be multiline\\nlets see what happens\\n\\n- a\\n- something else\\n\\n### subtitle\\n\\n```python\\n#even code block in the other block, crazy parsing for sure\\ndef test():\\n    print()\\n```'
 	id:a1
-	name:\'need to do something 1\'
-	name10:\'this is with space\'
+	name:'need to do something 1'
+	name10:'this is with space'
 	name11:aaa11
 	name2:test
 	name3:hi
 	name4:aaa
 	name5:aab
 	name6:aaaaa
-	'
-	assert texttools.dedent(d)==texttools.dedent(out).trim_space()
-
+	"
+	assert texttools.dedent(d) == texttools.dedent(out).trim_space()
 }
 
 fn test_export2() {
+	mut params := parse(params.textin2) or { panic(err) }
 
-	mut params := parse(textin2) or { panic(err) }
-
-	d:=params.export() or {panic(err)}
+	d := params.export() or { panic(err) }
 	// println(d)
-	mut out:='
+	mut out := "
 	description:something\\nyes
 	id:a1
-	name:\'need to do something 1\'
-	name10:\'this is with space\'
+	name:'need to do something 1'
+	name10:'this is with space'
 	name11:aaa11
 	name2:test
 	name3:hi
@@ -220,35 +213,28 @@ fn test_export2() {
 	aa
 	bb
 	zz	
-	'
-	assert texttools.dedent(d)==texttools.dedent(out).trim_space()
-
-
+	"
+	assert texttools.dedent(d) == texttools.dedent(out).trim_space()
 }
 
-
 fn test_import1() {
+	mut params := parse(params.textin2) or { panic(err) }
 
-	mut params := parse(textin2) or { panic(err) }
-
-	d:=params.export() or {panic(err)}
-	mut params2:=importparams(d)or {panic(err)}
+	d := params.export() or { panic(err) }
+	mut params2 := importparams(d) or { panic(err) }
 	// println(params2)
 
 	assert params.equal(params2)!
-
 }
 
-
 fn test_import2() {
+	mut params := parse(params.textin2) or { panic(err) }
 
-	mut params := parse(textin2) or { panic(err) }
-
-	d:='
+	d := "
 	id:a1
 	zz
-	name:\'need to do something 1\'
-	name10:\'this is with space\'
+	name:'need to do something 1'
+	name10:'this is with space'
 	name11:aaa11
 	name2:test
 	name3:hi
@@ -259,19 +245,16 @@ fn test_import2() {
 	bb
 	description:something\\nyes
 
-	'
+	"
 	println(d)
-	mut params2:=importparams(d)or {panic(err)}
+	mut params2 := importparams(d) or { panic(err) }
 	println(params2)
 
 	assert params.equal(params2)!
-	
-
 }
 
 fn test_hexhash() {
-	mut params := parse(textin2) or { panic(err) }
-	h:=params.hexhash()  or {panic(err)}
-	assert h=="e3517c4daa5526cf7a6f200de10a81a9db95460ecd469a53d8dca9d659228c20"
-
+	mut params := parse(params.textin2) or { panic(err) }
+	h := params.hexhash() or { panic(err) }
+	assert h == 'e3517c4daa5526cf7a6f200de10a81a9db95460ecd469a53d8dca9d659228c20'
 }

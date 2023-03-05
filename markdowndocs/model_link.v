@@ -61,17 +61,16 @@ pub fn (mut link Link) name_fix_no_underscore_no_ext() string {
 	// return link.filename.all_before_last('.').trim_right('_').to_lower()
 }
 
-fn (mut o Link) process()!{
+fn (mut o Link) process() ! {
 	o.parse()
 }
 
-
 // return how to represent link on source
 fn (link Link) wiki() string {
-	mut link_filename:=link.filename
-	if link.path  != '' {
+	mut link_filename := link.filename
+	if link.path != '' {
 		link_filename = '${link.path}/${link_filename}'
-	}			
+	}
 	if link.cat == LinkType.image {
 		if link.extra.trim_space() == '' {
 			return '![${link.description}](${link_filename})'
@@ -108,16 +107,13 @@ fn (link Link) wiki() string {
 	return link.content
 }
 
-
-
-fn (o Link) html() string{
+fn (o Link) html() string {
 	return o.wiki()
 }
 
 // fn ( o Link) str() string{
 // 	return "**** Link: ${o.wiki()}\n"
 // }
-
 
 // fn (link Link) original_get_with_ignore() string {
 // 	mut l := "[$descr]($link.url ':ignore')"
@@ -133,12 +129,12 @@ fn link_new() Link {
 
 // add link to a paragraph of a doc
 fn (mut link Link) parse() Link {
-	link.content=link.content.trim_space()
-	if link.content.starts_with("!"){
+	link.content = link.content.trim_space()
+	if link.content.starts_with('!') {
 		link.cat = LinkType.image
 	}
-	link.description = link.content.all_after("[").all_before("]").trim_space()
-	link.url = link.content.all_after("(").all_before(")").trim_space()
+	link.description = link.content.all_after('[').all_before(']').trim_space()
+	link.url = link.content.all_after('(').all_before(')').trim_space()
 	if link.url.contains('://') {
 		// linkstate = LinkState.ok
 		link.isexternal = true
@@ -164,8 +160,7 @@ fn (mut link Link) parse() Link {
 	// AT THIS POINT LINK IS A PAGE OR A FILE
 	////////////////////////////////////////
 
-
-	link.url = link.url.trim_left(" ")
+	link.url = link.url.trim_left(' ')
 
 	// deal with special cases where file is not the only thing in ()
 	if link.url.contains(' ') {

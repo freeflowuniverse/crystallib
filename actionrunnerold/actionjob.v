@@ -33,8 +33,8 @@ pub struct ActionJob {
 pub mut:
 	// id           u32 // unique id
 	guid         string
-	domain		 string
-	actor		 string	
+	domain       string
+	actor        string
 	actionname   string // actionname
 	params       Params
 	state        ActionJobState
@@ -42,8 +42,8 @@ pub mut:
 	end          time.Time
 	grace_period time.Duration
 	error        string
-	dependencies []string       // list the dependencies
-	timeout      u16 // time in seconds, 0 means we wait for ever
+	dependencies []string // list the dependencies
+	timeout      u16      // time in seconds, 0 means we wait for ever
 }
 
 // an actionjob can have 5 events + error msg as return:
@@ -58,7 +58,7 @@ pub mut:
 
 // return true if all dependencies are done
 pub fn (mut job ActionJob) check_dependencies_done() bool {
-	//TODO: need to work with the ID's
+	// TODO: need to work with the ID's
 	// for jopdep in job.dependencies {
 	// 	if jopdep.state == .active {
 	// 		return false // means is still active

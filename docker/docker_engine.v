@@ -13,37 +13,36 @@ pub mut:
 	sshkeys_allowed []string // all keys here have access over ssh into the machine, when ssh enabled
 	images          []DockerImage
 	containers      []DockerContainer
-	buildpath		string
-	dockerhubuser	string
-	localonly bool = true
-	cache bool = true
-	push bool
-	platform []BuildPlatformType
+	buildpath       string
+	dockerhubuser   string
+	localonly       bool = true
+	cache           bool = true
+	push            bool
+	platform        []BuildPlatformType
 }
 
-pub enum BuildPlatformType{
+pub enum BuildPlatformType {
 	linux_arm64
 	linux_amd64
 }
 
 // check docker has been installed & enabled on node
 pub fn (mut e DockerEngine) init() ! {
-	if e.buildpath==""{
-		e.buildpath="/tmp/builder"
-		e.node.exec_silent("mkdir -p ${e.buildpath}")!
+	if e.buildpath == '' {
+		e.buildpath = '/tmp/builder'
+		e.node.exec_silent('mkdir -p ${e.buildpath}')!
 	}
-	if e.dockerhubuser==""{
-		e.dockerhubuser="despiegk"
-	}	
-	if e.platform==[]{
-		if e.node.platform == .ubuntu && e.node.cputype == .intel{
+	if e.dockerhubuser == '' {
+		e.dockerhubuser = 'despiegk'
+	}
+	if e.platform == [] {
+		if e.node.platform == .ubuntu && e.node.cputype == .intel {
 			e.platform = [.linux_amd64]
-		}else if e.node.platform == .osx && e.node.cputype == .arm{
+		} else if e.node.platform == .osx && e.node.cputype == .arm {
 			e.platform = [.linux_arm64]
-		}else{
-			return error("only implemented ubuntu on amd and osx on arm for now for docker engine.")
+		} else {
+			return error('only implemented ubuntu on amd and osx on arm for now for docker engine.')
 		}
-
 	}
 	e.load()!
 }
@@ -84,23 +83,27 @@ pub fn (mut e DockerEngine) load() ! {
 // return list of images
 
 pub fn (mut e DockerEngine) containers_load() ! {
-	e.containers=[]DockerContainer{}
-	mut lines := e.node.exec_cmd(cmd:"docker ps -a --no-trunc --format '{{.ID}}|{{.Names}}|{{.Image}}|{{.Command}}|{{.CreatedAt}}|{{.Ports}}|{{.State}}|{{.Size}}|{{.Mounts}}|{{.Networks}}|{{.Labels}}'",
-		ignore_error_codes:[6])!
+	e.containers = []DockerContainer{}
+	mut lines := e.node.exec_cmd(
+		cmd: "docker ps -a --no-trunc --format '{{.ID}}|{{.Names}}|{{.Image}}|{{.Command}}|{{.CreatedAt}}|{{.Ports}}|{{.State}}|{{.Size}}|{{.Mounts}}|{{.Networks}}|{{.Labels}}'"
+		ignore_error_codes: [6]
+	)!
 	for line in lines.split_into_lines() {
-		if line.trim_space()==""{
+		if line.trim_space() == '' {
 			continue
 		}
 		fields := line.split('|').map(clear_str)
 		println(fields)
 		id := fields[0]
 		mut container := DockerContainer{
-			image: &DockerImage{engine:&e}
-			engine: &e				
+			image: &DockerImage{
+				engine: &e
+			}
+			engine: &e
 		}
 		container.id = id
 		container.name = fields[1]
-		container.image = e.image_get(id:fields[2])!
+		container.image = e.image_get(id: fields[2])!
 		container.command = fields[3]
 		container.created = parse_time(fields[4])!
 		container.ports = parse_ports(fields[5])!
@@ -113,7 +116,6 @@ pub fn (mut e DockerEngine) containers_load() ! {
 		e.containers << container
 	}
 }
-
 
 // get container from memory
 pub fn (mut e DockerEngine) container_get(name_or_id string) !&DockerContainer {
@@ -133,7 +135,6 @@ pub fn (mut e DockerEngine) container_delete(name_or_id string) ! {
 	}
 }
 
-
 // import a container into an image, run docker container with it
 // image_repo examples ['myimage', 'myimage:latest']
 // if DockerContainerCreateArgs contains a name, container will be created and restarted
@@ -150,11 +151,10 @@ pub fn (mut e DockerEngine) container_import(path string, mut args DockerContain
 
 // reset all images & containers, CAREFUL!
 pub fn (mut e DockerEngine) reset_all() ! {
-
-	for mut container in e.containers.clone(){
+	for mut container in e.containers.clone() {
 		container.delete(true)!
 	}
-	for mut image in e.images.clone(){
+	for mut image in e.images.clone() {
 		image.delete(true)!
 	}
 	e.node.exec_silent('docker image prune -a -f') or { panic(err) }
@@ -166,7 +166,7 @@ pub fn (mut e DockerEngine) reset_all() ! {
 pub fn (mut e DockerEngine) get_free_port() ?int {
 	mut used_ports := []int{}
 	mut range := []int{}
-	
+
 	for c in e.containers {
 		for p in c.forwarded_ports {
 			used_ports << p.split(':')[0].int()
@@ -184,4 +184,3 @@ pub fn (mut e DockerEngine) get_free_port() ?int {
 	}
 	return range[0]
 }
-
