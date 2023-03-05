@@ -218,10 +218,10 @@ pub fn (params &Params) get_list(key string) ![]string {
 	if params.exists(key) {
 		mut valuestr := params.get(key)!
 		if valuestr.contains(',') {
-			valuestr = valuestr.trim(' ,')
+			valuestr = valuestr.trim('[] ,')
 			res = valuestr.split(',').map(it.trim(' \'"'))
 		} else {
-			res = [valuestr.trim(' \'"')]
+			res = [valuestr.trim('[] \'"')]
 		}
 	}
 	return res
