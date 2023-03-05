@@ -25,7 +25,7 @@ pub fn (mut paragraph Paragraph) wiki() string {
 			Comment { out += item.wiki() }
 		}
 	}
-	return out
+	return out + '\n\n'
 }
 
 pub fn (mut paragraph Paragraph) html() string {

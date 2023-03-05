@@ -2,7 +2,7 @@ module main
 
 import freeflowuniverse.crystallib.markdowndocs
 import os
-import markdown
+import examples.markdown
 
 const testpath = os.dir(@FILE) + '/content'
 

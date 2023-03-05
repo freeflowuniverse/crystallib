@@ -1,5 +1,9 @@
 module params
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 667df183094470ef5dbeba569d84a1ac2b27784e
 import freeflowuniverse.crystallib.texttools
 import json
 
@@ -258,3 +262,106 @@ fn test_hexhash() {
 	h := params.hexhash() or { panic(err) }
 	assert h == 'e3517c4daa5526cf7a6f200de10a81a9db95460ecd469a53d8dca9d659228c20'
 }
+<<<<<<< HEAD
+=======
+
+/*
+fn test_to_resp_from_resp() {
+	mut input := Params{
+		params: [Param{
+			key: 'id'
+			value: 'a1'
+		}, Param{
+			key: 'name6'
+			value: 'aaaaa'
+		}, Param{
+			key: 'name'
+			value: 'need to do something 1'
+		}, Param{
+			key: 'description'
+			value: '## markdown works in it
+
+	description can be multiline
+	lets see what happens
+
+	- a
+	- something else
+
+	### subtitle
+
+	```python
+	#even code block in the other block, crazy parsing for sure
+	def test():
+	print()
+	```
+	'
+		}, Param{
+			key: 'name2'
+			value: 'test'
+		}, Param{
+			key: 'name3'
+			value: 'hi'
+		}, Param{
+			key: 'name10'
+			value: 'this is with space'
+		}, Param{
+			key: 'name11'
+			value: 'aaa11'
+		}, Param{
+			key: 'name4'
+			value: 'aaa'
+		}, Param{
+			key: 'name5'
+			value: 'aab'
+		}]
+		args: [Arg{
+			value: '111'
+		}, Arg{
+			value: '222'
+		}, Arg{
+			value: '333'
+		}]
+	}
+
+	mut bytes := input.to_resp()!
+	// println(bytes)
+
+	mut p := from_resp(bytes)?
+	println(p.str())
+	// expected result shown below
+}
+*/
+/*
+expected_result := "
+		id: 'a1'
+		name6: 'aaaaa'
+		name: 'need to do something 1'
+		description: '## markdown works in it
+
+		description can be multiline
+		lets see what happens
+
+		- a
+		- something else
+
+		### subtitle
+
+		```python
+		#even code block in the other block, crazy parsing for sure
+		def test():
+		print()
+		```
+		'
+		name2: 'test'
+		name3: 'hi'
+		name10: 'this is with space'
+		name11: 'aaa11'
+		name4: 'aaa'
+		name5: 'aab'
+		args:
+		'111'
+		'222'
+		'333'
+	"
+*/
+>>>>>>> 667df183094470ef5dbeba569d84a1ac2b27784e

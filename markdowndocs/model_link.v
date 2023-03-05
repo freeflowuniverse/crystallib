@@ -28,7 +28,7 @@ pub mut:
 	content     string
 	cat         LinkType
 	isexternal  bool // is not linked to a wiki (sites)
-	include     bool = true // means we will not link to the remote location, content will be shown in context of local site
+	include     bool // means we will not link to the remote location, content will be shown in context of local site
 	newtab      bool // means needs to be opened on a new tab
 	moresites   bool // this means we can look for the content on multiple source sites, site does not have to be specified
 	description string
@@ -91,14 +91,11 @@ fn (link Link) wiki() string {
 		}
 		if link.site != '' {
 			link_filename = '${link.site}:${link_filename}'
-		}
-		if link.include {
+		} else if link.include {
 			link_filename = '@${link_filename}'
-		}
-		if link.newtab {
+		} else if link.newtab {
 			link_filename = '!${link_filename}'
-		}
-		if link.moresites {
+		} else if link.moresites {
 			link_filename = '*${link_filename}'
 		}
 

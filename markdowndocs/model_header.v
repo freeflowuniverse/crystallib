@@ -15,7 +15,10 @@ fn (o Header) wiki() string {
 	for _ in 0 .. o.depth {
 		h += '#'
 	}
+<<<<<<< HEAD
 	h += ' '
+=======
+>>>>>>> 667df183094470ef5dbeba569d84a1ac2b27784e
 	return '${h} ${o.content}\n\n'
 }
 
