@@ -1,9 +1,5 @@
 module params
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 667df183094470ef5dbeba569d84a1ac2b27784e
 import freeflowuniverse.crystallib.texttools
 import json
 
