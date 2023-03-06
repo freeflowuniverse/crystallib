@@ -76,6 +76,7 @@ pub fn (mut r Row) extrapolate_smart (smartstr string) !&Cell {
 			}
 			x:=splitted[0].int()
 			v:=splitted[1].f32()
+			
 		}
 	}
 	
