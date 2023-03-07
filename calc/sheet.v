@@ -1,13 +1,16 @@
 module calc
 
+import freeflowuniverse.crystallib.currency
+
+[heap]
 pub struct Sheet{
 pub mut:
-	sheet_header []string
-	rows_have_header 
-	rows_headers []string
-	rows []Row
-	colsize int //size in nr of columns per row
+	name string
+	rows map[string]&Row
+	nrcol int = 60
 	params SheetParams
+	currencies &currency.Currencies
+	currency &currency.Currency
 }
 
 pub struct SheetParams{
@@ -19,15 +22,59 @@ pub mut:
 //find maximum length of a cell (as string representation for a colnr)
 //0 is the first col
 //the headers if used are never counted
-pub fn (mut s Sheet) len_col_max(colnr int) str {
+pub fn (mut s Sheet) len_col_max(colnr int) !int {
 	mut lmax:=0
-	for row on s.rows{
-		if row.len>colnr{
+	for _,mut row in s.rows{
+		if row.cells.len>colnr{
 			mut c:=row.cell_get(colnr)!
 			ll := c.repr().len
 			if ll>lmax {lmax=ll} 
 		}
 	}
+	return lmax
 
+}
+
+[params]
+struct ToYearArgs{
+pub mut:
+	name string
+	rowfilter []string
+}
+
+pub fn (mut s Sheet) toyear() !Sheet {
+	if args.name==""{
+		args.name=s.name"+_year"
+	}
+	//if rowfilter is not empty only put the rows in as specified and in order of specified
+	//make a new sheet, copy all required properties
+	//create new rows/cells where the toyear represent a year 
+	//use the aggregation property, sum means we sum, avg means we make avg over the year, ...
+	//the result is a new sheet in which we have only required rows and show per year
+
+	//TODO, implement
+	//TODO, make sure to set right nr of cols (/12)
+
+}
+
+pub fn (mut s Sheet) toquarter() !Sheet {
+	if args.name==""{
+		args.name=s.name"+_quarter"
+	}
+	//TODO, implement
+	//TODO, make sure to set right nr of cols (/4)
+
+}
+
+
+//return array with same amount of items as cols in the rows
+//
+//for year we return Y1, Y2, ...
+//for quarter we return Q1, Q2, ...
+//for months we returm m1, m2, ...
+pub fn (mut s Sheet) header() ![]string {
+	//if col + 40 = months
+	//if col + 10 = quarters
+	//else is years
 
 }
