@@ -1,27 +1,29 @@
 module calc
 import freeflowuniverse.crystallib.currency
-// fn test_sheets() {
-
-// 	mut sh:=sheet_new(name:"test") or {panic(err)}
-
-// 	mut nrnodes:=sh.row_new(name:"nrnodes",growth:"5:100,55:1000")!
-// 	mut nrnodes2:=sh.row_new(name:"nrnodes2",growth:"5:100,55:1000,60:500")!
-// 	mut times2:=sh.row_new(name:"times2",growth:"1:2")! //means all cells are nr 2
-
-// 	mut nrnodessum:=nrnodes.add("nrnodessum",nrnodes2)!
-// 	mut nrnodesmin:=nrnodes.subtract("nrnodesmin",nrnodes2)!
-// 	mut nrnodesmulti:=nrnodes.multiply("nrnodesmulti",times2)!
-// 	mut nrnodesdiv:=nrnodes.divide("nrnodesdiv",times2)!
-
-// 	mut nrnodesaggr:=nrnodes.aggregate("nrnodesaggr")!
 
 
-// 	//TODO: we need to create tests for it
+fn test_sheets() {
 
-// 	// println(sh)
-// 	// panic("test1")
+	mut sh:=sheet_new(name:"test") or {panic(err)}
 
-// }
+	mut nrnodes:=sh.row_new(name:"nrnodes",growth:"5:100,55:1000")!
+	mut nrnodes2:=sh.row_new(name:"nrnodes2",growth:"5:100,55:1000,60:500")!
+	mut times2:=sh.row_new(name:"times2",growth:"1:2")! //means all cells are nr 2
+
+	mut nrnodessum:=nrnodes.add("nrnodessum",nrnodes2)!
+	mut nrnodesmin:=nrnodes.subtract("nrnodesmin",nrnodes2)!
+	mut nrnodesmulti:=nrnodes.multiply("nrnodesmulti",times2)!
+	mut nrnodesdiv:=nrnodes.divide("nrnodesdiv",times2)!
+
+	mut nrnodesaggr:=nrnodes.aggregate("nrnodesaggr")!
+
+
+	//TODO: we need to create tests for it
+
+	// println(sh)
+	// panic("test1")
+
+}
 
 fn test_curr() {
 
