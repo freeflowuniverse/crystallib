@@ -42,6 +42,17 @@ pub mut:
 	rowfilter []string
 }
 
+//find all rows which have one of the tags
+//aggregate (sum) them into one row
+// returns a row with the result
+// useful to e.g. make new row which makes sum of all salaries for e.g. devengineering tag (or more than 1 tag)
+pub fn (mut s Sheet) group2row(name string, tags []string) !&Row {
+
+	//TODO, implement
+
+}
+
+
 pub fn (mut s Sheet) toyear() !Sheet {
 	if args.name==""{
 		args.name=s.name"+_year"
@@ -76,5 +87,25 @@ pub fn (mut s Sheet) header() ![]string {
 	//if col + 40 = months
 	//if col + 10 = quarters
 	//else is years
+
+}
+
+
+pub fn (mut s Sheet) json() !string {
+	//export to nice json representation
+
+}
+
+
+//find row, report error if not found
+pub fn (mut s Sheet) row_get(name string) !&Row {
+	//TODO:
+
+}
+
+
+//find row, report error if not found
+pub fn (mut s Sheet) cell_get(row string,col int) !&Cell {
+	//TODO:
 
 }
