@@ -35,11 +35,10 @@ struct ResponseBody {
 // 	return fiat_decoded.rates, crypto_decoded.rates
 // }
 
-
 // // gets the latest currency exchange rates from an API on internet
 // - an array of fiat codes e.g ['EUR', 'AED']
 // - an array of crypto codes e.g ['TERRA']
-// e.g. 
+// e.g.
 pub fn (mut cs Currencies) get_rates(cur_array []string, crypto bool) ! {
 	// http.CommonHeader.authorization: 'Bearer $h.auth.auth_token'
 	mut conn := httpconnection.new('example', 'https://api.exchangerate.host/', true)
@@ -49,22 +48,32 @@ pub fn (mut cs Currencies) get_rates(cur_array []string, crypto bool) ! {
 	for i in ["'", '[', ']', ' '] {
 		cur_codes = cur_codes.replace(i, '')
 	}
-	mut prefix:='latest?base=USD&symbols=$cur_codes'
-	if crypto{
-		prefix+='&source=crypto'
+	mut prefix := 'latest?base=USD&symbols=${cur_codes}'
+	if crypto {
+		prefix += '&source=crypto'
 	}
-	response:=conn.get(mut prefix:prefix )!
-	decoded := json.decode(ResponseBody, response) or {return error("Failed to decode crypto json: $err")}
-	for key,rate in decoded.rates{
-		c:=Currency{name:key.to_upper(),usdval:1/rate}
-		cs.currencies[key.to_upper()]=&c
+	response := conn.get(mut prefix: prefix)!
+	decoded := json.decode(ResponseBody, response) or {
+		return error('Failed to decode crypto json: ${err}')
 	}
-
+	for key, rate in decoded.rates {
+		c := Currency{
+			name: key.to_upper()
+			usdval: 1 / rate
+		}
+		cs.currencies[key.to_upper()] = &c
+	}
 }
 
 pub fn (mut cs Currencies) defaults_set() {
-	mut c1:=Currency{name: 'TFT',usdval: 0.015}
-	cs.currencies['TFT']=&c1
-	mut c2:=Currency{name: '',usdval: 0.0}
-	cs.currencies['']=&c2
+	mut c1 := Currency{
+		name: 'TFT'
+		usdval: 0.015
+	}
+	cs.currencies['TFT'] = &c1
+	mut c2 := Currency{
+		name: ''
+		usdval: 0.0
+	}
+	cs.currencies[''] = &c2
 }

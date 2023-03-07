@@ -26,13 +26,13 @@ fn (mut h HTTPConnection) cache_get(req Request) !Result {
 			code: -1
 		}
 	}
-	if data==""{
+	if data == '' {
 		return Result{
 			code: -1
-		}		
+		}
 	}
 	result := json.decode(Result, data) or {
-		return error('failed to decode result with error: ${err}.\ndata:\n$data')
+		return error('failed to decode result with error: ${err}.\ndata:\n${data}')
 	}
 	return result
 }

@@ -1,16 +1,8 @@
 module markdowndocs
 
-<<<<<<< HEAD
-import pathlib
-
-fn test_wiki1() {
-	mut docs := new(
-		content: '
-	
-=======
 fn test_wiki_headers_paragraphs() {
 	content := '
->>>>>>> 667df183094470ef5dbeba569d84a1ac2b27784e
+
 # TMUX
 
 tmux library provides functions for managing local / remote tmux sessions
@@ -25,18 +17,6 @@ To initialize tmux on a local or [remote node](mysite:page.md), simply build the
 	- no
 
 ### something else
-<<<<<<< HEAD
-	
-	'
-	)!
-
-	println(docs)
-
-	// TODO: doesn't work properly yet, many mistakes
-
-	// TODO: need to test wiki input vs wiki output, so it renders properly, we need to do quite some more tests for this
-=======
-
 '
 	mut docs := new(content: content)!
 
@@ -129,7 +109,6 @@ fn test_wiki_header_too_long() {
 ###### Should not be ok
 '
 	mut docs := new(content: content)!
->>>>>>> 667df183094470ef5dbeba569d84a1ac2b27784e
 
 	expected_wiki := '
 ##### Is ok
@@ -139,8 +118,6 @@ fn test_wiki_header_too_long() {
 	assert docs.items[0] is Header
 	assert expected_wiki.trim_space() == docs.wiki().trim_space()
 }
-<<<<<<< HEAD
-=======
 
 fn test_wiki_all_together() {
 	content := "
@@ -196,4 +173,3 @@ Example:
 	// TODO
 	assert content.trim_space() == docs.wiki().trim_space()
 }
->>>>>>> 667df183094470ef5dbeba569d84a1ac2b27784e

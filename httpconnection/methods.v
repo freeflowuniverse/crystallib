@@ -108,7 +108,7 @@ pub fn (mut h HTTPConnection) post_json_str(mut req Request) !string {
 	return result.data
 }
 
-//do a request with certain prefix on the already specified url
+// do a request with certain prefix on the already specified url
 // parse as json
 pub fn (mut h HTTPConnection) get_json_dict(mut req Request) !map[string]json2.Any {
 	data_ := h.get(mut req)!

@@ -4,11 +4,7 @@ module markdowndocs
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT REALITIES
 // adds the found links, text, comments to the paragraph
 fn (mut para Paragraph) parse() ! {
-<<<<<<< HEAD
-	mut parser := parser_char_new_text(para.content)
-=======
 	mut parser := parser_char_new_text(para.content.trim_space())
->>>>>>> 667df183094470ef5dbeba569d84a1ac2b27784e
 
 	para.items << Text{}
 
@@ -121,10 +117,6 @@ fn (mut para Paragraph) parse() ! {
 			}
 		}
 		llast.content += char_
-<<<<<<< HEAD
-
-=======
->>>>>>> 667df183094470ef5dbeba569d84a1ac2b27784e
 		// match llast {
 		// 	Link{
 

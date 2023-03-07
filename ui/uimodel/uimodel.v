@@ -10,12 +10,8 @@ pub mut:
 	all        bool
 	validation fn (string) bool = fn (s string) bool {
 		return true
-<<<<<<< HEAD
-	} // ? Is this valid?
-=======
 	}
 	// ? Is this valid?
->>>>>>> 667df183094470ef5dbeba569d84a1ac2b27784e
 }
 
 pub struct QuestionArgs {
