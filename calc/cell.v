@@ -1,37 +1,57 @@
 module calc
 
-import freeflowuniverse.crystallib.currency
-
 pub struct NoVal{}
 
-type CellVal = currency.Amount | int | f64 | string | NoVal
+// type CellVal = currency.Amount | int | f64 | string | NoVal
 
 pub struct Cell{
 pub mut:
-	name string
-	cell CellVal
+	val f64
 	row &Row [str: skip]
+	empty bool = true
 }
 
-pub fn (mut c Cell) repr() str {
-	val:=c.cell
-	mut valout := ''
-	match val {
-		currency.Amount {
-			valout=val.repr()!
+pub fn (mut c Cell) set(v string) ! {
+	if c.row.sheet.currency.name!=""{
+		//means we insert a currency so need to do the exchange 
+		mut amount:=c.row.sheet.currencies.amount_get(v)!
+		if amount.currency.name==""{
+			mut curr2:=c.row.sheet.currencies.currency_get("USD")!
+			amount.currency = curr2
 		}
-		int {
-			valout="$val"
-		}
-		f64 {
-			valout="$val"
-		}
-		string {
-			valout="$val"
-		}	
-		NoVal {
-			valout=""
-		}				
+		mut amount2:=amount.exchange(c.row.sheet.currency)! //do the exchange to the local currency
+		c.val = amount2.val
+	}else{
+		c.val = v.f64()
 	}
+	c.empty=false
+}
+
+pub fn (mut c Cell) repr() string {
+	// match val {
+	// 	currency.Amount {
+	// 		valout=val.repr()!
+	// 	}
+	// 	int {
+	// 		valout="$val"
+	// 	}
+	// 	f64 {
+	// 		valout="$val"
+	// 	}
+	// 	string {
+	// 		valout="$val"
+	// 	}	
+	// 	NoVal {
+	// 		valout=""
+	// 	}				
+	// }
+	if c.empty{
+		return "-"
+	}
+	valout:="$c.val"
 	return valout
+}
+
+pub fn (mut c Cell) str() string {
+	return c.repr()
 }

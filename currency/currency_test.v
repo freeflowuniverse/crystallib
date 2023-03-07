@@ -17,8 +17,8 @@ pub fn test_rates_get() {
 	//last arg is to say its a crypto
 	cs.get_rates(['TERRA','TFT','XLM','USDC'],true)!
 	
-	cs.currencies['TFT']=Currency{name: 'TFT',usdval: 0.01}
-	cs.currencies['AED']=Currency{name: 'AED',usdval: 0.25}
+	cs.currencies['TFT']=&Currency{name: 'TFT',usdval: 0.01}
+	cs.currencies['AED']=&Currency{name: 'AED',usdval: 0.25}
 
 	mut u:=cs.amount_get('1$')!
 	u2:=u.exchange(cs.currency_get('tft')!)!
@@ -32,6 +32,14 @@ pub fn test_rates_get() {
 	
 	c:=a.exchange(cs.currency_get('tft ')!)!
 	assert c.val == 250.0
+
+	mut aa2:=cs.amount_get('0')!
+	assert aa.val == 0.0
+
+	mut aa:=cs.amount_get('10')!
+	assert aa.val == 10.0
+	assert aa.currency.usdval == 0.0
+	assert aa.currency.name == ""
 
 }
 

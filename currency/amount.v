@@ -26,7 +26,7 @@ pub fn (a Amount) usd() f64 {
 // allows £,$,€ to be used as special cases
 pub fn (mut cs Currencies) amount_get(amount_ string) !Amount {
 	mut amount := amount_.to_upper()
-	numbers := ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+	numbers := ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9','.']
 	for i in ['_', ',', ' '] {
 		amount = amount.replace(i, '')
 	}
@@ -69,18 +69,25 @@ pub fn (mut cs Currencies) amount_get(amount_ string) !Amount {
 	}
 	// remove spaces from code and capitalise
 	code=code.to_upper().trim_space()
-	if !(code in cs.currencies){
-		cs.get_rates([code],false)! //not sure this will work
-		cs.get_rates([code],true)!
+	code2:=code.replace(".","").replace("0","")
+	if code2==""{
+		code=""
 	}
-
+	if code != ""{
+		if !(code in cs.currencies){
+			cs.get_rates([code],false)! //not sure this will work
+			cs.get_rates([code],true)!
+		}
+	}else{
+		num = amount
+	}
 	cur0:=cs.currencies[code] or {
 		return error("Cannot find currency with code $code")
 	}
 
 	mut amount2 := Amount{
-		val: f64(num.int())
-		currency: &cur0
+		val: num.f64()
+		currency: cur0
 		currencies: &cs
 	}
 

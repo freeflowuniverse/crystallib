@@ -56,14 +56,15 @@ pub fn (mut cs Currencies) get_rates(cur_array []string, crypto bool) ! {
 	response:=conn.get(mut prefix:prefix )!
 	decoded := json.decode(ResponseBody, response) or {return error("Failed to decode crypto json: $err")}
 	for key,rate in decoded.rates{
-		c:=Currency{name:key.to_upper(),usdval:rate}
-		cs.currencies[key.to_upper()]=c
+		c:=Currency{name:key.to_upper(),usdval:1/rate}
+		cs.currencies[key.to_upper()]=&c
 	}
 
 }
 
 pub fn (mut cs Currencies) defaults_set() {
-
-	cs.currencies['TFT']=Currency{name: 'TFT',usdval: 0.015}
-
+	mut c1:=Currency{name: 'TFT',usdval: 0.015}
+	cs.currencies['TFT']=&c1
+	mut c2:=Currency{name: '',usdval: 0.0}
+	cs.currencies['']=&c2
 }

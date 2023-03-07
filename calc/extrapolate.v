@@ -1,86 +1,78 @@
 module calc
 
-// import freeflowuniverse.crystallib.texttools
-
-//extrapolate years
-//eg growth [0,1,2,4,10], would give us 4 years starting from 0 going to 10
-pub fn extrapolate(growth []f64) []f64{
-	mut months := []f64{}
-	for year in 1..growth.len{
-		val_start := growth[year-1]
-		val_end := growth[year]
-		increment := (val_end-val_start)/11
-		for m in 0..12{
-			months << val_start+increment * m
-		}
-	}
-	return months
-}
-
-pub fn extrapolate_int(vals []int) []int{
-	vals2 := extrapolate(array2float(vals))
-	return array2int(vals2)
-}
-
-//will grow following a curve and then shows how per month we need to grow, how much to add
-//e.g. [0,0,0,0,0,10] means we 
-pub fn extrapolate_growth(vals []int) []int{
-	mut prev := 0 
-	mut res := []int
-	mut additional := 0 
-	for i in extrapolate_int(vals){
-		if i>prev{
-			additional = i - prev
-			prev = i
-			res << additional
-		}else{
-			res << 0
-		}
-	}
-	return res
-}
-
-
-
-// //add X months to the input
-// pub fn extrapolate_addmonths(growth []f64, nrmonthts int) []f64{
-// 	mut months := []f64{}
-// 	mut growth2 := growth.clone()
-// 	for _ in 1..growth.len{
-// 		growth2 << growth[growth.len-1]
-// 	}
-// 	for year in 1..growth2.len{
-// 		val_start := growth2[year-1]
-// 		val_end := growth2[year]
-// 		increment := (val_end-val_start)/11
-// 		for m in 0..12{
-// 			months << val_start+increment * m
-// 		}
-// 	}
-// 	return months
-// }
 
 
 // something like 3:2,10:5 means month 3 we start with 2, it grows to 5 on month 10
 // the cells out of the mentioned ranges are not filled if they are already set
-// the cells which are empty at start of row will go from 0 to the first val
+// the cells which are empty at start of row will become 0
 // the cells which are empty at the back will just be same value as the last one
-pub fn (mut r Row) extrapolate_smart (smartstr string) !&Cell {
-	res:=[]f32
+// currencies can be used e.g. 3:10usd,20:30aed (so we can even mix)
+// if the smartstr, is empty then will use existing values in the row to extra/intra polate, the empty values will be filled in
+pub fn (mut r Row) extrapolate (smartstr string) ! {
 	for mut part in smartstr.split(","){
-		part:=part.trim_space()
-		if part.contains(":"}{
+		part=part.trim_space()
+		if part.contains(":"){
 			splitted:=part.split(":")
 			if splitted.len!=2{
 				return error("smartextrapolate needs '3:2,10:5' as format, now $smartstr ")
 			}
-			x:=splitted[0].int()
-			v:=splitted[1].f32()
-			
+			x:=splitted[0].int()-1
+			if x <0{
+				return error("Cannot do smartstr, because the X is out of scope.\n$smartstr")
+			}
+			if x > r.sheet.nrcol{
+				return error("Cannot do smartstr, because the X is out of scope, needs to be 1+.\n$smartstr")
+			}
+			r.cells[x].set(splitted[1])!
 		}
 	}
-	
+	if r.cells[0].empty{
+		r.cells[0].set("0.0")!
+	}
+	mut xlast:=0 //remembers where there was last non empty value
+	mut xlastval:=0.0 //the value at that position
+	mut xlastwidth:=0 //need to know how fast to go up from the xlast to xnew
+	mut xnewval:=0.0
+	// println(r)
+	for x in 0..r.cells.len{
+		// println("$x ${r.cells[x].empty} $xlastwidth")
+		if r.cells[x].empty==false && xlastwidth==0{
+			//we get new value, just go to next
+			xlast=x
+			xlastval=r.cells[x].val
+			xlastwidth=0
+			// println(" value: $xlastval x:$x")
+			continue //no need to do anything
+		}
+		//if we get here we get an empty after having a non empty before
+		xlastwidth+=1
+		if r.cells[x].empty==false{
+			//now we find the next one not being empty so we need to do the interpolation
+			xnewval=r.cells[x].val
+			//now we need to walk over the inbetween and set the values
+			yincr:=(xnewval-xlastval)/xlastwidth
+			mut yy:=xlastval
+			// println("incr:$x :: $yincr")
+			for xx in (xlast+1)..x{
+				yy+=yincr
+				r.cells[xx].set("$yy")!
+			}
+			xlast=x
+			xlastval=xnewval
+			xlastwidth=0
+			xnewval=0.0			
+		}
 
+	}
+	//now fill in the last ones
+	xlastval=0.0
+	for x in 0..r.cells.len{
+		if r.cells[x].empty==false{
+			xlastval=r.cells[x].val
+			continue
+		}
+		r.cells[x].set("$xlastval")!
+	}
 }
 
 
