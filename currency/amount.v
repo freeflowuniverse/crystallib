@@ -2,8 +2,8 @@ module currency
 
 pub struct Amount {
 pub mut:
-	currency &Currency
-	val      f64
+	currency   &Currency
+	val        f64
 	currencies Currencies [str: skip]
 }
 
@@ -26,7 +26,7 @@ pub fn (a Amount) usd() f64 {
 // allows £,$,€ to be used as special cases
 pub fn (mut cs Currencies) amount_get(amount_ string) !Amount {
 	mut amount := amount_.to_upper()
-	numbers := ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9','.']
+	numbers := ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
 	for i in ['_', ',', ' '] {
 		amount = amount.replace(i, '')
 	}
@@ -68,22 +68,20 @@ pub fn (mut cs Currencies) amount_get(amount_ string) !Amount {
 		}
 	}
 	// remove spaces from code and capitalise
-	code=code.to_upper().trim_space()
-	code2:=code.replace(".","").replace("0","")
-	if code2==""{
-		code=""
+	code = code.to_upper().trim_space()
+	code2 := code.replace('.', '').replace('0', '')
+	if code2 == '' {
+		code = ''
 	}
-	if code != ""{
-		if !(code in cs.currencies){
-			cs.get_rates([code],false)! //not sure this will work
-			cs.get_rates([code],true)!
+	if code != '' {
+		if code !in cs.currencies {
+			cs.get_rates([code], false)! // not sure this will work
+			cs.get_rates([code], true)!
 		}
-	}else{
+	} else {
 		num = amount
 	}
-	cur0:=cs.currencies[code] or {
-		return error("Cannot find currency with code $code")
-	}
+	cur0 := cs.currencies[code] or { return error('Cannot find currency with code ${code}') }
 
 	mut amount2 := Amount{
 		val: num.f64()

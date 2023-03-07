@@ -85,26 +85,6 @@ fn (mut doc Doc) parse() ! {
 				continue
 			}
 
-<<<<<<< HEAD
-			// process headers
-			if line.starts_with('###### ') {
-				parser.error_add('header should be max 5 deep')
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('##### ') {
-				doc.items << Header{
-					content: line.all_after_first('#####').trim_space()
-					depth: 5
-				}
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('#### ') {
-				doc.items << Header{
-					content: line.all_after_first('####').trim_space()
-					depth: 4
-=======
 			// process headers (# is 35)
 			if line.len > 0 && line[0] == 35 {
 				mut d := 0
@@ -123,36 +103,8 @@ fn (mut doc Doc) parse() ! {
 					}
 					parser.next_start()
 					continue
->>>>>>> 667df183094470ef5dbeba569d84a1ac2b27784e
 				}
 			}
-<<<<<<< HEAD
-			if line.starts_with('### ') {
-				doc.items << Header{
-					content: line.all_after_first('###').trim_space()
-					depth: 3
-				}
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('## ') {
-				doc.items << Header{
-					content: line.all_after_first('##').trim_space()
-					depth: 2
-				}
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('# ') {
-				doc.items << Header{
-					content: line.all_after_first('#').trim_space()
-					depth: 1
-				}
-				parser.next_start()
-				continue
-			}
-=======
->>>>>>> 667df183094470ef5dbeba569d84a1ac2b27784e
 
 			if line.trim_space().to_lower().starts_with('<html') {
 				doc.items << Html{}
@@ -196,10 +148,6 @@ fn (mut doc Doc) parse() ! {
 	}
 
 	// paragraph is used as separator so the empty ones need to be removed
-<<<<<<< HEAD
-
-=======
->>>>>>> 667df183094470ef5dbeba569d84a1ac2b27784e
 	mut toremovelist := []int{}
 	mut counter := 0
 	for mut item in doc.items {
@@ -218,11 +166,7 @@ fn (mut doc Doc) parse() ! {
 			}
 			Paragraph {
 				item.process()!
-<<<<<<< HEAD
-				if item.content.trim(' \n') == '' {
-=======
 				if item.content.trim(' \r\n') == '' {
->>>>>>> 667df183094470ef5dbeba569d84a1ac2b27784e
 					toremovelist << counter
 				} else if item.items.len == 0 {
 					toremovelist << counter

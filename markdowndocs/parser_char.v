@@ -22,20 +22,6 @@ pub fn parser_char_new_path(path string) !ParserChar {
 	if !os.exists(path) {
 		return error("path: '${path}' does not exist, cannot parse.")
 	}
-<<<<<<< HEAD
-	mut parser := ParserChar{}
-	mut content := os.read_file(path) or { panic('Failed to load file ${path}') }
-	parser.chars = content
-	parser.charnr = 0
-	return parser
-}
-
-pub fn parser_char_new_text(text string) ParserChar {
-	mut parser := ParserChar{}
-	parser.chars = text
-	parser.charnr = 0
-	return parser
-=======
 	mut content := os.read_file(path) or { return error('Failed to load file ${path}') }
 	return ParserChar{
 		chars: content
@@ -48,7 +34,6 @@ pub fn parser_char_new_text(text string) ParserChar {
 		chars: text
 		charnr: 0
 	}
->>>>>>> 667df183094470ef5dbeba569d84a1ac2b27784e
 }
 
 // return a specific char
@@ -104,11 +89,7 @@ fn (mut parser ParserChar) text_next_is(tofind string, offset int) bool {
 	}
 	text := parser.chars.substr(startpos, startpos + tofind.len).replace('\n', '\\n')
 	didfind := (text == tofind)
-<<<<<<< HEAD
-	print(" -NT${offset}(${tofind}):'${text}':${didfind} .. ")
-=======
 	// print(" -NT${offset}($tofind):'$text':$didfind .. ")
->>>>>>> 667df183094470ef5dbeba569d84a1ac2b27784e
 	return didfind
 }
 

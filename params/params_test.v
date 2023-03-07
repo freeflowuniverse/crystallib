@@ -258,8 +258,6 @@ fn test_hexhash() {
 	h := params.hexhash() or { panic(err) }
 	assert h == 'e3517c4daa5526cf7a6f200de10a81a9db95460ecd469a53d8dca9d659228c20'
 }
-<<<<<<< HEAD
-=======
 
 /*
 fn test_to_resp_from_resp() {
@@ -360,4 +358,3 @@ expected_result := "
 		'333'
 	"
 */
->>>>>>> 667df183094470ef5dbeba569d84a1ac2b27784e

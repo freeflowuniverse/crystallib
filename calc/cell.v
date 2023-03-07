@@ -1,30 +1,30 @@
 module calc
 
-pub struct NoVal{}
+pub struct NoVal {}
 
 // type CellVal = currency.Amount | int | f64 | string | NoVal
 
-pub struct Cell{
+pub struct Cell {
 pub mut:
-	val f64
-	row &Row [str: skip]
+	val   f64
+	row   &Row [str: skip]
 	empty bool = true
 }
 
 pub fn (mut c Cell) set(v string) ! {
-	if c.row.sheet.currency.name!=""{
-		//means we insert a currency so need to do the exchange 
-		mut amount:=c.row.sheet.currencies.amount_get(v)!
-		if amount.currency.name==""{
-			mut curr2:=c.row.sheet.currencies.currency_get("USD")!
+	if c.row.sheet.currency.name != '' {
+		// means we insert a currency so need to do the exchange
+		mut amount := c.row.sheet.currencies.amount_get(v)!
+		if amount.currency.name == '' {
+			mut curr2 := c.row.sheet.currencies.currency_get('USD')!
 			amount.currency = curr2
 		}
-		mut amount2:=amount.exchange(c.row.sheet.currency)! //do the exchange to the local currency
+		mut amount2 := amount.exchange(c.row.sheet.currency)! // do the exchange to the local currency
 		c.val = amount2.val
-	}else{
+	} else {
 		c.val = v.f64()
 	}
-	c.empty=false
+	c.empty = false
 }
 
 pub fn (mut c Cell) repr() string {
@@ -45,10 +45,10 @@ pub fn (mut c Cell) repr() string {
 	// 		valout=""
 	// 	}				
 	// }
-	if c.empty{
-		return "-"
+	if c.empty {
+		return '-'
 	}
-	valout:="$c.val"
+	valout := '${c.val}'
 	return valout
 }
 
