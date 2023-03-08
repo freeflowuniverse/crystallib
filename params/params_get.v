@@ -12,7 +12,7 @@ import time { Duration }
 pub fn (params &Params) exists(key_ string) bool {
 	key := key_.to_lower()
 	for p in params.params {
-		if p.key == key {
+		if p.key == key && p.value != "" {
 			return true
 		}
 	}
