@@ -187,21 +187,19 @@ pub fn (mut site Site) page_new(mut p Path) !&Page {
 		return error('cannot find page with path ${p.path}')
 	}
 	p.path_normalize()! // make sure its all lower case and name is proper
-	mut page := Page{
+	if !p.path.ends_with('.md') {
+		return error('page ${p.path} needs to end with .md')
+	}
+	mut doc := markdowndocs.new(path: p.path) or { panic('cannot parse,${err}') }
+
+	mut page := Page {
+		doc: &doc
+		pathrel: p.path_relative(site.path.path)!.trim('/')
+		name: p.name_fix_no_ext()
 		path: p
 		site: &site
 		readonly: false
 	}
-	if !page.path.path.ends_with('.md') {
-		return error('page ${page} needs to end with .md')
-	}
-	// println(" ---------- $page.path.path")
-	// parse the markdown of the page
-	mut doc := markdowndocs.get(p.path) or { panic('cannot parse,${err}') }
-	page.doc = &doc
-	page.name = p.name_fix_no_ext()
-	page.pathrel = p.path_relative(site.path.path)!
-	page.pathrel = page.pathrel.trim('/')
 	_, namelower := get_site_and_obj_name(p.path, false)!
 	namesmallest := namelower.replace('_', '')
 	site.pages[namesmallest] = &page

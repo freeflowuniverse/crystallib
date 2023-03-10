@@ -54,7 +54,7 @@ pub fn (mut books Books) book_new(args BookNewArgs) !&Book {
 	mut summarypath := p.file_get('summary.md') or {
 		p.link_get('summary.md') or { return error('cannot find summary path: ${err}') }
 	}
-	mut doc := markdowndocs.get(summarypath.path) or {
+	mut doc := markdowndocs.new(path: summarypath.path) or {
 		panic('cannot book parse ${summarypath} ,${err}')
 	}
 
