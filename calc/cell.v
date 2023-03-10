@@ -27,6 +27,12 @@ pub fn (mut c Cell) set(v string) ! {
 	c.empty = false
 }
 
+pub fn (mut c Cell) add(v f64)  {
+	c.val += v
+	c.empty = false
+}
+
+
 pub fn (mut c Cell) repr() string {
 	// match val {
 	// 	currency.Amount {

@@ -1,6 +1,5 @@
 module currency
 
-import net.http
 import json
 import freeflowuniverse.crystallib.httpconnection
 
