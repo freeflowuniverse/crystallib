@@ -48,13 +48,16 @@ pub mut:
 // useful to e.g. make new row which makes sum of all salaries for e.g. devengineering tag (or more than 1 tag)
 pub fn (mut s Sheet) group2row(name string, tags []string) !&Row {
 	// TODO, implement
+	mut r:=Row{sheet:&s}
+	return &r
 }
 
+//make a copy of the sheet to the year
 pub fn (mut s Sheet) toyear() !Sheet {
-	if args.name == '' {
-		args.name = s.name
-		'+_year'
-	}
+	// if args.name == '' {
+	// 	args.name = s.name
+	// 	'+_year'
+	// }
 	// if rowfilter is not empty only put the rows in as specified and in order of specified
 	// make a new sheet, copy all required properties
 	// create new rows/cells where the toyear represent a year
@@ -63,15 +66,17 @@ pub fn (mut s Sheet) toyear() !Sheet {
 
 	// TODO, implement
 	// TODO, make sure to set right nr of cols (/12)
+	return s
 }
 
 pub fn (mut s Sheet) toquarter() !Sheet {
-	if args.name == '' {
-		args.name = s.name
-		'+_quarter'
-	}
+	// if args.name == '' {
+	// 	args.name = s.name
+	// 	'+_quarter'
+	// }
 	// TODO, implement
 	// TODO, make sure to set right nr of cols (/4)
+	return s
 }
 
 // return array with same amount of items as cols in the rows
@@ -83,18 +88,27 @@ pub fn (mut s Sheet) header() ![]string {
 	// if col + 40 = months
 	// if col + 10 = quarters
 	// else is years
+	return []string{}
 }
 
 pub fn (mut s Sheet) json() !string {
 	// export to nice json representation
+	return ""
 }
 
 // find row, report error if not found
 pub fn (mut s Sheet) row_get(name string) !&Row {
 	// TODO:
+	mut r:=Row{sheet:&s}
+	return &r
+
 }
 
 // find row, report error if not found
 pub fn (mut s Sheet) cell_get(row string, col int) !&Cell {
 	// TODO:
+	mut r:=s.row_get(row)!
+	mut c:=Cell{row:r}
+	return &c
+
 }

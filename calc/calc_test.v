@@ -16,10 +16,14 @@ fn test_sheets() {
 
 	mut nrnodesaggr := nrnodes.aggregate('nrnodesaggr')!
 
+
+	mut nrnodesdiff := nrnodes.difference('nrnodesdiff')!
+	
+
 	// TODO: we need to create tests for it
 
-	// println(sh)
-	// panic("test1")
+	println(sh)
+	panic("test1")
 }
 
 fn test_curr() {
