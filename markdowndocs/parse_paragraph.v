@@ -137,9 +137,12 @@ fn (mut para Paragraph) parse() ! {
 		match mut item {
 			Text {
 				item.process()!
-				if item.content.trim('\n ') == '' {
+				if item.content == '' {
 					toremovelist << counter
 				}
+				// if item.content.trim('\n') == '' {
+				// 	toremovelist << counter
+				// }
 			}
 			Link {
 				item.process()!
