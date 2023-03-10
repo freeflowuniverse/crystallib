@@ -5,8 +5,8 @@ import freeflowuniverse.crystallib.currency
 fn test_sheets() {
 	mut sh := sheet_new(name: 'test') or { panic(err) }
 
-	mut nrnodes := sh.row_new(name: 'nrnodes', growth: '5:100,55:1000')!
-	mut nrnodes2 := sh.row_new(name: 'nrnodes2', growth: '5:100,55:1000,60:500')!
+	mut nrnodes := sh.row_new(name: 'nrnodes', growth: '5:100,55:1000',tags:["nodes"])!
+	mut nrnodes2 := sh.row_new(name: 'nrnodes2', growth: '5:100,55:1000,60:500',tags:["nodes","somethingelse"])!
 	mut times2 := sh.row_new(name: 'times2', growth: '1:2')! // means all cells are nr 2
 
 	mut nrnodessum := nrnodes.add('nrnodessum', nrnodes2)!
@@ -18,15 +18,21 @@ fn test_sheets() {
 
 
 	mut nrnodesdiff := nrnodes.difference('nrnodesdiff')!
+
+	mut nodesum := sh.group2row(tags:["nodes"],name:'nodesum')!
 	
-	mut shyear:=sh.toyear(name:"nrnodesyear")!
-	mut shq:=sh.toquarter(name:"nrnodesq")!
+	mut shyear:=sh.toyear(name:"shyear",tagsfilter:["nodes"])!
+	mut shq:=sh.toquarter(name:"nrnodesq",tagsfilter:["nodes"])!
 
 	// TODO: we need to create tests for it
 
 	println(sh)
 	println(shyear)
 	println(shq)
+	// r:=shq.json()!
+	// println(r)
+	wiki:=sh.wiki(description:"is my description.")!
+	println(wiki)
 	panic("test1")
 }
 

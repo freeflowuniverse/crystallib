@@ -3,9 +3,12 @@ module calc
 pub struct Row {
 pub mut:
 	name          string
+	alias		  string
+	description		  string
 	cells         []Cell
-	sheet         &Sheet           [str: skip]
+	sheet         &Sheet           [str: skip ; skip]
 	aggregatetype RowAggregateType
+	reprtype ReprType  //how to represent it
 	tags          []string
 }
 
@@ -21,6 +24,8 @@ pub enum RowAggregateType {
 	max
 	min
 }
+
+
 
 pub struct RowNewParams {
 pub mut:

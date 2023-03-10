@@ -7,7 +7,7 @@ pub struct NoVal {}
 pub struct Cell {
 pub mut:
 	val   f64
-	row   &Row [str: skip]
+	row   &Row [str: skip ; skip]
 	empty bool = true
 }
 
@@ -54,8 +54,7 @@ pub fn (mut c Cell) repr() string {
 	if c.empty {
 		return '-'
 	}
-	valout := '${c.val}'
-	return valout
+	return float_repr(c.val,c.row.reprtype)
 }
 
 pub fn (mut c Cell) str() string {

@@ -1,6 +1,7 @@
 module calc
 
 import freeflowuniverse.crystallib.currency
+import json
 
 [heap]
 pub struct Sheet {
@@ -21,7 +22,7 @@ pub mut:
 // find maximum length of a cell (as string representation for a colnr)
 // 0 is the first col
 // the headers if used are never counted
-pub fn (mut s Sheet) len_col_max(colnr int) !int {
+pub fn (mut s Sheet) cells_width(colnr int) !int {
 	mut lmax := 0
 	for _, mut row in s.rows {
 		if row.cells.len > colnr {
@@ -35,15 +36,45 @@ pub fn (mut s Sheet) len_col_max(colnr int) !int {
 	return lmax
 }
 
+// return name or alias, comment max width in 2 size list
+pub fn (mut s Sheet) names_width() []int {
+	mut res:=[0,0]
+	for _, mut row in s.rows {
+			if row.name.len > res[0]{
+				res[0]=row.name.len
+			}
+			if row.alias.len > res[0]{
+				res[0]=row.alias.len
+			}
+			if row.description.len > res[1]{
+				res[1]=row.description.len
+			}
+	}
+	return res
+}
+
+[params]
+pub struct Group2RowArgs {
+pub mut:
+	name string
+	tags []string
+}
+
 
 // find all rows which have one of the tags
 // aggregate (sum) them into one row
 // returns a row with the result
 // useful to e.g. make new row which makes sum of all salaries for e.g. devengineering tag (or more than 1 tag)
-pub fn (mut s Sheet) group2row(name string, tags []string) !&Row {
+pub fn (mut s Sheet) group2row(args Group2RowArgs) !&Row {
+	name:=args.name
+	if name==""{
+		return error("name cannot be empty")
+	}
+	tags:=args.tags
+	if tags==[]{
+		return error("tags cannot be empty")
+	}
 	mut rowout:=s.row_new(name:name,growth:"1:0.0")!
-	println(rowout)
-	if true{panic('sdsds')}
 	for _,row in s.rows{
 		if tags.len>0{
 			mut ok:=false
@@ -64,13 +95,11 @@ pub fn (mut s Sheet) group2row(name string, tags []string) !&Row {
 			x+=1
 		}
 	}
-	println(rowout)
-	if true{panic('sdsds')}	
 	return rowout
 }
 
 [params]
-struct ToYearQuarterArgs {
+pub struct ToYearQuarterArgs {
 pub mut:
 	name       string
 	rowsfilter []string
@@ -114,31 +143,39 @@ fn (mut s Sheet) tosmaller(args_ ToYearQuarterArgs) !Sheet {
 		for x in 0..nrcol_new{
 			mut newval:=0.0
 			for xsub in 0..args.period_months{
+				xtot:=x*args.period_months+xsub
+				// println("${row.name} $xtot ${row.cells.len}")
+				// if row.cells.len < xtot+1{
+				// 	println(row)
+				// 	panic("too many cells")
+				// }
 				if row.aggregatetype == .sum || row.aggregatetype == .avg {
-					newval+= rnew.cells[x+xsub].val
+					newval+= row.cells[xtot].val
 				}else if row.aggregatetype == .max{
-					if rnew.cells[x+xsub].val > newval{
-						newval=rnew.cells[x+xsub].val
+					if row.cells[xtot].val > newval{
+						newval=row.cells[xtot].val
 					}
 				}else if row.aggregatetype == .min{
-				if rnew.cells[x+xsub].val < newval{
-						newval=rnew.cells[x+xsub].val
+				if row.cells[xtot].val < newval{
+						newval=row.cells[xtot].val
 					}
 				}else{
 					panic("not implemented")
 				}
 			}
 			if row.aggregatetype == .sum || row.aggregatetype == .max || row.aggregatetype == .min{
+				// println("sum/max/min ${row.name} $x ${rnew.cells.len}")
 				rnew.cells[x].val = newval
 			}else{
 				//avg
+				// println("avg ${row.name} $x ${rnew.cells.len}")
 				rnew.cells[x].val = newval / args.period_months
 			}			
 			 
 		}
-		return sheet_out
 	}
-	return s
+	// println("to smaller done")
+	return sheet_out
 }
 
 //make a copy of the sheet and aggregate on year
@@ -163,7 +200,7 @@ pub fn (mut s Sheet) toyear(args ToYearQuarterArgs) !Sheet {
 // rawsfilter is list of names of rows which will be included
 pub fn (mut s Sheet) toquarter(args ToYearQuarterArgs) !Sheet {
 	mut args2:=args
-	args2.period_months = 4
+	args2.period_months = 3
 	return s.tosmaller(args2)
 }
 
@@ -198,9 +235,10 @@ pub fn (mut s Sheet) header() ![]string {
 	return res
 }
 
-pub fn (mut s Sheet) json() !string {
-	// export to nice json representation (TODO)
-	return ""
+pub fn (mut s Sheet) json() string {
+	//TODO: not done yet
+	// return json.encode_pretty(s)
+	return""
 }
 
 // find row, report error if not found
