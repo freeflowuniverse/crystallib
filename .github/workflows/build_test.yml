@@ -1,0 +1,29 @@
+name: build_test
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: sudo apt install -y libgc-dev tmux mc git rsync curl
+
+      - name: Setup Vlang
+        uses: vlang/setup-v@v1
+        with:
+          check-latest: true
+
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Add crystallib at the expected path
+        run: |
+          bash install.sh
+      
+      - name: Run tests
+        run: |
+          v -stats test markdowndocs
+
+      

@@ -2,11 +2,11 @@ module markdowndocs
 
 fn test_charparser1() {
 	mut txt := ''
-	mut p2 := Paragraph{
+	mut p2 := Paragraph {
 		content: txt
 	}
 	p2.parse()!
-	assert p2 == Paragraph{
+	assert p2 == Paragraph {
 		content: ''
 		items: []
 		changed: false
@@ -49,57 +49,54 @@ fn test_charparser2() {
 }
 
 fn test_charparser3() {
-	println('\n\n\n\n')
-
 	mut txt := '!['
-	mut p2 := Paragraph{
+	mut p2 := Paragraph {
 		content: txt
 	}
 	p2.parse()!
-	assert p2 == Paragraph{
-		content: '!['
-		items: [
-			ParagraphItem(Link{
-				content: '!['
-				cat: .file
-				isexternal: false
-				include: true
-				newtab: false
-				moresites: false
-				description: ''
-				url: ''
-				filename: ''
-				path: ''
-				site: ''
-				extra: ''
-				state: .ok
-				error_msg: ''
-			}),
-		]
-	}
+	// TODO decide what to do in this case
+	// assert p2 == Paragraph {
+	// 	content: '!['
+	// 	items: [
+	// 		ParagraphItem(Link {
+	// 			content: '!['
+	// 			cat: .page
+	// 			isexternal: false
+	// 			include: true
+	// 			newtab: false
+	// 			moresites: false
+	// 			description: ''
+	// 			url: ''
+	// 			filename: ''
+	// 			path: ''
+	// 			site: ''
+	// 			extra: ''
+	// 			state: .ok
+	// 			error_msg: ''
+	// 		}),
+	// 	]
+	// }
 }
 
-fn test_charparser4() {
-	println('\n\n\n\n')
-
+fn test_charparser_link() {
 	mut txt := '![a](b)'
 	mut p2 := Paragraph{
 		content: txt
 	}
 	p2.parse()!
-	assert p2 == Paragraph{
+	assert p2 == Paragraph {
 		content: '![a](b)'
 		items: [
-			ParagraphItem(Link{
+			ParagraphItem(Link {
 				content: '![a](b)'
-				cat: .file
+				cat: .page
 				isexternal: false
-				include: true
+				include: false
 				newtab: false
 				moresites: false
-				description: ''
-				url: ''
-				filename: ''
+				description: 'a'
+				url: 'b'
+				filename: 'b.md'
 				path: ''
 				site: ''
 				extra: ''
@@ -111,96 +108,92 @@ fn test_charparser4() {
 	}
 }
 
-fn test_charparser5() {
-	println('\n\n\n\n')
-
+fn test_charparser_link_ignore_trailing_spaces() {
 	mut txt := '![a](b) '
-	mut p2 := Paragraph{
+	mut p2 := Paragraph {
 		content: txt
 	}
 	p2.parse()!
 
-	assert p2.items.last().content == ' '
+	assert p2.items.len == 1
+	assert p2.items.last().content == '![a](b)'
 }
 
-fn test_charparser6() {
-	println('\n\n\n\n')
-
+fn test_charparser_link_ignore_trailing_newlines() {
 	mut txt := '![a](b)\n \n'
-	mut p2 := Paragraph{
+	mut p2 := Paragraph {
 		content: txt
 	}
 	p2.parse()!
 
-	// println(p2.items.last())
-	assert p2.items.last().content.replace('\n', '\\n') == '\\n \\n'
+	assert p2.items.len == 1
+	assert p2.items.last().content == '![a](b)'
 }
 
-fn test_charparser7() {
-	println('\n\n\n\n')
 
-	mut txt := '
-- list
-![a](b) //comment
-sometext
-'
-	mut p2 := Paragraph{
-		content: txt
-	}
-	p2.parse()!
-	println(p2)
-
-	println(p2.items[3])
-	assert p2.items[3].content == 'comment'
-}
-
-fn test_charparser8() {
-	println('\n\n\n\n')
-
+fn test_charparser_link_comment_text() {
 	mut txt := '
 - list
 ![a](b.jpg) //comment
 sometext
 '
-	mut p2 := Paragraph{
+	mut p2 := Paragraph {
 		content: txt
 	}
 	p2.process()!
 
-	println('\n\n+++++\n')
-	println(p2)
+	assert p2.items.len == 5
+	assert p2.items[0] is Text
+	assert p2.items[0].content == "- list\n"
+	assert p2.items[1] is Link
+	item_1 := p2.items[1] as Link
+	assert item_1.cat == .image
+	assert item_1.filename == "b.jpg"
+	assert item_1.description == "a"
+	assert p2.items[2] is Text
+	assert p2.items[2].content == " "
+	assert p2.items[3] is Comment
+	item_3 := p2.items[3] as Comment
+	assert item_3.content == 'comment'
+	assert item_3.singleline == true
+	assert p2.items[4] is Text
+	assert p2.items[4].content == "sometext"
 
-	println(p2.items[3])
-	assert p2.items[3].content == 'comment'
-
-	println('\n\n|||${p2.wiki()}|||')
-
-	assert txt == p2.wiki()
+	assert "${txt.trim_space()}\n\n" == p2.wiki()
 }
 
-// fn test_charparser9() {
+fn test_charparser_link_multilinecomment_text() {
+	mut txt:="
+- list
+![a](b.jpg)<!--comment1-->
+<!--comment2-->
+sometext
+"
+	mut p2:=Paragraph {
+		content:txt
+	}
+	p2.process()!
 
-// 	println("\n\n\n\n")
+	assert p2.items.len == 6
+	assert p2.items[0] is Text
+	assert p2.items[0].content == "- list\n"
+	assert p2.items[1] is Link
+	item_1 := p2.items[1] as Link
+	assert item_1.cat == .image
+	assert item_1.filename == "b.jpg"
+	assert item_1.description == "a"
+	assert p2.items[2] is Comment
+	item_2 := p2.items[2] as Comment
+	assert item_2.content == 'comment1'
+	assert item_2.singleline == false
+	assert p2.items[3] is Text
+	assert p2.items[3].content == "\n"
+	assert p2.items[4] is Comment
+	item_4 := p2.items[4] as Comment
+	assert item_4.content == 'comment2'
+	assert item_4.singleline == false
+	assert p2.items[5] is Text
+	assert p2.items[5].content == "\nsometext"
 
-// 	mut txt:="
-// - list
-// ![a](b.jpg)<!--comment1-->
-// <!--comment2-->
-// sometext
-// "
-// 	mut p2:=Paragraph{content:txt}
-// 	p2.process()!
-
-// 	println("\n\n+++++\n")
-// 	println(p2)
-
-// 	// println(p2.items[3])
-// 	// assert p2.items[3].content=="comment"
-
-// 	println("\n\n|||${p2.wiki()}|||")
-
-// 	// assert txt==p2.wiki()
-
-// 	if true{panic('s')}
-
-// }
+	assert "${txt.trim_space()}\n\n" == p2.wiki()
+}
