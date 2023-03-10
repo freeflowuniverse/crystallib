@@ -25,5 +25,6 @@ jobs:
       - name: Run tests
         run: |
           v -stats test markdowndocs
+          v -stats test books
 
       
