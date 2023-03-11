@@ -119,6 +119,60 @@ unsigned char *secp265k1_shared_key(secp256k1_t *private, secp256k1_t *public) {
     return shared;
 }
 
+unsigned char *secp256k1_sign_hash(secp256k1_t *secp, unsigned char *hash, size_t length) {
+    secp256k1_sign_t signature;
+
+    if(length != SHA256_SIZE) {
+        printf("[-] warning: you should only sign sha-256 hash, size mismatch\n");
+        printf("[-] warning: you get warned\n");
+    }
+
+    int return_val = secp256k1_ecdsa_sign(secp->kntxt, &signature.sig, hash, secp->seckey, NULL, NULL);
+    assert(return_val);
+
+    signature.serialized = malloc(sizeof(unsigned char) * SERSIG_SIZE);
+
+    return_val = secp256k1_ecdsa_signature_serialize_compact(secp->kntxt, signature.serialized, &signature.sig);
+    assert(return_val);
+
+    return signature.serialized;
+}
+
+secp256k1_sign_t *secp256k1_load_signature(secp256k1_t *secp, unsigned char *serialized, size_t length) {
+    secp256k1_sign_t *signature;
+
+    if(length != SERSIG_SIZE) {
+        printf("[-] serialized signature length mismatch, expected %u bytes\n", SERSIG_SIZE);
+        return NULL;
+    }
+
+    signature = calloc(sizeof(secp256k1_sign_t), 1);
+
+    signature->length = length;
+    signature->serialized = malloc(length);
+    memcpy(signature->serialized, serialized, length);
+
+    if(!secp256k1_ecdsa_signature_parse_compact(secp->kntxt, &signature->sig, signature->serialized)) {
+        printf("[-] failed to parse the signature\n");
+        // FIXME: cleanup
+        return NULL;
+    }
+
+    return signature;
+}
+
+void secp256k1_sign_free(secp256k1_sign_t *signature) {
+    secp256k1_erase_free(signature->serialized, signature->length);
+    free(signature);
+}
+
+int secp256k1_sign_verify(secp256k1_t *secp, secp256k1_sign_t *signature, unsigned char *hash, size_t length) {
+    if(length != SHA256_SIZE) {
+        printf("[-] warning: you should only check sha-256 hash, size mismatch\n");
+    }
+
+    return secp256k1_ecdsa_verify(secp->kntxt, &signature->sig, hash, &secp->pubkey);
+}
 
 int main() {
     secp256k1_t *bob = secp256k1_new();
@@ -146,6 +200,29 @@ int main() {
 
     secp256k1_erase_free(shared1, SHARED_SIZE);
     secp256k1_erase_free(shared2, SHARED_SIZE);
+
+    // Hello, world!
+    unsigned char hash[32] = {
+        0x31, 0x5F, 0x5B, 0xDB, 0x76, 0xD0, 0x78, 0xC4,
+        0x3B, 0x8A, 0xC0, 0x06, 0x4E, 0x4A, 0x01, 0x64,
+        0x61, 0x2B, 0x1F, 0xCE, 0x77, 0xC8, 0x69, 0x34,
+        0x5B, 0xFC, 0x94, 0xC7, 0x58, 0x94, 0xED, 0xD3,
+    };
+
+    unsigned char *sign = secp256k1_sign_hash(bob, hash, sizeof(hash));
+
+    printf("\n");
+    printf("Signature:\n");
+    dumphex(sign, SERSIG_SIZE);
+
+    secp256k1_sign_t *sigobj = secp256k1_load_signature(bob, sign, SERSIG_SIZE);
+    int valid = secp256k1_sign_verify(bob, sigobj, hash, sizeof(hash));
+
+    printf("\n");
+    printf("Signature valid: %d\n", valid);
+
+    secp256k1_erase_free(sign, SERSIG_SIZE);
+    secp256k1_sign_free(sigobj);
 
     secp256k1_free(bob);
     secp256k1_free(alice);
