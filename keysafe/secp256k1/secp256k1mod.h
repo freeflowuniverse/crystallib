@@ -4,10 +4,14 @@
     #include <secp256k1.h>
 
     typedef struct secp256k1_t {
-        secp256k1_context *kntxt;
-        unsigned char *seckey;
-        unsigned char *compressed;
-        secp256k1_pubkey pubkey;
+        secp256k1_context *kntxt;         // library context
+        unsigned char *seckey;            // ec private key
+
+        unsigned char *compressed;        // ec public key serialized
+        secp256k1_pubkey pubkey;          // ec public key
+
+        unsigned char *xcompressed;       // x-only serialized key
+        secp256k1_xonly_pubkey xpubkey;   // x-only public key
 
     } secp256k1_t;
 
@@ -21,6 +25,7 @@
     #define SECKEY_SIZE    32   // secret key size
     #define SHARED_SIZE    32   // ecdh shared key size
     #define COMPPUB_SIZE   33   // compressed public key size
+    #define XSERPUB_SIZE   32   // x-only public key serialized size
     #define SERSIG_SIZE    64   // serialized signature size
 
     #define SHA256_SIZE    32   // sha-256 digest length
