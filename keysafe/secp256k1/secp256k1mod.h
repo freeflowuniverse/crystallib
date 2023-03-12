@@ -12,6 +12,8 @@
 
         unsigned char *xcompressed;       // x-only serialized key
         secp256k1_xonly_pubkey xpubkey;   // x-only public key
+        secp256k1_keypair keypair;        // keypair opaque representation
+                                          // needed for schnorr
 
     } secp256k1_t;
 
@@ -27,6 +29,7 @@
     #define COMPPUB_SIZE   33   // compressed public key size
     #define XSERPUB_SIZE   32   // x-only public key serialized size
     #define SERSIG_SIZE    64   // serialized signature size
+    #define SCHSIG_SIZE    64   // internal schnorr signature size
 
     #define SHA256_SIZE    32   // sha-256 digest length
 

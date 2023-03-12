@@ -114,6 +114,9 @@ int secp256k1_generate_key(secp256k1_t *secp) {
 
         // always compute the xonly pubkey as well, so we don't need to compute
         // it later for schnorr
+        retval = secp256k1_keypair_create(secp->kntxt, &secp->keypair, secp->seckey);
+        assert(retval);
+
         retval = secp256k1_xonly_pubkey_from_pubkey(secp->kntxt, &secp->xpubkey, NULL, &secp->pubkey);
         assert(retval);
 
@@ -136,19 +139,20 @@ unsigned char *secp265k1_shared_key(secp256k1_t *private, secp256k1_t *public) {
 
 unsigned char *secp256k1_sign_hash(secp256k1_t *secp, unsigned char *hash, size_t length) {
     secp256k1_sign_t signature;
+    int retval;
 
     if(length != SHA256_SIZE) {
         printf("[-] warning: you should only sign sha-256 hash, size mismatch\n");
         printf("[-] warning: you get warned\n");
     }
 
-    int return_val = secp256k1_ecdsa_sign(secp->kntxt, &signature.sig, hash, secp->seckey, NULL, NULL);
-    assert(return_val);
+    retval = secp256k1_ecdsa_sign(secp->kntxt, &signature.sig, hash, secp->seckey, NULL, NULL);
+    assert(retval);
 
     signature.serialized = malloc(sizeof(unsigned char) * SERSIG_SIZE);
 
-    return_val = secp256k1_ecdsa_signature_serialize_compact(secp->kntxt, signature.serialized, &signature.sig);
-    assert(return_val);
+    retval = secp256k1_ecdsa_signature_serialize_compact(secp->kntxt, signature.serialized, &signature.sig);
+    assert(retval);
 
     return signature.serialized;
 }
@@ -187,6 +191,42 @@ int secp256k1_sign_verify(secp256k1_t *secp, secp256k1_sign_t *signature, unsign
     }
 
     return secp256k1_ecdsa_verify(secp->kntxt, &signature->sig, hash, &secp->pubkey);
+}
+
+unsigned char *secp256k1_schnorr_sign_hash(secp256k1_t *secp, unsigned char *hash, size_t length) {
+    unsigned char aux[32];
+    unsigned char *signature;
+    int retval;
+
+    if(length != SHA256_SIZE) {
+        printf("[-] warning: you should only sign sha-256 hash, size mismatch\n");
+        printf("[-] warning: you get warned\n");
+    }
+
+    if(!fill_random(aux, sizeof(aux))) {
+        printf("[-] failed to generate randomness\n");
+        return NULL;
+    }
+
+    signature = malloc(sizeof(unsigned char) * SCHSIG_SIZE);
+
+    retval = secp256k1_schnorrsig_sign32(secp->kntxt, signature, hash, &secp->keypair, aux);
+    assert(retval);
+
+    return signature;
+}
+
+int secp256k1_schnorr_verify(secp256k1_t *secp, unsigned char *signature, size_t siglen, unsigned char *hash, size_t hashlen) {
+    if(hashlen != SHA256_SIZE) {
+        printf("[-] warning: you should only check sha-256 hash, size mismatch\n");
+    }
+
+    if(siglen != SCHSIG_SIZE) {
+        printf("[-] invalid signature length, should be %u bytes\n", SCHSIG_SIZE);
+        return 2;
+    }
+
+    return secp256k1_schnorrsig_verify(secp->kntxt, signature, hash, hashlen, &secp->xpubkey);
 }
 
 int main() {
@@ -229,7 +269,7 @@ int main() {
     unsigned char *sign = secp256k1_sign_hash(bob, hash, sizeof(hash));
 
     printf("\n");
-    printf("Signature:\n");
+    printf("Signature (ecdsa):\n");
     dumphex(sign, SERSIG_SIZE);
 
     secp256k1_sign_t *sigobj = secp256k1_load_signature(bob, sign, SERSIG_SIZE);
@@ -240,6 +280,17 @@ int main() {
 
     secp256k1_erase_free(sign, SERSIG_SIZE);
     secp256k1_sign_free(sigobj);
+
+    sign = secp256k1_schnorr_sign_hash(bob, hash, sizeof(hash));
+
+    printf("\n");
+    printf("Signature (schnorr):\n");
+    dumphex(sign, SCHSIG_SIZE);
+
+    valid = secp256k1_schnorr_verify(bob, sign, SCHSIG_SIZE, hash, sizeof(hash));
+
+    printf("\n");
+    printf("Signature valid: %d\n", valid);
 
     secp256k1_free(bob);
     secp256k1_free(alice);
