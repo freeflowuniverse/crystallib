@@ -33,6 +33,8 @@ jobs:
           bash install.sh
       
       - name: Run tests
+        env:
+          VJOBS: 1
         run: |
           v -stats test books
           v -stats test coinmarketcap
@@ -49,9 +51,7 @@ jobs:
           v -stats test mnemonic
           v -stats test params
           v -stats test pathlib
-          v -stats test pathlib/path_link_test.v
-          v -stats test pathlib/path_list_test.v
-          v -stats test pathlib/path_tools_test.v
+          v -stats test redisclient
           
 
 
