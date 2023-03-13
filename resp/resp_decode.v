@@ -42,7 +42,7 @@ pub fn (mut r StringLineReader) get_response() !RValue {
 			}
 		}
 		// read payload
-		buffer := r.read(bulkstring_size) or { panic(err) }
+		buffer := r.read(bulkstring_size)
 		// extract final \r\n
 		r.read_line()
 		return RBString{
@@ -136,7 +136,7 @@ pub fn (mut r StringLineReader) get_bytes() ![]u8 {
 			return ''.bytes()
 		}
 		// read payload
-		buffer := r.read(bulkstring_size)!
+		buffer := r.read(bulkstring_size)
 		// extract final \r\n
 		return buffer
 	} else {
