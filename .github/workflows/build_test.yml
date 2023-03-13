@@ -31,6 +31,10 @@ jobs:
       - name: Add crystallib at the expected path
         run: |
           bash install.sh
+
+      - name: Check formatting
+        run: |
+          v fmt -w .
       
       - name: Run tests
         env:
