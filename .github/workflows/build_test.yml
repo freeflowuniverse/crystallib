@@ -48,5 +48,11 @@ jobs:
           v -stats test markdowndocs
           v -stats test mnemonic
           v -stats test params
+          v -stats test pathlib
+          v -stats test pathlib/path_link_test.v
+          v -stats test pathlib/path_list_test.v
+          v -stats test pathlib/path_tools_test.v
+          
+
 
       
