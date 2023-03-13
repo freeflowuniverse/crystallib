@@ -1,6 +1,8 @@
 name: publishtools_build
+
 on:
-  push:
+  release:
+    types: [published]
   workflow_dispatch:
 
 jobs:
@@ -25,3 +27,5 @@ jobs:
       - name: Add crystallib at the expected path
         run: |
           bash install.sh
+
+      # TODO: Publish release
