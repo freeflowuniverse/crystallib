@@ -45,5 +45,6 @@ jobs:
           v -stats test docker
           v -stats test encoder
           v -stats test imagemagick
+          v -stats test ipaddress
 
       
