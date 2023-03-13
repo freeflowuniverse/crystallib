@@ -48,6 +48,7 @@ pub mut:
 // useful to e.g. make new row which makes sum of all salaries for e.g. devengineering tag (or more than 1 tag)
 pub fn (mut s Sheet) group2row(name string, tags []string) !&Row {
 	// TODO, implement
+	return error("Not implemented yet")
 }
 
 pub fn (mut s Sheet) toyear() !Sheet {
@@ -72,6 +73,7 @@ pub fn (mut s Sheet) toquarter() !Sheet {
 	}
 	// TODO, implement
 	// TODO, make sure to set right nr of cols (/4)
+	return error("Not implemented yet")
 }
 
 // return array with same amount of items as cols in the rows
@@ -83,18 +85,22 @@ pub fn (mut s Sheet) header() ![]string {
 	// if col + 40 = months
 	// if col + 10 = quarters
 	// else is years
+	return error("Not implemented yet")
 }
 
 pub fn (mut s Sheet) json() !string {
 	// export to nice json representation
+	return error("Not implemented yet")
 }
 
 // find row, report error if not found
 pub fn (mut s Sheet) row_get(name string) !&Row {
 	// TODO:
+	return error("Not implemented yet")
 }
 
 // find row, report error if not found
 pub fn (mut s Sheet) cell_get(row string, col int) !&Cell {
 	// TODO:
+	return error("Not implemented yet")
 }
