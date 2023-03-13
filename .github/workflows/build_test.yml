@@ -53,6 +53,7 @@ jobs:
           v -stats test pathlib
           v -stats test redisclient
           v -stats test resp
+          v -stats test texttools
           
 
 

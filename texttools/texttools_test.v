@@ -11,7 +11,6 @@ fn test_dedent() {
 
 	'
 	text = dedent(text)
-	// println("'$text'")
 	assert text.len == 20
 }
 
