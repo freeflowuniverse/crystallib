@@ -28,7 +28,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
 
-      - name: Add crystallib at the expected path
+      - name: Install crystallib
         run: |
           bash install.sh
 
@@ -59,7 +59,3 @@ jobs:
           v -stats test resp
           v -stats test texttools
           v -stats test timetools
-          
-
-
-      
