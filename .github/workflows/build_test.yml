@@ -26,5 +26,6 @@ jobs:
         run: |
           v -stats test markdowndocs
           v -stats test books
+          v -stats test coinmarketcap
 
       
