@@ -34,7 +34,6 @@ jobs:
       
       - name: Run tests
         run: |
-          v -stats test markdowndocs
           v -stats test books
           v -stats test coinmarketcap
           v -stats test console
@@ -46,5 +45,8 @@ jobs:
           v -stats test encoder
           v -stats test imagemagick
           v -stats test ipaddress
+          v -stats test markdowndocs
+          v -stats test mnemonic
+          v -stats test params
 
       
