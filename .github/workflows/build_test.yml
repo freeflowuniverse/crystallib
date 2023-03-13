@@ -18,7 +18,7 @@ jobs:
           - 6379:6379
     steps:
       - name: Install dependencies
-        run: sudo apt install -y libgc-dev tmux mc git rsync curl
+        run: sudo apt install -y libgc-dev tmux mc git rsync curl imagemagick
 
       - name: Setup Vlang
         uses: vlang/setup-v@v1.3
@@ -44,5 +44,6 @@ jobs:
           v -stats test data
           v -stats test docker
           v -stats test encoder
+          v -stats test imagemagick
 
       
