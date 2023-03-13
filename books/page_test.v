@@ -1,7 +1,6 @@
 module books
 
 import os
-import freeflowuniverse.crystallib.markdowndocs
 import freeflowuniverse.crystallib.pathlib
 
 const testpath = os.dir(@FILE) + '/example/book1'

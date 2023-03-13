@@ -1,7 +1,5 @@
 module resp
 
-import io
-
 fn print_val_to_check(s string) {
 	println(s.replace('\n', '\\\\n').replace('\r', '\\\\r'))
 }
@@ -15,28 +13,25 @@ fn test_readline() {
 
 	mut res := []u8{}
 	for _ in 0 .. 9 {
-		res << r.read(1) or { 'E'.bytes() }
+		res << r.read(1)
 	}
-	assert res.bytestr() == '123456EEE'
+	assert res.bytestr() == '123456'
 
 	res = []u8{}
 	r.reset()
 	for _ in 0 .. 7 {
-		res << r.read(2) or { 'E'.bytes() }
+		res << r.read(2)
 	}
-	// println(res.bytestr())
-	assert res.bytestr() == '123456EEEE'
+	assert res.bytestr() == '123456'
 
 	r = new_line_reader('12\n34\r\n56\r\n'.bytes())
 	res = []u8{}
 	for _ in 0 .. 4 {
-		line := r.read_line() or { 'E'.bytes() }
+		line := r.read_line()
 		res << line
 		res << '\\n'.bytes()
-		println(line)
 	}
-	println(res.bytestr())
-	assert '12\\n34\\n56\\nE\\n' == res.bytestr()
+	assert '12\\n34\\n56\\n\\n' == res.bytestr()
 }
 
 fn test_1() {

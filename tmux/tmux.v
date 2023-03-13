@@ -12,16 +12,16 @@ pub mut:
 }
 
 pub fn get_local() !Tmux {
-	mut builder := builder.new()
-	mut node := builder.node_local()!
+	mut builder_ := builder.new()
+	mut node := builder_.node_local()!
 	return Tmux{
 		node: node
 	}
 }
 
 pub fn get_remote(ipaddr string) !Tmux {
-	mut builder := builder.new()
-	mut node := builder.node_new(name: 'test', ipaddr: ipaddr, debug: true)!
+	mut builder_ := builder.new()
+	mut node := builder_.node_new(name: 'test', ipaddr: ipaddr, debug: true)!
 	return Tmux{
 		node: node
 	}
@@ -149,7 +149,6 @@ pub fn (mut t Tmux) stop() ! {
 	t.sessions = map[string]&Session{}
 	t.scan()!
 
-	mut node := t.node
 	for _, mut session in t.sessions {
 		session.stop()!
 	}

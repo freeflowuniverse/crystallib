@@ -79,7 +79,7 @@ fn (mut image Image) identify_verbose() ! {
 	// }
 }
 
-fn (mut image Image) identify() ! {
+pub fn (mut image Image) identify() ! {
 	if image.size_y != 0 {
 		// means was already done
 		return

@@ -1,5 +1,3 @@
-import freeflowuniverse.crystallib.books
-
 const path = '~/code/github/threefoldfoundation/books/content/abundance_internet'
 
 fn test_file_exists() {

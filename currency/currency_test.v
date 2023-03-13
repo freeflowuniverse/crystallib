@@ -38,7 +38,7 @@ pub fn test_rates_get() {
 	assert c.val == 250.0
 
 	mut aa2 := cs.amount_get('0')!
-	assert aa.val == 0.0
+	assert aa2.val == 0.0
 
 	mut aa := cs.amount_get('10')!
 	assert aa.val == 10.0
