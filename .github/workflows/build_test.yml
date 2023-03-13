@@ -37,5 +37,9 @@ jobs:
           v -stats test markdowndocs
           v -stats test books
           v -stats test coinmarketcap
+          v -stats test console
+          v -stats test crpgp
+          v -stats test crystaljson
+          v -stats test currency
 
       

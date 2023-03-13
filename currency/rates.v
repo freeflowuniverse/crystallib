@@ -1,8 +1,8 @@
 module currency
 
-import net.http
-import json
 import freeflowuniverse.crystallib.httpconnection
+
+import json
 
 struct ResponseBody {
 	motd    string
