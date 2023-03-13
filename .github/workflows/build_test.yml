@@ -54,6 +54,7 @@ jobs:
           v -stats test redisclient
           v -stats test resp
           v -stats test texttools
+          v -stats test timetools
           
 
 
