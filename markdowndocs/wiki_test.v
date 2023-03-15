@@ -96,10 +96,12 @@ for x in list {
 	has_public_ip:yes
 	has_public_config:1
 ```
+
+# This is some header
 '
 	mut docs := new(content: content)!
 
-	assert docs.items.len == 4
+	assert docs.items.len == 5
 	assert docs.items[0] is Header
 	assert docs.items[1] is CodeBlock
 	codeblock1 := docs.items[1] as CodeBlock
@@ -107,6 +109,7 @@ for x in list {
 	assert docs.items[2] is Header
 	assert docs.items[3] is CodeBlock
 	codeblock2 := docs.items[3] as CodeBlock
+	assert docs.items[4] is Header
 	assert content.trim_space() == docs.wiki().trim_space()
 }
 
