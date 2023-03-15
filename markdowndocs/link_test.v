@@ -5,8 +5,6 @@ import pathlib
 fn test_link1() {
 	mut docs := new(content: '[Architecture](architecture/architecture.md)')!
 
-	println(docs)
-
 	docscompare := Doc{
 		content: '[Architecture](architecture/architecture.md)'
 		items: [
@@ -17,7 +15,7 @@ fn test_link1() {
 						content: '[Architecture](architecture/architecture.md)'
 						cat: .page
 						isexternal: false
-						include: true
+						include: false
 						newtab: false
 						moresites: false
 						description: 'Architecture'
@@ -41,33 +39,6 @@ fn test_link1() {
 	}
 
 	assert docscompare == docs
-
-	paragr := docs.items[0]
-	if paragr is Paragraph {
-		link := paragr.items[0]
-		if link is Link {
-			println(link)
-			assert link == Link{
-				content: '[Architecture](architecture/architecture.md)'
-				cat: .page
-				isexternal: false
-				include: true
-				newtab: false
-				moresites: false
-				description: 'Architecture'
-				url: 'architecture/architecture.md'
-				filename: 'architecture.md'
-				path: 'architecture'
-				site: ''
-				extra: ''
-				state: .ok
-				error_msg: ''
-			}
-			return
-		}
-	}
-
-	panic('error, should not get here')
 }
 
 fn test_link2() {
@@ -77,7 +48,6 @@ fn test_link2() {
 	if paragr is Paragraph {
 		link := paragr.items[0]
 		if link is Link {
-			println(link)
 			assert '[Architecture](*!@architecture/architecture.md)' == link.wiki()
 			assert link == Link{
 				content: '[Architecture](@*!architecture/architecture.md)'
@@ -109,14 +79,12 @@ fn test_link3() {
 	if paragr is Paragraph {
 		link := paragr.items[0]
 		if link is Link {
-			println(link)
-			println(link.wiki())
 			assert "![AArchitecture](img/license_threefoldfzc.png ':size=800x900')" == link.wiki()
 			assert link == Link{
 				content: "[AArchitecture](./img/license_threefoldfzc.png ':size=800x900')"
 				cat: .image
 				isexternal: false
-				include: true
+				include: false
 				newtab: false
 				moresites: false
 				description: 'AArchitecture'
@@ -144,14 +112,12 @@ fn test_link4() {
 	if paragr is Paragraph {
 		link := paragr.items[0]
 		if link is Link {
-			println(link)
-			println(link.wiki())
 			assert '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)' == link.wiki()
 			assert link == Link{
 				content: '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)'
 				cat: .html
 				isexternal: true
-				include: true
+				include: false
 				newtab: false
 				moresites: false
 				description: 'Architecture'

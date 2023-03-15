@@ -14,5 +14,5 @@ fn test_get() {
 	assert nslist == ['default', 'test']
 
 	nsinfo := zdb.nsinfo('default')!
-	assert nsinfo.contains('name: default')
+	assert 'name: default' in nsinfo
 }

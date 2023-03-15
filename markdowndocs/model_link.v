@@ -91,11 +91,14 @@ fn (link Link) wiki() string {
 		}
 		if link.site != '' {
 			link_filename = '${link.site}:${link_filename}'
-		} else if link.include {
+		}
+		if link.include {
 			link_filename = '@${link_filename}'
-		} else if link.newtab {
+		}
+		if link.newtab {
 			link_filename = '!${link_filename}'
-		} else if link.moresites {
+		}
+		if link.moresites {
 			link_filename = '*${link_filename}'
 		}
 

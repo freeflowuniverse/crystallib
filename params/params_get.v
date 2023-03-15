@@ -12,7 +12,7 @@ import time { Duration }
 pub fn (params &Params) exists(key_ string) bool {
 	key := key_.to_lower()
 	for p in params.params {
-		if p.key == key {
+		if p.key == key && p.value != "" {
 			return true
 		}
 	}
@@ -108,20 +108,20 @@ pub fn (params &Params) get_u8_default(key string, defval u8) !u8 {
 	return defval
 }
 
-pub fn (params &Params) get_kilobytes(key string) !u64 {
+pub fn (params &Params) get_resource_in_bytes(key string) !u64 {
 	valuestr := params.get(key)!
 	mut times := 1
 	if valuestr.len > 2 && !valuestr[valuestr.len - 2].is_digit()
 		&& !valuestr[valuestr.len - 1].is_digit() {
 		times = match valuestr[valuestr.len - 2..].to_upper() {
 			'GB' {
-				1024 * 2024
+				1024 * 1024 * 1024 
 			}
 			'MB' {
-				1024
+				1024 * 1024
 			}
 			'KB' {
-				1
+				1024
 			}
 			else {
 				0
@@ -134,9 +134,9 @@ pub fn (params &Params) get_kilobytes(key string) !u64 {
 	return valuestr.u64() * u64(times)
 }
 
-pub fn (params &Params) get_kilobytes_default(key string, defval u64) !u64 {
+pub fn (params &Params) get_resource_in_bytes_default(key string, defval u64) !u64 {
 	if params.exists(key) {
-		return params.get_kilobytes(key)!
+		return params.get_resource_in_bytes(key)!
 	}
 	return defval
 }

@@ -17,3 +17,10 @@ A sheet can also be represented per year or per quarter, if per year then there 
 
 There is also functionality to export a sheet to wiki (markdown) or html representation.
 
+## offline
+
+if you need to work offline e.g. for development do
+
+```bash
+export OFFLINE=1
+```

@@ -39,13 +39,12 @@ fn (mut r StringLineReader) read_line() []u8 {
 	panic('should not get here')
 }
 
-fn (mut r StringLineReader) read(x int) ![]u8 {
+fn (mut r StringLineReader) read(x int) []u8 {
 	mut out := []u8{}
 	for _ in 0 .. x {
 		if r.x > r.y - 1 {
 			return []u8{}
 		}
-		// println(r.x)
 		out << r.data[r.x]
 		r.x++
 	}

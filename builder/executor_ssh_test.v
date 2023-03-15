@@ -8,59 +8,59 @@ import ipaddress { IPAddress }
 // connecting to local host over ssh and test executor
 fn testsuite_begin() {
 	mut e := ExecutorLocal{}
-	e.exec("yes | ssh-keygen -t rsa  -f ~/.ssh/id_rsa_test -N ''") or { panic(err) }
-	e.exec('chmod 0600 ~/.ssh/id_rsa_test && chmod 0644 ~/.ssh/id_rsa_test.pub') or { panic(err) }
-	e.exec('cat ~/.ssh/id_rsa_test.pub >> ~/.ssh/authorized_keys') or { panic(err) }
-	e.exec('chmod og-wx ~/.ssh/authorized_keys') or { panic(err) }
+	e.exec("yes | ssh-keygen -t rsa  -f ~/.ssh/id_rsa_test -N ''")!
+	e.exec('chmod 0600 ~/.ssh/id_rsa_test && chmod 0644 ~/.ssh/id_rsa_test.pub')!
+	e.exec('cat ~/.ssh/id_rsa_test.pub >> ~/.ssh/authorized_keys')!
+	e.exec('chmod og-wx ~/.ssh/authorized_keys')!
 }
 
 fn test_exec() {
-	mut e := ExecutorSSH{
+	mut e := ExecutorSSH {
 		sshkey: '~/.ssh/id_rsa_test'
 	}
-	e.ipaddr = IPAddress{
+	e.ipaddr = IPAddress {
 		addr: '127.0.0.1'
 		port: 22
 	}
-	res := e.exec('ls  /') or { panic(err) }
+	res := e.exec('ls  /')!
 	println(res)
 }
 
 fn test_file_operations() {
-	mut e := ExecutorSSH{
+	mut e := ExecutorSSH {
 		sshkey: '~/.ssh/id_rsa_test'
 	}
-	e.ipaddr = IPAddress{
+	e.ipaddr = IPAddress {
 		addr: '127.0.0.1'
 		port: 22
 		cat: .ipv4
 	}
 	mut filepath := '/tmp/${rand.uuid_v4()}'
-	e.file_write(filepath, 'ssh') or { panic('error writing file') }
-	mut text := e.file_read(filepath) or { panic('can not read file') }
+	e.file_write(filepath, 'ssh')!
+	mut text := e.file_read(filepath)!
 	assert text == 'ssh'
 	mut exists := e.file_exists(filepath)
 	assert exists == true
-	e.delete(filepath) or { panic(err) }
+	e.delete(filepath)!
 	exists = e.file_exists(filepath)
 	assert exists == false
 }
 
 fn test_environ_get() {
-	mut e := ExecutorSSH{
+	mut e := ExecutorSSH {
 		sshkey: '~/.ssh/id_rsa_test'
 	}
-	e.ipaddr = IPAddress{
+	e.ipaddr = IPAddress {
 		addr: '127.0.0.1'
 		port: 22
 		cat: .ipv4
 	}
-	mut env := e.environ_get() or { panic(err) }
+	mut env := e.environ_get()!
 	println(env)
 }
 
-// fn test_remote_machine(){
-// 	mut e := ExecutorSSH{
+// fn test_remote_machine() {
+// 	mut e := ExecutorSSH {
 // 		sshkey: "~/.ssh/id_rsa_test",
 // 		user: "root",
 // 		ipaddr: IPAddress{
@@ -72,6 +72,6 @@ fn test_environ_get() {
 // 			cat: IpAddressType.ipv4
 // 		}
 // 	}
-// 	res := e.exec("ls  /root") or {panic(err)}
+// 	res := e.exec("ls  /root")!
 // 	println(res)
 // }
