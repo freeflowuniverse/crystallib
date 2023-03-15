@@ -1,6 +1,8 @@
 name: publishtools_build
+
 on:
-  push:
+  release:
+    types: [published]
   workflow_dispatch:
 
 jobs:
@@ -26,4 +28,4 @@ jobs:
         run: |
           bash install.sh
 
-        # todo run tests
+      # TODO: Publish release
