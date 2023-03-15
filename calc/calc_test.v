@@ -52,15 +52,9 @@ fn test_sheets() {
 
 // 	mut pricetft := sh.row_new(name: 'pricetft', growth: '1:100aed,55:1000eur')!
 
-<<<<<<< HEAD
-// 	// println( sh.rows["pricetft"].cells[0])
-// 	assert sh.rows['pricetft'].cells[0].val == 25.0
-// 	assert sh.rows['pricetft'].cells[60 - 1].val == 900.0
-=======
 	// println( sh.rows["pricetft"].cells[0])
 	assert sh.rows['pricetft']!.cells[0].val == 25.0
 	assert sh.rows['pricetft']!.cells[60 - 1].val == 900.0
->>>>>>> development
 
 // 	// TODO: we need to create tests for it
 

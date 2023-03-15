@@ -65,7 +65,6 @@ pub mut:
 // aggregate (sum) them into one row
 // returns a row with the result
 // useful to e.g. make new row which makes sum of all salaries for e.g. devengineering tag (or more than 1 tag)
-<<<<<<< HEAD
 pub fn (mut s Sheet) group2row(args Group2RowArgs) !&Row {
 	name:=args.name
 	if name==""{
@@ -97,11 +96,6 @@ pub fn (mut s Sheet) group2row(args Group2RowArgs) !&Row {
 		}
 	}
 	return rowout
-=======
-pub fn (mut s Sheet) group2row(name string, tags []string) !&Row {
-	// TODO, implement
-	return error("Not implemented yet")
->>>>>>> development
 }
 
 [params]
@@ -180,7 +174,6 @@ fn (mut s Sheet) tosmaller(args_ ToYearQuarterArgs) !Sheet {
 			 
 		}
 	}
-<<<<<<< HEAD
 	// println("to smaller done")
 	return sheet_out
 }
@@ -209,11 +202,6 @@ pub fn (mut s Sheet) toquarter(args ToYearQuarterArgs) !Sheet {
 	mut args2:=args
 	args2.period_months = 3
 	return s.tosmaller(args2)
-=======
-	// TODO, implement
-	// TODO, make sure to set right nr of cols (/4)
-	return error("Not implemented yet")
->>>>>>> development
 }
 
 // return array with same amount of items as cols in the rows
@@ -240,7 +228,6 @@ pub fn (mut s Sheet) header() ![]string {
 	}
 
 	// else is years
-<<<<<<< HEAD
 	mut res:=[]string{}
 	for x in 1..s.nrcol+1{
 		res << "Y${x}"
@@ -252,38 +239,20 @@ pub fn (mut s Sheet) json() string {
 	//TODO: not done yet
 	// return json.encode_pretty(s)
 	return""
-=======
-	return error("Not implemented yet")
-}
-
-pub fn (mut s Sheet) json() !string {
-	// export to nice json representation
-	return error("Not implemented yet")
->>>>>>> development
 }
 
 // find row, report error if not found
 pub fn (mut s Sheet) row_get(name string) !&Row {
-<<<<<<< HEAD
 	return s.rows[name] or{
 		return error("could not find row with name: $name")
 	}
-=======
-	// TODO:
-	return error("Not implemented yet")
->>>>>>> development
 }
 
 // find row, report error if not found
 pub fn (mut s Sheet) cell_get(row string, col int) !&Cell {
-<<<<<<< HEAD
 	mut r:=s.row_get(row)!
 	mut c:=r.cells[col] or {
 		return error("could not find cell from col:$col for row name: $row")
 	}
 	return &c
-=======
-	// TODO:
-	return error("Not implemented yet")
->>>>>>> development
 }
