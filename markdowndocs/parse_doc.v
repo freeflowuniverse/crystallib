@@ -69,16 +69,16 @@ fn (mut doc Doc) parse() ! {
 
 		if mut llast is Paragraph {
 			if line.starts_with('!!') {
-				doc.items << Action{
-					content: line.all_after_first('!!')
+				doc.items << Action {
+					content: "${line.all_after_first('!!')}\n"
 				}
 				parser.next()
 				continue
 			}
 
-			// find codeblock or actions
+			// find codeblock
 			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
-				doc.items << CodeBlock{
+				doc.items << CodeBlock {
 					category: line.substr(3, line.len).to_lower().trim_space()
 				}
 				parser.next()
@@ -97,7 +97,7 @@ fn (mut doc Doc) parse() ! {
 						parser.next_start()
 						continue
 					}
-					doc.items << Header{
+					doc.items << Header {
 						content: line.all_after_first(line[..d]).trim_space()
 						depth: d
 					}

@@ -1,5 +1,7 @@
 module markdowndocs
 
+import freeflowuniverse.crystallib.params { Param, Params }
+
 fn test_wiki_headers_paragraphs() {
 	content := '
 
@@ -36,6 +38,42 @@ To initialize tmux on a local or [remote node](mysite:page.md), simply build the
 	assert paragraph2.items[3] is Link
 	assert paragraph2.items[4] is Text
 	assert docs.items[4] is Header
+	assert content.trim_space() == docs.wiki().trim_space()
+}
+
+fn test_wiki_action() {
+	content := '
+# This is an action
+
+!!farmerbot.nodemanager.define
+	has_public_config:1
+	has_public_ip:yes
+	id:15
+	twinid:20
+'
+	mut docs := new(content: content)!
+
+	assert docs.items.len == 2
+	assert docs.items[0] is Header
+	assert docs.items[1] is Action
+	action := docs.items[1] as Action
+	assert action.name == "farmerbot.nodemanager.define"
+	assert action.params == Params {
+		params: [Param {
+			key: 'has_public_config'
+			value: '1'
+		}, Param {
+			key: 'has_public_ip'
+			value: 'yes'
+		}, Param {
+			key: 'id'
+			value: '15'
+		}, Param {
+			key: 'twinid'
+			value: '20'
+		}]
+		args: []
+	}
 	assert content.trim_space() == docs.wiki().trim_space()
 }
 
@@ -158,18 +196,24 @@ Optional attributes:
 
 Example:
 
-```
 !!farmerbot.nodemanager.define
-	id:20
-	twinid:105
-	public_config:true
-	dedicated:1
 	certified:yes
 	cpuoverprovision:1
-```
+	dedicated:1
+	id:
+	public_config:true
+	twinid:105
 "
 	mut docs := new(content: content)!
-
-	// TODO
+	assert docs.items.len == 9
+	assert docs.items[0] is Header
+	assert docs.items[1] is Paragraph
+	assert docs.items[2] is Header
+	assert docs.items[3] is Paragraph
+	assert docs.items[4] is Header
+	assert docs.items[5] is Paragraph
+	assert docs.items[6] is Header
+	assert docs.items[7] is Paragraph
+	assert docs.items[8] is Action
 	assert content.trim_space() == docs.wiki().trim_space()
 }
