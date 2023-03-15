@@ -1,9 +1,12 @@
 module redisserver
 
+
+import freeflowuniverse.crystallib.redisclient
+import freeflowuniverse.crystallib.resp
+
 // NEED TO USE resp
 import net
-import freeflowuniverse.crystallib.resp
-import redisclient
+import time
 
 pub struct RedisInstance {
 pub mut:
@@ -25,7 +28,7 @@ pub struct RedisHandler {
 // https://redis.io/topics/protocol
 pub fn listen(addr string, port int) !RedisSrv {
 	mut socket := net.listen_tcp(net.AddrFamily.ip, '${addr}:${port}')!
-	// socket.set_read_timeout(2 * time.second)
+	// socket.set_accept_timeout(2 * time.second)
 	return RedisSrv{
 		socket: socket
 	}

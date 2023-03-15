@@ -114,7 +114,6 @@ def test():
 fn test_macro_args() {
 	mut text := "arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok'"
 	params := parse(text) or { panic(err) }
-	// println(params)
 
 	expexted_res := Params{
 		params: [Param{
@@ -142,8 +141,6 @@ fn test_args_get() {
 	mut text := "arg1  color:red priority:'2' description:'with spaces, lets see if ok' x:5 arg2"
 	mut params := parse(text) or { panic(err) }
 
-	// println(params)
-
 	assert params.arg_exists('arg1')
 	assert params.arg_exists('arg2')
 	assert !params.arg_exists('arg')
@@ -164,11 +161,8 @@ fn test_args_get() {
 // 	mut params := parse(textin) or { panic(err) }
 
 // 	d:=params.json_export()
-// 	println(d)
 
 // 	mut params2 := json_import(d) or {panic(err)}
-
-// 	println(params2)
 
 // 	panic("ssss")
 
@@ -178,7 +172,7 @@ fn test_export() {
 	mut params := parse(params.textin) or { panic(err) }
 
 	d := params.export() or { panic(err) }
-	// println(d)
+
 	mut out := "
 	description:'## markdown works in it\\n\\ndescription can be multiline\\nlets see what happens\\n\\n- a\\n- something else\\n\\n### subtitle\\n\\n```python\\n#even code block in the other block, crazy parsing for sure\\ndef test():\\n    print()\\n```'
 	id:a1
@@ -198,7 +192,7 @@ fn test_export2() {
 	mut params := parse(params.textin2) or { panic(err) }
 
 	d := params.export() or { panic(err) }
-	// println(d)
+	
 	mut out := "
 	description:something\\nyes
 	id:a1
@@ -222,7 +216,6 @@ fn test_import1() {
 
 	d := params.export() or { panic(err) }
 	mut params2 := importparams(d) or { panic(err) }
-	// println(params2)
 
 	assert params.equal(params2)!
 }
@@ -246,9 +239,7 @@ fn test_import2() {
 	description:something\\nyes
 
 	"
-	println(d)
 	mut params2 := importparams(d) or { panic(err) }
-	println(params2)
 
 	assert params.equal(params2)!
 }
@@ -318,10 +309,9 @@ fn test_to_resp_from_resp() {
 	}
 
 	mut bytes := input.to_resp()!
-	// println(bytes)
 
 	mut p := from_resp(bytes)?
-	println(p.str())
+
 	// expected result shown below
 }
 */
