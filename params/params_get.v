@@ -260,7 +260,7 @@ pub fn (params &Params) get_list_int(key string) ![]int {
 pub fn (params &Params) get_default_true(key string) bool {
 	mut r := params.get(key) or { '' }
 	r = texttools.name_fix_no_underscore(r)
-	if r == '' || r == '1' || r == 'true' || r == 'y' {
+	if r == '' || r == '1' || r == 'true' || r == 'y' || r == 'yes' {
 		return true
 	}
 	return false
@@ -269,7 +269,7 @@ pub fn (params &Params) get_default_true(key string) bool {
 pub fn (params &Params) get_default_false(key string) bool {
 	mut r := params.get(key) or { '' }
 	r = texttools.name_fix_no_underscore(r)
-	if r == '' || r == '0' || r == 'false' || r == 'n' {
+	if r == '' || r == '0' || r == 'false' || r == 'n' || r == 'no' {
 		return false
 	}
 	return true
