@@ -1,3 +1,5 @@
+module main1
+
 import freeflowuniverse.crystallib.twinclient as tw
 // This is an example that will deploy a machie for you.
 // This file containes [get_machine, delete_machine, deploy_machine] methods which let you interact with Grid3-client.

@@ -4,7 +4,7 @@ import vweb
 import json
 import net.http
 
-pub fn (mut app App) before_request() {
+fn (mut app App) before_request() {
 	basic_auth({
 		'Emad': '0000'
 	}, mut app) or { panic(err) }

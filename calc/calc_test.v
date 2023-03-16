@@ -5,15 +5,23 @@ import freeflowuniverse.crystallib.currency
 fn test_sheets() {
 	mut sh := sheet_new() or { panic(err) }
 
-	mut nrnodes := sh.row_new(name: 'nrnodes', growth: '5:100,55:1000', tags: [
-		'nodes',
-	])!
+	mut nrnodes := sh.row_new(
+		name: 'nrnodes'
+		growth: '5:100,55:1000'
+		tags: [
+			'nodes',
+		]
+	)!
 	mut curtest := sh.row_new(name: 'curtest', growth: '1:100EUR,55:1000AED,56:0')!
 
-	mut nrnodes2 := sh.row_new(name: 'nrnodes2', growth: '5:100,55:1000,60:500', tags: [
-		'nodes',
-		'somethingelse',
-	])!
+	mut nrnodes2 := sh.row_new(
+		name: 'nrnodes2'
+		growth: '5:100,55:1000,60:500'
+		tags: [
+			'nodes',
+			'somethingelse',
+		]
+	)!
 	mut times2 := sh.row_new(name: 'times2', growth: '1:2')! // means all cells are nr 2
 
 	mut nrnodessum := nrnodes.add('nrnodessum', nrnodes2)!

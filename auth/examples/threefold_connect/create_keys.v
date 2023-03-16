@@ -4,7 +4,7 @@ import libsodium
 import encoding.base64
 import term
 
-pub fn create_keys() ! {
+fn create_keys() ! {
 	sk_key := []u8{len: 32}
 	pk_key := []u8{len: 32}
 	_ := libsodium.crypto_sign_keypair(pk_key.data, sk_key.data)
