@@ -9,5 +9,5 @@ fn main() {
 	println('Coucou')
 	println(sha256.hexhash(message))
 
-	secp256k1.init()
+	// secp256k1.init()
 }

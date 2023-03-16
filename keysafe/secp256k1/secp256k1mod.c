@@ -6,10 +6,6 @@
 #include <stddef.h>
 #include <limits.h>
 #include <stdio.h>
-#include <secp256k1.h>
-#include <secp256k1_ecdh.h>
-#include <secp256k1_extrakeys.h>
-#include <secp256k1_schnorrsig.h>
 #include "secp256k1mod.h"
 
 static int fill_random(unsigned char* data, size_t size) {
