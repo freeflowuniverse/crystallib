@@ -34,7 +34,19 @@ fn (mut o Table) process() ! {
 }
 
 fn (o Table) wiki() string {
-	return o.content
+	mut out := "| ${o.header.join(' | ')} |\n"
+	alignment_row := o.alignments.map(
+		match it {
+			.left { ' :-- ' }
+			.center { ' :-: ' }
+			.right { ' --: ' }
+		}
+	).join('|')
+	out += "|${alignment_row}|\n"
+	for row in o.rows {
+		out += "| ${row.join(' | ')} |\n"
+	}
+	return "${out}\n"
 }
 
 fn (o Table) html() string {
