@@ -1,4 +1,4 @@
-import freeflowuniverse.crystallib.books { sites_new }
+import freeflowuniverse.crystallib.books
 
 const path = '~/code/github/threefoldfoundation/books/content/abundance_internet'
 

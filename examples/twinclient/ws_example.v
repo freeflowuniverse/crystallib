@@ -1,9 +1,9 @@
-import freeflowuniverse.crystallib.twinclient as tw
+import freeflowuniverse.crystallib.threefold.twinclient as tw
 import net.websocket as ws
 import term
 import json
 
-fn main() {
+fn main1() {
 	mut s := ws.new_server(.ip6, 8081, '/')
 	s.on_connect(fn (mut s ws.ServerClient) !bool {
 		if s.resource_name != '/' {

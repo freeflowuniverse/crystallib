@@ -1,6 +1,6 @@
 import freeflowuniverse.crystallib.twinclient as tw
 
-fn main() {
+fn main2() {
 	mut transport := tw.RmbTwinClient{}
 	transport.init([143], 5, 5)!
 	mut grid := tw.grid_client(transport)!

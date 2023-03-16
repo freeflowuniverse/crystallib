@@ -1,4 +1,4 @@
-module main
+module main3
 
 import pg
 

@@ -192,7 +192,7 @@ fn test_export2() {
 	mut params := parse(params.textin2) or { panic(err) }
 
 	d := params.export() or { panic(err) }
-	
+
 	mut out := "
 	description:something\\nyes
 	id:a1
