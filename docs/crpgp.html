@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>crpgp | vdoc</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  
+		<link rel="stylesheet" href="doc.css" />
+		<link rel="stylesheet" href="normalize.css" />
+		<script src="dark-mode.js"></script>
+</head>
+
+<body>
+  <div><a id="skip-to-content-link" href="#main-content">Skip to content</a></div>
+  <div id="page">
+    <header class="doc-nav hidden">
+      <div class="heading-container">
+        <div class="heading">
+          <div class="info">
+            <div class="module">crystallib</div>
+            <div class="toggle-version-container">
+              <span>0.1.0 e8c0b09</span>
+              <div id="dark-mode-toggle" role="switch" aria-checked="false" aria-label="Toggle dark mode"><svg xmlns="http://www.w3.org/2000/svg" class="light-icon" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" class="dark-icon" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><rect fill="none" height="24" width="24"/></g><g><g><g><path d="M11.1,12.08C8.77,7.57,10.6,3.6,11.63,2.01C6.27,2.2,1.98,6.59,1.98,12c0,0.14,0.02,0.28,0.02,0.42 C2.62,12.15,3.29,12,4,12c1.66,0,3.18,0.83,4.1,2.15C9.77,14.63,11,16.17,11,18c0,1.52-0.87,2.83-2.12,3.51 c0.98,0.32,2.03,0.5,3.11,0.5c3.5,0,6.58-1.8,8.37-4.52C18,17.72,13.38,16.52,11.1,12.08z"/></g><path d="M7,16l-0.18,0C6.4,14.84,5.3,14,4,14c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.62,0,2.49,0,3,0c1.1,0,2-0.9,2-2 C9,16.9,8.1,16,7,16z"/></g></g></svg>
+</div>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" id="toggle-menu" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+
+          </div>
+          <input type="text" id="search" placeholder="Search... (beta)" autocomplete="off">
+        </div>
+      </div>
+      <nav class="search hidden"></nav>
+      <nav class="content hidden">
+        <ul>
+          <li class="open"><div class="menu-row"><a href="./index.html">README</a></div></li><li class="open"><div class="menu-row"><a href="./cacher.html">cacher</a></div></li><li class="open"><div class="menu-row"><a href="./books.html">books</a></div></li><li class="open"><div class="menu-row"><a href="./builder.html">builder</a></div></li><li class="open"><div class="menu-row"><a href="./calc.html">calc</a></div></li><li class="open"><div class="menu-row"><a href="./coinmarketcap.html">coinmarketcap</a></div></li><li class="open"><div class="menu-row"><a href="./console.html">console</a></div></li><li class="open active"><div class="menu-row"><a href="./crpgp.html">crpgp</a></div></li><li class="open"><div class="menu-row"><a href="./crystaljson.html">crystaljson</a></div></li><li class="open"><div class="menu-row"><a href="./currency.html">currency</a></div></li><li class="open"><div class="menu-row"><a href="./data.html">data</a></div></li><li class="open"><div class="menu-row"><a href="./docker.html">docker</a></div></li><li class="open"><div class="menu-row"><a href="./encoder.html">encoder</a></div></li><li class="open"><div class="menu-row"><a href="./fftools.html">fftools</a></div></li><li class="open"><div class="menu-row"><a href="./github.html">github</a></div></li><li class="open"><div class="menu-row"><a href="./gittools.html">gittools</a></div></li><li class="open"><div class="menu-row"><a href="./hostsfile.html">hostsfile</a></div></li><li class="open"><div class="menu-row"><a href="./httpcache.html">httpcache</a></div></li><li class="open"><div class="menu-row"><a href="./httpconnection.html">httpconnection</a></div></li><li class="open"><div class="menu-row"><a href="./imagemagick.html">imagemagick</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">installers</a></div><ul><li><a href="./installers.base.html">base</a></li><li><a href="./installers.caddy.html">caddy</a></li><li><a href="./installers.crystaltools.html">crystaltools</a></li><li><a href="./installers.golang.html">golang</a></li><li><a href="./installers.imagemagick.html">imagemagick</a></li><li><a href="./installers.mdbook.html">mdbook</a></li><li><a href="./installers.repository.html">repository</a></li><li><a href="./installers.rust.html">rust</a></li><li><a href="./installers.swarm.html">swarm</a></li><li><a href="./installers.tailwind.html">tailwind</a></li><li><a href="./installers.tmux.html">tmux</a></li><li><a href="./installers.vlang.html">vlang</a></li><li><a href="./installers.zdb.html">zdb</a></li></ul></li><li class="open"><div class="menu-row"><a href="./ipaddress.html">ipaddress</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./keysafe.html">keysafe</a></div><ul><li><a href="./keysafe.secp256k1.html">secp256k1</a></li></ul></li><li class="open"><div class="menu-row"><a href="./markdowndocs.html">markdowndocs</a></div></li><li class="open"><div class="menu-row"><a href="./mnemonic.html">mnemonic</a></div></li><li class="open"><div class="menu-row"><a href="./natsclient.html">natsclient</a></div></li><li class="open"><div class="menu-row"><a href="./params.html">params</a></div></li><li class="open"><div class="menu-row"><a href="./pathlib.html">pathlib</a></div></li><li class="open"><div class="menu-row"><a href="./pgp.html">pgp</a></div></li><li class="open"><div class="menu-row"><a href="./process.html">process</a></div></li><li class="open"><div class="menu-row"><a href="./publisher2.html">publisher2</a></div></li><li class="open"><div class="menu-row"><a href="./redisclient.html">redisclient</a></div></li><li class="open"><div class="menu-row"><a href="./redisserver.html">redisserver</a></div></li><li class="open"><div class="menu-row"><a href="./resp.html">resp</a></div></li><li class="open"><div class="menu-row"><a href="./rootpath.html">rootpath</a></div></li><li class="open"><div class="menu-row"><a href="./serializers.html">serializers</a></div></li><li class="open"><div class="menu-row"><a href="./sshagent.html">sshagent</a></div></li><li class="open"><div class="menu-row"><a href="./taskletmanager.html">taskletmanager</a></div></li><li class="open"><div class="menu-row"><a href="./texttools.html">texttools</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">threefold</a></div><ul><li><a href="./threefold.liquid.html">liquid</a></li><li><a href="./threefold.macros.html">macros</a></li><li><a href="./threefold.nodepilot.html">nodepilot</a></li><li><a href="./threefold.terraform.html">terraform</a></li><li><a href="./threefold.tokens.html">tokens</a></li><li><a href="./threefold.twinclient.html">twinclient</a></li></ul></li><li class="open"><div class="menu-row"><a href="./timetools.html">timetools</a></div></li><li class="open"><div class="menu-row"><a href="./tmux.html">tmux</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">tools</a></div><ul><li><a href="./tools.cacher.html">cacher</a></li><li><a href="./tools.downloader.html">downloader</a></li></ul></li><li class="open"><div class="menu-row"><a href="./twinclient.html">twinclient</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./ui.html">ui</a></div><ul><li><a href="./ui.console.html">console</a></li><li><a href="./ui.telegram.html">telegram</a></li><li><a href="./ui.telegram.client.html">telegram.client</a></li><li><a href="./ui.uimodel.html">uimodel</a></li></ul></li><li class="open"><div class="menu-row"><a href="./vault.html">vault</a></div></li><li class="open"><div class="menu-row"><a href="./verasure.html">verasure</a></div></li><li class="open"><div class="menu-row"><a href="./vexecutor.html">vexecutor</a></div></li><li class="open"><div class="menu-row"><a href="./zdb.html">zdb</a></div></li>
+        </ul>
+      </nav>
+    </header>
+    <div class="doc-scrollview" id="main-content">
+      <div class="doc-container">
+        <div class="doc-content">
+          						<section id="readme_crpgp" class="doc-node">
+							<div class="title"><h1> crpgp <a href="#readme_crpgp">#</a></h1></div><h1>CRPGP</h1>
+<p>This module based on <a href="https://github.com/threefoldtech/crpgp">threefold/crpgp</a> repo, which is a wrapper for <a href="https://github.com/rpgp/rpgp">rpgp</a></p>
+<h2>Install</h2>
+<p>All needed libs can be installed from <a href="./install.sh">install.sh</a></p>
+<h2>High Level API</h2>
+<ul>
+<li>List of supported functions with a description for each method</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Description</th>
+<th>Input</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>generate_key</td>
+<td>generate a signed secret key using name, email, comment, key_type and key_length</td>
+<td>KeyParams</td>
+<td>SignedSecretKey</td>
+</tr>
+<tr>
+<td>SignedSecretKey.get_signed_public_key</td>
+<td>get a signed public key from signed secret key</td>
+<td></td>
+<td>SignedPublicKey</td>
+</tr>
+<tr>
+<td>import_publickey</td>
+<td>import signed public key in armored format</td>
+<td>string</td>
+<td>SignedPublicKey</td>
+</tr>
+<tr>
+<td>import_publickey_from_file</td>
+<td>like import_publickey but from a file</td>
+<td>string</td>
+<td>SignedPublicKey</td>
+</tr>
+<tr>
+<td>import_secretkey</td>
+<td>import signed secret key in armored format</td>
+<td>string</td>
+<td>SignedSecretKey</td>
+</tr>
+<tr>
+<td>import_secretkey_from_file</td>
+<td>like import_secretkey but from a file</td>
+<td>string</td>
+<td>SignedSecretKey</td>
+</tr>
+<tr>
+<td>SignedPublicKey.sign_message</td>
+<td>sign message with your signed public key</td>
+<td>string</td>
+<td>Signature</td>
+</tr>
+<tr>
+<td>SignedSecretKey.verify_signature</td>
+<td>verify signature for message with your signed secret key</td>
+<td>Signature, string</td>
+<td>bool</td>
+</tr>
+<tr>
+<td>SignedPublicKey.encrypt_from_text</td>
+<td>encrypt message from text using your signed public key</td>
+<td>string</td>
+<td>[]byte</td>
+</tr>
+<tr>
+<td>SignedSecretKey.decrypt_to_text</td>
+<td>decrypt encrypted messages to text using your signed secret key</td>
+<td>[]byte</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Signature.to_bytes</td>
+<td>convert signature to bytes</td>
+<td></td>
+<td>[]byte</td>
+</tr>
+<tr>
+<td>Signature.to_hex</td>
+<td>convert signature to hex</td>
+<td></td>
+<td>string</td>
+</tr>
+<tr>
+<td>signature_from_hex</td>
+<td>convert hex string to signature</td>
+<td>string</td>
+<td>Signature</td>
+</tr>
+</tbody>
+</table>
+<h3>Notes:</h3>
+<ul>
+<li>key_type is enum of [<code>cv25519</code>, <code>rsa</code>], by default key_type will be <code>cv25519</code></li>
+<li>key_length used if key_type is <code>rsa</code> and <code>3072</code> is a default value</li>
+</ul>
+<h2>How to use ?</h2>
+<ul>
+<li><p>We will go together step by step to illustrate how to use this module.</p>
+</li>
+<li><p>Import crpgp module</p>
+</li>
+</ul>
+<pre><code class="language-v">import crpgp
+</code></pre>
+<ul>
+<li>We have <strong>two</strong> options here, generate a new key, or import</li>
+</ul>
+<ol>
+<li>Generate:</li>
+</ol>
+<ul>
+<li>CV25519 key:</li>
+</ul>
+<pre><code class="language-v">ssk := crpgp.generate_key(name: &lt;YOUR_NAME&gt;, email: &lt;YOUR_EMAIL&gt;) ?
+</code></pre>
+<ul>
+<li>RSA key</li>
+</ul>
+<pre><code class="language-v">// key_length 3072 if not passed
+ssk := crpgp.generate_key(name: &lt;YOUR_NAME&gt;, email: &lt;YOUR_EMAIL&gt;, key_type: .rsa) ?
+</code></pre>
+<p>or</p>
+<pre><code class="language-v">ssk := crpgp.generate_key(name: &lt;YOUR_NAME&gt;, email: &lt;YOUR_EMAIL&gt;, key_type: .rsa, key_length: &lt;LENGTH&gt;) ?
+</code></pre>
+<ol start="2">
+<li>Import signed secret key from file</li>
+</ol>
+<pre><code class="language-v">ssk := crpgp.import_secretkey_from_file(&lt;FILE_PATH&gt;) ?
+</code></pre>
+<ul>
+<li>Now we have a signed secret key, let us get a signed public key, also we have <strong>two</strong> options, get from secret key or import</li>
+</ul>
+<ol>
+<li>Get signed public key from signed secret key</li>
+</ol>
+<pre><code class="language-v">spk := ssk.get_signed_public_key() ?
+</code></pre>
+<ol start="2">
+<li>import signed public key from file</li>
+</ol>
+<pre><code class="language-v">spk := crpgp.import_publickey_from_file(&lt;FILE_PATH&gt;) ?
+</code></pre>
+<ul>
+<li>Now we have a signed public and secret key, let us try to sign and verify a message</li>
+</ul>
+<pre><code class="language-v">message := &quot;these are my secrets\n12345&quot;
+mut sig := ssk.sign_message(message) ?
+println(sig.to_hex() ?) // In case we want to convert it to hex, here just to display it
+
+if spk.verify_signature(sig, message) {
+    println('✅ message signed and verified!')
+}
+</code></pre>
+<ul>
+<li>let us try encrypt and decrypt message.</li>
+</ul>
+<pre><code class="language-v">encrypted := spk.encrypt_from_text(message) ?
+decrypted := ssk.decrypt_to_text(encrypted) ?
+if message == decrypted {
+    println('✅ message encrypted and decrypted!')
+}
+</code></pre>
+<ul>
+<li>Done !</li>
+</ul>
+
+</section>
+
+						<section id="generate_key" class="doc-node">
+							<div class="title"><h2>fn generate_key <a href="#generate_key">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/pgp.v#L29"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">generate_key</span><span class="token punctuation">(</span>k KeyParams<span class="token punctuation">)</span> <span class="token operator">?</span>SignedSecretKey</code></pre>
+
+
+</section>
+						<section id="import_publickey_from_file" class="doc-node">
+							<div class="title"><h2>fn import_publickey_from_file <a href="#import_publickey_from_file">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/pgp.v#L62"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">import_publickey_from_file</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">?</span>SignedPublicKey</code></pre>
+<p>import public key from ASCII armor file format</p>
+
+</section>
+						<section id="signature_from_hex" class="doc-node">
+							<div class="title"><h2>fn signature_from_hex <a href="#signature_from_hex">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/pgp.v#L110"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">signature_from_hex</span><span class="token punctuation">(</span>sig <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">?</span>Signature</code></pre>
+
+
+</section>
+						<section id="signed_public_key_from_armored" class="doc-node">
+							<div class="title"><h2>fn signed_public_key_from_armored <a href="#signed_public_key_from_armored">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L281"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">signed_public_key_from_armored</span><span class="token punctuation">(</span>s <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">?</span>SignedPublicKey</code></pre>
+
+
+</section>
+						<section id="signed_public_key_from_bytes" class="doc-node">
+							<div class="title"><h2>fn signed_public_key_from_bytes <a href="#signed_public_key_from_bytes">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L259"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">signed_public_key_from_bytes</span><span class="token punctuation">(</span>bytes <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span><span class="token punctuation">)</span> <span class="token operator">?</span>SignedPublicKey</code></pre>
+
+
+</section>
+						<section id="signed_secret_key_from_armored" class="doc-node">
+							<div class="title"><h2>fn signed_secret_key_from_armored <a href="#signed_secret_key_from_armored">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L132"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">signed_secret_key_from_armored</span><span class="token punctuation">(</span>s <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">?</span>SignedSecretKey</code></pre>
+
+
+</section>
+						<section id="import_secretkey" class="doc-node">
+							<div class="title"><h2>fn import_secretkey <a href="#import_secretkey">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/pgp.v#L68"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">import_secretkey</span><span class="token punctuation">(</span>data <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">?</span>SignedSecretKey</code></pre>
+<p>import secret key from ASCII armor text format</p>
+
+</section>
+						<section id="import_secretkey_from_file" class="doc-node">
+							<div class="title"><h2>fn import_secretkey_from_file <a href="#import_secretkey_from_file">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/pgp.v#L73"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">import_secretkey_from_file</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">?</span>SignedSecretKey</code></pre>
+<p>import secret key from ASCII armor file format</p>
+
+</section>
+						<section id="str_to_bytes" class="doc-node">
+							<div class="title"><h2>fn str_to_bytes <a href="#str_to_bytes">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/utils.v#L14"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">str_to_bytes</span><span class="token punctuation">(</span>s <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span></code></pre>
+
+
+</section>
+						<section id="signed_secret_key_from_bytes" class="doc-node">
+							<div class="title"><h2>fn signed_secret_key_from_bytes <a href="#signed_secret_key_from_bytes">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L110"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">signed_secret_key_from_bytes</span><span class="token punctuation">(</span>bytes <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span><span class="token punctuation">)</span> <span class="token operator">?</span>SignedSecretKey</code></pre>
+
+
+</section>
+						<section id="new_secret_key_param_builder" class="doc-node">
+							<div class="title"><h2>fn new_secret_key_param_builder <a href="#new_secret_key_param_builder">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L3"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">new_secret_key_param_builder</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">?</span>SecretKeyParamsBuilder</code></pre>
+
+
+</section>
+						<section id="new_subkey_params_builder" class="doc-node">
+							<div class="title"><h2>fn new_subkey_params_builder <a href="#new_subkey_params_builder">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L196"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">new_subkey_params_builder</span><span class="token punctuation">(</span><span class="token punctuation">)</span> SubkeyParamsBuilder</code></pre>
+
+
+</section>
+						<section id="cu8_to_vbytes" class="doc-node">
+							<div class="title"><h2>fn cu8_to_vbytes <a href="#cu8_to_vbytes">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/utils.v#L3"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">cu8_to_vbytes</span><span class="token punctuation">(</span>ptr <span class="token operator">&</span><span class="token builtin">u8</span><span class="token punctuation">,</span> l <span class="token builtin">u64</span><span class="token punctuation">)</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span></code></pre>
+
+
+</section>
+						<section id="deserialize_signature" class="doc-node">
+							<div class="title"><h2>fn deserialize_signature <a href="#deserialize_signature">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L155"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">deserialize_signature</span><span class="token punctuation">(</span>bytes <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span><span class="token punctuation">)</span> <span class="token operator">?</span>Signature</code></pre>
+
+
+</section>
+						<section id="import_publickey" class="doc-node">
+							<div class="title"><h2>fn import_publickey <a href="#import_publickey">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/pgp.v#L57"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">import_publickey</span><span class="token punctuation">(</span>data <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">?</span>SignedPublicKey</code></pre>
+<p>import functions import public key from ASCII armor text format</p>
+
+</section>
+						<section id="SubkeyParamsBuilder.key_type" class="doc-node">
+							<div class="title"><h2>fn (SubkeyParamsBuilder) key_type <a href="#SubkeyParamsBuilder.key_type">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L202"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>b <span class="token operator">&</span>SubkeyParamsBuilder<span class="token punctuation">)</span> <span class="token function">key_type</span><span class="token punctuation">(</span>key_type C<span class="token punctuation">.</span>KeyType<span class="token punctuation">)</span> <span class="token operator">?</span></code></pre>
+
+
+</section>
+						<section id="SubkeyParamsBuilder.build" class="doc-node">
+							<div class="title"><h2>fn (SubkeyParamsBuilder) build <a href="#SubkeyParamsBuilder.build">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L208"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>b <span class="token operator">&</span>SubkeyParamsBuilder<span class="token punctuation">)</span> <span class="token function">build</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">?</span>SubkeyParams</code></pre>
+
+
+</section>
+						<section id="PublicKey.verify" class="doc-node">
+							<div class="title"><h2>fn (PublicKey) verify <a href="#PublicKey.verify">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L167"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>p <span class="token operator">&</span>PublicKey<span class="token punctuation">)</span> <span class="token function">verify</span><span class="token punctuation">(</span>data <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span><span class="token punctuation">,</span> sig <span class="token operator">&</span>Signature<span class="token punctuation">)</span> <span class="token operator">?</span></code></pre>
+
+
+</section>
+						<section id="PublicKey.sign_and_free" class="doc-node">
+							<div class="title"><h2>fn (PublicKey) sign_and_free <a href="#PublicKey.sign_and_free">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L175"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>p <span class="token operator">&</span>PublicKey<span class="token punctuation">)</span> <span class="token function">sign_and_free</span><span class="token punctuation">(</span>sk SignedSecretKey<span class="token punctuation">)</span> <span class="token operator">?</span>SignedPublicKey</code></pre>
+
+
+</section>
+						<section id="PublicKey.encrypt" class="doc-node">
+							<div class="title"><h2>fn (PublicKey) encrypt <a href="#PublicKey.encrypt">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L186"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>s <span class="token operator">&</span>PublicKey<span class="token punctuation">)</span> <span class="token function">encrypt</span><span class="token punctuation">(</span>data <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span><span class="token punctuation">)</span> <span class="token operator">?</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span></code></pre>
+
+
+</section>
+						<section id="SecretKey.sign" class="doc-node">
+							<div class="title"><h2>fn (SecretKey) sign <a href="#SecretKey.sign">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L55"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>s <span class="token operator">&</span>SecretKey<span class="token punctuation">)</span> <span class="token function">sign</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">?</span>SignedSecretKey</code></pre>
+
+
+</section>
+						<section id="SecretKeyParams.generate_and_free" class="doc-node">
+							<div class="title"><h2>fn (SecretKeyParams) generate_and_free <a href="#SecretKeyParams.generate_and_free">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L44"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>s <span class="token operator">&</span>SecretKeyParams<span class="token punctuation">)</span> <span class="token function">generate_and_free</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">?</span>SecretKey</code></pre>
+
+
+</section>
+						<section id="SecretKeyParamsBuilder.primary_key_id" class="doc-node">
+							<div class="title"><h2>fn (SecretKeyParamsBuilder) primary_key_id <a href="#SecretKeyParamsBuilder.primary_key_id">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L14"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>b <span class="token operator">&</span>SecretKeyParamsBuilder<span class="token punctuation">)</span> <span class="token function">primary_key_id</span><span class="token punctuation">(</span>primary_key_id <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">?</span></code></pre>
+
+
+</section>
+						<section id="SecretKeyParamsBuilder.key_type" class="doc-node">
+							<div class="title"><h2>fn (SecretKeyParamsBuilder) key_type <a href="#SecretKeyParamsBuilder.key_type">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L20"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>b <span class="token operator">&</span>SecretKeyParamsBuilder<span class="token punctuation">)</span> <span class="token function">key_type</span><span class="token punctuation">(</span>key_type C<span class="token punctuation">.</span>KeyType<span class="token punctuation">)</span> <span class="token operator">?</span></code></pre>
+
+
+</section>
+						<section id="SecretKeyParamsBuilder.subkey" class="doc-node">
+							<div class="title"><h2>fn (SecretKeyParamsBuilder) subkey <a href="#SecretKeyParamsBuilder.subkey">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L26"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>b <span class="token operator">&</span>SecretKeyParamsBuilder<span class="token punctuation">)</span> <span class="token function">subkey</span><span class="token punctuation">(</span>subkey SubkeyParams<span class="token punctuation">)</span> <span class="token operator">?</span></code></pre>
+
+
+</section>
+						<section id="SecretKeyParamsBuilder.build" class="doc-node">
+							<div class="title"><h2>fn (SecretKeyParamsBuilder) build <a href="#SecretKeyParamsBuilder.build">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L32"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>b <span class="token operator">&</span>SecretKeyParamsBuilder<span class="token punctuation">)</span> <span class="token function">build</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">?</span>SecretKeyParams</code></pre>
+
+
+</section>
+						<section id="Signature.serialize" class="doc-node">
+							<div class="title"><h2>fn (Signature) serialize <a href="#Signature.serialize">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L143"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>s <span class="token operator">&</span>Signature<span class="token punctuation">)</span> <span class="token function">serialize</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">?</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span></code></pre>
+
+
+</section>
+						<section id="Signature.to_hex" class="doc-node">
+							<div class="title"><h2>fn (Signature) to_hex <a href="#Signature.to_hex">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/pgp.v#L106"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>sig <span class="token operator">&</span>Signature<span class="token punctuation">)</span> <span class="token function">to_hex</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">?</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="SignedPublicKey.encrypt" class="doc-node">
+							<div class="title"><h2>fn (SignedPublicKey) encrypt <a href="#SignedPublicKey.encrypt">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L227"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>s <span class="token operator">&</span>SignedPublicKey<span class="token punctuation">)</span> <span class="token function">encrypt</span><span class="token punctuation">(</span>data <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span><span class="token punctuation">)</span> <span class="token operator">?</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span></code></pre>
+
+
+</section>
+						<section id="SignedPublicKey.encrypt_from_text" class="doc-node">
+							<div class="title"><h2>fn (SignedPublicKey) encrypt_from_text <a href="#SignedPublicKey.encrypt_from_text">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/pgp.v#L84"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>spk <span class="token operator">&</span>SignedPublicKey<span class="token punctuation">)</span> <span class="token function">encrypt_from_text</span><span class="token punctuation">(</span>message <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">?</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span></code></pre>
+
+
+</section>
+						<section id="SignedPublicKey.encrypt_with_any" class="doc-node">
+							<div class="title"><h2>fn (SignedPublicKey) encrypt_with_any <a href="#SignedPublicKey.encrypt_with_any">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L237"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>s <span class="token operator">&</span>SignedPublicKey<span class="token punctuation">)</span> <span class="token function">encrypt_with_any</span><span class="token punctuation">(</span>data <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span><span class="token punctuation">)</span> <span class="token operator">?</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span></code></pre>
+
+
+</section>
+						<section id="SignedPublicKey.to_armored" class="doc-node">
+							<div class="title"><h2>fn (SignedPublicKey) to_armored <a href="#SignedPublicKey.to_armored">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L270"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>s <span class="token operator">&</span>SignedPublicKey<span class="token punctuation">)</span> <span class="token function">to_armored</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">?</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="SignedPublicKey.to_bytes" class="doc-node">
+							<div class="title"><h2>fn (SignedPublicKey) to_bytes <a href="#SignedPublicKey.to_bytes">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L247"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>s <span class="token operator">&</span>SignedPublicKey<span class="token punctuation">)</span> <span class="token function">to_bytes</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">?</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span></code></pre>
+
+
+</section>
+						<section id="SignedPublicKey.verify" class="doc-node">
+							<div class="title"><h2>fn (SignedPublicKey) verify <a href="#SignedPublicKey.verify">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L219"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>p <span class="token operator">&</span>SignedPublicKey<span class="token punctuation">)</span> <span class="token function">verify</span><span class="token punctuation">(</span>data <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span><span class="token punctuation">,</span> sig <span class="token operator">&</span>Signature<span class="token punctuation">)</span> <span class="token operator">?</span></code></pre>
+
+
+</section>
+						<section id="SignedPublicKey.verify_signature" class="doc-node">
+							<div class="title"><h2>fn (SignedPublicKey) verify_signature <a href="#SignedPublicKey.verify_signature">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/pgp.v#L79"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>spk <span class="token operator">&</span>SignedPublicKey<span class="token punctuation">)</span> <span class="token function">verify_signature</span><span class="token punctuation">(</span>sig <span class="token operator">&</span>Signature<span class="token punctuation">,</span> message <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+<p>Public Key Functions</p>
+
+</section>
+						<section id="SignedSecretKey.to_bytes" class="doc-node">
+							<div class="title"><h2>fn (SignedSecretKey) to_bytes <a href="#SignedSecretKey.to_bytes">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L98"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>s <span class="token operator">&</span>SignedSecretKey<span class="token punctuation">)</span> <span class="token function">to_bytes</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">?</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span></code></pre>
+
+
+</section>
+						<section id="SignedSecretKey.decrypt" class="doc-node">
+							<div class="title"><h2>fn (SignedSecretKey) decrypt <a href="#SignedSecretKey.decrypt">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L77"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>s <span class="token operator">&</span>SignedSecretKey<span class="token punctuation">)</span> <span class="token function">decrypt</span><span class="token punctuation">(</span>data <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span><span class="token punctuation">)</span> <span class="token operator">?</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span></code></pre>
+
+
+</section>
+						<section id="SignedSecretKey.decrypt_to_text" class="doc-node">
+							<div class="title"><h2>fn (SignedSecretKey) decrypt_to_text <a href="#SignedSecretKey.decrypt_to_text">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/pgp.v#L93"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>ssk <span class="token operator">&</span>SignedSecretKey<span class="token punctuation">)</span> <span class="token function">decrypt_to_text</span><span class="token punctuation">(</span>encrypted_message <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span><span class="token punctuation">)</span> <span class="token operator">?</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="SignedSecretKey.get_signed_public_key" class="doc-node">
+							<div class="title"><h2>fn (SignedSecretKey) get_signed_public_key <a href="#SignedSecretKey.get_signed_public_key">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/pgp.v#L97"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>ssk <span class="token operator">&</span>SignedSecretKey<span class="token punctuation">)</span> <span class="token function">get_signed_public_key</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">?</span>SignedPublicKey</code></pre>
+
+
+</section>
+						<section id="SignedSecretKey.public_key" class="doc-node">
+							<div class="title"><h2>fn (SignedSecretKey) public_key <a href="#SignedSecretKey.public_key">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L87"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>s <span class="token operator">&</span>SignedSecretKey<span class="token punctuation">)</span> <span class="token function">public_key</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">?</span>PublicKey</code></pre>
+
+
+</section>
+						<section id="SignedSecretKey.sign_message" class="doc-node">
+							<div class="title"><h2>fn (SignedSecretKey) sign_message <a href="#SignedSecretKey.sign_message">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/pgp.v#L89"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>ssk <span class="token operator">&</span>SignedSecretKey<span class="token punctuation">)</span> <span class="token function">sign_message</span><span class="token punctuation">(</span>message <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">?</span>Signature</code></pre>
+<p>Secret Key Fucntions</p>
+
+</section>
+						<section id="SignedSecretKey.to_armored" class="doc-node">
+							<div class="title"><h2>fn (SignedSecretKey) to_armored <a href="#SignedSecretKey.to_armored">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L121"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>s <span class="token operator">&</span>SignedSecretKey<span class="token punctuation">)</span> <span class="token function">to_armored</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">?</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="SignedSecretKey.create_signature" class="doc-node">
+							<div class="title"><h2>fn (SignedSecretKey) create_signature <a href="#SignedSecretKey.create_signature">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/types.v#L66"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>s <span class="token operator">&</span>SignedSecretKey<span class="token punctuation">)</span> <span class="token function">create_signature</span><span class="token punctuation">(</span>data <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">byte</span><span class="token punctuation">)</span> <span class="token operator">?</span>Signature</code></pre>
+
+
+</section>
+						<section id="CipherSuite" class="doc-node">
+							<div class="title"><h2>enum CipherSuite <a href="#CipherSuite">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/pgp.v#L19"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">enum</span> <span class="token symbol">CipherSuite</span> <span class="token punctuation">{</span>
+	cv25519 <span class="token comment">// ed_dsa primary, ecdh sub</span>
+	rsa <span class="token comment">// rsa primary (rsa and bitsize can be parameterized)</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="KeyType_Tag" class="doc-node">
+							<div class="title"><h2>enum KeyType_Tag <a href="#KeyType_Tag">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/crpgp-manual.v#L4"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">enum</span> <span class="token symbol">KeyType_Tag</span> <span class="token punctuation">{</span>
+	rsa
+	ecdh
+	ed_dsa
+<span class="token punctuation">}</span></code></pre>
+<p>Things that are hard to convert from the c header file automatically</p>
+
+</section>
+						<section id="KeyParams" class="doc-node">
+							<div class="title"><h2>struct KeyParams <a href="#KeyParams">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/crpgp/pgp.v#L11"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">KeyParams</span> <span class="token punctuation">{</span>
+	name     <span class="token builtin">string</span>      <span class="token punctuation">[</span>required<span class="token punctuation">]</span>
+	email    <span class="token builtin">string</span>      <span class="token punctuation">[</span>required<span class="token punctuation">]</span>
+	key_type CipherSuite
+	length   <span class="token builtin">u32</span> <span class="token operator">=</span> <span class="token number">3072</span>
+	comment  <span class="token builtin">string</span>
+<span class="token punctuation">}</span></code></pre>
+<p>KeyParams</p>
+
+</section>
+
+          <div class="footer">
+            Powered by vdoc.
+          </div>
+        </div>
+        <div class="doc-toc"><ul><li class="open"><a href="#readme_crpgp">README</a></li>
+<li class="open"><a href="#generate_key">fn generate_key</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#import_publickey_from_file">fn import_publickey_from_file</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#signature_from_hex">fn signature_from_hex</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#signed_public_key_from_armored">fn signed_public_key_from_armored</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#signed_public_key_from_bytes">fn signed_public_key_from_bytes</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#signed_secret_key_from_armored">fn signed_secret_key_from_armored</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#import_secretkey">fn import_secretkey</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#import_secretkey_from_file">fn import_secretkey_from_file</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#str_to_bytes">fn str_to_bytes</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#signed_secret_key_from_bytes">fn signed_secret_key_from_bytes</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#new_secret_key_param_builder">fn new_secret_key_param_builder</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#new_subkey_params_builder">fn new_subkey_params_builder</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#cu8_to_vbytes">fn cu8_to_vbytes</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#deserialize_signature">fn deserialize_signature</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#import_publickey">fn import_publickey</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#SubkeyParamsBuilder.key_type">type SubkeyParamsBuilder</a>        <ul>
+<li><a href="#SubkeyParamsBuilder.key_type">fn key_type</a></li>
+<li><a href="#SubkeyParamsBuilder.build">fn build</a></li>
+</ul>
+</li>
+<li class="open"><a href="#PublicKey.verify">type PublicKey</a>        <ul>
+<li><a href="#PublicKey.verify">fn verify</a></li>
+<li><a href="#PublicKey.sign_and_free">fn sign_and_free</a></li>
+<li><a href="#PublicKey.encrypt">fn encrypt</a></li>
+</ul>
+</li>
+<li class="open"><a href="#SecretKey.sign">type SecretKey</a>        <ul>
+<li><a href="#SecretKey.sign">fn sign</a></li>
+</ul>
+</li>
+<li class="open"><a href="#SecretKeyParams.generate_and_free">type SecretKeyParams</a>        <ul>
+<li><a href="#SecretKeyParams.generate_and_free">fn generate_and_free</a></li>
+</ul>
+</li>
+<li class="open"><a href="#SecretKeyParamsBuilder.primary_key_id">type SecretKeyParamsBuilder</a>        <ul>
+<li><a href="#SecretKeyParamsBuilder.primary_key_id">fn primary_key_id</a></li>
+<li><a href="#SecretKeyParamsBuilder.key_type">fn key_type</a></li>
+<li><a href="#SecretKeyParamsBuilder.subkey">fn subkey</a></li>
+<li><a href="#SecretKeyParamsBuilder.build">fn build</a></li>
+</ul>
+</li>
+<li class="open"><a href="#Signature.serialize">type Signature</a>        <ul>
+<li><a href="#Signature.serialize">fn serialize</a></li>
+<li><a href="#Signature.to_hex">fn to_hex</a></li>
+</ul>
+</li>
+<li class="open"><a href="#SignedPublicKey.encrypt">type SignedPublicKey</a>        <ul>
+<li><a href="#SignedPublicKey.encrypt">fn encrypt</a></li>
+<li><a href="#SignedPublicKey.encrypt_from_text">fn encrypt_from_text</a></li>
+<li><a href="#SignedPublicKey.encrypt_with_any">fn encrypt_with_any</a></li>
+<li><a href="#SignedPublicKey.to_armored">fn to_armored</a></li>
+<li><a href="#SignedPublicKey.to_bytes">fn to_bytes</a></li>
+<li><a href="#SignedPublicKey.verify">fn verify</a></li>
+<li><a href="#SignedPublicKey.verify_signature">fn verify_signature</a></li>
+</ul>
+</li>
+<li class="open"><a href="#SignedSecretKey.to_bytes">type SignedSecretKey</a>        <ul>
+<li><a href="#SignedSecretKey.to_bytes">fn to_bytes</a></li>
+<li><a href="#SignedSecretKey.decrypt">fn decrypt</a></li>
+<li><a href="#SignedSecretKey.decrypt_to_text">fn decrypt_to_text</a></li>
+<li><a href="#SignedSecretKey.get_signed_public_key">fn get_signed_public_key</a></li>
+<li><a href="#SignedSecretKey.public_key">fn public_key</a></li>
+<li><a href="#SignedSecretKey.sign_message">fn sign_message</a></li>
+<li><a href="#SignedSecretKey.to_armored">fn to_armored</a></li>
+<li><a href="#SignedSecretKey.create_signature">fn create_signature</a></li>
+</ul>
+</li>
+<li class="open"><a href="#CipherSuite">enum CipherSuite</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#KeyType_Tag">enum KeyType_Tag</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#KeyParams">struct KeyParams</a>        <ul>
+</ul>
+</li>
+</ul></div>
+      </div>
+    </div>
+  </div>
+  <script src="doc.js"></script>
+  <script async src="search_index.js"></script>
+</body>
+
+</html>

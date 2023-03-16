@@ -85,8 +85,8 @@ pub struct Verasure {
 
 pub struct Shards {
 	blocksize int
-	data [][]u8
-	parity [][]u8
+	data      [][]u8
+	parity    [][]u8
 }
 
 pub fn new(segments int, spare int) Verasure {
@@ -141,7 +141,7 @@ pub fn (mut v Verasure) decode(shards Shards) []u8 {
 
 fn test() {
 	e := new(16, 4)
-	shards := e.encode("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer consectetur accumsan augue, at pharetra".bytes())
+	shards := e.encode('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer consectetur accumsan augue, at pharetra'.bytes())
 	println(shards)
 
 	data := e.decode(shards)
@@ -174,5 +174,3 @@ fn test() {
 
 	return
 }
-
-
