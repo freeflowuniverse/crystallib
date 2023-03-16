@@ -229,6 +229,7 @@ int secp256k1_schnorr_verify(secp256k1_t *secp, unsigned char *signature, size_t
     return secp256k1_schnorrsig_verify(secp->kntxt, signature, hash, hashlen, &secp->xpubkey);
 }
 
+#if 0
 int main() {
     secp256k1_t *bob = secp256k1_new();
     secp256k1_generate_key(bob);
@@ -292,9 +293,11 @@ int main() {
     printf("\n");
     printf("Signature valid: %d\n", valid);
 
+    secp256k1_erase_free(sign, SCHSIG_SIZE);
+
     secp256k1_free(bob);
     secp256k1_free(alice);
 
     return 0;
 }
-
+#endif
