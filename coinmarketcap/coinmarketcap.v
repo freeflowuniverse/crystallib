@@ -178,11 +178,11 @@ fn (mut h CoinMarketConnection) get_json(prefix string, data string, query strin
 		mut req := http.Request{}
 		if query != '' {
 			req = http.new_request(http.Method.get, '${h.url}/${prefix}?${query}', data) or {
-				return error("failed to create http request")
+				return error('failed to create http request')
 			}
 		} else {
 			req = http.new_request(http.Method.get, '${h.url}/${prefix}', data) or {
-				return error("failed to create http request")
+				return error('failed to create http request')
 			}
 		}
 		req.header = h.header()!
@@ -216,11 +216,11 @@ fn (mut h CoinMarketConnection) get_json_str(prefix string, data string, query s
 		mut req := http.Request{}
 		if query != '' {
 			req = http.new_request(http.Method.get, '${h.url}/${prefix}?${query}', data) or {
-				return error("failed to create http request")
+				return error('failed to create http request')
 			}
 		} else {
 			req = http.new_request(http.Method.get, '${h.url}/${prefix}', data) or {
-				return error("failed to create http request")
+				return error('failed to create http request')
 			}
 		}
 		req.header = h.header()!

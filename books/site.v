@@ -192,7 +192,7 @@ pub fn (mut site Site) page_new(mut p Path) !&Page {
 	}
 	mut doc := markdowndocs.new(path: p.path) or { panic('cannot parse,${err}') }
 
-	mut page := Page {
+	mut page := Page{
 		doc: &doc
 		pathrel: p.path_relative(site.path.path)!.trim('/')
 		name: p.name_fix_no_ext()

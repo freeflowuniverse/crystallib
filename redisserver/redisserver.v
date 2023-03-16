@@ -1,10 +1,8 @@
 module redisserver
 
-
+// NEED TO USE resp
 import freeflowuniverse.crystallib.redisclient
 import freeflowuniverse.crystallib.resp
-
-// NEED TO USE resp
 import net
 import time
 
