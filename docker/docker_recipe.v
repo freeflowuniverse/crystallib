@@ -19,6 +19,9 @@ type RecipeItem = AddItem
 	| PackageItem
 	| RunItem
 	| WorkDirItem
+	| CopyItem
+	| ExposeItem
+	| VolumeItem
 
 pub struct RecipeArgs {
 pub:
@@ -92,6 +95,18 @@ pub fn (mut b DockerBuilderRecipe) render() !string {
 				item.render()!
 			}
 			WorkDirItem {
+				item.check()!
+				item.render()!
+			}
+			CopyItem {
+				item.check()!
+				item.render()!
+			}
+			ExposeItem{
+				item.check()!
+				item.render()!
+			}
+			VolumeItem{
 				item.check()!
 				item.render()!
 			}
@@ -184,7 +199,7 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 	cmd := '
 		set -ex
 		cd ${destpath}
-		docker buildx build . -t ${b.engine.dockerhubuser}/${b.name}:${b.tag} --ssh default=\${SSH_AUTH_SOCK} ${nocache} ${bplatform} ${bpush}
+		docker buildx build . -t ${b.name}:${b.tag} --ssh default=\${SSH_AUTH_SOCK} ${nocache} ${bplatform} ${bpush}
 		'
 
 	mut cmdshell := 'set -ex\ncd ${destpath}\ndocker rm ${b.name} -f > /dev/null 2>&1\ndocker run --name ${b.name} '
@@ -197,7 +212,7 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 	cmdshell += '    -v ${destpath}:/src \\\n'
 	cmdshell += '    -v /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock \\\n'
 	cmdshell += '    -e SSH_AUTH_SOCK="/run/host-services/ssh-auth.sock" \\\n'
-	cmdshell += '    --hostname ${b.name} ${b.engine.dockerhubuser}/${b.name}:${b.tag}'
+	cmdshell += '    --hostname ${b.name} ${b.name}:${b.tag}'
 	if b.zinit {
 		cmdshell += '\n\ndocker exec -ti ${b.name} /bin/shell.sh'
 	} else {
