@@ -40,14 +40,18 @@ fn test_sheets() {
 
 	// TODO: we need to create tests for it
 
-	println(sh)
-	println(shyear)
-	println(shq)
+	// println(sh)
+	// println(shyear)
+	// println(shq)
 	// r:=shq.json()!
 	// println(r)
-	wiki := sh.wiki(description: 'is my description.')!
-	println(wiki)
-	panic('test1')
+	// wiki := sh.wiki(description: 'is my description.')!
+	// println(wiki)
+	// panic('test1')
+
+	html := sh.html(description: "Foo")!
+	println(html)
+	panic("bar")
 }
 
 // fn test_curr() {
