@@ -34,9 +34,9 @@ pub fn (mut b DockerBuilderRecipe) add_env(args EnvArgs) ! {
 			return error('each line in env needs to have =, now ${args.env} in \n ${b}')
 		}
 		splitted := line.split('=')
-		if splitted.len != 2 {
-			return error('each line in env needs to have 1x =, now ${args.env} in \n ${b}')
-		}
+		// if splitted.len != 2 {
+		// 	return error('each line in env needs to have 1x =, now ${args.env} in \n ${b}')
+		// }
 		item.env << EnvPart{
 			name: splitted[0]
 			value: splitted[1]
