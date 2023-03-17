@@ -250,6 +250,35 @@ fn test_hexhash() {
 	assert h == 'e3517c4daa5526cf7a6f200de10a81a9db95460ecd469a53d8dca9d659228c20'
 }
 
+fn test_params_default_false() {
+	mut params := parse("
+	certified:false
+	certified1:no
+	certified2:n
+	certified3:0
+	")!
+
+	assert params.get_default_false("certified") == false
+	assert params.get_default_false("certified1") == false
+	assert params.get_default_false("certified2") == false
+	assert params.get_default_false("certified3") == false
+	assert params.get_default_false("certified4") == false
+}
+
+fn test_params_default_true() {
+	mut params := parse("
+	certified:true
+	certified1:yes
+	certified2:y
+	certified3:1
+	")!
+
+	assert params.get_default_true("certified") == true
+	assert params.get_default_true("certified1") == true
+	assert params.get_default_true("certified2") == true
+	assert params.get_default_true("certified3") == true
+	assert params.get_default_true("certified4") == true
+}
 /*
 fn test_to_resp_from_resp() {
 	mut input := Params{
