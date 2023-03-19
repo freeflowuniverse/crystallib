@@ -95,7 +95,7 @@ pub fn multiline_to_single(text string) !string {
 				continue
 			}
 			if line2.trim_space().ends_with(":'") || line2.trim_space().ends_with(": '") {
-				return error("line cannot end with ': '' or ':'' in \n%text")
+				return error("line cannot end with ': '' or ':'' in \n$text\nline:$line2")
 			}
 			if line2.trim_space().ends_with(':') {
 				// means is multiline
