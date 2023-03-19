@@ -3,7 +3,7 @@ import json
 
 // used for testing
 
-mut conn := httpconnection.new('test', 'https://jsonplaceholder.typicode.com/', true)
+mut conn := httpconnection.new(name:'test', url:'https://jsonplaceholder.typicode.com/')
 // drop all caches
 conn.cache_drop()!
 mut keys := conn.redis.keys('http:${conn.cache.key}*')!

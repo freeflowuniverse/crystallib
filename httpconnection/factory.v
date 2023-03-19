@@ -11,7 +11,16 @@ fn init_factory() HTTPConnections {
 // Singleton creation
 const factory = init_factory()
 
-pub fn new(name string, url string, cache bool) &HTTPConnection {
+[params]
+pub struct HTTPConnectionArgs{
+pub:
+	name string [required]
+	url string [required]
+	cache bool = true
+	
+}
+
+pub fn new(args HTTPConnectionArgs) &HTTPConnection {
 	mut f := httpconnection.factory
 
 	mut header := http.new_header_from_map({
@@ -22,16 +31,15 @@ pub fn new(name string, url string, cache bool) &HTTPConnection {
 		panic("URL is empty, can't create http connection with empty url")
 	}
 
-	// Init conenection
-	// empty_redis := redisclient.Redis{}
+	// Init connection
 	mut conn := HTTPConnection{
 		redis: redisclient.core_get()
 		default_header: header
 		cache: CacheConfig{
-			disable: !cache
-			key: name
+			disable: !args.cache
+			key: args.name
 		}
-		base_url: url.trim('/')
+		base_url: args.url.trim('/')
 	}
 
 	// Store new connection
