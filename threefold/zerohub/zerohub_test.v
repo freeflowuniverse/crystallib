@@ -4,9 +4,14 @@ const secret="6Pz6giOpHSaA3KdYI6LLpGSLmDmzmRkVdwvc7S-E5PVB0-iRfgDKW9Rb_ZTlj-xEW4
 
 fn test_main() ? {
 
-	mut cl:=new(secret:secret)!
+	mut cl := new(secret:secret)!
 
-	mut flists := fl.flists_get()!
+	mut zhclient := ZeroHubClientArgs{
+		url: 'hub.grid.tf'
+		secret: secret
+	}
+
+	mut flists := cl.get_repos(zhclient)!
 
 	println(flists)
 

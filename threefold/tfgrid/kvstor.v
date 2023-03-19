@@ -18,7 +18,7 @@ pub fn (mut client TwinClient) kvstore_get(key string) ?string {
 
 pub struct KVStorListArgs{
 pub:
-		
+	reset bool
 }
 
 

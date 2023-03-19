@@ -27,7 +27,7 @@ pub fn new(args HTTPConnectionArgs) &HTTPConnection {
 		http.CommonHeader.content_type: 'application/json'
 	})
 
-	if url.replace(' ', '') == '' {
+	if args.url.replace(' ', '') == '' {
 		panic("URL is empty, can't create http connection with empty url")
 	}
 
@@ -43,9 +43,9 @@ pub fn new(args HTTPConnectionArgs) &HTTPConnection {
 	}
 
 	// Store new connection
-	f.connections[name] = &conn
+	f.connections[args.name] = &conn
 
-	res := f.connections[name] or { panic("couldn't find key '${name}' in f.connections") }
+	res := f.connections[args.name] or { panic("couldn't find key '${name}' in f.connections") }
 	return res
 }
 
