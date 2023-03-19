@@ -79,75 +79,9 @@ pub:
 	deployment_name string [required]
 }
 
-pub struct Disk {
-pub:
-	name       string [required]
-	size       u32    [required]
-	mountpoint string [required]
-}
 
-[params]
-pub struct QsfsDisk {
-pub:
-	qsfs_zdbs_name  string [required]
-	name            string [required]
-	prefix          string [required]
-	encryption_key  string [required]
-	cache           u32
-	minimal_shards  u32
-	expected_shards u32
-	mountpoint      string [required]
-}
 
-pub struct Network {
-pub:
-	ip_range   string [required]
-	name       string [required]
-	add_access bool   [json: 'addAccess']
-}
 
-pub struct Machine {
-pub:
-	name        string     [required]
-	node_id     u32        [required]
-	disks       []Disk
-	qsfs_disks  []QsfsDisk
-	public_ip   bool       [required]
-	planetary   bool       [required]
-	cpu         u32        [required]
-	memory      u64        [required]
-	rootfs_size u64        [required]
-	flist       string     [required]
-	entrypoint  string     [required]
-	env         Env
-}
-
-[params]
-pub struct AddMachine {
-pub:
-	name        string     [required]
-	node_id     u32        [required]
-	disks       []Disk
-	qsfs_disks  []QsfsDisk
-	public_ip   bool       [required]
-	planetary   bool       [required]
-	cpu         u32        [required]
-	memory      u64        [required]
-	rootfs_size u64        [required]
-	flist       string     [required]
-	entrypoint  string     [required]
-	env         Env
-}
-
-[params]
-pub struct MachinesModel {
-pub:
-	name        string    [required]
-	network     Network   [required]
-	machines    []Machine [required]
-	metadata    string
-	description string
-}
 
 pub struct KubernetesNode {
 pub:
@@ -276,14 +210,6 @@ pub mut:
 	hash    string [required]
 }
 
-pub struct Contract {
-pub:
-	version       u32
-	contract_id   u64           [json: 'contractId']
-	twin_id       u32           [json: 'twinId']
-	contract_type ContractTypes [json: 'contractType']
-	state         ContractState
-}
 
 pub struct SimpleContract {
 pub:
@@ -321,11 +247,7 @@ pub:
 	name string
 }
 
-struct ContractState {
-pub:
-	created string
-	deleted string
-}
+
 
 struct PublicIP {
 pub:
@@ -335,18 +257,7 @@ pub:
 	contract_id u64    [json: 'contractId']
 }
 
-pub struct ContractResponse {
-pub:
-	created []Contract
-	updated []Contract
-	deleted []SimpleDeleteContract
-}
 
-pub struct DeployResponse {
-pub:
-	contracts        ContractResponse
-	wireguard_config string
-}
 
 pub struct Env {
 pub:
@@ -441,28 +352,6 @@ pub:
 	public_ips        []PublicIP [json: 'publicIPs']
 }
 
-pub struct Node {
-pub:
-	version            u32
-	id                 string
-	node_id            u32          [json: 'nodeId']
-	farm_id            u32          [json: 'farmId']
-	twin_id            u32          [json: 'twinId']
-	country            string
-	city               string
-	grid_version       u32          [json: 'gridVersion']
-	uptime             u64
-	created            u64
-	farming_policy_id  u32          [json: 'farmingPolicyId']
-	updated_at         string       [json: 'updatedAt']
-	cru                string
-	mru                string
-	sru                string
-	hru                string
-	public_config      PublicConfig
-	status             string
-	certification_type string       [json: 'certificationType']
-}
 
 struct PublicConfig {
 	domain string
