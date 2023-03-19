@@ -1,6 +1,7 @@
 
 ## requirements
 
-// install https://github.com/threefoldtech/rmb-rs
+- have redis working
+- have tfgrid client golang client working as daemon
 
-//TODO: use the RMB client (is binary) to talk to RMB network to get info
+

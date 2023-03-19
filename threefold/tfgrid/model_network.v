@@ -1,7 +1,7 @@
 module tfgrid
 
 //TODO: describe how format is of the params and fill in default
-//TODO: whast does add_access mean?
+//TODO: what does add_access mean?
 pub struct Network {
 pub:
 	name       string 

@@ -25,3 +25,5 @@ pub:
 
 //todo: here we translate json, maybe can be done at golang side
 
+// what is purpose of this one?
+
