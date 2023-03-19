@@ -6,15 +6,19 @@ fn test_main() ? {
 
 	mut cl := new(secret:secret)!
 
-	mut zhclient := ZeroHubClientArgs{
-		url: 'hub.grid.tf'
-		secret: secret
-	}
+	// flists := cl.get_flists()!
+	// println(flists)
 
-	mut flists := cl.get_repos(zhclient)!
+	// repos := cl.get_repos()!
+	// println(repos)
 
-	println(flists)
+	// files := cl.get_files()!
+	// println(files)
 
-	panic("ddd")
+	// flists := cl.get_repo_flists('omarabdulaziz.3bot')!
+	// println(flists)
+
+	// flist_data := cl.get_flist_dump('omarabdulaziz.3bot', 'omarabdul3ziz-obuntu-zinit.flist')!
+	// println(flist_data)
 
 }
