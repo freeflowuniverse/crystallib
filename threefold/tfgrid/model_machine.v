@@ -2,7 +2,7 @@
 module tfgrid
 
 [params]
-//TODO: describe parameters, what is metadata?
+//TODO: describe parameters, what is metadata!
 pub struct MachinesModel {
 pub:
 	name        string    [required]
@@ -23,9 +23,9 @@ pub:
 	// qsfs_disks  []QsfsDisk  //for now not supported
 	public_ip   bool
 	planetary   bool
-	cpu         u32 = 1 
-	memory      u64 = 1
-	rootfs_size u64 = 10
+	cpu         u32 = 1  //todo!
+	memory      u64 = 1 //todo!
+	rootfs_size u64 = 10 //todo
 	flist       string = "" //TODO: fill basic flist in
 	entrypoint  string = "/"
 	ssh_key		string = "" //TODO: do we have other way how to get environment arguments inside VM

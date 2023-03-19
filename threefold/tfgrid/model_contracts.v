@@ -22,7 +22,7 @@ pub:
 	deleted string
 }
 
-//TODO: same here contract_type?? what is it
+//TODO: same here contract_type!! what is it
 pub struct Contract {
 pub:
 	version       u32

@@ -73,7 +73,7 @@ pub fn (mut q RedisRpc) process(timeout u64, op fn (string,string) !string ) !st
 			parts:=r.split_nth("\n",4)
 			if parts.len<4{return error('error on ${q.key} for return $r, should be 4 lines at least')}
 			returnqueue:=parts[0]
-			epochtime:=parts[1].u64() //we don't do anything with it now
+			// epochtime:=parts[1].u64() //we don't do anything with it now
 			cmd:=parts[2]
 			data:=parts[3]
 			datareturn:= op(cmd,data)!
