@@ -11,9 +11,12 @@ pub fn (mut client TFGridClient) machines_deploy(payload MachinesModel) !DeployR
 
 // Get machines deployment info using deployment name
 pub fn (mut client TFGridClient) machines_get(name string) ![]Deployment {
-	response := client.rpc.call(cmd: 'machines.get', data: json.encode_pretty({
-		'name': name
-	}))!
+	response := client.rpc.call(
+		cmd: 'machines.get'
+		data: json.encode_pretty({
+			'name': name
+		})
+	)!
 	return json.decode([]Deployment, response)
 }
 
