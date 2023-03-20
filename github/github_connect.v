@@ -66,7 +66,7 @@ pub fn (mut h GithubConnection) get_json_str(prefix string, getdata string, cach
 	mut result := h.cache_get(prefix, getdata, cache)
 	if result == '' {
 		url := '${h.url}/${prefix}'
-		mut req := http.new_request(http.Method.get, url, getdata)?
+		mut req := http.new_request(http.Method.get, url, getdata)
 		req.header = h.header()
 		req.add_custom_header('x-disable-pagination', 'True')?
 		res := req.do()?
@@ -131,7 +131,7 @@ fn (mut h GithubConnection) header() http.Header {
 // 		return cached_data
 // 	}
 // 	url := '$h.url/api/v1/$prefix'
-// 	mut req := http.new_request(http.Method.post, url, postdata) ?
+// 	mut req := http.new_request(http.Method.post, url, postdata)
 // 	// println(" --- $prefix\n$postdata")
 // 	if prefix.contains('auth') {
 // 		response := http.post_json('$h.url/api/v1/$prefix', postdata) ?
@@ -178,7 +178,7 @@ fn (mut h GithubConnection) header() http.Header {
 // 		response: response Json2.Any map.
 // 	*/
 // 	url := '$h.url/api/v1/$prefix/$id'
-// 	mut req := http.new_request(http.Method.patch, url, data) ?
+// 	mut req := http.new_request(http.Method.patch, url, data)
 // 	req.header = h.header()
 // 	mut res := req.do() ?
 // 	mut result := ''
@@ -202,7 +202,7 @@ fn (mut h GithubConnection) header() http.Header {
 // 		bool: True if deleted successfully.
 // 	*/
 // 	url := '$h.url/api/v1/$prefix/$id'
-// 	mut req := http.new_request(http.Method.delete, url, '') ?
+// 	mut req := http.new_request(http.Method.delete, url, '')
 // 	req.header = h.header()
 // 	mut res := req.do() ?
 // 	if res.status_code == 204 {
