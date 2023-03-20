@@ -1,7 +1,7 @@
 module rmb
 
-
-
+import json
+import base64
 
 pub struct ZosResources {
 pub mut:
@@ -19,7 +19,7 @@ pub mut:
 	system ZosResources
 }
 
-//get zos statistic from a node, nodeid is the parameter
+// get zos statistic from a node, nodeid is the parameter
 pub fn (mut z RMBClient) get_zos_statistics(dst u32) !ZosResourcesStatistics {
 	response := z.rmb_client_request('zos.statistics.get', dst)!
 	if response.err.message != '' {

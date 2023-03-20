@@ -1,6 +1,10 @@
 module rmb
 
-//cmd is e.g. 
+import base64
+import time
+import json
+
+// cmd is e.g.
 pub fn (mut z RMBClient) rmb_request(cmd string, dst u32) !RmbResponse {
 	msg := RmbMessage{
 		ver: 1

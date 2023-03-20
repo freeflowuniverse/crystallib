@@ -12,12 +12,11 @@ fn init_factory() HTTPConnections {
 const factory = init_factory()
 
 [params]
-pub struct HTTPConnectionArgs{
+pub struct HTTPConnectionArgs {
 pub:
-	name string [required]
-	url string [required]
+	name  string [required]
+	url   string [required]
 	cache bool = true
-	
 }
 
 pub fn new(args HTTPConnectionArgs) &HTTPConnection {

@@ -31,8 +31,8 @@ pub struct Workload {
 pub mut:
 	version     int
 	name        string
-	type_       string           [json: 'type'] //TODO: what is this?
-	data        string           [raw] //TODO: what is this?
+	type_       string           [json: 'type'] // TODO: what is this?
+	data        string           [raw] // TODO: what is this?
 	metadata    string
 	description string
 	result      DeploymentResult

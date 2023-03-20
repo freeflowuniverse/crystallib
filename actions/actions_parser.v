@@ -91,7 +91,7 @@ fn parse_into_blocks(text string) !Blocks {
 		}
 		if line2.contains('//') {
 			line2 = line2.all_before('//')
-		}		
+		}
 		// println("line: '$line2'")
 		if state == ParseBlockStatus.action {
 			if (line2.starts_with(' ') || line2 == '' || contains_params(line2))
