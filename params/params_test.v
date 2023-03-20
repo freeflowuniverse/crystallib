@@ -6,6 +6,7 @@ import json
 const textin = "
 	id:a1 name6:aaaaa
 	name:'need to do something 1' 
+	//comment
 	description:
 		## markdown works in it
 

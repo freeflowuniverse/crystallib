@@ -41,14 +41,14 @@ pub fn (mut actions ActionsParser) path_add(path string) ! {
 		for path0 in items {
 			pathtocheck := '${path}/${path0}'
 			if os.is_dir(pathtocheck) {
-				actions.add(pathtocheck)!
+				actions.path_add(pathtocheck)!
 			}
 		}
 		// now process files in order
 		for path1 in items {
 			pathtocheck := '${path}/${path1}'
 			if os.is_file(pathtocheck) {
-				actions.add(pathtocheck)!
+				actions.path_add(pathtocheck)!
 			}
 		}
 	}
@@ -98,13 +98,11 @@ fn parse_into_blocks(text string) !Blocks {
 	for line_ in text.split_into_lines() {
 		line2 = line_
 		line2 = line2.replace('\t', '    ')
-		if line2.contains('#') {
-			line2 = line2.all_before('#')
+		line2_nospace := line2.trim_space()
+		//remove lines with comments
+		if line2_nospace.starts_with('<!--') || line2_nospace.starts_with('#') || line2_nospace.starts_with('//') {
+			continue
 		}
-		if line2.contains('//') {
-			line2 = line2.all_before('//')
-		}
-		// println("line: '$line2'")
 		if state == ParseBlockStatus.action {
 			if (line2.starts_with(' ') || line2 == '') && !line2.contains('!!') {
 				// starts with tab or space, means block continues

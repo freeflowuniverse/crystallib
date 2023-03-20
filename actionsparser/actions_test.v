@@ -31,16 +31,15 @@ fn test_parse_into_blocks() {
 }
 
 fn test_file_parse() {
-	mut actionsmgr := get()
-	actionsmgr.file_parse('${actions.testpath}/testfile.md') or { panic(err) }
-	assert actionsmgr.actions.len == 10
+	mut actionsmgr := new(path:'${testpath}/testfile.md') or { panic(err) }
+	assert actionsmgr.unsorted.len == 10
 }
 
 fn test_dir_load() {
-	mut actionsmgr := dir_parse(actions.testpath)!
-	assert actionsmgr.actions.len == 11
+	mut actionsmgr := new(path:'${testpath}') or { panic(err) }
+	assert actionsmgr.unsorted.len == 11
 
-	mut a := actionsmgr.actions.last()
+	mut a := actionsmgr.unsorted.last()
 	assert a.name == 'books.mdbook_develop'
 	mut b := a.params.get('name') or { panic(err) }
 	assert b == 'feasibility_study_internet'

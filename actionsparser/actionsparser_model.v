@@ -11,4 +11,5 @@ pub mut:
 	skipped  []Action // the ones which won't be processed because its not right book or even actor
 	actor    string
 	book     string
+	filter 	 []string
 }
