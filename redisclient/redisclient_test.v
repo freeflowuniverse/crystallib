@@ -578,6 +578,34 @@ fn test_rpop() {
 	assert helper_rpop_key_not_found(mut redis, 'test48') == true
 }
 
+fn test_brpop() {
+	mut redis := setup()
+	defer {
+		cleanup(mut redis) or { panic(err) }
+	}
+	redis.lpush('test47', '123')!
+	r1 := redis.brpop('test47', 1)!
+	assert r1 == '123'
+	r2 := redis.brpop('test47', 1) or {
+		return
+	}
+	assert false, "brpop should time out here"
+}
+
+fn test_lrpop() {
+	mut redis := setup()
+	defer {
+		cleanup(mut redis) or { panic(err) }
+	}
+	redis.lpush('test47', '123')!
+	r1 := redis.blpop('test47', 1)!
+	assert r1 == '123'
+	r2 := redis.blpop('test47', 1) or {
+		return
+	}
+	assert false, "blpop should time out here"
+}
+
 fn test_llen() {
 	mut redis := setup()
 	defer {
