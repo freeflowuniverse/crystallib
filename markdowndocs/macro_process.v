@@ -28,23 +28,18 @@ pub fn macro_parse(line_ string) !MacroObj {
 	mut line := line_
 	mut r := MacroObj{}
 
-	line = line.trim(' ')
-	line = line.trim('!')
-	line = line.trim(' ')
+	line = line.trim(' !\n\r')
 
-	splitted := line.split(' ')
-
+	mut splitted := line.split('\n').filter(it != "")
 	if splitted.len < 1 {
 		return error('cannot parse macro, need to be at least cmd, now "${line}"')
 	}
-
-	r.cmd = cmd_fix(splitted[0])!
-
-	if splitted.len > 1 {
-		line = splitted[1..].join(' ')
+	if splitted.len == 1 {
+		splitted = splitted[0].split(' ')
 	}
+	r.cmd = cmd_fix(splitted[0])!
+	line = line.all_after(splitted[0])
 	p := params.parse(line)!
 	r.params = p
-
 	return r
 }
