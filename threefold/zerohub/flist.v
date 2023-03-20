@@ -56,7 +56,7 @@ pub:
 pub fn (mut cl TFGridClient) flists_get()! []Flist {
 	// /api/flist 
 	resp := http.get('https://${zhclient.url}/api/flistslist')!
-	flists := json.decode(Flist, resp.body)!
+	flists := json.decode([]Flist, resp.body)!
 	return flists
 }
 
