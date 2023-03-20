@@ -84,7 +84,6 @@ pub fn r_u32(value u32) RValue {
 	})
 }
 
-
 // might be that this does no exist for redis, lets check
 // if it doesn't exist lets create it
 pub fn r_float(value f64) RValue {
@@ -110,7 +109,6 @@ pub fn r_list_u32(values []u32) RValue {
 		values: ll
 	})
 }
-
 
 pub fn r_list_string(values []string) RValue {
 	mut ll := []RValue{}

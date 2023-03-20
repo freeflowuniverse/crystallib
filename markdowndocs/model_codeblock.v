@@ -11,17 +11,13 @@ fn (mut o CodeBlock) process() ! {
 }
 
 fn (o CodeBlock) wiki() string {
-	mut out:=""
-	out+="```$o.category\n"
-	out+=o.content.trim_space()
-	out+="\n```\n\n"
+	mut out := ''
+	out += '```${o.category}\n'
+	out += o.content.trim_space()
+	out += '\n```\n\n'
 	return out
 }
 
 fn (o CodeBlock) html() string {
 	return o.wiki()
 }
-
-// fn (o CodeBlock) str() string {
-// 	return '**** CodeBlock\n'
-// }

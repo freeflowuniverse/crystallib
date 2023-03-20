@@ -9,3 +9,5 @@ v vnemonic.v
 ```
 gcc vnemonic.c -o vnemonic -DBUILD_DEBUG
 ```
+
+> TODO:! make example, check with Maxux if issue

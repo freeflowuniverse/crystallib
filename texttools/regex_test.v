@@ -34,12 +34,7 @@ fn test_stdtext() {
 
 	mut text_out2 := ri.replace(text: text, dedent: true) or { panic(err) }
 
-	// println('!' + dedent(text) + '!')
-	// println('!' + dedent(text_out) + '!')
-	// println('!' + dedent(text_out2) + '!')
-
 	assert dedent(text_out2).trim('\n') == dedent(text_out).trim('\n')
-	// panic('s')
 }
 
 fn test_dirreplace() {

@@ -2,15 +2,17 @@ module taskletmanager
 
 import freeflowuniverse.crystallib.pathlib
 
-pub fn new(path string) !TaskletManager{
+pub fn new(path string) !TaskletManager {
 	mut p := pathlib.get(path)
-	mut tm:= TaskletManager{path:p}
+	mut tm := TaskletManager{
+		path: p
+	}
 	tm.scan()!
 	return tm
 }
 
-pub fn generate(path string) !TaskletManager{
-	mut tm:=new(path)!
+pub fn generate(path string) !TaskletManager {
+	mut tm := new(path)!
 	tm.generate_code()!
 	return tm
 }

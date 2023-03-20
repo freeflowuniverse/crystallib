@@ -1,21 +1,13 @@
 module main
 
-import freeflowuniverse.crystallib.builder
+import docker
 
 fn do() ! {
-	mut builder := builder.new()
-	mut node := builder.node_local()!
+	mut engine := docker.new()!
 
-	mut engine := engine_local([]) or { panic(err) }
+	// engine.reset_all()!
 
-	engine.reset_all()!
-
-	// TODO: HOW CAN WE CHECK THE LIST OF IMAGES IS EMPTY?
-	// NEXT IS NOT WORKING
-	mut il := engine.images_list() or { panic(err) }
-	mut cl := engine.containers_get() or { panic(err) }
-
-	println(node)
+	println(engine)
 }
 
 fn main() {

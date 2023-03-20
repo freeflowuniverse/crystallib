@@ -148,7 +148,6 @@ pub fn (mut path Path) delete() ! {
 	}
 }
 
-
 // write content to the file, check is file
 // if the path is a link to a file then will change the content of the file represented by the link
 pub fn (mut path Path) write(content string) ! {

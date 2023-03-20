@@ -1,43 +1,41 @@
 module markdowndocs
 
-import pathlib
-
-
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
-fn parse_doc(path string) !Doc {
-	path2 := pathlib.get_file(path, false)!
-	mut doc:=Doc{path:path2}
-	mut parser:=parser_new(path,mut &doc)!
-	
+fn (mut doc Doc) parse() ! {
+	mut parser := parser_line_new(mut &doc)!
+
 	for {
 		if parser.eof() {
+			// println("---end")
 			break
 		}
 		// go out of loop if end of file
 		line := parser.line_current()
+		// println(line)
 
-		mut llast:=parser.lastitem()
+		mut llast := parser.lastitem()
+		// println(llast)
 
-		if mut llast is Comment {
-			if llast.prefix == .short {
-				if line.trim_space().starts_with('//') {
-					llast.content += line.all_after_first('//') + '\n'
-					parser.next()
-					continue
-				}
-				parser.next_start()
-			} else {
-				if line.trim_space().ends_with('-->') {
-					llast.content += line.all_before_last('-->') + '\n'
-					parser.next_start()
-				} else {
-					llast.content += line + '\n'
-					parser.next()
-				}
-				continue
-			}
-		}
+		// if mut llast is Comment {
+		// 	if llast.prefix == .short {
+		// 		if line.trim_space().starts_with('//') {
+		// 			llast.content += line.all_after_first('//') + '\n'
+		// 			parser.next()
+		// 			continue
+		// 		}
+		// 		parser.next_start()
+		// 	} else {
+		// 		if line.trim_space().ends_with('-->') {
+		// 			llast.content += line.all_before_last('-->') + '\n'
+		// 			parser.next_start()
+		// 		} else {
+		// 			llast.content += line + '\n'
+		// 			parser.next()
+		// 		}
+		// 		continue
+		// 	}
+		// }
 
 		if mut llast is Action {
 			if line.starts_with(' ') || line.starts_with('\t') {
@@ -52,16 +50,16 @@ fn parse_doc(path string) !Doc {
 		}
 
 		if mut llast is Html {
-			if line.trim_space().to_lower().starts_with('</html'){
+			if line.trim_space().to_lower().starts_with('</html') {
 				parser.next_start()
-				continue				
+				continue
 			}
 		}
 
 		if mut llast is CodeBlock {
 			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
 				parser.next_start()
-				continue				
+				continue
 			} else {
 				llast.content += '${line}\n'
 			}
@@ -69,7 +67,7 @@ fn parse_doc(path string) !Doc {
 			continue
 		}
 
-		if mut llast is Paragraph{
+		if mut llast is Paragraph {
 			if line.starts_with('!!') {
 				doc.items << Action{
 					content: line.all_after_first('!!')
@@ -87,131 +85,110 @@ fn parse_doc(path string) !Doc {
 				continue
 			}
 
-			// process headers
-			if line.starts_with('###### ') {
-				parser.error_add('header should be max 5 deep')
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('##### ') {
-				doc.items << Header{
-					content: line.all_after_first('#####').trim_space()
-					depth: 5
-
+			// process headers (# is 35)
+			if line.len > 0 && line[0] == 35 {
+				mut d := 0
+				for d < line.len && line[d] == 35 {
+					d += 1
 				}
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('#### ') {
-				doc.items << Header{
-					content: line.all_after_first('####').trim_space()
-					depth: 4
-
+				if d < line.len && line[d] == 32 {
+					if d >= 6 {
+						parser.error_add('header should be max 5 deep')
+						parser.next_start()
+						continue
+					}
+					doc.items << Header{
+						content: line.all_after_first(line[..d]).trim_space()
+						depth: d
+					}
+					parser.next_start()
+					continue
 				}
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('### ') {
-				doc.items << Header{
-					content: line.all_after_first('###').trim_space()
-					depth: 3
-
-				}
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('## ') {
-				doc.items << Header{
-					content: line.all_after_first('##').trim_space()
-					depth: 2
-
-				}
-				parser.next_start()
-				continue
-			}
-			if line.starts_with('# ') {
-				doc.items << Header{
-					content: line.all_after_first('#').trim_space()
-					depth: 1
-
-				}
-				parser.next_start()
-				continue
 			}
 
-			if line.trim_space().to_lower().starts_with('<html'){
+			if line.trim_space().to_lower().starts_with('<html') {
 				doc.items << Html{}
 				parser.next()
-				continue				
-			}
-
-			if line.trim_space().starts_with('//') {
-				doc.items << Comment{
-					content: line.all_after_first('//').trim_space() + '\n'
-					prefix: .short
-
-				}
-				parser.next()
 				continue
 			}
-			if line.trim_space().starts_with('<!--') {
-				doc.items << Comment{
-					content: line.all_after_first('<!--').trim_space() + '\n'
-					prefix: .multi
 
-				}
-				parser.next()
-				continue
-			}
+			// if line.trim_space().starts_with('//') {
+			// 	doc.items << Comment{
+			// 		content: line.all_after_first('//').trim_space() + '\n'
+			// 		// prefix: .short
+
+			// 	}
+			// 	parser.next()
+			// 	continue
+			// }
+			// if line.trim_space().starts_with('<!--') {
+			// 	doc.items << Comment{
+			// 		content: line.all_after_first('<!--').trim_space() + '\n'
+			// 		prefix: .multi
+
+			// 	}
+			// 	parser.next()
+			// 	continue
+			// }
 		}
 
-		if mut llast is Paragraph || mut llast is Html || mut llast is Comment || mut llast is CodeBlock{
-			llast.content += line + '\n'
+		if mut llast is Paragraph || mut llast is Html || mut llast is CodeBlock {
+			if parser.endlf == false && parser.next_is_eof() {
+				llast.content += line
+			} else {
+				llast.content += line + '\n'
+			}
 		} else {
 			println(line)
 			println(llast)
-			panic("parser error, means we got element which is not supported")
+			panic('parser error, means we got element which is not supported')
 		}
 
 		parser.next()
 	}
 
-	mut toremovelist:=[]int{}
-	mut counter:=0
-	for item in doc.items{
-		if item is Paragraph{
-			if item.content=="" {
-				toremovelist << counter
+	// paragraph is used as separator so the empty ones need to be removed
+	mut toremovelist := []int{}
+	mut counter := 0
+	for mut item in doc.items {
+		match mut item {
+			Table {
+				item.process()!
+			}
+			Action {
+				item.process()!
+			}
+			Actions {
+				item.process()!
+			}
+			Header {
+				item.process()!
+			}
+			Paragraph {
+				item.process()!
+				if item.content.trim(' \r\n') == '' {
+					toremovelist << counter
+				} else if item.items.len == 0 {
+					toremovelist << counter
+				}
+			}
+			Html {
+				item.process()!
+			}
+			// Comment { item.process()! }
+			CodeBlock {
+				item.process()!
+			}
+			Link {
+				item.process()!
 			}
 		}
-		counter+=1
+		counter += 1
 	}
-	for toremove in toremovelist.reverse(){
+	for toremove in toremovelist.reverse() {
 		doc.items.delete(toremove)
 	}
-
-	doc.process()!
-	return doc
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // // walk backwards over the objects, if equal with what we have we keep on walking back
 // // if we find one which is same type as specified will return

@@ -10,7 +10,7 @@ fn (mut o Html) process() ! {
 }
 
 fn (o Html) wiki() string {
-	return "<html>\n${o.content}\n</html>\n"
+	return '<html>\n${o.content}\n</html>\n'
 }
 
 fn (o Html) html() string {

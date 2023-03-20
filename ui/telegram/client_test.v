@@ -1,6 +1,6 @@
 module telegram
 
-fn test_run () {
+fn test_run() {
 	client := new_client()
 	for {
 		updates := client.get_updates(offset: p.last_offset, limit: 100)
@@ -16,16 +16,14 @@ fn test_run () {
 	}
 }
 
-fn (mut client TelegramClient) handle_update (update vgram.Update) {
+fn (mut client TelegramClient) handle_update(update vgram.Update) {
 	user_id := update.message.from.id.str()
 
 	// todo: implement separate handlers for separate message types
 	text := update.message.text
 	bot.client.new()
-	
 
-
-	if user_id in ui.waiting_qs.keys() && text[0].ascii_str() != '/'{
+	if user_id in ui.waiting_qs.keys() && text[0].ascii_str() != '/' {
 		ui.waiting_qs[user_id].response_channel <- update.message.text
 	} else {
 		match text.trim_string_left('/').split(' ')[0] {
@@ -33,9 +31,6 @@ fn (mut client TelegramClient) handle_update (update vgram.Update) {
 			'order' {}
 		}
 	}
-}
-
-
 
 	// // Infinite loop to deal with incoming and outgoing messages
 	// for {
@@ -57,10 +52,10 @@ fn (mut client TelegramClient) handle_update (update vgram.Update) {
 	// }
 }
 
-fn (mut ui UITelegram) handle_update (update vgram.Update) {
+fn (mut ui UITelegram) handle_update(update vgram.Update) {
 	user_id := update.message.from.id.str()
 	text := update.message.text
-	if user_id in ui.waiting_qs.keys() && text[0].ascii_str() != '/'{
+	if user_id in ui.waiting_qs.keys() && text[0].ascii_str() != '/' {
 		ui.waiting_qs[user_id].response_channel <- update.message.text
 	} else {
 		match text.trim_string_left('/').split(' ')[0] {
@@ -70,10 +65,10 @@ fn (mut ui UITelegram) handle_update (update vgram.Update) {
 	}
 }
 
-fn (ui UITelegram) send (msg string, user_id string) {
-		_ := ui.bot.send_message(
-		chat_id: user_id,
-		text: msg,
-		parse_mode:'MarkdownV2'
+fn (ui UITelegram) send(msg string, user_id string) {
+	_ := ui.bot.send_message(
+		chat_id: user_id
+		text: msg
+		parse_mode: 'MarkdownV2'
 	)
-} 
+}

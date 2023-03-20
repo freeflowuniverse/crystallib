@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>calc | vdoc</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  
+		<link rel="stylesheet" href="doc.css" />
+		<link rel="stylesheet" href="normalize.css" />
+		<script src="dark-mode.js"></script>
+</head>
+
+<body>
+  <div><a id="skip-to-content-link" href="#main-content">Skip to content</a></div>
+  <div id="page">
+    <header class="doc-nav hidden">
+      <div class="heading-container">
+        <div class="heading">
+          <div class="info">
+            <div class="module">crystallib</div>
+            <div class="toggle-version-container">
+              <span>0.1.0 e8c0b09</span>
+              <div id="dark-mode-toggle" role="switch" aria-checked="false" aria-label="Toggle dark mode"><svg xmlns="http://www.w3.org/2000/svg" class="light-icon" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" class="dark-icon" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><rect fill="none" height="24" width="24"/></g><g><g><g><path d="M11.1,12.08C8.77,7.57,10.6,3.6,11.63,2.01C6.27,2.2,1.98,6.59,1.98,12c0,0.14,0.02,0.28,0.02,0.42 C2.62,12.15,3.29,12,4,12c1.66,0,3.18,0.83,4.1,2.15C9.77,14.63,11,16.17,11,18c0,1.52-0.87,2.83-2.12,3.51 c0.98,0.32,2.03,0.5,3.11,0.5c3.5,0,6.58-1.8,8.37-4.52C18,17.72,13.38,16.52,11.1,12.08z"/></g><path d="M7,16l-0.18,0C6.4,14.84,5.3,14,4,14c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.62,0,2.49,0,3,0c1.1,0,2-0.9,2-2 C9,16.9,8.1,16,7,16z"/></g></g></svg>
+</div>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" id="toggle-menu" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+
+          </div>
+          <input type="text" id="search" placeholder="Search... (beta)" autocomplete="off">
+        </div>
+      </div>
+      <nav class="search hidden"></nav>
+      <nav class="content hidden">
+        <ul>
+          <li class="open"><div class="menu-row"><a href="./index.html">README</a></div></li><li class="open"><div class="menu-row"><a href="./archiver.html">archiver</a></div></li><li class="open"><div class="menu-row"><a href="./books.html">books</a></div></li><li class="open"><div class="menu-row"><a href="./builder.html">builder</a></div></li><li class="open active"><div class="menu-row"><a href="./calc.html">calc</a></div></li><li class="open"><div class="menu-row"><a href="./coinmarketcap.html">coinmarketcap</a></div></li><li class="open"><div class="menu-row"><a href="./console.html">console</a></div></li><li class="open"><div class="menu-row"><a href="./crpgp.html">crpgp</a></div></li><li class="open"><div class="menu-row"><a href="./crystaljson.html">crystaljson</a></div></li><li class="open"><div class="menu-row"><a href="./currency.html">currency</a></div></li><li class="open"><div class="menu-row"><a href="./data.html">data</a></div></li><li class="open"><div class="menu-row"><a href="./docker.html">docker</a></div></li><li class="open"><div class="menu-row"><a href="./encoder.html">encoder</a></div></li><li class="open"><div class="menu-row"><a href="./fftools.html">fftools</a></div></li><li class="open"><div class="menu-row"><a href="./github.html">github</a></div></li><li class="open"><div class="menu-row"><a href="./gittools.html">gittools</a></div></li><li class="open"><div class="menu-row"><a href="./hostsfile.html">hostsfile</a></div></li><li class="open"><div class="menu-row"><a href="./httpconnection.html">httpconnection</a></div></li><li class="open"><div class="menu-row"><a href="./imagemagick.html">imagemagick</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">installers</a></div><ul><li><a href="./installers.base.html">base</a></li><li><a href="./installers.caddy.html">caddy</a></li><li><a href="./installers.crystaltools.html">crystaltools</a></li><li><a href="./installers.golang.html">golang</a></li><li><a href="./installers.imagemagick.html">imagemagick</a></li><li><a href="./installers.mdbook.html">mdbook</a></li><li><a href="./installers.repository.html">repository</a></li><li><a href="./installers.rust.html">rust</a></li><li><a href="./installers.swarm.html">swarm</a></li><li><a href="./installers.tailwind.html">tailwind</a></li><li><a href="./installers.tmux.html">tmux</a></li><li><a href="./installers.vlang.html">vlang</a></li><li><a href="./installers.zdb.html">zdb</a></li></ul></li><li class="open"><div class="menu-row"><a href="./ipaddress.html">ipaddress</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./keysafe.html">keysafe</a></div><ul><li><a href="./keysafe.secp256k1.html">secp256k1</a></li></ul></li><li class="open"><div class="menu-row"><a href="./markdowndocs.html">markdowndocs</a></div></li><li class="open"><div class="menu-row"><a href="./mnemonic.html">mnemonic</a></div></li><li class="open"><div class="menu-row"><a href="./natsclient.html">natsclient</a></div></li><li class="open"><div class="menu-row"><a href="./params.html">params</a></div></li><li class="open"><div class="menu-row"><a href="./pathlib.html">pathlib</a></div></li><li class="open"><div class="menu-row"><a href="./pgp.html">pgp</a></div></li><li class="open"><div class="menu-row"><a href="./process.html">process</a></div></li><li class="open"><div class="menu-row"><a href="./publisher2.html">publisher2</a></div></li><li class="open"><div class="menu-row"><a href="./redisclient.html">redisclient</a></div></li><li class="open"><div class="menu-row"><a href="./redisserver.html">redisserver</a></div></li><li class="open"><div class="menu-row"><a href="./resp.html">resp</a></div></li><li class="open"><div class="menu-row"><a href="./rootpath.html">rootpath</a></div></li><li class="open"><div class="menu-row"><a href="./serializers.html">serializers</a></div></li><li class="open"><div class="menu-row"><a href="./sshagent.html">sshagent</a></div></li><li class="open"><div class="menu-row"><a href="./taskletmanager.html">taskletmanager</a></div></li><li class="open"><div class="menu-row"><a href="./texttools.html">texttools</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">threefold</a></div><ul><li><a href="./threefold.liquid.html">liquid</a></li><li><a href="./threefold.macros.html">macros</a></li><li><a href="./threefold.nodepilot.html">nodepilot</a></li><li><a href="./threefold.terraform.html">terraform</a></li><li><a href="./threefold.tokens.html">tokens</a></li><li><a href="./threefold.twinclient.html">twinclient</a></li></ul></li><li class="open"><div class="menu-row"><a href="./timetools.html">timetools</a></div></li><li class="open"><div class="menu-row"><a href="./tmux.html">tmux</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">tools</a></div><ul><li><a href="./tools.cacher.html">cacher</a></li><li><a href="./tools.downloader.html">downloader</a></li></ul></li><li class="open"><div class="menu-row"><a href="./twinclient.html">twinclient</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./ui.html">ui</a></div><ul><li><a href="./ui.console.html">console</a></li><li><a href="./ui.telegram.html">telegram</a></li><li><a href="./ui.telegram.client.html">telegram.client</a></li><li><a href="./ui.uimodel.html">uimodel</a></li></ul></li><li class="open"><div class="menu-row"><a href="./vault.html">vault</a></div></li><li class="open"><div class="menu-row"><a href="./verasure.html">verasure</a></div></li><li class="open"><div class="menu-row"><a href="./vexecutor.html">vexecutor</a></div></li><li class="open"><div class="menu-row"><a href="./zdb.html">zdb</a></div></li>
+        </ul>
+      </nav>
+    </header>
+    <div class="doc-scrollview" id="main-content">
+      <div class="doc-container">
+        <div class="doc-content">
+          						<section id="readme_calc" class="doc-node">
+							<div class="title"><h1> calc <a href="#readme_calc">#</a></h1></div><h1>Sheet</h1>
+<p>The idea is to have a module which allows us to make software representation of a spreadsheet.</p>
+<p>The spreadsheet has a currency linked to it and also multi currency behavior, it also has powerful extra/intrapolation possibilities.</p>
+<p>A sheet has following format</p>
+<p>If we have 60 months representation (5 year), we have 60 columns</p>
+<ul>
+<li>rows, each row represent something e.g. salary for a person per month over 5 years</li>
+<li>the rows can be grouped per tags</li>
+<li>each row has 60 cols = cells, each cell has a value</li>
+<li>each row has a name</li>
+</ul>
+<p>A sheet can also be represented per year or per quarter, if per year then there would be 5 columns only.</p>
+<p>There is also functionality to export a sheet to wiki (markdown) or html representation.</p>
+<h2>offline</h2>
+<p>if you need to work offline e.g. for development do</p>
+<pre><code class="language-bash">export OFFLINE=1
+</code></pre>
+
+</section>
+
+						<section id="array2float" class="doc-node">
+							<div class="title"><h2>fn array2float <a href="#array2float">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/tools.v#L3"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">array2float</span><span class="token punctuation">(</span>list <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">f64</span></code></pre>
+
+
+</section>
+						<section id="array2int" class="doc-node">
+							<div class="title"><h2>fn array2int <a href="#array2int">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/tools.v#L11"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">array2int</span><span class="token punctuation">(</span>list <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">f64</span><span class="token punctuation">)</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">int</span></code></pre>
+
+
+</section>
+						<section id="sheet_new" class="doc-node">
+							<div class="title"><h2>fn sheet_new <a href="#sheet_new">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/factory.v#L21"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">sheet_new</span><span class="token punctuation">(</span>args_ SheetNewArgs<span class="token punctuation">)</span> <span class="token operator">!</span>Sheet</code></pre>
+<p>get a sheet has y nr of rows, each row has a name each row has X nr of columns which represent months we can do manipulations with the rows, is very useful for e.g. business planning params: 	nrcol int = 60 	visualize_cur bool //if we want to show e.g. $44.4 in a cell or just 44.4</p>
+
+</section>
+						<section id="float_repr" class="doc-node">
+							<div class="title"><h2>fn float_repr <a href="#float_repr">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/number.v#L11"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">float_repr</span><span class="token punctuation">(</span>nr_ <span class="token builtin">f64</span><span class="token punctuation">,</span> reprtype ReprType<span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+<p>represent a</p>
+
+</section>
+						<section id="RowAggregateType" class="doc-node">
+							<div class="title"><h2>enum RowAggregateType <a href="#RowAggregateType">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/row.v#L21"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">enum</span> <span class="token symbol">RowAggregateType</span> <span class="token punctuation">{</span>
+	sum
+	avg
+	max
+	min
+<span class="token punctuation">}</span></code></pre>
+<p>pub enum RowType{ 	cur 	integer 	float }</p>
+
+</section>
+						<section id="ReprType" class="doc-node">
+							<div class="title"><h2>enum ReprType <a href="#ReprType">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/number.v#L5"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">enum</span> <span class="token symbol">ReprType</span> <span class="token punctuation">{</span>
+	number <span class="token comment">// will use k, m, ...</span>
+	currency
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="NoVal" class="doc-node">
+							<div class="title"><h2>struct NoVal <a href="#NoVal">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/cell.v#L3"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">NoVal</span> <span class="token punctuation">{</span><span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="Row" class="doc-node">
+							<div class="title"><h2>struct Row <a href="#Row">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/row.v#L3"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Row</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	name          <span class="token builtin">string</span>
+	alias         <span class="token builtin">string</span>
+	description   <span class="token builtin">string</span>
+	cells         <span class="token punctuation">[</span><span class="token punctuation">]</span>Cell
+	sheet         <span class="token operator">&</span>Sheet           <span class="token punctuation">[</span>skip<span class="token punctuation">;</span> str<span class="token punctuation">:</span> skip<span class="token punctuation">]</span>
+	aggregatetype RowAggregateType
+	reprtype      ReprType <span class="token comment">// how to represent it</span>
+	tags          <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="Row.subtract" class="doc-node">
+							<div class="title"><h2>fn (Row) subtract <a href="#Row.subtract">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/row.v#L86"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Row<span class="token punctuation">)</span> <span class="token function">subtract</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">,</span> r2 Row<span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>Row</code></pre>
+
+
+</section>
+						<section id="Row.aggregate" class="doc-node">
+							<div class="title"><h2>fn (Row) aggregate <a href="#Row.aggregate">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/row.v#L119"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Row<span class="token punctuation">)</span> <span class="token function">aggregate</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>Row</code></pre>
+
+
+</section>
+						<section id="Row.cell_get" class="doc-node">
+							<div class="title"><h2>fn (Row) cell_get <a href="#Row.cell_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/row.v#L68"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Row<span class="token punctuation">)</span> <span class="token function">cell_get</span><span class="token punctuation">(</span>colnr <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>Cell</code></pre>
+
+
+</section>
+						<section id="Row.difference" class="doc-node">
+							<div class="title"><h2>fn (Row) difference <a href="#Row.difference">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/row.v#L132"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Row<span class="token punctuation">)</span> <span class="token function">difference</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>Row</code></pre>
+<p>find difference between the columns</p>
+
+</section>
+						<section id="Row.divide" class="doc-node">
+							<div class="title"><h2>fn (Row) divide <a href="#Row.divide">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/row.v#L108"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Row<span class="token punctuation">)</span> <span class="token function">divide</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">,</span> r2 Row<span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>Row</code></pre>
+
+
+</section>
+						<section id="Row.extrapolate" class="doc-node">
+							<div class="title"><h2>fn (Row) extrapolate <a href="#Row.extrapolate">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/extrapolate.v#L9"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Row<span class="token punctuation">)</span> <span class="token function">extrapolate</span><span class="token punctuation">(</span>smartstr <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>something like 3:2,10:5 means month 3 we start with 2, it grows to 5 on month 10 the cells out of the mentioned ranges are not filled if they are already set the cells which are empty at start of row will become 0 the cells which are empty at the back will just be same value as the last one currencies can be used e.g. 3:10usd,20:30aed (so we can even mix) if the smartstr, is empty then will use existing values in the row to extra/intra polate, the empty values will be filled in</p>
+
+</section>
+						<section id="Row.int" class="doc-node">
+							<div class="title"><h2>fn (Row) int <a href="#Row.int">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/row.v#L145"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Row<span class="token punctuation">)</span> <span class="token builtin">int</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>round to int</p>
+
+</section>
+						<section id="Row.multiply" class="doc-node">
+							<div class="title"><h2>fn (Row) multiply <a href="#Row.multiply">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/row.v#L97"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Row<span class="token punctuation">)</span> <span class="token function">multiply</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">,</span> r2 Row<span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>Row</code></pre>
+
+
+</section>
+						<section id="Row.add" class="doc-node">
+							<div class="title"><h2>fn (Row) add <a href="#Row.add">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/row.v#L75"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Row<span class="token punctuation">)</span> <span class="token function">add</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">,</span> r2 Row<span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>Row</code></pre>
+
+
+</section>
+						<section id="Group2RowArgs" class="doc-node">
+							<div class="title"><h2>struct Group2RowArgs <a href="#Group2RowArgs">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/sheet.v#L56"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Group2RowArgs</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	name <span class="token builtin">string</span>
+	tags <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="RowNewParams" class="doc-node">
+							<div class="title"><h2>struct RowNewParams <a href="#RowNewParams">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/row.v#L28"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">RowNewParams</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	name          <span class="token builtin">string</span>
+	growth        <span class="token builtin">string</span>
+	aggregatetype RowAggregateType
+	tags          <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="Sheet" class="doc-node">
+							<div class="title"><h2>struct Sheet <a href="#Sheet">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/sheet.v#L6"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Sheet</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	name       <span class="token builtin">string</span>
+	rows       <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token operator">&</span>Row
+	nrcol      <span class="token builtin">int</span> <span class="token operator">=</span> <span class="token number">60</span>
+	params     SheetParams
+	currencies <span class="token operator">&</span>currency<span class="token punctuation">.</span>Currencies
+	currency   <span class="token operator">&</span>currency<span class="token punctuation">.</span>Currency
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="Sheet.wiki" class="doc-node">
+							<div class="title"><h2>fn (Sheet) wiki <a href="#Sheet.wiki">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/wiki.v#L19"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> s Sheet<span class="token punctuation">)</span> <span class="token function">wiki</span><span class="token punctuation">(</span>args_ WikiArgs<span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+<p>format a sheet properly in wiki format</p>
+
+</section>
+						<section id="Sheet.cells_width" class="doc-node">
+							<div class="title"><h2>fn (Sheet) cells_width <a href="#Sheet.cells_width">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/sheet.v#L24"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> s Sheet<span class="token punctuation">)</span> <span class="token function">cells_width</span><span class="token punctuation">(</span>colnr <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">int</span></code></pre>
+<p>find maximum length of a cell (as string representation for a colnr) 0 is the first col the headers if used are never counted</p>
+
+</section>
+						<section id="Sheet.group2row" class="doc-node">
+							<div class="title"><h2>fn (Sheet) group2row <a href="#Sheet.group2row">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/sheet.v#L66"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> s Sheet<span class="token punctuation">)</span> <span class="token function">group2row</span><span class="token punctuation">(</span>args Group2RowArgs<span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>Row</code></pre>
+<p>find all rows which have one of the tags aggregate (sum) them into one row returns a row with the result useful to e.g. make new row which makes sum of all salaries for e.g. devengineering tag (or more than 1 tag)</p>
+
+</section>
+						<section id="Sheet.header" class="doc-node">
+							<div class="title"><h2>fn (Sheet) header <a href="#Sheet.header">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/sheet.v#L219"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> s Sheet<span class="token punctuation">)</span> <span class="token function">header</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
+<p>return array with same amount of items as cols in the rows</p>
+<p>for year we return Y1, Y2, ...<br>
+for quarter we return Q1, Q2, ...<br>
+for months we returm m1, m2, ...</p>
+
+</section>
+						<section id="Sheet.json" class="doc-node">
+							<div class="title"><h2>fn (Sheet) json <a href="#Sheet.json">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/sheet.v#L245"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> s Sheet<span class="token punctuation">)</span> <span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="Sheet.names_width" class="doc-node">
+							<div class="title"><h2>fn (Sheet) names_width <a href="#Sheet.names_width">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/sheet.v#L39"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> s Sheet<span class="token punctuation">)</span> <span class="token function">names_width</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">int</span></code></pre>
+<p>return name or alias, comment max width in 2 size list</p>
+
+</section>
+						<section id="Sheet.row_get" class="doc-node">
+							<div class="title"><h2>fn (Sheet) row_get <a href="#Sheet.row_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/sheet.v#L252"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> s Sheet<span class="token punctuation">)</span> <span class="token function">row_get</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>Row</code></pre>
+<p>find row, report error if not found</p>
+
+</section>
+						<section id="Sheet.row_new" class="doc-node">
+							<div class="title"><h2>fn (Sheet) row_new <a href="#Sheet.row_new">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/row.v#L44"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> s Sheet<span class="token punctuation">)</span> <span class="token function">row_new</span><span class="token punctuation">(</span>args RowNewParams<span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>Row</code></pre>
+<p>get a row with a certain name you can use the smart extrapolate function to populate the row params: 	name string 	growth string (this is input for the extrapolate function)  aggregatetype e.g. sum,avg,max,min  is used to go from months to e.g. year or quarter  tags []string e.g. [&quot;hr&quot;,&quot;hrdev&quot;] attach a tag to a row, can be used later to group smart exptrapolation is 3:2,10:5 means month 3 we start with 2, it grows to 5 on month 10</p>
+
+</section>
+						<section id="Sheet.toquarter" class="doc-node">
+							<div class="title"><h2>fn (Sheet) toquarter <a href="#Sheet.toquarter">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/sheet.v#L208"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> s Sheet<span class="token punctuation">)</span> <span class="token function">toquarter</span><span class="token punctuation">(</span>args ToYearQuarterArgs<span class="token punctuation">)</span> <span class="token operator">!</span>Sheet</code></pre>
+<p>make a copy of the sheet and aggregate on quarter params   name       string   rowsfilter []string   tagsfilter []string tags if set will see that there is at least one corresponding tag per row rawsfilter is list of names of rows which will be included</p>
+
+</section>
+						<section id="Sheet.toyear" class="doc-node">
+							<div class="title"><h2>fn (Sheet) toyear <a href="#Sheet.toyear">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/sheet.v#L195"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> s Sheet<span class="token punctuation">)</span> <span class="token function">toyear</span><span class="token punctuation">(</span>args ToYearQuarterArgs<span class="token punctuation">)</span> <span class="token operator">!</span>Sheet</code></pre>
+<p>make a copy of the sheet and aggregate on year params   name       string   rowsfilter []string   tagsfilter []string tags if set will see that there is at least one corresponding tag per row rawsfilter is list of names of rows which will be included</p>
+
+</section>
+						<section id="Sheet.cell_get" class="doc-node">
+							<div class="title"><h2>fn (Sheet) cell_get <a href="#Sheet.cell_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/sheet.v#L257"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> s Sheet<span class="token punctuation">)</span> <span class="token function">cell_get</span><span class="token punctuation">(</span>row <span class="token builtin">string</span><span class="token punctuation">,</span> col <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>Cell</code></pre>
+<p>find row, report error if not found</p>
+
+</section>
+						<section id="Cell" class="doc-node">
+							<div class="title"><h2>struct Cell <a href="#Cell">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/cell.v#L7"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Cell</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	val   <span class="token builtin">f64</span>
+	row   <span class="token operator">&</span>Row <span class="token punctuation">[</span>skip<span class="token punctuation">;</span> str<span class="token punctuation">:</span> skip<span class="token punctuation">]</span>
+	empty <span class="token builtin">bool</span> <span class="token operator">=</span> <span class="token boolean">true</span>
+<span class="token punctuation">}</span></code></pre>
+<p>type CellVal = currency.Amount | int | f64 | string | NoVal</p>
+
+</section>
+						<section id="Cell.set" class="doc-node">
+							<div class="title"><h2>fn (Cell) set <a href="#Cell.set">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/cell.v#L14"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> c Cell<span class="token punctuation">)</span> <span class="token function">set</span><span class="token punctuation">(</span>v <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="Cell.add" class="doc-node">
+							<div class="title"><h2>fn (Cell) add <a href="#Cell.add">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/cell.v#L30"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> c Cell<span class="token punctuation">)</span> <span class="token function">add</span><span class="token punctuation">(</span>v <span class="token builtin">f64</span><span class="token punctuation">)</span></code></pre>
+
+
+</section>
+						<section id="Cell.repr" class="doc-node">
+							<div class="title"><h2>fn (Cell) repr <a href="#Cell.repr">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/cell.v#L35"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> c Cell<span class="token punctuation">)</span> <span class="token function">repr</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="Cell.str" class="doc-node">
+							<div class="title"><h2>fn (Cell) str <a href="#Cell.str">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/cell.v#L59"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> c Cell<span class="token punctuation">)</span> <span class="token function">str</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="SheetNewArgs" class="doc-node">
+							<div class="title"><h2>struct SheetNewArgs <a href="#SheetNewArgs">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/factory.v#L6"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">SheetNewArgs</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	name          <span class="token builtin">string</span>
+	nrcol         <span class="token builtin">int</span>    <span class="token operator">=</span> <span class="token number">60</span>
+	visualize_cur <span class="token builtin">bool</span>   <span class="token operator">=</span> <span class="token boolean">true</span> <span class="token comment">// if we want to show e.g. $44.4 in a cell or just 44.4</span>
+	curr          <span class="token builtin">string</span> <span class="token operator">=</span> <span class="token string">'usd'</span> <span class="token comment">// preferred currency to work with</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="SheetParams" class="doc-node">
+							<div class="title"><h2>struct SheetParams <a href="#SheetParams">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/sheet.v#L16"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">SheetParams</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	visualize_cur <span class="token builtin">bool</span> <span class="token comment">// if we want to show e.g. $44.4 in a cell or just 44.4</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="ToYearQuarterArgs" class="doc-node">
+							<div class="title"><h2>struct ToYearQuarterArgs <a href="#ToYearQuarterArgs">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/sheet.v#L100"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">ToYearQuarterArgs</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	name          <span class="token builtin">string</span>
+	rowsfilter    <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+	tagsfilter    <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+	period_months <span class="token builtin">int</span> <span class="token operator">=</span> <span class="token number">12</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="WikiArgs" class="doc-node">
+							<div class="title"><h2>struct WikiArgs <a href="#WikiArgs">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/calc/wiki.v#L6"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">WikiArgs</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	name          <span class="token builtin">string</span>
+	rowsfilter    <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+	tagsfilter    <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+	period_months <span class="token builtin">int</span> <span class="token operator">=</span> <span class="token number">12</span> <span class="token comment">// 3 for quarter, 12 for year, 1 for all months</span>
+	description   <span class="token builtin">string</span>
+	title         <span class="token builtin">string</span>
+	title_disable <span class="token builtin">bool</span>
+	rowname       <span class="token builtin">bool</span> <span class="token operator">=</span> <span class="token boolean">true</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+
+          <div class="footer">
+            Powered by vdoc.
+          </div>
+        </div>
+        <div class="doc-toc"><ul><li class="open"><a href="#readme_calc">README</a></li>
+<li class="open"><a href="#array2float">fn array2float</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#array2int">fn array2int</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#sheet_new">fn sheet_new</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#float_repr">fn float_repr</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#RowAggregateType">enum RowAggregateType</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#ReprType">enum ReprType</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#NoVal">struct NoVal</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Row">struct Row</a>        <ul>
+<li><a href="#Row.subtract">fn subtract</a></li>
+<li><a href="#Row.aggregate">fn aggregate</a></li>
+<li><a href="#Row.cell_get">fn cell_get</a></li>
+<li><a href="#Row.difference">fn difference</a></li>
+<li><a href="#Row.divide">fn divide</a></li>
+<li><a href="#Row.extrapolate">fn extrapolate</a></li>
+<li><a href="#Row.int">fn int</a></li>
+<li><a href="#Row.multiply">fn multiply</a></li>
+<li><a href="#Row.add">fn add</a></li>
+</ul>
+</li>
+<li class="open"><a href="#Group2RowArgs">struct Group2RowArgs</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#RowNewParams">struct RowNewParams</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Sheet">struct Sheet</a>        <ul>
+<li><a href="#Sheet.wiki">fn wiki</a></li>
+<li><a href="#Sheet.cells_width">fn cells_width</a></li>
+<li><a href="#Sheet.group2row">fn group2row</a></li>
+<li><a href="#Sheet.header">fn header</a></li>
+<li><a href="#Sheet.json">fn json</a></li>
+<li><a href="#Sheet.names_width">fn names_width</a></li>
+<li><a href="#Sheet.row_get">fn row_get</a></li>
+<li><a href="#Sheet.row_new">fn row_new</a></li>
+<li><a href="#Sheet.toquarter">fn toquarter</a></li>
+<li><a href="#Sheet.toyear">fn toyear</a></li>
+<li><a href="#Sheet.cell_get">fn cell_get</a></li>
+</ul>
+</li>
+<li class="open"><a href="#Cell">struct Cell</a>        <ul>
+<li><a href="#Cell.set">fn set</a></li>
+<li><a href="#Cell.add">fn add</a></li>
+<li><a href="#Cell.repr">fn repr</a></li>
+<li><a href="#Cell.str">fn str</a></li>
+</ul>
+</li>
+<li class="open"><a href="#SheetNewArgs">struct SheetNewArgs</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#SheetParams">struct SheetParams</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#ToYearQuarterArgs">struct ToYearQuarterArgs</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#WikiArgs">struct WikiArgs</a>        <ul>
+</ul>
+</li>
+</ul></div>
+      </div>
+    </div>
+  </div>
+  <script src="doc.js"></script>
+  <script async src="search_index.js"></script>
+</body>
+
+</html>

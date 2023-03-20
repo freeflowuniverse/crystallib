@@ -1,16 +1,14 @@
 module markdowndocs
 
-import freeflowuniverse.crystallib.texttools
-
-enum CommentPrefix {
-	short
-	multi
-}
+// enum CommentPrefix {
+// 	short
+// 	multi
+// }
 
 pub struct Comment {
 pub mut:
 	content string
-	prefix  CommentPrefix
+	// prefix  CommentPrefix
 	singleline bool
 }
 
@@ -19,32 +17,18 @@ fn (mut o Comment) process() ! {
 }
 
 fn (o Comment) wiki() string {
-	mut out:=""
-	if o.singleline{
-		return "//${o.content}\n"
-	}	
-	if o.content.trim_space().contains("\n"){
-		out+="<!-- "
-		out+=o.content.trim_space()
-		out+="\n-->\n\n"
-	}else{
-		if o.singleline{
-			out+="<!-- ${o.content.trim_space()} -->\n"
-		}else{
-			out+="<!-- ${o.content.trim_space()} -->\n\n"
-		}
+	if o.singleline {
+		return '//${o.content}\n'
 	}
-	return out
+	return '<!--${o.content}-->' // out
 }
 
 fn (o Comment) html() string {
 	return o.wiki()
 }
 
-// fn (o Comment) str() string {
-// 	return '**** Comment\n${texttools.indent(o.content, '    ')}'
-// }
-
-fn comment_new(text string) Comment{
-	return Comment{content:text}
+fn comment_new(text string) Comment {
+	return Comment{
+		content: text
+	}
 }

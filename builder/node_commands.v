@@ -3,7 +3,6 @@ module builder
 import freeflowuniverse.crystallib.texttools
 import crypto.md5
 import time
-import os
 
 // check command exists on the platform, knows how to deal with different platforms
 pub fn (mut node Node) cmd_exists(cmd string) bool {
@@ -12,14 +11,15 @@ pub fn (mut node Node) cmd_exists(cmd string) bool {
 
 pub struct NodeExecCmd {
 pub mut:
-	cmd              string
-	period           int // period in which we check when this was done last, if 0 then period is indefinite
-	reset            bool = true
-	remove_installer bool = true // delete the installer
-	description      string
-	stdout           bool = true
-	checkkey         string // if used will use this one in stead of hash of cmd, to check if was executed already
-	tmpdir           string
+	cmd                string
+	period             int  // period in which we check when this was done last, if 0 then period is indefinite
+	reset              bool = true // means do again or not
+	remove_installer   bool = true // delete the installer
+	description        string
+	stdout             bool = true
+	checkkey           string // if used will use this one in stead of hash of cmd, to check if was executed already
+	tmpdir             string
+	ignore_error_codes []int
 }
 
 // return the ipaddress as known on the public side
@@ -47,8 +47,9 @@ pub fn (mut node Node) ipaddr_pub_get() !string {
 //	checkkey string //if used will use this one in stead of hash of cmd, to check if was executed already
 // }
 // ```
-pub fn (mut node Node) exec_cmd(args NodeExecCmd) ! {
+pub fn (mut node Node) exec_cmd(args_ NodeExecCmd) !string {
 	// println(args)
+	mut args := args_
 	mut cmd := args.cmd
 	mut now_epoch := time.now().unix_time()
 	mut now_str := now_epoch.str()
@@ -72,46 +73,42 @@ pub fn (mut node Node) exec_cmd(args NodeExecCmd) ! {
 	if !args.reset && node.done_exists('exec_${hhash}') {
 		if args.period == 0 {
 			println('   - exec cmd:${description} on ${node.name}: was already done, period indefinite.')
-			return
+			return node.done_get('exec_${hhash}') or { '' }
 		}
-		exec_last_time := node.done_get_str('exec_${hhash}').int()
+		nodedone := node.done_get_str('exec_${hhash}')
+		splitted := nodedone.split('|')
+		if splitted.len != 2 {
+			panic("Cannot return from done on exec needs to have |, now \n'${nodedone}' ")
+		}
+		exec_last_time := splitted[0].int()
+		lastoutput := splitted[1]
 		assert exec_last_time > 10000
 		// println(args)
 		// println("   - check exec cmd:$cmd on $node.name: time:$exec_last_time")
 		if exec_last_time > now_epoch - args.period {
 			hours := args.period / 3600
 			println('   - exec cmd:${description} on ${node.name}: was already done, period ${hours} h')
-			return
+			return lastoutput
 		}
 	}
 
-	if args.reset && args.tmpdir.len > 2 {
-		node.delete(args.tmpdir)!
+	if args.tmpdir.len == 0 {
+		if 'TMPDIR' !in node.environment {
+			return error("Couldn't find TMPDIR.")
+		}
+		args.tmpdir = node.environment['TMPDIR']
 	}
-
-	mut r_path := '/tmp/${hhash}.sh'
-	if args.tmpdir.len > 2 {
-		r_path = '${args.tmpdir}/installer.sh'
-		node.exec_silent('mkdir -p ${args.tmpdir}')!
-	}
+	r_path := '${args.tmpdir}/installer.sh'
 	node.file_write(r_path, cmd)!
-	if args.tmpdir.len > 2 {
-		cmd = "mkdir -p ${args.tmpdir} && cd ${args.tmpdir} && export TMPDIR='${args.tmpdir}' && bash ${r_path}"
-	} else {
-		cmd = 'cd /tmp && bash ${r_path}'
-	}
-
-	// println("   - exec cmd:$cmd on $node.name")
-	node.exec(cmd) or { return error(err.msg() + '\noriginal cmd:\n${args.cmd}') }
-
+	cmd = "mkdir -p ${args.tmpdir} && cd ${args.tmpdir} && export TMPDIR='${args.tmpdir}' && bash ${r_path}"
 	if args.remove_installer {
-		if args.tmpdir.len > 2 {
-			node.delete(args.tmpdir)!
-		} else {
-			node.delete(r_path)!
-		}
+		cmd += ' && rm -f ${r_path}'
 	}
-	node.done_set('exec_${hhash}', now_str)!
+	// println("   - exec cmd:$cmd on $node.name")
+	res := node.exec(cmd) or { return error(err.msg() + '\noriginal cmd:\n${args.cmd}') }
+
+	node.done_set('exec_${hhash}', '${now_str}|${res}')!
+	return res
 }
 
 // check if we can execute and there is not errorcode
@@ -128,19 +125,20 @@ pub fn (mut node Node) exec_ok(cmd string) bool {
 	return true
 }
 
-fn (mut node Node) platform_load() {
+fn (mut node Node) platform_load() ! {
+	// TODO: should rewrite this with one bash script, which gets the required info & returns e.g. env, platform, ... is much faster
 	println(' - platform load')
 	if node.platform == PlatformType.unknown {
 		if node.cmd_exists('sw_vers') {
 			node.platform = PlatformType.osx
-
-			// node execute uname -m !
-
-			// TODO: does not work for remote !!!
-			if os.uname().machine.to_lower() == 'x86_64' {
+			mut cputype := node.exec_silent('uname -m')!
+			cputype = cputype.to_lower().trim_space()
+			if cputype == 'x86_64' {
 				node.cputype = CPUType.intel
-			} else {
+			} else if cputype == 'arm64' {
 				node.cputype = CPUType.arm
+			} else {
+				return error("did not find cpu type, implement more types e.g. 32 bit. found: '${cputype}'")
 			}
 		} else if node.cmd_exists('apt-get') {
 			node.platform = PlatformType.ubuntu

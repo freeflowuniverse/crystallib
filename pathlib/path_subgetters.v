@@ -1,4 +1,5 @@
 module pathlib
+
 import os
 
 //////////////FILE
@@ -8,8 +9,8 @@ pub fn (mut path Path) file_exists(tofind string) bool {
 	if path.cat != Category.dir {
 		return false
 	}
-	if os.exists("${path.path}/$tofind"){
-		if os.is_file("${path.path}/$tofind") {
+	if os.exists('${path.path}/${tofind}') {
+		if os.is_file('${path.path}/${tofind}') {
 			return true
 		}
 	}
@@ -31,7 +32,6 @@ pub fn (mut path Path) file_exists_ignorecase(tofind string) bool {
 	return false
 }
 
-
 // find file underneith path, if exists return as Path, otherwise error
 pub fn (mut path Path) file_get(tofind string) !Path {
 	if path.cat != Category.dir || !(path.exists()) {
@@ -48,20 +48,16 @@ pub fn (mut path Path) file_get(tofind string) !Path {
 	return error('${tofind} is not in ${path.path}')
 }
 
-//get file, if not exist make new one
+// get file, if not exist make new one
 pub fn (mut path Path) file_get_new(tofind string) !Path {
 	if path.cat != Category.dir || !(path.exists()) {
 		return error('is not a dir or dir does not exist: ${path.path}')
-	}			
-	mut p:=path.file_get(tofind) or {
-		return pathlib.get_file("${path.path}/$tofind",true)!
 	}
+	mut p := path.file_get(tofind) or { return get_file('${path.path}/${tofind}', true)! }
 	return p
 }
 
-
 //////////////LINK
-
 
 // find link underneith path, if exists return True
 // is case insensitive
@@ -69,15 +65,14 @@ pub fn (mut path Path) link_exists(tofind string) bool {
 	if path.cat != Category.dir {
 		return false
 	}
-	//TODO: need to check, if this is correct, make test
-	if os.exists("${path.path}/$tofind"){
-		if os.is_link("${path.path}/$tofind") {
+	// TODO: need to check, if this is correct, make test
+	if os.exists('${path.path}/${tofind}') {
+		if os.is_link('${path.path}/${tofind}') {
 			return true
 		}
 	}
 	return false
 }
-
 
 // find link underneith path, if exists return True
 // is case insensitive
@@ -95,14 +90,12 @@ pub fn (mut path Path) link_exists_ignorecase(tofind string) bool {
 	return false
 }
 
-
-
 // find link underneith path, return as Path, can only be one
 // tofind is part of link name
 pub fn (mut path Path) link_get(tofind string) !Path {
 	if path.cat != Category.dir || !(path.exists()) {
 		return error('is not a dir or dir does not exist: ${path.path}')
-	}	
+	}
 	if path.link_exists(tofind) {
 		file_path := os.join_path(path.path, tofind)
 		return Path{
@@ -116,14 +109,13 @@ pub fn (mut path Path) link_get(tofind string) !Path {
 
 ///////// DIR
 
-
 // find dir underneith path, if exists return True
 pub fn (mut path Path) dir_exists(tofind string) bool {
 	if path.cat != Category.dir {
 		return false
 	}
-	if os.exists("${path.path}/$tofind"){
-		if os.is_dir("${path.path}/$tofind") {
+	if os.exists('${path.path}/${tofind}') {
+		if os.is_dir('${path.path}/${tofind}') {
 			return true
 		}
 	}
@@ -149,7 +141,7 @@ pub fn (mut path Path) dir_exists_ignorecase(tofind string) bool {
 pub fn (mut path Path) dir_get(tofind string) !Path {
 	if path.cat != Category.dir || !(path.exists()) {
 		return error('is not a dir or dir does not exist: ${path.path}')
-	}		
+	}
 	if path.dir_exists(tofind) {
 		dir_path := os.join_path(path.path, tofind)
 		return Path{
@@ -161,14 +153,11 @@ pub fn (mut path Path) dir_get(tofind string) !Path {
 	return error('${tofind} is not in ${path.path}')
 }
 
-//get file, if not exist make new one
+// get file, if not exist make new one
 pub fn (mut path Path) dir_get_new(tofind string) !Path {
 	if path.cat != Category.dir || !(path.exists()) {
 		return error('is not a dir or dir does not exist: ${path.path}')
-	}	
-	mut p:=path.dir_get(tofind) or {
-		return pathlib.get_dir("${path.path}/$tofind",true)!
 	}
+	mut p := path.dir_get(tofind) or { return get_dir('${path.path}/${tofind}', true)! }
 	return p
 }
-

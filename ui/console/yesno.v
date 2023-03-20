@@ -1,7 +1,7 @@
 module console
 
-import freeflowuniverse.crystallib.ui.uimodel {YesNoArgs}
-import freeflowuniverse.crystallib.console {color_fg}
+import freeflowuniverse.crystallib.ui.uimodel { YesNoArgs }
+import freeflowuniverse.crystallib.console { color_fg }
 import os
 
 // yes is true, no is false
@@ -9,7 +9,7 @@ import os
 // - description string
 // - question string
 // - warning string
-// - clear bool = true 
+// - clear bool = true
 //
 pub fn (mut c UIConsole) ask_yesno(args YesNoArgs) bool {
 	mut question := args.question

@@ -2,7 +2,6 @@ module docker
 
 import time
 import ipaddress { IPAddress }
-import freeflowuniverse.crystallib.builder
 
 pub enum DockerContainerStatus {
 	up
@@ -29,8 +28,7 @@ pub mut:
 	networks        []string
 	labels          map[string]string
 	image           &DockerImage
-	engine          string // name of docker engine
-	node            string // reference to node over ssh into container
+	engine          &DockerEngine           [str: skip]
 	status          DockerContainerStatus
 	memsize         int // in MB
 	command         string
@@ -52,68 +50,56 @@ pub mut:
 	command    string = '/bin/bash'
 }
 
-// get the node from docker engine
-pub fn (mut container DockerContainer) node() &builder.Node {
-	mut e := engine_get(container.engine) or {
-		panic('bug: should always find this engine: ${container.engine}')
-	}
-	mut factory := builder.new()
-	mut node := factory.node_get(e.node) or {
-		panic('bug: should always find this node: ${e.node}')
-	}
-	return node
-}
-
 // create/start container (first need to get a dockercontainer before we can start)
 pub fn (mut container DockerContainer) start() !string {
-	mut node := container.node()
-	c := node.exec_silent('docker start ${container.id}')!
+	c := container.engine.node.exec_silent('docker start ${container.id}')!
 	container.status = DockerContainerStatus.up
 	return c
 }
 
 // delete docker container
 pub fn (mut container DockerContainer) halt() !string {
-	mut node := container.node()
-	c := node.exec_silent('docker stop ${container.id}') or { '' }
+	c := container.engine.node.exec_silent('docker stop ${container.id}') or { '' }
 	container.status = DockerContainerStatus.down
 	return c
 }
 
 // delete docker container
 pub fn (mut container DockerContainer) delete(force bool) ! {
-	mut node := container.node()
 	println(' - CONTAINER DELETE: ${container.name}')
+	mut forcestr := ''
 	if force {
-		node.exec_silent('docker rm -f ${container.id}')!
-	} else {
-		node.exec_silent('docker rm ${container.id}')!
+		forcestr = '-f'
+	}
+	container.engine.node.exec_silent('docker rm ${container.id} ${forcestr}')!
+	mut x := 0
+	for container2 in container.engine.containers {
+		if container2.name == container.name {
+			container.engine.containers.delete(x)
+		}
+		x += 1
 	}
 }
 
 // save the docker container to image
 pub fn (mut container DockerContainer) save2image(image_repo string, image_tag string) !string {
-	mut node := container.node()
-	id := node.exec_silent('docker commit ${container.id} ${image_repo}:${image_tag}')!
+	id := container.engine.node.exec_silent('docker commit ${container.id} ${image_repo}:${image_tag}')!
 	container.image.id = id
 	return id
 }
 
 // export docker to tgz
 pub fn (mut container DockerContainer) export(path string) !string {
-	mut node := container.node()
-	return node.exec_silent('docker export ${container.id} > ${path}')
+	return container.engine.node.exec_silent('docker export ${container.id} > ${path}')
 }
 
 // open ssh shell to the cobtainer
 pub fn (mut container DockerContainer) ssh_shell(cmd string) ! {
-	mut node := container.node_container_get()!
-	node.shell(cmd)!
+	container.engine.node.shell(cmd)!
 }
 
 // open shell to the container using docker, is interactive, cannot use in script
 pub fn (mut container DockerContainer) shell(cmd string) ! {
-	mut node := container.node()
 	mut cmd2 := ''
 	if cmd.len == 0 {
 		cmd2 = 'docker exec -ti ${container.id} /bin/bash'
@@ -121,34 +107,24 @@ pub fn (mut container DockerContainer) shell(cmd string) ! {
 		cmd2 = "docker exec -ti ${container.id} /bin/bash -c '${cmd}'"
 	}
 	println(cmd2)
-	node.shell(cmd2)!
-}
-
-// ret
-
-// return the builder.node class which allows to remove executed, ...
-pub fn (mut container DockerContainer) node_container_get() !&builder.Node {
-	mut factory := builder.new()
-	mut node := factory.node_get(container.node)!
-	return node
+	container.engine.node.shell(cmd2)!
 }
 
 pub fn (mut container DockerContainer) execute(cmd_ string, silent bool) ! {
-	mut node := container.node()
 	cmd := 'docker exec ${container.id} ${cmd_}'
 	if silent {
-		node.exec_silent(cmd)!
+		container.engine.node.exec_silent(cmd)!
 	} else {
-		node.exec(cmd)!
+		container.engine.node.exec(cmd)!
 	}
 }
 
-pub fn (mut container DockerContainer) ssh_enable() !&builder.Node {
+pub fn (mut container DockerContainer) ssh_enable() ! {
 	// mut docker_pubkey := pubkey
 	// cmd = "docker exec $container.id sh -c 'echo \"$docker_pubkey\" >> ~/.ssh/authorized_keys'"
 
-	// if container.node.executor is builder.ExecutorSSH {
-	// 	mut sshkey := container.node.executor.info()['sshkey'] + '.pub'
+	// if container.engine.node.executor is builder.ExecutorSSH {
+	// 	mut sshkey := container.engine.node.executor.info()['sshkey'] + '.pub'
 	// 	sshkey = os.read_file(sshkey) or { panic(err) }
 	// 	// add pub sshkey on authorized keys of node and container
 	// 	cmd = "echo \"$sshkey\" >> ~/.ssh/authorized_keys && docker exec $container.id sh -c 'echo \"$docker_pubkey\" >> ~/.ssh/authorized_keys && echo \"$sshkey\" >> ~/.ssh/authorized_keys'"
@@ -156,8 +132,5 @@ pub fn (mut container DockerContainer) ssh_enable() !&builder.Node {
 
 	// wait  making sure container started correctly
 	// time.sleep_ms(200)
-	// container.node.executor.exec(cmd) !	
-
-	mut node := container.node()
-	return node
+	// container.engine.node.executor.exec(cmd) !	
 }

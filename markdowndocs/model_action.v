@@ -1,7 +1,7 @@
 module markdowndocs
 
 import freeflowuniverse.crystallib.params
-import freeflowuniverse.crystallib.texttools
+// import freeflowuniverse.crystallib.texttools
 
 pub struct Action {
 pub mut:
@@ -19,17 +19,18 @@ fn (mut action Action) process() ! {
 }
 
 fn (action Action) wiki() string {
-	return "!!"+action.content.trim_space()+"\n\n"
+	return '!!' + action.content.trim_space() + '\n\n'
+	// TODO: BUILD out of action name and params, not from content
 }
 
 fn (action Action) html() string {
 	return action.wiki()
 }
 
-fn (action Action) str() string {
-	p := '${action.params}'
-	return '**** ACTION ${action.name}\n${texttools.indent(p, '    ')}'
-}
+// fn (action Action) str() string {
+// 	p := '${action.params}'
+// 	return '**** ACTION ${action.name}\n${texttools.indent(p, '    ')}'
+// }
 
 // is set of actions in a codeblock
 pub struct Actions {
@@ -52,13 +53,13 @@ fn (actions Actions) html() string {
 	return actions.wiki()
 }
 
-fn (actions Actions) str() string {
-	mut out := '**** ACTIONS\n'
-	for action in actions.actions {
-		out += '  ** ACTION ${action.name}\n'
-	}
-	return out
-}
+// fn (actions Actions) str() string {
+// 	mut out := '**** ACTIONS\n'
+// 	for action in actions.actions {
+// 		out += '  ** ACTION ${action.name}\n'
+// 	}
+// 	return out
+// }
 
 // fn (mut actions Actions) action_add(a Action){
 // 	println(a)

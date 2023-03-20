@@ -3,16 +3,16 @@ module main
 import encoder
 import crypto.ed25519
 
-struct AStruct{
+struct AStruct {
 mut:
-	items []string
-	nr int
+	items   []string
+	nr      int
 	privkey []u8
 }
 
 fn do1() ! {
 	mut e := encoder.encoder_new()
-	a:=AStruct{
+	a := AStruct{
 		items: ['a', 'b']
 		nr: 10
 		privkey: []u8{len: 5, init: u8(0xf8)}
@@ -24,7 +24,7 @@ fn do1() ! {
 
 	println(e.data)
 	mut d := encoder.decoder_new(e.data)
-	mut aa:=AStruct{}
+	mut aa := AStruct{}
 	aa.items = d.get_list_string()
 	aa.nr = d.get_int()
 	aa.privkey = d.get_bytes()
@@ -33,7 +33,7 @@ fn do1() ! {
 }
 
 fn do2() ! {
-	a:=AStruct{
+	a := AStruct{
 		items: ['a', 'b']
 		nr: 10
 		privkey: []u8{len: 5, init: u8(0xf8)}
@@ -41,17 +41,15 @@ fn do2() ! {
 
 	serialize_data := encoder.encode(a)!
 
-    _ := encoder.decode[AStruct](serialize_data) or {
+	_ := encoder.decode[AStruct](serialize_data) or {
 		eprintln('Failed to decode, error: ${err}')
 		return
 	}
 }
-
 
 fn main() {
 	do1() or { panic(err) }
 	do2() or { panic(err) }
 }
 
-
-//TODO: adjust
+// TODO: adjust

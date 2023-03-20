@@ -1,6 +1,6 @@
 module markdowndocs
 
-type ParagraphItem = Text | Link | Comment
+type ParagraphItem = Comment | Link | Text
 
 [heap]
 pub struct Paragraph {
@@ -10,26 +10,31 @@ pub mut:
 	changed bool
 }
 
-
-fn (mut paragraph Paragraph) wiki() string {
-	mut out := ''
-	for mut item in paragraph.items {
-		match mut item{
-			Text {out += item.wiki()}
-			Link {out += item.wiki()}
-			Comment {out += item.wiki()}
-		}
+fn (mut paragraph Paragraph) process() ! {
+	if paragraph.items.len == 0 {
+		paragraph.parse()!
 	}
-	return out
 }
 
-fn (mut paragraph Paragraph) html() string {
+pub fn (mut paragraph Paragraph) wiki() string {
 	mut out := ''
 	for mut item in paragraph.items {
-		match mut item{
-			Text {out += item.html()}
-			Link {out += item.html()}
-			Comment {out += item.html()}
+		match mut item {
+			Text { out += item.wiki() }
+			Link { out += item.wiki() }
+			Comment { out += item.wiki() }
+		}
+	}
+	return out + '\n\n'
+}
+
+pub fn (mut paragraph Paragraph) html() string {
+	mut out := ''
+	for mut item in paragraph.items {
+		match mut item {
+			Text { out += item.html() }
+			Link { out += item.html() }
+			Comment { out += item.html() }
 		}
 	}
 	return out
@@ -46,23 +51,6 @@ fn (mut paragraph Paragraph) html() string {
 // 	}
 // 	return out
 // }
-
-fn (mut paragraph Paragraph) process() ! {
-	if paragraph.items.len>0{
-		panic("bug, cannot call process twise on paragraph")
-	}
-	println("process paragraph: $paragraph.content")
-	paragraph.parse()!
-	for mut item in paragraph.items {
-		match mut item{
-			Text {item.process()!}
-			Link {item.process()!}
-			Comment {item.process()!}
-		}
-	}
-}
-
-
 
 // fn (mut paragraph Paragraph) last_item_name() string {
 // 	return parser.doc.items.last().type_name().all_after_last('.').to_lower()

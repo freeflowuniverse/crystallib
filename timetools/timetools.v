@@ -2,6 +2,27 @@ module timetools
 
 import time
 
+const (
+	numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+	letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+		'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+
+	months  = {
+		'january':   1
+		'february':  2
+		'march':     3
+		'april':     4
+		'may':       5
+		'june':      6
+		'july':      7
+		'august':    8
+		'september': 9
+		'october':   10
+		'november':  11
+		'december':  12
+	}
+)
+
 pub struct Expiration {
 pub mut:
 	// expiration in epoch
@@ -134,4 +155,79 @@ pub fn get_unix_from_absolute(timestr string) !i64 {
 		return error('could not parse time string: ${err}')
 	}
 	return time_struct.unix_time() - 10_800
+}
+
+pub fn parse_date(datestr_ string) !map[string]int {
+	mut datestr_list := datestr_.to_lower().replace(' ', '').split('')
+
+	mut day := ''
+	mut month_str := ''
+
+	for char_ in datestr_list {
+		if char_ in timetools.numbers {
+			day += char_
+		} else {
+			month_str += char_
+		}
+	}
+
+	mut month_int := 0
+	mut month_found := false
+	for month, value in timetools.months {
+		if month.contains(month_str) {
+			month_int = value
+			month_found = true
+		}
+	}
+
+	if month_found == false {
+		return error('Month could not be identified')
+	}
+
+	if day.int() > 31 {
+		return error('Day value too large')
+	}
+
+	return {
+		'month': month_int
+		'day':   day.int()
+	}
+}
+
+pub fn parse_time(timestr_ string) !map[string]int {
+	mut clean_time := timestr_.replace_each([';', ':', '.', ':', ',', ':', ' ', '']).to_lower()
+	mut identifier := ''
+	mut no_letter_time := ''
+
+	for char_ in clean_time.split('') {
+		if char_ in timetools.letters {
+			identifier += char_
+		} else {
+			no_letter_time += char_
+		}
+	}
+
+	time_parts := no_letter_time.split(':')
+
+	mut hour := time_parts[0].int()
+	mut minute := 0
+
+	if time_parts.len != 1 {
+		minute = time_parts[1].int()
+	}
+
+	if identifier == 'pm' && hour != 12 {
+		hour += 12
+	}
+
+	if hour > 24 {
+		return error('Hour given is too great')
+	} else if minute > 59 {
+		return error('Minute given is too great')
+	}
+
+	return {
+		'hour':   hour
+		'minute': minute
+	}
 }

@@ -6,8 +6,6 @@ pub fn (mut e DockerEngine) container_create(args DockerContainerCreateArgs) !&D
 	mut ports := ''
 	mut mounts := ''
 	mut command := args.command
-	mut factory := builder.new()
-	mut node := factory.node_get(e.node)!
 
 	for port in args.forwarded_ports {
 		ports = ports + '-p ${port} '
@@ -35,10 +33,8 @@ pub fn (mut e DockerEngine) container_create(args DockerContainerCreateArgs) !&D
 	}
 
 	mut cmd := 'docker run --hostname ${args.hostname} --name ${args.name} ${ports} ${mounts} -d  -t ${image} ${command}'
-	node.exec(cmd)!
+	e.node.exec(cmd)!
 	e.load()!
 	mut container := e.container_get(args.name)!
-
-	container.engine = e.name
 	return container
 }

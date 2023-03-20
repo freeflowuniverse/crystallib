@@ -32,7 +32,7 @@ pub fn (mut r Redis) send_expect_str(items []string) !string {
 // send list of strings, expect string or nil back
 pub fn (mut r Redis) send_expect_strnil(items []string) !string {
 	r.write_cmds(items)!
-	d:=r.get_string_nil()!
+	d := r.get_string_nil()!
 	return d
 }
 

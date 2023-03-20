@@ -32,9 +32,9 @@ fn (mut executor ExecutorSSH) init() ! {
 		if addr == '' {
 			addr = 'localhost'
 		}
-		// TODO: doesn't work with ipv6 after working with ipv4
-		cmd := "sh -c 'ssh-keyscan -H ${executor.ipaddr.addr} -p ${executor.ipaddr.port} -t ecdsa-sha2-nistp256 2>/dev/null >> ~/.ssh/known_hosts'"
-		process.execute_silent(cmd) or { return error('cannot add the ssh keys to known hosts') }
+		// TODO: doesn't work with ipv6 after working with ipv4, need better check too, because this slows everything down
+		// cmd := "sh -c 'ssh-keyscan -H ${executor.ipaddr.addr} -p ${executor.ipaddr.port} -t ecdsa-sha2-nistp256 2>/dev/null >> ~/.ssh/known_hosts'"
+		// process.execute_silent(cmd) or { return error('cannot add the ssh keys to known hosts') }
 		executor.initialized = true
 	}
 }

@@ -74,9 +74,9 @@ pub fn (mut site Site) error(args SiteErrorArgs) {
 
 ///////////// PAGE/IMAGE/FILE GET
 
-//format of name is $sitename:$pagename or $pagename
-//look if we can find page in the local site is site name not specified
-//if sitename specified will look for page in that specific site
+// format of name is $sitename:$pagename or $pagename
+// look if we can find page in the local site is site name not specified
+// if sitename specified will look for page in that specific site
 pub fn (mut site Site) page_get(name string) !&Page {
 	sitename, mut namelower := get_site_and_obj_name(name, true)!
 	namelower = namelower.trim_string_right('.md')
@@ -85,7 +85,7 @@ pub fn (mut site Site) page_get(name string) !&Page {
 		if namelower in site.pages {
 			return site.pages[namelower]
 		}
-	}else{
+	} else {
 		if sitename in site.sites.sites {
 			// means site exists
 			mut site2 := site.sites.sites[sitename]
@@ -96,10 +96,9 @@ pub fn (mut site Site) page_get(name string) !&Page {
 	return error(msg2)
 }
 
-
-//format of name is $sitename:$imagename or $imagename
-//look if we can find image in the local site if site name not specified
-//if sitename specified will look for image in that specific site
+// format of name is $sitename:$imagename or $imagename
+// look if we can find image in the local site if site name not specified
+// if sitename specified will look for image in that specific site
 pub fn (mut site Site) image_get(name string) !&File {
 	sitename, mut namelower := get_site_and_obj_name(name, true)!
 	namelower = namelower.replace('_', '')
@@ -108,7 +107,7 @@ pub fn (mut site Site) image_get(name string) !&File {
 		if namelower in site.images {
 			return site.images[namelower]
 		}
-	}else{
+	} else {
 		if sitename in site.sites.sites {
 			// means site exists
 			mut site2 := site.sites.sites[sitename]
@@ -119,9 +118,9 @@ pub fn (mut site Site) image_get(name string) !&File {
 	return error(msg2)
 }
 
-//format of name is $sitename:$filename or $filename
-//look if we can find file in the local site is site name not specified
-//if sitename specified will look for file in that specific site
+// format of name is $sitename:$filename or $filename
+// look if we can find file in the local site is site name not specified
+// if sitename specified will look for file in that specific site
 pub fn (mut site Site) file_get(name string) !&File {
 	mut sitename, namelower := get_site_and_obj_name(name, false)!
 	namesmallest := namelower.replace('_', '')
@@ -142,13 +141,11 @@ pub fn (mut site Site) file_get(name string) !&File {
 	return error('Could not find file with name: ${namelower} for site:${site.name}')
 }
 
-
 ///////////// EXISTS
 
-
-//check if page exists in the local site, will ignore the mentioned site name
+// check if page exists in the local site, will ignore the mentioned site name
 pub fn (mut site Site) page_exists(name string) bool {
-	sitename, mut namelower := get_site_and_obj_name(name, true) or {panic(err)}
+	sitename, mut namelower := get_site_and_obj_name(name, true) or { panic(err) }
 	namelower = namelower.trim_string_right('.md')
 	namelower = namelower.replace('_', '')
 	if sitename == '' {
@@ -159,10 +156,9 @@ pub fn (mut site Site) page_exists(name string) bool {
 	return false
 }
 
-
-//check if image exists in the local site, will ignore the mentioned site name
+// check if image exists in the local site, will ignore the mentioned site name
 pub fn (mut site Site) image_exists(name string) bool {
-	sitename, mut namelower := get_site_and_obj_name(name, true) or {panic(err)}
+	sitename, mut namelower := get_site_and_obj_name(name, true) or { panic(err) }
 	namelower = namelower.replace('_', '')
 	if sitename == '' {
 		if namelower in site.images {
@@ -172,9 +168,9 @@ pub fn (mut site Site) image_exists(name string) bool {
 	return false
 }
 
-//check if file exists in the local site, will ignore the mentioned site name
+// check if file exists in the local site, will ignore the mentioned site name
 pub fn (mut site Site) file_exists(name string) bool {
-	sitename, mut namelower := get_site_and_obj_name(name, true) or {panic(err)}
+	sitename, mut namelower := get_site_and_obj_name(name, true) or { panic(err) }
 	namelower = namelower.replace('_', '')
 	if sitename == '' {
 		if namelower in site.files {
@@ -184,8 +180,6 @@ pub fn (mut site Site) file_exists(name string) bool {
 	return false
 }
 
-
-
 // add a page to the site, specify existing path
 // the page will be parsed as markdown
 pub fn (mut site Site) page_new(mut p Path) !&Page {
@@ -193,21 +187,19 @@ pub fn (mut site Site) page_new(mut p Path) !&Page {
 		return error('cannot find page with path ${p.path}')
 	}
 	p.path_normalize()! // make sure its all lower case and name is proper
+	if !p.path.ends_with('.md') {
+		return error('page ${p.path} needs to end with .md')
+	}
+	mut doc := markdowndocs.new(path: p.path) or { panic('cannot parse,${err}') }
+
 	mut page := Page{
+		doc: &doc
+		pathrel: p.path_relative(site.path.path)!.trim('/')
+		name: p.name_fix_no_ext()
 		path: p
 		site: &site
 		readonly: false
 	}
-	if !page.path.path.ends_with('.md') {
-		return error('page ${page} needs to end with .md')
-	}
-	// println(" ---------- $page.path.path")
-	// parse the markdown of the page
-	mut doc := markdowndocs.get(p.path) or { panic('cannot parse,${err}') }
-	page.doc = &doc
-	page.name = p.name_fix_no_ext()
-	page.pathrel = p.path_relative(site.path.path)!
-	page.pathrel = page.pathrel.trim('/')
 	_, namelower := get_site_and_obj_name(p.path, false)!
 	namesmallest := namelower.replace('_', '')
 	site.pages[namesmallest] = &page
@@ -266,16 +258,18 @@ fn (mut site Site) image_new(mut p Path) ! {
 	site.images[namesmallest] = &ff
 }
 
-//go over all pages, fix the links, check the images are there
+// go over all pages, fix the links, check the images are there
 pub fn (mut site Site) fix() ! {
-	$if debug {println(" --- site fix: $site.name")}
+	$if debug {
+		println(' --- site fix: ${site.name}')
+	}
 	for _, mut page in site.pages {
 		page.fix()!
 	}
 	site.errors_report()!
 }
 
-//return all pagenames for a site
+// return all pagenames for a site
 pub fn (mut site Site) pagenames() []string {
 	mut res := []string{}
 	for key, _ in site.pages {
@@ -285,7 +279,7 @@ pub fn (mut site Site) pagenames() []string {
 	return res
 }
 
-//write errors.md in the site, this allows us to see what the errors are
+// write errors.md in the site, this allows us to see what the errors are
 pub fn (mut site Site) errors_report() ! {
 	mut p := pathlib.get('${site.path.path}/errors.md')
 	if site.errors.len == 0 {

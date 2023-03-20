@@ -21,14 +21,18 @@ fn (mut h HTTPConnection) cache_key(req Request) string {
 fn (mut h HTTPConnection) cache_get(req Request) !Result {
 	key := h.cache_key(req)
 	mut data := h.redis.get(key) or {
-		println(err)
 		assert '${err}' == 'none'
 		return Result{
 			code: -1
 		}
 	}
+	if data == '' {
+		return Result{
+			code: -1
+		}
+	}
 	result := json.decode(Result, data) or {
-		return error('failed to decode result with error: ${err}')
+		return error('failed to decode result with error: ${err}.\ndata:\n${data}')
 	}
 	return result
 }

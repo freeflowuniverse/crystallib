@@ -17,8 +17,9 @@ mut:
 }
 
 fn init_connection() CoinMarketConnection {
+	mut redis := redisclient.core_get()
 	return CoinMarketConnection{
-		redis: redisclient.core_get()
+		redis: &redis
 	}
 }
 
@@ -81,7 +82,7 @@ pub fn new(args CMCNewArgs) CoinMarketConnection {
 	return conn
 }
 
-fn (mut h CoinMarketConnection) header() ?http.Header {
+fn (mut h CoinMarketConnection) header() !http.Header {
 	/*
 	Create a new header for Content type and Authorization
 
@@ -91,7 +92,7 @@ fn (mut h CoinMarketConnection) header() ?http.Header {
 	mut header := http.new_header_from_map({
 		http.CommonHeader.content_type: 'application/json'
 	})
-	header.add_custom('X-CMC_PRO_API_KEY', h.secret)?
+	header.add_custom('X-CMC_PRO_API_KEY', h.secret)!
 	return header
 }
 
@@ -131,7 +132,7 @@ fn (mut h CoinMarketConnection) cache_get(prefix string, reqdata string, cache b
 	return text
 }
 
-fn (mut h CoinMarketConnection) cache_set(prefix string, reqdata string, data string, cache bool) ? {
+fn (mut h CoinMarketConnection) cache_set(prefix string, reqdata string, data string, cache bool) ! {
 	/*
 	Set Cache
 	Inputs:
@@ -142,25 +143,25 @@ fn (mut h CoinMarketConnection) cache_set(prefix string, reqdata string, data st
 	*/
 	if cache {
 		key := cache_key(prefix, reqdata)
-		h.redis.set(key, data)?
+		h.redis.set(key, data)!
 		h.redis.expire(key, h.cache_timeout) or {
 			panic('should never get here, if redis worked expire should also work.${err}')
 		}
 	}
 }
 
-fn (mut h CoinMarketConnection) cache_drop() ? {
+fn (mut h CoinMarketConnection) cache_drop() ! {
 	/*
 	Drop all cache related to taiga
 	*/
-	all_keys := h.redis.keys('taiga:*')?
+	all_keys := h.redis.keys('taiga:*')!
 	for key in all_keys {
-		h.redis.del(key)?
+		h.redis.del(key)!
 	}
 	// TODO:: maintain authentication & reconnect (Need More Info)
 }
 
-fn (mut h CoinMarketConnection) get_json(prefix string, data string, query string, cache bool) ?map[string]json2.Any {
+fn (mut h CoinMarketConnection) get_json(prefix string, data string, query string, cache bool) !map[string]json2.Any {
 	/*
 	Get Request with Json Data
 	Inputs:
@@ -176,25 +177,29 @@ fn (mut h CoinMarketConnection) get_json(prefix string, data string, query strin
 		// println("MISS1")
 		mut req := http.Request{}
 		if query != '' {
-			req = http.new_request(http.Method.get, '${h.url}/${prefix}?${query}', data)?
+			req = http.new_request(http.Method.get, '${h.url}/${prefix}?${query}', data) or {
+				return error('failed to create http request')
+			}
 		} else {
-			req = http.new_request(http.Method.get, '${h.url}/${prefix}', data)?
+			req = http.new_request(http.Method.get, '${h.url}/${prefix}', data) or {
+				return error('failed to create http request')
+			}
 		}
-		req.header = h.header()?
-		res := req.do()?
+		req.header = h.header()!
+		res := req.do()!
 		result = res.body
 	}
 	// means empty result from cache
 	if result == 'NULL' {
 		result = ''
 	}
-	h.cache_set(prefix, data, result, cache)?
-	data_raw := json2.raw_decode(result)?
+	h.cache_set(prefix, data, result, cache)!
+	data_raw := json2.raw_decode(result)!
 	data2 := data_raw.as_map()
 	return data2
 }
 
-fn (mut h CoinMarketConnection) get_json_str(prefix string, data string, query string, cache bool) ?string {
+fn (mut h CoinMarketConnection) get_json_str(prefix string, data string, query string, cache bool) !string {
 	/*
 	Get Request with Json Data
 	Inputs:
@@ -210,27 +215,31 @@ fn (mut h CoinMarketConnection) get_json_str(prefix string, data string, query s
 		// println("MISS1")
 		mut req := http.Request{}
 		if query != '' {
-			req = http.new_request(http.Method.get, '${h.url}/${prefix}?${query}', data)?
+			req = http.new_request(http.Method.get, '${h.url}/${prefix}?${query}', data) or {
+				return error('failed to create http request')
+			}
 		} else {
-			req = http.new_request(http.Method.get, '${h.url}/${prefix}', data)?
+			req = http.new_request(http.Method.get, '${h.url}/${prefix}', data) or {
+				return error('failed to create http request')
+			}
 		}
-		req.header = h.header()?
-		res := req.do()?
+		req.header = h.header()!
+		res := req.do()!
 		result = res.body
 	}
 	// means empty result from cache
 	if result == 'NULL' {
 		result = ''
 	}
-	h.cache_set(prefix, data, result, cache)?
+	h.cache_set(prefix, data, result, cache)!
 	return result
 }
 
-pub fn (mut h CoinMarketConnection) token_price_usd() ?f64 {
+pub fn (mut h CoinMarketConnection) token_price_usd() !f64 {
 	prefix := 'cryptocurrency/quotes/latest'
 	query := 'symbol=TFT'
-	result := h.get_json_str(prefix, '', query, true)?
-	r := json.decode(CoinMarketResult, result)?
+	result := h.get_json_str(prefix, '', query, true)!
+	r := json.decode(CoinMarketResult, result)!
 	price := r.data.tft.quote.usd.price
 	per_last_week := r.data.tft.quote.usd.percent_change_7d
 	price_avg := price * (100 - per_last_week) / 100

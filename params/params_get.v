@@ -2,6 +2,7 @@ module params
 
 import texttools
 import os
+import time { Duration }
 
 // check if kwarg exist
 // line:
@@ -11,7 +12,7 @@ import os
 pub fn (params &Params) exists(key_ string) bool {
 	key := key_.to_lower()
 	for p in params.params {
-		if p.key == key {
+		if p.key == key && p.value != '' {
 			return true
 		}
 	}
@@ -86,37 +87,110 @@ pub fn (params &Params) get_u32(key string) !u32 {
 	return valuestr.u32()
 }
 
+pub fn (params &Params) get_u32_default(key string, defval u32) !u32 {
+	if params.exists(key) {
+		valuestr := params.get(key)!
+		return valuestr.u32()
+	}
+	return defval
+}
+
 pub fn (params &Params) get_u8(key string) !u8 {
 	valuestr := params.get(key)!
 	return valuestr.u8()
 }
 
-pub fn (params &Params) get_kilobytes(key string) !u64 {
+pub fn (params &Params) get_u8_default(key string, defval u8) !u8 {
+	if params.exists(key) {
+		valuestr := params.get(key)!
+		return valuestr.u8()
+	}
+	return defval
+}
+
+pub fn (params &Params) get_resource_in_bytes(key string) !u64 {
 	valuestr := params.get(key)!
 	mut times := 1
-	if valuestr.len > 2 && !valuestr[valuestr.len-2].is_digit() && !valuestr[valuestr.len-1].is_digit() {
-		times = match valuestr[valuestr.len-2 .. ].to_upper() {
-			"GB" {
-				1024 * 2024
+	if valuestr.len > 2 && !valuestr[valuestr.len - 2].is_digit()
+		&& !valuestr[valuestr.len - 1].is_digit() {
+		times = match valuestr[valuestr.len - 2..].to_upper() {
+			'GB' {
+				1024 * 1024 * 1024
 			}
-			"MB" {
+			'MB' {
+				1024 * 1024
+			}
+			'KB' {
 				1024
 			}
-			"KB" {
-				1
-			}
 			else {
-				return error("not valid: should end with kb, mb or gb")
+				0
 			}
+		}
+		if times == 0 {
+			return error('not valid: should end with kb, mb or gb')
 		}
 	}
 	return valuestr.u64() * u64(times)
-
 }
 
-pub fn (params &Params) get_kilobytes_default(key string, defval u64) !u64 {
+pub fn (params &Params) get_resource_in_bytes_default(key string, defval u64) !u64 {
 	if params.exists(key) {
-		return params.get_kilobytes(key)!
+		return params.get_resource_in_bytes(key)!
+	}
+	return defval
+}
+
+fn (params &Params) parse_time(value string) !Duration {
+	is_am := value.ends_with('AM')
+	is_pm := value.ends_with('PM')
+	is_am_pm := is_am || is_pm
+	data := if is_am_pm { value[..value.len - 2].split(':') } else { value.split(':') }
+	if data.len > 2 {
+		return error('Invalid duration value')
+	}
+	minute := if data.len == 2 { data[1].int() } else { 0 }
+	mut hour := data[0].int()
+	if is_am || is_pm {
+		if hour < 0 || hour > 12 {
+			return error('Invalid duration value')
+		}
+		if is_pm {
+			hour += 12
+		}
+	} else {
+		if hour < 0 || hour > 24 {
+			return error('Invalid duration value')
+		}
+	}
+	if minute < 0 || minute > 60 {
+		return error('Invalid duration value')
+	}
+	return Duration(time.hour * hour + time.minute * minute)
+}
+
+pub fn (params &Params) get_time_interval(key string) !(Duration, Duration) {
+	valuestr := params.get(key)!
+	data := valuestr.split('-')
+	if data.len != 2 {
+		return error('Invalid time interval: begin and end time required')
+	}
+	start := params.parse_time(data[0])!
+	end := params.parse_time(data[1])!
+	if end < start {
+		return error('Invalid time interval: begin time cannot be after end time')
+	}
+	return start, end
+}
+
+pub fn (params &Params) get_time(key string) !Duration {
+	valuestr := params.get(key)!
+	return params.parse_time(valuestr)!
+}
+
+pub fn (params &Params) get_time_default(key string, defval Duration) !Duration {
+	if params.exists(key) {
+		return params.get_time(key)!
 	}
 	return defval
 }
@@ -144,10 +218,10 @@ pub fn (params &Params) get_list(key string) ![]string {
 	if params.exists(key) {
 		mut valuestr := params.get(key)!
 		if valuestr.contains(',') {
-			valuestr = valuestr.trim(' ,')
+			valuestr = valuestr.trim('[] ,')
 			res = valuestr.split(',').map(it.trim(' \'"'))
 		} else {
-			res = [valuestr.trim(' \'"')]
+			res = [valuestr.trim('[] \'"')]
 		}
 	}
 	return res
@@ -159,11 +233,10 @@ pub fn (params &Params) get_list_u32(key string) ![]u32 {
 }
 
 pub fn (params &Params) get_list_namefix(key string) ![]string {
-	mut res:= params.get_list(key)!
+	mut res := params.get_list(key)!
 	res = res.map(texttools.name_fix(it))
 	return res
 }
-
 
 // get kwarg, and return list of ints
 // line:
@@ -187,7 +260,7 @@ pub fn (params &Params) get_list_int(key string) ![]int {
 pub fn (params &Params) get_default_true(key string) bool {
 	mut r := params.get(key) or { '' }
 	r = texttools.name_fix_no_underscore(r)
-	if r == '' || r == '1' || r == 'true' || r == 'y' {
+	if r == '' || r == '1' || r == 'true' || r == 'y' || r == 'yes' {
 		return true
 	}
 	return false
@@ -196,7 +269,7 @@ pub fn (params &Params) get_default_true(key string) bool {
 pub fn (params &Params) get_default_false(key string) bool {
 	mut r := params.get(key) or { '' }
 	r = texttools.name_fix_no_underscore(r)
-	if r == '' || r == '0' || r == 'false' || r == 'n' {
+	if r == '' || r == '0' || r == 'false' || r == 'n' || r == 'no' {
 		return false
 	}
 	return true

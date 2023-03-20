@@ -28,7 +28,7 @@ pub mut:
 	content     string
 	cat         LinkType
 	isexternal  bool // is not linked to a wiki (sites)
-	include     bool = true // means we will not link to the remote location, content will be shown in context of local site
+	include     bool // means we will not link to the remote location, content will be shown in context of local site
 	newtab      bool // means needs to be opened on a new tab
 	moresites   bool // this means we can look for the content on multiple source sites, site does not have to be specified
 	description string
@@ -55,86 +55,51 @@ fn (mut link Link) error(msg string) {
 	link.error_msg = msg
 }
 
-// needs to be the relative path in the site, important!
-// will return true if there was change
-pub fn (mut link Link) link_update(mut paragraph &Paragraph, linkpath_new string, save bool) ! {
-
-	paragr_content := link.replace(paragraph.content,"")!
-	if paragr_content != paragraph.content{
-		//means there was change
-		paragraph.content = paragr_content
-		paragraph.changed = true
-		if save{
-			// println("   ****** linkupdate:save")
-			// println(link)
-			// link.paragraph.doc.save()!			
-			panic('sdsssae')
-		}
-
-	}
-
-	// if linkoriginal_new != linkoriginal_old {
-	// 	// println("   ****** linkupdate:changed")
-	// 	paragraph.doc.content = paragraph.doc.content.replace(linkoriginal_old,
-	// 		linkoriginal_new)
-	// 	if save {
-	// 		// println("   ****** linkupdate:save")
-	// 		// println(link)
-	// 		paragraph.doc.save()!
-	// 	}
-	// 	paragraph.content.replace(linkoriginal_old, linkoriginal_new)
-	// 	link.path = linkpath_new.all_before_last('/')
-	// 	link.filename = linkpath_new.all_after_last('/')
-	// 	link.original = linkoriginal_new
-	// 	paragraph.changed = true
-	// 	return true
-	// }
-	// return false
-}
-
-
 // return the name of the link
 pub fn (mut link Link) name_fix_no_underscore_no_ext() string {
 	return texttools.name_fix_no_underscore_no_ext(link.filename)
 	// return link.filename.all_before_last('.').trim_right('_').to_lower()
 }
 
-fn (mut o Link) process()!{
+fn (mut o Link) process() ! {
 	o.parse()
 }
 
-
 // return how to represent link on source
 fn (link Link) wiki() string {
+	mut link_filename := link.filename
+	if link.path != '' {
+		link_filename = '${link.path}/${link_filename}'
+	}
 	if link.cat == LinkType.image {
-		if link.extra == '' {
-			return '![${link.description}](${link.filename})'
+		if link.extra.trim_space() == '' {
+			return '![${link.description}](${link_filename})'
 		} else {
-			return '![${link.description}](${link.filename} ${link.extra})'
+			return '![${link.description}](${link_filename} ${link.extra})'
 		}
 	}
 	if link.cat == LinkType.file {
-		if link.extra == '' {
-			return '[${link.description}](${link.filename})'
+		if link.extra.trim_space() == '' {
+			return '[${link.description}](${link_filename})'
 		} else {
-			return '[${link.description}](${link.filename} ${link.extra})'
+			return '[${link.description}](${link_filename} ${link.extra})'
 		}
 	}
 	if link.cat == LinkType.page {
 		if link.filename.contains(':') {
 			return "should not have ':' in link for page or file.\n${link}"
 		}
-
-		mut link_filename := link.filename
-
 		if link.site != '' {
 			link_filename = '${link.site}:${link_filename}'
 		}
-		if link.include == false {
+		if link.include {
 			link_filename = '@${link_filename}'
 		}
 		if link.newtab {
 			link_filename = '!${link_filename}'
+		}
+		if link.moresites {
+			link_filename = '*${link_filename}'
 		}
 
 		return '[${link.description}](${link_filename})'
@@ -142,15 +107,13 @@ fn (link Link) wiki() string {
 	return link.content
 }
 
-
-fn (o Link) html() string{
+fn (o Link) html() string {
 	return o.wiki()
 }
 
 // fn ( o Link) str() string{
 // 	return "**** Link: ${o.wiki()}\n"
 // }
-
 
 // fn (link Link) original_get_with_ignore() string {
 // 	mut l := "[$descr]($link.url ':ignore')"
@@ -160,28 +123,18 @@ fn (o Link) html() string{
 // 	return l
 // }
 
-// replace original link content in text with $replacewith
-// if replacewith is empty then will recreate the link as source_get()!
-pub fn (mut link Link) replace(text string, replacewith_ string) !string {
-	mut replacewith := replacewith_
-	if replacewith == '' {
-		replacewith = link.wiki()
-	}
-	return text.replace(link.content, replacewith)
-}
-
 fn link_new() Link {
 	return Link{}
 }
 
 // add link to a paragraph of a doc
 fn (mut link Link) parse() Link {
-	link.content=link.content.trim_space()
-	if link.content.starts_with("!"){
+	link.content = link.content.trim_space()
+	if link.content.starts_with('!') {
 		link.cat = LinkType.image
 	}
-	link.description = link.content.all_after("[").all_before("]").trim_space()
-	link.url = link.content.all_after("(").all_before(")").trim_space()
+	link.description = link.content.all_after('[').all_before(']').trim_space()
+	link.url = link.content.all_after('(').all_before(')').trim_space()
 	if link.url.contains('://') {
 		// linkstate = LinkState.ok
 		link.isexternal = true
@@ -206,6 +159,8 @@ fn (mut link Link) parse() Link {
 
 	// AT THIS POINT LINK IS A PAGE OR A FILE
 	////////////////////////////////////////
+
+	link.url = link.url.trim_left(' ')
 
 	// deal with special cases where file is not the only thing in ()
 	if link.url.contains(' ') {

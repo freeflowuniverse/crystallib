@@ -12,7 +12,7 @@ pub mut:
 //   localhost:6379
 //   /tmp/redis-default.sock
 pub fn get(addr string, auth string, namespace string) !ZDB {
-	println(" - ZDB get: addr:$addr namespace:$namespace")
+	println(' - ZDB get: addr:${addr} namespace:${namespace}')
 	mut redis := redisclient.get(addr)!
 	mut zdb := ZDB{
 		redis: redis
@@ -38,7 +38,7 @@ pub fn (mut zdb ZDB) ping() !string {
 	return zdb.redis.send_expect_str(['PING'])!
 }
 
-//if key not specified will get incremental key
+// if key not specified will get incremental key
 pub fn (mut zdb ZDB) set(key string, val string) !string {
 	return zdb.redis.send_expect_str(['SET', key, val])!
 }
@@ -89,16 +89,16 @@ pub fn (mut zdb ZDB) nsdel(namespace string) !string {
 
 pub fn (mut zdb ZDB) nsinfo(namespace string) !map[string]string {
 	i := zdb.redis.send_expect_str(['NSINFO', namespace])!
-	mut res:= map[string]string{}
+	mut res := map[string]string{}
 
-	for line in i.split_into_lines(){
-		if line.starts_with("#"){
+	for line in i.split_into_lines() {
+		if line.starts_with('#') {
 			continue
 		}
-		if !(line.contains(":")){
+		if !(line.contains(':')) {
 			continue
 		}
-		splitted := line.split(":")
+		splitted := line.split(':')
 		key := splitted[0]
 		val := splitted[1]
 		res[key.trim_space()] = val.trim_space()

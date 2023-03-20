@@ -34,11 +34,11 @@ const (
 	email_not_verified     = 'Email is not verified'
 )
 
-pub fn parse_keys(file_path string) !toml.Doc {
+fn parse_keys(file_path string) !toml.Doc {
 	return toml.parse_file(file_path)!
 }
 
-pub fn request_to_get_pub_key(username string) !http.Response {
+fn request_to_get_pub_key(username string) !http.Response {
 	mut header := http.new_header_from_map({
 		http.CommonHeader.content_type: 'application/json'
 	})
@@ -52,7 +52,7 @@ pub fn request_to_get_pub_key(username string) !http.Response {
 	return resp
 }
 
-pub fn request_to_verify_sei(sei string) !http.Response {
+fn request_to_verify_sei(sei string) !http.Response {
 	header := http.new_header_from_map({
 		http.CommonHeader.content_type: 'application/json'
 	})

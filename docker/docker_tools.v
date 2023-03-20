@@ -93,8 +93,10 @@ fn clear_str(s string) string {
 fn contains_ssh_port(forwarded_ports []string) bool {
 	for port in forwarded_ports {
 		splitted := port.split(':')
-		if splitted[1] == '22' || splitted[1] == '22/tcp' {
-			return true
+		if splitted.contains(':') {
+			if splitted[1] == '22' || splitted[1] == '22/tcp' {
+				return true
+			}
 		}
 	}
 	return false

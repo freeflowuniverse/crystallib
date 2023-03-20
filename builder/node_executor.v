@@ -1,5 +1,7 @@
 module builder
 
+import freeflowuniverse.crystallib.texttools
+
 // 	exec(cmd string) !string
 // 	exec_silent(cmd string) !string
 // 	file_write(path string, text string) !
@@ -14,6 +16,33 @@ pub fn (mut node Node) exec(cmd string) !string {
 		return node.executor.exec(cmd)
 	}
 	panic('did not find right executor')
+}
+
+[params]
+pub struct ExecFileArgs {
+pub:
+	path    string
+	cmd     string
+	execute bool = true
+	dedent  bool = true
+}
+
+pub fn (mut node Node) exec_file(args ExecFileArgs) ! {
+	if args.path == '' {
+		return error('need to specify path')
+	}
+	if args.cmd == '' {
+		return error('need to specify cmd')
+	}
+	mut cmd2 := args.cmd
+	if args.dedent {
+		cmd2 = texttools.dedent(cmd2)
+	}
+	node.file_write(args.path, cmd2)!
+	node.exec_silent('chmod +x ${args.path}')!
+	if args.execute {
+		node.exec('bash ${args.path}')!
+	}
 }
 
 // silently execute a command

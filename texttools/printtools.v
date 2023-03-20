@@ -27,7 +27,7 @@ pub fn print_array2(arr [][]string, delimiter string, sort bool) {
 	for y < arr.len {
 		mut row := ''
 		for x < arr[y].len {
-			row += expand(arr[y][x], maxwidth[x]) + delimiter
+			row += expand(arr[y][x], maxwidth[x], ' ') + delimiter
 			x++
 		}
 		res << row
@@ -41,10 +41,13 @@ pub fn print_array2(arr [][]string, delimiter string, sort bool) {
 	println(res.join_lines())
 }
 
-fn expand(txt_ string, l int) string {
+// expand text till length l, with string which is normally ' '
+pub fn expand(txt_ string, l int, with string) string {
 	mut txt := txt_
-	extra := l - txt.len
-	txt += ' '.repeat(extra)
+	if l > txt.len {
+		extra := l - txt.len
+		txt += with.repeat(extra)
+	}
 	return txt
 }
 

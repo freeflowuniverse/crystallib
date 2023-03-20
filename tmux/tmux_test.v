@@ -1,8 +1,8 @@
 module tmux
 
-import os
 import freeflowuniverse.crystallib.builder
-import freeflowuniverse.crystallib.installers.tmux
+// import freeflowuniverse.crystallib.installers.tmux
+import os
 
 const testpath = os.dir(@FILE) + '/testdata'
 

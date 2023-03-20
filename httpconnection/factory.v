@@ -37,7 +37,8 @@ pub fn new(name string, url string, cache bool) &HTTPConnection {
 	// Store new connection
 	f.connections[name] = &conn
 
-	return f.connections[name]
+	res := f.connections[name] or { panic("couldn't find key '${name}' in f.connections") }
+	return res
 }
 
 pub fn get(name string) !&HTTPConnection {

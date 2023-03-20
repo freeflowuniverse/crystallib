@@ -1,7 +1,6 @@
 module gittools
 
 import json
-import os
 
 fn test_url1() {
 	mut gs := get(GSConfig{}) or { panic('cannot load') }

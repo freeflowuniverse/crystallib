@@ -1,8 +1,8 @@
 module telegram
 
 import os
-import freeflowuniverse.crystallib.ui.uimodel {QuestionArgs, YesNoArgs, DropDownArgs}
-
+import freeflowuniverse.crystallib.ui.uimodel { DropDownArgs, QuestionArgs, YesNoArgs }
+import freeflowuniverse.crystallib.timetools
 
 // args:
 // - description string
@@ -18,16 +18,15 @@ import freeflowuniverse.crystallib.ui.uimodel {QuestionArgs, YesNoArgs, DropDown
 // 	response_channel chan string
 // }
 
-pub fn (mut ui UITelegram) ask_dropdown (args DropDownArgs) !string {
-
-	mut description := '$args.description \n\nChoices: \n'
+pub fn (mut ui UITelegram) ask_dropdown(args DropDownArgs) !string {
+	mut description := '${args.description} \n\nChoices: \n'
 	mut count := 1
 	for item in args.items {
-		description += '$count - $item\n'
+		description += '${count} - ${item}\n'
 		count += 1
 	}
 
-	question := 'Please send your choice by entering a number from 1 to $count:'
+	question := 'Please send your choice by entering a number from 1 to ${count}:'
 
 	q_args := QuestionArgs{
 		question: question
@@ -36,10 +35,10 @@ pub fn (mut ui UITelegram) ask_dropdown (args DropDownArgs) !string {
 		clear: args.clear
 		user_id: args.user_id
 	}
-	return ui.ask_question(q_args) or {return error("Failed to ask dropdown: $err")}
+	return ui.ask_question(q_args) or { return error('Failed to ask dropdown: ${err}') }
 }
 
-pub fn (mut ui UITelegram) ask_yesno (args YesNoArgs) !string {
+pub fn (mut ui UITelegram) ask_yesno(args YesNoArgs) !string {
 	q_args := QuestionArgs{
 		question: args.question
 		description: args.description
@@ -47,10 +46,10 @@ pub fn (mut ui UITelegram) ask_yesno (args YesNoArgs) !string {
 		clear: args.clear
 		user_id: args.user_id
 	}
-	return ui.ask_question(q_args) or {return error("Failed to ask yesno: $err")}
+	return ui.ask_question(q_args) or { return error('Failed to ask yesno: ${err}') }
 }
 
-pub fn (mut ui UITelegram) ask_question (args QuestionArgs) !string {
+pub fn (mut ui UITelegram) ask_question(args QuestionArgs) !string {
 	mut message := ''
 
 	mut warning := args.warning
@@ -75,8 +74,34 @@ pub fn (mut ui UITelegram) ask_question (args QuestionArgs) !string {
 		if args.validation(answer) {
 			return answer
 		} else {
-			warning += '\n $err'
+			warning += '\n ${err}'
 		}
+	}
+}
+
+pub fn (mut ui TelegramBot) ask_date(args QuestionArgs) !map[string]int {
+	mut warning := args.warning
+	for {
+		date_string := ui.ask_question(args)
+		args.warning = warning
+		if date := timetools.parse_date(date_string) {
+			return date
+		}
+		args.warning = warning +
+			"\n Failed to parse date, please input a date of the format: '28 feb'"
+	}
+}
+
+pub fn (mut ui TelegramBot) ask_time(args QuestionArgs) !map[string]int {
+	mut warning := args.warning
+	for {
+		time_string := ui.ask_question(args)
+		args.warning = warning
+		if time := timetools.parse_time(time_string) {
+			return time
+		}
+		args.warning = warning +
+			"\n Failed to parse time, please input a time of the format: 'HH:MM'"
 	}
 }
 
@@ -87,4 +112,3 @@ fn make_safe(text string) string {
 	}
 	return new_text
 }
-

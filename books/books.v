@@ -54,17 +54,17 @@ pub fn (mut books Books) book_new(args BookNewArgs) !&Book {
 	mut summarypath := p.file_get('summary.md') or {
 		p.link_get('summary.md') or { return error('cannot find summary path: ${err}') }
 	}
-	mut doc := markdowndocs.get(summarypath.path) or {
+	mut doc := markdowndocs.new(path: summarypath.path) or {
 		panic('cannot book parse ${summarypath} ,${err}')
 	}
-	
+
 	mut book := Book{
 		name: texttools.name_fix_no_ext(name)
 		path: p
 		books: &books
 		doc_summary: &doc
 	}
-	
+
 	books.books[book.name.replace('_', '')] = &book
 	return &book
 }
@@ -80,7 +80,7 @@ fn (mut books Books) scan_recursive(mut path pathlib.Path) ! {
 			content := bookfilepath.read()!
 			if content.trim_space() != '' {
 				// means there are params in there
-				mut params_ := params.parser(content)!
+				mut params_ := params.parse(content)!
 				if params_.exists('name') {
 					name = params_.get('name')!
 				}
@@ -117,7 +117,7 @@ pub fn (mut books Books) scan(path string) ! {
 pub fn (mut books Books) get(name string) !&Book {
 	namelower := texttools.name_fix_no_underscore_no_ext(name)
 	if namelower in books.books {
-		return books.books[namelower]
+		return books.books[namelower]!
 	}
 	return error('could not find book with name:${name}')
 }

@@ -14,52 +14,52 @@ pub enum PageStatus {
 pub struct Page {
 pub mut: // pointer to site
 	name           string // received a name fix
-	site           &Site            [str: skip]
+	site           &Site             [str: skip]
 	path           pathlib.Path
 	pathrel        string
 	state          PageStatus
-	pages_included []&Page          [str: skip]
-	pages_linked   []&Page          [str: skip]
-	files_linked   []&File          [str: skip]
+	pages_included []&Page           [str: skip]
+	pages_linked   []&Page           [str: skip]
+	files_linked   []&File           [str: skip]
 	categories     []string
 	doc            &markdowndocs.Doc [str: skip]
 	readonly       bool
 }
 
-
-fn (mut page Page) fix_link(mut paragraph &Paragraph, mut link &Link) ! {
-
+fn (mut page Page) fix_link(mut paragraph Paragraph, mut link Link) ! {
 	println(1)
 	println(link)
 	println(2)
 	mut file_name := link.filename
 	$if debug {
-		println(' - fix link ${link.original} with name:\'${file_name}\' for page: ${page.path.path}')
+		println(' - fix link ${link.content} with name:\'${file_name}\' for page: ${page.path.path}')
 	}
 
 	// check if the file or image is there, if yes we can return, nothing to do
-	mut file_search:=true
-	mut fileoj0 := File{site:page.site}
+	mut file_search := true
+	mut fileoj0 := File{
+		site: page.site
+	}
 	mut fileobj := &fileoj0
 
 	if link.cat == .image {
-		if page.site.image_exists(file_name){
-				file_search=false
-				fileobj=page.site.image_get(file_name) or{panic(err)}
-			}
-	}else{
-		if page.site.file_exists(file_name){
-				file_search=false
-				fileobj=page.site.file_get(file_name) or{panic(err)}
-			}
+		if page.site.image_exists(file_name) {
+			file_search = false
+			fileobj = page.site.image_get(file_name) or { panic(err) }
+		}
+	} else {
+		if page.site.file_exists(file_name) {
+			file_search = false
+			fileobj = page.site.file_get(file_name) or { panic(err) }
+		}
 	}
 	if file_search {
-		//if the site is filled in then it means we need to copy the file here, 
-		//or the image is not found, then we need to try and find it somewhere else
-		//we need to copy the image here
-		fileobj=page.site.sites.image_file_find_over_sites(file_name) or {
+		// if the site is filled in then it means we need to copy the file here,
+		// or the image is not found, then we need to try and find it somewhere else
+		// we need to copy the image here
+		fileobj = page.site.sites.image_file_find_over_sites(file_name) or {
 			msg := "'${file_name}' not found for page:${page.path.path}, we looked over all sites."
-			println("    * $msg")
+			println('    * ${msg}')
 			page.site.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
 			return
 		}
@@ -69,9 +69,9 @@ fn (mut page Page) fix_link(mut paragraph &Paragraph, mut link &Link) ! {
 		mut dest := pathlib.get('${page.path.path_dir()}/img/${fileobj.path.name()}')
 		pathlib.get_dir('${page.path.path_dir()}/img', true)! // make sure it exists
 		println(' *** COPY: ${fileobj.path.path} to ${dest.path}')
-		if fileobj.path.path == dest.path{
+		if fileobj.path.path == dest.path {
 			println(fileobj)
-			panic("source and destination is same when trying to fix link (copy).")
+			panic('source and destination is same when trying to fix link (copy).')
 		}
 		fileobj.path.copy(mut dest)!
 		page.site.image_new(mut dest)! // make sure site knows about the new file
@@ -90,14 +90,14 @@ fn (mut page Page) fix_link(mut paragraph &Paragraph, mut link &Link) ! {
 	link.description = ''
 	// last arg is if we need to save when link changed, only change when page is not readonly
 
-	link.link_update(mut paragraph, imagelink_rel, !page.readonly)!
-	if fileobj.path.path.contains("today_internet"){
+	// link.link_update(mut paragraph, imagelink_rel, !page.readonly)!
+	if fileobj.path.path.contains('today_internet') {
 		println(link)
-		println(paragraph.doc.wiki())
+		println(paragraph.wiki())
 		// println(fileobj)
 		println(imagelink_rel)
 		panic('sdsdsd')
-	}	
+	}
 }
 
 // checks if external link returns 404
@@ -113,13 +113,16 @@ fn (mut page Page) fix() ! {
 
 // walk over all links and fix them with location
 fn (mut page Page) fix_links() ! {
-	for mut paragraph in page.doc.items.filter(it is markdowndocs.Paragraph) {
-		if mut paragraph is markdowndocs.Paragraph {
-			for mut link in paragraph.links {
-				if link.isexternal {
-					page.fix_external_link(mut link)!
-				} else if link.cat == .image || link.cat == .file {
-					page.fix_link(mut &paragraph, mut link)!
+	for mut paragraph in page.doc.items.filter(it is Paragraph) {
+		if mut paragraph is Paragraph {
+			for mut item in paragraph.items {
+				if mut item is Link {
+					mut link := item
+					if link.isexternal {
+						page.fix_external_link(mut link)!
+					} else if link.cat == .image || link.cat == .file {
+						page.fix_link(mut &paragraph, mut link)!
+					}
 				}
 			}
 		}
@@ -151,7 +154,7 @@ fn (mut page Page) process_macro_include(content string) !string {
 			// for line_include in page_include.doc.content.split_into_lines() {
 			// 	result << line_include
 			// }
-			panic("implement include")
+			panic('implement include')
 			if page_include.files_linked.len > 0 {
 				page_include.fix()!
 			}
@@ -178,7 +181,7 @@ pub fn (mut page Page) save(dest0 string) ! {
 		dest = page.path.path
 	}
 	// out := page.process_macros()!
-	panic("implement save macro")
+	out := page.doc.wiki()
 	mut p := pathlib.get_file(dest, true)!
-	// p.write(out)!
+	p.write(out)!
 }

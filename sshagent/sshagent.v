@@ -37,12 +37,12 @@ pub fn load_interactive() !string {
 			description: 'We found more than 1 sshkey in sshagent, want to use one of those!'
 		)
 		{
-			keytouse := console.ask_dropdown(
-				items: pubkeys
-				description: 'Please choose the ssh key you want to use'
-			)
-			key_load(keytouse)!
-			return keytouse
+			// keytouse := console.ask_dropdown(
+			// 	items: pubkeys
+			// 	description: 'Please choose the ssh key you want to use'
+			// )
+			// key_load(keytouse)!
+			// return keytouse
 		}
 	}
 
@@ -72,20 +72,20 @@ pub fn load_interactive() !string {
 			description: 'We found more than 1 sshkey in ~/.ssh dir, want to use one of those?'
 		)
 		{
-			keytouse := console.ask_dropdown(
-				items: pubkeys
-				description: 'Please choose the ssh key you want to use'
-			)
-			key_load(keytouse)!
-			return keytouse
+			// keytouse := console.ask_dropdown(
+			// 	items: pubkeys
+			// 	description: 'Please choose the ssh key you want to use'
+			// )
+			// key_load(keytouse)!
+			// return keytouse
 		}
 	}
 
 	if console.ask_yesno(description: 'Would you like to generate a new key?') {
-		name := console.ask_question(question: 'name', minlen: 3)
-		passphrase := console.ask_question(question: 'passphrase', minlen: 5)
+		// name := console.ask_question(question: 'name', minlen: 3)
+		// passphrase := console.ask_question(question: 'passphrase', minlen: 5)
 
-		keytouse := key_generate(name, passphrase)!
+		// keytouse := key_generate(name, passphrase)!
 
 		// if console.ask_yesno(description:"Please acknowledge you will remember your passphrase for ever (-: ?"){
 		// 	key_load(keytouse)?
@@ -93,7 +93,7 @@ pub fn load_interactive() !string {
 		// }else{
 		// 	return error("Cannot continue, did not find sshkey to use")
 		// }
-		key_load_with_passphrase(keytouse, passphrase)!
+		// key_load_with_passphrase(keytouse, passphrase)!
 	}
 	return error('Cannot continue, did not find sshkey to use')
 
