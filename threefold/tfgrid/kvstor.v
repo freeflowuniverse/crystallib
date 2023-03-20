@@ -16,11 +16,10 @@ pub fn (mut client TFGridClient) kvstore_get(key string) !string {
 	return response.data
 }
 
-pub struct KVStorListArgs{
+pub struct KVStorListArgs {
 pub:
 	reset bool
 }
-
 
 // List all keys in my kvstore
 pub fn (mut client TFGridClient) kvstore_list() ![]string {

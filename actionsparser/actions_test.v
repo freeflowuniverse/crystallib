@@ -1,4 +1,4 @@
-module actions
+module actionsparser
 
 import os
 import freeflowuniverse.crystallib.texttools
@@ -7,8 +7,8 @@ const testpath = os.dir(@FILE) + '/testdata'
 
 fn test_parse_into_blocks() {
 	text := "!!git.link
-source:'https://github.com/ourworld-tsc/ourworld_books/tree/development/content/feasibility_study/Capabilities'
-dest:'https://github.com/threefoldfoundation/books/tree/main/books/feasibility_study_internet/src/capabilities'"
+		source:'https://github.com/ourworld-tsc/ourworld_books/tree/development/content/feasibility_study/Capabilities'
+		dest:'https://github.com/threefoldfoundation/books/tree/main/books/feasibility_study_internet/src/capabilities'"
 
 	mut blocks := parse_into_blocks(text) or { panic('cant parse') }
 	assert blocks.blocks.len == 1

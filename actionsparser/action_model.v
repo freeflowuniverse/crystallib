@@ -1,12 +1,7 @@
-module actions
+module actionsparser
 
 import freeflowuniverse.crystallib.params
 import freeflowuniverse.crystallib.texttools
-
-pub struct ActionsManager {
-pub mut:
-	actions []Action
-}
 
 pub struct Action {
 pub:

@@ -1,4 +1,4 @@
-module actions
+module actionsparser
 
 import os
 import freeflowuniverse.crystallib.params
@@ -30,39 +30,50 @@ mut:
 	content string
 }
 
-fn (mut actions ActionsManager) file_parse(path string) ! {
+// path can be a directory or a file
+pub fn (mut actions ActionsParser) path_add(path string) ! {
+	// recursive behavior for when dir
+	// println(" -- add: $path")
+	if os.is_dir(path) {
+		mut items := os.ls(path)!
+		items.sort() // make sure we sort the items before we go in
+		// process dirs first, make sure we go deepest possible
+		for path0 in items {
+			pathtocheck := '${path}/${path0}'
+			if os.is_dir(pathtocheck) {
+				actions.add(pathtocheck)!
+			}
+		}
+		// now process files in order
+		for path1 in items {
+			pathtocheck := '${path}/${path1}'
+			if os.is_file(pathtocheck) {
+				actions.add(pathtocheck)!
+			}
+		}
+	}
+
+	// make sure we only process markdown files
+	if os.is_file(path) {
+		if path.to_lower().ends_with('.md') {
+			actions.file_parse(path)!
+		}
+	}
+}
+
+fn (mut actions ActionsParser) file_parse(path string) ! {
 	if !os.exists(path) {
 		return error("path: '${path}' does not exist, cannot parse.")
 	}
 	content := os.read_file(path) or { return error('Failed to load file ${path}: ${err}') }
-	actions.text_parse(content)!
+	actions.text_add(content)!
 }
 
-fn (mut actions ActionsManager) text_parse(content string) ! {
+fn (mut actions ActionsParser) text_add(content string) ! {
 	blocks := parse_into_blocks(content)!
 	actions.parse_actions(blocks)!
+	actions.filter()!
 }
-
-// TODO/ add recursive
-// fn file_includes(path string) !string {
-// 	path0 := pathtools.get(path)
-// 	content := path0.read()!
-// 	out=[]string{}
-// 	for line in content.split_into_lines(){
-// 		if line.starts_with("!!include"){
-// 			//now we can do the include
-// 			params := params.parse(line.all_after_first(" "))!
-// 			path_to_include := params.get_path("path")! //checks it exists
-// 			path_included := pathtools.get(path_to_include)!
-// 			content := path_included.read()!
-// 			for line in content.split_into_lines(){
-// 				out << line
-// 			}
-// 			continue
-// 		}
-// 		out << line
-// 	}
-// }
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL actions BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
@@ -70,10 +81,11 @@ fn (mut actions ActionsManager) text_parse(content string) ! {
 // decides if a line might contain parameter definitions
 // most ide's auto dedent indented markdown so is necessary
 // TODO: figure out way to apply to all possible params
-fn contains_params(line string) bool {
-	param_keys := ['gitsource', 'gitdest', 'source', 'dest', 'name', 'url', 'path', 'message']
-	return param_keys.any(line.contains('${it}:'))
-}
+// fn contains_params(line string) bool {
+// 	param_keys := ['gitsource', 'gitdest', 'source', 'dest', 'name', 'url', 'path', 'message']
+// 	return param_keys.any(line.contains('${it}:'))
+// }
+// TODO: this is bad way how to do this, editors shouldn't do this, or configure editor differently, you're basically changing the way how the parser works, not ok
 
 // each block is name of action and the full content behind
 fn parse_into_blocks(text string) !Blocks {
@@ -91,11 +103,10 @@ fn parse_into_blocks(text string) !Blocks {
 		}
 		if line2.contains('//') {
 			line2 = line2.all_before('//')
-		}		
+		}
 		// println("line: '$line2'")
 		if state == ParseBlockStatus.action {
-			if (line2.starts_with(' ') || line2 == '' || contains_params(line2))
-				&& !line2.contains('!!') {
+			if (line2.starts_with(' ') || line2 == '') && !line2.contains('!!') {
 				// starts with tab or space, means block continues
 				block.content += '\n'
 				block.content += line2
@@ -137,17 +148,17 @@ fn (mut block Block) clean() {
 	block.content = texttools.dedent(block.content) // remove leading space
 }
 
-fn (mut actions ActionsManager) parse_block(block Block) ! {
+fn (mut actions ActionsParser) parse_block(block Block) ! {
 	params_ := params.parse(block.content) or { return error('Failed to parse block: ${err}') }
 
 	mut action := Action{
 		name: block.name
 		params: params_
 	}
-	actions.actions << action
+	actions.unsorted << action
 }
 
-fn (mut actions ActionsManager) parse_actions(blocks Blocks) ! {
+fn (mut actions ActionsParser) parse_actions(blocks Blocks) ! {
 	for block in blocks.blocks {
 		actions.parse_block(block)!
 	}

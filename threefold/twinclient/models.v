@@ -79,10 +79,6 @@ pub:
 	deployment_name string [required]
 }
 
-
-
-
-
 pub struct KubernetesNode {
 pub:
 	name        string     [required]
@@ -210,7 +206,6 @@ pub mut:
 	hash    string [required]
 }
 
-
 pub struct SimpleContract {
 pub:
 	contract_id u64 [json: 'contractId']
@@ -247,8 +242,6 @@ pub:
 	name string
 }
 
-
-
 struct PublicIP {
 pub:
 	id          string
@@ -256,8 +249,6 @@ pub:
 	gateway     string
 	contract_id u64    [json: 'contractId']
 }
-
-
 
 pub struct Env {
 pub:
@@ -351,7 +342,6 @@ pub:
 	stellar_address   string     [json: 'stellarAddress']
 	public_ips        []PublicIP [json: 'publicIPs']
 }
-
 
 struct PublicConfig {
 	domain string
