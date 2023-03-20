@@ -26,5 +26,5 @@ pub fn (mut z RMBClient) get_zos_wg_ports(dst u32) ![]u16 {
 	if response.err.message != '' {
 		return error('${response.err.message}')
 	}
-	return json.decode([]u16{}, base64.decode_str(response.dat))
+	return json.decode([]u16, base64.decode_str(response.dat))
 }
