@@ -1,7 +1,6 @@
 module actionsparser
 
 import os
-import freeflowuniverse.crystallib.texttools
 
 const testpath = os.dir(@FILE) + '/testdata'
 
@@ -31,13 +30,15 @@ fn test_parse_into_blocks() {
 }
 
 fn test_file_parse() {
-	mut actionsmgr := new(path:'${testpath}/testfile.md') or { panic(err) }
-	assert actionsmgr.unsorted.len == 10
+	mut actionsmgr := new(path: '${actionsparser.testpath}/testfile.md') or { panic(err) }
+	assert actionsmgr.unsorted.len == 0
+	assert actionsmgr.ok.len == 10
 }
 
 fn test_dir_load() {
-	mut actionsmgr := new(path:'${testpath}') or { panic(err) }
-	assert actionsmgr.unsorted.len == 11
+	mut actionsmgr := new(path: '${actionsparser.testpath}') or { panic(err) }
+	println('yo  $actionsmgr')
+	assert actionsmgr.ok.len == 11
 
 	mut a := actionsmgr.unsorted.last()
 	assert a.name == 'books.mdbook_develop'

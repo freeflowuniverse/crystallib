@@ -72,7 +72,6 @@ fn (mut actions ActionsParser) file_parse(path string) ! {
 fn (mut actions ActionsParser) text_add(content string) ! {
 	blocks := parse_into_blocks(content)!
 	actions.parse_actions(blocks)!
-	actions.filter()!
 }
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL actions BY DESIGN
@@ -94,13 +93,20 @@ fn parse_into_blocks(text string) !Blocks {
 	mut block := Block{}
 	mut pos := 0
 	mut line2 := ''
+	mut rid := ''
+	mut book := ''
+	mut actor := ''
+
+	mut prefix := ''
 	// no need to process files which are not at least 2 chars
 	for line_ in text.split_into_lines() {
 		line2 = line_
 		line2 = line2.replace('\t', '    ')
 		line2_nospace := line2.trim_space()
-		//remove lines with comments
-		if line2_nospace.starts_with('<!--') || line2_nospace.starts_with('#') || line2_nospace.starts_with('//') {
+
+		// remove lines with comments
+		if line2_nospace.starts_with('<!--') || line2_nospace.starts_with('#')
+			|| line2_nospace.starts_with('//') {
 			continue
 		}
 		if state == ParseBlockStatus.action {
@@ -146,18 +152,40 @@ fn (mut block Block) clean() {
 	block.content = texttools.dedent(block.content) // remove leading space
 }
 
-fn (mut actions ActionsParser) parse_block(block Block) ! {
+fn (mut actions ActionsParser) parse_block(block Block, prefix string) ! {
 	params_ := params.parse(block.content) or { return error('Failed to parse block: ${err}') }
 
 	mut action := Action{
-		name: block.name
+		name: '$prefix$block.name'
 		params: params_
 	}
 	actions.unsorted << action
 }
 
 fn (mut actions ActionsParser) parse_actions(blocks Blocks) ! {
+
+	mut actor := ''
+	mut book := ''
+
 	for block in blocks.blocks {
-		actions.parse_block(block)!
+		mut prefix := ''
+		if book != '' {
+			prefix += '${book}.'
+		}
+		if actor != '' {
+			prefix += '${actor}.'
+		}
+
+		actions.parse_block(block, prefix)!
+		action := actions.unsorted.last()
+
+		if action.name.starts_with('actor.select') {
+			prefix := 
+			actor = action.params.args[0]
+		}
+
+		else if action.name.starts_with('book.select') {
+			book = action.params.args[0]
+		}
 	}
 }

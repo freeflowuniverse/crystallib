@@ -30,5 +30,6 @@ pub fn new(args ActionParserArgs) !ActionsParser {
 	if args.path.len > 0 {
 		ap.path_add(args.path)!
 	}
+	ap.filter()!
 	return ap
 }

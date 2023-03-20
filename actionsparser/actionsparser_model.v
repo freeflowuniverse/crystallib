@@ -1,8 +1,5 @@
 module actionsparser
 
-import freeflowuniverse.crystallib.params
-import freeflowuniverse.crystallib.texttools
-
 pub struct ActionsParser {
 pub mut:
 	unsorted []Action // should be empty after filter action
@@ -11,5 +8,5 @@ pub mut:
 	skipped  []Action // the ones which won't be processed because its not right book or even actor
 	actor    string
 	book     string
-	filter 	 []string
+	filter   []string
 }
