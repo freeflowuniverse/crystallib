@@ -23,10 +23,10 @@ pub mut:
 pub struct RmbResponse {
 pub mut:
 	ver int = 1
-	ref string //todo: define 
+	ref string // todo: define
 	dat string
-	dst string //todo: define what is this
+	dst string // todo: define what is this
 	now u64
-	shm string //todo: what is this?
+	shm string // todo: what is this?
 	err RmbError
 }

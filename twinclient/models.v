@@ -672,7 +672,6 @@ pub mut:
 	signatures      []Signature
 }
 
-
 pub enum BlockChainType {
 	algorand
 	stellar
