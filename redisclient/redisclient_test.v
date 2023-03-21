@@ -584,12 +584,17 @@ fn test_brpop() {
 		cleanup(mut redis) or { panic(err) }
 	}
 	redis.lpush('test47', '123')!
-	r1 := redis.brpop('test47', 1)!
-	assert r1 == '123'
-	r2 := redis.brpop('test47', 1) or {
-		return
-	}
-	assert false, "brpop should time out here"
+	redis.lpush('test48', 'balbal')!
+	r1 := redis.brpop(['test47', 'test48'], 1)!
+	assert r1.len == 2
+	assert r1[0] == 'test47'
+	assert r1[1] == '123'
+	r2 := redis.brpop(['test47', 'test48'], 1)!
+	assert r2.len == 2
+	assert r2[0] == 'test48'
+	assert r2[1] == 'balbal'
+	r3 := redis.brpop(['test47'], 1)!
+	assert r3.len == 0
 }
 
 fn test_lrpop() {
@@ -598,12 +603,17 @@ fn test_lrpop() {
 		cleanup(mut redis) or { panic(err) }
 	}
 	redis.lpush('test47', '123')!
-	r1 := redis.blpop('test47', 1)!
-	assert r1 == '123'
-	r2 := redis.blpop('test47', 1) or {
-		return
-	}
-	assert false, "blpop should time out here"
+	redis.lpush('test48', 'balbal')!
+	r1 := redis.blpop(['test47', 'test48'], 1)!
+	assert r1.len == 2
+	assert r1[0] == 'test47'
+	assert r1[1] == '123'
+	r2 := redis.blpop(['test47', 'test48'], 1)!
+	assert r2.len == 2
+	assert r2[0] == 'test48'
+	assert r2[1] == 'balbal'
+	r3 := redis.blpop(['test47'], 1)!
+	assert r3.len == 0
 }
 
 fn test_llen() {
