@@ -181,18 +181,18 @@ pub fn (mut r Redis) lpop(key string) !string {
 	return r.send_expect_strnil(['LPOP', key])
 }
 
-pub fn (mut r Redis) blpop(keys []string, timeout int) ![]string {
+pub fn (mut r Redis) blpop(keys []string, timeout f64) ![]string {
 	mut request := [ 'BLPOP' ]
 	request << keys
-	request << '${timeout}'
+	request << "${timeout}"
 	res := r.send_expect_list_str(request)!
 	return res
 }
 
-pub fn (mut r Redis) brpop(keys []string, timeout int) ![]string {
+pub fn (mut r Redis) brpop(keys []string, timeout f64) ![]string {
 	mut request := [ 'BRPOP' ]
 	request << keys
-	request << '${timeout}'
+	request << "${timeout}"
 	res := r.send_expect_list_str(request)!
 	return res
 }

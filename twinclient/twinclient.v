@@ -162,8 +162,8 @@ pub fn (mut rmb RmbTwinClient) send(functionPath string, args string) !Message {
 
 pub fn (mut rmb RmbTwinClient) read(msg Message) !Message {
 	println('Waiting reply ${msg.retqueue}')
-	results := rmb.client.blpop([msg.retqueue], rmb.message.expiration)!
-	if results.len != 2 {
+	results := rmb.client.blpop([msg.retqueue], ${rmb.message.expiration})!
+	if results.len != 2 
 		return error('blpop failed')
 	}
 	mut response := json.decode(Message, results[1])!
