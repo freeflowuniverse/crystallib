@@ -19,8 +19,8 @@ fn (mut action Action) process() ! {
 }
 
 fn (action Action) wiki() string {
-	return '!!' + action.content.trim_space() + '\n\n'
-	// TODO: BUILD out of action name and params, not from content
+	params_ := action.params.export(indent:'\t')
+	return '!!${action.name}\n${params_}\n\n'
 }
 
 fn (action Action) html() string {
