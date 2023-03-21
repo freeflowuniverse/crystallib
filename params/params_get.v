@@ -12,7 +12,7 @@ import time { Duration }
 pub fn (params &Params) exists(key_ string) bool {
 	key := key_.to_lower()
 	for p in params.params {
-		if p.key == key && p.value != "" {
+		if p.key == key && p.value != '' {
 			return true
 		}
 	}
@@ -115,7 +115,7 @@ pub fn (params &Params) get_resource_in_bytes(key string) !u64 {
 		&& !valuestr[valuestr.len - 1].is_digit() {
 		times = match valuestr[valuestr.len - 2..].to_upper() {
 			'GB' {
-				1024 * 1024 * 1024 
+				1024 * 1024 * 1024
 			}
 			'MB' {
 				1024 * 1024
