@@ -93,11 +93,7 @@ fn parse_into_blocks(text string) !Blocks {
 	mut block := Block{}
 	mut pos := 0
 	mut line2 := ''
-	mut rid := ''
-	mut book := ''
-	mut actor := ''
 
-	mut prefix := ''
 	// no need to process files which are not at least 2 chars
 	for line_ in text.split_into_lines() {
 		line2 = line_
@@ -180,7 +176,6 @@ fn (mut actions ActionsParser) parse_actions(blocks Blocks) ! {
 		action := actions.unsorted.last()
 
 		if action.name.starts_with('actor.select') {
-			prefix := 
 			actor = action.params.args[0]
 		}
 

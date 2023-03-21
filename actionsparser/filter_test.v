@@ -1,7 +1,5 @@
 module actionsparser
 
-import os
-
 const text = "
 //select the book, can come from context as has been set before
 //now every person added will be added in this book
