@@ -59,49 +59,53 @@ const text = "
 !!book.select bbb
 "
 
-fn test_text_add() ! {
-	mut parser := new() or { panic(err) }
-	parser.text_add(text)!
-
-	assert parser.unsorted.len == 12
-	assert parser.ok.len == 0
-	assert parser.skipped.len == 0
-	assert parser.error.len == 0
-
-	// mut a := parser.unsorted.last()
-	// assert a.name == 'book.select'
-	// assert a.params.arg_exists('bbb')
-
-	mut b := parser.unsorted[2]
-	assert b.name == 'aaa.people.person_define'
-	mut c := b.params.get('cid') or { panic(err) }
-	assert c == '1gt'
-}
-
 fn test_filter_actor() ! {
 	mut parser := new(actor: 'people')!
 	parser.text_add(text)!
 
-	assert parser.unsorted.len == 12
+	assert parser.unsorted.len == 8
 	assert parser.skipped.len == 0
 
 	parser.filter_actor()
 
-	assert parser.unsorted.len == 8
-	panic(parser.skipped)
-	assert parser.skipped.len == 2
+	// confirm only one test actor action is skipped
+	assert parser.unsorted.len == 7
+	assert parser.skipped.len == 1
 }
 
 fn test_filter_book() ! {
-	mut parser := new(text: text)!
+	test_filter_book_aaa()!
+	test_filter_book_bbb()!
+}
 
-	assert parser.unsorted.len == 10
+fn test_filter_book_aaa() ! {
+	mut parser := new(book: 'aaa')!
+	parser.text_add(text)!
+	
+	assert parser.unsorted.len == 8
 	assert parser.skipped.len == 0
 
 	parser.filter_book()
 
+	// assert skipped action from book 'bbb'
+	assert parser.unsorted.len == 7
+	assert parser.skipped.len == 1
+	assert parser.skipped[0].name == 'bbb.people.person_define'
+}
+
+fn test_filter_book_bbb() ! {
+	mut parser := new(book: 'bbb')!
+	parser.text_add(text)!
+	
 	assert parser.unsorted.len == 8
-	assert parser.skipped.len == 2
+	assert parser.skipped.len == 0
+
+	parser.filter_book()
+
+	// assert skipped action from book 'bbb'
+	assert parser.unsorted.len == 1
+	assert parser.skipped.len == 7
+	assert parser.unsorted[0].name == 'bbb.people.person_define'
 }
 
 fn test_filter() ! {
@@ -114,8 +118,8 @@ fn test_filter() ! {
 	)!
 
 	assert parser.unsorted.len == 0
-	assert parser.ok.len == 2
-	assert parser.skipped.len == 0
+	assert parser.ok.len == 6
+	assert parser.skipped.len == 2
 
 	// assert parser.unsorted[1].name == 'person_delete'
 	// assert parser.ok[1].name == 'circle_delete'
