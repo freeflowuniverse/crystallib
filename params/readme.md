@@ -4,7 +4,7 @@ example text to parse
 
 ```yaml
 id:a1 name6:aaaaa
-name:'need to do something 1' 
+name:'need to do something 1'
 description:
     ## markdown works in it
 
@@ -25,7 +25,7 @@ name3: hi name10:'this is with space'  name11:aaa11
 name4: 'aaa'
 
 //somecomment
-name5:   'aab' 
+name5:   'aab'
 ```
 
 results in
@@ -47,10 +47,10 @@ Params{
 
                 description can be multiline
                 lets see what happens
-                
+
                 - a
                 - something else
-                
+
                 ### subtitle
                 '
 		}, Param{
@@ -75,3 +75,45 @@ Params{
 	}
 ```
 
+## Encoding / decoding
+
+The encoding and decoding functions can be used for generic types when it is necessary to serialize to / deserialize from data kept in a Params struct.
+
+```v
+params := Params {
+    params: [Param{
+        key: 'name'
+        value: 'test'
+    }, Param{
+        key: 'number'
+        value: '2'
+    }, Param{
+        key: 'yesno'
+        value: 'true'
+    }, Param{
+        key: 'liststr'
+        value:'one, two'
+    }, Param{
+        key: 'listint'
+        value:'1, 2'
+    }]
+}
+
+decoded := params.decode[TestStruct]()!
+```
+
+results in the following filled in struct:
+
+```
+TestStruct {
+    name: 'test'
+    number: 2
+    yesno: true
+    liststr: ['one', 'two']
+    listint: [1, 2]
+}
+```
+
+One can convert back to params from this struct using the encode function.
+
+**Currently encoding / decoding only supports `string`, `int`, `bool`, `[]string`, `[]int` types**
