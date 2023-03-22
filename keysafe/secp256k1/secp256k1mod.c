@@ -41,6 +41,23 @@ static void dumphex(unsigned char *data, size_t size) {
     printf("\n");
 }
 
+static unsigned char *hexparse(char *input) {
+    if(strncmp(input, "0x", 2) != 0)
+        return NULL;
+
+    size_t length = strlen(input);
+
+    char *target = calloc(sizeof(char), length);
+    char *pos = input + 2;
+
+    for(size_t count = 0; count < length - 2; count++) {
+        sscanf(pos, "%2hhx", &target[count]);
+        pos += 2;
+    }
+
+    return target;
+}
+
 static void secp256k1_erase(unsigned char *target, size_t length) {
 #if defined(__GNUC__)
     // memory barrier to avoid memset optimization
@@ -83,12 +100,38 @@ void secp256k1_free(secp256k1_t *secp) {
     free(secp);
 }
 
-int secp256k1_generate_key(secp256k1_t *secp) {
-    int retval;
-
+static int secp256k1_initialize_key(secp256k1_t *secp) {
     secp->seckey = malloc(sizeof(char) * SECKEY_SIZE);
     secp->compressed = malloc(sizeof(char) * COMPPUB_SIZE);
     secp->xcompressed = malloc(sizeof(char) * XSERPUB_SIZE);
+}
+
+static int secp256k1_populate_key(secp256k1_t *secp) {
+    int retval;
+
+    retval = secp256k1_ec_pubkey_create(secp->kntxt, &secp->pubkey, secp->seckey);
+    assert(retval);
+
+    size_t len = COMPPUB_SIZE;
+    retval = secp256k1_ec_pubkey_serialize(secp->kntxt, secp->compressed, &len, &secp->pubkey, SECP256K1_EC_COMPRESSED);
+    assert(retval);
+
+    // always compute the xonly pubkey as well, so we don't need to compute
+    // it later for schnorr
+    retval = secp256k1_keypair_create(secp->kntxt, &secp->keypair, secp->seckey);
+    assert(retval);
+
+    retval = secp256k1_xonly_pubkey_from_pubkey(secp->kntxt, &secp->xpubkey, NULL, &secp->pubkey);
+    assert(retval);
+
+    retval = secp256k1_xonly_pubkey_serialize(secp->kntxt, secp->xcompressed, &secp->xpubkey);
+    assert(retval);
+
+    return 0;
+}
+
+int secp256k1_generate_key(secp256k1_t *secp) {
+    secp256k1_initialize_key(secp);
 
     while(1) {
         if(!fill_random(secp->seckey, SECKEY_SIZE)) {
@@ -101,29 +144,31 @@ int secp256k1_generate_key(secp256k1_t *secp) {
             continue;
         }
 
-        retval = secp256k1_ec_pubkey_create(secp->kntxt, &secp->pubkey, secp->seckey);
-        assert(retval);
-
-        size_t len = COMPPUB_SIZE;
-        retval = secp256k1_ec_pubkey_serialize(secp->kntxt, secp->compressed, &len, &secp->pubkey, SECP256K1_EC_COMPRESSED);
-        assert(retval);
-
-        // always compute the xonly pubkey as well, so we don't need to compute
-        // it later for schnorr
-        retval = secp256k1_keypair_create(secp->kntxt, &secp->keypair, secp->seckey);
-        assert(retval);
-
-        retval = secp256k1_xonly_pubkey_from_pubkey(secp->kntxt, &secp->xpubkey, NULL, &secp->pubkey);
-        assert(retval);
-
-        retval = secp256k1_xonly_pubkey_serialize(secp->kntxt, secp->xcompressed, &secp->xpubkey);
-        assert(retval);
-
-        return 0;
+        return secp256k1_populate_key(secp);
     }
 
     return 1;
 }
+
+int secp256k1_load_key(secp256k1_t *secp, char *key) {
+    // only allow valid key size
+    if(strlen(key) != (SECKEY_SIZE * 2) + 2)
+        return 1;
+
+    unsigned char *binkey = hexparse(key);
+
+    secp256k1_initialize_key(secp);
+    free(secp->seckey);
+    secp->seckey = binkey;
+
+    if(secp256k1_ec_seckey_verify(secp->kntxt, secp->seckey) == 0) {
+        // invalid key
+        return 1;
+    }
+
+    return secp256k1_populate_key(secp);
+}
+
 
 unsigned char *secp265k1_shared_key(secp256k1_t *private, secp256k1_t *public) {
     unsigned char *shared = malloc(sizeof(unsigned char) * SHARED_SIZE);
@@ -225,18 +270,27 @@ int secp256k1_schnorr_verify(secp256k1_t *secp, unsigned char *signature, size_t
     return secp256k1_schnorrsig_verify(secp->kntxt, signature, hash, hashlen, &secp->xpubkey);
 }
 
-#if 0
+#if 1
 int main() {
-    secp256k1_t *bob = secp256k1_new();
-    secp256k1_generate_key(bob);
+    secp256k1_t *wendy = secp256k1_new();
+    secp256k1_generate_key(wendy);
 
+    printf("Wendy:\n");
+    dumphex(wendy->seckey, SECKEY_SIZE);
+    dumphex(wendy->compressed, COMPPUB_SIZE);
+    dumphex(wendy->xcompressed, XSERPUB_SIZE);
+
+    secp256k1_t *bob = secp256k1_new();
+    secp256k1_load_key(bob, "0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83");
+
+    printf("\n");
     printf("Bob:\n");
     dumphex(bob->seckey, SECKEY_SIZE);
     dumphex(bob->compressed, COMPPUB_SIZE);
     dumphex(bob->xcompressed, XSERPUB_SIZE);
 
     secp256k1_t *alice = secp256k1_new();
-    secp256k1_generate_key(alice);
+    secp256k1_load_key(alice, "0x8225825815f42e1c24a2e98714d99fee1a20b5ac864fbcb7a103cd0f37f0ffec");
 
     printf("\n");
     printf("Alice:\n");
