@@ -270,7 +270,7 @@ int secp256k1_schnorr_verify(secp256k1_t *secp, unsigned char *signature, size_t
     return secp256k1_schnorrsig_verify(secp->kntxt, signature, hash, hashlen, &secp->xpubkey);
 }
 
-#if 1
+#if 0
 int main() {
     secp256k1_t *wendy = secp256k1_new();
     secp256k1_generate_key(wendy);
