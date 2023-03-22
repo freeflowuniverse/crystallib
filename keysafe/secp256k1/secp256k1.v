@@ -55,6 +55,13 @@ pub fn generate_key(secp &Secp256k1_t) int {
 	return C.secp256k1_generate_key(secp)
 }
 
+fn C.secp256k1_load_key(secp &Secp256k1_t, key &u8) int
+
+pub fn load_key(secp &Secp256k1_t, key &u8) int {
+	return C.secp256k1_load_key(secp, key)
+}
+
+
 fn C.secp265k1_shared_key(private &Secp256k1_t, public &Secp256k1_t) &u8
 
 pub fn secp265k1_shared_key(private &Secp256k1_t, public &Secp256k1_t) &u8 {
