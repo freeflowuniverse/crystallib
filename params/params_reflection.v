@@ -1,7 +1,8 @@
 module params
 
-// TODO: support more field types
+// Decodes a params struct into a provided generic type.
 pub fn (params Params) decode[T]() !T {
+	// TODO: support more field types
     t := T{}
     $for field in T.fields {
         value := params.get(field.name)!
@@ -27,6 +28,8 @@ pub fn (params Params) decode[T]() !T {
     return t
 }
 
+// Takes in a generic struct and type, encodes the struct into a params struct 
+// with corresponding key value fields.
 pub fn encode[T](t T) !Params {
     mut params := Params{}
     $for field in T.fields {
