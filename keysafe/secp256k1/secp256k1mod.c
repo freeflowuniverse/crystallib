@@ -298,7 +298,7 @@ char *secp256k1_export(secp256k1_t *secp) {
     return hexifier(secp->seckey, SECKEY_SIZE);
 }
 
-#if 1
+#ifndef NO_SECP_MAIN
 int main() {
     secp256k1_t *wendy = secp256k1_new();
     secp256k1_generate_key(wendy);
