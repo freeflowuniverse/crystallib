@@ -8,18 +8,21 @@ pub fn (params Params) decode[T]() !T {
         $if field.typ is string {
             t.$(field.name) = params.get(field.name)!
         }
-        $if field.typ is int {
+        $else $if field.typ is int {
             t.$(field.name) = params.get_int(field.name)!
         }
-        $if field.typ is bool {
+        $else $if field.typ is bool {
             t.$(field.name) = params.get_default_true(field.name)
         }       
-        $if field.typ is []string {
+        $else $if field.typ is []string {
             t.$(field.name) = params.get_list(field.name)!
         }       
-        $if field.typ is []int {
+        $else $if field.typ is []int {
             t.$(field.name) = params.get_list_int(field.name)!
-        }       
+        }
+		$else {
+			return error('Unsupported type: Params encoding and decoding for generic types only supports the following types:\nstring, int, bool, []string, []int.')
+		}
     }
     return t
 }

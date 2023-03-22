@@ -8,6 +8,23 @@ struct TestStruct {
     listint []int
 }
 
+struct TestStruct2 {
+    name []string
+    number int
+    yesno bool
+    liststr []string
+    listint []int
+}
+
+// all unsuppported
+struct TestStruct3 {
+    name []u8
+    number f64
+    yesno []bool
+    liststr [][]string
+    listint [][]int
+}
+
 fn test_decode() {
     test := TestStruct {
         name: 'test'
@@ -38,6 +55,17 @@ fn test_decode() {
 
     decoded := params.decode[TestStruct]()!
     assert decoded == test
+
+	decoded2 := params.decode[TestStruct2]()!
+	assert typeof(decoded2.name) != typeof(decoded.name)
+
+	// Check fails with correct error provided unsupported type
+	if decoded3 := params.decode[TestStruct3]() {
+		assert false
+	}
+	else {
+		assert err.msg == 'Unsupported type: Params encoding and decoding for generic types only supports the following types:\nstring, int, bool, []string, []int.'
+	}
 }
 
 fn test_encode() {
