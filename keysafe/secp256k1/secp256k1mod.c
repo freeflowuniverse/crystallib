@@ -47,7 +47,7 @@ static unsigned char *hexparse(char *input) {
 
     size_t length = strlen(input);
 
-    char *target = calloc(sizeof(char), length);
+    unsigned char *target = calloc(sizeof(char), length);
     char *pos = input + 2;
 
     for(size_t count = 0; count < length - 2; count++) {
@@ -174,6 +174,7 @@ unsigned char *secp265k1_shared_key(secp256k1_t *private, secp256k1_t *public) {
     unsigned char *shared = malloc(sizeof(unsigned char) * SHARED_SIZE);
 
     int val = secp256k1_ecdh(private->kntxt, shared, &public->pubkey, private->seckey, NULL, NULL);
+    assert(val);
 
     return shared;
 }
