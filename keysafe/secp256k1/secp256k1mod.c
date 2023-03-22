@@ -41,6 +41,21 @@ static void dumphex(unsigned char *data, size_t size) {
     printf("\n");
 }
 
+static char *hexifier(unsigned char *data, size_t size) {
+    char *target = calloc(sizeof(char), (size * 2) + 4);
+    char buffer[8];
+
+    strcpy(target, "0x");
+    memset(buffer, 0, sizeof(buffer));
+
+    for(size_t i = 0; i < size; i++) {
+        sprintf(buffer, "%02x", data[i]);
+        strcat(target, buffer);
+    }
+
+    return target;
+}
+
 static unsigned char *hexparse(char *input) {
     if(strncmp(input, "0x", 2) != 0)
         return NULL;
@@ -271,7 +286,22 @@ int secp256k1_schnorr_verify(secp256k1_t *secp, unsigned char *signature, size_t
     return secp256k1_schnorrsig_verify(secp->kntxt, signature, hash, hashlen, &secp->xpubkey);
 }
 
-#if 0
+void secp256k1_dumps(secp256k1_t *secp) {
+    printf("Private Key: ");
+    dumphex(secp->seckey, SECKEY_SIZE);
+
+    printf("Public Key : ");
+    dumphex(secp->compressed, COMPPUB_SIZE);
+
+    printf("X-Only Key : ");
+    dumphex(secp->xcompressed, XSERPUB_SIZE);
+}
+
+char *secp256k1_export(secp256k1_t *secp) {
+    return hexifier(secp->seckey, SECKEY_SIZE);
+}
+
+#if 1
 int main() {
     secp256k1_t *wendy = secp256k1_new();
     secp256k1_generate_key(wendy);
@@ -346,8 +376,19 @@ int main() {
 
     secp256k1_erase_free(sign, SCHSIG_SIZE);
 
+    printf("\n");
+    printf("Wendy Export:\n");
+    char *export = secp256k1_export(wendy);
+    printf(">> %s\n", export);
+    free(export);
+
+    printf("\n");
+    printf("Wendy Keys dump:\n");
+    secp256k1_dumps(wendy);
+
     secp256k1_free(bob);
     secp256k1_free(alice);
+    secp256k1_free(wendy);
 
     return 0;
 }
