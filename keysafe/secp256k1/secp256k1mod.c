@@ -103,6 +103,12 @@ secp256k1_t *secp256k1_new() {
 
     // side-channel protection
     int val = secp256k1_context_randomize(secp->kntxt, randomize);
+    assert(val);
+
+    // allocate keys and initialize them empty
+    secp->seckey = calloc(sizeof(char), SECKEY_SIZE);
+    secp->compressed = calloc(sizeof(char), COMPPUB_SIZE);
+    secp->xcompressed = calloc(sizeof(char), XSERPUB_SIZE);
 
     return secp;
 }
@@ -113,12 +119,6 @@ void secp256k1_free(secp256k1_t *secp) {
     secp256k1_erase_free(secp->compressed, COMPPUB_SIZE);
     secp256k1_erase_free(secp->xcompressed, XSERPUB_SIZE);
     free(secp);
-}
-
-static int secp256k1_initialize_key(secp256k1_t *secp) {
-    secp->seckey = malloc(sizeof(char) * SECKEY_SIZE);
-    secp->compressed = malloc(sizeof(char) * COMPPUB_SIZE);
-    secp->xcompressed = malloc(sizeof(char) * XSERPUB_SIZE);
 }
 
 static int secp256k1_populate_key(secp256k1_t *secp) {
@@ -146,8 +146,6 @@ static int secp256k1_populate_key(secp256k1_t *secp) {
 }
 
 int secp256k1_generate_key(secp256k1_t *secp) {
-    secp256k1_initialize_key(secp);
-
     while(1) {
         if(!fill_random(secp->seckey, SECKEY_SIZE)) {
             printf("[-] failed to generate randomness\n");
@@ -172,7 +170,6 @@ int secp256k1_load_key(secp256k1_t *secp, char *key) {
 
     unsigned char *binkey = hexparse(key);
 
-    secp256k1_initialize_key(secp);
     free(secp->seckey);
     secp->seckey = binkey;
 
