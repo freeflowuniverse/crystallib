@@ -1,7 +1,7 @@
 module redisclient
 
 import rand
-import time
+// import time
 import json
 
 pub struct RedisRpc {
