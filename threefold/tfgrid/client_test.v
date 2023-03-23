@@ -4,9 +4,8 @@ import json
 import time
 
 fn test_main() ? {
-	// provide tf-grid client binary path here
-	mut client := tfgrid.new('/usr/local/bin/tf-grid')!
-	login(mut client)!
+	mut client := tfgrid.new()!
+	login()!
 
 	deployment_res := deploy(mut client)!
 	println('deployment result: ${deployment_res}')

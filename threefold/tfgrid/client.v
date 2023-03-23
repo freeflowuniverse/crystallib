@@ -11,14 +11,15 @@ pub mut:
 	rpc   &redisclient.RedisRpc [str: skip]
 }
 
-fn new(grid_client_path string) !TFGridClient {
+fn new() !TFGridClient {
 	mut redis := redisclient.core_get()
 	mut rpc := redis.rpc_get('tfgrid.client')
 	mut cl := TFGridClient{
 		redis: &redis
 		rpc: &rpc
 	}
-	process.execute_job(cmd: 'sh -c "${grid_client_path} server"')!
+	//TODO: this is not ok, not the right way how to do this, this means there can be multiple of these running
+	// process.execute_job(cmd: 'sh -c "${grid_client_path} server"')!
 
 	return cl
 }
