@@ -61,7 +61,7 @@ const text = "
 
 fn test_filter_actor() ! {
 	mut parser := new(actor: 'people')!
-	parser.text_add(text)!
+	parser.text_add(actionsparser.text)!
 
 	assert parser.unsorted.len == 8
 	assert parser.skipped.len == 0
@@ -80,8 +80,8 @@ fn test_filter_book() ! {
 
 fn test_filter_book_aaa() ! {
 	mut parser := new(book: 'aaa')!
-	parser.text_add(text)!
-	
+	parser.text_add(actionsparser.text)!
+
 	assert parser.unsorted.len == 8
 	assert parser.skipped.len == 0
 
@@ -95,8 +95,8 @@ fn test_filter_book_aaa() ! {
 
 fn test_filter_book_bbb() ! {
 	mut parser := new(book: 'bbb')!
-	parser.text_add(text)!
-	
+	parser.text_add(actionsparser.text)!
+
 	assert parser.unsorted.len == 8
 	assert parser.skipped.len == 0
 
@@ -110,7 +110,7 @@ fn test_filter_book_bbb() ! {
 
 fn test_filter() ! {
 	parser := new(
-		text: text
+		text: actionsparser.text
 		filter: ['circle_delete', 'person_delete', 'circle_define', 'person_define', 'circle_link',
 			'circle_comment', 'digital_payment_add']
 		actor: 'people'

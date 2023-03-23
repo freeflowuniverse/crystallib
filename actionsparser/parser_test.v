@@ -106,7 +106,7 @@ fn test_dir_load() {
 
 fn test_text_add() ! {
 	mut parser := new() or { panic(err) }
-	parser.text_add(text)!
+	parser.text_add(actionsparser.text)!
 
 	// all actions should be unsorted initially
 	assert parser.unsorted.len == 8
@@ -131,5 +131,4 @@ fn test_text_add() ! {
 	assert action.name == 'bbb.people.person_define'
 	param = action.params.get('name') or { panic(err) }
 	assert param == 'despiegk'
-
 }

@@ -58,9 +58,9 @@
 
 </section>
 
-						<section id="cmd_fix" class="doc-node">
-							<div class="title"><h2>fn cmd_fix <a href="#cmd_fix">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/markdowndocs/macro_process.v#L12"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">cmd_fix</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
-<p>fix cmd to remain lower case and dots only</p>
+						<section id="parser_char_new_text" class="doc-node">
+							<div class="title"><h2>fn parser_char_new_text <a href="#parser_char_new_text">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/markdowndocs/parser_char.v#L32"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">parser_char_new_text</span><span class="token punctuation">(</span>text <span class="token builtin">string</span><span class="token punctuation">)</span> ParserChar</code></pre>
+
 
 </section>
 						<section id="new" class="doc-node">
@@ -73,6 +73,11 @@
 
 
 </section>
+						<section id="cmd_fix" class="doc-node">
+							<div class="title"><h2>fn cmd_fix <a href="#cmd_fix">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/markdowndocs/macro_process.v#L12"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">cmd_fix</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+<p>fix cmd to remain lower case and dots only</p>
+
+</section>
 						<section id="markdown_min_header" class="doc-node">
 							<div class="title"><h2>fn markdown_min_header <a href="#markdown_min_header">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/markdowndocs/markdown_tools.v#L3"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">markdown_min_header</span><span class="token punctuation">(</span>text <span class="token builtin">string</span><span class="token punctuation">,</span> minlevel <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
 
@@ -83,16 +88,20 @@
 
 
 </section>
-						<section id="parser_char_new_text" class="doc-node">
-							<div class="title"><h2>fn parser_char_new_text <a href="#parser_char_new_text">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/markdowndocs/parser_char.v#L32"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">parser_char_new_text</span><span class="token punctuation">(</span>text <span class="token builtin">string</span><span class="token punctuation">)</span> ParserChar</code></pre>
-
-
-</section>
 						<section id="LinkState" class="doc-node">
 							<div class="title"><h2>enum LinkState <a href="#LinkState">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/markdowndocs/model_link.v#L18"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">enum</span> <span class="token symbol">LinkState</span> <span class="token punctuation">{</span>
 	ok
 	missing
 	error
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="Alignment" class="doc-node">
+							<div class="title"><h2>enum Alignment <a href="#Alignment">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/markdowndocs/model_table.v#L3"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">enum</span> Alignment <span class="token keyword">as</span> <span class="token builtin">u8</span> <span class="token punctuation">{</span>
+	left
+	center
+	right
 <span class="token punctuation">}</span></code></pre>
 
 
@@ -108,15 +117,6 @@
 	email
 	anchor
 	code
-<span class="token punctuation">}</span></code></pre>
-
-
-</section>
-						<section id="MacroObj" class="doc-node">
-							<div class="title"><h2>struct MacroObj <a href="#MacroObj">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/markdowndocs/macro_process.v#L5"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">MacroObj</span> <span class="token punctuation">{</span>
-<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
-	cmd    <span class="token builtin">string</span>
-	params params<span class="token punctuation">.</span>Params
 <span class="token punctuation">}</span></code></pre>
 
 
@@ -151,9 +151,13 @@
 
 </section>
 						<section id="Table" class="doc-node">
-							<div class="title"><h2>struct Table <a href="#Table">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/markdowndocs/model_table.v#L3"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Table</span> <span class="token punctuation">{</span>
+							<div class="title"><h2>struct Table <a href="#Table">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/markdowndocs/model_table.v#L9"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Table</span> <span class="token punctuation">{</span>
 <span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
-	content <span class="token builtin">string</span>
+	content     <span class="token builtin">string</span>
+	num_columns <span class="token builtin">int</span>
+	alignments  <span class="token punctuation">[</span><span class="token punctuation">]</span>Alignment
+	header      <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+	rows        <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
 <span class="token punctuation">}</span></code></pre>
 
 
@@ -283,12 +287,21 @@
 <p>return the name of the link</p>
 
 </section>
+						<section id="MacroObj" class="doc-node">
+							<div class="title"><h2>struct MacroObj <a href="#MacroObj">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/markdowndocs/macro_process.v#L5"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">MacroObj</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	cmd    <span class="token builtin">string</span>
+	params params<span class="token punctuation">.</span>Params
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
 
           <div class="footer">
             Powered by vdoc.
           </div>
         </div>
-        <div class="doc-toc"><ul><li class="open"><a href="#cmd_fix">fn cmd_fix</a>        <ul>
+        <div class="doc-toc"><ul><li class="open"><a href="#parser_char_new_text">fn parser_char_new_text</a>        <ul>
 </ul>
 </li>
 <li class="open"><a href="#new">fn new</a>        <ul>
@@ -297,22 +310,22 @@
 <li class="open"><a href="#macro_parse">fn macro_parse</a>        <ul>
 </ul>
 </li>
+<li class="open"><a href="#cmd_fix">fn cmd_fix</a>        <ul>
+</ul>
+</li>
 <li class="open"><a href="#markdown_min_header">fn markdown_min_header</a>        <ul>
 </ul>
 </li>
 <li class="open"><a href="#parser_char_new_path">fn parser_char_new_path</a>        <ul>
 </ul>
 </li>
-<li class="open"><a href="#parser_char_new_text">fn parser_char_new_text</a>        <ul>
-</ul>
-</li>
 <li class="open"><a href="#LinkState">enum LinkState</a>        <ul>
 </ul>
 </li>
-<li class="open"><a href="#LinkType">enum LinkType</a>        <ul>
+<li class="open"><a href="#Alignment">enum Alignment</a>        <ul>
 </ul>
 </li>
-<li class="open"><a href="#MacroObj">struct MacroObj</a>        <ul>
+<li class="open"><a href="#LinkType">enum LinkType</a>        <ul>
 </ul>
 </li>
 <li class="open"><a href="#NewDocArgs">struct NewDocArgs</a>        <ul>
@@ -356,6 +369,9 @@
 <li class="open"><a href="#Link">struct Link</a>        <ul>
 <li><a href="#Link.pathfull">fn pathfull</a></li>
 <li><a href="#Link.name_fix_no_underscore_no_ext">fn name_fix_no_underscore_no_ext</a></li>
+</ul>
+</li>
+<li class="open"><a href="#MacroObj">struct MacroObj</a>        <ul>
 </ul>
 </li>
 </ul></div>

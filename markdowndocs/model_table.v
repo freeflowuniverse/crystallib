@@ -8,24 +8,24 @@ pub enum Alignment as u8 {
 
 pub struct Table {
 pub mut:
-	content 	string
+	content     string
 	num_columns int
-	alignments 	[]Alignment
-	header 		[]string
-	rows 		[][]string
+	alignments  []Alignment
+	header      []string
+	rows        [][]string
 }
 
 fn (mut o Table) process() ! {
 	rows := o.content.split_into_lines()
 	if rows.len > 2 {
-		for row_string in rows[2 .. ] {
-			columns := row_string.trim("|").split("|")
+		for row_string in rows[2..] {
+			columns := row_string.trim('|').split('|')
 			mut row := []string{}
 			for i in 0 .. o.num_columns {
 				if i < columns.len {
-					row << columns[i].trim(" ")
+					row << columns[i].trim(' ')
 				} else {
-					row << ""
+					row << ''
 				}
 			}
 			o.rows << row
@@ -34,19 +34,17 @@ fn (mut o Table) process() ! {
 }
 
 fn (o Table) wiki() string {
-	mut out := "| ${o.header.join(' | ')} |\n"
-	alignment_row := o.alignments.map(
-		match it {
-			.left { ' :-- ' }
-			.center { ' :-: ' }
-			.right { ' --: ' }
-		}
-	).join('|')
-	out += "|${alignment_row}|\n"
+	mut out := '| ${o.header.join(' | ')} |\n'
+	alignment_row := o.alignments.map(match it {
+		.left { ' :-- ' }
+		.center { ' :-: ' }
+		.right { ' --: ' }
+	}).join('|')
+	out += '|${alignment_row}|\n'
 	for row in o.rows {
-		out += "| ${row.join(' | ')} |\n"
+		out += '| ${row.join(' | ')} |\n'
 	}
-	return "${out}\n"
+	return '${out}\n'
 }
 
 fn (o Table) html() string {

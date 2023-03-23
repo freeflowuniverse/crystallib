@@ -591,10 +591,8 @@ fn test_brpop() {
 	r2 := redis.brpop(['test47', 'test48'], 1)!
 	assert r2[0] == 'test48'
 	assert r2[1] == 'balbal'
-	r3 := redis.brpop(['test47'], 1) or {
-		return
-	}
-	assert false, "brpop should timeout"
+	r3 := redis.brpop(['test47'], 1) or { return }
+	assert false, 'brpop should timeout'
 }
 
 fn test_lrpop() {
@@ -610,10 +608,8 @@ fn test_lrpop() {
 	r2 := redis.blpop(['test47', 'test48'], 1)!
 	assert r2[0] == 'test48'
 	assert r2[1] == 'balbal'
-	r3 := redis.blpop(['test47'], 1) or {
-		return
-	}
-	assert false, "blpop should timeout"
+	r3 := redis.blpop(['test47'], 1) or { return }
+	assert false, 'blpop should timeout'
 }
 
 fn test_llen() {

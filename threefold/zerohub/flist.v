@@ -140,7 +140,9 @@ pub fn (mut cl ZeroHubClient) promote(source_repo string, source_name string, lo
 
 pub fn (mut cl ZeroHubClient) convert(image string) !string {
 	form := http.PostMultipartFormConfig{
-		form: {"image": image}
+		form: {
+			'image': image
+		}
 		header: cl.header
 	}
 

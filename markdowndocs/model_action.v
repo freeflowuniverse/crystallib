@@ -19,7 +19,7 @@ fn (mut action Action) process() ! {
 }
 
 fn (action Action) wiki() string {
-	params_ := action.params.export(indent:'\t')
+	params_ := action.params.export(indent: '\t')
 	return '!!${action.name}\n${params_}\n\n'
 }
 

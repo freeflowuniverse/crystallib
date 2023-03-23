@@ -149,13 +149,11 @@ fn (mut block Block) clean() {
 }
 
 fn (mut actions ActionsParser) parse_actions(blocks Blocks) ! {
-
 	// set action prefix such that $book.$actor.$action
 	mut actor := actions.actor
 	mut book := actions.book
 
 	for block in blocks.blocks {
-
 		action := parse_block(block, book, actor)!
 
 		if action.name.ends_with('actor.select') {
@@ -169,7 +167,7 @@ fn (mut actions ActionsParser) parse_actions(blocks Blocks) ! {
 			book = action.params.args[0]
 		} else {
 			actions.unsorted << action
-		}		
+		}
 	}
 }
 
@@ -191,14 +189,18 @@ fn parse_block(block Block, book_ string, actor_ string) !Action {
 	mut prefix := new_prefix(book, actor)
 
 	return Action{
-		name: '$prefix${block.name.all_after_last('.')}'
+		name: '${prefix}${block.name.all_after_last('.')}'
 		params: params_
 	}
 }
 
 fn new_prefix(book string, actor string) string {
 	mut prefix := ''
-	if book != '' { prefix += '${book}.' }
-	if actor != '' { prefix += '${actor}.' }
+	if book != '' {
+		prefix += '${book}.'
+	}
+	if actor != '' {
+		prefix += '${actor}.'
+	}
 	return prefix
 }

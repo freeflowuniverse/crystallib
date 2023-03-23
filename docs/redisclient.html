@@ -80,6 +80,59 @@ if r != 'some data' {
 
 
 </section>
+						<section id="KeyType" class="doc-node">
+							<div class="title"><h2>enum KeyType <a href="#KeyType">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient.v#L30"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">enum</span> <span class="token symbol">KeyType</span> <span class="token punctuation">{</span>
+	t_none
+	t_string
+	t_list
+	t_set
+	t_zset
+	t_hash
+	t_stream
+	t_unknown
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="RedisCache" class="doc-node">
+							<div class="title"><h2>struct RedisCache <a href="#RedisCache">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/rediscache.v#L3"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">RedisCache</span> <span class="token punctuation">{</span>
+<span class="token keyword">mut</span><span class="token punctuation">:</span>
+	redis     <span class="token operator">&</span>Redis <span class="token punctuation">[</span>str<span class="token punctuation">:</span> skip<span class="token punctuation">]</span>
+	namespace <span class="token builtin">string</span>
+	enabled   <span class="token builtin">bool</span> <span class="token operator">=</span> <span class="token boolean">true</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="RedisCache.get" class="doc-node">
+							<div class="title"><h2>fn (RedisCache) get <a href="#RedisCache.get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/rediscache.v#L18"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> h RedisCache<span class="token punctuation">)</span> <span class="token function">get</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">?</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="RedisCache.set" class="doc-node">
+							<div class="title"><h2>fn (RedisCache) set <a href="#RedisCache.set">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/rediscache.v#L32"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> h RedisCache<span class="token punctuation">)</span> <span class="token function">set</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> val <span class="token builtin">string</span><span class="token punctuation">,</span> expire <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="RedisCache.exists" class="doc-node">
+							<div class="title"><h2>fn (RedisCache) exists <a href="#RedisCache.exists">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/rediscache.v#L41"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> h RedisCache<span class="token punctuation">)</span> <span class="token function">exists</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+
+
+</section>
+						<section id="RedisCache.reset" class="doc-node">
+							<div class="title"><h2>fn (RedisCache) reset <a href="#RedisCache.reset">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/rediscache.v#L46"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> h RedisCache<span class="token punctuation">)</span> <span class="token function">reset</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="RedisQueue" class="doc-node">
+							<div class="title"><h2>struct RedisQueue <a href="#RedisQueue">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_queue.v#L5"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">RedisQueue</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	key   <span class="token builtin">string</span>
+	redis <span class="token operator">&</span>Redis
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
 						<section id="RedisQueue.add" class="doc-node">
 							<div class="title"><h2>fn (RedisQueue) add <a href="#RedisQueue.add">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_queue.v#L18"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> q RedisQueue<span class="token punctuation">)</span> <span class="token function">add</span><span class="token punctuation">(</span>val <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
 
@@ -95,36 +148,51 @@ if r != 'some data' {
 <p>get without timeout, returns none if nil</p>
 
 </section>
+						<section id="RedisRpc" class="doc-node">
+							<div class="title"><h2>struct RedisRpc <a href="#RedisRpc">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_rpc.v#L7"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">RedisRpc</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	key   <span class="token builtin">string</span>
+	redis <span class="token operator">&</span>Redis
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
 						<section id="RedisRpc.call" class="doc-node">
-							<div class="title"><h2>fn (RedisRpc) call <a href="#RedisRpc.call">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_rpc.v#L36"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> q RedisRpc<span class="token punctuation">)</span> <span class="token function">call</span><span class="token punctuation">(</span>args RPCArgs<span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+							<div class="title"><h2>fn (RedisRpc) call <a href="#RedisRpc.call">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_rpc.v#L50"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> q RedisRpc<span class="token punctuation">)</span> <span class="token function">call</span><span class="token punctuation">(</span>args RPCArgs<span class="token punctuation">)</span> <span class="token operator">!</span>Response</code></pre>
 <p>send data to a queue and wait till return comes back timeout in milliseconds params 	cmd string [required] 	data string [required] 	timeout u64=60000  //60 sec 	wait bool=true</p>
 
 </section>
 						<section id="RedisRpc.result" class="doc-node">
-							<div class="title"><h2>fn (RedisRpc) result <a href="#RedisRpc.result">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_rpc.v#L50"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> q RedisRpc<span class="token punctuation">)</span> <span class="token function">result</span><span class="token punctuation">(</span>timeout <span class="token builtin">u64</span><span class="token punctuation">,</span> retqueue <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+							<div class="title"><h2>fn (RedisRpc) result <a href="#RedisRpc.result">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_rpc.v#L71"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> q RedisRpc<span class="token punctuation">)</span> <span class="token function">result</span><span class="token punctuation">(</span>timeout <span class="token builtin">u64</span><span class="token punctuation">,</span> retqueue <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span>Response</code></pre>
 <p>get return once reuls processed</p>
 
 </section>
 						<section id="RedisRpc.process" class="doc-node">
-							<div class="title"><h2>fn (RedisRpc) process <a href="#RedisRpc.process">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_rpc.v#L67"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> q RedisRpc<span class="token punctuation">)</span> <span class="token function">process</span><span class="token punctuation">(</span>timeout <span class="token builtin">u64</span><span class="token punctuation">,</span> op <span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token builtin">string</span><span class="token punctuation">,</span> <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+							<div class="title"><h2>fn (RedisRpc) process <a href="#RedisRpc.process">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_rpc.v#L89"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> q RedisRpc<span class="token punctuation">)</span> <span class="token function">process</span><span class="token punctuation">(</span>timeout <span class="token builtin">u64</span><span class="token punctuation">,</span> op <span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token builtin">string</span><span class="token punctuation">,</span> <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
 <p>to be used by processor, to get request and execute, this is the server side of a RPC mechanism 2nd argument is a function which needs to execute the job: fn (string,string) !string</p>
 
 </section>
 						<section id="RedisRpc.delete" class="doc-node">
-							<div class="title"><h2>fn (RedisRpc) delete <a href="#RedisRpc.delete">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_rpc.v#L93"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> q RedisRpc<span class="token punctuation">)</span> <span class="token function">delete</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+							<div class="title"><h2>fn (RedisRpc) delete <a href="#RedisRpc.delete">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_rpc.v#L115"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> q RedisRpc<span class="token punctuation">)</span> <span class="token function">delete</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
 <p>get without timeout, returns none if nil</p>
 
 </section>
-						<section id="KeyType" class="doc-node">
-							<div class="title"><h2>enum KeyType <a href="#KeyType">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient.v#L30"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">enum</span> <span class="token symbol">KeyType</span> <span class="token punctuation">{</span>
-	t_none
-	t_string
-	t_list
-	t_set
-	t_zset
-	t_hash
-	t_stream
-	t_unknown
+						<section id="Response" class="doc-node">
+							<div class="title"><h2>struct Response <a href="#Response">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_rpc.v#L37"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Response</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span><span class="token punctuation">:</span>
+	result <span class="token builtin">string</span>
+	error  <span class="token builtin">string</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="RPCArgs" class="doc-node">
+							<div class="title"><h2>struct RPCArgs <a href="#RPCArgs">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_rpc.v#L21"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">RPCArgs</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span><span class="token punctuation">:</span>
+	cmd     <span class="token builtin">string</span> <span class="token punctuation">[</span>required<span class="token punctuation">]</span>
+	data    <span class="token builtin">string</span> <span class="token punctuation">[</span>required<span class="token punctuation">]</span>
+	timeout <span class="token builtin">u64</span>  <span class="token operator">=</span> <span class="token number">60000</span> <span class="token comment">// 60 sec</span>
+	wait    <span class="token builtin">bool</span> <span class="token operator">=</span> <span class="token boolean">true</span>
 <span class="token punctuation">}</span></code></pre>
 
 
@@ -136,6 +204,17 @@ if r != 'some data' {
 	nx       <span class="token builtin">bool</span>
 	xx       <span class="token builtin">bool</span>
 	keep_ttl <span class="token builtin">bool</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="Message" class="doc-node">
+							<div class="title"><h2>struct Message <a href="#Message">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_rpc.v#L29"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Message</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span><span class="token punctuation">:</span>
+	ret_queue <span class="token builtin">string</span>
+	now       <span class="token builtin">i64</span>
+	cmd       <span class="token builtin">string</span>
+	data      <span class="token builtin">string</span>
 <span class="token punctuation">}</span></code></pre>
 
 
@@ -156,12 +235,12 @@ if r != 'some data' {
 
 </section>
 						<section id="Redis.blpop" class="doc-node">
-							<div class="title"><h2>fn (Redis) blpop <a href="#Redis.blpop">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L184"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">blpop</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> timeout <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+							<div class="title"><h2>fn (Redis) blpop <a href="#Redis.blpop">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L184"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">blpop</span><span class="token punctuation">(</span>keys <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">,</span> timeout <span class="token builtin">f64</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
 
 
 </section>
 						<section id="Redis.brpop" class="doc-node">
-							<div class="title"><h2>fn (Redis) brpop <a href="#Redis.brpop">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L192"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">brpop</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> timeout <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+							<div class="title"><h2>fn (Redis) brpop <a href="#Redis.brpop">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L195"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">brpop</span><span class="token punctuation">(</span>keys <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">,</span> timeout <span class="token builtin">f64</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
 
 
 </section>
@@ -206,12 +285,12 @@ if r != 'some data' {
 
 </section>
 						<section id="Redis.flushall" class="doc-node">
-							<div class="title"><h2>fn (Redis) flushall <a href="#Redis.flushall">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L240"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">flushall</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+							<div class="title"><h2>fn (Redis) flushall <a href="#Redis.flushall">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L246"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">flushall</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
 
 
 </section>
 						<section id="Redis.flushdb" class="doc-node">
-							<div class="title"><h2>fn (Redis) flushdb <a href="#Redis.flushdb">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L244"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">flushdb</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+							<div class="title"><h2>fn (Redis) flushdb <a href="#Redis.flushdb">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L250"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">flushdb</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
 
 
 </section>
@@ -326,7 +405,7 @@ if r != 'some data' {
 
 </section>
 						<section id="Redis.llen" class="doc-node">
-							<div class="title"><h2>fn (Redis) llen <a href="#Redis.llen">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L204"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">llen</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">int</span></code></pre>
+							<div class="title"><h2>fn (Redis) llen <a href="#Redis.llen">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L210"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">llen</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">int</span></code></pre>
 
 
 </section>
@@ -366,12 +445,12 @@ if r != 'some data' {
 
 </section>
 						<section id="Redis.psetex" class="doc-node">
-							<div class="title"><h2>fn (Redis) psetex <a href="#Redis.psetex">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L228"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">psetex</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> millisecond <span class="token builtin">i64</span><span class="token punctuation">,</span> value <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+							<div class="title"><h2>fn (Redis) psetex <a href="#Redis.psetex">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L234"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">psetex</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> millisecond <span class="token builtin">i64</span><span class="token punctuation">,</span> value <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
 
 
 </section>
 						<section id="Redis.pttl" class="doc-node">
-							<div class="title"><h2>fn (Redis) pttl <a href="#Redis.pttl">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L212"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">pttl</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">int</span></code></pre>
+							<div class="title"><h2>fn (Redis) pttl <a href="#Redis.pttl">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L218"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">pttl</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">int</span></code></pre>
 
 
 </section>
@@ -391,22 +470,22 @@ if r != 'some data' {
 
 </section>
 						<section id="Redis.rename" class="doc-node">
-							<div class="title"><h2>fn (Redis) rename <a href="#Redis.rename">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L216"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">rename</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> newkey <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+							<div class="title"><h2>fn (Redis) rename <a href="#Redis.rename">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L222"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">rename</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> newkey <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
 
 
 </section>
 						<section id="Redis.renamenx" class="doc-node">
-							<div class="title"><h2>fn (Redis) renamenx <a href="#Redis.renamenx">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L220"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">renamenx</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> newkey <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">int</span></code></pre>
+							<div class="title"><h2>fn (Redis) renamenx <a href="#Redis.renamenx">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L226"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">renamenx</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> newkey <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">int</span></code></pre>
 
 
 </section>
 						<section id="Redis.rpc_get" class="doc-node">
-							<div class="title"><h2>fn (Redis) rpc_get <a href="#Redis.rpc_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_rpc.v#L13"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">rpc_get</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> RedisRpc</code></pre>
+							<div class="title"><h2>fn (Redis) rpc_get <a href="#Redis.rpc_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_rpc.v#L14"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">rpc_get</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> RedisRpc</code></pre>
 <p>return a rpc mechanism</p>
 
 </section>
 						<section id="Redis.rpop" class="doc-node">
-							<div class="title"><h2>fn (Redis) rpop <a href="#Redis.rpop">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L200"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">rpop</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+							<div class="title"><h2>fn (Redis) rpop <a href="#Redis.rpop">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L206"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">rpop</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
 
 
 </section>
@@ -416,12 +495,12 @@ if r != 'some data' {
 
 </section>
 						<section id="Redis.scan" class="doc-node">
-							<div class="title"><h2>fn (Redis) scan <a href="#Redis.scan">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L253"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">scan</span><span class="token punctuation">(</span>cursor <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token punctuation">(</span><span class="token builtin">string</span><span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span></code></pre>
+							<div class="title"><h2>fn (Redis) scan <a href="#Redis.scan">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L259"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">scan</span><span class="token punctuation">(</span>cursor <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token punctuation">(</span><span class="token builtin">string</span><span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span></code></pre>
 
 
 </section>
 						<section id="Redis.selectdb" class="doc-node">
-							<div class="title"><h2>fn (Redis) selectdb <a href="#Redis.selectdb">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L249"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">selectdb</span><span class="token punctuation">(</span>database <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+							<div class="title"><h2>fn (Redis) selectdb <a href="#Redis.selectdb">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L255"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">selectdb</span><span class="token punctuation">(</span>database <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
 <p>select is reserved</p>
 
 </section>
@@ -476,12 +555,12 @@ if r != 'some data' {
 
 </section>
 						<section id="Redis.setex" class="doc-node">
-							<div class="title"><h2>fn (Redis) setex <a href="#Redis.setex">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L224"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">setex</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> second <span class="token builtin">i64</span><span class="token punctuation">,</span> value <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+							<div class="title"><h2>fn (Redis) setex <a href="#Redis.setex">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L230"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">setex</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> second <span class="token builtin">i64</span><span class="token punctuation">,</span> value <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
 
 
 </section>
 						<section id="Redis.setnx" class="doc-node">
-							<div class="title"><h2>fn (Redis) setnx <a href="#Redis.setnx">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L232"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">setnx</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> value <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">int</span></code></pre>
+							<div class="title"><h2>fn (Redis) setnx <a href="#Redis.setnx">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L238"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">setnx</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> value <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">int</span></code></pre>
 
 
 </section>
@@ -501,58 +580,17 @@ if r != 'some data' {
 
 </section>
 						<section id="Redis.ttl" class="doc-node">
-							<div class="title"><h2>fn (Redis) ttl <a href="#Redis.ttl">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L208"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">ttl</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">int</span></code></pre>
+							<div class="title"><h2>fn (Redis) ttl <a href="#Redis.ttl">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L214"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">ttl</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">int</span></code></pre>
 
 
 </section>
 						<section id="Redis.type_of" class="doc-node">
-							<div class="title"><h2>fn (Redis) type_of <a href="#Redis.type_of">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L236"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">type_of</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+							<div class="title"><h2>fn (Redis) type_of <a href="#Redis.type_of">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L242"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">type_of</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
 
 
 </section>
 						<section id="Redis.append" class="doc-node">
 							<div class="title"><h2>fn (Redis) append <a href="#Redis.append">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_commands.v#L106"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> r Redis<span class="token punctuation">)</span> <span class="token function">append</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> value <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">int</span></code></pre>
-
-
-</section>
-						<section id="RedisCache" class="doc-node">
-							<div class="title"><h2>struct RedisCache <a href="#RedisCache">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/rediscache.v#L3"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">RedisCache</span> <span class="token punctuation">{</span>
-<span class="token keyword">mut</span><span class="token punctuation">:</span>
-	redis     <span class="token operator">&</span>Redis <span class="token punctuation">[</span>str<span class="token punctuation">:</span> skip<span class="token punctuation">]</span>
-	namespace <span class="token builtin">string</span>
-	enabled   <span class="token builtin">bool</span> <span class="token operator">=</span> <span class="token boolean">true</span>
-<span class="token punctuation">}</span></code></pre>
-
-
-</section>
-						<section id="RedisCache.get" class="doc-node">
-							<div class="title"><h2>fn (RedisCache) get <a href="#RedisCache.get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/rediscache.v#L18"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> h RedisCache<span class="token punctuation">)</span> <span class="token function">get</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">?</span><span class="token builtin">string</span></code></pre>
-
-
-</section>
-						<section id="RedisCache.set" class="doc-node">
-							<div class="title"><h2>fn (RedisCache) set <a href="#RedisCache.set">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/rediscache.v#L32"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> h RedisCache<span class="token punctuation">)</span> <span class="token function">set</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> val <span class="token builtin">string</span><span class="token punctuation">,</span> expire <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
-
-
-</section>
-						<section id="RedisCache.exists" class="doc-node">
-							<div class="title"><h2>fn (RedisCache) exists <a href="#RedisCache.exists">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/rediscache.v#L41"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> h RedisCache<span class="token punctuation">)</span> <span class="token function">exists</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
-
-
-</section>
-						<section id="RedisCache.reset" class="doc-node">
-							<div class="title"><h2>fn (RedisCache) reset <a href="#RedisCache.reset">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/rediscache.v#L46"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> h RedisCache<span class="token punctuation">)</span> <span class="token function">reset</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
-
-
-</section>
-						<section id="RPCArgs" class="doc-node">
-							<div class="title"><h2>struct RPCArgs <a href="#RPCArgs">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/redisclient/redisclient_rpc.v#L21"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">RPCArgs</span> <span class="token punctuation">{</span>
-<span class="token keyword">pub</span><span class="token punctuation">:</span>
-	cmd     <span class="token builtin">string</span> <span class="token punctuation">[</span>required<span class="token punctuation">]</span>
-	data    <span class="token builtin">string</span> <span class="token punctuation">[</span>required<span class="token punctuation">]</span>
-	timeout <span class="token builtin">u64</span>  <span class="token operator">=</span> <span class="token number">60000</span> <span class="token comment">// 60 sec</span>
-	wait    <span class="token builtin">bool</span> <span class="token operator">=</span> <span class="token boolean">true</span>
-<span class="token punctuation">}</span></code></pre>
 
 
 </section>
@@ -568,23 +606,39 @@ if r != 'some data' {
 <li class="open"><a href="#core_get">fn core_get</a>        <ul>
 </ul>
 </li>
-<li class="open"><a href="#RedisQueue.add">type RedisQueue</a>        <ul>
+<li class="open"><a href="#KeyType">enum KeyType</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#RedisCache">struct RedisCache</a>        <ul>
+<li><a href="#RedisCache.get">fn get</a></li>
+<li><a href="#RedisCache.set">fn set</a></li>
+<li><a href="#RedisCache.exists">fn exists</a></li>
+<li><a href="#RedisCache.reset">fn reset</a></li>
+</ul>
+</li>
+<li class="open"><a href="#RedisQueue">struct RedisQueue</a>        <ul>
 <li><a href="#RedisQueue.add">fn add</a></li>
 <li><a href="#RedisQueue.get">fn get</a></li>
 <li><a href="#RedisQueue.pop">fn pop</a></li>
 </ul>
 </li>
-<li class="open"><a href="#RedisRpc.call">type RedisRpc</a>        <ul>
+<li class="open"><a href="#RedisRpc">struct RedisRpc</a>        <ul>
 <li><a href="#RedisRpc.call">fn call</a></li>
 <li><a href="#RedisRpc.result">fn result</a></li>
 <li><a href="#RedisRpc.process">fn process</a></li>
 <li><a href="#RedisRpc.delete">fn delete</a></li>
 </ul>
 </li>
-<li class="open"><a href="#KeyType">enum KeyType</a>        <ul>
+<li class="open"><a href="#Response">struct Response</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#RPCArgs">struct RPCArgs</a>        <ul>
 </ul>
 </li>
 <li class="open"><a href="#SetOpts">struct SetOpts</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Message">struct Message</a>        <ul>
 </ul>
 </li>
 <li class="open"><a href="#Redis">struct Redis</a>        <ul>
@@ -661,16 +715,6 @@ if r != 'some data' {
 <li><a href="#Redis.ttl">fn ttl</a></li>
 <li><a href="#Redis.type_of">fn type_of</a></li>
 <li><a href="#Redis.append">fn append</a></li>
-</ul>
-</li>
-<li class="open"><a href="#RedisCache">struct RedisCache</a>        <ul>
-<li><a href="#RedisCache.get">fn get</a></li>
-<li><a href="#RedisCache.set">fn set</a></li>
-<li><a href="#RedisCache.exists">fn exists</a></li>
-<li><a href="#RedisCache.reset">fn reset</a></li>
-</ul>
-</li>
-<li class="open"><a href="#RPCArgs">struct RPCArgs</a>        <ul>
 </ul>
 </li>
 </ul></div>

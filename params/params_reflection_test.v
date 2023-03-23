@@ -1,15 +1,15 @@
 module params
 
 struct TestStruct {
-	name string
-	number int
-	yesno bool
+	name    string
+	number  int
+	yesno   bool
 	liststr []string
 	listint []int
 }
 
 fn test_decode() {
-	test := TestStruct {
+	test := TestStruct{
 		name: 'test'
 		number: 2
 		yesno: true
@@ -17,7 +17,7 @@ fn test_decode() {
 		listint: [1, 2]
 	}
 
-	params := Params {
+	params := Params{
 		params: [Param{
 			key: 'name'
 			value: 'test'
@@ -29,10 +29,10 @@ fn test_decode() {
 			value: 'true'
 		}, Param{
 			key: 'liststr'
-			value:'one, two'
+			value: 'one, two'
 		}, Param{
 			key: 'listint'
-			value:'1, 2'
+			value: '1, 2'
 		}]
 	}
 
@@ -41,7 +41,7 @@ fn test_decode() {
 }
 
 fn test_encode() {
-	test := TestStruct {
+	test := TestStruct{
 		name: 'test'
 		number: 2
 		yesno: true
@@ -49,7 +49,7 @@ fn test_encode() {
 		listint: [1, 2]
 	}
 
-	params := Params {
+	params := Params{
 		params: [Param{
 			key: 'name'
 			value: 'test'
@@ -61,10 +61,10 @@ fn test_encode() {
 			value: 'true'
 		}, Param{
 			key: 'liststr'
-			value:'one, two'
+			value: 'one, two'
 		}, Param{
 			key: 'listint'
-			value:'1, 2'
+			value: '1, 2'
 		}]
 	}
 

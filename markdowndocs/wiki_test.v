@@ -99,18 +99,18 @@ fn test_wiki_action() {
 	assert docs.items[0] is Header
 	assert docs.items[1] is Action
 	action := docs.items[1] as Action
-	assert action.name == "farmerbot.nodemanager.define"
-	assert action.params == Params {
-		params: [Param {
+	assert action.name == 'farmerbot.nodemanager.define'
+	assert action.params == Params{
+		params: [Param{
 			key: 'has_public_config'
 			value: '1'
-		}, Param {
+		}, Param{
 			key: 'has_public_ip'
 			value: 'yes'
-		}, Param {
+		}, Param{
 			key: 'id'
 			value: '15'
-		}, Param {
+		}, Param{
 			key: 'twinid'
 			value: '20'
 		}]

@@ -67,7 +67,7 @@
 </section>
 
 						<section id="new" class="doc-node">
-							<div class="title"><h2>fn new <a href="#new">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/actionsparser/actions_factory.v#L21"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">new</span><span class="token punctuation">(</span>args ActionParserArgs<span class="token punctuation">)</span> <span class="token operator">!</span>ActionsParser</code></pre>
+							<div class="title"><h2>fn new <a href="#new">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/actionsparser/factory.v#L21"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">new</span><span class="token punctuation">(</span>args ActionParserArgs<span class="token punctuation">)</span> <span class="token operator">!</span>ActionsParser</code></pre>
 <p>get an actionparser and do the processing, can always add text and files later see actionparser.path_add and text_add it will sort the actions if filter is given and remove the ones which are in error or not belonging to book or actor params 		text:string 		path:string 		//can be dirpath or filepath 		filter:[]string 	//how to sort &amp; filter 		actor:string 		book:string</p>
 
 </section>
@@ -108,7 +108,7 @@
 
 </section>
 						<section id="ActionParserArgs" class="doc-node">
-							<div class="title"><h2>struct ActionParserArgs <a href="#ActionParserArgs">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/actionsparser/actions_factory.v#L4"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">ActionParserArgs</span> <span class="token punctuation">{</span>
+							<div class="title"><h2>struct ActionParserArgs <a href="#ActionParserArgs">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/actionsparser/factory.v#L4"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">ActionParserArgs</span> <span class="token punctuation">{</span>
 <span class="token keyword">pub</span><span class="token punctuation">:</span>
 	text   <span class="token builtin">string</span>
 	path   <span class="token builtin">string</span>   <span class="token comment">// can be dir or file</span>
@@ -120,7 +120,7 @@
 
 </section>
 						<section id="ActionsParser" class="doc-node">
-							<div class="title"><h2>struct ActionsParser <a href="#ActionsParser">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/actionsparser/actionsparser_model.v#L6"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">ActionsParser</span> <span class="token punctuation">{</span>
+							<div class="title"><h2>struct ActionsParser <a href="#ActionsParser">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/actionsparser/actionsparser_model.v#L3"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">ActionsParser</span> <span class="token punctuation">{</span>
 <span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
 	unsorted <span class="token punctuation">[</span><span class="token punctuation">]</span>Action <span class="token comment">// should be empty after filter action</span>
 	ok       <span class="token punctuation">[</span><span class="token punctuation">]</span>Action <span class="token comment">// the ones ready to be processed they are in order</span>
@@ -128,12 +128,18 @@
 	skipped  <span class="token punctuation">[</span><span class="token punctuation">]</span>Action <span class="token comment">// the ones which won't be processed because its not right book or even actor</span>
 	actor    <span class="token builtin">string</span>
 	book     <span class="token builtin">string</span>
+	filter   <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
 <span class="token punctuation">}</span></code></pre>
 
 
 </section>
+						<section id="ActionsParser.filter" class="doc-node">
+							<div class="title"><h2>fn (ActionsParser) filter <a href="#ActionsParser.filter">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/actionsparser/filter.v#L4"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> actions ActionsParser<span class="token punctuation">)</span> <span class="token function">filter</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>make sure that only actions are remembered linked to the actor or book and also sorted in right order</p>
+
+</section>
 						<section id="ActionsParser.path_add" class="doc-node">
-							<div class="title"><h2>fn (ActionsParser) path_add <a href="#ActionsParser.path_add">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/actionsparser/actions_parser.v#L34"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> actions ActionsParser<span class="token punctuation">)</span> <span class="token function">path_add</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+							<div class="title"><h2>fn (ActionsParser) path_add <a href="#ActionsParser.path_add">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/actionsparser/parser.v#L34"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> actions ActionsParser<span class="token punctuation">)</span> <span class="token function">path_add</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
 <p>path can be a directory or a file</p>
 
 </section>
@@ -159,6 +165,7 @@
 </ul>
 </li>
 <li class="open"><a href="#ActionsParser">struct ActionsParser</a>        <ul>
+<li><a href="#ActionsParser.filter">fn filter</a></li>
 <li><a href="#ActionsParser.path_add">fn path_add</a></li>
 </ul>
 </li>

@@ -9,9 +9,8 @@ pub fn (mut actions ActionsParser) filter() ! {
 }
 
 // removes in place actions for books excluding the provided book
-// returns a list of 
+// returns a list of
 fn (mut actions ActionsParser) filter_actor() {
-
 	if actions.actor == '' {
 		return
 	}
@@ -36,7 +35,7 @@ fn (mut actions ActionsParser) filter_actor() {
 }
 
 // removes in place actions for books excluding the provided book
-// returns a list of 
+// returns a list of
 fn (mut actions ActionsParser) filter_book() {
 	if actions.book == '' {
 		return
@@ -62,9 +61,8 @@ fn (mut actions ActionsParser) filter_book() {
 }
 
 // removes in place actions for books excluding the provided book
-// returns a list of 
+// returns a list of
 fn (mut actions ActionsParser) filter_actions() {
-
 	//? if not here?
 	// for i, action in actions.unsorted {
 	// 	if !actions.filter.contains(action.name) {
@@ -76,9 +74,11 @@ fn (mut actions ActionsParser) filter_actions() {
 }
 
 fn sort_actions(filter []string, actions []Action) []Action {
-	if filter.len == 0 { return actions }
+	if filter.len == 0 {
+		return actions
+	}
 	if actions.len > 1 {
-		index := int(actions.len/2)
+		index := int(actions.len / 2)
 		a := sort_actions(filter, actions[..index])
 		b := sort_actions(filter, actions[index..])
 		return merge(a, b, filter)
@@ -91,12 +91,12 @@ fn merge(a []Action, b []Action, filters []string) []Action {
 	mut j := 0
 	mut sorted := []Action{}
 	for i < a.len && j < b.len {
-        if compare_order(a[i], b[j], filters) == -1 {
+		if compare_order(a[i], b[j], filters) == -1 {
 			sorted << a[i]
-            i += 1
+			i += 1
 		} else if compare_order(a[i], b[j], filters) == 1 {
 			sorted << b[j]
-            j += 1
+			j += 1
 		} else {
 			sorted << a[i]
 			sorted << b[j]
@@ -116,13 +116,11 @@ fn merge(a []Action, b []Action, filters []string) []Action {
 
 // compares the order of two actions, returns 1,0,-1 accordingly
 fn compare_order(a &Action, b &Action, filter []string) int {
-
 	a_prefix := a.name.all_before_last('.')
 	a_name := a.name.all_after_last('.')
 
 	b_prefix := b.name.all_before_last('.')
 	b_name := b.name.all_after_last('.')
-
 
 	if filter.index(a_name) == -1 || filter.index(b_name) == -1 {
 		return 0
