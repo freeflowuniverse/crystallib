@@ -23,9 +23,9 @@ pub:
 	disks       []Disk [json: 'disks']
 	public_ip   bool   [json: 'public_ip']
 	planetary   bool   [json: 'planetary']
-	cpu         u32    [json: 'cpu']         = 1 // the amount of virtual CPUs for this vm
-	memory      u64    [json: 'memory']      = 1 // memory in MBs
-	rootfs_size u64    [json: 'rootfs_size'] = 10 // root filesystem size in MBs
+	cpu         u32    [json: 'cpu']         = 2 // the amount of virtual CPUs for this vm
+	memory      u64    [json: 'memory']      = 4000 // memory in MBs
+	rootfs_size u64    [json: 'rootfs_size'] = 1000 // root filesystem size in MBs
 	flist       string [json: 'flist']      = 'https://hub.grid.tf/tf-official-apps/base:latest.flist'
 	entrypoint  string [json: 'entrypoint'] = '/sbin/zinit init'
 	ssh_key     string [json: 'ssh_key']
