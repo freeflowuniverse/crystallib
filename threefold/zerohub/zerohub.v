@@ -1,4 +1,5 @@
 module zerohub
+import net.http
 
 // import freeflowuniverse.crystallib.httpconnection
 
@@ -8,6 +9,7 @@ pub struct ZeroHubClient {
 pub mut:
 	url    string
 	secret string // is called bearer in documentation	
+	header http.Header
 }
 
 [params]
