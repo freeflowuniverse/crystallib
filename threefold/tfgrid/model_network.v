@@ -1,10 +1,14 @@
 module tfgrid
 
-// TODO: describe how format is of the params and fill in default
-// TODO: what does add_access mean!
 pub struct Network {
 pub:
-	name       string
-	ip_range   string = '' // TODO, format!
-	add_access bool   [json: 'addAccess'] // TODO: what does this mean!
+	name                 string
+	ip_range             string = '10.1.0.0/16'
+	add_wireguard_access bool   [json: 'add_wireguard_access'] // this adds wireguard access node
+	description          string
+}
+
+struct NetworkResult {
+pub:
+	wireguard_config string
 }

@@ -3,47 +3,54 @@ module tfgrid
 import json
 
 // Deploy machines workload
-pub fn (mut client TFGridClient) machines_deploy(payload MachinesModel) !DeployResponse {
-	payload_encoded := json.encode_pretty(payload)
+pub fn (mut client TFGridClient) machines_deploy(deployment MachinesModel) !MachinesResult {
+	payload_encoded := json.encode(deployment)
 	response := client.rpc.call(cmd: 'machines.deploy', data: payload_encoded)!
-	return json.decode(DeployResponse, response)
+	if response.error != '' {
+		return error(response.error)
+	}
+	return json.decode(MachinesResult, response.result)
 }
 
 // Get machines deployment info using deployment name
 pub fn (mut client TFGridClient) machines_get(name string) ![]Deployment {
 	response := client.rpc.call(
 		cmd: 'machines.get'
-		data: json.encode_pretty({
-			'name': name
-		})
+		data: name
 	)!
-	return json.decode([]Deployment, response)
+	if response.error != '' {
+		return error(response.error)
+	}
+
+	return json.decode([]Deployment, response.result)
+}
+
+// Delete a deployed machines using project name
+pub fn (mut client TFGridClient) machines_delete(name string) ! {
+	response := client.rpc.call(
+		cmd: 'machines.delete'
+		data: name
+	)!
+
+	if response.error != '' {
+		return error(response.error)
+	}
 }
 
 // Update deployed machines deployment with updated payload
-pub fn (mut client TFGridClient) machines_update(payload MachinesModel) !DeployResponse {
+pub fn (mut client TFGridClient) machines_update(payload MachinesModel) !MachinesResult {
 	payload_encoded := json.encode_pretty(payload)
 	response := client.rpc.call(cmd: 'machines.update', data: payload_encoded)!
-
-	return json.decode(DeployResponse, response)
+	if response.error != '' {
+		return error(response.error)
+	}
+	return json.decode(MachinesResult, response.result)
 }
 
 // List all my machines deployments
 pub fn (mut client TFGridClient) machines_list() ![]string {
 	response := client.rpc.call(cmd: 'machines.list', data: '{}')!
 	return json.decode([]string, response)
-}
-
-// Delete a deployed machines using deployment name
-pub fn (mut client TFGridClient) machines_delete(name string) !ContractResponse {
-	response := client.rpc.call(
-		cmd: 'machines.delete'
-		data: json.encode({
-			'name': name
-		})
-	)!
-
-	return json.decode(ContractResponse, response)
 }
 
 // Add new machine to a machines deployment
