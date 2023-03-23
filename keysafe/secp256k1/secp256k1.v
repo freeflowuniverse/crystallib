@@ -1,6 +1,9 @@
 [translated]
 module secp256k1
 
+import encoding.hex
+import crypto.sha256
+
 #include "@VMODROOT/secp256k1mod.h"
 
 #flag @VMODROOT/secp256k1mod.o
@@ -70,6 +73,8 @@ fn C.secp256k1_load_key(secp &Secp256k1_t, key &u8) int
 
 fn C.secp256k1_free(secp &Secp256k1_t)
 
+fn C.secp256k1_dumps(secp &Secp256k1_t)
+
 fn C.secp256k1_export(secp &Secp256k1_t) &u8
 
 fn C.secp256k1_generate_key(secp &Secp256k1_t) int
@@ -85,7 +90,7 @@ pub fn new() Secp256k1 {
 }
 
 pub fn (s Secp256k1) load(key string) {
-	println("load")
+	C.secp256k1_load_key(s.cctx, key.str)
 }
 
 pub fn (s Secp256k1) generate() {
@@ -93,15 +98,35 @@ pub fn (s Secp256k1) generate() {
 }
 
 pub fn (s Secp256k1) keys() {
-    println(s.cctx.seckey)
-    println(s.cctx.compressed)
-    println(s.cctx.xcompressed)
+	C.secp256k1_dumps(s.cctx)
 }
 
 pub fn (s Secp256k1) export() string {
 	key := C.secp256k1_export(s.cctx)
 	println(key)
-	return key.vstring()
+	return unsafe { key.vstring() }
 }
 
+pub fn (s Secp256k1) sharedkeys(target Secp256k1) []u8 {
+	shr := C.secp265k1_shared_key(s.cctx, target.cctx)
+	return unsafe { shr.vbytes(32) }
+}
 
+pub fn (s Secp256k1) sign(data []u8) []u8 {
+	C.secp256k1_sign_hash(s.cctx, data.data, data.len)
+	return []u8{}
+}
+
+pub fn (s Secp256k1) sign_hex(data []u8) string {
+	payload := s.sign(data)
+	return hex.encode(payload)
+}
+
+pub fn (s Secp256k1) sign_str(data string) []u8 {
+	return []u8{}
+}
+
+pub fn (s Secp256k1) sign_str_hex(data string) string {
+	payload := s.sign_str(data)
+	return hex.encode(payload)
+}
