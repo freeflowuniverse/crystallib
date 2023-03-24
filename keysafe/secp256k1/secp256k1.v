@@ -29,7 +29,6 @@ struct Secp256k1_keypair {
 }
 
 struct Secp256k1_t { 
-pub: // FIXME
 	kntxt &C.secp256k1_context
 	seckey &u8
 	compressed &u8
@@ -45,10 +44,13 @@ struct Secp256k1_sign_t {
 	length usize
 }
 
+struct Secp256k1_signature {
+	cctx &C.secp256k1_sign_t
+}
+
 struct Secp256k1 {
 	cctx &Secp256k1_t
 }
-
 
 //
 // prototypes
@@ -109,24 +111,105 @@ pub fn (s Secp256k1) export() string {
 
 pub fn (s Secp256k1) sharedkeys(target Secp256k1) []u8 {
 	shr := C.secp265k1_shared_key(s.cctx, target.cctx)
-	return unsafe { shr.vbytes(32) }
+
+	return unsafe { shr.vbytes(32) } // 32 bytes shared key
 }
 
-pub fn (s Secp256k1) sign(data []u8) []u8 {
-	C.secp256k1_sign_hash(s.cctx, data.data, data.len)
-	return []u8{}
+//
+// sign (ecdsa) data
+// - we force user to pass data to ensure we hash the right way
+//   data to ensure signature is valid and safe
+//
+pub fn (s Secp256k1) sign_data(data []u8) []u8 {
+	// hash data
+	h256 := sha256.sum(data)
+	signature := C.secp256k1_sign_hash(s.cctx, h256.data, h256.len)
+
+	return unsafe { signature.vbytes(64) } // 64 bytes signature
 }
 
-pub fn (s Secp256k1) sign_hex(data []u8) string {
-	payload := s.sign(data)
+// return a hex string of the signature
+pub fn (s Secp256k1) sign_data_hex(data []u8) string {
+	payload := s.sign_data(data)
 	return hex.encode(payload)
 }
 
 pub fn (s Secp256k1) sign_str(data string) []u8 {
-	return []u8{}
+	return s.sign_data(data.bytes())
 }
 
+// return a hex string of the signature
 pub fn (s Secp256k1) sign_str_hex(data string) string {
-	payload := s.sign_str(data)
+	return s.sign_data_hex(data.bytes())
+}
+
+//
+// verify a signature
+//
+pub fn (s Secp256k1) verify_data(signature []u8, data []u8) bool {
+	sig := Secp256k1_signature{}
+	sig.cctx = C.secp256k1_load_signature(s.cctx, signature.data, signature.len)
+
+	// compute data hash to ensure we do it correctly
+	// - do not trust the user, do it ourself -
+	h256 := sha256.sum(data)
+	valid := C.secp256k1_sign_verify(s.cctx, sig.cctx, h256.data, h256.len)
+	if valid == 1 {
+		return true
+	}
+
+	return false
+}
+
+pub fn (s Secp256k1) verify_str(signature []u8, input string) bool {
+	return s.verify_data(signature, input.bytes())
+}
+
+
+//
+// sign (schnorr) data
+// - we force user to pass data to ensure we hash the right way
+//   data to ensure signature is valid and safe
+//
+pub fn (s Secp256k1) schnorr_sign_data(data []u8) []u8 {
+	// hash data
+	h256 := sha256.sum(data)
+	signature := C.secp256k1_schnorr_sign_hash(s.cctx, h256.data, h256.len)
+
+	return unsafe { signature.vbytes(64) } // 64 bytes signature
+}
+
+// return a hex string of the signature
+pub fn (s Secp256k1) schnorr_sign_data_hex(data []u8) string {
+	payload := s.schnorr_sign_data(data)
 	return hex.encode(payload)
 }
+
+pub fn (s Secp256k1) schnorr_sign_str(data string) []u8 {
+	return s.schnorr_sign_data(data.bytes())
+}
+
+// return a hex string of the signature
+pub fn (s Secp256k1) schnorr_sign_str_hex(data string) string {
+	return s.schnorr_sign_data_hex(data.bytes())
+}
+
+//
+// verify a signature
+//
+pub fn (s Secp256k1) schnorr_verify_data(signature []u8, data []u8) bool {
+	// compute data hash to ensure we do it correctly
+	// - do not trust the user, do it ourself -
+	h256 := sha256.sum(data)
+	valid := C.secp256k1_schnorr_verify(s.cctx, signature.data, signature.len, h256.data, h256.len)
+	if valid == 1 {
+		return true
+	}
+
+	return false
+}
+
+pub fn (s Secp256k1) schnorr_verify_str(signature []u8, input string) bool {
+	return s.schnorr_verify_data(signature, input.bytes())
+}
+
