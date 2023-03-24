@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tmux | vdoc</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  
+		<link rel="stylesheet" href="doc.css" />
+		<link rel="stylesheet" href="normalize.css" />
+		<script src="dark-mode.js"></script>
+</head>
+
+<body>
+  <div><a id="skip-to-content-link" href="#main-content">Skip to content</a></div>
+  <div id="page">
+    <header class="doc-nav hidden">
+      <div class="heading-container">
+        <div class="heading">
+          <div class="info">
+            <div class="module">crystallib</div>
+            <div class="toggle-version-container">
+              <span>0.1.0 e8c0b09</span>
+              <div id="dark-mode-toggle" role="switch" aria-checked="false" aria-label="Toggle dark mode"><svg xmlns="http://www.w3.org/2000/svg" class="light-icon" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" class="dark-icon" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><rect fill="none" height="24" width="24"/></g><g><g><g><path d="M11.1,12.08C8.77,7.57,10.6,3.6,11.63,2.01C6.27,2.2,1.98,6.59,1.98,12c0,0.14,0.02,0.28,0.02,0.42 C2.62,12.15,3.29,12,4,12c1.66,0,3.18,0.83,4.1,2.15C9.77,14.63,11,16.17,11,18c0,1.52-0.87,2.83-2.12,3.51 c0.98,0.32,2.03,0.5,3.11,0.5c3.5,0,6.58-1.8,8.37-4.52C18,17.72,13.38,16.52,11.1,12.08z"/></g><path d="M7,16l-0.18,0C6.4,14.84,5.3,14,4,14c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.62,0,2.49,0,3,0c1.1,0,2-0.9,2-2 C9,16.9,8.1,16,7,16z"/></g></g></svg>
+</div>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" id="toggle-menu" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+
+          </div>
+          <input type="text" id="search" placeholder="Search... (beta)" autocomplete="off">
+        </div>
+      </div>
+      <nav class="search hidden"></nav>
+      <nav class="content hidden">
+        <ul>
+          <li class="open"><div class="menu-row"><a href="./index.html">README</a></div></li><li class="open"><div class="menu-row"><a href="./actionsparser.html">actionsparser</a></div></li><li class="open"><div class="menu-row"><a href="./archiver.html">archiver</a></div></li><li class="open"><div class="menu-row"><a href="./books.html">books</a></div></li><li class="open"><div class="menu-row"><a href="./builder.html">builder</a></div></li><li class="open"><div class="menu-row"><a href="./calc.html">calc</a></div></li><li class="open"><div class="menu-row"><a href="./coinmarketcap.html">coinmarketcap</a></div></li><li class="open"><div class="menu-row"><a href="./console.html">console</a></div></li><li class="open"><div class="menu-row"><a href="./crpgp.html">crpgp</a></div></li><li class="open"><div class="menu-row"><a href="./crystaljson.html">crystaljson</a></div></li><li class="open"><div class="menu-row"><a href="./currency.html">currency</a></div></li><li class="open"><div class="menu-row"><a href="./data.html">data</a></div></li><li class="open"><div class="menu-row"><a href="./docker.html">docker</a></div></li><li class="open"><div class="menu-row"><a href="./encoder.html">encoder</a></div></li><li class="open"><div class="menu-row"><a href="./fftools.html">fftools</a></div></li><li class="open"><div class="menu-row"><a href="./github.html">github</a></div></li><li class="open"><div class="menu-row"><a href="./gittools.html">gittools</a></div></li><li class="open"><div class="menu-row"><a href="./hostsfile.html">hostsfile</a></div></li><li class="open"><div class="menu-row"><a href="./httpconnection.html">httpconnection</a></div></li><li class="open"><div class="menu-row"><a href="./imagemagick.html">imagemagick</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">installers</a></div><ul><li><a href="./installers.base.html">base</a></li><li><a href="./installers.caddy.html">caddy</a></li><li><a href="./installers.crystaltools.html">crystaltools</a></li><li><a href="./installers.golang.html">golang</a></li><li><a href="./installers.imagemagick.html">imagemagick</a></li><li><a href="./installers.mdbook.html">mdbook</a></li><li><a href="./installers.repository.html">repository</a></li><li><a href="./installers.rust.html">rust</a></li><li><a href="./installers.swarm.html">swarm</a></li><li><a href="./installers.tailwind.html">tailwind</a></li><li><a href="./installers.tmux.html">tmux</a></li><li><a href="./installers.vlang.html">vlang</a></li><li><a href="./installers.zdb.html">zdb</a></li></ul></li><li class="open"><div class="menu-row"><a href="./ipaddress.html">ipaddress</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./keysafe.html">keysafe</a></div><ul><li><a href="./keysafe.secp256k1.html">secp256k1</a></li></ul></li><li class="open"><div class="menu-row"><a href="./markdowndocs.html">markdowndocs</a></div></li><li class="open"><div class="menu-row"><a href="./mnemonic.html">mnemonic</a></div></li><li class="open"><div class="menu-row"><a href="./natsclient.html">natsclient</a></div></li><li class="open"><div class="menu-row"><a href="./params.html">params</a></div></li><li class="open"><div class="menu-row"><a href="./pathlib.html">pathlib</a></div></li><li class="open"><div class="menu-row"><a href="./pgp.html">pgp</a></div></li><li class="open"><div class="menu-row"><a href="./process.html">process</a></div></li><li class="open"><div class="menu-row"><a href="./publisher2.html">publisher2</a></div></li><li class="open"><div class="menu-row"><a href="./redisclient.html">redisclient</a></div></li><li class="open"><div class="menu-row"><a href="./redisserver.html">redisserver</a></div></li><li class="open"><div class="menu-row"><a href="./resp.html">resp</a></div></li><li class="open"><div class="menu-row"><a href="./rootpath.html">rootpath</a></div></li><li class="open"><div class="menu-row"><a href="./serializers.html">serializers</a></div></li><li class="open"><div class="menu-row"><a href="./sshagent.html">sshagent</a></div></li><li class="open"><div class="menu-row"><a href="./taskletmanager.html">taskletmanager</a></div></li><li class="open"><div class="menu-row"><a href="./texttools.html">texttools</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">threefold</a></div><ul><li><a href="./threefold.liquid.html">liquid</a></li><li><a href="./threefold.macros.html">macros</a></li><li><a href="./threefold.nodepilot.html">nodepilot</a></li><li><a href="./threefold.rmb.html">rmb</a></li><li><a href="./threefold.terraform.html">terraform</a></li><li><a href="./threefold.tfgrid.html">tfgrid</a></li><li><a href="./threefold.tokens.html">tokens</a></li><li><a href="./threefold.twinclient.html">twinclient</a></li><li><a href="./threefold.zerohub.html">zerohub</a></li></ul></li><li class="open"><div class="menu-row"><a href="./timetools.html">timetools</a></div></li><li class="open active"><div class="menu-row"><a href="./tmux.html">tmux</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">tools</a></div><ul><li><a href="./tools.cacher.html">cacher</a></li><li><a href="./tools.downloader.html">downloader</a></li></ul></li><li class="open"><div class="menu-row"><a href="./twinclient.html">twinclient</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./ui.html">ui</a></div><ul><li><a href="./ui.console.html">console</a></li><li><a href="./ui.telegram.html">telegram</a></li><li><a href="./ui.telegram.client.html">telegram.client</a></li><li><a href="./ui.uimodel.html">uimodel</a></li></ul></li><li class="open"><div class="menu-row"><a href="./vault.html">vault</a></div></li><li class="open"><div class="menu-row"><a href="./verasure.html">verasure</a></div></li><li class="open"><div class="menu-row"><a href="./vexecutor.html">vexecutor</a></div></li><li class="open"><div class="menu-row"><a href="./zdb.html">zdb</a></div></li>
+        </ul>
+      </nav>
+    </header>
+    <div class="doc-scrollview" id="main-content">
+      <div class="doc-container">
+        <div class="doc-content">
+          						<section id="readme_tmux" class="doc-node">
+							<div class="title"><h1> tmux <a href="#readme_tmux">#</a></h1></div><h1>TMUX</h1>
+<p>tmux library provides functions for managing local / remote tmux sessions</p>
+<h2>Getting started</h2>
+<p>To initialize tmux on a local or remote node, simply build the node, install tmux, and run start</p>
+
+</section>
+
+						<section id="get_local" class="doc-node">
+							<div class="title"><h2>fn get_local <a href="#get_local">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux.v#L14"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">get_local</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span>Tmux</code></pre>
+
+
+</section>
+						<section id="get_remote" class="doc-node">
+							<div class="title"><h2>fn get_remote <a href="#get_remote">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux.v#L22"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">get_remote</span><span class="token punctuation">(</span>ipaddr <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span>Tmux</code></pre>
+
+
+</section>
+						<section id="Session.create" class="doc-node">
+							<div class="title"><h2>fn (Session) create <a href="#Session.create">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux_session.v#L47"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> s Session<span class="token punctuation">)</span> <span class="token function">create</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="Session.restart" class="doc-node">
+							<div class="title"><h2>fn (Session) restart <a href="#Session.restart">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux_session.v#L64"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> s Session<span class="token punctuation">)</span> <span class="token function">restart</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="Session.stop" class="doc-node">
+							<div class="title"><h2>fn (Session) stop <a href="#Session.stop">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux_session.v#L69"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> s Session<span class="token punctuation">)</span> <span class="token function">stop</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="Session.window_new" class="doc-node">
+							<div class="title"><h2>fn (Session) window_new <a href="#Session.window_new">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux_session.v#L89"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> s Session<span class="token punctuation">)</span> <span class="token function">window_new</span><span class="token punctuation">(</span>args WindowArgs<span class="token punctuation">)</span> <span class="token operator">!</span>Window</code></pre>
+<p>window_name is the name of the window in session main (will always be called session main) cmd to execute e.g. bash file environment arguments to use reset, if reset it will create window even if it does already exist, will destroy it</p>
+<pre><code>struct WindowArgs {
+pub mut:
+    name    string
+    cmd		string
+    env		map[string]string	
+    reset	bool
+}
+</code></pre>
+
+</section>
+						<section id="Session.window_get" class="doc-node">
+							<div class="title"><h2>fn (Session) window_get <a href="#Session.window_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux_session.v#L122"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> s Session<span class="token punctuation">)</span> <span class="token function">window_get</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>Window</code></pre>
+
+
+</section>
+						<section id="Window.create" class="doc-node">
+							<div class="title"><h2>fn (Window) create <a href="#Window.create">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux_window.v#L45"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> w Window<span class="token punctuation">)</span> <span class="token function">create</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="Window.check" class="doc-node">
+							<div class="title"><h2>fn (Window) check <a href="#Window.check">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux_window.v#L64"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> w Window<span class="token punctuation">)</span> <span class="token function">check</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>do some good checks if the window is still active not implemented yet</p>
+
+</section>
+						<section id="Window.restart" class="doc-node">
+							<div class="title"><h2>fn (Window) restart <a href="#Window.restart">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux_window.v#L69"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> w Window<span class="token punctuation">)</span> <span class="token function">restart</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>restart the window</p>
+
+</section>
+						<section id="Window.stop" class="doc-node">
+							<div class="title"><h2>fn (Window) stop <a href="#Window.stop">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux_window.v#L75"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> w Window<span class="token punctuation">)</span> <span class="token function">stop</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>stop the window</p>
+
+</section>
+						<section id="Window.delete" class="doc-node">
+							<div class="title"><h2>fn (Window) delete <a href="#Window.delete">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux_window.v#L85"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> w Window<span class="token punctuation">)</span> <span class="token function">delete</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>delete the window</p>
+
+</section>
+						<section id="Window.str" class="doc-node">
+							<div class="title"><h2>fn (Window) str <a href="#Window.str">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux_window.v#L90"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>window Window<span class="token punctuation">)</span> <span class="token function">str</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="Window.environment_print" class="doc-node">
+							<div class="title"><h2>fn (Window) environment_print <a href="#Window.environment_print">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux_window.v#L103"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> w Window<span class="token punctuation">)</span> <span class="token function">environment_print</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>show the environment</p>
+
+</section>
+						<section id="Window.output_print" class="doc-node">
+							<div class="title"><h2>fn (Window) output_print <a href="#Window.output_print">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux_window.v#L112"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> w Window<span class="token punctuation">)</span> <span class="token function">output_print</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>capture the output</p>
+
+</section>
+						<section id="Tmux" class="doc-node">
+							<div class="title"><h2>struct Tmux <a href="#Tmux">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux.v#L8"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Tmux</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	sessions <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token operator">&</span>Session
+	node     builder<span class="token punctuation">.</span>Node
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="Tmux.windows_get" class="doc-node">
+							<div class="title"><h2>fn (Tmux) windows_get <a href="#Tmux.windows_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux.v#L182"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> t Tmux<span class="token punctuation">)</span> <span class="token function">windows_get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token operator">&</span>Window</code></pre>
+<p>get all windows in new map</p>
+
+</section>
+						<section id="Tmux.list_print" class="doc-node">
+							<div class="title"><h2>fn (Tmux) list_print <a href="#Tmux.list_print">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux.v#L172"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> t Tmux<span class="token punctuation">)</span> <span class="token function">list_print</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>print list of tmux sessions</p>
+
+</section>
+						<section id="Tmux.load" class="doc-node">
+							<div class="title"><h2>fn (Tmux) load <a href="#Tmux.load">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux.v#L136"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> tmux Tmux<span class="token punctuation">)</span> <span class="token function">load</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>loads tmux session, from running tmux server to struct</p>
+
+</section>
+						<section id="Tmux.scan" class="doc-node">
+							<div class="title"><h2>fn (Tmux) scan <a href="#Tmux.scan">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux.v#L78"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> t Tmux<span class="token punctuation">)</span> <span class="token function">scan</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token operator">&</span>Window</code></pre>
+<p>scan and return which ones where in struct but not found in the system probably means a command did not start well</p>
+
+</section>
+						<section id="Tmux.session_get" class="doc-node">
+							<div class="title"><h2>fn (Tmux) session_get <a href="#Tmux.session_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux_session.v#L13"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> t Tmux<span class="token punctuation">)</span> <span class="token function">session_get</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>Session</code></pre>
+
+
+</section>
+						<section id="Tmux.session_get_create" class="doc-node">
+							<div class="title"><h2>fn (Tmux) session_get_create <a href="#Tmux.session_get_create">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux_session.v#L20"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> t Tmux<span class="token punctuation">)</span> <span class="token function">session_get_create</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">,</span> restart <span class="token builtin">bool</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>Session</code></pre>
+
+
+</section>
+						<section id="Tmux.start" class="doc-node">
+							<div class="title"><h2>fn (Tmux) start <a href="#Tmux.start">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux.v#L161"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> t Tmux<span class="token punctuation">)</span> <span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="Tmux.stop" class="doc-node">
+							<div class="title"><h2>fn (Tmux) stop <a href="#Tmux.stop">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux.v#L144"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> t Tmux<span class="token punctuation">)</span> <span class="token function">stop</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="Tmux.window_new" class="doc-node">
+							<div class="title"><h2>fn (Tmux) window_new <a href="#Tmux.window_new">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux_window.v#L39"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> t Tmux<span class="token punctuation">)</span> <span class="token function">window_new</span><span class="token punctuation">(</span>args WindowArgs<span class="token punctuation">)</span> <span class="token operator">!</span>Window</code></pre>
+<p>window_name is the name of the window in session main (will always be called session main) cmd to execute e.g. bash file environment arguments to use reset, if reset it will create window even if it does already exist, will destroy it</p>
+<pre><code>struct WindowArgs {
+pub mut:
+    name    string
+    cmd		string
+    env		map[string]string	
+    reset	bool
+}
+</code></pre>
+
+</section>
+						<section id="Tmux.is_running" class="doc-node">
+							<div class="title"><h2>fn (Tmux) is_running <a href="#Tmux.is_running">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux.v#L194"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> t Tmux<span class="token punctuation">)</span> <span class="token function">is_running</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+<p>checks whether tmux server is running</p>
+
+</section>
+						<section id="WindowArgs" class="doc-node">
+							<div class="title"><h2>struct WindowArgs <a href="#WindowArgs">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/tmux/tmux_window.v#L18"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">WindowArgs</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	name  <span class="token builtin">string</span>
+	cmd   <span class="token builtin">string</span>
+	env   <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+	reset <span class="token builtin">bool</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+
+          <div class="footer">
+            Powered by vdoc.
+          </div>
+        </div>
+        <div class="doc-toc"><ul><li class="open"><a href="#readme_tmux">README</a></li>
+<li class="open"><a href="#get_local">fn get_local</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#get_remote">fn get_remote</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Session.create">type Session</a>        <ul>
+<li><a href="#Session.create">fn create</a></li>
+<li><a href="#Session.restart">fn restart</a></li>
+<li><a href="#Session.stop">fn stop</a></li>
+<li><a href="#Session.window_new">fn window_new</a></li>
+<li><a href="#Session.window_get">fn window_get</a></li>
+</ul>
+</li>
+<li class="open"><a href="#Window.create">type Window</a>        <ul>
+<li><a href="#Window.create">fn create</a></li>
+<li><a href="#Window.check">fn check</a></li>
+<li><a href="#Window.restart">fn restart</a></li>
+<li><a href="#Window.stop">fn stop</a></li>
+<li><a href="#Window.delete">fn delete</a></li>
+<li><a href="#Window.str">fn str</a></li>
+<li><a href="#Window.environment_print">fn environment_print</a></li>
+<li><a href="#Window.output_print">fn output_print</a></li>
+</ul>
+</li>
+<li class="open"><a href="#Tmux">struct Tmux</a>        <ul>
+<li><a href="#Tmux.windows_get">fn windows_get</a></li>
+<li><a href="#Tmux.list_print">fn list_print</a></li>
+<li><a href="#Tmux.load">fn load</a></li>
+<li><a href="#Tmux.scan">fn scan</a></li>
+<li><a href="#Tmux.session_get">fn session_get</a></li>
+<li><a href="#Tmux.session_get_create">fn session_get_create</a></li>
+<li><a href="#Tmux.start">fn start</a></li>
+<li><a href="#Tmux.stop">fn stop</a></li>
+<li><a href="#Tmux.window_new">fn window_new</a></li>
+<li><a href="#Tmux.is_running">fn is_running</a></li>
+</ul>
+</li>
+<li class="open"><a href="#WindowArgs">struct WindowArgs</a>        <ul>
+</ul>
+</li>
+</ul></div>
+      </div>
+    </div>
+  </div>
+  <script src="doc.js"></script>
+  <script async src="search_index.js"></script>
+</body>
+
+</html>

@@ -1,11 +1,12 @@
 Module {
     name: 'crystallib'
-    author: 'despiegk'
+    author: 'freeflowuniverse'
     description: 'Set of various libraries'
     version: '0.1.0'
-    repo_url: 'https://github.com/crystaluniverse/crystallib'
+    repo_url: 'https://github.com/freeflowuniverse/crystallib'
     deps: []
     vcs: 'git'
+    license: 'apache2'
 }
 
 

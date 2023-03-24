@@ -1,7 +1,7 @@
 module hostsfile
 
 import os
-import process
+import freeflowuniverse.crystallib.process
 
 [heap]
 pub struct HostsFile {
@@ -24,7 +24,7 @@ pub fn load() HostsFile {
 
 		mut splitted := line.fields()
 		if splitted.len > 1 {
-			if !(section in obj.hosts) {
+			if section !in obj.hosts {
 				obj.hosts[section] = []map[string]string{}
 			}
 			obj.hosts[section] << {
@@ -39,18 +39,18 @@ pub fn (mut hostsfile HostsFile) save(sudo bool) &HostsFile {
 	mut str := ''
 	for section, items in hostsfile.hosts {
 		if section != '' {
-			str = str + '# $section\n\n'
+			str = str + '# ${section}\n\n'
 		}
 
 		for item in items {
 			for ip, domain in item {
-				str = str + '$ip\t$domain\n'
+				str = str + '${ip}\t${domain}\n'
 			}
 		}
 		str = str + '\n\n'
 	}
 	if sudo {
-		process.execute_interactive('sudo -- sh -c -e "echo \'$str\' > /etc/hosts"') or {
+		process.execute_interactive('sudo -- sh -c -e "echo \'${str}\' > /etc/hosts"') or {
 			panic(err)
 		}
 	} else {
@@ -69,7 +69,7 @@ pub fn (mut hostsfile HostsFile) reset(sections []string) &HostsFile {
 }
 
 pub fn (mut hostsfile HostsFile) add(ip string, domain string, section string) &HostsFile {
-	if !(section in hostsfile.hosts) {
+	if section !in hostsfile.hosts {
 		hostsfile.hosts[section] = []map[string]string{}
 	}
 	hostsfile.hosts[section] << {

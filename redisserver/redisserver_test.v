@@ -1,9 +1,10 @@
 import redisserver
 import redisclient
-import time
 
 fn setup() redisserver.RedisSrv {
-	return redisserver.listen('0.0.0.0', 5555) or { panic("Can't Listen on port with error: $err") }
+	return redisserver.listen('0.0.0.0', 5555) or {
+		panic("Can't Listen on port with error: ${err}")
+	}
 }
 
 fn test_run_server() {
@@ -12,16 +13,15 @@ fn test_run_server() {
 	for {
 		println('still looping...')
 		mut conn := redis_server.socket.accept() or { continue }
-		go redisserver.new_client(mut conn, mut main)
+		spawn redisserver.new_client(mut conn, mut main)
 		println('After GO...')
 	}
 }
 
 fn client_test() {
-	mut redis_client := redisclient.connect('localhost:5555') or { panic(err) }
+	mut redis_client := redisclient.get('localhost:5555') or { panic(err) }
 	redis_client.set('b', '5') or { panic(err) }
 	val := redis_client.get('b') or { panic(err) }
 	assert val == '5'
 	println('reach here')
 }
-

@@ -1,181 +1,83 @@
 module imagemagick
 
-import os
-import path
-import process
+import freeflowuniverse.crystallib.pathlib
+import freeflowuniverse.crystallib.params
+import freeflowuniverse.crystallib.process
 
-pub struct Images{
-pub mut:	
-	images []Image
-	status ImagesStatus
-}
-
-
-
-
-pub enum ImagesStatus{
-	init
-	loaded
-}
-
-pub fn installed_() bool {
-	out := process.execute_silent("convert -version")or{
-		return false
-	}
-	if ! out.contains("ImageMagick"){
+fn installed0() bool {
+	println(' - init imagemagick')
+	out := process.execute_silent('convert -version') or { return false }
+	if !out.contains('ImageMagick') {
 		return false
 	}
 	return true
 }
 
-pub const installed = installed_()
+// singleton creation
+const installed1 = installed0()
 
-fn init_magick() Images {
-	out := process.execute_silent("convert -version")or{
-		panic("Imagemagick probably not installed, error:$err")
-	}
-	if ! out.contains("ImageMagick"){
-		panic("Imagemagick probably not installed, could not find string ImageMahic but:\n$out")
-	}
-	mut images := Images{}
-	return images
+pub fn installed() bool {
+	// println("imagemagick installed: $imagemagick.installed1")
+	return imagemagick.installed1
 }
 
-// const cache = init_magick()
-
-// pub fn new() &Images {
-// 	return &imagemagick.cache
-// }
-
-// pub fn add(pathin string) &Images {
-// 	mut path2 := path.get_dir(pathin,false)
-// 	mut images := new()
-// 	images.load(path2) or {panic("cannot load images")}
-// 	return images
-// }
-
-// fn (mut images Images) check() ? {
-// 	if images.status == ImagesStatus.loaded {
-// 		return
-// 	}
-// 	images.load() ?
-// }
-
-pub struct ImageFindArgs{
-pub mut:
-	filter string
-	force bool
-	show bool
-}
-
-// pub fn (mut images Images) repos_get(args ImageFindArgs) []GitRepo  {
-// 	mut res := []GitRepo{}
-// 	for mut g in images.repos {
-// 		relpath := g.path_rel_get()
-// 		if args.filter != "" {
-// 			if relpath.contains(args.filter){
-// 				// println("$g.addr.name")
-// 				res << g
-// 			}		
-// 		}else{
-// 			res << g
-// 		}
-// 	}
-
-// 	return res
-// }
-
-// pub fn (mut images Images) repos_print(args ImageFindArgs)  {
-// 	mut r := [][]string{}
-// 	for mut g in images.repos_get(args){
-// 		// println(g)
-// 		changed:=g.changes()or {panic("issue in repo changes. $err")}
-// 		if changed{
-// 			r << ["- ${g.path_rel_get()}","$g.addr.branch","CHANGED"]
-// 		}else{
-// 			// println( " - ${g.path_rel_get()} - $g.addr.branch")
-// 			r << ["- ${g.path_rel_get()}","$g.addr.branch",""]
-// 		}
-// 	}
-// 	texttools.print_array2(r,"  ",true)
-// }
-
-
-// pub fn (mut images Images) list(args ImageFindArgs)? {
-// 	texttools.print_clear()
-// 	println(" #### overview of repositories:")
-// 	println("")
-// 	images.repos_print(args)
-// 	println("")
-// }
-
-
-// the factory for getting the images
-// git is checked uderneith $/code
-pub fn (mut images Images) add(p string) ? {
-	// mut root2:=""
-	// if 'DIR_CODE' in os.environ() {
-	// 	dir_ct := os.environ()['DIR_CODE']
-	// 	root2 = '$dir_ct/'
-	// } else {
-	// 	root2 = '$os.home_dir()/code/'
-	// 	if !os.exists(root2) {
-	// 		os.mkdir_all(root2) ?
-	// 	}
-	// }
-
-	// check if there are other arguments used as the ones loaded
-	// if images.status == ImagesStatus.loaded {
-	// 	return
-	// }
-
-	mut p2 := p
-	if p2==""{
-		p2 = os.getwd()
+// scan a directory
+fn filter_imagemagic(mut path pathlib.Path, mut params_ params.Params) !bool {
+	// print(" - check $path.path")
+	// println(" ===== "+path.name_no_ext())
+	if path.name().starts_with('.') {
+		// println(" FALSE")
+		return false
+	} else if path.name().starts_with('_') {
+		// println(" FALSE")
+		return false
+	} else if path.name_no_ext().ends_with('_') {
+		// println(" FALSE")
+		return false
+	} else if !path.is_file() {
+		// println(" FALSE")
+		return false
+	} else if !path.is_image_jpg_png() {
+		return false
 	}
-
-	// print_backtrace()
-	println(' - SCAN IMAGES FOR $p ')
-
-	mut done := []string{}
-
-	images.load_recursive(p2, mut done) ?
-	images.status = ImagesStatus.loaded
-
-	println(" - SCAN done")
+	// println(" TRUE")
+	return true
 }
 
-fn (mut images Images) load_recursive(p string, mut done []string) ? {
-	items := os.ls(p) or { return error('cannot load images because cannot find $p') }
-	mut pathnew := ""
-	for item in items {
-		pathnew = os.join_path(p,item)
-		// CAN DO THIS LATER IF NEEDED
-		// if pathnew in done{
-		// 	continue
-		// }
-		// done << pathnew
-		if os.is_dir(pathnew) {
-			// println(" - $pathnew")		
-			if item.starts_with('.') {
-				continue
-			}
-			// if item.starts_with('_') {
-			// 	continue
-			// }
-			images.load_recursive(pathnew, mut done) ?
-			continue
-		}
-		mut p2 := path.get_file(pathnew, false)
-		// println(p2)
-		if p2.is_image(){
-			// println(p2.path)
-			mut i:=Image{path:p2}
-			i.init()?
-			images.images << i
-		}
-		
+fn executor_imagemagic(mut path pathlib.Path, mut params_ params.Params) !params.Params {
+	mut backupdir := ''
+	if params_.exists('backupdir') {
+		backupdir = params_.get('backupdir') or { panic(error) }
 	}
+	mut image:=image_new(mut path)!
+	if backupdir.len>0{
+		image.downsize(backup:true,backup_dest:backupdir)!
+	}else{
+		image.downsize()!
+	}
+	return params_
 }
 
+pub struct ScanArgs {
+pub:
+	path      string
+	backupdir string
+}
 
+// struct ScanArgs{
+// 	path string //where to start from
+// 	backupdir string //if you want a backup dir
+// }
+// will return params with OK and ERROR if it was not ok
+pub fn scan(args ScanArgs) !params.Params {
+	if !installed() {
+		panic('cannot scan because imagemagic not installed.')
+	}
+	mut path := pathlib.get_dir(args.path, false)!
+	mut params_ := params.Params{}
+	if args.backupdir != '' {
+		params_.kwarg_add('backup', args.backupdir)
+	}
+	params_ = path.scan(mut params_, [filter_imagemagic], [executor_imagemagic])!
+	return params_
+}

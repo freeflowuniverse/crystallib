@@ -1,22 +1,29 @@
 module texttools
 
-// remove all leading spaces at same level
+pub fn indent(text string, prefix string) string {
+	mut res := []string{}
+	for line in text.split_into_lines() {
+		res << prefix + line
+	}
+	mut t := res.join_lines()
+	if !t.ends_with('\n') {
+		t += '\n'
+	}
+	return t
+}
 
+// remove all leading spaces at same level
 pub fn dedent(text string) string {
 	mut pre := 999
 	mut pre_current := 0
 	mut res := []string{}
-
-	//
 	text_lines := text.split_into_lines()
 
-	//
 	for line2 in text_lines {
-		line2_trimmed := line2.trim_space()
-		if line2_trimmed == '' {
+		// println("'$line2' $pre")
+		if line2.trim_space() == '' {
 			continue
 		}
-		// println("'$line2' $pre")
 		line2_expanded_tab := line2.replace('\t', '    ')
 		line2_expanded_tab_trimmed := line2_expanded_tab.trim_left(' ')
 		pre_current = line2_expanded_tab.len - line2_expanded_tab_trimmed.len
@@ -50,7 +57,7 @@ pub enum MultiLineStatus {
 // multiline to 'line1\\nline2\\n'
 // dedent also done before putting in '...'
 // tabs also replaced to 4x space
-pub fn multiline_to_single(text string) ?string {
+pub fn multiline_to_single(text string) !string {
 	mut multiline_first := ''
 	mut multiline := ''
 	mut line2 := ''
@@ -63,7 +70,7 @@ pub fn multiline_to_single(text string) ?string {
 		if state == MultiLineStatus.multiline {
 			// println("LINE2:'$line2'")
 			if line2.starts_with(' ') {
-				multiline += '$line2\n'
+				multiline += '${line2}\n'
 				continue
 			} else if line2.trim_space() == '' {
 				multiline += '\n'
@@ -88,7 +95,7 @@ pub fn multiline_to_single(text string) ?string {
 				continue
 			}
 			if line2.trim_space().ends_with(":'") || line2.trim_space().ends_with(": '") {
-				return error("line cannot end with ': '' or ':'' in \n%text")
+				return error("line cannot end with ': '' or ':'' in \n${text}\nline:${line2}")
 			}
 			if line2.trim_space().ends_with(':') {
 				// means is multiline
@@ -113,10 +120,9 @@ fn multiline_end(multiline_first string, multiline string) string {
 	multiline2 = dedent(multiline2)
 	multiline2 = multiline2.replace('\n', '\\n')
 	multiline2 = multiline2.replace("'", '"')
-	multiline2 = "$multiline_first'$multiline2'"
+	multiline2 = "${multiline_first}'${multiline2}'"
 	return multiline2
 }
-
 
 // //find variables which is $[a...zA...Z0...9]
 // pub fn template_find_args(text string)[]string{
@@ -155,7 +161,7 @@ fn multiline_end(multiline_first string, multiline string) string {
 // }
 
 // //find variables which is $[a...zA...Z0...9]
-// pub fn template_replace_args(text string, args map[string]string )?string{
+// pub fn template_replace_args(text string, args map[string]string )!string{
 //     mut args2 := map[string]string{}
 //     mut text2 := text
 //     for key in args.key_values{

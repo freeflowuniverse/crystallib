@@ -13,7 +13,7 @@ fn test_file_operations() {
 	assert text == 'abc'
 	mut exists := e.file_exists('/tmp/abc.txt')
 	assert exists == true
-	e.remove('/tmp/abc.txt') or { panic(err) }
+	e.delete('/tmp/abc.txt') or { panic(err) }
 	exists = e.file_exists('/tmp/abc.txt')
 	assert exists == false
 }
@@ -22,4 +22,10 @@ fn test_environ_get() {
 	mut e := ExecutorLocal{}
 	mut env := e.environ_get() or { panic(err) }
 	println(env)
+}
+
+fn test_node_new() {
+	mut factory := new()
+	mut node := factory.node_new(name: 'localhost') or { panic("Can't get new node: ${err}") }
+	println(node)
 }

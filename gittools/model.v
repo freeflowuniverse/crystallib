@@ -1,10 +1,12 @@
 module gittools
 
 pub enum GitStructureStatus {
+	new
 	init
 	loaded
 	error
 }
+
 pub enum GitStatus {
 	unknown
 	changes
@@ -13,27 +15,29 @@ pub enum GitStatus {
 }
 
 [heap]
-struct GitStructure {
+pub struct GitStructure {
 pub mut:
-	multibranch bool
-	root  string	
-	repos []GitRepo
+	config GSConfig
+	repos  []GitRepo
 	status GitStructureStatus
-	light  bool = true // if set then will clone only last history for all branches	
 }
 
-struct GitRepo {
+[heap]
+pub struct GitRepo {
 	id int [skip]
-	//only use when custom path
+pub:
+	// only use when custom path
 	path string
+	name string
 pub mut:
+	gs    &GitStructure [str: skip]
 	addr  GitAddr
 	state GitStatus
 }
 
-struct GitAddr {
-	// root string
+pub struct GitAddr {
 pub mut:
+	// root string
 	provider string
 	account  string
 	name     string // is the name of the repository

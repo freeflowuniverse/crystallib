@@ -1,0 +1,31 @@
+name: publishtools_build
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  Build-PublishTools:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref_name }} and your repository is ${{ github.repository }}."
+
+      - name: Install dependencies
+        run: sudo apt install -y libgc-dev tmux mc git rsync curl
+
+      - name: Setup Vlang
+        uses: vlang/setup-v@v1
+        with:
+          check-latest: true
+
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Add crystallib at the expected path
+        run: |
+          bash install.sh
+
+      # TODO: Publish release

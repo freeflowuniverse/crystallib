@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>gittools | vdoc</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  
+		<link rel="stylesheet" href="doc.css" />
+		<link rel="stylesheet" href="normalize.css" />
+		<script src="dark-mode.js"></script>
+</head>
+
+<body>
+  <div><a id="skip-to-content-link" href="#main-content">Skip to content</a></div>
+  <div id="page">
+    <header class="doc-nav hidden">
+      <div class="heading-container">
+        <div class="heading">
+          <div class="info">
+            <div class="module">crystallib</div>
+            <div class="toggle-version-container">
+              <span>0.1.0 e8c0b09</span>
+              <div id="dark-mode-toggle" role="switch" aria-checked="false" aria-label="Toggle dark mode"><svg xmlns="http://www.w3.org/2000/svg" class="light-icon" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" class="dark-icon" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><rect fill="none" height="24" width="24"/></g><g><g><g><path d="M11.1,12.08C8.77,7.57,10.6,3.6,11.63,2.01C6.27,2.2,1.98,6.59,1.98,12c0,0.14,0.02,0.28,0.02,0.42 C2.62,12.15,3.29,12,4,12c1.66,0,3.18,0.83,4.1,2.15C9.77,14.63,11,16.17,11,18c0,1.52-0.87,2.83-2.12,3.51 c0.98,0.32,2.03,0.5,3.11,0.5c3.5,0,6.58-1.8,8.37-4.52C18,17.72,13.38,16.52,11.1,12.08z"/></g><path d="M7,16l-0.18,0C6.4,14.84,5.3,14,4,14c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.62,0,2.49,0,3,0c1.1,0,2-0.9,2-2 C9,16.9,8.1,16,7,16z"/></g></g></svg>
+</div>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" id="toggle-menu" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+
+          </div>
+          <input type="text" id="search" placeholder="Search... (beta)" autocomplete="off">
+        </div>
+      </div>
+      <nav class="search hidden"></nav>
+      <nav class="content hidden">
+        <ul>
+          <li class="open"><div class="menu-row"><a href="./index.html">README</a></div></li><li class="open"><div class="menu-row"><a href="./actionsparser.html">actionsparser</a></div></li><li class="open"><div class="menu-row"><a href="./archiver.html">archiver</a></div></li><li class="open"><div class="menu-row"><a href="./books.html">books</a></div></li><li class="open"><div class="menu-row"><a href="./builder.html">builder</a></div></li><li class="open"><div class="menu-row"><a href="./calc.html">calc</a></div></li><li class="open"><div class="menu-row"><a href="./coinmarketcap.html">coinmarketcap</a></div></li><li class="open"><div class="menu-row"><a href="./console.html">console</a></div></li><li class="open"><div class="menu-row"><a href="./crpgp.html">crpgp</a></div></li><li class="open"><div class="menu-row"><a href="./crystaljson.html">crystaljson</a></div></li><li class="open"><div class="menu-row"><a href="./currency.html">currency</a></div></li><li class="open"><div class="menu-row"><a href="./data.html">data</a></div></li><li class="open"><div class="menu-row"><a href="./docker.html">docker</a></div></li><li class="open"><div class="menu-row"><a href="./encoder.html">encoder</a></div></li><li class="open"><div class="menu-row"><a href="./fftools.html">fftools</a></div></li><li class="open"><div class="menu-row"><a href="./github.html">github</a></div></li><li class="open active"><div class="menu-row"><a href="./gittools.html">gittools</a></div></li><li class="open"><div class="menu-row"><a href="./hostsfile.html">hostsfile</a></div></li><li class="open"><div class="menu-row"><a href="./httpconnection.html">httpconnection</a></div></li><li class="open"><div class="menu-row"><a href="./imagemagick.html">imagemagick</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">installers</a></div><ul><li><a href="./installers.base.html">base</a></li><li><a href="./installers.caddy.html">caddy</a></li><li><a href="./installers.crystaltools.html">crystaltools</a></li><li><a href="./installers.golang.html">golang</a></li><li><a href="./installers.imagemagick.html">imagemagick</a></li><li><a href="./installers.mdbook.html">mdbook</a></li><li><a href="./installers.repository.html">repository</a></li><li><a href="./installers.rust.html">rust</a></li><li><a href="./installers.swarm.html">swarm</a></li><li><a href="./installers.tailwind.html">tailwind</a></li><li><a href="./installers.tmux.html">tmux</a></li><li><a href="./installers.vlang.html">vlang</a></li><li><a href="./installers.zdb.html">zdb</a></li></ul></li><li class="open"><div class="menu-row"><a href="./ipaddress.html">ipaddress</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./keysafe.html">keysafe</a></div><ul><li><a href="./keysafe.secp256k1.html">secp256k1</a></li></ul></li><li class="open"><div class="menu-row"><a href="./markdowndocs.html">markdowndocs</a></div></li><li class="open"><div class="menu-row"><a href="./mnemonic.html">mnemonic</a></div></li><li class="open"><div class="menu-row"><a href="./natsclient.html">natsclient</a></div></li><li class="open"><div class="menu-row"><a href="./params.html">params</a></div></li><li class="open"><div class="menu-row"><a href="./pathlib.html">pathlib</a></div></li><li class="open"><div class="menu-row"><a href="./pgp.html">pgp</a></div></li><li class="open"><div class="menu-row"><a href="./process.html">process</a></div></li><li class="open"><div class="menu-row"><a href="./publisher2.html">publisher2</a></div></li><li class="open"><div class="menu-row"><a href="./redisclient.html">redisclient</a></div></li><li class="open"><div class="menu-row"><a href="./redisserver.html">redisserver</a></div></li><li class="open"><div class="menu-row"><a href="./resp.html">resp</a></div></li><li class="open"><div class="menu-row"><a href="./rootpath.html">rootpath</a></div></li><li class="open"><div class="menu-row"><a href="./serializers.html">serializers</a></div></li><li class="open"><div class="menu-row"><a href="./sshagent.html">sshagent</a></div></li><li class="open"><div class="menu-row"><a href="./taskletmanager.html">taskletmanager</a></div></li><li class="open"><div class="menu-row"><a href="./texttools.html">texttools</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">threefold</a></div><ul><li><a href="./threefold.liquid.html">liquid</a></li><li><a href="./threefold.macros.html">macros</a></li><li><a href="./threefold.nodepilot.html">nodepilot</a></li><li><a href="./threefold.rmb.html">rmb</a></li><li><a href="./threefold.terraform.html">terraform</a></li><li><a href="./threefold.tfgrid.html">tfgrid</a></li><li><a href="./threefold.tokens.html">tokens</a></li><li><a href="./threefold.twinclient.html">twinclient</a></li><li><a href="./threefold.zerohub.html">zerohub</a></li></ul></li><li class="open"><div class="menu-row"><a href="./timetools.html">timetools</a></div></li><li class="open"><div class="menu-row"><a href="./tmux.html">tmux</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">tools</a></div><ul><li><a href="./tools.cacher.html">cacher</a></li><li><a href="./tools.downloader.html">downloader</a></li></ul></li><li class="open"><div class="menu-row"><a href="./twinclient.html">twinclient</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./ui.html">ui</a></div><ul><li><a href="./ui.console.html">console</a></li><li><a href="./ui.telegram.html">telegram</a></li><li><a href="./ui.telegram.client.html">telegram.client</a></li><li><a href="./ui.uimodel.html">uimodel</a></li></ul></li><li class="open"><div class="menu-row"><a href="./vault.html">vault</a></div></li><li class="open"><div class="menu-row"><a href="./verasure.html">verasure</a></div></li><li class="open"><div class="menu-row"><a href="./vexecutor.html">vexecutor</a></div></li><li class="open"><div class="menu-row"><a href="./zdb.html">zdb</a></div></li>
+        </ul>
+      </nav>
+    </header>
+    <div class="doc-scrollview" id="main-content">
+      <div class="doc-container">
+        <div class="doc-content">
+          						<section id="readme_gittools" class="doc-node">
+							<div class="title"><h1> gittools <a href="#readme_gittools">#</a></h1></div><h1>GitTools</h1>
+<p>Are good tools to allow you to work with GIT in a programatic way</p>
+<p>Git repo's get checked out under</p>
+<ul>
+<li>multibranch: $homedir/code/multi/accountname/reponame/branchname/code</li>
+<li>single brach (default): $homedir/code/accountname/reponame/code</li>
+</ul>
+<blockquote>
+<p>TODO: need to check this multibranch could be its broken</p>
+</blockquote>
+<h2>Get a repo</h2>
+<p>This is the most basic usecase</p>
+<pre><code class="language-v">import gittools
+
+mut gs:=gittools.get()?
+url := &quot;https://github.com/threefoldfoundation/www_examplesite/tree/development/manual&quot;
+mut gr := gs.repo_get_from_url(url:url,pull:false, reset:false)
+
+println(gr)
+
+println(gr.path_content_get())
+
+</code></pre>
+<p>result is something like</p>
+<pre><code class="language-v">
+GitRepo{
+    id: 8
+    path: '/Users/despiegk1/code/github/threefoldfoundation/www_examplesite'
+    addr: freeflowuniverse.crystallib.gittools.GitAddr{
+        provider: 'github.com'
+        account: 'threefoldfoundation'
+        name: 'www_examplesite'
+        path: 'manual'
+        branch: 'development'
+        anker: ''
+        depth: 0
+    }
+    state: ok
+}
+
+#THIS IS THE PATH WHERE THE CONTENT GOT CHECKED OUT
+/Users/despiegk1/code/github/threefoldfoundation/www_examplesite/manual
+
+- bettertoken/info_bettertoken                 development             CHANGED
+- despiegk/data                                master                  CHANGED
+- despiegk/htmx_vweb                           master                  CHANGED
+- freeflowtribe/info_thesourcecode             development             CHANGED
+- freeflowuniverse/crystallib                  development_publisher3  CHANGED
+- freeflowuniverse/crystaltools                development_refactor    CHANGED
+- freeflowuniverse/freeflow_network            main                    CHANGED
+- freeflowuniverse/home                        development             CHANGED
+- freeflowuniverse/info_freeflow_internal      development             CHANGED
+- freeflowuniverse/info_freeflow_pub           development             CHANGED
+- freeflowuniverse/twinactions                 development             CHANGED
+- omni-sphere/info_vlang                       main                    CHANGED
+- ourworld-tsc/ourworld_books                  development             CHANGED
+- ourworld-tsc/ourworld_digital_bank           main                    CHANGED
+
+</code></pre>
+<h2>GIT ADDRESS</h2>
+<pre><code>url := 'https://github.com/vlang/v/blob/master/doc/docs.md#maps'
+obj := addr_get_from_url(url) or { panic('$err') }
+
+//result -&gt;
+GitAddr{
+    provider: 'github.com'
+    account: 'vlang'
+    name: 'v'
+    path: 'doc/docs.md'
+    branch: 'master'
+    anker: 'maps'
+    depth: 0
+}
+
+//another example starting from git@ ... url, works in same way
+url := 'git@github.com:crystaluniverse/publishtools/tree/development/doc'
+obj := addr_get_from_url(url) or { panic('$err') }
+
+tocompare := GitAddr{
+    provider: 'github.com'
+    account: 'crystaluniverse'
+    name: 'publishtools'
+    path: 'doc'
+    branch: 'development'
+    anker: ''
+    depth: 0
+}
+
+</code></pre>
+<p>is a cool mechanism to get the unique location to a part on page from a url</p>
+<h2>USAGE OF ENV VARIABLES</h2>
+<pre><code class="language-v">if 'MULTIBRANCH' in os.environ() {
+    gs.multibranch = true
+}
+
+if 'DIR_CODE' in os.environ() {
+    gs.config.root = os.environ()['DIR_CODE'] + '/'
+} else {
+    gs.config.root = '$os.home_dir()/code/'
+}
+</code></pre>
+<blockquote>
+<p>MULTIBRANCH and DIR_CODE can be set</p>
+</blockquote>
+<ul>
+<li>multibranch means we will checkout under $homedir/code/multi/accountname/reponame/branchname/code<ul>
+<li>in stead of  $homedir/code/accountname/reponame/code</li>
+</ul>
+</li>
+</ul>
+
+</section>
+
+						<section id="addr_get_from_path" class="doc-node">
+							<div class="title"><h2>fn addr_get_from_path <a href="#addr_get_from_path">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitaddr.v#L124"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">addr_get_from_path</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span>GitAddr</code></pre>
+<p>returns the git arguments starting from a git path</p>
+<pre><code>struct GitAddr{
+    mut:
+        provider string
+        account string
+        name string
+        path string		//path in the repo
+        branch string
+        anker string //position in the file
+}
+</code></pre>
+
+</section>
+						<section id="addr_get_from_url" class="doc-node">
+							<div class="title"><h2>fn addr_get_from_url <a href="#addr_get_from_url">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitaddr.v#L46"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">addr_get_from_url</span><span class="token punctuation">(</span>url <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span>GitAddr</code></pre>
+<p>return provider e.g. github, account is the name of the account, name of the repo, path if any this function will not checkout the code deals with quite some different formats Returns</p>
+<pre><code>struct GitAddr{
+    mut:
+        provider string
+        account string
+        name string
+        path string		//path in the repo
+        branch string
+        anker string //position in the file
+}
+</code></pre>
+
+</section>
+						<section id="get" class="doc-node">
+							<div class="title"><h2>fn get <a href="#get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/config.v#L25"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">get</span><span class="token punctuation">(</span>config GSConfig<span class="token punctuation">)</span> <span class="token operator">!</span>GitStructure</code></pre>
+<p>struct GSConfig{ filter string multibranch bool root string	//where will the code be checked out pull bool   //means we will pull even if the directory exists reset bool  //be careful, this means we will reset when pulling light       bool  // if set then will clone only last history for all branches		 }</p>
+
+</section>
+						<section id="GitStatus" class="doc-node">
+							<div class="title"><h2>enum GitStatus <a href="#GitStatus">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/model.v#L10"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">enum</span> <span class="token symbol">GitStatus</span> <span class="token punctuation">{</span>
+	unknown
+	changes
+	ok
+	error
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="GitStructureStatus" class="doc-node">
+							<div class="title"><h2>enum GitStructureStatus <a href="#GitStructureStatus">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/model.v#L3"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">enum</span> <span class="token symbol">GitStructureStatus</span> <span class="token punctuation">{</span>
+	new
+	init
+	loaded
+	error
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="GitLinkArgs" class="doc-node">
+							<div class="title"><h2>struct GitLinkArgs <a href="#GitLinkArgs">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/link.v#L5"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">GitLinkArgs</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span><span class="token punctuation">:</span>
+	gitsource <span class="token builtin">string</span> <span class="token comment">// the name of the git repo as used in gittools from the source</span>
+	gitdest   <span class="token builtin">string</span> <span class="token comment">// same but for destination</span>
+	source    <span class="token builtin">string</span> <span class="token comment">// if gitsource used, then will be append to the gitsource repo path</span>
+	dest      <span class="token builtin">string</span> <span class="token comment">// if gitdest used, then will be append to the gitfest repo path, to see where link is created</span>
+	pull      <span class="token builtin">bool</span>   <span class="token comment">// means we will pull source & destination</span>
+	reset     <span class="token builtin">bool</span>   <span class="token comment">// means we will reset changes, they will be overwritten</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="GitAddr" class="doc-node">
+							<div class="title"><h2>struct GitAddr <a href="#GitAddr">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/model.v#L38"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">GitAddr</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+<span class="token comment">// root string</span>
+	provider <span class="token builtin">string</span>
+	account  <span class="token builtin">string</span>
+	name     <span class="token builtin">string</span> <span class="token comment">// is the name of the repository</span>
+	path     <span class="token builtin">string</span> <span class="token comment">// path in the repo (not on filesystem)</span>
+	branch   <span class="token builtin">string</span>
+	anker    <span class="token builtin">string</span> <span class="token comment">// position in the file</span>
+	depth    <span class="token builtin">int</span>    <span class="token comment">// 0 means we have all depth</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="GitAddr.url_get" class="doc-node">
+							<div class="title"><h2>fn (GitAddr) url_get <a href="#GitAddr.url_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitaddr.v#L6"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>addr GitAddr<span class="token punctuation">)</span> <span class="token function">url_get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="GitAddr.url_http_get" class="doc-node">
+							<div class="title"><h2>fn (GitAddr) url_http_get <a href="#GitAddr.url_http_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitaddr.v#L18"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>addr GitAddr<span class="token punctuation">)</span> <span class="token function">url_http_get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="GitAddr.url_ssh_get" class="doc-node">
+							<div class="title"><h2>fn (GitAddr) url_ssh_get <a href="#GitAddr.url_ssh_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitaddr.v#L14"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>addr GitAddr<span class="token punctuation">)</span> <span class="token function">url_ssh_get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="GitStructure" class="doc-node">
+							<div class="title"><h2>struct GitStructure <a href="#GitStructure">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/model.v#L18"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">GitStructure</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	config GSConfig
+	repos  <span class="token punctuation">[</span><span class="token punctuation">]</span>GitRepo
+	status GitStructureStatus
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="GitStructure.repos_print" class="doc-node">
+							<div class="title"><h2>fn (GitStructure) repos_print <a href="#GitStructure.repos_print">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/factory.v#L54"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> gitstructure GitStructure<span class="token punctuation">)</span> <span class="token function">repos_print</span><span class="token punctuation">(</span>args GSArgs<span class="token punctuation">)</span></code></pre>
+<p>print the repos</p>
+<p>struct GSArgs { 	filter  string		//if used will only show the repo's which have the filter string inside 	pull    bool		// means when getting new repo will pull even when repo is already tehre 	force   bool		// means we will force a pull and reset old content	</p>
+
+</section>
+						<section id="GitStructure.commit" class="doc-node">
+							<div class="title"><h2>fn (GitStructure) commit <a href="#GitStructure.commit">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gittools_cmd.v#L36"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> gitstructure GitStructure<span class="token punctuation">)</span> <span class="token function">commit</span><span class="token punctuation">(</span>args GSArgs<span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="GitStructure.link" class="doc-node">
+							<div class="title"><h2>fn (GitStructure) link <a href="#GitStructure.link">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/link.v#L32"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> gs GitStructure<span class="token punctuation">)</span> <span class="token function">link</span><span class="token punctuation">(</span>args GitLinkArgs<span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>link a source to a destination, source is where the data is, where we link to the source or dest can be a path or git url, when starting with http or git then we consider it to be a git url</p>
+<p>struct GitLinkArgs { 	gitsource string   // the name of the git repo as used in gittools from the source 	gitdest string		//same but for destination 	source string		//if gitsource used, then will be append to the gitsource repo path 	dest string			//if gitdest used, then will be append to the gitfest repo path, to see where link is created 	pull bool			//means we will pull source &amp; destination 	reset bool			//means we will reset changes, they will be overwritten }</p>
+<p>used to process something like: !!git.link     gitsource:owb gitdest:books     source:'feasibility_study/Capabilities'     to:'feasibility_study_internet/src/capabilities2'</p>
+
+</section>
+						<section id="GitStructure.list" class="doc-node">
+							<div class="title"><h2>fn (GitStructure) list <a href="#GitStructure.list">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/factory.v#L68"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> gitstructure GitStructure<span class="token punctuation">)</span> <span class="token function">list</span><span class="token punctuation">(</span>args GSArgs<span class="token punctuation">)</span></code></pre>
+
+
+</section>
+						<section id="GitStructure.pull" class="doc-node">
+							<div class="title"><h2>fn (GitStructure) pull <a href="#GitStructure.pull">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gittools_cmd.v#L80"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> gitstructure GitStructure<span class="token punctuation">)</span> <span class="token function">pull</span><span class="token punctuation">(</span>args GSArgs<span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="GitStructure.push" class="doc-node">
+							<div class="title"><h2>fn (GitStructure) push <a href="#GitStructure.push">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gittools_cmd.v#L64"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> gitstructure GitStructure<span class="token punctuation">)</span> <span class="token function">push</span><span class="token punctuation">(</span>args GSArgs<span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="GitStructure.pushcommit" class="doc-node">
+							<div class="title"><h2>fn (GitStructure) pushcommit <a href="#GitStructure.pushcommit">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gittools_cmd.v#L5"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> gitstructure GitStructure<span class="token punctuation">)</span> <span class="token function">pushcommit</span><span class="token punctuation">(</span>args GSArgs<span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="GitStructure.repo_exists" class="doc-node">
+							<div class="title"><h2>fn (GitStructure) repo_exists <a href="#GitStructure.repo_exists">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitstructure.v#L148"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> gitstructure GitStructure<span class="token punctuation">)</span> <span class="token function">repo_exists</span><span class="token punctuation">(</span>addr RepoGetArgs<span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+<p>to use gitstructure.repo_get({account:&quot;something&quot;,name:&quot;myname&quot;}) or gitstructure.repo_get({name:&quot;myname&quot;})</p>
+
+</section>
+						<section id="GitStructure.repo_get" class="doc-node">
+							<div class="title"><h2>fn (GitStructure) repo_get <a href="#GitStructure.repo_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitstructure.v#L120"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> gitstructure GitStructure<span class="token punctuation">)</span> <span class="token function">repo_get</span><span class="token punctuation">(</span>args RepoGetArgs<span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>GitRepo</code></pre>
+<p>will return first found git repo to use gitstructure.repo_get({account:&quot;something&quot;,name:&quot;myname&quot;}) or gitstructure.repo_get({name:&quot;myname&quot;}) struct RepoGetArgs { 	account string 	name    string // is the name of the repository 	pull    bool   // will pull if this is set, but not reset 	reset bool //this means will pull and reset all changes } THIS FUNCTION DOES NOT EXECUTE THE CHECK !!!</p>
+
+</section>
+						<section id="GitStructure.repo_get_from_addr" class="doc-node">
+							<div class="title"><h2>fn (GitStructure) repo_get_from_addr <a href="#GitStructure.repo_get_from_addr">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitstructure.v#L52"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> gitstructure GitStructure<span class="token punctuation">)</span> <span class="token function">repo_get_from_addr</span><span class="token punctuation">(</span>addr GitAddr<span class="token punctuation">,</span> args RepoGetFromUrlArgs<span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>GitRepo</code></pre>
+<p>get gitrepo from gitaddress struct struct RepoGetFromUrlArgs { 	url    string 	branch string 	pull   bool // will pull if this is set 	reset bool //this means will pull and reset all changes 	name   string } pub struct GitAddr { 	provider string 	account  string 	name     string // is the name of the repository 	path     string // path in the repo (not on filesystem) 	branch   string 	anker    string // position in the file 	depth    int    // 0 means we have all depth }</p>
+
+</section>
+						<section id="GitStructure.repo_get_from_path" class="doc-node">
+							<div class="title"><h2>fn (GitStructure) repo_get_from_path <a href="#GitStructure.repo_get_from_path">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitstructure.v#L88"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> gitstructure GitStructure<span class="token punctuation">)</span> <span class="token function">repo_get_from_path</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">,</span> path Path<span class="token punctuation">,</span> pull <span class="token builtin">bool</span><span class="token punctuation">,</span> reset <span class="token builtin">bool</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>GitRepo</code></pre>
+<p>will return repo starting from a path if .git not in the path will go for parent untill .git found TODO: maybe refactor to implement fn like repo_get_from_url</p>
+
+</section>
+						<section id="GitStructure.repo_get_from_url" class="doc-node">
+							<div class="title"><h2>fn (GitStructure) repo_get_from_url <a href="#GitStructure.repo_get_from_url">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitstructure.v#L23"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> gitstructure GitStructure<span class="token punctuation">)</span> <span class="token function">repo_get_from_url</span><span class="token punctuation">(</span>args RepoGetFromUrlArgs<span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>GitRepo</code></pre>
+<p>will get repo starting from url, if the repo does not exist, only then will pull if pull is set on true, will then pull as well struct RepoGetFromUrlArgs { 	url    string 	branch string 	pull   bool // will pull if this is set 	reset bool //this means will pull and reset all changes }</p>
+
+</section>
+						<section id="GitStructure.repos_get" class="doc-node">
+							<div class="title"><h2>fn (GitStructure) repos_get <a href="#GitStructure.repos_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/factory.v#L30"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> gitstructure GitStructure<span class="token punctuation">)</span> <span class="token function">repos_get</span><span class="token punctuation">(</span>args GSArgs<span class="token punctuation">)</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>GitRepo</code></pre>
+<p>get a list of repo's which are in line to the args</p>
+<p>struct GSArgs { 	filter  string		//if used will only show the repo's which have the filter string inside 	pull    bool		// means when getting new repo will pull even when repo is already tehre 	force   bool		// means we will force a pull and reset old content	</p>
+
+</section>
+						<section id="GitStructure.codepath" class="doc-node">
+							<div class="title"><h2>fn (GitStructure) codepath <a href="#GitStructure.codepath">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/factory.v#L152"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> gs GitStructure<span class="token punctuation">)</span> <span class="token function">codepath</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="RepoGetFromUrlArgs" class="doc-node">
+							<div class="title"><h2>struct RepoGetFromUrlArgs <a href="#RepoGetFromUrlArgs">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitstructure.v#L6"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">RepoGetFromUrlArgs</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	url    <span class="token builtin">string</span>
+	branch <span class="token builtin">string</span>
+	pull   <span class="token builtin">bool</span> <span class="token comment">// will pull if this is set</span>
+	reset  <span class="token builtin">bool</span> <span class="token comment">// this means will pull and reset all changes</span>
+	name   <span class="token builtin">string</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="GSArgs" class="doc-node">
+							<div class="title"><h2>struct GSArgs <a href="#GSArgs">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/factory.v#L14"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">GSArgs</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	filter  <span class="token builtin">string</span> <span class="token comment">// if used will only show the repo's which have the filter string inside</span>
+	pull    <span class="token builtin">bool</span>   <span class="token comment">// means when getting new repo will pull even when repo is already tehre</span>
+	force   <span class="token builtin">bool</span>   <span class="token comment">// means we will force a pull and reset old content	</span>
+	message <span class="token builtin">string</span> <span class="token comment">// if we want to do a default commit with a message	</span>
+<span class="token comment">// show    bool	</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="GSConfig" class="doc-node">
+							<div class="title"><h2>struct GSConfig <a href="#GSConfig">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/config.v#L6"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">GSConfig</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	filter      <span class="token builtin">string</span>
+	multibranch <span class="token builtin">bool</span>
+	root        <span class="token builtin">string</span> <span class="token comment">// where will the code be checked out</span>
+	pull        <span class="token builtin">bool</span>   <span class="token comment">// means we will pull even if the directory exists</span>
+	reset       <span class="token builtin">bool</span>   <span class="token comment">// be careful, this means we will reset when pulling</span>
+	light       <span class="token builtin">bool</span>   <span class="token comment">// if set then will clone only last history for all branches		</span>
+	log         <span class="token builtin">bool</span>   <span class="token comment">// means we log the git statements</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="RepoGetArgs" class="doc-node">
+							<div class="title"><h2>struct RepoGetArgs <a href="#RepoGetArgs">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitstructure.v#L104"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">RepoGetArgs</span> <span class="token punctuation">{</span>
+<span class="token keyword">mut</span><span class="token punctuation">:</span>
+	account <span class="token builtin">string</span>
+	name    <span class="token builtin">string</span> <span class="token comment">// is the name of the repository</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="GitRepo" class="doc-node">
+							<div class="title"><h2>struct GitRepo <a href="#GitRepo">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/model.v#L26"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">GitRepo</span> <span class="token punctuation">{</span>
+	id <span class="token builtin">int</span> <span class="token punctuation">[</span>skip<span class="token punctuation">]</span>
+<span class="token keyword">pub</span><span class="token punctuation">:</span>
+<span class="token comment">// only use when custom path</span>
+	path <span class="token builtin">string</span>
+	name <span class="token builtin">string</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	gs    <span class="token operator">&</span>GitStructure <span class="token punctuation">[</span>str<span class="token punctuation">:</span> skip<span class="token punctuation">]</span>
+	addr  GitAddr
+	state GitStatus
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="GitRepo.remove_changes" class="doc-node">
+							<div class="title"><h2>fn (GitRepo) remove_changes <a href="#GitRepo.remove_changes">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitrepo.v#L268"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> repo GitRepo<span class="token punctuation">)</span> <span class="token function">remove_changes</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>remove all changes of the repo, be careful</p>
+
+</section>
+						<section id="GitRepo.branch_switch" class="doc-node">
+							<div class="title"><h2>fn (GitRepo) branch_switch <a href="#GitRepo.branch_switch">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitrepo.v#L308"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> repo GitRepo<span class="token punctuation">)</span> <span class="token function">branch_switch</span><span class="token punctuation">(</span>branchname <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="GitRepo.changes" class="doc-node">
+							<div class="title"><h2>fn (GitRepo) changes <a href="#GitRepo.changes">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitrepo.v#L93"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> repo GitRepo<span class="token punctuation">)</span> <span class="token function">changes</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">bool</span></code></pre>
+<p>if there are changes then will return 'true', otherwise 'false'</p>
+
+</section>
+						<section id="GitRepo.check" class="doc-node">
+							<div class="title"><h2>fn (GitRepo) check <a href="#GitRepo.check">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitrepo.v#L146"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> repo GitRepo<span class="token punctuation">)</span> <span class="token function">check</span><span class="token punctuation">(</span>pull_soft_ <span class="token builtin">bool</span><span class="token punctuation">,</span> reset_force_ <span class="token builtin">bool</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>this is the main git functionality to get git repo, update, reset, ...</p>
+
+</section>
+						<section id="GitRepo.commit" class="doc-node">
+							<div class="title"><h2>fn (GitRepo) commit <a href="#GitRepo.commit">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitrepo.v#L248"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> repo GitRepo<span class="token punctuation">)</span> <span class="token function">commit</span><span class="token punctuation">(</span>msg <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="GitRepo.delete" class="doc-node">
+							<div class="title"><h2>fn (GitRepo) delete <a href="#GitRepo.delete">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitrepo.v#L336"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> repo GitRepo<span class="token punctuation">)</span> <span class="token function">delete</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>deletes git repository</p>
+
+</section>
+						<section id="GitRepo.fetch_all" class="doc-node">
+							<div class="title"><h2>fn (GitRepo) fetch_all <a href="#GitRepo.fetch_all">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitrepo.v#L327"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> repo GitRepo<span class="token punctuation">)</span> <span class="token function">fetch_all</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="GitRepo.path" class="doc-node">
+							<div class="title"><h2>fn (GitRepo) path <a href="#GitRepo.path">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitrepo.v#L69"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> repo GitRepo<span class="token punctuation">)</span> <span class="token function">path</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="GitRepo.path_content_get" class="doc-node">
+							<div class="title"><h2>fn (GitRepo) path_content_get <a href="#GitRepo.path_content_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitrepo.v#L60"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> repo GitRepo<span class="token punctuation">)</span> <span class="token function">path_content_get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="GitRepo.path_get" class="doc-node">
+							<div class="title"><h2>fn (GitRepo) path_get <a href="#GitRepo.path_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitrepo.v#L73"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> repo GitRepo<span class="token punctuation">)</span> <span class="token function">path_get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="GitRepo.path_relative" class="doc-node">
+							<div class="title"><h2>fn (GitRepo) path_relative <a href="#GitRepo.path_relative">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitrepo.v#L84"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> repo GitRepo<span class="token punctuation">)</span> <span class="token function">path_relative</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="GitRepo.pull" class="doc-node">
+							<div class="title"><h2>fn (GitRepo) pull <a href="#GitRepo.pull">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitrepo.v#L231"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> repo GitRepo<span class="token punctuation">)</span> <span class="token function">pull</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>pulls remote content in, will fail if there are local changes</p>
+
+</section>
+						<section id="GitRepo.pull_reset" class="doc-node">
+							<div class="title"><h2>fn (GitRepo) pull_reset <a href="#GitRepo.pull_reset">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitrepo.v#L225"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> repo GitRepo<span class="token punctuation">)</span> <span class="token function">pull_reset</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>pulls remote content in, will reset changes</p>
+
+</section>
+						<section id="GitRepo.push" class="doc-node">
+							<div class="title"><h2>fn (GitRepo) push <a href="#GitRepo.push">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitrepo.v#L292"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> repo GitRepo<span class="token punctuation">)</span> <span class="token function">push</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="GitRepo.branch_get" class="doc-node">
+							<div class="title"><h2>fn (GitRepo) branch_get <a href="#GitRepo.branch_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/gittools/gitrepo.v#L300"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> repo GitRepo<span class="token punctuation">)</span> <span class="token function">branch_get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+
+          <div class="footer">
+            Powered by vdoc.
+          </div>
+        </div>
+        <div class="doc-toc"><ul><li class="open"><a href="#readme_gittools">README</a></li>
+<li class="open"><a href="#addr_get_from_path">fn addr_get_from_path</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#addr_get_from_url">fn addr_get_from_url</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#get">fn get</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#GitStatus">enum GitStatus</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#GitStructureStatus">enum GitStructureStatus</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#GitLinkArgs">struct GitLinkArgs</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#GitAddr">struct GitAddr</a>        <ul>
+<li><a href="#GitAddr.url_get">fn url_get</a></li>
+<li><a href="#GitAddr.url_http_get">fn url_http_get</a></li>
+<li><a href="#GitAddr.url_ssh_get">fn url_ssh_get</a></li>
+</ul>
+</li>
+<li class="open"><a href="#GitStructure">struct GitStructure</a>        <ul>
+<li><a href="#GitStructure.repos_print">fn repos_print</a></li>
+<li><a href="#GitStructure.commit">fn commit</a></li>
+<li><a href="#GitStructure.link">fn link</a></li>
+<li><a href="#GitStructure.list">fn list</a></li>
+<li><a href="#GitStructure.pull">fn pull</a></li>
+<li><a href="#GitStructure.push">fn push</a></li>
+<li><a href="#GitStructure.pushcommit">fn pushcommit</a></li>
+<li><a href="#GitStructure.repo_exists">fn repo_exists</a></li>
+<li><a href="#GitStructure.repo_get">fn repo_get</a></li>
+<li><a href="#GitStructure.repo_get_from_addr">fn repo_get_from_addr</a></li>
+<li><a href="#GitStructure.repo_get_from_path">fn repo_get_from_path</a></li>
+<li><a href="#GitStructure.repo_get_from_url">fn repo_get_from_url</a></li>
+<li><a href="#GitStructure.repos_get">fn repos_get</a></li>
+<li><a href="#GitStructure.codepath">fn codepath</a></li>
+</ul>
+</li>
+<li class="open"><a href="#RepoGetFromUrlArgs">struct RepoGetFromUrlArgs</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#GSArgs">struct GSArgs</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#GSConfig">struct GSConfig</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#RepoGetArgs">struct RepoGetArgs</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#GitRepo">struct GitRepo</a>        <ul>
+<li><a href="#GitRepo.remove_changes">fn remove_changes</a></li>
+<li><a href="#GitRepo.branch_switch">fn branch_switch</a></li>
+<li><a href="#GitRepo.changes">fn changes</a></li>
+<li><a href="#GitRepo.check">fn check</a></li>
+<li><a href="#GitRepo.commit">fn commit</a></li>
+<li><a href="#GitRepo.delete">fn delete</a></li>
+<li><a href="#GitRepo.fetch_all">fn fetch_all</a></li>
+<li><a href="#GitRepo.path">fn path</a></li>
+<li><a href="#GitRepo.path_content_get">fn path_content_get</a></li>
+<li><a href="#GitRepo.path_get">fn path_get</a></li>
+<li><a href="#GitRepo.path_relative">fn path_relative</a></li>
+<li><a href="#GitRepo.pull">fn pull</a></li>
+<li><a href="#GitRepo.pull_reset">fn pull_reset</a></li>
+<li><a href="#GitRepo.push">fn push</a></li>
+<li><a href="#GitRepo.branch_get">fn branch_get</a></li>
+</ul>
+</li>
+</ul></div>
+      </div>
+    </div>
+  </div>
+  <script src="doc.js"></script>
+  <script async src="search_index.js"></script>
+</body>
+
+</html>

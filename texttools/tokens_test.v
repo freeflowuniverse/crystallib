@@ -13,7 +13,6 @@ fn test_tokens() {
 
 	'
 	r := tokenize(text)
-	println(r)
 
 	r2 := TokenizerResult{
 		items: [TokenizerItem{
@@ -81,14 +80,11 @@ fn test_tokens() {
 // 	a := dedent(text_out2).trim(' \n')
 // 	b := dedent(compare).trim(' \n')
 
-// 	println('"""\n$a"""')
-// 	println('"""\n$b"""')
-
 // 	assert a == b
 // }
 
 fn test_tokens3() {
-	mut text := '
+	mut text := r'
     - [Definitions](tftech:definitions)
     (koekoe)
     (great )
@@ -105,7 +101,6 @@ fn test_tokens3() {
 	'
 
 	r := tokenize(text)
-	println(r)
 
 	assert r == TokenizerResult{
 		items: [TokenizerItem{
@@ -113,5 +108,4 @@ fn test_tokens3() {
 			matchstring: 'test'
 		}]
 	}
-
 }

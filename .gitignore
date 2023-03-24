@@ -16,3 +16,6 @@ _docs/
 crystallib
 vls.*
 vls.log
+runner
+node_modules/
+

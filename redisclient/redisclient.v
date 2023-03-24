@@ -3,17 +3,20 @@ module redisclient
 // original code see https://github.com/patrickpissurno/vredis/blob/master/vredis_test.v
 // credits see there as well (-:
 import net
+// import sync
 // import strconv
 import time
-import resp2
+import freeflowuniverse.crystallib.resp
+import os
 
 const default_read_timeout = net.infinite_timeout
 
+[heap]
 pub struct Redis {
 pub mut:
 	connected bool
 	socket    net.TcpConn
-	// reader &io.BufferedReader
+	addr      string
 }
 
 pub struct SetOpts {
@@ -35,133 +38,93 @@ pub enum KeyType {
 	t_unknown
 }
 
-[heap]
-struct RedisFactory {
-mut:
-	instances    map[string]&Redis
-}
-
-//needed to get singleton
-fn init2() RedisFactory {
-	mut f := redisclient.RedisFactory{
-	}	
-	return f
-}
-
-
-//singleton creation
-const factory = init2()
-
-//make sure to use new first, so that the connection has been initted
-//then you can get it everywhere
-pub fn get_local() ?&Redis {
-	name := 'local'
-	mut f := redisclient.factory
-	if ! (name in f.instances){
-		rediscl := redisclient.connect("localhost:6379")?
-		f.instances[name] = &rediscl
-	}
-	return f.instances[name]	
-}
-
-
 // https://redis.io/topics/protocol
-pub fn connect(addr string) ?Redis {
-	mut socket := net.dial_tcp(addr) or { return Redis{
-		connected: false
-	} }
-
-	socket.set_read_timeout(default_read_timeout)
-
-	return Redis{
-		connected: true,
-		socket: socket
-		// reader: io.new_buffered_reader(reader: io.make_reader(socket))
+// examples:
+//   localhost:6379
+//   /tmp/redis-default.sock
+pub fn get(addr string) !Redis {
+	mut r := Redis{
+		addr: addr
 	}
+	r.socket_connect()!
+	return r
 }
 
-pub fn (mut r Redis) set_read_timeout(timeout time.Duration) {
-	r.socket.set_read_timeout(timeout)
+pub fn (mut r Redis) socket_connect() ! {
+	addr := os.expand_tilde_to_home(r.addr)
+	// println(' - REDIS CONNECT: ${addr}')
+	r.socket = net.dial_tcp(addr)!
+	r.socket.set_blocking(true)!
+	r.socket.set_read_timeout(10 * time.second)
+	r.socket.peer_addr()!
+	r.connected = true
+	// println(" - connect ok")
 }
 
-// would be faster to do a buffered reader, but for now ok I guess
-pub fn (mut r Redis) read_line() ?[]byte {
-	mut buf := []byte{len: 1}
-	mut out := []byte{}
-	for {
-		r.socket.read(mut buf) ?
-		if buf == '\r'.bytes() {
-			continue
-		}
-		if buf == '\n'.bytes() {
-			// if out.bytestr() != '' {
-			// 	println("readline result:'$out.bytestr()'")
-			// }
-			return out
-		}
-		out << buf
-	}
-	// mut res := r.socket.read_line()
-	// // need to wait till something comes back, shouldn't this block? TODO:
-
-	// for _ in 0 .. 10000 {
-	// 	if res != '' {
-	// 		res = res.trim('\n\r')
-	// 		println("readline result:'$res'")
-	// 		return res.bytes()
-	// 	}
-	// 	// ugly hack
-	// 	time.sleep(time.microsecond)
-	// 	res = r.socket.read_line()
-	// 	println(" -- '$res'")
-	// }
-
-	return error('timeout')
-}
-
-fn (mut r Redis) write_line(data_ []byte) ? {
-	// is there no more efficient way?
-	mut data := data_.clone()
-	data << '\r'.bytes()
-	data << '\n'.bytes()
-	println(' >> ' + data.bytestr())
-
-	// mac os fix, this will fails if not connected
+// THIS IS A WORKAROUND, not sure why we need this, shouldn't be here
+fn (mut r Redis) socket_check() ! {
 	r.socket.peer_addr() or {
-		r.connected = false
-		println('[-] could not fetch peer address')
-		return
+		eprintln(' - re-connect socket for redis')
+		r.socket_connect()!
 	}
-
-	// this will silently close software
-	// if socket is not connected (on macos)
-	r.socket.write(data) ?
 }
 
-fn (mut r Redis) write(data []byte) ? {
-	_ := r.socket.write(data) ?
+pub fn (mut r Redis) read_line() !string {
+	return r.socket.read_line().trim_right('\r\n')
 }
 
-// write resp2 value to the redis channel
-pub fn (mut r Redis) write_rval(val resp2.RValue) ? {
-	// macos: needed to avoid silent exit
-	r.socket.peer_addr() or {
-		println('[-] could not fetch peer address')
-		return
-	}
+const cr_lf_bytes = [u8(`\r`), `\n`]
 
-	_ := r.socket.write(val.encode()) ?
+fn (mut r Redis) write_line(data []u8) ! {
+	r.socket_check()!
+	r.write(data)!
+	r.write(redisclient.cr_lf_bytes)!
+}
+
+// write *all the data* into the socket
+// This function loops, till *everything is written*
+// (some of the socket write ops could be partial)
+fn (mut r Redis) write(data []u8) ! {
+	r.socket_check()!
+	mut remaining := data.len
+	for remaining > 0 {
+		// zdbdata[data.len - remaining..].bytestr())
+		written_bytes := r.socket.write(data[data.len - remaining..])!
+		remaining -= written_bytes
+	}
+}
+
+// write resp value to the redis channel
+pub fn (mut r Redis) write_rval(val resp.RValue) ! {
+	r.socket_check()!
+	r.write(val.encode())!
 }
 
 // write list of strings to redis challen
-fn (mut r Redis) write_cmds(items []string) ? {
-	a := resp2.r_list_bstring(items)
-	r.write_rval(a) ?
+fn (mut r Redis) write_cmd(item string) ! {
+	a := resp.r_bytestring(item.bytes())
+	r.write_rval(a)!
 }
 
-fn (mut r Redis) read(size int) ?[]byte {
-	mut buf := []byte{len: size}
-	_ := r.socket.read(mut buf) ?
+// write list of strings to redis challen
+fn (mut r Redis) write_cmds(items []string) ! {
+	// if items.len==1{
+	// 	a := resp.r_bytestring(items[0].bytes())
+	// 	r.write_rval(a)!
+	// }{
+	a := resp.r_list_bstring(items)
+	r.write_rval(a)!
+	// }	
+}
+
+fn (mut r Redis) read(size int) ![]u8 {
+	r.socket_check() or {}
+	mut buf := []u8{len: size}
+	mut remaining := size
+	for remaining > 0 {
+		read_bytes := r.socket.read(mut buf[buf.len - remaining..])!
+		remaining -= read_bytes
+	}
 	return buf
 }
 

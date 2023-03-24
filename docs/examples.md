@@ -1,1 +1,0 @@
-see https://github.com/v-community/v_by_example

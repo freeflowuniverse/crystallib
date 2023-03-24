@@ -1,16 +1,15 @@
 module ipaddress
 
-import regex
 import os
-import process
+import freeflowuniverse.crystallib.process
 
 pub struct IPAddress {
-pub:
+pub mut:
 	addr string
 	// e.g. 24, default not specified
 	mask int
 	port int
-	cat  IpAddressType = IpAddressType.ipv4
+	cat  IpAddressType = .ipv4
 }
 
 pub enum IpAddressType {
@@ -28,8 +27,7 @@ pub enum IpAddressType {
 // format ipv6: [x:x:x:x:x:x:x:x]:p TODO: implement
 // format ipv6: x:x:x:x:x:x:x:x
 // format ipv6: x::x/96
-
-pub fn ipaddress_new(addr_string string) ?IPAddress {
+pub fn ipaddress_new(addr_string string) !IPAddress {
 	mut cat := IpAddressType.ipv4
 	mut addr := addr_string
 	mut port := ''
@@ -39,27 +37,27 @@ pub fn ipaddress_new(addr_string string) ?IPAddress {
 		addr = addr_string.replace('localhost', '127.0.0.1')
 	}
 
-	if '/' in addr {
+	if addr.contains('/') {
 		splitted := addr.split(addr)
 		if splitted.len == 2 {
 			mask = splitted[1].int()
 			addr = splitted[0]
 		} else {
-			return error('syntax error in ipaddr: $addr, should only have one /')
+			return error('syntax error in ipaddr: ${addr}, should only have one /')
 		}
 	}
 
-	if '::' in addr && addr.count('::') == 1 {
+	if addr.contains('::') && addr.count('::') == 1 {
 		cat = IpAddressType.ipv6
 		s := addr.split('::')
 		addr, port = s[0], s[1]
-	} else if ':' in addr && addr.count(':') == 1 {
+	} else if addr.contains(':') && addr.count(':') == 1 {
 		cat = IpAddressType.ipv4
 		s := addr.split(':')
 		addr, port = s[0], s[1]
-	} else if ':' in addr && addr.count(':') > 1 {
+	} else if addr.contains(':') && addr.count(':') > 1 {
 		cat = IpAddressType.ipv6
-	} else if '.' in addr && addr.count('.') == 3 {
+	} else if addr.contains('.') && addr.count('.') == 3 {
 		cat = IpAddressType.ipv4
 	} else {
 		return error('Invalid Ip address string')
@@ -72,11 +70,12 @@ pub fn ipaddress_new(addr_string string) ?IPAddress {
 		mask: mask
 	}
 
-	ip.check() ?
+	ip.check()!
 
 	return ip
 }
 
+[params]
 pub struct PingArgs {
 pub mut:
 	retry   int
@@ -102,12 +101,12 @@ pub fn (mut ipaddr IPAddress) ping(args_ PingArgs) bool {
 
 	mut cmd := ''
 	if ipaddr.cat == IpAddressType.ipv4 {
-		cmd = 'ping -c 1 -W $args.timeout $ipaddr.addr'
+		cmd = 'ping -c 1 -W ${args.timeout} ${ipaddr.addr}'
 	} else {
 		if process.is_osx() {
-			cmd = 'ping6 -c 1 -i $timeout $ipaddr.addr'
+			cmd = 'ping6 -c 1 -i ${timeout} ${ipaddr.addr}'
 		} else {
-			cmd = 'ping -6 -c 1 -W $args.timeout $ipaddr.addr'
+			cmd = 'ping -6 -c 1 -W ${args.timeout} ${ipaddr.addr}'
 		}
 	}
 	for _ in 0 .. args.retry {
@@ -122,34 +121,34 @@ pub fn (mut ipaddr IPAddress) ping(args_ PingArgs) bool {
 }
 
 // check if ipaddress is well formed
-pub fn (mut ipaddr IPAddress) check() ? {
-	mut query := r''
-	if ipaddr.cat == IpAddressType.ipv4 {
-		query = r'^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
-	} else {
-		query = r'(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))'
-	}
-	mut re := regex.regex_opt(query) or { panic(err) }
+pub fn (mut ipaddr IPAddress) check() ! {
+	// mut query := r''
+	// if ipaddr.cat == IpAddressType.ipv4 {
+	// 	query = r'^(?:(?:25[0-5]|2[0-5][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+	// } else {
+	// 	query = r'(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))'
+	// }
+	// mut re := regex.regex_opt(query) or { return error("Cannot check regex on ipaddr:\n$ipaddr\n $err") }
 
-	start, _ := re.match_string(ipaddr.addr)
+	// start, _ := re.match_string(ipaddr.addr)
 
-	if start < 0 {
-		return error('Invalid Ip address string. $ipaddr')
-	}
+	// if start < 0 {
+	// 	return error('Invalid Ip address string. $ipaddr')
+	// }
 }
 
-fn (mut ipaddr IPAddress) address() ?string {
+fn (mut ipaddr IPAddress) address() !string {
 	if ipaddr.cat == IpAddressType.ipv4 {
 		if ipaddr.port > 0 {
 			if ipaddr.mask > 0 {
 				return error('cannot have mask when port specified')
 			}
-			return '$ipaddr.addr:$ipaddr.port'
+			return '${ipaddr.addr}:${ipaddr.port}'
 		} else {
 			if ipaddr.mask > 0 {
-				return '$ipaddr.addr/$ipaddr.mask'
+				return '${ipaddr.addr}/${ipaddr.mask}'
 			} else {
-				return '$ipaddr.addr'
+				return '${ipaddr.addr}'
 			}
 		}
 	} else {
@@ -157,12 +156,12 @@ fn (mut ipaddr IPAddress) address() ?string {
 			if ipaddr.mask > 0 {
 				return error('cannot have mask when port specified')
 			}
-			return '[$ipaddr.addr]:$ipaddr.port'
+			return '[${ipaddr.addr}]:${ipaddr.port}'
 		} else {
 			if ipaddr.mask > 0 {
-				return '$ipaddr.addr/$ipaddr.mask'
+				return '${ipaddr.addr}/${ipaddr.mask}'
 			} else {
-				return '$ipaddr.addr'
+				return '${ipaddr.addr}'
 			}
 		}
 	}

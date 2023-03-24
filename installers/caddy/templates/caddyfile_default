@@ -1,0 +1,13 @@
+
+@domain
+
+encode zstd gzip
+
+# Set this path to your site's directory.
+root * @path
+
+# Enable the static file server.
+file_server
+
+
+
