@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.params
 
 fn test_macro() {
 	mut text := "Command.1.X arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok'"
-	result := macro_parse(text) or { panic(err) }
+	result := macro_parse(text)!
 
 	r := MacroObj{
 		cmd: 'command.1.x'
