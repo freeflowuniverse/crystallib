@@ -162,7 +162,7 @@ pub fn (mut rmb RmbTwinClient) send(functionPath string, args string) !Message {
 
 pub fn (mut rmb RmbTwinClient) read(msg Message) !Message {
 	println('Waiting reply ${msg.retqueue}')
-	results := rmb.client.blpop([msg.retqueue], '0')!
+	results := rmb.client.blpop([msg.retqueue], 0)!
 	response_json := resp.get_redis_value(results[1])
 	mut response := json.decode(Message, response_json)!
 	response.data = base64.decode_str(response.data)

@@ -140,9 +140,6 @@ fn (mut para Paragraph) parse() ! {
 				if item.content == '' {
 					toremovelist << counter
 				}
-				// if item.content.trim('\n') == '' {
-				// 	toremovelist << counter
-				// }
 			}
 			Link {
 				item.process()!
