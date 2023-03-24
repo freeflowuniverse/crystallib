@@ -33,11 +33,11 @@ const (
 	server_host            = 'http://localhost:8000'
 )
 
-pub fn parse_keys(file_path string) !toml.Doc {
+fn parse_keys(file_path string) !toml.Doc {
 	return toml.parse_file(file_path)!
 }
 
-pub fn url_encode(map_ map[string]string) string {
+fn url_encode(map_ map[string]string) string {
 	mut formated := ''
 
 	for k, v in map_ {
@@ -50,7 +50,7 @@ pub fn url_encode(map_ map[string]string) string {
 	return formated
 }
 
-pub fn request_to_server_to_verify(data SignedAttempt) !http.Response {
+fn request_to_server_to_verify(data SignedAttempt) !http.Response {
 	header := http.new_header_from_map({
 		http.CommonHeader.content_type: 'application/json'
 	})

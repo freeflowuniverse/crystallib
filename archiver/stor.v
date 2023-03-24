@@ -1,4 +1,4 @@
-module cacher
+module archiver
 
 // import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.pathlib
@@ -31,13 +31,6 @@ type Filter0 = fn (mut Path, mut params.Params) bool
 
 type Executor0 = fn (mut Path, mut params.Params) !params.Params
 
-// pub fn (mut path Path) scan(mut params params.Params, filters []Filter0, executors []Executor0) !params.Params {
-// 	if !path.is_dir() {
-// 		return error('can only scan on dir')
-// 	}
-// 	return scan_recursive(mut path, mut params, filters, executors)
-// }
-
 pub fn (mut a Archiver) add() ! {
 	mut p := pathlib.get_dir(testpath, false)!
 	mut params := params.Params{}
@@ -45,3 +38,10 @@ pub fn (mut a Archiver) add() ! {
 	params.kwarg_add('path_stor')
 	mut params2 := p.scan(mut params, [filter_base], [executor])!
 }
+
+// pub fn (mut path Path) scan(mut params params.Params, filters []Filter0, executors []Executor0) !params.Params {
+// 	if !path.is_dir() {
+// 		return error('can only scan on dir')
+// 	}
+// 	return scan_recursive(mut path, mut params, filters, executors)
+// }

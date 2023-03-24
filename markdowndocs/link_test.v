@@ -9,7 +9,7 @@ fn test_link1() {
 	assert paragraph.items.len == 1
 	assert paragraph.items[0] is Link
 	link := paragraph.items[0] as Link
-	assert link == Link {
+	assert link == Link{
 		content: '[Architecture](architecture/architecture.md)'
 		cat: .page
 		isexternal: false
@@ -29,14 +29,14 @@ fn test_link1() {
 
 fn test_link2() {
 	mut docs := new(content: '[Architecture](@*!architecture/architecture.md)')!
-	
+
 	assert docs.items.len == 1
 	assert docs.items[0] is Paragraph
 	paragraph := docs.items[0] as Paragraph
 	assert paragraph.items.len == 1
 	assert paragraph.items[0] is Link
 	link := paragraph.items[0] as Link
-	assert link == Link {
+	assert link == Link{
 		content: '[Architecture](@*!architecture/architecture.md)'
 		cat: .page
 		isexternal: false
@@ -64,7 +64,7 @@ fn test_link3() {
 	assert paragraph.items.len == 1
 	assert paragraph.items[0] is Link
 	link := paragraph.items[0] as Link
-	assert link == Link {
+	assert link == Link{
 		content: "[AArchitecture](./img/license_threefoldfzc.png ':size=800x900')"
 		cat: .image
 		isexternal: false
@@ -94,7 +94,7 @@ fn test_link4() {
 	assert paragraph.items.len == 1
 	assert paragraph.items[0] is Link
 	link := paragraph.items[0] as Link
-	assert link == Link {
+	assert link == Link{
 		content: '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)'
 		cat: .html
 		isexternal: true
