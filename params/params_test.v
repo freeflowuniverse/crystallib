@@ -6,6 +6,7 @@ import json
 const textin = "
 	id:a1 name6:aaaaa
 	name:'need to do something 1' 
+	//comment
 	description:
 		## markdown works in it
 
@@ -169,9 +170,9 @@ fn test_args_get() {
 // }
 
 fn test_export() {
-	mut params := parse(params.textin) or { panic(err) }
+	mut params := parse(params.textin)!
 
-	d := params.export() or { panic(err) }
+	d := params.export()
 
 	mut out := "
 	description:'## markdown works in it\\n\\ndescription can be multiline\\nlets see what happens\\n\\n- a\\n- something else\\n\\n### subtitle\\n\\n```python\\n#even code block in the other block, crazy parsing for sure\\ndef test():\\n    print()\\n```'
@@ -191,8 +192,8 @@ fn test_export() {
 fn test_export2() {
 	mut params := parse(params.textin2) or { panic(err) }
 
-	d := params.export() or { panic(err) }
-	
+	d := params.export()
+
 	mut out := "
 	description:something\\nyes
 	id:a1
@@ -214,10 +215,10 @@ fn test_export2() {
 fn test_import1() {
 	mut params := parse(params.textin2) or { panic(err) }
 
-	d := params.export() or { panic(err) }
+	d := params.export()
 	mut params2 := importparams(d) or { panic(err) }
 
-	assert params.equal(params2)!
+	assert params.equal(params2)
 }
 
 fn test_import2() {
@@ -239,15 +240,45 @@ fn test_import2() {
 	description:something\\nyes
 
 	"
-	mut params2 := importparams(d) or { panic(err) }
+	mut params2 := importparams(d)!
 
-	assert params.equal(params2)!
+	assert params.equal(params2)
 }
 
 fn test_hexhash() {
-	mut params := parse(params.textin2) or { panic(err) }
-	h := params.hexhash() or { panic(err) }
+	mut params := parse(params.textin2)!
+	h := params.hexhash()
 	assert h == 'e3517c4daa5526cf7a6f200de10a81a9db95460ecd469a53d8dca9d659228c20'
+}
+
+fn test_params_default_false() {
+	mut params := parse('
+	certified:false
+	certified1:no
+	certified2:n
+	certified3:0
+	')!
+
+	assert params.get_default_false('certified') == false
+	assert params.get_default_false('certified1') == false
+	assert params.get_default_false('certified2') == false
+	assert params.get_default_false('certified3') == false
+	assert params.get_default_false('certified4') == false
+}
+
+fn test_params_default_true() {
+	mut params := parse('
+	certified:true
+	certified1:yes
+	certified2:y
+	certified3:1
+	')!
+
+	assert params.get_default_true('certified') == true
+	assert params.get_default_true('certified1') == true
+	assert params.get_default_true('certified2') == true
+	assert params.get_default_true('certified3') == true
+	assert params.get_default_true('certified4') == true
 }
 
 /*

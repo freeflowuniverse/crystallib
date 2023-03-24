@@ -12,7 +12,7 @@ import time { Duration }
 pub fn (params &Params) exists(key_ string) bool {
 	key := key_.to_lower()
 	for p in params.params {
-		if p.key == key && p.value != "" {
+		if p.key == key && p.value != '' {
 			return true
 		}
 	}
@@ -115,7 +115,7 @@ pub fn (params &Params) get_resource_in_bytes(key string) !u64 {
 		&& !valuestr[valuestr.len - 1].is_digit() {
 		times = match valuestr[valuestr.len - 2..].to_upper() {
 			'GB' {
-				1024 * 1024 * 1024 
+				1024 * 1024 * 1024
 			}
 			'MB' {
 				1024 * 1024
@@ -260,7 +260,7 @@ pub fn (params &Params) get_list_int(key string) ![]int {
 pub fn (params &Params) get_default_true(key string) bool {
 	mut r := params.get(key) or { '' }
 	r = texttools.name_fix_no_underscore(r)
-	if r == '' || r == '1' || r == 'true' || r == 'y' {
+	if r == '' || r == '1' || r == 'true' || r == 'y' || r == 'yes' {
 		return true
 	}
 	return false
@@ -269,7 +269,7 @@ pub fn (params &Params) get_default_true(key string) bool {
 pub fn (params &Params) get_default_false(key string) bool {
 	mut r := params.get(key) or { '' }
 	r = texttools.name_fix_no_underscore(r)
-	if r == '' || r == '0' || r == 'false' || r == 'n' {
+	if r == '' || r == '0' || r == 'false' || r == 'n' || r == 'no' {
 		return false
 	}
 	return true
