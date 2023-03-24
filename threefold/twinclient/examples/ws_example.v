@@ -3,7 +3,7 @@ import net.websocket as ws
 import term
 import json
 
-fn main() {
+fn main3() {
 	mut s := ws.new_server(.ip6, 8081, '/')
 	s.on_connect(fn (mut s ws.ServerClient) !bool {
 		if s.resource_name != '/' {

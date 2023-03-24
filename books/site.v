@@ -81,19 +81,19 @@ pub fn (mut site Site) page_get(name string) !&Page {
 	sitename, mut namelower := get_site_and_obj_name(name, true)!
 	namelower = namelower.trim_string_right('.md')
 	namelower = namelower.replace('_', '')
+	error_msg2 := "Could not find page with name:'${namelower}'' in site:'${site.name}'"
 	if sitename == '' {
 		if namelower in site.pages {
-			return site.pages[namelower]
+			return site.pages[namelower] or { return error(error_msg2) }
 		}
 	} else {
 		if sitename in site.sites.sites {
 			// means site exists
-			mut site2 := site.sites.sites[sitename]
+			mut site2 := site.sites.sites[sitename] or { return error(error_msg2) }
 			return site2.page_get(namelower)!
 		}
 	}
-	msg2 := "Could not find page with name:'${namelower}'' in site:'${site.name}'"
-	return error(msg2)
+	return error(error_msg2)
 }
 
 // format of name is $sitename:$imagename or $imagename
@@ -102,19 +102,19 @@ pub fn (mut site Site) page_get(name string) !&Page {
 pub fn (mut site Site) image_get(name string) !&File {
 	sitename, mut namelower := get_site_and_obj_name(name, true)!
 	namelower = namelower.replace('_', '')
+	msg2 := "Could not find image with name:'${namelower}'' in site:'${site.name}'"
 	// make sure we look for images independent of extension and ending _
 	if sitename == '' {
 		if namelower in site.images {
-			return site.images[namelower]
+			return site.images[namelower] or { return error(msg2) }
 		}
 	} else {
 		if sitename in site.sites.sites {
 			// means site exists
-			mut site2 := site.sites.sites[sitename]
+			mut site2 := site.sites.sites[sitename] or { return error(msg2) }
 			return site2.image_get(namelower)!
 		}
 	}
-	msg2 := "Could not find image with name:'${namelower}'' in site:'${site.name}'"
 	return error(msg2)
 }
 
@@ -124,21 +124,22 @@ pub fn (mut site Site) image_get(name string) !&File {
 pub fn (mut site Site) file_get(name string) !&File {
 	mut sitename, namelower := get_site_and_obj_name(name, false)!
 	namesmallest := namelower.replace('_', '')
+	msg2 := 'Could not find file with name: ${namelower} for site:${site.name}'
 	if sitename == '' {
 		if namesmallest in site.files {
-			return site.files[namesmallest]
+			return site.files[namesmallest] or { return error(msg2) }
 		}
 	} else {
 		if sitename in site.sites.sites {
 			// means site exists
-			mut site2 := site.sites.sites[sitename]
-			return site2.file_get(namelower)
+			mut site2 := site.sites.sites[sitename] or { return error(msg2) }
+			return site2.file_get(namelower)!
 		} else {
 			sitenames := site.sites.sitenames().join('\n- ')
 			return error('Cannot find site with name:${sitename} \nKnown sitenames are:\n\n${sitenames}')
 		}
 	}
-	return error('Could not find file with name: ${namelower} for site:${site.name}')
+	return error(msg2)
 }
 
 ///////////// EXISTS
@@ -187,25 +188,25 @@ pub fn (mut site Site) page_new(mut p Path) !&Page {
 		return error('cannot find page with path ${p.path}')
 	}
 	p.path_normalize()! // make sure its all lower case and name is proper
+	if !p.path.ends_with('.md') {
+		return error('page ${p.path} needs to end with .md')
+	}
+	mut doc := markdowndocs.new(path: p.path) or { panic('cannot parse,${err}') }
+
 	mut page := Page{
+		doc: &doc
+		pathrel: p.path_relative(site.path.path)!.trim('/')
+		name: p.name_fix_no_ext()
 		path: p
 		site: &site
 		readonly: false
 	}
-	if !page.path.path.ends_with('.md') {
-		return error('page ${page} needs to end with .md')
-	}
-	// println(" ---------- $page.path.path")
-	// parse the markdown of the page
-	mut doc := markdowndocs.get(p.path) or { panic('cannot parse,${err}') }
-	page.doc = &doc
-	page.name = p.name_fix_no_ext()
-	page.pathrel = p.path_relative(site.path.path)!
-	page.pathrel = page.pathrel.trim('/')
 	_, namelower := get_site_and_obj_name(p.path, false)!
 	namesmallest := namelower.replace('_', '')
 	site.pages[namesmallest] = &page
-	return site.pages[namesmallest]
+	return site.pages[namesmallest] or {
+		return error('Cannot find page ${namesmallest} in site: ${site.name}')
+	}
 }
 
 // add a file to the site, specify existing path

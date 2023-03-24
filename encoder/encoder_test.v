@@ -189,7 +189,6 @@ fn get_struct_input[T](val T) StructType[T] {
 }
 
 fn encode_decode_struct[T](input StructType[T]) bool {
-	println(input)
 	data := encode(input) or {
 		eprintln('Failed to encode, error: ${err}')
 		return false
@@ -198,7 +197,6 @@ fn encode_decode_struct[T](input StructType[T]) bool {
 		eprintln('Failed to decode, error: ${err}')
 		return false
 	}
-	println(output)
 	return input == output
 }
 

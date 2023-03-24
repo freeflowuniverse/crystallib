@@ -10,7 +10,7 @@ pub struct ExportArgs {
 }
 
 // standardised export format
-pub fn (p Params) export(args ExportArgs) !string {
+pub fn (p Params) export(args ExportArgs) string {
 	mut out := []string{}
 	mut keys := []string{}
 	mut keys_val := map[string]string{}
@@ -33,9 +33,6 @@ pub fn (p Params) export(args ExportArgs) !string {
 	mut args2 := p.args.clone()
 	args2.sort()
 	for arg in args2 {
-		if arg.contains('\n') {
-			return error('there can be no \\n in args for params')
-		}
 		out << arg.trim_space()
 	}
 	mut outstr := out.join_lines()
@@ -49,9 +46,9 @@ pub fn importparams(txt string) !Params {
 	return parse(txt)
 }
 
-pub fn (p Params) equal(p2 Params) !bool {
-	a := p.export()!
-	b := p2.export()!
+pub fn (p Params) equal(p2 Params) bool {
+	a := p.export()
+	b := p2.export()
 	// println("----------------\n$a")
 	// println("================\n$b")
 	// println("----------------")
@@ -59,7 +56,7 @@ pub fn (p Params) equal(p2 Params) !bool {
 }
 
 // returns a unique sha256 in hex, will allways return the same independent of order of params
-pub fn (p Params) hexhash() !string {
-	a := p.export()!
+pub fn (p Params) hexhash() string {
+	a := p.export()
 	return sha256.hexhash(a)
 }

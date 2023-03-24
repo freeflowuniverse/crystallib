@@ -1,6 +1,6 @@
 import base64
 
-pub fn basic_auth(users map[string]string, request http.Request) ?bool {
+fn basic_auth(users map[string]string, request http.Request) ?bool {
 	mut processed_users := map[string]string{}
 	for u, p in users {
 		encodedauth := base64.encode('${u}:${p}'.bytes())

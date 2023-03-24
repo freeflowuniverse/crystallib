@@ -1,4 +1,4 @@
-module cacher
+module archiver
 
 // import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.pathlib

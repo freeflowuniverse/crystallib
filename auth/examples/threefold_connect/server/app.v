@@ -12,7 +12,7 @@ fn main() {
 	vweb.run(&ServerApp{}, 8000)
 }
 
-pub fn (mut server ServerApp) abort(status int, message string) {
+fn (mut server ServerApp) abort(status int, message string) {
 	server.set_status(status, message)
 	er := CustomResponse{status, message}
 	server.json(er.to_json())

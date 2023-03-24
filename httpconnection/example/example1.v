@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.httpconnection
 fn do() ! {
 	// http.CommonHeader.authorization: 'Bearer $h.auth.auth_token'
 
-	mut conn := httpconnection.new('example', 'https://reqres.in/api/', true)
+	mut conn := httpconnection.new(name: 'example', url: 'https://reqres.in/api/')
 	// do the cache on the connection
 	conn.cache.expire_after = 7200 // make the cache expire_after 2h
 
