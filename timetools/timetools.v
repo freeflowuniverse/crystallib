@@ -39,6 +39,24 @@ pub fn (mut exp Expiration) to_time() time.Time {
 	return time.unix(exp.expiration)
 }
 
+// Get Expiration object from time string input
+// input can be either relative or absolute
+// ## Relative time
+// #### time periods:
+// - s -> second
+// - h -> hour
+// - d -> day
+// - w -> week
+// - M -> month
+// - Q -> quarter
+// - Y -> year
+// 0 means right now
+// input string example: "+1w +2d -4h"
+// ## Absolute time
+// inputs must be of the form: "YYYY-MM-DD HH:mm:ss" or "YYYY-MM-DD"
+// input string examples:
+//'2022-12-5 20:14:35'
+//'2022-12-5' - sets hours, mins, seconds to 00
 pub fn time_from_string(timestr string) !time.Time {
 	mut exp_ := get_expiration_from_timestring(timestr)!
 	time_object := exp_.to_time()
@@ -63,8 +81,8 @@ pub fn time_from_string(timestr string) !time.Time {
 // input string examples:
 //'2022-12-5 20:14:35'
 //'2022-12-5' - sets hours, mins, seconds to 00
-// TODO: do error handling
-pub fn get_expiration_from_timestring(exp_ string) !Expiration { // TODO: function to determine if relative or absolute time
+pub fn get_expiration_from_timestring(exp_ string) !Expiration { 
+	// BACKLOG: function to determine if relative or absolute time, or is maybe done
 	trimmed := exp_.trim_space()
 	mut relative_bool := false
 	if trimmed.starts_with('+') || trimmed.starts_with('-') {
@@ -86,6 +104,7 @@ pub fn get_expiration_from_timestring(exp_ string) !Expiration { // TODO: functi
 			expiration: time_unix
 		}
 	}
+	// BACKLOG: do error handling	
 }
 
 pub fn get_unix_from_relative(exp_ string) !i64 {

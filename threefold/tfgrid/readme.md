@@ -1,4 +1,9 @@
 
+## get started
+
+- install tfgrid golang client
+- 
+
 ## requirements
 
 - have redis working

@@ -6,7 +6,7 @@ import json
 
 pub struct RedisRpc {
 pub mut:
-	key   string
+	key   string //queue name as used by this rpc
 	redis &Redis
 }
 
