@@ -10,6 +10,14 @@ enum ParamStatus {
 	quote // quote found means value in between ''
 }
 
+// need to do something to get out # and // at end of a line but not in ''
+// if line2.contains('#') {
+// 	line2 = line2.all_before('#')
+// }
+// if line2.contains('//') {
+// 	line2 = line2.all_before('//')
+// }
+
 // convert text with e.g. color:red or color:'red' to arguments
 // multiline is supported
 // result is params object which allows you to query the info you need

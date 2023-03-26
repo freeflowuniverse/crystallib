@@ -2,7 +2,7 @@ module redisclient
 
 import time
 
-struct RedisQueue {
+pub struct RedisQueue {
 pub mut:
 	key   string
 	redis &Redis

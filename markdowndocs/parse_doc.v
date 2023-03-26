@@ -1,9 +1,12 @@
 module markdowndocs
 
+import regex
+
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 fn (mut doc Doc) parse() ! {
 	mut parser := parser_line_new(mut &doc)!
+	re_header_row := regex.regex_opt('^:?-+:?$') or { return error("regex doesn't work") }
 
 	for {
 		if parser.eof() {
@@ -17,25 +20,16 @@ fn (mut doc Doc) parse() ! {
 		mut llast := parser.lastitem()
 		// println(llast)
 
-		// if mut llast is Comment {
-		// 	if llast.prefix == .short {
-		// 		if line.trim_space().starts_with('//') {
-		// 			llast.content += line.all_after_first('//') + '\n'
-		// 			parser.next()
-		// 			continue
-		// 		}
-		// 		parser.next_start()
-		// 	} else {
-		// 		if line.trim_space().ends_with('-->') {
-		// 			llast.content += line.all_before_last('-->') + '\n'
-		// 			parser.next_start()
-		// 		} else {
-		// 			llast.content += line + '\n'
-		// 			parser.next()
-		// 		}
-		// 		continue
-		// 	}
-		// }
+		if mut llast is Table {
+			if line.trim_space() == '' {
+				parser.next_start()
+				continue
+			} else {
+				llast.content += '${line}\n'
+			}
+			parser.next()
+			continue
+		}
 
 		if mut llast is Action {
 			if line.starts_with(' ') || line.starts_with('\t') {
@@ -68,15 +62,49 @@ fn (mut doc Doc) parse() ! {
 		}
 
 		if mut llast is Paragraph {
+			if line.starts_with('|') && line.ends_with('|') {
+				if !parser.eof() {
+					header := line.trim('|').split('|').map(it.trim(' '))
+					line2 := parser.line_next()
+					second_row := line2.trim('|').split('|').map(it.trim(' ')).filter(re_header_row.matches_string(it))
+					println('${header.len} vs ${second_row.len}')
+					if header.len == second_row.len {
+						// from now on we know it is a valid map
+						mut alignments := []Alignment{}
+						for cell in second_row {
+							mut alignment := Alignment.left
+							if cell[0] == 58 { // == ":"
+								if cell[cell.len - 1] == 58 { // == ":"
+									alignment = Alignment.center
+								}
+							} else if cell[cell.len - 1] == 58 { // == ":"
+								alignment = Alignment.right
+							}
+							alignments << alignment
+						}
+						doc.items << Table{
+							content: '${line}\n${line2}\n'
+							num_columns: header.len
+							header: header
+							alignments: alignments
+						}
+						parser.next()
+						parser.next()
+						continue
+					}
+				}
+			}
+
+			// parse action
 			if line.starts_with('!!') {
 				doc.items << Action{
-					content: line.all_after_first('!!')
+					content: '${line.all_after_first('!!')}\n'
 				}
 				parser.next()
 				continue
 			}
 
-			// find codeblock or actions
+			// find codeblock
 			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
 				doc.items << CodeBlock{
 					category: line.substr(3, line.len).to_lower().trim_space()
@@ -111,25 +139,6 @@ fn (mut doc Doc) parse() ! {
 				parser.next()
 				continue
 			}
-
-			// if line.trim_space().starts_with('//') {
-			// 	doc.items << Comment{
-			// 		content: line.all_after_first('//').trim_space() + '\n'
-			// 		// prefix: .short
-
-			// 	}
-			// 	parser.next()
-			// 	continue
-			// }
-			// if line.trim_space().starts_with('<!--') {
-			// 	doc.items << Comment{
-			// 		content: line.all_after_first('<!--').trim_space() + '\n'
-			// 		prefix: .multi
-
-			// 	}
-			// 	parser.next()
-			// 	continue
-			// }
 		}
 
 		if mut llast is Paragraph || mut llast is Html || mut llast is CodeBlock {

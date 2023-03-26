@@ -4,29 +4,39 @@ import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.process
 import os
 
-// backupdir, put on empty if not used
-pub fn image_downsize(mut path pathlib.Path, backupdir string) !Image {
-	mut image := image_new(mut path)!
-	if path.is_link() {
-		mut path_linked := path.getlink()!
-		mut image_linked := image_new(mut path_linked)!
-		image_linked.downsize(backupdir)!
-		if image.path.path != image_linked.path.path {
-			// means downsize worked, now we need to re-link
-			image.path.delete()!
-			image.path.path = image.path.path_dir() + '/' + image_linked.path.name()
-			image.path = image_linked.path.link(image.path.path, true)!
-		}
-	} else {
-		image.downsize(backupdir)!
-	}
-	return image
+[params]
+pub struct DownsizeArgs{
+	backup 	   		 bool
+	backup_root      string
+	backup_dest      string
 }
 
+// // backupdir, put on empty if not used
+// pub fn image_downsize(args DownsizeArgs) !Image {
+// 	mut image := image_new(mut path)!
+// 	if path.is_link() {
+// 		mut path_linked := path.getlink()!
+// 		mut image_linked := image_new(mut path_linked)!
+// 		pathlib.BackupArg{
+// 			dest:backupdir
+// 		}
+// 		image_linked.downsize(backupdir)!
+// 		if image.path.path != image_linked.path.path {
+// 			// means downsize worked, now we need to re-link
+// 			image.path.delete()!
+// 			image.path.path = image.path.path_dir() + '/' + image_linked.path.name()
+// 			image.path = image_linked.path.link(image.path.path, true)!
+// 		}
+// 	} else {
+// 		image.downsize(backupdir)!
+// 	}
+// 	return image
+// }
+
 // will downsize to reasonable size based on x
-pub fn (mut image Image) downsize(backupdir string) ! {
+pub fn (mut image Image) downsize(args DownsizeArgs) ! {
 	if image.path.is_link() {
-		return error('use image_downsize function if file is a link:\n${image}')
+		return error("cannot downsize if path is link.\n$image")
 	}
 	image.init_()!
 	if image.skip() {
@@ -39,12 +49,9 @@ pub fn (mut image Image) downsize(backupdir string) ! {
 		image.identify()!
 	}
 	// check in params
-	// if backupdir != '' {
-	// 	mut dest := image.path.backup_name_find('', backupdir) or {
-	// 		return error('cannot find backupname for $image.path.path . \n$error')
-	// 	}
-	// 	image.path.copy(mut dest)!
-	// }
+	if args.backup {
+		bpath:=image.path.backup(dest:args.backup_dest,root:args.backup_root)!		
+	}
 	if image.size_kbyte > 600 && image.size_x > 2400 {
 		image.size_kbyte = 0
 		println('   - convert image resize 50%: ${image.path.path}')

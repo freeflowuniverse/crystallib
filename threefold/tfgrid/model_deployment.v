@@ -12,13 +12,6 @@ pub mut:
 	signature_requirement SignatureRequirement
 }
 
-pub struct ResultStates {
-pub:
-	error   string = 'error'
-	ok      string = 'ok'
-	deleted string = 'deleted'
-}
-
 pub struct DeploymentResult {
 pub mut:
 	created i64
@@ -31,9 +24,28 @@ pub struct Workload {
 pub mut:
 	version     int
 	name        string
-	type_       string           [json: 'type'] // TODO: what is this?
-	data        string           [raw] // TODO: what is this?
+	type_       string           [json: 'type'] // this is the type of the workload (ZMachine, ZDB, ...)
+	data        string           [raw] // this is the workload data that contains workload specs
 	metadata    string
 	description string
 	result      DeploymentResult
+}
+
+pub struct SignatureRequirement {
+	requests        []SignatureRequest
+	weight_required int
+	signatures      []Signature
+	signature_style string
+}
+
+pub struct SignatureRequest {
+	twin_id  int
+	required bool
+	weight   i64
+}
+
+pub struct Signature {
+	twin_id        int
+	signature      string
+	signature_type string
 }
