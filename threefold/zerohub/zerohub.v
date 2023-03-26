@@ -1,26 +1,24 @@
 module zerohub
 import net.http
 
-// import freeflowuniverse.crystallib.httpconnection
-
-// TODO: curl -H "Authorization: bearer 6Pz6giOpHSaA3KdYI6LLpGSLmDmzmRkVdwvc7S-E5PVB0-iRfgDKW9Rb_ZTlj-xEW4_uSCa5VsyoRsML7DunA1sia3Jpc3RvZi4zYm90IiwgMTY3OTIxNTc3MF0=" https://hub.grid.tf/api/flist/
-
+// ZeroHubClient is the main struct that holds the values and methods.
 pub struct ZeroHubClient {
 pub mut:
 	url    string
-	secret string // is called bearer in documentation	
+	token  string
 	header http.Header
 }
 
+// ZeroHubClientArgs is the args needed to construct the ZeroHubClient.
 [params]
 pub struct ZeroHubClientArgs {
 pub:
 	url    string = 'hub.grid.tf'
-	secret string // is called bearer in documentation	
+	token  string
+	header http.Header
 }
 
-// see https://hub.grid.tf/
-// more info see https://github.com/threefoldtech/0-hub#public-api-endpoints-no-authentication-needed
+// Create new ZeroHubClient from the ZeroHubClientArgs
 pub fn new(args ZeroHubClientArgs) !ZeroHubClient {
 	// mut conn := httpconnection.new(name:'zerohub', url:'https://${args.url}')	
 
@@ -31,11 +29,20 @@ pub fn new(args ZeroHubClientArgs) !ZeroHubClient {
 	// 	//if reset asked for cache will be emptied
 	// 	conn.cache.cache_drop()!
 	// }
+	// TODO: there should be a check here that its accessible
+
+
+	header_config := http.HeaderConfig{
+		key: http.CommonHeader.authorization
+		value: 'Bearer ${args.token}'
+	}
+	header := http.new_header(header_config)
 
 	mut cl := ZeroHubClient{
 		url: args.url
-		secret: args.secret
+		token: args.token
+		header: header
 	}
-	// TODO: there should be a check here that its accessible
+
 	return cl
 }
