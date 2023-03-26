@@ -5,10 +5,10 @@ import freeflowuniverse.crystallib.process
 import os
 
 [params]
-pub struct DownsizeArgs{
-	backup 	   		 bool
-	backup_root      string
-	backup_dest      string
+pub struct DownsizeArgs {
+	backup      bool
+	backup_root string
+	backup_dest string
 }
 
 // // backupdir, put on empty if not used
@@ -36,7 +36,7 @@ pub struct DownsizeArgs{
 // will downsize to reasonable size based on x
 pub fn (mut image Image) downsize(args DownsizeArgs) ! {
 	if image.path.is_link() {
-		return error("cannot downsize if path is link.\n$image")
+		return error('cannot downsize if path is link.\n${image}')
 	}
 	image.init_()!
 	if image.skip() {
@@ -50,7 +50,7 @@ pub fn (mut image Image) downsize(args DownsizeArgs) ! {
 	}
 	// check in params
 	if args.backup {
-		bpath:=image.path.backup(dest:args.backup_dest,root:args.backup_root)!		
+		bpath := image.path.backup(dest: args.backup_dest, root: args.backup_root)!
 	}
 	if image.size_kbyte > 600 && image.size_x > 2400 {
 		image.size_kbyte = 0

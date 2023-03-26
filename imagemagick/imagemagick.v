@@ -49,10 +49,10 @@ fn executor_imagemagic(mut path pathlib.Path, mut params_ params.Params) !params
 	if params_.exists('backupdir') {
 		backupdir = params_.get('backupdir') or { panic(error) }
 	}
-	mut image:=image_new(mut path)!
-	if backupdir.len>0{
-		image.downsize(backup:true,backup_dest:backupdir)!
-	}else{
+	mut image := image_new(mut path)!
+	if backupdir.len > 0 {
+		image.downsize(backup: true, backup_dest: backupdir)!
+	} else {
 		image.downsize()!
 	}
 	return params_

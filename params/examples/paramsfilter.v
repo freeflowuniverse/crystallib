@@ -1,52 +1,50 @@
 module main
-import freeflowuniverse.crystallib.params {Params,parse}
 
-import time {sleep,Duration}
+import freeflowuniverse.crystallib.params { Params, parse }
+import time { Duration, sleep }
 
-fn do()!{
+fn do() ! {
+	totalnr := 100000
 
-	totalnr:=100000
-
-	//some performance tests
-	mut res:=[]Params{}
-	mut sw:=time.new_stopwatch()
-	for i in 0..totalnr{
-		mut text := "arg$i arg2 color:red$i priority:'incredible' description:'with spaces, lets see if ok'"
+	// some performance tests
+	mut res := []Params{}
+	mut sw := time.new_stopwatch()
+	for i in 0 .. totalnr {
+		mut text := "arg${i} arg2 color:red${i} priority:'incredible' description:'with spaces, lets see if ok'"
 		mut p := parse(text) or { panic(err) }
-		res <<p
+		res << p
 	}
 	sw.stop()
-	mut elapsed:=sw.elapsed()
+	mut elapsed := sw.elapsed()
 	println(elapsed)
 	sw.restart()
-	incl_test:= ["description:*see*"]
-	mut foundnr:=0
-	for i in 0..totalnr{
-		mut p2:=res[i]
-		e:=p2.filter_match(include:incl_test)!
-		f:=p2.filter_match(include:["arg100"])!
-		if f{
-			foundnr+=1
+	incl_test := ['description:*see*']
+	mut foundnr := 0
+	for i in 0 .. totalnr {
+		mut p2 := res[i]
+		e := p2.filter_match(include: incl_test)!
+		f := p2.filter_match(include: ['arg100'])!
+		if f {
+			foundnr += 1
 		}
-	}	
-	assert foundnr==1
-	elapsed=sw.elapsed()
+	}
+	assert foundnr == 1
+	elapsed = sw.elapsed()
 	println(elapsed)
 	// sw.restart()	
 
-	mbused:=60.0
-	bytesused:=mbused*1000*1000
-	bytes_param := bytesused/totalnr
-	println("bytes used per param: $bytes_param")
-	println("nr of founds: $foundnr")
+	mbused := 60.0
+	bytesused := mbused * 1000 * 1000
+	bytes_param := bytesused / totalnr
+	println('bytes used per param: ${bytes_param}')
+	println('nr of founds: ${foundnr}')
 
-	time.sleep(Duration(60 * time.minute))
+	sleep(Duration(60 * time.minute))
 
-	//conclusion only 60 bytes per params for 1m records
+	// conclusion only 60 bytes per params for 1m records
 	// takes 0.9 sec to walk over 1million records
-
 }
 
 fn main() {
-	do() or {panic(err)}	
+	do() or { panic(err) }
 }

@@ -20,20 +20,16 @@ fn test_image_downsize() {
 	image.init_() or { panic('Could not initialize image: ${err}') }
 	assert image.size_kbyte > 600
 
-	mut image_org:=image
-	image.downsize(backup:true) or {
-		panic('Cannot downsize image: $image \n ${err}')
-	}
+	mut image_org := image
+	image.downsize(backup: true) or { panic('Cannot downsize image: ${image} \n ${err}') }
 	// test correct file renaming
 	assert image.size_kbyte < image_org.size_kbyte
 	assert image.path.name_no_ext() == '${image_org.path.name_no_ext()}_'
 	// println(image.path.name())
 
-	//now need to put original file back
+	// now need to put original file back
 	image_org.path.restore()!
 	image.path.delete()!
-
-
 }
 
 // fn downsize_test() {

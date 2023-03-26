@@ -44,7 +44,9 @@ pub fn new(args HTTPConnectionArgs) &HTTPConnection {
 	// Store new connection
 	f.connections[args.name] = &conn
 
-	res := f.connections[args.name] or { panic("couldn't find key '${args.name}' in f.connections") }
+	res := f.connections[args.name] or {
+		panic("couldn't find key '${args.name}' in f.connections")
+	}
 	return res
 }
 
