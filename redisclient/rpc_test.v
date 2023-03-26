@@ -29,5 +29,5 @@ fn test_rpc() {
 	mut res := r.result(10000, returnqueue)!
 	println(res)
 
-	assert res.trim_space() == 'test.cmd+++++this is my data, normally json'
+	assert res.str().trim_space() == 'test.cmd+++++this is my data, normally json'
 }

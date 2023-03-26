@@ -36,8 +36,8 @@ pub fn (mut doc Doc) html() string {
 			Table { out += item.html() }
 			Action { out += item.html() }
 			Actions { out += item.html() }
-			Header { out += '<h${item.depth}>${item.content}</h${item.depth}>\n' } // todo: should be moved to item.html()
-			Paragraph { out += '<p>${item.content}</p>\n' }
+			Header { out += item.html() }
+			Paragraph { out += item.html() }
 			Html { out += item.html() }
 			// Comment { out += item.html() }
 			CodeBlock { out += item.html() }

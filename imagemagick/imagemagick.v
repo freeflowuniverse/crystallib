@@ -49,13 +49,12 @@ fn executor_imagemagic(mut path pathlib.Path, mut params_ params.Params) !params
 	if params_.exists('backupdir') {
 		backupdir = params_.get('backupdir') or { panic(error) }
 	}
-	image_downsize(mut path, backupdir)!
-	// if mut _ := image_downsize(mut path, backupdir) {
-	// 	println('** ERROR: could not downsize: $path.path \n$error')
-	// 	params_.kwarg_add(path.path, '$error')
-	// } else {
-	// 	params_.kwarg_add(path.path, 'OK')
-	// }
+	mut image:=image_new(mut path)!
+	if backupdir.len>0{
+		image.downsize(backup:true,backup_dest:backupdir)!
+	}else{
+		image.downsize()!
+	}
 	return params_
 }
 
@@ -77,7 +76,7 @@ pub fn scan(args ScanArgs) !params.Params {
 	mut path := pathlib.get_dir(args.path, false)!
 	mut params_ := params.Params{}
 	if args.backupdir != '' {
-		params_.kwarg_add('backupdir', args.backupdir)
+		params_.kwarg_add('backup', args.backupdir)
 	}
 	params_ = path.scan(mut params_, [filter_imagemagic], [executor_imagemagic])!
 	return params_

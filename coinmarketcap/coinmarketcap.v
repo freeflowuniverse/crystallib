@@ -177,13 +177,9 @@ fn (mut h CoinMarketConnection) get_json(prefix string, data string, query strin
 		// println("MISS1")
 		mut req := http.Request{}
 		if query != '' {
-			req = http.new_request(http.Method.get, '${h.url}/${prefix}?${query}', data) or {
-				return error('failed to create http request')
-			}
+			req = http.new_request(http.Method.get, '${h.url}/${prefix}?${query}', data)
 		} else {
-			req = http.new_request(http.Method.get, '${h.url}/${prefix}', data) or {
-				return error('failed to create http request')
-			}
+			req = http.new_request(http.Method.get, '${h.url}/${prefix}', data) 
 		}
 		req.header = h.header()!
 		res := req.do()!
@@ -215,13 +211,9 @@ fn (mut h CoinMarketConnection) get_json_str(prefix string, data string, query s
 		// println("MISS1")
 		mut req := http.Request{}
 		if query != '' {
-			req = http.new_request(http.Method.get, '${h.url}/${prefix}?${query}', data) or {
-				return error('failed to create http request')
-			}
+			req = http.new_request(http.Method.get, '${h.url}/${prefix}?${query}', data) 
 		} else {
-			req = http.new_request(http.Method.get, '${h.url}/${prefix}', data) or {
-				return error('failed to create http request')
-			}
+			req = http.new_request(http.Method.get, '${h.url}/${prefix}', data) 
 		}
 		req.header = h.header()!
 		res := req.do()!

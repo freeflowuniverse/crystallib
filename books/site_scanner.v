@@ -12,10 +12,11 @@ fn (mut site Site) file_image_remember(mut p pathlib.Path) ! {
 	if p.is_image() {
 		p.path_normalize()! // make sure its all lower case and name is proper
 		if imagemagick.installed() {
-			imagedownsized := imagemagick.image_downsize(mut p, '')!
+			mut image := imagemagick.image_new(mut p) or { panic('Cannot get new image:\n$p\n${err}') }
+			image.downsize(backup:false)!
 			// after downsize it could be the path has been changed, need to set it on the file
-			if p.path != imagedownsized.path.path {
-				p.path = imagedownsized.path.path
+			if p.path != image.path.path {
+				p.path = image.path.path
 				p.check()
 			}
 		}

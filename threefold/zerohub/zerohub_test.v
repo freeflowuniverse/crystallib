@@ -25,7 +25,7 @@ fn test_main() ? {
 
 	hub_token := os.getenv('HUB_JWT')
 	header_config := http.HeaderConfig{
-		key: 	http.CommonHeader.authorization
+		key: http.CommonHeader.authorization
 		value: 'bearer ${hub_token}'
 	}
 
@@ -62,6 +62,6 @@ fn test_main() ? {
 	// res := cl.upload_flist("./testup.flist")!
 	// println(res)
 
-	res := cl.upload_archive("./alpine.tar.gz")!
+	res := cl.upload_archive('./alpine.tar.gz')!
 	println(res)
 }
