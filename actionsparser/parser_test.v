@@ -7,7 +7,7 @@ const testpath = os.dir(@FILE) + '/testdata'
 const text = "
 //select the book, can come from context as has been set before
 //now every person added will be added in this book
-!!actor.select people
+!!actor_select people
 
 //delete everything as found in current book
 !!person_delete cid:1gt
@@ -49,18 +49,18 @@ const text = "
 	description: 'TF Wallet for TFT' 
 	preferred: false
 
-!!actor.select aaa.test
+!!select_actor test
 
 !!test_action
 	key: value
 
-!!actor.select bbb.people
+!!actor_select bbb.people
 
 !!person_define
   cid: 'eg'
   name: despiegk
 
-!!book.select bbb
+!!select_book bbb
 "
 
 fn test_parse_into_blocks() {
@@ -88,49 +88,58 @@ fn test_parse_into_blocks() {
 	assert content_lines[2] == "message:'link'"
 }
 
-// fn test_file_parse() {
-// 	mut actionsmgr := new(
-// 		path: '${actionsparser.testpath}/testfile.md',
-// 		defaultactor:people,
-// 		defaultbook:'aaa'
-// 	) or { panic(err) }
+fn test_file_parse() {
+	mut actionsmgr := new(
+		path: '${actionsparser.testpath}/testfile.md'
+		defaultactor: 'people'
+		defaultbook: 'aaa'
+	) or { panic(err) }
 
-// 	assert actionsmgr.actions.len == 10
-// }
+	assert actionsmgr.actions.len == 10
+}
 
-// fn test_dir_load() {
-// 	mut actionsmgr := new(
-// 		path: '${actionsparser.testpath}',
-// 		defaultactor:people,
-// 		defaultbook:'aaa'
-// 	) or { panic(err) }
-// 	assert actionsmgr.actions.len == 11
+fn test_dir_load() {
+	mut actionsmgr := new(
+		path: '${actionsparser.testpath}',
+		defaultactor:'people',
+		defaultbook:'aaa'
+	) or { panic(err) }
+	assert actionsmgr.actions.len == 11
 
-// 	mut a := actionsmgr.actions.last()
-// 	assert a.name == 'books.mdbook_develop'
-// 	mut b := a.params.get('name') or { panic(err) }
-// 	assert b == 'feasibility_study_internet'
-// }
+	mut a := actionsmgr.actions.last()
+	assert a.name == 'mdbook_develop'
+	mut b := a.params.get('name') or { panic(err) }
+	assert b == 'feasibility_study_internet'
+}
 
-// fn test_text_add() ! {
-// 	mut parser := new(text:actionsparser.text) or { panic(err) }
-// 	assert parser.actions.len == 0
+fn test_text_add() ! {
+	mut parser := new(
+		text:actionsparser.text
+		defaultactor:'people',
+		defaultbook:'aaa'
+	) or { panic(err) }
 
-// 	// confirm first action
-// 	mut action := parser.actions[0]
-// 	assert action.name == 'aaa.people.person_delete'
-// 	mut param := action.params.get('cid') or { panic(err) }
-// 	assert param == '1gt'
+	// confirm first action
+	mut action := parser.actions[0]
+	assert action.name == 'actor_select'
+	mut arg := action.params.get_arg(0,1) or { panic(err) }
+	assert arg == 'people'
 
-// 	// confirm second action
-// 	action = parser.actions[1]
-// 	assert action.name == 'aaa.people.person_define'
-// 	param = action.params.get('name') or { panic(err) }
-// 	assert param == 'fatayera'
+	// confirm second action
+	action = parser.actions[1]
+	assert action.name == 'person_delete'
+	mut param := action.params.get('cid') or { panic(err) }
+	assert param == '1gt'
 
-// 	// confirm last action
+	// confirm third action
+	action = parser.actions[1]
+	assert action.name == 'person_delete'
+	param = action.params.get('cid') or { panic(err) }
+	assert param == '1gt'
 
-// 	assert action.name == 'bbb.people.person_define'
-// 	param = action.params.get('name') or { panic(err) }
-// 	assert param == 'despiegk'
-// }
+	// confirm last action
+	action = parser.actions.last()
+	assert action.name == 'person_define'
+	param = action.params.get('name') or { panic(err) }
+	assert param == 'despiegk'
+}

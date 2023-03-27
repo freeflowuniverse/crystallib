@@ -20,15 +20,15 @@ pub:
 // 		book_default   string
 pub fn new(args ActionParserArgs) !ActionsParser {
 	mut ap := ActionsParser{}
+	ap.defaultdomain = args.defaultdomain
+	ap.defaultbook = args.defaultbook
+	ap.defaultactor = args.defaultactor
 	if args.text.len > 0 {
 		ap.text_add(args.text)!
 	}
 	if args.path.len > 0 {
 		ap.path_add(args.path)!
 	}
-	ap.defaultdomain = args.defaultdomain
-	ap.defaultbook = args.defaultbook
-	ap.defaultactor = args.defaultactor
 	return ap
 }
 

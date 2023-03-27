@@ -195,7 +195,10 @@ fn (mut actions ActionsParser) parse_block(block Block) ! {
 		return
 	}
 
-	println('${domain} - ${book} - ${actor} - ${name}')
+	//QUESTION: is this necessary
+	$if debug {
+		eprintln('${domain} - ${book} - ${actor} - ${name}')
+	}
 
 	domain_check(domain, block.content)!
 	book_check(book, block.content)!
