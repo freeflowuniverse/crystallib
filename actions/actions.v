@@ -1,7 +1,5 @@
 module actions
 
-module actionsparser
-
 import freeflowuniverse.crystallib.currency
 import freeflowuniverse.crystallib.actionsparser
 
