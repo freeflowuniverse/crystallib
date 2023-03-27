@@ -3,8 +3,8 @@ module actionsparser
 const text2 = "
 //select the book, can come from context as has been set before
 //now every person added will be added in this book
-!!actor.select people
-!!book.select aaa
+!!select_actor people
+!!select_book aaa
 
 //delete everything as found in current book
 !!person_delete cid:1g
@@ -46,24 +46,27 @@ const text2 = "
 	description: 'TF Wallet for TFT' 
 	preferred: false
 
-!!actor.select aaa.test
+!!select_actor aaa.test
 
 !!test_action
 	key: value
 
-!!actor.select bbb.people
+!!select_actor bbb.people
 
 !!person_define
   cid: 'eg'
   name: despiegk
 
-!!book.select bbb
+!!select_book bbb
 "
 
 fn test_filter_actor() ! {
-	mut parser := new(text: actionsparser.text2)!
-
+	mut parser := new(
+		defaultbook: 'aaa'
+		text: actionsparser.text2
+	)!
 	assert parser.actions.len == 8
+	assert parser.actions.map(it.name) == ['person_delete', 'person_define', 'circle_link', 'circle_comment', 'circle_comment', 'digital_payment_add', 'test_action', 'person_define']
 
 	// pub struct FilterArgs{
 	// pub:
@@ -72,10 +75,14 @@ fn test_filter_actor() ! {
 	// 	book     string	[required]  //can be empty, this means will not filter based on book	
 	// 	names_filter    []string //can be empty, then no filter, unix glob filters are allowed
 	// }	
-	println(parser)
-	actions := parser.filtersort(actor: 'people', book: 'aaa')!
-	println(actions)
-	assert actions.len == 8
+	args := FilterArgs {
+		actor: 'people'
+		book: 'aaa'
+		names_filter: ['*'] //QUESTION: if name filter is empty, should filter sort return list of len 0?
+	}
+	actions := filtersort(parser.actions, args)! //QUESTION: book and actors are also filtered here, is ok?
+	assert actions.len == 6
+	assert actions.map(it.name) == ['person_delete', 'person_define', 'circle_link', 'circle_comment', 'circle_comment', 'digital_payment_add']
 }
 
 // fn test_filter_book_aaa() ! {

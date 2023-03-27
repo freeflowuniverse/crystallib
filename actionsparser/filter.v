@@ -19,7 +19,8 @@ pub:
 // return  []Action
 pub fn filtersort(actions []Action, args FilterArgs) ![]Action {
 	mut result := []Action{}
-	for mut action in actions.actions {
+	mut actions2 := actions.clone()
+	for mut action in actions2 {
 		if args.domain != '' && args.domain != action.domain {
 			continue
 		}
@@ -33,6 +34,7 @@ pub fn filtersort(actions []Action, args FilterArgs) ![]Action {
 
 		mut prio := 0 // highest prio
 		for name_filter in args.names_filter {
+			println('oops: $name_filter')
 			if name_filter.contains('*') || name_filter.contains('?') || name_filter.contains('[') {
 				if action.name.match_glob(name_filter) {
 					action.priority = u8(prio)
@@ -50,7 +52,7 @@ pub fn filtersort(actions []Action, args FilterArgs) ![]Action {
 	mut resultsorted := []Action{}
 	for prioselect in 0 .. args.names_filter.len {
 		// walk over all prio's
-		for action2 in actions.actions {
+		for action2 in result {
 			if action2.priority == prioselect {
 				resultsorted << action2
 			}
