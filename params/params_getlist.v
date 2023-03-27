@@ -1,7 +1,6 @@
 module params
 
 import texttools
-import time
 
 // get kwarg, and return list of string based on comma separation
 pub fn (params &Params) get_list(key string) ![]string {

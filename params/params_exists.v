@@ -1,7 +1,5 @@
 module params
 
-import time
-
 // check if kwarg exist
 // line:
 //    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok

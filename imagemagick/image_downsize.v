@@ -50,7 +50,7 @@ pub fn (mut image Image) downsize(args DownsizeArgs) ! {
 	}
 	// check in params
 	if args.backup {
-		bpath := image.path.backup(dest: args.backup_dest, root: args.backup_root)!
+		image.path.backup(dest: args.backup_dest, root: args.backup_root)!
 	}
 	if image.size_kbyte > 600 && image.size_x > 2400 {
 		image.size_kbyte = 0
