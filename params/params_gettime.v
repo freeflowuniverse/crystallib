@@ -1,10 +1,9 @@
 module params
 
 import freeflowuniverse.crystallib.timetools
-import texttools
-import os
+// import texttools
+// import os
 import time { Duration, Time }
-
 
 // Get Expiration object from time string input
 // input can be either relative or absolute
@@ -36,8 +35,8 @@ pub fn (params &Params) get_time_default(key string, defval Time) !Time {
 	return defval
 }
 
-//calculate difference in time, returled as u64 (is Duration type)
-//format e.g. 
+// calculate difference in time, returled as u64 (is Duration type)
+// format e.g.
 pub fn (params &Params) get_time_interval(key string) !Duration {
 	valuestr := params.get(key)!
 	data := valuestr.split('-')
@@ -50,11 +49,10 @@ pub fn (params &Params) get_time_interval(key string) !Duration {
 		return error('Invalid time interval: begin time cannot be after end time')
 	}
 	return end.unix_time() - start.unix_time()
-	//NEXT: document and give examples, make sure there is test
+	// NEXT: document and give examples, make sure there is test
 }
 
-
-//QUESTION: what was purpose of this? Duration is not same as time, think code needs to be removed
+// QUESTION: what was purpose of this? Duration is not same as time, think code needs to be removed
 
 // fn (params &Params) parse_time(value string) !Duration {
 // 	is_am := value.ends_with('AM')

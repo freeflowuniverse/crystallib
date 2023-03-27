@@ -1,6 +1,8 @@
 module params
+
 import os
 // will get path and check it exists
+
 pub fn (params &Params) get_path(key string) !string {
 	path := params.get(key)!
 

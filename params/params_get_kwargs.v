@@ -1,7 +1,6 @@
 module params
 
 import texttools
-import os
 
 // see if the kwarg with the key exists
 // if yes return as string trimmed
@@ -76,8 +75,6 @@ pub fn (params &Params) get_u8_default(key string, defval u8) !u8 {
 	}
 	return defval
 }
-
-
 
 // get kwarg return as int, if it doesnt' exist return a default
 // line:

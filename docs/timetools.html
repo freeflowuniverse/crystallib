@@ -58,47 +58,18 @@
 
 </section>
 
-						<section id="get_expiration_from_timestring" class="doc-node">
-							<div class="title"><h2>fn get_expiration_from_timestring <a href="#get_expiration_from_timestring">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/timetools/timetools.v#L84"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">get_expiration_from_timestring</span><span class="token punctuation">(</span>exp_ <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span>Expiration</code></pre>
-<p>Get Expiration object from time string input input can be either relative or absolute</p>
-<h2>Relative time</h2>
-<h4>time periods:</h4>
-<ul>
-<li>s -&gt; second</li>
-<li>h -&gt; hour</li>
-<li>d -&gt; day</li>
-<li>w -&gt; week</li>
-<li>M -&gt; month</li>
-<li>Q -&gt; quarter</li>
-<li>Y -&gt; year
-0 means right now input string example: &quot;+1w +2d -4h&quot;</li>
-</ul>
-<h2>Absolute time</h2>
-<p>inputs must be of the form: &quot;YYYY-MM-DD HH:mm:ss&quot; or &quot;YYYY-MM-DD&quot; input string examples: '2022-12-5 20:14:35' '2022-12-5' - sets hours, mins, seconds to 00</p>
-
-</section>
 						<section id="get_unix_from_absolute" class="doc-node">
-							<div class="title"><h2>fn get_unix_from_absolute <a href="#get_unix_from_absolute">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/timetools/timetools.v#L162"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">get_unix_from_absolute</span><span class="token punctuation">(</span>timestr <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">i64</span></code></pre>
+							<div class="title"><h2>fn get_unix_from_absolute <a href="#get_unix_from_absolute">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/timetools/timetools.v#L117"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">get_unix_from_absolute</span><span class="token punctuation">(</span>timestr <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">i64</span></code></pre>
 
 
 </section>
 						<section id="get_unix_from_relative" class="doc-node">
-							<div class="title"><h2>fn get_unix_from_relative <a href="#get_unix_from_relative">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/timetools/timetools.v#L110"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">get_unix_from_relative</span><span class="token punctuation">(</span>exp_ <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">i64</span></code></pre>
+							<div class="title"><h2>fn get_unix_from_relative <a href="#get_unix_from_relative">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/timetools/timetools.v#L65"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">get_unix_from_relative</span><span class="token punctuation">(</span>timestr <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">i64</span></code></pre>
 
 
 </section>
-						<section id="parse_date" class="doc-node">
-							<div class="title"><h2>fn parse_date <a href="#parse_date">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/timetools/timetools.v#L179"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">parse_date</span><span class="token punctuation">(</span>datestr_ <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">int</span></code></pre>
-
-
-</section>
-						<section id="parse_time" class="doc-node">
-							<div class="title"><h2>fn parse_time <a href="#parse_time">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/timetools/timetools.v#L216"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">parse_time</span><span class="token punctuation">(</span>timestr_ <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">int</span></code></pre>
-
-
-</section>
-						<section id="time_from_string" class="doc-node">
-							<div class="title"><h2>fn time_from_string <a href="#time_from_string">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/timetools/timetools.v#L60"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">time_from_string</span><span class="token punctuation">(</span>timestr <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span>time<span class="token punctuation">.</span>Time</code></pre>
+						<section id="parse" class="doc-node">
+							<div class="title"><h2>fn parse <a href="#parse">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/timetools/timetools.v#L44"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">parse</span><span class="token punctuation">(</span>timestr <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span>time<span class="token punctuation">.</span>Time</code></pre>
 <p>Get Expiration object from time string input input can be either relative or absolute</p>
 <h2>Relative time</h2>
 <h4>time periods:</h4>
@@ -114,20 +85,6 @@
 </ul>
 <h2>Absolute time</h2>
 <p>inputs must be of the form: &quot;YYYY-MM-DD HH:mm:ss&quot; or &quot;YYYY-MM-DD&quot; input string examples: '2022-12-5 20:14:35' '2022-12-5' - sets hours, mins, seconds to 00</p>
-
-</section>
-						<section id="Expiration" class="doc-node">
-							<div class="title"><h2>struct Expiration <a href="#Expiration">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/timetools/timetools.v#L26"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Expiration</span> <span class="token punctuation">{</span>
-<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
-<span class="token comment">// expiration in epoch</span>
-	expiration <span class="token builtin">i64</span>
-<span class="token punctuation">}</span></code></pre>
-
-
-</section>
-						<section id="Expiration.to_time" class="doc-node">
-							<div class="title"><h2>fn (Expiration) to_time <a href="#Expiration.to_time">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/timetools/timetools.v#L38"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> exp Expiration<span class="token punctuation">)</span> <span class="token function">to_time</span><span class="token punctuation">(</span><span class="token punctuation">)</span> time<span class="token punctuation">.</span>Time</code></pre>
-<p>Get Time object from Expiration object</p>
 
 </section>
 
@@ -135,26 +92,13 @@
             Powered by vdoc.
           </div>
         </div>
-        <div class="doc-toc"><ul><li class="open"><a href="#get_expiration_from_timestring">fn get_expiration_from_timestring</a>        <ul>
-</ul>
-</li>
-<li class="open"><a href="#get_unix_from_absolute">fn get_unix_from_absolute</a>        <ul>
+        <div class="doc-toc"><ul><li class="open"><a href="#get_unix_from_absolute">fn get_unix_from_absolute</a>        <ul>
 </ul>
 </li>
 <li class="open"><a href="#get_unix_from_relative">fn get_unix_from_relative</a>        <ul>
 </ul>
 </li>
-<li class="open"><a href="#parse_date">fn parse_date</a>        <ul>
-</ul>
-</li>
-<li class="open"><a href="#parse_time">fn parse_time</a>        <ul>
-</ul>
-</li>
-<li class="open"><a href="#time_from_string">fn time_from_string</a>        <ul>
-</ul>
-</li>
-<li class="open"><a href="#Expiration">struct Expiration</a>        <ul>
-<li><a href="#Expiration.to_time">fn to_time</a></li>
+<li class="open"><a href="#parse">fn parse</a>        <ul>
 </ul>
 </li>
 </ul></div>

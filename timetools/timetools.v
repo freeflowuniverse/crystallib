@@ -23,8 +23,6 @@ const (
 	}
 )
 
-
-
 // Get Expiration object from time string input
 // input can be either relative or absolute
 // ## Relative time
@@ -61,7 +59,7 @@ pub fn parse(timestr string) !time.Time {
 		}
 		return time.unix(time_unix)
 	}
-	return error("bug")
+	return error('bug')
 }
 
 pub fn get_unix_from_relative(timestr string) !i64 {
@@ -117,7 +115,7 @@ pub fn get_unix_from_relative(timestr string) !i64 {
 }
 
 pub fn get_unix_from_absolute(timestr string) !i64 {
-	//QUESTION: is this good enough? looks weird
+	// QUESTION: is this good enough? looks weird
 	components := timestr.split_any(' :-')
 	mut full_string := timestr
 	if components.len == 3 {
@@ -133,10 +131,6 @@ pub fn get_unix_from_absolute(timestr string) !i64 {
 	}
 	return time_struct.unix_time() - 10_800
 }
-
-
-
-
 
 // fn parse_date(datestr_ string) !map[string]int {
 // 	mut datestr_list := datestr_.to_lower().replace(' ', '').split('')

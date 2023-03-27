@@ -42,7 +42,9 @@
 	description: 'TF Wallet for TFT' 
 	preferred: false
 
-!!actor.select aaa.test
+!!protocol_me.aaa.people.select
+!!aaa.people.select
+!!people.select
 
 !!test_action
 	key: value

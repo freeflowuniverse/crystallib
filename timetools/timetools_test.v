@@ -93,9 +93,7 @@ fn test_absolute_time() {
 		'2022':               1640984400 // should be beginning of 2022
 	}
 	for key, value in input_strings {
-		thetime := timetools.parse(key) or {
-			panic('cannot get expiration for ${key}')
-		}
+		thetime := timetools.parse(key) or { panic('cannot get expiration for ${key}') }
 		assert thetime.unix_time() == value, 'expiration was incorrect for ${key}'
 	}
 }
@@ -161,4 +159,3 @@ fn test_absolute_time() {
 // 		assert test_value == value, 'hour, minute was incorrect for ${key}'
 // 	}
 // }
-

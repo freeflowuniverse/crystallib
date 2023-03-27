@@ -1,7 +1,6 @@
 module params
 
-
-//convert GB, MB, KB to bytes
+// convert GB, MB, KB to bytes
 // e.g. 10 GB becomes bytes in u64
 pub fn (params &Params) get_storagecapacity_in_bytes(key string) !u64 {
 	valuestr := params.get(key)!
@@ -28,7 +27,6 @@ pub fn (params &Params) get_storagecapacity_in_bytes(key string) !u64 {
 	}
 	return valuestr.u64() * u64(times)
 }
-
 
 pub fn (params &Params) get_storagecapacity_in_bytes_default(key string, defval u64) !u64 {
 	if params.exists(key) {

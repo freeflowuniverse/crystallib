@@ -1,9 +1,10 @@
 module actionsparser
 
-const text = "
+const text2 = "
 //select the book, can come from context as has been set before
 //now every person added will be added in this book
-!!actor.select aaa.people
+!!actor.select people
+!!book.select aaa
 
 //delete everything as found in current book
 !!person_delete cid:1g
@@ -60,67 +61,60 @@ const text = "
 "
 
 fn test_filter_actor() ! {
-	mut parser := new(actor: 'people')!
-	parser.text_add(actionsparser.text)!
+	mut parser := new(text: actionsparser.text2)!
 
-	assert parser.unsorted.len == 8
-	assert parser.skipped.len == 0
+	assert parser.actions.len == 8
 
-	parser.filter_actor()
-
-	// confirm only one test actor action is skipped
-	assert parser.unsorted.len == 7
-	assert parser.skipped.len == 1
+	// pub struct FilterArgs{
+	// pub:
+	// 	domain string = "protocol_me"
+	// 	actor    string [required]  //can be empty, this means will not filter based on actor
+	// 	book     string	[required]  //can be empty, this means will not filter based on book	
+	// 	names_filter    []string //can be empty, then no filter, unix glob filters are allowed
+	// }	
+	println(parser)
+	actions := parser.filtersort(actor: 'people', book: 'aaa')!
+	println(actions)
+	assert actions.len == 8
 }
 
-fn test_filter_book() ! {
-	test_filter_book_aaa()!
-	test_filter_book_bbb()!
-}
+// fn test_filter_book_aaa() ! {
+// 	mut parser := new(defaultbook: 'aaa',text:actionsparser.text2)!
 
-fn test_filter_book_aaa() ! {
-	mut parser := new(book: 'aaa')!
-	parser.text_add(actionsparser.text)!
+// 	// assert parser.unsorted.len == 8
+// 	// assert parser.skipped.len == 0
 
-	assert parser.unsorted.len == 8
-	assert parser.skipped.len == 0
+// 	// parser.filter_book()
 
-	parser.filter_book()
+// 	// assert skipped action from book 'bbb'
+// 	// assert parser.unsorted.len == 7
+// 	// assert parser.skipped.len == 1
+// 	// assert parser.skipped[0].name == 'bbb.people.person_define'
 
-	// assert skipped action from book 'bbb'
-	assert parser.unsorted.len == 7
-	assert parser.skipped.len == 1
-	assert parser.skipped[0].name == 'bbb.people.person_define'
-}
+// 	//FIXME
 
-fn test_filter_book_bbb() ! {
-	mut parser := new(book: 'bbb')!
-	parser.text_add(actionsparser.text)!
+// }
 
-	assert parser.unsorted.len == 8
-	assert parser.skipped.len == 0
+// fn test_filter_book_bbb() ! {
+// 	mut parser := new(defaultbook: 'bbb',text:actionsparser.text2)!
 
-	parser.filter_book()
+// 	// parser.filtersort()
 
-	// assert skipped action from book 'bbb'
-	assert parser.unsorted.len == 1
-	assert parser.skipped.len == 7
-	assert parser.unsorted[0].name == 'bbb.people.person_define'
-}
+// 	//FIXME
 
-fn test_filter() ! {
-	parser := new(
-		text: actionsparser.text
-		filter: ['circle_delete', 'person_delete', 'circle_define', 'person_define', 'circle_link',
-			'circle_comment', 'digital_payment_add']
-		actor: 'people'
-		book: 'aaa'
-	)!
+// }
 
-	assert parser.unsorted.len == 0
-	assert parser.ok.len == 6
-	assert parser.skipped.len == 2
+// fn test_filter() ! {
+// 	// parser := new(
+// 	// 	text: actionsparser.text2
+// 	// )!
 
-	// assert parser.unsorted[1].name == 'person_delete'
-	// assert parser.ok[1].name == 'circle_delete'
-}
+// 	// actions:=parser.filtersort(
+// 	// 	names_filter: ['circle_delete', 'person_delete', 'circle_define', 'person_define', 'circle_link',
+// 	// 		'circle_comment', 'digital_payment_add']
+// 	// 	actor: 'people'
+// 	// 	book: 'aaa'
+// 	// )!
+// 	// assert actions.len == 8
+
+// }

@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.params { Params, parse }
 import time { Duration, sleep }
 
 fn do() ! {
-	totalnr := 100000
+	totalnr := 1000000
 
 	// some performance tests
 	mut res := []Params{}
@@ -33,7 +33,7 @@ fn do() ! {
 	println(elapsed)
 	// sw.restart()	
 
-	mbused := 60.0
+	mbused := 600.0
 	bytesused := mbused * 1000 * 1000
 	bytes_param := bytesused / totalnr
 	println('bytes used per param: ${bytes_param}')

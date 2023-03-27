@@ -12,7 +12,7 @@ const currenciesconst = init_factory()
 
 pub fn new() !Currencies {
 	mut cs := currency.currenciesconst
-	if cs.currencies.len==0{
+	if cs.currencies.len == 0 {
 		cs.defaults_set()
 		env := os.environ()
 		egpval := (1 / 30)
