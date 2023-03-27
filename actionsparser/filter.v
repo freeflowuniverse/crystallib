@@ -32,9 +32,15 @@ pub fn filtersort(actions []Action, args FilterArgs) ![]Action {
 		}
 		action.name = action.name.to_lower().trim_space()
 
+		// if name filter is not set, just push to result 
+		if args.names_filter.len == 0 {
+			result << action
+			continue
+		}
+
 		mut prio := 0 // highest prio
 		for name_filter in args.names_filter {
-			println('oops: $name_filter')
+			//QUESTION: what to do with [ and ?
 			if name_filter.contains('*') || name_filter.contains('?') || name_filter.contains('[') {
 				if action.name.match_glob(name_filter) {
 					action.priority = u8(prio)
@@ -45,11 +51,22 @@ pub fn filtersort(actions []Action, args FilterArgs) ![]Action {
 					result << action
 					continue
 				}
+			//BACKLOG: cleaner way to do this
+			} else if action.name == name_filter.to_lower() {
+				action.priority = u8(prio)
+				result << action
+				continue
 			}
 			prio += 1
 		}
 	}
 	mut resultsorted := []Action{}
+	
+	// if name filter is not set, return unsorted
+	if args.names_filter.len == 0 {
+		return result
+	}
+
 	for prioselect in 0 .. args.names_filter.len {
 		// walk over all prio's
 		for action2 in result {
