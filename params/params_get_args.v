@@ -9,6 +9,7 @@ pub fn (params &Params) get_arg(nr int, checknrargs int) !string {
 	if nr > params.args.len {
 		return error('Looking for arg nr ${nr}, not enough args available.\n${params}')
 	}
+	// 1,1
 	return params.args[nr] or { panic('error, above should have catched') }
 }
 
