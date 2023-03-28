@@ -4,7 +4,6 @@ module tfgrid
 pub struct MachinesModel {
 pub:
 	name        string    [required]
-	node_id     u32
 	network     Network   [required]
 	machines    []Machine [required]
 	metadata    string
@@ -13,49 +12,162 @@ pub:
 
 pub struct MachinesResult {
 pub:
-	network_result NetworkResult
-	machine_result []MachineResult
+	name               string
+	metadata           string
+	description        string
+	network            NetworkResult
+	machine            []MachineResult
+	node_deployment_id map[u32]u32
 }
 
+[params]
 pub struct Machine {
 pub:
-	name        string [json: 'name'; required]
-	disks       []Disk [json: 'disks']
-	public_ip   bool   [json: 'public_ip']
-	planetary   bool   [json: 'planetary']
-	cpu         u32    [json: 'cpu']         = 2 // the amount of virtual CPUs for this vm
-	memory      u64    [json: 'memory']      = 4000 // memory in MBs
-	rootfs_size u64    [json: 'rootfs_size'] = 1000 // root filesystem size in MBs
-	flist       string [json: 'flist']      = 'https://hub.grid.tf/tf-official-apps/base:latest.flist'
-	entrypoint  string [json: 'entrypoint'] = '/sbin/zinit init'
-	ssh_key     string [json: 'ssh_key']
-	// qsfs_disks  []QsfsDisk  //for now not supported
-}
-
-pub struct Disk {
-pub:
-	name       string [required]
-	size       u32    [required] // disk size in GBs
-	mountpoint string [required]
+	name        string            [required]
+	node_id     u32
+	flist       string = 'https://hub.grid.tf/tf-official-apps/base:latest.flist'
+	entrypoint  string = '/sbin/zinit init'
+	public_ip   bool
+	public_ip6  bool
+	planetary   bool = true
+	cpu         u32  = 1 // number of vcpu cores
+	memory      u64  = 1024 // in MBs
+	rootfs_size u64 // in MBs
+	zlogs       []Zlog
+	disks       []Disk
+	qsfs        []QSFS
+	env_vars    map[string]string // ex: { "SSH_KEY": ".." }
+	description string
 }
 
 struct MachineResult {
 pub:
-	name       string
-	public_ip  string
-	public_ip6 string
-	ygg_ip     string
+	name        string
+	node_id     u32
+	flist       string
+	entrypoint  string
+	public_ip   bool
+	public_ip6  bool
+	planetary   bool
+	cpu         u32
+	memory      u64
+	rootfs_size u64
+	zlogs       []Zlog
+	disks       []Disk
+	qsfs        []QSFSResult
+	env_vars    map[string]string
+	description string
+	// computed
+	computed_ip4 string
+	computed_ip6 string
+	wg_ip        string
+	ygg_ip       string
 }
 
-// [params]
-// pub struct QsfsDisk {
-// pub:
-// 	qsfs_zdbs_name  string [required]
-// 	name            string [required]
-// 	prefix          string [required]
-// 	encryption_key  string [required]
-// 	cache           u32
-// 	minimal_shards  u32
-// 	expected_shards u32
-// 	mountpoint      string [required]
-// }
+[params]
+pub struct Disk {
+pub:
+	name        string [required]
+	size        u32    [required] // disk size in GBs
+	mountpoint  string [required]
+	description string
+}
+
+[params]
+pub struct QSFS {
+pub:
+	name             string [required]
+	mountpoint       string [required]
+	qsfs_zdbs_name   string [required]
+	encryption_key   string [required]
+	cache            u32    [required]
+	minimal_shards   u32    [required]
+	expected_shards  u32    [required]
+	redundant_groups u32    [required]
+	redundant_nodes  u32    [required]
+
+	encryption_algorithm  string = 'AES'
+	compression_algorithm string = 'snappy'
+	metadata              Metadata [required]
+	description           string
+
+	max_zdb_data_dir_size u32     [required]
+	groups                []Group [required]
+}
+
+pub struct QSFSResult {
+pub:
+	name             string
+	mountpoint       string
+	qsfs_zdbs_name   string
+	encryption_key   string
+	cache            u32
+	minimal_shards   u32
+	expected_shards  u32
+	redundant_groups u32
+	redundant_nodes  u32
+
+	encryption_algorithm  string
+	compression_algorithm string
+	metadata              Metadata
+	description           string
+
+	max_zdb_data_dir_size u32
+	groups                []Group
+	// computed
+	metrics_endpoint string
+}
+
+[params]
+pub struct Zlog {
+pub:
+	output string
+}
+
+pub struct Metadata {
+	type_                string    [json: 'type'] = 'zdb'
+	prefix               string    [required]
+	encryption_algorithm string = 'AES'
+	encryption_key       string    [required]
+	backends             []Backend
+}
+
+pub struct Group {
+	backends []Backend
+}
+
+pub struct Backend {
+	address   string [required]
+	namespace string [required]
+	password  string [required]
+}
+
+pub struct Network {
+pub:
+	name                 string [required]
+	ip_range             string = '10.1.0.0/16'
+	add_wireguard_access bool
+	description          string
+}
+
+struct NetworkResult {
+pub:
+	name                 string
+	ip_range             string
+	add_wireguard_access bool
+	description          string
+	// computed
+	wireguard_config string
+}
+
+
+struct AddMachine {
+	machine Machine
+	project_name string
+}
+
+
+struct RemoveMachine {
+	machine_name string
+	project_name string
+}

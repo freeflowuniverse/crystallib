@@ -8,8 +8,5 @@ pub struct Credentials {
 }
 
 pub fn (mut client TFGridClient) login(credentials Credentials) ! {
-	res := client.rpc.call(cmd: 'login', data: json.encode(credentials))!
-	if res.error != '' {
-		return error(res.error)
-	}
+	client.rpc.call(cmd: 'login', data: json.encode(credentials))!
 }

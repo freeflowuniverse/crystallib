@@ -1,11 +1,11 @@
 import freeflowuniverse.crystallib.threefold.tfgrid
-import freeflowuniverse.crystallib.redisclient
-import json
+// import freeflowuniverse.crystallib.redisclient
+// import json
 import time
 
 fn test_main() ? {
 	mut client := tfgrid.new()!
-	login()!
+	login(mut client)!
 
 	deployment_res := deploy(mut client)!
 	println('deployment result: ${deployment_res}')
@@ -28,14 +28,23 @@ fn login(mut client tfgrid.TFGridClient) ! {
 }
 
 fn deploy(mut client tfgrid.TFGridClient) !tfgrid.MachinesResult {
+	mut disks := []tfgrid.Disk{}
+	disks << tfgrid.Disk{
+		name: 'disk1'
+		size: 10
+		mountpoint: '/mnt/disk1'
+	}
+
 	mut machines := []tfgrid.Machine{}
 	machines << tfgrid.Machine{
 		name: 'vm1'
-		planetary: true
 		cpu: 2
 		memory: 2048
 		rootfs_size: 512
-		ssh_key: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCs+AFNbOtMtWElFISu1NLke5dH3x+HKJ1Ef6qYpMzZlF9UfzKhcTSy+LQTxvk55dABBirsln03rRdsblmyCgJAPq/w75QVRJCoh8Ge47eOmvaIx6MLFKTVHbfdUTaqFUZ9B6OxnufPc/T/4uWuBHXGZHNu+6DFS6nx7d0hQJtke4fetEzu+6LjIup0V9Qvt2xSK7kTTuDqHbXzvqc8J9PWmhTr0Q5N3qNJ2g8RrTO3Whmb7Pr0qMA4gWuBPEQoDHnb0YuXqxd3L94bqf2dqo8zo1dVwAESe9OCjwFzSw/1XyPoHPzMxN5B1Uu0hgwGlUagRnDg/C/kA6RJBht91Q/fXDWdB/sLVMfGKZ8EiybRynMQcQMVGebVOw5dQyK5Jt069spBmlqZzJZ4Zpa6ktxwFW2foJxObVhm5fmFr6c7PYIyT03OkY83V9DJVFR+HiVi5in+0DOujMDoyQYV/6Zyvs1uMeJHARJTjvEYz6dbYcA7odp3Zi4Tmv+d+3nkx+k= superluigi@luigi'
+		env_vars: {
+			"SSH_KEY": 'ssh-rsa ...'
+		}
+		disks: disks
 	}
 
 	machines_model := tfgrid.MachinesModel{
@@ -53,7 +62,7 @@ fn deploy(mut client tfgrid.TFGridClient) !tfgrid.MachinesResult {
 	return client.machines_deploy(machines_model)!
 }
 
-fn get_deployment(mut client tfgrid.TFGridClient) ![]tfgrid.Deployment {
+fn get_deployment(mut client tfgrid.TFGridClient) !tfgrid.MachinesResult {
 	return client.machines_get('project1')!
 }
 

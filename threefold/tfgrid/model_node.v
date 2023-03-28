@@ -18,7 +18,7 @@ pub:
 	mru                string
 	sru                string
 	hru                string
-	public_config      PublicConfig
+	// public_config      PublicConfig
 	status             string
 	certification_type string       [json: 'certificationType']
 }
