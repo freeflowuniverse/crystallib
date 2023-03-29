@@ -41,7 +41,8 @@ fn do() ! {
 
 	sleep(Duration(60 * time.minute))
 
-	// conclusion only 60 bytes per params for 1m records
+	// conclusion only 60 bytes per params for 1m records 
+	// TODO: not sure needs to be redone
 	// takes 0.9 sec to walk over 1million records
 }
 
