@@ -17,7 +17,7 @@ pub:
 	description        string
 	network            NetworkResult
 	machine            []MachineResult
-	node_deployment_id map[u32]u32
+	node_deployment_id map[string]string
 }
 
 [params]

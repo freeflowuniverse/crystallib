@@ -1,10 +1,10 @@
 import freeflowuniverse.crystallib.threefold.tfgrid
-// import freeflowuniverse.crystallib.redisclient
-// import json
+
 import time
 
 fn test_main() ? {
 	mut client := tfgrid.new()!
+	
 	login(mut client)!
 
 	deployment_res := deploy(mut client)!
@@ -18,6 +18,7 @@ fn test_main() ? {
 
 	delete_project(mut client)!
 }
+
 
 fn login(mut client tfgrid.TFGridClient) ! {
 	cred := tfgrid.Credentials{

@@ -1,18 +1,17 @@
 module tfgrid
 
-import json
-
+/*
 pub fn (mut client TFGridClient) zdb_deploy(zdb ZDB) !ZDBResult {
-	payload := json.encode_pretty(zdb)
-	res := client.rpc.call(cmd: 'zdb.deploy', data: payload)!
-	return json.decode(ZDBResult, res)
+	retqueue := client.rpc.call[ZDB]('tfgrid.zdb.deploy', zdb)!
+	return client.rpc.result[ZDBResult](5000, retqueue)!
 }
 
 pub fn (mut client TFGridClient) zdb_delete(name string) ! {
-	client.rpc.call(cmd: 'zdb.delete', data: name)!
+	retqueue := client.rpc.call[string]('tfgrid.zdb.delete', name)!
+	_ := client.rpc.result[ZDBResult](5000, retqueue)!
 }
 
 pub fn (mut client TFGridClient) zdb_get(name string) !ZDBResult {
-	res := client.rpc.call(cmd: 'zdb.get', data: name)!
-	return json.decode(ZDBResult, res)
-}
+	retqueue := client.rpc.call[string]('tfgrid.zdb.get', name)!
+	return client.rpc.result[ZDBResult](5000, retqueue)!
+}*/

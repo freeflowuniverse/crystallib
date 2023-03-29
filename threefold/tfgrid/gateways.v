@@ -1,40 +1,37 @@
 module tfgrid
 
-import json
 
 // Deploy a fully qualified domain on gateway ex: site.com
 pub fn (mut client TFGridClient) gateways_deploy_fqdn(payload GatewayFQDN) !GatewayFQDNResult {
-	payload_encoded := json.encode_pretty(payload)
-	response := client.rpc.call(cmd: 'gateway.fqdn.deploy', data: payload_encoded)!
-	return json.decode(GatewayFQDNResult, response)
+	retqueue := client.rpc.call[GatewayFQDN]('tfgrid.gateway.fqdn.deploy', payload)!
+	return client.rpc.result[GatewayFQDNResult](5000, retqueue)!
 }
 
 // Get fqdn info using deployment name.
 pub fn (mut client TFGridClient) gateways_get_fqdn(name string) !GatewayFQDNResult {
-	response := client.rpc.call(cmd: 'gateway.fqdn.get', data: name)!
-
-	return json.decode(GatewayFQDNResult, response)
+	retqueue := client.rpc.call[string]('tfgrid.gateway.fqdn.get', name)!
+	return client.rpc.result[GatewayFQDNResult](5000, retqueue)!
 }
 
 
 // Deploy name domain on gateway ex: name.gateway.com
 pub fn (mut client TFGridClient) gateways_deploy_name(payload GatewayName) !GatewayNameResult {
-	payload_encoded := json.encode_pretty(payload)
-	response := client.rpc.call(cmd: 'gateway.name.deploy', data: payload_encoded)!
-	return json.decode(GatewayNameResult, response)
+	retqueue := client.rpc.call[GatewayName]('tfgrid.gateway.name.deploy', payload)!
+	return client.rpc.result[GatewayNameResult](5000, retqueue)!
 }
 
 pub fn (mut client TFGridClient) gateways_get_name(name string) !GatewayNameResult {
-	response := client.rpc.call(cmd: 'gateway.name.get', data: name)!
-
-	return json.decode(GatewayNameResult, response)
+	retqueue := client.rpc.call[string]('tfgrid.gateway.name.get', name)!
+	return client.rpc.result[GatewayNameResult](5000, retqueue)!
 }
 
 // Delete fqdn using deployment name
 pub fn (mut client TFGridClient) gateways_delete_fqdn(name string) ! {
-	client.rpc.call(cmd: 'gateway.fqdn.delete', data: name)!
+	retqueue := client.rpc.call[string]('tfgrid.gateway.fqdn.delete', name)!
+	client.rpc.result[string](5000, retqueue)!
 }
 
 pub fn (mut client TFGridClient) gateways_delete_name(name string) ! {
-	client.rpc.call(cmd: 'gateway.name.delete', data: name)!
+	retqueue := client.rpc.call[string]('tfgrid.gateway.name.delete', name)!
+	client.rpc.result[string](5000, retqueue)!
 }

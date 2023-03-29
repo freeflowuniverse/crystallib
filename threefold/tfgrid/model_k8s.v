@@ -16,7 +16,7 @@ pub struct K8sClusterResult {
 	master  K8sNode
 	workers []K8sNode
 	// computed
-	node_deployment_id map[u32]u64
+	node_deployment_id map[string]u64
 }
 
 pub struct K8sNode {
