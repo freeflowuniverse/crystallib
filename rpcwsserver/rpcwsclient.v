@@ -1,15 +1,15 @@
-module main
+module rpcwsserver
 
 import log
 import net.websocket { Client, Message }
 import time
 
 [heap]
-pub struct RpcWsClient{
+pub struct RpcWsClient {
 pub mut:
-	client &Client
+	client                    &Client
 	channel_incoming_messages chan string
-	logger &log.Logger
+	logger                    &log.Logger
 }
 
 fn (mut w RpcWsClient) on_message(mut c Client, msg &Message) ! {
@@ -18,16 +18,15 @@ fn (mut w RpcWsClient) on_message(mut c Client, msg &Message) ! {
 		return
 	}
 	if msg.opcode == .pong {
-		w.logger.debug("Received pong message")
+		w.logger.debug('Received pong message')
 		return
 	}
 	if msg.opcode != .text_frame && msg.opcode != .binary_frame {
-		w.logger.warn("Not a text message: ${msg.opcode}")
+		w.logger.warn('Not a text message: ${msg.opcode}')
 		return
 	}
-	w.channel_incoming_messages <- msg.payload.str()
+	w.channel_incoming_messages <- msg.payload.bytestr()
 }
-
 
 pub fn (mut w RpcWsClient) run() ! {
 	w.client.listen()!
@@ -39,35 +38,19 @@ pub fn (mut w RpcWsClient) send(message string, timeout int) !string {
 		response := <-w.channel_incoming_messages {
 			return response
 		}
-		timeout * time.millisecond {
-		}
+		timeout * time.millisecond {}
 	}
-	return error("timeout on receiving response from server")
+	return error('timeout on receiving response from server')
 }
 
-pub fn new_rpcwsclient(address string, logger &log.Logger) !RpcWsClient {
+pub fn new_rpcwsclient(address string, logger &log.Logger) !&RpcWsClient {
 	mut c := websocket.new_client(address, websocket.ClientOpt{})!
 	mut rpcwsclient := RpcWsClient{
-	 	client: c
-	 	channel_incoming_messages: chan string{}
-	 	logger: unsafe { logger }
+		client: c
+		channel_incoming_messages: chan string{}
+		logger: unsafe { logger }
 	}
 	c.on_message(rpcwsclient.on_message)
 	c.connect()!
-	return rpcwsclient
-}
-
-
-
-fn main() {
-	address := "localhost:8080"
-	mut logger := log.Logger(&log.Log{ level: .info})
-	mut myclient := new_rpcwsclient(address, &logger) or {
-		eprintln(err)
-		exit(1)
-	}
-	myclient.run() or {
-		eprintln(err)
-		exit(1)
-	}
+	return &rpcwsclient
 }
