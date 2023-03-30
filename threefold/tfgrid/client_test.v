@@ -18,15 +18,35 @@ fn test_main() ? {
 
 	// delete_project(mut client)!
 
-	k8s := deploy_k8s(mut client)!
-	println("deploy_result ${k8s}")
+	// k8s := deploy_k8s(mut client)!
+	// println("deploy_result ${k8s}")
 
-	k8s_get := client.k8s_get('testk8s')!
-	println("get_result ${k8s_get}")
+	// time.sleep(time.second * 10)
+	// k8s_get := client.k8s_get('testk8s')!
+	// println("get_result ${k8s_get}")
 
-	client.k8s_delete('testk8s')!
+	// client.k8s_delete('testk8s')!
+
+	// zdb := deploy_zdb(mut client)!
+	// println("deploy_result ${zdb}")
+
+	// time.sleep(time.second * 10)
+	// zdb_get := client.zdb_get('testzdb')!
+	// println("get_result ${zdb_get}")
+
+	// client.zdb_delete('testzdb')!
 }
 
+fn deploy_zdb(mut client tfgrid.TFGridClient) !tfgrid.ZDBResult {
+	return client.zdb_deploy(tfgrid.ZDB{
+		node_id: 33
+		name: 'testzdb'
+		password: 'strong'
+		public: false
+		size: 10
+		mode: 'user'
+	})
+}
 
 fn deploy_k8s(mut client tfgrid.TFGridClient) !tfgrid.K8sClusterResult {
 	master_node := tfgrid.K8sNode{
@@ -59,7 +79,7 @@ fn deploy_k8s(mut client tfgrid.TFGridClient) !tfgrid.K8sClusterResult {
 
 fn login(mut client tfgrid.TFGridClient) ! {
 	cred := tfgrid.Credentials{
-		mnemonics: 'PUT YOU MNEMONICS HERE'
+		mnemonics: 'mom picnic deliver again rug night rabbit music motion hole lion where'
 		network: 'dev'
 	}
 	client.login(cred)!

@@ -8,7 +8,7 @@ pub:
 	public      bool
 	size        u32    [required] // in GB
 	description string
-	mode        string
+	mode        string // user, seq
 }
 
 pub struct ZDBResult {
@@ -25,9 +25,4 @@ pub:
 	namespace   string
 	port        u32  
 	ips []string
-}
-
-enum ZDBMode {
-	user
-	seq
 }
