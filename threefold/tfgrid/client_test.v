@@ -1,40 +1,66 @@
 import freeflowuniverse.crystallib.threefold.tfgrid
 
-// import time
+import time
 
 fn test_main() ? {
 	mut client := tfgrid.new()!
 	
-	login(mut client)!
+	// login(mut client)!
 
-	// deployment_res := deploy(mut client)!
-	// println('deployment result: ${deployment_res}')
+	// // gateway fqdn
+	// gateway_fqdn_deploy := deploy_gateway_fqdn(mut client)!
+	// println('gateway fqdn: ${gateway_fqdn_deploy}')
 
-	// // sleep 10 seconds to let graphql database see changes
-	// time.sleep(time.second * 10)
+	// // sleep to let graphql database see changes
+	// time.sleep(time.second * 20)
 
-	// get_dep := get_deployment(mut client)!
-	// println('get deployment: ${get_dep}')
+	// gateway_fqdn_get := get_gateway_fqdn(mut client)!
+	// println('gateway fqdn: ${gateway_fqdn_get}')
 
-	// delete_project(mut client)!
+	// delete_gateway_fqdn(mut client)!
 
-	// k8s := deploy_k8s(mut client)!
-	// println("deploy_result ${k8s}")
 
-	// time.sleep(time.second * 10)
-	// k8s_get := client.k8s_get('testk8s')!
-	// println("get_result ${k8s_get}")
+	// // gateway name
+	// gateway_name_deploy := deploy_gateway_name(mut client)!
+	// println('gateway name: ${gateway_name_deploy}')
 
-	// client.k8s_delete('testk8s')!
+	// time.sleep(time.second * 20)
 
-	// zdb := deploy_zdb(mut client)!
-	// println("deploy_result ${zdb}")
+	// gateway_name_get := get_gateway_name(mut client)!
+	// println('gateway name: ${gateway_name_get}')
 
-	// time.sleep(time.second * 10)
-	// zdb_get := client.zdb_get('testzdb')!
-	// println("get_result ${zdb_get}")
+	delete_gateway_name(mut client)!
 
-	// client.zdb_delete('testzdb')!
+	// machine model
+	deployment_res := deploy(mut client)!
+	println('deployment result: ${deployment_res}')
+
+	time.sleep(time.second * 20)
+
+	get_dep := get_deployment(mut client)!
+	println('get deployment: ${get_dep}')
+
+	delete_project(mut client)!
+
+	// k8s cluster
+	k8s := deploy_k8s(mut client)!
+	println("deploy_result ${k8s}")
+
+	time.sleep(time.second * 20)
+	k8s_get := client.k8s_get('testk8s')!
+	println("get_result ${k8s_get}")
+
+	client.k8s_delete('testk8s')!
+
+	// zdb 
+	zdb := deploy_zdb(mut client)!
+	println("deploy_result ${zdb}")
+
+	time.sleep(time.second * 20)
+	zdb_get := client.zdb_get('testzdb')!
+	println("get_result ${zdb_get}")
+
+	client.zdb_delete('testzdb')!
 }
 
 fn deploy_zdb(mut client tfgrid.TFGridClient) !tfgrid.ZDBResult {
@@ -46,6 +72,47 @@ fn deploy_zdb(mut client tfgrid.TFGridClient) !tfgrid.ZDBResult {
 		size: 10
 		mode: 'user'
 	})
+}
+
+fn get_gateway_fqdn(mut client tfgrid.TFGridClient) !tfgrid.GatewayFQDNResult{
+	return client.gateways_get_fqdn('hamadaaaafqdn')!
+}
+
+fn deploy_gateway_fqdn(mut client tfgrid.TFGridClient) !tfgrid.GatewayFQDNResult{
+	mut backends := []string{}
+	backends << 'http://1.1.1.1:9000'
+	gateway_fqdn_model := tfgrid.GatewayFQDN{
+		name: "hamadaaaafqdn",
+		node_id: 11,
+		backends: backends
+		fqdn: 'hamada1.3x0.me'
+	}
+
+	return client.gateways_deploy_fqdn(gateway_fqdn_model)!
+}
+
+fn delete_gateway_fqdn(mut client tfgrid.TFGridClient) !{
+	client.gateways_delete_fqdn('hamadaaaafqdn')!
+}
+
+fn get_gateway_name(mut client tfgrid.TFGridClient) !tfgrid.GatewayNameResult{
+	return client.gateways_get_name('hamadaaaa')!
+}
+
+fn deploy_gateway_name(mut client tfgrid.TFGridClient) !tfgrid.GatewayNameResult{
+	mut backends := []string{}
+	backends << 'http://1.1.1.1:9000'
+	gateway_name_model := tfgrid.GatewayName{
+		name: "hamadaaaa",
+		node_id: 11,
+		backends: backends
+	}
+
+	return client.gateways_deploy_name(gateway_name_model)!
+}
+
+fn delete_gateway_name(mut client tfgrid.TFGridClient) !{
+	client.gateways_delete_name('hamadaaaa')!
 }
 
 fn deploy_k8s(mut client tfgrid.TFGridClient) !tfgrid.K8sClusterResult {
@@ -79,7 +146,7 @@ fn deploy_k8s(mut client tfgrid.TFGridClient) !tfgrid.K8sClusterResult {
 
 fn login(mut client tfgrid.TFGridClient) ! {
 	cred := tfgrid.Credentials{
-		mnemonics: 'mom picnic deliver again rug night rabbit music motion hole lion where'
+		mnemonics: 'route visual hundred rabbit wet crunch ice castle milk model inherit outside'
 		network: 'dev'
 	}
 	client.login(cred)!

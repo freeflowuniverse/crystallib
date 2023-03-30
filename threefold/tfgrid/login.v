@@ -8,5 +8,5 @@ pub struct Credentials {
 
 pub fn (mut client TFGridClient) login(credentials Credentials) ! {
 	retqueue := client.rpc.call[Credentials]('tfgrid.login', credentials)!
-	client.rpc.result[string](5000, retqueue)!
+	client.rpc.result[string](500000, retqueue)!
 }
