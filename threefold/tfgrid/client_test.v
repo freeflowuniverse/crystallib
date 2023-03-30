@@ -59,7 +59,7 @@ fn deploy_k8s(mut client tfgrid.TFGridClient) !tfgrid.K8sClusterResult {
 
 fn login(mut client tfgrid.TFGridClient) ! {
 	cred := tfgrid.Credentials{
-		mnemonics: 'mom picnic deliver again rug night rabbit music motion hole lion where'
+		mnemonics: 'PUT YOU MNEMONICS HERE'
 		network: 'dev'
 	}
 	client.login(cred)!
@@ -68,7 +68,6 @@ fn login(mut client tfgrid.TFGridClient) ! {
 fn deploy(mut client tfgrid.TFGridClient) !tfgrid.MachinesResult {
 	mut disks := []tfgrid.Disk{}
 	disks << tfgrid.Disk{
-		name: 'disk1'
 		size: 10
 		mountpoint: '/mnt/disk1'
 	}
@@ -76,9 +75,10 @@ fn deploy(mut client tfgrid.TFGridClient) !tfgrid.MachinesResult {
 	mut machines := []tfgrid.Machine{}
 	machines << tfgrid.Machine{
 		name: 'vm1'
+		node_id: 33
 		cpu: 2
 		memory: 2048
-		rootfs_size: 512
+		rootfs_size: 1024
 		env_vars: {
 			"SSH_KEY": 'ssh-rsa ...'
 		}
@@ -88,10 +88,7 @@ fn deploy(mut client tfgrid.TFGridClient) !tfgrid.MachinesResult {
 	machines_model := tfgrid.MachinesModel{
 		name: 'project1'
 		network: tfgrid.Network{
-			name: 'net1'
-			ip_range: '10.20.0.0/16'
 			add_wireguard_access: true
-			description: 'network'
 		}
 		machines: machines
 		metadata: 'metadata1'

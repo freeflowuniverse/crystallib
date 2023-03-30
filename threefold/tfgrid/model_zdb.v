@@ -2,7 +2,7 @@ module tfgrid
 
 pub struct ZDB {
 pub:
-	node_id      u32
+	node_id      u32	[required]
 	name        string [required]
 	password    string [required]
 	public      bool

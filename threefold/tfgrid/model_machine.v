@@ -5,7 +5,7 @@ pub struct MachinesModel {
 pub:
 	name        string    [required]
 	network     Network   [required]
-	machines    []Machine [required]
+	machines    []Machine [required] 
 	metadata    string
 	description string
 }
@@ -16,15 +16,14 @@ pub:
 	metadata           string
 	description        string
 	network            NetworkResult
-	machine            []MachineResult
-	node_deployment_id map[string]string
+	machines            []MachineResult 
 }
 
 [params]
 pub struct Machine {
 pub:
 	name        string            [required]
-	node_id     u32
+	node_id     u32	[required]
 	flist       string = 'https://hub.grid.tf/tf-official-apps/base:latest.flist'
 	entrypoint  string = '/sbin/zinit init'
 	public_ip   bool
@@ -53,24 +52,33 @@ pub:
 	memory      u64
 	rootfs_size u64
 	zlogs       []Zlog
-	disks       []Disk
+	disks       []DiskResult
 	qsfs        []QSFSResult
 	env_vars    map[string]string
 	description string
 	// computed
 	computed_ip4 string
 	computed_ip6 string
-	wg_ip        string
+	wireguard_ip        string
 	ygg_ip       string
 }
 
 [params]
 pub struct Disk {
 pub:
-	name        string [required]
 	size        u32    [required] // disk size in GBs
 	mountpoint  string [required]
 	description string
+}
+
+[params]
+pub struct DiskResult {
+pub:
+	size        u32    [required] // disk size in GBs
+	mountpoint  string [required]
+	description string
+	// computed
+	name        string [required]
 }
 
 [params]
@@ -144,18 +152,15 @@ pub struct Backend {
 
 pub struct Network {
 pub:
-	name                 string [required]
 	ip_range             string = '10.1.0.0/16'
 	add_wireguard_access bool
-	description          string
 }
 
 struct NetworkResult {
 pub:
 	name                 string
 	ip_range             string
-	add_wireguard_access bool
-	description          string
+
 	// computed
 	wireguard_config string
 }
