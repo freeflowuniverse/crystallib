@@ -15,7 +15,6 @@ fn run_client(address string, logger &log.Logger, messages []string) ![]string {
 	myclient.client.close(0, "I'm done here")!
 	t_client.wait()!
 	return responses
-
 }
 
 fn handler(client &websocket.Client, message string) string {

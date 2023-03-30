@@ -10,10 +10,10 @@ const (
 
 pub struct JsonRpcRequest[T]{
 pub mut:
-	jsonrpc string = jsonrpc_version
-	method string
-	params T
-	id string
+	jsonrpc string [required]
+	method string [required]
+	params T [required]
+	id string [required]
 }
 
 pub fn (j &JsonRpcRequest[T]) to_json() string {
@@ -22,9 +22,9 @@ pub fn (j &JsonRpcRequest[T]) to_json() string {
 
 pub struct JsonRpcResponse[T]{
 pub mut:
-	jsonrpc string = jsonrpc_version
-	result T
-	id string
+	jsonrpc string [required]
+	result T [required]
+	id string [required]
 }
 
 pub fn (j &JsonRpcResponse[T]) to_json() string {
@@ -33,9 +33,9 @@ pub fn (j &JsonRpcResponse[T]) to_json() string {
 
 pub struct JsonRpcError{
 pub mut:
-	jsonrpc string = jsonrpc_version
+	jsonrpc string [required]
 	error InnerJsonRpcError [required]
-	id string
+	id string [required]
 }
 
 struct InnerJsonRpcError{
@@ -51,6 +51,7 @@ pub fn (j &JsonRpcError) to_json() string {
 
 pub fn new_jsonrpcrequest[T](method string, params T) JsonRpcRequest[T] {
 	return JsonRpcRequest[T]{
+		jsonrpc: jsonrpc_version
 		method: method
 		params: params
 		id: rand.uuid_v4()
@@ -59,6 +60,7 @@ pub fn new_jsonrpcrequest[T](method string, params T) JsonRpcRequest[T] {
 
 pub fn new_jsonrpcresponse[T](id string, result T) JsonRpcResponse[T] {
 	return JsonRpcResponse[T]{
+		jsonrpc: jsonrpc_version
 		result: result
 		id: id
 	}
@@ -66,6 +68,7 @@ pub fn new_jsonrpcresponse[T](id string, result T) JsonRpcResponse[T] {
 
 pub fn new_jsonrpcerror(id string, code int, message string, data string) JsonRpcError {
 	return JsonRpcError{
+		jsonrpc: jsonrpc_version
 		error: struct {
 			code: code
 			message: message
