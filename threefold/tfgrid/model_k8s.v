@@ -15,13 +15,11 @@ pub struct K8sClusterResult {
 	ssh_key string
 	master  K8sNode
 	workers []K8sNode
-	// computed
-	node_deployment_id map[string]u64
 }
 
 pub struct K8sNode {
 	name       string [required]
-	node_id    string
+	node_id    u32
 	public_ip  bool
 	public_ip6 bool
 	planetary  bool   = true
@@ -33,7 +31,7 @@ pub struct K8sNode {
 
 pub struct K8sNodeResult {
 	name       string
-	node_id    string
+	node_id    u32
 	public_ip  bool
 	public_ip6 bool
 	planetary  bool

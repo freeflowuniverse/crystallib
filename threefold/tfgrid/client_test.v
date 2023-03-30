@@ -1,28 +1,65 @@
 import freeflowuniverse.crystallib.threefold.tfgrid
 
-import time
+// import time
 
 fn test_main() ? {
 	mut client := tfgrid.new()!
 	
 	login(mut client)!
 
-	deployment_res := deploy(mut client)!
-	println('deployment result: ${deployment_res}')
+	// deployment_res := deploy(mut client)!
+	// println('deployment result: ${deployment_res}')
 
-	// sleep 10 seconds to let graphql database see changes
-	time.sleep(time.second * 10)
+	// // sleep 10 seconds to let graphql database see changes
+	// time.sleep(time.second * 10)
 
-	get_dep := get_deployment(mut client)!
-	println('get deployment: ${get_dep}')
+	// get_dep := get_deployment(mut client)!
+	// println('get deployment: ${get_dep}')
 
-	delete_project(mut client)!
+	// delete_project(mut client)!
+
+	k8s := deploy_k8s(mut client)!
+	println("deploy_result ${k8s}")
+
+	k8s_get := client.k8s_get('testk8s')!
+	println("get_result ${k8s_get}")
+
+	client.k8s_delete('testk8s')!
 }
 
 
+fn deploy_k8s(mut client tfgrid.TFGridClient) !tfgrid.K8sClusterResult {
+	master_node := tfgrid.K8sNode{
+		name: "mater",
+		node_id: 11,
+		cpu: 1,
+		memory: 2048,
+		disk_size: 1
+	}
+
+	mut worker_nodes := []tfgrid.K8sNode{}
+	worker_nodes << tfgrid.K8sNode{
+		name: "w1",
+		node_id: 33,
+		cpu: 1,
+		memory: 2048,
+		disk_size: 1
+	}
+
+	cluster := tfgrid.K8sCluster{
+		name: "testk8s",
+		token: "toccccen",
+		ssh_key: "...",
+		master: master_node,
+		workers: worker_nodes
+	}
+
+	return client.k8s_deploy(cluster) !
+}
+
 fn login(mut client tfgrid.TFGridClient) ! {
 	cred := tfgrid.Credentials{
-		mnemonics: 'PUT YOUR MNEMONICS HERE'
+		mnemonics: 'mom picnic deliver again rug night rabbit music motion hole lion where'
 		network: 'dev'
 	}
 	client.login(cred)!
