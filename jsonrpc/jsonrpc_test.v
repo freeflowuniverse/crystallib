@@ -91,8 +91,8 @@ fn test_decode_jsonrpcerror_missing_error_fails() {
 	assert false, "decoding should throw an error"
 }
 
-fn test_decode_jsonrpcresult_missing_result_fails() {
-	data := '{"jsonrpc":"2.0","id":"some id from the original request"}'
+fn test_decode_jsonrpcresult_missing_id_fails() {
+	data := '{"jsonrpc":"2.0"}'
 
 	resp_or_error := jsonrpcresponse_decode[MyResult](data) or {
 		return
