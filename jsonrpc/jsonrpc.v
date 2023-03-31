@@ -23,7 +23,7 @@ pub fn (j &JsonRpcRequest[T]) to_json() string {
 pub struct JsonRpcResponse[D]{
 pub mut:
 	jsonrpc string [required]
-	result D [required]
+	result D
 	id string [required]
 }
 
