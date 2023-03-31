@@ -24,7 +24,7 @@ fn handler(client &websocket.Client, message string) string {
 	request := jsonrpc.jsonrpcrequest_decode[int](message) or {
 		return ""
 	}
-	return jsonrpc.new_jsonrpcresponse[string]("someid", "Response on ${request.params}").to_json()
+	return jsonrpc.new_jsonrpcresponse[string](request.id, "Response on ${request.params}").to_json()
 
 }
 
