@@ -58,6 +58,6 @@ jobs:
           v -stats test pathlib
           v -stats test redisclient
           v -stats test resp
-          v -stats test rpcwsserver
+          v -stats test rpcwebsocket
           v -stats test texttools
           v -stats test timetools
