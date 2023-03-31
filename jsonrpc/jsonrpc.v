@@ -20,14 +20,14 @@ pub fn (j &JsonRpcRequest[T]) to_json() string {
 	return json.encode(j)
 }
 
-pub struct JsonRpcResponse[T]{
+pub struct JsonRpcResponse[D]{
 pub mut:
 	jsonrpc string [required]
-	result T [required]
+	result D [required]
 	id string [required]
 }
 
-pub fn (j &JsonRpcResponse[T]) to_json() string {
+pub fn (j &JsonRpcResponse[D]) to_json() string {
 	return json.encode(j)
 }
 
@@ -82,8 +82,8 @@ pub fn jsonrpcrequest_decode[T](data string) !JsonRpcRequest[T] {
 	return json.decode(JsonRpcRequest[T], data)!
 }
 
-pub fn jsonrpcresponse_decode[T](data string) !JsonRpcResponse[T] {
-	return json.decode(JsonRpcResponse[T], data)!
+pub fn jsonrpcresponse_decode[D](data string) !JsonRpcResponse[D] {
+	return json.decode(JsonRpcResponse[D], data)!
 }
 
 pub fn jsonrpcerror_decode(data string) !JsonRpcError {

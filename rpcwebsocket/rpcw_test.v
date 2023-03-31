@@ -1,16 +1,18 @@
 module rpcwebsocket
 
+import freeflowuniverse.crystallib.jsonrpc
+
 import log
 import net.websocket
 import time
 
 
-fn run_client(address string, logger &log.Logger, messages []string) ![]string {
+fn run_client(address string, logger &log.Logger, messages []int) ![]string {
 	mut myclient := new_rpcwsclient(address, logger)!
 	t_client := spawn myclient.run()
 	mut responses := []string{}
 	for message in messages {
-		responses << myclient.send(message, 5000)!
+		responses << myclient.send_json_rpc[int,string]("mymethod", message, 5000)!
 	}
 	myclient.client.close(0, "I'm done here")!
 	t_client.wait()!
@@ -18,7 +20,12 @@ fn run_client(address string, logger &log.Logger, messages []string) ![]string {
 }
 
 fn handler(client &websocket.Client, message string) string {
-	return "Response on ${message}"
+	//return "Response on ${message}"
+	request := jsonrpc.jsonrpcrequest_decode[int](message) or {
+		return ""
+	}
+	return jsonrpc.new_jsonrpcresponse[string]("someid", "Response on ${request.params}").to_json()
+
 }
 
 fn test_client_server(){
@@ -34,7 +41,7 @@ fn test_client_server(){
 		time.sleep(100 * time.millisecond)
 	}
 
-	messages := ["msg1", "msg2", "msg3", "msg4", "msg5"]
+	messages := [1, 2, 3, 4, 5]
 	responses := run_client(address, &logger, messages)!
 	expected_responses := messages.map("Response on ${it}")
 	assert responses == expected_responses

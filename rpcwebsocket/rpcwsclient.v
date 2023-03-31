@@ -1,5 +1,7 @@
 module rpcwebsocket
 
+import freeflowuniverse.crystallib.jsonrpc
+
 import log
 import net.websocket { Client, Message }
 import time
@@ -41,6 +43,18 @@ pub fn (mut w RpcWsClient) send(message string, timeout int) !string {
 		timeout * time.millisecond {}
 	}
 	return error('timeout on receiving response from server')
+}
+
+pub fn (mut w RpcWsClient) send_json_rpc[T, D](method string, data T, timeout int) !D {
+	json_rpc_request :=  jsonrpc.new_jsonrpcrequest[T](method, data)
+	response := w.send(json_rpc_request.to_json(), timeout)!
+	jsonrpc_response := jsonrpc.jsonrpcresponse_decode[D](response) or {
+		error_check := jsonrpc.jsonrpcerror_decode(response) or {
+			return error("Unable to decode ${response}")
+		}
+		return error("Error ${error_check.error.code}: ${error_check.error.message}")
+	}
+	return jsonrpc_response.result
 }
 
 pub fn new_rpcwsclient(address string, logger &log.Logger) !&RpcWsClient {
