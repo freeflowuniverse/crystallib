@@ -1,4 +1,4 @@
-module rpcwsserver
+module rpcwebsocket
 
 import log
 import net.websocket { Client, Message }
