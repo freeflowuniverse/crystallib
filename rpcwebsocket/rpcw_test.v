@@ -20,7 +20,6 @@ fn run_client(address string, logger &log.Logger, messages []int) ![]string {
 }
 
 fn handler(client &websocket.Client, message string) string {
-	//return "Response on ${message}"
 	request := jsonrpc.jsonrpcrequest_decode[int](message) or {
 		return ""
 	}
