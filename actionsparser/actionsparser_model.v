@@ -55,7 +55,7 @@ fn name_check(c string, block string) ! {
 	if c.len < 2 {
 		return error("name bad specified (len min 2), found '${c}'.\nFor block: ${block}")
 	}
-	if c.len > 20 {
-		return error("name bad specified (len max 20), found '${c}'.\nFor block: ${block}")
+	if c.len > 40 {
+		return error("name bad specified (len max 40), found '${c}'.\nFor block: ${block}")
 	}
 }

@@ -250,7 +250,8 @@ pub fn (mut s Sheet) json() string {
 
 // find row, report error if not found
 pub fn (mut s Sheet) row_get(name string) !&Row {
-	return s.rows[name] or { return error('could not find row with name: ${name}') }
+	mut row:=s.rows[name] or { return error('could not find row with name: ${name}') }
+	return row
 }
 
 // find row, report error if not found

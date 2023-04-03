@@ -1,11 +1,12 @@
 module actionsparser
+import freeflowuniverse.crystallib.params 
 
 [params]
 pub struct FilterArgs {
 pub:
 	domain       string = 'protocol_me'
-	actor        string   [required] // can be empty, this means will not filter based on actor
-	book         string   [required] // can be empty, this means will not filter based on book	
+	actor        string    // can be empty, this means will not filter based on actor
+	book         string   // can be empty, this means will not filter based on book	
 	names_filter []string // can be empty, then no filter, unix glob filters are allowed
 }
 
@@ -17,10 +18,9 @@ pub:
 //   names_filter    []string //can be empty, then no filter, unix glob filters are allowed
 //
 // return  []Action
-pub fn filtersort(actions []Action, args FilterArgs) ![]Action {
+pub fn (mut parser ActionsParser) filtersort(args FilterArgs) ![]Action {
 	mut result := []Action{}
-	mut actions2 := actions.clone()
-	for mut action in actions2 {
+	for mut action in parser.actions {
 		if args.domain != '' && args.domain != action.domain {
 			continue
 		}
@@ -76,4 +76,22 @@ pub fn filtersort(actions []Action, args FilterArgs) ![]Action {
 		}
 	}
 	return resultsorted
+}
+
+//find 1 actions based on name, if 0 or more than 1 then error
+pub fn (mut parser ActionsParser) params_get(name string) !params.Params {
+	mut result := []Action{}
+	for mut action in parser.actions {
+		if action.name == name.to_lower(){
+			result<<action
+		}
+	}
+	if result.len==0{
+		return error("could not find params from action with name:'$name'")
+	}
+	if result.len>1{
+		return error("found more than one action with name:'$name'")
+	}
+	return result[0].params
+
 }

@@ -1,7 +1,6 @@
 //select the book, can come from context as has been set before
 //now every person added will be added in this book
-!!select_book aaa
-!!select_actor people
+!!actor.select aaa.people
 
 //delete everything as found in current book
 !!person_delete cid:1g
@@ -43,15 +42,14 @@
 	description: 'TF Wallet for TFT' 
 	preferred: false
 
-!!select_book aaa
-!!select_actor people
 
 !!test_action
 	key: value
 
-!!select_book bbb
+!!actor.select bbb.people
 
 !!person_define
   cid: 'eg'
   name: despiegk
 
+!!book.select bbb

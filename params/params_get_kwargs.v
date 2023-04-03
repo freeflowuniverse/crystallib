@@ -37,6 +37,21 @@ pub fn (params &Params) get_int(key string) !int {
 	return valuestr.int()
 }
 
+pub fn (params &Params) get_float(key string) !f64 {
+	valuestr := params.get(key)!
+	return valuestr.f64()
+}
+
+pub fn (params &Params) get_float_default(key string, defval f64) !f64 {
+	if params.exists(key) {
+		valuestr := params.get_float(key)!
+		return valuestr
+	}
+	return defval
+}
+
+
+
 pub fn (params &Params) get_u64(key string) !u64 {
 	valuestr := params.get(key)!
 	return valuestr.u64()
@@ -44,8 +59,8 @@ pub fn (params &Params) get_u64(key string) !u64 {
 
 pub fn (params &Params) get_u64_default(key string, defval u64) !u64 {
 	if params.exists(key) {
-		valuestr := params.get(key)!
-		return valuestr.u64()
+		valuestr := params.get_u64(key)!
+		return valuestr
 	}
 	return defval
 }
@@ -57,8 +72,8 @@ pub fn (params &Params) get_u32(key string) !u32 {
 
 pub fn (params &Params) get_u32_default(key string, defval u32) !u32 {
 	if params.exists(key) {
-		valuestr := params.get(key)!
-		return valuestr.u32()
+		valuestr := params.get_u32(key)!
+		return valuestr
 	}
 	return defval
 }
@@ -70,8 +85,8 @@ pub fn (params &Params) get_u8(key string) !u8 {
 
 pub fn (params &Params) get_u8_default(key string, defval u8) !u8 {
 	if params.exists(key) {
-		valuestr := params.get(key)!
-		return valuestr.u8()
+		valuestr := params.get_u8(key)!
+		return valuestr
 	}
 	return defval
 }
@@ -83,8 +98,8 @@ pub fn (params &Params) get_u8_default(key string, defval u8) !u8 {
 // description is a kwarg
 pub fn (params &Params) get_int_default(key string, defval int) !int {
 	if params.exists(key) {
-		valuestr := params.get(key)!
-		return valuestr.int()
+		valuestr := params.get_int(key)!
+		return valuestr
 	}
 	return defval
 }
