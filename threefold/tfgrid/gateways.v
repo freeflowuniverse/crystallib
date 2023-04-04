@@ -1,6 +1,5 @@
 module tfgrid
 
-
 // Deploy a fully qualified domain on gateway ex: site.com
 pub fn (mut client TFGridClient) gateways_deploy_fqdn(payload GatewayFQDN) !GatewayFQDNResult {
 	retqueue := client.rpc.call[GatewayFQDN]('tfgrid.gateway.fqdn.deploy', payload)!
@@ -12,7 +11,6 @@ pub fn (mut client TFGridClient) gateways_get_fqdn(name string) !GatewayFQDNResu
 	retqueue := client.rpc.call[string]('tfgrid.gateway.fqdn.get', name)!
 	return client.rpc.result[GatewayFQDNResult](500000, retqueue)!
 }
-
 
 // Deploy name domain on gateway ex: name.gateway.com
 pub fn (mut client TFGridClient) gateways_deploy_name(payload GatewayName) !GatewayNameResult {

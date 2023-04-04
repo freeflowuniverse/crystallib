@@ -7,7 +7,7 @@ pub:
 	node_id         u32      [required]
 	tls_passthrough bool
 	backends        []string [required]
-	fqdn            string [required]
+	fqdn            string   [required]
 }
 
 pub struct GatewayFQDNResult {

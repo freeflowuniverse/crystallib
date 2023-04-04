@@ -2,6 +2,6 @@ module tfgrid
 
 pub struct KeyValue {
 pub mut:
- 	key string
+	key   string
 	value string
 }

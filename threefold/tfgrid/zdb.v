@@ -1,6 +1,5 @@
 module tfgrid
 
-
 pub fn (mut client TFGridClient) zdb_deploy(zdb ZDB) !ZDBResult {
 	retqueue := client.rpc.call[ZDB]('tfgrid.zdb.deploy', zdb)!
 	return client.rpc.result[ZDBResult](500000, retqueue)!

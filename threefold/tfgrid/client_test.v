@@ -5,68 +5,45 @@ import time
 fn test_main() ? {
 	mut client := tfgrid.new()!
 	
-	// login(mut client)!
+	login(mut client)!
 
-	// // gateway fqdn
-	// gateway_fqdn_deploy := deploy_gateway_fqdn(mut client)!
-	// println('gateway fqdn: ${gateway_fqdn_deploy}')
-
-	// // sleep to let graphql database see changes
-	// time.sleep(time.second * 20)
-
-	// gateway_fqdn_get := get_gateway_fqdn(mut client)!
-	// println('gateway fqdn: ${gateway_fqdn_get}')
-
-	// delete_gateway_fqdn(mut client)!
-
-
-	// // gateway name
-	// gateway_name_deploy := deploy_gateway_name(mut client)!
-	// println('gateway name: ${gateway_name_deploy}')
-
-	// time.sleep(time.second * 20)
-
-	// gateway_name_get := get_gateway_name(mut client)!
-	// println('gateway name: ${gateway_name_get}')
-
-	delete_gateway_name(mut client)!
-
-	// machine model
-	deployment_res := deploy(mut client)!
-	println('deployment result: ${deployment_res}')
-
-	time.sleep(time.second * 20)
-
-	get_dep := get_deployment(mut client)!
-	println('get deployment: ${get_dep}')
-
-	delete_project(mut client)!
-
-	// k8s cluster
-	k8s := deploy_k8s(mut client)!
+	gateway_fqdn_deploy := deploy_gateway_fqdn(mut client, 'project1')!
+	println('gateway fqdn: ${gateway_fqdn_deploy}')
+	gateway_name_deploy := deploy_gateway_name(mut client, 'project2')!
+	println('gateway name: ${gateway_name_deploy}')
+	k8s := deploy_k8s(mut client, 'project3')!
 	println("deploy_result ${k8s}")
-
-	time.sleep(time.second * 20)
-	k8s_get := client.k8s_get('testk8s')!
-	println("get_result ${k8s_get}")
-
-	client.k8s_delete('testk8s')!
-
-	// zdb 
-	zdb := deploy_zdb(mut client)!
+	deployment_res := deploy(mut client, 'project4')!
+	println('deployment result: ${deployment_res}')
+	zdb := deploy_zdb(mut client, 'project5')!
 	println("deploy_result ${zdb}")
 
-	time.sleep(time.second * 20)
-	zdb_get := client.zdb_get('testzdb')!
+	// this timeout is for graphql database to have all latest updates
+	time.sleep(20*time.second)
+
+	gateway_fqdn_get := get_gateway_fqdn(mut client, 'project1')!
+	println('gateway fqdn: ${gateway_fqdn_get}')
+	gateway_name_get := get_gateway_name(mut client, 'project2')!
+	println('gateway name: ${gateway_name_get}')
+	k8s_get := client.k8s_get('project3')!
+	println("get_result ${k8s_get}")
+	get_dep := get_deployment(mut client, 'project4')!
+	println('get deployment: ${get_dep}')
+	zdb_get := client.zdb_get('project5')!
 	println("get_result ${zdb_get}")
 
-	client.zdb_delete('testzdb')!
+	delete_gateway_fqdn(mut client, 'project1')!
+	delete_gateway_name(mut client, 'project2')!
+	client.k8s_delete('project3')!
+	delete_project(mut client, 'project4')!
+	client.zdb_delete('project5')!
+
 }
 
-fn deploy_zdb(mut client tfgrid.TFGridClient) !tfgrid.ZDBResult {
+fn deploy_zdb(mut client tfgrid.TFGridClient, project_name string) !tfgrid.ZDBResult {
 	return client.zdb_deploy(tfgrid.ZDB{
 		node_id: 33
-		name: 'testzdb'
+		name: project_name
 		password: 'strong'
 		public: false
 		size: 10
@@ -74,15 +51,15 @@ fn deploy_zdb(mut client tfgrid.TFGridClient) !tfgrid.ZDBResult {
 	})
 }
 
-fn get_gateway_fqdn(mut client tfgrid.TFGridClient) !tfgrid.GatewayFQDNResult{
-	return client.gateways_get_fqdn('hamadaaaafqdn')!
+fn get_gateway_fqdn(mut client tfgrid.TFGridClient, project_name string) !tfgrid.GatewayFQDNResult{
+	return client.gateways_get_fqdn(project_name)!
 }
 
-fn deploy_gateway_fqdn(mut client tfgrid.TFGridClient) !tfgrid.GatewayFQDNResult{
+fn deploy_gateway_fqdn(mut client tfgrid.TFGridClient, project_name string) !tfgrid.GatewayFQDNResult{
 	mut backends := []string{}
 	backends << 'http://1.1.1.1:9000'
 	gateway_fqdn_model := tfgrid.GatewayFQDN{
-		name: "hamadaaaafqdn",
+		name: project_name,
 		node_id: 11,
 		backends: backends
 		fqdn: 'hamada1.3x0.me'
@@ -91,19 +68,19 @@ fn deploy_gateway_fqdn(mut client tfgrid.TFGridClient) !tfgrid.GatewayFQDNResult
 	return client.gateways_deploy_fqdn(gateway_fqdn_model)!
 }
 
-fn delete_gateway_fqdn(mut client tfgrid.TFGridClient) !{
-	client.gateways_delete_fqdn('hamadaaaafqdn')!
+fn delete_gateway_fqdn(mut client tfgrid.TFGridClient, project_name string) !{
+	client.gateways_delete_fqdn(project_name)!
 }
 
-fn get_gateway_name(mut client tfgrid.TFGridClient) !tfgrid.GatewayNameResult{
-	return client.gateways_get_name('hamadaaaa')!
+fn get_gateway_name(mut client tfgrid.TFGridClient, project_name string) !tfgrid.GatewayNameResult{
+	return client.gateways_get_name(project_name)!
 }
 
-fn deploy_gateway_name(mut client tfgrid.TFGridClient) !tfgrid.GatewayNameResult{
+fn deploy_gateway_name(mut client tfgrid.TFGridClient, project_name string) !tfgrid.GatewayNameResult{
 	mut backends := []string{}
 	backends << 'http://1.1.1.1:9000'
 	gateway_name_model := tfgrid.GatewayName{
-		name: "hamadaaaa",
+		name: project_name,
 		node_id: 11,
 		backends: backends
 	}
@@ -111,11 +88,11 @@ fn deploy_gateway_name(mut client tfgrid.TFGridClient) !tfgrid.GatewayNameResult
 	return client.gateways_deploy_name(gateway_name_model)!
 }
 
-fn delete_gateway_name(mut client tfgrid.TFGridClient) !{
-	client.gateways_delete_name('hamadaaaa')!
+fn delete_gateway_name(mut client tfgrid.TFGridClient, project_name string) !{
+	client.gateways_delete_name(project_name)!
 }
 
-fn deploy_k8s(mut client tfgrid.TFGridClient) !tfgrid.K8sClusterResult {
+fn deploy_k8s(mut client tfgrid.TFGridClient, project_name string) !tfgrid.K8sClusterResult {
 	master_node := tfgrid.K8sNode{
 		name: "mater",
 		node_id: 11,
@@ -134,7 +111,7 @@ fn deploy_k8s(mut client tfgrid.TFGridClient) !tfgrid.K8sClusterResult {
 	}
 
 	cluster := tfgrid.K8sCluster{
-		name: "testk8s",
+		name: project_name,
 		token: "toccccen",
 		ssh_key: "...",
 		master: master_node,
@@ -152,7 +129,7 @@ fn login(mut client tfgrid.TFGridClient) ! {
 	client.login(cred)!
 }
 
-fn deploy(mut client tfgrid.TFGridClient) !tfgrid.MachinesResult {
+fn deploy(mut client tfgrid.TFGridClient, project_name string) !tfgrid.MachinesResult {
 	mut disks := []tfgrid.Disk{}
 	disks << tfgrid.Disk{
 		size: 10
@@ -173,7 +150,7 @@ fn deploy(mut client tfgrid.TFGridClient) !tfgrid.MachinesResult {
 	}
 
 	machines_model := tfgrid.MachinesModel{
-		name: 'project1'
+		name: project_name
 		network: tfgrid.Network{
 			add_wireguard_access: true
 		}
@@ -184,10 +161,10 @@ fn deploy(mut client tfgrid.TFGridClient) !tfgrid.MachinesResult {
 	return client.machines_deploy(machines_model)!
 }
 
-fn get_deployment(mut client tfgrid.TFGridClient) !tfgrid.MachinesResult {
-	return client.machines_get('project1')!
+fn get_deployment(mut client tfgrid.TFGridClient, project_name string) !tfgrid.MachinesResult {
+	return client.machines_get(project_name)!
 }
 
-fn delete_project(mut client tfgrid.TFGridClient) ! {
-	return client.machines_delete('project1')
+fn delete_project(mut client tfgrid.TFGridClient, project_name string) ! {
+	return client.machines_delete(project_name)
 }

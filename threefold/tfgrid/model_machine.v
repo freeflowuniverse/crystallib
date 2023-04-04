@@ -5,25 +5,25 @@ pub struct MachinesModel {
 pub:
 	name        string    [required]
 	network     Network   [required]
-	machines    []Machine [required] 
+	machines    []Machine [required]
 	metadata    string
 	description string
 }
 
 pub struct MachinesResult {
 pub:
-	name               string
-	metadata           string
-	description        string
-	network            NetworkResult
-	machines            []MachineResult 
+	name        string
+	metadata    string
+	description string
+	network     NetworkResult
+	machines    []MachineResult
 }
 
 [params]
 pub struct Machine {
 pub:
 	name        string            [required]
-	node_id     u32	[required]
+	node_id     u32               [required]
 	flist       string = 'https://hub.grid.tf/tf-official-apps/base:latest.flist'
 	entrypoint  string = '/sbin/zinit init'
 	public_ip   bool
@@ -59,7 +59,7 @@ pub:
 	// computed
 	computed_ip4 string
 	computed_ip6 string
-	wireguard_ip        string
+	wireguard_ip string
 	ygg_ip       string
 }
 
@@ -78,7 +78,7 @@ pub:
 	mountpoint  string [required]
 	description string
 	// computed
-	name        string [required]
+	name string [required]
 }
 
 [params]
@@ -158,19 +158,16 @@ pub:
 
 struct NetworkResult {
 pub:
-	name                 string
-	ip_range             string
-
+	name     string
+	ip_range string
 	// computed
 	wireguard_config string
 }
 
-
 struct AddMachine {
-	machine Machine
+	machine      Machine
 	project_name string
 }
-
 
 struct RemoveMachine {
 	machine_name string
