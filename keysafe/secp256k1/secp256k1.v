@@ -12,6 +12,9 @@ import crypto.sha256
 #flag darwin -I/opt/homebrew/include
 #flag darwin -L/opt/homebrew/lib
 
+// linux: require libsecp256k1-dev
+// macos: require brew install secp256k1
+
 //
 // struct definitions
 //
