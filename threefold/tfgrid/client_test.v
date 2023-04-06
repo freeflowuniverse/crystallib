@@ -1,10 +1,10 @@
 import freeflowuniverse.crystallib.threefold.tfgrid
-
+import json
 import time
 
 fn test_main() ? {
 	mut client := tfgrid.new()!
-	
+
 	login(mut client)!
 
 	gateway_fqdn_deploy := deploy_gateway_fqdn(mut client, 'project1')!
@@ -12,32 +12,31 @@ fn test_main() ? {
 	gateway_name_deploy := deploy_gateway_name(mut client, 'project2')!
 	println('gateway name: ${gateway_name_deploy}')
 	k8s := deploy_k8s(mut client, 'project3')!
-	println("deploy_result ${k8s}")
+	println('deploy_result ${k8s}')
 	deployment_res := deploy(mut client, 'project4')!
 	println('deployment result: ${deployment_res}')
 	zdb := deploy_zdb(mut client, 'project5')!
-	println("deploy_result ${zdb}")
+	println('deploy_result ${zdb}')
 
 	// this timeout is for graphql database to have all latest updates
-	time.sleep(20*time.second)
+	time.sleep(20 * time.second)
 
 	gateway_fqdn_get := get_gateway_fqdn(mut client, 'project1')!
 	println('gateway fqdn: ${gateway_fqdn_get}')
 	gateway_name_get := get_gateway_name(mut client, 'project2')!
 	println('gateway name: ${gateway_name_get}')
 	k8s_get := client.k8s_get('project3')!
-	println("get_result ${k8s_get}")
+	println('get_result ${k8s_get}')
 	get_dep := get_deployment(mut client, 'project4')!
 	println('get deployment: ${get_dep}')
 	zdb_get := client.zdb_get('project5')!
-	println("get_result ${zdb_get}")
+	println('get_result ${zdb_get}')
 
 	delete_gateway_fqdn(mut client, 'project1')!
 	delete_gateway_name(mut client, 'project2')!
 	client.k8s_delete('project3')!
 	delete_project(mut client, 'project4')!
 	client.zdb_delete('project5')!
-
 }
 
 fn deploy_zdb(mut client tfgrid.TFGridClient, project_name string) !tfgrid.ZDBResult {
@@ -51,16 +50,16 @@ fn deploy_zdb(mut client tfgrid.TFGridClient, project_name string) !tfgrid.ZDBRe
 	})
 }
 
-fn get_gateway_fqdn(mut client tfgrid.TFGridClient, project_name string) !tfgrid.GatewayFQDNResult{
+fn get_gateway_fqdn(mut client tfgrid.TFGridClient, project_name string) !tfgrid.GatewayFQDNResult {
 	return client.gateways_get_fqdn(project_name)!
 }
 
-fn deploy_gateway_fqdn(mut client tfgrid.TFGridClient, project_name string) !tfgrid.GatewayFQDNResult{
+fn deploy_gateway_fqdn(mut client tfgrid.TFGridClient, project_name string) !tfgrid.GatewayFQDNResult {
 	mut backends := []string{}
 	backends << 'http://1.1.1.1:9000'
 	gateway_fqdn_model := tfgrid.GatewayFQDN{
-		name: project_name,
-		node_id: 11,
+		name: project_name
+		node_id: 11
 		backends: backends
 		fqdn: 'hamada1.3x0.me'
 	}
@@ -68,57 +67,57 @@ fn deploy_gateway_fqdn(mut client tfgrid.TFGridClient, project_name string) !tfg
 	return client.gateways_deploy_fqdn(gateway_fqdn_model)!
 }
 
-fn delete_gateway_fqdn(mut client tfgrid.TFGridClient, project_name string) !{
+fn delete_gateway_fqdn(mut client tfgrid.TFGridClient, project_name string) ! {
 	client.gateways_delete_fqdn(project_name)!
 }
 
-fn get_gateway_name(mut client tfgrid.TFGridClient, project_name string) !tfgrid.GatewayNameResult{
+fn get_gateway_name(mut client tfgrid.TFGridClient, project_name string) !tfgrid.GatewayNameResult {
 	return client.gateways_get_name(project_name)!
 }
 
-fn deploy_gateway_name(mut client tfgrid.TFGridClient, project_name string) !tfgrid.GatewayNameResult{
+fn deploy_gateway_name(mut client tfgrid.TFGridClient, project_name string) !tfgrid.GatewayNameResult {
 	mut backends := []string{}
 	backends << 'http://1.1.1.1:9000'
 	gateway_name_model := tfgrid.GatewayName{
-		name: project_name,
-		node_id: 11,
+		name: project_name
+		node_id: 11
 		backends: backends
 	}
 
 	return client.gateways_deploy_name(gateway_name_model)!
 }
 
-fn delete_gateway_name(mut client tfgrid.TFGridClient, project_name string) !{
+fn delete_gateway_name(mut client tfgrid.TFGridClient, project_name string) ! {
 	client.gateways_delete_name(project_name)!
 }
 
 fn deploy_k8s(mut client tfgrid.TFGridClient, project_name string) !tfgrid.K8sClusterResult {
 	master_node := tfgrid.K8sNode{
-		name: "mater",
-		node_id: 11,
-		cpu: 1,
-		memory: 2048,
+		name: 'mater'
+		node_id: 11
+		cpu: 1
+		memory: 2048
 		disk_size: 1
 	}
 
 	mut worker_nodes := []tfgrid.K8sNode{}
 	worker_nodes << tfgrid.K8sNode{
-		name: "w1",
-		node_id: 33,
-		cpu: 1,
-		memory: 2048,
+		name: 'w1'
+		node_id: 33
+		cpu: 1
+		memory: 2048
 		disk_size: 1
 	}
 
 	cluster := tfgrid.K8sCluster{
-		name: project_name,
-		token: "toccccen",
-		ssh_key: "...",
-		master: master_node,
+		name: project_name
+		token: 'toccccen'
+		ssh_key: '...'
+		master: master_node
 		workers: worker_nodes
 	}
 
-	return client.k8s_deploy(cluster) !
+	return client.k8s_deploy(cluster)!
 }
 
 fn login(mut client tfgrid.TFGridClient) ! {
@@ -144,7 +143,7 @@ fn deploy(mut client tfgrid.TFGridClient, project_name string) !tfgrid.MachinesR
 		memory: 2048
 		rootfs_size: 1024
 		env_vars: {
-			"SSH_KEY": 'ssh-rsa ...'
+			'SSH_KEY': 'ssh-rsa ...'
 		}
 		disks: disks
 	}
