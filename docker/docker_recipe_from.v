@@ -38,7 +38,7 @@ pub fn (mut b DockerBuilderRecipe) add_from(args FromArgs) ! {
 	}
 	if !(item.image.contains(':')) {
 		// need to add e.g. despiegk
-		item.image = '${b.engine.dockerhubuser}/${item.image}'
+		item.image = '${item.image}'
 	}
 	b.items << item
 }

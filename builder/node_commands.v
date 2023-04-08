@@ -128,18 +128,20 @@ pub fn (mut node Node) exec_ok(cmd string) bool {
 fn (mut node Node) platform_load() ! {
 	// TODO: should rewrite this with one bash script, which gets the required info & returns e.g. env, platform, ... is much faster
 	println(' - platform load')
+	mut cputype := node.exec_silent('uname -m')!
+	cputype = cputype.to_lower().trim_space()
+	if cputype == 'x86_64' {
+		node.cputype = CPUType.intel
+	} else if cputype == 'arm64' {
+		node.cputype = CPUType.arm
+	} else {
+		return error("did not find cpu type, implement more types e.g. 32 bit. found: '${cputype}'")
+	}
+
 	if node.platform == PlatformType.unknown {
 		if node.cmd_exists('sw_vers') {
 			node.platform = PlatformType.osx
-			mut cputype := node.exec_silent('uname -m')!
-			cputype = cputype.to_lower().trim_space()
-			if cputype == 'x86_64' {
-				node.cputype = CPUType.intel
-			} else if cputype == 'arm64' {
-				node.cputype = CPUType.arm
-			} else {
-				return error("did not find cpu type, implement more types e.g. 32 bit. found: '${cputype}'")
-			}
+
 		} else if node.cmd_exists('apt-get') {
 			node.platform = PlatformType.ubuntu
 			node.package_refresh() or {}
