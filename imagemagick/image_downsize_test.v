@@ -1,4 +1,4 @@
-import freeflowuniverse.crystallib.imagemagick { image_downsize, image_new }
+import freeflowuniverse.crystallib.imagemagick { image_new }
 import freeflowuniverse.crystallib.pathlib
 import os
 
@@ -20,15 +20,16 @@ fn test_image_downsize() {
 	image.init_() or { panic('Could not initialize image: ${err}') }
 	assert image.size_kbyte > 600
 
-	backup_dir := '${testpath}/backup'
-	mut downsized_img := image_downsize(mut img_path, backup_dir) or {
-		panic('Cannot downsize image:\n ${err}')
-	}
-
+	mut image_org := image
+	image.downsize(backup: true) or { panic('Cannot downsize image: ${image} \n ${err}') }
 	// test correct file renaming
-	assert downsized_img.size_kbyte < image.size_kbyte
-	assert downsized_img.path.name_no_ext() == '${image.path.name_no_ext()}_'
-	println(downsized_img.path.name())
+	assert image.size_kbyte < image_org.size_kbyte
+	assert image.path.name_no_ext() == '${image_org.path.name_no_ext()}_'
+	// println(image.path.name())
+
+	// now need to put original file back
+	image_org.path.restore()!
+	image.path.delete()!
 }
 
 // fn downsize_test() {

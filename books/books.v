@@ -54,7 +54,7 @@ pub fn (mut books Books) book_new(args BookNewArgs) !&Book {
 	mut summarypath := p.file_get('summary.md') or {
 		p.link_get('summary.md') or { return error('cannot find summary path: ${err}') }
 	}
-	mut doc := markdowndocs.get(summarypath.path) or {
+	mut doc := markdowndocs.new(path: summarypath.path) or {
 		panic('cannot book parse ${summarypath} ,${err}')
 	}
 
@@ -116,10 +116,8 @@ pub fn (mut books Books) scan(path string) ! {
 
 pub fn (mut books Books) get(name string) !&Book {
 	namelower := texttools.name_fix_no_underscore_no_ext(name)
-	if namelower in books.books {
-		return books.books[namelower]
-	}
-	return error('could not find book with name:${name}')
+	mut b := books.books[namelower] or { return error('could not find book with name:${name}') }
+	return b
 }
 
 // fix all loaded books

@@ -19,7 +19,7 @@ fn (o Header) wiki() string {
 }
 
 fn (o Header) html() string {
-	return o.wiki()
+	return '<h${o.depth}>${o.content}</h${o.depth}>\n'
 }
 
 // fn (o Header) str() string {

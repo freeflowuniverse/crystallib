@@ -181,7 +181,7 @@ pub fn (mut page Page) save(dest0 string) ! {
 		dest = page.path.path
 	}
 	// out := page.process_macros()!
-	out := page.doc.wiki()!
+	out := page.doc.wiki()
 	mut p := pathlib.get_file(dest, true)!
 	p.write(out)!
 }

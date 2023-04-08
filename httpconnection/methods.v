@@ -65,9 +65,7 @@ pub fn (mut h HTTPConnection) send(req Request) !Result {
 	if result.code in [0, -1] {
 		// 3 - Do request, if needed
 		url := h.url(req)
-		mut new_req := http.new_request(req.method, url, req.data) or {
-			return error('cannot do http new_request for ${req} \n${err}')
-		}
+		mut new_req := http.new_request(req.method, url, req.data)
 		// joining the header from the HTTPConnection with the one from Request
 		new_req.header = h.header()
 		for _ in 0 .. h.retry {

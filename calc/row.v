@@ -3,9 +3,12 @@ module calc
 pub struct Row {
 pub mut:
 	name          string
+	alias         string
+	description   string
 	cells         []Cell
-	sheet         &Sheet           [str: skip]
+	sheet         &Sheet           [skip; str: skip]
 	aggregatetype RowAggregateType
+	reprtype      ReprType // how to represent it
 	tags          []string
 }
 
@@ -123,4 +126,26 @@ pub fn (mut r Row) aggregate(name string) !&Row {
 		prevval = row_result.cells[x].val
 	}
 	return row_result
+}
+
+// find difference between the columns
+pub fn (mut r Row) difference(name string) !&Row {
+	mut row_result := r.sheet.row_new(name: name, aggregatetype: r.aggregatetype)!
+	assert row_result.cells.len == r.cells.len
+	row_result.cells[0].val = r.cells[0].val
+	row_result.cells[0].empty = false
+	for x in 1 .. r.sheet.nrcol {
+		row_result.cells[x].val = r.cells[x].val - r.cells[x - 1].val
+		row_result.cells[x].empty = false
+	}
+	return row_result
+}
+
+// round to int
+pub fn (mut r Row) int() {
+	for x in 1 .. r.sheet.nrcol {
+		if r.cells[x].empty == false {
+			r.cells[x].val = int(r.cells[x].val)
+		}
+	}
 }

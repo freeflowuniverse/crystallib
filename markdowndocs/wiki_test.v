@@ -1,5 +1,7 @@
 module markdowndocs
 
+import freeflowuniverse.crystallib.params { Param, Params }
+
 fn test_wiki_headers_paragraphs() {
 	content := '
 
@@ -39,6 +41,84 @@ To initialize tmux on a local or [remote node](mysite:page.md), simply build the
 	assert content.trim_space() == docs.wiki().trim_space()
 }
 
+fn test_wiki_headers_and_table() {
+	content := '
+
+# TMUX
+
+tmux library provides functions for managing local / remote tmux sessions
+
+## Getting started
+
+| nodeid | twinid | configured |
+| :-- | :-: | --: |
+| 51 | 2 | nope |
+| 52 | 3 | yes |
+
+some extra text
+
+'
+	mut docs := new(content: content)!
+
+	assert docs.items.len == 5
+	assert docs.items[0] is Header
+	assert docs.items[1] is Paragraph
+	paragraph1 := docs.items[1] as Paragraph
+	assert paragraph1.items.len == 1
+	assert paragraph1.items[0] is Text
+	assert docs.items[2] is Header
+	assert docs.items[3] is Table
+	table1 := docs.items[3] as Table
+	assert table1.num_columns == 3
+	assert table1.header.len == 3
+	assert table1.alignments.len == 3
+	assert table1.rows.len == 2
+	for row in table1.rows {
+		assert row.len == 3
+	}
+	assert docs.items[4] is Paragraph
+	paragraph2 := docs.items[4] as Paragraph
+	assert paragraph2.items.len == 1
+	assert paragraph2.items[0] is Text
+	assert content.trim_space() == docs.wiki().trim_space()
+}
+
+fn test_wiki_action() {
+	content := '
+# This is an action
+
+!!farmerbot.nodemanager.define
+	has_public_config:1
+	has_public_ip:yes
+	id:15
+	twinid:20
+'
+	mut docs := new(content: content)!
+
+	assert docs.items.len == 2
+	assert docs.items[0] is Header
+	assert docs.items[1] is Action
+	action := docs.items[1] as Action
+	assert action.name == 'farmerbot.nodemanager.define'
+	assert action.params == Params{
+		params: [Param{
+			key: 'has_public_config'
+			value: '1'
+		}, Param{
+			key: 'has_public_ip'
+			value: 'yes'
+		}, Param{
+			key: 'id'
+			value: '15'
+		}, Param{
+			key: 'twinid'
+			value: '20'
+		}]
+		args: []
+	}
+	assert content.trim_space() == docs.wiki().trim_space()
+}
+
 fn test_wiki_code() {
 	content := '
 # This is some code
@@ -58,10 +138,12 @@ for x in list {
 	has_public_ip:yes
 	has_public_config:1
 ```
+
+# This is some header
 '
 	mut docs := new(content: content)!
 
-	assert docs.items.len == 4
+	assert docs.items.len == 5
 	assert docs.items[0] is Header
 	assert docs.items[1] is CodeBlock
 	codeblock1 := docs.items[1] as CodeBlock
@@ -69,6 +151,7 @@ for x in list {
 	assert docs.items[2] is Header
 	assert docs.items[3] is CodeBlock
 	codeblock2 := docs.items[3] as CodeBlock
+	assert docs.items[4] is Header
 	assert content.trim_space() == docs.wiki().trim_space()
 }
 
@@ -143,6 +226,13 @@ Jobs don't have to originate from the system running the farmerbot. It may as we
 
 As mentioned before the farmerbot can be configured through markup definition files. This section will guide you through the possibilities.
 
+| nodeid | twinid | configured |
+| :-- | :-: | --: |
+| 51 | 2 | nope |
+| 52 | 3 | yes |
+| 53 | 4 | nope |
+| 54 | 5 | yes |
+
 ### Nodes
 
 The farmerbot requires you to setup the nodes that the farmerbot should handle.
@@ -158,18 +248,25 @@ Optional attributes:
 
 Example:
 
-```
 !!farmerbot.nodemanager.define
-	id:20
-	twinid:105
-	public_config:true
-	dedicated:1
 	certified:yes
 	cpuoverprovision:1
-```
+	dedicated:1
+	id:
+	public_config:true
+	twinid:105
 "
 	mut docs := new(content: content)!
-
-	// TODO
+	assert docs.items.len == 10
+	assert docs.items[0] is Header
+	assert docs.items[1] is Paragraph
+	assert docs.items[2] is Header
+	assert docs.items[3] is Paragraph
+	assert docs.items[4] is Header
+	assert docs.items[5] is Paragraph
+	assert docs.items[6] is Table
+	assert docs.items[7] is Header
+	assert docs.items[8] is Paragraph
+	assert docs.items[9] is Action
 	assert content.trim_space() == docs.wiki().trim_space()
 }

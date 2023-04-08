@@ -6,24 +6,58 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
     steps:
       - name: Install dependencies
-        run: sudo apt install -y libgc-dev tmux mc git rsync curl
+        run: sudo apt install -y libgc-dev tmux mc git rsync curl imagemagick
 
       - name: Setup Vlang
-        uses: vlang/setup-v@v1
+        uses: vlang/setup-v@v1.3
         with:
           check-latest: true
 
       - name: Check out repository code
         uses: actions/checkout@v3
 
-      - name: Add crystallib at the expected path
+      - name: Install crystallib
         run: |
           bash install.sh
+
+      - name: Check formatting
+        run: |
+          v fmt -w .
       
       - name: Run tests
+        env:
+          VJOBS: 1
         run: |
+          v -stats test books
+          v -stats test coinmarketcap
+          v -stats test console
+          v -stats test crpgp
+          v -stats test crystaljson
+          v -stats test currency
+          v -stats test data
+          v -stats test docker
+          v -stats test encoder
+          v -stats test imagemagick
+          v -stats test ipaddress
+          v -stats test jsonrpc
           v -stats test markdowndocs
-
-      
+          v -stats test mnemonic
+          v -stats test params
+          v -stats test pathlib
+          v -stats test redisclient
+          v -stats test resp
+          v -stats test rpcwebsocket
+          v -stats test texttools
+          v -stats test timetools

@@ -4,11 +4,11 @@ import net.http
 import json
 import encoding.base64
 
-pub fn encode(username string, password string) string {
+fn encode(username string, password string) string {
 	return base64.encode('${username}:${password}'.bytes())
 }
 
-pub fn register() ? {
+fn register() ? {
 	// Push new user into database if this user not registered yet.
 	// Otherwise, 400 error, but this will pass because login function working based on same cerds.
 	mut header := http.new_header_from_map({
@@ -30,7 +30,7 @@ pub fn register() ? {
 	println(resp)
 }
 
-pub fn login() ? {
+fn login() ? {
 	mut header := http.new_header_from_map({
 		http.CommonHeader.content_type: 'application/json'
 	})

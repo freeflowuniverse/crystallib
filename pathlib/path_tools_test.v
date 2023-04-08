@@ -96,9 +96,9 @@ fn testfile1_exists() {
 fn testfile1_find() {
 	println('************ testfile1_find ************')
 	mut test_path_dir := pathlib.get('${testpath}')
-	mut file := test_path_dir.file_find('testfile1') or { panic(err) }
+	mut file := test_path_dir.file_get('testfile1') or { panic(err) }
 	println('file ${file} found')
-	test_path_dir.file_find('newfile2') or { return }
+	test_path_dir.file_get('newfile2') or { return }
 	panic('should not get here')
 }
 

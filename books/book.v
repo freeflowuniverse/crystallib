@@ -139,8 +139,7 @@ fn (mut book Book) fix_summary() ! {
 // all images, files and pages found need to be linked to the book
 // find which files,pages, images are not found
 fn (mut book Book) link_pages_files_images() ! {
-	for key, _ in book.pages {
-		mut page := book.pages[key]
+	for _, mut page in book.pages {
 		for mut paragraph in page.doc.items.filter(it is markdowndocs.Paragraph) {
 			if mut paragraph is markdowndocs.Paragraph {
 				for mut item in paragraph.items {
@@ -210,25 +209,22 @@ pub fn (mut book Book) mdbook_export() ! {
 	book.template_install()! // make sure all required template files are in site
 	book_path := book.book_path('').path + '/src'
 	html_path := book.html_path('').path
-	for key, _ in book.pages {
-		mut page := book.pages[key]
+	for _, mut page in book.pages {
 		dest := '${book_path}/${page.site.name}/${page.pathrel}'
 		println(' - export: ${dest}')
 		page.save(dest)!
 	}
 
-	for key2, _ in book.files {
-		mut fobj := book.files[key2]
-		dest := '${book_path}/${fobj.site.name}/${fobj.pathrel}'
+	for _, mut file in book.files {
+		dest := '${book_path}/${file.site.name}/${file.pathrel}'
 		println(' - export: ${dest}')
-		fobj.copy(dest)!
+		file.copy(dest)!
 	}
 
-	for key3, _ in book.images {
-		mut iobj := book.images[key3]
-		dest := '${book_path}/${iobj.site.name}/${iobj.pathrel}'
+	for _, mut image in book.images {
+		dest := '${book_path}/${image.site.name}/${image.pathrel}'
 		println(' - export: ${dest}')
-		iobj.copy(dest)!
+		image.copy(dest)!
 	}
 
 	mut pathsummary := pathlib.get('${book_path}/SUMMARY.md')

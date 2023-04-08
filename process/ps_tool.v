@@ -30,9 +30,9 @@ pub mut:
 
 // make sure to use new first, so that the connection has been initted
 // then you can get it everywhere
-pub fn processmap_get() ?&ProcessMap {
+pub fn processmap_get() !&ProcessMap {
 	mut pm := ProcessMap{}
-	pm.scan()?
+	pm.scan()!
 	return &pm
 }
 
@@ -50,8 +50,8 @@ pub fn processmap_get() ?&ProcessMap {
 // 	rss			int
 // }
 //```
-pub fn procesinfo_get(pid int) ?&ProcessInfo {
-	mut pm := processmap_get()?
+pub fn procesinfo_get(pid int) !&ProcessInfo {
+	mut pm := processmap_get()!
 	for pi in pm.processes {
 		if pi.pid == pid {
 			return pi
@@ -60,7 +60,7 @@ pub fn procesinfo_get(pid int) ?&ProcessInfo {
 	return error('Cannot find process with pid: ${pid}, to get process info from.')
 }
 
-fn (mut pm ProcessMap) scan() ? {
+fn (mut pm ProcessMap) scan() ! {
 	now := time.now().unix_time()
 	// only scan if we didn't do in last 5 seconds
 	if pm.lastscan.unix_time() > now - 5 {
