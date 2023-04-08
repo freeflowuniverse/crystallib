@@ -77,15 +77,6 @@ fn (mut actions ActionsParser) text_add(content string) ! {
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL actions BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 
-// decides if a line might contain parameter definitions
-// most ide's auto dedent indented markdown so is necessary
-// TODO: figure out way to apply to all possible params
-// fn contains_params(line string) bool {
-// 	param_keys := ['gitsource', 'gitdest', 'source', 'dest', 'name', 'url', 'path', 'message']
-// 	return param_keys.any(line.contains('${it}:'))
-// }
-// TODO: this is bad way how to do this, editors shouldn't do this, or configure editor differently, you're basically changing the way how the parser works, not ok
-
 // each block is name of action and the full content behind
 fn parse_into_blocks(text string) !Blocks {
 	mut state := ParseBlockStatus.start
@@ -149,58 +140,75 @@ fn (mut block Block) clean() {
 }
 
 fn (mut actions ActionsParser) parse_actions(blocks Blocks) ! {
-	// set action prefix such that $book.$actor.$action
-	mut actor := actions.actor
-	mut book := actions.book
-
 	for block in blocks.blocks {
-		action := parse_block(block, book, actor)!
-
-		if action.name.ends_with('actor.select') {
-			actor = action.params.args[0]
-			// todo: improve readability
-			if actor.count('.') == 1 {
-				book = actor.all_before('.')
-				actor = actor.all_after('.')
-			}
-		} else if action.name.ends_with('book.select') {
-			book = action.params.args[0]
-		} else {
-			actions.unsorted << action
-		}
+		actions.parse_block(block)!
 	}
 }
 
-fn parse_block(block Block, book_ string, actor_ string) !Action {
+// go over block, fill in default book or actor if needed
+fn (mut actions ActionsParser) parse_block(block Block) ! {
 	params_ := params.parse(block.content) or { return error('Failed to parse block: ${err}') }
 
-	mut book := book_
-	mut actor := actor_
+	mut domain := ''
+	mut book := ''
+	mut actor := ''
 
-	if block.name.count('.') == 1 {
-		// action defines actor in name
+	name := block.name.all_after_last('.').trim_space()
+	splitted := block.name.split('.')
+
+	if splitted.len == 1 {
+		domain = actions.defaultdomain
+		book = actions.defaultbook
+		actor = actions.defaultactor
+	} else if splitted.len == 2 {
+		domain = actions.defaultdomain
+		book = actions.defaultbook
 		actor = block.name.all_before_last('.')
-	} else if block.name.count('.') == 2 {
-		// action defines book and actor in name
-		book = block.name.split('.')[0]
-		actor = block.name.split('.')[1]
+	} else if splitted.len == 3 {
+		domain = actions.defaultdomain
+		book = splitted[0]
+		actor = splitted[1]
+	} else if splitted.len == 4 {
+		domain = splitted[0]
+		book = splitted[1]
+		actor = splitted[2]
+	} else {
+		domain = ''
+		book = ''
+		actor = ''
+		return error('max 3 . in block.\n${block}')
 	}
 
-	mut prefix := new_prefix(book, actor)
+	// !!select_domain protocol_me
+	// !!select_book aaa
+	// !!select_actor people
+	if name == 'select_domain' {
+		actions.defaultdomain = params_.get_arg(0, 1)! // means there needs to be 1 arg
+		return
+	}
+	if name == 'select_book' {
+		actions.defaultbook = params_.get_arg(0, 1)! // means there needs to be 1 arg
+		return
+	}
+	if name == 'select_actor' {
+		actions.defaultactor = params_.get_arg(0, 1)! // means there needs to be 1 arg
+		return
+	}
 
-	return Action{
-		name: '${prefix}${block.name.all_after_last('.')}'
+	//QUESTION: is this necessary
+	$if debug {
+		eprintln('${domain} - ${book} - ${actor} - ${name}')
+	}
+
+	domain_check(domain, block.content)!
+	book_check(book, block.content)!
+	actor_check(actor, block.content)!
+	name_check(name, block.content)!
+
+	actions.actions << Action{
+		name: name
+		book: book
+		actor: actor
 		params: params_
 	}
-}
-
-fn new_prefix(book string, actor string) string {
-	mut prefix := ''
-	if book != '' {
-		prefix += '${book}.'
-	}
-	if actor != '' {
-		prefix += '${actor}.'
-	}
-	return prefix
 }

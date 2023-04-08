@@ -1,131 +1,97 @@
 module actionsparser
+import freeflowuniverse.crystallib.params 
+
+[params]
+pub struct FilterArgs {
+pub:
+	domain       string = 'protocol_me'
+	actor        string    // can be empty, this means will not filter based on actor
+	book         string   // can be empty, this means will not filter based on book	
+	names_filter []string // can be empty, then no filter, unix glob filters are allowed
+}
 
 // make sure that only actions are remembered linked to the actor or book and also sorted in right order
-pub fn (mut actions ActionsParser) filter() ! {
-	actions.filter_actor()
-	actions.filter_book()
-	actions.filter_actions()
-	actions.unsorted = []Action{}
-}
+// will also sort using the names filter
+// args ActionsGetArgs:
+//   actor    string [required]  //can be empty, this means will not filter based on actor
+//   book     string	[required]  //can be empty, this means will not filter based on book	
+//   names_filter    []string //can be empty, then no filter, unix glob filters are allowed
+//
+// return  []Action
+pub fn (mut parser ActionsParser) filtersort(args FilterArgs) ![]Action {
+	mut result := []Action{}
+	for mut action in parser.actions {
+		if args.domain != '' && args.domain != action.domain {
+			continue
+		}
+		if args.book != '' && args.book != action.book {
+			continue
+		}
+		if args.actor != '' && args.actor != action.actor {
+			continue
+		}
+		action.name = action.name.to_lower().trim_space()
 
-// removes in place actions for books excluding the provided book
-// returns a list of
-fn (mut actions ActionsParser) filter_actor() {
-	if actions.actor == '' {
-		return
-	}
-
-	mut i := 0
-	for {
-		if i == actions.unsorted.len {
-			break
+		// if name filter is not set, just push to result 
+		if args.names_filter.len == 0 {
+			result << action
+			continue
 		}
 
-		action := actions.unsorted[i]
-		prefix := action.name.all_before_last('.')
-		actor := prefix.all_after_last('.')
-
-		if actor != actions.actor {
-			actions.skipped << action
-			actions.unsorted.delete(i)
-		} else {
-			i += 1
+		mut prio := 0 // highest prio
+		for name_filter in args.names_filter {
+			//QUESTION: what to do with [ and ?
+			if name_filter.contains('*') || name_filter.contains('?') || name_filter.contains('[') {
+				if action.name.match_glob(name_filter) {
+					action.priority = u8(prio)
+					result << action
+					continue
+				} else if action.name == name_filter.to_lower() {
+					action.priority = u8(prio)
+					result << action
+					continue
+				}
+			//BACKLOG: cleaner way to do this
+			} else if action.name == name_filter.to_lower() {
+				action.priority = u8(prio)
+				result << action
+				continue
+			}
+			prio += 1
 		}
 	}
-}
-
-// removes in place actions for books excluding the provided book
-// returns a list of
-fn (mut actions ActionsParser) filter_book() {
-	if actions.book == '' {
-		return
+	mut resultsorted := []Action{}
+	
+	// if name filter is not set, return unsorted
+	if args.names_filter.len == 0 {
+		return result
 	}
 
-	mut i := 0
-	for {
-		if i == actions.unsorted.len {
-			break
-		}
-
-		action := actions.unsorted[i]
-		prefix := action.name.all_before_last('.')
-		book := prefix.split('.')[prefix.split('.').len - 2]
-
-		if book != actions.book {
-			actions.skipped << action
-			actions.unsorted.delete(i)
-		} else {
-			i += 1
+	for prioselect in 0 .. args.names_filter.len {
+		// walk over all prio's
+		for action2 in result {
+			if action2.priority == prioselect {
+				resultsorted << action2
+			}
 		}
 	}
+	return resultsorted
 }
 
-// removes in place actions for books excluding the provided book
-// returns a list of
-fn (mut actions ActionsParser) filter_actions() {
-	//? if not here?
-	// for i, action in actions.unsorted {
-	// 	if !actions.filter.contains(action.name) {
-	// 		actions.skipped << action
-	// 		actions.unsorted.delete(i)
-	// 	}
-	// }
-	actions.ok = sort_actions(actions.filter, actions.unsorted)
-}
-
-fn sort_actions(filter []string, actions []Action) []Action {
-	if filter.len == 0 {
-		return actions
-	}
-	if actions.len > 1 {
-		index := int(actions.len / 2)
-		a := sort_actions(filter, actions[..index])
-		b := sort_actions(filter, actions[index..])
-		return merge(a, b, filter)
-	}
-	return actions
-}
-
-fn merge(a []Action, b []Action, filters []string) []Action {
-	mut i := 0
-	mut j := 0
-	mut sorted := []Action{}
-	for i < a.len && j < b.len {
-		if compare_order(a[i], b[j], filters) == -1 {
-			sorted << a[i]
-			i += 1
-		} else if compare_order(a[i], b[j], filters) == 1 {
-			sorted << b[j]
-			j += 1
-		} else {
-			sorted << a[i]
-			sorted << b[j]
-			i += 1
-			j += 1
+//find 1 actions based on name, if 0 or more than 1 then error
+pub fn (mut parser ActionsParser) params_get(name string) !params.Params {
+	mut result := []Action{}
+	for mut action in parser.actions {
+		if action.name == name.to_lower(){
+			result<<action
 		}
 	}
-
-	// append remainder to end
-	if i == a.len && j != b.len {
-		sorted << b[j..]
-	} else if i != a.len && j == b.len {
-		sorted << a[i..]
+	if result.len==0{
+		return error("could not find params from action with name:'$name'")
 	}
-	return sorted
-}
-
-// compares the order of two actions, returns 1,0,-1 accordingly
-fn compare_order(a &Action, b &Action, filter []string) int {
-	a_prefix := a.name.all_before_last('.')
-	a_name := a.name.all_after_last('.')
-
-	b_prefix := b.name.all_before_last('.')
-	b_name := b.name.all_after_last('.')
-
-	if filter.index(a_name) == -1 || filter.index(b_name) == -1 {
-		return 0
-	} else if filter.index(a_name) < filter.index(b_name) {
-		return -1
+	if result.len>1{
+		return error("found more than one action with name:'$name'")
 	}
-	return 1
+	return result[0].params
+
 }

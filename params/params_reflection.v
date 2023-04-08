@@ -37,3 +37,5 @@ pub fn encode[T](t T) !Params {
 	}
 	return params
 }
+
+// BACKLOG: can we do the encode recursive?

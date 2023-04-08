@@ -1,5 +1,6 @@
 module params
 
+[heap]
 pub struct Params {
 pub mut:
 	params []Param

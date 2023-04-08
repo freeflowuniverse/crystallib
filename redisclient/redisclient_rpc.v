@@ -6,7 +6,7 @@ import json
 
 pub struct RedisRpc {
 pub mut:
-	key   string
+	key   string // queue name as used by this rpc
 	redis &Redis
 }
 
@@ -62,7 +62,7 @@ pub fn (mut q RedisRpc) call(args RPCArgs) !string {
 	if args.wait {
 		return q.result(args.timeout, retqueue)!
 	}
-	return ""
+	return ''
 }
 
 // get return once result processed
@@ -71,8 +71,8 @@ pub fn (mut q RedisRpc) result(timeout u64, retqueue string) !string {
 	for {
 		r := q.redis.rpop(retqueue) or { '' } // TODO: should be blocking since certain timeout
 		if r != '' {
-			res:=json.decode(Response, r)!
-			if res.error!=""{
+			res := json.decode(Response, r)!
+			if res.error != '' {
 				return error(res.error)
 			}
 			return res.result
@@ -93,7 +93,7 @@ pub fn (mut q RedisRpc) process(timeout u64, op fn (string, string) !string) !st
 	for {
 		r := q.redis.rpop(q.key) or { '' } // TODO: should be blocking since certain timeout
 		if r != '' {
-			msg:=json.decode(Message,r)!
+			msg := json.decode(Message, r)!
 
 			returnqueue := msg.ret_queue
 			// epochtime:=parts[1].u64() //we don't do anything with it now
@@ -102,16 +102,16 @@ pub fn (mut q RedisRpc) process(timeout u64, op fn (string, string) !string) !st
 			// if true{panic("sd")}
 			datareturn := op(cmd, data) or {
 				response := Response{
-					result:""
-					error:err.str()
+					result: ''
+					error: err.str()
 				}
 				encoded := json.encode(response)
 				q.redis.lpush(returnqueue, encoded)!
-				return ""
+				return ''
 			}
 			response := Response{
-				result:datareturn
-				error:""
+				result: datareturn
+				error: ''
 			}
 			encoded := json.encode(response)
 			q.redis.lpush(returnqueue, encoded)!

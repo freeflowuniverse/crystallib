@@ -4,15 +4,13 @@ import freeflowuniverse.crystallib.params
 import freeflowuniverse.crystallib.texttools
 
 pub struct Action {
-pub:
-	name string
 pub mut:
-	params params.Params
-}
-
-// get the param as string, if it does not exist will throw error
-pub fn (mut action Action) param_get(name_ string) !string {
-	return action.params.get(name_)
+	name     string        [required]
+	domain   string = 'protocol_me'
+	actor    string        [required]
+	book     string        [required]
+	priority u8 // 0 is highest
+	params   params.Params
 }
 
 pub fn (action Action) str() string {

@@ -44,3 +44,7 @@
 !!books.mdbook_develop name:feasibility_study_internet
 
 <!-- !!publishtools.publish server:'ourserver.com' -->
+
+!!protocol_me.aaa.people.select
+!!aaa.people.select
+!!people.select

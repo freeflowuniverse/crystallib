@@ -64,6 +64,7 @@ pub fn (mut cs Currencies) get_rates(cur_array []string, crypto bool) ! {
 	}
 }
 
+// can give actions string, if empty will just set TFT at 0.015
 pub fn (mut cs Currencies) defaults_set() {
 	mut c1 := Currency{
 		name: 'TFT'

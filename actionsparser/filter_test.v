@@ -1,9 +1,10 @@
 module actionsparser
 
-const text = "
+const text2 = "
 //select the book, can come from context as has been set before
 //now every person added will be added in this book
-!!actor.select aaa.people
+!!select_actor people
+!!select_book aaa
 
 //delete everything as found in current book
 !!person_delete cid:1g
@@ -45,82 +46,124 @@ const text = "
 	description: 'TF Wallet for TFT' 
 	preferred: false
 
-!!actor.select aaa.test
+!!select_actor test
 
 !!test_action
 	key: value
 
-!!actor.select bbb.people
+!!select_book bbb
+!!select_actor people
 
 !!person_define
   cid: 'eg'
   name: despiegk
 
-!!book.select bbb
 "
 
-fn test_filter_actor() ! {
-	mut parser := new(actor: 'people')!
-	parser.text_add(actionsparser.text)!
-
-	assert parser.unsorted.len == 8
-	assert parser.skipped.len == 0
-
-	parser.filter_actor()
-
-	// confirm only one test actor action is skipped
-	assert parser.unsorted.len == 7
-	assert parser.skipped.len == 1
-}
-
-fn test_filter_book() ! {
-	test_filter_book_aaa()!
-	test_filter_book_bbb()!
-}
-
-fn test_filter_book_aaa() ! {
-	mut parser := new(book: 'aaa')!
-	parser.text_add(actionsparser.text)!
-
-	assert parser.unsorted.len == 8
-	assert parser.skipped.len == 0
-
-	parser.filter_book()
-
-	// assert skipped action from book 'bbb'
-	assert parser.unsorted.len == 7
-	assert parser.skipped.len == 1
-	assert parser.skipped[0].name == 'bbb.people.person_define'
-}
-
-fn test_filter_book_bbb() ! {
-	mut parser := new(book: 'bbb')!
-	parser.text_add(actionsparser.text)!
-
-	assert parser.unsorted.len == 8
-	assert parser.skipped.len == 0
-
-	parser.filter_book()
-
-	// assert skipped action from book 'bbb'
-	assert parser.unsorted.len == 1
-	assert parser.skipped.len == 7
-	assert parser.unsorted[0].name == 'bbb.people.person_define'
-}
-
+//QUESTION: how to better organize these tests
 fn test_filter() ! {
-	parser := new(
-		text: actionsparser.text
-		filter: ['circle_delete', 'person_delete', 'circle_define', 'person_define', 'circle_link',
-			'circle_comment', 'digital_payment_add']
+
+	// test filter book:aaa actor:people
+	mut parser := new(defaultbook: 'aaa',text:actionsparser.text2)!
+	mut sorted := filtersort(parser.actions, actor: 'people' book: 'aaa')! //QUESTION: can you leave actor blank?
+	assert parser.actions.len == 8
+	assert sorted.len == 6
+
+	// test filter book:bbb actor:people
+	parser = new(defaultbook: 'aaa',text:actionsparser.text2)!
+	sorted = filtersort(parser.actions, actor: 'people' book: 'bbb')!
+	assert parser.actions.len == 8
+	assert sorted.len == 1
+
+	// test filter book:ccc actor:people
+	parser = new(defaultbook: 'aaa',text:actionsparser.text2)!
+	sorted = filtersort(parser.actions, actor: 'people' book: 'ccc')!
+	assert parser.actions.len == 8
+	assert sorted.len == 0
+
+	// test filter book:aaa actor:test
+	parser = new(defaultbook: 'aaa',text:actionsparser.text2)!
+	sorted = filtersort(parser.actions, actor: 'test' book: 'aaa')!
+	assert parser.actions.len == 8
+	assert sorted.len == 1
+
+	// test filter with names:[*]
+	parser = new(defaultbook: 'aaa' text: actionsparser.text2)!
+	assert parser.actions.len == 8
+	assert parser.actions.map(it.name) == ['person_delete', 'person_define', 'circle_link', 'circle_comment', 'circle_comment', 'digital_payment_add', 'test_action', 'person_define']
+
+	mut args := FilterArgs {
 		actor: 'people'
 		book: 'aaa'
+		names_filter: ['*']
+	}
+	sorted = filtersort(parser.actions, args)!
+	assert sorted.len == 6
+	assert sorted.map(it.name) == ['person_delete', 'person_define', 'circle_link', 'circle_comment', 'circle_comment', 'digital_payment_add']
+	
+	// test filter with names:['']
+	//QUESTION: should this return empty list?
+	parser = new(
+		defaultbook: 'aaa'
+		text: actionsparser.text2
 	)!
+	
+	assert parser.actions.map(it.name) == ['person_delete', 'person_define', 'circle_link', 'circle_comment', 'circle_comment', 'digital_payment_add', 'test_action', 'person_define']
 
-	assert parser.unsorted.len == 0
-	assert parser.ok.len == 6
-	assert parser.skipped.len == 2
+	args = FilterArgs {
+		actor: 'people'
+		book: 'aaa'
+		names_filter: ['']
+	}
+	sorted = filtersort(parser.actions, args)!
+	assert sorted.len == 0
+	assert sorted.map(it.name) == []
+	
+	// test filter with names in same order as actions
+	parser = new(
+		defaultbook: 'aaa'
+		text: actionsparser.text2
+	)!
+	
+	args = FilterArgs {
+		actor: 'people'
+		book: 'aaa'
+		names_filter: ['person_delete', 'person_define', 'circle_link', 'circle_comment', 'digital_payment_add']
+	}
+	sorted = filtersort(parser.actions, args)!
+	assert sorted.len == 6
+	assert sorted.map(it.name) == ['person_delete', 'person_define', 'circle_link', 'circle_comment', 'circle_comment', 'digital_payment_add']
+	
+	// test filter with names in different order than actions
+	parser = new(
+		defaultbook: 'aaa'
+		text: actionsparser.text2
+	)!
+	args = FilterArgs {
+		actor: 'people'
+		book: 'aaa'
+		// this order of names don't make much sense, just for testing
+		names_filter: ['circle_comment', 'person_define','digital_payment_add', 'person_delete', 'circle_link']
+	}
+	sorted = filtersort(parser.actions, args)!
+	assert sorted.len == 6
+	assert sorted.map(it.name) == ['circle_comment', 'circle_comment', 'person_define', 'digital_payment_add', 'person_delete', 'circle_link']
 
-	// assert parser.unsorted[1].name == 'person_delete'
-	// assert parser.ok[1].name == 'circle_delete'
+	//QUESTION: if we only have one name, is it just that action?
+	// test filter with only two names in filter
+	parser = new(
+		defaultbook: 'aaa'
+		text: actionsparser.text2
+	)!
+	
+	args = FilterArgs {
+		actor: 'people'
+		book: 'aaa'
+		// this order of names don't make much sense, just for testing
+		names_filter: ['person_define', 'person_delete']
+	}
+	sorted = filtersort(parser.actions, args)!
+	assert sorted.len == 2
+	assert sorted.map(it.name) == ['person_define', 'person_delete']
+
 }

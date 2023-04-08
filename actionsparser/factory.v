@@ -3,11 +3,11 @@ module actionsparser
 [params]
 pub struct ActionParserArgs {
 pub:
-	text   string
-	path   string   // can be dir or file
-	filter []string // how to sort & filter
-	actor  string
-	book   string
+	text          string
+	path          string // can be dir or file
+	defaultdomain string = 'protocol_me'
+	defaultbook   string
+	defaultactor  string
 }
 
 // get an actionparser and do the processing, can always add text and files later see actionparser.path_add and text_add
@@ -15,21 +15,21 @@ pub:
 // params
 // 		text:string
 // 		path:string 		//can be dirpath or filepath
-// 		filter:[]string 	//how to sort & filter
-// 		actor:string
-// 		book:string
+// 		domain_default  string = "protocol_me"
+// 		actor_default  string
+// 		book_default   string
 pub fn new(args ActionParserArgs) !ActionsParser {
-	mut ap := ActionsParser{
-		filter: args.filter
-		actor: args.actor
-		book: args.book
-	}
+	mut ap := ActionsParser{}
+	ap.defaultdomain = args.defaultdomain
+	ap.defaultbook = args.defaultbook
+	ap.defaultactor = args.defaultactor
 	if args.text.len > 0 {
 		ap.text_add(args.text)!
 	}
 	if args.path.len > 0 {
 		ap.path_add(args.path)!
 	}
-	ap.filter()!
 	return ap
 }
+
+// URGENT: needs to be debugged and tests checked
