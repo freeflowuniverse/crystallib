@@ -35,6 +35,12 @@ fn test_main() ? {
 	// println("get_result ${zdb_get}")
 
 	// client.zdb_delete('testzdb')!
+
+	// res := client.filter_nodes(tfgrid.FilterOptions{
+	// 	// farm_id: 336
+	// 	mru: 2048
+	// })!
+	// println("nodes ${res}")
 }
 
 fn deploy_zdb(mut client tfgrid.TFGridClient) !tfgrid.ZDBResult {
@@ -51,7 +57,8 @@ fn deploy_zdb(mut client tfgrid.TFGridClient) !tfgrid.ZDBResult {
 fn deploy_k8s(mut client tfgrid.TFGridClient) !tfgrid.K8sClusterResult {
 	master_node := tfgrid.K8sNode{
 		name: "mater",
-		node_id: 11,
+		// node_id: 11,
+		farm_id: 336,
 		cpu: 1,
 		memory: 2048,
 		disk_size: 1
@@ -60,14 +67,33 @@ fn deploy_k8s(mut client tfgrid.TFGridClient) !tfgrid.K8sClusterResult {
 	mut worker_nodes := []tfgrid.K8sNode{}
 	worker_nodes << tfgrid.K8sNode{
 		name: "w1",
-		node_id: 33,
+		// node_id: 33,
 		cpu: 1,
 		memory: 2048,
-		disk_size: 1
+		disk_size: 50,
+		// public_ip: true
+	}
+
+	worker_nodes << tfgrid.K8sNode{
+		name: "w2",
+		// node_id: 33,
+		cpu: 1,
+		memory: 2048,
+		disk_size: 2000,
+		// public_ip: true
+	}
+
+	worker_nodes << tfgrid.K8sNode{
+		name: "w3",
+		// node_id: 33,
+		cpu: 1,
+		memory: 2048,
+		disk_size: 50,
+		// public_ip: true
 	}
 
 	cluster := tfgrid.K8sCluster{
-		name: "testk8s",
+		name: "testk8ss",
 		token: "toccccen",
 		ssh_key: "...",
 		master: master_node,
