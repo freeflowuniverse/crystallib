@@ -5,7 +5,6 @@ import os
 import vweb
 import publisher_config
 import json
-
 import gittools
 import rest
 
@@ -13,10 +12,10 @@ import rest
 
 struct MyContext {
 pub:
-	config    		&publisher_config.ConfigRoot
+	config &publisher_config.ConfigRoot
 pub mut:
-	publisher 	&Publisher
-	webnames 		map[string]string
+	publisher   &Publisher
+	webnames    map[string]string
 	data_loader &rest.DataLoader
 }
 
@@ -31,7 +30,7 @@ enum FileType {
 }
 
 fn path_wiki_get(config publisher_config.ConfigRoot, sitename_ string, name_ string) ?(FileType, string) {
-	filetype, sitename, mut name := filetype_site_name_get(config, sitename_, name_) ?
+	filetype, sitename, mut name := filetype_site_name_get(config, sitename_, name_)?
 
 	mut path2 := os.join_path(config.publish.paths.publish, sitename, name)
 	if name == 'readme.md' && (!os.exists(path2)) {
@@ -41,19 +40,19 @@ fn path_wiki_get(config publisher_config.ConfigRoot, sitename_ string, name_ str
 	// println('  > get: $path2 ($name)')
 
 	if !os.exists(path2) {
-		return error('cannot find file in: $path2')
+		return error('cannot find file in: ${path2}')
 	}
 	return filetype, path2
 }
 
 fn filetype_site_name_get(config publisher_config.ConfigRoot, site string, name_ string) ?(FileType, string, string) {
 	// println(" - wiki get: '$site' '$name'")
-	site_config := config.site_wiki_get(site) ?
+	site_config := config.site_wiki_get(site)?
 	mut name := name_.to_lower().trim(' ').trim('.').trim(' ')
 	extension := os.file_ext(name).trim('.')
 	mut sitename := site_config.name
 	if sitename.starts_with('wiki_') || sitename.starts_with('info_') {
-		panic('sitename short cannot start with wiki_ or info_.\n$site_config')
+		panic('sitename short cannot start with wiki_ or info_.\n${site_config}')
 	}
 
 	if name.contains('__') {
@@ -62,17 +61,17 @@ fn filetype_site_name_get(config publisher_config.ConfigRoot, site string, name_
 			return error('filename not well formatted. Needs to have 2 parts around "__". Now ${name}.')
 		}
 		sitename = parts[0].trim(' ')
-		if sitename == "tfgrid"{
-			sitename = "threefold"
+		if sitename == 'tfgrid' {
+			sitename = 'threefold'
 		}
-		if sitename == "tokens"{
-			sitename = "threefold"
+		if sitename == 'tokens' {
+			sitename = 'threefold'
 		}
-		if sitename == "cloud"{
-			sitename = "threefold"
+		if sitename == 'cloud' {
+			sitename = 'threefold'
 		}
-		if sitename == "internet4"{
-			sitename = "threefold"
+		if sitename == 'internet4' {
+			sitename = 'threefold'
 		}
 		name = parts[1].trim(' ')
 	}
@@ -129,7 +128,7 @@ fn index_template(config &publisher_config.ConfigRoot) string {
 	web_hostnames := config.web_hostnames
 	mut port_str := ''
 	if config.publish.port != 80 {
-		port_str = ':$config.publish.port'
+		port_str = ':${config.publish.port}'
 	}
 	return $tmpl('index_root.html')
 }
@@ -145,7 +144,7 @@ fn site_www_deliver(config publisher_config.ConfigRoot, domain string, path stri
 	path2 = os.join_path(site_path, path2)
 
 	if !os.exists(path2) {
-		println(' - ERROR: cannot find path:$path2')
+		println(' - ERROR: cannot find path:${path2}')
 		return app.not_found()
 	} else {
 		if os.is_dir(path2) {
@@ -163,7 +162,7 @@ fn site_www_deliver(config publisher_config.ConfigRoot, domain string, path stri
 			// println("deliver: '$path2'")
 			// NOT GOOD NEEDS TO BE NOT LIKE THIS: TODO: find way how to send file
 			content2 := os.read_file(path2) or { return app.not_found() }
-			app.set_content_type(content_type_get(path2) ?)
+			app.set_content_type(content_type_get(path2)?)
 			return app.ok(content2)
 		}
 	}
@@ -175,16 +174,16 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path str
 	if debug {
 		// println(' >>> Webserver >> config >> $config')
 		// println(' >>> Webserver >> domain >> $domain')
-		println(' >>> Webserver >> path >> $path0')
+		println(' >>> Webserver >> path >> ${path0}')
 		// println(' >>> Webserver >> req >> $req')
 		// println(' >>> Webserver >> res >> $res')
 	}
 
 	mut sitename := config.name_web_get(domain) or { return app.not_found() }
-	if path0.contains("/") && path0.contains("sidebar"){
-		path0 = path0.replace("/","|")
-		path0 = path0.replace("||","|")
-		path0 = path0.replace("_sidebar","sidebar")
+	if path0.contains('/') && path0.contains('sidebar') {
+		path0 = path0.replace('/', '|')
+		path0 = path0.replace('||', '|')
+		path0 = path0.replace('_sidebar', 'sidebar')
 	}
 	name := os.base(path0)
 	mut publisherobj := rlock app.ctx {
@@ -198,28 +197,28 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path str
 	}
 
 	if publisherobj.develop {
-		filetype, sitename2, name2 := filetype_site_name_get(config, sitename, name) ?
+		filetype, sitename2, name2 := filetype_site_name_get(config, sitename, name)?
 		if debug {
-			println(' >> get develop: $filetype, $sitename2, $name2')
+			println(' >> get develop: ${filetype}, ${sitename2}, ${name2}')
 		}
 
 		if filetype == FileType.javascript || filetype == FileType.css {
 			if debug {
-				println(' >>> file static get: $filetype, $sitename2, $name2')
+				println(' >>> file static get: ${filetype}, ${sitename2}, ${name2}')
 			}
 
 			mut p := os.join_path(config.publish.paths.base, 'static', name2)
 			mut content := os.read_file(p) or {
 				if debug {
-					println(' >>> file static not found or error: $p\n$err')
+					println(' >>> file static not found or error: ${p}\n${err}')
 				}
 				return app.not_found()
 			}
-			app.set_content_type(content_type_get(p) ?)
+			app.set_content_type(content_type_get(p)?)
 			if debug {
-				content_type := content_type_get(p) ?
+				content_type := content_type_get(p)?
 				len1 := content.len
-				println(' >>> file static content type: $content_type, len:$len1')
+				println(' >>> file static content type: ${content_type}, len:${len1}')
 			}
 			return app.ok(content)
 		}
@@ -229,19 +228,19 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path str
 			// mut index := os.read_file( site.path + '/index.html') or {
 			// 	res.send("index.html not found", 404)
 			// }
-			site_config := config.site_wiki_get(sitename2) ?
+			site_config := config.site_wiki_get(sitename2)?
 			index_out := template_wiki_root(sitename, '', '', site_config.opengraph)
 			return app.html(index_out)
 		} else if filetype == FileType.wiki {
 			if site2.page_exists(name2) {
-				mut page := site2.page_get(name2, mut publisherobj) ?
+				mut page := site2.page_get(name2, mut publisherobj)?
 				page.replace_defs(mut publisherobj) or { return app.server_error(2) }
 				content := domain_replacer(rlock app.ctx {
 					app.ctx.webnames
 				}, page.content)
 				return app.ok(content)
 			} else {
-				mut page_def := publisherobj.def_page_get(name2) ?
+				mut page_def := publisherobj.def_page_get(name2)?
 				page_def.replace_defs(mut publisherobj) or { return app.server_error(3) }
 				// if debug {println(" >> page send: $name2")}
 				content2 := domain_replacer(rlock app.ctx {
@@ -251,23 +250,23 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path str
 			}
 		} else {
 			// now is a file
-			file3 := site2.file_get(name2, mut publisherobj) ?
+			file3 := site2.file_get(name2, mut publisherobj)?
 			path3 := file3.path_get(mut publisherobj)
 			if debug {
-				println(' >> file get: $path3')
+				println(' >> file get: ${path3}')
 			}
 			content3 := os.read_file(path3) or { return app.not_found() }
 			// NOT GOOD NEEDS TO BE NOT LIKE THIS: TODO: find way how to send file
-			app.set_content_type(content_type_get(path3) ?)
+			app.set_content_type(content_type_get(path3)?)
 			return app.ok(content3)
 		}
 	} else {
 		filetype, path2 := path_wiki_get(config, sitename, name) or {
-			println(' - ERROR: could not get path for: $sitename:$name\n$err')
+			println(' - ERROR: could not get path for: ${sitename}:${name}\n${err}')
 			return app.not_found()
 		}
 		if debug {
-			println(" - '$sitename:$name' -> $path2")
+			println(" - '${sitename}:${name}' -> ${path2}")
 		}
 		if filetype == FileType.wiki {
 			content := os.read_file(path2) or { return app.not_found() }
@@ -275,14 +274,14 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path str
 		} else {
 			if !os.exists(path2) {
 				if debug {
-					println(' - ERROR: cannot find path:$path2')
+					println(' - ERROR: cannot find path:${path2}')
 				}
 				return app.not_found()
 			} else {
 				// println("deliver: '$path2'")
 				content := os.read_file(path2) or { return app.not_found() }
 				// NOT GOOD NEEDS TO BE NOT LIKE THIS: TODO: find way how to send file
-				app.set_content_type(content_type_get(path2) ?)
+				app.set_content_type(content_type_get(path2)?)
 				return app.ok(content)
 			}
 		}
@@ -307,17 +306,19 @@ fn error_template(mut app App, sitename string) string {
 	}
 	mut errors := PublisherErrors{}
 	mut site := publisherobj.site_get(sitename) or {
-		return 'cannot get site, in template for errors\n $err'
+		return 'cannot get site, in template for errors\n ${err}'
 	}
 	if publisherobj.develop {
 		errors = publisherobj.errors_get(site) or {
-			return 'ERROR: cannot get errors, in template for errors\n $err'
+			return 'ERROR: cannot get errors, in template for errors\n ${err}'
 		}
 	} else {
-		path2 := os.join_path(config.publish.paths.publish, 'wiki_$sitename', 'errors.json')
-		err_file := os.read_file(path2) or { return 'ERROR: could not find errors file on $path2' }
+		path2 := os.join_path(config.publish.paths.publish, 'wiki_${sitename}', 'errors.json')
+		err_file := os.read_file(path2) or {
+			return 'ERROR: could not find errors file on ${path2}'
+		}
 		errors = json.decode(PublisherErrors, err_file) or {
-			return 'ERROR: json not well formatted on $path2'
+			return 'ERROR: json not well formatted on ${path2}'
 		}
 	}
 	mut site_errors := errors.site_errors
@@ -356,18 +357,17 @@ fn content_type_get(path string) ?string {
 		return 'text/html'
 	}
 
-	return error('cannot find content type for $path')
+	return error('cannot find content type for ${path}')
 }
 
 struct App {
 	vweb.Context
-
 pub mut:
 	ctx shared MyContext
 }
 
-fn (mut app App) list<T>() ?[]T {
-	println("listing $T.name documents...")
+fn (mut app App) list[T]() ?[]T {
+	println('listing ${T.name} documents...')
 
 	mut data_loader := rlock app.ctx {
 		app.ctx.data_loader
@@ -375,98 +375,97 @@ fn (mut app App) list<T>() ?[]T {
 
 	// TODO: should pass page/page_count through query_params
 	// this will get all results
-	return data_loader.list<T>(1, 0)
+	return data_loader.list[T](1, 0)
 }
 
-fn (mut app App) get<T>(id string) ?T {
-	println("getting $T.name document with id of ${id}...")
+fn (mut app App) get[T](id string) ?T {
+	println('getting ${T.name} document with id of ${id}...')
 
 	mut data_loader := rlock app.ctx {
 		app.ctx.data_loader
 	}
 
-	return data_loader.get<T>(id)
+	return data_loader.get[T](id)
 }
 
-["/api/data/blog"]
+['/api/data/blog']
 pub fn (mut app App) list_blogs() vweb.Result {
-	result := app.list<rest.Blog>() or {
+	result := app.list[rest.Blog]() or {
 		println(err)
 		return app.not_found()
 	}
 
-	return app.json_pretty<[]rest.Blog>(result)
+	return app.json_pretty[[]rest.Blog](result)
 }
 
-["/api/data/news"]
+['/api/data/news']
 pub fn (mut app App) list_news() vweb.Result {
-	result := app.list<rest.News>() or {
+	result := app.list[rest.News]() or {
 		println(err)
 		return app.not_found()
 	}
 
-	return app.json_pretty<[]rest.News>(result)
+	return app.json_pretty[[]rest.News](result)
 }
 
-["/api/data/project"]
+['/api/data/project']
 pub fn (mut app App) list_projects() vweb.Result {
-	result := app.list<rest.Project>() or {
+	result := app.list[rest.Project]() or {
 		println(err)
 		return app.not_found()
 	}
 
-	return app.json_pretty<[]rest.Project>(result)
+	return app.json_pretty[[]rest.Project](result)
 }
 
-["/api/data/person"]
+['/api/data/person']
 pub fn (mut app App) list_persons() vweb.Result {
-	result := app.list<rest.Person>() or {
+	result := app.list[rest.Person]() or {
 		println(err)
 		return app.not_found()
 	}
 
-	return app.json_pretty<[]rest.Person>(result)
+	return app.json_pretty[[]rest.Person](result)
 }
 
-
-["/api/data/blog/:id"]
+['/api/data/blog/:id']
 pub fn (mut app App) get_blog(id string) vweb.Result {
-	result := app.get<rest.Blog>(id) or {
+	result := app.get[rest.Blog](id) or {
 		println(err)
 		return app.not_found()
 	}
 
-	return app.json_pretty<rest.Blog>(result)
+	return app.json_pretty[rest.Blog](result)
 }
 
-["/api/data/news/:id"]
+['/api/data/news/:id']
 pub fn (mut app App) get_news(id string) vweb.Result {
-	result := app.get<rest.News>(id) or {
+	result := app.get[rest.News](id) or {
 		println(err)
 		return app.not_found()
 	}
 
-	return app.json_pretty<rest.News>(result)
+	return app.json_pretty[rest.News](result)
 }
 
-["/api/data/project/:id"]
+['/api/data/project/:id']
 pub fn (mut app App) get_project(id string) vweb.Result {
-	result := app.get<rest.Project>(id) or {
+	result := app.get[rest.Project](id) or {
 		println(err)
 		return app.not_found()
 	}
 
-	return app.json_pretty<rest.Project>(result)
+	return app.json_pretty[rest.Project](result)
 }
 
-["/api/data/person/:id"]
+['/api/data/person/:id']
 pub fn (mut app App) get_person(id string) vweb.Result {
-	result := app.get<rest.Person>(id) or {
+	result := app.get[rest.Person](id) or {
 		println(err)
 		return app.not_found()
 	}
 
-	return app.json_pretty<rest.Person>(result)
+	return app.json_pretty[rest.Person](result)
 }
 
 // ["/data/:doc_type/:id/:filename"]
@@ -487,7 +486,7 @@ pub fn (mut app App) handler(_path string) vweb.Result {
 	mut path := _path
 
 	// enable CORS by default
-	app.add_header("Access-Control-Allow-Origin", "*")
+	app.add_header('Access-Control-Allow-Origin', '*')
 
 	// println(" ++ $path")
 
@@ -529,7 +528,7 @@ pub fn (mut app App) handler(_path string) vweb.Result {
 			domain = 'localhost'
 		} else {
 			domain = config.domain_get(sitename, cat) or { return app.not_found() }
-			println('DOMAIN:$domain')
+			println('DOMAIN:${domain}')
 		}
 	}
 
@@ -568,13 +567,13 @@ pub fn (mut app App) index() vweb.Result {
 }
 
 // Run server
-pub fn webserver_run(mut publisher &Publisher) ? {
-	publisher.check() ?
-	publisher.config.update_staticfiles(false) ?
+pub fn webserver_run(mut publisher Publisher) ? {
+	publisher.check()?
+	publisher.config.update_staticfiles(false)?
 
 	mut gt := gittools.new()
-	mut repo := gt.repos_get(filter: "threefold_data")[0]
-	data_path := os.join_path(repo.path(), "content")
+	mut repo := gt.repos_get(filter: 'threefold_data')[0]
+	data_path := os.join_path(repo.path(), 'content')
 
 	mut app := App{
 		ctx: MyContext{

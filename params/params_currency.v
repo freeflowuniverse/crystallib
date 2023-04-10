@@ -3,10 +3,9 @@ module params
 import freeflowuniverse.crystallib.currency
 // import texttools
 // import os
-import time { Duration, Time }
+import time
 
-
-//see currency object, gets it from params
+// see currency object, gets it from params
 pub fn (params &Params) get_currencyamount(key string) !currency.Amount {
 	valuestr := params.get(key)!
 	mut cs := currency.new()!
@@ -21,8 +20,7 @@ pub fn (params &Params) get_currencyamount_default(key string, defval string) !c
 	return cs.amount_get(defval)!
 }
 
-
-//get currency expressed in float in line to currency passed
+// get currency expressed in float in line to currency passed
 pub fn (params &Params) get_currencyfloat(key string) !currency.Amount {
 	mut cs := currency.new()!
 	valuestr := params.get(key)!

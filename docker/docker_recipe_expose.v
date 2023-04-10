@@ -8,8 +8,8 @@ pub mut:
 
 pub struct ExposeItem {
 pub mut:
-	ports []string
-	recipe          &DockerBuilderRecipe [str: skip]
+	ports  []string
+	recipe &DockerBuilderRecipe [str: skip]
 }
 
 // to do something like: 'Expose 8080/udp'
@@ -22,7 +22,7 @@ pub fn (mut b DockerBuilderRecipe) add_expose(args ExposeARgs) ! {
 }
 
 pub fn (mut i ExposeItem) check() ! {
-	if i.ports.len == 0{
+	if i.ports.len == 0 {
 		return error('ports list cannot be empty')
 	}
 }
@@ -32,7 +32,6 @@ pub fn (mut i ExposeItem) render() !string {
 	for s in i.ports {
 		out += ' ${s}'
 	}
-	
+
 	return out
 }
-

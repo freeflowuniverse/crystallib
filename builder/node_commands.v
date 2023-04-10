@@ -141,7 +141,6 @@ fn (mut node Node) platform_load() ! {
 	if node.platform == PlatformType.unknown {
 		if node.cmd_exists('sw_vers') {
 			node.platform = PlatformType.osx
-
 		} else if node.cmd_exists('apt-get') {
 			node.platform = PlatformType.ubuntu
 			node.package_refresh() or {}

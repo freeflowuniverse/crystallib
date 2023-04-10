@@ -195,7 +195,7 @@ fn (mut actions ActionsParser) parse_block(block Block) ! {
 		return
 	}
 
-	//QUESTION: is this necessary
+	// QUESTION: is this necessary
 	$if debug {
 		eprintln('${domain} - ${book} - ${actor} - ${name}')
 	}

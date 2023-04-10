@@ -1,6 +1,6 @@
 module params
 
-import time {Time}
+import time
 
 const testparams = Params{
 	params: [
@@ -15,21 +15,20 @@ const testparams = Params{
 		Param{
 			key: 'interval'
 			value: '2022-12-5'
-		}
-	]	
+		},
+	]
 }
 
 fn test_get_time() ! {
-	sometime := testparams.get_time('when')!
+	sometime := params.testparams.get_time('when')!
 	assert sometime.unix == 1670260475
 
-	anothertime := testparams.get_time('date')!
+	anothertime := params.testparams.get_time('date')!
 	assert anothertime.unix == 1670187600
 }
 
-
 fn test_get_time_default() ! {
-	notime := testparams.get_time_default('now', time.now())!
+	notime := params.testparams.get_time_default('now', time.now())!
 	assert notime.day == time.now().day
 }
 

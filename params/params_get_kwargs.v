@@ -50,8 +50,6 @@ pub fn (params &Params) get_float_default(key string, defval f64) !f64 {
 	return defval
 }
 
-
-
 pub fn (params &Params) get_u64(key string) !u64 {
 	valuestr := params.get(key)!
 	return valuestr.u64()

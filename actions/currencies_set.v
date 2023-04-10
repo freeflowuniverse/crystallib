@@ -3,10 +3,9 @@ module actions
 import freeflowuniverse.crystallib.currency
 import freeflowuniverse.crystallib.actionsparser
 
-fn  currencies_execute(actions []actionsparser.Action) ! {
-
-	mut actions2 := actionsparser.filtersort(actions:actions, actor: 'currency', book: '*')! // URGENT: means we do for any book
-	if actions2.len==0{
+fn currencies_execute(actions []actionsparser.Action) ! {
+	mut actions2 := actionsparser.filtersort(actions: actions, actor: 'currency', book: '*')! // URGENT: means we do for any book
+	if actions2.len == 0 {
 		return
 	}
 

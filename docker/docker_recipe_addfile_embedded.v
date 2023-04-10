@@ -1,14 +1,14 @@
 module docker
 
 [params]
-pub struct AddArgs {
+pub struct AddFileEmbeddedArgs {
 pub mut:
 	source          string // is the filename, needs to be embedded
 	dest            string // in the container we're building
 	make_executable bool
 }
 
-pub struct AddItem {
+pub struct AddFileEmbeddedItem {
 pub mut:
 	source          string
 	dest            string // in the container we're building
@@ -18,8 +18,8 @@ pub mut:
 }
 
 // to do something like: 'Add alpine:latest'
-pub fn (mut b DockerBuilderRecipe) add_file(args AddArgs) ! {
-	mut item := AddItem{
+pub fn (mut b DockerBuilderRecipe) add_file_embedded(args AddFileEmbeddedArgs) ! {
+	mut item := AddFileEmbeddedItem{
 		source: args.source
 		dest: args.dest
 		make_executable: args.make_executable
@@ -34,7 +34,7 @@ pub fn (mut b DockerBuilderRecipe) add_file(args AddArgs) ! {
 	b.items << item
 }
 
-pub fn (mut i AddItem) check() ! {
+pub fn (mut i AddFileEmbeddedItem) check() ! {
 	if i.check_embed == false {
 		return
 	}
@@ -47,7 +47,7 @@ pub fn (mut i AddItem) check() ! {
 	return error('Could not find filename: ${i.source} in embedded files. \n ${i}')
 }
 
-pub fn (mut i AddItem) render() !string {
+pub fn (mut i AddFileEmbeddedItem) render() !string {
 	mut out := 'ADD ${i.source} ${i.dest}'
 	if i.make_executable {
 		out += '\nRUN chmod +x ${i.dest}\n'
@@ -56,7 +56,7 @@ pub fn (mut i AddItem) render() !string {
 }
 
 // get code from the file added
-fn (mut i AddItem) getcontent() !string {
+fn (mut i AddFileEmbeddedItem) getcontent() !string {
 	srcpath := '${i.recipe.engine.buildpath}/${i.recipe.name}/${i.source}'
 	content := i.recipe.engine.node.file_read(srcpath)!
 	return content

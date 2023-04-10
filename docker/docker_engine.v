@@ -6,19 +6,20 @@ import freeflowuniverse.crystallib.builder
 // https://docs.docker.com/reference/
 
 [heap]
-struct DockerEngine {
+pub struct DockerEngine {
 	name string
 pub mut:
-	node            builder.Node
-	sshkeys_allowed []string // all keys here have access over ssh into the machine, when ssh enabled
-	images          []DockerImage
-	containers      []DockerContainer
-	buildpath       string
-	dockerhubuser   string
-	localonly       bool = true
-	cache           bool = true
-	push            bool
-	platform        []BuildPlatformType
+	node                 builder.Node        [str: skip]
+	sshkeys_allowed      []string // all keys here have access over ssh into the machine, when ssh enabled
+	images               []DockerImage
+	containers           []DockerContainer
+	buildpath            string
+	localonly            bool
+	cache                bool = true
+	push                 bool
+	platform             []BuildPlatformType
+	registries           []DockerRegistry // one or more supported DockerRegistries
+	prefix				 string
 }
 
 pub enum BuildPlatformType {
@@ -26,14 +27,13 @@ pub enum BuildPlatformType {
 	linux_amd64
 }
 
+
+
 // check docker has been installed & enabled on node
 pub fn (mut e DockerEngine) init() ! {
 	if e.buildpath == '' {
 		e.buildpath = '/tmp/builder'
 		e.node.exec_silent('mkdir -p ${e.buildpath}')!
-	}
-	if e.dockerhubuser == '' {
-		e.dockerhubuser = 'despiegk'
 	}
 	if e.platform == [] {
 		if e.node.platform == .ubuntu && e.node.cputype == .intel {
@@ -117,9 +117,14 @@ pub fn (mut e DockerEngine) containers_load() ! {
 	}
 }
 
-// get container from memory
+// get container from memory, can use match_glob see https://modules.vlang.io/index.html#string.match_glob
 pub fn (mut e DockerEngine) container_get(name_or_id string) !&DockerContainer {
 	for _, c in e.containers {
+		if name_or_id.contains('*') || name_or_id.contains('?') || name_or_id.contains('[') {
+			if c.name.match_glob(name_or_id) {
+				return &c
+			}
+		}
 		if c.name == name_or_id || c.id == name_or_id {
 			return &c
 		}
@@ -127,12 +132,35 @@ pub fn (mut e DockerEngine) container_get(name_or_id string) !&DockerContainer {
 	return error('Cannot find container with name ${name_or_id}')
 }
 
+// check existance of container, can use match_glob see https://modules.vlang.io/index.html#string.match_glob
+pub fn (mut e DockerEngine) container_exists(name_or_id string) bool {
+	for _, c in e.containers {
+		if name_or_id.contains('*') || name_or_id.contains('?') || name_or_id.contains('[') {
+			if c.name.match_glob(name_or_id) {
+				return true
+			}
+		}
+		if c.name == name_or_id || c.id == name_or_id {
+			return true
+		}
+	}
+	return false
+}
+
+// delete one or more containers, can use match_glob see https://modules.vlang.io/index.html#string.match_glob
 pub fn (mut e DockerEngine) container_delete(name_or_id string) ! {
 	for _, mut c in e.containers {
+		if name_or_id.contains('*') || name_or_id.contains('?') || name_or_id.contains('[') {
+			if c.name.match_glob(name_or_id) {
+				println(' - docker container delete: ${c.name}')
+				c.delete(true)!
+			}
+		}
 		if c.name == name_or_id || c.id == name_or_id {
 			c.delete(true)!
 		}
 	}
+	e.load()!
 }
 
 // import a container into an image, run docker container with it

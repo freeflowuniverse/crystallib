@@ -17,6 +17,7 @@ pub:
 	name  string [required]
 	url   string [required]
 	cache bool = true
+	retry int  = 0
 }
 
 pub fn new(args HTTPConnectionArgs) &HTTPConnection {
@@ -38,6 +39,7 @@ pub fn new(args HTTPConnectionArgs) &HTTPConnection {
 			disable: !args.cache
 			key: args.name
 		}
+		retry: args.retry
 		base_url: args.url.trim('/')
 	}
 

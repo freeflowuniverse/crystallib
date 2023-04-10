@@ -37,7 +37,7 @@ pub fn (params &Params) get_time_default(key string, defval Time) !Time {
 
 // calculate difference in time, returled as u64 (is Duration type)
 // format e.g.
-//QUESTION: splitting by - doesn't work? Alternative?
+// QUESTION: splitting by - doesn't work? Alternative?
 pub fn (params &Params) get_time_interval(key string) !Duration {
 	valuestr := params.get(key)!
 	data := valuestr.split('-')

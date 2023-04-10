@@ -1,11 +1,12 @@
 module actionsparser
-import freeflowuniverse.crystallib.params 
+
+import freeflowuniverse.crystallib.params
 
 [params]
 pub struct FilterArgs {
 pub:
 	domain       string = 'protocol_me'
-	actor        string    // can be empty, this means will not filter based on actor
+	actor        string   // can be empty, this means will not filter based on actor
 	book         string   // can be empty, this means will not filter based on book	
 	names_filter []string // can be empty, then no filter, unix glob filters are allowed
 }
@@ -32,7 +33,7 @@ pub fn (mut parser ActionsParser) filtersort(args FilterArgs) ![]Action {
 		}
 		action.name = action.name.to_lower().trim_space()
 
-		// if name filter is not set, just push to result 
+		// if name filter is not set, just push to result
 		if args.names_filter.len == 0 {
 			result << action
 			continue
@@ -40,7 +41,7 @@ pub fn (mut parser ActionsParser) filtersort(args FilterArgs) ![]Action {
 
 		mut prio := 0 // highest prio
 		for name_filter in args.names_filter {
-			//QUESTION: what to do with [ and ?
+			// QUESTION: what to do with [ and ?
 			if name_filter.contains('*') || name_filter.contains('?') || name_filter.contains('[') {
 				if action.name.match_glob(name_filter) {
 					action.priority = u8(prio)
@@ -51,7 +52,7 @@ pub fn (mut parser ActionsParser) filtersort(args FilterArgs) ![]Action {
 					result << action
 					continue
 				}
-			//BACKLOG: cleaner way to do this
+				// BACKLOG: cleaner way to do this
 			} else if action.name == name_filter.to_lower() {
 				action.priority = u8(prio)
 				result << action
@@ -61,7 +62,7 @@ pub fn (mut parser ActionsParser) filtersort(args FilterArgs) ![]Action {
 		}
 	}
 	mut resultsorted := []Action{}
-	
+
 	// if name filter is not set, return unsorted
 	if args.names_filter.len == 0 {
 		return result
@@ -78,20 +79,19 @@ pub fn (mut parser ActionsParser) filtersort(args FilterArgs) ![]Action {
 	return resultsorted
 }
 
-//find 1 actions based on name, if 0 or more than 1 then error
+// find 1 actions based on name, if 0 or more than 1 then error
 pub fn (mut parser ActionsParser) params_get(name string) !params.Params {
 	mut result := []Action{}
 	for mut action in parser.actions {
-		if action.name == name.to_lower(){
-			result<<action
+		if action.name == name.to_lower() {
+			result << action
 		}
 	}
-	if result.len==0{
-		return error("could not find params from action with name:'$name'")
+	if result.len == 0 {
+		return error("could not find params from action with name:'${name}'")
 	}
-	if result.len>1{
-		return error("found more than one action with name:'$name'")
+	if result.len > 1 {
+		return error("found more than one action with name:'${name}'")
 	}
 	return result[0].params
-
 }
