@@ -40,11 +40,6 @@ pub:
 	error  string
 }
 
-struct MethodNotFoundErr {
-	Error
-	method string
-}
-
 // send jsonrpc data to a queue and return the return queue
 // params
 // 	method string
