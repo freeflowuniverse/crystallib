@@ -234,7 +234,8 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 	cmd := '
 		set -ex
 		cd ${destpath}
-		docker buildx build . -t ${b.name}:${b.tag} --ssh default=\${SSH_AUTH_SOCK} ${nocache} ${bplatform} ${bpush}
+		#docker buildx build . -t ${b.name}:${b.tag} --ssh default=\${SSH_AUTH_SOCK} ${nocache} ${bplatform} ${bpush}
+		docker build . -t ${b.name}:${b.tag} --ssh default=\${SSH_AUTH_SOCK} ${nocache} ${bplatform} ${bpush}
 		'
 
 	mut cmdshell := 'set -ex\ncd ${destpath}\ndocker rm ${b.name} -f > /dev/null 2>&1\ndocker run --name ${b.name} '

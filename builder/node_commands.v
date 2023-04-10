@@ -94,9 +94,10 @@ pub fn (mut node Node) exec_cmd(args_ NodeExecCmd) !string {
 
 	if args.tmpdir.len == 0 {
 		if 'TMPDIR' !in node.environment {
-			return error("Couldn't find TMPDIR.")
+			args.tmpdir="/tmp"
+		}else{
+			args.tmpdir = node.environment['TMPDIR']
 		}
-		args.tmpdir = node.environment['TMPDIR']
 	}
 	r_path := '${args.tmpdir}/installer.sh'
 	node.file_write(r_path, cmd)!
