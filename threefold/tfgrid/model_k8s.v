@@ -48,14 +48,12 @@ pub struct K8sNodeResult {
 	ygg_ip       string
 }
 
-
 pub struct AddK8sNode {
-	node K8sNode
+	node         K8sNode
 	cluster_name string
 }
 
-
 pub struct RemoveK8sNode {
 	cluster_name string
-	node_name string
+	node_name    string
 }
