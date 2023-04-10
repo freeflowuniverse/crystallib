@@ -187,6 +187,7 @@ pub fn (mut e DockerEngine) reset_all() ! {
 	}
 	e.node.exec_silent('docker image prune -a -f') or { panic(err) }
 	e.node.exec_silent('docker builder prune -a -f') or { panic(err) }
+	e.node.done_reset()!
 	e.load()!
 }
 
