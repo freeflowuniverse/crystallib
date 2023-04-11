@@ -1,7 +1,7 @@
 module tfgrid
 
 import freeflowuniverse.crystallib.redisclient
-import freeflowuniverse.crystallib.process
+// import freeflowuniverse.crystallib.process
 
 pub struct Deployer {}
 
@@ -18,7 +18,7 @@ fn new() !TFGridClient {
 		redis: &redis
 		rpc: &rpc
 	}
-	//TODO: this is not ok, not the right way how to do this, this means there can be multiple of these running
+	// TODO: this is not ok, not the right way how to do this, this means there can be multiple of these running
 	// process.execute_job(cmd: 'sh -c "${grid_client_path} server"')!
 
 	return cl

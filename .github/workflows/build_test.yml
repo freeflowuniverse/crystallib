@@ -51,6 +51,7 @@ jobs:
           v -stats test encoder
           v -stats test imagemagick
           v -stats test ipaddress
+          v -stats test jsonrpc
           v -stats test markdowndocs
           v -stats test mnemonic
           v -stats test params

@@ -1,5 +1,4 @@
 import freeflowuniverse.crystallib.redisclient
-import time
 
 fn setup() &redisclient.Redis {
 	mut redis := redisclient.core_get()
@@ -14,7 +13,7 @@ fn cleanup(mut redis redisclient.Redis) ! {
 }
 
 fn process_test(cmd string, data string) !string {
-	return '${cmd}+++++${data}\n\n\n\n'
+	return '${cmd}+++++${data}------'
 }
 
 fn test_rpc() {
@@ -24,10 +23,9 @@ fn test_rpc() {
 	}
 	mut r := redis.rpc_get('testrpc')
 
-	r.call(cmd: 'test.cmd', data: 'this is my data, normally json', wait: false)!
-	returnqueue := r.process(10000, process_test)!
-	mut res := r.result(10000, returnqueue)!
-	println(res)
+	returnqueue := r.call('test.cmd', 'this is my data, normally json')!
+	r.process[string, string](10000, process_test)!
+	mut res := r.result[string](10000, returnqueue)!
 
-	assert res.str().trim_space() == 'test.cmd+++++this is my data, normally json'
+	assert res == 'test.cmd+++++this is my data, normally json------'
 }
