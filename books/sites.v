@@ -105,7 +105,7 @@ pub fn (mut sites Sites) exists(name string) bool {
 pub fn (mut sites Sites) get(name string) !&Site {
 	namelower := texttools.name_fix_no_underscore_no_ext(name)
 	if namelower in sites.sites {
-		return sites.sites[namelower]
+		return sites.sites[namelower] or { return error('Cannot find site ${namelower} in sites.') }
 	}
 	return error('could not find site with name:${name}')
 }
@@ -153,7 +153,7 @@ fn (mut sites Sites) site_get_from_object_name(name string) !&Site {
 	}
 	if sitename in sites.sites {
 		// means site exists
-		mut site3 := sites.sites[sitename]
+		mut site3 := sites.sites[sitename] or { panic('cannot find ${sitename}') }
 		return site3
 	}
 	sitenames := sites.sitenames().join('\n- ')

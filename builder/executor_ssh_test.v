@@ -15,10 +15,10 @@ fn testsuite_begin() {
 }
 
 fn test_exec() {
-	mut e := ExecutorSSH {
+	mut e := ExecutorSSH{
 		sshkey: '~/.ssh/id_rsa_test'
 	}
-	e.ipaddr = IPAddress {
+	e.ipaddr = IPAddress{
 		addr: '127.0.0.1'
 		port: 22
 	}
@@ -27,10 +27,10 @@ fn test_exec() {
 }
 
 fn test_file_operations() {
-	mut e := ExecutorSSH {
+	mut e := ExecutorSSH{
 		sshkey: '~/.ssh/id_rsa_test'
 	}
-	e.ipaddr = IPAddress {
+	e.ipaddr = IPAddress{
 		addr: '127.0.0.1'
 		port: 22
 		cat: .ipv4
@@ -47,10 +47,10 @@ fn test_file_operations() {
 }
 
 fn test_environ_get() {
-	mut e := ExecutorSSH {
+	mut e := ExecutorSSH{
 		sshkey: '~/.ssh/id_rsa_test'
 	}
-	e.ipaddr = IPAddress {
+	e.ipaddr = IPAddress{
 		addr: '127.0.0.1'
 		port: 22
 		cat: .ipv4

@@ -22,11 +22,11 @@ const (
 	no_signature     = 'Make sure that you have an "Authorization" in your header.'
 )
 
-pub fn encode(username string, password string) string {
+fn encode(username string, password string) string {
 	return base64.encode('${username}:${password}'.bytes())
 }
 
-pub fn decode(signature string) string {
+fn decode(signature string) string {
 	mut sig := signature
 	if signature.contains('Basic ') {
 		sig = signature.split(' ')[1]
@@ -35,7 +35,7 @@ pub fn decode(signature string) string {
 	return sig
 }
 
-pub fn basic_auth(users map[string]string, mut app App) ? {
+fn basic_auth(users map[string]string, mut app App) ? {
 	mut processed_users := map[string]string{}
 	for u, p in users {
 		encodedauth := base64.encode('${u}:${p}'.bytes())

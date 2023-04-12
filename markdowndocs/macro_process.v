@@ -30,7 +30,7 @@ pub fn macro_parse(line_ string) !MacroObj {
 
 	line = line.trim(' !\n\r')
 
-	mut splitted := line.split('\n').filter(it != "")
+	mut splitted := line.split('\n').filter(it != '')
 	if splitted.len < 1 {
 		return error('cannot parse macro, need to be at least cmd, now "${line}"')
 	}

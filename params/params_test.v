@@ -6,6 +6,7 @@ import json
 const textin = "
 	id:a1 name6:aaaaa
 	name:'need to do something 1' 
+	//comment
 	description:
 		## markdown works in it
 
@@ -192,7 +193,7 @@ fn test_export2() {
 	mut params := parse(params.textin2) or { panic(err) }
 
 	d := params.export()
-	
+
 	mut out := "
 	description:something\\nyes
 	id:a1
@@ -251,34 +252,35 @@ fn test_hexhash() {
 }
 
 fn test_params_default_false() {
-	mut params := parse("
+	mut params := parse('
 	certified:false
 	certified1:no
 	certified2:n
 	certified3:0
-	")!
+	')!
 
-	assert params.get_default_false("certified") == false
-	assert params.get_default_false("certified1") == false
-	assert params.get_default_false("certified2") == false
-	assert params.get_default_false("certified3") == false
-	assert params.get_default_false("certified4") == false
+	assert params.get_default_false('certified') == false
+	assert params.get_default_false('certified1') == false
+	assert params.get_default_false('certified2') == false
+	assert params.get_default_false('certified3') == false
+	assert params.get_default_false('certified4') == false
 }
 
 fn test_params_default_true() {
-	mut params := parse("
+	mut params := parse('
 	certified:true
 	certified1:yes
 	certified2:y
 	certified3:1
-	")!
+	')!
 
-	assert params.get_default_true("certified") == true
-	assert params.get_default_true("certified1") == true
-	assert params.get_default_true("certified2") == true
-	assert params.get_default_true("certified3") == true
-	assert params.get_default_true("certified4") == true
+	assert params.get_default_true('certified') == true
+	assert params.get_default_true('certified1') == true
+	assert params.get_default_true('certified2') == true
+	assert params.get_default_true('certified3') == true
+	assert params.get_default_true('certified4') == true
 }
+
 /*
 fn test_to_resp_from_resp() {
 	mut input := Params{

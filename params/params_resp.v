@@ -2,8 +2,6 @@ module params
 
 import freeflowuniverse.crystallib.resp
 
-// TODO: better to use the binary one
-
 // encode using resp (redis procotol)
 pub fn (mut p Params) to_resp() ![]u8 {
 	mut b_main := resp.builder_new()
@@ -49,3 +47,5 @@ pub fn from_resp(data []u8) !Params {
 
 	return p
 }
+
+// NEXT: needs to do a good test, this protocol is much smaller than default text format

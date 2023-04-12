@@ -20,7 +20,7 @@ fn (o Comment) wiki() string {
 	if o.singleline {
 		return '//${o.content}\n'
 	}
-	return "<!--${o.content}-->" //out
+	return '<!--${o.content}-->' // out
 }
 
 fn (o Comment) html() string {

@@ -2,7 +2,7 @@ module params
 
 import freeflowuniverse.crystallib.texttools
 import crypto.sha256
-// TODO: better to use the binary one
+// BACKLOG: better to use the binary one, not sure?
 
 [params]
 pub struct ExportArgs {
@@ -10,6 +10,7 @@ pub struct ExportArgs {
 }
 
 // standardised export format
+// it outputs a default way sorted and readable
 pub fn (p Params) export(args ExportArgs) string {
 	mut out := []string{}
 	mut keys := []string{}

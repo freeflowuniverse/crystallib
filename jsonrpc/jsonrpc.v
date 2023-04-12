@@ -3,46 +3,45 @@ module jsonrpc
 import json
 import rand
 
-
 const (
-	jsonrpc_version = "2.0"
+	jsonrpc_version = '2.0'
 )
 
-pub struct JsonRpcRequest[T]{
+pub struct JsonRpcRequest[T] {
 pub mut:
-	jsonrpc string = jsonrpc_version
-	method string
-	params T
-	id string
+	jsonrpc string [required]
+	method  string [required]
+	params  T      [required]
+	id      string [required]
 }
 
 pub fn (j &JsonRpcRequest[T]) to_json() string {
 	return json.encode(j)
 }
 
-pub struct JsonRpcResponse[T]{
+pub struct JsonRpcResponse[D] {
 pub mut:
-	jsonrpc string = jsonrpc_version
-	result T
-	id string
+	jsonrpc string [required]
+	result  D
+	id      string [required]
 }
 
-pub fn (j &JsonRpcResponse[T]) to_json() string {
+pub fn (j &JsonRpcResponse[D]) to_json() string {
 	return json.encode(j)
 }
 
-pub struct JsonRpcError{
+pub struct JsonRpcError {
 pub mut:
-	jsonrpc string = jsonrpc_version
-	error InnerJsonRpcError [required]
-	id string
+	jsonrpc string            [required]
+	error   InnerJsonRpcError [required]
+	id      string            [required]
 }
 
-struct InnerJsonRpcError{
+struct InnerJsonRpcError {
 pub mut:
-	code int [required]
+	code    int    [required]
 	message string [required]
-	data string
+	data    string
 }
 
 pub fn (j &JsonRpcError) to_json() string {
@@ -51,6 +50,7 @@ pub fn (j &JsonRpcError) to_json() string {
 
 pub fn new_jsonrpcrequest[T](method string, params T) JsonRpcRequest[T] {
 	return JsonRpcRequest[T]{
+		jsonrpc: jsonrpc.jsonrpc_version
 		method: method
 		params: params
 		id: rand.uuid_v4()
@@ -59,6 +59,7 @@ pub fn new_jsonrpcrequest[T](method string, params T) JsonRpcRequest[T] {
 
 pub fn new_jsonrpcresponse[T](id string, result T) JsonRpcResponse[T] {
 	return JsonRpcResponse[T]{
+		jsonrpc: jsonrpc.jsonrpc_version
 		result: result
 		id: id
 	}
@@ -66,6 +67,7 @@ pub fn new_jsonrpcresponse[T](id string, result T) JsonRpcResponse[T] {
 
 pub fn new_jsonrpcerror(id string, code int, message string, data string) JsonRpcError {
 	return JsonRpcError{
+		jsonrpc: jsonrpc.jsonrpc_version
 		error: struct {
 			code: code
 			message: message
@@ -79,8 +81,8 @@ pub fn jsonrpcrequest_decode[T](data string) !JsonRpcRequest[T] {
 	return json.decode(JsonRpcRequest[T], data)!
 }
 
-pub fn jsonrpcresponse_decode[T](data string) !JsonRpcResponse[T] {
-	return json.decode(JsonRpcResponse[T], data)!
+pub fn jsonrpcresponse_decode[D](data string) !JsonRpcResponse[D] {
+	return json.decode(JsonRpcResponse[D], data)!
 }
 
 pub fn jsonrpcerror_decode(data string) !JsonRpcError {
