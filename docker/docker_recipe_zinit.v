@@ -58,12 +58,13 @@ pub fn (mut b DockerBuilderRecipe) add_zinit_cmd(args ZinitAddArgs) ! {
 		oneshot:args.oneshot
 	}
 
+	mut afterargs := []string{}
+
 	if args.after.len>0{
-		mut afterargs:=[]string{}
 		for afteritem in args.after.split(","){
-			afterargs<< afteritem.to_lower().trim_space()
+			afterargs << afteritem.to_lower().trim_space()
 		}
-		item.after=afterargs
+		item.after = afterargs
 	}
 	
 	b.items << item
@@ -86,7 +87,7 @@ pub fn (mut b DockerBuilderRecipe) add_zinit_cmd(args ZinitAddArgs) ! {
 	}
 	if args.after.len>0{
 		zinitfilecontent += "after:\n"
-		for a in args.after{
+		for a in afterargs {
 			zinitfilecontent += "  - $a\n"
 		}
 	}
