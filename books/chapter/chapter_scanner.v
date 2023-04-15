@@ -7,15 +7,7 @@ import freeflowuniverse.crystallib.books.pointer
 
 // path is the full path
 fn (mut chapter Chapter) scan_internal(mut p pathlib.Path) ! {
-	// println(' - load chapter:$chapter.name - $p.path')
-	// mut path_sidebar := '$p.path/sidebar.md'
-	// println(" - sidebar check: $path_/sidebar.md")
-	// if os.exists(path_sidebar) {
-	// 	// means we are not in root of path
-	// 	mut p2 := pathlib.get_file(path_sidebar, false)!
-	// 	chapter.page_remember(mut p2, true)!
-	// 	println(' - Found sidebar: $p.path')
-	// }
+	@if debug { println(' - load chapter:$chapter.name - $p.path')}
 	mut llist := p.list(recursive: false)!
 	for mut p_in in llist {
 		p_name := p_in.name()
@@ -99,6 +91,9 @@ fn (mut chapter Chapter) file_image_remember(mut p pathlib.Path) ! {
 			mut image := imagemagick.image_new(mut p) or {
 				panic('Cannot get new image:\n${p}\n${err}')
 			}
+			println(ptr)
+			println(chapter)
+			if true{panic("Sdsd")}
 			image.downsize(backup: false)!
 			// after downsize it could be the path has been changed, need to set it on the file
 			if p.path != image.path.path {
