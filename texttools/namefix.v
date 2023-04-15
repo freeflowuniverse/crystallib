@@ -80,7 +80,7 @@ pub fn name_fix_keepext(name_ string) string {
 	}
 	name = out.bytestr()
 
-	name = name.trim(' _')
+	// name = name.trim(' _') //DONT DO final _ is ok to keep
 
 	if extension.len>0{
 		name+=".$extension"

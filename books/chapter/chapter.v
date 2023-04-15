@@ -33,8 +33,9 @@ pub mut:
 
 // walk over one specific chapter, find all files and pages
 pub fn (mut chapter Chapter) scan() ! {
-	$if debug { println(' - load chapter:$chapter.name - $chapter.path.path')}
+	$if debug { println(' - load chapter: $chapter.name - $chapter.path.path')}
 	chapter.scan_internal(mut chapter.path)!
+	$if debug {println( "scan done")}
 }
 
 
@@ -136,7 +137,6 @@ pub fn (mut chapter Chapter) page_new(mut p Path) !&Page {
 	$if debug {
 		println(" - chapter:'$chapter.name' page new: $p.path")
 	}
-
 	mut ptr:=pointer.pointerpath_new(path:p.path,path_normalize:true,needs_to_exist:true)!
 	mut doc := markdowndocs.new(path: p.path) or { panic('cannot parse,${err}') }
 	mut page := Page{
@@ -156,7 +156,7 @@ pub fn (mut chapter Chapter) page_new(mut p Path) !&Page {
 // add a file to the chapter, specify existing path
 pub fn (mut chapter Chapter) file_new(mut p Path) ! {
 	$if debug {
-		println(" - chapter:'$chapter.name' fil new: $p.path")
+		println(" - chapter:'$chapter.name' file new: $p.path")
 	}
 	mut ptr:=pointer.pointerpath_new(path:p.path,path_normalize:true,needs_to_exist:true)!
 	mut ff := File{

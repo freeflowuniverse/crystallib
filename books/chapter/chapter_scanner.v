@@ -7,8 +7,14 @@ import freeflowuniverse.crystallib.books.pointer
 
 // path is the full path
 fn (mut chapter Chapter) scan_internal(mut p pathlib.Path) ! {
+	$if debug {println( "--- scan internal $p.path")}
 	mut llist := p.list(recursive: false)!
 	for mut p_in in llist {
+		// println("--- SCAN SUB:\n$p_in")
+		if p_in.exists() == false{
+			chapter.error(path: p_in, msg: 'probably a broken link', cat: .unknown)
+			continue //means broken link
+		}
 		p_name := p_in.name()
 		if p_name.starts_with('.') {
 			continue
@@ -16,8 +22,7 @@ fn (mut chapter Chapter) scan_internal(mut p pathlib.Path) ! {
 			continue
 		}
 
-		if mut p_in.is_link() {
-			// should support dirs only
+		if mut p_in.is_link() && p_in.is_file() {
 			link_real_path := p_in.realpath() // this is with the symlink resolved
 			chapter_abs_path := chapter.path.absolute()
 			if p_in.extension_lower() == 'md' {
@@ -30,7 +35,7 @@ fn (mut chapter Chapter) scan_internal(mut p pathlib.Path) ! {
 				// $if debug{println(" - @FN IS LINK: \n    abs:'$link_abs_path' \n    real:'$link_real_path'\n    chapter:'$chapter_abs_path'")}
 				p_in.unlink()! // will transform link to become the file or dir it points too
 				assert !p_in.is_link()
-			} else {
+			} else {				
 				p_in.relink()! // will check that the link is on the file with the shortest path
 				// println(p_in)
 			}
@@ -85,14 +90,12 @@ fn (mut chapter Chapter) scan_internal(mut p pathlib.Path) ! {
 fn (mut chapter Chapter) file_image_remember(mut p pathlib.Path) ! {
 	$if debug {eprintln(" - file or image remember : $p.path")}
 	mut ptr:=pointer.pointerpath_new(path:p.path,path_normalize:true,needs_to_exist:true)!
+	p=ptr.path
 	if ptr.is_image() {
 		if chapter.heal && imagemagick.installed() {
 			mut image := imagemagick.image_new(mut p) or {
 				panic('Cannot get new image:\n${p}\n${err}')
 			}
-			println(ptr)
-			println(chapter)
-			if true{panic("Sdsd")}
 			image.downsize(backup: false)!
 			// after downsize it could be the path has been changed, need to set it on the file
 			if p.path != image.path.path {
@@ -129,7 +132,7 @@ fn (mut chapter Chapter) file_image_remember(mut p pathlib.Path) ! {
 			mut pathdouble := filedouble.path
 			chapter.error(path: pathdouble, msg: 'duplicate file', cat: .image_double)
 		} else {
-			chapter.file_new(mut p)!
+			chapter.file_new(mut ptr.path)!
 		}
 	}else{
 		panic("unknown obj type, bug")

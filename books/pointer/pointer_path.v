@@ -39,7 +39,7 @@ pub fn pointerpath_new(args PointerPathArgs) !PointerPath {
 	}
 	if args.path_normalize{
 		//need to change to clean path
-	 	mypath.path_normalize()!
+	 	pointerpath.path.path_normalize()!
 	}
 	return pointerpath
 }

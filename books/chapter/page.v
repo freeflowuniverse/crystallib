@@ -97,7 +97,7 @@ fn (mut page Page) fix_link(mut paragraph Paragraph, mut link Link) ! {
 		println(paragraph.wiki())
 		// println(fileobj)
 		println(imagelink_rel)
-		panic('sdsdsd')
+		panic('45jhg')
 	}
 }
 

@@ -1,33 +1,24 @@
 module main
 
-// import freeflowuniverse.crystallib.chapters
-import freeflowuniverse.crystallib.gittools
-import os
+import freeflowuniverse.crystallib.books.chapter
 
 // const path0 = '~/code/github/threefoldfoundation/books'
 
-const reset = false
+const reset = true
 
 fn do() ! {
-	mut path := ''
 
-	mut gs := gittools.get(root: '/tmp/code')!
+	mut c := chapter.chapter_new(
+		git_root: "~/code5"
+		git_url: "https://github.com/threefoldfoundation/books/tree/main/content/mytwin"
+		load: true
+		heal: true	
+		name: 'Scanner1'
+		git_reset: true
+	)!
 
-	url := 'git@github.com:threefoldfoundation/books.git'
-	mut gr := gs.repo_get_from_url(url: url, pull: false, reset: reset)!
-	path = gr.path
 
-	// chapters.scan(path + '/content')!
 
-	// mut chapters := chapters.books_new(&chapters)
-	// chapters.scan(path + '/chapters')!
-
-	// // println(chapters.chapters["ppp"])
-	// mut b := chapters.get('abundance_internet')!
-
-	// b.mdbook_export()!
-
-	panic("not implemented")
 }
 
 fn main() {
