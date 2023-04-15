@@ -15,10 +15,13 @@ fn do() ! {
 
 	assert c.page_exists("grant")
 	assert c.page_exists("grant3") == false
-	assert c.image_exists("centralized_internet")
-	assert c.image_exists("centralized_internet_") == false
+	assert c.image_exists("centralized_internet.jpg")
+	assert c.image_exists("centralized_internet_.jpg")
+	mut i:=c.image_get("centralized_internet_.jpg")!
+	println(i)
 	assert c.image_exists("smart_contract_it")
 	assert c.image_exists("smart_contractit")==false
+
 
 	println(c)
 }
