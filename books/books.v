@@ -33,6 +33,7 @@ pub mut:
 pub struct BookNewArgs {
 	name string
 	path string
+	giturl string
 }
 
 // add a book to the book collection

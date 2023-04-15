@@ -1,4 +1,4 @@
-module books
+module chapter
 
 import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.markdowndocs { Link, Paragraph }
@@ -12,9 +12,9 @@ pub enum PageStatus {
 
 [heap]
 pub struct Page {
-pub mut: // pointer to site
+pub mut: // pointer to chapter
 	name           string // received a name fix
-	site           &Site             [str: skip]
+	chapter           &Chapter             [str: skip]
 	path           pathlib.Path
 	pathrel        string
 	state          PageStatus
@@ -38,50 +38,51 @@ fn (mut page Page) fix_link(mut paragraph Paragraph, mut link Link) ! {
 	// check if the file or image is there, if yes we can return, nothing to do
 	mut file_search := true
 	mut fileoj0 := File{
-		site: page.site
+		chapter: page.chapter
 	}
 	mut fileobj := &fileoj0
 
 	if link.cat == .image {
-		if page.site.image_exists(file_name) {
+		if page.chapter.image_exists(file_name) {
 			file_search = false
-			fileobj = page.site.image_get(file_name) or { panic(err) }
+			fileobj = page.chapter.image_get(file_name)!
 		}
 	} else {
-		if page.site.file_exists(file_name) {
+		if page.chapter.file_exists(file_name) {
 			file_search = false
-			fileobj = page.site.file_get(file_name) or { panic(err) }
+			fileobj = page.chapter.file_get(file_name)!
 		}
 	}
-	if file_search {
-		// if the site is filled in then it means we need to copy the file here,
-		// or the image is not found, then we need to try and find it somewhere else
-		// we need to copy the image here
-		fileobj = page.site.sites.image_file_find_over_sites(file_name) or {
-			msg := "'${file_name}' not found for page:${page.path.path}, we looked over all sites."
-			println('    * ${msg}')
-			page.site.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
-			return
-		}
-		// we found the image should copy to the site now
-		println("     * image or file found in other site: '${fileobj}'")
-		println(link)
-		mut dest := pathlib.get('${page.path.path_dir()}/img/${fileobj.path.name()}')
-		pathlib.get_dir('${page.path.path_dir()}/img', true)! // make sure it exists
-		println(' *** COPY: ${fileobj.path.path} to ${dest.path}')
-		if fileobj.path.path == dest.path {
-			println(fileobj)
-			panic('source and destination is same when trying to fix link (copy).')
-		}
-		fileobj.path.copy(mut dest)!
-		page.site.image_new(mut dest)! // make sure site knows about the new file
-		fileobj.path = dest
+	//TODO: implement wider search
+	// if file_search {
+	// 	// if the chapter is filled in then it means we need to copy the file here,
+	// 	// or the image is not found, then we need to try and find it somewhere else
+	// 	// we need to copy the image here
+	// 	fileobj = page.chapter.chapters.image_file_find_over_chapters(file_name) or {
+	// 		msg := "'${file_name}' not found for page:${page.path.path}, we looked over all chapters."
+	// 		println('    * ${msg}')
+	// 		page.chapter.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
+	// 		return
+	// 	}
+	// 	// we found the image should copy to the chapter now
+	// 	println("     * image or file found in other chapter: '${fileobj}'")
+	// 	println(link)
+	// 	mut dest := pathlib.get('${page.path.path_dir()}/img/${fileobj.path.name()}')
+	// 	pathlib.get_dir('${page.path.path_dir()}/img', true)! // make sure it exists
+	// 	println(' *** COPY: ${fileobj.path.path} to ${dest.path}')
+	// 	if fileobj.path.path == dest.path {
+	// 		println(fileobj)
+	// 		panic('source and destination is same when trying to fix link (copy).')
+	// 	}
+	// 	fileobj.path.copy(mut dest)!
+	// 	page.chapter.image_new(mut dest)! // make sure chapter knows about the new file
+	// 	fileobj.path = dest
 
-		fileobj.path.check()
-		if fileobj.path.is_link() {
-			fileobj.path.unlink()! // make a real file, not a link
-		}
-	}
+	// 	fileobj.path.check()
+	// 	if fileobj.path.is_link() {
+	// 		fileobj.path.unlink()! // make a real file, not a link
+	// 	}
+	// }
 
 	// means we now found the file or image
 	page.files_linked << fileobj
@@ -140,9 +141,9 @@ fn (mut page Page) process_macro_include(content string) !string {
 		// TODO: need other type of include macro format !!!include ...
 		if page_name_include != '' {
 			//* means we dereference, we have a copy so we can change
-			mut page_include := *page.site.page_get(page_name_include) or {
+			mut page_include := *page.chapter.page_get(page_name_include) or {
 				msg := "include:'${page_name_include}' not found for page:${page.path.path}"
-				page.site.error(path: page.path, msg: 'include ${msg}', cat: .page_not_found)
+				page.chapter.error(path: page.path, msg: 'include ${msg}', cat: .page_not_found)
 				line = '> ERROR: ${msg}'
 				continue
 			}

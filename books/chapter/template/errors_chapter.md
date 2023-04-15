@@ -1,6 +1,6 @@
 # Errors
 
-@for error in site.errors
+@for error in chapter.errors
 
 ## @error.cat 
 
