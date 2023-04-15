@@ -9,7 +9,7 @@ const testpath = os.dir(@FILE) + '/example/directory_scan/chapter1'
 
 fn test_fix() {
 	mut test_chapter := chapter_new(
-		name: 'Test Chapter'
+		name: 'Chapter1'
 		path: '${chapter.testpath}'
 	) or { panic('Cannot create new chapter: ${err}') }
 
@@ -29,7 +29,7 @@ fn test_fix() {
 fn test_scan() {
 
 	mut test_chapter := chapter_new(
-		name: 'Test Chapter'
+		name: 'Chapter2'
 		path: '${chapter.testpath}'
 		load: true
 		heal: false

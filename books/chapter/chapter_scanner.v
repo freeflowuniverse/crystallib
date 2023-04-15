@@ -7,7 +7,6 @@ import freeflowuniverse.crystallib.books.pointer
 
 // path is the full path
 fn (mut chapter Chapter) scan_internal(mut p pathlib.Path) ! {
-	@if debug { println(' - load chapter:$chapter.name - $p.path')}
 	mut llist := p.list(recursive: false)!
 	for mut p_in in llist {
 		p_name := p_in.name()

@@ -33,6 +33,7 @@ pub mut:
 
 // walk over one specific chapter, find all files and pages
 pub fn (mut chapter Chapter) scan() ! {
+	$if debug { println(' - load chapter:$chapter.name - $chapter.path.path')}
 	chapter.scan_internal(mut chapter.path)!
 }
 
