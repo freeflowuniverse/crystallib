@@ -8,6 +8,7 @@ pub struct EmptyRegex {
 
 type OurRegex = EmptyRegex | RE
 
+[params]
 pub struct ListArgs {
 pub mut:
 	regex         OurRegex
@@ -20,7 +21,7 @@ pub mut:
 // return as list of Paths
 // param tofind: part of name (relative to string)
 // param recursive: if recursive behaviour
-pub fn (mut path Path) list(args ListArgs) ![]Path {
+pub fn (path Path) list(args ListArgs) ![]Path {
 	if path.cat !in [Category.dir, Category.linkdir] {
 		return error('Path must be directory or link to directory')
 	}
@@ -64,14 +65,14 @@ pub fn (mut path Path) list(args ListArgs) ![]Path {
 }
 
 // find dir underneith path,
-pub fn (mut path Path) dir_list(args ListArgs) ![]Path {
+pub fn (path Path) dir_list(args ListArgs) ![]Path {
 	list_all := path.list(args)!
 	mut list_dirs := list_all.filter(it.cat == Category.dir)
 	return list_dirs
 }
 
 // find file underneith path,
-pub fn (mut path Path) file_list(args ListArgs) ![]Path {
+pub fn (path Path) file_list(args ListArgs) ![]Path {
 	list_all := path.list(args)!
 	mut list_files := list_all.filter(it.cat == Category.file)
 	return list_files
