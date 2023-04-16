@@ -17,7 +17,7 @@ pub fn struct_to_schema(struct_ codemodel.Struct) SchemaRef {
 
 // get schema_from_typesymbol receives a typesymbol, if the typesymbol belongs to a user defined struct
 // it returns a reference to the schema, else it returns a schema for the typesymbol
-fn typesymbol_to_schema(symbol string) SchemaRef {
+pub fn typesymbol_to_schema(symbol string) SchemaRef {
 	if symbol.contains('[]') {
 		mut array_type := symbol.trim_string_left('[]')
 		return SchemaRef(Schema{
