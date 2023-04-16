@@ -12,7 +12,7 @@ The recommended way to generate an OpenRPC document for a V module is to use the
 
 `openrpc docgen .`
 
-Running this command in a V client module's directory will generate an OpenRPC document from the code in the module and output it to a openrpc.json file in the same directory. See [annotation code for openrpc document generation]() for information on how to format V client module to be compatible for OpenRPC Document Generation.
+Running this command in a V client module's directory will generate an OpenRPC document from the code in the module and output it to a openrpc.json file in the same directory. See [annotation code for openrpc document generation](#annotating-code-for-openrpc-document-generation) for information on how to format V client module to be compatible for OpenRPC Document Generation.
 
 The following output parameter and source path argument can be used to generate an OpenRPC Document for a module that is in a different directory, and output the document in a desired path.
 
