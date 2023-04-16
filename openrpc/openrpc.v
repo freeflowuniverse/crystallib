@@ -61,7 +61,7 @@ pub struct Method {
 	servers []Server
 	errors []ErrorRef
 	links []LinkRef
-	param_structure string [json: paramStructure] = 'either' // todo, make paramformat enum
+	param_structure string [json: paramStructure] // todo, make paramformat enum
 	examples []ExamplePairing
 }
 
