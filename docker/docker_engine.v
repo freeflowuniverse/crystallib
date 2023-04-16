@@ -9,25 +9,23 @@ import freeflowuniverse.crystallib.builder
 pub struct DockerEngine {
 	name string
 pub mut:
-	node                 builder.Node        [str: skip]
-	sshkeys_allowed      []string // all keys here have access over ssh into the machine, when ssh enabled
-	images               []DockerImage
-	containers           []DockerContainer
-	buildpath            string
-	localonly            bool
-	cache                bool = true
-	push                 bool
-	platform             []BuildPlatformType
-	registries           []DockerRegistry // one or more supported DockerRegistries
-	prefix				 string
+	node            builder.Node        [str: skip]
+	sshkeys_allowed []string // all keys here have access over ssh into the machine, when ssh enabled
+	images          []DockerImage
+	containers      []DockerContainer
+	buildpath       string
+	localonly       bool
+	cache           bool = true
+	push            bool
+	platform        []BuildPlatformType
+	registries      []DockerRegistry // one or more supported DockerRegistries
+	prefix          string
 }
 
 pub enum BuildPlatformType {
 	linux_arm64
 	linux_amd64
 }
-
-
 
 // check docker has been installed & enabled on node
 pub fn (mut e DockerEngine) init() ! {

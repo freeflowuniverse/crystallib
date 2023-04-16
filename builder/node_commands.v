@@ -94,8 +94,8 @@ pub fn (mut node Node) exec_cmd(args_ NodeExecCmd) !string {
 
 	if args.tmpdir.len == 0 {
 		if 'TMPDIR' !in node.environment {
-			args.tmpdir="/tmp"
-		}else{
+			args.tmpdir = '/tmp'
+		} else {
 			args.tmpdir = node.environment['TMPDIR']
 		}
 	}

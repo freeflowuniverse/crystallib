@@ -1,6 +1,6 @@
 module openrpc
 
-import jsonschema {Schema, SchemaRef}
+import jsonschema
 
 fn test_encode() ! {
 	doc := OpenRPC{
@@ -15,7 +15,6 @@ fn test_encode() ! {
 }
 
 fn test_encode_2() ! {
-
 	doc := OpenRPC{
 		info: Info{
 			title: ''
@@ -30,9 +29,9 @@ fn test_encode_2() ! {
 				params: [
 					ContentDescriptor{
 						name: 'sample descriptor'
-					}
+					},
 				]
-			}
+			},
 		]
 	}
 	encoded := doc.encode()!

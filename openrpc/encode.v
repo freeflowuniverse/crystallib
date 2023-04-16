@@ -1,7 +1,7 @@
 module openrpc
 
 import json
-import x.json2 {Any}
+import x.json2 { Any }
 import v.reflection
 
 // encode encodes an OpenRPC document struct into json string.
@@ -17,7 +17,7 @@ pub fn (doc OpenRPC) encode() !string {
 // this treats undefined values as null, which is ok for openrpc document encoding.
 pub fn prune(obj Any) Any {
 	mut pruned := Any{}
-	
+
 	if obj is map[string]Any {
 		mut pruned_map := map[string]Any{}
 

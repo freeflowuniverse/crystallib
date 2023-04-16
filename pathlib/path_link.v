@@ -63,8 +63,8 @@ pub fn (mut path Path) unlink() ! {
 		// nothing to do because not link, will not giver error
 		return
 	}
-	if path.is_dir(){
-		return error("Cannot unlink a directory: $path.path")
+	if path.is_dir() {
+		return error('Cannot unlink a directory: ${path.path}')
 	}
 	link_abs_path := path.absolute()
 	link_real_path := path.realpath() // this is with the symlink resolved

@@ -1,4 +1,4 @@
-module chapter
+module library
 
 import os
 import freeflowuniverse.crystallib.pathlib
@@ -17,17 +17,14 @@ fn test_fix() {
 	mut test_page := test_chapter.page_new(mut page_path) or { panic('Cannot create page: ${err}') }
 
 	println(test_page)
-	
+
 	// test_page.fix() or { panic('Cannot fix page: ${err}') }
 
 	assert test_page.pathrel == 'decentralized_cloud/decentralized_cloud.md'
 	assert test_page.name == 'decentralized_cloud'
-
 }
 
-
 fn test_scan() {
-
 	mut test_chapter := chapter_new(
 		name: 'Chapter2'
 		path: '${chapter.testpath}'
@@ -35,9 +32,7 @@ fn test_scan() {
 		heal: false
 	) or { panic('Cannot create / load new chapter: ${err}') }
 
-
 	println(test_chapter)
 
-	panic("Sd")
-
+	panic('Sd')
 }

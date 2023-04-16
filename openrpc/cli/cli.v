@@ -3,7 +3,6 @@ module main
 import freeflowuniverse.crystallib.openrpc
 import freeflowuniverse.crystallib.openrpc.docgen
 import freeflowuniverse.crystallib.pathlib
-
 import cli { Command, Flag }
 import json
 import os
@@ -57,13 +56,19 @@ fn main() {
 
 fn cli_docgen(cmd Command) ! {
 	config := docgen.OpenRPCConfig{
-		title: cmd.flags.get_string('title') or { panic('Failed to get `title` flag: $err') }
-		description: cmd.flags.get_string('description') or { panic('Failed to get `description` flag: $err') }
-		version: cmd.flags.get_string('version') or { panic('Failed to get `version` flag: $err') }
+		title: cmd.flags.get_string('title') or { panic('Failed to get `title` flag: ${err}') }
+		description: cmd.flags.get_string('description') or {
+			panic('Failed to get `description` flag: ${err}')
+		}
+		version: cmd.flags.get_string('version') or {
+			panic('Failed to get `version` flag: ${err}')
+		}
 		source: cmd.args[0]
 	}
-	doc := docgen.docgen(config) or {panic('Failed to generate OpenRPC Document.\n$err')}
-	target := cmd.flags.get_string('output_path') or { panic('Failed to get `output_path` flag: $err') }
+	doc := docgen.docgen(config) or { panic('Failed to generate OpenRPC Document.\n${err}') }
+	target := cmd.flags.get_string('output_path') or {
+		panic('Failed to get `output_path` flag: ${err}')
+	}
 	doc_str := json.encode(doc)
 
 	mut target_path := ''

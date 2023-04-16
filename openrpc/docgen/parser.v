@@ -1,31 +1,33 @@
 module docgen
 
-import v.ast {Comment}
+import v.ast
 import v.doc
 import os
 import v.pref
 import v.parser as vparser
 import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.jsonschema {Schema, SchemaRef, Reference}
-import freeflowuniverse.crystallib.openrpc {OpenRPC, ContentDescriptor, ContentDescriptorRef}
+import freeflowuniverse.crystallib.jsonschema { Reference, Schema, SchemaRef }
+import freeflowuniverse.crystallib.openrpc { ContentDescriptor, ContentDescriptorRef }
 
-const (fpref = &pref.Preferences{
-	is_fmt: true
-})
+const (
+	fpref = &pref.Preferences{
+		is_fmt: true
+	}
+)
 
 [noinit]
 struct Parser {
-	mut:
-	table ast.Table
+mut:
+	table    ast.Table
 	file_ast ast.File
-	methods []openrpc.Method
-	schemas map[string]jsonschema.SchemaRef
+	methods  []openrpc.Method
+	schemas  map[string]SchemaRef
 	examples map[string]openrpc.Example
-	vdocs []doc.Doc
+	vdocs    []doc.Doc
 }
 
 pub fn new() Parser {
-	return Parser {
+	return Parser{
 		table: ast.new_table()
 	}
 }
@@ -34,7 +36,7 @@ pub fn new() Parser {
 // returns filled in OpenRPC specification struct
 pub fn (mut parser Parser) parse(path_ string) ! {
 	$if debug {
-		eprintln('Parsing path: $path_')
+		eprintln('Parsing path: ${path_}')
 	}
 
 	mut path := pathlib.get(path_)
@@ -48,13 +50,12 @@ pub fn (mut parser Parser) parse(path_ string) ! {
 	dcs.with_comments = true
 	dcs.prefs.os = pref.get_host_os()
 	dcs.generate()!
-	println('DOC:$dcs')
+	println('DOC:${dcs}')
 
 	for key, content in dcs.contents {
 		parser.parse_recursive(content)!
 	}
 }
-
 
 pub fn (mut parser Parser) parse_recursive(node doc.DocNode) ! {
 	for child in node.children {
@@ -62,9 +63,8 @@ pub fn (mut parser Parser) parse_recursive(node doc.DocNode) ! {
 	}
 
 	if node.kind.str() == 'fn' {
-
 		mut params := []Param{}
-	
+
 		split_content := node.content.split(node.name)
 		mut params_str := ''
 		if split_content.len > 1 {
@@ -78,7 +78,7 @@ pub fn (mut parser Parser) parse_recursive(node doc.DocNode) ! {
 				})
 			}
 		} else {
-			return error('Expected to find $node.name in $node.content')
+			return error('Expected to find ${node.name} in ${node.content}')
 		}
 
 		if node.is_pub {
@@ -95,12 +95,12 @@ pub fn (mut parser Parser) parse_recursive(node doc.DocNode) ! {
 
 struct Param {
 	name string
-	typ string
+	typ  string
 }
 
 struct MethodArgs1 {
-	name string
-	params []Param
+	name        string
+	params      []Param
 	return_type string
 }
 
@@ -108,7 +108,7 @@ struct MethodArgs1 {
 // returns parsed method structure
 pub fn (mut parser Parser) parse_method(args MethodArgs1) ! {
 	$if debug {
-		eprintln('Parse method: $args.name')
+		eprintln('Parse method: ${args.name}')
 	}
 
 	params := get_param_descriptors(args.params)
@@ -124,11 +124,9 @@ pub fn (mut parser Parser) parse_method(args MethodArgs1) ! {
 // get_param_descriptors takes in a list of params
 // returns content descriptors for the params
 fn get_param_descriptors(params []Param) []ContentDescriptorRef {
-	
 	mut descriptors := []ContentDescriptorRef{}
 
 	for param in params {
-		
 		schemaref := get_schema_from_typesymbol(param.typ)
 		descriptors << ContentDescriptorRef(ContentDescriptor{
 			name: param.name
@@ -137,14 +135,12 @@ fn get_param_descriptors(params []Param) []ContentDescriptorRef {
 	}
 
 	return descriptors
-
 }
 
 // get_result_descriptor takes a V function's DocNode
 // parses it's return type and description of what the function returns from the comments
 // returns result descriptor: Content Descriptor that describes what a function returns
 fn get_result_descriptor(return_type string) !ContentDescriptorRef {
-	
 	schemaref := get_schema_from_typesymbol(return_type)
 
 	return ContentDescriptor{
@@ -160,15 +156,21 @@ fn get_schema_from_typesymbol(symbol string) SchemaRef {
 		mut array_type := symbol.trim_string_left('[]')
 		return SchemaRef(Schema{
 			typ: 'array'
-			items: get_schema_from_typesymbol(array_type) 
+			items: get_schema_from_typesymbol(array_type)
 		})
 	} else if symbol[0].is_capital() {
-		return SchemaRef(Reference{ref: '#/components/schemas/$symbol'})
+		return SchemaRef(Reference{
+			ref: '#/components/schemas/${symbol}'
+		})
 	} else {
 		if symbol == 'void' {
-			return SchemaRef(Schema{typ: 'null'})
+			return SchemaRef(Schema{
+				typ: 'null'
+			})
 		}
-		return SchemaRef(Schema{typ: symbol})
+		return SchemaRef(Schema{
+			typ: symbol
+		})
 	}
 }
 
@@ -176,7 +178,7 @@ fn get_schema_from_typesymbol(symbol string) SchemaRef {
 // returns parsed method structure
 pub fn (mut parser Parser) parse_schema(node doc.DocNode) ! {
 	$if debug {
-		eprintln('Parse schema: $node')
+		eprintln('Parse schema: ${node}')
 		// eprintln(statement)
 	}
 
@@ -204,8 +206,8 @@ pub fn (mut parser Parser) parse_schema(node doc.DocNode) ! {
 		symbol := split[1..].join('').trim_space()
 		properties[name] = get_schema_from_typesymbol(symbol)
 	}
-	
-	parser.schemas[node.name] = SchemaRef(jsonschema.Schema{
+
+	parser.schemas[node.name] = SchemaRef(Schema{
 		title: node.name
 		properties: properties
 	})

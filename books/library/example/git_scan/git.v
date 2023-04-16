@@ -7,18 +7,14 @@ import freeflowuniverse.crystallib.books.chapter
 const reset = true
 
 fn do() ! {
-
 	mut c := chapter.chapter_new(
-		git_root: "~/code5"
-		git_url: "https://github.com/threefoldfoundation/books/tree/main/content/mytwin"
+		git_root: '~/code5'
+		git_url: 'https://github.com/threefoldfoundation/books/tree/main/content/mytwin'
 		load: true
-		heal: true	
+		heal: true
 		name: 'Scanner1'
-		git_reset: true
+		git_reset: reset
 	)!
-
-
-
 }
 
 fn main() {

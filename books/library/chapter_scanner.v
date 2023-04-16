@@ -1,19 +1,19 @@
-module chapter
+module library
 
 import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.imagemagick
-import freeflowuniverse.crystallib.books.pointer
-
 
 // path is the full path
 fn (mut chapter Chapter) scan_internal(mut p pathlib.Path) ! {
-	$if debug {println( "--- scan internal $p.path")}
+	$if debug {
+		println('--- scan internal ${p.path}')
+	}
 	mut llist := p.list(recursive: false)!
 	for mut p_in in llist {
 		// println("--- SCAN SUB:\n$p_in")
-		if p_in.exists() == false{
+		if p_in.exists() == false {
 			chapter.error(path: p_in, msg: 'probably a broken link', cat: .unknown)
-			continue //means broken link
+			continue // means broken link
 		}
 		p_name := p_in.name()
 		if p_name.starts_with('.') {
@@ -35,7 +35,7 @@ fn (mut chapter Chapter) scan_internal(mut p pathlib.Path) ! {
 				// $if debug{println(" - @FN IS LINK: \n    abs:'$link_abs_path' \n    real:'$link_real_path'\n    chapter:'$chapter_abs_path'")}
 				p_in.unlink()! // will transform link to become the file or dir it points too
 				assert !p_in.is_link()
-			} else {				
+			} else {
 				p_in.relink()! // will check that the link is on the file with the shortest path
 				// println(p_in)
 			}
@@ -49,9 +49,9 @@ fn (mut chapter Chapter) scan_internal(mut p pathlib.Path) ! {
 			if p_name.starts_with('gallery_') {
 				// TODO: need to be implemented by macro
 				continue
-			// } else if p_name == 'chapters' {
-			// 	p_in.delete()!
-			// 	continue
+				// } else if p_name == 'chapters' {
+				// 	p_in.delete()!
+				// 	continue
 			} else {
 				chapter.scan_internal(mut p_in)!
 				// chapter.side_bar_fix(path_, mut publisher)
@@ -84,13 +84,14 @@ fn (mut chapter Chapter) scan_internal(mut p pathlib.Path) ! {
 	}
 }
 
-
 // remember the file, so we know if we have duplicates
 // also fixes the name
 fn (mut chapter Chapter) file_image_remember(mut p pathlib.Path) ! {
-	$if debug {eprintln(" - file or image remember : $p.path")}
-	mut ptr:=pointer.pointerpath_new(path:p.path,path_normalize:true,needs_to_exist:true)!
-	p=ptr.path
+	$if debug {
+		eprintln(' - file or image remember : ${p.path}')
+	}
+	mut ptr := pointer.pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
+	p = ptr.path
 	if ptr.is_image() {
 		if chapter.heal && imagemagick.installed() {
 			mut image := imagemagick.image_new(mut p) or {
@@ -116,7 +117,7 @@ fn (mut chapter Chapter) file_image_remember(mut p pathlib.Path) ! {
 			// file double is the one who already existed, need to change the path and can delete original
 			filedouble.path = filedouble.path
 			filedouble.init()
-			if chapter.heal{
+			if chapter.heal {
 				println(' - delete double image: ${p.path}')
 				p.delete()!
 			}
@@ -134,8 +135,8 @@ fn (mut chapter Chapter) file_image_remember(mut p pathlib.Path) ! {
 		} else {
 			chapter.file_new(mut ptr.path)!
 		}
-	}else{
-		panic("unknown obj type, bug")
+	} else {
+		panic('unknown obj type, bug')
 	}
 }
 

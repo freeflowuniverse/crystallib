@@ -1,4 +1,4 @@
-module chapter
+module library
 
 import freeflowuniverse.crystallib.pathlib
 import os
@@ -17,7 +17,7 @@ pub enum FileType {
 [heap]
 pub struct File {
 pub mut:
-	chapter         &Chapter        [str: skip]
+	chapter      &Chapter     [str: skip]
 	name         string // received a name fix
 	path         pathlib.Path
 	pathrel      string

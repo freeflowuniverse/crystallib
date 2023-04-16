@@ -13,7 +13,6 @@ fn test_docgen_simple() ! {
 }
 
 fn test_docgen() ! {
-
 	client_path := os.dir(@FILE).all_before_last('/') + '/examples/openrpc_client'
 	doc := docgen(
 		title: 'test'

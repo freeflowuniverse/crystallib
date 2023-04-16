@@ -1,8 +1,9 @@
-module chapter
+module library
 
 import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.markdowndocs { Link, Paragraph }
 import freeflowuniverse.crystallib.texttools
+import os
 
 pub enum PageStatus {
 	unknown
@@ -14,7 +15,7 @@ pub enum PageStatus {
 pub struct Page {
 pub mut: // pointer to chapter
 	name           string // received a name fix
-	chapter           &Chapter             [str: skip]
+	chapter        &Chapter          [str: skip]
 	path           pathlib.Path
 	pathrel        string
 	state          PageStatus
@@ -24,17 +25,16 @@ pub mut: // pointer to chapter
 	categories     []string
 	doc            &markdowndocs.Doc [str: skip]
 	readonly       bool
+	changed 	   bool
 }
 
-fn (mut page Page) fix_link(mut paragraph Paragraph, mut link Link) ! {
-	println(1)
-	println(link)
-	println(2)
+//update link on the page, find the link into the chapter
+fn (mut page Page) link_update(mut link Link) ! {
+	mut linkout:=link
 	mut file_name := link.filename
 	$if debug {
-		println(' - fix link ${link.content} with name:\'${file_name}\' for page: ${page.path.path}')
+		println(' - get link ${link.content} with name:\'${file_name}\' for page: ${page.path.path}')
 	}
-
 	// check if the file or image is there, if yes we can return, nothing to do
 	mut file_search := true
 	mut fileoj0 := File{
@@ -53,7 +53,7 @@ fn (mut page Page) fix_link(mut paragraph Paragraph, mut link Link) ! {
 			fileobj = page.chapter.file_get(file_name)!
 		}
 	}
-	//TODO: implement wider search
+	// TODO: implement wider search
 	// if file_search {
 	// 	// if the chapter is filled in then it means we need to copy the file here,
 	// 	// or the image is not found, then we need to try and find it somewhere else
@@ -86,19 +86,27 @@ fn (mut page Page) fix_link(mut paragraph Paragraph, mut link Link) ! {
 
 	// means we now found the file or image
 	page.files_linked << fileobj
-
+	linkcompare1:=link.description+link.url+link.filename+link.content
 	imagelink_rel := pathlib.path_relative(page.path.path_dir(), fileobj.path.path)!
 	link.description = ''
-	// last arg is if we need to save when link changed, only change when page is not readonly
+	link.url = imagelink_rel
+	link.filename = os.base(imagelink_rel)
+	link.content = link.wiki()
+	linkcompare2:=link.description+link.url+link.filename+link.content
+	if linkcompare1!=linkcompare2{
+		page.changed=true
+	}
 
 	// link.link_update(mut paragraph, imagelink_rel, !page.readonly)!
-	if fileobj.path.path.contains('today_internet') {
-		println(link)
-		println(paragraph.wiki())
-		// println(fileobj)
-		println(imagelink_rel)
-		panic('45jhg')
-	}
+	// if true || fileobj.path.path.contains('today_internet') {
+	// 	println(link)
+	// 	println(linkout)
+	// 	// println(paragraph.wiki())
+	// 	println(fileobj)
+	// 	println(imagelink_rel)
+	// 	panic('45jhg')
+	// }
+	
 }
 
 // checks if external link returns 404
@@ -110,19 +118,25 @@ fn (mut page Page) fix_external_link(mut link Link) ! {
 
 fn (mut page Page) fix() ! {
 	page.fix_links()!
+	//TODO: do includes
+	if page.changed{
+		println("CHANGED: $page.path")
+		page.save()!
+		page.changed=false
+	}
 }
 
 // walk over all links and fix them with location
 fn (mut page Page) fix_links() ! {
 	for mut paragraph in page.doc.items.filter(it is Paragraph) {
 		if mut paragraph is Paragraph {
-			for mut item in paragraph.items {
-				if mut item is Link {
-					mut link := item
-					if link.isexternal {
-						page.fix_external_link(mut link)!
-					} else if link.cat == .image || link.cat == .file {
-						page.fix_link(mut &paragraph, mut link)!
+			for mut item_link in paragraph.items {
+				if mut item_link is Link {
+					if item_link.isexternal {
+						page.fix_external_link(mut item_link)!
+					} else if item_link.cat == .image || item_link.cat == .file {
+						//this will change the link
+						page.link_update(mut item_link)!
 					}
 				}
 			}
@@ -174,15 +188,21 @@ fn (mut page Page) process_macro_include(content string) !string {
 // 	return out
 // }
 
+[params]
+pub struct PageSaveArgs{
+pub mut:
+	dest string
+}
+
 // save the page on the requested dest
 // make sure the macro's are being executed
-pub fn (mut page Page) save(dest0 string) ! {
-	mut dest := dest0
-	if dest == '' {
-		dest = page.path.path
+pub fn (mut page Page) save(args_ PageSaveArgs) ! {
+	mut args:=args_
+	if args.dest == '' {
+		args.dest = page.path.path
 	}
 	// out := page.process_macros()!
 	out := page.doc.wiki()
-	mut p := pathlib.get_file(dest, true)!
+	mut p := pathlib.get_file(args.dest, true)!
 	p.write(out)!
 }

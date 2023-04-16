@@ -1,45 +1,41 @@
 module library
-import freeflowuniverse.crystallib.books.chapter
+
+import freeflowuniverse.crystallib.gittools
+import freeflowuniverse.crystallib.pathlib
 
 [params]
 pub struct ChapterNewArgs {
-	name string
-	path string
-	giturl string //e.g. 'git@github.com:threefoldfoundation/chapters.git' can also be with https... 
-	load bool //if set will scan the dir and load all
+pub mut:
+	name      string
+	path      string
+	git_url   string
+	git_reset bool
+	git_root  string
+	git_pull  bool
+	heal      bool // healing means we fix images, if selected will automatically load, remove stale links
+	load      bool
 }
 
-
-// add a new chapter 
-// path is location where to scan
-//example url: url := 'git@github.com:threefoldfoundation/chapters.git'
-pub fn (mut library Library) chapter_new(args_ ChapterNewArgs) ! &Chapter {
-
+// get a new chapter
+pub fn (mut book Book) chapter_new(args_ ChapterNewArgs) !Chapter {
 	mut args := args_
-	
-	//get git if specified
-	if args.giturl.len>0{
-		mut gr := gs.repo_get_from_url(url: url, pull: false, reset: reset)!
-		args.path = gr.path
+	if args.git_url.len > 0 {
+		mut gs := gittools.get(root: args.git_root)!
+		mut gr := gs.repo_get_from_url(url: args.git_url, pull: args.git_pull, reset: args.git_reset)!
+		args.path = gr.path_content_get()
 	}
-	
-	mut p := pathlib.get_dir(args.path, false)! // makes sure we have the right path to the chapter dir
-	if !p.exists() {
-		return error('cannot find chapter on path: ${args.path}')
+	mut pp := pathlib.get_dir(args.path, false)!
+	mut ch := Chapter{
+		name: args.name
+		path: pp
+		heal: args.heal
+		book: &book
 	}
-	p.path_normalize()! // make sure its all lower case and name is proper, will rename the directory if needed
-
-	mut name := args.name
-	if name == '' {
-		name = p.name()
+	if args.load || args.heal {
+		ch.scan()!
 	}
-	mut chapter := chapter.Chapter{
-		name: texttools.name_fix_no_ext(name)
-		path: p
-		chapters: &Library
+	if args.heal {
+		ch.fix()!
 	}
-	if args.load{
-		chapter.load()!
-	}
-	return chapter
+	return ch
 }

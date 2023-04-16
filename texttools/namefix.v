@@ -2,7 +2,6 @@
 module texttools
 
 import os
-
 import encoding.utf8
 
 pub fn name_fix(name string) string {
@@ -51,39 +50,38 @@ pub fn name_fix_keepext(name_ string) string {
 		name = name[..(name.len - extension.len - 1)]
 	}
 
-
-	to_replace_:="-;:. "
-	mut to_replace:=[]u8{}
-	for i in to_replace_{
-		to_replace<<i
+	to_replace_ := '-;:. '
+	mut to_replace := []u8{}
+	for i in to_replace_ {
+		to_replace << i
 	}
 
-	mut out:=[]u8{}
-	mut prev:=u8(0)
-	for u in name{
-		if u  == 95{ //underscore
-			if prev!=95{
-				//only when previous is not _
-				out<<u
-			}			
-		}else if u>47 && u<58 { //see https://www.charset.org/utf-8
-			out<<u
-		}else if u>96 && u<123 {
-			out<<u
-		}else if u in to_replace {
-			out<<u8(95)
-		}else{
-			//means previous one should not be used
+	mut out := []u8{}
+	mut prev := u8(0)
+	for u in name {
+		if u == 95 { // underscore
+			if prev != 95 {
+				// only when previous is not _
+				out << u
+			}
+		} else if u > 47 && u < 58 { // see https://www.charset.org/utf-8
+			out << u
+		} else if u > 96 && u < 123 {
+			out << u
+		} else if u in to_replace {
+			out << u8(95)
+		} else {
+			// means previous one should not be used
 			continue
 		}
-		prev=u
+		prev = u
 	}
 	name = out.bytestr()
 
 	// name = name.trim(' _') //DONT DO final _ is ok to keep
 
-	if extension.len>0{
-		name+=".$extension"
+	if extension.len > 0 {
+		name += '.${extension}'
 	}
 	return name
 }

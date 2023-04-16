@@ -1,4 +1,5 @@
-module chapter
+module library
+
 import freeflowuniverse.crystallib.pathlib { Path }
 
 pub enum ChapterErrorCat {
