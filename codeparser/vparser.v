@@ -62,7 +62,8 @@ fn (vparser VParser) parse_vpath(path pathlib.Path) ![]CodeItem {
 		}
 	} else if path.is_file() {
 		file_is_excluded := vparser.exclude_files.any(path.path.ends_with(it))
-		if file_is_excluded {
+		// todo: use pathlib list regex param to filter non-v files
+		if file_is_excluded || !path.path.ends_with('.v') {
 			return code
 		}
 		code << vparser.parse_vfile(path.path)
@@ -99,6 +100,7 @@ fn (vparser VParser) parse_vfile(path string) []CodeItem {
 					table: table
 					comments: preceeding_comments
 				))
+				preceeding_comments = []ast.Comment
 			}
 		} else if stmt is ast.StructDecl {
 			struct_decl := stmt as ast.StructDecl
@@ -108,6 +110,7 @@ fn (vparser VParser) parse_vfile(path string) []CodeItem {
 					table: table
 					comments: preceeding_comments
 				))
+				preceeding_comments = []ast.Comment
 			}
 		}
 	}
@@ -127,6 +130,16 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 		println('Parsing function: $args.fn_decl.short_name')
 	}
 
+	// get function params excluding receiver
+	receiver_name := args.fn_decl.receiver.name
+	fn_params := args.fn_decl.params.filter(it.name != receiver_name)
+
+	params := vparser.parse_params(
+		comments: args.comments
+		params: fn_params
+		table: args.table
+	)
+
 	result := vparser.parse_result(
 		comments: args.comments
 		return_type: args.fn_decl.return_type
@@ -135,10 +148,7 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 
 	return Function{
 		name: args.fn_decl.short_name
-		params: vparser.parse_params(
-			params: args.fn_decl.params
-			table: args.table
-		)
+		params: params
 		result: result
 	}
 }
@@ -154,16 +164,32 @@ struct ParamsArgs {
 fn (vparser VParser)parse_params(args ParamsArgs) []Param {
 	$if debug {
 		println('Parsing params: ${args.params.map(it.name)}')
+		println('Parsing comm: $args.comments')
 	}
-	
-	return args.params.map(
-		Param{
-			name: it.name
-			typ: Type{
-				symbol: args.table.type_to_str(it.typ).all_after_last('.')
+
+	comment_str := args.comments.map(it.text).join('')
+	mut params := []Param{}
+	for param in args.params {
+
+		mut description := ''
+		// todo: make param description format more flexible
+		// find comment line that describes param
+		for comment in args.comments {
+			if start := comment.text.index('- $param.name: ') {
+				description = comment.text[start..].trim_string_left('- $param.name: ')
 			}
 		}
-	)
+		
+		params << Param {
+			name: param.name
+			description: description
+			typ: Type{
+				symbol: args.table.type_to_str(param.typ).all_after_last('.')
+			}
+		}
+	}
+	
+	return params
 }
 
 struct ReturnArgs {
@@ -178,7 +204,10 @@ fn (vparser VParser)parse_result(args ReturnArgs) Result {
 	mut name := ''
 	mut description := ''
 	if start := comment_str.index('returns') {
-		end := comment_str[start..].index('.') or {comment_str.len - 1}
+		mut end := comment_str.index_after('.', start)
+		if end == -1 {
+			end = comment_str.len
+		}
 		return_str := comment_str[start..end].trim_string_left('returns ')
 
 		split := return_str.split(', ')
