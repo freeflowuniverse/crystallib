@@ -51,7 +51,6 @@ fn main() {
 
 	cmd.add_command(docgen_cmd)
 	cmd.setup()
-	println(os.args)
 	cmd.parse(os.args)
 }
 
