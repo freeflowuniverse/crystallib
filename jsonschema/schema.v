@@ -30,6 +30,15 @@ pub fn typesymbol_to_schema(symbol string) SchemaRef {
 		if symbol == 'void' {
 			return SchemaRef(Schema{typ: 'null'})
 		}
+		if symbol == 'bool' {
+			return SchemaRef(Schema{typ: 'boolean'})
+		}
+		if symbol == 'u32' {
+			return SchemaRef(Schema{typ: 'integer'})
+		}
+		if symbol == 'u64' {
+			return SchemaRef(Schema{typ: 'integer'})
+		}
 		return SchemaRef(Schema{typ: symbol})
 	}
 }
