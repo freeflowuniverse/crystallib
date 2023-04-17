@@ -229,7 +229,7 @@ fn (vparser VParser)parse_result(args ReturnArgs) Result {
 }
 
 // parse_params parses ast function parameters into function parameters
-fn (vparser VParser)parse_type(typ ast.Type, table ast.Table) Type {
+fn (vparser VParser)parse_type(typ ast.Type, table &ast.Table) Type {
 	$if debug {
 		println('Parsing type: $typ')
 	}
@@ -243,7 +243,7 @@ fn (vparser VParser)parse_type(typ ast.Type, table ast.Table) Type {
 struct VStructArgs {
 	comments []ast.Comment // comments that belong to the struct declaration
 	struct_decl ast.StructDecl // v.ast Struct declaration for struct being parsed
-	table ast.Table // v.ast table for getting type names 
+	table &ast.Table // v.ast table for getting type names 
 }
 
 // parse_params parses struct args into struct
@@ -258,16 +258,28 @@ fn (vparser VParser) parse_vstruct(args VStructArgs) Struct {
 }
 
 // parse_fields parses ast struct fields into struct fields
-fn (vparser VParser)parse_fields(fields []ast.StructField, table ast.Table) []StructField {
+fn (vparser VParser)parse_fields(fields []ast.StructField, table &ast.Table) []StructField {
 	$if debug {
 		println('Parsing fields: ${fields.map(it.name)}')
 	}
-	return fields.map(
-		StructField{
-			name: it.name
+
+	mut fields_ := []StructField{}
+	for field in fields {
+		println('field: $field.name')
+		fields_ << StructField{
+			name: field.name
 			typ: Type{
-				symbol: table.type_to_str(it.typ).all_after_last('.')
+				symbol: table.type_to_str(field.typ).all_after_last('.')
 			}
 		}
-	)
+	}
+	return fields_
+	// return fields.map(
+	// 	StructField{
+	// 		name: it.name
+	// 		typ: Type{
+	// 			symbol: table.type_to_str(it.typ).all_after_last('.')
+	// 		}
+	// 	}
+	// )
 }
