@@ -12,7 +12,6 @@ fn test_pointerpath() {
 			name: 'a_file'
 			cat: .page
 			extension: 'md'
-			chapter: ''
 			book: ''
 			error: ''
 			state: .unknown
@@ -32,7 +31,6 @@ fn test_pointerpath() {
 			name: 'a_file'
 			cat: .image
 			extension: 'jpeg'
-			chapter: ''
 			book: ''
 			error: ''
 			state: .unknown
@@ -55,7 +53,6 @@ fn test_pointer() {
 		name: 'page'
 		cat: .page
 		extension: 'md'
-		chapter: ''
 		book: ''
 		error: ''
 		state: .unknown
@@ -67,7 +64,6 @@ fn test_pointer2() {
 	p := pointer_new('chapterAAA:Page__.md') or { panic(err) }
 	println(p)
 	p_compare := Pointer{
-		chapter: ''
 		name: 'page'
 		cat: .page
 		extension: 'md'
@@ -83,7 +79,6 @@ fn test_pointer3() {
 	p := pointer_new('MY_Book:chapter_AAA:Page__.md') or { panic(err) }
 	println(p)
 	p_compare := Pointer{
-		chapter: ''
 		name: 'page'
 		cat: .page
 		extension: 'md'
