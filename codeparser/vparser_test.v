@@ -6,6 +6,280 @@ import os
 
 const testpath = os.dir(@FILE) + '/testdata'
 
+// is a map of test files used in these tests and their complete codeitems
+// used to make assertions and verify test outputs
+const testcode = {
+	'anotherfile.v': [
+		codemodel.CodeItem(codemodel.Function{
+			name: 'anotherfile_func0'
+			receiver: codemodel.Param{
+				description: ''
+				name: ''
+				typ: codemodel.Type{
+					symbol: ''
+				}
+			}
+			description: ''
+			params: []
+			body: ''
+			result: codemodel.Result{
+				typ: codemodel.Type{
+					symbol: 'void'
+				}
+				description: ''
+				name: ''
+			}
+			has_return: false
+		}), codemodel.CodeItem(codemodel.Function{
+			name: 'anotherfile_func1'
+			receiver: codemodel.Param{
+				description: ''
+				name: ''
+				typ: codemodel.Type{
+					symbol: ''
+				}
+			}
+			description: ''
+			params: [codemodel.Param{
+				description: 'a name that the function will do nothing with'
+				name: 'name'
+				typ: codemodel.Type{
+					symbol: 'string'
+				}
+			}]
+			body: ''
+			result: codemodel.Result{
+				typ: codemodel.Type{
+					symbol: 'void'
+				}
+				description: ''
+				name: ''
+			}
+			has_return: false
+		}), codemodel.CodeItem(codemodel.Struct{
+			name: 'AnotherfileStruct0'
+			fields: [codemodel.StructField{
+				comments: []
+				attrs: []
+				name: 'param1'
+				typ: codemodel.Type{
+					symbol: 'string'
+				}
+			}, codemodel.StructField{
+				comments: []
+				attrs: []
+				name: 'param2'
+				typ: codemodel.Type{
+					symbol: 'int'
+				}
+			}]
+		}), codemodel.CodeItem(codemodel.Function{
+			name: 'anotherfile_func2'
+			receiver: codemodel.Param{
+				description: ''
+				name: ''
+				typ: codemodel.Type{
+					symbol: ''
+				}
+			}
+			description: ''
+			params: [codemodel.Param{
+				description: 'configuration for anotherfile_func2'
+				name: 'config'
+				typ: codemodel.Type{
+					symbol: 'AnotherfileStruct0'
+				}
+			}]
+			body: ''
+			result: codemodel.Result{
+				typ: codemodel.Type{
+					symbol: 'void'
+				}
+				description: ''
+				name: ''
+			}
+			has_return: false
+		}), codemodel.CodeItem(codemodel.Struct{
+			name: 'AnotherfileStruct1'
+			fields: [codemodel.StructField{
+				comments: []
+				attrs: []
+				name: 'param'
+				typ: codemodel.Type{
+					symbol: 'string'
+				}
+			}]
+		}), codemodel.CodeItem(codemodel.Function{
+			name: 'anotherfile_func3'
+			receiver: codemodel.Param{
+				description: ''
+				name: ''
+				typ: codemodel.Type{
+					symbol: ''
+				}
+			}
+			description: ''
+			params: [codemodel.Param{
+				description: ''
+				name: 'param1'
+				typ: codemodel.Type{
+					symbol: 'string'
+				}
+			}, codemodel.Param{
+				description: ''
+				name: 'param2'
+				typ: codemodel.Type{
+					symbol: 'string'
+				}
+			}]
+			body: ''
+			result: codemodel.Result{
+				typ: codemodel.Type{
+					symbol: 'AnotherfileStruct1'
+				}
+				description: 'a FileStruc1 struct filled in with params 1 and 2'
+				name: 'the created filestruct1'
+			}
+			has_return: false
+		})
+	],
+	'subfile.v': [
+		codemodel.CodeItem(codemodel.Function{
+			name: 'subfile_func0'
+			receiver: codemodel.Param{
+				description: ''
+				name: ''
+				typ: codemodel.Type{
+					symbol: ''
+				}
+			}
+			description: ''
+			params: []
+			body: ''
+			result: codemodel.Result{
+				typ: codemodel.Type{
+					symbol: 'void'
+				}
+				description: ''
+				name: ''
+			}
+			has_return: false
+		}), codemodel.CodeItem(codemodel.Function{
+			name: 'subfile_func1'
+			receiver: codemodel.Param{
+				description: ''
+				name: ''
+				typ: codemodel.Type{
+					symbol: ''
+				}
+			}
+			description: ''
+			params: [codemodel.Param{
+				description: 'a name that the function will do nothing with'
+				name: 'name'
+				typ: codemodel.Type{
+					symbol: 'string'
+				}
+			}]
+			body: ''
+			result: codemodel.Result{
+				typ: codemodel.Type{
+					symbol: 'void'
+				}
+				description: ''
+				name: ''
+			}
+			has_return: false
+		}), codemodel.CodeItem(codemodel.Struct{
+			name: 'SubfileStruct0'
+			fields: [codemodel.StructField{
+				comments: []
+				attrs: []
+				name: 'param1'
+				typ: codemodel.Type{
+					symbol: 'string'
+				}
+			}, codemodel.StructField{
+				comments: []
+				attrs: []
+				name: 'param2'
+				typ: codemodel.Type{
+					symbol: 'int'
+				}
+			}]
+		}), codemodel.CodeItem(codemodel.Function{
+			name: 'subfile_func2'
+			receiver: codemodel.Param{
+				description: ''
+				name: ''
+				typ: codemodel.Type{
+					symbol: ''
+				}
+			}
+			description: ''
+			params: [codemodel.Param{
+				description: 'configuration for subfile_func2'
+				name: 'config'
+				typ: codemodel.Type{
+					symbol: 'SubfileStruct0'
+				}
+			}]
+			body: ''
+			result: codemodel.Result{
+				typ: codemodel.Type{
+					symbol: 'void'
+				}
+				description: ''
+				name: ''
+			}
+			has_return: false
+		}), codemodel.CodeItem(codemodel.Struct{
+			name: 'SubfileStruct1'
+			fields: [codemodel.StructField{
+				comments: []
+				attrs: []
+				name: 'param'
+				typ: codemodel.Type{
+					symbol: 'string'
+				}
+			}]
+		}), codemodel.CodeItem(codemodel.Function{
+			name: 'subfile_func3'
+			receiver: codemodel.Param{
+				description: ''
+				name: ''
+				typ: codemodel.Type{
+					symbol: ''
+				}
+			}
+			description: ''
+			params: [codemodel.Param{
+				description: ''
+				name: 'param1'
+				typ: codemodel.Type{
+					symbol: 'string'
+				}
+			}, codemodel.Param{
+				description: ''
+				name: 'param2'
+				typ: codemodel.Type{
+					symbol: 'string'
+				}
+			}]
+			body: ''
+			result: codemodel.Result{
+				typ: codemodel.Type{
+					symbol: 'SubfileStruct1'
+				}
+				description: 'a FileStruc1 struct filled in with params 1 and 2'
+				name: 'the created filestruct1'
+			}
+			has_return: false
+		})
+	]
+	'file.v': []CodeItem{}
+}
+
 // tests parsing blank directory, should return empty codeitem array.
 fn test_vparse_blankdir() ! {
 	$if debug {
@@ -75,7 +349,7 @@ fn test_vparse_recursive() ! {
 // and exclude a directory
 fn test_vparse_exclude_dirs() ! {
 	$if debug {
-		eprintln('\nTEST: test_vparse_recursive\n')
+		eprintln('\nTEST: test_vparse_exclude_dirs\n')
 	}
 	code := parse_v(testpath, 
 	recursive: true
@@ -99,7 +373,7 @@ fn test_vparse_exclude_dirs() ! {
 // and exclude a file
 fn test_vparse_exclude_files() ! {
 	$if debug {
-		eprintln('\nTEST: test_vparse_recursive\n')
+		eprintln('\nTEST: test_vparse_exclude_files\n')
 	}
 	code := parse_v(testpath, 
 	recursive: true
@@ -123,7 +397,7 @@ fn test_vparse_exclude_files() ! {
 // and exclude a file
 fn test_vparse_only_pub() ! {
 	$if debug {
-		eprintln('\nTEST: test_vparse_recursive\n')
+		eprintln('\nTEST: test_vparse_only_pub\n')
 	}
 	code := parse_v(testpath, 
 		recursive: true

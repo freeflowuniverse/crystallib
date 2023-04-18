@@ -6,14 +6,8 @@ import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.codemodel {CodeItem, Function, Struct, StructField, Param, Type, Result}
 import v.pref
 
-const (
-	fpref = &pref.Preferences{
-		is_fmt: true
-	}
-)
-
 // VParser holds configuration of parsing
-// has methods that parse subparts of the code
+// has methods that implement parsing
 [params]
 pub struct VParser {
 	exclude_dirs []string // directories to be excluded from parsing
@@ -22,9 +16,15 @@ pub struct VParser {
 	recursive bool // whether subdirs should be parsed as well
 }
 
-// parse_v
+// parse_v takes in a path to parse V code from and 
+// vparser configuration params, returns a list of parsed codeitems
 pub fn parse_v(path_ string, vparser VParser) ![]CodeItem {
 	mut path := pathlib.get(path_)
+	
+	$if debug {
+		eprintln('Parsing path `$path.path` with cofiguration:\n$vparser\n')
+	}
+
 	if !path.exists() {
 		return error('Path `$path.path` doesn\'t exist.')
 	}
@@ -33,14 +33,9 @@ pub fn parse_v(path_ string, vparser VParser) ![]CodeItem {
 	return vparser.parse_vpath(path)!
 }
 
-// parse_vpath parses the v code files in a given path
+// parse_vpath parses the v code files and returns codeitems in a given path
 // can be recursive or not based on the parsers configuration
-// returns codeitems from the entire path
 fn (vparser VParser) parse_vpath(path pathlib.Path) ![]CodeItem {
-	$if debug {
-		println('Parsing path `$path.path`')
-	}
-
 	mut code := []CodeItem{}
 	if path.is_dir() {
 		dir_is_excluded := vparser.exclude_dirs.any(path.path.ends_with(it))
@@ -70,16 +65,20 @@ fn (vparser VParser) parse_vpath(path pathlib.Path) ![]CodeItem {
 	} else {
 		return error('Path being parsed must either be a directory or a file.')
 	}
-
 	return code
 }
 
-// parse_vfile parses a v code file 
-// returns the code items that are in the file
+// parse_vfile parses and returns code items from a v code file 
 fn (vparser VParser) parse_vfile(path string) []CodeItem {
+	$if debug {
+		eprintln('Parsing file `$path`')
+	}
 	mut code := []CodeItem{}
 
 	table := ast.new_table()
+	fpref := &pref.Preferences{ // preferences for parsing
+		is_fmt: true
+	}
 	file_ast := parser.parse_file(path, table, .parse_comments, fpref)
 	mut preceeding_comments := []ast.Comment
 
@@ -127,7 +126,7 @@ struct VFuncArgs {
 // parse_vfunc parses function args into function struct
 pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 	$if debug {
-		println('Parsing function: $args.fn_decl.short_name')
+		eprintln('Parsing function: $args.fn_decl.short_name')
 	}
 
 	// get function params excluding receiver
@@ -162,18 +161,11 @@ struct ParamsArgs {
 
 // parse_params parses ast function parameters into function parameters
 fn (vparser VParser)parse_params(args ParamsArgs) []Param {
-	$if debug {
-		println('Parsing params: ${args.params.map(it.name)}')
-		println('Parsing comm: $args.comments')
-	}
-
 	comment_str := args.comments.map(it.text).join('')
 	mut params := []Param{}
 	for param in args.params {
-
 		mut description := ''
-		// todo: make param description format more flexible
-		// find comment line that describes param
+		// parse comment line that describes param
 		for comment in args.comments {
 			if start := comment.text.index('- $param.name: ') {
 				description = comment.text[start..].trim_string_left('- $param.name: ')
@@ -198,9 +190,12 @@ struct ReturnArgs {
 	table ast.Table // v.ast table for getting type names 
 }
 
+// parse_result parses a function's comments and return type
+// returns a result struct that represents what the function's result is
 fn (vparser VParser)parse_result(args ReturnArgs) Result {
 	comment_str := args.comments.map(it.text).join('')
 
+	// parse comments to get return name and description	
 	mut name := ''
 	mut description := ''
 	if start := comment_str.index('returns') {
@@ -230,10 +225,6 @@ fn (vparser VParser)parse_result(args ReturnArgs) Result {
 
 // parse_params parses ast function parameters into function parameters
 fn (vparser VParser)parse_type(typ ast.Type, table &ast.Table) Type {
-	$if debug {
-		println('Parsing type: $typ')
-	}
-
 	type_str := table.type_to_str(typ).all_after_last('.')
 	return Type {
 		symbol: type_str
@@ -249,7 +240,7 @@ struct VStructArgs {
 // parse_params parses struct args into struct
 fn (vparser VParser) parse_vstruct(args VStructArgs) Struct {
 	$if debug {
-		println('Parsing struct: $args.struct_decl.name')
+		eprintln('Parsing struct: $args.struct_decl.name')
 	}
 	return Struct{
 		name: args.struct_decl.name.all_after_last('.')
@@ -259,27 +250,13 @@ fn (vparser VParser) parse_vstruct(args VStructArgs) Struct {
 
 // parse_fields parses ast struct fields into struct fields
 fn (vparser VParser)parse_fields(fields []ast.StructField, table &ast.Table) []StructField {
-	$if debug {
-		println('Parsing fields: ${fields.map(it.name)}')
-	}
-
 	mut fields_ := []StructField{}
-	for field in fields {
-		println('field: $field.name')
-		fields_ << StructField{
-			name: field.name
+	return fields.map(
+		StructField{
+			name: it.name
 			typ: Type{
-				symbol: table.type_to_str(field.typ).all_after_last('.')
+				symbol: table.type_to_str(it.typ).all_after_last('.')
 			}
 		}
-	}
-	return fields_
-	// return fields.map(
-	// 	StructField{
-	// 		name: it.name
-	// 		typ: Type{
-	// 			symbol: table.type_to_str(it.typ).all_after_last('.')
-	// 		}
-	// 	}
-	// )
+	)
 }
