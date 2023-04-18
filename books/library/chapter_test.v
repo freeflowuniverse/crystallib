@@ -3,17 +3,19 @@ module library
 import os
 import freeflowuniverse.crystallib.pathlib
 
-const testpath = os.dir(@FILE) + '/example/directory_scan/chapter1'
+const testpath = os.dir(@FILE) + '/example/chapter1'
 
 // const test_page = test_chapter.page_new()
 
-fn test_fix() {
-	mut test_chapter := chapter_new(
+fn test_fix() ! {
+	mut library := new()
+	mut book := library.book_new(name: 'testbook')!
+	mut test_chapter := book.chapter_new(
 		name: 'Chapter1'
-		path: '${chapter.testpath}'
+		path: library.testpath
 	) or { panic('Cannot create new chapter: ${err}') }
 
-	mut page_path := pathlib.get('${chapter.testpath}/decentralized_cloud/decentralized_cloud.md')
+	mut page_path := pathlib.get('${library.testpath}/decentralized_cloud/decentralized_cloud.md')
 	mut test_page := test_chapter.page_new(mut page_path) or { panic('Cannot create page: ${err}') }
 
 	println(test_page)
@@ -25,14 +27,14 @@ fn test_fix() {
 }
 
 fn test_scan() {
-	mut test_chapter := chapter_new(
+	mut library := new()
+	mut book := library.book_new(name: 'testbook')!
+	mut test_chapter := book.chapter_new(
 		name: 'Chapter2'
-		path: '${chapter.testpath}'
+		path: '${library.testpath}'
 		load: true
 		heal: false
 	) or { panic('Cannot create / load new chapter: ${err}') }
 
 	println(test_chapter)
-
-	panic('Sd')
 }
