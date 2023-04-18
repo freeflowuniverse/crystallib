@@ -1,45 +1,62 @@
 module library
 
-import freeflowuniverse.crystallib.books.textools
+import freeflowuniverse.crystallib.texttools
 
 [heap]
 pub struct Book {
 pub mut:
-	chapters map[string]&chapter.Chapter
-	library &Library
+	name string
+	sid string
+	chapters map[string]&Chapter
+	library &Library [str: skip]
+	state BookState
 }
+
+pub enum BookState{
+	init
+	ok 
+	error
+}
+
+
+pub struct ChapterNotFound {
+	Error
+pub:
+	pointer Pointer
+	book &Book
+	msg string
+}
+
+pub fn (err ChapterNotFound) msg() string {
+	if err.msg.len>0{
+		return err.msg
+	}	
+	chapternames := err.book.chapternames().join('\n- ')
+	return '"Cannot not find chapter from book:${err.book.name}.\nPointer: ${err.pointer}.\nKnown Chapters:\n${chapternames}'
+}
+
 
 pub fn (mut book Book) chapter_exists(name string) bool {
 	namelower := texttools.name_fix_no_underscore_no_ext(name)
-	if  namelower in library.chapters {
+	if  namelower in book.chapters {
 		return true
 	}
 	return false
 }
 
-pub fn (mut book Book) chapter_get(name string) !&Chapter {
-	namelower := texttools.name_fix_no_underscore_no_ext(name)
-	for key,ch in library.chapters {
-		if key==namelower{
-			return ch
-		}
-	}
-	return error('could not find chapter with name:${name}')
-}
-
 // fix all loaded library
 pub fn (mut book Book) fix() ! {
-	if library.state == .ok {
+	if book.state == .ok {
 		return
 	}
-	for key, mut ch in library.chapters {
+	for _, mut ch in book.chapters {
 		ch.fix()!
 	}
 }
 
-pub fn (mut book Book) chapternames() []string {
+pub fn (book Book) chapternames() []string {
 	mut res := []string{}
-	for ke,chapter in library.chapters {
+	for _,chapter in book.chapters {
 		res << chapter.name
 	}
 	res.sort()
@@ -48,56 +65,137 @@ pub fn (mut book Book) chapternames() []string {
 
 
 // internal function
-fn (mut book Book) chapter_get_from_pointer(p pointer.Pointer) !&Chapter {
-	if p.chapter in library.library {
-		// means chapter exists
-		mut ch := library.library[p.chapter] or { panic('cannot find ${p.chapter}') }
-		return ch
+fn (mut book Book) chapter_get_from_pointer(p Pointer) !&Chapter {
+	if p.book!="" && p.book!= book.name{
+		return ChapterNotFound{
+			book:&book
+			pointer: p
+			msg: "book name was not empty and was not same as book.\n$p"
+		}
 	}
-	chapternames := library.chapternames().join('\n- ')
-	msg := 'Cannot find chapter with name:${p.chapter} \nKnown chapter names are:\n\n${chapternames}'
-	return error(msg)
+	mut ch := book.chapters[p.chapter] or { 
+		return ChapterNotFound{
+			book:&book
+			pointer: p
+		}
+	}	
+	return ch	
 }
 
 pub fn (mut book Book) chapter_get(name string) !&Chapter {
-	p:=pointer.pointer_new(name)
-	return library.chapter_get_from_pointer(p)!
+	p:=pointer_new(name)!
+	return book.chapter_get_from_pointer(p)!
 }
 
 
-// get the page
-pub fn (mut book Book) page_get(name string) !&Page {
-	p:=pointer.pointer_new(name)
-	mut chapter := library.chapter_get_from_pointer(p)!
-	return chapter.page_get(name)!
+pub struct NoOrTooManyObjFound {
+	Error
+pub:
+	book &Book
+	pointer Pointer
+	nr int
 }
 
-// get the image
-pub fn (mut book Book) image_get(name string) !&File {
-	p:=pointer.pointer_new(name)
-	mut chapter := library.chapter_get_from_pointer(p)!
-	return chapter.image_get(name)!
+pub fn (err NoOrTooManyObjFound) msg() string {
+	if err.nr>0{
+		return 'Too many obj found for ${err.book.name}. Pointer: ${err.pointer}'
+	}
+	return 'No obj found for ${err.book.name}. Pointer: ${err.pointer}'
 }
 
-// get the file
-// the chapter name needs to be specified
-pub fn (mut book Book) file_get(name string) !&File {
-	p:=pointer.pointer_new(name)
-	mut chapter := library.chapter_get_from_pointer(name)!
-	return chapter.file_get(name)!
-}
 
-// will walk over all library, untill it finds the image or the file
-pub fn (mut book Book) image_file_find_over_sites(name string) !&File {
-	for _, mut chapter in library.library {
-		if chapter.image_exists(name) {
-			return chapter.image_get(name)
-		}
-		if chapter.file_exists(name) {
-			return chapter.file_get(name)
+// get the page from pointer string: $book:$chapter:$name or
+// $chapter:$name or $name
+pub fn (mut book Book) page_get(pointerstr string) !&Page {
+	p:=pointer_new(pointerstr)!
+	mut res := []&Page{}
+	for _,chapter in book.chapters{
+		if p.chapter=="" || p.chapter==chapter.name{
+			if chapter.page_exists(pointerstr){
+				res<<chapter.page_get(pointerstr) or {panic("BUG")}
+			}
 		}
 	}
-	return error('could not find image over all chapters: ${name} in book: ${book.name}')
+	if res.len==1{
+		return res[0]
+	}else{
+		return NoOrTooManyObjFound{book:&book,pointer:p,nr:res.len}
+	}
+
 }
 
+
+// get the page from pointer string: $book:$chapter:$name or
+// $chapter:$name or $name
+pub fn (mut book Book) image_get(pointerstr string) !&File {
+	p:=pointer_new(pointerstr)!
+	mut res := []&File{}
+	for _,chapter in book.chapters{
+		if p.chapter=="" || p.chapter==chapter.name{
+			if chapter.image_exists(pointerstr){
+				res<<chapter.image_get(pointerstr) or {panic("BUG")}
+			}
+		}
+	}
+	if res.len==1{
+		return res[0]
+	}else{
+		return NoOrTooManyObjFound{book:&book,pointer:p,nr:res.len}
+	}
+}
+
+// get the file from pointer string: $book:$chapter:$name or
+// $chapter:$name or $name
+pub fn (mut book Book) file_get(pointerstr string) !&File {
+	p:=pointer_new(pointerstr)!
+	mut res := []&File{}
+	for _,chapter in book.chapters{
+		if p.chapter=="" || p.chapter==chapter.name{
+			if chapter.file_exists(pointerstr){
+				res<<chapter.file_get(pointerstr) or {panic("BUG")}
+			}
+		}
+	}
+	if res.len==1{
+		return res[0]
+	}else{
+		return NoOrTooManyObjFound{book:&book,pointer:p,nr:res.len}
+	}
+}
+
+//exists or too many
+pub fn (mut book Book) page_exists(name string) bool {
+	_ := book.page_get(name) or {
+		if err is ChapterNotFound || err is ChapterObjNotFound || err is NoOrTooManyObjFound {
+			return false
+		} else {
+			panic(err)
+		}
+	}
+	return true
+}
+
+//exists or too many
+pub fn (mut book Book) image_exists(name string) bool {
+	_ := book.image_get(name) or {
+		if err is ChapterNotFound || err is ChapterObjNotFound  || err is NoOrTooManyObjFound{
+			return false
+		} else {
+			panic(err)
+		}
+	}
+	return true
+}
+
+//exists or too many
+pub fn (mut book Book) file_exists(name string) bool {
+	_ := book.file_get(name) or {
+		if err is ChapterNotFound || err is ChapterObjNotFound  || err is NoOrTooManyObjFound{
+			return false
+		} else {
+			panic(err)
+		}
+	}
+	return true
+}
 

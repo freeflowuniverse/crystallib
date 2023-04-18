@@ -57,9 +57,9 @@ pub fn (err ChapterObjNotFound) msg() string {
 // format of name is $chaptername:$pagename or $pagename
 // look if we can find page in the local chapter is chapter name not specified
 // if chaptername specified will look for page in that specific chapter
-pub fn (mut chapter Chapter) page_get(name string) !&Page {
+pub fn ( chapter Chapter) page_get(name string) !&Page {
 	cat := 'page'
-	ptr := pointer.pointer_new(name)!
+	ptr := pointer_new(name)!
 	if ptr.chapter != '' && ptr.chapter != chapter.name {
 		return error("Can't get in chapter, chapter name asked for is ${ptr.chapter} while we are in chaptner ${chapter.name}")
 	}
@@ -79,9 +79,9 @@ pub fn (mut chapter Chapter) page_get(name string) !&Page {
 	}
 }
 
-pub fn (mut chapter Chapter) file_get(name string) !&File {
+pub fn ( chapter Chapter) file_get(name string) !&File {
 	cat := 'file'
-	ptr := pointer.pointer_new(name)!
+	ptr := pointer_new(name)!
 	if ptr.chapter != '' && ptr.chapter != chapter.name {
 		return error("Can't get in chapter, chapter name asked for is ${ptr.chapter} while we are in chaptner ${chapter.name}")
 	}
@@ -101,9 +101,9 @@ pub fn (mut chapter Chapter) file_get(name string) !&File {
 	}
 }
 
-pub fn (mut chapter Chapter) image_get(name string) !&File {
+pub fn ( chapter Chapter) image_get(name string) !&File {
 	cat := 'image'
-	ptr := pointer.pointer_new(name)!
+	ptr := pointer_new(name)!
 	if ptr.chapter != '' && ptr.chapter != chapter.name {
 		return error("Can't get in chapter, chapter name asked for is ${ptr.chapter} while we are in chaptner ${chapter.name}")
 	}
@@ -123,7 +123,7 @@ pub fn (mut chapter Chapter) image_get(name string) !&File {
 	}
 }
 
-pub fn (mut chapter Chapter) page_exists(name string) bool {
+pub fn ( chapter Chapter) page_exists(name string) bool {
 	_ := chapter.page_get(name) or {
 		if err is ChapterObjNotFound {
 			return false
@@ -134,7 +134,7 @@ pub fn (mut chapter Chapter) page_exists(name string) bool {
 	return true
 }
 
-pub fn (mut chapter Chapter) image_exists(name string) bool {
+pub fn ( chapter Chapter) image_exists(name string) bool {
 	_ := chapter.image_get(name) or {
 		if err is ChapterObjNotFound {
 			return false
@@ -145,7 +145,7 @@ pub fn (mut chapter Chapter) image_exists(name string) bool {
 	return true
 }
 
-pub fn (mut chapter Chapter) file_exists(name string) bool {
+pub fn ( chapter Chapter) file_exists(name string) bool {
 	_ := chapter.file_get(name) or {
 		if err is ChapterObjNotFound {
 			return false
@@ -164,7 +164,7 @@ pub fn (mut chapter Chapter) page_new(mut p Path) !&Page {
 	$if debug {
 		println(" - chapter:'${chapter.name}' page new: ${p.path}")
 	}
-	mut ptr := pointer.pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
+	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
 	mut doc := markdowndocs.new(path: p.path) or { panic('cannot parse,${err}') }
 	mut page := Page{
 		doc: &doc
@@ -185,7 +185,7 @@ pub fn (mut chapter Chapter) file_new(mut p Path) ! {
 	$if debug {
 		println(" - chapter:'${chapter.name}' file new: ${p.path}")
 	}
-	mut ptr := pointer.pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
+	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
 	mut ff := File{
 		path: p
 		chapter: &chapter
@@ -200,7 +200,7 @@ pub fn (mut chapter Chapter) image_new(mut p Path) ! {
 		println(" - chapter:'${chapter.name}' image new: ${p.path}")
 	}
 
-	mut ptr := pointer.pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
+	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
 	if ptr.pointer.name.starts_with('.') {
 		panic('should not start with . \n${p}')
 	}
@@ -238,7 +238,7 @@ pub fn (mut chapter Chapter) fix() ! {
 }
 
 // return all pagenames for a chapter
-pub fn (mut chapter Chapter) pagenames() []string {
+pub fn ( chapter Chapter) pagenames() []string {
 	mut res := []string{}
 	for key, _ in chapter.pages {
 		res << key
@@ -248,7 +248,7 @@ pub fn (mut chapter Chapter) pagenames() []string {
 }
 
 // write errors.md in the chapter, this allows us to see what the errors are
-pub fn (mut chapter Chapter) errors_report() ! {
+pub fn ( chapter Chapter) errors_report() ! {
 	mut p := pathlib.get('${chapter.path.path}/errors.md')
 	if chapter.errors.len == 0 {
 		p.delete()!

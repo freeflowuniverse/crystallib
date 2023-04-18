@@ -1,43 +1,51 @@
 module library
-import freeflowuniverse.crystallib.books.textools
+import freeflowuniverse.crystallib.texttools
 
 [heap]
 pub struct Library {
 pub mut:
-	books map[string]book.Book
+	books map[string]&Book
+	state LibraryState
+}
+
+pub enum LibraryState{
+	init
+	ok 
+	error
+}
+
+[params]
+pub struct BookNewArgs{
+pub mut:
+	name string
+	chapters_path string
+}
+
+pub fn (mut l Library) book_new(args_ BookNewArgs)!&Book{
+	mut args:=args_
+	args.name=texttools.name_fix_no_underscore_no_ext(args.name)
+	if args.name==""{
+		return error("Cannot specify new book without specifying a name.")
+	}
+
+	mut b:=Book{name:args.name,library:&l}
+	l.books[args.name]=&b
+	if args.chapters_path.len>0{
+		//lets now scan for chapters
+		//TODO: 
+	}	
+	return l.books[args.name] or {panic("bug")}
 }
 
 
-
-pub fn (mut library Library) book_exists(name string) bool {
-	namelower := texttools.name_fix_no_underscore_no_ext(name)
-	if  namelower in library.books {
-		return true
-	}
-	return false
+pub struct BookNotFound {
+	Error
+pub:
+	bookname string
+	library &Library
+	msg string
 }
-
-pub fn (mut library Library) book_get(name string) !&Book {
-	namelower := texttools.name_fix_no_underscore_no_ext(name)
-	for key,book in library.books {
-		if key==namelower{
-			return book
-		}
-	}
-	return error('could not find book with name:${name}')
-}
-
-// fix all loaded library
-pub fn (mut library Library) fix() ! {
-	if library.state == .ok {
-		return
-	}
-	for key, mut book in library.books {
-		book.fix()!
-	}
-}
-
-pub fn (mut library Library) booknames() []string {
+pub fn (library Library) booknames() []string {
 	mut res := []string{}
 	for _,book in library.books {
 		res << book.name
@@ -47,57 +55,116 @@ pub fn (mut library Library) booknames() []string {
 }
 
 
-// internal function
-fn (mut library Library) book_get_from_pointer(p pointer.Pointer) !&Chapter {
-	if p.book in library.library {
-		// means book exists
-		mut book := library.library[p.book] or { panic('cannot find ${p.book}') }
-		return book
+pub fn (err BookNotFound) msg() string {
+	booknames := err.library.booknames().join('\n- ')
+	if err.msg.len>0{
+		return err.msg
 	}
-	booknames := library.booknames().join('\n- ')
-	msg := 'Cannot find book with name:${p.book} \nKnown book names are:\n\n${booknames}'
-	return error(msg)
-}
-
-pub fn (mut library Library) book_get(name string) !&Chapter {
-	p:=pointer.pointer_new(name)
-	return library.book_get_from_pointer(p)!
+	return "Cannot not find book:'${err.bookname}'.\nKnown books:\n${booknames}"
 }
 
 
-// get the page
-pub fn (mut library Library) page_get(name string) !&Page {
-	p:=pointer.pointer_new(name)
-	mut book := library.book_get_from_pointer(p)!
-	return book.page_get(name)!
+
+pub fn ( library Library) book_get(name string) !&Book {
+	if name.contains(":"){
+		return BookNotFound{
+			library:&library
+			msg: "bookname cannot have : inside"
+			bookname:name
+		}
+	}
+	namelower := texttools.name_fix_no_underscore_no_ext(name)
+	if namelower==""{
+		return BookNotFound{
+			library:&library
+			msg:'book needs to be specified, now empty.'
+		}		
+	}	
+	return library.books[namelower] or {
+		return BookNotFound{
+			library:&library
+			bookname:name
+		}
+	}
 }
 
-// get the image
-pub fn (mut library Library) image_get(name string) !&File {
-	p:=pointer.pointer_new(name)
-	mut book := library.book_get_from_pointer(p)!
-	return book.image_get(name)!
+pub fn ( library Library) book_exists(name string) bool {
+	_ := library.book_get(name) or {
+		if err is BookNotFound  {
+			return false
+		} else {
+			panic(err) // catch unforseen errors
+		}
+	}
+	return true
 }
 
-// get the file
-// the book name needs to be specified
-pub fn (mut library Library) file_get(name string) !&File {
-	p:=pointer.pointer_new(name)
-	mut book := library.book_get_from_pointer(name)!
-	return book.file_get(name)!
-}
 
-// will walk over all library, untill it finds the image or the file
-pub fn (mut library Library) image_file_find_over_books(name string) !&File {
+// fix all loaded library
+pub fn (mut library Library) fix() ! {
+	if library.state == .ok {
+		return
+	}
 	for _, mut book in library.books {
-		if book.image_exists(name) {
-			return book.image_get(name)
-		}
-		if book.file_exists(name) {
-			return book.file_get(name)
-		}
+		book.fix()!
 	}
-	return error('could not find image over all books: ${name} in book: ${book.name}')
 }
 
 
+// get the page from a pointer, format of pointer is $book:$chapter:$name or $book::$name 
+pub fn ( library Library) page_get(pointerstr string) !&Page {
+	p:=pointer_new(pointerstr)!
+	mut book := library.book_get(p.book)!
+	return book.page_get(pointerstr)!
+}
+
+// get the image from a pointer, format of pointer is $book:$chapter:$name or $book::$name 
+pub fn ( library Library) image_get(pointerstr string) !&File {
+	p:=pointer_new(pointerstr)!
+	mut book := library.book_get(p.book)!
+	return book.image_get(pointerstr)!
+}
+
+// get the file from a pointer, format of pointer is $book:$chapter:$name or $book::$name 
+pub fn ( library Library) file_get(pointerstr string) !&File {
+	p:=pointer_new(pointerstr)!
+	mut book := library.book_get(p.book)!
+	return book.file_get(pointerstr)!
+}
+
+// get the image from a pointer, format of pointer is $book:$chapter:$name or $book::$name 
+pub fn ( library Library) page_exists(pointerstr string) bool {
+	_ := library.page_get(pointerstr) or {
+		if err is ChapterNotFound || err is ChapterObjNotFound || err is BookNotFound{
+			return false
+		} else {
+			panic(err) // catch unforseen errors
+		}
+	}
+	return true
+}
+
+
+// get the image from a pointer, format of pointer is $book:$chapter:$name or $book::$name 
+pub fn ( library Library) image_exists(pointerstr string) bool {
+	_ := library.image_get(pointerstr) or {
+		if err is ChapterNotFound || err is ChapterObjNotFound || err is BookNotFound{
+			return false
+		} else {
+			panic(err) // catch unforseen errors
+		}
+	}
+	return true
+}
+
+// get the image from a pointer, format of pointer is $book:$chapter:$name or $book::$name 
+pub fn ( library Library) file_exists(pointerstr string) bool {
+	_ := library.file_get(pointerstr) or {
+		if err is ChapterNotFound || err is ChapterObjNotFound || err is BookNotFound{
+			return false
+		} else {
+			panic(err) // catch unforseen errors
+		}
+	}
+	return true
+}

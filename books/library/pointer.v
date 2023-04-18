@@ -26,7 +26,6 @@ pub mut:
 	cat       PointerCat
 	state     PointerState
 	extension string // e.g. jpg
-	chapter   string
 	book      string
 	error     string // if there is an error on the pointer, then will be visible in this property
 }

@@ -90,7 +90,7 @@ fn (mut chapter Chapter) file_image_remember(mut p pathlib.Path) ! {
 	$if debug {
 		eprintln(' - file or image remember : ${p.path}')
 	}
-	mut ptr := pointer.pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
+	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
 	p = ptr.path
 	if ptr.is_image() {
 		if chapter.heal && imagemagick.installed() {

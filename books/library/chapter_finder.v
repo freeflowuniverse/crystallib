@@ -1,11 +1,12 @@
 module library
 import freeflowuniverse.crystallib.pathlib { Path }
+import freeflowuniverse.crystallib.params
 
 //walk over directory find dis with .site or .chapter inside and add to the book
-fn (mut book Book) chapters_find(mut path pathlib.Path) ! {
+fn (mut book Book) scan_recursive(mut path pathlib.Path) ! {
 	// $if debug{println(" - chapters find recursive: $path.path")}
 	if path.is_dir() {
-		if path.file_exists('.site') || path.file_exists('.chapter') || {
+		if path.file_exists('.site') || path.file_exists('.chapter') {
 			mut name := path.name()
 
 			mut chapterfilepath := Path{}
@@ -37,7 +38,7 @@ fn (mut book Book) chapters_find(mut path pathlib.Path) ! {
 					continue
 				}
 
-				book.chapters_find(mut p_in) or {
+				book.scan_recursive(mut p_in) or {
 					msg := 'Cannot process recursive on ${p_in.path}\n${err}'
 					// println(msg)
 					return error(msg)
@@ -47,8 +48,8 @@ fn (mut book Book) chapters_find(mut path pathlib.Path) ! {
 	}
 }
 
-pub fn (mut books Books) chapters_find(path string) ! {
+pub fn (mut book Book) chapters_scan(path string) ! {
 	mut p := pathlib.get_dir(path, false)!
-	books.scan_recursive(mut p)!
-	books.fix()!
+	book.scan_recursive(mut p)!
+	book.fix()!
 }

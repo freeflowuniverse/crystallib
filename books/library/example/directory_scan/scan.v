@@ -1,12 +1,17 @@
 module main
 
-import freeflowuniverse.crystallib.books.chapter
+import freeflowuniverse.crystallib.books.library
 import os
 
 const testpath = os.dir(@FILE) + '/../chapter1'
 
 fn do() ! {
-	mut c := chapter.chapter_new(
+
+	mut l := library.new()
+	
+	mut book:=l.book_new(name:"testbook")!
+
+	mut c := book.chapter_new(
 		path: testpath
 		load: true
 		heal: false

@@ -1,13 +1,19 @@
 module main
 
-import freeflowuniverse.crystallib.books.chapter
+import freeflowuniverse.crystallib.books.library
 
 // const path0 = '~/code/github/threefoldfoundation/books'
 
-const reset = true
+const reset = false
 
 fn do() ! {
-	mut c := chapter.chapter_new(
+
+
+	mut l := library.new()
+	
+	mut book:=l.book_new(name:"testbook")!
+
+	mut c := book.chapter_new(
 		git_root: '~/code5'
 		git_url: 'https://github.com/threefoldfoundation/books/tree/main/content/mytwin'
 		load: true

@@ -1,4 +1,4 @@
-module books
+module library
 
 //! Use booksrunner in ./actionrunner
 
