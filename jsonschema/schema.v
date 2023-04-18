@@ -17,12 +17,21 @@ pub fn struct_to_schema(struct_ codemodel.Struct) SchemaRef {
 
 // get schema_from_typesymbol receives a typesymbol, if the typesymbol belongs to a user defined struct
 // it returns a reference to the schema, else it returns a schema for the typesymbol
-pub fn typesymbol_to_schema(symbol string) SchemaRef {
-	if symbol.contains('[]') {
+pub fn typesymbol_to_schema(symbol_ string) SchemaRef {
+	mut symbol := symbol_.trim_string_left('!')
+	if symbol == '' {
+		return SchemaRef(Schema{typ: 'null'})
+	} else if symbol.starts_with('[]') {
 		mut array_type := symbol.trim_string_left('[]')
 		return SchemaRef(Schema{
 			typ: 'array'
 			items: typesymbol_to_schema(array_type)
+		})
+	} else if symbol.starts_with('map[string]') {
+		mut map_type := symbol.trim_string_left('map[string]')
+		return SchemaRef(Schema{
+			typ: 'object'
+			additional_properties: typesymbol_to_schema(map_type)
 		})
 	} else if symbol[0].is_capital() {
 		return SchemaRef(Reference{ref: '#/components/schemas/$symbol'})
@@ -33,11 +42,23 @@ pub fn typesymbol_to_schema(symbol string) SchemaRef {
 		if symbol == 'bool' {
 			return SchemaRef(Schema{typ: 'boolean'})
 		}
+		if symbol == 'int' {
+			return SchemaRef(Schema{typ: 'integer'})
+		}
+		if symbol == 'u16' {
+			return SchemaRef(Schema{typ: 'integer'})
+		}
 		if symbol == 'u32' {
 			return SchemaRef(Schema{typ: 'integer'})
 		}
 		if symbol == 'u64' {
-			return SchemaRef(Schema{typ: 'integer'})
+			return SchemaRef(Schema{typ: 'string'})
+		}
+		if symbol == '!' {
+			return SchemaRef(Schema{typ: 'null'})
+		}
+		if symbol == 'i64' {
+			return SchemaRef(Schema{typ: 'string'})
 		}
 		return SchemaRef(Schema{typ: symbol})
 	}

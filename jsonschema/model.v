@@ -18,6 +18,7 @@ pub mut:
 	description string
 	typ string [json: 'type']
 	properties map[string]SchemaRef
+	additional_properties SchemaRef [json: 'additionalProperties']
 	required []string
 	ref string
 	items Items
