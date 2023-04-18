@@ -8,8 +8,8 @@ const testpath = os.dir(@FILE) + '/example/chapter1'
 // const test_page = test_chapter.page_new()
 
 fn test_fix() ! {
-	mut library := new()
-	mut book := library.book_new(name: 'testbook')!
+	mut lib := new()
+	mut book := book_new(name: 'testbook')!
 	mut test_chapter := book.chapter_new(
 		name: 'Chapter1'
 		path: library.testpath
@@ -20,18 +20,18 @@ fn test_fix() ! {
 
 	println(test_page)
 
-	// test_page.fix() or { panic('Cannot fix page: ${err}') }
-
 	assert test_page.pathrel == 'decentralized_cloud/decentralized_cloud.md'
 	assert test_page.name == 'decentralized_cloud'
+
+	test_page.fix() or { panic('Cannot fix page: ${err}') }
 }
 
 fn test_scan() {
-	mut library := new()
-	mut book := library.book_new(name: 'testbook')!
+	mut lib := new()
+	mut book := lib.book_new(name: 'testbook')!
 	mut test_chapter := book.chapter_new(
 		name: 'Chapter2'
-		path: '${library.testpath}'
+		path: library.testpath
 		load: true
 		heal: false
 	) or { panic('Cannot create / load new chapter: ${err}') }
