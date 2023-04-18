@@ -2,9 +2,24 @@ module library
 import freeflowuniverse.crystallib.pathlib { Path }
 import freeflowuniverse.crystallib.params
 
+
+[params]
+pub struct ChapterFinderArgs {
+pub mut:
+	path      string
+	heal      bool // healing means we fix images, if selected will automatically load, remove stale links
+	load      bool
+}
+
+
 //walk over directory find dis with .site or .chapter inside and add to the book
-fn (mut book Book) scan_recursive(mut path pathlib.Path) ! {
+fn (mut book Book) scan_recursive(args ChapterFinderArgs) ! {
 	// $if debug{println(" - chapters find recursive: $path.path")}
+	if args.path.len<3{
+		return error("Path needs to be not empty.")
+	}
+	mut path := pathlib.get_dir(args.path, false)!
+
 	if path.is_dir() {
 		if path.file_exists('.site') || path.file_exists('.chapter') {
 			mut name := path.name()
@@ -26,7 +41,7 @@ fn (mut book Book) scan_recursive(mut path pathlib.Path) ! {
 				}
 			}
 			println(' - chapter new: ${chapterfilepath.path} name:${name}')
-			book.chapter_new(path: chapterfilepath.path, name: name)!
+			book.chapter_new(path: path.path, name: name,heal:args.heal, load:args.load)!
 			return
 		}
 		mut llist := path.list(recursive: false) or {
@@ -38,7 +53,7 @@ fn (mut book Book) scan_recursive(mut path pathlib.Path) ! {
 					continue
 				}
 
-				book.scan_recursive(mut p_in) or {
+				book.scan_recursive(path:p_in.path, heal:args.heal, load:args.load) or {
 					msg := 'Cannot process recursive on ${p_in.path}\n${err}'
 					// println(msg)
 					return error(msg)
@@ -48,8 +63,7 @@ fn (mut book Book) scan_recursive(mut path pathlib.Path) ! {
 	}
 }
 
-pub fn (mut book Book) chapters_scan(path string) ! {
-	mut p := pathlib.get_dir(path, false)!
-	book.scan_recursive(mut p)!
+pub fn (mut book Book) chapters_scan(args ChapterFinderArgs) ! {
+	book.scan_recursive(args)!
 	book.fix()!
 }

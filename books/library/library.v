@@ -1,5 +1,6 @@
 module library
 import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.gittools
 
 [heap]
 pub struct Library {
@@ -19,6 +20,12 @@ pub struct BookNewArgs{
 pub mut:
 	name string
 	chapters_path string
+	chapters_giturl string
+	git_reset bool
+	git_root  string
+	git_pull  bool
+	heal      bool // healing means we fix images, if selected will automatically load, remove stale links
+	load      bool	
 }
 
 pub fn (mut l Library) book_new(args_ BookNewArgs)!&Book{
@@ -30,10 +37,17 @@ pub fn (mut l Library) book_new(args_ BookNewArgs)!&Book{
 
 	mut b:=Book{name:args.name,library:&l}
 	l.books[args.name]=&b
+
+	if args.chapters_giturl.len > 0 {
+		mut gs := gittools.get(root: args.git_root)!
+		mut gr := gs.repo_get_from_url(url: args.chapters_giturl, pull: args.git_pull, reset: args.git_reset)!
+		args.chapters_path = gr.path_content_get()
+	}
+
 	if args.chapters_path.len>0{
-		//lets now scan for chapters
-		//TODO: 
+		b.scan_recursive(path:args.chapters_path, heal:args.heal, load:args.load)!
 	}	
+
 	return l.books[args.name] or {panic("bug")}
 }
 
@@ -135,7 +149,7 @@ pub fn ( library Library) file_get(pointerstr string) !&File {
 // get the image from a pointer, format of pointer is $book:$chapter:$name or $book::$name 
 pub fn ( library Library) page_exists(pointerstr string) bool {
 	_ := library.page_get(pointerstr) or {
-		if err is ChapterNotFound || err is ChapterObjNotFound || err is BookNotFound{
+		if err is ChapterNotFound || err is ChapterObjNotFound || err is BookNotFound || err is NoOrTooManyObjFound{
 			return false
 		} else {
 			panic(err) // catch unforseen errors
@@ -148,7 +162,7 @@ pub fn ( library Library) page_exists(pointerstr string) bool {
 // get the image from a pointer, format of pointer is $book:$chapter:$name or $book::$name 
 pub fn ( library Library) image_exists(pointerstr string) bool {
 	_ := library.image_get(pointerstr) or {
-		if err is ChapterNotFound || err is ChapterObjNotFound || err is BookNotFound{
+		if err is ChapterNotFound || err is ChapterObjNotFound || err is BookNotFound || err is NoOrTooManyObjFound{
 			return false
 		} else {
 			panic(err) // catch unforseen errors
@@ -160,7 +174,7 @@ pub fn ( library Library) image_exists(pointerstr string) bool {
 // get the image from a pointer, format of pointer is $book:$chapter:$name or $book::$name 
 pub fn ( library Library) file_exists(pointerstr string) bool {
 	_ := library.file_get(pointerstr) or {
-		if err is ChapterNotFound || err is ChapterObjNotFound || err is BookNotFound{
+		if err is ChapterNotFound || err is ChapterObjNotFound || err is BookNotFound || err is NoOrTooManyObjFound{
 			return false
 		} else {
 			panic(err) // catch unforseen errors

@@ -129,9 +129,12 @@ pub fn (mut book Book) page_get(pointerstr string) !&Page {
 // $chapter:$name or $name
 pub fn (mut book Book) image_get(pointerstr string) !&File {
 	p:=pointer_new(pointerstr)!
+	// println("chapter:'$p.chapter' name:'$p.name'")
 	mut res := []&File{}
 	for _,chapter in book.chapters{
+		// println(chapter.name)
 		if p.chapter=="" || p.chapter==chapter.name{
+			// println("in chapter")
 			if chapter.image_exists(pointerstr){
 				res<<chapter.image_get(pointerstr) or {panic("BUG")}
 			}

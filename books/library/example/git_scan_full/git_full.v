@@ -11,16 +11,18 @@ fn do() ! {
 
 	mut l := library.new()
 	
-	mut book:=l.book_new(name:"testbook")!
-
-	mut c := book.chapter_new(
+	mut book:=l.book_new(
+		name:"testbook"
 		git_root: '~/code5'
-		git_url: 'https://github.com/threefoldfoundation/books/tree/main/content/mytwin'
+		chapters_giturl: 'https://github.com/threefoldfoundation/books/tree/main/content'
+		git_reset: reset
 		load: true
 		heal: true
-		name: 'mytwin'
-		git_reset: reset
 	)!
+
+	println(book.chapters.len)
+
+	if true{panic("SDSD")}
 
 	p1:=book.page_get("funny_Comparison")!
 	p2:=book.page_get("funny Comparison.md")!
