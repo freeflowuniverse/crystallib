@@ -59,7 +59,6 @@ pub fn docgen(config DocGenConfig) !OpenRPC {
 fn fn_to_method(function codemodel.Function) Method {
 	$if debug {
 		eprintln('Converting function to method: $function.name')
-		// println('comments: $function.comments')
 	}
 
 	params := params_to_descriptors(function.params)
