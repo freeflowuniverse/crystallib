@@ -1,7 +1,6 @@
 module jsonschema
 
 import freeflowuniverse.crystallib.codemodel
-import freeflowuniverse.crystallib.codeparser
 
 pub fn struct_to_schema(struct_ codemodel.Struct) SchemaRef {
 	mut properties := map[string]SchemaRef{}
