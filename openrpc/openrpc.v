@@ -2,6 +2,7 @@ module openrpc
 
 import freeflowuniverse.crystallib.jsonschema {SchemaRef, Reference}
 import time
+import x.json2
 
 pub struct OpenRPC {
 	pub mut:
@@ -13,12 +14,14 @@ pub struct OpenRPC {
 	external_docs []ExternalDocs [json: externalDocs]
 }
 
+type License_ = License | json2.Null
+
 pub struct Info{
 	title string [required]
 	description string
 	terms_of_service string [json: termsOfService]
 	contact Contact
-	license License
+	license License_
 	version string [required]
 }
 
@@ -29,7 +32,7 @@ pub struct Contact {
 }
 
 pub struct License {
-	name string [required] = ''
+	name string [required]
 	url string
 }
 
@@ -69,7 +72,7 @@ pub type ContentDescriptorRef = ContentDescriptor | jsonschema.Reference
 
 pub struct ContentDescriptor {
 	pub:
-	name string [required] = ''
+	name string [required]
 	summary string
 	description string
 	required bool
