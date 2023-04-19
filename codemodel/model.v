@@ -45,6 +45,7 @@ pub mut:
 
 pub struct Param {
 	pub:
+	required bool
 	description string
 	name string
 	typ  Type
