@@ -80,7 +80,7 @@ fn (vparser VParser) parse_vfile(path string) []CodeItem {
 		is_fmt: true
 	}
 	file_ast := parser.parse_file(path, table, .parse_comments, fpref)
-	mut preceeding_comments := []ast.Comment
+	mut preceeding_comments := []ast.Comment{}
 
 	for stmt in file_ast.stmts {
 		// code block from vlib/v/doc/doc.v
@@ -99,7 +99,7 @@ fn (vparser VParser) parse_vfile(path string) []CodeItem {
 					table: table
 					comments: preceeding_comments
 				))
-				preceeding_comments = []ast.Comment
+				preceeding_comments = []ast.Comment{}
 			}
 		} else if stmt is ast.StructDecl {
 			struct_decl := stmt as ast.StructDecl
@@ -109,7 +109,7 @@ fn (vparser VParser) parse_vfile(path string) []CodeItem {
 					table: table
 					comments: preceeding_comments
 				))
-				preceeding_comments = []ast.Comment
+				preceeding_comments = []ast.Comment{}
 			}
 		}
 	}
@@ -161,7 +161,6 @@ struct ParamsArgs {
 
 // parse_params parses ast function parameters into function parameters
 fn (vparser VParser)parse_params(args ParamsArgs) []Param {
-	comment_str := args.comments.map(it.text).join('')
 	mut params := []Param{}
 	for param in args.params {
 		mut description := ''
@@ -250,7 +249,6 @@ fn (vparser VParser) parse_vstruct(args VStructArgs) Struct {
 
 // parse_fields parses ast struct fields into struct fields
 fn (vparser VParser)parse_fields(fields []ast.StructField, table &ast.Table) []StructField {
-	mut fields_ := []StructField{}
 	return fields.map(
 		StructField{
 			name: it.name
