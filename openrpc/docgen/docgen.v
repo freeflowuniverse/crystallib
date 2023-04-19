@@ -1,7 +1,5 @@
 module docgen
 
-import v.doc
-import v.pref
 import freeflowuniverse.crystallib.jsonschema
 import freeflowuniverse.crystallib.openrpc {OpenRPC, Method}
 import freeflowuniverse.crystallib.codemodel {Struct, Function}
@@ -19,26 +17,30 @@ pub struct DocGenConfig {
 	exclude_files []string // files to be excluded when parsing source for document generation
 }
 
-// docgen generates OpenRPC Document struct for JSON-RPC API defined in the config params.
+// docgen returns OpenRPC Document struct for JSON-RPC API defined in the config params.
 // returns generated OpenRPC struct which can be encoded into json using `openrpc.OpenRPC.encode()`
 pub fn docgen(config DocGenConfig) !OpenRPC {
 	$if debug {
 		eprintln('Generating OpenRPC Document from path: $config.source')
 	}
 
+	// parse source code into code items
 	code := codeparser.parse_v(
 		config.source,
 		exclude_dirs: config.exclude_dirs
 		exclude_files: config.exclude_files
 	)!
+
 	mut schemas := map[string]jsonschema.SchemaRef{}
 	mut methods := []openrpc.Method{}
 
+	// generate JSONSchema compliant schema definitions for structs in code
 	for struct_ in code.filter(it is Struct).map(it as Struct) {
 		schema := jsonschema.struct_to_schema(struct_)
 		schemas[struct_.name] = schema
 	}
 
+	// generate OpenRPC compliant method definitions for functions in code
 	for function in code.filter(it is Function).map(it as Function) {
 		method := fn_to_method(function)
 		methods << method
@@ -56,13 +58,16 @@ pub fn docgen(config DocGenConfig) !OpenRPC {
 	}
 }
 
+// fn_to_method turns a codemodel function into a openrpc method description
 fn fn_to_method(function codemodel.Function) Method {
 	$if debug {
-		eprintln('Converting function to method: $function.name')
+		eprintln('Creating openrpc method description for function: $function.name')
 	}
 
 	params := params_to_descriptors(function.params)
 	result_schema := jsonschema.typesymbol_to_schema(function.result.typ.symbol)
+
+	// if result name isn't set, set it to 
 	result_name := if function.result.name != '' {
 		function.result.name
 	} else {
@@ -77,13 +82,13 @@ fn fn_to_method(function codemodel.Function) Method {
 
 	return openrpc.Method{
 		name: function.name
+		description: function.description
 		params: params
 		result: result
 	}
 }
 
-// get_param_descriptors takes in a list of params
-// returns content descriptors for the params
+// get_param_descriptors returns content descriptors generated for a list of params
 fn params_to_descriptors(params []codemodel.Param) []openrpc.ContentDescriptorRef {
 	
 	mut descriptors := []openrpc.ContentDescriptorRef{}
@@ -94,6 +99,7 @@ fn params_to_descriptors(params []codemodel.Param) []openrpc.ContentDescriptorRe
 			name: param.name
 			schema: schemaref
 			description: param.description
+			required: param.required
 		})
 	}
 
