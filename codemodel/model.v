@@ -13,6 +13,7 @@ pub struct Comment {
 pub struct Struct {
 	pub:
 	name string
+	description string
 	fields []StructField
 }
 
@@ -21,6 +22,8 @@ pub struct StructField {
 	comments []Comment
 	attrs    []Attribute
 	name string
+	description string
+	anon_struct Struct // sometimes fields may hold anonymous structs
 	typ Type
 }
 
