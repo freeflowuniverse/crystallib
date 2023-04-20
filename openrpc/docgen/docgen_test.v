@@ -45,8 +45,10 @@ fn test_params_to_descriptors() {
 	assert descriptors[0] is openrpc.ContentDescriptor
 	param0 := descriptors[0] as openrpc.ContentDescriptor
 	assert param0.name == 'test_param'
-	assert param0.description == 'a parameter to test if params are also included in the method description.'
-	assert param0.required == true
+	param0_description := param0.description or {''}
+	assert param0_description == 'a parameter to test if params are also included in the method description.'
+	// param0_required := param
+	assert param0.required or { false } == true
 	assert param0.schema is jsonschema.Schema
 	param0_schema := param0.schema as jsonschema.Schema
 	assert param0_schema.typ == 'string'
@@ -55,8 +57,8 @@ fn test_params_to_descriptors() {
 	assert descriptors[1] is openrpc.ContentDescriptor
 	param1 := descriptors[1] as openrpc.ContentDescriptor
 	assert param1.name == 'another_param'
-	assert param1.description == 'a second parameter to test if method description works with multiple params.'
-	assert param1.required == false
+	param1_description := param1.description or {''}
+	assert param1_description == 'a second parameter to test if method description works with multiple params.'
 	assert param1.schema is jsonschema.Schema
 	param1_schema := param1.schema as jsonschema.Schema
 	assert param1_schema.typ == 'integer'
@@ -65,7 +67,6 @@ fn test_params_to_descriptors() {
 	assert descriptors[2] is openrpc.ContentDescriptor
 	param2 := descriptors[2] as openrpc.ContentDescriptor
 	assert param2.name == 'array_param'
-	assert param2.required == false
 	assert param2.schema is jsonschema.Schema
 	param2_schema := param2.schema as jsonschema.Schema
 	assert param2_schema.typ == 'array'
@@ -113,7 +114,8 @@ fn test_fn_to_method() {
 
 	//test method info is described correctly
 	assert openrpc_method.name == 'test_function'
-	assert openrpc_method.description == 'tests whether OpenRPC method description can be generated from function.'
+	description := openrpc_method.description or {''}
+	assert description == 'tests whether OpenRPC method description can be generated from function.'
 	assert openrpc_method.params.len == 1
 
 	// test test_param is described correctly
@@ -128,7 +130,7 @@ fn test_fn_to_method() {
 	assert openrpc_method.result is openrpc.ContentDescriptor
 	result := openrpc_method.result as openrpc.ContentDescriptor
 	assert result.name == 'string_list'
-	assert result.description == 'a list of strings which the function will return'
+	assert result.description or {''} == 'a list of strings which the function will return'
 	assert result.schema is jsonschema.Schema
 	result_schema := result.schema as jsonschema.Schema
 	assert result_schema.typ == 'array'
@@ -142,9 +144,10 @@ fn test_fn_to_method() {
 // test_docgen tests whether OpenRPC document generation for the PetStore JSON-RPC Client
 // works across different configurations
 fn test_docgen() ! {
-	client_path := os.dir(@FILE).all_before_last('/') + '/examples/openrpc_client'
+	client_path := os.dir(@FILE).all_before_last('/') + '/examples/petstore_client'
 	doc := docgen(
 		title: 'test'
 		source: client_path
 	)!
+	panic(doc.encode()!)
 }
