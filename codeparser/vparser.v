@@ -120,7 +120,7 @@ fn (vparser VParser) parse_vfile(path string) []CodeItem {
 struct VFuncArgs {
 	comments []ast.Comment // v comments that belong to the function
 	fn_decl ast.FnDecl // v.ast parsed function declaration
-	table ast.Table // ast table used for getting typesymbols from
+	table &ast.Table // ast table used for getting typesymbols from
 }
 
 // parse_vfunc parses function args into function struct
@@ -145,8 +145,16 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 		table: args.table
 	)
 
+	mut fn_comments := []string{}
+	for comment in args.comments.map(it.text.trim_string_left('\u0001').trim_space()) {
+		if !comment.starts_with('-') && !comment.starts_with('returns') {
+			fn_comments << comment.trim_string_left(args.fn_decl.short_name)
+		}
+	}
+
 	return Function{
 		name: args.fn_decl.short_name
+		description: fn_comments.join(' ')
 		params: params
 		result: result
 	}
@@ -156,7 +164,7 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 struct ParamsArgs {
 	comments []ast.Comment // comments of the function
 	params []ast.Param // ast type of what function returns
-	table ast.Table // ast table for getting type names 
+	table &ast.Table // ast table for getting type names 
 }
 
 // parse_params parses ast function parameters into function parameters
@@ -179,14 +187,13 @@ fn (vparser VParser)parse_params(args ParamsArgs) []Param {
 			}
 		}
 	}
-	
 	return params
 }
 
 struct ReturnArgs {
 	comments []ast.Comment // comments of the function
 	return_type ast.Type // v.ast type of what function returns
-	table ast.Table // v.ast table for getting type names 
+	table &ast.Table // v.ast table for getting type names 
 }
 
 // parse_result parses a function's comments and return type
@@ -210,7 +217,6 @@ fn (vparser VParser)parse_result(args ReturnArgs) Result {
 			description = split[1..].join(', ')
 		}
 	}
-
 	return_symbol := args.table.type_to_str(args.return_type).all_after_last('.')
 	
 	return Result {
@@ -241,20 +247,46 @@ fn (vparser VParser) parse_vstruct(args VStructArgs) Struct {
 	$if debug {
 		eprintln('Parsing struct: $args.struct_decl.name')
 	}
+
+	comments := args.comments.map(it.text.trim_string_left('\u0001').trim_space())
+
 	return Struct{
 		name: args.struct_decl.name.all_after_last('.')
+		description: comments.join(' ')
 		fields: vparser.parse_fields(args.struct_decl.fields, args.table)
 	}
 }
 
 // parse_fields parses ast struct fields into struct fields
 fn (vparser VParser)parse_fields(fields []ast.StructField, table &ast.Table) []StructField {
-	return fields.map(
-		StructField{
-			name: it.name
+	mut fields_ := []StructField{}
+	for field in fields {
+		mut anon_struct := Struct{}
+		if table.type_to_str(field.typ).all_after_last('.').starts_with('_VAnon') {
+			anon_struct = vparser.parse_vstruct(
+				table: table
+				struct_decl: field.anon_struct_decl
+			)
+		}
+		
+		description := field.comments.map(it.text.trim_string_left('\u0001').trim_space()).join(' ')
+		fields_ << StructField{
+			name: field.name
+			anon_struct: anon_struct
+			description: description
 			typ: Type{
-				symbol: table.type_to_str(it.typ).all_after_last('.')
+				symbol: table.type_to_str(field.typ).all_after_last('.')
 			}
 		}
-	)
+	}
+	return fields_
+
+	// return fields.map(
+	// 	StructField{
+	// 		name: it.name
+	// 		typ: Type{
+	// 			symbol: table.type_to_str(it.typ).all_after_last('.')
+	// 		}
+	// 	}
+	// )
 }
