@@ -52,7 +52,7 @@ fn find_benchmark(nr int) {
 }
 
 fn main() {
-	counter := 500
+	counter := 50000
 
 	if os.exists(testpath) {
 		os.rm(testpath)!
@@ -66,13 +66,13 @@ fn main() {
 		ff.write_string("color:r${i} urgent depth:'${i},${i + 1}' description:'a longer description_${i}'\n")!
 		bmark.ok()
 	}
-
+	ff.close()
 	bmark.stop()
 
 	nritems := 1000 * counter / bmark.total_duration()
 	println('nr of items per sec for write: ${nritems}')
 	// copy_to_stdout()
-	// find_item("*some line with a nr: 449")  or {panic(err)}
+	find_item("*some line with a nr: 499")  or {panic(err)}
 
 	find_benchmark(counter)
 }

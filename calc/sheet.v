@@ -1,6 +1,7 @@
 module calc
 
 import freeflowuniverse.crystallib.currency
+import freeflowuniverse.crystallib.params
 
 [heap]
 pub struct Sheet {
@@ -56,41 +57,34 @@ pub fn (mut s Sheet) names_width() []int {
 pub struct Group2RowArgs {
 pub mut:
 	name string
-	tags []string
+	include []string //to use with params filter e.g. ['location:belgium_*'] //would match all words starting with belgium
+	exclude []string
+	tags    string
+	descr   string
+	subgroup string	
+	aggregatetype RowAggregateType = .sum
 }
 
 // find all rows which have one of the tags
 // aggregate (sum) them into one row
 // returns a row with the result
-// useful to e.g. make new row which makes sum of all salaries for e.g. devengineering tag (or more than 1 tag)
+// useful to e.g. make new row which makes sum of all salaries for e.g. dev and engineering tag
 pub fn (mut s Sheet) group2row(args Group2RowArgs) !&Row {
 	name := args.name
 	if name == '' {
 		return error('name cannot be empty')
 	}
-	tags := args.tags
-	if tags == [] {
-		return error('tags cannot be empty')
-	}
-	mut rowout := s.row_new(name: name, growth: '1:0.0')!
+	mut rowout := s.row_new(name: name, tags: args.tags, descr:args.descr, subgroup:args.subgroup, 	
+				aggregatetype:args.aggregatetype)!
 	for _, row in s.rows {
-		if tags.len > 0 {
-			mut ok := false
-			for tag1 in row.tags {
-				for tag2 in tags {
-					if tag1.to_lower() == tag2.to_lower() {
-						ok = true
-					}
-				}
+		tagstofilter:=params.parse(row.tags)!
+		matched:=tagstofilter.filter_match(include: args.include, exclude:args.exclude)!
+		if matched{
+			mut x := 0
+			for cell in row.cells {
+				rowout.cells[x].val += cell.val
+				x += 1
 			}
-			if ok == false {
-				continue
-			}
-		}
-		mut x := 0
-		for cell in row.cells {
-			rowout.cells[x].val += cell.val
-			x += 1
 		}
 	}
 	return rowout
@@ -100,8 +94,9 @@ pub fn (mut s Sheet) group2row(args Group2RowArgs) !&Row {
 pub struct ToYearQuarterArgs {
 pub mut:
 	name          string
-	rowsfilter    []string
-	tagsfilter    []string
+	namefilter    		  []string //only include the exact names as secified for the rows
+	includefilter    	  []string //matches for the tags
+	excludefilter		  []string //matches for the tags
 	period_months int = 12
 }
 
@@ -123,16 +118,13 @@ fn (mut s Sheet) tosmaller(args_ ToYearQuarterArgs) !Sheet {
 		curr: s.currency.name
 	)!
 	for _, row in s.rows {
-		if args.rowsfilter.len > 0 || args.tagsfilter.len > 0 {
+		if args.namefilter.len > 0 || args.includefilter.len > 0 || args.excludefilter.len > 0 {
 			mut ok := false
-			for tag1 in row.tags {
-				for tag2 in args.tagsfilter {
-					if tag1.to_lower() == tag2.to_lower() {
-						ok = true
-					}
-				}
+			if args.includefilter.len > 0 || args.excludefilter.len > 0{
+				tagstofilter:=params.parse(row.tags)!
+				ok=tagstofilter.filter_match(include: args.includefilter, exclude:args.excludefilter)!
 			}
-			for name1 in args.rowsfilter {
+			for name1 in args.namefilter {
 				if name1.to_lower() == row.name.to_lower() {
 					ok = true
 				}
@@ -141,7 +133,7 @@ fn (mut s Sheet) tosmaller(args_ ToYearQuarterArgs) !Sheet {
 				continue
 			}
 		}
-		// means filter not specified or
+		// means filter not specified or filtered
 		mut rnew := sheet_out.row_new(
 			name: row.name
 			aggregatetype: row.aggregatetype

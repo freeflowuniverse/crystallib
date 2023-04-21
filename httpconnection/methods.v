@@ -70,7 +70,7 @@ pub fn (mut h HTTPConnection) send(req Request) !Result {
 		new_req.header = h.header()
 		for _ in 0 .. h.retry {
 			response = new_req.do() or {
-				err_message = '${err}'
+				err_message = 'Cannot send rew:$req\nerror:${err}'
 				// println(err_message)
 				continue
 			}
@@ -112,7 +112,7 @@ pub fn (mut h HTTPConnection) post_json_str(req_ Request) !string {
 pub fn (mut h HTTPConnection) get_json_dict(req Request) !map[string]json2.Any {
 	data_ := h.get(req)!
 	mut data := map[string]json2.Any{}
-	println(data)
+	// println(data)
 	data = crystaljson.json_dict_filter_any(data_, false, [], [])!
 	return data
 }

@@ -21,15 +21,16 @@ pub fn (params &Params) get_currencyamount_default(key string, defval string) !c
 }
 
 // get currency expressed in float in line to currency passed
-pub fn (params &Params) get_currencyfloat(key string) !currency.Amount {
+pub fn (params &Params) get_currencyfloat(key string) !f64 {
 	mut cs := currency.new()!
 	valuestr := params.get(key)!
-	return cs.amount_get(valuestr)!
+	a:=cs.amount_get(valuestr)!
+	return a.val
 }
 
-pub fn (params &Params) get_currencyfloat_default(key string, defval currency.Amount) !currency.Amount {
+pub fn (params &Params) get_currencyfloat_default(key string, defval f64) !f64 {
 	if params.exists(key) {
-		return params.get_currencyamount(key)!
+		return params.get_currencyfloat(key)!
 	}
 	return defval
 }

@@ -39,7 +39,7 @@ fn copy_to_stdout() {
 }
 
 fn find_benchmark(nr int) {
-	counter := 1000
+	counter := 100
 
 	mut bmark := benchmark.new_benchmark()
 
@@ -59,7 +59,7 @@ fn find_benchmark(nr int) {
 }
 
 fn main() {
-	counter := 5000
+	counter := 50000
 
 	if os.exists(testpath) {
 		os.rm(testpath)!
@@ -74,6 +74,8 @@ fn main() {
 		bmark.ok()
 	}
 
+	ff.close()
+
 	bmark.stop()
 
 	nritems := 1000 * counter / bmark.total_duration()
@@ -83,7 +85,7 @@ fn main() {
 
 	// copy_to_stdout()
 
-	// find_item("*some line with a nr: 449")  or {panic(err)}
+	find_item("*some line with a nr: ${counter-1}")  or {panic(err)}
 
 	find_benchmark(counter)
 }
