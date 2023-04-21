@@ -116,7 +116,10 @@ pub fn (mut r DockerBuilderRecipe) add_sshserver(args CodeGetArgs) ! {
 		name: "ssh-keys",
 		after: "sshd-setup",
 		exec: "
-			mkdir -m 700 /root/.ssh
+			if [ ! -d /root/.ssh ]; then
+				mkdir -m 700 /root/.ssh
+			fi
+
 			echo \$SSH_KEY >> /root/.ssh/authorized_keys
 			chmod 600 /root/.ssh/authorized_keys
 		"
