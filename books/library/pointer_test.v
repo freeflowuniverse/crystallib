@@ -94,7 +94,6 @@ fn test_pointer4() {
 	p := pointer_new('MY_Book:chapter_AAA:aImage__.jpg') or { panic(err) }
 	println(p)
 	p_compare := Pointer{
-		chapter: ''
 		name: 'aimage'
 		cat: .image
 		extension: 'jpg'
@@ -110,7 +109,6 @@ fn test_pointer5() {
 	p := pointer_new('MY_Book::aImage__.jpg') or { panic(err) }
 	println(p)
 	p_compare := Pointer{
-		chapter: ''
 		name: 'aimage'
 		cat: .image
 		extension: 'jpg'
