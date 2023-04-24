@@ -1,7 +1,6 @@
 module jsonschema
 
 fn test_encode_simple() ! {
-	
 	struct_str := '
 // person struct used for test schema encoding
 struct TestPerson {
@@ -9,17 +8,17 @@ struct TestPerson {
 	age int
 }'
 
-	schema := Schema {
+	schema := Schema{
 		schema: 'test'
 		title: 'TestPerson'
 		description: 'person struct used for test schema encoding'
 		typ: 'object'
 		properties: {
-			'name': Schema {
+			'name': Schema{
 				typ: 'string'
 				description: 'name of the test person'
-			},
-			'age': Schema {
+			}
+			'age':  Schema{
 				typ: 'integer'
 				description: 'age of the test person'
 			}
@@ -31,7 +30,6 @@ struct TestPerson {
 }
 
 fn test_encode_schema_with_reference() ! {
-	
 	struct_str := '
 // person struct used for test schema encoding
 struct TestPerson {
@@ -40,21 +38,21 @@ struct TestPerson {
 	friend Friend
 }'
 
-	schema := Schema {
+	schema := Schema{
 		schema: 'test'
 		title: 'TestPerson'
 		description: 'person struct used for test schema encoding'
 		typ: 'object'
 		properties: {
-			'name': Schema {
+			'name':   Schema{
 				typ: 'string'
 				description: 'name of the test person'
-			},
-			'age': Schema {
+			}
+			'age':    Schema{
 				typ: 'integer'
 				description: 'age of the test person'
-			},
-			'friend': Reference {
+			}
+			'friend': Reference{
 				ref: '#components/schemas/Friend'
 			}
 		}
@@ -65,35 +63,35 @@ struct TestPerson {
 }
 
 fn test_encode_recursive() ! {
-	schema := Schema {
+	schema := Schema{
 		schema: 'test'
 		title: 'TestPerson'
 		description: 'person struct used for test schema encoding'
 		typ: 'object'
 		properties: {
-			'name': Schema {
+			'name':   Schema{
 				typ: 'string'
 				description: 'name of the test person'
-			},
-			'age': Schema {
+			}
+			'age':    Schema{
 				typ: 'integer'
 				description: 'age of the test person'
-			},
-			'friend': Schema {
+			}
+			'friend': Schema{
 				title: 'TestFriend'
 				typ: 'object'
 				description: 'friend of the test person'
 				properties: {
-					'name': Schema {
+					'name': Schema{
 						typ: 'string'
 						description: 'name of the test friend person'
-					},
-					'age': Schema {
+					}
+					'age':  Schema{
 						typ: 'integer'
 						description: 'age of the test friend person'
 					}
 				}
-			},
+			}
 		}
 	}
 	encoded := schema.vstructs_encode()!

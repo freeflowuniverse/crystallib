@@ -2,7 +2,7 @@ module jsonschema
 
 const vtypes = {
 	'integer': 'int'
-	'string': 'string'
+	'string':  'string'
 }
 
 pub fn (schema Schema) v_encode() !string {
@@ -41,7 +41,7 @@ pub fn (schema Schema) vstructs_encode() ![]string {
 			}
 		}
 
-		properties += '\n\t$name $typesymbol'
+		properties += '\n\t${name} ${typesymbol}'
 		if name in schema.required {
 			properties += ' [required]'
 		}
@@ -65,13 +65,13 @@ pub fn (schema Schema) vtype_encode() !string {
 			// items := schema.items as SchemaRef
 			if schema.items is Schema {
 				items_schema := schema.items as Schema
-				property_str = '[]$items_schema.typ'
+				property_str = '[]${items_schema.typ}'
 			}
 		}
-	} else if schema.typ in vtypes.keys(){
-		property_str = vtypes[schema.typ]
+	} else if schema.typ in jsonschema.vtypes.keys() {
+		property_str = jsonschema.vtypes[schema.typ]
 	} else {
-		return error('unknown type `$schema.typ` ')
+		return error('unknown type `${schema.typ}` ')
 	}
 	return property_str
 }
