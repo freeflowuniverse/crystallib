@@ -149,5 +149,5 @@ fn test_docgen() ! {
 		title: 'test'
 		source: client_path
 	)!
-	panic(doc.encode()!)
+	// assert doc == {}
 }

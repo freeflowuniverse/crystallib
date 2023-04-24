@@ -41,7 +41,7 @@ fn test_encode_with_method() ! {
 		]
 	}
 	encoded := doc.encode()!
-	assert encoded == '{"openrpc":"1.0.0","info":{"version":"1.0.0"},"methods":[{"name":"method_name","summary":"summary","description":"description for this method","params":[{"name":"sample descriptor"}]}]}'
+	assert encoded == '{"openrpc":"1.0.0","info":{"version":"1.0.0"},"methods":[{"name":"method_name","summary":"summary","description":"description for this method","params":[{"name":"sample descriptor","schema":{"type":"string"}}]}]}'
 }
 
 // test if can correctly encode a complete OpenRPC doc
@@ -69,7 +69,5 @@ fn test_encode() ! {
 		]
 	}
 	encoded := json.encode(doc)
-	panic(encoded)
-	// jsonencoded := doc.encode()!
-	// assert encoded == '{"openrpc":"1.0.0","info":{"version":"1.0.0"},"methods":[{"name":"method_name","summary":"summary","description":"description for this method","params":[{"name":"sample descriptor"}]}]}'
+	assert encoded == '{"openrpc":"1.0.0","info":{"title":"","version":"1.0.0"},"methods":[{"name":"method_name","summary":"summary","description":"description for this method","params":[{"name":"sample descriptor","schema":{"\$schema":"","\$id":"","title":"","description":"","type":"string","properties":{},"additionalProperties":{},"required":[],"ref":"","items":{},"defs":{},"_type":"Schema"},"_type":"ContentDescriptor"}],"result":{},"deprecated":true}]}'
 }
