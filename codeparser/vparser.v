@@ -99,8 +99,8 @@ fn (vparser VParser) parse_vfile(path string) []CodeItem {
 					table: table
 					comments: preceeding_comments
 				))
-				preceeding_comments = []ast.Comment{}
 			}
+			preceeding_comments = []ast.Comment{}
 		} else if stmt is ast.StructDecl {
 			struct_decl := stmt as ast.StructDecl
 			if struct_decl.is_pub || !vparser.only_pub {
@@ -109,8 +109,8 @@ fn (vparser VParser) parse_vfile(path string) []CodeItem {
 					table: table
 					comments: preceeding_comments
 				))
-				preceeding_comments = []ast.Comment{}
 			}
+			preceeding_comments = []ast.Comment{}
 		}
 	}
 	return code
