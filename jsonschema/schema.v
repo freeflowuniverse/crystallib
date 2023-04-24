@@ -1,157 +1,26 @@
 module jsonschema
 
-import freeflowuniverse.crystallib.codemodel
+type Items = SchemaRef | []SchemaRef
 
-pub fn struct_to_schema(struct_ codemodel.Struct) SchemaRef {
-	mut properties := map[string]SchemaRef{}
-	for field in struct_.fields {
-		mut property_schema := SchemaRef(Schema{})
-		if field.typ.symbol.starts_with('_VAnonStruct') {
-			property_schema = struct_to_schema(field.anon_struct)
-		} else {
-			property_schema = typesymbol_to_schema(field.typ.symbol)
-		}
-		if mut property_schema is Schema {
-			properties[field.name] = SchemaRef(
-				Schema {
-					typ: property_schema.typ
-					title: property_schema.title
-					description: field.description
-				}
-			)
-		} else {
-			properties[field.name] = property_schema
-		}
-	}
+pub type SchemaRef = Schema | Reference
 
-	title := if struct_.name.starts_with('_VAnonStruct') {
-		''} else {
-			struct_.name
-		}
-	
-	return SchemaRef(Schema{
-		title: title
-		description: struct_.description
-		properties: properties
-	})
+pub struct Reference {
+	pub:
+	ref string [json: '\$ref'; required]
 }
 
-// get typesymbol_to_schema receives a typesymbol, if the typesymbol belongs to a user defined struct
-// it returns a reference to the schema, else it returns a schema for the typesymbol
-pub fn typesymbol_to_schema(symbol_ string) SchemaRef {
-	mut symbol := symbol_.trim_string_left('!').trim_string_left('?')
-	if symbol == '' {
-		return SchemaRef(Schema{typ: 'null'})
-	} else if symbol.starts_with('[]') {
-		mut array_type := symbol.trim_string_left('[]')
-		return SchemaRef(Schema{
-			typ: 'array'
-			items: typesymbol_to_schema(array_type)
-		})
-	} else if symbol.starts_with('map[string]') {
-		mut map_type := symbol.trim_string_left('map[string]')
-		return SchemaRef(Schema{
-			typ: 'object'
-			additional_properties: typesymbol_to_schema(map_type)
-		})
-	} else if symbol[0].is_capital() {
-		return SchemaRef(Reference{ref: '#/components/schemas/$symbol'})
-	} else if symbol.starts_with('_VAnonStruct') {
-		return SchemaRef(Reference{ref: '#/components/schemas/$symbol'})
-	} else {
-		if symbol == 'void' {
-			return SchemaRef(Schema{typ: 'null'})
-		}
-		if symbol == 'bool' {
-			return SchemaRef(Schema{typ: 'boolean'})
-		}
-		if symbol == 'int' {
-			return SchemaRef(Schema{typ: 'integer'})
-		}
-		if symbol == 'u16' {
-			return SchemaRef(Schema{typ: 'integer'})
-		}
-		if symbol == 'u32' {
-			return SchemaRef(Schema{typ: 'integer'})
-		}
-		if symbol == 'u64' {
-			return SchemaRef(Schema{typ: 'string'})
-		}
-		if symbol == '!' {
-			return SchemaRef(Schema{typ: 'null'})
-		}
-		if symbol == 'i64' {
-			return SchemaRef(Schema{typ: 'string'})
-		}
-		if symbol == 'byte' {
-			return SchemaRef(Schema{typ: 'string'})
-		}
-		return SchemaRef(Schema{typ: symbol})
-	}
+// https://json-schema.org/draft-07/json-schema-release-notes.html
+pub struct Schema {
+pub mut:
+	schema string [json: '\$schema']
+	id string [json: '\$id']
+	title string
+	description string
+	typ string [json: 'type']
+	properties map[string]SchemaRef
+	additional_properties SchemaRef [json: 'additionalProperties']
+	required []string
+	ref string
+	items Items
+	defs map[string]Schema
 }
-
-
-// // contains_object checks whether a schema is an object or an array of objects
-// pub fn (schema Schema) contains_object() bool {
-// 	if schema.typ == 'object' {
-// 		return true
-// 	} 
-// 	if schema.typ != 'array' {
-// 		return false
-// 	}
-
-// 	// schema is array with single type
-// 	if schema.items is SchemaRef {
-// 		items := schema.items as Schema
-// 		return items.contains_object()
-// 	} 
-
-// 	// schema is array with multiple types
-// 	items := schema.items as []Schema
-// 	return items.map(it.contains_object()).any(!it)
-// }
-
-// // 
-// pub fn (mut schema Schema) clean() {
-// 	for property in schema.properties.filter(it.typ == 'objects') {
-// 		schema.define(property)
-// 	}
-// }
-
-// define defines a schema within the schema
-// returns uri relative to base of schema
-pub fn (mut schema Schema) define(key string, def_schema Schema) ! {
-	if key in schema.defs.keys() {
-		return error('Definition with key `$key` already exists.')
-	}
-	schema.defs[key] = def_schema
-}
-
-
-// pub fn (schema Schema) exists(id string) !bool {
-// 	if false {
-// 		return error('unexpected id format')
-// 	}
-// 	return schema.
-// }
-
-// // // https://json-schema.org/understanding-json-schema/structuring.html
-// // type Identifier {
-// // 	typ IDType
-// // }
-
-// // struct NonRelativeURI {
-// // 	scheme string
-// // 	fragment
-// // }
-
-// // enum IDType {
-// // 	uri // non-relative uri
-// // 	relative_reference
-// // 	uri_reference
-// // 	absolute_uri
-// // }
-
-// // pub fn load_id() Identifier {
-
-// // }
