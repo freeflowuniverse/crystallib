@@ -1,15 +1,31 @@
 # JSON Schema
+A V library for the JSON Schema model, and a few handy functions. 
+## JSON Schema Model
 
+Defined [here](https://json-schema.org/), "JSON Schema is a declarative language that allows you to annotate and validate JSON documents." The model in this module provides a struct that can easily be encoded into a JSON Schema.
 
-# Encoding to V
+## Generating a Schema
 
-Currently, to encode a JSON Schema to V, the schema must satisfy the following assumptions:
-- each object in schema must have a title
+The generate.v file provides functions that can generate JSONSchema from [codemodels](../codemodel/). This allows for easy generation of JSON Schema from structs, and is useful for generating schemas from parsed code in v.
 
-## Struct Names 
+Example: 
+```go
+struct_ := codemodel.Struct {
+    name: "Mystruct"
+    fields: [
+        codemodel.StructField {
+            name: "myfield"
+            typ: "string"
+        }
+    ]
+}
+schema := struct_to_schema(struct_)
+```
 
-When generating structs from schema objects, the encoder uses the title of the schema object to name the struct. The title is converted to PascalCase and used as the structs name. 
+### Generating Schemas for Anonymous Structs
 
-## Recursive Schemas
+The properties of a JSON Schema is a list of key value pairs, where keys represent the subschema's name and the value is the schema (or the reference to the schema which is defined elsewhere) of the property. This is analogous to the fields of a struct, which is represented by a field name and a type.
 
-In V, recursive structs are written with sumtypes. The Schema library doesn't support sumtypes yet, and as such recursive schemas can't be encoded into V.
+It's good practice to define object type schemas separately and reference them in properties, especially if the same schema is used in multiple places. However, object type schemas can also be defined in property definitions. This may make sense if the schema is exclusively used as a property of a schema, similar to using an anonymous struct for the type definition of a field of a struct.
+
+As such, schema's generated from structs that declare anonymous structs as field types, include a schema definition in the property field.
