@@ -9,7 +9,7 @@ pub fn (mut client Client) get_pets(tags []string, limit int) []Pet {}
 [params]
 struct NewPet {
 	name string [required]
-	tag string
+	tag  string
 }
 
 // create_pet creates a new pet in the store. Duplicates are allowed.

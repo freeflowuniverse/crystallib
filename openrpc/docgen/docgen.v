@@ -1,19 +1,19 @@
 module docgen
 
 import freeflowuniverse.crystallib.jsonschema
-import freeflowuniverse.crystallib.openrpc {OpenRPC, Method}
-import freeflowuniverse.crystallib.codemodel {Struct, Function}
+import freeflowuniverse.crystallib.openrpc { Method, OpenRPC }
+import freeflowuniverse.crystallib.codemodel { Function, Struct }
 import freeflowuniverse.crystallib.codeparser
 
 // configuration parameters for OpenRPC Document generation.
 [params]
 pub struct DocGenConfig {
-	title string // Title of the JSON-RPC API
-	description string // Description of the JSON-RPC API
-	version string = '1.0.0' // OpenRPC Version used
-	source string // Source code directory to generate doc from
-	strict bool // Strict mode generates document for only methods and struct with the attribute `openrpc`
-	exclude_dirs []string // directories to be excluded when parsing source for document generation
+	title         string   // Title of the JSON-RPC API
+	description   string   // Description of the JSON-RPC API
+	version       string = '1.0.0' // OpenRPC Version used
+	source        string   // Source code directory to generate doc from
+	strict        bool     // Strict mode generates document for only methods and struct with the attribute `openrpc`
+	exclude_dirs  []string // directories to be excluded when parsing source for document generation
 	exclude_files []string // files to be excluded when parsing source for document generation
 }
 
@@ -21,18 +21,17 @@ pub struct DocGenConfig {
 // returns generated OpenRPC struct which can be encoded into json using `openrpc.OpenRPC.encode()`
 pub fn docgen(config DocGenConfig) !OpenRPC {
 	$if debug {
-		eprintln('Generating OpenRPC Document from path: $config.source')
+		eprintln('Generating OpenRPC Document from path: ${config.source}')
 	}
 
 	// parse source code into code items
-	code := codeparser.parse_v(
-		config.source,
+	code := codeparser.parse_v(config.source,
 		exclude_dirs: config.exclude_dirs
 		exclude_files: config.exclude_files
 	)!
 
 	mut schemas := map[string]jsonschema.SchemaRef{}
-	mut methods := []openrpc.Method{}
+	mut methods := []Method{}
 
 	// generate JSONSchema compliant schema definitions for structs in code
 	for struct_ in code.filter(it is Struct).map(it as Struct) {
@@ -46,41 +45,41 @@ pub fn docgen(config DocGenConfig) !OpenRPC {
 		methods << method
 	}
 
-	return OpenRPC {
-		info: openrpc.Info {
+	return OpenRPC{
+		info: openrpc.Info{
 			title: config.title
 			version: config.version
 		}
 		methods: methods
-		components: openrpc.Components {
+		components: openrpc.Components{
 			schemas: schemas
 		}
 	}
 }
 
 // fn_to_method turns a codemodel function into a openrpc method description
-fn fn_to_method(function codemodel.Function) Method {
+fn fn_to_method(function Function) Method {
 	$if debug {
-		eprintln('Creating openrpc method description for function: $function.name')
+		eprintln('Creating openrpc method description for function: ${function.name}')
 	}
 
 	params := params_to_descriptors(function.params)
 	result_schema := jsonschema.typesymbol_to_schema(function.result.typ.symbol)
 
-	// if result name isn't set, set it to 
+	// if result name isn't set, set it to
 	result_name := if function.result.name != '' {
 		function.result.name
 	} else {
 		function.result.typ.symbol
 	}
 
-	result := openrpc.ContentDescriptor {
+	result := openrpc.ContentDescriptor{
 		name: result_name
 		schema: result_schema
 		description: function.result.description
 	}
 
-	return openrpc.Method{
+	return Method{
 		name: function.name
 		description: function.description
 		params: params
@@ -90,7 +89,6 @@ fn fn_to_method(function codemodel.Function) Method {
 
 // get_param_descriptors returns content descriptors generated for a list of params
 fn params_to_descriptors(params []codemodel.Param) []openrpc.ContentDescriptorRef {
-	
 	mut descriptors := []openrpc.ContentDescriptorRef{}
 
 	for param in params {

@@ -5,38 +5,38 @@ import freeflowuniverse.crystallib.codemodel
 import freeflowuniverse.crystallib.jsonschema
 import freeflowuniverse.crystallib.openrpc
 
-// test_fn_to_method tests whether 
+// test_fn_to_method tests whether
 fn test_params_to_descriptors() {
 	// testing only a few types of parameters since
 	// an exhaustive type_to_schema test is done at jsonschema/schema_test.v
 	params := [
-		codemodel.Param {
+		codemodel.Param{
 			name: 'test_param'
 			description: 'a parameter to test if params are also included in the method description.'
 			required: true
-			typ: codemodel.Type {
+			typ: codemodel.Type{
 				symbol: 'string'
 			}
-		}, 
-		codemodel.Param {
+		},
+		codemodel.Param{
 			name: 'another_param'
 			description: 'a second parameter to test if method description works with multiple params.'
-			typ: codemodel.Type {
+			typ: codemodel.Type{
 				symbol: 'int'
 			}
-		}
-		codemodel.Param {
+		},
+		codemodel.Param{
 			name: 'array_param'
-			typ: codemodel.Type {
+			typ: codemodel.Type{
 				symbol: '[]string'
 			}
-		}
-		codemodel.Param {
+		},
+		codemodel.Param{
 			name: 'object_param'
-			typ: codemodel.Type {
+			typ: codemodel.Type{
 				symbol: 'Object'
 			}
-		}
+		},
 	]
 
 	descriptors := params_to_descriptors(params)
@@ -45,7 +45,7 @@ fn test_params_to_descriptors() {
 	assert descriptors[0] is openrpc.ContentDescriptor
 	param0 := descriptors[0] as openrpc.ContentDescriptor
 	assert param0.name == 'test_param'
-	param0_description := param0.description or {''}
+	param0_description := param0.description or { '' }
 	assert param0_description == 'a parameter to test if params are also included in the method description.'
 	// param0_required := param
 	assert param0.required or { false } == true
@@ -57,7 +57,7 @@ fn test_params_to_descriptors() {
 	assert descriptors[1] is openrpc.ContentDescriptor
 	param1 := descriptors[1] as openrpc.ContentDescriptor
 	assert param1.name == 'another_param'
-	param1_description := param1.description or {''}
+	param1_description := param1.description or { '' }
 	assert param1_description == 'a second parameter to test if method description works with multiple params.'
 	assert param1.schema is jsonschema.Schema
 	param1_schema := param1.schema as jsonschema.Schema
@@ -75,36 +75,36 @@ fn test_params_to_descriptors() {
 	assert param2_schema_items is jsonschema.Schema
 	param2_schema_items_schema := param2_schema_items as jsonschema.Schema
 	assert param2_schema_items_schema.typ == 'string'
-	
+
 	// test object_param is described correctly
 	assert descriptors[3] is openrpc.ContentDescriptor
 	param3 := descriptors[3] as openrpc.ContentDescriptor
 	assert param3.name == 'object_param'
 	// should be reference since the param type is a struct
-	assert param3.schema is jsonschema.Reference 
+	assert param3.schema is jsonschema.Reference
 	param3_schema := param3.schema as jsonschema.Reference
 	assert param3_schema.ref == '#/components/schemas/Object'
 }
 
-// test_fn_to_method tests whether 
+// test_fn_to_method tests whether
 fn test_fn_to_method() {
-	function := codemodel.Function {
+	function := codemodel.Function{
 		name: 'test_function'
 		description: 'tests whether OpenRPC method description can be generated from function.'
 		// testing only with single simple param since params_to_descriptors is tested above
 		params: [
-			codemodel.Param {
+			codemodel.Param{
 				name: 'test_param'
-				typ: codemodel.Type {
+				typ: codemodel.Type{
 					symbol: 'string'
 				}
-			}
+			},
 		]
 		has_return: true
-		result: codemodel.Result {
+		result: codemodel.Result{
 			name: 'string_list'
 			description: 'a list of strings which the function will return'
-			typ: codemodel.Type {
+			typ: codemodel.Type{
 				symbol: '[]string'
 			}
 		}
@@ -112,9 +112,9 @@ fn test_fn_to_method() {
 
 	openrpc_method := fn_to_method(function)
 
-	//test method info is described correctly
+	// test method info is described correctly
 	assert openrpc_method.name == 'test_function'
-	description := openrpc_method.description or {''}
+	description := openrpc_method.description or { '' }
 	assert description == 'tests whether OpenRPC method description can be generated from function.'
 	assert openrpc_method.params.len == 1
 
@@ -130,7 +130,7 @@ fn test_fn_to_method() {
 	assert openrpc_method.result is openrpc.ContentDescriptor
 	result := openrpc_method.result as openrpc.ContentDescriptor
 	assert result.name == 'string_list'
-	assert result.description or {''} == 'a list of strings which the function will return'
+	assert result.description or { '' } == 'a list of strings which the function will return'
 	assert result.schema is jsonschema.Schema
 	result_schema := result.schema as jsonschema.Schema
 	assert result_schema.typ == 'array'

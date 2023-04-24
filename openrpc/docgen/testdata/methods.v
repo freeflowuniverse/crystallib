@@ -26,5 +26,4 @@ pub struct Params {
 }
 
 pub fn method_with_params(params Params) {
-
 }

@@ -87,27 +87,27 @@ enum ParamStructure {
 
 pub type ContentDescriptorRef = ContentDescriptor | Reference
 
-// Content Descriptors are objects that do just as they suggest - describe content. 
-// They are reusable ways of describing either parameters or result. 
+// Content Descriptors are objects that do just as they suggest - describe content.
+// They are reusable ways of describing either parameters or result.
 // They MUST have a schema.
 pub struct ContentDescriptor {
 pub:
 	name        string    [required] // Name of the content that is being described. If the content described is a method parameter assignable by-name, this field SHALL define the parameter’s key (ie name).
 	summary     ?string // A short summary of the content that is being described.
 	description ?string // A verbose explanation of the content descriptor behavior.
-	required    ?bool // Determines if the content is a required field. Default value is false.
+	required    ?bool   // Determines if the content is a required field. Default value is false.
 	schema      SchemaRef [required] // Schema that describes the content.
 	deprecated  ?bool // Specifies that the content is deprecated and SHOULD be transitioned out of usage. Default value is false.
 }
 
-// The Example Pairing object consists of a set of example params and result. 
+// The Example Pairing object consists of a set of example params and result.
 // The result is what you can expect from the JSON-RPC service given the exact params.
 pub struct ExamplePairing {
-	name        ?string // Name for the example pairing.
-	description ?string // A verbose explanation of the example pairing.
-	summary     ?string // Short description for the example pairing.
+	name        ?string       // Name for the example pairing.
+	description ?string       // A verbose explanation of the example pairing.
+	summary     ?string       // Short description for the example pairing.
 	params      ?[]ExampleRef // Example parameters.
-	result      ExampleRef // Example result. When undefined, the example pairing represents usage of the method as a notification.
+	result      ExampleRef    // Example result. When undefined, the example pairing represents usage of the method as a notification.
 }
 
 type ExampleRef = Example | Reference
@@ -117,7 +117,7 @@ type ExampleRef = Example | Reference
 pub struct Example {
 	name           ?string // Cannonical name of the example.
 	summary        ?string // Short description for the example.
- 	description    ?string // A verbose explanation of the example.
+	description    ?string // A verbose explanation of the example.
 	value          ?string // Embedded literal example. The value field and externalValue field are mutually exclusive. To represent examples of media types that cannot naturally represented in JSON, use a string value to contain the example, escaping where necessary.
 	external_value ?string [json: externalValue] // A URL that points to the literal example. This provides the capability to reference examples that cannot easily be included in JSON documents. The value field and externalValue field are mutually exclusive.
 }
@@ -151,31 +151,31 @@ type ErrorRef = Error | Reference
 // TODO: handle any type for data field
 // Defines an application level error.
 pub struct Error {
-	code    int    [required] // A Number that indicates the error type that occurred. This MUST be an integer. The error codes from and including -32768 to -32000 are reserved for pre-defined errors. These pre-defined errors SHOULD be assumed to be returned from any JSON-RPC api.
-	message string [required] // A String providing a short description of the error. The message SHOULD be limited to a concise single sentence.
+	code    int     [required] // A Number that indicates the error type that occurred. This MUST be an integer. The error codes from and including -32768 to -32000 are reserved for pre-defined errors. These pre-defined errors SHOULD be assumed to be returned from any JSON-RPC api.
+	message string  [required] // A String providing a short description of the error. The message SHOULD be limited to a concise single sentence.
 	data    ?string // A Primitive or Structured value that contains additional information about the error. This may be omitted. The value of this member is defined by the Server (e.g. detailed error information, nested errors etc.).
 }
 
 // TODO: enforce regex requirements
-// Holds a set of reusable objects for different aspects of the OpenRPC. 
+// Holds a set of reusable objects for different aspects of the OpenRPC.
 // All objects defined within the components object will have no effect on the API unless they are explicitly referenced from properties outside the components object.
 // All the fixed fields declared above are objects that MUST use keys that match the regular expression: ^[a-zA-Z0-9\.\-_]+$
 pub struct Components {
 	content_descriptors     map[string]ContentDescriptor [json: contentDescriptors] // An object to hold reusable Content Descriptor Objects.
 	schemas                 map[string]SchemaRef // An object to hold reusable Schema Objects.
-	examples                map[string]Example // An object to hold reusable Example Objects.
-	links                   map[string]Link // An object to hold reusable Link Objects.
-	error                   map[string]Error // An object to hold reusable Error Objects.
+	examples                map[string]Example   // An object to hold reusable Example Objects.
+	links                   map[string]Link      // An object to hold reusable Link Objects.
+	error                   map[string]Error     // An object to hold reusable Error Objects.
 	example_pairing_objects map[string]ExamplePairing    [json: examplePairingObjects] // An object to hold reusable Example Pairing Objects.
 	tags                    map[string]Tag // An object to hold reusable Tag Objects.
 }
 
 type TagRef = Reference | Tag
 
-// Adds metadata to a single tag that is used by the Method Object. 
+// Adds metadata to a single tag that is used by the Method Object.
 // It is not mandatory to have a Tag Object per tag defined in the Method Object instances.
 pub struct Tag {
-	name          string       [required] // The name of the tag.
+	name          string        [required] // The name of the tag.
 	summary       ?string // A short summary of the tag.
 	description   ?string // A verbose explanation for the tag.
 	external_docs ?ExternalDocs [json: externalDocs] // Additional external documentation for this tag.
@@ -184,7 +184,7 @@ pub struct Tag {
 // Allows referencing an external resource for extended documentation.
 pub struct ExternalDocs {
 	description ?string // A verbose explanation of the target documentation.
-	url         string [required] // The URL for the target documentation. Value MUST be in the format of a URL.
+	url         string  [required] // The URL for the target documentation. Value MUST be in the format of a URL.
 }
 
 // todo: implement specification extensions

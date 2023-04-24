@@ -1,7 +1,7 @@
 module openrpc
 
 import json
-import freeflowuniverse.crystallib.jsonschema {Schema, SchemaRef}
+import freeflowuniverse.crystallib.jsonschema { Schema, SchemaRef }
 
 // test if encode can correctly encode a blank OpenRPC
 fn test_encode_blank() ! {
@@ -35,9 +35,9 @@ fn test_encode_with_method() ! {
 						schema: SchemaRef(Schema{
 							typ: 'string'
 						})
-					}
+					},
 				]
-			}
+			},
 		]
 	}
 	encoded := doc.encode()!
@@ -63,9 +63,9 @@ fn test_encode() ! {
 						schema: SchemaRef(Schema{
 							typ: 'string'
 						})
-					}
+					},
 				]
-			}
+			},
 		]
 	}
 	encoded := json.encode(doc)

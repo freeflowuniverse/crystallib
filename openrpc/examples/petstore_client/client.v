@@ -1,10 +1,10 @@
 module petstore_client
 
-import freeflowuniverse.crystallib.jsonrpc {JsonRpcRequest}
+import freeflowuniverse.crystallib.jsonrpc { JsonRpcRequest }
 import net.websocket
 
 struct Client {
-	mut:
+mut:
 	ws_client &websocket.Client
 }
 
@@ -16,4 +16,3 @@ pub fn new() Client {
 fn (mut client Client) send_rpc(rpc JsonRpcRequest) ! {
 	client.ws_client.write_string(rpc.to_json())
 }
-
