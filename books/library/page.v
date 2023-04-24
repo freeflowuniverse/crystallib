@@ -205,4 +205,8 @@ pub fn (mut page Page) save(args_ PageSaveArgs) ! {
 	out := page.doc.wiki()
 	mut p := pathlib.get_file(args.dest, true)!
 	p.write(out)!
+
+	// mutate page to save updated doc
+	updated_doc := markdowndocs.new(path: p.path) or { panic('cannot parse,${err}') }	
+	page.doc = &updated_doc
 }
