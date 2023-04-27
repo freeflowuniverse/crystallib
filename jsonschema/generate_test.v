@@ -19,5 +19,4 @@ fn test_struct_to_schema() {
 
 	schema := struct_to_schema(struct_)
 	println(schema)
-	panic('as')
 }
