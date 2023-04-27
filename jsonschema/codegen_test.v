@@ -96,5 +96,4 @@ fn test_encode_recursive() ! {
 	}
 	encoded := schema.vstructs_encode()!
 	println(encoded)
-	panic('sss')
 }
