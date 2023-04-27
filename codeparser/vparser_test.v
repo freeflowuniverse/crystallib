@@ -10,7 +10,7 @@ const testpath = os.dir(@FILE) + '/testdata'
 const testcode = {
 	'anotherfile.v': [
 		CodeItem(Function{
-			name: 'anotherfile_func0'
+			name: 'test.anotherfile_func0'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -32,7 +32,7 @@ const testcode = {
 			has_return: false
 		}),
 		CodeItem(Function{
-			name: 'anotherfile_func1'
+			name: 'test.anotherfile_func1'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -97,7 +97,7 @@ const testcode = {
 			]
 		}),
 		CodeItem(Function{
-			name: 'anotherfile_func2'
+			name: 'test.anotherfile_func2'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -148,7 +148,7 @@ const testcode = {
 			]
 		}),
 		CodeItem(Function{
-			name: 'anotherfile_func3'
+			name: 'test.anotherfile_func3'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -189,7 +189,7 @@ const testcode = {
 	]
 	'subfile.v':     [
 		CodeItem(Function{
-			name: 'subfile_func0'
+			name: 'test.subfile_func0'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -211,7 +211,7 @@ const testcode = {
 			has_return: false
 		}),
 		CodeItem(Function{
-			name: 'subfile_func1'
+			name: 'test.subfile_func1'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -276,7 +276,7 @@ const testcode = {
 			]
 		}),
 		CodeItem(Function{
-			name: 'subfile_func2'
+			name: 'test.subfile_func2'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -327,7 +327,7 @@ const testcode = {
 			]
 		}),
 		CodeItem(Function{
-			name: 'subfile_func3'
+			name: 'test.subfile_func3'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -368,7 +368,7 @@ const testcode = {
 	]
 	'file.v':        [
 		CodeItem(Function{
-			name: 'file_func0'
+			name: 'test.file_func0'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -390,7 +390,7 @@ const testcode = {
 			has_return: false
 		}),
 		CodeItem(Function{
-			name: 'file_func1'
+			name: 'test.file_func1'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -455,7 +455,7 @@ const testcode = {
 			]
 		}),
 		CodeItem(Function{
-			name: 'file_func2'
+			name: 'test.file_func2'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -491,7 +491,7 @@ const testcode = {
 			fields: []
 		}),
 		CodeItem(Function{
-			name: 'file_func3'
+			name: 'test.file_func3'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -533,6 +533,7 @@ const testcode = {
 }
 
 fn test_vparse_blankdir() ! {
+	os.mkdir_all("${codeparser.testpath}/blankdir", os.MkdirParams{})!
 	code := parse_v('${codeparser.testpath}/blankdir')!
 	assert code.len == 0
 }
@@ -540,7 +541,7 @@ fn test_vparse_blankdir() ! {
 fn test_vparse_flat_directory() ! {
 	code := parse_v('${codeparser.testpath}/flatdir')!
 	assert code.len == 12
-	assert code[0..6] == codeparser.testcode['anotherfile.v'][0..6]
+	assert code[0..6] == codeparser.testcode['anotherfile.v'][0..6], "<${code[0..6]}> vs <${codeparser.testcode['anotherfile.v'][0..6]}>"
 	assert code[6..12] == codeparser.testcode['subfile.v'][0..6]
 }
 
