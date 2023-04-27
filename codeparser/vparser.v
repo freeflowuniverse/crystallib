@@ -93,6 +93,13 @@ fn (vparser VParser) parse_vfile(path string) []CodeItem {
 		}
 		if stmt is ast.FnDecl {
 			fn_decl := stmt as ast.FnDecl
+			if fn_decl.attrs.len > 0 {
+				openrpc_attrs := fn_decl.attrs.filter(it.name == 'openrpc') {
+					if openrpc_attrs.any(it.arg == 'exclude') {
+						continue
+					}
+				}
+			}
 			if fn_decl.is_pub || !vparser.only_pub {
 				code << CodeItem(vparser.parse_vfunc(
 					fn_decl: fn_decl
@@ -103,6 +110,13 @@ fn (vparser VParser) parse_vfile(path string) []CodeItem {
 			preceeding_comments = []ast.Comment{}
 		} else if stmt is ast.StructDecl {
 			struct_decl := stmt as ast.StructDecl
+			if struct_decl.attrs.len > 0 {
+				openrpc_attrs := struct_decl.attrs.filter(it.name == 'openrpc') {
+					if openrpc_attrs.any(it.arg == 'exclude') {
+						continue
+					}
+				}
+			}
 			if struct_decl.is_pub || !vparser.only_pub {
 				code << CodeItem(vparser.parse_vstruct(
 					struct_decl: struct_decl
@@ -153,7 +167,7 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 	}
 
 	return Function{
-		name: args.fn_decl.short_name
+		name: args.fn_decl.name
 		description: fn_comments.join(' ')
 		params: params
 		result: result
