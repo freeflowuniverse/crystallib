@@ -9,7 +9,7 @@ pub fn (schema Schema) v_encode() !string {
 	module_name := 'schema.title.'
 	structs := schema.vstructs_encode()!
 	// todo: report bug: return $tmpl(...)
-	encoded := $tmpl('templates/schema.v')
+	encoded := $tmpl('templates/schema.vtemplate')
 	return encoded
 }
 
@@ -46,7 +46,7 @@ pub fn (schema Schema) vstructs_encode() ![]string {
 			properties += ' [required]'
 		}
 	}
-	schemas << $tmpl('templates/struct.v')
+	schemas << $tmpl('templates/struct.vtemplate')
 	return schemas
 }
 
