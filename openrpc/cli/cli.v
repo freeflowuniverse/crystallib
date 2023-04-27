@@ -59,6 +59,12 @@ fn main() {
 		abbrev: 'f'
 		description: 'Files to be excluded from source code to generate document from.'
 	})
+	docgen_cmd.add_flag(Flag{
+		flag: .bool
+		name: 'public_only'
+		abbrev: 'p'
+		description: 'Generates document only from public functions.'
+	})
 
 	cmd.add_command(docgen_cmd)
 	cmd.setup()
@@ -80,6 +86,9 @@ fn cli_docgen(cmd Command) ! {
 		}
 		exclude_files: cmd.flags.get_strings('exclude_files') or {
 			panic('Failed to get `exclude_files` flag: ${err}')
+		}
+		only_pub: cmd.flags.get_bool('public_only') or {
+			panic('Failed to get `public_only` flag: ${err}')
 		}
 	}
 	doc := docgen.docgen(config) or { panic('Failed to generate OpenRPC Document.\n${err}') }
