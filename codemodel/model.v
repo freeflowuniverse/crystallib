@@ -11,14 +11,14 @@ pub struct Comment {
 }
 
 pub struct Struct {
-	pub:
+pub:
 	name string
 	description string
 	fields []StructField
 }
 
 pub struct StructField {
-	pub:
+pub:
 	comments []Comment
 	attrs    []Attribute
 	name string
@@ -47,7 +47,7 @@ pub mut:
 }
 
 pub struct Param {
-	pub:
+pub:
 	required bool
 	description string
 	name string
@@ -55,13 +55,13 @@ pub struct Param {
 }
 
 pub struct Result {
-	pub:
+pub:
 	typ Type
 	description string
 	name string
 }
 
 pub struct Type {
-	pub:
+pub:
 	symbol string	
 }
