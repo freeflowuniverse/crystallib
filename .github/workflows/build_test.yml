@@ -42,6 +42,8 @@ jobs:
         run: |
           v -stats test books
           v -stats test coinmarketcap
+          v -stats test codemodel
+          v -stats test codeparser
           v -stats test console
           v -stats test crpgp
           v -stats test crystaljson
@@ -52,8 +54,10 @@ jobs:
           v -stats test imagemagick
           v -stats test ipaddress
           v -stats test jsonrpc
+          v -stats test jsonschema
           v -stats test markdowndocs
           v -stats test mnemonic
+          v -stats test openrpc
           v -stats test params
           v -stats test pathlib
           v -stats test redisclient
