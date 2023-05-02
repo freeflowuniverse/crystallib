@@ -3,7 +3,8 @@ module codeparser
 import v.ast
 import v.parser
 import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.codemodel { CodeItem, Function, Param, Result, Struct, StructField, Type }
+import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.codemodel { CodeItem, Function, Param, Result, Struct, StructField, Type, Sumtype }
 import v.pref
 
 // VParser holds configuration of parsing
@@ -108,6 +109,25 @@ fn (vparser VParser) parse_vfile(path string) []CodeItem {
 				))
 			}
 			preceeding_comments = []ast.Comment{}
+		} else if stmt is ast.TypeDecl {
+			if stmt is ast.SumTypeDecl {
+				sumtype_decl := stmt as ast.SumTypeDecl
+				if sumtype_decl.attrs.len > 0 {
+					openrpc_attrs := sumtype_decl.attrs.filter(it.name == 'openrpc') {
+						if openrpc_attrs.any(it.arg == 'exclude') {
+							continue
+						}
+					}
+				}
+				if sumtype_decl.is_pub || !vparser.only_pub {
+					code << CodeItem(vparser.parse_vsumtype(
+						sumtype_decl: sumtype_decl
+						table: table
+						comments: preceeding_comments
+					))
+				}
+				preceeding_comments = []ast.Comment{}
+			}
 		} else if stmt is ast.StructDecl {
 			struct_decl := stmt as ast.StructDecl
 			if struct_decl.attrs.len > 0 {
@@ -166,8 +186,9 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 		}
 	}
 
+	pascal_name := texttools.name_fix_snake_to_pascal(args.fn_decl.short_name)
 	return Function{
-		name: args.fn_decl.name
+		name: '${args.fn_decl.mod}.${pascal_name}'
 		description: fn_comments.join(' ')
 		params: params
 		result: result
@@ -271,6 +292,27 @@ fn (vparser VParser) parse_vstruct(args VStructArgs) Struct {
 	}
 }
 
+struct VSumTypeArgs {
+	comments    []ast.Comment  // comments that belong to the struct declaration
+	sumtype_decl ast.SumTypeDecl // v.ast Struct declaration for struct being parsed
+	table       &ast.Table     // v.ast table for getting type names
+}
+
+// parse_params parses struct args into struct
+fn (vparser VParser) parse_vsumtype(args VSumTypeArgs) Sumtype {
+	$if debug {
+		eprintln('Parsing sumtype: ${args.sumtype_decl.name}')
+	}
+
+	comments := args.comments.map(it.text.trim_string_left('\u0001').trim_space())
+
+	return Sumtype{
+		name: args.sumtype_decl.name.all_after_last('.')
+		description: comments.join(' ')
+		types: vparser.parse_variants(args.sumtype_decl.variants, args.table)
+	}
+}
+
 // parse_fields parses ast struct fields into struct fields
 fn (vparser VParser) parse_fields(fields []ast.StructField, table &ast.Table) []StructField {
 	mut fields_ := []StructField{}
@@ -303,4 +345,15 @@ fn (vparser VParser) parse_fields(fields []ast.StructField, table &ast.Table) []
 	// 		}
 	// 	}
 	// )
+}
+
+// parse_fields parses ast struct fields into struct fields
+fn (vparser VParser) parse_variants(variants []ast.TypeNode, table &ast.Table) []Type {
+	mut types := []Type{}
+	for variant in variants {
+		types << Type{
+			symbol: table.type_to_str(variant.typ).all_after_last('.')
+		}
+	}
+	return types
 }

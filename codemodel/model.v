@@ -3,7 +3,7 @@ module codemodel
 // Code is a list of statements
 pub type Code = []CodeItem
 
-pub type CodeItem = Comment | Struct | Function
+pub type CodeItem = Comment | Struct | Function | Sumtype
 
 pub struct Comment {
 	text string
@@ -15,6 +15,13 @@ pub:
 	name string
 	description string
 	fields []StructField
+}
+
+pub struct Sumtype {
+	pub:
+	name string
+	description string
+	types []Type
 }
 
 pub struct StructField {

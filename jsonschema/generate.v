@@ -3,6 +3,23 @@ module jsonschema
 import freeflowuniverse.crystallib.codemodel
 
 // struct_to_schema generates a json schema or reference from a struct model
+pub fn sumtype_to_schema(sumtype codemodel.Sumtype) SchemaRef {
+	mut one_of := []SchemaRef
+	for type_ in sumtype.types {
+		property_schema := typesymbol_to_schema(type_.symbol)
+		one_of << property_schema
+	}
+
+	title := sumtype.name
+
+	return SchemaRef(Schema{
+		title: title
+		description: sumtype.description
+		one_of: one_of
+	})
+}
+
+// struct_to_schema generates a json schema or reference from a struct model
 pub fn struct_to_schema(struct_ codemodel.Struct) SchemaRef {
 	mut properties := map[string]SchemaRef{}
 	for field in struct_.fields {
@@ -80,6 +97,11 @@ pub fn typesymbol_to_schema(symbol_ string) SchemaRef {
 				typ: 'integer'
 			})
 		}
+		if symbol == 'u8' {
+			return SchemaRef(Schema{
+				typ: 'integer'
+			})
+		}
 		if symbol == 'u16' {
 			return SchemaRef(Schema{
 				typ: 'integer'
@@ -91,6 +113,11 @@ pub fn typesymbol_to_schema(symbol_ string) SchemaRef {
 			})
 		}
 		if symbol == 'u64' {
+			return SchemaRef(Schema{
+				typ: 'string'
+			})
+		}
+		if symbol == 'f64' {
 			return SchemaRef(Schema{
 				typ: 'string'
 			})
