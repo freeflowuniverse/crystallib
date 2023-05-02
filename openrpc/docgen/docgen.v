@@ -2,7 +2,7 @@ module docgen
 
 import freeflowuniverse.crystallib.jsonschema
 import freeflowuniverse.crystallib.openrpc { Method, OpenRPC }
-import freeflowuniverse.crystallib.codemodel { Function, Struct }
+import freeflowuniverse.crystallib.codemodel { Function, Struct, Sumtype }
 import freeflowuniverse.crystallib.codeparser
 
 // configuration parameters for OpenRPC Document generation.
@@ -40,6 +40,12 @@ pub fn docgen(config DocGenConfig) !OpenRPC {
 	for struct_ in code.filter(it is Struct).map(it as Struct) {
 		schema := jsonschema.struct_to_schema(struct_)
 		schemas[struct_.name] = schema
+	}
+
+	// generate JSONSchema compliant schema definitions for sumtypes in code
+	for sumtype in code.filter(it is Sumtype).map(it as Sumtype) {
+		schema := jsonschema.sumtype_to_schema(sumtype)
+		schemas[sumtype.name] = schema
 	}
 
 	// generate OpenRPC compliant method definitions for functions in code
