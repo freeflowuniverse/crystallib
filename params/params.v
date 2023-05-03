@@ -13,11 +13,10 @@ pub:
 	value string
 }
 
-//get params from txt, same as parse()
+// get params from txt, same as parse()
 pub fn new(txt string) !Params {
 	return parse(txt)!
 }
-
 
 pub fn new_params() Params {
 	return Params{}

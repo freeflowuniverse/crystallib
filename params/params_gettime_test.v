@@ -92,7 +92,7 @@ fn test_get_timestamp_12h_pm_fails() ! {
 		time.Duration(time.hour)
 	}
 	if passed {
-		return error("Did not throw error, it should")
+		return error('Did not throw error, it should')
 	}
 }
 
@@ -108,7 +108,7 @@ fn test_get_timestamp_24h_format_fails() ! {
 		time.Duration(time.hour)
 	}
 	if passed {
-		return error("Did not throw error, it should")
+		return error('Did not throw error, it should')
 	}
 }
 
@@ -118,7 +118,7 @@ fn test_get_timestamp_default() ! {
 	parsed_time := params.testparams.get_timestamp_default('timestamp_24h_format', default_duration)!
 	assert parsed_time == time.Duration(time.hour * 16 + time.minute * 21)
 
-	parsed_time_default := params.testparams.get_timestamp_default('non_existing_timestamp', default_duration)!
+	parsed_time_default := params.testparams.get_timestamp_default('non_existing_timestamp',
+		default_duration)!
 	assert parsed_time_default == default_duration
 }
-	
