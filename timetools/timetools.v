@@ -23,28 +23,6 @@ const (
 	}
 )
 
-pub struct Expiration {
-pub mut:
-	// expiration in epoch
-	expiration i64
-}
-
-// Get unix time from Expiration object
-fn (mut exp Expiration) epoch() i64 {
-	return exp.expiration
-}
-
-// Get Time object from Expiration object
-pub fn (mut exp Expiration) to_time() time.Time {
-	return time.unix(exp.expiration)
-}
-
-pub fn time_from_string(timestr string) !time.Time {
-	mut exp_ := get_expiration_from_timestring(timestr)!
-	time_object := exp_.to_time()
-	return time_object
-}
-
 // Get Expiration object from time string input
 // input can be either relative or absolute
 // ## Relative time
@@ -63,34 +41,33 @@ pub fn time_from_string(timestr string) !time.Time {
 // input string examples:
 //'2022-12-5 20:14:35'
 //'2022-12-5' - sets hours, mins, seconds to 00
-// TODO: do error handling
-pub fn get_expiration_from_timestring(exp_ string) !Expiration { // TODO: function to determine if relative or absolute time
-	trimmed := exp_.trim_space()
+pub fn parse(timestr string) !time.Time {
+	trimmed := timestr.trim_space()
+	if trimmed==""{
+		return time.now()
+	}
 	mut relative_bool := false
 	if trimmed.starts_with('+') || trimmed.starts_with('-') {
 		relative_bool = true
 	}
 
 	if relative_bool == true {
-		time_unix := get_unix_from_relative(exp_) or {
+		time_unix := get_unix_from_relative(trimmed) or {
 			return error('Failed to get unix from relative time: ${err}')
 		}
-		return Expiration{
-			expiration: time_unix
-		}
+		return time.unix(time_unix)
 	} else {
-		time_unix := get_unix_from_absolute(exp_) or {
+		time_unix := get_unix_from_absolute(trimmed) or {
 			return error('Failed to get unix from absolute time: ${err}')
 		}
-		return Expiration{
-			expiration: time_unix
-		}
+		return time.unix(time_unix)
 	}
+	return error('bug')
 }
 
-pub fn get_unix_from_relative(exp_ string) !i64 {
+pub fn get_unix_from_relative(timestr string) !i64 {
 	// removes all spaces from the string
-	mut full_exp := exp_.replace(' ', '')
+	mut full_exp := timestr.replace(' ', '')
 
 	// If input is empty or contains just a 0
 	if full_exp == '' || full_exp.trim(' ') == '0' {
@@ -141,6 +118,7 @@ pub fn get_unix_from_relative(exp_ string) !i64 {
 }
 
 pub fn get_unix_from_absolute(timestr string) !i64 {
+	// QUESTION: is this good enough? looks weird
 	components := timestr.split_any(' :-')
 	mut full_string := timestr
 	if components.len == 3 {
@@ -157,77 +135,77 @@ pub fn get_unix_from_absolute(timestr string) !i64 {
 	return time_struct.unix_time() - 10_800
 }
 
-pub fn parse_date(datestr_ string) !map[string]int {
-	mut datestr_list := datestr_.to_lower().replace(' ', '').split('')
+// fn parse_date(datestr_ string) !map[string]int {
+// 	mut datestr_list := datestr_.to_lower().replace(' ', '').split('')
 
-	mut day := ''
-	mut month_str := ''
+// 	mut day := ''
+// 	mut month_str := ''
 
-	for char_ in datestr_list {
-		if char_ in timetools.numbers {
-			day += char_
-		} else {
-			month_str += char_
-		}
-	}
+// 	for char_ in datestr_list {
+// 		if char_ in timetools.numbers {
+// 			day += char_
+// 		} else {
+// 			month_str += char_
+// 		}
+// 	}
 
-	mut month_int := 0
-	mut month_found := false
-	for month, value in timetools.months {
-		if month.contains(month_str) {
-			month_int = value
-			month_found = true
-		}
-	}
+// 	mut month_int := 0
+// 	mut month_found := false
+// 	for month, value in timetools.months {
+// 		if month.contains(month_str) {
+// 			month_int = value
+// 			month_found = true
+// 		}
+// 	}
 
-	if month_found == false {
-		return error('Month could not be identified')
-	}
+// 	if month_found == false {
+// 		return error('Month could not be identified')
+// 	}
 
-	if day.int() > 31 {
-		return error('Day value too large')
-	}
+// 	if day.int() > 31 {
+// 		return error('Day value too large')
+// 	}
 
-	return {
-		'month': month_int
-		'day':   day.int()
-	}
-}
+// 	return {
+// 		'month': month_int
+// 		'day':   day.int()
+// 	}
+// }
 
-pub fn parse_time(timestr_ string) !map[string]int {
-	mut clean_time := timestr_.replace_each([';', ':', '.', ':', ',', ':', ' ', '']).to_lower()
-	mut identifier := ''
-	mut no_letter_time := ''
+// fn parse_time(timestr_ string) !map[string]int {
+// 	mut clean_time := timestr_.replace_each([';', ':', '.', ':', ',', ':', ' ', '']).to_lower()
+// 	mut identifier := ''
+// 	mut no_letter_time := ''
 
-	for char_ in clean_time.split('') {
-		if char_ in timetools.letters {
-			identifier += char_
-		} else {
-			no_letter_time += char_
-		}
-	}
+// 	for char_ in clean_time.split('') {
+// 		if char_ in timetools.letters {
+// 			identifier += char_
+// 		} else {
+// 			no_letter_time += char_
+// 		}
+// 	}
 
-	time_parts := no_letter_time.split(':')
+// 	time_parts := no_letter_time.split(':')
 
-	mut hour := time_parts[0].int()
-	mut minute := 0
+// 	mut hour := time_parts[0].int()
+// 	mut minute := 0
 
-	if time_parts.len != 1 {
-		minute = time_parts[1].int()
-	}
+// 	if time_parts.len != 1 {
+// 		minute = time_parts[1].int()
+// 	}
 
-	if identifier == 'pm' && hour != 12 {
-		hour += 12
-	}
+// 	if identifier == 'pm' && hour != 12 {
+// 		hour += 12
+// 	}
 
-	if hour > 24 {
-		return error('Hour given is too great')
-	} else if minute > 59 {
-		return error('Minute given is too great')
-	}
+// 	if hour > 24 {
+// 		return error('Hour given is too great')
+// 	} else if minute > 59 {
+// 		return error('Minute given is too great')
+// 	}
 
-	return {
-		'hour':   hour
-		'minute': minute
-	}
-}
+// 	return {
+// 		'hour':   hour
+// 		'minute': minute
+// 	}
+// }

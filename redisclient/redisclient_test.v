@@ -130,7 +130,7 @@ fn test_setex() {
 	time.sleep(2100 * time.millisecond)
 	r = redis.get('test9')!
 
-	assert r == ""
+	assert r == ''
 }
 
 fn test_psetex() {
@@ -147,7 +147,7 @@ fn test_psetex() {
 
 	time.sleep(220 * time.millisecond)
 	r = redis.get('test10')!
-	assert r == ""
+	assert r == ''
 }
 
 fn test_setnx() {
@@ -591,10 +591,8 @@ fn test_brpop() {
 	r2 := redis.brpop(['test47', 'test48'], 1)!
 	assert r2[0] == 'test48'
 	assert r2[1] == 'balbal'
-	r3 := redis.brpop(['test47'], 1) or {
-		return
-	}
-	assert false, "brpop should timeout"
+	r3 := redis.brpop(['test47'], 1) or { return }
+	assert false, 'brpop should timeout'
 }
 
 fn test_lrpop() {
@@ -610,10 +608,8 @@ fn test_lrpop() {
 	r2 := redis.blpop(['test47', 'test48'], 1)!
 	assert r2[0] == 'test48'
 	assert r2[1] == 'balbal'
-	r3 := redis.blpop(['test47'], 1) or {
-		return
-	}
-	assert false, "blpop should timeout"
+	r3 := redis.blpop(['test47'], 1) or { return }
+	assert false, 'blpop should timeout'
 }
 
 fn test_llen() {
@@ -828,7 +824,7 @@ fn helper_get_key_not_found(mut redis redisclient.Redis, key string) bool {
 		} else {
 			return false
 		}
-	} == ""
+	} == ''
 }
 
 fn helper_randomkey_database_empty(mut redis redisclient.Redis) bool {
@@ -838,7 +834,7 @@ fn helper_randomkey_database_empty(mut redis redisclient.Redis) bool {
 		} else {
 			return false
 		}
-	} == "" 
+	} == ''
 }
 
 fn helper_renamenx_err_helper(mut redis redisclient.Redis, key string, newkey string) string {
@@ -853,7 +849,7 @@ fn helper_lpop_key_not_found(mut redis redisclient.Redis, key string) bool {
 		} else {
 			return false
 		}
-	} == "" 
+	} == ''
 }
 
 fn helper_rpop_key_not_found(mut redis redisclient.Redis, key string) bool {
@@ -863,5 +859,5 @@ fn helper_rpop_key_not_found(mut redis redisclient.Redis, key string) bool {
 		} else {
 			return false
 		}
-	} == ""
+	} == ''
 }

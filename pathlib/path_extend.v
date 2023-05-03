@@ -1,25 +1,42 @@
 module pathlib
 
-// join parts to a path and return path, returns a new path
-pub fn (mut p Path) join(parts ...string) !Path {
-	mut p2 := Path{
-		path: p.path
+// join parts to a path and return path, returns a new path, create if needed
+pub fn (mut p Path) extend_dir_create(parts ...string) !Path {
+	mut out := p.path
+	if !p.is_dir() {
+		return error('Cannot only extend a dir.')
 	}
-	// TODO Add tests
-	p2.check()
-
-	if !p2.is_dir() {
-		return error('can only extend dir, ${p2.path}')
+	if p.exists() == false {
+		return error("Cannot extend a dir if it doesn't exist")
 	}
 	for part in parts {
 		if part.contains('~') {
 			return error('cannot extend part ${part} if ~ in')
 		}
 		part2 := part.trim(' ')
-		p2.path += '/' + part2
+		out += '/' + part2.trim('/')
 	}
-	p2.path = p2.path.replace('//', '/')
-	p2.check()
+	out = out.replace('//', '/')
+	mut p2 := get_dir(out, true)!
+	return p2
+}
+
+// only works for a dir
+pub fn (mut p Path) extend_file(name string) !Path {
+	if !p.is_dir() {
+		return error('Cannot only extend a dir.')
+	}
+	if p.exists() == false {
+		return error("Cannot extend a dir if it doesn't exist")
+	}
+
+	mut out := p.path
+	if name.contains('~') {
+		return error('cannot extend dir if ~ in name: ${name}')
+	}
+	out += '/' + name.trim('/')
+	out = out.replace('//', '/')
+	mut p2 := get_file(out, false)!
 	return p2
 }
 

@@ -5,7 +5,7 @@ import os
 const testpath = os.dir(@FILE) + '/testdata'
 
 fn test_parsing_using_path() {
-	mut doc := new(path:'${markdowndocs.testpath}/test.md') or { panic('cannot parse,${err}') }
+	mut doc := new(path: '${markdowndocs.testpath}/test.md')!
 	correct_doc := '**** Header 1: this is a test
 **** Paragraph
     - [this is link](something.md)

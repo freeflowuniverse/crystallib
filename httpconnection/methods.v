@@ -100,7 +100,8 @@ pub fn (r Result) is_ok() bool {
 	return r.code >= 200 && r.code <= 399
 }
 
-pub fn (mut h HTTPConnection) post_json_str(mut req Request) !string {
+pub fn (mut h HTTPConnection) post_json_str(req_ Request) !string {
+	mut req := req_
 	req.method = .post
 	result := h.send(req)!
 	return result.data
@@ -108,16 +109,16 @@ pub fn (mut h HTTPConnection) post_json_str(mut req Request) !string {
 
 // do a request with certain prefix on the already specified url
 // parse as json
-pub fn (mut h HTTPConnection) get_json_dict(mut req Request) !map[string]json2.Any {
-	data_ := h.get(mut req)!
+pub fn (mut h HTTPConnection) get_json_dict(req Request) !map[string]json2.Any {
+	data_ := h.get(req)!
 	mut data := map[string]json2.Any{}
 	println(data)
 	data = crystaljson.json_dict_filter_any(data_, false, [], [])!
 	return data
 }
 
-pub fn (mut h HTTPConnection) get_json_list(mut req Request) ![]string {
-	mut data_ := h.get(mut req)!
+pub fn (mut h HTTPConnection) get_json_list(req Request) ![]string {
+	mut data_ := h.get(req)!
 	if req.dict_key.len > 0 {
 		data_ = crystaljson.json_dict_get_string(data_, false, req.dict_key)!
 	}
@@ -126,7 +127,8 @@ pub fn (mut h HTTPConnection) get_json_list(mut req Request) ![]string {
 }
 
 // Get Request with json data and return response as string
-pub fn (mut h HTTPConnection) get(mut req Request) !string {
+pub fn (mut h HTTPConnection) get(req_ Request) !string {
+	mut req := req_
 	req.method = .get
 	result := h.send(req)!
 	return result.data

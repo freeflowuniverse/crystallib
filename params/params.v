@@ -1,5 +1,6 @@
 module params
 
+[heap]
 pub struct Params {
 pub mut:
 	params []Param
@@ -11,6 +12,12 @@ pub:
 	key   string
 	value string
 }
+
+//get params from txt, same as parse()
+pub fn new(txt string) !Params {
+	return parse(txt)!
+}
+
 
 pub fn new_params() Params {
 	return Params{}

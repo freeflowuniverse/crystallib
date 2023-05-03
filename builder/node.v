@@ -21,8 +21,8 @@ pub enum CPUType {
 [heap]
 pub struct Node {
 mut:
-	executor Executor        [skip; str: skip]
 	factory  &BuilderFactory [skip; str: skip]
+	executor Executor        [skip; str: skip]
 pub:
 	name string = 'mymachine'
 pub mut:

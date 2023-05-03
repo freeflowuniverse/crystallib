@@ -11,22 +11,38 @@ pub enum PlatformType {
 	ubuntu
 }
 
-type RecipeItem = AddItem
+type RecipeItem = AddFileEmbeddedItem
 	| CmdItem
+	| CopyItem
 	| EntryPointItem
 	| EnvItem
+	| ExposeItem
 	| FromItem
 	| PackageItem
 	| RunItem
+	| VolumeItem
 	| WorkDirItem
+	| ZinitItem
 
 pub struct RecipeArgs {
 pub:
-	name     string
+	name   string
+	prefix string // string (e.g. despiegk/ or myimage registry-host:5000/despiegk/) is added to the name when pushing
+	// also exists on docker engine level, if not used here will come from the docker engine level
+	tag      string //(default is 'latest' but can be a version nr)
 	platform PlatformType
 	zinit    bool = true
 }
 
+// params
+// ```
+// name     string
+// prefix 	 string (e.g. despiegk/ or myimage registry-host:5000/despiegk/) is added to the name when pushing
+//					also exists on docker engine level, if not used here will come from the docker engine level
+// tag		 string (default is 'latest' but can be a version nr)
+// platform PlatformType
+// zinit    bool = true
+// ```
 pub fn (mut e DockerEngine) recipe_new(args RecipeArgs) DockerBuilderRecipe {
 	if args.name == '' {
 		panic('name cannot be empty.')
@@ -36,6 +52,8 @@ pub fn (mut e DockerEngine) recipe_new(args RecipeArgs) DockerBuilderRecipe {
 		platform: args.platform
 		name: args.name
 		zinit: args.zinit
+		tag: args.tag
+		prefix: args.prefix
 	}
 }
 
@@ -43,6 +61,7 @@ pub fn (mut e DockerEngine) recipe_new(args RecipeArgs) DockerBuilderRecipe {
 pub struct DockerBuilderRecipe {
 pub mut:
 	name     string
+	prefix   string
 	tag      string
 	params   Params
 	files    []embed_file.EmbedFileData
@@ -61,6 +80,7 @@ pub fn (mut b DockerBuilderRecipe) render() !string {
 	b.check_from_statement()!
 	b.check_conf_add()!
 	mut items := []string{}
+	mut zinitexists:=false
 	for mut item in b.items {
 		item_str := match mut item {
 			FromItem {
@@ -79,7 +99,7 @@ pub fn (mut b DockerBuilderRecipe) render() !string {
 				item.check()!
 				item.render()!
 			}
-			AddItem {
+			AddFileEmbeddedItem {
 				item.check()!
 				item.render()!
 			}
@@ -95,9 +115,31 @@ pub fn (mut b DockerBuilderRecipe) render() !string {
 				item.check()!
 				item.render()!
 			}
+			CopyItem {
+				item.check()!
+				item.render()!
+			}
+			ExposeItem {
+				item.check()!
+				item.render()!
+			}
+			VolumeItem {
+				item.check()!
+				item.render()!
+			}
+			ZinitItem {
+				zinitexists=true
+				item.check()!
+				item.render()!				
+			}			
 		}
 		items << item_str
 	}
+	if zinitexists{
+		//means there is a zinit, we need to add the directory for zinit
+		items << "COPY zinit /etc/zinit\n"
+
+	}	
 	return items.join('\n')
 }
 
@@ -129,13 +171,13 @@ fn (mut b DockerBuilderRecipe) check_conf_add() ! {
 		lastfromcounter += 1
 	}
 	for item in b.items {
-		if item is AddItem {
+		if item is AddFileEmbeddedItem {
 			if item.source == 'conf.sh' {
 				return
 			}
 		}
 	}
-	b.items.insert(lastfromcounter + 1, AddItem{
+	b.items.insert(lastfromcounter + 1, AddFileEmbeddedItem{
 		recipe: &b
 		source: 'conf.sh'
 		dest: '/conf.sh'
@@ -143,10 +185,18 @@ fn (mut b DockerBuilderRecipe) check_conf_add() ! {
 	})
 }
 
+pub fn (mut b DockerBuilderRecipe) path() string {
+	destpath := '${b.engine.buildpath}/${b.name}'
+	return destpath
+}
+
 pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 	dockerfilecontent := b.render()!
 
-	destpath := '${b.engine.buildpath}/${b.name}'
+	destpath := b.path()
+	if reset {
+		b.engine.node.exec_silent('rm -rf ${destpath}')!	
+	}
 	b.engine.node.exec_silent('mkdir -p ${destpath}')!
 	b.engine.node.file_write('${destpath}/Dockerfile', dockerfilecontent)!
 	for item in b.files {
@@ -184,20 +234,21 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 	cmd := '
 		set -ex
 		cd ${destpath}
-		docker buildx build . -t ${b.engine.dockerhubuser}/${b.name}:${b.tag} --ssh default=\${SSH_AUTH_SOCK} ${nocache} ${bplatform} ${bpush}
+		#docker buildx build . -t ${b.name}:${b.tag} --ssh default=\${SSH_AUTH_SOCK} ${nocache} ${bplatform} ${bpush}
+		docker build . -t ${b.name}:${b.tag} --ssh default=\${SSH_AUTH_SOCK} ${nocache} ${bplatform} ${bpush}
 		'
 
 	mut cmdshell := 'set -ex\ncd ${destpath}\ndocker rm ${b.name} -f > /dev/null 2>&1\ndocker run --name ${b.name} '
 	if b.zinit { // means zinit is in docker
 		cmdshell += '-d'
-		cmdshell += '   -v ${destpath}/zinit:/etc/zinit \\\n'
+		// cmdshell += '   -v ${destpath}/zinit:/etc/zinit \\\n' //we don\t want to add zinit any more
 	} else {
 		cmdshell += '-it \\\n'
 	}
 	cmdshell += '    -v ${destpath}:/src \\\n'
 	cmdshell += '    -v /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock \\\n'
 	cmdshell += '    -e SSH_AUTH_SOCK="/run/host-services/ssh-auth.sock" \\\n'
-	cmdshell += '    --hostname ${b.name} ${b.engine.dockerhubuser}/${b.name}:${b.tag}'
+	cmdshell += '    --hostname ${b.name} ${b.name}:${b.tag}'
 	if b.zinit {
 		cmdshell += '\n\ndocker exec -ti ${b.name} /bin/shell.sh'
 	} else {
@@ -208,7 +259,7 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 
 	mut tohash := dockerfilecontent + b.name + cmdshell + cmd
 	for mut item in b.items {
-		if mut item is AddItem {
+		if mut item is AddFileEmbeddedItem {
 			c := item.getcontent()!
 			tohash += c
 		}
