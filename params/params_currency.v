@@ -3,7 +3,6 @@ module params
 import freeflowuniverse.crystallib.currency
 // import texttools
 // import os
-import time
 
 // see currency object, gets it from params
 pub fn (params &Params) get_currencyamount(key string) !currency.Amount {

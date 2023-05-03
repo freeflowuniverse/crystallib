@@ -1,8 +1,5 @@
 module params
 
-import freeflowuniverse.crystallib.texttools
-import json
-
 fn test_macro_args() {
 	mut text := "arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok'"
 	mut params := parse(text) or { panic(err) }
