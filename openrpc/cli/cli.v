@@ -4,7 +4,6 @@ import freeflowuniverse.crystallib.openrpc
 import freeflowuniverse.crystallib.openrpc.docgen
 import freeflowuniverse.crystallib.pathlib
 import cli { Command, Flag }
-import json
 import os
 
 fn main() {

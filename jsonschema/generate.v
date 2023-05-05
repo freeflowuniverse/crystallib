@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.codemodel
 
 // struct_to_schema generates a json schema or reference from a struct model
 pub fn sumtype_to_schema(sumtype codemodel.Sumtype) SchemaRef {
-	mut one_of := []SchemaRef
+	mut one_of := []SchemaRef{}
 	for type_ in sumtype.types {
 		property_schema := typesymbol_to_schema(type_.symbol)
 		one_of << property_schema
