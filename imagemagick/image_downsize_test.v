@@ -28,7 +28,7 @@ fn test_image_downsize() {
 	// println(image.path.name())
 
 	// now need to put original file back
-	image_org.path.restore()!
+	image_org.path.restore(overwrite: true)!
 	image.path.delete()!
 }
 

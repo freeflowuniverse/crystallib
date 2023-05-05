@@ -68,7 +68,7 @@ pub fn new_jsonrpcresponse[T](id string, result T) JsonRpcResponse[T] {
 pub fn new_jsonrpcerror(id string, code int, message string, data string) JsonRpcError {
 	return JsonRpcError{
 		jsonrpc: jsonrpc.jsonrpc_version
-		error: struct {
+		error: InnerJsonRpcError {
 			code: code
 			message: message
 			data: data

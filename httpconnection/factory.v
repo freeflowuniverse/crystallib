@@ -17,7 +17,7 @@ pub:
 	name  string [required]
 	url   string [required]
 	cache bool = true
-	retry int = 1
+	retry int  = 5
 }
 
 pub fn new(args HTTPConnectionArgs) &HTTPConnection {

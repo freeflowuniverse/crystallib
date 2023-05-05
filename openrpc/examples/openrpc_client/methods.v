@@ -20,7 +20,7 @@ pub fn (client Client) create_animal(args AnimalArgs) {
 }
 
 // get_animal finds an animal in the database with the provided name
-// returns the animal: an animal in the db with a matching name
+// returns the animal, an animal in the db with a matching name
 pub fn (client Client) get_animal(name string) Animal {
 	return Animal{}
 }

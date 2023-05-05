@@ -2,8 +2,6 @@
 
 OpenRPC V library. Model for OpenRPC, client code generation, and specification generation from code.
 
-## Introduction
-
 ## Definitions
 
 - OpenRPC Specifications: Specifications that define standards for describing JSON-RPC API's.
@@ -19,14 +17,8 @@ OpenRPC V library. Model for OpenRPC, client code generation, and specification 
 
 ## Installation
 
+Follow crystallib installation instructions.
+
 ## Getting started
 
-To use the specification generator, you need to have a V project with at least one V file.
-
-## Client Code Generation
-
-The OpenRPC client generator, referred to as client generator from here on after, generates V Client from an OpenRPC 2.0 compliant JSON specification for RPC methods.
-
-## OpenRPC Document Generation
-
-The OpenRPC specification generator, referred to as specification generator from here on after, generates an OpenRPC 2.0 compliant JSON specification for RPC methods in a V project.
+See [OpenRPC Document Generator](./docgen/README.md/#getting-started)

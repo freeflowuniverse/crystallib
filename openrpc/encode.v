@@ -2,7 +2,6 @@ module openrpc
 
 import json
 import x.json2 { Any }
-import v.reflection
 
 // encode encodes an OpenRPC document struct into json string.
 // eliminates undefined variable by calling prune on the initial encoding.
@@ -16,8 +15,6 @@ pub fn (doc OpenRPC) encode() !string {
 // prune recursively prunes a map of Any type, pruning map keys where the value is the default value of the variable.
 // this treats undefined values as null, which is ok for openrpc document encoding.
 pub fn prune(obj Any) Any {
-	mut pruned := Any{}
-
 	if obj is map[string]Any {
 		mut pruned_map := map[string]Any{}
 

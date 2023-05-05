@@ -47,15 +47,32 @@ fn main() {
 		abbrev: 'd'
 		description: 'Description of the OpenRPC Document'
 	})
+	docgen_cmd.add_flag(Flag{
+		flag: .string_array
+		name: 'exclude_dirs'
+		abbrev: 'd'
+		description: 'Directories to be excluded from source code to generate document from.'
+	})
+	docgen_cmd.add_flag(Flag{
+		flag: .string_array
+		name: 'exclude_files'
+		abbrev: 'f'
+		description: 'Files to be excluded from source code to generate document from.'
+	})
+	docgen_cmd.add_flag(Flag{
+		flag: .bool
+		name: 'public_only'
+		abbrev: 'p'
+		description: 'Generates document only from public functions.'
+	})
 
 	cmd.add_command(docgen_cmd)
 	cmd.setup()
-	println(os.args)
 	cmd.parse(os.args)
 }
 
 fn cli_docgen(cmd Command) ! {
-	config := docgen.OpenRPCConfig{
+	config := docgen.DocGenConfig{
 		title: cmd.flags.get_string('title') or { panic('Failed to get `title` flag: ${err}') }
 		description: cmd.flags.get_string('description') or {
 			panic('Failed to get `description` flag: ${err}')
@@ -64,14 +81,27 @@ fn cli_docgen(cmd Command) ! {
 			panic('Failed to get `version` flag: ${err}')
 		}
 		source: cmd.args[0]
+		exclude_dirs: cmd.flags.get_strings('exclude_dirs') or {
+			panic('Failed to get `exclude_dirs` flag: ${err}')
+		}
+		exclude_files: cmd.flags.get_strings('exclude_files') or {
+			panic('Failed to get `exclude_files` flag: ${err}')
+		}
+		only_pub: cmd.flags.get_bool('public_only') or {
+			panic('Failed to get `public_only` flag: ${err}')
+		}
 	}
 	doc := docgen.docgen(config) or { panic('Failed to generate OpenRPC Document.\n${err}') }
 	target := cmd.flags.get_string('output_path') or {
 		panic('Failed to get `output_path` flag: ${err}')
 	}
-	doc_str := json.encode(doc)
+	doc_str := doc.encode()!
 
-	mut target_path := ''
+	mut path_ := pathlib.get(target)
+	if !path_.exists() {
+		return error('Provided target`${target}` does not exist.')
+	}
+	mut target_path := path_.path + '/openrpc.json'
 	if target == '.' {
 		target_path = os.getwd() + '/openrpc.json'
 	}
