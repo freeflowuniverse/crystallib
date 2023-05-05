@@ -3,36 +3,36 @@ module codemodel
 // Code is a list of statements
 pub type Code = []CodeItem
 
-pub type CodeItem = Comment | Struct | Function | Sumtype
+pub type CodeItem = Comment | Function | Struct | Sumtype
 
 pub struct Comment {
-	text string
+	text     string
 	is_multi bool
 }
 
 pub struct Struct {
 pub:
-	name string
+	name        string
 	description string
-	fields []StructField
-	mod string
+	fields      []StructField
+	mod         string
 }
 
 pub struct Sumtype {
-	pub:
-	name string
+pub:
+	name        string
 	description string
-	types []Type
+	types       []Type
 }
 
 pub struct StructField {
 pub:
-	comments []Comment
-	attrs    []Attribute
-	name string
+	comments    []Comment
+	attrs       []Attribute
+	name        string
 	description string
 	anon_struct Struct // sometimes fields may hold anonymous structs
-	typ Type
+	typ         Type
 }
 
 pub struct Attribute {
@@ -44,33 +44,33 @@ pub:
 
 pub struct Function {
 pub:
-	name         string
-	receiver      Param 
-	mod string
+	name     string
+	receiver Param
+	mod      string
 pub mut:
 	description string
-	params        []Param
-	body           string
-	result       Result
-	has_return        bool
+	params      []Param
+	body        string
+	result      Result
+	has_return  bool
 }
 
 pub struct Param {
 pub:
-	required bool
+	required    bool
 	description string
-	name string
-	typ  Type
+	name        string
+	typ         Type
 }
 
 pub struct Result {
 pub:
-	typ Type
+	typ         Type
 	description string
-	name string
+	name        string
 }
 
 pub struct Type {
 pub:
-	symbol string	
+	symbol string
 }
