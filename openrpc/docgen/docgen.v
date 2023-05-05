@@ -15,7 +15,7 @@ pub struct DocGenConfig {
 	strict        bool     // Strict mode generates document for only methods and struct with the attribute `openrpc`
 	exclude_dirs  []string // directories to be excluded when parsing source for document generation
 	exclude_files []string // files to be excluded when parsing source for document generation
-	only_pub bool // excludes all non-public declarations from document generation
+	only_pub      bool     // excludes all non-public declarations from document generation
 }
 
 // docgen returns OpenRPC Document struct for JSON-RPC API defined in the config params.
