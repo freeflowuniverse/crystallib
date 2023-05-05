@@ -15,6 +15,7 @@ pub:
 	name string
 	description string
 	fields []StructField
+	mod string
 }
 
 pub struct Sumtype {
@@ -45,6 +46,7 @@ pub struct Function {
 pub:
 	name         string
 	receiver      Param 
+	mod string
 pub mut:
 	description string
 	params        []Param

@@ -189,8 +189,9 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 	}
 
 	return Function{
-		name: '${args.fn_decl.mod}.${args.fn_decl.short_name}'
+		name: args.fn_decl.short_name
 		description: fn_comments.join(' ')
+		mod: args.fn_decl.mod
 		params: params
 		result: result
 	}

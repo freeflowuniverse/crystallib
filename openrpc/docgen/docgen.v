@@ -88,9 +88,13 @@ fn fn_to_method(function Function) Method {
 		schema: result_schema
 		description: function.result.description
 	}
-
-	pascal_name := texttools.name_fix_snake_to_pascal(function.name.all_after('.'))
-	function_name := '${function.name.all_before('.')}.${pascal_name}'
+ 
+	pascal_name := texttools.name_fix_snake_to_pascal(function.name)
+	function_name := if function.mod != '' {
+		'${function.mod}.${pascal_name}'
+	} else {
+		pascal_name
+	}
 
 	return Method{
 		name: function_name

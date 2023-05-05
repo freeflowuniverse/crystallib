@@ -113,7 +113,7 @@ fn test_fn_to_method() {
 	openrpc_method := fn_to_method(function)
 
 	// test method info is described correctly
-	assert openrpc_method.name == 'test_function'
+	assert openrpc_method.name == 'TestFunction'
 	description := openrpc_method.description or { '' }
 	assert description == 'tests whether OpenRPC method description can be generated from function.'
 	assert openrpc_method.params.len == 1
