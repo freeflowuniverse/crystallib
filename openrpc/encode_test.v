@@ -13,7 +13,14 @@ fn test_encode_blank() ! {
 		methods: []Method{}
 	}
 	encoded := doc.encode()!
-	assert encoded == '{"openrpc":"1.0.0","info":{"version":"1.0.0"},"methods":[]}'
+	assert encoded == '{
+  "openrpc": "1.0.0",
+  "info": {
+    "version": "1.0.0"
+  },
+  "methods": [
+  ]
+}'
 }
 
 // test if can correctly encode an OpenRPC doc with a method
@@ -41,7 +48,27 @@ fn test_encode_with_method() ! {
 		]
 	}
 	encoded := doc.encode()!
-	assert encoded == '{"openrpc":"1.0.0","info":{"version":"1.0.0"},"methods":[{"name":"method_name","summary":"summary","description":"description for this method","params":[{"name":"sample descriptor","schema":{"type":"string"}}]}]}'
+	assert encoded == '{
+  "openrpc": "1.0.0",
+  "info": {
+    "version": "1.0.0"
+  },
+  "methods": [
+    {
+      "name": "method_name",
+      "summary": "summary",
+      "description": "description for this method",
+      "params": [
+        {
+          "name": "sample descriptor",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    }
+  ]
+}'
 }
 
 // test if can correctly encode a complete OpenRPC doc
