@@ -143,6 +143,6 @@ fn (mut m BizModel) revenue_actions( actions actionsparser.ActionsParser)!{
 					delay:cogs_delay_month,
 					tags:"cat:cogs total name:$name",
 					descr:'Cost of goods.' )!
-
-
+		}
+	}
 }

@@ -19,7 +19,7 @@ fn test_sheets() {
 	)!
 
 
-	mut incrementalrow := sh.row_new(name: 'times2', growth: '1:0,60:59')! // means all cells are nr 2
+	mut incrementalrow := sh.row_new(name: 'times2', growth: '1:0,60:59')! 
 
 	mut smartrow := sh.row_new(name: 'oem', growth: '10:1000USD,40:2000', extrapolate:false)! 
 
@@ -31,15 +31,18 @@ fn test_sheets() {
 
 	println(incrementalrow)
 
-	mut incrementalrow2 := sh.row_new(name: 'incr2', growth: '1:0,60:59')! // means all cells are nr 2
-	inc2row:=incrementalrow2.recurring(name:'testrecurring',delaymonths:0)!
-	inc3row:=incrementalrow2.recurring(name:'testrecurring',delaymonths:3)!
+	mut toincrement := sh.row_new(name: 'incr2', growth: '1:0,60:59')!
+	inc1row:=toincrement.recurring(name:'testrecurring1',delaymonths:0)!
+	inc2row:=toincrement.recurring(name:'testrecurring2',delaymonths:3)!
 
-	println(incrementalrow2)
-	println(inc2row)
+	println(toincrement)
+	println(inc1row)
 	println(inc2row)
 
-	if true{panic("sds")}
+	assert inc1row.cells[4].val == 10.0
+	assert inc2row.cells[7].val == 10.0
+
+	// if true{panic("sds")}
 
 	//SUM
 

@@ -2,10 +2,10 @@
 
 possible parameters
 
-- name, e.g. for a specific person
-- descr: description of the funding
-- investment is month:amount,month:amount, ...
-- type: loan or capital
+- name
+- descr: description of the cost
+- cost: is 'month:amount,month:amount, ...'
+- type: travel, admin, legal, varia
 
 Other financial flows can be mentioned here as well.
 

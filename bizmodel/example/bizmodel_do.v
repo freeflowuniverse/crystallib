@@ -1,6 +1,6 @@
 module main
 import os
-import bizmodel
+import freeflowuniverse.crystallib.bizmodel
 
 const testpath = os.dir(@FILE) + '/data'
 
