@@ -3,7 +3,6 @@ module codeparser
 import v.ast
 import v.parser
 import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.codemodel { CodeItem, Function, Param, Result, Struct, StructField, Type, Sumtype }
 import v.pref
 
@@ -186,9 +185,8 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 		}
 	}
 
-	pascal_name := texttools.name_fix_snake_to_pascal(args.fn_decl.short_name)
 	return Function{
-		name: '${args.fn_decl.mod}.${pascal_name}'
+		name: '${args.fn_decl.mod}.${args.fn_decl.short_name}'
 		description: fn_comments.join(' ')
 		params: params
 		result: result

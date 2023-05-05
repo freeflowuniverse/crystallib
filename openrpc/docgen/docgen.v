@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.jsonschema
 import freeflowuniverse.crystallib.openrpc { Method, OpenRPC }
 import freeflowuniverse.crystallib.codemodel { Function, Struct, Sumtype }
 import freeflowuniverse.crystallib.codeparser
+import freeflowuniverse.crystallib.texttools
 
 // configuration parameters for OpenRPC Document generation.
 [params]
@@ -88,8 +89,11 @@ fn fn_to_method(function Function) Method {
 		description: function.result.description
 	}
 
+	pascal_name := texttools.name_fix_snake_to_pascal(function.name.all_after('.'))
+	function_name := '${function.name.all_before('.')}.$pascal_name'
+
 	return Method{
-		name: function.name
+		name: function_name
 		description: function.description
 		params: params
 		result: result
