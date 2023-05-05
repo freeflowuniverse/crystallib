@@ -90,7 +90,7 @@ fn fn_to_method(function Function) Method {
 	}
 
 	pascal_name := texttools.name_fix_snake_to_pascal(function.name.all_after('.'))
-	function_name := '${function.name.all_before('.')}.$pascal_name'
+	function_name := '${function.name.all_before('.')}.${pascal_name}'
 
 	return Method{
 		name: function_name

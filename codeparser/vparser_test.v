@@ -533,7 +533,7 @@ const testcode = {
 }
 
 fn test_vparse_blankdir() ! {
-	os.mkdir_all("${codeparser.testpath}/blankdir", os.MkdirParams{})!
+	os.mkdir_all('${codeparser.testpath}/blankdir', os.MkdirParams{})!
 	code := parse_v('${codeparser.testpath}/blankdir')!
 	assert code.len == 0
 }
@@ -541,7 +541,7 @@ fn test_vparse_blankdir() ! {
 fn test_vparse_flat_directory() ! {
 	code := parse_v('${codeparser.testpath}/flatdir')!
 	assert code.len == 12
-	assert code[0..6] == codeparser.testcode['anotherfile.v'][0..6], "<${code[0..6]}> vs <${codeparser.testcode['anotherfile.v'][0..6]}>"
+	assert code[0..6] == codeparser.testcode['anotherfile.v'][0..6], '<${code[0..6]}> vs <${codeparser.testcode['anotherfile.v'][0..6]}>'
 	assert code[6..12] == codeparser.testcode['subfile.v'][0..6]
 }
 

@@ -3,7 +3,7 @@ module codeparser
 import v.ast
 import v.parser
 import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.codemodel { CodeItem, Function, Param, Result, Struct, StructField, Type, Sumtype }
+import freeflowuniverse.crystallib.codemodel { CodeItem, Function, Param, Result, Struct, StructField, Sumtype, Type }
 import v.pref
 
 // VParser holds configuration of parsing
@@ -94,7 +94,8 @@ fn (vparser VParser) parse_vfile(path string) []CodeItem {
 		if stmt is ast.FnDecl {
 			fn_decl := stmt as ast.FnDecl
 			if fn_decl.attrs.len > 0 {
-				openrpc_attrs := fn_decl.attrs.filter(it.name == 'openrpc') {
+				openrpc_attrs := fn_decl.attrs.filter(it.name == 'openrpc')
+				{
 					if openrpc_attrs.any(it.arg == 'exclude') {
 						continue
 					}
@@ -112,7 +113,8 @@ fn (vparser VParser) parse_vfile(path string) []CodeItem {
 			if stmt is ast.SumTypeDecl {
 				sumtype_decl := stmt as ast.SumTypeDecl
 				if sumtype_decl.attrs.len > 0 {
-					openrpc_attrs := sumtype_decl.attrs.filter(it.name == 'openrpc') {
+					openrpc_attrs := sumtype_decl.attrs.filter(it.name == 'openrpc')
+					{
 						if openrpc_attrs.any(it.arg == 'exclude') {
 							continue
 						}
@@ -130,7 +132,8 @@ fn (vparser VParser) parse_vfile(path string) []CodeItem {
 		} else if stmt is ast.StructDecl {
 			struct_decl := stmt as ast.StructDecl
 			if struct_decl.attrs.len > 0 {
-				openrpc_attrs := struct_decl.attrs.filter(it.name == 'openrpc') {
+				openrpc_attrs := struct_decl.attrs.filter(it.name == 'openrpc')
+				{
 					if openrpc_attrs.any(it.arg == 'exclude') {
 						continue
 					}
@@ -291,9 +294,9 @@ fn (vparser VParser) parse_vstruct(args VStructArgs) Struct {
 }
 
 struct VSumTypeArgs {
-	comments    []ast.Comment  // comments that belong to the struct declaration
+	comments     []ast.Comment   // comments that belong to the struct declaration
 	sumtype_decl ast.SumTypeDecl // v.ast Struct declaration for struct being parsed
-	table       &ast.Table     // v.ast table for getting type names
+	table        &ast.Table      // v.ast table for getting type names
 }
 
 // parse_params parses struct args into struct
