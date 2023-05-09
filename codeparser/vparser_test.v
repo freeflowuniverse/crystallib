@@ -385,7 +385,7 @@ const testcode = {
 					symbol: ''
 				}
 			}
-			mod: 'testdata'
+			mod: 'codeparser.testdata'
 			description: ' is the first function of file'
 			params: []
 			body: ''
@@ -408,7 +408,7 @@ const testcode = {
 					symbol: ''
 				}
 			}
-			mod: 'testdata'
+			mod: 'codeparser.testdata'
 			description: ' is the second function of file'
 			params: [
 				codemodel.Param{
@@ -474,7 +474,7 @@ const testcode = {
 					symbol: ''
 				}
 			}
-			mod: 'testdata'
+			mod: 'codeparser.testdata'
 			description: ' is the third function of the file'
 			params: [
 				codemodel.Param{
@@ -511,7 +511,7 @@ const testcode = {
 					symbol: ''
 				}
 			}
-			mod: 'testdata'
+			mod: 'codeparser.testdata'
 			description: ' is the fourth function of the file is does something with param1 and param2 and creates FileStruct1'
 			params: [
 				codemodel.Param{
