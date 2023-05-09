@@ -1,4 +1,4 @@
-module test
+module testdata
 
 // file_func0 is the first function of file
 fn file_func0() {}
