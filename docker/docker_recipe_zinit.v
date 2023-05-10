@@ -109,7 +109,6 @@ pub fn (mut b DockerBuilderRecipe) add_zinit_cmd(args ZinitAddArgs) ! {
 	}	
 	mut ff:=pathlib.get_file(b.path()+"/zinit/${args.name}.yaml",true)!
 	ff.write(zinitfilecontent)!
-
 }
 
 pub fn (mut i ZinitItem) check() ! {

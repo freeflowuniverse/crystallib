@@ -193,9 +193,6 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 	dockerfilecontent := b.render()!
 
 	destpath := b.path()
-	if reset {
-		b.engine.node.exec_silent('rm -rf ${destpath}')!
-	}
 	b.engine.node.exec_silent('mkdir -p ${destpath}')!
 	b.engine.node.file_write('${destpath}/Dockerfile', dockerfilecontent)!
 	for item in b.files {
@@ -254,7 +251,7 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 		cmdshell += " '/bin/shell.sh'\n"
 	}
 	cmdshell += '\ndocker rm ${b.name} -f > /dev/null 2>&1\n'
-	println(cmdshell)
+	// println(cmdshell)
 
 	mut tohash := dockerfilecontent + b.name + cmdshell + cmd
 	for mut item in b.items {

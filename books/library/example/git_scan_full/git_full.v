@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.books.library
 
 // const path0 = '~/code/github/threefoldfoundation/books'
 
-const reset = false
+const reset = true
 
 fn do() ! {
 
@@ -12,12 +12,12 @@ fn do() ! {
 	mut l := library.new()
 	
 	mut book:=l.book_new(
-		name:"testbook"
+		name:"testbook2"
 		git_root: '~/code5'
-		chapters_giturl: 'https://github.com/threefoldfoundation/books/tree/main/content'
+		chapters_giturl: 'https://github.com/threefoldfoundation/books2/tree/main/content'
 		git_reset: reset
 		load: true
-		heal: true
+		heal: false
 	)!
 
 	println(book.chapters.len)

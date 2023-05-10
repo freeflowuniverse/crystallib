@@ -34,20 +34,22 @@ fn (mut m BizModel) revenue_actions( actions actionsparser.ActionsParser)!{
 				//make name ourselves
 				name=texttools.name_fix(descr)
 			}
-			mut revenue_item := action.params.get_default('revenue_item',"")!
-			mut revenue_nr := action.params.get_default('revenue_nr',"")!
+			mut revenue_item_param := action.params.get_default('revenue_item',"")!
+			mut revenue_nr_param := action.params.get_default('revenue_nr',"")!
 
-			mut revenue_time := action.params.get_default('revenue_time',"")!
-			mut revenue_growth := action.params.get_default('revenue_growth',"")!
+			mut revenue_time_param := action.params.get_default('revenue_time',"")!
+			mut revenue_growth_param := action.params.get_default('revenue_growth',"")!
 
 			//cost of goods
 			cogs_delay_month := action.params.get_float_default('cogs_delay_month',3.0)!
 			cogs_perc := action.params.get_percentage_default('cogs_perc','0%')!
 
-			mut revenue_item:=m.sheet.row_new(name: "rev_item_$name", growth:revenue_item, tags:"cat:rev name:$name",
+			mut revenue_item:=m.sheet.row_new(name: "rev_item_$name", growth:revenue_item_param, tags:"cat:rev name:$name",
 						descr:'What is revenue for 1 item.',aggregatetype:.avg)!
-			mut revenue_nr:=m.sheet.row_new(name: "revenue_nr_$name", growth:revenue_nr, tags:"cat:rev  name:$name",
+			mut revenue_nr:=m.sheet.row_new(name: "revenue_nr_$name", growth:revenue_nr_param, tags:"cat:rev  name:$name",
 						descr:'How many of the items are being sold per month.')!
+			
+			//multiply rev item with rev nr to get to total
 			mut revenue_item_total:=revenue_item.action(name: "rev_item_total_$name", 
 						rows: [revenue_nr], action:.multiply, 
 						tags:"cat:rev name:$name",
@@ -58,9 +60,9 @@ fn (mut m BizModel) revenue_actions( actions actionsparser.ActionsParser)!{
 						tags:"cat:rev total name:$name",growth:"1:0.0",
 						descr:'What is sum of recurring, oneoff and growth, is total revenue for this service/product.')!
 
-			mut revenue_time:=m.sheet.row_new(name: "rev_time_$name", growth:revenue_time, tags:"cat:rev  name:$name",
+			mut revenue_time:=m.sheet.row_new(name: "rev_time_$name", growth:revenue_time_param, tags:"cat:rev  name:$name",
 						descr:'Onetime revenues.', extrapolate:false)!
-			mut revenue_growth:=m.sheet.row_new(name: "revenue_growth_$name", growth:revenue_growth, 
+			mut revenue_growth:=m.sheet.row_new(name: "revenue_growth_$name", growth:revenue_growth_param, 
 						tags:"cat:rev name:$name",
 						descr:'What is other revenue growth, interpolated.')!
 			revenue_total.action( action:.sum, rows: [revenue_growth,revenue_time,revenue_item_total])!
@@ -97,9 +99,9 @@ fn (mut m BizModel) revenue_actions( actions actionsparser.ActionsParser)!{
 			}
 			
 			//revenue
-			mut revenue_setup := action.params.get_default('revenue_setup',"")!
-			mut revenue_monthly := action.params.get_default('revenue_monthly',"")!
-			revenue_monthly_delay := action.params.get_float_default('revenue_monthly_delay',0.0)!
+			mut revenue_setup_param := action.params.get_default('revenue_setup',"")!
+			mut revenue_monthly_param := action.params.get_default('revenue_monthly',"")!
+			revenue_monthly_delay_param := action.params.get_float_default('revenue_monthly_delay',0.0)!
 
 			//cogs
 			mut cogs_setup := action.params.get_default('cogs_setup',"")!
@@ -112,9 +114,9 @@ fn (mut m BizModel) revenue_actions( actions actionsparser.ActionsParser)!{
 			nr_months := action.params.get_int_default('nr_months',60)!
 
 
-			mut revenue_setup:=m.sheet.row_new(name: "rev_setup_$name", growth:revenue_setup, tags:"cat:rev name:$name",
+			mut revenue_setup:=m.sheet.row_new(name: "rev_setup_$name", growth:revenue_setup_param, tags:"cat:rev name:$name",
 						descr:'Revenue for 1 item setup.',aggregatetype:.avg)!
-			mut revenue_monthly:=m.sheet.row_new(name: "rev_month_$name", growth:revenue_monthly, tags:"cat:rev name:$name",
+			mut revenue_monthly:=m.sheet.row_new(name: "rev_month_$name", growth:revenue_monthly_param, tags:"cat:rev name:$name",
 						descr:'Revenue for 1 item per month.',aggregatetype:.avg)!
 
 			mut cogs_setup:=m.sheet.row_new(name: "cogs_setup_$name", growth:cogs_setup, tags:"cat:cogs name:$name",

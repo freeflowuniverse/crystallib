@@ -1,7 +1,7 @@
 module library
 import freeflowuniverse.crystallib.pathlib { Path }
 import freeflowuniverse.crystallib.params
-
+import os
 
 [params]
 pub struct ChapterFinderArgs {
@@ -21,15 +21,15 @@ fn (mut book Book) scan_recursive(args ChapterFinderArgs) ! {
 	mut path := pathlib.get_dir(args.path, false)!
 
 	if path.is_dir() {
-		if path.file_exists('.site') || path.file_exists('.chapter') {
+		if path.file_exists('.site'){
+			//mv .site file to .chapter file
+			chapterfilepath1 := path.extend_file('.site')!
+			chapterfilepath2 := path.extend_file('.chapter')!
+			os.mv(chapterfilepath1.path,chapterfilepath2.path)!
+		}		
+		if path.file_exists('.chapter') {
 			mut name := path.name()
-
-			mut chapterfilepath := Path{}
-			if path.file_exists('.site') {
-				chapterfilepath = path.file_get('.site')!
-			}else{
-				chapterfilepath = path.file_get('.chapter')!
-			}
+			mut chapterfilepath := path.file_get('.chapter')!
 			
 			// now we found a book we need to add
 			content := chapterfilepath.read()!
@@ -49,7 +49,7 @@ fn (mut book Book) scan_recursive(args ChapterFinderArgs) ! {
 		}
 		for mut p_in in llist {
 			if p_in.is_dir() {
-				if p_in.path.starts_with('.') || p_in.path.starts_with('_') {
+				if p_in.name().starts_with('.') || p_in.name().starts_with('_') {
 					continue
 				}
 
