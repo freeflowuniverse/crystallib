@@ -2,8 +2,9 @@ module docgen
 
 import freeflowuniverse.crystallib.jsonschema
 import freeflowuniverse.crystallib.openrpc { Method, OpenRPC }
-import freeflowuniverse.crystallib.codemodel { Function, Struct }
+import freeflowuniverse.crystallib.codemodel { Function, Struct, Sumtype }
 import freeflowuniverse.crystallib.codeparser
+import freeflowuniverse.crystallib.texttools
 
 // configuration parameters for OpenRPC Document generation.
 [params]
@@ -15,7 +16,7 @@ pub struct DocGenConfig {
 	strict        bool     // Strict mode generates document for only methods and struct with the attribute `openrpc`
 	exclude_dirs  []string // directories to be excluded when parsing source for document generation
 	exclude_files []string // files to be excluded when parsing source for document generation
-	only_pub bool // excludes all non-public declarations from document generation
+	only_pub      bool     // excludes all non-public declarations from document generation
 }
 
 // docgen returns OpenRPC Document struct for JSON-RPC API defined in the config params.
@@ -40,6 +41,12 @@ pub fn docgen(config DocGenConfig) !OpenRPC {
 	for struct_ in code.filter(it is Struct).map(it as Struct) {
 		schema := jsonschema.struct_to_schema(struct_)
 		schemas[struct_.name] = schema
+	}
+
+	// generate JSONSchema compliant schema definitions for sumtypes in code
+	for sumtype in code.filter(it is Sumtype).map(it as Sumtype) {
+		schema := jsonschema.sumtype_to_schema(sumtype)
+		schemas[sumtype.name] = schema
 	}
 
 	// generate OpenRPC compliant method definitions for functions in code
@@ -82,8 +89,15 @@ fn fn_to_method(function Function) Method {
 		description: function.result.description
 	}
 
+	pascal_name := texttools.name_fix_snake_to_pascal(function.name)
+	function_name := if function.mod != '' {
+		'${function.mod}.${pascal_name}'
+	} else {
+		pascal_name
+	}
+
 	return Method{
-		name: function.name
+		name: function_name
 		description: function.description
 		params: params
 		result: result

@@ -9,7 +9,8 @@ pub fn (doc OpenRPC) encode() !string {
 	encoded := json.encode(doc)
 	raw_decode := json2.raw_decode(encoded)!
 	mut doc_map := raw_decode.as_map()
-	return prune(doc_map).str()
+	pruned_map := prune(doc_map)
+	return json2.encode_pretty[Any](pruned_map)
 }
 
 // prune recursively prunes a map of Any type, pruning map keys where the value is the default value of the variable.

@@ -10,7 +10,7 @@ const testpath = os.dir(@FILE) + '/testdata'
 const testcode = {
 	'anotherfile.v': [
 		CodeItem(Function{
-			name: 'test.anotherfile_func0'
+			name: 'anotherfile_func0'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -19,6 +19,7 @@ const testcode = {
 					symbol: ''
 				}
 			}
+			mod: 'codeparser.testdata.flatdir'
 			description: ' is the first function of file'
 			params: []
 			body: ''
@@ -32,7 +33,7 @@ const testcode = {
 			has_return: false
 		}),
 		CodeItem(Function{
-			name: 'test.anotherfile_func1'
+			name: 'anotherfile_func1'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -41,6 +42,7 @@ const testcode = {
 					symbol: ''
 				}
 			}
+			mod: 'codeparser.testdata.flatdir'
 			description: ' is the second function of file'
 			params: [
 				codemodel.Param{
@@ -97,7 +99,7 @@ const testcode = {
 			]
 		}),
 		CodeItem(Function{
-			name: 'test.anotherfile_func2'
+			name: 'anotherfile_func2'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -106,6 +108,7 @@ const testcode = {
 					symbol: ''
 				}
 			}
+			mod: 'codeparser.testdata.flatdir'
 			description: ' is the third function of the file'
 			params: [
 				codemodel.Param{
@@ -148,7 +151,7 @@ const testcode = {
 			]
 		}),
 		CodeItem(Function{
-			name: 'test.anotherfile_func3'
+			name: 'anotherfile_func3'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -157,6 +160,7 @@ const testcode = {
 					symbol: ''
 				}
 			}
+			mod: 'codeparser.testdata.flatdir'
 			description: ' is the fourth function of the file is does something with param1 and param2 and creates AnotherfileStruct1'
 			params: [
 				codemodel.Param{
@@ -189,7 +193,7 @@ const testcode = {
 	]
 	'subfile.v':     [
 		CodeItem(Function{
-			name: 'test.subfile_func0'
+			name: 'subfile_func0'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -198,6 +202,7 @@ const testcode = {
 					symbol: ''
 				}
 			}
+			mod: 'codeparser.testdata.flatdir'
 			description: ' is the first function of file'
 			params: []
 			body: ''
@@ -211,7 +216,7 @@ const testcode = {
 			has_return: false
 		}),
 		CodeItem(Function{
-			name: 'test.subfile_func1'
+			name: 'subfile_func1'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -220,6 +225,7 @@ const testcode = {
 					symbol: ''
 				}
 			}
+			mod: 'codeparser.testdata.flatdir'
 			description: ' is the second function of file'
 			params: [
 				codemodel.Param{
@@ -276,7 +282,7 @@ const testcode = {
 			]
 		}),
 		CodeItem(Function{
-			name: 'test.subfile_func2'
+			name: 'subfile_func2'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -285,6 +291,7 @@ const testcode = {
 					symbol: ''
 				}
 			}
+			mod: 'codeparser.testdata.flatdir'
 			description: ' is the third function of the file'
 			params: [
 				codemodel.Param{
@@ -327,7 +334,7 @@ const testcode = {
 			]
 		}),
 		CodeItem(Function{
-			name: 'test.subfile_func3'
+			name: 'subfile_func3'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -336,6 +343,7 @@ const testcode = {
 					symbol: ''
 				}
 			}
+			mod: 'codeparser.testdata.flatdir'
 			description: ' is the fourth function of the file is does something with param1 and param2 and creates SubfileStruct1'
 			params: [
 				codemodel.Param{
@@ -368,7 +376,7 @@ const testcode = {
 	]
 	'file.v':        [
 		CodeItem(Function{
-			name: 'test.file_func0'
+			name: 'file_func0'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -377,6 +385,7 @@ const testcode = {
 					symbol: ''
 				}
 			}
+			mod: 'codeparser.testdata'
 			description: ' is the first function of file'
 			params: []
 			body: ''
@@ -390,7 +399,7 @@ const testcode = {
 			has_return: false
 		}),
 		CodeItem(Function{
-			name: 'test.file_func1'
+			name: 'file_func1'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -399,6 +408,7 @@ const testcode = {
 					symbol: ''
 				}
 			}
+			mod: 'codeparser.testdata'
 			description: ' is the second function of file'
 			params: [
 				codemodel.Param{
@@ -455,7 +465,7 @@ const testcode = {
 			]
 		}),
 		CodeItem(Function{
-			name: 'test.file_func2'
+			name: 'file_func2'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -464,6 +474,7 @@ const testcode = {
 					symbol: ''
 				}
 			}
+			mod: 'codeparser.testdata'
 			description: ' is the third function of the file'
 			params: [
 				codemodel.Param{
@@ -491,7 +502,7 @@ const testcode = {
 			fields: []
 		}),
 		CodeItem(Function{
-			name: 'test.file_func3'
+			name: 'file_func3'
 			receiver: codemodel.Param{
 				required: false
 				description: ''
@@ -500,6 +511,7 @@ const testcode = {
 					symbol: ''
 				}
 			}
+			mod: 'codeparser.testdata'
 			description: ' is the fourth function of the file is does something with param1 and param2 and creates FileStruct1'
 			params: [
 				codemodel.Param{
@@ -533,7 +545,7 @@ const testcode = {
 }
 
 fn test_vparse_blankdir() ! {
-	os.mkdir_all("${codeparser.testpath}/blankdir", os.MkdirParams{})!
+	os.mkdir_all('${codeparser.testpath}/blankdir', os.MkdirParams{})!
 	code := parse_v('${codeparser.testpath}/blankdir')!
 	assert code.len == 0
 }
@@ -541,13 +553,15 @@ fn test_vparse_blankdir() ! {
 fn test_vparse_flat_directory() ! {
 	code := parse_v('${codeparser.testpath}/flatdir')!
 	assert code.len == 12
-	assert code[0..6] == codeparser.testcode['anotherfile.v'][0..6], "<${code[0..6]}> vs <${codeparser.testcode['anotherfile.v'][0..6]}>"
+	assert code[0] == testcode['anotherfile.v'][0]
+	assert code[0..6] == codeparser.testcode['anotherfile.v'][0..6], '<${code[0..6]}> vs <${codeparser.testcode['anotherfile.v'][0..6]}>'
 	assert code[6..12] == codeparser.testcode['subfile.v'][0..6]
 }
 
 fn test_vparse_non_recursive() ! {
 	code := parse_v(codeparser.testpath)!
 	assert code.len == 6
+	assert code[0] == codeparser.testcode['file.v'][0]
 	assert code[0..6] == codeparser.testcode['file.v'][0..6]
 }
 
