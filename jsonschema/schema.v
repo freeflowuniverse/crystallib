@@ -23,4 +23,5 @@ pub mut:
 	ref                   string
 	items                 Items
 	defs                  map[string]Schema
+	one_of	?[]SchemaRef [json: 'oneOf']
 }

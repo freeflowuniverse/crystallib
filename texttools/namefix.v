@@ -27,6 +27,12 @@ pub fn name_fix_no_underscore(name string) string {
 	return x
 }
 
+pub fn name_fix_snake_to_pascal(name string) string {
+	x := name.replace('_', ' ')
+	pascal := x.title().replace(' ', '')
+	return pascal
+}
+
 // remove underscores and extension
 pub fn name_fix_no_underscore_no_ext(name_ string) string {
 	return name_fix_keepext(name_).all_before_last('.').replace('_', '')

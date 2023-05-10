@@ -1,4 +1,4 @@
-module test
+module flatdir
 
 // subfile_func0 is the first function of file
 fn subfile_func0() {}

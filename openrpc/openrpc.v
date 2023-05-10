@@ -1,8 +1,6 @@
 module openrpc
 
 import freeflowuniverse.crystallib.jsonschema { Reference, SchemaRef }
-import x.json2
-import time
 
 //  GitHub Flavored Markdown syntax MAY be used for rich text representation.
 
