@@ -9,7 +9,7 @@ import json
 pub struct Command {
 pub mut:
 	cmd        string
-	timeout    int = 1200
+	timeout    int = 3600
 	stdout     bool
 	stdout_log bool = true
 	debug      bool

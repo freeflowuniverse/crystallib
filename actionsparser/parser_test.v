@@ -100,9 +100,9 @@ fn test_file_parse() {
 
 fn test_dir_load() {
 	mut actionsmgr := new(
-		path: '${actionsparser.testpath}',
-		defaultactor:'people',
-		defaultbook:'aaa'
+		path: '${actionsparser.testpath}'
+		defaultactor: 'people'
+		defaultbook: 'aaa'
 	) or { panic(err) }
 	assert actionsmgr.actions.len == 11
 
@@ -114,15 +114,15 @@ fn test_dir_load() {
 
 fn test_text_add() ! {
 	mut parser := new(
-		text:actionsparser.text
-		defaultactor:'people',
-		defaultbook:'aaa'
+		text: actionsparser.text
+		defaultactor: 'people'
+		defaultbook: 'aaa'
 	) or { panic(err) }
 
 	// confirm first action
 	mut action := parser.actions[0]
 	assert action.name == 'actor_select'
-	mut arg := action.params.get_arg(0,1) or { panic(err) }
+	mut arg := action.params.get_arg(0, 1) or { panic(err) }
 	assert arg == 'people'
 
 	// confirm second action

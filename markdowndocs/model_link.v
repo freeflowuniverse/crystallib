@@ -66,7 +66,7 @@ fn (mut o Link) process() ! {
 }
 
 // return how to represent link on source
-fn (link Link) wiki() string {
+pub fn (link Link) wiki() string {
 	mut link_filename := link.filename
 	if link.path != '' {
 		link_filename = '${link.path}/${link_filename}'

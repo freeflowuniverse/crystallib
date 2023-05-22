@@ -5,9 +5,10 @@ import freeflowuniverse.crystallib.texttools
 
 // check path exists
 pub fn (mut path Path) exists() bool {
-	if path.cat == .unknown || path.exist == .unknown {
-		path.check()
-	}
+	// if path.cat == .unknown || path.exist == .unknown {
+	// 	path.check()
+	// }
+	path.check()
 	return path.exist == .yes
 }
 
@@ -133,9 +134,10 @@ pub fn (mut path Path) rm() ! {
 // delete
 pub fn (mut path Path) delete() ! {
 	if path.exists() {
+		// println("exists: $path")
 		match path.cat {
 			.file, .linkfile, .linkdir {
-				os.rm(path.path)!
+				os.rm(path.path.replace('//', '/'))!
 			}
 			.dir {
 				os.rmdir_all(path.path)!
@@ -166,6 +168,7 @@ pub fn (mut path Path) write(content string) ! {
 
 // read content from file
 pub fn (mut path Path) read() !string {
+	path.check()
 	match path.cat {
 		.file, .linkfile {
 			p := path.absolute()
@@ -175,7 +178,7 @@ pub fn (mut path Path) read() !string {
 			return os.read_file(p)
 		}
 		else {
-			return error('Path is not a file')
+			return error('Path is not a file when reading. ${path.path}')
 		}
 	}
 }

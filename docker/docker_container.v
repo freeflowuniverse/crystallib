@@ -119,18 +119,18 @@ pub fn (mut container DockerContainer) execute(cmd_ string, silent bool) ! {
 	}
 }
 
-pub fn (mut container DockerContainer) ssh_enable() ! {
-	// mut docker_pubkey := pubkey
-	// cmd = "docker exec $container.id sh -c 'echo \"$docker_pubkey\" >> ~/.ssh/authorized_keys'"
+// pub fn (mut container DockerContainer) ssh_enable() ! {
+// 	// mut docker_pubkey := pubkey
+// 	// cmd = "docker exec $container.id sh -c 'echo \"$docker_pubkey\" >> ~/.ssh/authorized_keys'"
 
-	// if container.engine.node.executor is builder.ExecutorSSH {
-	// 	mut sshkey := container.engine.node.executor.info()['sshkey'] + '.pub'
-	// 	sshkey = os.read_file(sshkey) or { panic(err) }
-	// 	// add pub sshkey on authorized keys of node and container
-	// 	cmd = "echo \"$sshkey\" >> ~/.ssh/authorized_keys && docker exec $container.id sh -c 'echo \"$docker_pubkey\" >> ~/.ssh/authorized_keys && echo \"$sshkey\" >> ~/.ssh/authorized_keys'"
-	// }
+// 	// if container.engine.node.executor is builder.ExecutorSSH {
+// 	// 	mut sshkey := container.engine.node.executor.info()['sshkey'] + '.pub'
+// 	// 	sshkey = os.read_file(sshkey) or { panic(err) }
+// 	// 	// add pub sshkey on authorized keys of node and container
+// 	// 	cmd = "echo \"$sshkey\" >> ~/.ssh/authorized_keys && docker exec $container.id sh -c 'echo \"$docker_pubkey\" >> ~/.ssh/authorized_keys && echo \"$sshkey\" >> ~/.ssh/authorized_keys'"
+// 	// }
 
-	// wait  making sure container started correctly
-	// time.sleep_ms(200)
-	// container.engine.node.executor.exec(cmd) !	
-}
+// 	// wait  making sure container started correctly
+// 	// time.sleep_ms(200)
+// 	// container.engine.node.executor.exec(cmd) !	
+// }
