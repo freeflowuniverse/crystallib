@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>builder | vdoc</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  
+		<link rel="stylesheet" href="doc.css" />
+		<link rel="stylesheet" href="normalize.css" />
+		<script src="dark-mode.js"></script>
+</head>
+
+<body>
+  <div><a id="skip-to-content-link" href="#main-content">Skip to content</a></div>
+  <div id="page">
+    <header class="doc-nav hidden">
+      <div class="heading-container">
+        <div class="heading">
+          <div class="info">
+            <div class="module">crystallib</div>
+            <div class="toggle-version-container">
+              <span>0.1.0 37a7962</span>
+              <div id="dark-mode-toggle" role="switch" aria-checked="false" aria-label="Toggle dark mode"><svg xmlns="http://www.w3.org/2000/svg" class="light-icon" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" class="dark-icon" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><rect fill="none" height="24" width="24"/></g><g><g><g><path d="M11.1,12.08C8.77,7.57,10.6,3.6,11.63,2.01C6.27,2.2,1.98,6.59,1.98,12c0,0.14,0.02,0.28,0.02,0.42 C2.62,12.15,3.29,12,4,12c1.66,0,3.18,0.83,4.1,2.15C9.77,14.63,11,16.17,11,18c0,1.52-0.87,2.83-2.12,3.51 c0.98,0.32,2.03,0.5,3.11,0.5c3.5,0,6.58-1.8,8.37-4.52C18,17.72,13.38,16.52,11.1,12.08z"/></g><path d="M7,16l-0.18,0C6.4,14.84,5.3,14,4,14c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.62,0,2.49,0,3,0c1.1,0,2-0.9,2-2 C9,16.9,8.1,16,7,16z"/></g></g></svg>
+</div>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" id="toggle-menu" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+
+          </div>
+          <input type="text" id="search" placeholder="Search... (beta)" autocomplete="off">
+        </div>
+      </div>
+      <nav class="search hidden"></nav>
+      <nav class="content hidden">
+        <ul>
+          <li class="open"><div class="menu-row"><a href="./index.html">README</a></div></li><li class="open"><div class="menu-row"><a href="./actions.html">actions</a></div></li><li class="open"><div class="menu-row"><a href="./actionsparser.html">actionsparser</a></div></li><li class="open"><div class="menu-row"><a href="./archiver.html">archiver</a></div></li><li class="open"><div class="menu-row"><a href="./bizmodel.html">bizmodel</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./books.library.html">books</a></div><ul><li><a href="./books.library.html">library</a></li></ul></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./books.html">books</a></div><ul><li><a href="./books.library.html">library</a></li></ul></li><li class="open active"><div class="menu-row"><a href="./builder.html">builder</a></div></li><li class="open"><div class="menu-row"><a href="./calc.html">calc</a></div></li><li class="open"><div class="menu-row"><a href="./codemodel.html">codemodel</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./codeparser.html">codeparser</a></div><ul><li><a href="./codeparser.testdata.html">testdata</a></li><li><a href="./codeparser.testdata.flatdir.html">testdata.flatdir</a></li></ul></li><li class="open"><div class="menu-row"><a href="./coinmarketcap.html">coinmarketcap</a></div></li><li class="open"><div class="menu-row"><a href="./console.html">console</a></div></li><li class="open"><div class="menu-row"><a href="./crpgp.html">crpgp</a></div></li><li class="open"><div class="menu-row"><a href="./crystaljson.html">crystaljson</a></div></li><li class="open"><div class="menu-row"><a href="./currency.html">currency</a></div></li><li class="open"><div class="menu-row"><a href="./data.html">data</a></div></li><li class="open"><div class="menu-row"><a href="./docker.html">docker</a></div></li><li class="open"><div class="menu-row"><a href="./encoder.html">encoder</a></div></li><li class="open"><div class="menu-row"><a href="./fftools.html">fftools</a></div></li><li class="open"><div class="menu-row"><a href="./github.html">github</a></div></li><li class="open"><div class="menu-row"><a href="./gittools.html">gittools</a></div></li><li class="open"><div class="menu-row"><a href="./hostsfile.html">hostsfile</a></div></li><li class="open"><div class="menu-row"><a href="./httpconnection.html">httpconnection</a></div></li><li class="open"><div class="menu-row"><a href="./imagemagick.html">imagemagick</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">installers</a></div><ul><li><a href="./installers.base.html">base</a></li><li><a href="./installers.caddy.html">caddy</a></li><li><a href="./installers.crystaltools.html">crystaltools</a></li><li><a href="./installers.golang.html">golang</a></li><li><a href="./installers.imagemagick.html">imagemagick</a></li><li><a href="./installers.mdbook.html">mdbook</a></li><li><a href="./installers.repository.html">repository</a></li><li><a href="./installers.rust.html">rust</a></li><li><a href="./installers.swarm.html">swarm</a></li><li><a href="./installers.tailwind.html">tailwind</a></li><li><a href="./installers.tmux.html">tmux</a></li><li><a href="./installers.vlang.html">vlang</a></li><li><a href="./installers.zdb.html">zdb</a></li></ul></li><li class="open"><div class="menu-row"><a href="./ipaddress.html">ipaddress</a></div></li><li class="open"><div class="menu-row"><a href="./jsonrpc.html">jsonrpc</a></div></li><li class="open"><div class="menu-row"><a href="./jsonschema.html">jsonschema</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./keysafe.html">keysafe</a></div><ul><li><a href="./keysafe.secp256k1.html">secp256k1</a></li></ul></li><li class="open"><div class="menu-row"><a href="./markdowndocs.html">markdowndocs</a></div></li><li class="open"><div class="menu-row"><a href="./mnemonic.html">mnemonic</a></div></li><li class="open"><div class="menu-row"><a href="./natsclient.html">natsclient</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./openrpc.html">openrpc</a></div><ul><li><a href="./openrpc.docgen.html">docgen</a></li><li><a href="./openrpc.examples.openrpc_client.html">examples.openrpc_client</a></li><li><a href="./openrpc.examples.petstore_client.html">examples.petstore_client</a></li></ul></li><li class="open"><div class="menu-row"><a href="./main.html">main</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./openrpc.examples.openrpc_client.html">openrpc</a></div><ul><li><a href="./openrpc.docgen.html">docgen</a></li><li><a href="./openrpc.examples.openrpc_client.html">examples.openrpc_client</a></li><li><a href="./openrpc.examples.petstore_client.html">examples.petstore_client</a></li></ul></li><li class="open"><div class="menu-row"><a href="./openssl.html">openssl</a></div></li><li class="open"><div class="menu-row"><a href="./params.html">params</a></div></li><li class="open"><div class="menu-row"><a href="./pathlib.html">pathlib</a></div></li><li class="open"><div class="menu-row"><a href="./pgp.html">pgp</a></div></li><li class="open"><div class="menu-row"><a href="./process.html">process</a></div></li><li class="open"><div class="menu-row"><a href="./publisher2.html">publisher2</a></div></li><li class="open"><div class="menu-row"><a href="./publisher_core.html">publisher_core</a></div></li><li class="open"><div class="menu-row"><a href="./redisclient.html">redisclient</a></div></li><li class="open"><div class="menu-row"><a href="./redisserver.html">redisserver</a></div></li><li class="open"><div class="menu-row"><a href="./resp.html">resp</a></div></li><li class="open"><div class="menu-row"><a href="./rootpath.html">rootpath</a></div></li><li class="open"><div class="menu-row"><a href="./rpcwebsocket.html">rpcwebsocket</a></div></li><li class="open"><div class="menu-row"><a href="./serializers.html">serializers</a></div></li><li class="open"><div class="menu-row"><a href="./sshagent.html">sshagent</a></div></li><li class="open"><div class="menu-row"><a href="./taskletmanager.html">taskletmanager</a></div></li><li class="open"><div class="menu-row"><a href="./texttools.html">texttools</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">threefold</a></div><ul><li><a href="./threefold.liquid.html">liquid</a></li><li><a href="./threefold.macros.html">macros</a></li><li><a href="./threefold.macros.rest.html">macros.rest</a></li><li><a href="./threefold.nodepilot.html">nodepilot</a></li><li><a href="./threefold.rmb.html">rmb</a></li><li><a href="./threefold.terraform.html">terraform</a></li><li><a href="./threefold.tfgrid.html">tfgrid</a></li><li><a href="./threefold.tokens.html">tokens</a></li><li><a href="./threefold.twinclient.html">twinclient</a></li><li><a href="./threefold.zerohub.html">zerohub</a></li></ul></li><li class="open"><div class="menu-row"><a href="./timetools.html">timetools</a></div></li><li class="open"><div class="menu-row"><a href="./tmux.html">tmux</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">tools</a></div><ul><li><a href="./tools.cacher.html">cacher</a></li><li><a href="./tools.downloader.html">downloader</a></li></ul></li><li class="open"><div class="menu-row"><a href="./twinclient.html">twinclient</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./ui.html">ui</a></div><ul><li><a href="./ui.console.html">console</a></li><li><a href="./ui.telegram.html">telegram</a></li><li><a href="./ui.telegram.client.html">telegram.client</a></li><li><a href="./ui.uimodel.html">uimodel</a></li></ul></li><li class="open"><div class="menu-row"><a href="./vault.html">vault</a></div></li><li class="open"><div class="menu-row"><a href="./verasure.html">verasure</a></div></li><li class="open"><div class="menu-row"><a href="./vexecutor.html">vexecutor</a></div></li><li class="open"><div class="menu-row"><a href="./zdb.html">zdb</a></div></li>
+        </ul>
+      </nav>
+    </header>
+    <div class="doc-scrollview" id="main-content">
+      <div class="doc-container">
+        <div class="doc-content">
+          						<section id="readme_builder" class="doc-node">
+							<div class="title"><h1> builder <a href="#readme_builder">#</a></h1></div><h1>BUILDER</h1>
+<h2>Initialization</h2>
+<pre><code class="language-vlang">
+</code></pre>
+<h2>NODE DB</h2>
+<p>There is a type of database implemented on a node level, its basically a key value stor stored on the node.</p>
+<p>Very useful to store values we don't wanna forget.</p>
+<h2>EXECUTOR</h2>
+<p>We have executors implemented to work over SSH or for the LOCAL machine.</p>
+<p>Each executor implements the following methods</p>
+<ul>
+<li>exec(cmd string) !string</li>
+<li>exec_silent(cmd string) !string</li>
+<li>file_write(path string, text string) !</li>
+<li>file_read(path string) !string</li>
+<li>file_exists(path string) bool</li>
+<li>delete(path string) !</li>
+<li>download(source string, dest string) !</li>
+<li>upload(source string, dest string) !</li>
+<li>environ_get() !map[string]string</li>
+<li>info() map[string]string</li>
+<li>shell(cmd string) !</li>
+<li>list(path string) ![]string</li>
+<li>dir_exists(path string) bool</li>
+<li>debug_off()</li>
+<li>debug_on()</li>
+</ul>
+<h2>TMUX</h2>
+<p>TMUX is a very capable process manager, this class makes it easier to operate.</p>
+<p>example:</p>
+<pre><code class="language-v">
+
+</code></pre>
+<p>A cool feature is that we can run TMUX remote over an SSH node.</p>
+<h3>Concepts</h3>
+<ul>
+<li>tmux = is the factory, it represents the tmux process manager, linked to a node</li>
+<li>session = is a set of windows, it has a name and groups windows</li>
+<li>window = is typically one process running (you can have panes but in our implementation we skip this)</li>
+</ul>
+
+</section>
+
+						<section id="node_local" class="doc-node">
+							<div class="title"><h2>fn node_local <a href="#node_local">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/builder_factory.v#L26"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">node_local</span><span class="token punctuation">(</span>args NodeLocalArgs<span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>Node</code></pre>
+
+
+</section>
+						<section id="new" class="doc-node">
+							<div class="title"><h2>fn new <a href="#new">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/builder_factory.v#L12"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">new</span><span class="token punctuation">(</span><span class="token punctuation">)</span> BuilderFactory</code></pre>
+
+
+</section>
+						<section id="CPUType" class="doc-node">
+							<div class="title"><h2>enum CPUType <a href="#CPUType">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node.v#L13"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">enum</span> <span class="token symbol">CPUType</span> <span class="token punctuation">{</span>
+	unknown
+	intel
+	arm
+	intel32
+	arm32
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="PlatformType" class="doc-node">
+							<div class="title"><h2>enum PlatformType <a href="#PlatformType">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node.v#L6"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">enum</span> <span class="token symbol">PlatformType</span> <span class="token punctuation">{</span>
+	unknown
+	osx
+	ubuntu
+	alpine
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="ExecutorNewArguments" class="doc-node">
+							<div class="title"><h2>struct ExecutorNewArguments <a href="#ExecutorNewArguments">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor.v#L7"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">ExecutorNewArguments</span> <span class="token punctuation">{</span>
+	local  <span class="token builtin">bool</span> <span class="token comment">// if this set then will always be the local machine</span>
+	ipaddr <span class="token builtin">string</span>
+	user   <span class="token builtin">string</span> <span class="token operator">=</span> <span class="token string">'root'</span>
+	debug  <span class="token builtin">bool</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="ExecutorSSH" class="doc-node">
+							<div class="title"><h2>struct ExecutorSSH <a href="#ExecutorSSH">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_ssh.v#L9"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">ExecutorSSH</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	ipaddr      ipaddress<span class="token punctuation">.</span>IPAddress
+	sshkey      <span class="token builtin">string</span>
+	user        <span class="token builtin">string</span> <span class="token operator">=</span> <span class="token string">'root'</span> <span class="token comment">// default will be root</span>
+	initialized <span class="token builtin">bool</span>
+	retry       <span class="token builtin">int</span> <span class="token operator">=</span> <span class="token number">1</span> <span class="token comment">// nr of times something will be retried before failing, need to check also what error is, only things which should be retried need to be done</span>
+	debug       <span class="token builtin">bool</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="ExecutorSSH.debug_on" class="doc-node">
+							<div class="title"><h2>fn (ExecutorSSH) debug_on <a href="#ExecutorSSH.debug_on">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_ssh.v#L42"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorSSH<span class="token punctuation">)</span> <span class="token function">debug_on</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+
+</section>
+						<section id="ExecutorSSH.debug_off" class="doc-node">
+							<div class="title"><h2>fn (ExecutorSSH) debug_off <a href="#ExecutorSSH.debug_off">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_ssh.v#L46"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorSSH<span class="token punctuation">)</span> <span class="token function">debug_off</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+
+</section>
+						<section id="ExecutorSSH.exec" class="doc-node">
+							<div class="title"><h2>fn (ExecutorSSH) exec <a href="#ExecutorSSH.exec">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_ssh.v#L50"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorSSH<span class="token punctuation">)</span> <span class="token function">exec</span><span class="token punctuation">(</span>cmd <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="ExecutorSSH.exec_silent" class="doc-node">
+							<div class="title"><h2>fn (ExecutorSSH) exec_silent <a href="#ExecutorSSH.exec_silent">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_ssh.v#L59"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorSSH<span class="token punctuation">)</span> <span class="token function">exec_silent</span><span class="token punctuation">(</span>cmd <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="ExecutorSSH.file_write" class="doc-node">
+							<div class="title"><h2>fn (ExecutorSSH) file_write <a href="#ExecutorSSH.file_write">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_ssh.v#L70"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorSSH<span class="token punctuation">)</span> <span class="token function">file_write</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">,</span> text <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="ExecutorSSH.file_read" class="doc-node">
+							<div class="title"><h2>fn (ExecutorSSH) file_read <a href="#ExecutorSSH.file_read">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_ssh.v#L80"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorSSH<span class="token punctuation">)</span> <span class="token function">file_read</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="ExecutorSSH.file_exists" class="doc-node">
+							<div class="title"><h2>fn (ExecutorSSH) file_exists <a href="#ExecutorSSH.file_exists">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_ssh.v#L91"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorSSH<span class="token punctuation">)</span> <span class="token function">file_exists</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+
+
+</section>
+						<section id="ExecutorSSH.delete" class="doc-node">
+							<div class="title"><h2>fn (ExecutorSSH) delete <a href="#ExecutorSSH.delete">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_ssh.v#L103"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorSSH<span class="token punctuation">)</span> <span class="token function">delete</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>carefull removes everything</p>
+
+</section>
+						<section id="ExecutorSSH.download" class="doc-node">
+							<div class="title"><h2>fn (ExecutorSSH) download <a href="#ExecutorSSH.download">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_ssh.v#L111"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorSSH<span class="token punctuation">)</span> <span class="token function">download</span><span class="token punctuation">(</span>source <span class="token builtin">string</span><span class="token punctuation">,</span> dest <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>upload from local FS to executor FS</p>
+
+</section>
+						<section id="ExecutorSSH.upload" class="doc-node">
+							<div class="title"><h2>fn (ExecutorSSH) upload <a href="#ExecutorSSH.upload">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_ssh.v#L144"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorSSH<span class="token punctuation">)</span> <span class="token function">upload</span><span class="token punctuation">(</span>source <span class="token builtin">string</span><span class="token punctuation">,</span> dest <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>download from executor FS to local FS</p>
+
+</section>
+						<section id="ExecutorSSH.environ_get" class="doc-node">
+							<div class="title"><h2>fn (ExecutorSSH) environ_get <a href="#ExecutorSSH.environ_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_ssh.v#L160"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorSSH<span class="token punctuation">)</span> <span class="token function">environ_get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
+<p>get environment variables from the executor</p>
+
+</section>
+						<section id="ExecutorSSH.info" class="doc-node">
+							<div class="title"><h2>fn (ExecutorSSH) info <a href="#ExecutorSSH.info">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_ssh.v#L187"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorSSH<span class="token punctuation">)</span> <span class="token function">info</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="ExecutorSSH.shell" class="doc-node">
+							<div class="title"><h2>fn (ExecutorSSH) shell <a href="#ExecutorSSH.shell">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_ssh.v#L200"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorSSH<span class="token punctuation">)</span> <span class="token function">shell</span><span class="token punctuation">(</span>cmd <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>ssh shell on the node default ssh port, or any custom port that may be forwarding ssh traffic to certain container</p>
+
+</section>
+						<section id="ExecutorSSH.list" class="doc-node">
+							<div class="title"><h2>fn (ExecutorSSH) list <a href="#ExecutorSSH.list">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_ssh.v#L208"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorSSH<span class="token punctuation">)</span> <span class="token function">list</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="ExecutorSSH.dir_exists" class="doc-node">
+							<div class="title"><h2>fn (ExecutorSSH) dir_exists <a href="#ExecutorSSH.dir_exists">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_ssh.v#L220"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorSSH<span class="token punctuation">)</span> <span class="token function">dir_exists</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+
+
+</section>
+						<section id="BuilderFactory" class="doc-node">
+							<div class="title"><h2>struct BuilderFactory <a href="#BuilderFactory">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/builder_factory.v#L6"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">BuilderFactory</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	nodes <span class="token punctuation">[</span><span class="token punctuation">]</span>Node
+	redis <span class="token operator">&</span>redisclient<span class="token punctuation">.</span>Redis
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="BuilderFactory.node_get" class="doc-node">
+							<div class="title"><h2>fn (BuilderFactory) node_get <a href="#BuilderFactory.node_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_factory.v#L10"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> builder BuilderFactory<span class="token punctuation">)</span> <span class="token function">node_get</span><span class="token punctuation">(</span>name <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>Node</code></pre>
+<p>retrieve node from the factory, will throw error if not there</p>
+
+</section>
+						<section id="BuilderFactory.node_local" class="doc-node">
+							<div class="title"><h2>fn (BuilderFactory) node_local <a href="#BuilderFactory.node_local">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_factory.v#L5"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> builder BuilderFactory<span class="token punctuation">)</span> <span class="token function">node_local</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>Node</code></pre>
+<p>get node connection to local machine pass your redis client there</p>
+
+</section>
+						<section id="BuilderFactory.node_new" class="doc-node">
+							<div class="title"><h2>fn (BuilderFactory) node_new <a href="#BuilderFactory.node_new">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_factory.v#L38"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> builder BuilderFactory<span class="token punctuation">)</span> <span class="token function">node_new</span><span class="token punctuation">(</span>args NodeArguments<span class="token punctuation">)</span> <span class="token operator">!</span><span class="token operator">&</span>Node</code></pre>
+<p>the factory which returns an node, based on the arguments will chose ssh executor or the local one</p>
+<ul>
+<li>format ipaddr: localhost:7777</li>
+<li>format ipaddr: 192.168.6.6:7777</li>
+<li>format ipaddr: 192.168.6.6</li>
+<li>format ipaddr: any ipv6 addr</li>
+<li>if only name used then is localhost with localhost executor</li>
+</ul>
+<pre><code>pub struct NodeArguments {
+    ipaddr string
+    name   string
+    user   string = &quot;root&quot;
+    debug  bool
+    reset bool
+    }
+</code></pre>
+
+</section>
+						<section id="NodeArguments" class="doc-node">
+							<div class="title"><h2>struct NodeArguments <a href="#NodeArguments">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node.v#L42"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">NodeArguments</span> <span class="token punctuation">{</span>
+	ipaddr <span class="token builtin">string</span>
+	name   <span class="token builtin">string</span>
+	user   <span class="token builtin">string</span> <span class="token operator">=</span> <span class="token string">'root'</span>
+	debug  <span class="token builtin">bool</span>
+	reload <span class="token builtin">bool</span>
+<span class="token punctuation">}</span></code></pre>
+<p>format ipaddr: localhost:7777 format ipaddr: 192.168.6.6:7777 format ipaddr: 192.168.6.6 format ipaddr: any ipv6 addr format ipaddr: if only name used then is localhost</p>
+
+</section>
+						<section id="NodeExecCmd" class="doc-node">
+							<div class="title"><h2>struct NodeExecCmd <a href="#NodeExecCmd">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_commands.v#L12"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">NodeExecCmd</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	cmd                <span class="token builtin">string</span>
+	period             <span class="token builtin">int</span>  <span class="token comment">// period in which we check when this was done last, if 0 then period is indefinite</span>
+	reset              <span class="token builtin">bool</span> <span class="token operator">=</span> <span class="token boolean">true</span> <span class="token comment">// means do again or not</span>
+	remove_installer   <span class="token builtin">bool</span> <span class="token operator">=</span> <span class="token boolean">true</span> <span class="token comment">// delete the installer</span>
+	description        <span class="token builtin">string</span>
+	stdout             <span class="token builtin">bool</span> <span class="token operator">=</span> <span class="token boolean">true</span>
+	checkkey           <span class="token builtin">string</span> <span class="token comment">// if used will use this one in stead of hash of cmd, to check if was executed already</span>
+	tmpdir             <span class="token builtin">string</span>
+	ignore_error_codes <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">int</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="NodeLocalArgs" class="doc-node">
+							<div class="title"><h2>struct NodeLocalArgs <a href="#NodeLocalArgs">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/builder_factory.v#L21"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">NodeLocalArgs</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span><span class="token punctuation">:</span>
+	reload <span class="token builtin">bool</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="Package" class="doc-node">
+							<div class="title"><h2>struct Package <a href="#Package">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/model_package.v#L4"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Package</span> <span class="token punctuation">{</span>
+	name        <span class="token builtin">string</span>
+	description <span class="token builtin">string</span>
+	version     <span class="token builtin">string</span>
+	aliases     <span class="token punctuation">[</span><span class="token punctuation">]</span>PackageAlias
+<span class="token punctuation">}</span></code></pre>
+<p>is e.g. an ubuntu packagedapp, it needs to be packaged by the package maintainers !</p>
+
+</section>
+						<section id="Package.name_get" class="doc-node">
+							<div class="title"><h2>fn (Package) name_get <a href="#Package.name_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/model_package.v#L20"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> package Package<span class="token punctuation">)</span> <span class="token function">name_get</span><span class="token punctuation">(</span>platformtype PlatformType<span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+<p>get the right name depending the platform type</p>
+
+</section>
+						<section id="Package.version_get" class="doc-node">
+							<div class="title"><h2>fn (Package) version_get <a href="#Package.version_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/model_package.v#L30"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> package Package<span class="token punctuation">)</span> <span class="token function">version_get</span><span class="token punctuation">(</span>platformtype PlatformType<span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+<p>get the right name depending the platform type</p>
+
+</section>
+						<section id="PackageAlias" class="doc-node">
+							<div class="title"><h2>struct PackageAlias <a href="#PackageAlias">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/model_package.v#L13"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">PackageAlias</span> <span class="token punctuation">{</span>
+	name         <span class="token builtin">string</span>
+	platformtype PlatformType
+	version      <span class="token builtin">string</span>
+<span class="token punctuation">}</span></code></pre>
+<p>if there is an exception of how package needs to be installed (alias) e.g. on ubuntu something is called myapp but on alpine its my_app</p>
+
+</section>
+						<section id="Node" class="doc-node">
+							<div class="title"><h2>struct Node <a href="#Node">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node.v#L22"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Node</span> <span class="token punctuation">{</span>
+<span class="token keyword">mut</span><span class="token punctuation">:</span>
+	factory  <span class="token operator">&</span>BuilderFactory <span class="token punctuation">[</span>skip<span class="token punctuation">;</span> str<span class="token punctuation">:</span> skip<span class="token punctuation">]</span>
+	executor Executor        <span class="token punctuation">[</span>skip<span class="token punctuation">;</span> str<span class="token punctuation">:</span> skip<span class="token punctuation">]</span>
+<span class="token keyword">pub</span><span class="token punctuation">:</span>
+	name <span class="token builtin">string</span> <span class="token operator">=</span> <span class="token string">'mymachine'</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	platform    PlatformType
+	cputype     CPUType
+	done        <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+	environment <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+	params      Params
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="Node.upload" class="doc-node">
+							<div class="title"><h2>fn (Node) upload <a href="#Node.upload">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L155"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">upload</span><span class="token punctuation">(</span>source <span class="token builtin">string</span><span class="token punctuation">,</span> dest <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="Node.command_exists" class="doc-node">
+							<div class="title"><h2>fn (Node) command_exists <a href="#Node.command_exists">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L120"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">command_exists</span><span class="token punctuation">(</span>cmd <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+<p>checks if given executable exists in node</p>
+
+</section>
+						<section id="Node.debug_off" class="doc-node">
+							<div class="title"><h2>fn (Node) debug_off <a href="#Node.debug_off">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L213"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">debug_off</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+
+</section>
+						<section id="Node.debug_on" class="doc-node">
+							<div class="title"><h2>fn (Node) debug_on <a href="#Node.debug_on">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L222"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">debug_on</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+
+</section>
+						<section id="Node.delete" class="doc-node">
+							<div class="title"><h2>fn (Node) delete <a href="#Node.delete">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L131"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">delete</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="Node.dir_exists" class="doc-node">
+							<div class="title"><h2>fn (Node) dir_exists <a href="#Node.dir_exists">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L204"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">dir_exists</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+
+
+</section>
+						<section id="Node.done_exists" class="doc-node">
+							<div class="title"><h2>fn (Node) done_exists <a href="#Node.done_exists">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/done.v#L36"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">done_exists</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+
+
+</section>
+						<section id="Node.done_get" class="doc-node">
+							<div class="title"><h2>fn (Node) done_get <a href="#Node.done_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/done.v#L13"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">done_get</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">?</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="Node.done_get_int" class="doc-node">
+							<div class="title"><h2>fn (Node) done_get_int <a href="#Node.done_get_int">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/done.v#L29"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">done_get_int</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">int</span></code></pre>
+<p>will return 0 if it doesnt exist</p>
+
+</section>
+						<section id="Node.done_get_str" class="doc-node">
+							<div class="title"><h2>fn (Node) done_get_str <a href="#Node.done_get_str">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/done.v#L21"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">done_get_str</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+<p>will return empty string if it doesnt exist</p>
+
+</section>
+						<section id="Node.done_print" class="doc-node">
+							<div class="title"><h2>fn (Node) done_print <a href="#Node.done_print">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/done.v#L40"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">done_print</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+
+</section>
+						<section id="Node.done_reset" class="doc-node">
+							<div class="title"><h2>fn (Node) done_reset <a href="#Node.done_reset">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/done.v#L47"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">done_reset</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="Node.done_set" class="doc-node">
+							<div class="title"><h2>fn (Node) done_set <a href="#Node.done_set">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/done.v#L3"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">done_set</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> val <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="Node.download" class="doc-node">
+							<div class="title"><h2>fn (Node) download <a href="#Node.download">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L146"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">download</span><span class="token punctuation">(</span>source <span class="token builtin">string</span><span class="token punctuation">,</span> dest <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<pre><code>download(source string, dest string) ! 	upload(source string, dest string) ! 	environ_get() !map[string]string 	info() map[string]string 	shell(cmd string) !
+</code></pre>
+
+</section>
+						<section id="Node.environ_get" class="doc-node">
+							<div class="title"><h2>fn (Node) environ_get <a href="#Node.environ_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L164"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">environ_get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="Node.exec" class="doc-node">
+							<div class="title"><h2>fn (Node) exec <a href="#Node.exec">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L13"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">exec</span><span class="token punctuation">(</span>cmd <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+<pre><code>exec(cmd string) !string 	exec_silent(cmd string) !string 	file_write(path string, text string) ! 	file_read(path string) !string 	file_exists(path string) bool 	delete(path string) !
+</code></pre>
+
+</section>
+						<section id="Node.exec_cmd" class="doc-node">
+							<div class="title"><h2>fn (Node) exec_cmd <a href="#Node.exec_cmd">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_commands.v#L50"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">exec_cmd</span><span class="token punctuation">(</span>args_ NodeExecCmd<span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+<p>cmd: cmd to execute period in sec, e.g. if 3600, means will only execute this if not done yet within the hour</p>
+<p>ARGS:</p>
+<pre><code>struct NodeExecCmd{
+    cmd string
+    period int //period in which we check when this was done last, if 0 then period is indefinite
+    reset bool = true
+    description string
+    checkkey string //if used will use this one in stead of hash of cmd, to check if was executed already
+}
+</code></pre>
+
+</section>
+						<section id="Node.exec_file" class="doc-node">
+							<div class="title"><h2>fn (Node) exec_file <a href="#Node.exec_file">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L31"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">exec_file</span><span class="token punctuation">(</span>args ExecFileArgs<span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="Node.exec_ok" class="doc-node">
+							<div class="title"><h2>fn (Node) exec_ok <a href="#Node.exec_ok">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_commands.v#L116"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">exec_ok</span><span class="token punctuation">(</span>cmd <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+<p>check if we can execute and there is not errorcode</p>
+
+</section>
+						<section id="Node.exec_retry" class="doc-node">
+							<div class="title"><h2>fn (Node) exec_retry <a href="#Node.exec_retry">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L64"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">exec_retry</span><span class="token punctuation">(</span>args ExecRetryArgs<span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+<p>a cool way to execute something until it succeeds params:  	cmd     string  	retrymax int = 10 		//how may times maximum to retry   	period_milli int = 100	//sleep in between retry in milliseconds 	    timeout int = 2			//timeout for al the tries together</p>
+
+</section>
+						<section id="Node.exec_silent" class="doc-node">
+							<div class="title"><h2>fn (Node) exec_silent <a href="#Node.exec_silent">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L83"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">exec_silent</span><span class="token punctuation">(</span>cmd <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+<p>silently execute a command</p>
+
+</section>
+						<section id="Node.file_exists" class="doc-node">
+							<div class="title"><h2>fn (Node) file_exists <a href="#Node.file_exists">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L110"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">file_exists</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+
+
+</section>
+						<section id="Node.file_read" class="doc-node">
+							<div class="title"><h2>fn (Node) file_read <a href="#Node.file_read">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L101"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">file_read</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="Node.file_write" class="doc-node">
+							<div class="title"><h2>fn (Node) file_write <a href="#Node.file_write">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L92"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">file_write</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">,</span> text <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="Node.info" class="doc-node">
+							<div class="title"><h2>fn (Node) info <a href="#Node.info">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L173"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">info</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="Node.ipaddr_pub_get" class="doc-node">
+							<div class="title"><h2>fn (Node) ipaddr_pub_get <a href="#Node.ipaddr_pub_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_commands.v#L27"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">ipaddr_pub_get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+<p>return the ipaddress as known on the public side is using resolver4.opendns.com</p>
+
+</section>
+						<section id="Node.key" class="doc-node">
+							<div class="title"><h2>fn (Node) key <a href="#Node.key">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node.v#L51"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">key</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+<p>get unique key for the node, as used in caching environment</p>
+
+</section>
+						<section id="Node.list" class="doc-node">
+							<div class="title"><h2>fn (Node) list <a href="#Node.list">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L195"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">list</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
+<pre><code>list(path string) ![]string 	dir_exists(path string) bool 	debug_off() 	debug_on()
+</code></pre>
+
+</section>
+						<section id="Node.load" class="doc-node">
+							<div class="title"><h2>fn (Node) load <a href="#Node.load">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node.v#L72"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">load</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">bool</span></code></pre>
+<p>load the node from redis cache, if not there will load from system return true if the data was in redis (cache)</p>
+
+</section>
+						<section id="Node.package_install" class="doc-node">
+							<div class="title"><h2>fn (Node) package_install <a href="#Node.package_install">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_commands.v#L164"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">package_install</span><span class="token punctuation">(</span>package Package<span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="Node.package_refresh" class="doc-node">
+							<div class="title"><h2>fn (Node) package_refresh <a href="#Node.package_refresh">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_commands.v#L156"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">package_refresh</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="Node.readfromsystem" class="doc-node">
+							<div class="title"><h2>fn (Node) readfromsystem <a href="#Node.readfromsystem">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node.v#L57"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">readfromsystem</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>get remote environment arguments in memory</p>
+
+</section>
+						<section id="Node.save" class="doc-node">
+							<div class="title"><h2>fn (Node) save <a href="#Node.save">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node.v#L92"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">save</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>get remote environment arguments in memory</p>
+
+</section>
+						<section id="Node.shell" class="doc-node">
+							<div class="title"><h2>fn (Node) shell <a href="#Node.shell">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L182"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">shell</span><span class="token punctuation">(</span>cmd <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="Node.cmd_exists" class="doc-node">
+							<div class="title"><h2>fn (Node) cmd_exists <a href="#Node.cmd_exists">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_commands.v#L8"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> node Node<span class="token punctuation">)</span> <span class="token function">cmd_exists</span><span class="token punctuation">(</span>cmd <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+<p>check command exists on the platform, knows how to deal with different platforms</p>
+
+</section>
+						<section id="ExecFileArgs" class="doc-node">
+							<div class="title"><h2>struct ExecFileArgs <a href="#ExecFileArgs">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L23"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">ExecFileArgs</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span><span class="token punctuation">:</span>
+	path    <span class="token builtin">string</span>
+	cmd     <span class="token builtin">string</span>
+	execute <span class="token builtin">bool</span> <span class="token operator">=</span> <span class="token boolean">true</span>
+	dedent  <span class="token builtin">bool</span> <span class="token operator">=</span> <span class="token boolean">true</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="ExecRetryArgs" class="doc-node">
+							<div class="title"><h2>struct ExecRetryArgs <a href="#ExecRetryArgs">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/node_executor.v#L50"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">ExecRetryArgs</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span><span class="token punctuation">:</span>
+	cmd          <span class="token builtin">string</span>
+	retrymax     <span class="token builtin">int</span> <span class="token operator">=</span> <span class="token number">10</span> <span class="token comment">// how may times maximum to retry</span>
+	period_milli <span class="token builtin">int</span> <span class="token operator">=</span> <span class="token number">100</span> <span class="token comment">// sleep in between retry in milliseconds</span>
+	timeout      <span class="token builtin">int</span> <span class="token operator">=</span> <span class="token number">2</span> <span class="token comment">// timeout for al the tries together</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="ExecutorLocal" class="doc-node">
+							<div class="title"><h2>struct ExecutorLocal <a href="#ExecutorLocal">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_local.v#L7"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">ExecutorLocal</span> <span class="token punctuation">{</span>
+	retry <span class="token builtin">int</span> <span class="token operator">=</span> <span class="token number">1</span> <span class="token comment">// nr of times something will be retried before failing, need to check also what error is, only things which should be retried need to be done, default 1 because is local</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	debug <span class="token builtin">bool</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="ExecutorLocal.exec" class="doc-node">
+							<div class="title"><h2>fn (ExecutorLocal) exec <a href="#ExecutorLocal.exec">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_local.v#L13"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorLocal<span class="token punctuation">)</span> <span class="token function">exec</span><span class="token punctuation">(</span>cmd <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="ExecutorLocal.exec_silent" class="doc-node">
+							<div class="title"><h2>fn (ExecutorLocal) exec_silent <a href="#ExecutorLocal.exec_silent">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_local.v#L18"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorLocal<span class="token punctuation">)</span> <span class="token function">exec_silent</span><span class="token punctuation">(</span>cmd <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="ExecutorLocal.file_write" class="doc-node">
+							<div class="title"><h2>fn (ExecutorLocal) file_write <a href="#ExecutorLocal.file_write">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_local.v#L27"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorLocal<span class="token punctuation">)</span> <span class="token function">file_write</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">,</span> text <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="ExecutorLocal.file_read" class="doc-node">
+							<div class="title"><h2>fn (ExecutorLocal) file_read <a href="#ExecutorLocal.file_read">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_local.v#L32"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorLocal<span class="token punctuation">)</span> <span class="token function">file_read</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="ExecutorLocal.file_exists" class="doc-node">
+							<div class="title"><h2>fn (ExecutorLocal) file_exists <a href="#ExecutorLocal.file_exists">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_local.v#L36"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorLocal<span class="token punctuation">)</span> <span class="token function">file_exists</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+
+
+</section>
+						<section id="ExecutorLocal.debug_on" class="doc-node">
+							<div class="title"><h2>fn (ExecutorLocal) debug_on <a href="#ExecutorLocal.debug_on">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_local.v#L40"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorLocal<span class="token punctuation">)</span> <span class="token function">debug_on</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+
+</section>
+						<section id="ExecutorLocal.debug_off" class="doc-node">
+							<div class="title"><h2>fn (ExecutorLocal) debug_off <a href="#ExecutorLocal.debug_off">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_local.v#L44"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorLocal<span class="token punctuation">)</span> <span class="token function">debug_off</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+
+
+</section>
+						<section id="ExecutorLocal.delete" class="doc-node">
+							<div class="title"><h2>fn (ExecutorLocal) delete <a href="#ExecutorLocal.delete">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_local.v#L49"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorLocal<span class="token punctuation">)</span> <span class="token function">delete</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>carefull removes everything</p>
+
+</section>
+						<section id="ExecutorLocal.environ_get" class="doc-node">
+							<div class="title"><h2>fn (ExecutorLocal) environ_get <a href="#ExecutorLocal.environ_get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_local.v#L59"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorLocal<span class="token punctuation">)</span> <span class="token function">environ_get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
+<p>get environment variables from the executor</p>
+
+</section>
+						<section id="ExecutorLocal.info" class="doc-node">
+							<div class="title"><h2>fn (ExecutorLocal) info <a href="#ExecutorLocal.info">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_local.v#L72"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorLocal<span class="token punctuation">)</span> <span class="token function">info</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="ExecutorLocal.upload" class="doc-node">
+							<div class="title"><h2>fn (ExecutorLocal) upload <a href="#ExecutorLocal.upload">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_local.v#L79"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorLocal<span class="token punctuation">)</span> <span class="token function">upload</span><span class="token punctuation">(</span>source <span class="token builtin">string</span><span class="token punctuation">,</span> dest <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>upload from local FS to executor FS</p>
+
+</section>
+						<section id="ExecutorLocal.download" class="doc-node">
+							<div class="title"><h2>fn (ExecutorLocal) download <a href="#ExecutorLocal.download">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_local.v#L84"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorLocal<span class="token punctuation">)</span> <span class="token function">download</span><span class="token punctuation">(</span>source <span class="token builtin">string</span><span class="token punctuation">,</span> dest <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+<p>download from executor FS to local FS</p>
+
+</section>
+						<section id="ExecutorLocal.shell" class="doc-node">
+							<div class="title"><h2>fn (ExecutorLocal) shell <a href="#ExecutorLocal.shell">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_local.v#L88"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorLocal<span class="token punctuation">)</span> <span class="token function">shell</span><span class="token punctuation">(</span>cmd <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span></code></pre>
+
+
+</section>
+						<section id="ExecutorLocal.list" class="doc-node">
+							<div class="title"><h2>fn (ExecutorLocal) list <a href="#ExecutorLocal.list">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_local.v#L96"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorLocal<span class="token punctuation">)</span> <span class="token function">list</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="ExecutorLocal.dir_exists" class="doc-node">
+							<div class="title"><h2>fn (ExecutorLocal) dir_exists <a href="#ExecutorLocal.dir_exists">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/builder/executor_local.v#L103"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> executor ExecutorLocal<span class="token punctuation">)</span> <span class="token function">dir_exists</span><span class="token punctuation">(</span>path <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+
+
+</section>
+
+          <div class="footer">
+            Powered by vdoc.
+          </div>
+        </div>
+        <div class="doc-toc"><ul><li class="open"><a href="#readme_builder">README</a></li>
+<li class="open"><a href="#node_local">fn node_local</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#new">fn new</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#CPUType">enum CPUType</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#PlatformType">enum PlatformType</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#ExecutorNewArguments">struct ExecutorNewArguments</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#ExecutorSSH">struct ExecutorSSH</a>        <ul>
+<li><a href="#ExecutorSSH.debug_on">fn debug_on</a></li>
+<li><a href="#ExecutorSSH.debug_off">fn debug_off</a></li>
+<li><a href="#ExecutorSSH.exec">fn exec</a></li>
+<li><a href="#ExecutorSSH.exec_silent">fn exec_silent</a></li>
+<li><a href="#ExecutorSSH.file_write">fn file_write</a></li>
+<li><a href="#ExecutorSSH.file_read">fn file_read</a></li>
+<li><a href="#ExecutorSSH.file_exists">fn file_exists</a></li>
+<li><a href="#ExecutorSSH.delete">fn delete</a></li>
+<li><a href="#ExecutorSSH.download">fn download</a></li>
+<li><a href="#ExecutorSSH.upload">fn upload</a></li>
+<li><a href="#ExecutorSSH.environ_get">fn environ_get</a></li>
+<li><a href="#ExecutorSSH.info">fn info</a></li>
+<li><a href="#ExecutorSSH.shell">fn shell</a></li>
+<li><a href="#ExecutorSSH.list">fn list</a></li>
+<li><a href="#ExecutorSSH.dir_exists">fn dir_exists</a></li>
+</ul>
+</li>
+<li class="open"><a href="#BuilderFactory">struct BuilderFactory</a>        <ul>
+<li><a href="#BuilderFactory.node_get">fn node_get</a></li>
+<li><a href="#BuilderFactory.node_local">fn node_local</a></li>
+<li><a href="#BuilderFactory.node_new">fn node_new</a></li>
+</ul>
+</li>
+<li class="open"><a href="#NodeArguments">struct NodeArguments</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#NodeExecCmd">struct NodeExecCmd</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#NodeLocalArgs">struct NodeLocalArgs</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Package">struct Package</a>        <ul>
+<li><a href="#Package.name_get">fn name_get</a></li>
+<li><a href="#Package.version_get">fn version_get</a></li>
+</ul>
+</li>
+<li class="open"><a href="#PackageAlias">struct PackageAlias</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Node">struct Node</a>        <ul>
+<li><a href="#Node.upload">fn upload</a></li>
+<li><a href="#Node.command_exists">fn command_exists</a></li>
+<li><a href="#Node.debug_off">fn debug_off</a></li>
+<li><a href="#Node.debug_on">fn debug_on</a></li>
+<li><a href="#Node.delete">fn delete</a></li>
+<li><a href="#Node.dir_exists">fn dir_exists</a></li>
+<li><a href="#Node.done_exists">fn done_exists</a></li>
+<li><a href="#Node.done_get">fn done_get</a></li>
+<li><a href="#Node.done_get_int">fn done_get_int</a></li>
+<li><a href="#Node.done_get_str">fn done_get_str</a></li>
+<li><a href="#Node.done_print">fn done_print</a></li>
+<li><a href="#Node.done_reset">fn done_reset</a></li>
+<li><a href="#Node.done_set">fn done_set</a></li>
+<li><a href="#Node.download">fn download</a></li>
+<li><a href="#Node.environ_get">fn environ_get</a></li>
+<li><a href="#Node.exec">fn exec</a></li>
+<li><a href="#Node.exec_cmd">fn exec_cmd</a></li>
+<li><a href="#Node.exec_file">fn exec_file</a></li>
+<li><a href="#Node.exec_ok">fn exec_ok</a></li>
+<li><a href="#Node.exec_retry">fn exec_retry</a></li>
+<li><a href="#Node.exec_silent">fn exec_silent</a></li>
+<li><a href="#Node.file_exists">fn file_exists</a></li>
+<li><a href="#Node.file_read">fn file_read</a></li>
+<li><a href="#Node.file_write">fn file_write</a></li>
+<li><a href="#Node.info">fn info</a></li>
+<li><a href="#Node.ipaddr_pub_get">fn ipaddr_pub_get</a></li>
+<li><a href="#Node.key">fn key</a></li>
+<li><a href="#Node.list">fn list</a></li>
+<li><a href="#Node.load">fn load</a></li>
+<li><a href="#Node.package_install">fn package_install</a></li>
+<li><a href="#Node.package_refresh">fn package_refresh</a></li>
+<li><a href="#Node.readfromsystem">fn readfromsystem</a></li>
+<li><a href="#Node.save">fn save</a></li>
+<li><a href="#Node.shell">fn shell</a></li>
+<li><a href="#Node.cmd_exists">fn cmd_exists</a></li>
+</ul>
+</li>
+<li class="open"><a href="#ExecFileArgs">struct ExecFileArgs</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#ExecRetryArgs">struct ExecRetryArgs</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#ExecutorLocal">struct ExecutorLocal</a>        <ul>
+<li><a href="#ExecutorLocal.exec">fn exec</a></li>
+<li><a href="#ExecutorLocal.exec_silent">fn exec_silent</a></li>
+<li><a href="#ExecutorLocal.file_write">fn file_write</a></li>
+<li><a href="#ExecutorLocal.file_read">fn file_read</a></li>
+<li><a href="#ExecutorLocal.file_exists">fn file_exists</a></li>
+<li><a href="#ExecutorLocal.debug_on">fn debug_on</a></li>
+<li><a href="#ExecutorLocal.debug_off">fn debug_off</a></li>
+<li><a href="#ExecutorLocal.delete">fn delete</a></li>
+<li><a href="#ExecutorLocal.environ_get">fn environ_get</a></li>
+<li><a href="#ExecutorLocal.info">fn info</a></li>
+<li><a href="#ExecutorLocal.upload">fn upload</a></li>
+<li><a href="#ExecutorLocal.download">fn download</a></li>
+<li><a href="#ExecutorLocal.shell">fn shell</a></li>
+<li><a href="#ExecutorLocal.list">fn list</a></li>
+<li><a href="#ExecutorLocal.dir_exists">fn dir_exists</a></li>
+</ul>
+</li>
+</ul></div>
+      </div>
+    </div>
+  </div>
+  <script src="doc.js"></script>
+  <script async src="search_index.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>params | vdoc</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  
+		<link rel="stylesheet" href="doc.css" />
+		<link rel="stylesheet" href="normalize.css" />
+		<script src="dark-mode.js"></script>
+</head>
+
+<body>
+  <div><a id="skip-to-content-link" href="#main-content">Skip to content</a></div>
+  <div id="page">
+    <header class="doc-nav hidden">
+      <div class="heading-container">
+        <div class="heading">
+          <div class="info">
+            <div class="module">crystallib</div>
+            <div class="toggle-version-container">
+              <span>0.1.0 37a7962</span>
+              <div id="dark-mode-toggle" role="switch" aria-checked="false" aria-label="Toggle dark mode"><svg xmlns="http://www.w3.org/2000/svg" class="light-icon" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" class="dark-icon" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><rect fill="none" height="24" width="24"/></g><g><g><g><path d="M11.1,12.08C8.77,7.57,10.6,3.6,11.63,2.01C6.27,2.2,1.98,6.59,1.98,12c0,0.14,0.02,0.28,0.02,0.42 C2.62,12.15,3.29,12,4,12c1.66,0,3.18,0.83,4.1,2.15C9.77,14.63,11,16.17,11,18c0,1.52-0.87,2.83-2.12,3.51 c0.98,0.32,2.03,0.5,3.11,0.5c3.5,0,6.58-1.8,8.37-4.52C18,17.72,13.38,16.52,11.1,12.08z"/></g><path d="M7,16l-0.18,0C6.4,14.84,5.3,14,4,14c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.62,0,2.49,0,3,0c1.1,0,2-0.9,2-2 C9,16.9,8.1,16,7,16z"/></g></g></svg>
+</div>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" id="toggle-menu" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+
+          </div>
+          <input type="text" id="search" placeholder="Search... (beta)" autocomplete="off">
+        </div>
+      </div>
+      <nav class="search hidden"></nav>
+      <nav class="content hidden">
+        <ul>
+          <li class="open"><div class="menu-row"><a href="./index.html">README</a></div></li><li class="open"><div class="menu-row"><a href="./actions.html">actions</a></div></li><li class="open"><div class="menu-row"><a href="./actionsparser.html">actionsparser</a></div></li><li class="open"><div class="menu-row"><a href="./archiver.html">archiver</a></div></li><li class="open"><div class="menu-row"><a href="./bizmodel.html">bizmodel</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./books.library.html">books</a></div><ul><li><a href="./books.library.html">library</a></li></ul></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./books.html">books</a></div><ul><li><a href="./books.library.html">library</a></li></ul></li><li class="open"><div class="menu-row"><a href="./builder.html">builder</a></div></li><li class="open"><div class="menu-row"><a href="./calc.html">calc</a></div></li><li class="open"><div class="menu-row"><a href="./codemodel.html">codemodel</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./codeparser.html">codeparser</a></div><ul><li><a href="./codeparser.testdata.html">testdata</a></li><li><a href="./codeparser.testdata.flatdir.html">testdata.flatdir</a></li></ul></li><li class="open"><div class="menu-row"><a href="./coinmarketcap.html">coinmarketcap</a></div></li><li class="open"><div class="menu-row"><a href="./console.html">console</a></div></li><li class="open"><div class="menu-row"><a href="./crpgp.html">crpgp</a></div></li><li class="open"><div class="menu-row"><a href="./crystaljson.html">crystaljson</a></div></li><li class="open"><div class="menu-row"><a href="./currency.html">currency</a></div></li><li class="open"><div class="menu-row"><a href="./data.html">data</a></div></li><li class="open"><div class="menu-row"><a href="./docker.html">docker</a></div></li><li class="open"><div class="menu-row"><a href="./encoder.html">encoder</a></div></li><li class="open"><div class="menu-row"><a href="./fftools.html">fftools</a></div></li><li class="open"><div class="menu-row"><a href="./github.html">github</a></div></li><li class="open"><div class="menu-row"><a href="./gittools.html">gittools</a></div></li><li class="open"><div class="menu-row"><a href="./hostsfile.html">hostsfile</a></div></li><li class="open"><div class="menu-row"><a href="./httpconnection.html">httpconnection</a></div></li><li class="open"><div class="menu-row"><a href="./imagemagick.html">imagemagick</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">installers</a></div><ul><li><a href="./installers.base.html">base</a></li><li><a href="./installers.caddy.html">caddy</a></li><li><a href="./installers.crystaltools.html">crystaltools</a></li><li><a href="./installers.golang.html">golang</a></li><li><a href="./installers.imagemagick.html">imagemagick</a></li><li><a href="./installers.mdbook.html">mdbook</a></li><li><a href="./installers.repository.html">repository</a></li><li><a href="./installers.rust.html">rust</a></li><li><a href="./installers.swarm.html">swarm</a></li><li><a href="./installers.tailwind.html">tailwind</a></li><li><a href="./installers.tmux.html">tmux</a></li><li><a href="./installers.vlang.html">vlang</a></li><li><a href="./installers.zdb.html">zdb</a></li></ul></li><li class="open"><div class="menu-row"><a href="./ipaddress.html">ipaddress</a></div></li><li class="open"><div class="menu-row"><a href="./jsonrpc.html">jsonrpc</a></div></li><li class="open"><div class="menu-row"><a href="./jsonschema.html">jsonschema</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./keysafe.html">keysafe</a></div><ul><li><a href="./keysafe.secp256k1.html">secp256k1</a></li></ul></li><li class="open"><div class="menu-row"><a href="./markdowndocs.html">markdowndocs</a></div></li><li class="open"><div class="menu-row"><a href="./mnemonic.html">mnemonic</a></div></li><li class="open"><div class="menu-row"><a href="./natsclient.html">natsclient</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./openrpc.html">openrpc</a></div><ul><li><a href="./openrpc.docgen.html">docgen</a></li><li><a href="./openrpc.examples.openrpc_client.html">examples.openrpc_client</a></li><li><a href="./openrpc.examples.petstore_client.html">examples.petstore_client</a></li></ul></li><li class="open"><div class="menu-row"><a href="./main.html">main</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./openrpc.examples.openrpc_client.html">openrpc</a></div><ul><li><a href="./openrpc.docgen.html">docgen</a></li><li><a href="./openrpc.examples.openrpc_client.html">examples.openrpc_client</a></li><li><a href="./openrpc.examples.petstore_client.html">examples.petstore_client</a></li></ul></li><li class="open"><div class="menu-row"><a href="./openssl.html">openssl</a></div></li><li class="open active"><div class="menu-row"><a href="./params.html">params</a></div></li><li class="open"><div class="menu-row"><a href="./pathlib.html">pathlib</a></div></li><li class="open"><div class="menu-row"><a href="./pgp.html">pgp</a></div></li><li class="open"><div class="menu-row"><a href="./process.html">process</a></div></li><li class="open"><div class="menu-row"><a href="./publisher2.html">publisher2</a></div></li><li class="open"><div class="menu-row"><a href="./publisher_core.html">publisher_core</a></div></li><li class="open"><div class="menu-row"><a href="./redisclient.html">redisclient</a></div></li><li class="open"><div class="menu-row"><a href="./redisserver.html">redisserver</a></div></li><li class="open"><div class="menu-row"><a href="./resp.html">resp</a></div></li><li class="open"><div class="menu-row"><a href="./rootpath.html">rootpath</a></div></li><li class="open"><div class="menu-row"><a href="./rpcwebsocket.html">rpcwebsocket</a></div></li><li class="open"><div class="menu-row"><a href="./serializers.html">serializers</a></div></li><li class="open"><div class="menu-row"><a href="./sshagent.html">sshagent</a></div></li><li class="open"><div class="menu-row"><a href="./taskletmanager.html">taskletmanager</a></div></li><li class="open"><div class="menu-row"><a href="./texttools.html">texttools</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">threefold</a></div><ul><li><a href="./threefold.liquid.html">liquid</a></li><li><a href="./threefold.macros.html">macros</a></li><li><a href="./threefold.macros.rest.html">macros.rest</a></li><li><a href="./threefold.nodepilot.html">nodepilot</a></li><li><a href="./threefold.rmb.html">rmb</a></li><li><a href="./threefold.terraform.html">terraform</a></li><li><a href="./threefold.tfgrid.html">tfgrid</a></li><li><a href="./threefold.tokens.html">tokens</a></li><li><a href="./threefold.twinclient.html">twinclient</a></li><li><a href="./threefold.zerohub.html">zerohub</a></li></ul></li><li class="open"><div class="menu-row"><a href="./timetools.html">timetools</a></div></li><li class="open"><div class="menu-row"><a href="./tmux.html">tmux</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">tools</a></div><ul><li><a href="./tools.cacher.html">cacher</a></li><li><a href="./tools.downloader.html">downloader</a></li></ul></li><li class="open"><div class="menu-row"><a href="./twinclient.html">twinclient</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./ui.html">ui</a></div><ul><li><a href="./ui.console.html">console</a></li><li><a href="./ui.telegram.html">telegram</a></li><li><a href="./ui.telegram.client.html">telegram.client</a></li><li><a href="./ui.uimodel.html">uimodel</a></li></ul></li><li class="open"><div class="menu-row"><a href="./vault.html">vault</a></div></li><li class="open"><div class="menu-row"><a href="./verasure.html">verasure</a></div></li><li class="open"><div class="menu-row"><a href="./vexecutor.html">vexecutor</a></div></li><li class="open"><div class="menu-row"><a href="./zdb.html">zdb</a></div></li>
+        </ul>
+      </nav>
+    </header>
+    <div class="doc-scrollview" id="main-content">
+      <div class="doc-container">
+        <div class="doc-content">
+          						<section id="readme_params" class="doc-node">
+							<div class="title"><h1> params <a href="#readme_params">#</a></h1></div><h1>Params</h1>
+<p>example text to parse</p>
+<pre><code class="language-yaml">id:a1 name6:aaaaa
+name:'need to do something 1' 
+description:
+    ## markdown works in it
+
+    description can be multiline
+    lets see what happens
+
+    - a
+    - something else
+
+    ### subtitle
+
+
+name2:   test
+name3: hi name10:'this is with space'  name11:aaa11
+
+#some comment
+
+name4: 'aaa'
+
+//somecomment
+name5:   'aab' 
+</code></pre>
+<p>results in</p>
+<pre><code class="language-go">Params{
+    params: [Param{
+        key: 'id'
+        value: 'a1'
+    }, Param{
+        key: 'name6'
+        value: 'aaaaa'
+    }, Param{
+        key: 'name'
+        value: 'need to do something 1'
+    }, Param{
+        key: 'description'
+        value: '## markdown works in it
+
+                description can be multiline
+                lets see what happens
+                
+                - a
+                - something else
+                
+                ### subtitle
+                '
+        }, Param{
+            key: 'name2'
+            value: 'test'
+        }, Param{
+            key: 'name3'
+            value: 'hi'
+        }, Param{
+            key: 'name10'
+            value: 'this is with space'
+        }, Param{
+            key: 'name11'
+            value: 'aaa11'
+        }, Param{
+            key: 'name4'
+            value: 'aaa'
+        }, Param{
+            key: 'name5'
+            value: 'aab'
+        }]
+    }
+</code></pre>
+
+</section>
+
+						<section id="parse" class="doc-node">
+							<div class="title"><h2>fn parse <a href="#parse">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/parser.v#L38"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">parse</span><span class="token punctuation">(</span>text <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span>Params</code></pre>
+<p>convert text with e.g. color:red or color:'red' to arguments multiline is supported result is params object which allows you to query the info you need params is following:</p>
+<p>struct Params { 	params []Param 	args   []Arg } struct Arg { 	value string } struct Param { 	key   string 	value string } it has nice methods to query the params</p>
+
+</section>
+						<section id="json_import" class="doc-node">
+							<div class="title"><h2>fn json_import <a href="#json_import">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_json.v#L21"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">json_import</span><span class="token punctuation">(</span>data <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span>Params</code></pre>
+
+
+</section>
+						<section id="new" class="doc-node">
+							<div class="title"><h2>fn new <a href="#new">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params.v#L17"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">new</span><span class="token punctuation">(</span>txt <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span>Params</code></pre>
+<p>get params from txt, same as parse()</p>
+
+</section>
+						<section id="new_params" class="doc-node">
+							<div class="title"><h2>fn new_params <a href="#new_params">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params.v#L21"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">new_params</span><span class="token punctuation">(</span><span class="token punctuation">)</span> Params</code></pre>
+
+
+</section>
+						<section id="encode" class="doc-node">
+							<div class="title"><h2>fn encode <a href="#encode">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_reflection.v#L27"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> encode<span class="token punctuation">[</span><span class="token builtin">T</span><span class="token punctuation">]</span><span class="token punctuation">(</span>t <span class="token builtin">T</span><span class="token punctuation">)</span> <span class="token operator">!</span>Params</code></pre>
+
+
+</section>
+						<section id="from_resp" class="doc-node">
+							<div class="title"><h2>fn from_resp <a href="#from_resp">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_resp.v#L21"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">from_resp</span><span class="token punctuation">(</span>data <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">u8</span><span class="token punctuation">)</span> <span class="token operator">!</span>Params</code></pre>
+
+
+</section>
+						<section id="importparams" class="doc-node">
+							<div class="title"><h2>fn importparams <a href="#importparams">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_export_import.v#L46"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">importparams</span><span class="token punctuation">(</span>txt <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span>Params</code></pre>
+
+
+</section>
+						<section id="ExportArgs" class="doc-node">
+							<div class="title"><h2>struct ExportArgs <a href="#ExportArgs">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_export_import.v#L8"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">ExportArgs</span> <span class="token punctuation">{</span>
+	indent <span class="token builtin">string</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="Params" class="doc-node">
+							<div class="title"><h2>struct Params <a href="#Params">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params.v#L4"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Params</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	params <span class="token punctuation">[</span><span class="token punctuation">]</span>Param
+	args   <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="Params.to_resp" class="doc-node">
+							<div class="title"><h2>fn (Params) to_resp <a href="#Params.to_resp">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_resp.v#L6"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> p Params<span class="token punctuation">)</span> <span class="token function">to_resp</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">u8</span></code></pre>
+<p>encode using resp (redis procotol)</p>
+
+</section>
+						<section id="Params.arg_exists" class="doc-node">
+							<div class="title"><h2>fn (Params) arg_exists <a href="#Params.arg_exists">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_exists.v#L23"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">arg_exists</span><span class="token punctuation">(</span>key_ <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+<p>check if arg exist (arg is just a value in the string e.g. red, not value:something) line:    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok arg1 is an arg description is a kwarg</p>
+
+</section>
+						<section id="Params.decode" class="doc-node">
+							<div class="title"><h2>fn (Params) decode <a href="#Params.decode">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_reflection.v#L4"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params Params<span class="token punctuation">)</span> decode<span class="token punctuation">[</span><span class="token builtin">T</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">T</span></code></pre>
+<p>TODO: support more field types</p>
+
+</section>
+						<section id="Params.empty" class="doc-node">
+							<div class="title"><h2>fn (Params) empty <a href="#Params.empty">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params.v#L48"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> p Params<span class="token punctuation">)</span> <span class="token function">empty</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+
+
+</section>
+						<section id="Params.equal" class="doc-node">
+							<div class="title"><h2>fn (Params) equal <a href="#Params.equal">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_export_import.v#L50"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>p Params<span class="token punctuation">)</span> <span class="token function">equal</span><span class="token punctuation">(</span>p2 Params<span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+
+
+</section>
+						<section id="Params.exists" class="doc-node">
+							<div class="title"><h2>fn (Params) exists <a href="#Params.exists">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_exists.v#L8"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">exists</span><span class="token punctuation">(</span>key_ <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+<p>check if kwarg exist line:    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok arg1 is an arg description is a kwarg</p>
+
+</section>
+						<section id="Params.export" class="doc-node">
+							<div class="title"><h2>fn (Params) export <a href="#Params.export">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_export_import.v#L14"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>p Params<span class="token punctuation">)</span> <span class="token function">export</span><span class="token punctuation">(</span>args ExportArgs<span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+<p>standardised export format it outputs a default way sorted and readable</p>
+
+</section>
+						<section id="Params.filter_match" class="doc-node">
+							<div class="title"><h2>fn (Params) filter_match <a href="#Params.filter_match">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_filter.v#L13"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params Params<span class="token punctuation">)</span> <span class="token function">filter_match</span><span class="token punctuation">(</span>myfilter ParamsFilter<span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">bool</span></code></pre>
+<p>will return true if the params object match the filter (include and excludes) will first do the include filter then exclude, which means if matched and exclude is then matched won't count uses the filter_item function for each include or excluse (see further)</p>
+
+</section>
+						<section id="Params.filter_match_item" class="doc-node">
+							<div class="title"><h2>fn (Params) filter_match_item <a href="#Params.filter_match_item">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_filter.v#L53"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params Params<span class="token punctuation">)</span> <span class="token function">filter_match_item</span><span class="token punctuation">(</span>myfilter <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">bool</span></code></pre>
+<p>match params for 1 string based match
+can be e.g.</p>
+<ul>
+<li>hr+development, means look for argument hr or development</li>
+<li>devel*, look for an argument which starts with devel (see match_glob)</li>
+<li>color:<em>red</em>, look for a value with key color, which has 'red' string inside
+match_glob matches the string, with a Unix shell-style wildcard pattern 	The special characters used in shell-style wildcards are:     * - matches everything     ? - matches any single character 	   [seq] - matches any of the characters in the sequence     [^seq] - matches any character that is NOT in the sequence
+Any other character in pattern, is matched 1:1 to the corresponding character in name, including / and .<br>
+You can wrap the meta-characters in brackets too, i.e. [?] matches ? in the string, and [*] matches * in the string.</li>
+</ul>
+
+</section>
+						<section id="Params.get" class="doc-node">
+							<div class="title"><h2>fn (Params) get <a href="#Params.get">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_kwargs.v#L7"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get</span><span class="token punctuation">(</span>key_ <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+<p>see if the kwarg with the key exists if yes return as string trimmed</p>
+
+</section>
+						<section id="Params.get_arg" class="doc-node">
+							<div class="title"><h2>fn (Params) get_arg <a href="#Params.get_arg">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_args.v#L5"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_arg</span><span class="token punctuation">(</span>nr <span class="token builtin">int</span><span class="token punctuation">,</span> checknrargs <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+<p>return the arg with nr, 0 is the first if checknrargs==0 then won't check, if set, it means will check the nr of args if not correct will give error</p>
+
+</section>
+						<section id="Params.get_arg_default" class="doc-node">
+							<div class="title"><h2>fn (Params) get_arg_default <a href="#Params.get_arg_default">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_args.v#L17"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_arg_default</span><span class="token punctuation">(</span>nr <span class="token builtin">int</span><span class="token punctuation">,</span> defval <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+<p>return arg, if the nr is larger than amount of args, will return the defval</p>
+
+</section>
+						<section id="Params.get_arg_int" class="doc-node">
+							<div class="title"><h2>fn (Params) get_arg_int <a href="#Params.get_arg_int">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_args.v#L26"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_arg_int</span><span class="token punctuation">(</span>nr <span class="token builtin">int</span><span class="token punctuation">,</span> checknrargs <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">int</span></code></pre>
+<p>get arg return as int, if checknrargs is not 0, it will make sure the nr of args corresponds</p>
+
+</section>
+						<section id="Params.get_arg_int_default" class="doc-node">
+							<div class="title"><h2>fn (Params) get_arg_int_default <a href="#Params.get_arg_int_default">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_args.v#L32"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_arg_int_default</span><span class="token punctuation">(</span>nr <span class="token builtin">int</span><span class="token punctuation">,</span> defval <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">int</span></code></pre>
+<p>get arg return as int. defval is the default value specified</p>
+
+</section>
+						<section id="Params.get_currencyamount" class="doc-node">
+							<div class="title"><h2>fn (Params) get_currencyamount <a href="#Params.get_currencyamount">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_currency.v#L8"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_currencyamount</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span>currency<span class="token punctuation">.</span>Amount</code></pre>
+<p>see currency object, gets it from params</p>
+
+</section>
+						<section id="Params.get_currencyamount_default" class="doc-node">
+							<div class="title"><h2>fn (Params) get_currencyamount_default <a href="#Params.get_currencyamount_default">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_currency.v#L14"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_currencyamount_default</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> defval <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span>currency<span class="token punctuation">.</span>Amount</code></pre>
+
+
+</section>
+						<section id="Params.get_currencyfloat" class="doc-node">
+							<div class="title"><h2>fn (Params) get_currencyfloat <a href="#Params.get_currencyfloat">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_currency.v#L23"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_currencyfloat</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">f64</span></code></pre>
+<p>get currency expressed in float in line to currency passed</p>
+
+</section>
+						<section id="Params.get_currencyfloat_default" class="doc-node">
+							<div class="title"><h2>fn (Params) get_currencyfloat_default <a href="#Params.get_currencyfloat_default">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_currency.v#L30"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_currencyfloat_default</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> defval <span class="token builtin">f64</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">f64</span></code></pre>
+
+
+</section>
+						<section id="Params.get_default" class="doc-node">
+							<div class="title"><h2>fn (Params) get_default <a href="#Params.get_default">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_kwargs.v#L22"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_default</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> defval <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+<p>get kwarg return as string, ifn't exist return the defval line:    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok arg1 is an arg description is a kwarg</p>
+
+</section>
+						<section id="Params.get_default_false" class="doc-node">
+							<div class="title"><h2>fn (Params) get_default_false <a href="#Params.get_default_false">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_kwargs.v#L134"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_default_false</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+
+
+</section>
+						<section id="Params.get_default_true" class="doc-node">
+							<div class="title"><h2>fn (Params) get_default_true <a href="#Params.get_default_true">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_kwargs.v#L125"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_default_true</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token builtin">bool</span></code></pre>
+
+
+</section>
+						<section id="Params.get_float" class="doc-node">
+							<div class="title"><h2>fn (Params) get_float <a href="#Params.get_float">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_kwargs.v#L40"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_float</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">f64</span></code></pre>
+
+
+</section>
+						<section id="Params.get_float_default" class="doc-node">
+							<div class="title"><h2>fn (Params) get_float_default <a href="#Params.get_float_default">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_kwargs.v#L45"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_float_default</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> defval <span class="token builtin">f64</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">f64</span></code></pre>
+
+
+</section>
+						<section id="Params.get_from_hashmap" class="doc-node">
+							<div class="title"><h2>fn (Params) get_from_hashmap <a href="#Params.get_from_hashmap">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_kwargs.v#L155"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_from_hashmap</span><span class="token punctuation">(</span>key_ <span class="token builtin">string</span><span class="token punctuation">,</span> defval <span class="token builtin">string</span><span class="token punctuation">,</span> hashmap <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="Params.get_int" class="doc-node">
+							<div class="title"><h2>fn (Params) get_int <a href="#Params.get_int">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_kwargs.v#L35"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_int</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">int</span></code></pre>
+<p>get kwarg return as int line:    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok arg1 is an arg description is a kwarg</p>
+
+</section>
+						<section id="Params.get_int_default" class="doc-node">
+							<div class="title"><h2>fn (Params) get_int_default <a href="#Params.get_int_default">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_kwargs.v#L117"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_int_default</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> defval <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">int</span></code></pre>
+<p>get kwarg return as int, if it doesnt' exist return a default line:    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok arg1 is an arg description is a kwarg</p>
+
+</section>
+						<section id="Params.get_list" class="doc-node">
+							<div class="title"><h2>fn (Params) get_list <a href="#Params.get_list">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_getlist.v#L6"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_list</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
+<p>get kwarg, and return list of string based on comma separation</p>
+
+</section>
+						<section id="Params.get_list_f64" class="doc-node">
+							<div class="title"><h2>fn (Params) get_list_f64 <a href="#Params.get_list_f64">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_getlist.v#L26"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_list_f64</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">f64</span></code></pre>
+
+
+</section>
+						<section id="Params.get_list_int" class="doc-node">
+							<div class="title"><h2>fn (Params) get_list_int <a href="#Params.get_list_int">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_getlist.v#L42"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_list_int</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">int</span></code></pre>
+<p>get kwarg, and return list of ints line:    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok arg1 is an arg description is a kwarg</p>
+
+</section>
+						<section id="Params.get_list_namefix" class="doc-node">
+							<div class="title"><h2>fn (Params) get_list_namefix <a href="#Params.get_list_namefix">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_getlist.v#L31"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_list_namefix</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="Params.get_list_u32" class="doc-node">
+							<div class="title"><h2>fn (Params) get_list_u32 <a href="#Params.get_list_u32">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_getlist.v#L21"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_list_u32</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">u32</span></code></pre>
+
+
+</section>
+						<section id="Params.get_path" class="doc-node">
+							<div class="title"><h2>fn (Params) get_path <a href="#Params.get_path">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_getpath.v#L6"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_path</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+
+
+</section>
+						<section id="Params.get_path_create" class="doc-node">
+							<div class="title"><h2>fn (Params) get_path_create <a href="#Params.get_path_create">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_getpath.v#L17"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_path_create</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+<p>will get path and check it exists if not will create</p>
+
+</section>
+						<section id="Params.get_percentage" class="doc-node">
+							<div class="title"><h2>fn (Params) get_percentage <a href="#Params.get_percentage">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_kwargs.v#L53"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_percentage</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">f64</span></code></pre>
+
+
+</section>
+						<section id="Params.get_percentage_default" class="doc-node">
+							<div class="title"><h2>fn (Params) get_percentage_default <a href="#Params.get_percentage_default">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_kwargs.v#L63"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_percentage_default</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> defval <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">f64</span></code></pre>
+
+
+</section>
+						<section id="Params.get_storagecapacity_in_bytes" class="doc-node">
+							<div class="title"><h2>fn (Params) get_storagecapacity_in_bytes <a href="#Params.get_storagecapacity_in_bytes">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_getresource.v#L5"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_storagecapacity_in_bytes</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">u64</span></code></pre>
+<p>convert GB, MB, KB to bytes e.g. 10 GB becomes bytes in u64</p>
+
+</section>
+						<section id="Params.get_storagecapacity_in_bytes_default" class="doc-node">
+							<div class="title"><h2>fn (Params) get_storagecapacity_in_bytes_default <a href="#Params.get_storagecapacity_in_bytes_default">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_getresource.v#L31"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_storagecapacity_in_bytes_default</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> defval <span class="token builtin">u64</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">u64</span></code></pre>
+
+
+</section>
+						<section id="Params.get_time" class="doc-node">
+							<div class="title"><h2>fn (Params) get_time <a href="#Params.get_time">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_gettime.v#L26"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_time</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span>Time</code></pre>
+<p>Get Expiration object from time string input input can be either relative or absolute</p>
+<h2>Relative time</h2>
+<h4>time periods:</h4>
+<ul>
+<li>s -&gt; second</li>
+<li>h -&gt; hour</li>
+<li>d -&gt; day</li>
+<li>w -&gt; week</li>
+<li>M -&gt; month</li>
+<li>Q -&gt; quarter</li>
+<li>Y -&gt; year
+0 means right now input string example: &quot;+1w +2d -4h&quot;</li>
+</ul>
+<h2>Absolute time</h2>
+<p>inputs must be of the form: &quot;YYYY-MM-DD HH:mm:ss&quot; or &quot;YYYY-MM-DD&quot; input string examples: '2022-12-5 20:14:35' '2022-12-5' - sets hours, mins, seconds to 00</p>
+
+</section>
+						<section id="Params.get_time_default" class="doc-node">
+							<div class="title"><h2>fn (Params) get_time_default <a href="#Params.get_time_default">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_gettime.v#L31"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_time_default</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> defval Time<span class="token punctuation">)</span> <span class="token operator">!</span>Time</code></pre>
+
+
+</section>
+						<section id="Params.get_time_interval" class="doc-node">
+							<div class="title"><h2>fn (Params) get_time_interval <a href="#Params.get_time_interval">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_gettime.v#L41"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_time_interval</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span>Duration</code></pre>
+<p>calculate difference in time, returled as u64 (is Duration type)
+format e.g.<br>
+QUESTION: splitting by - doesn't work? Alternative?</p>
+
+</section>
+						<section id="Params.get_timestamp" class="doc-node">
+							<div class="title"><h2>fn (Params) get_timestamp <a href="#Params.get_timestamp">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_gettime.v#L64"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_timestamp</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span>Duration</code></pre>
+<p>Parses a timestamp. Can be 12h or 24h format</p>
+
+</section>
+						<section id="Params.get_timestamp_default" class="doc-node">
+							<div class="title"><h2>fn (Params) get_timestamp_default <a href="#Params.get_timestamp_default">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_gettime.v#L56"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_timestamp_default</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> defval Duration<span class="token punctuation">)</span> <span class="token operator">!</span>Duration</code></pre>
+
+
+</section>
+						<section id="Params.get_u32" class="doc-node">
+							<div class="title"><h2>fn (Params) get_u32 <a href="#Params.get_u32">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_kwargs.v#L86"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_u32</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">u32</span></code></pre>
+
+
+</section>
+						<section id="Params.get_u32_default" class="doc-node">
+							<div class="title"><h2>fn (Params) get_u32_default <a href="#Params.get_u32_default">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_kwargs.v#L91"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_u32_default</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> defval <span class="token builtin">u32</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">u32</span></code></pre>
+
+
+</section>
+						<section id="Params.get_u64" class="doc-node">
+							<div class="title"><h2>fn (Params) get_u64 <a href="#Params.get_u64">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_kwargs.v#L73"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_u64</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">u64</span></code></pre>
+
+
+</section>
+						<section id="Params.get_u64_default" class="doc-node">
+							<div class="title"><h2>fn (Params) get_u64_default <a href="#Params.get_u64_default">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_kwargs.v#L78"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_u64_default</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> defval <span class="token builtin">u64</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">u64</span></code></pre>
+
+
+</section>
+						<section id="Params.get_u8" class="doc-node">
+							<div class="title"><h2>fn (Params) get_u8 <a href="#Params.get_u8">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_kwargs.v#L99"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_u8</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">u8</span></code></pre>
+
+
+</section>
+						<section id="Params.get_u8_default" class="doc-node">
+							<div class="title"><h2>fn (Params) get_u8_default <a href="#Params.get_u8_default">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_get_kwargs.v#L104"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>params <span class="token operator">&</span>Params<span class="token punctuation">)</span> <span class="token function">get_u8_default</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> defval <span class="token builtin">u8</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">u8</span></code></pre>
+
+
+</section>
+						<section id="Params.hexhash" class="doc-node">
+							<div class="title"><h2>fn (Params) hexhash <a href="#Params.hexhash">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_export_import.v#L60"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>p Params<span class="token punctuation">)</span> <span class="token function">hexhash</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+<p>returns a unique sha256 in hex, will allways return the same independent of order of params</p>
+
+</section>
+						<section id="Params.json_export" class="doc-node">
+							<div class="title"><h2>fn (Params) json_export <a href="#Params.json_export">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_json.v#L17"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> params Params<span class="token punctuation">)</span> <span class="token function">json_export</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token builtin">string</span></code></pre>
+<p>pub struct ParamPub { pub: 	key   string 	value string }</p>
+
+</section>
+						<section id="Params.kwarg_add" class="doc-node">
+							<div class="title"><h2>fn (Params) kwarg_add <a href="#Params.kwarg_add">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params.v#L25"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> result Params<span class="token punctuation">)</span> <span class="token function">kwarg_add</span><span class="token punctuation">(</span>key <span class="token builtin">string</span><span class="token punctuation">,</span> value <span class="token builtin">string</span><span class="token punctuation">)</span></code></pre>
+
+
+</section>
+						<section id="Params.arg_add" class="doc-node">
+							<div class="title"><h2>fn (Params) arg_add <a href="#Params.arg_add">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params.v#L42"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span><span class="token keyword">mut</span> result Params<span class="token punctuation">)</span> <span class="token function">arg_add</span><span class="token punctuation">(</span>value <span class="token builtin">string</span><span class="token punctuation">)</span></code></pre>
+
+
+</section>
+						<section id="ParamsFilter" class="doc-node">
+							<div class="title"><h2>struct ParamsFilter <a href="#ParamsFilter">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params_filter.v#L4"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">ParamsFilter</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	include <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+	exclude <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+						<section id="Param" class="doc-node">
+							<div class="title"><h2>struct Param <a href="#Param">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/params/params.v#L10"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Param</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span><span class="token punctuation">:</span>
+	key   <span class="token builtin">string</span>
+	value <span class="token builtin">string</span>
+<span class="token punctuation">}</span></code></pre>
+
+
+</section>
+
+          <div class="footer">
+            Powered by vdoc.
+          </div>
+        </div>
+        <div class="doc-toc"><ul><li class="open"><a href="#readme_params">README</a></li>
+<li class="open"><a href="#parse">fn parse</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#json_import">fn json_import</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#new">fn new</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#new_params">fn new_params</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#encode">fn encode</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#from_resp">fn from_resp</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#importparams">fn importparams</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#ExportArgs">struct ExportArgs</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Params">struct Params</a>        <ul>
+<li><a href="#Params.to_resp">fn to_resp</a></li>
+<li><a href="#Params.arg_exists">fn arg_exists</a></li>
+<li><a href="#Params.decode">fn decode</a></li>
+<li><a href="#Params.empty">fn empty</a></li>
+<li><a href="#Params.equal">fn equal</a></li>
+<li><a href="#Params.exists">fn exists</a></li>
+<li><a href="#Params.export">fn export</a></li>
+<li><a href="#Params.filter_match">fn filter_match</a></li>
+<li><a href="#Params.filter_match_item">fn filter_match_item</a></li>
+<li><a href="#Params.get">fn get</a></li>
+<li><a href="#Params.get_arg">fn get_arg</a></li>
+<li><a href="#Params.get_arg_default">fn get_arg_default</a></li>
+<li><a href="#Params.get_arg_int">fn get_arg_int</a></li>
+<li><a href="#Params.get_arg_int_default">fn get_arg_int_default</a></li>
+<li><a href="#Params.get_currencyamount">fn get_currencyamount</a></li>
+<li><a href="#Params.get_currencyamount_default">fn get_currencyamount_default</a></li>
+<li><a href="#Params.get_currencyfloat">fn get_currencyfloat</a></li>
+<li><a href="#Params.get_currencyfloat_default">fn get_currencyfloat_default</a></li>
+<li><a href="#Params.get_default">fn get_default</a></li>
+<li><a href="#Params.get_default_false">fn get_default_false</a></li>
+<li><a href="#Params.get_default_true">fn get_default_true</a></li>
+<li><a href="#Params.get_float">fn get_float</a></li>
+<li><a href="#Params.get_float_default">fn get_float_default</a></li>
+<li><a href="#Params.get_from_hashmap">fn get_from_hashmap</a></li>
+<li><a href="#Params.get_int">fn get_int</a></li>
+<li><a href="#Params.get_int_default">fn get_int_default</a></li>
+<li><a href="#Params.get_list">fn get_list</a></li>
+<li><a href="#Params.get_list_f64">fn get_list_f64</a></li>
+<li><a href="#Params.get_list_int">fn get_list_int</a></li>
+<li><a href="#Params.get_list_namefix">fn get_list_namefix</a></li>
+<li><a href="#Params.get_list_u32">fn get_list_u32</a></li>
+<li><a href="#Params.get_path">fn get_path</a></li>
+<li><a href="#Params.get_path_create">fn get_path_create</a></li>
+<li><a href="#Params.get_percentage">fn get_percentage</a></li>
+<li><a href="#Params.get_percentage_default">fn get_percentage_default</a></li>
+<li><a href="#Params.get_storagecapacity_in_bytes">fn get_storagecapacity_in_bytes</a></li>
+<li><a href="#Params.get_storagecapacity_in_bytes_default">fn get_storagecapacity_in_bytes_default</a></li>
+<li><a href="#Params.get_time">fn get_time</a></li>
+<li><a href="#Params.get_time_default">fn get_time_default</a></li>
+<li><a href="#Params.get_time_interval">fn get_time_interval</a></li>
+<li><a href="#Params.get_timestamp">fn get_timestamp</a></li>
+<li><a href="#Params.get_timestamp_default">fn get_timestamp_default</a></li>
+<li><a href="#Params.get_u32">fn get_u32</a></li>
+<li><a href="#Params.get_u32_default">fn get_u32_default</a></li>
+<li><a href="#Params.get_u64">fn get_u64</a></li>
+<li><a href="#Params.get_u64_default">fn get_u64_default</a></li>
+<li><a href="#Params.get_u8">fn get_u8</a></li>
+<li><a href="#Params.get_u8_default">fn get_u8_default</a></li>
+<li><a href="#Params.hexhash">fn hexhash</a></li>
+<li><a href="#Params.json_export">fn json_export</a></li>
+<li><a href="#Params.kwarg_add">fn kwarg_add</a></li>
+<li><a href="#Params.arg_add">fn arg_add</a></li>
+</ul>
+</li>
+<li class="open"><a href="#ParamsFilter">struct ParamsFilter</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Param">struct Param</a>        <ul>
+</ul>
+</li>
+</ul></div>
+      </div>
+    </div>
+  </div>
+  <script src="doc.js"></script>
+  <script async src="search_index.js"></script>
+</body>
+
+</html>
