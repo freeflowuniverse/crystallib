@@ -11,7 +11,7 @@ pub mut:
 	aggregatetype RowAggregateType
 	reprtype      ReprType // how to represent it
 	tags          string
-	subgroup	  string
+	subgroup      string
 }
 
 // pub enum RowType{
@@ -34,9 +34,9 @@ pub mut:
 	growth        string
 	aggregatetype RowAggregateType
 	tags          string
-	descr   string
-	subgroup string
-	extrapolate bool = true
+	descr         string
+	subgroup      string
+	extrapolate   bool = true
 }
 
 // get a row with a certain name
@@ -48,9 +48,9 @@ pub mut:
 //  tags []string e.g. ["hr","hrdev"] attach a tag to a row, can be used later to group
 // smart exptrapolation is 3:2,10:5 means month 3 we start with 2, it grows to 5 on month 10
 pub fn (mut s Sheet) row_new(args_ RowNewParams) !&Row {
-	mut args:=args_
-	if args.aggregatetype==.unknown{
-		args.aggregatetype=.sum
+	mut args := args_
+	if args.aggregatetype == .unknown {
+		args.aggregatetype = .sum
 	}
 	name := args.name.to_lower()
 	if name.trim_space() == '' {
@@ -71,10 +71,10 @@ pub fn (mut s Sheet) row_new(args_ RowNewParams) !&Row {
 		}
 	}
 	assert r.cells.len == s.nrcol
-	if args.growth.len > 0{
-		if  args.extrapolate {
+	if args.growth.len > 0 {
+		if args.extrapolate {
 			r.extrapolate(args.growth)!
-		}else{
+		} else {
 			r.smartfill(args.growth)!
 		}
 	}

@@ -1,36 +1,36 @@
 module library
-import freeflowuniverse.crystallib.pathlib { Path }
+
+import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.params
 import os
 
 [params]
 pub struct ChapterFinderArgs {
 pub mut:
-	path      string
-	heal      bool // healing means we fix images, if selected will automatically load, remove stale links
-	load      bool
+	path string
+	heal bool // healing means we fix images, if selected will automatically load, remove stale links
+	load bool
 }
 
-
-//walk over directory find dis with .site or .chapter inside and add to the book
+// walk over directory find dis with .site or .chapter inside and add to the book
 fn (mut book Book) scan_recursive(args ChapterFinderArgs) ! {
 	// $if debug{println(" - chapters find recursive: $path.path")}
-	if args.path.len<3{
-		return error("Path needs to be not empty.")
+	if args.path.len < 3 {
+		return error('Path needs to be not empty.')
 	}
 	mut path := pathlib.get_dir(args.path, false)!
 
 	if path.is_dir() {
-		if path.file_exists('.site'){
-			//mv .site file to .chapter file
+		if path.file_exists('.site') {
+			// mv .site file to .chapter file
 			chapterfilepath1 := path.extend_file('.site')!
 			chapterfilepath2 := path.extend_file('.chapter')!
-			os.mv(chapterfilepath1.path,chapterfilepath2.path)!
-		}		
+			os.mv(chapterfilepath1.path, chapterfilepath2.path)!
+		}
 		if path.file_exists('.chapter') {
 			mut name := path.name()
 			mut chapterfilepath := path.file_get('.chapter')!
-			
+
 			// now we found a book we need to add
 			content := chapterfilepath.read()!
 			if content.trim_space() != '' {
@@ -41,7 +41,7 @@ fn (mut book Book) scan_recursive(args ChapterFinderArgs) ! {
 				}
 			}
 			println(' - chapter new: ${chapterfilepath.path} name:${name}')
-			book.chapter_new(path: path.path, name: name,heal:args.heal, load:args.load)!
+			book.chapter_new(path: path.path, name: name, heal: args.heal, load: args.load)!
 			return
 		}
 		mut llist := path.list(recursive: false) or {
@@ -53,7 +53,7 @@ fn (mut book Book) scan_recursive(args ChapterFinderArgs) ! {
 					continue
 				}
 
-				book.scan_recursive(path:p_in.path, heal:args.heal, load:args.load) or {
+				book.scan_recursive(path: p_in.path, heal: args.heal, load: args.load) or {
 					msg := 'Cannot process recursive on ${p_in.path}\n${err}'
 					// println(msg)
 					return error(msg)

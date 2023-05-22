@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.currency
 [params]
 pub struct SheetNewArgs {
 pub mut:
-	name          string = "main"
+	name          string = 'main'
 	nrcol         int    = 60
 	visualize_cur bool   = true // if we want to show e.g. $44.4 in a cell or just 44.4
 	curr          string = 'usd' // preferred currency to work with

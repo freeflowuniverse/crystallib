@@ -8,7 +8,7 @@ const testpath = os.dir(@FILE) + '/testdata/broken_chapter'
 
 fn testsuite_end() {
 	// reset testdata changes after running tests
-	os.execute('git checkout $testpath')
+	os.execute('git checkout ${library.testpath}')
 }
 
 fn test_link_update() ! {}
@@ -28,7 +28,7 @@ fn test_fix() ! {
 
 	doc_before := *((*test_page).doc)
 	test_page.fix() or { panic('Cannot fix page: ${err}') }
-	
+
 	assert !test_page.changed // should be set to false after fix
 	assert test_page.doc != doc_before // page was actually modified
 
@@ -36,9 +36,9 @@ fn test_fix() ! {
 	wrong_link := paragraph.items[1] as Link
 	right_link := paragraph.items[3] as Link
 
-	assert wrong_link.path := 
-	println(test_page.doc)
-	panic('s')
+	// assert wrong_link.path :=
+	// println(test_page.doc)
+	// panic('s')
 }
 
 fn test_fix_links() ! {}

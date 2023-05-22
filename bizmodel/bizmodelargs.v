@@ -1,7 +1,7 @@
 module bizmodel
 
-pub struct BizModelArgs{
+pub struct BizModelArgs {
 pub mut:
-	name string
+	name      string
 	data_path string
 }
