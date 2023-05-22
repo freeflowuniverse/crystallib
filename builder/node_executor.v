@@ -1,5 +1,6 @@
 module builder
 
+import time
 import freeflowuniverse.crystallib.texttools
 
 // 	exec(cmd string) !string
@@ -43,6 +44,39 @@ pub fn (mut node Node) exec_file(args ExecFileArgs) ! {
 	if args.execute {
 		node.exec('bash ${args.path}')!
 	}
+}
+
+[params]
+pub struct ExecRetryArgs {
+pub:
+	cmd          string
+	retrymax     int = 10 // how may times maximum to retry
+	period_milli int = 100 // sleep in between retry in milliseconds
+	timeout      int = 2 // timeout for al the tries together
+}
+
+// a cool way to execute something until it succeeds
+// params:
+//  	cmd     string
+//  	retrymax int = 10 		//how may times maximum to retry
+//   	period_milli int = 100	//sleep in between retry in milliseconds
+// 	    timeout int = 2			//timeout for al the tries together
+pub fn (mut node Node) exec_retry(args ExecRetryArgs) !string {
+	start_time := time.now().unix_time_milli()
+	mut run_time := 0.0
+	for true {
+		run_time = time.now().unix_time_milli()
+		if run_time > start_time + args.timeout * 1000 {
+			return error('timeout on exec retry for ${args}')
+		}
+		println(args.cmd)
+		r := node.exec_silent(args.cmd) or { 'error' }
+		if r != 'error' {
+			return r
+		}
+		time.sleep(args.period_milli * time.millisecond)
+	}
+	return error('couldnt execute exec retry for ${args}, got at end')
 }
 
 // silently execute a command
@@ -193,3 +227,12 @@ pub fn (mut node Node) debug_on() {
 	}
 	panic('did not find right executor')
 }
+
+// pub fn (mut node Node) upload(source string, dest string) ! {
+// 	if mut node.executor is ExecutorLocal {
+// 		return node.executor.upload(source,dest)!
+// 	} else if mut node.executor is ExecutorSSH {
+// 		return node.executor.upload(source,dest)!
+// 	}
+// 	panic('did not find right executor')
+// }

@@ -153,7 +153,7 @@ fn (mut actions ActionsParser) parse_block(block Block) ! {
 	mut book := ''
 	mut actor := ''
 
-	name := block.name.all_after_last('.').trim_space()
+	name := block.name.all_after_last('.').trim_space().to_lower()
 	splitted := block.name.split('.')
 
 	if splitted.len == 1 {
@@ -195,7 +195,7 @@ fn (mut actions ActionsParser) parse_block(block Block) ! {
 		return
 	}
 
-	//QUESTION: is this necessary
+	// QUESTION: is this necessary
 	$if debug {
 		eprintln('${domain} - ${book} - ${actor} - ${name}')
 	}

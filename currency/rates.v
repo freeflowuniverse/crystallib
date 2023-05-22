@@ -51,7 +51,7 @@ pub fn (mut cs Currencies) get_rates(cur_array []string, crypto bool) ! {
 	if crypto {
 		prefix += '&source=crypto'
 	}
-	response := conn.get(mut prefix: prefix)!
+	response := conn.get(prefix: prefix)!
 	decoded := json.decode(ResponseBody, response) or {
 		return error('Failed to decode crypto json: ${err}')
 	}

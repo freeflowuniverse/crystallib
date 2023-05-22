@@ -39,8 +39,8 @@ fn actor_check(c string, block string) ! {
 		return error('actor not specified\nFor block: ${block}')
 	}
 
-	if c.len < 4 {
-		return error("actor bad specified (len min 4), found '${c}'.\nFor block: ${block}")
+	if c.len < 2 {
+		return error("actor bad specified (len min 2), found '${c}'.\nFor block: ${block}")
 	}
 	if c.len > 20 {
 		return error("actor bad specified (len max 20), found '${c}'.\nFor block: ${block}")

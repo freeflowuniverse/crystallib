@@ -6,8 +6,9 @@ import freeflowuniverse.crystallib.texttools
 pub struct WikiArgs {
 pub mut:
 	name          string
-	rowsfilter    []string
-	tagsfilter    []string
+	namefilter    		  []string //only include the exact names as secified for the rows
+	includefilter    	  []string //matches for the tags
+	excludefilter		  []string //matches for the tags
 	period_months int = 12 // 3 for quarter, 12 for year, 1 for all months
 	description   string
 	title         string
@@ -24,8 +25,9 @@ pub fn (mut s Sheet) wiki(args_ WikiArgs) !string {
 
 	argssmaller := ToYearQuarterArgs{
 		name: args.name
-		rowsfilter: args.rowsfilter
-		tagsfilter: args.tagsfilter
+		includefilter: args.includefilter
+		excludefilter: args.excludefilter
+		namefilter: args.namefilter
 		period_months: args.period_months
 	}
 	mut sheet := s.tosmaller(argssmaller)! // this will do the filtering and if needed make smaller

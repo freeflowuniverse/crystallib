@@ -71,3 +71,31 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 		r.cells[x].set('${xlastval}')!
 	}
 }
+
+
+// something like 3:2,10:5 means month 3 we set 2, month 10 5
+// there i no interpolation, all other fields are set on 0
+pub fn (mut r Row) smartfill(smartstr string) ! {
+	for mut part in smartstr.split(',') {
+		part = part.trim_space()
+		if part.contains(':') {
+			splitted := part.split(':')
+			if splitted.len != 2 {
+				return error("smartextrapolate needs '3:2,10:5' as format, now ${smartstr} ")
+			}
+			x := splitted[0].int() - 1
+			if x < 0 {
+				return error('Cannot do smartstr, because the X is out of scope.\n${smartstr}')
+			}
+			if x > r.sheet.nrcol {
+				return error('Cannot do smartstr, because the X is out of scope, needs to be 1+.\n${smartstr}')
+			}
+			r.cells[x].set(splitted[1])!
+		}
+	}
+	for x in 0 .. r.cells.len {
+		if r.cells[x].empty {
+			r.cells[x].set('0.0')!
+		}
+	}
+}

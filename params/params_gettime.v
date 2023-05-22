@@ -37,7 +37,7 @@ pub fn (params &Params) get_time_default(key string, defval Time) !Time {
 
 // calculate difference in time, returled as u64 (is Duration type)
 // format e.g.
-//QUESTION: splitting by - doesn't work? Alternative?
+// QUESTION: splitting by - doesn't work? Alternative?
 pub fn (params &Params) get_time_interval(key string) !Duration {
 	valuestr := params.get(key)!
 	data := valuestr.split('-')
@@ -53,32 +53,44 @@ pub fn (params &Params) get_time_interval(key string) !Duration {
 	// NEXT: document and give examples, make sure there is test
 }
 
-// QUESTION: what was purpose of this? Duration is not same as time, think code needs to be removed
+pub fn (params &Params) get_timestamp_default(key string, defval Duration) !Duration {
+	if params.exists(key) {
+		return params.get_timestamp(key)!
+	}
+	return defval
+}
 
-// fn (params &Params) parse_time(value string) !Duration {
-// 	is_am := value.ends_with('AM')
-// 	is_pm := value.ends_with('PM')
-// 	is_am_pm := is_am || is_pm
-// 	data := if is_am_pm { value[..value.len - 2].split(':') } else { value.split(':') }
-// 	if data.len > 2 {
-// 		return error('Invalid duration value')
-// 	}
-// 	minute := if data.len == 2 { data[1].int() } else { 0 }
-// 	mut hour := data[0].int()
-// 	if is_am || is_pm {
-// 		if hour < 0 || hour > 12 {
-// 			return error('Invalid duration value')
-// 		}
-// 		if is_pm {
-// 			hour += 12
-// 		}
-// 	} else {
-// 		if hour < 0 || hour > 24 {
-// 			return error('Invalid duration value')
-// 		}
-// 	}
-// 	if minute < 0 || minute > 60 {
-// 		return error('Invalid duration value')
-// 	}
-// 	return Duration(time.hour * hour + time.minute * minute)
-// }
+// Parses a timestamp. Can be 12h or 24h format
+pub fn (params &Params) get_timestamp(key string) !Duration {
+	valuestr := params.get(key)!
+	return params.parse_timestamp(valuestr)!
+}
+
+// Parses a timestamp. Can be 12h or 24h format
+fn (params &Params) parse_timestamp(value string) !Duration {
+	is_am := value.ends_with('AM')
+	is_pm := value.ends_with('PM')
+	is_am_pm := is_am || is_pm
+	data := if is_am_pm { value[..value.len - 2].split(':') } else { value.split(':') }
+	if data.len > 2 {
+		return error('Invalid duration value')
+	}
+	minute := if data.len == 2 { data[1].int() } else { 0 }
+	mut hour := data[0].int()
+	if is_am || is_pm {
+		if hour < 0 || hour > 12 {
+			return error('Invalid duration value')
+		}
+		if is_pm {
+			hour += 12
+		}
+	} else {
+		if hour < 0 || hour > 24 {
+			return error('Invalid duration value')
+		}
+	}
+	if minute < 0 || minute > 60 {
+		return error('Invalid duration value')
+	}
+	return Duration(time.hour * hour + time.minute * minute)
+}
