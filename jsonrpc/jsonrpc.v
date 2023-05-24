@@ -1,6 +1,7 @@
 module jsonrpc
 
 import json
+import x.json2
 import rand
 
 const (
@@ -27,7 +28,8 @@ pub mut:
 }
 
 pub fn (j &JsonRpcResponse[D]) to_json() string {
-	return json.encode(j)
+	// return json.encode(j)
+	return ''
 }
 
 pub struct JsonRpcError {
@@ -79,6 +81,17 @@ pub fn new_jsonrpcerror(id string, code int, message string, data string) JsonRp
 
 pub fn jsonrpcrequest_decode[T](data string) !JsonRpcRequest[T] {
 	return json.decode(JsonRpcRequest[T], data)!
+}
+
+pub fn jsonrpcrequest_decode_method(data string) !string {
+	raw := json2.raw_decode(data)!
+	decoded_map := raw.as_map()
+	method := decoded_map['method']
+	if method is string {
+		return method as string
+	} else {
+		return error('Expected method field to be string.')
+	}
 }
 
 pub fn jsonrpcresponse_decode[D](data string) !JsonRpcResponse[D] {
