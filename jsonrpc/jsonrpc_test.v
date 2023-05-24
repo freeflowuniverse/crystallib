@@ -23,7 +23,7 @@ fn test_jsonrpcresponse() {
 	result := MyResult{
 		resulta: 'this is some data'
 	}
-	resp := new_jsonrpcresponse(id, result)
+	resp := new_jsonrpcresponse[MyResult](id, result)
 	assert resp.to_json() == '{"jsonrpc":"2.0","result":{"resulta":"this is some data"},"id":"some id from the original request"}'
 }
 
@@ -70,6 +70,12 @@ fn test_decode_jsonrpcresult() {
 	}
 
 	assert resp_or_error.id == 'some id from the original request'
+}
+
+fn test_jsonrpcrequest_decode_method() {
+	data := '{"jsonrpc":"2.0","method":"mymethod","params":{"attr1":"test"},"id":"564"}'
+	method := jsonrpcrequest_decode_method(data)!
+	assert method == 'mymethod'
 }
 
 fn test_decode_jsonrpcrequest_missing_method_fails() {

@@ -28,8 +28,7 @@ pub mut:
 }
 
 pub fn (j &JsonRpcResponse[D]) to_json() string {
-	// return json.encode(j)
-	return ''
+	return json.encode(j)
 }
 
 pub struct JsonRpcError {
@@ -70,7 +69,7 @@ pub fn new_jsonrpcresponse[T](id string, result T) JsonRpcResponse[T] {
 pub fn new_jsonrpcerror(id string, code int, message string, data string) JsonRpcError {
 	return JsonRpcError{
 		jsonrpc: jsonrpc.jsonrpc_version
-		error: InnerJsonRpcError{
+		error: InnerJsonRpcError {
 			code: code
 			message: message
 			data: data
