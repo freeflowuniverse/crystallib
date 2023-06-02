@@ -184,7 +184,7 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 	mut fn_comments := []string{}
 	for comment in args.comments.map(it.text.trim_string_left('\u0001').trim_space()) {
 		if !comment.starts_with('-') && !comment.starts_with('returns') {
-			fn_comments << comment.trim_string_left(args.fn_decl.short_name)
+			fn_comments << comment.trim_string_left('${args.fn_decl.short_name} ')
 		}
 	}
 
