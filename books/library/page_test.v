@@ -32,9 +32,9 @@ fn test_fix() ! {
 	assert !test_page.changed // should be set to false after fix
 	assert test_page.doc != doc_before // page was actually modified
 
-	paragraph := test_page.doc.items[1] as Paragraph
-	wrong_link := paragraph.items[1] as Link
-	right_link := paragraph.items[3] as Link
+	paragraph := test_page.doc.items[1] as markdowndocs.Paragraph
+	wrong_link := paragraph.items[1] as markdowndocs.Link
+	right_link := paragraph.items[3] as markdowndocs.Link
 
 	// assert wrong_link.path :=
 	// println(test_page.doc)
