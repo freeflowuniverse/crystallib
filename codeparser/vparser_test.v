@@ -20,7 +20,7 @@ const testcode = {
 				}
 			}
 			mod: 'codeparser.testdata.flatdir'
-			description: ' is the first function of file'
+			description: 'is the first function of file'
 			params: []
 			body: ''
 			result: codemodel.Result{
@@ -43,7 +43,7 @@ const testcode = {
 				}
 			}
 			mod: 'codeparser.testdata.flatdir'
-			description: ' is the second function of file'
+			description: 'is the second function of file'
 			params: [
 				codemodel.Param{
 					required: false
@@ -109,7 +109,7 @@ const testcode = {
 				}
 			}
 			mod: 'codeparser.testdata.flatdir'
-			description: ' is the third function of the file'
+			description: 'is the third function of the file'
 			params: [
 				codemodel.Param{
 					required: false
@@ -161,7 +161,7 @@ const testcode = {
 				}
 			}
 			mod: 'codeparser.testdata.flatdir'
-			description: ' is the fourth function of the file is does something with param1 and param2 and creates AnotherfileStruct1'
+			description: 'is the fourth function of the file is does something with param1 and param2 and creates AnotherfileStruct1'
 			params: [
 				codemodel.Param{
 					required: false
@@ -203,7 +203,7 @@ const testcode = {
 				}
 			}
 			mod: 'codeparser.testdata.flatdir'
-			description: ' is the first function of file'
+			description: 'is the first function of file'
 			params: []
 			body: ''
 			result: codemodel.Result{
@@ -226,7 +226,7 @@ const testcode = {
 				}
 			}
 			mod: 'codeparser.testdata.flatdir'
-			description: ' is the second function of file'
+			description: 'is the second function of file'
 			params: [
 				codemodel.Param{
 					required: false
@@ -292,7 +292,7 @@ const testcode = {
 				}
 			}
 			mod: 'codeparser.testdata.flatdir'
-			description: ' is the third function of the file'
+			description: 'is the third function of the file'
 			params: [
 				codemodel.Param{
 					required: false
@@ -344,7 +344,7 @@ const testcode = {
 				}
 			}
 			mod: 'codeparser.testdata.flatdir'
-			description: ' is the fourth function of the file is does something with param1 and param2 and creates SubfileStruct1'
+			description: 'is the fourth function of the file is does something with param1 and param2 and creates SubfileStruct1'
 			params: [
 				codemodel.Param{
 					required: false
@@ -386,7 +386,7 @@ const testcode = {
 				}
 			}
 			mod: 'codeparser.testdata'
-			description: ' is the first function of file'
+			description: 'is the first function of file'
 			params: []
 			body: ''
 			result: codemodel.Result{
@@ -409,7 +409,7 @@ const testcode = {
 				}
 			}
 			mod: 'codeparser.testdata'
-			description: ' is the second function of file'
+			description: 'is the second function of file'
 			params: [
 				codemodel.Param{
 					required: false
@@ -475,7 +475,7 @@ const testcode = {
 				}
 			}
 			mod: 'codeparser.testdata'
-			description: ' is the third function of the file'
+			description: 'is the third function of the file'
 			params: [
 				codemodel.Param{
 					required: false
@@ -512,7 +512,7 @@ const testcode = {
 				}
 			}
 			mod: 'codeparser.testdata'
-			description: ' is the fourth function of the file is does something with param1 and param2 and creates FileStruct1'
+			description: 'is the fourth function of the file is does something with param1 and param2 and creates FileStruct1'
 			params: [
 				codemodel.Param{
 					required: false

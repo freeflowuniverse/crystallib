@@ -31,7 +31,7 @@ fn test_client_server() {
 	mut myserver := new_rpcwsserver(port, handler, &logger)!
 	t_server := spawn myserver.run()
 	// wait till server ready
-	for myserver.server.state != .open {
+	for myserver.server.get_state() != .open {
 		time.sleep(100 * time.millisecond)
 	}
 
