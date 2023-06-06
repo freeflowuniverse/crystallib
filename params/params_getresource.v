@@ -34,3 +34,29 @@ pub fn (params &Params) get_storagecapacity_in_bytes_default(key string, defval 
 	}
 	return defval
 }
+
+pub fn (params &Params) get_sotragecapacity_in_gigabytes(key string) !u64 {
+	valuestr := params.get(key)!
+	mut times := 1
+	if valuestr.len > 2 && !valuestr[valuestr.len - 2].is_digit()
+		&& !valuestr[valuestr.len - 1].is_digit() {
+		times = match valuestr[valuestr.len - 2..].to_upper() {
+			'GB' {
+				1
+			}
+			'MB' {
+				1024
+			}
+			'KB' {
+				1024 * 1024
+			}
+			else {
+				0
+			}
+		}
+		if times == 0 {
+			return error('not valid: should end with kb, mb or gb')
+		}
+	}
+	return valuestr.u64() / u64(times)
+}
