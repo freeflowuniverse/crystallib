@@ -35,7 +35,7 @@ pub fn (params &Params) get_storagecapacity_in_bytes_default(key string, defval 
 	return defval
 }
 
-pub fn (params &Params) get_sotragecapacity_in_gigabytes(key string) !u64 {
+pub fn (params &Params) get_storagecapacity_in_gigabytes(key string) !u64 {
 	valuestr := params.get(key)!
 	mut times := 1
 	if valuestr.len > 2 && !valuestr[valuestr.len - 2].is_digit()
