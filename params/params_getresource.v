@@ -35,7 +35,7 @@ pub fn (params &Params) get_storagecapacity_in_bytes_default(key string, defval 
 	return defval
 }
 
-// gets the least amount of gigabytes that would suffice for the required capacity
+// Parses the provided value to gigabytes, the value is rounded up while doing so.
 pub fn (params &Params) get_storagecapacity_in_gigabytes(key string) !u64 {
 	valuestr := params.get(key)!
 	mut units := 1
