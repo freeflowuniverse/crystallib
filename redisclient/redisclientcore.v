@@ -1,14 +1,14 @@
 module redisclient
 
-import freeflowuniverse.crystallib.redisclient
+// import freeflowuniverse.crystallib.redisclient
 // import freeflowuniverse.crystallib.appsbox.redisapp
 
-pub fn core_get() redisclient.Redis {
+pub fn core_get() Redis {
 	// tcpport := 7777
 	// mut r := Redis{
 	// 	addr: '/tmp/redis_${tcpport}.sock'
 	// }
-	mut r := redisclient.get('127.0.0.1:6379') or {
+	mut r := get('127.0.0.1:6379') or {
 		panic(err)
 		// println('$err')
 		// make sure redis starts
