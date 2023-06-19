@@ -1,6 +1,6 @@
 module tfgrid
 
-import freeflowuniverse.crystallib.redisclient
+import freeflowuniverse.crystallib.redisclient { RedisURL }
 import freeflowuniverse.crystallib.process
 
 pub struct Deployer {}
@@ -12,7 +12,7 @@ pub mut:
 }
 
 fn new() !TFGridClient {
-	mut redis := redisclient.core_get()
+	mut redis := redisclient.core_get(RedisURL{})!
 	mut rpc := redis.rpc_get('tfgrid.client')
 	mut cl := TFGridClient{
 		redis: &redis

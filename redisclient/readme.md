@@ -3,7 +3,7 @@
 ## basic example to connect to local redis on 127.0.0.1:6379
 
 ```v
-mut redis := redisclient.core_get()
+mut redis := redisclient.core_get(RedisURL{})!
 redis.set('test', 'some data') or { panic('set' + err.str() + '\n' + c.str()) }
 r := redis.get('test')?
 if r != 'some data' {
