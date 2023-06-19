@@ -1,6 +1,6 @@
 module builder
 
-import freeflowuniverse.crystallib.redisclient
+import freeflowuniverse.crystallib.redisclient { RedisURL }
 
 [heap]
 pub struct BuilderFactory {
@@ -9,8 +9,8 @@ pub mut:
 	redis &redisclient.Redis
 }
 
-pub fn new() BuilderFactory {
-	mut r := redisclient.core_get()
+pub fn new() !BuilderFactory {
+	mut r := redisclient.core_get(RedisURL{})!
 	mut bf := BuilderFactory{
 		redis: &r
 	}
@@ -24,6 +24,6 @@ pub:
 }
 
 pub fn node_local(args NodeLocalArgs) !&Node {
-	mut builder := new()
+	mut builder := new()!
 	return builder.node_new(name: 'localhost', reload: args.reload)
 }

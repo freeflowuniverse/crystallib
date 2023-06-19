@@ -4,7 +4,7 @@ import os
 import x.json2
 import json
 import net.http
-import freeflowuniverse.crystallib.redisclient
+import freeflowuniverse.crystallib.redisclient { RedisURL }
 import crypto.md5
 
 struct CoinMarketConnection {
@@ -16,8 +16,8 @@ mut:
 	cache_timeout int
 }
 
-fn init_connection() CoinMarketConnection {
-	mut redis := redisclient.core_get()
+fn init_connection() !CoinMarketConnection {
+	mut redis := redisclient.core_get(RedisURL{})!
 	return CoinMarketConnection{
 		redis: &redis
 	}
@@ -50,7 +50,7 @@ struct CoinMarketResultUSD {
 	percent_change_7d f64
 }
 
-pub fn new(args CMCNewArgs) CoinMarketConnection {
+pub fn new(args CMCNewArgs) !CoinMarketConnection {
 	/*
 	Create a new taiga client
 	Inputs:
@@ -70,7 +70,7 @@ pub fn new(args CMCNewArgs) CoinMarketConnection {
 	if updated_args.secret == '' {
 		panic('CMCKEY needs to be set in env.')
 	}
-	mut conn := init_connection()
+	mut conn := init_connection()!
 	conn.url = 'https://pro-api.coinmarketcap.com/v1'
 	conn.secret = updated_args.secret
 	conn.cache_timeout = updated_args.cache_timeout

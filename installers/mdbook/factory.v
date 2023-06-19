@@ -29,7 +29,7 @@ pub fn get_install(mut node builder.Node) !Installer {
 }
 
 pub fn install() !Installer {
-	mut builder_ := builder.new()
+	mut builder_ := builder.new()!
 	mut node := builder_.node_local()!
 	mut i := get(mut node)!
 	i.install()!

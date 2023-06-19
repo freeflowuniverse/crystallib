@@ -1,12 +1,12 @@
 module main
 
-import freeflowuniverse.crystallib.redisclient
+import freeflowuniverse.crystallib.redisclient { RedisURL }
 import time
 
 fn conn_for_thread(c int) {
 	println('thread ${c}')
 	// time.sleep(100 * time.millisecond)
-	mut redis := redisclient.core_get()
+	mut redis := redisclient.core_get(RedisURL{})!
 	println('ok ${c}')
 	redis.set('test', 'some data') or { panic('set ' + err.str() + '\n' + c.str()) }
 	redis.get('test') or { panic('get ' + err.str() + '\n' + c.str()) }
@@ -22,7 +22,7 @@ fn conn2(c int) ?bool {
 
 	// ONCE THIS WORKS, WE SHOULD TEST NEXT AS well, ENABLE REDIS CLIENT ABOVE
 
-	mut redis := redisclient.core_get()
+	mut redis := redisclient.core_get(RedisURL{})!
 	redis.set('test', 'some data') or { panic('set' + err.str() + '\n' + c.str()) }
 	r := redis.get('test')?
 	if r != 'some data' {

@@ -1,10 +1,10 @@
-import freeflowuniverse.crystallib.redisclient
+import freeflowuniverse.crystallib.redisclient { RedisURL }
 import time
 // original code see https://github.com/patrickpissurno/vredis/blob/master/vredis_test.v
 // credits see there as well (-:
 
-fn setup() &redisclient.Redis {
-	mut redis := redisclient.core_get()
+fn setup() !&redisclient.Redis {
+	mut redis := redisclient.core_get(RedisURL{})!
 	// Select db 10 to be away from default one '0'
 	redis.selectdb(10) or { panic(err) }
 	return &redis
@@ -16,7 +16,7 @@ fn cleanup(mut redis redisclient.Redis) ! {
 }
 
 fn test_set() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -41,7 +41,7 @@ fn test_set() {
 }
 
 fn test_large_value() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -64,7 +64,7 @@ fn test_large_value() {
 }
 
 fn test_queue() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -83,7 +83,7 @@ fn test_queue() {
 }
 
 fn test_scan() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -99,7 +99,7 @@ fn test_scan() {
 }
 
 fn test_set_opts() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -119,7 +119,7 @@ fn test_set_opts() {
 }
 
 fn test_setex() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -134,7 +134,7 @@ fn test_setex() {
 }
 
 fn test_psetex() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -151,7 +151,7 @@ fn test_psetex() {
 }
 
 fn test_setnx() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -168,7 +168,7 @@ fn test_setnx() {
 }
 
 fn test_incrby() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -195,7 +195,7 @@ fn test_incrby() {
 }
 
 fn test_incr() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -221,7 +221,7 @@ fn test_incr() {
 }
 
 fn test_decr() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -247,7 +247,7 @@ fn test_decr() {
 }
 
 fn test_decrby() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -273,7 +273,7 @@ fn test_decrby() {
 }
 
 fn test_incrbyfloat() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -305,7 +305,7 @@ fn test_incrbyfloat() {
 }
 
 fn test_append() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -324,7 +324,7 @@ fn test_append() {
 }
 
 fn test_lpush() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -336,7 +336,7 @@ fn test_lpush() {
 }
 
 fn test_rpush() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -348,7 +348,7 @@ fn test_rpush() {
 }
 
 fn test_setrange() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -366,7 +366,7 @@ fn test_setrange() {
 }
 
 fn test_expire() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -385,7 +385,7 @@ fn test_expire() {
 }
 
 fn test_pexpire() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -404,7 +404,7 @@ fn test_pexpire() {
 }
 
 fn test_expireat() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -423,7 +423,7 @@ fn test_expireat() {
 }
 
 fn test_pexpireat() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -442,7 +442,7 @@ fn test_pexpireat() {
 }
 
 fn test_persist() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -460,7 +460,7 @@ fn test_persist() {
 }
 
 fn test_get() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -471,7 +471,7 @@ fn test_get() {
 }
 
 fn test_getset() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -492,7 +492,7 @@ fn test_getset() {
 }
 
 fn test_getrange() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -511,7 +511,7 @@ fn test_getrange() {
 }
 
 fn test_randomkey() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -526,7 +526,7 @@ fn test_randomkey() {
 }
 
 fn test_strlen() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -545,7 +545,7 @@ fn test_strlen() {
 }
 
 fn test_lpop() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -562,7 +562,7 @@ fn test_lpop() {
 }
 
 fn test_rpop() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -579,7 +579,7 @@ fn test_rpop() {
 }
 
 fn test_brpop() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -596,7 +596,7 @@ fn test_brpop() {
 }
 
 fn test_lrpop() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -613,7 +613,7 @@ fn test_lrpop() {
 }
 
 fn test_llen() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -642,7 +642,7 @@ fn test_llen() {
 }
 
 fn test_ttl() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -668,7 +668,7 @@ fn test_ttl() {
 }
 
 fn test_pttl() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -694,7 +694,7 @@ fn test_pttl() {
 }
 
 fn test_exists() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -713,7 +713,7 @@ fn test_exists() {
 }
 
 fn test_type_of() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -738,7 +738,7 @@ fn test_type_of() {
 }
 
 fn test_del() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -752,7 +752,7 @@ fn test_del() {
 }
 
 fn test_rename() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -767,7 +767,7 @@ fn test_rename() {
 }
 
 fn test_renamenx() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -794,7 +794,7 @@ fn test_renamenx() {
 }
 
 fn test_flushall() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
@@ -804,7 +804,7 @@ fn test_flushall() {
 }
 
 fn test_keys() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
