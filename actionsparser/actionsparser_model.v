@@ -29,8 +29,8 @@ fn book_check(c string, block string) ! {
 	if c.len < 3 {
 		return error("book bad specified (len min 3), found '${c}'.\nFor block: ${block}")
 	}
-	if c.len > 6 {
-		return error("book bad specified (len max 6), found '${c}'.\nFor block: ${block}")
+	if c.len > 10 {
+		return error("book bad specified (len max 10), found '${c}'.\nFor block: ${block}")
 	}
 }
 
