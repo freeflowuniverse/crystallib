@@ -29,10 +29,10 @@ fn test_decode() {
 			value: 'true'
 		}, Param{
 			key: 'liststr'
-			value: 'one, two'
+			value: '["one", "two"]'
 		}, Param{
 			key: 'listint'
-			value: '1, 2'
+			value: '[1, 2]'
 		}]
 	}
 
@@ -61,10 +61,10 @@ fn test_encode() {
 			value: 'true'
 		}, Param{
 			key: 'liststr'
-			value: 'one, two'
+			value: '[\'one\', \'two\']'
 		}, Param{
 			key: 'listint'
-			value: '1, 2'
+			value: '[1, 2]'
 		}]
 	}
 
