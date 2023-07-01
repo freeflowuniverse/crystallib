@@ -5,7 +5,7 @@ fn test_get_tft_price() {
 	mut args := CMCNewArgs{
 		secret: key
 	}
-	mut c := new(args)
+	mut c := new(args)!
 
 	// TFT/USD price
 	price := c.token_price_usd() or { panic(err) }

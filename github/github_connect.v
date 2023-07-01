@@ -3,7 +3,7 @@ module github
 import x.json2
 import json
 import net.http
-import freeflowuniverse.crystallib.redisclient
+import freeflowuniverse.crystallib.redisclient { RedisURL }
 import crystaljson
 import os
 
@@ -21,7 +21,7 @@ mut:
 // Init connection for github singleton
 fn init_connection() GithubConnection {
 	mut conn := GithubConnection{
-		redis: redisclient.core_get()
+		redis: redisclient.core_get(RedisURL{})!
 	}
 	return conn
 }

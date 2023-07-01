@@ -18,7 +18,7 @@ pub fn (mut ossl OpenSSL) generate_ca(args OpenSSLGenerateArgs) !OpenSSLKey {
 		return error('need to give domain and needs to be bigger than 6 chars. \n${r}')
 	}
 
-	mut b := builder.new()
+	mut b := builder.new()!
 	mut node := b.node_local()!
 
 	// info on https://mariadb.com/docs/xpand/security/data-in-transit-encryption/create-self-signed-certificates-keys-openssl/
