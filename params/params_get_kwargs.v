@@ -119,3 +119,41 @@ pub fn (params &Params) get_default_false(key string) bool {
 	}
 	return true
 }
+
+
+// return options
+
+pub fn (params &Params) get_int_opt(key string) ?int{
+	return params.get_int(key) or {none}
+}
+
+pub fn (params &Params) get_u8_opt(key string) ?u8{
+	return params.get_u8(key) or {none}
+}
+
+pub fn (params &Params) get_u32_opt(key string) ?u32{
+	return params.get_u32(key) or {none}
+}
+
+pub fn (params &Params) get_u64_opt(key string) ?u64{
+	return params.get_u64(key) or {none}
+}
+
+pub fn (params &Params) get_string_opt(key string) ?string{
+	return params.get(key) or {none}
+}
+
+pub fn (params &Params) get_bool_opt(key string) ?bool{
+	mut r := params.get(key) or { '' }
+	r = texttools.name_fix_no_underscore(r)
+
+	if r == '1' || r == 'true' || r == 'y' || r == 'yes' {
+		return true
+	}
+
+	if r == '0' || r == 'false' || r == 'n' || r == 'no' {
+		return false
+	}
+
+	return none
+}
