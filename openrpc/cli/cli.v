@@ -49,7 +49,7 @@ fn main() {
 	docgen_cmd.add_flag(Flag{
 		flag: .string_array
 		name: 'exclude_dirs'
-		abbrev: 'd'
+		abbrev: 'ed'
 		description: 'Directories to be excluded from source code to generate document from.'
 	})
 	docgen_cmd.add_flag(Flag{
