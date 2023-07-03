@@ -1,5 +1,7 @@
 module params
 
+import strconv
+
 // convert GB, MB, KB to bytes
 // e.g. 10 GB becomes bytes in u64
 pub fn (params &Params) get_storagecapacity_in_bytes(key string) !u64 {
@@ -25,7 +27,7 @@ pub fn (params &Params) get_storagecapacity_in_bytes(key string) !u64 {
 			return error('not valid: should end with kb, mb or gb')
 		}
 	}
-	return valuestr.u64() * u64(times)
+	return strconv.parse_uint(valuestr[0..valuestr.len-2], 10, 64)! * u64(times)
 }
 
 pub fn (params &Params) get_storagecapacity_in_bytes_default(key string, defval u64) !u64 {
@@ -60,8 +62,9 @@ pub fn (params &Params) get_storagecapacity_in_gigabytes(key string) !u64 {
 		}
 	}
 
-	mut ret := valuestr.u64() / u64(units)
-	if valuestr.u64() % u64(units) != 0 {
+	val := strconv.parse_uint(valuestr[0..valuestr.len-2], 10, 64)!
+	mut ret := val / u64(units)
+	if val % u64(units) != 0 {
 		ret += 1
 	}
 
