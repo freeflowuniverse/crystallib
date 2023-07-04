@@ -27,11 +27,12 @@ pub mut:
 	defs                  map[string]Schema
 	one_of	?[]SchemaRef [json: 'oneOf']
 
+	// todo: make fields optional upon the fixing of https://github.com/vlang/v/issues/18775
 	// from https://git.sr.ht/~emersion/go-jsonschema/tree/master/item/schema.go
 	// Validation for numbers
-	multiple_of      Number [json: "multipleOf"]
-	maximum          Number [json_as_number]
-	exclusive_maximum Number [json: "exclusiveMaximum"]
-	minimum          Number
-	exclusive_minimum Number [json: "exclusiveMinimum"]
+	multiple_of      Number [json: "multipleOf"; omitempty]
+	maximum          Number [omitempty]
+	exclusive_maximum Number [json: "exclusiveMaximum"; omitempty]
+	minimum          Number [omitempty]
+	exclusive_minimum Number [json: "exclusiveMinimum"; omitempty]
 }
