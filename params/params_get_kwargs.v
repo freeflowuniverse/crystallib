@@ -35,12 +35,16 @@ pub fn (params &Params) get_default(key string, defval string) !string {
 // description is a kwarg
 pub fn (params &Params) get_int(key string) !int {
 	valuestr := params.get(key)!
-	return strconv.atoi(valuestr)
+	return strconv.atoi(valuestr) or {
+		return error('Parameter ${key} = ${valuestr} is not a valid signed 32-bit integer')
+	}
 }
 
 pub fn (params &Params) get_float(key string) !f64 {
 	valuestr := params.get(key)!
-	return strconv.atof64(valuestr)
+	return strconv.atof64(valuestr) or {
+		return error('Parameter ${key} = ${valuestr} is not a valid 64-bit float')
+	}
 }
 
 pub fn (params &Params) get_float_default(key string, defval f64) !f64 {
@@ -53,7 +57,9 @@ pub fn (params &Params) get_float_default(key string, defval f64) !f64 {
 
 pub fn (params &Params) get_u64(key string) !u64 {
 	valuestr := params.get(key)!
-	return strconv.parse_uint(valuestr, 10, 64)
+	return strconv.parse_uint(valuestr, 10, 64) or {
+		return error('Parameter ${key} = ${valuestr} is not a valid unsigned 64-bit integer')
+	}
 }
 
 pub fn (params &Params) get_u64_default(key string, defval u64) !u64 {
@@ -66,7 +72,9 @@ pub fn (params &Params) get_u64_default(key string, defval u64) !u64 {
 
 pub fn (params &Params) get_u32(key string) !u32 {
 	valuestr := params.get(key)!
-	return u32(strconv.parse_uint(valuestr, 10, 32)!)
+	return u32(strconv.parse_uint(valuestr, 10, 32) or {
+		return error('Parameter ${key} = ${valuestr} is not a valid unsigned 32-bit integer')
+	})
 }
 
 pub fn (params &Params) get_u32_default(key string, defval u32) !u32 {
@@ -79,7 +87,9 @@ pub fn (params &Params) get_u32_default(key string, defval u32) !u32 {
 
 pub fn (params &Params) get_u8(key string) !u8 {
 	valuestr := params.get(key)!
-	return u8(strconv.parse_uint(valuestr, 10, 8)!)
+	return u8(strconv.parse_uint(valuestr, 10, 8) or {
+		return error('Parameter ${key} = ${valuestr} is not a valid unsigned 8-bit integer')
+	})
 }
 
 pub fn (params &Params) get_u8_default(key string, defval u8) !u8 {
