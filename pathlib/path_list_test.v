@@ -8,7 +8,7 @@ fn testsuite_begin() {
 	assert !os.is_dir(testpath)
 	os.mkdir_all(testpath) or { panic(err) }
 	os.mkdir_all('${testpath}/test_parent') or { panic(err) }
-	
+
 	// create some files for testing
 	os.create('${testpath}/testfile.txt')!
 	os.create('${testpath}/test_parent/subfile.txt')!

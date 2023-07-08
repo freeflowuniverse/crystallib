@@ -33,14 +33,14 @@ pub fn (mut b DockerBuilderRecipe) add_from(args FromArgs) ! {
 			item.tag = 'latest'
 		}
 	}
-	mut prefix:=b.prefix
-	if b.engine.prefix.len>0{
-		prefix=b.engine.prefix
+	mut prefix := b.prefix
+	if b.engine.prefix.len > 0 {
+		prefix = b.engine.prefix
 	}
-	if prefix.len>0 && !(prefix.ends_with("/")){
-		return error("cannot use prefix if it doesn't end with /, was '$prefix'")
+	if prefix.len > 0 && !(prefix.ends_with('/')) {
+		return error("cannot use prefix if it doesn't end with /, was '${prefix}'")
 	}
-	item.image = '$prefix${item.image}'
+	item.image = '${prefix}${item.image}'
 	if item.image == '' {
 		return error('image name cannot be empty')
 	}

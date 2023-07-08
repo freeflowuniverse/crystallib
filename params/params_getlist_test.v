@@ -5,14 +5,13 @@ fn test_get_list_single_quotes() {
 		params: [
 			Param{
 				key: 'mylist'
-				value: '[\'A\',\'A\',\'A\',\'A\']'
+				value: "['A','A','A','A']"
 			},
 		]
 	}
-	list := testparams.get_list("mylist")!
+	list := testparams.get_list('mylist')!
 	assert list == ['A', 'A', 'A', 'A']
 }
-
 
 fn test_get_list_double_quotes() {
 	testparams := Params{
@@ -23,7 +22,7 @@ fn test_get_list_double_quotes() {
 			},
 		]
 	}
-	list := testparams.get_list("mylist")!
+	list := testparams.get_list('mylist')!
 	assert list == ['A', 'A', 'A', 'A']
 }
 
@@ -36,7 +35,7 @@ fn test_get_list_single_and_double_quotes() {
 			},
 		]
 	}
-	list := testparams.get_list("mylist")!
+	list := testparams.get_list('mylist')!
 	assert list == ['A', 'A', 'A', 'A']
 }
 
@@ -49,7 +48,7 @@ fn test_get_list_double_quote_inside_single() {
 			},
 		]
 	}
-	list := testparams.get_list("mylist")!
+	list := testparams.get_list('mylist')!
 	assert list == ['A', '"A"', 'A', 'A']
 }
 
@@ -62,10 +61,8 @@ fn test_get_list_invalid() {
 			},
 		]
 	}
-	list := testparams.get_list("mylist") or {
-		return
-	}
-	assert false, "expected get_list to throw an error"
+	list := testparams.get_list('mylist') or { return }
+	assert false, 'expected get_list to throw an error'
 }
 
 fn test_get_list_u8() {
@@ -77,7 +74,7 @@ fn test_get_list_u8() {
 			},
 		]
 	}
-	list := testparams.get_list_u8("mylist")!
+	list := testparams.get_list_u8('mylist')!
 	assert list == [u8(1), u8(5), u8(7), u8(2)]
 }
 
@@ -85,7 +82,7 @@ fn test_get_list_u8_default() {
 	testparams := Params{
 		params: []
 	}
-	list := testparams.get_list_u8_default("mylist", []u8{})
+	list := testparams.get_list_u8_default('mylist', []u8{})
 	assert list == []u8{}
 }
 
@@ -98,7 +95,7 @@ fn test_get_list_u16() {
 			},
 		]
 	}
-	list := testparams.get_list_u16("mylist")!
+	list := testparams.get_list_u16('mylist')!
 	assert list == [u16(1), u16(5), u16(7), u16(2)]
 }
 
@@ -106,10 +103,9 @@ fn test_get_list_u16_default() {
 	testparams := Params{
 		params: []
 	}
-	list := testparams.get_list_u16_default("mylist", []u16{})
+	list := testparams.get_list_u16_default('mylist', []u16{})
 	assert list == []u16{}
 }
-
 
 fn test_get_list_u32() {
 	testparams := Params{
@@ -120,7 +116,7 @@ fn test_get_list_u32() {
 			},
 		]
 	}
-	list := testparams.get_list_u32("mylist")!
+	list := testparams.get_list_u32('mylist')!
 	assert list == [u32(1), u32(5), u32(7), u32(15148)]
 }
 
@@ -128,7 +124,7 @@ fn test_get_list_u32_default() {
 	testparams := Params{
 		params: []
 	}
-	list := testparams.get_list_u32_default("mylist", []u32{})
+	list := testparams.get_list_u32_default('mylist', []u32{})
 	assert list == []u32{}
 }
 
@@ -141,7 +137,7 @@ fn test_get_list_u64() {
 			},
 		]
 	}
-	list := testparams.get_list_u64("mylist")!
+	list := testparams.get_list_u64('mylist')!
 	assert list == [u64(1), u64(5), u64(7), u64(15148)]
 }
 
@@ -149,7 +145,7 @@ fn test_get_list_u64_default() {
 	testparams := Params{
 		params: []
 	}
-	list := testparams.get_list_u64_default("mylist", []u64{})
+	list := testparams.get_list_u64_default('mylist', []u64{})
 	assert list == []u64{}
 }
 
@@ -162,7 +158,7 @@ fn test_get_list_i8() {
 			},
 		]
 	}
-	list := testparams.get_list_i8("mylist")!
+	list := testparams.get_list_i8('mylist')!
 	assert list == [i8(1), i8(-5), i8(10), i8(-2)]
 }
 
@@ -170,7 +166,7 @@ fn test_get_list_i8_default() {
 	testparams := Params{
 		params: []
 	}
-	list := testparams.get_list_i8_default("mylist", []i8{})
+	list := testparams.get_list_i8_default('mylist', []i8{})
 	assert list == []i8{}
 }
 
@@ -183,7 +179,7 @@ fn test_get_list_i16() {
 			},
 		]
 	}
-	list := testparams.get_list_i16("mylist")!
+	list := testparams.get_list_i16('mylist')!
 	assert list == [i16(1), i16(-25), i16(165), i16(-148)]
 }
 
@@ -191,7 +187,7 @@ fn test_get_list_i16_default() {
 	testparams := Params{
 		params: []
 	}
-	list := testparams.get_list_i16_default("mylist", []i16{})
+	list := testparams.get_list_i16_default('mylist', []i16{})
 	assert list == []i16{}
 }
 
@@ -204,7 +200,7 @@ fn test_get_list_int() {
 			},
 		]
 	}
-	list := testparams.get_list_int("mylist")!
+	list := testparams.get_list_int('mylist')!
 	assert list == [1, -25, 165, -1484984]
 }
 
@@ -212,7 +208,7 @@ fn test_get_list_int_default() {
 	testparams := Params{
 		params: []
 	}
-	list := testparams.get_list_int_default("mylist", []int{})
+	list := testparams.get_list_int_default('mylist', []int{})
 	assert list == []int{}
 }
 
@@ -225,7 +221,7 @@ fn test_get_list_i64() {
 			},
 		]
 	}
-	list := testparams.get_list_i64("mylist")!
+	list := testparams.get_list_i64('mylist')!
 	assert list == [i64(1), i64(-25), i64(165), i64(-148)]
 }
 
@@ -233,7 +229,7 @@ fn test_get_list_i64_default() {
 	testparams := Params{
 		params: []
 	}
-	list := testparams.get_list_i64_default("mylist", []i64{})
+	list := testparams.get_list_i64_default('mylist', []i64{})
 	assert list == []i64{}
 }
 
@@ -246,7 +242,7 @@ fn test_get_list_f32() {
 			},
 		]
 	}
-	list := testparams.get_list_f32("mylist")!
+	list := testparams.get_list_f32('mylist')!
 	assert list == [f32(1.5), f32(5.78), f32(7.478), f32(15148.4654)]
 }
 
@@ -254,7 +250,7 @@ fn test_get_list_f32_default() {
 	testparams := Params{
 		params: []
 	}
-	list := testparams.get_list_f32_default("mylist", []f32{})
+	list := testparams.get_list_f32_default('mylist', []f32{})
 	assert list == []f32{}
 }
 
@@ -267,7 +263,7 @@ fn test_get_list_f64() {
 			},
 		]
 	}
-	list := testparams.get_list_f64("mylist")!
+	list := testparams.get_list_f64('mylist')!
 	assert list == [1.5, 5.78, 7.478, 15148.4654]
 }
 
@@ -275,6 +271,6 @@ fn test_get_list_f64_default() {
 	testparams := Params{
 		params: []
 	}
-	list := testparams.get_list_f64_default("mylist", []f64{})
+	list := testparams.get_list_f64_default('mylist', []f64{})
 	assert list == []f64{}
 }

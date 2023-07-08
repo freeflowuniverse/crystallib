@@ -14,7 +14,6 @@ pub mut:
 	recipe &DockerBuilderRecipe [str: skip]
 }
 
-
 pub fn (mut b DockerBuilderRecipe) add_entrypoint(args EntryPointArgs) ! {
 	mut item := EntryPointItem{
 		cmd: args.cmd

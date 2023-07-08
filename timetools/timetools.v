@@ -43,7 +43,7 @@ const (
 //'2022-12-5' - sets hours, mins, seconds to 00
 pub fn parse(timestr string) !time.Time {
 	trimmed := timestr.trim_space()
-	if trimmed==""{
+	if trimmed == '' {
 		return time.now()
 	}
 	mut relative_bool := false

@@ -80,7 +80,7 @@ pub fn (mut b DockerBuilderRecipe) render() !string {
 	b.check_from_statement()!
 	b.check_conf_add()!
 	mut items := []string{}
-	mut zinitexists:=false
+	mut zinitexists := false
 	for mut item in b.items {
 		item_str := match mut item {
 			FromItem {
@@ -128,18 +128,17 @@ pub fn (mut b DockerBuilderRecipe) render() !string {
 				item.render()!
 			}
 			ZinitItem {
-				zinitexists=true
+				zinitexists = true
 				item.check()!
-				item.render()!				
-			}			
+				item.render()!
+			}
 		}
 		items << item_str
 	}
-	if zinitexists{
-		//means there is a zinit, we need to add the directory for zinit
-		items << "COPY zinit /etc/zinit\n"
-
-	}	
+	if zinitexists {
+		// means there is a zinit, we need to add the directory for zinit
+		items << 'COPY zinit /etc/zinit\n'
+	}
 	return items.join('\n')
 }
 
@@ -195,7 +194,7 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 
 	destpath := b.path()
 	if reset {
-		b.engine.node.exec_silent('rm -rf ${destpath}')!	
+		b.engine.node.exec_silent('rm -rf ${destpath}')!
 	}
 	b.engine.node.exec_silent('mkdir -p ${destpath}')!
 	b.engine.node.file_write('${destpath}/Dockerfile', dockerfilecontent)!
