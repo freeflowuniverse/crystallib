@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>openrpc | vdoc</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  
+		<link rel="stylesheet" href="doc.css" />
+		<link rel="stylesheet" href="normalize.css" />
+		<script src="dark-mode.js"></script>
+</head>
+
+<body>
+  <div><a id="skip-to-content-link" href="#main-content">Skip to content</a></div>
+  <div id="page">
+    <header class="doc-nav hidden">
+      <div class="heading-container">
+        <div class="heading">
+          <div class="info">
+            <div class="module">crystallib</div>
+            <div class="toggle-version-container">
+              <span>0.1.0 2179db3</span>
+              <div id="dark-mode-toggle" role="switch" aria-checked="false" aria-label="Toggle dark mode"><svg xmlns="http://www.w3.org/2000/svg" class="light-icon" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" class="dark-icon" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><rect fill="none" height="24" width="24"/></g><g><g><g><path d="M11.1,12.08C8.77,7.57,10.6,3.6,11.63,2.01C6.27,2.2,1.98,6.59,1.98,12c0,0.14,0.02,0.28,0.02,0.42 C2.62,12.15,3.29,12,4,12c1.66,0,3.18,0.83,4.1,2.15C9.77,14.63,11,16.17,11,18c0,1.52-0.87,2.83-2.12,3.51 c0.98,0.32,2.03,0.5,3.11,0.5c3.5,0,6.58-1.8,8.37-4.52C18,17.72,13.38,16.52,11.1,12.08z"/></g><path d="M7,16l-0.18,0C6.4,14.84,5.3,14,4,14c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.62,0,2.49,0,3,0c1.1,0,2-0.9,2-2 C9,16.9,8.1,16,7,16z"/></g></g></svg>
+</div>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" id="toggle-menu" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+
+          </div>
+          <input type="text" id="search" placeholder="Search... (beta)" autocomplete="off">
+        </div>
+      </div>
+      <nav class="search hidden"></nav>
+      <nav class="content hidden">
+        <ul>
+          <li class="open"><div class="menu-row"><a href="./index.html">README</a></div></li><li class="open"><div class="menu-row"><a href="./actions.html">actions</a></div></li><li class="open"><div class="menu-row"><a href="./actionsparser.html">actionsparser</a></div></li><li class="open"><div class="menu-row"><a href="./archiver.html">archiver</a></div></li><li class="open"><div class="menu-row"><a href="./books.html">books</a></div></li><li class="open"><div class="menu-row"><a href="./builder.html">builder</a></div></li><li class="open"><div class="menu-row"><a href="./calc.html">calc</a></div></li><li class="open"><div class="menu-row"><a href="./codemodel.html">codemodel</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./codeparser.html">codeparser</a></div><ul><li><a href="./codeparser.testdata.html">testdata</a></li><li><a href="./codeparser.testdata.flatdir.html">testdata.flatdir</a></li></ul></li><li class="open"><div class="menu-row"><a href="./coinmarketcap.html">coinmarketcap</a></div></li><li class="open"><div class="menu-row"><a href="./console.html">console</a></div></li><li class="open"><div class="menu-row"><a href="./crpgp.html">crpgp</a></div></li><li class="open"><div class="menu-row"><a href="./crystaljson.html">crystaljson</a></div></li><li class="open"><div class="menu-row"><a href="./currency.html">currency</a></div></li><li class="open"><div class="menu-row"><a href="./data.html">data</a></div></li><li class="open"><div class="menu-row"><a href="./docker.html">docker</a></div></li><li class="open"><div class="menu-row"><a href="./encoder.html">encoder</a></div></li><li class="open"><div class="menu-row"><a href="./fftools.html">fftools</a></div></li><li class="open"><div class="menu-row"><a href="./github.html">github</a></div></li><li class="open"><div class="menu-row"><a href="./gittools.html">gittools</a></div></li><li class="open"><div class="menu-row"><a href="./hostsfile.html">hostsfile</a></div></li><li class="open"><div class="menu-row"><a href="./httpconnection.html">httpconnection</a></div></li><li class="open"><div class="menu-row"><a href="./imagemagick.html">imagemagick</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">installers</a></div><ul><li><a href="./installers.base.html">base</a></li><li><a href="./installers.caddy.html">caddy</a></li><li><a href="./installers.crystaltools.html">crystaltools</a></li><li><a href="./installers.golang.html">golang</a></li><li><a href="./installers.imagemagick.html">imagemagick</a></li><li><a href="./installers.mdbook.html">mdbook</a></li><li><a href="./installers.repository.html">repository</a></li><li><a href="./installers.rust.html">rust</a></li><li><a href="./installers.swarm.html">swarm</a></li><li><a href="./installers.tailwind.html">tailwind</a></li><li><a href="./installers.tmux.html">tmux</a></li><li><a href="./installers.vlang.html">vlang</a></li><li><a href="./installers.zdb.html">zdb</a></li></ul></li><li class="open"><div class="menu-row"><a href="./ipaddress.html">ipaddress</a></div></li><li class="open"><div class="menu-row"><a href="./jsonrpc.html">jsonrpc</a></div></li><li class="open"><div class="menu-row"><a href="./jsonschema.html">jsonschema</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./keysafe.html">keysafe</a></div><ul><li><a href="./keysafe.secp256k1.html">secp256k1</a></li></ul></li><li class="open"><div class="menu-row"><a href="./markdowndocs.html">markdowndocs</a></div></li><li class="open"><div class="menu-row"><a href="./mnemonic.html">mnemonic</a></div></li><li class="open"><div class="menu-row"><a href="./natsclient.html">natsclient</a></div></li><li class="open active"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./openrpc.html">openrpc</a></div><ul><li><a href="./openrpc.docgen.html">docgen</a></li><li><a href="./openrpc.examples.openrpc_client.html">examples.openrpc_client</a></li><li><a href="./openrpc.examples.petstore_client.html">examples.petstore_client</a></li></ul></li><li class="open"><div class="menu-row"><a href="./main.html">main</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./openrpc.examples.openrpc_client.html">openrpc</a></div><ul><li><a href="./openrpc.docgen.html">docgen</a></li><li><a href="./openrpc.examples.openrpc_client.html">examples.openrpc_client</a></li><li><a href="./openrpc.examples.petstore_client.html">examples.petstore_client</a></li></ul></li><li class="open"><div class="menu-row"><a href="./openssl.html">openssl</a></div></li><li class="open"><div class="menu-row"><a href="./params.html">params</a></div></li><li class="open"><div class="menu-row"><a href="./pathlib.html">pathlib</a></div></li><li class="open"><div class="menu-row"><a href="./pgp.html">pgp</a></div></li><li class="open"><div class="menu-row"><a href="./process.html">process</a></div></li><li class="open"><div class="menu-row"><a href="./publisher2.html">publisher2</a></div></li><li class="open"><div class="menu-row"><a href="./publisher_core.html">publisher_core</a></div></li><li class="open"><div class="menu-row"><a href="./redisclient.html">redisclient</a></div></li><li class="open"><div class="menu-row"><a href="./redisserver.html">redisserver</a></div></li><li class="open"><div class="menu-row"><a href="./resp.html">resp</a></div></li><li class="open"><div class="menu-row"><a href="./rootpath.html">rootpath</a></div></li><li class="open"><div class="menu-row"><a href="./rpcwebsocket.html">rpcwebsocket</a></div></li><li class="open"><div class="menu-row"><a href="./serializers.html">serializers</a></div></li><li class="open"><div class="menu-row"><a href="./sshagent.html">sshagent</a></div></li><li class="open"><div class="menu-row"><a href="./taskletmanager.html">taskletmanager</a></div></li><li class="open"><div class="menu-row"><a href="./texttools.html">texttools</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">threefold</a></div><ul><li><a href="./threefold.liquid.html">liquid</a></li><li><a href="./threefold.macros.html">macros</a></li><li><a href="./threefold.macros.rest.html">macros.rest</a></li><li><a href="./threefold.nodepilot.html">nodepilot</a></li><li><a href="./threefold.rmb.html">rmb</a></li><li><a href="./threefold.terraform.html">terraform</a></li><li><a href="./threefold.tfgrid.html">tfgrid</a></li><li><a href="./threefold.tokens.html">tokens</a></li><li><a href="./threefold.twinclient.html">twinclient</a></li><li><a href="./threefold.zerohub.html">zerohub</a></li></ul></li><li class="open"><div class="menu-row"><a href="./timetools.html">timetools</a></div></li><li class="open"><div class="menu-row"><a href="./tmux.html">tmux</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="#">tools</a></div><ul><li><a href="./tools.cacher.html">cacher</a></li><li><a href="./tools.downloader.html">downloader</a></li></ul></li><li class="open"><div class="menu-row"><a href="./twinclient.html">twinclient</a></div></li><li class="open"><div class="menu-row"><svg xmlns="http://www.w3.org/2000/svg" class="dropdown-arrow" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg><a href="./ui.html">ui</a></div><ul><li><a href="./ui.console.html">console</a></li><li><a href="./ui.telegram.html">telegram</a></li><li><a href="./ui.telegram.client.html">telegram.client</a></li><li><a href="./ui.uimodel.html">uimodel</a></li></ul></li><li class="open"><div class="menu-row"><a href="./vault.html">vault</a></div></li><li class="open"><div class="menu-row"><a href="./verasure.html">verasure</a></div></li><li class="open"><div class="menu-row"><a href="./vexecutor.html">vexecutor</a></div></li><li class="open"><div class="menu-row"><a href="./zdb.html">zdb</a></div></li>
+        </ul>
+      </nav>
+    </header>
+    <div class="doc-scrollview" id="main-content">
+      <div class="doc-container">
+        <div class="doc-content">
+          						<section id="readme_openrpc" class="doc-node">
+							<div class="title"><h1> openrpc <a href="#readme_openrpc">#</a></h1></div><h1>OpenRPC</h1>
+<p>OpenRPC V library. Model for OpenRPC, client code generation, and specification generation from code.</p>
+<h2>Definitions</h2>
+<ul>
+<li><p>OpenRPC Specifications: Specifications that define standards for describing JSON-RPC API's.</p>
+</li>
+<li><p><a href="https://spec.open-rpc.org/#openrpc-document">OpenRPC Document</a>: &quot;A document that defines or describes an API conforming to the OpenRPC Specification.&quot;</p>
+</li>
+<li><p>OpenRPC Client: An API Client (using either HTTP or Websocket) that governs functions (one per RPC Method defined in OpenRPC Document) to communicate with RPC servers and perform RPCs.</p>
+</li>
+<li><p>OpenRPC Client module in V: An OpenRPC Client in the form of a V module. The module must have the following files:</p>
+<ul>
+<li>a model.v file, in which structs of components defined in the OpenRPC Document reside</li>
+<li>a client.v file, in which the client struct is defined, alongside client methods that are used for communicating with a JSON-RPC API server. (for instance a send_rpc method that is used in all the client methods)</li>
+<li>a methods.v file, in which methods of the client reside</li>
+</ul>
+</li>
+</ul>
+<h2>Installation</h2>
+<p>Follow crystallib installation instructions.</p>
+<h2>Getting started</h2>
+<p>See <a href="./docgen/README.md/#getting-started">OpenRPC Document Generator</a></p>
+
+</section>
+
+						<section id="prune" class="doc-node">
+							<div class="title"><h2>fn prune <a href="#prune">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/openrpc/encode.v#L18"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token function">prune</span><span class="token punctuation">(</span>obj Any<span class="token punctuation">)</span> Any</code></pre>
+<p>prune recursively prunes a map of Any type, pruning map keys where the value is the default value of the variable.<br>
+this treats undefined values as null, which is ok for openrpc document encoding.</p>
+
+</section>
+						<section id="ContentDescriptorRef" class="doc-node">
+							<div class="title"><h2>type ContentDescriptorRef <a href="#ContentDescriptorRef">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/openrpc/openrpc.v#L86"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">type</span> ContentDescriptorRef <span class="token operator">=</span> ContentDescriptor <span class="token operator">|</span> Reference</code></pre>
+
+
+</section>
+						<section id="ContentDescriptor" class="doc-node">
+							<div class="title"><h2>struct ContentDescriptor <a href="#ContentDescriptor">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/openrpc/openrpc.v#L91"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">ContentDescriptor</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span><span class="token punctuation">:</span>
+	name        <span class="token builtin">string</span>    <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token comment">// Name of the content that is being described. If the content described is a method parameter assignable by-name, this field SHALL define the parameter’s key (ie name).</span>
+	summary     <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// A short summary of the content that is being described.</span>
+	description <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// A verbose explanation of the content descriptor behavior.</span>
+	required    <span class="token operator">?</span><span class="token builtin">bool</span>   <span class="token comment">// Determines if the content is a required field. Default value is false.</span>
+	schema      SchemaRef <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token comment">// Schema that describes the content.</span>
+	deprecated  <span class="token operator">?</span><span class="token builtin">bool</span> <span class="token comment">// Specifies that the content is deprecated and SHOULD be transitioned out of usage. Default value is false.</span>
+<span class="token punctuation">}</span></code></pre>
+<p>Content Descriptors are objects that do just as they suggest - describe content.<br>
+They are reusable ways of describing either parameters or result.<br>
+They MUST have a schema.</p>
+
+</section>
+						<section id="Error" class="doc-node">
+							<div class="title"><h2>struct Error <a href="#Error">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/openrpc/openrpc.v#L151"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Error</span> <span class="token punctuation">{</span>
+	code    <span class="token builtin">int</span>     <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token comment">// A Number that indicates the error type that occurred. This MUST be an integer. The error codes from and including -32768 to -32000 are reserved for pre-defined errors. These pre-defined errors SHOULD be assumed to be returned from any JSON-RPC api.</span>
+	message <span class="token builtin">string</span>  <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token comment">// A String providing a short description of the error. The message SHOULD be limited to a concise single sentence.</span>
+	data    <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// A Primitive or Structured value that contains additional information about the error. This may be omitted. The value of this member is defined by the Server (e.g. detailed error information, nested errors etc.).</span>
+<span class="token punctuation">}</span></code></pre>
+<p>TODO: handle any type for data field
+Defines an application level error.</p>
+
+</section>
+						<section id="Example" class="doc-node">
+							<div class="title"><h2>struct Example <a href="#Example">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/openrpc/openrpc.v#L115"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Example</span> <span class="token punctuation">{</span>
+	name           <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// Cannonical name of the example.</span>
+	summary        <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// Short description for the example.</span>
+	description    <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// A verbose explanation of the example.</span>
+	value          <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// Embedded literal example. The value field and externalValue field are mutually exclusive. To represent examples of media types that cannot naturally represented in JSON, use a string value to contain the example, escaping where necessary.</span>
+	external_value <span class="token operator">?</span><span class="token builtin">string</span> <span class="token punctuation">[</span>json<span class="token punctuation">:</span> externalValue<span class="token punctuation">]</span> <span class="token comment">// A URL that points to the literal example. This provides the capability to reference examples that cannot easily be included in JSON documents. The value field and externalValue field are mutually exclusive.</span>
+<span class="token punctuation">}</span></code></pre>
+<p>The Example object is an object that defines an example that is intended to match the schema of a given Content Descriptor.<br>
+Question: how to handle any type for value?</p>
+
+</section>
+						<section id="ExamplePairing" class="doc-node">
+							<div class="title"><h2>struct ExamplePairing <a href="#ExamplePairing">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/openrpc/openrpc.v#L103"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">ExamplePairing</span> <span class="token punctuation">{</span>
+	name        <span class="token operator">?</span><span class="token builtin">string</span>       <span class="token comment">// Name for the example pairing.</span>
+	description <span class="token operator">?</span><span class="token builtin">string</span>       <span class="token comment">// A verbose explanation of the example pairing.</span>
+	summary     <span class="token operator">?</span><span class="token builtin">string</span>       <span class="token comment">// Short description for the example pairing.</span>
+	params      <span class="token operator">?</span><span class="token punctuation">[</span><span class="token punctuation">]</span>ExampleRef <span class="token comment">// Example parameters.</span>
+	result      ExampleRef    <span class="token comment">// Example result. When undefined, the example pairing represents usage of the method as a notification.</span>
+<span class="token punctuation">}</span></code></pre>
+<p>The Example Pairing object consists of a set of example params and result.<br>
+The result is what you can expect from the JSON-RPC service given the exact params.</p>
+
+</section>
+						<section id="ExternalDocs" class="doc-node">
+							<div class="title"><h2>struct ExternalDocs <a href="#ExternalDocs">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/openrpc/openrpc.v#L183"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">ExternalDocs</span> <span class="token punctuation">{</span>
+	description <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// A verbose explanation of the target documentation.</span>
+	url         <span class="token builtin">string</span>  <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token comment">// The URL for the target documentation. Value MUST be in the format of a URL.</span>
+<span class="token punctuation">}</span></code></pre>
+<p>Allows referencing an external resource for extended documentation.</p>
+
+</section>
+						<section id="Info" class="doc-node">
+							<div class="title"><h2>struct Info <a href="#Info">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/openrpc/openrpc.v#L22"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Info</span> <span class="token punctuation">{</span>
+	title            <span class="token builtin">string</span>   <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token comment">// The title of the application.</span>
+	description      <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// A verbose description of the application.</span>
+	terms_of_service <span class="token operator">?</span><span class="token builtin">string</span>  <span class="token punctuation">[</span>json<span class="token punctuation">:</span> termsOfService<span class="token punctuation">]</span> <span class="token comment">// A URL to the Terms of Service for the API. MUST be in the format of a URL.</span>
+	contact          <span class="token operator">?</span>Contact <span class="token comment">// The contact information for the exposed API.</span>
+	license          <span class="token operator">?</span>License <span class="token comment">// The license information for the exposed API.</span>
+	version          <span class="token builtin">string</span>   <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token comment">// The version of the OpenRPC document (which is distinct from the OpenRPC Specification version or the API implementation version).</span>
+<span class="token punctuation">}</span></code></pre>
+<p>The object provides metadata about the API.<br>
+The metadata MAY be used by the clients if needed, and MAY be presented in editing or documentation generation tools for convenience.</p>
+
+</section>
+						<section id="License" class="doc-node">
+							<div class="title"><h2>struct License <a href="#License">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/openrpc/openrpc.v#L39"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">License</span> <span class="token punctuation">{</span>
+	name <span class="token builtin">string</span>  <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token comment">// The license name used for the API.</span>
+	url  <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// A URL to the license used for the API. MUST be in the format of a URL.</span>
+<span class="token punctuation">}</span></code></pre>
+<p>License information for the exposed API.</p>
+
+</section>
+						<section id="Link" class="doc-node">
+							<div class="title"><h2>struct Link <a href="#Link">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/openrpc/openrpc.v#L129"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Link</span> <span class="token punctuation">{</span>
+	name        <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// Cannonical name of the link.</span>
+	description <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// A description of the link.</span>
+	summary     <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// Short description for the link.</span>
+	method      <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// The name of an existing, resolvable OpenRPC method, as defined with a unique method. This field MUST resolve to a unique Method Object. As opposed to Open Api, Relative method values ARE NOT permitted.</span>
+	params      <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span><span class="token builtin">string</span> <span class="token comment">// A map representing parameters to pass to a method as specified with method. The key is the parameter name to be used, whereas the value can be a constant or a runtime expression to be evaluated and passed to the linked method.</span>
+	server      <span class="token operator">?</span>Server <span class="token comment">// A server object to be used by the target method.</span>
+<span class="token punctuation">}</span></code></pre>
+<p>The Link object represents a possible design-time link for a result. The presence of a link does not guarantee the caller’s ability to successfully invoke it, rather it provides a known relationship and traversal mechanism between results and other methods.<br>
+Unlike dynamic links (i.e. links provided in the result payload), the OpenRPC linking mechanism does not require link information in the runtime result.<br>
+For computing links, and providing instructions to execute them, a runtime expression is used for accessing values in an method and using them as parameters while invoking the linked method.<br>
+TODO: change params map's value type to LinkParam once issue is solved: <a href="https://github.com/vlang/v/issues/18002">https://github.com/vlang/v/issues/18002</a></p>
+
+</section>
+						<section id="Method" class="doc-node">
+							<div class="title"><h2>struct Method <a href="#Method">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/openrpc/openrpc.v#L63"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Method</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span><span class="token punctuation">:</span>
+	name            <span class="token builtin">string</span>                 <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token comment">// The cannonical name for the method. The name MUST be unique within the methods array.</span>
+	tags            <span class="token operator">?</span><span class="token punctuation">[</span><span class="token punctuation">]</span>TagRef <span class="token comment">// A list of tags for API documentation control. Tags can be used for logical grouping of methods by resources or any other qualifier.</span>
+	summary         <span class="token operator">?</span><span class="token builtin">string</span>   <span class="token comment">// A short summary of what the method does.</span>
+	description     <span class="token operator">?</span><span class="token builtin">string</span>   <span class="token comment">// A verbose explanation of the method behavior.</span>
+	external_docs   <span class="token operator">?</span>ExternalDocs          <span class="token punctuation">[</span>json<span class="token punctuation">:</span> externalDocs<span class="token punctuation">]</span> <span class="token comment">// Additional external documentation for this method.</span>
+	params          <span class="token punctuation">[</span><span class="token punctuation">]</span>ContentDescriptorRef <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token comment">// A list of parameters that are applicable for this method. The list MUST NOT include duplicated parameters and therefore require name to be unique. The list can use the Reference Object to link to parameters that are defined by the Content Descriptor Object. All optional params (content descriptor objects with “required”: false) MUST be positioned after all required params in the list.</span>
+	result          ContentDescriptorRef <span class="token comment">// The description of the result returned by the method. If defined, it MUST be a Content Descriptor or Reference Object. If undefined, the method MUST only be used as a notification.</span>
+	deprecated      <span class="token operator">?</span><span class="token builtin">bool</span>       <span class="token comment">// Declares this method to be deprecated. Consumers SHOULD refrain from usage of the declared method. Default value is false.</span>
+	servers         <span class="token operator">?</span><span class="token punctuation">[</span><span class="token punctuation">]</span>Server   <span class="token comment">// An alternative servers array to service this method. If an alternative servers array is specified at the Root level, it will be overridden by this value.</span>
+	errors          <span class="token operator">?</span><span class="token punctuation">[</span><span class="token punctuation">]</span>ErrorRef <span class="token comment">// A list of custom application defined errors that MAY be returned. The Errors MUST have unique error codes.</span>
+	links           <span class="token operator">?</span><span class="token punctuation">[</span><span class="token punctuation">]</span>LinkRef  <span class="token comment">// A list of possible links from this method call.</span>
+	param_structure <span class="token operator">?</span>ParamStructure        <span class="token punctuation">[</span>json<span class="token punctuation">:</span> paramStructure<span class="token punctuation">]</span> <span class="token comment">// The expected format of the parameters. As per the JSON-RPC 2.0 specification, the params of a JSON-RPC request object may be an array, object, or either (represented as by-position, by-name, and either respectively). When a method has a paramStructure value of by-name, callers of the method MUST send a JSON-RPC request object whose params field is an object. Further, the key names of the params object MUST be the same as the contentDescriptor.names for the given method. Defaults to "either".</span>
+	examples        <span class="token operator">?</span><span class="token punctuation">[</span><span class="token punctuation">]</span>ExamplePairing <span class="token comment">// Array of Example Pairing Object where each example includes a valid params-to-result Content Descriptor pairing.</span>
+<span class="token punctuation">}</span></code></pre>
+<p>Describes the interface for the given method name. The method name is used as the method field of the JSON-RPC body. It therefore MUST be unique.<br>
+TODO: make result optional once issue is solved: <a href="https://github.com/vlang/v/issues/18001">https://github.com/vlang/v/issues/18001</a></p>
+
+</section>
+						<section id="OpenRPC" class="doc-node">
+							<div class="title"><h2>struct OpenRPC <a href="#OpenRPC">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/openrpc/openrpc.v#L10"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">OpenRPC</span> <span class="token punctuation">{</span>
+<span class="token keyword">pub</span> <span class="token keyword">mut</span><span class="token punctuation">:</span>
+	openrpc       <span class="token builtin">string</span>          <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">'1.0.0'</span> <span class="token comment">// This string MUST be the semantic version number of the OpenRPC Specification version that the OpenRPC document uses.</span>
+	info          Info            <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token comment">// Provides metadata about the API.</span>
+	servers       <span class="token operator">?</span><span class="token punctuation">[</span><span class="token punctuation">]</span>Server <span class="token comment">// An array of Server Objects, which provide connectivity information to a target server.</span>
+	methods       <span class="token punctuation">[</span><span class="token punctuation">]</span>Method        <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token comment">// The available methods for the API.</span>
+	components    <span class="token operator">?</span>Components <span class="token comment">// An element to hold various schemas for the specification.</span>
+	external_docs <span class="token operator">?</span><span class="token punctuation">[</span><span class="token punctuation">]</span>ExternalDocs <span class="token punctuation">[</span>json<span class="token punctuation">:</span> externalDocs<span class="token punctuation">]</span> <span class="token comment">// Additional external documentation.</span>
+<span class="token punctuation">}</span></code></pre>
+<p>This is the root object of the OpenRPC document.<br>
+The contents of this object represent a whole OpenRPC document.<br>
+How this object is constructed or stored is outside the scope of the OpenRPC Specification.</p>
+
+</section>
+						<section id="OpenRPC.encode" class="doc-node">
+							<div class="title"><h2>fn (OpenRPC) encode <a href="#OpenRPC.encode">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/openrpc/encode.v#L8"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">fn</span> <span class="token punctuation">(</span>doc OpenRPC<span class="token punctuation">)</span> <span class="token function">encode</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!</span><span class="token builtin">string</span></code></pre>
+<p>encode encodes an OpenRPC document struct into json string.<br>
+eliminates undefined variable by calling prune on the initial encoding.</p>
+
+</section>
+						<section id="Server" class="doc-node">
+							<div class="title"><h2>struct Server <a href="#Server">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/openrpc/openrpc.v#L46"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Server</span> <span class="token punctuation">{</span>
+	name        <span class="token builtin">string</span>                    <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token comment">// A name to be used as the cannonical name for the server.</span>
+	url         RuntimeExpression         <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token comment">// A URL to the target host. This URL supports Server Variables and MAY be relative, to indicate that the host location is relative to the location where the OpenRPC document is being served. Server Variables are passed into the Runtime Expression to produce a server URL.</span>
+	summary     <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// A short summary of what the server is.</span>
+	description <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// An optional string describing the host designated by the URL.</span>
+	variables   <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>ServerVariable <span class="token comment">// A map between a variable name and its value. The value is passed into the Runtime Expression to produce a server URL.</span>
+<span class="token punctuation">}</span></code></pre>
+<p>An object representing a Server.<br>
+TODO: make variables field optional bug fixed: <a href="https://github.com/vlang/v/issues/18000">https://github.com/vlang/v/issues/18000</a></p>
+
+</section>
+						<section id="ServerVariable" class="doc-node">
+							<div class="title"><h2>struct ServerVariable <a href="#ServerVariable">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/openrpc/openrpc.v#L55"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">ServerVariable</span> <span class="token punctuation">{</span>
+	enum_       <span class="token operator">?</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token builtin">string</span> <span class="token punctuation">[</span>json<span class="token punctuation">:</span> <span class="token string">'enum'</span><span class="token punctuation">]</span> <span class="token comment">// An enumeration of string values to be used if the substitution options are from a limited set.</span>
+	default_    <span class="token builtin">string</span>    <span class="token punctuation">[</span>json<span class="token punctuation">:</span> <span class="token string">'default'</span><span class="token punctuation">;</span> required<span class="token punctuation">]</span> <span class="token comment">// The default value to use for substitution, which SHALL be sent if an alternate value is not supplied. Note this behavior is different than the Schema Object’s treatment of default values, because in those cases parameter values are optional.</span>
+	description <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// An optional description for the server variable. GitHub Flavored Markdown syntax MAY be used for rich text representation.</span>
+<span class="token punctuation">}</span></code></pre>
+<p>An object representing a Server Variable for server URL template substitution.</p>
+
+</section>
+						<section id="Components" class="doc-node">
+							<div class="title"><h2>struct Components <a href="#Components">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/openrpc/openrpc.v#L161"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Components</span> <span class="token punctuation">{</span>
+	content_descriptors     <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>ContentDescriptor <span class="token punctuation">[</span>json<span class="token punctuation">:</span> contentDescriptors<span class="token punctuation">]</span> <span class="token comment">// An object to hold reusable Content Descriptor Objects.</span>
+	schemas                 <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>SchemaRef <span class="token comment">// An object to hold reusable Schema Objects.</span>
+	examples                <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>Example   <span class="token comment">// An object to hold reusable Example Objects.</span>
+	links                   <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>Link      <span class="token comment">// An object to hold reusable Link Objects.</span>
+	error                   <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>Error     <span class="token comment">// An object to hold reusable Error Objects.</span>
+	example_pairing_objects <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>ExamplePairing    <span class="token punctuation">[</span>json<span class="token punctuation">:</span> examplePairingObjects<span class="token punctuation">]</span> <span class="token comment">// An object to hold reusable Example Pairing Objects.</span>
+	tags                    <span class="token builtin">map</span><span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">]</span>Tag <span class="token comment">// An object to hold reusable Tag Objects.</span>
+<span class="token punctuation">}</span></code></pre>
+<p>TODO: enforce regex requirements
+Holds a set of reusable objects for different aspects of the OpenRPC.<br>
+All objects defined within the components object will have no effect on the API unless they are explicitly referenced from properties outside the components object.<br>
+All the fixed fields declared above are objects that MUST use keys that match the regular expression: ^[a-zA-Z0-9.-_]+$</p>
+
+</section>
+						<section id="Tag" class="doc-node">
+							<div class="title"><h2>struct Tag <a href="#Tag">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/openrpc/openrpc.v#L175"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Tag</span> <span class="token punctuation">{</span>
+	name          <span class="token builtin">string</span>        <span class="token punctuation">[</span>required<span class="token punctuation">]</span> <span class="token comment">// The name of the tag.</span>
+	summary       <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// A short summary of the tag.</span>
+	description   <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// A verbose explanation for the tag.</span>
+	external_docs <span class="token operator">?</span>ExternalDocs <span class="token punctuation">[</span>json<span class="token punctuation">:</span> externalDocs<span class="token punctuation">]</span> <span class="token comment">// Additional external documentation for this tag.</span>
+<span class="token punctuation">}</span></code></pre>
+<p>Adds metadata to a single tag that is used by the Method Object.<br>
+It is not mandatory to have a Tag Object per tag defined in the Method Object instances.</p>
+
+</section>
+						<section id="Contact" class="doc-node">
+							<div class="title"><h2>struct Contact <a href="#Contact">#</a></h2><a class="link" rel="noreferrer" target="_blank" href="https://github.com/freeflowuniverse/crystallib/blob/master/crystallib/openrpc/openrpc.v#L32"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg></a></div><pre class="signature"><code><span class="token keyword">struct</span> <span class="token symbol">Contact</span> <span class="token punctuation">{</span>
+	name  <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// The identifying name of the contact person/organization.</span>
+	email <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// The URL pointing to the contact information. MUST be in the format of a URL.</span>
+	url   <span class="token operator">?</span><span class="token builtin">string</span> <span class="token comment">// The email address of the contact person/organization. MUST be in the format of an email address.</span>
+<span class="token punctuation">}</span></code></pre>
+<p>Contact information for the exposed API.</p>
+
+</section>
+
+          <div class="footer">
+            Powered by vdoc.
+          </div>
+        </div>
+        <div class="doc-toc"><ul><li class="open"><a href="#readme_openrpc">README</a></li>
+<li class="open"><a href="#prune">fn prune</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#ContentDescriptorRef">type ContentDescriptorRef</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#ContentDescriptor">struct ContentDescriptor</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Error">struct Error</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Example">struct Example</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#ExamplePairing">struct ExamplePairing</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#ExternalDocs">struct ExternalDocs</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Info">struct Info</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#License">struct License</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Link">struct Link</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Method">struct Method</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#OpenRPC">struct OpenRPC</a>        <ul>
+<li><a href="#OpenRPC.encode">fn encode</a></li>
+</ul>
+</li>
+<li class="open"><a href="#Server">struct Server</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#ServerVariable">struct ServerVariable</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Components">struct Components</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Tag">struct Tag</a>        <ul>
+</ul>
+</li>
+<li class="open"><a href="#Contact">struct Contact</a>        <ul>
+</ul>
+</li>
+</ul></div>
+      </div>
+    </div>
+  </div>
+  <script src="doc.js"></script>
+  <script async src="search_index.js"></script>
+</body>
+
+</html>
