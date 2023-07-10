@@ -1,6 +1,15 @@
 module calc
 
 import freeflowuniverse.crystallib.currency
+import v.embed_file
+
+
+[heap]
+pub struct SheetConfig {
+pub mut:
+	heal bool   = true
+	dest string = '/tmp/htmlpages'
+}
 
 [heap]
 pub struct Sheet {
@@ -11,6 +20,9 @@ pub mut:
 	params     SheetParams
 	currencies &currency.Currencies
 	currency   &currency.Currency
+	embedded_files []embed_file.EmbedFileData // this where we have the templates for exporting a book
+	config SheetConfig
+	state SheetState
 }
 
 pub struct SheetParams {
