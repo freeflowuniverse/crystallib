@@ -36,12 +36,12 @@ pub fn macro_parse(line_ string) ?MacroObj {
 		return error('cannot parse macro, need to be at least cmd, now "$line"')
 	}
 
-	r.cmd = cmd_fix(splitted[0]) ?
+	r.cmd = cmd_fix(splitted[0])?
 
 	if splitted.len > 1 {
 		line = splitted[1..].join(' ')
 	}
-	params := text_to_params(line) ?
+	params := text_to_params(line)?
 	r.params = params
 
 	return r

@@ -19,5 +19,3 @@ mut:
 	debug_off()
 	debug_on()
 }
-
-

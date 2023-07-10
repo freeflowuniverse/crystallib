@@ -1,4 +1,5 @@
 module publisher_core
+
 // import os
 import texttools
 import publisher_config
@@ -21,11 +22,11 @@ pub fn new(config &publisher_config.ConfigRoot) ?Publisher {
 
 // check all pages, try to find errors
 pub fn (mut publisher Publisher) check() ? {
-	if publisher.init{
+	if publisher.init {
 		return
 	}
 	for mut site in publisher.sites {
-		if site.config.cat != publisher_config.SiteCat.wiki{
+		if site.config.cat != publisher_config.SiteCat.wiki {
 			continue
 		}
 		site.load(mut publisher)?
@@ -34,7 +35,7 @@ pub fn (mut publisher Publisher) check() ? {
 	// now the defs are loaded
 	// so we can write the default defs pages
 	for mut site in publisher.sites {
-		if site.config.cat != publisher_config.SiteCat.wiki{
+		if site.config.cat != publisher_config.SiteCat.wiki {
 			continue
 		}
 		// write default def page for all categories
@@ -42,14 +43,13 @@ pub fn (mut publisher Publisher) check() ? {
 	}
 
 	for mut site in publisher.sites {
-		if site.config.cat != publisher_config.SiteCat.wiki{
+		if site.config.cat != publisher_config.SiteCat.wiki {
 			continue
 		}
 		site.process(mut publisher)?
 	}
-	
-	publisher.init = true
 
+	publisher.init = true
 }
 
 // returns the found locations for the sites, will return [[name,path]]

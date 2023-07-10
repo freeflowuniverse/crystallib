@@ -11,10 +11,10 @@ import time
 
 struct MyContext {
 pub:
-	config    		&publisher_config.ConfigRoot
+	config &publisher_config.ConfigRoot
 pub mut:
-	publisher 	&Publisher
-	webnames 		map[string]string
+	publisher &Publisher
+	webnames  map[string]string
 }
 
 enum FileType {
@@ -28,7 +28,7 @@ enum FileType {
 }
 
 fn path_wiki_get(config publisher_config.ConfigRoot, sitename_ string, name_ string) ?(FileType, string) {
-	filetype, sitename, mut name := filetype_site_name_get(config, sitename_, name_) ?
+	filetype, sitename, mut name := filetype_site_name_get(config, sitename_, name_)?
 
 	mut path2 := os.join_path(config.publish.paths.publish, sitename, name)
 	if name == 'readme.md' && (!os.exists(path2)) {
@@ -45,7 +45,7 @@ fn path_wiki_get(config publisher_config.ConfigRoot, sitename_ string, name_ str
 
 fn filetype_site_name_get(config publisher_config.ConfigRoot, site string, name_ string) ?(FileType, string, string) {
 	// println(" - wiki get: '$site' '$name'")
-	site_config := config.site_wiki_get(site) ?
+	site_config := config.site_wiki_get(site)?
 	mut name := name_.to_lower().trim(' ').trim('.').trim(' ')
 	extension := os.file_ext(name).trim('.')
 	mut sitename := site_config.name
@@ -59,18 +59,18 @@ fn filetype_site_name_get(config publisher_config.ConfigRoot, site string, name_
 			return error('filename not well formatted. Needs to have 2 parts around "__". Now ${name}.')
 		}
 		sitename = parts[0].trim(' ')
-		if sitename == "tfgrid"{
-			sitename = "threefold"
+		if sitename == 'tfgrid' {
+			sitename = 'threefold'
 		}
-		if sitename == "tokens"{
-			sitename = "threefold"
+		if sitename == 'tokens' {
+			sitename = 'threefold'
 		}
-		if sitename == "cloud"{
-			sitename = "threefold"
+		if sitename == 'cloud' {
+			sitename = 'threefold'
 		}
-		if sitename == "internet4"{
-			sitename = "threefold"
-		}		
+		if sitename == 'internet4' {
+			sitename = 'threefold'
+		}
 		name = parts[1].trim(' ')
 	}
 
@@ -160,13 +160,13 @@ fn site_www_deliver(config publisher_config.ConfigRoot, domain string, path stri
 			// println("deliver: '$path2'")
 			// NOT GOOD NEEDS TO BE NOT LIKE THIS: TODO: find way how to send file
 			content2 := os.read_file(path2) or { return app.not_found() }
-			app.set_content_type(content_type_get(path2) ?)
+			app.set_content_type(content_type_get(path2)?)
 			return app.ok(content2)
 		}
 	}
 }
 
-//sitename is name for site
+// sitename is name for site
 fn site_wiki_deliver(config publisher_config.ConfigRoot, sitename string, path string, mut app App) ?vweb.Result {
 	mut path0 := path
 	debug := false
@@ -179,16 +179,16 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, sitename string, path s
 	}
 
 	// mut sitename := config.name_web_get(domain) or { return app.not_found() }
-	if path0.contains("/") && path0.contains("sidebar"){
-		path0 = path0.replace("/","|")
-		path0 = path0.replace("||","|")
-		path0 = path0.replace("_sidebar","sidebar")
+	if path0.contains('/') && path0.contains('sidebar') {
+		path0 = path0.replace('/', '|')
+		path0 = path0.replace('||', '|')
+		path0 = path0.replace('_sidebar', 'sidebar')
 	}
-	name := os.base(path0)	
+	name := os.base(path0)
 	mut publisherobj := rlock app.ctx {
 		app.ctx.publisher
 	}
-	
+
 	if path.ends_with('errors') || path.ends_with('error') || path.ends_with('errors.md')
 		|| path.ends_with('error.md') {
 		app.set_content_type('text/html')
@@ -196,7 +196,7 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, sitename string, path s
 	}
 
 	if publisherobj.develop {
-		filetype, sitename2, name2 := filetype_site_name_get(config, sitename, name) ?
+		filetype, sitename2, name2 := filetype_site_name_get(config, sitename, name)?
 		if debug {
 			println(' >> get develop: $filetype, $sitename2, $name2')
 		}
@@ -213,9 +213,9 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, sitename string, path s
 				}
 				return app.not_found()
 			}
-			app.set_content_type(content_type_get(p) ?)
+			app.set_content_type(content_type_get(p)?)
 			if debug {
-				content_type := content_type_get(p) ?
+				content_type := content_type_get(p)?
 				len1 := content.len
 				println(' >>> file static content type: $content_type, len:$len1')
 			}
@@ -227,37 +227,41 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, sitename string, path s
 			// mut index := os.read_file( site.path + '/index.html') or {
 			// 	res.send("index.html not found", 404)
 			// }
-			site_config := config.site_wiki_get(sitename2) ?
+			site_config := config.site_wiki_get(sitename2)?
 			index_out := template_wiki_root(sitename, '', '', site_config.opengraph)?
 			return app.html(index_out)
 		} else if filetype == FileType.wiki {
 			if site2.page_exists(name2) {
-				mut page := site2.page_get(name2, mut publisherobj) ?
-				mut content :=  page.content_get(mut publisherobj,false,true) or { return app.server_error(2) }
+				mut page := site2.page_get(name2, mut publisherobj)?
+				mut content := page.content_get(mut publisherobj, false, true) or {
+					return app.server_error(2)
+				}
 				// content = domain_replacer(rlock app.ctx {
 				// 	app.ctx.webnames
 				// }, content)
 				return app.ok(content)
 			} else {
-				mut page_def := publisherobj.def_page_get(name2) ?
+				mut page_def := publisherobj.def_page_get(name2)?
 				// content := page_def.replace_defs(mut publisherobj, page_def.content) or { return app.server_error(3) }
 				// if debug {println(" >> page send: $name2")}
 				// content2 := domain_replacer(rlock app.ctx {
 				// 	app.ctx.webnames
 				// }, page_def.content)
-				mut content :=  page_def.content_get(mut publisherobj,false,true) or { return app.server_error(2) }
+				mut content := page_def.content_get(mut publisherobj, false, true) or {
+					return app.server_error(2)
+				}
 				return app.ok(content)
 			}
 		} else {
 			// now is a file
-			file3 := site2.file_get(name2, mut publisherobj) ?
+			file3 := site2.file_get(name2, mut publisherobj)?
 			path3 := file3.path_get(mut publisherobj)?
 			if debug {
 				println(' >> file get: $path3')
 			}
 			content3 := os.read_file(path3) or { return app.not_found() }
 			// NOT GOOD NEEDS TO BE NOT LIKE THIS: TODO: find way how to send file
-			app.set_content_type(content_type_get(path3) ?)
+			app.set_content_type(content_type_get(path3)?)
 			return app.ok(content3)
 		}
 	} else {
@@ -281,7 +285,7 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, sitename string, path s
 				// println("deliver: '$path2'")
 				content := os.read_file(path2) or { return app.not_found() }
 				// NOT GOOD NEEDS TO BE NOT LIKE THIS: TODO: find way how to send file
-				app.set_content_type(content_type_get(path2) ?)
+				app.set_content_type(content_type_get(path2)?)
 				return app.ok(content)
 			}
 		}
@@ -366,13 +370,13 @@ pub mut:
 
 struct Tracker {
 mut:
-	id string
+	id    string
 	state string
-	url string
-	page string [json: 'hash']
+	url   string
+	page  string [json: 'hash']
 }
 
-fn wiki_name_from_url (url string) string {
+fn wiki_name_from_url(url string) string {
 	url_splitted := url.split('/')
 	mut wiki_name := ''
 	for id, element in url_splitted {
@@ -384,10 +388,10 @@ fn wiki_name_from_url (url string) string {
 }
 
 // Get user ip without temperory port
-fn (mut app App) user_ip() string{
+fn (mut app App) user_ip() string {
 	// Get user ip returned with a temp port, like [::1]:81152
 	mut user_ip := app.ip()
-	ind := user_ip.last_index(':') or {user_ip.len}
+	ind := user_ip.last_index(':') or { user_ip.len }
 
 	// In this line we take the ip part only without port
 	user_ip = user_ip.substr(0, ind)
@@ -395,18 +399,18 @@ fn (mut app App) user_ip() string{
 }
 
 ['/tracker'; post]
-pub fn (mut app App) handle_tracker() vweb.Result{
+pub fn (mut app App) handle_tracker() vweb.Result {
 	mut tracker := json.decode(Tracker, app.req.data) or {
 		app.set_status(400, 'Bad Request')
 		return app.json('{"status": "error", "message": "failed to decode data with error: $err"}')
 	}
 	// Time to be used in logs
 	time_now := time.now()
-	date := time_now.ymmdd().replace('-','_')
+	date := time_now.ymmdd().replace('-', '_')
 	// Info from request
 	// trim / from id and page
 	tracker.id = tracker.id.trim('/')
-	tracker.page = if tracker.page.trim('/') == '' {'home'} else {tracker.page.trim('/')}
+	tracker.page = if tracker.page.trim('/') == '' { 'home' } else { tracker.page.trim('/') }
 	// Get wiki name from url
 	wiki_name := wiki_name_from_url(tracker.url)
 
@@ -424,7 +428,7 @@ pub fn (mut app App) handle_tracker() vweb.Result{
 		}
 	}
 
-	file_path := logs_dir +'/' + tracker.id + '__${date}.log'
+	file_path := logs_dir + '/' + tracker.id + '__${date}.log'
 	mut log_file := os.open_append(file_path) or {
 		app.set_status(500, 'Internal Error')
 		return app.json('{"status": "error", "message": "failed to open file with error: $err"}')
@@ -454,14 +458,14 @@ pub fn (mut app App) handler(_path string) vweb.Result {
 	mut path := _path
 
 	// enable CORS by default
-	app.add_header("Access-Control-Allow-Origin", "*")
+	app.add_header('Access-Control-Allow-Origin', '*')
 
 	// println(" ++ $path")
 
 	mut domain := ''
 	// mut cat := publisher_config.SiteCat.web
 
-	mut sitename := ""
+	mut sitename := ''
 	mut iswiki := false
 
 	if config.web_hostnames {
@@ -481,8 +485,8 @@ pub fn (mut app App) handler(_path string) vweb.Result {
 			path = path[5..]
 			iswiki = true
 			// cat = publisher_config.SiteCat.wiki
-		// } else {
-		// 	cat = publisher_config.SiteCat.web
+			// } else {
+			// 	cat = publisher_config.SiteCat.web
 		}
 
 		splitted := path.split('/')
@@ -504,11 +508,11 @@ pub fn (mut app App) handler(_path string) vweb.Result {
 		// }
 	}
 
-	if domain == 'localhost' || sitename == ''{
+	if domain == 'localhost' || sitename == '' {
 		return app.html(index_template(config))
 	}
 
-	// 
+	//
 	// mut domainfound := false
 	// for siteconfig in config.sites {
 	// 	println(" ---- $sitename $siteconfig.name")
@@ -540,9 +544,9 @@ pub fn (mut app App) index() vweb.Result {
 }
 
 // Run server
-pub fn webserver_run(mut publisher &Publisher) ? {
-	publisher.check() ?
-	publisher.config.update_staticfiles(false) ?
+pub fn webserver_run(mut publisher Publisher) ? {
+	publisher.check()?
+	publisher.config.update_staticfiles(false)?
 	mut app := App{
 		ctx: MyContext{
 			publisher: publisher

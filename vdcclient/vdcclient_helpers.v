@@ -7,8 +7,10 @@ import net.http
 
 pub fn get(url string, auth_cred string) http.Response {
 	mut config := http.FetchConfig{}
-	config.header = http.new_header({ key: .authorization, value: 'Basic $auth_cred' },
-		
+	config.header = http.new_header({
+		key:   .authorization
+		value: 'Basic $auth_cred'
+	},
 		key: .content_type
 		value: 'application/json'
 	)
@@ -19,8 +21,10 @@ pub fn get(url string, auth_cred string) http.Response {
 pub fn get_with_body_param(url string, auth_cred string, body string) http.Response {
 	mut config := http.FetchConfig{}
 	config.data = body
-	config.header = http.new_header({ key: .authorization, value: 'Basic $auth_cred' },
-		
+	config.header = http.new_header({
+		key:   .authorization
+		value: 'Basic $auth_cred'
+	},
 		key: .content_type
 		value: 'application/json'
 	)
@@ -31,8 +35,10 @@ pub fn get_with_body_param(url string, auth_cred string, body string) http.Respo
 pub fn post(url string, auth_cred string, body string) http.Response {
 	mut config := http.FetchConfig{}
 	config.data = body
-	config.header = http.new_header({ key: .authorization, value: 'Basic $auth_cred' },
-		
+	config.header = http.new_header({
+		key:   .authorization
+		value: 'Basic $auth_cred'
+	},
 		key: .content_type
 		value: 'application/json'
 	)
@@ -43,12 +49,13 @@ pub fn post(url string, auth_cred string, body string) http.Response {
 pub fn delete(url string, auth_cred string, body string) http.Response {
 	mut config := http.FetchConfig{}
 	config.data = body
-	config.header = http.new_header({ key: .authorization, value: 'Basic $auth_cred' },
-		
+	config.header = http.new_header({
+		key:   .authorization
+		value: 'Basic $auth_cred'
+	},
 		key: .content_type
 		value: 'application/json'
 	)
 	config.method = http.Method.delete
 	return http.fetch(url, config) or { panic("Can't DELETE with error $err") }
 }
-

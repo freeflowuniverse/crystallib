@@ -10,7 +10,7 @@ module resp2
 // }
 
 pub fn (mut r StringLineReader) get_response() ?RValue {
-	line_ := r.read_line() ?
+	line_ := r.read_line()?
 	line := line_.bytestr()
 
 	if line.starts_with('-') {
@@ -36,7 +36,7 @@ pub fn (mut r StringLineReader) get_response() ?RValue {
 		if bulkstring_size == 0 {
 			// extract final \r\n and not reading
 			// any payload
-			r.read_line() ?
+			r.read_line()?
 			return RString{
 				value: ''
 			}
@@ -44,7 +44,7 @@ pub fn (mut r StringLineReader) get_response() ?RValue {
 		// read payload
 		buffer := r.read(bulkstring_size) or { panic(err) }
 		// extract final \r\n
-		r.read_line() ?
+		r.read_line()?
 		return RBString{
 			value: buffer
 		} // FIXME: won't support binary (afaik)
@@ -58,7 +58,7 @@ pub fn (mut r StringLineReader) get_response() ?RValue {
 
 		// proceed each entries, they can be of any types
 		for _ in 0 .. items {
-			value := r.get_response() ?
+			value := r.get_response()?
 			arr.values << value
 		}
 
@@ -79,7 +79,7 @@ pub fn decode(data []u8) ?[]RValue {
 }
 
 pub fn (mut r StringLineReader) get_int() ?int {
-	line_ := r.read_line() ?
+	line_ := r.read_line()?
 	line := line_.bytestr()
 	if line.starts_with(':') {
 		return line[1..].int()
@@ -89,7 +89,7 @@ pub fn (mut r StringLineReader) get_int() ?int {
 }
 
 pub fn (mut r StringLineReader) get_list_int() ?[]int {
-	line_ := r.read_line() ?
+	line_ := r.read_line()?
 	line := line_.bytestr()
 	mut res := []int{}
 
@@ -97,7 +97,7 @@ pub fn (mut r StringLineReader) get_list_int() ?[]int {
 		items := line[1..].int()
 		// proceed each entries, they can be of any types
 		for _ in 0 .. items {
-			value := r.get_int() ?
+			value := r.get_int()?
 			res << value
 		}
 		return res
@@ -107,7 +107,7 @@ pub fn (mut r StringLineReader) get_list_int() ?[]int {
 }
 
 pub fn (mut r StringLineReader) get_string() ?string {
-	line_ := r.read_line() ?
+	line_ := r.read_line()?
 	line := line_.bytestr()
 	if line.starts_with('+') {
 		return line[1..]
@@ -117,12 +117,12 @@ pub fn (mut r StringLineReader) get_string() ?string {
 }
 
 pub fn (mut r StringLineReader) get_bool() ?bool {
-	i := r.get_int() ?
+	i := r.get_int()?
 	return i == 1
 }
 
 pub fn (mut r StringLineReader) get_bytes() ?[]u8 {
-	line_ := r.read_line() ?
+	line_ := r.read_line()?
 	line := line_.bytestr()
 	if line.starts_with('$') {
 		mut bulkstring_size := line[1..].int()
@@ -132,11 +132,11 @@ pub fn (mut r StringLineReader) get_bytes() ?[]u8 {
 		if bulkstring_size == 0 {
 			// extract final \r\n and not reading
 			// any payload
-			r.read_line() ?
+			r.read_line()?
 			return ''.bytes()
 		}
 		// read payload
-		buffer := r.read(bulkstring_size) ?
+		buffer := r.read(bulkstring_size)?
 		// extract final \r\n
 		return buffer
 	} else {

@@ -2,7 +2,6 @@ module twinclient
 
 import json
 
-
 // Deploy kubernetes workload
 pub fn (mut client TwinClient) kubernetes_deploy(payload K8SModel) ?DeployResponse {
 	payload_encoded := json.encode_pretty(payload)
@@ -13,7 +12,9 @@ pub fn (mut client TwinClient) kubernetes_deploy(payload K8SModel) ?DeployRespon
 
 // Get kubernetes deployment info using deployment name
 pub fn (mut client TwinClient) kubernetes_get(name string) ?[]Deployment {
-	response := client.transport.send('k8s.get', json.encode({"name": name}))?
+	response := client.transport.send('k8s.get', json.encode({
+		'name': name
+	}))?
 
 	return json.decode([]Deployment, response.data)
 }
@@ -51,7 +52,9 @@ pub fn (mut client TwinClient) kubernetes_list() ?[]string {
 
 // Delete deployed kubernetes using deployment name
 pub fn (mut client TwinClient) kubernetes_delete(name string) ?ContractResponse {
-	response := client.transport.send('k8s.delete', json.encode({"name": name}))?
+	response := client.transport.send('k8s.delete', json.encode({
+		'name': name
+	}))?
 
 	return json.decode(ContractResponse, response.data)
 }

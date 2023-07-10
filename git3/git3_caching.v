@@ -50,7 +50,7 @@ fn (mut h Git3Connection) cache_set(prefix string, postdata string, data string,
 	*/
 	if cache {
 		key := cache_key(prefix, postdata)
-		h.redis.set(key, data) ?
+		h.redis.set(key, data)?
 		h.redis.expire(key, h.cache_timeout) or {
 			panic('should never get here, if redis worked expire should also work.$err')
 		}
@@ -61,9 +61,9 @@ pub fn (mut h Git3Connection) cache_drop_all() ? {
 	/*
 	Drop all cache related to git3
 	*/
-	all_keys := h.redis.keys('git3:*') ?
+	all_keys := h.redis.keys('git3:*')?
 	for key in all_keys {
-		h.redis.del(key) ?
+		h.redis.del(key)?
 	}
 }
 
@@ -71,8 +71,8 @@ pub fn (mut h Git3Connection) cache_drop(prefix string) ? {
 	/*
 	Drop specific key cache related to git3
 	*/
-	all_keys := h.redis.keys('git3:$prefix*') ?
+	all_keys := h.redis.keys('git3:$prefix*')?
 	for key in all_keys {
-		h.redis.del(key) ?
+		h.redis.del(key)?
 	}
 }

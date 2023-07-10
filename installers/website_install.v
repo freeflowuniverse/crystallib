@@ -5,12 +5,11 @@ import publisher_config
 import process
 import gittools
 import texttools
-import nodejs
+import installers.nodejs
 
-
-//is the one coming from command line
+// is the one coming from command line
 pub fn web(doreset bool, clean bool) ? {
-	println(" - install websystem: doreset:$doreset clean:$clean")
+	println(' - install websystem: doreset:$doreset clean:$clean')
 	// println('INSTALLER:')
 	if doreset {
 		println(' - reset the full system')
@@ -32,26 +31,23 @@ pub fn web(doreset bool, clean bool) ? {
 	// update_config() or { return error(' ** ERROR: cannot copy config files to ~publisher/config. Error was:\n$err') }
 
 	mut gt := gittools.get()?
-		
-	gt.repo_get_from_url(url:"https://github.com/threefoldfoundation/threefold_data")? 
-	
+
+	gt.repo_get_from_url(url: 'https://github.com/threefoldfoundation/threefold_data')?
+
 	sites_install([]) or { return error(' ** ERROR: cannot install sites. Error was:\n$err') }
 
-	println( " - websites installed")
+	println(' - websites installed')
 }
-
 
 // Initialize (load wikis) only once when server starts
 pub fn website_install(names []string, first bool) ? {
-
-    mut conf := publisher_config.get()?
+	mut conf := publisher_config.get()?
 	for mut site in conf.sites_get(names) {
-
 		mut repo := site.repo_get()
 		base := conf.publish.paths.base
 		nodejspath := conf.nodejs.path
 		mut path := site.path.path
-		
+
 		println(' - install website $site.name on $path')
 
 		mut gt := gittools.get()?
@@ -70,16 +66,15 @@ pub fn website_install(names []string, first bool) ? {
 				return error('cannot install node modules for ${repo.addr.name}.\n$err')
 			}
 			repo.remove_changes()?
-
 		}
 
 		if conf.publish.pull || site.pull {
 			repo.pull()?
 		}
 
-		mut nvm_line := ""
+		mut nvm_line := ''
 		if conf.nodejs.nvm {
-			nvm_line = "source $base/nvm.sh && nvm use --lts && export PATH=$nodejspath/bin:\$PATH"
+			nvm_line = 'source $base/nvm.sh && nvm use --lts && export PATH=$nodejspath/bin:\$PATH'
 		}
 
 		script_install := '
@@ -145,7 +140,7 @@ pub fn website_install(names []string, first bool) ? {
 
 		'
 
-		package_json :='
+		package_json := '
 		{
 			"name": "$site.name",
 			"private": true,
@@ -205,11 +200,11 @@ pub fn website_install(names []string, first bool) ? {
 
 		os.write_file('$path/package.json', texttools.dedent(package_json)) or {
 			return error('cannot write to $path/package.json\n$err')
-		}	
+		}
 
-		os.chmod('$path/install', 0o700) ?
-		os.chmod('$path/run', 0o700) ?
-		os.chmod('$path/build', 0o700) ?
+		os.chmod('$path/install', 0o700)?
+		os.chmod('$path/run', 0o700)?
+		os.chmod('$path/build', 0o700)?
 
 		if os.exists('$path/.installed') {
 			return
@@ -220,7 +215,7 @@ pub fn website_install(names []string, first bool) ? {
 			return error('cannot install node modules for ${repo.addr.name}.\n$err')
 		}
 
-		//lets upgrade for tailwind
+		// lets upgrade for tailwind
 		// mut ri := texttools.regex_instructions_new()
 		// instr := [
 		// 	'whitespace-no-wrap:whitespace-nowrap',
@@ -239,16 +234,15 @@ pub fn website_install(names []string, first bool) ? {
 		// }
 
 		// only require threebot_data in case of gridsome website
-		if os.exists('$path/gridsome.config.js'){
+		if os.exists('$path/gridsome.config.js') {
 			mut datarepo := gt.repo_get(name: 'threefold_data') or {
 				return error('ERROR: cannot get repo:$err')
 			}
-		
+
 			for x in ['blog', 'person', 'news', 'project'] {
 				if os.exists('$path/content') {
-					process.execute_silent('rm -rf $path/content/$x\n') ?
-					os.symlink('$datarepo.path()/content/$x',
-						'$path/content/$x') or {
+					process.execute_silent('rm -rf $path/content/$x\n')?
+					os.symlink('$datarepo.path()/content/$x', '$path/content/$x') or {
 						return error('Cannot link $x from data path to path.\n$err')
 					}
 				}
@@ -258,22 +252,20 @@ pub fn website_install(names []string, first bool) ? {
 		os.write_file('$path/.installed', '') or {
 			return error('cannot write to $path/.installed\n$err')
 		}
-
 	}
 }
 
 pub fn wiki_install(names []string) ? {
-
-    mut conf := publisher_config.get()?
-	println(conf.sites_wiki_get(names) )
+	mut conf := publisher_config.get()?
+	println(conf.sites_wiki_get(names))
 	for mut site in conf.sites_wiki_get(names) {
 		mut repo := site.repo_get()
 		println(' - install wiki $site.name on $site.path.path')
 
 		if conf.publish.reset || site.reset {
-			repo.remove_changes()?		
+			repo.remove_changes()?
 			println('   > reset')
-		}	
+		}
 
 		if conf.publish.pull || site.pull {
 			repo.pull()?

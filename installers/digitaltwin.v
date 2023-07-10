@@ -9,7 +9,7 @@ import gittools
 
 pub fn digitaltwin_install(update bool) ? {
 	mut conf := publisher_config.get()?
-	base := conf.publish.paths.base	
+	base := conf.publish.paths.base
 	mut gt := gittools.get()?
 	mut pull := update
 
@@ -20,11 +20,11 @@ pub fn digitaltwin_install(update bool) ? {
 
 	if !os.exists('$repo.path()/src/node_modules') || update == true {
 		println('- will make sure repo is up2date')
-		repo.pull() ?
+		repo.pull()?
 
 		println('- will download static files')
 
-		conf.update_staticfiles(true) ?
+		conf.update_staticfiles(true)?
 
 		println(' - will install digitaltwin')
 
@@ -39,7 +39,7 @@ pub fn digitaltwin_install(update bool) ? {
 			'
 		process.execute_silent(script) or {
 			print(err)
-			os.rmdir_all('$repo.path()/src/node_modules') or { }
+			os.rmdir_all('$repo.path()/src/node_modules') or {}
 			return error('cannot install digital twin.\n$err')
 		}
 	}
@@ -48,12 +48,11 @@ pub fn digitaltwin_install(update bool) ? {
 }
 
 pub fn digitaltwin_start(isproduction bool, update bool) ? {
-
 	mut conf := publisher_config.get()?
 
-	digitaltwin_install(update) ?
+	digitaltwin_install(update)?
 	base := conf.publish.paths.base
-	
+
 	mut gt := gittools.get()?
 
 	url := 'https://github.com/threefoldtech/twin_server/'
@@ -91,12 +90,11 @@ pub fn digitaltwin_start(isproduction bool, update bool) ? {
 		tmux send-keys -t digitaltwin:1 "cd $base/config && publishtools removechanges && publishtools develop" ENTER
 		'
 	}
-	process.execute_interactive('$script') ?
+	process.execute_interactive('$script')?
 	println(' - digital twin started')
 }
 
 pub fn digitaltwin_restart(isproduction bool) ? {
-
 	mut conf := publisher_config.get()?
 
 	base := conf.publish.paths.base
@@ -108,7 +106,7 @@ pub fn digitaltwin_restart(isproduction bool) ? {
 	}
 
 	println(' - will restart digitaltwin')
-	
+
 	mut script := ''
 	if !isproduction {
 		script = '
@@ -140,12 +138,11 @@ pub fn digitaltwin_restart(isproduction bool) ? {
 		'
 	}
 
-	
-	process.execute_interactive('$script') ?
+	process.execute_interactive('$script')?
 	println(' - digital twin restarted')
 }
 
-pub fn digitaltwin_reload( isproduction bool) ? {
+pub fn digitaltwin_reload(isproduction bool) ? {
 	println(' - will reload digitaltwin')
 	mut conf := publisher_config.get()?
 	base := conf.publish.paths.base
@@ -156,14 +153,14 @@ pub fn digitaltwin_reload( isproduction bool) ? {
 				tmux new-window -t digitaltwin:1
 				tmux send-keys -t digitaltwin:1 "cd $base/config && publishtools removechanges && publishtools develop" ENTER
 				'
-	process.execute_interactive('$script') ?
+	process.execute_interactive('$script')?
 	println(' - digital twin restarted')
 }
 
 pub fn digitaltwin_stop(isproduction bool) ? {
 	println(' - will stop digitaltwin')
 	script := 'tmux kill-session -t digitaltwin'
-	process.execute_interactive('$script') ?
+	process.execute_interactive('$script')?
 	println(' - digital twin reloaded')
 }
 
@@ -173,7 +170,7 @@ pub fn digitaltwin_status(isproduction bool) ? {
 				set -e
 				ps -C "node server.js"  >/dev/null && echo "Running" || echo "Not running"
 				'
-	process.execute_interactive('$script') ?
+	process.execute_interactive('$script')?
 }
 
 pub fn digitaltwin_logs(isproduction bool) ? {

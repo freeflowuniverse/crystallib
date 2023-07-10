@@ -18,5 +18,5 @@ fn test_generate_wiki() ? {
 	url := 'https://staging.circles.threefold.me'
 	mut t := taiga.new(url, taiga_cred[0], taiga_cred[1], 10000)
 	export_dir := './wiki' // set export directory
-	taiga.export(export_dir, url) ?
+	taiga.export(export_dir, url)?
 }

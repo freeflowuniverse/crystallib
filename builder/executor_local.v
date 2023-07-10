@@ -11,16 +11,16 @@ pub mut:
 }
 
 pub fn (mut executor ExecutorLocal) exec(cmd string) ?string {
-	res := process.execute_job(cmd: cmd, stdout:true) ?
+	res := process.execute_job(cmd: cmd, stdout: true)?
 	return res.output
 }
 
 pub fn (mut executor ExecutorLocal) exec_silent(cmd string) ?string {
 	mut stdout := false
-	if executor.debug{
+	if executor.debug {
 		stdout = true
-	}	
-	res := process.execute_job(cmd: cmd, stdout: stdout) ?
+	}
+	res := process.execute_job(cmd: cmd, stdout: stdout)?
 	return res.output
 }
 
@@ -44,16 +44,14 @@ pub fn (mut executor ExecutorLocal) debug_off() {
 	executor.debug = false
 }
 
-
 // carefull removes everything
 pub fn (mut executor ExecutorLocal) remove(path string) ? {
 	if os.is_file(path) || os.is_link(path) {
 		return os.rm(path)
-
 	} else if os.is_dir(path) {
 		return os.rmdir_all(path)
 	}
-	return 
+	return
 }
 
 // get environment variables from the executor
@@ -78,21 +76,20 @@ pub fn (mut executor ExecutorLocal) info() map[string]string {
 
 // upload from local FS to executor FS
 pub fn (mut executor ExecutorLocal) upload(source string, dest string) ? {
-	executor.exec('cp -r $source $dest') ?
+	executor.exec('cp -r $source $dest')?
 }
 
 // download from executor FS to local FS
 pub fn (mut executor ExecutorLocal) download(source string, dest string) ? {
-	executor.exec('cp -r $source $dest') ?
+	executor.exec('cp -r $source $dest')?
 }
 
 pub fn (mut executor ExecutorLocal) shell(cmd string) ? {
-	if cmd.len>0{
-		os.execvp('/bin/bash',["-c '$cmd'"]) ?
-	}else{
-		os.execvp('/bin/bash',[]) ?
+	if cmd.len > 0 {
+		os.execvp('/bin/bash', ["-c '$cmd'"])?
+	} else {
+		os.execvp('/bin/bash', [])?
 	}
-	
 }
 
 pub fn (mut executor ExecutorLocal) list(path string) ?[]string {

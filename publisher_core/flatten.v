@@ -31,7 +31,7 @@ pub fn (mut publisher Publisher) errors_get(site Site) ?PublisherErrors {
 	}
 
 	for name, page_id in site.pages {
-		page := publisher.page_get_by_id(page_id) ?
+		page := publisher.page_get_by_id(page_id)?
 		if page.errors.len > 0 {
 			errors.page_errors[name] = page.errors
 		}
@@ -40,9 +40,9 @@ pub fn (mut publisher Publisher) errors_get(site Site) ?PublisherErrors {
 	return errors
 }
 
-
-[if debug?]
-fn trace_progress(msg string){
+[if debug ?]
+fn trace_progress(msg string) {
 	println(msg)
 }
+
 // $if debug {eprintln(@FILE + ':' + @LINE + ":" + @FN " - something")}

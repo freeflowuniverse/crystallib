@@ -1,7 +1,5 @@
 module texttools
 
-
-
 // fn test_replacer() {
 // 	mut text := '
 // 	these; Are Some ramdom words!
@@ -34,18 +32,15 @@ module texttools
 // 	Red Lagoon
 // 	&redlagoon
 // 	'
-		
+
 // 	r := replace_items(dedent(text),replacer)
 
 // 	a := dedent(r).trim(' \n')
 // 	b := dedent(result_required).trim(' \n')
 
-
-	
 // 	assert a==b
 
 // }
-
 
 // fn test_replacer2() {
 // 	mut text := '
@@ -79,7 +74,7 @@ module texttools
 // 	Red Lagoon
 // 	&redlagoon
 // 	'
-		
+
 // 	r := replace_items(dedent(text),replacer)
 
 // 	a := dedent(r).trim(' \n')
@@ -91,7 +86,6 @@ module texttools
 // 	assert a==b
 
 // }
-
 
 // fn test_replacer3() {
 // 	mut text := '
@@ -107,7 +101,7 @@ module texttools
 // 	mut result_required := '
 
 // 	'
-		
+
 // 	r := replace_items(dedent(text),replacer)
 
 // 	a := dedent(r).trim(' \n')
@@ -120,7 +114,6 @@ module texttools
 
 // }
 
-
 fn test_replacer4() {
 	mut text := '
 	- [Why](threefold__why_intro.md)
@@ -130,15 +123,15 @@ fn test_replacer4() {
 	'
 
 	replacer := {
-		'tfgrid__web4':'PEERPEER'
-		'P2P':'Red Lagoon'		
+		'tfgrid__web4': 'PEERPEER'
+		'P2P':          'Red Lagoon'
 	}
 
 	mut result_required := '
 
 	'
-		
-	r := replace_items(dedent(text),replacer)
+
+	r := replace_items(dedent(text), replacer)
 
 	a := dedent(r).trim(' \n')
 	b := dedent(result_required).trim(' \n')
@@ -146,8 +139,5 @@ fn test_replacer4() {
 	println(a)
 	println(b)
 
-	assert a==b
-
+	assert a == b
 }
-
-

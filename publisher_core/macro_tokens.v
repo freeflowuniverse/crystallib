@@ -68,7 +68,7 @@ fn address_defined(a string) string {
 fn macro_tokens_values(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	s := tokens.load_tokens()?
 
-	mut id := macro.params.get('id') ?
+	mut id := macro.params.get('id')?
 
 	mut fields := map[string]f64{}
 	fields['total-tokens'] = s.total_tokens
@@ -195,7 +195,7 @@ fn macro_tokens_locked_chart(mut state LineProcessorState, mut macro texttools.M
 }
 
 fn macro_tokens_account_info(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
-	accid := macro.params.get('id') ?
+	accid := macro.params.get('id')?
 	s := tokens.load_account(accid)?
 
 	mut out := []string{}
@@ -229,7 +229,7 @@ fn macro_tokens_account_info(mut state LineProcessorState, mut macro texttools.M
 }
 
 fn macro_tokens_account_vesting(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
-	accid := macro.params.get('id') ?
+	accid := macro.params.get('id')?
 	s := tokens.load_account(accid)?
 
 	mut out := []string{}
@@ -252,7 +252,7 @@ fn macro_tokens_account_vesting(mut state LineProcessorState, mut macro texttool
 }
 
 fn macro_tokens_account_locked(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
-	accid := macro.params.get('id') ?
+	accid := macro.params.get('id')?
 	s := tokens.load_account(accid)?
 
 	mut out := []string{}
@@ -329,7 +329,7 @@ fn macro_tokens_total_distribution(mut state LineProcessorState, mut macro textt
 
 fn macro_tokens_total_liquid(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
 	s := tokens.load_tokens()?
-	price := macro.params.get('tftprice') ?
+	price := macro.params.get('tftprice')?
 
 	mut out := []string{}
 
@@ -408,53 +408,53 @@ fn macro_tokens_special_wallets_table(mut state LineProcessorState, mut macro te
 }
 
 fn macro_tokens(mut state LineProcessorState, mut macro texttools.MacroObj) ? {
-	mut tokentype := macro.params.get('type') ?
+	mut tokentype := macro.params.get('type')?
 
 	if tokentype == 'value' {
-		macro_tokens_values(mut state, mut macro) ?
+		macro_tokens_values(mut state, mut macro)?
 	}
 
 	if tokentype == 'distribution' {
-		macro_tokens_distribution(mut state, mut macro) ?
+		macro_tokens_distribution(mut state, mut macro)?
 	}
 
 	if tokentype == 'locked-table' {
-		macro_tokens_locked_table(mut state, mut macro) ?
+		macro_tokens_locked_table(mut state, mut macro)?
 	}
 
 	if tokentype == 'locked-chart' {
-		macro_tokens_locked_chart(mut state, mut macro) ?
+		macro_tokens_locked_chart(mut state, mut macro)?
 	}
 
 	if tokentype == 'account-info' {
-		macro_tokens_account_info(mut state, mut macro) ?
+		macro_tokens_account_info(mut state, mut macro)?
 	}
 
 	if tokentype == 'account-vesting' {
-		macro_tokens_account_vesting(mut state, mut macro) ?
+		macro_tokens_account_vesting(mut state, mut macro)?
 	}
 
 	if tokentype == 'account-locked' {
-		macro_tokens_account_locked(mut state, mut macro) ?
+		macro_tokens_account_locked(mut state, mut macro)?
 	}
 
 	if tokentype == 'current-distribution' {
-		macro_tokens_current_distribution(mut state, mut macro) ?
+		macro_tokens_current_distribution(mut state, mut macro)?
 	}
 
 	if tokentype == 'total-distribution' {
-		macro_tokens_total_distribution(mut state, mut macro) ?
+		macro_tokens_total_distribution(mut state, mut macro)?
 	}
 
 	if tokentype == 'total-liquid' {
-		macro_tokens_total_liquid(mut state, mut macro) ?
+		macro_tokens_total_liquid(mut state, mut macro)?
 	}
 
 	if tokentype == 'total-liquid-chart' {
-		macro_tokens_total_liquid_chart(mut state, mut macro) ?
+		macro_tokens_total_liquid_chart(mut state, mut macro)?
 	}
 
 	if tokentype == 'special-wallets-table' {
-		macro_tokens_special_wallets_table(mut state, mut macro) ?
+		macro_tokens_special_wallets_table(mut state, mut macro)?
 	}
 }

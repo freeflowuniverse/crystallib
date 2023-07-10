@@ -6,25 +6,23 @@ import json
 import gittools
 import actionparser
 
-
 fn config_init() ConfigRoot {
 	mut config := ConfigRoot{}
 	return config
 }
 
 // load the initial config from filesystem
-fn (mut config ConfigRoot) init_once()? {
-
+fn (mut config ConfigRoot) init_once() ? {
 	envs := os.environ()
 
-	if 'PUBSITE' in envs && envs['PUBSITE'].trim(" ") != '' {
+	if 'PUBSITE' in envs && envs['PUBSITE'].trim(' ') != '' {
 		mut gt2 := gittools.get()?
 		url := envs['PUBSITE']
 		// println(' - found PUBSITE in environment variables, will use this one for config dir.')
 		println(' - get git repo to fetch configuration for publ tools: $url')
-		r := gt2.repo_get_from_url(url: url, pull: false) ?
+		r := gt2.repo_get_from_url(url: url, pull: false)?
 		// println(' - changedir for config: $r.path_content_get()')
-		os.chdir(r.path_content_get()) ?
+		os.chdir(r.path_content_get())?
 	}
 
 	// Load Site & Group config files
@@ -50,19 +48,18 @@ fn (mut config ConfigRoot) init_once()? {
 		}
 	}
 
-	if sites_config_files.len==0 && md_config_files.len==0{
+	if sites_config_files.len == 0 && md_config_files.len == 0 {
 		curdir := os.getwd()
 		return error('cannot find site files in current dir: $curdir, site files start with site_ or there needs to be an .md file')
 	}
-
 
 	// will check if there are site_... files, if not is error
 
 	// Load Publish config
 	if os.exists('config.json') {
 		println(' - Found config file for publish tools.')
-		txt := os.read_file('config.json') ?
-		config.publish = json.decode(PublishConfig, txt) ?
+		txt := os.read_file('config.json')?
+		config.publish = json.decode(PublishConfig, txt)?
 	} else {
 		// println(' - Not Found config file for publish tools. Default values applied')
 		config.publish = PublishConfig{
@@ -114,16 +111,16 @@ fn (mut config ConfigRoot) init_once()? {
 	// Load nodejs config
 	if os.exists('nodejs.json') {
 		println(' - Found config file for NodeJS.')
-		txt := os.read_file('nodejs.json') ?
-		fsnodejs := json.decode(NodejsConfigFS, txt) ?
+		txt := os.read_file('nodejs.json')?
+		fsnodejs := json.decode(NodejsConfigFS, txt)?
 		if fsnodejs.version == 'lts' {
 			config.nodejs.version = NodejsCat.lts
 		} else {
 			config.nodejs.version = NodejsCat.latest
 		}
 		config.nodejs.nvm = fsnodejs.nvm
-	// } else {
-	// 	println(' - Not Found config file for NodeJS. Default values applied')
+		// } else {
+		// 	println(' - Not Found config file for NodeJS. Default values applied')
 	}
 	config.init_nodejs() // Init nodejs configurations
 
@@ -134,19 +131,20 @@ fn (mut config ConfigRoot) init_once()? {
 
 	for site_file in sites_config_files {
 		// println(' - found $site_file as a config file for sites.')
-		txt := os.read_file(site_file) ?
+		txt := os.read_file(site_file)?
 		// mut site_in := json.decode(SiteConfig, txt) ?
 		mut site_in_raw := json.decode(SiteConfigRaw, txt) or { panic(err) }
 		if site_in_raw.name == '' {
-			site_in_raw.name = site_file.to_lower().replace(".json","").replace("site_","")
-			if site_in_raw.name == "wiki"{
-				return error("wiki is not allowed as name for a wiki site")
+			site_in_raw.name = site_file.to_lower().replace('.json', '').replace('site_',
+				'')
+			if site_in_raw.name == 'wiki' {
+				return error('wiki is not allowed as name for a wiki site')
 			}
 		}
-		//default is wiki
+		// default is wiki
 		if site_in_raw.cat == '' {
-			site_in_raw.cat = "wiki"
-		}		
+			site_in_raw.cat = 'wiki'
+		}
 		// make sure we normalize the name
 		site_in_raw.name = texttools.name_fix(site_in_raw.name)
 		// site_in.configroot = &config
@@ -156,50 +154,43 @@ fn (mut config ConfigRoot) init_once()? {
 	}
 
 	for md_file in md_config_files {
-
 		config.markdown_configs << md_file
 
 		res := actionparser.parse(md_file)?
 
-		for action in res.actions{
-			//find actions with name wiki, rest can be ignored for now
+		for action in res.actions {
+			// find actions with name wiki, rest can be ignored for now
 
-			if action.name == "wiki"{
+			if action.name == 'wiki' {
 				mut sc := SiteConfigRaw{}
 
-				//now walk over params
-				for param in action.params{
-					if param.name=="name"{
+				// now walk over params
+				for param in action.params {
+					if param.name == 'name' {
 						sc.name = texttools.name_fix(param.value)
 					}
-					if param.name=="path"{
+					if param.name == 'path' {
 						sc.fs_path = param.value
 					}
-					if param.name=="url"{
+					if param.name == 'url' {
 						sc.git_url = param.value
 					}
 				}
-				sc.cat = "wiki"
+				sc.cat = 'wiki'
 				mut site_in := site_new(sc)?
-				config.sites << site_in	
+				config.sites << site_in
 			}
-
 		}
-
 	}
-
-
-
 
 	// Load Groups
 	for group_file in groups_config_files {
 		println(' - found $group_file as a config file for group.')
-		txt := os.read_file(group_file) ?
-		config.groups << json.decode([]UserGroup, txt) ?
+		txt := os.read_file(group_file)?
+		config.groups << json.decode([]UserGroup, txt)?
 	}
 
-	println(" - CONFIG LOADED FOR ${os.getwd()}")
-
+	println(' - CONFIG LOADED FOR $os.getwd()')
 }
 
 pub fn (mut site SiteConfig) load() ? {
@@ -217,7 +208,6 @@ pub fn (mut site SiteConfig) load() ? {
 	o.delete()?
 	mut o2 := site.path.join('wikiconfig.json')?
 	o2.delete()?
-
 }
 
 // to create singleton
@@ -227,12 +217,11 @@ pub fn singleton() &ConfigRoot {
 	return &publisher_config.gconf
 }
 
-
 pub fn get() ?&ConfigRoot {
 	mut cr := singleton()
-	if ! cr.loaded{
+	if !cr.loaded {
 		cr.init_once()?
 		cr.loaded = true
 	}
-	return cr 
+	return cr
 }

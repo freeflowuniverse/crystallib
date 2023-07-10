@@ -368,7 +368,7 @@ fn account_info(account Raw_Account) Account {
 	return final
 }
 
-pub fn load_tokens()? StatsTFT {
+pub fn load_tokens() ?StatsTFT {
 	mut hc := httpcache.newcache()
 
 	urltft := 'https://statsdata.threefoldtoken.com/stellar_stats/api/stats?detailed=true'

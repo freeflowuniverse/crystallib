@@ -4,25 +4,20 @@ import os
 import path
 import process
 
-pub struct Images{
-pub mut:	
+pub struct Images {
+pub mut:
 	images []Image
 	status ImagesStatus
 }
 
-
-
-
-pub enum ImagesStatus{
+pub enum ImagesStatus {
 	init
 	loaded
 }
 
 pub fn installed_() bool {
-	out := process.execute_silent("convert -version")or{
-		return false
-	}
-	if ! out.contains("ImageMagick"){
+	out := process.execute_silent('convert -version') or { return false }
+	if !out.contains('ImageMagick') {
 		return false
 	}
 	return true
@@ -31,11 +26,11 @@ pub fn installed_() bool {
 pub const installed = installed_()
 
 fn init_magick() Images {
-	out := process.execute_silent("convert -version")or{
-		panic("Imagemagick probably not installed, error:$err")
+	out := process.execute_silent('convert -version') or {
+		panic('Imagemagick probably not installed, error:$err')
 	}
-	if ! out.contains("ImageMagick"){
-		panic("Imagemagick probably not installed, could not find string ImageMahic but:\n$out")
+	if !out.contains('ImageMagick') {
+		panic('Imagemagick probably not installed, could not find string ImageMahic but:\n$out')
 	}
 	mut images := Images{}
 	return images
@@ -61,11 +56,11 @@ fn init_magick() Images {
 // 	images.load() ?
 // }
 
-pub struct ImageFindArgs{
+pub struct ImageFindArgs {
 pub mut:
 	filter string
-	force bool
-	show bool
+	force  bool
+	show   bool
 }
 
 // pub fn (mut images Images) repos_get(args ImageFindArgs) []GitRepo  {
@@ -100,7 +95,6 @@ pub mut:
 // 	texttools.print_array2(r,"  ",true)
 // }
 
-
 // pub fn (mut images Images) list(args ImageFindArgs)? {
 // 	texttools.print_clear()
 // 	println(" #### overview of repositories:")
@@ -108,7 +102,6 @@ pub mut:
 // 	images.repos_print(args)
 // 	println("")
 // }
-
 
 // the factory for getting the images
 // git is checked uderneith $/code
@@ -130,7 +123,7 @@ pub fn (mut images Images) add(p string) ? {
 	// }
 
 	mut p2 := p
-	if p2==""{
+	if p2 == '' {
 		p2 = os.getwd()
 	}
 
@@ -139,17 +132,17 @@ pub fn (mut images Images) add(p string) ? {
 
 	mut done := []string{}
 
-	images.load_recursive(p2, mut done) ?
+	images.load_recursive(p2, mut done)?
 	images.status = ImagesStatus.loaded
 
-	println(" - SCAN done")
+	println(' - SCAN done')
 }
 
 fn (mut images Images) load_recursive(p string, mut done []string) ? {
 	items := os.ls(p) or { return error('cannot load images because cannot find $p') }
-	mut pathnew := ""
+	mut pathnew := ''
 	for item in items {
-		pathnew = os.join_path(p,item)
+		pathnew = os.join_path(p, item)
 		// CAN DO THIS LATER IF NEEDED
 		// if pathnew in done{
 		// 	continue
@@ -163,19 +156,18 @@ fn (mut images Images) load_recursive(p string, mut done []string) ? {
 			// if item.starts_with('_') {
 			// 	continue
 			// }
-			images.load_recursive(pathnew, mut done) ?
+			images.load_recursive(pathnew, mut done)?
 			continue
 		}
 		mut p2 := path.get_file(pathnew, false)?
 		// println(p2)
-		if p2.is_image(){
+		if p2.is_image() {
 			// println(p2.path)
-			mut i:=Image{path:p2}
+			mut i := Image{
+				path: p2
+			}
 			i.init()?
 			images.images << i
 		}
-		
 	}
 }
-
-

@@ -12,8 +12,8 @@ pub fn factory(redis &redisclient.Redis) ?DigitalTwinFactory {
 	}
 
 	mut path := os.home_dir() + '/.digitaltwin'
-	if ! path.exists(){
-		os.mkdir_all(path) ?
+	if !path.exists() {
+		os.mkdir_all(path)?
 	}
 
 	// seed will contains data needed to build
@@ -27,10 +27,10 @@ pub fn factory(redis &redisclient.Redis) ?DigitalTwinFactory {
 		libsodium.randombytes_buf(seed.data, size_t(seedlen))
 
 		println('[+] key: saving new generated seed: $path_seed')
-		os.write_file_array(path_seed, seed) ?
+		os.write_file_array(path_seed, seed)?
 	} else {
 		// loading existing seed from file
-		seed = os.read_bytes(path_seed) ?
+		seed = os.read_bytes(path_seed)?
 
 		println('[+] key: seed loaded from local file')
 	}

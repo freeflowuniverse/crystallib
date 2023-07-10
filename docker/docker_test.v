@@ -6,11 +6,10 @@ fn test_docker1() {
 
 	engine.reset_all()
 
-
 	// TODO: HOW CAN WE CHECK THE LIST OF IMAGES IS EMPTY?
 	// NEXT IS NOT WORKING
-	mut il:=engine.images_list() or {panic(err)}
-	mut cl:=engine.containers_list() or {panic(err)}
+	mut il := engine.images_list() or { panic(err) }
+	mut cl := engine.containers_list() or { panic(err) }
 
 	assert il == []
 	assert cl == []

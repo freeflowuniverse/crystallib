@@ -24,4 +24,3 @@ fn client_test() {
 	assert val == '5'
 	println('reach here')
 }
-

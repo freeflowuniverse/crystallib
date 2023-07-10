@@ -50,7 +50,7 @@ fn (mut h GithubConnection) cache_set(prefix string, postdata string, data strin
 	*/
 	if cache {
 		key := cache_key(prefix, postdata)
-		h.redis.set(key, data) ?
+		h.redis.set(key, data)?
 		h.redis.expire(key, h.cache_timeout) or {
 			panic('should never get here, if redis worked expire should also work.$err')
 		}
@@ -61,9 +61,9 @@ pub fn (mut h GithubConnection) cache_drop_all() ? {
 	/*
 	Drop all cache related to github
 	*/
-	all_keys := h.redis.keys('github:*') ?
+	all_keys := h.redis.keys('github:*')?
 	for key in all_keys {
-		h.redis.del(key) ?
+		h.redis.del(key)?
 	}
 }
 
@@ -71,8 +71,8 @@ pub fn (mut h GithubConnection) cache_drop(prefix string) ? {
 	/*
 	Drop specific key cache related to github
 	*/
-	all_keys := h.redis.keys('github:$prefix*') ?
+	all_keys := h.redis.keys('github:$prefix*')?
 	for key in all_keys {
-		h.redis.del(key) ?
+		h.redis.del(key)?
 	}
 }

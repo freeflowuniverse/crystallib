@@ -1,6 +1,6 @@
 module gittools
-import texttools
 
+import texttools
 import os
 
 fn init_gitstructure() GitStructure {
@@ -14,7 +14,7 @@ fn get_internal() &GitStructure {
 	return &gittools.codecache
 }
 
-pub fn get() ? &GitStructure {
+pub fn get() ?&GitStructure {
 	mut gs := get_internal()
 	gs.check()?
 	return gs
@@ -24,28 +24,28 @@ fn (mut gitstructure GitStructure) check() ? {
 	if gitstructure.status == GitStructureStatus.loaded {
 		return
 	}
-	gitstructure.load() ?
+	gitstructure.load()?
 }
 
-pub struct GSArgs{
+pub struct GSArgs {
 pub mut:
-	filter string
+	filter  string
 	message string
-	force bool
-	show bool
-	pull bool
+	force   bool
+	show    bool
+	pull    bool
 }
 
-pub fn (mut gitstructure GitStructure) repos_get(args GSArgs) []GitRepo  {
+pub fn (mut gitstructure GitStructure) repos_get(args GSArgs) []GitRepo {
 	mut res := []GitRepo{}
 	for mut g in gitstructure.repos {
 		relpath := g.path_rel_get()
-		if args.filter != "" {
-			if relpath.contains(args.filter){
+		if args.filter != '' {
+			if relpath.contains(args.filter) {
 				// println("$g.addr.name")
 				res << g
-			}		
-		}else{
+			}
+		} else {
 			res << g
 		}
 	}
@@ -53,42 +53,40 @@ pub fn (mut gitstructure GitStructure) repos_get(args GSArgs) []GitRepo  {
 	return res
 }
 
-pub fn (mut gitstructure GitStructure) repos_print(args GSArgs)  {
+pub fn (mut gitstructure GitStructure) repos_print(args GSArgs) {
 	mut r := [][]string{}
-	for mut g in gitstructure.repos_get(args){
+	for mut g in gitstructure.repos_get(args) {
 		// println(g)
-		changed:=g.changes()or {panic("issue in repo changes. $err")}
-		if changed{
-			r << ["- ${g.path_rel_get()}","$g.addr.branch","CHANGED"]
-		}else{
+		changed := g.changes() or { panic('issue in repo changes. $err') }
+		if changed {
+			r << ['- $g.path_rel_get()', '$g.addr.branch', 'CHANGED']
+		} else {
 			// println( " - ${g.path_rel_get()} - $g.addr.branch")
-			r << ["- ${g.path_rel_get()}","$g.addr.branch",""]
+			r << ['- $g.path_rel_get()', '$g.addr.branch', '']
 		}
 	}
-	texttools.print_array2(r,"  ",true)
+	texttools.print_array2(r, '  ', true)
 }
 
-
-pub fn (mut gitstructure GitStructure) list(args GSArgs)? {
+pub fn (mut gitstructure GitStructure) list(args GSArgs) ? {
 	texttools.print_clear()
-	println(" #### overview of repositories:")
-	println("")
+	println(' #### overview of repositories:')
+	println('')
 	gitstructure.repos_print(args)
-	println("")
+	println('')
 }
-
 
 // the factory for getting the gitstructure
 // git is checked uderneith $/code
 fn (mut gitstructure GitStructure) load() ? {
-	mut root2:=""
+	mut root2 := ''
 	if 'DIR_CODE' in os.environ() {
 		dir_ct := os.environ()['DIR_CODE']
 		root2 = '$dir_ct/'
 	} else {
 		root2 = '$os.home_dir()/code/'
 		if !os.exists(root2) {
-			os.mkdir_all(root2) ?
+			os.mkdir_all(root2)?
 		}
 	}
 
@@ -97,7 +95,7 @@ fn (mut gitstructure GitStructure) load() ? {
 		multibranch = true
 	}
 
-	root2 = root2.replace('~', os.home_dir()).trim_right("/")
+	root2 = root2.replace('~', os.home_dir()).trim_right('/')
 
 	// check if there are other arguments used as the ones loaded
 	if gitstructure.status == GitStructureStatus.loaded {
@@ -116,7 +114,6 @@ fn (mut gitstructure GitStructure) load() ? {
 	// print_backtrace()
 	// println(' - SCAN GITSTRUCTURE FOR $root2 ')
 
-
 	gitstructure.root = root2
 	gitstructure.multibranch = multibranch
 
@@ -125,7 +122,7 @@ fn (mut gitstructure GitStructure) load() ? {
 	gitstructure.repos = []GitRepo{}
 
 	mut done := []string{}
-	gitstructure.load_recursive(gitstructure.root, mut done) ?
+	gitstructure.load_recursive(gitstructure.root, mut done)?
 	gitstructure.status = GitStructureStatus.loaded
 
 	// println(" - SCAN done")
@@ -159,9 +156,8 @@ fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []strin
 			if item.starts_with('_') {
 				continue
 			}
-			gitstructure.load_recursive(pathnew, mut done) ?
+			gitstructure.load_recursive(pathnew, mut done)?
 		}
 	}
 	// println(" - git exit: $path1")
 }
-

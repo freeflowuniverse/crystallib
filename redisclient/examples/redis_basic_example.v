@@ -1,40 +1,40 @@
 module main
+
 import despiegk.crystallib.redisclient
 
 fn redistest() ? {
-	mut redis := redisclient.get_local() 
+	mut redis := redisclient.get_local()
 
-	redis.selectdb(10) ?
+	redis.selectdb(10)?
 
-	redis.set('test', 'some data') ?
+	redis.set('test', 'some data')?
 
-	redis.set('hello', 'bla\r\nbli\r\nblu') ?
-	
-	mut r := redis.get('test') ?
+	redis.set('hello', 'bla\r\nbli\r\nblu')?
+
+	mut r := redis.get('test')?
 	assert r == 'some data'
 
-	rr := "a".repeat(100000)
-	for i in 0..1{
+	rr := 'a'.repeat(100000)
+	for i in 0 .. 1 {
 		redis.set('test0', rr)?
 		rr2 := redis.get('test0')?
-		if rr!=rr2{
-
+		if rr != rr2 {
 			// println(rr)
 			// println("------")
 			// println(rr2)
 			// println("------")
 
-			println("DATA SEND TO REDIS & RECEIVED IS NOT SAME (test $i)")
-			println("SIZE DATA SEND: ${rr.len}")
-			println("SIZE DATA RECEIVED: ${rr2.len}")
-			println(rr.count("a"))
-			println(rr2.count("a"))
+			println('DATA SEND TO REDIS & RECEIVED IS NOT SAME (test $i)')
+			println('SIZE DATA SEND: $rr.len')
+			println('SIZE DATA RECEIVED: $rr2.len')
+			println(rr.count('a'))
+			println(rr2.count('a'))
 
-			return error("large set fail")
+			return error('large set fail')
 		}
 	}
 
-	println("TEST OK")
+	println('TEST OK')
 
 	// r = redis.get('hello') ?
 	// assert r == 'bla\r\nbli\r\nblu'
@@ -138,7 +138,6 @@ fn redistest() ? {
 	// println(values)
 
 	// assert values.len == 3
-
 }
 
 fn main() {

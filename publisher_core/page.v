@@ -3,7 +3,7 @@ module publisher_core
 import texttools
 import os
 
-pub fn (page Page) write(mut publisher &Publisher, content string) {
+pub fn (page Page) write(mut publisher Publisher, content string) {
 	mut path := page.path_get(mut publisher)
 	if path.ends_with('.md') {
 		path = path[..path.len - 3]
@@ -12,7 +12,7 @@ pub fn (page Page) write(mut publisher &Publisher, content string) {
 	os.write_file(path, content) or { panic('cannot write, $err') }
 }
 
-pub fn (page Page) path_exists(mut publisher &Publisher) bool {
+pub fn (page Page) path_exists(mut publisher Publisher) bool {
 	mut path := page.path_get(mut publisher)
 	if path.ends_with('.md') {
 		path = path[..path.len - 3]
@@ -31,14 +31,14 @@ pub fn (page Page) path_exists(mut publisher &Publisher) bool {
 // 	return true
 // }
 
-fn (mut page Page) error_add(error PageError, mut publisher &Publisher) {
+fn (mut page Page) error_add(error PageError, mut publisher Publisher) {
 	for error_existing in page.errors {
 		if error_existing.msg.trim(' ') == error.msg.trim(' ') {
 			return
 		}
 	}
-	errormsg := error.msg.replace('\n',' ')
-	println (" - ERROR in page: $page.path : $errormsg")
+	errormsg := error.msg.replace('\n', ' ')
+	println(' - ERROR in page: $page.path : $errormsg')
 	if page.state != PageStatus.error {
 		// only add when not in error mode yet, because means check was already done
 		// println(' - ERROR: $error.msg')
@@ -53,7 +53,7 @@ fn (mut page Page) error_add(error PageError, mut publisher &Publisher) {
 
 // load the page & find defs
 // if it returns false, it means was already processed
-pub fn (mut page Page) load(mut publisher &Publisher) ?bool {
+pub fn (mut page Page) load(mut publisher Publisher) ?bool {
 	if page.state == PageStatus.ok {
 		// means was already processed, content is available
 		return false
@@ -65,19 +65,19 @@ pub fn (mut page Page) load(mut publisher &Publisher) ?bool {
 	}
 
 	// loads the defs and other metadata
-	page.process_metadata(mut publisher) ?
+	page.process_metadata(mut publisher)?
 	return true
 }
 
 // process the markdown content and include other files, find links, ...
 // find errors
-pub fn (mut page Page) process(mut publisher &Publisher) ?bool {
+pub fn (mut page Page) process(mut publisher Publisher) ?bool {
 	if page.state == PageStatus.ok {
 		// means was already processed, content is available
 		return false
 	}
 
-	page.process_lines(mut publisher) ? // first find all the links
+	page.process_lines(mut publisher)? // first find all the links
 	// println(page.content)
 	// make sure we only execute this once !
 	page.state = PageStatus.ok
@@ -110,7 +110,7 @@ fn (mut state LineProcessorState) error(msg string) {
 	}
 	state.page.error_add(page_error, mut state.publisher)
 	// state.lines_source << '> **ERROR: $page_error.msg **<BR>\n\n'
-	if !(state.page.name in ['sidebar', 'navbar']) {
+	if state.page.name !in ['sidebar', 'navbar'] {
 		state.lines_server << '> **ERROR: $page_error.msg **<BR>\n\n'
 		// if msg.contains("disclaimer") && state.page.name == "humanity"{
 		// 	eprintln(state.page.name)
@@ -122,7 +122,7 @@ fn (mut state LineProcessorState) error(msg string) {
 	// println(page_error)
 }
 
-//change what will be given by server to the client, so not change on source
+// change what will be given by server to the client, so not change on source
 fn (mut state LineProcessorState) serverline_change(ffrom string, tto string) {
 	linelast := state.lines_server.pop()
 	state.lines_server << linelast.replace(ffrom, tto)
@@ -142,7 +142,7 @@ fn (mut state LineProcessorState) sourceline_change(ffrom string, tto string) {
 }
 
 // walk over each line in the page and check for definitions
-fn (mut page Page) process_metadata(mut publisher &Publisher) ? {
+fn (mut page Page) process_metadata(mut publisher Publisher) ? {
 	mut state := LineProcessorState{
 		site: &publisher.sites[page.site_id]
 		publisher: publisher
@@ -185,7 +185,7 @@ fn (mut page Page) process_metadata(mut publisher &Publisher) ? {
 // walk over each line in the page and do the link parsing on it
 // will also look for definitions
 // happens line per line
-fn (mut page Page) process_lines(mut publisher &Publisher) ? {
+fn (mut page Page) process_lines(mut publisher Publisher) ? {
 	mut state := LineProcessorState{
 		site: &publisher.sites[page.site_id]
 		publisher: publisher
@@ -193,7 +193,7 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 	}
 
 	mut debug := false
-	mut skipline_format := ""
+	mut skipline_format := ''
 
 	// mut page_linked := Page{}
 
@@ -229,17 +229,16 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 
 		linestrip := line.trim(' ')
 
-
-		for skipsearch in ["'''",'```','"""']{
-			if linestrip.starts_with(skipsearch){
+		for skipsearch in ["'''", '```', '"""'] {
+			if linestrip.starts_with(skipsearch) {
 				skipline_format = skipsearch
 			}
 		}
 
-		if skipline_format!=""{
+		if skipline_format != '' {
 			state.lines_server << line
-			//no reason to continue
-			skipline_format = ""
+			// no reason to continue
+			skipline_format = ''
 			continue
 		}
 
@@ -257,7 +256,6 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 		}
 
 		state.lines_server << line
-
 
 		if linestrip.starts_with('!!!include') {
 			mut params := texttools.new_params()
@@ -277,9 +275,9 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 			}
 
 			// println(" -- include: '$page_name_include'")
-			mut moresites:=false
-			if page_name_include.starts_with("*"){
-				page_name_include = page_name_include.all_after("*")
+			mut moresites := false
+			if page_name_include.starts_with('*') {
+				page_name_include = page_name_include.all_after('*')
 				moresites = true
 			}
 
@@ -293,9 +291,9 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 				continue
 			}
 
-			//make sure server will publish the full page
+			// make sure server will publish the full page
 			name_server := page_linked.name_get(mut publisher, state.site.id)
-			if  name_server != page_name_include {
+			if name_server != page_name_include {
 				// means we need to change on the server and source side
 				state.serverline_change(page_name_include, name_server)
 				state.sourceline_change(page_name_include, name_server)
@@ -344,15 +342,14 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 			// 	println(link)
 			// 	panic("ssss")
 			// }
-
 		} // end of the walk over all links
 	} // end of the line walk
 
 	// now we need to rewrite the source & server lines
 	page.content = state.lines_server.join('\n')
 
-	if skipline_format!=""{
-		page.content+="\n<br>\n"		
+	if skipline_format != '' {
+		page.content += '\n<br>\n'
 	}
 
 	if state.changed_source {
@@ -360,11 +357,10 @@ fn (mut page Page) process_lines(mut publisher &Publisher) ? {
 	}
 }
 
-
-//param flatten, if true will return links as can be used when flattening happens
-fn (mut page Page) content_get(mut publisher &Publisher, flatten bool, defsreplace bool) ?string {
+// param flatten, if true will return links as can be used when flattening happens
+fn (mut page Page) content_get(mut publisher Publisher, flatten bool, defsreplace bool) ?string {
 	mut out := []string{}
-	
+
 	site := page.site_get(mut publisher)?
 
 	for mut line in page.content.split_into_lines() {
@@ -374,41 +370,36 @@ fn (mut page Page) content_get(mut publisher &Publisher, flatten bool, defsrepla
 
 		mut links_parser_result := link_parser(mut publisher, mut &page, line)?
 
-
 		// there can be more than 1 link on 1 line
 		for mut link in links_parser_result.links {
 			if link.state != LinkState.ok {
-				out << '> ERROR LINK: ' + link.error_msg + "\n<br>\n"
+				out << '> ERROR LINK: ' + link.error_msg + '\n<br>\n'
 				continue
-			}			
-			llink := link.server_get (site, mut &publisher,flatten)?
+			}
+			llink := link.server_get(site, mut &publisher, flatten)?
 			// if link.original_get().contains("need to kno"){
 			// 	println(" --4 ${link.original_get()}")
 			// 	println(" --5 $llink")
 			// 	panic("ssds")
 			// }
 			// state.serverline_change(link.original_get(),llink)
-			line = line.replace(link.original_get(),llink)
+			line = line.replace(link.original_get(), llink)
 		} // end of the walk over all links
 
 		out << line
-
 	} // end of the line walk
 	// mut content := state.lines_server.join('\n')
 
-	mut content:= out.join('\n')
+	mut content := out.join('\n')
 
-	if defsreplace{
+	if defsreplace {
 		content = publisher.replace_defs_links(mut &page, content)?
 	}
 
 	return content
-
 }
 
 fn (mut page Page) title() string {
-
-
 	lines := page.content.split('\n')
 
 	for line in lines {
@@ -422,9 +413,7 @@ fn (mut page Page) title() string {
 	return 'NO TITLE'
 }
 
-
-//get the page of the sidebar which is close by
-pub fn (mut page Page) sidebar_page_get(mut publisher &Publisher) ?&Page{
+// get the page of the sidebar which is close by
+pub fn (mut page Page) sidebar_page_get(mut publisher Publisher) ?&Page {
 	return publisher.page_get_by_id(page.sidebarid)
 }
-

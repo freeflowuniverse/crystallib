@@ -39,16 +39,16 @@ pub fn generate_key(k KeyParams) ?SignedSecretKey {
 			subkey_type = C.KeyType{KeyType_Tag.rsa, k.length}
 		}
 	}
-	builder := new_secret_key_param_builder() ?
-	builder.primary_key_id(k.id()) ?
-	builder.key_type(primarykey_type) ?
+	builder := new_secret_key_param_builder()?
+	builder.primary_key_id(k.id())?
+	builder.key_type(primarykey_type)?
 	subkey_builder := new_subkey_params_builder()
-	subkey_builder.key_type(subkey_type) ?
-	subkey := subkey_builder.build() ?
-	builder.subkey(subkey) ?
-	params := builder.build() ?
-	sk := params.generate_and_free() ?
-	ssk := sk.sign() ?
+	subkey_builder.key_type(subkey_type)?
+	subkey := subkey_builder.build()?
+	builder.subkey(subkey)?
+	params := builder.build()?
+	sk := params.generate_and_free()?
+	ssk := sk.sign()?
 	return ssk
 }
 
@@ -60,7 +60,7 @@ pub fn import_publickey(data string) ?SignedPublicKey {
 
 // import public key from ASCII armor file format
 pub fn import_publickey_from_file(path string) ?SignedPublicKey {
-	content := os.read_file(path) ?
+	content := os.read_file(path)?
 	return import_publickey(content)
 }
 
@@ -71,7 +71,7 @@ pub fn import_secretkey(data string) ?SignedSecretKey {
 
 // import secret key from ASCII armor file format
 pub fn import_secretkey_from_file(path string) ?SignedSecretKey {
-	content := os.read_file(path) ?
+	content := os.read_file(path)?
 	return import_secretkey(content)
 }
 
@@ -91,11 +91,11 @@ pub fn (ssk &SignedSecretKey) sign_message(message string) ?Signature {
 }
 
 pub fn (ssk &SignedSecretKey) decrypt_to_text(encrypted_message []byte) ?string {
-	return ssk.decrypt(encrypted_message) ?.bytestr()
+	return ssk.decrypt(encrypted_message)?.bytestr()
 }
 
 pub fn (ssk &SignedSecretKey) get_signed_public_key() ?SignedPublicKey {
-	return ssk.public_key() ?.sign_and_free(ssk)
+	return ssk.public_key()?.sign_and_free(ssk)
 }
 
 // Signature Fucntions
@@ -104,10 +104,10 @@ fn (sig &Signature) to_bytes() ?[]byte {
 }
 
 pub fn (sig &Signature) to_hex() ?string {
-	return hex.encode(sig.to_bytes() ?)
+	return hex.encode(sig.to_bytes()?)
 }
 
 pub fn signature_from_hex(sig string) ?Signature {
-	sig_bytes := hex.decode(sig) ?
+	sig_bytes := hex.decode(sig)?
 	return deserialize_signature(sig_bytes)
 }

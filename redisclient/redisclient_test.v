@@ -11,7 +11,7 @@ fn setup() &redisclient.Redis {
 }
 
 fn cleanup(mut redis redisclient.Redis) ? {
-	redis.flushall() ?
+	redis.flushall()?
 	redis.disconnect()
 }
 

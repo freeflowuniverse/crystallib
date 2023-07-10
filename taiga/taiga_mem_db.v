@@ -3,12 +3,12 @@ module taiga
 import despiegk.crystallib.taigaexports { ProjectExport }
 
 pub fn load_data() ? {
-	projects() ?
-	stories() ?
-	tasks() ?
-	issues() ?
-	epics() ?
-	users() ?
+	projects()?
+	stories()?
+	tasks()?
+	issues()?
+	epics()?
+	users()?
 }
 
 // Get elements from singleton obj if found

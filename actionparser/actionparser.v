@@ -56,7 +56,7 @@ pub fn parse(path string) ?ParseResult {
 	}
 	content := os.read_file(path) or { panic('Failed to load file $path') }
 
-	blocks := parse_into_blocks(content) ?
+	blocks := parse_into_blocks(content)?
 
 	mut parseresult := ParseResult{}
 

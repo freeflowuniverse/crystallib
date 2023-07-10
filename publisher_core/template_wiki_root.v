@@ -239,7 +239,7 @@ fn template_wiki_root(reponame string, repourl string, trackingid string, opengr
 	return out
 }
 
-fn template_wiki_root_save(destdir string, reponame string, repourl string, trackingid string, opengraph publisher_config.OpenGraph)? {
+fn template_wiki_root_save(destdir string, reponame string, repourl string, trackingid string, opengraph publisher_config.OpenGraph) ? {
 	out := template_wiki_root(reponame, repourl, trackingid, opengraph)?
 	os.write_file('$destdir/index.html', out)?
 }
