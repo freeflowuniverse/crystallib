@@ -1,7 +1,6 @@
 module rest
 
 import os
-import yaml
 import json
 
 pub struct DataLoader {
@@ -9,7 +8,7 @@ pub:
 	base_path string
 }
 
-const ImageFields = ['logo', 'image']
+// const imageFields = ['logo', 'image']
 
 pub fn new_data_loader(base_path string) &DataLoader {
 	return &DataLoader{
