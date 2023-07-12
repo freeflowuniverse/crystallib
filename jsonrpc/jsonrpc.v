@@ -83,9 +83,9 @@ pub fn jsonrpcrequest_decode[T](data string) !JsonRpcRequest[T] {
 
 struct JsonRpcRequestAny {
 pub mut:
-   jsonrpc string [required]
-   method string [required]
-   id string [required]
+	jsonrpc string [required]
+	method  string [required]
+	id      string [required]
 }
 
 pub fn jsonrpcrequest_decode_method(data string) !string {

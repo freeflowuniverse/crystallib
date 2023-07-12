@@ -18,5 +18,5 @@ vls.*
 vls.log
 runner
 node_modules/
-
+docs/
 coroutine

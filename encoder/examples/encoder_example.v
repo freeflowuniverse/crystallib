@@ -11,7 +11,6 @@ mut:
 }
 
 fn do1() ! {
-
 	_, privkey := ed25519.generate_key()!
 	a := AStruct{
 		items: ['a', 'b']
@@ -20,15 +19,15 @@ fn do1() ! {
 		privkey: privkey
 	}
 
-	//do encoding
-	mut e := encoder.encoder_new()	
+	// do encoding
+	mut e := encoder.encoder_new()
 	e.add_list_string(a.items)
 	e.add_int(a.nr)
 	e.add_bytes(privkey)
 
 	println(e.data)
 
-	//do decoding
+	// do decoding
 	mut d := encoder.decoder_new(e.data)
 	mut aa := AStruct{}
 	aa.items = d.get_list_string()

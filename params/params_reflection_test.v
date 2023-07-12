@@ -61,7 +61,7 @@ fn test_encode() {
 			value: 'true'
 		}, Param{
 			key: 'liststr'
-			value: '[\'one\', \'two\']'
+			value: "['one', 'two']"
 		}, Param{
 			key: 'listint'
 			value: '[1, 2]'
