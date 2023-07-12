@@ -57,7 +57,7 @@ pub fn (err ChapterObjNotFound) msg() string {
 // format of name is $chaptername:$pagename or $pagename
 // look if we can find page in the local chapter is chapter name not specified
 // if chaptername specified will look for page in that specific chapter
-pub fn ( chapter Chapter) page_get(name string) !&Page {
+pub fn (chapter Chapter) page_get(name string) !&Page {
 	cat := 'page'
 	ptr := pointer_new(name)!
 	if ptr.chapter != '' && ptr.chapter != chapter.name {
@@ -79,7 +79,7 @@ pub fn ( chapter Chapter) page_get(name string) !&Page {
 	}
 }
 
-pub fn ( chapter Chapter) file_get(name string) !&File {
+pub fn (chapter Chapter) file_get(name string) !&File {
 	cat := 'file'
 	ptr := pointer_new(name)!
 	if ptr.chapter != '' && ptr.chapter != chapter.name {
@@ -101,7 +101,7 @@ pub fn ( chapter Chapter) file_get(name string) !&File {
 	}
 }
 
-pub fn ( chapter Chapter) image_get(name string) !&File {
+pub fn (chapter Chapter) image_get(name string) !&File {
 	cat := 'image'
 	ptr := pointer_new(name)!
 	if ptr.chapter != '' && ptr.chapter != chapter.name {
@@ -123,7 +123,7 @@ pub fn ( chapter Chapter) image_get(name string) !&File {
 	}
 }
 
-pub fn ( chapter Chapter) page_exists(name string) bool {
+pub fn (chapter Chapter) page_exists(name string) bool {
 	_ := chapter.page_get(name) or {
 		if err is ChapterObjNotFound {
 			return false
@@ -134,7 +134,7 @@ pub fn ( chapter Chapter) page_exists(name string) bool {
 	return true
 }
 
-pub fn ( chapter Chapter) image_exists(name string) bool {
+pub fn (chapter Chapter) image_exists(name string) bool {
 	_ := chapter.image_get(name) or {
 		if err is ChapterObjNotFound {
 			return false
@@ -145,7 +145,7 @@ pub fn ( chapter Chapter) image_exists(name string) bool {
 	return true
 }
 
-pub fn ( chapter Chapter) file_exists(name string) bool {
+pub fn (chapter Chapter) file_exists(name string) bool {
 	_ := chapter.file_get(name) or {
 		if err is ChapterObjNotFound {
 			return false
@@ -238,7 +238,7 @@ pub fn (mut chapter Chapter) fix() ! {
 }
 
 // return all pagenames for a chapter
-pub fn ( chapter Chapter) pagenames() []string {
+pub fn (chapter Chapter) pagenames() []string {
 	mut res := []string{}
 	for key, _ in chapter.pages {
 		res << key
@@ -248,7 +248,7 @@ pub fn ( chapter Chapter) pagenames() []string {
 }
 
 // write errors.md in the chapter, this allows us to see what the errors are
-pub fn ( chapter Chapter) errors_report() ! {
+pub fn (chapter Chapter) errors_report() ! {
 	mut p := pathlib.get('${chapter.path.path}/errors.md')
 	if chapter.errors.len == 0 {
 		p.delete()!

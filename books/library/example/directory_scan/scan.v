@@ -6,10 +6,9 @@ import os
 const testpath = os.dir(@FILE) + '/../chapter1'
 
 fn do() ! {
-
 	mut l := library.new()
-	
-	mut book:=l.book_new(name:"testbook")!
+
+	mut book := l.book_new(name: 'testbook')!
 
 	mut c := book.chapter_new(
 		path: testpath

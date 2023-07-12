@@ -20,7 +20,7 @@ pub mut:
 // get a new chapter
 pub fn (mut book Book) chapter_new(args_ ChapterNewArgs) !&Chapter {
 	mut args := args_
-	args.name=texttools.name_fix_no_underscore_no_ext(args.name)
+	args.name = texttools.name_fix_no_underscore_no_ext(args.name)
 	if args.git_url.len > 0 {
 		mut gs := gittools.get(root: args.git_root)!
 		mut gr := gs.repo_get_from_url(url: args.git_url, pull: args.git_pull, reset: args.git_reset)!
@@ -40,6 +40,6 @@ pub fn (mut book Book) chapter_new(args_ ChapterNewArgs) !&Chapter {
 		ch.fix()!
 	}
 
-	book.chapters[ch.name]=&ch
+	book.chapters[ch.name] = &ch
 	return book.chapters[ch.name]
 }

@@ -72,7 +72,6 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 	}
 }
 
-
 // something like 3:2,10:5 means month 3 we set 2, month 10 5
 // there i no interpolation, all other fields are set on 0
 pub fn (mut r Row) smartfill(smartstr string) ! {

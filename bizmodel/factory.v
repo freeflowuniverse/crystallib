@@ -1,25 +1,24 @@
 module bizmodel
+
 import freeflowuniverse.crystallib.calc
 import freeflowuniverse.crystallib.actionsparser
 
-
-pub struct BizModel{
+pub struct BizModel {
 pub mut:
-	sheet calc.Sheet
+	sheet  calc.Sheet
 	params BizModelArgs
 }
 
-pub struct BizModelNewArgs{
+pub struct BizModelNewArgs {
 	path string
 }
 
-pub fn new(args BizModelNewArgs)!BizModel{
-
+pub fn new(args BizModelNewArgs) !BizModel {
 	mut sh := calc.sheet_new()!
-	mut m:=BizModel{
-		sheet:sh
-		params:BizModelArgs{
-			data_path:args.path
+	mut m := BizModel{
+		sheet: sh
+		params: BizModelArgs{
+			data_path: args.path
 		}
 	}
 
@@ -29,9 +28,7 @@ pub fn new(args BizModelNewArgs)!BizModel{
 }
 
 pub fn (mut m BizModel) actions() ! {
-
-	ap:=actionsparser.new(path:m.params.data_path,defaultbook:'aaa')!
+	ap := actionsparser.new(path: m.params.data_path, defaultbook: 'aaa')!
 	m.hr_actions(ap)!
 	m.revenue_actions(ap)!
-
 }

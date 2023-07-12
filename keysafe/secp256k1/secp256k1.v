@@ -18,7 +18,7 @@ import crypto.sha256
 //
 // struct definitions
 //
-struct Secp256k1_pubkey { 
+struct Secp256k1_pubkey {
 	data [64]u8
 }
 
@@ -26,28 +26,28 @@ struct Secp256k1_xonly_pubkey {
 	data [64]u8
 }
 
-struct Secp256k1_ecdsa_signature { 
+struct Secp256k1_ecdsa_signature {
 	data [64]u8
 }
 
-struct Secp256k1_keypair { 
+struct Secp256k1_keypair {
 	data [96]u8
 }
 
-struct Secp256k1_t { 
-	kntxt &C.secp256k1_context
-	seckey &u8
-	compressed &u8
-	pubkey Secp256k1_pubkey
+struct Secp256k1_t {
+	kntxt       &C.secp256k1_context
+	seckey      &u8
+	compressed  &u8
+	pubkey      Secp256k1_pubkey
 	xcompressed &u8
-	xpubkey Secp256k1_xonly_pubkey
-	keypair Secp256k1_keypair
+	xpubkey     Secp256k1_xonly_pubkey
+	keypair     Secp256k1_keypair
 }
 
-struct Secp256k1_sign_t { 
-	sig Secp256k1_ecdsa_signature
+struct Secp256k1_sign_t {
+	sig        Secp256k1_ecdsa_signature
 	serialized &u8
-	length usize
+	length     usize
 }
 
 struct Secp256k1_signature {
@@ -69,7 +69,7 @@ fn C.secp256k1_schnorr_sign_hash(secp &Secp256k1_t, hash &u8, length usize) &u8
 
 fn C.secp256k1_sign_verify(secp &Secp256k1_t, signature &Secp256k1_sign_t, hash &u8, length usize) int
 
-fn C.secp256k1_sign_free(signature &Secp256k1_sign_t) 
+fn C.secp256k1_sign_free(signature &Secp256k1_sign_t)
 
 fn C.secp256k1_load_signature(secp &Secp256k1_t, serialized &u8, length usize) &Secp256k1_sign_t
 
@@ -171,7 +171,6 @@ pub fn (s Secp256k1) verify_str(signature []u8, input string) bool {
 	return s.verify_data(signature, input.bytes())
 }
 
-
 //
 // sign (schnorr) data
 // - we force user to pass data to ensure we hash the right way
@@ -207,7 +206,8 @@ pub fn (s Secp256k1) schnorr_verify_data(signature []u8, data []u8) bool {
 	// compute data hash to ensure we do it correctly
 	// - do not trust the user, do it ourself -
 	h256 := sha256.sum(data)
-	valid := C.secp256k1_schnorr_verify(s.cctx, signature.data, signature.len, h256.data, h256.len)
+	valid := C.secp256k1_schnorr_verify(s.cctx, signature.data, signature.len, h256.data,
+		h256.len)
 	if valid == 1 {
 		return true
 	}
@@ -218,4 +218,3 @@ pub fn (s Secp256k1) schnorr_verify_data(signature []u8, data []u8) bool {
 pub fn (s Secp256k1) schnorr_verify_str(signature []u8, input string) bool {
 	return s.schnorr_verify_data(signature, input.bytes())
 }
-

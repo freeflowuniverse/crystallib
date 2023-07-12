@@ -553,7 +553,7 @@ fn test_vparse_blankdir() ! {
 fn test_vparse_flat_directory() ! {
 	code := parse_v('${codeparser.testpath}/flatdir')!
 	assert code.len == 12
-	assert code[0] == testcode['anotherfile.v'][0]
+	assert code[0] == codeparser.testcode['anotherfile.v'][0]
 	assert code[0..6] == codeparser.testcode['anotherfile.v'][0..6], '<${code[0..6]}> vs <${codeparser.testcode['anotherfile.v'][0..6]}>'
 	assert code[6..12] == codeparser.testcode['subfile.v'][0..6]
 }

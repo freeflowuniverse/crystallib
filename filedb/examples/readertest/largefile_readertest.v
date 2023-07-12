@@ -85,7 +85,7 @@ fn main() {
 
 	// copy_to_stdout()
 
-	find_item("*some line with a nr: ${counter-1}")  or {panic(err)}
+	find_item('*some line with a nr: ${counter - 1}') or { panic(err) }
 
 	find_benchmark(counter)
 }

@@ -56,12 +56,12 @@ pub fn (mut s Sheet) names_width() []int {
 [params]
 pub struct Group2RowArgs {
 pub mut:
-	name string
-	include []string //to use with params filter e.g. ['location:belgium_*'] //would match all words starting with belgium
-	exclude []string
-	tags    string
-	descr   string
-	subgroup string	
+	name          string
+	include       []string // to use with params filter e.g. ['location:belgium_*'] //would match all words starting with belgium
+	exclude       []string
+	tags          string
+	descr         string
+	subgroup      string
 	aggregatetype RowAggregateType = .sum
 }
 
@@ -74,12 +74,17 @@ pub fn (mut s Sheet) group2row(args Group2RowArgs) !&Row {
 	if name == '' {
 		return error('name cannot be empty')
 	}
-	mut rowout := s.row_new(name: name, tags: args.tags, descr:args.descr, subgroup:args.subgroup, 	
-				aggregatetype:args.aggregatetype)!
+	mut rowout := s.row_new(
+		name: name
+		tags: args.tags
+		descr: args.descr
+		subgroup: args.subgroup
+		aggregatetype: args.aggregatetype
+	)!
 	for _, row in s.rows {
-		tagstofilter:=params.parse(row.tags)!
-		matched:=tagstofilter.filter_match(include: args.include, exclude:args.exclude)!
-		if matched{
+		tagstofilter := params.parse(row.tags)!
+		matched := tagstofilter.filter_match(include: args.include, exclude: args.exclude)!
+		if matched {
 			mut x := 0
 			for cell in row.cells {
 				rowout.cells[x].val += cell.val
@@ -94,9 +99,9 @@ pub fn (mut s Sheet) group2row(args Group2RowArgs) !&Row {
 pub struct ToYearQuarterArgs {
 pub mut:
 	name          string
-	namefilter    		  []string //only include the exact names as secified for the rows
-	includefilter    	  []string //matches for the tags
-	excludefilter		  []string //matches for the tags
+	namefilter    []string // only include the exact names as secified for the rows
+	includefilter []string // matches for the tags
+	excludefilter []string // matches for the tags
 	period_months int = 12
 }
 
@@ -120,9 +125,12 @@ fn (mut s Sheet) tosmaller(args_ ToYearQuarterArgs) !Sheet {
 	for _, row in s.rows {
 		if args.namefilter.len > 0 || args.includefilter.len > 0 || args.excludefilter.len > 0 {
 			mut ok := false
-			if args.includefilter.len > 0 || args.excludefilter.len > 0{
-				tagstofilter:=params.parse(row.tags)!
-				ok=tagstofilter.filter_match(include: args.includefilter, exclude:args.excludefilter)!
+			if args.includefilter.len > 0 || args.excludefilter.len > 0 {
+				tagstofilter := params.parse(row.tags)!
+				ok = tagstofilter.filter_match(
+					include: args.includefilter
+					exclude: args.excludefilter
+				)!
 			}
 			for name1 in args.namefilter {
 				if name1.to_lower() == row.name.to_lower() {
