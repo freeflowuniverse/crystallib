@@ -22,7 +22,7 @@ pub fn (mut ossl OpenSSL) generate(args OpenSSLGenerateArgs) !OpenSSLKey {
 	openssl req -newkey rsa:4096 -nodes -sha256 -keyout ${r.path_key.path} -addext "subjectAltName = DNS:${args.domain}" -subj "/C=BE/ST=Ghent/L=Something/O=Global Security/OU=IT Department/CN=${args.domain}" -x509 -days 365 -out ${r.path_cert.path}
 	'
 
-	mut b := builder.new()
+	mut b := builder.new()!
 	mut node := b.node_local()!
 
 	node.exec(cmd)!

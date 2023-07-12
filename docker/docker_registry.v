@@ -15,7 +15,7 @@ pub mut:
 [params]
 pub struct DockerRegistryArgs {
 pub mut:
-	name      string [required] = 'default' 
+	name      string [required] = 'default'
 	datapath  string
 	ssl       bool
 	reset     bool // if reset will reset existing running one
@@ -95,7 +95,7 @@ pub fn (mut e DockerEngine) registry_add(args DockerRegistryArgs) ! {
 		name: 'localdockerhub'
 		url: 'https://localhost:5000/v2/'
 		retry: 10
-	)
+	)!
 
 	// r := conn.get_json_dict(mut prefix: 'errors')!
 

@@ -1,8 +1,8 @@
-import freeflowuniverse.crystallib.redisclient
+import freeflowuniverse.crystallib.redisclient { RedisURL }
 import time
 
-fn setup() &redisclient.Redis {
-	mut redis := redisclient.core_get()
+fn setup() !&redisclient.Redis {
+	mut redis := redisclient.core_get(RedisURL{})!
 	// Select db 10 to be away from default one '0'
 	redis.selectdb(10) or { panic(err) }
 	return &redis
@@ -18,7 +18,7 @@ fn process_test(cmd string, data string) !string {
 }
 
 fn test_rpc() {
-	mut redis := setup()
+	mut redis := setup()!
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}

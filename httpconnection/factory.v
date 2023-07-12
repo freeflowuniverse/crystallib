@@ -1,7 +1,7 @@
 module httpconnection
 
 import net.http
-import freeflowuniverse.crystallib.redisclient
+import freeflowuniverse.crystallib.redisclient { RedisURL }
 
 fn init_factory() HTTPConnections {
 	mut htpc := HTTPConnections{}
@@ -20,7 +20,7 @@ pub:
 	retry int  = 5
 }
 
-pub fn new(args HTTPConnectionArgs) &HTTPConnection {
+pub fn new(args HTTPConnectionArgs) !&HTTPConnection {
 	mut f := httpconnection.factory
 
 	mut header := http.new_header_from_map({
@@ -33,7 +33,7 @@ pub fn new(args HTTPConnectionArgs) &HTTPConnection {
 
 	// Init connection
 	mut conn := HTTPConnection{
-		redis: redisclient.core_get()
+		redis: redisclient.core_get(RedisURL{})!
 		default_header: header
 		cache: CacheConfig{
 			disable: !args.cache
@@ -60,11 +60,11 @@ pub fn get(name string) !&HTTPConnection {
 	return r
 }
 
-pub fn (mut h HTTPConnection) clone() &HTTPConnection {
+pub fn (mut h HTTPConnection) clone() !&HTTPConnection {
 	if h.cache.disable {
 		return h
 	}
 	mut new_conn := h
-	new_conn.redis = redisclient.core_get()
+	new_conn.redis = redisclient.core_get(RedisURL{})!
 	return &new_conn
 }
