@@ -74,6 +74,15 @@ pub fn typesymbol_to_schema(symbol_ string) SchemaRef {
 			additional_properties: typesymbol_to_schema(map_type)
 		})
 	} else if symbol[0].is_capital() {
+		// todo: better imported type handling
+		if symbol == 'Uint128' {
+			return SchemaRef(Schema{
+				typ: 'integer'
+				minimum: Number(0)
+				// todo: implement uint128 number
+				// maximum: Number('340282366920938463463374607431768211455')
+			})
+		}
 		return SchemaRef(Reference{
 			ref: '#/components/schemas/${symbol}'
 		})
