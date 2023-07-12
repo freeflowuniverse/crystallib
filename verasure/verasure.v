@@ -139,8 +139,8 @@ pub fn (mut v Verasure) decode(shards Shards) []u8 {
 	return response
 }
 
-fn test() {
-	e := new(16, 4)
+pub fn test() {
+	mut e := new(16, 4)
 	shards := e.encode('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer consectetur accumsan augue, at pharetra'.bytes())
 	println(shards)
 
