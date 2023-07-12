@@ -9,7 +9,7 @@ pub:
 	base_path string
 }
 
-const ImageFields = ['logo', 'image']
+const image_fields = ['logo', 'image']
 
 pub fn new_data_loader(base_path string) &DataLoader {
 	return &DataLoader{
