@@ -193,7 +193,9 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 	dockerfilecontent := b.render()!
 
 	destpath := b.path()
-
+	if reset {
+		b.engine.node.exec_silent('rm -rf ${destpath}')!
+	}
 	b.engine.node.exec_silent('mkdir -p ${destpath}')!
 	b.engine.node.file_write('${destpath}/Dockerfile', dockerfilecontent)!
 	for item in b.files {
