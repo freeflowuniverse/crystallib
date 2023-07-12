@@ -1,7 +1,6 @@
 module library
 
 import os
-import freeflowuniverse.crystallib.pathlib
 
 const testpath = os.dir(@FILE) + '/example/chapter1'
 

@@ -2,7 +2,6 @@
 module texttools
 
 import os
-import encoding.utf8
 
 pub fn name_fix(name string) string {
 	name2 := name_fix_keepext(name)

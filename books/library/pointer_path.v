@@ -1,6 +1,5 @@
 module library
 
-import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.pathlib
 
 pub enum PointerPathState {

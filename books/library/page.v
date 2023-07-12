@@ -30,7 +30,7 @@ pub mut: // pointer to chapter
 
 // update link on the page, find the link into the chapter
 fn (mut page Page) link_update(mut link Link) ! {
-	mut linkout := link
+	//mut linkout := link
 	mut file_name := link.filename
 	$if debug {
 		println(' - get link ${link.content} with name:\'${file_name}\' for page: ${page.path.path}')

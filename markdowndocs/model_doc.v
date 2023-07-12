@@ -34,6 +34,8 @@ enum HtmlSourceCat {
 //	filename string, if in memory in a book
 //  cat, is .css or .script
 pub fn (mut doc Doc) pre_add(arg HtmlSource) string {
+	// TODO what is this function for?
+	return ""
 }
 
 type DocItem = Action | Actions | CodeBlock | Header | Html | Link | Paragraph | Table
