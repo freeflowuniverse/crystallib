@@ -74,7 +74,9 @@ pub fn name_fix_keepext(name_ string) string {
 		} else if u > 96 && u < 123 {
 			out << u
 		} else if u in to_replace {
-			out << u8(95)
+			if prev != 95 {
+				out << u8(95)
+			}
 		} else {
 			// means previous one should not be used
 			continue
@@ -84,7 +86,6 @@ pub fn name_fix_keepext(name_ string) string {
 	name = out.bytestr()
 
 	// name = name.trim(' _') //DONT DO final _ is ok to keep
-
 	if extension.len > 0 {
 		name += '.${extension}'
 	}
