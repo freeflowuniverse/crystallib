@@ -13,21 +13,20 @@ pub mut:
 [param]
 pub struct HtmlSource {
 pub mut:
-	url string
-	path string
-	bookname string
+	url         string
+	path        string
+	bookname    string
 	chaptername string
-	filename string
-	cat HtmlSourceCat
+	filename    string
+	cat         HtmlSourceCat
 }
 
-enum HtmlSourceCat{
+enum HtmlSourceCat {
 	css
 	script
 }
 
-
-//add a css or script link to a document
+// add a css or script link to a document
 //  url: is source where the data comes from, can be CDN or local link
 //  path: can be relative or absolute path to the info
 // 	bookname, if in memory in a book
@@ -35,9 +34,7 @@ enum HtmlSourceCat{
 //	filename string, if in memory in a book
 //  cat, is .css or .script
 pub fn (mut doc Doc) pre_add(arg HtmlSource) string {
-
 }
-
 
 type DocItem = Action | Actions | CodeBlock | Header | Html | Link | Paragraph | Table
 
