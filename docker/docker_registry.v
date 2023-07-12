@@ -1,6 +1,5 @@
 module docker
 
-import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.openssl
 import freeflowuniverse.crystallib.httpconnection
 

@@ -1,6 +1,5 @@
 module docker
 
-import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.texttools
 
