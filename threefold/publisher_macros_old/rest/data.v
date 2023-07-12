@@ -8,7 +8,7 @@ pub:
 	base_path string
 }
 
-// const imageFields = ['logo', 'image']
+// const image_fields = ['logo', 'image']
 
 pub fn new_data_loader(base_path string) &DataLoader {
 	return &DataLoader{
@@ -53,7 +53,7 @@ fn (mut d DataLoader) get_doc_type_name[T]() string {
 // TODO
 fn (mut d DataLoader) resolve_links[T](mut document T) {
 	// $for field in T.fields {
-	// 	if field.name in ImageFields {
+	// 	if field.name in image_fields {
 	// 		document.$(field.name) = $(field.name) // resolve_link()
 	// 	}
 
