@@ -1,6 +1,7 @@
 module params
 
 import texttools
+import strconv
 
 // see if the kwarg with the key exists
 // if yes return as string trimmed
@@ -34,12 +35,16 @@ pub fn (params &Params) get_default(key string, defval string) !string {
 // description is a kwarg
 pub fn (params &Params) get_int(key string) !int {
 	valuestr := params.get(key)!
-	return valuestr.int()
+	return strconv.atoi(valuestr) or {
+		return error('Parameter ${key} = ${valuestr} is not a valid signed 32-bit integer')
+	}
 }
 
 pub fn (params &Params) get_float(key string) !f64 {
 	valuestr := params.get(key)!
-	return valuestr.f64()
+	return strconv.atof64(valuestr) or {
+		return error('Parameter ${key} = ${valuestr} is not a valid 64-bit float')
+	}
 }
 
 pub fn (params &Params) get_float_default(key string, defval f64) !f64 {
@@ -72,7 +77,9 @@ pub fn (params &Params) get_percentage_default(key string, defval string) !f64 {
 
 pub fn (params &Params) get_u64(key string) !u64 {
 	valuestr := params.get(key)!
-	return valuestr.u64()
+	return strconv.parse_uint(valuestr, 10, 64) or {
+		return error('Parameter ${key} = ${valuestr} is not a valid unsigned 64-bit integer')
+	}
 }
 
 pub fn (params &Params) get_u64_default(key string, defval u64) !u64 {
@@ -85,7 +92,9 @@ pub fn (params &Params) get_u64_default(key string, defval u64) !u64 {
 
 pub fn (params &Params) get_u32(key string) !u32 {
 	valuestr := params.get(key)!
-	return valuestr.u32()
+	return u32(strconv.parse_uint(valuestr, 10, 32) or {
+		return error('Parameter ${key} = ${valuestr} is not a valid unsigned 32-bit integer')
+	})
 }
 
 pub fn (params &Params) get_u32_default(key string, defval u32) !u32 {
@@ -98,7 +107,9 @@ pub fn (params &Params) get_u32_default(key string, defval u32) !u32 {
 
 pub fn (params &Params) get_u8(key string) !u8 {
 	valuestr := params.get(key)!
-	return valuestr.u8()
+	return u8(strconv.parse_uint(valuestr, 10, 8) or {
+		return error('Parameter ${key} = ${valuestr} is not a valid unsigned 8-bit integer')
+	})
 }
 
 pub fn (params &Params) get_u8_default(key string, defval u8) !u8 {

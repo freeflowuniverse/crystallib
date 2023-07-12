@@ -81,6 +81,18 @@ pub fn jsonrpcrequest_decode[T](data string) !JsonRpcRequest[T] {
 	return json.decode(JsonRpcRequest[T], data)!
 }
 
+struct JsonRpcRequestAny {
+pub mut:
+   jsonrpc string [required]
+   method string [required]
+   id string [required]
+}
+
+pub fn jsonrpcrequest_decode_method(data string) !string {
+	decoded := json.decode(JsonRpcRequestAny, data)!
+	return decoded.method
+}
+
 pub fn jsonrpcresponse_decode[D](data string) !JsonRpcResponse[D] {
 	return json.decode(JsonRpcResponse[D], data)!
 }
