@@ -2,6 +2,9 @@
     #define SECP256K1_V_MOD
 
     #include <secp256k1.h>
+    #include <secp256k1_ecdh.h>
+    #include <secp256k1_extrakeys.h>
+    #include <secp256k1_schnorrsig.h>
 
     typedef struct secp256k1_t {
         secp256k1_context *kntxt;         // library context
@@ -39,5 +42,15 @@
     int secp256k1_generate_key(secp256k1_t *secp);
     unsigned char *secp265k1_shared_key(secp256k1_t *private, secp256k1_t *public);
     unsigned char *secp256k1_sign_hash(secp256k1_t *secp, unsigned char *hash, size_t length);
+
+    secp256k1_sign_t *secp256k1_load_signature(secp256k1_t *secp, unsigned char *serialized, size_t length);
+    int secp256k1_sign_verify(secp256k1_t *secp, secp256k1_sign_t *signature, unsigned char *hash, size_t length);
+    unsigned char *secp256k1_schnorr_sign_hash(secp256k1_t *secp, unsigned char *hash, size_t length);
+    int secp256k1_schnorr_verify(secp256k1_t *secp, unsigned char *signature, size_t siglen, unsigned char *hash, size_t hashlen);
+    void secp256k1_sign_free(secp256k1_sign_t *signature);
+
+    char *secp256k1_export(secp256k1_t *secp);
+    void secp256k1_dumps(secp256k1_t *secp);
+    int secp256k1_load_key(secp256k1_t *secp, char *key);
 #endif
 
