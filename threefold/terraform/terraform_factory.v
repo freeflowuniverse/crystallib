@@ -3,7 +3,7 @@ module terraform
 import freeflowuniverse.crystallib.builder
 import os
 import crypto.md5
-import freeflowuniverse.crystallib.redisclient
+import freeflowuniverse.crystallib.redisclient { RedisURL }
 import freeflowuniverse.crystallib.rootpath
 
 pub enum TerraformFactoryStatus {
@@ -24,7 +24,7 @@ pub mut:
 // needed to get singleton
 fn init2() TerraformFactory {
 	mut x := TerraformFactory{
-		redis: redisclient.core_get()
+		redis: redisclient.core_get(RedisURL{})!
 	}
 	return x
 }

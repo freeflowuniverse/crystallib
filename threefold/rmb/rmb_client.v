@@ -1,7 +1,7 @@
 module zerohub
 
 import freeflowuniverse.crystallib.httpconnection
-import freeflowuniverse.crystallib.redisclient
+import freeflowuniverse.crystallib.redisclient { RedisURL }
 import os
 
 pub struct RMBClient {
@@ -59,7 +59,7 @@ pub fn new(args_ RMBClientArgs) !RMBClient {
 		args.tfchain_url = 'wss://tfchain.qa.grid.tf:443'
 	}
 
-	mut redis := redisclient.core_get()
+	mut redis := redisclient.core_get(RedisURL{})!
 
 	mut cl := RMBClient{
 		redis: redis

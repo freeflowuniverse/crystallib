@@ -2,7 +2,7 @@ module params
 
 // TODO: support more field types
 pub fn (params Params) decode[T]() !T {
-	t := T{}
+	mut t := T{}
 	$for field in T.fields {
 		// value := params.get(field.name)!
 		$if field.typ is string {
@@ -31,7 +31,7 @@ pub fn encode[T](t T) !Params {
 		val := t.$(field.name)
 		param := Param{
 			key: field.name
-			value: '${val}'.trim_left('[').trim_right(']').replace("'", '')
+			value: '${val}'
 		}
 		params.params << param
 	}
