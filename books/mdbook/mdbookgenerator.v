@@ -23,7 +23,7 @@ pub mut:
 [heap]
 pub struct MDBook {
 pub mut:
-	book          &Book
+	book           &Book
 	state          BooksState
 	embedded_files []embed_file.EmbedFileData // this where we have the templates for exporting a book
 	config         MDBooksConfig
@@ -38,7 +38,7 @@ pub struct BookNewArgs {
 // add a book to the book collection
 // 		name string
 // 		path string
-pub fn  book_new(args BookNewArgs) !&Book {
+pub fn book_new(args BookNewArgs) !&Book {
 	mut p := pathlib.get_file(args.path, false)! // makes sure we have the right path
 	if !p.exists() {
 		return error('cannot find book on path: ${args.path}')
@@ -68,8 +68,6 @@ pub fn  book_new(args BookNewArgs) !&Book {
 	mdbook.mdbook[book.name.replace('_', '')] = &book
 	return &book
 }
-
-
 
 // make sure all initialization has been done e.g. installing mdbook
 pub fn (mut mdbook MDBook) init() ! {

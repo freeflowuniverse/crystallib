@@ -72,7 +72,7 @@ fn main() {
 	nritems := 1000 * counter / bmark.total_duration()
 	println('nr of items per sec for write: ${nritems}')
 	// copy_to_stdout()
-	find_item("*some line with a nr: 499")  or {panic(err)}
+	find_item('*some line with a nr: 499') or { panic(err) }
 
 	find_benchmark(counter)
 }

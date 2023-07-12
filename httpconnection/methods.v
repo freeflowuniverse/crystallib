@@ -70,7 +70,7 @@ pub fn (mut h HTTPConnection) send(req Request) !Result {
 		new_req.header = h.header()
 		for _ in 0 .. h.retry {
 			response = new_req.do() or {
-				err_message = 'Cannot send rew:$req\nerror:${err}'
+				err_message = 'Cannot send rew:${req}\nerror:${err}'
 				// println(err_message)
 				continue
 			}

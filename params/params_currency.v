@@ -23,7 +23,7 @@ pub fn (params &Params) get_currencyamount_default(key string, defval string) !c
 pub fn (params &Params) get_currencyfloat(key string) !f64 {
 	mut cs := currency.new()!
 	valuestr := params.get(key)!
-	a:=cs.amount_get(valuestr)!
+	a := cs.amount_get(valuestr)!
 	return a.val
 }
 

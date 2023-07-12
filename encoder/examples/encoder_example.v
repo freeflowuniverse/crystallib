@@ -11,18 +11,24 @@ mut:
 }
 
 fn do1() ! {
-	mut e := encoder.encoder_new()
+
+	_, privkey := ed25519.generate_key()!
 	a := AStruct{
 		items: ['a', 'b']
 		nr: 10
-		privkey: []u8{len: 5, init: u8(0xf8)}
+		// privkey: []u8{len: 5, init: u8(0xf8)}
+		privkey: privkey
 	}
+
+	//do encoding
+	mut e := encoder.encoder_new()	
 	e.add_list_string(a.items)
 	e.add_int(a.nr)
-	_, privkey := ed25519.generate_key()!
 	e.add_bytes(privkey)
 
 	println(e.data)
+
+	//do decoding
 	mut d := encoder.decoder_new(e.data)
 	mut aa := AStruct{}
 	aa.items = d.get_list_string()
@@ -41,10 +47,12 @@ fn do2() ! {
 
 	serialize_data := encoder.encode(a)!
 
-	_ := encoder.decode[AStruct](serialize_data) or {
+	r := encoder.decode[AStruct](serialize_data) or {
 		eprintln('Failed to decode, error: ${err}')
 		return
 	}
+
+	println(r)
 }
 
 fn main() {

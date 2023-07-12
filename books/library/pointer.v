@@ -21,7 +21,7 @@ pub enum PointerState {
 // a chapter or book is identitied by smartid or name, name is only meaningful in my 3bot
 pub struct Pointer {
 pub mut:
-	chapter      string
+	chapter   string
 	name      string // is name without extension
 	cat       PointerCat
 	state     PointerState

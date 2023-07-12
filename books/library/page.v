@@ -25,12 +25,12 @@ pub mut: // pointer to chapter
 	categories     []string
 	doc            &markdowndocs.Doc [str: skip]
 	readonly       bool
-	changed 	   bool
+	changed        bool
 }
 
-//update link on the page, find the link into the chapter
+// update link on the page, find the link into the chapter
 fn (mut page Page) link_update(mut link Link) ! {
-	mut linkout:=link
+	mut linkout := link
 	mut file_name := link.filename
 	$if debug {
 		println(' - get link ${link.content} with name:\'${file_name}\' for page: ${page.path.path}')
@@ -86,15 +86,15 @@ fn (mut page Page) link_update(mut link Link) ! {
 
 	// means we now found the file or image
 	page.files_linked << fileobj
-	linkcompare1:=link.description+link.url+link.filename+link.content
+	linkcompare1 := link.description + link.url + link.filename + link.content
 	imagelink_rel := pathlib.path_relative(page.path.path_dir(), fileobj.path.path)!
 	link.description = ''
 	link.url = imagelink_rel
 	link.filename = os.base(imagelink_rel)
 	link.content = link.wiki()
-	linkcompare2:=link.description+link.url+link.filename+link.content
-	if linkcompare1!=linkcompare2{
-		page.changed=true
+	linkcompare2 := link.description + link.url + link.filename + link.content
+	if linkcompare1 != linkcompare2 {
+		page.changed = true
 	}
 
 	// link.link_update(mut paragraph, imagelink_rel, !page.readonly)!
@@ -106,7 +106,6 @@ fn (mut page Page) link_update(mut link Link) ! {
 	// 	println(imagelink_rel)
 	// 	panic('45jhg')
 	// }
-	
 }
 
 // checks if external link returns 404
@@ -118,11 +117,11 @@ fn (mut page Page) fix_external_link(mut link Link) ! {
 
 fn (mut page Page) fix() ! {
 	page.fix_links()!
-	//TODO: do includes
-	if page.changed{
-		println("CHANGED: $page.path")
+	// TODO: do includes
+	if page.changed {
+		println('CHANGED: ${page.path}')
 		page.save()!
-		page.changed=false
+		page.changed = false
 	}
 }
 
@@ -135,7 +134,7 @@ fn (mut page Page) fix_links() ! {
 					if item_link.isexternal {
 						page.fix_external_link(mut item_link)!
 					} else if item_link.cat == .image || item_link.cat == .file {
-						//this will change the link
+						// this will change the link
 						page.link_update(mut item_link)!
 					}
 				}
@@ -189,7 +188,7 @@ fn (mut page Page) process_macro_include(content string) !string {
 // }
 
 [params]
-pub struct PageSaveArgs{
+pub struct PageSaveArgs {
 pub mut:
 	dest string
 }
@@ -197,7 +196,7 @@ pub mut:
 // save the page on the requested dest
 // make sure the macro's are being executed
 pub fn (mut page Page) save(args_ PageSaveArgs) ! {
-	mut args:=args_
+	mut args := args_
 	if args.dest == '' {
 		args.dest = page.path.path
 	}
@@ -207,6 +206,6 @@ pub fn (mut page Page) save(args_ PageSaveArgs) ! {
 	p.write(out)!
 
 	// mutate page to save updated doc
-	updated_doc := markdowndocs.new(path: p.path) or { panic('cannot parse,${err}') }	
+	updated_doc := markdowndocs.new(path: p.path) or { panic('cannot parse,${err}') }
 	page.doc = &updated_doc
 }

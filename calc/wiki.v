@@ -6,9 +6,9 @@ import freeflowuniverse.crystallib.texttools
 pub struct WikiArgs {
 pub mut:
 	name          string
-	namefilter    		  []string //only include the exact names as secified for the rows
-	includefilter    	  []string //matches for the tags
-	excludefilter		  []string //matches for the tags
+	namefilter    []string // only include the exact names as secified for the rows
+	includefilter []string // matches for the tags
+	excludefilter []string // matches for the tags
 	period_months int = 12 // 3 for quarter, 12 for year, 1 for all months
 	description   string
 	title         string
