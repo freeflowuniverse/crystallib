@@ -73,8 +73,12 @@ pub fn (mut b DockerBuilderRecipe) add_zinit_cmd(args ZinitAddArgs) ! {
 		if !content.trim_space().starts_with('set ') {
 			content = 'set -ex\n\n${content}'
 		}
-		b.write_file(dest: '/cmds/${args.name}.sh', content: content, make_executable: true, name:
-			args.name + '.sh')!
+		b.write_file(
+			dest: '/cmds/${args.name}.sh'
+			content: content
+			make_executable: true
+			name: args.name + '.sh'
+		)!
 		zinitfilecontent += 'exec: /bin/bash /cmds/${args.name}.sh\n'
 	} else {
 		zinitfilecontent += 'exec: ${args.exec}\n'
