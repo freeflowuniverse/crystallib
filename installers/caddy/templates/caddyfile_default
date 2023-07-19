@@ -1,10 +1,10 @@
 
-@domain
+@config.domain
 
 encode zstd gzip
 
 # Set this path to your site's directory.
-root * @path
+root * @config.path
 
 # Enable the static file server.
 file_server

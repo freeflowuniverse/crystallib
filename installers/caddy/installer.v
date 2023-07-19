@@ -1,23 +1,20 @@
 module caddy
 
-import installers.base
-// import freeflowuniverse.crystallib.pathlib
+import freeflowuniverse.crystallib.builder
+import freeflowuniverse.crystallib.installers.base
 
 // install caddy will return true if it was already installed
-pub fn (mut i Installer) install() ! {
-	mut node := i.node
+pub fn install(mut node &builder.Node) ! {
+
+	//make sure we install base on the node
+	// base.install(mut node)!
+
 	// install caddy if it was already done will return true
 	println(' - ${node.name}: install caddy')
-	if !(i.state == .reset) && node.done_exists('install_caddy') {
-		println('    ${node.name}: was already done')
-		return
-	}
 
 	if node.platform != .ubuntu {
 		return error('only support ubuntu for now')
 	}
-
-	base.get_install(mut node)!
 
 	if node.command_exists('caddy') {
 		println('Caddy was already installed.')
@@ -27,8 +24,9 @@ pub fn (mut i Installer) install() ! {
 
 	node.exec("
 		sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https gpg sudo
-		curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-		curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list
+		rm -f /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+		curl -1sLfk 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+		curl -1sLfk 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list
 		apt update
 		apt install caddy
 	") or {
@@ -39,11 +37,21 @@ pub fn (mut i Installer) install() ! {
 	return
 }
 
+pub struct WebConfig{
+pub mut:
+	node &builder.Node
+	path string = "/var/www"
+	domain string = "default.com"
+}
+
 // configure caddy as default webserver & start
-pub fn (mut i Installer) configure_webserver_default(path string, domain string) ! {
-	mut node := i.node
+// node, path, domain
+// path e.g. /var/www
+// domain e.g. www.myserver.com
+pub fn install_test( config WebConfig) ! {
 	mut config_file := $tmpl('templates/caddyfile_default')
-	node.exec('mkdir -p ${path}')!
+	mut node:= config.node
+	node.exec('mkdir -p ${config.path}')!
 
 	default_html := '
 	<!DOCTYPE html>
@@ -56,37 +64,32 @@ pub fn (mut i Installer) configure_webserver_default(path string, domain string)
 		</body>
 	</html>
 	'
-	node.file_write('${path}/index.html', default_html)!
+	node.file_write('${config.path}/index.html', default_html)!
 
-	i.configuration_set(config_file)!
+	configuration_set(mut node, config_file)!
 }
 
-pub fn (mut i Installer) configuration_get() !string {
-	mut node := i.node
+pub fn configuration_get(mut node &builder.Node) !string {
 	c := node.file_read('/etc/caddy/Caddyfile')!
 	return c
 }
 
-pub fn (mut i Installer) configuration_set(config_file string) ! {
-	mut node := i.node
+pub fn configuration_set(mut node &builder.Node, config_file string) ! {
 	node.file_write('/etc/caddy/Caddyfile', config_file)!
-	i.restart()!
+	restart(mut node)!
 }
 
 // start caddy
-pub fn (mut i Installer) start() ! {
-	mut node := i.node
+pub fn start(mut node &builder.Node) ! {
 	node.exec_silent('caddy start --config /etc/caddy/Caddyfile')!
 }
 
-pub fn (mut i Installer) stop() ! {
-	mut node := i.node
+pub fn stop(mut node &builder.Node) ! {
 	node.exec_silent('caddy stop') or {}
 	// TODO: should do some better test to check if caddy is really stopped
 }
 
-pub fn (mut i Installer) restart() ! {
-	mut node := i.node
+pub fn restart(mut node &builder.Node) ! {
 	cmd := '
 	set +ex
 	caddy stop

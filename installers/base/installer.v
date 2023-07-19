@@ -4,8 +4,7 @@ import freeflowuniverse.crystallib.builder
 import process
 
 // install base will return true if it was already installed
-pub fn (mut i Installer) install() ! {
-	mut node := i.node
+pub fn install(mut node &builder.Node) ! {
 	println(' - ${node.name}: platform prepare')
 	if !node.done_exists('platform_prepare') {
 		if node.platform == builder.PlatformType.osx {
