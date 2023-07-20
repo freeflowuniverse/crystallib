@@ -1,13 +1,13 @@
 
 module main
 import freeflowuniverse.crystallib.builder
-import crystallib.installers.caddy
+import crystallib.installers.golang
 
 fn do() ! {
 
 	//do basic install on a node
 	mut n:=builder.node_local()!
-	caddy.install_configure(node:mut n)!
+	golang.install(node:mut n)!
 
 }
 

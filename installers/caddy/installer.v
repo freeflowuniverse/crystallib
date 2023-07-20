@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.installers.base
 pub fn install(mut node &builder.Node) ! {
 
 	//make sure we install base on the node
-	// base.install(mut node)!
+	base.install(mut node)!
 
 	// install caddy if it was already done will return true
 	println(' - ${node.name}: install caddy')
@@ -48,9 +48,10 @@ pub mut:
 // node, path, domain
 // path e.g. /var/www
 // domain e.g. www.myserver.com
-pub fn install_test( config WebConfig) ! {
+pub fn install_configure( config WebConfig) ! {
 	mut config_file := $tmpl('templates/caddyfile_default')
 	mut node:= config.node
+	install(mut node)!
 	node.exec('mkdir -p ${config.path}')!
 
 	default_html := '
