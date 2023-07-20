@@ -1,6 +1,8 @@
 module installers
 
-//following functions are set of utilities to make our life easy, use vlang as constructs (not the builder)
+import time
+
+// following functions are set of utilities to make our life easy, use vlang as constructs (not the builder)
 
 [params]
 pub struct ExecArgs {
@@ -14,17 +16,15 @@ pub mut:
 	checkkey           string // if used will use this one in stead of hash of cmd, to check if was executed already
 	tmpdir             string
 	ignore_error_codes []int
- 	retry_max 		   int = 1 		//how may times maximum to retry
-  	retry_period       int = 100	//sleep in between retry in milliseconds
-	retry_timeout 	   int = 2	    //timeout for al the tries together	in milliseconds
+	retry_max          int = 1 // how may times maximum to retry
+	retry_period       int = 100 // sleep in between retry in milliseconds
+	retry_timeout      int = 2 // timeout for al the tries together	in milliseconds
 }
 
-
-//TODO: document properly
+// TODO: document properly
 // supports multiline
 pub fn exec(args ExecArgs) !string {
-	//TODO: implement without node builder, use redis for state
-	mut args := args_
+	// TODO: implement without node builder, use redis for state
 	mut cmd := args.cmd
 	mut now_epoch := time.now().unix_time()
 	mut now_str := now_epoch.str()
@@ -86,4 +86,3 @@ pub fn exec(args ExecArgs) !string {
 	done_set('exec_${hhash}', '${now_str}|${res}')!
 	return res
 }
-

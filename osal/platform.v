@@ -1,9 +1,9 @@
 module osal
 
-//TODO:
+// TODO:
 
 fn platform() !PlatformType {
-	//use redis to cache,
+	// use redis to cache,
 	println(' - platform load')
 	mut cputype := exec_silent('uname -m')!
 	cputype = cputype.to_lower().trim_space()
@@ -28,7 +28,7 @@ fn platform() !PlatformType {
 	return platform
 }
 
-fn  platform_load() ! {
+fn platform_load() ! {
 	// TODO: should rewrite this with one bash script, which gets the required info & returns e.g. env, platform, ... is much faster
 	println(' - platform load')
 	mut cputype := exec_silent('uname -m')!

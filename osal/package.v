@@ -1,16 +1,13 @@
 module os
 
-
-pub fn  package_refresh() ! {
+pub fn package_refresh() ! {
 	if platform == PlatformType.ubuntu {
-		exec('apt-get update') or {
-			return error('could not update packages list\nerror:\n${err}')
-		}
+		exec('apt-get update') or { return error('could not update packages list\nerror:\n${err}') }
 	}
 }
 
-pub fn  package_install(package Package) ! {
-	//get platform
+pub fn package_install(package Package) ! {
+	// get platform
 	name := package.name
 	if platform == PlatformType.osx {
 		exec('brew install ${name}') or {
@@ -29,7 +26,7 @@ pub fn  package_install(package Package) ! {
 	}
 }
 
-fn  upgrade() ! {
+fn upgrade() ! {
 	if platform == PlatformType.ubuntu {
 		upgrade_cmds := '
 			sudo killall apt apt-get

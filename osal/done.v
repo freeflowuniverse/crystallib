@@ -1,8 +1,8 @@
 module installers
 
-//TODO: implement done using redis (just a hset)
+// TODO: implement done using redis (just a hset)
 
-pub fn  done_set(key string, val string) ! {
+pub fn done_set(key string, val string) ! {
 	if key in node.done {
 		if node.done[key] == val {
 			return
@@ -12,7 +12,7 @@ pub fn  done_set(key string, val string) ! {
 	node.save()!
 }
 
-pub fn  done_get(key string) ?string {
+pub fn done_get(key string) ?string {
 	if key !in node.done {
 		return none
 	}
@@ -20,7 +20,7 @@ pub fn  done_get(key string) ?string {
 }
 
 // will return empty string if it doesnt exist
-pub fn  done_get_str(key string) string {
+pub fn done_get_str(key string) string {
 	if key !in node.done {
 		return ''
 	}
@@ -28,25 +28,25 @@ pub fn  done_get_str(key string) string {
 }
 
 // will return 0 if it doesnt exist
-pub fn  done_get_int(key string) int {
+pub fn done_get_int(key string) int {
 	if key !in node.done {
 		return 0
 	}
 	return node.done[key].int()
 }
 
-pub fn  done_exists(key string) bool {
+pub fn done_exists(key string) bool {
 	return key in node.done
 }
 
-pub fn  done_print() {
+pub fn done_print() {
 	println('   DONE: ${node.name} ')
 	for key, val in node.done {
 		println('   . ${key} = ${val}')
 	}
 }
 
-pub fn  done_reset() ! {
+pub fn done_reset() ! {
 	node.done = map[string]string{}
 	node.save()!
 }
