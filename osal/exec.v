@@ -23,7 +23,7 @@ pub mut:
 
 // TODO: document properly
 // supports multiline
-pub fn exec(args ExecArgs) !string {
+pub fn (mut o Osal) exec(args ExecArgs) !string {
 	// TODO: implement without node builder, use redis for state
 	mut cmd := args.cmd
 	mut now_epoch := time.now().unix_time()
@@ -45,15 +45,15 @@ pub fn exec(args ExecArgs) !string {
 			description = '\n${description}\n'
 		}
 	}
-	if !args.reset && done_exists('exec_${hhash}') {
+	if !args.reset && o.done_exists('exec_${hhash}') {
 		if args.period == 0 {
-			println('   - exec cmd:${description} on ${name}: was already done, period indefinite.')
-			return done_get('exec_${hhash}') or { '' }
+			o.logger.info('   - exec cmd:${description} on ${name}: was already done, period indefinite.')
+			return o.done_get('exec_${hhash}') or { '' }
 		}
-		nodedone := done_get_str('exec_${hhash}')
+		nodedone := o.done_get_str('exec_${hhash}')
 		splitted := nodedone.split('|')
 		if splitted.len != 2 {
-			panic("Cannot return from done on exec needs to have |, now \n'${nodedone}' ")
+			return error("Cannot return from done on exec needs to have |, now \n'${nodedone}' ")
 		}
 		exec_last_time := splitted[0].int()
 		lastoutput := splitted[1]
@@ -81,8 +81,8 @@ pub fn exec(args ExecArgs) !string {
 		cmd += ' && rm -f ${r_path}'
 	}
 	// println("   - exec cmd:$cmd on $name")
-	res := exec(cmd) or { return error(err.msg() + '\noriginal cmd:\n${args.cmd}') }
+	res := o.exec(cmd) or { return error(err.msg() + '\noriginal cmd:\n${args.cmd}') }
 
-	done_set('exec_${hhash}', '${now_str}|${res}')!
+	o.done_set('exec_${hhash}', '${now_str}|${res}')!
 	return res
 }
