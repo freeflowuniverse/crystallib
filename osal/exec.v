@@ -1,8 +1,8 @@
 module osal
 
 import freeflowuniverse.crystallib.texttools
-
 import crypto.md5
+import os
 import time
 
 // following functions are set of utilities to make our life easy, use vlang as constructs (not the builder)
@@ -18,17 +18,16 @@ pub mut:
 	stdout             bool = true
 	checkkey           string // if used will use this one in stead of hash of cmd, to check if was executed already
 	tmpdir             string
+	environment        map[string]string
 	ignore_error_codes []int
 	retry_max          int = 1 // how may times maximum to retry
 	retry_period       int = 100 // sleep in between retry in milliseconds
 	retry_timeout      int = 2 // timeout for al the tries together	in milliseconds
 }
 
-/*
 // TODO: document properly
 // supports multiline
 pub fn (mut o Osal) exec(args ExecArgs) !string {
-	// TODO: implement without node builder, use redis for state
 	mut cmd := args.cmd
 	mut now_epoch := time.now().unix_time()
 	mut now_str := now_epoch.str()
@@ -51,7 +50,7 @@ pub fn (mut o Osal) exec(args ExecArgs) !string {
 	}
 	if !args.reset && o.done_exists('exec_${hhash}') {
 		if args.period == 0 {
-			o.logger.info('   - exec cmd:${description} on ${name}: was already done, period indefinite.')
+			o.logger.info('exec cmd:${description}: was already done, period indefinite.')
 			return o.done_get('exec_${hhash}') or { '' }
 		}
 		nodedone := o.done_get_str('exec_${hhash}')
@@ -61,33 +60,44 @@ pub fn (mut o Osal) exec(args ExecArgs) !string {
 		}
 		exec_last_time := splitted[0].int()
 		lastoutput := splitted[1]
+		if exec_last_time <= 10000 {
+			return error('Last time should  be more then 10000')
+		}
 		assert exec_last_time > 10000
-		// println(args)
-		// println("   - check exec cmd:$cmd on $name: time:$exec_last_time")
+		o.logger.info('check exec cmd:${cmd}: time:${exec_last_time}')
 		if exec_last_time > now_epoch - args.period {
 			hours := args.period / 3600
-			println('   - exec cmd:${description} on ${name}: was already done, period ${hours} h')
+			o.logger.info('exec cmd:${description}: was already done, period ${hours} h')
 			return lastoutput
 		}
 	}
 
-	if args.tmpdir.len == 0 {
-		if 'TMPDIR' !in environment {
-			args.tmpdir = '/tmp'
+	mut tmpdir := '/tmp'
+	if args.tmpdir.len != 0 {
+		if 'TMPDIR' in args.environment {
+			tmpdir = args.environment['TMPDIR']
 		} else {
-			args.tmpdir = environment['TMPDIR']
+			tmpdir = '/tmp'
 		}
 	}
-	r_path := '${args.tmpdir}/installer.sh'
-	file_write(r_path, cmd)!
-	cmd = "mkdir -p ${args.tmpdir} && cd ${args.tmpdir} && export TMPDIR='${args.tmpdir}' && bash ${r_path}"
+	r_path := '${tmpdir}/installer.sh'
+	o.file_write(r_path, cmd)!
+	cmd = "mkdir -p ${tmpdir} && cd ${tmpdir} && export TMPDIR='${tmpdir}' && bash ${r_path}"
 	if args.remove_installer {
 		cmd += ' && rm -f ${r_path}'
 	}
-	// println("   - exec cmd:$cmd on $name")
-	res := o.exec(cmd) or { return error(err.msg() + '\noriginal cmd:\n${args.cmd}') }
+	o.logger.info('exec cmd:${cmd}')
+	old_environment := o.env_get_all()
+	if args.environment.len > 0 {
+		o.env_set_all(env: args.environment)
+	}
+	res := os.execute(cmd)
+	o.env_set_all(env: old_environment)
+	if res.exit_code != 0 {
+		return error('Execution failed with exit code ${res.exit_code}' +
+			'\noriginal cmd:\n${args.cmd}')
+	}
 
-	o.done_set('exec_${hhash}', '${now_str}|${res}')!
-	return res
+	o.done_set('exec_${hhash}', '${now_str}|${res.output}')!
+	return res.output
 }
-*/

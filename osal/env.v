@@ -2,25 +2,24 @@ module osal
 
 import os
 
-// TODO: how to deal with environment os.env
 [params]
 pub struct EnvSet {
 pub mut:
-	key string [required]
-	value string [required]
+	key       string [required]
+	value     string [required]
 	overwrite bool = true
 }
 
 [params]
 pub struct EnvSetAll {
 pub mut:
-	env map[string]string
-	clear_before_set bool
+	env                 map[string]string
+	clear_before_set    bool
 	overwrite_if_exists bool = true
 }
 
 // Sets an environment if it was not set before, it overwrites the enviroment variable if it exists and if overwrite was set to true (default)
-pub fn (mut o Osal) env_set(args EnvSet)  {
+pub fn (mut o Osal) env_set(args EnvSet) {
 	os.setenv(args.key, args.value, args.overwrite)
 }
 
@@ -58,7 +57,5 @@ pub fn (mut o Osal) env_get(key string) !string {
 
 // Returns the requested environment variable if it exists or returns the provided default value if it does not
 pub fn (mut o Osal) env_get_default(key string, def string) string {
-	return os.environ()[key] or {
-		return def
-	}
+	return os.environ()[key] or { return def }
 }

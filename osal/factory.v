@@ -12,8 +12,10 @@ mut:
 [params]
 pub struct OsalArgs {
 pub mut:
-	redis_address string = "localhost:6379"
-	logger log.Logger = log.Logger(&log.Log{ level: .info})
+	redis_address string     = 'localhost:6379'
+	logger        log.Logger = log.Logger(&log.Log{
+	level: .info
+})
 }
 
 pub fn new(args OsalArgs) !Osal {
