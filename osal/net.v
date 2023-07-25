@@ -2,6 +2,7 @@ module osal
 
 // TODO: ping
 
+/*
 // return the ipaddress as known on the public side
 // is using resolver4.opendns.com
 pub fn ipaddr_pub_get() !string {
@@ -14,3 +15,4 @@ pub fn ipaddr_pub_get() !string {
 	mut ipaddr := done_get('ipaddr') or { return 'Error: ipaddr is none' }
 	return ipaddr.trim('\n').trim(' \n')
 }
+*/

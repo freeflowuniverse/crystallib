@@ -1,5 +1,8 @@
-module installers
+module osal
 
+import freeflowuniverse.crystallib.texttools
+
+import crypto.md5
 import time
 
 // following functions are set of utilities to make our life easy, use vlang as constructs (not the builder)
@@ -21,6 +24,7 @@ pub mut:
 	retry_timeout      int = 2 // timeout for al the tries together	in milliseconds
 }
 
+/*
 // TODO: document properly
 // supports multiline
 pub fn (mut o Osal) exec(args ExecArgs) !string {
@@ -86,3 +90,4 @@ pub fn (mut o Osal) exec(args ExecArgs) !string {
 	o.done_set('exec_${hhash}', '${now_str}|${res}')!
 	return res
 }
+*/

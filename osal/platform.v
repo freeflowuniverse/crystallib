@@ -1,7 +1,7 @@
 module osal
 
 // TODO:
-
+/*
 fn platform() !PlatformType {
 	// use redis to cache,
 	println(' - platform load')
@@ -54,3 +54,4 @@ fn platform_load() ! {
 		}
 	}
 }
+*/

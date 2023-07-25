@@ -1,5 +1,6 @@
-module os
+module osal
 
+/*
 pub fn package_refresh() ! {
 	if platform == PlatformType.ubuntu {
 		exec('apt-get update') or { return error('could not update packages list\nerror:\n${err}') }
@@ -51,3 +52,4 @@ fn upgrade() ! {
 		)!
 	}
 }
+*/

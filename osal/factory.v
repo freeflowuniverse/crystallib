@@ -9,9 +9,16 @@ mut:
 	logger &log.Logger
 }
 
-pub fn new(redis_address string, logger &log.Logger) !Osal {
+[params]
+pub struct OsalArgs {
+pub mut:
+	redis_address string = "localhost:6379"
+	logger log.Logger = log.Logger(&log.Log{ level: .info})
+}
+
+pub fn new(args OsalArgs) !Osal {
 	return Osal{
-		redis: redisclient.get(redis_address)!
-		logger: unsafe { logger }
+		redis: redisclient.get(args.redis_address)!
+		logger: &args.logger
 	}
 }
