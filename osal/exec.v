@@ -20,9 +20,9 @@ pub mut:
 	tmpdir             string
 	environment        map[string]string
 	ignore_error_codes []int
-	retry_max          int = 1 // how may times maximum to retry
+	retry_max          u8 = 1 // how may times maximum to retry
 	retry_period       int = 100 // sleep in between retry in milliseconds
-	retry_timeout      int = 2 // timeout for al the tries together	in milliseconds
+	retry_timeout      int = 2000 // timeout for al the tries together in milliseconds
 }
 
 // TODO: document properly
@@ -30,7 +30,7 @@ pub mut:
 pub fn (mut o Osal) exec(args ExecArgs) !string {
 	mut cmd := args.cmd
 	mut now_epoch := time.now().unix_time()
-	mut now_str := now_epoch.str()
+
 	if cmd.contains('\n') {
 		cmd = texttools.dedent(cmd)
 	}
@@ -82,22 +82,36 @@ pub fn (mut o Osal) exec(args ExecArgs) !string {
 	}
 	r_path := '${tmpdir}/installer.sh'
 	o.file_write(r_path, cmd)!
-	cmd = "mkdir -p ${tmpdir} && cd ${tmpdir} && export TMPDIR='${tmpdir}' && bash ${r_path}"
-	if args.remove_installer {
-		cmd += ' && rm -f ${r_path}'
-	}
-	o.logger.info('exec cmd:${cmd}')
-	old_environment := o.env_get_all()
-	if args.environment.len > 0 {
-		o.env_set_all(env: args.environment)
-	}
-	res := os.execute(cmd)
-	o.env_set_all(env: old_environment)
-	if res.exit_code != 0 {
-		return error('Execution failed with exit code ${res.exit_code}' +
-			'\noriginal cmd:\n${args.cmd}')
+	os.chmod(r_path, 0o777)!
+
+	time_started := time.now()
+	mut err := ""
+	for _ in 0..args.retry_max+1 {
+		mut process := os.new_process("/bin/bash")
+		process.set_args([r_path])
+		process.set_work_folder(tmpdir)
+		process.set_redirect_stdio()
+		if args.environment.len > 0 {
+			process.set_environment(args.environment)	
+		}
+		
+		process.run()
+		for process.is_alive() {
+			if time.now() - time_started >= time.millisecond * args.retry_timeout {
+				process.signal_kill()
+				return error('Execution failed due to timeout (${args.retry_timeout})' +
+					'\noriginal cmd:\n${args.cmd}')
+			} 
+			time.sleep(time.millisecond * 100)
+		}
+		process.wait()
+		err = process.stderr_read()
+		if err == "" {
+			res := process.stdout_read()
+			o.done_set('exec_${hhash}', '${time.now().unix_time().str()}|${res}')!
+			return res
+		}
 	}
 
-	o.done_set('exec_${hhash}', '${now_str}|${res.output}')!
-	return res.output
+	return error('Execution failed (retried ${args.retry_max} times): "${err}"\noriginal cmd:\n${args.cmd}')
 }
