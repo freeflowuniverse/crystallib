@@ -32,7 +32,7 @@ fn test_exec_cmd_fail_and_retry() ! {
 	mut o := new()!
 
 	res := o.exec(cmd: "lsk ./", retry_max: 2) or {
-		assert err.str().contains("Execution failed (retried 2 times)"), ""
+		assert err.str().contains("Execution failed with code 127 (retried 2 times)"), "Expected a different error, got ${err}"
 		assert !os.is_file('/tmp/installer.sh')
 		return
 	}

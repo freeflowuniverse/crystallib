@@ -21,7 +21,7 @@ pub mut:
 	ignore_error_codes []int
 	retry_max          u8 = 1 // how may times maximum to retry
 	retry_period       int = 100 // sleep in between retry in milliseconds
-	retry_timeout      int = 2000 // timeout for al the tries together in milliseconds
+	retry_timeout      int = 2000 // timeout for al the tries together in milliseconds, if this value is 0 it will wait indefinite
 }
 
 // Executes the provided command in a bash script using the environment variables. It retries the amount of times specified in the arguments if the command failed and fails if the command took longer then the retry_timeout. 
@@ -93,6 +93,7 @@ pub fn (mut o Osal) exec(args ExecArgs) !string {
 
 	time_started := time.now()
 	mut err := ""
+	mut err_code := 0
 	for x in 0..args.retry_max+1 {
 		mut process := os.new_process("/bin/bash")
 		process.set_args([r_path])
@@ -103,7 +104,7 @@ pub fn (mut o Osal) exec(args ExecArgs) !string {
 		}
 		
 		process.run()
-		for process.is_alive() {
+		for args.retry_timeout > 0 && process.is_alive() {
 			if time.now() - time_started >= time.millisecond * args.retry_timeout {
 				process.signal_kill()
 				return error('Execution failed due to timeout (${args.retry_timeout})\noriginal cmd:\n${args.cmd}')
@@ -117,10 +118,11 @@ pub fn (mut o Osal) exec(args ExecArgs) !string {
 			o.done_set('exec_${hhash}', '${time.now().unix_time().str()}|${res}')!
 			return res
 		} else {
+			err_code = process.code
 			attempts := if args.retry_max > 0 { " (attempt nr ${x+1})" } else { "" }
 			o.logger.error("Execution failed with code ${process.code}${attempts}: ${err}")
 		}
 	}
 
-	return error('Execution failed (retried ${args.retry_max} times): "${err}"\noriginal cmd:\n${args.cmd}')
+	return error('Execution failed with code ${err_code} (retried ${args.retry_max} times):\nerr:"${err}"\noriginal cmd:\n${args.cmd}')
 }
