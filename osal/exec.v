@@ -48,11 +48,8 @@ pub fn (mut o Osal) exec(args ExecArgs) !string {
 			description = '\n${description}\n'
 		}
 	}
+
 	if !args.reset && o.done_exists('exec_${hhash}') {
-		if args.period == 0 {
-			o.logger.info('exec cmd:${description}: was already done, period indefinite.')
-			return o.done_get('exec_${hhash}') or { '' }
-		}
 		nodedone := o.done_get_str('exec_${hhash}')
 		splitted := nodedone.split('|')
 		if splitted.len != 2 {
@@ -60,15 +57,20 @@ pub fn (mut o Osal) exec(args ExecArgs) !string {
 		}
 		exec_last_time := splitted[0].int()
 		lastoutput := splitted[1]
+		if args.period == 0 {
+			o.logger.info('exec cmd:${description}: was already done, period indefinite.')
+			return lastoutput
+		}
 		if exec_last_time <= 10000 {
 			return error('Last time should  be more then 10000')
 		}
-		assert exec_last_time > 10000
 		o.logger.info('check exec cmd:${cmd}: time:${exec_last_time}')
 		if exec_last_time > now_epoch - args.period {
 			hours := args.period / 3600
 			o.logger.info('exec cmd:${description}: was already done, period ${hours} h')
 			return lastoutput
+		} else {
+			o.logger.debug('exec cmd:${description}: was already done but it was too long ago, doing it agian')
 		}
 	}
 
@@ -80,13 +82,19 @@ pub fn (mut o Osal) exec(args ExecArgs) !string {
 			tmpdir = '/tmp'
 		}
 	}
+
 	r_path := '${tmpdir}/installer.sh'
 	o.file_write(r_path, cmd)!
+	if args.remove_installer {
+		defer {
+			os.rm(r_path) or { }
+		}
+	}
 	os.chmod(r_path, 0o777)!
 
 	time_started := time.now()
 	mut err := ""
-	for _ in 0..args.retry_max+1 {
+	for x in 0..args.retry_max+1 {
 		mut process := os.new_process("/bin/bash")
 		process.set_args([r_path])
 		process.set_work_folder(tmpdir)
@@ -99,8 +107,7 @@ pub fn (mut o Osal) exec(args ExecArgs) !string {
 		for process.is_alive() {
 			if time.now() - time_started >= time.millisecond * args.retry_timeout {
 				process.signal_kill()
-				return error('Execution failed due to timeout (${args.retry_timeout})' +
-					'\noriginal cmd:\n${args.cmd}')
+				return error('Execution failed due to timeout (${args.retry_timeout})\noriginal cmd:\n${args.cmd}')
 			} 
 			time.sleep(time.millisecond * 100)
 		}
@@ -110,6 +117,9 @@ pub fn (mut o Osal) exec(args ExecArgs) !string {
 			res := process.stdout_read()
 			o.done_set('exec_${hhash}', '${time.now().unix_time().str()}|${res}')!
 			return res
+		} else {
+			attempts := if args.retry_max > 0 { "  (attempt nr ${x+1})" } else { "" }
+			o.logger.error("Execution failed${attempts}: ${err}")
 		}
 	}
 

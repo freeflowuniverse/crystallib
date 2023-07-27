@@ -29,7 +29,10 @@ pub fn (mut o Osal) done_get_int(key string) int {
 
 // Returns true if the command has been executed (if it is found in the hset exec.done) and false in the other case
 pub fn (mut o Osal) done_exists(key string) bool {
-	_ := o.redis.hget(osal.redis_done_key, '${key}') or { return false }
+	val := o.redis.hget(osal.redis_done_key, '${key}') or { return false }
+	if val == "" {
+		return false
+	}
 	return true
 }
 
