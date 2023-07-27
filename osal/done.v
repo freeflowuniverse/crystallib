@@ -39,8 +39,8 @@ pub fn (mut o Osal) done_exists(key string) bool {
 // Logs all the commands that were executed on this system (looks in the hset exec.done to do so)
 pub fn (mut o Osal) done_print() ! {
 	mut output := 'DONE:\n'
-	for key, val in o.redis.hgetall(osal.redis_done_key)! {
-		output += '   . ${key} = ${val}'
+	for key, value in o.redis.hgetall(osal.redis_done_key)! {
+		output += '\t${key} = ${value}\n'
 	}
 	o.logger.info('${output}')
 }

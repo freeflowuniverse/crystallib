@@ -68,9 +68,16 @@ pub fn (mut r Redis) hget(key string, skey string) !string {
 	return r.send_expect_strnil(['HGET', key, skey])
 }
 
-pub fn (mut r Redis) hgetall(key string) ![]resp.RValue {
+pub fn (mut r Redis) hgetall(key string) !map[string]string {
 	// mut key2 := key.trim("\"'")
-	return r.send_expect_list(['HGETALL', key])
+	res := r.send_expect_list_str(['HGETALL', key])!
+	mut mapped := map[string]string{}
+	mut i := 0
+	for i < res.len && i+1 < res.len {
+		mapped[res[i]] = res[i+1]
+		i += 2
+	}
+	return mapped
 }
 
 pub fn (mut r Redis) hexists(key string, skey string) !bool {

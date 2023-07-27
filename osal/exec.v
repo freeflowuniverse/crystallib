@@ -15,7 +15,6 @@ pub mut:
 	reset              bool = true // means do again or not
 	remove_installer   bool = true // delete the installer
 	description        string
-	stdout             bool = true
 	checkkey           string // if used will use this one in stead of hash of cmd, to check if was executed already
 	tmpdir             string
 	environment        map[string]string
@@ -25,8 +24,8 @@ pub mut:
 	retry_timeout      int = 2000 // timeout for al the tries together in milliseconds
 }
 
-// TODO: document properly
-// supports multiline
+// Executes the provided command in a bash script using the environment variables. It retries the amount of times specified in the arguments if the command failed and fails if the command took longer then the retry_timeout. 
+// The output of a successful command is returned and cached in redis. The cached value will be returned if the same command is executed again and if arguments allow so.
 pub fn (mut o Osal) exec(args ExecArgs) !string {
 	mut cmd := args.cmd
 	mut now_epoch := time.now().unix_time()
@@ -113,13 +112,13 @@ pub fn (mut o Osal) exec(args ExecArgs) !string {
 		}
 		process.wait()
 		err = process.stderr_read()
-		if err == "" {
+		if process.code == 0 || process.code in args.ignore_error_codes {
 			res := process.stdout_read()
 			o.done_set('exec_${hhash}', '${time.now().unix_time().str()}|${res}')!
 			return res
 		} else {
-			attempts := if args.retry_max > 0 { "  (attempt nr ${x+1})" } else { "" }
-			o.logger.error("Execution failed${attempts}: ${err}")
+			attempts := if args.retry_max > 0 { " (attempt nr ${x+1})" } else { "" }
+			o.logger.error("Execution failed with code ${process.code}${attempts}: ${err}")
 		}
 	}
 

@@ -108,6 +108,9 @@ pub fn (v RValue) strget() string {
 		// RArray{
 		// 	return v.str()
 		// }
+		RBString {
+			return v.value.bytestr()
+		}
 		RString {
 			return v.str()
 		}

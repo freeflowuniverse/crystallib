@@ -13,6 +13,7 @@ cat /tmp/testdirectory/file.txt
 '
 )
 
+// Test that succeeds in creating a file and printing the content of that file
 fn test_exec_cmd_create_file_and_print_content() ! {
 	mut o := new()!
 
@@ -26,6 +27,7 @@ fn test_exec_cmd_create_file_and_print_content() ! {
 	os.rmdir_all("/tmp/testdirectory")!
 }
 
+// Test where the command fails and we retry 2 times and it still fails
 fn test_exec_cmd_fail_and_retry() ! {
 	mut o := new()!
 
@@ -37,6 +39,7 @@ fn test_exec_cmd_fail_and_retry() ! {
 	return error("The command should fail and return an error!")
 }
 
+// Test where the execution takes too long and a timeout occurs
 fn test_exec_cmd_fail_due_timeout() ! {
 	mut o := new()!
 
@@ -47,6 +50,19 @@ fn test_exec_cmd_fail_due_timeout() ! {
 	return error("The command should fail and return an error!")
 }
 
+// Test where the command returns in an error but we ignore that error code
+fn test_exec_ignore_error_codes() ! {
+	mut o := new()!
+	mut redis := redisclient.get('localhost:6379')!
+	args := ExecArgs{
+		cmd: 'exit 10'
+		ignore_error_codes: [10]
+	}
+
+	mut res := o.exec(args)!
+}
+
+// Test using a cached result with a period of 10 milliseconds
 fn test_exec_cmd_done() ! {
 	mut o := new()!
 	mut redis := redisclient.get('localhost:6379')!
