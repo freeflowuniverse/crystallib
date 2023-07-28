@@ -24,6 +24,13 @@ pub mut:
 	retry_timeout      int = 2000 // timeout for al the tries together in milliseconds, if this value is 0 it will wait indefinite
 }
 
+pub fn (mut o Osal) cmd_exists(cmd string) bool {
+	o.exec(cmd: 'which ${cmd}', retry_max: 0) or {
+		return false
+	}
+	return true
+}
+
 // Executes the provided command in a bash script using the environment variables. It retries the amount of times specified in the arguments if the command failed and fails if the command took longer then the retry_timeout. 
 // The output of a successful command is returned and cached in redis. The cached value will be returned if the same command is executed again and if arguments allow so.
 pub fn (mut o Osal) exec(args ExecArgs) !string {

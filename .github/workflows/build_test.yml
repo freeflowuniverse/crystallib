@@ -58,6 +58,7 @@ jobs:
           v -stats test markdowndocs
           v -stats test mnemonic
           v -stats test openrpc
+          v -stats test osal
           v -stats test params
           v -stats test pathlib
           v -stats test redisclient
