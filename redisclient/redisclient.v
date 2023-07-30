@@ -14,9 +14,8 @@ const default_read_timeout = net.infinite_timeout
 [heap]
 pub struct Redis {
 pub mut:
-	connected bool
-	socket    net.TcpConn
-	addr      string
+	socket net.TcpConn
+	addr   string
 }
 
 pub struct SetOpts {
@@ -56,12 +55,8 @@ pub fn (mut r Redis) socket_connect() ! {
 	r.socket = net.dial_tcp(addr)!
 	r.socket.set_blocking(true)!
 	r.socket.set_read_timeout(10 * time.second)
-	r.socket.peer_addr()!
-	r.connected = true
-	// println(" - connect ok")
 }
 
-// THIS IS A WORKAROUND, not sure why we need this, shouldn't be here
 fn (mut r Redis) socket_check() ! {
 	r.socket.peer_addr() or {
 		eprintln(' - re-connect socket for redis')

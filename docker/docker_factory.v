@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.builder
 [params]
 pub struct DockerEngineArgs {
 pub mut:
-	sshkeys_allowed []string
+	sshkeys_allowed []string // ssh keys which will be inserted when a docker gets deployed (is not implemented yet)
 	name            string = 'default'
 	localonly       bool   // do you build for local utilization only
 	prefix          string // e.g. despiegk/ or myimage registry-host:5000/despiegk/) is added to the name when pushing	

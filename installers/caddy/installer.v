@@ -4,9 +4,8 @@ import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.installers.base
 
 // install caddy will return true if it was already installed
-pub fn install(mut node &builder.Node) ! {
-
-	//make sure we install base on the node
+pub fn install(mut node builder.Node) ! {
+	// make sure we install base on the node
 	base.install(mut node)!
 
 	// install caddy if it was already done will return true
@@ -37,20 +36,20 @@ pub fn install(mut node &builder.Node) ! {
 	return
 }
 
-pub struct WebConfig{
+pub struct WebConfig {
 pub mut:
-	node &builder.Node
-	path string = "/var/www"
-	domain string = "default.com"
+	node   &builder.Node
+	path   string = '/var/www'
+	domain string = 'default.com'
 }
 
 // configure caddy as default webserver & start
 // node, path, domain
 // path e.g. /var/www
 // domain e.g. www.myserver.com
-pub fn install_configure( config WebConfig) ! {
+pub fn install_configure(config WebConfig) ! {
 	mut config_file := $tmpl('templates/caddyfile_default')
-	mut node:= config.node
+	mut node := config.node
 	install(mut node)!
 	node.exec('mkdir -p ${config.path}')!
 
@@ -70,27 +69,27 @@ pub fn install_configure( config WebConfig) ! {
 	configuration_set(mut node, config_file)!
 }
 
-pub fn configuration_get(mut node &builder.Node) !string {
+pub fn configuration_get(mut node builder.Node) !string {
 	c := node.file_read('/etc/caddy/Caddyfile')!
 	return c
 }
 
-pub fn configuration_set(mut node &builder.Node, config_file string) ! {
+pub fn configuration_set(mut node builder.Node, config_file string) ! {
 	node.file_write('/etc/caddy/Caddyfile', config_file)!
 	restart(mut node)!
 }
 
 // start caddy
-pub fn start(mut node &builder.Node) ! {
+pub fn start(mut node builder.Node) ! {
 	node.exec_silent('caddy start --config /etc/caddy/Caddyfile')!
 }
 
-pub fn stop(mut node &builder.Node) ! {
+pub fn stop(mut node builder.Node) ! {
 	node.exec_silent('caddy stop') or {}
 	// TODO: should do some better test to check if caddy is really stopped
 }
 
-pub fn restart(mut node &builder.Node) ! {
+pub fn restart(mut node builder.Node) ! {
 	cmd := '
 	set +ex
 	caddy stop

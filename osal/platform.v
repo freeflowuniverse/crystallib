@@ -1,5 +1,6 @@
 module osal
 
+import log
 
 pub enum PlatformType {
 	unknown
@@ -16,21 +17,25 @@ pub enum CPUType {
 	arm32
 }
 
-pub fn (mut o Osal) platform() PlatformType {
-	if o.cmd_exists('sw_vers') {
+pub fn platform() PlatformType {
+	// TODO: cache in redis
+	if cmd_exists('sw_vers') {
 		return PlatformType.osx
-	} else if o.cmd_exists('apt-get') {
+	} else if cmd_exists('apt-get') {
 		return PlatformType.ubuntu
-	} else if o.cmd_exists('apk') {
+	} else if cmd_exists('apk') {
 		return PlatformType.alpine
-	} 
-
+	}
+	panic('platform not supported, only support osx, ubuntu and alpine.')
 	return PlatformType.unknown
 }
 
-pub fn (mut o Osal) cputype() CPUType {
-	mut cputype := o.exec(cmd: 'uname -m', retry_max: 0) or {
-		o.logger.error("Failed to execute uname to get the cputype: ${err}")
+pub fn cputype() CPUType {
+	mut logger := log.Logger(&log.Log{
+		level: .info
+	})
+	mut cputype := exec(cmd: 'uname -m', retry: 0) or {
+		logger.error('Failed to execute uname to get the cputype: ${err}')
 		return CPUType.unknown
 	}
 	cputype = cputype.to_lower().trim_space()
@@ -39,7 +44,6 @@ pub fn (mut o Osal) cputype() CPUType {
 	} else if cputype == 'arm64' {
 		return CPUType.arm
 	}
-
-	o.logger.warn("Unknown cputype ${cputype}")
+	logger.warn('Unknown cputype ${cputype}')
 	return CPUType.unknown
 }

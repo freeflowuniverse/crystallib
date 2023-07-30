@@ -126,6 +126,12 @@ pub fn (mut h HTTPConnection) get_json_list(req Request) ![]string {
 	return data
 }
 
+pub fn (mut h HTTPConnection) get_json(req Request) !string {
+	h.default_header.add(.content_language, 'Content-Type: application/json')
+	mut data_ := h.get(req)!
+	return data_
+}
+
 // Get Request with json data and return response as string
 pub fn (mut h HTTPConnection) get(req_ Request) !string {
 	mut req := req_

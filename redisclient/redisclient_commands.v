@@ -73,8 +73,8 @@ pub fn (mut r Redis) hgetall(key string) !map[string]string {
 	res := r.send_expect_list_str(['HGETALL', key])!
 	mut mapped := map[string]string{}
 	mut i := 0
-	for i < res.len && i+1 < res.len {
-		mapped[res[i]] = res[i+1]
+	for i < res.len && i + 1 < res.len {
+		mapped[res[i]] = res[i + 1]
 		i += 2
 	}
 	return mapped

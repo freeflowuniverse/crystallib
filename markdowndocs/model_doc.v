@@ -35,7 +35,7 @@ enum HtmlSourceCat {
 //  cat, is .css or .script
 pub fn (mut doc Doc) pre_add(arg HtmlSource) string {
 	// TODO what is this function for?
-	return ""
+	return ''
 }
 
 type DocItem = Action | Actions | CodeBlock | Header | Html | Link | Paragraph | Table

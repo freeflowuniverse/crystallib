@@ -1,6 +1,7 @@
 module docker
 
 import freeflowuniverse.crystallib.builder
+import freeflowuniverse.crystallib.osal {cputype,platform}
 // import freeflowuniverse.crystallib.installers.swarm
 
 // https://docs.docker.com/reference/
@@ -9,7 +10,7 @@ import freeflowuniverse.crystallib.builder
 pub struct DockerEngine {
 	name string
 pub mut:
-	node            builder.Node        [str: skip]
+	node            builder.Node        [str: skip] // URGENT: remove node use osal everywhere (OS SAL)
 	sshkeys_allowed []string // all keys here have access over ssh into the machine, when ssh enabled
 	images          []DockerImage
 	containers      []DockerContainer
@@ -34,9 +35,9 @@ pub fn (mut e DockerEngine) init() ! {
 		e.node.exec_silent('mkdir -p ${e.buildpath}')!
 	}
 	if e.platform == [] {
-		if e.node.platform == .ubuntu && e.node.cputype == .intel {
+		if e.node.platform == .ubuntu && cputype() == .intel {
 			e.platform = [.linux_amd64]
-		} else if e.node.platform == .osx && e.node.cputype == .arm {
+		} else if e.node.platform == .osx && cputype() == .arm {
 			e.platform = [.linux_arm64]
 		} else {
 			return error('only implemented ubuntu on amd and osx on arm for now for docker engine.')
@@ -51,35 +52,8 @@ pub fn (mut e DockerEngine) load() ! {
 	e.containers_load()!
 }
 
-// return list of containers
-// pub enum DockerContainerStatus {
-// 	up
-// 	down
-// 	restarting
-// 	paused
-// 	dead
-// 	created
-// }
-// struct DockerContainer {
-// pub:
-// 	id          string
-// 	name        string
-// 	hostname    string
-// 	created     string
-// 	ssh_enabled bool // if yes make sure ssh is enabled to the container
-// 	ipaddr 		builder.IPAddress
-// 	image           DockerImage
-// 	forwarded_ports []string
-// 	mounted_volumes []string
-// 	ssh_port        int // ssh port on node that is used to get ssh
-// 	ports           []string	
-// pub mut:
-// 	node            string
-// 	status          DockerContainerStatus
-// }
-// }
-// return list of images
-
+// load all containers, they can be consulten in e.containers
+// see obj: DockerContainer as result in e.containers
 pub fn (mut e DockerEngine) containers_load() ! {
 	e.containers = []DockerContainer{}
 	mut lines := e.node.exec_cmd(
@@ -91,13 +65,16 @@ pub fn (mut e DockerEngine) containers_load() ! {
 			continue
 		}
 		fields := line.split('|').map(clear_str)
-		println(fields)
+		// println(fields)
 		id := fields[0]
 		mut container := DockerContainer{
 			image: &DockerImage{
 				engine: &e
 			}
 			engine: &e
+		}
+		if fields.len < 11 {
+			panic('docker ps needs to output 11 parts.\n${fields}')
 		}
 		container.id = id
 		container.name = fields[1]
@@ -109,7 +86,7 @@ pub fn (mut e DockerEngine) containers_load() ! {
 		container.memsize = parse_size_mb(fields[7])!
 		// container.mounts = parse_mounts(fields[8])!
 		container.networks = parse_networks(fields[9])!
-		container.labels = parse_labels(fields[10])!
+		// container.labels = parse_labels(fields[10])!
 		container.ssh_enabled = contains_ssh_port(container.ports)
 		e.containers << container
 	}

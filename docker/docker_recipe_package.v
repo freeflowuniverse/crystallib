@@ -1,6 +1,5 @@
 module docker
 
-
 [params]
 pub struct PackageArgs {
 pub mut:

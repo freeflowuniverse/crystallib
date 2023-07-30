@@ -14,7 +14,7 @@ pub enum DockerContainerStatus {
 
 // need to fill in what is relevant
 [heap]
-struct DockerContainer {
+pub struct DockerContainer {
 pub mut:
 	id              string
 	name            string
@@ -26,7 +26,7 @@ pub mut:
 	ssh_port        int // ssh port on node that is used to get ssh
 	ports           []string
 	networks        []string
-	labels          map[string]string
+	labels          map[string]string       [str: skip]
 	image           &DockerImage
 	engine          &DockerEngine           [str: skip]
 	status          DockerContainerStatus
@@ -34,11 +34,12 @@ pub mut:
 	command         string
 }
 
-struct DockerContainerVolume {
-	src  string
+pub struct DockerContainerVolume {
+	src  string // TODO: is this in container? suggest to change src -> containerpath na dest->hostpath
 	dest string
 }
 
+[params]
 pub struct DockerContainerCreateArgs {
 	name            string
 	hostname        string

@@ -19,43 +19,43 @@ pub mut:
 }
 
 // Sets an environment if it was not set before, it overwrites the enviroment variable if it exists and if overwrite was set to true (default)
-pub fn (mut o Osal) env_set(args EnvSet) {
+pub fn env_set(args EnvSet) {
 	os.setenv(args.key, args.value, args.overwrite)
 }
 
 // Unsets an environment variable
-pub fn (mut o Osal) env_unset(key string) {
+pub fn env_unset(key string) {
 	os.unsetenv(key)
 }
 
 // Unsets all environment variables
-pub fn (mut o Osal) env_unset_all() {
+pub fn env_unset_all() {
 	for key, _ in os.environ() {
-		o.env_unset(key)
+		env_unset(key)
 	}
 }
 
 // Allows to set multiple enviroment variables in one go, if clear_before_set is true all existing environment variables will be unset before the operation, if overwrite_if_exists is set to true it will overwrite all existing enviromnent variables
-pub fn (mut o Osal) env_set_all(args EnvSetAll) {
+pub fn env_set_all(args EnvSetAll) {
 	if args.clear_before_set {
-		o.env_unset_all()
+		env_unset_all()
 	}
 	for key, val in args.env {
-		o.env_set(key: key, value: val, overwrite: args.overwrite_if_exists)
+		env_set(key: key, value: val, overwrite: args.overwrite_if_exists)
 	}
 }
 
 // Returns all existing environment variables
-pub fn (mut o Osal) env_get_all() map[string]string {
+pub fn env_get_all() map[string]string {
 	return os.environ()
 }
 
 // Returns the requested environment variable if it exists or throws an error if it does not
-pub fn (mut o Osal) env_get(key string) !string {
+pub fn env_get(key string) !string {
 	return os.environ()[key]!
 }
 
 // Returns the requested environment variable if it exists or returns the provided default value if it does not
-pub fn (mut o Osal) env_get_default(key string, def string) string {
+pub fn env_get_default(key string, def string) string {
 	return os.environ()[key] or { return def }
 }

@@ -1,6 +1,5 @@
 module docker
 
-
 [params]
 pub struct FromArgs {
 pub mut:
