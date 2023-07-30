@@ -14,7 +14,7 @@ pub:
 	openaikey string
 }
 
-fn new(args OpenAIFactoryArgs) !OpenAIFactory {
+pub fn new(args OpenAIFactoryArgs) !OpenAIFactory {
 	mut conn := httpconnection.new(
 		name: 'openai'
 		url: 'https://api.openai.com/v1/'
@@ -28,8 +28,9 @@ fn new(args OpenAIFactoryArgs) !OpenAIFactory {
 		// compensate for internet not being there
 		key = env['OPENAI_API_KEY']
 	}
-	oif.connection.default_header.add(.authorization, 'Authorization: Bearer ${key}')
+	oif.connection.default_header.add(.authorization, 'Bearer ${key}')
 	// req.add_custom_header('x-disable-pagination', 'True') !
+
 
 	return oif
 }

@@ -44,15 +44,15 @@ pub mut:
 
 struct ChatMessagesRaw {
 mut:
-	model_type string
+	model string
 	messages   []MessageRaw
 }
 
 // TODO: doc
-pub fn (mut f OpenAIFactory) chat_completion(model_type ModelType, msgs Messages) ! {
+pub fn (mut f OpenAIFactory) chat_completion(model_type ModelType, msgs Messages) !ChatCompletion {
 	model_type0 := modelname_str(model_type)
 	mut m := ChatMessagesRaw{
-		model_type: model_type0
+		model: model_type0
 	}
 	for msg in msgs.messages {
 		mr := MessageRaw{
@@ -63,7 +63,7 @@ pub fn (mut f OpenAIFactory) chat_completion(model_type ModelType, msgs Messages
 	}
 	data := json.encode(m)
 	r := f.connection.post_json_str(prefix: 'chat/completions', data: data)!
-	// TODO: return as nicely formatted json see above
-	println(r)
-	panic('sdsd')
+
+	res := json.decode(ChatCompletion, r)!
+	return res
 }
