@@ -4,28 +4,28 @@ import json
 
 pub struct Model {
 pub mut:
-	id string
-	created int
-	object string
-	owned_by string
-	root string
-	parent string
+	id         string
+	created    int
+	object     string
+	owned_by   string
+	root       string
+	parent     string
 	permission []ModelPermission
 }
 
 pub struct ModelPermission {
 pub mut:
-	id string
-	created int
-	object string
-	allow_create_engine bool
-	allow_sampling bool
-	allow_logprobs bool
+	id                   string
+	created              int
+	object               string
+	allow_create_engine  bool
+	allow_sampling       bool
+	allow_logprobs       bool
 	allow_search_indices bool
-	allow_view bool
-	allow_fine_tuning bool
-	organization string
-	is_blocking bool	
+	allow_view           bool
+	allow_fine_tuning    bool
+	organization         string
+	is_blocking          bool
 }
 
 pub struct Models {

@@ -14,45 +14,45 @@ pub enum AudioRespType {
 }
 
 const (
-	audio_model = "whisper-1"
+	audio_model      = 'whisper-1'
 	audio_mime_types = {
-		'.mp3': 'audio/mpeg',
-		'.mp4': 'audio/mp4',
-		'.mpeg': 'audio/mpeg',
-		'.mpga': 'audio/mp4',
-		'.m4a': 'audio/mp4',
-		'.wav': 'audio/vnd.wav',
-		'.webm': 'application/octet-stream',
+		'.mp3':  'audio/mpeg'
+		'.mp4':  'audio/mp4'
+		'.mpeg': 'audio/mpeg'
+		'.mpga': 'audio/mp4'
+		'.m4a':  'audio/mp4'
+		'.wav':  'audio/vnd.wav'
+		'.webm': 'application/octet-stream'
 	}
 )
 
-fn audio_resp_type_str(i AudioRespType) string{
+fn audio_resp_type_str(i AudioRespType) string {
 	return match i {
 		.json {
-			"json"
+			'json'
 		}
 		.text {
-			"text"
+			'text'
 		}
 		.srt {
-			"srt"
+			'srt'
 		}
 		.verbose_json {
-			"verbose_json"
+			'verbose_json'
 		}
 		.vtt {
-			"vtt"
+			'vtt'
 		}
 	}
 }
 
 pub struct AudioArgs {
 pub mut:
-	filepath string
-	prompt string
+	filepath        string
+	prompt          string
 	response_format AudioRespType
-	temperature int
-	language string
+	temperature     int
+	language        string
 }
 
 pub struct AudioResponse {
@@ -63,46 +63,46 @@ pub mut:
 // create transcription from an audio file
 // supported audio formats are mp3, mp4, mpeg, mpga, m4a, wav, or webm
 pub fn (mut f OpenAIFactory) create_transcription(args AudioArgs) !AudioResponse {
-	return f.create_audio_request(args, "audio/transcriptions")
+	return f.create_audio_request(args, 'audio/transcriptions')
 }
 
 // create translation to english from an audio file
 // supported audio formats are mp3, mp4, mpeg, mpga, m4a, wav, or webm
 pub fn (mut f OpenAIFactory) create_tranlation(args AudioArgs) !AudioResponse {
-	return f.create_audio_request(args, "audio/translations")
+	return f.create_audio_request(args, 'audio/translations')
 }
 
 fn (mut f OpenAIFactory) create_audio_request(args AudioArgs, endpoint string) !AudioResponse {
 	file_content := os.read_file(args.filepath)!
 	ext := os.file_ext(args.filepath)
-	mut file_mime_type := ""
-	if ext in audio_mime_types {
-		file_mime_type = audio_mime_types[ext]
+	mut file_mime_type := ''
+	if ext in openai.audio_mime_types {
+		file_mime_type = openai.audio_mime_types[ext]
 	} else {
-		return error("file extenion not supported")
+		return error('file extenion not supported')
 	}
 
-	file_data := http.FileData {
-		filename: os.base(args.filepath),
-		content_type: file_mime_type,
-		data: file_content,
+	file_data := http.FileData{
+		filename: os.base(args.filepath)
+		content_type: file_mime_type
+		data: file_content
 	}
 
 	form := http.PostMultipartFormConfig{
 		files: {
-			"file": [file_data],
-		},
+			'file': [file_data]
+		}
 		form: {
-			'model': audio_model,
-			'prompt': args.prompt,
-			'response_format': audio_resp_type_str(args.response_format),
-			'temperature': args.temperature.str(),
-			'language': args.language,
-		},
+			'model':           openai.audio_model
+			'prompt':          args.prompt
+			'response_format': audio_resp_type_str(args.response_format)
+			'temperature':     args.temperature.str()
+			'language':        args.language
+		}
 	}
-	
+
 	req := httpconnection.Request{
-		prefix: endpoint,
+		prefix: endpoint
 	}
 	r := f.connection.post_multi_part(req, form)!
 	if r.status_code != 200 {

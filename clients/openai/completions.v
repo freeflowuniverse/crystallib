@@ -44,8 +44,8 @@ pub mut:
 
 struct ChatMessagesRaw {
 mut:
-	model string
-	messages   []MessageRaw
+	model    string
+	messages []MessageRaw
 }
 
 // creates a new chat completion given a list of messages
