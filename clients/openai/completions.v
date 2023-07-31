@@ -48,7 +48,8 @@ mut:
 	messages   []MessageRaw
 }
 
-// TODO: doc
+// creates a new chat completion given a list of messages
+// each message consists of message content and the role of the author
 pub fn (mut f OpenAIFactory) chat_completion(model_type ModelType, msgs Messages) !ChatCompletion {
 	model_type0 := modelname_str(model_type)
 	mut m := ChatMessagesRaw{

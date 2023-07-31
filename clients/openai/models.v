@@ -33,11 +33,13 @@ pub mut:
 	data []Model
 }
 
+// list current models available in Open AI
 pub fn (mut f OpenAIFactory) list_models() !Models {
 	r := f.connection.get(prefix: 'models')!
 	return json.decode(Models, r)!
 }
 
+// returns details of a model using the model id
 pub fn (mut f OpenAIFactory) get_model(model string) !Model {
 	r := f.connection.get(prefix: 'models/' + model)!
 	return json.decode(Model, r)!
