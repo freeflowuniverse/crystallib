@@ -1,7 +1,7 @@
 module docker
 
 import freeflowuniverse.crystallib.builder
-import freeflowuniverse.crystallib.osal {cputype,platform}
+import freeflowuniverse.crystallib.osal { cputype }
 // import freeflowuniverse.crystallib.installers.swarm
 
 // https://docs.docker.com/reference/

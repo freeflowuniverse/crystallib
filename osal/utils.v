@@ -6,13 +6,13 @@ import log
 
 // Returns a logger object and allows you to specify via environment argument OSAL_LOG_LEVEL the debug level
 pub fn get_logger() log.Logger {
-	log_level := env_get_default("OSAL_LOG_LEVEL", "info")
+	log_level := env_get_default('OSAL_LOG_LEVEL', 'info')
 	return log.Logger(&log.Log{
 		level: match log_level.to_lower() {
-			"debug" { .debug }
-			"info" { .info }
-			"warn" { .warn }
-			"error" { .error }
+			'debug' { .debug }
+			'info' { .info }
+			'warn' { .warn }
+			'error' { .error }
 			else { .info }
 		}
 	})
