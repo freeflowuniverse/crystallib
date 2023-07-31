@@ -6,13 +6,13 @@ fn test_ipaddr_pub_get() {
 }
 
 fn test_ping() {
-	ping(address: '127.0.0.1', count: 1)!
+	assert ping(address: '127.0.0.1', count: 1) == .ok
 }
 
-fn test_ping_fails() ! {
-	ping(address: '192.168.145.154', count: 5, timeout: 1) or {
-		assert err.str().starts_with('Execution failed with code 1'), 'Expected a different error, got ${err}'
-		return
-	}
-	return error('Ping should fail!')
+fn test_ping_timeout() ! {
+	assert ping(address: '192.168.145.154', count: 5, timeout: 1) == .timeout
+}
+
+fn test_ping_unknownhost() ! {
+	assert ping(address: '12.902.219.1', count: 5, timeout: 1) == .unknownhost
 }

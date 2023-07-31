@@ -4,7 +4,6 @@ import freeflowuniverse.crystallib.texttools
 import crypto.md5
 import os
 import time
-import log
 
 pub struct ExecError {
 	Error
@@ -24,7 +23,7 @@ fn (err ExecError) msg() string {
 	if err.timeout {
 		return 'Execution failed timeout\n${err.args}'
 	}
-	mut msg := 'Execution failed with code:${err.exitcode}\n${err.error}\n${err.args}'
+	mut msg := 'Execution failed with code ${err.exitcode}\n${err.error}\n${err.args}'
 	if err.script_path.len > 0 {
 		msg += '\nscript path:${err.script_path}'
 	}
@@ -69,10 +68,7 @@ pub fn cmd_exists(cmd string) bool {
 // The output of a successful command is returned and cached in redis.
 // The cached value will be returned if the same command is executed again and if arguments allow so.
 pub fn exec(args ExecArgs) !string {
-	mut logger := log.Logger(&log.Log{
-		level: .info
-	})
-
+	mut logger := get_logger()
 	mut cmd := args.cmd
 	mut now_epoch := time.now().unix_time()
 
@@ -117,7 +113,7 @@ pub fn exec(args ExecArgs) !string {
 			return lastoutput
 		} else {
 			if args.silent == false {
-				logger.debug('exec cmd:${description}: was already done but it was too long ago, doing it agian')
+				logger.info('exec cmd:${description}: was already done but it was too long ago, doing it agian')
 			}
 		}
 	}
@@ -163,12 +159,14 @@ pub fn exec(args ExecArgs) !string {
 			}
 			time.sleep(time.millisecond * 100)
 		}
-		process.wait() // URGENT: we need solution to print while we are waiting, need better solution for reading stdout, needs to be in loop of above is_alive
+		// URGENT: we need solution to print while we are waiting, need better solution for reading stdout, needs to be in loop of above is_alive
+		// ANSWER: I agree, we might want to look at using baobab here then. 
+		process.wait()
 		err = process.stderr_read()
 		if process.code == 0 || process.code in args.ignore_error_codes {
 			res := process.stdout_read()
 			if args.silent == false && args.stdout == true { // TODO: make sure happens while process active
-				println(res)
+				logger.info('Output from execution of command "${args.description}"')
 			}
 			done_set('exec_${hhash}', '${time.now().unix_time().str()}|${res}')!
 			return res
