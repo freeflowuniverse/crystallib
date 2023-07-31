@@ -160,7 +160,6 @@ pub fn exec(args ExecArgs) !string {
 			time.sleep(time.millisecond * 100)
 		}
 		// URGENT: we need solution to print while we are waiting, need better solution for reading stdout, needs to be in loop of above is_alive
-		// ANSWER: I agree, we might want to look at using baobab here then. 
 		process.wait()
 		err = process.stderr_read()
 		if process.code == 0 || process.code in args.ignore_error_codes {
