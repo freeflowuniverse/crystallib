@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.gittools
 pub struct Tree {
 pub mut:
 	collections map[string]&Collection
-	books map[string]&Book
+	books map[string]&MDBook
 	state TreeState
 }
 

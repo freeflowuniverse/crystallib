@@ -26,7 +26,7 @@ pub mut:
 	errors []CollectionError
 	state  CollectionState
 	heal   bool
-	book   &Book
+	book   &MDBook
 }
 
 // walk over one specific collection, find all files and pages

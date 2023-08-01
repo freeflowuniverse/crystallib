@@ -13,7 +13,7 @@ pub struct CollectionNotFound {
 	Error
 pub:
 	pointer Pointer
-	book    &Book
+	book    &MDBook
 	msg     string
 }
 
@@ -25,7 +25,7 @@ pub fn (err CollectionNotFound) msg() string {
 	return '"Cannot not find collection from book:${err.book.name}.\nPointer: ${err.pointer}.\nKnown Collections:\n${collectionnames}'
 }
 
-pub fn (mut book Book) collection_exists(name string) bool {
+pub fn (mut book MDBook) collection_exists(name string) bool {
 	namelower := texttools.name_fix_no_underscore_no_ext(name)
 	if namelower in book.collections {
 		return true

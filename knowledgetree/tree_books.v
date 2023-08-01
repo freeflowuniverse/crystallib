@@ -2,7 +2,7 @@ module knowledgetree
 
 
 //process the summary
-fn (book Book) process_summary()! {
+fn (book MDBook) process_summary()! {
 
 	// is case insensitive
 	//? checks for both summary.md files and links
@@ -48,7 +48,7 @@ pub fn (err BookNotFound) msg() string {
 	return "Cannot not find book:'${err.bookname}'.\nKnown books:\n${booknames}"
 }
 
-pub fn (tree Tree) book_get(name string) !&Book {
+pub fn (tree Tree) book_get(name string) !&MDBook {
 	if name.contains(':') {
 		return BookNotFound{
 			tree: &tree
