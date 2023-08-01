@@ -61,50 +61,67 @@ const text2 = "
 "
 
 // QUESTION: how to better organize these tests
-fn test_filter() ! {
+// ANSWER: split them up, this test is testing too much, tests should be easy to read and easy to modify
+
+fn test_filter_on_book_aaa() ! {
+	// test filter book:aaa
+	mut parser := new(defaultbook: 'aaa', text: actionsparser.text2)!
+	assert parser.actions.len == 8
+	sorted := parser.filtersort(book: 'aaa')!
+	assert sorted.len == 7
+}
+
+fn test_filter_on_actor_people_and_book_aaa() ! {
 	// test filter book:aaa actor:people
 	mut parser := new(defaultbook: 'aaa', text: actionsparser.text2)!
-	mut sorted := filtersort(parser.actions, actor: 'people', book: 'aaa')! // QUESTION: can you leave actor blank?
 	assert parser.actions.len == 8
+	sorted := parser.filtersort(actor: 'people', book: 'aaa')! // QUESTION: can you leave actor blank? ANSWER: Yes you can, I added a test on top
 	assert sorted.len == 6
+}
 
-	// test filter book:bbb actor:people
-	parser = new(defaultbook: 'aaa', text: actionsparser.text2)!
-	sorted = filtersort(parser.actions, actor: 'people', book: 'bbb')!
+fn test_filter_on_actor_people_and_book_bbb() ! {
+	// test filter actor:people
+	mut parser := new(defaultbook: 'aaa', text: actionsparser.text2)!
 	assert parser.actions.len == 8
+	sorted := parser.filtersort(actor: 'people', book: 'bbb')!
 	assert sorted.len == 1
+}
 
+
+fn test_filter_on_actor_people_and_book_ccc() ! {
 	// test filter book:ccc actor:people
-	parser = new(defaultbook: 'aaa', text: actionsparser.text2)!
-	sorted = filtersort(parser.actions, actor: 'people', book: 'ccc')!
+	mut parser := new(defaultbook: 'aaa', text: actionsparser.text2)!
 	assert parser.actions.len == 8
+	sorted := parser.filtersort(actor: 'people', book: 'ccc')!
 	assert sorted.len == 0
+}
 
-	// test filter book:aaa actor:test
-	parser = new(defaultbook: 'aaa', text: actionsparser.text2)!
-	sorted = filtersort(parser.actions, actor: 'test', book: 'aaa')!
+// test filter book:aaa actor:test
+fn test_filter_on_actor_test_and_book_aaa() ! {
+	mut parser := new(defaultbook: 'aaa', text: actionsparser.text2)!
 	assert parser.actions.len == 8
+	sorted := parser.filtersort(actor: 'test', book: 'aaa')!
 	assert sorted.len == 1
+}
 
-	// test filter with names:[*]
-	parser = new(defaultbook: 'aaa', text: actionsparser.text2)!
+// test filter with names:[*]
+fn test_filter_with_names_asterix() ! {
+	mut parser := new(defaultbook: 'aaa', text: actionsparser.text2)!
 	assert parser.actions.len == 8
 	assert parser.actions.map(it.name) == ['person_delete', 'person_define', 'circle_link',
 		'circle_comment', 'circle_comment', 'digital_payment_add', 'test_action', 'person_define']
 
-	mut args := FilterArgs{
-		actor: 'people'
-		book: 'aaa'
-		names_filter: ['*']
-	}
-	sorted = filtersort(parser.actions, args)!
+	sorted := parser.filtersort(actor: 'people', book:'aaa', names_filter: ['*'])!
 	assert sorted.len == 6
 	assert sorted.map(it.name) == ['person_delete', 'person_define', 'circle_link', 'circle_comment',
 		'circle_comment', 'digital_payment_add']
+}
 
-	// test filter with names:['']
+// test filtering with names_filter with one empty string
+fn test_filter_with_names_list_with_empty_string() ! {
 	// QUESTION: should this return empty list?
-	parser = new(
+	// ANSWER: I think yes as you technically want the actions where the name is an empty string
+	mut parser := new(
 		defaultbook: 'aaa'
 		text: actionsparser.text2
 	)!
@@ -112,63 +129,47 @@ fn test_filter() ! {
 	assert parser.actions.map(it.name) == ['person_delete', 'person_define', 'circle_link',
 		'circle_comment', 'circle_comment', 'digital_payment_add', 'test_action', 'person_define']
 
-	args = FilterArgs{
-		actor: 'people'
-		book: 'aaa'
-		names_filter: ['']
-	}
-	sorted = filtersort(parser.actions, args)!
+	sorted := parser.filtersort(actor: 'people', book: 'aaa', names_filter: [''])!
 	assert sorted.len == 0
 	assert sorted.map(it.name) == []
+}
 
-	// test filter with names in same order as actions
-	parser = new(
+// test filter with names in same order as actions
+fn test_filter_with_names_in_same_order() ! {
+	mut parser := new(
 		defaultbook: 'aaa'
 		text: actionsparser.text2
 	)!
 
-	args = FilterArgs{
-		actor: 'people'
-		book: 'aaa'
-		names_filter: ['person_delete', 'person_define', 'circle_link', 'circle_comment',
-			'digital_payment_add']
-	}
-	sorted = filtersort(parser.actions, args)!
+	sorted := parser.filtersort(actor: 'people', book: 'aaa', names_filter: ['person_delete', 'person_define', 'circle_link', 'circle_comment', 'digital_payment_add'])!
 	assert sorted.len == 6
 	assert sorted.map(it.name) == ['person_delete', 'person_define', 'circle_link', 'circle_comment',
 		'circle_comment', 'digital_payment_add']
+}
 
-	// test filter with names in different order than actions
-	parser = new(
+// test filter with names in different order than actions
+fn test_filter_with_names_in_different_order() ! {
+	mut parser := new(
 		defaultbook: 'aaa'
 		text: actionsparser.text2
 	)!
-	args = FilterArgs{
-		actor: 'people'
-		book: 'aaa'
-		// this order of names don't make much sense, just for testing
-		names_filter: ['circle_comment', 'person_define', 'digital_payment_add', 'person_delete',
-			'circle_link']
-	}
-	sorted = filtersort(parser.actions, args)!
+
+	sorted := parser.filtersort(actor: 'people', book: 'aaa', names_filter: ['circle_comment', 'person_define', 'digital_payment_add', 'person_delete', 'circle_link'])!
 	assert sorted.len == 6
 	assert sorted.map(it.name) == ['circle_comment', 'circle_comment', 'person_define',
 		'digital_payment_add', 'person_delete', 'circle_link']
+}
 
+// test filter with only two names in filter
+fn test_filter_with_only_two_names_in_filter() ! {
 	// QUESTION: if we only have one name, is it just that action?
-	// test filter with only two names in filter
-	parser = new(
+	// ANSWER: yes
+	mut parser := new(
 		defaultbook: 'aaa'
 		text: actionsparser.text2
 	)!
 
-	args = FilterArgs{
-		actor: 'people'
-		book: 'aaa'
-		// this order of names don't make much sense, just for testing
-		names_filter: ['person_define', 'person_delete']
-	}
-	sorted = filtersort(parser.actions, args)!
+	sorted := parser.filtersort(actor: 'people', book: 'aaa', names_filter: ['person_define', 'person_delete'])!
 	assert sorted.len == 2
 	assert sorted.map(it.name) == ['person_define', 'person_delete']
 }
