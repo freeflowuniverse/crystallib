@@ -1,27 +1,27 @@
 module knowledgetree
 
 
-[params]
-pub struct BookNewArgs {
-pub mut:
-	name            string [required]
-}
+//process the summary
+fn (book Book) process_summary()! {
 
-pub fn (mut l Tree) book_new(args_ BookNewArgs) !&Book {
-	mut args := args_
-	args.name = texttools.name_fix_no_underscore_no_ext(args.name)
-	if args.name == '' {
-		return error('Cannot specify new book without specifying a name.')
+	// is case insensitive
+	//? checks for both summary.md files and links
+	mut summarypath := p.file_get('summary.md') or {
+		p.link_get('summary.md') or { return error('cannot find summary path: ${err}') }
+	}
+	mut doc := markdowndocs.new(path: summarypath.path) or {
+		panic('cannot book parse ${summarypath} ,${err}')
 	}
 
-	mut b := Book{
-		name: args.name
-		tree: &l
-	}
-	l.books[args.name] = &b
+	//TODO: now we need to walk over all parts of the summary and for each item check we find collection (collection exists)
 
-	return l.books[args.name] or { panic('bug') }
+	panic("too implement, there was code but i lost it")
+
 }
+
+
+
+//FIND METHODS ON TREE
 
 pub struct BookNotFound {
 	Error
