@@ -1,17 +1,13 @@
-module books
+module knowledgetree
 
-//QUESTION: not sure this is still relevant
+//TODO: needs serious fixes
 
 // import os
 import freeflowuniverse.crystallib.pathlib { Path }
 import freeflowuniverse.crystallib.markdowndocs
+import freeflowuniverse.crystallib.texttools
+import v.embed_file
 import os
-
-enum BookType {
-	book
-	wiki
-	web
-}
 
 enum BookState {
 	init
@@ -44,41 +40,116 @@ pub mut:
 }
 
 [heap]
-pub struct Book {
+pub struct MDBook {
 pub:
-	name     string
-	booktype BookType
+	tree  	 &Tree            [str: skip]
 pub mut:
+	name     string
+	path   string //path exists
+	dest   string //path where book will be generated		
 	title       string
-	books       &Books            [str: skip] // pointer to books
-	pages       map[string]&Page
+	pages       map[string]&Page  //links to the object in tree
 	files       map[string]&File
 	images      map[string]&File
 	path        Path
 	errors      []BookError
-	book        BookState
-	doc_summary &markdowndocs.Doc [str: skip]
+	state        BookState
+	doc_summary  &markdowndocs.Doc [str: skip]
 }
 
-pub fn (mut book Book) error(args BookErrorArgs) {
+pub fn (mut book MDBook) error(args BookErrorArgs) {
 	book.errors << BookError{
 		msg: args.msg
 		cat: args.cat
 	}
 }
 
+
+pub enum BookState {
+	init
+	ok
+	error
+}
+
+
+
+[params]
+pub struct BookNewArgs {
+pub:
+	name   string [required] //name of the book
+	path   string //path exists
+	dest   string //path where book will be generated
+	git_url   string
+	git_reset bool
+	git_root  string //in case we want to checkout code on other location
+	git_pull  bool	
+}
+
+
+pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
+	mut args := args_
+	args.name = texttools.name_fix_no_underscore_no_ext(args.name)
+	if args.name == '' {
+		return error('Cannot specify new book without specifying a name.')
+	}
+
+	if args.git_url.len > 0 {
+		mut gs := gittools.get(root: args.git_root)!
+		mut gr := gs.repo_get_from_url(url: args.git_url, pull: args.git_pull, reset: args.git_reset)!
+		args.path = gr.path_content_get()
+	}
+
+	if args.path.len < 3 {
+		return error('Path needs to be not empty.')
+	}	
+
+
+	mut p := pathlib.get_file(path, false)! // makes sure we have the right path
+	if !p.exists() {
+		return error('cannot find book on path: ${args.path}')
+	}
+	p.path_normalize()! // make sure its all lower case and name is proper
+
+
+	mut b := MDBook{
+		name: args.name
+		tree: &l
+		path: args.path
+		dest: args.dest
+	}
+	l.books[args.name] = &b
+
+	return l.books[args.name] or { panic('bug') }
+	
+}
+
+
 // fix summary (this means summary will put the )
 // walk over pages find broken links
 // report on the errors
-pub fn (mut book Book) fix() ! {
+pub fn (mut book MDBook) fix() ! {
 	// book.fix_summary()!
 	// book.link_pages_files_images()!
 	// TODO: check the links on pages
 	// book.errors_report()!
 }
 
+
+
+// reset all, just to make sure we regenerate fresh
+pub fn (mut mdbook MDBook) reset() ! {
+	// delete where the mdbook are created
+	for item in ['mdbook', 'html'] {
+		mut a := pathlib.get(mdbook.config.dest + '/${item}')
+		a.delete()!
+	}
+	mdbook.state = .init // makes sure we re-init
+	mdbook.init()!
+}
+
+
 // fixes the summary doc for the book
-fn (mut book Book) fix_summary() ! {
+fn (mut book MDBook) fix_summary() ! {
 	for mut paragraph in book.doc_summary.items.filter(it is markdowndocs.Paragraph) {
 		if mut paragraph is markdowndocs.Paragraph {
 			for mut item in paragraph.items {
@@ -140,7 +211,7 @@ fn (mut book Book) fix_summary() ! {
 
 // all images, files and pages found need to be linked to the book
 // find which files,pages, images are not found
-fn (mut book Book) link_pages_files_images() ! {
+fn (mut book MDBook) link_pages_files_images() ! {
 	for _, mut page in book.pages {
 		for mut paragraph in page.doc.items.filter(it is markdowndocs.Paragraph) {
 			if mut paragraph is markdowndocs.Paragraph {
@@ -184,7 +255,7 @@ fn (mut book Book) link_pages_files_images() ! {
 	}
 }
 
-pub fn (mut book Book) errors_report() ! {
+pub fn (mut book MDBook) errors_report() ! {
 	mut p := pathlib.get('${book.path.path}/errors.md')
 	if book.errors.len == 0 {
 		p.delete()!
@@ -195,19 +266,19 @@ pub fn (mut book Book) errors_report() ! {
 }
 
 // return path where the book will be created (exported and built from)
-fn (book Book) book_path(path string) Path {
+fn (book MDBook) book_path(path string) Path {
 	dest0 := book.books.config.dest
 	return pathlib.get('${dest0}/books/${book.name}/${path}')
 }
 
 // return path where the book will be created (exported and built from)
-fn (book Book) html_path(path string) Path {
+fn (book MDBook) html_path(path string) Path {
 	dest0 := book.books.config.dest
 	return pathlib.get('${dest0}/html/${book.name}/${path}')
 }
 
 // export an mdbook to its html representation
-pub fn (mut book Book) mdbook_export() ! {
+pub fn (mut book MDBook) export() ! {
 	book.template_install()! // make sure all required template files are in site
 	book_path := book.book_path('').path + '/src'
 	html_path := book.html_path('').path
@@ -238,12 +309,12 @@ pub fn (mut book Book) mdbook_export() ! {
 	os.execute_or_panic('open ${html_path}/index.html')
 }
 
-fn (mut book Book) template_write(path string, content string) ! {
+fn (mut book MDBook) template_write(path string, content string) ! {
 	mut dest_path := book.book_path(path)
 	dest_path.write(content)!
 }
 
-fn (mut book Book) template_install() ! {
+fn (mut book MDBook) template_install() ! {
 	if book.title == '' {
 		book.title = book.name
 	}
