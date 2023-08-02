@@ -1,7 +1,6 @@
 module docker
 
-// import freeflowuniverse.crystallib.builder
-
+import freeflowuniverse.crystallib.osal { cputype, platform, exec, file_write }
 pub fn (mut e DockerEngine) container_create(args DockerContainerCreateArgs) !&DockerContainer {
 	mut ports := ''
 	mut mounts := ''
@@ -32,9 +31,7 @@ pub fn (mut e DockerEngine) container_create(args DockerContainerCreateArgs) !&D
 		ports += '-p ${port}:22/tcp'
 	}
 
-	mut cmd := 'docker run --hostname ${args.hostname} --name ${args.name} ${ports} ${mounts} -d  -t ${image} ${command}'
-	e.node.exec(cmd)!
-	e.load()!
+	exec(cmd:"'docker run --hostname ${args.hostname} --name ${args.name} ${ports} ${mounts} -d  -t ${image} ${command}")!
 	mut container := e.container_get(args.name)!
 	return container
 }

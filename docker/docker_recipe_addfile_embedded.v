@@ -1,4 +1,5 @@
 module docker
+import freeflowuniverse.crystallib.osal { cputype, platform, exec, file_read }
 
 [params]
 pub struct AddFileEmbeddedArgs {
@@ -58,6 +59,6 @@ pub fn (mut i AddFileEmbeddedItem) render() !string {
 // get code from the file added
 fn (mut i AddFileEmbeddedItem) getcontent() !string {
 	srcpath := '${i.recipe.engine.buildpath}/${i.recipe.name}/${i.source}'
-	content := i.recipe.engine.node.file_read(srcpath)!
+	content := file_read(srcpath)!
 	return content
 }

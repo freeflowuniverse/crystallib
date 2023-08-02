@@ -1,7 +1,6 @@
 module docker
 
-import freeflowuniverse.crystallib.builder
-import freeflowuniverse.crystallib.osal { cputype }
+import freeflowuniverse.crystallib.osal { cputype, platform, exec }
 // import freeflowuniverse.crystallib.installers.swarm
 
 // https://docs.docker.com/reference/
@@ -10,7 +9,6 @@ import freeflowuniverse.crystallib.osal { cputype }
 pub struct DockerEngine {
 	name string
 pub mut:
-	node            builder.Node        [str: skip] // URGENT: remove node use osal everywhere (OS SAL)
 	sshkeys_allowed []string // all keys here have access over ssh into the machine, when ssh enabled
 	images          []DockerImage
 	containers      []DockerContainer
@@ -32,12 +30,12 @@ pub enum BuildPlatformType {
 pub fn (mut e DockerEngine) init() ! {
 	if e.buildpath == '' {
 		e.buildpath = '/tmp/builder'
-		e.node.exec_silent('mkdir -p ${e.buildpath}')!
+		exec(cmd:'mkdir -p ${e.buildpath}',silent:true)!
 	}
 	if e.platform == [] {
-		if e.node.platform == .ubuntu && cputype() == .intel {
+		if platform() == .ubuntu && cputype() == .intel {
 			e.platform = [.linux_amd64]
-		} else if e.node.platform == .osx && cputype() == .arm {
+		} else if platform() == .osx && cputype() == .arm {
 			e.platform = [.linux_arm64]
 		} else {
 			return error('only implemented ubuntu on amd and osx on arm for now for docker engine.')
@@ -56,16 +54,19 @@ pub fn (mut e DockerEngine) load() ! {
 // see obj: DockerContainer as result in e.containers
 pub fn (mut e DockerEngine) containers_load() ! {
 	e.containers = []DockerContainer{}
-	mut lines := e.node.exec_cmd(
+	mut lines := exec(
 		cmd: "docker ps -a --no-trunc --format '{{.ID}}|{{.Names}}|{{.Image}}|{{.Command}}|{{.CreatedAt}}|{{.Ports}}|{{.State}}|{{.Size}}|{{.Mounts}}|{{.Networks}}|{{.Labels}}'"
 		ignore_error_codes: [6]
+		silent: true
 	)!
 	for line in lines.split_into_lines() {
 		if line.trim_space() == '' {
 			continue
 		}
 		fields := line.split('|').map(clear_str)
-		// println(fields)
+		if fields.len < 11 {
+			panic('docker ps needs to output 11 parts.\n${fields}')
+		}		
 		id := fields[0]
 		mut container := DockerContainer{
 			image: &DockerImage{
@@ -73,9 +74,7 @@ pub fn (mut e DockerEngine) containers_load() ! {
 			}
 			engine: &e
 		}
-		if fields.len < 11 {
-			panic('docker ps needs to output 11 parts.\n${fields}')
-		}
+
 		container.id = id
 		container.name = fields[1]
 		container.image = e.image_get(id: fields[2])!
@@ -88,7 +87,8 @@ pub fn (mut e DockerEngine) containers_load() ! {
 		container.networks = parse_networks(fields[9])!
 		// container.labels = parse_labels(fields[10])!
 		container.ssh_enabled = contains_ssh_port(container.ports)
-		e.containers << container
+		println(container)
+		// e.containers << container
 	}
 }
 
@@ -128,11 +128,11 @@ pub fn (mut e DockerEngine) container_delete(name_or_id string) ! {
 		if name_or_id.contains('*') || name_or_id.contains('?') || name_or_id.contains('[') {
 			if c.name.match_glob(name_or_id) {
 				println(' - docker container delete: ${c.name}')
-				c.delete(true)!
+				c.delete()!
 			}
 		}
 		if c.name == name_or_id || c.id == name_or_id {
-			c.delete(true)!
+			c.delete()!
 		}
 	}
 	e.load()!
@@ -147,7 +147,7 @@ pub fn (mut e DockerEngine) container_import(path string, mut args DockerContain
 		image = image + ':${args.image_tag}'
 	}
 
-	e.node.exec_silent('docker import  ${path} ${image}')!
+	exec(cmd:'docker import  ${path} ${image}',silent:true)!
 	// make sure we start from loaded image
 	return e.container_create(args)
 }
@@ -155,14 +155,14 @@ pub fn (mut e DockerEngine) container_import(path string, mut args DockerContain
 // reset all images & containers, CAREFUL!
 pub fn (mut e DockerEngine) reset_all() ! {
 	for mut container in e.containers.clone() {
-		container.delete(true)!
+		container.delete()!
 	}
 	for mut image in e.images.clone() {
 		image.delete(true)!
 	}
-	e.node.exec_silent('docker image prune -a -f') or { panic(err) }
-	e.node.exec_silent('docker builder prune -a -f') or { panic(err) }
-	e.node.done_reset()!
+	exec(cmd:'docker image prune -a -f',silent:true) or { panic(err) }
+	exec(cmd:'docker builder prune -a -f',silent:true) or { panic(err) }
+	osal.done_reset()!
 	e.load()!
 }
 

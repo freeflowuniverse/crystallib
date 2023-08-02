@@ -2,8 +2,10 @@ module docker
 
 import freeflowuniverse.crystallib.params { Params }
 import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.osal {file_write, file_read, exec}
 import crypto.md5
 import v.embed_file
+import os
 
 // only 2 supported for now
 pub enum PlatformType {
@@ -73,7 +75,8 @@ pub mut:
 
 // delete the working directory
 pub fn (mut b DockerBuilderRecipe) delete() ! {
-	// n.engine.node.exec_silent()
+	// exec(cmd:)
+	panic("implement")
 }
 
 pub fn (mut b DockerBuilderRecipe) render() !string {
@@ -194,18 +197,18 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 
 	destpath := b.path()
 	if reset {
-		b.engine.node.exec_silent('rm -rf ${destpath}')!
+		os.rmdir_all(destpath)!
 	}
-	b.engine.node.exec_silent('mkdir -p ${destpath}')!
-	b.engine.node.file_write('${destpath}/Dockerfile', dockerfilecontent)!
+	os.mkdir_all(destpath)!
+	file_write('${destpath}/Dockerfile', dockerfilecontent)!
 	for item in b.files {
 		filename := item.path.all_after_first('/')
-		b.engine.node.file_write('${destpath}/${filename}', item.to_string())!
+		file_write('${destpath}/${filename}', item.to_string())!
 	}
 	confsh := '
 		export NAME="${b.name}"
 	'
-	b.engine.node.file_write('${destpath}/conf.sh', texttools.dedent(confsh))!
+	file_write('${destpath}/conf.sh', texttools.dedent(confsh))!
 	if b.engine.localonly {
 		b.tag = 'local'
 	} else {
@@ -265,17 +268,17 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 	}
 	hashnew := md5.hexhash(tohash)
 
-	if reset == false && b.engine.node.done_exists('build_${b.name}') {
-		hashlast := b.engine.node.done_get('build_${b.name}') or { '' }
+	if reset == false && osal.done_exists('build_${b.name}') {
+		hashlast := osal.done_get('build_${b.name}') or { '' }
 		if hashnew == hashlast {
 			println('\n ** BUILD ALREADY DONE FOR ${b.name.to_upper()}\n')
 			return
 		}
 	}
 
-	b.engine.node.exec_file(path: '${destpath}/shell.sh', cmd: cmdshell, execute: false)!
+	file_write('${destpath}/shell.sh', cmdshell)!
 
-	b.engine.node.exec_file(path: '${destpath}/build.sh', cmd: cmd)!
+	exec(path: '${destpath}/build.sh', cmd: cmd)!
 
-	b.engine.node.done_set('build_${b.name}', hashnew)!
+	osal.done_set('build_${b.name}', hashnew)!
 }

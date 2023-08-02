@@ -5,7 +5,6 @@ import freeflowuniverse.crystallib.osal { exec }
 fn do() ! {
 	exec(
 		cmd: 'eecho sometext'
-		remove_installer: false
 		reset: false
 		retry: 5
 		period: 10
@@ -28,6 +27,19 @@ fn do() ! {
 	)!
 
 	println(r)
+
+
+	// _ := exec(
+	// 	cmd: 'mc'
+	// 	path: "/tmp/test.sh"
+	// 	environment:{
+	// 		"TEST":"HI"
+	// 		"YES":"no"
+	// 	}
+	// 	shell: true
+	// 	debug:true
+	// )!
+
 
 	println('echo ok ')
 }

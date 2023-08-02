@@ -2,6 +2,8 @@ module docker
 
 import freeflowuniverse.crystallib.openssl
 import freeflowuniverse.crystallib.httpconnection
+import freeflowuniverse.crystallib.osal { cputype, platform, exec }
+import os
 
 [heap]
 pub struct DockerRegistry {
@@ -49,7 +51,6 @@ pub fn (mut e DockerEngine) registry_add(args DockerRegistryArgs) ! {
 	if registry.datapath.len < 4 {
 		return error('datapath needs to be len +3')
 	}
-	mut n := e.node
 
 	mut composer := e.compose_new(name: 'docker_registry')
 	mut service := composer.service_new(name: 'registry', image: 'registry:2')!
@@ -70,13 +71,13 @@ pub fn (mut e DockerEngine) registry_add(args DockerRegistryArgs) ! {
 
 		p1 := '${registry.datapath}/certs/domain.crt'
 		p2 := '${registry.datapath}/certs/domain.key'
-		if !n.file_exists(p1) || !n.file_exists(p2) || args.reset_ssl {
+		if !os.exists(p1) || !os.exists(p2) || args.reset_ssl {
 			// means we are missing a key
 			mut ossl := openssl.new()!
 			k := ossl.get(name: 'docker_registry')!
-			n.exec('mkdir -p ${registry.datapath}/certs')!
-			n.upload(k.path_cert.path, p1)!
-			n.upload(k.path_key.path, p2)!
+			os.mkdir_all("${registry.datapath}/certs")!
+			os.cp(k.path_cert.path, p1)!
+			os.cp(k.path_key.path, p2)!
 		}
 	}
 	e.registries << registry
@@ -86,7 +87,7 @@ pub fn (mut e DockerEngine) registry_add(args DockerRegistryArgs) ! {
 
 	composer.start()!
 
-	n.exec_retry(cmd: 'curl https://localhost:5000/v2/ -k', timeout: 1) or {
+	exec(cmd: 'curl https://localhost:5000/v2/ -k',  retry:4) or {
 		return error('could not start docker registry, did not answer')
 	}
 
