@@ -16,7 +16,7 @@ pub mut:
 	localonly       bool
 	cache           bool = true
 	push            bool
-	platform        []BuildPlatformType
+	platform        []BuildPlatformType //used to build
 	registries      []DockerRegistry // one or more supported DockerRegistries
 	prefix          string
 }
@@ -83,12 +83,12 @@ pub fn (mut e DockerEngine) containers_load() ! {
 		container.ports = parse_ports(fields[5])!
 		container.status = parse_container_state(fields[6])!
 		container.memsize = parse_size_mb(fields[7])!
-		// container.mounts = parse_mounts(fields[8])!
+		container.mounts = parse_mounts(fields[8])!
 		container.networks = parse_networks(fields[9])!
-		// container.labels = parse_labels(fields[10])!
+		container.labels = parse_labels(fields[10])!
 		container.ssh_enabled = contains_ssh_port(container.ports)
 		println(container)
-		// e.containers << container
+		e.containers << container
 	}
 }
 

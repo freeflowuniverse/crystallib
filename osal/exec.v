@@ -53,9 +53,9 @@ pub mut:
 	ignore_errors	   bool //if set will ignore all errors (not for shell)
 	silent             bool // if silent will not do logs
 	stdout             bool // will print everything to output
+	timeout			   u8 = 10000 //timeout default is 10 sec (is in milliseconds) is per retry, 0 means wait forever
 	retry              u8   // how may times maximum to retry  (0 means just execute 1x), will only work when no shell
 	retry_period       int = 100 // sleep in between retry in milliseconds
-	retry_timeout      int = 2000 // timeout for al the tries together in milliseconds, if this value is 0 it will wait indefinite
 	shell			   bool  //if shell will run interactive
 	path			   string //is the path where the script will be put which is executed
 	debug			   bool //if debug will put +ex in the script which is being executed and will make sure script stays
@@ -188,8 +188,8 @@ pub fn exec(args_ ExecArgs) !string {
 			}
 
 			process.run()
-			for args.retry_timeout > 0 && process.is_alive() {
-				if time.now() - time_started >= time.millisecond * args.retry_timeout {
+			for args.timeout > 0 && process.is_alive() {
+				if time.now() - time_started >= time.millisecond * 1000 * args.timeout {
 					process.signal_kill()
 					return ExecError{
 						timeout: true

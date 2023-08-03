@@ -27,7 +27,7 @@ pub mut:
 	ports           []string
 	networks        []string
 	labels          map[string]string       [str: skip]
-	image           &DockerImage
+	image           &DockerImage			[str: skip]
 	engine          &DockerEngine           [str: skip]
 	status          DockerContainerStatus
 	memsize         int // in MB
@@ -94,15 +94,21 @@ pub fn (mut container DockerContainer) export(path string) ! {
 // 	container.engine.node.shell(cmd)!
 // }
 
+[params]
+pub struct DockerShellArgs{
+pub mut:
+	cmd string	
+}
+
 // open shell to the container using docker, is interactive, cannot use in script
-pub fn (mut container DockerContainer) shell(cmd string) ! {
-	mut cmd2 := ''
-	if cmd.len == 0 {
-		cmd2 = 'docker exec -ti ${container.id} /bin/bash'
+pub fn (mut container DockerContainer) shell(args DockerShellArgs) ! {
+	mut cmd:=""
+	if args.cmd.len == 0 {
+		cmd = 'docker exec -ti ${container.id} /bin/bash'
 	} else {
-		cmd2 = "docker exec -ti ${container.id} /bin/bash -c '${cmd}'"
+		cmd = "docker exec -ti ${container.id} /bin/bash -c '${cmd}'"
 	}
-	exec(cmd:cmd2,shell:true,debug:true)!
+	exec(cmd:cmd,shell:true,debug:true)!
 }
 
 pub fn (mut container DockerContainer) execute(cmd_ string, silent bool) ! {
