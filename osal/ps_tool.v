@@ -1,4 +1,4 @@
-module process
+module osal
 
 import time
 
