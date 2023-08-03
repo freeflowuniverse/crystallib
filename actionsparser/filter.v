@@ -26,7 +26,7 @@ pub fn (parser ActionsParser) filtersort(args FilterArgs) ![]Action {
 		if args.domain != '' && args.domain != action.domain {
 			continue
 		}
-		if args.book != '' && args.book != action.book {
+		if args.book != '' && args.book != '*' && args.book != action.book {
 			continue
 		}
 		if args.actor != '' && args.actor != action.actor {

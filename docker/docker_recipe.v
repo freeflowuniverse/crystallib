@@ -2,7 +2,7 @@ module docker
 
 import freeflowuniverse.crystallib.params { Params }
 import freeflowuniverse.crystallib.texttools
-import freeflowuniverse.crystallib.osal {file_write, file_read, exec}
+import freeflowuniverse.crystallib.osal { exec, file_write }
 import crypto.md5
 import v.embed_file
 import os
@@ -76,7 +76,7 @@ pub mut:
 // delete the working directory
 pub fn (mut b DockerBuilderRecipe) delete() ! {
 	// exec(cmd:)
-	panic("implement")
+	panic('implement')
 }
 
 pub fn (mut b DockerBuilderRecipe) render() !string {

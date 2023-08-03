@@ -1,6 +1,6 @@
 module docker
 
-import freeflowuniverse.crystallib.osal { cputype, platform, exec }
+import freeflowuniverse.crystallib.osal { cputype, exec, platform }
 // import freeflowuniverse.crystallib.installers.swarm
 
 // https://docs.docker.com/reference/
@@ -16,8 +16,8 @@ pub mut:
 	localonly       bool
 	cache           bool = true
 	push            bool
-	platform        []BuildPlatformType //used to build
-	registries      []DockerRegistry // one or more supported DockerRegistries
+	platform        []BuildPlatformType // used to build
+	registries      []DockerRegistry    // one or more supported DockerRegistries
 	prefix          string
 }
 
@@ -30,7 +30,7 @@ pub enum BuildPlatformType {
 pub fn (mut e DockerEngine) init() ! {
 	if e.buildpath == '' {
 		e.buildpath = '/tmp/builder'
-		exec(cmd:'mkdir -p ${e.buildpath}',silent:true)!
+		exec(cmd: 'mkdir -p ${e.buildpath}', silent: true)!
 	}
 	if e.platform == [] {
 		if platform() == .ubuntu && cputype() == .intel {
@@ -66,7 +66,7 @@ pub fn (mut e DockerEngine) containers_load() ! {
 		fields := line.split('|').map(clear_str)
 		if fields.len < 11 {
 			panic('docker ps needs to output 11 parts.\n${fields}')
-		}		
+		}
 		id := fields[0]
 		mut container := DockerContainer{
 			image: &DockerImage{
@@ -84,10 +84,10 @@ pub fn (mut e DockerEngine) containers_load() ! {
 		container.status = parse_container_state(fields[6])!
 		container.memsize = parse_size_mb(fields[7])!
 		container.mounts = parse_mounts(fields[8])!
+		container.mount_ids = parse_mount_ids(fields[8])!
 		container.networks = parse_networks(fields[9])!
 		container.labels = parse_labels(fields[10])!
 		container.ssh_enabled = contains_ssh_port(container.ports)
-		println(container)
 		e.containers << container
 	}
 }
@@ -147,7 +147,7 @@ pub fn (mut e DockerEngine) container_import(path string, mut args DockerContain
 		image = image + ':${args.image_tag}'
 	}
 
-	exec(cmd:'docker import  ${path} ${image}',silent:true)!
+	exec(cmd: 'docker import  ${path} ${image}', silent: true)!
 	// make sure we start from loaded image
 	return e.container_create(args)
 }
@@ -160,8 +160,8 @@ pub fn (mut e DockerEngine) reset_all() ! {
 	for mut image in e.images.clone() {
 		image.delete(true)!
 	}
-	exec(cmd:'docker image prune -a -f',silent:true) or { panic(err) }
-	exec(cmd:'docker builder prune -a -f',silent:true) or { panic(err) }
+	exec(cmd: 'docker image prune -a -f', silent: true) or { panic(err) }
+	exec(cmd: 'docker builder prune -a -f', silent: true) or { panic(err) }
 	osal.done_reset()!
 	e.load()!
 }

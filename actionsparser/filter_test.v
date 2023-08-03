@@ -87,7 +87,6 @@ fn test_filter_on_actor_people_and_book_bbb() ! {
 	assert sorted.len == 1
 }
 
-
 fn test_filter_on_actor_people_and_book_ccc() ! {
 	// test filter book:ccc actor:people
 	mut parser := new(defaultbook: 'aaa', text: actionsparser.text2)!
@@ -111,7 +110,7 @@ fn test_filter_with_names_asterix() ! {
 	assert parser.actions.map(it.name) == ['person_delete', 'person_define', 'circle_link',
 		'circle_comment', 'circle_comment', 'digital_payment_add', 'test_action', 'person_define']
 
-	sorted := parser.filtersort(actor: 'people', book:'aaa', names_filter: ['*'])!
+	sorted := parser.filtersort(actor: 'people', book: 'aaa', names_filter: ['*'])!
 	assert sorted.len == 6
 	assert sorted.map(it.name) == ['person_delete', 'person_define', 'circle_link', 'circle_comment',
 		'circle_comment', 'digital_payment_add']
@@ -141,7 +140,13 @@ fn test_filter_with_names_in_same_order() ! {
 		text: actionsparser.text2
 	)!
 
-	sorted := parser.filtersort(actor: 'people', book: 'aaa', names_filter: ['person_delete', 'person_define', 'circle_link', 'circle_comment', 'digital_payment_add'])!
+	sorted := parser.filtersort(actor: 'people', book: 'aaa', names_filter: [
+		'person_delete',
+		'person_define',
+		'circle_link',
+		'circle_comment',
+		'digital_payment_add',
+	])!
 	assert sorted.len == 6
 	assert sorted.map(it.name) == ['person_delete', 'person_define', 'circle_link', 'circle_comment',
 		'circle_comment', 'digital_payment_add']
@@ -154,7 +159,13 @@ fn test_filter_with_names_in_different_order() ! {
 		text: actionsparser.text2
 	)!
 
-	sorted := parser.filtersort(actor: 'people', book: 'aaa', names_filter: ['circle_comment', 'person_define', 'digital_payment_add', 'person_delete', 'circle_link'])!
+	sorted := parser.filtersort(actor: 'people', book: 'aaa', names_filter: [
+		'circle_comment',
+		'person_define',
+		'digital_payment_add',
+		'person_delete',
+		'circle_link',
+	])!
 	assert sorted.len == 6
 	assert sorted.map(it.name) == ['circle_comment', 'circle_comment', 'person_define',
 		'digital_payment_add', 'person_delete', 'circle_link']
@@ -169,7 +180,10 @@ fn test_filter_with_only_two_names_in_filter() ! {
 		text: actionsparser.text2
 	)!
 
-	sorted := parser.filtersort(actor: 'people', book: 'aaa', names_filter: ['person_define', 'person_delete'])!
+	sorted := parser.filtersort(actor: 'people', book: 'aaa', names_filter: [
+		'person_define',
+		'person_delete',
+	])!
 	assert sorted.len == 2
 	assert sorted.map(it.name) == ['person_define', 'person_delete']
 }

@@ -44,31 +44,35 @@ fn parse_ports(s string) ![]string {
 
 fn parse_labels(s string) !map[string]string {
 	mut res := map[string]string{}
-	if s.trim_space().len>0{
-		println(s)
-		panic("todo")
-		// TODO: need to do
+	if s.trim_space().len > 0 {
+		labels := s.split(',').map(clear_str)
+		for label in labels {
+			parts := label.split('=')
+			res[parts[0]] = parts[1]
+		}
 	}
 	return res
 }
 
 fn parse_networks(s string) ![]string {
 	mut res := []string{}
-	if s.trim_space().len>0{
-		println(s)
-		// panic("todo networks")
-		// TODO: need to do
+	if s.trim_space().len > 0 {
+		res = s.split(',').map(clear_str)
 	}
 	return res
 }
 
 fn parse_mounts(s string) ![]DockerContainerVolume {
 	mut res := []DockerContainerVolume{}
-	// TODO: need to do
-	if s.trim_space().len>0{
-		println(s)
-		panic("todo mounts")
-		// TODO: need to do
+	// TODO: returned mounts data from ps is only mount ids
+	// might need to consider doing an inspect call to generate DockerContainerVolume
+	return res
+}
+
+fn parse_mount_ids(s string) ![]string {
+	mut res := []string{}
+	if s.trim_space().len > 0 {
+		res = s.split(',').map(clear_str)
 	}
 	return res
 }

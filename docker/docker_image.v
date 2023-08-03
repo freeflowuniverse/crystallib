@@ -1,6 +1,6 @@
 module docker
 
-import freeflowuniverse.crystallib.osal { cputype, platform, exec }
+import freeflowuniverse.crystallib.osal { exec }
 import time
 
 [heap]
@@ -21,7 +21,7 @@ pub fn (mut image DockerImage) delete(force bool) ! {
 	if force {
 		forcestr = '-f'
 	}
-	exec(cmd:'docker rmi ${image.id} ${forcestr}',silent:true)!
+	exec(cmd: 'docker rmi ${image.id} ${forcestr}', silent: true)!
 	mut x := 0
 	for image2 in image.engine.images {
 		if image2.id == image.id {
@@ -33,23 +33,26 @@ pub fn (mut image DockerImage) delete(force bool) ! {
 
 // export docker image to tar.gz
 pub fn (mut image DockerImage) export(path string) !string {
-	exec(cmd:'docker save ${image.id} > ${path}',silent:true)!
-	return ""
+	exec(cmd: 'docker save ${image.id} > ${path}', silent: true)!
+	return ''
 }
 
 // import docker image back into the local env
 pub fn (mut image DockerImage) load(path string) ! {
-	exec(cmd:'docker load < ${path}',silent:true)!
+	exec(cmd: 'docker load < ${path}', silent: true)!
 }
 
 pub fn (mut e DockerEngine) images_load() ! {
 	e.images = []DockerImage{}
-	mut lines :=exec(cmd:"docker images --format '{{.ID}}|{{.Repository}}|{{.Tag}}|{{.Digest}}|{{.Size}}|{{.CreatedAt}}'",silent:true)!
+	mut lines := exec(
+		cmd: "docker images --format '{{.ID}}|{{.Repository}}|{{.Tag}}|{{.Digest}}|{{.Size}}|{{.CreatedAt}}'"
+		silent: true
+	)!
 	for line in lines.split_into_lines() {
 		fields := line.split('|').map(clear_str)
 		if fields.len < 6 {
 			panic('docker image needs to output 6 parts.\n${fields}')
-		}		
+		}
 		mut obj := DockerImage{
 			engine: &e
 		}
