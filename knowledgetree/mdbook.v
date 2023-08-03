@@ -3,9 +3,11 @@ module knowledgetree
 //TODO: needs serious fixes
 
 // import os
-import freeflowuniverse.crystallib.pathlib { Path }
+import freeflowuniverse.crystallib.gittools
 import freeflowuniverse.crystallib.markdowndocs
+import freeflowuniverse.crystallib.pathlib { Path }
 import freeflowuniverse.crystallib.texttools
+
 import v.embed_file
 import os
 
@@ -51,7 +53,7 @@ pub mut:
 	pages       map[string]&Page  //links to the object in tree
 	files       map[string]&File
 	images      map[string]&File
-	path        Path
+	pathlib        Path
 	errors      []BookError
 	state        BookState
 	doc_summary  &markdowndocs.Doc [str: skip]
@@ -67,7 +69,7 @@ pub fn (mut book MDBook) error(args BookErrorArgs) {
 
 [params]
 pub struct BookNewArgs {
-pub:
+pub mut:
 	name   string [required] //name of the book
 	path   string //path exists
 	dest   string //path where book will be generated
@@ -95,8 +97,7 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 		return error('Path needs to be not empty.')
 	}	
 
-
-	mut p := pathlib.get_file(path, false)! // makes sure we have the right path
+	mut p := pathlib.get_file(args.path, false)! // makes sure we have the right path
 	if !p.exists() {
 		return error('cannot find book on path: ${args.path}')
 	}

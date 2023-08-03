@@ -89,7 +89,7 @@ fn (mut collection Collection) scan_internal(mut p pathlib.Path) ! {
 				// 	p_in.delete()!
 				// 	continue
 			} else {
-				collection.scan(mut p_in)!
+				collection.scan_internal(mut p_in)!
 			}
 		} else {
 			if p_name.to_lower() == 'defs.md' {

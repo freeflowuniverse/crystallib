@@ -56,7 +56,7 @@ pub fn actions_process(mut parser actionsparser.ActionsParser, actions_done map[
 			name := action.params.get('name')!
 			mut book := tree.book_get(name)!
 			// QUESTION: I can't find any mdbook_develop function nor develop function, what is this function and what should it do?
-			book.mdbook_develop()!
+			//book.mdbook_develop()!
 		}
 
 		//? Currently can only export book by name, is that ok?
@@ -65,7 +65,7 @@ pub fn actions_process(mut parser actionsparser.ActionsParser, actions_done map[
 			name := action.params.get('name')!
 			dest_path := action.params.get('path')!
 
-			book := tree.get(name)!
+			mut book := tree.book_get(name)!
 			//? What do book_pull and book_reset do?
 			// mut gr := gt.repo_get_from_url(url: export_url, pull: book_pull, reset: book_reset)?
 			// mut export_repo := gt.repo_get_from_url(url: export_url)?

@@ -1,6 +1,7 @@
 module knowledgetree
 
 // import os
+import freeflowuniverse.crystallib.imagemagick
 import freeflowuniverse.crystallib.pathlib { Path }
 import freeflowuniverse.crystallib.markdowndocs
 
@@ -26,7 +27,7 @@ pub mut:
 	errors []CollectionError
 	state  CollectionState
 	heal   bool
-	book   &MDBook
+	tree   &Tree
 }
 
 // walk over one specific collection, find all files and pages

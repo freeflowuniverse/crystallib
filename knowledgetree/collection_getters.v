@@ -1,5 +1,7 @@
 module knowledgetree
 
+import freeflowuniverse.crystallib.texttools
+
 pub fn (tree Tree) collectionnames() []string {
 	mut res := []string{}
 	for _, collection in tree.collections {
@@ -13,7 +15,7 @@ pub struct CollectionNotFound {
 	Error
 pub:
 	pointer Pointer
-	book    &MDBook
+	tree    &Tree
 	msg     string
 }
 
@@ -21,13 +23,13 @@ pub fn (err CollectionNotFound) msg() string {
 	if err.msg.len > 0 {
 		return err.msg
 	}
-	collectionnames := err.book.collectionnames().join('\n- ')
-	return '"Cannot not find collection from book:${err.book.name}.\nPointer: ${err.pointer}.\nKnown Collections:\n${collectionnames}'
+	collectionnames := err.tree.collectionnames().join('\n- ')
+	return '"Cannot not find collection from tree.\nPointer: ${err.pointer}.\nKnown Collections:\n${collectionnames}'
 }
 
-pub fn (mut book MDBook) collection_exists(name string) bool {
+pub fn (tree Tree) collection_exists(name string) bool {
 	namelower := texttools.name_fix_no_underscore_no_ext(name)
-	if namelower in book.collections {
+	if namelower in tree.collections {
 		return true
 	}
 	return false
@@ -36,7 +38,7 @@ pub fn (mut book MDBook) collection_exists(name string) bool {
 
 // internal function
 fn (mut tree Tree) collection_get_from_pointer(p Pointer) !&Collection {
-	if p.tree != '' && p.tree != tree.name {
+	if p.tree.name != tree.name {
 		return CollectionNotFound{
 			tree: &tree
 			pointer: p

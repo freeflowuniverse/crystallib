@@ -5,7 +5,10 @@ import freeflowuniverse.crystallib.gittools
 
 [heap]
 pub struct Tree {
+pub:
+	name string
 pub mut:
+	pointers map[string]&Pointer
 	collections map[string]&Collection
 	books map[string]&MDBook
 	state TreeState

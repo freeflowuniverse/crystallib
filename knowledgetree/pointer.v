@@ -27,6 +27,7 @@ pub mut:
 	state     PointerState
 	extension string // e.g. jpg
 	error     string // if there is an error on the pointer, then will be visible in this property
+	tree     &Tree
 }
 
 // will return a clean pointer to a page, image or file
