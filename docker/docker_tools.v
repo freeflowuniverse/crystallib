@@ -45,8 +45,8 @@ fn parse_ports(s string) ![]string {
 fn parse_labels(s string) !map[string]string {
 	mut res := map[string]string{}
 	if s.trim_space().len>0{
-		println(s)
-		panic("todo")
+		// println(s)
+		// panic("todo")
 		// TODO: need to do
 	}
 	return res
@@ -66,8 +66,8 @@ fn parse_mounts(s string) ![]DockerContainerVolume {
 	mut res := []DockerContainerVolume{}
 	// TODO: need to do
 	if s.trim_space().len>0{
-		println(s)
-		panic("todo mounts")
+		// println(s)
+		// panic("todo mounts")
 		// TODO: need to do
 	}
 	return res

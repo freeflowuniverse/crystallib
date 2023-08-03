@@ -17,6 +17,7 @@ mut:
 pub enum ErrorType{
 	timeout
 	args
+	exec
 }
 
 fn (err JobError) msg() string {
@@ -24,9 +25,9 @@ fn (err JobError) msg() string {
 		return 'Error in arguments:\n${err.job.cmd}'
 	}
 	if err.error_type == .timeout {
-		return 'Execution failed timeout\n${err.job.cmd}'
+		return 'Execution failed timeout\n${err.job}'
 	}
-	mut msg := 'Execution failed with code ${err.job.exit_code}\n${err.job.error}\n${err.job.cmd}'
+	mut msg := 'Execution failed with code ${err.job.exit_code}\n${err.job.error}\n${err.job}'
 	if err.job.cmd.scriptpath.len > 0 {
 		msg += '\nscript path:${err.job.cmd.scriptpath}'
 	}
@@ -46,8 +47,8 @@ pub struct Command {
 pub mut:
 	cmd        string
 	description 	string
-	timeout    int = 3600
-	stdout     bool
+	timeout    int = 3600 //timeout in sec
+	stdout     bool = true
 	stdout_log bool = true
 	die        bool = true
 	work_folder string //location where cmd will be executed
@@ -103,12 +104,13 @@ pub fn exec(cmd Command) !Job {
 	mut logger := get_logger()
 	defer {
 		if os.exists(job.cmd.scriptpath) {
+			// println(job.cmd.scriptpath)	
 			os.rm(job.cmd.scriptpath) or {panic("cannot remove ${job.cmd.scriptpath}")}
 		}
 	}
 	if job.cmd.debug {
 		job.cmd.stdout = true
-		println('execute: ${job}')
+		logger.info('execute: ${job}')
 	}
 
 	if cmd.shell{
@@ -121,7 +123,9 @@ pub fn exec(cmd Command) !Job {
 		os.execvp(process_args[0], process_args[1..process_args.len])!			
 	}else{
 		start := time.now().unix_time()		
-		for x in 0..job.cmd.retry+1{		
+		for x in 0..job.cmd.retry+1{	
+
+			// println(process_args)	
 			mut p := os.new_process(process_args[0])
 			defer {
 				p.close()
@@ -148,7 +152,8 @@ pub fn exec(cmd Command) !Job {
 							job.output += out
 						}
 					}
-					if time.now().unix_time() > start + job.cmd.timeout {
+					if time.now().unix_time() > start + job.cmd.timeout*1000 {
+						// println(job.cmd.timeout*1000)
 						job.exit_code = 9999
 						job.end = time.now()
 						return JobError{job:job,error_type:.timeout}
@@ -160,6 +165,8 @@ pub fn exec(cmd Command) !Job {
 			}		
 			if p.code > 0 {
 				job.exit_code = p.code
+				job.output += p.stdout_read()
+
 				if job.cmd.retry>0 && x < job.cmd.retry {
 					time.sleep( time.millisecond * 100) //wait 0.1 sec
 				}
@@ -190,7 +197,7 @@ pub fn exec(cmd Command) !Job {
 			if job.cmd.stdout {
 				println("Job Error")
 			}			
-			je := JobError{job:job,error_type:.timeout}
+			je := JobError{job:job,error_type:.exec}
 			println(je.msg())
 			return je
 		}
