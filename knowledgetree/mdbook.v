@@ -65,14 +65,6 @@ pub fn (mut book MDBook) error(args BookErrorArgs) {
 }
 
 
-pub enum BookState {
-	init
-	ok
-	error
-}
-
-
-
 [params]
 pub struct BookNewArgs {
 pub:

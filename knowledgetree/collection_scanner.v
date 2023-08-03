@@ -21,17 +21,17 @@ pub mut:
 // a path will not be added unless .collection is in the path of a collection dir 
 pub fn (mut tree Tree) collections_scan(args CollectionScannerArgs) ! {
 	// $if debug{println(" - collections find recursive: $path.path")}
-	mut args := args_
-	if args.git_url.len > 0 {
-		mut gs := gittools.get(root: args.git_root)!
-		mut gr := gs.repo_get_from_url(url: args.git_url, pull: args.git_pull, reset: args.git_reset)!
-		args.path = gr.path_content_get()
+	mut args_ := args
+	if args_.git_url.len > 0 {
+		mut gs := gittools.get(root: args_.git_root)!
+		mut gr := gs.repo_get_from_url(url: args_.git_url, pull: args_.git_pull, reset: args_.git_reset)!
+		args_.path = gr.path_content_get()
 	}
 
-	if args.path.len < 3 {
+	if args_.path.len < 3 {
 		return error('Path needs to be not empty.')
 	}
-	mut path := pathlib.get_dir(args.path, false)!
+	mut path := pathlib.get_dir(args_.path, false)!
 
 	if path.is_dir() {
 		if path.file_exists('.site') {
@@ -54,7 +54,7 @@ pub fn (mut tree Tree) collections_scan(args CollectionScannerArgs) ! {
 				}
 			}
 			println(' - collection new: ${collectionfilepath.path} name:${name}')
-			tree.collection_new(path: path.path, name: name, heal: args.heal, load: args.load)!
+			tree.collection_new(path: path.path, name: name, heal: args_.heal, load: args_.load)!
 			return
 		}
 		mut llist := path.list(recursive: false) or {
@@ -66,7 +66,7 @@ pub fn (mut tree Tree) collections_scan(args CollectionScannerArgs) ! {
 					continue
 				}
 
-				tree.scan_recursive(path: p_in.path, heal: args.heal, load: args.load) or {
+				tree.scan_recursive(path: p_in.path, heal: args_.heal, load: args_.load) or {
 					msg := 'Cannot process recursive on ${p_in.path}\n${err}'
 					// println(msg)
 					return error(msg)

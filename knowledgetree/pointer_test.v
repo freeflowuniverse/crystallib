@@ -12,7 +12,6 @@ fn test_pointerpath() {
 			name: 'a_file'
 			cat: .page
 			extension: 'md'
-			book: ''
 			error: ''
 			state: .unknown
 		}
@@ -31,7 +30,6 @@ fn test_pointerpath() {
 			name: 'a_file'
 			cat: .image
 			extension: 'jpeg'
-			book: ''
 			error: ''
 			state: .unknown
 		}
@@ -53,7 +51,6 @@ fn test_pointer() {
 		name: 'page'
 		cat: .page
 		extension: 'md'
-		book: ''
 		error: ''
 		state: .unknown
 	}
@@ -68,7 +65,6 @@ fn test_pointer2() {
 		cat: .page
 		extension: 'md'
 		collection: 'collectionaaa'
-		book: ''
 		error: ''
 		state: .unknown
 	}
@@ -83,7 +79,6 @@ fn test_pointer3() {
 		cat: .page
 		extension: 'md'
 		collection: 'collection_aaa'
-		book: 'my_book'
 		error: ''
 		state: .unknown
 	}
@@ -98,7 +93,6 @@ fn test_pointer4() {
 		cat: .image
 		extension: 'jpg'
 		collection: 'collection_aaa'
-		book: 'my_book'
 		error: ''
 		state: .unknown
 	}
@@ -113,7 +107,6 @@ fn test_pointer5() {
 		cat: .image
 		extension: 'jpg'
 		collection: ''
-		book: 'my_book'
 		error: ''
 		state: .unknown
 	}

@@ -30,6 +30,7 @@ pub fn (mut tree Tree) fix() ! {
 	}	
 }
 
+/*
 // get the page from a pointer, format of pointer is $book:$collection:$name or $book::$name
 pub fn (tree Tree) page_get(pointerstr string) !&Page {
 	p := pointer_new(pointerstr)!
@@ -88,7 +89,7 @@ pub fn (tree Tree) file_exists(pointerstr string) bool {
 		}
 	}
 	return true
-}
+}*/
 
 //TODO: don't we have dublicates here?
 

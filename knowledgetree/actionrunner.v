@@ -1,26 +1,29 @@
 module knowledgetree
 
+import freeflowuniverse.crystallib.gittools
 
 // TODO: need to get this to work, needs basic tooling to be able to use 3script
 
 // ! Use booksrunner in ./actionrunner
 
-import freeflowuniverse.crystallib.actionparser
+import freeflowuniverse.crystallib.actionsparser
 
 // find all actions & process, this works inclusive
-pub fn actions_process(mut parser actionparser.ActionsParser, actions_done map[string]string) ?map[string]string {
+pub fn actions_process(mut parser actionsparser.ActionsParser, actions_done map[string]string) ?map[string]string {
 	// $if debug {
 	// 	println("+++++")
 	// 	println(actions)
 	// 	println("-----")
 	// }
 
-	mut sites := books.sites_new()
-
-	books.books_new(&sites)
+	// QUESTION: what is this
+	//mut sites := books.sites_new()
+	//books.books_new(&sites)
 
 	// sites.scan(path + '/content')?
 	// books.scan(path + '/books')?
+
+	mut gt := gittools.get()?
 
 	for mut action in parser.actions {
 		$if debug {

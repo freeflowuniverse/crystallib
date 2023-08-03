@@ -14,7 +14,7 @@ mut:
 }
 
 // get a new collection
-fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
+pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 	mut args := args_
 	args.name = texttools.name_fix_no_underscore_no_ext(args.name)
 
@@ -40,7 +40,7 @@ fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 
 
 // path is the full path
-fn (mut collection Collection) scan(mut p pathlib.Path) ! {
+fn (mut collection Collection) scan_internal(mut p pathlib.Path) ! {
 	$if debug {
 		println('--- scan ${p.path}')
 	}
