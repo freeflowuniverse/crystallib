@@ -45,7 +45,7 @@ pub fn (mut b DockerComposeRecipe) stop() ! {
 
 pub fn (mut b DockerComposeRecipe) delete() ! {
 	b.stop()!
-	exec(cmd:'rm -rf ${b.path} && mkdir -p ${b.path}',silent:true)!
+	exec(cmd:'rm -rf ${b.path} && mkdir -p ${b.path}',stdout:false)!
 }
 
 fn (mut b DockerComposeRecipe) render() ! {

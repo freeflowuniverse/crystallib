@@ -2,6 +2,7 @@ module pathlib
 
 import os
 import freeflowuniverse.crystallib.texttools
+import time
 
 // check path exists
 pub fn (mut path Path) exists() bool {
@@ -318,16 +319,16 @@ pub fn temp_write(args_ TMPWriteArgs) !string {
 			}
 		}		
 		t := time.now().format_ss_milli().replace(' ', '-')
-		mut tmppath := '${tmpdir}/execscripts/${t}.sh'
-		if !os.exists('${tmpdir}/execscripts/') {
-			os.mkdir('${tmpdir}/execscripts') or {
-				return error('Cannot create ${tmpdir}/execscripts,${err}')
+		mut tmppath := '${args.tmpdir}/execscripts/${t}.sh'
+		if !os.exists('${args.tmpdir}/execscripts/') {
+			os.mkdir('${args.tmpdir}/execscripts') or {
+				return error('Cannot create ${args.tmpdir}/execscripts,${err}')
 			}
 		}
 		if os.exists(tmppath) {
 			for i in 1 .. 200 {
 				// println(i)
-				tmppath = '${tmpdir}/execscripts/{${t}}_${i}.sh'
+				tmppath = '${args.tmpdir}/execscripts/{${t}}_${i}.sh'
 				if !os.exists(tmppath) {
 					break
 				}
@@ -344,5 +345,5 @@ pub fn temp_write(args_ TMPWriteArgs) !string {
 	}
 	os.write_file(args.path, args.text)!
 	os.chmod(args.path, 0o777)!	
-	return tmppath
+	return args.path
 }

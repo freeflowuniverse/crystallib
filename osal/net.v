@@ -28,7 +28,7 @@ pub fn ping(args PingArgs) PingResult {
 	} else {
 		panic('Unsupported platform for ping')
 	}
-	_ := exec(cmd: cmd, reset: true, retry: args.retry, timeout: 0, silent: true) or {
+	_ := exec(cmd: cmd, retry: args.retry, timeout: 0, stdout: false) or {
 		if err.code() == 9999 {
 			return .timeout
 		}
@@ -55,6 +55,6 @@ pub fn ping(args PingArgs) PingResult {
 // is using resolver4.opendns.com
 pub fn ipaddr_pub_get() !string {
 	cmd := 'dig @resolver4.opendns.com myip.opendns.com +short'
-	ipaddr := exec(cmd: cmd, reset: false, period: 600000)!
-	return ipaddr.trim('\n').trim(' \n')
+	ipaddr := exec(cmd: cmd)!
+	return ipaddr.output.trim('\n').trim(' \n')
 }

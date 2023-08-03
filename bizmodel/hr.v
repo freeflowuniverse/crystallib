@@ -1,6 +1,6 @@
 module bizmodel
 
-import freeflowuniverse.crystallib.actionsparser
+import freeflowuniverse.crystallib.baobab.actionsparser
 import freeflowuniverse.crystallib.texttools
 
 // !!hr.employee_define

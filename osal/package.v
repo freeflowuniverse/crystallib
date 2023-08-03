@@ -60,8 +60,6 @@ pub fn upgrade() ! {
 
 		exec(
 			cmd: upgrade_cmds
-			period: 48 * 3600
-			reset: false
 			retry: 5
 			description: 'upgrade operating system packages'
 		)!

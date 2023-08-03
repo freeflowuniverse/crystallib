@@ -1,0 +1,1 @@
+This is what needs to be re-developed for other languages, we kept it as easy as possible. Here you will logic regarding jobs: structs, functions to encode or decode jobs to json, etc.

@@ -7,7 +7,6 @@ fn do() ! {
 		cmd: 'eecho sometext'
 		reset: false
 		retry: 5
-		period: 10
 	) or {
 		println(err.code())
 		assert err.code() == 127

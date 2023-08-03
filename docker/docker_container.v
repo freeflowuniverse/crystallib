@@ -59,7 +59,7 @@ pub fn (mut container DockerContainer) start() ! {
 
 // delete docker container
 pub fn (mut container DockerContainer) halt() ! {
-	exec(cmd:'docker stop ${container.id}') or { '' }
+	osal.execute_stdout('docker stop ${container.id}') or { '' }
 	container.status = DockerContainerStatus.down
 }
 
@@ -67,7 +67,7 @@ pub fn (mut container DockerContainer) halt() ! {
 pub fn (mut container DockerContainer) delete() ! {
 	println(' - CONTAINER DELETE: ${container.name}')
 
-	exec(cmd:'docker rm ${container.id} -f',silent:true)!
+	exec(cmd:'docker rm ${container.id} -f',stdout:false)!
 	mut x := 0
 	for container2 in container.engine.containers {
 		if container2.name == container.name {
@@ -79,7 +79,7 @@ pub fn (mut container DockerContainer) delete() ! {
 
 // save the docker container to image
 pub fn (mut container DockerContainer) save2image(image_repo string, image_tag string) !string {
-	id:=exec(cmd:'docker commit ${container.id} ${image_repo}:${image_tag}')!
+	id:=osal.execute_stdout('docker commit ${container.id} ${image_repo}:${image_tag}')!
 	container.image.id = id.trim(" ")
 	return id
 }
@@ -113,7 +113,7 @@ pub fn (mut container DockerContainer) shell(args DockerShellArgs) ! {
 
 pub fn (mut container DockerContainer) execute(cmd_ string, silent bool) ! {
 	cmd := 'docker exec ${container.id} ${cmd_}'
-	exec(cmd:cmd,silent:silent)!
+	exec(cmd:cmd,stdout:!silent)!
 }
 
 // pub fn (mut container DockerContainer) ssh_enable() ! {

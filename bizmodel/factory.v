@@ -1,7 +1,7 @@
 module bizmodel
 
 import freeflowuniverse.crystallib.calc
-import freeflowuniverse.crystallib.actionsparser
+import freeflowuniverse.crystallib.baobab.actionsparser
 
 pub struct BizModel {
 pub mut:

@@ -278,7 +278,7 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 
 	file_write('${destpath}/shell.sh', cmdshell)!
 
-	exec(path: '${destpath}/build.sh', cmd: cmd)!
+	exec(scriptpath: '${destpath}/build.sh', cmd: cmd)!
 
 	osal.done_set('build_${b.name}', hashnew)!
 }

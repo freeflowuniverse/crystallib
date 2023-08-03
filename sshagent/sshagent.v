@@ -99,7 +99,7 @@ pub fn load_interactive() !string {
 
 	// url_github_add := "https://library.threefold.me/info/publishtools/#/sshkey_github"
 
-	// process.execute_interactive("open $url_github_add")?
+	// osal.execute_interactive("open $url_github_add")?
 
 	// if console.ask_yesno(description:"Did you manage to add the github key to this repo ?"){
 	// 	println( " - CONGRATS: your sshkey is now loaded.")

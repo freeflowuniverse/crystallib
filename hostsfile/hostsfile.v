@@ -1,7 +1,7 @@
 module hostsfile
 
 import os
-import freeflowuniverse.crystallib.process
+import freeflowuniverse.crystallib.osal
 
 [heap]
 pub struct HostsFile {
@@ -50,7 +50,7 @@ pub fn (mut hostsfile HostsFile) save(sudo bool) &HostsFile {
 		str = str + '\n\n'
 	}
 	if sudo {
-		process.execute_interactive('sudo -- sh -c -e "echo \'${str}\' > /etc/hosts"') or {
+		osal.execute_interactive('sudo -- sh -c -e "echo \'${str}\' > /etc/hosts"') or {
 			panic(err)
 		}
 	} else {

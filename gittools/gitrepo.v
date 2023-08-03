@@ -1,7 +1,7 @@
 module gittools
 
 import os
-import freeflowuniverse.crystallib.process
+import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.sshagent
 // import pathlib
 
@@ -93,7 +93,7 @@ pub fn (mut repo GitRepo) path_relative() string {
 pub fn (mut repo GitRepo) changes() !bool {
 	cmd := 'cd ${repo.path()} && git status'
 	// println(cmd)
-	out := process.execute_silent(cmd) or {
+	out := osal.execute_silent(cmd) or {
 		return error('Could not execute command to check git status on ${repo.path()}\ncannot execute ${cmd}')
 	}
 	if out.contains('Untracked files') {
@@ -179,7 +179,7 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ! {
 				cmd = repo.get_clone_cmd(true)
 			}
 
-			process.execute_silent(cmd) or {
+			osal.execute_silent(cmd) or {
 				println(' GIT FAILED: ${cmd}')
 				return error('Cannot pull repo: ${repo.path()}. Error was ${err}')
 			}
@@ -238,7 +238,7 @@ pub fn (mut repo GitRepo) pull() ! {
 		// 	return error('Cannot pull repo: ${repo.path()} because there are changes in the dir.')
 		// }
 		cmd2 := 'cd ${repo.path()} && git pull'
-		process.execute_silent(cmd2) or {
+		osal.execute_silent(cmd2) or {
 			println(' GIT PULL FAILED: ${cmd2}')
 			return error('Cannot pull repo: ${repo.path()}. Error was ${err}')
 		}
@@ -256,7 +256,7 @@ pub fn (mut repo GitRepo) commit(msg string) ! {
 		git add . -A
 		git commit -m \"${msg}\"
 		echo "
-		process.execute_silent(cmd) or {
+		osal.execute_silent(cmd) or {
 			return error('Cannot commit repo: ${repo.path()}. Error was ${err}')
 		}
 	} else {
@@ -281,7 +281,7 @@ pub fn (mut repo GitRepo) remove_changes() ! {
 		git checkout .
 		echo ""
 		'
-		process.execute_silent(cmd) or {
+		osal.execute_silent(cmd) or {
 			return error('Cannot commit repo: ${repo.path()}. Error was ${err}')
 		}
 	} else {
@@ -292,14 +292,14 @@ pub fn (mut repo GitRepo) remove_changes() ! {
 pub fn (mut repo GitRepo) push() ! {
 	println('   - PUSH: ${repo.url_get(true)}')
 	cmd := 'cd ${repo.path()} && git push'
-	process.execute_silent(cmd) or {
+	osal.execute_silent(cmd) or {
 		return error('Cannot push repo: ${repo.path()}. Error was ${err}')
 	}
 }
 
 pub fn (mut repo GitRepo) branch_get() !string {
 	cmd := 'cd ${repo.path()} && git rev-parse --abbrev-ref HEAD'
-	branch := process.execute_silent(cmd) or {
+	branch := osal.execute_silent(cmd) or {
 		return error('Cannot get branch name from repo: ${repo.path()}. Error was ${err} for cmd ${cmd}')
 	}
 	return branch.trim(' \n')
@@ -316,7 +316,7 @@ pub fn (mut repo GitRepo) branch_switch(branchname string) ! {
 	// Fetch repo before checkout, in case a new branch added.
 	repo.fetch_all()!
 	cmd := 'cd ${repo.path()} && git checkout ${branchname}'
-	process.execute_silent(cmd) or {
+	osal.execute_silent(cmd) or {
 		// println('GIT CHECKOUT FAILED: $cmd_checkout')
 		return error('Cannot branch switch repo: ${repo.path()}. Error was ${err} \n cmd: ${cmd}')
 	}
@@ -326,7 +326,7 @@ pub fn (mut repo GitRepo) branch_switch(branchname string) ! {
 
 pub fn (mut repo GitRepo) fetch_all() ! {
 	cmd := 'cd ${repo.path()} && git fetch --all'
-	process.execute_silent(cmd) or {
+	osal.execute_silent(cmd) or {
 		// println('GIT FETCH FAILED: $cmd_checkout')
 		return error('Cannot fetch repo: ${repo.path()}. Error was ${err} \n cmd: ${cmd}')
 	}
@@ -339,7 +339,7 @@ pub fn (mut repo GitRepo) delete() ! {
 		repo.check(false, false)!
 	} else {
 		cmd2 := 'cd ${repo.path()} && git pull'
-		process.execute_silent(cmd2) or {
+		osal.execute_silent(cmd2) or {
 			println(' GIT DELETE FAILED: ${cmd2}')
 			return error('Cannot delete repo: ${repo.path()}. Error was ${err}')
 		}

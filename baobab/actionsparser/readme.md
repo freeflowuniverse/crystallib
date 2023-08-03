@@ -36,7 +36,7 @@ The generic actions()... is used to make all happen.
 
 
 ```go
-import freeflowuniverse.crystallib.actionsparser
+import freeflowuniverse.crystallib.baobab.actionsparser
 
 // !!hr.employee_define
 //     descr:'Junior Engineer'

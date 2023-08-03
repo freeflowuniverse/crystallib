@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.process
+import freeflowuniverse.crystallib.osal
 
 fn do() ? {
 	mut pm := process.processmap_get()?

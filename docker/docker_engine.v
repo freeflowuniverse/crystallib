@@ -30,7 +30,7 @@ pub enum BuildPlatformType {
 pub fn (mut e DockerEngine) init() ! {
 	if e.buildpath == '' {
 		e.buildpath = '/tmp/builder'
-		exec(cmd:'mkdir -p ${e.buildpath}',silent:true)!
+		exec(cmd:'mkdir -p ${e.buildpath}',stdout:false)!
 	}
 	if e.platform == [] {
 		if platform() == .ubuntu && cputype() == .intel {
@@ -54,11 +54,12 @@ pub fn (mut e DockerEngine) load() ! {
 // see obj: DockerContainer as result in e.containers
 pub fn (mut e DockerEngine) containers_load() ! {
 	e.containers = []DockerContainer{}
-	mut lines := exec(
+	mut ljob := exec(
 		cmd: "docker ps -a --no-trunc --format '{{.ID}}|{{.Names}}|{{.Image}}|{{.Command}}|{{.CreatedAt}}|{{.Ports}}|{{.State}}|{{.Size}}|{{.Mounts}}|{{.Networks}}|{{.Labels}}'"
 		ignore_error_codes: [6]
-		silent: true
+		stdout: false
 	)!
+	lines:=ljob.output
 	for line in lines.split_into_lines() {
 		if line.trim_space() == '' {
 			continue
@@ -147,7 +148,7 @@ pub fn (mut e DockerEngine) container_import(path string, mut args DockerContain
 		image = image + ':${args.image_tag}'
 	}
 
-	exec(cmd:'docker import  ${path} ${image}',silent:true)!
+	exec(cmd:'docker import  ${path} ${image}',stdout:false)!
 	// make sure we start from loaded image
 	return e.container_create(args)
 }
@@ -160,8 +161,8 @@ pub fn (mut e DockerEngine) reset_all() ! {
 	for mut image in e.images.clone() {
 		image.delete(true)!
 	}
-	exec(cmd:'docker image prune -a -f',silent:true) or { panic(err) }
-	exec(cmd:'docker builder prune -a -f',silent:true) or { panic(err) }
+	exec(cmd:'docker image prune -a -f',stdout:false) or { panic(err) }
+	exec(cmd:'docker builder prune -a -f',stdout:false) or { panic(err) }
 	osal.done_reset()!
 	e.load()!
 }

@@ -1,8 +1,8 @@
 module actions
 
-import freeflowuniverse.crystallib.actionsparser
+import freeflowuniverse.crystallib.baobab.actionsparser
 
-fn currencies_execute(actions []actionsparser.Action) ! {
+fn actions(actions []actionsparser.Action) ! {
 	mut actions2 := actionsparser.filtersort(actions: actions, actor: 'currency', book: '*')! // TODO: means we do for any book
 	if actions2.len == 0 {
 		return

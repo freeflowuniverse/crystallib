@@ -95,7 +95,7 @@ pub fn cputype() CPUType {
 			return cputype_
 		}
 	}
-	sys_info := exec(cmd: 'uname -m', retry: 0) or {
+	sys_info := execute_stdout('uname -m') or {
 		logger.error('Failed to execute uname to get the cputype: ${err}')
 		return CPUType.unknown
 	}
@@ -115,4 +115,9 @@ pub fn cputype() CPUType {
 		}
 	}
 	return cputype_
+}
+
+
+pub fn is_osx()bool{
+	return platform() == .osx
 }

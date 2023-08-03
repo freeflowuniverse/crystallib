@@ -1,17 +1,17 @@
 module main
 
-import freeflowuniverse.crystallib.process
+import freeflowuniverse.crystallib.osal
 
 fn do() ? {
-	if process.is_osx() {
+	if osal.is_osx() {
 		println('IS OSX')
 	}
 
-	mut job2 := process.execute_job(cmd: 'ls /')?
+	mut job2 := osal.exec(cmd: 'ls /')?
 	println(job2)
 
 	// wont die, the result can be found in /tmp/execscripts
-	mut job := process.execute_job(cmd: 'ls dsds', die: false)?
+	mut job := osal.exec(cmd: 'ls dsds', die: false)?
 	println(job)
 }
 
