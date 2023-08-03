@@ -203,7 +203,14 @@ pub fn exec(args_ ExecArgs) !string {
 			process.wait()
 			err = process.stderr_read()
 			if process.code == 0 || process.code in args.ignore_error_codes {
-				res := process.stdout_read()
+				mut res := ""
+				for {
+					data := process.stdout_read()
+					if data == "" {
+						break
+					}
+					res += data
+				}
 				if args.silent == false && args.stdout == true { // TODO: make sure happens while process active
 					logger.info('Output from execution of command "${args.description}"')
 				}
