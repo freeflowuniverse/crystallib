@@ -6,11 +6,11 @@ import freeflowuniverse.crystallib.params
 import os
 
 [params]
-pub struct CollectionScannerArgs {
+pub struct TreeScannerArgs {
 pub mut:
 	path string
 	heal bool // healing means we fix images, if selected will automatically load, remove stale links
-	load bool
+	load bool = true
 	git_url   string
 	git_reset bool
 	git_root  string
@@ -19,7 +19,7 @@ pub mut:
 
 // walk over directory find dis with .site or .collection inside and add to the tree
 // a path will not be added unless .collection is in the path of a collection dir 
-pub fn (mut tree Tree) collections_scan(args CollectionScannerArgs) ! {
+pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 	// $if debug{println(" - collections find recursive: $path.path")}
 	mut args_ := args
 	if args_.git_url.len > 0 {
@@ -34,29 +34,43 @@ pub fn (mut tree Tree) collections_scan(args CollectionScannerArgs) ! {
 	mut path := pathlib.get_dir(args_.path, false)!
 
 	if path.is_dir() {
+		name := path.name()
 		if path.file_exists('.site') {
 			// mv .site file to .collection file
 			collectionfilepath1 := path.extend_file('.site')!
 			collectionfilepath2 := path.extend_file('.collection')!
 			os.mv(collectionfilepath1.path, collectionfilepath2.path)!
 		}
-		if path.file_exists('.collection') {
-			mut name := path.name()
-			mut collectionfilepath := path.file_get('.collection')!
+		for type_of_file in [".collection", ".book"] {
+			if path.file_exists(type_of_file) {
+				mut filepath := path.file_get(type_of_file)!
 
-			// now we found a tree we need to add
-			content := collectionfilepath.read()!
-			if content.trim_space() != '' {
-				// means there are params in there
-				mut params_ := params.parse(content)!
-				if params_.exists('name') {
-					name = params_.get('name')!
+				// now we found a tree we need to add
+				content := filepath.read()!
+				if content.trim_space() != '' {
+					// means there are params in there
+					mut params_ := params.parse(content)!
+					if params_.exists('name') {
+						name = params_.get('name')!
+					}
+				}
+				println(' - ${type_of_file[1..]} new: ${filepath.path} name:${name}')
+				match type_of_file {
+					".collection" {
+						tree.collection_new(path: path.path, name: name, heal: args_.heal, load: args_.load)!
+						return
+					}
+					".book" {
+						tree.book_new(path: path.path, name: name, heal: args_heal)!
+						return
+					}
+					else {
+						panic("not implemented: please add the new type to the match statement")
+					}
 				}
 			}
-			println(' - collection new: ${collectionfilepath.path} name:${name}')
-			tree.collection_new(path: path.path, name: name, heal: args_.heal, load: args_.load)!
-			return
 		}
+
 		mut llist := path.list(recursive: false) or {
 			return error('cannot list: ${path.path} \n${error}')
 		}
