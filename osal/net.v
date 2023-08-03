@@ -28,7 +28,7 @@ pub fn ping(args PingArgs) PingResult {
 	} else {
 		panic('Unsupported platform for ping')
 	}
-	_ := exec(cmd: cmd, reset: true, retry: args.retry, retry_timeout: 0, silent: true) or {
+	_ := exec(cmd: cmd, reset: true, retry: args.retry, timeout: 0, silent: true) or {
 		if err.code() == 9999 {
 			return .timeout
 		}

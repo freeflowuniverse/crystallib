@@ -7,3 +7,4 @@ pathlib/examples
 process/examples
 redisclient/examples
 vault/examples
+manual
