@@ -248,6 +248,7 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 	cmdshell += '    -v ${destpath}:/src \\\n'
 	cmdshell += '    -v /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock \\\n'
 	cmdshell += '    -e SSH_AUTH_SOCK="/run/host-services/ssh-auth.sock" \\\n'
+	cmdshell += '    --privileged \\\n'
 	cmdshell += '    --hostname ${b.name} ${b.name}:${b.tag}'
 	if b.zinit {
 		cmdshell += '\n\ndocker exec -ti ${b.name} /bin/shell.sh'
