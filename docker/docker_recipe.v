@@ -197,7 +197,7 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 	dockerfilecontent := b.render()!
 
 	destpath := b.path()
-	// osal.resetdir_all(destpath)!
+	os.mkdir_all(destpath)!
 	file_write('${destpath}/Dockerfile', dockerfilecontent)!
 	for item in b.files {
 		filename := item.path.all_after_first('/')
