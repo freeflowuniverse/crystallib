@@ -1,7 +1,7 @@
 module processor
 
-import freeflowuniverse.baobab.client
-import freeflowuniverse.baobab.jobs
+import freeflowuniverse.crystallib.baobab.client
+import freeflowuniverse.crystallib.baobab.jobs
 import log
 import rand
 

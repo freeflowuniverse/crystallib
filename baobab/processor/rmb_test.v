@@ -1,6 +1,6 @@
 module processor
 
-import freeflowuniverse.baobab.jobs
+import freeflowuniverse.crystallib.baobab.jobs
 import freeflowuniverse.crystallib.redisclient
 import encoding.base64
 import json

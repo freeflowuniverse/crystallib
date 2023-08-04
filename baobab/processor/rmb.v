@@ -1,6 +1,6 @@
 module processor
 
-import freeflowuniverse.baobab.jobs
+import freeflowuniverse.crystallib.baobab.jobs
 import encoding.base64
 import json
 import time

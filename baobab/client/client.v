@@ -1,6 +1,6 @@
 module client
 
-import freeflowuniverse.baobab.jobs { ActionJob, ActionJobState, JobNewArgs, json_load }
+import freeflowuniverse.crystallib.baobab.jobs { ActionJob, ActionJobState, JobNewArgs, json_load }
 
 // Create a new job, it does not send it for execution
 // yet

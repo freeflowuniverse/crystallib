@@ -1,9 +1,9 @@
 module actionrunner
 
 import time
-import freeflowuniverse.baobab.actor
-import freeflowuniverse.baobab.client
-import freeflowuniverse.baobab.jobs
+import freeflowuniverse.crystallib.baobab.actor
+import freeflowuniverse.crystallib.baobab.client
+import freeflowuniverse.crystallib.baobab.jobs
 import freeflowuniverse.crystallib.redisclient
 
 fn testsuite_begin() {

@@ -1,7 +1,7 @@
 module client
 
-import freeflowuniverse.baobab.actions
-import freeflowuniverse.baobab.jobs
+import freeflowuniverse.crystallib.baobab.actions
+import freeflowuniverse.crystallib.baobab.jobs
 import time
 import rand
 

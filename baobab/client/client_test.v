@@ -1,7 +1,7 @@
 module client
 
 import freeflowuniverse.crystallib.redisclient
-import freeflowuniverse.baobab.actions
+import freeflowuniverse.crystallib.baobab.actions
 import os
 
 const samples_dir = os.dir(@FILE) + '/../../examples/actionsdir'

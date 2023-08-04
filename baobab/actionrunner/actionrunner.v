@@ -1,8 +1,8 @@
 module actionrunner
 
-import freeflowuniverse.baobab.actor
-import freeflowuniverse.baobab.client { Client }
-import freeflowuniverse.baobab.jobs { ActionJob }
+import freeflowuniverse.crystallib.baobab.actor
+import freeflowuniverse.crystallib.baobab.client { Client }
+import freeflowuniverse.crystallib.baobab.jobs { ActionJob }
 import rand
 
 const (
