@@ -258,7 +258,7 @@ Aland Islands	AX	ALA	248
 // ARGS:
 pub fn countries_get() map[string]&Country {
 	mut cs := map[string]&Country{}
-	for country__ in country_string.split_into_lines() {
+	for country__ in people.country_string.split_into_lines() {
 		mut country_ := country__.trim_space()
 		country_ = country_.replace('\t', ' ').replace('  ', ' ').replace('  ', ' ')
 		if country_ == '' {
@@ -280,9 +280,9 @@ pub fn countries_get() map[string]&Country {
 		cs[shortname] = &c
 	}
 
-	//HARDCODED in a few vat_percentages
+	// HARDCODED in a few vat_percentages
 	cs['belgium'].vat_percent = 21
-	//cs['united_arab_emirates'].vat_percent = 0
+	// cs['united_arab_emirates'].vat_percent = 0
 
 	return cs
 }

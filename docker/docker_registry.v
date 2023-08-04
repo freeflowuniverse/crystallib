@@ -2,7 +2,7 @@ module docker
 
 import freeflowuniverse.crystallib.openssl
 import freeflowuniverse.crystallib.httpconnection
-import freeflowuniverse.crystallib.osal { cputype, platform, exec }
+import freeflowuniverse.crystallib.osal { exec }
 import os
 
 [heap]
@@ -75,7 +75,7 @@ pub fn (mut e DockerEngine) registry_add(args DockerRegistryArgs) ! {
 			// means we are missing a key
 			mut ossl := openssl.new()!
 			k := ossl.get(name: 'docker_registry')!
-			os.mkdir_all("${registry.datapath}/certs")!
+			os.mkdir_all('${registry.datapath}/certs')!
 			os.cp(k.path_cert.path, p1)!
 			os.cp(k.path_key.path, p2)!
 		}
@@ -83,11 +83,11 @@ pub fn (mut e DockerEngine) registry_add(args DockerRegistryArgs) ! {
 	e.registries << registry
 
 	// delete all previous containers, uses wildcards see https://modules.vlang.io/index.html#string.match_glob
-	e.container_delete('docker_registry*')!
+	e.container_delete(name:'docker_registry*')!
 
 	composer.start()!
 
-	exec(cmd: 'curl https://localhost:5000/v2/ -k',  retry:4) or {
+	exec(cmd: 'curl https://localhost:5000/v2/ -k', retry: 4) or {
 		return error('could not start docker registry, did not answer')
 	}
 

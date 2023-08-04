@@ -2,7 +2,7 @@ module docker
 
 import freeflowuniverse.crystallib.params { Params }
 import freeflowuniverse.crystallib.texttools
-import freeflowuniverse.crystallib.osal { cputype, platform, exec, file_write }
+import freeflowuniverse.crystallib.osal { exec, file_write }
 import os
 
 [heap]
@@ -45,7 +45,7 @@ pub fn (mut b DockerComposeRecipe) stop() ! {
 
 pub fn (mut b DockerComposeRecipe) delete() ! {
 	b.stop()!
-	exec(cmd:'rm -rf ${b.path} && mkdir -p ${b.path}',stdout:false)!
+	exec(cmd: 'rm -rf ${b.path} && mkdir -p ${b.path}', stdout: false)!
 }
 
 fn (mut b DockerComposeRecipe) render() ! {

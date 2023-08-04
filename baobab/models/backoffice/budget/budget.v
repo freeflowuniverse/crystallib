@@ -9,13 +9,12 @@ import freeflowuniverse.protocolme.people
 pub struct Budget {
 pub mut:
 	allocation []BudgetAllocation
-	planning []BudgetItem
-	months []BudgetMonth
+	planning   []BudgetItem
+	months     []BudgetMonth
 }
 
-type BudgetAllocation = BudgetAllocationPerson //| BudgetAllocationCompany 
-type BudgetItem = BudgetItemPerson | BudgetItemGeneric | BudgetItemOffice
-
+type BudgetAllocation = BudgetAllocationPerson //| BudgetAllocationCompany
+type BudgetItem = BudgetItemGeneric | BudgetItemOffice | BudgetItemPerson
 
 // pub struct BudgetAllocationCompany{
 // pub mut:
@@ -25,12 +24,8 @@ type BudgetItem = BudgetItemPerson | BudgetItemGeneric | BudgetItemOffice
 // 	percentage int //0-100
 // }
 
-pub struct BudgetAllocationPerson{
+pub struct BudgetAllocationPerson {
 pub mut:
-	person &people.Person 
-	percentage int //0-100
+	person     &people.Person
+	percentage int // 0-100
 }
-
-
-
-

@@ -1,10 +1,7 @@
 module people
 
-
-pub struct Country { 
+pub struct Country {
 pub mut:
-	name  		string
-	codes 		[]string
+	name  string
+	codes []string
 }
-
-

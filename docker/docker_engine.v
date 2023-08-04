@@ -1,6 +1,7 @@
 module docker
 
-import freeflowuniverse.crystallib.osal { cputype, platform, exec }
+import freeflowuniverse.crystallib.osal { cputype, exec, platform }
+import freeflowuniverse.crystallib.texttools
 // import freeflowuniverse.crystallib.installers.swarm
 
 // https://docs.docker.com/reference/
@@ -16,8 +17,8 @@ pub mut:
 	localonly       bool
 	cache           bool = true
 	push            bool
-	platform        []BuildPlatformType //used to build
-	registries      []DockerRegistry // one or more supported DockerRegistries
+	platform        []BuildPlatformType // used to build
+	registries      []DockerRegistry    // one or more supported DockerRegistries
 	prefix          string
 }
 
@@ -30,7 +31,7 @@ pub enum BuildPlatformType {
 pub fn (mut e DockerEngine) init() ! {
 	if e.buildpath == '' {
 		e.buildpath = '/tmp/builder'
-		exec(cmd:'mkdir -p ${e.buildpath}',stdout:false)!
+		exec(cmd: 'mkdir -p ${e.buildpath}', stdout: false)!
 	}
 	if e.platform == [] {
 		if platform() == .ubuntu && cputype() == .intel {
@@ -59,7 +60,7 @@ pub fn (mut e DockerEngine) containers_load() ! {
 		ignore_error_codes: [6]
 		stdout: false
 	)!
-	lines:=ljob.output
+	lines := ljob.output
 	for line in lines.split_into_lines() {
 		if line.trim_space() == '' {
 			continue
@@ -67,7 +68,7 @@ pub fn (mut e DockerEngine) containers_load() ! {
 		fields := line.split('|').map(clear_str)
 		if fields.len < 11 {
 			panic('docker ps needs to output 11 parts.\n${fields}')
-		}		
+		}
 		id := fields[0]
 		mut container := DockerContainer{
 			image: &DockerImage{
@@ -77,7 +78,7 @@ pub fn (mut e DockerEngine) containers_load() ! {
 		}
 
 		container.id = id
-		container.name = fields[1]
+		container.name = texttools.name_fix(fields[1])
 		container.image = e.image_get(id: fields[2])!
 		container.command = fields[3]
 		container.created = parse_time(fields[4])!
@@ -88,56 +89,121 @@ pub fn (mut e DockerEngine) containers_load() ! {
 		container.networks = parse_networks(fields[9])!
 		container.labels = parse_labels(fields[10])!
 		container.ssh_enabled = contains_ssh_port(container.ports)
-		println(container)
+		// println(container)
 		e.containers << container
 	}
 }
 
+//EXISTS, GET
+
+
+[params]
+pub struct ContainerGetArgs {
+ pub mut:
+	name   string
+	id     string
+	image_id string
+	// tag    string
+	// digest string
+}
+
+
+pub struct ContainerGetError {
+	Error
+pub:
+	args ContainerGetArgs
+	notfound bool
+	toomany bool
+}
+
+pub fn (err ContainerGetError) msg() string {
+	if err.notfound{
+		return 'Could not find image with args:\n${err.args}'
+	}
+	if err.toomany{
+		return 'Found more than 1 image with args:\n${err.args}'
+	}
+	panic("unknown error for ContainerGetError")	
+}
+
+pub fn (err ContainerGetError) code() int {
+	if err.notfound{
+		return 1
+	}
+	if err.toomany{
+		return 2
+	}
+	panic("unknown error for ContainerGetError")	
+}
+
+// get containers from memory
+// params:
+//   name   string  (can also be a glob e.g. use *,? and [])
+//   id     string
+//   image_id string
+pub fn (mut e DockerEngine) containers_get(args_ ContainerGetArgs) ![]&DockerContainer {
+	mut args:=args_
+	args.name = texttools.name_fix(args.name)
+	mut res:=[]&DockerContainer{}
+	for _, c in e.containers{
+		if args.name.contains('*') || args.name.contains('?') || args.name.contains('[') {
+			if c.name.match_glob(args.name) {
+				res<<&c
+				continue
+			}
+		}else{
+			if c.name == args.name || c.id == args.id {
+				res<<&c
+				continue
+			}	
+		}		
+		if args.image_id.len>0 && (c.image.id == args.image_id){
+			res<<&c
+		}
+	}
+	if res.len==0{
+		return ContainerGetError{args:args,notfound:true}
+	}
+	return res
+}
+
+
 // get container from memory, can use match_glob see https://modules.vlang.io/index.html#string.match_glob
-pub fn (mut e DockerEngine) container_get(name_or_id string) !&DockerContainer {
-	for _, c in e.containers {
-		if name_or_id.contains('*') || name_or_id.contains('?') || name_or_id.contains('[') {
-			if c.name.match_glob(name_or_id) {
-				return &c
-			}
-		}
-		if c.name == name_or_id || c.id == name_or_id {
-			return &c
-		}
+pub fn (mut e DockerEngine) container_get(args_ ContainerGetArgs) !&DockerContainer {
+	mut args:=args_
+	args.name = texttools.name_fix(args.name)
+	mut res:=e.containers_get(args)!
+	if res.len>1{
+		return ContainerGetError{args:args,notfound:true}
 	}
-	return error('Cannot find container with name ${name_or_id}')
+	return res[0]
 }
 
-// check existance of container, can use match_glob see https://modules.vlang.io/index.html#string.match_glob
-pub fn (mut e DockerEngine) container_exists(name_or_id string) bool {
-	for _, c in e.containers {
-		if name_or_id.contains('*') || name_or_id.contains('?') || name_or_id.contains('[') {
-			if c.name.match_glob(name_or_id) {
-				return true
-			}
+pub fn (mut e DockerEngine) container_exists(args ContainerGetArgs) !bool {
+	e.container_get(args) or {
+		if err.code()==1 {
+			return false
 		}
-		if c.name == name_or_id || c.id == name_or_id {
-			return true
-		}
+		return err
 	}
-	return false
+	return true
 }
 
-// delete one or more containers, can use match_glob see https://modules.vlang.io/index.html#string.match_glob
-pub fn (mut e DockerEngine) container_delete(name_or_id string) ! {
-	for _, mut c in e.containers {
-		if name_or_id.contains('*') || name_or_id.contains('?') || name_or_id.contains('[') {
-			if c.name.match_glob(name_or_id) {
-				println(' - docker container delete: ${c.name}')
-				c.delete()!
-			}
-		}
-		if c.name == name_or_id || c.id == name_or_id {
-			c.delete()!
-		}
-	}
+pub fn (mut e DockerEngine) container_delete(args ContainerGetArgs) ! {
+	mut c:=e.container_get(args)!
+	c.delete()!
 	e.load()!
 }
+
+//remove one or more container
+pub fn (mut e DockerEngine) containers_delete(args ContainerGetArgs) ! {
+	mut cs:=e.containers_get(args)!
+	for mut c in cs{
+		c.delete()!
+	}	
+	e.load()!
+}
+
 
 // import a container into an image, run docker container with it
 // image_repo examples ['myimage', 'myimage:latest']
@@ -148,7 +214,7 @@ pub fn (mut e DockerEngine) container_import(path string, mut args DockerContain
 		image = image + ':${args.image_tag}'
 	}
 
-	exec(cmd:'docker import  ${path} ${image}',stdout:false)!
+	exec(cmd: 'docker import  ${path} ${image}', stdout: false)!
 	// make sure we start from loaded image
 	return e.container_create(args)
 }
@@ -161,8 +227,8 @@ pub fn (mut e DockerEngine) reset_all() ! {
 	for mut image in e.images.clone() {
 		image.delete(true)!
 	}
-	exec(cmd:'docker image prune -a -f',stdout:false) or { panic(err) }
-	exec(cmd:'docker builder prune -a -f',stdout:false) or { panic(err) }
+	exec(cmd: 'docker image prune -a -f', stdout: false) or { panic(err) }
+	exec(cmd: 'docker builder prune -a -f', stdout: false) or { panic(err) }
 	osal.done_reset()!
 	e.load()!
 }

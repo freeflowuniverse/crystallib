@@ -82,10 +82,10 @@ pub fn amount_get(amount_ string) &Amount {
 	// remove spaces from code and capitalise
 
 	code_nice := match code {
-		'$' {'USD'}
-		'£' {'GBP'}
-		'€' {'EUR'}
-		else {code.to_upper()}
+		'$' { 'USD' }
+		'£' { 'GBP' }
+		'€' { 'EUR' }
+		else { code.to_upper() }
 	}
 
 	currencies := get_currencies() // TODO with api
@@ -98,13 +98,13 @@ pub fn amount_get(amount_ string) &Amount {
 	return &amount2
 }
 
-pub fn add_amounts (amounts []&Amount) !Amount {
+pub fn add_amounts(amounts []&Amount) !Amount {
 	target_currency := amounts[0].currency
 
 	mut total_val := f64(0)
 	for amount in amounts {
 		if amount.currency != target_currency {
-			return error("Input amounts are of different currencies")
+			return error('Input amounts are of different currencies')
 		}
 		total_val += amount.val
 	}
@@ -137,11 +137,19 @@ pub fn get_rates(fiat_array []string, crypto_array []string) !(map[string]f32, m
 		crypto_codes = crypto_codes.replace(i, '')
 	}
 
-	mut response := http.get('https://api.exchangerate.host/latest?base=USD&symbols=$crypto_codes&source=crypto') or {return error("Failed to get crypto http response: $err")}
-	crypto_decoded := json.decode(ResponseBody, response.body) or {return error("Failed to decode crypto json: $err")}
+	mut response := http.get('https://api.exchangerate.host/latest?base=USD&symbols=${crypto_codes}&source=crypto') or {
+		return error('Failed to get crypto http response: ${err}')
+	}
+	crypto_decoded := json.decode(ResponseBody, response.body) or {
+		return error('Failed to decode crypto json: ${err}')
+	}
 
-	response = http.get('https://api.exchangerate.host/latest?base=USD&symbols=$fiat_codes') or {return error("Failed to get fiat http response: $err")}
-	fiat_decoded := json.decode(ResponseBody, response.body) or {return error("Failed to decode fiat json: $err")}
+	response = http.get('https://api.exchangerate.host/latest?base=USD&symbols=${fiat_codes}') or {
+		return error('Failed to get fiat http response: ${err}')
+	}
+	fiat_decoded := json.decode(ResponseBody, response.body) or {
+		return error('Failed to decode fiat json: ${err}')
+	}
 
 	return fiat_decoded.rates, crypto_decoded.rates
 }
@@ -187,12 +195,12 @@ pub fn get_currencies() Currencies {
 	mut currencies := Currencies{
 		currencies: {
 			'EUR':  &eur
-			'GBP': &gbp
-			'USD':   &usd
-			'TFT':   &tft
-			'AED':   &aed
-			'USDC':  &usdc
-			'EGP':   &egp
+			'GBP':  &gbp
+			'USD':  &usd
+			'TFT':  &tft
+			'AED':  &aed
+			'USDC': &usdc
+			'EGP':  &egp
 		}
 	}
 

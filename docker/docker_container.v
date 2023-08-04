@@ -1,5 +1,6 @@
 module docker
-import freeflowuniverse.crystallib.osal { cputype, platform, exec }
+
+import freeflowuniverse.crystallib.osal { exec }
 import time
 import ipaddress { IPAddress }
 
@@ -27,7 +28,7 @@ pub mut:
 	ports           []string
 	networks        []string
 	labels          map[string]string       [str: skip]
-	image           &DockerImage			[str: skip]
+	image           &DockerImage            [str: skip]
 	engine          &DockerEngine           [str: skip]
 	status          DockerContainerStatus
 	memsize         int // in MB
@@ -53,7 +54,7 @@ pub mut:
 
 // create/start container (first need to get a dockercontainer before we can start)
 pub fn (mut container DockerContainer) start() ! {
-	exec(cmd:'docker start ${container.id}')!
+	exec(cmd: 'docker start ${container.id}')!
 	container.status = DockerContainerStatus.up
 }
 
@@ -67,7 +68,7 @@ pub fn (mut container DockerContainer) halt() ! {
 pub fn (mut container DockerContainer) delete() ! {
 	println(' - CONTAINER DELETE: ${container.name}')
 
-	exec(cmd:'docker rm ${container.id} -f',stdout:false)!
+	exec(cmd: 'docker rm ${container.id} -f', stdout: false)!
 	mut x := 0
 	for container2 in container.engine.containers {
 		if container2.name == container.name {
@@ -79,14 +80,14 @@ pub fn (mut container DockerContainer) delete() ! {
 
 // save the docker container to image
 pub fn (mut container DockerContainer) save2image(image_repo string, image_tag string) !string {
-	id:=osal.execute_stdout('docker commit ${container.id} ${image_repo}:${image_tag}')!
-	container.image.id = id.trim(" ")
+	id := osal.execute_stdout('docker commit ${container.id} ${image_repo}:${image_tag}')!
+	container.image.id = id.trim(' ')
 	return id
 }
 
 // export docker to tgz
 pub fn (mut container DockerContainer) export(path string) ! {
-	exec(cmd:'docker export ${container.id} > ${path}')!
+	exec(cmd: 'docker export ${container.id} > ${path}')!
 }
 
 // // open ssh shell to the cobtainer
@@ -95,25 +96,25 @@ pub fn (mut container DockerContainer) export(path string) ! {
 // }
 
 [params]
-pub struct DockerShellArgs{
+pub struct DockerShellArgs {
 pub mut:
-	cmd string	
+	cmd string
 }
 
 // open shell to the container using docker, is interactive, cannot use in script
 pub fn (mut container DockerContainer) shell(args DockerShellArgs) ! {
-	mut cmd:=""
+	mut cmd := ''
 	if args.cmd.len == 0 {
 		cmd = 'docker exec -ti ${container.id} /bin/bash'
 	} else {
 		cmd = "docker exec -ti ${container.id} /bin/bash -c '${cmd}'"
 	}
-	exec(cmd:cmd,shell:true,debug:true)!
+	exec(cmd: cmd, shell: true, debug: true)!
 }
 
 pub fn (mut container DockerContainer) execute(cmd_ string, silent bool) ! {
 	cmd := 'docker exec ${container.id} ${cmd_}'
-	exec(cmd:cmd,stdout:!silent)!
+	exec(cmd: cmd, stdout: !silent)!
 }
 
 // pub fn (mut container DockerContainer) ssh_enable() ! {

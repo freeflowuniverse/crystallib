@@ -1,19 +1,18 @@
 module people
 
-enum ContactsState{
-	init		 //is still init mode, empty
-	smartids	 //the smartid's are known
-	loaded		 //the contact data has been fetched
+enum ContactsState {
+	init // is still init mode, empty
+	smartids // the smartid's are known
+	loaded // the contact data has been fetched
 }
 
 [heap]
 pub struct Contacts {
-	system.Base	
+	system.Base
 pub mut:
 	contacts []Contact
-	state 
+	// state
 }
-
 
 [heap]
 pub struct Contact {
@@ -52,9 +51,9 @@ pub mut:
 	country    &Country
 }
 
-//add a contact which will be owned by the local twin
+// add a contact which will be owned by the local twin
 pub fn (mut contacts Contacts) new() &Contact {
-	mut c:=Contact{}
+	mut c := Contact{}
 	constacts.contacts << &c
 	return &c
 }
@@ -66,13 +65,11 @@ pub fn (mut contacts Contacts) new() &Contact {
 // 	return &c
 // }
 
-
-
 // Add email address
 // ARGS:
 // - Email
 pub fn (mut contact Contact) email_add(email Email) {
-	contact.emails << &email 
+	contact.emails << &email
 	// TODO any possible checks)
 }
 

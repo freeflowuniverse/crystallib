@@ -8,19 +8,18 @@ import freeflowuniverse.crystallib.encoder
 pub struct Person {
 	system.Base
 pub mut:
-	id              string // needs to be unique
-	firstname       string
-	lastname        string
-	description     string
-	start_date      system.OurTime
-	end_date        system.OurTime
-	contacts        Contacts
+	id          string // needs to be unique
+	firstname   string
+	lastname    string
+	description string
+	start_date  system.OurTime
+	end_date    system.OurTime
+	contacts    Contacts
 }
-
 
 pub struct PersonNewArgs {
 pub mut:
-	firstname   string [required] 
+	firstname   string [required]
 	lastname    string [required]
 	description string
 }
@@ -42,11 +41,10 @@ pub fn (mut person Person) contact_add() !&Contact {
 	return &o
 }
 
-
 pub fn person_new(data string) ?Person {
-	if data!=""{
+	if data != '' {
 		obj := json.decode(Person, data) or {
-			return error('Failed to decode json, error: $err for $data')
+			return error('Failed to decode json, error: ${err} for ${data}')
 		}
 		return obj
 	}
@@ -64,9 +62,5 @@ pub fn (mut o Person) json() string {
 	return json.encode(o)
 }
 
-
 pub fn (mut o Person) contacts() ![]Contact {
-	
 }
-
-

@@ -1,10 +1,10 @@
 module backoffice
 
-//import freeflowuniverse.protocolme.organization
-//import freeflowuniverse.protocolme.models.backoffice.finance
-//import freeflowuniverse.crystallib.timetools
-//import time
-//import math
+// import freeflowuniverse.protocolme.organization
+// import freeflowuniverse.protocolme.models.backoffice.finance
+// import freeflowuniverse.crystallib.timetools
+// import time
+// import math
 
 // generates monthly budgets
 // ARGS:
@@ -25,7 +25,7 @@ pub fn (mut memdb MemDB) budget_item_add(name string, remark string, start_time 
 	cost := finance.amount_get(cost_fixed)
 	mut start := get_expiration_from_timestring(start_time) or {panic(error)} //TODO check this is correct
 
-	// function to find latest id 
+	// function to find latest id
 	mut latest_id := 0
 	for id in data.budget_items.keys {
 		if id.int() > latest_id {
@@ -242,7 +242,7 @@ pub struct BudgetToolInput {
 		'person1': {
 			'budget_breakdown':{
 				'total_budget':
-				'wage_budget': 
+				'wage_budget':
 				'office_type':
 				'utility_budget':
 			},
@@ -252,7 +252,7 @@ pub struct BudgetToolInput {
 				&budget_item3
 			}
 		}
-		'person2': 
+		'person2':
 	},
 	'circle2':{
 		'person3': {}
@@ -320,7 +320,7 @@ fn (memdb MemDB) slices_get (period_start system.OurTime, period_end system.OurT
 	}
 
 	// takes a budget_item, removing the time stamps and returning an updated cost
-	fn (budget_item &BudgetItem) slice (new_cost) budget_item_slice BudgetItemSlice { 
+	fn (budget_item &BudgetItem) slice (new_cost) budget_item_slice BudgetItemSlice {
 		budget_item_slice := BudgetItemSlice {
 				budget_item_type: budget_item.budget_item_type
 				name: budget_item.name
@@ -434,5 +434,4 @@ fn (budget_item_slices []&BudgetItemSlice) filter_by_companies (filter_list []&p
 	}
 	return filtered_slicess
 }
-
 */

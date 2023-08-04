@@ -1,7 +1,8 @@
 module circle
+
 import freeflowuniverse.protocolme.models.people
 
-//group of people (persons)
+// group of people (persons)
 pub struct Circle {
 pub mut:
 	name        string
@@ -15,33 +16,27 @@ pub enum PersonState {
 	uncertain
 }
 
-
 pub enum Role {
 	follower
 	stakeholder
 	member
-	contributor	
+	contributor
 }
-
-
 
 pub struct CircleMember {
 pub mut:
-	person 			 string	 
-	description      string
-	role             Role
+	person      string
+	description string
+	role        Role
 	// contribution_fee ContributionFee
-	is_admin		bool //can manage all properties of the Circle
+	is_admin bool // can manage all properties of the Circle
 
-	active       	 PersonState
+	active PersonState
 }
 
-//add a contact which will be owned by the local twin
+// add a contact which will be owned by the local twin
 pub fn (cm CircleMember) person_get() &people.Person {
-	//todo: get person
-	p:=people.Person{}
+	// todo: get person
+	p := people.Person{}
 	return &p
 }
-
-
-

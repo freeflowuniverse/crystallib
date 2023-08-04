@@ -44,7 +44,7 @@ fn parse_ports(s string) ![]string {
 
 fn parse_labels(s string) !map[string]string {
 	mut res := map[string]string{}
-	if s.trim_space().len>0{
+	if s.trim_space().len > 0 {
 		// println(s)
 		// panic("todo")
 		// TODO: need to do
@@ -54,7 +54,7 @@ fn parse_labels(s string) !map[string]string {
 
 fn parse_networks(s string) ![]string {
 	mut res := []string{}
-	if s.trim_space().len>0{
+	if s.trim_space().len > 0 {
 		println(s)
 		// panic("todo networks")
 		// TODO: need to do
@@ -65,7 +65,7 @@ fn parse_networks(s string) ![]string {
 fn parse_mounts(s string) ![]DockerContainerVolume {
 	mut res := []DockerContainerVolume{}
 	// TODO: need to do
-	if s.trim_space().len>0{
+	if s.trim_space().len > 0 {
 		// println(s)
 		// panic("todo mounts")
 		// TODO: need to do

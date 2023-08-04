@@ -1,14 +1,13 @@
 module backoffice
 
-//import freeflowuniverse.backoffice.people
+// import freeflowuniverse.backoffice.people
 import freeflowuniverse.protocolme.organization
 import freeflowuniverse.crystallib.texttools
 
 // TODO company_add
-pub fn (mut memdb MemDB) company_add (o organization.CompanyNewArgs) &organization.Company {
-	
+pub fn (mut memdb MemDB) company_add(o organization.CompanyNewArgs) &organization.Company {
 	mut obj := organization.Company{
-		name:   o.name
+		name: o.name
 		registration_country: o.registration_country
 	}
 	// sets the start date of the person
@@ -32,4 +31,4 @@ pub fn (mut memdb MemDB) company_find(company_name string) ?&organization.Compan
 	return error('Could not find company with name: $shortname')
 }
 */
-//TODO: if only return 1 then is get not find
+// TODO: if only return 1 then is get not find

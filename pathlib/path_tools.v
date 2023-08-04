@@ -298,26 +298,24 @@ pub fn path_relative(source_ string, linkpath_ string) !string {
 // 	}
 // }
 
-
 [params]
-pub struct TMPWriteArgs{
+pub struct TMPWriteArgs {
 pub mut:
 	tmpdir string
-	text string //text to put in file
-	path string //to overrule the path where script will be stored
+	text   string // text to put in file
+	path   string // to overrule the path where script will be stored
 }
-
 
 // write temp file and return path
 pub fn temp_write(args_ TMPWriteArgs) !string {
-	mut args:=args_
+	mut args := args_
 
-	if args.path.len==0{
-		if args.tmpdir.len==0{
+	if args.path.len == 0 {
+		if args.tmpdir.len == 0 {
 			if 'TMPDIR' in os.environ() {
-				args.tmpdir = os.environ()['TMPDIR'] or {'/tmp'}
+				args.tmpdir = os.environ()['TMPDIR'] or { '/tmp' }
 			}
-		}		
+		}
 		t := time.now().format_ss_milli().replace(' ', '-')
 		mut tmppath := '${args.tmpdir}/execscripts/${t}.sh'
 		if !os.exists('${args.tmpdir}/execscripts/') {
@@ -339,11 +337,10 @@ pub fn temp_write(args_ TMPWriteArgs) !string {
 					panic("should not get here, can't find temp file to write for process job.")
 				}
 			}
-		}		
+		}
 		args.path = tmppath
-
 	}
 	os.write_file(args.path, args.text)!
-	os.chmod(args.path, 0o777)!	
+	os.chmod(args.path, 0o777)!
 	return args.path
 }

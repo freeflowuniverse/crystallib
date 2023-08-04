@@ -23,10 +23,10 @@ pub mut:
 // This is redundant but necessary to avoid C error
 pub struct PaymentDigitalNewArgs {
 pub mut:
-	name        string 
-	blockchain  string     [required]
-	account     string     [required]
-	description string 
+	name        string
+	blockchain  string [required]
+	account     string [required]
+	description string
 	preferred   bool //? Is this false by default?
 }
 
@@ -34,9 +34,9 @@ pub mut:
 pub struct PaymentMethodIban {
 pub mut:
 	name        string // optional
-	account_num string 
-	iban        string [required]
-	swift_code  string [required]
+	account_num string
+	iban        string          [required]
+	swift_code  string          [required]
 	country     &people.Country [required]
 	description string // optional
 	preferred   bool
@@ -44,12 +44,12 @@ pub mut:
 
 pub struct PaymentIbanNewArgs {
 pub mut:
-	name        string 
-	account_num string 
-	iban        string [required]
-	swift_code  string [required]
+	name        string
+	account_num string
+	iban        string          [required]
+	swift_code  string          [required]
 	country     &people.Country [required]
-	description string 
+	description string
 	preferred   bool //? Is this false by default?
 }
 

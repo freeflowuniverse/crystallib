@@ -3,14 +3,13 @@ module people
 import freeflowuniverse.protocolme.models.backoffice.finance
 import time
 
-
 [heap]
 pub struct PersonFinance {
 pub mut:
-	paymentmethods 	[]finance.PaymentMethod	
+	paymentmethods []finance.PaymentMethod
 }
 
-pub fn (mut person PersonFinance) digital_payment_add (new_method finance.PaymentDigitalNewArgs) !finance.PaymentMethod {
+pub fn (mut person PersonFinance) digital_payment_add(new_method finance.PaymentDigitalNewArgs) !finance.PaymentMethod {
 	mut preferred := false
 	// If this is the first payment method, set preferred to true
 	if person.paymentmethods.len == 0 {
@@ -27,12 +26,12 @@ pub fn (mut person PersonFinance) digital_payment_add (new_method finance.Paymen
 	blockchain_temp := new_method.blockchain.to_lower()
 
 	blockchain_ := match blockchain_temp {
-		'stellar'      {finance.BlockchainType.stellar}     
-		'algorand'     {finance.BlockchainType.algorand}    
-		'tfchain'      {finance.BlockchainType.tfchain}     
-		'ethereum'     {finance.BlockchainType.ethereum}    
-		'smartchain'   {finance.BlockchainType.smartchain}  
-		else {panic(error("Failed to parse inputted blockchain: Please enter either stellar, algorand, tfchain, ethereum or smartchain."))}
+		'stellar' { finance.BlockchainType.stellar }
+		'algorand' { finance.BlockchainType.algorand }
+		'tfchain' { finance.BlockchainType.tfchain }
+		'ethereum' { finance.BlockchainType.ethereum }
+		'smartchain' { finance.BlockchainType.smartchain }
+		else { panic(error('Failed to parse inputted blockchain: Please enter either stellar, algorand, tfchain, ethereum or smartchain.')) }
 	}
 
 	mut new_method_ := finance.PaymentMethodDigital{
@@ -48,11 +47,10 @@ pub fn (mut person PersonFinance) digital_payment_add (new_method finance.Paymen
 	return new_method_
 }
 
-
 // ## Add an Iban Payment Method
 // ARGS:
 // - finance.PaymentMethodIban
-pub fn (mut person Person) iban_payment_add (new_method finance.PaymentIbanNewArgs) !finance.PaymentMethod {
+pub fn (mut person Person) iban_payment_add(new_method finance.PaymentIbanNewArgs) !finance.PaymentMethod {
 	mut preferred := false
 	// If this is the first payment method, set preferred to true
 	if person.paymentmethods.len == 0 {
@@ -67,12 +65,12 @@ pub fn (mut person Person) iban_payment_add (new_method finance.PaymentIbanNewAr
 	}
 
 	mut new_method_ := finance.PaymentMethodIban{
-	name: new_method.name
-	account_num: new_method.account_num
-	iban: new_method.iban
-	swift_code: new_method.swift_code
-	description: new_method.description
-	preferred: preferred
+		name: new_method.name
+		account_num: new_method.account_num
+		iban: new_method.iban
+		swift_code: new_method.swift_code
+		description: new_method.description
+		preferred: preferred
 	}
 
 	person.paymentmethods << new_method_

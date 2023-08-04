@@ -1,6 +1,5 @@
 module docker
 
-
 pub struct EnvItem {
 pub mut:
 	name  string

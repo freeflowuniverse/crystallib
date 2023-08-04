@@ -18,13 +18,13 @@ pub mut:
 	state        StoryStatus
 	owner        []string
 	contributors []string
-	assignment []StoryAssign // someone works on the story or task, or bug, ...
+	assignment   []StoryAssign // someone works on the story or task, or bug, ...
 }
 
 pub struct StoryAssign {
 pub mut:
-	person     string
-	group      string
+	person string
+	group  string
 	// membertype StoryAssignType
 	expiration system.OurTime
 }
@@ -49,7 +49,7 @@ fn (mut story Story) text_load(lines []string) ? {
 	mut comments := Comments{}
 	lines << '# END'
 	for line in lines {
-		println(' -- $line')
+		println(' -- ${line}')
 		argsfound, params := line_parser_params(line)?
 		if argsfound {
 			story.params_process(params)?

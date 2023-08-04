@@ -1,6 +1,6 @@
 module osal
 
-//needs to be rewritten using baobab, all needs to become 1 thing
+// needs to be rewritten using baobab, all needs to become 1 thing
 
 // import freeflowuniverse.crystallib.texttools
 // import freeflowuniverse.crystallib.osal
@@ -59,18 +59,14 @@ module osal
 // 	debug			   bool //if debug will put +ex in the script which is being executed and will make sure script stays
 // }
 
-
 // // Executes the provided command in a bash script using the environment variables.
 // // It retries the amount of times specified in the arguments if the command failed and fails if the command took longer then the retry_timeout.
 // // The output of a successful command is returned and cached in redis.
 // // The cached value will be returned if the same command is executed again and if arguments allow so.
 // pub fn exec(args_ ExecArgs) !string {
 // 	mut args:=args_
-	
 
 // 	mut die:=!args.ignore_errors
-
-
 
 // 	mut hhash := ''
 // 	if args.checkkey.len > 0 {
@@ -126,7 +122,6 @@ module osal
 // 			tmpdir = '/tmp'
 // 		}
 // 	}
-
 
 // 	mut r_path := '${tmpdir}/exec.sh'
 // 	if args.scriptpath.len>0{
@@ -204,6 +199,5 @@ module osal
 // 			scriptpath: r_path
 // 		}
 // 	}
-
 
 // }

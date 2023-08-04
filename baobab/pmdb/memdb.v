@@ -5,15 +5,12 @@ import freeflowuniverse.protocolme.models.system
 // import freeflowuniverse.protocolme.models.backoffice.organization
 import time
 
+// [heap]
+// pub struct MemDB {
+// pub mut:
 
+// }
 
-[heap]
-pub struct MemDB {
-pub mut:
-	
-}
-
-
-pub fn new() MemDB {
-	return MemDB{}
-}
+// pub fn new() MemDB {
+// 	return MemDB{}
+// }

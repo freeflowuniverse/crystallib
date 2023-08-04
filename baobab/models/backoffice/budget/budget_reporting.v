@@ -10,10 +10,8 @@ module budget
 // 	utility int = 0
 // }
 
-
-
 // pub struct BudgetStatistics {
-// 	budget_breakdown  BudgetBreakdown 
+// 	budget_breakdown  BudgetBreakdown
 // 	budget_items      []&BudgetItem
 // }
 
@@ -49,8 +47,6 @@ module budget
 
 // pub type Period = Month | Quarter | Year
 
-
-
 // // budget item slice is effectively a budget item, but only for that time period
 // pub struct BudgetItemSlice {
 // 	budget_item_type BudgetItemType
@@ -62,9 +58,6 @@ module budget
 // 	type_extras      &BudgetItemExtras
 // 	id               string
 // }
-
-
-
 
 // // struct BudgetItemOffice {}
 

@@ -1,5 +1,6 @@
 module docker
-import freeflowuniverse.crystallib.osal { cputype, platform, exec, file_read }
+
+import freeflowuniverse.crystallib.osal { file_read }
 
 [params]
 pub struct AddFileEmbeddedArgs {

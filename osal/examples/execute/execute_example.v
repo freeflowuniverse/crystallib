@@ -27,7 +27,6 @@ fn do() ! {
 
 	println(r)
 
-
 	// _ := exec(
 	// 	cmd: 'mc'
 	// 	path: "/tmp/test.sh"
@@ -38,7 +37,6 @@ fn do() ! {
 	// 	shell: true
 	// 	debug:true
 	// )!
-
 
 	println('echo ok ')
 }

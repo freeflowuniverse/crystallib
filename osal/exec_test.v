@@ -3,7 +3,7 @@ module osal
 import crypto.md5
 import os
 
-//TODO: needs to be rewritten for process
+// TODO: needs to be rewritten for process
 
 // const (
 // 	cmd_create_file_and_print_content = '#!/bin/bash

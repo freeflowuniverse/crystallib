@@ -16,10 +16,10 @@ const (
 [heap]
 pub struct ActionRunner {
 pub mut:
-	actors  []&actor.IActor
-	client  &Client
-	running bool
-	timeout_waiting_actors f64 = default_waiting_actors
+	actors                 []&actor.IActor
+	client                 &Client
+	running                bool
+	timeout_waiting_actors f64 = actionrunner.default_waiting_actors
 }
 
 // This is the factory function for actionrunner

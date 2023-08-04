@@ -19,8 +19,8 @@ mut:
 	client client.Client
 	logger &log.Logger
 pub mut:
-	running bool
-	timeout_waiting_queues f64 = default_timeout_waiting_queues
+	running                bool
+	timeout_waiting_queues f64 = processor.default_timeout_waiting_queues
 }
 
 // Factory method for creating a new processor.
