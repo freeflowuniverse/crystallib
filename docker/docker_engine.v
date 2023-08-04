@@ -94,46 +94,44 @@ pub fn (mut e DockerEngine) containers_load() ! {
 	}
 }
 
-//EXISTS, GET
-
+// EXISTS, GET
 
 [params]
 pub struct ContainerGetArgs {
- pub mut:
-	name   string
-	id     string
+pub mut:
+	name     string
+	id       string
 	image_id string
 	// tag    string
 	// digest string
 }
 
-
 pub struct ContainerGetError {
 	Error
 pub:
-	args ContainerGetArgs
+	args     ContainerGetArgs
 	notfound bool
-	toomany bool
+	toomany  bool
 }
 
 pub fn (err ContainerGetError) msg() string {
-	if err.notfound{
+	if err.notfound {
 		return 'Could not find image with args:\n${err.args}'
 	}
-	if err.toomany{
+	if err.toomany {
 		return 'Found more than 1 image with args:\n${err.args}'
 	}
-	panic("unknown error for ContainerGetError")	
+	panic('unknown error for ContainerGetError')
 }
 
 pub fn (err ContainerGetError) code() int {
-	if err.notfound{
+	if err.notfound {
 		return 1
 	}
-	if err.toomany{
+	if err.toomany {
 		return 2
 	}
-	panic("unknown error for ContainerGetError")	
+	panic('unknown error for ContainerGetError')
 }
 
 // get containers from memory
@@ -142,46 +140,51 @@ pub fn (err ContainerGetError) code() int {
 //   id     string
 //   image_id string
 pub fn (mut e DockerEngine) containers_get(args_ ContainerGetArgs) ![]&DockerContainer {
-	mut args:=args_
+	mut args := args_
 	args.name = texttools.name_fix(args.name)
-	mut res:=[]&DockerContainer{}
-	for _, c in e.containers{
+	mut res := []&DockerContainer{}
+	for _, c in e.containers {
 		if args.name.contains('*') || args.name.contains('?') || args.name.contains('[') {
 			if c.name.match_glob(args.name) {
-				res<<&c
+				res << &c
 				continue
 			}
-		}else{
+		} else {
 			if c.name == args.name || c.id == args.id {
-				res<<&c
+				res << &c
 				continue
-			}	
-		}		
-		if args.image_id.len>0 && (c.image.id == args.image_id){
-			res<<&c
+			}
+		}
+		if args.image_id.len > 0 && c.image.id == args.image_id {
+			res << &c
 		}
 	}
-	if res.len==0{
-		return ContainerGetError{args:args,notfound:true}
+	if res.len == 0 {
+		return ContainerGetError{
+			args: args
+			notfound: true
+		}
 	}
 	return res
 }
 
-
 // get container from memory, can use match_glob see https://modules.vlang.io/index.html#string.match_glob
 pub fn (mut e DockerEngine) container_get(args_ ContainerGetArgs) !&DockerContainer {
-	mut args:=args_
+	mut args := args_
 	args.name = texttools.name_fix(args.name)
-	mut res:=e.containers_get(args)!
-	if res.len>1{
-		return ContainerGetError{args:args,notfound:true}
+	mut res := e.containers_get(args)!
+	if res.len > 1 {
+		return ContainerGetError{
+			args: args
+			notfound: true
+		}
 	}
 	return res[0]
 }
 
 pub fn (mut e DockerEngine) container_exists(args ContainerGetArgs) !bool {
 	e.container_get(args) or {
-		if err.code()==1 {
+		if err.code() == 1 {
 			return false
 		}
 		return err
@@ -190,20 +193,19 @@ pub fn (mut e DockerEngine) container_exists(args ContainerGetArgs) !bool {
 }
 
 pub fn (mut e DockerEngine) container_delete(args ContainerGetArgs) ! {
-	mut c:=e.container_get(args)!
+	mut c := e.container_get(args)!
 	c.delete()!
 	e.load()!
 }
 
-//remove one or more container
+// remove one or more container
 pub fn (mut e DockerEngine) containers_delete(args ContainerGetArgs) ! {
-	mut cs:=e.containers_get(args)!
-	for mut c in cs{
+	mut cs := e.containers_get(args)!
+	for mut c in cs {
 		c.delete()!
-	}	
+	}
 	e.load()!
 }
-
 
 // import a container into an image, run docker container with it
 // image_repo examples ['myimage', 'myimage:latest']

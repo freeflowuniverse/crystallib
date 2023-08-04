@@ -1,4 +1,4 @@
-module client
+module mbus
 
 import freeflowuniverse.crystallib.redisclient
 import freeflowuniverse.crystallib.baobab.actions

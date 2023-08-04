@@ -54,7 +54,7 @@ pub mut:
 	environment        map[string]string // env variables
 	ignore_error_codes []int
 	scriptpath         string // is the path where the script will be put which is executed
-	scriptkeep		   bool   // means we don't remove the script
+	scriptkeep         bool   // means we don't remove the script
 	debug              bool   // if debug will put +ex in the script which is being executed and will make sure script stays
 	shell              bool   // means we will execute it in a shell interactive
 	retry              int
@@ -104,7 +104,7 @@ pub fn exec(cmd Command) !Job {
 	process_args := job.cmd_to_process_args()!
 	mut logger := get_logger()
 	defer {
-		if job.cmd.scriptkeep==false && os.exists(job.cmd.scriptpath) {
+		if job.cmd.scriptkeep == false && os.exists(job.cmd.scriptpath) {
 			// println(job.cmd.scriptpath)	
 			os.rm(job.cmd.scriptpath) or { panic('cannot remove ${job.cmd.scriptpath}') }
 		}
@@ -198,10 +198,10 @@ pub fn exec(cmd Command) !Job {
 			}
 
 			errorpath2 := job.cmd.scriptpath.all_before_last('.sh') + '_error.log'
-			mut errortxt:="# ERROR:\n\n"
-			errortxt+=job.cmd.cmd+"\n"
-			errortxt+="## OUTPUT:\n\n"
-			errortxt+=job.output
+			mut errortxt := '# ERROR:\n\n'
+			errortxt += job.cmd.cmd + '\n'
+			errortxt += '## OUTPUT:\n\n'
+			errortxt += job.output
 			os.write_file(errorpath2, errortxt) or {
 				msg := 'cannot write errortxt to ${errorpath2}'
 				return error(msg)
@@ -218,7 +218,7 @@ pub fn exec(cmd Command) !Job {
 			return je
 		}
 	} else {
-		if !cmd.debug && job.cmd.scriptkeep==false {
+		if !cmd.debug && job.cmd.scriptkeep == false {
 			if os.exists(job.cmd.scriptpath) {
 				os.rm(job.cmd.scriptpath)!
 			}

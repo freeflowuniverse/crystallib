@@ -1,4 +1,4 @@
-module client
+module mbus
 
 // Helper function to see how many jobs are still
 // remaining in an actors queue.

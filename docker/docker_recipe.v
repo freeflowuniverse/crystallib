@@ -166,10 +166,10 @@ fn (mut b DockerBuilderRecipe) check_from_statement() ! {
 fn (mut b DockerBuilderRecipe) check_conf_add() ! {
 	// we need to make sure we insert it after the last FromItem
 	mut lastfromcounter := 0
-	mut counter:=0
+	mut counter := 0
 	for item3 in b.items {
 		if item3 is FromItem {
-			lastfromcounter=counter
+			lastfromcounter = counter
 		}
 		counter += 1
 	}
@@ -266,7 +266,7 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 		}
 	}
 
-	image_exists:=b.engine.image_exists(repo:b.name)!	
+	image_exists := b.engine.image_exists(repo: b.name)!
 	hashnew := md5.hexhash(tohash)
 
 	if image_exists && reset == false && osal.done_exists('build_${b.name}') {
@@ -278,9 +278,9 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 	}
 
 	file_write('${destpath}/shell.sh', cmdshell)!
-	os.chmod('${destpath}/shell.sh',0o777)!
+	os.chmod('${destpath}/shell.sh', 0o777)!
 
-	exec(scriptpath: '${destpath}/build.sh', cmd: cmd,scriptkeep:true)!
+	exec(scriptpath: '${destpath}/build.sh', cmd: cmd, scriptkeep: true)!
 
 	osal.done_set('build_${b.name}', hashnew)!
 }

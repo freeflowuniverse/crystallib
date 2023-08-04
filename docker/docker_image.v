@@ -70,36 +70,33 @@ pub:
 	id     string
 }
 
-
 pub struct ImageGetError {
 	Error
 pub:
-	args ImageGetArgs
+	args     ImageGetArgs
 	notfound bool
-	toomany bool
+	toomany  bool
 }
 
 pub fn (err ImageGetError) msg() string {
-	if err.notfound{
+	if err.notfound {
 		return 'Could not find image with args:\n${err.args}'
 	}
-	if err.toomany{
+	if err.toomany {
 		return 'Found more than 1 image with args:\n${err.args}'
 	}
-	panic("unknown error for ImageGetError")	
+	panic('unknown error for ImageGetError')
 }
 
 pub fn (err ImageGetError) code() int {
-	if err.notfound{
+	if err.notfound {
 		return 1
 	}
-	if err.toomany{
+	if err.toomany {
 		return 2
 	}
-	panic("unknown error for ImageGetError")	
+	panic('unknown error for ImageGetError')
 }
-
-
 
 // find image based on repo and optional tag
 // args:
@@ -130,17 +127,23 @@ pub fn (mut e DockerEngine) image_get(args ImageGetArgs) !&DockerImage {
 		counter += 1
 	}
 	if counter > 0 {
-		return ImageGetError{args:args, toomany:true}
+		return ImageGetError{
+			args: args
+			toomany: true
+		}
 	}
 	if counter == 0 {
-		return ImageGetError{args:args, notfound:true}
+		return ImageGetError{
+			args: args
+			notfound: true
+		}
 	}
 	return e.image_get(digest: result_digest)!
 }
 
 pub fn (mut e DockerEngine) image_exists(args ImageGetArgs) !bool {
 	e.image_get(args) or {
-		if err.code()==1 {
+		if err.code() == 1 {
 			return false
 		}
 		return err

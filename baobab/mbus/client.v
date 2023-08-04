@@ -1,4 +1,4 @@
-module client
+module mbus
 
 import freeflowuniverse.crystallib.baobab.jobs { ActionJob, ActionJobState, JobNewArgs, json_load }
 

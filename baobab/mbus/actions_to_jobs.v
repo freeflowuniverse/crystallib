@@ -1,4 +1,4 @@
-module client
+module mbus
 
 import freeflowuniverse.crystallib.baobab.actions
 import freeflowuniverse.crystallib.baobab.jobs
@@ -16,10 +16,10 @@ pub struct ScheduleActionsArgs {
 }
 
 // Returns a collection of jobs from a list of actions
-pub fn (mut client Client) schedule_actions(args ScheduleActionsArgs) !jobs.ActionJobs {
-	mut jobsfactory := jobs.ActionJobs{}
+pub fn (mut client Client) schedule_actions(args ScheduleActionsArgs) !ActionJobs {
+	mut jobsfactory := ActionJobs{}
 	for a in args.actions {
-		mut job := jobs.ActionJob{
+		mut job := ActionJob{
 			guid: rand.uuid_v4()
 			twinid: args.twinid
 			action: a.name

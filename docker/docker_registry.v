@@ -83,7 +83,7 @@ pub fn (mut e DockerEngine) registry_add(args DockerRegistryArgs) ! {
 	e.registries << registry
 
 	// delete all previous containers, uses wildcards see https://modules.vlang.io/index.html#string.match_glob
-	e.container_delete(name:'docker_registry*')!
+	e.container_delete(name: 'docker_registry*')!
 
 	composer.start()!
 
