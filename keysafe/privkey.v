@@ -16,6 +16,8 @@ pub fn key_encode(key []u8) string {
 }
 
 // retrieve the master public key from PrivKey object
+// this is the public key as need to be shared to a remote user to verify that we signed with our private key
+// is shared as hex key in string format (66 chars)
 pub fn (key PrivKey) master_public() string {
 	x := key.signkey.verify_key.public_key
 
@@ -26,6 +28,18 @@ pub fn (key PrivKey) master_public() string {
 }
 
 // sign data with our signing key
+// data is bytestr
+// output is []u8 bytestring
+// to get bytes from string do: mystring.bytes().
 pub fn (key PrivKey) sign(data []u8) []u8 {
 	return key.signkey.sign(data)
+}
+
+// sign data with our signing key.
+// data is bytestr.
+// output is hex string.
+// to get bytes from string do: mystring.bytes().
+// size of output is ?
+pub fn (key PrivKey) sign_hex(data []u8) string {
+	return hex.encode(key.sign(data))
 }

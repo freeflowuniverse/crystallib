@@ -28,6 +28,7 @@ pub enum RowAggregateType {
 	min
 }
 
+[params]
 pub struct RowNewParams {
 pub mut:
 	name          string

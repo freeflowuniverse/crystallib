@@ -3,12 +3,14 @@ module bizmodel
 import freeflowuniverse.crystallib.baobab.actionsparser
 import freeflowuniverse.crystallib.texttools
 
-// !!hr.employee_define
-//     descr:'Junior Engineer'
-//     growth:'1:5,60:30' cost:'4000USD' indexation:'5%'
-//     department:'engineering'
 
 // populate the params for hr
+// !!hr.employee_define
+//     descr:'Junior Engineer'
+//     nrpeople:'1:5,60:30' 
+//	   cost:'4000USD' 
+//	   indexation:'5%'
+//     department:'engineering'
 fn (mut m BizModel) hr_actions(actions actionsparser.ActionsParser) ! {
 	mut actions2 := actions.filtersort(actor: 'hr')!
 	for action in actions2 {
@@ -20,7 +22,7 @@ fn (mut m BizModel) hr_actions(actions actionsparser.ActionsParser) ! {
 			}
 			if name.len == 0 {
 				// make name ourselves
-				name = texttools.name_fix(descr)
+				name = texttools.name_fix(descr) //TODO:limit len
 			}
 			mut cost := action.params.get_currencyfloat_default('cost', 0.0)!
 			mut cost_year := action.params.get_currencyfloat_default('cost_year', 0.0)!
