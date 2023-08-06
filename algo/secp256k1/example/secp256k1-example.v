@@ -62,6 +62,7 @@ fn do()!{
 	println(alice.verify_data(signed, message.bytes()))
 	println(alice.verify_str(signed_str, message))
 
+
 	println('-------------------')
 
 	//

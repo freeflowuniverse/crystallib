@@ -4,7 +4,17 @@ This is a lib256k1 binding for vlang.
 
 >> QUESTION: is there something to be installed on OS before we can use this?
 
-# Features
+## Requirements
+
+make sure the lib is installed
+
+on osx
+
+```bash
+brew install secp256k1
+```
+
+## Features
 
 - [x] Generate EC keys
 - [ ] Load existing EC keys
