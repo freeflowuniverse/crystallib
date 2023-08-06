@@ -57,8 +57,9 @@ enum TwinConnectionType{
 //they have the info as required to connect to them
 pub fn (mut ks KeysSafe) othertwin_get(args OtherTwinGetArgs) !OtherTwin {
 
-
+	//check if mem, if there get from mem
 	//use sqlite to get info (do query)
+	//store in mem, so it gets cached
 }
 
 //send message to this other twin

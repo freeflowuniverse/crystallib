@@ -11,6 +11,8 @@ pub struct KeysSafe {
 pub mut:
 	secret string // secret to encrypt local file
 	db sqlite.DB
+	mytwins map[string]&MyTwin //is like a cache for what is in the sqlitedb
+	othertwins map[string]&OtherTwin //is like a cache for what is in the sqlitedb
 
 }
 
@@ -36,4 +38,18 @@ pub fn new(args_ KeysSafeNewArgs) !KeysSafe {
 	}
 
 	return safe
+}
+
+
+
+pub fn (mut safe KeysSafe) save ()!{
+
+	//walk over mem, make sure all info from mem is also in sqlitedb
+
+}
+
+pub fn (mut safe KeysSafe) loadall ()!{
+
+	//walk over sqlitedb, load all in mem
+
 }
