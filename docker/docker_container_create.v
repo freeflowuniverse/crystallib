@@ -33,8 +33,9 @@ pub fn (mut e DockerEngine) container_create(args DockerContainerCreateArgs) !&D
 	}
 
 	exec(
-		cmd: "'docker run --hostname ${args.hostname} --name ${args.name} ${ports} ${mounts} -d  -t ${image} ${command}"
+		cmd: "'docker run --hostname ${args.hostname} --priviliged --name ${args.name} ${ports} ${mounts} -d  -t ${image} ${command}"
 	)!
+	//TODO: (rob) see how to make sure we always run priviliged, or put in create args
 	mut container := e.container_get(name: args.name)!
 	return container
 }

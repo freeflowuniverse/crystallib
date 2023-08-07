@@ -24,3 +24,6 @@ if you need to work offline e.g. for development do
 ```bash
 export OFFLINE=1
 ```
+
+
+>> TODO: we probably need to rename this module (spreadsheet or sheets).
