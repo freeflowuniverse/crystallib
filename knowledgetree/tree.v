@@ -1,7 +1,6 @@
 module knowledgetree
 
-import freeflowuniverse.crystallib.texttools
-import freeflowuniverse.crystallib.gittools
+import v.embed_file
 
 [heap]
 pub struct Tree {
@@ -11,6 +10,7 @@ pub mut:
 	pointers map[string]&Pointer
 	collections map[string]&Collection
 	books map[string]&MDBook
+	embedded_files []embed_file.EmbedFileData // this where we have the templates for exporting a book
 	state TreeState
 }
 
@@ -18,6 +18,34 @@ pub enum TreeState {
 	init
 	ok
 	error
+}
+
+fn (mut tree Tree) init()!{
+	// QUESTION: what is this and what should it do? 
+	//mdbook.install()! //not sure where this is, needs to be in installers, using our osal
+	tree.embedded_files << $embed_file('template/css/print.css')
+	tree.embedded_files << $embed_file('template/css/variables.css')
+	tree.embedded_files << $embed_file('template/mermaid-init.js')
+	tree.embedded_files << $embed_file('template/mermaid.min.js') 
+	
+	//TODO make sure all files are embedded
+}
+
+
+// reset all, just to make sure we regenerate fresh
+pub fn (mut tree Tree) reset() ! {
+	for _, mut book in tree.books {
+		book.reset()!
+	}
+}
+
+// export the mdbooks to html
+pub fn (mut tree Tree) export() ! {
+	tree.reset()! // make sure we start from scratch
+	tree.fix()!
+	for _, mut book in tree.books {
+		book.export()! 
+	}
 }
 
 // fix all loaded tree
@@ -32,70 +60,6 @@ pub fn (mut tree Tree) fix() ! {
 		collection.fix()!
 	}	
 }
-
-/*
-// get the page from a pointer, format of pointer is $book:$collection:$name or $book::$name
-pub fn (tree Tree) page_get(pointerstr string) !&Page {
-	p := pointer_new(pointerstr)!
-	mut book := tree.book_get(p.book)!
-	return book.page_get(pointerstr)!
-}
-
-// get the image from a pointer, format of pointer is $book:$collection:$name or $book::$name
-pub fn (tree Tree) image_get(pointerstr string) !&File {
-	p := pointer_new(pointerstr)!
-	mut book := tree.book_get(p.book)!
-	return book.image_get(pointerstr)!
-}
-
-// get the file from a pointer, format of pointer is $book:$collection:$name or $book::$name
-pub fn (tree Tree) file_get(pointerstr string) !&File {
-	p := pointer_new(pointerstr)!
-	mut book := tree.book_get(p.book)!
-	return book.file_get(pointerstr)!
-}
-
-// get the image from a pointer, format of pointer is $book:$collection:$name or $book::$name
-pub fn (tree Tree) page_exists(pointerstr string) bool {
-	_ := tree.page_get(pointerstr) or {
-		if err is CollectionNotFound || err is CollectionObjNotFound || err is BookNotFound
-			|| err is NoOrTooManyObjFound {
-			return false
-		} else {
-			panic(err) // catch unforseen errors
-		}
-	}
-	return true
-}
-
-// get the image from a pointer, format of pointer is $book:$collection:$name or $book::$name
-pub fn (tree Tree) image_exists(pointerstr string) bool {
-	_ := tree.image_get(pointerstr) or {
-		if err is CollectionNotFound || err is CollectionObjNotFound || err is BookNotFound
-			|| err is NoOrTooManyObjFound {
-			return false
-		} else {
-			panic(err) // catch unforseen errors
-		}
-	}
-	return true
-}
-
-// get the image from a pointer, format of pointer is $book:$collection:$name or $book::$name
-pub fn (tree Tree) file_exists(pointerstr string) bool {
-	_ := tree.file_get(pointerstr) or {
-		if err is CollectionNotFound || err is CollectionObjNotFound || err is BookNotFound
-			|| err is NoOrTooManyObjFound {
-			return false
-		} else {
-			panic(err) // catch unforseen errors
-		}
-	}
-	return true
-}*/
-
-//TODO: don't we have dublicates here?
-
 
 //the next is our custom error for objects not found
 pub struct NoOrTooManyObjFound {

@@ -38,7 +38,7 @@ pub fn (tree Tree) collection_exists(name string) bool {
 
 // internal function
 fn (mut tree Tree) collection_get_from_pointer(p Pointer) !&Collection {
-	if p.tree.name != tree.name {
+	if p.tree.len > 0 && p.tree != tree.name {
 		return CollectionNotFound{
 			tree: &tree
 			pointer: p

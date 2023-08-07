@@ -8,7 +8,6 @@ import freeflowuniverse.crystallib.markdowndocs
 import freeflowuniverse.crystallib.pathlib { Path }
 import freeflowuniverse.crystallib.texttools
 
-import v.embed_file
 import os
 
 enum BookState {
@@ -43,17 +42,16 @@ pub mut:
 
 [heap]
 pub struct MDBook {
-pub:
-	tree  	 &Tree            [str: skip]
 pub mut:
+	tree  	 &Tree            [str: skip]
 	name     string
-	path   string //path exists
+	//path   string //path exists
 	dest   string //path where book will be generated		
 	title       string
 	pages       map[string]&Page  //links to the object in tree
 	files       map[string]&File
 	images      map[string]&File
-	pathlib        Path
+	path        Path
 	errors      []BookError
 	state        BookState
 	doc_summary  &markdowndocs.Doc [str: skip]
@@ -94,7 +92,7 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 	}
 
 	if args.path.len < 3 {
-		return error('Path needs to be not empty.')
+		return error('Path cannot be empty.')
 	}	
 
 	mut p := pathlib.get_file(args.path, false)! // makes sure we have the right path
@@ -107,7 +105,7 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 	mut b := MDBook{
 		name: args.name
 		tree: &l
-		path: args.path
+		path: p
 		dest: args.dest
 	}
 	l.books[args.name] = &b
@@ -121,19 +119,24 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 // walk over pages find broken links
 // report on the errors
 pub fn (mut book MDBook) fix() ! {
-	// book.fix_summary()!
-	// book.link_pages_files_images()!
+	book.fix_summary()!
+	book.link_pages_files_images()!
 	// TODO: check the links on pages
-	// book.errors_report()!
+	book.errors_report()!
 }
 
+
+pub fn (mut mdbook MDBook) init() ! {
+	// QUESTION: what should init do?
+	mdbook.process_summary()!
+}
 
 
 // reset all, just to make sure we regenerate fresh
 pub fn (mut mdbook MDBook) reset() ! {
 	// delete where the mdbook are created
 	for item in ['mdbook', 'html'] {
-		mut a := pathlib.get(mdbook.config.dest + '/${item}')
+		mut a := pathlib.get(mdbook.dest + '/${item}')
 		a.delete()!
 	}
 	mdbook.state = .init // makes sure we re-init
@@ -155,22 +158,22 @@ fn (mut book MDBook) fix_summary() ! {
 						$if debug {
 							println(' - book ${book.name} summary:${link.pathfull()}')
 						}
-						mut sitename := link.path.all_before('/')
+						mut collectionname := link.path.all_before('/')
 						if link.path == '' {
-							// means site has not been specified
-							return error('site needs to be specified in summary, is the first part of path e.g. sitename/...')
+							// means collection has not been specified
+							return error('collection needs to be specified in summary, is the first part of path e.g. collectionname/...')
 						}
-						if book.books.sites.exists(sitename) {
-							mut site := book.books.sites.get(sitename)!
-							dest := '${book.path.path}/${sitename}'
-							site.path.link(dest, true)!
+						pagename := link.filename
+						if book.tree.page_exists(pagename) {
+							page := book.tree.page_get(pagename)!
+							mut collection := page.collection
+							dest := '${book.path}/${collectionname}'
+							collection.path.link(dest, true)!
 
 							// now  we can process the page where the link goes to
-							pagename := link.filename
-							if site.page_exists(pagename) {
-								page := site.page_get(pagename)!
-								newlink := '[${link.description}](${sitename}/${page.pathrel})'
-								book.pages['${site.name}:${page.name}'] = page
+							if collection.page_exists(pagename) {
+								newlink := '[${link.description}](${collectionname}/${page.pathrel})'
+								book.pages['${collection.name}:${page.name}'] = page
 								if newlink != link.content {
 									// $if debug {
 									// 	println('change: $link.content -> $newlink')
@@ -183,15 +186,15 @@ fn (mut book MDBook) fix_summary() ! {
 							} else {
 								book.error(
 									cat: .page_not_found
-									msg: "Cannot find page:'${pagename}' in site:'${sitename}'"
+									msg: "Cannot find page:'${pagename}' in collection:'${collectionname}'"
 								)
 								continue
 							}
 						} else {
-							sitenames := book.books.sites.sitenames().join('\n- ')
+							collectionnames := book.tree.collectionnames().join('\n- ')
 							book.error(
 								cat: .site_not_found
-								msg: 'Cannot find site: ${sitename} \n\nsitenames known::\n\n${sitenames} '
+								msg: 'Cannot find site: ${collectionname} \n\collectionnames known::\n\n${collectionnames} '
 							)
 							continue
 						}
@@ -212,34 +215,34 @@ fn (mut book MDBook) link_pages_files_images() ! {
 					if mut item is markdowndocs.Link {
 						mut link := item
 						if link.cat == .page {
-							pageobj := page.site.page_get(link.filename) or {
+							pageobj := page.collection.page_get(link.filename) or {
 								book.error(
 									cat: .page_not_found
 									msg: 'Cannot find page: ${link.filename} in ${page.name}'
 								)
 								continue
 							}
-							book.pages['${pageobj.site.name}:${pageobj.name}'] = pageobj
+							book.pages['${pageobj.collection.name}:${pageobj.name}'] = pageobj
 						}
 						if link.cat == .file {
-							fileobj := page.site.file_get(link.filename) or {
+							fileobj := page.collection.file_get(link.filename) or {
 								book.error(
 									cat: .file_not_found
 									msg: 'Cannot find file: ${link.filename} in ${page.name}'
 								)
 								continue
 							}
-							book.files['${fileobj.site.name}:${fileobj.name}'] = fileobj
+							book.files['${fileobj.collection.name}:${fileobj.name}'] = fileobj
 						}
 						if link.cat == .image {
-							imageobj := page.site.image_get(link.filename) or {
+							imageobj := page.collection.image_get(link.filename) or {
 								book.error(
 									cat: .image_not_found
 									msg: 'Cannot find image: ${link.filename} in ${page.name}'
 								)
 								continue
 							}
-							book.images['${imageobj.site.name}:${imageobj.name}'] = imageobj
+							book.images['${imageobj.collection.name}:${imageobj.name}'] = imageobj
 						}
 					}
 				}
@@ -260,35 +263,35 @@ pub fn (mut book MDBook) errors_report() ! {
 
 // return path where the book will be created (exported and built from)
 fn (book MDBook) book_path(path string) Path {
-	dest0 := book.books.config.dest
+	dest0 := book.dest
 	return pathlib.get('${dest0}/books/${book.name}/${path}')
 }
 
 // return path where the book will be created (exported and built from)
 fn (book MDBook) html_path(path string) Path {
-	dest0 := book.books.config.dest
+	dest0 := book.dest
 	return pathlib.get('${dest0}/html/${book.name}/${path}')
 }
 
 // export an mdbook to its html representation
 pub fn (mut book MDBook) export() ! {
-	book.template_install()! // make sure all required template files are in site
+	book.template_install()! // make sure all required template files are in collection
 	book_path := book.book_path('').path + '/src'
 	html_path := book.html_path('').path
 	for _, mut page in book.pages {
-		dest := '${book_path}/${page.site.name}/${page.pathrel}'
+		dest := '${book_path}/${page.collection.name}/${page.pathrel}'
 		println(' - export: ${dest}')
-		page.save(dest)!
+		page.save(dest: dest)!
 	}
 
 	for _, mut file in book.files {
-		dest := '${book_path}/${file.site.name}/${file.pathrel}'
+		dest := '${book_path}/${file.collection.name}/${file.pathrel}'
 		println(' - export: ${dest}')
 		file.copy(dest)!
 	}
 
 	for _, mut image in book.images {
-		dest := '${book_path}/${image.site.name}/${image.pathrel}'
+		dest := '${book_path}/${image.collection.name}/${image.pathrel}'
 		println(' - export: ${dest}')
 		image.copy(dest)!
 	}
@@ -313,7 +316,7 @@ fn (mut book MDBook) template_install() ! {
 	}
 
 	// get embedded files to the mdbook dir
-	for item in book.books.embedded_files {
+	for item in book.tree.embedded_files {
 		book_path := item.path.all_after_first('/')
 		book.template_write(book_path, item.to_string())!
 	}

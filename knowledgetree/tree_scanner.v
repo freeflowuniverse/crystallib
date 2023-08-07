@@ -1,8 +1,9 @@
 module knowledgetree
 
+import freeflowuniverse.crystallib.gittools
 import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.imagemagick
 import freeflowuniverse.crystallib.params
+
 import os
 
 [params]
@@ -34,7 +35,7 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 	mut path := pathlib.get_dir(args_.path, false)!
 
 	if path.is_dir() {
-		name := path.name()
+		mut name := path.name()
 		if path.file_exists('.site') {
 			// mv .site file to .collection file
 			collectionfilepath1 := path.extend_file('.site')!
@@ -61,7 +62,7 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 						return
 					}
 					".book" {
-						tree.book_new(path: path.path, name: name, heal: args_heal)!
+						tree.book_new(path: path.path, name: name)!
 						return
 					}
 					else {
@@ -80,7 +81,7 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 					continue
 				}
 
-				tree.scan_recursive(path: p_in.path, heal: args_.heal, load: args_.load) or {
+				tree.scan(path: p_in.path, heal: args_.heal, load: args_.load) or {
 					msg := 'Cannot process recursive on ${p_in.path}\n${err}'
 					// println(msg)
 					return error(msg)

@@ -1,6 +1,5 @@
 module knowledgetree
 
-import freeflowuniverse.crystallib.gittools
 import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.texttools
 
@@ -19,7 +18,7 @@ pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 	args.name = texttools.name_fix_no_underscore_no_ext(args.name)
 
 	mut pp := pathlib.get_dir(args.path, false)! //will raise error if path doesn't exist
-	mut collection := Collection{
+	mut collection := &Collection{
 		name: args.name
 		path: pp
 		heal: args.heal
@@ -32,8 +31,8 @@ pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 		collection.fix()!
 	}
 
-	tree.collections[collection.name] = &collection
-	return tree.collections[collection.name]
+	tree.collections[collection.name] = collection
+	return collection
 }
 
 

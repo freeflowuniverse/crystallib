@@ -21,8 +21,6 @@ pub fn actions_process(mut parser actionsparser.ActionsParser, actions_done map[
 
 	mut tree := new()!
 
-	mut collection := tree.collection_new()!
-
 	//sites.scan(path + '/content')?
 	tree.scan(path: os.getwd())!
 

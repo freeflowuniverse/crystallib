@@ -16,7 +16,7 @@ pub struct HTTPConnectionArgs {
 pub:
 	name  string [required]
 	url   string [required]
-	cache bool = false
+	cache bool
 	retry int  = 1
 }
 
