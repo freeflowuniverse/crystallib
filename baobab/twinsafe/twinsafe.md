@@ -3,6 +3,9 @@
 a personal safe data stor to keep info about the 3bot ecosystem
 
 This is a datastor in sqlite which holds your private key info and the pub key info from other twins.
+It also holds all your private config information for your varia of connections e.g. a connection to openai, ...
+
+The config info is stored as 3Script
 
 context
 
@@ -17,7 +20,11 @@ context
 
 ## remarks
 
-There are 2 objects, mytwin is the info I need for myself, so I can sign info and I have my private key available, othertwin only has info how I can get to another twin and communicate with it.
+There are 3 type objects
+
+- mytwin is the info I need for myself, so I can sign info and I have my private key available, 
+- othertwin only has info how I can get to another twin and communicate with it.
+- myconfig is 3script based info
 
 
 

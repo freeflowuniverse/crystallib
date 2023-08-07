@@ -1,39 +1,7 @@
 module twinsafe
 
-import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.algo.secp256k1
 
-pub struct MyTwinGetError {
-	Error
-mut:
-	args        TwinGetArgs
-	error_type MyTwinGetErrorType
-	msg string
-}
-
-pub enum MyTwinGetErrorType {
-	notfound
-	double
-}
-
-fn (err MyTwinGetError) msg() string {
-	if err.error_type == .double {
-		return 'More than 1 twin found:\n${err.args}'
-	}
-	mut msg := 'Could not get twin.\n${err.msg}\n${err.args}'
-	return msg
-}
-
-fn (err MyTwinGetError) code() int {
-	return int(err.error_type)
-}
-
-[params]
-pub struct MyTwinGetArgs{
-pub:
-	name string
-	id u32
-}
 
 
 //this is me, my representation
@@ -43,10 +11,50 @@ pub:
 	id u32
 	description string
 	privkey Secp256k1 //to be used for signing, verifying, only to be filled in when private key	
+	keysafe  &KeysSafe            [str: skip]  //allows us to remove ourselves from mem, or go to db
 }
 
+
+
+//ADD
+
+[params]
+pub struct TwinAddArgs{
+pub:
+	name string
+	id u32
+	description string
+	privatekey_generate bool
+	privatekey string //given in hex or mnemonics
+}
+
+
+// generate a new key is just importing a key with a random seed
+// if it exists will return the key which is already there
+pub fn (mut ks KeysSafe) mytwin_add(args_ TwinAddArgs) ! {
+	mut args:=args_
+	if args.privatekey_generate && args.privatekey.len>0{
+		
+	}
+	mut seed := []u8{}
+
+	// generate a new random seed
+	for _ in 0 .. 32 {
+		seed << u8(libsodium.randombytes_random()) //TODO: use secp256k1
+	}
+
+	//TODO: based on args generate key or add pre-defined key
+	//check if hex or mnemonics, then import accordingly
+
+	//use sqlite to store in db, encrypt the private key, symmetric using aes_symmetric 
+	//no need to encrypt other properties
+
+	//TODO: use proper error handling with custom error type
+}
+
+
 //I can have more than 1 mytwin, ideal for testing as well
-pub fn (mut ks KeysSafe) mytwin_get(args MyTwinGetArgs) !MyTwin {
+pub fn (mut ks KeysSafe) mytwin_get(args GetArgs) !MyTwin {
 
 
 	//use sqlite to get info (do query)
@@ -58,3 +66,13 @@ pub fn (mut ks KeysSafe) mytwin_get(args MyTwinGetArgs) !MyTwin {
 fn (mut twin MyTwin) sign (data []u8 )![]u8 {
 
 }
+
+
+pub fn (mut o MyTwin) delete() ! {
+    //delete from memory and from sqlitedb
+}
+
+pub fn (mut o MyTwin) save() ! {
+    //update in DB, or insert if it doesn't exist yet
+}
+
