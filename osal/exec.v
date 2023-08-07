@@ -1,11 +1,12 @@
 module osal
 
-import os
-import time
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.pathlib
-// import io.util
+
 import json
+import os
+import time
+// import io.util
 
 pub struct JobError {
 	Error
@@ -266,10 +267,15 @@ fn (mut job Job) cmd_to_process_args() ![]string {
 		firstlines += 'set +x\n'
 	}
 	cmd = firstlines + '\n' + cmd
-
-	job.cmd.scriptpath = pathlib.temp_write(text: cmd, path: job.cmd.scriptpath) or {
-		return error('error: cannot write script to execute ${err}')
+	scriptpath := if job.cmd.scriptpath.len > 0 {
+		job.cmd.scriptpath
+	} else {
+		"/tmp/exece.sh"
 	}
+	job.cmd.scriptpath = pathlib.temp_write(text: cmd, path: scriptpath) or {
+		return error('error: cannot write script to execute: ${err}')
+	}
+	os.chmod(job.cmd.scriptpath, 0o777)!
 	return ['/bin/bash', '-c', '/bin/bash ${job.cmd.scriptpath} 2>&1']
 }
 
