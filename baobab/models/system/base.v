@@ -2,7 +2,7 @@ module system
 
 import json
 import freeflowuniverse.crystallib.params
-import freeflowuniverse.crystallib.encoder
+import freeflowuniverse.crystallib.algo.encoder
 
 [heap]
 pub struct Base {

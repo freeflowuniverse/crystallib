@@ -2,7 +2,7 @@ module people
 
 import freeflowuniverse.protocolme.models.system
 import json
-import freeflowuniverse.crystallib.encoder
+import freeflowuniverse.crystallib.algo.encoder
 
 [heap]
 pub struct Person {

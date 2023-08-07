@@ -10,7 +10,7 @@ possible parameters
 Other financial flows can be mentioned here as well.
 
 
-```js
+<!-- ```js
 !!funding.define
     name:'our_investor'
     descr:'A fantastic super investor.'  
@@ -25,4 +25,4 @@ Other financial flows can be mentioned here as well.
 
 
 ```
-
+ -->
