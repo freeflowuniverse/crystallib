@@ -19,7 +19,7 @@ pub:
 //ADD
 
 [params]
-pub struct TwinAddArgs{
+pub struct MyTwinAddArgs{
 pub:
 	name string
 	id u32
@@ -31,7 +31,7 @@ pub:
 
 // generate a new key is just importing a key with a random seed
 // if it exists will return the key which is already there
-pub fn (mut ks KeysSafe) mytwin_add(args_ TwinAddArgs) ! {
+pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
 	mut args:=args_
 	if args.privatekey_generate && args.privatekey.len>0{
 		

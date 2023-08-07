@@ -2,8 +2,6 @@
 
 This is a lib256k1 binding for vlang.
 
->> QUESTION: is there something to be installed on OS before we can use this?
-
 ## Requirements
 
 make sure the lib is installed
@@ -13,6 +11,8 @@ on osx
 ```bash
 brew install secp256k1
 ```
+
+>> TODO: what needs to be installed for linux (maxime)
 
 ## Features
 

@@ -9,11 +9,11 @@ pub:
 	name string
 	id u32
 	description string
-	pubkey ... //TODO: how to do the pubkey, what is form of that?
+	// pubkey ... //TODO: how to do the pubkey, what is form of that?
 	conn_type TwinConnectionType 
 	addr string      //ipv4 or ipv6 or redis connection string
 	keysafe  &KeysSafe            [str: skip]  //allows us to remove ourselves from mem, or go to db
-
+	state TwinState //only keep this in mem, does not have to be in sqlitedb
 }
 
 enum TwinConnectionType{
@@ -23,10 +23,17 @@ enum TwinConnectionType{
 }
 
 
+// The possible states of a job
+pub enum TwinState {
+	active
+	unreacheable
+}
+
+
 //ADD
 
 [params]
-pub struct OtherTwinArgs{
+pub struct OtherTwinAddArgs{
 pub:
 	name string
 	id u32
@@ -39,7 +46,7 @@ pub:
 
 // generate a new key is just importing a key with a random seed
 // if it exists will return the key which is already there
-pub fn (mut ks KeysSafe) othertwin_add(args_ OtherTwinArgs) ! {
+pub fn (mut ks KeysSafe) othertwin_add(args_ OtherTwinAddArgs) ! {
 	mut args:=args_
 	if args.privatekey_generate && args.privatekey.len>0{
 		
@@ -73,7 +80,7 @@ pub fn (mut ks KeysSafe) othertwin_get(args GetArgs) !OtherTwin {
 }
 
 //send message to this other twin
-pub fn (mut twin OtherTwin) send (mbus.RPCMessage)!{
+pub fn (mut twin OtherTwin) send (msg mbus.RPCMessage)!{
 
 	//TODO: convert to binary (means signature is part of it too)
 	//TODO: give to mbus to send

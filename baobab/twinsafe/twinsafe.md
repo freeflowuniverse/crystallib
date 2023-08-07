@@ -15,7 +15,7 @@ context
 - in our local datastor we can remember name, description, ...
 - we use sqlite to remember all the info
 - the personal datastor also remembers our private key(s)
-- we use algo/secp256k1/secp256k1.v for signing & verification
+- we use algo/secp256k1/secp256k1.v for signing & verification per twin
 - encryption is done using symmetric encryption (see )
 
 ## remarks

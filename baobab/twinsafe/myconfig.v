@@ -12,7 +12,7 @@ pub:
 
 
 [params]
-pub struct TwinAddArgs{
+pub struct MyConfigAddArgs{
 pub:
 	name string
 	id u32
@@ -24,7 +24,7 @@ pub:
 
 // generate a new key is just importing a key with a random seed
 // if it exists will return the key which is already there
-pub fn (mut ks KeysSafe) myconfig_add(args_ TwinAddArgs) ! {
+pub fn (mut ks KeysSafe) myconfig_add(args_ MyConfigAddArgs) ! {
 
 }
 

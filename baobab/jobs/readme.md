@@ -3,13 +3,15 @@
 
 Send job messages over our mycelium network, which is a peer2peer encrypted network.
 
+Jobs use MBUS (change with before) to send the message.
+
 
 ## redis
 
 The client uses a couple redis queues:
 * jobs.db
 * jobs.processor.in
-* jbos.return.$guid
+* jobs.return.$guid
 
 ### jobs.db
 

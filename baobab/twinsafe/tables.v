@@ -1,3 +1,3 @@
 module twinsafe
 
-//TODO: create 2 tables, one for othertwin, one for mytwin
+//TODO: create 3 tables, one for othertwin, one for mytwin, one for myconfig
