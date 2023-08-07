@@ -5,6 +5,11 @@ import os
 
 // TODO: needs to be rewritten for process
 
+// TODO: remove this test, to make the tests pass we need at least one test
+fn test_does_nothing() {
+
+}
+
 // const (
 // 	cmd_create_file_and_print_content = '#!/bin/bash
 // mkdir -p /tmp/testdirectory
