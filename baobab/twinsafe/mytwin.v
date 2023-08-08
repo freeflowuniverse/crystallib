@@ -1,15 +1,19 @@
 module twinsafe
 
 import freeflowuniverse.crystallib.algo.secp256k1
+import freeflowuniverse.crystallib.algo.aes_symmetric
+import freeflowuniverse.crystallib.algo.mnemonic
+import encoding.hex
 
 // this is me, my representation
 pub struct MyTwin {
 pub:
-	id          u32       [primary; sql: serial]
-	name        string    [nonull]
+	id          u32                 [primary; sql: serial]
+	name        string              [nonull]
 	description string
-	privkey     Secp256k1        // to be used for signing, verifying, only to be filled in when private key	
-	keysafe     &KeysSafe [skip] // allows us to remove ourselves from mem, or go to db
+	privkey     secp256k1.Secp256k1 [skip] // to be used for signing, verifying, only to be filled in when private key	
+	keysafe     &KeysSafe           [skip] // allows us to remove ourselves from mem, or go to db
+	privkey_str [string]
 }
 
 // ADD
@@ -17,39 +21,60 @@ pub:
 [params]
 pub struct MyTwinAddArgs {
 pub:
-	id                  u32
-	name                string [sql: unique]
-	description         string
-	privatekey_generate bool
-	privatekey          string // given in hex or mnemonics
+	id          u32
+	name        string [sql: unique]
+	description string
+	privatekey string // given in hex or mnemonics
 }
 
 // generate a new key is just importing a key with a random seed
 // if it exists will return the key which is already there
 pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
 	mut args := args_
-	if args.privatekey_generate && args.privatekey.len > 0 {
+	privkeyhex := ""
+	if args.privatekey.len > 0 {
+		if args.privatekey[0..2] == "0x"{
+			privkey_hex = args.privatekey
+		}else{
+			privkey_hex = hex.encode(mnemonic.parse(args.privatekey))
+		}
+		
+	} else {
+		// TODO: generate the seed
+		// generate the key_bytes
 	}
-	mut seed := []u8{}
-
-	// generate a new random seed
-	for _ in 0 .. 32 {
-		seed << u8(libsodium.randombytes_random()) // TODO: use secp256k1
+	privkey_str := aes_symmetric.encrypt(privkeyhex, ks.secret)
+	privkey := secp256k1.new(keyhex: privkey_str)
+	twin := myTwin{
+		name: args.name
+		description: args.description
+		privkey_str: privkey_str
+		privkey: privkey
+		keysafe: ks 
 	}
-
-	// TODO: based on args generate key or add pre-defined key
-	// check if hex or mnemonics, then import accordingly
-
-	// use sqlite to store in db, encrypt the private key, symmetric using aes_symmetric
-	// no need to encrypt other properties
-
-	// TODO: use proper error handling with custom error type
+	sql ks.db {
+		insert twin into MyTwin
+	}
+	ks.mytwins[twin.name] = twin
 }
+
 
 // I can have more than 1 mytwin, ideal for testing as well
 pub fn (mut ks KeysSafe) mytwin_get(args GetArgs) !MyTwin {
-	// use sqlite to get info (do query)
-	// decrypt the private key
+	twins := sql safe.db {
+		select from MyTwin where id == args.id
+	}!
+	if twins.len > 0 {
+		mytwin := twins[0]
+		// decrypt privatekey
+		privkey_hex := aes_symmetric.decrypt(mytwin.privkey_str, ks.secret)
+		privkey := secp256k1.new(keyhex: privkey_hex)
+		mytwin.privateKey = privkey
+		mytwin.keysafe = ks
+		return mytwin
+	}
+
+	return  GetError{id: 0, name: "not found", msg: "couldn't get mytwin with id ${args.id}", error_type: GetErrorType.not_found}
 }
 
 pub fn (mut ks KeysSafe) mytwin_exist(args_ MyTwinAddArgs) ! {
@@ -65,12 +90,32 @@ pub fn (mut ks KeysSafe) mytwin_exist(args_ MyTwinAddArgs) ! {
 
 // use my private keyto sign data, important before sending
 fn (mut twin MyTwin) sign(data []u8) ![]u8 {
+	twin.privkey.sign_data(data)
 }
 
-pub fn (mut o MyTwin) delete() ! {
-	// delete from memory and from sqlitedb
+pub fn (mut twin MyTwin) delete() ! {
+	twin.keysage.mytwins.delete(twin.name)
+	sql twin.keysafe.db {
+		delete from MyTwin where id == twin.id
+	}
 }
 
-pub fn (mut o MyTwin) save() ! {
-	// update in DB, or insert if it doesn't exist yet
+pub fn (mut twin MyTwin) save() ! {
+	privkey_hex := twin.privatekey.hex()
+	twin.privkey_str = aes_symmetric.encrypt(privkey_hex, twin.keysafe.secret)
+
+	twins := sql twin.keysage.db {
+		select from MyTwin where id == twin.id
+	}!
+	if twins.len > 0 {
+		// twin already exists in the data base so we update
+		sql twin.keysafe.db {
+			update MyTwin set name = twin.name, description = twin.description, privkey_str = twin.privkey_str
+			where id == twin.id
+		}!
+		return
+	}
+	sql safe.db {
+		insert twin into MyTwin
+	}!
 }
