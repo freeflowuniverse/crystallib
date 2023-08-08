@@ -24,7 +24,7 @@ if currency not specified then is always in USD
 //     descr:'License Deals'  
 //     revenue_growth:'10:1000,20:1100'
 //     cogs_perc: '10%'  
-//     cogs_delay_month: 1
+//     rev_delay_month: 1
 
 // !!revenue.define 
 //     descr:'3NODE License Sales 1 Time'  
@@ -32,7 +32,7 @@ if currency not specified then is always in USD
 //     revenue_item:'1:100,60:200'
 //     revenue_nr:'10:1000,24:2000,60:40000'
 //     cogs_perc: '10%'
-//     cogs_delay_month: 1
+//     rev_delay_month: 1
 ```
 
 ## Revenue Items Recurring

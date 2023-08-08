@@ -52,6 +52,17 @@ pub fn (mut ks KeysSafe) mytwin_get(args GetArgs) !MyTwin {
 	// decrypt the private key
 }
 
+pub fn (mut ks KeysSafe) mytwin_exist(args_ MyTwinAddArgs) ! {
+	ks.mytwin_get(args_) or {
+		if err.code == 0{
+			return false
+		}
+		return err
+	}
+	return true
+
+}
+
 // use my private keyto sign data, important before sending
 fn (mut twin MyTwin) sign(data []u8) ![]u8 {
 }
