@@ -43,15 +43,15 @@ import freeflowuniverse.crystallib.baobab.actions
 //     growth:'1:5,60:30' cost:'4000USD' indexation:'5%'
 //     department:'engineering'
 
-pub actions(actions actions.ActionsParser) ! {
+pub actions(actions actions.Actions) ! {
     
     mut bizmodel:=...
-    bizmodel.hr_actions(actions actions.ActionsParser)!
+    bizmodel.hr_actions(actions actions.Actions)!
 
 }
 
 // populate the params for hr
-fn (mut m BizModel) hr_actions(actions actions.ActionsParser) ! {
+fn (mut m BizModel) hr_actions(actions actions.Actions) ! {
 	mut actions2 := actions.filtersort(actor: 'hr')!
 	for action in actions2 {
 		if action.name == 'employee_define' {

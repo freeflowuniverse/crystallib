@@ -1,12 +1,14 @@
 module spreadsheet
 
-// something like 3:2,10:5 means month 3 we start with 2, it grows to 5 on month 10
+// smartstring is something like 3:2,10:5 means month 3 we start with 2, it grows to 5 on month 10
 // the cells out of the mentioned ranges are not filled if they are already set
 // the cells which are empty at start of row will become 0
 // the cells which are empty at the back will just be same value as the last one
 // currencies can be used e.g. 3:10usd,20:30aed (so we can even mix)
 // if the smartstr, is empty then will use existing values in the row to extra/intra polate, the empty values will be filled in
 pub fn (mut r Row) extrapolate(smartstr string) ! {
+
+	//put the values in the row
 	for mut part in smartstr.split(',') {
 		part = part.trim_space()
 		if part.contains(':') {
@@ -33,13 +35,16 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 	mut xnewval := 0.0
 	// println(r)
 	for x in 0 .. r.cells.len {
-		// println("$x ${r.cells[x].empty} $xlastwidth")
+		// println("$x empty:${r.cells[x].empty} xlastwidth:$xlastwidth")
+		if r.cells[x].empty && xlastval == 0 {
+			continue
+		}
 		if r.cells[x].empty == false && xlastwidth == 0 {
 			// we get new value, just go to next
 			xlast = x
 			xlastval = r.cells[x].val
 			xlastwidth = 0
-			// println(" value: $xlastval x:$x")
+			// print(" lastval:$xlastval")
 			continue // no need to do anything
 		}
 		// if we get here we get an empty after having a non empty before
@@ -50,7 +55,7 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 			// now we need to walk over the inbetween and set the values
 			yincr := (xnewval - xlastval) / xlastwidth
 			mut yy := xlastval
-			// println("incr:$x :: $yincr")
+			// print(" yincr:$yincr")
 			for xx in (xlast + 1) .. x {
 				yy += yincr
 				r.cells[xx].set('${yy}')!
@@ -62,6 +67,7 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 		}
 	}
 	// println("ROW1:$r")
+	
 	// now fill in the last ones
 	xlastval = 0.0
 	for x in 0 .. r.cells.len {
@@ -73,6 +79,7 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 	}
 
 	// println("ROW:$r")
+	// if true{panic("s")}
 
 }
 
@@ -94,6 +101,8 @@ pub fn (mut r Row) smartfill(smartstr string) ! {
 				return error('Cannot do smartstr, because the X is out of scope, needs to be 1+.\n${smartstr}')
 			}
 			r.cells[x].set(splitted[1])!
+		}else{
+			r.cells[0].set(part)!
 		}
 	}
 	for x in 0 .. r.cells.len {

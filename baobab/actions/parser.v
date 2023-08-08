@@ -31,7 +31,7 @@ mut:
 }
 
 // path can be a directory or a file
-pub fn (mut actions ActionsParser) path_add(path string) ! {
+pub fn (mut actions Actions) path_add(path string) ! {
 	// recursive behavior for when dir
 	// println(" -- add: $path")
 	if os.is_dir(path) {
@@ -61,7 +61,7 @@ pub fn (mut actions ActionsParser) path_add(path string) ! {
 	}
 }
 
-fn (mut actions ActionsParser) file_parse(path string) ! {
+fn (mut actions Actions) file_parse(path string) ! {
 	if !os.exists(path) {
 		return error("path: '${path}' does not exist, cannot parse.")
 	}
@@ -69,7 +69,7 @@ fn (mut actions ActionsParser) file_parse(path string) ! {
 	actions.text_add(content)!
 }
 
-fn (mut actions ActionsParser) text_add(content string) ! {
+fn (mut actions Actions) text_add(content string) ! {
 	blocks := parse_into_blocks(content)!
 	actions.parse_actions(blocks)!
 }
@@ -139,14 +139,14 @@ fn (mut block Block) clean() {
 	block.content = texttools.dedent(block.content) // remove leading space
 }
 
-fn (mut actions ActionsParser) parse_actions(blocks Blocks) ! {
+fn (mut actions Actions) parse_actions(blocks Blocks) ! {
 	for block in blocks.blocks {
 		actions.parse_block(block)!
 	}
 }
 
 // go over block, fill in default book or actor if needed
-fn (mut actions ActionsParser) parse_block(block Block) ! {
+fn (mut actions Actions) parse_block(block Block) ! {
 	params_ := params.parse(block.content) or { return error('Failed to parse block: ${err}') }
 
 	mut domain := ''

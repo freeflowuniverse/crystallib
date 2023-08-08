@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.texttools
 
 //this allows you to input the required info into the keysafe
 
-fn (mut ks KeysSafe) actions(actions actions.ActionsParser) ! {
+fn (mut ks KeysSafe) actions(actions actions.Actions) ! {
 	mut actions2 := actions.filtersort(actor: 'twinsafe')!
 	for action in actions2 {
 		if action.name == 'mytwin_define' {

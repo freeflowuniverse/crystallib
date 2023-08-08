@@ -19,7 +19,7 @@ pub:
 //   names_filter    []string //can be empty, then no filter, unix glob filters are allowed
 //
 // return  []Action
-pub fn (parser ActionsParser) filtersort(args FilterArgs) ![]Action {
+pub fn (parser Actions) filtersort(args FilterArgs) ![]Action {
 	mut result := []Action{}
 	for action_ in parser.actions {
 		mut action := action_
@@ -78,7 +78,7 @@ pub fn (parser ActionsParser) filtersort(args FilterArgs) ![]Action {
 }
 
 // find 1 actions based on name, if 0 or more than 1 then error
-pub fn (parser ActionsParser) params_get(name string) !params.Params {
+pub fn (parser Actions) params_get(name string) !params.Params {
 	mut result := []Action{}
 	for action in parser.actions {
 		if action.name == name.to_lower() {

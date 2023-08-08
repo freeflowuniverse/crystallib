@@ -41,11 +41,14 @@ pub mut:
 //
 pub fn (mut r Row) action(args_ RowActionArgs) !&Row {
 	mut args := args_
+	if args.aggregatetype == .unknown {
+		args.aggregatetype = r.aggregatetype
+	}		
 	mut row_result := r
 	if args.name.len > 0 {
 		mut r3 := r.sheet.row_new(
 			name: args.name
-			aggregatetype: r.aggregatetype
+			aggregatetype: args.aggregatetype
 			descr: args.descr
 			subgroup: args.subgroup
 			tags: args.tags

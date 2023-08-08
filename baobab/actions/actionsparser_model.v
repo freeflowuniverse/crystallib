@@ -1,6 +1,6 @@
 module actions
 
-pub struct ActionsParser {
+pub struct Actions {
 pub mut:
 	actions       []Action // should be empty after filter action
 	defaultdomain string = 'protocol_me'

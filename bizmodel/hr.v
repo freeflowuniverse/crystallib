@@ -1,6 +1,6 @@
 module bizmodel
 
-import freeflowuniverse.crystallib.baobab.actions
+import freeflowuniverse.crystallib.baobab.actions {Actions}
 import freeflowuniverse.crystallib.texttools
 
 
@@ -11,8 +11,8 @@ import freeflowuniverse.crystallib.texttools
 //	   cost:'4000USD' 
 //	   indexation:'5%'
 //     department:'engineering'
-fn (mut m BizModel) hr_actions(actions actions.Actions) ! {
-	mut actions2 := actions.filtersort(actor: 'hr')!
+fn (mut m BizModel) hr_actions(actions_ Actions) ! {
+	mut actions2 := actions_.filtersort(actor: 'hr')!
 	for action in actions2 {
 		if action.name == 'employee_define' {
 			mut name := action.params.get_default('name', '')!

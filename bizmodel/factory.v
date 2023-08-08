@@ -15,7 +15,7 @@ pub mut:
 pub struct BizModelArgs {
 pub mut:
 	name      string
-	data_path string
+	path string
 }
 
 
@@ -24,8 +24,8 @@ pub fn new(args BizModelArgs) !BizModel {
 	mut m := BizModel{
 		sheet: sh
 		params: BizModelArgs{
-			data_path: args.path
-			name: textools.name_fix(args.name)
+			path: args.path
+			name: texttools.name_fix(args.name)
 		}
 	}
 
@@ -35,7 +35,7 @@ pub fn new(args BizModelArgs) !BizModel {
 }
 
 pub fn (mut m BizModel) actions() ! {
-	ap := actions.new(path: m.params.data_path, defaultcircle: 'bizmodel_${m.params.name}')!
+	ap := actions.new(path: m.params.path, defaultcircle: 'bizmodel_${m.params.name}')!
 	m.revenue_actions(ap)!
 	m.hr_actions(ap)!
 }

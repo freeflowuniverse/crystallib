@@ -15,24 +15,24 @@ possible parameters
 if currency not specified then is always in USD
 
 ```js
-!!revenue.define 
-    descr:'OEM Deals'  
-    revenue_time:'10:1000000USD,20:1200000'
-    cogs_perc: '1:5%,20:10%'  
+// !!revenue.define 
+//     descr:'OEM Deals'  
+//     revenue_time:'10:1000000USD,20:1200000'
+//     cogs_perc: '1:5%,20:10%'  
 
-!!revenue.define 
-    descr:'License Deals'  
-    revenue_growth:'10:1000,20:1100'
-    cogs_perc: '10%'  
-    cogs_delay_month: 1
+// !!revenue.define 
+//     descr:'License Deals'  
+//     revenue_growth:'10:1000,20:1100'
+//     cogs_perc: '10%'  
+//     cogs_delay_month: 1
 
-!!revenue.define 
-    descr:'3NODE License Sales 1 Time'  
-    //means revenue is 100 month 1, 200 month 60
-    revenue_item:'1:100,60:200'
-    revenue_nr:'10:1000,24:2000,60:40000'
-    cogs_perc: '10%'
-    cogs_delay_month: 1
+// !!revenue.define 
+//     descr:'3NODE License Sales 1 Time'  
+//     //means revenue is 100 month 1, 200 month 60
+//     revenue_item:'1:100,60:200'
+//     revenue_nr:'10:1000,24:2000,60:40000'
+//     cogs_perc: '10%'
+//     cogs_delay_month: 1
 ```
 
 ## Revenue Items Recurring
@@ -60,13 +60,17 @@ if currency not specified then is always in USD
 !!revenue.recurring_define 
     name: '3node_lic'
     descr:'3NODE License Sales Recurring Basic'  
-    revenue_setup:'1:100,60:50'
-    revenue_monthly_delay:'2'
-    revenue_monthly:'1:5,60:10'
-    cogs_setup:'1:1000'
-    cogs_monthly_perc:'20%'
-    cogs_monthly_delay:'2'
-    nr_sold:'10:1000,24:2000,60:40000'
+    // revenue_setup:'1:100,60:50'
+    revenue_setup:'5'
+    revenue_monthly_delay:'0'
+    revenue_monthly:'1:1,60:1'
+    // cogs_setup:'1:0'
+    cogs_setup_perc:'50%'
+    cogs_setup_delay:'0'
+    cogs_monthly_perc:'50%'
+    cogs_monthly_delay:'0'
+    nr_sold:2
+    // nr_sold:'10:1000,24:2000,60:40000'
     //60 is the default
     nr_months:60 
 ```

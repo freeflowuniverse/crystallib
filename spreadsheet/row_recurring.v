@@ -14,12 +14,16 @@ pub mut:
 	delaymonths   int // how many months should we delay the output
 }
 
-pub fn (mut r Row) recurring(args RowRecurringArgs) !&Row {
+pub fn (mut r Row) recurring(args_ RowRecurringArgs) !&Row {
 	mut row_result := r
+	mut args := args_
+	if args.aggregatetype == .unknown {
+		args.aggregatetype = r.aggregatetype
+	}	
 	if args.name.len > 0 {
 		mut r3 := r.sheet.row_new(
 			name: args.name
-			aggregatetype: r.aggregatetype
+			aggregatetype: args.aggregatetype
 			descr: args.descr
 			subgroup: args.subgroup
 			tags: args.tags
@@ -27,7 +31,7 @@ pub fn (mut r Row) recurring(args RowRecurringArgs) !&Row {
 		row_result = *r3
 	}
 	// mut arr:=[]f64{} //is one per starting moint
-	mut prevval := 0.0
+	// mut prevval := 0.0
 	for x in 0 .. r.sheet.nrcol {
 		// arr<<0.0
 		mut aggregated := 0.0

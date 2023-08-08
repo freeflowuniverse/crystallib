@@ -5,7 +5,7 @@ module library
 // import freeflowuniverse.crystallib.actionparser
 
 // // find all actions & process, this works inclusive
-// pub fn actions_process(mut parser actionparser.ActionsParser, actions_done map[string]string) ?map[string]string {
+// pub fn actions_process(mut parser actionparser.Actions, actions_done map[string]string) ?map[string]string {
 // 	// $if debug {
 // 	// 	println("+++++")
 // 	// 	println(actions)
