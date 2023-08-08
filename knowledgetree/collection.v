@@ -263,17 +263,15 @@ pub fn (mut collection Collection) image_new(mut p Path) ! {
 		panic('should not start with . \n${p}')
 	}
 	if collection.image_exists(ptr.pointer.name) {
-		// TODO: fix doubles
-
 		// remove this one
-		// mut file_double := collection.image_get(p.name())!
-		// mut path_double := file_double.path
-		// if p.path.len > path_double.path.len {
-		// 	p.delete()!
-		// } else {
-		// 	path_double.delete()!
-		// 	file_double.path = p // reset the path so the shortest one remains
-		// }
+		mut file_double := collection.image_get(p.name())!
+		mut path_double := file_double.path
+		if p.path.len > path_double.path.len {
+		 	p.delete()!
+		} else {
+			path_double.delete()!
+			file_double.path = p // reset the path so the shortest one remains
+		}
 		return
 	}
 	mut ff := File{

@@ -43,6 +43,7 @@ fn (mut page Page) link_update(mut link Link) ! {
 	mut fileobj := &fileoj0
 
 	if link.cat == .image {
+		print(" IT IS AN IMAGE")
 		if page.collection.image_exists(file_name) {
 			file_search = false
 			fileobj = page.collection.image_get(file_name)!
@@ -53,36 +54,36 @@ fn (mut page Page) link_update(mut link Link) ! {
 			fileobj = page.collection.file_get(file_name)!
 		}
 	}
-	// TODO: implement wider search
-	// if file_search {
-	// 	// if the collection is filled in then it means we need to copy the file here,
-	// 	// or the image is not found, then we need to try and find it somewhere else
-	// 	// we need to copy the image here
-	// 	fileobj = page.collection.collections.image_file_find_over_collections(file_name) or {
-	// 		msg := "'${file_name}' not found for page:${page.path.path}, we looked over all collections."
-	// 		println('    * ${msg}')
-	// 		page.collection.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
-	// 		return
-	// 	}
-	// 	// we found the image should copy to the collection now
-	// 	println("     * image or file found in other collection: '${fileobj}'")
-	// 	println(link)
-	// 	mut dest := pathlib.get('${page.path.path_dir()}/img/${fileobj.path.name()}')
-	// 	pathlib.get_dir('${page.path.path_dir()}/img', true)! // make sure it exists
-	// 	println(' *** COPY: ${fileobj.path.path} to ${dest.path}')
-	// 	if fileobj.path.path == dest.path {
-	// 		println(fileobj)
-	// 		panic('source and destination is same when trying to fix link (copy).')
-	// 	}
-	// 	fileobj.path.copy(mut dest)!
-	// 	page.collection.image_new(mut dest)! // make sure collection knows about the new file
-	// 	fileobj.path = dest
 
-	// 	fileobj.path.check()
-	// 	if fileobj.path.is_link() {
-	// 		fileobj.path.unlink()! // make a real file, not a link
-	// 	}
-	// }
+	if file_search {
+		// if the collection is filled in then it means we need to copy the file here,
+	 	// or the image is not found, then we need to try and find it somewhere else
+	 	// we need to copy the image here
+	 	fileobj = page.collection.tree.image_get(file_name) or {
+	 		msg := "'${file_name}' not found for page:${page.path.path}, we looked over all collections."
+	 		println('    * ${msg}')
+	 		page.collection.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
+	 		return
+	 	}
+	 	// we found the image should copy to the collection now
+	 	println("     * image or file found in other collection: '${fileobj}'")
+	 	println(link)
+	 	mut dest := pathlib.get('${page.path.path_dir()}/img/${fileobj.path.name()}')
+	 	pathlib.get_dir('${page.path.path_dir()}/img', true)! // make sure it exists
+	 	println(' *** COPY: ${fileobj.path.path} to ${dest.path}')
+	 	if fileobj.path.path == dest.path {
+	 		println(fileobj)
+	 		panic('source and destination is same when trying to fix link (copy).')
+	 	}
+	 	fileobj.path.copy(mut dest)!
+	 	page.collection.image_new(mut dest)! // make sure collection knows about the new file
+	 	fileobj.path = dest
+
+	 	fileobj.path.check()
+	 	if fileobj.path.is_link() {
+	 		fileobj.path.unlink()! // make a real file, not a link
+	 	}
+	}
 
 	// means we now found the file or image
 	page.files_linked << fileobj

@@ -30,5 +30,3 @@ fn test_scan() {
 	println(test_collection)
 }
 
-
-//TODO: needs to be checked

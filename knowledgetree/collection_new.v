@@ -35,9 +35,6 @@ pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 	return collection
 }
 
-
-
-
 // path is the full path
 fn (mut collection Collection) scan_internal(mut p pathlib.Path) ! {
 	$if debug {

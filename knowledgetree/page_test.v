@@ -4,11 +4,11 @@ import os
 import freeflowuniverse.crystallib.markdowndocs
 import freeflowuniverse.crystallib.pathlib
 
-const testpath = os.dir(@FILE) + '/testdata/broken_collection'
+const testpath = os.dir(@FILE) + '/testdata/broken_chapter'
 
 fn testsuite_end() {
 	// reset testdata changes after running tests
-	os.execute('git checkout ${tree.testpath}')
+	os.execute('git checkout ${knowledgetree.testpath}')
 }
 
 fn test_link_update() ! {}
@@ -16,14 +16,13 @@ fn test_link_update() ! {}
 fn test_fix_external_link() ! {}
 
 fn test_fix() ! {
-	mut lib := new()
-	mut book := lib.book_new(name: 'testbook')!
-	mut test_collection := book.collection_new(
+	mut tree := new()!
+	mut test_collection := tree.collection_new(
 		name: 'Collection1'
-		path: tree.testpath
+		path: knowledgetree.testpath
 	) or { panic('Cannot create new collection: ${err}') }
 
-	mut page_path := pathlib.get('${tree.testpath}/wrong_links/page_with_wrong_links.md')
+	mut page_path := pathlib.get('${knowledgetree.testpath}/wrong_links/page_with_wrong_links.md')
 	mut test_page := test_collection.page_new(mut page_path) or { panic('Cannot create page: ${err}') }
 
 	doc_before := *((*test_page).doc)
