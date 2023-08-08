@@ -3,11 +3,11 @@
 ## execute jobs
 
 ```v
-mut job2:=process.execute_job(cmd:"ls /")?
+mut job2:=osal.exec(cmd:"ls /")?
 println(job2)
 
 //wont die, the result can be found in /tmp/execscripts
-mut job:=process.execute_job(cmd:"ls dsds",die:false)?
+mut job:=osal.exec(cmd:"ls dsds",die:false)?
 //this one has an error
 println(job) 
 ```
@@ -41,3 +41,6 @@ info returns like:
         rss: 1360
     }]
 ```
+
+
+>TODO: code here is gone now all of osal, need to make sure we copy this info too and the examples

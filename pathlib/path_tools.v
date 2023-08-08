@@ -2,6 +2,7 @@ module pathlib
 
 import os
 import freeflowuniverse.crystallib.texttools
+import time
 
 // check path exists
 pub fn (mut path Path) exists() bool {
@@ -296,3 +297,50 @@ pub fn path_relative(source_ string, linkpath_ string) !string {
 // 		return error(msg)
 // 	}
 // }
+
+[params]
+pub struct TMPWriteArgs {
+pub mut:
+	tmpdir string
+	text   string // text to put in file
+	path   string // to overrule the path where script will be stored
+}
+
+// write temp file and return path
+pub fn temp_write(args_ TMPWriteArgs) !string {
+	mut args := args_
+
+	if args.path.len == 0 {
+		if args.tmpdir.len == 0 {
+			if 'TMPDIR' in os.environ() {
+				args.tmpdir = os.environ()['TMPDIR'] or { '/tmp' }
+			}
+		}
+		t := time.now().format_ss_milli().replace(' ', '-')
+		mut tmppath := '${args.tmpdir}/execscripts/${t}.sh'
+		if !os.exists('${args.tmpdir}/execscripts/') {
+			os.mkdir('${args.tmpdir}/execscripts') or {
+				return error('Cannot create ${args.tmpdir}/execscripts,${err}')
+			}
+		}
+		if os.exists(tmppath) {
+			for i in 1 .. 200 {
+				// println(i)
+				tmppath = '${args.tmpdir}/execscripts/{${t}}_${i}.sh'
+				if !os.exists(tmppath) {
+					break
+				}
+				// TODO: would be better to remove older files, e.g. if older than 1 day, remove
+				if i > 99 {
+					// os.rmdir_all('$tmpdir/execscripts')!
+					// return temp_write(text)
+					panic("should not get here, can't find temp file to write for process job.")
+				}
+			}
+		}
+		args.path = tmppath
+	}
+	os.write_file(args.path, args.text)!
+	os.chmod(args.path, 0o777)!
+	return args.path
+}

@@ -2,7 +2,7 @@ module builder
 
 import os
 import rand
-import freeflowuniverse.crystallib.process
+import freeflowuniverse.crystallib.osal
 import ipaddress
 
 [heap]
@@ -22,11 +22,11 @@ fn (mut executor ExecutorSSH) init() ! {
 			executor.ipaddr.port = 22
 		}
 		// TODO: need to call code from SSHAGENT do not reimplement here
-		process.execute_job(cmd: 'pgrep -x ssh-agent || eval `ssh-agent -s`') or {
+		osal.exec(cmd: 'pgrep -x ssh-agent || eval `ssh-agent -s`') or {
 			return error('Could not start ssh-agent, error was: ${err}')
 		}
 		if executor.sshkey != '' {
-			process.execute_job(cmd: 'ssh-add ${executor.sshkey}')!
+			osal.exec(cmd: 'ssh-add ${executor.sshkey}')!
 		}
 		mut addr := executor.ipaddr.addr
 		if addr == '' {
@@ -34,7 +34,7 @@ fn (mut executor ExecutorSSH) init() ! {
 		}
 		// TODO: doesn't work with ipv6 after working with ipv4, need better check too, because this slows everything down
 		// cmd := "sh -c 'ssh-keyscan -H ${executor.ipaddr.addr} -p ${executor.ipaddr.port} -t ecdsa-sha2-nistp256 2>/dev/null >> ~/.ssh/known_hosts'"
-		// process.execute_silent(cmd) or { return error('cannot add the ssh keys to known hosts') }
+		// osal.execute_silent(cmd) or { return error('cannot add the ssh keys to known hosts') }
 		executor.initialized = true
 	}
 }
@@ -52,7 +52,7 @@ pub fn (mut executor ExecutorSSH) exec(cmd string) !string {
 	if executor.debug {
 		println(' .. execute ${executor.ipaddr.addr}: ${cmd}')
 	}
-	res := process.execute_job(cmd: cmd2, stdout: true, stdout_log: true)!
+	res := osal.exec(cmd: cmd2, stdout: true, stdout_log: true)!
 	return res.output
 }
 
@@ -63,7 +63,7 @@ pub fn (mut executor ExecutorSSH) exec_silent(cmd string) !string {
 		println(' .. execute ${executor.ipaddr.addr}: ${cmd}')
 	}
 	cmd2 := 'ssh ${executor.user}@${executor.ipaddr.addr} -p ${executor.ipaddr.port} "${cmd}"'
-	res := process.execute_job(cmd: cmd2, stdout: stdout)!
+	res := osal.exec(cmd: cmd2, stdout: stdout)!
 	return res.output
 }
 
@@ -118,8 +118,8 @@ pub fn (mut executor ExecutorSSH) download(source string, dest string) ! {
 	if executor.ipaddr.cat == .ipv6 {
 		cmd_ipaddr = '[${executor.ipaddr.addr}]'
 	}
-	mut job := process.Job{}
-	job = process.execute_job(
+	mut job := osal.Job{}
+	job = osal.exec(
 		cmd: 'rsync -avHPe "ssh -p${port}" ${executor.user}@${cmd_ipaddr}:${source} ${dest}'
 		die: false
 	)!
@@ -129,7 +129,7 @@ pub fn (mut executor ExecutorSSH) download(source string, dest string) ! {
 				// TODO, not good enough because we need to check which platform
 				return error('could install rsync, was maybe not ubuntu.\n${executor}')
 			}
-			job = process.execute_job(
+			job = osal.exec(
 				cmd: 'rsync -avHPe "ssh -p${port}" ${executor.user}@${cmd_ipaddr}:${source} ${dest}'
 				die: false
 			)!
@@ -151,7 +151,7 @@ pub fn (mut executor ExecutorSSH) upload(source string, dest string) ! {
 	if executor.ipaddr.cat == .ipv6 {
 		cmd_ipaddr = '[${executor.ipaddr.addr}]'
 	}
-	process.execute_job(
+	osal.exec(
 		cmd: 'rsync -avHPe "ssh -p${port}" ${source} -e ssh ${executor.user}@${cmd_ipaddr}:${dest}'
 	) or { panic(@FN + ': Cannot execute job') }
 }

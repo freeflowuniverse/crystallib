@@ -1,7 +1,5 @@
 module docker
 
-// import freeflowuniverse.crystallib.builder
-
 pub struct EnvItem {
 pub mut:
 	name  string

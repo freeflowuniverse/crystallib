@@ -1,6 +1,6 @@
 module docker
 
-// import freeflowuniverse.crystallib.builder
+import freeflowuniverse.crystallib.osal { exec }
 
 pub fn (mut e DockerEngine) container_create(args DockerContainerCreateArgs) !&DockerContainer {
 	mut ports := ''
@@ -32,9 +32,10 @@ pub fn (mut e DockerEngine) container_create(args DockerContainerCreateArgs) !&D
 		ports += '-p ${port}:22/tcp'
 	}
 
-	mut cmd := 'docker run --hostname ${args.hostname} --name ${args.name} ${ports} ${mounts} -d  -t ${image} ${command}'
-	e.node.exec(cmd)!
-	e.load()!
-	mut container := e.container_get(args.name)!
+	exec(
+		cmd: "'docker run --hostname ${args.hostname} --priviliged --name ${args.name} ${ports} ${mounts} -d  -t ${image} ${command}"
+	)!
+	//TODO: (rob) see how to make sure we always run priviliged, or put in create args
+	mut container := e.container_get(name: args.name)!
 	return container
 }

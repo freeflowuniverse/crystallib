@@ -31,6 +31,5 @@ pub fn new(args OpenAIFactoryArgs) !OpenAIFactory {
 	oif.connection.default_header.add(.authorization, 'Bearer ${key}')
 	// req.add_custom_header('x-disable-pagination', 'True') !
 
-
 	return oif
 }

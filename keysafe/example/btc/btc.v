@@ -1,7 +1,7 @@
 module main
 
 import crypto.sha256
-import freeflowuniverse.crystallib.keysafe.secp256k1
+import freeflowuniverse.crystallib.algo.secp256k1
 
 fn main() {
 	message := 'Hello world, this is my awesome message'

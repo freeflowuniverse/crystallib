@@ -1,7 +1,5 @@
 module docker
 
-import freeflowuniverse.crystallib.builder
-
 [params]
 pub struct DockerEngineArgs {
 pub mut:
@@ -17,10 +15,8 @@ pub fn new(args DockerEngineArgs) !DockerEngine {
 	if args2.name == '' {
 		args2.name = 'local'
 	}
-	mut node := builder.node_local()!
 	mut de := DockerEngine{
 		name: args2.name
-		node: node
 		sshkeys_allowed: args2.sshkeys_allowed
 		prefix: args.prefix
 		localonly: args.localonly

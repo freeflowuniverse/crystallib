@@ -2,6 +2,8 @@ module docker
 
 import freeflowuniverse.crystallib.params { Params }
 import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.osal { exec, file_write }
+import os
 
 [heap]
 pub struct DockerComposeRecipe {
@@ -43,7 +45,7 @@ pub fn (mut b DockerComposeRecipe) stop() ! {
 
 pub fn (mut b DockerComposeRecipe) delete() ! {
 	b.stop()!
-	b.engine.node.exec_silent('rm -rf ${b.path} && mkdir -p ${b.path}')!
+	exec(cmd: 'rm -rf ${b.path} && mkdir -p ${b.path}', stdout: false)!
 }
 
 fn (mut b DockerComposeRecipe) render() ! {
@@ -62,12 +64,12 @@ pub fn (mut b DockerComposeRecipe) start() ! {
 	b.render()!
 	println(b)
 	println(' - start compose file in: ${b.path}')
-	b.engine.node.exec_silent('mkdir -p ${b.path}')!
-	b.engine.node.file_write('${b.path}/docker-compose.yml', b.content)!
+	os.mkdir_all(b.path)!
+	file_write('${b.path}/docker-compose.yml', b.content)!
 	for composeitem in b.items {
 		for item in composeitem.files {
 			filename := item.path.all_after_first('/')
-			b.engine.node.file_write('${b.path}/${filename}', item.to_string())!
+			file_write('${b.path}/${filename}', item.to_string())!
 		}
 	}
 
@@ -77,5 +79,5 @@ pub fn (mut b DockerComposeRecipe) start() ! {
 		docker compose up -d
 		'
 
-	b.engine.node.exec_file(path: '${b.path}/start.sh', cmd: cmd)!
+	exec(cmd: cmd)!
 }

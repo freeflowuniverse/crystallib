@@ -1,6 +1,6 @@
 module client
 
-import freeflowuniverse.baobab.client
+import freeflowuniverse.crystallib.baobab.client
 import freeflowuniverse.crystallib.redisclient
 import dariotarantini.vgram
 import json

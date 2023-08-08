@@ -1,6 +1,6 @@
 module imagemagick
 
-import freeflowuniverse.crystallib.process
+import freeflowuniverse.crystallib.osal
 
 fn (mut image Image) identify_verbose() ! {
 	if image.size_y != 0 {
@@ -8,7 +8,7 @@ fn (mut image Image) identify_verbose() ! {
 		return
 	}
 	// println(' - identify: $image.path')
-	out := process.execute_silent("identify -verbose '${image.path.path}'") or {
+	out := osal.execute_silent("identify -verbose '${image.path.path}'") or {
 		return error('Could not get info from image ${image.path.path} \nError:${err}')
 	}
 	mut channel_stats := false
@@ -85,7 +85,7 @@ pub fn (mut image Image) identify() ! {
 		return
 	}
 	// println(' - identify: $image.path')
-	mut out := process.execute_silent("identify -ping '${image.path.path}'") or {
+	mut out := osal.execute_silent("identify -ping '${image.path.path}'") or {
 		return error('Could not get info from image, error:${err}')
 	}
 	out = out.trim(' \n')

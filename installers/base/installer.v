@@ -9,7 +9,7 @@ pub fn install(mut node builder.Node) ! {
 	if !node.done_exists('platform_prepare') {
 		if node.platform == builder.PlatformType.osx {
 			if !node.cmd_exists('brew') {
-				process.execute_interactive('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"') or {
+				osal.execute_interactive('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"') or {
 					return error('cannot install brew, something went wrong.\n${err}')
 				}
 			}

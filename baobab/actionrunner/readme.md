@@ -1,0 +1,2 @@
+
+This is what needs to be re-developed for other languages, we kept it as easy as possible. The actionrunner is the entity that listens for jobs to be executed by the actors that it is "managing". It will listen to each queue of the actors that it manages (*jobs.actors.$domain_name.$actorname*), unserialize the jobs, execute them and return the result. On this page you will find the functions that you can use to setup an actionrunner.

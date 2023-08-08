@@ -1,8 +1,6 @@
 module osal
 
 fn test_done_set() ! {
-	mut o := new()!
-
 	done_set('mykey', 'myvalue')!
 	assert done_exists('mykey')
 	assert done_get('mykey')! == 'myvalue'

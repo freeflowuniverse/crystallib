@@ -1,7 +1,7 @@
 module telegram
 
 import dariotarantini.vgram
-import freeflowuniverse.baobab.client
+import freeflowuniverse.crystallib.baobab.client
 import freeflowuniverse.crystallib.params
 
 pub struct UITelegram {

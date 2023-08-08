@@ -1,6 +1,6 @@
 module builder
 
-import freeflowuniverse.crystallib.process
+import freeflowuniverse.crystallib.osal
 import os
 
 [heap]
@@ -11,7 +11,7 @@ pub mut:
 }
 
 pub fn (mut executor ExecutorLocal) exec(cmd string) !string {
-	res := process.execute_job(cmd: cmd, stdout: true)!
+	res := osal.exec(cmd: cmd, stdout: true)!
 	return res.output
 }
 
@@ -20,7 +20,7 @@ pub fn (mut executor ExecutorLocal) exec_silent(cmd string) !string {
 	if executor.debug {
 		stdout = true
 	}
-	res := process.execute_job(cmd: cmd, stdout: stdout)!
+	res := osal.exec(cmd: cmd, stdout: stdout)!
 	return res.output
 }
 
