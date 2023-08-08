@@ -6,13 +6,13 @@ import freeflowuniverse.crystallib.gittools
 
 // ! Use booksrunner in ./actionrunner
 
-import freeflowuniverse.crystallib.actionsparser
+import freeflowuniverse.crystallib.actions
 
 import os
 
 // QUESTION: can you write specs for this function, what should it do, what actions should it recognize, please be specific
 // find all actions & process, this works inclusive
-pub fn actions_process(mut parser actionsparser.ActionsParser, actions_done map[string]string) !map[string]string {
+pub fn actions_process(mut parser actions.Actions, actions_done map[string]string) !map[string]string {
 	// $if debug {
 	// 	println("+++++")
 	// 	println(actions)
