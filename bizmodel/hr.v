@@ -1,6 +1,6 @@
 module bizmodel
 
-import freeflowuniverse.crystallib.baobab.actionsparser
+import freeflowuniverse.crystallib.baobab.actions
 import freeflowuniverse.crystallib.texttools
 
 
@@ -11,7 +11,7 @@ import freeflowuniverse.crystallib.texttools
 //	   cost:'4000USD' 
 //	   indexation:'5%'
 //     department:'engineering'
-fn (mut m BizModel) hr_actions(actions actionsparser.ActionsParser) ! {
+fn (mut m BizModel) hr_actions(actions actions.Actions) ! {
 	mut actions2 := actions.filtersort(actor: 'hr')!
 	for action in actions2 {
 		if action.name == 'employee_define' {
@@ -24,52 +24,52 @@ fn (mut m BizModel) hr_actions(actions actionsparser.ActionsParser) ! {
 				// make name ourselves
 				name = texttools.name_fix(descr) //TODO:limit len
 			}
-			mut cost := action.params.get_currencyfloat_default('cost', 0.0)!
-			mut cost_year := action.params.get_currencyfloat_default('cost_year', 0.0)!
-			if cost_year > 0 {
-				cost = cost_year / 12
-			}
-			mut cost_growth := action.params.get_default('cost_growth', '')!
-			growth := action.params.get_default('growth', '1:1')!
+			mut cost := action.params.get_default('cost', "0.0")!
+			// mut cost_year := action.params.get_currencyfloat_default('cost_year', 0.0)!
+			// if cost_year > 0 {
+			// 	cost = cost_year / 12
+			// }
+			// mut cost_growth := action.params.get_default('cost_growth', '')!
+			// growth := action.params.get_default('growth', '1:1')!
 			department := action.params.get_default('department', 'unknown department')!
 			indexation := action.params.get_percentage_default('indexation', '0%')!
 
-			// cost per person
-			namecostperson := 'nr_${name}'
-			if cost_growth.len > 0 && cost > 0 {
-				return error('cannot specify cost and cost growth together, chose one please.')
-			}
-			if indexation > 0 {
-				if cost_growth.len > 0 {
-					return error('cannot specify cost growth and indexation')
-				}
-				cost2 := cost * (1 + indexation) * (1 + indexation) * (1 + indexation) * (1 +
-					indexation) * (1 + indexation) * (1 + indexation) // 6 years, maybe need to look at months
-				cost_growth = '1:${cost},60:${cost2}'
-			}
-			if cost_growth.len == 0 && cost > 0 {
-				cost_growth = '1:${cost}'
-			}
-			mut costotal := m.sheet.row_new(
-				name: 'cost_total_${name}'
-				growth: cost_growth
-				tags: 'cat:hr cost:total'
-				descr: '"cost to company per function.'
-				subgroup: 'HR cost total.'
-			)!
+			// // cost per person
+			// namecostperson := 'nr_${name}'
+			// if cost_growth.len > 0 && cost > 0 {
+			// 	return error('cannot specify cost and cost growth together, chose one please.')
+			// }
+			// if indexation > 0 {
+			// 	if cost_growth.len > 0 {
+			// 		return error('cannot specify cost growth and indexation')
+			// 	}
+			// 	cost2 := cost * (1 + indexation) * (1 + indexation) * (1 + indexation) * (1 +
+			// 		indexation) * (1 + indexation) * (1 + indexation) // 6 years, maybe need to look at months
+			// 	cost_growth = '1:${cost},60:${cost2}'
+			// }
+			// if cost_growth.len == 0 && cost > 0 {
+			// 	cost_growth = '1:${cost}'
+			// }
+			// mut costotal := m.sheet.row_new(
+			// 	name: 'cost_total_${name}'
+			// 	growth: cost_growth
+			// 	tags: 'cat:hr cost:total'
+			// 	descr: '"cost to company per function.'
+			// 	subgroup: 'HR cost total.'
+			// )!
 
-			// multiply with nr of people if any
-			if growth != '1:1' {
-				mut nr := m.sheet.row_new(
-					name: 'nr_${name}'
-					growth: growth
-					tags: 'cat:hr cost:item'
-					descr: 'amount of ${descr}'
-					subgroup: 'NR of people on payroll'
-					aggregatetype: .max
-				)!
-				costotal.action(rows: [nr], action: .multiply)!
-			}
+			// // multiply with nr of people if any
+			// if growth != '1:1' {
+			// 	mut nr := m.sheet.row_new(
+			// 		name: 'nr_${name}'
+			// 		growth: growth
+			// 		tags: 'cat:hr cost:item'
+			// 		descr: 'amount of ${descr}'
+			// 		subgroup: 'NR of people on payroll'
+			// 		aggregatetype: .max
+			// 	)!
+			// 	costotal.action(rows: [nr], action: .multiply)!
+			// }
 		}
 	}
 }

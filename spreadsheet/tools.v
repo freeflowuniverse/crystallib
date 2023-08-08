@@ -1,4 +1,4 @@
-module calc
+module spreadsheet
 
 pub fn array2float(list []int) []f64 {
 	mut list2 := []f64{}

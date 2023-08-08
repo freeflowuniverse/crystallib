@@ -17,8 +17,14 @@ if currency not specified then is always in USD
 ```js
 !!revenue.define 
     descr:'OEM Deals'  
-    revenue_time:'10:1000USD,20:1100EUR'
+    revenue_time:'10:1000000USD,20:1200000'
     cogs_perc: '1:5%,20:10%'  
+
+!!revenue.define 
+    descr:'License Deals'  
+    revenue_growth:'10:1000,20:1100'
+    cogs_perc: '10%'  
+    cogs_delay_month: 1
 
 !!revenue.define 
     descr:'3NODE License Sales 1 Time'  

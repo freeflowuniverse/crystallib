@@ -1,4 +1,4 @@
-module actionsparser
+module actions
 
 import freeflowuniverse.crystallib.params
 

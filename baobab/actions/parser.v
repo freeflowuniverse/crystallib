@@ -1,4 +1,4 @@
-module actionsparser
+module actions
 
 import os
 import freeflowuniverse.crystallib.params
@@ -158,11 +158,11 @@ fn (mut actions ActionsParser) parse_block(block Block) ! {
 
 	if splitted.len == 1 {
 		domain = actions.defaultdomain
-		book = actions.defaultbook
+		book = actions.defaultcircle
 		actor = actions.defaultactor
 	} else if splitted.len == 2 {
 		domain = actions.defaultdomain
-		book = actions.defaultbook
+		book = actions.defaultcircle
 		actor = block.name.all_before_last('.')
 	} else if splitted.len == 3 {
 		domain = actions.defaultdomain
@@ -187,7 +187,7 @@ fn (mut actions ActionsParser) parse_block(block Block) ! {
 		return
 	}
 	if name == 'select_book' {
-		actions.defaultbook = params_.get_arg(0, 1)! // means there needs to be 1 arg
+		actions.defaultcircle = params_.get_arg(0, 1)! // means there needs to be 1 arg
 		return
 	}
 	if name == 'select_actor' {

@@ -1,4 +1,4 @@
-module calc
+module spreadsheet
 
 pub enum RowAction {
 	add // add rows

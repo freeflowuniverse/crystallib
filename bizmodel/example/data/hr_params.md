@@ -17,7 +17,7 @@ possible parameters
 
 !!hr.employee_define 
     descr:'Senior Engineer' 
-    cost:'1:12000USD,12:14000'
+    cost:'1:12000,12:14000'
     department:'engineering'
     nrpeople:'1:5,20:5'
 

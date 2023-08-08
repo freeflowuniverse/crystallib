@@ -1,4 +1,4 @@
-module calc
+module spreadsheet
 
 import freeflowuniverse.crystallib.currency
 import freeflowuniverse.crystallib.params

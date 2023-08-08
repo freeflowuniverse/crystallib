@@ -1,4 +1,4 @@
-module actionsparser
+module actions
 
 import os
 
@@ -90,9 +90,9 @@ fn test_parse_into_blocks() {
 
 fn test_file_parse() {
 	mut actionsmgr := new(
-		path: '${actionsparser.testpath}/testfile.md'
+		path: '${actions.testpath}/testfile.md'
 		defaultactor: 'people'
-		defaultbook: 'aaa'
+		defaultcircle: 'aaa'
 	)!
 
 	assert actionsmgr.actions.len == 13
@@ -100,9 +100,9 @@ fn test_file_parse() {
 
 fn test_dir_load() {
 	mut actionsmgr := new(
-		path: '${actionsparser.testpath}'
+		path: '${actions.testpath}'
 		defaultactor: 'people'
-		defaultbook: 'aaa'
+		defaultcircle: 'aaa'
 	)!
 	assert actionsmgr.actions.len == 14
 
@@ -114,9 +114,9 @@ fn test_dir_load() {
 
 fn test_text_add() ! {
 	mut parser := new(
-		text: actionsparser.text
+		text: actions.text
 		defaultactor: 'people'
-		defaultbook: 'aaa'
+		defaultcircle: 'aaa'
 	)!
 
 	// confirm first action

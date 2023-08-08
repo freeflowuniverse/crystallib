@@ -1,4 +1,4 @@
-module actionsparser
+module actions
 
 [params]
 pub struct ActionParserArgs {
@@ -6,7 +6,7 @@ pub:
 	text          string
 	path          string // can be dir or file
 	defaultdomain string = 'protocol_me'
-	defaultbook   string
+	defaultcircle   string
 	defaultactor  string
 }
 
@@ -21,7 +21,7 @@ pub:
 pub fn new(args ActionParserArgs) !ActionsParser {
 	mut ap := ActionsParser{}
 	ap.defaultdomain = args.defaultdomain
-	ap.defaultbook = args.defaultbook
+	ap.defaultcircle = args.defaultcircle
 	ap.defaultactor = args.defaultactor
 	if args.text.len > 0 {
 		ap.text_add(args.text)!

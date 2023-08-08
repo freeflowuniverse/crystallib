@@ -1,6 +1,6 @@
 module bizmodel
 
-import freeflowuniverse.crystallib.baobab.actionsparser
+import freeflowuniverse.crystallib.baobab.actions
 import freeflowuniverse.crystallib.texttools
 
 // possible parameters for non recurring
@@ -13,7 +13,7 @@ import freeflowuniverse.crystallib.texttools
 // - cogs_delay_month: how many months delay on cost of goods, default is 0 months.
 // - cogs_perc: what is percentage of the cogs (can change over time) e.g. 0:5%,12:10%.
 //
-fn (mut m BizModel) revenue_actions(actions actionsparser.ActionsParser) ! {
+fn (mut m BizModel) revenue_actions(actions actions.Actions) ! {
 	mut actions2 := actions.filtersort(actor: 'revenue')!
 	for action in actions2 {
 		if action.name == 'define' {
@@ -46,31 +46,32 @@ fn (mut m BizModel) revenue_actions(actions actionsparser.ActionsParser) ! {
 			mut revenue_nr_param := action.params.get_default('revenue_nr', '')!
 
 			mut revenue_time_param := action.params.get_default('revenue_time', '')!
+			mut revenue_growth_param := action.params.get_default('revenue_growth', '')!
 
 			// cost of goods
 			cogs_delay_month_param := action.params.get_int_default('cogs_delay_month', 3)!
 			cogs_perc_param := action.params.get_default('cogs_perc', '0%')!
 
 			mut revenue_item := m.sheet.row_new(
-				name: 'rev_item_${name}'
+				name: '${name}_rev_per_item'
 				growth: revenue_item_param
-				tags: 'cat:rev name:${name}'
+				tags: 'rev name:${name}'
 				descr: 'What is revenue for 1 item.'
 				aggregatetype: .avg
 			)!
 			mut revenue_nr := m.sheet.row_new(
-				name: 'revenue_nr_${name}'
+				name: '${name}_rev_nr_items'
 				growth: revenue_nr_param
-				tags: 'cat:rev  name:${name}'
+				tags: 'rev  name:${name}'
 				descr: 'How many of the items are being sold per month.'
 			)!
 
 			// multiply rev item with rev nr to get to total
 			mut revenue_item_total := revenue_item.action(
-				name: 'rev_item_total_${name}'
+				name: '${name}_rev_items_aggregated'
 				rows: [revenue_nr]
 				action: .multiply
-				tags: 'cat:rev name:${name}'
+				tags: 'rev name:${name}'
 				descr: 'What is revenue for all items.'
 				aggregatetype: .sum
 			)!
@@ -78,32 +79,46 @@ fn (mut m BizModel) revenue_actions(actions actionsparser.ActionsParser) ! {
 
 
 			mut revenue_time := m.sheet.row_new(
-				name: 'rev_time_${name}'
+				name: '${name}_rev_one_off'
 				growth: revenue_time_param
-				tags: 'cat:rev  name:${name}'
+				tags: 'rev  name:${name}'
 				descr: 'Onetime revenues.'
+				aggregatetype: .sum
 				extrapolate: false
 			)!
 
+			mut revenue_growth := m.sheet.row_new(
+				name: '${name}_rev_monthly_growth'
+				growth: revenue_growth_param
+				tags: 'rev  name:${name}'
+				descr: 'Monthly Growing revenues.'
+				aggregatetype: .sum
+			)!
+			// println(revenue_time_param)
+			// println(m.sheet.wiki()!)
+			// println(revenue_growth_param)
+			// println(revenue_growth)
+			// if true{panic("sdsd")}
+
 			mut cogs_perc := m.sheet.row_new(
-				name: 'cogs_perc_${name}'
+				name: '${name}_cogs_perc'
 				growth: cogs_perc_param
-				tags: 'name:${name}'
+				tags: 'name:${name} cogs'
 				descr: 'Percentage of cogs'
 				aggregatetype: .avg
 			)!
 
 			mut revenue_total := m.sheet.row_new(
-				name: 'revenue_total_${name}'
-				tags: 'cat:rev total name:${name}'
+				name: '${name}_rev_total'
+				tags: 'rev total name:${name}'
 				growth: '1:0.0' //init as 0
 				descr: 'Total revenue for this service/product.'
 			)!
-			revenue_total.action(action: .add,rows: [ revenue_time, revenue_item_total])!
+			revenue_total.action(action: .add,rows: [ revenue_time, revenue_item_total,revenue_growth])!
 			
 			mut cogs_total := m.sheet.row_new(
-				name: 'cogs_total_${name}'
-				tags: 'cat:cogs total name:${name}'
+				name: '${name}_cogs_total'
+				tags: 'cogs total name:${name}'
 				growth: '1:0.0' //init as 0
 				descr: 'Total cogs for product.'
 			)!			
@@ -111,8 +126,8 @@ fn (mut m BizModel) revenue_actions(actions actionsparser.ActionsParser) ! {
 
 
 			mut margin_total := m.sheet.row_new(
-				name: 'margin_total_${name}'
-				tags: 'cat:margin total name:${name}'
+				name: '${name}_margin_total'
+				tags: 'margin total name:${name}'
 				growth: '1:0.0' //init as 0
 				descr: 'Total margin for product.'
 			)!			
@@ -162,36 +177,36 @@ fn (mut m BizModel) revenue_actions(actions actionsparser.ActionsParser) ! {
 			nr_months_param := action.params.get_int_default('nr_months', 60)!
 
 			mut revenue_setup := m.sheet.row_new(
-				name: 'rev_setup_${name}'
+				name: '${name}_recurring_rev_per_item_setup'
 				growth: revenue_setup_param
-				tags: 'cat:rev name:${name}'
+				tags: 'rev name:${name}'
 				descr: 'Revenue for 1 item setup.'
 				aggregatetype: .avg
 			)!
 			mut revenue_monthly := m.sheet.row_new(
-				name: 'rev_month_${name}'
+				name: '${name}_recurring_rev_per_item_month'
 				growth: revenue_monthly_param
-				tags: 'cat:rev name:${name}'
+				tags: 'rev name:${name}'
 				descr: 'Revenue for 1 item per month.'
 				aggregatetype: .avg
 			)!
 
-			mut nr_sold:=m.sheet.row_new(name: "nr_sold_per_month_$name", growth:nr_sold_param, tags:"cat:rev  name:$name",
+			mut nr_sold:=m.sheet.row_new(name: "${name}_recurring_nr_sold_per_month", growth:nr_sold_param, tags:"cat:rev  name:$name",
 						descr:'How many of the items are being sold per month.',aggregatetype: .avg)!
 
-			mut revenue_setup_total:=revenue_setup.action(name: "rev_setup_total_$name",
+			mut revenue_setup_total:=revenue_setup.action(name: "${name}_recurring_rev_setup_aggregated",
 						rows: [nr_sold], action:.multiply,
-						tags:"cat:rev name:$name",
+						tags:"rev name:$name",
 						descr:'What is revenue setup for all items.',aggregatetype:.sum)!
-			mut revenue_month_total:=revenue_monthly.action(name: "rev_month_total_$name",
+			mut revenue_month_total:=revenue_monthly.action(name: "${name}_recurring_rev_month_aggregated",
 						rows: [nr_sold], action:.multiply,
-						tags:"cat:rev name:$name",
+						tags:"rev name:$name",
 						delaymonths:revenue_monthly_delay_param,
 						descr:'What is revenue monthly for all items.',aggregatetype:.sum)!	
 
 			mut revenue_total := m.sheet.row_new(
-				name: 'revenue_total_${name}'
-				tags: 'cat:rev total name:${name}'
+				name: '${name}_recurring_rev_total'
+				tags: 'rev total name:${name}'
 				growth: '1:0.0' //init as 0
 				descr: 'What is total revenue for this service/product.'
 			)!
@@ -199,20 +214,20 @@ fn (mut m BizModel) revenue_actions(actions actionsparser.ActionsParser) ! {
 
 			//NOW WORK WITH COGS
 
-			mut cogs_setup:=m.sheet.row_new(name: "cogs_setup_$name", growth:cogs_setup_param, tags:"cat:cogs name:$name",
+			mut cogs_setup:=m.sheet.row_new(name: "cogs_setup_$name", growth:cogs_setup_param, tags:"cogs name:$name",
 						descr:'COGS for 1 item setup.',aggregatetype:.avg)!
-			mut cogs_monthly:=m.sheet.row_new(name: "cogs_month_$name", growth:cogs_monthly_param, tags:"cat:cogs name:$name",
+			mut cogs_monthly:=m.sheet.row_new(name: "cogs_month_$name", growth:cogs_monthly_param, tags:"cogs name:$name",
 						descr:'COGS for 1 item per month.',aggregatetype:.avg)!
 
 
 			mut cogs_setup_total:=cogs_setup.action(name: "cogs_setup_total_$name",
 						rows: [nr_sold], action:.multiply,
-						tags:"cat:rev name:$name",
+						tags:"cogs name:$name",
 						delaymonths:cogs_setup_delay_param,
 						descr:'What is cogs setup for all items.',aggregatetype:.sum)!
 			mut cogs_month_total:=cogs_monthly.action(name: "cogs_month_total_$name",
 						rows: [nr_sold], action:.multiply,
-						tags:"cat:rev name:$name",
+						tags:"cogs name:$name",
 						delaymonths:cogs_monthly_delay_param,
 						descr:'What is cogs monthly for all items.',aggregatetype:.sum)!	
 
@@ -220,32 +235,32 @@ fn (mut m BizModel) revenue_actions(actions actionsparser.ActionsParser) ! {
 			mut cogs_setup_perc := m.sheet.row_new(
 				name: 'cogs_setup_perc_${name}'
 				growth: cogs_setup_perc_param
-				tags: 'name:${name}'
+				tags: 'name:${name} cogs'
 				descr: 'Percentage of cogs'
 				aggregatetype: .avg
 			)!
 			mut cogs_monthly_perc := m.sheet.row_new(
 				name: 'cogs_monthly_perc_${name}'
 				growth: cogs_monthly_perc_param
-				tags: 'name:${name}'
+				tags: 'name:${name} cogs'
 				descr: 'Percentage of cogs'
 				aggregatetype: .avg
 			)!			
 			mut cogs_setup_from_perc:=revenue_setup_total.action(name: "cogs_setup_from_perc_$name",
 						rows: [cogs_setup_perc], action:.multiply,
-						tags:"cat:cogs name:$name",
+						tags:"cogs name:$name",
 						delaymonths:cogs_setup_delay_param,
 						descr:'What is cogs as percent of setup.',aggregatetype:.sum)!	
 			mut cogs_monthly_from_perc:=revenue_month_total.action(name: "cogs_monthly_from_perc_$name",
 						rows: [cogs_monthly_perc], action:.multiply,
-						tags:"cat:cogs name:$name",
+						tags:"cogs name:$name",
 						delaymonths:cogs_monthly_delay_param,
 						descr:'What is cogs as percent of monthly.',aggregatetype:.sum)!										
 
 
 			mut cogs_total := m.sheet.row_new(
 				name: 'cogs_total_${name}'
-				tags: 'cat:rev total name:${name}'
+				tags: 'cogs total name:${name}'
 				growth: '1:0.0' //init as 0
 				descr: 'What is total cogs for this service/product.'
 			)!
@@ -254,7 +269,7 @@ fn (mut m BizModel) revenue_actions(actions actionsparser.ActionsParser) ! {
 
 			mut margin_total := m.sheet.row_new(
 				name: 'margin_total_${name}'
-				tags: 'cat:margin total name:${name}'
+				tags: 'margin total name:${name}'
 				growth: '1:0.0' //init as 0
 				descr: 'Total margin for product.'
 			)!			

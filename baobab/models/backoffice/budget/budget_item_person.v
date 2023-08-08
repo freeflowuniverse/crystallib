@@ -103,7 +103,7 @@ pub fn (mut budget Budget) person_add(args PersonAddArgs) !&BudgetItemPerson {
 
 //? should cost_fixed change every year for BudgetItemPerson
 //? When do salaries increase? At the end of each year?
-pub fn (mut item BudgetItemPerson) calc(year int, month int) f64 {
+pub fn (mut item BudgetItemPerson) spreadsheet(year int, month int) f64 {
 	// get fixed_cost
 	// add bonus
 	// accomodate for salary increase

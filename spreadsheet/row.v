@@ -1,4 +1,4 @@
-module calc
+module spreadsheet
 
 [heap]
 pub struct Row {

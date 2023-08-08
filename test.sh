@@ -1,5 +1,5 @@
 v -stats test actions
-v -stats test actionsparser
+v -stats test actions
 v -stats test books
 v -stats test coinmarketcap
 v -stats test console

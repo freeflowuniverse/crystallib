@@ -1,4 +1,4 @@
-module calc
+module spreadsheet
 
 // something like 3:2,10:5 means month 3 we start with 2, it grows to 5 on month 10
 // the cells out of the mentioned ranges are not filled if they are already set
@@ -24,9 +24,9 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 			r.cells[x].set(splitted[1])!
 		}
 	}
-	if r.cells[0].empty {
-		r.cells[0].set('0.0')!
-	}
+
+	
+
 	mut xlast := 0 // remembers where there was last non empty value
 	mut xlastval := 0.0 // the value at that position
 	mut xlastwidth := 0 // need to know how fast to go up from the xlast to xnew
@@ -61,6 +61,7 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 			xnewval = 0.0
 		}
 	}
+	// println("ROW1:$r")
 	// now fill in the last ones
 	xlastval = 0.0
 	for x in 0 .. r.cells.len {
@@ -70,6 +71,9 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 		}
 		r.cells[x].set('${xlastval}')!
 	}
+
+	// println("ROW:$r")
+
 }
 
 // something like 3:2,10:5 means month 3 we set 2, month 10 5
