@@ -105,8 +105,10 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 		tree: &l
 		path: p
 		dest: args.dest
-		doc_summary: &doc
 	}
+
+	b.process_summary()!
+
 	l.books[args.name] = b
 
 	return b
@@ -115,15 +117,13 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 
 //process the summary
 fn (mut book MDBook) process_summary()! {
-	mut doc := markdowndocs.new(path: book.path.path) or {
-		panic('cannot book parse ${summarypath} ,${err}')
+	doc := markdowndocs.new(path: '${book.path.path}/summary.md') or {
+		panic('cannot book parse ${book.path.path} ,${err}')
 	}
 
-	//TODO: now we need to walk over all parts of the summary and for each item check we find collection (collection exists)
+	book.doc_summary = &doc
 
-	panic("too implement, there was code but i lost it")
-	*/
-
+	book.fix()!
 }
 
 

@@ -1,6 +1,15 @@
 module knowledgetree
 
+import freeflowuniverse.crystallib.osal
+
 import v.embed_file
+
+const (
+	cmd_install_cargo = '
+cargo install mdbook
+cargo install mdbook-mermaid
+'
+)
 
 [heap]
 pub struct Tree {
@@ -21,8 +30,9 @@ pub enum TreeState {
 }
 
 fn (mut tree Tree) init()!{
-	// QUESTION: what is this and what should it do? 
-	//mdbook.install()! //not sure where this is, needs to be in installers, using our osal
+	// TODO: uncomment line below
+	//osal.exec(cmd:cmd_install_cargo)!
+
 	tree.embedded_files << $embed_file('template/css/print.css')
 	tree.embedded_files << $embed_file('template/css/variables.css')
 	tree.embedded_files << $embed_file('template/mermaid-init.js')

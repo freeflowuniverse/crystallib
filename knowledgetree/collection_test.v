@@ -2,13 +2,13 @@ module knowledgetree
 
 import os
 
-const testpath = os.dir(@FILE) + '/example/collection1'
+const testpath = os.dir(@FILE) + '/example/chapter1'
 
 // const test_page = test_collection.page_new()
 
 fn test_fix() ! {
 	mut lib := new()!
-	mut book := lib.book_new(name: 'testbook')!
+	mut book := lib.book_new(name: 'testbook', path: testpath)!
 	mut test_collection := lib.collection_new(
 		name: 'Collection1'
 		path: knowledgetree.testpath
@@ -19,7 +19,7 @@ fn test_fix() ! {
 
 fn test_scan() {
 	mut lib := new()!
-	mut book := lib.book_new(name: 'testbook')!
+	mut book := lib.book_new(name: 'testbook', path: testpath)!
 	mut test_collection := lib.collection_new(
 		name: 'Collection2'
 		path: knowledgetree.testpath
