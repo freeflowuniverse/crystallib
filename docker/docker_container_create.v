@@ -37,6 +37,8 @@ pub fn (mut e DockerEngine) container_create(args DockerContainerCreateArgs) !&D
 	exec(
 		cmd: "docker run --hostname ${args.hostname} ${privileged} --sysctl net.ipv6.conf.all.disable_ipv6=0 --name ${args.name} ${ports} ${mounts} -d  -t ${image} ${command}"
 	)!
+	//Have to reload the containers as container_get works from memory
+	e.containers_load()!
 	mut container := e.container_get(name: args.name)!
 	return container
 }
