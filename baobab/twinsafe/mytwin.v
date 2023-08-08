@@ -7,7 +7,7 @@ import encoding.hex
 
 // this is me, my representation
 pub struct MyTwin {
-pub:
+pub mut:
 	id          u32                 [primary; sql: serial]
 	name        string              [nonull]
 	description string
@@ -30,12 +30,12 @@ pub:
 // if it exists will return the key which is already there
 pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
 	mut args := args_
-	privkeyhex := ""
+	mut privkeyhex := ""
 	if args.privatekey.len > 0 {
 		if args.privatekey[0..2] == "0x"{
-			privkey_hex = args.privatekey
+			privkeyhex = args.privatekey
 		}else{
-			privkey_hex = hex.encode(mnemonic.parse(args.privatekey))
+			privkeyhex = hex.encode(mnemonic.parse(args.privatekey))
 		}
 		
 	} else {
@@ -51,13 +51,13 @@ pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
 		privkey: privkey
 		keysafe: ks 
 	}
-	twins := sql safe.db {
+	twins := sql ks.db {
 		select from MyTwin where name == twin.name
 	}!
 	if twins.len > 0 {
 		return GetError{
-			args: {
-				id:   twins[0].id
+			args: GetArgs{
+				id:   twins[0].id,
 				name: twins[0].name
 			}
 			msg: 'mytwin with name: ${twins[0].name} aleady exist'
@@ -66,23 +66,27 @@ pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
 	}
 	sql ks.db {
 		insert twin into MyTwin
-	}
+	}!
 	ks.mytwins[twin.name] = twin
 }
 
 
 // I can have more than 1 mytwin, ideal for testing as well
 pub fn (mut ks KeysSafe) mytwin_get(args GetArgs) !MyTwin {
-	twins := sql safe.db {
+	if args.name in ks.mytwins {
+		return ks.mytwins[args.name]
+	}
+	twins := sql ks.db {
 		select from MyTwin where name == args.name
 	}!
 	if twins.len == 1 {
-		mytwin := twins[0]
+		mut mytwin := twins[0]
 		// decrypt privatekey
 		privkey_hex := aes_symmetric.decrypt(mytwin.privkey_str, ks.secret)
 		privkey := secp256k1.new(keyhex: privkey_hex)
-		mytwin.privateKey = privkey
+		mytwin.privkey = privkey
 		mytwin.keysafe = ks
+		ks.mytwins[mytwin.name] = mytwin
 		return mytwin
 	}
 	return  GetError{
@@ -91,7 +95,7 @@ pub fn (mut ks KeysSafe) mytwin_get(args GetArgs) !MyTwin {
 		error_type: GetErrorType.notfound}
 }
 
-pub fn (mut ks KeysSafe) mytwin_exist(args_ MyTwinAddArgs) ! {
+pub fn (mut ks KeysSafe) mytwin_exist(args_ GetArgs) !bool {
 	ks.mytwin_get(args_) or {
 		if err.code == 0{
 			return false
@@ -104,21 +108,21 @@ pub fn (mut ks KeysSafe) mytwin_exist(args_ MyTwinAddArgs) ! {
 
 // use my private keyto sign data, important before sending
 fn (mut twin MyTwin) sign(data []u8) ![]u8 {
-	twin.privkey.sign_data(data)
+	return twin.privkey.sign_data(data)
 }
 
 pub fn (mut twin MyTwin) delete() ! {
-	twin.keysage.mytwins.delete(twin.name)
+	twin.keysafe.mytwins.delete(twin.name)
 	sql twin.keysafe.db {
 		delete from MyTwin where id == twin.id
 	}!
 }
 
 pub fn (mut twin MyTwin) save() ! {
-	privkey_hex := twin.privatekey.hex()
+	privkey_hex := twin.privkey.hex()
 	twin.privkey_str = aes_symmetric.encrypt(privkey_hex, twin.keysafe.secret)
 
-	twins := sql twin.keysage.db {
+	twins := sql twin.keysafe.db {
 		select from MyTwin where name == twin.name
 	}!
 	if twins.len > 0 {
@@ -129,7 +133,7 @@ pub fn (mut twin MyTwin) save() ! {
 		}!
 		return
 	}
-	sql safe.db {
+	sql twin.keysafe.db {
 		insert twin into MyTwin
 	}!
 }

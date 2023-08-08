@@ -38,13 +38,16 @@ pub fn new(args_ KeysSafeNewArgs) !KeysSafe {
 pub fn (mut safe KeysSafe) save() ! {
 	// walk over mem, make sure all info from mem is also in sqlitedb
 	for _, twin in safe.mytwins {
-		twin.save()
+		mut twin_ := twin
+		twin_.save()!
 	}
 	for _, other_twin in safe.othertwins {
-		other_twin.save()
+		mut othertwin_ := other_twin
+		othertwin_.save()!
 	}
 	for _, config in safe.myconfigs {
-		config.save()
+		mut config_ := config
+		config_.save()!
 	}
 }
 
@@ -56,21 +59,21 @@ pub fn (mut safe KeysSafe) loadall() ! {
 		args := GetArgs{
 			id: twin.id, name: twin.name
 		}
-		safe.mytwins[twin.name] = safe.mytwin_get(args)
+		safe.mytwins[twin.name] = safe.mytwin_get(args)!
 	}
 	other_twins := safe.load_other_twins()!
 	for otwin in other_twins {
 		args := GetArgs{
 			id: otwin.id, name: otwin.name
 		}
-		safe.othertwins[otwin.name] = safe.othertwin_get(args)
+		safe.othertwins[otwin.name] = safe.othertwin_get(args)!
 	}
 	configs := safe.load_myconfig()!
 	for config in configs {
 		args := GetArgs{
 			id: config.id, name: config.name
 		}
-		safe.myconfigs[config.name] = safe.myconfig_get(args)
+		safe.myconfigs[config.name] = safe.myconfig_get(args)!
 	}
 }
 

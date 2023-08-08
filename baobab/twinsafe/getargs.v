@@ -12,6 +12,7 @@ pub enum GetErrorType {
 	notfound
 	error
 	alreadyexists
+	double
 }
 
 fn (err GetError) msg() string {

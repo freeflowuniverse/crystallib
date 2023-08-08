@@ -1,12 +1,12 @@
-module bizmodel
+module twinsafe
 
 import freeflowuniverse.crystallib.baobab.actions
 import freeflowuniverse.crystallib.texttools
 
 //this allows you to input the required info into the keysafe
 
-fn (mut ks KeysSafe) actions(actions actions.Actions) ! {
-	mut actions2 := actions.filtersort(actor: 'twinsafe')!
+fn (mut ks KeysSafe) actions(act actions.Actions) ! {
+	mut actions2 := act.filtersort(actor: 'twinsafe')!
 	for action in actions2 {
 		if action.name == 'mytwin_define' {
 			mut name := action.params.get_default('name', '')!
