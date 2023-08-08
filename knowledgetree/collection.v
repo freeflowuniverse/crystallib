@@ -19,7 +19,6 @@ pub:
 	name string
 pub mut:
 	title string
-	// collections  &Collections           [str: skip] // pointer to collections
 	pages  map[string]&Page
 	files  map[string]&File
 	images map[string]&File

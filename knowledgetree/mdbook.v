@@ -45,7 +45,6 @@ pub struct MDBook {
 pub mut:
 	tree  	 &Tree            [str: skip]
 	name     string
-	//path   string //path exists
 	dest   string //path where book will be generated		
 	title       string
 	pages       map[string]&Page  //links to the object in tree
@@ -101,16 +100,18 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 	}
 	p.path_normalize()! // make sure its all lower case and name is proper
 
+	doc := markdowndocs.new(path: args.path)!
 
-	mut b := MDBook{
+	mut b := &MDBook{
 		name: args.name
 		tree: &l
 		path: p
 		dest: args.dest
+		doc_summary: &doc
 	}
-	l.books[args.name] = &b
+	l.books[args.name] = b
 
-	return l.books[args.name] or { panic('bug') }
+	return b
 	
 }
 
