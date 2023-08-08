@@ -21,7 +21,6 @@ pub:
 [params]
 pub struct MyTwinAddArgs {
 pub:
-	id          u32
 	name        string [sql: unique]
 	description string
 	privatekey string // given in hex or mnemonics
@@ -52,6 +51,19 @@ pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
 		privkey: privkey
 		keysafe: ks 
 	}
+	twins := sql safe.db {
+		select from MyTwin where name == twin.name
+	}!
+	if twins.len > 0 {
+		return GetError{
+			args: {
+				id:   twins[0].id
+				name: twins[0].name
+			}
+			msg: 'mytwin with name: ${twins[0].name} aleady exist'
+			error_type: GetErrorType.alreadyexists
+		}
+	}
 	sql ks.db {
 		insert twin into MyTwin
 	}
@@ -62,9 +74,9 @@ pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
 // I can have more than 1 mytwin, ideal for testing as well
 pub fn (mut ks KeysSafe) mytwin_get(args GetArgs) !MyTwin {
 	twins := sql safe.db {
-		select from MyTwin where id == args.id
+		select from MyTwin where name == args.name
 	}!
-	if twins.len > 0 {
+	if twins.len == 1 {
 		mytwin := twins[0]
 		// decrypt privatekey
 		privkey_hex := aes_symmetric.decrypt(mytwin.privkey_str, ks.secret)
@@ -73,8 +85,14 @@ pub fn (mut ks KeysSafe) mytwin_get(args GetArgs) !MyTwin {
 		mytwin.keysafe = ks
 		return mytwin
 	}
-
-	return  GetError{id: 0, name: "not found", msg: "couldn't get mytwin with id ${args.id}", error_type: GetErrorType.not_found}
+	return  GetError{
+		args: 
+			{
+				id: 0
+				name: args.name
+			},
+			msg: "couldn't get mytwin with name ${args.name}" 
+			error_type: GetErrorType.notfound}
 }
 
 pub fn (mut ks KeysSafe) mytwin_exist(args_ MyTwinAddArgs) ! {
@@ -97,7 +115,7 @@ pub fn (mut twin MyTwin) delete() ! {
 	twin.keysage.mytwins.delete(twin.name)
 	sql twin.keysafe.db {
 		delete from MyTwin where id == twin.id
-	}
+	}!
 }
 
 pub fn (mut twin MyTwin) save() ! {
@@ -105,7 +123,7 @@ pub fn (mut twin MyTwin) save() ! {
 	twin.privkey_str = aes_symmetric.encrypt(privkey_hex, twin.keysafe.secret)
 
 	twins := sql twin.keysage.db {
-		select from MyTwin where id == twin.id
+		select from MyTwin where name == twin.name
 	}!
 	if twins.len > 0 {
 		// twin already exists in the data base so we update

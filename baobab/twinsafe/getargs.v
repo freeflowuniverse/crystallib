@@ -3,14 +3,15 @@ module twinsafe
 pub struct GetError {
 	Error
 mut:
-	args        GetArgs
-	error_type 	GetErrorType
-	msg string
+	args       GetArgs
+	error_type GetErrorType
+	msg        string
 }
 
 pub enum GetErrorType {
 	notfound
 	error
+	alreadyexists
 }
 
 fn (err GetError) msg() string {
@@ -25,11 +26,10 @@ fn (err GetError) code() int {
 	return int(err.error_type)
 }
 
+// standardised way how to get an object
 [params]
-//standardised way how to get an object
-pub struct GetArgs{
+pub struct GetArgs {
 pub:
 	name string
-	id u32
+	id   u32
 }
-
