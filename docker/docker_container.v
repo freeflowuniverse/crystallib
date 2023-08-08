@@ -46,6 +46,7 @@ pub struct DockerContainerCreateArgs {
 	hostname        string
 	forwarded_ports []string // ["80:9000/tcp", "1000, 10000/udp"]
 	mounted_volumes []string // ["/root:/root", ]
+	privileged 		bool
 pub mut:
 	image_repo string
 	image_tag  string

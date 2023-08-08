@@ -25,6 +25,8 @@ pub fn (mut e DockerEngine) container_create(args DockerContainerCreateArgs) !&D
 		command = '/usr/local/bin/boot.sh'
 	}
 
+	privileged:=if args.privileged {'--privileged'} else{''}
+
 	// if forwarded ports passed in the args not containing mapping tp ssh (22) create one
 	if !contains_ssh_port(args.forwarded_ports) {
 		// find random free port in the node
@@ -33,9 +35,8 @@ pub fn (mut e DockerEngine) container_create(args DockerContainerCreateArgs) !&D
 	}
 
 	exec(
-		cmd: "'docker run --hostname ${args.hostname} --priviliged --name ${args.name} ${ports} ${mounts} -d  -t ${image} ${command}"
+		cmd: "docker run --hostname ${args.hostname} ${privileged} --sysctl net.ipv6.conf.all.disable_ipv6=0 --name ${args.name} ${ports} ${mounts} -d  -t ${image} ${command}"
 	)!
-	//TODO: (rob) see how to make sure we always run priviliged, or put in create args
 	mut container := e.container_get(name: args.name)!
 	return container
 }
