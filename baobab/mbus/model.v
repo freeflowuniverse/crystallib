@@ -21,8 +21,8 @@ pub mut:
 	state  RPCState
 
 	//is hash of above encoded
-	rpc_id		  	  u8[]      // unique on the source twin, where the rpc comes from, is hash
-	return_id		  u8[]    // unique for the return path, is hash of return message (can be result or acceptance)
+	rpc_id		  	  []u8      // unique on the source twin, where the rpc comes from, is hash
+	return_id		  []u8    // unique for the return path, is hash of return message (can be result or acceptance)
 
 	signature   []u8    //signature using private key on source twin
 }
@@ -78,7 +78,7 @@ pub fn decode(data []u8) !RPCMessage {
 
 
 //verify using a pubkey
-pub fn (mut msg RPCMessage) verify(pubkey u8[])! {
+pub fn (mut msg RPCMessage) verify(pubkey []u8)! {
 	//TODO: verify the signature based on the source sender
 	//start from msg.data
 }
