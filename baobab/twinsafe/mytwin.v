@@ -2,7 +2,7 @@ module twinsafe
 
 import freeflowuniverse.crystallib.algo.secp256k1
 import freeflowuniverse.crystallib.algo.aes_symmetric
-import freeflowuniverse.crystallib.algo.mnemonic
+import freeflowuniverse.crystallib.mnemonic
 import encoding.hex
 
 // this is me, my representation
@@ -13,7 +13,7 @@ pub:
 	description string
 	privkey     secp256k1.Secp256k1 [skip] // to be used for signing, verifying, only to be filled in when private key	
 	keysafe     &KeysSafe           [skip] // allows us to remove ourselves from mem, or go to db
-	privkey_str [string]
+	privkey_str string
 }
 
 // ADD
@@ -86,13 +86,9 @@ pub fn (mut ks KeysSafe) mytwin_get(args GetArgs) !MyTwin {
 		return mytwin
 	}
 	return  GetError{
-		args: 
-			{
-				id: 0
-				name: args.name
-			},
-			msg: "couldn't get mytwin with name ${args.name}" 
-			error_type: GetErrorType.notfound}
+		args: args,
+		msg: "couldn't get mytwin with name ${args.name}" 
+		error_type: GetErrorType.notfound}
 }
 
 pub fn (mut ks KeysSafe) mytwin_exist(args_ MyTwinAddArgs) ! {

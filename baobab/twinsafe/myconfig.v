@@ -48,7 +48,7 @@ pub fn (mut ks KeysSafe) myconfig_add(args_ MyConfigAddArgs) ! {
 	sql safe.db {
 		insert myconfig into MyConfig
 	}!
-	ks.myconfigs[myconfig.name] myconfig
+	ks.myconfigs[myconfig.name] = myconfig
 }
 
 // I can have more than 1 myconfig, ideal for testing as well
@@ -64,13 +64,9 @@ pub fn (mut ks KeysSafe) myconfig_get(args GetArgs) !MyConfig {
 		return myconfig
 	}
 	return  GetError{
-		args: 
-			{
-				id: 0
-				name: args.name
-			},
-			msg: "couldn't get myconfig with name ${args.name}" 
-			error_type: GetErrorType.notfound}
+		args: args,
+		msg: "couldn't get myconfig with name: ${args.name}" 
+		error_type: GetErrorType.notfound}
 }
 
 pub fn (mut myconfig MyConfig) delete() ! {
