@@ -30,21 +30,27 @@ pub:
 // if it exists will return the key which is already there
 pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
 	mut args := args_
-	mut privkeyhex := ""
+	mut privkey_hex := ""
 	if args.privatekey.len > 0 {
 		if args.privatekey[0..2] == "0x"{
-			privkeyhex = args.privatekey
+			privkey_hex = args.privatekey
 		}else{
-			privkeyhex = hex.encode(mnemonic.parse(args.privatekey))
+			privkey_hex = hex.encode(mnemonic.parse(args.privatekey))
 		}
 		
 	} else {
 		// TODO: generate the seed
 		// generate the key_bytes
 	}
-	privkey_str := aes_symmetric.encrypt(privkeyhex, ks.secret)
-	privkey := secp256k1.new(keyhex: privkey_str)
-	twin := myTwin{
+	
+	// convert privkey_hex to bytes to decrypt it 
+	privkey_bytes := hex.decode(privkey_hex)!
+	// decrypt the key which will produce encrypted bytes
+	privkey_enc_bytes := aes_symmetric.encrypt(privkey_bytes, ks.secret)
+	// encode the encrypted bytes so we can store it in the data base as string
+	privkey_str := hex.encode(privkey_enc_bytes)
+	privkey := secp256k1.new(keyhex: privkey_hex)!
+	twin := MyTwin{
 		name: args.name
 		description: args.description
 		privkey_str: privkey_str
@@ -82,8 +88,10 @@ pub fn (mut ks KeysSafe) mytwin_get(args GetArgs) !MyTwin {
 	if twins.len == 1 {
 		mut mytwin := twins[0]
 		// decrypt privatekey
-		privkey_hex := aes_symmetric.decrypt(mytwin.privkey_str, ks.secret)
-		privkey := secp256k1.new(keyhex: privkey_hex)
+		privkey_enc_bytes := hex.decode(mytwin.privkey_str)!
+		privkey_bytes := aes_symmetric.decrypt(privkey_enc_bytes, ks.secret)
+		privkey_hex := hex.encode(privkey_bytes)
+		privkey := secp256k1.new(keyhex: privkey_hex)!
 		mytwin.privkey = privkey
 		mytwin.keysafe = ks
 		ks.mytwins[mytwin.name] = mytwin
@@ -119,9 +127,10 @@ pub fn (mut twin MyTwin) delete() ! {
 }
 
 pub fn (mut twin MyTwin) save() ! {
-	privkey_hex := twin.privkey.hex()
-	twin.privkey_str = aes_symmetric.encrypt(privkey_hex, twin.keysafe.secret)
-
+	privkey_hex := twin.privkey.export()
+	privkey_bytes := hex.decode(privkey_hex)!
+	privkey_enc := aes_symmetric.encrypt(privkey_bytes, twin.keysafe.secret)
+	twin.privkey_str = hex.encode(privkey_enc)
 	twins := sql twin.keysafe.db {
 		select from MyTwin where name == twin.name
 	}!

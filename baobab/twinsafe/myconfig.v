@@ -1,5 +1,5 @@
 module twinsafe
-
+import encoding.hex
 import freeflowuniverse.crystallib.algo.aes_symmetric
 
 // this is me, my representation
@@ -24,7 +24,8 @@ pub:
 // generate a new key is just importing a key with a random seed
 // if it exists will return the key which is already there
 pub fn (mut ks KeysSafe) myconfig_add(args_ MyConfigAddArgs) ! {
-	config_enc := aes_symmetric.encrypt(args_.config, ks.secret)
+	
+	config_enc := hex.encode(aes_symmetric.encrypt(args_.config.bytes(), ks.secret))
 	myconfig := MyConfig{
 		name: args_.name
 		description: args_.description
@@ -53,13 +54,17 @@ pub fn (mut ks KeysSafe) myconfig_add(args_ MyConfigAddArgs) ! {
 
 // I can have more than 1 myconfig, ideal for testing as well
 pub fn (mut ks KeysSafe) myconfig_get(args GetArgs) !MyConfig {
+	if args.name in ks.myconfigs {
+		return ks.myconfigs[args.name]
+	}
 	configs := sql ks.db {
 		select from MyConfig where name == args.name
 	}!
 	if configs.len == 1 {
-		myconfig := configs[0]
-		config := aes_symmetric.decrypt(myconfig.config_enc, ks.secret)
-		myconfig.config = config
+		mut myconfig := configs[0]
+		config_enc := hex.decode(myconfig.config_enc)!
+		config_bytes := aes_symmetric.decrypt(config_enc, ks.secret)
+		myconfig.config = config_bytes.bytestr()
 		myconfig.keysafe = ks
 		return myconfig
 	}
@@ -77,7 +82,7 @@ pub fn (mut myconfig MyConfig) delete() ! {
 }
 
 pub fn (mut myconfig MyConfig) save() ! {
-	myconfig.config_enc = aes_symmetric.encrypt(myconfig.config, twin.keysafe.secret)
+	config_enc := aes_symmetric.encrypt(myconfig.config.bytes(), myconfig.keysafe.secret)
 
 	cfgs := sql myconfig.keysafe.db {
 		select from MyConfig where name == myconfig.name
@@ -85,7 +90,7 @@ pub fn (mut myconfig MyConfig) save() ! {
 	if cfgs.len > 0 {
 		// twin already exists in the data base so we update
 		sql myconfig.keysafe.db {
-			update MyConfig set name = myconfig.name, description = myconfig.description, config_enc = myconfig.config_enc
+			update MyConfig set name = myconfig.name, description = myconfig.description, config_enc = hex.encode(config_enc)
 			where id == cfgs[0].id
 		}!
 		return
