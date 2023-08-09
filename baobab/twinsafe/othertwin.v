@@ -4,18 +4,19 @@ import freeflowuniverse.crystallib.algo.secp256k1
 // import freeflowuniverse.crystallib.baobab.mbus
 
 pub struct OtherTwin {
+	conn_type_str   string
 pub mut:
 	id          u32                [primary; sql: serial]
 	name        string             [nonull]
 	description string
-	conn_type   TwinConnectionType
+	conn_type   TwinConnectionType [skip]
 	addr        string // ipv4 or ipv6 or redis connection string
 	keysafe     &KeysSafe          [skip] // allows us to remove ourselves from mem, or go to db
-	state       TwinState        // only keep this in mem, does not have to be in sqlitedb
-	// pubkey ... //TODO: how to do the pubkey, what is form of that?
+	state       TwinState          [skip] // only keep this in mem, does not have to be in sqlitedb
+	pubkey      string // pubkey is given in hex
 }
 
-enum TwinConnectionType {
+pub enum TwinConnectionType {
 	ipv6
 	ipv4
 	redis
@@ -35,31 +36,60 @@ pub:
 	name        string
 	id          u32
 	description string
-	publickey   string // given in hex
+	pubkey      string // given in hex
 	conn_type   TwinConnectionType
 	addr        string //
+}
+
+fn twin_conn_str(conn_type TwinConnectionType) string{
+	return match conn_type {
+		.ipv4{"ipv4"}
+		.ipv6{"ipv6"}
+		.redis{"redis"}
+	}
+}
+
+fn twin_conn_from_str(conn_type string) TwinConnectionType{
+	return match conn_type{
+		"ipv4"{ TwinConnectionType.ipv4}
+		"ipv6"{ TwinConnectionType.ipv6}
+		"redis"{ TwinConnectionType.redis}
+		else {
+			TwinConnectionType.ipv4
+		}
+	}
 }
 
 // generate a new key is just importing a key with a random seed
 // if it exists will return the key which is already there
 pub fn (mut ks KeysSafe) othertwin_add(args_ OtherTwinAddArgs) ! {
-	// mut args := args_
-	// if args.privatekey_generate && args.privatekey.len > 0 {
-	// }
-	// mut seed := []u8{}
+	mut args := args_
 
-	// // generate a new random seed
-	// for _ in 0 .. 32 {
-	// 	seed << u8(libsodium.randombytes_random()) // TODO: use secp256k1
-	// }
-
-	// TODO: based on args generate key or add pre-defined key
-	// check if hex or mnemonics, then import accordingly
-
-	// use sqlite to store in db, encrypt the private key, symmetric using aes_symmetric
-	// no need to encrypt other properties
-
-	// TODO: use proper error handling with custom error type
+	twin := OtherTwin{
+		name: args.name
+		description: args.description
+		pubkey: args.pubkey
+		conn_type_str: twin_conn_str(args.conn_type)
+		addr: args.addr
+		keysafe: ks
+	}
+	twins := sql ks.db {
+		select from OtherTwin where name == twin.name
+	}!
+	if twins.len > 0 {
+		return GetError{
+			args: GetArgs{
+				id: twins[0].id
+				name: twins[0].name
+			}
+			msg: 'othertwin with name: ${twins[0].name} aleady exist'
+			error_type: GetErrorType.alreadyexists
+		}
+	}
+	sql ks.db {
+		insert twin into OtherTwin
+	}!
+	ks.othertwins[twin.name] = twin
 }
 
 ////GET
@@ -75,38 +105,56 @@ pub fn (mut ks KeysSafe) othertwin_get(args GetArgs) !OtherTwin {
 	}!
 	if twins.len == 1 {
 		mut othertwin := twins[0]
-		// decrypt privatekey
 		othertwin.keysafe = ks
+		othertwin.state = TwinState.unreacheable // TODO: check which state to be added after loading from db
+		othertwin.conn_type = twin_conn_from_str(othertwin.conn_type_str)
 		ks.othertwins[othertwin.name] = othertwin
 		return othertwin
 	}
-	return  GetError{
-		args: args,
-		msg: "couldn't get mytwin with name ${args.name}" 
-		error_type: GetErrorType.notfound}
+	return GetError{
+		args: args
+		msg: "couldn't get mytwin with name ${args.name}"
+		error_type: GetErrorType.notfound
+	}
 }
 
-// send message to this other twin
+// // send message to this other twin
 // pub fn (mut twin OtherTwin) send(msg mbus.RPCMessage) ! {
-	// TODO: convert to binary (means signature is part of it too)
-	// TODO: give to mbus to send
+// 	// TODO: convert to binary (means signature is part of it too)
+// 	// TODO: give to mbus to send
 // }
 
-// receive info from mbus, if anything in there
+// // receive info from mbus, if anything in there
 // pub fn (mut twin OtherTwin) receive() !mbus.RPCMessage {
-	// TODO: receive data from mbus for this twin
-	// TODO: verify the data which comes back over mbus with twin.verify...
-	// TODO: probably need to use ? as return, so its optional result
+// 	// TODO: receive data from mbus for this twin
+// 	// TODO: verify the data which comes back over mbus with twin.verify...
+// 	// TODO: probably need to use ? as return, so its optional result
 // }
 
-// verify the received data from the mbus and make sure signature is ok
-fn (mut twin OtherTwin) verify(data []u8, signature []u8) ! {
+// // verify the received data from the mbus and make sure signature is ok
+// fn (mut twin OtherTwin) verify(data []u8, signature []u8) ! {
+// }
+
+pub fn (mut twin OtherTwin) delete() ! {
+	twin.keysafe.othertwins.delete(twin.name)
+	sql twin.keysafe.db {
+		delete from OtherTwin where id == twin.id
+	}!
 }
 
-pub fn (mut o OtherTwin) delete() ! {
-	// delete from memory and from sqlitedb
-}
-
-pub fn (mut o OtherTwin) save() ! {
-	// update in DB, or insert if it doesn't exist yet
+pub fn (mut twin OtherTwin) save() ! {
+	twins := sql twin.keysafe.db {
+		select from OtherTwin where name == twin.name
+	}!
+	if twins.len > 0 {
+		// twin already exists in the data base so we update
+		sql twin.keysafe.db {
+			update OtherTwin set name = twin.name, description = twin.description, pubkey = twin.pubkey,
+			conn_type_str = twin.conn_type_str, addr = twin.addr where id == twin.id
+		}!
+		return
+	}
+	sql twin.keysafe.db {
+		insert twin into OtherTwin
+	}!
 }

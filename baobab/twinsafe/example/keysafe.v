@@ -11,8 +11,33 @@ fn do()! {
 	"
 	
 	// TODO: create some messages and see it all works properly
-	// TODO: create some twins and query them
+	ksargs := twinsafe.KeysSafeNewArgs{
+		path: '/tmp/test.db',
+		secret: "testsec"
+	}
+	mut ks := twinsafe.new(ksargs)!
+	twinsafe.create_tables(ks.db)!
+	ks.myconfig_add(name: "myconfig1", description: "mydescription", config: "someconfig") or {
+		println("${err}")
+	}
+
+	myconfig := ks.myconfig_get( twinsafe.GetArgs{name: "myconfig1", id: 0})!
+	println(myconfig.config)
+
+	ks.mytwin_add(name: "mytwin1", description: "mytwin description", privatekey: "0x8225825815f42e1c24a2e98714d99fee1a20b5ac864fbcb7a103cd0f37f0ffec") or {
+		println("$err")
+	}
+	mytwin := ks.mytwin_get( twinsafe.GetArgs{name: "mytwin1", id: 0})!
+	println(mytwin.description)
+
+	ks.othertwin_add(name: "othertwin1", description: "othertwin description", conn_type: twinsafe.TwinConnectionType.ipv4, addr: "127.0.0.1", pubkey: "0x8225825815f42e1c24a2e98714d99fee1a20b5ac864") or {
+		println("$err")
+	}
+	otwin := ks.othertwin_get( twinsafe.GetArgs{name: "othertwin1", id: 0})!
+	println(otwin.description)
+
 }
+
 
 
 fn main() {

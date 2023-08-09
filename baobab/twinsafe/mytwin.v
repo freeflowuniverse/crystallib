@@ -23,27 +23,26 @@ pub struct MyTwinAddArgs {
 pub:
 	name        string [sql: unique]
 	description string
-	privatekey string // given in hex or mnemonics
+	privatekey  string // given in hex or mnemonics
 }
 
 // generate a new key is just importing a key with a random seed
 // if it exists will return the key which is already there
 pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
 	mut args := args_
-	mut privkey_hex := ""
+	mut privkey_hex := ''
 	if args.privatekey.len > 0 {
-		if args.privatekey[0..2] == "0x"{
+		if args.privatekey[0..2] == '0x' {
 			privkey_hex = args.privatekey
-		}else{
+		} else {
 			privkey_hex = hex.encode(mnemonic.parse(args.privatekey))
 		}
-		
 	} else {
 		// TODO: generate the seed
 		// generate the key_bytes
 	}
-	
-	// convert privkey_hex to bytes to decrypt it 
+
+	// convert privkey_hex to bytes to decrypt it
 	privkey_bytes := hex.decode(privkey_hex)!
 	// decrypt the key which will produce encrypted bytes
 	privkey_enc_bytes := aes_symmetric.encrypt(privkey_bytes, ks.secret)
@@ -55,7 +54,7 @@ pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
 		description: args.description
 		privkey_str: privkey_str
 		privkey: privkey
-		keysafe: ks 
+		keysafe: ks
 	}
 	twins := sql ks.db {
 		select from MyTwin where name == twin.name
@@ -63,7 +62,7 @@ pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
 	if twins.len > 0 {
 		return GetError{
 			args: GetArgs{
-				id:   twins[0].id,
+				id: twins[0].id
 				name: twins[0].name
 			}
 			msg: 'mytwin with name: ${twins[0].name} aleady exist'
@@ -75,7 +74,6 @@ pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
 	}!
 	ks.mytwins[twin.name] = twin
 }
-
 
 // I can have more than 1 mytwin, ideal for testing as well
 pub fn (mut ks KeysSafe) mytwin_get(args GetArgs) !MyTwin {
@@ -97,21 +95,21 @@ pub fn (mut ks KeysSafe) mytwin_get(args GetArgs) !MyTwin {
 		ks.mytwins[mytwin.name] = mytwin
 		return mytwin
 	}
-	return  GetError{
-		args: args,
-		msg: "couldn't get mytwin with name ${args.name}" 
-		error_type: GetErrorType.notfound}
+	return GetError{
+		args: args
+		msg: "couldn't get mytwin with name ${args.name}"
+		error_type: GetErrorType.notfound
+	}
 }
 
 pub fn (mut ks KeysSafe) mytwin_exist(args_ GetArgs) !bool {
 	ks.mytwin_get(args_) or {
-		if err.code == 0{
+		if err.code() == 0 {
 			return false
 		}
 		return err
 	}
 	return true
-
 }
 
 // use my private keyto sign data, important before sending
