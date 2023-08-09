@@ -1,5 +1,3 @@
-
-
 ## Existing decentralization projects
 
 There are a number of project operational that are creating decentralised utility for data processing and storage. ThreeFold is a multidisciplinary project which touches all of the bases for creating a new IT stack fueling the Internet.
