@@ -43,8 +43,8 @@ fn (mut page Page) link_update(mut link Link) ! {
 	mut fileobj := &fileoj0
 
 	if link.cat == .image {
-		print(" IT IS AN IMAGE")
 		if page.collection.image_exists(file_name) {
+			println("IMAGE EXISTS!")
 			file_search = false
 			fileobj = page.collection.image_get(file_name)!
 		}
@@ -89,7 +89,7 @@ fn (mut page Page) link_update(mut link Link) ! {
 	page.files_linked << fileobj
 	linkcompare1 := link.description + link.url + link.filename + link.content
 	imagelink_rel := pathlib.path_relative(page.path.path_dir(), fileobj.path.path)!
-	link.description = ''
+	link.description = link.description
 	link.url = imagelink_rel
 	link.filename = os.base(imagelink_rel)
 	link.content = link.wiki()

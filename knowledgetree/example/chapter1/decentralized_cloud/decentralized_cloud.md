@@ -5,7 +5,7 @@ There are a number of project operational that are creating decentralised utilit
 
 To the extent that it provides a complete suite for hosting a decentralized protocols' computation, storage, and network requirements, ThreeFold technology is a logical foundation for any forward looking decentralization initiative.
 
-## ThreeFold Decentralized (autonomous) compute and storage 
+## ThreeFold Decentralized (autonomous) compute and storage
 
 ThreeFold is a project the seeks true decentralization for traditional IT capacity generation. They are creating a foundational layer for the internet, cloud and layer-1 blockchain protocols.
 
@@ -23,6 +23,7 @@ Find more information here:
 - website: http://www.threefold.io
 - tree: http://tree.threefold.me
 
+
 ## What does ThreeFold bring
 
 ThreeFold brings a technology stack that undoes a lot of the (unnecessary) complexity that currently exits in the world of Internet and more generic the world of Information Technology.  This technology stack includes:
@@ -33,3 +34,4 @@ In order reach their goal ThreeFold has developed a large number of building blo
 
 
 [Link to](casperlabs_deployment.md)
+
