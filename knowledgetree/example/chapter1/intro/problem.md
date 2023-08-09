@@ -1,4 +1,3 @@
-
 # Problem statement
 
 The current internet mainly consists of centralised datacenters and networks owned and operated by a handfull of service providers.  80% of the Internet belongs to less than 10 companies.  This is not helping blockchain layer-1 projects to achieve reliability and decentralization.
@@ -16,3 +15,4 @@ This current situation has two major drawbacks:
 
 - relying on centralized hosting providers builds a very centralized blockchain node group deployment on those massive cloud providers.  Decentralization is not achieved and there is a fair amount of risk involved when issues occur in these datacenters.
 - having to choose between cloud or bare metal and then following the installation protocol for the specific blockchain deployment requires a fair amount of technical skills.  This is not for everyone. 
+
