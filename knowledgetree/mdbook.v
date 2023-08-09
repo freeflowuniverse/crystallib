@@ -117,8 +117,15 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 
 //process the summary
 fn (mut book MDBook) process_summary()! {
-	doc := markdowndocs.new(path: '${book.path.path}/summary.md') or {
-		panic('cannot book parse ${book.path.path} ,${err}')
+	mut p := pathlib.get_file('${book.path.path}/summary.md', false)!
+	if !p.exists() {
+		p = pathlib.get_file('${book.path.path}/SUMMARY.md', false)!
+		if !p.exists() {
+			return error('cannot find summary.md for book under ${book.path.path}/')
+		}
+	}
+	doc := markdowndocs.new(path: p.path) or {
+		return error('cannot book parse ${book.path.path}: ${err}')
 	}
 
 	book.doc_summary = &doc
