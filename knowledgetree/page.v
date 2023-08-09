@@ -44,7 +44,6 @@ fn (mut page Page) link_update(mut link Link) ! {
 
 	if link.cat == .image {
 		if page.collection.image_exists(file_name) {
-			println("IMAGE EXISTS!")
 			file_search = false
 			fileobj = page.collection.image_get(file_name)!
 		}
