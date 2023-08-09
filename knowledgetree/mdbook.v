@@ -213,7 +213,7 @@ fn (mut book MDBook) fix_summary() ! {
 							collectionnames := book.tree.collectionnames().join('\n- ')
 							book.error(
 								cat: .site_not_found
-								msg: 'Cannot find site: ${collectionname} \n\collectionnames known::\n\n${collectionnames} '
+								msg: 'Cannot find collection: ${collectionname} \n\collectionnames known::\n\n${collectionnames} '
 							)
 							continue
 						}
