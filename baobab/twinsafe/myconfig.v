@@ -25,6 +25,20 @@ pub:
 // generate a new key is just importing a key with a random seed
 // if it exists will return the key which is already there
 pub fn (mut ks KeysSafe) myconfig_add(args_ MyConfigAddArgs) ! {
+	configs := sql ks.db {
+		select from MyConfig where name == args_.name
+	}!
+	if configs.len > 0 {
+		return GetError{
+			args: GetArgs{
+				id: 0
+				name: args_.name
+			}
+			msg: 'myconfig with name: ${args_.name} aleady exist'
+			error_type: GetErrorType.alreadyexists
+		}
+	}
+
 	config_enc := hex.encode(aes_symmetric.encrypt(args_.config.bytes(), ks.secret))
 	myconfig := MyConfig{
 		name: args_.name
@@ -33,19 +47,7 @@ pub fn (mut ks KeysSafe) myconfig_add(args_ MyConfigAddArgs) ! {
 		config_enc: config_enc
 		keysafe: ks
 	}
-	configs := sql ks.db {
-		select from MyConfig where name == myconfig.name
-	}!
-	if configs.len > 0 {
-		return GetError{
-			args: GetArgs{
-				id: configs[0].id
-				name: configs[0].name
-			}
-			msg: 'myconfig with name: ${configs[0].name} aleady exist'
-			error_type: GetErrorType.alreadyexists
-		}
-	}
+	
 	sql ks.db {
 		insert myconfig into MyConfig
 	}!

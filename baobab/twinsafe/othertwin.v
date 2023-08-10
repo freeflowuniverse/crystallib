@@ -34,7 +34,6 @@ pub enum TwinState {
 pub struct OtherTwinAddArgs {
 pub:
 	name        string
-	id          u32
 	description string
 	pubkey      string // given in hex
 	conn_type   TwinConnectionType
@@ -64,7 +63,19 @@ fn twin_conn_from_str(conn_type string) TwinConnectionType{
 // if it exists will return the key which is already there
 pub fn (mut ks KeysSafe) othertwin_add(args_ OtherTwinAddArgs) ! {
 	mut args := args_
-
+	twins := sql ks.db {
+		select from OtherTwin where name == args.name
+	}!
+	if twins.len > 0 {
+		return GetError{
+			args: GetArgs{
+				id: 0
+				name: args.name
+			}
+			msg: 'othertwin with name: ${args.name} aleady exist'
+			error_type: GetErrorType.alreadyexists
+		}
+	}
 	twin := OtherTwin{
 		name: args.name
 		description: args.description
@@ -73,19 +84,7 @@ pub fn (mut ks KeysSafe) othertwin_add(args_ OtherTwinAddArgs) ! {
 		addr: args.addr
 		keysafe: ks
 	}
-	twins := sql ks.db {
-		select from OtherTwin where name == twin.name
-	}!
-	if twins.len > 0 {
-		return GetError{
-			args: GetArgs{
-				id: twins[0].id
-				name: twins[0].name
-			}
-			msg: 'othertwin with name: ${twins[0].name} aleady exist'
-			error_type: GetErrorType.alreadyexists
-		}
-	}
+	
 	sql ks.db {
 		insert twin into OtherTwin
 	}!
