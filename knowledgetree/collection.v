@@ -218,13 +218,13 @@ fn (mut collection Collection) file_image_remember(mut p pathlib.Path) ! {
 
 // add a page to the collection, specify existing path
 // the page will be parsed as markdown
-pub fn (mut collection Collection) page_new(mut p Path) !&Page {
+pub fn (mut collection Collection) page_new(mut p Path) ! {
 	$if debug {
 		println(" - collection:'${collection.name}' page new: ${p.path}")
 	}
 	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
 	if collection.page_exists(ptr.pointer.name) {
-		collection.error(path: p, msg: 'Can\'t add ${p.path}: a page named ${ptr.pointer.name} already exists in the collection', cat:.double)
+		collection.error(path: p, msg: 'Can\'t add ${p.path}: a page named ${ptr.pointer.name} already exists in the collection', cat: .page_double)
 		return 
 	}
 	mut doc := markdowndocs.new(path: p.path) or { panic('cannot parse,${err}') }
@@ -237,7 +237,6 @@ pub fn (mut collection Collection) page_new(mut p Path) !&Page {
 		readonly: false
 	}
 	collection.pages[ptr.pointer.name] = page
-	return page
 }
 
 // add a file to the collection, specify existing path
@@ -247,7 +246,7 @@ pub fn (mut collection Collection) file_new(mut p Path) ! {
 	}
 	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
 	if collection.file_exists(ptr.pointer.name) {
-		collection.error(path: p, msg: 'Can\'t add ${p.path}: a file named ${ptr.pointer.name} already exists in the collection', cat:.double)
+		collection.error(path: p, msg: 'Can\'t add ${p.path}: a file named ${ptr.pointer.name} already exists in the collection', cat: .file_double)
 		return 
 	}
 

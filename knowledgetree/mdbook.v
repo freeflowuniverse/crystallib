@@ -23,7 +23,7 @@ pub enum BookErrorCat {
 	file_not_found
 	image_not_found
 	page_not_found
-	site_not_found
+	collection_not_found
 	sidebar
 }
 
@@ -184,14 +184,13 @@ fn (mut book MDBook) fix_summary() ! {
 						}
 						pagename := link.filename
 						if book.tree.collection_exists(collectionname) {
-							println("Collection ${collectionname} exists!!")
 							mut collection := book.tree.collection_get(collectionname)!
 							dest := '${book.path}/${collectionname}'
 							collection.path.link(dest, true)!
 
 							// now we can process the page where the link goes to
 							if collection.page_exists(pagename) {
-								page := book.tree.page_get(pagename)!
+								page := collection.page_get(pagename)!
 								newlink := '[${link.description}](${collectionname}/${page.pathrel})'
 								book.pages['${collection.name}:${page.name}'] = page
 								if newlink != link.content {
@@ -200,7 +199,8 @@ fn (mut book MDBook) fix_summary() ! {
 									// }
 									paragraph.content = paragraph.content.replace(link.content,
 										newlink)
-									panic('new page is ${link.content} with ${newlink}')
+									// TODO: don't think we need this one
+									//panic('new page is ${link.content} with ${newlink}')
 									//paragraph.doc.save_wiki()!
 									//panic('not implemented save wiki')
 								}
@@ -214,7 +214,7 @@ fn (mut book MDBook) fix_summary() ! {
 						} else {
 							collectionnames := book.tree.collectionnames().join('\n- ')
 							book.error(
-								cat: .site_not_found
+								cat: .collection_not_found
 								msg: 'Cannot find collection: ${collectionname} \n\collectionnames known::\n\n${collectionnames} '
 							)
 							continue

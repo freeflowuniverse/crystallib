@@ -24,7 +24,7 @@ pub fn (err CollectionNotFound) msg() string {
 		return err.msg
 	}
 	collectionnames := err.tree.collectionnames().map('- ${it}').join('\n')
-	return '"Cannot find collection from tree.\nPointer: ${err.pointer}\nKnown Collections:\n${collectionnames}'
+	return '"Cannot find collection ${err.pointer} in tree.\nKnown Collections:\n${collectionnames}'
 }
 
 pub fn (tree Tree) collection_exists(name string) bool {
@@ -53,6 +53,5 @@ fn (mut tree Tree) collection_get_from_pointer(p Pointer) !&Collection {
 }
 
 pub fn (mut tree Tree) collection_get(name string) !&Collection {
-	p := pointer_new(name)!
-	return tree.collection_get_from_pointer(p)!
+	return tree.collection_get_from_pointer(Pointer{collection: name})!
 }

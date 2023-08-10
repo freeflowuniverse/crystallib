@@ -60,7 +60,7 @@ fn (mut page Page) link_update(mut link Link) ! {
 	 	// we need to copy the image here
 	 	fileobj = page.collection.tree.image_get(file_name) or {
 	 		msg := "'${file_name}' not found for page:${page.path.path}, we looked over all collections."
-	 		println('    * ${msg}')
+	 		//println('    * ${msg}')
 	 		page.collection.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
 	 		return
 	 	}

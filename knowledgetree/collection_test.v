@@ -4,7 +4,6 @@ import os
 
 const testpath = os.dir(@FILE) + '/example/chapter1'
 
-// const test_page = test_collection.page_new()
 
 fn test_fix() ! {
 	mut lib := new()!
