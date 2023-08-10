@@ -71,9 +71,6 @@ pub fn (mut e DockerEngine) containers_load() ! {
 		}
 		id := fields[0]
 		mut container := DockerContainer{
-			image: &DockerImage{
-				engine: &e
-			}
 			engine: &e
 		}
 
