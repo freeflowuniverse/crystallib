@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.algo.aes_symmetric
 pub struct MyConfig {
 pub mut:
 	id          u32       [primary; sql: serial]
-	name        string    [nonull]
+	name        string    [nonull; unique]
 	description string
 	config      string    [skip]    // this is 3script which holds the initialization content for configuration of anything
 	keysafe     &KeysSafe [skip] // allows us to remove ourselves from mem, or go to db
@@ -22,28 +22,37 @@ pub:
 	config      string
 }
 
+fn (mut ks KeysSafe) myconfig_db_exists(args GetArgs) !bool{
+	configs := sql ks.db {
+		select from MyConfig where name == args.name
+	}!
+	if configs.len > 0 {
+		return true
+	}
+	return false
+}
+
 // generate a new key is just importing a key with a random seed
 // if it exists will return the key which is already there
 pub fn (mut ks KeysSafe) myconfig_add(args_ MyConfigAddArgs) ! {
-	configs := sql ks.db {
-		select from MyConfig where name == args_.name
-	}!
-	if configs.len > 0 {
+	mut args := args_
+	exists := ks.myconfig_db_exists(name: args.name)!
+	if exists{
 		return GetError{
 			args: GetArgs{
 				id: 0
 				name: args_.name
 			}
-			msg: 'myconfig with name: ${args_.name} aleady exist'
+			msg: 'myconfig with name: ${args.name} already exist'
 			error_type: GetErrorType.alreadyexists
 		}
 	}
-
-	config_enc := hex.encode(aes_symmetric.encrypt(args_.config.bytes(), ks.secret))
+	
+	config_enc := hex.encode(aes_symmetric.encrypt(args.config.bytes(), ks.secret))
 	myconfig := MyConfig{
-		name: args_.name
-		description: args_.description
-		config: args_.config
+		name: args.name
+		description: args.description
+		config: args.config
 		config_enc: config_enc
 		keysafe: ks
 	}
@@ -87,14 +96,12 @@ pub fn (mut myconfig MyConfig) delete() ! {
 pub fn (mut myconfig MyConfig) save() ! {
 	config_enc := aes_symmetric.encrypt(myconfig.config.bytes(), myconfig.keysafe.secret)
 
-	cfgs := sql myconfig.keysafe.db {
-		select from MyConfig where name == myconfig.name
-	}!
-	if cfgs.len > 0 {
-		// twin already exists in the data base so we update
+	exists := myconfig.keysafe.myconfig_db_exists(name: myconfig.name)!
+
+	if exists {
 		sql myconfig.keysafe.db {
 			update MyConfig set name = myconfig.name, description = myconfig.description,
-			config_enc = hex.encode(config_enc) where id == cfgs[0].id
+			config_enc = hex.encode(config_enc) where name == myconfig.name
 		}!
 		return
 	}

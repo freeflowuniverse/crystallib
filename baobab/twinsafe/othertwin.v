@@ -7,7 +7,7 @@ pub struct OtherTwin {
 	conn_type_str   string
 pub mut:
 	id          u32                [primary; sql: serial]
-	name        string             [nonull]
+	name        string             [nonull; unique]
 	description string
 	conn_type   TwinConnectionType [skip]
 	addr        string // ipv4 or ipv6 or redis connection string
@@ -59,14 +59,22 @@ fn twin_conn_from_str(conn_type string) TwinConnectionType{
 	}
 }
 
-// generate a new key is just importing a key with a random seed
-// if it exists will return the key which is already there
-pub fn (mut ks KeysSafe) othertwin_add(args_ OtherTwinAddArgs) ! {
-	mut args := args_
+fn (mut ks KeysSafe) othertwin_db_exists(args GetArgs) !bool{
 	twins := sql ks.db {
 		select from OtherTwin where name == args.name
 	}!
 	if twins.len > 0 {
+		return true
+	}
+	return false
+}
+
+// generate a new key is just importing a key with a random seed
+// if it exists will return the key which is already there
+pub fn (mut ks KeysSafe) othertwin_add(args_ OtherTwinAddArgs) ! {
+	mut args := args_
+	exists := ks.othertwin_db_exists(name: args.name)!
+	if exists{
 		return GetError{
 			args: GetArgs{
 				id: 0
@@ -142,14 +150,11 @@ pub fn (mut twin OtherTwin) delete() ! {
 }
 
 pub fn (mut twin OtherTwin) save() ! {
-	twins := sql twin.keysafe.db {
-		select from OtherTwin where name == twin.name
-	}!
-	if twins.len > 0 {
-		// twin already exists in the data base so we update
+	exists := twin.keysafe.othertwin_db_exists(name: twin.name)!
+	if exists{
 		sql twin.keysafe.db {
 			update OtherTwin set name = twin.name, description = twin.description, pubkey = twin.pubkey,
-			conn_type_str = twin.conn_type_str, addr = twin.addr where id == twin.id
+			conn_type_str = twin.conn_type_str, addr = twin.addr where name == twin.name
 		}!
 		return
 	}

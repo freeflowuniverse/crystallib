@@ -9,7 +9,7 @@ import encoding.hex
 pub struct MyTwin {
 pub mut:
 	id          u32                 [primary; sql: serial]
-	name        string              [nonull]
+	name        string              [nonull; unique]
 	description string
 	privkey     secp256k1.Secp256k1 [skip] // to be used for signing, verifying, only to be filled in when private key	
 	keysafe     &KeysSafe           [skip] // allows us to remove ourselves from mem, or go to db
@@ -23,42 +23,43 @@ pub struct MyTwinAddArgs {
 pub:
 	name        string [sql: unique]
 	description string
-	privkey  string // given in hex or mnemonics
+	privkey  string // given in hex
 }
 
-// generate a new key is just importing a key with a random seed
-// if it exists will return the key which is already there
-pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
-	mut args := args_
-	mut privkey_hex := ''
-
+fn (mut ks KeysSafe) mytwin_db_exists(args GetArgs) !bool{
 	twins := sql ks.db {
 		select from MyTwin where name == args.name
 	}!
 	if twins.len > 0 {
+		return true
+	}
+	return false
+}
+// generate a new key is just importing a key with a random seed
+// if it exists will return the key which is already there
+pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
+	mut args := args_
+	exists := ks.mytwin_db_exists(name: args.name)!
+	if exists{
 		return GetError{
 			args: GetArgs{
 				id: 0
 				name: args.name
 			}
-			msg: 'mytwin with name: ${twins[0].name} aleady exist'
+			msg: 'mytwin with name: ${args.name} aleady exist'
 			error_type: GetErrorType.alreadyexists
 		}
 	}
-	
-	if args.privkey.len > 0 {
-		if args.privkey[0..2] == '0x' {
-			privkey_hex = args.privkey
-		} else {
-			privkey_hex = hex.encode(mnemonic.parse(args.privkey)) // TODO check after mnemonics lib is fixed
-		}
-	} else {
-		privkey := secp256k1.new()!
-		privkey_hex = privkey.export()
-	}
 
+	mut privkey_hex := args.privkey
+	mut privkey := secp256k1.new(keyhex: privkey_hex)!	
+
+	// if user didn't pass privkey, then we used the one generated from the above statement
+	if privkey_hex.len == 0 {
+		privkey_hex = privkey.export()
+
+	}
 	privkey_str := encrypt_privkey(privkey_hex, ks.secret)!
-	privkey := secp256k1.new(keyhex: privkey_hex)!
 	twin := MyTwin{
 		name: args.name
 		description: args.description
@@ -77,8 +78,7 @@ fn encrypt_privkey(privkey_hex string, secret string) !string{
 	// decrypt the key which will produce encrypted bytes
 	privkey_enc_bytes := aes_symmetric.encrypt(privkey_bytes, secret)
 	// encode the encrypted bytes so we can store it in the data base as string
-	privkey := hex.encode(privkey_enc_bytes)
-	return privkey
+	 return hex.encode(privkey_enc_bytes)
 
 }
 fn decrypt_privkey(privkey_enc string, secret string) !string{
@@ -135,20 +135,16 @@ pub fn (mut twin MyTwin) delete() ! {
 
 pub fn (mut twin MyTwin) save() ! {
 	privkey_hex := twin.privkey.export()
-	privkey_bytes := hex.decode(privkey_hex)!
-	privkey_enc := aes_symmetric.encrypt(privkey_bytes, twin.keysafe.secret)
-	twin.privkey_str = hex.encode(privkey_enc)
-	twins := sql twin.keysafe.db {
-		select from MyTwin where name == twin.name
-	}!
-	if twins.len > 0 {
-		// twin already exists in the data base so we update
+	twin.privkey_str = encrypt_privkey(privkey_hex, twin.keysafe.secret)!
+	exists := twin.keysafe.mytwin_db_exists(name: twin.name)!
+	if exists{ 
 		sql twin.keysafe.db {
 			update MyTwin set name = twin.name, description = twin.description, privkey_str = twin.privkey_str
-			where id == twin.id
+			where name == twin.name
 		}!
 		return
 	}
+	
 	sql twin.keysafe.db {
 		insert twin into MyTwin
 	}!
