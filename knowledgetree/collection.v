@@ -223,8 +223,12 @@ pub fn (mut collection Collection) page_new(mut p Path) !&Page {
 		println(" - collection:'${collection.name}' page new: ${p.path}")
 	}
 	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
+	if collection.page_exists(ptr.pointer.name) {
+		collection.error(path: p, msg: 'Can\'t add ${p.path}: a page named ${ptr.pointer.name} already exists in the collection', cat:.double)
+		return 
+	}
 	mut doc := markdowndocs.new(path: p.path) or { panic('cannot parse,${err}') }
-	mut page := Page{
+	mut page := &Page{
 		doc: &doc
 		pathrel: p.path_relative(collection.path.path)!.trim('/')
 		name: ptr.pointer.name
@@ -232,10 +236,8 @@ pub fn (mut collection Collection) page_new(mut p Path) !&Page {
 		collection: &collection
 		readonly: false
 	}
-	collection.pages[ptr.pointer.name] = &page
-	return collection.pages[ptr.pointer.name] or {
-		return error('Cannot find page ${ptr.pointer.name} in collection: ${collection.name}')
-	}
+	collection.pages[ptr.pointer.name] = page
+	return page
 }
 
 // add a file to the collection, specify existing path
@@ -244,12 +246,17 @@ pub fn (mut collection Collection) file_new(mut p Path) ! {
 		println(" - collection:'${collection.name}' file new: ${p.path}")
 	}
 	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
-	mut ff := File{
+	if collection.file_exists(ptr.pointer.name) {
+		collection.error(path: p, msg: 'Can\'t add ${p.path}: a file named ${ptr.pointer.name} already exists in the collection', cat:.double)
+		return 
+	}
+
+	mut ff := &File{
 		path: p
 		collection: &collection
 	}
 	ff.init()
-	collection.files[ptr.pointer.name] = &ff
+	collection.files[ptr.pointer.name] = ff
 }
 
 // add a image to the collection, specify existing path
@@ -274,12 +281,12 @@ pub fn (mut collection Collection) image_new(mut p Path) ! {
 		}
 		return
 	}
-	mut ff := File{
+	mut ff := &File{
 		path: p
 		collection: &collection
 	}
 	ff.init()
-	collection.images[ptr.pointer.name] = &ff
+	collection.images[ptr.pointer.name] = ff
 }
 
 // go over all pages, fix the links, check the images are there

@@ -23,8 +23,8 @@ pub fn (err CollectionNotFound) msg() string {
 	if err.msg.len > 0 {
 		return err.msg
 	}
-	collectionnames := err.tree.collectionnames().join('\n- ')
-	return '"Cannot not find collection from tree.\nPointer: ${err.pointer}.\nKnown Collections:\n${collectionnames}'
+	collectionnames := err.tree.collectionnames().map('- ${it}').join('\n')
+	return '"Cannot find collection from tree.\nPointer: ${err.pointer}\nKnown Collections:\n${collectionnames}'
 }
 
 pub fn (tree Tree) collection_exists(name string) bool {

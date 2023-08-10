@@ -30,6 +30,7 @@ pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 	if args.heal {
 		collection.fix()!
 	}
+	println("ALL PAGES: ${collection.pages}")
 
 	tree.collections[collection.name] = collection
 	return collection

@@ -183,14 +183,15 @@ fn (mut book MDBook) fix_summary() ! {
 							return error('collection needs to be specified in summary, is the first part of path e.g. collectionname/...')
 						}
 						pagename := link.filename
-						if book.tree.page_exists(pagename) {
-							page := book.tree.page_get(pagename)!
-							mut collection := page.collection
+						if book.tree.collection_exists(collectionname) {
+							println("Collection ${collectionname} exists!!")
+							mut collection := book.tree.collection_get(collectionname)!
 							dest := '${book.path}/${collectionname}'
 							collection.path.link(dest, true)!
 
-							// now  we can process the page where the link goes to
+							// now we can process the page where the link goes to
 							if collection.page_exists(pagename) {
+								page := book.tree.page_get(pagename)!
 								newlink := '[${link.description}](${collectionname}/${page.pathrel})'
 								book.pages['${collection.name}:${page.name}'] = page
 								if newlink != link.content {
@@ -199,8 +200,9 @@ fn (mut book MDBook) fix_summary() ! {
 									// }
 									paragraph.content = paragraph.content.replace(link.content,
 										newlink)
-									// paragraph.doc.save_wiki()!
-									panic('not implemented save wiki')
+									panic('new page is ${link.content} with ${newlink}')
+									//paragraph.doc.save_wiki()!
+									//panic('not implemented save wiki')
 								}
 							} else {
 								book.error(
