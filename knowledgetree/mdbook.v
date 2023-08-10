@@ -1,14 +1,10 @@
 module knowledgetree
 
-//TODO: needs serious fixes
-
-// import os
 import freeflowuniverse.crystallib.gittools
 import freeflowuniverse.crystallib.markdowndocs
 import freeflowuniverse.crystallib.pathlib { Path }
 import freeflowuniverse.crystallib.texttools
-
-import os
+import freeflowuniverse.crystallib.osal
 
 enum BookState {
 	init
@@ -84,6 +80,10 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 		return error('Cannot specify new book without specifying a name.')
 	}
 
+	if args.name in l.books {
+		return error('Book already exists')
+	}
+
 	if args.git_url.len > 0 {
 		mut gs := gittools.get(root: args.git_root)!
 		mut gr := gs.repo_get_from_url(url: args.git_url, pull: args.git_pull, reset: args.git_reset)!
@@ -140,7 +140,6 @@ fn (mut book MDBook) process_summary()! {
 pub fn (mut book MDBook) fix() ! {
 	book.fix_summary()!
 	book.link_pages_files_images()!
-	// TODO: check the links on pages
 	book.errors_report()!
 }
 
@@ -174,9 +173,7 @@ fn (mut book MDBook) fix_summary() ! {
 						msge := 'external link not supported yet in summary for:\n ${book}'
 						book.error(cat: .unknown, msg: msge)
 					} else {
-						$if debug {
-							println(' - book ${book.name} summary:${link.pathfull()}')
-						}
+						book.tree.logger.debug('book ${book.name} summary:${link.pathfull()}')
 						mut collectionname := link.path.all_before('/')
 						if link.path == '' {
 							// means collection has not been specified
@@ -194,9 +191,7 @@ fn (mut book MDBook) fix_summary() ! {
 								newlink := '[${link.description}](${collectionname}/${page.pathrel})'
 								book.pages['${collection.name}:${page.name}'] = page
 								if newlink != link.content {
-									// $if debug {
-									// 	println('change: $link.content -> $newlink')
-									// }
+									book.tree.logger.debug('change: $link.content -> $newlink')
 									paragraph.content = paragraph.content.replace(link.content,
 										newlink)
 									// TODO: don't think we need this one
@@ -301,19 +296,19 @@ pub fn (mut book MDBook) export() ! {
 	html_path := book.html_path('').path
 	for _, mut page in book.pages {
 		dest := '${book_path}/${page.collection.name}/${page.pathrel}'
-		println(' - export: ${dest}')
+		book.tree.logger.info('- export: ${dest}')
 		page.save(dest: dest)!
 	}
 
 	for _, mut file in book.files {
 		dest := '${book_path}/${file.collection.name}/${file.pathrel}'
-		println(' - export: ${dest}')
+		book.tree.logger.info('- export: ${dest}')
 		file.copy(dest)!
 	}
 
 	for _, mut image in book.images {
 		dest := '${book_path}/${image.collection.name}/${image.pathrel}'
-		println(' - export: ${dest}')
+		book.tree.logger.info('- export: ${dest}')
 		image.copy(dest)!
 	}
 
@@ -322,8 +317,10 @@ pub fn (mut book MDBook) export() ! {
 	pathsummary.write(book.doc_summary.wiki())!
 
 	// lets now build
-	os.execute_or_panic('mdbook build ${book.book_path('').path} --dest-dir ${html_path}')
-	os.execute_or_panic('open ${html_path}/index.html')
+	osal.exec(cmd: 'mdbook build ${book.book_path('').path} --dest-dir ${html_path}', retry: 0)!
+
+	book.tree.logger.info('MDBook has been generated under ${book_path}')
+	book.tree.logger.info('Html pages are found under ${html_path}')
 }
 
 fn (mut book MDBook) template_write(path string, content string) ! {

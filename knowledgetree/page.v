@@ -32,9 +32,8 @@ pub mut: // pointer to collection
 fn (mut page Page) link_update(mut link Link) ! {
 	// mut linkout := link
 	mut file_name := link.filename
-	$if debug {
-		println(' - get link ${link.content} with name:\'${file_name}\' for page: ${page.path.path}')
-	}
+	page.collection.tree.logger.debug('get link ${link.content} with name:\'${file_name}\' for page: ${page.path.path}')
+
 	// check if the file or image is there, if yes we can return, nothing to do
 	mut file_search := true
 	mut fileoj0 := File{
@@ -60,18 +59,16 @@ fn (mut page Page) link_update(mut link Link) ! {
 	 	// we need to copy the image here
 	 	fileobj = page.collection.tree.image_get(file_name) or {
 	 		msg := "'${file_name}' not found for page:${page.path.path}, we looked over all collections."
-	 		//println('    * ${msg}')
 	 		page.collection.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
 	 		return
 	 	}
 	 	// we found the image should copy to the collection now
-	 	println("     * image or file found in other collection: '${fileobj}'")
-	 	println(link)
+		page.collection.tree.logger.debug('image or file found in other collection: ${fileobj}')
+	 	page.collection.tree.logger.debug('${link}')
 	 	mut dest := pathlib.get('${page.path.path_dir()}/img/${fileobj.path.name()}')
 	 	pathlib.get_dir('${page.path.path_dir()}/img', true)! // make sure it exists
-	 	println(' *** COPY: ${fileobj.path.path} to ${dest.path}')
+		page.collection.tree.logger.debug('*** COPY: ${fileobj.path.path} to ${dest.path}')
 	 	if fileobj.path.path == dest.path {
-	 		println(fileobj)
 	 		panic('source and destination is same when trying to fix link (copy).')
 	 	}
 	 	fileobj.path.copy(mut dest)!
@@ -119,7 +116,7 @@ fn (mut page Page) fix() ! {
 	page.fix_links()!
 	// TODO: do includes
 	if page.changed {
-		println('CHANGED: ${page.path}')
+		page.collection.tree.logger.debug('CHANGED: ${page.path}')
 		page.save()!
 		page.changed = false
 	}

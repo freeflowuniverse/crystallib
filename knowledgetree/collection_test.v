@@ -26,6 +26,5 @@ fn test_scan() {
 		heal: false
 	) or { panic('Cannot create / load new collection: ${err}') }
 
-	println(test_collection)
 }
 

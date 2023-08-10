@@ -17,6 +17,10 @@ pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 	mut args := args_
 	args.name = texttools.name_fix_no_underscore_no_ext(args.name)
 
+	if args.name in tree.collections {
+		return error('Collection already exits')
+	}
+
 	mut pp := pathlib.get_dir(args.path, false)! //will raise error if path doesn't exist
 	mut collection := &Collection{
 		name: args.name
@@ -27,9 +31,9 @@ pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 	if args.load || args.heal {
 		collection.scan()!
 	}
-	//if args.heal {
+	if args.heal {
 		collection.fix()!
-	//}
+	}
 
 	tree.collections[collection.name] = collection
 	return collection
@@ -37,12 +41,9 @@ pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 
 // path is the full path
 fn (mut collection Collection) scan_internal(mut p pathlib.Path) ! {
-	$if debug {
-		println('--- scan ${p.path}')
-	}
+	collection.tree.logger.debug('scan ${p.path}')
 	mut llist := p.list(recursive: false)!
 	for mut p_in in llist {
-		// println("--- SCAN SUB:\n$p_in")
 		if p_in.exists() == false {
 			collection.error(path: p_in, msg: 'probably a broken link', cat: .unknown)
 			continue // means broken link
@@ -64,12 +65,10 @@ fn (mut collection Collection) scan_internal(mut p pathlib.Path) ! {
 			}
 			if !link_real_path.starts_with(collection_abs_path) {
 				// means we are not in the collection so we need to copy
-				// $if debug{println(" - @FN IS LINK: \n    abs:'$link_abs_path' \n    real:'$link_real_path'\n    collection:'$collection_abs_path'")}
 				p_in.unlink()! // will transform link to become the file or dir it points too
 				assert !p_in.is_link()
 			} else {
 				p_in.relink()! // will check that the link is on the file with the shortest path
-				// println(p_in)
 			}
 		}
 		if p_in.cat == .linkfile {

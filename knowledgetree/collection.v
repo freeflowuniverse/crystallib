@@ -31,13 +31,9 @@ pub mut:
 
 // walk over one specific collection, find all files and pages
 pub fn (mut collection Collection) scan() ! {
-	$if debug {
-		println(' - load collection: ${collection.name} - ${collection.path.path}')
-	}
+	collection.tree.logger.debug('load collection: ${collection.name} - ${collection.path.path}')
 	collection.scan_internal(mut collection.path)!
-	$if debug {
-		println('scan done')
-	}
+	collection.tree.logger.debug('scan done')
 }
 
 ///////////// PAGE/IMAGE/FILE GET
@@ -162,9 +158,7 @@ pub fn (collection Collection) file_exists(name string) bool {
 // remember the file, so we know if we have duplicates
 // also fixes the name
 fn (mut collection Collection) file_image_remember(mut p pathlib.Path) ! {
-	$if debug {
-		eprintln(' - file or image remember : ${p.path}')
-	}
+	collection.tree.logger.debug('file or image remember : ${p.path}')
 	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)! //TODO: seems like some overkill
 	p = ptr.path
 	if ptr.is_image() {
@@ -193,7 +187,7 @@ fn (mut collection Collection) file_image_remember(mut p pathlib.Path) ! {
 			filedouble.path = filedouble.path
 			filedouble.init()
 			if collection.heal {
-				println(' - delete double image: ${p.path}')
+				collection.tree.logger.info('delete double image: ${p.path}')
 				p.delete()!
 			}
 			return
@@ -219,9 +213,7 @@ fn (mut collection Collection) file_image_remember(mut p pathlib.Path) ! {
 // add a page to the collection, specify existing path
 // the page will be parsed as markdown
 pub fn (mut collection Collection) page_new(mut p Path) ! {
-	$if debug {
-		println(" - collection:'${collection.name}' page new: ${p.path}")
-	}
+	collection.tree.logger.debug('collection: ${collection.name} page new: ${p.path}')
 	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
 	if collection.page_exists(ptr.pointer.name) {
 		collection.error(path: p, msg: 'Can\'t add ${p.path}: a page named ${ptr.pointer.name} already exists in the collection', cat: .page_double)
@@ -241,9 +233,7 @@ pub fn (mut collection Collection) page_new(mut p Path) ! {
 
 // add a file to the collection, specify existing path
 pub fn (mut collection Collection) file_new(mut p Path) ! {
-	$if debug {
-		println(" - collection:'${collection.name}' file new: ${p.path}")
-	}
+	collection.tree.logger.debug('collection: ${collection.name} file new: ${p.path}')
 	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
 	if collection.file_exists(ptr.pointer.name) {
 		collection.error(path: p, msg: 'Can\'t add ${p.path}: a file named ${ptr.pointer.name} already exists in the collection', cat: .file_double)
@@ -260,9 +250,7 @@ pub fn (mut collection Collection) file_new(mut p Path) ! {
 
 // add a image to the collection, specify existing path
 pub fn (mut collection Collection) image_new(mut p Path) ! {
-	$if debug {
-		println(" - collection:'${collection.name}' image new: ${p.path}")
-	}
+	collection.tree.logger.debug('collection: ${collection.name} image new: ${p.path}')
 
 	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
 	if ptr.pointer.name.starts_with('.') {
@@ -290,9 +278,7 @@ pub fn (mut collection Collection) image_new(mut p Path) ! {
 
 // go over all pages, fix the links, check the images are there
 pub fn (mut collection Collection) fix() ! {
-	$if debug {
-		println(' --- collection fix: ${collection.name}')
-	}
+	collection.tree.logger.debug('collection fix: ${collection.name}')
 	for _, mut page in collection.pages {
 		page.fix()!
 	}

@@ -55,7 +55,7 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 						name = params_.get('name')!
 					}
 				}
-				println(' - ${type_of_file[1..]} new: ${filepath.path} name:${name}')
+				tree.logger.debug(' - ${type_of_file[1..]} new: ${filepath.path} name:${name}')
 				match type_of_file {
 					".collection" {
 						tree.collection_new(path: path.path, name: name, heal: args_.heal, load: args_.load)!
@@ -83,7 +83,6 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 
 				tree.scan(path: p_in.path, heal: args_.heal, load: args_.load) or {
 					msg := 'Cannot process recursive on ${p_in.path}\n${err}'
-					// println(msg)
 					return error(msg)
 				}
 			}
