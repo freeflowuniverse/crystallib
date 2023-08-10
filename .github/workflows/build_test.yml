@@ -40,22 +40,24 @@ jobs:
         env:
           VJOBS: 1
         run: |
-          v -stats test actions
+          v -stats test algo
+          v -stats test baobab
+          v -stats test bizmodel
           v -stats test books
-          v -stats test coinmarketcap
+          v -stats test clients
           v -stats test codemodel
           v -stats test codeparser
           v -stats test console
-          v -stats test crpgp
           v -stats test crystaljson
           v -stats test currency
           v -stats test data
           v -stats test docker
-          v -stats test encoder
+          v -stats test gittools
           v -stats test imagemagick
           v -stats test ipaddress
           v -stats test jsonrpc
           v -stats test jsonschema
+          v -stats test knopwledgetree
           v -stats test markdowndocs
           v -stats test mnemonic
           v -stats test openrpc
@@ -65,5 +67,6 @@ jobs:
           v -stats test redisclient
           v -stats test resp
           v -stats test rpcwebsocket
+          v -stats test spreadsheet
           v -stats test texttools
           v -stats test timetools
