@@ -39,6 +39,7 @@ jobs:
       - name: Run tests
         env:
           VJOBS: 1
+          OFFLINE: 1
         run: |
           v -stats test algo
           v -stats test bizmodel
