@@ -18,7 +18,9 @@ jobs:
           - 6379:6379
     steps:
       - name: Install dependencies
-        run: sudo apt install -y libgc-dev tmux mc git rsync curl imagemagick
+        run: |
+          sudo apt install -y libgc-dev tmux mc git rsync curl imagemagick
+          cargo install mdbook mdbook-mermaid 
 
       - name: Setup Vlang
         uses: vlang/setup-v@v1.3
