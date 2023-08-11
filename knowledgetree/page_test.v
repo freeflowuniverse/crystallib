@@ -23,7 +23,8 @@ fn test_fix() ! {
 	) or { panic('Cannot create new collection: ${err}') }
 
 	mut page_path := pathlib.get('${knowledgetree.testpath}/wrong_links/page_with_wrong_links.md')
-	mut test_page := test_collection.page_new(mut page_path) or { panic('Cannot create page: ${err}') }
+	test_collection.page_new(mut page_path) or { panic('Cannot create page: ${err}') }
+	mut test_page := test_collection.page_get('page_with_wrong_links.md')!
 
 	doc_before := *((*test_page).doc)
 	test_page.fix() or { panic('Cannot fix page: ${err}') }

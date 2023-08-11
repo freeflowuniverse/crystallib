@@ -1,7 +1,5 @@
 module knowledgetree
 
-import freeflowuniverse.crystallib.osal
-
 import log
 import v.embed_file
 

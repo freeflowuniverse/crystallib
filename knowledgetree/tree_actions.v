@@ -4,8 +4,7 @@ import freeflowuniverse.crystallib.baobab.actions
 import freeflowuniverse.crystallib.pathlib
 
 pub fn (mut tree Tree) execute(parser actions.Actions) ! {
-	mut actions_ := parser.actions
-	for mut action in actions_ {
+	for action in parser.actions {
 		tree.logger.debug('Executing action: ${action}')
 
 		match action.name {
@@ -26,7 +25,7 @@ pub fn (mut tree Tree) execute(parser actions.Actions) ! {
 			'collection.add' {
 				collection_name := action.params.get('name')!
 				collection_path := action.params.get('path')!
-				mut col_server := tree.collection_new(name: collection_name, path: collection_path, heal: true)!
+				_ := tree.collection_new(name: collection_name, path: collection_path, heal: true)!
 			}
 			'page.add' {
 				collection_name := action.params.get('collection')!

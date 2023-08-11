@@ -1,6 +1,6 @@
 module knowledgetree
 
-import freeflowuniverse.crystallib.gittools
+/*import freeflowuniverse.crystallib.gittools
 
 // TODO: need to get this to work, needs basic tooling to be able to use 3script
 
@@ -76,3 +76,4 @@ pub fn actions_process(mut parser actions.Actions, actions_done map[string]strin
 	}
 	return actions_done
 }
+*/

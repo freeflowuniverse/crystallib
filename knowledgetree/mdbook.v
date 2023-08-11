@@ -105,6 +105,7 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 		tree: &l
 		path: p
 		dest: args.dest
+		doc_summary: &markdowndocs.Doc{}
 	}
 
 	b.process_summary()!
