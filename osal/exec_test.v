@@ -1,7 +1,7 @@
 module osal
 
-import crypto.md5
-import os
+// import crypto.md5
+// import os
 
 // TODO: needs to be rewritten for process
 
