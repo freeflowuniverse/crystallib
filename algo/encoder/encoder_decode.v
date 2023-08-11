@@ -65,7 +65,7 @@ pub fn (mut d Decoder) get_u64() u64 {
 }
 
 pub fn (mut d Decoder) get_time() time.Time {
-	return time.unix2(i64(d.get_u64()), d.get_int())
+	return time.unix_nanosecond(i64(d.get_u64()), d.get_int())
 }
 
 pub fn (mut d Decoder) get_list_string() []string {
