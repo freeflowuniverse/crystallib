@@ -1,5 +1,6 @@
 module knowledgetree
 
+import log
 import v.embed_file
 
 [heap]
@@ -7,6 +8,7 @@ pub struct Tree {
 pub:
 	name string
 pub mut:
+	logger log.Logger
 	pointers map[string]&Pointer
 	collections map[string]&Collection
 	books map[string]&MDBook
@@ -21,14 +23,10 @@ pub enum TreeState {
 }
 
 fn (mut tree Tree) init()!{
-	// QUESTION: what is this and what should it do? 
-	//mdbook.install()! //not sure where this is, needs to be in installers, using our osal
 	tree.embedded_files << $embed_file('template/css/print.css')
 	tree.embedded_files << $embed_file('template/css/variables.css')
 	tree.embedded_files << $embed_file('template/mermaid-init.js')
 	tree.embedded_files << $embed_file('template/mermaid.min.js') 
-	
-	//TODO make sure all files are embedded
 }
 
 

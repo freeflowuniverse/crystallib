@@ -1,14 +1,10 @@
 module knowledgetree
 
-//TODO: needs serious fixes
-
-// import os
 import freeflowuniverse.crystallib.gittools
 import freeflowuniverse.crystallib.markdowndocs
 import freeflowuniverse.crystallib.pathlib { Path }
 import freeflowuniverse.crystallib.texttools
-
-import os
+import freeflowuniverse.crystallib.osal
 
 enum BookState {
 	init
@@ -23,7 +19,7 @@ pub enum BookErrorCat {
 	file_not_found
 	image_not_found
 	page_not_found
-	site_not_found
+	collection_not_found
 	sidebar
 }
 
@@ -84,6 +80,10 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 		return error('Cannot specify new book without specifying a name.')
 	}
 
+	if args.name in l.books {
+		return error('Book already exists')
+	}
+
 	if args.git_url.len > 0 {
 		mut gs := gittools.get(root: args.git_root)!
 		mut gr := gs.repo_get_from_url(url: args.git_url, pull: args.git_pull, reset: args.git_reset)!
@@ -100,19 +100,38 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 	}
 	p.path_normalize()! // make sure its all lower case and name is proper
 
-	doc := markdowndocs.new(path: args.path)!
-
 	mut b := &MDBook{
 		name: args.name
 		tree: &l
 		path: p
 		dest: args.dest
-		doc_summary: &doc
+		doc_summary: &markdowndocs.Doc{}
 	}
+
+	b.process_summary()!
+
 	l.books[args.name] = b
 
 	return b
 	
+}
+
+//process the summary
+fn (mut book MDBook) process_summary()! {
+	mut p := pathlib.get_file('${book.path.path}/summary.md', false)!
+	if !p.exists() {
+		p = pathlib.get_file('${book.path.path}/SUMMARY.md', false)!
+		if !p.exists() {
+			return error('cannot find summary.md for book under ${book.path.path}/')
+		}
+	}
+	doc := markdowndocs.new(path: p.path) or {
+		return error('cannot book parse ${book.path.path}: ${err}')
+	}
+
+	book.doc_summary = &doc
+
+	book.fix()!
 }
 
 
@@ -122,7 +141,6 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 pub fn (mut book MDBook) fix() ! {
 	book.fix_summary()!
 	book.link_pages_files_images()!
-	// TODO: check the links on pages
 	book.errors_report()!
 }
 
@@ -156,33 +174,33 @@ fn (mut book MDBook) fix_summary() ! {
 						msge := 'external link not supported yet in summary for:\n ${book}'
 						book.error(cat: .unknown, msg: msge)
 					} else {
-						$if debug {
-							println(' - book ${book.name} summary:${link.pathfull()}')
-						}
+						book.tree.logger.debug('book ${book.name} summary:${link.pathfull()}')
 						mut collectionname := link.path.all_before('/')
 						if link.path == '' {
 							// means collection has not been specified
 							return error('collection needs to be specified in summary, is the first part of path e.g. collectionname/...')
 						}
 						pagename := link.filename
-						if book.tree.page_exists(pagename) {
-							page := book.tree.page_get(pagename)!
-							mut collection := page.collection
-							dest := '${book.path}/${collectionname}'
-							collection.path.link(dest, true)!
+						if book.tree.collection_exists(collectionname) {
+							mut collection := book.tree.collection_get(collectionname)!
+							dest := '${book.path.path}/${collectionname}'
+							if dest != collection.path.path {
+								collection.path.link(dest, true)!
+							}
 
-							// now  we can process the page where the link goes to
+							// now we can process the page where the link goes to
 							if collection.page_exists(pagename) {
+								page := collection.page_get(pagename)!
 								newlink := '[${link.description}](${collectionname}/${page.pathrel})'
 								book.pages['${collection.name}:${page.name}'] = page
 								if newlink != link.content {
-									// $if debug {
-									// 	println('change: $link.content -> $newlink')
-									// }
+									book.tree.logger.debug('change: $link.content -> $newlink')
 									paragraph.content = paragraph.content.replace(link.content,
 										newlink)
-									// paragraph.doc.save_wiki()!
-									panic('not implemented save wiki')
+									// TODO: don't think we need this one
+									//panic('new page is ${link.content} with ${newlink}')
+									//paragraph.doc.save_wiki()!
+									//panic('not implemented save wiki')
 								}
 							} else {
 								book.error(
@@ -194,8 +212,8 @@ fn (mut book MDBook) fix_summary() ! {
 						} else {
 							collectionnames := book.tree.collectionnames().join('\n- ')
 							book.error(
-								cat: .site_not_found
-								msg: 'Cannot find site: ${collectionname} \n\collectionnames known::\n\n${collectionnames} '
+								cat: .collection_not_found
+								msg: 'Cannot find collection: ${collectionname} \n\collectionnames known::\n\n${collectionnames} '
 							)
 							continue
 						}
@@ -281,19 +299,19 @@ pub fn (mut book MDBook) export() ! {
 	html_path := book.html_path('').path
 	for _, mut page in book.pages {
 		dest := '${book_path}/${page.collection.name}/${page.pathrel}'
-		println(' - export: ${dest}')
+		book.tree.logger.info('- export: ${dest}')
 		page.save(dest: dest)!
 	}
 
 	for _, mut file in book.files {
 		dest := '${book_path}/${file.collection.name}/${file.pathrel}'
-		println(' - export: ${dest}')
+		book.tree.logger.info('- export: ${dest}')
 		file.copy(dest)!
 	}
 
 	for _, mut image in book.images {
 		dest := '${book_path}/${image.collection.name}/${image.pathrel}'
-		println(' - export: ${dest}')
+		book.tree.logger.info('- export: ${dest}')
 		image.copy(dest)!
 	}
 
@@ -302,8 +320,10 @@ pub fn (mut book MDBook) export() ! {
 	pathsummary.write(book.doc_summary.wiki())!
 
 	// lets now build
-	os.execute_or_panic('mdbook build ${book.book_path('').path} --dest-dir ${html_path}')
-	os.execute_or_panic('open ${html_path}/index.html')
+	osal.exec(cmd: 'mdbook build ${book.book_path('').path} --dest-dir ${html_path}', retry: 0)!
+
+	book.tree.logger.info('MDBook has been generated under ${book_path}')
+	book.tree.logger.info('Html pages are found under ${html_path}')
 }
 
 fn (mut book MDBook) template_write(path string, content string) ! {
