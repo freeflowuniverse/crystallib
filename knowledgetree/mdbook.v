@@ -184,7 +184,9 @@ fn (mut book MDBook) fix_summary() ! {
 						if book.tree.collection_exists(collectionname) {
 							mut collection := book.tree.collection_get(collectionname)!
 							dest := '${book.path.path}/${collectionname}'
-							collection.path.link(dest, true)!
+							if dest != collection.path.path {
+								collection.path.link(dest, true)!
+							}
 
 							// now we can process the page where the link goes to
 							if collection.page_exists(pagename) {
