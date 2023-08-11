@@ -182,7 +182,7 @@ fn (mut book MDBook) fix_summary() ! {
 						pagename := link.filename
 						if book.tree.collection_exists(collectionname) {
 							mut collection := book.tree.collection_get(collectionname)!
-							dest := '${book.path}/${collectionname}'
+							dest := '${book.path.path}/${collectionname}'
 							collection.path.link(dest, true)!
 
 							// now we can process the page where the link goes to

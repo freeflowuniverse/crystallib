@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.texttools
 
 [params]
-struct CollectionNewArgs {
+pub struct CollectionNewArgs {
 mut:
 	name      string [required]
 	path      string [required]
