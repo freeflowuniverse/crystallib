@@ -1,5 +1,4 @@
 import freeflowuniverse.crystallib.redisclient
-import time
 
 fn setup() !&redisclient.Redis {
 	mut redis := redisclient.core_get()!
