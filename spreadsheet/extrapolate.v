@@ -30,15 +30,17 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 	
 
 	mut xlast := 0 // remembers where there was last non empty value
+	mut has_previous_value := false
 	mut xlastval := 0.0 // the value at that position
 	mut xlastwidth := 0 // need to know how fast to go up from the xlast to xnew
 	mut xnewval := 0.0
-	// println(r)
+	//println(r)
 	for x in 0 .. r.cells.len {
-		// println("$x empty:${r.cells[x].empty} xlastwidth:$xlastwidth")
-		if r.cells[x].empty && xlastval == 0 {
+		//println("$x empty:${r.cells[x].empty} xlastwidth:$xlastwidth xlastval:$xlastval xlast:$xlast")
+		if r.cells[x].empty && !has_previous_value {
 			continue
 		}
+		has_previous_value = true
 		if r.cells[x].empty == false && xlastwidth == 0 {
 			// we get new value, just go to next
 			xlast = x
