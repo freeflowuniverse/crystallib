@@ -57,7 +57,7 @@ jobs:
           v -stats test ipaddress
           v -stats test jsonrpc
           v -stats test jsonschema
-          v -stats test knopwledgetree
+          v -stats test knowledgetree
           v -stats test markdowndocs
           v -stats test mnemonic
           v -stats test openrpc
