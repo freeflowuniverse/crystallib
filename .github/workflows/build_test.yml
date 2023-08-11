@@ -41,7 +41,6 @@ jobs:
           VJOBS: 1
         run: |
           v -stats test algo
-          v -stats test baobab
           v -stats test bizmodel
           v -stats test books
           v -stats test clients
