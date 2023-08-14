@@ -1,6 +1,7 @@
 module rest
 
 import os
+import yaml
 import json
 
 pub struct DataLoader {
@@ -8,7 +9,7 @@ pub:
 	base_path string
 }
 
-// const image_fields = ['logo', 'image']
+const image_fields = ['logo', 'image']
 
 pub fn new_data_loader(base_path string) &DataLoader {
 	return &DataLoader{
@@ -53,7 +54,7 @@ fn (mut d DataLoader) get_doc_type_name[T]() string {
 // TODO
 fn (mut d DataLoader) resolve_links[T](mut document T) {
 	// $for field in T.fields {
-	// 	if field.name in image_fields {
+	// 	if field.name in ImageFields {
 	// 		document.$(field.name) = $(field.name) // resolve_link()
 	// 	}
 
