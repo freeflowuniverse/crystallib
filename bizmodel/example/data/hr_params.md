@@ -23,7 +23,7 @@ possible parameters
 
 !!hr.employee_define 
     descr:'CTO'  
-    cost:'12000USD' indexation:'10%' 
+    cost:'12000EUR' indexation:'10%' 
     department:'engineering'
 
 !!hr.employee_define 
