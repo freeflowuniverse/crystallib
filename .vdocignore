@@ -35,3 +35,4 @@ threefold/twinclient/examples
 crpgp/examples
 openrpc/examples
 texttools/testdata
+coroutines/
