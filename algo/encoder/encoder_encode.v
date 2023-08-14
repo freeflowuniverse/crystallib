@@ -63,7 +63,7 @@ pub fn (mut b Encoder) add_u64(data u64) {
 
 pub fn (mut b Encoder) add_time(data time.Time) {
 	b.add_u64(u64(data.unix_time())) // add as epoch time
-	b.add_int(data.microsecond)
+	b.add_int(data.nanosecond)
 }
 
 pub fn (mut b Encoder) add_list_string(data []string) {

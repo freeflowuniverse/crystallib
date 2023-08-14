@@ -51,7 +51,7 @@ pub fn (mut e DockerEngine) load() ! {
 	e.containers_load()!
 }
 
-// load all containers, they can be consulten in e.containers
+// load all containers, they can be consulted in e.containers
 // see obj: DockerContainer as result in e.containers
 pub fn (mut e DockerEngine) containers_load() ! {
 	e.containers = []DockerContainer{}
@@ -71,9 +71,6 @@ pub fn (mut e DockerEngine) containers_load() ! {
 		}
 		id := fields[0]
 		mut container := DockerContainer{
-			image: &DockerImage{
-				engine: &e
-			}
 			engine: &e
 		}
 

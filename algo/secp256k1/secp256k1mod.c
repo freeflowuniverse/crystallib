@@ -163,6 +163,7 @@ int secp256k1_generate_key(secp256k1_t *secp) {
     return 1;
 }
 
+// backward compatibility
 int secp256k1_load_key(secp256k1_t *secp, char *key) {
     // only allow valid key size
     if(strlen(key) != (SECKEY_SIZE * 2) + 2)
@@ -179,6 +180,28 @@ int secp256k1_load_key(secp256k1_t *secp, char *key) {
     }
 
     return secp256k1_populate_key(secp);
+}
+
+int secp256k1_load_private_key(secp256k1_t *secp, char *key) {
+    return secp256k1_load_key(secp, key);
+}
+
+int secp256k1_load_public_key(secp256k1_t *secp, char *key) {
+    // only allow valid key size
+    if(strlen(key) != (COMPPUB_SIZE * 2) + 2)
+        return 1;
+
+    unsigned char *binkey = hexparse(key);
+
+    free(secp->compressed);
+    secp->compressed = binkey;
+
+    if(!secp256k1_ec_pubkey_parse(secp->kntxt, &secp->pubkey, secp->compressed, COMPPUB_SIZE)) {
+        printf("[-] failed to load public key\n");
+        return 1;
+    }
+
+    return 0;
 }
 
 
@@ -294,9 +317,20 @@ void secp256k1_dumps(secp256k1_t *secp) {
     dumphex(secp->xcompressed, XSERPUB_SIZE);
 }
 
+// backward compatibility
 char *secp256k1_export(secp256k1_t *secp) {
     return hexifier(secp->seckey, SECKEY_SIZE);
 }
+
+// return private key in hex format
+char *secp256k1_private_key(secp256k1_t *secp) {
+    return secp256k1_export(secp);
+}
+
+char *secp256k1_public_key(secp256k1_t *secp) {
+    return hexifier(secp->compressed, COMPPUB_SIZE);
+}
+
 
 #ifndef NO_SECP_MAIN
 int main() {
@@ -308,6 +342,7 @@ int main() {
     dumphex(wendy->compressed, COMPPUB_SIZE);
     dumphex(wendy->xcompressed, XSERPUB_SIZE);
 
+    // bob
     secp256k1_t *bob = secp256k1_new();
     secp256k1_load_key(bob, "0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83");
 
@@ -317,6 +352,18 @@ int main() {
     dumphex(bob->compressed, COMPPUB_SIZE);
     dumphex(bob->xcompressed, XSERPUB_SIZE);
 
+    // export functions
+    char *priv = secp256k1_private_key(bob);
+    char *pubk = secp256k1_public_key(bob);
+    printf("Private export: %s\n", priv);
+    printf("Public  export: %s\n", pubk);
+    free(priv);
+
+    secp256k1_t *bobpub = secp256k1_new();
+    int val = secp256k1_load_public_key(bobpub, "0x03310ec949bd4f7fc24f823add1394c78e1e9d70949ccacf094c027faa20d99e21");
+    printf("Public key loader: %d\n", val);
+
+    // alice
     secp256k1_t *alice = secp256k1_new();
     secp256k1_load_key(alice, "0x8225825815f42e1c24a2e98714d99fee1a20b5ac864fbcb7a103cd0f37f0ffec");
 
@@ -356,6 +403,15 @@ int main() {
 
     printf("\n");
     printf("Signature valid: %d\n", valid);
+
+    secp256k1_sign_free(sigobj);
+
+    // using bobpub
+    sigobj = secp256k1_load_signature(bobpub, sign, SERSIG_SIZE);
+    valid = secp256k1_sign_verify(bobpub, sigobj, hash, sizeof(hash));
+
+    printf("\n");
+    printf("Signature valid (using bob public key only): %d\n", valid);
 
     secp256k1_erase_free(sign, SERSIG_SIZE);
     secp256k1_sign_free(sigobj);

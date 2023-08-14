@@ -1,16 +1,17 @@
 module twinsafe
 
+import encoding.hex
 import freeflowuniverse.crystallib.algo.aes_symmetric
 
 // this is me, my representation
 pub struct MyConfig {
 pub mut:
 	id          u32       [primary; sql: serial]
-	name        string    [nonull]
+	name        string    [nonull; unique]
 	description string
-	config      string [skip] // this is 3script which holds the initialization content for configuration of anything
+	config      string    [skip]    // this is 3script which holds the initialization content for configuration of anything
 	keysafe     &KeysSafe [skip] // allows us to remove ourselves from mem, or go to db
-	config_enc string
+	config_enc  string
 }
 
 [params]
@@ -21,30 +22,41 @@ pub:
 	config      string
 }
 
+fn (mut ks KeysSafe) myconfig_db_exists(args GetArgs) !bool{
+	configs := sql ks.db {
+		select from MyConfig where name == args.name
+	}!
+	if configs.len > 0 {
+		return true
+	}
+	return false
+}
+
 // generate a new key is just importing a key with a random seed
 // if it exists will return the key which is already there
 pub fn (mut ks KeysSafe) myconfig_add(args_ MyConfigAddArgs) ! {
-	config_enc := aes_symmetric.encrypt(args_.config, ks.secret)
-	myconfig := MyConfig{
-		name: args_.name
-		description: args_.description
-		config: args_.config
-		config_enc: config_enc
-		keysafe: ks
-	}
-	configs := sql ks.db {
-		select from MyConfig where name == myconfig.name
-	}!
-	if configs.len > 0 {
+	mut args := args_
+	exists := ks.myconfig_db_exists(name: args.name)!
+	if exists{
 		return GetError{
 			args: GetArgs{
-				id:   configs[0].id,
-				name: configs[0].name
+				id: 0
+				name: args_.name
 			}
-			msg: 'myconfig with name: ${configs[0].name} aleady exist'
+			msg: 'myconfig with name: ${args.name} already exist'
 			error_type: GetErrorType.alreadyexists
 		}
 	}
+	
+	config_enc := hex.encode(aes_symmetric.encrypt(args.config.bytes(), ks.secret))
+	myconfig := MyConfig{
+		name: args.name
+		description: args.description
+		config: args.config
+		config_enc: config_enc
+		keysafe: ks
+	}
+	
 	sql ks.db {
 		insert myconfig into MyConfig
 	}!
@@ -53,20 +65,25 @@ pub fn (mut ks KeysSafe) myconfig_add(args_ MyConfigAddArgs) ! {
 
 // I can have more than 1 myconfig, ideal for testing as well
 pub fn (mut ks KeysSafe) myconfig_get(args GetArgs) !MyConfig {
+	if args.name in ks.myconfigs {
+		return ks.myconfigs[args.name]
+	}
 	configs := sql ks.db {
 		select from MyConfig where name == args.name
 	}!
 	if configs.len == 1 {
-		myconfig := configs[0]
-		config := aes_symmetric.decrypt(myconfig.config_enc, ks.secret)
-		myconfig.config = config
+		mut myconfig := configs[0]
+		config_enc := hex.decode(myconfig.config_enc)!
+		config_bytes := aes_symmetric.decrypt(config_enc, ks.secret)
+		myconfig.config = config_bytes.bytestr()
 		myconfig.keysafe = ks
 		return myconfig
 	}
-	return  GetError{
-		args: args,
-		msg: "couldn't get myconfig with name: ${args.name}" 
-		error_type: GetErrorType.notfound}
+	return GetError{
+		args: args
+		msg: "couldn't get myconfig with name: ${args.name}"
+		error_type: GetErrorType.notfound
+	}
 }
 
 pub fn (mut myconfig MyConfig) delete() ! {
@@ -77,16 +94,14 @@ pub fn (mut myconfig MyConfig) delete() ! {
 }
 
 pub fn (mut myconfig MyConfig) save() ! {
-	myconfig.config_enc = aes_symmetric.encrypt(myconfig.config, twin.keysafe.secret)
+	config_enc := aes_symmetric.encrypt(myconfig.config.bytes(), myconfig.keysafe.secret)
 
-	cfgs := sql myconfig.keysafe.db {
-		select from MyConfig where name == myconfig.name
-	}!
-	if cfgs.len > 0 {
-		// twin already exists in the data base so we update
+	exists := myconfig.keysafe.myconfig_db_exists(name: myconfig.name)!
+
+	if exists {
 		sql myconfig.keysafe.db {
-			update MyConfig set name = myconfig.name, description = myconfig.description, config_enc = myconfig.config_enc
-			where id == cfgs[0].id
+			update MyConfig set name = myconfig.name, description = myconfig.description,
+			config_enc = hex.encode(config_enc) where name == myconfig.name
 		}!
 		return
 	}

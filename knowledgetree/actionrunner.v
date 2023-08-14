@@ -1,18 +1,18 @@
 module knowledgetree
 
-import freeflowuniverse.crystallib.gittools
+/*import freeflowuniverse.crystallib.gittools
 
 // TODO: need to get this to work, needs basic tooling to be able to use 3script
 
 // ! Use booksrunner in ./actionrunner
 
-import freeflowuniverse.crystallib.actionsparser
+import freeflowuniverse.crystallib.baobab.actions
 
 import os
 
 // QUESTION: can you write specs for this function, what should it do, what actions should it recognize, please be specific
 // find all actions & process, this works inclusive
-pub fn actions_process(mut parser actionsparser.ActionsParser, actions_done map[string]string) !map[string]string {
+pub fn actions_process(mut parser actions.Actions, actions_done map[string]string) !map[string]string {
 	// $if debug {
 	// 	println("+++++")
 	// 	println(actions)
@@ -76,3 +76,4 @@ pub fn actions_process(mut parser actionsparser.ActionsParser, actions_done map[
 	}
 	return actions_done
 }
+*/

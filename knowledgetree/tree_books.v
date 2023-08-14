@@ -2,26 +2,6 @@ module knowledgetree
 
 import freeflowuniverse.crystallib.texttools
 
-//process the summary
-fn (book MDBook) process_summary()! {
-
-	// is case insensitive
-	//? checks for both summary.md files and links
-	/*
-	mut summarypath := p.file_get('summary.md') or {
-		p.link_get('summary.md') or { return error('cannot find summary path: ${err}') }
-	}
-	mut doc := markdowndocs.new(path: summarypath.path) or {
-		panic('cannot book parse ${summarypath} ,${err}')
-	}
-
-	//TODO: now we need to walk over all parts of the summary and for each item check we find collection (collection exists)
-
-	panic("too implement, there was code but i lost it")
-	*/
-
-}
-
 
 
 //FIND METHODS ON TREE

@@ -18,7 +18,9 @@ jobs:
           - 6379:6379
     steps:
       - name: Install dependencies
-        run: sudo apt install -y libgc-dev tmux mc git rsync curl imagemagick
+        run: |
+          sudo apt install -y libgc-dev tmux mc git rsync curl imagemagick
+          cargo install mdbook mdbook-mermaid 
 
       - name: Setup Vlang
         uses: vlang/setup-v@v1.3
@@ -39,23 +41,25 @@ jobs:
       - name: Run tests
         env:
           VJOBS: 1
+          OFFLINE: 1
         run: |
-          v -stats test actions
+          v -stats test algo
+          v -stats test bizmodel
           v -stats test books
-          v -stats test coinmarketcap
+          v -stats test clients
           v -stats test codemodel
           v -stats test codeparser
           v -stats test console
-          v -stats test crpgp
           v -stats test crystaljson
           v -stats test currency
           v -stats test data
           v -stats test docker
-          v -stats test encoder
+          v -stats test gittools
           v -stats test imagemagick
           v -stats test ipaddress
           v -stats test jsonrpc
           v -stats test jsonschema
+          v -stats test knowledgetree
           v -stats test markdowndocs
           v -stats test mnemonic
           v -stats test openrpc
@@ -65,5 +69,6 @@ jobs:
           v -stats test redisclient
           v -stats test resp
           v -stats test rpcwebsocket
+          v -stats test spreadsheet
           v -stats test texttools
           v -stats test timetools

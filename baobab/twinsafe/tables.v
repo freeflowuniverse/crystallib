@@ -3,7 +3,7 @@ module twinsafe
 import db.sqlite
 // TODO: create 3 tables, one for othertwin, one for mytwin, one for myconfig
 
-fn create_tables(db sqlite.DB) ! {
+pub fn create_tables(db sqlite.DB) ! {
 	sql db {
 		create table MyTwin
 	}!

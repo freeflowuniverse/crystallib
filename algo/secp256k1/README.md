@@ -6,13 +6,34 @@ This is a lib256k1 binding for vlang.
 
 make sure the lib is installed
 
-on osx
+### macOS
 
 ```bash
 brew install secp256k1
 ```
 
->> TODO: what needs to be installed for linux (maxime)
+### Ubuntu
+
+Compile latest release, version included in Ubuntu is outdated.
+
+```
+apt-get install -y build-essential wget autoconf libtool
+
+wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.3.2.tar.gz
+tar -xvf v0.3.2.tar.gz
+
+cd secp256k1-0.3.2/
+./autogen.sh
+./configure
+make -j 5
+make install
+```
+
+### Gentoo
+
+```bash
+emerge dev-libs/libsecp256k1
+```
 
 ## Features
 

@@ -1,7 +1,6 @@
 module encoder
 
 import time
-import x.json2 as json
 
 // example see https://github.com/vlang/v/blob/master/examples/compiletime/reflection.v
 
