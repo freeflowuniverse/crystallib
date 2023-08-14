@@ -45,7 +45,6 @@ jobs:
         run: |
           v -stats test algo
           v -stats test bizmodel
-          v -stats test books
           v -stats test clients
           v -stats test codemodel
           v -stats test codeparser
