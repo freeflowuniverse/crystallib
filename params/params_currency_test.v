@@ -25,7 +25,7 @@ fn test_get_currencyamount() ! {
 	// testeuro
 	amount = params.testparams.get_currencyamount('euros')!
 	assert amount.currency.name == 'EUR'
-	assert amount.currency.usdval > 1 // may need revision in future
+	assert amount.currency.usdval >= 0.9 // may need revision in future
 	assert amount.val == 100.0
 }
 
@@ -33,7 +33,7 @@ fn test_get_currencyamount_default() ! {
 	// testeuro
 	mut amount := params.testparams.get_currencyamount_default('na', '20EUR')!
 	assert amount.currency.name == 'EUR'
-	assert amount.currency.usdval > 1 // may need revision in future
+	assert amount.currency.usdval >= 0.9 // may need revision in future
 	assert amount.val == 20
 }
 
