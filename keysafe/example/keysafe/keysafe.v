@@ -46,7 +46,7 @@ fn main() {
 	println('=== Signed Data Dump ===')
 	println(signed)
 
-	//QUESTION: how to get the data out ?
+	// QUESTION: how to get the data out ?
 
 	// load public key like it was received from external channel
 	checker := keysafe.verifykey_new('maxux', share_maxux)!

@@ -53,11 +53,11 @@ fn main() {
 	})!
 	print(translation)
 
-	file_upload := ai_cli.upload_file(filepath:"/path/to/file.jsonl", purpose:"fine-tune")
+	file_upload := ai_cli.upload_file(filepath: '/path/to/file.jsonl', purpose: 'fine-tune')
 	print(file_upload)
 	files := ai_cli.list_filess()!
 	print(files)
-	resp := ai_cli.create_fine_tune(training_file: file.id, model: "curie")!
+	resp := ai_cli.create_fine_tune(training_file: file.id, model: 'curie')!
 	print(resp)
 
 	fine_tunes := ai_cli.list_fine_tunes()!

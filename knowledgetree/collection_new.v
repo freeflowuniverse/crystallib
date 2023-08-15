@@ -6,10 +6,10 @@ import freeflowuniverse.crystallib.texttools
 [params]
 pub struct CollectionNewArgs {
 mut:
-	name      string [required]
-	path      string [required]
-	heal      bool // healing means we fix images, if selected will automatically load, remove stale links
-	load      bool = true
+	name string [required]
+	path string [required]
+	heal bool // healing means we fix images, if selected will automatically load, remove stale links
+	load bool = true
 }
 
 // get a new collection
@@ -21,7 +21,7 @@ pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 		return error('Collection already exits')
 	}
 
-	mut pp := pathlib.get_dir(args.path, false)! //will raise error if path doesn't exist
+	mut pp := pathlib.get_dir(args.path, false)! // will raise error if path doesn't exist
 	mut collection := &Collection{
 		name: args.name
 		path: pp
@@ -60,7 +60,11 @@ fn (mut collection Collection) scan_internal(mut p pathlib.Path) ! {
 			collection_abs_path := collection.path.absolute()
 			if p_in.extension_lower() == 'md' {
 				// means we are linking pages,this should not be done, need or change
-				collection.error(path: p_in, msg: 'a markdown file should not be linked', cat: .unknown)
+				collection.error(
+					path: p_in
+					msg: 'a markdown file should not be linked'
+					cat: .unknown
+				)
 				continue
 			}
 			if !link_real_path.starts_with(collection_abs_path) {

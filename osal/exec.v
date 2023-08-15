@@ -2,7 +2,6 @@ module osal
 
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.pathlib
-
 import json
 import os
 import time
@@ -270,7 +269,7 @@ fn (mut job Job) cmd_to_process_args() ![]string {
 	scriptpath := if job.cmd.scriptpath.len > 0 {
 		job.cmd.scriptpath
 	} else {
-		"/tmp/exece.sh"
+		'/tmp/exece.sh'
 	}
 	job.cmd.scriptpath = pathlib.temp_write(text: cmd, path: scriptpath) or {
 		return error('error: cannot write script to execute: ${err}')

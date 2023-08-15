@@ -6,24 +6,24 @@ import os
 import net.http
 
 const (
-	jsonl_mime_type = "text/jsonl"
+	jsonl_mime_type = 'text/jsonl'
 )
 
 [params]
 pub struct FileUploadArgs {
 pub:
 	filepath string
-	purpose string
+	purpose  string
 }
 
 pub struct File {
 pub mut:
-	id string
-	object string
-	bytes int
+	id         string
+	object     string
+	bytes      int
 	created_at int
-	filename string
-	purpose string
+	filename   string
+	purpose    string
 }
 
 pub struct Files {
@@ -33,8 +33,8 @@ pub mut:
 
 pub struct DeleteResp {
 pub mut:
-	id string
-	object string
+	id      string
+	object  string
 	deleted bool
 }
 
@@ -45,7 +45,7 @@ pub fn (mut f OpenAIFactory) upload_file(args FileUploadArgs) !File {
 	file_data := http.FileData{
 		filename: os.base(args.filepath)
 		data: file_content
-		content_type: jsonl_mime_type
+		content_type: openai.jsonl_mime_type
 	}
 
 	form := http.PostMultipartFormConfig{
@@ -53,12 +53,12 @@ pub fn (mut f OpenAIFactory) upload_file(args FileUploadArgs) !File {
 			'file': [file_data]
 		}
 		form: {
-			'purpose':           args.purpose
+			'purpose': args.purpose
 		}
 	}
 
 	req := httpconnection.Request{
-		prefix: "files"
+		prefix: 'files'
 	}
 	r := f.connection.post_multi_part(req, form)!
 	if r.status_code != 200 {
@@ -87,6 +87,6 @@ pub fn (mut f OpenAIFactory) get_file(file_id string) !File {
 
 // returns the content of a specific file
 pub fn (mut f OpenAIFactory) get_file_content(file_id string) !string {
-	r := f.connection.get(prefix: 'files/' + file_id + "/content")!
+	r := f.connection.get(prefix: 'files/' + file_id + '/content')!
 	return r
 }

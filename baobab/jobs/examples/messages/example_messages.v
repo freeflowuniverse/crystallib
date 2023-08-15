@@ -1,11 +1,6 @@
-
-
 module main
 
 fn do() ! {
-
-
-
 }
 
 fn main() {

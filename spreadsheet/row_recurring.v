@@ -19,7 +19,7 @@ pub fn (mut r Row) recurring(args_ RowRecurringArgs) !&Row {
 	mut args := args_
 	if args.aggregatetype == .unknown {
 		args.aggregatetype = r.aggregatetype
-	}	
+	}
 	if args.name.len > 0 {
 		mut r3 := r.sheet.row_new(
 			name: args.name

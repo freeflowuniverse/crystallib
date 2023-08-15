@@ -27,45 +27,45 @@ mut:
 
 pub struct ModerationResult {
 pub mut:
-	categories ModerationResultCategories
+	categories      ModerationResultCategories
 	category_scores ModerationResultCategoryScores
-	flagged bool
+	flagged         bool
 }
 
 pub struct ModerationResultCategories {
 pub mut:
-	sexual bool
-	hate bool
-	harassment bool
-	selfharm bool [json: "self-harm"]
-	sexual_minors bool [json: "sexual/minors"]
-	hate_threatening bool [json: "hate/threatening"]
-	violence_graphic bool [json: "violence/graphic"]
-	selfharm_intent bool [json: "self-harm/intent"]
-	selfharm_instructions bool [json: "self-harm/instructions"]
-	harassment_threatening bool [json: "harassment/threatening"]
-	violence bool
+	sexual                 bool
+	hate                   bool
+	harassment             bool
+	selfharm               bool [json: 'self-harm']
+	sexual_minors          bool [json: 'sexual/minors']
+	hate_threatening       bool [json: 'hate/threatening']
+	violence_graphic       bool [json: 'violence/graphic']
+	selfharm_intent        bool [json: 'self-harm/intent']
+	selfharm_instructions  bool [json: 'self-harm/instructions']
+	harassment_threatening bool [json: 'harassment/threatening']
+	violence               bool
 }
 
 pub struct ModerationResultCategoryScores {
 pub mut:
-	sexual f32
-	hate f32
-	harassment f32
-	selfharm f32 [json: "self-harm"]
-	sexual_minors f32 [json: "sexual/minors"]
-	hate_threatening f32 [json: "hate/threatening"]
-	violence_graphic f32 [json: "violence/graphic"]
-	selfharm_intent f32 [json: "self-harm/intent"]
-	selfharm_instructions f32 [json: "self-harm/instructions"]
-	harassment_threatening f32 [json: "harassment/threatening"]
-	violence f32
+	sexual                 f32
+	hate                   f32
+	harassment             f32
+	selfharm               f32 [json: 'self-harm']
+	sexual_minors          f32 [json: 'sexual/minors']
+	hate_threatening       f32 [json: 'hate/threatening']
+	violence_graphic       f32 [json: 'violence/graphic']
+	selfharm_intent        f32 [json: 'self-harm/intent']
+	selfharm_instructions  f32 [json: 'self-harm/instructions']
+	harassment_threatening f32 [json: 'harassment/threatening']
+	violence               f32
 }
 
 pub struct ModerationResponse {
 pub mut:
-	id string
-	model string
+	id      string
+	model   string
 	results []ModerationResult
 }
 

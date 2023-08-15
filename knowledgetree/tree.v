@@ -8,12 +8,12 @@ pub struct Tree {
 pub:
 	name string
 pub mut:
-	logger log.Logger
-	pointers map[string]&Pointer
-	collections map[string]&Collection
-	books map[string]&MDBook
+	logger         log.Logger
+	pointers       map[string]&Pointer
+	collections    map[string]&Collection
+	books          map[string]&MDBook
 	embedded_files []embed_file.EmbedFileData // this where we have the templates for exporting a book
-	state TreeState
+	state          TreeState
 }
 
 pub enum TreeState {
@@ -22,13 +22,12 @@ pub enum TreeState {
 	error
 }
 
-fn (mut tree Tree) init()!{
+fn (mut tree Tree) init() ! {
 	tree.embedded_files << $embed_file('template/css/print.css')
 	tree.embedded_files << $embed_file('template/css/variables.css')
 	tree.embedded_files << $embed_file('template/mermaid-init.js')
-	tree.embedded_files << $embed_file('template/mermaid.min.js') 
+	tree.embedded_files << $embed_file('template/mermaid.min.js')
 }
-
 
 // reset all, just to make sure we regenerate fresh
 pub fn (mut tree Tree) reset() ! {
@@ -42,7 +41,7 @@ pub fn (mut tree Tree) export() ! {
 	tree.reset()! // make sure we start from scratch
 	tree.fix()!
 	for _, mut book in tree.books {
-		book.export()! 
+		book.export()!
 	}
 }
 
@@ -56,10 +55,10 @@ pub fn (mut tree Tree) fix() ! {
 	}
 	for _, mut collection in tree.collections {
 		collection.fix()!
-	}	
+	}
 }
 
-//the next is our custom error for objects not found
+// the next is our custom error for objects not found
 pub struct NoOrTooManyObjFound {
 	Error
 pub:

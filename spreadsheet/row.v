@@ -73,9 +73,9 @@ pub fn (mut s Sheet) row_new(args_ RowNewParams) !&Row {
 	}
 	assert r.cells.len == s.nrcol
 	if args.growth.len > 0 {
-		if args.extrapolate{
-			if !args.growth.contains(",") &&  !args.growth.contains(":"){
-				args.growth="1:${args.growth}"
+		if args.extrapolate {
+			if !args.growth.contains(',') && !args.growth.contains(':') {
+				args.growth = '1:${args.growth}'
 			}
 			r.extrapolate(args.growth)!
 		} else {

@@ -9,7 +9,7 @@ pub:
 	remote libsodium.VerifyKey // target public master key
 }
 
-//remote is the public master key which needs to verify
+// remote is the public master key which needs to verify
 pub fn verifykey_new(name string, remote string) !VerifyKey {
 	parsed := hex.decode(remote.substr(2, remote.len))!
 

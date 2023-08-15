@@ -16,19 +16,18 @@ pub enum PointerState {
 	error
 }
 
-
 // links to a page, image or file
 pub struct Pointer {
 pub mut:
-	sid			 string //is the smartid name only relevant into my 3bot, each pointer can have unique sid
-	collection   string //all namefixed
-	book 	     string 
-	name      string // is name without extension, all namefixed (lowercase...)
-	cat       PointerCat
-	state     PointerState
-	extension string // e.g. jpg
-	error     string // if there is an error on the pointer, then will be visible in this property
-	tree     string
+	sid        string // is the smartid name only relevant into my 3bot, each pointer can have unique sid
+	collection string // all namefixed
+	book       string
+	name       string // is name without extension, all namefixed (lowercase...)
+	cat        PointerCat
+	state      PointerState
+	extension  string // e.g. jpg
+	error      string // if there is an error on the pointer, then will be visible in this property
+	tree       string
 }
 
 // will return a clean pointer to a page, image or file

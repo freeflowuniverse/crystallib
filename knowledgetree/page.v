@@ -15,9 +15,9 @@ pub enum PageStatus {
 pub struct Page {
 pub mut: // pointer to collection
 	name           string // received a name fix
-	collection        &Collection          [str: skip]
+	collection     &Collection       [str: skip]
 	path           pathlib.Path
-	pathrel        string		//relative path in the collection
+	pathrel        string // relative path in the collection
 	state          PageStatus
 	pages_included []&Page           [str: skip]
 	pages_linked   []&Page           [str: skip]
@@ -55,30 +55,30 @@ fn (mut page Page) link_update(mut link Link) ! {
 
 	if file_search {
 		// if the collection is filled in then it means we need to copy the file here,
-	 	// or the image is not found, then we need to try and find it somewhere else
-	 	// we need to copy the image here
-	 	fileobj = page.collection.tree.image_get(file_name) or {
-	 		msg := "'${file_name}' not found for page:${page.path.path}, we looked over all collections."
-	 		page.collection.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
-	 		return
-	 	}
-	 	// we found the image should copy to the collection now
+		// or the image is not found, then we need to try and find it somewhere else
+		// we need to copy the image here
+		fileobj = page.collection.tree.image_get(file_name) or {
+			msg := "'${file_name}' not found for page:${page.path.path}, we looked over all collections."
+			page.collection.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
+			return
+		}
+		// we found the image should copy to the collection now
 		page.collection.tree.logger.debug('image or file found in other collection: ${fileobj}')
-	 	page.collection.tree.logger.debug('${link}')
-	 	mut dest := pathlib.get('${page.path.path_dir()}/img/${fileobj.path.name()}')
-	 	pathlib.get_dir('${page.path.path_dir()}/img', true)! // make sure it exists
+		page.collection.tree.logger.debug('${link}')
+		mut dest := pathlib.get('${page.path.path_dir()}/img/${fileobj.path.name()}')
+		pathlib.get_dir('${page.path.path_dir()}/img', true)! // make sure it exists
 		page.collection.tree.logger.debug('*** COPY: ${fileobj.path.path} to ${dest.path}')
-	 	if fileobj.path.path == dest.path {
-	 		panic('source and destination is same when trying to fix link (copy).')
-	 	}
-	 	fileobj.path.copy(mut dest)!
-	 	page.collection.image_new(mut dest)! // make sure collection knows about the new file
-	 	fileobj.path = dest
+		if fileobj.path.path == dest.path {
+			panic('source and destination is same when trying to fix link (copy).')
+		}
+		fileobj.path.copy(mut dest)!
+		page.collection.image_new(mut dest)! // make sure collection knows about the new file
+		fileobj.path = dest
 
-	 	fileobj.path.check()
-	 	if fileobj.path.is_link() {
-	 		fileobj.path.unlink()! // make a real file, not a link
-	 	}
+		fileobj.path.check()
+		if fileobj.path.is_link() {
+			fileobj.path.unlink()! // make a real file, not a link
+		}
 	}
 
 	// means we now found the file or image
