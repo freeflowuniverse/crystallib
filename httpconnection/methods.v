@@ -140,6 +140,14 @@ pub fn (mut h HTTPConnection) get(req_ Request) !string {
 	return result.data
 }
 
+// Delete Request with json data and return response as string
+pub fn (mut h HTTPConnection) delete(req_ Request) !string {
+	mut req := req_
+	req.method = .delete
+	result := h.send(req)!
+	return result.data
+}
+
 // performs a multi part form data request
 pub fn (mut h HTTPConnection) post_multi_part(req Request, form http.PostMultipartFormConfig) !http.Response {
 	mut req_form := form

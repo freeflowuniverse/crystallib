@@ -44,12 +44,28 @@ fn main() {
 	print(images_variatons)
 
 	transcription := ai_cli.create_transcription(op.AudioArgs{
-		filepath: '/path/to/voice.wav'
+		filepath: '/path/to/audio'
 	})!
 	print(transcription)
 
 	translation := ai_cli.create_tranlation(op.AudioArgs{
-		filepath: '/path/to/voice.wav'
+		filepath: '/path/to/audio'
 	})!
 	print(translation)
+
+	file_upload := ai_cli.upload_file(filepath:"/path/to/file.jsonl", purpose:"fine-tune")
+	print(file_upload)
+	files := ai_cli.list_filess()!
+	print(files)
+	resp := ai_cli.create_fine_tune(training_file: file.id, model: "curie")!
+	print(resp)
+
+	fine_tunes := ai_cli.list_fine_tunes()!
+	print(fine_tunes)
+
+	fine_tune := ai_cli.get_fine_tune(fine_tunes.data[0].id)!
+	print(fine_tune)
+
+	moderations := ai_cli.create_moderation('Something violent', op.ModerationModel.text_moderation_latest)!
+	print(moderations)
 }
