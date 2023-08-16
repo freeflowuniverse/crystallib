@@ -42,11 +42,13 @@ pub struct DockerContainerVolume {
 
 [params]
 pub struct DockerContainerCreateArgs {
-	name            string
-	hostname        string
-	forwarded_ports []string // ["80:9000/tcp", "1000, 10000/udp"]
-	mounted_volumes []string // ["/root:/root", ]
-	privileged 		bool
+	name             string
+	hostname         string
+	forwarded_ports  []string // ["80:9000/tcp", "1000, 10000/udp"]
+	mounted_volumes  []string // ["/root:/root", ]
+	env              map[string]string // map of environment variables that will be passed to the container
+	privileged       bool
+	remove_when_done bool = true // remove the container when it shuts down
 pub mut:
 	image_repo string
 	image_tag  string
