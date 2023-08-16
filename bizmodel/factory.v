@@ -10,14 +10,11 @@ pub mut:
 	params BizModelArgs
 }
 
-
-
 pub struct BizModelArgs {
 pub mut:
-	name      string
+	name string
 	path string
 }
-
 
 pub fn new(args BizModelArgs) !BizModel {
 	mut sh := spreadsheet.sheet_new()!

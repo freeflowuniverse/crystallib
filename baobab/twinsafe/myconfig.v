@@ -9,7 +9,7 @@ pub mut:
 	id          u32       [primary; sql: serial]
 	name        string    [nonull; unique]
 	description string
-	config      string    [skip]    // this is 3script which holds the initialization content for configuration of anything
+	config      string    [skip] // this is 3script which holds the initialization content for configuration of anything
 	keysafe     &KeysSafe [skip] // allows us to remove ourselves from mem, or go to db
 	config_enc  string
 }
@@ -22,7 +22,7 @@ pub:
 	config      string
 }
 
-fn (mut ks KeysSafe) myconfig_db_exists(args GetArgs) !bool{
+fn (mut ks KeysSafe) myconfig_db_exists(args GetArgs) !bool {
 	configs := sql ks.db {
 		select from MyConfig where name == args.name
 	}!
@@ -37,7 +37,7 @@ fn (mut ks KeysSafe) myconfig_db_exists(args GetArgs) !bool{
 pub fn (mut ks KeysSafe) myconfig_add(args_ MyConfigAddArgs) ! {
 	mut args := args_
 	exists := ks.myconfig_db_exists(name: args.name)!
-	if exists{
+	if exists {
 		return GetError{
 			args: GetArgs{
 				id: 0
@@ -47,7 +47,7 @@ pub fn (mut ks KeysSafe) myconfig_add(args_ MyConfigAddArgs) ! {
 			error_type: GetErrorType.alreadyexists
 		}
 	}
-	
+
 	config_enc := hex.encode(aes_symmetric.encrypt(args.config.bytes(), ks.secret))
 	myconfig := MyConfig{
 		name: args.name
@@ -56,7 +56,7 @@ pub fn (mut ks KeysSafe) myconfig_add(args_ MyConfigAddArgs) ! {
 		config_enc: config_enc
 		keysafe: ks
 	}
-	
+
 	sql ks.db {
 		insert myconfig into MyConfig
 	}!

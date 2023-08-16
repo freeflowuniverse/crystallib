@@ -6,7 +6,7 @@ pub:
 	text          string
 	path          string // can be dir or file
 	defaultdomain string = 'protocol_me'
-	defaultcircle   string
+	defaultcircle string
 	defaultactor  string
 }
 

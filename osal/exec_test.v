@@ -7,7 +7,6 @@ module osal
 
 // TODO: remove this test, to make the tests pass we need at least one test
 fn test_does_nothing() {
-
 }
 
 // const (

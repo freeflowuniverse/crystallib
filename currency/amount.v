@@ -73,9 +73,9 @@ pub fn (mut cs Currencies) amount_get(amount_ string) !Amount {
 	if code2 == '' {
 		code = ''
 	}
-	if code == "%"{
-		amount = "${amount.f64()/100}"
-		code=""
+	if code == '%' {
+		amount = '${amount.f64() / 100}'
+		code = ''
 	}
 	if code != '' {
 		if code !in cs.currencies {

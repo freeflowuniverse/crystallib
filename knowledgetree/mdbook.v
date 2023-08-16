@@ -39,17 +39,17 @@ pub mut:
 [heap]
 pub struct MDBook {
 pub mut:
-	tree  	 &Tree            [str: skip]
-	name     string
-	dest   string //path where book will be generated		
+	tree        &Tree             [str: skip]
+	name        string
+	dest        string // path where book will be generated		
 	title       string
-	pages       map[string]&Page  //links to the object in tree
+	pages       map[string]&Page // links to the object in tree
 	files       map[string]&File
 	images      map[string]&File
 	path        Path
 	errors      []BookError
-	state        BookState
-	doc_summary  &markdowndocs.Doc [str: skip]
+	state       BookState
+	doc_summary &markdowndocs.Doc [str: skip]
 }
 
 pub fn (mut book MDBook) error(args BookErrorArgs) {
@@ -59,19 +59,17 @@ pub fn (mut book MDBook) error(args BookErrorArgs) {
 	}
 }
 
-
 [params]
 pub struct BookNewArgs {
 pub mut:
-	name   string [required] //name of the book
-	path   string //path exists
-	dest   string //path where book will be generated
+	name      string [required] // name of the book
+	path      string // path exists
+	dest      string // path where book will be generated
 	git_url   string
 	git_reset bool
-	git_root  string //in case we want to checkout code on other location
-	git_pull  bool	
+	git_root  string // in case we want to checkout code on other location
+	git_pull  bool
 }
-
 
 pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 	mut args := args_
@@ -92,7 +90,7 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 
 	if args.path.len < 3 {
 		return error('Path cannot be empty.')
-	}	
+	}
 
 	mut p := pathlib.get_file(args.path, false)! // makes sure we have the right path
 	if !p.exists() {
@@ -113,11 +111,10 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 	l.books[args.name] = b
 
 	return b
-	
 }
 
-//process the summary
-fn (mut book MDBook) process_summary()! {
+// process the summary
+fn (mut book MDBook) process_summary() ! {
 	mut p := pathlib.get_file('${book.path.path}/summary.md', false)!
 	if !p.exists() {
 		p = pathlib.get_file('${book.path.path}/SUMMARY.md', false)!
@@ -134,7 +131,6 @@ fn (mut book MDBook) process_summary()! {
 	book.fix()!
 }
 
-
 // fix summary (this means summary will put the )
 // walk over pages find broken links
 // report on the errors
@@ -144,12 +140,10 @@ pub fn (mut book MDBook) fix() ! {
 	book.errors_report()!
 }
 
-
 pub fn (mut mdbook MDBook) init() ! {
 	// QUESTION: what should init do?
 	mdbook.process_summary()!
 }
-
 
 // reset all, just to make sure we regenerate fresh
 pub fn (mut mdbook MDBook) reset() ! {
@@ -161,7 +155,6 @@ pub fn (mut mdbook MDBook) reset() ! {
 	mdbook.state = .init // makes sure we re-init
 	mdbook.init()!
 }
-
 
 // fixes the summary doc for the book
 fn (mut book MDBook) fix_summary() ! {
@@ -194,13 +187,13 @@ fn (mut book MDBook) fix_summary() ! {
 								newlink := '[${link.description}](${collectionname}/${page.pathrel})'
 								book.pages['${collection.name}:${page.name}'] = page
 								if newlink != link.content {
-									book.tree.logger.debug('change: $link.content -> $newlink')
+									book.tree.logger.debug('change: ${link.content} -> ${newlink}')
 									paragraph.content = paragraph.content.replace(link.content,
 										newlink)
 									// TODO: don't think we need this one
-									//panic('new page is ${link.content} with ${newlink}')
-									//paragraph.doc.save_wiki()!
-									//panic('not implemented save wiki')
+									// panic('new page is ${link.content} with ${newlink}')
+									// paragraph.doc.save_wiki()!
+									// panic('not implemented save wiki')
 								}
 							} else {
 								book.error(

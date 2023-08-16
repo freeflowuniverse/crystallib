@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.algo.secp256k1
 // import freeflowuniverse.crystallib.baobab.mbus
 
 pub struct OtherTwin {
-	conn_type_str   string
+	conn_type_str string
 pub mut:
 	id          u32                [primary; sql: serial]
 	name        string             [nonull; unique]
@@ -40,26 +40,32 @@ pub:
 	addr        string //
 }
 
-fn twin_conn_str(conn_type TwinConnectionType) string{
+fn twin_conn_str(conn_type TwinConnectionType) string {
 	return match conn_type {
-		.ipv4{"ipv4"}
-		.ipv6{"ipv6"}
-		.redis{"redis"}
+		.ipv4 { 'ipv4' }
+		.ipv6 { 'ipv6' }
+		.redis { 'redis' }
 	}
 }
 
-fn twin_conn_from_str(conn_type string) TwinConnectionType{
-	return match conn_type{
-		"ipv4"{ TwinConnectionType.ipv4}
-		"ipv6"{ TwinConnectionType.ipv6}
-		"redis"{ TwinConnectionType.redis}
+fn twin_conn_from_str(conn_type string) TwinConnectionType {
+	return match conn_type {
+		'ipv4' {
+			TwinConnectionType.ipv4
+		}
+		'ipv6' {
+			TwinConnectionType.ipv6
+		}
+		'redis' {
+			TwinConnectionType.redis
+		}
 		else {
 			TwinConnectionType.ipv4
 		}
 	}
 }
 
-fn (mut ks KeysSafe) othertwin_db_exists(args GetArgs) !bool{
+fn (mut ks KeysSafe) othertwin_db_exists(args GetArgs) !bool {
 	twins := sql ks.db {
 		select from OtherTwin where name == args.name
 	}!
@@ -74,7 +80,7 @@ fn (mut ks KeysSafe) othertwin_db_exists(args GetArgs) !bool{
 pub fn (mut ks KeysSafe) othertwin_add(args_ OtherTwinAddArgs) ! {
 	mut args := args_
 	exists := ks.othertwin_db_exists(name: args.name)!
-	if exists{
+	if exists {
 		return GetError{
 			args: GetArgs{
 				id: 0
@@ -92,7 +98,7 @@ pub fn (mut ks KeysSafe) othertwin_add(args_ OtherTwinAddArgs) ! {
 		addr: args.addr
 		keysafe: ks
 	}
-	
+
 	sql ks.db {
 		insert twin into OtherTwin
 	}!
@@ -151,7 +157,7 @@ pub fn (mut twin OtherTwin) delete() ! {
 
 pub fn (mut twin OtherTwin) save() ! {
 	exists := twin.keysafe.othertwin_db_exists(name: twin.name)!
-	if exists{
+	if exists {
 		sql twin.keysafe.db {
 			update OtherTwin set name = twin.name, description = twin.description, pubkey = twin.pubkey,
 			conn_type_str = twin.conn_type_str, addr = twin.addr where name == twin.name

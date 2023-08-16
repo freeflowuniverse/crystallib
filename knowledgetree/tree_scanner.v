@@ -3,29 +3,32 @@ module knowledgetree
 import freeflowuniverse.crystallib.gittools
 import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.params
-
 import os
 
 [params]
 pub struct TreeScannerArgs {
 pub mut:
-	path string
-	heal bool // healing means we fix images, if selected will automatically load, remove stale links
-	load bool = true
+	path      string
+	heal      bool // healing means we fix images, if selected will automatically load, remove stale links
+	load      bool = true
 	git_url   string
 	git_reset bool
 	git_root  string
-	git_pull  bool	
+	git_pull  bool
 }
 
 // walk over directory find dis with .site or .collection inside and add to the tree
-// a path will not be added unless .collection is in the path of a collection dir 
+// a path will not be added unless .collection is in the path of a collection dir
 pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 	// $if debug{println(" - collections find recursive: $path.path")}
 	mut args_ := args
 	if args_.git_url.len > 0 {
 		mut gs := gittools.get(root: args_.git_root)!
-		mut gr := gs.repo_get_from_url(url: args_.git_url, pull: args_.git_pull, reset: args_.git_reset)!
+		mut gr := gs.repo_get_from_url(
+			url: args_.git_url
+			pull: args_.git_pull
+			reset: args_.git_reset
+		)!
 		args_.path = gr.path_content_get()
 	}
 
@@ -42,7 +45,7 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 			collectionfilepath2 := path.extend_file('.collection')!
 			os.mv(collectionfilepath1.path, collectionfilepath2.path)!
 		}
-		for type_of_file in [".collection", ".book"] {
+		for type_of_file in ['.collection', '.book'] {
 			if path.file_exists(type_of_file) {
 				mut filepath := path.file_get(type_of_file)!
 
@@ -57,16 +60,21 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 				}
 				tree.logger.debug(' - ${type_of_file[1..]} new: ${filepath.path} name:${name}')
 				match type_of_file {
-					".collection" {
-						tree.collection_new(path: path.path, name: name, heal: args_.heal, load: args_.load)!
+					'.collection' {
+						tree.collection_new(
+							path: path.path
+							name: name
+							heal: args_.heal
+							load: args_.load
+						)!
 						return
 					}
-					".book" {
+					'.book' {
 						tree.book_new(path: path.path, name: name)!
 						return
 					}
 					else {
-						panic("not implemented: please add the new type to the match statement")
+						panic('not implemented: please add the new type to the match statement')
 					}
 				}
 			}

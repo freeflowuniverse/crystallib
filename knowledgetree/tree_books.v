@@ -2,15 +2,13 @@ module knowledgetree
 
 import freeflowuniverse.crystallib.texttools
 
-
-
-//FIND METHODS ON TREE
+// FIND METHODS ON TREE
 
 pub struct BookNotFound {
 	Error
 pub:
 	bookname string
-	tree  &Tree
+	tree     &Tree
 	msg      string
 }
 
@@ -46,12 +44,10 @@ pub fn (tree Tree) book_get(name string) !&MDBook {
 			msg: 'book needs to be specified, now empty.'
 		}
 	}
-	return tree.books[namelower] or {
-		return BookNotFound{
-			tree: &tree
-			bookname: name
-		}
-	}
+	return tree.books[namelower] or { return BookNotFound{
+		tree: &tree
+		bookname: name
+	} }
 }
 
 pub fn (tree Tree) book_exists(name string) bool {

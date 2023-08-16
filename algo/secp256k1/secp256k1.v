@@ -87,54 +87,53 @@ fn C.secp256k1_export(secp &Secp256k1_t) &u8
 
 fn C.secp256k1_generate_key(secp &Secp256k1_t) int
 
-
 [params]
-pub struct Secp256NewArgs{
+pub struct Secp256NewArgs {
 pub:
-	keyhex string //e.g. 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83
-	key []u8      //is in binary form 
+	keyhex string // e.g. 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83
+	key    []u8   // is in binary form
 }
 
-//get a Secp256k1 key, can start from an existing key in binary or string format
+// get a Secp256k1 key, can start from an existing key in binary or string format
 // parameters:.
 // 	keyhex string //e.g. 478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83  .
 // 	key []u8      //is in binary form  .
 // 	generate bool = true //default will generate a new key	.
 pub fn new(args_ Secp256NewArgs) !Secp256k1 {
-	mut args:=args_
+	mut args := args_
 	secp := Secp256k1{}
 	secp.cctx = C.secp256k1_new()
-	if args.key.len>0 && args.keyhex.len>0{
-		return error("cannot specify hexkey and key at same time")
+	if args.key.len > 0 && args.keyhex.len > 0 {
+		return error('cannot specify hexkey and key at same time')
 	}
-	if !(args.key.len>0 || args.keyhex.len>0){
-		//generate the private key (in case we did not load it)
+	if !(args.key.len > 0 || args.keyhex.len > 0) {
+		// generate the private key (in case we did not load it)
 		C.secp256k1_generate_key(secp.cctx)
-	}else{
-		//load key from key like 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83
-		//key is the private key
+	} else {
+		// load key from key like 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83
+		// key is the private key
 		C.secp256k1_load_key(secp.cctx, args.keyhex.str)
-		//TODO: implement the binary key input
-		//TODO: check format in side and report properly
+		// TODO: implement the binary key input
+		// TODO: check format in side and report properly
 	}
-	secp.keys()	
+	secp.keys()
 	return secp
 }
 
-//QUESTION: what does this do?
+// QUESTION: what does this do?
 fn (s Secp256k1) keys() {
 	C.secp256k1_dumps(s.cctx)
 }
 
-//export private key
+// export private key
 pub fn (s Secp256k1) export() string {
 	key := C.secp256k1_export(s.cctx)
 	println(key)
 	return unsafe { key.vstring() }
 }
 
-//export public key as bytestring
-//TODO: don't understand, is a shared key unique for a target? Is it like a pub key?
+// export public key as bytestring
+// TODO: don't understand, is a shared key unique for a target? Is it like a pub key?
 pub fn (s Secp256k1) sharedkeys(target Secp256k1) []u8 {
 	shr := C.secp265k1_shared_key(s.cctx, target.cctx)
 
@@ -173,7 +172,7 @@ pub fn (s Secp256k1) sign_str_hex(data string) string {
 // verify a signature
 //
 pub fn (s Secp256k1) verify_data(signature []u8, data []u8) bool {
-	//todo: check size signature
+	// todo: check size signature
 	sig := Secp256k1_signature{}
 	sig.cctx = C.secp256k1_load_signature(s.cctx, signature.data, signature.len)
 

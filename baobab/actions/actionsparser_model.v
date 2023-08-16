@@ -4,7 +4,7 @@ pub struct Actions {
 pub mut:
 	actions       []Action // should be empty after filter action
 	defaultdomain string = 'protocol_me'
-	defaultcircle   string
+	defaultcircle string
 	defaultactor  string
 }
 

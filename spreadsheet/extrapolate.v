@@ -7,8 +7,7 @@ module spreadsheet
 // currencies can be used e.g. 3:10usd,20:30aed (so we can even mix)
 // if the smartstr, is empty then will use existing values in the row to extra/intra polate, the empty values will be filled in
 pub fn (mut r Row) extrapolate(smartstr string) ! {
-
-	//put the values in the row
+	// put the values in the row
 	for mut part in smartstr.split(',') {
 		part = part.trim_space()
 		if part.contains(':') {
@@ -27,16 +26,14 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 		}
 	}
 
-	
-
 	mut xlast := 0 // remembers where there was last non empty value
 	mut has_previous_value := false
 	mut xlastval := 0.0 // the value at that position
 	mut xlastwidth := 0 // need to know how fast to go up from the xlast to xnew
 	mut xnewval := 0.0
-	//println(r)
+	// println(r)
 	for x in 0 .. r.cells.len {
-		//println("$x empty:${r.cells[x].empty} xlastwidth:$xlastwidth xlastval:$xlastval xlast:$xlast")
+		// println("$x empty:${r.cells[x].empty} xlastwidth:$xlastwidth xlastval:$xlastval xlast:$xlast")
 		if r.cells[x].empty && !has_previous_value {
 			continue
 		}
@@ -69,7 +66,7 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 		}
 	}
 	// println("ROW1:$r")
-	
+
 	// now fill in the last ones
 	xlastval = 0.0
 	for x in 0 .. r.cells.len {
@@ -82,7 +79,6 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 
 	// println("ROW:$r")
 	// if true{panic("s")}
-
 }
 
 // something like 3:2,10:5 means month 3 we set 2, month 10 5
@@ -103,7 +99,7 @@ pub fn (mut r Row) smartfill(smartstr string) ! {
 				return error('Cannot do smartstr, because the X is out of scope, needs to be 1+.\n${smartstr}')
 			}
 			r.cells[x].set(splitted[1])!
-		}else{
+		} else {
 			r.cells[0].set(part)!
 		}
 	}

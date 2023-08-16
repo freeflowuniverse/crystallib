@@ -5,17 +5,21 @@ import crypto.sha256
 import freeflowuniverse.crystallib.algo.secp256k1
 
 fn main() {
-	do() or {panic(err)}
+	do() or { panic(err) }
 }
 
-fn do()!{
+fn do() ! {
 	println('[+] initializing libsecp256 vlang wrapper')
 
 	wendy := secp256k1.new()!
 
-	bob := secp256k1.new(keyhex:'0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83')!
+	bob := secp256k1.new(
+		keyhex: '0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83'
+	)!
 
-	alice := secp256k1.new(keyhex:'0x8225825815f42e1c24a2e98714d99fee1a20b5ac864fbcb7a103cd0f37f0ffec')!
+	alice := secp256k1.new(
+		keyhex: '0x8225825815f42e1c24a2e98714d99fee1a20b5ac864fbcb7a103cd0f37f0ffec'
+	)!
 
 	shr1 := bob.sharedkeys(alice)
 	println(shr1)
@@ -26,11 +30,10 @@ fn do()!{
 	println('-----')
 
 	mut message := 'Hello world, this is my awesome message'
-	message+=message
-	message+=message
-	message+=message
-	message+=message
-	
+	message += message
+	message += message
+	message += message
+	message += message
 
 	h256 := sha256.hexhash(message)
 	println(h256)
@@ -61,7 +64,6 @@ fn do()!{
 
 	println(alice.verify_data(signed, message.bytes()))
 	println(alice.verify_str(signed_str, message))
-
 
 	println('-------------------')
 

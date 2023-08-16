@@ -18,7 +18,7 @@ pub struct Collection {
 pub:
 	name string
 pub mut:
-	title string
+	title  string
 	pages  map[string]&Page
 	files  map[string]&File
 	images map[string]&File
@@ -41,8 +41,8 @@ pub fn (mut collection Collection) scan() ! {
 pub struct CollectionObjNotFound {
 	Error
 pub:
-	name    string
-	cat     string
+	name       string
+	cat        string
 	collection string
 }
 
@@ -154,12 +154,11 @@ pub fn (collection Collection) file_exists(name string) bool {
 
 ///////////////////////////////////////////////////////////
 
-
 // remember the file, so we know if we have duplicates
 // also fixes the name
-fn (mut collection Collection) file_image_remember(mut p pathlib.Path) ! {
+fn (mut collection Collection) file_image_remember(mut p Path) ! {
 	collection.tree.logger.debug('file or image remember : ${p.path}')
-	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)! //TODO: seems like some overkill
+	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)! // TODO: seems like some overkill
 	p = ptr.path
 	if ptr.is_image() {
 		if collection.heal && imagemagick.installed() {
@@ -209,15 +208,18 @@ fn (mut collection Collection) file_image_remember(mut p pathlib.Path) ! {
 	}
 }
 
-
 // add a page to the collection, specify existing path
 // the page will be parsed as markdown
 pub fn (mut collection Collection) page_new(mut p Path) ! {
 	collection.tree.logger.debug('collection: ${collection.name} page new: ${p.path}')
 	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
 	if collection.page_exists(ptr.pointer.name) {
-		collection.error(path: p, msg: 'Can\'t add ${p.path}: a page named ${ptr.pointer.name} already exists in the collection', cat: .page_double)
-		return 
+		collection.error(
+			path: p
+			msg: 'Can\'t add ${p.path}: a page named ${ptr.pointer.name} already exists in the collection'
+			cat: .page_double
+		)
+		return
 	}
 	mut doc := markdowndocs.new(path: p.path) or { panic('cannot parse,${err}') }
 	mut page := &Page{
@@ -236,8 +238,12 @@ pub fn (mut collection Collection) file_new(mut p Path) ! {
 	collection.tree.logger.debug('collection: ${collection.name} file new: ${p.path}')
 	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
 	if collection.file_exists(ptr.pointer.name) {
-		collection.error(path: p, msg: 'Can\'t add ${p.path}: a file named ${ptr.pointer.name} already exists in the collection', cat: .file_double)
-		return 
+		collection.error(
+			path: p
+			msg: 'Can\'t add ${p.path}: a file named ${ptr.pointer.name} already exists in the collection'
+			cat: .file_double
+		)
+		return
 	}
 
 	mut ff := &File{
@@ -261,7 +267,7 @@ pub fn (mut collection Collection) image_new(mut p Path) ! {
 		mut file_double := collection.image_get(p.name())!
 		mut path_double := file_double.path
 		if p.path.len > path_double.path.len {
-		 	p.delete()!
+			p.delete()!
 		} else {
 			path_double.delete()!
 			file_double.path = p // reset the path so the shortest one remains

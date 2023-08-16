@@ -23,10 +23,10 @@ pub struct MyTwinAddArgs {
 pub:
 	name        string [sql: unique]
 	description string
-	privkey  string // given in hex
+	privkey     string // given in hex
 }
 
-fn (mut ks KeysSafe) mytwin_db_exists(args GetArgs) !bool{
+fn (mut ks KeysSafe) mytwin_db_exists(args GetArgs) !bool {
 	twins := sql ks.db {
 		select from MyTwin where name == args.name
 	}!
@@ -35,12 +35,13 @@ fn (mut ks KeysSafe) mytwin_db_exists(args GetArgs) !bool{
 	}
 	return false
 }
+
 // generate a new key is just importing a key with a random seed
 // if it exists will return the key which is already there
 pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
 	mut args := args_
 	exists := ks.mytwin_db_exists(name: args.name)!
-	if exists{
+	if exists {
 		return GetError{
 			args: GetArgs{
 				id: 0
@@ -52,12 +53,11 @@ pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
 	}
 
 	mut privkey_hex := args.privkey
-	mut privkey := secp256k1.new(keyhex: privkey_hex)!	
+	mut privkey := secp256k1.new(keyhex: privkey_hex)!
 
 	// if user didn't pass privkey, then we used the one generated from the above statement
 	if privkey_hex.len == 0 {
 		privkey_hex = privkey.export()
-
 	}
 	privkey_str := encrypt_privkey(privkey_hex, ks.secret)!
 	twin := MyTwin{
@@ -72,21 +72,22 @@ pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
 	}!
 	ks.mytwins[twin.name] = twin
 }
-fn encrypt_privkey(privkey_hex string, secret string) !string{
+
+fn encrypt_privkey(privkey_hex string, secret string) !string {
 	// convert privkey_hex to bytes to decrypt it
 	privkey_bytes := hex.decode(privkey_hex)!
 	// decrypt the key which will produce encrypted bytes
 	privkey_enc_bytes := aes_symmetric.encrypt(privkey_bytes, secret)
 	// encode the encrypted bytes so we can store it in the data base as string
-	 return hex.encode(privkey_enc_bytes)
-
+	return hex.encode(privkey_enc_bytes)
 }
-fn decrypt_privkey(privkey_enc string, secret string) !string{
-		privkey_enc_bytes := hex.decode(privkey_enc)!
-		privkey_bytes := aes_symmetric.decrypt(privkey_enc_bytes, secret)
-		return  "0x${hex.encode(privkey_bytes)}"
 
+fn decrypt_privkey(privkey_enc string, secret string) !string {
+	privkey_enc_bytes := hex.decode(privkey_enc)!
+	privkey_bytes := aes_symmetric.decrypt(privkey_enc_bytes, secret)
+	return '0x${hex.encode(privkey_bytes)}'
 }
+
 // I can have more than 1 mytwin, ideal for testing as well
 pub fn (mut ks KeysSafe) mytwin_get(args GetArgs) !MyTwin {
 	if args.name in ks.mytwins {
@@ -137,14 +138,14 @@ pub fn (mut twin MyTwin) save() ! {
 	privkey_hex := twin.privkey.export()
 	twin.privkey_str = encrypt_privkey(privkey_hex, twin.keysafe.secret)!
 	exists := twin.keysafe.mytwin_db_exists(name: twin.name)!
-	if exists{ 
+	if exists {
 		sql twin.keysafe.db {
 			update MyTwin set name = twin.name, description = twin.description, privkey_str = twin.privkey_str
 			where name == twin.name
 		}!
 		return
 	}
-	
+
 	sql twin.keysafe.db {
 		insert twin into MyTwin
 	}!

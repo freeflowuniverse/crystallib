@@ -9,7 +9,7 @@ const reset = true
 fn do() ! {
 	mut l := tree.new()
 
-	//start a tree
+	// start a tree
 	// now add collections to the tree
 
 	mut book := l.book_new(

@@ -35,7 +35,6 @@ pub fn (tree Tree) collection_exists(name string) bool {
 	return false
 }
 
-
 // internal function
 fn (mut tree Tree) collection_get_from_pointer(p Pointer) !&Collection {
 	if p.tree.len > 0 && p.tree != tree.name {
@@ -45,13 +44,15 @@ fn (mut tree Tree) collection_get_from_pointer(p Pointer) !&Collection {
 			msg: 'tree name was not empty and was not same as tree.\n${p}'
 		}
 	}
-	mut ch := tree.collections[p.collection] or { return CollectionNotFound{
-		tree: &tree
-		pointer: p
-	} }
+	mut ch := tree.collections[p.collection] or {
+		return CollectionNotFound{
+			tree: &tree
+			pointer: p
+		}
+	}
 	return ch
 }
 
 pub fn (mut tree Tree) collection_get(name string) !&Collection {
-	return tree.collection_get_from_pointer(Pointer{collection: name})!
+	return tree.collection_get_from_pointer(Pointer{ collection: name })!
 }

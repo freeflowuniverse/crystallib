@@ -51,27 +51,29 @@ pub fn (mut safe KeysSafe) save() ! {
 	}
 }
 
-
 pub fn (mut safe KeysSafe) loadall() ! {
 	// walk over sqlitedb, load all in mem
 	mytwins := safe.load_mytwins()!
 	for twin in mytwins {
 		args := GetArgs{
-			id: twin.id, name: twin.name
+			id: twin.id
+			name: twin.name
 		}
 		safe.mytwins[twin.name] = safe.mytwin_get(args)!
 	}
 	other_twins := safe.load_other_twins()!
 	for otwin in other_twins {
 		args := GetArgs{
-			id: otwin.id, name: otwin.name
+			id: otwin.id
+			name: otwin.name
 		}
 		safe.othertwins[otwin.name] = safe.othertwin_get(args)!
 	}
 	configs := safe.load_myconfig()!
 	for config in configs {
 		args := GetArgs{
-			id: config.id, name: config.name
+			id: config.id
+			name: config.name
 		}
 		safe.myconfigs[config.name] = safe.myconfig_get(args)!
 	}

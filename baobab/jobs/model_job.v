@@ -31,7 +31,7 @@ pub mut:
 	state        ActionJobState
 	start        time.Time
 	end          time.Time
-	grace_period u32 	// wait till next run, in seconds	
+	grace_period u32 // wait till next run, in seconds	
 	error        string
 	timeout      u32    // time in seconds, 2h is maximum
 	src_twinid   u32    // which twin send the request
@@ -43,12 +43,12 @@ pub mut:
 pub struct JobError {
 	Error
 pub mut:
-	msg      string
-	job_guid string
+	msg        string
+	job_guid   string
 	error_type JobErrorType
 }
 
-pub enum JobErrorType{
+pub enum JobErrorType {
 	timeout
 	error
 	unreacheable

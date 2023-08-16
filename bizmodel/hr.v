@@ -1,14 +1,13 @@
 module bizmodel
 
-import freeflowuniverse.crystallib.baobab.actions {Actions}
+import freeflowuniverse.crystallib.baobab.actions { Actions }
 import freeflowuniverse.crystallib.texttools
-
 
 // populate the params for hr
 // !!hr.employee_define
 //     descr:'Junior Engineer'
-//     nrpeople:'1:5,60:30' 
-//	   cost:'4000USD' 
+//     nrpeople:'1:5,60:30'
+//	   cost:'4000USD'
 //	   indexation:'5%'
 //     department:'engineering'
 fn (mut m BizModel) hr_actions(actions_ Actions) ! {
@@ -22,9 +21,9 @@ fn (mut m BizModel) hr_actions(actions_ Actions) ! {
 			}
 			if name.len == 0 {
 				// make name ourselves
-				name = texttools.name_fix(descr) //TODO:limit len
+				name = texttools.name_fix(descr) // TODO:limit len
 			}
-			mut cost := action.params.get_default('cost', "0.0")!
+			mut cost := action.params.get_default('cost', '0.0')!
 			// mut cost_year := action.params.get_currencyfloat_default('cost_year', 0.0)!
 			// if cost_year > 0 {
 			// 	cost = cost_year / 12
