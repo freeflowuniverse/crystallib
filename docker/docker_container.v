@@ -110,7 +110,7 @@ pub fn (mut container DockerContainer) shell(args DockerShellArgs) ! {
 	if args.cmd.len == 0 {
 		cmd = 'docker exec -ti ${container.id} /bin/bash'
 	} else {
-		cmd = "docker exec -ti ${container.id} /bin/bash -c '${cmd}'"
+		cmd = "docker exec -ti ${container.id} /bin/bash -c '${args.cmd}'"
 	}
 	exec(cmd: cmd, shell: true, debug: true)!
 }
