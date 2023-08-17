@@ -1,7 +1,7 @@
 ## Existing decentralization projects
 
 There are a number of project operational that are creating decentralised utility for data processing and storage. ThreeFold is a multidisciplinary project which touches all of the bases for creating a new IT stack fueling the Internet.
-![tf_comparison](../img/tf_comparison.png)
+![tf_comparison](tf_comparison.png)
 
 To the extent that it provides a complete suite for hosting a decentralized protocols' computation, storage, and network requirements, ThreeFold technology is a logical foundation for any forward looking decentralization initiative.
 
@@ -13,7 +13,12 @@ We might not realise everyday but the internet is in the hands of a handful of l
 - network providers: mostly the Tier 1 players that have been working together since the inception of the internet to guide and direct traffic and have been providing interconnect services for lower tiers, national and regional players to the rest of the world.
 - datacenter (or a more modern version of them, cloud) providers.  Datacenters are the end point for all the networks  Datacenters are (literally) massive warehouses that house servers on which (most, if not all today) of the internet content and services are processed and stored.  This includes today public services, private services, freemium services bot also mostly all of the blockchain projects rely on massive cloud providers providing them with data processing and storage services.
 
-![threefold_architecture](img/threefold_supernode_.jpg)
+![threefold_architecture](threefold_supernode_.jpg)
+
+> results in double but is ok, just a test
+
+![](a_image.jpg)
+
 
 So this internet is governed my a small number of network providers that *decide* how internet traffic flows are and who gets to pay for transit services and who not (internet transit between two parties where no money exchanges hands is called peering) and a small number of datacenter that control all the content on the internet, get freemium information about consumer behavior and know everything about us.
 

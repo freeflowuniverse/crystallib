@@ -17,8 +17,8 @@ pub mut:
 	git_pull  bool
 }
 
-// walk over directory find dis with .site or .collection inside and add to the tree
-// a path will not be added unless .collection is in the path of a collection dir
+// walk over directory find dirs with .book or .collection inside and add to the tree
+// a path will not be added unless .collection is in the path of a collection dir or .book in a book
 pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 	// $if debug{println(" - collections find recursive: $path.path")}
 	mut args_ := args

@@ -41,7 +41,8 @@ pub struct MDBook {
 pub mut:
 	tree        &Tree             [str: skip]
 	name        string
-	dest        string // path where book will be generated		
+	dest        string // path where book will be generated	
+	dest_md     string // path where the md files will be generated
 	title       string
 	pages       map[string]&Page // links to the object in tree
 	files       map[string]&File
@@ -65,17 +66,40 @@ pub mut:
 	name      string [required] // name of the book
 	path      string // path exists
 	dest      string // path where book will be generated
+	dest_md   string // path where the md files will be generated
 	git_url   string
 	git_reset bool
 	git_root  string // in case we want to checkout code on other location
 	git_pull  bool
 }
 
+// get a new book
+//
+// name      string [required] // name of the book
+// path      string // path exists
+// dest      string // path where book will be generated
+// dest_md   string // path where the md files will be generated
+// git_url   string
+// git_reset bool
+// git_root  string // in case we want to checkout code on other location
+// git_pull  bool
+//
+// if dest not filled in will be /tmp/mdbook_export/$name
+// if dest_md not filled in will be /tmp/mdbook/$name
+//
 pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 	mut args := args_
 	args.name = texttools.name_fix_no_underscore_no_ext(args.name)
 	if args.name == '' {
 		return error('Cannot specify new book without specifying a name.')
+	}
+
+	if args.dest_md == '' {
+		 args.dest_md = "/tmp/mdbook/${args.name}"
+	}
+
+	if args.dest == '' {
+		 args.dest = "/tmp/mdbook_export/${args.name}"
 	}
 
 	if args.name in l.books {
@@ -98,62 +122,45 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 	}
 	p.path_normalize()! // make sure its all lower case and name is proper
 
-	mut b := &MDBook{
+	mut book := &MDBook{
 		name: args.name
 		tree: &l
 		path: p
 		dest: args.dest
+		dest_md: args.dest_md
 		doc_summary: &markdowndocs.Doc{}
 	}
-
-	b.process_summary()!
-
-	l.books[args.name] = b
-
-	return b
-}
-
-// process the summary
-fn (mut book MDBook) process_summary() ! {
-	mut p := pathlib.get_file('${book.path.path}/summary.md', false)!
-	if !p.exists() {
-		p = pathlib.get_file('${book.path.path}/SUMMARY.md', false)!
-		if !p.exists() {
-			return error('cannot find summary.md for book under ${book.path.path}/')
-		}
-	}
-	doc := markdowndocs.new(path: p.path) or {
-		return error('cannot book parse ${book.path.path}: ${err}')
-	}
-
-	book.doc_summary = &doc
-
-	book.fix()!
-}
-
-// fix summary (this means summary will put the )
-// walk over pages find broken links
-// report on the errors
-pub fn (mut book MDBook) fix() ! {
+	book.reset()! //clean the destination
+	book.load_summary()!
 	book.fix_summary()!
 	book.link_pages_files_images()!
 	book.errors_report()!
+
+	l.books[args.name] = book
+
+	return book
 }
 
-pub fn (mut mdbook MDBook) init() ! {
-	// QUESTION: what should init do?
-	mdbook.process_summary()!
+// load the summary
+fn (mut book MDBook) load_summary() ! {
+	mut path_summary:=book.path.sub_get(name:"summary.md",file_ensure:true, name_fix:true) or {
+		return error("Cannot find a summary for ${book.path.path}")
+	 }
+	doc := markdowndocs.new(path: path_summary.path) or {
+		return error('cannot book parse summary for ${book.path.path}: ${err}')
+	}
+	book.doc_summary = &doc
+
 }
+
 
 // reset all, just to make sure we regenerate fresh
 pub fn (mut mdbook MDBook) reset() ! {
 	// delete where the mdbook are created
-	for item in ['mdbook', 'html'] {
-		mut a := pathlib.get(mdbook.dest + '/${item}')
-		a.delete()!
-	}
-	mdbook.state = .init // makes sure we re-init
-	mdbook.init()!
+	mut a := pathlib.get(mdbook.dest)
+	a.delete()!
+	mut b := pathlib.get(mdbook.dest_md)
+	b.delete()!
 }
 
 // fixes the summary doc for the book
@@ -271,56 +278,66 @@ pub fn (mut book MDBook) errors_report() ! {
 	}
 	c := $tmpl('template/errors.md')
 	p.write(c)!
+	mut p2 := pathlib.get('${book.dest_md}/errors.md')
+	if book.errors.len == 0 {
+		p2.delete()!
+		return
+	}
+	p2.write(c)!	
 }
 
 // return path where the book will be created (exported and built from)
-fn (book MDBook) book_path(path string) Path {
-	dest0 := book.dest
-	return pathlib.get('${dest0}/books/${book.name}/${path}')
+fn (book MDBook) md_path(path string) Path {
+	return pathlib.get(book.dest_md+"/${path}")
 }
 
 // return path where the book will be created (exported and built from)
 fn (book MDBook) html_path(path string) Path {
-	dest0 := book.dest
-	return pathlib.get('${dest0}/html/${book.name}/${path}')
+	return pathlib.get(book.dest+"/${path}")
+}
+
+// export an mdbook to its html representation and open the html
+pub fn (mut book MDBook) read() ! {
+	book.export()!
+	osal.exec(cmd: 'open ${book.html_path('').path}/index.html', shell:true)!
 }
 
 // export an mdbook to its html representation
 pub fn (mut book MDBook) export() ! {
 	book.template_install()! // make sure all required template files are in collection
-	book_path := book.book_path('').path + '/src'
+	md_path := book.md_path('').path + '/src'
 	html_path := book.html_path('').path
 	for _, mut page in book.pages {
-		dest := '${book_path}/${page.collection.name}/${page.pathrel}'
+		dest := '${md_path}/${page.collection.name}/${page.pathrel}'
 		book.tree.logger.info('- export: ${dest}')
 		page.save(dest: dest)!
 	}
 
 	for _, mut file in book.files {
-		dest := '${book_path}/${file.collection.name}/${file.pathrel}'
+		dest := '${md_path}/${file.collection.name}/${file.pathrel}'
 		book.tree.logger.info('- export: ${dest}')
 		file.copy(dest)!
 	}
 
 	for _, mut image in book.images {
-		dest := '${book_path}/${image.collection.name}/${image.pathrel}'
+		dest := '${md_path}/${image.collection.name}/${image.pathrel}'
 		book.tree.logger.info('- export: ${dest}')
 		image.copy(dest)!
 	}
 
-	mut pathsummary := pathlib.get('${book_path}/SUMMARY.md')
+	mut pathsummary := pathlib.get('${md_path}/SUMMARY.md')
 	// write summary
 	pathsummary.write(book.doc_summary.wiki())!
 
 	// lets now build
-	osal.exec(cmd: 'mdbook build ${book.book_path('').path} --dest-dir ${html_path}', retry: 0)!
+	osal.exec(cmd: 'mdbook build ${book.md_path('').path} --dest-dir ${html_path}', retry: 0)!
 
-	book.tree.logger.info('MDBook has been generated under ${book_path}')
-	book.tree.logger.info('Html pages are found under ${html_path}')
+	book.tree.logger.info('MDBook has been generated under ${md_path}')
+	book.tree.logger.info('HTML pages are found under ${html_path}')
 }
 
 fn (mut book MDBook) template_write(path string, content string) ! {
-	mut dest_path := book.book_path(path)
+	mut dest_path := book.md_path(path)
 	dest_path.write(content)!
 }
 
@@ -331,8 +348,8 @@ fn (mut book MDBook) template_install() ! {
 
 	// get embedded files to the mdbook dir
 	for item in book.tree.embedded_files {
-		book_path := item.path.all_after_first('/')
-		book.template_write(book_path, item.to_string())!
+		md_path := item.path.all_after_first('/')
+		book.template_write(md_path, item.to_string())!
 	}
 	c := $tmpl('template/book.toml')
 	book.template_write('book.toml', c)!

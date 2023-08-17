@@ -26,7 +26,7 @@ pub mut:
 	errors []CollectionError
 	state  CollectionState
 	heal   bool
-	tree   &Tree
+	tree   &Tree             [str: skip]
 }
 
 // walk over one specific collection, find all files and pages

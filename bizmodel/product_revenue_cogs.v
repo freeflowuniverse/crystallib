@@ -114,8 +114,10 @@ fn (mut m BizModel) revenue_actions(actions_ Actions) ! {
 				growth: '1:0.0' // init as 0
 				descr: 'Total revenue for this service/product.'
 			)!
-			revenue_total.action(action: .add, rows: [revenue_time, revenue_item_total,
-				revenue_growth])!
+			revenue_total.action(
+				action: .add
+				rows: [revenue_time, revenue_item_total, revenue_growth]
+			)!
 
 			mut cogs_total := m.sheet.row_new(
 				name: '${name}_cogs_total'
@@ -326,8 +328,11 @@ fn (mut m BizModel) revenue_actions(actions_ Actions) ! {
 				growth: '1:0.0' // init as 0
 				descr: 'What is total cogs for this service/product.'
 			)!
-			cogs_total.action(rows: [cogs_setup_total, cogs_month_total, cogs_setup_from_perc,
-				cogs_monthly_from_perc], action: .add)!
+			cogs_total.action(
+				rows: [cogs_setup_total, cogs_month_total, cogs_setup_from_perc,
+					cogs_monthly_from_perc]
+				action: .add
+			)!
 
 			mut margin_total := revenue_total.action(
 				action: .substract

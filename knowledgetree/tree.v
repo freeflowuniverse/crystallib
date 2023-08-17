@@ -50,9 +50,6 @@ pub fn (mut tree Tree) fix() ! {
 	if tree.state == .ok {
 		return
 	}
-	for _, mut book in tree.books {
-		book.fix()!
-	}
 	for _, mut collection in tree.collections {
 		collection.fix()!
 	}
