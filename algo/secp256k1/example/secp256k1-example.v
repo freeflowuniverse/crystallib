@@ -17,12 +17,24 @@ fn do() ! {
 	println("Wendy Public:  " + wendy.public_key())
 	println("-------")
 
+	// create 'bob' from a private key, full features will be available
 	bob := secp256k1.new(
 		keyhex: '0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83'
 	)!
 
+	// create 'alice' from a private key, full features will be available
 	alice := secp256k1.new(
 		keyhex: '0x8225825815f42e1c24a2e98714d99fee1a20b5ac864fbcb7a103cd0f37f0ffec'
+	)!
+
+	// create 'bobpub' from bob only public key, reduced features available (only sign check, shared keys, etc.)
+	bobpub := secp256k1.new(
+		pubhex: bob.public_key()
+	)!
+
+	// create 'alicepub' from alice only public key, reduced features available
+	alicepub := secp256k1.new(
+		pubhex: alice.public_key()
 	)!
 
 	shr1 := bob.sharedkeys(alice)
@@ -30,6 +42,14 @@ fn do() ! {
 
 	shr2 := alice.sharedkeys(bob)
 	println(shr2)
+
+	// example in real world, where private key is available and only target public key
+	shr1pub := bob.sharedkeys(alicepub)
+	println(shr1pub)
+
+	shr2pub := alice.sharedkeys(bobpub)
+	println(shr2pub)
+
 
 	println('-----')
 
@@ -66,8 +86,12 @@ fn do() ! {
 	println(signed_str_hex)
 	println(signed_str_hex.len)
 
-	println(alice.verify_data(signed, message.bytes()))
-	println(alice.verify_str(signed_str, message))
+	// instanciate alice with only her public key
+	println(alicepub.verify_data(signed, message.bytes()))
+	println(alicepub.verify_str(signed_str, message))
+
+	// println(alice.verify_data(signed, message.bytes()))
+	// println(alice.verify_str(signed_str, message))
 
 	println('-------------------')
 

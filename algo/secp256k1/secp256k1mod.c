@@ -362,6 +362,7 @@ int main() {
     secp256k1_t *bobpub = secp256k1_new();
     int val = secp256k1_load_public_key(bobpub, "0x03310ec949bd4f7fc24f823add1394c78e1e9d70949ccacf094c027faa20d99e21");
     printf("Public key loader: %d\n", val);
+    secp256k1_dumps(bobpub);
 
     // alice
     secp256k1_t *alice = secp256k1_new();
