@@ -185,7 +185,7 @@ fn (mut book MDBook) fix_summary() ! {
 							mut collection := book.tree.collection_get(collectionname)!
 							dest := '${book.path.path}/${collectionname}'
 							if dest != collection.path.path {
-								collection.path.link(dest, true)!
+								//collection.path.link(dest, true)!
 							}
 
 							// now we can process the page where the link goes to
@@ -197,10 +197,6 @@ fn (mut book MDBook) fix_summary() ! {
 									book.tree.logger.debug('change: ${link.content} -> ${newlink}')
 									paragraph.content = paragraph.content.replace(link.content,
 										newlink)
-									// TODO: don't think we need this one
-									// panic('new page is ${link.content} with ${newlink}')
-									// paragraph.doc.save_wiki()!
-									// panic('not implemented save wiki')
 								}
 							} else {
 								book.error(
@@ -273,19 +269,19 @@ fn (mut book MDBook) link_pages_files_images() ! {
 }
 
 pub fn (mut book MDBook) errors_report() ! {
-	mut p := pathlib.get('${book.path.path}/errors.md')
-	if book.errors.len == 0 {
-		p.delete()!
-		return
-	}
 	c := $tmpl('template/errors.md')
-	p.write(c)!
-	mut p2 := pathlib.get('${book.dest_md}/errors.md')
+	mut p2 := pathlib.get('${book.dest_md}/src/errors.md')
 	if book.errors.len == 0 {
 		p2.delete()!
 		return
 	}
-	p2.write(c)!	
+	p2.write(c)!
+
+	// Add error item to the summary.md file
+	mut paragraph :=  markdowndocs.Paragraph { }
+	paragraph.items << markdowndocs.Text { content: '- ' }
+	paragraph.items << markdowndocs.Link { cat: .page, content: '[Errors](errors.md)' description: 'Errors', filename: 'errors.md' }
+	book.doc_summary.items << paragraph
 }
 
 // return path where the book will be created (exported and built from)
@@ -328,6 +324,7 @@ pub fn (mut book MDBook) export() ! {
 	}
 
 	mut pathsummary := pathlib.get('${md_path}/SUMMARY.md')
+	println("PATH Is ${book.doc_summary.wiki()}")
 	// write summary
 	pathsummary.write(book.doc_summary.wiki())!
 
