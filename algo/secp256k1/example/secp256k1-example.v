@@ -113,7 +113,7 @@ fn do() ! {
 	println(alicepub.schnorr_verify_data(schnorr_signed, message.bytes()))
 	println(alicepub.schnorr_verify_str(schnorr_signed_str, message))
 
-	// should fails, it's not the right signature method
+	// should fails, it's not the right signature method (ecdsa / schnorr)
 	println(alicepub.verify_data(schnorr_signed, message.bytes()))
 	println(alicepub.verify_str(schnorr_signed_str, message))
 }
