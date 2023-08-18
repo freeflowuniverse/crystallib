@@ -51,7 +51,7 @@ emerge dev-libs/libsecp256k1
 
 There are 4 differents things / features to understand in this secp256k1 implementation (wrapper).
 
-### secp256k1 public key and private key
+### Public and Privaye keys for secp256k1
 
 This is a simple private/public key schema. This wrapper deals with hexdump of keys.
 
@@ -75,7 +75,7 @@ secp256k1.new(pubkey: '0x02df72fc4fa607ca3478446750bf9f8510242c4fa5849e77373d711
 Using `privkey` argument, this will create an object with only the public key,
 which can be used for shared key or signature verification
 
-### shared keys
+### Shared Keys
 
 Library `secp256k1` have one feature which allows you to derivate a `shared intermediate common key` from
 the private key of one party and the public key from the other party.
@@ -106,7 +106,7 @@ shared := alice.sharedkeys(bobpub)
 // shared = 0xf114df29d930f0cd37f62cbca36c46773a42bf87e12edcb35d47c4bfbd20514d (same shared key)
 ```
 
-### ecdsa signature
+### ECDSA Signature
 
 This is the default signature method. When doing a signature, you don't sign the actual data but you
 have to sign a hash (sha256) of the data. This payload needs to be fixed length. The return signature
@@ -124,7 +124,7 @@ valid := alicepub.verify_str(sstr, "Hello World !")
 // valid = true
 ```
 
-### schnorr signature
+### Schnorr Signature
 
 This is the new prefered signature method. In theory, this method can in addition be able to sign
 using multiple parties without storing signature of everyone, signature can be chained but this is not
