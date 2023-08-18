@@ -1,51 +1,47 @@
 module main
 
-import freeflowuniverse.crystallib.books.tree
+import freeflowuniverse.crystallib.knowledgetree
 
 // const path0 = '~/code/github/threefoldfoundation/books'
 
 const reset = false
 
 fn do() ! {
-	mut l := tree.new()
+	mut tree := knowledgetree.new()!
 
-	mut book := l.book_new(name: 'testbook')!
-
-	mut c := book.collection_new(
+	tree.scan(
 		git_root: '~/code5'
 		git_url: 'https://github.com/threefoldfoundation/books/tree/main/content/mytwin'
 		load: true
 		heal: true
-		name: 'mytwin'
 		git_reset: reset
 	)!
 
-	p1 := book.page_get('funny_Comparison')!
-	p2 := book.page_get('funny Comparison.md')!
+	p1 := tree.page_get('funny_Comparison')!
+	p2 := tree.page_get('funny Comparison.md')!
 	assert p1 == p2
 
 	assert p2.pathrel == 'intro/funny_comparison.md'
 
 	println(p1)
 
-	assert book.page_exists('funny_Comparison')
-	assert book.image_exists('experience_')
-	assert book.image_exists('experience_.png')
-	assert book.image_exists('experience.png')
-	assert book.image_exists('mytwin:experience.png')
-	assert book.image_exists('testbook:mytwin:experience.png')
-	assert book.image_exists('testbook::experience.png')
-	assert book.image_exists('mytwins:experience.png') == false
+	assert tree.page_exists('funny_Comparison')
+	assert tree.image_exists('experience_')
+	assert tree.image_exists('experience_.png')
+	assert tree.image_exists('experience.png')
+	assert tree.image_exists('mytwin:experience.png')
+	assert tree.image_exists('testbook:mytwin:experience.png')
+	assert tree.image_exists('testbook::experience.png')
+	assert tree.image_exists('mytwins:experience.png') == false
 
-	assert l.image_exists('testbook:mytwin:experience.png')
-	assert l.image_exists('testbook::experience.png')
-	assert l.image_exists('testbook::experiencee.png') == false
+	assert tree.image_exists('testbook:mytwin:experience.png')
+	assert tree.image_exists('testbook::experience.png')
+	assert tree.image_exists('testbook::experiencee.png') == false
 
 	println('OK')
 }
 
 fn main() {
-	println('ERROR IN MAIN')
 	do() or { panic(err) }
 }
 

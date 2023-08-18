@@ -7,7 +7,6 @@ const testpath = os.dir(@FILE) + '/../chapter1'
 
 fn do() ! {
 	mut tr := knowledgetree.new()!
-
 	tr.scan(path: testpath, heal: false)!
 
 	mut c := tr.collection_get('solution')!
@@ -24,7 +23,6 @@ fn do() ! {
 	mut page := c.page_get('casperlabs_deployment')!
 	mut page2 := c.page_get('casperlabs_Deployment')!
 	assert page == page2
-	// println(c)
 
 	mut book := tr.book_new(path: '${testpath}', name: 'mybook')!
 	book.read()! // will generate and open

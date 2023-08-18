@@ -63,11 +63,10 @@ fn (mut doc Doc) parse() ! {
 
 		if mut llast is Paragraph {
 			if line.starts_with('|') && line.ends_with('|') {
-				if !parser.eof() {
-					header := line.trim('|').split('|').map(it.trim(' '))
+				if !parser.next_is_eof() {
+					header := line.trim('|').split('|').map(it.trim(' \t'))
 					line2 := parser.line_next()
-					second_row := line2.trim('|').split('|').map(it.trim(' ')).filter(re_header_row.matches_string(it))
-					println('${header.len} vs ${second_row.len}')
+					second_row := line2.trim('|').split('|').map(it.trim(' \t')).filter(re_header_row.matches_string(it))
 					if header.len == second_row.len {
 						// from now on we know it is a valid map
 						mut alignments := []Alignment{}

@@ -20,6 +20,7 @@ pub enum BookErrorCat {
 	image_not_found
 	page_not_found
 	collection_not_found
+	collection_error
 	sidebar
 }
 
@@ -165,11 +166,12 @@ pub fn (mut mdbook MDBook) reset() ! {
 
 // fixes the summary doc for the book
 fn (mut book MDBook) fix_summary() ! {
-	for mut paragraph in book.doc_summary.items.filter(it is markdowndocs.Paragraph) {
-		if mut paragraph is markdowndocs.Paragraph {
-			for mut item in paragraph.items {
-				if mut item is markdowndocs.Link {
-					mut link := item
+	for y in 0..book.doc_summary.items.len {
+		if book.doc_summary.items[y] is markdowndocs.Paragraph {
+			mut paragraph := book.doc_summary.items[y] as markdowndocs.Paragraph
+			for x in 0..paragraph.items.len {
+				if paragraph.items[x] is markdowndocs.Link {
+					mut link := paragraph.items[x] as markdowndocs.Link
 					if link.isexternal {
 						msge := 'external link not supported yet in summary for:\n ${book}'
 						book.error(cat: .unknown, msg: msge)
@@ -184,9 +186,13 @@ fn (mut book MDBook) fix_summary() ! {
 						if book.tree.collection_exists(collectionname) {
 							mut collection := book.tree.collection_get(collectionname)!
 							dest := '${book.path.path}/${collectionname}'
+							/*
+							// QUESTION: WHy did we need this in the first place?
 							if dest != collection.path.path {
-								collection.path.link(dest, true)!
+								// QUESTION: WHy did we need this in the first place?
+								//collection.path.link(dest, true)!
 							}
+							*/
 
 							// now we can process the page where the link goes to
 							if collection.page_exists(pagename) {
@@ -197,10 +203,9 @@ fn (mut book MDBook) fix_summary() ! {
 									book.tree.logger.debug('change: ${link.content} -> ${newlink}')
 									paragraph.content = paragraph.content.replace(link.content,
 										newlink)
-									// TODO: don't think we need this one
-									// panic('new page is ${link.content} with ${newlink}')
-									// paragraph.doc.save_wiki()!
-									// panic('not implemented save wiki')
+									link.path = collectionname + '/' + page.pathrel.all_before_last('/').trim_right('/')
+									link.content = newlink
+									paragraph.items[x] = link
 								}
 							} else {
 								book.error(
@@ -211,15 +216,18 @@ fn (mut book MDBook) fix_summary() ! {
 							}
 						} else {
 							collectionnames := book.tree.collectionnames().join('\n- ')
+							msg := 'Cannot find collection: ${collectionname} \ncollectionnames known::\n\n${collectionnames} '
+							book.tree.logger.error(msg)
 							book.error(
 								cat: .collection_not_found
-								msg: 'Cannot find collection: ${collectionname} \ncollectionnames known::\n\n${collectionnames} '
+								msg: msg
 							)
 							continue
 						}
 					}
 				}
 			}
+			book.doc_summary.items[y] = paragraph
 		}
 	}
 }
@@ -271,19 +279,51 @@ fn (mut book MDBook) link_pages_files_images() ! {
 }
 
 pub fn (mut book MDBook) errors_report() ! {
-	mut p := pathlib.get('${book.path.path}/errors.md')
-	if book.errors.len == 0 {
-		p.delete()!
-		return
+	// Add errors of the collections to the report
+	mut collection_errors := map[string]string{ }
+	for _, mut page in book.pages {
+		if page.collection.errors.len > 0 {
+			collection_errors[page.collection.name] = '${page.collection.path.path}/errors.md'
+		}
 	}
+
+	for _, mut file in book.files {
+		if file.collection.errors.len > 0 {
+			collection_errors[file.collection.name] = '${file.collection.path.path}/errors.md'
+		}
+	}
+
+	for _, mut image in book.images {
+		if image.collection.errors.len > 0 {
+			collection_errors[image.collection.name] = '${image.collection.path.path}/errors.md'
+		}
+	}
+	for collection_name, error_path in collection_errors {
+		mut path_error_file := pathlib.get(error_path)
+		path_error_file.copy(mut pathlib.get('${book.md_path("").path}/src/errors_${collection_name}.md'))!
+
+		book.error(
+			cat: .collection_error
+			msg: 'There were one or more errors in collection ${collection_name}, please take a look at [the collection\'s error page](errors_${collection_name}.md)'
+		)
+	}
+
 	c := $tmpl('template/errors.md')
-	p.write(c)!
-	mut p2 := pathlib.get('${book.dest_md}/errors.md')
-	if book.errors.len == 0 {
+	mut p2 := pathlib.get('${book.dest_md}/src/errors.md')
+	if book.errors.len == 0{
 		p2.delete()!
 		return
 	}
-	p2.write(c)!	
+	p2.write(c)!
+
+	mut paragraph :=  markdowndocs.Paragraph { }
+	paragraph.items << markdowndocs.Text { content: '- ' }
+	paragraph.items << markdowndocs.Link { cat: .page, description: 'Errors', filename: 'errors.md' }
+	for collection_name, error_path in collection_errors {
+		paragraph.items << markdowndocs.Text { content: '\n  - ' }
+		paragraph.items << markdowndocs.Link { cat: .page, description: 'Errors in collection ${collection_name}', filename: 'errors_${collection_name}.md' }
+	}
+	book.doc_summary.items << paragraph
 }
 
 // return path where the book will be created (exported and built from)
@@ -316,7 +356,7 @@ pub fn (mut book MDBook) export() ! {
 	for _, mut file in book.files {
 		dest := '${md_path}/${file.collection.name}/${file.pathrel}'
 		book.tree.logger.info('- export: ${dest}')
-		file.copy(dest)!
+		5
 	}
 
 	for _, mut image in book.images {
