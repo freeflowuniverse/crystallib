@@ -79,19 +79,30 @@ fn C.secp265k1_shared_key(private &Secp256k1_t, public &Secp256k1_t) &u8
 
 fn C.secp256k1_load_key(secp &Secp256k1_t, key &u8) int
 
+fn C.secp256k1_load_private_key(secp &Secp256k1_t, key &u8) int
+
+fn C.secp256k1_load_public_key(secp &Secp256k1_t, key &u8) int
+
 fn C.secp256k1_free(secp &Secp256k1_t)
 
 fn C.secp256k1_dumps(secp &Secp256k1_t)
 
 fn C.secp256k1_export(secp &Secp256k1_t) &u8
 
+fn C.secp256k1_private_key(secp &Secp256k1_t) &u8
+
+fn C.secp256k1_public_key(secp &Secp256k1_t) &u8
+
 fn C.secp256k1_generate_key(secp &Secp256k1_t) int
 
 [params]
 pub struct Secp256NewArgs {
 pub:
-	keyhex string // e.g. 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83
-	key    []u8   // is in binary form
+	keyhex string   // old way, same as privhex
+	pubhex string   // public key hex (eg 0x03310ec949bd4f7fc24f823add1394c78e1e9d70949ccacf094c027faa20d99e21)
+	privhex string  // private key hex (eg 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83)
+
+	key []u8      // is in binary form 
 }
 
 // get a Secp256k1 key, can start from an existing key in binary or string format
@@ -101,26 +112,55 @@ pub:
 // 	generate bool = true //default will generate a new key	.
 pub fn new(args_ Secp256NewArgs) !Secp256k1 {
 	mut args := args_
+
 	secp := Secp256k1{}
 	secp.cctx = C.secp256k1_new()
+
 	if args.key.len > 0 && args.keyhex.len > 0 {
-		return error('cannot specify hexkey and key at same time')
+		return error("cannot specify hexkey and key at same time")
 	}
-	if !(args.key.len > 0 || args.keyhex.len > 0) {
-		// generate the private key (in case we did not load it)
+
+	if args.privhex.len > 0 && args.pubhex.len > 0 {
+		return error("cannot specify private and public key at same time")
+	}
+	
+	if (args.key.len == 0 && args.keyhex.len == 0 && args.privhex.len == 0 && args.pubhex.len == 0) {
+		// no keys specified, generating new private and public key
 		C.secp256k1_generate_key(secp.cctx)
+
 	} else {
-		// load key from key like 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83
-		// key is the private key
-		C.secp256k1_load_key(secp.cctx, args.keyhex.str)
+		if args.keyhex.len > 0 {
+			// load key from hex like 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83
+			// key is the private key
+			C.secp256k1_load_private_key(secp.cctx, args.keyhex.str)
+		}
+
+		if args.privhex.len > 0 {
+			// same as keyhex (backward compatibility)
+			// load key from hex like 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83
+			// key is the private key
+			C.secp256k1_load_private_key(secp.cctx, args.privhex.str)
+		}
+
+		if args.pubhex.len > 0 {
+			// load key from hex like 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83
+			// key is the public key, this only allow signature check
+			C.secp256k1_load_public_key(secp.cctx, args.pubhex.str)
+		}
+
 		// TODO: implement the binary key input
 		// TODO: check format in side and report properly
 	}
-	secp.keys()
+
+	// dumps keys for debugging purpose
+	// secp.keys()	
+
 	return secp
 }
 
-// QUESTION: what does this do?
+// request keys dump from low level library
+// this basically prints keys from internal objects (private, public, shared, x-only, ...)
+// this is for debug purpose
 fn (s Secp256k1) keys() {
 	C.secp256k1_dumps(s.cctx)
 }
@@ -138,6 +178,17 @@ pub fn (s Secp256k1) sharedkeys(target Secp256k1) []u8 {
 	shr := C.secp265k1_shared_key(s.cctx, target.cctx)
 
 	return unsafe { shr.vbytes(32) } // 32 bytes shared key
+}
+
+pub fn (s Secp256k1) private_key() string {
+	key := C.secp256k1_private_key(s.cctx)
+	return unsafe { key.vstring() }
+}
+
+
+pub fn (s Secp256k1) public_key() string {
+	key := C.secp256k1_public_key(s.cctx)
+	return unsafe { key.vstring() }
 }
 
 //

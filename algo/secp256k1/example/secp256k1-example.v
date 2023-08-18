@@ -12,6 +12,10 @@ fn do() ! {
 	println('[+] initializing libsecp256 vlang wrapper')
 
 	wendy := secp256k1.new()!
+	println("-------")
+	println("Wendy Private: " + wendy.private_key())
+	println("Wendy Public:  " + wendy.public_key())
+	println("-------")
 
 	bob := secp256k1.new(
 		keyhex: '0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83'
