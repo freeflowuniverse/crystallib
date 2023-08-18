@@ -204,9 +204,11 @@ fn (mut book MDBook) fix_summary() ! {
 							}
 						} else {
 							collectionnames := book.tree.collectionnames().join('\n- ')
+							msg := 'Cannot find collection: ${collectionname} \ncollectionnames known::\n\n${collectionnames} '
+							book.tree.logger.error(msg)
 							book.error(
 								cat: .collection_not_found
-								msg: 'Cannot find collection: ${collectionname} \ncollectionnames known::\n\n${collectionnames} '
+								msg: msg
 							)
 							continue
 						}

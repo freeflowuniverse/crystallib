@@ -1,16 +1,14 @@
 module main
 
-import freeflowuniverse.crystallib.books.tree
+import freeflowuniverse.crystallib.knowledgetree
 import os
 
-const testpath = os.dir(@FILE) + '/../collection1'
+const testpath = os.dir(@FILE) + '/../chapter1'
 
 fn do() ! {
-	mut l := tree.new()
+	mut tree := knowledgetree.new()!
 
-	mut book := l.book_new(name: 'testbook')!
-
-	mut c := book.collection_new(
+	mut c := tree.collection_new(
 		path: testpath
 		load: true
 		heal: false
@@ -30,8 +28,6 @@ fn do() ! {
 	mut page2 := c.page_get('casperlabs_Deployment')!
 	assert page == page2
 	println(page)
-
-	// println(c)
 }
 
 fn main() {
