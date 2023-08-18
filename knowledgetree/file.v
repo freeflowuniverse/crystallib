@@ -22,7 +22,7 @@ pub mut:
 	path         pathlib.Path
 	pathrel      string
 	state        FileStatus
-	pages_linked []&Page      [str: skip] // pointer to pages which use this file
+	pages_linked []&Page // pointer to pages which use this file
 	ftype        FileType
 }
 

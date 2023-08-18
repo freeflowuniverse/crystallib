@@ -69,6 +69,9 @@ fn main() {
 	moderations := ai_cli.create_moderation('Something violent', op.ModerationModel.text_moderation_latest)!
 	print(moderations)
 
-	embeddings := ai_cli.create_embeddings(input: ["sample embedding input"], model: op.EmbeddingModel.text_embedding_ada)!
+	embeddings := ai_cli.create_embeddings(
+		input: ['sample embedding input']
+		model: op.EmbeddingModel.text_embedding_ada
+	)!
 	print(embeddings)
 }

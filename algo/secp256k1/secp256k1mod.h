@@ -50,6 +50,8 @@
     void secp256k1_sign_free(secp256k1_sign_t *signature);
 
     char *secp256k1_export(secp256k1_t *secp);
+    char *secp256k1_private_key(secp256k1_t *secp);
+    char *secp256k1_public_key(secp256k1_t *secp);
     void secp256k1_dumps(secp256k1_t *secp);
     int secp256k1_load_key(secp256k1_t *secp, char *key);
 #endif

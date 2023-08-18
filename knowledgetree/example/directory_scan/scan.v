@@ -6,14 +6,10 @@ import os
 const testpath = os.dir(@FILE) + '/../chapter1'
 
 fn do() ! {
-	mut tree := knowledgetree.new()!
+	mut tr := knowledgetree.new()!
+	tr.scan(path: testpath, heal: false)!
 
-	mut c := tree.collection_new(
-		path: testpath
-		load: true
-		heal: false
-		name: 'Scanner1'
-	)!
+	mut c := tr.collection_get('solution')!
 
 	assert c.page_exists('grant')
 	assert c.page_exists('grant3') == false
@@ -27,7 +23,10 @@ fn do() ! {
 	mut page := c.page_get('casperlabs_deployment')!
 	mut page2 := c.page_get('casperlabs_Deployment')!
 	assert page == page2
-	println(page)
+
+	mut book := tr.book_new(path: '${testpath}', name: 'mybook')!
+	book.read()! // will generate and open
+	println(book)
 }
 
 fn main() {

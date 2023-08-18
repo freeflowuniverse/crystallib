@@ -121,6 +121,18 @@ void secp256k1_free(secp256k1_t *secp) {
     free(secp);
 }
 
+static int secp256k1_populate_public_key(secp256k1_t *secp) {
+    int retval;
+
+    retval = secp256k1_xonly_pubkey_from_pubkey(secp->kntxt, &secp->xpubkey, NULL, &secp->pubkey);
+    assert(retval);
+
+    retval = secp256k1_xonly_pubkey_serialize(secp->kntxt, secp->xcompressed, &secp->xpubkey);
+    assert(retval);
+
+    return 0;
+}
+
 static int secp256k1_populate_key(secp256k1_t *secp) {
     int retval;
 
@@ -136,13 +148,7 @@ static int secp256k1_populate_key(secp256k1_t *secp) {
     retval = secp256k1_keypair_create(secp->kntxt, &secp->keypair, secp->seckey);
     assert(retval);
 
-    retval = secp256k1_xonly_pubkey_from_pubkey(secp->kntxt, &secp->xpubkey, NULL, &secp->pubkey);
-    assert(retval);
-
-    retval = secp256k1_xonly_pubkey_serialize(secp->kntxt, secp->xcompressed, &secp->xpubkey);
-    assert(retval);
-
-    return 0;
+    return secp256k1_populate_public_key(secp);
 }
 
 int secp256k1_generate_key(secp256k1_t *secp) {
@@ -201,7 +207,7 @@ int secp256k1_load_public_key(secp256k1_t *secp, char *key) {
         return 1;
     }
 
-    return 0;
+    return secp256k1_populate_public_key(secp);;
 }
 
 
@@ -362,6 +368,7 @@ int main() {
     secp256k1_t *bobpub = secp256k1_new();
     int val = secp256k1_load_public_key(bobpub, "0x03310ec949bd4f7fc24f823add1394c78e1e9d70949ccacf094c027faa20d99e21");
     printf("Public key loader: %d\n", val);
+    secp256k1_dumps(bobpub);
 
     // alice
     secp256k1_t *alice = secp256k1_new();
@@ -426,6 +433,11 @@ int main() {
 
     printf("\n");
     printf("Signature valid: %d\n", valid);
+
+    valid = secp256k1_schnorr_verify(bobpub, sign, SCHSIG_SIZE, hash, sizeof(hash));
+
+    printf("\n");
+    printf("Signature valid (using bob pubkey key only): %d\n", valid);
 
     secp256k1_erase_free(sign, SCHSIG_SIZE);
 

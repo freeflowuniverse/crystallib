@@ -148,6 +148,10 @@ fn (mut page Page) process_macro_include(content string) !string {
 		if line.trim_space().starts_with('{{#include') {
 			page_name_include = texttools.name_fix_no_ext(line.all_after_first('#include').all_before('}}').trim_space())
 		}
+		if line.trim_space().starts_with('!!include ') {
+			page_name_include = texttools.name_fix_no_ext(line.all_after_first('!!include ')).trim_space()
+		}
+
 		// TODO: need other type of include macro format !!!include ...
 		if page_name_include != '' {
 			//* means we dereference, we have a copy so we can change
@@ -198,6 +202,7 @@ pub fn (mut page Page) save(args_ PageSaveArgs) ! {
 		args.dest = page.path.path
 	}
 	// out := page.process_macros()!
+	page.fix_links()! // always need to make sure that the links are now clean
 	out := page.doc.wiki()
 	mut p := pathlib.get_file(args.dest, true)!
 	p.write(out)!
