@@ -19,12 +19,12 @@ fn do() ! {
 
 	// create 'bob' from a private key, full features will be available
 	bob := secp256k1.new(
-		keyhex: '0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83'
+		privhex: '0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83'
 	)!
 
 	// create 'alice' from a private key, full features will be available
 	alice := secp256k1.new(
-		keyhex: '0x8225825815f42e1c24a2e98714d99fee1a20b5ac864fbcb7a103cd0f37f0ffec'
+		privhex: '0x8225825815f42e1c24a2e98714d99fee1a20b5ac864fbcb7a103cd0f37f0ffec'
 	)!
 
 	// create 'bobpub' from bob only public key, reduced features available (only sign check, shared keys, etc.)
@@ -110,10 +110,10 @@ fn do() ! {
 	schnorr_signed_str_hex := alice.schnorr_sign_str_hex(message)
 	println(schnorr_signed_str_hex)
 
-	println(alice.schnorr_verify_data(schnorr_signed, message.bytes()))
-	println(alice.schnorr_verify_str(schnorr_signed_str, message))
+	println(alicepub.schnorr_verify_data(schnorr_signed, message.bytes()))
+	println(alicepub.schnorr_verify_str(schnorr_signed_str, message))
 
-	// should fails, it's not the right signature
-	println(alice.verify_data(schnorr_signed, message.bytes()))
-	println(alice.verify_str(schnorr_signed_str, message))
+	// should fails, it's not the right signature method
+	println(alicepub.verify_data(schnorr_signed, message.bytes()))
+	println(alicepub.verify_str(schnorr_signed_str, message))
 }
