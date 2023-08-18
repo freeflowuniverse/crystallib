@@ -166,10 +166,10 @@ fn (mut page Page) process_macro_include(content string) !string {
 			page_include.path = page.path // we need to operate in path from where we include from
 
 			line = ''
-			// for line_include in page_include.doc.content.split_into_lines() {
-			// 	result << line_include
-			// }
-			panic('implement include')
+			for line_include in page_include.doc.content.split_into_lines() {
+			 	result << line_include
+			}
+			//panic('implement include')
 			if page_include.files_linked.len > 0 {
 				page_include.fix()!
 			}
@@ -181,12 +181,12 @@ fn (mut page Page) process_macro_include(content string) !string {
 	return result.join('\n')
 }
 
-// // will process the macro's and return string
-// fn (mut page Page) process_macros() !string {
-// 	mut out := page.doc.content
-// 	out = page.process_macro_include(out)!
-// 	return out
-// }
+// will process the macro's and return string
+fn (mut page Page) process_macros() !string {
+ 	mut out := page.doc.wiki()
+ 	out = page.process_macro_include(out)!
+ 	return out
+}
 
 [params]
 pub struct PageSaveArgs {
@@ -201,9 +201,9 @@ pub fn (mut page Page) save(args_ PageSaveArgs) ! {
 	if args.dest == '' {
 		args.dest = page.path.path
 	}
-	// out := page.process_macros()!
 	page.fix_links()! // always need to make sure that the links are now clean
-	out := page.doc.wiki()
+	mut out := page.process_macros()!
+	//out = page.doc.wiki()
 	mut p := pathlib.get_file(args.dest, true)!
 	p.write(out)!
 

@@ -166,11 +166,12 @@ pub fn (mut mdbook MDBook) reset() ! {
 
 // fixes the summary doc for the book
 fn (mut book MDBook) fix_summary() ! {
-	for mut paragraph in book.doc_summary.items.filter(it is markdowndocs.Paragraph) {
-		if mut paragraph is markdowndocs.Paragraph {
-			for mut item in paragraph.items {
-				if mut item is markdowndocs.Link {
-					mut link := item
+	for y in 0..book.doc_summary.items.len {
+		if book.doc_summary.items[y] is markdowndocs.Paragraph {
+			mut paragraph := book.doc_summary.items[y] as markdowndocs.Paragraph
+			for x in 0..paragraph.items.len {
+				if paragraph.items[x] is markdowndocs.Link {
+					mut link := paragraph.items[x] as markdowndocs.Link
 					if link.isexternal {
 						msge := 'external link not supported yet in summary for:\n ${book}'
 						book.error(cat: .unknown, msg: msge)
@@ -185,10 +186,13 @@ fn (mut book MDBook) fix_summary() ! {
 						if book.tree.collection_exists(collectionname) {
 							mut collection := book.tree.collection_get(collectionname)!
 							dest := '${book.path.path}/${collectionname}'
+							/*
+							// QUESTION: WHy did we need this in the first place?
 							if dest != collection.path.path {
 								// QUESTION: WHy did we need this in the first place?
 								//collection.path.link(dest, true)!
 							}
+							*/
 
 							// now we can process the page where the link goes to
 							if collection.page_exists(pagename) {
@@ -199,6 +203,9 @@ fn (mut book MDBook) fix_summary() ! {
 									book.tree.logger.debug('change: ${link.content} -> ${newlink}')
 									paragraph.content = paragraph.content.replace(link.content,
 										newlink)
+									link.path = collectionname + '/' + page.pathrel.all_before_last('/').trim_right('/')
+									link.content = newlink
+									paragraph.items[x] = link
 								}
 							} else {
 								book.error(
@@ -220,6 +227,7 @@ fn (mut book MDBook) fix_summary() ! {
 					}
 				}
 			}
+			book.doc_summary.items[y] = paragraph
 		}
 	}
 }
