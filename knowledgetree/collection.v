@@ -213,7 +213,6 @@ fn (mut collection Collection) file_image_remember(mut p Path) ! {
 pub fn (mut collection Collection) page_new(mut p Path) ! {
 	collection.tree.logger.debug('collection: ${collection.name} page new: ${p.path}')
 	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
-	println("POINTER IS ${ptr.pointer.name}")
 	if collection.page_exists(ptr.pointer.name) {
 		collection.error(
 			path: p

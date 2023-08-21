@@ -85,8 +85,9 @@ fn (mut page Page) link_update(mut link Link) ! {
 	page.files_linked << fileobj
 	linkcompare1 := link.description + link.url + link.filename + link.content
 	imagelink_rel := pathlib.path_relative(page.path.path_dir(), fileobj.path.path)!
+
 	link.description = link.description
-	link.url = imagelink_rel
+	link.path = os.dir(imagelink_rel)
 	link.filename = os.base(imagelink_rel)
 	link.content = link.wiki()
 	linkcompare2 := link.description + link.url + link.filename + link.content
@@ -124,18 +125,24 @@ fn (mut page Page) fix() ! {
 
 // walk over all links and fix them with location
 fn (mut page Page) fix_links() ! {
-	for mut paragraph in page.doc.items.filter(it is Paragraph) {
-		if mut paragraph is Paragraph {
-			for mut item_link in paragraph.items {
-				if mut item_link is Link {
+	for x in 0..page.doc.items.len {
+		if page.doc.items[x] is Paragraph {
+			mut paragraph := page.doc.items[x] as Paragraph
+			for y in 0..paragraph.items.len {
+				if paragraph.items[y] is Link {
+					mut item_link := paragraph.items[y] as Link
 					if item_link.isexternal {
 						page.fix_external_link(mut item_link)!
 					} else if item_link.cat == .image || item_link.cat == .file {
 						// this will change the link
+						println("LINK BEFORE: ${item_link}")
 						page.link_update(mut item_link)!
+						println("LINK AFTER: ${item_link}")
 					}
+					paragraph.items[y] = item_link
 				}
 			}
+			page.doc.items[x] = paragraph
 		}
 	}
 }
