@@ -14,5 +14,5 @@ fn test_ping_timeout() ! {
 }
 
 fn test_ping_unknownhost() ! {
-	assert ping(address: '12.902.219.1', count: 5, timeout: 1) == .unknownhost
+	assert ping(address: '12.902.219.1', count: 1, timeout: 1) == .unknownhost
 }
