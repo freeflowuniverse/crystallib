@@ -229,6 +229,7 @@ pub fn (mut collection Collection) page_new(mut p Path) ! {
 		path: p
 		collection: &collection
 		readonly: false
+		pages_linked: []&Page{}
 	}
 	collection.pages[ptr.pointer.name] = page
 }

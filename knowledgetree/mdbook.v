@@ -186,13 +186,6 @@ fn (mut book MDBook) fix_summary() ! {
 						if book.tree.collection_exists(collectionname) {
 							mut collection := book.tree.collection_get(collectionname)!
 							dest := '${book.path.path}/${collectionname}'
-							/*
-							// QUESTION: WHy did we need this in the first place?
-							if dest != collection.path.path {
-								// QUESTION: WHy did we need this in the first place?
-								//collection.path.link(dest, true)!
-							}
-							*/
 
 							// now we can process the page where the link goes to
 							if collection.page_exists(pagename) {
@@ -342,12 +335,26 @@ pub fn (mut book MDBook) read() ! {
 	osal.exec(cmd: 'open ${book.html_path('').path}/index.html', shell:true)!
 }
 
+pub fn (mut book MDBook) export_linked_pages(md_path string, mut page Page) ! {
+	for mut page_linked in page.pages_linked {
+		if page_linked.pages_linked.len > 0 {
+			book.export_linked_pages(md_path, mut page_linked)!
+		}
+		dest := '${md_path}/${page_linked.collection.name}/${page_linked.pathrel}'
+		book.tree.logger.info('- export: ${dest}')
+		page_linked.save(dest: dest)!
+	}
+}
+
 // export an mdbook to its html representation
 pub fn (mut book MDBook) export() ! {
 	book.template_install()! // make sure all required template files are in collection
 	md_path := book.md_path('').path + '/src'
 	html_path := book.html_path('').path
 	for _, mut page in book.pages {
+		if page.pages_linked.len > 0 {
+			book.export_linked_pages(md_path, mut page)!
+		}
 		dest := '${md_path}/${page.collection.name}/${page.pathrel}'
 		book.tree.logger.info('- export: ${dest}')
 		page.save(dest: dest)!
@@ -356,7 +363,6 @@ pub fn (mut book MDBook) export() ! {
 	for _, mut file in book.files {
 		dest := '${md_path}/${file.collection.name}/${file.pathrel}'
 		book.tree.logger.info('- export: ${dest}')
-		5
 	}
 
 	for _, mut image in book.images {
