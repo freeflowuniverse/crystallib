@@ -1,6 +1,5 @@
-module zerohub
+module rmb
 
-import freeflowuniverse.crystallib.httpconnection
 import freeflowuniverse.crystallib.redisclient { RedisURL }
 import os
 
@@ -12,7 +11,7 @@ pub mut:
 	redis            &redisclient.Redis [str: skip]
 }
 
-enum TFNetType {
+pub enum TFNetType {
 	unspecified
 	main
 	test
@@ -22,10 +21,11 @@ enum TFNetType {
 
 [params]
 pub struct RMBClientArgs {
-pub:
-	nettype     TFNetType
-	relay_url   string
-	tfchain_url string
+pub mut:
+	nettype          TFNetType
+	relay_url        string
+	tfchain_url      string
+	tfchain_mnemonic string
 }
 
 //  params
@@ -35,9 +35,9 @@ pub:
 // 		tfchain_mnemonic string= e.g. "wss://tfchain.dev.grid.tf:443"  	OPTIONAL
 pub fn new(args_ RMBClientArgs) !RMBClient {
 	mut args := args_
-	if tfchain_mnemonic == '' {
-		if 'TFCHAINSECRET' in os.environ {
-			args.tfchain_mnemonic = os.environ['TFCHAINSECRET']
+	if args.tfchain_mnemonic == '' {
+		if 'TFCHAINSECRET' in os.environ() {
+			args.tfchain_mnemonic = os.environ()['TFCHAINSECRET']
 		} else {
 			return error('need to specify TFCHAINSECRET (menomics for TFChain) as env argument or inside client')
 		}
@@ -62,7 +62,7 @@ pub fn new(args_ RMBClientArgs) !RMBClient {
 	mut redis := redisclient.core_get(RedisURL{})!
 
 	mut cl := RMBClient{
-		redis: redis
+		redis: &redis
 		relay_url: args.relay_url
 		tfchain_url: args.tfchain_url
 		tfchain_mnemonic: args.tfchain_mnemonic

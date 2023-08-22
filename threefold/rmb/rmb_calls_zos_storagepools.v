@@ -1,7 +1,7 @@
 module rmb
 
 import json
-import base64
+import encoding.base64
 
 struct ZosPoolJSON {
 mut:
@@ -25,18 +25,20 @@ enum PoolType {
 
 // get storage pools from a zos, the argument is u32 address of the zos
 pub fn (mut z RMBClient) get_storage_pools(dst u32) ![]ZosPool {
-	response := z.rmb_client_request('zos.storage.pools', dst)!
+	response := z.rmb_request('zos.storage.pools', dst)!
 	if response.err.message != '' {
 		return error('${response.err.message}')
 	}
-	objs := json.decode([]ZosPoolJSON, base64.decode_str(response.dat))
+	objs := json.decode([]ZosPoolJSON, base64.decode_str(response.dat))!
 	mut res := []ZosPool{}
 	for o in objs {
-		res = ZosPool{
+		res << ZosPool{
 			name: o.name
 			size: o.size
 			used: o.used
 			pool_type: .dontknow // TODO
 		}
 	}
+
+	return res
 }

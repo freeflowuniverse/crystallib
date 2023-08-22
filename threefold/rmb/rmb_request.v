@@ -1,7 +1,8 @@
 module rmb
 
-import base64
+import encoding.base64
 import time
+import rand
 import json
 
 // cmd is e.g.
@@ -17,7 +18,7 @@ pub fn (mut z RMBClient) rmb_request(cmd string, dst u32) !RmbResponse {
 	}
 	request := json.encode_pretty(msg)
 	z.redis.lpush('msgbus.system.local', request)!
-	response_json := z.redis.blpop(msg.ret, 5)!
-	response := json.decode(RmbResponse, response_json)!
+	response_json := z.redis.blpop([msg.ret], 5)!
+	response := json.decode(RmbResponse, response_json[0])!
 	return response
 }
