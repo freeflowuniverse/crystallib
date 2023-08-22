@@ -10,3 +10,6 @@
 - major world records in relation to hosting of very big internet sites (1998-2000) with global loadbalancing and caching at a time this was not done yet
 
 > We are delighted to use this expertise for the benefit of the world and are grateful for the chance devxdao gives us to develop and contribute even more.
+
+
+!!include double.md
