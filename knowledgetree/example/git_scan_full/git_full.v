@@ -43,7 +43,11 @@ fn do() ! {
 	assert tree.image_exists('testbook::experience.png')
 	assert tree.image_exists('testbook::experiencee.png') == false
 
-	mut book := tree.book_new(name: 'MyBook', path: '~/code5/github/threefoldfoundation/books2/books/threefold_projects_overview', dest: '_book1')!
+	mut book := tree.book_new(
+		name: 'MyBook'
+		path: '~/code5/github/threefoldfoundation/books2/books/threefold_projects_overview'
+		dest: '_book1'
+	)!
 	book.export()!
 
 	println('OK')

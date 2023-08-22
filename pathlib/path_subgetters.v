@@ -6,7 +6,7 @@ import os
 [params]
 pub struct SubGetParams {
 pub mut:
-	name          string 
+	name          string
 	name_fix_find bool // means we will also find if name is same as the name_fix
 	name_fix      bool // if file found and name fix was different than file on filesystem, will rename
 	dir_ensure    bool // if dir_ensure on will fail if its not a dir
@@ -69,8 +69,8 @@ pub fn (mut path Path) sub_get(args_ SubGetParams) !Path {
 		}
 	}
 	if args.name == '' {
-		return error("name cannot be empty")
-	}	
+		return error('name cannot be empty')
+	}
 	if args.name_fix {
 		args.name_fix_find = true
 	}

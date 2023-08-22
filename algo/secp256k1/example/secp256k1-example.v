@@ -12,10 +12,10 @@ fn do() ! {
 	println('[+] initializing libsecp256 vlang wrapper')
 
 	wendy := secp256k1.new()!
-	println("-------")
-	println("Wendy Private: " + wendy.private_key())
-	println("Wendy Public:  " + wendy.public_key())
-	println("-------")
+	println('-------')
+	println('Wendy Private: ' + wendy.private_key())
+	println('Wendy Public:  ' + wendy.public_key())
+	println('-------')
 
 	// create 'bob' from a private key, full features will be available
 	bob := secp256k1.new(
@@ -49,7 +49,6 @@ fn do() ! {
 
 	shr2pub := alice.sharedkeys(bobpub)
 	println(shr2pub)
-
 
 	println('-----')
 

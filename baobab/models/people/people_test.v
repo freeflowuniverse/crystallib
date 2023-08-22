@@ -1,16 +1,13 @@
 module people
 
-import freeflowuniverse.protocolme.models.system
+import freeflowuniverse.crystallib.baobab.models.system
 import json
 
 fn test_1() {
-	mut p := person_new('')?
-	p.start_date.now()
+	mut p := person_new()?
+	// p.start_date.now()
 
-	println(p)
-	mut y := p.respbuilder()!
-	println(y)
-	println(p.json())
+	// println(p)
 
-	panic('s')
+	// panic('s')
 }

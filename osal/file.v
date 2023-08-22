@@ -11,7 +11,15 @@ pub fn file_read(path string) !string {
 }
 
 // remove all if it exists
-pub fn rmdir_all(path string) ! {
+pub fn dir_ensure(path string) ! {
+	if ! os.exists(path) {
+		os.mkdir_all(s2)!
+	}
+}
+
+
+// remove all if it exists
+pub fn dir_delete(path string) ! {
 	if os.exists(path) {
 		return os.rmdir_all(path)
 	}
@@ -19,7 +27,7 @@ pub fn rmdir_all(path string) ! {
 
 // remove all if it exists
 // and then (re-)create
-pub fn resetdir_all(path string) ! {
+pub fn dir_reset(path string) ! {
 	rmdir_all(path)!
 	os.mkdir_all(path)!
 }

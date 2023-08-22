@@ -96,11 +96,11 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 	}
 
 	if args.dest_md == '' {
-		 args.dest_md = "/tmp/mdbook/${args.name}"
+		args.dest_md = '/tmp/mdbook/${args.name}'
 	}
 
 	if args.dest == '' {
-		 args.dest = "/tmp/mdbook_export/${args.name}"
+		args.dest = '/tmp/mdbook_export/${args.name}'
 	}
 
 	if args.name in l.books {
@@ -131,7 +131,7 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 		dest_md: args.dest_md
 		doc_summary: &markdowndocs.Doc{}
 	}
-	book.reset()! //clean the destination
+	book.reset()! // clean the destination
 	book.load_summary()!
 	book.fix_summary()!
 	book.link_pages_files_images()!
@@ -144,16 +144,14 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 
 // load the summary
 fn (mut book MDBook) load_summary() ! {
-	mut path_summary:=book.path.sub_get(name:"summary.md",file_ensure:true, name_fix:true) or {
-		return error("Cannot find a summary for ${book.path.path}")
-	 }
+	mut path_summary := book.path.sub_get(name: 'summary.md', file_ensure: true, name_fix: true) or {
+		return error('Cannot find a summary for ${book.path.path}')
+	}
 	doc := markdowndocs.new(path: path_summary.path) or {
 		return error('cannot book parse summary for ${book.path.path}: ${err}')
 	}
 	book.doc_summary = &doc
-
 }
-
 
 // reset all, just to make sure we regenerate fresh
 pub fn (mut mdbook MDBook) reset() ! {
@@ -166,10 +164,10 @@ pub fn (mut mdbook MDBook) reset() ! {
 
 // fixes the summary doc for the book
 fn (mut book MDBook) fix_summary() ! {
-	for y in 0..book.doc_summary.items.len {
+	for y in 0 .. book.doc_summary.items.len {
 		if book.doc_summary.items[y] is markdowndocs.Paragraph {
 			mut paragraph := book.doc_summary.items[y] as markdowndocs.Paragraph
-			for x in 0..paragraph.items.len {
+			for x in 0 .. paragraph.items.len {
 				if paragraph.items[x] is markdowndocs.Link {
 					mut link := paragraph.items[x] as markdowndocs.Link
 					if link.isexternal {
@@ -203,7 +201,8 @@ fn (mut book MDBook) fix_summary() ! {
 									book.tree.logger.debug('change: ${link.content} -> ${newlink}')
 									paragraph.content = paragraph.content.replace(link.content,
 										newlink)
-									link.path = collectionname + '/' + page.pathrel.all_before_last('/').trim_right('/')
+									link.path = collectionname + '/' +
+										page.pathrel.all_before_last('/').trim_right('/')
 									link.content = newlink
 									paragraph.items[x] = link
 								}
@@ -280,7 +279,7 @@ fn (mut book MDBook) link_pages_files_images() ! {
 
 pub fn (mut book MDBook) errors_report() ! {
 	// Add errors of the collections to the report
-	mut collection_errors := map[string]string{ }
+	mut collection_errors := map[string]string{}
 	for _, mut page in book.pages {
 		if page.collection.errors.len > 0 {
 			collection_errors[page.collection.name] = '${page.collection.path.path}/errors.md'
@@ -300,7 +299,7 @@ pub fn (mut book MDBook) errors_report() ! {
 	}
 	for collection_name, error_path in collection_errors {
 		mut path_error_file := pathlib.get(error_path)
-		path_error_file.copy(mut pathlib.get('${book.md_path("").path}/src/errors_${collection_name}.md'))!
+		path_error_file.copy(mut pathlib.get('${book.md_path('').path}/src/errors_${collection_name}.md'))!
 
 		book.error(
 			cat: .collection_error
@@ -310,36 +309,48 @@ pub fn (mut book MDBook) errors_report() ! {
 
 	c := $tmpl('template/errors.md')
 	mut p2 := pathlib.get('${book.dest_md}/src/errors.md')
-	if book.errors.len == 0{
+	if book.errors.len == 0 {
 		p2.delete()!
 		return
 	}
 	p2.write(c)!
 
-	mut paragraph :=  markdowndocs.Paragraph { }
-	paragraph.items << markdowndocs.Text { content: '- ' }
-	paragraph.items << markdowndocs.Link { cat: .page, description: 'Errors', filename: 'errors.md' }
+	mut paragraph := markdowndocs.Paragraph{}
+	paragraph.items << markdowndocs.Text{
+		content: '- '
+	}
+	paragraph.items << markdowndocs.Link{
+		cat: .page
+		description: 'Errors'
+		filename: 'errors.md'
+	}
 	for collection_name, error_path in collection_errors {
-		paragraph.items << markdowndocs.Text { content: '\n  - ' }
-		paragraph.items << markdowndocs.Link { cat: .page, description: 'Errors in collection ${collection_name}', filename: 'errors_${collection_name}.md' }
+		paragraph.items << markdowndocs.Text{
+			content: '\n  - '
+		}
+		paragraph.items << markdowndocs.Link{
+			cat: .page
+			description: 'Errors in collection ${collection_name}'
+			filename: 'errors_${collection_name}.md'
+		}
 	}
 	book.doc_summary.items << paragraph
 }
 
 // return path where the book will be created (exported and built from)
 fn (book MDBook) md_path(path string) Path {
-	return pathlib.get(book.dest_md+"/${path}")
+	return pathlib.get(book.dest_md + '/${path}')
 }
 
 // return path where the book will be created (exported and built from)
 fn (book MDBook) html_path(path string) Path {
-	return pathlib.get(book.dest+"/${path}")
+	return pathlib.get(book.dest + '/${path}')
 }
 
 // export an mdbook to its html representation and open the html
 pub fn (mut book MDBook) read() ! {
 	book.export()!
-	osal.exec(cmd: 'open ${book.html_path('').path}/index.html', shell:true)!
+	osal.exec(cmd: 'open ${book.html_path('').path}/index.html', shell: true)!
 }
 
 // export an mdbook to its html representation

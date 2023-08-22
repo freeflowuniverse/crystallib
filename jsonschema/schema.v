@@ -26,7 +26,6 @@ pub mut:
 	items                 Items
 	defs                  map[string]Schema
 	one_of                ?[]SchemaRef         [json: 'oneOf']
-
 	// todo: make fields optional upon the fixing of https://github.com/vlang/v/issues/18775
 	// from https://git.sr.ht/~emersion/go-jsonschema/tree/master/item/schema.go
 	// Validation for numbers

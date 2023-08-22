@@ -98,11 +98,11 @@ fn C.secp256k1_generate_key(secp &Secp256k1_t) int
 [params]
 pub struct Secp256NewArgs {
 pub:
-	keyhex string   // old way, same as privhex
-	pubhex string   // public key hex  (eg 0x03310ec949bd4f7fc24f823add1394c78e1e9d70949ccacf094c027faa20d99e21)
-	privhex string  // private key hex (eg 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83)
+	keyhex  string // old way, same as privhex
+	pubhex  string // public key hex  (eg 0x03310ec949bd4f7fc24f823add1394c78e1e9d70949ccacf094c027faa20d99e21)
+	privhex string // private key hex (eg 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83)
 
-	key []u8      // is in binary form (not implemented) 
+	key []u8 // is in binary form (not implemented)
 }
 
 // get a Secp256k1 key, can start from an existing key in string hex format (starts with 0x)
@@ -122,24 +122,23 @@ pub fn new(args_ Secp256NewArgs) !Secp256k1 {
 	secp.cctx = C.secp256k1_new()
 
 	if args.key.len > 0 && args.keyhex.len > 0 {
-		return error("cannot specify hexkey and key at same time")
+		return error('cannot specify hexkey and key at same time')
 	}
 
 	if args.privhex.len > 0 && args.pubhex.len > 0 {
-		return error("cannot specify private and public key at same time")
+		return error('cannot specify private and public key at same time')
 	}
-	
+
 	if (args.key.len == 0 && args.keyhex.len == 0 && args.privhex.len == 0 && args.pubhex.len == 0) {
 		// no keys specified, generating new private and public key
 		C.secp256k1_generate_key(secp.cctx)
-
 	} else {
 		if args.keyhex.len > 0 {
 			// load key from hex like 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83
 			// key is the private key
 			load := C.secp256k1_load_private_key(secp.cctx, args.keyhex.str)
 			if load > 0 {
-				return error("invalid private key")
+				return error('invalid private key')
 			}
 		}
 
@@ -149,7 +148,7 @@ pub fn new(args_ Secp256NewArgs) !Secp256k1 {
 			// key is the private key
 			load := C.secp256k1_load_private_key(secp.cctx, args.privhex.str)
 			if load > 0 {
-				return error("invalid private key")
+				return error('invalid private key')
 			}
 		}
 
@@ -158,7 +157,7 @@ pub fn new(args_ Secp256NewArgs) !Secp256k1 {
 			// key is the public key, this only allow signature check, shared keys, etc.
 			load := C.secp256k1_load_public_key(secp.cctx, args.pubhex.str)
 			if load > 0 {
-				return error("invalid public key")
+				return error('invalid public key')
 			}
 		}
 

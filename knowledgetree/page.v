@@ -167,9 +167,9 @@ fn (mut page Page) process_macro_include(content string) !string {
 
 			line = ''
 			for line_include in page_include.doc.content.split_into_lines() {
-			 	result << line_include
+				result << line_include
 			}
-			//panic('implement include')
+			// panic('implement include')
 			if page_include.files_linked.len > 0 {
 				page_include.fix()!
 			}
@@ -183,9 +183,9 @@ fn (mut page Page) process_macro_include(content string) !string {
 
 // will process the macro's and return string
 fn (mut page Page) process_macros() !string {
- 	mut out := page.doc.wiki()
- 	out = page.process_macro_include(out)!
- 	return out
+	mut out := page.doc.wiki()
+	out = page.process_macro_include(out)!
+	return out
 }
 
 [params]
@@ -203,7 +203,7 @@ pub fn (mut page Page) save(args_ PageSaveArgs) ! {
 	}
 	page.fix_links()! // always need to make sure that the links are now clean
 	mut out := page.process_macros()!
-	//out = page.doc.wiki()
+	// out = page.doc.wiki()
 	mut p := pathlib.get_file(args.dest, true)!
 	p.write(out)!
 
