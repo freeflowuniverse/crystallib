@@ -28,6 +28,33 @@ pub mut: // pointer to collection
 	changed        bool
 }
 
+fn (mut page Page) link_to_page_update(mut link Link) ! {
+	assert link.cat == .page
+	mut file_name := link.filename
+	mut other_page := if page.collection.page_exists(file_name) {
+		page.collection.page_get(file_name)!
+	} else if page.collection.tree.page_exists(file_name) {
+		page.collection.tree.page_get(file_name)!
+	} else {
+		page.collection.error(path: page.path, msg: 'link to unknown page: ${link.str()}', cat: .page_not_found)
+		return
+	}
+	if ! (other_page in page.pages_linked) {
+		page.pages_linked << other_page
+	}
+	linkcompare1 := link.description + link.url + link.filename + link.content
+	imagelink_rel := pathlib.path_relative(page.path.path_dir(), other_page.path.path)!
+
+	link.description = link.description
+	link.path = os.dir(imagelink_rel)
+	link.filename = os.base(imagelink_rel)
+	link.content = link.wiki()
+	linkcompare2 := link.description + link.url + link.filename + link.content
+	if linkcompare1 != linkcompare2 {
+		page.changed = true
+	}
+}
+
 // update link on the page, find the link into the collection
 fn (mut page Page) link_update(mut link Link) ! {
 	// mut linkout := link
@@ -46,11 +73,13 @@ fn (mut page Page) link_update(mut link Link) ! {
 			file_search = false
 			fileobj = page.collection.image_get(file_name)!
 		}
-	} else {
+	} else if link.cat == .file {
 		if page.collection.file_exists(file_name) {
 			file_search = false
 			fileobj = page.collection.file_get(file_name)!
 		}
+	} else {
+		panic('can\'t update link of type ${link.cat}')
 	}
 
 	if file_search {
@@ -85,8 +114,9 @@ fn (mut page Page) link_update(mut link Link) ! {
 	page.files_linked << fileobj
 	linkcompare1 := link.description + link.url + link.filename + link.content
 	imagelink_rel := pathlib.path_relative(page.path.path_dir(), fileobj.path.path)!
+
 	link.description = link.description
-	link.url = imagelink_rel
+	link.path = os.dir(imagelink_rel)
 	link.filename = os.base(imagelink_rel)
 	link.content = link.wiki()
 	linkcompare2 := link.description + link.url + link.filename + link.content
@@ -124,18 +154,27 @@ fn (mut page Page) fix() ! {
 
 // walk over all links and fix them with location
 fn (mut page Page) fix_links() ! {
-	for mut paragraph in page.doc.items.filter(it is Paragraph) {
-		if mut paragraph is Paragraph {
-			for mut item_link in paragraph.items {
-				if mut item_link is Link {
+	for x in 0..page.doc.items.len {
+		if page.doc.items[x] is Paragraph {
+			mut paragraph := page.doc.items[x] as Paragraph
+			for y in 0..paragraph.items.len {
+				if paragraph.items[y] is Link {
+					mut item_link := paragraph.items[y] as Link
+					if item_link.filename == 'threefold_cloud.md' {
+						print("${item_link}")
+					}
 					if item_link.isexternal {
 						page.fix_external_link(mut item_link)!
 					} else if item_link.cat == .image || item_link.cat == .file {
-						// this will change the link
+						// this will change the link			
 						page.link_update(mut item_link)!
+					} else if item_link.cat == .page {
+						page.link_to_page_update(mut item_link)!
 					}
+					paragraph.items[y] = item_link
 				}
 			}
+			page.doc.items[x] = paragraph
 		}
 	}
 }
