@@ -69,7 +69,7 @@ pub fn (mut cs Currencies) amount_get(amount_ string) !Amount {
 	}
 	// remove spaces from code and capitalise
 	code = code.to_upper().trim_space()
-	code2 := code.replace('.', '').replace('0', '')
+	code2 := code.replace('.', '').replace('0', '').trim_space()
 	if code2 == '' {
 		code = ''
 	}
@@ -85,7 +85,10 @@ pub fn (mut cs Currencies) amount_get(amount_ string) !Amount {
 	} else {
 		num = amount
 	}
-	cur0 := cs.currencies[code] or { return error('Cannot find currency with code ${code}') }
+	if code==""{
+		code="USD"
+	}
+	cur0 := cs.currencies[code] or { return error('Cannot find currency with code \'${code}\'') }
 
 	mut amount2 := Amount{
 		val: num.f64()

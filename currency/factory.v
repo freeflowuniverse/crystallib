@@ -13,9 +13,10 @@ const currenciesconst = init_factory()
 pub fn new() !Currencies {
 	mut cs := currency.currenciesconst
 	if cs.currencies.len == 0 {
+		println("FETCHCURRENCIES")
 		cs.defaults_set()
 		env := os.environ()
-		egpval := (1 / 30)
+		egpval := (1 / 32)
 		if 'OFFLINE' in env {
 			// compensate for internet not being there
 			cs.default_set('EUR', 0.9)

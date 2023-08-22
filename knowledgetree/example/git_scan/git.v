@@ -4,14 +4,14 @@ import freeflowuniverse.crystallib.knowledgetree
 
 // const path0 = '~/code/github/threefoldfoundation/books'
 
-const reset = false
+const reset = true
 
 fn do() ! {
 	mut tree := knowledgetree.new()!
 
 	tree.scan(
-		git_root: '~/code5'
-		git_url: 'https://github.com/threefoldfoundation/books/tree/main/content/mytwin'
+		git_root: '~/code6'
+		git_url: 'https://github.com/threefoldfoundation/books/tree/main/content'
 		load: true
 		heal: true
 		git_reset: reset
