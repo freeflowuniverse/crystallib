@@ -1,7 +1,7 @@
 module knowledgetree
 
 import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.markdowndocs { Link, Paragraph }
+import freeflowuniverse.crystallib.markdowndocs { Include, Link, Paragraph }
 import freeflowuniverse.crystallib.texttools
 import os
 
@@ -182,12 +182,10 @@ fn (mut page Page) fix_links() ! {
 }
 
 // will execute on 1 specific macro = include
-fn (mut page Page) process_macro_include(content string) !string {
-	if content.contains('!!include') {
-		println("${page.doc.items}")
-	}
+fn (mut page Page) process_macro_include() ! {
+	/*
 	mut result := []string{}
-	for mut line in content.split_into_lines() {
+	for x in page
 		mut page_name_include := ''
 		if line.trim_space().starts_with('{{#include') {
 			page_name_include = texttools.name_fix_no_ext(line.all_after_first('#include').all_before('}}').trim_space())
@@ -198,7 +196,7 @@ fn (mut page Page) process_macro_include(content string) !string {
 
 		// TODO: need other type of include macro format !!!include ...
 		if page_name_include != '' {
-			//* means we dereference, we have a copy so we can change
+			// * means we dereference, we have a copy so we can change
 			mut page_include := *page.collection.page_get(page_name_include) or {
 				msg := "include:'${page_name_include}' not found for page:${page.path.path}"
 				page.collection.error(path: page.path, msg: 'include ${msg}', cat: .page_not_found)
@@ -223,13 +221,47 @@ fn (mut page Page) process_macro_include(content string) !string {
 		}
 	}
 	return result.join('\n')
+	*/
+}
+
+fn (mut page Page) process_includes(mut include_tree []string) ! {
+	// check for circular imports
+	if page.name in include_tree {
+		history := include_tree.join(' -> ')
+		page.collection.error(path: page.path, msg: 'Found a circular include: ${history} in ', cat: .circular_import)
+		return 
+	}
+	include_tree << page.name
+
+	// find the files to import
+	mut included_pages := map[int]&Page{}
+	for x in 0..page.doc.items.len {
+		if page.doc.items[x] is Include {
+			include := page.doc.items[x] as Include
+			page.collection.tree.logger.debug("Including page ${include.content} into ${page.path.path}")
+			mut page_to_include := *page.collection.page_get(include.content) or {
+				msg := "include:'${include.content}' not found for page:${page.path.path}"
+				page.collection.error(path: page.path, msg: 'include ${msg}', cat: .page_not_found)
+				continue
+			}
+			page.collection.tree.logger.debug('Found page in collection ${page_to_include.collection.name}')
+			page_to_include.process_includes(mut include_tree)!
+			included_pages[x] = &page_to_include
+		}
+	}
+
+	// now we need to remove the links and replace them with the items from the doc of the page to insert
+	mut offset := 0
+	for x, page_to_include in included_pages {
+		page.doc.items.delete(x+offset)
+		page.doc.items.insert(x+offset, page_to_include.doc.items)
+		offset += page_to_include.doc.items.len-1
+	}
 }
 
 // will process the macro's and return string
-fn (mut page Page) process_macros() !string {
- 	mut out := page.doc.wiki()
- 	out = page.process_macro_include(out)!
- 	return out
+fn (mut page Page) process_macros() ! {
+ 	//out = page.process_macro_include(out)!
 }
 
 [params]
@@ -245,9 +277,11 @@ pub fn (mut page Page) save(args_ PageSaveArgs) ! {
 	if args.dest == '' {
 		args.dest = page.path.path
 	}
+	mut include_tree := []string{}
+	page.process_includes(mut include_tree)!
+	page.process_macros()!
 	page.fix_links()! // always need to make sure that the links are now clean
-	mut out := page.process_macros()!
-	//out = page.doc.wiki()
+	out := page.doc.wiki()
 	mut p := pathlib.get_file(args.dest, true)!
 	p.write(out)!
 

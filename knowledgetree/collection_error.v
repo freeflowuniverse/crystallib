@@ -11,6 +11,7 @@ pub enum CollectionErrorCat {
 	page_double
 	page_not_found
 	sidebar
+	circular_import
 }
 
 pub struct CollectionErrorArgs {

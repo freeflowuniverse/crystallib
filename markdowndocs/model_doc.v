@@ -38,7 +38,7 @@ pub fn (mut doc Doc) pre_add(arg HtmlSource) string {
 	return ''
 }
 
-type DocItem = Action | Actions | CodeBlock | Header | Html | Link | Paragraph | Table
+type DocItem = Action | Actions | CodeBlock | Header | Html | Include | Link | Paragraph | Table
 
 pub fn (mut doc Doc) wiki() string {
 	mut out := ''
@@ -50,6 +50,7 @@ pub fn (mut doc Doc) wiki() string {
 			Header { out += item.wiki() }
 			Paragraph { out += item.wiki() }
 			Html { out += item.wiki() }
+			Include { out += item.wiki() }
 			// Comment { out += item.wiki() }
 			CodeBlock { out += item.wiki() }
 			Link { out += item.wiki() }
@@ -68,6 +69,7 @@ pub fn (mut doc Doc) html() string {
 			Header { out += item.html() }
 			Paragraph { out += item.html() }
 			Html { out += item.html() }
+			Include { out += item.html() }
 			// Comment { out += item.html() }
 			CodeBlock { out += item.html() }
 			Link { out += item.html() }
