@@ -183,7 +183,6 @@ fn (mut book MDBook) fix_summary() ! {
 						pagename := link.filename
 						if book.tree.collection_exists(collectionname) {
 							mut collection := book.tree.collection_get(collectionname)!
-							dest := '${book.path.path}/${collectionname}'
 
 							// now we can process the page where the link goes to
 							if collection.page_exists(pagename) {
@@ -317,7 +316,7 @@ pub fn (mut book MDBook) errors_report() ! {
 		description: 'Errors'
 		filename: 'errors.md'
 	}
-	for collection_name, error_path in collection_errors {
+	for collection_name, _ in collection_errors {
 		paragraph.items << markdowndocs.Text{
 			content: '\n  - '
 		}
@@ -346,10 +345,10 @@ pub fn (mut book MDBook) read() ! {
 	osal.exec(cmd: 'open ${book.html_path('').path}/index.html', shell: true)!
 }
 
-pub fn (mut book MDBook) export_linked_pages(md_path string, mut page Page) ! {
-	for mut page_linked in page.pages_linked {
+pub fn (mut book MDBook) export_linked_pages(md_path string, mut linked_pages []&Page) ! {
+	for mut page_linked in linked_pages {
 		if page_linked.pages_linked.len > 0 {
-			book.export_linked_pages(md_path, mut page_linked)!
+			book.export_linked_pages(md_path, mut page_linked.pages_linked)!
 		}
 		dest := '${md_path}/${page_linked.collection.name}/${page_linked.pathrel}'
 		book.tree.logger.info('- export: ${dest}')
@@ -364,7 +363,7 @@ pub fn (mut book MDBook) export() ! {
 	html_path := book.html_path('').path
 	for _, mut page in book.pages {
 		if page.pages_linked.len > 0 {
-			book.export_linked_pages(md_path, mut page)!
+			book.export_linked_pages(md_path, mut page.pages_linked)!
 		}
 		dest := '${md_path}/${page.collection.name}/${page.pathrel}'
 		book.tree.logger.info('- export: ${dest}')

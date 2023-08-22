@@ -29,7 +29,9 @@ pub mut: // pointer to collection
 }
 
 fn (mut page Page) link_to_page_update(mut link Link) ! {
-	assert link.cat == .page
+	if link.cat != .page {
+		panic('link should be of type page not ${link.cat}')
+	}
 	mut file_name := link.filename
 	mut other_page := if page.collection.page_exists(file_name) {
 		page.collection.page_get(file_name)!
@@ -79,7 +81,7 @@ fn (mut page Page) link_update(mut link Link) ! {
 			fileobj = page.collection.file_get(file_name)!
 		}
 	} else {
-		panic('can\'t update link of type ${link.cat}')
+		panic('link should be of type image or file, not ${link.cat}')
 	}
 
 	if file_search {
@@ -181,6 +183,9 @@ fn (mut page Page) fix_links() ! {
 
 // will execute on 1 specific macro = include
 fn (mut page Page) process_macro_include(content string) !string {
+	if content.contains('!!include') {
+		println("${page.doc.items}")
+	}
 	mut result := []string{}
 	for mut line in content.split_into_lines() {
 		mut page_name_include := ''
@@ -206,9 +211,9 @@ fn (mut page Page) process_macro_include(content string) !string {
 
 			line = ''
 			for line_include in page_include.doc.content.split_into_lines() {
-				result << line_include
+			 	result << line_include
 			}
-			// panic('implement include')
+			//panic('implement include')
 			if page_include.files_linked.len > 0 {
 				page_include.fix()!
 			}
@@ -222,9 +227,9 @@ fn (mut page Page) process_macro_include(content string) !string {
 
 // will process the macro's and return string
 fn (mut page Page) process_macros() !string {
-	mut out := page.doc.wiki()
-	out = page.process_macro_include(out)!
-	return out
+ 	mut out := page.doc.wiki()
+ 	out = page.process_macro_include(out)!
+ 	return out
 }
 
 [params]
@@ -242,7 +247,7 @@ pub fn (mut page Page) save(args_ PageSaveArgs) ! {
 	}
 	page.fix_links()! // always need to make sure that the links are now clean
 	mut out := page.process_macros()!
-	// out = page.doc.wiki()
+	//out = page.doc.wiki()
 	mut p := pathlib.get_file(args.dest, true)!
 	p.write(out)!
 
