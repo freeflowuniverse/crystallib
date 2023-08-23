@@ -2,7 +2,7 @@ module knowledgetree
 
 import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.markdowndocs { Include, Link, Paragraph }
-import freeflowuniverse.crystallib.texttools
+
 import os
 
 pub enum PageStatus {
