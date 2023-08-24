@@ -13,7 +13,7 @@ fn do() ! {
 		git_root: '~/code6'
 		git_url: 'https://github.com/threefoldfoundation/books/tree/main/content'
 		load: true
-		heal: true
+		heal: false
 		git_reset: reset
 	)!
 

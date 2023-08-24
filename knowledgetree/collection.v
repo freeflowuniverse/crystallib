@@ -158,13 +158,14 @@ pub fn (collection Collection) file_exists(name string) bool {
 // also fixes the name
 fn (mut collection Collection) file_image_remember(mut p Path) ! {
 	collection.tree.logger.debug('file or image remember : ${p.path}')
-	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)! // TODO: seems like some overkill
+	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: true)! // TODO: seems like some overkill
 	p = ptr.path
 	if ptr.is_image() {
 		if collection.heal && imagemagick.installed() {
 			mut image := imagemagick.image_new(mut p) or {
 				panic('Cannot get new image:\n${p}\n${err}')
 			}
+			collection.tree.logger.debug('downsizing image ${p.path}')
 			image.downsize(backup: false)!
 			// after downsize it could be the path has been changed, need to set it on the file
 			if p.path != image.path.path {
@@ -212,7 +213,9 @@ fn (mut collection Collection) file_image_remember(mut p Path) ! {
 // the page will be parsed as markdown
 pub fn (mut collection Collection) page_new(mut p Path) ! {
 	collection.tree.logger.debug('collection: ${collection.name} page new: ${p.path}')
-	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
+	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: true)!
+	// in case heal is true pointerpath_new can normalize the path
+	p = ptr.path
 	if collection.page_exists(ptr.pointer.name) {
 		collection.error(
 			path: p
@@ -237,7 +240,9 @@ pub fn (mut collection Collection) page_new(mut p Path) ! {
 // add a file to the collection, specify existing path
 pub fn (mut collection Collection) file_new(mut p Path) ! {
 	collection.tree.logger.debug('collection: ${collection.name} file new: ${p.path}')
-	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
+	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: true)!
+	// in case heal is true pointerpath_new can normalize the path
+	p = ptr.path
 	if collection.file_exists(ptr.pointer.name) {
 		collection.error(
 			path: p
@@ -258,11 +263,12 @@ pub fn (mut collection Collection) file_new(mut p Path) ! {
 // add a image to the collection, specify existing path
 pub fn (mut collection Collection) image_new(mut p Path) ! {
 	collection.tree.logger.debug('collection: ${collection.name} image new: ${p.path}')
-
-	mut ptr := pointerpath_new(path: p.path, path_normalize: true, needs_to_exist: true)!
+	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: true)!
 	if ptr.pointer.name.starts_with('.') {
 		panic('should not start with . \n${p}')
 	}
+	// in case heal is true pointerpath_new can normalize the path
+	p = ptr.path
 	if collection.image_exists(ptr.pointer.name) {
 		// remove this one
 		mut file_double := collection.image_get(p.name())!
