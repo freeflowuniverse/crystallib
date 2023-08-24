@@ -7,6 +7,8 @@ import freeflowuniverse.crystallib.pathlib { Path }
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.osal
 
+import os
+
 enum BookState {
 	init
 	initdone
@@ -388,6 +390,9 @@ pub fn (mut book MDBook) export() ! {
 				panic('imagemagick: cannot create new image from ${path_dest.path}: ${err}')
 			}
 			image_to_downsize.downsize(backup: false)!
+			if image_to_downsize.path.path != path_dest.path {
+				os.mv(image_to_downsize.path.path, path_dest.path)!
+			}
 		}
 	}
 

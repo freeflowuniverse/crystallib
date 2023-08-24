@@ -157,7 +157,7 @@ pub fn (collection Collection) file_exists(name string) bool {
 // remember the file, so we know if we have duplicates
 // also fixes the name
 fn (mut collection Collection) file_image_remember(mut p Path) ! {
-	collection.tree.logger.debug('file or image remember : ${p.path}')
+	collection.tree.logger.debug('file or image remember: ${p.path}')
 	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: true)! // TODO: seems like some overkill
 	p = ptr.path
 	if ptr.is_image() {
