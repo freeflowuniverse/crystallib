@@ -85,9 +85,13 @@ pub fn (mut s Sheet) group2row(args Group2RowArgs) !&Row {
 		tagstofilter := params.parse(row.tags)!
 		matched := tagstofilter.filter_match(include: args.include, exclude: args.exclude)!
 		if matched {
+			// println("MMMMMAAAAATCH: \n${args.include} ${row.tags}")
+			// println(row)
+			// if true{panic("SDSD")}
 			mut x := 0
 			for cell in row.cells {
 				rowout.cells[x].val += cell.val
+				rowout.cells[x].empty = false
 				x += 1
 			}
 		}
@@ -121,6 +125,7 @@ fn (mut s Sheet) tosmaller(args_ ToYearQuarterArgs) !Sheet {
 		nrcol: nrcol_new
 		visualize_cur: s.params.visualize_cur
 		curr: s.currency.name
+		currencies: s.currencies
 	)!
 	for _, row in s.rows {
 		if args.namefilter.len > 0 || args.includefilter.len > 0 || args.excludefilter.len > 0 {
@@ -253,6 +258,15 @@ pub fn (mut s Sheet) row_get(name string) !&Row {
 	mut row := s.rows[name] or { return error('could not find row with name: ${name}') }
 	return row
 }
+
+pub fn (mut s Sheet) row_delete(name string) {
+	if name in s.rows{
+		s.rows.delete(name)
+	}
+}
+
+
+
 
 // find row, report error if not found
 pub fn (mut s Sheet) cell_get(row string, col int) !&Cell {

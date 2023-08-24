@@ -77,16 +77,14 @@ pub fn (mut cs Currencies) amount_get(amount_ string) !Amount {
 		amount = '${amount.f64() / 100}'
 		code = ''
 	}
-	if code != '' {
+	if code == '' {
+		num = amount
+		
+	}else{
 		if code !in cs.currencies {
 			cs.get_rates([code], false)! // not sure this will work
 			cs.get_rates([code], true)!
-		}
-	} else {
-		num = amount
-	}
-	if code==""{
-		code="USD"
+		}		
 	}
 	cur0 := cs.currencies[code] or { return error('Cannot find currency with code \'${code}\'') }
 

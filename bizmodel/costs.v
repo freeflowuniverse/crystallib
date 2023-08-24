@@ -12,10 +12,10 @@ import freeflowuniverse.crystallib.texttools
 //     department:'engineering'
 //	   cost_percent_revenue e.g. 4%, will make sure the cost will be at least 4% of revenue
 
-fn (mut m BizModel) hr_actions(actions_ Actions) ! {
-	mut actions2 := actions_.filtersort(actor: 'hr')!
+fn (mut m BizModel) overhead_actions(actions_ Actions) ! {
+	mut actions2 := actions_.filtersort(actor: 'costs')!
 	for action in actions2 {
-		if action.name == 'employee_define' {
+		if action.name == 'define' {
 			mut name := action.params.get_default('name', '')!
 			mut descr := action.params.get_default('descr', '')!
 			if descr.len == 0 {
@@ -25,54 +25,50 @@ fn (mut m BizModel) hr_actions(actions_ Actions) ! {
 				// make name ourselves
 				name = texttools.name_fix(descr) // TODO:limit len
 			}
-			mut cost := action.params.get_default('cost', '0.0')!
-			// mut cost_year := action.params.get_currencyfloat_default('cost_year', 0.0)!
-			// if cost_year > 0 {
-			// 	cost = cost_year / 12
-			// }
-			// mut cost_growth := action.params.get_default('cost_growth', '')!
-			// growth := action.params.get_default('growth', '1:1')!
+			mut cost := action.params.get_default('cost', '0.0')! //is extrapolated
+			mut cost_one := action.params.get_default('cost_one', '')!
+
 			department := action.params.get_default('department', 'unknown department')!
 			cost_percent_revenue := action.params.get_percentage_default('cost_percent_revenue', '0%')!
-			nrpeople := action.params.get_default('nrpeople', '1')!
 
 			indexation := action.params.get_percentage_default('indexation', '0%')!
 
-			// // cost per person
-			// namecostperson := 'nr_${name}'
-			// if cost_growth.len > 0 && cost > 0 {
-			// 	return error('cannot specify cost and cost growth together, chose one please.')
-			// }
 			if indexation > 0 {
 				if cost.contains(":"){
 					return error('cannot specify cost growth and indexation, should be no : inside cost param.')
 				}
+				//TODO: need to be able to go from e.g. month 6 and still do indexation
 				mut cost_:=cost.int()
 				cost2 := cost_ * (1 + indexation) * (1 + indexation) * (1 + indexation) * (1 +
 					indexation) * (1 + indexation) * (1 + indexation) // 6 years, maybe need to look at months
-				cost = '1:${cost},60:${cost2}'
+				cost = '0:${cost},59:${cost2}'
+				// println(cost)
 			}
 
-			mut costpeople_row := m.sheet.row_new(
-				name: 'hr_cost_${name}'
+			mut extrap:=false
+			if cost_one!=""{
+				// if cost!=""{
+				// 	return error("Cannot specify cost:'${cost}' and cost_one:'${cost_one}'.")
+				// }
+				extrap=false
+				cost = cost_one
+			}else{
+				// if cost_one!=""{
+				// 	return error("Cannot specify cost:'${cost}' and cost_one:'${cost_one}'.")
+				// }
+				extrap=true
+			}
+
+
+			mut cost_row := m.sheet.row_new(
+				name: 'cost_${name}'
 				growth: cost
-				tags: 'department:${department} hrcost'
-				descr: '"cost to company per function for department ${department}'
-				subgroup: 'HR cost.'
+				tags: 'department:${department} ocost'
+				descr: '"cost overhead for department ${department}'
+				extrapolate:extrap
 			)!
-			costpeople_row.action(action: .reverse)!
+			cost_row.action(action: .reverse)!	
 
-			// multiply with nr of people if any
-			if nrpeople!="1"{
-				mut nrpeople_row := m.sheet.row_new(
-					name: 'nrpeople_${name}'
-					growth: nrpeople
-					tags: 'hrnr'
-					descr: 'amount of people for ${descr}'
-					aggregatetype: .avg
-				)!
-				_:=costpeople_row.action(action: .multiply, rows: [ nrpeople_row])!
-			}
 			if cost_percent_revenue>0{
 				mut revtotal:=m.sheet.row_get("revenue_total")!	
 				mut cost_min := revtotal.action(
@@ -83,7 +79,7 @@ fn (mut m BizModel) hr_actions(actions_ Actions) ! {
 				)!		
 				cost_min.action(action: .forwardavg)!			 //avg out forward looking for 12 months	
 				cost_min.action(action: .reverse)!				
-				costpeople_row.action(
+				cost_row.action(
 					action: .min
 					rows:[cost_min]
 				)!				
@@ -94,7 +90,8 @@ fn (mut m BizModel) hr_actions(actions_ Actions) ! {
 		}
 	}
 
-	mut hr_cost_row:=m.sheet.group2row(name:"hr_cost_total",include:["hrcost"],tags:'pl',descr:'total cost for hr')!
+	mut hr_cost_row:=m.sheet.group2row(name:"overhead_cost_total",include:["ocost"],
+		tags:'pl',descr:'total cost for overhead.')!
 	
 
 }

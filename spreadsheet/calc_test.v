@@ -18,23 +18,39 @@ fn test_sheets() {
 		tags: 'cat:nodes delay color:green'
 	)!
 
-	mut incrementalrow := sh.row_new(name: 'times2', growth: '1:0,60:59')!
+	mut nrnodes3 := sh.row_new(
+		name: 'nrnodes3'
+		growth: '0:100'
+	)!	
+
+	mut incrementalrow := sh.row_new(name: 'incrementalrow', growth: '0:0,60:59')!
 
 	mut smartrow := sh.row_new(name: 'oem', growth: '10:1000USD,40:2000', extrapolate: false)!
 
 	assert smartrow.cells[8].val == 0.0
-	assert smartrow.cells[9].val == 1000.0
-	assert smartrow.cells[39].val == 2000.0
+	assert smartrow.cells[10].val == 1000.0
+	assert smartrow.cells[40].val == 2000.0
 
 	println(nrnodes)
 
 	println(incrementalrow)
 
-	mut toincrement := sh.row_new(name: 'incr2', growth: '1:0,60:59')!
+	mut toincrement := sh.row_new(name: 'incr2', growth: '0:0,60:59')!
 	inc1row := toincrement.recurring(name: 'testrecurring1', delaymonths: 0)!
 	inc2row := toincrement.recurring(name: 'testrecurring2', delaymonths: 3)!
 
 	println(toincrement)
+
+	a1:=toincrement.look_forward_avg(50,20)!
+	a2:=toincrement.look_forward_avg(12,12)!
+
+	// println(a1)
+	// println(a2)
+	
+
+	// if true{panic("sss")}
+
+
 	println(inc1row)
 	println(inc2row)
 
@@ -65,12 +81,15 @@ fn test_sheets() {
 	assert res.last().cells[20].val == nrnodes.cells[20].val - 40.0
 
 	res << nrnodes.action(name: 'max1', action: .max, rows: [incrementalrow])!
-	assert res.last().cells[20].val == 20
+	assert res.last().cells[2].val == 2.0
 
-	res << nrnodes.action(name: 'max1', action: .max, val: 3.0)!
-	assert res.last().cells[20].val == 3.0
+	res << nrnodes3.action(name: 'max2', action: .max, val: 3.0)!
+	assert res.last().cells[20].val == 100.0
 
-	res << nrnodes.action(name: 'min', action: .max, val: 1.0)!
+	res << nrnodes3.action(name: 'max3', action: .max, val: 300.0)!
+	assert res.last().cells[20].val == 300.0	
+
+	res << nrnodes3.action(name: 'min1', action: .min, val: 1.0)!
 	assert res.last().cells[20].val == 1.0
 
 	res << incrementalrow.action(name: 'aggr1', action: .aggregate, val: 1.0)!
@@ -79,8 +98,7 @@ fn test_sheets() {
 	println(res.last())
 
 	incrementalrow.delay(3)!
-	println(incrementalrow)
-	assert incrementalrow.cells[4].val == 1
+	assert incrementalrow.cells[6].val == 3
 
 	// mut nrnodessum := nrnodes.add('nrnodessum', nrnodes2)!
 

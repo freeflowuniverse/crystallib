@@ -1,6 +1,6 @@
 module spreadsheet
 
-// smartstring is something like 3:2,10:5 means month 3 we start with 2, it grows to 5 on month 10
+// smartstring is something like 3:2,10:5 means end month 3 we start with 2, it grows to 5 on end month 10
 // the cells out of the mentioned ranges are not filled if they are already set
 // the cells which are empty at start of row will become 0
 // the cells which are empty at the back will just be same value as the last one
@@ -15,12 +15,12 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 			if splitted.len != 2 {
 				return error("smartextrapolate needs '3:2,10:5' as format, now ${smartstr} ")
 			}
-			x := splitted[0].int() - 1
+			mut x := splitted[0].int()
 			if x < 0 {
 				return error('Cannot do smartstr, because the X is out of scope.\n${smartstr}')
 			}
-			if x > r.sheet.nrcol {
-				return error('Cannot do smartstr, because the X is out of scope, needs to be 1+.\n${smartstr}')
+			if x > r.sheet.nrcol-1 {
+				x = r.sheet.nrcol-1 
 			}
 			r.cells[x].set(splitted[1])!
 		}
@@ -81,7 +81,7 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 	// if true{panic("s")}
 }
 
-// something like 3:2,10:5 means month 3 we set 2, month 10 5
+// something like 3:2,10:5 means end month 3 we set 2, month 10 5
 // there i no interpolation, all other fields are set on 0
 pub fn (mut r Row) smartfill(smartstr string) ! {
 	for mut part in smartstr.split(',') {
@@ -91,7 +91,7 @@ pub fn (mut r Row) smartfill(smartstr string) ! {
 			if splitted.len != 2 {
 				return error("smartextrapolate needs '3:2,10:5' as format, now ${smartstr} ")
 			}
-			x := splitted[0].int() - 1
+			x := splitted[0].int()
 			if x < 0 {
 				return error('Cannot do smartstr, because the X is out of scope.\n${smartstr}')
 			}

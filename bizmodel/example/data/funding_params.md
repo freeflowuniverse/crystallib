@@ -15,12 +15,12 @@ Other financial flows can be mentioned here as well.
     name:'our_investor'
     descr:'A fantastic super investor.'  
     investment:'3:1000000EUR'
-    type:'loan'
+    type:'capital'
 
 !!funding.define
-    name:'afounder'
-    descr:'Together Were Strong'  
-    investment:'1:1000000EUR'
+    name:'a_founder'
+    descr:'Together Are Strong'  
+    investment:'2000000'
     type:'loan'
 
 

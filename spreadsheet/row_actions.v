@@ -10,6 +10,8 @@ pub enum RowAction {
 	roundint
 	max
 	min
+	reverse //+1 becomes -1
+	forwardavg //try to find 12 forward looking cells and do avg where we are
 }
 
 [params]
@@ -70,11 +72,11 @@ pub fn (mut r Row) action(args_ RowActionArgs) !&Row {
 				} else if args.action == .divide {
 					row_result.cells[x].val = row_result.cells[x].val / r2.cells[x].val
 				} else if args.action == .max {
-					if row_result.cells[x].val > r2.cells[x].val {
+					if r2.cells[x].val > row_result.cells[x].val {
 						row_result.cells[x].val = r2.cells[x].val
 					}
 				} else if args.action == .min {
-					if row_result.cells[x].val < r2.cells[x].val {
+					if r2.cells[x].val < row_result.cells[x].val {
 						row_result.cells[x].val = r2.cells[x].val
 					}
 				} else {
@@ -99,17 +101,26 @@ pub fn (mut r Row) action(args_ RowActionArgs) !&Row {
 			} else if args.action == .roundint {
 				row_result.cells[x].val = int(row_result.cells[x].val)
 			} else if args.action == .max {
-				if row_result.cells[x].val > args.val {
+				if args.val > row_result.cells[x].val   {
 					row_result.cells[x].val = args.val
 				}
 			} else if args.action == .min {
-				if row_result.cells[x].val < args.val {
+				if args.val < row_result.cells[x].val  {
 					row_result.cells[x].val = args.val
 				}
 			} else {
 				return error('Action wrongly specified for ${r} with\nargs:${args}')
 			}
 		}
+
+		if args.action == .reverse {
+			row_result.cells[x].val = -row_result.cells[x].val
+		}
+		if args.action == .forwardavg {
+			a:=row_result.look_forward_avg(x,6)!
+			row_result.cells[x].val = a
+		}
+
 	}
 	if args.delaymonths > 0 {
 		row_result.delay(args.delaymonths)!
