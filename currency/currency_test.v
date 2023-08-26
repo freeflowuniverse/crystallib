@@ -49,6 +49,6 @@ pub fn test_rates_get() {
 
 	mut aa := cs.amount_get('10')!
 	assert aa.val == 10.0
-	assert aa.currency.usdval == 0.0
-	assert aa.currency.name == ''
+	assert aa.currency.usdval == 1.0
+	assert aa.currency.name == 'USD'
 }

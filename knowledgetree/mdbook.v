@@ -1,10 +1,13 @@
 module knowledgetree
 
 import freeflowuniverse.crystallib.gittools
+import freeflowuniverse.crystallib.imagemagick
 import freeflowuniverse.crystallib.markdowndocs
 import freeflowuniverse.crystallib.pathlib { Path }
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.osal
+
+import os
 
 enum BookState {
 	init
@@ -376,9 +379,21 @@ pub fn (mut book MDBook) export() ! {
 	}
 
 	for _, mut image in book.images {
-		dest := '${md_path}/${image.collection.name}/${image.pathrel}'
+		mut dest := '${md_path}/${image.collection.name}/${image.pathrel}'
 		book.tree.logger.info('- export: ${dest}')
 		image.copy(dest)!
+
+		mut path_dest := pathlib.get(dest)
+		if imagemagick.installed() {
+			book.tree.logger.debug('downsizing image ${path_dest.path}')
+			mut image_to_downsize := imagemagick.image_new(mut path_dest) or {
+				panic('imagemagick: cannot create new image from ${path_dest.path}: ${err}')
+			}
+			image_to_downsize.downsize(backup: false)!
+			if image_to_downsize.path.path != path_dest.path {
+				os.mv(image_to_downsize.path.path, path_dest.path)!
+			}
+		}
 	}
 
 	mut pathsummary := pathlib.get('${md_path}/SUMMARY.md')

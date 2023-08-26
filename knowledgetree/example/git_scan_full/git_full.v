@@ -46,7 +46,6 @@ fn do() ! {
 	mut book := tree.book_new(
 		name: 'MyBook'
 		path: '~/code5/github/threefoldfoundation/books2/books/threefold_projects_overview'
-		dest: '_book1'
 	)!
 	book.export()!
 
