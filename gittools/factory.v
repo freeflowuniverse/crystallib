@@ -159,3 +159,29 @@ pub fn (mut gs GitStructure) codepath() string {
 	// println(" ***** $p")
 	return p
 }
+
+
+pub struct CodeGetFromUrlArgs {
+pub mut:
+	url    string
+	branch string
+	pull   bool // will pull if this is set
+	reset bool //this means will pull and reset all changes
+	root string //where code will be checked out
+}
+
+// will get repo starting from url, if the repo does not exist, only then will pull
+// if pull is set on true, will then pull as well
+// struct RepoGetFromUrlArgs {
+//  
+// 	url    string
+// 	branch string
+// 	pull   bool // will pull if this is set
+// 	reset bool //this means will pull and reset all changes
+// }
+pub fn code_get(args CodeGetFromUrlArgs) !string {
+	mut gs := gittools.get(root: args.root)!
+	mut gr := gs.repo_get_from_url(url: args.url, pull: args.pull, reset: args.reset)!
+	return gr. path_content_get()
+
+}

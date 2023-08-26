@@ -189,10 +189,11 @@ pub fn (mut path Path) read() !string {
 // need to check than only valid items can be done
 // return Path of the destination file or dir
 pub fn (mut path Path) copy(mut dest Path) !Path {
+	path.check()
 	dest.check()
 	if dest.exists() {
 		if !(path.cat in [.file, .dir] && dest.cat in [.file, .dir]) {
-			return error('Source or Destination path is not file or directory.\n${path.cat}\n${dest.cat}')
+			return error('Source or Destination path is not file or directory.\n\n${path.path}-${path.cat}---${dest.path}-${dest.cat}')
 		}
 		if path.cat == .dir && dest.cat == .file {
 			return error("Can't copy directory to file")
