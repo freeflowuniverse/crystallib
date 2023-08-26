@@ -21,7 +21,7 @@ pub mut:
 
 // get zos statistic from a node, nodeid is the parameter
 pub fn (mut z RMBClient) get_zos_statistics(dst u32) !ZosResourcesStatistics {
-	response := z.rmb_request('zos.statistics.get', dst)!
+	response := z.rmb_request('zos.statistics.get', dst, '')!
 	if response.err.message != '' {
 		return error('${response.err.message}')
 	}

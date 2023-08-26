@@ -6,12 +6,12 @@ import rand
 import json
 
 // cmd is e.g.
-pub fn (mut z RMBClient) rmb_request(cmd string, dst u32) !RmbResponse {
+pub fn (mut z RMBClient) rmb_request(cmd string, dst u32, payload string) !RmbResponse {
 	msg := RmbMessage{
 		ver: 1
 		cmd: cmd
-		exp: 5
-		dat: base64.encode_str('')
+		exp: 5 * 60
+		dat: base64.encode_str(payload)
 		dst: [dst]
 		ret: rand.uuid_v4()
 		now: u64(time.now().unix_time())
@@ -19,6 +19,6 @@ pub fn (mut z RMBClient) rmb_request(cmd string, dst u32) !RmbResponse {
 	request := json.encode_pretty(msg)
 	z.redis.lpush('msgbus.system.local', request)!
 	response_json := z.redis.blpop([msg.ret], 5)!
-	response := json.decode(RmbResponse, response_json[0])!
+	response := json.decode(RmbResponse, response_json[1])!
 	return response
 }

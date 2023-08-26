@@ -25,7 +25,7 @@ enum PoolType {
 
 // get storage pools from a zos, the argument is u32 address of the zos
 pub fn (mut z RMBClient) get_storage_pools(dst u32) ![]ZosPool {
-	response := z.rmb_request('zos.storage.pools', dst)!
+	response := z.rmb_request('zos.storage.pools', dst, '')!
 	if response.err.message != '' {
 		return error('${response.err.message}')
 	}
