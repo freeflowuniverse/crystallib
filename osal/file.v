@@ -12,11 +12,10 @@ pub fn file_read(path string) !string {
 
 // remove all if it exists
 pub fn dir_ensure(path string) ! {
-	if ! os.exists(path) {
+	if !os.exists(path) {
 		os.mkdir_all(path)!
 	}
 }
-
 
 // remove all if it exists
 pub fn dir_delete(path string) ! {

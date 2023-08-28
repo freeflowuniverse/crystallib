@@ -10,23 +10,23 @@ pub mut:
 	// other example url := 'https://github.com/threefoldfoundation/www_examplesite/tree/development/manual'
 	pull  bool
 	reset bool
-	name string
+	name  string
 	dest  string // where does the directory need to be checked out to
 }
 
 // checkout a code repository on right location
 pub fn (mut r DockerBuilderRecipe) add_codeget(args_ CodeGetArgs) ! {
-	mut args:=args_
+	mut args := args_
 	mut gs := gittools.get(root: '${r.path()}/code')!
 
 	mut gr := gs.repo_get_from_url(url: args.url, pull: args.pull, reset: args.reset)!
 
-	if args.name=="" {
+	if args.name == '' {
 		args.name = gr.addr.name
 	}
 
-	if args.dest==""{
-		args.dest = "/code/${args.name}"
+	if args.dest == '' {
+		args.dest = '/code/${args.name}'
 	}
 
 	// gs.repos_print(filter: '')

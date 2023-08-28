@@ -3,32 +3,11 @@ module main
 import os
 import freeflowuniverse.crystallib.bizmodel
 import freeflowuniverse.crystallib.spreadsheet
-import cli { Command, Flag }
+import cli { Command }
 
 const testpath = os.dir(@FILE) + '/data'
 
-fn cli_docgen(cmd Command) ! {
-	config := docgen.DocGenConfig{
-		source: cmd.args[0]
-	}
-	doc := docgen.docgen(config) or { panic('Failed to generate OpenRPC Document.\n${err}') }
-	target := cmd.flags.get_string('output_path') or {
-		panic('Failed to get `output_path` flag: ${err}')
-	}
-	doc_str := doc.encode()!
-
-	mut path_ := pathlib.get(target)
-	if !path_.exists() {
-		return error('Provided target`${target}` does not exist.')
-	}
-	mut target_path := path_.path + '/openrpc.json'
-	if target == '.' {
-		target_path = os.getwd() + '/openrpc.json'
-	}
-
-
-	if 
-
+fn do(cmd Command) ! {
 
 	mut m := bizmodel.new(path: testpath)!
 	println('')
@@ -50,23 +29,22 @@ fn cli_docgen(cmd Command) ! {
 		descr: 'Net Company Result.'
 	)!
 
-	println(m.sheet.wiki(includefilter: ['result'], name: 'Net Company Result.',period_months:3)!)
+	println(m.sheet.wiki(includefilter: ['result'], name: 'Net Company Result.', period_months: 3)!)
 
-	mut company_result:=m.sheet.row_get("company_result")!	
-	mut cashflow:=company_result.recurring(
+	mut company_result := m.sheet.row_get('company_result')!
+	mut cashflow := company_result.recurring(
 		name: 'Cashflow'
 		tags: 'cashflow'
-		descr: 'Cashflow of company.'	
+		descr: 'Cashflow of company.'
 	)!
 
 	// println(cashflow)
 
-	println(m.sheet.wiki(includefilter: ['cashflow'], name: 'cashflow_aggregated',period_months:3)!)
+	println(m.sheet.wiki(includefilter: ['cashflow'], name: 'cashflow_aggregated', period_months: 3)!)
 
-	cashflow_min:=spreadsheet.float_repr(cashflow.min(),.number)
+	cashflow_min := spreadsheet.float_repr(cashflow.min(), .number)
 
-	println("\nThe lowest cash level over the years: ${cashflow_min}\n")
-
+	println('\nThe lowest cash level over the years: ${cashflow_min}\n')
 }
 
 fn main() {

@@ -5,12 +5,12 @@ import freeflowuniverse.crystallib.currency
 // import os
 
 // see currency object, gets it from params
-pub fn (params &Params) get_currencyamount(mut cs &currency.Currencies, key string) !currency.Amount {
+pub fn (params &Params) get_currencyamount(mut cs currency.Currencies, key string) !currency.Amount {
 	valuestr := params.get(key)!
 	return cs.amount_get(valuestr)!
 }
 
-pub fn (params &Params) get_currencyamount_default(mut cs &currency.Currencies, key string, defval string) !currency.Amount {
+pub fn (params &Params) get_currencyamount_default(mut cs currency.Currencies, key string, defval string) !currency.Amount {
 	if params.exists(key) {
 		return params.get_currencyamount(mut cs, key)!
 	}
@@ -18,15 +18,15 @@ pub fn (params &Params) get_currencyamount_default(mut cs &currency.Currencies, 
 }
 
 // get currency expressed in float in line to currency passed
-pub fn (params &Params) get_currencyfloat(mut cs &currency.Currencies, key string) !f64 {
+pub fn (params &Params) get_currencyfloat(mut cs currency.Currencies, key string) !f64 {
 	valuestr := params.get(key)!
 	a := cs.amount_get(valuestr)!
 	return a.val
 }
 
-pub fn (params &Params) get_currencyfloat_default(mut cs &currency.Currencies, key string, defval f64) !f64 {
+pub fn (params &Params) get_currencyfloat_default(mut cs currency.Currencies, key string, defval f64) !f64 {
 	if params.exists(key) {
-		return params.get_currencyfloat(mut cs,key)!
+		return params.get_currencyfloat(mut cs, key)!
 	}
 	return defval
 }

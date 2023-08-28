@@ -1,187 +1,76 @@
 module gittools
 
-import freeflowuniverse.crystallib.texttools
 import os
 
-fn (mut gitstructure GitStructure) check() ! {
-	if gitstructure.status == GitStructureStatus.loaded {
-		return
-	}
-	gitstructure.load()!
-}
-
 [params]
-pub struct GSArgs {
+pub struct GSConfig {
 pub mut:
-	filter  string // if used will only show the repo's which have the filter string inside
-	pull    bool   // means when getting new repo will pull even when repo is already tehre
-	force   bool   // means we will force a pull and reset old content	
-	message string // if we want to do a default commit with a message	
-	// show    bool	
+	filter      string
+	multibranch bool
+	root        string // where will the code be checked out
+	pull        bool   // means we will pull even if the directory exists
+	reset       bool   // be careful, this means we will reset when pulling
+	light       bool   // if set then will clone only last history for all branches		
+	log         bool   // means we log the git statements
 }
 
-// get a list of repo's which are in line to the args
-//
-// struct GSArgs {
-// 	filter  string		//if used will only show the repo's which have the filter string inside
-// 	pull    bool		// means when getting new repo will pull even when repo is already tehre
-// 	force   bool		// means we will force a pull and reset old content	
-//
-pub fn (mut gitstructure GitStructure) repos_get(args GSArgs) []GitRepo {
-	mut res := []GitRepo{}
-	for mut g in gitstructure.repos {
-		relpath := g.path_relative()
-		if args.filter != '' {
-			if relpath.contains(args.filter) {
-				// println("$g.addr.name")
-				res << g
-			}
-		} else {
-			res << g
-		}
+// struct GSConfig{
+// filter string
+// multibranch bool
+// root string	//where will the code be checked out
+// pull bool   //means we will pull even if the directory exists
+// reset bool  //be careful, this means we will reset when pulling
+// light       bool  // if set then will clone only last history for all branches		
+// }
+pub fn get(config GSConfig) !GitStructure {
+	mut gs := GitStructure{
+		config: config
 	}
 
-	return res
+	if 'MULTIBRANCH' in os.environ() {
+		gs.config.multibranch = true
+	}
+
+	if 'DIR_CODE' in os.environ() {
+		gs.config.root = os.environ()['DIR_CODE'] + '/'
+	}
+	if gs.config.root == '' {
+		gs.config.root = '${os.home_dir()}/code/'
+	}
+
+	gs.config.root = gs.config.root.replace('~', os.home_dir()).trim_right('/')
+
+	if !os.exists(gs.config.root) {
+		os.mkdir_all(gs.config.root)!
+	}
+
+	gs.status = GitStructureStatus.init // step2
+
+	gs.check()!
+
+	return gs
 }
-
-// print the repos
-//
-// struct GSArgs {
-// 	filter  string		//if used will only show the repo's which have the filter string inside
-// 	pull    bool		// means when getting new repo will pull even when repo is already tehre
-// 	force   bool		// means we will force a pull and reset old content	
-//
-pub fn (mut gitstructure GitStructure) repos_print(args GSArgs) {
-	mut r := [][]string{}
-	for mut g in gitstructure.repos_get(args) {
-		changed := g.changes() or { panic('issue in repo changes. ${err}') }
-		pr := g.path_relative()
-		if changed {
-			r << ['- ${pr}', '${g.addr.branch}', 'CHANGED']
-		} else {
-			r << ['- ${pr}', '${g.addr.branch}', '']
-		}
-	}
-	texttools.print_array2(r, '  ', true)
-}
-
-pub fn (mut gitstructure GitStructure) list(args GSArgs) {
-	texttools.print_clear()
-	println(' #### overview of repositories:')
-	println('')
-	gitstructure.repos_print(args)
-	println('')
-}
-
-// reload the full git tree
-fn (mut gitstructure GitStructure) reload() ! {
-	gitstructure.status = GitStructureStatus.init
-
-	if !os.exists(gitstructure.codepath()) {
-		os.mkdir_all(gitstructure.codepath())!
-	}
-
-	gitstructure.check()!
-}
-
-// the factory for getting the gitstructure
-// git is checked uderneith $/code
-fn (mut gitstructure GitStructure) load() ! {
-	if gitstructure.status == GitStructureStatus.loaded {
-		return
-	}
-
-	// print_backtrace()
-	// println(' - SCAN GITSTRUCTURE FOR $root2 ')
-
-	// println(" -- multibranch: $multibranch")
-
-	gitstructure.repos = []GitRepo{}
-
-	mut done := []string{}
-
-	// path which git repos will be recursively loaded
-	git_path := gitstructure.codepath() + '/github'
-	gitstructure.load_recursive(git_path, mut done)!
-
-	gitstructure.status = GitStructureStatus.loaded
-
-	// println(" - SCAN done")
-}
-
-fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []string) ! {
-	// println(" - git load: $path1")
-	if !(os.exists(path1)) {
-		os.mkdir_all(path1)!
-	}
-	items := os.ls(path1) or {
-		return error('cannot load gitstructure because cannot find ${path1}')
-	}
-	mut pathnew := ''
-	for item in items {
-		pathnew = os.join_path(path1, item)
-		// CAN DO THIS LATER IF NEEDED
-		// if pathnew in done{
-		// 	continue
-		// }
-		// done << pathnew
-		if os.is_dir(pathnew) {
-			// println(" - $pathnew")		
-			if os.exists(os.join_path(pathnew, '.git')) {
-				gitaddr := addr_get_from_path(pathnew) or { return err }
-				gitstructure.repos << GitRepo{
-					addr: gitaddr
-					path: pathnew
-					id: gitstructure.repos.len
-					gs: &gitstructure
-				}
-				continue
-			}
-			if item.starts_with('.') {
-				continue
-			}
-			if item.starts_with('_') {
-				continue
-			}
-			gitstructure.load_recursive(pathnew, mut done)!
-		}
-	}
-	// println(" - git exit: $path1")
-}
-
-pub fn (mut gs GitStructure) codepath() string {
-	mut p := ''
-	if gs.config.multibranch {
-		p = gs.config.root + '/multi'
-	} else {
-		p = gs.config.root
-	}
-	// println(" ***** $p")
-	return p
-}
-
 
 pub struct CodeGetFromUrlArgs {
 pub mut:
 	url    string
 	branch string
-	pull   bool // will pull if this is set
-	reset bool //this means will pull and reset all changes
-	root string //where code will be checked out
+	pull   bool   // will pull if this is set
+	reset  bool   // this means will pull and reset all changes
+	root   string // where code will be checked out
 }
 
 // will get repo starting from url, if the repo does not exist, only then will pull
 // if pull is set on true, will then pull as well
 // struct RepoGetFromUrlArgs {
-//  
+//
 // 	url    string
 // 	branch string
 // 	pull   bool // will pull if this is set
 // 	reset bool //this means will pull and reset all changes
 // }
 pub fn code_get(args CodeGetFromUrlArgs) !string {
-	mut gs := gittools.get(root: args.root)!
+	mut gs := get(root: args.root)!
 	mut gr := gs.repo_get_from_url(url: args.url, pull: args.pull, reset: args.reset)!
-	return gr. path_content_get()
-
+	return gr.path_content_get()
 }

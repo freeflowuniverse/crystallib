@@ -13,7 +13,6 @@ pub fn test_singleton_get() {
 	mut cs := new()
 	assert cs.currencies.len > 0
 	// mut cs2 := new()!
-	
 }
 
 pub fn test_rates_get() {

@@ -14,7 +14,7 @@ pub mut:
 	description string
 	emails      []&Email
 	tel         []&Tel
-	addresses   []&Address	
+	addresses   []&Address
 	start_date  system.OurTime
 	end_date    system.OurTime
 }
@@ -25,21 +25,16 @@ pub mut:
 	firstname   string [required]
 	lastname    string [required]
 	description string
-
 }
 
 pub fn (mut m MemDB) person_new(args PersonNewArgs) ! {
-	mut p:=Person{
-		id:args.id
-		firstname:args.firstname
-		lastname:args.lastname
-		description:args.description		
+	mut p := Person{
+		id: args.id
+		firstname: args.firstname
+		lastname: args.lastname
+		description: args.description
 	}
-
-
 }
-
-
 
 // pub fn person_json_load(data string) ?Person {
 // 	if data != '' {

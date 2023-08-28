@@ -3,8 +3,8 @@ module currency
 import os
 
 pub fn new() &Currencies {
-	println("FETCHCURRENCIES")
-	mut cs:=Currencies{}
+	println('FETCHCURRENCIES')
+	mut cs := Currencies{}
 	cs.defaults_set()
 	env := os.environ()
 	egpval := (1 / 32)
@@ -17,8 +17,8 @@ pub fn new() &Currencies {
 		cs.default_set('TFT', 0.01)
 		cs.default_set('USDC', 1.0)
 	} else {
-		cs.get_rates(['EUR', 'AED', 'USD', 'EGP'], false) or {panic(err)}
-		cs.get_rates(['TERRA', 'TFT', 'XLM', 'USDC'], true) or {panic(err)}
+		cs.get_rates(['EUR', 'AED', 'USD', 'EGP'], false) or { panic(err) }
+		cs.get_rates(['TERRA', 'TFT', 'XLM', 'USDC'], true) or { panic(err) }
 	}
 	return &cs
 }

@@ -6,7 +6,6 @@ import freeflowuniverse.crystallib.markdowndocs
 import freeflowuniverse.crystallib.pathlib { Path }
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.osal
-
 import os
 
 enum BookState {

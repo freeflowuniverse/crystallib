@@ -40,7 +40,11 @@ struct ResponseBody {
 // e.g.
 pub fn (mut cs Currencies) get_rates(cur_array []string, crypto bool) ! {
 	// http.CommonHeader.authorization: 'Bearer $h.auth.auth_token'
-	mut conn := httpconnection.new(name: 'example', url: 'https://api.exchangerate.host/', cache:true)!
+	mut conn := httpconnection.new(
+		name: 'example'
+		url: 'https://api.exchangerate.host/'
+		cache: true
+	)!
 	// do the cache on the connection
 	conn.cache.expire_after = 7200 // make the cache expire_after 2h
 	mut cur_codes := cur_array.str()

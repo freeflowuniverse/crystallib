@@ -26,7 +26,7 @@ fn test_macro_args() {
 	assert f_
 
 	g := params.filter_match(include: ['arg1+arg3'])!
-	assert g==false
+	assert g == false
 
 	// NEXT: do include and excluse and more than one as well
 }

@@ -21,7 +21,7 @@ fn test_sheets() {
 	mut nrnodes3 := sh.row_new(
 		name: 'nrnodes3'
 		growth: '0:100'
-	)!	
+	)!
 
 	mut incrementalrow := sh.row_new(name: 'incrementalrow', growth: '0:0,60:59')!
 
@@ -41,15 +41,13 @@ fn test_sheets() {
 
 	println(toincrement)
 
-	a1:=toincrement.look_forward_avg(50,20)!
-	a2:=toincrement.look_forward_avg(12,12)!
+	a1 := toincrement.look_forward_avg(50, 20)!
+	a2 := toincrement.look_forward_avg(12, 12)!
 
 	// println(a1)
 	// println(a2)
-	
 
 	// if true{panic("sss")}
-
 
 	println(inc1row)
 	println(inc2row)
@@ -87,7 +85,7 @@ fn test_sheets() {
 	assert res.last().cells[20].val == 100.0
 
 	res << nrnodes3.action(name: 'max3', action: .max, val: 300.0)!
-	assert res.last().cells[20].val == 300.0	
+	assert res.last().cells[20].val == 300.0
 
 	res << nrnodes3.action(name: 'min1', action: .min, val: 1.0)!
 	assert res.last().cells[20].val == 1.0

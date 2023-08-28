@@ -151,6 +151,15 @@ pub fn (mut path Path) delete() ! {
 	}
 }
 
+//remove all content but if dir let the dir exist
+pub fn (mut path Path) empty() ! {
+	path.delete()!
+	if path.cat == .dir{
+		os.mkdir_all(path.path)!
+		path.exist = .yes
+	}
+}
+
 // write content to the file, check is file
 // if the path is a link to a file then will change the content of the file represented by the link
 pub fn (mut path Path) write(content string) ! {

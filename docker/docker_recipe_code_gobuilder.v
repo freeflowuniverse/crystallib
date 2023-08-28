@@ -6,16 +6,15 @@ pub fn (mut r DockerBuilderRecipe) add_gobuilder() ! {
 	r.add_workdir(workdir: '/app')!
 }
 
-
 [params]
 pub struct GoBuildArgs {
 pub mut:
-	url string // e.g.  https://github.com/valeriansaliou/sonic
-	pull  bool
-	reset bool
+	url      string // e.g.  https://github.com/valeriansaliou/sonic
+	pull     bool
+	reset    bool
 	buildcmd string = 'go run build.go '
-	copycmd string = ''
-	name  string
+	copycmd  string = ''
+	name     string
 }
 
 // do a build of a go package .
@@ -25,11 +24,10 @@ pub mut:
 // DEBUG TRICK: put debug flag on, which will not execute the build cmd .
 //    you can go to /tmp/build/buildname and do shell.sh to debug
 pub fn (mut r DockerBuilderRecipe) add_gobuild_from_code(args GoBuildArgs) ! {
+	r.add_codeget(url: args.url, name: args.name, reset: args.reset, pull: args.pull)!
 
-	r.add_codeget(url:args.url,name:args.name,reset:args.reset,pull:args.pull)!
-
-	if args.name==""{
-		return error("name needs to be specified.")
+	if args.name == '' {
+		return error('name needs to be specified.')
 	}
 
 	r.add_run(
@@ -39,23 +37,21 @@ pub fn (mut r DockerBuilderRecipe) add_gobuild_from_code(args GoBuildArgs) ! {
 		${args.copycmd}
 		'
 	)!
-
 }
 
 [params]
 pub struct GoPackageArgs {
 pub mut:
-	name string // can be comma separated, can also be url e.g. github.com/caddyserver/xcaddy/cmd/xcaddy@latest
-	postcmd string //normally empty
+	name    string // can be comma separated, can also be url e.g. github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+	postcmd string // normally empty
 }
 
-//install go components
+// install go components
 pub fn (mut r DockerBuilderRecipe) add_go_package(args GoPackageArgs) ! {
-
-	if args.name == ''  {
+	if args.name == '' {
 		return error('name cannot be empty, name can be comma separated')
 	}
-	mut names:=[]string{}
+	mut names := []string{}
 	if args.name.contains(',') {
 		for item2 in args.name.split(',') {
 			names << item2.trim_space()
@@ -66,11 +62,12 @@ pub fn (mut r DockerBuilderRecipe) add_go_package(args GoPackageArgs) ! {
 		}
 	}
 
-	for name in names{
-		r.add_run(cmd: '
+	for name in names {
+		r.add_run(
+			cmd: '
 			go install ${name}
 			${args.postcmd}
-			')!
+			'
+		)!
 	}
-
 }

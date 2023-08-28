@@ -7,8 +7,8 @@ import freeflowuniverse.crystallib.currency
 
 pub struct BizModel {
 pub mut:
-	sheet  spreadsheet.Sheet
-	params BizModelArgs
+	sheet      spreadsheet.Sheet
+	params     BizModelArgs
 	currencies currency.Currencies
 }
 
@@ -19,15 +19,15 @@ pub mut:
 }
 
 pub fn new(args BizModelArgs) !BizModel {
-	mut cs:=currency.new()
-	mut sh := spreadsheet.sheet_new(currencies:cs)!
+	mut cs := currency.new()
+	mut sh := spreadsheet.sheet_new(currencies: cs)!
 	mut m := BizModel{
 		sheet: sh
 		params: BizModelArgs{
 			path: args.path
 			name: texttools.name_fix(args.name)
 		}
-		currencies:cs
+		currencies: cs
 	}
 
 	m.actions()!
@@ -36,7 +36,7 @@ pub fn new(args BizModelArgs) !BizModel {
 }
 
 pub fn (mut m BizModel) actions() ! {
-	println("ACTIONS")
+	println('ACTIONS')
 	ap := actions.new(path: m.params.path, defaultcircle: 'bizmodel_${m.params.name}')!
 	m.revenue_actions(ap)!
 	m.hr_actions(ap)!

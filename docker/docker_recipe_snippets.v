@@ -36,7 +36,6 @@ pub fn (mut r DockerBuilderRecipe) execute(args ExecuteArgs) ! {
 	}
 }
 
-
 pub fn (mut r DockerBuilderRecipe) add_nodejsbuilder() ! {
 	r.add_package(name: 'nodejs, npm')!
 }
@@ -86,5 +85,3 @@ pub fn (mut r DockerBuilderRecipe) add_sshserver(args CodeGetArgs) ! {
 
 	r.add_zinit_cmd(name: 'sshd', exec: '/usr/sbin/sshd -D -e', after: 'sshd-setup')!
 }
-
-

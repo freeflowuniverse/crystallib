@@ -97,7 +97,7 @@ fn (mut doc Doc) parse() ! {
 			// parse includes
 			if line.starts_with('!!include ') {
 				content := line.all_after_first('!!include ').trim_space()
-				doc.items << Include {
+				doc.items << Include{
 					content: content
 				}
 				parser.next_start()
@@ -149,7 +149,8 @@ fn (mut doc Doc) parse() ! {
 			}
 		}
 
-		if mut llast is Paragraph || mut llast is Html || mut llast is CodeBlock || mut llast is Include {
+		if mut llast is Paragraph || mut llast is Html || mut llast is CodeBlock
+			|| mut llast is Include {
 			if parser.endlf == false && parser.next_is_eof() {
 				llast.content += line
 			} else {
@@ -192,7 +193,7 @@ fn (mut doc Doc) parse() ! {
 			Html {
 				item.process()!
 			}
-			Include { 
+			Include {
 				item.process()!
 			}
 			// Comment { item.process()! }

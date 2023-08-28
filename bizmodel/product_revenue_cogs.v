@@ -12,7 +12,7 @@ import freeflowuniverse.crystallib.params
 // - revenue_nr: how many items are sold of the revenue specification e.g. 1:100,60:200 means growing from 100 to 200 over 6Y.
 // - revenue_time, revenue per specific times, e.g. month 10, OEM deal of 1000, month 20 another one would be '10:1000,20:1000'.
 // - revenue_setup_delay: how many months delay on cost of goods, default is 0 months.
-// - revenue_monthly_delay 
+// - revenue_monthly_delay
 // - cogs_perc: what is percentage of the cogs (can change over time) e.g. 0:5%,12:10%.
 //
 fn (mut m BizModel) revenue_actions(actions_ Actions) ! {
@@ -50,8 +50,10 @@ fn (mut m BizModel) revenue_actions(actions_ Actions) ! {
 			mut revenue_time_param := action.params.get_default('revenue_time', '')!
 			mut revenue_growth_param := action.params.get_default('revenue_growth', '')!
 
-			revenue_monthly_delay_param := action.params.get_int_default('revenue_monthly_delay',0)!
-			revenue_setup_delay_param := action.params.get_int_default('revenue_setup_delay',0)!
+			revenue_monthly_delay_param := action.params.get_int_default('revenue_monthly_delay',
+				0)!
+			revenue_setup_delay_param := action.params.get_int_default('revenue_setup_delay',
+				0)!
 			cogs_perc_param := action.params.get_default('cogs_perc', '0%')!
 
 			mut revenue_item := m.sheet.row_new(
@@ -171,14 +173,17 @@ fn (mut m BizModel) revenue_actions(actions_ Actions) ! {
 			// revenue
 			revenue_setup_param := action.params.get_default('revenue_setup', '')!
 			revenue_monthly_param := action.params.get_default('revenue_monthly', '')!
-			revenue_monthly_delay_param := action.params.get_int_default('revenue_monthly_delay',0)!
-			revenue_setup_delay_param := action.params.get_int_default('revenue_setup_delay',0)!
+			revenue_monthly_delay_param := action.params.get_int_default('revenue_monthly_delay',
+				0)!
+			revenue_setup_delay_param := action.params.get_int_default('revenue_setup_delay',
+				0)!
 
 			// cogs
 			cogs_setup_param := action.params.get_default('cogs_setup', '')!
 			cogs_monthly_param := action.params.get_default('cogs_monthly', '')!
 			cogs_setup_perc_param := action.params.get_default('cogs_setup_perc', '0%')!
-			cogs_monthly_perc_param := action.params.get_default('cogs_monthly_perc','0%')!
+			cogs_monthly_perc_param := action.params.get_default('cogs_monthly_perc',
+				'0%')!
 
 			// how many do we sell per month
 			nr_sold_param := action.params.get_default('nr_sold', '')!
@@ -314,7 +319,7 @@ fn (mut m BizModel) revenue_actions(actions_ Actions) ! {
 				name: '${name}_cogs_monthly_from_perc'
 				rows: [cogs_monthly_perc]
 				action: .multiply
-				tags: 'cogs name:${name}'				
+				tags: 'cogs name:${name}'
 				descr: 'What is cogs as percent of monthly.'
 				aggregatetype: .sum
 			)!

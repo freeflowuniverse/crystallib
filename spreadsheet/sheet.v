@@ -260,13 +260,10 @@ pub fn (mut s Sheet) row_get(name string) !&Row {
 }
 
 pub fn (mut s Sheet) row_delete(name string) {
-	if name in s.rows{
+	if name in s.rows {
 		s.rows.delete(name)
 	}
 }
-
-
-
 
 // find row, report error if not found
 pub fn (mut s Sheet) cell_get(row string, col int) !&Cell {

@@ -148,6 +148,7 @@ fn (mut actions Actions) parse_actions(blocks Blocks) ! {
 // go over block, fill in default book or actor if needed
 fn (mut actions Actions) parse_block(block Block) ! {
 	params_ := params.parse(block.content) or { return error('Failed to parse block: ${err}') }
+	// println(block)
 
 	mut domain := ''
 	mut book := ''
@@ -195,7 +196,6 @@ fn (mut actions Actions) parse_block(block Block) ! {
 		return
 	}
 
-	// QUESTION: is this necessary
 	$if debug {
 		eprintln('${domain} - ${book} - ${actor} - ${name}')
 	}

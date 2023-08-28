@@ -34,5 +34,10 @@ fn (mut m BizModel) funding_actions(actions_ Actions) ! {
 			)!
 		}
 	}
-	mut funding_total:=m.sheet.group2row(name:"funding_total",include:["funding"],tags:'pl',descr:'total funding')!	
+	mut funding_total := m.sheet.group2row(
+		name: 'funding_total'
+		include: ['funding']
+		tags: 'pl'
+		descr: 'total funding'
+	)!
 }

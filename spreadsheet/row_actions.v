@@ -11,7 +11,7 @@ pub enum RowAction {
 	max
 	min
 	reverse //+1 becomes -1
-	forwardavg //try to find 12 forward looking cells and do avg where we are
+	forwardavg // try to find 12 forward looking cells and do avg where we are
 }
 
 [params]
@@ -101,11 +101,11 @@ pub fn (mut r Row) action(args_ RowActionArgs) !&Row {
 			} else if args.action == .roundint {
 				row_result.cells[x].val = int(row_result.cells[x].val)
 			} else if args.action == .max {
-				if args.val > row_result.cells[x].val   {
+				if args.val > row_result.cells[x].val {
 					row_result.cells[x].val = args.val
 				}
 			} else if args.action == .min {
-				if args.val < row_result.cells[x].val  {
+				if args.val < row_result.cells[x].val {
 					row_result.cells[x].val = args.val
 				}
 			} else {
@@ -117,10 +117,9 @@ pub fn (mut r Row) action(args_ RowActionArgs) !&Row {
 			row_result.cells[x].val = -row_result.cells[x].val
 		}
 		if args.action == .forwardavg {
-			a:=row_result.look_forward_avg(x,6)!
+			a := row_result.look_forward_avg(x, 6)!
 			row_result.cells[x].val = a
 		}
-
 	}
 	if args.delaymonths > 0 {
 		row_result.delay(args.delaymonths)!

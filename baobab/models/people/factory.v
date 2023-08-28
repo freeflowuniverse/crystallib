@@ -15,18 +15,17 @@ pub mut:
 pub struct NewArgs {
 pub mut:
 	circle u32
-	db sqlite.DB
+	db     sqlite.DB
 }
 
 [table: 'Person']
 struct PersonTable {
-	cid       int    [primary; sql: serial] //is unique per circle
-	id 		  string [unique] //needs to be unique as well per circle
-	firstname   string [nonull]
-	lastname    string [nonull]
-	data		string [nonull] //will have the data
+	cid       int    [primary; sql: serial] // is unique per circle
+	id        string [unique] // needs to be unique as well per circle
+	firstname string [nonull]
+	lastname  string [nonull]
+	data      string [nonull] // will have the data
 }
-
 
 pub fn new(args NewArgs) !MemDB {
 	mut m := MemDB{

@@ -19,8 +19,8 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 			if x < 0 {
 				return error('Cannot do smartstr, because the X is out of scope.\n${smartstr}')
 			}
-			if x > r.sheet.nrcol-1 {
-				x = r.sheet.nrcol-1 
+			if x > r.sheet.nrcol - 1 {
+				x = r.sheet.nrcol - 1
 			}
 			r.cells[x].set(splitted[1])!
 		}

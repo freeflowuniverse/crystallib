@@ -2,7 +2,6 @@ module knowledgetree
 
 import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.markdowndocs { Include, Link, Paragraph }
-
 import os
 
 pub enum PageStatus {
@@ -38,10 +37,14 @@ fn (mut page Page) link_to_page_update(mut link Link) ! {
 	} else if page.collection.tree.page_exists(file_name) {
 		page.collection.tree.page_get(file_name)!
 	} else {
-		page.collection.error(path: page.path, msg: 'link to unknown page: ${link.str()}', cat: .page_not_found)
+		page.collection.error(
+			path: page.path
+			msg: 'link to unknown page: ${link.str()}'
+			cat: .page_not_found
+		)
 		return
 	}
-	if ! (other_page in page.pages_linked) {
+	if other_page !in page.pages_linked {
 		page.pages_linked << other_page
 	}
 	linkcompare1 := link.description + link.url + link.filename + link.content
@@ -156,14 +159,14 @@ fn (mut page Page) fix() ! {
 
 // walk over all links and fix them with location
 fn (mut page Page) fix_links() ! {
-	for x in 0..page.doc.items.len {
+	for x in 0 .. page.doc.items.len {
 		if page.doc.items[x] is Paragraph {
 			mut paragraph := page.doc.items[x] as Paragraph
-			for y in 0..paragraph.items.len {
+			for y in 0 .. paragraph.items.len {
 				if paragraph.items[y] is Link {
 					mut item_link := paragraph.items[y] as Link
 					if item_link.filename == 'threefold_cloud.md' {
-						print("${item_link}")
+						print('${item_link}')
 					}
 					if item_link.isexternal {
 						page.fix_external_link(mut item_link)!
@@ -228,17 +231,21 @@ fn (mut page Page) process_includes(mut include_tree []string) ! {
 	// check for circular imports
 	if page.name in include_tree {
 		history := include_tree.join(' -> ')
-		page.collection.error(path: page.path, msg: 'Found a circular include: ${history} in ', cat: .circular_import)
-		return 
+		page.collection.error(
+			path: page.path
+			msg: 'Found a circular include: ${history} in '
+			cat: .circular_import
+		)
+		return
 	}
 	include_tree << page.name
 
 	// find the files to import
 	mut included_pages := map[int]&Page{}
-	for x in 0..page.doc.items.len {
+	for x in 0 .. page.doc.items.len {
 		if page.doc.items[x] is Include {
 			include := page.doc.items[x] as Include
-			page.collection.tree.logger.debug("Including page ${include.content} into ${page.path.path}")
+			page.collection.tree.logger.debug('Including page ${include.content} into ${page.path.path}')
 			mut page_to_include := *page.collection.page_get(include.content) or {
 				msg := "include:'${include.content}' not found for page:${page.path.path}"
 				page.collection.error(path: page.path, msg: 'include ${msg}', cat: .page_not_found)
@@ -253,15 +260,15 @@ fn (mut page Page) process_includes(mut include_tree []string) ! {
 	// now we need to remove the links and replace them with the items from the doc of the page to insert
 	mut offset := 0
 	for x, page_to_include in included_pages {
-		page.doc.items.delete(x+offset)
-		page.doc.items.insert(x+offset, page_to_include.doc.items)
-		offset += page_to_include.doc.items.len-1
+		page.doc.items.delete(x + offset)
+		page.doc.items.insert(x + offset, page_to_include.doc.items)
+		offset += page_to_include.doc.items.len - 1
 	}
 }
 
 // will process the macro's and return string
 fn (mut page Page) process_macros() ! {
- 	//out = page.process_macro_include(out)!
+	// out = page.process_macro_include(out)!
 }
 
 [params]
