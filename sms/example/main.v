@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.sms { new_sms_client }
+import freeflowuniverse.crystallib.sms { new_sms_client, StatusTypes }
 import os
 import log
 
@@ -26,10 +26,10 @@ fn main() {
 
 	res := client.send(msg) or {
 		client.logger.error('failed to send message: ${err}')
-		return
+		exit(1)
 	}
 
-	if res.level == 'error' {
+	if res.level == StatusTypes.error {
 		client.logger.error('${res.content}: ${res.more_info}')
 	} else {
 		client.logger.info('${res.content}: ${res.more_info}')

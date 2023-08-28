@@ -34,9 +34,14 @@ pub:
 
 pub struct Result {
 pub:
-	level     string
+	level     StatusTypes
 	content   string
 	more_info string
+}
+
+pub enum StatusTypes {
+	error
+	success
 }
 
 pub fn new_sms_client(cred Credentials, mut logger log.Log) !Client {
@@ -104,14 +109,14 @@ pub fn (mut c Client) send(msg Message) !Result {
 
 	if get_value(res_obj, 'status') != sms.success_status {
 		return Result{
-			level: 'error'
+			level: .error
 			content: get_value(res_obj, 'message')
 			more_info: get_value(res_obj, 'more_info')
 		}
 	}
 
 	return Result{
-		level: 'success'
+		level: .success
 		content: get_value(res_obj, 'body')
 	}
 }
