@@ -1,8 +1,9 @@
 module sms
 
-import os
+import net.http
 import x.json2
 import log
+import encoding.base64
 
 const success_status = 'queued'
 
@@ -38,7 +39,7 @@ pub:
 	more_info string
 }
 
-pub fn new(cred Credentials, mut logger log.Log) !Client {
+pub fn new_sms_client(cred Credentials, mut logger log.Log) !Client {
 	return Client{
 		sid: cred.sid
 		token: cred.token
@@ -65,19 +66,43 @@ fn get_value(res json2.Any, key string) string {
 	return ret.str()
 }
 
+pub fn (mut c Client) get_auth_headers() !http.Header {
+	mut headers_map := map[string]string{}
+	token := base64.encode_str('${c.sid}:${c.token}')
+	headers_map['Authorization'] = 'Basic ${token}'
+	headers := http.new_custom_header_from_map(headers_map)!
+
+	return headers
+}
+
+pub fn (mut c Client) get_data_form(msg Message) !map[string]string {
+	mut data := map[string]string{}
+	data['To'] = msg.destination
+	data['Body'] = msg.content
+	data['From'] = c.source
+
+	return data
+}
+
 pub fn (mut c Client) send(msg Message) !Result {
 	c.validate_credentials() or { return error(err.str()) }
 
-	cmd := "curl -X POST ${c.api_url}/${c.sid}/Messages.json	-d 'Body=${msg.content}' -d 'From=${c.source}' -d 'To=${msg.destination}' -u '${c.sid}:${c.token}' -s"
+	headers := c.get_auth_headers()!
+	form := c.get_data_form(msg)!
 
-	res := os.execute(cmd)
+	post_form := http.PostMultipartFormConfig{
+		form: form
+		header: headers
+	}
 
-	res_obj := json2.raw_decode(res.output) or {
+	res := http.post_multipart_form('${c.api_url}/${c.sid}/Messages.json', post_form)!
+
+	res_obj := json2.raw_decode(res.body) or {
 		c.logger.error(err.str())
 		return Result{}
 	}
 
-	if get_value(res_obj, 'status') != success_status {
+	if get_value(res_obj, 'status') != sms.success_status {
 		return Result{
 			level: 'error'
 			content: get_value(res_obj, 'message')
