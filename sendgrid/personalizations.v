@@ -26,9 +26,9 @@ fn (mut p Personalizations) set_from(r Recipiant) {
 }
 
 // add_cc adds an array of recipients who will receive a copy of your email.
-fn (mut p Personalizations) add_cc(r []Recipiant) {
-	p.cc << r
-}
+// fn (mut p Personalizations) add_cc(r []Recipiant) {
+// 	p.cc << r
+// }
 
 // set_subject assigns the subject of the email.
 fn (mut p Personalizations) set_subject(s string) {
