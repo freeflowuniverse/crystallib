@@ -41,16 +41,6 @@ fn (c Client) get_headers() !http.Header {
 	return headers
 }
 
-pub fn (mut c Client) new_email(sendTo []Personalizations, subject string, content []Content) !Email {
-	return Email{
-		personalizations: sendTo
-		from: Recipiant{
-			email: c.source
-		}
-		subject: subject
-		content: content
-	}
-}
 
 pub fn (mut c Client) send(email Email) !http.Response {
 	mut request := http.new_request(http.Method.post, c.api_url, json.encode(email))
