@@ -82,7 +82,7 @@ struct TrackingSettings {
 }
 
 pub struct Email {
-pub:
+pub mut:
 	personalizations  []Personalizations [required]
 	from              Recipiant          [required]
 	subject           string             [required]
@@ -100,4 +100,48 @@ pub:
 	ip_pool_name      ?string
 	mail_settings     ?MailSettings
 	tracking_settings ?TrackingSettings
+}
+
+pub fn (mut e Email) add_personalization(personalizations []Personalizations) {
+	e.personalizations << personalizations
+}
+
+pub fn (mut e Email) add_content(content []Content) {
+	e.content << content
+}
+
+pub fn (mut e Email) add_headers(headers map[string]string) {
+	e.headers or {
+		e.headers = map[string]string{}
+		map[string]string{}
+	}
+
+	for k, v in headers {
+		e.headers[k] = v
+	}
+}
+
+pub fn new_email(to []string, from string, subject string, content string) Email {
+	mut recipiants := []Recipiant{}
+
+	for email in to {
+		recipiants << Recipiant{
+			email: email
+		}
+	}
+
+	personalization := Personalizations{
+		to: recipiants
+	}
+
+	return Email{
+		personalizations: [personalization]
+		from: Recipiant{
+			email: from
+		}
+		subject: subject
+		content: [Content{
+			value: content
+		}]
+	}
 }
