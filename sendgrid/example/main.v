@@ -31,8 +31,8 @@ fn main() {
 		exit(1)
 	}
 
-	email := sendgrid.new_email(['target_email@example.com','target_email2@example.com'], 'source_email@example.com',
-		'Hello from Crystallib', '<h2>Hello from Twilio SendGrid via crystallib!</h2><p>Sending with the email service trusted by developers and marketers for <strong>time-savings</strong>, <strong>scalability</strong>, and <strong>delivery expertise</strong>.</p>')
+	email := sendgrid.new_email(['target_email@example.com', 'target_email2@example.com'],
+		'source_email@example.com', 'Hello from Crystallib', '<h2>Hello from Twilio SendGrid via crystallib!</h2><p>Sending with the email service trusted by developers and marketers for <strong>time-savings</strong>, <strong>scalability</strong>, and <strong>delivery expertise</strong>.</p>')
 
 	client.send(email) or {
 		logger.error('failed to send the email: ${err}')
