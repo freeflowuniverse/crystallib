@@ -3,10 +3,10 @@ module sendgrid
 [params]
 pub struct Personalizations {
 pub mut:
-	to                    []Recipiant        [required]
-	from                  ?Recipiant
-	cc                    ?[]Recipiant
-	bcc                   ?[]Recipiant
+	to                    []Recipient        [required]
+	from                  ?Recipient
+	cc                    ?[]Recipient
+	bcc                   ?[]Recipient
 	subject               ?string
 	headers               ?map[string]string
 	substitutions         ?map[string]string
@@ -15,18 +15,18 @@ pub mut:
 	send_at               ?i64
 }
 
-// add_to adds a list of recepients to which this email should be sent.
-fn (mut p Personalizations) add_to(r []Recipiant) {
+// add_to adds a list of recipients to which this email should be sent.
+fn (mut p Personalizations) add_to(r []Recipient) {
 	p.to << r
 }
 
 // set_from assigns the from field in the email.
-fn (mut p Personalizations) set_from(r Recipiant) {
+fn (mut p Personalizations) set_from(r Recipient) {
 	p.from = r
 }
 
 // add_cc adds an array of recipients who will receive a copy of your email.
-fn (mut p Personalizations) add_cc(r []Recipiant) {
+fn (mut p Personalizations) add_cc(r []Recipient) {
 	p.cc or {
 		p.cc = r
 		return
