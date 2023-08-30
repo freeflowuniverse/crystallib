@@ -117,8 +117,8 @@ pub fn (mut e Email) add_content(content []Content) {
 
 pub fn (mut e Email) add_headers(headers map[string]string) {
 	e.headers or {
-		e.headers = map[string]string{}
-		map[string]string{}
+		e.headers = headers.clone()
+		return
 	}
 
 	for k, v in headers {

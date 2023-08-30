@@ -26,9 +26,14 @@ fn (mut p Personalizations) set_from(r Recipiant) {
 }
 
 // add_cc adds an array of recipients who will receive a copy of your email.
-// fn (mut p Personalizations) add_cc(r []Recipiant) {
-// 	p.cc << r
-// }
+fn (mut p Personalizations) add_cc(r []Recipiant) {
+	p.cc or {
+		p.cc = r
+		return
+	}
+
+	p.cc << r
+}
 
 // set_subject assigns the subject of the email.
 fn (mut p Personalizations) set_subject(s string) {
@@ -39,8 +44,8 @@ fn (mut p Personalizations) set_subject(s string) {
 // if some of the new headers already existed, their values are overwritten.
 fn (mut p Personalizations) add_headers(new_headers map[string]string) {
 	p.headers or {
-		p.headers = map[string]string{}
-		map[string]string{}
+		p.headers = new_headers.clone()
+		return
 	}
 
 	for k, v in new_headers {
@@ -52,8 +57,8 @@ fn (mut p Personalizations) add_headers(new_headers map[string]string) {
 // if some of the keys already existed, their values are overwritten.
 fn (mut p Personalizations) add_substitution(new_subs map[string]string) {
 	p.substitutions or {
-		p.substitutions = map[string]string{}
-		map[string]string{}
+		p.substitutions = new_subs.clone()
+		return
 	}
 
 	for k, v in new_subs {
@@ -66,8 +71,8 @@ fn (mut p Personalizations) add_substitution(new_subs map[string]string) {
 // if some of the keys already existed, their values are overwritten.
 fn (mut p Personalizations) add_dynamic_template_data(new_dynamic_template_data map[string]string) {
 	p.dynamic_template_data or {
-		p.dynamic_template_data = map[string]string{}
-		map[string]string{}
+		p.dynamic_template_data = new_dynamic_template_data.clone()
+		return
 	}
 
 	for k, v in new_dynamic_template_data {
@@ -80,8 +85,8 @@ fn (mut p Personalizations) add_dynamic_template_data(new_dynamic_template_data 
 // if some of the keys already existed, their values are overwritten.
 fn (mut p Personalizations) add_custom_args(new_custom_args map[string]string) {
 	p.custom_args or {
-		p.custom_args = map[string]string{}
-		map[string]string{}
+		p.custom_args = new_custom_args.clone()
+		return
 	}
 
 	for k, v in new_custom_args {
