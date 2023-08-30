@@ -1,5 +1,10 @@
 module sendgrid
 
+pub struct Content {
+	type_ string [json: 'type'] = 'text/html'
+	value string
+}
+
 struct Recipiant {
 	email string  [required]
 	name  ?string
