@@ -5,17 +5,17 @@ pub struct Content {
 	value string
 }
 
-struct Recipiant {
+struct Recipient {
 	email string  [required]
 	name  ?string
 }
 
-struct Attatchment {
-	content    string  [required]
-	type_      ?string [json: 'type']
-	filename   string  [required]
-	disposion  ?string
-	content_id ?string
+struct Attachment {
+	content     string  [required]
+	type_       ?string [json: 'type']
+	filename    string  [required]
+	disposition ?string
+	content_id  ?string
 }
 
 struct UnsubscribeGroups {
@@ -59,42 +59,42 @@ struct ClickTrackingSettings {
 }
 
 struct OpenTrackingSettings {
-	enable          ?bool
-	subsitution_tag ?string
+	enable           ?bool
+	substitution_tag ?string
 }
 
 struct SubscriptionTrackingSettings {
-	enable          ?bool
-	text            ?string
-	html            ?string
-	subsitution_tag ?string
+	enable           ?bool
+	text             ?string
+	html             ?string
+	substitution_tag ?string
 }
 
 struct GoogleAnalyticsSettings {
-	enable      ?bool
-	utm_source  ?string
-	utm_meduim  ?string
-	utm_term    ?string
-	utm_content ?string
-	utm_campain ?string
+	enable       ?bool
+	utm_source   ?string
+	utm_medium   ?string
+	utm_term     ?string
+	utm_content  ?string
+	utm_campaign ?string
 }
 
 struct TrackingSettings {
-	click_tracking       ?ClickTrackingSettings
-	open_tracking        ?OpenTrackingSettings
-	subscripion_tracking ?SubscriptionTrackingSettings
-	ganalytics           ?GoogleAnalyticsSettings
+	click_tracking        ?ClickTrackingSettings
+	open_tracking         ?OpenTrackingSettings
+	subscription_tracking ?SubscriptionTrackingSettings
+	ganalytics            ?GoogleAnalyticsSettings
 }
 
 pub struct Email {
 pub mut:
 	personalizations  []Personalizations [required]
-	from              Recipiant          [required]
+	from              Recipient          [required]
 	subject           string             [required]
 	content           []Content          [required]
-	reply_to          ?Recipiant
-	reply_to_list     ?[]Recipiant
-	attatchments      ?[]Attatchment
+	reply_to          ?Recipient
+	reply_to_list     ?[]Recipient
+	attachments       ?[]Attachment
 	template_id       ?string
 	headers           ?map[string]string
 	categories        ?[]string
@@ -127,21 +127,21 @@ pub fn (mut e Email) add_headers(headers map[string]string) {
 }
 
 pub fn new_email(to []string, from string, subject string, content string) Email {
-	mut recipiants := []Recipiant{}
+	mut recipients := []Recipient{}
 
 	for email in to {
-		recipiants << Recipiant{
+		recipients << Recipient{
 			email: email
 		}
 	}
 
 	personalization := Personalizations{
-		to: recipiants
+		to: recipients
 	}
 
 	return Email{
 		personalizations: [personalization]
-		from: Recipiant{
+		from: Recipient{
 			email: from
 		}
 		subject: subject
