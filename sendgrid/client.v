@@ -5,7 +5,7 @@ import json
 
 pub struct Client {
 pub:
-	token   string
+	token string
 }
 
 const send_api_endpoint = 'https://api.sendgrid.com/v3/mail/send'
@@ -30,7 +30,7 @@ fn (c Client) get_headers() !http.Header {
 	return headers
 }
 
-pub fn (c Client) send(email Email)! {
+pub fn (c Client) send(email Email) ! {
 	mut request := http.new_request(http.Method.post, sendgrid.send_api_endpoint, json.encode(email))
 	request.header = c.get_headers()!
 
@@ -38,5 +38,4 @@ pub fn (c Client) send(email Email)! {
 	if res.status_code != int(http.Status.accepted) {
 		return error(res.body)
 	}
-
 }
