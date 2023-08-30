@@ -29,13 +29,15 @@ pub fn new(args BizModelArgs) !BizModel {
 		}
 		currencies: cs
 	}
-
-	m.actions()!
+	if args.path !=""{
+		m.load()!
+	}
+	
 
 	return m
 }
 
-pub fn (mut m BizModel) actions() ! {
+pub fn (mut m BizModel) load() ! {
 	println('ACTIONS')
 	ap := actions.new(path: m.params.path, defaultcircle: 'bizmodel_${m.params.name}')!
 	m.revenue_actions(ap)!

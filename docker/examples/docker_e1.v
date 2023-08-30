@@ -1,6 +1,6 @@
 module main
 
-import docker
+import freeflowuniverse.crystallib.docker
 
 fn do() ! {
 	mut engine := docker.new()!

@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.httpconnection
 fn do() ! {
 	// http.CommonHeader.authorization: 'Bearer $h.auth.auth_token'
 
-	mut conn := httpconnection.new(name: 'example', url: 'https://reqres.in/api/')
+	mut conn := httpconnection.new(name: 'example', url: 'https://reqres.in/api/')!
 	// do the cache on the connection
 	conn.cache.expire_after = 7200 // make the cache expire_after 2h
 
@@ -17,11 +17,11 @@ fn do() ! {
 	conn.cache_drop()!
 
 	// subkey will get result of rest call & get subset of dict
-	r := conn.get_json_dict(mut prefix: 'users')!
+	r := conn.get_json_dict(prefix: 'users')!
 	println(r)
 
 	// will return as list but will start from subkey data
-	mut r2 := conn.get_json_list(mut prefix: 'users', dict_key: 'data')!
+	mut r2 := conn.get_json_list(prefix: 'users', dict_key: 'data')!
 	println(r2)
 
 	t3 := spawn conn.get(prefix: 'users', id: '1', dict_key: 'data')
