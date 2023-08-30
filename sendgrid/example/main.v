@@ -1,21 +1,19 @@
 module main
 
 import os
-import freeflowuniverse.crystallib.sendgrid { new_sendgrid_client }
+import freeflowuniverse.crystallib.sendgrid { new_client }
 
 fn main() {
-	cred := sendgrid.Credintials{
-		token: os.getenv('SENDGRID_AUTH_TOKEN')
-		source: os.getenv('SENDGRID_EMAIL')
-		api: 'https://api.sendgrid.com/v3/mail/send'
-	}
+	
+		token:= os.getenv('SENDGRID_AUTH_TOKEN')
+	
 
-	mut client := new_sendgrid_client(cred) or {
+	mut client := new_client(token) or {
 		println('something went wrong')
 		return
 	}
 
-	email := sendgrid.new_email(['mariobassem12@gmail.com', 'omarksm09@gmail.com'], client.source,
+	email := sendgrid.new_email(['mariobassem12@gmail.com', 'omarksm09@gmail.com'], "omarkassem099@gmail.com",
 		'finally works', 'done today')
 	res := client.send(email) or {
 		print(err)
