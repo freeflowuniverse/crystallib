@@ -13,7 +13,9 @@ pub mut:
 	addr        string // ipv4 or ipv6 or redis connection string
 	keysafe     &KeysSafe          [skip] // allows us to remove ourselves from mem, or go to db
 	state       TwinState          [skip] // only keep this in mem, does not have to be in sqlitedb
-	pubkey      string // pubkey is given in hex
+	pubkey_str      string // pubkey is given in hex
+	pubkey     secp256k1.Secp256k1 [skip] // to be used for signing, verifying, only to be filled in when public key	
+
 }
 
 pub enum TwinConnectionType {
@@ -90,10 +92,13 @@ pub fn (mut ks KeysSafe) othertwin_add(args_ OtherTwinAddArgs) ! {
 			error_type: GetErrorType.alreadyexists
 		}
 	}
+
+	pubkey := secp256k1.new(pubhex: args.pubkey)!
 	twin := OtherTwin{
 		name: args.name
 		description: args.description
-		pubkey: args.pubkey
+		pubkey_str: args.pubkey
+		pubkey: pubkey
 		conn_type_str: twin_conn_str(args.conn_type)
 		addr: args.addr
 		keysafe: ks
@@ -145,8 +150,9 @@ pub fn (mut ks KeysSafe) othertwin_get(args GetArgs) !OtherTwin {
 // }
 
 // // verify the received data from the mbus and make sure signature is ok
-// fn (mut twin OtherTwin) verify(data []u8, signature []u8) ! {
-// }
+fn (mut twin OtherTwin) verify(data []u8, signature []u8) bool {
+	return twin.pubkey.verify_data(signature, data)
+}
 
 pub fn (mut twin OtherTwin) delete() ! {
 	twin.keysafe.othertwins.delete(twin.name)
@@ -159,7 +165,7 @@ pub fn (mut twin OtherTwin) save() ! {
 	exists := twin.keysafe.othertwin_db_exists(name: twin.name)!
 	if exists {
 		sql twin.keysafe.db {
-			update OtherTwin set name = twin.name, description = twin.description, pubkey = twin.pubkey,
+			update OtherTwin set name = twin.name, description = twin.description, pubkey_str = twin.pubkey_str,
 			conn_type_str = twin.conn_type_str, addr = twin.addr where name == twin.name
 		}!
 		return
