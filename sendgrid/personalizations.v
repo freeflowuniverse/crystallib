@@ -32,7 +32,9 @@ fn (mut p Personalizations) add_cc(r []Recipient) {
 		return
 	}
 
-	p.cc << r
+	for item in r {
+		p.cc << item
+	}
 }
 
 // set_subject assigns the subject of the email.
