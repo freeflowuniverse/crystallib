@@ -32,16 +32,19 @@ email := sendgrid.new_email(
 You can execute the program using the following command:
 
 ```shell
-v run sendgrid/example/main.v -t "you API token"
+v run sendgrid/example/main.v -t "YOUR_API_TOKEN"
 ```
 
 You can provide the API key using the -t command-line argument, or you can export the API key using the following command:
-`export SENDGRID_AUTH_TOKEN="your api token"`
+
+```shell
+export SENDGRID_AUTH_TOKEN="YOUR_API_TOKEN"
+```
 
 Additionally, you can enable debug mode by passing the -d flag:
 
 ```shell
-v run sendgrid/example/main.v -d -t "you API token"
+v run sendgrid/example/main.v -d -t "YOUR_API_TOKEN"
 ```
 
 ## Advanced
