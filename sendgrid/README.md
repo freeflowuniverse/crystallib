@@ -46,4 +46,5 @@ v run sendgrid/example/main.v -d -t "you API token"
 
 ## Advanced
 
-For more customization options, you can implement your own methods; We provide some useful structs and methods in [email](./email) and [personalization](./personalizations.v) that you can leverage to tailor the emails according to your specific requirements.
+We provide some useful structs and methods in [email](./email) and [personalization](./personalizations.v) that you can leverage to tailor the emails according to your specific requirements.
+You can check the SendGrid API reference [here](https://docs.sendgrid.com/api-reference/how-to-use-the-sendgrid-v3-api/)
