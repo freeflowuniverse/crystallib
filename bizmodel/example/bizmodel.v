@@ -27,9 +27,6 @@ fn cli_docgen(cmd Command) ! {
 	}
 
 
-	if 
-
-
 	mut m := bizmodel.new(path: testpath)!
 	println('')
 	println(m.sheet.wiki(includefilter: ['funding'], name: 'FUNDING')!)
