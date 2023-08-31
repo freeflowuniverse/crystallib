@@ -79,7 +79,7 @@ pub fn (mut cs Currencies) amount_get(amount_ string) !Amount {
 	}
 	if code == '' {
 		num = amount
-		
+		code = 'USD'
 	}else{
 		if code !in cs.currencies {
 			cs.get_rates([code], false)! // not sure this will work
