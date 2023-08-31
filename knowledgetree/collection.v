@@ -295,7 +295,7 @@ pub fn (mut collection Collection) fix() ! {
 	for _, mut page in collection.pages {
 		page.fix()!
 	}
-	collection.errors_report()!
+	collection.errors_report('${collection.path.path}/errors.md')!
 }
 
 // return all pagenames for a collection
@@ -309,8 +309,8 @@ pub fn (collection Collection) pagenames() []string {
 }
 
 // write errors.md in the collection, this allows us to see what the errors are
-pub fn (collection Collection) errors_report() ! {
-	mut p := pathlib.get('${collection.path.path}/errors.md')
+pub fn (collection Collection) errors_report(where string) ! {
+	mut p := pathlib.get('${where}')
 	if collection.errors.len == 0 {
 		p.delete()!
 		return
