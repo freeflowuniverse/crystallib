@@ -7,6 +7,7 @@ pub:
 pub mut:	
 	instance string	
 	docker docker.DockerEngine
+	last_gid int
 	
 }
 

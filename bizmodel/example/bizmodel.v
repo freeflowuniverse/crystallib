@@ -2,10 +2,12 @@ module main
 import freeflowuniverse.crystallib.baobab.spawner
 import os
 import freeflowuniverse.crystallib.bizmodel
+import freeflowuniverse.crystallib.knowledgetree
 // import freeflowuniverse.crystallib.spreadsheet
 // import cli { Command }
 
 const testpath = os.dir(@FILE) + '/data'
+const wikipath = os.dir(@FILE) + '/wiki'
 
 
 
@@ -15,18 +17,19 @@ fn do() ! {
 	mut m:=bizmodel.background(mut s,path:testpath)!
 
 	println(m.wiki(includefilter: ['funding'], name: 'FUNDING')!)
+
+	mut tr := knowledgetree.new(mut &s)!
+
+	mut mp:=bizmodel.macroprocessor_new(mut &s)
+
+	tr.macroprocessor_add(mut &mp)!
+
+	tr.scan(path: wikipath, heal: false)!
+	mut book := tr.book_new(path: '${wikipath}', name: 'mybook')!
+	book.read()! // will generate and open	
 	
 	// println('')
-	// println(m.sheet.wiki(includefilter: ['funding'], name: 'FUNDING')!)
-	// println(m.sheet.wiki(includefilter: ['rev'], name: 'revenue')!)
-	// println(m.sheet.wiki(includefilter: ['revtotal'], name: 'revenue total')!)
-	// println(m.sheet.wiki(includefilter: ['revtotal2'], title_disable: true)!)
-	// println(m.sheet.wiki(includefilter: ['cogs'], name: 'cogs')!)
-	// println(m.sheet.wiki(includefilter: ['margin'], name: 'margin')!)
-	// println(m.sheet.wiki(includefilter: ['hrnr'], name: 'HR Teams')!)
-	// println(m.sheet.wiki(includefilter: ['hrcost'], name: 'HR Cost')!)
-	// println(m.sheet.wiki(includefilter: ['ocost'], name: 'COSTS')!)
-	// println(m.sheet.wiki(includefilter: ['pl'], name: 'P&L Overview')!)
+
 
 	// m.sheet.group2row(
 	// 	name: 'company_result'

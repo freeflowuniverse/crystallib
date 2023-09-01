@@ -14,10 +14,9 @@ fn bizmodel_do(mut ch_in sync.Channel,mut ch_out sync.Channel) {
 	println("biz model thread start")
 	mut rpcobj:=spawner.RPCArg{}
 	mut m:=new(path:rpcobj.val) or {panic(err)}
-	for i in 0..10
+	for i in 0..10000000000
 	{
-		// ch_out.pop(&rpcobj)
-		// println("received")
+		// println(" - T: will receive")
 		ch_in.pop(&rpcobj)
 		if rpcobj.method=="STOP"{
 			println("STOP")
@@ -42,7 +41,7 @@ fn bizmodel_do(mut ch_in sync.Channel,mut ch_out sync.Channel) {
 		}
 		//WIKI
 		if rpcobj.method.to_upper().trim_space()=="WIKI"{
-			println("WIKI")
+			// println("WIKI:${rpcobj.val}")
 			data:=json.decode(spreadsheet.WikiArgs,rpcobj.val) or{panic(err)} //is bug so ok to panic
 			rpcobj.result=m.sheet.wiki(data) or { 
 				rpcobj.error="$err"
@@ -50,8 +49,19 @@ fn bizmodel_do(mut ch_in sync.Channel,mut ch_out sync.Channel) {
 				}
 		}
 
-		// println()
+		//BARCHART1
+		if rpcobj.method.to_upper().trim_space()=="BARCHART1"{
+			// println("BARCHART1:${rpcobj.val}")
+			data:=json.decode(spreadsheet.RowGetArgs,rpcobj.val) or{panic(err)} //is bug so ok to panic
+			rpcobj.result=m.sheet.wiki_bar_chart(data) or { 
+				rpcobj.error="$err"
+				""
+				}
+		}		
+
+		// println("DONE:${rpcobj.val}")
 		if ! rpcobj.async{
+			// println(" - T: will send")
 			ch_out.push(&rpcobj)
 		}	
 	}
@@ -64,7 +74,7 @@ fn bizmodel_do(mut ch_in sync.Channel,mut ch_out sync.Channel) {
 pub fn background(mut s &spawner.Spawner, args BizModelArgs) !BizModelBackground {
 	///spawn the process and wait for 3scripts to be fed
 
-	mut t:=s.thread_add("athread",bizmodel_do)!
+	mut t:=s.thread_add("bizmodel",bizmodel_do)!
 	// time.sleep(time.Duration(time.second))
 
 	mut res:=t.rpc(method:"LOAD",val:args.path)! //will make sure biz model gets loaded

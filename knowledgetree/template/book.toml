@@ -5,12 +5,49 @@ multilingual = false
 src = "src"
 title = "@book.title"
 
+[output.html.fold]
+enable = true
+level = 0
+
+
+[output]
+
+[output.html]
+no-section-label = true
+additional-js = ["mermaid.min.js", "mermaid-init.js","echarts.min.js"]
+
+
+[build]
+create-missing = false
+
+
 [preprocessor]
 
 [preprocessor.mermaid]
 command = "mdbook-mermaid"
 
-[output]
+#use as mdbook preprocessor
+[preprocessor.echarts]
 
-[output.html]
-additional-js = ["mermaid.min.js", "mermaid-init.js"]
+# [output.pdf]
+# landscape = false
+# display-header-footer = true
+# print-background = true
+# theme = "ayu"
+# # scale = 0.7
+# paper-width = 8.3
+# paper-height = 11.7
+# margin-top = 0.5
+# margin-bottom = 0.5
+# margin-left = 0.5
+# margin-right = 0.5
+# page-ranges = ""
+# ignore-invalid-page-ranges = false
+# header-template = "<h3 style='font-size:8px; margin-left: 48%' class='title'></h3>"
+# footer-template = "<p style='font-size:10px; margin-left: 48%'><span class='pageNumber'></span> / <span class='totalPages'></span></p>"
+# prefer-css-page-size = false
+
+[preprocessor.plantuml]
+plantuml-cmd="http://localhost:8080/plantuml"
+# plantuml-cmd="http://www.plantuml.com/plantuml"
+use-data-uris=true

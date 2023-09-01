@@ -402,6 +402,14 @@ pub fn (mut book MDBook) export() ! {
 	// lets now build
 	osal.exec(cmd: 'mdbook build ${book.md_path('').path} --dest-dir ${html_path}', retry: 0)!
 
+	for item in book.tree.embedded_files {
+		if item.path.ends_with(".css"){
+			css_name := item.path.all_after_last('/')
+			osal.file_write("${html_path}/css/${css_name}",item.to_string())!
+			println(" ======= ${html_path}/css/${css_name}")
+		}		
+	}	
+
 	book.tree.logger.info('MDBook has been generated under ${md_path}')
 	book.tree.logger.info('HTML pages are found under ${html_path}')
 }
@@ -423,4 +431,7 @@ fn (mut book MDBook) template_install() ! {
 	}
 	c := $tmpl('template/book.toml')
 	book.template_write('book.toml', c)!
+
 }
+
+

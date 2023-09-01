@@ -14,29 +14,46 @@ import strconv
 pub fn (params &Params) get_list(key string) ![]string {
 	mut res := []string{}
 	mut valuestr := params.get(key)!
-	valuestr = valuestr.trim('[] ,')
-	mut j := 0
-	mut i := 0
-	for i < valuestr.len {
-		if valuestr[i] == 34 || valuestr[i] == 39 { // handle single or double quotes
-			quote := valuestr[i..i + 1]
-			j = valuestr.index_after('${quote}', i + 1)
-			if j == -1 {
-				return error('Invalid list at index ${i}: strings should surrounded by single or double quote')
-			}
-			if i + 1 < j {
-				res << valuestr[i + 1..j]
-				i = j + 1
-				if i < valuestr.len && valuestr[i] != 44 { // handle comma
-					return error('Invalid list at index ${i}: strings should be separated by a comma')
-				}
-			}
-		} else if valuestr[i] == 32 { // handle space
-		} else {
-			return error('Invalid list at index ${i}: unexpected character at location ${i}, items in a list of strings should start with single or double quotes')
+	valuestr=valuestr.trim("[] ")
+	mut splitted:=valuestr.split(",")
+	for mut item in splitted{
+		item=item.trim("\"' ")
+		if item!=""{
+			res<<item
 		}
-		i += 1
 	}
+
+	//THE IMPLEMENTATION BELOW IS TOO COMPLEX AND ALSO NOT DEFENSIVE ENOUGH
+
+	// mut res := []string{}
+	// mut valuestr := params.get(key)!
+	// valuestr = valuestr.trim('[] ,')
+	// if valuestr==""{
+	// 	return []
+	// }
+	// mut j := 0
+	// mut i := 0
+	// for i < valuestr.len {
+	// 	if valuestr[i] == 34 || valuestr[i] == 39 { // handle single or double quotes
+	// 		// println("::::${valuestr[i]}")
+	// 		quote := valuestr[i..i + 1]
+	// 		j = valuestr.index_after('${quote}', i + 1)
+	// 		if j == -1 {
+	// 			return error('Invalid list at index ${i}: strings should surrounded by single or double quote')
+	// 		}
+	// 		if i + 1 < j {
+	// 			res << valuestr[i + 1..j]
+	// 			i = j + 1
+	// 			if i < valuestr.len && valuestr[i] != 44 { // handle comma
+	// 				return error('Invalid list at index ${i}: strings should be separated by a comma')
+	// 			}
+	// 		}
+	// 	} else if valuestr[i] == 32 { // handle space
+	// 	} else {
+	// 		res << valuestr[i..i + 1]
+	// 	}
+	// 	i += 1
+	// }
 	return res
 }
 

@@ -1,7 +1,7 @@
 module knowledgetree
 
 import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.markdowndocs { Include, Link, Paragraph }
+import freeflowuniverse.crystallib.markdowndocs { Include, Link, Paragraph, Action }
 import os
 
 pub enum PageStatus {
@@ -184,49 +184,6 @@ fn (mut page Page) fix_links() ! {
 	}
 }
 
-// will execute on 1 specific macro = include
-fn (mut page Page) process_macro_include() ! {
-	/*
-	mut result := []string{}
-	for x in page
-		mut page_name_include := ''
-		if line.trim_space().starts_with('{{#include') {
-			page_name_include = texttools.name_fix_no_ext(line.all_after_first('#include').all_before('}}').trim_space())
-		}
-		if line.trim_space().starts_with('!!include ') {
-			page_name_include = texttools.name_fix_no_ext(line.all_after_first('!!include ')).trim_space()
-		}
-
-		// TODO: need other type of include macro format !!!include ...
-		if page_name_include != '' {
-			// * means we dereference, we have a copy so we can change
-			mut page_include := *page.collection.page_get(page_name_include) or {
-				msg := "include:'${page_name_include}' not found for page:${page.path.path}"
-				page.collection.error(path: page.path, msg: 'include ${msg}', cat: .page_not_found)
-				line = '> ERROR: ${msg}'
-				continue
-			}
-			page_include.readonly = true // we should not save this file
-			page_include.name = 'DONOTSAVE'
-			page_include.path = page.path // we need to operate in path from where we include from
-
-			line = ''
-			for line_include in page_include.doc.content.split_into_lines() {
-			 	result << line_include
-			}
-			//panic('implement include')
-			if page_include.files_linked.len > 0 {
-				page_include.fix()!
-			}
-		}
-		if line != '' {
-			result << line
-		}
-	}
-	return result.join('\n')
-	*/
-}
-
 fn (mut page Page) process_includes(mut include_tree []string) ! {
 	// check for circular imports
 	if page.name in include_tree {
@@ -268,7 +225,31 @@ fn (mut page Page) process_includes(mut include_tree []string) ! {
 
 // will process the macro's and return string
 fn (mut page Page) process_macros() ! {
-	// out = page.process_macro_include(out)!
+	for x in 0 .. page.doc.items.len {		
+		if page.doc.items[x] is markdowndocs.Action {
+			macro := page.doc.items[x] as Action
+			println(page.doc.items[x])
+			page.collection.tree.logger.info('Process macro ${macro.content} into ${page.path.path}')
+			mut out:=""
+			for mut mp in page.collection.tree.macroprocessors{
+				res:=mp.process("!!${macro.content}")!
+				if res.error==""{
+					out+=res.result+"\n"
+				}else{
+					out+=">> ERROR:\n${res.error}\n"
+				}
+				mut para:=Paragraph{content:res.result}
+				para.process()!
+				page.doc.items.delete(x )
+				page.doc.items.insert(x,para )
+				if res.state==.stop{
+					break
+				}
+
+			}
+
+		}
+	}
 }
 
 [params]

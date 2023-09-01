@@ -10,7 +10,7 @@ pub mut:
 	changed bool
 }
 
-fn (mut paragraph Paragraph) process() ! {
+pub fn (mut paragraph Paragraph) process() ! {
 	if paragraph.items.len == 0 {
 		paragraph.parse()!
 	}

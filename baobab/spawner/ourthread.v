@@ -21,7 +21,7 @@ pub fn (mut t OurThread) rpc(args RPCArg) !string {
 	if args.async{
 		return ""
 	}
-	// println("wait return")
+	// println("wait: return")
 	t.ch_return.pop(&args)
 	// println(args)
 

@@ -12,7 +12,6 @@ pub mut:
 	period_months int = 12 // 3 for quarter, 12 for year, 1 for all months
 	description   string
 	title         string
-	title_disable bool
 	rowname       bool = true
 }
 
@@ -32,11 +31,8 @@ pub fn (mut s Sheet) wiki(args_ WikiArgs) !string {
 	}
 	mut sheet := s.tosmaller(argssmaller)! // this will do the filtering and if needed make smaller
 
-	if args.title == '' {
-		args.title = 'Sheet ${args.name}.'
-	}
 	mut out := ''
-	if !args.title_disable {
+	if args.title.len>0 {
 		out = '## ${args.title}\n\n'
 	}
 	if args.description != '' {

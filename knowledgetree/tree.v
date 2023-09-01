@@ -2,6 +2,9 @@ module knowledgetree
 
 import log
 import v.embed_file
+import freeflowuniverse.crystallib.baobab.spawner
+
+
 
 [heap]
 pub struct Tree {
@@ -14,6 +17,8 @@ pub mut:
 	books          map[string]&MDBook
 	embedded_files []embed_file.EmbedFileData // this where we have the templates for exporting a book
 	state          TreeState
+	macroprocessors []&IMacroProcessor
+	spawner &spawner.Spawner
 }
 
 pub enum TreeState {
@@ -25,7 +30,9 @@ pub enum TreeState {
 fn (mut tree Tree) init() ! {
 	tree.embedded_files << $embed_file('template/css/print.css')
 	tree.embedded_files << $embed_file('template/css/variables.css')
+	tree.embedded_files << $embed_file('template/css/general.css')
 	tree.embedded_files << $embed_file('template/mermaid-init.js')
+	tree.embedded_files << $embed_file('template/echarts.min.js')
 	tree.embedded_files << $embed_file('template/mermaid.min.js')
 }
 
@@ -35,6 +42,14 @@ pub fn (mut tree Tree) reset() ! {
 		book.reset()!
 	}
 }
+
+//add macroprocessor to the tree
+// see interface IMacroProcessor for how macroprocessor needs to be implemented
+pub fn (mut tree Tree) macroprocessor_add(mut mp &IMacroProcessor) ! {
+	tree.macroprocessors << mp
+}
+
+
 
 // export the mdbooks to html
 pub fn (mut tree Tree) export() ! {
