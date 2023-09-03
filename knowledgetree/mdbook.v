@@ -189,14 +189,15 @@ fn (mut book MDBook) fix_summary() ! {
 							// now we can process the page where the link goes to
 							if collection.page_exists(pagename) {
 								page := collection.page_get(pagename)!
+								book.tree.logger.debug('found page: ${page.path.path}')
 								newlink := '[${link.description}](${collectionname}/${page.pathrel})'
 								book.pages['${collection.name}:${page.name}'] = page
 								if newlink != link.content {
 									book.tree.logger.debug('change: ${link.content} -> ${newlink}')
 									paragraph.content = paragraph.content.replace(link.content,
 										newlink)
-									link.path = collectionname + '/' +
-										page.pathrel.all_before_last('/').trim_right('/')
+									newpath := collectionname + '/' + page.pathrel
+									link.path = newpath.all_before_last('/').trim_right('/')
 									link.content = newlink
 									paragraph.items[x] = link
 								}
@@ -223,6 +224,7 @@ fn (mut book MDBook) fix_summary() ! {
 			book.doc_summary.items[y] = paragraph
 		}
 	}
+	book.tree.logger.debug('finished fixing summary')
 }
 
 // all images, files and pages found need to be linked to the book
@@ -238,7 +240,7 @@ fn (mut book MDBook) link_pages_files_images() ! {
 							pageobj := page.collection.page_get(link.filename) or {
 								book.error(
 									cat: .page_not_found
-									msg: 'Cannot find page: ${link.filename} in ${page.name}'
+									msg: '${page.path.path}: Cannot find page ${link.filename} in ${page.collection.name}'
 								)
 								continue
 							}
@@ -248,7 +250,7 @@ fn (mut book MDBook) link_pages_files_images() ! {
 							fileobj := page.collection.file_get(link.filename) or {
 								book.error(
 									cat: .file_not_found
-									msg: 'Cannot find file: ${link.filename} in ${page.name}'
+									msg: '${page.path.path}: Cannot find file ${link.filename} in ${page.collection.name}'
 								)
 								continue
 							}
@@ -258,7 +260,7 @@ fn (mut book MDBook) link_pages_files_images() ! {
 							imageobj := page.collection.image_get(link.filename) or {
 								book.error(
 									cat: .image_not_found
-									msg: 'Cannot find image: ${link.filename} in ${page.name}'
+									msg: '${page.path.path}: Cannot find image ${link.filename} in ${page.collection.name}'
 								)
 								continue
 							}
@@ -269,38 +271,40 @@ fn (mut book MDBook) link_pages_files_images() ! {
 			}
 		}
 	}
+	book.tree.logger.info('finished linking pages files images')
 }
 
 pub fn (mut book MDBook) errors_report() ! {
-	// Add errors of the collections to the report
-	mut collection_errors := map[string]string{}
+	// Look for errors in linked collections
+	mut collection_errors := map[string]&Collection{}
 	for _, mut page in book.pages {
 		if page.collection.errors.len > 0 {
-			collection_errors[page.collection.name] = '${page.collection.path.path}/errors.md'
+			collection_errors[page.collection.name] = page.collection
 		}
 	}
 
 	for _, mut file in book.files {
 		if file.collection.errors.len > 0 {
-			collection_errors[file.collection.name] = '${file.collection.path.path}/errors.md'
+			collection_errors[file.collection.name] = file.collection
 		}
 	}
 
 	for _, mut image in book.images {
 		if image.collection.errors.len > 0 {
-			collection_errors[image.collection.name] = '${image.collection.path.path}/errors.md'
+			collection_errors[image.collection.name] = image.collection
 		}
 	}
-	for collection_name, error_path in collection_errors {
-		mut path_error_file := pathlib.get(error_path)
-		path_error_file.copy(mut pathlib.get('${book.md_path('').path}/src/errors_${collection_name}.md'))!
-
+	// Export the errors of the collections that contain errors
+	for collection_name, collection in collection_errors {
+		collection.errors_report('${book.md_path('').path}/src/errors_${collection_name}.md') or {
+			return error("failed to report errors for collection ${collection_name}")
+		}
 		book.error(
 			cat: .collection_error
 			msg: 'There were one or more errors in collection ${collection_name}, please take a look at [the collection\'s error page](errors_${collection_name}.md)'
 		)
 	}
-
+	// Lets link the errors in the errors.md file
 	c := $tmpl('template/errors.md')
 	mut p2 := pathlib.get('${book.dest_md}/src/errors.md')
 	if book.errors.len == 0 {
@@ -353,7 +357,7 @@ pub fn (mut book MDBook) export_linked_pages(md_path string, mut linked_pages []
 			book.export_linked_pages(md_path, mut page_linked.pages_linked)!
 		}
 		dest := '${md_path}/${page_linked.collection.name}/${page_linked.pathrel}'
-		book.tree.logger.info('- export: ${dest}')
+		book.tree.logger.info('export: ${dest}')
 		page_linked.save(dest: dest)!
 	}
 }
@@ -368,18 +372,18 @@ pub fn (mut book MDBook) export() ! {
 			book.export_linked_pages(md_path, mut page.pages_linked)!
 		}
 		dest := '${md_path}/${page.collection.name}/${page.pathrel}'
-		book.tree.logger.info('- export: ${dest}')
+		book.tree.logger.info('export page: ${dest}')
 		page.save(dest: dest)!
 	}
 
 	for _, mut file in book.files {
 		dest := '${md_path}/${file.collection.name}/${file.pathrel}'
-		book.tree.logger.info('- export: ${dest}')
+		book.tree.logger.info('export file: ${dest}')
 	}
 
 	for _, mut image in book.images {
 		mut dest := '${md_path}/${image.collection.name}/${image.pathrel}'
-		book.tree.logger.info('- export: ${dest}')
+		book.tree.logger.info('export image: ${dest}')
 		image.copy(dest)!
 
 		mut path_dest := pathlib.get(dest)

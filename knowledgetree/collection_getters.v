@@ -54,5 +54,6 @@ fn (mut tree Tree) collection_get_from_pointer(p Pointer) !&Collection {
 }
 
 pub fn (mut tree Tree) collection_get(name string) !&Collection {
-	return tree.collection_get_from_pointer(Pointer{ collection: name })!
+	name_fixed := texttools.name_fix_no_underscore_no_ext(name)
+	return tree.collection_get_from_pointer(Pointer{ collection: name_fixed })!
 }
