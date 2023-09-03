@@ -28,4 +28,4 @@ There are 3 type objects
 
 
 
->> TODO: create some tests
+For an example on how to use check example [here](example/keysafe.v).

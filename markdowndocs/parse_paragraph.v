@@ -7,6 +7,7 @@ fn (mut para Paragraph) parse() ! {
 	mut parser := parser_char_new_text(para.content.trim_space())
 
 	para.items << Text{}
+	mut potential_link := false
 
 	for {
 		if parser.eof() {
@@ -15,19 +16,6 @@ fn (mut para Paragraph) parse() ! {
 
 		mut llast := para.items.last()
 		mut char_ := parser.char_current()
-		// char_debug := char_.replace("\n","\\n")
-		// println("")
-		// match llast {
-		// 	Link{
-		// 		print(" ---- L :'$char_debug' ")
-		// 	}
-		// 	Text{
-		// 		print(" ---- T :'$char_debug' ")
-		// 	}
-		// 	Comment{
-		// 		print(" ---- C :'$char_debug' ")
-		// 	}
-		// }
 
 		// check for comments end
 		if mut llast is Comment {
@@ -72,13 +60,15 @@ fn (mut para Paragraph) parse() ! {
 					char_ = ''
 					continue
 				}
+				potential_link = true
 			}
-			if char_ == ')' {
+			if char_ == ')' && potential_link {
 				// end of link
 				llast.content += char_ // need to add current content
 				para.items << Text{}
 				parser.next()
 				char_ = ''
+				potential_link = false
 				continue
 			}
 		}

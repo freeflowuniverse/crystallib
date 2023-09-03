@@ -53,7 +53,7 @@ pub fn (mut ks KeysSafe) mytwin_add(args_ MyTwinAddArgs) ! {
 	}
 
 	mut privkey_hex := args.privkey
-	mut privkey := secp256k1.new(keyhex: privkey_hex)!
+	mut privkey := secp256k1.new(privhex: privkey_hex)!
 
 	// if user didn't pass privkey, then we used the one generated from the above statement
 	if privkey_hex.len == 0 {

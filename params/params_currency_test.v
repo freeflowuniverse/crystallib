@@ -17,14 +17,14 @@ const testparams = Params{
 
 fn test_get_currencyamount() ! {
 	// testusd
-	cs := currency.new()
-	mut amount := params.testparams.get_currencyamount(cs, 'dollars')!
+	mut cs:=currency.new()
+	mut amount := params.testparams.get_currencyamount(mut cs, 'dollars')!
 	assert amount.currency.name == 'USD'
 	assert amount.currency.usdval == 1.0
 	assert amount.val == 100.0
 
 	// testeuro
-	amount = params.testparams.get_currencyamount(cs, 'euros')!
+	amount = params.testparams.get_currencyamount(mut cs, 'euros')!
 	assert amount.currency.name == 'EUR'
 	assert amount.currency.usdval >= 0.9 // may need revision in future
 	assert amount.val == 100.0
@@ -32,7 +32,8 @@ fn test_get_currencyamount() ! {
 
 fn test_get_currencyamount_default() ! {
 	// testeuro
-	mut amount := params.testparams.get_currencyamount_default(cs, 'na', '20EUR')!
+	mut cs:=currency.new()
+	mut amount := params.testparams.get_currencyamount_default(mut cs,'na', '20EUR')!
 	assert amount.currency.name == 'EUR'
 	assert amount.currency.usdval >= 0.9 // may need revision in future
 	assert amount.val == 20
