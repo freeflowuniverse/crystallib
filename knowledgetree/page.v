@@ -35,16 +35,6 @@ fn (mut page Page) link_to_page_update(mut link Link) ! {
 	mut other_page := if page.collection.page_exists(file_name) {
 		page.collection.page_get(file_name)!
 	} else {
-<<<<<<< HEAD
-		page.collection.error(
-			path: page.path
-			msg: 'link to unknown page: ${link.str()}'
-			cat: .page_not_found
-		)
-		return
-	}
-	if other_page !in page.pages_linked {
-=======
 		page_in_other_collection := page.collection.tree.page_get(file_name) or {
 			if err is CollectionNotFound || err is CollectionObjNotFound {
 				page.collection.error(path: page.path, msg: 'link to unknown page: ${link.str()}', cat: .page_not_found)
@@ -59,9 +49,7 @@ fn (mut page Page) link_to_page_update(mut link Link) ! {
 		}
 		page_in_other_collection
 	}
-
 	if ! (other_page in page.pages_linked) {
->>>>>>> 57eac1e95244f94a883f8f4a5ed1e8c37e76c2cf
 		page.pages_linked << other_page
 	}
 	linkcompare1 := link.description + link.url + link.filename + link.content
