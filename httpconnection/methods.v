@@ -26,7 +26,7 @@ fn (mut h HTTPConnection) url(req Request) string {
 		u += '/${req.id}'
 	}
 	if req.params.len > 0 {
-		u += '!${http.url_encode_form_data(req.params)}'
+		u += '?${http.url_encode_form_data(req.params)}'
 	}
 	return u
 }
