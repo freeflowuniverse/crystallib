@@ -44,4 +44,20 @@ pub fn (mut m BizModel) load() ! {
 	m.hr_actions(ap)!
 	m.funding_actions(ap)!
 	m.overhead_actions(ap)!
+
+	m.sheet.group2row(
+		name: 'company_result'
+		include: ['pl']
+		tags: 'netresult'
+		descr: 'Net Company Result.'
+	)!
+
+	mut company_result := m.sheet.row_get('company_result')!
+	mut cashflow := company_result.recurring(
+		name: 'Cashflow'
+		tags: 'cashflow'
+		descr: 'Cashflow of company.'
+	)!
+
+
 }

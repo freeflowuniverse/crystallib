@@ -3,7 +3,6 @@ import freeflowuniverse.crystallib.baobab.spawner
 import freeflowuniverse.crystallib.knowledgetree
 import freeflowuniverse.crystallib.baobab.actions
 import freeflowuniverse.crystallib.spreadsheet
-import time
 import json
 
 pub struct MacroProcessorBizmodel {
@@ -23,7 +22,7 @@ pub fn (mut mp MacroProcessorBizmodel) process(code string) !knowledgetree.Macro
 	for action in actions2 {
 		p:=action.params
 		mut period_type_e :=spreadsheet.PeriodType.error //year, month, quarter
-
+		mut unit_e :=spreadsheet.UnitType.normal
 		if action.name == 'sheet_wiki' {			
 			args:=spreadsheet.WikiArgs{
 				name:p.get_default("name","")!
@@ -35,13 +34,29 @@ pub fn (mut mp MacroProcessorBizmodel) process(code string) !knowledgetree.Macro
 				rowname:p.get_default_true("rowname")
 			}
 			r.result= mp.spawner.rpc(mut tname:"bizmodel",method:"WIKI",val:json.encode(args))!
-			r.result+="<BR>"
+			// r.result+="<BR>"
 			return r
 		}
 
-		if action.name == 'graph_row' {			
+		chart_methodname:=match action.name {
+			'graph_bar_row' {"BARCHART1"} 
+			'graph_pie_row' {"PIECHART1"}
+			else{""}
+		}
+
+		size:=p.get_default("size","")!
+
+		if chart_methodname.len>0{			
 			rowname:=p.get_default("rowname","")!
-			period_type:=p.get_default("period_type","year")!			
+			unit:=p.get_default("unit","normal")!
+			unit_e=match unit {
+				"thousand" {.thousand}
+				"million" {.million}
+				"billion" {.billion}
+				else {.normal}
+			}			
+			period_type:=p.get_default("period_type","year")!
+			
 			period_type_e=match period_type {
 				"year" {.year}
 				"month" {.month}
@@ -57,12 +72,20 @@ pub fn (mut mp MacroProcessorBizmodel) process(code string) !knowledgetree.Macro
 			if !(period_type in ["year","month","quarter"]){
 				return error("period type needs to be in year,month,quarter")
 			}
+
+			title_sub:=p.get_default("title_sub","")!
+			title:=p.get_default("title","")!
+
 			args:=spreadsheet.RowGetArgs{
 				rowname:rowname
 				period_type:period_type_e
+				unit:unit_e
+				title_sub:title_sub
+				title:title
+				size:size
 			}			
-			r.result= mp.spawner.rpc(mut tname:"bizmodel",method:"BARCHART1",val:json.encode(args))!
-			r.result+="\n<BR>"
+			r.result= mp.spawner.rpc(mut tname:"bizmodel",method:chart_methodname,val:json.encode(args))!
+			r.result+="\n"
 			return r
 		}
 

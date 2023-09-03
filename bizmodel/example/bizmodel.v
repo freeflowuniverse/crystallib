@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.knowledgetree
 // import freeflowuniverse.crystallib.spreadsheet
 // import cli { Command }
 
-const testpath = os.dir(@FILE) + '/data'
+const testpath = os.dir(@FILE) + '/wiki'
 const wikipath = os.dir(@FILE) + '/wiki'
 
 

@@ -1,5 +1,4 @@
 module spreadsheet
-import json
 
 
 fn remove_empty_line(txt string)string{
@@ -22,10 +21,19 @@ pub mut:
 	period_type   PeriodType //year, month, quarter
   aggregate     bool = true //if more than 1 row matches should we aggregate or not
   aggregatetype RowAggregateType = .sum //important if used with include/exclude, because then we group
-  
-	// description   string
-	// title         string
+  unit          UnitType
+  title         string
+  title_sub     string
+  size          string
 }
+
+pub enum UnitType{
+  normal
+  thousand
+  million
+  billion
+}
+
 
 pub enum PeriodType{
   year
@@ -38,7 +46,7 @@ pub enum PeriodType{
 pub fn (mut s Sheet)  header_get_as_string ( period_type PeriodType )!string{
     err_pre:="Can't get header for sheet:${s.name}\n"
     period_type_s:=match period_type{
-        .year {"'Y1', 'Y2', 'Y3', 'Y4', 'Y5', 'Y6'"}
+        .year {"'Y1', 'Y2', 'Y3', 'Y4', 'Y5'"}
         .quarter {
           mut out:=""
           for i in 1..(6*4+1){
@@ -71,17 +79,26 @@ pub fn (mut s Sheet)  data_get_as_string (args RowGetArgs )!string{
     }    
     mut out:=""
     // println(s2.row_get(args.rowname)!)
-    vals:=s2.values_get(args.rowname)!
+    mut vals:=s2.values_get(args.rowname)!
     if args.period_type==.year && vals.len!=nryears{
         return error("${err_pre}Vals.len need to be 6, for year.\nhere:\n$vals")
       }
     if args.period_type==.quarter && vals.len!=nryears*4{
-        return error("${err_pre}vals.len need to be 6*4, for quarter.\nhere:\n$vals")
+        return error("${err_pre}vals.len need to be 5*4, for quarter.\nhere:\n$vals")
       }
     if args.period_type==.month && vals.len!=nryears*12{
         return error("${err_pre}vals.len need to be 6*12, for month.\nhere:\n$vals")
       }    
-    for val in vals{
+    for mut val in vals{
+      if args.unit==.thousand{
+        val=val/1000.0
+      }
+      if args.unit==.million{
+        val=val/1000000.0
+      }
+      if args.unit==.billion{
+        val=val/1000000000.0
+      }            
       out+=",${val}"
     }
     return out.trim(",")
