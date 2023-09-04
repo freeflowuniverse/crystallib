@@ -11,7 +11,7 @@ import os
 enum BookState {
 	init
 	initdone
-	scanned
+	scanned //needed?
 	fixed
 	ok
 }
@@ -47,7 +47,7 @@ pub mut:
 	dest        string // path where book will be generated	
 	dest_md     string // path where the md files will be generated
 	title       string
-	pages       map[string]&Page // links to the object in tree
+	pages       map[string]&Page //needs to be a new copy
 	files       map[string]&File
 	images      map[string]&File
 	path        Path
