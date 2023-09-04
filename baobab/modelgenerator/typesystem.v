@@ -1,4 +1,4 @@
-module data
+module modelgenerator
 
 import encoding.binary as bin
 import time

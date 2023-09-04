@@ -1,4 +1,4 @@
-module data
+module modelgenerator
 
 pub struct Field {
 pub mut:

@@ -8,7 +8,6 @@ v -stats test clients/coinmarketcap
 v -stats test console
 v -stats test crystaljson
 v -stats test currency
-v -stats test data
 v -stats test docker
 v -stats test algo/encoder
 v -stats test imagemagick

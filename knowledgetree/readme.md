@@ -5,7 +5,7 @@
 Tree is the main object, holds the following objects
 
 - collections
-- books (e.g. mdbooks)
+- books (e.g. mdbooks): only used to generate should not be stored in mem
 - pointers, are pointers to a book, page, image, ... anything inside a knowledge tree as a unique smartid (sid)
 
 

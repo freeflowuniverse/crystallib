@@ -1,4 +1,4 @@
-module data
+module modelgenerator
 
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.pathlib
