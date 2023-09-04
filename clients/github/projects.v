@@ -44,4 +44,4 @@ assignees(first: 10) { nodes{ login }}}}}}}}}'
 	data := json.encode(req)
 	r := g.graphql_connection.post_json_str(data: data)!
 	return json.decode(ProjectInfoResp, r)!
-} 
+}

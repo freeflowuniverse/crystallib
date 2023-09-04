@@ -22,10 +22,9 @@ fn test_get_list_smallstr() {
 			},
 		]
 	}
-	list := testparams.get_list('mylist') or {panic(err)}
-	assert list==['a']
+	list := testparams.get_list('mylist') or { panic(err) }
+	assert list == ['a']
 	// if true{panic("sdsdsdsdsdsdsdsd")}
-	
 }
 
 fn test_get_list_smallstr2() {
@@ -37,10 +36,8 @@ fn test_get_list_smallstr2() {
 			},
 		]
 	}
-	list := testparams.get_list('mylist') or {panic(err)}
-	assert list==['a','b','dddeegggdf','e']
-
-	
+	list := testparams.get_list('mylist') or { panic(err) }
+	assert list == ['a', 'b', 'dddeegggdf', 'e']
 }
 
 fn test_get_list_double_quotes() {
@@ -82,7 +79,7 @@ fn test_get_list_double_quote_inside_single() {
 	assert list == ['A', 'A', 'A', 'A']
 }
 
-//we need to be more defensive this succeeds
+// we need to be more defensive this succeeds
 // fn test_get_list_invalid() {
 // 	testparams := Params{
 // 		params: [

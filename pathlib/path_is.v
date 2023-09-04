@@ -11,7 +11,7 @@ pub fn (path Path) is_dir() bool {
 	return path.cat == Category.dir || path.cat == Category.linkdir
 }
 
-//check is dir and a link
+// check is dir and a link
 pub fn (path Path) is_dir_link() bool {
 	if path.cat == .unknown {
 		panic('did not check path yet')
@@ -19,7 +19,7 @@ pub fn (path Path) is_dir_link() bool {
 	return path.cat == Category.linkdir
 }
 
-//is a file but no link
+// is a file but no link
 pub fn (path Path) is_file() bool {
 	if path.cat == .unknown {
 		panic('did not check path yet')

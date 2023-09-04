@@ -1,3 +1,3 @@
 module syncthing
 
-const name="syncthing"
+const name = 'syncthing'

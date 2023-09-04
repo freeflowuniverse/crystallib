@@ -1,3 +1,3 @@
 module vbuilder
 
-const name="vbuilder"
+const name = 'vbuilder'

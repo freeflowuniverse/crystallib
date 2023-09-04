@@ -4,19 +4,17 @@ import log
 import v.embed_file
 import freeflowuniverse.crystallib.baobab.spawner
 
-
-
 [heap]
 pub struct Tree {
 pub:
 	name string
 pub mut:
-	logger         log.Logger
-	collections    map[string]&Collection
-	embedded_files []embed_file.EmbedFileData // this where we have the templates for exporting a book
-	state          TreeState
+	logger          log.Logger
+	collections     map[string]&Collection
+	embedded_files  []embed_file.EmbedFileData // this where we have the templates for exporting a book
+	state           TreeState
 	macroprocessors []&IMacroProcessor
-	spawner &spawner.Spawner
+	spawner         &spawner.Spawner
 }
 
 pub enum TreeState {
@@ -41,13 +39,11 @@ pub fn (mut tree Tree) reset() ! {
 	}
 }
 
-//add macroprocessor to the tree
+// add macroprocessor to the tree
 // see interface IMacroProcessor for how macroprocessor needs to be implemented
-pub fn (mut tree Tree) macroprocessor_add(mut mp &IMacroProcessor) ! {
+pub fn (mut tree Tree) macroprocessor_add(mut mp IMacroProcessor) ! {
 	tree.macroprocessors << mp
 }
-
-
 
 // // export the mdbooks to html
 // pub fn (mut tree Tree) export() ! {

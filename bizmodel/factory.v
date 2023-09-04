@@ -29,10 +29,9 @@ pub fn new(args BizModelArgs) !BizModel {
 		}
 		currencies: cs
 	}
-	if args.path !=""{
+	if args.path != '' {
 		m.load()!
 	}
-	
 
 	return m
 }
@@ -58,6 +57,4 @@ pub fn (mut m BizModel) load() ! {
 		tags: 'cashflow'
 		descr: 'Cashflow of company.'
 	)!
-
-
 }

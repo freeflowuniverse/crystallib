@@ -1,26 +1,26 @@
 module spreadsheet
 
 pub fn (mut s Sheet) wiki_title_chart(args RowGetArgs) string {
-    if args.title.len>0{
-      titletxt:="
+	if args.title.len > 0 {
+		titletxt := "
         title: {
           text: '${args.title}',
           subtext: '${args.title_sub}',
           left: 'center'
         },
         "
-        return titletxt
-    }
-    return ""
+		return titletxt
+	}
+	return ''
 }
 
-//produce a nice looking bar chart see
+// produce a nice looking bar chart see
 // https://echarts.apache.org/examples/en/index.html#chart-type-bar
 pub fn (mut s Sheet) wiki_bar_chart(args_ RowGetArgs) !string {
-    mut args:=args_
-    header:=s.header_get_as_string(args.period_type)!
-    data:=s.data_get_as_string(args)!
-    bar1:="
+	mut args := args_
+	header := s.header_get_as_string(args.period_type)!
+	data := s.data_get_as_string(args)!
+	bar1 := "
       ${s.wiki_title_chart(args)}
       xAxis: {
         type: 'category',
@@ -40,29 +40,25 @@ pub fn (mut s Sheet) wiki_bar_chart(args_ RowGetArgs) !string {
         }
       ]
     "
-  out:=remove_empty_line("```echarts\n{${bar1}\n};\n```\n")
-  println(out)
-  // if true{panic("Sdsdsd")}
-  return out
-
+	out := remove_empty_line('```echarts\n{${bar1}\n};\n```\n')
+	println(out)
+	// if true{panic("Sdsdsd")}
+	return out
 }
 
-
-
-
-//produce a nice looking bar chart see
+// produce a nice looking bar chart see
 // https://echarts.apache.org/examples/en/index.html#chart-type-bar
 pub fn (mut s Sheet) wiki_pie_chart(args_ RowGetArgs) !string {
-    mut args:=args_
-    header:=s.header_get_as_string(args.period_type)!
-    data:=s.data_get_as_string(args)!
-    
-    mut radius:=""
-    if args.size.len>0{
-      radius="radius: '${args.size}',"
-    }
-    
-    bar1:="
+	mut args := args_
+	header := s.header_get_as_string(args.period_type)!
+	data := s.data_get_as_string(args)!
+
+	mut radius := ''
+	if args.size.len > 0 {
+		radius = "radius: '${args.size}',"
+	}
+
+	bar1 := "
     ${s.wiki_title_chart(args)}
     tooltip: {
       trigger: 'item'
@@ -94,10 +90,8 @@ pub fn (mut s Sheet) wiki_pie_chart(args_ RowGetArgs) !string {
     ]
 
     "
-  out:=remove_empty_line("```echarts\n{${bar1}\n};\n```\n")
-  println(out)
-  // if true{panic("Sdsdsd")}
-  return out
-
+	out := remove_empty_line('```echarts\n{${bar1}\n};\n```\n')
+	println(out)
+	// if true{panic("Sdsdsd")}
+	return out
 }
-

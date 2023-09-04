@@ -2,18 +2,7 @@
 
 ## Revenue Items (non recurring)
 
-possible parameters
-
-- name, e.g. for a specific project
-- descr, description of the revenue line item
-- revenue_item, revenue for 1 item '1000USD', can change over time e.g. 0:1000USD,10:1200USD
-- revenue_nr: how many items are sold of the revenue specification e.g. 1:100,60:200 means growing from 100 to 200 over 6Y
-- revenue_time, revenue per specific times, e.g. month 10, OEM deal of 1000, month 20 another one would be '10:1000,20:1000'
-- revenue_setup_delay, how many months before revenue comes in after sales
-- revenue_monthly_delay, how many months before monthly revenue starts
-- cogs_perc: what is percentage of the cogs (can change over time) e.g. 0:5%,12:10%
-
-if currency not specified then is always in USD
+This company is a cloud company ...
 
 ```js
 !!revenue.define 

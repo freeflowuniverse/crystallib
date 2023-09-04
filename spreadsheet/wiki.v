@@ -32,7 +32,7 @@ pub fn (mut s Sheet) wiki(args_ WikiArgs) !string {
 	mut sheet := s.tosmaller(argssmaller)! // this will do the filtering and if needed make smaller
 
 	mut out := ''
-	if args.title.len>0 {
+	if args.title.len > 0 {
 		out = '## ${args.title}\n\n'
 	}
 	if args.description != '' {

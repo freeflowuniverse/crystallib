@@ -2,7 +2,7 @@ module gittools
 
 import freeflowuniverse.crystallib.pathlib { Path }
 import os
-import freeflowuniverse.crystallib.texttools 
+import freeflowuniverse.crystallib.texttools
 
 [params]
 pub struct RepoGetFromUrlArgs {

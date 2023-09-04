@@ -2,8 +2,7 @@ module knowledgetree
 
 import freeflowuniverse.crystallib.texttools
 
-
-//REMARK NO LONGER NEEDED
+// REMARK NO LONGER NEEDED
 
 // FIND METHODS ON TREE
 

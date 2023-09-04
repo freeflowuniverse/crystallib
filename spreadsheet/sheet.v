@@ -259,13 +259,11 @@ pub fn (mut s Sheet) row_get(name string) !&Row {
 	return row
 }
 
-
 pub fn (mut s Sheet) values_get(name string) ![]f64 {
-	mut r:=s.row_get(name)!
-	vs:= r.values_get()
+	mut r := s.row_get(name)!
+	vs := r.values_get()
 	return vs
 }
-
 
 pub fn (mut s Sheet) row_delete(name string) {
 	if name in s.rows {

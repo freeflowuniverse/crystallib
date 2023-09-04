@@ -6,7 +6,7 @@ pub:
 	text          string
 	path          string // can be dir or file
 	defaultdomain string = 'protocol_me'
-	defaultcircle string = "acircle"
+	defaultcircle string = 'acircle'
 	defaultactor  string
 }
 
@@ -31,5 +31,3 @@ pub fn new(args ActionsArgs) !Actions {
 	}
 	return ap
 }
-
-

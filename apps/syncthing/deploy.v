@@ -1,9 +1,4 @@
 module syncthing
 
-
-
-fn (mut a App) deploy() !{
-
-	
-
+fn (mut a App) deploy() ! {
 }

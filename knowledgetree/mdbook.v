@@ -231,8 +231,8 @@ fn (mut book MDBook) fix_summary() ! {
 // find which files,pages, images are not found
 fn (mut book MDBook) link_pages_files_images() ! {
 	for _, page in book.pages {
-		println("page ${page.name} *****")
-		println("page ${page.name} collection name: ${page.collection.name}")
+		println('page ${page.name} *****')
+		println('page ${page.name} collection name: ${page.collection.name}')
 		for paragraph in page.doc.items.filter(it is markdowndocs.Paragraph) {
 			if paragraph is markdowndocs.Paragraph {
 				for item in paragraph.items {
@@ -240,28 +240,28 @@ fn (mut book MDBook) link_pages_files_images() ! {
 					println(item is markdowndocs.Link)
 					println(5)
 					if item is markdowndocs.Link {
-						link:=item
-						
+						link := item
+
 						if link.cat == .page {
-							println("page get: ${link.filename}")
-							println("page ${page.name} collection name 2: ${page.collection.name}")
+							println('page get: ${link.filename}')
+							println('page ${page.name} collection name 2: ${page.collection.name}')
 							pageobj := page.collection.page_get(link.filename) or {
-								println("ERROR")
+								println('ERROR')
 								book.error(
 									cat: .page_not_found
 									msg: '${page.path.path}: Cannot find page ${link.filename} in ${page.collection.name}'
 								)
 								continue
 							}
-							print("1")
+							print('1')
 							println('${pageobj.collection.name}:${pageobj.name}')
-							print("1.1")
+							print('1.1')
 							println(pageobj)
 							// println(book.pages)
-							println("2")
+							println('2')
 							book.pages['${pageobj.collection.name}:${pageobj.name}'] = pageobj
-							println("3")
-						}else if link.cat == .file {
+							println('3')
+						} else if link.cat == .file {
 							fileobj := page.collection.file_get(link.filename) or {
 								book.error(
 									cat: .file_not_found
@@ -270,7 +270,7 @@ fn (mut book MDBook) link_pages_files_images() ! {
 								continue
 							}
 							// book.files['${fileobj.collection.name}:${fileobj.name}'] = fileobj
-						}else if link.cat == .image {
+						} else if link.cat == .image {
 							imageobj := page.collection.image_get(link.filename) or {
 								book.error(
 									cat: .image_not_found
@@ -280,12 +280,16 @@ fn (mut book MDBook) link_pages_files_images() ! {
 							}
 							// book.images['${imageobj.collection.name}:${imageobj.name}'] = imageobj
 						}
-						println("ifend link")
+						println('ifend link')
 					}
-				}print("itemsend")
-			}print("parafsend")
-		}print("filterend")
-	}print("pageend")
+				}
+				print('itemsend')
+			}
+			print('parafsend')
+		}
+		print('filterend')
+	}
+	print('pageend')
 	println(4)
 	book.tree.logger.info('finished linking pages files images')
 }
@@ -313,7 +317,7 @@ pub fn (mut book MDBook) errors_report() ! {
 	// Export the errors of the collections that contain errors
 	for collection_name, collection in collection_errors {
 		collection.errors_report('${book.md_path('').path}/src/errors_${collection_name}.md') or {
-			return error("failed to report errors for collection ${collection_name}")
+			return error('failed to report errors for collection ${collection_name}')
 		}
 		book.error(
 			cat: .collection_error
@@ -423,12 +427,12 @@ pub fn (mut book MDBook) export() ! {
 	osal.exec(cmd: 'mdbook build ${book.md_path('').path} --dest-dir ${html_path}', retry: 0)!
 
 	for item in book.tree.embedded_files {
-		if item.path.ends_with(".css"){
+		if item.path.ends_with('.css') {
 			css_name := item.path.all_after_last('/')
-			osal.file_write("${html_path}/css/${css_name}",item.to_string())!
-			println(" ======= ${html_path}/css/${css_name}")
-		}		
-	}	
+			osal.file_write('${html_path}/css/${css_name}', item.to_string())!
+			println(' ======= ${html_path}/css/${css_name}')
+		}
+	}
 
 	book.tree.logger.info('MDBook has been generated under ${md_path}')
 	book.tree.logger.info('HTML pages are found under ${html_path}')
@@ -451,7 +455,4 @@ fn (mut book MDBook) template_install() ! {
 	}
 	c := $tmpl('template/book.toml')
 	book.template_write('book.toml', c)!
-
 }
-
-

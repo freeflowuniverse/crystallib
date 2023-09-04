@@ -202,10 +202,10 @@ fn (mut actions Actions) parse_block(block Block) ! {
 
 	domain_check(domain, block.content)!
 	book_check(book, block.content)!
-	if name!="include"{
-			actor_check(actor, block.content)!
+	if name != 'include' {
+		actor_check(actor, block.content)!
 	}
-	
+
 	name_check(name, block.content)!
 
 	actions.actions << Action{

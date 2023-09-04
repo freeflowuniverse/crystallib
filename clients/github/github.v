@@ -15,7 +15,7 @@ pub fn new() !GithubClient {
 	)!
 
 	env := os.environ()
-	if 'GITHUB_TOKEN'  !in env {
+	if 'GITHUB_TOKEN' !in env {
 		return error('need to set `GITHUB_TOKEN` environment variable with a valid token')
 	}
 	key := env['GITHUB_TOKEN']

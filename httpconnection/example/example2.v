@@ -1,9 +1,10 @@
 module main
+
 import freeflowuniverse.crystallib.httpconnection
 import json
 
 // used for testing
-	fn do() ! {
+fn do() ! {
 	mut conn := httpconnection.new(name: 'test', url: 'https://jsonplaceholder.typicode.com/')!
 	// drop all caches
 	conn.cache_drop()!
@@ -116,7 +117,7 @@ import json
 	println(res.code)
 	keys = conn.redis.keys('http:${conn.cache.key}*')!
 	assert keys.len == 2
-	}
+}
 
 fn main() {
 	do() or { panic(err) }

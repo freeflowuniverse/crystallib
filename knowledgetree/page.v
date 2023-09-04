@@ -1,7 +1,7 @@
 module knowledgetree
 
 import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.markdowndocs { Include, Link, Paragraph, Action }
+import freeflowuniverse.crystallib.markdowndocs { Action, Include, Link, Paragraph }
 import os
 
 pub enum PageStatus {
@@ -37,19 +37,31 @@ fn (mut page Page) link_to_page_update(mut link Link) ! {
 	} else {
 		page_in_other_collection := page.collection.tree.page_get(file_name) or {
 			if err is CollectionNotFound || err is CollectionObjNotFound {
-				page.collection.error(path: page.path, msg: 'link to unknown page: ${link.str()}', cat: .page_not_found)
+				page.collection.error(
+					path: page.path
+					msg: 'link to unknown page: ${link.str()}'
+					cat: .page_not_found
+				)
 			} else if err is NoOrTooManyObjFound {
 				if err.nr > 1 {
-					page.collection.error(path: page.path, msg: 'found multiple pages named ${link.str()} in different collections', cat: .page_not_found)
+					page.collection.error(
+						path: page.path
+						msg: 'found multiple pages named ${link.str()} in different collections'
+						cat: .page_not_found
+					)
 				} else {
-					page.collection.error(path: page.path, msg: 'link to unknown page: ${link.str()}', cat: .page_not_found)
+					page.collection.error(
+						path: page.path
+						msg: 'link to unknown page: ${link.str()}'
+						cat: .page_not_found
+					)
 				}
 			}
 			return
 		}
 		page_in_other_collection
 	}
-	if ! (other_page in page.pages_linked) {
+	if other_page !in page.pages_linked {
 		page.pages_linked << other_page
 	}
 	linkcompare1 := link.description + link.url + link.filename + link.content
@@ -230,29 +242,29 @@ fn (mut page Page) process_includes(mut include_tree []string) ! {
 
 // will process the macro's and return string
 fn (mut page Page) process_macros() ! {
-	for x in 0 .. page.doc.items.len {		
-		if page.doc.items[x] is markdowndocs.Action {
+	for x in 0 .. page.doc.items.len {
+		if page.doc.items[x] is Action {
 			macro := page.doc.items[x] as Action
 			println(page.doc.items[x])
 			page.collection.tree.logger.info('Process macro ${macro.content} into ${page.path.path}')
-			mut out:=""
-			for mut mp in page.collection.tree.macroprocessors{
-				res:=mp.process("!!${macro.content}")!
-				if res.error==""{
-					out+=res.result+"\n"
-				}else{
-					out+=">> ERROR:\n${res.error}\n"
+			mut out := ''
+			for mut mp in page.collection.tree.macroprocessors {
+				res := mp.process('!!${macro.content}')!
+				if res.error == '' {
+					out += res.result + '\n'
+				} else {
+					out += '>> ERROR:\n${res.error}\n'
 				}
-				mut para:=Paragraph{content:res.result}
+				mut para := Paragraph{
+					content: res.result
+				}
 				para.process()!
-				page.doc.items.delete(x )
-				page.doc.items.insert(x,para )
-				if res.state==.stop{
+				page.doc.items.delete(x)
+				page.doc.items.insert(x, para)
+				if res.state == .stop {
 					break
 				}
-
 			}
-
 		}
 	}
 }

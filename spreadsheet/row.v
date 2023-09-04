@@ -93,13 +93,12 @@ pub fn (mut r Row) cell_get(colnr int) !&Cell {
 }
 
 pub fn (mut r Row) values_get() []f64 {
-	mut out:=[]f64{}
-	for cell in r.cells{
-		out<<cell.val
+	mut out := []f64{}
+	for cell in r.cells {
+		out << cell.val
 	}
 	return out
 }
-
 
 // starting from cell look forward for nrcolls
 // make the average

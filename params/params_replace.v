@@ -1,29 +1,27 @@
 module params
+
 import freeflowuniverse.crystallib.texttools
 import regex
 
 // convert GB, MB, KB to bytes
 // e.g. 10 GB becomes bytes in u64
 pub fn (mut params Params) replace(args map[string]string) {
-
-	for mut p in params.params{
-		for i in regexfind(p.value){
-			i2:=texttools.name_fix(i)
-			if i2 in args{
+	for mut p in params.params {
+		for i in regexfind(p.value) {
+			i2 := texttools.name_fix(i)
+			if i2 in args {
 				// println("$i -> ${args[i2]}")
-				p.value=p.value.replace(i,args[i2])
+				p.value = p.value.replace(i, args[i2])
 			}
 		}
 	}
-
 }
 
-
-fn regexfind(txt string) []string{
+fn regexfind(txt string) []string {
 	pattern := r'\{(\w+)\}'
 	mut re := regex.regex_opt(pattern) or { panic(err) }
 	// println(re.get_query())
-	mut words:= re.find_all_str(txt) 
+	mut words := re.find_all_str(txt)
 	// println(words)
 	return words
 }

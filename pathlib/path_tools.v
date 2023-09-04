@@ -151,10 +151,10 @@ pub fn (mut path Path) delete() ! {
 	}
 }
 
-//remove all content but if dir let the dir exist
+// remove all content but if dir let the dir exist
 pub fn (mut path Path) empty() ! {
 	path.delete()!
-	if path.cat == .dir{
+	if path.cat == .dir {
 		os.mkdir_all(path.path)!
 		path.exist = .yes
 	}

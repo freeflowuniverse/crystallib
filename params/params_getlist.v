@@ -14,16 +14,16 @@ import strconv
 pub fn (params &Params) get_list(key string) ![]string {
 	mut res := []string{}
 	mut valuestr := params.get(key)!
-	valuestr=valuestr.trim("[] ")
-	mut splitted:=valuestr.split(",")
-	for mut item in splitted{
-		item=item.trim("\"' ")
-		if item!=""{
-			res<<item
+	valuestr = valuestr.trim('[] ')
+	mut splitted := valuestr.split(',')
+	for mut item in splitted {
+		item = item.trim('"\' ')
+		if item != '' {
+			res << item
 		}
 	}
 
-	//THE IMPLEMENTATION BELOW IS TOO COMPLEX AND ALSO NOT DEFENSIVE ENOUGH
+	// THE IMPLEMENTATION BELOW IS TOO COMPLEX AND ALSO NOT DEFENSIVE ENOUGH
 
 	// mut res := []string{}
 	// mut valuestr := params.get(key)!

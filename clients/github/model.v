@@ -5,7 +5,7 @@ pub struct ProjectDetails {
 }
 
 pub struct ProjectsDetails {
-	id string
+	id    string
 	title string
 }
 
@@ -14,8 +14,8 @@ pub struct ProjectNodes {
 }
 
 pub struct OrganizationDetails {
-	project_v2 ProjectDetails [json: "projectV2"]
-	projects_v2 ProjectNodes [json: "projectsV2"]
+	project_v2  ProjectDetails [json: 'projectV2']
+	projects_v2 ProjectNodes   [json: 'projectsV2']
 }
 
 pub struct DataResp {
@@ -39,7 +39,7 @@ pub struct ProjectInfoAssignees {
 }
 
 pub struct ProjectInfoContent {
-	title string
+	title     string
 	assignees ProjectInfoAssignees
 }
 
@@ -48,9 +48,9 @@ pub struct ProjectInfoFieldMeta {
 }
 
 pub struct ProjectInfoFieldNode {
-	text string
-	name string
-	date string
+	text  string
+	name  string
+	date  string
 	field ProjectInfoFieldMeta
 }
 
@@ -59,9 +59,9 @@ pub struct ProjectInfoField {
 }
 
 pub struct ProjectInfoNode {
-	id string
-	field_values  ProjectInfoField [json:"fieldValues"]
-	content ProjectInfoContent
+	id           string
+	field_values ProjectInfoField   [json: 'fieldValues']
+	content      ProjectInfoContent
 }
 
 pub struct ProjectInfoINodes {

@@ -1,9 +1,4 @@
 module vbuilder
 
-
-
-fn (mut a App) deploy() !{
-
-	
-
+fn (mut a App) deploy() ! {
 }
