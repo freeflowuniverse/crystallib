@@ -178,7 +178,13 @@ fn (mut book MDBook) fix_summary() ! {
 						}
 						pagename := link.filename
 						if book.tree.collection_exists(collectionname) {
-							mut collection := book.tree.collection_get(collectionname)!
+
+							// clone collection so that changes don't mutate collection in knowledgetree
+							collection_ := book.tree.collection_get(collectionname)!
+							mut collection := Collection{
+								...collection_,
+							}
+
 
 							// now we can process the page where the link goes to
 							if collection.page_exists(pagename) {
