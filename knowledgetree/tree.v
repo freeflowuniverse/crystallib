@@ -34,9 +34,10 @@ fn (mut tree Tree) init() ! {
 
 // reset all, just to make sure we regenerate fresh
 pub fn (mut tree Tree) reset() ! {
-	for _, mut book in tree.books {
-		book.reset()!
-	}
+	// QUESTION: what should reset do
+	// for _, mut book in tree.books {
+	// 	book.reset()!
+	// }
 }
 
 // add macroprocessor to the tree

@@ -8,19 +8,12 @@ pub fn (mut tree Tree) execute(parser actions.Actions) ! {
 		tree.logger.debug('Executing action: ${action}')
 
 		match action.name {
-			'books.add' {
+			'books.create' {
 				book_name := action.params.get('name')!
 				book_path := action.params.get('path')!
 				book_dest := action.params.get_default('dest', 'mdbook_${book_name}')!
 
 				tree.book_new(path: book_path, name: book_name, dest: book_dest)!
-			}
-			'books.export' {
-				tree.scan()!
-
-				book_name := action.params.get('name')!
-				mut book := tree.book_get(book_name)!
-				book.export()!
 			}
 			'collection.add' {
 				collection_name := action.params.get('name')!

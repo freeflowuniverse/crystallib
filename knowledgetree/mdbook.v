@@ -105,10 +105,6 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 		args.dest = '/tmp/mdbook_export/${args.name}'
 	}
 
-	if args.name in l.books {
-		return error('Book already exists')
-	}
-
 	if args.git_url.len > 0 {
 		mut gs := gittools.get(root: args.git_root)!
 		mut gr := gs.repo_get_from_url(url: args.git_url, pull: args.git_pull, reset: args.git_reset)!
@@ -138,8 +134,6 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 	book.fix_summary()!
 	book.link_pages_files_images()!
 	book.errors_report()!
-
-	l.books[args.name] = book
 
 	return book
 }
