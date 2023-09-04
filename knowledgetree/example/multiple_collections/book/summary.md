@@ -3,3 +3,4 @@
     - [Strawberry](fruits/strawberry.md)
 - [Vegetables](vegetables/intro.md)
     - [Tomato](vegetables/tomato.md)
+    - [Broccoli](vegetables/broccoli.md)

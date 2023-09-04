@@ -19,14 +19,19 @@ pub fn do() ! {
 	mut col_fruits := tree.collection_new(
 		name: 'fruits'
 		path: collections_path + '/fruits'
-		heal: true
+		heal: false
 	)!
 	mut col_vegetables := tree.collection_new(
 		name: 'vegetables'
 		path: collections_path + '/vegetables'
-		heal: true
+		heal: false
 	)!
 
-	mut book := tree.book_new(name: 'Fruits & Vegetables', path: book_path, dest: book_dest)!
+	mut book := tree.book_new(
+		name: 'Fruits & Vegetables',
+		path: book_path,
+		dest: book_dest
+		heal: true
+	)!
 	book.export()!
 }
