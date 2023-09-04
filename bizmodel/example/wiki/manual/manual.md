@@ -8,7 +8,7 @@ Look at following examples to know how to do it
 
 - [Revenue](revenue_params_example.md)
 - [Funding](funding_params_example.md)
-- [HR](hr_params.example.md)
+- [HR](hr_params_example.md)
 - [Cost](costs_params_example.md)
 
 ## Overview of 3script actions

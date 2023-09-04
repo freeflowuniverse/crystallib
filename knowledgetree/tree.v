@@ -12,9 +12,7 @@ pub:
 	name string
 pub mut:
 	logger         log.Logger
-	pointers       map[string]&Pointer
 	collections    map[string]&Collection
-	books          map[string]&MDBook
 	embedded_files []embed_file.EmbedFileData // this where we have the templates for exporting a book
 	state          TreeState
 	macroprocessors []&IMacroProcessor
@@ -51,14 +49,14 @@ pub fn (mut tree Tree) macroprocessor_add(mut mp &IMacroProcessor) ! {
 
 
 
-// export the mdbooks to html
-pub fn (mut tree Tree) export() ! {
-	tree.reset()! // make sure we start from scratch
-	tree.fix()!
-	for _, mut book in tree.books {
-		book.export()!
-	}
-}
+// // export the mdbooks to html
+// pub fn (mut tree Tree) export() ! {
+// 	tree.reset()! // make sure we start from scratch
+// 	tree.fix()!
+// 	for _, mut book in tree.books {
+// 		book.export()!
+// 	}
+// }
 
 // fix all loaded tree
 pub fn (mut tree Tree) fix() ! {

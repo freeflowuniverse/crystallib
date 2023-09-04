@@ -230,23 +230,38 @@ fn (mut book MDBook) fix_summary() ! {
 // all images, files and pages found need to be linked to the book
 // find which files,pages, images are not found
 fn (mut book MDBook) link_pages_files_images() ! {
-	for _, mut page in book.pages {
-		for mut paragraph in page.doc.items.filter(it is markdowndocs.Paragraph) {
-			if mut paragraph is markdowndocs.Paragraph {
-				for mut item in paragraph.items {
-					if mut item is markdowndocs.Link {
-						mut link := item
+	for _, page in book.pages {
+		println("page ${page.name} *****")
+		println("page ${page.name} collection name: ${page.collection.name}")
+		for paragraph in page.doc.items.filter(it is markdowndocs.Paragraph) {
+			if paragraph is markdowndocs.Paragraph {
+				for item in paragraph.items {
+					println(item)
+					println(item is markdowndocs.Link)
+					println(5)
+					if item is markdowndocs.Link {
+						link:=item
+						
 						if link.cat == .page {
+							println("page get: ${link.filename}")
+							println("page ${page.name} collection name 2: ${page.collection.name}")
 							pageobj := page.collection.page_get(link.filename) or {
+								println("ERROR")
 								book.error(
 									cat: .page_not_found
 									msg: '${page.path.path}: Cannot find page ${link.filename} in ${page.collection.name}'
 								)
 								continue
 							}
+							print("1")
+							println('${pageobj.collection.name}:${pageobj.name}')
+							print("1.1")
+							println(pageobj)
+							// println(book.pages)
+							println("2")
 							book.pages['${pageobj.collection.name}:${pageobj.name}'] = pageobj
-						}
-						if link.cat == .file {
+							println("3")
+						}else if link.cat == .file {
 							fileobj := page.collection.file_get(link.filename) or {
 								book.error(
 									cat: .file_not_found
@@ -254,9 +269,8 @@ fn (mut book MDBook) link_pages_files_images() ! {
 								)
 								continue
 							}
-							book.files['${fileobj.collection.name}:${fileobj.name}'] = fileobj
-						}
-						if link.cat == .image {
+							// book.files['${fileobj.collection.name}:${fileobj.name}'] = fileobj
+						}else if link.cat == .image {
 							imageobj := page.collection.image_get(link.filename) or {
 								book.error(
 									cat: .image_not_found
@@ -264,13 +278,15 @@ fn (mut book MDBook) link_pages_files_images() ! {
 								)
 								continue
 							}
-							book.images['${imageobj.collection.name}:${imageobj.name}'] = imageobj
+							// book.images['${imageobj.collection.name}:${imageobj.name}'] = imageobj
 						}
+						println("ifend link")
 					}
-				}
-			}
-		}
-	}
+				}print("itemsend")
+			}print("parafsend")
+		}print("filterend")
+	}print("pageend")
+	println(4)
 	book.tree.logger.info('finished linking pages files images')
 }
 

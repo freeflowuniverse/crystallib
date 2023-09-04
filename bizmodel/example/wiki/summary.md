@@ -7,5 +7,5 @@
 - [Manual](bizmodel/manual.md)
     - [Revenue](bizmodel/revenue_params_example.md)
     - [Funding](bizmodel/funding_params_example.md)
-    - [HR](bizmodel/hr_params.example.md)
+    - [HR](bizmodel/hr_params_example.md)
     - [Cost](bizmodel/costs_params_example.md)

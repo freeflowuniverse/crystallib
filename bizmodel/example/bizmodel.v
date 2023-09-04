@@ -6,7 +6,6 @@ import freeflowuniverse.crystallib.knowledgetree
 // import freeflowuniverse.crystallib.spreadsheet
 // import cli { Command }
 
-const testpath = os.dir(@FILE) + '/wiki'
 const wikipath = os.dir(@FILE) + '/wiki'
 
 
@@ -14,7 +13,7 @@ const wikipath = os.dir(@FILE) + '/wiki'
 fn do() ! {
 
 	mut s:=spawner.new()
-	mut m:=bizmodel.background(mut s,path:testpath)!
+	mut m:=bizmodel.background(mut s,path:wikipath)!
 
 	println(m.wiki(includefilter: ['funding'], name: 'FUNDING')!)
 
