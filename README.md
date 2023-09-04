@@ -1,31 +1,45 @@
 
-## to install
 
-```bash
-v install https://github.com/freeflowuniverse/crystallib
-```
 
 ## to develop
 
-- do ```v install https://github.com/freeflowuniverse/crystallib```
-- edit the code there
-- use `v run test.v` to run some ad hoc tests
+requirements
+
+- v installed
+- ssh key loaded for access to github
+
+```bash
+mkdir -p ~/code/github/freeflowuniverse
+cd ~/code/github/freeflowuniverse
+git clone git@github.com:freeflowuniverse/crystallib.git
+cd crystallib
+# checkout current branch with most recent changes
+git checkout development_kristof 
+bash install.sh
+
+```
+
+## test your code before checking in
+
+```bash
+cd ~/code/github/freeflowuniverse/crystallib
+bash test.sh
+```
+
 - use `v test vredis2/` to run tests of one module
 
 ## generating docs
 
 ```bash
 #cd in this directory
-## with also private methods
-v doc -all -m . -o /tmp/crystallib -f html -readme
-## public methods only
-
-rm -rf /tmp/crystallib && v doc -m . -o /tmp/crystallib -f html -readme
-open /tmp/crystallib/_docs/builder.html
+cd ~/code/github/freeflowuniverse/crystallib
+bash doc.sh
 ```
 
-## examples see
+## to install
 
-- ```github/freeflowuniverse/crystaltools/examples```
+> don't use to develop
 
-
+```bash
+v install https://github.com/freeflowuniverse/crystallib
+```
