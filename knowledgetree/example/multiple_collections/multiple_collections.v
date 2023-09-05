@@ -19,18 +19,13 @@ pub fn do() ! {
 	mut col_vegetables := tree.collection_new(
 		name: 'vegetables'
 		path: collections_path + '/vegetables'
-		heal: true
+		heal: false
 	)!
 	mut col_fruits := tree.collection_new(
 		name: 'fruits'
 		path: collections_path + '/fruits'
-		heal: true
+		heal: false
 	)!
-	// mut col_vegetables := tree.collection_new(
-	// 	name: 'vegetables'
-	// 	path: collections_path + '/vegetables'
-	// 	heal: true
-	// )!
 
 	mut book := knowledgetree.book_new(
 		name: 'Fruits & Vegetables',
