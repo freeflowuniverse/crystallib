@@ -38,31 +38,34 @@ pub mut:
 	dest       string // if the dir or file needs to be copied somewhere
 	destlink   bool = true // if bool then will link the downloaded content to the dest
 	hash       string // if specified then will check the hash of the downloaded content
+	metapath   string //if not specified then will not write
+	gitstructure ?gittools.GitStructure [skip; str: skip]
 }
 
+fn getlastname(url string)string{
+	mut lastname := url.split('/').last()
+	if lastname.contains('?') {
+		lastname=lastname.split("?")[0]
+	}
+	if lastname.contains('.') {
+		lastname=lastname.split(".")[0]
+	}
+
+	return texttools.name_fix(lastname)
+
+}
 // downoads url specified dir or file .
-// url can be ssh:// http(s):// git:// file:// path:// http(s)file:// .
+// url can be ssh:// http(s):// git://  or just a path
 // to a directory linked to a circle '${runner.root}/circles/${circlename}/downloads/${args.name}' .
 // will return DownloadMeta, which is als json serialized in above directory .
 // if dest specified will link to the dest or copy depending param:destlink
 pub fn download(args_ DownloadArgs) !DownloadMeta {
+	// println(" -- DOWNLOAD ${args_.url}\n$args_")
 	mut args := args_
 
-	mut lastname := args.url.split('/').last()
-	if lastname.contains('?') {
-		return error('cannot get name from url if ? in the last part after /')
-	}
-
-	mut ext := ''
-	if lastname.contains('.') {
-		ext = lastname.split('.').last().to_lower().trim_space()
-		if ext.len > 4 {
-			ext = ''
-		}
-	}
 
 	if args.name == '' {
-		args.name = texttools.name_fix(lastname)
+		args.name = getlastname(args.url)
 	}
 
 	if args.name == '' {
@@ -80,10 +83,6 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 		args.downloadpath = '${os.temp_dir()}/downloads/${args.name}'
 	}
 
-	println(args)
-
-	// mut downloaddir := '${r.root.path}/circles/${r.circle}/downloads/${args.name}'
-
 	mut downloadpath := pathlib.get(args.downloadpath)
 
 	u := args.url.to_lower().trim_space()
@@ -92,8 +91,14 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 
 	if u.starts_with('http://') || u.starts_with('https://') || u.starts_with('git://') {
 		// might be git based checkout
-		mut gs := gittools.get(light: true)!
+		if args.gitstructure == none{
+			mut gs2 := gittools.get(light: true)!
+			args.gitstructure = gs2
+		}	
+		mut gs := args.gitstructure or {return error("cannot find gitstructure")}
+			
 		mut gr := gs.repo_get_from_url(url: args.url, pull: args.reset, reset: args.reset)!
+
 		downloadpath = pathlib.get_dir(gr.path_content_get(), false)!
 		downloadtype = .git
 	} else if u.starts_with('ssh://') || u.starts_with('ftp://') {
@@ -143,13 +148,16 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 		downloadtype: downloadtype
 		path: downloadpath.path
 	}
-	metapath := '${downloadpath.path_dir()}/.meta'
-	mut metafile := downloadpath.file_get_new(metapath)!
-	metaobj_data := json.encode_pretty(metaobj)
-	metafile.write(metaobj_data)!
+	if args.metapath.len>0{
+		mut metapatho:=pathlib.get(args.metapath)
+		metapath := '${metapatho.path_dir()}/${args.name}.meta'
+		mut metafile := downloadpath.file_get_new(metapath)!
+		metaobj_data := json.encode_pretty(metaobj)
+		metafile.write(metaobj_data)!
+	}
 	if args.dest.len > 0 && args.dest != downloadpath.path {
 		// means we need to link or copy the downloaded content to a different location
-		println(' - downloader dest link: ${args.dest}')
+		// println(' - downloader dest link: ${args.dest}')
 		if downloadpath.is_file() {
 			// means its a file need to link differently
 			if args.destlink {
@@ -160,13 +168,13 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 			}
 		} else {
 			if args.destlink {
-				downloadpath.link(args.dest, true)!
+				downloadpath.link(args.dest, true) or {return error("cannot link ${downloadpath} to ${args.dest}.\n$err")} //delete the dest link
 			} else {
 				mut desto := pathlib.get(args.dest)
 				downloadpath.copy(mut desto)!
 			}
 		}
 	}
-	println(metaobj)
+	// println(metaobj)
 	return metaobj
 }

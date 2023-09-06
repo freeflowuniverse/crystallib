@@ -123,6 +123,7 @@ pub fn addr_get_from_url(url string) !GitAddr {
 // ```
 pub fn addr_get_from_path(path string) !GitAddr {
 	mut path2 := path.replace('~', os.home_dir())
+	println("GIT ADDR $path2")
 	if !os.exists(os.join_path(path2, '.git')) {
 		return error("path: '${path2}' is not a git dir, missed a .git directory")
 	}

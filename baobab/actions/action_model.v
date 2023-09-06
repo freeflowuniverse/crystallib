@@ -14,8 +14,16 @@ pub mut:
 }
 
 pub fn (action Action) str() string {
-	p := 'ACTION: ${action.name}\n${action.params}'
-	return p
+	mut out:="!!"
+	if action.domain!="protocol_me"{
+		out+="${action.domain}."
+	}
+	if action.actor!=""{
+		out+="${action.actor}."
+	}
+	out+="${action.name} "
+	out+="\n${action.params}"
+	return out
 }
 
 // return list of names

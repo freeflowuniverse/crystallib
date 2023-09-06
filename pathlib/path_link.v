@@ -21,21 +21,24 @@ pub fn (mut path Path) link(linkpath string, delete_exists bool) !Path {
 		}
 	}
 
-	// create dir if it would not exist yet
+	mut origin_path := ""
 	dest_dir := os.dir(linkpath)
 	if !os.exists(dest_dir) {
 		os.mkdir_all(dest_dir)!
 	}
-	origin_path := path_relative(dest_dir, path.path)!
+	if path.cat == .dir{
+		origin_path = path_relative(dest_dir, path.path)!	
+	}else{
+		origin_path = path_relative(dest_dir, path.path)!		
+	}
+	// println("${dest_dir} ::: ${origin_path} ::: ${linkpath}")	
+
 	msg := 'link to origin (source): ${path.path}  \nthe link:${linkpath} \nlink rel: ${origin_path}'
-	// $if debug {
-	// 	println(msg)
-	// }	
 	os.symlink(origin_path, linkpath) or { return error('cant symlink ${msg}\n${err}') }
 	return get(linkpath)
 }
 
-// will make sure that the link goes from file with largest path to smalles
+// will make sure that the link goes from file with largest path to smallest
 // good to make sure we have links always done in same way
 pub fn (mut path Path) relink() ! {
 	if !path.is_link() {

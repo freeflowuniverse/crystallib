@@ -5,9 +5,9 @@ import os
 // get the url for the git repo, in http or ssh format
 fn (mut repo GitRepo) url_get(http bool) string {
 	if http {
-		return repo.addr.url_http_get()
+		return repo.addr().url_http_get()
 	} else {
-		return repo.addr.url_ssh_get()
+		return repo.addr().url_ssh_get()
 	}
 }
 

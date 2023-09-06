@@ -6,6 +6,7 @@ import os
 const collections_path = os.dir(@FILE) + '/testdata/collections'
 
 const book1_path = os.dir(@FILE) + '/testdata/book1'
+
 const book1_dest = os.dir(@FILE) + '/testdata/_book1'
 
 fn test_book_new() {
@@ -33,7 +34,11 @@ fn test_book_new() {
 		heal: true
 	)!
 
-	mut book := tree.book_new(name: 'book1', path: knowledgetree.book1_path, dest: book1_dest)!
+	mut book := tree.book_new(
+		name: 'book1'
+		path: knowledgetree.book1_path
+		dest: knowledgetree.book1_dest
+	)!
 	book.export()!
 	panic('sh')
 }

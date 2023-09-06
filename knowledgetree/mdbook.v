@@ -11,7 +11,7 @@ import os
 enum BookState {
 	init
 	initdone
-	scanned //needed?
+	scanned // needed?
 	fixed
 	ok
 }
@@ -47,7 +47,7 @@ pub mut:
 	dest        string // path where book will be generated	
 	dest_md     string // path where the md files will be generated
 	title       string
-	pages       map[string]&Page //needs to be a new copy
+	pages       map[string]&Page // needs to be a new copy
 	files       map[string]&File
 	images      map[string]&File
 	path        Path
@@ -178,13 +178,11 @@ fn (mut book MDBook) fix_summary() ! {
 						}
 						pagename := link.filename
 						if book.tree.collection_exists(collectionname) {
-
 							// clone collection so that changes don't mutate collection in knowledgetree
 							collection_ := book.tree.collection_get(collectionname)!
 							mut collection := Collection{
-								...collection_,
+								...collection_
 							}
-
 
 							// now we can process the page where the link goes to
 							if collection.page_exists(pagename) {
@@ -259,7 +257,7 @@ fn (mut book MDBook) link_pages_files_images() ! {
 							println(pageobj)
 							// println(book.pages)
 							println('2')
-							book.pages['${pageobj.collection.name}:${pageobj.name}'] = pageobj
+							// book.pages['${pageobj.collection.name}:${pageobj.name}'] = pageobj
 							println('3')
 						} else if link.cat == .file {
 							fileobj := page.collection.file_get(link.filename) or {

@@ -51,3 +51,11 @@ pub fn (mut p Params) empty() bool {
 	}
 	return false
 }
+
+
+pub fn (mut p Params) str() string {
+	mut out:=""
+	out=p.export(indent:"    ")
+	out=out.trim_right("\n")
+	return out
+}

@@ -15,9 +15,9 @@ pub fn (mut gitstructure GitStructure) pushcommit(args GSArgs) ! {
 
 	for mut g in gitstructure.repos_get(args) {
 		if args.pull {
-			println(' - COMMIT, PULL, PUSH: ${g.addr.name}')
+			println(' - COMMIT, PULL, PUSH: ${g.name()}')
 		} else {
-			println(' - COMMIT, PUSH: ${g.addr.name}')
+			println(' - COMMIT, PUSH: ${g.name()}')
 		}
 		changes := g.changes()!
 		if changes {
@@ -46,9 +46,9 @@ pub fn (mut gitstructure GitStructure) commit(args GSArgs) ! {
 
 	for mut g in gitstructure.repos_get(args) {
 		if args.pull {
-			println(' - COMMIT, PULL: ${g.addr.name}')
+			println(' - COMMIT, PULL: ${g.name()}')
 		} else {
-			println(' - COMMIT: ${g.addr.name}')
+			println(' - COMMIT: ${g.name()}')
 		}
 		changes := g.changes()!
 		if changes {
@@ -69,7 +69,7 @@ pub fn (mut gitstructure GitStructure) push(args GSArgs) ! {
 	println('')
 
 	for mut g in gitstructure.repos_get(args) {
-		println(' - push: ${g.addr.name}')
+		println(' - push: ${g.name()}')
 		changes := g.changes()!
 		if changes {
 			g.push()!
@@ -85,7 +85,7 @@ pub fn (mut gitstructure GitStructure) pull(args GSArgs) ! {
 	println('')
 
 	for mut g in gitstructure.repos_get(args) {
-		println(' - push: ${g.addr.name}')
+		println(' - push: ${g.name()}')
 		g.pull()!
 	}
 }

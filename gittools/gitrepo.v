@@ -9,9 +9,9 @@ import freeflowuniverse.crystallib.sshagent
 // we check on name, if nameof repo is same as name of key we will load
 // will return true if the key did exist, which means we need to connect over ssh !!!
 fn (mut repo GitRepo) ssh_key_load_if_exists() !bool {
-	mut key_path := '${os.home_dir()}/.ssh/${repo.addr.name}'
+	mut key_path := '${os.home_dir()}/.ssh/${repo.name()}'
 	if !os.exists(key_path) {
-		key_path = '.ssh/${repo.addr.name}'
+		key_path = '.ssh/${repo.name()}'
 	}
 	if !os.exists(key_path) {
 		// tried local path to where we are, no key as well
@@ -25,8 +25,8 @@ fn (mut repo GitRepo) ssh_key_load_if_exists() !bool {
 
 	// exists means the key has been loaded
 	// nrkeys is how many keys were loaded in sshagent in first place
-	exists, nrkeys := sshagent.key_loaded(repo.addr.name)
-	// println(' >>> $repo.addr.name $nrkeys, $exists')
+	exists, nrkeys := sshagent.key_loaded(repo.name())
+	// println(' >>> $repo.name() $nrkeys, $exists')
 
 	if (!exists) || nrkeys > 0 {
 		// means we did not find the key but there were other keys loaded
@@ -45,7 +45,7 @@ fn (mut repo GitRepo) ssh_key_load_if_exists() !bool {
 
 fn (mut repo GitRepo) path_account_get() string {
 	mut provider := ''
-	addr := repo.addr
+	addr := repo.addr()
 	if addr.provider == 'github.com' {
 		provider = 'github'
 	} else {
@@ -59,10 +59,10 @@ fn (mut repo GitRepo) path_account_get() string {
 
 pub fn (mut repo GitRepo) path_content_get() string {
 	mut p := repo.path()
-	if repo.addr.path == '' {
+	if repo.addr().path == '' {
 		return p
 	} else {
-		return '${p}/${repo.addr.path}'
+		return '${p}/${repo.addr().path}'
 	}
 }
 
@@ -75,17 +75,17 @@ pub fn (mut repo GitRepo) path_get() string {
 		return repo.path
 	}
 	if repo.gs.config.multibranch {
-		return '${repo.path_account_get()}/${repo.addr.name}/${repo.addr.branch}'
+		return '${repo.path_account_get()}/${repo.name()}/${repo.addr().branch}'
 	} else {
-		return '${repo.path_account_get()}/${repo.addr.name}'
+		return '${repo.path_account_get()}/${repo.name()}'
 	}
 }
 
 pub fn (mut repo GitRepo) path_relative() string {
 	if repo.gs.config.multibranch {
-		return '${repo.addr.account}/${repo.addr.name}/${repo.addr.branch}'
+		return '${repo.addr().account}/${repo.name()}/${repo.addr().branch}'
 	} else {
-		return '${repo.addr.account}/${repo.addr.name}'
+		return '${repo.addr().account}/${repo.name()}'
 	}
 }
 
@@ -126,16 +126,16 @@ fn (mut repo GitRepo) get_clone_cmd(http bool) string {
 	}
 
 	if repo.gs.config.multibranch {
-		cmd = 'mkdir -p ${repo.path_account_get()}/${repo.addr.name} && cd ${repo.path_account_get()}/${repo.addr.name} && git clone ${light} ${url} ${repo.addr.branch}'
+		cmd = 'mkdir -p ${repo.path_account_get()}/${repo.name()} && cd ${repo.path_account_get()}/${repo.name()} && git clone ${light} ${url} ${repo.addr().branch}'
 	} else {
 		cmd = 'mkdir -p ${repo.path_account_get()} && cd ${repo.path_account_get()} && git clone ${light} ${url}'
 	}
-	if repo.addr.branch != '' {
-		cmd += ' -b ${repo.addr.branch}'
+	if repo.addr().branch != '' {
+		cmd += ' -b ${repo.addr().branch}'
 	}
-	if repo.addr.depth != 0 {
-		cmd += ' --depth=${repo.addr.depth}'
-		//  && cd $repo.addr.name && git fetch
+	if repo.addr().depth != 0 {
+		cmd += ' --depth=${repo.addr().depth}'
+		//  && cd $repo.name() && git fetch
 		// why was this there?
 	}
 	// println(" - CMD: $cmd")
@@ -146,12 +146,12 @@ fn (mut repo GitRepo) get_clone_cmd(http bool) string {
 pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ! {
 	mut pull_soft := pull_soft_ || reset_force_
 	mut reset_force := reset_force_
-	url := repo.addr.url_http_with_branch_get()
+	url := repo.addr().url_http_with_branch_get()
 	// println(' - check repo:$url, pull:$pull_soft, reset:$reset_force')
-	// println(repo.addr)
+	// println(repo.addr())
 	if repo.state != GitStatus.ok || pull_soft {
 		// need to get the status of the repo
-		// println(' - repo $repo.addr.name check')
+		// println(' - repo $repo.name() check')
 
 		mut needs_to_be_ssh := false
 
@@ -196,15 +196,15 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ! {
 			repo.remove_changes()!
 		}
 
-		// println(repo.addr)
+		// println(repo.addr())
 		// print_backtrace()
-		if repo.addr.branch != '' {
+		if repo.addr().branch != '' {
 			mut branchname := repo.branch_get()!
-			// println( " - branch detected: $branchname, branch on repo obj:'$repo.addr.branch'")
+			// println( " - branch detected: $branchname, branch on repo obj:'$repo.addr().branch'")
 			branchname = branchname.trim('\n ')
-			if branchname != repo.addr.branch && pull_soft {
-				println(' - branch switch ${branchname} -> ${repo.addr.branch} for ${url}')
-				repo.branch_switch(repo.addr.branch)!
+			if branchname != repo.addr().branch && pull_soft {
+				println(' - branch switch ${branchname} -> ${repo.addr().branch} for ${url}')
+				repo.branch_switch(repo.addr().branch)!
 				// need to pull now
 				pull_soft = true
 			}
@@ -220,6 +220,26 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ! {
 	}
 	return
 }
+
+
+//return the addr info of the gitrepo				
+pub fn (mut repo GitRepo) addr() GitAddr {
+	if repo.addr_==none{
+		repo.addr_ = addr_get_from_path(repo.path) or {panic(err)}	
+	}
+	return repo.addr_ or {panic(err)}
+}
+
+pub fn (mut repo GitRepo) name() string {
+	if repo.name_==""{
+		repo.name_=repo.path.split("/").last()
+		if repo.name_.len<3 {
+			panic("bug, name split for git name() in repo")
+		}
+	}
+	return repo.name_
+}
+
 
 // pulls remote content in, will reset changes
 pub fn (mut repo GitRepo) pull_reset() ! {

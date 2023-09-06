@@ -68,6 +68,15 @@ fn bizmodel_do(mut ch_in sync.Channel, mut ch_out sync.Channel) {
 			}
 		}
 
+		if rpcobj.method.to_upper().trim_space() == 'LINECHART1' {
+			// println("BARCHART1:${rpcobj.val}")
+			data := json.decode(spreadsheet.RowGetArgs, rpcobj.val) or { panic(err) } // is bug so ok to panic
+			rpcobj.result = m.sheet.wiki_line_chart(data) or {
+				rpcobj.error = '${err}'
+				''
+			}
+		}
+
 		// println("DONE:${rpcobj.val}")
 		if !rpcobj.async {
 			// println(" - T: will send")

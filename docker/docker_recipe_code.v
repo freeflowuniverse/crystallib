@@ -22,7 +22,7 @@ pub fn (mut r DockerBuilderRecipe) add_codeget(args_ CodeGetArgs) ! {
 	mut gr := gs.repo_get_from_url(url: args.url, pull: args.pull, reset: args.reset)!
 
 	if args.name == '' {
-		args.name = gr.addr.name
+		args.name = gr.name()
 	}
 
 	if args.dest == '' {

@@ -15,7 +15,8 @@ fn (mut s Session) actions_include(myactions []actions.Action) ![]actions.Action
 				return error('Cannot include: ${sourceurl}, is <5 chars. \n${s}')
 			}
 			s.includes << sourceurl
-			m := download(url: sourceurl, reset: true)!
+
+			m := download(url: sourceurl, reset: false)!
 
 			ap_include := actions.new(path: m.path)!
 			mut actions_include := ap_include.filtersort(actor: 'runner')!

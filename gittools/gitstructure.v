@@ -12,6 +12,7 @@ pub mut:
 	pull   bool // will pull if this is set
 	reset  bool // this means will pull and reset all changes
 	name   string
+	
 }
 
 // will get repo starting from url, if the repo does not exist, only then will pull
@@ -60,10 +61,10 @@ pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr, args Rep
 		// repo does not exist yet
 		println(' - repo does not exist yet')
 		gitstructure.repos << GitRepo{
-			addr: addr
+			addr_: addr
 			id: gitstructure.repos.len
 			gs: &gitstructure
-			name: args.name
+			name_: args.name
 		}
 		mut r0 := gitstructure.repo_get(args2) or {
 			// means could not pull need to remove the repo from the list again
@@ -77,7 +78,7 @@ pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr, args Rep
 		mut r := gitstructure.repo_get(args2) or {
 			return error('cannot load git ${args.url}\n${err}')
 		}
-		r.addr = addr
+		r.addr_ = addr
 		// println (" GIT REPO GET PULL:$args.pull, RESET: $args.reset")
 		r.check(args.pull, args.reset)!
 		return r
@@ -121,13 +122,13 @@ mut:
 // THIS FUNCTION DOES NOT EXECUTE THE CHECK !!!
 pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) !&GitRepo {
 	mut res_ids := []int{}
-	for r in gitstructure.repos {
-		if r.name != '' && r.name == args.name {
+	for mut r in gitstructure.repos {
+		if r.name() != '' && r.name() == args.name {
 			res_ids << r.id
 			continue
 		}
-		if r.addr.name == args.name {
-			if args.account == '' || args.account == r.addr.account {
+		if r.name() == args.name {
+			if args.account == '' || args.account == r.addr().account {
 				res_ids << r.id
 			}
 		}
@@ -148,12 +149,12 @@ pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) !&GitRepo {
 // to use gitstructure.repo_get({account:"something",name:"myname"})
 // or gitstructure.repo_get({name:"myname"})
 pub fn (mut gitstructure GitStructure) repo_exists(addr RepoGetArgs) bool {
-	for r in gitstructure.repos {
-		if r.name != '' && r.name == addr.name {
+	for mut r in gitstructure.repos {
+		if r.name() != '' && r.name() == addr.name {
 			return true
 		}
-		if r.addr.name == addr.name {
-			if addr.account == '' || addr.account == r.addr.account {
+		if r.name() == addr.name {
+			if addr.account == '' || addr.account == r.addr().account {
 				return true
 			}
 		}
@@ -191,7 +192,7 @@ pub fn (mut gitstructure GitStructure) repos_get(args GSArgs) []GitRepo {
 		relpath := g.path_relative()
 		if args.filter != '' {
 			if relpath.contains(args.filter) {
-				// println("$g.addr.name")
+				// println("$g.name()")
 				res << g
 			}
 		} else {
@@ -215,9 +216,9 @@ pub fn (mut gitstructure GitStructure) repos_print(args GSArgs) {
 		changed := g.changes() or { panic('issue in repo changes. ${err}') }
 		pr := g.path_relative()
 		if changed {
-			r << ['- ${pr}', '${g.addr.branch}', 'CHANGED']
+			r << ['- ${pr}', '${g.addr().branch}', 'CHANGED']
 		} else {
-			r << ['- ${pr}', '${g.addr.branch}', '']
+			r << ['- ${pr}', '${g.addr().branch}', '']
 		}
 	}
 	texttools.print_array2(r, '  ', true)
@@ -260,6 +261,10 @@ fn (mut gitstructure GitStructure) load() ! {
 
 	// path which git repos will be recursively loaded
 	git_path := gitstructure.codepath() + '/github'
+	if !(os.exists( gitstructure.codepath())) {
+		os.mkdir_all( gitstructure.codepath())!
+	}
+
 	gitstructure.load_recursive(git_path, mut done)!
 
 	gitstructure.status = GitStructureStatus.loaded
@@ -268,10 +273,12 @@ fn (mut gitstructure GitStructure) load() ! {
 }
 
 fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []string) ! {
-	// println(" - git load: $path1")
-	if !(os.exists(path1)) {
-		os.mkdir_all(path1)!
+	mut path1o:=pathlib.get(path1)
+	relpath:=path1o.path_relative(gitstructure.rootpath.path)!
+	if relpath.count("/") > 3{
+		return 
 	}
+	// println(" - git load: $relpath")
 	items := os.ls(path1) or {
 		return error('cannot load gitstructure because cannot find ${path1}')
 	}
@@ -286,9 +293,7 @@ fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []strin
 		if os.is_dir(pathnew) {
 			// println(" - $pathnew")		
 			if os.exists(os.join_path(pathnew, '.git')) {
-				gitaddr := addr_get_from_path(pathnew) or { return err }
 				gitstructure.repos << GitRepo{
-					addr: gitaddr
 					path: pathnew
 					id: gitstructure.repos.len
 					gs: &gitstructure

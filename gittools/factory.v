@@ -1,6 +1,7 @@
 module gittools
 
 import os
+import freeflowuniverse.crystallib.pathlib
 
 [params]
 pub struct GSConfig {
@@ -40,9 +41,7 @@ pub fn get(config GSConfig) !GitStructure {
 
 	gs.config.root = gs.config.root.replace('~', os.home_dir()).trim_right('/')
 
-	if !os.exists(gs.config.root) {
-		os.mkdir_all(gs.config.root)!
-	}
+	gs.rootpath = pathlib.get_dir(gs.config.root,true)!
 
 	gs.status = GitStructureStatus.init // step2
 
@@ -60,15 +59,15 @@ pub mut:
 	root   string // where code will be checked out
 }
 
-// will get repo starting from url, if the repo does not exist, only then will pull
-// if pull is set on true, will then pull as well
-// struct RepoGetFromUrlArgs {
-//
-// 	url    string
-// 	branch string
-// 	pull   bool // will pull if this is set
-// 	reset bool //this means will pull and reset all changes
-// }
+// will get repo starting from url, if the repo does not exist, only then will pull .
+// if pull is set on true, will then pull as well .
+// struct RepoGetFromUrlArgs { .
+// .
+// 	url    string .
+// 	branch string .
+// 	pull   bool // will pull if this is set .
+// 	reset bool //this means will pull and reset all changes .
+// } .
 pub fn code_get(args CodeGetFromUrlArgs) !string {
 	mut gs := get(root: args.root)!
 	mut gr := gs.repo_get_from_url(url: args.url, pull: args.pull, reset: args.reset)!
