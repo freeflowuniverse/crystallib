@@ -46,7 +46,7 @@ fn (mut tree Tree) collection_get_from_pointer(p Pointer) !Collection {
 			pointer: p
 		}
 	}
-	return ch
+	return *ch
 }
 
 pub fn (mut tree Tree) collection_get(name string) !Collection {
