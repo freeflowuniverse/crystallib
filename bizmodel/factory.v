@@ -2,18 +2,22 @@ module bizmodel
 
 import freeflowuniverse.crystallib.spreadsheet
 import freeflowuniverse.crystallib.texttools
-import freeflowuniverse.crystallib.knowledgetree
+// import freeflowuniverse.crystallib.knowledgetree
 import freeflowuniverse.crystallib.baobab.actions
 // import freeflowuniverse.crystallib.baobab.hero
 // import freeflowuniverse.crystallib.baobab.context
-import freeflowuniverse.crystallib.osal.downloader
-import freeflowuniverse.crystallib.currencies
+import freeflowuniverse.crystallib.currency
+
+__global (
+	bizmodels shared map[string]BizModel
+)
+
 
 pub struct BizModel {
 pub mut:
 	sheet   spreadsheet.Sheet
 	params  BizModelArgs
-	book    ?knowledgetree.MDBook
+	currencies currency.Currencies
 }
 
 [params]
@@ -30,9 +34,19 @@ pub mut:
 	mdbook_path string // if empty is /tmp/mdbooks/$name
 }
 
-pub fn new(args_ BizModelArgs) !BizModel {
+pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 	mut args := args_
-	mut sh := spreadsheet.sheet_new(currencies: cs)!
+
+	mut cs:=currency.new()
+
+	mut sh := spreadsheet.sheet_new(currencies:cs)!
+
+	mut bm := BizModel{
+		sheet: sh
+		params: args
+		currencies: cs
+	}
+
 
 	if args.name == '' {
 		args.name = texttools.name_fix(args.name)
@@ -42,20 +56,10 @@ pub fn new(args_ BizModelArgs) !BizModel {
 		args.mdbook_name = args.name
 	}
 
-	mut bm := BizModel{
-		sheet: sh
-		params: BizModelArgs{
-			path: args.path
-			url: args.url
-			name: args.name
-		}
-		context: args.context
-		currencies: currencies.new() or { panic(err) }
-	}
 
 	bm.load()!
 
-	mut tree := args.context.knowledgetree('bizmodel_${args.name}')!
+	// mut tree := args.context.knowledgetree('bizmodel_${args.name}')!
 
 	// mut gs := c.gitstructure('default')!
 	// if args.git_root.len > 0 {
@@ -82,6 +86,8 @@ pub fn new(args_ BizModelArgs) !BizModel {
 	// 	dest: args.mdbook_path
 	// )!
 
+	mut book:=knowledgetree.MDBook{}
+
 	return book
 }
 
@@ -93,10 +99,10 @@ pub fn (mut m BizModel) load() ! {
 	m.funding_actions(ap)!
 	m.overhead_actions(ap)!
 
-	tr.scan(
-		path: wikipath
-		heal: false
-	)!
+	// tr.scan(
+	// 	path: wikipath
+	// 	heal: false
+	// )!
 
 	m.sheet.group2row(
 		name: 'company_result'

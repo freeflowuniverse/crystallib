@@ -1,9 +1,8 @@
 module main
 
-import freeflowuniverse.crystallib.baobab.context
 import os
 import freeflowuniverse.crystallib.bizmodel
-import freeflowuniverse.crystallib.knowledgetree
+// import freeflowuniverse.crystallib.knowledgetree
 // import freeflowuniverse.crystallib.spreadsheet
 // import cli { Command }
 
@@ -14,7 +13,7 @@ fn do() ! {
 
 	bizmodel.new(path: wikipath)!
 
-	book.read()! // will generate and open	
+	// book.read()! // will generate and open	
 
 	// println('')
 
