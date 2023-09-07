@@ -218,6 +218,6 @@ fn (mut actions Actions) parse_block(block Block) ! {
 		circle: circle
 		actor: actor
 		params: params_
-		priority: prio
+		priority: u8(prio)
 	}
 }
