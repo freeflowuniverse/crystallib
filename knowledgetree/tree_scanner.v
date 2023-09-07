@@ -71,14 +71,6 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 						)!
 						return
 					}
-					'.book' {
-						book_new(
-							path: path.path
-							name: name
-							tree: tree
-						)!
-						return
-					}
 					else {
 						panic('not implemented: please add the new type to the match statement')
 					}
