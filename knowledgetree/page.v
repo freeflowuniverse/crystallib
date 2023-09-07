@@ -251,23 +251,23 @@ fn (mut page Page) process_macros() ! {
 			// println(doc.items[x])
 			// println('Process macro ${macro.content} into ${page.path.path}')
 			mut out := ''
-		// 	for mut mp in tree.macroprocessors {
-		// 		res := mp.process('!!${macro.content}')!
-		// 		if res.error == '' {
-		// 			out += res.result + '\n'
-		// 		} else {
-		// 			out += '>> ERROR:\n${res.error}\n'
-		// 		}
-		// 		mut para := Paragraph{
-		// 			content: res.result
-		// 		}
-		// 		para.process()!
-		// 		doc.items.delete(x)
-		// 		doc.items.insert(x, para)
-		// 		if res.state == .stop {
-		// 			break
-		// 		}
-		// 	}
+			for mut mp in tree.macroprocessors {
+				res := mp.process('!!${macro.content}')!
+				if res.error == '' {
+					out += res.result + '\n'
+				} else {
+					out += '>> ERROR:\n${res.error}\n'
+				}
+				mut para := Paragraph{
+					content: res.result
+				}
+				para.process()!
+				doc.items.delete(x)
+				doc.items.insert(x, para)
+				if res.state == .stop {
+					break
+				}
+			}
 		}
 	}
 }

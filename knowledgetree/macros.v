@@ -1,6 +1,6 @@
 module knowledgetree
 
-import freeflowuniverse.crystallib.baobab.spawner
+// import freeflowuniverse.crystallib.baobab.spawner
 
 pub enum MacroResultState {
 	ok
@@ -17,6 +17,10 @@ pub mut:
 
 interface IMacroProcessor {
 mut:
-	spawner &spawner.Spawner
+	// spawner &spawner.Spawner
 	process(code string) !MacroResult
+
+
+
+
 }

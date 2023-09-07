@@ -6,18 +6,15 @@ import freeflowuniverse.crystallib.baobab.actions
 import freeflowuniverse.crystallib.spreadsheet
 import json
 
-// pub struct MacroProcessorBizmodel {
-// pub mut:
-// 	spawner &spawner.Spawner
-// }
+pub struct MacroProcessorBizmodel {
+}
 
-// pub fn macroprocessor_new(mut s spawner.Spawner) MacroProcessorBizmodel {
-// 	return MacroProcessorBizmodel{
-// 		spawner: s
-// 	}
-// }
+pub fn macroprocessor_new(mut s spawner.Spawner) MacroProcessorBizmodel {
+	return MacroProcessorBizmodel{
+	}
+}
 
-pub fn (mut mp MacroProcessorBizmodel) process(code string) !knowledgetree.MacroResult {
+pub fn process(code string) !knowledgetree.MacroResult {
 	mut r := knowledgetree.MacroResult{
 		state: .stop
 	}
@@ -37,8 +34,11 @@ pub fn (mut mp MacroProcessorBizmodel) process(code string) !knowledgetree.Macro
 				title: p.get_default('title', '')!
 				rowname: p.get_default_true('rowname')
 			}
-			r.result = mp.spawner.rpc(mut tname: 'bizmodel', method: 'WIKI', val: json.encode(args))!
+			// r.result = mp.spawner.rpc(mut tname: 'bizmodel', method: 'WIKI', val: json.encode(args))!
 			// r.result+="<BR>"
+
+			//TODO: use the global spreadsheet to get the results
+
 			return r
 		}
 

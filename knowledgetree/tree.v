@@ -14,7 +14,7 @@ pub mut:
 	collections    map[string]&Collection
 	embedded_files []embed_file.EmbedFileData // this where we have the templates for exporting a book
 	state          TreeState
-	// macroprocessors []&IMacroProcessor
+	macroprocessors []&IMacroProcessor
 	// spawner         &spawner.Spawner
 	// context context.Context
 }
@@ -40,9 +40,9 @@ fn (mut tree Tree) init() ! {
 
 // add macroprocessor to the tree
 // see interface IMacroProcessor for how macroprocessor needs to be implemented
-// pub fn (mut tree Tree) macroprocessor_add(mut mp IMacroProcessor) ! {
-// 	tree.macroprocessors << mp
-// }
+pub fn (mut tree Tree) macroprocessor_add(mut mp IMacroProcessor) ! {
+	tree.macroprocessors << mp
+}
 
 // fix all loaded tree
 pub fn (mut tree Tree) fix() ! {
