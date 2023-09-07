@@ -24,6 +24,7 @@ pub fn (a Amount) usd() f64 {
 // - check in string for format  e.g. 10.3usd or '10 usd' or '10 USD' or '10 usDC'
 // allows £,$,€ to be used as special cases
 fn  amount_get(amount_ string) !Amount {
+	check()	
 	mut amount := amount_.to_upper()
 	numbers := ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
 	for i in ['_', ',', ' '] {

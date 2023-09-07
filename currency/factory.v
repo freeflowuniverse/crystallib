@@ -6,11 +6,6 @@ __global (
 	currencies shared map[string]Currency
 )
 
-// fn init() {
-// 	currencies.init()
-// }
-
-
 fn check() {
 	if currencies.len==0{
 		refresh()
