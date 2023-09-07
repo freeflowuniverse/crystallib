@@ -6,16 +6,16 @@ import freeflowuniverse.crystallib.baobab.actions
 import freeflowuniverse.crystallib.spreadsheet
 import json
 
-pub struct MacroProcessorBizmodel {
-pub mut:
-	spawner &spawner.Spawner
-}
+// pub struct MacroProcessorBizmodel {
+// pub mut:
+// 	spawner &spawner.Spawner
+// }
 
-pub fn macroprocessor_new(mut s spawner.Spawner) MacroProcessorBizmodel {
-	return MacroProcessorBizmodel{
-		spawner: s
-	}
-}
+// pub fn macroprocessor_new(mut s spawner.Spawner) MacroProcessorBizmodel {
+// 	return MacroProcessorBizmodel{
+// 		spawner: s
+// 	}
+// }
 
 pub fn (mut mp MacroProcessorBizmodel) process(code string) !knowledgetree.MacroResult {
 	mut r := knowledgetree.MacroResult{

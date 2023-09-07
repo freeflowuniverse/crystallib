@@ -11,9 +11,12 @@ const wikipath = os.dir(@FILE) + '/wiki'
 fn do() ! {
 	// mut c := context.new()!
 
-	bizmodel.new(path: wikipath)!
+	mut book:= bizmodel.new(path: wikipath)!
 
-	// book.read()! // will generate and open	
+	book.read()! // will generate and open	
+
+
+	//// TODO: Kristof check if we have everything then remove
 
 	// println('')
 
