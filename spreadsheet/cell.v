@@ -1,5 +1,7 @@
 module spreadsheet
 
+import freeflowuniverse.crystallib.currency
+
 pub struct NoVal {}
 
 // type CellVal = currency.Amount | int | f64 | string | NoVal
@@ -14,9 +16,9 @@ pub mut:
 pub fn (mut c Cell) set(v string) ! {
 	if c.row.sheet.currency.name != '' {
 		// means we insert a currency so need to do the exchange
-		mut amount := c.row.sheet.currencies.amount_get(v)!
+		mut amount := currency.amount_get(v)!
 		if amount.currency.name == '' {
-			mut curr2 := c.row.sheet.currencies.currency_get('USD')!
+			mut curr2 := currencies['USD']!
 			amount.currency = curr2
 		}
 		mut amount2 := amount.exchange(c.row.sheet.currency)! // do the exchange to the local currency

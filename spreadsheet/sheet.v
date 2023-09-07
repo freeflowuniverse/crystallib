@@ -6,11 +6,11 @@ import freeflowuniverse.crystallib.params
 [heap]
 pub struct Sheet {
 pub mut:
-	name       string
-	rows       map[string]&Row
-	nrcol      int = 60
-	params     SheetParams
-	currency   currency.Currency
+	name     string
+	rows     map[string]&Row
+	nrcol    int = 60
+	params   SheetParams
+	currency currency.Currency
 }
 
 pub struct SheetParams {
@@ -109,7 +109,7 @@ pub mut:
 }
 
 // internal function used by to year and by to quarter
-fn (mut s Sheet) tosmaller(args_ ToYearQuarterArgs) !Sheet {
+fn (s Sheet) tosmaller(args_ ToYearQuarterArgs) !Sheet {
 	mut args := args_
 	if args.name == '' {
 		args.name = s.name + '_year'
@@ -124,7 +124,7 @@ fn (mut s Sheet) tosmaller(args_ ToYearQuarterArgs) !Sheet {
 		nrcol: nrcol_new
 		visualize_cur: s.params.visualize_cur
 		curr: s.currency.name
-		currencies: s.currencies
+		// currencies: s.currencies
 	)!
 	for _, row in s.rows {
 		if args.namefilter.len > 0 || args.includefilter.len > 0 || args.excludefilter.len > 0 {
