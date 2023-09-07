@@ -11,7 +11,7 @@ __global (
 [params]
 pub struct GSConfig {
 pub mut:
-	gitname     string [required]
+	gitname     string = "default"
 	filter      string
 	multibranch bool
 	root        string // where will the code be checked out
