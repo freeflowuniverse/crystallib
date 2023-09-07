@@ -42,11 +42,11 @@ pub fn process(code string) !knowledgetree.MacroResult {
 			return r
 		}
 
-		chart_methodname := match action.name {
-			'graph_bar_row' { 'BARCHART1' }
-			'graph_pie_row' { 'PIECHART1' }
-			else { '' }
-		}
+		// chart_methodname := match action.name {
+		// 	'graph_bar_row' { 'BARCHART1' }
+		// 	'graph_pie_row' { 'PIECHART1' }
+		// 	else { '' }
+		// }
 
 		size := p.get_default('size', '')!
 
@@ -88,11 +88,14 @@ pub fn process(code string) !knowledgetree.MacroResult {
 				title: title
 				size: size
 			}
-			r.result = mp.spawner.rpc(mut
-				tname: 'bizmodel'
-				method: chart_methodname
-				val: json.encode(args)
-			)!
+
+			//TODO: use the global spreadsheet to get the results
+
+			// r.result = mp.spawner.rpc(mut
+			// 	tname: 'bizmodel'
+			// 	method: chart_methodname
+			// 	val: json.encode(args)
+			// )!
 			r.result += '\n'
 			return r
 		}

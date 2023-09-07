@@ -10,8 +10,7 @@ pub mut:
 	rows       map[string]&Row
 	nrcol      int = 60
 	params     SheetParams
-	currencies &currency.Currencies
-	currency   &currency.Currency
+	currency   currency.Currency
 }
 
 pub struct SheetParams {
