@@ -10,16 +10,16 @@ __global (
 )
 
 [params]
-pub struct ArgsNew{
+pub struct ArgsNew {
 pub mut:
-	name string = "default"
+	name string = 'default'
 }
 
-//get a new tree initialized 
-//will create a new tree instance, be careful
-pub fn new( args_  ArgsNew) ! {
-	mut args:=args_
-	args.name=texttools.name_fix(args.name)
+// get a new tree initialized
+// will create a new tree instance, be careful
+pub fn new(args_ ArgsNew) ! {
+	mut args := args_
+	args.name = texttools.name_fix(args.name)
 	level := match osal.env_get_default('KNOWLEDGETREE_LOG_LEVEL', 'INFO') {
 		'DEBUG' {
 			log.Level.debug
@@ -28,11 +28,11 @@ pub fn new( args_  ArgsNew) ! {
 			log.Level.info
 		}
 	}
-	lock knowledgetrees{
+	lock knowledgetrees {
 		mut t := Tree{
 			name: args.name
 			// context: c
-			logger: log.Log{
+			logger: &log.Log{
 				level: level
 			}
 		}
@@ -41,31 +41,33 @@ pub fn new( args_  ArgsNew) ! {
 	}
 }
 
-pub fn scan( args_ TreeScannerArgs) ! {
-	mut args:=args_
-	args.name=texttools.name_fix(args.name)	
-	rlock knowledgetrees{
-		mut tree:=knowledgetrees[args.name] or { return error("cannot find tree: $args.name") }
+pub fn scan(args_ TreeScannerArgs) ! {
+	mut args := args_
+	args.name = texttools.name_fix(args.name)
+	lock knowledgetrees {
+		mut tree := knowledgetrees[args.name] or { return error('cannot find tree: ${args.name}') }
 		tree.scan(args)!
+		knowledgetrees[args.name] = tree
 	}
 }
 
 [params]
-pub struct ArgsGet{
+pub struct ArgsGet {
 pub mut:
-	treename string = "default"
-	name string 
+	treename string = 'default'
+	name     string
 }
 
-pub fn collection_get( args_ ArgsGet) !Collection {
-	mut args:=args_
-	args.treename=texttools.name_fix(args.treename)
-	rlock knowledgetrees{
-		mut tree:=knowledgetrees[args.treename] or { return error("cannot find tree: ${args.treename}") }
+pub fn collection_get(args_ ArgsGet) !Collection {
+	mut args := args_
+	args.treename = texttools.name_fix(args.treename)
+	rlock knowledgetrees {
+		mut tree := knowledgetrees[args.treename] or {
+			return error('cannot find tree: ${args.treename}')
+		}
 		return tree.collection_get(args.name)!
 	}
-	panic("should not get here")
-
+	panic('should not get here')
 }
 
 // pub fn mdbook_generate( treename string, collectionname string) !Collection {

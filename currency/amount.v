@@ -2,8 +2,8 @@ module currency
 
 pub struct Amount {
 pub mut:
-	currency   Currency
-	val        f64
+	currency Currency
+	val      f64
 }
 
 // convert an Amount into usd
@@ -23,8 +23,8 @@ pub fn (a Amount) usd() f64 {
 // -decimals are done with US notation (.)
 // - check in string for format  e.g. 10.3usd or '10 usd' or '10 USD' or '10 usDC'
 // allows £,$,€ to be used as special cases
-fn  amount_get(amount_ string) !Amount {
-	check()	
+pub fn amount_get(amount_ string) !Amount {
+	check()
 	mut amount := amount_.to_upper()
 	numbers := ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
 	for i in ['_', ',', ' '] {
@@ -81,27 +81,25 @@ fn  amount_get(amount_ string) !Amount {
 		num = amount
 		code = 'USD'
 	} else {
-		rlock currencies{
+		rlock currencies {
 			if code !in currencies {
 				rates_get([code], false)! // not sure this will work
 				rates_get([code], true)!
 			}
 		}
 	}
-	rlock currencies{
+	rlock currencies {
 		cur0 := currencies[code] or { return error('Cannot find currency with code \'${code}\'') }
 
 		mut amount2 := Amount{
 			val: num.f64()
 			currency: cur0
-		}		
+		}
 
 		return amount2
 	}
 
-
-	panic("bug")
-	
+	panic('bug')
 }
 
 // pub fn (mut a0 Amount) add (a2 Amount)! {

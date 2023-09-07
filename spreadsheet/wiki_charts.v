@@ -15,7 +15,7 @@ pub fn (mut s Sheet) wiki_title_chart(args RowGetArgs) string {
 }
 
 // produce a nice looking bar chart see
-https://echarts.apache.org/examples/en/editor.html?c=line-stack
+// https://echarts.apache.org/examples/en/editor.html?c=line-stack
 pub fn (mut s Sheet) wiki_line_chart(args_ RowGetArgs) !string {
 	mut args := args_
 	header := s.header_get_as_string(args.period_type)!
@@ -86,7 +86,6 @@ pub fn (mut s Sheet) wiki_line_chart(args_ RowGetArgs) !string {
 	// if true{panic("Sdsdsd")}
 	return out
 }
-
 
 // produce a nice looking bar chart see
 // https://echarts.apache.org/examples/en/index.html#chart-type-bar

@@ -10,10 +10,12 @@ pub struct Tree {
 pub:
 	name string
 pub mut:
-	logger         log.Logger
-	collections    map[string]&Collection
-	embedded_files []embed_file.EmbedFileData // this where we have the templates for exporting a book
-	state          TreeState
+	logger          &log.Logger = &log.Log{
+	level: .info
+}
+	collections     map[string]&Collection
+	embedded_files  []embed_file.EmbedFileData // this where we have the templates for exporting a book
+	state           TreeState
 	macroprocessors []&IMacroProcessor
 	// spawner         &spawner.Spawner
 	// context context.Context

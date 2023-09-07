@@ -16,7 +16,7 @@ pub mut:
 }
 
 // format a sheet properly in wiki format
-pub fn (mut s Sheet) wiki(args_ WikiArgs) !string {
+pub fn (s Sheet) wiki(args_ WikiArgs) !string {
 	mut args := args_
 	if args.name == '' {
 		args.name = s.name

@@ -11,78 +11,78 @@ pub mut:
 }
 
 fn bizmodel_do(mut ch_in sync.Channel, mut ch_out sync.Channel) {
-	println('biz model thread start')
-	mut rpcobj := spawner.RPCArg{}
-	mut m := new(path: rpcobj.val) or { panic(err) }
-	for i in 0 .. 10000000000 {
-		// println(" - T: will receive")
-		ch_in.pop(&rpcobj)
-		if rpcobj.method == 'STOP' {
-			println('STOP')
-			return
-		}
-		// LOAD
-		if rpcobj.method.to_upper().trim_space() == 'LOAD' {
-			println('BIZMODEL LOAD: path:${rpcobj.val}')
-			if rpcobj.val.len == 0 {
-				rpcobj.error = 'val cannot be empty for load, is path of the bizmodel'
-			}
-			m = new(path: rpcobj.val) or {
-				rpcobj.error = 'Could not load bizmodel.\n${err}'
-				new(path: rpcobj.val) or { panic(err) } // return empty one
-			}
-			rpcobj.result = 'OK'
-		}
+	// println('biz model thread start')
+	// mut rpcobj := spawner.RPCArg{}
+	// mut m := new(path: rpcobj.val) or { panic(err) }
+	// for i in 0 .. 10000000000 {
+	// 	// println(" - T: will receive")
+	// 	ch_in.pop(&rpcobj)
+	// 	if rpcobj.method == 'STOP' {
+	// 		println('STOP')
+	// 		return
+	// 	}
+	// 	// LOAD
+	// 	if rpcobj.method.to_upper().trim_space() == 'LOAD' {
+	// 		println('BIZMODEL LOAD: path:${rpcobj.val}')
+	// 		if rpcobj.val.len == 0 {
+	// 			rpcobj.error = 'val cannot be empty for load, is path of the bizmodel'
+	// 		}
+	// 		m = new(path: rpcobj.val) or {
+	// 			rpcobj.error = 'Could not load bizmodel.\n${err}'
+	// 			new(path: rpcobj.val) or { panic(err) } // return empty one
+	// 		}
+	// 		rpcobj.result = 'OK'
+	// 	}
 
-		if m.params.path == '' {
-			// means is not loaded yet
-			rpcobj.error = 'Bizmodel not loaded, need to do a load action first.'
-		}
-		// WIKI
-		if rpcobj.method.to_upper().trim_space() == 'WIKI' {
-			// println("WIKI:${rpcobj.val}")
-			data := json.decode(spreadsheet.WikiArgs, rpcobj.val) or { panic(err) } // is bug so ok to panic
-			rpcobj.result = m.sheet.wiki(data) or {
-				rpcobj.error = '${err}'
-				''
-			}
-		}
+	// 	if m.params.path == '' {
+	// 		// means is not loaded yet
+	// 		rpcobj.error = 'Bizmodel not loaded, need to do a load action first.'
+	// 	}
+	// 	// WIKI
+	// 	if rpcobj.method.to_upper().trim_space() == 'WIKI' {
+	// 		// println("WIKI:${rpcobj.val}")
+	// 		data := json.decode(spreadsheet.WikiArgs, rpcobj.val) or { panic(err) } // is bug so ok to panic
+	// 		rpcobj.result = m.sheet.wiki(data) or {
+	// 			rpcobj.error = '${err}'
+	// 			''
+	// 		}
+	// 	}
 
-		// BARCHART1
-		if rpcobj.method.to_upper().trim_space() == 'BARCHART1' {
-			// println("BARCHART1:${rpcobj.val}")
-			data := json.decode(spreadsheet.RowGetArgs, rpcobj.val) or { panic(err) } // is bug so ok to panic
-			rpcobj.result = m.sheet.wiki_bar_chart(data) or {
-				rpcobj.error = '${err}'
-				''
-			}
-		}
+	// 	// BARCHART1
+	// 	if rpcobj.method.to_upper().trim_space() == 'BARCHART1' {
+	// 		// println("BARCHART1:${rpcobj.val}")
+	// 		data := json.decode(spreadsheet.RowGetArgs, rpcobj.val) or { panic(err) } // is bug so ok to panic
+	// 		rpcobj.result = m.sheet.wiki_bar_chart(data) or {
+	// 			rpcobj.error = '${err}'
+	// 			''
+	// 		}
+	// 	}
 
-		// PIECHART1
-		if rpcobj.method.to_upper().trim_space() == 'PIECHART1' {
-			// println("BARCHART1:${rpcobj.val}")
-			data := json.decode(spreadsheet.RowGetArgs, rpcobj.val) or { panic(err) } // is bug so ok to panic
-			rpcobj.result = m.sheet.wiki_pie_chart(data) or {
-				rpcobj.error = '${err}'
-				''
-			}
-		}
+	// 	// PIECHART1
+	// 	if rpcobj.method.to_upper().trim_space() == 'PIECHART1' {
+	// 		// println("BARCHART1:${rpcobj.val}")
+	// 		data := json.decode(spreadsheet.RowGetArgs, rpcobj.val) or { panic(err) } // is bug so ok to panic
+	// 		rpcobj.result = m.sheet.wiki_pie_chart(data) or {
+	// 			rpcobj.error = '${err}'
+	// 			''
+	// 		}
+	// 	}
 
-		if rpcobj.method.to_upper().trim_space() == 'LINECHART1' {
-			// println("BARCHART1:${rpcobj.val}")
-			data := json.decode(spreadsheet.RowGetArgs, rpcobj.val) or { panic(err) } // is bug so ok to panic
-			rpcobj.result = m.sheet.wiki_line_chart(data) or {
-				rpcobj.error = '${err}'
-				''
-			}
-		}
+	// 	if rpcobj.method.to_upper().trim_space() == 'LINECHART1' {
+	// 		// println("BARCHART1:${rpcobj.val}")
+	// 		data := json.decode(spreadsheet.RowGetArgs, rpcobj.val) or { panic(err) } // is bug so ok to panic
+	// 		rpcobj.result = m.sheet.wiki_line_chart(data) or {
+	// 			rpcobj.error = '${err}'
+	// 			''
+	// 		}
+	// 	}
 
-		// println("DONE:${rpcobj.val}")
-		if !rpcobj.async {
-			// println(" - T: will send")
-			ch_out.push(&rpcobj)
-		}
-	}
+	// 	// println("DONE:${rpcobj.val}")
+	// 	if !rpcobj.async {
+	// 		// println(" - T: will send")
+	// 		ch_out.push(&rpcobj)
+	// 	}
+	// }
 }
 
 // run the business tool in a thread .

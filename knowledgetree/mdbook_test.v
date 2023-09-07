@@ -4,48 +4,33 @@ import freeflowuniverse.crystallib.baobab.spawner
 import freeflowuniverse.crystallib.markdowndocs
 import os
 
-const collections_path = os.dir(@FILE) + '/testdata/collections'
+const (
+	collections_path = os.dir(@FILE) + '/testdata/collections'
+	tree_name = 'mdbook_test_tree'
+	book1_path = os.dir(@FILE) + '/testdata/book1'
+	book1_dest = os.dir(@FILE) + '/testdata/_book1'
+)
 
-const book1_path = os.dir(@FILE) + '/testdata/book1'
-
-const book1_dest = os.dir(@FILE) + '/testdata/_book1'
-
-fn config_tree() !Tree {
+fn create_tree() ! {
 	mut s := spawner.new()
-	mut tree := new(mut s)!
-
-	mut col_examples := tree.collection_new(
-		name: 'examples'
-		path: knowledgetree.collections_path + '/examples'
-		heal: true
+	new(name: tree_name)!
+	scan(
+		name: tree_name
+		path: collections_path
 	)!
-	mut col_playground := tree.collection_new(
-		name: 'playground'
-		path: knowledgetree.collections_path + '/playground'
-		heal: true
-	)!
-	mut col_rpc := tree.collection_new(
-		name: 'rpc'
-		path: knowledgetree.collections_path + '/rpc'
-		heal: true
-	)!
-	mut col_server := tree.collection_new(
-		name: 'server'
-		path: knowledgetree.collections_path + '/server'
-		heal: true
-	)!
-
-	tree.scan()!
-	return tree
+	rlock knowledgetrees {
+		println('debugz:')
+		println(knowledgetrees[tree_name].collections)
+	}
 }
 
 fn test_book_reset() {
-	tree := config_tree()!
-	mut book := book_new(
+	create_tree()!
+	mut book := book_create(
 		name: 'book1'
 		path: knowledgetree.book1_path
 		dest: knowledgetree.book1_dest
-		tree: tree
+		tree_name: tree_name
 	)!
 
 	os.mkdir(knowledgetree.book1_dest)!
@@ -55,12 +40,12 @@ fn test_book_reset() {
 }
 
 fn test_book_load_summary() {
-	tree := config_tree()!
-	mut book := book_new(
+	create_tree()!
+	mut book := book_create(
 		name: 'book1'
 		path: knowledgetree.book1_path
 		dest: knowledgetree.book1_dest
-		tree: tree
+		tree_name: tree_name
 	)!
 	book.load_summary()!
 
@@ -72,12 +57,12 @@ fn test_book_load_summary() {
 }
 
 fn test_book_fix_summary() {
-	tree := config_tree()!
-	mut book := book_new(
+	create_tree()!
+	mut book := book_create(
 		name: 'book1'
 		path: knowledgetree.book1_path
 		dest: knowledgetree.book1_dest
-		tree: tree
+		tree_name: tree_name
 	)!
 	book.load_summary()!
 	println('starting fix')
@@ -85,13 +70,13 @@ fn test_book_fix_summary() {
 	panic('hs')
 }
 
-fn test_book_new() {
-	tree := config_tree()!
-	mut book := book_new(
+fn test_book_create() {
+	create_tree()!
+	mut book := book_create(
 		name: 'book1'
 		path: knowledgetree.book1_path
 		dest: knowledgetree.book1_dest
-		tree: tree
+		tree_name: tree_name
 	)!
 
 	println(book)
@@ -99,12 +84,12 @@ fn test_book_new() {
 }
 
 fn test_book_export() {
-	tree := config_tree()!
-	mut book := book_new(
+	create_tree()!
+	mut book := book_create(
 		name: 'book1'
 		path: knowledgetree.book1_path
 		dest: knowledgetree.book1_dest
-		tree: tree
+		tree_name: tree_name
 	) or { panic(err) }
 	// book.export() or {panic(err)}
 }
