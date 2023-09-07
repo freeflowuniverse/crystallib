@@ -70,7 +70,7 @@ pub mut:
 	path      string // path exists
 	dest      string // path where book will be generated
 	dest_md   string // path where the md files will be generated
-	tree      Tree   [str: skip]
+	tree_name      string
 	git_url   string
 	git_reset bool
 	git_root  string // in case we want to checkout code on other location
@@ -112,7 +112,7 @@ pub fn book_create(args_ BookNewArgs) !&MDBook {
 	}
 
 	if args.git_url.len > 0 {
-		mut gs := gittools.get(root: args.git_root)!
+		mut gs := gittools.get(gitname: args.git_root)!
 		mut gr := gs.repo_get_from_url(url: args.git_url, pull: args.git_pull, reset: args.git_reset)!
 		args.path = gr.path_content_get()
 	}
@@ -127,9 +127,11 @@ pub fn book_create(args_ BookNewArgs) !&MDBook {
 	}
 	p.path_normalize()! // make sure its all lower case and name is proper
 
-	mut tree := Tree{
-		...args.tree
-	} // reference to clone of seed tree
+	mut tree := Tree{} // reference to clone of seed tree
+	rlock {
+		tree = knowledgetrees[args.tree_name]
+	}
+
 	mut book := &MDBook{
 		name: args.name
 		tree: &tree
@@ -143,7 +145,6 @@ pub fn book_create(args_ BookNewArgs) !&MDBook {
 	book.fix_summary()!
 	book.link_pages_files_images()!
 	book.errors_report()!
-	book.export_linked_pages()!
 	book.export()!
 
 	return book
@@ -240,9 +241,10 @@ fn (mut book MDBook) fix_summary() ! {
 // find which files,pages, images are not found
 fn (mut book MDBook) link_pages_files_images() ! {
 	for _, page in book.pages {
-		println('page ${page.name} *****')
-		println('page ${page.name} collection name: ${page.collection.name}')
-		for paragraph in page.doc.items.filter(it is markdowndocs.Paragraph) {
+		println('page ${page.name} collection ${page.collection_name}*****')
+
+		doc := page.doc or {return}
+		for paragraph in doc.items.filter(it is markdowndocs.Paragraph) {
 			if paragraph is markdowndocs.Paragraph {
 				for item in paragraph.items {
 					println(item)
@@ -253,17 +255,21 @@ fn (mut book MDBook) link_pages_files_images() ! {
 
 						if link.cat == .page {
 							println('page get: ${link.filename}')
-							println('page ${page.name} collection name 2: ${page.collection.name}')
-							pageobj := page.collection.page_get(link.filename) or {
+							println('page ${page.name} collection name 2: ${page.collection_name}')
+
+							collection := book.tree.collection_get(page.collection_name) or {
+								panic('couldnt find book collection')
+							}
+							pageobj := collection.page_get(link.filename) or {
 								println('ERROR')
 								book.error(
 									cat: .page_not_found
-									msg: '${page.path.path}: Cannot find page ${link.filename} in ${page.collection.name}'
+									msg: '${page.path.path}: Cannot find page ${link.filename} in ${page.collection_name}'
 								)
 								continue
 							}
 							print('1')
-							println('${pageobj.collection.name}:${pageobj.name}')
+							println('${pageobj.collection_name}:${pageobj.name}')
 							print('1.1')
 							println(pageobj)
 							// println(book.pages)
@@ -271,19 +277,25 @@ fn (mut book MDBook) link_pages_files_images() ! {
 							// book.pages['${pageobj.collection.name}:${pageobj.name}'] = pageobj
 							println('3')
 						} else if link.cat == .file {
-							fileobj := page.collection.file_get(link.filename) or {
+							collection := book.tree.collection_get(page.collection_name) or {
+								panic('couldnt find book collection')
+							}
+							fileobj := collection.file_get(link.filename) or {
 								book.error(
 									cat: .file_not_found
-									msg: '${page.path.path}: Cannot find file ${link.filename} in ${page.collection.name}'
+									msg: '${page.path.path}: Cannot find file ${link.filename} in ${page.collection_name}'
 								)
 								continue
 							}
 							// book.files['${fileobj.collection.name}:${fileobj.name}'] = fileobj
 						} else if link.cat == .image {
-							imageobj := page.collection.image_get(link.filename) or {
+							collection := book.tree.collection_get(page.collection_name) or {
+								panic('couldnt find book collection')
+							}
+							imageobj := collection.image_get(link.filename) or {
 								book.error(
 									cat: .image_not_found
-									msg: '${page.path.path}: Cannot find image ${link.filename} in ${page.collection.name}'
+									msg: '${page.path.path}: Cannot find image ${link.filename} in ${page.collection_name}'
 								)
 								continue
 							}
@@ -295,7 +307,7 @@ fn (mut book MDBook) link_pages_files_images() ! {
 				print('itemsend')
 			}
 			print('parafsend')
-		}
+		} 
 		print('filterend')
 	}
 	print('pageend')
@@ -307,8 +319,11 @@ fn (mut book MDBook) errors_report() ! {
 	// Look for errors in linked collections
 	mut collection_errors := map[string]&Collection{}
 	for _, mut page in book.pages {
-		if page.collection.errors.len > 0 {
-			collection_errors[page.collection.name] = page.collection
+		collection := book.tree.collection_get(page.collection_name) or {
+			panic('couldnt find book collection')
+		}
+		if collection.errors.len > 0 {
+			collection_errors[page.collection_name] = &collection
 		}
 	}
 
@@ -379,7 +394,7 @@ fn (mut book MDBook) export_linked_pages(md_path string, mut linked_pages []&Pag
 		if page_linked.pages_linked.len > 0 {
 			book.export_linked_pages(md_path, mut page_linked.pages_linked)!
 		}
-		dest := '${md_path}/${page_linked.collection.name}/${page_linked.pathrel}'
+		dest := '${md_path}/${page_linked.collection_name}/${page_linked.pathrel}'
 		book.tree.logger.info('export: ${dest}')
 		page_linked.save(dest: dest)!
 	}
@@ -394,7 +409,7 @@ fn (mut book MDBook) export() ! {
 		if page.pages_linked.len > 0 {
 			book.export_linked_pages(md_path, mut page.pages_linked)!
 		}
-		dest := '${md_path}/${page.collection.name}/${page.pathrel}'
+		dest := '${md_path}/${page.collection_name}/${page.pathrel}'
 		book.tree.logger.info('export page: ${dest}')
 		page.save(dest: dest)!
 	}

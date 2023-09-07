@@ -6,10 +6,18 @@ import os
 const testpath = os.dir(@FILE) + '/../chapter1'
 
 fn do() ! {
-	knowledgetree.new()!
-	knowledgetree.scan(path: testpath, heal: false)!
+	tree_name:= 'Kapok'
+	knowledgetree.new(name: tree_name)!
+	knowledgetree.scan(
+		name: tree_name
+		path: testpath,
+		heal: false
+	)!
 
-	mut c := knowledgetree.collection_get(name:'solution')!
+	mut c := knowledgetree.collection_get(
+		treename: tree_name
+		name:'solution'
+	)!
 
 	assert c.page_exists('grant')
 	assert c.page_exists('grant3') == false
