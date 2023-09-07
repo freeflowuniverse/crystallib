@@ -70,6 +70,7 @@ pub mut:
 	path      string // path exists
 	dest      string // path where book will be generated
 	dest_md   string // path where the md files will be generated
+	tree      Tree             [str: skip]
 	git_url   string
 	git_reset bool
 	git_root  string // in case we want to checkout code on other location
@@ -90,7 +91,7 @@ pub mut:
 // if dest not filled in will be /tmp/mdbook_export/$name
 // if dest_md not filled in will be /tmp/mdbook/$name
 //
-pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
+pub fn book_new(args_ BookNewArgs) !&MDBook {
 	mut args := args_
 	args.name = texttools.name_fix_no_underscore_no_ext(args.name)
 	if args.name == '' {
@@ -121,9 +122,10 @@ pub fn (mut l Tree) book_new(args_ BookNewArgs) !&MDBook {
 	}
 	p.path_normalize()! // make sure its all lower case and name is proper
 
+	mut tree := Tree{...args.tree} // reference to clone of seed tree
 	mut book := &MDBook{
 		name: args.name
-		tree: &l
+		tree: &tree
 		path: p
 		dest: args.dest
 		dest_md: args.dest_md

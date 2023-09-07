@@ -21,8 +21,15 @@ fn do() ! {
 
 	tr.macroprocessor_add(mut &mp)!
 
-	tr.scan(path: wikipath, heal: false)!
-	mut book := tr.book_new(path: '${wikipath}', name: 'mybook')!
+	tr.scan(
+		path: wikipath,
+		heal: false
+	)!
+	mut book := knowledgetree.book_new(
+		path: '${wikipath}',
+		name: 'mybook',
+		tree: tr
+	)!
 	book.read()! // will generate and open	
 
 	// println('')

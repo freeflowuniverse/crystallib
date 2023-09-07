@@ -70,7 +70,11 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 						return
 					}
 					'.book' {
-						tree.book_new(path: path.path, name: name)!
+						book_new(
+							path: path.path,
+							name: name
+							tree: tree
+						)!
 						return
 					}
 					else {

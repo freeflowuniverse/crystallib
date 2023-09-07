@@ -13,7 +13,11 @@ pub fn (mut tree Tree) execute(parser actions.Actions) ! {
 				book_path := action.params.get('path')!
 				book_dest := action.params.get_default('dest', 'mdbook_${book_name}')!
 
-				tree.book_new(path: book_path, name: book_name, dest: book_dest)!
+				book_new(
+					path: book_path,
+					name: book_name, 
+					dest: book_dest
+				)!
 			}
 			'collection.add' {
 				collection_name := action.params.get('name')!
