@@ -70,7 +70,7 @@ pub mut:
 	path      string // path exists
 	dest      string // path where book will be generated
 	dest_md   string // path where the md files will be generated
-	tree_name      string
+	tree_name string
 	git_url   string
 	git_reset bool
 	git_root  string // in case we want to checkout code on other location
@@ -127,8 +127,8 @@ pub fn book_create(args_ BookNewArgs) !&MDBook {
 	}
 	p.path_normalize()! // make sure its all lower case and name is proper
 
-	mut tree := Tree{} // reference to clone of seed tree
-	rlock {
+	mut tree := knowledgetrees[args.tree_name] // reference to clone of seed tree
+	rlock knowledgetrees {
 		tree = knowledgetrees[args.tree_name]
 	}
 
@@ -143,8 +143,11 @@ pub fn book_create(args_ BookNewArgs) !&MDBook {
 	book.reset()! // clean the destination
 	book.load_summary()!
 	book.fix_summary()!
+	println('pause')
+	println(book.pages.values().map('${it.doc}').join('\n NEXT:'))
 	book.link_pages_files_images()!
 	book.errors_report()!
+
 	book.export()!
 
 	return book
@@ -199,6 +202,7 @@ fn (mut book MDBook) fix_summary() ! {
 							// now we can process the page where the link goes to
 							if collection.page_exists(pagename) {
 								page := collection.page_get(pagename)!
+								println('here we go ${page.doc}')
 								book.tree.logger.debug('found page: ${page.path.path}')
 								newlink := '[${link.description}](${collectionname}/${page.pathrel})'
 								book.pages['${collection.name}:${page.name}'] = page
@@ -242,8 +246,9 @@ fn (mut book MDBook) fix_summary() ! {
 fn (mut book MDBook) link_pages_files_images() ! {
 	for _, page in book.pages {
 		println('page ${page.name} collection ${page.collection_name}*****')
+		println('page_content ${page.doc}')
 
-		doc := page.doc or {return}
+		doc := page.doc or { return }
 		for paragraph in doc.items.filter(it is markdowndocs.Paragraph) {
 			if paragraph is markdowndocs.Paragraph {
 				for item in paragraph.items {
@@ -307,7 +312,7 @@ fn (mut book MDBook) link_pages_files_images() ! {
 				print('itemsend')
 			}
 			print('parafsend')
-		} 
+		}
 		print('filterend')
 	}
 	print('pageend')
@@ -320,6 +325,7 @@ fn (mut book MDBook) errors_report() ! {
 	mut collection_errors := map[string]&Collection{}
 	for _, mut page in book.pages {
 		collection := book.tree.collection_get(page.collection_name) or {
+			println('right here: ${page.collection_name}')
 			panic('couldnt find book collection')
 		}
 		if collection.errors.len > 0 {
@@ -411,6 +417,7 @@ fn (mut book MDBook) export() ! {
 		}
 		dest := '${md_path}/${page.collection_name}/${page.pathrel}'
 		book.tree.logger.info('export page: ${dest}')
+		println('dirtylog: ${page.doc}')
 		page.save(dest: dest)!
 	}
 

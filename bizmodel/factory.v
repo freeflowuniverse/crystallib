@@ -2,7 +2,7 @@ module bizmodel
 
 import freeflowuniverse.crystallib.spreadsheet
 import freeflowuniverse.crystallib.texttools
-// import freeflowuniverse.crystallib.knowledgetree
+import freeflowuniverse.crystallib.knowledgetree
 import freeflowuniverse.crystallib.baobab.actions
 // import freeflowuniverse.crystallib.baobab.hero
 // import freeflowuniverse.crystallib.baobab.context
@@ -12,12 +12,11 @@ __global (
 	bizmodels shared map[string]BizModel
 )
 
-
 pub struct BizModel {
 pub mut:
-	sheet   spreadsheet.Sheet
-	params  BizModelArgs
-	currencies currency.Currencies
+	sheet  spreadsheet.Sheet
+	params BizModelArgs
+	// currencies currency.Currencies
 }
 
 [params]
@@ -31,22 +30,26 @@ pub mut:
 	git_pull    bool
 	git_branch  string
 	mdbook_name string // if empty will be same as name of bizmodel
-	mdbook_path string // if empty is /tmp/mdbooks/$name
+	mdbook_path string
+	mdbook_dest string // if empty is /tmp/mdbooks/$name
 }
 
 pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 	mut args := args_
 
-	mut cs:=currency.new()
+	// mut cs := currency.new()
 
-	mut sh := spreadsheet.sheet_new(currencies:cs)!
+	mut sh := spreadsheet.sheet_new()!
 
 	mut bm := BizModel{
 		sheet: sh
 		params: args
-		currencies: cs
+		// currencies: cs
 	}
 
+	lock bizmodels {
+		bizmodels[args.name] = bm
+	}
 
 	if args.name == '' {
 		args.name = texttools.name_fix(args.name)
@@ -56,8 +59,21 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 		args.mdbook_name = args.name
 	}
 
-
 	bm.load()!
+
+	tree_name := 'kapok'
+	knowledgetree.new(name: tree_name)!
+	knowledgetree.scan(
+		name: tree_name
+		path: args.path
+		// heal: true
+	)!
+
+	rlock knowledgetrees {
+		tree := knowledgetrees['kapok']
+		print('start:')
+		println(tree.collections.values().map(it.pages.values().map('${it.doc}')))
+	}
 
 	// mut tree := args.context.knowledgetree('bizmodel_${args.name}')!
 
@@ -79,16 +95,16 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 
 	// tree.scan(path: args.path)!
 
-	// mut book := knowledgetree.book_create(
-	// 	path: '${wikipath}'
-	// 	name: args.mdbook_name
-	// 	tree: tree
-	// 	dest: args.mdbook_path
-	// )!
+	mut book := knowledgetree.book_create(
+		path: args.mdbook_path
+		name: args.mdbook_name
+		tree_name: tree_name
+		dest: args.mdbook_dest
+	)!
 
-	mut book:=knowledgetree.MDBook{}
+	// mut book := knowledgetree.MDBook{}
 
-	return book
+	return *book
 }
 
 pub fn (mut m BizModel) load() ! {

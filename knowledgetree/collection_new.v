@@ -24,6 +24,7 @@ pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 	mut pp := pathlib.get_dir(args.path, false)! // will raise error if path doesn't exist
 	mut collection := &Collection{
 		name: args.name
+		tree_name: tree.name
 		path: pp
 		heal: args.heal
 	}
@@ -31,6 +32,9 @@ pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 		collection.scan()!
 	}
 	if args.heal {
+		rlock knowledgetrees {
+			println('hereya0: ${knowledgetrees['kapok']}')
+		}
 		collection.fix()!
 	}
 
@@ -40,7 +44,9 @@ pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 
 // path is the full path
 fn (mut collection Collection) scan_internal(mut p pathlib.Path) ! {
-	$if debug {println('scan ${p.path}')}
+	$if debug {
+		println('scan ${p.path}')
+	}
 	mut llist := p.list(recursive: false)!
 	for mut p_in in llist {
 		if p_in.exists() == false {
