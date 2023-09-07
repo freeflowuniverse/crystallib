@@ -2,6 +2,7 @@ module actionsexecutor
 
 import freeflowuniverse.crystallib.baobab.actions
 
+
 fn git(mut actions actions.Actions, action action.Action) ! {
 	if action.name == 'init' {
 		// means we support initialization afterwards
@@ -9,7 +10,7 @@ fn git(mut actions actions.Actions, action action.Action) ! {
 	}
 
 	if action.name == 'get' {
-		mut gs := c.gitstructure()!
+		mut gs := gittools.new()!
 		url := action.params.get('url')!
 		branch := action.params.get_default('branch', '')!
 		reset := action.params.get_default_false('reset')!
