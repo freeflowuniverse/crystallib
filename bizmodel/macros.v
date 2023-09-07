@@ -10,8 +10,7 @@ pub struct MacroProcessorBizmodel {
 }
 
 pub fn macroprocessor_new(mut s spawner.Spawner) MacroProcessorBizmodel {
-	return MacroProcessorBizmodel{
-	}
+	return MacroProcessorBizmodel{}
 }
 
 pub fn process(code string) !knowledgetree.MacroResult {
@@ -34,10 +33,17 @@ pub fn process(code string) !knowledgetree.MacroResult {
 				title: p.get_default('title', '')!
 				rowname: p.get_default_true('rowname')
 			}
-			// r.result = mp.spawner.rpc(mut tname: 'bizmodel', method: 'WIKI', val: json.encode(args))!
-			// r.result+="<BR>"
 
-			//TODO: use the global spreadsheet to get the results
+			rlock bizmodels {
+				mut model := bizmodels['default']
+				r.result = model.sheet.wiki(args) or { panic(err) }
+				println('debugz: ${r.result}')
+			}
+			// r.result = m.sheet.wiki(data)
+			// r.result = mp.spawner.rpc(mut tname: 'bizmodel', method: 'WIKI', val: json.encode(args))!
+			r.result += '<BR>'
+
+			// TODO: use the global spreadsheet to get the results
 
 			return r
 		}
@@ -88,11 +94,37 @@ pub fn process(code string) !knowledgetree.MacroResult {
 				title: title
 				size: size
 			}
-			r.result = mp.spawner.rpc(mut
-				tname: 'bizmodel'
-				method: chart_methodname
-				val: json.encode(args)
-			)!
+
+			mut model := BizModel{}
+			rlock bizmodels {
+				model = bizmodels['default']
+			}
+
+			match action.name {
+				'graph_title_row' {
+					r.result = model.sheet.wiki_title_chart(args)
+				}
+				'graph_line_row' {
+					r.result = model.sheet.wiki_line_chart(args) or { panic(err) }
+				}
+				'graph_bar_row' {
+					r.result = model.sheet.wiki_bar_chart(args) or { panic(err) }
+				}
+				'graph_pie_row' {
+					r.result = model.sheet.wiki_pie_chart(args) or { panic(err) }
+				}
+				else {
+					panic('unexpected action name ${action.name}')
+				}
+			}
+
+			println('debugz: ${r.result}')
+
+			// r.result = mp.spawner.rpc(mut
+			// 	tname: 'bizmodel'
+			// 	method: chart_methodname
+			// 	val: json.encode(args)
+			// )!
 			r.result += '\n'
 			return r
 		}
