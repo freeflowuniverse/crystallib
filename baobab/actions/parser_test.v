@@ -5,11 +5,11 @@ import os
 const testpath = os.dir(@FILE) + '/testdata'
 
 const text = "
-//select the book, can come from context as has been set before
-//now every person added will be added in this book
+//select the circle, can come from context as has been set before
+//now every person added will be added in this circle
 !!actor_select people
 
-//delete everything as found in current book
+//delete everything as found in current circle
 !!person_delete cid:1gt
 
 !!person_define
@@ -23,7 +23,7 @@ const text = "
   email: 'adnan@threefold.io,fatayera@threefold.io'
 
 !!circle_link
-//can define as cid or as name, name needs to be in same book
+//can define as cid or as name, name needs to be in same circle
   person: '1gt'
   //can define as cid or as name
   circle:tftech         
@@ -60,7 +60,7 @@ const text = "
   cid: 'eg'
   name: despiegk
 
-!!select_book bbb
+!!select_circle bbb
 "
 
 fn test_parse_into_blocks() {
@@ -109,7 +109,7 @@ fn test_dir_load() {
 	mut a := actionsmgr.actions.last()
 	assert a.name == 'select'
 	assert a.actor == 'people'
-	assert a.book == 'aaa'
+	assert a.circle == 'aaa'
 }
 
 fn test_text_add() ! {

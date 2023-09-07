@@ -7,6 +7,7 @@ import os
 const collections_path = os.dir(@FILE) + '/testdata/collections'
 
 const book1_path = os.dir(@FILE) + '/testdata/book1'
+
 const book1_dest = os.dir(@FILE) + '/testdata/_book1'
 
 fn config_tree() !Tree {
@@ -41,24 +42,24 @@ fn config_tree() !Tree {
 fn test_book_reset() {
 	tree := config_tree()!
 	mut book := book_new(
-		name: 'book1',
-		path: knowledgetree.book1_path,
-		dest: book1_dest,
+		name: 'book1'
+		path: knowledgetree.book1_path
+		dest: knowledgetree.book1_dest
 		tree: tree
 	)!
 
-	os.mkdir(book1_dest)!
-	assert os.exists(book1_dest)
+	os.mkdir(knowledgetree.book1_dest)!
+	assert os.exists(knowledgetree.book1_dest)
 	book.reset()!
-	assert !os.exists(book1_dest)
+	assert !os.exists(knowledgetree.book1_dest)
 }
 
 fn test_book_load_summary() {
 	tree := config_tree()!
 	mut book := book_new(
-		name: 'book1',
-		path: knowledgetree.book1_path,
-		dest: book1_dest,
+		name: 'book1'
+		path: knowledgetree.book1_path
+		dest: knowledgetree.book1_dest
 		tree: tree
 	)!
 	book.load_summary()!
@@ -73,9 +74,9 @@ fn test_book_load_summary() {
 fn test_book_fix_summary() {
 	tree := config_tree()!
 	mut book := book_new(
-		name: 'book1',
-		path: knowledgetree.book1_path,
-		dest: book1_dest,
+		name: 'book1'
+		path: knowledgetree.book1_path
+		dest: knowledgetree.book1_dest
 		tree: tree
 	)!
 	book.load_summary()!
@@ -87,9 +88,9 @@ fn test_book_fix_summary() {
 fn test_book_new() {
 	tree := config_tree()!
 	mut book := book_new(
-		name: 'book1',
-		path: knowledgetree.book1_path,
-		dest: book1_dest,
+		name: 'book1'
+		path: knowledgetree.book1_path
+		dest: knowledgetree.book1_dest
 		tree: tree
 	)!
 
@@ -100,9 +101,9 @@ fn test_book_new() {
 fn test_book_export() {
 	tree := config_tree()!
 	mut book := book_new(
-		name: 'book1',
-		path: knowledgetree.book1_path,
-		dest: book1_dest,
+		name: 'book1'
+		path: knowledgetree.book1_path
+		dest: knowledgetree.book1_dest
 		tree: tree
 	) or { panic(err) }
 	// book.export() or {panic(err)}

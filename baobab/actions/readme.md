@@ -9,7 +9,7 @@ are text based representatsions of actions which need to be executed
 example
 
 ```
-!!tflibrary.booksmanager.book_add 
+!!tflibrary.circlesmanager.circle_add 
     gitsource:'books'
     path:'technology/src'
     name:technology
@@ -18,15 +18,15 @@ example
 the first one is the action, the rest are the params
 
 
-## to select domain, actor or book
+## to select domain, actor or circle
 
 ```go
 !!select_domain protocol_me
-!!select_book aaa
+!!select_circle aaa
 !!select_actor people
 ```
 
-Depending specified domain or book or actor, we make a default selection
+Depending specified domain or circle or actor, we make a default selection
 
 ## way how to use for a module
 

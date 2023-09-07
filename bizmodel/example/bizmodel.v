@@ -10,24 +10,24 @@ import freeflowuniverse.crystallib.knowledgetree
 const wikipath = os.dir(@FILE) + '/wiki'
 
 fn do() ! {
-	mut s := spawner.new()
-	mut m := bizmodel.background(mut s, path: wikipath)!
+	// mut s := spawner.new()
+	// mut m := bizmodel.background(mut s, path: wikipath)!
 
-	println(m.wiki(includefilter: ['funding'], name: 'FUNDING')!)
+	// println(m.wiki(includefilter: ['funding'], name: 'FUNDING')!)
 
-	mut tr := knowledgetree.new(mut &s)!
+	// mut tr := knowledgetree.new(mut &c)!
 
-	mut mp := bizmodel.macroprocessor_new(mut &s)
+	// mut mp := bizmodel.macroprocessor_new(mut &s)
 
-	tr.macroprocessor_add(mut &mp)!
+	// tr.macroprocessor_add(mut &mp)!
 
 	tr.scan(
-		path: wikipath,
+		path: wikipath
 		heal: false
 	)!
 	mut book := knowledgetree.book_new(
-		path: '${wikipath}',
-		name: 'mybook',
+		path: '${wikipath}'
+		name: 'mybook'
 		tree: tr
 	)!
 	book.read()! // will generate and open	

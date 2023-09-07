@@ -1,6 +1,5 @@
 module actions
 
-
 fn domain_check(c string, block string) ! {
 	if c.len == 0 {
 		return error('domain not specified\nFor block: ${block}')
@@ -14,16 +13,16 @@ fn domain_check(c string, block string) ! {
 	}
 }
 
-fn book_check(c string, block string) ! {
+fn circle_check(c string, block string) ! {
 	if c.len == 0 {
-		return error('book not specified\nFor block: ${block}')
+		return error('circle not specified\nFor block: ${block}')
 	}
 
 	if c.len < 3 {
-		return error("book bad specified (len min 3), found '${c}'.\nFor block: ${block}")
+		return error("circle bad specified (len min 3), found '${c}'.\nFor block: ${block}")
 	}
 	if c.len > 20 {
-		return error("book bad specified (len max 20), found '${c}'.\nFor block: ${block}")
+		return error("circle bad specified (len max 20), found '${c}'.\nFor block: ${block}")
 	}
 }
 

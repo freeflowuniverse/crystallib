@@ -1,12 +1,12 @@
 module actions
 
 const text2 = "
-//select the book, can come from context as has been set before
-//now every person added will be added in this book
+//select the circle, can come from context as has been set before
+//now every person added will be added in this circle
 !!select_actor people
-!!select_book aaa
+!!select_circle aaa
 
-//delete everything as found in current book
+//delete everything as found in current circle
 !!person_delete cid:1g
 
 !!person_define
@@ -20,7 +20,7 @@ const text2 = "
   email: 'adnan@threefold.io,fatayera@threefold.io'
 
 !!circle_link
-//can define as cid or as name, name needs to be in same book
+//can define as cid or as name, name needs to be in same circle
   person: '1gt'
   //can define as cid or as name
   circle:tftech         
@@ -51,7 +51,7 @@ const text2 = "
 !!test_action
 	key: value
 
-!!select_book bbb
+!!select_circle bbb
 !!select_actor people
 
 !!person_define
@@ -63,43 +63,43 @@ const text2 = "
 // QUESTION: how to better organize these tests
 // ANSWER: split them up, this test is testing too much, tests should be easy to read and easy to modify
 
-fn test_filter_on_book_aaa() ! {
-	// test filter book:aaa
+fn test_filter_on_circle_aaa() ! {
+	// test filter circle:aaa
 	mut parser := new(defaultcircle: 'aaa', text: actions.text2)!
 	assert parser.actions.len == 8
-	sorted := parser.filtersort(book: 'aaa')!
+	sorted := parser.filtersort(circle: 'aaa')!
 	assert sorted.len == 7
 }
 
-fn test_filter_on_actor_people_and_book_aaa() ! {
-	// test filter book:aaa actor:people
+fn test_filter_on_actor_people_and_circle_aaa() ! {
+	// test filter circle:aaa actor:people
 	mut parser := new(defaultcircle: 'aaa', text: actions.text2)!
 	assert parser.actions.len == 8
-	sorted := parser.filtersort(actor: 'people', book: 'aaa')! // QUESTION: can you leave actor blank? ANSWER: Yes you can, I added a test on top
+	sorted := parser.filtersort(actor: 'people', circle: 'aaa')! // QUESTION: can you leave actor blank? ANSWER: Yes you can, I added a test on top
 	assert sorted.len == 6
 }
 
-fn test_filter_on_actor_people_and_book_bbb() ! {
+fn test_filter_on_actor_people_and_circle_bbb() ! {
 	// test filter actor:people
 	mut parser := new(defaultcircle: 'aaa', text: actions.text2)!
 	assert parser.actions.len == 8
-	sorted := parser.filtersort(actor: 'people', book: 'bbb')!
+	sorted := parser.filtersort(actor: 'people', circle: 'bbb')!
 	assert sorted.len == 1
 }
 
-fn test_filter_on_actor_people_and_book_ccc() ! {
-	// test filter book:ccc actor:people
+fn test_filter_on_actor_people_and_circle_ccc() ! {
+	// test filter circle:ccc actor:people
 	mut parser := new(defaultcircle: 'aaa', text: actions.text2)!
 	assert parser.actions.len == 8
-	sorted := parser.filtersort(actor: 'people', book: 'ccc')!
+	sorted := parser.filtersort(actor: 'people', circle: 'ccc')!
 	assert sorted.len == 0
 }
 
-// test filter book:aaa actor:test
-fn test_filter_on_actor_test_and_book_aaa() ! {
+// test filter circle:aaa actor:test
+fn test_filter_on_actor_test_and_circle_aaa() ! {
 	mut parser := new(defaultcircle: 'aaa', text: actions.text2)!
 	assert parser.actions.len == 8
-	sorted := parser.filtersort(actor: 'test', book: 'aaa')!
+	sorted := parser.filtersort(actor: 'test', circle: 'aaa')!
 	assert sorted.len == 1
 }
 
@@ -110,7 +110,7 @@ fn test_filter_with_names_asterix() ! {
 	assert parser.actions.map(it.name) == ['person_delete', 'person_define', 'circle_link',
 		'circle_comment', 'circle_comment', 'digital_payment_add', 'test_action', 'person_define']
 
-	sorted := parser.filtersort(actor: 'people', book: 'aaa', names_filter: ['*'])!
+	sorted := parser.filtersort(actor: 'people', circle: 'aaa', names_filter: ['*'])!
 	assert sorted.len == 6
 	assert sorted.map(it.name) == ['person_delete', 'person_define', 'circle_link', 'circle_comment',
 		'circle_comment', 'digital_payment_add']
@@ -128,7 +128,7 @@ fn test_filter_with_names_list_with_empty_string() ! {
 	assert parser.actions.map(it.name) == ['person_delete', 'person_define', 'circle_link',
 		'circle_comment', 'circle_comment', 'digital_payment_add', 'test_action', 'person_define']
 
-	sorted := parser.filtersort(actor: 'people', book: 'aaa', names_filter: [''])!
+	sorted := parser.filtersort(actor: 'people', circle: 'aaa', names_filter: [''])!
 	assert sorted.len == 0
 	assert sorted.map(it.name) == []
 }
@@ -142,7 +142,7 @@ fn test_filter_with_names_in_same_order() ! {
 
 	sorted := parser.filtersort(
 		actor: 'people'
-		book: 'aaa'
+		circle: 'aaa'
 		names_filter: [
 			'person_delete',
 			'person_define',
@@ -165,7 +165,7 @@ fn test_filter_with_names_in_different_order() ! {
 
 	sorted := parser.filtersort(
 		actor: 'people'
-		book: 'aaa'
+		circle: 'aaa'
 		names_filter: [
 			'circle_comment',
 			'person_define',
@@ -190,7 +190,7 @@ fn test_filter_with_only_two_names_in_filter() ! {
 
 	sorted := parser.filtersort(
 		actor: 'people'
-		book: 'aaa'
+		circle: 'aaa'
 		names_filter: [
 			'person_define',
 			'person_delete',

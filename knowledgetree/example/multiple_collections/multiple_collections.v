@@ -5,11 +5,13 @@ import freeflowuniverse.crystallib.knowledgetree
 import os
 
 const collections_path = os.dir(@FILE) + '/collections'
+
 const book_path = os.dir(@FILE) + '/book'
+
 const book_dest = os.dir(@FILE) + '/dest'
 
 pub fn main() {
-	do() or {panic(err)}
+	do() or { panic(err) }
 }
 
 pub fn do() ! {
@@ -28,8 +30,8 @@ pub fn do() ! {
 	)!
 
 	mut book := knowledgetree.book_new(
-		name: 'Fruits & Vegetables',
-		path: book_path,
+		name: 'Fruits & Vegetables'
+		path: book_path
 		dest: book_dest
 		tree: tree
 	)!

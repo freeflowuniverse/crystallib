@@ -145,13 +145,13 @@ fn (mut actions Actions) parse_actions(blocks Blocks) ! {
 	}
 }
 
-// go over block, fill in default book or actor if needed
+// go over block, fill in default circle or actor if needed
 fn (mut actions Actions) parse_block(block Block) ! {
 	params_ := params.parse(block.content) or { return error('Failed to parse block: ${err}') }
 	// println(block)
 
 	mut domain := ''
-	mut book := ''
+	mut circle := ''
 	mut actor := ''
 
 	name := block.name.all_after_last('.').trim_space().to_lower()
@@ -159,35 +159,35 @@ fn (mut actions Actions) parse_block(block Block) ! {
 
 	if splitted.len == 1 {
 		domain = actions.defaultdomain
-		book = actions.defaultcircle
+		circle = actions.defaultcircle
 		actor = actions.defaultactor
 	} else if splitted.len == 2 {
 		domain = actions.defaultdomain
-		book = actions.defaultcircle
+		circle = actions.defaultcircle
 		actor = block.name.all_before_last('.')
 	} else if splitted.len == 3 {
 		domain = actions.defaultdomain
-		book = splitted[0]
+		circle = splitted[0]
 		actor = splitted[1]
 	} else if splitted.len == 4 {
 		domain = splitted[0]
-		book = splitted[1]
+		circle = splitted[1]
 		actor = splitted[2]
 	} else {
 		domain = ''
-		book = ''
+		circle = ''
 		actor = ''
 		return error('max 3 . in block.\n${block}')
 	}
 
 	// !!select_domain protocol_me
-	// !!select_book aaa
+	// !!select_circle aaa
 	// !!select_actor people
 	if name == 'select_domain' {
 		actions.defaultdomain = params_.get_arg(0, 1)! // means there needs to be 1 arg
 		return
 	}
-	if name == 'select_book' {
+	if name == 'select_circle' {
 		actions.defaultcircle = params_.get_arg(0, 1)! // means there needs to be 1 arg
 		return
 	}
@@ -197,21 +197,27 @@ fn (mut actions Actions) parse_block(block Block) ! {
 	}
 
 	$if debug {
-		eprintln('${domain} - ${book} - ${actor} - ${name}')
+		eprintln('${domain} - ${circle} - ${actor} - ${name}')
 	}
 
 	domain_check(domain, block.content)!
-	book_check(book, block.content)!
+	circle_check(circle, block.content)!
 	if name != 'include' {
 		actor_check(actor, block.content)!
 	}
 
 	name_check(name, block.content)!
 
+	prio := params_.get_int_default('prio', 5)!
+	if prio > 10 {
+		return error('priority cannot be higher than 10. \n${block}')
+	}
+
 	actions.actions << Action{
 		name: name
-		book: book
+		circle: circle
 		actor: actor
 		params: params_
+		priority: prio
 	}
 }

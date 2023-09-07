@@ -70,7 +70,7 @@ pub mut:
 	path      string // path exists
 	dest      string // path where book will be generated
 	dest_md   string // path where the md files will be generated
-	tree      Tree             [str: skip]
+	tree      Tree   [str: skip]
 	git_url   string
 	git_reset bool
 	git_root  string // in case we want to checkout code on other location
@@ -122,7 +122,9 @@ pub fn book_new(args_ BookNewArgs) !&MDBook {
 	}
 	p.path_normalize()! // make sure its all lower case and name is proper
 
-	mut tree := Tree{...args.tree} // reference to clone of seed tree
+	mut tree := Tree{
+		...args.tree
+	} // reference to clone of seed tree
 	mut book := &MDBook{
 		name: args.name
 		tree: &tree

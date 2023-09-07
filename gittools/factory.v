@@ -15,15 +15,23 @@ pub mut:
 	log         bool   // means we log the git statements
 }
 
-// struct GSConfig{
-// filter string
-// multibranch bool
-// root string	//where will the code be checked out
-// pull bool   //means we will pull even if the directory exists
-// reset bool  //be careful, this means we will reset when pulling
-// light       bool  // if set then will clone only last history for all branches		
+// get new gitstructure .
+// args .
+//```
+// pub struct GSConfig {
+// 	filter      string
+// 	multibranch bool
+// 	root        string // where will the code be checked out
+// 	pull        bool   // means we will pull even if the directory exists
+// 	reset       bool   // be careful, this means we will reset when pulling
+// 	light       bool   // if set then will clone only last history for all branches		
+// 	log         bool   // means we log the git statements
 // }
-pub fn get(config GSConfig) !GitStructure {
+//```
+// has also support for os.environ variables .
+// - MULTIBRANCH .
+// - DIR_CODE , default: ${os.home_dir()}/code/ .
+pub fn new(config GSConfig) !GitStructure {
 	mut gs := GitStructure{
 		config: config
 	}

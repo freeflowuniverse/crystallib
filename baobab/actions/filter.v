@@ -7,15 +7,15 @@ pub struct FilterArgs {
 pub:
 	domain       string = 'protocol_me'
 	actor        string   // can be empty, this means will not filter based on actor
-	book         string   // can be empty, this means will not filter based on book	
+	circle       string   // can be empty, this means will not filter based on circle	
 	names_filter []string // can be empty, then no filter, unix glob filters are allowed
 }
 
-// make sure that only actions are remembered linked to the actor or book and also sorted in right order
+// make sure that only actions are remembered linked to the actor or circle and also sorted in right order
 // will also sort using the names filter
 // args ActionsGetArgs:
 //   actor    string [required]  //can be empty, this means will not filter based on actor
-//   book     string	[required]  //can be empty, this means will not filter based on book	
+//   circle     string	[required]  //can be empty, this means will not filter based on circle	
 //   names_filter    []string //can be empty, then no filter, unix glob filters are allowed
 //
 // return  []Action
@@ -26,7 +26,7 @@ pub fn (parser Actions) filtersort(args FilterArgs) ![]Action {
 		if args.domain != '' && args.domain != action.domain {
 			continue
 		}
-		if args.book != '' && args.book != '*' && args.book != action.book {
+		if args.circle != '' && args.circle != '*' && args.circle != action.circle {
 			continue
 		}
 		if args.actor != '' && args.actor != action.actor {

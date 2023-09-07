@@ -14,8 +14,8 @@ pub fn (mut tree Tree) execute(parser actions.Actions) ! {
 				book_dest := action.params.get_default('dest', 'mdbook_${book_name}')!
 
 				book_new(
-					path: book_path,
-					name: book_name, 
+					path: book_path
+					name: book_name
 					dest: book_dest
 				)!
 			}
