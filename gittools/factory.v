@@ -3,16 +3,21 @@ module gittools
 import os
 import freeflowuniverse.crystallib.pathlib
 
+
+__global (
+	instances shared map[string]GitStructure
+)
+
 [params]
 pub struct GSConfig {
 pub mut:
-	gitname     string
+	gitname     string [required]
 	filter      string
 	multibranch bool
 	root        string // where will the code be checked out
 	pull        bool   // means we will pull even if the directory exists
 	reset       bool   // be careful, this means we will reset when pulling
-	light       bool   // if set then will clone only last history for all branches		
+	light       bool = true  // if set then will clone only last history for all branches		
 	log         bool   // means we log the git statements
 }
 
@@ -38,6 +43,11 @@ pub fn new(config GSConfig) !GitStructure {
 		config: config
 	}
 
+	if gs.config.gitname == '' {
+		return error("need to provide gitname for gitstructure")
+	}
+
+
 	if 'MULTIBRANCH' in os.environ() {
 		gs.config.multibranch = true
 	}
@@ -57,11 +67,56 @@ pub fn new(config GSConfig) !GitStructure {
 
 	gs.check()!
 
+	lock instances{
+		instances[gs.config.gitname] = gs
+	}
+
 	return gs
 }
 
+[params]
+pub struct GitToolsGetArgs{
+pub mut:
+	gitname string
+}
+pub fn get(args_ GitToolsGetArgs) !GitStructure {
+	mut args:=args_
+	if args.gitname==""{
+		args.gitname="default"
+	}
+	if args.gitname in instances{
+		rlock instances{		
+			return instances[args.gitname] //Is that now copy?
+		}
+	}else{
+		lock instances{	
+			instances[args.gitname]=new(gitname:args.gitname)!
+		}
+	}
+
+	return error("Canot find gitstructure with name $args.gitname")
+}
+
+
+pub fn reload(args_ GitToolsGetArgs) !GitStructure {
+	mut args:=args_
+	if args.gitname==""{
+		args.gitname="default"
+	}	
+	lock instances{
+		if args.gitname in instances{
+			mut gs:= instances[args.gitname]
+			gs.repos=[]GitRepo{}
+			gs.check()!
+		}
+	}
+	return error("Canot find gitstructure with name $args.gitname to reload.")
+}
+	
+
 pub struct CodeGetFromUrlArgs {
 pub mut:
+	gitname string //optional, if not mentioned is default
 	url    string
 	branch string
 	pull   bool   // will pull if this is set
@@ -89,7 +144,7 @@ pub mut:
 // 	reset bool //this means will pull and reset all changes .
 // ```
 pub fn code_get(args CodeGetFromUrlArgs) !string {
-	mut gs := get(root: args.root)!
+	mut gs := get(gitname:args.gitname)!
 	mut gr := gs.repo_get_from_url(url: args.url, pull: args.pull, reset: args.reset)!
 	return gr.path_content_get()
 }

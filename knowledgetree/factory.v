@@ -1,10 +1,25 @@
 module knowledgetree
 
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.texttools
 // import freeflowuniverse.crystallib.baobab.context
 import log
 
-pub fn new( name string) !Tree {
+__global (
+	knowledgetrees shared map[string]Tree
+)
+
+[params]
+pub struct ArgsNew{
+pub mut:
+	name string = "default"
+}
+
+//get a new tree initialized 
+//will create a new tree instance, be careful
+pub fn new( args_  ArgsNew) ! {
+	mut args:=args_
+	args.name=texttools.name_fix(args.name)
 	level := match osal.env_get_default('KNOWLEDGETREE_LOG_LEVEL', 'INFO') {
 		'DEBUG' {
 			log.Level.debug
@@ -13,13 +28,52 @@ pub fn new( name string) !Tree {
 			log.Level.info
 		}
 	}
-	mut t := Tree{
-		name: name
-		// context: c
-		logger: log.Log{
-			level: level
+	lock knowledgetrees{
+		mut t := Tree{
+			name: args.name
+			// context: c
+			logger: log.Log{
+				level: level
+			}
 		}
+		t.init()! // initialize mdbooks embed logic
+		knowledgetrees[args.name] = t
 	}
-	t.init()! // initialize mdbooks embed logic
-	return t
 }
+
+pub fn scan( args_ TreeScannerArgs) ! {
+	mut args:=args_
+	args.name=texttools.name_fix(args.name)	
+	rlock knowledgetrees{
+		mut tree:=knowledgetrees[args.name] or { return error("cannot find tree: $args.name") }
+		tree.scan(args)!
+	}
+}
+
+[params]
+pub struct ArgsGet{
+pub mut:
+	treename string = "default"
+	name string 
+}
+
+pub fn collection_get( args_ ArgsGet) !Collection {
+	mut args:=args_
+	args.treename=texttools.name_fix(args.treename)
+	rlock knowledgetrees{
+		mut tree:=knowledgetrees[args.treename] or { return error("cannot find tree: ${args.treename}") }
+		return tree.collection_get(args.name)!
+	}
+	panic("should not get here")
+
+}
+
+// pub fn mdbook_generate( treename string, collectionname string) !Collection {
+// 	treename2:=texttools.name_fix(treename)
+// 	rlock knowledgetrees{
+// 		mut tree:=knowledgetrees[treename2] or { return error("cannot find tree: $treename2") }
+// 		return tree.collection_get(collectionname)!
+// 	}
+// 	panic("should not get here")
+
+// }

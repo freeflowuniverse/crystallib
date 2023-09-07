@@ -26,14 +26,13 @@ pub mut:
 	errors []CollectionError
 	state  CollectionState
 	heal   bool
-	tree   &Tree             [str: skip]
 }
 
 // walk over one specific collection, find all files and pages
 pub fn (mut collection Collection) scan() ! {
-	collection.tree.logger.debug('load collection: ${collection.name} - ${collection.path.path}')
+	$if debug {println('load collection: ${collection.name} - ${collection.path.path}')}
 	collection.scan_internal(mut collection.path)!
-	collection.tree.logger.debug('scan done')
+	$if debug {println('scan done')}
 }
 
 ///////////// PAGE/IMAGE/FILE GET
@@ -162,7 +161,7 @@ pub fn (collection Collection) file_exists(name string) bool {
 // remember the file, so we know if we have duplicates
 // also fixes the name
 fn (mut collection Collection) file_image_remember(mut p Path) ! {
-	collection.tree.logger.debug('file or image remember: ${p.path}')
+	$if debug {println('file or image remember: ${p.path}')}
 	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: true)! // TODO: seems like some overkill
 	p = ptr.path
 	if ptr.is_image() {
@@ -170,7 +169,7 @@ fn (mut collection Collection) file_image_remember(mut p Path) ! {
 			mut image := imagemagick.image_new(mut p) or {
 				panic('Cannot get new image:\n${p}\n${err}')
 			}
-			collection.tree.logger.debug('downsizing image ${p.path}')
+			$if debug {println('downsizing image ${p.path}')}
 			image.downsize(backup: false)!
 			// after downsize it could be the path has been changed, need to set it on the file
 			if p.path != image.path.path {
@@ -192,7 +191,6 @@ fn (mut collection Collection) file_image_remember(mut p Path) ! {
 			filedouble.path = filedouble.path
 			filedouble.init()
 			if collection.heal {
-				collection.tree.logger.info('delete double image: ${p.path}')
 				p.delete()!
 			}
 			return
@@ -217,7 +215,7 @@ fn (mut collection Collection) file_image_remember(mut p Path) ! {
 // add a page to the collection, specify existing path
 // the page will be parsed as markdown
 pub fn (mut collection Collection) page_new(mut p Path) ! {
-	collection.tree.logger.debug('collection: ${collection.name} page new: ${p.path}')
+	$if debug {println('collection: ${collection.name} page new: ${p.path}')}
 	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: true)!
 	// in case heal is true pointerpath_new can normalize the path
 	p = ptr.path
@@ -244,7 +242,7 @@ pub fn (mut collection Collection) page_new(mut p Path) ! {
 
 // add a file to the collection, specify existing path
 pub fn (mut collection Collection) file_new(mut p Path) ! {
-	collection.tree.logger.debug('collection: ${collection.name} file new: ${p.path}')
+	$if debug {println('collection: ${collection.name} file new: ${p.path}')}
 	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: true)!
 	// in case heal is true pointerpath_new can normalize the path
 	p = ptr.path
@@ -267,7 +265,7 @@ pub fn (mut collection Collection) file_new(mut p Path) ! {
 
 // add a image to the collection, specify existing path
 pub fn (mut collection Collection) image_new(mut p Path) ! {
-	collection.tree.logger.debug('collection: ${collection.name} image new: ${p.path}')
+	$if debug {println('collection: ${collection.name} image new: ${p.path}')}
 	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: true)!
 	if ptr.pointer.name.starts_with('.') {
 		panic('should not start with . \n${p}')
@@ -296,7 +294,7 @@ pub fn (mut collection Collection) image_new(mut p Path) ! {
 
 // go over all pages, fix the links, check the images are there
 pub fn (mut collection Collection) fix() ! {
-	collection.tree.logger.debug('collection fix: ${collection.name}')
+	$if debug {println('collection fix: ${collection.name}')}
 	for _, mut page in collection.pages {
 		page.fix()!
 	}

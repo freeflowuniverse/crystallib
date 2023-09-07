@@ -26,7 +26,6 @@ pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 		name: args.name
 		path: pp
 		heal: args.heal
-		tree: &tree
 	}
 	if args.load || args.heal {
 		collection.scan()!
@@ -41,7 +40,7 @@ pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 
 // path is the full path
 fn (mut collection Collection) scan_internal(mut p pathlib.Path) ! {
-	collection.tree.logger.debug('scan ${p.path}')
+	$if debug {println('scan ${p.path}')}
 	mut llist := p.list(recursive: false)!
 	for mut p_in in llist {
 		if p_in.exists() == false {

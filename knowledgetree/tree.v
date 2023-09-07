@@ -2,8 +2,8 @@ module knowledgetree
 
 import log
 import v.embed_file
-import freeflowuniverse.crystallib.baobab.spawner
-import freeflowuniverse.crystallib.baobab.context
+// import freeflowuniverse.crystallib.baobab.spawner
+// import freeflowuniverse.crystallib.baobab.context
 
 [heap]
 pub struct Tree {
@@ -16,7 +16,7 @@ pub mut:
 	state          TreeState
 	// macroprocessors []&IMacroProcessor
 	// spawner         &spawner.Spawner
-	context context.Context
+	// context context.Context
 }
 
 pub enum TreeState {

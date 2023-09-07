@@ -8,6 +8,7 @@ import os
 [params]
 pub struct TreeScannerArgs {
 pub mut:
+	name      string = "default" //name of tree
 	path      string
 	heal      bool // healing means we fix images, if selected will automatically load, remove stale links
 	load      bool = true
@@ -23,13 +24,14 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 	// $if debug{println(" - collections find recursive: $path.path")}
 	mut args_ := args
 	if args_.git_url.len > 0 {
-		mut gs := gittools.get(root: args_.git_root)!
-		mut gr := gs.repo_get_from_url(
-			url: args_.git_url
-			pull: args_.git_pull
-			reset: args_.git_reset
-		)!
-		args_.path = gr.path_content_get()
+		panic("fix git")
+		// mut gs := gittools.get(root: args_.git_root)!
+		// mut gr := gs.repo_get_from_url(
+		// 	url: args_.git_url
+		// 	pull: args_.git_pull
+		// 	reset: args_.git_reset
+		// )!
+		// args_.path = gr.path_content_get()
 	}
 
 	if args_.path.len < 3 {
