@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.baobab.spawner
+import freeflowuniverse.crystallib.baobab.context
 import os
 import freeflowuniverse.crystallib.bizmodel
 import freeflowuniverse.crystallib.knowledgetree
@@ -10,26 +10,10 @@ import freeflowuniverse.crystallib.knowledgetree
 const wikipath = os.dir(@FILE) + '/wiki'
 
 fn do() ! {
-	// mut s := spawner.new()
-	// mut m := bizmodel.background(mut s, path: wikipath)!
+	// mut c := context.new()!
 
-	// println(m.wiki(includefilter: ['funding'], name: 'FUNDING')!)
+	bizmodel.new(path: wikipath)!
 
-	// mut tr := knowledgetree.new(mut &c)!
-
-	// mut mp := bizmodel.macroprocessor_new(mut &s)
-
-	// tr.macroprocessor_add(mut &mp)!
-
-	tr.scan(
-		path: wikipath
-		heal: false
-	)!
-	mut book := knowledgetree.book_new(
-		path: '${wikipath}'
-		name: 'mybook'
-		tree: tr
-	)!
 	book.read()! // will generate and open	
 
 	// println('')

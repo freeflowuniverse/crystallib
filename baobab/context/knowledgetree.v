@@ -1,34 +1,21 @@
 module context
 
 import freeflowuniverse.crystallib.knowledgetree
+import freeflowuniverse.crystallib.texttools
 
-
-
-pub fn (mut c Context) knowledgetree() !knowledgetree.Tree {
-	if c.knowledgetree == none{
-		c.knowledgetree = knowledgetree.new(mut c)!	
+pub fn (mut c Context) knowledgetree(name_ string) !knowledgetree.Tree {
+	name := texttools.name_fix(name_)
+	if name !in c.knowledgetree {
+		c.knowledgetree[name] = knowledgetree.new(mut c, name)!
 	}
-	return c.knowledgetree or {panic(err)}
+	return c.knowledgetree[name] or { panic(err) }
 }
 
+pub fn knowledgetree_init(mut c Context, mut actions Actions, action Action) ! {
+	if action.name == 'init' {
+		mut name := action.params.get_string('name')!
+		name = texttools.name_fix(name)
 
-
-fn (mut c Context) knowledgetree_init(mut actions Actions, action Action) ! {
-
-
-	if action.name == "init"{
-
-		filter:=action.params.get_string_default(filter,"")!
-		root:=action.params.get_string_default(root,"")!
-		pull:=action.params.get_default_false(pull)!
-		reset:=action.params.get_default_false(reset)!
-		light:=action.params.get_default_true(light)!
-		log:=action.params.get_default_false(log)!
-
-		c.gitstructure:=gittools.new(filter:filter,root:root,pull:pull,reset:reset,light:light,log:log)!
-
+		c.knowledgetree(name)!
 	}
-
-
 }
-

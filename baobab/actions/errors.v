@@ -1,6 +1,6 @@
 module actions
 
-import freeflowuniverse.crystallib.params
+
 import freeflowuniverse.crystallib.texttools
 
 pub struct ActionError {
@@ -9,7 +9,7 @@ pub mut:
 	msg    string [required]
 }
 
-pub fn (actions Actions) error_add(action Action, msg string) {
+pub fn (mut actions Actions) error_add(action Action, msg string) {
 	e := ActionError{
 		action: action
 		msg: msg
@@ -17,7 +17,7 @@ pub fn (actions Actions) error_add(action Action, msg string) {
 	actions.errors << e
 }
 
-pub fn (error Error) str() string {
+pub fn (error ActionError) str() string {
 	mut out := '#### Error\n\n'
 	out += ' - action:${error.action.name}'
 	if error.msg.contains('\n') {

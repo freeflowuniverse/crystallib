@@ -4,10 +4,13 @@ import freeflowuniverse.crystallib.baobab.actions
 import freeflowuniverse.crystallib.baobab.context
 
 fn git(mut c context.Context, mut actions actions.Actions, action action.Action) ! {
+	if action.name == 'init' {
+		// means we support initialization afterwards
+		c.bizmodel_init(mut actions, action)!
+	}
+
 	if action.name == 'get' {
-		name := action.params.get('name')!
-		gitname := action.params.get_default('gitname', 'default')!
-		mut gs := c.gitstructure(gitname)!
+		mut gs := c.gitstructure()!
 		url := action.params.get('url')!
 		branch := action.params.get_default('branch', '')!
 		reset := action.params.get_default_false('reset')!

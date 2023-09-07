@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.pathlib
 [params]
 pub struct GSConfig {
 pub mut:
+	gitname     string
 	filter      string
 	multibranch bool
 	root        string // where will the code be checked out
@@ -19,6 +20,7 @@ pub mut:
 // args .
 //```
 // pub struct GSConfig {
+//	gitname     string
 // 	filter      string
 // 	multibranch bool
 // 	root        string // where will the code be checked out

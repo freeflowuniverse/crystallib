@@ -1,10 +1,10 @@
 module knowledgetree
 
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.baobab.spawner
+// import freeflowuniverse.crystallib.baobab.context
 import log
 
-pub fn new(mut s spawner.Spawner) !Tree {
+pub fn new( name string) !Tree {
 	level := match osal.env_get_default('KNOWLEDGETREE_LOG_LEVEL', 'INFO') {
 		'DEBUG' {
 			log.Level.debug
@@ -14,11 +14,12 @@ pub fn new(mut s spawner.Spawner) !Tree {
 		}
 	}
 	mut t := Tree{
-		spawner: s
+		name: name
+		// context: c
 		logger: log.Log{
 			level: level
 		}
 	}
-	t.init()! // initialize mdbooks logic
+	t.init()! // initialize mdbooks embed logic
 	return t
 }

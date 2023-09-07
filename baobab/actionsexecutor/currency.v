@@ -1,6 +1,5 @@
 module actionsexecutor
 
-
 // fn currency_actions(actions_ []actions.Action) ! {
 // 	mut actions2 := actions.filtersort(actions: actions_, actor: 'currency', book: '*')!
 // 	if actions2.len == 0 {

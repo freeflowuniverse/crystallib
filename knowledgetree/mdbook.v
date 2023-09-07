@@ -77,6 +77,11 @@ pub mut:
 	git_pull  bool
 }
 
+// export an mdbook to its html representation and open the html
+pub fn (mut book MDBook) read() ! {
+	osal.exec(cmd: 'open ${book.html_path('').path}/index.html', shell: true)!
+}
+
 // get a new book
 //
 // name      string [required] // name of the book
@@ -91,7 +96,7 @@ pub mut:
 // if dest not filled in will be /tmp/mdbook_export/$name
 // if dest_md not filled in will be /tmp/mdbook/$name
 //
-pub fn book_new(args_ BookNewArgs) !&MDBook {
+pub fn book_create(args_ BookNewArgs) !&MDBook {
 	mut args := args_
 	args.name = texttools.name_fix_no_underscore_no_ext(args.name)
 	if args.name == '' {
@@ -138,6 +143,8 @@ pub fn book_new(args_ BookNewArgs) !&MDBook {
 	book.fix_summary()!
 	book.link_pages_files_images()!
 	book.errors_report()!
+	book.export_linked_pages()!
+	book.export()!
 
 	return book
 }
@@ -154,7 +161,7 @@ fn (mut book MDBook) load_summary() ! {
 }
 
 // reset all, just to make sure we regenerate fresh
-pub fn (mut mdbook MDBook) reset() ! {
+fn (mut mdbook MDBook) reset() ! {
 	// delete where the mdbook are created
 	mut a := pathlib.get(mdbook.dest)
 	a.delete()!
@@ -296,7 +303,7 @@ fn (mut book MDBook) link_pages_files_images() ! {
 	book.tree.logger.info('finished linking pages files images')
 }
 
-pub fn (mut book MDBook) errors_report() ! {
+fn (mut book MDBook) errors_report() ! {
 	// Look for errors in linked collections
 	mut collection_errors := map[string]&Collection{}
 	for _, mut page in book.pages {
@@ -367,13 +374,7 @@ fn (book MDBook) html_path(path string) Path {
 	return pathlib.get(book.dest + '/${path}')
 }
 
-// export an mdbook to its html representation and open the html
-pub fn (mut book MDBook) read() ! {
-	book.export()!
-	osal.exec(cmd: 'open ${book.html_path('').path}/index.html', shell: true)!
-}
-
-pub fn (mut book MDBook) export_linked_pages(md_path string, mut linked_pages []&Page) ! {
+fn (mut book MDBook) export_linked_pages(md_path string, mut linked_pages []&Page) ! {
 	for mut page_linked in linked_pages {
 		if page_linked.pages_linked.len > 0 {
 			book.export_linked_pages(md_path, mut page_linked.pages_linked)!
@@ -385,7 +386,7 @@ pub fn (mut book MDBook) export_linked_pages(md_path string, mut linked_pages []
 }
 
 // export an mdbook to its html representation
-pub fn (mut book MDBook) export() ! {
+fn (mut book MDBook) export() ! {
 	book.template_install()! // make sure all required template files are in collection
 	md_path := book.md_path('').path + '/src'
 	html_path := book.html_path('').path

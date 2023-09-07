@@ -1,4 +1,4 @@
-module hero
+module downloader
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.pathlib
@@ -30,7 +30,7 @@ pub struct DownloadArgs {
 pub mut:
 	name         string // name of the download, if not specified then last part  of url
 	downloadpath string // the directory or file where we will download, will be /tmp/downloads/$name
-	url          string // url can be ssh:// http(s):// git:// file:// path:// http(s)file://
+	url          string // url can be ssh:// http(s):// git:// file:// http(s)file:// or just a path
 	reset        bool   // to remove all changes
 	// gitpull    bool   // if you want to force to pull the information
 	minsize_kb   u32 // is always in kb

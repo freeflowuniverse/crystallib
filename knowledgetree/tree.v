@@ -3,18 +3,20 @@ module knowledgetree
 import log
 import v.embed_file
 import freeflowuniverse.crystallib.baobab.spawner
+import freeflowuniverse.crystallib.baobab.context
 
 [heap]
 pub struct Tree {
 pub:
 	name string
 pub mut:
-	logger          log.Logger
-	collections     map[string]&Collection
-	embedded_files  []embed_file.EmbedFileData // this where we have the templates for exporting a book
-	state           TreeState
-	macroprocessors []&IMacroProcessor
-	spawner         &spawner.Spawner
+	logger         log.Logger
+	collections    map[string]&Collection
+	embedded_files []embed_file.EmbedFileData // this where we have the templates for exporting a book
+	state          TreeState
+	// macroprocessors []&IMacroProcessor
+	// spawner         &spawner.Spawner
+	context context.Context
 }
 
 pub enum TreeState {
@@ -32,27 +34,14 @@ fn (mut tree Tree) init() ! {
 	tree.embedded_files << $embed_file('template/mermaid.min.js')
 }
 
-// reset all, just to make sure we regenerate fresh
-pub fn (mut tree Tree) reset() ! {
-	// QUESTION: what should reset do
-	// for _, mut book in tree.books {
-	// 	book.reset()!
-	// }
-}
+// pub fn (mut tree Tree) reset() ! {
+// 	// tree.collections = map[string]
+// }
 
 // add macroprocessor to the tree
 // see interface IMacroProcessor for how macroprocessor needs to be implemented
-pub fn (mut tree Tree) macroprocessor_add(mut mp IMacroProcessor) ! {
-	tree.macroprocessors << mp
-}
-
-// // export the mdbooks to html
-// pub fn (mut tree Tree) export() ! {
-// 	tree.reset()! // make sure we start from scratch
-// 	tree.fix()!
-// 	for _, mut book in tree.books {
-// 		book.export()!
-// 	}
+// pub fn (mut tree Tree) macroprocessor_add(mut mp IMacroProcessor) ! {
+// 	tree.macroprocessors << mp
 // }
 
 // fix all loaded tree
