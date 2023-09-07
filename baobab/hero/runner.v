@@ -7,18 +7,18 @@ import freeflowuniverse.crystallib.gittools
 // a session is a set of actions, can even load actions recursive
 pub struct Runner {
 pub mut:
-	args RunnerArgs
-	path pathlib.Path // is the base directory of the runner
+	args     RunnerArgs
+	path     pathlib.Path // is the base directory of the runner
 	sessions []&Session
 }
 
 [params]
 pub struct RunnerArgs {
 pub mut:
-	circle string
-	root   string //default ~/3bot/circles
-	reset  bool  // will reset the content as fetched of url when true
-	url    string // url can be ssh:// http(s):// git:// file:// path:// http(s)file://
+	circle       string
+	root         string // default ~/3bot/circles
+	reset        bool   // will reset the content as fetched of url when true
+	url          string // url can be ssh:// http(s):// git:// file:// path:// http(s)file://
 	gitstructure ?gittools.GitStructure [skip; str: skip]
 }
 
@@ -32,7 +32,7 @@ pub fn new(args_ RunnerArgs) !Runner {
 	if args.circle == '' {
 		args.circle = 'default'
 	}
-	if args.gitstructure == none{
+	if args.gitstructure == none {
 		mut gs := gittools.get(light: true)!
 		args.gitstructure = gs
 	}
@@ -45,20 +45,18 @@ pub fn new(args_ RunnerArgs) !Runner {
 	mut bootstrap_session := r.session_new(name: 'bootstrap', reset: args.reset)!
 
 	if args.url.len > 0 {
-		bootstrap_session.actions_add(downloadname:"core", url: args.url, reset: args.reset)!
-		bootstrap_session.run(actions_runner_config_enable: true)! //runner_config means we manipulate internals
+		bootstrap_session.actions_add(downloadname: 'core', url: args.url, reset: args.reset)!
+		bootstrap_session.run(actions_runner_config_enable: true)! // runner_config means we manipulate internals
 	}
-	//now the actions on bootstrap are the good ones
+	// now the actions on bootstrap are the good ones
 	return r
 }
 
-
 pub fn (mut r Runner) str() string {
-	mut out:="## Runner\n\n"
-	out+="> ${r.args.url}\n\n"
-	for session in r.sessions{
-		out+="${*session}\n"
-
+	mut out := '## Runner\n\n'
+	out += '> ${r.args.url}\n\n'
+	for session in r.sessions {
+		out += '${*session}\n'
 	}
 	return out
 }

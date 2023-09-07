@@ -33,27 +33,27 @@ pub mut:
 	url          string // url can be ssh:// http(s):// git:// file:// path:// http(s)file://
 	reset        bool   // to remove all changes
 	// gitpull    bool   // if you want to force to pull the information
-	minsize_kb u32 // is always in kb
-	maxsize_kb u32
-	dest       string // if the dir or file needs to be copied somewhere
-	destlink   bool = true // if bool then will link the downloaded content to the dest
-	hash       string // if specified then will check the hash of the downloaded content
-	metapath   string //if not specified then will not write
+	minsize_kb   u32 // is always in kb
+	maxsize_kb   u32
+	dest         string // if the dir or file needs to be copied somewhere
+	destlink     bool = true // if bool then will link the downloaded content to the dest
+	hash         string // if specified then will check the hash of the downloaded content
+	metapath     string // if not specified then will not write
 	gitstructure ?gittools.GitStructure [skip; str: skip]
 }
 
-fn getlastname(url string)string{
+fn getlastname(url string) string {
 	mut lastname := url.split('/').last()
 	if lastname.contains('?') {
-		lastname=lastname.split("?")[0]
+		lastname = lastname.split('?')[0]
 	}
 	if lastname.contains('.') {
-		lastname=lastname.split(".")[0]
+		lastname = lastname.split('.')[0]
 	}
 
 	return texttools.name_fix(lastname)
-
 }
+
 // downoads url specified dir or file .
 // url can be ssh:// http(s):// git://  or just a path
 // to a directory linked to a circle '${runner.root}/circles/${circlename}/downloads/${args.name}' .
@@ -62,7 +62,6 @@ fn getlastname(url string)string{
 pub fn download(args_ DownloadArgs) !DownloadMeta {
 	// println(" -- DOWNLOAD ${args_.url}\n$args_")
 	mut args := args_
-
 
 	if args.name == '' {
 		args.name = getlastname(args.url)
@@ -91,12 +90,12 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 
 	if u.starts_with('http://') || u.starts_with('https://') || u.starts_with('git://') {
 		// might be git based checkout
-		if args.gitstructure == none{
+		if args.gitstructure == none {
 			mut gs2 := gittools.get(light: true)!
 			args.gitstructure = gs2
-		}	
-		mut gs := args.gitstructure or {return error("cannot find gitstructure")}
-			
+		}
+		mut gs := args.gitstructure or { return error('cannot find gitstructure') }
+
 		mut gr := gs.repo_get_from_url(url: args.url, pull: args.reset, reset: args.reset)!
 
 		downloadpath = pathlib.get_dir(gr.path_content_get(), false)!
@@ -148,8 +147,8 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 		downloadtype: downloadtype
 		path: downloadpath.path
 	}
-	if args.metapath.len>0{
-		mut metapatho:=pathlib.get(args.metapath)
+	if args.metapath.len > 0 {
+		mut metapatho := pathlib.get(args.metapath)
 		metapath := '${metapatho.path_dir()}/${args.name}.meta'
 		mut metafile := downloadpath.file_get_new(metapath)!
 		metaobj_data := json.encode_pretty(metaobj)
@@ -168,7 +167,9 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 			}
 		} else {
 			if args.destlink {
-				downloadpath.link(args.dest, true) or {return error("cannot link ${downloadpath} to ${args.dest}.\n$err")} //delete the dest link
+				downloadpath.link(args.dest, true) or {
+					return error('cannot link ${downloadpath} to ${args.dest}.\n${err}')
+				} // delete the dest link
 			} else {
 				mut desto := pathlib.get(args.dest)
 				downloadpath.copy(mut desto)!

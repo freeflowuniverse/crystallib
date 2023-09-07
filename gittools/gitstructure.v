@@ -12,7 +12,6 @@ pub mut:
 	pull   bool // will pull if this is set
 	reset  bool // this means will pull and reset all changes
 	name   string
-	
 }
 
 // will get repo starting from url, if the repo does not exist, only then will pull
@@ -261,8 +260,8 @@ fn (mut gitstructure GitStructure) load() ! {
 
 	// path which git repos will be recursively loaded
 	git_path := gitstructure.codepath() + '/github'
-	if !(os.exists( gitstructure.codepath())) {
-		os.mkdir_all( gitstructure.codepath())!
+	if !(os.exists(gitstructure.codepath())) {
+		os.mkdir_all(gitstructure.codepath())!
 	}
 
 	gitstructure.load_recursive(git_path, mut done)!
@@ -273,10 +272,10 @@ fn (mut gitstructure GitStructure) load() ! {
 }
 
 fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []string) ! {
-	mut path1o:=pathlib.get(path1)
-	relpath:=path1o.path_relative(gitstructure.rootpath.path)!
-	if relpath.count("/") > 3{
-		return 
+	mut path1o := pathlib.get(path1)
+	relpath := path1o.path_relative(gitstructure.rootpath.path)!
+	if relpath.count('/') > 3 {
+		return
 	}
 	// println(" - git load: $relpath")
 	items := os.ls(path1) or {

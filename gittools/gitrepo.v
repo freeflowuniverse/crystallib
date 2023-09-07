@@ -221,25 +221,23 @@ pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ! {
 	return
 }
 
-
-//return the addr info of the gitrepo				
+// return the addr info of the gitrepo				
 pub fn (mut repo GitRepo) addr() GitAddr {
-	if repo.addr_==none{
-		repo.addr_ = addr_get_from_path(repo.path) or {panic(err)}	
+	if repo.addr_ == none {
+		repo.addr_ = addr_get_from_path(repo.path) or { panic(err) }
 	}
-	return repo.addr_ or {panic(err)}
+	return repo.addr_ or { panic(err) }
 }
 
 pub fn (mut repo GitRepo) name() string {
-	if repo.name_==""{
-		repo.name_=repo.path.split("/").last()
-		if repo.name_.len<3 {
-			panic("bug, name split for git name() in repo")
+	if repo.name_ == '' {
+		repo.name_ = repo.path.split('/').last()
+		if repo.name_.len < 3 {
+			panic('bug, name split for git name() in repo')
 		}
 	}
 	return repo.name_
 }
-
 
 // pulls remote content in, will reset changes
 pub fn (mut repo GitRepo) pull_reset() ! {

@@ -13,16 +13,32 @@ pub mut:
 	params   params.Params
 }
 
+pub struct Actions {
+pub mut:
+	actions       []Action // should be empty after filter action
+	defaultdomain string = 'protocol_me'
+	defaultcircle string
+	defaultactor  string
+}
+
+pub fn (actions Actions) str() string {
+	mut out := '## Actions\n\n'
+	for action in actions.actions{
+		out+="${action}"
+	}
+	return out
+}
+
 pub fn (action Action) str() string {
-	mut out:="!!"
-	if action.domain!="protocol_me"{
-		out+="${action.domain}."
+	mut out := '!!'
+	if action.domain != 'protocol_me' {
+		out += '${action.domain}.'
 	}
-	if action.actor!=""{
-		out+="${action.actor}."
+	if action.actor != '' {
+		out += '${action.actor}.'
 	}
-	out+="${action.name} "
-	out+="\n${action.params}"
+	out += '${action.name} '
+	out += '\n${action.params}'
 	return out
 }
 

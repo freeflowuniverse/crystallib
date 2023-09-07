@@ -2,8 +2,8 @@ module actionsexecutor
 
 import freeflowuniverse.crystallib.baobab.actions
 
-fn actions(actions []actions.Action) ! {
-	mut actions2 := actions.filtersort(actions: actions, actor: 'currency', book: '*')! // TODO: means we do for any book
+fn currency_actions(actions_ []actions.Action) ! {
+	mut actions2 := actions.filtersort(actions: actions_, actor: 'currency', book: '*')! 
 	if actions2.len == 0 {
 		return
 	}

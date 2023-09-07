@@ -1,12 +1,5 @@
 module actions
 
-pub struct Actions {
-pub mut:
-	actions       []Action // should be empty after filter action
-	defaultdomain string = 'protocol_me'
-	defaultcircle string
-	defaultactor  string
-}
 
 fn domain_check(c string, block string) ! {
 	if c.len == 0 {

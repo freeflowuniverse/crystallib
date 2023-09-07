@@ -1,4 +1,5 @@
 module gittools
+
 import freeflowuniverse.crystallib.pathlib
 
 pub enum GitStructureStatus {
@@ -18,10 +19,10 @@ pub enum GitStatus {
 [heap]
 pub struct GitStructure {
 pub mut:
-	config GSConfig
-	repos  []GitRepo
-	status GitStructureStatus
-	rootpath  pathlib.Path
+	config   GSConfig
+	repos    []GitRepo
+	status   GitStructureStatus
+	rootpath pathlib.Path
 }
 
 [heap]
@@ -34,9 +35,8 @@ pub mut:
 	gs    &GitStructure [str: skip]
 	state GitStatus
 	name_ string
-
 mut:
-	addr_  ?GitAddr
+	addr_ ?GitAddr
 }
 
 pub struct GitAddr {

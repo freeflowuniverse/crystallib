@@ -21,15 +21,15 @@ pub fn (mut path Path) link(linkpath string, delete_exists bool) !Path {
 		}
 	}
 
-	mut origin_path := ""
+	mut origin_path := ''
 	dest_dir := os.dir(linkpath)
 	if !os.exists(dest_dir) {
 		os.mkdir_all(dest_dir)!
 	}
-	if path.cat == .dir{
-		origin_path = path_relative(dest_dir, path.path)!	
-	}else{
-		origin_path = path_relative(dest_dir, path.path)!		
+	if path.cat == .dir {
+		origin_path = path_relative(dest_dir, path.path)!
+	} else {
+		origin_path = path_relative(dest_dir, path.path)!
 	}
 	// println("${dest_dir} ::: ${origin_path} ::: ${linkpath}")	
 
