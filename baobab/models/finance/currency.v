@@ -6,7 +6,7 @@ import json
 //? why is this a new struct, cant we just use a map instead?
 pub struct Currencies {
 pub mut:
-	currencies map[string]&Currency
+	currencies map[string]Currency
 }
 
 pub struct Currency {
@@ -17,7 +17,7 @@ pub mut:
 
 pub struct Amount {
 pub mut:
-	currency &Currency
+	currency Currency
 	val      f64
 }
 

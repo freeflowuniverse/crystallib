@@ -48,11 +48,11 @@ pub fn process(code string) !knowledgetree.MacroResult {
 			return r
 		}
 
-		chart_methodname := match action.name {
-			'graph_bar_row' { 'BARCHART1' }
-			'graph_pie_row' { 'PIECHART1' }
-			else { '' }
-		}
+		// chart_methodname := match action.name {
+		// 	'graph_bar_row' { 'BARCHART1' }
+		// 	'graph_pie_row' { 'PIECHART1' }
+		// 	else { '' }
+		// }
 
 		size := p.get_default('size', '')!
 
