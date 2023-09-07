@@ -233,7 +233,6 @@ pub fn (mut collection Collection) page_new(mut p Path) ! {
 		pathrel: p.path_relative(collection.path.path)!.trim('/')
 		name: ptr.pointer.name
 		path: p
-		collection: &collection
 		readonly: false
 		pages_linked: []&Page{}
 	}
