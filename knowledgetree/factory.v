@@ -51,6 +51,18 @@ pub fn scan(args_ TreeScannerArgs) ! {
 	}
 }
 
+pub fn macroprocessor_add(args_ TreeScannerArgs) ! {
+	mut args := args_
+	args.name = texttools.name_fix(args.name)
+	lock knowledgetrees {
+		mut tree := knowledgetrees[args.name] or { return error('cannot find tree: ${args.name}') }
+		tree.scan(args)!
+		knowledgetrees[args.name] = tree
+	}
+}
+
+
+
 [params]
 pub struct ArgsGet {
 pub mut:
