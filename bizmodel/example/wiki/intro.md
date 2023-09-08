@@ -12,6 +12,8 @@ Unit is in Million USD.
 
 !!bizmodel.graph_bar_row rowname:revenue_total unit:million
 
+!!bizmodel.graph_line_row rowname:revenue_total unit:million
+
 !!bizmodel.graph_pie_row rowname:revenue_total unit:million size:'80%'
 
 ## FUNDING

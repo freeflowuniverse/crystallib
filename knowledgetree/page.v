@@ -187,9 +187,6 @@ fn (mut page Page) fix() ! {
 // walk over all links and fix them with location
 fn (mut page Page) fix_links() ! {
 	mut doc := page.doc or { return error('no doc yet on page') }
-	rlock knowledgetrees {
-		println('hereya: ${knowledgetrees['kapok']}')
-	}
 	for x in 0 .. doc.items.len {
 		if doc.items[x] is Paragraph {
 			mut paragraph := doc.items[x] as Paragraph
@@ -305,6 +302,8 @@ fn (mut page Page) process_macros() ! {
 			}
 		}
 	}
+	// QUESTION: is this best practice? alternatives are also difficult and hacky
+	page.doc = doc
 }
 
 [params]
@@ -325,7 +324,8 @@ pub fn (mut page Page) save(args_ PageSaveArgs) ! {
 	page.process_includes(mut include_tree)!
 	page.process_macros()!
 	page.fix_links()! // always need to make sure that the links are now clean
-	out := doc.wiki()
+	// QUESTION: okay convention?
+	out := page.doc or { panic('this should never happen') }.wiki()
 	mut p := pathlib.get_file(args.dest, true)!
 	p.write(out)!
 

@@ -51,17 +51,21 @@ pub fn scan(args_ TreeScannerArgs) ! {
 	}
 }
 
-pub fn macroprocessor_add(args_ TreeScannerArgs) ! {
+pub struct MacroProcessorArgs {
+mut:
+	processor IMacroProcessor
+	name      string
+}
+
+pub fn macroprocessor_add(args_ MacroProcessorArgs) ! {
 	mut args := args_
 	args.name = texttools.name_fix(args.name)
 	lock knowledgetrees {
 		mut tree := knowledgetrees[args.name] or { return error('cannot find tree: ${args.name}') }
-		tree.scan(args)!
+		tree.macroprocessor_add(args_.processor)!
 		knowledgetrees[args.name] = tree
 	}
 }
-
-
 
 [params]
 pub struct ArgsGet {

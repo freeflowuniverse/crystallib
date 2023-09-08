@@ -417,7 +417,6 @@ fn (mut book MDBook) export() ! {
 		}
 		dest := '${md_path}/${page.collection_name}/${page.pathrel}'
 		book.tree.logger.info('export page: ${dest}')
-		println('dirtylog: ${page.doc}')
 		page.save(dest: dest)!
 	}
 

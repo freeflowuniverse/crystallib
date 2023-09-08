@@ -32,9 +32,6 @@ pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 		collection.scan()!
 	}
 	if args.heal {
-		rlock knowledgetrees {
-			println('hereya0: ${knowledgetrees['kapok']}')
-		}
 		collection.fix()!
 	}
 

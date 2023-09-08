@@ -10,7 +10,7 @@ pub struct Tree {
 pub:
 	name string
 pub mut:
-	logger          &log.Logger = &log.Log{
+	logger &log.Logger = &log.Log{
 	level: .info
 }
 	collections     map[string]&Collection
@@ -42,7 +42,7 @@ fn (mut tree Tree) init() ! {
 
 // add macroprocessor to the tree
 // see interface IMacroProcessor for how macroprocessor needs to be implemented
-pub fn (mut tree Tree) macroprocessor_add(mut mp IMacroProcessor) ! {
+pub fn (mut tree Tree) macroprocessor_add(mp IMacroProcessor) ! {
 	tree.macroprocessors << mp
 }
 

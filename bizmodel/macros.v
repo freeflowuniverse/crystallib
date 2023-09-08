@@ -5,13 +5,14 @@ import freeflowuniverse.crystallib.baobab.actions
 import freeflowuniverse.crystallib.spreadsheet
 
 pub struct MacroProcessorBizmodel {
+	bizmodel_name string // name of bizmodel the macro will use for processing
 }
 
-pub fn macroprocessor_new() MacroProcessorBizmodel {
-	return MacroProcessorBizmodel{}
+pub fn macroprocessor_new(bizmodel_name string) MacroProcessorBizmodel {
+	return MacroProcessorBizmodel{bizmodel_name}
 }
 
-pub fn (mut processor MacroProcessorBizmodel) process(code string) !knowledgetree.MacroResult {
+pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.MacroResult {
 	mut r := knowledgetree.MacroResult{
 		state: .stop
 	}
@@ -32,12 +33,9 @@ pub fn (mut processor MacroProcessorBizmodel) process(code string) !knowledgetre
 				rowname: p.get_default_true('rowname')
 			}
 
-			panic("in macro")
-
 			rlock bizmodels {
-				mut model := bizmodels['default']
+				mut model := bizmodels[processor.bizmodel_name]
 				r.result = model.sheet.wiki(args) or { panic(err) }
-				println('debugz: ${r.result}')
 			}
 			// r.result = m.sheet.wiki(data)
 			// r.result = mp.spawner.rpc(mut tname: 'bizmodel', method: 'WIKI', val: json.encode(args))!
@@ -48,15 +46,11 @@ pub fn (mut processor MacroProcessorBizmodel) process(code string) !knowledgetre
 			return r
 		}
 
-		chart_methodname := match action.name {
-			'graph_bar_row' { 'BARCHART1' }
-			'graph_pie_row' { 'PIECHART1' }
-			else { '' }
-		}
-
 		size := p.get_default('size', '')!
 
-		if chart_methodname.len > 0 {
+		supported_actions := ['graph_pie_row', 'graph_line_row', 'graph_bar_row', 'graph_title_row']
+
+		if action.name in supported_actions {
 			rowname := p.get_default('rowname', '')!
 			unit := p.get_default('unit', 'normal')!
 			unit_e = match unit {
@@ -77,6 +71,7 @@ pub fn (mut processor MacroProcessorBizmodel) process(code string) !knowledgetre
 				return error('period type needs to be in year,month,quarter')
 			}
 			if rowname == '' {
+				println(action)
 				return error('specify the rowname please')
 			}
 			if period_type !in ['year', 'month', 'quarter'] {
@@ -97,7 +92,7 @@ pub fn (mut processor MacroProcessorBizmodel) process(code string) !knowledgetre
 
 			mut model := BizModel{}
 			rlock bizmodels {
-				model = bizmodels['default']
+				model = bizmodels[processor.bizmodel_name]
 			}
 
 			match action.name {
@@ -105,7 +100,7 @@ pub fn (mut processor MacroProcessorBizmodel) process(code string) !knowledgetre
 					r.result = model.sheet.wiki_title_chart(args)
 				}
 				'graph_line_row' {
-					r.result = model.sheet.wiki_line_chart(args) or { panic(err) }
+					r.result = model.sheet.wiki_line_chart([args]) or { panic(err) }
 				}
 				'graph_bar_row' {
 					r.result = model.sheet.wiki_bar_chart(args) or { panic(err) }
@@ -127,6 +122,8 @@ pub fn (mut processor MacroProcessorBizmodel) process(code string) !knowledgetre
 			// )!
 			r.result += '\n'
 			return r
+		} else {
+			println('action ${action} isnt supported yet')
 		}
 	}
 	return r

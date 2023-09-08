@@ -22,7 +22,7 @@ pub mut:
 [params]
 pub struct BizModelArgs {
 pub mut:
-	name        string
+	name        string = 'default' // name of bizmodel
 	path        string
 	git_url     string
 	git_reset   bool
@@ -46,6 +46,7 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 		params: args
 		// currencies: cs
 	}
+	bm.load()!
 
 	lock bizmodels {
 		bizmodels[args.name] = bm
@@ -59,15 +60,15 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 		args.mdbook_name = args.name
 	}
 
-	bm.load()!
-
 	tree_name := 'kapok'
 	knowledgetree.new(name: tree_name)!
 
+	mp := macroprocessor_new(args_.name)
+	knowledgetree.macroprocessor_add(
+		name: tree_name
+		processor: mp
+	)!
 
-	macroprocessor_new
-
-	
 	knowledgetree.scan(
 		name: tree_name
 		path: args.path
@@ -125,17 +126,18 @@ pub fn (mut m BizModel) load() ! {
 	// 	heal: false
 	// )!
 
-	m.sheet.group2row(
-		name: 'company_result'
-		include: ['pl']
-		tags: 'netresult'
-		descr: 'Net Company Result.'
-	)!
+	// QUESTION: why was this here?
+	// m.sheet.group2row(
+	// 	name: 'company_result'
+	// 	include: ['pl']
+	// 	tags: 'netresult'
+	// 	descr: 'Net Company Result.'
+	// )!
 
-	mut company_result := m.sheet.row_get('company_result')!
-	mut cashflow := company_result.recurring(
-		name: 'Cashflow'
-		tags: 'cashflow'
-		descr: 'Cashflow of company.'
-	)!
+	// mut company_result := m.sheet.row_get('company_result')!
+	// mut cashflow := company_result.recurring(
+	// 	name: 'Cashflow'
+	// 	tags: 'cashflow'
+	// 	descr: 'Cashflow of company.'
+	// )!
 }
