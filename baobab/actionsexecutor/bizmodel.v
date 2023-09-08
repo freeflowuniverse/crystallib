@@ -9,12 +9,12 @@ fn git(mut actions actions.Actions, action action.Action) ! {
 		c.bizmodel_init(mut actions, action)!
 	}
 
-	if action.name == 'get' {
-		mut gs := gittools.new()!
-		url := action.params.get('url')!
-		branch := action.params.get_default('branch', '')!
-		reset := action.params.get_default_false('reset')!
-		pull := action.params.get_default_false('pull')!
-		mut gr := gs.repo_get_from_url(url: url, branch: branch, pull: pull, reset: reset)!
-	}
+	// if action.name == 'get' {
+	// 	mut gs := gittools.new()!
+	// 	url := action.params.get('url')!
+	// 	branch := action.params.get_default('branch', '')!
+	// 	reset := action.params.get_default_false('reset')!
+	// 	pull := action.params.get_default_false('pull')!
+	// 	mut gr := gs.repo_get_from_url(url: url, branch: branch, pull: pull, reset: reset)!
+	// }
 }
