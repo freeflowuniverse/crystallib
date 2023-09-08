@@ -1,19 +1,17 @@
 module bizmodel
 
-import freeflowuniverse.crystallib.baobab.spawner
 import freeflowuniverse.crystallib.knowledgetree
 import freeflowuniverse.crystallib.baobab.actions
 import freeflowuniverse.crystallib.spreadsheet
-import json
 
 pub struct MacroProcessorBizmodel {
 }
 
-pub fn macroprocessor_new(mut s spawner.Spawner) MacroProcessorBizmodel {
+pub fn macroprocessor_new() MacroProcessorBizmodel {
 	return MacroProcessorBizmodel{}
 }
 
-pub fn process(code string) !knowledgetree.MacroResult {
+pub fn (mut processor MacroProcessorBizmodel) process(code string) !knowledgetree.MacroResult {
 	mut r := knowledgetree.MacroResult{
 		state: .stop
 	}
@@ -33,6 +31,8 @@ pub fn process(code string) !knowledgetree.MacroResult {
 				title: p.get_default('title', '')!
 				rowname: p.get_default_true('rowname')
 			}
+
+			panic("in macro")
 
 			rlock bizmodels {
 				mut model := bizmodels['default']

@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.knowledgetree
 import freeflowuniverse.crystallib.baobab.actions
 // import freeflowuniverse.crystallib.baobab.hero
 // import freeflowuniverse.crystallib.baobab.context
-import freeflowuniverse.crystallib.currency
+// import freeflowuniverse.crystallib.currency
 
 __global (
 	bizmodels shared map[string]BizModel
@@ -63,6 +63,11 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 
 	tree_name := 'kapok'
 	knowledgetree.new(name: tree_name)!
+
+
+	macroprocessor_new
+
+	
 	knowledgetree.scan(
 		name: tree_name
 		path: args.path

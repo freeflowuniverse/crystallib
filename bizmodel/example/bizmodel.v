@@ -9,6 +9,7 @@ import freeflowuniverse.crystallib.bizmodel
 const wikipath = os.dir(@FILE) + '/wiki'
 
 fn do() ! {
+	
 	// mut c := context.new()!
 
 	mut book := bizmodel.new(
@@ -17,7 +18,7 @@ fn do() ! {
 		mdbook_dest: os.dir(@FILE) + '/dest'
 		path: wikipath
 	)!
-
+	
 	book.read()! // will generate and open	
 
 	//// TODO: Kristof check if we have everything then remove
