@@ -41,6 +41,18 @@ pub enum PeriodType {
 }
 
 // return e.g. "'Y1', 'Y2', 'Y3', 'Y4', 'Y5', 'Y6'" if year, is for header
+pub fn (mut s Sheet) header_get_as_list(period_type PeriodType) ![]string {
+	str := s.header_get_as_string(period_type)!
+	return str.split(',')
+}
+
+// return e.g. "'Y1', 'Y2', 'Y3', 'Y4', 'Y5', 'Y6'" if year, is for header
+pub fn (mut s Sheet) data_get_as_list(args RowGetArgs) ![]string {
+	str := s.data_get_as_string(args)!
+	return str.split(',')
+}
+
+// return e.g. "'Y1', 'Y2', 'Y3', 'Y4', 'Y5', 'Y6'" if year, is for header
 pub fn (mut s Sheet) header_get_as_string(period_type PeriodType) !string {
 	err_pre := "Can't get header for sheet:${s.name}\n"
 	period_type_s := match period_type {
