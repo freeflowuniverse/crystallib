@@ -28,6 +28,18 @@ pub fn (mut paragraph Paragraph) wiki() string {
 	return out + '\n\n'
 }
 
+pub fn (mut paragraph Paragraph) markdown() string {
+	mut out := ''
+	for mut item in paragraph.items {
+		match mut item {
+			Text { out += item.wiki() }
+			Link { out += item.markdown() }
+			Comment { out += item.wiki() }
+		}
+	}
+	return out + '\n\n'
+}
+
 pub fn (mut paragraph Paragraph) html() string {
 	mut out := ''
 	for mut item in paragraph.items {

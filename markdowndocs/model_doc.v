@@ -59,6 +59,25 @@ pub fn (mut doc Doc) wiki() string {
 	return out
 }
 
+pub fn (mut doc Doc) markdown() string {
+	mut out := ''
+	for mut item in doc.items {
+		match mut item {
+			Table { out += item.wiki() }
+			Action { out += item.wiki() }
+			Actions { out += item.wiki() }
+			Header { out += item.wiki() }
+			Paragraph { out += item.markdown() }
+			Html { out += item.wiki() }
+			Include { out += item.wiki() }
+			// Comment { out += item.wiki() }
+			CodeBlock { out += item.wiki() }
+			Link { out += item.markdown() }
+		}
+	}
+	return out
+}
+
 pub fn (mut doc Doc) html() string {
 	mut out := ''
 	for mut item in doc.items {

@@ -107,6 +107,29 @@ pub fn (link Link) wiki() string {
 	return link.content
 }
 
+// return how to represent link on source
+pub fn (link Link) markdown() string {
+	mut link_filename := link.filename
+	if link.path != '' {
+		link_filename = '${link.path}/${link_filename}'
+	}
+	if link.cat == LinkType.image {
+		if link.extra.trim_space() == '' {
+			return '![${link.description}](${link_filename})'
+		} else {
+			return '![${link.description}](${link_filename} ${link.extra})'
+		}
+	} else {
+		if link.extra.trim_space() == '' {
+			return '[${link.description}](${link_filename})'
+		} else {
+			return '[${link.description}](${link_filename} ${link.extra})'
+		}
+	}
+
+	return link.content
+}
+
 fn (o Link) html() string {
 	return o.wiki()
 }
