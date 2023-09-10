@@ -314,6 +314,37 @@ pub mut:
 
 // save the page on the requested dest
 // make sure the macro's are being executed
+pub fn (mut page Page) process() ! {
+	mut doc := page.doc or { return error('no doc yet on page') }
+	mut include_tree := []string{}
+	page.process_includes(mut include_tree)!
+	page.process_macros()!
+	page.fix_links()! // always need to make sure that the links are now clean
+	// QUESTION: okay convention?
+	// mutate page to save updated doc
+	page.doc = doc
+}
+
+// save the page on the requested dest
+// make sure the macro's are being executed
+pub fn (mut page Page) export(args_ PageSaveArgs) ! {
+	mut doc := page.doc or { return error('no doc yet on page') }
+	mut args := args_
+	if args.dest == '' {
+		args.dest = page.path.path
+	}
+	// QUESTION: okay convention?
+	out := page.doc or { panic('this should never happen') }.markdown()
+	mut p := pathlib.get_file(args.dest, true)!
+	p.write(out)!
+
+	// mutate page to save updated doc
+	updated_doc := markdowndocs.new(path: p.path) or { panic('cannot parse,${err}') }
+	page.doc = updated_doc
+}
+
+// save the page on the requested dest
+// make sure the macro's are being executed
 pub fn (mut page Page) save(args_ PageSaveArgs) ! {
 	mut doc := page.doc or { return error('no doc yet on page') }
 	mut args := args_

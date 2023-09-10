@@ -186,8 +186,8 @@ fn (mut book MDBook) fix_summary() ! {
 						book.error(cat: .unknown, msg: msge)
 					} else {
 						book.tree.logger.debug('book ${book.name} summary:${link.pathfull()}')
-						mut collectionname := link.path.all_before('/')
-						if link.path == '' {
+						mut collectionname := link.url.all_before(':')
+						if collectionname == '' {
 							// means collection has not been specified
 							return error('collection needs to be specified in summary, is the first part of path e.g. collectionname/...')
 						}
@@ -417,7 +417,8 @@ pub fn (mut book MDBook) export() ! {
 		}
 		dest := '${md_path}/${page.collection_name}/${page.pathrel}'
 		book.tree.logger.info('export page: ${dest}')
-		page.save(dest: dest)!
+		page.process()!
+		page.export(dest: dest)!
 	}
 
 	for _, mut file in book.files {
@@ -445,7 +446,7 @@ pub fn (mut book MDBook) export() ! {
 
 	mut pathsummary := pathlib.get('${md_path}/SUMMARY.md')
 	// write summary
-	pathsummary.write(book.doc_summary.wiki())!
+	pathsummary.write(book.doc_summary.markdown())!
 
 	// lets now build
 	osal.exec(cmd: 'mdbook build ${book.md_path('').path} --dest-dir ${html_path}', retry: 0)!
