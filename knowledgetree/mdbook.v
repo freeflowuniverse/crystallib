@@ -407,7 +407,7 @@ fn (mut book MDBook) export_linked_pages(md_path string, mut linked_pages []&Pag
 }
 
 // export an mdbook to its html representation
-fn (mut book MDBook) export() ! {
+pub fn (mut book MDBook) export() ! {
 	book.template_install()! // make sure all required template files are in collection
 	md_path := book.md_path('').path + '/src'
 	html_path := book.html_path('').path

@@ -32,7 +32,9 @@ pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 		collection.scan()!
 	}
 	if args.heal {
-		collection.fix()!
+		// QUESTION: if other collection isn't already loaded, fails
+		// todo: collection is only responsible of healing internal links. not required to find other ccollecctions, that should be done in tree healing level
+		// collection.fix()!
 	}
 
 	tree.collections[collection.name] = collection

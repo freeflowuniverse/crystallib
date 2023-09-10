@@ -4,36 +4,30 @@ import freeflowuniverse.crystallib.baobab.spawner
 import freeflowuniverse.crystallib.knowledgetree
 import os
 
-const collections_path = os.dir(@FILE) + '/collections'
-
-const book_path = os.dir(@FILE) + '/book'
-
-const book_dest = os.dir(@FILE) + '/dest'
+const (
+	tree_name        = 'fruits_and_veggies'
+	collections_path = os.dir(@FILE) + '/collections'
+	book_path        = os.dir(@FILE) + '/book'
+	book_dest        = os.dir(@FILE) + '/dest'
+)
 
 pub fn main() {
 	do() or { panic(err) }
 }
 
 pub fn do() ! {
-	mut s := spawner.new()
-	mut tree := knowledgetree.new(mut s)!
-
-	mut col_vegetables := tree.collection_new(
-		name: 'vegetables'
-		path: collections_path + '/vegetables'
-		heal: false
-	)!
-	mut col_fruits := tree.collection_new(
-		name: 'fruits'
-		path: collections_path + '/fruits'
-		heal: false
+	knowledgetree.new(name: tree_name)!
+	knowledgetree.scan(
+		name: tree_name
+		path: collections_path
+		heal: true
 	)!
 
-	mut book := knowledgetree.book_new(
+	mut book := knowledgetree.book_create(
 		name: 'Fruits & Vegetables'
+		tree_name: tree_name
 		path: book_path
 		dest: book_dest
-		tree: tree
 	)!
 	book.export()!
 }
