@@ -7,7 +7,7 @@ __global (
 )
 
 fn check() {
-	if currencies.len==0{
+	if currencies.len == 0 {
 		refresh()
 	}
 }
@@ -31,15 +31,12 @@ pub fn refresh() {
 	}
 }
 
-
-//get a currency object based on the name
+// get a currency object based on the name
 pub fn get(name_ string) !Currency {
 	mut name := name_.to_upper().trim_space()
 	check()
 	rlock currencies {
 		return currencies[name] or { return error('Could not find currency ${name}') }
 	}
-	panic("bug")
+	panic('bug')
 }
-
-

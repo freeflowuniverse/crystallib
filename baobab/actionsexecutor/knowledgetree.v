@@ -3,11 +3,11 @@ module actionsexecutor
 import freeflowuniverse.crystallib.baobab.actions
 import freeflowuniverse.crystallib.knowledgetree
 
-fn knowledgetree( mut actions actions.Actions, action actions.Action) ! {
+fn knowledgetree(mut actions actions.Actions, action actions.Action) ! {
 	if action.name == 'scan' {
-		mut name := action.params.get_default('name',"default")!
+		mut name := action.params.get_default('name', 'default')!
 
-		knowledgetree.new(name:name)!
+		knowledgetree.new(name: name)!
 
 		mut path := action.params.get_default('path', '')!
 		mut heal := action.params.get_default_false('heal')
@@ -33,7 +33,7 @@ fn knowledgetree( mut actions actions.Actions, action actions.Action) ! {
 		mut name := action.params.get('name')!
 		mut tree_name := action.params.get('tree_name')!
 
-		knowledgetree.new(name:name)!
+		knowledgetree.new(name: name)!
 
 		mut path := action.params.get_default('path', '')!
 		mut git_url := action.params.get_default('git_url', '')!

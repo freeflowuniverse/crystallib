@@ -91,7 +91,7 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 	if u.starts_with('http://') || u.starts_with('https://') || u.starts_with('git://') {
 		// might be git based checkout
 		if args.gitstructure == none {
-			mut gs2 := gittools.get(light: true)!
+			mut gs2 := gittools.new(light: true)!
 			args.gitstructure = gs2
 		}
 		mut gs := args.gitstructure or { return error('cannot find gitstructure') }
@@ -118,6 +118,9 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 		downloadtype = .httpfile
 	} else if args.url.len > 0 {
 		downloadpath = pathlib.get(args.url)
+		if !(downloadpath.exists()){
+			return error("Cannot download files or dir, because doesn't exist.\n${args}'")	
+		}
 		if downloadpath.is_file() {
 			downloadtype = .pathfile
 		} else if downloadpath.is_dir() {

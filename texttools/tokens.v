@@ -57,6 +57,7 @@ pub fn name_fix_no_underscore_token(name string) string {
 	return newitem
 }
 
+// needs to be 2x because can be 3 to 2 to 1
 const name_fix_replaces = [
 	' ',
 	'_',
@@ -65,7 +66,7 @@ const name_fix_replaces = [
 	'__',
 	'_',
 	'__',
-	'_', /* needs to be 2x because can be 3 to 2 to 1 */
+	'_',
 	'::',
 	'_',
 	';',

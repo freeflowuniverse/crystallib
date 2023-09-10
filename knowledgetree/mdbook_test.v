@@ -6,21 +6,21 @@ import os
 
 const (
 	collections_path = os.dir(@FILE) + '/testdata/collections'
-	tree_name = 'mdbook_test_tree'
-	book1_path = os.dir(@FILE) + '/testdata/book1'
-	book1_dest = os.dir(@FILE) + '/testdata/_book1'
+	tree_name        = 'mdbook_test_tree'
+	book1_path       = os.dir(@FILE) + '/testdata/book1'
+	book1_dest       = os.dir(@FILE) + '/testdata/_book1'
 )
 
 fn create_tree() ! {
 	mut s := spawner.new()
-	new(name: tree_name)!
+	new(name: knowledgetree.tree_name)!
 	scan(
-		name: tree_name
-		path: collections_path
+		name: knowledgetree.tree_name
+		path: knowledgetree.collections_path
 	)!
 	rlock knowledgetrees {
 		println('debugz:')
-		println(knowledgetrees[tree_name].collections)
+		println(knowledgetrees[knowledgetree.tree_name].collections)
 	}
 }
 
@@ -30,7 +30,7 @@ fn test_book_reset() {
 		name: 'book1'
 		path: knowledgetree.book1_path
 		dest: knowledgetree.book1_dest
-		tree_name: tree_name
+		tree_name: knowledgetree.tree_name
 	)!
 
 	os.mkdir(knowledgetree.book1_dest)!
@@ -45,7 +45,7 @@ fn test_book_load_summary() {
 		name: 'book1'
 		path: knowledgetree.book1_path
 		dest: knowledgetree.book1_dest
-		tree_name: tree_name
+		tree_name: knowledgetree.tree_name
 	)!
 	book.load_summary()!
 
@@ -62,7 +62,7 @@ fn test_book_fix_summary() {
 		name: 'book1'
 		path: knowledgetree.book1_path
 		dest: knowledgetree.book1_dest
-		tree_name: tree_name
+		tree_name: knowledgetree.tree_name
 	)!
 	book.load_summary()!
 	println('starting fix')
@@ -76,7 +76,7 @@ fn test_book_create() {
 		name: 'book1'
 		path: knowledgetree.book1_path
 		dest: knowledgetree.book1_dest
-		tree_name: tree_name
+		tree_name: knowledgetree.tree_name
 	)!
 
 	println(book)
@@ -89,7 +89,7 @@ fn test_book_export() {
 		name: 'book1'
 		path: knowledgetree.book1_path
 		dest: knowledgetree.book1_dest
-		tree_name: tree_name
+		tree_name: knowledgetree.tree_name
 	) or { panic(err) }
 	// book.export() or {panic(err)}
 }

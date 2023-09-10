@@ -59,16 +59,12 @@ pub fn (err CollectionObjNotFound) msg() string {
 // if collectionname specified will look for page in that specific collection
 pub fn (collection Collection) page_get(name string) !&Page {
 	cat := 'page'
-	println('222')
 	ptr := pointer_new(name)!
 	if ptr.collection != '' && ptr.collection != collection.name {
 		return error("Can't get in collection, collection name asked for is ${ptr.collection} while we are in chaptner ${collection.name}")
 	}
-	println('223')
 	if ptr.name in collection.pages {
-		println('224')
 		return collection.pages[ptr.name] or {
-			println('225')
 			return CollectionObjNotFound{
 				cat: cat
 				collection: collection.name
@@ -76,7 +72,6 @@ pub fn (collection Collection) page_get(name string) !&Page {
 			}
 		}
 	}
-	println('226')
 	return CollectionObjNotFound{
 		cat: cat
 		collection: collection.name

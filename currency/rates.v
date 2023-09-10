@@ -65,7 +65,7 @@ pub fn rates_get(cur_array []string, crypto bool) ! {
 			name: key.to_upper()
 			usdval: 1 / rate
 		}
-		lock{
+		lock {
 			currencies[key.to_upper()] = c
 		}
 	}
@@ -82,7 +82,7 @@ pub fn defaults_set() {
 		name: ''
 		usdval: 0.0
 	}
-	lock{
+	lock {
 		currencies[''] = c2
 	}
 }
@@ -93,8 +93,7 @@ pub fn default_set(cur string, usdval f64) {
 		name: cur2
 		usdval: usdval
 	}
-	lock{
+	lock {
 		currencies[cur2] = c1
 	}
-	
 }

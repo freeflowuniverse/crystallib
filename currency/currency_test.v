@@ -14,7 +14,7 @@ pub fn test_rates_get() {
 	// last arg is to say its a crypto
 	rates_get(['TERRA', 'TFT', 'XLM', 'USDC'], true)!
 
-	lock{
+	lock {
 		currencies['TFT'] = Currency{
 			name: 'TFT'
 			usdval: 0.01
@@ -44,7 +44,5 @@ pub fn test_rates_get() {
 		assert aa.val == 10.0
 		assert aa.currency.name == 'USD'
 		assert aa.currency.usdval == 1.0
-		}		
-
+	}
 }
-

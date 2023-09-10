@@ -1,6 +1,5 @@
 module actions
 
-
 import freeflowuniverse.crystallib.texttools
 
 pub struct ActionError {

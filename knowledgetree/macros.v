@@ -19,8 +19,4 @@ interface IMacroProcessor {
 mut:
 	// spawner &spawner.Spawner
 	process(code string) !MacroResult
-
-
-
-
 }

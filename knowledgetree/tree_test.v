@@ -4,18 +4,19 @@ import log
 import v.embed_file
 // import freeflowuniverse.crystallib.baobab.spawner
 // import freeflowuniverse.crystallib.baobab.context
+import os
 
 const (
 	collections_path = os.dir(@FILE) + '/testdata/collections'
-	tree_name = 'tree_test_tree'
-	book1_path = os.dir(@FILE) + '/testdata/book1'
-	book1_dest = os.dir(@FILE) + '/testdata/_book1'
+	tree_name        = 'tree_test_tree'
+	book1_path       = os.dir(@FILE) + '/testdata/book1'
+	book1_dest       = os.dir(@FILE) + '/testdata/_book1'
 )
 
 fn create_tree() !Tree {
-	new(name: tree_name)!
+	new(name: knowledgetree.tree_name)!
 	rlock knowledgetrees {
-		return knowledgetrees[tree_name]
+		return knowledgetrees[knowledgetree.tree_name]
 	}
 }
 

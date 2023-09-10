@@ -10,9 +10,9 @@ pub struct Tree {
 pub:
 	name string
 pub mut:
-	logger &log.Logger = &log.Log{
-	level: .info
-}
+	logger &log.Logger [skip; str: skip] = &log.Log{
+		level: .info
+	}				 
 	collections     map[string]&Collection
 	embedded_files  []embed_file.EmbedFileData // this where we have the templates for exporting a book
 	state           TreeState

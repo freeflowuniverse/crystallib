@@ -3,6 +3,36 @@ module texttools
 
 import os
 
+pub fn email_fix(name string) !string {
+	mut name2 := name.to_lower().trim_space()
+	if name2.contains("<"){
+		name2=name2.split("<")[1].split("<")[0]
+	}
+	if ! name2.is_ascii(){
+		return error("email needs to be ascii, was ${name}")
+	}
+	if name2.contains(" "){
+		return error("email cannot have spaces, was ${name}")
+	}
+	return name2
+}
+
+//fix string which represenst a tel nr
+pub fn tel_fix(name_ string) !string {
+	mut name := name_.to_lower().trim_space()
+	for x in ["[","]","{","}","(",")","*","-","."," "]{
+		name=name.replace(x,"")
+	}
+	if ! name.is_ascii(){
+		return error("email needs to be ascii, was ${name}")
+	}
+	return name
+}
+
+
+
+
+
 pub fn name_fix(name string) string {
 	name2 := name_fix_keepext(name)
 	return name2

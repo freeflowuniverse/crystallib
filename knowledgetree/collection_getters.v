@@ -41,11 +41,9 @@ fn (mut tree Tree) collection_get_from_pointer(p Pointer) !Collection {
 			msg: 'tree name was not empty and was not same as tree.\n${p}'
 		}
 	}
-	mut ch := tree.collections[p.collection] or {
-		return CollectionNotFound{
-			pointer: p
-		}
-	}
+	mut ch := tree.collections[p.collection] or { return CollectionNotFound{
+		pointer: p
+	} }
 	return *ch
 }
 

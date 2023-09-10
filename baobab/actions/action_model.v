@@ -32,14 +32,14 @@ pub fn (actions Actions) str() string {
 		out += '### errors\n\n'
 	}
 	for error in actions.errors {
-		out += '${error}'
+		out += '${error}\n'
 	}
 
 	if actions.results.len > 0 {
 		out += '### results\n\n'
 	}
 	for key, val in actions.results {
-		out += '	${key}:${val}'
+		out += '	${key}:${val}\n'
 	}
 
 	return out
@@ -54,7 +54,7 @@ pub fn (action Action) str() string {
 		out += '${action.actor}.'
 	}
 	out += '${action.name} '
-	out += '\n${action.params}'
+	out += '\n${action.params}\n'
 	return out
 }
 

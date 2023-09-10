@@ -3,7 +3,7 @@ module gittools
 import json
 
 fn test_url1() {
-	mut gs := get(GSConfig{}) or { panic('cannot load') }
+	mut gs := new(GSConfig{}) or { panic('cannot load') }
 
 	url := 'https://github.com/vlang/v/blob/master/doc/docs.md#maps'
 	obj := addr_get_from_url(url) or { panic('${err}') }
@@ -25,7 +25,7 @@ fn test_url1() {
 }
 
 fn test_url2() {
-	mut gs := get(GSConfig{}) or { panic('cannot load') }
+	mut gs := new(GSConfig{}) or { panic('cannot load') }
 
 	url := 'git@github.com:crystaluniverse/publishtools/tree/development/doc'
 	obj := addr_get_from_url(url) or { panic('${err}') }
@@ -48,7 +48,7 @@ fn test_url2() {
 }
 
 fn test_url3() {
-	mut gs := get(GSConfig{}) or { panic('cannot load') }
+	mut gs := new(GSConfig{}) or { panic('cannot load') }
 
 	url := 'https://github.com/vlang/v/blob/master/doc/docs.md'
 	obj := addr_get_from_url(url)!

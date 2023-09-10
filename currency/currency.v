@@ -5,5 +5,3 @@ pub mut:
 	name   string
 	usdval f64
 }
-
-

@@ -2,7 +2,6 @@ module actionsexecutor
 
 import freeflowuniverse.crystallib.baobab.actions
 
-
 fn git(mut actions actions.Actions, action action.Action) ! {
 	if action.name == 'init' {
 		// means we support initialization afterwards

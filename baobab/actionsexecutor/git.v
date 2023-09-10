@@ -3,7 +3,7 @@ module actionsexecutor
 import freeflowuniverse.crystallib.baobab.actions
 import freeflowuniverse.crystallib.gittools
 
-fn git( mut actions actions.Actions, action action.Action) ! {
+fn git(mut actions actions.Actions, action action.Action) ! {
 	if action.name == 'get' {
 		name := action.params.get('name')!
 		gitname := action.params.get_default('gitname', 'default')!
@@ -13,6 +13,5 @@ fn git( mut actions actions.Actions, action action.Action) ! {
 		reset := action.params.get_default_false('reset')!
 		pull := action.params.get_default_false('pull')!
 		mut gr := gs.repo_get_from_url(url: url, branch: branch, pull: pull, reset: reset)!
-		
 	}
 }
