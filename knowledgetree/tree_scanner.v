@@ -94,4 +94,13 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 			}
 		}
 	}
+
+	if args_.heal {
+		for _, mut collection in tree.collections {
+			if !args_.load {
+				collection.scan()!
+			}
+			collection.fix()!
+		}
+	}
 }
