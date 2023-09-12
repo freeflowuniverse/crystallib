@@ -17,6 +17,14 @@ pub fn email_fix(name string) !string {
 	return name2
 }
 
+//like name_fix but _ becomes space
+pub fn name_fix_keepspace(name string) !string {
+	mut name2:=name_fix(name)
+	name2=name2.replace("_"," ")
+	return name2
+}
+
+
 //fix string which represenst a tel nr
 pub fn tel_fix(name_ string) !string {
 	mut name := name_.to_lower().trim_space()
