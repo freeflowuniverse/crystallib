@@ -82,7 +82,6 @@ fn (mut page Page) link_update(mut link Link) ! {
 		mut tree := knowledgetrees[page.tree_name] or {
 			return error('could not find treename: ${page.tree_name}')
 		}
-		println('debus: ${tree}')
 		mut collection := tree.collections[page.collection_name] or {
 			return error("2could not find collection:'${page.collection_name}' in tree: ${page.tree_name}")
 		}
@@ -267,13 +266,12 @@ fn (mut page Page) process_includes(mut include_tree []string) ! {
 
 // will process the macro's and return string
 fn (mut page Page) process_macros() ! {
+	logger.info('Processing macros in page ${page.name}')
 	mut doc := page.doc or { return error('no doc yet on page') }
 	for x in 0 .. doc.items.len {
-		println('item: ${doc.items[x]}')
 		if doc.items[x] is Action {
 			macro := doc.items[x] as Action
-			// println(doc.items[x])
-			println('Process macro ${macro.content} into ${page.path.path}')
+			logger.info('Process macro: ${macro.name} into page: ${page.name}')
 			mut out := ''
 
 			// QUESTION: is this implementation ok?
@@ -281,7 +279,6 @@ fn (mut page Page) process_macros() ! {
 			lock {
 				tree = knowledgetrees[page.tree_name]
 			}
-			// println('check: ${tree}')
 
 			for mut mp in tree.macroprocessors {
 				res := mp.process('!!${macro.content}')!
@@ -315,14 +312,10 @@ pub mut:
 // save the page on the requested dest
 // make sure the macro's are being executed
 pub fn (mut page Page) process() ! {
-	mut doc := page.doc or { return error('no doc yet on page') }
 	mut include_tree := []string{}
 	page.process_includes(mut include_tree)!
 	page.process_macros()!
 	page.fix_links()! // always need to make sure that the links are now clean
-	// QUESTION: okay convention?
-	// mutate page to save updated doc
-	page.doc = doc
 }
 
 // save the page on the requested dest

@@ -6,7 +6,14 @@ import freeflowuniverse.crystallib.markdowndocs
 import freeflowuniverse.crystallib.pathlib { Path }
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.osal
+import log
 import os
+
+__global (
+	logger = log.Log{
+		level: .debug
+	}
+)
 
 enum BookState {
 	init
@@ -143,8 +150,6 @@ pub fn book_create(args_ BookNewArgs) !&MDBook {
 	book.reset()! // clean the destination
 	book.load_summary()!
 	book.fix_summary()!
-	println('pause')
-	println(book.pages.values().map('${it.doc}').join('\n NEXT:'))
 	book.link_pages_files_images()!
 	book.errors_report()!
 
@@ -202,7 +207,6 @@ fn (mut book MDBook) fix_summary() ! {
 							// now we can process the page where the link goes to
 							if collection.page_exists(pagename) {
 								page := collection.page_get(pagename)!
-								println('here we go ${page.doc}')
 								book.tree.logger.debug('found page: ${page.path.path}')
 								newlink := '[${link.description}](${collectionname}/${page.pathrel})'
 								book.pages['${collection.name}:${page.name}'] = page
@@ -244,43 +248,30 @@ fn (mut book MDBook) fix_summary() ! {
 // all images, files and pages found need to be linked to the book
 // find which files,pages, images are not found
 fn (mut book MDBook) link_pages_files_images() ! {
+	logger.info('Linking pages, files, and images in MDBook: ${book.name}')
 	for _, page in book.pages {
-		println('page ${page.name} collection ${page.collection_name}*****')
-		println('page_content ${page.doc}')
-
+		logger.info('Linking pages, files, and images in MDBook: ${book.name} page: ${page.name}')
 		doc := page.doc or { return }
 		for paragraph in doc.items.filter(it is markdowndocs.Paragraph) {
 			if paragraph is markdowndocs.Paragraph {
 				for item in paragraph.items {
-					println(item)
-					println(item is markdowndocs.Link)
-					println(5)
 					if item is markdowndocs.Link {
 						link := item
 
 						if link.cat == .page {
-							println('page get: ${link.filename}')
-							println('page ${page.name} collection name 2: ${page.collection_name}')
-
+							logger.info('Linking page ')
 							collection := book.tree.collection_get(page.collection_name) or {
+								logger.error('Could not link page ')
 								panic('couldnt find book collection')
 							}
 							pageobj := collection.page_get(link.filename) or {
-								println('ERROR')
 								book.error(
 									cat: .page_not_found
 									msg: '${page.path.path}: Cannot find page ${link.filename} in ${page.collection_name}'
 								)
 								continue
 							}
-							print('1')
-							println('${pageobj.collection_name}:${pageobj.name}')
-							print('1.1')
-							println(pageobj)
-							// println(book.pages)
-							println('2')
-							// book.pages['${pageobj.collection.name}:${pageobj.name}'] = pageobj
-							println('3')
+							book.pages['${pageobj.collection_name}:${pageobj.name}'] = pageobj
 						} else if link.cat == .file {
 							collection := book.tree.collection_get(page.collection_name) or {
 								panic('couldnt find book collection')
@@ -306,18 +297,12 @@ fn (mut book MDBook) link_pages_files_images() ! {
 							}
 							// book.images['${imageobj.collection.name}:${imageobj.name}'] = imageobj
 						}
-						println('ifend link')
 					}
 				}
-				print('itemsend')
 			}
-			print('parafsend')
 		}
-		print('filterend')
 	}
-	print('pageend')
-	println(4)
-	book.tree.logger.info('finished linking pages files images')
+	logger.info('finished linking pages files images')
 }
 
 fn (mut book MDBook) errors_report() ! {
@@ -325,7 +310,6 @@ fn (mut book MDBook) errors_report() ! {
 	mut collection_errors := map[string]&Collection{}
 	for _, mut page in book.pages {
 		collection := book.tree.collection_get(page.collection_name) or {
-			println('right here: ${page.collection_name}')
 			panic('couldnt find book collection')
 		}
 		if collection.errors.len > 0 {
@@ -408,22 +392,27 @@ fn (mut book MDBook) export_linked_pages(md_path string, mut linked_pages []&Pag
 
 // export an mdbook to its html representation
 pub fn (mut book MDBook) export() ! {
+	logger.info('Exporting MDBook: ${book.name}')
 	book.template_install()! // make sure all required template files are in collection
 	md_path := book.md_path('').path + '/src'
 	html_path := book.html_path('').path
+
+	logger.info('Exporting pages in MDBook: ${book.name}')
 	for _, mut page in book.pages {
 		if page.pages_linked.len > 0 {
 			book.export_linked_pages(md_path, mut page.pages_linked)!
 		}
 		dest := '${md_path}/${page.collection_name}/${page.pathrel}'
-		book.tree.logger.info('export page: ${dest}')
 		page.process()!
+		logger.info('Exporting page: ${page.name}')
 		page.export(dest: dest)!
+		logger.info('Exported page: ${page.name}')
 	}
 
+	logger.info('Exporting files in MDBook: ${book.name}')
 	for _, mut file in book.files {
 		dest := '${md_path}/${file.collection.name}/${file.pathrel}'
-		book.tree.logger.info('export file: ${dest}')
+		logger.info('Exporting file: ${dest}')
 	}
 
 	for _, mut image in book.images {
@@ -453,9 +442,9 @@ pub fn (mut book MDBook) export() ! {
 
 	for item in book.tree.embedded_files {
 		if item.path.ends_with('.css') {
+			logger.info('Writing css files into MDBook')
 			css_name := item.path.all_after_last('/')
 			osal.file_write('${html_path}/css/${css_name}', item.to_string())!
-			println(' ======= ${html_path}/css/${css_name}')
 		}
 	}
 

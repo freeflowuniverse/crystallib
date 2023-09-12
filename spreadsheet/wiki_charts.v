@@ -71,7 +71,6 @@ pub fn (mut s Sheet) wiki_line_chart(args_ []RowGetArgs) !string {
       series: [${series_lines.join(',')}] 
   "
 	out := remove_empty_line('```echarts\n{${template}\n};\n```\n')
-	println(out)
 	// if true{panic("Sdsdsd")}
 	return out
 }
@@ -103,7 +102,6 @@ pub fn (mut s Sheet) wiki_bar_chart(args_ RowGetArgs) !string {
       ]
     "
 	out := remove_empty_line('```echarts\n{${bar1}\n};\n```\n')
-	println(out)
 	// if true{panic("Sdsdsd")}
 	return out
 }
@@ -157,7 +155,6 @@ pub fn (mut s Sheet) wiki_pie_chart(args_ RowGetArgs) !string {
 
     "
 	out := remove_empty_line('```echarts\n{${bar1}\n};\n```\n')
-	println(out)
 	// if true{panic("Sdsdsd")}
 	return out
 }
