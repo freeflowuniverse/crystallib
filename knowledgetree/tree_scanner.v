@@ -95,3 +95,16 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 		}
 	}
 }
+
+// QUESTION: healing doesn't work in scanning, is it ok to separate?
+pub fn (mut tree Tree) heal(args TreeScannerArgs) ! {
+	mut args_ := args
+	if args_.heal {
+		for _, mut collection in tree.collections {
+			if !args_.load {
+				collection.scan()!
+			}
+			collection.fix()!
+		}
+	}
+}

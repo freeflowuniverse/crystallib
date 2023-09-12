@@ -113,8 +113,6 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 				}
 			}
 
-			println('debugz: ${r.result}')
-
 			// r.result = mp.spawner.rpc(mut
 			// 	tname: 'bizmodel'
 			// 	method: chart_methodname
@@ -123,7 +121,7 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 			r.result += '\n'
 			return r
 		} else {
-			println('action ${action} isnt supported yet')
+			logger.warn('action ${action.name} isnt supported yet')
 		}
 	}
 	return r

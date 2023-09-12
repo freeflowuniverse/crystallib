@@ -28,11 +28,8 @@ pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 		path: pp
 		heal: args.heal
 	}
-	if args.load || args.heal {
+	if args.load {
 		collection.scan()!
-	}
-	if args.heal {
-		collection.fix()!
 	}
 
 	tree.collections[collection.name] = collection

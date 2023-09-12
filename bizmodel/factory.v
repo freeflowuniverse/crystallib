@@ -38,9 +38,7 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 	mut args := args_
 
 	// mut cs := currency.new()
-
 	mut sh := spreadsheet.sheet_new()!
-
 	mut bm := BizModel{
 		sheet: sh
 		params: args
@@ -72,14 +70,8 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 	knowledgetree.scan(
 		name: tree_name
 		path: args.path
-		// heal: true
+		heal: true
 	)!
-
-	rlock knowledgetrees {
-		tree := knowledgetrees['kapok']
-		print('start:')
-		println(tree.collections.values().map(it.pages.values().map('${it.doc}')))
-	}
 
 	// mut tree := args.context.knowledgetree('bizmodel_${args.name}')!
 

@@ -18,10 +18,6 @@ fn create_tree() ! {
 		name: knowledgetree.tree_name
 		path: knowledgetree.collections_path
 	)!
-	rlock knowledgetrees {
-		println('debugz:')
-		println(knowledgetrees[knowledgetree.tree_name].collections)
-	}
 }
 
 fn test_book_reset() {

@@ -48,6 +48,13 @@ pub fn scan(args_ TreeScannerArgs) ! {
 		mut tree := knowledgetrees[args.name] or { return error('cannot find tree: ${args.name}') }
 		tree.scan(args)!
 		knowledgetrees[args.name] = tree
+		// knowledgetrees[args.name] or { return error('cannot find tree: ${args.name}') }.scan(args)!
+	}
+
+	lock knowledgetrees {
+		mut tree := knowledgetrees[args.name] or { return error('cannot find tree: ${args.name}') }
+		tree.heal(args)!
+		knowledgetrees[args.name] = tree
 	}
 }
 
