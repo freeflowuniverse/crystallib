@@ -19,7 +19,7 @@ fn do() ! {
 		path: wikipath
 	)!
 
-	book.read()! // will generate and open	
+	book.read()! // will generate and open
 
 	//// TODO: Kristof check if we have everything then remove
 
