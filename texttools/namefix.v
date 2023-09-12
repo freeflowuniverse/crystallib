@@ -29,8 +29,26 @@ pub fn tel_fix(name_ string) !string {
 	return name
 }
 
+pub fn wiki_fix(content_ string) string {
+	mut content:=content_
+	for _ in 0..5{
+		content=content.replace("\n\n\n","\n\n")
+	}
+	content=content.replace("\n\n-","\n-")
+	return content
+}
 
-
+pub fn action_multiline_fix(content string) string {
+	if content.trim_space().contains("\n"){
+		splitted:=content.split("\n")
+		mut out:='\n'
+		for item in splitted{
+			out+="    $item\n"
+		}
+		return out
+	}
+	return content.trim_space()
+}
 
 
 pub fn name_fix(name string) string {
