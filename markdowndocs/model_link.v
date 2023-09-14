@@ -66,7 +66,7 @@ fn (mut o Link) process() ! {
 }
 
 // return how to represent link on source
-fn (link Link) wiki() string {
+pub fn (link Link) wiki() string {
 	mut link_filename := link.filename
 	if link.path != '' {
 		link_filename = '${link.path}/${link_filename}'
@@ -133,8 +133,17 @@ fn (mut link Link) parse() Link {
 	if link.content.starts_with('!') {
 		link.cat = LinkType.image
 	}
-	link.description = link.content.all_after('[').all_before(']').trim_space()
-	link.url = link.content.all_after('(').all_before(')').trim_space()
+	
+	index := link.content.index_after('](', 0)
+	start := if link.content.starts_with('[') { 1 } else { 2 }
+	if index > start {
+		link.description = link.content[start..index]
+	}
+	if index + 2 < link.content.len-1 {
+		link.url = link.content[index+2..link.content.len-1]
+	}
+	//link.description = link.content.all_after('[').all_before(']').trim_space()
+	//link.url = link.content.all_after('(').all_before(')').trim_space()
 	if link.url.contains('://') {
 		// linkstate = LinkState.ok
 		link.isexternal = true

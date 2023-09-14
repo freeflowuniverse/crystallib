@@ -69,7 +69,7 @@ pub fn (mut q RedisRpc) call(args RPCArgs) !string {
 pub fn (mut q RedisRpc) result(timeout u64, retqueue string) !string {
 	start := u64(time.now().unix_time_milli())
 	for {
-		r := q.redis.rpop(retqueue) or { '' } // TODO: should be blocking since certain timeout
+		r := q.redis.rpop(retqueue) or { '' }
 		if r != '' {
 			res := json.decode(Response, r)!
 			if res.error != '' {
@@ -91,7 +91,7 @@ pub fn (mut q RedisRpc) result(timeout u64, retqueue string) !string {
 pub fn (mut q RedisRpc) process(timeout u64, op fn (string, string) !string) !string {
 	start := u64(time.now().unix_time_milli())
 	for {
-		r := q.redis.rpop(q.key) or { '' } // TODO: should be blocking since certain timeout
+		r := q.redis.rpop(q.key) or { '' }
 		if r != '' {
 			msg := json.decode(Message, r)!
 

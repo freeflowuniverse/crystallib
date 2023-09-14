@@ -3,8 +3,6 @@ module texttools
 
 import os
 
-const ignore = '\\/[]()?!@#$%^&*<>:;{}|'
-
 pub fn name_fix(name string) string {
 	name2 := name_fix_keepext(name)
 	return name2
@@ -50,31 +48,46 @@ pub fn name_fix_keepext(name_ string) string {
 		name = old_name.split('#')[0]
 	}
 
-	name = name.replace(' ', '_')
-	name = name.replace('-', '_')
-	name = name.replace(';', ':')
-	name = name.replace('::', ':')
-	name = name.trim(' .:')
-
 	// need to replace . to _ but not the last one (because is ext)
 	fext := os.file_ext(name)
 	extension := fext.trim('.')
 	if extension != '' {
 		name = name[..(name.len - extension.len - 1)]
-		name = name.replace('.', '_')
-		name = name + '.${extension}'
 	}
-	name = name.replace('__', '_')
-	name = name.replace('__', '_') // needs to be 2x because can be 3 to 2 to 1
 
-	for c in texttools.ignore {
-		if name.contains(c.str()) {
-			name = name.replace(c.str(), '')
+	to_replace_ := '-;:. '
+	mut to_replace := []u8{}
+	for i in to_replace_ {
+		to_replace << i
+	}
+
+	mut out := []u8{}
+	mut prev := u8(0)
+	for u in name {
+		if u == 95 { // underscore
+			if prev != 95 {
+				// only when previous is not _
+				out << u
+			}
+		} else if u > 47 && u < 58 { // see https://www.charset.org/utf-8
+			out << u
+		} else if u > 96 && u < 123 {
+			out << u
+		} else if u in to_replace {
+			if prev != 95 {
+				out << u8(95)
+			}
+		} else {
+			// means previous one should not be used
+			continue
 		}
+		prev = u
 	}
+	name = out.bytestr()
 
-	// to make sure that future garbage collection works
-	name = name.clone()
-
+	// name = name.trim(' _') //DONT DO final _ is ok to keep
+	if extension.len > 0 {
+		name += '.${extension}'
+	}
 	return name
 }

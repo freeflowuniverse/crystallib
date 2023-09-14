@@ -35,7 +35,6 @@ fn test_url2() {
 	// home := os.real_path(os.home_dir())
 
 	tocompare := GitAddr{
-		// root: '$home/code/'
 		provider: 'github.com'
 		account: 'crystaluniverse'
 		name: 'publishtools'
@@ -48,22 +47,21 @@ fn test_url2() {
 	assert json.encode(obj) == json.encode(tocompare)
 }
 
-// fn test_url2() {
-// 	gs := new("",false)!
+fn test_url3() {
+	mut gs := get(GSConfig{}) or { panic('cannot load') }
 
-// 	url := 'https://github.com/vlang/v/blob/master/doc/docs.md'
-// 	obj := addr_get_from_url(url)
+	url := 'https://github.com/vlang/v/blob/master/doc/docs.md'
+	obj := addr_get_from_url(url)!
 
-// 	tocompare := GitAddr{
-// 		provider: 'github.com'
-// 		account: 'vlang'
-// 		repo: 'v'
-// 		path: 'doc/docs.md'
-// 		branch: 'master'
-// 	}
-
-// 	assert json.encode(obj) == json.encode(tocompare)
-// }
+	tocompare := GitAddr{
+		provider: 'github.com'
+		account: 'vlang'
+		name: 'v'
+		path: 'doc/docs.md'
+		branch: 'master'
+	}
+	assert json.encode(obj) == json.encode(tocompare)
+}
 
 // fn test_url3() {
 // 	gs := new("",false)!

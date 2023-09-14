@@ -65,7 +65,7 @@ const name_fix_replaces = [
 	'__',
 	'_',
 	'__',
-	'_', /* needs to be 2x because can be 3 to 2 to 1 */
+	'_', // needs to be 2x because can be 3 to 2 to 1
 	'::',
 	'_',
 	';',

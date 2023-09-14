@@ -1,9 +1,9 @@
 module main
 
-import freeflowuniverse.crystallib.redisclient { RedisURL }
+import freeflowuniverse.crystallib.redisclient
 
 fn redistest() ! {
-	mut redis := redisclient.core_get(RedisURL{})!
+	mut redis := redisclient.core_get()!
 
 	redis.selectdb(0)!
 

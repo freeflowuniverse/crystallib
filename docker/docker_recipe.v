@@ -2,8 +2,10 @@ module docker
 
 import freeflowuniverse.crystallib.params { Params }
 import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.osal { exec, file_write }
 import crypto.md5
 import v.embed_file
+import os
 
 // only 2 supported for now
 pub enum PlatformType {
@@ -73,14 +75,15 @@ pub mut:
 
 // delete the working directory
 pub fn (mut b DockerBuilderRecipe) delete() ! {
-	// n.engine.node.exec_silent()
+	// exec(cmd:)
+	panic('implement')
 }
 
 pub fn (mut b DockerBuilderRecipe) render() !string {
 	b.check_from_statement()!
 	b.check_conf_add()!
 	mut items := []string{}
-	mut zinitexists:=false
+	mut zinitexists := false
 	for mut item in b.items {
 		item_str := match mut item {
 			FromItem {
@@ -128,18 +131,17 @@ pub fn (mut b DockerBuilderRecipe) render() !string {
 				item.render()!
 			}
 			ZinitItem {
-				zinitexists=true
+				zinitexists = true
 				item.check()!
-				item.render()!				
-			}			
+				item.render()!
+			}
 		}
 		items << item_str
 	}
-	if zinitexists{
-		//means there is a zinit, we need to add the directory for zinit
-		items << "COPY zinit /etc/zinit\n"
-
-	}	
+	if zinitexists {
+		// means there is a zinit, we need to add the directory for zinit
+		items << 'COPY zinit /etc/zinit\n'
+	}
 	return items.join('\n')
 }
 
@@ -164,11 +166,12 @@ fn (mut b DockerBuilderRecipe) check_from_statement() ! {
 fn (mut b DockerBuilderRecipe) check_conf_add() ! {
 	// we need to make sure we insert it after the last FromItem
 	mut lastfromcounter := 0
+	mut counter := 0
 	for item3 in b.items {
 		if item3 is FromItem {
-			break
+			lastfromcounter = counter
 		}
-		lastfromcounter += 1
+		counter += 1
 	}
 	for item in b.items {
 		if item is AddFileEmbeddedItem {
@@ -194,19 +197,16 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 	dockerfilecontent := b.render()!
 
 	destpath := b.path()
-	if reset {
-		b.engine.node.exec_silent('rm -rf ${destpath}')!	
-	}
-	b.engine.node.exec_silent('mkdir -p ${destpath}')!
-	b.engine.node.file_write('${destpath}/Dockerfile', dockerfilecontent)!
+	os.mkdir_all(destpath)!
+	file_write('${destpath}/Dockerfile', dockerfilecontent)!
 	for item in b.files {
 		filename := item.path.all_after_first('/')
-		b.engine.node.file_write('${destpath}/${filename}', item.to_string())!
+		file_write('${destpath}/${filename}', item.to_string())!
 	}
 	confsh := '
 		export NAME="${b.name}"
 	'
-	b.engine.node.file_write('${destpath}/conf.sh', texttools.dedent(confsh))!
+	file_write('${destpath}/conf.sh', texttools.dedent(confsh))!
 	if b.engine.localonly {
 		b.tag = 'local'
 	} else {
@@ -248,6 +248,7 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 	cmdshell += '    -v ${destpath}:/src \\\n'
 	cmdshell += '    -v /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock \\\n'
 	cmdshell += '    -e SSH_AUTH_SOCK="/run/host-services/ssh-auth.sock" \\\n'
+	cmdshell += '    --privileged \\\n'
 	cmdshell += '    --hostname ${b.name} ${b.name}:${b.tag}'
 	if b.zinit {
 		cmdshell += '\n\ndocker exec -ti ${b.name} /bin/shell.sh'
@@ -255,7 +256,7 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 		cmdshell += " '/bin/shell.sh'\n"
 	}
 	cmdshell += '\ndocker rm ${b.name} -f > /dev/null 2>&1\n'
-	println(cmdshell)
+	// println(cmdshell)
 
 	mut tohash := dockerfilecontent + b.name + cmdshell + cmd
 	for mut item in b.items {
@@ -264,19 +265,22 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 			tohash += c
 		}
 	}
+
+	image_exists := b.engine.image_exists(repo: b.name)!
 	hashnew := md5.hexhash(tohash)
 
-	if reset == false && b.engine.node.done_exists('build_${b.name}') {
-		hashlast := b.engine.node.done_get('build_${b.name}') or { '' }
+	if image_exists && reset == false && osal.done_exists('build_${b.name}') {
+		hashlast := osal.done_get('build_${b.name}') or { '' }
 		if hashnew == hashlast {
 			println('\n ** BUILD ALREADY DONE FOR ${b.name.to_upper()}\n')
 			return
 		}
 	}
 
-	b.engine.node.exec_file(path: '${destpath}/shell.sh', cmd: cmdshell, execute: false)!
+	file_write('${destpath}/shell.sh', cmdshell)!
+	os.chmod('${destpath}/shell.sh', 0o777)!
 
-	b.engine.node.exec_file(path: '${destpath}/build.sh', cmd: cmd)!
+	exec(scriptpath: '${destpath}/build.sh', cmd: cmd, scriptkeep: true)!
 
-	b.engine.node.done_set('build_${b.name}', hashnew)!
+	osal.done_set('build_${b.name}', hashnew)!
 }

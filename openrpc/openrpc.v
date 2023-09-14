@@ -10,7 +10,7 @@ import freeflowuniverse.crystallib.jsonschema { Reference, SchemaRef }
 pub struct OpenRPC {
 pub mut:
 	openrpc       string          [required] = '1.0.0' // This string MUST be the semantic version number of the OpenRPC Specification version that the OpenRPC document uses.
-	info          Info            [required] // Provides metadata about the API.
+	info          Info            [required]   // Provides metadata about the API.
 	servers       ?[]Server // An array of Server Objects, which provide connectivity information to a target server.
 	methods       []Method        [required] // The available methods for the API.
 	components    ?Components // An element to hold various schemas for the specification.
@@ -149,7 +149,7 @@ type ErrorRef = Error | Reference
 // TODO: handle any type for data field
 // Defines an application level error.
 pub struct Error {
-	code    int     [required] // A Number that indicates the error type that occurred. This MUST be an integer. The error codes from and including -32768 to -32000 are reserved for pre-defined errors. These pre-defined errors SHOULD be assumed to be returned from any JSON-RPC api.
+	code    int     [required]    // A Number that indicates the error type that occurred. This MUST be an integer. The error codes from and including -32768 to -32000 are reserved for pre-defined errors. These pre-defined errors SHOULD be assumed to be returned from any JSON-RPC api.
 	message string  [required] // A String providing a short description of the error. The message SHOULD be limited to a concise single sentence.
 	data    ?string // A Primitive or Structured value that contains additional information about the error. This may be omitted. The value of this member is defined by the Server (e.g. detailed error information, nested errors etc.).
 }

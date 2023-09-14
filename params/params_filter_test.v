@@ -22,5 +22,11 @@ fn test_macro_args() {
 	f := params.filter_match(include: ['arg*'])!
 	assert f
 
+	f_ := params.filter_match(include: ['arg1+arg2'])!
+	assert f_
+
+	g := params.filter_match(include: ['arg1+arg3'])!
+	assert g == false
+
 	// NEXT: do include and excluse and more than one as well
 }

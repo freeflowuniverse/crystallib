@@ -9,8 +9,14 @@ module currency
 // 	)
 // }
 
+pub fn test_singleton_get() {
+	mut cs := new()
+	assert cs.currencies.len > 0
+	// mut cs2 := new()!
+}
+
 pub fn test_rates_get() {
-	mut cs := new()!
+	mut cs := new()
 	cs.get_rates(['EUR', 'AED', 'USD', 'EGP'], false)!
 	// last arg is to say its a crypto
 	cs.get_rates(['TERRA', 'TFT', 'XLM', 'USDC'], true)!
@@ -42,6 +48,6 @@ pub fn test_rates_get() {
 
 	mut aa := cs.amount_get('10')!
 	assert aa.val == 10.0
-	assert aa.currency.usdval == 0.0
-	assert aa.currency.name == ''
+	assert aa.currency.name == 'USD'
+	assert aa.currency.usdval == 1.0
 }

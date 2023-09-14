@@ -2,11 +2,11 @@ module imagemagick
 
 import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.params
-import freeflowuniverse.crystallib.process
+import freeflowuniverse.crystallib.osal
 
 fn installed0() bool {
 	println(' - init imagemagick')
-	out := process.execute_silent('convert -version') or { return false }
+	out := osal.execute_silent('convert -version') or { return false }
 	if !out.contains('ImageMagick') {
 		return false
 	}

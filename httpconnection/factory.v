@@ -16,8 +16,8 @@ pub struct HTTPConnectionArgs {
 pub:
 	name  string [required]
 	url   string [required]
-	cache bool = true
-	retry int  = 5
+	cache bool
+	retry int = 1
 }
 
 pub fn new(args HTTPConnectionArgs) !&HTTPConnection {

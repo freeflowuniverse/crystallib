@@ -8,7 +8,7 @@ pub mut:
 }
 
 pub struct Param {
-pub:
+pub mut:
 	key   string
 	value string
 }

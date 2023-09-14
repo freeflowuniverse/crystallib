@@ -1,7 +1,5 @@
 module docker
 
-import freeflowuniverse.crystallib.builder
-
 [params]
 pub struct CmdArgs {
 pub mut:
@@ -14,7 +12,7 @@ pub mut:
 	recipe &DockerBuilderRecipe [str: skip]
 }
 
-//add run command to docker, is the cmd which is run when docker get's built
+// add run command to docker, is the cmd which is run when docker get's built
 pub fn (mut b DockerBuilderRecipe) add_cmd(args CmdArgs) ! {
 	mut item := CmdItem{
 		cmd: args.cmd

@@ -1,6 +1,5 @@
 module openssl
 
-import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.builder
 import json
 

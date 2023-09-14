@@ -3,19 +3,19 @@ module docker
 [params]
 pub struct CopyArgs {
 pub mut:
-	from   string
-	source string
-	dest   string
-	make_executable bool //if set will make the file copied executable
+	from            string
+	source          string
+	dest            string
+	make_executable bool // if set will make the file copied executable
 }
 
 pub struct CopyItem {
 pub mut:
-	from        string
-	source      string
-	dest        string
-	recipe      &DockerBuilderRecipe [str: skip]
-	make_executable bool //if set will make the file copied executable
+	from            string
+	source          string
+	dest            string
+	recipe          &DockerBuilderRecipe [str: skip]
+	make_executable bool // if set will make the file copied executable
 	// check_embed bool = true
 }
 
@@ -47,6 +47,6 @@ pub fn (mut i CopyItem) render() !string {
 	}
 	if i.make_executable {
 		out += '\nRUN chmod +x ${i.dest}\n'
-	}	
+	}
 	return out
 }

@@ -70,7 +70,7 @@ pub fn (mut h HTTPConnection) send(req Request) !Result {
 		new_req.header = h.header()
 		for _ in 0 .. h.retry {
 			response = new_req.do() or {
-				err_message = '${err}'
+				err_message = 'Cannot send rew:${req}\nerror:${err}'
 				// println(err_message)
 				continue
 			}
@@ -112,7 +112,7 @@ pub fn (mut h HTTPConnection) post_json_str(req_ Request) !string {
 pub fn (mut h HTTPConnection) get_json_dict(req Request) !map[string]json2.Any {
 	data_ := h.get(req)!
 	mut data := map[string]json2.Any{}
-	println(data)
+	// println(data)
 	data = crystaljson.json_dict_filter_any(data_, false, [], [])!
 	return data
 }
@@ -126,10 +126,34 @@ pub fn (mut h HTTPConnection) get_json_list(req Request) ![]string {
 	return data
 }
 
+pub fn (mut h HTTPConnection) get_json(req Request) !string {
+	h.default_header.add(.content_language, 'Content-Type: application/json')
+	mut data_ := h.get(req)!
+	return data_
+}
+
 // Get Request with json data and return response as string
 pub fn (mut h HTTPConnection) get(req_ Request) !string {
 	mut req := req_
 	req.method = .get
 	result := h.send(req)!
 	return result.data
+}
+
+// Delete Request with json data and return response as string
+pub fn (mut h HTTPConnection) delete(req_ Request) !string {
+	mut req := req_
+	req.method = .delete
+	result := h.send(req)!
+	return result.data
+}
+
+// performs a multi part form data request
+pub fn (mut h HTTPConnection) post_multi_part(req Request, form http.PostMultipartFormConfig) !http.Response {
+	mut req_form := form
+	mut header := h.header()
+	header.set(http.CommonHeader.content_type, 'multipart/form-data')
+	req_form.header = header
+	url := h.url(req)
+	return http.post_multipart_form(url, req_form)!
 }

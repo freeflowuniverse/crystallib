@@ -1,8 +1,5 @@
 module docker
 
-import freeflowuniverse.crystallib.builder
-
-
 pub struct EnvItem {
 pub mut:
 	name  string
@@ -10,15 +7,15 @@ pub mut:
 }
 
 pub fn (mut b DockerBuilderRecipe) add_env(name string, val string) ! {
-	if name.len<3{
-		return error("min length of name is 3")
+	if name.len < 3 {
+		return error('min length of name is 3')
 	}
-	if val.len<3{
-		return error("min length of val is 3")
+	if val.len < 3 {
+		return error('min length of val is 3')
 	}
 	mut item := EnvItem{
-		name:name.to_upper()
-		value:val
+		name: name.to_upper()
+		value: val
 	}
 	b.items << item
 }

@@ -40,7 +40,11 @@ struct ResponseBody {
 // e.g.
 pub fn (mut cs Currencies) get_rates(cur_array []string, crypto bool) ! {
 	// http.CommonHeader.authorization: 'Bearer $h.auth.auth_token'
-	mut conn := httpconnection.new(name: 'example', url: 'https://api.exchangerate.host/')!
+	mut conn := httpconnection.new(
+		name: 'example'
+		url: 'https://api.exchangerate.host/'
+		cache: true
+	)!
 	// do the cache on the connection
 	conn.cache.expire_after = 7200 // make the cache expire_after 2h
 	mut cur_codes := cur_array.str()
@@ -51,6 +55,7 @@ pub fn (mut cs Currencies) get_rates(cur_array []string, crypto bool) ! {
 	if crypto {
 		prefix += '&source=crypto'
 	}
+	// TODO: conn.get hits invalid memory access, let's fix the issue
 	response := conn.get(prefix: prefix)!
 	decoded := json.decode(ResponseBody, response) or {
 		return error('Failed to decode crypto json: ${err}')

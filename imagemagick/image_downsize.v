@@ -1,7 +1,7 @@
 module imagemagick
 
 import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.process
+import freeflowuniverse.crystallib.osal
 import os
 
 [params]
@@ -57,7 +57,7 @@ pub fn (mut image Image) downsize(args DownsizeArgs) ! {
 		println('   - convert image resize 50%: ${image.path.path}')
 		cmd := "convert '${image.path.path}' -resize 50% '${image.path.path}'"
 		// TODO:
-		process.execute_silent(cmd) or {
+		osal.execute_silent(cmd) or {
 			return error('could not convert png to png --resize 50%.\n${cmd} .\n${error}')
 		}
 		// println(image)
@@ -66,7 +66,7 @@ pub fn (mut image Image) downsize(args DownsizeArgs) ! {
 		image.size_kbyte = 0
 		println('   - convert image resize 75%: ${image.path.path}')
 		cmd := "convert '${image.path.path}' -resize 75% '${image.path.path}'"
-		process.execute_silent(cmd) or {
+		osal.execute_silent(cmd) or {
 			return error('could not convert png to png --resize 75%.\n${cmd} \n${error}')
 		}
 		image.init_()!
@@ -80,7 +80,7 @@ pub fn (mut image Image) downsize(args DownsizeArgs) ! {
 			if os.exists(path_dest) {
 				os.rm(path_dest)!
 			}
-			process.execute_silent(cmd) or {
+			osal.execute_silent(cmd) or {
 				return error('could not convert png to jpg.\n${cmd} \n${error}')
 			}
 			if os.exists(image.path.path) {

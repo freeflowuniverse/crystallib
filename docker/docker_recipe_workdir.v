@@ -1,7 +1,5 @@
 module docker
 
-import freeflowuniverse.crystallib.builder
-
 [params]
 pub struct WorkDirArgs {
 pub mut:

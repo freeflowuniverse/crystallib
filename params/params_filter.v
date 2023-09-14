@@ -10,12 +10,15 @@ pub mut:
 // will return true if the params object match the filter (include and excludes)
 // will first do the include filter then exclude, which means if matched and exclude is then matched won't count
 // uses the filter_item function for each include or excluse (see further)
-pub fn (mut params Params) filter_match(myfilter ParamsFilter) !bool {
+pub fn (params Params) filter_match(myfilter ParamsFilter) !bool {
 	mut inclok := true
 	if myfilter.include.len > 0 {
 		inclok = false
 		for incl in myfilter.include {
 			ok := params.filter_match_item(incl)!
+			// println(params)
+			// println(myfilter)
+			// println(" - filter match: ok:$ok $incl")
 			if ok {
 				inclok = true
 				break // not more needed to check includes, we found one
@@ -42,7 +45,6 @@ pub fn (mut params Params) filter_match(myfilter ParamsFilter) !bool {
 //    - hr+development, means look for argument hr or development
 //    - devel*, look for an argument which starts with devel (see match_glob)
 //    - color:*red*, look for a value with key color, which has 'red' string inside
-//
 // 	match_glob matches the string, with a Unix shell-style wildcard pattern
 // 	The special characters used in shell-style wildcards are:
 //     * - matches everything
@@ -51,7 +53,7 @@ pub fn (mut params Params) filter_match(myfilter ParamsFilter) !bool {
 //     [^seq] - matches any character that is NOT in the sequence
 //     Any other character in pattern, is matched 1:1 to the corresponding character in name, including / and .
 //     You can wrap the meta-characters in brackets too, i.e. [?] matches ? in the string, and [*] matches * in the string.
-pub fn (mut params Params) filter_match_item(myfilter string) !bool {
+pub fn (params Params) filter_match_item(myfilter string) !bool {
 	mut tests := [myfilter]
 	if myfilter.contains('+') {
 		tests = myfilter.split('+')

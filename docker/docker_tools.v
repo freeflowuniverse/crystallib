@@ -44,22 +44,31 @@ fn parse_ports(s string) ![]string {
 
 fn parse_labels(s string) !map[string]string {
 	mut res := map[string]string{}
-	// TODO: need to do
+	if s.trim_space().len > 0 {
+		// println(s)
+		// panic("todo")
+		// TODO: need to do
+	}
 	return res
 }
 
 fn parse_networks(s string) ![]string {
 	mut res := []string{}
-	// TODO: need to do
+	if s.trim_space().len > 0 {
+		println(s)
+		// panic("todo networks")
+		// TODO: need to do
+	}
 	return res
 }
 
 fn parse_mounts(s string) ![]DockerContainerVolume {
 	mut res := []DockerContainerVolume{}
 	// TODO: need to do
-	println(s)
-	if s.len > 0 {
-		panic('sd3')
+	if s.trim_space().len > 0 {
+		// println(s)
+		// panic("todo mounts")
+		// TODO: need to do
 	}
 	return res
 }
@@ -93,10 +102,8 @@ fn clear_str(s string) string {
 fn contains_ssh_port(forwarded_ports []string) bool {
 	for port in forwarded_ports {
 		splitted := port.split(':')
-		if splitted.contains(':') {
-			if splitted[1] == '22' || splitted[1] == '22/tcp' {
-				return true
-			}
+		if splitted.last() == '22' || splitted.last() == '22/tcp' {
+			return true
 		}
 	}
 	return false

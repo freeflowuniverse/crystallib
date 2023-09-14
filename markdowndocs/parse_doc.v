@@ -63,11 +63,10 @@ fn (mut doc Doc) parse() ! {
 
 		if mut llast is Paragraph {
 			if line.starts_with('|') && line.ends_with('|') {
-				if !parser.eof() {
-					header := line.trim('|').split('|').map(it.trim(' '))
+				if !parser.next_is_eof() {
+					header := line.trim('|').split('|').map(it.trim(' \t'))
 					line2 := parser.line_next()
-					second_row := line2.trim('|').split('|').map(it.trim(' ')).filter(re_header_row.matches_string(it))
-					println('${header.len} vs ${second_row.len}')
+					second_row := line2.trim('|').split('|').map(it.trim(' \t')).filter(re_header_row.matches_string(it))
 					if header.len == second_row.len {
 						// from now on we know it is a valid map
 						mut alignments := []Alignment{}
@@ -95,6 +94,15 @@ fn (mut doc Doc) parse() ! {
 				}
 			}
 
+			// parse includes
+			if line.starts_with('!!include ') {
+				content := line.all_after_first('!!include ').trim_space()
+				doc.items << Include{
+					content: content
+				}
+				parser.next_start()
+				continue
+			}
 			// parse action
 			if line.starts_with('!!') {
 				doc.items << Action{
@@ -141,7 +149,8 @@ fn (mut doc Doc) parse() ! {
 			}
 		}
 
-		if mut llast is Paragraph || mut llast is Html || mut llast is CodeBlock {
+		if mut llast is Paragraph || mut llast is Html || mut llast is CodeBlock
+			|| mut llast is Include {
 			if parser.endlf == false && parser.next_is_eof() {
 				llast.content += line
 			} else {
@@ -182,6 +191,9 @@ fn (mut doc Doc) parse() ! {
 				}
 			}
 			Html {
+				item.process()!
+			}
+			Include {
 				item.process()!
 			}
 			// Comment { item.process()! }
