@@ -65,7 +65,7 @@ pub fn (mut ui UITelegram) ask_question(args QuestionArgs) !string {
 		if args.question != '' {
 			question = args.question
 		}
-		message += '*bold \*${make_safe(question)}*\n'
+		message += '*bold \\*${make_safe(question)}*\n'
 
 		warning = args.warning
 
