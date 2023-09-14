@@ -87,7 +87,7 @@ fn test_time() {
 	e.add_time(t)
 
 	mut d := decoder_new(e.data)
-	assert d.get_time() == t
+	assert "${d.get_time()}" == "${t}"
 }
 
 fn test_list_string() {
@@ -197,7 +197,10 @@ fn encode_decode_struct[T](input StructType[T]) bool {
 		eprintln('Failed to decode, error: ${err}')
 		return false
 	}
-	return input == output
+	if '${input}' != '${output}' {
+		eprintln('Failed to decode:\nINPUT: ${input}\nDECODED: ${output}')
+	}
+	return '${input}' == '${output}'
 }
 
 fn test_struct() {
