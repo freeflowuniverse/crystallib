@@ -47,7 +47,7 @@ fn init_session(mut tmux Tmux, s_name string) !Session {
 pub fn (mut s Session) create() ! {
 	res_opt := "-P -F '#\{window_id\}'"
 	cmd := "tmux new-session ${res_opt} -d -s ${s.name} 'sh'"
-	window_id_ := s.tmux.node.exec(cmd) or {
+	window_id_ := osal.execute_silent(cmd) or {
 		return error("Can't create tmux session ${s.name} \n${cmd}\n${err}")
 	}
 

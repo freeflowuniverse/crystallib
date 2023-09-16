@@ -10,7 +10,7 @@ see imagemagick
 
 ```golang
 import os
-import freeflowuniverse.crystallib.builder
+
 import installers.base
 import process
 
@@ -18,17 +18,16 @@ import process
 const installername = os.base(os.dir(@FILE))
 
 // install imagemagick will return true if it was already installed
-pub fn (mut i Installer) install() ! {
-	mut node := i.node
+pub fn  install() ! {
+
 	println(' - $node.name: install $installername')
-	if !node.done_exists('install_${installername}') {
-		if node.platform == builder.PlatformType.osx || node.platform == builder.PlatformType.ubuntu{
-			node.package_install(name:"imagemagick")!
+	if !osal.done_exists('install_${installername}') {
+		if osal.platform() == builder.PlatformType.ubuntu{
+			package_install(name:"imagemagick")!
 		} else {
 			panic('only ubuntu and osx supported for now')
 		}
-		node.done_set('install_${installername}', 'OK')!
-	}
+	osal.done_set('install_${installername}', 'OK')!
 	println(' - ${installername} already done')
 }
 

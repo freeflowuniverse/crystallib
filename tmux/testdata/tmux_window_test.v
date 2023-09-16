@@ -1,6 +1,6 @@
 module tmux
 
-import freeflowuniverse.crystallib.builder
+import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.tmux
 
 // uses single tmux instance for all tests

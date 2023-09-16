@@ -1,16 +1,16 @@
 module vlang
 
 // install vlang will return true if it was already installed
-pub fn (mut i Installer) install() ! {
-	mut node := i.node
+pub fn  install() ! {
+
 	// install vlang if it was already done will return true
 	println(' - ${node.name}: install vlang')
-	if !(i.state == .reset) && node.done_exists('install_vlang') {
+	if !(i.state == .reset) && osal.done_exists('install_vlang') {
 		println('    ${node.name}: was already done')
 		return
 	}
 
-	if node.command_exists('v') {
+	if cmd_exists('v') {
 		println('Vlang was already installed.')
 		return
 	}
@@ -23,8 +23,8 @@ pub fn (mut i Installer) install() ! {
 	./v symlink
 	'
 
-	node.exec(cmd) or { return error('Cannot install vlang.\n${err}') }
+	osal.exec_silent('Cannot install vlang.\n${err}')!
 
-	node.done_set('install_vlang', 'OK')!
+osal.done_set('install_vlang', 'OK')!
 	return
 }
