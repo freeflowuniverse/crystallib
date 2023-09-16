@@ -41,9 +41,9 @@ fn test_window_new() {
 // // tests creating duplicate windows
 // fn test_window_new0() {
 
-// 	mut builder := builder.new()
-// 	mut node_ssh := builder.node_new(name: 'test', ipaddr: '185.69.166.152', debug: true)!
-// 	installer := tmux.get_install(mut node_ssh) or { panic("could not install tmux to node: $err") }
+
+// 	
+// 	installer := tmux.get_install(
 
 // 	mut tmux := Tmux {
 // 		node: node_ssh

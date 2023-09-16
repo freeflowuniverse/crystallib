@@ -9,7 +9,7 @@ pub fn install() ! {
 	base.install()!
 
 	// install caddy if it was already done will return true
-	println(' - ${node.name}: install caddy')
+	println(' - package_install install caddy')
 
 	if osal.platform() != .ubuntu {
 		return error('only support ubuntu for now')

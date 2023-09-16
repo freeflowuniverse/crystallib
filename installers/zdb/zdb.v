@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.installers.base
 // install zdb will return true if it was already installed
 pub fn  install() ! {
 	base.install()!
-	println(' - ${node.name}: install zdb')
+	println(' - package_install install zdb')
 	if !osal.done_exists('install_zdb') && !cmd_exists('zdb') {
 		mut gs := gittools.get(root: '/tmp/code')!
 		url := 'git@github.com:threefoldtech/0-db.git'

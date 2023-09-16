@@ -4,10 +4,10 @@ import freeflowuniverse.crystallib.osal
 pub fn  install() ! {
 
 	// install rust if it was already done will return true
-	println(' - ${node.name}: install rust')
+	println(' - package_install install rust')
 	// TODO: install_rust was in done_exists
 	if !(i.state == .reset) && osal.done_exists('install_rust') {
-		println('    ${node.name}: was already done')
+		println('    package_install was already done')
 		return
 	}
 

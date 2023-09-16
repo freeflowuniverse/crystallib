@@ -11,7 +11,7 @@ const installername = os.base(os.dir(@FILE))
 // install imagemagick will return true if it was already installed
 pub fn  install() ! {
 
-	println(' - ${node.name}: install ${installername}')
+	println(' - package_install install ${installername}')
 	if !osal.done_exists('install_${installername}') {
 		if osal.platform() == builder.PlatformType.ubuntu {
 			osal.package_install(name: 'imagemagick')!

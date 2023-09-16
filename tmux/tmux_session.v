@@ -1,30 +1,51 @@
 module tmux
-
+import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.texttools
 import os
 
 [heap]
 struct Session {
 pub mut:
 	tmux    &Tmux              [str: skip] // reference back
-	windows map[string]&Window // session has windows
+	windows []&Window // session has windows
 	name    string
 }
 
-pub fn (mut t Tmux) session_get(name string) !&Session {
-	if name in t.sessions {
-		return t.sessions[name]
+//get session (session has windows) .
+//returns none if not found
+pub fn (mut t Tmux) session_get(name_ string) ?&Session {
+	name:=texttools.name_fix(name_)
+	for session in t.sessions {
+		if session.name == name {
+			return session
+		}
 	}
-	return error('could not find session ${name}')
+	return none
 }
 
-pub fn (mut t Tmux) session_get_create(name string, restart bool) !&Session {
-	name_l := name.to_lower()
-	if name_l !in t.sessions {
+[params]
+pub struct SessionCreateArgs{
+pub mut:
+	name string [required]
+	reset bool
+}
+
+
+// create session, if reset will re-create
+pub fn (mut t Tmux) session_create(args SessionCreateArgs) !&Session {
+	name:=texttools.name_fix(name_)
+	mut session := t.session_get(name)
+	if !session{
 		os.log('TMUX - Session ${name} will be created')
+		session = Session{
+			tmux: t // reference back
+			name: name
+		}
+	}
 		init_session(mut t, name_l)!
 		t.scan()!
 	}
-	mut session := t.sessions[name_l]
+	mut session := t.sessions[name_l] or {panic("cannot find map entry")}
 	if restart {
 		os.log('TMUX - Session ${name} will be restarted.')
 		session.restart()!
@@ -32,12 +53,8 @@ pub fn (mut t Tmux) session_get_create(name string, restart bool) !&Session {
 	return session
 }
 
-fn init_session(mut tmux Tmux, s_name string) !Session {
-	mut s := Session{
-		tmux: tmux // reference back
-		windows: map[string]&Window{}
-		name: s_name.to_lower()
-	}
+fn init_session(mut tmux Tmux, name_ string) !Session {
+	name:=texttools.name_fix(name_)
 	os.log('SESSION - Initialize session: ${s.name}')
 	s.create()!
 	tmux.sessions[s_name] = &s
@@ -52,11 +69,11 @@ pub fn (mut s Session) create() ! {
 	}
 
 	cmd3 := 'tmux set-option remain-on-exit on'
-	s.tmux.node.exec(cmd3) or { return error("Can't execute ${cmd3}\n${err}") }
+	osal.execute_silent(cmd3) or { return error("Can't execute ${cmd3}\n${err}") }
 
 	window_id := window_id_.trim(' \n')
 	cmd2 := "tmux rename-window -t ${window_id} 'notused'"
-	s.tmux.node.exec(cmd2) or {
+	osal.execute_silent(cmd2) or {
 		return error("Can't rename window ${window_id} to notused \n${cmd2}\n${err}")
 	}
 }
@@ -67,8 +84,8 @@ pub fn (mut s Session) restart() ! {
 }
 
 pub fn (mut s Session) stop() ! {
-	mut node := s.tmux.node
-	node.exec('tmux kill-session -t ${s.name}') or {
+	
+	osal.execute_silent('tmux kill-session -t ${s.name}') or {
 		return error("Can't delete session ${s.name} - This may happen when session is not found: ${err}")
 	}
 }
@@ -124,7 +141,7 @@ pub fn (mut s Session) window_get(name string) !&Window {
 	if name_l !in s.windows {
 		return error('Cannot find window ${name} in session:${s.name}')
 	}
-	return s.windows[name_l]
+	return s.windows[name_l] or {panic("cannot find map entry")}
 }
 
 // pub fn (mut s Session) activate()! {	

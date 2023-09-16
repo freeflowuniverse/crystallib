@@ -3,7 +3,7 @@ module tmux
 import freeflowuniverse.crystallib.osal
 import os
 
-fn (mut t Tmux) scan_add(line string) !&Window {
+fn (mut t Tmux) scan_add(line string) !Window {
 	// println(" -- scan add")
 	if line.count('|') < 4 {
 		return error(@FN + 'expects line with at least 5 params separated by |')
@@ -37,7 +37,7 @@ fn (mut t Tmux) scan_add(line string) !&Window {
 		// println("NOT IN WINDOWS: $window_name_l")
 	}
 
-	mut w := session.windows[window_name_l]
+	mut w := session.windows[window_name_l] or {error("cannot find $window_name_l")}
 
 	w.name = window_name_l
 	w.id = (window_id.replace('@', '')).int()
@@ -51,9 +51,9 @@ fn (mut t Tmux) scan_add(line string) !&Window {
 
 // scan the system to detect sessions .
 // probably means a command did not start well
-pub fn (mut t Tmux) scan() !map[string]&Window {
+pub fn (mut t Tmux) scan() ![]Window {
 	// os.log('TMUX - Scanning ....')
-	mut node := t.node
+	
 	cmd_list_session := "tmux list-sessions -F '#{session_name}'"
 	exec_list := osal.execute_silent(cmd_list_session)!
 
@@ -95,7 +95,7 @@ pub fn (mut t Tmux) scan() !map[string]&Window {
 		}
 	}
 
-	for _, mut w2 in windows {
+	for mut w2 in windows {
 		w2.check()!
 	}
 	return windows

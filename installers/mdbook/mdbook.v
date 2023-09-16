@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.installers.vlang
 pub fn  install() ! {
 
 	vlang.get_install()!
-	println(' - ${node.name}: install mdbook')
+	println(' - package_install install mdbook')
 	if !osal.done_exists('install_mdbook') && !cmd_exists('mdbook') {
 		cmd := '
 		.cargo/bin/cargo install mdbook

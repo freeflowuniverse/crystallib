@@ -1,6 +1,7 @@
 module tmux
 
 import os
+import freeflowuniverse.crystallib.osal
 
 [heap]
 struct Window {
@@ -43,7 +44,7 @@ pub fn (mut t Tmux) window_new(args WindowArgs) !Window {
 }
 
 pub fn (mut w Window) create() ! {
-	mut node := w.session.tmux.node
+	
 	// tmux new-window -P -c /tmp -e good=1 -e bad=0 -n koekoe -t main bash
 	if w.active == false {
 		res_opt := "-P -F '#{session_name}|#{window_name}|#{window_id}|#{pane_active}|#{pane_id}|#{pane_pid}|#{pane_start_command}'"
@@ -73,7 +74,7 @@ pub fn (mut w Window) restart() ! {
 
 // stop the window
 pub fn (mut w Window) stop() ! {
-	mut node := w.session.tmux.node
+	
 	osal.execute_silent('tmux kill-window -t @${w.id}') or {
 		return error("Can't kill window with id:${w.id}")
 	}
@@ -94,14 +95,14 @@ pub fn (window Window) str() string {
 // will select the current window so with tmux a we can go there .
 // to login into a session do `tmux a -s mysessionname`
 fn (mut w Window) activate() ! {
-	mut node := w.session.tmux.node
+	
 	cmd2 := 'tmux select-window -t %${w.id}'
 	osal.execute_silent(cmd2) or { return error("Couldn't select window ${w.name} \n${cmd2}\n${err}") }
 }
 
 // show the environment
 pub fn (mut w Window) environment_print() ! {
-	mut node := w.session.tmux.node
+	
 	res := osal.execute_silent('tmux show-environment -t %${w.paneid}') or {
 		return error('Couldnt show enviroment cmd: ${w.cmd} \n${err}')
 	}
@@ -110,7 +111,7 @@ pub fn (mut w Window) environment_print() ! {
 
 // capture the output
 pub fn (mut w Window) output_print() ! {
-	mut node := w.session.tmux.node
+	
 	//-S is start, minus means go in history, otherwise its only the active output
 	res := osal.execute_silent('tmux capture-pane -t %${w.paneid} -S -10000') or {
 		return error('Couldnt show enviroment cmd: ${w.cmd} \n${err}')

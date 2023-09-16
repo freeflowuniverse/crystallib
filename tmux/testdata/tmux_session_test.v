@@ -4,15 +4,14 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.tmux
 
 // fn testsuite_end() {
-// 	mut builder := builder.new()
-// 	mut node := builder.node_new(name: 'test', ipaddr: '185.69.166.152', debug: true)!
+
+// 	
 // }
 
 fn testsuite_begin() {
-	mut builder := builder.new()
-	mut node := builder.node_new(name: 'test', ipaddr: '185.69.166.152', debug: true)!
+
+	
 	mut tmux := Tmux{
-		node: node
 	}
 
 	if tmux.is_running()! {
@@ -21,14 +20,13 @@ fn testsuite_begin() {
 }
 
 fn test_session_create() {
-	mut builder := builder.new()
-	mut node_ssh := builder.node_new(name: 'test', ipaddr: '185.69.166.152', debug: true)!
-	installer := tmux.get_install(mut node_ssh) or {
-		panic('could not install tmux to node: ${err}')
+
+	
+	installer := tmux.get_install(
+		panic('could not install tmux: ${err}')
 	}
 
 	mut tmux := Tmux{
-		node: node_ssh
 	}
 	tmux.start() or { panic('cannot start tmux: ${err}') }
 
@@ -72,9 +70,9 @@ fn test_session_create() {
 
 // fn test_session_stop() {
 
-// 	mut builder := builder.new()
-// 	mut node_ssh := builder.node_new(name: 'test', ipaddr: '185.69.166.152', debug: true)!
-// 	installer := tmux.get_install(mut node_ssh) or { panic("could not install tmux to node: $err") }
+
+// 	
+// 	installer := tmux.get_install(
 
 // 	mut tmux := Tmux {
 // 		node: node_ssh

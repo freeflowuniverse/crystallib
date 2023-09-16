@@ -11,9 +11,9 @@ pub fn install() ! {
 	base.install()!
 
 	// install golang if it was already done will return true
-	println(' - ${node.name}: install golang')
+	println(' - package_install install golang')
 	if osal.done_exists('install_golang') {
-		println('    ${node.name}: was already done')
+		println('    package_install was already done')
 		return
 	}
 

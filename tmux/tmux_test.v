@@ -97,8 +97,8 @@ fn test_scan() ! {
 // //TODO: fix test
 // fn test_scan_add() ! {
 // 	println("-----Testing scan_add------")
-// 	mut builder := builder.new()
-// 	mut node_ssh := builder.node_new(name: 'test', ipaddr: '185.69.166.152', debug: true)!
+
+// 	
 // 	mut tmux := Tmux { node: node_ssh }
 // 	windows := tmux.scan_add("line")!
 // }

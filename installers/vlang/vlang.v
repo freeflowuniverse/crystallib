@@ -4,9 +4,9 @@ module vlang
 pub fn  install() ! {
 
 	// install vlang if it was already done will return true
-	println(' - ${node.name}: install vlang')
+	println(' - package_install install vlang')
 	if !(i.state == .reset) && osal.done_exists('install_vlang') {
-		println('    ${node.name}: was already done')
+		println('    package_install was already done')
 		return
 	}
 

@@ -4,9 +4,9 @@ import freeflowuniverse.crystallib.osal
 pub fn  install() ! {
 
 	// install crystaltools if it was already done will return true
-	println(' - ${node.name}: install crystaltools')
+	println(' - package_install install crystaltools')
 	if !(i.state == .reset) && osal.done_exists('install_crystaltools') {
-		println('    ${node.name}: was already done')
+		println('    package_install was already done')
 		return
 	}
 	panic('outdated')
@@ -19,9 +19,9 @@ pub fn  install() ! {
 
 pub fn  update() ! {
 
-	println(' - ${node.name}: update crystaltools')
+	println(' - package_install update crystaltools')
 	if !(i.state == .reset) && osal.done_exists('install_crystaltools') {
-		println('    ${node.name}: was already done')
+		println('    package_install was already done')
 		return
 	}
 	osal.exec_silent('cd /tmp && export TERM=xterm && source /root/env.sh && ct_upgrade') or {

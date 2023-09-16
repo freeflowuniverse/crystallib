@@ -1,6 +1,7 @@
 module tmux
 
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.session
 import os
 // import redisclient
 
@@ -8,12 +9,17 @@ import os
 pub struct Tmux {
 pub mut:
 	sessions map[string]&Session
+	sessionid string //unique link to job
+}
+
+[params]
+pub struct TmuxNewArgs{
+	sessionid string
 }
 
 //return tmux instance
-pub fn new() !Tmux {
-	mut builder_ := builder.new()
-	return Tmux{}
+pub fn new(args TmuxNewArgs) !Tmux {
+	return Tmux{sessionid:args.sessionid}
 }
 
 // loads tmux session, populate the object
@@ -61,13 +67,13 @@ pub fn (mut t Tmux) list_print() {
 	}
 }
 
-// get all windows in new map
-pub fn (mut t Tmux) windows_get() map[string]&Window {
-	mut res := map[string]&Window{}
+// get all windows as found in all sessions
+pub fn (mut t Tmux) windows_get() []&Window {
+	mut res := []&Window{}
 	// os.log('TMUX - Start listing  ....')
 	for _, session in t.sessions {
 		for _, window in session.windows {
-			res[window.name] = window
+			res << window
 		}
 	}
 	return res

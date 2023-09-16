@@ -4,9 +4,9 @@ module tailwind
 pub fn  install() ! {
 
 	// install tailwind if it was already done will return true
-	println(' - ${node.name}: install tailwind')
+	println(' - package_install install tailwind')
 	if !(i.state == .reset) && osal.done_exists('install_tailwind') {
-		println('    ${node.name}: was already done')
+		println('    package_install was already done')
 		return
 	}
 

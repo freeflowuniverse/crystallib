@@ -3,7 +3,7 @@ module tmux
 // install tmux will return true if it was already installed
 pub fn  install() ! {
 
-	println(' - ${node.name}: install tmux')
+	println(' - install tmux')
 	if osal.cmd_exists('tmux') {
 		println('tmux was already installed.')
 	}
