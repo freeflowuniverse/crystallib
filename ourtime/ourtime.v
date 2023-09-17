@@ -40,7 +40,7 @@ pub fn new(txt_ string) !OurTime {
 		ot.now()
 		return ot
 	}	
-	unix:=parse(txt)!
+	unix:=parse(txt_)!
 	return OurTime{unix:unix}
 }
 
@@ -51,31 +51,36 @@ pub fn now() OurTime {
 }
 
 // print the wiki formatting for time
-pub fn (ourtime OurTime) md() string {
-	return ourtime.time().format()
+pub fn (ot OurTime) md() string {
+	return ot.time().format()
 }
 
 //returns a date-time string in "YYYY-MM-DD HH:mm" format (24h).
-pub fn (ourtime OurTime) str() string {
-	return ourtime.time().format()
+pub fn (ot OurTime) str() string {
+	return ot.time().format()
 }
 
 // returns a date string in "YYYY-MM-DD" format
-pub fn (ourtime OurTime) day() string {
-	return ourtime.time().ymmdd()
+pub fn (ot OurTime) day() string {
+	return ot.time().ymmdd()
 }
 
 //returns as epoch (seconds)
-pub fn (ourtime OurTime) int() int {
-	return int(ourtime.time().unix_time())
+pub fn (ot OurTime) int() int {
+	return int(ot.time().unix_time())
 }
 
 //set ourtime to now
 pub fn (mut t OurTime) now() {
-	t.unix = u32(time.now().unix_time())
+	t.unix = i64(time.now().unix_time())
 }
-
 // get time from vlang
 pub fn (t OurTime) time() time.Time {
 	return time.unix(i64(t.unix))
+}
+
+
+// get time from vlang
+pub fn (t OurTime) unix_time() i64 {
+	return t.unix
 }

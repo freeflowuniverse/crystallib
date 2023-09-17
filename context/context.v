@@ -1,36 +1,33 @@
 module context
 
 import freeflowuniverse.crystallib.params
-import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.ourtime
-import freeflowuniverse.crystallib.redis
+import freeflowuniverse.crystallib.redisclient
+import freeflowuniverse.crystallib.texttools
 
-import os
 
 __global (
-	contexts shared map[string]Context
+	contexts shared map[string]&Context
 )
 
 pub struct Context{
 pub mut:
 	cid string //unique id per application or a context (an installed app)
-	name string
-	start 	timetools.OurTime
-	end timetools.OurTime
+	alias string
+	start 	ourtime.OurTime
 	params params.Params
 	done map[string]bool
-	redis redis.Redis
-	sessions map[string]Session
+	redis string
 }
 
 [params]
 pub struct ContextNewArgs{
 pub mut:
 	cid string //unique id per application or a context (an installed app)
-	name string
+	alias string
 	start string //can be e.g. +1h
 	params ?params.Params
-	redis_connection string
+	redis string
 }
 
 
@@ -43,33 +40,28 @@ pub mut:
 // start string  //can be e.g. +1h
 // ```
 //
-pub fn get(args_ ContextNewArgs) !Context {
+pub fn get(args_ ContextNewArgs) !&Context {
 	mut args:=args_
-	args.name=texttools.name_fix(args.name)
-	if !(args.name in contexts){
-		mut params:=params.Params{}
-		if args.params{
-			params=args.params
+	args.cid=texttools.name_fix(args.cid)
+	if !(args.cid in contexts){
+		mut params_ := args.params or {	params.Params{}		}
+		mut r:=redisclient.get("localhost:7777")!
+		if args.redis.len>0{
+			r=redisclient.get(args.redis)!
 		}
-		mut r=redis.get("localhost:7777")!
-		if args.redisconnection{
-			r=redis.get(args.redis_connection)!
-		}
-
 		mut c:=Context{
 				cid:args.cid
-				name:args.name
-				start:args.start
-				params:params
+				alias:args.alias
+				start:ourtime.new(args.start)!
+				params:params_
 				redis:r
 			}
-
 		lock contexts {
-			contexts[args.name]=c
+			contexts[args.cid]=&c
 		}
 	}
-	rlock contexts {
-		return contexts[args.name] or { return error('Could not find context ${args.name}') }
+	lock contexts {
+		return contexts[args.cid] or { return error('Could not find context ${args.cid}') }
 	}
 	panic('bug')
 }

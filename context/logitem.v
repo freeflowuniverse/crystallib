@@ -2,14 +2,14 @@ module context
 
 import freeflowuniverse.crystallib.ourtime
 import freeflowuniverse.crystallib.texttools
-import freeflowuniverse.crystallib.params
+// import freeflowuniverse.crystallib.params
 import os
 
 
 pub struct LogItem{
 pub mut:
 	session &Session [skip; str: skip]
-	time timetools.OurTime
+	time ourtime.OurTime
 	cat string
 	log string
 }
@@ -27,7 +27,7 @@ pub mut:
 // category can be any well chosen category e.g. vm
 pub fn (session Session) log(args_ LogArgs) !LogItem {
 	mut args:=args_
-	args.cat:=timetools.name_fix(args.cat)
+	args.cat=texttools.name_fix(args.cat)
 	
 	mut l:=LogItem{
 		session:&session
@@ -35,6 +35,8 @@ pub fn (session Session) log(args_ LogArgs) !LogItem {
 		log:args.log
 		time:ourtime.now()
 	}
+
+	return l
 
 }
 

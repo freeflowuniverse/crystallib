@@ -7,6 +7,11 @@ pub struct RedisURL {
 }
 
 pub fn core_get(url RedisURL) !Redis {
-	mut r := get('${url.address}:${url.port}')!
+	lock redis_connections{		
+		if redis_connections.len==0{
+			new(['${url.address}:${url.port}'])!
+		}
+	}
+	mut r := Redis{}
 	return r
 }

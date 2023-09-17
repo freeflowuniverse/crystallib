@@ -27,7 +27,9 @@ import time
 fn parse(timestr string) !i64 {
 	trimmed := timestr.trim_space()
 	if trimmed == '' {
-		return time.now()
+		n:= now()
+		time_unix:=n.unix_time()
+		return time_unix
 	}
 	mut relative_bool := false
 	if trimmed.starts_with('+') || trimmed.starts_with('-') {
@@ -43,7 +45,7 @@ fn parse(timestr string) !i64 {
 		time_unix := get_unix_from_absolute(trimmed) or {
 			return error('Failed to get unix from absolute time: ${err}')
 		}
-		return i64
+		return time_unix
 	}
 	return error('bug')
 }
@@ -101,7 +103,7 @@ pub fn get_unix_from_relative(timestr string) !i64 {
 }
 
 pub fn get_unix_from_absolute(timestr_ string) !i64 {
-	timestr:=timestr_.trim_space()!
+	timestr:=timestr_.trim_space()
 	split_time_hour := timestr.split(' ')
 	if split_time_hour.len>2{
 		return error("format of date/time not correct: $timestr_")
@@ -137,18 +139,13 @@ pub fn get_unix_from_absolute(timestr_ string) !i64 {
 		timepart = '${timepart}:00'
 	} else if timparts.len == 1 {
 		timepart = '${timepart}:00:00'
-	} else if components.len == 0 {
+	} else if timparts.len == 0 {
 		timepart = '00:00:00'
 	}else{
 		return error("format of date/time not correct, in time part: '${timestr_}'")
 	}
 
 	full_string:="${datepart} ${timepart}"
-
-	ttime := time.parse_iso8601(txt)!
-	return OurTime{
-		unix: ttime.unix_time()
-	}
 
 	time_struct := time.parse(full_string) or {
 		return error("could not parse date/time string '${timestr_}': ${err}")

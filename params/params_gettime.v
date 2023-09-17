@@ -1,6 +1,6 @@
 module params
 
-import freeflowuniverse.crystallib.timetools
+import freeflowuniverse.crystallib.ourtime
 // import texttools
 // import os
 import time { Duration, Time }
@@ -23,12 +23,12 @@ import time { Duration, Time }
 // input string examples:
 //'2022-12-5 20:14:35'
 //'2022-12-5' - sets hours, mins, seconds to 00
-pub fn (params &Params) get_time(key string) !Time {
+pub fn (params &Params) get_time(key string) !ourtime.OurTime {
 	valuestr := params.get(key)!
-	return timetools.parse(valuestr)!
+	return ourtime.new(valuestr)!
 }
 
-pub fn (params &Params) get_time_default(key string, defval Time) !Time {
+pub fn (params &Params) get_time_default(key string, defval ourtime.OurTime) !ourtime.OurTime {
 	if params.exists(key) {
 		return params.get_time(key)!
 	}
