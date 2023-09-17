@@ -87,6 +87,9 @@ pub fn new(addrs []string) !Redis {
 	return r
 }
 
+pub fn get(addr string) !Redis {
+	return new([addr])
+}
 fn (mut r RedisInternal) socket_connect() ! {
 	addr := os.expand_tilde_to_home(r.addr)
 	// println(' - REDIS CONNECT: ${addr}')

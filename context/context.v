@@ -16,8 +16,7 @@ pub mut:
 	alias string
 	start 	ourtime.OurTime
 	params params.Params
-	done map[string]bool
-	redis string
+	done []string
 }
 
 [params]
@@ -27,7 +26,6 @@ pub mut:
 	alias string
 	start string //can be e.g. +1h
 	params ?params.Params
-	redis string
 }
 
 
@@ -45,16 +43,11 @@ pub fn get(args_ ContextNewArgs) !&Context {
 	args.cid=texttools.name_fix(args.cid)
 	if !(args.cid in contexts){
 		mut params_ := args.params or {	params.Params{}		}
-		mut r:=redisclient.get("localhost:7777")!
-		if args.redis.len>0{
-			r=redisclient.get(args.redis)!
-		}
 		mut c:=Context{
 				cid:args.cid
 				alias:args.alias
 				start:ourtime.new(args.start)!
 				params:params_
-				redis:r
 			}
 		lock contexts {
 			contexts[args.cid]=&c
@@ -66,3 +59,48 @@ pub fn get(args_ ContextNewArgs) !&Context {
 	panic('bug')
 }
 
+
+
+
+//save the context to redis & mem 
+pub fn (mut context Context) load()!{
+	mut r:=redisclient.core_get()!
+	if context.cid.len==2{
+		return error("sid should be at least 2 char")
+	}
+	t:=r.hget("context",context.cid)!
+	if t==""{
+		return
+	}
+	p:=params.new(t)!
+	if context.alias==""{
+		context.alias=p.get_default("alias","")!
+	}
+	context.start=p.get_time_default("start",context.start)!
+}
+
+
+//save the context to redis & mem 
+pub fn (context Context) save()!{
+	mut r:=redisclient.core_get()!
+	r.hset("context",context.cid,context.str2())!
+
+}
+
+//save the context to redis & mem 
+pub fn (context Context) str() string{
+	return "!!context.context_define ${context.str2()}"
+}
+
+fn (context Context) str2() string{
+	mut out:="cid:${context.cid} "
+	if context.alias.len>0{
+		out+=" alias:${context.alias}"
+	}
+	out+=" start:${context.start}"
+	if context.done.len>0{
+		done:=context.done.join(",")
+		out+="\n	done:'${done}'"
+	}
+	return out
+}

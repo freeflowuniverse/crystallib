@@ -2,6 +2,7 @@ module tmux
 
 import os
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.texttools
 
 [heap]
 struct Window {
@@ -20,7 +21,7 @@ pub struct WindowArgs {
 pub mut:
 	name  string
 	cmd   string
-	env   map[string]string
+	env     map[string]string
 	reset bool
 }
 
@@ -38,13 +39,96 @@ pub mut:
 // }
 // ```
 pub fn (mut t Tmux) window_new(args WindowArgs) !Window {
-	mut s := t.session_get_create('main', false)!
+	mut s := t.session_create(name:'main', reset:false)!
 	mut w := s.window_new(args)!
 	return w
 }
 
-pub fn (mut w Window) create() ! {
-	
+
+// window_name is the name of the window in session main (will always be called session main)
+// cmd to execute e.g. bash file
+// environment arguments to use
+// reset, if reset it will create window even if it does already exist, will destroy it
+// ```
+// struct WindowArgs {
+// pub mut:
+// 	name    string
+// 	cmd		string
+// 	env		map[string]string	
+// 	reset	bool
+// }
+// ```
+pub fn (mut s Session) window_new(args WindowArgs) !Window {
+	// $if debug { println(" - start window: $args")}
+	namel:=texttools.name_fix(args.name)
+	if s.window_exist(name:namel) {
+		if args.reset {
+			s.window_delete(name:namel)!
+		} else {
+			return error('cannot create new window it already exists, window ${namel} in session:${s.name}')
+		}
+	}
+	mut w := Window{
+		session: &s
+		name: namel
+		cmd: args.cmd
+		env: args.env
+	}
+	s.windows<<&w
+	w.create()!
+	s.window_delete(name:"notused")!
+	return w
+}
+
+pub struct WindowGetArgs {
+pub mut:
+	name  string
+	cmd   string
+	id int
+}
+
+fn (mut s Session) window_exist(args_ WindowGetArgs) bool {
+	mut args:=args_
+	s.window_get(args) or { return false }
+	return true
+}
+
+pub fn (mut s Session) window_get(args_ WindowGetArgs) !&Window {
+	mut args:=args_
+	args.name=texttools.name_fix(args.name)	
+	for w in s.windows {
+		if w.name == args.name {
+			if (args.id>0 && w.id==args.id) || args.id==0 {
+				return w
+			}			
+		}
+	}
+	return error('Cannot find window ${args.name} in session:${s.name}')
+}
+
+pub fn (mut s Session) window_delete(args_ WindowGetArgs) ! {
+	// $if debug { println(" - window delete: $args_")}
+	mut args:=args_
+	args.name=texttools.name_fix(args.name)	
+	if !(s.window_exist(args)){
+		return 
+	}
+	mut i:=0
+	for mut w in s.windows {
+		if w.name == args.name {
+			if (args.id>0 && w.id==args.id) || args.id==0 {
+				w.stop()!
+				break
+			}					
+		}
+		i+=1
+	}
+	s.windows.delete(i) //i is now the one in the list which needs to be removed	
+}
+
+
+
+pub fn (mut w Window) create() ! {	
 	// tmux new-window -P -c /tmp -e good=1 -e bad=0 -n koekoe -t main bash
 	if w.active == false {
 		res_opt := "-P -F '#{session_name}|#{window_name}|#{window_id}|#{pane_active}|#{pane_id}|#{pane_pid}|#{pane_start_command}'"
@@ -53,8 +137,13 @@ pub fn (mut w Window) create() ! {
 		res := osal.execute_silent(cmd) or {
 			return error("Can't create new window ${w.name} \n${cmd}\n${err}")
 		}
-		w.session.tmux.scan_add(res)!
-		// os.log('WINDOW - Window: $w.name created in session: $w.session.name')
+		//now look at output to get the window id = wid
+		line_arr := res.split('|')
+		wid := line_arr[2]		or {panic("cannot split line for window create.\n$line_arr") }
+		w.id=wid.replace("@","").int()
+		$if debug{
+			println('WINDOW - Window: $w.name created in session: $w.session.name')
+		}
 	} else {
 		return error('cannot create window, it already exists.\n${w.name}:${w.id}:${w.cmd}')
 	}
@@ -80,12 +169,6 @@ pub fn (mut w Window) stop() ! {
 	}
 	w.pid = 0
 	w.active = false
-}
-
-// delete the window
-pub fn (mut w Window) delete() ! {
-	w.stop()!
-	w.session.windows.delete(w.name)
 }
 
 pub fn (window Window) str() string {

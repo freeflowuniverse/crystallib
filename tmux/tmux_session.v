@@ -13,15 +13,40 @@ pub mut:
 
 //get session (session has windows) .
 //returns none if not found
-pub fn (mut t Tmux) session_get(name_ string) ?&Session {
+pub fn (mut t Tmux) session_get(name_ string) !&Session {
 	name:=texttools.name_fix(name_)
-	for session in t.sessions {
-		if session.name == name {
-			return session
+	for s in t.sessions {
+		if s.name == name {
+			return s
 		}
 	}
-	return none
+	return error("Canot find session with name: ${name_}")
 }
+
+pub fn (mut t Tmux) session_exist(name_ string) bool {
+	name:=texttools.name_fix(name_)
+	t.session_get(name) or { return false }
+	return true
+}
+
+pub fn (mut t Tmux) session_delete(name_ string)! {
+	if !(t.session_exist(name_)){
+		return
+	}
+	name:=texttools.name_fix(name_)
+	mut i:=0
+	for mut s in t.sessions {
+		if s.name == name {
+			s.stop()!
+			break
+		}
+		i+=1
+	}	
+	t.sessions.delete(i)
+	
+}
+
+
 
 [params]
 pub struct SessionCreateArgs{
@@ -33,31 +58,23 @@ pub mut:
 
 // create session, if reset will re-create
 pub fn (mut t Tmux) session_create(args SessionCreateArgs) !&Session {
-	name:=texttools.name_fix(name_)
-	mut session := t.session_get(name)
-	if !session{
-		os.log('TMUX - Session ${name} will be created')
-		session = Session{
+	name:=texttools.name_fix(args.name)
+	if !(t.session_exist(name)){
+		// println("create session: $args")
+		mut s2 := Session{
 			tmux: t // reference back
 			name: name
 		}
-	}
-		init_session(mut t, name_l)!
-		t.scan()!
-	}
-	mut session := t.sessions[name_l] or {panic("cannot find map entry")}
-	if restart {
-		os.log('TMUX - Session ${name} will be restarted.')
-		session.restart()!
-	}
-	return session
-}
+		s2.create()!
+		t.sessions<<&s2		
 
-fn init_session(mut tmux Tmux, name_ string) !Session {
-	name:=texttools.name_fix(name_)
-	os.log('SESSION - Initialize session: ${s.name}')
-	s.create()!
-	tmux.sessions[s_name] = &s
+	}
+	mut s := t.session_get(name)!
+	if args.reset {
+		// println('TMUX - Session ${name} will be restarted.')
+		s.restart()!
+	}
+	t.scan()!
 	return s
 }
 
@@ -90,59 +107,34 @@ pub fn (mut s Session) stop() ! {
 	}
 }
 
-// window_name is the name of the window in session main (will always be called session main)
-// cmd to execute e.g. bash file
-// environment arguments to use
-// reset, if reset it will create window even if it does already exist, will destroy it
-// ```
-// struct WindowArgs {
-// pub mut:
-// 	name    string
-// 	cmd		string
-// 	env		map[string]string	
-// 	reset	bool
-// }
-// ```
-pub fn (mut s Session) window_new(args WindowArgs) !Window {
-	// os.log(cmd)
-	// os.log(check)
-	namel := args.name.to_lower()
 
-	if s.window_exist(namel) {
-		if args.reset {
-			mut w_to_stop := s.window_get(namel)!
-			w_to_stop.stop()!
-		} else {
-			return error('cannot kill window it already exists, window ${namel} in session:${s.name}')
-		}
+// get all windows as found in a session
+pub fn (mut s Session) windows_get() []&Window {
+	mut res := []&Window{}
+	// os.log('TMUX - Start listing  ....')
+	for _, window in s.windows {
+		res << window
 	}
-	mut w := Window{
-		session: &s
-		name: namel
-		cmd: args.cmd
-		env: args.env
-	}
-	s.windows[namel] = &w
-	w.create()!
-	// delete the notused one if there is at least one new one
-	// if namel != "notused" && "notused" in s.windows.keys(){
-	// 	// os.log(" DELETE notused")
-	// 	s.windows["notused"].delete()!
-	// }
-	return w
+	return res
 }
 
-fn (mut s Session) window_exist(name string) bool {
-	return name.to_lower() in s.windows
+pub fn (mut s Session) windownames_get() []string {
+	mut res := []string{}
+	for _, window in s.windows {
+		res << window.name
+	}
+	return res
 }
 
-pub fn (mut s Session) window_get(name string) !&Window {
-	name_l := name.to_lower()
-	if name_l !in s.windows {
-		return error('Cannot find window ${name} in session:${s.name}')
+
+pub fn (mut s Session) str() string {
+	mut out:="## Session: ${s.name}\n\n"
+	for _,w in s.windows{
+		out+="${*w}\n"
 	}
-	return s.windows[name_l] or {panic("cannot find map entry")}
+	return out
 }
+
 
 // pub fn (mut s Session) activate()! {	
 // 	active_session := s.tmux.redis.get('tmux:active_session') or { 'No active session found' }

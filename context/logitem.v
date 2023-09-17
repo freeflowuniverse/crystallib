@@ -40,3 +40,8 @@ pub fn (session Session) log(args_ LogArgs) !LogItem {
 
 }
 
+pub fn (li LogItem) str()string {
+
+	return "${li.session.sid}"
+
+}

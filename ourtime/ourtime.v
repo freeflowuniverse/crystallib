@@ -84,3 +84,9 @@ pub fn (t OurTime) time() time.Time {
 pub fn (t OurTime) unix_time() i64 {
 	return t.unix
 }
+
+
+pub fn (t OurTime) empty() bool{
+	return t.unix==0
+}
+

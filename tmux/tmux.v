@@ -1,14 +1,14 @@
 module tmux
 
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.session
+// import freeflowuniverse.crystallib.session
 import os
 // import redisclient
 
 [heap]
 pub struct Tmux {
 pub mut:
-	sessions map[string]&Session
+	sessions []&Session
 	sessionid string //unique link to job
 }
 
@@ -19,7 +19,9 @@ pub struct TmuxNewArgs{
 
 //return tmux instance
 pub fn new(args TmuxNewArgs) !Tmux {
-	return Tmux{sessionid:args.sessionid}
+	mut t:= Tmux{sessionid:args.sessionid}
+	t.scan()!
+	return t
 }
 
 // loads tmux session, populate the object
@@ -27,8 +29,9 @@ pub fn (mut tmux Tmux) load() ! {
 	if !tmux.is_running() {
 		return error("Tmux not runnning.")
 	}
-	tmux_ls := osal.execute_silent('tmux ls')!
-	$if debug{println('Tmux: ${tmux_ls}')}
+	// tmux_ls := osal.execute_silent('tmux ls')!
+	// $if debug{println('Tmux: ${tmux_ls}')}
+	tmux.scan()!
 }
 
 pub fn (mut t Tmux) stop() ! {
@@ -36,7 +39,7 @@ pub fn (mut t Tmux) stop() ! {
 		eprintln('Stopping tmux...')
 	}
 
-	t.sessions = map[string]&Session{}
+	t.sessions = []&Session{}
 	t.scan()!
 
 	for _, mut session in t.sessions {
@@ -84,3 +87,14 @@ pub fn (mut t Tmux) is_running() bool {
 	res := osal.execute_silent('tmux info') or { err.msg() }
 	return !res.contains('no server running on /tmp/tmux-0/default')
 }
+
+
+pub fn (mut t Tmux) str() string {
+	mut out:="# Tmux\n\n"
+	for s in t.sessions{
+		out+="${*s}\n"
+	}
+	return out
+}
+
+

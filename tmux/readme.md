@@ -1,7 +1,12 @@
 # TMUX
 
-tmux library provides functions for managing local / remote tmux sessions
+tmux library provides functions for managing tmux sessions
 
-## Getting started
+- session is the top one
+- then windows (is where you see the app running)
+- then panes in windows (we don't support yet)
 
-To initialize tmux on a local or remote node, simply build the node, install tmux, and run start
+
+## to attach to a tmux session
+
+> TODO:
