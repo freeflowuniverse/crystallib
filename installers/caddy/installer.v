@@ -1,7 +1,9 @@
 module caddy
 
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.osal.downloader
 import freeflowuniverse.crystallib.installers.base
+import os
 
 // install caddy will return true if it was already installed
 pub fn install() ! {
@@ -14,23 +16,26 @@ pub fn install() ! {
 	if osal.platform() != .ubuntu {
 		return error('only support ubuntu for now')
 	}
+	downloader.download(url:"https://github.com/caddyserver/caddy/releases/download/v2.7.4/caddy_2.7.4_linux_arm64.tar.gz",
+		minsize_kb=10000, name:"caddy", expand:true)!
 
-	if cmd_exists('caddy') {
-		println('Caddy was already installed.')
-		//! should we set caddy as done here !
-		return
-	}
-	//TODO: better to start from a build one
-	osal.exec_silent("
-		sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https gpg sudo
-		rm -f /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-		curl -1sLfk 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-		curl -1sLfk 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list
-		apt update
-		apt install caddy
-	") or {
-		return error('Cannot install caddy.\n${err}')
-	}
+
+	// if cmd_exists('caddy') {
+	// 	println('Caddy was already installed.')
+	// 	//! should we set caddy as done here !
+	// 	return
+	// }
+	// //TODO: better to start from a build one
+	// osal.execute_silent("
+	// 	sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https gpg sudo
+	// 	rm -f /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+	// 	curl -1sLfk 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+	// 	curl -1sLfk 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list
+	// 	apt update
+	// 	apt install caddy
+	// ") or {
+	// 	return error('Cannot install caddy.\n${err}')
+	// }
 
 	osal.done_set('install_caddy', 'OK')!
 	return
@@ -49,9 +54,8 @@ pub mut:
 // domain e.g. www.myserver.com
 pub fn install_configure(config WebConfig) ! {
 	mut config_file := $tmpl('templates/caddyfile_default')
-	 := config.node
 	install()!
-	osal.exec_silent('mkdir -p ${config.path}')!
+	os.mkdir_all(config.path)!
 
 	default_html := '
 	<!DOCTYPE html>
@@ -64,28 +68,28 @@ pub fn install_configure(config WebConfig) ! {
 		</body>
 	</html>
 	'
-	node.file_write('${config.path}/index.html', default_html)!
+	osal.file_write('${config.path}/index.html', default_html)!
 
-	configuration_set(, config_file)!
+	configuration_set(config_file)!
 }
 
 pub fn configuration_get() !string {
-	c := node.file_read('/etc/caddy/Caddyfile')!
+	c := osal.file_read('/etc/caddy/Caddyfile')!
 	return c
 }
 
-pub fn configuration_set(, config_file string) ! {
-	node.file_write('/etc/caddy/Caddyfile', config_file)!
+pub fn configuration_set(config_file string) ! {
+	osal.file_write('/etc/caddy/Caddyfile', config_file)!
 	restart()!
 }
 
 // start caddy
 pub fn start() ! {
-	osal.exec_silent('caddy start --config /etc/caddy/Caddyfile')!
+	osal.execute_silent('caddy start --config /etc/caddy/Caddyfile')!
 }
 
 pub fn stop() ! {
-	osal.exec_silent('caddy stop') or {}
+	osal.execute_silent('caddy stop') or {}
 	// TODO: should do some better test to check if caddy is really stopped
 }
 
@@ -96,5 +100,5 @@ pub fn restart() ! {
 	set -ex
 	caddy start --config /etc/caddy/Caddyfile
 	'
-	osal.exec_silent(cmd)!
+	osal.execute_silent(cmd)!
 }

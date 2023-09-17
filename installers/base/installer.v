@@ -14,17 +14,17 @@ pub fn install() ! {
 				}
 			}
 			if !osal.cmd_exists('clang') {
-				osal.exec_silent('xcode-select --install') or {
+				osal.execute_silent('xcode-select --install') or {
 					return error('cannot install xcode-select --install, something went wrong.\n${err}')
 				}
 			}
 			println(' - OSX prepare')
-			osal.exec_silent('
+			osal.execute_silent('
 			brew install mc tmux git rsync curl tmux
 			')!
 		} osal.platform() == builder.PlatformType.ubuntu {
 			println(' - Ubuntu prepare')
-			osal.exec_silent('
+			osal.execute_silent('
 			apt update
 			apt install iputils-ping net-tools git rsync curl mc tmux -y
 			')!

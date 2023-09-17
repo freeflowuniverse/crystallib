@@ -10,7 +10,7 @@ pub struct SwarmArgs {
 // installs docker & swarm
 pub fn  install_docker(args SwarmArgs) ! {
 	mut installed := true
-	out2 := osal.exec_silent('docker version') or {
+	out2 := osal.execute_silent('docker version') or {
 		installed = false
 		println('ERROR:' + err.msg())
 		'ERROR:' + err.msg()
@@ -66,15 +66,15 @@ pub fn  install_docker(args SwarmArgs) ! {
 	// 	'
 
 	// ? cannot find exec function with args,
-	// osal.exec_silent(cmd: docker_install, reset: args.reset, description: 'install docker.')?
-	osal.exec_silent(docker_install)!
+	// osal.execute_silent(cmd: docker_install, reset: args.reset, description: 'install docker.')?
+	osal.execute_silent(docker_install)!
 
 	// ? Where to get tmux from
 
 
 	for _ in 1 .. 10 {
 		mut out := ''
-		out = osal.exec_silent('docker info') or {
+		out = osal.execute_silent('docker info') or {
 			// if err.msg().contains("Cannot connect to the Docker daemon"){
 			// 	"noconnection"
 			// }
@@ -99,7 +99,7 @@ pub fn (mut installer Installer) install_portainer() ! {
 		curl -L https://downloads.portainer.io/portainer-agent-stack.yml -o portainer-agent-stack.yml
 		docker stack deploy -c portainer-agent-stack.yml portainer
 		'
-	installer.osal.exec_silent(install)!
+	installer.osal.execute_silent(install)!
 
 	// >TODO: check that the ubuntu is focal
 }
@@ -108,7 +108,7 @@ pub fn  docker_swarm_install(args SwarmArgs) ! {
 	i.install_docker(args)!
 	ipaddr_master := ipaddr_pub_get()!
 	cmd := 'docker swarm init --advertise-addr ${ipaddr_master}'
-	osal.exec_silent(cmd)!
+	osal.execute_silent(cmd)!
 }
 
 pub struct SwarmArgsAdd {
@@ -129,5 +129,5 @@ pub fn (mut installer Installer) docker_swarm_install_add(mut args SwarmArgsAdd)
 
 	cmd := 'docker swarm leave && docker swarm join --token  ${token} ${ipaddr}:2377'
 	println(cmd)
-	installer.osal.exec_silent(cmd)!
+	installer.osal.execute_silent(cmd)!
 }

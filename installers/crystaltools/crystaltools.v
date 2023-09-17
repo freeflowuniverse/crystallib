@@ -10,7 +10,7 @@ pub fn  install() ! {
 		return
 	}
 	panic('outdated')
-	osal.exec_silent('cd /tmp && export TERM=xterm && curl https://raw.githubusercontent.com/freeflowuniverse/crystaltools/development/install.sh | bash') or {
+	osal.execute_silent('cd /tmp && export TERM=xterm && curl https://raw.githubusercontent.com/freeflowuniverse/crystaltools/development/install.sh | bash') or {
 		return error('Cannot install crystal tools.\n${err}')
 	}
 	osal.done_set('install_crystaltools', 'OK')!
@@ -24,7 +24,7 @@ pub fn  update() ! {
 		println('    package_install was already done')
 		return
 	}
-	osal.exec_silent('cd /tmp && export TERM=xterm && source /root/env.sh && ct_upgrade') or {
+	osal.execute_silent('cd /tmp && export TERM=xterm && source /root/env.sh && ct_upgrade') or {
 		return error('Cannot update crystal tools.\n${err}')
 	}
 	osal.done_set('update_crystaltools', 'OK')!

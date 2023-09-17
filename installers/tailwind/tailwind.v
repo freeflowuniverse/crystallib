@@ -21,7 +21,7 @@ pub fn  install() ! {
 		mv tailwindcss-linux-x64 tailwindcss
 	'
 
-	osal.exec_silent('Cannot install tailwind.\n${err}')!
+	osal.execute_silent('Cannot install tailwind.\n${err}')!
 
 	osal.done_set('install_tailwind', 'OK')!
 	return

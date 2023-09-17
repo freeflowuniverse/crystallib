@@ -46,7 +46,7 @@ pub fn install() ! {
 		panic('only ubuntu and osx supported for now')
 	}
 
-	osal.exec_silent('Cannot install golang.\n${err}') 	
+	osal.execute_silent('Cannot install golang.\n${err}') 	
 	osal.done_set('install_golang', 'OK')!
 	return
 }

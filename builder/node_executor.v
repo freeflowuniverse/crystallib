@@ -39,7 +39,7 @@ pub fn (mut node Node) exec_file(args ExecFileArgs) ! {
 	if args.dedent {
 		cmd2 = texttools.dedent(cmd2)
 	}
-	node.file_write(args.path, cmd2)!
+	osal.file_write(args.path, cmd2)!
 	node.exec_silent('chmod +x ${args.path}')!
 	if args.execute {
 		node.exec('bash ${args.path}')!

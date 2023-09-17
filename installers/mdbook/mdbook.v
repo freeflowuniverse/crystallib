@@ -12,7 +12,7 @@ pub fn  install() ! {
 		.cargo/bin/cargo install mdbook
     	.cargo/bin/cargo install mdbook-mermaid
 		'
-		osal.exec_silent('Cannot install mdbook.\n${err}') 
+		osal.execute_silent('Cannot install mdbook.\n${err}') 
 		osal.done_set('install_mdbook', 'OK')!
 	}
 	println(' - mdbook already done')

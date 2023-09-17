@@ -23,7 +23,7 @@ pub fn  install() ! {
 	./v symlink
 	'
 
-	osal.exec_silent('Cannot install vlang.\n${err}')!
+	osal.execute_silent('Cannot install vlang.\n${err}')!
 
 osal.done_set('install_vlang', 'OK')!
 	return

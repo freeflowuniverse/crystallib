@@ -16,17 +16,17 @@ pub fn  install() ! {
 		return
 	}
 	// curl --proto '=https' --tlsv1.2 https://sh.rustup.rs | sh -s -- -y
-	osal.exec_silent("curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y") or {
+	osal.execute_silent("curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y") or {
 		return error('Cannot install rust.\n${err}')
 	}
 
 	return error('Cannot setup rust.\n${err}') }
 
 	// path := "export PATH='/usr/bin:/bin:/root/.cargo/bin'"
-	// osal.exec_silent("echo $path >> .bash_profile") or {
+	// osal.execute_silent("echo $path >> .bash_profile") or {
 	// 	return error('Cannot add path to .bash_profile: $err')
 	// }
-	// osal.exec_silent("echo $path >> .bashrc") or {
+	// osal.execute_silent("echo $path >> .bashrc") or {
 	// 	return error('Cannot add path to .bashrc: $err')
 	// }
 

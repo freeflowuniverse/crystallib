@@ -100,7 +100,7 @@ pub fn (mut node Node) exec_cmd(args_ NodeExecCmd) !string {
 		}
 	}
 	r_path := '${args.tmpdir}/installer.sh'
-	node.file_write(r_path, cmd)!
+	osal.file_write(r_path, cmd)!
 	cmd = "mkdir -p ${args.tmpdir} && cd ${args.tmpdir} && export TMPDIR='${args.tmpdir}' && bash ${r_path}"
 	if args.remove_installer {
 		cmd += ' && rm -f ${r_path}'

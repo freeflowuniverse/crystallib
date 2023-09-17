@@ -19,13 +19,13 @@ pub fn  install(repo_url string) ! {
 	// 	return
 	// }
 
-	osal.exec_silent('mkdir -p code/github/${repo_owner}') or {
+	osal.execute_silent('mkdir -p code/github/${repo_owner}') or {
 		return error('could not create directory code/github:\n${err}')
 	}
 
 	cmd := 'git clone ${repo_url} code/github/${repo_owner}/${repo_name}'
 
-	osal.exec_silent(cmd) or {
+	osal.execute_silent(cmd) or {
 		return error('Cannot install repository: ${repo_owner}/${repo_name} \n ${err}')
 	}
 
