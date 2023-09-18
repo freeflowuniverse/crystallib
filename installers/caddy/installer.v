@@ -17,7 +17,7 @@ pub fn install() ! {
 		return error('only support ubuntu for now')
 	}
 	downloader.download(url:"https://github.com/caddyserver/caddy/releases/download/v2.7.4/caddy_2.7.4_linux_arm64.tar.gz",
-		minsize_kb=10000, name:"caddy", expand:true)!
+		minsize_kb:10000, name:"caddy", expand:true)!
 
 
 	// if cmd_exists('caddy') {

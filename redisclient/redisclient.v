@@ -92,15 +92,16 @@ pub fn get(addr string) !Redis {
 }
 fn (mut r RedisInternal) socket_connect() ! {
 	addr := os.expand_tilde_to_home(r.addr)
-	// println(' - REDIS CONNECT: ${addr}')
+	// print(' - REDIS CONNECT: ${addr}')
 	r.socket = net.dial_tcp(addr)!
 	r.socket.set_blocking(true)!
 	r.socket.set_read_timeout(1 * time.second)
+	// println("---OK")
 }
 
 fn (mut r RedisInternal) socket_check() ! {
 	r.socket.peer_addr() or {
-		eprintln(' - re-connect socket for redis')
+		// eprintln(' - re-connect socket for redis')
 		r.socket_connect()!
 	}
 }
@@ -155,21 +156,29 @@ fn (mut r Redis) write_line(data []u8) ! {
 
 
 fn (mut r Redis) write(data []u8) ! {
+	print("lock write:\n$data")
 	lock redis_connections{		
 		redis_connections[redis_connections.len-1].write(data)!
 	}
+	println("--OK")
 }
 
 fn (mut r Redis) read(size int) ![]u8 {
+	print("lock read")
 	lock redis_connections{		
-		return redis_connections[redis_connections.len-1].read(size)!
+		mut res:= redis_connections[redis_connections.len-1].read(size)!
+		println("--OK?")
+		return res
 	}
 	panic("bug")
 }
 
 fn (mut r Redis) read_line() !string {
+	print("lock readln")
 	lock redis_connections{		
-		return redis_connections[redis_connections.len-1].read_line()!
+		mut res:= redis_connections[redis_connections.len-1].read_line()!
+		println("--OK?")
+		return res
 	}
 	panic("bug")
 }

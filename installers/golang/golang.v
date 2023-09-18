@@ -23,7 +23,7 @@ pub fn install() ! {
 		return
 	}
 
-	if osal.platform() == builder.PlatformType.osx {
+	if osal.platform() == .osx {
 		cmd := '
 		cd /tmp
 		rm -f ${golang.go_version}
@@ -32,7 +32,7 @@ pub fn install() ! {
 		exit 1 
 		echo \'export PATH=${PATH}:/usr/local/go/bin\' >> ${HOME}/.profile
 		'
-	} osal.platform() == builder.PlatformType.ubuntu {
+	} osal.platform() == .ubuntu {
 		cmd := '
 		cd /tmp
 		rm -f go1.20.6.linux-amd64.tar.gz

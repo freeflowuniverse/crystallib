@@ -25,7 +25,7 @@ pub fn  install_docker(args SwarmArgs) ! {
 		return
 	}
 
-	if osal.platform() != builder.PlatformType.ubuntu {
+	if osal.platform() != .ubuntu {
 		return error('cannot install docker, wrong platform, for now only ubuntu supported, make sure to unstall docker desktop before trying again.')
 	}
 
