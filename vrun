@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# The script's purpose is to act as a wrapper for the `echo` command
+
+# Check if no arguments are provided
+if [[ $# -eq 0 ]]; then
+    echo "No arguments provided for the V Command."
+    exit 1
+fi
+
+# Pass all arguments to the echo command
+v -cg -enable-globals run $@
+
+

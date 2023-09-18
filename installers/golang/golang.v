@@ -1,29 +1,29 @@
 module golang
 
-import freeflowuniverse.crystallib.builder
+import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
 
 const go_version = '1.20.6'
 
 // install golang will return true if it was already installed
-pub fn install(mut node builder.Node) ! {
+pub fn install() ! {
 	// make sure we install base on the node
-	base.install(mut node)!
+	base.install()!
 
 	// install golang if it was already done will return true
-	println(' - ${node.name}: install golang')
-	if node.done_exists('install_golang') {
-		println('    ${node.name}: was already done')
+	println(' - package_install install golang')
+	if osal.done_exists('install_golang') {
+		println('    package_install was already done')
 		return
 	}
 
-	if node.command_exists('go') {
+	if cmd_exists('go') {
 		println('Golang was already installed.')
-		node.done_set('install_golang', 'OK')!
+		osal.done_set('install_golang', 'OK')!
 		return
 	}
 
-	if node.platform == builder.PlatformType.osx {
+	if osal.platform() == .osx {
 		cmd := '
 		cd /tmp
 		rm -f ${golang.go_version}
@@ -32,7 +32,7 @@ pub fn install(mut node builder.Node) ! {
 		exit 1 
 		echo \'export PATH=${PATH}:/usr/local/go/bin\' >> ${HOME}/.profile
 		'
-	} else if node.platform == builder.PlatformType.ubuntu {
+	} osal.platform() == .ubuntu {
 		cmd := '
 		cd /tmp
 		rm -f go1.20.6.linux-amd64.tar.gz
@@ -46,8 +46,7 @@ pub fn install(mut node builder.Node) ! {
 		panic('only ubuntu and osx supported for now')
 	}
 
-	node.exec(cmd) or { return error('Cannot install golang.\n${err}') }
-
-	node.done_set('install_golang', 'OK')!
+	osal.execute_silent('Cannot install golang.\n${err}') 	
+	osal.done_set('install_golang', 'OK')!
 	return
 }

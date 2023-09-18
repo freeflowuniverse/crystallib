@@ -1,6 +1,6 @@
 module tmux
 
-import freeflowuniverse.crystallib.builder
+import freeflowuniverse.crystallib.osal
 // import freeflowuniverse.crystallib.installers.tmux
 import os
 
@@ -28,7 +28,7 @@ fn test_start() ! {
 
 	// test server is running after start()
 	tmux.start() or { panic('cannot start tmux: ${err}') }
-	mut tmux_ls := tmux.node.exec('tmux ls') or { panic('Cannot execute tmux ls: ${err}') }
+	mut tmux_ls := osal.execute_silent('tmux ls') or { panic('Cannot execute tmux ls: ${err}') }
 	// test started tmux contains windows
 	assert tmux_ls.contains('init: 1 windows')
 	tmux.stop() or { panic('cannot stop tmux: ${err}') }
@@ -97,8 +97,8 @@ fn test_scan() ! {
 // //TODO: fix test
 // fn test_scan_add() ! {
 // 	println("-----Testing scan_add------")
-// 	mut builder := builder.new()
-// 	mut node_ssh := builder.node_new(name: 'test', ipaddr: '185.69.166.152', debug: true)!
+
+// 	
 // 	mut tmux := Tmux { node: node_ssh }
 // 	windows := tmux.scan_add("line")!
 // }

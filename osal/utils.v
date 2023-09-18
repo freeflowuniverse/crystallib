@@ -20,7 +20,7 @@ pub fn get_logger() log.Logger {
 // Returns a redis client object and allows you to specify via environment argument OSAL_REDIS_ADDRESS on which address to connect to
 pub fn get_redis() redisclient.Redis {
 	redis_address := env_get('OSAL_REDIS_ADDRESS') or {
-		return redisclient.core_get() or { panic('Osal has hard dependency to redis!') }
+		return redisclient.core_get() or { panic('OSAL has hard dependency to redis!') }
 	}
 	return redisclient.get(redis_address) or { panic('Osal has hard dependency to redis!') }
 }

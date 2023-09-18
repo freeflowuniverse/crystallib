@@ -1,14 +1,14 @@
 module zdb
 
 import freeflowuniverse.crystallib.gittools
+import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
 
 // install zdb will return true if it was already installed
-pub fn (mut i Installer) install() ! {
+pub fn  install() ! {
 	base.install()!
-	mut node := i.node
-	println(' - ${node.name}: install zdb')
-	if !node.done_exists('install_zdb') && !node.command_exists('zdb') {
+	println(' - package_install install zdb')
+	if !osal.done_exists('install_zdb') && !cmd_exists('zdb') {
 		mut gs := gittools.get(root: '/tmp/code')!
 		url := 'git@github.com:threefoldtech/0-db.git'
 		mut gr := gs.repo_get_from_url(url: url, pull: true, reset: false)!
@@ -18,7 +18,7 @@ pub fn (mut i Installer) install() ! {
 		make
 		sudo rsync -rav ${gr.path}/bin/zdb* /usr/local/bin/
 		'
-		node.exec(cmd) or { return error('Cannot install zdb.\n${err}') }
-		node.done_set('install_zdb', 'OK')!
+		osal.execute_silent('Cannot install zdb.\n${err}')!
+		osal.done_set('install_zdb', 'OK')!
 	}
 }

@@ -40,6 +40,7 @@ pub mut:
 	hash         string // if specified then will check the hash of the downloaded content
 	metapath     string // if not specified then will not write
 	gitstructure ?gittools.GitStructure [skip; str: skip]
+	expand bool 
 }
 
 fn getlastname(url string) string {
@@ -157,6 +158,11 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 		metaobj_data := json.encode_pretty(metaobj)
 		metafile.write(metaobj_data)!
 	}
+
+	if args.expand{
+		if true{panic("|sdsd")}
+	}
+
 	if args.dest.len > 0 && args.dest != downloadpath.path {
 		// means we need to link or copy the downloaded content to a different location
 		// println(' - downloader dest link: ${args.dest}')

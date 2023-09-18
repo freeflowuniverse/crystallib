@@ -45,8 +45,11 @@ pub enum CPUType {
 pub fn platform() PlatformType {
 	mut logger := get_logger()
 	mut platform_ := PlatformType.unknown
+	print("platform")
 	mut redis := get_redis()
+	print("redis exists")
 	cached := redis.exists(osal.redis_key_platform) or { false }
+	println("+++")
 	if cached {
 		platform_from_redis := redis.get(osal.redis_key_platform) or {
 			logger.error('Failed to get value from redis key ${osal.redis_key_platform}')
@@ -57,7 +60,6 @@ pub fn platform() PlatformType {
 			return platform_
 		}
 	}
-
 	if cmd_exists('sw_vers') {
 		platform_ = PlatformType.osx
 	} else if cmd_exists('apt-get') {
