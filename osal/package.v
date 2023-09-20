@@ -27,7 +27,11 @@ pub fn package_install(name string) ! {
 			return error('could not install package:${name}\nerror:\n${err}')
 		}
 	} else if platform_ == .ubuntu {
-		exec(cmd: 'apt install -y ${name}') or {
+		exec(cmd: '
+			export TERM=xterm
+			export DEBIAN_FRONTEND=noninteractive
+			apt install -y ${name}  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+			') or {
 			return error('could not install package:${name}\nerror:\n${err}')
 		}
 	} else if platform_ == .alpine {
@@ -39,12 +43,12 @@ pub fn package_install(name string) ! {
 	}
 }
 
-// upgrade the us, only implemented for ubuntu right now
+// upgrade the OS, only implemented for ubuntu right now
 pub fn upgrade() ! {
 	platform_ := platform()
 	if platform_ == .ubuntu {
 		upgrade_cmds := '
-			sudo killall apt apt-get
+			sudo killall apt apt-get 2>&1 > /dev/null
 			rm -f /var/lib/apt/lists/lock
 			rm -f /var/cache/apt/archives/lock
 			rm -f /var/lib/dpkg/lock*		

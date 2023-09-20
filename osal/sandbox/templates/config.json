@@ -1,0 +1,57 @@
+{
+    "ociVersion": "1.0.0",
+    "process": {
+      "terminal": true,
+      "user": {
+        "uid": 0,
+        "gid": 0
+      },
+      "args": [
+        "/bin/bash"
+      ],
+      "cwd": "/",
+      "env": [
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "TERM=xterm"
+      ]      
+    },
+    "root": {
+      "path": "${c.path_root.path}",
+      "readonly": false
+    },
+    "hostname": "${c.name}",
+    "mounts": [
+      {
+        "destination": "/io",
+        "type": "bind",
+        "source": "${c.path_io.path}",
+        "options": ["rbind", "rw"]
+      }
+    ],
+    "linux": {
+      "resources": {
+        "memory": {
+          "limit": 1073741824
+        }
+      },
+      "namespaces": [
+        {
+            "type": "pid"
+        },
+        {
+            "type": "network"
+        },
+        {
+            "type": "ipc"
+        },
+        {
+            "type": "uts"
+        },
+        {
+            "type": "mount"
+        }
+      ]   
+    }
+  }
+  
+
