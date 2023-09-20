@@ -1,8 +1,7 @@
 module tailwind
 
 // install tailwind will return true if it was already installed
-pub fn  install() ! {
-
+pub fn install() ! {
 	// install tailwind if it was already done will return true
 	println(' - package_install install tailwind')
 	if !(i.state == .reset) && osal.done_exists('install_tailwind') {

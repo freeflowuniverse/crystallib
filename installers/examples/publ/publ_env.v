@@ -1,12 +1,10 @@
 module main
 
-
 import installers.mdbook
 import installers.caddy
 
 fn install() ! {
 	// shortcut to install the base
-
 
 	mut caddy := caddy.get_install()!
 
@@ -20,7 +18,6 @@ fn install() ! {
 
 fn reload() ! {
 	// shortcut to install the base
-
 
 	mut caddy := caddy.get()!
 

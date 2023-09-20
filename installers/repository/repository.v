@@ -1,8 +1,9 @@
 module repository
+
 import freeflowuniverse.crystallib.osal
 // install repository will return true if it was already installed
-pub fn  install(repo_url string) ! {
 
+pub fn install(repo_url string) ! {
 	split_url := repo_url.split('/')
 	mut repo_name := split_url[split_url.len - 1].trim_string_right('.git')
 	mut repo_owner := split_url[split_url.len - 2]
@@ -29,6 +30,6 @@ pub fn  install(repo_url string) ! {
 		return error('Cannot install repository: ${repo_owner}/${repo_name} \n ${err}')
 	}
 
-osal.done_set('install_${repo_owner}/${repo_name}', 'OK')!
+	osal.done_set('install_${repo_owner}/${repo_name}', 'OK')!
 	return
 }

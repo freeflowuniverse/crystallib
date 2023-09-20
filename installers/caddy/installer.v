@@ -29,7 +29,7 @@ pub fn install(args InstallArgs) ! {
 		return error('only support ubuntu for now')
 	}
 	mut dest := osal.download(
-		url: 'https://github.com/caddyserver/caddy/releases/download/v2.7.4/caddy_2.7.4_linux_amd64.tar.gz'
+		url: 'https://github.com/caddyserver/caddy/releases/download/v2.7.4/caddy_2.7.4_linux_arm64.tar.gz'
 		minsize_kb: 10000
 		reset: true
 		expand_dir: '/tmp/caddyserver'
@@ -88,23 +88,16 @@ pub mut:
 }
 
 pub fn configuration_set(args_ ConfigurationArgs) ! {
-	println('setting configuration... ${args_}')
 	mut args := args_
 	if args.content == '' && args.path == '' {
 		return error('need to specify content or path.')
 	}
 	if args.content.len > 0 {
 		args.content = texttools.dedent(args.content)
-		if !os.exists('/etc/caddy') {
-			os.mkdir_all('/etc/caddy')!
-		}
 		osal.file_write('/etc/caddy/Caddyfile', args.content)!
 	} else {
 		mut p := pathlib.get_file(args.path, true)!
 		content := p.read()!
-		if !os.exists('/etc/caddy') {
-			os.mkdir_all('/etc/caddy')!
-		}
 		osal.file_write('/etc/caddy/Caddyfile', content)!
 	}
 

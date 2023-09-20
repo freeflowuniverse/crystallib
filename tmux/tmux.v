@@ -8,18 +8,20 @@ import os
 [heap]
 pub struct Tmux {
 pub mut:
-	sessions []&Session
-	sessionid string //unique link to job
+	sessions  []&Session
+	sessionid string // unique link to job
 }
 
 [params]
-pub struct TmuxNewArgs{
+pub struct TmuxNewArgs {
 	sessionid string
 }
 
-//return tmux instance
+// return tmux instance
 pub fn new(args TmuxNewArgs) !Tmux {
-	mut t:= Tmux{sessionid:args.sessionid}
+	mut t := Tmux{
+		sessionid: args.sessionid
+	}
 	t.scan()!
 	return t
 }
@@ -27,7 +29,7 @@ pub fn new(args TmuxNewArgs) !Tmux {
 // loads tmux session, populate the object
 pub fn (mut tmux Tmux) load() ! {
 	if !tmux.is_running() {
-		return error("Tmux not runnning.")
+		return error('Tmux not runnning.')
 	}
 	// tmux_ls := osal.execute_silent('tmux ls')!
 	// $if debug{println('Tmux: ${tmux_ls}')}
@@ -53,9 +55,7 @@ pub fn (mut t Tmux) stop() ! {
 
 pub fn (mut t Tmux) start() ! {
 	cmd := 'tmux new-sess -d -s init'
-	_ := osal.execute_silent(cmd) or {
-		return error("Can't execute $cmd \n$err")
-	}
+	_ := osal.execute_silent(cmd) or { return error("Can't execute ${cmd} \n${err}") }
 	// scan and add default bash window created with session init
 	t.scan()!
 }
@@ -88,13 +88,10 @@ pub fn (mut t Tmux) is_running() bool {
 	return !res.contains('no server running on /tmp/tmux-0/default')
 }
 
-
 pub fn (mut t Tmux) str() string {
-	mut out:="# Tmux\n\n"
-	for s in t.sessions{
-		out+="${*s}\n"
+	mut out := '# Tmux\n\n'
+	for s in t.sessions {
+		out += '${*s}\n'
 	}
 	return out
 }
-
-

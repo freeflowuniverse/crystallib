@@ -57,7 +57,7 @@ pub fn (mut path Path) expand(dest string) !Path {
 
 // chown changes the owner and group attributes of path to owner and group.
 pub fn (mut path Path) chown(owner int, group int) ! {
-	return os.chown(path.path, owner, group)
+	return os.chown(path.path, owner, group)!
 }
 
 // chmod change file access attributes of path to mode.
