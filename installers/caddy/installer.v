@@ -19,6 +19,7 @@ pub fn install() ! {
 	downloader.download(url:"https://github.com/caddyserver/caddy/releases/download/v2.7.4/caddy_2.7.4_linux_arm64.tar.gz",
 		minsize_kb:10000, name:"caddy", expand:true)!
 
+	println('downloaded!')
 
 	// if cmd_exists('caddy') {
 	// 	println('Caddy was already installed.')

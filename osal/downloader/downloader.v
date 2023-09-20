@@ -62,6 +62,7 @@ fn getlastname(url string) string {
 // if dest specified will link to the dest or copy depending param:destlink
 pub fn download(args_ DownloadArgs) !DownloadMeta {
 	// println(" -- DOWNLOAD ${args_.url}\n$args_")
+	println('downloading: ${args_}')
 	mut args := args_
 
 	if args.name == '' {
@@ -96,10 +97,13 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 			args.gitstructure = gs2
 		}
 		mut gs := args.gitstructure or { return error('cannot find gitstructure') }
-
+		println('argss: ${args}')
+		println('debugz before')
 		mut gr := gs.repo_get_from_url(url: args.url, pull: args.reset, reset: args.reset)!
-
+			println('debugz after')
+			
 		downloadpath = pathlib.get_dir(gr.path_content_get(), false)!
+
 		downloadtype = .git
 	} else if u.starts_with('ssh://') || u.starts_with('ftp://') {
 		return error('Cannot download for runner, unsupported methods:\n${args}')
