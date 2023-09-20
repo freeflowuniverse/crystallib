@@ -1,6 +1,5 @@
 module main
 
-
 import installers.golang
 
 fn do() ! {

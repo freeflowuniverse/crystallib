@@ -16,7 +16,6 @@ pub mut:
 	minsize_kb u32 = 10 // is always in kb
 	maxsize_kb u32
 	expand_dir string
-
 }
 
 // if name is not specified, then will be the filename part
@@ -61,13 +60,10 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 		dest.delete()!
 	}
 
-
 	if args.reset {
 		mut dest_delete := pathlib.get_file(args.dest + '_', false)!
 		dest_delete.delete()!
-
 	}
-
 
 	meta.write(args.url.trim_space())!
 
@@ -78,15 +74,15 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 			if size > args.minsize_kb {
 				if args.maxsize_kb > 0 {
 					if size < args.maxsize_kb {
-						if args.expand_dir.len>0{
+						if args.expand_dir.len > 0 {
 							return dest.expand(args.expand_dir)!
 						}
 						return dest
 					}
 				} else {
-					if args.expand_dir.len>0{
+					if args.expand_dir.len > 0 {
 						return dest.expand(args.expand_dir)!
-					}					
+					}
 					return dest
 				}
 			}
@@ -123,9 +119,9 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 	}
 	dest0.rename(dest.name())!
 
-	if args.expand_dir.len>0{
+	if args.expand_dir.len > 0 {
 		return dest0.expand(args.expand_dir)!
-}
+	}
 
 	return dest0
 }

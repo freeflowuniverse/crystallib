@@ -1,6 +1,5 @@
 module main
 
-
 import installers.caddy
 
 fn do() ! {

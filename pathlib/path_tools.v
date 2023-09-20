@@ -30,25 +30,26 @@ pub fn (mut path Path) rename(name string) ! {
 	path.check()
 }
 
+// TODO: make part of pathlib of Path
 
-//TODO: make part of pathlib of Path
-
-//uncompress to specified directory
-//if copy then will keep the original
+// uncompress to specified directory
+// if copy then will keep the original
 pub fn (mut path Path) expand(dest string) !Path {
-	if dest.len<4{
+	if dest.len < 4 {
 		return error("Path dest needs to be mentioned and +4 char. Now '${dest}'")
 	}
-	desto:=get_dir(dest,true)!
+	desto := get_dir(dest, true)!
 	println(desto)
-	if path.name().to_lower().ends_with(".tar.gz") || path.name().to_lower().ends_with(".tgz"){
-		cmd:="tar -xzvf ${path.path} -C ${desto.path}"
+	if path.name().to_lower().ends_with('.tar.gz') || path.name().to_lower().ends_with('.tgz') {
+		cmd := 'tar -xzvf ${path.path} -C ${desto.path}'
 		println(cmd)
-		res:=os.execute(cmd)
-		if res.exit_code>0{return error("Could not expand.\n$res")}
-	}else{
+		res := os.execute(cmd)
+		if res.exit_code > 0 {
+			return error('Could not expand.\n${res}')
+		}
+	} else {
 		println(path)
-		panic("not implemented yet")
+		panic('not implemented yet')
 	}
 
 	return desto
@@ -56,7 +57,7 @@ pub fn (mut path Path) expand(dest string) !Path {
 
 // chown changes the owner and group attributes of path to owner and group.
 pub fn (mut path Path) chown(owner int, group int) ! {
-	return os.chown(path.path,owner,group)!
+	return os.chown(path.path, owner, group)!
 }
 
 // chmod change file access attributes of path to mode.
@@ -234,7 +235,7 @@ pub fn (mut path Path) read() !string {
 // return Path of the destination file or dir
 pub fn (mut path Path) copy(dest_ string) !Path {
 	path.check()
-	mut dest:=get_dir(dest_,false)!
+	mut dest := get_dir(dest_, false)!
 	if dest.exists() {
 		if !(path.cat in [.file, .dir] && dest.cat in [.file, .dir]) {
 			return error('Source or Destination path is not file or directory.\n\n${path.path}-${path.cat}---${dest.path}-${dest.cat}')

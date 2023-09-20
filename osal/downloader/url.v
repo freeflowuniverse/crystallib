@@ -1,7 +1,7 @@
 module downloader
 
 // pub fn url_is_git_repo(url string) bool {
-	
+
 // 	// url is Git Transport Protocol
 // 	// git://host.xz/path/to/repo.git/ or git://host.xz/~user/path/to/repo.git/
 // 	if url.starts_with('git://') {
@@ -11,7 +11,7 @@ module downloader
 // 		// TODO: perform more checks
 // 		return true
 // 	}
-	
-// 	http_schema := url.starts_with('http://') || u.starts_with('https://') 
+
+// 	http_schema := url.starts_with('http://') || u.starts_with('https://')
 
 // }

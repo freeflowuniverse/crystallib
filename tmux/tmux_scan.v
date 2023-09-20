@@ -18,7 +18,7 @@ fn (mut t Tmux) scan_add(line string) !&Window {
 	pane_pid := line_arr[5]
 	pane_start_command := line_arr[6] or { '' }
 
-	wid:=(window_id.replace('@', '')).int()
+	wid := (window_id.replace('@', '')).int()
 
 	// os.log('TMUX FOUND: $line\n    ++ $session_name:$window_name wid:$window_id pid:$pane_pid entrypoint:$pane_start_command')
 	mut s := t.session_get(session_name)!
@@ -28,18 +28,18 @@ fn (mut t Tmux) scan_add(line string) !&Window {
 		active = true
 	}
 
-	mut name:=texttools.name_fix(window_name)
+	mut name := texttools.name_fix(window_name)
 
 	mut w := Window{
 		session: s
 		name: name
-	}	
-		
-	if !(s.window_exist(name:window_name, id:wid)){
+	}
+
+	if !(s.window_exist(name: window_name, id: wid)) {
 		// println("window not exists")
 		s.windows << &w
-	}else{
-		w = s.window_get(name:window_name, id:wid)!
+	} else {
+		w = s.window_get(name: window_name, id: wid)!
 	}
 
 	w.id = wid
@@ -54,7 +54,7 @@ fn (mut t Tmux) scan_add(line string) !&Window {
 // scan the system to detect sessions .
 pub fn (mut t Tmux) scan() ! {
 	// os.log('TMUX - Scanning ....')
-	
+
 	cmd_list_session := "tmux list-sessions -F '#{session_name}'"
 	exec_list := osal.execute_silent(cmd_list_session)!
 
@@ -87,5 +87,4 @@ pub fn (mut t Tmux) scan() ! {
 			t.scan_add(line)!
 		}
 	}
-
 }

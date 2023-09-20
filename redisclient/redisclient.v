@@ -1,6 +1,5 @@
 module redisclient
 
-
 // original code see https://github.com/patrickpissurno/vredis/blob/master/vredis_test.v
 // credits see there as well (-:
 import net
@@ -12,10 +11,8 @@ import os
 
 __global (
 	redis_connections shared []RedisInternal
-	redis shared []Redis
+	redis             shared []Redis
 )
-
-
 
 const default_read_timeout = net.infinite_timeout
 
@@ -26,14 +23,12 @@ mut:
 	addr   string
 }
 
-
 [heap]
 pub struct Redis {
 mut:
-	current int				
+	current int
 pub mut:
-	connection_nr   []int 	//is the position in the global
-
+	connection_nr []int // is the position in the global
 }
 
 pub struct SetOpts {
@@ -61,26 +56,28 @@ pub enum KeyType {
 //   /tmp/redis-default.sock
 pub fn new(addrs []string) !Redis {
 	mut r := Redis{}
-	lock redis_connections{
+	lock redis_connections {
 		// toadd:=[]string{}
-		for addr in addrs{
-			mut found:=false
-			mut addr_nr:=0
-			for conn in redis_connections{
-				if conn.addr == addr{
-					r.connection_nr << addr_nr //remember this connection nr
-					found=true
+		for addr in addrs {
+			mut found := false
+			mut addr_nr := 0
+			for conn in redis_connections {
+				if conn.addr == addr {
+					r.connection_nr << addr_nr // remember this connection nr
+					found = true
 					break
 				}
-				addr_nr+=1
+				addr_nr += 1
 			}
-			if found{
+			if found {
 				continue
-			}else{
-				//we need to make a new internal connection
-				mut ri:=RedisInternal{addr:addr}
-				redis_connections<<ri
-				r.connection_nr << redis_connections.len-1
+			} else {
+				// we need to make a new internal connection
+				mut ri := RedisInternal{
+					addr: addr
+				}
+				redis_connections << ri
+				r.connection_nr << redis_connections.len - 1
 			}
 		}
 	}
@@ -90,6 +87,7 @@ pub fn new(addrs []string) !Redis {
 pub fn get(addr string) !Redis {
 	return new([addr])
 }
+
 fn (mut r RedisInternal) socket_connect() ! {
 	addr := os.expand_tilde_to_home(r.addr)
 	// print(' - REDIS CONNECT: ${addr}')
@@ -110,7 +108,6 @@ pub fn (mut r RedisInternal) read_line() !string {
 	return r.socket.read_line().trim_right('\r\n')
 }
 
-
 // write *all the data* into the socket
 // This function loops, till *everything is written*
 // (some of the socket write ops could be partial)
@@ -123,7 +120,6 @@ fn (mut r RedisInternal) write(data []u8) ! {
 		remaining -= written_bytes
 	}
 }
-
 
 fn (mut r RedisInternal) read(size int) ![]u8 {
 	r.socket_check() or {}
@@ -140,12 +136,11 @@ pub fn (mut r RedisInternal) disconnect() {
 	r.socket.close() or {}
 }
 
-
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-//TODO: need to implement a way how to use multiple connections at once
+// TODO: need to implement a way how to use multiple connections at once
 
 const cr_lf_bytes = [u8(`\r`), `\n`]
 
@@ -154,40 +149,38 @@ fn (mut r Redis) write_line(data []u8) ! {
 	r.write(redisclient.cr_lf_bytes)!
 }
 
-
 fn (mut r Redis) write(data []u8) ! {
-	print("lock write:\n$data")
-	lock redis_connections{		
-		redis_connections[redis_connections.len-1].write(data)!
+	print('lock write:\n${data}')
+	lock redis_connections {
+		redis_connections[redis_connections.len - 1].write(data)!
 	}
-	println("--OK")
+	println('--OK')
 }
 
 fn (mut r Redis) read(size int) ![]u8 {
-	print("lock read")
-	lock redis_connections{		
-		mut res:= redis_connections[redis_connections.len-1].read(size)!
-		println("--OK?")
+	print('lock read')
+	lock redis_connections {
+		mut res := redis_connections[redis_connections.len - 1].read(size)!
+		println('--OK?')
 		return res
 	}
-	panic("bug")
+	panic('bug')
 }
 
 fn (mut r Redis) read_line() !string {
-	print("lock readln")
-	lock redis_connections{		
-		mut res:= redis_connections[redis_connections.len-1].read_line()!
-		println("--OK?")
+	print('lock readln')
+	lock redis_connections {
+		mut res := redis_connections[redis_connections.len - 1].read_line()!
+		println('--OK?')
 		return res
 	}
-	panic("bug")
+	panic('bug')
 }
 
 // write resp value to the redis channel
 pub fn (mut r Redis) write_rval(val resp.RValue) ! {
 	r.write(val.encode())!
 }
-
 
 // write list of strings to redis challen
 fn (mut r Redis) write_cmd(item string) ! {
@@ -205,4 +198,3 @@ fn (mut r Redis) write_cmds(items []string) ! {
 	r.write_rval(a)!
 	// }	
 }
-

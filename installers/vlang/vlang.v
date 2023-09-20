@@ -1,8 +1,7 @@
 module vlang
 
 // install vlang will return true if it was already installed
-pub fn  install() ! {
-
+pub fn install() ! {
 	// install vlang if it was already done will return true
 	println(' - package_install install vlang')
 	if !(i.state == .reset) && osal.done_exists('install_vlang') {
@@ -25,6 +24,6 @@ pub fn  install() ! {
 
 	osal.execute_silent('Cannot install vlang.\n${err}')!
 
-osal.done_set('install_vlang', 'OK')!
+	osal.done_set('install_vlang', 'OK')!
 	return
 }

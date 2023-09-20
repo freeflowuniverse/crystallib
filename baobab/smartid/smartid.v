@@ -17,22 +17,21 @@ pub fn new(sid string) !SmartId {
 	return smartdid_new(sid)
 }
 
-//generate a smartid, upto 99999
+// generate a smartid, upto 99999
 pub fn generate() string {
-	idint:=rand.u32_in_range(1,30000) or { panic(err) }
+	idint := rand.u32_in_range(1, 30000) or { panic(err) }
 	return smartid_string(idint)
 }
 
-//make sure that we don't use an existing one
+// make sure that we don't use an existing one
 pub fn generate_unique(existing []string) !string {
-	idint:=rand.u32_in_range(1,30000) or { panic(err) }
-	idstr:=smartid_string(idint)
-	if !(idstr in existing){
+	idint := rand.u32_in_range(1, 30000) or { panic(err) }
+	idstr := smartid_string(idint)
+	if idstr !in existing {
 		return idstr
-	}		
-	return error("Could not find unique smartid, run out of tries")
+	}
+	return error('Could not find unique smartid, run out of tries')
 }
-
 
 // return smartid for 2 parts e.g. region and circle
 pub fn smartids2_string(sids [2]u32) string {

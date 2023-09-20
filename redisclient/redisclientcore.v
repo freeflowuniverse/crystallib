@@ -17,7 +17,7 @@ pub fn core_get(url RedisURL) !Redis {
 	if !connection_exists {
 		new(['${url.address}:${url.port}'])!
 	}
-	println("unlock redis")
+	println('unlock redis')
 	mut r := Redis{}
 	return r
 }

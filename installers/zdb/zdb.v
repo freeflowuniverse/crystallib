@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
 
 // install zdb will return true if it was already installed
-pub fn  install() ! {
+pub fn install() ! {
 	base.install()!
 	println(' - package_install install zdb')
 	if !osal.done_exists('install_zdb') && !cmd_exists('zdb') {
