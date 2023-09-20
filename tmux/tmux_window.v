@@ -44,6 +44,12 @@ pub fn (mut t Tmux) window_new(args WindowArgs) !Window {
 	return w
 }
 
+//is always in the main tmux
+pub fn (mut t Tmux) window_delete(args WindowGetArgs) ! {
+	mut s := t.session_create(name:'main', reset:false)!
+	s.window_delete(name:args.name)!
+}
+
 
 // window_name is the name of the window in session main (will always be called session main)
 // cmd to execute e.g. bash file

@@ -84,6 +84,7 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 	u := args.url.to_lower().trim_space()
 
 	mut downloadtype := DownloadType.unknown
+	mut downloadpath:=pathlib.Path{}
 
 	if u.starts_with('http://') || u.starts_with('https://') || u.starts_with('git://') {
 		// might be git based checkout
@@ -107,12 +108,12 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 		urllocal = urllocal.replace('httpfile', 'http')
 
 		if args.downloadpath == '' {
-			filename:=u.split("\n").last()
+			filename:=u.split("/").last()
 			args.downloadpath = '${os.temp_dir()}/downloads/${args.name}/${filename}'
 			os.mkdir_all('${os.temp_dir()}/downloads/${args.name}')!
 		}
 
-		mut downloadpath := pathlib.get(args.downloadpath)	
+		downloadpath = pathlib.get(args.downloadpath)	
 		//TODO: need to create dir even if path specified	
 		defer {
 			downloadpath.delete() or { panic(err) }
@@ -126,7 +127,7 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 		)!
 		downloadtype = .httpfile
 	} else if args.url.len > 0 {
-		mut downloadpath := pathlib.get(args.url)
+		downloadpath = pathlib.get(args.url)
 		if !(downloadpath.exists()){
 			return error("Cannot download files or dir, because doesn't exist.\n${args}'")	
 		}

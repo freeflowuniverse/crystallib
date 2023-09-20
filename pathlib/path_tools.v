@@ -30,6 +30,31 @@ pub fn (mut path Path) rename(name string) ! {
 	path.check()
 }
 
+
+//TODO: make part of pathlib of Path
+
+//uncompress to specified directory
+//if copy then will keep the original
+pub fn (mut path Path) expand(dest string) !Path {
+	if dest.len<4{
+		return error("Path dest needs to be mentioned and +4 char. Now '${dest}'")
+	}
+	desto:=get_dir(dest,true)!
+	println(desto)
+	if path.name().to_lower().ends_with(".tar.gz") || path.name().to_lower().ends_with(".tgz"){
+		cmd:="tar -xzvf ${path.path} -C ${desto.path}"
+		println(cmd)
+		res:=os.execute(cmd)
+		if res.exit_code>0{return error("Could not expand.\n$res")}
+	}else{
+		println(path)
+		panic("not implemented yet")
+	}
+
+	return desto
+}
+
+
 // get relative path in relation to destpath
 // will not resolve symlinks
 pub fn (mut path Path) path_relative(destpath string) !string {
@@ -197,9 +222,9 @@ pub fn (mut path Path) read() !string {
 // dest needs to be a directory or file
 // need to check than only valid items can be done
 // return Path of the destination file or dir
-pub fn (mut path Path) copy(mut dest Path) !Path {
+pub fn (mut path Path) copy(dest_ string) !Path {
 	path.check()
-	dest.check()
+	mut dest:=get_dir(dest_,false)!
 	if dest.exists() {
 		if !(path.cat in [.file, .dir] && dest.cat in [.file, .dir]) {
 			return error('Source or Destination path is not file or directory.\n\n${path.path}-${path.cat}---${dest.path}-${dest.cat}')
