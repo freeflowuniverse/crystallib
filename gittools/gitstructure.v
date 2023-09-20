@@ -23,7 +23,7 @@ pub mut:
 // 	reset bool //this means will pull and reset all changes
 // }
 pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs) !&GitRepo {
-	println('debugz!: ${args}')
+	// println('debugz!: ${args}')
 	mut addr := addr_get_from_url(args.url) or { return error('cannot get addr from url:${err}') }
 
 	if addr.branch != '' && args.branch != '' && addr.branch != args.branch {

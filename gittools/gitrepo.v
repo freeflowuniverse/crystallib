@@ -230,10 +230,11 @@ pub fn (mut repo GitRepo) addr() GitAddr {
 }
 
 pub fn (mut repo GitRepo) name() string {
-	println('debugz: ${repo.path}')
+	// println('debugz: ${repo.path}')
 	if repo.name_ == '' {
-		repo.name_ = repo.path.split('/').last()
+		repo.name_ = repo.addr().path.split('/').last()
 		if repo.name_.len < 3 {
+			println(repo)
 			panic('bug, name split for git name() in repo')
 		}
 	}

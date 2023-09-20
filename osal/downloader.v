@@ -52,10 +52,6 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 
 	u := args.url.to_lower().trim_space()
 
-	if u.starts_with('http://') || u.starts_with('https://') || u.starts_with('git://') {
-		// might be git based checkout
-	}
-
 	if !cmd_exists('curl') {
 		return error('please make sure curl has been installed.')
 	}

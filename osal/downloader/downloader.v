@@ -80,11 +80,6 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 		args.url = args.url.replace('@name', args.name)
 	}
 
-	if args.downloadpath == '' {
-		args.downloadpath = '${os.temp_dir()}/downloads/${args.name}'
-	}
-
-	mut downloadpath := pathlib.get(args.downloadpath)
 
 	u := args.url.to_lower().trim_space()
 
@@ -97,10 +92,10 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 			args.gitstructure = gs2
 		}
 		mut gs := args.gitstructure or { return error('cannot find gitstructure') }
-		println('argss: ${args}')
-		println('debugz before')
+		// println('argss: ${args}')
+		// println('debugz before')
 		mut gr := gs.repo_get_from_url(url: args.url, pull: args.reset, reset: args.reset)!
-			println('debugz after')
+			// println('debugz after')
 			
 		downloadpath = pathlib.get_dir(gr.path_content_get(), false)!
 
@@ -109,7 +104,16 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 		return error('Cannot download for runner, unsupported methods:\n${args}')
 	} else if u.starts_with('httpsfile') || u.starts_with('httpfile') {
 		mut urllocal := args.url.replace('httpsfile', 'https')
-		urllocal = args.url.replace('httpfile', 'http')
+		urllocal = urllocal.replace('httpfile', 'http')
+
+		if args.downloadpath == '' {
+			filename:=u.split("\n").last()
+			args.downloadpath = '${os.temp_dir()}/downloads/${args.name}/${filename}'
+			os.mkdir_all('${os.temp_dir()}/downloads/${args.name}')!
+		}
+
+		mut downloadpath := pathlib.get(args.downloadpath)	
+		//TODO: need to create dir even if path specified	
 		defer {
 			downloadpath.delete() or { panic(err) }
 		}
@@ -122,7 +126,7 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 		)!
 		downloadtype = .httpfile
 	} else if args.url.len > 0 {
-		downloadpath = pathlib.get(args.url)
+		mut downloadpath := pathlib.get(args.url)
 		if !(downloadpath.exists()){
 			return error("Cannot download files or dir, because doesn't exist.\n${args}'")	
 		}
