@@ -31,8 +31,9 @@ pub fn install(args InstallArgs) ! {
 	mut dest:=osal.download(url:"https://github.com/caddyserver/caddy/releases/download/v2.7.4/caddy_2.7.4_linux_arm64.tar.gz",
 		minsize_kb:10000,reset:true,expand_dir:"/tmp/caddyserver")!
 
-	mut caddyfile:=dest.file_get("caddy")!
+	mut caddyfile:=dest.file_get("caddy")! //file in the dest
 	caddyfile.copy("/usr/local/bin")! 
+	caddyfile.chmod(0o770)! //includes read & write & execute
 
 	osal.done_set('install_caddy', 'OK')!
 	return

@@ -54,6 +54,16 @@ pub fn (mut path Path) expand(dest string) !Path {
 	return desto
 }
 
+// chown changes the owner and group attributes of path to owner and group.
+pub fn (mut path Path) chown(owner int, group int) ! {
+	return os.chown(path.path,owner,group)!
+}
+
+// chmod change file access attributes of path to mode.
+// Octals like 0o600 can be used.
+pub fn (mut path Path) chmod(mode int) ! {
+	return os.chmod(path.path)!
+}
 
 // get relative path in relation to destpath
 // will not resolve symlinks

@@ -1,0 +1,35 @@
+{
+    "ociVersion": "1.0.0",
+    "process": {
+      "terminal": true,
+      "user": {
+        "uid": 0,
+        "gid": 0
+      },
+      "args": [
+        "/bin/sh"
+      ],
+      "cwd": "/"
+    },
+    "root": {
+      "path": "/var/container/fs1",
+      "readonly": false
+    },
+    "hostname": "runc",
+    "mounts": [
+      {
+        "destination": "/data",
+        "type": "bind",
+        "source": "/var/data",
+        "options": ["rbind", "rw"]
+      }
+    ],
+    "linux": {
+      "resources": {
+        "memory": {
+          "limit": 1073741824
+        }
+      }
+    }
+  }
+  
