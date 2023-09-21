@@ -17,6 +17,12 @@ pub fn done_get(key string) ?string {
 	return val
 }
 
+pub fn done_delete(key string) ! {
+	mut redis := get_redis()
+	redis.hdel(osal.redis_done_key, '${key}')!
+}
+
+
 // Retrieves the value (string value) of a command that was executed by looking in the hset exec.done in redis, this function returns an empty string in case it is not found in the hset
 pub fn done_get_str(key string) string {
 	mut redis := get_redis()

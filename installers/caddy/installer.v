@@ -43,10 +43,11 @@ pub fn install(args InstallArgs) ! {
 	return
 }
 
+[params]
 pub struct WebConfig {
 pub mut:
 	path   string = '/var/www'
-	domain string = 'default.com'
+	domain string = ''
 }
 
 // configure caddy as default webserver & start
@@ -55,6 +56,9 @@ pub mut:
 // domain e.g. www.myserver.com
 pub fn configure_examples(config WebConfig) ! {
 	mut config_file := $tmpl('templates/caddyfile_default')
+	if config.domain==""{
+		config_file = $tmpl('templates/caddyfile_all')
+	}
 	install()!
 	os.mkdir_all(config.path)!
 
@@ -114,15 +118,21 @@ pub fn configuration_set(args_ ConfigurationArgs) ! {
 
 // start caddy
 pub fn start() ! {
+	if !os.exists("/etc/caddy/Caddyfile"){
+
+	}
 	mut t := tmux.new()!
-	mut w := t.window_new(name: 'caddy', cmd: 'caddy run --config /etc/caddy/Caddyfile')!
+	mut w := t.window_new(name: 'caddy', cmd: '
+			caddy run --config /etc/caddy/Caddyfile
+			echo CADDY STOPPED
+			/bin/bash'
+		)!
 }
 
 pub fn stop() ! {
 	mut t := tmux.new()!
 	t.window_delete(name: 'caddy')!
 	// osal.execute_silent('caddy stop') or {}
-	// TODO: should do some better test to check if caddy is really stopped
 }
 
 pub fn restart() ! {

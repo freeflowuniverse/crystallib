@@ -56,12 +56,14 @@ pub fn (mut t Tmux) scan() ! {
 	// os.log('TMUX - Scanning ....')
 
 	cmd_list_session := "tmux list-sessions -F '#{session_name}'"
-	exec_list := osal.execute_silent(cmd_list_session)!
+	exec_list := osal.exec(cmd:cmd_list_session,stdout:false,name:"tmux_list") or {
+		return error("could not execute list sessions.\n$err")
+	}
 
-	// println('execlist out: ${exec_list}')
+	// println('execlist out for sessions: ${exec_list}')
 
 	// make sure we have all sessions
-	for line in exec_list.split_into_lines() {
+	for line in exec_list.output.split_into_lines() {
 		session_name := line.trim(' \n').to_lower()
 		if session_name == '' {
 			continue
@@ -75,6 +77,8 @@ pub fn (mut t Tmux) scan() ! {
 		}
 		t.sessions << &s
 	}
+
+	println(t)
 
 	// mut done := map[string]bool{}
 	cmd := "tmux list-panes -a -F '#{session_name}|#{window_name}|#{window_id}|#{pane_active}|#{pane_id}|#{pane_pid}|#{pane_start_command}'"

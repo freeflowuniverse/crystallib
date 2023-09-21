@@ -347,6 +347,7 @@ pub fn path_relative(source_ string, linkpath_ string) !string {
 [params]
 pub struct TMPWriteArgs {
 pub mut:
+	name string //optional name to remember it more easily
 	tmpdir string
 	text   string // text to put in file
 	path   string // to overrule the path where script will be stored
@@ -360,10 +361,16 @@ pub fn temp_write(args_ TMPWriteArgs) !string {
 		if args.tmpdir.len == 0 {
 			if 'TMPDIR' in os.environ() {
 				args.tmpdir = os.environ()['TMPDIR'] or { '/tmp' }
+			}else{
+				args.tmpdir = "/tmp"
 			}
 		}
-		t := time.now().format_ss_milli().replace(' ', '-')
+		t := time.now().format_ss_milli().replace(' ', '-').replace('.', ':')
 		mut tmppath := '${args.tmpdir}/execscripts/${t}.sh'
+		if args.name.len>0{
+			tmppath = '${args.tmpdir}/execscripts/${args.name}_${t}.sh'
+		}
+		
 		if !os.exists('${args.tmpdir}/execscripts/') {
 			os.mkdir('${args.tmpdir}/execscripts') or {
 				return error('Cannot create ${args.tmpdir}/execscripts,${err}')

@@ -3,7 +3,7 @@ module tmux
 import freeflowuniverse.crystallib.osal
 // import freeflowuniverse.crystallib.session
 import os
-// import redisclient
+import time
 
 [heap]
 pub struct Tmux {
@@ -22,17 +22,18 @@ pub fn new(args TmuxNewArgs) !Tmux {
 	mut t := Tmux{
 		sessionid: args.sessionid
 	}
+	t.load()!
 	t.scan()!
 	return t
 }
 
 // loads tmux session, populate the object
 pub fn (mut tmux Tmux) load() ! {
-	if !tmux.is_running() {
-		return error('Tmux not runnning.')
+	isrunning:=tmux.is_running()!
+	if !isrunning{
+		tmux.start()!
 	}
-	// tmux_ls := osal.execute_silent('tmux ls')!
-	// $if debug{println('Tmux: ${tmux_ls}')}
+	// println("SCAN")
 	tmux.scan()!
 }
 
@@ -49,14 +50,15 @@ pub fn (mut t Tmux) stop() ! {
 	}
 
 	cmd := 'tmux kill-server'
-	_ := osal.execute_silent(cmd) or { '' }
+	_ := osal.exec(cmd:cmd,stdout:false,name:'tmux_kill_server',die:false) or { panic("bug") }
 	os.log('TMUX - All sessions stopped .')
 }
 
 pub fn (mut t Tmux) start() ! {
-	cmd := 'tmux new-sess -d -s init'
-	_ := osal.execute_silent(cmd) or { return error("Can't execute ${cmd} \n${err}") }
+	cmd := 'tmux new-sess -d -s main'
+	_ := osal.exec(cmd:cmd,stdout:false,name:'tmux_start') or { return error("Can't execute ${cmd} \n${err}") }
 	// scan and add default bash window created with session init
+	time.sleep(time.Duration(100 * time.millisecond))
 	t.scan()!
 }
 
@@ -83,9 +85,19 @@ pub fn (mut t Tmux) windows_get() []&Window {
 }
 
 // checks whether tmux server is running
-pub fn (mut t Tmux) is_running() bool {
-	res := osal.execute_silent('tmux info') or { err.msg() }
-	return !res.contains('no server running on /tmp/tmux-0/default')
+pub fn (mut t Tmux) is_running() !bool {
+	res := osal.exec(cmd:'tmux info',stdout:false,name:'tmux_info',die:false) or { panic("bug") }
+	if res.error.contains('no server running'){
+		// println(" TMUX NOT RUNNING")
+		return false
+	}
+	if res.error.contains('no current client'){
+		return true
+	}	
+	if res.exit_code>0{
+		return error("could not execute tmux info.\n$res")
+	}
+	return true
 }
 
 pub fn (mut t Tmux) str() string {

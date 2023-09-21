@@ -5,7 +5,6 @@ import freeflowuniverse.crystallib.osal { exec }
 fn do() ! {
 	exec(
 		cmd: 'eecho sometext'
-		reset: false
 		retry: 5
 	) or {
 		println(err.code())

@@ -21,7 +21,7 @@ pub fn (mut t Tmux) session_get(name_ string) !&Session {
 			return s
 		}
 	}
-	return error('Canot find session with name: ${name_}')
+	return error('Can not find session with name: \'${name_}\', out of loaded sessions.')
 }
 
 pub fn (mut t Tmux) session_exist(name_ string) bool {
@@ -57,7 +57,7 @@ pub mut:
 pub fn (mut t Tmux) session_create(args SessionCreateArgs) !&Session {
 	name := texttools.name_fix(args.name)
 	if !(t.session_exist(name)) {
-		// println("create session: $args")
+		$if debug {println(" - tmux - create session: $args")}
 		mut s2 := Session{
 			tmux: t // reference back
 			name: name
@@ -67,7 +67,7 @@ pub fn (mut t Tmux) session_create(args SessionCreateArgs) !&Session {
 	}
 	mut s := t.session_get(name)!
 	if args.reset {
-		// println('TMUX - Session ${name} will be restarted.')
+		$if debug {println(' - tmux - session ${name} will be restarted.')}
 		s.restart()!
 	}
 	t.scan()!
