@@ -16,6 +16,7 @@ pub mut:
 	minsize_kb u32 = 10 // is always in kb
 	maxsize_kb u32
 	expand_dir string
+	expand_file string
 }
 
 // if name is not specified, then will be the filename part
@@ -122,6 +123,10 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 	if args.expand_dir.len > 0 {
 		return dest0.expand(args.expand_dir)!
 	}
+	if args.expand_file.len > 0 {
+		return dest0.expand(args.expand_file)!
+	}
+
 
 	return dest0
 }

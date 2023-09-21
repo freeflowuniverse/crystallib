@@ -33,6 +33,10 @@ pub fn new(args_ InstallArgs) !Postgresql {
 
 	mut args:=args_
 
+	if args.path==""{
+		args.path="/data/postgresql"
+	}
+
 	if args.host_remove{
 		host_remove()!
 	}
