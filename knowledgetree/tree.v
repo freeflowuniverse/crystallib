@@ -11,8 +11,8 @@ pub:
 	name string
 pub mut:
 	logger &log.Logger [skip; str: skip] = &log.Log{
-		level: .info
-	}				 
+	level: .info
+}
 	collections     map[string]&Collection
 	embedded_files  []embed_file.EmbedFileData // this where we have the templates for exporting a book
 	state           TreeState
@@ -74,7 +74,7 @@ pub fn (err NoOrTooManyObjFound) msg() string {
 
 // get the page from pointer string: $tree:$collection:$name or
 // $collection:$name or $name
-pub fn (mut tree Tree) page_get(pointerstr string) !&Page {
+pub fn (tree Tree) page_get(pointerstr string) !&Page {
 	p := pointer_new(pointerstr)!
 	mut res := []&Page{}
 	for _, collection in tree.collections {
@@ -97,7 +97,7 @@ pub fn (mut tree Tree) page_get(pointerstr string) !&Page {
 
 // get the page from pointer string: $tree:$collection:$name or
 // $collection:$name or $name
-pub fn (mut tree Tree) image_get(pointerstr string) !&File {
+pub fn (tree Tree) image_get(pointerstr string) !&File {
 	p := pointer_new(pointerstr)!
 	// println("collection:'$p.collection' name:'$p.name'")
 	mut res := []&File{}
