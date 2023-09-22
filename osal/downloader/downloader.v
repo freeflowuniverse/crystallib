@@ -40,7 +40,7 @@ pub mut:
 	hash         string // if specified then will check the hash of the downloaded content
 	metapath     string // if not specified then will not write
 	gitstructure ?gittools.GitStructure [skip; str: skip]
-	expand bool 
+	expand       bool
 }
 
 fn getlastname(url string) string {
@@ -62,6 +62,7 @@ fn getlastname(url string) string {
 // if dest specified will link to the dest or copy depending param:destlink
 pub fn download(args_ DownloadArgs) !DownloadMeta {
 	// println(" -- DOWNLOAD ${args_.url}\n$args_")
+	println('downloading: ${args_}')
 	mut args := args_
 
 	if args.name == '' {
@@ -79,15 +80,10 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 		args.url = args.url.replace('@name', args.name)
 	}
 
-	if args.downloadpath == '' {
-		args.downloadpath = '${os.temp_dir()}/downloads/${args.name}'
-	}
-
-	mut downloadpath := pathlib.get(args.downloadpath)
-
 	u := args.url.to_lower().trim_space()
 
 	mut downloadtype := DownloadType.unknown
+	mut downloadpath := pathlib.Path{}
 
 	if u.starts_with('http://') || u.starts_with('https://') || u.starts_with('git://') {
 		// might be git based checkout
@@ -96,16 +92,25 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 			args.gitstructure = gs2
 		}
 		mut gs := args.gitstructure or { return error('cannot find gitstructure') }
-
 		mut gr := gs.repo_get_from_url(url: args.url, pull: args.reset, reset: args.reset)!
 
 		downloadpath = pathlib.get_dir(gr.path_content_get(), false)!
+
 		downloadtype = .git
 	} else if u.starts_with('ssh://') || u.starts_with('ftp://') {
 		return error('Cannot download for runner, unsupported methods:\n${args}')
 	} else if u.starts_with('httpsfile') || u.starts_with('httpfile') {
 		mut urllocal := args.url.replace('httpsfile', 'https')
-		urllocal = args.url.replace('httpfile', 'http')
+		urllocal = urllocal.replace('httpfile', 'http')
+
+		if args.downloadpath == '' {
+			filename := u.split('/').last()
+			args.downloadpath = '${os.temp_dir()}/downloads/${args.name}/${filename}'
+			os.mkdir_all('${os.temp_dir()}/downloads/${args.name}')!
+		}
+
+		downloadpath = pathlib.get(args.downloadpath)
+		// TODO: need to create dir even if path specified	
 		defer {
 			downloadpath.delete() or { panic(err) }
 		}
@@ -119,8 +124,8 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 		downloadtype = .httpfile
 	} else if args.url.len > 0 {
 		downloadpath = pathlib.get(args.url)
-		if !(downloadpath.exists()){
-			return error("Cannot download files or dir, because doesn't exist.\n${args}'")	
+		if !(downloadpath.exists()) {
+			return error("Cannot download files or dir, because doesn't exist.\n${args}'")
 		}
 		if downloadpath.is_file() {
 			downloadtype = .pathfile
@@ -159,8 +164,10 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 		metafile.write(metaobj_data)!
 	}
 
-	if args.expand{
-		if true{panic("|sdsd")}
+	if args.expand {
+		if true {
+			panic('|sdsd')
+		}
 	}
 
 	if args.dest.len > 0 && args.dest != downloadpath.path {

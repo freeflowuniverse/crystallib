@@ -51,6 +51,17 @@ pub enum MultiLineStatus {
 	multiline
 }
 
+pub fn remove_empty_lines(text string) string {
+	mut out:=[]string{}
+	for l in text.split_into_lines(){
+		if l.trim_space()==""{
+			continue
+		}
+		out<<l
+	}
+	return out.join("\n")
+}
+
 // converst a multiline to a single line, keeping all relevant information
 // empty lines removed (unless if in parameter)
 // commented lines removed as well (starts with // and #)

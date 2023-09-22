@@ -44,6 +44,7 @@ fn (err JobError) code() int {
 [params]
 pub struct Command {
 pub mut:
+	name			   string //to give a name to your command, good to see logs...
 	cmd                string
 	description        string
 	timeout            int  = 3600 // timeout in sec
@@ -58,6 +59,7 @@ pub mut:
 	debug              bool   // if debug will put +ex in the script which is being executed and will make sure script stays
 	shell              bool   // means we will execute it in a shell interactive
 	retry              int
+	insert_noninteractive_statements bool = true //make sure we run on non interactive way
 }
 
 pub struct Job {
@@ -85,6 +87,7 @@ pub mut:
 //   stdout bool = true
 //   die bool = true
 //	 debug bool
+//	 name string
 //
 // returns Job:
 //     start time.Time
@@ -101,13 +104,16 @@ pub fn exec(cmd Command) !Job {
 		cmd: cmd
 	}
 	job.start = time.now()
-	process_args := job.cmd_to_process_args()!
+	process_args := job.cmd_to_process_args(cmd.insert_noninteractive_statements)!
 	mut logger := get_logger()
 	defer {
-		if job.cmd.scriptkeep == false && os.exists(job.cmd.scriptpath) {
+		if job.exit_code == 0  && job.cmd.scriptkeep == false && os.exists(job.cmd.scriptpath) {
 			// println(job.cmd.scriptpath)	
 			os.rm(job.cmd.scriptpath) or { panic('cannot remove ${job.cmd.scriptpath}') }
 		}
+		if job.cmd.die == false  && job.cmd.scriptkeep == false && os.exists(job.cmd.scriptpath) {
+			os.rm(job.cmd.scriptpath) or { panic('cannot remove ${job.cmd.scriptpath}') }
+		}		
 	}
 	if job.cmd.debug {
 		job.cmd.stdout = true
@@ -171,11 +177,12 @@ pub fn exec(cmd Command) !Job {
 			if p.code > 0 {
 				job.exit_code = p.code
 				job.output += p.stdout_read()
+				job.error += p.stderr_read() //TODO: might block? need to see
 
 				if job.cmd.retry > 0 && x < job.cmd.retry {
 					time.sleep(time.millisecond * 100) // wait 0.1 sec
 				}
-				// p.close()
+				p.close()
 			} else {
 				break // go out of retry loop
 			}
@@ -207,14 +214,15 @@ pub fn exec(cmd Command) !Job {
 				return error(msg)
 			}
 
-			if job.cmd.stdout {
-				println('Job Error')
-			}
 			je := JobError{
 				job: job
 				error_type: .exec
 			}
-			println(je.msg())
+		if job.cmd.stdout {
+				println('Job Error')
+				println(je.msg())
+			}			
+			
 			return je
 		}
 	} else {
@@ -239,7 +247,7 @@ pub fn exec(cmd Command) !Job {
 
 // process commands to arguments which can be given to a process manager
 // will return temporary path and args for process
-fn (mut job Job) cmd_to_process_args() ![]string {
+fn (mut job Job) cmd_to_process_args(insert_noninteractive_statements bool) ![]string {
 	// all will be done over filessytem now
 	mut cmd := texttools.dedent(job.cmd.cmd)
 	if !cmd.ends_with('\n') {
@@ -258,24 +266,34 @@ fn (mut job Job) cmd_to_process_args() ![]string {
 	// use bash debug and die on error features
 	mut firstlines := '#!/bin/bash\n'
 	if job.cmd.die {
-		firstlines += 'set +e\n'
-	} else {
 		firstlines += 'set -e\n'
+	} else {
+		firstlines += 'set +e\n'
 	}
 	if job.cmd.debug {
-		firstlines += 'set +x\n'
+		firstlines += 'set -x\n'
 	}
+
+	if insert_noninteractive_statements{
+		firstlines+="export DEBIAN_FRONTEND=noninteractive TERM=xterm\n\n"
+	}
+
 	cmd = firstlines + '\n' + cmd
+
+
 	scriptpath := if job.cmd.scriptpath.len > 0 {
 		job.cmd.scriptpath
-	} else {
-		'/tmp/exece.sh'
+	}else{
+		""
 	}
-	job.cmd.scriptpath = pathlib.temp_write(text: cmd, path: scriptpath) or {
+
+	job.cmd.scriptpath = pathlib.temp_write(text: cmd, path: scriptpath,name:job.cmd.name) or {
 		return error('error: cannot write script to execute: ${err}')
 	}
+
 	os.chmod(job.cmd.scriptpath, 0o777)!
-	return ['/bin/bash', '-c', '/bin/bash ${job.cmd.scriptpath} 2>&1']
+	// return ['/bin/bash', '-c', '/bin/bash ${job.cmd.scriptpath} 2>&1']
+	return [job.cmd.scriptpath]
 }
 
 // shortcut to execute a job silent
@@ -298,4 +316,33 @@ pub fn execute_interactive(cmd string) ! {
 pub fn cmd_exists(cmd string) bool {
 	exec(cmd: 'which ${cmd}', retry: 0) or { return false }
 	return true
+}
+
+
+
+
+// cmd is the cmd to execute can use ' ' and spaces
+// if \n in cmd it will write it to ext and then execute with bash
+// if die==false then will just return returncode,out but not return error
+// if stdout will show stderr and stdout
+//
+// if cmd starts with find or ls, will give to bash -c so it can execute
+// if cmd has no path, path will be found
+// $... are remplaced by environment arguments TODO:implement
+//
+// Command argument:
+//   cmd string
+//   timeout int = 600
+//   stdout bool = true
+//   die bool = true
+//	 debug bool
+//
+// return what needs to be executed can give it to bash -c ...
+pub fn exec_string(cmd Command) !string {
+	mut job := Job{
+		cmd: cmd
+	}
+	job.start = time.now()
+	process_args := job.cmd_to_process_args(cmd.insert_noninteractive_statements)!
+	return process_args[0]
 }

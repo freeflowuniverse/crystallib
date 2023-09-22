@@ -1,7 +1,7 @@
 import freeflowuniverse.crystallib.ourtime
 import time
 
-//TODO: need to update the tests
+// TODO: need to update the tests
 
 // fn check_input(input_string string, seconds int) {
 // 	nnow := time.now().unix_time()

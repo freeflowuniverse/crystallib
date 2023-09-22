@@ -20,11 +20,11 @@ fn testsuite_begin() {
 }
 
 fn test_session_create() {
-
 	
-	installer := tmux.get_install(
-		panic('could not install tmux: ${err}')
-	}
+	
+	// installer := tmux.get_install(
+	// 	panic('could not install tmux: ${err}')
+	// }
 
 	mut tmux := Tmux{
 	}

@@ -23,6 +23,7 @@ pub mut:
 // 	reset bool //this means will pull and reset all changes
 // }
 pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs) !&GitRepo {
+	// println('debugz!: ${args}')
 	mut addr := addr_get_from_url(args.url) or { return error('cannot get addr from url:${err}') }
 
 	if addr.branch != '' && args.branch != '' && addr.branch != args.branch {
@@ -52,6 +53,7 @@ pub fn (mut gitstructure GitStructure) repo_get_from_url(args RepoGetFromUrlArgs
 // 	depth    int    // 0 means we have all depth
 // }
 pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr, args RepoGetFromUrlArgs) !&GitRepo {
+	println('getting from addr: ${addr}')
 	args2 := RepoGetArgs{
 		name: addr.name
 		account: addr.account
@@ -74,6 +76,7 @@ pub fn (mut gitstructure GitStructure) repo_get_from_addr(addr GitAddr, args Rep
 		r0.check(args.pull, args.reset)!
 		return r0
 	} else {
+		println('repo exists ${args2}')
 		mut r := gitstructure.repo_get(args2) or {
 			return error('cannot load git ${args.url}\n${err}')
 		}
@@ -121,7 +124,9 @@ mut:
 // THIS FUNCTION DOES NOT EXECUTE THE CHECK !!!
 pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) !&GitRepo {
 	mut res_ids := []int{}
+	println('getting repo: ${args}')
 	for mut r in gitstructure.repos {
+		println('loop repo ${r}')
 		if r.name() != '' && r.name() == args.name {
 			res_ids << r.id
 			continue
@@ -132,6 +137,7 @@ pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) !&GitRepo {
 			}
 		}
 	}
+	println('endfor')
 	if res_ids.len == 1 {
 		return &gitstructure.repos[res_ids[0]]
 	}
@@ -148,16 +154,21 @@ pub fn (mut gitstructure GitStructure) repo_get(args RepoGetArgs) !&GitRepo {
 // to use gitstructure.repo_get({account:"something",name:"myname"})
 // or gitstructure.repo_get({name:"myname"})
 pub fn (mut gitstructure GitStructure) repo_exists(addr RepoGetArgs) bool {
+	println('llets see ${addr}')
 	for mut r in gitstructure.repos {
+		println('close: ${r}')
 		if r.name() != '' && r.name() == addr.name {
+			println('found')
 			return true
 		}
 		if r.name() == addr.name {
 			if addr.account == '' || addr.account == r.addr().account {
+				println('found')
 				return true
 			}
 		}
 	}
+	println('we saw')
 	return false
 }
 

@@ -1,12 +1,13 @@
 module base
+
 import freeflowuniverse.crystallib.osal
 
 // install base will return true if it was already installed
 pub fn install() ! {
 	println('platform prepare')
-	pl:=osal.platform()
+	pl := osal.platform()
 	if !osal.done_exists('platform_prepare') {
-		if  pl == .osx {
+		if pl == .osx {
 			if !osal.cmd_exists('brew') {
 				osal.execute_interactive('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"') or {
 					return error('cannot install brew, something went wrong.\n${err}')
@@ -21,7 +22,7 @@ pub fn install() ! {
 			osal.execute_silent('
 			brew install mc tmux git rsync curl tmux
 			')!
-		} else if pl  == .ubuntu {
+		} else if pl == .ubuntu {
 			println(' - Ubuntu prepare')
 			osal.execute_silent('
 			apt update

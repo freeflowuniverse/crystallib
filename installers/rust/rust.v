@@ -1,17 +1,18 @@
 module rust
+
 import freeflowuniverse.crystallib.osal
 // install rust will return true if it was already installed
-pub fn  install() ! {
 
+pub fn install() ! {
 	// install rust if it was already done will return true
 	println(' - package_install install rust')
 	// TODO: install_rust was in done_exists
-	if !(i.state == .reset) && osal.done_exists('install_rust') {
+	if osal.done_exists('install_rust') {
 		println('    package_install was already done')
 		return
 	}
 
-	if cmd_exists('rustup') && cmd_exists('cargo') {
+	if osal.cmd_exists('rustup') && osal.cmd_exists('cargo') {
 		println('Rust was already installed.')
 		return
 	}
@@ -20,7 +21,7 @@ pub fn  install() ! {
 		return error('Cannot install rust.\n${err}')
 	}
 
-	return error('Cannot setup rust.\n${err}') }
+	// return error('Cannot setup rust.\n')
 
 	// path := "export PATH='/usr/bin:/bin:/root/.cargo/bin'"
 	// osal.execute_silent("echo $path >> .bash_profile") or {

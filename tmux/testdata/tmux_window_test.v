@@ -41,7 +41,6 @@ fn test_window_new() {
 // // tests creating duplicate windows
 // fn test_window_new0() {
 
-
 // 	
 // 	installer := tmux.get_install(
 

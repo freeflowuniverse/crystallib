@@ -39,7 +39,7 @@ pub fn (mut actions Actions) path_add(path string) ! {
 		items.sort() // make sure we sort the items before we go in
 		// process dirs first, make sure we go deepest possible
 		for path0 in items {
-			if path0.starts_with("_"){
+			if path0.starts_with('_') {
 				continue
 			}
 			pathtocheck := '${path}/${path0}'

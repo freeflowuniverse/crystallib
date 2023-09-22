@@ -3,7 +3,7 @@ module params
 import freeflowuniverse.crystallib.ourtime
 // import texttools
 // import os
-import time { Duration, Time }
+import time { Duration }
 
 // Get Expiration object from time string input
 // input can be either relative or absolute

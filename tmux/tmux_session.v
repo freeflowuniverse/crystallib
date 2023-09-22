@@ -1,4 +1,5 @@
 module tmux
+
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.texttools
 import os
@@ -6,72 +7,67 @@ import os
 [heap]
 struct Session {
 pub mut:
-	tmux    &Tmux              [str: skip] // reference back
+	tmux    &Tmux     [str: skip] // reference back
 	windows []&Window // session has windows
 	name    string
 }
 
-//get session (session has windows) .
-//returns none if not found
+// get session (session has windows) .
+// returns none if not found
 pub fn (mut t Tmux) session_get(name_ string) !&Session {
-	name:=texttools.name_fix(name_)
+	name := texttools.name_fix(name_)
 	for s in t.sessions {
 		if s.name == name {
 			return s
 		}
 	}
-	return error("Canot find session with name: ${name_}")
+	return error('Can not find session with name: \'${name_}\', out of loaded sessions.')
 }
 
 pub fn (mut t Tmux) session_exist(name_ string) bool {
-	name:=texttools.name_fix(name_)
+	name := texttools.name_fix(name_)
 	t.session_get(name) or { return false }
 	return true
 }
 
-pub fn (mut t Tmux) session_delete(name_ string)! {
-	if !(t.session_exist(name_)){
+pub fn (mut t Tmux) session_delete(name_ string) ! {
+	if !(t.session_exist(name_)) {
 		return
 	}
-	name:=texttools.name_fix(name_)
-	mut i:=0
+	name := texttools.name_fix(name_)
+	mut i := 0
 	for mut s in t.sessions {
 		if s.name == name {
 			s.stop()!
 			break
 		}
-		i+=1
-	}	
+		i += 1
+	}
 	t.sessions.delete(i)
-	
 }
 
-
-
 [params]
-pub struct SessionCreateArgs{
+pub struct SessionCreateArgs {
 pub mut:
-	name string [required]
+	name  string [required]
 	reset bool
 }
 
-
 // create session, if reset will re-create
 pub fn (mut t Tmux) session_create(args SessionCreateArgs) !&Session {
-	name:=texttools.name_fix(args.name)
-	if !(t.session_exist(name)){
-		// println("create session: $args")
+	name := texttools.name_fix(args.name)
+	if !(t.session_exist(name)) {
+		$if debug {println(" - tmux - create session: $args")}
 		mut s2 := Session{
 			tmux: t // reference back
 			name: name
 		}
 		s2.create()!
-		t.sessions<<&s2		
-
+		t.sessions << &s2
 	}
 	mut s := t.session_get(name)!
 	if args.reset {
-		// println('TMUX - Session ${name} will be restarted.')
+		$if debug {println(' - tmux - session ${name} will be restarted.')}
 		s.restart()!
 	}
 	t.scan()!
@@ -101,12 +97,10 @@ pub fn (mut s Session) restart() ! {
 }
 
 pub fn (mut s Session) stop() ! {
-	
 	osal.execute_silent('tmux kill-session -t ${s.name}') or {
 		return error("Can't delete session ${s.name} - This may happen when session is not found: ${err}")
 	}
 }
-
 
 // get all windows as found in a session
 pub fn (mut s Session) windows_get() []&Window {
@@ -126,15 +120,13 @@ pub fn (mut s Session) windownames_get() []string {
 	return res
 }
 
-
 pub fn (mut s Session) str() string {
-	mut out:="## Session: ${s.name}\n\n"
-	for _,w in s.windows{
-		out+="${*w}\n"
+	mut out := '## Session: ${s.name}\n\n'
+	for _, w in s.windows {
+		out += '${*w}\n'
 	}
 	return out
 }
-
 
 // pub fn (mut s Session) activate()! {	
 // 	active_session := s.tmux.redis.get('tmux:active_session') or { 'No active session found' }

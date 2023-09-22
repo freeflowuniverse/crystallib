@@ -18,7 +18,7 @@ fn (mut t Tmux) scan_add(line string) !&Window {
 	pane_pid := line_arr[5]
 	pane_start_command := line_arr[6] or { '' }
 
-	wid:=(window_id.replace('@', '')).int()
+	wid := (window_id.replace('@', '')).int()
 
 	// os.log('TMUX FOUND: $line\n    ++ $session_name:$window_name wid:$window_id pid:$pane_pid entrypoint:$pane_start_command')
 	mut s := t.session_get(session_name)!
@@ -28,18 +28,18 @@ fn (mut t Tmux) scan_add(line string) !&Window {
 		active = true
 	}
 
-	mut name:=texttools.name_fix(window_name)
+	mut name := texttools.name_fix(window_name)
 
 	mut w := Window{
 		session: s
 		name: name
-	}	
-		
-	if !(s.window_exist(name:window_name, id:wid)){
+	}
+
+	if !(s.window_exist(name: window_name, id: wid)) {
 		// println("window not exists")
 		s.windows << &w
-	}else{
-		w = s.window_get(name:window_name, id:wid)!
+	} else {
+		w = s.window_get(name: window_name, id: wid)!
 	}
 
 	w.id = wid
@@ -54,14 +54,16 @@ fn (mut t Tmux) scan_add(line string) !&Window {
 // scan the system to detect sessions .
 pub fn (mut t Tmux) scan() ! {
 	// os.log('TMUX - Scanning ....')
-	
-	cmd_list_session := "tmux list-sessions -F '#{session_name}'"
-	exec_list := osal.execute_silent(cmd_list_session)!
 
-	// println('execlist out: ${exec_list}')
+	cmd_list_session := "tmux list-sessions -F '#{session_name}'"
+	exec_list := osal.exec(cmd:cmd_list_session,stdout:false,name:"tmux_list") or {
+		return error("could not execute list sessions.\n$err")
+	}
+
+	// println('execlist out for sessions: ${exec_list}')
 
 	// make sure we have all sessions
-	for line in exec_list.split_into_lines() {
+	for line in exec_list.output.split_into_lines() {
 		session_name := line.trim(' \n').to_lower()
 		if session_name == '' {
 			continue
@@ -76,6 +78,8 @@ pub fn (mut t Tmux) scan() ! {
 		t.sessions << &s
 	}
 
+	println(t)
+
 	// mut done := map[string]bool{}
 	cmd := "tmux list-panes -a -F '#{session_name}|#{window_name}|#{window_id}|#{pane_active}|#{pane_id}|#{pane_pid}|#{pane_start_command}'"
 	out := osal.execute_silent(cmd) or { return error("Can't execute ${cmd} \n${err}") }
@@ -87,5 +91,4 @@ pub fn (mut t Tmux) scan() ! {
 			t.scan_add(line)!
 		}
 	}
-
 }

@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.texttools
 [params]
 pub struct DownloadArgs {
 pub mut:
-	name       string // optional (otherwise derived out of directory name or filename)
+	name       string // optional (otherwise derived out of filename)
 	url        string
 	reset      bool   // will remove
 	hash       string // if hash is known, will verify what hash is
@@ -15,6 +15,8 @@ pub mut:
 	retry      int = 3
 	minsize_kb u32 = 10 // is always in kb
 	maxsize_kb u32
+	expand_dir string
+	expand_file string
 }
 
 // if name is not specified, then will be the filename part
@@ -27,16 +29,8 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 		return error('cannot get name from url if ? in the last part after /')
 	}
 
-	mut ext := ''
-	if lastname.contains('.') {
-		ext = lastname.split('.').last().to_lower().trim_space()
-		if ext.len > 4 {
-			ext = ''
-		}
-	}
-
 	if args.name == '' {
-		args.name = texttools.name_fix(lastname)
+		args.name = lastname
 	}
 
 	if args.dest.contains('@name') {
@@ -52,10 +46,6 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 
 	u := args.url.to_lower().trim_space()
 
-	if u.starts_with('http://') || u.starts_with('https://') || u.starts_with('git://') {
-		// might be git based checkout
-	}
-
 	if !cmd_exists('curl') {
 		return error('please make sure curl has been installed.')
 	}
@@ -70,10 +60,12 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 		args.reset = true
 		dest.delete()!
 	}
+
 	if args.reset {
 		mut dest_delete := pathlib.get_file(args.dest + '_', false)!
 		dest_delete.delete()!
 	}
+
 	meta.write(args.url.trim_space())!
 
 	// check if the file exists, if yes and right size lets return
@@ -83,9 +75,15 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 			if size > args.minsize_kb {
 				if args.maxsize_kb > 0 {
 					if size < args.maxsize_kb {
+						if args.expand_dir.len > 0 {
+							return dest.expand(args.expand_dir)!
+						}
 						return dest
 					}
 				} else {
+					if args.expand_dir.len > 0 {
+						return dest.expand(args.expand_dir)!
+					}
 					return dest
 				}
 			}
@@ -93,7 +91,6 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 	}
 
 	mut dest0 := pathlib.get_file(args.dest + '_', false)!
-
 	cmd := '
 		rm -f ${dest0.path}_
 		cd /tmp
@@ -121,8 +118,15 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 			}
 		}
 	}
+	dest0.rename(dest.name())!
 
-	// dest1:=dest0.copy(mut dest)!
-	// dest0.delete()!
+	if args.expand_dir.len > 0 {
+		return dest0.expand(args.expand_dir)!
+	}
+	if args.expand_file.len > 0 {
+		return dest0.expand(args.expand_file)!
+	}
+
+
 	return dest0
 }

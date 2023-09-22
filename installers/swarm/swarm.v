@@ -8,7 +8,7 @@ pub struct SwarmArgs {
 }
 
 // installs docker & swarm
-pub fn  install_docker(args SwarmArgs) ! {
+pub fn install_docker(args SwarmArgs) ! {
 	mut installed := true
 	out2 := osal.execute_silent('docker version') or {
 		installed = false
@@ -18,7 +18,7 @@ pub fn  install_docker(args SwarmArgs) ! {
 
 	if out2.contains('Cannot connect to the Docker daemon') {
 		// means docker needs to be started
-		return error("cannot find docker")
+		return error('cannot find docker')
 	}
 
 	if installed {
@@ -71,7 +71,6 @@ pub fn  install_docker(args SwarmArgs) ! {
 
 	// ? Where to get tmux from
 
-
 	for _ in 1 .. 10 {
 		mut out := ''
 		out = osal.execute_silent('docker info') or {
@@ -104,7 +103,7 @@ pub fn (mut installer Installer) install_portainer() ! {
 	// >TODO: check that the ubuntu is focal
 }
 
-pub fn  docker_swarm_install(args SwarmArgs) ! {
+pub fn docker_swarm_install(args SwarmArgs) ! {
 	i.install_docker(args)!
 	ipaddr_master := ipaddr_pub_get()!
 	cmd := 'docker swarm init --advertise-addr ${ipaddr_master}'

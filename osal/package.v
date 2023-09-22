@@ -21,13 +21,23 @@ pub fn package_refresh() ! {
 
 // install a package will use right commands per platform
 pub fn package_install(name string) ! {
+	if name.contains(","){
+		for n in name.split(","){
+			package_install(n.trim_space())!
+		}
+		return
+	}
 	platform_ := platform()
 	if platform_ == .osx {
 		exec(cmd: 'brew install ${name}') or {
 			return error('could not install package:${name}\nerror:\n${err}')
 		}
 	} else if platform_ == .ubuntu {
-		exec(cmd: 'apt install -y ${name}') or {
+		exec(cmd: '
+			export TERM=xterm
+			export DEBIAN_FRONTEND=noninteractive
+			apt install -y ${name}  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+			') or {
 			return error('could not install package:${name}\nerror:\n${err}')
 		}
 	} else if platform_ == .alpine {
@@ -39,19 +49,18 @@ pub fn package_install(name string) ! {
 	}
 }
 
-// upgrade the us, only implemented for ubuntu right now
+// upgrade the OS, only implemented for ubuntu right now
 pub fn upgrade() ! {
 	platform_ := platform()
 	if platform_ == .ubuntu {
 		upgrade_cmds := '
-			sudo killall apt apt-get
+			set +ex
+			sudo killall apt apt-get > /dev/null 2>&1
+			set -ex
 			rm -f /var/lib/apt/lists/lock
 			rm -f /var/cache/apt/archives/lock
 			rm -f /var/lib/dpkg/lock*		
-			export TERM=xterm
-			export DEBIAN_FRONTEND=noninteractive
 			dpkg --configure -a
-			set -ex
 			apt update
 			apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
 			apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
@@ -60,7 +69,7 @@ pub fn upgrade() ! {
 
 		exec(
 			cmd: upgrade_cmds
-			retry: 5
+			retry: 2
 			description: 'upgrade operating system packages'
 		)!
 	} else {

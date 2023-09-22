@@ -23,12 +23,11 @@ import time
 // 	}
 // )
 
-
 fn parse(timestr string) !i64 {
 	trimmed := timestr.trim_space()
 	if trimmed == '' {
-		n:= now()
-		time_unix:=n.unix_time()
+		n := now()
+		time_unix := n.unix_time()
 		return time_unix
 	}
 	mut relative_bool := false
@@ -103,24 +102,24 @@ pub fn get_unix_from_relative(timestr string) !i64 {
 }
 
 pub fn get_unix_from_absolute(timestr_ string) !i64 {
-	timestr:=timestr_.trim_space()
+	timestr := timestr_.trim_space()
 	split_time_hour := timestr.split(' ')
-	if split_time_hour.len>2{
-		return error("format of date/time not correct: $timestr_")
+	if split_time_hour.len > 2 {
+		return error('format of date/time not correct: ${timestr_}')
 	}
-	mut datepart:=""
-	mut timepart:=""
-	if split_time_hour.len==2{
-		//there is a date and time part
-		datepart=split_time_hour[0]
-		timepart=split_time_hour[1]
-	}else if split_time_hour.len==2{
-		datepart=split_time_hour[0]
-	}else{
+	mut datepart := ''
+	mut timepart := ''
+	if split_time_hour.len == 2 {
+		// there is a date and time part
+		datepart = split_time_hour[0]
+		timepart = split_time_hour[1]
+	} else if split_time_hour.len == 2 {
+		datepart = split_time_hour[0]
+	} else {
 		return error("format of date/time not correct: '${timestr_}'")
 	}
-	datepart=datepart.replace("/","-")
-	if timepart.contains("-") || timepart.contains("/"){
+	datepart = datepart.replace('/', '-')
+	if timepart.contains('-') || timepart.contains('/') {
 		return error("format of date/time not correct, no - or / in time: '${timestr_}'")
 	}
 
@@ -141,11 +140,11 @@ pub fn get_unix_from_absolute(timestr_ string) !i64 {
 		timepart = '${timepart}:00:00'
 	} else if timparts.len == 0 {
 		timepart = '00:00:00'
-	}else{
+	} else {
 		return error("format of date/time not correct, in time part: '${timestr_}'")
 	}
 
-	full_string:="${datepart} ${timepart}"
+	full_string := '${datepart} ${timepart}'
 
 	time_struct := time.parse(full_string) or {
 		return error("could not parse date/time string '${timestr_}': ${err}")
