@@ -314,7 +314,7 @@ pub fn execute_interactive(cmd string) ! {
 }
 
 pub fn cmd_exists(cmd string) bool {
-	exec(cmd: 'which ${cmd}', retry: 0) or { return false }
+	exec(cmd: 'which ${cmd}', retry: 0,stdout: false) or { return false }
 	return true
 }
 

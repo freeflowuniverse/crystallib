@@ -232,9 +232,8 @@ pub fn (mut repo GitRepo) addr() GitAddr {
 pub fn (mut repo GitRepo) name() string {
 	if repo.name_ == '' {
 		repo.name_ = repo.addr().path.split('/').last()
-		if repo.name_.len < 3 {
-			println(repo)
-			panic('bug, name split for git name() in repo')
+		if repo.name_.len !=0 {
+			panic('bug, name split for git name() in repo.\nnow:\'${repo.name_}\'')
 		}
 	}
 	return repo.name_

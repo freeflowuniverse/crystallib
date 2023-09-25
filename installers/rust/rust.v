@@ -17,9 +17,10 @@ pub fn install() ! {
 		return
 	}
 	// curl --proto '=https' --tlsv1.2 https://sh.rustup.rs | sh -s -- -y
-	osal.execute_silent("curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y") or {
-		return error('Cannot install rust.\n${err}')
-	}
+	osal.execute_silent("curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y")!
+	
+
+	println(" IMPORTANT: TO USE DO: \nsource \$HOME/.cargo/env")
 
 	// return error('Cannot setup rust.\n')
 

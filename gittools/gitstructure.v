@@ -270,7 +270,7 @@ fn (mut gitstructure GitStructure) load() ! {
 	mut done := []string{}
 
 	// path which git repos will be recursively loaded
-	git_path := gitstructure.codepath() + '/github'
+	git_path := gitstructure.codepath() 
 	if !(os.exists(gitstructure.codepath())) {
 		os.mkdir_all(gitstructure.codepath())!
 	}

@@ -47,7 +47,7 @@ pub fn (mut path Path) expand(dest string) !Path {
 		if res.exit_code > 0 {
 			return error('Could not expand.\n${res}')
 		}
-	} if path.name().to_lower().ends_with('.xz') {
+	} else if path.name().to_lower().ends_with('.xz') {
 		cmd:="xz --decompress ${path.path} --stdout > ${dest}"
 		println(cmd)
 		res := os.execute(cmd)
