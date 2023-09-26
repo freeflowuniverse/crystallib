@@ -52,14 +52,14 @@ pub enum MultiLineStatus {
 }
 
 pub fn remove_empty_lines(text string) string {
-	mut out:=[]string{}
-	for l in text.split_into_lines(){
-		if l.trim_space()==""{
+	mut out := []string{}
+	for l in text.split_into_lines() {
+		if l.trim_space() == '' {
 			continue
 		}
-		out<<l
+		out << l
 	}
-	return out.join("\n")
+	return out.join('\n')
 }
 
 // converst a multiline to a single line, keeping all relevant information

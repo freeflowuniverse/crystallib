@@ -56,8 +56,8 @@ pub fn (mut t Tmux) scan() ! {
 	// os.log('TMUX - Scanning ....')
 
 	cmd_list_session := "tmux list-sessions -F '#{session_name}'"
-	exec_list := osal.exec(cmd:cmd_list_session,stdout:false,name:"tmux_list") or {
-		return error("could not execute list sessions.\n$err")
+	exec_list := osal.exec(cmd: cmd_list_session, stdout: false, name: 'tmux_list') or {
+		return error('could not execute list sessions.\n${err}')
 	}
 
 	// println('execlist out for sessions: ${exec_list}')

@@ -44,22 +44,22 @@ fn (err JobError) code() int {
 [params]
 pub struct Command {
 pub mut:
-	name			   string //to give a name to your command, good to see logs...
-	cmd                string
-	description        string
-	timeout            int  = 3600 // timeout in sec
-	stdout             bool = true
-	stdout_log         bool = true
-	die                bool = true
-	work_folder        string // location where cmd will be executed
-	environment        map[string]string // env variables
-	ignore_error_codes []int
-	scriptpath         string // is the path where the script will be put which is executed
-	scriptkeep         bool   // means we don't remove the script
-	debug              bool   // if debug will put +ex in the script which is being executed and will make sure script stays
-	shell              bool   // means we will execute it in a shell interactive
-	retry              int
-	insert_noninteractive_statements bool = true //make sure we run on non interactive way
+	name                             string // to give a name to your command, good to see logs...
+	cmd                              string
+	description                      string
+	timeout                          int  = 3600 // timeout in sec
+	stdout                           bool = true
+	stdout_log                       bool = true
+	die                              bool = true
+	work_folder                      string // location where cmd will be executed
+	environment                      map[string]string // env variables
+	ignore_error_codes               []int
+	scriptpath                       string            // is the path where the script will be put which is executed
+	scriptkeep                       bool   // means we don't remove the script
+	debug                            bool   // if debug will put +ex in the script which is being executed and will make sure script stays
+	shell                            bool   // means we will execute it in a shell interactive
+	retry                            int
+	insert_noninteractive_statements bool = true // make sure we run on non interactive way
 }
 
 pub struct Job {
@@ -107,13 +107,13 @@ pub fn exec(cmd Command) !Job {
 	process_args := job.cmd_to_process_args(cmd.insert_noninteractive_statements)!
 	mut logger := get_logger()
 	defer {
-		if job.exit_code == 0  && job.cmd.scriptkeep == false && os.exists(job.cmd.scriptpath) {
+		if job.exit_code == 0 && job.cmd.scriptkeep == false && os.exists(job.cmd.scriptpath) {
 			// println(job.cmd.scriptpath)	
 			os.rm(job.cmd.scriptpath) or { panic('cannot remove ${job.cmd.scriptpath}') }
 		}
-		if job.cmd.die == false  && job.cmd.scriptkeep == false && os.exists(job.cmd.scriptpath) {
+		if job.cmd.die == false && job.cmd.scriptkeep == false && os.exists(job.cmd.scriptpath) {
 			os.rm(job.cmd.scriptpath) or { panic('cannot remove ${job.cmd.scriptpath}') }
-		}		
+		}
 	}
 	if job.cmd.debug {
 		job.cmd.stdout = true
@@ -177,7 +177,7 @@ pub fn exec(cmd Command) !Job {
 			if p.code > 0 {
 				job.exit_code = p.code
 				job.output += p.stdout_read()
-				job.error += p.stderr_read() //TODO: might block? need to see
+				job.error += p.stderr_read() // TODO: might block? need to see
 
 				if job.cmd.retry > 0 && x < job.cmd.retry {
 					time.sleep(time.millisecond * 100) // wait 0.1 sec
@@ -218,11 +218,11 @@ pub fn exec(cmd Command) !Job {
 				job: job
 				error_type: .exec
 			}
-		if job.cmd.stdout {
+			if job.cmd.stdout {
 				println('Job Error')
 				println(je.msg())
-			}			
-			
+			}
+
 			return je
 		}
 	} else {
@@ -274,20 +274,19 @@ fn (mut job Job) cmd_to_process_args(insert_noninteractive_statements bool) ![]s
 		firstlines += 'set -x\n'
 	}
 
-	if insert_noninteractive_statements{
-		firstlines+="export DEBIAN_FRONTEND=noninteractive TERM=xterm\n\n"
+	if insert_noninteractive_statements {
+		firstlines += 'export DEBIAN_FRONTEND=noninteractive TERM=xterm\n\n'
 	}
 
 	cmd = firstlines + '\n' + cmd
 
-
 	scriptpath := if job.cmd.scriptpath.len > 0 {
 		job.cmd.scriptpath
-	}else{
-		""
+	} else {
+		''
 	}
 
-	job.cmd.scriptpath = pathlib.temp_write(text: cmd, path: scriptpath,name:job.cmd.name) or {
+	job.cmd.scriptpath = pathlib.temp_write(text: cmd, path: scriptpath, name: job.cmd.name) or {
 		return error('error: cannot write script to execute: ${err}')
 	}
 
@@ -314,12 +313,9 @@ pub fn execute_interactive(cmd string) ! {
 }
 
 pub fn cmd_exists(cmd string) bool {
-	exec(cmd: 'which ${cmd}', retry: 0,stdout: false) or { return false }
+	exec(cmd: 'which ${cmd}', retry: 0, stdout: false) or { return false }
 	return true
 }
-
-
-
 
 // cmd is the cmd to execute can use ' ' and spaces
 // if \n in cmd it will write it to ext and then execute with bash

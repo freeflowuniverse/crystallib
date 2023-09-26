@@ -57,7 +57,9 @@ pub mut:
 pub fn (mut t Tmux) session_create(args SessionCreateArgs) !&Session {
 	name := texttools.name_fix(args.name)
 	if !(t.session_exist(name)) {
-		$if debug {println(" - tmux - create session: $args")}
+		$if debug {
+			println(' - tmux - create session: ${args}')
+		}
 		mut s2 := Session{
 			tmux: t // reference back
 			name: name
@@ -67,7 +69,9 @@ pub fn (mut t Tmux) session_create(args SessionCreateArgs) !&Session {
 	}
 	mut s := t.session_get(name)!
 	if args.reset {
-		$if debug {println(' - tmux - session ${name} will be restarted.')}
+		$if debug {
+			println(' - tmux - session ${name} will be restarted.')
+		}
 		s.restart()!
 	}
 	t.scan()!

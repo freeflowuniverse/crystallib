@@ -9,10 +9,7 @@ import freeflowuniverse.crystallib.installers.tmux
 // }
 
 fn testsuite_begin() {
-
-	
-	mut tmux := Tmux{
-	}
+	mut tmux := Tmux{}
 
 	if tmux.is_running()! {
 		tmux.stop()!
@@ -20,14 +17,11 @@ fn testsuite_begin() {
 }
 
 fn test_session_create() {
-	
-	
 	// installer := tmux.get_install(
 	// 	panic('could not install tmux: ${err}')
 	// }
 
-	mut tmux := Tmux{
-	}
+	mut tmux := Tmux{}
 	tmux.start() or { panic('cannot start tmux: ${err}') }
 
 	mut s := Session{
@@ -69,7 +63,6 @@ fn test_session_create() {
 }
 
 // fn test_session_stop() {
-
 
 // 	
 // 	installer := tmux.get_install(

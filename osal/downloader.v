@@ -6,16 +6,16 @@ import freeflowuniverse.crystallib.texttools
 [params]
 pub struct DownloadArgs {
 pub mut:
-	name       string // optional (otherwise derived out of filename)
-	url        string
-	reset      bool   // will remove
-	hash       string // if hash is known, will verify what hash is
-	dest       string // if specified will copy to that destination	
-	timeout    int = 180
-	retry      int = 3
-	minsize_kb u32 = 10 // is always in kb
-	maxsize_kb u32
-	expand_dir string
+	name        string // optional (otherwise derived out of filename)
+	url         string
+	reset       bool   // will remove
+	hash        string // if hash is known, will verify what hash is
+	dest        string // if specified will copy to that destination	
+	timeout     int = 180
+	retry       int = 3
+	minsize_kb  u32 = 10 // is always in kb
+	maxsize_kb  u32
+	expand_dir  string
 	expand_file string
 }
 
@@ -126,7 +126,6 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 	if args.expand_file.len > 0 {
 		return dest0.expand(args.expand_file)!
 	}
-
 
 	return dest0
 }

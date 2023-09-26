@@ -21,8 +21,8 @@ pub fn package_refresh() ! {
 
 // install a package will use right commands per platform
 pub fn package_install(name string) ! {
-	if name.contains(","){
-		for n in name.split(","){
+	if name.contains(',') {
+		for n in name.split(',') {
 			package_install(n.trim_space())!
 		}
 		return
@@ -33,13 +33,13 @@ pub fn package_install(name string) ! {
 			return error('could not install package:${name}\nerror:\n${err}')
 		}
 	} else if platform_ == .ubuntu {
-		exec(cmd: '
+		exec(
+			cmd: '
 			export TERM=xterm
 			export DEBIAN_FRONTEND=noninteractive
 			apt install -y ${name}  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-			') or {
-			return error('could not install package:${name}\nerror:\n${err}')
-		}
+			'
+		) or { return error('could not install package:${name}\nerror:\n${err}') }
 	} else if platform_ == .alpine {
 		exec(cmd: 'apk install ${name}') or {
 			return error('could not install package:${name}\nerror:\n${err}')

@@ -56,7 +56,7 @@ pub mut:
 // domain e.g. www.myserver.com
 pub fn configure_examples(config WebConfig) ! {
 	mut config_file := $tmpl('templates/caddyfile_default')
-	if config.domain==""{
+	if config.domain == '' {
 		config_file = $tmpl('templates/caddyfile_all')
 	}
 	install()!
@@ -98,14 +98,14 @@ pub fn configuration_set(args_ ConfigurationArgs) ! {
 	}
 	if args.content.len > 0 {
 		args.content = texttools.dedent(args.content)
-	if !os.exists('/etc/caddy') {
+		if !os.exists('/etc/caddy') {
 			os.mkdir_all('/etc/caddy')!
 		}
 		osal.file_write('/etc/caddy/Caddyfile', args.content)!
 	} else {
 		mut p := pathlib.get_file(args.path, true)!
 		content := p.read()!
-	if !os.exists('/etc/caddy') {
+		if !os.exists('/etc/caddy') {
 			os.mkdir_all('/etc/caddy')!
 		}
 		osal.file_write('/etc/caddy/Caddyfile', content)!
@@ -118,15 +118,16 @@ pub fn configuration_set(args_ ConfigurationArgs) ! {
 
 // start caddy
 pub fn start() ! {
-	if !os.exists("/etc/caddy/Caddyfile"){
-
+	if !os.exists('/etc/caddy/Caddyfile') {
 	}
 	mut t := tmux.new()!
-	mut w := t.window_new(name: 'caddy', cmd: '
+	mut w := t.window_new(
+		name: 'caddy'
+		cmd: '
 			caddy run --config /etc/caddy/Caddyfile
 			echo CADDY STOPPED
 			/bin/bash'
-		)!
+	)!
 }
 
 pub fn stop() ! {
@@ -138,7 +139,6 @@ pub fn stop() ! {
 pub fn restart() ! {
 	stop()!
 	start()!
-
 }
 
 // if cmd_exists('caddy') {

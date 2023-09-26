@@ -7,10 +7,10 @@ pub fn install() ! {
 	println(' - package install install docker')
 	if osal.platform() != .ubuntu {
 		return error('only support ubuntu for now')
-	}	
-	if (!osal.done_exists('install_docker') && !osal.cmd_exists('docker') ){
+	}
+	if (!osal.done_exists('install_docker') && !osal.cmd_exists('docker')) {
 		osal.upgrade()!
-		osal.package_install("mc,wget,htop,apt-transport-https,ca-certificates,curl,software-properties-common")!
+		osal.package_install('mc,wget,htop,apt-transport-https,ca-certificates,curl,software-properties-common')!
 		cmd := '
 		rm -f /usr/share/keyrings/docker-archive-keyring.gpg
 		curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -20,16 +20,15 @@ pub fn install() ! {
 		#systemctl status docker
 		'
 		osal.execute_silent(cmd)!
-		osal.package_install("docker-ce")!
+		osal.package_install('docker-ce')!
 		check()!
 		osal.done_set('install_docker', 'OK')!
 	}
 	println(' - docker already done')
 }
 
-
 pub fn check() ! {
-	//todo: do a monitoring check to see if it works
+	// todo: do a monitoring check to see if it works
 	cmd := '
 	# Check if docker command exists
 	if ! command -v docker &> /dev/null; then
@@ -55,6 +54,6 @@ pub fn check() ! {
 	fi
 
 	'
-	r:=osal.execute_silent(cmd)!	
+	r := osal.execute_silent(cmd)!
 	println(r)
 }
