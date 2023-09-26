@@ -2,15 +2,15 @@ module gittools
 
 import os
 import freeflowuniverse.crystallib.sshagent
+import freeflowuniverse.crystallib.pathlib
 
-
-//location of a file, dir or part of file in a GitAddr
+// location of a file, dir or part of file in a GitAddr
 pub struct GitLocator {
-	gs    	&GitStructure [str: skip]	
+	gs &GitStructure [str: skip]
 pub mut:
-	addr     GitAddr
-	path     string // path in the repo (not on filesystem)
-	anker    string // position in the file
+	addr  GitAddr
+	path  string // path in the repo (not on filesystem)
+	anker string // position in the file
 }
 
 // will use url to get git locator (is a pointer to a file, dir or part of file)
@@ -70,32 +70,30 @@ pub fn (gitstructure GitStructure) locator_new(url string) !GitLocator {
 	provider := parts[0]
 	account := parts[1]
 	name := parts[2]
-	mut ga:= GitAddr{
+	mut ga := GitAddr{
 		provider: provider
 		account: account
 		name: name
 		branch: branch
 	}
 	ga.check()!
-	
-	mut gl:= GitLocator{
+
+	mut gl := GitLocator{
 		anker: anker
-		path: path	
+		path: path
 		addr: ga
 		gs: &gitstructure
 	}
 	return gl
-
 }
 
-
-
-//return the path on the filesystem pointing to the locator
+// return the path on the filesystem pointing to the locator
 pub fn (mut l GitLocator) path_on_fs() !pathlib.Path {
-	addrpath:=l.addr.path_on_fs()!
-	if l.path.len>0{
-		return pathlib.get("{addrpath.path}/l.path")
-	}else{
+	// TODO: figure out addrpath:=l.addr.path_on_fs()!
+	addrpath := l.addr.path()!
+	if l.path.len > 0 {
+		return pathlib.get('{addrpath.path}/l.path')
+	} else {
 		return addrpath
 	}
 }

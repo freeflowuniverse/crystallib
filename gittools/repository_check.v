@@ -4,23 +4,23 @@ import os
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.sshagent
 
-
 [params]
-pub struct CheckArgs{
+pub struct CheckArgs {
 pub mut:
-	pull false
-	reset false
+	pull  bool = false
+	reset bool = false
 }
 
 // this is the main git functionality to get git repo, update, reset, ...
 fn (mut repo GitRepo) check(args_ CheckArgs) ! {
-	mut args:=args_
+	mut args := args_
 	args.pull = args.pull || args.reset
 
 	url := repo.addr.url_http_with_branch_get()
 	// println(' - check repo:$url, pull:$args.pull, reset:$args.reset')
 	// println(repo.addr)
-	if repo.state != GitStatus.ok || pull_soft {
+	// QUESTION: what is pull soft
+	if repo.state != GitStatus.ok {
 		// need to get the status of the repo
 		// println(' - repo $repo.name() check')
 		mut needs_to_be_ssh := false
@@ -33,7 +33,7 @@ fn (mut repo GitRepo) check(args_ CheckArgs) ! {
 
 		// first check if path does not exist yet, if not need to clone
 		if !(repo.path.exists()) {
-			println(' - missing repo, pull: ${url}-> ${repo.path()}')
+			println(' - missing repo, pull: ${url}-> ${repo.path.path}')
 			if !needs_to_be_ssh && sshagent.loaded() {
 				needs_to_be_ssh = true
 			}
@@ -51,18 +51,22 @@ fn (mut repo GitRepo) check(args_ CheckArgs) ! {
 
 			osal.execute_silent(cmd) or {
 				println(' GIT FAILED: ${cmd}')
-				return error('Cannot pull repo: ${repo.path()}. Error was ${err}')
+				return error('Cannot pull repo: ${repo.addr.path()}. Error was ${err}')
 			}
 			// println(' - GIT PULL OK')
 			// can return safely, because pull did work			
 			repo.state = GitStatus.ok
 			return
 		}
+		// QUESTION: default false?
+		mut reset_force := false
+		mut pull_soft := false
 
 		// check the branch, see if branch on FS is same as what is required if set
 
+		// QUESTION: what is reset_force {
 		if reset_force {
-			println(' - remove git changes: ${repo.path()}')
+			println(' - remove git changes: ${repo.path.path}')
 			repo.remove_changes()!
 		}
 
@@ -80,10 +84,10 @@ fn (mut repo GitRepo) check(args_ CheckArgs) ! {
 			}
 			repo.state = GitStatus.ok
 			return
-		}else{
-			//branch not known, need to load
+		} else {
+			// branch not known, need to load
 			cmd2 := 'cd ${repo.path} && git rev-parse --abbrev-ref HEAD'
-			branch := osal.execute_silent(cmd2).output.trim(' \n')!
+			branch := osal.execute_silent(cmd2)!.trim(' \n')
 			repo.addr.branch = branch
 		}
 
@@ -96,8 +100,6 @@ fn (mut repo GitRepo) check(args_ CheckArgs) ! {
 	return
 }
 
-
-
 fn (mut repo GitRepo) get_clone_cmd(http bool) string {
 	url := repo.url_get(http)
 	mut cmd := ''
@@ -107,14 +109,14 @@ fn (mut repo GitRepo) get_clone_cmd(http bool) string {
 		light = ' --depth 1 --no-single-branch'
 	}
 
-	mut path:=repo.addr.path_account()!
+	mut path := repo.addr.path_account()
 	cmd = 'cd ${path.path} && git clone ${light} ${url} ${repo.addr.branch}'
 	if repo.addr.branch != '' {
 		cmd += ' -b ${repo.addr.branch}'
 	}
-	if repo.addr.depth != 0 {
-		cmd += ' --depth=${repo.addr.depth}'
-	}
+	// QUESTION: no more depth?
+	// if repo.addr.depth != 0 {
+	// 	cmd += ' --depth=${repo.addr.depth}'
+	// }
 	return cmd
 }
-

@@ -16,7 +16,7 @@ fn (mut repo GitRepo) url_get(http bool) string {
 // http true means we will change to http method
 // http false means we will change to ssh method
 fn (mut repo GitRepo) connection_change(http bool) !bool {
-	path2 := repo.path()
+	path2 := repo.path.path
 	if !os.exists(path2) {
 		// nothing to do
 		return false
