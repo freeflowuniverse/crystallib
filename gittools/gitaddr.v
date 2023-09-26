@@ -29,7 +29,11 @@ fn (mut addr GitAddr) check()! {
 
 // returns the git address starting from path
 fn (gitstructure GitStructure)  addr_from_path(path string) !GitAddr {
+
 	mut path2 := path.replace('~', os.home_dir())
+
+	//TODO: walk up to find .git in dir, this way we know we found the right path for the repo
+
 	println('GIT ADDR ${path2}')
 	if !os.exists(os.join_path(path2, '.git')) {
 		return error("path: '${path2}' is not a git dir, missed a .git directory")
