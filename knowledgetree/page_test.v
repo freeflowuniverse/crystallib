@@ -4,11 +4,24 @@ import os
 import freeflowuniverse.crystallib.markdowndocs
 import freeflowuniverse.crystallib.pathlib
 
-const testpath = os.dir(@FILE) + '/testdata/broken_chapter'
+const (
+	testpath         = os.dir(@FILE) + '/testdata/broken_chapter'
+	collections_path = os.dir(@FILE) + '/testdata/collections'
+	tree_name        = 'page_test_tree'
+)
 
 fn testsuite_end() {
 	// reset testdata changes after running tests
 	os.execute('git checkout ${knowledgetree.testpath}')
+}
+
+fn create_tree() !Tree {
+	new(name: knowledgetree.tree_name)!
+	scan(
+		name: knowledgetree.tree_name
+		path: knowledgetree.collections_path
+	)!
+	return knowledgetrees[knowledgetree.tree_name]
 }
 
 fn test_link_update() ! {}
@@ -16,7 +29,7 @@ fn test_link_update() ! {}
 fn test_fix_external_link() ! {}
 
 fn test_fix() ! {
-	mut tree := new()!
+	tree := create_tree()!
 	mut test_collection := tree.collection_new(
 		name: 'Collection1'
 		path: knowledgetree.testpath

@@ -3,7 +3,9 @@ module knowledgetree
 // import os
 import freeflowuniverse.crystallib.imagemagick
 import freeflowuniverse.crystallib.pathlib { Path }
+import freeflowuniverse.crystallib.params
 import freeflowuniverse.crystallib.markdowndocs
+import os
 
 pub enum CollectionState {
 	init
@@ -19,25 +21,17 @@ pub:
 	name      string
 	tree_name string
 pub mut:
-	title  string
-	pages  map[string]&Page
-	files  map[string]&File
-	images map[string]&File
-	path   Path
-	errors []CollectionError
-	state  CollectionState
-	heal   bool
-}
-
-// walk over one specific collection, find all files and pages
-pub fn (mut collection Collection) scan() ! {
-	$if debug {
-		println('load collection: ${collection.name} - ${collection.path.path}')
-	}
-	collection.scan_internal(mut collection.path)!
-	$if debug {
-		println('scan done')
-	}
+	title           string
+	pages           map[string]&Page
+	files           map[string]&File
+	images          map[string]&File
+	external_pages  map[string]&Page
+	external_files  map[string]&File
+	external_images map[string]&File
+	path            Path
+	errors          []CollectionError
+	state           CollectionState
+	heal            bool
 }
 
 ///////////// PAGE/IMAGE/FILE GET
@@ -333,4 +327,35 @@ pub fn (collection Collection) errors_report(where string) ! {
 	}
 	c := $tmpl('template/errors_collection.md')
 	p.write(c)!
+}
+
+pub fn get_collection_name(mut path Path) !string {
+	println('looking for collection for path: ${path.path}')
+	if path.path == '/' {
+		return error('collection not found')
+	}
+
+	if !path.file_exists('.collection') {
+		// recurse to parent dir if .collection file not found
+		mut parent_path := pathlib.get(os.dir(path.path))
+		return get_collection_name(mut parent_path)!
+	}
+
+	mut collection_path := path.file_get('.collection')!
+
+	content := collection_path.read()!
+	if content.trim_space() != '' {
+		// means there are params in there
+		mut params_ := params.parse(content)!
+		if params_.exists('name') {
+			return params_.get('name')!
+		} else {
+			// by default, if .collection file exists but name isnt specified, return dir name as collection name
+			return os.dir(collection_path.path)
+		}
+	} else {
+		return error('collection name not found in .collection file')
+	}
+
+	panic('code should never reach here')
 }

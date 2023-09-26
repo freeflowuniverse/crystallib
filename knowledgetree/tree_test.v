@@ -13,128 +13,88 @@ const (
 	book1_dest       = os.dir(@FILE) + '/testdata/_book1'
 )
 
-fn create_tree() !Tree {
-	new(name: knowledgetree.tree_name)!
-	rlock knowledgetrees {
-		return knowledgetrees[knowledgetree.tree_name]
-	}
-}
-
 fn test_init() ! {
-	tree := create_tree()
-	// tree.embedded_files << $embed_file('template/css/print.css')
-	// tree.embedded_files << $embed_file('template/css/variables.css')
-	// tree.embedded_files << $embed_file('template/css/general.css')
-	// tree.embedded_files << $embed_file('template/mermaid-init.js')
-	// tree.embedded_files << $embed_file('template/echarts.min.js')
-	// tree.embedded_files << $embed_file('template/mermaid.min.js')
+	mut tree := Tree{}
+	tree.init()!
+	assert tree.embedded_files.len == 6
 }
 
-fn test_fix() ! {
-	// if tree.state == .ok {
-	// 	return
-	// }
-	// for _, mut collection in tree.collections {
-	// 	collection.fix()!
-	// }
+pub struct TestMacroProcessor {
+}
+
+pub fn (processor TestMacroProcessor) process(code string) !MacroResult {
+	return MacroResult{}
+}
+
+fn test_macroprocessor_add() {
+	mut tree := Tree{}
+	mp := TestMacroProcessor{}
+	tree.macroprocessor_add(mp)!
+	assert tree.macroprocessors.len == 1
 }
 
 fn test_page_get() {
-	// p := pointer_new(pointerstr)!
-	// mut res := []&Page{}
-	// for _, collection in tree.collections {
-	// 	if p.collection == '' || p.collection == collection.name {
-	// 		if collection.page_exists(pointerstr) {
-	// 			res << collection.page_get(pointerstr) or { panic('BUG') }
-	// 		}
-	// 	}
-	// }
-	// if res.len == 1 {
-	// 	return res[0]
-	// } else {
-	// 	return NoOrTooManyObjFound{
-	// 		tree: &tree
-	// 		pointer: p
-	// 		nr: res.len
-	// 	}
-	// }
-}
+	new(name: knowledgetree.tree_name)!
+	scan(
+		name: knowledgetree.tree_name
+		path: knowledgetree.collections_path
+	)!
+	tree := knowledgetrees[knowledgetree.tree_name]
 
-fn test_image_get() {
-	// p := pointer_new(pointerstr)!
-	// // println("collection:'$p.collection' name:'$p.name'")
-	// mut res := []&File{}
-	// for _, collection in tree.collections {
-	// 	// println(collection.name)
-	// 	if p.collection == '' || p.collection == collection.name {
-	// 		// println("in collection")
-	// 		if collection.image_exists(pointerstr) {
-	// 			res << collection.image_get(pointerstr) or { panic('BUG') }
-	// 		}
-	// 	}
-	// }
-	// if res.len == 1 {
-	// 	return res[0]
-	// } else {
-	// 	return NoOrTooManyObjFound{
-	// 		tree: &tree
-	// 		pointer: p
-	// 		nr: res.len
-	// 	}
-	// }
-}
+	// these page pointers are correct and page_get should work
+	apple_ptr_correct0 := 'fruits:apple.md'
+	apple_ptr_correct1 := 'apple.md'
+	apple_ptr_correct2 := 'apple'
 
-fn test_file_get() {
-	// p := pointer_new(pointerstr)!
-	// mut res := []&File{}
-	// for _, collection in tree.collections {
-	// 	if p.collection == '' || p.collection == collection.name {
-	// 		if collection.file_exists(pointerstr) {
-	// 			res << collection.file_get(pointerstr) or { panic('BUG') }
-	// 		}
-	// 	}
-	// }
-	// if res.len == 1 {
-	// 	return res[0]
-	// } else {
-	// 	return NoOrTooManyObjFound{
-	// 		tree: &tree
-	// 		pointer: p
-	// 		nr: res.len
-	// 	}
-	// }
-}
+	if page := tree.page_get(apple_ptr_correct0) {
+		assert page.name == 'apple'
+	} else {
+		assert false
+	}
+	if page := tree.page_get(apple_ptr_correct1) {
+		assert page.name == 'apple'
+	} else {
+		assert false
+	}
+	if page := tree.page_get(apple_ptr_correct2) {
+		assert page.name == 'apple'
+	} else {
+		assert false
+	}
 
-fn test_page_exists() {
-	// _ := tree.page_get(name) or {
-	// 	if err is CollectionNotFound || err is CollectionObjNotFound || err is NoOrTooManyObjFound {
-	// 		return false
-	// 	} else {
-	// 		panic(err)
-	// 	}
-	// }
-	// return true
-}
+	// these page pointers are incorrect but page_get should still work
+	apple_ptr_incorrect0 := 'incorrect/apple.md'
+	apple_ptr_incorrect1 := 'fruits:incorrect/apple.md'
+	apple_ptr_incorrect2 := 'fruits:incorrect/apple'
 
-fn test_image_exists() {
-	// _ := tree.image_get(name) or {
-	// 	if err is CollectionNotFound || err is CollectionObjNotFound || err is NoOrTooManyObjFound {
-	// 		return false
-	// 	} else {
-	// 		panic(err)
-	// 	}
-	// }
-	// return true
-}
+	if page := tree.page_get(apple_ptr_incorrect0) {
+		assert page.name == 'apple'
+	} else {
+		assert false
+	}
+	if page := tree.page_get(apple_ptr_incorrect1) {
+		assert page.name == 'apple'
+	} else {
+		assert true
+	}
+	if page := tree.page_get(apple_ptr_incorrect2) {
+		assert page.name == 'apple'
+	} else {
+		assert true
+	}
 
-// exists or too many
-fn test_file_exists() {
-	// _ := tree.file_get(name) or {
-	// 	if err is CollectionNotFound || err is CollectionObjNotFound || err is NoOrTooManyObjFound {
-	// 		return false
-	// 	} else {
-	// 		panic(err)
-	// 	}
-	// }
-	// return true
+	// these page pointers are faulty
+	apple_ptr_faulty0 := 'nonexistent:apple.md'
+	apple_ptr_faulty1 := 'appple.md'
+
+	if page := tree.page_get(apple_ptr_faulty0) {
+		assert false
+	} else {
+		assert true
+	}
+	if page := tree.page_get(apple_ptr_faulty1) {
+		assert false
+	} else {
+		assert true
+	}
 }

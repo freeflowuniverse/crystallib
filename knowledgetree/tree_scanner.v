@@ -3,15 +3,17 @@ module knowledgetree
 import freeflowuniverse.crystallib.gittools
 import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.params
+import freeflowuniverse.crystallib.markdowndocs
 import os
 
 [params]
 pub struct TreeScannerArgs {
 pub mut:
-	name      string = 'default' // name of tree
-	path      string
-	heal      bool // healing means we fix images, if selected will automatically load, remove stale links
-	load      bool = true
+	name string = 'default' // name of tree
+	path string
+	heal bool // healing means we fix images, if selected will automatically load, remove stale links
+	load bool = true
+	// strict    bool // means we assume all dir's in root directory of scanning to be collections
 	git_url   string
 	git_reset bool
 	git_root  string
@@ -78,6 +80,21 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 			}
 		}
 
+		// QUESTION: is this necessary?
+		// if !args_.strict {
+		// 	for dir in path.dir_list()! {
+		// 		// dont double count collections already added
+		// 		if !dir.file_exists('.collection') || !dir.file_exists('.site') {
+		// 			tree.collection_new(
+		// 				path: dir.path
+		// 				name: name
+		// 				heal: args_.heal
+		// 				load: args_.load
+		// 			)!
+		// 		}
+		// 	}
+		// }
+
 		mut llist := path.list(recursive: false) or {
 			return error('cannot list: ${path.path} \n${error}')
 		}
@@ -95,6 +112,23 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 		}
 	}
 }
+
+// pub fn (mut tree Tree) get_external_assets() ! {
+// 	tree.collection_new(name: '_external', path: '')!
+// 	for key, mut collection in tree.collections {
+// 		external_links := []markdowndocs.Link{}
+// 		for link in external_links {
+// 			if tree.collections.values().any(fn (mut it) {
+// 				link.path.starts_with(mut it)
+// 			})
+// 			{
+// 				// means that link external to collection exists in another collection belonging to tree, so skip
+// 				continue
+// 			}
+// 			collection.page_new(link.path)
+// 		}
+// 	}
+// }
 
 // QUESTION: healing doesn't work in scanning, is it ok to separate?
 pub fn (mut tree Tree) heal(args TreeScannerArgs) ! {

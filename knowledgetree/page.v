@@ -12,7 +12,7 @@ pub enum PageStatus {
 
 [heap]
 pub struct Page {
-pub mut: // pointer to collection
+pub mut:
 	name            string // received a name fix
 	path            pathlib.Path
 	pathrel         string // relative path in the collection
@@ -128,7 +128,7 @@ fn (mut page Page) link_update(mut link Link) ! {
 			if fileobj.path.path == dest.path {
 				panic('source and destination is same when trying to fix link (copy).')
 			}
-			fileobj.path.copy(mut dest)!
+			fileobj.path.copy(dest.path)!
 			collection.image_new(mut dest)! // make sure collection knows about the new file
 			fileobj.path = dest
 

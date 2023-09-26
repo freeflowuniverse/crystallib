@@ -119,9 +119,10 @@ pub fn book_create(args_ BookNewArgs) !&MDBook {
 	}
 
 	if args.git_url.len > 0 {
-		mut gs := gittools.get(gitname: args.git_root)!
-		mut gr := gs.repo_get_from_url(url: args.git_url, pull: args.git_pull, reset: args.git_reset)!
-		args.path = gr.path_content_get()
+		mut gs := gittools.get(name: args.git_root) or { gittools.new()! }
+		locator := gs.locator_new(args.git_url)!
+		mut gr := gs.repo_get(locator: locator)!
+		args.path = gr.path.path
 	}
 
 	if args.path.len < 3 {
@@ -152,8 +153,10 @@ pub fn book_create(args_ BookNewArgs) !&MDBook {
 	book.fix_summary()!
 	book.link_pages_files_images()!
 	book.errors_report()!
-
 	book.export()!
+	println('booky00: ${book.name}')
+	pages_str := book.pages.values().map('\n${it.name}\npages_included:${it.pages_linked.map(it.name)}')
+	println('pages: \n${pages_str}')
 
 	return book
 }
@@ -259,7 +262,7 @@ fn (mut book MDBook) link_pages_files_images() ! {
 						link := item
 
 						if link.cat == .page {
-							logger.info('Linking page ')
+							logger.info('Linking page ${link.filename} from ${link.path} into ${page.name}')
 							collection := book.tree.collection_get(page.collection_name) or {
 								logger.error('Could not link page ')
 								panic('couldnt find book collection')
@@ -392,18 +395,24 @@ fn (mut book MDBook) export_linked_pages(md_path string, mut linked_pages []&Pag
 
 // export an mdbook to its html representation
 pub fn (mut book MDBook) export() ! {
+	println('booky01: ${book.name}')
+	pages_str := book.pages.values().map('\n${it.name}\npages_included:${it.pages_linked.map(it.name)}')
+	println('pages: \n${pages_str}')
 	logger.info('Exporting MDBook: ${book.name}')
 	book.template_install()! // make sure all required template files are in collection
 	md_path := book.md_path('').path + '/src'
 	html_path := book.html_path('').path
 
 	logger.info('Exporting pages in MDBook: ${book.name}')
+
 	for _, mut page in book.pages {
+		page.process()!
 		if page.pages_linked.len > 0 {
+			println('debug55: ${page.pages_linked}')
 			book.export_linked_pages(md_path, mut page.pages_linked)!
 		}
+
 		dest := '${md_path}/${page.collection_name}/${page.pathrel}'
-		page.process()!
 		logger.info('Exporting page: ${page.name}')
 		page.export(dest: dest)!
 		logger.info('Exported page: ${page.name}')
@@ -439,7 +448,6 @@ pub fn (mut book MDBook) export() ! {
 
 	// lets now build
 	osal.exec(cmd: 'mdbook build ${book.md_path('').path} --dest-dir ${html_path}', retry: 0)!
-
 	for item in book.tree.embedded_files {
 		if item.path.ends_with('.css') {
 			logger.info('Writing css files into MDBook')

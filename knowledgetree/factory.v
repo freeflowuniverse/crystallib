@@ -31,7 +31,6 @@ pub fn new(args_ ArgsNew) ! {
 	lock knowledgetrees {
 		mut t := Tree{
 			name: args.name
-			// context: c
 			logger: &log.Log{
 				level: level
 			}

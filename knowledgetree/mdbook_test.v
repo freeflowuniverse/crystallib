@@ -5,14 +5,29 @@ import freeflowuniverse.crystallib.markdowndocs
 import os
 
 const (
-	collections_path = os.dir(@FILE) + '/testdata/collections'
-	tree_name        = 'mdbook_test_tree'
-	book1_path       = os.dir(@FILE) + '/testdata/book1'
-	book1_dest       = os.dir(@FILE) + '/testdata/_book1'
+	testdata_path     = os.dir(@FILE) + '/testdata'
+	collections_path  = os.dir(@FILE) + '/testdata/collections'
+	books_path        = os.dir(@FILE) + '/testdata/books'
+	destinations_path = os.dir(@FILE) + '/testdata/destinations'
+	tree_name         = 'mdbook_test_tree'
+	book1_path        = os.dir(@FILE) + '/testdata/book1'
+	book1_dest        = os.dir(@FILE) + '/testdata/_book1'
 )
 
+fn testsuite_begin() {
+	if os.exists(knowledgetree.book1_dest) {
+		os.rmdir_all(knowledgetree.book1_dest)!
+	}
+	os.cp_all(knowledgetree.testdata_path, '${knowledgetree.testdata_path}_previous',
+		true)!
+}
+
+fn testsuite_end() {
+	os.rmdir_all(knowledgetree.testdata_path)!
+	os.mv('${knowledgetree.testdata_path}_previous', knowledgetree.testdata_path)!
+}
+
 fn create_tree() ! {
-	mut s := spawner.new()
 	new(name: knowledgetree.tree_name)!
 	scan(
 		name: knowledgetree.tree_name
@@ -29,7 +44,6 @@ fn test_book_reset() {
 		tree_name: knowledgetree.tree_name
 	)!
 
-	os.mkdir(knowledgetree.book1_dest)!
 	assert os.exists(knowledgetree.book1_dest)
 	book.reset()!
 	assert !os.exists(knowledgetree.book1_dest)
@@ -56,14 +70,15 @@ fn test_book_fix_summary() {
 	create_tree()!
 	mut book := book_create(
 		name: 'book1'
-		path: knowledgetree.book1_path
-		dest: knowledgetree.book1_dest
+		path: '${knowledgetree.books_path}/fruits_vegetables'
+		dest: '${knowledgetree.destinations_path}/fruits_vegetables'
 		tree_name: knowledgetree.tree_name
 	)!
 	book.load_summary()!
-	println('starting fix')
+	summary_links_before := '${book.doc_summary.items}'
 	book.fix_summary()!
-	panic('hs')
+	summary_links_after := '${book.doc_summary.items}'
+	assert summary_links_before != summary_links_after
 }
 
 fn test_book_create() {
@@ -74,9 +89,6 @@ fn test_book_create() {
 		dest: knowledgetree.book1_dest
 		tree_name: knowledgetree.tree_name
 	)!
-
-	println(book)
-	// panic('sh')
 }
 
 fn test_book_export() {
@@ -87,5 +99,5 @@ fn test_book_export() {
 		dest: knowledgetree.book1_dest
 		tree_name: knowledgetree.tree_name
 	) or { panic(err) }
-	// book.export() or {panic(err)}
+	book.export() or { panic(err) }
 }
