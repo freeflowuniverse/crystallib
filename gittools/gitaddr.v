@@ -2,6 +2,54 @@ module gittools
 
 import os
 import freeflowuniverse.crystallib.sshagent
+import freeflowuniverse.crystallib.texttools
+
+
+//unique identification of a git repository
+//can be translated to location on filesystem
+//can be translated to url of the git repository online
+pub struct GitAddr {
+pub mut:
+	// root string
+	provider string
+	account  string
+	name     string // is the name of the repository
+	branch   string
+}
+
+
+//internal function to check git address
+fn (mut addr GitAddr) check()! {
+	if addr.provider == 'github.com' {
+		addr.provider = 'github'
+	}
+}
+
+// returns the git repo starting from path
+fn addr_get_from_path(path string) !GitAddr {
+	mut path2 := path.replace('~', os.home_dir())
+	println('GIT ADDR ${path2}')
+	if !os.exists(os.join_path(path2, '.git')) {
+		return error("path: '${path2}' is not a git dir, missed a .git directory")
+	}
+	pathconfig := os.join_path(path2, '.git', 'config')
+	if !os.exists(pathconfig) {
+		return error("path: '${path2}' is not a git dir, missed a .git/config file")
+	}
+
+	cmd := 'cd ${path} && git config --get remote.origin.url'
+	url := os.execute_or_panic(cmd).output.trim(' \n')
+
+	cmd2 := 'cd ${path} && git rev-parse --abbrev-ref HEAD'
+	branch := os.execute_or_panic(cmd2).output.trim(' \n')
+
+	mut locator := gitlocator_new(url)!
+	return locator.addr
+}
+
+
+##############################################################################################################
+##############################################################################################################
 
 pub fn (addr GitAddr) url_get() string {
 	if sshagent.loaded() {
@@ -29,117 +77,7 @@ fn (addr GitAddr) url_http_with_branch_get() string {
 	}
 }
 
-// return provider e.g. github, account is the name of the account, name of the repo, path if any
-// this function will not checkout the code
-// deals with quite some different formats Returns
-// ```
-// struct GitAddr{
-// 		provider string
-// 		account string
-// 		name string
-// 		path string		//path in the repo
-// 		branch string
-// 		anker string //position in the file
-// }
-// ```
-pub fn addr_get_from_url(url string) !GitAddr {
-	// println(" ** URL: $url **")
-	mut urllower := url.to_lower()
-	urllower = urllower.trim_space()
-	if urllower.starts_with('ssh://') {
-		urllower = urllower[6..]
-	}
-	if urllower.starts_with('git@') {
-		urllower = urllower[4..]
-	}
-	if urllower.starts_with('http:/') {
-		urllower = urllower[6..]
-	}
-	if urllower.starts_with('https:/') {
-		urllower = urllower[7..]
-	}
-	if urllower.ends_with('.git') {
-		urllower = urllower[0..urllower.len - 4]
-	}
-	urllower = urllower.replace(':', '/')
-	urllower = urllower.replace('//', '/')
-	urllower = urllower.trim('/')
-	urllower = urllower.replace('/blob/', '/')
-	urllower = urllower.replace('/tree/', '/')
 
-	// println(" ** URL2: $urllower **")
-
-	mut parts := urllower.split('/')
-	mut anker := ''
-	mut path := ''
-	mut branch := ''
-	// deal with path
-	if parts.len > 4 {
-		path = parts[4..parts.len].join('/')
-		if path.contains('#') {
-			parts2 := path.split('#')
-			if parts2.len == 2 {
-				path = parts2[0]
-				anker = parts2[1]
-			} else {
-				return error("url badly formatted have more than 1 x '#' in ${url}")
-			}
-		}
-	}
-	// found the branch
-	if parts.len > 3 {
-		branch = parts[3]
-		parts[2] = parts[2].replace('.git', '')
-	}
-	if parts.len < 3 {
-		return error("url badly formatted, not enough parts in '${urllower}' \nparts:\n${parts}")
-	}
-
-	provider := parts[0]
-	account := parts[1]
-	name := parts[2]
-	return GitAddr{
-		provider: provider
-		account: account
-		name: name
-		branch: branch
-		anker: anker
-		path: path
-	}
-}
-
-// returns the git arguments starting from a git path
-// ```
-// struct GitAddr{
-// 	mut:
-// 		provider string
-// 		account string
-// 		name string
-// 		path string		//path in the repo
-// 		branch string
-// 		anker string //position in the file
-// }
-// ```
-pub fn addr_get_from_path(path string) !GitAddr {
-	mut path2 := path.replace('~', os.home_dir())
-	println('GIT ADDR ${path2}')
-	if !os.exists(os.join_path(path2, '.git')) {
-		return error("path: '${path2}' is not a git dir, missed a .git directory")
-	}
-	pathconfig := os.join_path(path2, '.git', 'config')
-	if !os.exists(pathconfig) {
-		return error("path: '${path2}' is not a git dir, missed a .git/config file")
-	}
-
-	cmd := 'cd ${path} && git config --get remote.origin.url'
-	url := os.execute_or_panic(cmd).output.trim(' \n')
-
-	cmd2 := 'cd ${path} && git rev-parse --abbrev-ref HEAD'
-	branch := os.execute_or_panic(cmd2).output.trim(' \n')
-
-	mut addr := addr_get_from_url(url)!
-	addr.branch = branch
-
-	// println(addr)
-	return addr
-}
+	provider = texttools.name_fix(addr.provider)
+	name = texttools.name_fix(addr.name)
+	account = texttools.name_fix(addr.account)

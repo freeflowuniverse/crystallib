@@ -7,29 +7,14 @@ __global (
 	instances shared map[string]GitStructure
 )
 
-[params]
-pub struct GSConfig {
-pub mut:
-	gitname     string = 'default'
-	filter      string
-	multibranch bool
-	root        string // where will the code be checked out
-	pull        bool   // means we will pull even if the directory exists
-	reset       bool   // be careful, this means we will reset when pulling
-	light       bool = true // if set then will clone only last history for all branches		
-	log         bool   // means we log the git statements
-}
 
 // get new gitstructure .
 // args .
 //```
 // pub struct GSConfig {
-//	gitname     string
-// 	filter      string
+//  name        string = "default"
 // 	multibranch bool
 // 	root        string // where will the code be checked out
-// 	pull        bool   // means we will pull even if the directory exists
-// 	reset       bool   // be careful, this means we will reset when pulling
 // 	light       bool   // if set then will clone only last history for all branches		
 // 	log         bool   // means we log the git statements
 // }
@@ -37,7 +22,7 @@ pub mut:
 // has also support for os.environ variables .
 // - MULTIBRANCH .
 // - DIR_CODE , default: ${os.home_dir()}/code/ .
-pub fn new(config GSConfig) !GitStructure {
+pub fn new(config GitStructureConfig) !GitStructure {
 	mut gs := GitStructure{
 		config: config
 	}
@@ -73,30 +58,30 @@ pub fn new(config GSConfig) !GitStructure {
 }
 
 [params]
-pub struct GitToolsGetArgs {
+pub struct GitStructureGetArgs {
 pub mut:
-	gitname string
+	name string
 }
 
-pub fn get(args_ GitToolsGetArgs) !GitStructure {
+pub fn get(args_ GitStructureGetArgs) !GitStructure {
 	mut args := args_
-	if args.gitname == '' {
-		args.gitname = 'default'
+	if args.name == '' {
+		args.name = 'default'
 	}
-	if args.gitname in instances {
+	if args.name in instances {
 		rlock instances {
-			return instances[args.gitname] // Is that now copy?
+			return instances[args.name]
 		}
 	} else {
 		lock instances {
-			instances[args.gitname] = new(gitname: args.gitname)!
+			instances[args.name] = new(gitname: args.name)!
 		}
 	}
 
 	return error('Canot find gitstructure with name ${args.gitname}')
 }
 
-pub fn reload(args_ GitToolsGetArgs) !GitStructure {
+pub fn reload(args_ GitStructureGetArgs) !GitStructure {
 	mut args := args_
 	if args.gitname == '' {
 		args.gitname = 'default'
@@ -113,7 +98,7 @@ pub fn reload(args_ GitToolsGetArgs) !GitStructure {
 
 pub struct CodeGetFromUrlArgs {
 pub mut:
-	gitname string // optional, if not mentioned is default
+	gitstructure_name string // optional, if not mentioned is default
 	url     string
 	branch  string
 	pull    bool   // will pull if this is set
@@ -136,12 +121,13 @@ pub mut:
 // PARAMS .
 // ```
 // 	url    string .
-// 	branch string .
 // 	pull   bool // will pull if this is set .
 // 	reset bool //this means will pull and reset all changes .
 // ```
 pub fn code_get(args CodeGetFromUrlArgs) !string {
-	mut gs := get(gitname: args.gitname)!
-	mut gr := gs.repo_get_from_url(url: args.url, pull: args.pull, reset: args.reset)!
-	return gr.path_content_get()
+	mut gs := get(name: args.gitstructure_name)!
+	mut locator := gitlocator_new(args.url)!
+	mut repo := gs.repo_get_from_locator(locator)!
+	repo.check(pull:args.pull,reset:args.reset)!
+	return locator.path()!
 }

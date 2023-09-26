@@ -3,54 +3,26 @@ module gittools
 import os
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.sshagent
-// import pathlib
+import freeflowuniverse.crystallib.pathlib
 
-// check if sshkey for a repo exists in the homedir/.ssh
-// we check on name, if nameof repo is same as name of key we will load
-// will return true if the key did exist, which means we need to connect over ssh !!!
-fn (mut repo GitRepo) ssh_key_load_if_exists() !bool {
-	mut key_path := '${os.home_dir()}/.ssh/${repo.name()}'
-	if !os.exists(key_path) {
-		key_path = '.ssh/${repo.name()}'
-	}
-	if !os.exists(key_path) {
-		// tried local path to where we are, no key as well
-		return false
-	}
-
-	// println(" - check keypath: $key_path")
-
-	// println(ssh_agent_key_loaded("info_digitaltwin"))
-	// panic("ss")
-
-	// exists means the key has been loaded
-	// nrkeys is how many keys were loaded in sshagent in first place
-	exists, nrkeys := sshagent.key_loaded(repo.name())
-	// println(' >>> $repo.name() $nrkeys, $exists')
-
-	if (!exists) || nrkeys > 0 {
-		// means we did not find the key but there were other keys loaded
-		// only choice we have now is to reset and use this key
-		sshagent.reset()!
-		sshagent.key_load(key_path)!
-		return true
-	} else if exists && nrkeys == 1 {
-		// means the right key was loaded
-		return true
-	} else {
-		// did not find the key nothing to do
-		return false
-	}
+[heap]
+pub struct GitRepo {
+	id int [skip]
+mut:
+	gs    &GitStructure [str: skip]
+pub mut:
+	state GitStatus
+	addr GitAddr
+	path pathlib.Path
 }
+
+
+
 
 fn (mut repo GitRepo) path_account_get() string {
 	mut provider := ''
 	addr := repo.addr()
-	if addr.provider == 'github.com' {
-		provider = 'github'
-	} else {
-		provider = addr.provider
-	}
+
 	if repo.gs.codepath() == '' {
 		panic('cannot be empty')
 	}
@@ -65,6 +37,7 @@ pub fn (mut repo GitRepo) path_content_get() string {
 		return '${p}/${repo.addr().path}'
 	}
 }
+
 
 pub fn (mut repo GitRepo) path() string {
 	return repo.path_get()
@@ -142,102 +115,6 @@ fn (mut repo GitRepo) get_clone_cmd(http bool) string {
 	return cmd
 }
 
-// this is the main git functionality to get git repo, update, reset, ...
-pub fn (mut repo GitRepo) check(pull_soft_ bool, reset_force_ bool) ! {
-	mut pull_soft := pull_soft_ || reset_force_
-	mut reset_force := reset_force_
-	url := repo.addr().url_http_with_branch_get()
-	// println(' - check repo:$url, pull:$pull_soft, reset:$reset_force')
-	// println(repo.addr())
-	if repo.state != GitStatus.ok || pull_soft {
-		// need to get the status of the repo
-		// println(' - repo $repo.name() check')
-
-		mut needs_to_be_ssh := false
-
-		// check if there is a custom key to be used (sshkey)
-		needs_to_be_ssh0 := repo.ssh_key_load_if_exists()!
-		if needs_to_be_ssh0 {
-			needs_to_be_ssh = true
-		}
-
-		// first check if path does not exist yet, if not need to clone
-		if !os.exists(repo.path()) {
-			println(' - missing repo, pull: ${url}-> ${repo.path()}')
-			if !needs_to_be_ssh && sshagent.loaded() {
-				needs_to_be_ssh = true
-			}
-			// get the url (http or ssh)
-			mut cmd := ''
-			if needs_to_be_ssh {
-				// println("GIT: PULL USING SSH")
-				// cmd based on ssh
-				cmd = repo.get_clone_cmd(false)
-			} else {
-				// cmd based on http
-				// println("GIT: PULL USING HTTP")
-				cmd = repo.get_clone_cmd(true)
-			}
-
-			osal.execute_silent(cmd) or {
-				println(' GIT FAILED: ${cmd}')
-				return error('Cannot pull repo: ${repo.path()}. Error was ${err}')
-			}
-			// println(' - GIT PULL OK')
-			// can return safely, because pull did work			
-			repo.state = GitStatus.ok
-			return
-		}
-
-		// check the branch, see if branch on FS is same as what is required if set
-
-		if reset_force {
-			println(' - remove git changes: ${repo.path()}')
-			repo.remove_changes()!
-		}
-
-		// println(repo.addr())
-		// print_backtrace()
-		if repo.addr().branch != '' {
-			mut branchname := repo.branch_get()!
-			// println( " - branch detected: $branchname, branch on repo obj:'$repo.addr().branch'")
-			branchname = branchname.trim('\n ')
-			if branchname != repo.addr().branch && pull_soft {
-				println(' - branch switch ${branchname} -> ${repo.addr().branch} for ${url}')
-				repo.branch_switch(repo.addr().branch)!
-				// need to pull now
-				pull_soft = true
-			}
-			repo.state = GitStatus.ok
-			return
-		}
-
-		if pull_soft {
-			repo.pull()!
-		}
-
-		repo.state = GitStatus.ok
-	}
-	return
-}
-
-// return the addr info of the gitrepo				
-pub fn (mut repo GitRepo) addr() GitAddr {
-	if repo.addr_ == none {
-		repo.addr_ = addr_get_from_path(repo.path) or { panic(err) }
-	}
-	return repo.addr_ or { panic(err) }
-}
-
-pub fn (mut repo GitRepo) name() string {
-	if repo.name_ == '' {
-		repo.name_ = repo.addr().path.split('/').last()
-		if repo.name_.len !=0 {
-			panic('bug, name split for git name() in repo.\nnow:\'${repo.name_}\'')
-		}
-	}
-	return repo.name_
-}
 
 // pulls remote content in, will reset changes
 pub fn (mut repo GitRepo) pull_reset() ! {
@@ -361,5 +238,37 @@ pub fn (mut repo GitRepo) delete() ! {
 			println(' GIT DELETE FAILED: ${cmd2}')
 			return error('Cannot delete repo: ${repo.path()}. Error was ${err}')
 		}
+	}
+}
+
+// check if sshkey for a repo exists in the homedir/.ssh
+// we check on name, if nameof repo is same as name of key we will load
+// will return true if the key did exist, which means we need to connect over ssh !!!
+fn (mut repo GitRepo) ssh_key_load_if_exists() !bool {
+	mut key_path := '${os.home_dir()}/.ssh/${repo.name()}'
+	if !os.exists(key_path) {
+		key_path = '.ssh/${repo.name()}'
+	}
+	if !os.exists(key_path) {
+		// tried local path to where we are, no key as well
+		return false
+	}
+	// exists means the key has been loaded
+	// nrkeys is how many keys were loaded in sshagent in first place
+	exists, nrkeys := sshagent.key_loaded(repo.name())
+	// println(' >>> $repo.name() $nrkeys, $exists')
+
+	if (!exists) || nrkeys > 0 {
+		// means we did not find the key but there were other keys loaded
+		// only choice we have now is to reset and use this key
+		sshagent.reset()!
+		sshagent.key_load(key_path)!
+		return true
+	} else if exists && nrkeys == 1 {
+		// means the right key was loaded
+		return true
+	} else {
+		// did not find the key nothing to do
+		return false
 	}
 }
