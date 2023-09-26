@@ -17,50 +17,11 @@ pub mut:
 }
 
 
-
-
-fn (mut repo GitRepo) path_account_get() string {
-	mut provider := ''
-	addr := repo.addr()
-
-	if repo.gs.codepath() == '' {
-		panic('cannot be empty')
-	}
-	return '${repo.gs.codepath()}/${provider}/${addr.account}'
-}
-
-pub fn (mut repo GitRepo) path_content_get() string {
-	mut p := repo.path()
-	if repo.addr().path == '' {
-		return p
-	} else {
-		return '${p}/${repo.addr().path}'
-	}
-}
-
-
-pub fn (mut repo GitRepo) path() string {
-	return repo.path_get()
-}
-
-pub fn (mut repo GitRepo) path_get() string {
-	if repo.path != '' {
-		return repo.path
-	}
-	if repo.gs.config.multibranch {
-		return '${repo.path_account_get()}/${repo.name()}/${repo.addr().branch}'
-	} else {
-		return '${repo.path_account_get()}/${repo.name()}'
-	}
-}
-
+//relative path inside the gitstructure, pointing to the repo
 pub fn (mut repo GitRepo) path_relative() string {
-	if repo.gs.config.multibranch {
-		return '${repo.addr().account}/${repo.name()}/${repo.addr().branch}'
-	} else {
-		return '${repo.addr().account}/${repo.name()}'
-	}
+	return repo.path.path_relative(repo.gs.path)!  //TODO: check if works well
 }
+
 
 // if there are changes then will return 'true', otherwise 'false'
 pub fn (mut repo GitRepo) changes() !bool {
@@ -88,33 +49,6 @@ pub fn (mut repo GitRepo) changes() !bool {
 
 	return true
 }
-
-fn (mut repo GitRepo) get_clone_cmd(http bool) string {
-	url := repo.url_get(http)
-	mut cmd := ''
-
-	mut light := ''
-	if repo.gs.config.light {
-		light = ' --depth 1 --no-single-branch'
-	}
-
-	if repo.gs.config.multibranch {
-		cmd = 'mkdir -p ${repo.path_account_get()}/${repo.name()} && cd ${repo.path_account_get()}/${repo.name()} && git clone ${light} ${url} ${repo.addr().branch}'
-	} else {
-		cmd = 'mkdir -p ${repo.path_account_get()} && cd ${repo.path_account_get()} && git clone ${light} ${url}'
-	}
-	if repo.addr().branch != '' {
-		cmd += ' -b ${repo.addr().branch}'
-	}
-	if repo.addr().depth != 0 {
-		cmd += ' --depth=${repo.addr().depth}'
-		//  && cd $repo.name() && git fetch
-		// why was this there?
-	}
-	// println(" - CMD: $cmd")
-	return cmd
-}
-
 
 // pulls remote content in, will reset changes
 pub fn (mut repo GitRepo) pull_reset() ! {

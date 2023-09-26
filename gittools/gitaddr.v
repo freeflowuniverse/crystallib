@@ -3,12 +3,14 @@ module gittools
 import os
 import freeflowuniverse.crystallib.sshagent
 import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.pathlib
 
 
 //unique identification of a git repository
 //can be translated to location on filesystem
 //can be translated to url of the git repository online
 pub struct GitAddr {
+	gs    	&GitStructure [str: skip]		
 pub mut:
 	// root string
 	provider string
@@ -25,8 +27,8 @@ fn (mut addr GitAddr) check()! {
 	}
 }
 
-// returns the git repo starting from path
-fn addr_get_from_path(path string) !GitAddr {
+// returns the git address starting from path
+fn (gitstructure GitStructure)  addr_from_path(path string) !GitAddr {
 	mut path2 := path.replace('~', os.home_dir())
 	println('GIT ADDR ${path2}')
 	if !os.exists(os.join_path(path2, '.git')) {
@@ -44,8 +46,37 @@ fn addr_get_from_path(path string) !GitAddr {
 	branch := os.execute_or_panic(cmd2).output.trim(' \n')
 
 	mut locator := gitlocator_new(url)!
+	locator.addr.branch = branch
 	return locator.addr
 }
+
+//return the path on the filesystem pointing to the address (is always a dir)
+pub fn (addr GitAddr) path() !pathlib.Path {
+	provider = texttools.name_fix(addr.provider)
+	name = texttools.name_fix(addr.name)
+	account = texttools.name_fix(addr.account)		
+	path_string:="${addr.gs.rootpath}/${provider}/${account}/${name}"
+	if repo.gs.rootpath == '' {
+		panic('cannot be empty')
+	}
+	if addr.gs.config.multibranch{
+		path_string+="/${addr.branch}"
+	}	
+	path :=pathlib.get_dir(path_string,true)!
+	return path
+}
+
+fn (mut addr GitAddr) path_account() pathlib.Path {
+	mut provider := ''
+	addr := repo.addr
+	if repo.gs.rootpath == '' {
+		panic('cannot be empty')
+	}
+	path :=pathlib.get_dir("${addr.gs.rootpath}/${provider}/${account}",true)!
+	return path
+}	
+}
+
 
 
 ##############################################################################################################
@@ -78,6 +109,9 @@ fn (addr GitAddr) url_http_with_branch_get() string {
 }
 
 
-	provider = texttools.name_fix(addr.provider)
-	name = texttools.name_fix(addr.name)
-	account = texttools.name_fix(addr.account)
+pub fn (addr GitAddr) str() string {
+	if addr.branch==""{
+		panic("bug, addr branch should never be empty")
+	}
+	return '${addr.provider}:${addr.account}/${addr.name}[${addr.branch}]'
+}

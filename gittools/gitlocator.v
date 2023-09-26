@@ -6,16 +6,15 @@ import freeflowuniverse.crystallib.sshagent
 
 //location of a file, dir or part of file in a GitAddr
 pub struct GitLocator {
+	gs    	&GitStructure [str: skip]	
 pub mut:
 	addr     GitAddr
 	path     string // path in the repo (not on filesystem)
 	anker    string // position in the file
 }
 
-
-
-// will use url to get gitlocator
-pub fn gitlocator_new(url string) !GitLocator {
+// will use url to get git locator (is a pointer to a file, dir or part of file)
+pub fn (gitstructure GitStructure) locator_new(url string) !GitLocator {
 	// println(" ** URL: $url **")
 	mut urllower := url.to_lower()
 	urllower = urllower.trim_space()
@@ -83,7 +82,20 @@ pub fn gitlocator_new(url string) !GitLocator {
 		anker: anker
 		path: path	
 		addr: ga
+		gs: &gitstructure
 	}
 	return gl
 
+}
+
+
+
+//return the path on the filesystem pointing to the locator
+pub fn (mut l GitLocator) path_on_fs() !pathlib.Path {
+	addrpath:=l.addr.path_on_fs()!
+	if l.path.len>0{
+		return pathlib.get("{addrpath.path}/l.path")
+	}else{
+		return addrpath
+	}
 }

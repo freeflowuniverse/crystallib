@@ -17,9 +17,9 @@ fn (mut repo GitRepo) check(args_ CheckArgs) ! {
 	mut args:=args_
 	args.pull = args.pull || args.reset
 
-	url := repo.addr().url_http_with_branch_get()
+	url := repo.addr.url_http_with_branch_get()
 	// println(' - check repo:$url, pull:$args.pull, reset:$args.reset')
-	// println(repo.addr())
+	// println(repo.addr)
 	if repo.state != GitStatus.ok || pull_soft {
 		// need to get the status of the repo
 		// println(' - repo $repo.name() check')
@@ -32,7 +32,7 @@ fn (mut repo GitRepo) check(args_ CheckArgs) ! {
 		}
 
 		// first check if path does not exist yet, if not need to clone
-		if !os.exists(repo.path()) {
+		if !(repo.path.exists()) {
 			println(' - missing repo, pull: ${url}-> ${repo.path()}')
 			if !needs_to_be_ssh && sshagent.loaded() {
 				needs_to_be_ssh = true
@@ -66,23 +66,28 @@ fn (mut repo GitRepo) check(args_ CheckArgs) ! {
 			repo.remove_changes()!
 		}
 
-		// println(repo.addr())
+		// println(repo.addr)
 		// print_backtrace()
-		if repo.addr().branch != '' {
+		if repo.addr.branch != '' {
 			mut branchname := repo.branch_get()!
-			// println( " - branch detected: $branchname, branch on repo obj:'$repo.addr().branch'")
+			// println( " - branch detected: $branchname, branch on repo obj:'$repo.addr.branch'")
 			branchname = branchname.trim('\n ')
-			if branchname != repo.addr().branch && pull_soft {
-				println(' - branch switch ${branchname} -> ${repo.addr().branch} for ${url}')
-				repo.branch_switch(repo.addr().branch)!
+			if branchname != repo.addr.branch && pull_soft {
+				println(' - branch switch ${branchname} -> ${repo.addr.branch} for ${url}')
+				repo.branch_switch(repo.addr.branch)!
 				// need to pull now
 				pull_soft = true
 			}
 			repo.state = GitStatus.ok
 			return
+		}else{
+			//branch not known, need to load
+			cmd2 := 'cd ${repo.path} && git rev-parse --abbrev-ref HEAD'
+			branch := osal.execute_silent(cmd2).output.trim(' \n')!
+			repo.addr.branch = branch
 		}
 
-		if pull_soft {
+		if args.pull {
 			repo.pull()!
 		}
 
@@ -90,3 +95,26 @@ fn (mut repo GitRepo) check(args_ CheckArgs) ! {
 	}
 	return
 }
+
+
+
+fn (mut repo GitRepo) get_clone_cmd(http bool) string {
+	url := repo.url_get(http)
+	mut cmd := ''
+
+	mut light := ''
+	if repo.gs.config.light {
+		light = ' --depth 1 --no-single-branch'
+	}
+
+	mut path:=repo.addr.path_account()!
+	cmd = 'cd ${path.path} && git clone ${light} ${url} ${repo.addr.branch}'
+	if repo.addr.branch != '' {
+		cmd += ' -b ${repo.addr.branch}'
+	}
+	if repo.addr.depth != 0 {
+		cmd += ' --depth=${repo.addr.depth}'
+	}
+	return cmd
+}
+

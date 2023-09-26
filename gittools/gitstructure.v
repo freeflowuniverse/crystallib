@@ -45,9 +45,9 @@ pub fn (mut gitstructure GitStructure) repos_print(args GSArgs) {
 		changed := g.changes() or { panic('issue in repo changes. ${err}') }
 		pr := g.path_relative()
 		if changed {
-			r << ['- ${pr}', '${g.addr().branch}', 'CHANGED']
+			r << ['- ${pr}', '${g.addr.branch}', 'CHANGED']
 		} else {
-			r << ['- ${pr}', '${g.addr().branch}', '']
+			r << ['- ${pr}', '${g.addr.branch}', '']
 		}
 	}
 	texttools.print_array2(r, '  ', true)
@@ -58,8 +58,8 @@ pub fn (mut gitstructure GitStructure) repos_print(args GSArgs) {
 fn (mut gitstructure GitStructure) reload() ! {
 	gitstructure.status = GitStructureStatus.init
 
-	if !os.exists(gitstructure.codepath()) {
-		os.mkdir_all(gitstructure.codepath())!
+	if !os.exists(gitstructure.rootpath) {
+		os.mkdir_all(gitstructure.rootpath)!
 	}
 
 	gitstructure.check()!
@@ -82,9 +82,9 @@ fn (mut gitstructure GitStructure) load() ! {
 	mut done := []string{}
 
 	// path which git repos will be recursively loaded
-	git_path := gitstructure.codepath() 
-	if !(os.exists(gitstructure.codepath())) {
-		os.mkdir_all(gitstructure.codepath())!
+	git_path := gitstructure.rootpath 
+	if !(os.exists(gitstructure.rootpath)) {
+		os.mkdir_all(gitstructure.rootpath)!
 	}
 
 	gitstructure.load_recursive(git_path, mut done)!
@@ -134,13 +134,3 @@ fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []strin
 	// println(" - git exit: $path1")
 }
 
-pub fn (mut gs GitStructure) codepath() string {
-	mut p := ''
-	if gs.config.multibranch {
-		p = gs.config.root + '/multi'
-	} else {
-		p = gs.config.root
-	}
-	// println(" ***** $p")
-	return p
-}
