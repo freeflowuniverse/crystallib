@@ -1,4 +1,4 @@
-![](img/casper_devxdao_.jpg)  
+![](img/casper_devxdao.jpg)
 
 # Grant
 
@@ -103,6 +103,4 @@ For this part of the grant we need much more input from Casperlabs.
 - [ ] better description of / manuals for the solution
 - [ ] documentation and make demonstration tutorials in text and video
 - [ ] document all links to code & scripts as used on above
-
-
 

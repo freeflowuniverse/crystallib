@@ -35,3 +35,15 @@ pub fn (mut collection Collection) error(args CollectionErrorArgs) {
 		cat: args.cat
 	}
 }
+
+pub struct CollectionObjNotFound {
+	Error
+pub:
+	name       string
+	cat        string
+	collection string
+}
+
+pub fn (err CollectionObjNotFound) msg() string {
+	return '"Could not find object of type ${err.cat} with name ${err.name} in collection:${err.collection}'
+}

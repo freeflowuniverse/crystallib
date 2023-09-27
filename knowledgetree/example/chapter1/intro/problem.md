@@ -2,7 +2,7 @@
 
 The current internet mainly consists of centralised datacenters and networks owned and operated by a handfull of service providers.  80% of the Internet belongs to less than 10 companies.  This is not helping blockchain layer-1 projects to achieve reliability and decentralization.
 
-![undersea_cables](img/undersea_cables_.jpg)
+![undersea_cables](img/undersea_cables.jpg)
 
 In this intenet blockchain node (owners) have two options:
 - go to one of the market leader in cloud solution, get a VM and work their way through the install protocol for the blockchain node.

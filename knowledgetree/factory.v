@@ -40,23 +40,6 @@ pub fn new(args_ ArgsNew) ! {
 	}
 }
 
-pub fn scan(args_ TreeScannerArgs) ! {
-	mut args := args_
-	args.name = texttools.name_fix(args.name)
-	lock knowledgetrees {
-		mut tree := knowledgetrees[args.name] or { return error('cannot find tree: ${args.name}') }
-		tree.scan(args)!
-		knowledgetrees[args.name] = tree
-		// knowledgetrees[args.name] or { return error('cannot find tree: ${args.name}') }.scan(args)!
-	}
-
-	lock knowledgetrees {
-		mut tree := knowledgetrees[args.name] or { return error('cannot find tree: ${args.name}') }
-		tree.heal(args)!
-		knowledgetrees[args.name] = tree
-	}
-}
-
 pub struct MacroProcessorArgs {
 mut:
 	processor IMacroProcessor

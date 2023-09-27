@@ -1,10 +1,6 @@
 module knowledgetree
 
-// import os
-import freeflowuniverse.crystallib.imagemagick
 import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.params
-import freeflowuniverse.crystallib.markdowndocs
 import os
 
 // walk over one specific collection, find all files and pages

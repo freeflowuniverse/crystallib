@@ -34,7 +34,7 @@ pub fn (tree Tree) collection_exists(name string) bool {
 }
 
 // internal function
-fn (mut tree Tree) collection_get_from_pointer(p Pointer) !Collection {
+fn (tree Tree) collection_get_from_pointer(p Pointer) !Collection {
 	if p.tree.len > 0 && p.tree != tree.name {
 		return CollectionNotFound{
 			pointer: p
@@ -47,7 +47,7 @@ fn (mut tree Tree) collection_get_from_pointer(p Pointer) !Collection {
 	return *ch
 }
 
-pub fn (mut tree Tree) collection_get(name string) !Collection {
+pub fn (tree Tree) collection_get(name string) !Collection {
 	name_fixed := texttools.name_fix(name)
 	return tree.collection_get_from_pointer(Pointer{ collection: name_fixed })!
 }

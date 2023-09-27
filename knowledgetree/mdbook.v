@@ -408,7 +408,6 @@ pub fn (mut book MDBook) export() ! {
 	for _, mut page in book.pages {
 		page.process()!
 		if page.pages_linked.len > 0 {
-			println('debug55: ${page.pages_linked}')
 			book.export_linked_pages(md_path, mut page.pages_linked)!
 		}
 
