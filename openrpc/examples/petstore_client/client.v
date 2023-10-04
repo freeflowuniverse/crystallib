@@ -8,11 +8,12 @@ mut:
 	ws_client &websocket.Client
 }
 
-pub fn new() Client {
+pub fn new() !Client {
 	address := 'localhost:8000'
 	ws_client := websocket.new_client(address)!
+	return Client{ws_client}
 }
 
-fn (mut client Client) send_rpc(rpc JsonRpcRequest) ! {
+fn (mut client Client) send_rpc[T](rpc JsonRpcRequest[T]) ! {
 	client.ws_client.write_string(rpc.to_json())
 }

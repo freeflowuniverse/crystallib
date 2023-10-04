@@ -2,8 +2,6 @@ module openrpc
 
 import freeflowuniverse.crystallib.jsonschema { Reference, SchemaRef }
 
-//  GitHub Flavored Markdown syntax MAY be used for rich text representation.
-
 // This is the root object of the OpenRPC document.
 // The contents of this object represent a whole OpenRPC document.
 // How this object is constructed or stored is outside the scope of the OpenRPC Specification.

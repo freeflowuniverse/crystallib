@@ -1,7 +1,6 @@
-module docgen
+module openrpc
 
 import freeflowuniverse.crystallib.jsonschema
-import freeflowuniverse.crystallib.openrpc { Method, OpenRPC }
 import freeflowuniverse.crystallib.codemodel { Function, Struct, Sumtype }
 import freeflowuniverse.crystallib.codeparser
 import freeflowuniverse.crystallib.texttools
@@ -20,7 +19,7 @@ pub struct DocGenConfig {
 }
 
 // docgen returns OpenRPC Document struct for JSON-RPC API defined in the config params.
-// returns generated OpenRPC struct which can be encoded into json using `openrpc.OpenRPC.encode()`
+// returns generated OpenRPC struct which can be encoded into json using `OpenRPC.encode()`
 pub fn docgen(config DocGenConfig) !OpenRPC {
 	$if debug {
 		eprintln('Generating OpenRPC Document from path: ${config.source}')
@@ -56,12 +55,12 @@ pub fn docgen(config DocGenConfig) !OpenRPC {
 	}
 
 	return OpenRPC{
-		info: openrpc.Info{
+		info: Info{
 			title: config.title
 			version: config.version
 		}
 		methods: methods
-		components: openrpc.Components{
+		components: Components{
 			schemas: schemas
 		}
 	}
@@ -83,7 +82,7 @@ fn fn_to_method(function Function) Method {
 		function.result.typ.symbol
 	}
 
-	result := openrpc.ContentDescriptor{
+	result := ContentDescriptor{
 		name: result_name
 		schema: result_schema
 		description: function.result.description
@@ -105,12 +104,12 @@ fn fn_to_method(function Function) Method {
 }
 
 // get_param_descriptors returns content descriptors generated for a list of params
-fn params_to_descriptors(params []codemodel.Param) []openrpc.ContentDescriptorRef {
-	mut descriptors := []openrpc.ContentDescriptorRef{}
+fn params_to_descriptors(params []codemodel.Param) []ContentDescriptorRef {
+	mut descriptors := []ContentDescriptorRef{}
 
 	for param in params {
 		schemaref := jsonschema.typesymbol_to_schema(param.typ.symbol)
-		descriptors << openrpc.ContentDescriptorRef(openrpc.ContentDescriptor{
+		descriptors << ContentDescriptorRef(ContentDescriptor{
 			name: param.name
 			schema: schemaref
 			description: param.description

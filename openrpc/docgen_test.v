@@ -1,9 +1,8 @@
-module docgen
+module openrpc
 
 import os
 import freeflowuniverse.crystallib.codemodel
 import freeflowuniverse.crystallib.jsonschema
-import freeflowuniverse.crystallib.openrpc
 
 // test_fn_to_method tests whether
 fn test_params_to_descriptors() {
@@ -42,8 +41,8 @@ fn test_params_to_descriptors() {
 	descriptors := params_to_descriptors(params)
 
 	// test test_param is described correctly
-	assert descriptors[0] is openrpc.ContentDescriptor
-	param0 := descriptors[0] as openrpc.ContentDescriptor
+	assert descriptors[0] is ContentDescriptor
+	param0 := descriptors[0] as ContentDescriptor
 	assert param0.name == 'test_param'
 	param0_description := param0.description or { '' }
 	assert param0_description == 'a parameter to test if params are also included in the method description.'
@@ -54,8 +53,8 @@ fn test_params_to_descriptors() {
 	assert param0_schema.typ == 'string'
 
 	// test another_param is described correctly
-	assert descriptors[1] is openrpc.ContentDescriptor
-	param1 := descriptors[1] as openrpc.ContentDescriptor
+	assert descriptors[1] is ContentDescriptor
+	param1 := descriptors[1] as ContentDescriptor
 	assert param1.name == 'another_param'
 	param1_description := param1.description or { '' }
 	assert param1_description == 'a second parameter to test if method description works with multiple params.'
@@ -64,8 +63,8 @@ fn test_params_to_descriptors() {
 	assert param1_schema.typ == 'integer'
 
 	// test array_param is described correctly
-	assert descriptors[2] is openrpc.ContentDescriptor
-	param2 := descriptors[2] as openrpc.ContentDescriptor
+	assert descriptors[2] is ContentDescriptor
+	param2 := descriptors[2] as ContentDescriptor
 	assert param2.name == 'array_param'
 	assert param2.schema is jsonschema.Schema
 	param2_schema := param2.schema as jsonschema.Schema
@@ -77,8 +76,8 @@ fn test_params_to_descriptors() {
 	assert param2_schema_items_schema.typ == 'string'
 
 	// test object_param is described correctly
-	assert descriptors[3] is openrpc.ContentDescriptor
-	param3 := descriptors[3] as openrpc.ContentDescriptor
+	assert descriptors[3] is ContentDescriptor
+	param3 := descriptors[3] as ContentDescriptor
 	assert param3.name == 'object_param'
 	// should be reference since the param type is a struct
 	assert param3.schema is jsonschema.Reference
@@ -119,16 +118,16 @@ fn test_fn_to_method() {
 	assert openrpc_method.params.len == 1
 
 	// test test_param is described correctly
-	assert openrpc_method.params[0] is openrpc.ContentDescriptor
-	param0 := openrpc_method.params[0] as openrpc.ContentDescriptor
+	assert openrpc_method.params[0] is ContentDescriptor
+	param0 := openrpc_method.params[0] as ContentDescriptor
 	assert param0.name == 'test_param'
 	assert param0.schema is jsonschema.Schema
 	param0_schema := param0.schema as jsonschema.Schema
 	assert param0_schema.typ == 'string'
 
 	// test function return is described correctly
-	assert openrpc_method.result is openrpc.ContentDescriptor
-	result := openrpc_method.result as openrpc.ContentDescriptor
+	assert openrpc_method.result is ContentDescriptor
+	result := openrpc_method.result as ContentDescriptor
 	assert result.name == 'string_list'
 	assert result.description or { '' } == 'a list of strings which the function will return'
 	assert result.schema is jsonschema.Schema
@@ -144,7 +143,7 @@ fn test_fn_to_method() {
 // test_docgen tests whether OpenRPC document generation for the PetStore JSON-RPC Client
 // works across different configurations
 fn test_docgen() ! {
-	client_path := os.dir(@FILE).all_before_last('/') + '/examples/petstore_client'
+	client_path := os.dir(@FILE) + '/examples/petstore_client'
 	doc := docgen(
 		title: 'test'
 		source: client_path
