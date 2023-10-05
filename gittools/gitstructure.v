@@ -124,7 +124,6 @@ pub mut:
 // # to specify a branch and a folder in the branch
 // https://github.com/threefoldtech/tfgrid-sdk-ts/tree/development/docs
 // ```
-
 pub fn code_get(args CodeGetFromUrlArgs) !string {
 	mut gs := get(name: args.gitstructure_name) or { new(name: args.gitstructure_name)! }
 	mut locator := gs.locator_new(args.url)!
