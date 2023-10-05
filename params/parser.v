@@ -45,7 +45,7 @@ pub fn parse(text string) !Params {
 	text2 = text2.replace('\\n', '<<BR>>')
 	text2 = text2.replace('\n', ' ')
 
-	validchars := 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,.'
+	validchars := 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,./'
 
 	mut ch := ''
 	mut state := ParamStatus.start
