@@ -1,7 +1,5 @@
 module gittools
 
-import freeflowuniverse.crystallib.pathlib
-
 pub struct GitLinkArgs {
 pub:
 	gitsource string // the name of the git repo as used in gittools from the source

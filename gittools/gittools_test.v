@@ -1,7 +1,5 @@
 module gittools
 
-import json
-
 fn test_url1() {
 	mut gs := new(GitStructureConfig{}) or { panic('cannot load') }
 	url := 'https://github.com/vlang/v/blob/master/doc/docs.md#maps'

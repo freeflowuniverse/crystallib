@@ -1,6 +1,5 @@
 module gittools
 
-import os
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.sshagent
 

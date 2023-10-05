@@ -2,6 +2,7 @@ module gittools
 
 import os
 import freeflowuniverse.crystallib.pathlib
+import freeflowuniverse.crystallib.texttools
 
 __global (
 	instances shared map[string]GitStructure
@@ -9,12 +10,12 @@ __global (
 
 [heap]
 pub struct GitStructure {
+	config   GitStructureConfig // configuration settings
+	rootpath pathlib.Path = pathlib.get('~/code') // path to root code directory
 pub mut:
-	name     string = 'default'
-	config   GitStructureConfig
-	repos    []&GitRepo
-	status   GitStructureStatus
-	rootpath pathlib.Path
+	name   string = 'default' // key indexing global gitstructure
+	repos  []&GitRepo // repositories in gitstructure
+	status GitStructureStatus
 }
 
 pub enum GitStructureStatus {
@@ -24,24 +25,8 @@ pub enum GitStructureStatus {
 	error
 }
 
-// TODO: figure out
-// pub fn (mut gitstructure GitStructure) repos_print(args GSArgs) {
-// 	mut r := [][]string{}
-// 	for mut g in gitstructure.repos_get(args) {
-// 		changed := g.changes() or { panic('issue in repo changes. ${err}') }
-// 		pr := g.path_relative()
-// 		if changed {
-// 			r << ['- ${pr}', '${g.addr.branch}', 'CHANGED']
-// 		} else {
-// 			r << ['- ${pr}', '${g.addr.branch}', '']
-// 		}
-// 	}
-// 	texttools.print_array2(r, '  ', true)
-// }
-
 [params]
 pub struct GitStructureConfig {
-pub mut:
 	name        string = 'default'
 	multibranch bool
 	root        string // where will the code be checked out
@@ -53,36 +38,37 @@ pub mut:
 // has also support for os.environ variables .
 // - MULTIBRANCH .
 // - DIR_CODE , default: ${os.home_dir()}/code/ .
-pub fn new(config GitStructureConfig) !GitStructure {
-	mut gs := GitStructure{
-		config: config
-	}
-
-	if gs.config.name == '' {
+pub fn new(config_ GitStructureConfig) !GitStructure {
+	if config_.name == '' {
 		return error('need to provide name for gitstructure')
 	}
 
-	if 'MULTIBRANCH' in os.environ() {
-		gs.config.multibranch = true
+	// TODO: document env overwriting
+	root := if 'DIR_CODE' in os.environ() {
+		os.environ()['DIR_CODE'] + '/'
+	} else if config_.root == '' {
+		'${os.home_dir()}/code/'
+	} else {
+		config_.root
 	}
 
-	if 'DIR_CODE' in os.environ() {
-		gs.config.root = os.environ()['DIR_CODE'] + '/'
-	}
-	if gs.config.root == '' {
-		gs.config.root = '${os.home_dir()}/code/'
-	}
-
-	gs.config.root = gs.config.root.replace('~', os.home_dir()).trim_right('/')
-
-	gs.rootpath = pathlib.get_dir(gs.config.root, true) or {
-		return error('Code root doesnt exist: ${err}')
+	config := GitStructureConfig{
+		...config_
+		multibranch: 'MULTIBRANCH' in os.environ() || config_.multibranch
+		root: root.replace('~', os.home_dir()).trim_right('/')
 	}
 
-	gs.status = GitStructureStatus.init // step2
+	mut gs := GitStructure{
+		config: config
+		rootpath: pathlib.get_dir(config.root, true) or { panic('this should never happen') }
+		status: GitStructureStatus.init
+	}
 
-	// TODO: figure out
-	// gs.check()!
+	if os.exists(gs.config.root) {
+		gs.load()!
+	} else {
+		os.mkdir_all(gs.config.root)!
+	}
 
 	lock instances {
 		instances[gs.config.name] = gs
@@ -98,13 +84,15 @@ pub struct GitStructureGetArgs {
 }
 
 pub fn get(args_ GitStructureGetArgs) ?GitStructure {
+	name := if args_.name == '' {
+		'default'
+	} else {
+		args_.name
+	}
+
 	args := GitStructureGetArgs{
 		...args_
-		name: if args_.name == '' {
-			'default'
-		} else {
-			args_.name
-		}
+		name: name
 	}
 
 	if args.name in instances {
@@ -144,4 +132,18 @@ pub fn code_get(args CodeGetFromUrlArgs) !string {
 	repo.check(pull: args.pull, reset: args.reset)!
 	// TODO: figure out
 	return locator.path
+}
+
+pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) {
+	mut r := [][]string{}
+	for mut g in gitstructure.repos_get(args) {
+		changed := g.changes() or { panic('issue in repo changes. ${err}') }
+		pr := g.path_relative()
+		if changed {
+			r << ['- ${pr}', '${g.addr.branch}', 'CHANGED']
+		} else {
+			r << ['- ${pr}', '${g.addr.branch}', '']
+		}
+	}
+	texttools.print_array2(r, '  ', true)
 }

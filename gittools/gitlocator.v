@@ -1,7 +1,5 @@
 module gittools
 
-import os
-import freeflowuniverse.crystallib.sshagent
 import freeflowuniverse.crystallib.pathlib
 
 // location of a file, dir or part of file in a GitAddr
