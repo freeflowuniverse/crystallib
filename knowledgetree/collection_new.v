@@ -15,7 +15,7 @@ mut:
 // get a new collection
 pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 	mut args := args_
-	args.name = texttools.name_fix_no_underscore_no_ext(args.name)
+	args.name = texttools.name_fix(args.name)
 
 	if args.name in tree.collections {
 		return error('Collection already exits')
