@@ -1,7 +1,6 @@
 module knowledgetree
 
 import freeflowuniverse.crystallib.pathlib
-import os
 
 // walk over one specific collection, find all files and pages
 pub fn (mut collection Collection) scan() ! {
