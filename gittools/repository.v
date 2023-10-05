@@ -12,7 +12,7 @@ mut:
 	gs &GitStructure [str: skip]
 pub mut:
 	state GitStatus
-	addr  []GitAddr
+	addr  GitAddr
 	path  pathlib.Path
 }
 
