@@ -141,7 +141,7 @@ pub fn (mut path Path) sub_exists(args_ SubGetParams) !bool {
 //////////////FILE
 
 // find file underneith dir path, if exists return True
-pub fn (mut path Path) file_exists(tofind string) bool {
+pub fn (path Path) file_exists(tofind string) bool {
 	if path.cat != Category.dir {
 		return false
 	}

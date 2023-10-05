@@ -136,7 +136,7 @@ pub fn code_get(args CodeGetFromUrlArgs) !string {
 
 pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) {
 	mut r := [][]string{}
-	for mut g in gitstructure.repos_get(args) {
+	for g in gitstructure.repos_get(args) {
 		changed := g.changes() or { panic('issue in repo changes. ${err}') }
 		pr := g.path_relative()
 		if changed {

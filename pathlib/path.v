@@ -95,6 +95,7 @@ pub fn (mut path Path) path_dir() string {
 	return os.dir(path.path)
 }
 
+// QUESTION: should this mutate path's name, probably not?
 pub fn (mut path Path) name_no_ext() string {
 	mut name := path.name()
 	if name.contains('.') {

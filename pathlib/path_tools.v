@@ -76,7 +76,7 @@ pub fn (mut path Path) chmod(mode int) ! {
 
 // get relative path in relation to destpath
 // will not resolve symlinks
-pub fn (mut path Path) path_relative(destpath string) !string {
+pub fn (path Path) path_relative(destpath string) !string {
 	// println(" - path relative: '$path.path' '$destpath'")
 	return path_relative(destpath, path.path)
 }
