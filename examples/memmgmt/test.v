@@ -11,8 +11,9 @@ pub mut:
 }
 
 
-fn (mut db DB) get() &Item {
-	return &db.items[2] or {panic("s")}
+fn (mut db DB) get(nr) &Item {
+	mut l:= &db.items[nr] or {panic("s")}
+	return l
 }	
 
 fn do() ! {
@@ -35,7 +36,7 @@ fn do() ! {
 
 	println(db)	
 
-	mut item2:=db.get()
+	mut item2:=db.get(2)
 	item2.nr=4444
 
 
