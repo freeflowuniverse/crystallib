@@ -1,9 +1,6 @@
 module gittools
 
 import os
-import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.sshagent
-import freeflowuniverse.crystallib.pathlib
 
 const (
 	github_dir     = '${os.home_dir()}/testcode/github'

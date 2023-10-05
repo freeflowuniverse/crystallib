@@ -1,8 +1,7 @@
 module gittools
 
-import freeflowuniverse.crystallib.pathlib
-import os
 import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.pathlib
 
 [params]
 pub struct RepoGetArgs {
@@ -13,7 +12,7 @@ pub struct RepoGetArgs {
 
 
 // returns the git address starting from path
-fn (gitstructure GitStructure) repo_from_path(path string) !GitAddr {
+fn (gitstructure GitStructure) repo_from_path(path string) !&GitRepo {
 	mut path2 := path.replace('~', os.home_dir())
 
 	// TODO: walk up to find .git in dir, this way we know we found the right path for the repo
@@ -36,34 +35,45 @@ fn (gitstructure GitStructure) repo_from_path(path string) !GitAddr {
 	mut locator := gitstructure.locator_new(url)!
 	locator.addr.branch = branch
 
-	repos_get	
+	mut repos:=gitstructure.repos_get(provider:locator.addr.provider,account:locator.addr.account,name:locator.addr.name)!
 
+	if repos.len>1{
+		return error("found more than 1 repo in gitructure for same provider/account/name.\npath:$path\n$repos")
+	}
+
+	if repos.len==1{
+		//now need to check path is same
+		mut r:=repos[0]
+		mut path2o:=pathlib.dir_get(path2,false)!
+		if r.path!= path2o{
+			return error("path mismatch in gitstructure.\npath:$path\n$repos")
+		}
+		return repos[0]
+	}
 	mut gitrepo:=GitRepo{
 		path: pathlib.get(pathnew)
 		id: gitstructure.repos.len
 		gs: &gitstructure
 		addr : [locator.addr]
 	}	
-
+	gitstructure.repos << &gitrepo
 	return gitrepo
 }
 
 
 // will get repo starting from url, if the repo does not exist, only then will pull
 // if pull is set on true, will then pull as well
-// struct RepoGetFromUrlArgs {
-// 	locator GitLocator
-// 	pull   bool // will pull if this is set
-// 	reset bool //this means will pull and reset all changes
-// }
 pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !&GitRepo {
 	mut args := RepoGetArgs{
 		...args_
 		pull: args_.reset || args_.pull
 	}
-
-	return gitstructure. args.locator.addr.path()!
-	return &r
+	p:=args.locator.addr.path()!
+	mut r:= gitstructure.repo_from_path(p)!
+	if args.pull {
+		r.check(pull: args.pull, reset: args.reset)!
+	}
+	return r	
 }
 
 fn (mut gitstructure GitStructure) repo_get_internal(l GitLocator) !&GitRepo {
@@ -101,7 +111,7 @@ struct ReposGetArgs {
 	reset   bool // means we will force a pull and reset old content	
 }
 
-pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []GitRepo {
+pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []&GitRepo {
 	mut args := ReposGetArgs{
 		...args_
 		name: texttools.name_fix(args_.name)
@@ -130,43 +140,10 @@ pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []GitRepo {
 	return res
 }
 
-// print the repos
-//
-// struct GSArgs {
-// 	filter  string		//if used will only show the repo's which have the filter string inside
-// 	pull    bool		// means when getting new repo will pull even when repo is already tehre
-// 	force   bool		// means we will force a pull and reset old content	
-//
-pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) {
-	mut r := [][]string{}
-	for mut g in gitstructure.repos_get(args) {
-		changed := g.changes() or { panic('issue in repo changes. ${err}') }
-		pr := g.path_relative()
-		if changed {
-			r << ['- ${pr}', '${g.addr.branch}', 'CHANGED']
-		} else {
-			r << ['- ${pr}', '${g.addr.branch}', '']
-		}
-	}
-	texttools.print_array2(r, '  ', true)
-}
-
 pub fn (mut gitstructure GitStructure) list(args ReposGetArgs) {
 	texttools.print_clear()
 	println(' #### overview of repositories:')
 	println('')
 	gitstructure.repos_print(args)
 	println('')
-}
-
-// reload the full git tree
-fn (mut gitstructure GitStructure) reload() ! {
-	gitstructure.status = GitStructureStatus.init
-
-	if !os.exists(gitstructure.rootpath.path) {
-		os.mkdir_all(gitstructure.rootpath.path)!
-	}
-
-	// TODO: figure out
-	// gitstructure.check()!
 }

@@ -54,6 +54,7 @@ fn (mut addr GitAddr) path_account() pathlib.Path {
 	return path
 }
 
+// url_get returns the url of a git address
 pub fn (addr GitAddr) url_get() string {
 	if sshagent.loaded() {
 		return addr.url_ssh_get()

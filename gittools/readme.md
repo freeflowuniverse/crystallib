@@ -17,7 +17,8 @@ Git repo's get checked out under
   - linked to a specific repository as its stored on the local filesystem
   - links to gitstructure
 - GitAddress
-  - has always 1 gitrepo, but 1 gitrepo can have more than 1 gitaddress
+  - links to gitstructure
+  - can retrieve gitrepo from it but not linked
 - GitLocator
   - always has GitAddress
   - a gitlocator is nothing without gitaddress

@@ -1,6 +1,6 @@
 module gittools
 
-import os
+// import os
 // import freeflowuniverse.crystallib.sshagent
 import freeflowuniverse.crystallib.pathlib
 
@@ -81,7 +81,7 @@ pub fn (gitstructure GitStructure) locator_new(url string) !GitLocator {
 	mut gl := GitLocator{
 		anker: anker
 		path: path
-		addr: ga
+		addr: &ga
 	}
 	return gl
 }

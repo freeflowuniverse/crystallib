@@ -1,14 +1,13 @@
 module gittools
 
-import os
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.sshagent
 
 [params]
 pub struct CheckArgs {
 pub mut:
-	pull  bool = false
-	reset bool = false
+	pull  bool
+	reset bool
 }
 
 // this is the main git functionality to get git repo, update, reset, ...
