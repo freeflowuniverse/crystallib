@@ -15,14 +15,7 @@ pub fn main() {
 }
 
 pub fn do() ! {
-	mut s := spawner.new()
-	mut tree := knowledgetree.new(mut s)!
-
-	mut col_examples := tree.collection_new(
-		name: 'examples'
-		path: collection_path
-		heal: true
-	)!
+	knowledgetree.new()!
 	// mut col_playground := tree.collection_new(
 	// 	name: 'playground'
 	// 	path: knowledgetree.collections_path + '/playground'
@@ -39,6 +32,10 @@ pub fn do() ! {
 	// 	heal: true
 	// )!
 
-	mut book := tree.book_new(name: 'book1', path: book1_path, dest: book1_dest)!
+	mut book := knowledgetree.book_create(
+		name: 'book1'
+		path: book1_path
+		dest: book1_dest
+	)!
 	book.export()!
 }
