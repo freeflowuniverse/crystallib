@@ -4,9 +4,16 @@ import freeflowuniverse.crystallib.spreadsheet
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.knowledgetree
 import freeflowuniverse.crystallib.baobab.actions
+import os
+
 // import freeflowuniverse.crystallib.baobab.hero
 // import freeflowuniverse.crystallib.baobab.context
 // import freeflowuniverse.crystallib.currency
+// import freeflowuniverse.crystallib.knowledgetree
+// import freeflowuniverse.crystallib.spreadsheet
+// import cli { Command }
+
+const manualpath = os.dir(@FILE) + '/manual'
 
 __global (
 	bizmodels shared map[string]BizModel
@@ -72,6 +79,11 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 		path: args.path
 		heal: true
 	)!
+
+	knowledgetree.scan(
+		path: manualpath
+		heal: false
+	)!	
 
 	// mut tree := args.context.knowledgetree('bizmodel_${args.name}')!
 
