@@ -9,9 +9,24 @@ Git repo's get checked out under
 
 >TODO: need to check this multibranch could be its broken
 
+## Objects
+
+- Structure of all found gitrepo's
+- GitRepo
+  - linked to one or more git addresses
+  - linked to a specific repository as its stored on the local filesystem
+  - links to gitstructure
+- GitAddress
+  - has always 1 gitrepo, but 1 gitrepo can have more than 1 gitaddress
+- GitLocator
+  - always has GitAddress
+  - a gitlocator is nothing without gitaddress
+
 ## Get a repo
 
 This is the most basic usecase
+
+>> TODO: check
 
 ```v
 import gittools

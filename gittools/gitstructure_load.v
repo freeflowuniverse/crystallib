@@ -27,7 +27,7 @@ fn (mut gitstructure GitStructure) load() ! {
 fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []string) ! {
 	mut path1o := pathlib.get(path1)
 	relpath := path1o.path_relative(gitstructure.rootpath.path)!
-	if relpath.count('/') > 3 {
+	if relpath.count('/') > 4 {
 		return
 	}
 
@@ -44,11 +44,11 @@ fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []strin
 		// done << pathnew
 		if os.is_dir(pathnew) {
 			if os.exists(os.join_path(pathnew, '.git')) {
-				gitstructure.repos << &GitRepo{
-					path: pathlib.get(pathnew)
-					id: gitstructure.repos.len
-					gs: &gitstructure
-				}
+
+				mut addr:=gitstructure.addr_from_path(pathnew)!				
+
+
+				gitstructure.repos << &gitrepo
 				continue
 			}
 			if item.starts_with('.') {

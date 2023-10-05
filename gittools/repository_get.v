@@ -11,6 +11,44 @@ pub struct RepoGetArgs {
 	reset   bool // if we want to force a clean repo
 }
 
+
+// returns the git address starting from path
+fn (gitstructure GitStructure) repo_from_path(path string) !GitAddr {
+	mut path2 := path.replace('~', os.home_dir())
+
+	// TODO: walk up to find .git in dir, this way we know we found the right path for the repo
+
+	println('GIT ADDR ${path2}')
+	if !os.exists(os.join_path(path2, '.git')) {
+		return error("path: '${path2}' is not a git dir, missed a .git directory")
+	}
+	pathconfig := os.join_path(path2, '.git', 'config')
+	if !os.exists(pathconfig) {
+		return error("path: '${path2}' is not a git dir, missed a .git/config file")
+	}
+
+	cmd := 'cd ${path} && git config --get remote.origin.url'
+	url := os.execute_or_panic(cmd).output.trim(' \n')
+
+	cmd2 := 'cd ${path} && git rev-parse --abbrev-ref HEAD'
+	branch := os.execute_or_panic(cmd2).output.trim(' \n')
+
+	mut locator := gitstructure.locator_new(url)!
+	locator.addr.branch = branch
+
+	repos_get	
+
+	mut gitrepo:=GitRepo{
+		path: pathlib.get(pathnew)
+		id: gitstructure.repos.len
+		gs: &gitstructure
+		addr : [locator.addr]
+	}	
+
+	return gitrepo
+}
+
+
 // will get repo starting from url, if the repo does not exist, only then will pull
 // if pull is set on true, will then pull as well
 // struct RepoGetFromUrlArgs {
@@ -24,19 +62,7 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !&GitRepo {
 		pull: args_.reset || args_.pull
 	}
 
-	mut r := GitRepo{
-		addr: args.locator.addr
-		gs: &gitstructure
-		path: args.locator.addr.path()!
-	}
-	if !gitstructure.repo_exists(args.locator)! {
-		// repo does not exist yet
-		println(' - repo does not exist yet.\n${args.locator}')
-		gitstructure.repos << &r
-	} else {
-		r = *gitstructure.repo_get(locator: args.locator)! // get the most recent one, unreference
-	}
-	r.addr = args.locator.addr
+	return gitstructure. args.locator.addr.path()!
 	return &r
 }
 

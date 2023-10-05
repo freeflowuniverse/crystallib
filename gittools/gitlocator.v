@@ -1,14 +1,13 @@
 module gittools
 
 import os
-import freeflowuniverse.crystallib.sshagent
+// import freeflowuniverse.crystallib.sshagent
 import freeflowuniverse.crystallib.pathlib
 
 // location of a file, dir or part of file in a GitAddr
 pub struct GitLocator {
-	gs &GitStructure [str: skip]
 pub mut:
-	addr  GitAddr
+	addr  &GitAddr
 	path  string // path in the repo (not on filesystem)
 	anker string // position in the file
 }
@@ -75,6 +74,7 @@ pub fn (gitstructure GitStructure) locator_new(url string) !GitLocator {
 		account: account
 		name: name
 		branch: branch
+		gs: &gitstructure
 	}
 	ga.check()!
 
@@ -82,7 +82,6 @@ pub fn (gitstructure GitStructure) locator_new(url string) !GitLocator {
 		anker: anker
 		path: path
 		addr: ga
-		gs: &gitstructure
 	}
 	return gl
 }

@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.pathlib
 // can be translated to location on filesystem
 // can be translated to url of the git repository online
 pub struct GitAddr {
-	gs &GitStructure [str: skip]
+	gs &GitStructure
 pub mut:
 	// root string
 	provider string
@@ -25,31 +25,6 @@ fn (mut addr GitAddr) check() ! {
 	}
 }
 
-// returns the git address starting from path
-fn (gitstructure GitStructure) addr_from_path(path string) !GitAddr {
-	mut path2 := path.replace('~', os.home_dir())
-
-	// TODO: walk up to find .git in dir, this way we know we found the right path for the repo
-
-	println('GIT ADDR ${path2}')
-	if !os.exists(os.join_path(path2, '.git')) {
-		return error("path: '${path2}' is not a git dir, missed a .git directory")
-	}
-	pathconfig := os.join_path(path2, '.git', 'config')
-	if !os.exists(pathconfig) {
-		return error("path: '${path2}' is not a git dir, missed a .git/config file")
-	}
-
-	cmd := 'cd ${path} && git config --get remote.origin.url'
-	url := os.execute_or_panic(cmd).output.trim(' \n')
-
-	cmd2 := 'cd ${path} && git rev-parse --abbrev-ref HEAD'
-	branch := os.execute_or_panic(cmd2).output.trim(' \n')
-
-	mut locator := gitstructure.locator_new(url)!
-	locator.addr.branch = branch
-	return locator.addr
-}
 
 // return the path on the filesystem pointing to the address (is always a dir)
 pub fn (addr GitAddr) path() !pathlib.Path {
