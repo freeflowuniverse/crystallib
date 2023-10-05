@@ -75,7 +75,6 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 	)!
 
 	knowledgetree.scan(
-		name: tree_name
 		path: args.path
 		heal: true
 	)!
