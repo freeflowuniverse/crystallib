@@ -88,17 +88,25 @@ fn (mut page Page) link_update(mut link Link) ! {
 
 		// check if the file or image is there, if yes we can return, nothing to do
 		mut file_search := true
-		mut fileobj := File{}
+		// fileobj := File{collection: }
+
+		mut fileobj := File{
+			collection: collection
+		}
 
 		if link.cat == .image {
 			if collection.image_exists(file_name) {
 				file_search = false
 				fileobj = collection.image_get(file_name)!
+			} else {
+				collection.error(path: page.path, msg: 'image not found', cat: .image_not_found)
 			}
 		} else if link.cat == .file {
 			if collection.file_exists(file_name) {
 				file_search = false
 				fileobj = collection.file_get(file_name)!
+			} else {
+				collection.error(path: page.path, msg: 'file not found', cat: .file_not_found)
 			}
 		} else {
 			panic('link should be of type image or file, not ${link.cat}')
@@ -138,8 +146,10 @@ fn (mut page Page) link_update(mut link Link) ! {
 			}
 		}
 
+		// hack around
+		fileobj_copy := fileobj
 		// means we now found the file or image
-		page.files_linked << &fileobj
+		page.files_linked << &fileobj_copy
 		linkcompare1 := link.description + link.url + link.filename + link.content
 		imagelink_rel := pathlib.path_relative(page.path.path_dir(), fileobj.path.path)!
 
