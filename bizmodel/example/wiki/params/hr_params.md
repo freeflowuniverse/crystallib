@@ -66,5 +66,8 @@ possible parameters
     department:'ops'
     nrpeople:'3:5,20:10'
     cost_percent_revenue:'1%'
+    costcenter:'tfdmcc:25,cs_tfcloud:75'
+    generate_page:'../employees/support_senior.md'
+    
 
 ```
