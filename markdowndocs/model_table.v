@@ -33,8 +33,9 @@ fn (mut o Table) process() ! {
 	}
 }
 
-fn (o Table) wiki() string {
+pub fn (o Table) wiki() string {
 	mut out := '| ${o.header.join(' | ')} |\n'
+	// TODO: default alignment row, currently if emtpy table doesnt render
 	alignment_row := o.alignments.map(match it {
 		.left { ' :-- ' }
 		.center { ' :-: ' }

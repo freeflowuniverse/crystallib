@@ -48,7 +48,8 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 
 		size := p.get_default('size', '')!
 
-		supported_actions := ['graph_pie_row', 'graph_line_row', 'graph_bar_row', 'graph_title_row']
+		supported_actions := ['graph_pie_row', 'graph_line_row', 'graph_bar_row', 'graph_title_row',
+			'wiki_row_overview']
 
 		if action.name in supported_actions {
 			rowname := p.get_default('rowname', '')!
@@ -70,7 +71,8 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 			if period_type_e == .error {
 				return error('period type needs to be in year,month,quarter')
 			}
-			if rowname == '' {
+			// TODO: cleaner handling of wiki_row_overview
+			if rowname == '' && action.name != 'wiki_row_overview' {
 				println(action)
 				return error('specify the rowname please')
 			}
@@ -110,7 +112,7 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 				}
 				'wiki_row_overview' {
 					r.result = model.sheet.wiki_row_overview(args) or { panic(err) }
-				}				
+				}
 				else {
 					panic('unexpected action name ${action.name}')
 				}
