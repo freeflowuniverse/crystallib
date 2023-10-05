@@ -93,7 +93,6 @@ fn (mut doc Doc) parse() ! {
 					}
 				}
 			}
-
 			// parse includes
 			if line.starts_with('!!include ') {
 				content := line.all_after_first('!!include ').trim_space()
