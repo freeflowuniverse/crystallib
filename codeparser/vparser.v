@@ -30,12 +30,12 @@ pub fn parse_v(path_ string, vparser VParser) ![]CodeItem {
 	}
 
 	path.check()
-	return vparser.parse_vpath(path)!
+	return vparser.parse_vpath(mut path)!
 }
 
 // parse_vpath parses the v code files and returns codeitems in a given path
 // can be recursive or not based on the parsers configuration
-fn (vparser VParser) parse_vpath(path pathlib.Path) ![]CodeItem {
+fn (vparser VParser) parse_vpath(mut path pathlib.Path) ![]CodeItem {
 	mut code := []CodeItem{}
 	if path.is_dir() {
 		dir_is_excluded := vparser.exclude_dirs.any(path.path.ends_with(it))
@@ -45,15 +45,15 @@ fn (vparser VParser) parse_vpath(path pathlib.Path) ![]CodeItem {
 
 		if vparser.recursive {
 			// parse subdirs if configured recursive
-			subdirs := path.dir_list()!
-			for subdir in subdirs {
-				code << vparser.parse_vpath(subdir)!
+			mut subdirs := path.dir_list()!
+			for mut subdir in subdirs {
+				code << vparser.parse_vpath(mut subdir)!
 			}
 		}
 
-		files := path.file_list()!
-		for file in files {
-			code << vparser.parse_vpath(file)!
+		mut files := path.file_list()!
+		for mut file in files {
+			code << vparser.parse_vpath(mut file)!
 		}
 	} else if path.is_file() {
 		file_is_excluded := vparser.exclude_files.any(path.path.ends_with(it))
@@ -167,7 +167,16 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 
 	// get function params excluding receiver
 	receiver_name := args.fn_decl.receiver.name
+	receiver_type := args.table.type_to_str(args.fn_decl.receiver.typ).all_after_last('.')
 	fn_params := args.fn_decl.params.filter(it.name != receiver_name)
+
+	receiver := Param{
+		name: receiver_name
+		typ: Type{
+			symbol: receiver_type
+		}
+		mutable: args.fn_decl.rec_mut
+	}
 
 	params := vparser.parse_params(
 		comments: args.comments
@@ -192,6 +201,7 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 		name: args.fn_decl.short_name
 		description: fn_comments.join(' ')
 		mod: args.fn_decl.mod
+		receiver: receiver
 		params: params
 		result: result
 	}
@@ -225,6 +235,32 @@ fn (vparser VParser) parse_params(args ParamsArgs) []Param {
 		}
 	}
 	return params
+}
+
+[params]
+struct ParamArgs {
+	comments []ast.Comment // comments of the function
+	param    ast.Param     // ast type of what function returns
+	table    &ast.Table    // ast table for getting type names
+}
+
+// parse_params parses ast function parameters into function parameters
+fn (vparser VParser) parse_param(args ParamArgs) Param {
+	mut description := ''
+	// parse comment line that describes param
+	for comment in args.comments {
+		if start := comment.text.index('- ${args.param.name}: ') {
+			description = comment.text[start..].trim_string_left('- ${args.param.name}: ')
+		}
+	}
+
+	return Param{
+		name: args.param.name
+		description: description
+		typ: Type{
+			symbol: args.table.type_to_str(args.param.typ).all_after_last('.')
+		}
+	}
 }
 
 struct ReturnArgs {
@@ -291,6 +327,9 @@ fn (vparser VParser) parse_vstruct(args VStructArgs) Struct {
 		name: args.struct_decl.name.all_after_last('.')
 		description: comments.join(' ')
 		fields: vparser.parse_fields(args.struct_decl.fields, args.table)
+		mod: args.struct_decl.name.all_before_last('.')
+		attrs: args.struct_decl.attrs.map(codemodel.Attribute{ name: it.name })
+		is_pub: args.struct_decl.is_pub
 	}
 }
 
@@ -329,6 +368,7 @@ fn (vparser VParser) parse_fields(fields []ast.StructField, table &ast.Table) []
 
 		description := field.comments.map(it.text.trim_string_left('\u0001').trim_space()).join(' ')
 		fields_ << StructField{
+			attrs: field.attrs.map(codemodel.Attribute{name: it.name, has_arg: it.has_arg, arg: it.arg })
 			name: field.name
 			anon_struct: anon_struct
 			description: description

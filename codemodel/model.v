@@ -1,9 +1,9 @@
 module codemodel
 
 // Code is a list of statements
-pub type Code = []CodeItem
+// pub type Code = []CodeItem
 
-pub type CodeItem = Comment | Function | Struct | Sumtype
+pub type CodeItem = Comment | Function | Import | Struct | Sumtype
 
 pub struct Comment {
 	text     string
@@ -16,6 +16,8 @@ pub:
 	description string
 	fields      []StructField
 	mod         string
+	is_pub      bool
+	attrs       []Attribute
 }
 
 pub struct Sumtype {
@@ -58,9 +60,11 @@ pub mut:
 pub struct Param {
 pub:
 	required    bool
+	mutable     bool
 	description string
 	name        string
 	typ         Type
+	struct_     Struct
 }
 
 pub struct Result {
@@ -68,9 +72,17 @@ pub:
 	typ         Type
 	description string
 	name        string
+	result      bool // whether is result type
 }
 
 pub struct Type {
 pub:
 	symbol string
+	mod    string
+}
+
+pub struct Import {
+pub mut:
+	mod   string
+	types []string
 }

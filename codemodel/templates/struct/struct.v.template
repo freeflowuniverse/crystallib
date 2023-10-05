@@ -1,0 +1,6 @@
+@{struct_.description}
+struct @{struct_.name} {
+@for field in struct_.fields
+@{field.name} @{field.typ.symbol} // @{field.description}
+@end
+}
