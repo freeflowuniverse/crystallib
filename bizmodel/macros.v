@@ -108,6 +108,9 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 				'graph_pie_row' {
 					r.result = model.sheet.wiki_pie_chart(args) or { panic(err) }
 				}
+				'wiki_row_overview' {
+					r.result = model.sheet.wiki_row_overview(args) or { panic(err) }
+				}				
 				else {
 					panic('unexpected action name ${action.name}')
 				}
