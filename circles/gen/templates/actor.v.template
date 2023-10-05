@@ -1,0 +1,19 @@
+module circles
+
+import freeflowuniverse.crystallib.baobab.actions
+import freeflowuniverse.crystallib.params as paramslib
+
+__global (
+	circle_actor shared CircleActor
+)
+
+struct CircleActor {
+mut:
+	circles map[string]&Circle
+}
+
+@{handler}
+
+@for method in methods
+@{method}
+@end

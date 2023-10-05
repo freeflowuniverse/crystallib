@@ -1,0 +1,8 @@
+pub fn (shared actor CircleActor) act(action actions.Action) ! {
+	match action.name {
+@for handler in handlers
+@{handler}
+@end
+		else {}
+	}
+}
