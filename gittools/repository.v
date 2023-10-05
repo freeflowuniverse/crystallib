@@ -24,13 +24,13 @@ pub enum GitStatus {
 }
 
 // relative path inside the gitstructure, pointing to the repo
-pub fn (mut repo GitRepo) path_relative() string {
+pub fn (repo GitRepo) path_relative() string {
 	// TODO: figure out
 	return repo.path.path_relative(repo.gs.rootpath.path) or { panic('couldnt get relative path') } // TODO: check if works well
 }
 
 // if there are changes then will return 'true', otherwise 'false'
-pub fn (mut repo GitRepo) changes() !bool {
+pub fn (repo GitRepo) changes() !bool {
 	cmd := 'cd ${repo.path.path} && git status'
 	out := osal.execute_silent(cmd) or {
 		return error('Could not execute command to check git status on ${repo.path}\ncannot execute ${cmd}')

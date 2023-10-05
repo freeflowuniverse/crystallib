@@ -12,7 +12,6 @@ pub mut:
 	reset   bool // if we want to force a clean repo
 }
 
-
 // returns the git address starting from path
 fn (mut gitstructure GitStructure) repo_from_path(path string) !&GitRepo {
 	mut path2 := path.replace('~', os.home_dir())
@@ -37,45 +36,48 @@ fn (mut gitstructure GitStructure) repo_from_path(path string) !&GitRepo {
 	mut locator := gitstructure.locator_new(url)!
 	locator.addr.branch = branch
 
-	mut repos:=gitstructure.repos_get(provider:locator.addr.provider,account:locator.addr.account,name:locator.addr.name)!
+	mut repos := gitstructure.repos_get(
+		provider: locator.addr.provider
+		account: locator.addr.account
+		name: locator.addr.name
+	)
 
-	if repos.len>1{
-		return error("found more than 1 repo in gitructure for same provider/account/name.\npath:$path\n$repos")
+	if repos.len > 1 {
+		return error('found more than 1 repo in gitructure for same provider/account/name.\npath:${path}\n${repos}')
 	}
 
-	if repos.len==1{
-		//now need to check path is same
-		mut r:=repos[0]
-		mut path2o:=pathlib.get_dir(path2,false)!
-		if r.path!= path2o{
-			return error("path mismatch in gitstructure.\npath:$path\n$repos")
+	if repos.len == 1 {
+		// now need to check path is same
+		mut r := repos[0]
+		mut path2o := pathlib.get_dir(path2, false)!
+		if r.path != path2o {
+			return error('path mismatch in gitstructure.\npath:${path}\n${repos}')
 		}
 		return repos[0]
 	}
-	mut gitrepo:=GitRepo{
+	mut gitrepo := GitRepo{
 		path: pathlib.get(path2)
 		id: gitstructure.repos.len
 		gs: &gitstructure
-		addr : *locator.addr
-	}	
-	gitstructure.repos << &gitrepo
-	return gitrepo
+		addr: *locator.addr
+	}
+	// QUESTION: is this necessary? causes double counting in loading
+	// gitstructure.repos << &gitrepo
+	return &gitrepo
 }
-
 
 // will get repo starting from url, if the repo does not exist, only then will pull
 // if pull is set on true, will then pull as well
 pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !&GitRepo {
-
-	mut args :=args_
+	mut args := args_
 	args.pull = args_.reset || args_.pull
 
-	p:=args.locator.addr.path()!
-	mut r:= gitstructure.repo_from_path(p)!
+	p := args.locator.addr.path()!
+	mut r := gitstructure.repo_from_path(p.path)!
 	if args.pull {
 		r.check(pull: args.pull, reset: args.reset)!
 	}
-	return r	
+	return r
 }
 
 fn (mut gitstructure GitStructure) repo_get_internal(l GitLocator) !&GitRepo {
@@ -106,12 +108,12 @@ pub fn (mut gitstructure GitStructure) repo_exists(l GitLocator) !bool {
 // get a list of repo's which are in line to the args
 //
 struct ReposGetArgs {
-	filter  string // if used will only show the repo's which have the filter string inside
-	name    string
-	account string
+	filter   string // if used will only show the repo's which have the filter string inside
+	name     string
+	account  string
 	provider string
-	pull    bool // means when getting new repo will pull even when repo is already there
-	reset   bool // means we will force a pull and reset old content	
+	pull     bool // means when getting new repo will pull even when repo is already there
+	reset    bool // means we will force a pull and reset old content	
 }
 
 pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []&GitRepo {
@@ -131,17 +133,21 @@ pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []&GitRepo 
 		}
 		if args.name.len > 0 && args.name != r.addr.name {
 			continue // means no match
-		}		
+		}
 		if args.account.len > 0 && args.account != r.addr.account {
 			continue // means no match
 		}
 		if args.provider.len > 0 && args.provider != r.addr.provider {
 			continue // means no match
 		}
+		res << r
+	}
+
+	// pull found repos if pull arg
+	for mut r in res {
 		if args.pull {
 			r.check(pull: args.pull, reset: args.reset) or { panic('failed to check repo ${err}') }
 		}
-		res << r
 	}
 	return res
 }
