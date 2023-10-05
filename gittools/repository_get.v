@@ -121,7 +121,7 @@ pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []&GitRepo 
 		account: texttools.name_fix(args_.account)
 	}
 	mut res := []&GitRepo{}
-	for mut r in gitstructure.repos {
+	for r in gitstructure.repos {
 		relpath := r.path_relative()
 		if args.filter != '' {
 			if relpath.contains(args.filter) {
