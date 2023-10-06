@@ -21,8 +21,9 @@ __global (
 
 pub struct BizModel {
 pub mut:
-	sheet  spreadsheet.Sheet
-	params BizModelArgs
+	sheet     spreadsheet.Sheet
+	params    BizModelArgs
+	employees map[string]&Employee //
 	// currencies currency.Currencies
 }
 
@@ -39,6 +40,17 @@ pub mut:
 	mdbook_name string // if empty will be same as name of bizmodel
 	mdbook_path string
 	mdbook_dest string // if empty is /tmp/mdbooks/$name
+}
+
+pub struct Employee {
+	name                 string
+	description          string
+	department           string
+	cost                 string
+	cost_percent_revenue f64
+	nrpeople             string
+	indexation           f64
+	cost_center          string
 }
 
 pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
@@ -121,6 +133,7 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 pub fn (mut m BizModel) load() ! {
 	println('ACTIONS LOAD ${m.params.name}')
 	ap := actions.new(path: m.params.path, defaultcircle: 'bizmodel_${m.params.name}')!
+	println('we got our actions! ${ap.actions.map(it.context)}')
 	m.revenue_actions(ap)!
 	m.hr_actions(ap)!
 	m.funding_actions(ap)!
