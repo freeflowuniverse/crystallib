@@ -43,6 +43,7 @@ pub mut:
 }
 
 pub struct Employee {
+pub:
 	name                 string
 	description          string
 	department           string

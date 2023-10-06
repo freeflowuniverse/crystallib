@@ -10,4 +10,6 @@
     - [funding_params](bizmodel_manual:params/funding_params.md)
     - [hr_params](bizmodel_manual:params/hr_params.md)
     - [costs_params](bizmodel_manual:params/costs_params.md)
+- [employees](bizmodel_example:employees.md)
+  - [CTO](bizmodel_example:cto.md)
 

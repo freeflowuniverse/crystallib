@@ -3,6 +3,7 @@ module bizmodel
 import freeflowuniverse.crystallib.knowledgetree
 import freeflowuniverse.crystallib.baobab.actions
 import freeflowuniverse.crystallib.spreadsheet
+import freeflowuniverse.crystallib.markdowndocs
 
 pub struct MacroProcessorBizmodel {
 	bizmodel_name string // name of bizmodel the macro will use for processing
@@ -20,6 +21,31 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 	mut actions2 := ap.filtersort(actor: 'bizmodel')!
 	for action in actions2 {
 		p := action.params
+
+		if action.name == 'employee_wiki' {
+			mut model := BizModel{}
+			rlock bizmodels {
+				model = bizmodels[processor.bizmodel_name]
+			}
+			id := p.get_default('id', '')!
+			if id !in model.employees {
+				return error('employee with id <${id}> not found')
+			}
+			employee := model.employees[id]
+
+			employee_table := markdowndocs.Table{
+				header: ['Key', 'Value']
+				rows: [
+					['cost', employee.cost],
+					['department', employee.department],
+					['indexation', '${employee.indexation}'],
+				]
+				alignments: [.left, .left]
+			}.wiki()
+			r.result = $tmpl('./templates/employee.md')
+			return r
+		}
+
 		mut period_type_e := spreadsheet.PeriodType.error // year, month, quarter
 		mut unit_e := spreadsheet.UnitType.normal
 		if action.name == 'sheet_wiki' {
@@ -49,7 +75,7 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 		size := p.get_default('size', '')!
 
 		supported_actions := ['graph_pie_row', 'graph_line_row', 'graph_bar_row', 'graph_title_row',
-			'wiki_row_overview']
+			'wiki_row_overview', 'employee_wiki', 'employees_wiki']
 
 		if action.name in supported_actions {
 			rowname := p.get_default('rowname', '')!
@@ -110,9 +136,9 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 				'graph_pie_row' {
 					r.result = model.sheet.wiki_pie_chart(args) or { panic(err) }
 				}
-				// 'wiki_row_overview' {
-				// 	r.result = model.sheet.wiki_row_overview(args) or { panic(err) }
-				// }
+				'wiki_row_overview' {
+					r.result = model.sheet.wiki_row_overview(args) or { panic(err) }
+				}
 				else {
 					panic('unexpected action name ${action.name}')
 				}

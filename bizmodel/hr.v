@@ -17,7 +17,6 @@ import rand
 
 fn (mut m BizModel) hr_actions(actions_ Actions) ! {
 	mut actions2 := actions_.filtersort(actor: 'hr')!
-	println('lets see: ${actions2.map(it.context)}')
 	for action in actions2 {
 		if action.name == 'employee_define' {
 			mut name := action.params.get_default('name', '')!
@@ -97,7 +96,7 @@ fn (mut m BizModel) hr_actions(actions_ Actions) ! {
 				m.sheet.row_delete('tmp3')
 			}
 			employee := Employee{
-				name: name
+				name: if name != '' { name } else { descr }
 				description: descr
 				department: department
 				cost: cost

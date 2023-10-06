@@ -2,12 +2,11 @@ module main
 
 import os
 import freeflowuniverse.crystallib.bizmodel
-import cli { Command }
+import cli { Command, Flag }
 
 // const wikipath = os.dir(@FILE) + '/wiki'
 
 fn do() ! {
-
 	mut cmd := Command{
 		name: 'bizmodel'
 		description: 'Run your bizmodel.'
@@ -18,7 +17,7 @@ fn do() ! {
 		description: 'Run 1 simulation.'
 		usage: 'summary_path -i /data/mybizmodelwiki -o /tmp/outputdir'
 		required_args: 1
-		execute: run
+		execute: run_func
 	}
 
 	run_cmd.add_flag(Flag{
@@ -46,41 +45,34 @@ fn do() ! {
 	})
 
 	cmd.add_command(run_cmd)
-    app.setup()
-    app.parse(os.args)
-
-
-
+	cmd.setup()
+	cmd.parse(os.args)
 }
 
-fn run_cmd(cmd Command) ! {
-
-	inputdir := cmd.flags.get_string('inputdir') or {
-		//TODO: default: use current dir
-		""
-	}	
+fn run_func(cmd Command) ! {
+	inputdir := cmd.flags.get_string('inputdir') or { os.getwd() }
 
 	summarydir := cmd.flags.get_string('summarydir') or {
-		//TODO: default: use current dir, see there is summary.md file
-		""
-	}	
-
-	outputdir := cmd.flags.get_string('outputdir') or {
-		"/tmp/bizmodel/output"
+		dir := os.getwd()
+		if !os.exists('${dir}/summary.md') {
+			return error('Failed to find summary.md in current directory. Try passing directory that hosts summary.md file with the summarydir flag.')
+		}
+		dir
 	}
+
+	outputdir := cmd.flags.get_string('outputdir') or { '/tmp/bizmodel/output' }
 
 	// mut c := context.new()!
 
 	mut book := bizmodel.new(
 		name: 'example'
 		mdbook_name: 'biz_book'
-		mdbook_path: inputdir //TODO: need to make sure we support collections not to be on same place as summary
+		mdbook_path: summarydir // TODO: need to make sure we support collections not to be on same place as summary
 		mdbook_dest: outputdir
-		path: wikipath
+		path: inputdir
 	)!
 
 	book.read()! // will generate and open	
-
 }
 
 fn main() {
