@@ -1,6 +1,5 @@
 module gittools
 
-import os
 import freeflowuniverse.crystallib.sshagent
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.pathlib
@@ -25,13 +24,12 @@ fn (mut addr GitAddr) check() ! {
 	}
 }
 
-
 // return the path on the filesystem pointing to the address (is always a dir)
 pub fn (addr GitAddr) path() !pathlib.Path {
 	provider := texttools.name_fix(addr.provider)
 	name := texttools.name_fix(addr.name)
 	account := texttools.name_fix(addr.account)
-	mut path_string := '${addr.gs.rootpath}/${provider}/${account}/${name}'
+	mut path_string := '${addr.gs.rootpath.path}/${provider}/${account}/${name}'
 	if addr.gs.rootpath.path == '' {
 		panic('cannot be empty')
 	}
@@ -48,7 +46,7 @@ fn (mut addr GitAddr) path_account() pathlib.Path {
 	if addr.gs.rootpath.path == '' {
 		panic('cannot be empty')
 	}
-	path := pathlib.get_dir('${addr.gs.rootpath}/${provider}/${addr.account}', true) or {
+	path := pathlib.get_dir('${addr.gs.rootpath.path}${provider}/${addr.account}', true) or {
 		panic('couldnt get directory')
 	}
 	return path

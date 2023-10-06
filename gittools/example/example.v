@@ -12,10 +12,11 @@ fn do() ! {
 
 	println(gs)
 
-	// url := 'https://github.com/threefoldfoundation/www_examplesite/tree/development/manual'
-	// mut gr := gs.repo_get_from_url(url: url, pull: false, reset: false)!
+	mut gr := gittools.code_get(
+		url: 'https://github.com/despiegk/ourworld_data'
+	)!
 
-	// println(gr)
+	println(gr)
 
 	// this will show the exact path of the manual
 	// println(gr.path_content_get())
