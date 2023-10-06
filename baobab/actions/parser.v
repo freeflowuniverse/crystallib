@@ -1,6 +1,7 @@
 module actions
 
 import os
+import freeflowuniverse.crystallib.markdowndocs
 import freeflowuniverse.crystallib.params
 import freeflowuniverse.crystallib.texttools
 
@@ -26,8 +27,10 @@ mut:
 
 struct Block {
 mut:
-	name    string
-	content string
+	name     string
+	content  string
+	src_path string
+	index    int
 }
 
 // path can be a directory or a file
@@ -69,11 +72,12 @@ fn (mut actions Actions) file_parse(path string) ! {
 		return error("path: '${path}' does not exist, cannot parse.")
 	}
 	content := os.read_file(path) or { return error('Failed to load file ${path}: ${err}') }
-	actions.text_add(content)!
+	blocks := parse_into_blocks(content, path)!
+	actions.parse_actions(blocks)!
 }
 
 fn (mut actions Actions) text_add(content string) ! {
-	blocks := parse_into_blocks(content)!
+	blocks := parse_into_blocks(content, '')!
 	actions.parse_actions(blocks)!
 }
 
@@ -81,12 +85,16 @@ fn (mut actions Actions) text_add(content string) ! {
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 
 // each block is name of action and the full content behind
-fn parse_into_blocks(text string) !Blocks {
+fn parse_into_blocks(text string, path string) !Blocks {
 	mut state := ParseBlockStatus.start
 	mut blocks := Blocks{}
-	mut block := Block{}
+	mut block := Block{
+		src_path: path
+		index: 0
+	}
 	mut pos := 0
 	mut line2 := ''
+	mut block_index := 0
 
 	// no need to process files which are not at least 2 chars
 	for line_ in text.split_into_lines() {
@@ -110,7 +118,11 @@ fn parse_into_blocks(text string) !Blocks {
 				// add found block
 				block.clean()
 				blocks.blocks << block
-				block = Block{} // new block
+				block_index += 1
+				block = Block{
+					src_path: path
+					index: block_index
+				} // new block
 			}
 		}
 		if state == ParseBlockStatus.start {
@@ -151,7 +163,6 @@ fn (mut actions Actions) parse_actions(blocks Blocks) ! {
 // go over block, fill in default circle or actor if needed
 fn (mut actions Actions) parse_block(block Block) ! {
 	params_ := params.parse(block.content) or { return error('Failed to parse block: ${err}') }
-	// println(block)
 
 	mut domain := ''
 	mut circle := ''
@@ -222,5 +233,74 @@ fn (mut actions Actions) parse_block(block Block) ! {
 		actor: actor
 		params: params_
 		priority: u8(prio)
+		context: Context{
+			source_file: block.src_path
+			block_index: block.index
+		}
 	}
+}
+
+[params]
+pub struct ReplaceBlock {
+	new_block Block
+	action    Action
+	context   Context
+}
+
+pub fn replace_block(args ReplaceBlock) ! {
+	mut content := os.read_file(args.context.source_file) or {
+		return error('Failed to load file ${args.context.source_file}: ${err}')
+	}
+	mut blocks := parse_into_blocks(content, args.context.source_file)!
+	// blocks.blocks.delete(args.context.block_index, args.new_block)
+	// blocks.blocks.insert(args.context.block_index, args.new_block)
+
+	mut prev_index := 0
+	for i, block in blocks.blocks {
+		mut start_index := content.index_after(block.name, prev_index + 1) - 2
+		for j in 1 .. i + 1 {
+			start_index = content.index_after('!!${block.name}', start_index + 1)
+		}
+
+		if i < args.context.block_index {
+			continue
+		}
+
+		end_index := content.index_after('\n\n', start_index + 1)
+
+		//! this is flimsy
+		// TODO: find better solution later
+
+		mut new_content := content[..start_index] + '${args.action}'
+		new_content += content[end_index..]
+		prev_index = end_index
+		println('debugzo3: ${new_content}')
+		os.write_file(args.context.source_file, new_content)!
+		content = new_content
+
+		return
+	}
+}
+
+pub struct AddIdToAction {
+	id      string
+	action  Action
+	context Context
+}
+
+pub fn add_id_to_action(args AddIdToAction) ! {
+	mut split := '${args.action}'.split('\n')
+	action_name := split[0]
+	split.insert(1, '\tid: ${args.id}')
+	content := split[0..].join('\n')
+	new_block := Block{
+		name: action_name
+		content: content
+	}
+
+	replace_block(
+		action: args.action
+		context: args.context
+		new_block: new_block
+	)!
 }
