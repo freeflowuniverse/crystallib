@@ -2,6 +2,7 @@ module gittools
 
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.pathlib
+import freeflowuniverse.crystallib.redisclient
 import os
 
 [params]
@@ -18,7 +19,7 @@ fn (mut gitstructure GitStructure) repo_from_path(path string) !&GitRepo {
 
 	// TODO: walk up to find .git in dir, this way we know we found the right path for the repo
 
-	println('GIT ADDR ${path2}')
+	// println('GIT ADDR ${path2}')
 	if !os.exists(os.join_path(path2, '.git')) {
 		return error("path: '${path2}' is not a git dir, missed a .git directory")
 	}
@@ -26,12 +27,30 @@ fn (mut gitstructure GitStructure) repo_from_path(path string) !&GitRepo {
 	if !os.exists(pathconfig) {
 		return error("path: '${path2}' is not a git dir, missed a .git/config file")
 	}
+	mut redis := redisclient.core_get()!
+	mut url:=redis.get('git:cache:${path}:url') or {""}	
+	mut branch:=redis.get('git:cache:${path}:branch') or {""}	
 
-	cmd := 'cd ${path} && git config --get remote.origin.url'
-	url := os.execute_or_panic(cmd).output.trim(' \n')
+	if url==""{
+		cmd := 'cd ${path} && git config --get remote.origin.url'
+		res := os.execute(cmd)
+		if res.exit_code==1{
+			return error("Git doesn have an origin url, maybe gitrepo is corrupt. See ${path2}")
+		} else if res.exit_code==0{
+			url=res.output.trim(' \n')	
+			redis.set('git:cache:${path}:url',url) or {}	
+			redis.expire('git:cache:${path}:url',1800)!
+		}else{
+			return error("Cannot get git config. Cmd was:\n$cmd")
+		}
+	}
 
-	cmd2 := 'cd ${path} && git rev-parse --abbrev-ref HEAD'
-	branch := os.execute_or_panic(cmd2).output.trim(' \n')
+	if branch==""{
+		cmd2 := 'cd ${path} && git rev-parse --abbrev-ref HEAD'
+		branch = os.execute_or_panic(cmd2).output.trim(' \n')
+		redis.set('git:cache:${path}:branch',branch) or {}	
+		redis.expire('git:cache:${path}:branch',1800)!
+	}
 
 	mut locator := gitstructure.locator_new(url)!
 	locator.addr.branch = branch
@@ -107,7 +126,9 @@ pub fn (mut gitstructure GitStructure) repo_exists(l GitLocator) !bool {
 
 // get a list of repo's which are in line to the args
 //
-struct ReposGetArgs {
+[params]
+pub struct ReposGetArgs {
+pub mut:
 	filter   string // if used will only show the repo's which have the filter string inside
 	name     string
 	account  string

@@ -1,30 +1,28 @@
 module ui
+import freeflowuniverse.crystallib.ui.generic {UserInterface,ChannelType}
+import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.params
+// import freeflowuniverse.crystallib.ui.telegram
 
-import freeflowuniverse.crystallib.ui.console { UIConsole }
-import freeflowuniverse.crystallib.ui.telegram { UITelegram }
 
-// need to do this for each type of UI channel e.g. console, telegram, ...
-type UIChannel = UIConsole | UITelegram // TODO TelegramBot
-
-pub struct UserInterface {
+[params]
+pub struct UserInterfaceArgs {
 pub mut:
-	channel UIChannel
-	user_id string
+	channel ChannelType
+	params params.Params //to pass arguments to implementation
 }
 
-enum ChannelType {
-	console
-	telegram
-}
 
-pub fn new(channel_type string, user_id string) !UserInterface {
-	mut channel := match channel_type {
-		'console' { console.new() }
-		'telegram' { telegram.new() }
+pub fn new(args UserInterfaceArgs) !UserInterface {
+	mut ch := match args.channel {
+			.console { console.new() }
+			// .telegram { telegram.new() }
+			else { panic("can't find channel") }
+
 	}
+
 	return UserInterface{
-		channel: channel
-		user_id: user_id
-	}
+			channel: ch
+		}
 	// return error("Channel type not understood, only console supported now.") // input is necessarily valid
 }

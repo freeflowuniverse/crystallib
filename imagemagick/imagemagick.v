@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.params
 import freeflowuniverse.crystallib.osal
 
 fn installed0() bool {
-	println(' - init imagemagick')
+	// println(' - init imagemagick')
 	out := osal.execute_silent('convert -version') or { return false }
 	if !out.contains('ImageMagick') {
 		return false

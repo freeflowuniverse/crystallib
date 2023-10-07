@@ -26,7 +26,7 @@ mut:
 
 struct Block {
 mut:
-	name    string
+	name    string  //actionname
 	content string
 }
 

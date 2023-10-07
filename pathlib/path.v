@@ -124,6 +124,6 @@ pub fn (mut path Path) path_get_name_with_underscore() string {
 	}
 }
 
-// pub fn (mut path Path) str() string {
-// 	return 'path: $path.path'
+// pub fn (mut p Path) str() string {
+// 	return 'path: $p.path'
 // }

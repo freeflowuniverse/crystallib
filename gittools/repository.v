@@ -7,9 +7,9 @@ import freeflowuniverse.crystallib.pathlib
 
 [heap]
 pub struct GitRepo {
-	id int [skip]
+	id int
 mut:
-	gs &GitStructure [str: skip]
+	gs &GitStructure [skip; str: skip] 
 pub mut:
 	state GitStatus
 	addr  GitAddr

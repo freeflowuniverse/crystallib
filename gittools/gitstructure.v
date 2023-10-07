@@ -1,8 +1,9 @@
 module gittools
-
+import freeflowuniverse.crystallib.redisclient
 import os
 import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.texttools
+import json
 
 __global (
 	instances shared map[string]GitStructure
@@ -32,6 +33,7 @@ pub struct GitStructureConfig {
 	root        string // where will the code be checked out
 	light       bool = true // if set then will clone only last history for all branches		
 	log         bool   // means we log the git statements
+	cachereset  bool
 }
 
 // get new gitstructure .
@@ -43,6 +45,15 @@ pub fn new(config_ GitStructureConfig) !GitStructure {
 		return error('need to provide name for gitstructure')
 	}
 
+	if config_.cachereset{
+		mut redis := redisclient.core_get()!
+		key_check := 'git:cache:*'
+		keys := redis.keys(key_check)!
+		for key in keys {
+			// println(key)
+			redis.del(key)!
+		}
+	}
 	// TODO: document env overwriting
 	root := if 'DIR_CODE' in os.environ() {
 		os.environ()['DIR_CODE'] + '/'
@@ -79,33 +90,41 @@ pub fn new(config_ GitStructureConfig) !GitStructure {
 
 [params]
 pub struct GitStructureGetArgs {
+pub mut:
 	name   string
+	coderoot string
 	create bool // if true, will create a gitstructure
 }
 
 pub fn get(args_ GitStructureGetArgs) ?GitStructure {
-	name := if args_.name == '' {
-		'default'
-	} else {
-		args_.name
+	mut args:=args_
+	if args.name==""{
+		args.name="default"
 	}
+	if args.coderoot.len>0{
+		for key,i in instances{
+			//TODO: more defensive
+			if i.rootpath.path==args.coderoot{
+				rlock instances {
+					return instances[key]
+				}
+			}
+		}
+		return none
 
-	args := GitStructureGetArgs{
-		...args_
-		name: name
 	}
-
 	if args.name in instances {
 		rlock instances {
 			return instances[args.name]
 		}
 	}
+
 	return none
 }
 
 pub struct CodeGetFromUrlArgs {
 pub mut:
-	gitstructure_name string // optional, if not mentioned is default
+	gitstructure_name string = "default"// optional, if not mentioned is default
 	url               string
 	branch            string
 	pull              bool   // will pull if this is set
@@ -129,20 +148,7 @@ pub fn code_get(args CodeGetFromUrlArgs) !string {
 	mut locator := gs.locator_new(args.url)!
 	mut repo := gs.repo_get(locator: locator)!
 	repo.check(pull: args.pull, reset: args.reset)!
-	// TODO: figure out
-	return locator.path
+	s:=locator.path_on_fs()!
+	return s.path
 }
 
-pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) {
-	mut r := [][]string{}
-	for g in gitstructure.repos_get(args) {
-		changed := g.changes() or { panic('issue in repo changes. ${err}') }
-		pr := g.path_relative()
-		if changed {
-			r << ['- ${pr}', '${g.addr.branch}', 'CHANGED']
-		} else {
-			r << ['- ${pr}', '${g.addr.branch}', '']
-		}
-	}
-	texttools.print_array2(r, '  ', true)
-}

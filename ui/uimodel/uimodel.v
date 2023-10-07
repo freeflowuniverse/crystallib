@@ -3,6 +3,7 @@ module uimodel
 [params]
 pub struct DropDownArgs {
 pub mut:
+	description string
 	question   string // WARNING, this was changed to be question
 	items      []string
 	warning    string
@@ -11,9 +12,9 @@ pub mut:
 	validation fn (string) bool = fn (s string) bool {
 		return true
 	}
-	// ? Is this valid?
 }
 
+[params]
 pub struct QuestionArgs {
 pub mut:
 	description string
@@ -30,6 +31,7 @@ pub mut:
 
 // validation responds with either true or an error message
 
+[params]
 pub struct YesNoArgs {
 pub mut:
 	description string
