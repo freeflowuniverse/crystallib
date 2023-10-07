@@ -26,7 +26,7 @@ pub fn cmd_git_actions(mut cmdroot Command){
 		name: 'git_do'
 		description: 'Work with your repos, list, commit, pull, reset, ...'
 		required_args: 0
-		usage:'url_of_git_repo'
+		usage:''
 		execute: cmd_gitactions_execute
 	}
 
@@ -166,16 +166,13 @@ pub fn cmd_git_actions(mut cmdroot Command){
 fn cmd_gitactions_execute(cmd Command) ! {
 	coderoot:=cmd.flags.get_string('coderoot') or {""}	
 	
-	if cmd.flags.get_bool('cachereset') or {false}{
-		gittools.cachereset()!
-	}
-
 	mut gs := gittools.get(root:coderoot,create:true) or {return error("Could not find gittools on '${coderoot}'\n$err")}
 
 	mut repo:=cmd.flags.get_string('repo') or {""}
 	mut account:=cmd.flags.get_string('account') or {""}
 	mut provider:=cmd.flags.get_string('provider') or {""}
-	if repo=="" && account=="" && provider==""{
+	mut filter:=cmd.flags.get_string('filter') or {""}
+	if repo=="" && account=="" && provider==""&& filter==""{
 		curdir:=os.getwd()
 		if os.exists("${curdir}/.git"){
 			//we are in current directory
@@ -200,6 +197,7 @@ fn cmd_gitactions_execute(cmd Command) ! {
 			commitpullpush:cmd.flags.get_bool('commitpullpush') or {false}
 			delete:cmd.flags.get_bool('delete') or {false}
 			script:cmd.flags.get_bool('script') or {false}
+			cachereset:cmd.flags.get_bool('cachereset') or {false}
 		)!
 
 	editor:=cmd.flags.get_bool('editor') or {false}

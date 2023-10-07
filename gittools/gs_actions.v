@@ -49,7 +49,8 @@ pub mut:
 	commitpullpush bool
 	msg string
 	delete bool //remove the repo
-	script bool = true //run non interactive
+	script bool = true //run non interactiv
+	cachereset bool
 }
 
 
@@ -73,6 +74,16 @@ pub fn (mut gs GitStructure) actions(args_ ReposActionsArgs)! {
 
 	mut ui := gui.new()!
 
+	for g in gs.repos_get(
+			filter:args.filter
+			name:args.repo
+			account:args.account
+			provider:args.provider		
+		) {
+			if args.cachereset{
+				g.refresh(reload:true)!
+			}
+		}
 
 	if args.print{
 		gs.repos_print(
@@ -92,7 +103,6 @@ pub fn (mut gs GitStructure) actions(args_ ReposActionsArgs)! {
 			account:args.account
 			provider:args.provider		
 		) {
-			
 			if g.needcommit()!{
 				need_commit=true
 			}
