@@ -43,11 +43,7 @@ pub fn get_dir(path string, create bool) !Path {
 		if !p2.is_dir() {
 			return error('Path ${path} is not a dir.')
 		}
-	} else {
-		if p2.exist == .no {
-			return error('dir ${path} does not exist, it should.')
-		}
-	}
+	} 
 	return p2
 }
 

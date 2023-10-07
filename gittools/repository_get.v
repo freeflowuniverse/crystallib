@@ -34,6 +34,9 @@ mut:
 
 //load the info from dis
 fn repo_disk_status(args DiskStatusArgs) !DiskStatus {
+	if args.path.len<3{
+		return error("path cannot be smaller than 3.\n$args")
+	}
 	pre:='git:cache:${args.path}'
 	path:=args.path
 	mut redis := redisclient.core_get()!
@@ -87,6 +90,11 @@ fn repo_disk_status_delete(args DiskStatusArgs) ! {
 
 // returns the git address starting from path
 pub fn (mut gitstructure GitStructure) repo_from_path(path string) !&GitRepo {
+
+	if path.len<3{
+		panic("path cannot be <3.\n$path")
+	}
+
 	mut path2 := path.replace('~', os.home_dir())
 
 	// TODO: walk up to find .git in dir, this way we know we found the right path for the repo
