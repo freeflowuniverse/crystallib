@@ -21,7 +21,7 @@ fn (mut gitstructure GitStructure) repo_from_path(path string) !&GitRepo {
 
 	// println('GIT ADDR ${path2}')
 	if !os.exists(os.join_path(path2, '.git')) {
-		return error("path: '${path2}' is not a git dir, missed a .git directory")
+		return error("failed to get repo from path: '${path2}' is not a git dir, missed a .git directory")
 	}
 	pathconfig := os.join_path(path2, '.git', 'config')
 	if !os.exists(pathconfig) {
@@ -80,8 +80,6 @@ fn (mut gitstructure GitStructure) repo_from_path(path string) !&GitRepo {
 		gs: &gitstructure
 		addr: *locator.addr
 	}
-	// QUESTION: is this necessary? causes double counting in loading
-	// gitstructure.repos << &gitrepo
 	return &gitrepo
 }
 
@@ -92,10 +90,17 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !&GitRepo {
 	args.pull = args_.reset || args_.pull
 
 	p := args.locator.addr.path()!
-	mut r := gitstructure.repo_from_path(p.path)!
-	if args.pull {
-		r.check(pull: args.pull, reset: args.reset)!
+
+	mut r := if gitstructure.repo_exists(args.locator)! {
+		gitstructure.repo_from_path(p.path)!
+	} else {
+		// if repo doesn't exist, create new repo from address in locator
+		&GitRepo{
+			gs: &gitstructure
+			addr: args.locator.addr
+		}
 	}
+	r.check(pull: args.pull, reset: args.reset)!
 	return r
 }
 

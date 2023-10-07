@@ -24,7 +24,7 @@ fn (mut repo GitRepo) connection_change(http bool) !bool {
 
 	pathconfig := os.join_path(path2, '.git', 'config')
 	if !os.exists(pathconfig) {
-		return error("path: '${path2}' is not a git dir, missed a .git/config file. Could not change git to ssh repo.")
+		return error("connection change failed, path: '${path2}' is not a git dir, missed a .git/config file. Could not change git to ssh repo.")
 	}
 	content := os.read_file(pathconfig) or {
 		return error('Failed to load config ${pathconfig} for sshconfig')

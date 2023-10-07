@@ -5,7 +5,9 @@ struct Code {
 }
 
 pub fn new(items []ICodeItem) Code {
-	return Code{items:items}
+	return Code{
+		items: items
+	}
 }
 
 interface ICodeItem {
@@ -24,20 +26,21 @@ pub fn (import_ Import) vgen() string {
 
 // vgen_function generates a function statement for a function
 pub fn (function Function) vgen() string {
-	params_ := function.params.map(
-		Param{
-			...it
-			typ: Type{symbol:it.struct_.name}
+	params_ := function.params.map(Param{
+		...it
+		typ: Type{
+			symbol: it.struct_.name
 		}
-	)
+	})
 	params := params_.map('${it.name} ${it.typ.symbol}').join(', ')
-	
+
 	// TODO: fix and tidy
-	receiver_ := Param{...function.receiver
-		typ: Type{symbol:function.receiver.struct_.name}
+	receiver_ := Param{
+		...function.receiver
+		typ: Type{
+			symbol: function.receiver.struct_.name
+		}
 	}
-
-
 
 	receiver := if function.receiver.name != '' {
 		mut_ := if function.receiver.mutable { 'mut ' } else { '' }
@@ -56,6 +59,6 @@ pub fn (struct_ Struct) vgen() string {
 
 // vgen_function generates a function statement for a function
 pub fn (result Result) vgen() string {
-	str := if result.result {'!'} else {''}
+	str := if result.result { '!' } else { '' }
 	return str
 }

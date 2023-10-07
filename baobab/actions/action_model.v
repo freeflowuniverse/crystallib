@@ -11,6 +11,17 @@ pub mut:
 	circle   string        [required]
 	priority u8 = 10 // 0 is highest, do 10 as default
 	params   params.Params
+	context  Context // pointer to index of item in doc
+}
+
+pub struct Context {
+	source_file string // path of file where action is declared in
+	block_index int    // index of action block within source_file
+}
+
+pub struct DocPointer {
+	doc_path   string
+	item_index int
 }
 
 pub struct Actions {

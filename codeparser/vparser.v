@@ -368,7 +368,11 @@ fn (vparser VParser) parse_fields(fields []ast.StructField, table &ast.Table) []
 
 		description := field.comments.map(it.text.trim_string_left('\u0001').trim_space()).join(' ')
 		fields_ << StructField{
-			attrs: field.attrs.map(codemodel.Attribute{name: it.name, has_arg: it.has_arg, arg: it.arg })
+			attrs: field.attrs.map(codemodel.Attribute{
+				name: it.name
+				has_arg: it.has_arg
+				arg: it.arg
+			})
 			name: field.name
 			anon_struct: anon_struct
 			description: description

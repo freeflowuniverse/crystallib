@@ -1,5 +1,7 @@
 module spreadsheet
 
+import freeflowuniverse.crystallib.markdowndocs
+
 pub fn (mut s Sheet) wiki_title_chart(args RowGetArgs) string {
 	if args.title.len > 0 {
 		titletxt := "
@@ -12,6 +14,15 @@ pub fn (mut s Sheet) wiki_title_chart(args RowGetArgs) string {
 		return titletxt
 	}
 	return ''
+}
+
+pub fn (mut s Sheet) wiki_row_overview(args RowGetArgs) !string {
+	table := markdowndocs.Table{
+		header: ['Row Name', 'Description', 'Tags']
+		rows: s.rows.values().map([it.name, it.description, it.tags])
+		alignments: [.left, .left, .left]
+	}
+	return table.wiki()
 }
 
 // produce a nice looking bar chart see

@@ -2,6 +2,9 @@ module bizmodel
 
 import freeflowuniverse.crystallib.baobab.actions { Actions }
 import freeflowuniverse.crystallib.texttools
+import freeflowuniverse.crystallib.params
+import freeflowuniverse.crystallib.pathlib
+import rand
 
 // populate the params for hr
 // !!hr.employee_define
@@ -14,6 +17,7 @@ import freeflowuniverse.crystallib.texttools
 
 fn (mut m BizModel) hr_actions(actions_ Actions) ! {
 	mut actions2 := actions_.filtersort(actor: 'hr')!
+	println('lets see: ${actions2.map(it.context)}')
 	for action in actions2 {
 		if action.name == 'employee_define' {
 			mut name := action.params.get_default('name', '')!
@@ -38,6 +42,8 @@ fn (mut m BizModel) hr_actions(actions_ Actions) ! {
 			nrpeople := action.params.get_default('nrpeople', '1')!
 
 			indexation := action.params.get_percentage_default('indexation', '0%')!
+
+			cost_center := action.params.get_default('costcenter', 'default_costcenter')!
 
 			// // cost per person
 			// namecostperson := 'nr_${name}'
@@ -90,6 +96,40 @@ fn (mut m BizModel) hr_actions(actions_ Actions) ! {
 				)!
 				m.sheet.row_delete('tmp3')
 			}
+			employee := Employee{
+				name: name
+				description: descr
+				department: department
+				cost: cost
+				cost_percent_revenue: cost_percent_revenue
+				nrpeople: nrpeople
+				indexation: indexation
+				cost_center: cost_center
+			}
+			// todo: use existing id gen
+
+			mut id := action.params.get_default('id', '')!
+			if id == '' {
+				id = rand.string(3)
+				for (id in m.employees) {
+					id = rand.string(3)
+				}
+				// todo: make update action instead
+				mut new_action := actions.Action{
+					...action
+				}
+				new_action.params.params << params.Param{
+					key: 'id'
+					value: id
+				}
+				actions.add_id_to_action(
+					id: id
+					action: new_action
+					context: action.context
+				)!
+			}
+
+			m.employees[id] = &employee
 		}
 	}
 
