@@ -451,7 +451,7 @@ pub fn (mut book MDBook) export() ! {
 		if item.path.ends_with('.css') {
 			logger.info('Writing css files into MDBook')
 			css_name := item.path.all_after_last('/')
-			osal.file_write('${html_path}/css/${css_name}', item.to_string())!
+			osal.file_write('${html_path.trim_right('/')}/css/${css_name}', item.to_string())!
 		}
 	}
 
