@@ -2,6 +2,9 @@ module gittools
 
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.pathlib
+import freeflowuniverse.crystallib.redisclient
+import freeflowuniverse.crystallib.osal
+
 import os
 
 [params]
@@ -12,13 +15,83 @@ pub mut:
 	reset   bool // if we want to force a clean repo
 }
 
+
+[params]
+struct DiskStatusArgs{
+pub mut:
+	path string
+	reload bool
+	reload_status bool
+}
+
+
+struct DiskStatus{
+mut:
+	branch string
+	url string 
+	status string
+}
+
+//load the info from dis
+fn repo_disk_status(args DiskStatusArgs) !DiskStatus {
+	pre:='git:cache:${args.path}'
+	path:=args.path
+	mut redis := redisclient.core_get()!
+	mut ds:= DiskStatus	{
+		url:redis.get('${pre}:url') or {""}	
+		branch:redis.get('${pre}:branch') or {""}
+		status:redis.get('${pre}:status') or {""}
+	}
+
+	if args.reload || ds.url==""{
+		cmd := 'cd ${path} && git config --get remote.origin.url'
+		ds.url=osal.execute_silent(cmd) or {
+			return error('Cannot get remote origin url: ${path}. Error was ${err}')
+		}		
+		ds.url=ds.url.trim(' \n')
+		redis.set('${pre}:url',ds.url) or {}	
+		redis.expire('${pre}:url',3600*20)!
+	}
+
+	if args.reload || ds.branch==""{
+		cmd2 := 'cd ${path} && git rev-parse --abbrev-ref HEAD'
+		ds.branch=osal.execute_silent(cmd2) or {
+			return error('Cannot get branch: ${path}. Error was ${err}')
+		}	
+		ds.branch=ds.branch.trim(' \n')
+		redis.set('${pre}:branch',ds.branch) or {}	
+		redis.expire('${pre}:branch',3600*20)!
+	}
+
+	if args.reload || args.reload_status ||  ds.status==""{
+		println(" - get status for: ${path}")
+		cmd3 := 'cd ${path} &&  git status'
+		ds.status=osal.execute_silent(cmd3) or {
+			return error('Cannot get status for repo: ${path}. Error was ${err}')
+		}		
+		redis.set('${pre}:status',ds.status) or {}	
+		redis.expire('${pre}:status',3600*20)!
+	}
+
+	return ds
+}
+
+fn repo_disk_status_delete(args DiskStatusArgs) ! {
+	pre:='git:cache:${args.path}:*'
+	mut redis := redisclient.core_get()!
+		keys := redis.keys(pre)!
+		for key in keys {
+			redis.del(key)!
+		}
+}
+
 // returns the git address starting from path
-fn (mut gitstructure GitStructure) repo_from_path(path string) !&GitRepo {
+pub fn (mut gitstructure GitStructure) repo_from_path(path string) !&GitRepo {
 	mut path2 := path.replace('~', os.home_dir())
 
 	// TODO: walk up to find .git in dir, this way we know we found the right path for the repo
 
-	println('GIT ADDR ${path2}')
+	// println('GIT ADDR ${path2}')
 	if !os.exists(os.join_path(path2, '.git')) {
 		return error("failed to get repo from path: '${path2}' is not a git dir, missed a .git directory")
 	}
@@ -27,14 +100,10 @@ fn (mut gitstructure GitStructure) repo_from_path(path string) !&GitRepo {
 		return error("path: '${path2}' is not a git dir, missed a .git/config file")
 	}
 
-	cmd := 'cd ${path} && git config --get remote.origin.url'
-	url := os.execute_or_panic(cmd).output.trim(' \n')
+	ds:=repo_disk_status(path:path2)!
 
-	cmd2 := 'cd ${path} && git rev-parse --abbrev-ref HEAD'
-	branch := os.execute_or_panic(cmd2).output.trim(' \n')
-
-	mut locator := gitstructure.locator_new(url)!
-	locator.addr.branch = branch
+	mut locator := gitstructure.locator_new(ds.url)!
+	locator.addr.branch = ds.branch
 
 	mut repos := gitstructure.repos_get(
 		provider: locator.addr.provider
@@ -81,7 +150,6 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !&GitRepo {
 			addr: args.locator.addr
 		}
 	}
-	r.check(pull: args.pull, reset: args.reset)!
 	return r
 }
 
@@ -112,13 +180,13 @@ pub fn (mut gitstructure GitStructure) repo_exists(l GitLocator) !bool {
 
 // get a list of repo's which are in line to the args
 //
-struct ReposGetArgs {
+[params]
+pub struct ReposGetArgs {
+pub mut:
 	filter   string // if used will only show the repo's which have the filter string inside
 	name     string
 	account  string
 	provider string
-	pull     bool // means when getting new repo will pull even when repo is already there
-	reset    bool // means we will force a pull and reset old content	
 }
 
 pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []&GitRepo {
@@ -128,13 +196,15 @@ pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []&GitRepo 
 		account: texttools.name_fix(args_.account)
 	}
 	mut res := []&GitRepo{}
+	// println(args)
 	for r in gitstructure.repos {
 		relpath := r.path_relative()
 		if args.filter != '' {
 			if relpath.contains(args.filter) {
-				// println("$g.name()")
+				// println("MATCH: $args.filter")
 				res << r
 			}
+			continue
 		}
 		if args.name.len > 0 && args.name != r.addr.name {
 			continue // means no match
@@ -148,12 +218,6 @@ pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []&GitRepo 
 		res << r
 	}
 
-	// pull found repos if pull arg
-	for mut r in res {
-		if args.pull {
-			r.check(pull: args.pull, reset: args.reset) or { panic('failed to check repo ${err}') }
-		}
-	}
 	return res
 }
 

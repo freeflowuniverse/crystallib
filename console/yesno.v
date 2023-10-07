@@ -2,6 +2,7 @@ module console
 
 import os
 
+[params]
 pub struct YesNoArgs {
 pub mut:
 	description string

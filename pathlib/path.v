@@ -41,6 +41,10 @@ pub fn (path Path) realpath() string {
 	return p2
 }
 
+pub fn (path Path) shortpath() string {
+	return path.realpath().replace(os.home_dir(),'~' )
+}
+
 // check the inside of pathobject, is like an init function
 pub fn (mut path Path) check() {
 	if os.exists(path.path) {
@@ -124,6 +128,6 @@ pub fn (mut path Path) path_get_name_with_underscore() string {
 	}
 }
 
-// pub fn (mut path Path) str() string {
-// 	return 'path: $path.path'
+// pub fn (mut p Path) str() string {
+// 	return 'path: $p.path'
 // }

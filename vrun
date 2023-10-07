@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# The script's purpose is to act as a wrapper for the `echo` command
+# The script's purpose is to act as a wrapper for the `v` command
 
 # Check if no arguments are provided
 if [[ $# -eq 0 ]]; then
@@ -8,7 +8,7 @@ if [[ $# -eq 0 ]]; then
     exit 1
 fi
 
-# Pass all arguments to the echo command
+# Pass all arguments to the v command
 v -cg -enable-globals run $@
 
 

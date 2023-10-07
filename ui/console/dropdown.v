@@ -10,7 +10,7 @@ import os
 // 	items       []string
 // 	warning     string
 // 	clear       bool = true
-pub fn (mut c UIConsole) ask_dropdown_int(args DropDownArgs) int {
+pub fn (mut c UIConsole) ask_dropdown(args DropDownArgs) int {
 	if args.clear {
 		clear() // clears the screen
 	}
@@ -40,7 +40,7 @@ pub fn (mut c UIConsole) ask_dropdown_int(args DropDownArgs) int {
 		return 999999
 	}
 	if !texttools.is_int(choice) {
-		return c.ask_dropdown_int(
+		return c.ask_dropdown(
 			clear: true
 			description: args.description
 			all: args.all
@@ -50,7 +50,7 @@ pub fn (mut c UIConsole) ask_dropdown_int(args DropDownArgs) int {
 	}
 	choice_int := choice.int()
 	if choice_int < 1 || choice_int > nr {
-		return c.ask_dropdown_int(
+		return c.ask_dropdown(
 			clear: true
 			description: args.description
 			all: args.all
@@ -67,7 +67,7 @@ pub fn (mut c UIConsole) ask_dropdown_int(args DropDownArgs) int {
 // 	warning     string
 // 	clear       bool = true
 pub fn (mut c UIConsole) ask_dropdown_multiple(args DropDownArgs) []string {
-	res := c.ask_dropdown_int(
+	res := c.ask_dropdown(
 		clear: args.clear
 		description: args.description
 		all: args.all
@@ -87,7 +87,7 @@ pub fn (mut c UIConsole) ask_dropdown_multiple(args DropDownArgs) []string {
 // 	warning     string
 // 	clear       bool = true
 pub fn (mut c UIConsole) ask_dropdown_string(args DropDownArgs) string {
-	res := c.ask_dropdown_int(
+	res := c.ask_dropdown(
 		clear: args.clear
 		description: args.description
 		all: args.all

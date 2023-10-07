@@ -1,8 +1,7 @@
 module gittools
-
+import freeflowuniverse.crystallib.redisclient
 import os
 import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.texttools
 
 __global (
 	instances shared map[string]GitStructure
@@ -27,11 +26,23 @@ pub enum GitStructureStatus {
 
 [params]
 pub struct GitStructureConfig {
+pub mut:
 	name        string = 'default'
 	multibranch bool
 	root        string // where will the code be checked out
 	light       bool = true // if set then will clone only last history for all branches		
 	log         bool   // means we log the git statements
+	cachereset  bool
+}
+
+pub fn cachereset()!{
+	mut redis := redisclient.core_get()!
+	key_check := 'git:cache:*'
+	keys := redis.keys(key_check)!
+	for key in keys {
+		// println(key)
+		redis.del(key)!
+	}	
 }
 
 // get new gitstructure .
@@ -43,6 +54,9 @@ pub fn new(config_ GitStructureConfig) !GitStructure {
 		return error('need to provide name for gitstructure')
 	}
 
+	if config_.cachereset{
+		cachereset()!
+	}
 	// TODO: document env overwriting
 	root := if 'DIR_CODE' in os.environ() {
 		os.environ()['DIR_CODE'] + '/'
@@ -79,33 +93,46 @@ pub fn new(config_ GitStructureConfig) !GitStructure {
 
 [params]
 pub struct GitStructureGetArgs {
+pub mut:
 	name   string
+	root string
 	create bool // if true, will create a gitstructure
 }
 
-pub fn get(args_ GitStructureGetArgs) ?GitStructure {
-	name := if args_.name == '' {
-		'default'
-	} else {
-		args_.name
+pub fn get(args_ GitStructureGetArgs) !GitStructure {
+	mut args:=args_
+	if args.name==""{
+		args.name="default"
 	}
+	if args.root.len>0{
+		for key,i in instances{
+			//TODO: more defensive
+			if i.rootpath.path==args.root{
+				rlock instances {
+					return instances[key]
+				}
+			}
+		}
+		if args.create{
+			return new(name:args.name,root:args.root)!
+		}
+		return error("cannot find gitstructure with args.\n$args")
 
-	args := GitStructureGetArgs{
-		...args_
-		name: name
 	}
-
 	if args.name in instances {
 		rlock instances {
 			return instances[args.name]
 		}
 	}
-	return none
+	if args.create{
+		return new(name:args.name,root:args.root)!
+	}
+	return error("cannot find gitstructure with args.\n$args")
 }
 
 pub struct CodeGetFromUrlArgs {
 pub mut:
-	gitstructure_name string // optional, if not mentioned is default
+	gitstructure_name string = "default"// optional, if not mentioned is default
 	url               string
 	branch            string
 	pull              bool   // will pull if this is set
@@ -125,24 +152,11 @@ pub mut:
 // https://github.com/threefoldtech/tfgrid-sdk-ts/tree/development/docs
 // ```
 pub fn code_get(args CodeGetFromUrlArgs) !string {
-	mut gs := get(name: args.gitstructure_name) or { new(name: args.gitstructure_name)! }
+	mut gs := get(name: args.gitstructure_name,create:true,root:args.root)!
 	mut locator := gs.locator_new(args.url)!
 	mut repo := gs.repo_get(locator: locator)!
-	repo.check(pull: args.pull, reset: args.reset)!
-	// TODO: figure out
-	return locator.path
+	repo.checkinit(pull: args.pull, reset: args.reset)!
+	s:=locator.path_on_fs()!
+	return s.path
 }
 
-pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) {
-	mut r := [][]string{}
-	for g in gitstructure.repos_get(args) {
-		changed := g.changes() or { panic('issue in repo changes. ${err}') }
-		pr := g.path_relative()
-		if changed {
-			r << ['- ${pr}', '${g.addr.branch}', 'CHANGED']
-		} else {
-			r << ['- ${pr}', '${g.addr.branch}', '']
-		}
-	}
-	texttools.print_array2(r, '  ', true)
-}

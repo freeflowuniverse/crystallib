@@ -8,13 +8,14 @@ import freeflowuniverse.crystallib.pathlib
 // can be translated to location on filesystem
 // can be translated to url of the git repository online
 pub struct GitAddr {
-	gs &GitStructure
+	gs &GitStructure [skip; str: skip] 
 pub mut:
 	// root string
 	provider string
 	account  string
 	name     string // is the name of the repository
 	branch   string
+	url string
 }
 
 // internal function to check git address
@@ -23,6 +24,7 @@ fn (mut addr GitAddr) check() ! {
 		addr.provider = 'github'
 	}
 }
+
 
 // return the path on the filesystem pointing to the address (is always a dir)
 pub fn (addr GitAddr) path() !pathlib.Path {
@@ -36,17 +38,17 @@ pub fn (addr GitAddr) path() !pathlib.Path {
 	if addr.gs.config.multibranch {
 		path_string += '/${addr.branch}'
 	}
-	path := pathlib.get_dir(path_string, true)!
+	path := pathlib.get_dir(path_string, false)!
 	return path
 }
 
-fn (mut addr GitAddr) path_account() pathlib.Path {
+fn ( addr GitAddr) path_account() pathlib.Path {
 	mut provider := ''
 	// addr := repo.addr
 	if addr.gs.rootpath.path == '' {
 		panic('cannot be empty')
 	}
-	path := pathlib.get_dir('${addr.gs.rootpath.path}${provider}/${addr.account}', true) or {
+	path := pathlib.get_dir('${addr.gs.rootpath.path}/${provider}/${addr.account}', true) or {
 		panic('couldnt get directory')
 	}
 	return path

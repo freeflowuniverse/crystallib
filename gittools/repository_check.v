@@ -11,9 +11,11 @@ pub mut:
 }
 
 // this is the main git functionality to get git repo, update, reset, ...
-fn (mut repo GitRepo) check(args_ CheckArgs) ! {
+fn (mut repo GitRepo) checkinit(args_ CheckArgs) ! {
 	mut args := args_
 	args.pull = args.pull || args.reset
+
+	repo.refresh(reload:args.reset)!
 
 	url := repo.addr.url_http_with_branch_get()
 	// println(' - check repo:$url, pull:$args.pull, reset:$args.reset')
@@ -84,10 +86,7 @@ fn (mut repo GitRepo) check(args_ CheckArgs) ! {
 			repo.state = GitStatus.ok
 			return
 		} else {
-			// branch not known, need to load
-			cmd2 := 'cd ${repo.path} && git rev-parse --abbrev-ref HEAD'
-			branch := osal.execute_silent(cmd2)!.trim(' \n')
-			repo.addr.branch = branch
+			return error("branch should have been known for ${repo}")
 		}
 
 		if args.pull {
@@ -99,7 +98,7 @@ fn (mut repo GitRepo) check(args_ CheckArgs) ! {
 	return
 }
 
-fn (mut repo GitRepo) get_clone_cmd(http bool) string {
+fn ( repo GitRepo) get_clone_cmd(http bool) string {
 	url := repo.url_get(http)
 	mut cmd := ''
 
@@ -113,9 +112,5 @@ fn (mut repo GitRepo) get_clone_cmd(http bool) string {
 	if repo.addr.branch != '' {
 		cmd += ' -b ${repo.addr.branch}'
 	}
-	// QUESTION: no more depth?
-	// if repo.addr.depth != 0 {
-	// 	cmd += ' --depth=${repo.addr.depth}'
-	// }
 	return cmd
 }
