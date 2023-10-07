@@ -1,6 +1,7 @@
 module mycmds
 
 import freeflowuniverse.crystallib.gittools
+import freeflowuniverse.crystallib.osal
 import cli { Command,Flag }
 
 // const wikipath = os.dir(@FILE) + '/wiki'
@@ -23,7 +24,7 @@ import cli { Command,Flag }
 pub fn cmd_git_actions(mut cmdroot Command){
 	mut cmd_run := Command{
 		name: 'git_do'
-		description: 'List all the repos and their status, you can also use this to commit, pull, push or reset'
+		description: 'Work with your repos, list, commit, pull, reset, ...'
 		required_args: 0
 		usage:'url_of_git_repo'
 		execute: cmd_gitactions_execute
@@ -142,6 +143,22 @@ pub fn cmd_git_actions(mut cmdroot Command){
 		description: 'reset the cache of the repos, they are kept for 24h'
 	})
 
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'sourcetree'
+		abbrev: 'ui'
+		description: 'Open sourcetree on found repos, will do for max 5.'
+	})
+
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'editor'
+		abbrev: 'code'
+		description: 'Open visual studio code on found repos, will do for max 5.'
+	})
+
 
 	cmdroot.add_command(cmd_run)		
 }
@@ -167,4 +184,34 @@ fn cmd_gitactions_execute(cmd Command) ! {
 			delete:cmd.flags.get_bool('delete') or {false}
 			script:cmd.flags.get_bool('script') or {false}
 		)!
+
+	editor:=cmd.flags.get_bool('editor') or {false}
+	sourcetree:=cmd.flags.get_bool('sourcetree') or {false}
+	if sourcetree || editor{
+		repos:=gs.repos_get(
+				filter:cmd.flags.get_string('filter') or {""}
+				name:cmd.flags.get_string('repo') or {""}
+				account:cmd.flags.get_string('account') or {""}
+				provider:cmd.flags.get_string('provider') or {""}	
+			) 
+		if repos.len>5{
+			return error("Can only open sourcetree or code editor for max 5 repo's")
+		}
+		for r in repos{
+			if editor{
+				cmd3:="open -a \"Visual Studio Code\" ${r.path.path}"
+				osal.execute_interactive(cmd3) or {
+					panic(err)
+				}			
+			}
+			if sourcetree{
+				cmd4:='open -a SourceTree ${r.path.path}'
+				println(cmd4)
+				osal.execute_interactive(cmd4) or {
+					panic(err)
+				}			
+			}			
+		}	
+			
+	}
 }

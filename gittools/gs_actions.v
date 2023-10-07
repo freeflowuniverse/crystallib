@@ -9,7 +9,7 @@ pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) {
 		need_commit := g.needcommit() or { panic('issue in repo need_commit. ${err}') }
 		need_pull := g.needpull() or { panic('issue in repo need_pull. ${err}') }
 		need_push := g.needpush() or { panic('issue in repo need_push. ${err}') }
-		pr := g.path_relative()
+		pr := g.path.shortpath()
 		mut s:=""
 		if need_commit{
 			s+="COMMIT,"
@@ -203,4 +203,6 @@ pub fn (mut gs GitStructure) actions(args_ ReposActionsArgs)! {
 			)
 		}		
 	} 
+
+
 }

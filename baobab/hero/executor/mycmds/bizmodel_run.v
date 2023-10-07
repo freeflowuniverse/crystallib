@@ -8,8 +8,8 @@ import cli { Command,Flag }
 
 pub fn cmd_run_config(mut cmdroot Command){
 	mut cmd_run := Command{
-		name: 'run'
-		description: 'Run 1 simulation.'
+		name: 'bizmodel'
+		description: 'Run a bizmodel simulation.'
 		usage: '-s ~/mymodels/greenworld/mybook -i ~/mymodels/greenworld/wiki  -o /tmp/outputdir'
 		required_args: 0
 		execute: cmd_run_execute

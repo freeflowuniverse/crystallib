@@ -8,8 +8,8 @@ import mycmds
 fn do() ! {
 
 	mut cmd := Command{
-		name: 'bizmodel'
-		description: 'Bizmodel Executor.'
+		name: 'hero'
+		description: 'Your HERO for our Crystal Lib Tools.'
 		version: '1.0.0'
 		disable_man:true
 	}
