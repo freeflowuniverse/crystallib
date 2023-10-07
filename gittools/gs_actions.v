@@ -165,6 +165,7 @@ pub fn (mut gs GitStructure) actions(args_ ReposActionsArgs)! {
 					}				
 					msg=ui.ask_question(question:"commit message for repo: ${g.addr.account}/${g.addr.name} ")
 				}
+				println(" - commit ${g.addr.account}/${g.addr.name}")
 				g.commit(msg)!
 				changed=true
 
@@ -174,12 +175,15 @@ pub fn (mut gs GitStructure) actions(args_ ReposActionsArgs)! {
 		}
 		if args.pull || args.pullreset || args.commitpullpush || args.commitpull {
 			if args.pullreset{
+				println(" - remove changes ${g.addr.account}/${g.addr.name}")
 				g.remove_changes()!
 			}
+			println(" - pull ${g.addr.account}/${g.addr.name}")
 			g.pull()!
 			changed=true
 		}
 		if args.commitpush || args.commitpullpush{
+			println(" - push ${g.addr.account}/${g.addr.name}")
 			g.push()!
 			changed=true
 		}

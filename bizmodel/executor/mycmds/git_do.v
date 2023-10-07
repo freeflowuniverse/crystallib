@@ -138,7 +138,7 @@ pub fn cmd_git_actions(mut cmdroot Command){
 		flag: .bool
 		required: false
 		name: 'cachereset'
-		abbrev: 'cr'
+		abbrev: 'l'
 		description: 'reset the cache of the repos, they are kept for 24h'
 	})
 
@@ -153,7 +153,7 @@ fn cmd_gitactions_execute(cmd Command) ! {
 		gittools.cachereset()!
 	}
 
-	mut gs := gittools.get(root:coderoot,create:true) or {return error("Could not find gittools on '${coderoot}'")}
+	mut gs := gittools.get(root:coderoot,create:true) or {return error("Could not find gittools on '${coderoot}'\n$err")}
 	gs.actions(
 			filter:cmd.flags.get_string('filter') or {""}
 			repo:cmd.flags.get_string('repo') or {""}
