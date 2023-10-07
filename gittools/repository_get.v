@@ -86,7 +86,7 @@ fn repo_disk_status_delete(args DiskStatusArgs) ! {
 }
 
 // returns the git address starting from path
-fn (mut gitstructure GitStructure) repo_from_path(path string) !&GitRepo {
+pub fn (mut gitstructure GitStructure) repo_from_path(path string) !&GitRepo {
 	mut path2 := path.replace('~', os.home_dir())
 
 	// TODO: walk up to find .git in dir, this way we know we found the right path for the repo

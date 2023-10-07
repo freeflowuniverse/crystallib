@@ -3,7 +3,7 @@ module mycmds
 import freeflowuniverse.crystallib.gittools
 import freeflowuniverse.crystallib.osal
 import cli { Command,Flag }
-
+import os
 // const wikipath = os.dir(@FILE) + '/wiki'
 
 
@@ -171,11 +171,28 @@ fn cmd_gitactions_execute(cmd Command) ! {
 	}
 
 	mut gs := gittools.get(root:coderoot,create:true) or {return error("Could not find gittools on '${coderoot}'\n$err")}
+
+	mut repo:=cmd.flags.get_string('repo') or {""}
+	mut account:=cmd.flags.get_string('account') or {""}
+	mut provider:=cmd.flags.get_string('provider') or {""}
+	if repo=="" && account=="" && provider==""{
+		curdir:=os.getwd()
+		if os.exists("${curdir}/.git"){
+			//we are in current directory
+			r0:=gs.repo_from_path(curdir)!
+			repo=r0.addr.name
+			account=r0.addr.account
+			provider=r0.addr.provider
+		}
+	}
+
+
+
 	gs.actions(
 			filter:cmd.flags.get_string('filter') or {""}
-			repo:cmd.flags.get_string('repo') or {""}
-			account:cmd.flags.get_string('account') or {""}
-			provider:cmd.flags.get_string('provider') or {""}
+			repo:repo
+			account:account
+			provider:provider
 			pull:cmd.flags.get_bool('pull') or {false}	
 			pullreset:cmd.flags.get_bool('pullreset') or {false}
 			commit:cmd.flags.get_bool('commit') or {false}
@@ -190,9 +207,9 @@ fn cmd_gitactions_execute(cmd Command) ! {
 	if sourcetree || editor{
 		repos:=gs.repos_get(
 				filter:cmd.flags.get_string('filter') or {""}
-				name:cmd.flags.get_string('repo') or {""}
-				account:cmd.flags.get_string('account') or {""}
-				provider:cmd.flags.get_string('provider') or {""}	
+				name:repo
+				account:account
+				provider:provider
 			) 
 		if repos.len>5{
 			return error("Can only open sourcetree or code editor for max 5 repo's")

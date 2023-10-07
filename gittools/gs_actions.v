@@ -2,6 +2,7 @@ module gittools
 import freeflowuniverse.crystallib.ui as gui
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.console
+import os
 
 pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) {
 	mut r := [][]string{}
@@ -71,6 +72,7 @@ pub fn (mut gs GitStructure) actions(args_ ReposActionsArgs)! {
 	mut args:=args_
 
 	mut ui := gui.new()!
+
 
 	if args.print{
 		gs.repos_print(
