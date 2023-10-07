@@ -23,57 +23,103 @@ pub enum GitStatus {
 	error
 }
 
+[params]
+pub struct RefreshArgs{
+pub mut:
+	reload bool
+}
+
+// get the state from the disk
+pub fn (repo GitRepo) refresh(args RefreshArgs)! {
+	ds:=repo_disk_status(path:repo.path.path,reload:args.reload,reload_status:true)!
+
+	if ds.url != repo.addr.url{
+		return error("url on repo:'${repo.addr.url}' not same as url on disk: ${ds.url}")
+	}
+
+	if ds.branch != repo.addr.branch{
+		return error("branch on repo:'${repo.addr.url}' not same as branch on disk: ${ds.url}")
+		//TODO: need to implement code to deal with this situation
+	}
+}
+
+pub fn (repo GitRepo) state_delete()! {
+	repo_disk_status_delete(path:repo.path.path)!
+}
+
+
 // relative path inside the gitstructure, pointing to the repo
 pub fn (repo GitRepo) path_relative() string {
 	// TODO: figure out
 	return repo.path.path_relative(repo.gs.rootpath.path) or { panic('couldnt get relative path') } // TODO: check if works well
 }
 
-// if there are changes then will return 'true', otherwise 'false'
-pub fn (repo GitRepo) changes() !bool {
-	cmd := 'cd ${repo.path.path} && git status'
-	out := osal.execute_silent(cmd) or {
-		return error('Could not execute command to check git status on ${repo.path}\ncannot execute ${cmd}')
-	}
-	if out.contains('Untracked files') {
-		return true
-	} else if out.contains('Your branch is ahead of') {
-		return true
-	} else if out.contains('Changes not staged for commit') {
-		return true
-	} else if out.contains('nothing to commit') {
-		return false
-	} else {
+pub fn (repo GitRepo) changes(args RefreshArgs) !bool {	
+	if repo.needcommit()!{
 		return true
 	}
-	return true
+	return false
+}
+
+
+pub fn (repo GitRepo) needcommit(args RefreshArgs) !bool {	
+	check:=["untracked files","changes not staged for commit"]
+	path:=repo.path.path
+	ds:=repo_disk_status(path:path)!	
+	for tocheck in check{
+		if ds.status.to_lower().contains(tocheck.to_lower()){
+			return true
+		}
+	}
+	return false
+}
+
+pub fn (repo GitRepo) needpull(args RefreshArgs) !bool {	
+	check:=["branch is behind"]
+	path:=repo.path.path
+	ds:=repo_disk_status(path:path)!	
+	for tocheck in check{
+		if ds.status.to_lower().contains(tocheck.to_lower()){
+			return true
+		}
+	}
+	return false
+}
+
+pub fn (repo GitRepo) needpush(args RefreshArgs) !bool {	
+	check:=["to publish your local commits","your branch is ahead of"]
+	path:=repo.path.path
+	ds:=repo_disk_status(path:path)!	
+	for tocheck in check{
+		if ds.status.to_lower().contains(tocheck.to_lower()){
+			return true
+		}
+	}
+	return false
 }
 
 // pulls remote content in, will reset changes
-pub fn (mut repo GitRepo) pull_reset() ! {
+pub fn ( repo GitRepo) pull_reset() ! {
 	repo.remove_changes()!
 	repo.pull()!
 }
 
 // pulls remote content in, will fail if there are local changes
-pub fn (mut repo GitRepo) pull() ! {
+pub fn ( repo GitRepo) pull() ! {
 	println('   - PULL: ${repo.url_get(true)}')
-	if !os.exists(repo.path.path) {
-		repo.check(pull: false, reset: false)!
-	} else {
-		// changes := repo.changes()!
-		// if changes{
-		// 	return error('Cannot pull repo: ${repo.path.path} because there are changes in the dir.')
-		// }
-		cmd2 := 'cd ${repo.path.path} && git pull'
-		osal.execute_silent(cmd2) or {
-			println(' GIT PULL FAILED: ${cmd2}')
-			return error('Cannot pull repo: ${repo.path}. Error was ${err}')
-		}
+	changes := repo.changes()!
+	if changes{
+		return error('Cannot pull repo: ${repo.path.path} because there are changes in the dir.')
 	}
+	cmd2 := 'cd ${repo.path.path} && git pull'
+	osal.execute_silent(cmd2) or {
+		println(' GIT PULL FAILED: ${cmd2}')
+		return error('Cannot pull repo: ${repo.path}. Error was ${err}')
+	}
+	repo.refresh()!
 }
 
-pub fn (mut repo GitRepo) commit(msg string) ! {
+pub fn (repo GitRepo) commit(msg string) ! {
 	change := repo.changes() or {
 		return error('cannot detect if there are changes on repo.\n${err}')
 	}
@@ -90,10 +136,11 @@ pub fn (mut repo GitRepo) commit(msg string) ! {
 	} else {
 		println('     > no change')
 	}
+	repo.refresh()!
 }
 
 // remove all changes of the repo, be careful
-pub fn (mut repo GitRepo) remove_changes() ! {
+pub fn ( repo GitRepo) remove_changes() ! {
 	change := repo.changes() or {
 		return error('cannot detect if there are changes on repo.\n${err}')
 	}
@@ -115,25 +162,24 @@ pub fn (mut repo GitRepo) remove_changes() ! {
 	} else {
 		println('     > no change  ${repo.path.path}')
 	}
+	repo.refresh()!
 }
 
-pub fn (mut repo GitRepo) push() ! {
+pub fn ( repo GitRepo) push() ! {
 	println('   - PUSH: ${repo.url_get(true)}')
 	cmd := 'cd ${repo.path.path} && git push'
 	osal.execute_silent(cmd) or {
 		return error('Cannot push repo: ${repo.path.path}. Error was ${err}')
 	}
+	repo.refresh()!
 }
 
-pub fn (mut repo GitRepo) branch_get() !string {
-	cmd := 'cd ${repo.path.path} && git rev-parse --abbrev-ref HEAD'
-	branch := osal.execute_silent(cmd) or {
-		return error('Cannot get branch name from repo: ${repo.path.path}. Error was ${err} for cmd ${cmd}')
-	}
-	return branch.trim(' \n')
+pub fn ( repo GitRepo) branch_get() !string {
+	repo.refresh(reload:true)!
+	return repo.addr.branch
 }
 
-pub fn (mut repo GitRepo) branch_switch(branchname string) ! {
+pub fn ( repo GitRepo) branch_switch(branchname string) ! {
 	if repo.gs.config.multibranch {
 		return error('cannot do a branch switch if we are using multibranch strategy.')
 	}
@@ -152,19 +198,20 @@ pub fn (mut repo GitRepo) branch_switch(branchname string) ! {
 	repo.pull()!
 }
 
-pub fn (mut repo GitRepo) fetch_all() ! {
+pub fn ( repo GitRepo) fetch_all() ! {
 	cmd := 'cd ${repo.path.path} && git fetch --all'
 	osal.execute_silent(cmd) or {
 		// println('GIT FETCH FAILED: $cmd_checkout')
 		return error('Cannot fetch repo: ${repo.path.path}. Error was ${err} \n cmd: ${cmd}')
 	}
+	repo.refresh()!
 }
 
 // deletes git repository
-pub fn (mut repo GitRepo) delete() ! {
+pub fn ( repo GitRepo) delete() ! {
 	println('   - DELETE: ${repo.url_get(true)}')
 	if !os.exists(repo.path.path) {
-		repo.check(reset: false, pull: false)!
+		return
 	} else {
 		cmd2 := 'cd ${repo.path.path} && git pull'
 		osal.execute_silent(cmd2) or {
@@ -172,12 +219,13 @@ pub fn (mut repo GitRepo) delete() ! {
 			return error('Cannot delete repo: ${repo.path.path}. Error was ${err}')
 		}
 	}
+	repo.state_delete()!
 }
 
 // check if sshkey for a repo exists in the homedir/.ssh
 // we check on name, if nameof repo is same as name of key we will load
 // will return true if the key did exist, which means we need to connect over ssh !!!
-fn (mut repo GitRepo) ssh_key_load_if_exists() !bool {
+fn ( repo GitRepo) ssh_key_load_if_exists() !bool {
 	mut key_path := '${os.home_dir()}/.ssh/${repo.addr.name}'
 	if !os.exists(key_path) {
 		key_path = '.ssh/${repo.addr.name}'

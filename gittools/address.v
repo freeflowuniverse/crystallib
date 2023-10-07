@@ -1,6 +1,5 @@
 module gittools
 
-import os
 import freeflowuniverse.crystallib.sshagent
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.pathlib
@@ -16,6 +15,7 @@ pub mut:
 	account  string
 	name     string // is the name of the repository
 	branch   string
+	url string
 }
 
 // internal function to check git address
@@ -42,7 +42,7 @@ pub fn (addr GitAddr) path() !pathlib.Path {
 	return path
 }
 
-fn (mut addr GitAddr) path_account() pathlib.Path {
+fn ( addr GitAddr) path_account() pathlib.Path {
 	mut provider := ''
 	// addr := repo.addr
 	if addr.gs.rootpath.path == '' {

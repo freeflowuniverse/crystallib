@@ -61,14 +61,13 @@ pub fn cmd_git_actions(mut cmdroot Command){
 		abbrev: 'c'
 		description: 'will commit newly found content, specify the message.'
 	})
-
 	cmd_run.add_flag(Flag{
 		flag: .bool
 		required: false
-		name: 'commitpush'
+		name: 'commitpull'
 		abbrev: 'cp'
-		description: 'commit and push.'
-	})
+		description: 'commit and pull.'
+	})	
 
 	cmd_run.add_flag(Flag{
 		flag: .bool
@@ -135,24 +134,37 @@ pub fn cmd_git_actions(mut cmdroot Command){
 		description: 'script way, will not run interative'
 	})
 
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'cachereset'
+		abbrev: 'cr'
+		description: 'reset the cache of the repos, they are kept for 24h'
+	})
+
+
 	cmdroot.add_command(cmd_run)		
 }
 
 fn cmd_gitactions_execute(cmd Command) ! {
 	coderoot:=cmd.flags.get_string('coderoot') or {""}	
-	mut gs := gittools.get(coderoot:coderoot) or {return error("Could not find gittools on '${coderoot}'")}
+	
+	if cmd.flags.get_bool('cachereset') or {false}{
+		gittools.cachereset()!
+	}
+
+	mut gs := gittools.get(root:coderoot,create:true) or {return error("Could not find gittools on '${coderoot}'")}
 	gs.actions(
-		filter:cmd.flags.get_string('filter') or {""}
-		repo:cmd.flags.get_string('repo') or {""}
-		account:cmd.flags.get_string('account') or {""}
-		provider:cmd.flags.get_string('provider') or {""}
-		pull:cmd.flags.get_bool('pull') or {false}	
-		pullreset:cmd.flags.get_bool('pullreset') or {false}
-		commit:cmd.flags.get_bool('commit') or {false}
-		commitpush:cmd.flags.get_bool('commitpush') or {false}
-		commitpullpush:cmd.flags.get_bool('commitpullpush') or {false}
-		delete:cmd.flags.get_bool('delete') or {false}
-		script:cmd.flags.get_bool('script') or {false}
-		coderoot:cmd.flags.get_string('coderoot') or {""}
+			filter:cmd.flags.get_string('filter') or {""}
+			repo:cmd.flags.get_string('repo') or {""}
+			account:cmd.flags.get_string('account') or {""}
+			provider:cmd.flags.get_string('provider') or {""}
+			pull:cmd.flags.get_bool('pull') or {false}	
+			pullreset:cmd.flags.get_bool('pullreset') or {false}
+			commit:cmd.flags.get_bool('commit') or {false}
+			commitpull:cmd.flags.get_bool('commitpull') or {false}
+			commitpullpush:cmd.flags.get_bool('commitpullpush') or {false}
+			delete:cmd.flags.get_bool('delete') or {false}
+			script:cmd.flags.get_bool('script') or {false}
 		)!
 }

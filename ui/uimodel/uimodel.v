@@ -7,7 +7,7 @@ pub mut:
 	question   string // WARNING, this was changed to be question
 	items      []string
 	warning    string
-	clear      bool = true
+	clear      bool = false
 	all        bool
 	validation fn (string) bool = fn (s string) bool {
 		return true
@@ -20,7 +20,7 @@ pub mut:
 	description string
 	question    string
 	warning     string
-	clear       bool = true
+	clear       bool = false
 	regex       string
 	minlen      int
 	reset       bool
@@ -37,7 +37,7 @@ pub mut:
 	description string
 	question    string
 	warning     string
-	clear       bool = true
+	clear       bool = false
 	reset       bool
 	validation  fn (string) bool = fn (s string) bool {
 		return true

@@ -74,6 +74,7 @@ pub fn (gitstructure GitStructure) locator_new(url string) !GitLocator {
 		account: account
 		name: name
 		branch: branch
+		url: url
 		gs: &gitstructure 
 	}
 	ga.check()!
