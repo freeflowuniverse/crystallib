@@ -6,13 +6,13 @@ import cli { Command, Flag }
 
 // const wikipath = os.dir(@FILE) + '/wiki'
 
-pub fn cmd_run_config(mut cmdroot Command) {
+pub fn cmd_biztools(mut cmdroot Command) {
 	mut cmd_run := Command{
 		name: 'bizmodel'
 		description: 'Run a bizmodel simulation.'
 		usage: '-s ~/mymodels/greenworld/mybook -i ~/mymodels/greenworld/wiki  -o /tmp/outputdir'
 		required_args: 0
-		execute: cmd_run_execute
+		execute: cmd_biztools_execute
 	}
 
 	cmd_run.add_flag(Flag{
@@ -42,7 +42,7 @@ pub fn cmd_run_config(mut cmdroot Command) {
 	cmdroot.add_command(cmd_run)
 }
 
-fn cmd_run_execute(cmd Command) ! {
+fn cmd_biztools_execute(cmd Command) ! {
 	mut inputdir := cmd.flags.get_string('inputdir') or { '' }
 
 	mut summarydir := cmd.flags.get_string('summarydir') or { '' }
@@ -69,7 +69,11 @@ fn cmd_run_execute(cmd Command) ! {
 	}
 
 	if inputdir == '' {
-		inputdir = os.getwd()
+		if summarydir!=""{
+			inputdir = summarydir
+		}else{
+			inputdir = os.getwd()
+		}		
 	}
 
 	outputdir := cmd.flags.get_string('outputdir') or { '/tmp/bizmodel/output' }

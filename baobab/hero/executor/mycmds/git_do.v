@@ -19,13 +19,13 @@ import os
 // delete bool (remove the repo)
 // script bool (run non interactive)
 // coderoot string //the location of coderoot if its another one
-pub fn cmd_git_actions(mut cmdroot Command) {
+pub fn cmd_git_do(mut cmdroot Command) {
 	mut cmd_run := Command{
 		name: 'git_do'
 		description: 'Work with your repos, list, commit, pull, reset, ...'
 		required_args: 0
 		usage: ''
-		execute: cmd_gitactions_execute
+		execute: cmd_git_do_execute
 	}
 
 	cmd_run.add_flag(Flag{
@@ -157,7 +157,7 @@ pub fn cmd_git_actions(mut cmdroot Command) {
 	cmdroot.add_command(cmd_run)
 }
 
-fn cmd_gitactions_execute(cmd Command) ! {
+fn cmd_git_do_execute(cmd Command) ! {
 	coderoot := cmd.flags.get_string('coderoot') or { '' }
 
 	mut gs := gittools.get(root: coderoot, create: true) or {

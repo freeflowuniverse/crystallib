@@ -2,9 +2,9 @@
 
 Overview of achieved revenue.
 
-!!bizmodel.graph_bar_row rowname:revenue_total unit:million title:'A Title' title_sub:'Sub'
-
 Unit is in Million USD.
+
+!!bizmodel.sheet_wiki title:'REVENUE' includefilter:rev
 
 !!bizmodel.graph_bar_row rowname:revenue_total unit:million
 

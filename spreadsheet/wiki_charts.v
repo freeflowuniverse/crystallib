@@ -2,6 +2,7 @@ module spreadsheet
 
 import freeflowuniverse.crystallib.markdowndocs
 
+
 pub fn (mut s Sheet) wiki_title_chart(args RowGetArgs) string {
 	if args.title.len > 0 {
 		titletxt := "
@@ -27,25 +28,20 @@ pub fn (mut s Sheet) wiki_row_overview(args RowGetArgs) !string {
 
 // produce a nice looking bar chart see
 // https://echarts.apache.org/examples/en/editor.html?c=line-stack
-pub fn (mut s Sheet) wiki_line_chart(args_ []RowGetArgs) !string {
-	// mut args := args_
-
-	row_headers := args_.map(s.header_get_as_string(it.period_type)!)
-	if row_headers.any(it != row_headers[0]) {
-		return error('All rows in a line chart should have the same header')
-	}
-
-	row_names := args_.map(it.rowname)
-
+pub fn (mut s Sheet) wiki_line_chart(args_ RowGetArgs) !string {
+  mut args:=args_
+	header := s.header_get_as_string(args.period_type)!
+	row_names := ["something"] //TODO: implement
 	mut series_lines := []string{}
-	for arg in args_ {
-		series_lines << '{
-          name: \'${arg.rowname}\',
-          type: \'line\',
-          stack: \'Total\',
-          data: [${s.data_get_as_string(arg)!}]
-        }'
-	}
+
+  series_lines << '{
+        name: \'${row_names[0]}\',
+        type: \'line\',
+        stack: \'Total\',
+        data: [${s.data_get_as_string(args)!}]
+      }'
+
+  //TODO: need to implement the multiple results which can come back from the args, can be more than 1
 
 	// header := s.header_get_as_string(args.period_type)!
 	// data := s.data_get_as_string(args)!
@@ -53,7 +49,7 @@ pub fn (mut s Sheet) wiki_line_chart(args_ []RowGetArgs) !string {
 	// println('HERE!! ${data}')
 
 	template := "
-      ${s.wiki_title_chart(args_[0])}
+      ${s.wiki_title_chart(args)}
       tooltip: {
         trigger: 'axis'
       },
@@ -74,7 +70,7 @@ pub fn (mut s Sheet) wiki_line_chart(args_ []RowGetArgs) !string {
       xAxis: {
         type: 'category',
         boundaryGap: false,
-        data: [${row_headers[0]}]
+        data: [${header}]
       },
       yAxis: {
         type: 'value'

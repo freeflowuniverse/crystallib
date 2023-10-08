@@ -5,13 +5,13 @@ import cli { Command, Flag }
 
 // const wikipath = os.dir(@FILE) + '/wiki'
 
-pub fn cmd_git_config(mut cmdroot Command) {
+pub fn cmd_git_get(mut cmdroot Command) {
 	mut cmd_run := Command{
 		name: 'git_get'
 		description: 'Get git repo, use https:// or git... to a git repo, will try to load you ssh-key'
 		required_args: 1
 		usage: 'url_of_git_repo'
-		execute: cmd_gitget_execute
+		execute: cmd_git_get_execute
 	}
 
 	cmd_run.add_flag(Flag{
@@ -41,7 +41,7 @@ pub fn cmd_git_config(mut cmdroot Command) {
 	cmdroot.add_command(cmd_run)
 }
 
-fn cmd_gitget_execute(cmd Command) ! {
+fn cmd_git_get_execute(cmd Command) ! {
 	// mut gs := gittools.new()!
 	url := cmd.args[0] or { panic('cannot find args for code_get') }
 	r := gittools.code_get(

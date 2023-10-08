@@ -2,7 +2,7 @@ module main
 
 import os
 import cli { Command }
-import baobab.hero.executor.mycmds
+import freeflowuniverse.crystallib.baobab.hero.executor.mycmds
 
 fn do() ! {
 	mut cmd := Command{
@@ -12,9 +12,9 @@ fn do() ! {
 		disable_man: true
 	}
 
-	mycmds.cmd_run_config(mut cmd)
-	mycmds.cmd_git_config(mut cmd)
-	mycmds.cmd_git_actions(mut cmd)
+	mycmds.cmd_biztools(mut cmd)
+	mycmds.cmd_git_get(mut cmd)
+	mycmds.cmd_git_do(mut cmd)
 
 	cmd.setup()
 	cmd.parse(os.args)

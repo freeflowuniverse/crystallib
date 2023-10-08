@@ -14,7 +14,7 @@ fn remove_empty_line(txt string) string {
 [params]
 pub struct RowGetArgs {
 pub mut:
-	rowname       string   // only include the exact names as secified for the row (if only one row
+	rowname       string   // only include the exact names as secified for the row (if only one row)
 	include       []string // to use with params filter e.g. ['location:belgium_*'] //would match all words starting with belgium
 	exclude       []string
 	period_type   PeriodType       // year, month, quarter
