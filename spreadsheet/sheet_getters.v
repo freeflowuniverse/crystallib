@@ -43,8 +43,8 @@ pub enum PeriodType {
 }
 
 //find rownames which match RowGetArgs
-pub fn (s Sheet) rownames_get(args RowGetArgs) ![]string{} {
-	res:=[]string{}
+pub fn (s Sheet) rownames_get(args RowGetArgs) ![]string {
+	mut res:=[]string{}
 	for _, row in s.rows {
 		if row.filter(args)!{
 			res<<row.name
@@ -54,7 +54,7 @@ pub fn (s Sheet) rownames_get(args RowGetArgs) ![]string{} {
 }
 
 //get one rowname, if more than 1 will fail, if 0 will fail
-pub fn (s Sheet) rowname_get(args RowGetArgs) !string{} {
+pub fn (s Sheet) rowname_get(args RowGetArgs) !string {
 	r:=s.rownames_get(args)!
 	if r.len==1{
 		return r[0]
@@ -114,13 +114,25 @@ pub fn (mut s Sheet) data_get_as_string(args RowGetArgs) !string {
 	nryears := 5
 	err_pre := "Can't get data for sheet:${s.name} row:${args.rowname}.\n"
 	mut s2 := s
+
 	if args.period_type == .year {
-		s2 = s.toyear()!
+		s2 = s.toyear(
+			name: args.rowname
+			namefilter: args.namefilter
+			includefilter: args.includefilter
+			excludefilter: args.excludefilter
+		)!
 	}
 	if args.period_type == .quarter {
-		s2 = s.toquarter()!
+		s2 = s.toquarter(
+			name: args.rowname
+			namefilter: args.namefilter
+			includefilter: args.includefilter
+			excludefilter: args.excludefilter
+		)!
 	}
 	mut out := ''
+
 	// println(s2.row_get(args.rowname)!)
 	mut vals := s2.values_get(args.rowname)!
 	if args.period_type == .year && vals.len != nryears {
@@ -132,6 +144,7 @@ pub fn (mut s Sheet) data_get_as_string(args RowGetArgs) !string {
 	if args.period_type == .month && vals.len != nryears * 12 {
 		return error('${err_pre}vals.len need to be 6*12, for month.\nhere:\n${vals}')
 	}
+
 	for mut val in vals {
 		if args.unit == .thousand {
 			val = val / 1000.0

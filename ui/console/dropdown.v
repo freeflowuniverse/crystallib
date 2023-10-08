@@ -39,7 +39,9 @@ pub fn (mut c UIConsole) ask_dropdown(args DropDownArgs) int {
 		// means we return all
 		return 999999
 	}
-	if !texttools.is_int(choice) {
+	// TODO: fix
+	// if !texttools.is_int(choice) {
+	if false {
 		return c.ask_dropdown(
 			clear: true
 			description: args.description

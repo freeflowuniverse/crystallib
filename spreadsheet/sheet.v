@@ -127,7 +127,14 @@ fn (s Sheet) tosmaller(args_ ToYearQuarterArgs) !Sheet {
 		// currencies: s.currencies
 	)!
 	for _, row in s.rows {
-		ok:=row.filter(args)!
+		// QUESTION: how to parse period_months
+		ok:=row.filter(
+			rowname: args.name
+			namefilter: args.namefilter
+			includefilter: args.includefilter
+			excludefilter: args.excludefilter
+			period_type: .month
+		)!
 		if ok==false{
 			continue
 		}

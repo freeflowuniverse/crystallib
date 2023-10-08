@@ -29,20 +29,28 @@ pub fn (mut s_ Sheet) wiki_row_overview(args RowGetArgs) !string {
 
 // produce a nice looking bar chart see
 // https://echarts.apache.org/examples/en/editor.html?c=line-stack
-pub fn (mut s_ Sheet) wiki_line_chart(args_ RowGetArgs) !string {
+pub fn (mut s Sheet) wiki_line_chart(args_ RowGetArgs) !string {
   mut args:=args_
-  args.rowname = s.rowname_get(args)!
+
+
+  rownames := s.rownames_get(args)!
 	header := s.header_get_as_string(args.period_type)!  
 	mut series_lines := []string{}
 
-  series_lines << '{
-        name: \'${row_name}\',
-        type: \'line\',
-        stack: \'Total\',
-        data: [${s.data_get_as_string(args)!}]
-      }'
+	for rowname in rownames {
+		data := s.data_get_as_string(RowGetArgs{
+			...args
+			rowname: rowname
+		})!
+		series_lines << '{
+			name: \'${rowname}\',
+			type: \'line\',
+			stack: \'Total\',
+			data: [${data}]
+		}'
+	}
 
-  //TODO: need to implement the multiple results which can come back from the args, can be more than 1
+	// TODO: need to implement the multiple results which can come back from the args, can be more than 1
 
 	// header := s.header_get_as_string(args.period_type)!
 	// data := s.data_get_as_string(args)!
@@ -55,7 +63,7 @@ pub fn (mut s_ Sheet) wiki_line_chart(args_ RowGetArgs) !string {
         trigger: 'axis'
       },
       legend: {
-        data: ${row_names}
+        data: ${rownames}
       },
       grid: {
         left: '3%',
@@ -85,7 +93,7 @@ pub fn (mut s_ Sheet) wiki_line_chart(args_ RowGetArgs) !string {
 
 // produce a nice looking bar chart see
 // https://echarts.apache.org/examples/en/index.html#chart-type-bar
-pub fn (mut s_ Sheet) wiki_bar_chart(args_ RowGetArgs) !string {
+pub fn (mut s Sheet) wiki_bar_chart(args_ RowGetArgs) !string {
   mut args:=args_
   args.rowname = s.rowname_get(args)!
 	header := s.header_get_as_string(args.period_type)!
@@ -117,7 +125,7 @@ pub fn (mut s_ Sheet) wiki_bar_chart(args_ RowGetArgs) !string {
 
 // produce a nice looking bar chart see
 // https://echarts.apache.org/examples/en/index.html#chart-type-bar
-pub fn (mut s_ Sheet) wiki_pie_chart(args_ RowGetArgs) !string {
+pub fn (mut s Sheet) wiki_pie_chart(args_ RowGetArgs) !string {
   mut args:=args_
   args.rowname = s.rowname_get(args)!
 	header := s.header_get_as_list(args.period_type)!
