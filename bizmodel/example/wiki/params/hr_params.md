@@ -15,28 +15,29 @@ possible parameters
 
 ```js
 
- !!hr.employee_define 
-     descr:'Senior Engineer' 
-     cost:'1:12000,12:14000'
-     department:'engineering'
-     nrpeople:'0:5,20:5'
+!!hr.employee_define 
+    sid:2
+    descr:'Senior Engineer' 
+    cost:'1:12000,12:14000'
+    department:'engineering'
+    nrpeople:'0:5,20:5'
 
- !!hr.employee_define 
-     descr:'CTO'  
-     cost:'12000EUR' indexation:'10%' 
-     department:'engineering'
+!!hr.employee_define 
+    descr:'CTO'  
+    cost:'12000EUR' indexation:'10%' 
+    department:'engineering'
 
- !!hr.employee_define 
-     descr:'Senior Architect'  
-     cost:'10000USD' indexation:'5%' 
-     department:'engineering'
-     nrpeople:'0:5,20:10'
+!!hr.employee_define 
+    descr:'Senior Architect'  
+    cost:'10000USD' indexation:'5%' 
+    department:'engineering'
+    nrpeople:'0:5,20:10'
 
- !!hr.employee_define 
-     descr:'Junior Engineer' 
-     cost:'4000USD' indexation:'5%' 
-     department:'engineering'
-     nrpeople:'0:5,20:10'
+!!hr.employee_define 
+    descr:'Junior Engineer' 
+    cost:'4000USD' indexation:'5%' 
+    department:'engineering'
+    nrpeople:'0:5,20:10'
 
 ```
 
@@ -46,24 +47,21 @@ possible parameters
 ```js
 
 !!hr.employee_define 
-     descr:'Ops Manager' 
-     cost:'1:8000,12:14000'
-     department:'ops'
-
- !!hr.employee_define 
-     descr:'Support Junior'  
-     cost:'2000EUR' indexation:'5%' 
-     department:'ops'
-     nrpeople:'7:5,18:10'
-     cost_percent_revenue:'1%'
-
- !!hr.employee_define 
-     descr:'Support Senior'  
-     cost:'5000EUR' indexation:'5%' 
-     department:'ops'
-     nrpeople:'3:5,20:10'
-     cost_percent_revenue:'1%'
-     costcenter:'tfdmcc:25,cs_tfcloud:75'
-     generate_page:'../employees/support_senior.md'
-
+    descr:'Ops Manager' 
+    cost:'1:8000,12:14000'
+    department:'ops'
+!!hr.employee_define 
+    descr:'Support Junior'  
+    cost:'2000EUR' indexation:'5%' 
+    department:'ops'
+    nrpeople:'7:5,18:10'
+    cost_percent_revenue:'1%'
+!!hr.employee_define 
+    descr:'Support Senior'  
+    cost:'5000EUR' indexation:'5%' 
+    department:'ops'
+    nrpeople:'3:5,20:10'
+    cost_percent_revenue:'1%'
+    costcenter:'tfdmcc:25,cs_tfcloud:75'
+    generate_page:'../employees/support_senior.md'
 ```
