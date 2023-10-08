@@ -35,7 +35,7 @@ mut:
 //load the info from dis
 fn repo_disk_status(args DiskStatusArgs) !DiskStatus {
 	if args.path.len<3{
-		return error("path cannot be smaller than 3.\n$args")
+		panic("path cannot be smaller than 3.\n$args")
 	}
 	pre:='git:cache:${args.path}'
 	path:=args.path
@@ -152,11 +152,15 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !&GitRepo {
 	mut r := if gitstructure.repo_exists(args.locator)! {
 		gitstructure.repo_from_path(p.path)!
 	} else {
+		// println("repo does not exist:\n$p\n+++")
 		// if repo doesn't exist, create new repo from address in locator
-		&GitRepo{
+		mut r2:=&GitRepo{
 			gs: &gitstructure
 			addr: args.locator.addr
+			path: p
 		}
+		r2.checkinit(pull: args.pull, reset: args.reset)!
+		gitstructure.repo_from_path(r2.path.path)!
 	}
 	return r
 }

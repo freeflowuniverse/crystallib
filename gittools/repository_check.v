@@ -15,12 +15,9 @@ fn (mut repo GitRepo) checkinit(args_ CheckArgs) ! {
 	mut args := args_
 	args.pull = args.pull || args.reset
 
-	repo.refresh(reload:args.reset)!
-
 	url := repo.addr.url_http_with_branch_get()
 	// println(' - check repo:$url, pull:$args.pull, reset:$args.reset')
 	// println(repo.addr)
-	// QUESTION: what is pull soft
 	if repo.state != GitStatus.ok {
 		// need to get the status of the repo
 		// println(' - repo $repo.name() check')
@@ -34,7 +31,7 @@ fn (mut repo GitRepo) checkinit(args_ CheckArgs) ! {
 
 		// first check if path does not exist yet, if not need to clone
 		if !(repo.path.exists()) {
-			println(' - missing repo, pull: ${url}-> ${repo.path.path}')
+			println(' - missing repo, pull: ${url} -> ${repo.path.path}')
 			if !needs_to_be_ssh && sshagent.loaded() {
 				needs_to_be_ssh = true
 			}
@@ -59,14 +56,10 @@ fn (mut repo GitRepo) checkinit(args_ CheckArgs) ! {
 			repo.state = GitStatus.ok
 			return
 		}
-		// QUESTION: default false?
-		mut reset_force := false
-		mut pull_soft := false
 
 		// check the branch, see if branch on FS is same as what is required if set
 
-		// QUESTION: what is reset_force {
-		if reset_force {
+		if args.reset {
 			println(' - remove git changes: ${repo.path.path}')
 			repo.remove_changes()!
 		}
@@ -77,21 +70,19 @@ fn (mut repo GitRepo) checkinit(args_ CheckArgs) ! {
 			mut branchname := repo.branch_get()!
 			// println( " - branch detected: $branchname, branch on repo obj:'$repo.addr.branch'")
 			branchname = branchname.trim('\n ')
-			if branchname != repo.addr.branch && pull_soft {
+			if branchname != repo.addr.branch && args.pull {
 				println(' - branch switch ${branchname} -> ${repo.addr.branch} for ${url}')
 				repo.branch_switch(repo.addr.branch)!
-				// need to pull now
-				pull_soft = true
+				args.pull=true
 			}
-			repo.state = GitStatus.ok
-			return
 		} else {
 			return error("branch should have been known for ${repo}")
 		}
-
 		if args.pull {
 			repo.pull()!
 		}
+
+		repo.refresh(reload:true)!
 
 		repo.state = GitStatus.ok
 	}

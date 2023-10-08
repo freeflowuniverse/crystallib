@@ -198,6 +198,7 @@ fn cmd_gitactions_execute(cmd Command) ! {
 			delete:cmd.flags.get_bool('delete') or {false}
 			script:cmd.flags.get_bool('script') or {false}
 			cachereset:cmd.flags.get_bool('cachereset') or {false}
+			msg:cmd.flags.get_string('message') or {""}
 		)!
 
 	editor:=cmd.flags.get_bool('editor') or {false}

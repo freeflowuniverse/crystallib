@@ -15,25 +15,26 @@ pub mut:
 	account  string
 	name     string // is the name of the repository
 	branch   string
-	url string
+	url_original string
 }
 
 // internal function to check git address
-fn (mut addr GitAddr) check() ! {
-	if addr.provider == 'github.com' {
-		addr.provider = 'github'
+fn (addr GitAddr) check(){
+	if addr.provider=="" || addr.account=="" || addr.name==""{
+		panic("provider, account or name is empty: ${addr.provider}/${addr.account}/${addr.name}")
 	}
 }
 
 
 // return the path on the filesystem pointing to the address (is always a dir)
 pub fn (addr GitAddr) path() !pathlib.Path {
+	addr.check()
 	provider := texttools.name_fix(addr.provider)
 	name := texttools.name_fix(addr.name)
 	account := texttools.name_fix(addr.account)
 	mut path_string := '${addr.gs.rootpath.path}/${provider}/${account}/${name}'
 	if addr.gs.rootpath.path == '' {
-		panic('cannot be empty')
+		panic('roorpath cannot be empty')
 	}
 	if addr.gs.config.multibranch {
 		path_string += '/${addr.branch}'
@@ -43,12 +44,11 @@ pub fn (addr GitAddr) path() !pathlib.Path {
 }
 
 fn ( addr GitAddr) path_account() pathlib.Path {
-	mut provider := ''
-	// addr := repo.addr
+	addr.check()
 	if addr.gs.rootpath.path == '' {
 		panic('cannot be empty')
 	}
-	path := pathlib.get_dir('${addr.gs.rootpath.path}/${provider}/${addr.account}', true) or {
+	path := pathlib.get_dir('${addr.gs.rootpath.path}/${addr.provider}/${addr.account}', true) or {
 		panic('couldnt get directory')
 	}
 	return path
@@ -64,15 +64,26 @@ pub fn (addr GitAddr) url_get() string {
 }
 
 pub fn (addr GitAddr) url_ssh_get() string {
-	return 'git@${addr.provider}:${addr.account}/${addr.name}.git'
+	addr.check()
+	mut provider:=addr.provider
+	if provider=="github"{
+		provider="github.com"
+	}
+	return 'git@${provider}:${addr.account}/${addr.name}.git'
 }
 
 pub fn (addr GitAddr) url_http_get() string {
-	return 'https://${addr.provider}/${addr.account}/${addr.name}'
+	addr.check()
+	mut provider:=addr.provider
+	if provider=="github"{
+		provider="github.com"
+	}
+	return 'https://${provider}/${addr.account}/${addr.name}'
 }
 
 // return http url with branch inside
 fn (addr GitAddr) url_http_with_branch_get() string {
+	addr.check()
 	u := addr.url_http_get()
 	if addr.branch != '' {
 		return '${u}/tree/${addr.branch}'
@@ -82,6 +93,7 @@ fn (addr GitAddr) url_http_with_branch_get() string {
 }
 
 pub fn (addr GitAddr) str() string {
+	addr.check()
 	if addr.branch == '' {
 		panic('bug, addr branch should never be empty')
 	}

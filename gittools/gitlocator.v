@@ -74,11 +74,12 @@ pub fn (gitstructure GitStructure) locator_new(url string) !GitLocator {
 		account: account
 		name: name
 		branch: branch
-		url: url
+		url_original: url
 		gs: &gitstructure 
 	}
-	ga.check()!
-
+	if ga.provider == 'github.com' {
+		ga.provider = 'github'
+	}	
 	mut gl := GitLocator{
 		anker: anker
 		path: path
@@ -89,7 +90,6 @@ pub fn (gitstructure GitStructure) locator_new(url string) !GitLocator {
 
 // return the path on the filesystem pointing to the locator
 pub fn (mut l GitLocator) path_on_fs() !pathlib.Path {
-	// TODO: figure out addrpath:=l.addr.path_on_fs()!
 	addrpath := l.addr.path()!
 	if l.path.len > 0 {
 		return pathlib.get('{addrpath.path}/l.path')

@@ -33,12 +33,12 @@ pub mut:
 pub fn (repo GitRepo) refresh(args RefreshArgs)! {
 	ds:=repo_disk_status(path:repo.path.path,reload:args.reload,reload_status:true)!
 
-	if ds.url != repo.addr.url{
-		return error("url on repo:'${repo.addr.url}' not same as url on disk: ${ds.url}")
+	if ds.url != repo.addr.url_original{
+		return error("url on repo:'${repo.addr.url_original}' not same as url on disk: ${ds.url}")
 	}
 
 	if ds.branch != repo.addr.branch{
-		return error("branch on repo:'${repo.addr.url}' not same as branch on disk: ${ds.url}")
+		return error("branch on repo:'${repo.addr.url_original}' not same as branch on disk: ${ds.url}")
 		//TODO: need to implement code to deal with this situation
 	}
 }
