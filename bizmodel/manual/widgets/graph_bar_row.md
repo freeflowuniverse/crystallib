@@ -1,19 +1,20 @@
 # Tables
 
-![](img/table_widget_example.png)
 
-### how to represent tables from sheet
+
+### how to represent a graph bar
 
 ```js
 
 !!bizmodel.graph_bar_row rowname:revenue_total unit:million title:'A Title' title_sub:'Sub'
-!!bizmodel.sheet_wiki title:'REVENUE' includefilter:rev
 
 ```
 ### params
 
-- title, title of the tables widget
+- title: title of the tables widget
+- title_sub: ...
 - name, name of the widget
+- unit:million
 - selectors:
   - rowname , to show one specific row
   - [namefilter](namefilter.md)
