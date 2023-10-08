@@ -23,6 +23,7 @@ possible parameters
     nrpeople:'0:5,20:5'
 
 !!hr.employee_define 
+    sid:3
     descr:'CTO'  
     cost:'12000EUR' indexation:'10%' 
     department:'engineering'

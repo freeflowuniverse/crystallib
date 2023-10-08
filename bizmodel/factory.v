@@ -1,6 +1,8 @@
 module bizmodel
 
 import freeflowuniverse.crystallib.spreadsheet
+import freeflowuniverse.crystallib.baobab.smartid
+import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.knowledgetree
 import freeflowuniverse.crystallib.baobab.actions
@@ -131,10 +133,22 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 	return *book
 }
 
+pub fn (mut m BizModel) replace_smart_ids() ! {
+	dir_path := pathlib.get(m.params.path)
+	files := dir_path.file_list(recursive: true)!
+
+	for file in files {
+		content_ := os.read_file(file.path)!
+		content := smartid.sid_empty_replace(content_, '')!
+		os.write_file(file.path, content)!
+	}
+}
+
 pub fn (mut m BizModel) load() ! {
 	println('ACTIONS LOAD ${m.params.name}')
+
+	m.replace_smart_ids()!
 	ap := actions.new(path: m.params.path, defaultcircle: 'bizmodel_${m.params.name}')!
-	println('we got our actions! ${ap.actions.map(it.context)}')
 	m.revenue_actions(ap)!
 	m.hr_actions(ap)!
 	m.funding_actions(ap)!

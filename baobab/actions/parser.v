@@ -72,11 +72,8 @@ fn (mut actions Actions) file_parse(path string) ! {
 	if !os.exists(path) {
 		return error("path: '${path}' does not exist, cannot parse.")
 	}
-	content_ := os.read_file(path) or { return error('Failed to load file ${path}: ${err}') }
+	content := os.read_file(path) or { return error('Failed to load file ${path}: ${err}') }
 	// actions.text_add(content)!
-	content := smartid.sid_empty_replace(content_, '')!
-	os.write_file(path, content)!
-	println('debug content: ${content}')
 	blocks := parse_into_blocks(content, path)!
 	actions.parse_actions(blocks)!
 }
