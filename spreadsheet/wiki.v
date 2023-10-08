@@ -2,41 +2,26 @@ module spreadsheet
 
 import freeflowuniverse.crystallib.texttools
 
-[params]
-pub struct WikiArgs {
-pub mut:
-	name          string
-	namefilter    []string // only include the exact names as secified for the rows
-	includefilter []string // matches for the tags
-	excludefilter []string // matches for the tags
-	period_months int = 12 // 3 for quarter, 12 for year, 1 for all months
-	description   string
-	title         string
-	rowname       bool = true
-}
 
 // format a sheet properly in wiki format
-pub fn (s Sheet) wiki(args_ WikiArgs) !string {
+pub fn (s Sheet) wiki(args_ RowGetArgs) !string {
 	mut args := args_
-	if args.name == '' {
-		args.name = s.name
-	}
 
-	argssmaller := ToYearQuarterArgs{
-		name: args.name
-		includefilter: args.includefilter
-		excludefilter: args.excludefilter
-		namefilter: args.namefilter
-		period_months: args.period_months
-	}
-	mut sheet := s.tosmaller(argssmaller)! // this will do the filtering and if needed make smaller
+	period_months := match args.period_type {
+	.year  { 12 }
+	.month { 1 }
+	.quarter{ 3 }
+	else { panic("bug") }
+}
+
+	mut sheet := s.filter(args)! // this will do the filtering and if needed make smaller
 
 	mut out := ''
 	if args.title.len > 0 {
 		out = '## ${args.title}\n\n'
 	}
-	if args.description != '' {
-		out += args.description + '\n\n'
+	if args.title != '' {
+		out += args.title + '\n\n'
 	}
 
 	mut colmax := []int{}
@@ -52,7 +37,7 @@ pub fn (s Sheet) wiki(args_ WikiArgs) !string {
 
 	mut header_wiki_items := []string{}
 	mut header_wiki_items2 := []string{}
-	if args.rowname && names_width[0] > 0 {
+	if args.rowname_show && names_width[0] > 0 {
 		header_wiki_items << texttools.expand('|', names_width[0] + 1, ' ')
 		header_wiki_items2 << texttools.expand('|', names_width[0] + 1, '-')
 	}
@@ -74,7 +59,7 @@ pub fn (s Sheet) wiki(args_ WikiArgs) !string {
 
 	for _, mut row in sheet.rows {
 		mut wiki_items := []string{}
-		if args.rowname && names_width[0] > 0 {
+		if args.rowname_show && names_width[0] > 0 {
 			wiki_items << texttools.expand('|${row.name}', names_width[0] + 1, ' ')
 		}
 		for x in 0 .. sheet.nrcol {

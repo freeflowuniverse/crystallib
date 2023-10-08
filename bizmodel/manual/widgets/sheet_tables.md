@@ -6,19 +6,10 @@
 
 ```js
 
-!!bizmodel.graph_bar_row rowname:revenue_total unit:million title:'A Title' title_sub:'Sub'
+!!bizmodel.graph_bar_row namefilter:revenue_total unit:million title:'A Title' title_sub:'Sub'
 !!bizmodel.sheet_wiki title:'REVENUE' includefilter:rev
 
 ```
-### params
 
-- title, title of the tables widget
-- name, name of the widget
-- selectors:
-  - rowname , to show one specific row
-  - [namefilter](namefilter.md)
-  - includefilter, which rows to include look at overview of rows to see which ones there are
-  - excludefilter, which rows not to include
-  - period_months (default 12)
-
+!!include:widget_args
 

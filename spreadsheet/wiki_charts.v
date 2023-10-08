@@ -2,7 +2,6 @@ module spreadsheet
 
 import freeflowuniverse.crystallib.markdowndocs
 
-
 pub fn (mut s Sheet) wiki_title_chart(args RowGetArgs) string {
 	if args.title.len > 0 {
 		titletxt := "
@@ -17,9 +16,11 @@ pub fn (mut s Sheet) wiki_title_chart(args RowGetArgs) string {
 	return ''
 }
 
-pub fn (mut s Sheet) wiki_row_overview(args RowGetArgs) !string {
+pub fn (mut s_ Sheet) wiki_row_overview(args RowGetArgs) !string {
+  mut s := s_.filter(args)!  
 	table := markdowndocs.Table{
 		header: ['Row Name', 'Description', 'Tags']
+    //TODO: need to use the build in mechanism to filter rows
 		rows: s.rows.values().map([it.name, it.description, it.tags])
 		alignments: [.left, .left, .left]
 	}
@@ -28,14 +29,14 @@ pub fn (mut s Sheet) wiki_row_overview(args RowGetArgs) !string {
 
 // produce a nice looking bar chart see
 // https://echarts.apache.org/examples/en/editor.html?c=line-stack
-pub fn (mut s Sheet) wiki_line_chart(args_ RowGetArgs) !string {
+pub fn (mut s_ Sheet) wiki_line_chart(args_ RowGetArgs) !string {
   mut args:=args_
-	header := s.header_get_as_string(args.period_type)!
-	row_names := ["something"] //TODO: implement
+  args.rowname = s.rowname_get(args)!
+	header := s.header_get_as_string(args.period_type)!  
 	mut series_lines := []string{}
 
   series_lines << '{
-        name: \'${row_names[0]}\',
+        name: \'${row_name}\',
         type: \'line\',
         stack: \'Total\',
         data: [${s.data_get_as_string(args)!}]
@@ -84,8 +85,9 @@ pub fn (mut s Sheet) wiki_line_chart(args_ RowGetArgs) !string {
 
 // produce a nice looking bar chart see
 // https://echarts.apache.org/examples/en/index.html#chart-type-bar
-pub fn (mut s Sheet) wiki_bar_chart(args_ RowGetArgs) !string {
-	mut args := args_
+pub fn (mut s_ Sheet) wiki_bar_chart(args_ RowGetArgs) !string {
+  mut args:=args_
+  args.rowname = s.rowname_get(args)!
 	header := s.header_get_as_string(args.period_type)!
 	data := s.data_get_as_string(args)!
 	bar1 := "
@@ -115,8 +117,9 @@ pub fn (mut s Sheet) wiki_bar_chart(args_ RowGetArgs) !string {
 
 // produce a nice looking bar chart see
 // https://echarts.apache.org/examples/en/index.html#chart-type-bar
-pub fn (mut s Sheet) wiki_pie_chart(args_ RowGetArgs) !string {
-	mut args := args_
+pub fn (mut s_ Sheet) wiki_pie_chart(args_ RowGetArgs) !string {
+  mut args:=args_
+  args.rowname = s.rowname_get(args)!
 	header := s.header_get_as_list(args.period_type)!
 	data := s.data_get_as_list(args)!
 

@@ -14,9 +14,10 @@ fn remove_empty_line(txt string) string {
 [params]
 pub struct RowGetArgs {
 pub mut:
-	rowname       string   // only include the exact names as secified for the row (if only one row)
-	include       []string // to use with params filter e.g. ['location:belgium_*'] //would match all words starting with belgium
-	exclude       []string
+	rowname		  string //if specified then its one name
+	namefilter    []string // only include the exact names as secified for the rows
+	includefilter   []string // to use with params filter e.g. ['location:belgium_*'] //would match all words starting with belgium
+	excludefilter   []string
 	period_type   PeriodType       // year, month, quarter
 	aggregate     bool = true // if more than 1 row matches should we aggregate or not
 	aggregatetype RowAggregateType = .sum // important if used with include/exclude, because then we group
@@ -24,6 +25,7 @@ pub mut:
 	title         string
 	title_sub     string
 	size          string
+	rowname_show       bool = true  //show the name of the row
 }
 
 pub enum UnitType {
@@ -39,6 +41,30 @@ pub enum PeriodType {
 	quarter
 	error
 }
+
+//find rownames which match RowGetArgs
+pub fn (s Sheet) rownames_get(args RowGetArgs) ![]string{} {
+	res:=[]string{}
+	for _, row in s.rows {
+		if row.filter(args)!{
+			res<<row.name
+		}
+	}
+	return res
+}
+
+//get one rowname, if more than 1 will fail, if 0 will fail
+pub fn (s Sheet) rowname_get(args RowGetArgs) !string{} {
+	r:=s.rownames_get(args)!
+	if r.len==1{
+		return r[0]
+	}
+	if r.len==0{
+		return error("Didn't find rows for ${s.name}.\n$args")
+	}
+	return error("Found too many rows for ${s.name}.\n$args")
+}
+
 
 // return e.g. "'Y1', 'Y2', 'Y3', 'Y4', 'Y5', 'Y6'" if year, is for header
 pub fn (mut s Sheet) header_get_as_list(period_type PeriodType) ![]string {
@@ -82,6 +108,9 @@ pub fn (mut s Sheet) header_get_as_string(period_type PeriodType) !string {
 
 // return the values
 pub fn (mut s Sheet) data_get_as_string(args RowGetArgs) !string {
+	if args.rowname==""{
+		return error("rowname needs to be specified")
+	}
 	nryears := 5
 	err_pre := "Can't get data for sheet:${s.name} row:${args.rowname}.\n"
 	mut s2 := s
@@ -116,4 +145,25 @@ pub fn (mut s Sheet) data_get_as_string(args RowGetArgs) !string {
 		out += ',${val}'
 	}
 	return out.trim(',')
+}
+
+
+//use RowGetArgs to get to smaller version of sheet
+pub fn (mut s Sheet) filter(args RowGetArgs) !Sheet {
+
+    period_months := match args.period_type {
+      .year  { 12 }
+      .month { 1 }
+      .quarter{ 3 }
+      else { panic("bug") }  
+    }
+
+    tga:=ToYearQuarterArgs{
+      namefilter:args.namefilter
+      includefilter:args.includefilter
+      excludefilter:args.excludefilter
+      period_months:period_months
+    }
+
+    return s.tosmaller(tga)!
 }

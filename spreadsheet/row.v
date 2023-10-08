@@ -129,3 +129,27 @@ pub fn (r Row) min() int {
 	}
 	return int(v)
 }
+
+//apply the namefilter, include & exclude filter, if match return true
+pub fn (row Row) filter(args RowGetArgs) !bool {
+	mut ok := false
+	if args.namefilter.len > 0 || args.includefilter.len > 0 || args.excludefilter.len > 0 {
+		
+		if args.includefilter.len > 0 || args.excludefilter.len > 0 {
+			tagstofilter := params.parse(row.tags)!
+			ok = tagstofilter.filter_match(
+				include: args.includefilter
+				exclude: args.excludefilter
+			)!
+		}
+		for name1 in args.namefilter {
+			if name1.to_lower() == row.name.to_lower() {
+				ok = true
+			}
+		}
+		if ok == false {
+			return false
+		}
+	}
+	return ok
+}

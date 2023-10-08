@@ -5,4 +5,3 @@
     - [costs params](bizmodel_manual:costs_params.md)
 - [rows overview](bizmodel_manual:rows_overview.md)
 - [concepts](bizmodel_manual:concepts.md)
-    - [namefilter](bizmodel_manual:namefilter.md)

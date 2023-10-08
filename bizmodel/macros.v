@@ -46,39 +46,16 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 			return r
 		}
 
-		mut period_type_e := spreadsheet.PeriodType.error // year, month, quarter
-		mut unit_e := spreadsheet.UnitType.normal
-		if action.name == 'sheet_wiki' {
-			args := spreadsheet.WikiArgs{
-				name: p.get_default('name', '')!
-				namefilter: p.get_list_default('namefilter', [])!
-				includefilter: p.get_list_default('includefilter', [])!
-				excludefilter: p.get_list_default('excludefilter', [])!
-				period_months: p.get_int_default('period_months', 12)!
-				title: p.get_default('title', '')!
-				rowname: p.get_default_true('rowname')
-			}
-
-			rlock bizmodels {
-				mut model := bizmodels[processor.bizmodel_name]
-				r.result = model.sheet.wiki(args) or { panic(err) }
-			}
-			// r.result = m.sheet.wiki(data)
-			// r.result = mp.spawner.rpc(mut tname: 'bizmodel', method: 'WIKI', val: json.encode(args))!
-			r.result += '<BR>'
-
-			// TODO: use the global spreadsheet to get the results
-
-			return r
-		}
-
-		size := p.get_default('size', '')!
-
-		supported_actions := ['graph_pie_row', 'graph_line_row', 'graph_bar_row', 'graph_title_row',
+		supported_actions := ['sheet_wiki','graph_pie_row', 'graph_line_row', 'graph_bar_row', 'graph_title_row',
 			'wiki_row_overview', 'employee_wiki', 'employees_wiki']
 
 		if action.name in supported_actions {
-			rowname := p.get_default('rowname', '')!
+			namefilter:=get_list("namefilter")!
+			includefilter:=get_list("includefilter")!
+			excludefilter:=get_list("excludefilter")!
+			size := p.get_default('size', '')!
+			title_sub := p.get_default('title_sub', '')!
+			title := p.get_default('title', '')!
 			unit := p.get_default('unit', 'normal')!
 			unit_e = match unit {
 				'thousand' { .thousand }
@@ -87,7 +64,9 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 				else { .normal }
 			}
 			period_type := p.get_default('period_type', 'year')!
-
+			if period_type !in ['year', 'month', 'quarter'] {
+				return error('period type needs to be in year,month,quarter')
+			}
 			period_type_e = match period_type {
 				'year' { .year }
 				'month' { .month }
@@ -97,25 +76,32 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 			if period_type_e == .error {
 				return error('period type needs to be in year,month,quarter')
 			}
-			// TODO: cleaner handling of wiki_row_overview
-			if rowname == '' && action.name != 'wiki_row_overview' {
-				println(action)
-				return error('specify the rowname please')
-			}
-			if period_type !in ['year', 'month', 'quarter'] {
-				return error('period type needs to be in year,month,quarter')
-			}
 
-			title_sub := p.get_default('title_sub', '')!
-			title := p.get_default('title', '')!
+			aggregate := p.get_default_false('aggregate')!
+			rowname_show := p.get_default_true('rowname_show')!
+
+			// namefilter    []string // only include the exact names as secified for the rows
+			// includefilter   []string // to use with params filter e.g. ['location:belgium_*'] //would match all words starting with belgium
+			// excludefilter   []string
+			// period_type   PeriodType       // year, month, quarter
+			// aggregate     bool = true // if more than 1 row matches should we aggregate or not
+			// aggregatetype RowAggregateType = .sum // important if used with include/exclude, because then we group
+			// unit          UnitType
+			// title         string
+			// title_sub     string
+			// size          string
+			// rowname_show       bool = true  //show the name of the row
 
 			args := spreadsheet.RowGetArgs{
-				rowname: rowname
+				namefilter:namefilter
+				includefilter:includefilter
+				excludefilter:excludefilter
 				period_type: period_type_e
 				unit: unit_e
 				title_sub: title_sub
 				title: title
 				size: size
+				rowname_show: rowname_show
 			}
 
 			mut model := BizModel{}
@@ -125,31 +111,29 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 
 			match action.name {
 				'graph_title_row' {
+					r.result = model.sheet.wiki(args) or { panic(err) }
+				}
+				'graph_title_row' {
 					r.result = model.sheet.wiki_title_chart(args)
 				}
 				'graph_line_row' {
-					r.result = model.sheet.wiki_line_chart([args]) or { panic(err) }
+					r.result = model.sheet.wiki_line_chart([args])!
 				}
 				'graph_bar_row' {
-					r.result = model.sheet.wiki_bar_chart(args) or { panic(err) }
+					r.result = model.sheet.wiki_bar_chart(args)!
 				}
 				'graph_pie_row' {
-					r.result = model.sheet.wiki_pie_chart(args) or { panic(err) }
+					r.result = model.sheet.wiki_pie_chart(args)!
 				}
 				'wiki_row_overview' {
-					r.result = model.sheet.wiki_row_overview(args) or { panic(err) }
+					r.result = model.sheet.wiki_row_overview(args)!
 				}
 				else {
-					panic('unexpected action name ${action.name}')
+					return error('unexpected action name ${action.name}')
 				}
 			}
 
-			// r.result = mp.spawner.rpc(mut
-			// 	tname: 'bizmodel'
-			// 	method: chart_methodname
-			// 	val: json.encode(args)
-			// )!
-			r.result += '\n'
+			r.result += '\n<BR>'
 			return r
 		} else {
 			logger.warn('action ${action.name} isnt supported yet')

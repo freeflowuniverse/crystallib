@@ -102,7 +102,7 @@ pub fn (mut s Sheet) group2row(args Group2RowArgs) !&Row {
 pub struct ToYearQuarterArgs {
 pub mut:
 	name          string
-	namefilter    []string // only include the exact names as secified for the rows
+	namefilter    []string // only include the exact names as specified for the rows
 	includefilter []string // matches for the tags
 	excludefilter []string // matches for the tags
 	period_months int = 12
@@ -127,23 +127,9 @@ fn (s Sheet) tosmaller(args_ ToYearQuarterArgs) !Sheet {
 		// currencies: s.currencies
 	)!
 	for _, row in s.rows {
-		if args.namefilter.len > 0 || args.includefilter.len > 0 || args.excludefilter.len > 0 {
-			mut ok := false
-			if args.includefilter.len > 0 || args.excludefilter.len > 0 {
-				tagstofilter := params.parse(row.tags)!
-				ok = tagstofilter.filter_match(
-					include: args.includefilter
-					exclude: args.excludefilter
-				)!
-			}
-			for name1 in args.namefilter {
-				if name1.to_lower() == row.name.to_lower() {
-					ok = true
-				}
-			}
-			if ok == false {
-				continue
-			}
+		ok:=row.filter(args)!
+		if ok==false{
+			continue
 		}
 		// means filter not specified or filtered
 		mut rnew := sheet_out.row_new(

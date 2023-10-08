@@ -7,7 +7,10 @@ fn test_macro_args() {
 	assert params.filter_match(include: ['description:*see*'])!
 
 	assert params.filter_match(include: ['priority:incredible'])!
-
+	assert params.filter_match(include: ['priority:incredible+color:red'])!
+	assert params.filter_match(include: ['priority:incredible+color:green','arg1'])!
+	assert params.filter_match(include: ['priority:incredible+color:red','arg1+arg3'])!
+	
 	assert params.filter_match(include: ['arg2'])!
 
 	c := params.filter_match(include: ['arg'])!
@@ -28,5 +31,9 @@ fn test_macro_args() {
 	g := params.filter_match(include: ['arg1+arg3'])!
 	assert g == false
 
-	// NEXT: do include and excluse and more than one as well
+	h := params.filter_match(include: ['priority:incredible+color:green'])!
+	assert h == false
+
+	h2 := params.filter_match(include: ['priority:incredible'], exclude:["color:red"])!
+	assert h2 == false	
 }
