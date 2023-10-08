@@ -1,13 +1,23 @@
 module params
 
+import freeflowuniverse.crystallib.texttools.regext
 import freeflowuniverse.crystallib.texttools
-import regex
 
-// convert GB, MB, KB to bytes
-// e.g. 10 GB becomes bytes in u64
+
+//find parts of text in PARAM values which are of form {NAME}, and replace those .
+// .
+// will walk over all elements of the params, and then replace all the values .
+// .
+// NAME is as follows: .
+//   Uppercase letters: A-Z . 
+//   Lowercase letters: a-z .
+//   Digits: 0-9 .
+//   Underscore: _ .
+// .
+// the NAME is key of the map, the val of the map is what we replace with
 pub fn (mut params Params) replace(args map[string]string) {
 	for mut p in params.params {
-		for i in regexfind(p.value) {
+		for i in regext.find_simple_vars(p.value) {
 			i2 := texttools.name_fix(i)
 			if i2 in args {
 				// println("$i -> ${args[i2]}")
@@ -15,15 +25,6 @@ pub fn (mut params Params) replace(args map[string]string) {
 			}
 		}
 	}
-}
-
-fn regexfind(txt string) []string {
-	pattern := r'\{(\w+)\}'
-	mut re := regex.regex_opt(pattern) or { panic(err) }
-	// println(re.get_query())
-	mut words := re.find_all_str(txt)
-	// println(words)
-	return words
 }
 
 // func main() {

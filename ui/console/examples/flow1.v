@@ -18,17 +18,17 @@ fn (mut f RoomOrderFlow) room_choice() ! {
 
 	println(i)
 
-	smoker:=f.ui.ask_yesno(description:"Are you a smoker?")
-	if smoker{
-		smoke:=f.ui.ask_yesno(description:"Do you want to smoke in your room?")
-		if smoke == false{
-			println("Please realize if we detect you have smoked in your room we will charge 100USD to deep clean the room.")
-		}			
+	smoker := f.ui.ask_yesno(description: 'Are you a smoker?')
+	if smoker {
+		smoke := f.ui.ask_yesno(description: 'Do you want to smoke in your room?')
+		if smoke == false {
+			println('Please realize if we detect you have smoked in your room we will charge 100USD to deep clean the room.')
+		}
 	}
-	if smoker==false{
-		//TODO check there is a non smoking room.
+	if smoker == false {
+		// TODO check there is a non smoking room.
 		println("We are very sorry, we didn't find a non smoking room, do you want another room or you are ok.")
-	}else{
+	} else {
 		println("We are a non smoking hotel, we're sorry.")
 	}
 }
@@ -40,10 +40,11 @@ fn do() ! {
 	// warning     string
 	// reset       bool = true	
 
-	gui := ui.new(channel:.console)!
-	mut f := RoomOrderFlow{ui:gui}
+	gui := ui.new(channel: .console)!
+	mut f := RoomOrderFlow{
+		ui: gui
+	}
 	f.room_choice()!
-
 
 	// println(i)
 }

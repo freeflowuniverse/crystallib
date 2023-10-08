@@ -43,7 +43,7 @@ pub fn get_dir(path string, create bool) !Path {
 		if !p2.is_dir() {
 			return error('Path ${path} is not a dir.')
 		}
-	} 
+	}
 	return p2
 }
 

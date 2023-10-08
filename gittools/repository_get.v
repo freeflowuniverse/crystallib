@@ -4,7 +4,6 @@ import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.pathlib
 import freeflowuniverse.crystallib.redisclient
 import freeflowuniverse.crystallib.osal
-
 import os
 
 [params]
@@ -15,84 +14,81 @@ pub mut:
 	reset   bool // if we want to force a clean repo
 }
 
-
 [params]
-struct DiskStatusArgs{
+struct DiskStatusArgs {
 pub mut:
-	path string
-	reload bool
+	path          string
+	reload        bool
 	reload_status bool
 }
 
-
-struct DiskStatus{
+struct DiskStatus {
 mut:
 	branch string
-	url string 
+	url    string
 	status string
 }
 
-//load the info from dis
+// load the info from dis
 fn repo_disk_status(args DiskStatusArgs) !DiskStatus {
-	if args.path.len<3{
-		panic("path cannot be smaller than 3.\n$args")
+	if args.path.len < 3 {
+		panic('path cannot be smaller than 3.\n${args}')
 	}
-	pre:='git:cache:${args.path}'
-	path:=args.path
+	pre := 'git:cache:${args.path}'
+	path := args.path
 	mut redis := redisclient.core_get()!
-	mut ds:= DiskStatus	{
-		url:redis.get('${pre}:url') or {""}	
-		branch:redis.get('${pre}:branch') or {""}
-		status:redis.get('${pre}:status') or {""}
+	mut ds := DiskStatus{
+		url: redis.get('${pre}:url') or { '' }
+		branch: redis.get('${pre}:branch') or { '' }
+		status: redis.get('${pre}:status') or { '' }
 	}
 
-	if args.reload || ds.url==""{
+	if args.reload || ds.url == '' {
 		cmd := 'cd ${path} && git config --get remote.origin.url'
-		ds.url=osal.execute_silent(cmd) or {
+		ds.url = osal.execute_silent(cmd) or {
 			return error('Cannot get remote origin url: ${path}. Error was ${err}')
-		}		
-		ds.url=ds.url.trim(' \n')
-		redis.set('${pre}:url',ds.url) or {}	
-		redis.expire('${pre}:url',3600*20)!
+		}
+		ds.url = ds.url.trim(' \n')
+		redis.set('${pre}:url', ds.url) or {}
+		redis.expire('${pre}:url', 3600 * 20)!
 	}
 
-	if args.reload || ds.branch==""{
+	if args.reload || ds.branch == '' {
 		cmd2 := 'cd ${path} && git rev-parse --abbrev-ref HEAD'
-		ds.branch=osal.execute_silent(cmd2) or {
+		ds.branch = osal.execute_silent(cmd2) or {
 			return error('Cannot get branch: ${path}. Error was ${err}')
-		}	
-		ds.branch=ds.branch.trim(' \n')
-		redis.set('${pre}:branch',ds.branch) or {}	
-		redis.expire('${pre}:branch',3600*20)!
+		}
+		ds.branch = ds.branch.trim(' \n')
+		redis.set('${pre}:branch', ds.branch) or {}
+		redis.expire('${pre}:branch', 3600 * 20)!
 	}
 
-	if args.reload || args.reload_status ||  ds.status==""{
-		println(" - get status for: ${path}")
+	if args.reload || args.reload_status || ds.status == '' {
+		println(' - get status for: ${path}')
 		cmd3 := 'cd ${path} &&  git status'
-		ds.status=osal.execute_silent(cmd3) or {
+		ds.status = osal.execute_silent(cmd3) or {
 			return error('Cannot get status for repo: ${path}. Error was ${err}')
-		}		
-		redis.set('${pre}:status',ds.status) or {}	
-		redis.expire('${pre}:status',3600*20)!
+		}
+		redis.set('${pre}:status', ds.status) or {}
+		redis.expire('${pre}:status', 3600 * 20)!
 	}
 
 	return ds
 }
 
 fn repo_disk_status_delete(args DiskStatusArgs) ! {
-	pre:='git:cache:${args.path}:*'
+	pre := 'git:cache:${args.path}:*'
 	mut redis := redisclient.core_get()!
-		keys := redis.keys(pre)!
-		for key in keys {
-			redis.del(key)!
-		}
+	keys := redis.keys(pre)!
+	for key in keys {
+		redis.del(key)!
+	}
 }
 
 // returns the git address starting from path
 pub fn (mut gitstructure GitStructure) repo_from_path(path string) !&GitRepo {
-
-	if path.len<3{
-		panic("path cannot be <3.\n$path")
+	if path.len < 3 {
+		panic('path cannot be <3.\n${path}')
 	}
 
 	mut path2 := path.replace('~', os.home_dir())
@@ -108,7 +104,7 @@ pub fn (mut gitstructure GitStructure) repo_from_path(path string) !&GitRepo {
 		return error("path: '${path2}' is not a git dir, missed a .git/config file")
 	}
 
-	ds:=repo_disk_status(path:path2)!
+	ds := repo_disk_status(path: path2)!
 
 	mut locator := gitstructure.locator_new(ds.url)!
 	locator.addr.branch = ds.branch
@@ -154,7 +150,7 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !&GitRepo {
 	} else {
 		// println("repo does not exist:\n$p\n+++")
 		// if repo doesn't exist, create new repo from address in locator
-		mut r2:=&GitRepo{
+		mut r2 := &GitRepo{
 			gs: &gitstructure
 			addr: args.locator.addr
 			path: p

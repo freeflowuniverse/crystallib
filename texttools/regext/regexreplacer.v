@@ -1,5 +1,5 @@
-module texttools
-
+module regext
+import freeflowuniverse.crystallib.texttools
 import regex
 import os
 
@@ -8,7 +8,7 @@ pub mut:
 	instructions []ReplaceInstruction
 }
 
-struct ReplaceInstruction {
+pub struct ReplaceInstruction {
 pub:
 	regex_str    string
 	find_str     string
@@ -25,7 +25,12 @@ fn (mut self ReplaceInstructions) get_regex_queries() []string {
 	return res
 }
 
-fn regex_rewrite(r string) !string {
+//rewrite a filter string to a regex .
+//each char will be checked for in lower case as well as upper case (will match both) .
+//will only look at ascii .
+//'_- ' will be replaced to match one or more spaces .
+//the returned result is a regex string
+pub fn regex_rewrite(r string) !string {
 	r2 := r.to_lower()
 	mut res := []string{}
 	for ch in r2 {
@@ -48,8 +53,8 @@ fn regex_rewrite(r string) !string {
 	//+r"[\\n \:\!\.\?;,\\(\\)\\[\\]]"
 }
 
-// regex string see https://github.com/vlang/v/blob/master/vlib/regex/README.md
-// find_str is a normal search (text)
+// regex string see https://github.com/vlang/v/blob/master/vlib/regex/README.md .
+// find_str is a normal search (text) .
 // replace is the string we want to replace the match with
 fn (mut self ReplaceInstructions) add_item(regex_find_str string, replace_with string) ! {
 	mut item := regex_find_str
@@ -78,15 +83,15 @@ fn (mut self ReplaceInstructions) add_item(regex_find_str string, replace_with s
 	}
 }
 
-//
-// input is ["^Rregex:replacewith",...]
-// input is ["^Rregex:^Rregex2:replacewith"]
-// input is ["findstr:findstr:replacewith"]
-// input is ["findstr:^Rregex2:replacewith"]
-// findstr is a normal string to look for, is always matched case insensitive
-// regex is regex as described in https://github.com/vlang/v/blob/master/vlib/regex/README.md
-//   regex start with ^R
-//   case insensitive regex start with ^S
+// each element of the list can have more search statements .
+// a search statement can have 3 forms.
+//  - regex start with ^R see https://github.com/vlang/v/blob/master/vlib/regex/README.md .
+//  - case insensitive string find start with ^S (will internally convert to regex).
+//  - just a string, this is a literal find (case sensitive) .
+// input is ["^Rregex:replacewith",...] .
+// input is ["^Rregex:^Rregex2:replacewith"] .
+// input is ["findstr:findstr:replacewith"] .
+// input is ["findstr:^Rregex2:replacewith"] .
 pub fn (mut ri ReplaceInstructions) add(replacelist []string) ! {
 	for i in replacelist {
 		splitted := i.split(':')
@@ -101,19 +106,21 @@ pub fn (mut ri ReplaceInstructions) add(replacelist []string) ! {
 	}
 }
 
+[params]
 pub struct ReplaceArgs {
 pub mut:
 	text   string
 	dedent bool
 }
 
-// does the matching line per line
+// this is the actual function which will take text as input and return the replaced result
+// does the matching line per line .
 // will use dedent function, on text
 pub fn (mut self ReplaceInstructions) replace(args ReplaceArgs) !string {
 	mut gi := 0
 	mut text2 := args.text
 	if args.dedent {
-		text2 = dedent(text2)
+		text2 = texttools.dedent(text2)
 	}
 	mut line2 := ''
 	mut res := []string{}
@@ -160,6 +167,7 @@ pub fn (mut self ReplaceInstructions) replace(args ReplaceArgs) !string {
 	return x
 }
 
+[params]
 pub struct ReplaceDirArgs {
 pub mut:
 	path       string

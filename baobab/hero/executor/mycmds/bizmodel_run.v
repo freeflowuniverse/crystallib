@@ -2,11 +2,11 @@ module mycmds
 
 import os
 import freeflowuniverse.crystallib.bizmodel
-import cli { Command,Flag }
+import cli { Command, Flag }
 
 // const wikipath = os.dir(@FILE) + '/wiki'
 
-pub fn cmd_run_config(mut cmdroot Command){
+pub fn cmd_run_config(mut cmdroot Command) {
 	mut cmd_run := Command{
 		name: 'bizmodel'
 		description: 'Run a bizmodel simulation.'
@@ -39,56 +39,50 @@ pub fn cmd_run_config(mut cmdroot Command){
 		description: 'path to the collections, can be more than 1, if not specifieds is current dir.'
 	})
 
-	cmdroot.add_command(cmd_run)	
-
+	cmdroot.add_command(cmd_run)
 }
 
 fn cmd_run_execute(cmd Command) ! {
+	mut inputdir := cmd.flags.get_string('inputdir') or { '' }
 
-	mut inputdir := cmd.flags.get_string('inputdir') or {""}	
-
-	mut summarydir := cmd.flags.get_string('summarydir') or {""}
-	if summarydir==""{
-		if inputdir!=""{
-			for t in ["${inputdir}/summary.md","${inputdir}/Summary.md"]{
-				if os.exists(t){
-					summarydir=inputdir
+	mut summarydir := cmd.flags.get_string('summarydir') or { '' }
+	if summarydir == '' {
+		if inputdir != '' {
+			for t in ['${inputdir}/summary.md', '${inputdir}/Summary.md'] {
+				if os.exists(t) {
+					summarydir = inputdir
 					break
 				}
 			}
-			""
+			''
 		}
-		for t in ["${os.getwd()}/summary.md","${os.getwd()}/Summary.md"]{
-			if os.exists(t){
-				summarydir=os.getwd()
+		for t in ['${os.getwd()}/summary.md', '${os.getwd()}/Summary.md'] {
+			if os.exists(t) {
+				summarydir = os.getwd()
 				break
 			}
 		}
-		""
-	}	
-	if summarydir==""{
-		return error("Could not find summary.md in inputdir:'$inputdir' or currentdir.")		
+		''
+	}
+	if summarydir == '' {
+		return error("Could not find summary.md in inputdir:'${inputdir}' or currentdir.")
 	}
 
-	if inputdir==""{
-		inputdir=os.getwd()
+	if inputdir == '' {
+		inputdir = os.getwd()
 	}
 
-	outputdir := cmd.flags.get_string('outputdir') or {
-		"/tmp/bizmodel/output"
-	}
+	outputdir := cmd.flags.get_string('outputdir') or { '/tmp/bizmodel/output' }
 
 	// mut c := context.new()!
 
 	mut book := bizmodel.new(
 		name: 'example'
 		mdbook_name: 'biz_book'
-		mdbook_path: summarydir //TODO: need to make sure we support collections not to be on same place as summary
+		mdbook_path: summarydir // TODO: need to make sure we support collections not to be on same place as summary
 		mdbook_dest: outputdir
 		path: inputdir
 	)!
 
 	book.read()! // will generate and open	
-
 }
-

@@ -75,11 +75,11 @@ pub fn (gitstructure GitStructure) locator_new(url string) !GitLocator {
 		name: name
 		branch: branch
 		url_original: url
-		gs: &gitstructure 
+		gs: &gitstructure
 	}
 	if ga.provider == 'github.com' {
 		ga.provider = 'github'
-	}	
+	}
 	mut gl := GitLocator{
 		anker: anker
 		path: path

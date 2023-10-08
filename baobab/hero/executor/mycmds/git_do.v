@@ -2,11 +2,9 @@ module mycmds
 
 import freeflowuniverse.crystallib.gittools
 import freeflowuniverse.crystallib.osal
-import cli { Command,Flag }
+import cli { Command, Flag }
 import os
 // const wikipath = os.dir(@FILE) + '/wiki'
-
-
 
 // filter   string // if used will only show the repo's which have the filter string inside
 // repo     string
@@ -21,12 +19,12 @@ import os
 // delete bool (remove the repo)
 // script bool (run non interactive)
 // coderoot string //the location of coderoot if its another one
-pub fn cmd_git_actions(mut cmdroot Command){
+pub fn cmd_git_actions(mut cmdroot Command) {
 	mut cmd_run := Command{
 		name: 'git_do'
 		description: 'Work with your repos, list, commit, pull, reset, ...'
 		required_args: 0
-		usage:''
+		usage: ''
 		execute: cmd_gitactions_execute
 	}
 
@@ -54,7 +52,6 @@ pub fn cmd_git_actions(mut cmdroot Command){
 		description: 'delete the repo.'
 	})
 
-
 	cmd_run.add_flag(Flag{
 		flag: .bool
 		required: false
@@ -68,7 +65,7 @@ pub fn cmd_git_actions(mut cmdroot Command){
 		name: 'commitpull'
 		abbrev: 'cp'
 		description: 'commit and pull.'
-	})	
+	})
 
 	cmd_run.add_flag(Flag{
 		flag: .bool
@@ -86,7 +83,6 @@ pub fn cmd_git_actions(mut cmdroot Command){
 		description: 'which message to use for commit.'
 	})
 
-
 	cmd_run.add_flag(Flag{
 		flag: .string
 		required: false
@@ -94,7 +90,6 @@ pub fn cmd_git_actions(mut cmdroot Command){
 		abbrev: 'cr'
 		description: 'If you want to use another directory for your code root.'
 	})
-
 
 	cmd_run.add_flag(Flag{
 		flag: .string
@@ -159,75 +154,69 @@ pub fn cmd_git_actions(mut cmdroot Command){
 		description: 'Open visual studio code on found repos, will do for max 5.'
 	})
 
-
-	cmdroot.add_command(cmd_run)		
+	cmdroot.add_command(cmd_run)
 }
 
 fn cmd_gitactions_execute(cmd Command) ! {
-	coderoot:=cmd.flags.get_string('coderoot') or {""}	
-	
-	mut gs := gittools.get(root:coderoot,create:true) or {return error("Could not find gittools on '${coderoot}'\n$err")}
+	coderoot := cmd.flags.get_string('coderoot') or { '' }
 
-	mut repo:=cmd.flags.get_string('repo') or {""}
-	mut account:=cmd.flags.get_string('account') or {""}
-	mut provider:=cmd.flags.get_string('provider') or {""}
-	mut filter:=cmd.flags.get_string('filter') or {""}
-	if repo=="" && account=="" && provider==""&& filter==""{
-		curdir:=os.getwd()
-		if os.exists("${curdir}/.git"){
-			//we are in current directory
-			r0:=gs.repo_from_path(curdir)!
-			repo=r0.addr.name
-			account=r0.addr.account
-			provider=r0.addr.provider
+	mut gs := gittools.get(root: coderoot, create: true) or {
+		return error("Could not find gittools on '${coderoot}'\n${err}")
+	}
+
+	mut repo := cmd.flags.get_string('repo') or { '' }
+	mut account := cmd.flags.get_string('account') or { '' }
+	mut provider := cmd.flags.get_string('provider') or { '' }
+	mut filter := cmd.flags.get_string('filter') or { '' }
+	if repo == '' && account == '' && provider == '' && filter == '' {
+		curdir := os.getwd()
+		if os.exists('${curdir}/.git') {
+			// we are in current directory
+			r0 := gs.repo_from_path(curdir)!
+			repo = r0.addr.name
+			account = r0.addr.account
+			provider = r0.addr.provider
 		}
 	}
 
-
-
 	gs.actions(
-			filter:cmd.flags.get_string('filter') or {""}
-			repo:repo
-			account:account
-			provider:provider
-			pull:cmd.flags.get_bool('pull') or {false}	
-			pullreset:cmd.flags.get_bool('pullreset') or {false}
-			commit:cmd.flags.get_bool('commit') or {false}
-			commitpull:cmd.flags.get_bool('commitpull') or {false}
-			commitpullpush:cmd.flags.get_bool('commitpullpush') or {false}
-			delete:cmd.flags.get_bool('delete') or {false}
-			script:cmd.flags.get_bool('script') or {false}
-			cachereset:cmd.flags.get_bool('cachereset') or {false}
-			msg:cmd.flags.get_string('message') or {""}
-		)!
+		filter: cmd.flags.get_string('filter') or { '' }
+		repo: repo
+		account: account
+		provider: provider
+		pull: cmd.flags.get_bool('pull') or { false }
+		pullreset: cmd.flags.get_bool('pullreset') or { false }
+		commit: cmd.flags.get_bool('commit') or { false }
+		commitpull: cmd.flags.get_bool('commitpull') or { false }
+		commitpullpush: cmd.flags.get_bool('commitpullpush') or { false }
+		delete: cmd.flags.get_bool('delete') or { false }
+		script: cmd.flags.get_bool('script') or { false }
+		cachereset: cmd.flags.get_bool('cachereset') or { false }
+		msg: cmd.flags.get_string('message') or { '' }
+	)!
 
-	editor:=cmd.flags.get_bool('editor') or {false}
-	sourcetree:=cmd.flags.get_bool('sourcetree') or {false}
-	if sourcetree || editor{
-		repos:=gs.repos_get(
-				filter:cmd.flags.get_string('filter') or {""}
-				name:repo
-				account:account
-				provider:provider
-			) 
-		if repos.len>5{
+	editor := cmd.flags.get_bool('editor') or { false }
+	sourcetree := cmd.flags.get_bool('sourcetree') or { false }
+	if sourcetree || editor {
+		repos := gs.repos_get(
+			filter: cmd.flags.get_string('filter') or { '' }
+			name: repo
+			account: account
+			provider: provider
+		)
+		if repos.len > 5 {
 			return error("Can only open sourcetree or code editor for max 5 repo's")
 		}
-		for r in repos{
-			if editor{
-				cmd3:="open -a \"Visual Studio Code\" ${r.path.path}"
-				osal.execute_interactive(cmd3) or {
-					panic(err)
-				}			
+		for r in repos {
+			if editor {
+				cmd3 := "open -a \"Visual Studio Code\" ${r.path.path}"
+				osal.execute_interactive(cmd3) or { panic(err) }
 			}
-			if sourcetree{
-				cmd4:='open -a SourceTree ${r.path.path}'
+			if sourcetree {
+				cmd4 := 'open -a SourceTree ${r.path.path}'
 				println(cmd4)
-				osal.execute_interactive(cmd4) or {
-					panic(err)
-				}			
-			}			
-		}	
-			
+				osal.execute_interactive(cmd4) or { panic(err) }
+			}
+		}
 	}
 }

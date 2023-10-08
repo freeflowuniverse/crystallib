@@ -1,4 +1,4 @@
-module texttools
+module regext
 
 import os
 

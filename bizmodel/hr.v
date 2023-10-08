@@ -114,18 +114,18 @@ fn (mut m BizModel) hr_actions(actions_ Actions) ! {
 					id = rand.string(3)
 				}
 				// todo: make update action instead
-				mut new_action := actions.Action{
-					...action
-				}
-				new_action.params.params << params.Param{
-					key: 'id'
-					value: id
-				}
-				actions.add_id_to_action(
-					id: id
-					action: new_action
-					context: action.context
-				)!
+				// mut new_action := actions.Action{
+				// 	...action
+				// }
+				// new_action.params.params << params.Param{
+				// 	key: 'id'
+				// 	value: id
+				// }
+				// actions.add_id_to_action(
+				// 	id: id
+				// 	action: new_action
+				// 	context: action.context
+				// )!
 			}
 
 			m.employees[id] = &employee

@@ -3,7 +3,7 @@ module gittools
 import os
 
 // get the url for the git repo, in http or ssh format
-fn ( repo GitRepo) url_get(http bool) string {
+fn (repo GitRepo) url_get(http bool) string {
 	if http {
 		return repo.addr.url_http_get()
 	} else {
@@ -15,7 +15,7 @@ fn ( repo GitRepo) url_get(http bool) string {
 // will return true if it changed
 // http true means we will change to http method
 // http false means we will change to ssh method
-fn ( repo GitRepo) connection_change(http bool) !bool {
+fn (repo GitRepo) connection_change(http bool) !bool {
 	path2 := repo.path.path
 	if !os.exists(path2) {
 		// nothing to do

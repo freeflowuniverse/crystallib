@@ -12,7 +12,7 @@ fn setup() !&redisclient.Redis {
 
 fn cleanup(mut redis redisclient.Redis) ! {
 	redis.flushall()!
-	redis.disconnect()
+	// redis.disconnect()
 }
 
 fn test_set() {

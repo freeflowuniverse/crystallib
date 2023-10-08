@@ -1,5 +1,5 @@
 module circles
 
-pub struct BusinessModel {
-	employees 
-}
+// pub struct BusinessModel {
+// 	employees
+// }

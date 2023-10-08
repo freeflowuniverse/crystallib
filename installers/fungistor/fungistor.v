@@ -8,11 +8,10 @@ pub fn install() ! {
 	rust.install()!
 	println(' - install fungistor')
 	if !osal.done_exists('install_fungistor') && !osal.cmd_exists('rst') {
-
 		mut gs := gittools.new(root: '/tmp/code')!
 		url := 'https://github.com/threefoldtech/rfs'
 		mut gr := gs.repo_get_from_url(url: url, pull: false, reset: false)!
-		mut path:=gr.path_content_get() 
+		mut path := gr.path_content_get()
 
 		cmd := '
 		cd ${path}

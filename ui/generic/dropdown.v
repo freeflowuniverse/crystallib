@@ -11,9 +11,9 @@ import freeflowuniverse.crystallib.ui.uimodel { DropDownArgs }
 // 	clear       bool = true
 pub fn (mut c UserInterface) ask_dropdown(args DropDownArgs) int {
 	return match mut c.channel {
-		UIConsole { c.channel.ask_dropdown(args)}
+		UIConsole { c.channel.ask_dropdown(args) }
 		// UITelegram { return c.ask_dropdown(args) }
-		else {  panic("can't find channel") }
+		else { panic("can't find channel") }
 	}
 }
 

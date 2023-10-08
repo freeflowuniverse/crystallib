@@ -1,6 +1,6 @@
 module template
 
-import freeflowuniverse.crystallib.console { color_fg }
+import freeflowuniverse.crystallib.console
 import freeflowuniverse.crystallib.ui.uimodel { DropDownArgs }
 
 // return the dropdown as an int
@@ -9,7 +9,6 @@ import freeflowuniverse.crystallib.ui.uimodel { DropDownArgs }
 // 	warning     string
 // 	clear       bool = true
 pub fn (mut c UIExample) ask_dropdown(args DropDownArgs) int {
-
 	return 0
 }
 
@@ -28,5 +27,5 @@ pub fn (mut c UIExample) ask_dropdown_multiple(args DropDownArgs) []string {
 // 	warning     string
 // 	clear       bool = true
 pub fn (mut c UIExample) ask_dropdown_string(args DropDownArgs) string {
-	return ""
+	return ''
 }

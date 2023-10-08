@@ -73,23 +73,23 @@ fn (mut repo GitRepo) checkinit(args_ CheckArgs) ! {
 			if branchname != repo.addr.branch && args.pull {
 				println(' - branch switch ${branchname} -> ${repo.addr.branch} for ${url}')
 				repo.branch_switch(repo.addr.branch)!
-				args.pull=true
+				args.pull = true
 			}
 		} else {
-			return error("branch should have been known for ${repo}")
+			return error('branch should have been known for ${repo}')
 		}
 		if args.pull {
 			repo.pull()!
 		}
 
-		repo.refresh(reload:true)!
+		repo.refresh(reload: true)!
 
 		repo.state = GitStatus.ok
 	}
 	return
 }
 
-fn ( repo GitRepo) get_clone_cmd(http bool) string {
+fn (repo GitRepo) get_clone_cmd(http bool) string {
 	url := repo.url_get(http)
 	mut cmd := ''
 

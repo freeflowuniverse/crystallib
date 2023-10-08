@@ -1,7 +1,7 @@
 module telegram
 
 import os
-import freeflowuniverse.crystallib.ui.uimodel { DropDownArgs, QuestionArgs, YesNoArgs }
+import freeflowuniverse.crystallib.ui.uimodel
 // import freeflowuniverse.crystallib.timetools
 
 // // args:

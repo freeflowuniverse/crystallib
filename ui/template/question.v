@@ -2,7 +2,7 @@ module template
 
 import os
 import freeflowuniverse.crystallib.ui.uimodel { QuestionArgs }
-import freeflowuniverse.crystallib.console { color_fg }
+import freeflowuniverse.crystallib.console
 
 // args:
 // - description string
@@ -13,6 +13,5 @@ import freeflowuniverse.crystallib.console { color_fg }
 // - minlen: min nr of chars
 //
 pub fn (mut c UIExample) ask_question(args QuestionArgs) string {
-
-	return ""
+	return ''
 }

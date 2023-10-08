@@ -8,23 +8,22 @@ import freeflowuniverse.crystallib.pathlib
 // can be translated to location on filesystem
 // can be translated to url of the git repository online
 pub struct GitAddr {
-	gs &GitStructure [skip; str: skip] 
+	gs &GitStructure [skip; str: skip]
 pub mut:
 	// root string
-	provider string
-	account  string
-	name     string // is the name of the repository
-	branch   string
+	provider     string
+	account      string
+	name         string // is the name of the repository
+	branch       string
 	url_original string
 }
 
 // internal function to check git address
-fn (addr GitAddr) check(){
-	if addr.provider=="" || addr.account=="" || addr.name==""{
-		panic("provider, account or name is empty: ${addr.provider}/${addr.account}/${addr.name}")
+fn (addr GitAddr) check() {
+	if addr.provider == '' || addr.account == '' || addr.name == '' {
+		panic('provider, account or name is empty: ${addr.provider}/${addr.account}/${addr.name}')
 	}
 }
-
 
 // return the path on the filesystem pointing to the address (is always a dir)
 pub fn (addr GitAddr) path() !pathlib.Path {
@@ -43,14 +42,13 @@ pub fn (addr GitAddr) path() !pathlib.Path {
 	return path
 }
 
-fn ( addr GitAddr) path_account() pathlib.Path {
+fn (addr GitAddr) path_account() pathlib.Path {
 	addr.check()
 	if addr.gs.rootpath.path == '' {
 		panic('cannot be empty')
 	}
-	path := pathlib.get_dir('${addr.gs.rootpath.path}/${addr.provider}/${addr.account}', true) or {
-		panic('couldnt get directory')
-	}
+	path := pathlib.get_dir('${addr.gs.rootpath.path}/${addr.provider}/${addr.account}',
+		true) or { panic('couldnt get directory') }
 	return path
 }
 
@@ -65,18 +63,18 @@ pub fn (addr GitAddr) url_get() string {
 
 pub fn (addr GitAddr) url_ssh_get() string {
 	addr.check()
-	mut provider:=addr.provider
-	if provider=="github"{
-		provider="github.com"
+	mut provider := addr.provider
+	if provider == 'github' {
+		provider = 'github.com'
 	}
 	return 'git@${provider}:${addr.account}/${addr.name}.git'
 }
 
 pub fn (addr GitAddr) url_http_get() string {
 	addr.check()
-	mut provider:=addr.provider
-	if provider=="github"{
-		provider="github.com"
+	mut provider := addr.provider
+	if provider == 'github' {
+		provider = 'github.com'
 	}
 	return 'https://${provider}/${addr.account}/${addr.name}'
 }

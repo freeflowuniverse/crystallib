@@ -42,7 +42,7 @@ pub fn (path Path) realpath() string {
 }
 
 pub fn (path Path) shortpath() string {
-	return path.realpath().replace(os.home_dir(),'~' )
+	return path.realpath().replace(os.home_dir(), '~')
 }
 
 // check the inside of pathobject, is like an init function

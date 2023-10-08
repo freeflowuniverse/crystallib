@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.ui.template { UIExample }
 // import freeflowuniverse.crystallib.ui.telegram { UITelegram }
 
 // need to do this for each type of UI channel e.g. console, telegram, ...
-type UIChannel = console.UIConsole | UIExample // TODO TelegramBot
+type UIChannel = UIConsole | UIExample // TODO TelegramBot
 
 pub struct UserInterface {
 pub mut:
@@ -17,4 +17,3 @@ pub enum ChannelType {
 	console
 	telegram
 }
-

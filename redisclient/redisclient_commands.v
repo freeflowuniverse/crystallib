@@ -281,3 +281,26 @@ pub fn (mut r Redis) scan(cursor int) !(string, []string) {
 
 	return resp.get_redis_value(res[0]), values
 }
+
+
+// Add the specified members to the set stored at key. Specified members that are already a member 
+// of this set are ignored. If key does not exist, a new set is created before adding the specified members.
+// An error is returned when the value stored at key is not a set.
+pub fn (mut r Redis) sadd(key string, members []string) !int {
+	mut tosend:=['SADD',key]
+	for k in members{
+		tosend<<k
+	}	
+	return r.send_expect_int(tosend)
+}
+
+//Returns if member is a member of the set stored at key.
+pub fn (mut r Redis) smismember(key string, members []string) ![]int {
+	// mut key2 := key.trim("\"'")
+	mut tosend:=['SMISMEMBER',key]
+	for k in members{
+		tosend<<k
+	}
+	res:= r.send_expect_list_int(tosend)!
+	return res
+}

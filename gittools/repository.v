@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.pathlib
 pub struct GitRepo {
 	id int
 mut:
-	gs &GitStructure [skip; str: skip] 
+	gs &GitStructure [skip; str: skip]
 pub mut:
 	state GitStatus
 	addr  GitAddr
@@ -24,29 +24,28 @@ pub enum GitStatus {
 }
 
 [params]
-pub struct RefreshArgs{
+pub struct RefreshArgs {
 pub mut:
 	reload bool
 }
 
 // get the state from the disk
-pub fn (repo GitRepo) refresh(args RefreshArgs)! {
-	ds:=repo_disk_status(path:repo.path.path,reload:args.reload,reload_status:true)!
+pub fn (repo GitRepo) refresh(args RefreshArgs) ! {
+	ds := repo_disk_status(path: repo.path.path, reload: args.reload, reload_status: true)!
 
-	if ds.url != repo.addr.url_original{
+	if ds.url != repo.addr.url_original {
 		return error("url on repo:'${repo.addr.url_original}' not same as url on disk: ${ds.url}")
 	}
 
-	if ds.branch != repo.addr.branch{
+	if ds.branch != repo.addr.branch {
 		return error("branch on repo:'${repo.addr.url_original}' not same as branch on disk: ${ds.url}")
-		//TODO: need to implement code to deal with this situation
+		// TODO: need to implement code to deal with this situation
 	}
 }
 
-pub fn (repo GitRepo) state_delete()! {
-	repo_disk_status_delete(path:repo.path.path)!
+pub fn (repo GitRepo) state_delete() ! {
+	repo_disk_status_delete(path: repo.path.path)!
 }
-
 
 // relative path inside the gitstructure, pointing to the repo
 pub fn (repo GitRepo) path_relative() string {
@@ -54,44 +53,43 @@ pub fn (repo GitRepo) path_relative() string {
 	return repo.path.path_relative(repo.gs.rootpath.path) or { panic('couldnt get relative path') } // TODO: check if works well
 }
 
-pub fn (repo GitRepo) changes(args RefreshArgs) !bool {	
-	if repo.needcommit()!{
+pub fn (repo GitRepo) changes(args RefreshArgs) !bool {
+	if repo.needcommit()! {
 		return true
 	}
 	return false
 }
 
-
-pub fn (repo GitRepo) needcommit(args RefreshArgs) !bool {	
-	check:=["untracked files","changes not staged for commit"]
-	path:=repo.path.path
-	ds:=repo_disk_status(path:path)!	
-	for tocheck in check{
-		if ds.status.to_lower().contains(tocheck.to_lower()){
+pub fn (repo GitRepo) needcommit(args RefreshArgs) !bool {
+	check := ['untracked files', 'changes not staged for commit']
+	path := repo.path.path
+	ds := repo_disk_status(path: path)!
+	for tocheck in check {
+		if ds.status.to_lower().contains(tocheck.to_lower()) {
 			return true
 		}
 	}
 	return false
 }
 
-pub fn (repo GitRepo) needpull(args RefreshArgs) !bool {	
-	check:=["branch is behind"]
-	path:=repo.path.path
-	ds:=repo_disk_status(path:path)!	
-	for tocheck in check{
-		if ds.status.to_lower().contains(tocheck.to_lower()){
+pub fn (repo GitRepo) needpull(args RefreshArgs) !bool {
+	check := ['branch is behind']
+	path := repo.path.path
+	ds := repo_disk_status(path: path)!
+	for tocheck in check {
+		if ds.status.to_lower().contains(tocheck.to_lower()) {
 			return true
 		}
 	}
 	return false
 }
 
-pub fn (repo GitRepo) needpush(args RefreshArgs) !bool {	
-	check:=["to publish your local commits","your branch is ahead of"]
-	path:=repo.path.path
-	ds:=repo_disk_status(path:path)!	
-	for tocheck in check{
-		if ds.status.to_lower().contains(tocheck.to_lower()){
+pub fn (repo GitRepo) needpush(args RefreshArgs) !bool {
+	check := ['to publish your local commits', 'your branch is ahead of']
+	path := repo.path.path
+	ds := repo_disk_status(path: path)!
+	for tocheck in check {
+		if ds.status.to_lower().contains(tocheck.to_lower()) {
 			return true
 		}
 	}
@@ -99,16 +97,16 @@ pub fn (repo GitRepo) needpush(args RefreshArgs) !bool {
 }
 
 // pulls remote content in, will reset changes
-pub fn ( repo GitRepo) pull_reset() ! {
+pub fn (repo GitRepo) pull_reset() ! {
 	repo.remove_changes()!
 	repo.pull()!
 }
 
 // pulls remote content in, will fail if there are local changes
-pub fn ( repo GitRepo) pull() ! {
+pub fn (repo GitRepo) pull() ! {
 	println('   - PULL: ${repo.url_get(true)}')
 	changes := repo.changes()!
-	if changes{
+	if changes {
 		return error('Cannot pull repo: ${repo.path.path} because there are changes in the dir.')
 	}
 	cmd2 := 'cd ${repo.path.path} && git pull'
@@ -140,7 +138,7 @@ pub fn (repo GitRepo) commit(msg string) ! {
 }
 
 // remove all changes of the repo, be careful
-pub fn ( repo GitRepo) remove_changes() ! {
+pub fn (repo GitRepo) remove_changes() ! {
 	change := repo.changes() or {
 		return error('cannot detect if there are changes on repo.\n${err}')
 	}
@@ -165,7 +163,7 @@ pub fn ( repo GitRepo) remove_changes() ! {
 	repo.refresh()!
 }
 
-pub fn ( repo GitRepo) push() ! {
+pub fn (repo GitRepo) push() ! {
 	println('   - PUSH: ${repo.url_get(true)}')
 	cmd := 'cd ${repo.path.path} && git push'
 	osal.execute_silent(cmd) or {
@@ -174,12 +172,12 @@ pub fn ( repo GitRepo) push() ! {
 	repo.refresh()!
 }
 
-pub fn ( repo GitRepo) branch_get() !string {
-	repo.refresh(reload:true)!
+pub fn (repo GitRepo) branch_get() !string {
+	repo.refresh(reload: true)!
 	return repo.addr.branch
 }
 
-pub fn ( repo GitRepo) branch_switch(branchname string) ! {
+pub fn (repo GitRepo) branch_switch(branchname string) ! {
 	if repo.gs.config.multibranch {
 		return error('cannot do a branch switch if we are using multibranch strategy.')
 	}
@@ -198,7 +196,7 @@ pub fn ( repo GitRepo) branch_switch(branchname string) ! {
 	repo.pull()!
 }
 
-pub fn ( repo GitRepo) fetch_all() ! {
+pub fn (repo GitRepo) fetch_all() ! {
 	cmd := 'cd ${repo.path.path} && git fetch --all'
 	osal.execute_silent(cmd) or {
 		// println('GIT FETCH FAILED: $cmd_checkout')
@@ -208,7 +206,7 @@ pub fn ( repo GitRepo) fetch_all() ! {
 }
 
 // deletes git repository
-pub fn ( repo GitRepo) delete() ! {
+pub fn (repo GitRepo) delete() ! {
 	println('   - DELETE: ${repo.url_get(true)}')
 	if !os.exists(repo.path.path) {
 		return
@@ -225,7 +223,7 @@ pub fn ( repo GitRepo) delete() ! {
 // check if sshkey for a repo exists in the homedir/.ssh
 // we check on name, if nameof repo is same as name of key we will load
 // will return true if the key did exist, which means we need to connect over ssh !!!
-fn ( repo GitRepo) ssh_key_load_if_exists() !bool {
+fn (repo GitRepo) ssh_key_load_if_exists() !bool {
 	mut key_path := '${os.home_dir()}/.ssh/${repo.addr.name}'
 	if !os.exists(key_path) {
 		key_path = '.ssh/${repo.addr.name}'
