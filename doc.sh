@@ -2,7 +2,7 @@ set -ex
 rm -rf _docs
 rm -rf docs
 
-cd src
+cd crystallib
 
 v fmt -w .
 v doc -m -f html . -readme -comments -no-timestamp -o ../

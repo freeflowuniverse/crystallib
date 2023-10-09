@@ -1,6 +1,6 @@
 module openrpc_client
 
-import freeflowuniverse.crystallib.jsonrpc { JsonRpcRequest }
+import freeflowuniverse.crystallib.data.jsonrpc { JsonRpcRequest }
 import net.websocket
 
 struct Client {

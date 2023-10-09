@@ -1,6 +1,6 @@
 module petstore_client
 
-import freeflowuniverse.crystallib.jsonrpc
+import freeflowuniverse.crystallib.data.jsonrpc
 
 // get_pets finds pets in the system that the user has access to by tags and within a limit
 // - tags: tags to filter by

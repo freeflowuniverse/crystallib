@@ -1,7 +1,7 @@
 module main
 
-import freeflowuniverse.crystallib.pathlib
-import freeflowuniverse.crystallib.params
+import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.data.params
 import os
 
 const testpath3 = os.dir(@FILE) + '/test_path'

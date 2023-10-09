@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.pathlib
+import freeflowuniverse.crystallib.core.pathlib
 import os
 
 const testpath4 = os.dir(@FILE) + '/test_path/test_parent/readme.md'

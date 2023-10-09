@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.params { Params, parse }
+import freeflowuniverse.crystallib.data.params { Params, parse }
 import time { Duration, sleep }
 
 fn do() ! {

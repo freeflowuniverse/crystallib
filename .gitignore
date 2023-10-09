@@ -13,7 +13,6 @@ vex_webserver
 publishtools/publishtools
 .vscode
 _docs/
-crystallib
 vls.*
 vls.log
 runner

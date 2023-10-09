@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.pathlib
+import freeflowuniverse.crystallib.core.pathlib
 
 fn do() ! {
 	// a2 := pathlib.path_relative('/a/b/c/d.txt', '/d.txt')

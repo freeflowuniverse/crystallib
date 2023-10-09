@@ -13,7 +13,7 @@
 // import crypto.rand as crypto_rand
 // import sqlite
 // import freeflowuniverse.crystallib.publisher2 { Publisher, User, ACE, ACL, Authentication, Email, Right, Access }
-// import freeflowuniverse.crystallib.pathlib { Path }
+// import freeflowuniverse.crystallib.core.pathlib { Path }
 
 // fn do() ? {
 // 	mut publisher := publisher2.get()?

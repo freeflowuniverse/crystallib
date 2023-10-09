@@ -1,7 +1,7 @@
 module main
 
 import freeflowuniverse.crystallib.vault
-import freeflowuniverse.crystallib.pathlib
+import freeflowuniverse.crystallib.core.pathlib
 import os
 
 const testdir2 = os.dir(@FILE) + '/easy'
