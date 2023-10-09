@@ -39,7 +39,9 @@ fn (mut t TFGridHandler) taiga(action Action) ! {
 		'delete' {
 			name := action.params.get('name')!
 
-			t.tfgrid.cancel_taiga_deployment(name) or { return error('failed to delete taiga instance: ${err}') }
+			t.tfgrid.cancel_taiga_deployment(name) or {
+				return error('failed to delete taiga instance: ${err}')
+			}
 		}
 		else {
 			return error('operation ${action.name} is not supported on taiga')

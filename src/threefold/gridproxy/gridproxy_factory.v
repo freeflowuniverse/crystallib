@@ -8,7 +8,7 @@ pub mut:
 	http_client httpconnection.HTTPConnection
 }
 
-pub enum TFGridNet {		
+pub enum TFGridNet {
 	main
 	test
 	dev

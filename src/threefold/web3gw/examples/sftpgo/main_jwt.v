@@ -4,12 +4,11 @@ import threefoldtech.web3gw.sftpgo
 import flag
 import os
 
-const(
+const (
 	default_server_address = 'http://localhost:8080/api/v2'
 )
 
-fn main(){
-
+fn main() {
 	mut fp := flag.new_flag_parser(os.args)
 	fp.application('Welcome to the SFTPGO sal.')
 	fp.limit_free_args(0, 0)!
@@ -20,9 +19,9 @@ fn main(){
 	password := fp.string('password', `p`, '', 'user password')
 
 	args := sftpgo.JWTArgs{
-		address: address,
-		username: username,
-		password: password,
+		address: address
+		username: username
+		password: password
 	}
 	mut api_key := sftpgo.generate_jwt_token(args) or {
 		println(err)

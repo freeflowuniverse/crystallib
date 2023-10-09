@@ -1,9 +1,7 @@
 module main
 
 import freeflowuniverse.crystallib.rpcwebsocket { RpcWsClient }
-
 import threefoldtech.web3gw.ipfs
-
 import flag
 import log
 import os
@@ -17,20 +15,20 @@ fn execute_rpcs(mut client RpcWsClient, mut logger log.Logger) ! {
 	mut ipfs_client := ipfs.new(mut client)
 	// ipfs_client.load(url:'', secret: secret)!
 
-	cid := ipfs_client.store_file("sometext".bytes())!
-	logger.info("cid: ${cid}")
+	cid := ipfs_client.store_file('sometext'.bytes())!
+	logger.info('cid: ${cid}')
 
 	content := ipfs_client.get_file(cid)!
-	logger.info("content: ${base64.decode_str(content)}")
+	logger.info('content: ${base64.decode_str(content)}')
 
 	cids := ipfs_client.list_cids()!
-	logger.info("cids: ${cids}")
+	logger.info('cids: ${cids}')
 
 	removed := ipfs_client.remove_file(cid)!
-	logger.info("removed file?: ${removed}")
+	logger.info('removed file?: ${removed}')
 
 	ipfs_client.remove_all_files()!
-	logger.info("example how to remove all files")
+	logger.info('example how to remove all files')
 }
 
 fn main() {
@@ -58,10 +56,9 @@ fn main() {
 	}
 
 	_ := spawn myclient.run()
-	
-	
+
 	execute_rpcs(mut myclient, mut logger) or {
-		logger.error("Failed executing calls: $err")
+		logger.error('Failed executing calls: ${err}')
 		exit(1)
 	}
 }

@@ -5,62 +5,60 @@ import flag
 import os
 import log
 
-const(
+const (
 	default_server_address = 'http://localhost:8080/api/v2'
 )
 
-
-fn folders_crud(mut cl sftpgo.SFTPGoClient, mut logger log.Logger){
-	// create folder struct 
+fn folders_crud(mut cl sftpgo.SFTPGoClient, mut logger log.Logger) {
+	// create folder struct
 	mut folder := sftpgo.Folder{
-		name: "folder2"
-		mapped_path: "/folder2"
-		description: "folder 2 description"
+		name: 'folder2'
+		mapped_path: '/folder2'
+		description: 'folder 2 description'
 	}
 
-	//list all folders
-	folders := cl.list_folders() or { 
-		logger.error("failed to list folder: $err")
+	// list all folders
+	folders := cl.list_folders() or {
+		logger.error('failed to list folder: ${err}')
 		exit(1)
 	}
-	logger.info("folders: $folders")
+	logger.info('folders: ${folders}')
 
-	//add folder 
-	created_folder := cl.add_folder(folder)  or {
-		logger.error("failed to add folder: $err")
+	// add folder
+	created_folder := cl.add_folder(folder) or {
+		logger.error('failed to add folder: ${err}')
 		exit(1)
 	}
-	logger.info("folder created: $created_folder")
+	logger.info('folder created: ${created_folder}')
 
-	//get folder
-	returned_folder := cl.get_folder(folder.name) or { 
-		logger.error("failed to get folder: $err")
+	// get folder
+	returned_folder := cl.get_folder(folder.name) or {
+		logger.error('failed to get folder: ${err}')
 		exit(1)
 	}
-	logger.info("folder: $returned_folder")
+	logger.info('folder: ${returned_folder}')
 
-	//update folder 
-	folder.description = "folder2 description modified"
-	cl.update_folder(folder)  or {
-		logger.error("failed to update folder: $err")
+	// update folder
+	folder.description = 'folder2 description modified'
+	cl.update_folder(folder) or {
+		logger.error('failed to update folder: ${err}')
 		exit(1)
 	}
-	//get updated folder
-	updated_folder := cl.get_folder(folder.name) or { 
-		logger.error("failed to get updated folder: $err")
+	// get updated folder
+	updated_folder := cl.get_folder(folder.name) or {
+		logger.error('failed to get updated folder: ${err}')
 		exit(1)
 	}
-	logger.info("updated folder: $updated_folder")
+	logger.info('updated folder: ${updated_folder}')
 
 	deleted := cl.delete_folder(folder.name) or {
-		logger.error("failed to update user: $err")
+		logger.error('failed to update user: ${err}')
 		exit(1)
 	}
-	logger.info("folder deleted: $deleted")
+	logger.info('folder deleted: ${deleted}')
 }
 
-fn main(){
-
+fn main() {
 	mut fp := flag.new_flag_parser(os.args)
 	fp.application('Welcome to the SFTPGO sal.')
 	fp.limit_free_args(0, 0)!
@@ -76,7 +74,7 @@ fn main(){
 	}
 
 	args := sftpgo.SFTPGOClientArgs{
-		address: address,
+		address: address
 		key: key
 	}
 	mut cl := sftpgo.new(args) or {
@@ -87,5 +85,4 @@ fn main(){
 		level: if debug_log { .debug } else { .info }
 	})
 	folders_crud(mut cl, mut logger)
-
 }

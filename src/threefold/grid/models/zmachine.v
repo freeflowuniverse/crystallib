@@ -97,22 +97,20 @@ pub fn (z Zmachine) to_workload(args WorkloadArgs) Workload {
 
 // VM struct used to deploy machine in a high level manner
 pub struct VM {
-	name            string ='myvm' 
-	flist           string = 'https://hub.grid.tf/tf-official-apps/base:latest.flist'
-	entrypoint      string = '/sbin/zinit init'
-	env_vars          map[string]string
-	cpu             int = 1
-	memory          int = 1024
-	rootfs_size          int
+	name        string = 'myvm'
+	flist       string = 'https://hub.grid.tf/tf-official-apps/base:latest.flist'
+	entrypoint  string = '/sbin/zinit init'
+	env_vars    map[string]string
+	cpu         int = 1
+	memory      int = 1024
+	rootfs_size int
 }
-
 
 pub fn (vm VM) json_encode() string {
 	mut env_vars := []string{}
-	for k, v in vm.env_vars{
+	for k, v in vm.env_vars {
 		env_vars << '"${k}": "${v}"'
 	}
 
-
-	return '{"name":"${vm.name}","flist":"${vm.flist}","entrypoint":"${vm.entrypoint}","env_vars":{${env_vars.join(",")}},"cpu":${vm.cpu},"memory":${vm.memory}, "rootfs_size": ${vm.rootfs_size}}'
+	return '{"name":"${vm.name}","flist":"${vm.flist}","entrypoint":"${vm.entrypoint}","env_vars":{${env_vars.join(',')}},"cpu":${vm.cpu},"memory":${vm.memory}, "rootfs_size": ${vm.rootfs_size}}'
 }

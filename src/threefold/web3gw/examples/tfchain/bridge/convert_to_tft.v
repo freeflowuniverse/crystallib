@@ -1,9 +1,7 @@
 module main
 
 import freeflowuniverse.crystallib.rpcwebsocket { RpcWsClient }
-
 import threefoldtech.web3gw.stellar
-
 import flag
 import log
 import os
@@ -11,7 +9,6 @@ import os
 const (
 	default_server_address = 'ws://127.0.0.1:8080'
 )
-
 
 fn execute_rpcs(mut client RpcWsClient, mut logger log.Logger, network string, secret string, amount string, twin_id u32) ! {
 	mut stellar_client := stellar.new(mut client)
@@ -26,9 +23,8 @@ fn execute_rpcs(mut client RpcWsClient, mut logger log.Logger, network string, s
 	stellar_client.bridge_to_tfchain(amount: amount, twin_id: twin_id)!
 }
 
-
 fn main() {
-	// This is some code that allows us to quickly create a commmand line tool with arguments. 
+	// This is some code that allows us to quickly create a commmand line tool with arguments.
 	mut fp := flag.new_flag_parser(os.args)
 	fp.application('Welcome to the web3_proxy client. The web3_proxy client allows you to execute all remote procedure calls that the web3_proxy server can handle.')
 	fp.limit_free_args(0, 0)!
@@ -50,20 +46,20 @@ fn main() {
 	}
 
 	mut failed_parsing := false
-	if network == "" {
-		logger.error("Argument network is required!")
+	if network == '' {
+		logger.error('Argument network is required!')
 		failed_parsing = true
 	}
 	if twin_id <= 0 {
-		logger.error("Invalid twinid, it must be greater than 0!")	
+		logger.error('Invalid twinid, it must be greater than 0!')
 		failed_parsing = true
 	}
 	if secret == '' {
-		logger.error("Argument secret is required!")
+		logger.error('Argument secret is required!')
 		failed_parsing = true
 	}
 	if amount == '' {
-		logger.error("Amount is invalid, it should be greater than 0!")
+		logger.error('Amount is invalid, it should be greater than 0!')
 		failed_parsing = true
 	}
 	if failed_parsing {
@@ -71,14 +67,13 @@ fn main() {
 		exit(1)
 	}
 
-
 	mut myclient := rpcwebsocket.new_rpcwsclient(address, &logger) or {
 		logger.error('Failed creating rpc websocket client: ${err}')
 		exit(1)
 	}
 	_ := spawn myclient.run()
 	execute_rpcs(mut myclient, mut logger, network, secret, amount, u32(twin_id)) or {
-		logger.error("Failed executing calls: $err")
+		logger.error('Failed executing calls: ${err}')
 		exit(1)
 	}
 }

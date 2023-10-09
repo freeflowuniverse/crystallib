@@ -49,7 +49,7 @@ pub mut:
 
 pub struct Disk {
 pub:
-	size        u32    [required] // disk size in GBs
+	size        u32    [required]    // disk size in GBs
 	mountpoint  string [required] // mountpoint of the disk on the machine
 	description string // disk description
 	// computed
@@ -60,15 +60,15 @@ pub struct QSFS {
 pub:
 	mountpoint            string   [required] // mountpoint of the qsfs on the machine
 	encryption_key        string   [required] // 64 long hex encoded encryption key (e.g. 0000000000000000000000000000000000000000000000000000000000000000).
-	cache                 u32      [required] // The size of the fuse mountpoint on the node in MBs (holds qsfs local data before pushing).
-	minimal_shards        u32      [required] // The minimum amount of shards which are needed to recover the original data.
-	expected_shards       u32      [required] // The amount of shards which are generated when the data is encoded. Essentially, this is the amount of shards which is needed to be able to recover the data, and some disposable shards which could be lost. The amount of disposable shards can be calculated as expected_shards - minimal_shards.
-	redundant_groups      u32      [required] // The amount of groups which one should be able to loose while still being able to recover the original data.
-	redundant_nodes       u32      [required] // The amount of nodes that can be lost in every group while still being able to recover the original data.
+	cache                 u32      [required]    // The size of the fuse mountpoint on the node in MBs (holds qsfs local data before pushing).
+	minimal_shards        u32      [required]    // The minimum amount of shards which are needed to recover the original data.
+	expected_shards       u32      [required]    // The amount of shards which are generated when the data is encoded. Essentially, this is the amount of shards which is needed to be able to recover the data, and some disposable shards which could be lost. The amount of disposable shards can be calculated as expected_shards - minimal_shards.
+	redundant_groups      u32      [required]    // The amount of groups which one should be able to loose while still being able to recover the original data.
+	redundant_nodes       u32      [required]    // The amount of nodes that can be lost in every group while still being able to recover the original data.
 	encryption_algorithm  string = 'AES' // configuration to use for the encryption stage. Currently only AES is supported.
 	compression_algorithm string = 'snappy' // configuration to use for the compression stage. Currently only snappy is supported.
 	metadata              Metadata [required] // metadata configs
-	description           string // qsfs description
+	description           string              // qsfs description
 
 	max_zdb_data_dir_size u32     [required] // Maximum size of the data dir in MiB, if this is set and the sum of the file sizes in the data dir gets higher than this value, the least used, already encoded file will be removed.
 	groups                []Group [required] // groups configs
@@ -80,10 +80,10 @@ pub:
 pub struct Metadata {
 pub:
 	type_                string    [json: 'type'] = 'zdb' // configuration for the metadata store to use, currently only ZDB is supported.
-	prefix               string    [required] // Data stored on the remote metadata is prefixed with.
+	prefix               string    [required]     // Data stored on the remote metadata is prefixed with.
 	encryption_algorithm string = 'AES' // configuration to use for the encryption stage. Currently only AES is supported.
 	encryption_key       string    [required] // 64 long hex encoded encryption key (e.g. 0000000000000000000000000000000000000000000000000000000000000000).
-	backends             []Backend // backends configs
+	backends             []Backend         // backends configs
 }
 
 pub struct Group {
@@ -200,8 +200,8 @@ pub mut:
 [params]
 pub struct GatewayName {
 pub mut:
-	name            string   [json: 'name'] // identifier for the gateway, must be unique
-	node_id         u32      [json: 'node_id'] // node to deploy the gateway workload on, if 0, a random elibile node will be selected
+	name            string   [json: 'name']    // identifier for the gateway, must be unique
+	node_id         u32      [json: 'node_id']    // node to deploy the gateway workload on, if 0, a random elibile node will be selected
 	tls_passthrough bool     [json: 'tls_passthrough'] // True to enable TLS encryption
 	backends        []string [json: 'backends'] // The backend that the gateway will point to
 	// computed
@@ -213,11 +213,11 @@ pub mut:
 [params]
 pub struct GatewayFQDN {
 pub mut:
-	name            string   [json: 'name'] // name of the instance
-	node_id         u32      [json: 'node_id'] // node id that the instance was deployed on
+	name            string   [json: 'name']    // name of the instance
+	node_id         u32      [json: 'node_id']    // node id that the instance was deployed on
 	tls_passthrough bool     [json: 'tls_passthrough'] // whether or not tls was enables
 	backends        []string [json: 'backends'] // backends that this gateway is pointing to
-	fqdn            string   [json: 'fqdn'] // fully qualified domain name pointing to this gatewat
+	fqdn            string   [json: 'fqdn']       // fully qualified domain name pointing to this gatewat
 	// computed
 	contract_id u32 // contract id for the gateway
 }
@@ -590,19 +590,19 @@ pub:
 pub struct ZOSNodeRequest {
 pub:
 	node_id int
-	data u64
+	data    u64
 }
 
 pub struct NodeStatistics {
 pub:
 	total Capacity
-	used Capacity
+	used  Capacity
 }
 
 pub struct SystemTooling {
 pub:
 	aggregator string
-	decoder string
+	decoder    string
 }
 
 pub struct SystemPropertyData {
@@ -613,77 +613,77 @@ pub:
 
 pub struct SystemSubsection {
 pub:
-	title string
+	title      string
 	properties map[string]SystemPropertyData
 }
 
 pub struct SystemSection {
 pub:
-	handleline string
-	typestr string
-	section_type int [json: 'type']
-	subsections []SystemSubsection
+	handleline   string
+	typestr      string
+	section_type int                [json: 'type']
+	subsections  []SystemSubsection
 }
 
 pub struct SystemDMI {
 pub:
-	tooling SystemTooling
+	tooling  SystemTooling
 	sections []SystemSection
 }
 
 pub struct ZOSVersion {
 pub:
-	zos string
+	zos   string
 	zinit string
 }
 
 pub struct WorkloadResult {
 pub:
 	created u32
-	state string
+	state   string
 	message string
-	data u64
+	data    u64
 }
 
 pub struct Workload {
 pub:
-	version u32
-	name string
-	workload_type string [json: 'type']
-	data ZDBWorkload
-	metadata string
-	description string
-	result WorkloadResult
+	version       u32
+	name          string
+	workload_type string         [json: 'type']
+	data          ZDBWorkload
+	metadata      string
+	description   string
+	result        WorkloadResult
 }
 
 pub struct SignatureRequest {
-	twin_id u32
+	twin_id  u32
 	required bool
-	weight u32
+	weight   u32
 }
 
 pub struct SignatureRequirement {
 pub:
 	weight_required int
-	requests []SignatureRequest
+	requests        []SignatureRequest
 }
 
 pub struct Deployment {
 pub:
-	version u32
-	twin_id u32
-	contract_id u64
-	metadata string
-	description string
-	expiration u64
+	version               u32
+	twin_id               u32
+	contract_id           u64
+	metadata              string
+	description           string
+	expiration            u64
 	signature_requirement SignatureRequirement
-	workloads []Workload
+	workloads             []Workload
 }
 
 pub struct ZDBWorkload {
 pub:
 	password string
-	mode string
-	size u32
-	public bool
+	mode     string
+	size     u32
+	public   bool
 }

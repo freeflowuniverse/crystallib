@@ -1,7 +1,7 @@
 module vdc
 
-pub struct DISK{
+pub struct DISK {
 pub mut:
-	name string
+	name        string
 	description string
 }

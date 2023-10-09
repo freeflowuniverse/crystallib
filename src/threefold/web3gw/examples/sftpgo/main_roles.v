@@ -5,66 +5,63 @@ import flag
 import os
 import log
 
-const(
+const (
 	default_server_address = 'http://localhost:8080/api/v2'
 )
 
-fn roles_crud(mut cl sftpgo.SFTPGoClient, mut logger log.Logger){
-	// create role struct 
+fn roles_crud(mut cl sftpgo.SFTPGoClient, mut logger log.Logger) {
+	// create role struct
 	mut role := sftpgo.Role{
-		name: "role1"
-		description: "role 1 description"
+		name: 'role1'
+		description: 'role 1 description'
 		users: []
 		admins: []
 	}
 
 	// list existing roles
-	roles := cl.list_roles() or { 
-		logger.error("failed to list roles: $err")
+	roles := cl.list_roles() or {
+		logger.error('failed to list roles: ${err}')
 		exit(1)
 	}
-	logger.info("roles: $roles")
+	logger.info('roles: ${roles}')
 
-	//add Role 
-	created_role := cl.add_role(role)  or {
-		logger.error("failed to add role: $err")
+	// add Role
+	created_role := cl.add_role(role) or {
+		logger.error('failed to add role: ${err}')
 		exit(1)
 	}
-	logger.info("role created: $created_role")
+	logger.info('role created: ${created_role}')
 
-	//get role
-	returned_role := cl.get_role(role.name) or { 
-		logger.error("failed to get folder: $err")
+	// get role
+	returned_role := cl.get_role(role.name) or {
+		logger.error('failed to get folder: ${err}')
 		exit(1)
 	}
-	logger.info("role: $returned_role")
+	logger.info('role: ${returned_role}')
 
-	//update role
-	role.description = "role1 description modified"
-	cl.update_role(role)  or {
-		logger.error("failed to update role: $err")
+	// update role
+	role.description = 'role1 description modified'
+	cl.update_role(role) or {
+		logger.error('failed to update role: ${err}')
 		exit(1)
 	}
-	
-	//get updated role
-	updated_role := cl.get_role(role.name) or { 
-		logger.error("failed to get updated role: $err")
+
+	// get updated role
+	updated_role := cl.get_role(role.name) or {
+		logger.error('failed to get updated role: ${err}')
 		exit(1)
 	}
-	logger.info("updated_role: $updated_role")
+	logger.info('updated_role: ${updated_role}')
 
-
-	//delete role
+	// delete role
 	deleted := cl.delete_role(role.name) or {
-		logger.error("failed to update role: $err")
+		logger.error('failed to update role: ${err}')
 		exit(1)
 	}
-	logger.info("role deleted: $deleted")
+	logger.info('role deleted: ${deleted}')
 }
 
-
-fn main(){
-
+fn main() {
 	mut fp := flag.new_flag_parser(os.args)
 	fp.application('Welcome to the SFTPGO sal.')
 	fp.limit_free_args(0, 0)!
@@ -80,7 +77,7 @@ fn main(){
 	}
 
 	args := sftpgo.SFTPGOClientArgs{
-		address: address,
+		address: address
 		key: key
 	}
 	mut cl := sftpgo.new(args) or {
@@ -91,5 +88,4 @@ fn main(){
 		level: if debug_log { .debug } else { .info }
 	})
 	roles_crud(mut cl, mut logger)
-
 }

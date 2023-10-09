@@ -3,8 +3,7 @@ module vdc
 import freeflowuniverse.crystallib.baobab.actions
 import freeflowuniverse.crystallib.pathlib
 
-//TODO: needs to be done for VDC
-
+// TODO: needs to be done for VDC
 
 pub fn (mut vdc VDC) execute(parser actions.Actions) ! {
 	for action in parser.actions {

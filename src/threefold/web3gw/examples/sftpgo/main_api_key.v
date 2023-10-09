@@ -4,12 +4,11 @@ import threefoldtech.web3gw.sftpgo
 import flag
 import os
 
-const(
+const (
 	default_server_address = 'http://localhost:8080/api/v2'
 )
 
-fn main(){
-
+fn main() {
 	mut fp := flag.new_flag_parser(os.args)
 	fp.application('Welcome to the SFTPGO sal.')
 	fp.limit_free_args(0, 0)!
@@ -24,12 +23,12 @@ fn main(){
 	admin := fp.string('admin', `d`, '', 'the admin username either pass it or pass a user ')
 
 	args := sftpgo.APIKeyParams{
-		address: address,
+		address: address
 		jwt: jwt
-		name: name,
-		scope: scope,
-		description: description,
-		user: user,
+		name: name
+		scope: scope
+		description: description
+		user: user
 		admin: admin
 	}
 	mut api_key := sftpgo.generate_api_key(args) or {

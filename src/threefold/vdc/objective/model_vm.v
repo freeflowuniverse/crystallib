@@ -1,8 +1,8 @@
 module vdc
 
-pub struct VM{
+pub struct VM {
 pub mut:
-	name string
+	name        string
 	description string
-	vms []DISK
+	vms         []DISK
 }

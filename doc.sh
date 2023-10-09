@@ -1,9 +1,9 @@
 set -ex
 rm -rf _docs
 rm -rf docs
-v fmt -w .
+v fmt -w src
 #pushd src
-v doc -m -f html . -readme -comments -no-timestamp 
+v doc -m -f html src/. -readme -comments -no-timestamp 
 #-o ../
 #popd
 

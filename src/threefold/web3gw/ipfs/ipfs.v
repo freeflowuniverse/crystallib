@@ -6,7 +6,8 @@ const (
 	default_timeout = 500000
 )
 
-[noinit; openrpc: exclude]
+[openrpc: exclude]
+[noinit]
 pub struct IpfsClient {
 mut:
 	client &RpcWsClient

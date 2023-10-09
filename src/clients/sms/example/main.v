@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.sms { new_sms_client, StatusTypes }
+import freeflowuniverse.crystallib.sms { StatusTypes, new_sms_client }
 import os
 import log
 

@@ -1,6 +1,6 @@
 module main
 
-import threefoldtech.web3gw.tfgrid { NetworkDeployment, TFGridClient, DeployVM, VMDeployment }
+import threefoldtech.web3gw.tfgrid { DeployVM, NetworkDeployment, TFGridClient, VMDeployment }
 import log { Logger }
 import flag { FlagParser }
 import os
@@ -51,7 +51,7 @@ fn delete_vm(mut fp FlagParser, mut t TFGridClient) ! {
 	t.cancel_vm_deployment(vm_name)!
 }
 
-fn remove_vm(mut fp FlagParser, mut t TFGridClient)!NetworkDeployment {
+fn remove_vm(mut fp FlagParser, mut t TFGridClient) !NetworkDeployment {
 	fp.usage_example('remove [options]')
 
 	vm_name := fp.string_opt('vm_name', `v`, 'Name of the VM to be removed')!

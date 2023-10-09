@@ -3,6 +3,7 @@ module main
 import log
 import threefoldtech.tfgrid
 import threefoldtech.tfgrid.models
+
 fn main() {
 	mut logger := log.Log{
 		level: .debug

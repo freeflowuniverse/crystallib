@@ -20,6 +20,5 @@ pub fn new() !VDC {
 	return vdc
 }
 
-
-//TODO: build up models for VDC which have support for all we required
-//TODO: build the actions so from examples folder we load a full model
+// TODO: build up models for VDC which have support for all we required
+// TODO: build the actions so from examples folder we load a full model

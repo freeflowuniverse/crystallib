@@ -12,7 +12,7 @@ const (
 
 [params]
 pub struct Arguments {
-	network string = "main"
+	network          string = 'main'
 	tfchain_mnemonic string
 	ssh_key          string
 }

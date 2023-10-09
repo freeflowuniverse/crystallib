@@ -3,7 +3,7 @@ module tfchain
 [params]
 pub struct Load {
 pub:
-	network string
+	network  string
 	mnemonic string
 }
 
@@ -81,38 +81,36 @@ pub struct CreateFarm {
 
 [params]
 pub struct SwapToStellar {
-	target_stellar_address string 
-	amount u64
+	target_stellar_address string
+	amount                 u64
 }
 
 [params]
 pub struct AwaitBridgedFromStellar {
 pub:
-	memo                            string // the memo to look for
-	timeout                         int    // the timeout after which we abandon the search
-	height int    // at what blockheight to start looking for the transaction
+	memo    string // the memo to look for
+	timeout int    // the timeout after which we abandon the search
+	height  int    // at what blockheight to start looking for the transaction
 }
 
 pub struct TwinOptionRelay {
-pub: 
+pub:
 	has_value bool
-	as_value string	
+	as_value  string
 }
 
 pub struct TwinEntityProof {
-pub: 
+pub:
 	entity_id u32
 	signature string
-	
 }
 
 pub struct TwinData {
-pub: 
-	id u32
+pub:
+	id         u32
 	account_id string
-	relay TwinOptionRelay
-	entities []TwinEntityProof
-
+	relay      TwinOptionRelay
+	entities   []TwinEntityProof
 }
 
 pub struct NodeResources {
@@ -125,9 +123,9 @@ pub:
 
 pub struct NodeLocation {
 pub:
-	city string
-	country string
-	latitude string
+	city      string
+	country   string
+	latitude  string
 	longitude string
 }
 
@@ -140,102 +138,101 @@ pub:
 pub struct NodeOptionIP {
 pub:
 	has_value bool
-	as_value NodeIP
+	as_value  NodeIP
 }
 
 pub struct NodeOptionDomain {
 pub:
 	has_value bool
-	as_value string
+	as_value  string
 }
 
 pub struct NodePublicConfig {
 pub:
-	ip4 NodeIP
-	ip6 NodeOptionIP
+	ip4    NodeIP
+	ip6    NodeOptionIP
 	domain NodeOptionDomain
 }
 
 pub struct NodeOptionPublicConfig {
 pub:
 	has_value bool
-	as_value NodePublicConfig
+	as_value  NodePublicConfig
 }
 
 pub struct NodeOptionBoardSerial {
 pub:
 	has_value bool
-	as_value string
+	as_value  string
 }
 
 pub struct NodeCertification {
 pub:
-	is_diy bool
+	is_diy       bool
 	is_certified bool
 }
 
 pub struct NodeData {
-pub: 
-	version u32
-	id u32
-	farm_id u32
-	twin_id u32
-	resources NodeResources
-	location NodeLocation
-	public_config NodeOptionPublicConfig
-	created u64
-	farming_policy u32
-	secure_boot bool
-	virtualized bool
-	board_serial NodeOptionBoardSerial
+pub:
+	version          u32
+	id               u32
+	farm_id          u32
+	twin_id          u32
+	resources        NodeResources
+	location         NodeLocation
+	public_config    NodeOptionPublicConfig
+	created          u64
+	farming_policy   u32
+	secure_boot      bool
+	virtualized      bool
+	board_serial     NodeOptionBoardSerial
 	connection_price u32
 }
 
 pub struct ContractDeletedState {
 pub:
 	is_canceled_by_user bool
-	is_out_of_funds bool
+	is_out_of_funds     bool
 }
 
 pub struct ContractState {
 pub:
-	is_created bool
-	is_deleted bool
-	is_grace_period bool
+	is_created                   bool
+	is_deleted                   bool
+	is_grace_period              bool
 	as_grace_period_block_number u64
-	as_deleted ContractDeletedState
+	as_deleted                   ContractDeletedState
 }
 
-
 pub struct ContractData {
-pub: 
-	version u32
-	contract_id u64
-	twin_id u32
+pub:
+	version              u32
+	contract_id          u64
+	twin_id              u32
 	solution_provider_id u64
 }
 
 pub struct FarmCertification {
-pub: 
+pub:
 	is_not_certified bool
-	is_gold bool
+	is_gold          bool
 }
 
 pub struct FarmPublicIP {
-pub: 
-	ip string
-	gateway string
+pub:
+	ip          string
+	gateway     string
 	contract_id u64
 }
 
 pub struct FarmData {
-pub: 
-	version u32
-	id u32
-	name string
-	twin_id u32
-	pricing_policy_id u32
+pub:
+	version            u32
+	id                 u32
+	name               string
+	twin_id            u32
+	pricing_policy_id  u32
 	certification_type FarmCertification
-	public_ips []FarmPublicIP
-	dedicated_farm bool
+	public_ips         []FarmPublicIP
+	dedicated_farm     bool
 }

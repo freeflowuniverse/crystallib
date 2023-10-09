@@ -4,7 +4,7 @@ import net.http
 import json
 import x.json2
 import log
-import models
+import threefold.grid.models
 
 pub struct GraphQl {
 	url string

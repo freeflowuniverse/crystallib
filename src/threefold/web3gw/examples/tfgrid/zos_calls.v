@@ -1,7 +1,7 @@
 module main
 
 import freeflowuniverse.crystallib.rpcwebsocket
-import threefoldtech.web3gw.tfgrid 
+import threefoldtech.web3gw.tfgrid
 import flag
 import log
 import os
@@ -10,7 +10,6 @@ import json
 const (
 	default_server_address = 'ws://127.0.0.1:8080'
 )
-
 
 fn run_zos_node_calls(mut client tfgrid.TFGridClient, mut logger log.Logger) ! {
 	mut request := tfgrid.ZOSNodeRequest{

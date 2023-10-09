@@ -1,18 +1,19 @@
 module tfgrid
 
-//TODO: import tfclient
-//TODO: import websocket client from vlcient.factory
+import os
 
-//export MNEMONIC='...'
-pub fn tfgridclient_example()!TFGridClient{
+// TODO: import tfclient
+// TODO: import websocket client from vlcient.factory
 
-	if !"MNEMONIC" in os.env{
+// export MNEMONIC='...'
+pub fn tfgridclient_example() !TFGridClient {
+	if !'MNEMONIC' in os.env {
 		return error("Specify 'MNEMONICS' as ENV env. do 'export MNEMONIC=...'")
 	}
 
-	mnemonic:=os.env("MNEMONIC")
+	mnemonic := os.env('MNEMONIC')
 
-	mut tfgrid_client := tfgrid.new(mut client)
+	mut tfgrid_client := new(mut client)
 
-	tfgrid_client.load(network:"main", mnemonic: mnemonic)!	
+	tfgrid_client.load(network: 'main', mnemonic: mnemonic)!
 }

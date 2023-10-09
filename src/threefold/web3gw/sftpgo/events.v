@@ -1,13 +1,13 @@
 module sftpgo
+
 import net.http
 
 [params]
 pub struct EventRequest {
-	start int //start_timestamp
-	end   int //end_timestamp
-	limit int //represents max result count
-	order string //result order for example DESC
-	
+	start int    // start_timestamp
+	end   int    // end_timestamp
+	limit int    // represents max result count
+	order string // result order for example DESC
 }
 
 pub fn (mut cl SFTPGoClient) get_fs_events(start int, end int, limit int, order string) !string {
@@ -18,7 +18,6 @@ pub fn (mut cl SFTPGoClient) get_fs_events(start int, end int, limit int, order 
 	}
 	resp := req.do()!
 	return resp.body
-
 }
 
 pub fn (mut cl SFTPGoClient) get_provider_events(start int, end int, limit int, order string) !string {
@@ -29,5 +28,4 @@ pub fn (mut cl SFTPGoClient) get_provider_events(start int, end int, limit int, 
 	}
 	resp := req.do()!
 	return resp.body
-
 }

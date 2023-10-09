@@ -4,7 +4,7 @@ import os
 import json
 import time
 import log
-import models
+import threefold.grid.models
 
 pub struct Deployer {
 pub:
@@ -12,7 +12,7 @@ pub:
 	substrate_url string
 	twin_id       u32
 	relay_url     string
-	env string
+	env           string
 pub mut:
 	logger log.Log
 }
@@ -153,7 +153,7 @@ pub fn (mut d Deployer) sign_deployment(hash string) !string {
 	return res.output
 }
 
-pub fn (mut d Deployer) deploy_single_vm(node_id u32, solution_type string, vm models.VM) !string{
+pub fn (mut d Deployer) deploy_single_vm(node_id u32, solution_type string, vm models.VM) !string {
 	data := vm.json_encode()
 	res := os.execute("grid-cli deploy-single --mnemonics \"${d.mnemonics}\" --env ${d.env} --solution_type \"${solution_type}\" --node ${node_id} --data '${data}'")
 	return res.output

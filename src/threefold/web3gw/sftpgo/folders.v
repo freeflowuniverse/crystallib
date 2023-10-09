@@ -1,14 +1,14 @@
 module sftpgo
+
 import json
 import net.http
 
 [params]
 pub struct Folder {
-	pub mut:
-		name string
-		mapped_path string
-		description string
-	
+pub mut:
+	name        string
+	mapped_path string
+	description string
 }
 
 pub fn (mut cl SFTPGoClient) list_folders() !string {
@@ -19,7 +19,6 @@ pub fn (mut cl SFTPGoClient) list_folders() !string {
 	}
 	resp := req.do()!
 	return resp.body
-
 }
 
 pub fn (mut cl SFTPGoClient) add_folder(folder Folder) !string {
@@ -31,7 +30,6 @@ pub fn (mut cl SFTPGoClient) add_folder(folder Folder) !string {
 	}
 	resp := req.do()!
 	return resp.body
-
 }
 
 pub fn (mut cl SFTPGoClient) get_folder(name string) !string {
@@ -42,7 +40,6 @@ pub fn (mut cl SFTPGoClient) get_folder(name string) !string {
 	}
 	resp := req.do()!
 	return resp.body
-
 }
 
 pub fn (mut cl SFTPGoClient) update_folder(folder Folder) !string {
@@ -54,7 +51,6 @@ pub fn (mut cl SFTPGoClient) update_folder(folder Folder) !string {
 	}
 	resp := req.do()!
 	return resp.body
-
 }
 
 pub fn (mut cl SFTPGoClient) delete_folder(name string) !string {
@@ -65,5 +61,4 @@ pub fn (mut cl SFTPGoClient) delete_folder(name string) !string {
 	}
 	resp := req.do()!
 	return resp.body
-
 }

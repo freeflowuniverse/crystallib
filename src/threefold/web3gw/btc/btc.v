@@ -6,7 +6,8 @@ const (
 	default_timeout = 500000
 )
 
-[noinit; openrpc: exclude]
+[openrpc: exclude]
+[noinit]
 pub struct BtcClient {
 mut:
 	client &RpcWsClient
@@ -33,11 +34,10 @@ pub fn (mut s BtcClient) address() !string {
 
 // Sends the passed amount to the given address with a comment if provided and returns the hash of the transaction
 pub fn (mut c BtcClient) transfer(args Transfer) !string {
-	return c.client.send_json_rpc[[]Transfer, string]('btc.Transfer', [args],
-		btc.default_timeout)!
+	return c.client.send_json_rpc[[]Transfer, string]('btc.Transfer', [args], btc.default_timeout)!
 }
 
-// Provides a more accurate estimated fee given an estimation mode. 
+// Provides a more accurate estimated fee given an estimation mode.
 pub fn (mut c BtcClient) estimate_smart_fee(args EstimateSmartFee) !EstimateSmartFeeResult {
 	return c.client.send_json_rpc[[]EstimateSmartFee, EstimateSmartFeeResult]('btc.EstimateSmartFee',
 		[args], btc.default_timeout)!
@@ -63,7 +63,7 @@ pub fn (mut c BtcClient) get_block_count() !i64 {
 	return c.client.send_json_rpc[[]string, i64]('btc.GetBlockCount', []string{}, btc.default_timeout)!
 }
 
-// Returns block statistics given the hash of that block. 
+// Returns block statistics given the hash of that block.
 pub fn (mut c BtcClient) get_block_stats(hash string) !GetBlockStatsResult {
 	return c.client.send_json_rpc[[]string, GetBlockStatsResult]('btc.GetBlockStats',
 		[hash], btc.default_timeout)!
@@ -75,7 +75,7 @@ pub fn (mut c BtcClient) get_block_verbose_tx(hash string) !GetBlockVerboseTxRes
 		[hash], btc.default_timeout)!
 }
 
-// Returns statistics about the total number and rate of transactions in the chain. 
+// Returns statistics about the total number and rate of transactions in the chain.
 // Providing the arguments will reduce the amount of blocks to calculate the statistics on.
 pub fn (mut c BtcClient) get_chain_tx_stats(args GetChainTxStats) !GetChainTxStatsResult {
 	return c.client.send_json_rpc[[]GetChainTxStats, GetChainTxStatsResult]('btc.GetChainTxStats',
@@ -112,6 +112,7 @@ pub fn (mut c BtcClient) get_peer_info() ![]GetPeerInfoResult {
 
 // Returns a transaction given its hash.
 pub fn (mut c BtcClient) get_raw_transaction(tx_hash string) !Transaction {
-	return c.client.send_json_rpc[[]string, Transaction]('btc.GetRawTransaction', [tx_hash],
-		btc.default_timeout)!
+	return c.client.send_json_rpc[[]string, Transaction]('btc.GetRawTransaction', [
+		tx_hash,
+	], btc.default_timeout)!
 }

@@ -19,8 +19,8 @@ pub struct Transfer {
 
 [params]
 pub struct EstimateSmartFee {
-	conf_target i64 = 1 // confirmation target in blocks
-	mode        string = "CONSERVATIVE" // defines the different fee estimation modes, should be one of UNSET, ECONOMICAL or CONSERVATIVE
+	conf_target i64    = 1 // confirmation target in blocks
+	mode        string = 'CONSERVATIVE' // defines the different fee estimation modes, should be one of UNSET, ECONOMICAL or CONSERVATIVE
 }
 
 pub struct EstimateSmartFeeResult {
@@ -31,7 +31,7 @@ pub struct EstimateSmartFeeResult {
 
 [params]
 pub struct GetChainTxStats {
-	amount_of_blocks int // provide statistics for amount_of_blocks blocks, if 0 for all blocks
+	amount_of_blocks int    // provide statistics for amount_of_blocks blocks, if 0 for all blocks
 	block_hash_end   string // provide statistics for amount_of_blocks blocks up until the block with the hash provided in block_hash_end
 }
 

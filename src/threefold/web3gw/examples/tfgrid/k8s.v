@@ -1,6 +1,6 @@
 module main
 
-import threefoldtech.web3gw.tfgrid {K8sCluster, K8sNode, TFGridClient }
+import threefoldtech.web3gw.tfgrid { K8sCluster, K8sNode, TFGridClient }
 import log { Logger }
 import flag { FlagParser }
 import os

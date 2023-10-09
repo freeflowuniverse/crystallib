@@ -15,7 +15,7 @@ fn execute_rpcs(mut client RpcWsClient, mut logger log.Logger, secret string, ne
 
 	stellar_client.load(secret: secret, network: network)!
 
-	transactions := stellar_client.transactions(limit:limit, include_failed:true)!
+	transactions := stellar_client.transactions(limit: limit, include_failed: true)!
 	logger.info('Transactions: ${transactions}')
 }
 

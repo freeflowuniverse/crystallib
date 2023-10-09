@@ -12,7 +12,7 @@ const (
 
 [params]
 pub struct Arguments {
-	network string = "main"
+	network          string = 'main'
 	tfchain_mnemonic string
 	ssh_key          string
 }
@@ -23,12 +23,13 @@ fn execute_rpcs(mut client RpcWsClient, mut logger log.Logger, args Arguments) !
 	tfgrid_client.load(network: args.network, mnemonic: args.tfchain_mnemonic)!
 
 	deployment := tfgrid_client.deploy_network(
-		name: "mynetwork"
-		network: tfgrid.NetworkConfiguration {
-			name: "mynetwork"
+		name: 'mynetwork'
+		network: tfgrid.NetworkConfiguration{
+			name: 'mynetwork'
 			add_wireguard_access: true
-		} 
-		vms: [tfgrid.VMConfiguration{
+		}
+		vms: [
+			tfgrid.VMConfiguration{
 				name: 'vm1'
 				farm_id: 1
 				cpu: 2
@@ -57,7 +58,8 @@ fn execute_rpcs(mut client RpcWsClient, mut logger log.Logger, args Arguments) !
 					size: 10
 					mountpoint: '/mnt/disk1'
 				}]
-			}]
+			},
+		]
 	)!
 	logger.info('Network deployment: ${deployment}')
 }

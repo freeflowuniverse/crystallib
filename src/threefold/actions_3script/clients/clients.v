@@ -14,4 +14,3 @@ pub mut:
 	eth_client EthClient
 	btc_client BtcClient
 }
-

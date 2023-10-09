@@ -30,7 +30,7 @@ fn (mut t TFGridHandler) funkwhale(action Action) ! {
 		'get' {
 			name := action.params.get('name')!
 
-			get_res :=t.tfgrid.get_funkwhale_deployment(name)!
+			get_res := t.tfgrid.get_funkwhale_deployment(name)!
 
 			t.logger.info('${get_res}')
 		}

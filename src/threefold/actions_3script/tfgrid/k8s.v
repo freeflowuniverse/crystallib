@@ -99,7 +99,9 @@ fn (mut t TFGridHandler) k8s(action Action) ! {
 		'delete' {
 			name := action.params.get('name')!
 
-			t.tfgrid.cancel_k8s_cluster(name) or { return error('failed to delete k8s cluster: ${err}') }
+			t.tfgrid.cancel_k8s_cluster(name) or {
+				return error('failed to delete k8s cluster: ${err}')
+			}
 		}
 		else {
 			return error('operation ${action.name} is not supported on k8s')

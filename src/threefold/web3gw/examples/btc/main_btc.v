@@ -2,7 +2,6 @@ module main
 
 import freeflowuniverse.crystallib.rpcwebsocket { RpcWsClient }
 import threefoldtech.web3gw.btc
-
 import flag
 import log
 import os
@@ -17,31 +16,30 @@ fn execute_rpcs(mut client RpcWsClient, mut logger log.Logger, host string, user
 	btc_client.load(host: host, user: user, pass: password)!
 
 	amount_blocks := btc_client.get_block_count()!
-	logger.info("Block count: ${amount_blocks}")
+	logger.info('Block count: ${amount_blocks}')
 
 	node_addresses := btc_client.get_node_addresses()!
-	logger.info("Node addresses: ${node_addresses}")
+	logger.info('Node addresses: ${node_addresses}')
 
 	mining_info := btc_client.get_mining_info()!
-	logger.info("Mining info: ${mining_info}")
+	logger.info('Mining info: ${mining_info}')
 
 	difficulty := btc_client.get_difficulty()!
-	logger.info("Difficulty: ${difficulty}")
+	logger.info('Difficulty: ${difficulty}')
 
 	hash_block_at_height_5 := btc_client.get_block_hash(5)!
-	logger.info("Hash block at height 5: ${hash_block_at_height_5}")
+	logger.info('Hash block at height 5: ${hash_block_at_height_5}')
 
 	chain_tx_stats := btc_client.get_chain_tx_stats()!
-	logger.info("Chain transaction statistics: ${chain_tx_stats}")
+	logger.info('Chain transaction statistics: ${chain_tx_stats}')
 
 	fee_estimation := btc_client.estimate_smart_fee()!
-	logger.info("Fee estimation: ${fee_estimation}")
+	logger.info('Fee estimation: ${fee_estimation}')
 
 	/*
 	result := btc_client.create_wallet(name:"mywallet2", passphrase:"mypassphrase")!
 	logger.info("Result of creating wallet: ${result}")
 	*/
-	
 }
 
 fn main() {

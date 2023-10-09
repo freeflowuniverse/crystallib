@@ -1,15 +1,15 @@
 module sftpgo
+
 import json
 import net.http
 
 [params]
 pub struct Role {
-	pub mut:
-		name string
-		description string
-		users []string
-		admins []string
-	
+pub mut:
+	name        string
+	description string
+	users       []string
+	admins      []string
 }
 
 pub fn (mut cl SFTPGoClient) list_roles() !string {
@@ -20,7 +20,6 @@ pub fn (mut cl SFTPGoClient) list_roles() !string {
 	}
 	resp := req.do()!
 	return resp.body
-
 }
 
 pub fn (mut cl SFTPGoClient) add_role(role Role) !string {
@@ -32,7 +31,6 @@ pub fn (mut cl SFTPGoClient) add_role(role Role) !string {
 	}
 	resp := req.do()!
 	return resp.body
-
 }
 
 pub fn (mut cl SFTPGoClient) get_role(name string) !string {
@@ -43,7 +41,6 @@ pub fn (mut cl SFTPGoClient) get_role(name string) !string {
 	}
 	resp := req.do()!
 	return resp.body
-
 }
 
 pub fn (mut cl SFTPGoClient) update_role(role Role) !string {
@@ -55,7 +52,6 @@ pub fn (mut cl SFTPGoClient) update_role(role Role) !string {
 	}
 	resp := req.do()!
 	return resp.body
-
 }
 
 pub fn (mut cl SFTPGoClient) delete_role(name string) !string {
@@ -66,5 +62,4 @@ pub fn (mut cl SFTPGoClient) delete_role(name string) !string {
 	}
 	resp := req.do()!
 	return resp.body
-
 }

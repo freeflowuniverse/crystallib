@@ -5,29 +5,26 @@ import flag
 import os
 import log
 
-const(
+const (
 	default_server_address = 'http://localhost:8080/api/v2'
 )
 
-
-fn get_events(mut cl sftpgo.SFTPGoClient, mut logger log.Logger){
-	fs_events := cl.get_fs_events(0, 0, 100, "DESC") or {
-		logger.error("failed to list fs events: $err")
+fn get_events(mut cl sftpgo.SFTPGoClient, mut logger log.Logger) {
+	fs_events := cl.get_fs_events(0, 0, 100, 'DESC') or {
+		logger.error('failed to list fs events: ${err}')
 		exit(1)
 	}
 
-	logger.info("fs_events: $fs_events")
+	logger.info('fs_events: ${fs_events}')
 
-	provider_events := cl.get_provider_events(0, 0, 100, "DESC") or {
-		logger.error("failed to list provider events: $err")
+	provider_events := cl.get_provider_events(0, 0, 100, 'DESC') or {
+		logger.error('failed to list provider events: ${err}')
 		exit(1)
 	}
-	logger.info("provider_events: $provider_events")
-
+	logger.info('provider_events: ${provider_events}')
 }
 
-fn main(){
-
+fn main() {
 	mut fp := flag.new_flag_parser(os.args)
 	fp.application('Welcome to the SFTPGO sal.')
 	fp.limit_free_args(0, 0)!
@@ -43,7 +40,7 @@ fn main(){
 	}
 
 	args := sftpgo.SFTPGOClientArgs{
-		address: address,
+		address: address
 		key: key
 	}
 	mut cl := sftpgo.new(args) or {
@@ -54,5 +51,4 @@ fn main(){
 		level: if debug_log { .debug } else { .info }
 	})
 	get_events(mut cl, mut logger)
-
 }

@@ -141,8 +141,10 @@ fn deploy_machine_with_qsfs(mut client tfgrid.TFGridClient, machine_with_qsfs Ma
 
 fn delete_qsfs_zdbs(mut client tfgrid.TFGridClient, machine_with_qsfs_name string, count u32) ! {
 	for i in 0 .. count {
-		client.cancel_zdb_deployment(generate_zdb_name(machine_with_qsfs_name, 'seq', i))!
-		client.cancel_zdb_deployment(generate_zdb_name(machine_with_qsfs_name, 'user', i))!
+		client.cancel_zdb_deployment(generate_zdb_name(machine_with_qsfs_name, 'seq',
+			i))!
+		client.cancel_zdb_deployment(generate_zdb_name(machine_with_qsfs_name, 'user',
+			i))!
 	}
 }
 

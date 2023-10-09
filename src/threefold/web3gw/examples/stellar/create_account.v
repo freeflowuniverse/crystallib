@@ -2,7 +2,6 @@ module main
 
 import freeflowuniverse.crystallib.rpcwebsocket { RpcWsClient }
 import threefoldtech.web3gw.stellar
-
 import flag
 import log
 import os
@@ -16,8 +15,8 @@ fn execute_rpcs(mut client RpcWsClient, mut logger log.Logger, network string) !
 
 	seed := stellar_client.create_account(network)!
 	address := stellar_client.address()!
-	logger.info("Public address is ${address}")
-	logger.info("Seed is ${seed} (keep this safe!!!!")	
+	logger.info('Public address is ${address}')
+	logger.info('Seed is ${seed} (keep this safe!!!!')
 }
 
 fn main() {

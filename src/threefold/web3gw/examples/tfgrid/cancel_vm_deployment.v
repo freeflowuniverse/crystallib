@@ -12,7 +12,7 @@ const (
 
 [params]
 pub struct Arguments {
-	network string = "main"
+	network          string = 'main'
 	deployment_name  string
 	tfchain_mnemonic string
 }

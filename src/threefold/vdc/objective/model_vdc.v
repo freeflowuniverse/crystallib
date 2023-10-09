@@ -1,10 +1,11 @@
 module vdc
+
 import log
 
-pub struct VDC{
+pub struct VDC {
 pub mut:
-	name string
+	name        string
 	description string
-	vms []VM
-	logger log.Logger
+	vms         []VM
+	logger      log.Logger
 }
