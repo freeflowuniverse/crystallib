@@ -1,6 +1,6 @@
 module params
 
-import texttools
+import freeflowuniverse.crystallib.core.texttools
 
 enum ParamStatus {
 	start

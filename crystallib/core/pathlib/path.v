@@ -76,7 +76,7 @@ fn (mut path Path) check_exists() ! {
 }
 
 // returns name with extension
-pub fn (mut path Path) name() string {
+pub fn (path Path) name() string {
 	return os.base(path.path)
 }
 

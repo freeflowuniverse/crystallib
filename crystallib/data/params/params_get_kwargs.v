@@ -1,6 +1,6 @@
 module params
 
-import texttools
+import freeflowuniverse.crystallib.core.texttools
 import strconv
 
 // see if the kwarg with the key exists
