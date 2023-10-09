@@ -1,6 +1,6 @@
 module markdowndocs
 
-import pathlib
+import freeflowuniverse.crystallib.core.pathlib
 
 pub struct Doc {
 pub mut:

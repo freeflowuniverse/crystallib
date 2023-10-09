@@ -1,4 +1,4 @@
-import freeflowuniverse.crystallib.imagemagick { image_new }
+import freeflowuniverse.crystallib.tools.imagemagick { image_new }
 import freeflowuniverse.crystallib.core.pathlib
 import os
 

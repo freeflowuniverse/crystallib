@@ -2,7 +2,7 @@ module gittools
 
 import os
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.sshagent
+import freeflowuniverse.crystallib.tools.sshagent
 import freeflowuniverse.crystallib.core.pathlib
 
 [heap]

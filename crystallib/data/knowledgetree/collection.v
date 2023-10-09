@@ -1,7 +1,7 @@
 module knowledgetree
 
 // import os
-import freeflowuniverse.crystallib.imagemagick
+import freeflowuniverse.crystallib.tools.imagemagick
 import freeflowuniverse.crystallib.core.pathlib { Path }
 import freeflowuniverse.crystallib.data.params
 import freeflowuniverse.crystallib.data.markdowndocs

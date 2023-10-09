@@ -3,7 +3,7 @@ module sandbox
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.gittools
+import freeflowuniverse.crystallib.osal.gittools
 import os
 import json
 

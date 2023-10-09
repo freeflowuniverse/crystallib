@@ -1,6 +1,6 @@
 module vault
 
-import pathlib
+import freeflowuniverse.crystallib.core.pathlib
 import time
 import os
 

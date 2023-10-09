@@ -139,7 +139,7 @@ pub fn (mut m BizModel) replace_smart_ids() ! {
 
 	for file in files {
 		content_ := os.read_file(file.path)!
-		content := smartid.sid_empty_replace(content_, '')!
+		content := smartid.sids_empty_replace(content_, '')!
 		os.write_file(file.path, content)!
 	}
 }
