@@ -1,4 +1,4 @@
-module zerohub
+module rmb
 
 import freeflowuniverse.crystallib.clients.httpconnection
 import freeflowuniverse.crystallib.clients.redisclient { RedisURL }
@@ -12,7 +12,7 @@ pub mut:
 	redis            &redisclient.Redis [str: skip]
 }
 
-enum TFNetType {
+pub enum TFNetType {
 	unspecified
 	main
 	test
