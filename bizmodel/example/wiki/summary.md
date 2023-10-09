@@ -19,5 +19,6 @@
 - [employees](bizmodel_example:employees.md)
   - [CTO](bizmodel_example:cto.md)
 - [concepts](bizmodel_manual:concepts.md)
-    - [namefilter](bizmodel_manual:namefilter.md)
+<!-- QUESTION: where is namefilter.md -->
+<!-- - [namefilter](bizmodel_manual:namefilter.md) -->
 

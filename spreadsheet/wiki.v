@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.texttools
 
 
 // format a sheet properly in wiki format
-pub fn (s Sheet) wiki(args_ RowGetArgs) !string {
+pub fn (mut s Sheet) wiki(args_ RowGetArgs) !string {
 	mut args := args_
 
 	period_months := match args.period_type {

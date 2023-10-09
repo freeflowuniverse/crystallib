@@ -105,17 +105,18 @@ pub fn background(mut s spawner.Spawner, args BizModelArgs) !BizModelBackground 
 	}
 }
 
-// get wiki representation of the data from the sheet
-//
-// name          string .
-// namefilter    []string // only include the exact names as secified for the rows .
-// includefilter []string // matches for the tags .
-// excludefilter []string // matches for the tags .
-// period_months int = 12 // 3 for quarter, 12 for year, 1 for all months .
-// description   string .
-// title         string .
-// title_disable bool .
-// rowname       bool = true .
-pub fn (mut m BizModelBackground) wiki(args spreadsheet.WikiArgs) !string {
-	return m.ourthread.rpc(method: 'WIKI', val: json.encode(args))!
-}
+// QUESTION: do we still use this?
+// // get wiki representation of the data from the sheet
+// //
+// // name          string .
+// // namefilter    []string // only include the exact names as secified for the rows .
+// // includefilter []string // matches for the tags .
+// // excludefilter []string // matches for the tags .
+// // period_months int = 12 // 3 for quarter, 12 for year, 1 for all months .
+// // description   string .
+// // title         string .
+// // title_disable bool .
+// // rowname       bool = true .
+// pub fn (mut m BizModelBackground) wiki(args spreadsheet.WikiArgs) !string {
+// 	return m.ourthread.rpc(method: 'WIKI', val: json.encode(args))!
+// }

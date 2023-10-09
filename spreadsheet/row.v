@@ -1,5 +1,7 @@
 module spreadsheet
 
+import freeflowuniverse.crystallib.params
+
 [heap]
 pub struct Row {
 pub mut:
@@ -131,8 +133,14 @@ pub fn (r Row) min() int {
 }
 
 //apply the namefilter, include & exclude filter, if match return true
-pub fn (row Row) filter(args RowGetArgs) !bool {
+pub fn (row Row) filter(args_ RowGetArgs) !bool {
 	mut ok := false
+	mut args := args_
+	// QUESTION: This was implemented because some macros use the rowname param instead of namefilter, ok?
+	if args_.namefilter.len == 0 && args_.rowname != '' {
+		args.namefilter = [args_.rowname]
+	}
+
 	if args.namefilter.len > 0 || args.includefilter.len > 0 || args.excludefilter.len > 0 {
 		
 		if args.includefilter.len > 0 || args.excludefilter.len > 0 {

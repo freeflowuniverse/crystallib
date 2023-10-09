@@ -50,35 +50,36 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 			'wiki_row_overview', 'employee_wiki', 'employees_wiki']
 
 		if action.name in supported_actions {
-			namefilter:=get_list("namefilter")!
-			includefilter:=get_list("includefilter")!
-			excludefilter:=get_list("excludefilter")!
+			rowname := p.get_default('rowname', '')!
+			namefilter:=p.get_list_default("namefilter", [])!
+			includefilter:=p.get_list_default("includefilter", [])!
+			excludefilter:=p.get_list_default("excludefilter", [])!
 			size := p.get_default('size', '')!
 			title_sub := p.get_default('title_sub', '')!
 			title := p.get_default('title', '')!
 			unit := p.get_default('unit', 'normal')!
-			unit_e = match unit {
-				'thousand' { .thousand }
-				'million' { .million }
-				'billion' { .billion }
-				else { .normal }
+			unit_e := match unit {
+				'thousand' { spreadsheet.UnitType.thousand }
+				'million' { spreadsheet.UnitType.million }
+				'billion' { spreadsheet.UnitType.billion }
+				else { spreadsheet.UnitType.normal }
 			}
 			period_type := p.get_default('period_type', 'year')!
 			if period_type !in ['year', 'month', 'quarter'] {
 				return error('period type needs to be in year,month,quarter')
 			}
-			period_type_e = match period_type {
-				'year' { .year }
-				'month' { .month }
-				'quarter' { .quarter }
-				else { .error }
+			period_type_e := match period_type {
+				'year' { spreadsheet.PeriodType.year }
+				'month' { spreadsheet.PeriodType.month }
+				'quarter' { spreadsheet.PeriodType.quarter }
+				else { spreadsheet.PeriodType.error }
 			}
 			if period_type_e == .error {
 				return error('period type needs to be in year,month,quarter')
 			}
 
-			aggregate := p.get_default_false('aggregate')!
-			rowname_show := p.get_default_true('rowname_show')!
+			aggregate := p.get_default_false('aggregate')
+			rowname_show := p.get_default_true('rowname_show')
 
 			// namefilter    []string // only include the exact names as secified for the rows
 			// includefilter   []string // to use with params filter e.g. ['location:belgium_*'] //would match all words starting with belgium
@@ -93,6 +94,7 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 			// rowname_show       bool = true  //show the name of the row
 
 			args := spreadsheet.RowGetArgs{
+				rowname: rowname
 				namefilter:namefilter
 				includefilter:includefilter
 				excludefilter:excludefilter
@@ -110,14 +112,15 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 			}
 
 			match action.name {
-				'graph_title_row' {
+				// which action is associated with wiki() method
+				'sheet_wiki' {
 					r.result = model.sheet.wiki(args) or { panic(err) }
 				}
 				'graph_title_row' {
 					r.result = model.sheet.wiki_title_chart(args)
 				}
 				'graph_line_row' {
-					r.result = model.sheet.wiki_line_chart([args])!
+					r.result = model.sheet.wiki_line_chart(args)!
 				}
 				'graph_bar_row' {
 					r.result = model.sheet.wiki_bar_chart(args)!
