@@ -1,6 +1,6 @@
 module publisher_core
 
-import texttools
+import freeflowuniverse.crystallib.core.texttools
 import os
 import vweb
 import publisher_config

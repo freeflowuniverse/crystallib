@@ -1,7 +1,7 @@
 module params
 
 import freeflowuniverse.crystallib.data.ourtime
-// import texttools
+// import freeflowuniverse.crystallib.core.texttools
 // import os
 import time { Duration }
 
