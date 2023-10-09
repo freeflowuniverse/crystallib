@@ -1,0 +1,2 @@
+root_object := circle.@{root_objects_field}
+root_object.@{sub_objects_field} << params

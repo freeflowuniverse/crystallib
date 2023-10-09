@@ -1,3 +1,0 @@
-# Fruits
-
-- [Apple](./apple.md)
