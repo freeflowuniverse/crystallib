@@ -1,0 +1,7 @@
+fn (mut circle Circle) @{method_name}(params @{params.structure.name}) ! {
+    @if root_object
+    @{root_obj_cmd}
+    @else
+    @{sub_obj_cmd}
+    @end
+}

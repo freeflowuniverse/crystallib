@@ -1,2 +1,0 @@
-
-This is what needs to be re-developed for other languages, we kept it as easy as possible. An actor is an entity that can execute one or more jobs. On this page you will find a minimalistic interface that can be used together with the actionrunner in order to implement actors.
