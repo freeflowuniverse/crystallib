@@ -150,13 +150,11 @@ pub fn book_create(args_ BookNewArgs) !&MDBook {
 	}
 	book.reset()! // clean the destination
 	book.load_summary()!
-	book.fix_summary()!
 	book.link_pages_files_images()!
+	book.fix_summary()!
 	book.errors_report()!
 	book.export()!
-	println('booky00: ${book.name}')
 	pages_str := book.pages.values().map('\n${it.name}\npages_included:${it.pages_linked.map(it.name)}')
-	println('pages: \n${pages_str}')
 
 	return book
 }
@@ -183,6 +181,8 @@ fn (mut mdbook MDBook) reset() ! {
 
 // fixes the summary doc for the book
 fn (mut book MDBook) fix_summary() ! {
+	// add linked pages to summary if they dont exist in summary
+
 	for y in 0 .. book.doc_summary.items.len {
 		if book.doc_summary.items[y] is markdowndocs.Paragraph {
 			mut paragraph := book.doc_summary.items[y] as markdowndocs.Paragraph
@@ -246,6 +246,28 @@ fn (mut book MDBook) fix_summary() ! {
 		}
 	}
 	book.tree.logger.debug('finished fixing summary')
+}
+
+// add_page_to_summary adds pages that have been linked to summary
+fn (mut book MDBook) add_missing_pages_to_summary() ! {
+	mut path_summary := pathlib.get('${book.dest_md}/src/SUMMARY.md')
+	summary_content := os.read_file(path_summary.path)!
+	dest_md_path := pathlib.get('${book.dest_md}/src')
+	mut files := dest_md_path.file_list(recursive:true)!
+
+	mut missing_links := []string{}
+	for mut file in files.filter(!it.path.ends_with('SUMMARY.md')) {
+		rel_path := file.path.trim_string_left('${book.dest_md}/src/')
+
+		if !summary_content.contains(file.path.trim_string_left('${book.dest_md}/src/')) {
+			missing_links << '\t- [${file.name_fix_no_ext()}](${rel_path})'
+		}
+	}
+
+	if missing_links.len > 0 {
+		missing_links_str := '- [Missing links]()\n${missing_links.join('\n')}'
+		os.write_file(path_summary.path, '${summary_content}.${missing_links_str}')!
+	}
 }
 
 // all images, files and pages found need to be linked to the book
@@ -387,7 +409,7 @@ fn (mut book MDBook) export_linked_pages(md_path string, mut linked_pages []&Pag
 		if page_linked.pages_linked.len > 0 {
 			book.export_linked_pages(md_path, mut page_linked.pages_linked)!
 		}
-		dest := '${md_path}/${page_linked.collection_name}/${page_linked.pathrel}'
+		dest := '${md_path.trim_right('/')}/${page_linked.collection_name}/${page_linked.pathrel}'
 		book.tree.logger.info('export: ${dest}')
 		page_linked.save(dest: dest)!
 	}
@@ -395,9 +417,7 @@ fn (mut book MDBook) export_linked_pages(md_path string, mut linked_pages []&Pag
 
 // export an mdbook to its html representation
 pub fn (mut book MDBook) export() ! {
-	println('booky01: ${book.name}')
 	pages_str := book.pages.values().map('\n${it.name}\npages_included:${it.pages_linked.map(it.name)}')
-	println('pages: \n${pages_str}')
 	logger.info('Exporting MDBook: ${book.name}')
 	book.template_install()! // make sure all required template files are in collection
 	md_path := book.md_path('').path + '/src'
@@ -444,6 +464,7 @@ pub fn (mut book MDBook) export() ! {
 	mut pathsummary := pathlib.get('${md_path}/SUMMARY.md')
 	// write summary
 	pathsummary.write(book.doc_summary.markdown())!
+	book.add_missing_pages_to_summary()!
 
 	// lets now build
 	osal.exec(cmd: 'mdbook build ${book.md_path('').path} --dest-dir ${html_path}', retry: 0)!

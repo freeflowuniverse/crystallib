@@ -12,15 +12,15 @@ pub mut:
 }
 
 [params]
-pub struct GlobalIdNewArgs{
+pub struct GlobalIdNewArgs {
 pub mut:
-	gid_str string // rid.cid.oid format
-	gid_coord []int //3 coordinates first one is region
-	cid string //required iSf no txt of coordinates, allows to generate a good gid
-	rid string //can be empty
+	gid_str   string // rid.cid.oid format
+	gid_coord []int  // 3 coordinates first one is region
+	cid       string // required iSf no txt of coordinates, allows to generate a good gid
+	rid       string // can be empty
 }
 
-//TODO: timur, needs to be implemented, needs to support txt or coordinates, and then use sid_new for getting new sid
+// TODO: tyes, coimur, needs to be implemented, needs to support txt or coordinates, and then use sid_new for getting new sid
 
 // smartid is of form region.circle.obj .
 // each part (also called smartid) min3 max 6 chars, each char = a...z or 0...9 .
@@ -28,7 +28,7 @@ pub mut:
 // if txt & coordinates empty then will generate unique one, circle needs to be specified if new one
 fn gid_new(args GlobalIdNewArgs) !GlobalId {
 	mut o := GlobalId{}
-	gid:=args.gid_str
+	gid := args.gid_str
 	mut ids := gid.split('.')
 	if ids.len > 3 {
 		return error('need format d.d.d max 2 . for a global smartid \n${gid}')
@@ -81,10 +81,9 @@ pub fn gid_check(gid string) bool {
 	return true
 }
 
-//raise error if smartid not valid
+// raise error if smartid not valid
 pub fn gid_test(gid string) ! {
-	if !gid_check(gid){
-		return error("gid:${gid} is not valid.")
+	if !gid_check(gid) {
+		return error('gid:${gid} is not valid.')
 	}
 }
-

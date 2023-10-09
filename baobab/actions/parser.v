@@ -1,6 +1,7 @@
 module actions
 
 import os
+import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.markdowndocs
 import freeflowuniverse.crystallib.params
 import freeflowuniverse.crystallib.texttools
@@ -72,6 +73,7 @@ fn (mut actions Actions) file_parse(path string) ! {
 		return error("path: '${path}' does not exist, cannot parse.")
 	}
 	content := os.read_file(path) or { return error('Failed to load file ${path}: ${err}') }
+	// actions.text_add(content)!
 	blocks := parse_into_blocks(content, path)!
 	actions.parse_actions(blocks)!
 }

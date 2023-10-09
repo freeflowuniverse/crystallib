@@ -271,6 +271,7 @@ fn (mut page Page) process_includes(mut include_tree []string) ! {
 			doc.items.insert(x + offset, docinclude.items)
 			offset += doc.items.len - 1
 		}
+		page.doc = doc
 	}
 }
 

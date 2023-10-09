@@ -1,6 +1,7 @@
 module bizmodel
 
 import freeflowuniverse.crystallib.baobab.actions { Actions }
+import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.texttools
 import freeflowuniverse.crystallib.params
 import freeflowuniverse.crystallib.pathlib
@@ -107,28 +108,16 @@ fn (mut m BizModel) hr_actions(actions_ Actions) ! {
 			}
 			// todo: use existing id gen
 
-			mut id := action.params.get_default('id', '')!
-			if id == '' {
-				id = rand.string(3)
-				for (id in m.employees) {
-					id = rand.string(3)
-				}
-				// todo: make update action instead
-				// mut new_action := actions.Action{
-				// 	...action
+			mut sid := action.params.get_default('sid', '')!
+			if sid != '' {
+				// sid = smartid.sid_new('')!
+				// // TODO: this isn't necessary if sid_new works correctly
+				// // but lets keep it in here for now until we test smartid
+				// for (sid in m.employees) {
+				// 	sid = smartid.sid_new('')!
 				// }
-				// new_action.params.params << params.Param{
-				// 	key: 'id'
-				// 	value: id
-				// }
-				// actions.add_id_to_action(
-				// 	id: id
-				// 	action: new_action
-				// 	context: action.context
-				// )!
+				m.employees[sid] = &employee
 			}
-
-			m.employees[id] = &employee
 		}
 	}
 

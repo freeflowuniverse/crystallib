@@ -1,3 +1,5 @@
 # Employees
 
-- [CTO](bizmodel:cto.md)
+- [CTO](bizmodel_example:cto.md)
+
+!!include bizmodel_example:cto.md
