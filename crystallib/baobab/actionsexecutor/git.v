@@ -1,7 +1,7 @@
 module actionsexecutor
 
 import freeflowuniverse.crystallib.baobab.actions
-import freeflowuniverse.crystallib.gittools
+import freeflowuniverse.crystallib.osal.gittools
 
 fn git(mut actions actions.Actions, action action.Action) ! {
 	if action.name == 'get' {

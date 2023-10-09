@@ -1,7 +1,7 @@
 module gittools
 
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.sshagent
+import freeflowuniverse.crystallib.tools.sshagent
 
 [params]
 pub struct CheckArgs {

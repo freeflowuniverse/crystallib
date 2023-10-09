@@ -1,7 +1,7 @@
 module console
 
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.console { color_fg }
+// import freeflowuniverse.crystallib.ui.console { color_fg }
 import freeflowuniverse.crystallib.ui.uimodel { DropDownArgs }
 import os
 
@@ -15,7 +15,7 @@ pub fn (mut c UIConsole) ask_dropdown(args DropDownArgs) int {
 		clear() // clears the screen
 	}
 	if args.description.len > 0 {
-		println(console.style(args.description, 'bold'))
+		println(style(args.description, 'bold'))
 	}
 	if args.warning.len > 0 {
 		println(color_fg(args.warning, 'red'))

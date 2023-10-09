@@ -1,6 +1,6 @@
 module mycmds
 
-import freeflowuniverse.crystallib.gittools
+import freeflowuniverse.crystallib.osal.gittools
 import cli { Command, Flag }
 
 // const wikipath = os.dir(@FILE) + '/wiki'

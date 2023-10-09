@@ -33,7 +33,7 @@ fn sids_set(text string, cid string) ! {
 // find parts of text in form sid:*** till sid:******  .
 // also support  sid:'***' till sid:'******'
 // replace all occurrences with new sid's which are unique
-fn sids_empty_replace(txt_ string, cid string) !txt {
+pub fn sids_empty_replace(txt_ string, cid string) !string {
 	mut txt := txt_
 	pattern := r'sid:[\*]{3,6}[\s$]'
 	mut re := regex.regex_opt(pattern) or { panic(err) }

@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.console
+import freeflowuniverse.crystallib.ui.console
 
 struct RoomOrderFlow {
 	current_product string

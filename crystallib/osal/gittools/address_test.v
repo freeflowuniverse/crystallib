@@ -1,7 +1,7 @@
 module gittools
 
 import os
-import freeflowuniverse.crystallib.sshagent
+import freeflowuniverse.crystallib.tools.sshagent
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 

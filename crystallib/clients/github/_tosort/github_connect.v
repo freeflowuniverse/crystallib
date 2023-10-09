@@ -4,7 +4,7 @@ import x.json2
 import json
 import net.http
 import freeflowuniverse.crystallib.clients.redisclient { RedisURL }
-import crystaljson
+import freeflowuniverse.crystallib.core.crystaljson
 import os
 
 [heap]

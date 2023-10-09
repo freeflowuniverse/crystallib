@@ -2,7 +2,7 @@ module gittools
 
 import freeflowuniverse.crystallib.ui as gui
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.console
+import freeflowuniverse.crystallib.ui.console
 
 pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) {
 	mut r := [][]string{}

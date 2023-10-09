@@ -1,6 +1,6 @@
 module mycmds
 
-import freeflowuniverse.crystallib.gittools
+import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.osal
 import cli { Command, Flag }
 import os

@@ -1,6 +1,6 @@
 module markdowndocs
 
-import pathlib
+import freeflowuniverse.crystallib.core.pathlib
 import os
 
 [params]

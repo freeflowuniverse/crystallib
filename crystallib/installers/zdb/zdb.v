@@ -1,6 +1,6 @@
 module zdb
 
-import freeflowuniverse.crystallib.gittools
+import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
 
