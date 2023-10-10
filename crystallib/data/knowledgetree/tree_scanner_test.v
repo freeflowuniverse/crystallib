@@ -1,6 +1,6 @@
 module knowledgetree
 
-import freeflowuniverse.crystallib.gittools
+import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.params
 import os

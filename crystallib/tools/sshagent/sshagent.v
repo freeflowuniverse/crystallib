@@ -1,6 +1,6 @@
 module sshagent
 
-import freeflowuniverse.crystallib.console
+import freeflowuniverse.crystallib.ui.console
 import os
 import freeflowuniverse.crystallib.core.pathlib
 import crypto.sha256
@@ -22,9 +22,10 @@ fn listsplit(key string) string {
 // will return the key which will be used
 pub fn load_interactive() !string {
 	mut pubkeys := pubkeys_get()
+	mut c := console.UIConsole{}
 	pubkeys.map(listsplit)
 	if pubkeys.len == 1 {
-		console.ask_yesno(
+		c.ask_yesno(
 			description: 'We found sshkey ${pubkeys[0]} in sshagent, want to use this one?'
 		)
 		{
@@ -33,7 +34,7 @@ pub fn load_interactive() !string {
 		}
 	}
 	if pubkeys.len > 1 {
-		if console.ask_yesno(
+		if c.ask_yesno(
 			description: 'We found more than 1 sshkey in sshagent, want to use one of those!'
 		)
 		{
@@ -59,7 +60,7 @@ pub fn load_interactive() !string {
 	// println(keypaths)
 
 	if pubkeys.len == 1 {
-		if console.ask_yesno(
+		if c.ask_yesno(
 			description: 'We found sshkey ${pubkeys[0]} in ~/.ssh dir, want to use this one?'
 		)
 		{
@@ -68,7 +69,7 @@ pub fn load_interactive() !string {
 		}
 	}
 	if pubkeys.len > 1 {
-		if console.ask_yesno(
+		if c.ask_yesno(
 			description: 'We found more than 1 sshkey in ~/.ssh dir, want to use one of those?'
 		)
 		{
@@ -81,7 +82,7 @@ pub fn load_interactive() !string {
 		}
 	}
 
-	if console.ask_yesno(description: 'Would you like to generate a new key?') {
+	if c.ask_yesno(description: 'Would you like to generate a new key?') {
 		// name := console.ask_question(question: 'name', minlen: 3)
 		// passphrase := console.ask_question(question: 'passphrase', minlen: 5)
 

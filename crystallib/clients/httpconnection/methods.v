@@ -17,7 +17,7 @@ module httpconnection
 
 import x.json2
 import net.http
-import crystaljson
+import freeflowuniverse.crystallib.core.crystaljson
 
 // Build url from Request and httpconnection
 fn (mut h HTTPConnection) url(req Request) string {

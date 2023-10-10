@@ -1,6 +1,6 @@
 module template
 
-import freeflowuniverse.crystallib.console
+import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.ui.uimodel { DropDownArgs }
 
 // return the dropdown as an int

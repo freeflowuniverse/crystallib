@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.imagemagick
+import freeflowuniverse.crystallib.tools.imagemagick
 import gittools
 
 fn do() ! {

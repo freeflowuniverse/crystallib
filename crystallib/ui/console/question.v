@@ -2,7 +2,7 @@ module console
 
 import os
 import freeflowuniverse.crystallib.ui.uimodel { QuestionArgs }
-import freeflowuniverse.crystallib.console { color_fg }
+// import freeflowuniverse.crystallib.ui.console { color_fg }
 
 // args:
 // - description string
@@ -18,7 +18,7 @@ pub fn (mut c UIConsole) ask_question(args QuestionArgs) string {
 		clear() // clears the screen
 	}
 	if args.description.len > 0 {
-		println(console.style(args.description, 'bold'))
+		println(style(args.description, 'bold'))
 	}
 	if args.warning.len > 0 {
 		println(color_fg(args.warning, 'red'))

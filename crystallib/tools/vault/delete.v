@@ -1,6 +1,6 @@
 module vault
 
-import pathlib
+import freeflowuniverse.crystallib.core.pathlib
 
 // walk over folders, find the vaults and delete them
 pub fn vaults_delete(mut path pathlib.Path) ! {

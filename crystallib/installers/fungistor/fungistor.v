@@ -2,7 +2,7 @@ module fungistor
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.rust
-import freeflowuniverse.crystallib.gittools
+import freeflowuniverse.crystallib.osal.gittools
 
 pub fn install() ! {
 	rust.install()!
