@@ -68,7 +68,7 @@ fn test_parse_into_blocks() {
 		source:'https://github.com/ourworld-tsc/ourworld_books/tree/development/content/feasibility_study/Capabilities'
 		dest:'https://github.com/threefoldfoundation/books/tree/main/books/feasibility_study_internet/src/capabilities'"
 
-	mut blocks := parse_into_blocks(md)!
+	mut blocks := parse_into_blocks(md, '')!
 	assert blocks.blocks.len == 1
 	assert blocks.blocks[0].name == 'git.link'
 	mut content_lines := blocks.blocks[0].content.split('\n')
@@ -80,7 +80,7 @@ fn test_parse_into_blocks() {
 	url:'https://github.com/threefoldfoundation/books'
 	message:'link'"
 
-	blocks = parse_into_blocks(md_2)!
+	blocks = parse_into_blocks(md_2, '')!
 	assert blocks.blocks.len == 1
 	assert blocks.blocks[0].name == 'git.commit'
 	content_lines = blocks.blocks[0].content.split('\n')

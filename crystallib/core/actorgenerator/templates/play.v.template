@@ -1,0 +1,24 @@
+import freeflowuniverse.crystallib.baobab.actions as actionslib {ActionsArgs, Actions}
+import freeflowuniverse.crystallib.data.params as paramslib {Params}
+
+__global(
+	actor_factory map[string]shared ExampleActor
+)
+
+// PlayConfig. If actions are provided runs actions. Otherwise loads and runs actions in path.
+pub struct Play {
+	ActionsArgs
+	actions []Actions
+}
+
+pub fn play(params Play) ! {
+	actor_actions := if params.actions.len > 0 {
+		params.actions
+	} else {
+		actionslib.new(params.ActionsArgs)
+	}
+
+	for action in actions.filtersort(actor: '') {
+        actor_factory[cid].act(action)!
+	}
+}

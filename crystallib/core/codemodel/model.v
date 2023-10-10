@@ -3,7 +3,12 @@ module codemodel
 // Code is a list of statements
 // pub type Code = []CodeItem
 
-pub type CodeItem = Comment | Function | Import | Struct | Sumtype
+pub type CodeItem = Comment | Function | Import | Struct | Sumtype | CustomCode
+
+// item for adding custom code in
+pub struct CustomCode {
+	text string
+}
 
 pub struct Comment {
 	text     string
@@ -11,13 +16,13 @@ pub struct Comment {
 }
 
 pub struct Struct {
-pub:
+pub mut:
 	name        string
 	description string
-	fields      []StructField
 	mod         string
 	is_pub      bool
 	attrs       []Attribute
+	fields      []StructField
 }
 
 pub struct Sumtype {
@@ -33,8 +38,13 @@ pub:
 	attrs       []Attribute
 	name        string
 	description string
+	default string
+	is_pub bool
+	is_mut bool
 	anon_struct Struct // sometimes fields may hold anonymous structs
 	typ         Type
+pub mut:
+	structure Struct
 }
 
 pub struct Attribute {
@@ -61,6 +71,7 @@ pub struct Param {
 pub:
 	required    bool
 	mutable     bool
+	is_shared bool
 	description string
 	name        string
 	typ         Type
@@ -73,10 +84,20 @@ pub:
 	description string
 	name        string
 	result      bool // whether is result type
+	optional    bool // whether is result type
+	structure   Struct
 }
 
+// todo: maybe make 'is_' fields methods?
 pub struct Type {
 pub:
+	is_reference bool
+	is_map bool
+	is_array bool
+	is_mutable bool
+	is_shared bool
+	is_optional bool
+	is_result bool
 	symbol string
 	mod    string
 }

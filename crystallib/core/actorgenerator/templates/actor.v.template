@@ -1,0 +1,16 @@
+module circles
+
+import freeflowuniverse.crystallib.baobab.actions
+import freeflowuniverse.crystallib.data.params as paramslib
+
+__global (
+	@{model_param.name}_actors map[string]shared @{model_param.typ.symbol}Actor
+)
+
+@{actor_struct}
+
+@{handler}
+
+@for method in methods
+@{method}
+@end
