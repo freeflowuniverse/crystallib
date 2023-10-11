@@ -1,7 +1,7 @@
 module docker
 
 import freeflowuniverse.crystallib.osal.gittools
-import freeflowuniverse.crystallib.core.pathlib
+// import freeflowuniverse.crystallib.core.pathlib
 
 [params]
 pub struct CodeGetArgs {
@@ -19,9 +19,7 @@ pub fn (mut r DockerBuilderRecipe) add_codeget(args_ CodeGetArgs) ! {
 	mut args := args_
 	mut gs := gittools.get(root: '${r.path()}/code')!
 
-	locator := gittools.GitLocator{
-		path: args.url
-	}
+	locator := gs.locator_new(args.url)!
 
 	mut gr := gs.repo_get(locator: locator, pull: args.pull, reset: args.reset)!
 

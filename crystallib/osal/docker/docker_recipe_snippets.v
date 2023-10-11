@@ -1,7 +1,7 @@
 module docker
 
-import freeflowuniverse.crystallib.osal.gittools
-import freeflowuniverse.crystallib.core.pathlib
+// import freeflowuniverse.crystallib.osal.gittools
+// import freeflowuniverse.crystallib.core.pathlib
 
 pub fn (mut r DockerBuilderRecipe) add_zinit() ! {
 	r.add_run(

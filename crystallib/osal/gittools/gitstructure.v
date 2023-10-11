@@ -154,7 +154,7 @@ pub mut:
 pub fn code_get(args CodeGetFromUrlArgs) !string {
 	mut gs := get(name: args.gitstructure_name, create: true, root: args.root)!
 	mut locator := gs.locator_new(args.url)!
-	mut repo := gs.repo_get(locator: locator)!
+	_ := gs.repo_get(locator: locator)!
 	s := locator.path_on_fs()!
 	return s.path
 }
