@@ -11,8 +11,7 @@ fn main() {
   r.add_run(cmd: 'apt update -y 
   apt install -y git vim wget openssh-server')!
 
-  r.add_run(cmd: 'wget -O /sbin/zinit https://github.com/threefoldtech/zinit/releases/download/v0.2.5/zinit 
-  chmod +x /sbin/zinit')!
+  r.add_zinit()!
 
   r.add_zinit_cmd(name: "sshd", exec: "/usr/bin/sshd -D")!
 
