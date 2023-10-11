@@ -1,8 +1,8 @@
 
-
+```js
 !!book.book_new 
 		name:"testbook"
-		git_root: '~/code5'
+		git_root: '/tmp/code'
 		collections_giturl: 'https://github.com/threefoldfoundation/books/tree/main/content'
 		git_reset: reset
 		load: true
@@ -17,3 +17,4 @@
 
 !!book.sidebar_page_add	sidebar:sidebar_main page:'funny_Comparison' label:'funny comparison'
 
+```
