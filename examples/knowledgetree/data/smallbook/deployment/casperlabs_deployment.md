@@ -1,6 +1,6 @@
 ## Casper labs deployment
 
-{{#include missing_layer.md}}
+!!include missing_layer.md
 
 ![](img/deployment_.jpg)  
 
