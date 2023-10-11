@@ -179,7 +179,7 @@ fn cmd_git_do_execute(cmd Command) ! {
 		}
 	}
 
-	gs.actions(
+	gs.do(
 		filter: cmd.flags.get_string('filter') or { '' }
 		repo: repo
 		account: account

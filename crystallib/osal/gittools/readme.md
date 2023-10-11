@@ -9,6 +9,34 @@ Git repo's get checked out under
 
 >TODO: need to check this multibranch could be its broken
 
+## 3script
+
+```js
+
+gittools.git_do .
+    coderoot //location where code will be checked out .
+    filter // if used will only show the repo's which have the filter string inside .
+    repo            .
+    account         .
+    provider        .
+    print          bool = true .
+    pull           bool // means when getting new repo will pull even when repo is already there .
+    pullreset      bool // means we will force a pull and reset old content	 .
+    commit         bool .
+    commitpull     bool .
+    commitpush     bool .
+    commitpullpush bool .
+    msg            string .
+    delete         bool // remove the repo . 
+    script         bool = true // run non interactive (default for actions) .
+    cachereset     bool //remove redis cache .
+gittools.git_get .
+    coderoot //location where code will be checked out .
+    pull           bool // means when getting new repo will pull even when repo is already there .
+    pullreset      bool // means we will force a pull and reset old content	 .
+
+```
+
 ## Objects
 
 - Structure of all found gitrepo's
