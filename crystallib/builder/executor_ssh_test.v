@@ -1,7 +1,7 @@
 module builder
 
 import rand
-import ipaddress { IPAddress }
+import freeflowuniverse.crystallib.data.ipaddress { IPAddress }
 
 // Assuming this function runs first (which is the case)
 // This generates ssh keys on local machine to use for

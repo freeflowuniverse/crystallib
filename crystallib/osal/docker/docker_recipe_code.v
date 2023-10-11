@@ -19,10 +19,14 @@ pub fn (mut r DockerBuilderRecipe) add_codeget(args_ CodeGetArgs) ! {
 	mut args := args_
 	mut gs := gittools.get(root: '${r.path()}/code')!
 
-	mut gr := gs.repo_get_from_url(url: args.url, pull: args.pull, reset: args.reset)!
+	locator := gittools.GitLocator{
+		path: args.url
+	}
+
+	mut gr := gs.repo_get(locator: locator, pull: args.pull, reset: args.reset)!
 
 	if args.name == '' {
-		args.name = gr.name()
+		args.name = gr.addr.name
 	}
 
 	if args.dest == '' {
@@ -40,7 +44,7 @@ pub fn (mut r DockerBuilderRecipe) add_codeget(args_ CodeGetArgs) ! {
 		return error("dest is to short (min 3): now '${args.dest}'")
 	}
 
-	commonpath := pathlib.path_relative(r.path(), gr.path_content_get())!
+	commonpath := gr.path_relative()
 	if commonpath.contains('..') {
 		panic('bug should not be')
 	}
