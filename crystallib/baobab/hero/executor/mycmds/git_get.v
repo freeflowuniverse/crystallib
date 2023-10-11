@@ -25,8 +25,8 @@ pub fn cmd_git_get(mut cmdroot Command) {
 	cmd_run.add_flag(Flag{
 		flag: .bool
 		required: false
-		name: 'reset'
-		abbrev: 'r'
+		name: 'pullreset'
+		abbrev: 'pr'
 		description: 'will reset the git repo if there are changes inside, CAREFUL.'
 	})
 

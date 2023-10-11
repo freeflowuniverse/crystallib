@@ -1,0 +1,21 @@
+fn (shared actor CircleActor) @{function.name}(params paramslib.Params) ! {
+@for getter in params_getters
+@{getter}
+@end
+	cid := params.get('cid')!
+@if function.receiver.name != 'circle'
+    rid := params.get('rid')!
+@end
+@if function.receiver.mutable
+	lock actor {
+		mut circle := actor.circles[cid]
+@else
+    rlock actor{
+        circle := actor.circles[cid]
+@end
+@if function.receiver.name != 'circle'
+    @{function.receiver.name} := circle[rid]
+@end
+    @{method_call}
+	}
+}

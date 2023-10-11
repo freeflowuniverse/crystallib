@@ -3,6 +3,7 @@ module gittools
 import freeflowuniverse.crystallib.ui as gui
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.baobab.actions
 
 pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) {
 	mut r := [][]string{}
@@ -51,6 +52,39 @@ pub mut:
 	cachereset     bool
 }
 
+// PARAMS: .
+// gittools.git_do .
+// 		coderoot //location where code will be checked out .
+// 		filter // if used will only show the repo's which have the filter string inside .
+// 		repo            .
+// 		account         .
+// 		provider        .
+// 		print          bool = true .
+// 		pull           bool // means when getting new repo will pull even when repo is already there .
+// 		pullreset      bool // means we will force a pull and reset old content	 .
+// 		commit         bool .
+// 		commitpull     bool .
+// 		commitpush     bool .
+// 		commitpullpush bool .
+// 		msg            string .
+// 		delete         bool // remove the repo . 
+// 		script         bool = true // run non interactive (default for actions) .
+// 		cachereset     bool //remove redis cache .
+// gittools.git_get .
+// 		coderoot //location where code will be checked out .
+// 		pull           bool // means when getting new repo will pull even when repo is already there .
+// 		pullreset      bool // means we will force a pull and reset old content	 .
+pub fn (mut gs GitStructure) action(action actions.Action) ! {
+	//gittools.git_do:
+		// see freeflowuniverse/crystallib/crystallib/baobab/hero/executor/mycmds/git_do.v
+		//TODO: execute the actions as mentioned above
+
+	//fittools.git_get:
+		//see freeflowuniverse/crystallib/crystallib/baobab/hero/executor/mycmds/git_get.v
+		//TODO: execute the actions as mentioned above
+
+}
+
 // filter   string // if used will only show the repo's which have the filter string inside .
 // repo     string .
 // account  string .
@@ -66,7 +100,7 @@ pub mut:
 // delete bool (remove the repo) .
 // script bool (run non interactive) .
 // root string //the location of coderoot if its another one .
-pub fn (mut gs GitStructure) actions(args_ ReposActionsArgs) ! {
+pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 	mut args := args_
 
 	mut ui := gui.new()!

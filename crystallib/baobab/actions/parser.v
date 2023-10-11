@@ -1,8 +1,6 @@
 module actions
 
 import os
-import freeflowuniverse.crystallib.baobab.smartid
-import freeflowuniverse.crystallib.data.markdowndocs
 import freeflowuniverse.crystallib.data.params
 import freeflowuniverse.crystallib.core.texttools
 

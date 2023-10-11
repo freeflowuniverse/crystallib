@@ -15,7 +15,7 @@ pub mut:
 [params]
 pub struct RunnerArgs {
 pub mut:
-	circle       string
+	cid       string //circleid
 	root         string // default ~/3bot/circles
 	reset        bool   // will reset the content as fetched of url when true
 	url          string // url can be ssh:// http(s):// git:// file:// path:// http(s)file://
@@ -29,8 +29,8 @@ pub fn new(args_ RunnerArgs) !Runner {
 	if args.root == '' {
 		args.root = '~/3bot/circles'
 	}
-	if args.circle == '' {
-		args.circle = 'default'
+	if args.cid == '' {
+		args.cid = 'default'
 	}
 	if args.gitstructure == none {
 		mut gs := gittools.get(light: true)!
@@ -38,7 +38,7 @@ pub fn new(args_ RunnerArgs) !Runner {
 	}
 
 	mut r := Runner{
-		path: pathlib.get_dir('${args.root}/${args.circle}', true)!
+		path: pathlib.get_dir('${args.root}/${args.cid}', true)!
 		args: args
 	}
 
