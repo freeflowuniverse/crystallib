@@ -46,7 +46,7 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 		// panic('fix git')
 		mut gs := gittools.new(root: args_.git_root)!
 		mut locator := gs.locator_new(args.git_url)!
-		mut gr := gs.repo_get(
+		gs.repo_get(
 			locator: locator
 			pull: args_.git_pull
 			reset: args_.git_reset

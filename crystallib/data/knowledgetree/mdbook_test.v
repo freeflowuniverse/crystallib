@@ -41,36 +41,34 @@ fn testsuite_end() {
 	os.mv('${knowledgetree.testdata_path}_previous', knowledgetree.testdata_path)!
 }
 
-fn create_tree() ! {
-	new(name: knowledgetree.tree_name)!
-	scan(
-		name: knowledgetree.tree_name
+fn test_book_generate() {
+	mut tree := new()!
+	tree.scan(
 		path: knowledgetree.collections_path
 	)!
-}
-
-fn test_book_create() {
-	create_tree()!
 
 	for name, test_book in knowledgetree.test_books {
-		mut book := book_create(
+		mut book := book_generate(
 			name: name
 			path: test_book.src_path
 			dest: test_book.dest_path
-			tree_name: knowledgetree.tree_name
+			tree: tree
 		)!
 	}
 }
 
 fn test_book_reset() {
-	create_tree()!
+	mut tree := new()!
+	tree.scan(
+		path: knowledgetree.collections_path
+	)!
 
 	for name, test_book in knowledgetree.test_books {
-		mut book := book_create(
+		mut book := book_generate(
 			name: 'book1'
 			path: test_book.src_path
 			dest: test_book.dest_path
-			tree_name: knowledgetree.tree_name
+			tree: tree
 		)!
 
 		assert os.exists(test_book.dest_path)
@@ -80,14 +78,17 @@ fn test_book_reset() {
 }
 
 fn test_book_load_summary() {
-	create_tree()!
+	mut tree := new()!
+	tree.scan(
+		path: knowledgetree.collections_path
+	)!
 
 	for name, test_book in knowledgetree.test_books {
-		mut book := book_create(
+		mut book := book_generate(
 			name: name
 			path: test_book.src_path
 			dest: test_book.dest_path
-			tree_name: knowledgetree.tree_name
+			tree: tree
 		)!
 		book.load_summary()!
 
@@ -100,14 +101,17 @@ fn test_book_load_summary() {
 }
 
 fn test_book_fix_summary() {
-	create_tree()!
+	mut tree := new()!
+	tree.scan(
+		path: knowledgetree.collections_path
+	)!
 
 	for name, test_book in knowledgetree.test_books {
-		mut book := book_create(
+		mut book := book_generate(
 			name: name
 			path: test_book.src_path
 			dest: test_book.dest_path
-			tree_name: knowledgetree.tree_name
+			tree: tree
 		)!
 		book.load_summary()!
 		summary_links_before := '${book.doc_summary.items}'
@@ -118,14 +122,17 @@ fn test_book_fix_summary() {
 }
 
 fn test_book_export() {
-	create_tree()!
+	mut tree := new()!
+	tree.scan(
+		path: knowledgetree.collections_path
+	)!
 
 	for name, test_book in knowledgetree.test_books {
-		mut book := book_create(
+		mut book := book_generate(
 			name: name
 			path: test_book.src_path
 			dest: test_book.dest_path
-			tree_name: knowledgetree.tree_name
+			tree: tree
 		)!
 		book.export() or { panic(err) }
 	}

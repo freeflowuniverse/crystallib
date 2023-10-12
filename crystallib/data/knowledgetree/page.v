@@ -25,7 +25,7 @@ pub mut:
 	readonly        bool
 	changed         bool
 	tree_name       string
-	tree       &Tree
+	tree       &Tree [str: skip]
 	collection_name string
 }
 
