@@ -12,13 +12,17 @@ pub struct Play {
 }
 
 pub fn play(params Play) ! {
-	actor_actions := if params.actions.len > 0 {
-		params.actions
+	actions := if params.actions.len > 0 {
+		ap := actionslib.Actions{
+			actions: params.actions
+		}
+		ap.filtersort(actor: '@actor_name')!
 	} else {
-		actionslib.new(params.ActionsArgs)
+		ap := actionslib.new(params.ActionsArgs)!
+		ap.filtersort(actor: '@actor_name')!
 	}
 
-	for action in actions.filtersort(actor: '') {
-        actor_factory[cid].act(action)!
+	for action in actions {
+		actor_factory[action.circle].act(action)!
 	}
 }

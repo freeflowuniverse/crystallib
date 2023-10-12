@@ -1,10 +1,10 @@
-module circles
+module organization
 
 import time
 
 [root_object]
 pub struct Epic {
-pub mut: 
+pub mut:
 	stories []string
 	sprints []string
 }
@@ -40,7 +40,7 @@ pub mut:
 	title       string
 	description string
 	priority    Priority
-	tags map[string]string
+	tags        map[string]string
 }
 
 pub enum Priority {

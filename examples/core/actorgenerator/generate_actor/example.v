@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.core.codeparser
 import os
 
 const (
-	model_path       = '${os.dir(@FILE)}/organization_model'
+	model_path       = '${os.dir(@FILE)}/organization'
 	destination_path = '${os.dir(@FILE)}/organization_actor/actor.v'
 )
 
@@ -15,6 +15,7 @@ fn main() {
 }
 
 fn generate_actor() ! {
+	os.execute('ln -s ${destination_path} ${os.home_dir()}/.vmodules/')
 	code := codeparser.parse_v(model_path)!
 	generator := actorgenerator.ActorGenerator{'example'}
 	actor_code := generator.generate(code)!
