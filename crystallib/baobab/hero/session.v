@@ -250,7 +250,13 @@ pub fn (mut s Session) run(args RunArgs) ! {
 		actions: actionsprocessed3
 	)!
 
+	for action in actionsprocessed3 {
+		if action.actor == 'gittools' {
+			gittools.action(action)
+		}
+	}
 	s.actions = actionsprocessed3
+
 }
 
 pub fn (mut s Session) var_set(name string, value string) {
