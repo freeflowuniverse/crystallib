@@ -46,7 +46,6 @@ fn (mut repo GitRepo) checkinit(args_ CheckArgs) ! {
 				// println("GIT: PULL USING HTTP")
 				cmd = repo.get_clone_cmd(true)
 			}
-
 			osal.execute_silent(cmd) or {
 				println(' GIT FAILED: ${cmd}')
 				return error('Cannot pull repo: ${repo.addr.path()}. Error was ${err}')
@@ -99,7 +98,9 @@ fn (repo GitRepo) get_clone_cmd(http bool) string {
 	}
 
 	mut path := repo.addr.path_account()
-	cmd = 'cd ${path.path} && git clone ${light} ${url} ${repo.addr.branch}'
+	// QUESTION: why was branch name used for repo?
+	// cmd = 'cd ${path.path} && git clone ${light} ${url} ${repo.addr.branch}'
+	cmd = 'cd ${path.path} && git clone ${light} ${url} ${repo.addr.name}'
 	if repo.addr.branch != '' {
 		cmd += ' -b ${repo.addr.branch}'
 	}

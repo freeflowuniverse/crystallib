@@ -92,7 +92,7 @@ pub fn (gitstructure GitStructure) locator_new(url string) !GitLocator {
 pub fn (mut l GitLocator) path_on_fs() !pathlib.Path {
 	addrpath := l.addr.path()!
 	if l.path.len > 0 {
-		return pathlib.get('{addrpath.path}/l.path')
+		return pathlib.get('${addrpath.path}/${l.path}')
 	} else {
 		return addrpath
 	}
