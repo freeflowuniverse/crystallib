@@ -4,9 +4,13 @@ module docker
 // import freeflowuniverse.crystallib.core.pathlib
 
 pub fn (mut r DockerBuilderRecipe) add_zinit() ! {
+	mut pkg_manager := 'apk add'
+	if r.platform == .ubuntu {
+		pkg_manager = 'apt install'
+	}
 	r.add_run(
 		cmd: '
-		apk add wget
+			${pkg_manager} wget
     	wget https://github.com/threefoldtech/zinit/releases/download/v0.2.5/zinit -O /sbin/zinit
     	chmod +x /sbin/zinit
 		touch /etc/environment
