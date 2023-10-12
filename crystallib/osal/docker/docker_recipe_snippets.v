@@ -59,7 +59,7 @@ pub fn (mut r DockerBuilderRecipe) add_vbuilder() ! {
 }
 
 // add ssh server and init scripts (note: zinit needs to be installed)
-pub fn (mut r DockerBuilderRecipe) add_sshserver(args CodeGetArgs) ! {
+pub fn (mut r DockerBuilderRecipe) add_sshserver() ! {
 	r.add_package(name: 'openssh-server')!
 
 	r.add_zinit_cmd(
