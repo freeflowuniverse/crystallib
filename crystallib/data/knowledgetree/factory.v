@@ -17,7 +17,7 @@ pub mut:
 
 // get a new tree initialized
 // will create a new tree instance, be careful
-pub fn new(args_ ArgsNew) ! {
+pub fn new(args_ ArgsNew) !Tree {
 	mut args := args_
 	args.name = texttools.name_fix(args.name)
 	level := match osal.env_get_default('KNOWLEDGETREE_LOG_LEVEL', 'INFO') {
@@ -28,15 +28,22 @@ pub fn new(args_ ArgsNew) ! {
 			log.Level.info
 		}
 	}
-	lock knowledgetrees {
-		mut t := Tree{
-			name: args.name
-			logger: &log.Log{
-				level: level
-			}
+	mut t := Tree{
+		name: args.name
+		logger: &log.Log{
+			level: level
 		}
-		t.init()! // initialize mdbooks embed logic
-		knowledgetrees[args.name] = t
+	}
+	t.init()! // initialize mdbooks embed logic
+	return t
+}
+
+// get a new global tree initialized
+// will create a new tree instance, be careful
+pub fn new_global(args_ ArgsNew) ! {
+	lock knowledgetrees {
+		tree := new(args_)!
+		knowledgetrees[tree.name] = tree
 	}
 }
 

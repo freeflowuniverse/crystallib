@@ -85,7 +85,7 @@ pub mut:
 }
 
 // export an mdbook to its html representation and open the html
-pub fn (mut book MDBook) read() ! {
+pub fn (book MDBook) read() ! {
 	osal.exec(cmd: 'open ${book.html_path('').path}/index.html', shell: true)!
 }
 
