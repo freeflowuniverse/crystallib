@@ -1,6 +1,8 @@
 module hero
 
 import freeflowuniverse.crystallib.baobab.actions
+import freeflowuniverse.crystallib.baobab.actors.publisher
+import freeflowuniverse.crystallib.osal.downloader
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 
@@ -37,7 +39,6 @@ pub fn (mut r Runner) session_new(args_ SessionArgs) !Session {
 	}
 
 	args.name = texttools.name_fix(args.name)
-
 	mut p := pathlib.get_dir('${r.path.path}/sessions/${args.name}', true)!
 	mut session := Session{
 		runner: &r
@@ -86,7 +87,7 @@ pub mut:
 pub fn (mut session Session) downloadpath(name_ string) !pathlib.Path {
 	mut name := name_
 	if name.contains(':') || name.contains('.') {
-		name = getlastname(name)
+		name = downloader.getlastname(name)
 	} else {
 		name = texttools.name_fix(name)
 	}
@@ -107,7 +108,7 @@ pub fn (mut session Session) actions_add(args_ ActionsAddArgs) ! {
 
 	if !(urlpath.exists() && (urlpath.is_dir() || urlpath.is_dir_link())) {
 		if args.downloadname == '' {
-			args.downloadname = getlastname(args.url)
+			args.downloadname = downloader.getlastname(args.url)
 		}
 
 		mut downloadpath := session.downloadpath(args.downloadname)!
@@ -117,7 +118,7 @@ pub fn (mut session Session) actions_add(args_ ActionsAddArgs) ! {
 
 		// if not a dir and not exist we need to download
 		// will link if git
-		_ := download(
+		_ := downloader.download(
 			url: args.url
 			reset: args.reset
 			dest: downloadpath.path // is now a dir so files will get in dir
@@ -155,12 +156,12 @@ pub fn (mut s Session) run(args RunArgs) ! {
 				mut circle := action.params.get_default('circle', '')!
 				mut root := action.params.get_default('root', '')!
 				if circle.len > 0 {
-					s.runner.args.circle = circle
+					s.runner.args.cid = circle
 				}
 				if root.len > 0 {
 					s.runner.args.root = root
 				}
-				s.runner.path = pathlib.get_dir('${s.runner.args.root}/${s.runner.args.circle}',
+				s.runner.path = pathlib.get_dir('${s.runner.args.root}/${s.runner.args.cid}',
 					true)!
 			}
 		} else if (action.actor == 'runner' || action.actor == 'session')
@@ -203,7 +204,11 @@ pub fn (mut s Session) run(args RunArgs) ! {
 				if alias.len > 0 {
 					return error('cannot have alias while we expect to process subdirs')
 				}
-				m := download(url: sourceurl, reset: reset, gitstructure: s.runner.args.gitstructure)!
+				m := downloader.download(
+					url: sourceurl
+					reset: reset
+					gitstructure: s.runner.args.gitstructure
+				)!
 				mut downloadpath := pathlib.get_dir(m.path, false)!
 				// needs to be a dir
 				for mut subdir in downloadpath.dir_list()! {
@@ -211,7 +216,7 @@ pub fn (mut s Session) run(args RunArgs) ! {
 					dest := '${s.runner.path.path}/recipes/${alias}'
 					if m.downloadtype == .pathdir {
 						mut destpath := pathlib.get_dir(dest, true)!
-						subdir.copy(mut destpath)!
+						subdir.copy(destpath.path)!
 					} else if m.downloadtype == .git {
 						subdir.link(dest, true)!
 					} else {
@@ -223,10 +228,10 @@ pub fn (mut s Session) run(args RunArgs) ! {
 				}
 			} else {
 				if alias.len == 0 {
-					alias = getlastname(sourceurl)
+					alias = downloader.getlastname(sourceurl)
 				}
 				dest := '${s.runner.path.path}/recipes/${alias}'
-				_ := download(
+				_ := downloader.download(
 					url: sourceurl
 					reset: reset
 					dest: dest
@@ -240,6 +245,10 @@ pub fn (mut s Session) run(args RunArgs) ! {
 			actionsprocessed3 << action2
 		}
 	}
+
+	publisher.play(
+		actions: actionsprocessed3
+	)!
 
 	s.actions = actionsprocessed3
 }
