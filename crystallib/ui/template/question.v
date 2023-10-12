@@ -1,8 +1,8 @@
 module template
 
-import os
+// import os
 import freeflowuniverse.crystallib.ui.uimodel { QuestionArgs }
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 // args:
 // - description string

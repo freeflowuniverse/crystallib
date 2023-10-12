@@ -1,6 +1,6 @@
 module console
 
-import freeflowuniverse.crystallib.core.texttools
+// import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.ui.console { color_fg }
 import freeflowuniverse.crystallib.ui.uimodel { DropDownArgs }
 import os

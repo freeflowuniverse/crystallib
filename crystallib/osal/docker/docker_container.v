@@ -2,7 +2,7 @@ module docker
 
 import freeflowuniverse.crystallib.osal { exec }
 import time
-import ipaddress { IPAddress }
+import freeflowuniverse.crystallib.data.ipaddress { IPAddress }
 
 pub enum DockerContainerStatus {
 	up
