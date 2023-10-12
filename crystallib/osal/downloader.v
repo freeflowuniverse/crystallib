@@ -1,7 +1,7 @@
 module osal
 
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.core.texttools
+// import freeflowuniverse.crystallib.core.texttools
 
 [params]
 pub struct DownloadArgs {
@@ -44,7 +44,7 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 		args.dest = '/tmp/${args.name}'
 	}
 
-	u := args.url.to_lower().trim_space()
+	_ := args.url.to_lower().trim_space()
 
 	if !cmd_exists('curl') {
 		return error('please make sure curl has been installed.')

@@ -72,11 +72,11 @@ pub fn (mut e DockerEngine) containers_load() ! {
 		id := fields[0]
 		mut container := DockerContainer{
 			engine: &e
+			image: e.image_get(id: fields[2])!
 		}
 
 		container.id = id
 		container.name = texttools.name_fix(fields[1])
-		container.image = e.image_get(id: fields[2])!
 		container.command = fields[3]
 		container.created = parse_time(fields[4])!
 		container.ports = parse_ports(fields[5])!
