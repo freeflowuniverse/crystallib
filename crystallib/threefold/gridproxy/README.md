@@ -71,7 +71,7 @@ If you want to use the client, you need to import it in your code.
 
 * import the client:
   ```v
-  import threefoldtech.vgrid.gridproxy
+  import freeflowuniverse.crystallib.threefold.gridproxy
   ```
 
 * create a client:
