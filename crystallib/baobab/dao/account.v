@@ -12,7 +12,7 @@ pub mut:
 }
 
 // make sure account exists in the dao
-pub fn (mut dao DAO) account_get(address string, name string) ?&Account {
+pub fn (mut dao DAO) account_get(address string, name string) !&Account {
 	address_ := texttools.name_fix(address)
 	name_ := texttools.name_fix(name)
 

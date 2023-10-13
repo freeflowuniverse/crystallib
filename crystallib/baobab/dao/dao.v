@@ -13,23 +13,23 @@ pub mut:
 	time_current time.Time
 }
 
-fn (mut t DAO) save() ? {
+fn (mut t DAO) save() ! {
 }
 
 // get dao pool
-pub fn get(path string) ?DAO {
+pub fn get(path string) !DAO {
 	mut t := DAO{
 		path: path
 	}
 	t.time_current = time.now()
-	t.pool_set(currency: 'usdc', usdprice_buy: 1, usdprice_sell: 1)?
+	t.pool_set(currency: 'usdc', usdprice_buy: 1, usdprice_sell: 1)!
 	return t
 }
 
 // set the a time, important to be able to simulate
 //  "YYYY-MM-DD HH:mm:ss" format
-pub fn (mut d DAO) time_set(now string) ? {
-	d.time_current = time.parse(now)?
+pub fn (mut d DAO) time_set(now string) ! {
+	d.time_current = time.parse(now)!
 }
 
 // move the clock, only useful in test scenarios
