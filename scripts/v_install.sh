@@ -1,4 +1,4 @@
-set -ex
+set -e
 
 if [[ -z "${CLBRANCH}" ]]; then 
     export CLBRANCH="development"
@@ -13,7 +13,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 export OURHOME="$HOME"
 export DIR_CODE="$OURHOME/code"
-export OURHOME="$HOME/heroplay"
+export OURHOME="$HOME/play"
 mkdir -p $OURHOME
 
 if [ -z "$TERM" ]; then
@@ -230,33 +230,6 @@ function docker_install {
     fi
 }
 
-# function crystal_tools_get {
-#     mkdir -p $DIR_CODE/github/freeflowuniverse
-#     if [[ -d "$DIR_CODE/github/freeflowuniverse/crystaltools" ]]
-#     then
-#         pushd $DIR_CODE/$2 2>&1 >> /dev/null
-#         # git pull
-#         popd 2>&1 >> /dev/null
-#     else
-#         pushd $DIR_CODE/github/freeflowuniverse 2>&1 >> /dev/null
-#         git clone --depth 1 --no-single-branch https://github.com/freeflowuniverse/crystaltools.git
-#         popd 2>&1 >> /dev/null
-#     fi
-#     if [[ -z "${CLBRANCH}" ]]; then 
-#     echo ' - no branch set'
-#     else
-#         if [[ "$CLBRANCH" == "development" ]]; then 
-#             echo
-#         else
-#             echo ' - switch to branch ${CLBRANCH} for publishtools'
-#             pushd $DIR_CODE/github/freeflowuniverse/crystaltools 2>&1 >> /dev/null
-#             git checkout $CLBRANCH
-#             git pull
-#             popd 2>&1 >> /dev/null
-#         fi
-#     fi
-# }
-
 
 #important to first remove
 rm -f $OURHOME/env.sh
@@ -269,7 +242,8 @@ if [[ -f "env.sh" ]]; then
         ln -sfv $PWD/env.sh /workspace/env.sh 
     fi
 else
-    curl -k https://raw.githubusercontent.com/threefoldtech/builders/$BUILDERBRANCH/scripts/env.sh > $OURHOME/env.sh
+    #https://raw.githubusercontent.com/freeflowuniverse/crystallib/$CLBRANCH/scripts/env.sh
+    curl -k https://raw.githubusercontent.com/freeflowuniverse/crystallib/$CLBRANCH/scripts/env.sh > $OURHOME/env.sh
     if [[ -d "/workspace" ]]
     then
         cp $OURHOME/env.sh /workspace/env.sh 
@@ -290,7 +264,7 @@ fi
 
 
 #CHECK IF DIR EXISTS, IF NOT CLONE
-if ! [[ -f "$HOME/.vmodules/done_crystallib_docker" ]]; then
+if ! [[ -f "$HOME/.vmodules/done_crystallib" ]]; then
 
     os_update
     redis_install
@@ -302,12 +276,12 @@ if ! [[ -f "$HOME/.vmodules/done_crystallib_docker" ]]; then
     github_keyscan
 
     crystal_lib_get
-    gridbuilder_get
-    docker_install
+    # gridbuilder_get
+    # docker_install
     # buildx_install
 
 
-    touch "$HOME/.vmodules/done_crystallib_docker"
+    touch "$HOME/.vmodules/done_crystallib"
 fi
 
 
@@ -337,17 +311,15 @@ fi
 # clear
 # ct_help
 
-tmux ls
+# tmux ls
 
-cp /root/code/github/threefoldtech/vbuilders/scripts/vrun /usr/local/bin/
-chmod 770  /usr/local/bin/vrun
 
-pushd ~/.vmodules/freeflowuniverse/crystallib
-git status
-popd
-pushd  ~/.vmodules/threefoldtech/builders
-git status
-popd
+# pushd ~/.vmodules/freeflowuniverse/crystallib
+# git status
+# popd
+# pushd  ~/.vmodules/threefoldtech/builders
+# git status
+# popd
 
 echo "**** INSTALL WAS OK ****"
 

@@ -39,7 +39,7 @@ pub fn cmd_build_examples(mut cmdroot Command) {
 
 fn cmd_build_examples_execute(cmd Command) ! {
 	mut args_and_flags := util.join_env_vflags_and_os_args()[1..]
-	file_dir := os.dir(@FILE)
+	// file_dir := os.dir(@FILE)
 	// os.execute('v run ${file_dir}/build_examples.v')
 	// command := 'v run ${file_dir}/build_examples.v'
 	prefs, command := pref.parse_args_and_show_errors(external_tools, args_and_flags,
