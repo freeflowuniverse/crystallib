@@ -2,7 +2,7 @@ module main
 
 import os
 import cli { Command }
-import freeflowuniverse.crystallib.baobab.hero.executor.mycmds
+import freeflowuniverse.crystallib.baobab.hero.herocmds
 
 const (
 	external_tools = ['build-examples.v']
@@ -17,7 +17,7 @@ fn do() ! {
 	}
 
 	cmd_build_examples(mut cmd)
-	mycmds.cmd_git_do(mut cmd)
+	herocmds.cmd_git_do(mut cmd)
 	cmd.setup()
 	cmd.parse(os.args)
 }

@@ -61,9 +61,8 @@ pub fn prepare_test_session(zargs string, folder string, oskipped []string, main
 	if vargs.len > 0 {
 		eprintln('v compiler args: "${vargs}"')
 	}
-	mut session := testing.new_test_session(vargs, true)
+	mut session := testing.new_test_session('-enable-globals', true)
 	files := os.walk_ext(os.join_path_single(parent_dir, folder), '.v')
-	println('debugz: ${files}\n${os.join_path_single(parent_dir, folder)}')
 	mut mains := []string{}
 	mut skipped := oskipped.clone()
 	next_file: for f in files {

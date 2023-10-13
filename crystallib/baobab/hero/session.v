@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.baobab.actors.publisher
 import freeflowuniverse.crystallib.osal.downloader
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.osal.gittools
 
 // a session is where in execute on actions inside a runner, a runner can have multiple sessions
 // as session result in a recipe which is a 3script which is fully included and has all actions readable what will be done
@@ -252,7 +253,7 @@ pub fn (mut s Session) run(args RunArgs) ! {
 
 	for action in actionsprocessed3 {
 		if action.actor == 'gittools' {
-			gittools.action(action)
+			gittools.action(action)!
 		}
 	}
 	s.actions = actionsprocessed3
