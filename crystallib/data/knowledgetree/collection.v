@@ -32,7 +32,7 @@ pub mut:
 	errors          []CollectionError
 	state           CollectionState
 	heal            bool
-	tree &Tree [str: skip]
+	tree            &Tree             [str: skip]
 }
 
 // format of name is $collectionname:$pagename or $pagename

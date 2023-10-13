@@ -3,7 +3,7 @@ module knowledgetree
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.tools.imagemagick
 import freeflowuniverse.crystallib.data.markdowndocs
-import freeflowuniverse.crystallib.core.pathlib { Path }
+import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.osal
 import log
@@ -16,7 +16,7 @@ pub mut:
 	path      string // path exists
 	dest      string // path where book will be generated
 	dest_md   string // path where the md files will be generated
-	tree	  Tree
+	tree      Tree
 	git_url   string
 	git_reset bool
 	git_root  string // in case we want to checkout code on other location

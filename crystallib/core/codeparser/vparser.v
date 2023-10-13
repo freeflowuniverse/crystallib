@@ -409,4 +409,3 @@ fn (vparser VParser) parse_variants(variants []ast.TypeNode, table &ast.Table) [
 	}
 	return types
 }
-
