@@ -25,6 +25,7 @@ pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 	mut collection := &Collection{
 		name: args.name
 		tree_name: tree.name
+		tree: tree
 		path: pp
 		heal: args.heal
 	}

@@ -2,6 +2,7 @@ module builder
 
 import time
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.osal
 
 // 	exec(cmd string) !string
 // 	exec_silent(cmd string) !string

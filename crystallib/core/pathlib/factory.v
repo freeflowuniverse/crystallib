@@ -8,6 +8,9 @@ pub fn get(path_ string) Path {
 	if path.contains('~') {
 		path = path.replace('~', os.home_dir())
 	}
+	if path.contains('file://') {
+		path = path.trim_string_left('file://')
+	}
 	mut p2 := Path{
 		path: path
 	}

@@ -25,6 +25,7 @@ pub mut:
 	readonly        bool
 	changed         bool
 	tree_name       string
+	tree       &Tree [str: skip]
 	collection_name string
 }
 
@@ -34,20 +35,18 @@ fn (mut page Page) link_to_page_update(mut link Link) ! {
 	}
 	mut file_name := link.filename
 
-	mut other_page := Page{}
+	mut other_page := Page{
+		tree: page.tree
+	}
 
-	lock knowledgetrees {
-		mut tree := knowledgetrees[page.tree_name] or {
-			return error('could not find treename: ${page.tree_name}')
-		}
-		mut collection := tree.collections[page.collection_name] or {
-			return error("3could not find collection:'${page.collection_name}' in tree: ${page.tree_name}")
+		mut collection := page.tree.collections[page.collection_name] or {
+			return error("could not find collection:'${page.collection_name}' in tree: ${page.tree_name}")
 		}
 
 		if file_name in collection.pages {
 			other_page = collection.pages[file_name] or { panic('bug') }
-		} else if tree.page_exists(file_name) {
-			other_page = tree.page_get(file_name)!
+		} else if page.tree.page_exists(file_name) {
+			other_page = page.tree.page_get(file_name)!
 		} else {
 			collection.error(
 				path: page.path
@@ -57,7 +56,6 @@ fn (mut page Page) link_to_page_update(mut link Link) ! {
 			return
 		}
 		page.pages_linked << &other_page
-	}
 
 	linkcompare1 := link.description + link.url + link.filename + link.content
 	imagelink_rel := pathlib.path_relative(page.path.path_dir(), other_page.path.path)!
@@ -78,11 +76,7 @@ fn (mut page Page) link_update(mut link Link) ! {
 	mut file_name := link.filename
 	println('get link ${link.content} with name:\'${file_name}\' for page: ${page.path.path}')
 
-	lock knowledgetrees {
-		mut tree := knowledgetrees[page.tree_name] or {
-			return error('could not find treename: ${page.tree_name}')
-		}
-		mut collection := tree.collections[page.collection_name] or {
+		mut collection := page.tree.collections[page.collection_name] or {
 			return error("2could not find collection:'${page.collection_name}' in tree: ${page.tree_name}")
 		}
 
@@ -116,7 +110,7 @@ fn (mut page Page) link_update(mut link Link) ! {
 			// if the collection is filled in then it means we need to copy the file here,
 			// or the image is not found, then we need to try and find it somewhere else
 			// we need to copy the image here
-			fileobj = tree.image_get(file_name) or {
+			fileobj = page.tree.image_get(file_name) or {
 				msg := "'${file_name}' not found for page:${page.path.path}, we looked over all collections."
 				collection.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
 				return
@@ -171,7 +165,6 @@ fn (mut page Page) link_update(mut link Link) ! {
 		// 	println(imagelink_rel)
 		// 	panic('45jhg')
 		// }
-	}
 }
 
 // checks if external link returns 404
@@ -222,11 +215,7 @@ fn (mut page Page) fix_links() ! {
 }
 
 fn (mut page Page) process_includes(mut include_tree []string) ! {
-	rlock knowledgetrees {
-		mut tree := knowledgetrees[page.tree_name] or {
-			return error('could not find treename: ${page.tree_name}')
-		}
-		mut collection := tree.collections[page.collection_name] or {
+		mut collection := page.tree.collections[page.collection_name] or {
 			return error("1could not find collection:'${page.collection_name}' in tree: ${page.tree_name}")
 		}
 		mut doc := page.doc or { return error('no doc yet on page') }
@@ -269,10 +258,10 @@ fn (mut page Page) process_includes(mut include_tree []string) ! {
 			docinclude := page_to_include.doc or { panic('no doc on include page') }
 			doc.items.delete(x + offset)
 			doc.items.insert(x + offset, docinclude.items)
+			println('yo: ${docinclude.items}')
 			offset += doc.items.len - 1
 		}
 		page.doc = doc
-	}
 }
 
 // will process the macro's and return string
@@ -285,13 +274,7 @@ fn (mut page Page) process_macros() ! {
 			logger.info('Process macro: ${macro.name} into page: ${page.name}')
 			mut out := ''
 
-			// QUESTION: is this implementation ok?
-			mut tree := Tree{}
-			lock {
-				tree = knowledgetrees[page.tree_name]
-			}
-
-			for mut mp in tree.macroprocessors {
+			for mut mp in page.tree.macroprocessors {
 				res := mp.process('!!${macro.content}')!
 				if res.error == '' {
 					out += res.result + '\n'

@@ -32,6 +32,7 @@ pub mut:
 	errors          []CollectionError
 	state           CollectionState
 	heal            bool
+	tree &Tree [str: skip]
 }
 
 // format of name is $collectionname:$pagename or $pagename
@@ -222,6 +223,7 @@ pub fn (mut collection Collection) page_new(mut p Path) ! {
 		readonly: false
 		pages_linked: []&Page{}
 		tree_name: collection.tree_name
+		tree: collection.tree
 		collection_name: collection.name
 	}
 	collection.pages[ptr.pointer.name] = page

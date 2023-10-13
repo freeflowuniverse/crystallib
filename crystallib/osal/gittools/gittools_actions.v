@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.ui as gui
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.baobab.actions
+import os
 
 pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) {
 	mut r := [][]string{}
@@ -75,14 +76,65 @@ pub mut:
 // 		pull           bool // means when getting new repo will pull even when repo is already there .
 // 		pullreset      bool // means we will force a pull and reset old content	 .
 pub fn (mut gs GitStructure) action(action actions.Action) ! {
-	//gittools.git_do:
-		// see freeflowuniverse/crystallib/crystallib/baobab/hero/executor/mycmds/git_do.v
-		//TODO: execute the actions as mentioned above
+	match action.name {
+		'git_do' {
+			git_do_action(action)!
+		} 
+		'git_get' {
+			git_get_action(action)!
+		} else {
+			return error('action ${action.name} not supported by gittools')
+		}
+	}
+}
 
-	//fittools.git_get:
-		//see freeflowuniverse/crystallib/crystallib/baobab/hero/executor/mycmds/git_get.v
-		//TODO: execute the actions as mentioned above
+pub fn git_do_action(action actions.Action) ! {
+	mut coderoot := action.params.get_default('coderoot', '')!
+	mut gs := gittools.get(root: coderoot, create: true) or {
+		return error("Could not find gittools on '${coderoot}'\n${err}")
+	}
+	mut repo := action.params.get_default('repo', '')!
+	mut account := action.params.get_default('account', '')!
+	mut provider := action.params.get_default('provider','')!
+	mut filter := action.params.get_default('filter', '')!
+	if repo == '' && account == '' && provider == '' && filter == '' {
+		curdir := os.getwd()
+		if os.exists('${curdir}/.git') {
+			// we are in current directory
+			r0 := gs.repo_from_path(curdir)!
+			repo = r0.addr.name
+			account = r0.addr.account
+			provider = r0.addr.provider
+		}
+	}
 
+	gs.do(
+		filter: action.params.get_default('filter', '')!
+		repo: repo
+		account: account
+		provider: provider
+		pull: action.params.get_default_false('pull')
+		pullreset: action.params.get_default_false('pullreset')
+		commit: action.params.get_default_false('commit')
+		commitpull: action.params.get_default_false('commitpull')
+		commitpullpush: action.params.get_default_false('commitpullpush')
+		delete: action.params.get_default_false('delete')
+		script: action.params.get_default_false('script')
+		cachereset: action.params.get_default_false('cachereset')
+		msg: action.params.get_default('message', '')!
+	)!
+	println(gs)
+}
+
+pub fn git_get_action(action actions.Action) ! {
+	url := action.params.get('url')!
+	r := gittools.code_get(
+		url: url
+		root: action.params.get_default('coderoot','')!
+		pull: action.params.get_default_false('pull')
+		reset: action.params.get_default_false('reset')
+	)!
+	println("Pulled code from '${url}'\nCan be found in: '${r}'")
 }
 
 // filter   string // if used will only show the repo's which have the filter string inside .

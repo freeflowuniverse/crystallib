@@ -55,7 +55,7 @@ fn parse_labels(s string) !map[string]string {
 fn parse_networks(s string) ![]string {
 	mut res := []string{}
 	if s.trim_space().len > 0 {
-		println(s)
+		// println(s)
 		// panic("todo networks")
 		// TODO: need to do
 	}

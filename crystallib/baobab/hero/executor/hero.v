@@ -15,6 +15,7 @@ fn do() ! {
 	mycmds.cmd_biztools(mut cmd)
 	mycmds.cmd_git_get(mut cmd)
 	mycmds.cmd_git_do(mut cmd)
+	mycmds.cmd_3script_do(mut cmd)
 
 	cmd.setup()
 	cmd.parse(os.args)

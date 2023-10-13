@@ -3,7 +3,7 @@ module builder
 import os
 import rand
 import freeflowuniverse.crystallib.osal
-import ipaddress
+import freeflowuniverse.crystallib.data.ipaddress
 
 [heap]
 pub struct ExecutorSSH {

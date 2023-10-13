@@ -73,7 +73,7 @@ pub fn reload(args_ GitStructureGetArgs) !GitStructure {
 	}
 
 	lock instances {
-		mut gs := get(name: args.name) or { return error('erro') }
+		_ := get(name: args.name) or { return error('erro') }
 		instances[args.name].load()!
 	}
 

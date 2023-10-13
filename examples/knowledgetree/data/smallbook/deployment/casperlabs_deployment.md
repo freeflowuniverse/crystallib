@@ -1,7 +1,5 @@
 ## Casper labs deployment
 
-{{#include missing_layer.md}}
-
 ![](img/deployment_.jpg)  
 
 ### Smart contract for IT....

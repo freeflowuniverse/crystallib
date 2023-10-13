@@ -81,21 +81,18 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 	}
 
 	tree_name := 'kapok'
-	knowledgetree.new(name: tree_name)!
+	mut tree := knowledgetree.new(name: tree_name)!
 
 	mp := macroprocessor_new(args_.name)
-	knowledgetree.macroprocessor_add(
-		name: tree_name
-		processor: mp
-	)!
+	tree.macroprocessor_add(mp)!
 
-	knowledgetree.scan(
+	tree.scan(
 		name: tree_name
 		path: args.path
 		heal: false
 	)!
 
-	knowledgetree.scan(
+	tree.scan(
 		name: tree_name
 		path: bizmodel.manualpath
 		heal: false
@@ -121,10 +118,10 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 
 	// tree.scan(path: args.path)!
 
-	mut book := knowledgetree.book_create(
+	mut book := knowledgetree.book_generate(
 		path: args.mdbook_path
 		name: args.mdbook_name
-		tree_name: tree_name
+		tree: tree
 		dest: args.mdbook_dest
 	)!
 
