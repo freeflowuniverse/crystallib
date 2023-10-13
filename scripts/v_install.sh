@@ -262,6 +262,11 @@ else
   rm -f $HOME/.vmodules/done_crystallib
 fi
 
+if ! [ -x "$(command -v v)" ]; then
+  v_install
+fi
+
+
 
 #CHECK IF DIR EXISTS, IF NOT CLONE
 if ! [[ -f "$HOME/.vmodules/done_crystallib" ]]; then
@@ -285,9 +290,6 @@ if ! [[ -f "$HOME/.vmodules/done_crystallib" ]]; then
 fi
 
 
-if ! [ -x "$(command -v v)" ]; then
-  v_install
-fi
 
 if [[ -z "${ANSIBLE}" ]]; then
     echo
