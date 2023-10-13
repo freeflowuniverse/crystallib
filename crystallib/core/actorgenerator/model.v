@@ -5,5 +5,5 @@ import freeflowuniverse.crystallib.core.codeparser
 import os
 
 pub struct ActorGenerator {
-	model_name   string
+	model_name string
 }

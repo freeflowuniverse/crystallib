@@ -10,7 +10,7 @@ pub mut:
 	pull     bool
 	reset    bool
 	buildcmd string = 'cargo build --release'
-	copycmd  string 
+	copycmd  string
 	debug    bool // to be able to easily debug the intermediate step
 	name     string
 }

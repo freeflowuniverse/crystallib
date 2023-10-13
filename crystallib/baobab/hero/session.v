@@ -256,7 +256,6 @@ pub fn (mut s Session) run(args RunArgs) ! {
 		}
 	}
 	s.actions = actionsprocessed3
-
 }
 
 pub fn (mut s Session) var_set(name string, value string) {

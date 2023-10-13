@@ -68,7 +68,7 @@ pub mut:
 // 		commitpush     bool .
 // 		commitpullpush bool .
 // 		msg            string .
-// 		delete         bool // remove the repo . 
+// 		delete         bool // remove the repo .
 // 		script         bool = true // run non interactive (default for actions) .
 // 		cachereset     bool //remove redis cache .
 // gittools.git_get .
@@ -79,10 +79,11 @@ pub fn (mut gs GitStructure) action(action actions.Action) ! {
 	match action.name {
 		'git_do' {
 			git_do_action(action)!
-		} 
+		}
 		'git_get' {
 			git_get_action(action)!
-		} else {
+		}
+		else {
 			return error('action ${action.name} not supported by gittools')
 		}
 	}
@@ -90,12 +91,12 @@ pub fn (mut gs GitStructure) action(action actions.Action) ! {
 
 pub fn git_do_action(action actions.Action) ! {
 	mut coderoot := action.params.get_default('coderoot', '')!
-	mut gs := gittools.get(root: coderoot, create: true) or {
+	mut gs := get(root: coderoot, create: true) or {
 		return error("Could not find gittools on '${coderoot}'\n${err}")
 	}
 	mut repo := action.params.get_default('repo', '')!
 	mut account := action.params.get_default('account', '')!
-	mut provider := action.params.get_default('provider','')!
+	mut provider := action.params.get_default('provider', '')!
 	mut filter := action.params.get_default('filter', '')!
 	if repo == '' && account == '' && provider == '' && filter == '' {
 		curdir := os.getwd()
@@ -128,9 +129,9 @@ pub fn git_do_action(action actions.Action) ! {
 
 pub fn git_get_action(action actions.Action) ! {
 	url := action.params.get('url')!
-	r := gittools.code_get(
+	r := code_get(
 		url: url
-		root: action.params.get_default('coderoot','')!
+		root: action.params.get_default('coderoot', '')!
 		pull: action.params.get_default_false('pull')
 		reset: action.params.get_default_false('reset')
 	)!

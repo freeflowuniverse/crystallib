@@ -3,7 +3,7 @@ module codemodel
 // Code is a list of statements
 // pub type Code = []CodeItem
 
-pub type CodeItem = Comment | Function | Import | Struct | Sumtype | CustomCode
+pub type CodeItem = Comment | CustomCode | Function | Import | Struct | Sumtype
 
 // item for adding custom code in
 pub struct CustomCode {
@@ -38,9 +38,9 @@ pub:
 	attrs       []Attribute
 	name        string
 	description string
-	default string
-	is_pub bool
-	is_mut bool
+	default     string
+	is_pub      bool
+	is_mut      bool
 	anon_struct Struct // sometimes fields may hold anonymous structs
 	typ         Type
 pub mut:
@@ -71,7 +71,7 @@ pub struct Param {
 pub:
 	required    bool
 	mutable     bool
-	is_shared bool
+	is_shared   bool
 	description string
 	name        string
 	typ         Type
@@ -92,14 +92,14 @@ pub:
 pub struct Type {
 pub:
 	is_reference bool
-	is_map bool
-	is_array bool
-	is_mutable bool
-	is_shared bool
-	is_optional bool
-	is_result bool
-	symbol string
-	mod    string
+	is_map       bool
+	is_array     bool
+	is_mutable   bool
+	is_shared    bool
+	is_optional  bool
+	is_result    bool
+	symbol       string
+	mod          string
 }
 
 pub struct Import {

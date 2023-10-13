@@ -32,10 +32,10 @@ pub fn test_generate_get_method() {
 	test_struct := codemodel.Struct{
 		name: 'TestStruct'
 	}
-		field := get_child_field(
-			parent: actor_struct
-			child: test_struct
-		)
+	field := get_child_field(
+		parent: actor_struct
+		child: test_struct
+	)
 
 	method := generator.generate_get_method(
 		actor_name: actor_struct.name

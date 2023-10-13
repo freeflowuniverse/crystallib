@@ -13,7 +13,7 @@ pub mut:
 	reset bool
 }
 
-//TODO: make installer for peertube
+// TODO: make installer for peertube
 
 // install peertube will return true if it was already installed
 pub fn install(args InstallArgs) ! {

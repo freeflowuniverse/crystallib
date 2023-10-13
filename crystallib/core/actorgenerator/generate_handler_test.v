@@ -26,9 +26,9 @@ fn test_generate_handler_method() {
 					symbol: 'TestActor'
 				}
 			}
-		}
+		},
 	]
-	
+
 	handler := test_generator.generate_handler_method(test_methods)
 	println(handler.vgen())
 	panic('aaa')
