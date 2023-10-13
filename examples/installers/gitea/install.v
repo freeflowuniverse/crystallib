@@ -1,6 +1,6 @@
 module main
 
-import crystallib.installers.gitea
+import freeflowuniverse.crystallib.installers.gitea
 
 fn do() ! {
 	mut g := gitea.new(

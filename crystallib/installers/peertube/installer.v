@@ -1,7 +1,7 @@
 module peertube
 
 import freeflowuniverse.crystallib.installers.base
-import freeflowuniverse.crystallib.tmux
+import freeflowuniverse.crystallib.tools.tmux
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
