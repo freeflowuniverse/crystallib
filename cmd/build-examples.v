@@ -54,7 +54,7 @@ pub fn v_build_failing_skipped(zargs string, folder string, oskipped []string, c
 pub fn prepare_test_session(zargs string, folder string, oskipped []string, main_label string) testing.TestSession {
 	vexe := pref.vexe_path()
 	file_dir := os.dir(os.dir(@FILE))
-	parent_dir := '${file_dir}'
+	parent_dir := '/Users/timurgordon/code/github/freeflowuniverse/crystallib'
 	// testing.vlib_should_be_present(parent_dir)
 	vargs := zargs.replace(vexe, '')
 	testing.eheader(main_label)
@@ -63,6 +63,7 @@ pub fn prepare_test_session(zargs string, folder string, oskipped []string, main
 	}
 	mut session := testing.new_test_session(vargs, true)
 	files := os.walk_ext(os.join_path_single(parent_dir, folder), '.v')
+	println('debugz: ${files}\n${os.join_path_single(parent_dir, folder)}')
 	mut mains := []string{}
 	mut skipped := oskipped.clone()
 	next_file: for f in files {
