@@ -8,9 +8,10 @@
 	firstname: 'Adnan'
 	lastname: 'Fatayerji'
 	description: 'Head of Business Development'
+    alias:'' //list of possible aliases
     tags:
 
-!contact:define
+!contact.define
     id:'***'
     user:'1ge'  //can be name or id
 	email: 'adnan@threefold.io,fatayera@threefold.io'

@@ -11,6 +11,19 @@ How to deal with milestones, stories, tasks
     deadline:''//in ourtime format
     state:'' //new,active,blocked,done,verified
 
+!milestone.define
+	id:'***'
+    name:'' //optional
+    project:'' //id or name of project (can define part of title, will also match)
+	title:'color_ui'
+	description: '...'
+    priority:'' //normal,urgent,low
+    deadline: //can be defined as +10d as well, get replaced to date when first run
+    percent_done:'10%' //or 5 without %
+    owner:'' //list of users (name or id based), comma separated
+    state:'' //new,active,blocked,done,verified
+    epics:'' //one or more epics this story links too
+
 !team.define
 	id:'***'
     name:''
@@ -33,6 +46,7 @@ How to deal with milestones, stories, tasks
     state:'' //new,active,blocked,done,verified
     epics:'' //one or more epics this story links too
     costcenter:'' //one or more costcenters
+    milestone:'' //one or more milestones, use name or id
 
 !task.define
 	id:'***'
