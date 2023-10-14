@@ -75,7 +75,7 @@ pub mut:
 // 		coderoot //location where code will be checked out .
 // 		pull           bool // means when getting new repo will pull even when repo is already there .
 // 		pullreset      bool // means we will force a pull and reset old content	 .
-pub fn (mut gs GitStructure) action(action actions.Action) ! {
+pub fn action(action actions.Action) ! {
 	match action.name {
 		'git_do' {
 			git_do_action(action)!

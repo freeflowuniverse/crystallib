@@ -7,7 +7,7 @@ pub fn vaults_delete(mut path pathlib.Path) ! {
 	for mut p in path.list(recursive: true)! {
 		if p.is_dir() {
 			if p.name() == '.vault' {
-				p.delete()?
+				p.delete()!
 			}
 		}
 	}

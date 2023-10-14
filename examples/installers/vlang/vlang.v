@@ -1,6 +1,6 @@
 module main
 
-import installers.vlang
+import freeflowuniverse.crystallib.installers.vlang
 
 fn do() ! {
 	// shortcut to install the base

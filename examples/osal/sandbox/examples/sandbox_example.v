@@ -1,6 +1,6 @@
 module main
 
-// import freeflowuniverse.crystallib.tmux
+// import freeflowuniverse.crystallib.tools.tmux
 import freeflowuniverse.crystallib.installers.caddy
 import freeflowuniverse.crystallib.osal.sandbox
 import os

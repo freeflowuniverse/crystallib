@@ -6,13 +6,13 @@ import time
 fn conn_for_thread(c int) {
 	println('thread ${c}')
 	// time.sleep(100 * time.millisecond)
-	mut redis := redisclient.core_get()!
+	mut redis := redisclient.core_get() or {panic(err)}
 	println('ok ${c}')
 	redis.set('test', 'some data') or { panic('set ' + err.str() + '\n' + c.str()) }
 	redis.get('test') or { panic('get ' + err.str() + '\n' + c.str()) }
 }
 
-fn conn2(c int) ?bool {
+fn conn2(c int) !bool {
 	// mut socket := net.dial_tcp("localhost:6379")?
 	// mut socket := net.dial_tcp("/tmp/redis.sock")?
 
@@ -24,14 +24,14 @@ fn conn2(c int) ?bool {
 
 	mut redis := redisclient.core_get()!
 	redis.set('test', 'some data') or { panic('set' + err.str() + '\n' + c.str()) }
-	r := redis.get('test')?
+	r := redis.get('test')!
 	if r != 'some data' {
 		panic('get error different result.' + '\n' + c.str())
 	}
 	return true
 }
 
-fn redistest() ? {
+fn redistest() ! {
 	mut threads := []thread{}
 
 	for c in 0 .. 200 {

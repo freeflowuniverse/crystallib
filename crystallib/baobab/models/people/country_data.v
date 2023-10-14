@@ -272,16 +272,16 @@ pub fn countries_get() map[string]&Country {
 		country_ = country_.all_before_last(' ')
 		c := Country{
 			name: country_
-			code2: code2
-			code3: code3
-			nr: nr
+			codes: ['', code2, code3]
+			// QUESTION: nr: nr, what is nr for?
 		}
 		shortname := texttools.name_fix_no_underscore_no_ext(country_)
 		cs[shortname] = &c
 	}
 
 	// HARDCODED in a few vat_percentages
-	cs['belgium'].vat_percent = 21
+	// TODO: where is vat percent
+	// cs['belgium'].vat_percent = 21
 	// cs['united_arab_emirates'].vat_percent = 0
 
 	return cs

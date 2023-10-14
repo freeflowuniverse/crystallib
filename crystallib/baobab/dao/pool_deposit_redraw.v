@@ -16,8 +16,8 @@ struct FundingArgs {
 // 	amount f64
 //```
 // add money to the dao poolfor a user
-pub fn (mut dao DAO) pool_deposit(args FundingArgs) ?&LPWallet {
-	mut r := dao.pools_wallet_get(args.account, args.currency, true)?
+pub fn (mut dao DAO) pool_deposit(args FundingArgs) !&LPWallet {
+	mut r := dao.pools_wallet_get(args.account, args.currency, true)!
 
 	r.wallet.modified = true
 	r.wallet.amount += args.amount
@@ -33,5 +33,5 @@ pub fn (mut dao DAO) pool_deposit(args FundingArgs) ?&LPWallet {
 // 	account &Account
 // 	amount f64
 //```
-pub fn (mut dao DAO) pool_withdraw(args FundingArgs) ?&LPWallet {
-}
+// pub fn (mut dao DAO) pool_withdraw(args FundingArgs) !&LPWallet {
+// }
