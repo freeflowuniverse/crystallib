@@ -1,10 +1,14 @@
 # Git
 
-## git.init
+## !!git.init
 
 Init the git structure, defines which root to use, ...
 
 Can only be used when initializing the context (not afterwards).
+
+> TODO: is outdated
+
+>> TODO: add git_get git_do see code
 
 **env arguments**
 

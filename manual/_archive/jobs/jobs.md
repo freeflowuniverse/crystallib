@@ -1,5 +1,7 @@
 # Jobs
 
+> NO LONGER RIGHT, need update
+
 The word job has been mentioned a few times already. One can describe a job as the information needed by an actor to do a specific thing (compute something, produce a specific result on a system, bring an actor in a specific state, etc).
 
 In baobab a job contains the attributes:

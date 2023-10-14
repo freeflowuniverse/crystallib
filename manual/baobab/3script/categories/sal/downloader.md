@@ -1,13 +1,15 @@
 	
 # Downloader
 
-## downloader.get
+## !!downloader.get
 
 Download using curl or git.
 
 Also supports direct connections to a local path.
 
 This tool will use git underneith if relevant (when git or http url).
+
+> TODO: might be outdated
 
 #### Params    
     
