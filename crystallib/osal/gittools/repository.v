@@ -145,7 +145,7 @@ pub fn (mut repo GitRepo) commit_pull(args_ ActionArgs) ! {
 
 // pulls remote content in, will fail if there are local changes
 pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
-	println('   - PULL: ${repo.url_get(true)}')
+	$if debug{println('   - PULL: ${repo.url_get(true)}')}
 	mut args:=args_
 	if args.reload{
 		repo.load()!
@@ -226,7 +226,7 @@ pub fn (mut repo GitRepo) push(args_ ActionArgs) ! {
 		repo.load()!
 		args.reload=false
 	}		
-	println('   - PUSH: ${repo.url_get(true)}')
+	$if debug{println('   - PUSH: ${repo.url_get(true)}')}
 	st := repo.status()!
 	if st.need_push {	
 		cmd := 'cd ${repo.path.path} && git push'
@@ -268,7 +268,7 @@ pub fn (mut repo GitRepo) fetch_all() ! {
 
 // deletes git repository
 pub fn (mut repo GitRepo) delete() ! {
-	println('   - DELETE: ${repo.url_get(true)}')
+	$if debug{println('   - DELETE: ${repo.url_get(true)}')}
 	if !os.exists(repo.path.path) {
 		return
 	} else {

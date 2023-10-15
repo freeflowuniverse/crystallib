@@ -31,7 +31,7 @@ fn (gs GitStructure) cache_reset() ! {
 
 
 pub fn (mut gitstructure GitStructure) list(args ReposGetArgs)! {
-	texttools.print_clear()
+	// texttools.print_clear()
 	println(' #### overview of repositories:')
 	println('')
 	gitstructure.repos_print(args)!

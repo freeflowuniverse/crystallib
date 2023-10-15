@@ -25,8 +25,8 @@ pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs)! {
 		r << [' - ${pr}', '[${g.addr.branch}]', s]
 	}
 	// println(args)
-	console.clear()
-	println('\n ==== repositories on your disk ===\n')
+	// console.clear()
+	println('\n ==== repositories on coderoot: ${gitstructure.config.root} ===\n')
 	texttools.print_array2(r, '  ', true)
 	println('')
 }
@@ -154,12 +154,12 @@ pub fn git_get_action(action actions.Action) ! {
 // cachereset
 pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 	mut args := args_
-	println(args)
+	// println(args)
 
 	mut ui := gui.new()!
 
 	if args.filter=="" && args.cachereset{
-		println("-- cache reset for all repo's")
+		// println("-- cache reset for all repo's")
 		cache_delete(gs.name())!
 		gs.load()!
 		if true{panic("cache reset for all repo")}
@@ -171,7 +171,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 			provider: args.provider
 		) {
 			if args.cachereset {
-				println("-- cache reset of ${g.addr.name}")
+				// println("-- cache reset of ${g.addr.name}")
 				g.load()!
 			}
 		}
@@ -202,7 +202,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 		need_push = false || st.need_push
 		// println(" --- git_do ${g.addr.name} ${st.need_commit} ${st.need_pull}  ${st.need_push}")		
 	}
-	
+
 	if args.print {
 		if need_commit || need_pull || need_push {
 			mut out := '\n ** NEED TO '
@@ -291,7 +291,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 	}
 
 	if changed {
-		console.clear()
+		// console.clear()
 		println('\nCompleted required actions.\n')
 
 		if args.print {

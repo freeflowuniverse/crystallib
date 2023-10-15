@@ -67,7 +67,7 @@ fn repo_load(addr GitAddr, path string) !GitRepoStatus {
 	mut addr2:=*locator.addr
 	addr2.branch=st.branch
 
-	println(" - loaded repo ${path}     --------     addr: ${addr2}")
+	$if debug{println(" - loaded repo ${path}     --------     addr: ${addr2}")}
 
 	jsondata:=json.encode(st)
 	redis.set(addr2.cache_key_status(), jsondata)!

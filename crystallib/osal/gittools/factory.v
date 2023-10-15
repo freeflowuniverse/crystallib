@@ -103,7 +103,7 @@ pub fn get(args_ GitStructureGetArgs) !GitStructure {
 			args.name = md5.hexhash(args.coderoot)
 		}
 	}
-	println("GET GS:\n$args")
+	// println("GET GS:\n$args")
 	for key, i in instances {
 		if i.name() == args.name {
 			rlock instances {
