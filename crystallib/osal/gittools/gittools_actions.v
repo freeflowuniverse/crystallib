@@ -202,6 +202,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 		need_push = false || st.need_push
 		// println(" --- git_do ${g.addr.name} ${st.need_commit} ${st.need_pull}  ${st.need_push}")		
 	}
+	
 	if args.print {
 		if need_commit || need_pull || need_push {
 			mut out := '\n ** NEED TO '
