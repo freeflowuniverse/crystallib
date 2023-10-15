@@ -15,7 +15,7 @@ fn main(){
 
 
 
-	//
+	// twin iterator
 	max_page_iteration := u64(5) // set maximum pages to iterate on
 
 	mut twin_iterator := gp_client.get_twins_iterator(model.TwinFilter{})
