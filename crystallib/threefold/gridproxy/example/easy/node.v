@@ -62,10 +62,10 @@ fn main() {
 
 		iterator_nodes := node_iterator.next()
 		if iterator_nodes != none {
-			println(node_iterator.filter.page)
 			iterator_available_node << iterator_nodes
 		} else {
 			break //if the page is empty the next function will return none
 		}
 	}
+	// println(iterator_available_node)
 }
