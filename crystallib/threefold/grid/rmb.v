@@ -2,7 +2,7 @@ module tfgrid
 
 import os
 import json
-import crystallib.threefold.grid.models
+import freeflowuniverse.crystallib.threefold.grid.models
 
 pub fn (mut d Deployer) rmb_deployment_changes(dst u32, contract_id u64) !string {
 	res := os.execute("grid-cli rmb-dl-changes --substrate ${d.substrate_url} --mnemonics \"${d.mnemonics}\" --relay ${d.relay_url} --dst ${dst} --contract_id '${contract_id}'")

@@ -1,6 +1,6 @@
 module main
 
-import crystallib.baobab.dao
+import freeflowuniverse.crystallib.baobab.dao
 import libsodium
 
 fn simulate() ? {

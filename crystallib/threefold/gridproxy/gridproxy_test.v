@@ -1,6 +1,6 @@
 module gridproxy
 
-import crystallib.threefold.gridproxy.model
+import freeflowuniverse.crystallib.threefold.gridproxy.model
 import time
 
 const (

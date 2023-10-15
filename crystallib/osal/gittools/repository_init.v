@@ -2,34 +2,27 @@ module gittools
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.tools.sshagent
+import freeflowuniverse.crystallib.clients.redisclient
 
-[params]
-pub struct CheckArgs {
-pub mut:
-	pull  bool
-	reset bool
-}
-
-// this is the main git functionality to get git repo, update, reset, ...
-fn (mut repo GitRepo) init(args_ CheckArgs) ! {
-	mut args := args_
-	args.pull = args.pull || args.reset
-
-	url := repo.addr.url_http_with_branch_get()
-	// println(' - check repo:$url, pull:$args.pull, reset:$args.reset')
-	// println(repo.addr)
-	// need to get the status of the repo
-	// println(' - repo $repo.name() check')
-	mut needs_to_be_ssh := false
-
-	// check if there is a custom key to be used (sshkey)
-	needs_to_be_ssh0 := repo.ssh_key_load_if_exists()!
-	if needs_to_be_ssh0 {
-		needs_to_be_ssh = true
-	}
+// this will clone the repo if it doesn't exist yet
+fn (mut repo GitRepo) load_from_url() ! {
 
 	// first check if path does not exist yet, if not need to clone
 	if !(repo.path.exists()) {
+
+		url := repo.addr.url_http_with_branch_get()
+		// println(' - check repo:$url, pull:$args.pull, reset:$args.reset')
+		// println(repo.addr)
+		// need to get the status of the repo
+		// println(' - repo $repo.name() check')
+		mut needs_to_be_ssh := false
+
+		// check if there is a custom key to be used (sshkey)
+		needs_to_be_ssh0 := repo.ssh_key_load_if_exists()!
+		if needs_to_be_ssh0 {
+			needs_to_be_ssh = true
+		}
+
 		println(' - missing repo, pull: ${url} -> ${repo.path.path}')
 		if !needs_to_be_ssh && sshagent.loaded() {
 			needs_to_be_ssh = true
@@ -49,40 +42,33 @@ fn (mut repo GitRepo) init(args_ CheckArgs) ! {
 			println(' GIT FAILED: ${cmd}')
 			return error('Cannot pull repo: ${repo.addr.path()}. Error was ${err}')
 		}
-		// println(' - GIT PULL OK')
-		// can return safely, because pull did work		
-		repo.load()! //make sure state is ok	
-		return
 	}
 
-	// check the branch, see if branch on FS is same as what is required if set
+}
 
-	repo.load()!
 
-	if args.reset {
-		println(' - remove git changes: ${repo.path.path}')
-		repo.remove_changes(reload:false)!
+
+//path needs to exit, load all from disk
+fn (mut repo GitRepo) load_from_path() ! {
+
+	if !repo.path.exists(){
+		return error("cannot load from path, doesn't exist for ${repo.path}")
 	}
 
-	// println(repo.addr)
-	// print_backtrace()
-	if repo.addr.branch != '' {
-		st := repo.status()!
-		mut branchname := st.branch
-		// println( " - branch detected: $branchname, branch on repo obj:'$repo.addr.branch'")
-		if st.branch != repo.addr.branch && args.pull {
-			println(' - branch switch ${branchname} -> ${repo.addr.branch} for ${url}')
-			repo.branch_switch(repo.addr.branch)!
-			args.pull = true
-		}
-	} else {
-		return error('branch should have been known for ${repo}')
+	mut redis := redisclient.core_get()!
+	mut urlfromcache:=redis.get(repo.cache_key_path())!
+	if urlfromcache==""{
+		//we don't know it means we need to fetch if from the filesystem
+		st:=repo.load()!
+		redis.set(repo.cache_key_path(),st.remote_url)!
+		redis.expire(repo.cache_key_path(), 3600 * 24)!
+		urlfromcache=redis.get(repo.cache_key_path()) or {panic("bug")}
 	}
-	if args.pull {
-		repo.pull()!
-	}else{
-		repo.load()!
-	}
+
+	locator:=repo.gs.locator_new(urlfromcache)!
+	repo.addr=locator.addr
+
+
 }
 
 fn (repo GitRepo) get_clone_cmd(http bool) string {

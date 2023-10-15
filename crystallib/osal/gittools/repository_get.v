@@ -1,11 +1,8 @@
 module gittools
 
 
-import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.clients.redisclient
-import freeflowuniverse.crystallib.osal
+
 import freeflowuniverse.crystallib.core.texttools
-import os
 
 [params]
 pub struct RepoGetArgs {
@@ -18,7 +15,7 @@ pub mut:
 
 // will get repo starting from url, if the repo does not exist, only then will pull
 // if pull is set on true, will then pull as well
-pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !&GitRepo {
+pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !GitRepo {
 	mut args := args_
 	args.pull = args_.reset || args_.pull
 
@@ -29,17 +26,43 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !&GitRepo {
 	} else {
 		// println("repo does not exist:\n$p\n+++")
 		// if repo doesn't exist, create new repo from address in locator
-		mut r2 := &GitRepo{
+		mut r2 := GitRepo{
 			gs: &gitstructure
 			addr: args.locator.addr
 			path: p
 		}
-		r2.init(pull: args.pull, reset: args.reset)!
+		r2.load_from_url()!
+
+		if r2.addr.branch != '' {
+			st := r2.status()!
+			mut branchname := st.branch
+			// println( " - branch detected: $branchname, branch on repo obj:'$repo.addr.branch'")
+			if st.branch != r2.addr.branch && args.pull {
+				println(' - branch switch ${branchname} -> ${r2.addr.branch} for ${r2.addr.url_original}')
+				r2.branch_switch(r2.addr.branch)!
+			}
+		} else {
+			return error('branch should have been known for ${r2}')
+		}	
+
+		r2
 	}
+
+	if args.reset {
+		println(' - remove git changes: ${r.path.path}')
+		r.remove_changes(reload:false)!
+	}
+
+	if args.pull {
+		r.pull()!
+	}else{
+		r.load()!
+	}
+
 	return r
 }
 
-fn (mut gitstructure GitStructure) repo_get_internal(l GitLocator) !&GitRepo {
+fn (mut gitstructure GitStructure) repo_get_internal(l GitLocator) !GitRepo {
 	res := gitstructure.repos_get(name: l.addr.name, account: l.addr.account)
 	if res.len == 0 {
 		return error('cannot find repo with locator.\n${l}')
@@ -48,10 +71,9 @@ fn (mut gitstructure GitStructure) repo_get_internal(l GitLocator) !&GitRepo {
 		return error('Found more than 1 repo with locator.\n${l}')
 	}
 	if res[0].addr.name != l.addr.name || res[0].addr.name != l.addr.name {
-		// TODO: figure out
 		panic("bug")
 	}
-	return res[0]
+	return res[0] or {panic("bug")}
 }
 
 pub fn (mut gitstructure GitStructure) repo_exists(l GitLocator) !bool {
@@ -76,13 +98,13 @@ pub mut:
 	provider string
 }
 
-pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []&GitRepo {
+pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []GitRepo {
 	mut args := ReposGetArgs{
 		...args_
 		name: texttools.name_fix(args_.name)
 		account: texttools.name_fix(args_.account)
 	}
-	mut res := []&GitRepo{}
+	mut res := []GitRepo{}
 	// println(args)
 	for r in gitstructure.repos {
 		relpath := r.path_relative()
@@ -108,55 +130,3 @@ pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []&GitRepo 
 	return res
 }
 
-
-// // returns the git address starting from path
-// pub fn (mut gitstructure GitStructure) repo_from_path(path string) !&GitRepo {
-// 	if path.len < 3 {
-// 		panic('path cannot be <3.\n${path}')
-// 	}
-
-// 	mut path2 := path.replace('~', os.home_dir())
-
-// 	// TODO: walk up to find .git in dir, this way we know we found the right path for the repo
-
-// 	// println('GIT ADDR ${path2}')
-// 	if !os.exists(os.join_path(path2, '.git')) {
-// 		return error("failed to get repo from path: '${path2}' is not a git dir, missed a .git directory")
-// 	}
-// 	pathconfig := os.join_path(path2, '.git', 'config')
-// 	if !os.exists(pathconfig) {
-// 		return error("path: '${path2}' is not a git dir, missed a .git/config file")
-// 	}
-
-// 	ds := repo_disk_status(path: path2)!
-
-// 	mut locator := gitstructure.locator_new(ds.url)!
-// 	locator.addr.branch = ds.branch
-
-// 	mut repos := gitstructure.repos_get(
-// 		provider: locator.addr.provider
-// 		account: locator.addr.account
-// 		name: locator.addr.name
-// 	)
-
-// 	if repos.len > 1 {
-// 		return error('found more than 1 repo in gitructure for same provider/account/name.\npath:${path}\n${repos}')
-// 	}
-
-// 	if repos.len == 1 {
-// 		// now need to check path is same
-// 		mut r := repos[0]
-// 		mut path2o := pathlib.get_dir(path2, false)!
-// 		if r.path != path2o {
-// 			return error('path mismatch in gitstructure.\npath:${path}\n${repos}')
-// 		}
-// 		return repos[0]
-// 	}
-// 	mut gitrepo := GitRepo{
-// 		path: pathlib.get(path2)
-// 		id: gitstructure.repos.len
-// 		gs: &gitstructure
-// 		addr: *locator.addr
-// 	}
-// 	return &gitrepo
-// }

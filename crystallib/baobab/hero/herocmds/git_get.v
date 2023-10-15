@@ -42,11 +42,11 @@ pub fn cmd_git_get(mut cmdroot Command) {
 }
 
 fn cmd_git_get_execute(cmd Command) ! {
-	// mut gs := gittools.new()!
+	// mut gs := gittools.get()!
 	url := cmd.args[0] or { panic('cannot find args for code_get') }
 	r := gittools.code_get(
 		url: url
-		root: cmd.flags.get_string('coderoot') or { '' }
+		coderoot: cmd.flags.get_string('coderoot') or { '' }
 		pull: cmd.flags.get_bool('pull') or { false }
 		reset: cmd.flags.get_bool('reset') or { false }
 	)!

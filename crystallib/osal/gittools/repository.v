@@ -32,9 +32,15 @@ fn (repo GitRepo) cache_key()string {
 	return 'git:cache:${repo.gs.name}__${repo.addr.cachekey()}:'
 }
 
+fn (repo GitRepo) cache_key_path()string {
+	return 'git:cachepath:${repo.path.path}'
+}
+
+
 fn (repo GitRepo) cache_delete()! {
 	mut redis := redisclient.core_get()!
 	redis.del(repo.cache_key())!
+	redis.del(repo.cache_key_path())!
 }
 
 
@@ -53,6 +59,10 @@ pub fn (repo GitRepo) load() !GitRepoStatus {
 		return error('Cannot get remote origin url: ${path}. Error was ${err}')
 	}
 	st.remote_url = st.remote_url.trim(' \n')
+
+	if st.remote_url==""{
+		return error("cannot fetch info from $path, url not specified")
+	}
 
 	cmd2 := 'cd ${path} && git rev-parse --abbrev-ref HEAD'
 	// println(cmd2)
@@ -98,6 +108,16 @@ pub fn (repo GitRepo) load() !GitRepoStatus {
 
 	println(" ok")
 	return st
+}
+
+
+fn (repo GitRepo) status_exists() !bool {
+	mut redis := redisclient.core_get()!
+	mut data:=redis.get(repo.cache_key()) or {return false}
+	if data.len==0{
+		return false
+	}
+	return true
 }
 
 

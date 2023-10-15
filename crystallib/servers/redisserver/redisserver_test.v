@@ -1,4 +1,4 @@
-import crystallib.servers.redisserver
+import freeflowuniverse.crystallib.servers.redisserver
 import redisclient
 
 fn setup() redisserver.RedisSrv {

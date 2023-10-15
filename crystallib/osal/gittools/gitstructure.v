@@ -39,13 +39,22 @@ pub fn (gs GitStructure) reload() ! {
 
 
 
-pub fn (mut gitstructure GitStructure) list(args ReposGetArgs) {
+pub fn (mut gitstructure GitStructure) list(args ReposGetArgs)! {
 	texttools.print_clear()
 	println(' #### overview of repositories:')
 	println('')
-	gitstructure.repos_print(args)
+	gitstructure.repos_print(args)!
 	println('')
 }
 
 
+pub fn (mut gitstructure GitStructure) repo_from_path(path string)!GitRepo {
+	mut r:=GitRepo {
+		gs:&gitstructure
+		addr:GitAddr{gs:&gitstructure}
+		path:pathlib.get_dir(path,false)!
+	}
+	r.load_from_path()!
+	return r
+}
 

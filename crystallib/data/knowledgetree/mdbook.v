@@ -119,7 +119,7 @@ pub fn book_create(args_ BookNewArgs) !&MDBook {
 	}
 
 	if args.git_url.len > 0 {
-		mut gs := gittools.get(name: args.git_root) or { gittools.new()! }
+		mut gs := gittools.get(name: "tree") or { return error("cant find gitstructure with name tree.") }
 		locator := gs.locator_new(args.git_url)!
 		mut gr := gs.repo_get(locator: locator)!
 		args.path = gr.path.path

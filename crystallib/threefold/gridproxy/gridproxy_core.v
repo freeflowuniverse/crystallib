@@ -2,7 +2,7 @@ module gridproxy
 
 // client library for threefold gridproxy API.
 import json
-import crystallib.threefold.gridproxy.model { Contract, ContractFilter, ContractIterator, Farm, FarmFilter, FarmIterator, GridStat, Node, NodeFilter, NodeIterator, NodeStats, Node_, StatFilter, Twin, TwinFilter, TwinIterator }
+import freeflowuniverse.crystallib.threefold.gridproxy.model { Contract, ContractFilter, ContractIterator, Farm, FarmFilter, FarmIterator, GridStat, Node, NodeFilter, NodeIterator, NodeStats, Node_, StatFilter, Twin, TwinFilter, TwinIterator }
 
 /*
 all errors returned by the gridproxy API or the client are wrapped in a standard `Error` object with two fields.

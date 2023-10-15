@@ -4,7 +4,7 @@ import os
 import json
 import time
 import log
-import crystallib.threefold.grid.models
+import freeflowuniverse.crystallib.threefold.grid.models
 
 pub struct Deployer {
 pub:

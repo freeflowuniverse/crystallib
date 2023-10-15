@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.clients.redisclient
 import os
 import json
 import freeflowuniverse.crystallib.core.pathlib
+import crypto.md5
 
 __global (
 	instances shared map[string]GitStructure
@@ -62,6 +63,7 @@ pub fn configure(config_ GitStructureConfig) ! {
 pub struct GitStructureGetArgs {
 pub mut:
 	name        string = 'default'
+	coderoot    string 
 	reload  	bool
 }
 
@@ -69,31 +71,50 @@ pub mut:
 // params: .
 //  - name      string = 'default' .
 //  - reload  	bool .
+//  - coderoot    string , if used and name not used will md5 the coderoot as name
 pub fn get(args_ GitStructureGetArgs) !GitStructure {
+	mut args:=args_
+	if args.coderoot.len>0{
+		if args.name=="default" || args.name=="" {			
+			args.name = md5.hexhash(args.coderoot)
+		}
+	}
 	for key, i in instances {
-		if i.name == args_.name {
+		if i.name == args.name {
 			rlock instances {
 				mut gs:= instances[key]
-				if args_.reload{
+				if args.reload{
 					gs.load()!
 				}
 				return gs
 			}
 		}
 	}		
-
 	mut redis := redisclient.core_get()!
-	mut datajson:=redis.get(cache_key(args_.name))!	
+	mut datajson:=redis.get(cache_key(args.name))!	
 	if datajson==""{
-		if args_.name=="default"{
+		if args.name=="default"{
 			//is the only one we can do by default
 			configure()!
-			datajson=redis.get(cache_key(args_.name))!	
+			datajson=redis.get(cache_key(args.name))!	
 			if datajson==""{
 				panic("bug")
 			}
+		} else if args.name=="tmp"{
+			//is the only one we can do by default
+			configure(root:"/tmp/code",name:args.name)!
+			datajson=redis.get(cache_key(args.name))!	
+			if datajson==""{
+				panic("bug")
+			}
+		} else if args.coderoot.len>0{
+			configure(root:args.coderoot,name:args.name)!
+			datajson=redis.get(cache_key(args.name))!	
+			if datajson==""{
+				panic("bug")
+			}			
 		}else{
-			return error("Configure your gitstructure, ${args_.name}, has not been configured yet.")
+			return error("Configure your gitstructure, ${args.name}, has not been configured yet.")
 		}
 	}
 	config:=json.decode(GitStructureConfig,datajson)!
@@ -102,7 +123,8 @@ pub fn get(args_ GitStructureGetArgs) !GitStructure {
 
 pub struct CodeGetFromUrlArgs {
 pub mut:
-	gitstructure_name string = 'default' // optional, if not mentioned is default
+	coderoot string
+	gitstructure_name string = 'default' // optional, if not mentioned is default, tmp is another good one
 	url               string
 	// branch            string
 	pull              bool   // will pull if this is set
@@ -121,7 +143,14 @@ pub mut:
 // # to specify a branch and a folder in the branch
 // https://github.com/threefoldtech/tfgrid-sdk-ts/tree/development/docs
 // ```
-pub fn code_get(args CodeGetFromUrlArgs) !string {
+pub fn code_get(args_ CodeGetFromUrlArgs) !string {
+	mut args:=args_
+	if args.coderoot.len>0{
+		if args.gitstructure_name=="default" || args.gitstructure_name=="" {			
+			args.gitstructure_name = md5.hexhash(args.coderoot)
+		}
+		configure(name: args.gitstructure_name,root:args.coderoot)!
+	}
 	mut gs := get(name: args.gitstructure_name)!
 	mut locator := gs.locator_new(args.url)!
 	g := gs.repo_get(locator: locator)!

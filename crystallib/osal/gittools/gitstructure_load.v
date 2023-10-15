@@ -40,11 +40,13 @@ fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []strin
 		// done << pathnew
 		if os.is_dir(pathnew) {
 			if os.exists(os.join_path(pathnew, '.git')) {
+				
 				mut repo := gitstructure.repo_from_path(pathnew)!
+
 				$if debug {
 					println('Loading repository ${repo.addr} from path ${repo.path.path}')
 				}
-				gitstructure.repos << repo
+				gitstructure.repos << &repo
 				continue
 			}
 			if item.starts_with('.') {
