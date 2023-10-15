@@ -2,7 +2,7 @@ module gridproxy
 
 // client library for threefold gridproxy API.
 import json
-import crystallib.threefold.gridproxy.model { Contract, ContractFilter, ContractIterator, Farm, FarmFilter, FarmIterator, GridStat, Node, NodeFilter, NodeIterator, NodeStats, Node_, StatFilter, Twin, TwinFilter, TwinIterator }
+import freeflowuniverse.crystallib.threefold.gridproxy.model  { Contract, ContractFilter, ContractIterator, Farm, FarmFilter, FarmIterator, GridStat, Node, NodeFilter, NodeIterator, NodeStats, Node_, StatFilter, Twin, TwinFilter, TwinIterator }
 
 /*
 all errors returned by the gridproxy API or the client are wrapped in a standard `Error` object with two fields.
@@ -186,7 +186,7 @@ pub fn (mut c GridProxyClient) get_nodes(params NodeFilter) ![]Node {
 // * `country_contains` (string): Node partial country filter. [optional].
 // * `country` (string): Node country filter. [optional].
 // * `dedicated` (bool): Set to true to get the dedicated nodes only. [optional].
-// * `domain` (string): Set to true to filter nodes with domain. [optional].
+// * `domain` (bool): Set to true to filter nodes with domain. [optional].
 // * `farm_ids` ([]u64): List of farm ids. [optional].
 // * `farm_name_contains` (string): Get nodes for specific farm. [optional].
 // * `farm_name` (string): Get nodes for specific farm. [optional].

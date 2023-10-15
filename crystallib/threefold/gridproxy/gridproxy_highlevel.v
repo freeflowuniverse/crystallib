@@ -1,6 +1,7 @@
 module gridproxy
 
-import crystallib.threefold.gridproxy.model { ContractFilter, ContractIterator, Farm, FarmFilter, FarmIterator, NodeFilter, NodeIterator, ResourceFilter, Twin }
+import freeflowuniverse.crystallib.threefold.gridproxy.model
+ { ContractFilter, ContractIterator, Farm, FarmFilter, FarmIterator, NodeFilter, NodeIterator, ResourceFilter, Twin }
 
 // fetch specific twin information by twin id.
 //
