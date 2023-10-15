@@ -18,9 +18,7 @@ pub fn install() ! {
 		make
 		sudo rsync -rav ${locator.path_on_fs()!.path}/bin/zdb* /usr/local/bin/
 		'
-		osal.execute_silent(cmd) or {
-			return error('Cannot install zdb.\n${err}')
-		}
+		osal.execute_silent(cmd) or { return error('Cannot install zdb.\n${err}') }
 		osal.done_set('install_zdb', 'OK')!
 	}
 }

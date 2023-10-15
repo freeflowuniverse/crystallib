@@ -41,7 +41,6 @@ pub fn cmd_3script_do(mut cmdroot Command) {
 		description: 'url where 3script can be found.'
 	})
 
-
 	cmd_run.add_flag(Flag{
 		flag: .bool
 		required: false
@@ -74,7 +73,6 @@ pub fn cmd_3script_do(mut cmdroot Command) {
 		description: 'Run the runner.'
 	})
 
-
 	cmdroot.add_command(cmd_run)
 }
 
@@ -83,8 +81,8 @@ fn cmd_3script_execute(cmd Command) ! {
 	mut path := cmd.flags.get_string('path') or { '' }
 	mut circle := cmd.flags.get_string('circle') or { 'test' }
 	mut url := cmd.flags.get_string('url') or { '' }
-	if path==""{
-		path=url
+	if path == '' {
+		path = url
 	}
 
 	mut gs := gittools.get(coderoot: coderoot) or {
@@ -102,6 +100,4 @@ fn cmd_3script_execute(cmd Command) ! {
 	if cmd.flags.get_bool('run') or { false } {
 		h.run()!
 	}
-	
-
 }

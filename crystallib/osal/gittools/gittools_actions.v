@@ -6,10 +6,10 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.baobab.actions
 import os
 
-pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs)! {
+pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {
 	mut r := [][]string{}
 	for mut g in gitstructure.repos_get(args) {
-		st:=g.status()!
+		st := g.status()!
 		pr := g.path.shortpath()
 		mut s := ''
 		if st.need_commit {
@@ -89,7 +89,7 @@ pub fn action(action actions.Action) ! {
 
 pub fn git_do_action(action actions.Action) ! {
 	mut coderoot := action.params.get_default('coderoot', '')!
-	mut gs := get(coderoot:coderoot) or {
+	mut gs := get(coderoot: coderoot) or {
 		return error("Could not find gittools on '${coderoot}'\n${err}")
 	}
 	mut repo := action.params.get_default('repo', '')!
@@ -158,12 +158,14 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 
 	mut ui := gui.new()!
 
-	if args.filter=="" && args.cachereset{
+	if args.filter == '' && args.cachereset {
 		// println("-- cache reset for all repo's")
 		cache_delete(gs.name())!
 		gs.load()!
-		if true{panic("cache reset for all repo")}
-	}else{
+		if true {
+			panic('cache reset for all repo')
+		}
+	} else {
 		for mut g in gs.repos_get(
 			filter: args.filter
 			name: args.repo
@@ -176,7 +178,6 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 			}
 		}
 	}
-
 
 	if args.print {
 		gs.repos_print(
@@ -196,7 +197,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 		account: args.account
 		provider: args.provider
 	) {
-		st:=g.status()!
+		st := g.status()!
 		need_commit = false || st.need_commit
 		need_pull = false || st.need_pull
 		need_push = false || st.need_push
@@ -256,7 +257,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 		provider: args.provider
 	) {
 		if args.commit || args.commitpush || args.commitpullpush || args.commitpull {
-			st:=g.status()!
+			st := g.status()!
 			if st.need_commit {
 				mut msg := args.msg
 				if msg.len == 0 {
@@ -268,7 +269,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 					)
 				}
 				println(' - commit ${g.addr.account}/${g.addr.name}')
-				g.commit(msg:msg,reload:true)!
+				g.commit(msg: msg, reload: true)!
 				changed = true
 			} else {
 				println(' - no need to commit, no changes for ${g.addr.account}/${g.addr.name}')

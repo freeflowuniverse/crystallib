@@ -8,7 +8,7 @@ pub fn install() ! {
 	rust.install()!
 	println(' - install fungistor')
 	if !osal.done_exists('install_fungistor') && !osal.cmd_exists('rst') {
-		path := gittools.code_get(url:'https://github.com/threefoldtech/rfs',reset:true)!
+		path := gittools.code_get(url: 'https://github.com/threefoldtech/rfs', reset: true)!
 		cmd := '
 		cd ${path}
 		rustup target add x86_64-unknown-linux-musl

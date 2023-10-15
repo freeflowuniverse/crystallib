@@ -5,10 +5,8 @@ import freeflowuniverse.crystallib.tools.sshagent
 
 // this will clone the repo if it doesn't exist yet
 fn (mut repo GitRepo) load_from_url() ! {
-
 	// first check if path does not exist yet, if not need to clone
 	if !(repo.path.exists()) {
-
 		url := repo.addr.url_http_with_branch_get()
 		// println(' - check repo:$url, pull:$args.pull, reset:$args.reset')
 		// println(repo.addr)
@@ -43,18 +41,15 @@ fn (mut repo GitRepo) load_from_url() ! {
 		}
 		repo.load()!
 	}
-
 }
 
-
-
-//path needs to exit, load all from disk
+// path needs to exit, load all from disk
 fn (mut repo GitRepo) load_from_path() ! {
-
-	$if debug{println(" - load from path: ${repo.path.path}")}
+	$if debug {
+		println(' - load from path: ${repo.path.path}')
+	}
 
 	repo.status()!
-
 }
 
 fn (repo GitRepo) get_clone_cmd(http bool) string {

@@ -1,7 +1,6 @@
 module hero
 
 import freeflowuniverse.crystallib.baobab.actions
-
 import freeflowuniverse.crystallib.osal.downloader
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
@@ -246,7 +245,7 @@ pub fn (mut s Session) run(args RunArgs) ! {
 			actionsprocessed3 << action2
 		}
 	}
-	
+
 	s.actions = actionsprocessed3
 
 	s.actions_do()!

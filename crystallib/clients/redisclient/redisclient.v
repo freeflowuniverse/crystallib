@@ -54,7 +54,7 @@ pub enum KeyType {
 //   localhost:6379
 //   /tmp/redis-default.sock
 pub fn new(addrs []string) !Redis {
-	mut connection_nrs:=[]int{}
+	mut connection_nrs := []int{}
 	lock redis_connections {
 		// toadd:=[]string{}		
 		for addr in addrs {
@@ -62,7 +62,7 @@ pub fn new(addrs []string) !Redis {
 			mut addr_nr := 0
 			for conn in redis_connections {
 				if conn.addr == addr {
-					connection_nrs <<addr_nr // remember this connection nr
+					connection_nrs << addr_nr // remember this connection nr
 					found = true
 					break
 				}
@@ -80,7 +80,9 @@ pub fn new(addrs []string) !Redis {
 			}
 		}
 	}
-	r := Redis{connection_nr:connection_nrs}
+	r := Redis{
+		connection_nr: connection_nrs
+	}
 	return r
 }
 

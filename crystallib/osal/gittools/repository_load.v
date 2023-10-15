@@ -4,13 +4,12 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.clients.redisclient
 import json
 
-
 fn repo_load(addr GitAddr, path string) !GitRepoStatus {
 	// $if debug{println(" - git repo load: ${path}")}
-	
+
 	mut redis := redisclient.core_get()!
 
-	mut st:=GitRepoStatus{}
+	mut st := GitRepoStatus{}
 
 	cmd := 'cd ${path} && git config --get remote.origin.url'
 	// println(cmd)
@@ -19,8 +18,8 @@ fn repo_load(addr GitAddr, path string) !GitRepoStatus {
 	}
 	st.remote_url = st.remote_url.trim(' \n')
 
-	if st.remote_url==""{
-		return error("cannot fetch info from $path, url not specified")
+	if st.remote_url == '' {
+		return error('cannot fetch info from ${path}, url not specified')
 	}
 
 	cmd2 := 'cd ${path} && git rev-parse --abbrev-ref HEAD'
@@ -30,49 +29,51 @@ fn repo_load(addr GitAddr, path string) !GitRepoStatus {
 	}
 	st.branch = st.branch.trim(' \n')
 
-	if st.branch==""{
-		return error("could not find branch for.\n$cmd2")
+	if st.branch == '' {
+		return error('could not find branch for.\n${cmd2}')
 	}
 	cmd3 := 'cd ${path} &&  git status'
 	mut status_str := osal.execute_silent(cmd3) or {
 		return error('Cannot get status for repo: ${path}. Error was ${err}')
 	}
-	status_str=status_str.to_lower()
+	status_str = status_str.to_lower()
 
-	//check if commit is needed
-	check := ['untracked files', 'changes not staged for commit','to be committed']
+	// check if commit is needed
+	check := ['untracked files', 'changes not staged for commit', 'to be committed']
 	for tocheck in check {
 		if status_str.to_lower().contains(tocheck) {
-			st.need_commit=true
+			st.need_commit = true
 		}
 	}
 
-	//check if push is needed
+	// check if push is needed
 	check2 := ['to publish your local commits', 'your branch is ahead of']
 	for tocheck in check2 {
 		if status_str.to_lower().contains(tocheck) {
-			st.need_push=true
+			st.need_push = true
 		}
 	}
 
-	//check if pull is needed
+	// check if pull is needed
 	check3 := ['branch is behind']
 	for tocheck in check3 {
 		if status_str.to_lower().contains(tocheck) {
-			st.need_pull=true
+			st.need_pull = true
 		}
 	}
 
-	locator:=locator_new(addr.gsconfig,st.remote_url)!	
-	mut addr2:=*locator.addr
-	addr2.branch=st.branch
+	locator := locator_new(addr.gsconfig, st.remote_url)!
+	mut addr2 := *locator.addr
+	addr2.branch = st.branch
 
-	$if debug{println(" - loaded repo ${path}     --------     addr: ${addr2}")}
+	$if debug {
+		println(' - loaded repo ${path}     --------     addr: ${addr2}')
+	}
 
-	jsondata:=json.encode(st)
+	jsondata := json.encode(st)
 	redis.set(addr2.cache_key_status(), jsondata)!
-	redis.set(addr2.cache_key_path(path),addr2.cache_key_status())! //remember the key in redis starting from path
+	redis.set(addr2.cache_key_path(path), addr2.cache_key_status())! // remember the key in redis starting from path
 	redis.expire(addr2.cache_key_status(), 3600 * 24 * 7)!
-	redis.expire(addr2.cache_key_path(path), 3600 * 24 * 7 )!
+	redis.expire(addr2.cache_key_path(path), 3600 * 24 * 7)!
 	return st
 }

@@ -13,24 +13,20 @@ pub struct GitRepo {
 mut:
 	gs &GitStructure [skip; str: skip]
 pub mut:
-
-	addr  GitAddr
-	path  pathlib.Path
+	addr GitAddr
+	path pathlib.Path
 }
 
-
-pub struct GitRepoStatus{
+pub struct GitRepoStatus {
 pub mut:
 	need_commit bool
-	need_push bool
-	need_pull bool
-	branch string
-	remote_url string
+	need_push   bool
+	need_pull   bool
+	branch      string
+	remote_url  string
 }
 
-
-
-fn (repo GitRepo) cache_delete()! {
+fn (repo GitRepo) cache_delete() ! {
 	mut redis := redisclient.core_get()!
 	redis.del(repo.addr.cache_key_status())!
 	redis.del(repo.cache_key_path())!
@@ -40,58 +36,59 @@ fn (repo GitRepo) cache_key_path() string {
 	return repo.addr.cache_key_path(repo.path.path)
 }
 
-
 pub fn (mut repo GitRepo) load() !GitRepoStatus {
 	path := repo.path.path
-	if !repo.path.exists(){
+	if !repo.path.exists() {
 		return error("cannot load from path, doesn't exist for ${repo.path}")
-	}	
-	mut st:= repo_load(repo.addr,repo.path.path)!
+	}
+	mut st := repo_load(repo.addr, repo.path.path)!
 	repo.status_set(st)!
 	return st
 }
 
 fn (repo GitRepo) status_exists() !bool {
 	mut redis := redisclient.core_get()!
-	mut data:=redis.get(repo.addr.cache_key_status()) or {return false}
-	if data.len==0{
+	mut data := redis.get(repo.addr.cache_key_status()) or { return false }
+	if data.len == 0 {
 		return false
 	}
 	return true
 }
 
 fn (mut repo GitRepo) status_set(st GitRepoStatus) ! {
-	if repo.addr.provider == '' || repo.addr.account == '' || repo.addr.name == ''  || repo.addr.branch == '' {
-		locator:=repo.gs.locator_new(st.remote_url)!		
-		repo.addr=locator.addr
+	if repo.addr.provider == '' || repo.addr.account == '' || repo.addr.name == ''
+		|| repo.addr.branch == '' {
+		locator := repo.gs.locator_new(st.remote_url)!
+		repo.addr = locator.addr
 		repo.addr.branch = st.branch
 	}
 }
 
 pub fn (mut repo GitRepo) status() !GitRepoStatus {
 	mut redis := redisclient.core_get()!
-	mut cache_key:=""
-	if repo.addr.provider == '' || repo.addr.account == '' || repo.addr.name == ''  || repo.addr.branch == '' {
-		//means we don't know the addr data yet, need to see in redis if we can find the key
-		cache_key=redis.get(repo.cache_key_path())!
-	}else{
-		//we can calculate the key
-		cache_key=repo.addr.cache_key_status()
+	mut cache_key := ''
+	if repo.addr.provider == '' || repo.addr.account == '' || repo.addr.name == ''
+		|| repo.addr.branch == '' {
+		// means we don't know the addr data yet, need to see in redis if we can find the key
+		cache_key = redis.get(repo.cache_key_path())!
+	} else {
+		// we can calculate the key
+		cache_key = repo.addr.cache_key_status()
 	}
 	// println("cache_key: $cache_key")
-	mut data:=""
-	if cache_key.len>0{
-		data=redis.get(cache_key)!
-	}	
+	mut data := ''
+	if cache_key.len > 0 {
+		data = redis.get(cache_key)!
+	}
 	// println("data: $data")
-	if data.len==0{
+	if data.len == 0 {
 		repo.load()!
-		data=redis.get(repo.addr.cache_key_status())!
-		if data==""{
-			panic("bug, redis should not be empty now.\n${repo.addr.cache_key_status()}")
+		data = redis.get(repo.addr.cache_key_status())!
+		if data == '' {
+			panic('bug, redis should not be empty now.\n${repo.addr.cache_key_status()}')
 		}
 	}
-	st:=json.decode(GitRepoStatus,data)!
+	st := json.decode(GitRepoStatus, data)!
 	repo.status_set(st)!
 	return st
 }
@@ -103,54 +100,55 @@ pub fn (repo GitRepo) path_relative() string {
 
 // pulls remote content in, will reset changes
 pub fn (mut repo GitRepo) pull_reset(args_ ActionArgs) ! {
-	mut args:=args_
-	if args.reload{
+	mut args := args_
+	if args.reload {
 		repo.load()!
-		args.reload=false
-	}	
+		args.reload = false
+	}
 	repo.remove_changes(args)!
 	repo.pull(args)!
 }
 
 [params]
-pub struct ActionArgs{
+pub struct ActionArgs {
 pub mut:
 	reload bool = true
-	msg string //only relevant for commit
+	msg    string // only relevant for commit
 }
 
-//commit the changes, message is needed, pull from remote, push to remote
+// commit the changes, message is needed, pull from remote, push to remote
 pub fn (mut repo GitRepo) commit_pull_push(args_ ActionArgs) ! {
-	mut args:=args_
-	if args.reload{
+	mut args := args_
+	if args.reload {
 		repo.load()!
-		args.reload=false
+		args.reload = false
 	}
 	repo.commit(args)!
 	repo.pull(args)!
 	repo.push(args)!
 }
 
-//commit the changes, message is needed, pull from remote
+// commit the changes, message is needed, pull from remote
 pub fn (mut repo GitRepo) commit_pull(args_ ActionArgs) ! {
-	mut args:=args_
-	if args.reload{
+	mut args := args_
+	if args.reload {
 		repo.load()!
-		args.reload=false
+		args.reload = false
 	}
 	repo.commit(args)!
 	repo.pull(args)!
 }
 
-
 // pulls remote content in, will fail if there are local changes
 pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
-	$if debug{println('   - PULL: ${repo.url_get(true)}')}
-	mut args:=args_
-	if args.reload{
+	$if debug {
+		println('   - PULL: ${repo.url_get(true)}')
+	}
+	mut args := args_
+	if args.reload {
 		repo.load()!
-		args.reload=false
-	}	
+		args.reload = false
+	}
 	st := repo.status()!
 	if st.need_commit {
 		return error('Cannot pull repo: ${repo.path.path} because there are changes in the dir.')
@@ -166,15 +164,15 @@ pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 }
 
 pub fn (mut repo GitRepo) commit(args_ ActionArgs) ! {
-	mut args:=args_
-	if args.reload{
+	mut args := args_
+	if args.reload {
 		repo.load()!
-		args.reload=false
-	}		
+		args.reload = false
+	}
 	st := repo.status()!
 	if st.need_commit {
-		if args.msg==""{
-			return error("Cannot commit, message is empty for ${repo}")
+		if args.msg == '' {
+			return error('Cannot commit, message is empty for ${repo}')
 		}
 		cmd := "
 		cd ${repo.path.path}
@@ -193,11 +191,11 @@ pub fn (mut repo GitRepo) commit(args_ ActionArgs) ! {
 
 // remove all changes of the repo, be careful
 pub fn (mut repo GitRepo) remove_changes(args_ ActionArgs) ! {
-	mut args:=args_
-	if args.reload{
+	mut args := args_
+	if args.reload {
 		repo.load()!
-		args.reload=false
-	}			
+		args.reload = false
+	}
 	st := repo.status()!
 	if st.need_commit {
 		println(' - remove change ${repo.path.path}')
@@ -221,14 +219,16 @@ pub fn (mut repo GitRepo) remove_changes(args_ ActionArgs) ! {
 }
 
 pub fn (mut repo GitRepo) push(args_ ActionArgs) ! {
-	mut args:=args_
-	if args.reload{
+	mut args := args_
+	if args.reload {
 		repo.load()!
-		args.reload=false
-	}		
-	$if debug{println('   - PUSH: ${repo.url_get(true)}')}
+		args.reload = false
+	}
+	$if debug {
+		println('   - PUSH: ${repo.url_get(true)}')
+	}
 	st := repo.status()!
-	if st.need_push {	
+	if st.need_push {
 		cmd := 'cd ${repo.path.path} && git push'
 		osal.execute_silent(cmd) or {
 			return error('Cannot push repo: ${repo.path.path}. Error was ${err}')
@@ -243,7 +243,7 @@ pub fn (mut repo GitRepo) branch_switch(branchname string) ! {
 	}
 	repo.load()!
 	st := repo.status()!
-	if st.need_commit || st.need_push  {
+	if st.need_commit || st.need_push {
 		return error('Cannot branch switch repo: ${repo.path.path} because there are changes in the dir.')
 	}
 	// Fetch repo before checkout, in case a new branch added.
@@ -254,7 +254,7 @@ pub fn (mut repo GitRepo) branch_switch(branchname string) ! {
 		return error('Cannot branch switch repo: ${repo.path.path}. Error was ${err} \n cmd: ${cmd}')
 	}
 	// println(cmd)
-	repo.pull(reload:true)!
+	repo.pull(reload: true)!
 }
 
 pub fn (mut repo GitRepo) fetch_all() ! {
@@ -268,11 +268,13 @@ pub fn (mut repo GitRepo) fetch_all() ! {
 
 // deletes git repository
 pub fn (mut repo GitRepo) delete() ! {
-	$if debug{println('   - DELETE: ${repo.url_get(true)}')}
+	$if debug {
+		println('   - DELETE: ${repo.url_get(true)}')
+	}
 	if !os.exists(repo.path.path) {
 		return
 	} else {
-		panic("implement")
+		panic('implement')
 	}
 	repo.cache_delete()!
 }

@@ -1,24 +1,26 @@
 module gittools
+
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.clients.redisclient
 import freeflowuniverse.crystallib.core.texttools
+
 [heap]
 pub struct GitStructure {
 	config   GitStructureConfig // configuration settings
 	rootpath pathlib.Path = pathlib.get('~/code') // path to root code directory
 pub mut:
-	repos  []&GitRepo // repositories in gitstructure
+	repos []&GitRepo // repositories in gitstructure
 }
 
 fn (gs GitStructure) cache_key() string {
 	return gitstructure_cache_key(gs.name())
 }
 
-fn (gs GitStructure) name()string  {
+fn (gs GitStructure) name() string {
 	return gs.config.name
 }
 
-//remove cache
+// remove cache
 fn (gs GitStructure) cache_reset() ! {
 	mut redis := redisclient.core_get()!
 	key_check := gs.cache_key()
@@ -28,9 +30,7 @@ fn (gs GitStructure) cache_reset() ! {
 	}
 }
 
-
-
-pub fn (mut gitstructure GitStructure) list(args ReposGetArgs)! {
+pub fn (mut gitstructure GitStructure) list(args ReposGetArgs) ! {
 	// texttools.print_clear()
 	println(' #### overview of repositories:')
 	println('')
@@ -38,14 +38,14 @@ pub fn (mut gitstructure GitStructure) list(args ReposGetArgs)! {
 	println('')
 }
 
-
-pub fn (mut gitstructure GitStructure) repo_from_path(path string)!GitRepo {
-	mut r:=GitRepo {
-		gs:&gitstructure
-		addr:GitAddr{gsconfig:gitstructure.config}
-		path:pathlib.get_dir(path,false)!
+pub fn (mut gitstructure GitStructure) repo_from_path(path string) !GitRepo {
+	mut r := GitRepo{
+		gs: &gitstructure
+		addr: GitAddr{
+			gsconfig: gitstructure.config
+		}
+		path: pathlib.get_dir(path, false)!
 	}
 	// r.load_from_path()!
 	return r
 }
-

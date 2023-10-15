@@ -10,10 +10,10 @@ import freeflowuniverse.crystallib.core.pathlib
 pub struct GitAddr {
 	gsconfig GitStructureConfig
 pub mut:
-	provider     string
-	account      string
-	name         string // is the name of the repository
-	branch       string
+	provider   string
+	account    string
+	name       string // is the name of the repository
+	branch     string
 	remote_url string
 }
 
@@ -93,15 +93,15 @@ pub fn (addr GitAddr) str() string {
 	return '${addr.provider}:${addr.account}/${addr.name}[${addr.branch}]'
 }
 
-//CACHE ARGS
+// CACHE ARGS
 
-fn (addr GitAddr) cache_key_status()string {
-	cache_key:=gitstructure_cache_key(addr.gsconfig.name)
-	return "${cache_key}:${addr.cache_key_provider_account_name()}"
+fn (addr GitAddr) cache_key_status() string {
+	cache_key := gitstructure_cache_key(addr.gsconfig.name)
+	return '${cache_key}:${addr.cache_key_provider_account_name()}'
 }
 
 fn (addr GitAddr) cache_key_path(path string) string {
-	cache_key:=gitstructure_cache_key(addr.gsconfig.name)
+	cache_key := gitstructure_cache_key(addr.gsconfig.name)
 	return '${cache_key}:${path}'
 }
 

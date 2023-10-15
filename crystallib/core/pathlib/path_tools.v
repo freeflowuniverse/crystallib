@@ -375,8 +375,8 @@ pub fn temp_write(args_ TMPWriteArgs) !string {
 			}
 		}
 		mut t := time.now().format_ss_milli().replace(' ', '-').replace('.', ':')
-		texthash:=md5.hexhash(args.text)
-		t+="_${texthash}"
+		texthash := md5.hexhash(args.text)
+		t += '_${texthash}'
 		mut tmppath := '${args.tmpdir}/execscripts/${t}.sh'
 		if args.name.len > 0 {
 			tmppath = '${args.tmpdir}/execscripts/${args.name}_${t}.sh'

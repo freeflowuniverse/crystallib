@@ -44,8 +44,8 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 	mut args_ := args
 	if args_.git_url.len > 0 {
 		// panic('fix git')
-		gittools.configure(name:"tree",root:args_.git_root)!
-		mut gs := gittools.get(name:"tree")!
+		gittools.configure(name: 'tree', root: args_.git_root)!
+		mut gs := gittools.get(name: 'tree')!
 		mut locator := gs.locator_new(args.git_url)!
 		gs.repo_get(
 			locator: locator

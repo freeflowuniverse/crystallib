@@ -13,8 +13,8 @@ pub mut:
 }
 
 // will use url to get git locator (is a pointer to a file, dir or part of file)
-pub fn (mut gs GitStructure) locator_new( url string) !GitLocator {
-	return locator_new(gs.config,url)!
+pub fn (mut gs GitStructure) locator_new(url string) !GitLocator {
+	return locator_new(gs.config, url)!
 }
 
 // will use url to get git locator (is a pointer to a file, dir or part of file)

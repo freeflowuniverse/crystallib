@@ -10,7 +10,7 @@ pub fn get_redis_url(url string) !RedisURL {
 	if !url.contains(':') {
 		return error('url doesnt contain port')
 	} else {
-		return RedisURL {
+		return RedisURL{
 			address: url.all_before_last(':')
 			port: url.all_after_last(':').u16()
 		}

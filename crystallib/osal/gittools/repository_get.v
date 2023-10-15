@@ -1,7 +1,5 @@
 module gittools
 
-
-
 import freeflowuniverse.crystallib.core.texttools
 
 [params]
@@ -11,7 +9,6 @@ pub mut:
 	pull    bool // if we want to pull when calling the repo
 	reset   bool // if we want to force a clean repo
 }
-
 
 // will get repo starting from url, if the repo does not exist, only then will pull
 // if pull is set on true, will then pull as well
@@ -42,16 +39,16 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !GitRepo {
 			}
 		} else {
 			return error('branch should have been known for ${r2.addr.remote_url}')
-		}	
+		}
 		r2
 	}
 	if args.reset {
 		println(' - remove git changes: ${r.path.path}')
-		r.remove_changes(reload:false)!
+		r.remove_changes(reload: false)!
 	}
 	if args.pull {
 		r.pull()!
-	}else{
+	} else {
 		r.status()!
 	}
 	return r
@@ -66,9 +63,9 @@ fn (mut gitstructure GitStructure) repo_get_internal(l GitLocator) !GitRepo {
 		return error('Found more than 1 repo with locator.\n${l}')
 	}
 	if res[0].addr.name != l.addr.name || res[0].addr.name != l.addr.name {
-		panic("bug")
+		panic('bug')
 	}
-	return res[0] or {panic("bug")}
+	return res[0] or { panic('bug') }
 }
 
 pub fn (mut gitstructure GitStructure) repo_exists(l GitLocator) !bool {
@@ -124,4 +121,3 @@ pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []GitRepo {
 
 	return res
 }
-

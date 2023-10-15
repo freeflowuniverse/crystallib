@@ -180,8 +180,7 @@ fn cmd_git_do_execute(cmd Command) ! {
 		}
 	}
 
-
-	//high level interface as done on gitstructure to execute on the cmds above
+	// high level interface as done on gitstructure to execute on the cmds above
 	gs.do(
 		filter: cmd.flags.get_string('filter') or { '' }
 		repo: repo

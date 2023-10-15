@@ -16,7 +16,7 @@ pub struct GlobalIdNewArgs {
 pub mut:
 	gid_str   string // rid.cid.oid format
 	gid_coord []int  // 3 coordinates first one is region
-	cid       string 
+	cid       string
 	rid       string // can be empty
 }
 
