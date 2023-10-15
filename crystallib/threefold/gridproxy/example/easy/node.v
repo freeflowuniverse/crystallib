@@ -1,6 +1,5 @@
 import freeflowuniverse.crystallib.threefold.gridproxy
 import freeflowuniverse.crystallib.threefold.gridproxy.model
-import json 
 fn main(){
 
 	// init gridproxy client on devnet with redis cash
@@ -34,8 +33,8 @@ fn main(){
 	// using resource filter
 
 	resources := model.ResourceFilter{
-		free_sru_gb: 0
-		free_hru_gb:0
+		free_sru_gb: 1 //gb
+		free_hru_gb:0 
 		free_mru_gb: 0
 		free_ips:0
 	}
@@ -51,7 +50,7 @@ fn main(){
 	// to get the available nodes (Up), that have the provided resources
 	has_resources_filter.status ="up"
 	available_nodes :=  gp_client.get_nodes(has_resources_filter)!
-	// println(available_nodes)
+	println(available_nodes)
 
 	return
 
