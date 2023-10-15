@@ -57,7 +57,7 @@ fn cmd_3script_execute(cmd Command) ! {
 	coderoot := cmd.flags.get_string('coderoot') or { '' }
 	mut path := cmd.flags.get_string('path') or { '' }
 
-	mut gs := gittools.get(root: coderoot, create: true) or {
+	mut gs := gittools.get(coderoot: coderoot) or {
 		return error("Could not find gittools on '${coderoot}'\n${err}")
 	}
 

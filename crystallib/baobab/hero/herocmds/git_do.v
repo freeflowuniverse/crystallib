@@ -161,7 +161,7 @@ pub fn cmd_git_do(mut cmdroot Command) {
 fn cmd_git_do_execute(cmd Command) ! {
 	coderoot := cmd.flags.get_string('coderoot') or { '' }
 
-	mut gs := gittools.get(root: coderoot, create: true) or {
+	mut gs := gittools.get(coderoot: coderoot) or {
 		return error("Could not find gittools on '${coderoot}'\n${err}")
 	}
 
