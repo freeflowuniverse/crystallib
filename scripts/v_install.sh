@@ -81,13 +81,13 @@ function crystal_lib_get {
     then
         pushd $DIR_CODE/github/freeflowuniverse/crystallib 2>&1 >> /dev/null
         git pull
-        git checkout $BUILDERBRANCH
+        git checkout $CLBRANCH
         popd 2>&1 >> /dev/null
     else
         pushd $DIR_CODE/github/freeflowuniverse 2>&1 >> /dev/null
         git clone --depth 1 --no-single-branch git@github.com:freeflowuniverse/crystallib.git
         cd crystallib
-        git checkout $BUILDERBRANCH
+        git checkout $CLBRANCH
         popd 2>&1 >> /dev/null
     fi
     pushd $DIR_CODE/github/freeflowuniverse/crystallib
@@ -254,8 +254,6 @@ fi
 bash -e $OURHOME/env.sh
 source $OURHOME/env.sh
 
-github_keyscan
-
 if [[ -z "${RESET}" ]]; then
   echo
 else
@@ -284,7 +282,6 @@ if ! [[ -f "$HOME/.vmodules/done_crystallib" ]]; then
     # gridbuilder_get
     # docker_install
     # buildx_install
-
 
     touch "$HOME/.vmodules/done_crystallib"
 fi
