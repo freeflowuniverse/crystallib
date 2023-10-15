@@ -153,21 +153,32 @@ pub fn git_get_action(action actions.Action) ! {
 // delete bool (remove the repo) .
 // script bool (run non interactive) .
 // root string //the location of coderoot if its another one .
+// cachereset
 pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 	mut args := args_
+	println(args)
 
 	mut ui := gui.new()!
 
-	for g in gs.repos_get(
-		filter: args.filter
-		name: args.repo
-		account: args.account
-		provider: args.provider
-	) {
-		if args.cachereset {
-			g.refresh(reload: true)!
+	if args.filter=="" && args.cachereset{
+		println("-- cache reset for all repo's")
+		cachereset()!
+		gs.load()!
+		if true{panic("sdsdsd")}
+	}else{
+		for g in gs.repos_get(
+			filter: args.filter
+			name: args.repo
+			account: args.account
+			provider: args.provider
+		) {
+			if args.cachereset {
+				println("-- cache reset of ${g.addr.name}")
+				g.refresh(reload: true)!
+			}
 		}
 	}
+
 
 	if args.print {
 		gs.repos_print(
@@ -196,7 +207,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 		if g.needpush()! {
 			need_push = true
 		}
-		// println(" ---- ${g.addr.name} $need_commit $need_pull  $need_push")		
+		println(" --- git_do ${g.addr.name} $need_commit $need_pull  $need_push")		
 	}
 
 	if args.print {

@@ -4,11 +4,14 @@ import os
 import vlang.testing
 import v.pref
 
+//TODO: is kind of complicated, build .sh, then go to a .v script, can all be in 1 cmd in hero
+
 // ln -s ../../code/utils/v/cmd/tools/modules/testing .
 
 const vroot = os.dir(os.real_path(os.getenv_opt('VEXE') or { @VEXE }))
 
 // build as a project folder
+//TODO: shouldn't this be more dynamic?
 const efolders = [
 	'examples/viewer',
 	'examples/vweb_orm_jwt',
@@ -18,6 +21,8 @@ const efolders = [
 pub fn normalised_vroot_path(path string) string {
 	return os.real_path(os.join_path_single(vroot, path)).replace('\\', '/')
 }
+
+// TODO: should be part of hero cmds
 
 fn main() {
 	args_string := os.args[1..].join(' ')
@@ -54,6 +59,7 @@ pub fn v_build_failing_skipped(zargs string, folder string, oskipped []string, c
 pub fn prepare_test_session(zargs string, folder string, oskipped []string, main_label string) testing.TestSession {
 	vexe := pref.vexe_path()
 	file_dir := os.dir(os.dir(@FILE))
+	// TODO: cannt work timur folder
 	parent_dir := '/Users/timurgordon/code/github/freeflowuniverse/crystallib'
 	// testing.vlib_should_be_present(parent_dir)
 	vargs := zargs.replace(vexe, '')

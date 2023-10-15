@@ -11,40 +11,98 @@ pub struct GitRepo {
 mut:
 	gs &GitStructure [skip; str: skip]
 pub mut:
-	state GitStatus
+
 	addr  GitAddr
 	path  pathlib.Path
 }
 
-pub enum GitStatus {
-	unknown
-	changes
-	ok
-	error
-}
 
-[params]
-pub struct RefreshArgs {
+pub struct GitRepoStatus{
 pub mut:
-	reload bool
+	need_commit bool
+	need_push bool
+	need pull bool
+	branch string
+	remote_url string
 }
 
-// get the state from the disk
-pub fn (repo GitRepo) refresh(args RefreshArgs) ! {
-	ds := repo_disk_status(path: repo.path.path, reload: args.reload, reload_status: true)!
-
-	if ds.url != repo.addr.url_original {
-		return error("url on repo:'${repo.addr.url_original}' not same as url on disk: ${ds.url}")
-	}
-
-	if ds.branch != repo.addr.branch {
-		return error("branch on repo:'${repo.addr.url_original}' not same as branch on disk: ${ds.url}")
-		// TODO: need to implement code to deal with this situation
-	}
+fn (repo GitRepo) cache_key() {
+	return 'git:cache:${repo.gs.name}__${repo.addr.cachekey()}:'
 }
 
-pub fn (repo GitRepo) state_delete() ! {
-	repo_disk_status_delete(path: repo.path.path)!
+// load state from disk
+pub fn (repo GitRepo) load() ! {
+	print(" - git repo load: ${repo.cache_key()}")
+
+	pre := 
+	path := args.path
+	mut redis := redisclient.core_get()!
+
+	mut st:=GitRepoStatus{}
+
+	cmd := 'cd ${path} && git config --get remote.origin.url'
+	// println(cmd)
+	st.url = osal.execute_silent(cmd) or {
+		return error('Cannot get remote origin url: ${path}. Error was ${err}')
+	}
+	st.url = st.url.trim(' \n')
+
+	cmd2 := 'cd ${path} && git rev-parse --abbrev-ref HEAD'
+	// println(cmd2)
+	st.branch = osal.execute_silent(cmd2) or {
+		return error('Cannot get branch: ${path}. Error was ${err}')
+	}
+	st.branch = st.branch.trim(' \n')
+
+
+	cmd3 := 'cd ${path} &&  git status'
+	mut status_str := osal.execute_silent(cmd3) or {
+		return error('Cannot get status for repo: ${path}. Error was ${err}')
+	}
+	status_str=status_str.to_lower()
+
+	//check if commit is needed
+	check := ['untracked files', 'changes not staged for commit','to be committed']
+	for tocheck in check {
+		if status_str.to_lower().contains(tocheck) {
+			st.need_commit=true
+		}
+	}
+
+	//check if push is needed
+	check2 := ['to publish your local commits', 'your branch is ahead of']
+	for tocheck in check2 {
+		if status_str.to_lower().contains(tocheck) {
+			st.need_push=true
+		}
+	}
+
+	//check if pull is needed
+	check3 := ['branch is behind']
+	for tocheck in check3 {
+		if status_str.to_lower().contains(tocheck) {
+			st.need_pull=true
+		}
+	}
+
+	jsondata:=json.encode(st)!
+	redis.set(repo.cache_key(), jsondata)!
+	redis.expire(repo.cache_key(), 3600 * 24)!
+
+	println(" ok")
+}
+
+pub fn (repo GitRepo) status() GitRepoStatus! {
+	mut data:=redis.get(repo.cache_key())!
+	if data.len==0{
+		repo.load()!
+		data=redis.get(repo.cache_key())!
+		if data==""{
+			panic("bug, redis should not be empty now")
+		}
+	}
+	status:=json.decode(GitRepoStatus,st)!
+	return status
 }
 
 // relative path inside the gitstructure, pointing to the repo
@@ -53,60 +111,45 @@ pub fn (repo GitRepo) path_relative() string {
 	return repo.path.path_relative(repo.gs.rootpath.path) or { panic('couldnt get relative path') } // TODO: check if works well
 }
 
-pub fn (repo GitRepo) changes(args RefreshArgs) !bool {
-	if repo.needcommit()! {
-		return true
-	}
-	return false
-}
-
-pub fn (repo GitRepo) needcommit(args RefreshArgs) !bool {
-	check := ['untracked files', 'changes not staged for commit']
-	path := repo.path.path
-	ds := repo_disk_status(path: path)!
-	for tocheck in check {
-		if ds.status.to_lower().contains(tocheck.to_lower()) {
-			return true
-		}
-	}
-	return false
-}
-
-pub fn (repo GitRepo) needpull(args RefreshArgs) !bool {
-	check := ['branch is behind']
-	path := repo.path.path
-	ds := repo_disk_status(path: path)!
-	for tocheck in check {
-		if ds.status.to_lower().contains(tocheck.to_lower()) {
-			return true
-		}
-	}
-	return false
-}
-
-pub fn (repo GitRepo) needpush(args RefreshArgs) !bool {
-	check := ['to publish your local commits', 'your branch is ahead of']
-	path := repo.path.path
-	ds := repo_disk_status(path: path)!
-	for tocheck in check {
-		if ds.status.to_lower().contains(tocheck.to_lower()) {
-			return true
-		}
-	}
-	return false
-}
-
 // pulls remote content in, will reset changes
-pub fn (repo GitRepo) pull_reset() ! {
+pub fn (repo GitRepo) pull_reset(args_ ActionArgs) ! {
+	mut args:=args_
+	if args.reload{
+		repo.reload()!
+		args.reload=false
+	}	
 	repo.remove_changes()!
 	repo.pull()!
 }
 
+[params]
+pub struct ActionArgs{
+pub mut:
+	reload bool = true
+	msg string //only relevant for commit
+}
+
+//commit the changes, message is needed, pull from remote, push to remote
+pub fn (repo GitRepo) commit_pull_push(args_ ActionArgs) ! {
+	mut args:=args_
+	if args.reload{
+		repo.reload()!
+		args.reload=false
+	}
+	repo.commit(args)!
+	repo.pull(args)!
+	repo.push(args)!
+}
+
 // pulls remote content in, will fail if there are local changes
-pub fn (repo GitRepo) pull() ! {
+pub fn (repo GitRepo) pull(args_ ActionArgs) ! {
 	println('   - PULL: ${repo.url_get(true)}')
-	changes := repo.changes()!
-	if changes {
+	if reload{
+
+	}
+	repo.load()! //first load status again
+	st := repo.status()!
+	if st.need_pull {
 		return error('Cannot pull repo: ${repo.path.path} because there are changes in the dir.')
 	}
 	cmd2 := 'cd ${repo.path.path} && git pull'
@@ -114,14 +157,12 @@ pub fn (repo GitRepo) pull() ! {
 		println(' GIT PULL FAILED: ${cmd2}')
 		return error('Cannot pull repo: ${repo.path}. Error was ${err}')
 	}
-	repo.refresh()!
+	repo.load()!
 }
 
-pub fn (repo GitRepo) commit(msg string) ! {
-	change := repo.changes() or {
-		return error('cannot detect if there are changes on repo.\n${err}')
-	}
-	if change {
+pub fn (repo GitRepo) commit(args_ ActionArgs) ! {
+	st := repo.status()!
+	if st.need_commit {
 		cmd := "
 		cd ${repo.path.path}
 		set +e
@@ -134,15 +175,13 @@ pub fn (repo GitRepo) commit(msg string) ! {
 	} else {
 		println('     > no change')
 	}
-	repo.refresh()!
+	repo.load()!
 }
 
 // remove all changes of the repo, be careful
 pub fn (repo GitRepo) remove_changes() ! {
-	change := repo.changes() or {
-		return error('cannot detect if there are changes on repo.\n${err}')
-	}
-	if change {
+	st := repo.status()!
+	if st.need_commit {
 		println(' - remove change ${repo.path.path}')
 		cmd := '
 		cd ${repo.path.path}
@@ -158,23 +197,21 @@ pub fn (repo GitRepo) remove_changes() ! {
 			return error('Cannot commit repo: ${repo.path.path}. Error was ${err}')
 		}
 	} else {
-		println('     > no change  ${repo.path.path}')
+		println('     > nothing to remove, no changes  ${repo.path.path}')
 	}
-	repo.refresh()!
+	repo.load()!
 }
 
 pub fn (repo GitRepo) push() ! {
 	println('   - PUSH: ${repo.url_get(true)}')
-	cmd := 'cd ${repo.path.path} && git push'
-	osal.execute_silent(cmd) or {
-		return error('Cannot push repo: ${repo.path.path}. Error was ${err}')
+	st := repo.status()!
+	if st.need_push {	
+		cmd := 'cd ${repo.path.path} && git push'
+		osal.execute_silent(cmd) or {
+			return error('Cannot push repo: ${repo.path.path}. Error was ${err}')
+		}
 	}
-	repo.refresh()!
-}
-
-pub fn (repo GitRepo) branch_get() !string {
-	repo.refresh(reload: true)!
-	return repo.addr.branch
+	repo.load()!
 }
 
 pub fn (repo GitRepo) branch_switch(branchname string) ! {

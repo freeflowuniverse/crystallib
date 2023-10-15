@@ -97,3 +97,8 @@ pub fn (addr GitAddr) str() string {
 	}
 	return '${addr.provider}:${addr.account}/${addr.name}[${addr.branch}]'
 }
+
+fn (addr GitAddr) cachekey() string {
+	addr.check()
+	return '${addr.provider}__${addr.account}__${addr.name}'
+}

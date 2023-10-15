@@ -20,3 +20,5 @@ cp ~/Downloads/hero ~/code/github/freeflowuniverse/freeflow_binary/$ASSET/
 
 hero git_do -f freeflow_binary -cpp -m "new release hero" -script
 
+echo " ** HERO COMPILE PUSH OK"
+

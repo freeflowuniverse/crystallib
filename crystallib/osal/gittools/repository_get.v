@@ -29,52 +29,6 @@ mut:
 	status string
 }
 
-// load the info from dis
-fn repo_disk_status(args DiskStatusArgs) !DiskStatus {
-	if args.path.len < 3 {
-		panic('path cannot be smaller than 3.\n${args}')
-	}
-	pre := 'git:cache:${args.path}'
-	path := args.path
-	mut redis := redisclient.core_get()!
-	mut ds := DiskStatus{
-		url: redis.get('${pre}:url') or { '' }
-		branch: redis.get('${pre}:branch') or { '' }
-		status: redis.get('${pre}:status') or { '' }
-	}
-
-	if args.reload || ds.url == '' {
-		cmd := 'cd ${path} && git config --get remote.origin.url'
-		ds.url = osal.execute_silent(cmd) or {
-			return error('Cannot get remote origin url: ${path}. Error was ${err}')
-		}
-		ds.url = ds.url.trim(' \n')
-		redis.set('${pre}:url', ds.url) or {}
-		redis.expire('${pre}:url', 3600 * 20)!
-	}
-
-	if args.reload || ds.branch == '' {
-		cmd2 := 'cd ${path} && git rev-parse --abbrev-ref HEAD'
-		ds.branch = osal.execute_silent(cmd2) or {
-			return error('Cannot get branch: ${path}. Error was ${err}')
-		}
-		ds.branch = ds.branch.trim(' \n')
-		redis.set('${pre}:branch', ds.branch) or {}
-		redis.expire('${pre}:branch', 3600 * 20)!
-	}
-
-	if args.reload || args.reload_status || ds.status == '' {
-		println(' - get status for: ${path}')
-		cmd3 := 'cd ${path} &&  git status'
-		ds.status = osal.execute_silent(cmd3) or {
-			return error('Cannot get status for repo: ${path}. Error was ${err}')
-		}
-		redis.set('${pre}:status', ds.status) or {}
-		redis.expire('${pre}:status', 3600 * 20)!
-	}
-
-	return ds
-}
 
 fn repo_disk_status_delete(args DiskStatusArgs) ! {
 	pre := 'git:cache:${args.path}:*'

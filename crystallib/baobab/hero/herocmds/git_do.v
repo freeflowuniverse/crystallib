@@ -19,6 +19,7 @@ import os
 // delete bool (remove the repo)
 // script bool (run non interactive)
 // coderoot string //the location of coderoot if its another one
+// cachereset, make sure cache empty
 pub fn cmd_git_do(mut cmdroot Command) {
 	mut cmd_run := Command{
 		name: 'git_do'
@@ -179,6 +180,8 @@ fn cmd_git_do_execute(cmd Command) ! {
 		}
 	}
 
+
+	//high level interface as done on gitstructure to execute on the cmds above
 	gs.do(
 		filter: cmd.flags.get_string('filter') or { '' }
 		repo: repo

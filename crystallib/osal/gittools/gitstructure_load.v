@@ -62,20 +62,3 @@ fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []strin
 	}
 }
 
-pub fn reload(args_ GitStructureGetArgs) !GitStructure {
-	args := GitStructureGetArgs{
-		...args_
-		name: if args_.name == '' {
-			'default'
-		} else {
-			args_.name
-		}
-	}
-
-	lock instances {
-		_ := get(name: args.name) or { return error('erro') }
-		instances[args.name].load()!
-	}
-
-	return error('Canot find gitstructure with name ${args.name} to reload.')
-}
