@@ -60,3 +60,9 @@ pub fn (mut r Runner) str() string {
 	}
 	return out
 }
+
+pub fn (mut r Runner) run() ! {
+	for mut session in r.sessions {
+		session.run()!
+	}
+}

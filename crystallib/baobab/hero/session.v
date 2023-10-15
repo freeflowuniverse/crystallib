@@ -1,7 +1,7 @@
 module hero
 
 import freeflowuniverse.crystallib.baobab.actions
-import freeflowuniverse.crystallib.baobab.actors.publisher
+
 import freeflowuniverse.crystallib.osal.downloader
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
@@ -246,17 +246,10 @@ pub fn (mut s Session) run(args RunArgs) ! {
 			actionsprocessed3 << action2
 		}
 	}
-
-	publisher.play(
-		actions: actionsprocessed3
-	)!
-
-	for action in actionsprocessed3 {
-		if action.actor == 'gittools' {
-			gittools.action(action)!
-		}
-	}
+	
 	s.actions = actionsprocessed3
+
+	s.actions_do()!
 }
 
 pub fn (mut s Session) var_set(name string, value string) {

@@ -1,0 +1,3 @@
+# Strawberry
+
+Strawberries are red
