@@ -7,34 +7,25 @@ pub struct GitStructure {
 	config   GitStructureConfig // configuration settings
 	rootpath pathlib.Path = pathlib.get('~/code') // path to root code directory
 pub mut:
-	name   string = 'default' // key indexing global gitstructure
 	repos  []&GitRepo // repositories in gitstructure
 }
 
+fn (gs GitStructure) cache_key() string {
+	return gitstructure_cache_key(gs.name())
+}
+
+fn (gs GitStructure) name()string  {
+	return gs.config.name
+}
+
 //remove cache
-fn (gs GitStructure) cachereset() ! {
+fn (gs GitStructure) cache_reset() ! {
 	mut redis := redisclient.core_get()!
-	key_check := 'git:cache:*'
+	key_check := gs.cache_key()
 	keys := redis.keys(key_check)!
 	for key in keys {
-		// println(key)
 		redis.del(key)!
 	}
-}
-
-//internal function to be executed in thread
-fn repo_thread_refresh(r GitRepo)  {
-	r.load() or {panic(err)}
-}
-
-pub fn (gs GitStructure) reload() ! {
-	gs.cachereset()!
-	mut threads := []thread{}
-	for r in instances[gs.name].repos {
-		threads<<spawn repo_thread_refresh(r ) 
-	}
-	threads.wait()
-	println(' - all repo refresh jobs finished.')
 }
 
 
@@ -51,10 +42,10 @@ pub fn (mut gitstructure GitStructure) list(args ReposGetArgs)! {
 pub fn (mut gitstructure GitStructure) repo_from_path(path string)!GitRepo {
 	mut r:=GitRepo {
 		gs:&gitstructure
-		addr:GitAddr{gs:&gitstructure}
+		addr:GitAddr{gsconfig:gitstructure.config}
 		path:pathlib.get_dir(path,false)!
 	}
-	r.load_from_path()!
+	// r.load_from_path()!
 	return r
 }
 

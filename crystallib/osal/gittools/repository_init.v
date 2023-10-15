@@ -2,7 +2,6 @@ module gittools
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.tools.sshagent
-import freeflowuniverse.crystallib.clients.redisclient
 
 // this will clone the repo if it doesn't exist yet
 fn (mut repo GitRepo) load_from_url() ! {
@@ -42,6 +41,7 @@ fn (mut repo GitRepo) load_from_url() ! {
 			println(' GIT FAILED: ${cmd}')
 			return error('Cannot pull repo: ${repo.addr.path()}. Error was ${err}')
 		}
+		repo.load()!
 	}
 
 }
@@ -51,23 +51,9 @@ fn (mut repo GitRepo) load_from_url() ! {
 //path needs to exit, load all from disk
 fn (mut repo GitRepo) load_from_path() ! {
 
-	if !repo.path.exists(){
-		return error("cannot load from path, doesn't exist for ${repo.path}")
-	}
+	$if debug{println(" - load from path: ${repo.path.path}")}
 
-	mut redis := redisclient.core_get()!
-	mut urlfromcache:=redis.get(repo.cache_key_path())!
-	if urlfromcache==""{
-		//we don't know it means we need to fetch if from the filesystem
-		st:=repo.load()!
-		redis.set(repo.cache_key_path(),st.remote_url)!
-		redis.expire(repo.cache_key_path(), 3600 * 24)!
-		urlfromcache=redis.get(repo.cache_key_path()) or {panic("bug")}
-	}
-
-	locator:=repo.gs.locator_new(urlfromcache)!
-	repo.addr=locator.addr
-
+	repo.status()!
 
 }
 

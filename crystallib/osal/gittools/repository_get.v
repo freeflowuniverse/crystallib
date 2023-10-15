@@ -32,33 +32,28 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !GitRepo {
 			path: p
 		}
 		r2.load_from_url()!
-
 		if r2.addr.branch != '' {
 			st := r2.status()!
 			mut branchname := st.branch
-			// println( " - branch detected: $branchname, branch on repo obj:'$repo.addr.branch'")
+			// println( " - branch detected: $branchname, branch on repo obj:'$r2.addr.branch'")
 			if st.branch != r2.addr.branch && args.pull {
-				println(' - branch switch ${branchname} -> ${r2.addr.branch} for ${r2.addr.url_original}')
+				println(' - branch switch ${branchname} -> ${r2.addr.branch} for ${r2.addr.remote_url}')
 				r2.branch_switch(r2.addr.branch)!
 			}
 		} else {
-			return error('branch should have been known for ${r2}')
+			return error('branch should have been known for ${r2.addr.remote_url}')
 		}	
-
 		r2
 	}
-
 	if args.reset {
 		println(' - remove git changes: ${r.path.path}')
 		r.remove_changes(reload:false)!
 	}
-
 	if args.pull {
 		r.pull()!
 	}else{
-		r.load()!
+		r.status()!
 	}
-
 	return r
 }
 

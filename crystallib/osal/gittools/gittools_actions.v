@@ -8,7 +8,7 @@ import os
 
 pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs)! {
 	mut r := [][]string{}
-	for g in gitstructure.repos_get(args) {
+	for mut g in gitstructure.repos_get(args) {
 		st:=g.status()!
 		pr := g.path.shortpath()
 		mut s := ''
@@ -160,11 +160,11 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 
 	if args.filter=="" && args.cachereset{
 		println("-- cache reset for all repo's")
-		cachereset()!
+		cache_delete(gs.name())!
 		gs.load()!
-		if true{panic("sdsdsd")}
+		if true{panic("cache reset for all repo")}
 	}else{
-		for g in gs.repos_get(
+		for mut g in gs.repos_get(
 			filter: args.filter
 			name: args.repo
 			account: args.account
@@ -190,7 +190,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 	mut need_commit := false
 	mut need_pull := false
 	mut need_push := false
-	for g in gs.repos_get(
+	for mut g in gs.repos_get(
 		filter: args.filter
 		name: args.repo
 		account: args.account
@@ -248,7 +248,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 
 	mut changed := false
 
-	for g in gs.repos_get(
+	for mut g in gs.repos_get(
 		filter: args.filter
 		name: args.repo
 		account: args.account

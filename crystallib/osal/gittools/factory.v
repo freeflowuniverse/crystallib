@@ -21,24 +21,49 @@ pub mut:
 	log         bool   // means we log the git statements
 }
 
-fn cache_key(name string)string {
-	return 'git:cache:${name}}:'
-}
-
-fn cache_delete(name string)! {
-	mut redis := redisclient.core_get()!
-	redis.del(cache_key(name))!
-}
-
 pub fn cachereset() ! {
 	mut redis := redisclient.core_get()!
 	key_check := 'git:cache:*'
 	keys := redis.keys(key_check)!
 	for key in keys {
+		redis.del(key)!
+	}
+}
+
+pub fn configreset() ! {
+	mut redis := redisclient.core_get()!
+	key_check := 'git:config:*'
+	keys := redis.keys(key_check)!
+	for key in keys {
+		redis.del(key)!
+	}
+}
+
+//reset all caches and configs, for all git repo's .
+//can't harm, will just reload everything
+pub fn reset() ! {
+	cachereset()!
+	configreset()!
+}
+
+
+fn cache_delete(name string) ! {
+	mut redis := redisclient.core_get()!
+	keys := redis.keys(gitstructure_cache_key(name))!
+	for key in keys {
 		// println(key)
 		redis.del(key)!
 	}
 }
+
+fn gitstructure_cache_key(name string) string {
+	return 'git:cache:${name}'
+}
+
+fn gitstructure_config_key(name string) string {
+	return 'git:config:${name}'
+}
+
 
 //configure the gitstructure .
 // .
@@ -52,10 +77,9 @@ pub fn cachereset() ! {
 // - MULTIBRANCH .
 // - DIR_CODE , default: ${os.home_dir()}/code/ .
 pub fn configure(config_ GitStructureConfig) ! {
-	cache_delete(config_.name)!
 	datajson:=json.encode(config_)
 	mut redis := redisclient.core_get()!
-	redis.set(cache_key(config_.name),datajson)!
+	redis.set(gitstructure_config_key(config_.name),datajson)!
 }
 
 
@@ -79,8 +103,9 @@ pub fn get(args_ GitStructureGetArgs) !GitStructure {
 			args.name = md5.hexhash(args.coderoot)
 		}
 	}
+	println("GET GS:\n$args")
 	for key, i in instances {
-		if i.name == args.name {
+		if i.name() == args.name {
 			rlock instances {
 				mut gs:= instances[key]
 				if args.reload{
@@ -91,25 +116,25 @@ pub fn get(args_ GitStructureGetArgs) !GitStructure {
 		}
 	}		
 	mut redis := redisclient.core_get()!
-	mut datajson:=redis.get(cache_key(args.name))!	
+	mut datajson:=redis.get(gitstructure_config_key(args.name))!	
 	if datajson==""{
 		if args.name=="default"{
 			//is the only one we can do by default
 			configure()!
-			datajson=redis.get(cache_key(args.name))!	
+			datajson=redis.get(gitstructure_config_key(args.name))!	
 			if datajson==""{
 				panic("bug")
 			}
 		} else if args.name=="tmp"{
 			//is the only one we can do by default
 			configure(root:"/tmp/code",name:args.name)!
-			datajson=redis.get(cache_key(args.name))!	
+			datajson=redis.get(gitstructure_config_key(args.name))!	
 			if datajson==""{
 				panic("bug")
 			}
 		} else if args.coderoot.len>0{
 			configure(root:args.coderoot,name:args.name)!
-			datajson=redis.get(cache_key(args.name))!	
+			datajson=redis.get(gitstructure_config_key(args.name))!	
 			if datajson==""{
 				panic("bug")
 			}			
@@ -129,7 +154,7 @@ pub mut:
 	// branch            string
 	pull              bool   // will pull if this is set
 	reset             bool   // this means will pull and reset all changes
-	reload			  bool=true //reload the cache
+	reload			  bool //reload the cache
 }
 
 // will get repo starting from url, if the repo does not exist, only then will pull .
@@ -143,17 +168,10 @@ pub mut:
 // # to specify a branch and a folder in the branch
 // https://github.com/threefoldtech/tfgrid-sdk-ts/tree/development/docs
 // ```
-pub fn code_get(args_ CodeGetFromUrlArgs) !string {
-	mut args:=args_
-	if args.coderoot.len>0{
-		if args.gitstructure_name=="default" || args.gitstructure_name=="" {			
-			args.gitstructure_name = md5.hexhash(args.coderoot)
-		}
-		configure(name: args.gitstructure_name,root:args.coderoot)!
-	}
-	mut gs := get(name: args.gitstructure_name)!
-	mut locator := gs.locator_new(args.url)!
-	g := gs.repo_get(locator: locator)!
+pub fn code_get(args CodeGetFromUrlArgs) !string {
+	mut gs := get(name:args.gitstructure_name,coderoot:args.coderoot)!
+	mut locator := gs.locator_new(args.url)!	
+	mut g := gs.repo_get(locator: locator)!
 	if args.reload{
 		g.load()!
 	}
@@ -171,7 +189,6 @@ pub fn code_get(args_ CodeGetFromUrlArgs) !string {
 // - DIR_CODE , default: ${os.home_dir()}/code/ .
 fn new(config_ GitStructureConfig) !GitStructure {
 	mut config:=config_
-	cache_delete(config.name)!
 	if config.root == ""{
 		root := if 'DIR_CODE' in os.environ() {
 			os.environ()['DIR_CODE'] + '/'
@@ -187,7 +204,8 @@ fn new(config_ GitStructureConfig) !GitStructure {
 
 	mut gs := GitStructure{
 		config: config
-		rootpath: pathlib.get_dir(config.root, true) or { panic('this should never happen') }
+		rootpath: pathlib.get_dir(config.root, true) or { panic('this should never happen') 
+		}
 	}
 
 	if os.exists(gs.config.root) {
