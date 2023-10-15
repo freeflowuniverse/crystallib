@@ -6,9 +6,6 @@ import freeflowuniverse.crystallib.core.pathlib
 // the factory for getting the gitstructure
 // git is checked uderneith $/code
 fn (mut gitstructure GitStructure) load() ! {
-	if gitstructure.status == GitStructureStatus.loaded {
-		return
-	}
 
 	gitstructure.repos.clear()
 
@@ -21,7 +18,6 @@ fn (mut gitstructure GitStructure) load() ! {
 	}
 
 	gitstructure.load_recursive(git_path.path, mut done)!
-	gitstructure.status = GitStructureStatus.loaded
 }
 
 fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []string) ! {

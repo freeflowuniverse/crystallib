@@ -25,9 +25,8 @@ mut:
 
 [heap]
 pub struct Redis {
-mut:
-	current int
-pub mut:
+pub:
+	// current int
 	connection_nr []int // is the position in the global
 }
 
@@ -55,15 +54,15 @@ pub enum KeyType {
 //   localhost:6379
 //   /tmp/redis-default.sock
 pub fn new(addrs []string) !Redis {
-	mut r := Redis{}
+	mut connection_nrs:=[]int{}
 	lock redis_connections {
-		// toadd:=[]string{}
+		// toadd:=[]string{}		
 		for addr in addrs {
 			mut found := false
 			mut addr_nr := 0
 			for conn in redis_connections {
 				if conn.addr == addr {
-					r.connection_nr << addr_nr // remember this connection nr
+					connection_nrs <<addr_nr // remember this connection nr
 					found = true
 					break
 				}
@@ -77,10 +76,11 @@ pub fn new(addrs []string) !Redis {
 					addr: addr
 				}
 				redis_connections << ri
-				r.connection_nr << redis_connections.len - 1
+				connection_nrs << redis_connections.len - 1
 			}
 		}
 	}
+	r := Redis{connection_nr:connection_nrs}
 	return r
 }
 

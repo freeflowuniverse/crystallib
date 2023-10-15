@@ -4,6 +4,8 @@ import os
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.tools.sshagent
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.clients.redisclient
+import json
 
 [heap]
 pub struct GitRepo {
@@ -21,31 +23,36 @@ pub struct GitRepoStatus{
 pub mut:
 	need_commit bool
 	need_push bool
-	need pull bool
+	need_pull bool
 	branch string
 	remote_url string
 }
 
-fn (repo GitRepo) cache_key() {
+fn (repo GitRepo) cache_key()string {
 	return 'git:cache:${repo.gs.name}__${repo.addr.cachekey()}:'
 }
 
-// load state from disk
-pub fn (repo GitRepo) load() ! {
+fn (repo GitRepo) cache_delete()! {
+	mut redis := redisclient.core_get()!
+	redis.del(repo.cache_key())!
+}
+
+
+// load state from disk and put to cache
+pub fn (repo GitRepo) load() !GitRepoStatus {
 	print(" - git repo load: ${repo.cache_key()}")
 
-	pre := 
-	path := args.path
+	path := repo.path.path
 	mut redis := redisclient.core_get()!
 
 	mut st:=GitRepoStatus{}
 
 	cmd := 'cd ${path} && git config --get remote.origin.url'
 	// println(cmd)
-	st.url = osal.execute_silent(cmd) or {
+	st.remote_url = osal.execute_silent(cmd) or {
 		return error('Cannot get remote origin url: ${path}. Error was ${err}')
 	}
-	st.url = st.url.trim(' \n')
+	st.remote_url = st.remote_url.trim(' \n')
 
 	cmd2 := 'cd ${path} && git rev-parse --abbrev-ref HEAD'
 	// println(cmd2)
@@ -85,29 +92,31 @@ pub fn (repo GitRepo) load() ! {
 		}
 	}
 
-	jsondata:=json.encode(st)!
+	jsondata:=json.encode(st)
 	redis.set(repo.cache_key(), jsondata)!
 	redis.expire(repo.cache_key(), 3600 * 24)!
 
 	println(" ok")
+	return st
 }
 
-pub fn (repo GitRepo) status() GitRepoStatus! {
+
+pub fn (repo GitRepo) status() !GitRepoStatus {
+	mut redis := redisclient.core_get()!
 	mut data:=redis.get(repo.cache_key())!
 	if data.len==0{
 		repo.load()!
 		data=redis.get(repo.cache_key())!
 		if data==""{
-			panic("bug, redis should not be empty now")
+			panic("bug, redis should not be empty now.\n${repo.cache_key()}")
 		}
 	}
-	status:=json.decode(GitRepoStatus,st)!
+	status:=json.decode(GitRepoStatus,data)!
 	return status
 }
 
 // relative path inside the gitstructure, pointing to the repo
 pub fn (repo GitRepo) path_relative() string {
-	// TODO: figure out
 	return repo.path.path_relative(repo.gs.rootpath.path) or { panic('couldnt get relative path') } // TODO: check if works well
 }
 
@@ -115,11 +124,11 @@ pub fn (repo GitRepo) path_relative() string {
 pub fn (repo GitRepo) pull_reset(args_ ActionArgs) ! {
 	mut args:=args_
 	if args.reload{
-		repo.reload()!
+		repo.load()!
 		args.reload=false
 	}	
-	repo.remove_changes()!
-	repo.pull()!
+	repo.remove_changes(args)!
+	repo.pull(args)!
 }
 
 [params]
@@ -133,7 +142,7 @@ pub mut:
 pub fn (repo GitRepo) commit_pull_push(args_ ActionArgs) ! {
 	mut args:=args_
 	if args.reload{
-		repo.reload()!
+		repo.load()!
 		args.reload=false
 	}
 	repo.commit(args)!
@@ -141,33 +150,56 @@ pub fn (repo GitRepo) commit_pull_push(args_ ActionArgs) ! {
 	repo.push(args)!
 }
 
+//commit the changes, message is needed, pull from remote
+pub fn (repo GitRepo) commit_pull_(args_ ActionArgs) ! {
+	mut args:=args_
+	if args.reload{
+		repo.load()!
+		args.reload=false
+	}
+	repo.commit(args)!
+	repo.pull(args)!
+}
+
+
 // pulls remote content in, will fail if there are local changes
 pub fn (repo GitRepo) pull(args_ ActionArgs) ! {
 	println('   - PULL: ${repo.url_get(true)}')
-	if reload{
-
-	}
-	repo.load()! //first load status again
+	mut args:=args_
+	if args.reload{
+		repo.load()!
+		args.reload=false
+	}	
 	st := repo.status()!
-	if st.need_pull {
+	if st.need_commit {
 		return error('Cannot pull repo: ${repo.path.path} because there are changes in the dir.')
 	}
-	cmd2 := 'cd ${repo.path.path} && git pull'
-	osal.execute_silent(cmd2) or {
-		println(' GIT PULL FAILED: ${cmd2}')
-		return error('Cannot pull repo: ${repo.path}. Error was ${err}')
+	if st.need_pull {
+		cmd2 := 'cd ${repo.path.path} && git pull'
+		osal.execute_silent(cmd2) or {
+			println(' GIT PULL FAILED: ${cmd2}')
+			return error('Cannot pull repo: ${repo.path}. Error was ${err}')
+		}
+		repo.load()!
 	}
-	repo.load()!
 }
 
 pub fn (repo GitRepo) commit(args_ ActionArgs) ! {
+	mut args:=args_
+	if args.reload{
+		repo.load()!
+		args.reload=false
+	}		
 	st := repo.status()!
 	if st.need_commit {
+		if args.msg==""{
+			return error("Cannot commit, message is empty for ${repo}")
+		}
 		cmd := "
 		cd ${repo.path.path}
 		set +e
 		git add . -A
-		git commit -m \"${msg}\"
+		git commit -m \"${args.msg}\"
 		echo "
 		osal.execute_silent(cmd) or {
 			return error('Cannot commit repo: ${repo.path.path}. Error was ${err}')
@@ -179,7 +211,12 @@ pub fn (repo GitRepo) commit(args_ ActionArgs) ! {
 }
 
 // remove all changes of the repo, be careful
-pub fn (repo GitRepo) remove_changes() ! {
+pub fn (repo GitRepo) remove_changes(args_ ActionArgs) ! {
+	mut args:=args_
+	if args.reload{
+		repo.load()!
+		args.reload=false
+	}			
 	st := repo.status()!
 	if st.need_commit {
 		println(' - remove change ${repo.path.path}')
@@ -202,7 +239,12 @@ pub fn (repo GitRepo) remove_changes() ! {
 	repo.load()!
 }
 
-pub fn (repo GitRepo) push() ! {
+pub fn (repo GitRepo) push(args_ ActionArgs) ! {
+	mut args:=args_
+	if args.reload{
+		repo.load()!
+		args.reload=false
+	}		
 	println('   - PUSH: ${repo.url_get(true)}')
 	st := repo.status()!
 	if st.need_push {	
@@ -218,8 +260,9 @@ pub fn (repo GitRepo) branch_switch(branchname string) ! {
 	if repo.gs.config.multibranch {
 		return error('cannot do a branch switch if we are using multibranch strategy.')
 	}
-	changes := repo.changes()!
-	if changes {
+	repo.load()!
+	st := repo.status()!
+	if st.need_commit || st.need_push  {
 		return error('Cannot branch switch repo: ${repo.path.path} because there are changes in the dir.')
 	}
 	// Fetch repo before checkout, in case a new branch added.
@@ -230,7 +273,7 @@ pub fn (repo GitRepo) branch_switch(branchname string) ! {
 		return error('Cannot branch switch repo: ${repo.path.path}. Error was ${err} \n cmd: ${cmd}')
 	}
 	// println(cmd)
-	repo.pull()!
+	repo.pull(reload:true)!
 }
 
 pub fn (repo GitRepo) fetch_all() ! {
@@ -239,7 +282,7 @@ pub fn (repo GitRepo) fetch_all() ! {
 		// println('GIT FETCH FAILED: $cmd_checkout')
 		return error('Cannot fetch repo: ${repo.path.path}. Error was ${err} \n cmd: ${cmd}')
 	}
-	repo.refresh()!
+	repo.load()!
 }
 
 // deletes git repository
@@ -248,13 +291,9 @@ pub fn (repo GitRepo) delete() ! {
 	if !os.exists(repo.path.path) {
 		return
 	} else {
-		cmd2 := 'cd ${repo.path.path} && git pull'
-		osal.execute_silent(cmd2) or {
-			println(' GIT DELETE FAILED: ${cmd2}')
-			return error('Cannot delete repo: ${repo.path.path}. Error was ${err}')
-		}
+		panic("implement")
 	}
-	repo.state_delete()!
+	repo.cache_delete()!
 }
 
 // check if sshkey for a repo exists in the homedir/.ssh

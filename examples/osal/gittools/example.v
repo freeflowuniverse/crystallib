@@ -3,7 +3,6 @@ module main
 import crystallib.osal.gittools
 import os
 
-const testpath = os.dir(@FILE) + '/book1'
 
 fn do() ! {
 	mut gs := gittools.new(

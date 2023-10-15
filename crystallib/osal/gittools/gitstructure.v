@@ -1,5 +1,7 @@
 module gittools
-
+import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.clients.redisclient
+import freeflowuniverse.crystallib.core.texttools
 [heap]
 pub struct GitStructure {
 	config   GitStructureConfig // configuration settings
@@ -7,16 +9,7 @@ pub struct GitStructure {
 pub mut:
 	name   string = 'default' // key indexing global gitstructure
 	repos  []&GitRepo // repositories in gitstructure
-	status GitStructureStatus
 }
-
-pub enum GitStructureStatus {
-	new
-	init
-	loaded
-	error
-}
-
 
 //remove cache
 fn (gs GitStructure) cachereset() ! {
@@ -27,21 +20,32 @@ fn (gs GitStructure) cachereset() ! {
 		// println(key)
 		redis.del(key)!
 	}
+}
 
 //internal function to be executed in thread
 fn repo_thread_refresh(r GitRepo)  {
-	r.refresh(reload:true) or {panic(err)}
+	r.load() or {panic(err)}
 }
 
 pub fn (gs GitStructure) reload() ! {
 	gs.cachereset()!
-		mut threads := []thread{}
-		for r in instances[args.name].repos {
-			threads<<spawn repo_thread_refresh(r ) 
-		}
-		threads.wait()
-		println(' - all repo refresh jobs finished.')
+	mut threads := []thread{}
+	for r in instances[gs.name].repos {
+		threads<<spawn repo_thread_refresh(r ) 
 	}
-
-	return error('Canot find gitstructure with name ${args.name} to reload.')
+	threads.wait()
+	println(' - all repo refresh jobs finished.')
 }
+
+
+
+pub fn (mut gitstructure GitStructure) list(args ReposGetArgs) {
+	texttools.print_clear()
+	println(' #### overview of repositories:')
+	println('')
+	gitstructure.repos_print(args)
+	println('')
+}
+
+
+
