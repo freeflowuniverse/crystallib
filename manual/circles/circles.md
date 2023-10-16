@@ -1,0 +1,23 @@
+# Circle
+
+- has a unique CID = circle id (is a SID)
+- has following components
+  - context manager
+    - manages a state for one specific context
+    - has a name and unique sid, and is linked to 1 circle (there can be more than 1 in a circle)
+    - has params 
+    - has todo checklist
+  - session
+    - linked to 1 context
+    - has unique id (int) linked to context
+    - can have a name (optional)
+    - is like a chat session, can be any series of actions
+    - each action once in needs to be executed becomes a job
+    - a job is linked to a 3script, which is the physical representation of all the jobs (actions) which need to be executed, the 3script is in order.
+  - job
+    - linked to a session
+    - has incremental id, in relation to session
+    - is the execution of 1 specific action (3script action)
+    - action can go to SAL,DAL or WAL
+    - it results in logs being collected
+    - it results in params being set on session level (only when WAL)
