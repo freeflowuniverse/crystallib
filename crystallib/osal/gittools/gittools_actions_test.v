@@ -1,6 +1,6 @@
 module gittools
 
-import freeflowuniverse.crystallib.baobab.actions
+import freeflowuniverse.crystallib.core.actionsparser
 import os
 
 const (

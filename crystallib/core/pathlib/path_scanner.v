@@ -1,6 +1,6 @@
 module pathlib
 
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 
 type Filter0 = fn (mut Path, mut params.Params) !bool
 

@@ -36,22 +36,22 @@ The generic actions()... is used to make all happen.
 
 
 ```go
-import freeflowuniverse.crystallib.baobab.actions
+import freeflowuniverse.crystallib.core.actionsparser
 
 // !!hr.employee_define
 //     descr:'Junior Engineer'
 //     growth:'1:5,60:30' cost:'4000USD' indexation:'5%'
 //     department:'engineering'
 
-pub actions(actions actions.Actions) ! {
+pub actions(actions actionsparser.Actions) ! {
     
     mut bizmodel:=...
-    bizmodel.hr_actions(actions actions.Actions)!
+    bizmodel.hr_actions(actions actionsparser.Actions)!
 
 }
 
 // populate the params for hr
-fn (mut m BizModel) hr_actions(actions actions.Actions) ! {
+fn (mut m BizModel) hr_actions(actions actionsparser.Actions) ! {
 	mut actions2 := actions.filtersort(actor: 'hr')!
 	for action in actions2 {
 		if action.name == 'employee_define' {

@@ -1,7 +1,7 @@
-module actions
+module actionsparser
 
 import os
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.texttools
 
 enum ParseBlockStatus {

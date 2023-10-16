@@ -1,7 +1,7 @@
 module threelang
 
 import log
-import freeflowuniverse.crystallib.baobab.actions
+import freeflowuniverse.crystallib.core.actionsparser
 import freeflowuniverse.crystallib.rpcwebsocket { RpcWsClient }
 import threefoldtech.web3gw.tfgrid as tfgrid_client
 import threefoldtech.web3gw.tfchain as tfchain_client
@@ -66,7 +66,7 @@ pub fn new(args RunnerArgs, debug_log bool) !Runner {
 	return runner
 }
 
-pub fn (mut r Runner) run(mut acs actions.Actions) ! {
+pub fn (mut r Runner) run(mut acs actionsparser.Actions) ! {
 	for action in acs.actions {
 		match action.book {
 			threelang.tfgrid_book {

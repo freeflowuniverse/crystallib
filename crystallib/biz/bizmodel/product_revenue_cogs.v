@@ -1,8 +1,8 @@
 module bizmodel
 
-import freeflowuniverse.crystallib.baobab.actions { Actions }
+import freeflowuniverse.crystallib.core.actionsparser { Actions }
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 
 // possible parameters for non recurring
 //

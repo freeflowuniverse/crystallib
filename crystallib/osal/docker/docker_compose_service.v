@@ -1,7 +1,7 @@
 module docker
 
 import v.embed_file
-import freeflowuniverse.crystallib.data.params { Params }
+import freeflowuniverse.crystallib.data.paramsparser { Params }
 
 [heap]
 pub struct ComposeService {

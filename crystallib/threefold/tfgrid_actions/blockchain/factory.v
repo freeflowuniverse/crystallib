@@ -1,6 +1,6 @@
 module blockchain
 
-// import freeflowuniverse.crystallib.baobab.actions
+// import freeflowuniverse.crystallib.core.actionsparser
 
 pub struct Controller {
 }

@@ -1,7 +1,7 @@
 module spreadsheet
 
 import freeflowuniverse.crystallib.data.currency
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 
 [heap]
 pub struct Sheet {

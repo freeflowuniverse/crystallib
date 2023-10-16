@@ -4,11 +4,9 @@ import freeflowuniverse.crystallib.clients.redisclient
 import math
 // import rand
 
-// smartid is of form region.circle.obj .
 // each part min3 max 6 chars, each char = a...z or 0...9
 // to create a new one we need to know the circle
 pub fn sid_new(cid string) !string {
-	// idint := rand.u32_in_range(1, 42800) or { panic(err) }
 	mut redis := redisclient.core_get()!
 	sidlast := redis.get('circle:${cid}:sid')! // is the last sid
 	sidlasti := sidlast.u32() + 1

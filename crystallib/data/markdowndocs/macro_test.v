@@ -1,6 +1,6 @@
 module markdowndocs
 
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 
 fn test_macro() {
 	mut text := "Command.1.X arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok'"

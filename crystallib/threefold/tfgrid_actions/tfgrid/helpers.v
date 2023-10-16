@@ -1,6 +1,6 @@
 module tfgrid
 
-import freeflowuniverse.crystallib.baobab.actions { Action }
+import freeflowuniverse.crystallib.core.actionsparser { Action }
 
 pub fn (mut t TFGridHandler) helper(action Action) ! {
 	match action.actor {

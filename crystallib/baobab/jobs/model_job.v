@@ -1,6 +1,6 @@
 module jobs
 
-import freeflowuniverse.crystallib.data.params { Params }
+import freeflowuniverse.crystallib.data.paramsparser { Params }
 import time
 
 // The possible states of a job
@@ -20,7 +20,7 @@ pub mut:
 }
 
 // The internal representation of a job. For params see
-// github/freeflowuniverse/crystallib.data.params/readme.md.
+// github/freeflowuniverse/crystallib.data.paramsparser/readme.md.
 pub struct ActionJob {
 pub mut:
 	guid         string // unique jobid (unique per actor which is unique per twin)

@@ -1,5 +1,5 @@
-import freeflowuniverse.crystallib.baobab.actions as actionslib {ActionsArgs, Actions}
-import freeflowuniverse.crystallib.data.params as paramslib {Params}
+import freeflowuniverse.crystallib.core.actionsparser  {ActionsArgs, Actions}
+import freeflowuniverse.crystallib.data.paramsparser  {Params}
 
 __global(
 	actor_factory map[string]shared ExampleActor
@@ -13,12 +13,12 @@ pub struct Play {
 
 pub fn play(params Play) ! {
 	actions := if params.actions.len > 0 {
-		ap := actionslib.Actions{
+		ap := actionsparser.Actions{
 			actions: params.actions
 		}
 		ap.filtersort(actor: '@actor_name')!
 	} else {
-		ap := actionslib.new(params.ActionsArgs)!
+		ap := actionsparser.new(params.ActionsArgs)!
 		ap.filtersort(actor: '@actor_name')!
 	}
 

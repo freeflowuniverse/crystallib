@@ -1,7 +1,7 @@
 module system
 
 import json
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.algo.encoder
 
 [heap]

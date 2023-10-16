@@ -1,7 +1,7 @@
 module stellar
 
 import threefoldtech.web3gw.stellar as stellar_client { StellarClient }
-import freeflowuniverse.crystallib.baobab.actions { Action }
+import freeflowuniverse.crystallib.core.actionsparser { Action }
 import freeflowuniverse.crystallib.rpcwebsocket { RpcWsClient }
 import log { Logger }
 

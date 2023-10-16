@@ -1,6 +1,6 @@
 module hero
 
-import freeflowuniverse.crystallib.baobab.actions
+import freeflowuniverse.crystallib.core.actionsparser
 import freeflowuniverse.crystallib.osal.downloader
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
@@ -13,7 +13,7 @@ pub mut:
 	name     string
 	path     pathlib.Path      [skip] // is the base directory of the session
 	vars     map[string]string
-	actions  []actions.Action  [skip]
+	actions  []actionsparser.Action  [skip]
 	includes []string
 	runner   &Runner           [skip; str: skip]
 }
@@ -147,8 +147,8 @@ pub mut:
 pub fn (mut s Session) run(args RunArgs) ! {
 	// lets first resolve the includes and process after including
 	mut actionsprocessed := s.actions_include(s.actions)!
-	mut actionsprocessed2 := []actions.Action{}
-	mut actionsprocessed3 := []actions.Action{}
+	mut actionsprocessed2 := []actionsparser.Action{}
+	mut actionsprocessed3 := []actionsparser.Action{}
 	for mut action in actionsprocessed {
 		if action.actor == 'runner' && action.name == 'config' {
 			if args.actions_runner_config_enable {

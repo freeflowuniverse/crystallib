@@ -1,6 +1,6 @@
-module actions
+module actionsparser
 
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 
 [params]
 pub struct FilterArgs {

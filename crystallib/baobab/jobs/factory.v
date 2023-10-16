@@ -1,7 +1,7 @@
 module jobs
 
 import freeflowuniverse.crystallib.clients.redisclient
-import freeflowuniverse.crystallib.data.params { Params }
+import freeflowuniverse.crystallib.data.paramsparser { Params }
 import rand
 import time
 

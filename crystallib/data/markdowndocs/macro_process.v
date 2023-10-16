@@ -1,6 +1,6 @@
 module markdowndocs
 
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 
 pub struct MacroObj {
 pub mut:

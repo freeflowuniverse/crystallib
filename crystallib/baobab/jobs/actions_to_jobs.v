@@ -1,6 +1,6 @@
 module jobs
 
-import freeflowuniverse.crystallib.baobab.actions
+import freeflowuniverse.crystallib.core.actionsparser
 import freeflowuniverse.crystallib.baobab.jobs
 import time
 import rand
@@ -12,7 +12,7 @@ pub struct ScheduleActionsArgs {
 	src_twinid u32
 	src_action string
 	timeout    u32
-	actions    []actions.Action
+	actions    []actionsparser.Action
 }
 
 // Returns a collection of jobs from a list of actions

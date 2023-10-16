@@ -1,6 +1,6 @@
 module web3gw
 
-import freeflowuniverse.crystallib.baobab.actions { Action }
+import freeflowuniverse.crystallib.core.actionsparser { Action }
 
 pub fn (mut h Web3GWHandler) keys_define(action Action) ! {
 	tfc_mnemonic := action.params.get_default('mnemonic', '')!

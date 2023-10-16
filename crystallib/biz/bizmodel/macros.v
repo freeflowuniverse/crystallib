@@ -1,7 +1,7 @@
 module bizmodel
 
 import freeflowuniverse.crystallib.data.knowledgetree
-import freeflowuniverse.crystallib.baobab.actions
+import freeflowuniverse.crystallib.core.actionsparser
 import freeflowuniverse.crystallib.biz.spreadsheet
 import freeflowuniverse.crystallib.data.markdowndocs
 

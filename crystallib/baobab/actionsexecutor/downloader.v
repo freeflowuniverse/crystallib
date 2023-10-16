@@ -1,9 +1,9 @@
 module actionsexecutor
 
-import freeflowuniverse.crystallib.baobab.actions
+import freeflowuniverse.crystallib.core.actionsparser
 import freeflowuniverse.crystallib.osal.downloader
 
-fn downloader(mut actions actions.Actions, action action.Action) ! {
+fn downloader(action actionsparser.Action) ! {
 	if action.name == 'get' {
 		mut name := action.params.get_default('name', '')!
 		mut downloadpath := action.params.get_default('downloadpath', '')!

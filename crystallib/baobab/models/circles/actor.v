@@ -1,7 +1,7 @@
 module circles
 
-import freeflowuniverse.crystallib.baobab.actions
-import freeflowuniverse.crystallib.data.params as paramslib
+import freeflowuniverse.crystallib.core.actionsparser
+import freeflowuniverse.crystallib.data.paramsparser 
 
 __global (
 	circle_actor shared CircleActor
@@ -12,7 +12,7 @@ mut:
 	circles map[string]&Circle
 }
 
-pub fn (shared actor CircleActor) act(action actions.Action) ! {
+pub fn (shared actor CircleActor) act(action actionsparser.Action) ! {
 	match action.name {
 		'add_milestone' { actor.add_milestone(action.params)! }
 		'add_member' { actor.add_member(action.params)! }
@@ -22,7 +22,7 @@ pub fn (shared actor CircleActor) act(action actions.Action) ! {
 	}
 }
 
-fn (shared actor CircleActor) add_milestone(params paramslib.Params) ! {
+fn (shared actor CircleActor) add_milestone(params paramsparser.Params) ! {
 	title := params.get('title')!
 	description := params.get('description')!
 	cid := params.get('cid')!
@@ -36,7 +36,7 @@ fn (shared actor CircleActor) add_milestone(params paramslib.Params) ! {
 	}
 }
 
-fn (shared actor CircleActor) add_member(params paramslib.Params) ! {
+fn (shared actor CircleActor) add_member(params paramsparser.Params) ! {
 	member := params.get('member')!
 	cid := params.get('cid')!
 
@@ -48,7 +48,7 @@ fn (shared actor CircleActor) add_member(params paramslib.Params) ! {
 	}
 }
 
-fn (shared actor CircleActor) add_story(params paramslib.Params) ! {
+fn (shared actor CircleActor) add_story(params paramsparser.Params) ! {
 	title := params.get('title')!
 	description := params.get('description')!
 	cid := params.get('cid')!
@@ -62,7 +62,7 @@ fn (shared actor CircleActor) add_story(params paramslib.Params) ! {
 	}
 }
 
-fn (shared actor CircleActor) set_status(params paramslib.Params) ! {
+fn (shared actor CircleActor) set_status(params paramsparser.Params) ! {
 	title := params.get('title')!
 	description := params.get('description')!
 	cid := params.get('cid')!

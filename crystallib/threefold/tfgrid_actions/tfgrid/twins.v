@@ -1,6 +1,6 @@
 module tfgrid
 
-import freeflowuniverse.crystallib.baobab.actions { Action }
+import freeflowuniverse.crystallib.core.actionsparser { Action }
 import threefoldtech.web3gw.tfgrid { FindTwins, Limit, TwinFilter }
 
 pub fn (mut h TFGridHandler) twins(action Action) ! {

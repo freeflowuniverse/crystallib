@@ -2,7 +2,7 @@ module archiver
 
 // import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 
 fn filter_base(mut path pathlib.Path, mut params params.Params) !bool {
 	// print(" - check $path.path")

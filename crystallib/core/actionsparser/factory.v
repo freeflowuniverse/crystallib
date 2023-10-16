@@ -1,4 +1,4 @@
-module actions
+module actionsparser
 
 [params]
 pub struct ActionsArgs {

@@ -1,6 +1,6 @@
 module mbus
 
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.algo.encoder
 import freeflowuniverse.crystallib.algo.secp256k1
 import crypto.md5

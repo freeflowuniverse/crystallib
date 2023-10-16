@@ -1,7 +1,7 @@
 module jobs
 
 import freeflowuniverse.crystallib.clients.redisclient
-import freeflowuniverse.crystallib.baobab.actions
+import freeflowuniverse.crystallib.core.actionsparser
 import os
 
 const samples_dir = os.dir(@FILE) + '/../../examples/actionsdir'

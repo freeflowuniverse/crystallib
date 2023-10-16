@@ -3,7 +3,7 @@ module gittools
 import freeflowuniverse.crystallib.ui as gui
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.baobab.actions
+import freeflowuniverse.crystallib.core.actionsparser
 import os
 
 pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {
@@ -73,7 +73,7 @@ pub mut:
 // 		coderoot //location where code will be checked out .
 // 		pull           bool // means when getting new repo will pull even when repo is already there .
 // 		pullreset      bool // means we will force a pull and reset old content	 .
-pub fn action(action actions.Action) ! {
+pub fn action(action actionsparser.Action) ! {
 	match action.name {
 		'git_do' {
 			git_do_action(action)!
@@ -87,7 +87,7 @@ pub fn action(action actions.Action) ! {
 	}
 }
 
-pub fn git_do_action(action actions.Action) ! {
+pub fn git_do_action(action actionsparser.Action) ! {
 	mut coderoot := action.params.get_default('coderoot', '')!
 	mut gs := get(coderoot: coderoot) or {
 		return error("Could not find gittools on '${coderoot}'\n${err}")
@@ -125,7 +125,7 @@ pub fn git_do_action(action actions.Action) ! {
 	println(gs)
 }
 
-pub fn git_get_action(action actions.Action) ! {
+pub fn git_get_action(action actionsparser.Action) ! {
 	url := action.params.get('url')!
 	r := code_get(
 		url: url

@@ -1,6 +1,6 @@
 module jobs
 
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 import json
 import time
 

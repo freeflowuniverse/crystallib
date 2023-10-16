@@ -2,7 +2,7 @@ module ui
 
 import freeflowuniverse.crystallib.ui.generic { ChannelType, UserInterface }
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 // import freeflowuniverse.crystallib.ui.telegram
 
 [params]

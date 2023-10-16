@@ -1,6 +1,6 @@
 module people
 
-import freeflowuniverse.crystallib.baobab.actions
+import freeflowuniverse.crystallib.core.actionsparser
 import freeflowuniverse.crystallib.baobab.models.system
 import db.sqlite
 

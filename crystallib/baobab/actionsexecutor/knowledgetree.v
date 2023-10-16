@@ -1,9 +1,9 @@
 // module actionsexecutor
 
-// import freeflowuniverse.crystallib.baobab.actions
+// import freeflowuniverse.crystallib.core.actionsparser
 // import freeflowuniverse.crystallib.data.knowledgetree
 
-// fn knowledgetree(mut actions actions.Actions, action actions.Action) ! {
+// fn knowledgetree(mut actions actionsparser.Actions, action actionsparser.Action) ! {
 // 	if action.name == 'scan' {
 // 		mut name := action.params.get_default('name', 'default')!
 

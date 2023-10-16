@@ -1,4 +1,4 @@
-module actions
+module actionsparser
 
 import freeflowuniverse.crystallib.core.texttools
 

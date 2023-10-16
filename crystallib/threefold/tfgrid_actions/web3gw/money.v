@@ -1,6 +1,6 @@
 module web3gw
 
-import freeflowuniverse.crystallib.baobab.actions { Action }
+import freeflowuniverse.crystallib.core.actionsparser { Action }
 import strconv
 
 const (

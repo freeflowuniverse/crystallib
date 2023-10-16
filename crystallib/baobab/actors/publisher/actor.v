@@ -1,7 +1,7 @@
 module publisher
 
-import freeflowuniverse.crystallib.baobab.actions as actionslib { ActionsArgs }
-import freeflowuniverse.crystallib.data.params as paramslib
+import freeflowuniverse.crystallib.core.actionsparser  { ActionsArgs }
+import freeflowuniverse.crystallib.data.paramsparser 
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.pathlib
@@ -22,17 +22,17 @@ mut:
 // PlayConfig. If actions are provided runs actions. Otherwise loads and runs actions in path.
 pub struct Play {
 	ActionsArgs
-	actions []actionslib.Action
+	actions []actionsparser.Action
 }
 
 pub fn play(params Play) ! {
 	actions := if params.actions.len > 0 {
-		ap := actionslib.Actions{
+		ap := actionsparser.Actions{
 			actions: params.actions
 		}
 		ap.filtersort(actor: 'knowledgetree')!
 	} else {
-		ap := actionslib.new(params.ActionsArgs)!
+		ap := actionsparser.new(params.ActionsArgs)!
 		ap.filtersort(actor: 'knowledgetree')!
 	}
 
@@ -47,7 +47,7 @@ pub fn play(params Play) ! {
 }
 
 // act handles incoming action and matches to corresponding method
-pub fn (mut actor PublisherActor) act(action actionslib.Action) ! {
+pub fn (mut actor PublisherActor) act(action actionsparser.Action) ! {
 	match action.name {
 		'collections_scan' {
 			actor.collections_scan(action)!
@@ -65,7 +65,7 @@ pub fn (mut actor PublisherActor) act(action actionslib.Action) ! {
 }
 
 // collections_scan scans a path for collections and adds the collections to actor's knowledgetree
-fn (mut actor PublisherActor) collections_scan(action actionslib.Action) ! {
+fn (mut actor PublisherActor) collections_scan(action actionsparser.Action) ! {
 	git_url := action.params.get('git_url')!
 	git_root := action.params.get('git_root')!
 	lock actor.knowledgetree {
@@ -78,7 +78,7 @@ fn (mut actor PublisherActor) collections_scan(action actionslib.Action) ! {
 }
 
 // book_generate generates an mdbook using the actor's knowledgetree and provided params
-fn (mut actor PublisherActor) book_generate(action actionslib.Action) ! {
+fn (mut actor PublisherActor) book_generate(action actionsparser.Action) ! {
 	mut tree := knowledgetree.Tree{}
 	rlock actor.knowledgetree {
 		tree = actor.knowledgetree
@@ -103,7 +103,7 @@ fn (mut actor PublisherActor) book_generate(action actionslib.Action) ! {
 }
 
 // book_open opens the book with the provided name
-fn (actor PublisherActor) book_open(action actionslib.Action) ! {
+fn (actor PublisherActor) book_open(action actionsparser.Action) ! {
 	rlock actor.books {
 		name := action.params.get('name')!
 		if name !in actor.books {

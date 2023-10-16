@@ -1,4 +1,4 @@
-module actions
+module actionsparser
 
 fn domain_check(c string, block string) ! {
 	if c.len == 0 {
