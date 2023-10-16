@@ -23,13 +23,16 @@ pub fn new(args_ FactoryArgs) !Factory {
 	mut f := Factory{
 		path_images: pathlib.get_dir(args.path_images, true)!
 	}
+
 	return f
 }
 
 [params]
 pub struct DebootstrapArgs {
 pub mut:
-	reset bool = true
+	reset      bool = true
+	release    string = 'stable'
+	repository string = 'http://deb.debian.org/debian/'
 }
 
 pub fn (mut f Factory) debootstrap(args DebootstrapArgs) ! {

@@ -1,7 +1,7 @@
 module main
 
 // import freeflowuniverse.crystallib.tmux
-import freeflowuniverse.crystallib.installers.caddy
+// import freeflowuniverse.crystallib.installers.caddy
 import freeflowuniverse.crystallib.osal.sandbox
 import os
 
@@ -19,9 +19,11 @@ fn do() ! {
 	// caddy.configuration_set(path:"${configpath}/Caddyfile",restart:true)!
 
 	sandbox.install()! // will also do an upgrade of the OS
-	mut f := sandbox.new()!
-	// f.debootstrap()!
-	mut c := f.container_new()!
+	x := sandbox.FactoryArgs{path_images: "/tmp/images"}
+	mut f := sandbox.new(x)!
+
+	cmd := sandbox.ContainerArgs{startcmd: ["ls", "/", "/proc"]}
+	mut c := f.container_new(cmd)!
 	c.debootstrap()!
 	c.start()!
 }
