@@ -8,7 +8,7 @@ Create workloads in native low level format, and then use a gridriver go binary 
 
 ### griddriver
 
-see https://github.com/threefoldtech/3bot/tree/development/griddriver
+see https://github.com/threefoldtech/web3gw/tree/development/griddriver
 
 
 ### outdated
@@ -17,15 +17,14 @@ see https://github.com/threefoldtech/3bot/tree/development/griddriver
 
 - redis server
   - step by step installation [here](https://developer.redis.com/create/linux/)
-- [rmb peer](https://github.com/threefoldtech/rmb-rs)
-- grid cli
+- grid driver
   - this is a helper binary to facilitate tfgrid interactions
   - how to install:
 
 ```bash
-cd 3bot/grid_cli
-go build -o grid-cli
-sudo mv grid-cli /usr/bin/
+cd 3bot/grid_driver
+go build -o grid-driver
+sudo mv grid-driver /usr/bin/
 ```
 
 ## How to deploy
