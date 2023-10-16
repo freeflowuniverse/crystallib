@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.baobab.actions
 // 	}
 
 // 	// if action.name == 'get' {
-// 	// 	mut gs := gittools.new()!
+// 	// 	mut gs := gittools.get()!
 // 	// 	url := action.params.get('url')!
 // 	// 	branch := action.params.get_default('branch', '')!
 // 	// 	reset := action.params.get_default_false('reset')!

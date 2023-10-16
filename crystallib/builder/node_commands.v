@@ -3,6 +3,7 @@ module builder
 import freeflowuniverse.crystallib.core.texttools
 import crypto.md5
 import time
+import freeflowuniverse.crystallib.osal
 
 // check command exists on the platform, knows how to deal with different platforms
 pub fn (mut node Node) cmd_exists(cmd string) bool {

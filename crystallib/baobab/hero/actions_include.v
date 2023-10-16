@@ -1,6 +1,7 @@
 module hero
 
 import freeflowuniverse.crystallib.baobab.actions
+import freeflowuniverse.crystallib.osal.downloader
 
 // recursive include of actions
 fn (mut s Session) actions_include(myactions []actions.Action) ![]actions.Action {
@@ -16,7 +17,7 @@ fn (mut s Session) actions_include(myactions []actions.Action) ![]actions.Action
 			}
 			s.includes << sourceurl
 
-			m := download(url: sourceurl, reset: false)!
+			m := downloader.download(url: sourceurl, reset: false)!
 
 			ap_include := actions.new(path: m.path)!
 			mut actions_include := ap_include.filtersort(actor: 'runner')!

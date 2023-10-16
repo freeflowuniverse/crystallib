@@ -59,7 +59,7 @@ v run examples/http_example.v
 - In this case you have to invoke grid functions inside the WebSocket server, so you have to initialize the server first and then pass the client of this server as a parameter, see [examples](https://github.com/freeflowuniverse/crystallib/tree/development/twinclient/examples)
 
 ```v
-import crystallib.twinclient as tw
+import freeflowuniverse.crystallib.twinclient as tw
 import net.websocket as ws
 import term
 import json

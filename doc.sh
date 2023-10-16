@@ -1,4 +1,6 @@
 set -ex
+cd ~/code/github/freeflowuniverse/crystallib
+
 rm -rf _docs
 rm -rf docs
 

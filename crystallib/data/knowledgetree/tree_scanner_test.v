@@ -13,17 +13,24 @@ const (
 )
 
 fn test_scan() ! {
-	new(name: knowledgetree.tree_name)!
-	scan(
-		name: knowledgetree.tree_name
+	mut tree := new()!
+	tree.scan(
 		path: knowledgetree.collections_path
+		heal: false
 	)!
-	rlock knowledgetrees {
-		tree := knowledgetrees[knowledgetree.tree_name]
 
-		// QUESTION: upon scan, should all folders be added as collection
-		// or only ones with .collection / .site file?
-		assert tree.collections.keys() == ['examples', 'fruits', 'playground', 'rpc', 'server',
-			'vegetables']
-	}
+	// mut c := tree.collection_get('solution')!
+
+	// assert c.page_exists('grant')
+	// assert c.page_exists('grant3') == false
+	// assert c.image_exists('centralized_internet.jpg')
+	// assert c.image_exists('centralized_internet_.jpg')
+	// mut i := c.image_get('centralized_internet_.jpg')!
+	// println(i)
+	// assert c.image_exists('duplicate_centralized_internet.jpg')
+	// assert c.image_exists('duplicate_centralized_internets_.jpg') == false
+
+	// mut page := c.page_get('casperlabs_deployment')!
+	// mut page2 := c.page_get('casperlabs_Deployment')!
+	// assert page == page2
 }

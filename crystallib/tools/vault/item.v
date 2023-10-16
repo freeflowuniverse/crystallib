@@ -19,20 +19,20 @@ pub fn (i Item) meta() string {
 }
 
 // get path object representing the vaulted item
-fn (i Item) path() ?pathlib.Path {
+fn (i Item) path() !pathlib.Path {
 	pathstr := '${i.shelve.path.path}/.vault/${i.name_nr}'
 	return pathlib.get_file(pathstr, true)
 }
 
 // content of the vaulted item
-fn (i Item) content() ?string {
-	mut p := i.path()?
+fn (i Item) content() !string {
+	mut p := i.path()!
 	return p.read()
 }
 
 // save the metadata for the backups
-pub fn (i Item) sha256() ?string {
-	mut p := i.path()?
+pub fn (i Item) sha256() !string {
+	mut p := i.path()!
 	return p.sha256()
 }
 

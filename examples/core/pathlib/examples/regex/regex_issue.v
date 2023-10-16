@@ -24,7 +24,7 @@ fn main() {
 	mut r := la.regex
 	if r is RE {
 		println(r)
-		println(r.matches_string(item))
+		println((r as RE).matches_string(item))
 	}
 
 	// match r {

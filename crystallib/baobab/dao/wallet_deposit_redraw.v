@@ -10,8 +10,8 @@ import time
 // 	account &Account
 // 	amount f64
 //```
-pub fn (mut dao DAO) wallet_deposit(args FundingArgs) ?&LPWallet {
-	mut r := dao.pools_wallet_get(args.account, args.currency, false)?
+pub fn (mut dao DAO) wallet_deposit(args FundingArgs) !&LPWallet {
+	mut r := dao.pools_wallet_get(args.account, args.currency, false)!
 
 	r.wallet.modified = true
 	r.wallet.amount += args.amount
@@ -20,7 +20,7 @@ pub fn (mut dao DAO) wallet_deposit(args FundingArgs) ?&LPWallet {
 
 	// check if person has also usdc account, if not need to create
 	if args.account.address !in lpusd.wallets_pool {
-		dao.fund(currency: 'usdc', account: args.account, amount: 0, inpool: true)?
+		dao.fund(currency: 'usdc', account: args.account, amount: 0, inpool: true)!
 	}
 
 	return &p
@@ -33,7 +33,7 @@ pub fn (mut dao DAO) wallet_deposit(args FundingArgs) ?&LPWallet {
 // 	account &Account
 // 	amount f64
 //```
-pub fn (mut dao DAO) wallet_withdraw(args FundingArgs) ?&LPWallet {
+pub fn (mut dao DAO) wallet_withdraw(args FundingArgs) !&LPWallet {
 	// TODO: this code is copy from above, needs to be all changed
 
 	return &p
@@ -49,6 +49,6 @@ struct WalletArgs {
 // args
 // - currency string
 // - account &Account
-pub fn (mut dao DAO) wallet_get(args WalletArgs) ?&LPWallet {
+pub fn (mut dao DAO) wallet_get(args WalletArgs) !&LPWallet {
 	// TODO
 }

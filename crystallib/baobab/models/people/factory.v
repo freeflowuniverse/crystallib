@@ -2,7 +2,7 @@ module people
 
 import freeflowuniverse.crystallib.baobab.actions
 import freeflowuniverse.crystallib.baobab.models.system
-import sqlite
+import db.sqlite
 
 [heap]
 pub struct MemDB {

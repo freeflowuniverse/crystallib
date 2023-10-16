@@ -1,7 +1,7 @@
 module docker
 
-import freeflowuniverse.crystallib.osal.gittools
-import freeflowuniverse.crystallib.core.pathlib
+// import freeflowuniverse.crystallib.osal.gittools
+// import freeflowuniverse.crystallib.core.pathlib
 
 [params]
 pub struct RustBuildArgs {
@@ -10,7 +10,7 @@ pub mut:
 	pull     bool
 	reset    bool
 	buildcmd string = 'cargo build --release'
-	copycmd  string = ''
+	copycmd  string
 	debug    bool // to be able to easily debug the intermediate step
 	name     string
 }
@@ -48,7 +48,7 @@ pub fn (mut r DockerBuilderRecipe) add_rustbuild_from_code(args RustBuildArgs) !
 pub struct RustPackageArgs {
 pub mut:
 	name    string // can be comma separated
-	copycmd string = '' // normally empty
+	copycmd string // normally empty
 }
 
 // use cargo install to install rust components

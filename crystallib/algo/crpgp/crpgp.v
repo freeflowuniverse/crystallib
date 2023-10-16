@@ -38,7 +38,7 @@ struct Signature {
 
 struct C.SignedPublicKey {}
 
-struct SignedPublicKey {
+pub struct SignedPublicKey {
 	internal &C.SignedPublicKey
 }
 
@@ -50,7 +50,7 @@ struct SignedPublicSubKey {
 
 struct C.SignedSecretKey {}
 
-struct SignedSecretKey {
+pub struct SignedSecretKey {
 	internal &C.SignedSecretKey
 }
 

@@ -2,6 +2,7 @@ module knowledgetree
 
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.texttools
 import os
 
@@ -42,14 +43,16 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 	// $if debug{println(" - collections find recursive: $path.path")}
 	mut args_ := args
 	if args_.git_url.len > 0 {
-		panic('fix git')
-		// mut gs := gittools.get(root: args_.git_root)!
-		// mut gr := gs.repo_get_from_url(
-		// 	url: args_.git_url
-		// 	pull: args_.git_pull
-		// 	reset: args_.git_reset
-		// )!
-		// args_.path = gr.path_content_get()
+		// panic('fix git')
+		gittools.configure(name: 'tree', root: args_.git_root)!
+		mut gs := gittools.get(name: 'tree')!
+		mut locator := gs.locator_new(args.git_url)!
+		gs.repo_get(
+			locator: locator
+			pull: args_.git_pull
+			reset: args_.git_reset
+		)!
+		args_.path = locator.path_on_fs()!.path
 	}
 
 	if args_.path.len < 3 {

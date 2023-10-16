@@ -571,7 +571,7 @@ pub fn webserver_run(mut publisher Publisher) ? {
 	publisher.check()?
 	publisher.config.update_staticfiles(false)?
 
-	mut gt := gittools.new()
+	mut gt := gittools.get()
 	mut repo := gt.repos_get(filter: 'threefold_data')[0]
 	data_path := os.join_path(repo.path(), 'content')
 

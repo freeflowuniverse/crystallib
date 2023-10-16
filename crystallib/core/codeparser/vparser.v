@@ -65,6 +65,7 @@ fn (vparser VParser) parse_vpath(mut path pathlib.Path) ![]CodeItem {
 	} else {
 		return error('Path being parsed must either be a directory or a file.')
 	}
+	codemodel.inflate_types(mut code)
 	return code
 }
 
@@ -378,7 +379,12 @@ fn (vparser VParser) parse_fields(fields []ast.StructField, table &ast.Table) []
 			description: description
 			typ: Type{
 				symbol: table.type_to_str(field.typ).all_after_last('.')
+				is_array: table.type_to_str(field.typ).contains('[]')
+				is_map: table.type_to_str(field.typ).contains('map[')
 			}
+			is_pub: field.is_pub
+			is_mut: field.is_mut
+			default: field.default_val
 		}
 	}
 	return fields_

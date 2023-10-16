@@ -1,5 +1,7 @@
 module system
 
+import freeflowuniverse.crystallib.data.ourtime
+
 [heap]
 struct Remarks {
 pub mut:
@@ -11,6 +13,6 @@ pub mut:
 struct Remark {
 pub mut:
 	content string
-	time    OurTime
+	time    ourtime.OurTime
 	author  string // smartid to circle.person
 }

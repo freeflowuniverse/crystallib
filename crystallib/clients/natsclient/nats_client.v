@@ -303,7 +303,7 @@ fn (mut cl NATSClient) nats_error(data string) {
 
 pub fn (mut cl NATSClient) listen() ! {
 	t := spawn cl.websocket.listen()
-	for cl.websocket.state == .open {
+	for cl.websocket.client_state.state == .open {
 		cl.pull_messages(20, cl.pull_frequency)
 		// keep connection alive
 		cl.send_ping()
@@ -313,34 +313,34 @@ pub fn (mut cl NATSClient) listen() ! {
 }
 
 pub fn new_natsclient(address string, ch_messages chan NATSMessage, ch_keyvalue chan NATSKeyValue, logger &log.Logger) !&NATSClient {
-	mut websocket := websocket.new_client(address, websocket.ClientOpt{}) or {
+	mut ws := websocket.new_client(address, websocket.ClientOpt{}) or {
 		return error('failed to create client for ${address}: ${err}')
 	}
 	mut natsmsgparser := NATSMessageParser{}
 	uuid := rand.uuid_v4()
-	mut natsclient := NATSClient{
+	mut client := NATSClient{
 		uuid: uuid
 		myinbox: 'myinbox.${uuid}'
 		address: address
 		logger: unsafe { logger }
-		websocket: websocket
+		websocket: ws
 		ch_messages: ch_messages
 		ch_keyvalue: ch_keyvalue
 		natsmsgparser: &natsmsgparser
 	}
-	natsmsgparser.on_nats_message = natsclient.nats_message
-	natsmsgparser.on_nats_info = natsclient.nats_info
-	natsmsgparser.on_nats_ping = natsclient.send_pong
-	natsmsgparser.on_nats_error = natsclient.nats_error
+	natsmsgparser.on_nats_message = client.nats_message
+	natsmsgparser.on_nats_info = client.nats_info
+	natsmsgparser.on_nats_ping = client.send_pong
+	natsmsgparser.on_nats_error = client.nats_error
 
-	websocket.on_message(natsclient.on_message)
-	websocket.connect()!
+	ws.on_message(client.on_message)
+	ws.connect()!
 
-	natsclient.send_connect()
+	client.send_connect()
 	// myinbox is used to get messages back for consumers (should be unique)
-	natsclient.subscribe('${natsclient.myinbox}.>') or {
-		natsclient.logger.error('${natsclient.logger_prefix} Failed to subscribe to our inbox')
+	client.subscribe('${client.myinbox}.>') or {
+		client.logger.error('${natsclient.logger_prefix} Failed to subscribe to our inbox')
 	}
 
-	return &natsclient
+	return &client
 }

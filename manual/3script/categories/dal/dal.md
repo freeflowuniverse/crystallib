@@ -1,0 +1,27 @@
+## dal = domain abstraction layer = models
+
+- ! : model dsl action = models
+  - $domain.$rootobjectname.define
+    - id: is a smartid (use *** to let it be filled in automatically)
+    - name: optional
+    - descripton: optional
+    - tags: is in params format (see filter mechanism)
+  - $domain.$rootobjectname.delete (or del)
+    - id
+  - $domain.$rootobjectname.get (returns the data)
+    - id
+    - format: 3script or json
+  - $domain.$rootobjectname.list (returns id's and name's of found rootobjects)
+    - namefilter: part of name in filter format see [filtering](filtering.md)
+    - includefilter: see [tags](tags.md)
+    - excludefilter: see [tags](tags.md)
+    - format: 3script or json
+  - example rootobjectnames: project, user, contact, story, ...
+  - domain is optional, if not mentioned then is core.  which is our default
+  - id:'***' automatically fill in id
+    - means will be filled in automatically
+  - name & id can be used interchangeable to link 2 objects to each other
+    - e.g. in an object story:'ed4' would belink to a smart if.
+    - e.g. in an object story:'my_story' would be link to a object with name my_story
+  - each rootobject has unique smart id (sid) and this is unique per circle.
+  - when working with rootobjects this is always done per circle

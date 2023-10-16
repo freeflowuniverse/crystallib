@@ -15,7 +15,8 @@ pub fn (mut path Path) link(linkpath string, delete_exists bool) !Path {
 	// os.exists for faulty links returns false so also checks if path is link
 	if os.exists(linkpath) || os.is_link(linkpath) {
 		if delete_exists {
-			os.rm(linkpath)!
+			mut linkpath_obj := get(linkpath)
+			linkpath_obj.delete()!
 		} else {
 			return error('cannot link ${path.path} to ${linkpath}, because dest exists.')
 		}
@@ -34,6 +35,7 @@ pub fn (mut path Path) link(linkpath string, delete_exists bool) !Path {
 	// println("${dest_dir} ::: ${origin_path} ::: ${linkpath}")	
 
 	msg := 'link to origin (source): ${path.path}  \nthe link:${linkpath} \nlink rel: ${origin_path}'
+	// TODO: figure out why os.symlink doesn't work for linking file into dir
 	os.symlink(origin_path, linkpath) or { return error('cant symlink ${msg}\n${err}') }
 	return get(linkpath)
 }
