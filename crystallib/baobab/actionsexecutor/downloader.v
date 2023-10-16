@@ -23,7 +23,7 @@ pub fn sal_downloader(action actionsparser.Action) ! {
 
 fn downloader_get(args ActionExecArg) ! {
 	action:=args.action
-	// context:=args.action or {panic("no context")} //if we need it here
+	// session:=args.action or {panic("no context")} //if we need it here
 	mut name := action.params.get_default('name', '')!
 	mut downloadpath := action.params.get_default('downloadpath', '')!
 	mut url := action.params.get_default('url', '')!
@@ -51,7 +51,7 @@ fn downloader_get(args ActionExecArg) ! {
 		dest: dest
 		hash: hash
 		metapath: metapath
-		context:context //TO IMPLEMENT (also optional)
+		session:session //TO IMPLEMENT (also optional)
 	)!	
 
 }

@@ -5,6 +5,6 @@ import freeflowuniverse.crystallib.baobab.context
 [params]
 pub struct ActionExecArgs{
 pub mut:
-	context ?context.Context
+	session ?context.Session
 	action actionsparser.Action
 }
