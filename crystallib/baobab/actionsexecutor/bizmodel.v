@@ -1,6 +1,6 @@
 module actionsexecutor
 
-import freeflowuniverse.crystallib.core.actionsparser
+import freeflowuniverse.crystallib.data.actionsparser
 
 // fn git(mut actions actionsparser.Actions, action actionsparser.Action) ! {
 // 	if action.name == 'init' {

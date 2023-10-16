@@ -3,7 +3,7 @@ module gittools
 import freeflowuniverse.crystallib.ui as gui
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.core.actionsparser
+import freeflowuniverse.crystallib.data.actionsparser
 import os
 
 pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {

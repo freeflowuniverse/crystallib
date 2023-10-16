@@ -1,6 +1,6 @@
 module people
 
-import freeflowuniverse.crystallib.core.actionsparser { Actions }
+import freeflowuniverse.crystallib.data.actionsparser { Actions }
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.paramsparser
 

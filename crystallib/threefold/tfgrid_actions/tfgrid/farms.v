@@ -1,6 +1,6 @@
 module tfgrid
 
-import freeflowuniverse.crystallib.core.actionsparser { Action }
+import freeflowuniverse.crystallib.data.actionsparser { Action }
 import threefoldtech.web3gw.tfgrid { FarmFilter, FindFarms, Limit }
 
 pub fn (mut h TFGridHandler) farms(action Action) ! {

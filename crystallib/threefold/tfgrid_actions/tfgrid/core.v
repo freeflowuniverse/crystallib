@@ -1,6 +1,6 @@
 module tfgrid
 
-import freeflowuniverse.crystallib.core.actionsparser { Action }
+import freeflowuniverse.crystallib.data.actionsparser { Action }
 
 fn (mut t TFGridHandler) core(action Action) ! {
 	match action.name {

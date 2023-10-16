@@ -1,4 +1,4 @@
-import freeflowuniverse.crystallib.core.actionsparser  {ActionsArgs, Actions}
+import freeflowuniverse.crystallib.data.actionsparser  {ActionsArgs, Actions}
 import freeflowuniverse.crystallib.data.paramsparser  {Params}
 
 __global(

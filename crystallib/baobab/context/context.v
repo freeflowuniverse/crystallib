@@ -1,6 +1,7 @@
 module context
 
 import freeflowuniverse.crystallib.data.paramsparser
+import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.clients.redisclient
 import freeflowuniverse.crystallib.core.texttools
@@ -14,8 +15,9 @@ pub mut:
 	id    string 
 	alias  string
 	start  ourtime.OurTime
-	end  ourtime.OurTime
-	params params.Params
+	// end  ourtime.OurTime
+	params paramsparser.Params
+	gitstructure ?gittools.GitStructure //optional
 	done   []string
 }
 
@@ -25,7 +27,7 @@ pub mut:
 	id    string
 	alias  string
 	start  string // can be e.g. +1h
-	params ?params.Params
+	params ?paramsparser.Params
 }
 
 // get a context object based on the name /
@@ -41,7 +43,7 @@ pub fn get(args_ ContextNewArgs) !&Context {
 	mut args := args_
 	args.id = texttools.name_fix(args.id)
 	if args.id !in contexts {
-		mut params_ := args.params or { params.Params{} }
+		mut params_ := args.params or { paramsparser.Params{} }
 		mut c := Context{
 			id: args.id
 			alias: args.alias
@@ -68,7 +70,7 @@ pub fn (mut context Context) load() ! {
 	if t == '' {
 		return
 	}
-	p := params.new(t)!
+	p := paramsparser.new(t)!
 	if context.alias == '' {
 		context.alias = p.get_default('alias', '')!
 	}

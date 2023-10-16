@@ -1,6 +1,6 @@
 module tfgrid
 
-import freeflowuniverse.crystallib.core.actionsparser { Action }
+import freeflowuniverse.crystallib.data.actionsparser { Action }
 import threefoldtech.web3gw.tfgrid { NetworkConfiguration, VMConfiguration }
 import rand
 

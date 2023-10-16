@@ -1,6 +1,6 @@
 // module actionsexecutor
 
-// import freeflowuniverse.crystallib.core.actionsparser
+// import freeflowuniverse.crystallib.data.actionsparser
 // import freeflowuniverse.crystallib.data.knowledgetree
 
 // fn knowledgetree(mut actions actionsparser.Actions, action actionsparser.Action) ! {

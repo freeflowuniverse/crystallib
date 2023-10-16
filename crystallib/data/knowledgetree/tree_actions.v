@@ -1,6 +1,6 @@
 module knowledgetree
 
-import freeflowuniverse.crystallib.core.actionsparser
+import freeflowuniverse.crystallib.data.actionsparser
 import freeflowuniverse.crystallib.core.pathlib
 
 // need to become part of baobab.actionexecutor...

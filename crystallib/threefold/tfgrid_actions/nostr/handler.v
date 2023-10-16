@@ -1,7 +1,7 @@
 module nostr
 
 import threefoldtech.threebot.nostr as nostr_client { NostrClient }
-import freeflowuniverse.crystallib.core.actionsparser { Action }
+import freeflowuniverse.crystallib.data.actionsparser { Action }
 import freeflowuniverse.crystallib.rpcwebsocket { RpcWsClient }
 import log { Logger }
 

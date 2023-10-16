@@ -1,6 +1,6 @@
 module hero
 
-import freeflowuniverse.crystallib.core.actionsparser
+import freeflowuniverse.crystallib.data.actionsparser
 import freeflowuniverse.crystallib.osal.downloader
 
 // recursive include of actions

@@ -60,7 +60,7 @@ pub fn (mut session Session) load() ! {
 	if t == '' {
 		return
 	}
-	p := params.new(t)!
+	p := paramsparser.new(t)!
 	if session.name == '' {
 		session.name = p.get_default('name', '')!
 	}

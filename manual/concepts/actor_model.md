@@ -1,8 +1,4 @@
-# baobab manual
-
-It's always good practice to make your software do one thing only and do it well. This results in less complex code that is easier to maintain. 
-
-So instead of having one application that is able to do 5 totally different things it is better to develop 5 different applications. If one of those applications need the help of another it can always ask. In the meantime it can continue its work until the other application is done helping. 
+# actor model princiople
 
 This introduction is a basic decription of the [actor model principles](https://www.oreilly.com/library/view/scala-reactive-programming/9781787288645/8253d31d-ed61-46c3-8c69-9d49d8d8ab07.xhtml). I just used different names in my example. You can rename applications by actors and "help of another application" by "executing jobs". There are many benefits to using that model, here are a few:
 

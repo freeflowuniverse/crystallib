@@ -1,6 +1,6 @@
 module twinsafe
 
-import freeflowuniverse.crystallib.core.actionsparser
+import freeflowuniverse.crystallib.data.actionsparser
 import freeflowuniverse.crystallib.core.texttools
 
 // this allows you to input the required info into the keysafe

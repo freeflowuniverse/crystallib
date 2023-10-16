@@ -1,6 +1,6 @@
 module circles
 
-import freeflowuniverse.crystallib.core.actionsparser
+import freeflowuniverse.crystallib.data.actionsparser
 import freeflowuniverse.crystallib.data.paramsparser 
 
 __global (

@@ -1,7 +1,7 @@
 module threelang
 
 import log
-import freeflowuniverse.crystallib.core.actionsparser
+import freeflowuniverse.crystallib.data.actionsparser
 import freeflowuniverse.crystallib.rpcwebsocket { RpcWsClient }
 import threefoldtech.web3gw.tfgrid as tfgrid_client
 import threefoldtech.web3gw.tfchain as tfchain_client

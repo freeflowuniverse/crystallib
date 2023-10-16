@@ -1,6 +1,6 @@
 module gittools
 
-import freeflowuniverse.crystallib.core.actionsparser
+import freeflowuniverse.crystallib.data.actionsparser
 import os
 
 const (

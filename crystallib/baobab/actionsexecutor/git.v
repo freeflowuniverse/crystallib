@@ -1,6 +1,6 @@
 module actionsexecutor
 
-import freeflowuniverse.crystallib.core.actionsparser
+import freeflowuniverse.crystallib.data.actionsparser
 import freeflowuniverse.crystallib.osal.gittools
 
 fn git(mut actions actionsparser.Actions, action actionsparser.Action) ! {
