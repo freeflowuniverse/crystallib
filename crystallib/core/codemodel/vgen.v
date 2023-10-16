@@ -3,10 +3,10 @@ module codemodel
 import os
 
 pub struct CodeFile {
-	pub:
-	mod string
+pub:
+	mod     string
 	imports []Import
-	items []CodeItem
+	items   []CodeItem
 }
 
 pub fn new_file(config CodeFile) CodeFile {
@@ -96,7 +96,9 @@ pub fn (function Function) vgen() string {
 		typ: Type{
 			symbol: if function.receiver.struct_.name != '' {
 				function.receiver.struct_.name
-			} else {function.receiver.typ.symbol}
+			} else {
+				function.receiver.typ.symbol
+			}
 		}
 	}
 
@@ -106,7 +108,9 @@ pub fn (function Function) vgen() string {
 		} else {
 			'(${function.receiver.name} ${function.receiver.typ.vgen()})'
 		}
-	} else {''}
+	} else {
+		''
+	}
 
 	return $tmpl('templates/function/function.v.template')
 }

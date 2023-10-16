@@ -186,7 +186,7 @@ fn test_url1() {
 // // 	mut s := new("",false)!
 
 // // 	addr := s.addr_get_from_url('https://github.com/freeflowuniverse/crystaltools')
-// // 	mut r := s.repo_get(addr) or { panic('cannot load git $addr.url_original\n$err\n') }
+// // 	mut r := s.repo_get(addr) or { panic('cannot load git $addr.remote_url\n$err\n') }
 
 // // 	println(r.url_get())
 

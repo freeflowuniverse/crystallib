@@ -35,7 +35,7 @@ fn sids_set(text string, cid string) ! {
 // replace all occurrences with new sid's which are unique
 pub fn sids_empty_replace(txt_ string, cid string) !string {
 	mut txt := txt_
-	pattern := r'sid:[\*]{3,6}[\s$]'
+	pattern := r'id:[\*]{3,6}[\s$]'
 	mut re := regex.regex_opt(pattern) or { panic(err) }
 	// re.replace_by_fn(txt,sid_empty_replace_unit)
 	for _ in 0 .. 1000 {

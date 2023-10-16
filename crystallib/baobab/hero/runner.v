@@ -33,7 +33,7 @@ pub fn new(args_ RunnerArgs) !Runner {
 		args.cid = 'default'
 	}
 	if args.gitstructure == none {
-		mut gs := gittools.new(light: true)!
+		mut gs := gittools.get()!
 		args.gitstructure = gs
 	}
 
@@ -59,4 +59,10 @@ pub fn (mut r Runner) str() string {
 		out += '${*session}\n'
 	}
 	return out
+}
+
+pub fn (mut r Runner) run() ! {
+	for mut session in r.sessions {
+		session.run()!
+	}
 }

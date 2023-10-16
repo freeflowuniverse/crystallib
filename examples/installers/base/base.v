@@ -1,11 +1,10 @@
 module main
 
-import installers.base
+import freeflowuniverse.crystallib.installers.base
 
 fn do() ! {
 	// shortcut to install the base
-	mut i := base.install()!
-	println(i)
+	base.install()!
 }
 
 fn main() {

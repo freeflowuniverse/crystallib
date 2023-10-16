@@ -27,7 +27,7 @@ pub mut:
 }
 
 // set dao pool
-pub fn (mut t DAO) pool_set(arg LPParams) ?&Pool {
+pub fn (mut t DAO) pool_set(arg LPParams) !&Pool {
 	if texttools.name_fix_no_underscore(arg.currency).to_lower() != arg.currency {
 		return error('can specify currency only in lowercase and no special chars, e.g. tft, usdc, ... is ok')
 	}
@@ -39,7 +39,7 @@ pub fn (mut t DAO) pool_set(arg LPParams) ?&Pool {
 		lp.usdprice_buy = arg.usdprice_buy
 		lp.modtime = t.time_current
 		// check that nothing weird is filled in
-		asset_check(lp)?
+		asset_check(lp)!
 		return lp
 	}
 
@@ -49,14 +49,14 @@ pub fn (mut t DAO) pool_set(arg LPParams) ?&Pool {
 		usdprice_buy: arg.usdprice_buy
 		modtime: t.time_current
 	}
-	asset_check(a)?
+	asset_check(a)!
 
 	t.pools[arg.currency] = &a
 
 	return t.pools[arg.currency]
 }
 
-pub fn (mut t DAO) pool_get(currency string) ?&Pool {
+pub fn (mut t DAO) pool_get(currency string) !&Pool {
 	if currency in t.pools {
 		return t.pools[currency]
 	}
@@ -64,7 +64,7 @@ pub fn (mut t DAO) pool_get(currency string) ?&Pool {
 }
 
 // will recalculate of all wallets
-pub fn (mut lp Pool) calculate() ? {
+pub fn (mut lp Pool) calculate() ! {
 	mut tot := 0.0
 	for key, p in lp.wallets_pool {
 		tot += p.amount
@@ -88,12 +88,12 @@ pub mut:
 //	poolusd &Pool
 // 	poolcur &Pool
 // 	wallet &LPWallet
-fn (mut dao DAO) pools_wallet_get(account &Account, currency string, ispool bool) ?PoolsWalletResult {
-	mut lp := dao.pool_get(currency)?
-	mut lpusd := dao.pool_get('usdc')?
+fn (mut dao DAO) pools_wallet_get(account &Account, currency string, ispool bool) !PoolsWalletResult {
+	mut lp := dao.pool_get(currency)!
+	mut lpusd := dao.pool_get('usdc')!
 
-	lp.calculate()? // calculates how much percent each user has in the liquidity pool
-	lpusd.calculate()? // calculates how much percent each user has in the liquidity pool
+	lp.calculate()! // calculates how much percent each user has in the liquidity pool
+	lpusd.calculate()! // calculates how much percent each user has in the liquidity pool
 
 	mut p := LPWallet{
 		account: account

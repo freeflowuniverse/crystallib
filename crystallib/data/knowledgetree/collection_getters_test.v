@@ -7,9 +7,9 @@ const (
 )
 
 fn test_collection_get() {
-	mut tree := knowledgetree.new()!
+	mut tree := new()!
 	tree.scan(
-		path: testpath
+		path: knowledgetree.testpath
 		heal: false
 	)!
 	println('scanned test')

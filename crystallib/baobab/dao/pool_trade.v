@@ -32,9 +32,9 @@ pub mut:
 // 	tokens_after   f64
 // }
 // ```
-pub fn (mut dao DAO) trade_info(args PoolTradeArgs) ?TradeInfo {
+pub fn (mut dao DAO) trade_info(args PoolTradeArgs) !TradeInfo {
 	// TODO: we need to do decent check here that buy is possible, is there enough money on the accounts
-	mut r := dao.pools_wallet_get(args.account, args.currency, true)?
+	mut r := dao.pools_wallet_get(args.account, args.currency, true)!
 
 	return TradeInfo{
 		currency: r.poolcur.currency
@@ -51,7 +51,7 @@ pub struct PoolTradeArgs {
 }
 
 // this allows a user to buy a chose currency
-// e.g. dao.buy(buy(currency:"tft", account:kristof, amount:1000)?
+// e.g. dao.buy(buy(currency:"tft", account:kristof, amount:1000)!
 //		this means kristof is buying 1000 tft, this needs to come from his personal account, if not there will fail
 // ARGS for the trade info
 // {
@@ -69,17 +69,17 @@ pub struct PoolTradeArgs {
 // 	tokens_before  f64
 // 	tokens_after   f64
 // }
-pub fn (mut dao DAO) pool_trade_buy(args PoolTradeArgs) ?TradeInfo {
+pub fn (mut dao DAO) pool_trade_buy(args PoolTradeArgs) !TradeInfo {
 	// TODO: this code is for sure broken, need to fix
 
-	mut r := dao.pools_wallet_get(args.account, args.currency, true)?
+	mut r := dao.pools_wallet_get(args.account, args.currency, true)!
 
 	// TODO
 	usdneeded := args.amount / r.poolcur.usdprice_buy // money as paid for by the customer, needs to be given to the pool in usd
 	currencyreceive := args.amount // documentation purpose, is the currency the user is buying & amount
 
 	// this should always be there, because has been initialized that way
-	mut buyer_private_account_usd := r.poolusd.wallets[args.account.address]
+	mut buyer_private_account_usd := r.poolusd.wallets_pool[args.account.address]
 	buyer_private_account_usd.amount -= usdneeded
 
 	for key, mut p in r.poolcur.wallets_pool {
@@ -89,11 +89,11 @@ pub fn (mut dao DAO) pool_trade_buy(args PoolTradeArgs) ?TradeInfo {
 		walletusd0.amount += usdneeded / p.poolpercentage
 	}
 
-	r.poolusd.calculate()?
-	r.poolcur.calculate()?
+	r.poolusd.calculate()!
+	r.poolcur.calculate()!
 
 	return lp.buy_info(args)
 }
 
-pub fn (mut dao DAO) pool_trade_sell(args PoolTradeArgs) ?TradeInfo {
+pub fn (mut dao DAO) pool_trade_sell(args PoolTradeArgs) !TradeInfo {
 }

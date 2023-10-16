@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.tmux
+import freeflowuniverse.crystallib.tools.tmux
 
 fn do() ! {
 	mut t := tmux.new()!

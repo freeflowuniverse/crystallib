@@ -4,7 +4,7 @@ import net.http
 import json
 import x.json2
 import log
-import crystallib.threefold.grid.models
+import freeflowuniverse.crystallib.threefold.grid.models
 
 pub struct GraphQl {
 	url string
@@ -110,7 +110,7 @@ pub fn (mut g GraphQl) get_contract_by_project_name(mut deployer Deployer, proje
 	mut contracts := Contracts{}
 
 	g.logger.debug('Getting user twin')
-	twin_id := get_user_twin(deployer.mnemonics, deployer.substrate_url)!
+	twin_id := deployer.client.get_user_twin()!
 	g.logger.debug('Getting twin ${twin_id} contracts...')
 
 	contract_list := g.list_twin_contracts(twin_id, ['Created', 'GracePeriod'])!

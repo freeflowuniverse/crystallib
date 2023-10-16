@@ -30,7 +30,7 @@ All needed libs can be installed from [install.sh](./install.sh)
 - key_type is enum of [`cv25519`, `rsa`], by default key_type will be `cv25519`
 - key_length used if key_type is `rsa` and `3072` is a default value
 
-## How to use ?
+## How to use !
 
 - We will go together step by step to illustrate how to use this module.
 
@@ -46,24 +46,24 @@ import crpgp
 - CV25519 key:
 
 ```v
-ssk := crpgp.generate_key(name: <YOUR_NAME>, email: <YOUR_EMAIL>) ?
+ssk := crpgp.generate_key(name: <YOUR_NAME>, email: <YOUR_EMAIL>) !
 ```
 
 - RSA key
 
 ```v
 // key_length 3072 if not passed
-ssk := crpgp.generate_key(name: <YOUR_NAME>, email: <YOUR_EMAIL>, key_type: .rsa) ?
+ssk := crpgp.generate_key(name: <YOUR_NAME>, email: <YOUR_EMAIL>, key_type: .rsa) !
 ```
 or
 ```v
-ssk := crpgp.generate_key(name: <YOUR_NAME>, email: <YOUR_EMAIL>, key_type: .rsa, key_length: <LENGTH>) ?
+ssk := crpgp.generate_key(name: <YOUR_NAME>, email: <YOUR_EMAIL>, key_type: .rsa, key_length: <LENGTH>) !
 ```
 
 2. Import signed secret key from file
 
 ```v
-ssk := crpgp.import_secretkey_from_file(<FILE_PATH>) ?
+ssk := crpgp.import_secretkey_from_file(<FILE_PATH>) !
 ```
 
 - Now we have a signed secret key, let us get a signed public key, also we have **two** options, get from secret key or import
@@ -71,21 +71,21 @@ ssk := crpgp.import_secretkey_from_file(<FILE_PATH>) ?
 1. Get signed public key from signed secret key
 
 ```v
-spk := ssk.get_signed_public_key() ?
+spk := ssk.get_signed_public_key() !
 ```
 
 2. import signed public key from file
 
 ```v
-spk := crpgp.import_publickey_from_file(<FILE_PATH>) ?
+spk := crpgp.import_publickey_from_file(<FILE_PATH>) !
 ```
 
 - Now we have a signed public and secret key, let us try to sign and verify a message
 
 ```v
 message := "these are my secrets\n12345"
-mut sig := ssk.sign_message(message) ?
-println(sig.to_hex() ?) // In case we want to convert it to hex, here just to display it
+mut sig := ssk.sign_message(message) !
+println(sig.to_hex() !) // In case we want to convert it to hex, here just to display it
 
 if spk.verify_signature(sig, message) {
     println('✅ message signed and verified!')
@@ -95,8 +95,8 @@ if spk.verify_signature(sig, message) {
 - let us try encrypt and decrypt message.
 
 ```v
-encrypted := spk.encrypt_from_text(message) ?
-decrypted := ssk.decrypt_to_text(encrypted) ?
+encrypted := spk.encrypt_from_text(message) !
+decrypted := ssk.decrypt_to_text(encrypted) !
 if message == decrypted {
     println('✅ message encrypted and decrypted!')
 }

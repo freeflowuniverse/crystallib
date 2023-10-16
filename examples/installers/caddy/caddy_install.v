@@ -1,6 +1,6 @@
 module main
 
-import crystallib.installers.caddy
+import freeflowuniverse.crystallib.installers.caddy
 
 fn do() ! {
 	caddy.install()!

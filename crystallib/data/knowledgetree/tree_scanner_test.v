@@ -13,9 +13,9 @@ const (
 )
 
 fn test_scan() ! {
-	mut tree := knowledgetree.new()!
+	mut tree := new()!
 	tree.scan(
-		path: collections_path
+		path: knowledgetree.collections_path
 		heal: false
 	)!
 

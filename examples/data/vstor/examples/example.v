@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.vstor
+import freeflowuniverse.crystallib.data.vstor
 
 fn do() ! {
 	mut vstor := vstor.new()!

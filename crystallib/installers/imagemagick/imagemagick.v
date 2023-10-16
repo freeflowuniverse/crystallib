@@ -2,7 +2,7 @@ module imagemagick
 
 import freeflowuniverse.crystallib.osal
 import os
-import crystallib.installers.base
+import freeflowuniverse.crystallib.installers.base
 import process
 
 // this gets the name of the directory

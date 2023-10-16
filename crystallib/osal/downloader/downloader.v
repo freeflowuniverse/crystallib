@@ -87,7 +87,7 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 	if u.starts_with('http://') || u.starts_with('https://') || u.starts_with('git://') {
 		// might be git based checkout
 		if args.gitstructure == none {
-			mut gs2 := gittools.new(light: true)!
+			mut gs2 := gittools.get()!
 			args.gitstructure = gs2
 		}
 		mut gs := args.gitstructure or { return error('cannot find gitstructure') }

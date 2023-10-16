@@ -29,12 +29,12 @@ pub fn (generator ActorGenerator) generate(code []codemodel.CodeItem) ![]codemod
 
 	handler_method := generator.generate_handler_method(crud_methods)
 	// actor_code := $tmpl('templates/actor.v.template')
-	
-	custom_code := codemodel.CustomCode {
+
+	custom_code := codemodel.CustomCode{
 		text: $tmpl('./templates/play.v.template')
 	}
-	
-	mut actor_code := []codemodel.CodeItem{}	
+
+	mut actor_code := []codemodel.CodeItem{}
 	actor_code << custom_code
 	actor_code << actor_struct
 	actor_code << handler_method

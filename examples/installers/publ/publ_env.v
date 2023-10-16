@@ -1,7 +1,7 @@
 module main
 
-import installers.mdbook
-import installers.caddy
+import freeflowuniverse.crystallib.installers.mdbook
+import freeflowuniverse.crystallib.installers.caddy
 
 fn install() ! {
 	// shortcut to install the base

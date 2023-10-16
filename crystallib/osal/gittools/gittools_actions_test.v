@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.baobab.actions
 import os
 
 const (
-	git_do_action = "
+	git_do_action  = "
 !!gittools.git_do
 	coderoot: '${os.home_dir()}/code'
 	repo: 'crystallib'
@@ -22,7 +22,7 @@ const (
 
 fn test_git_do_action() {
 	ap := actions.new(
-		text:git_do_action
+		text: gittools.git_do_action
 	)!
 
 	git_do_action(ap.actions[0])!
@@ -31,7 +31,7 @@ fn test_git_do_action() {
 
 fn test_git_get_action() {
 	ap := actions.new(
-		text:git_get_action
+		text: gittools.git_get_action
 	)!
 
 	git_get_action(ap.actions[0])!

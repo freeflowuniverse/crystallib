@@ -1,6 +1,6 @@
 module main
 
-import installers.imagemagick
+import freeflowuniverse.crystallib.installers.imagemagick
 
 fn do() ! {
 	// shortcut to install the base

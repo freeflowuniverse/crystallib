@@ -1,10 +1,10 @@
 module main
 
-import installers.zdb
+import freeflowuniverse.crystallib.installers.zdb
 
 fn do() ! {
 	// shortcut to install the base
-	mut i := zdb.install()!
+	zdb.install()!
 }
 
 fn main() {

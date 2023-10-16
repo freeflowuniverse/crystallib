@@ -51,7 +51,7 @@ fn test_file_get() {
 	tree.scan(
 		path: knowledgetree.collections_path
 	)!
-	
+
 	banana_file_name := 'banana'
 	banana_file_collection := 'test_fruits'
 	banana_file_path := '${os.dir(@FILE)}/testdata/collections/fruits/banana.txt'

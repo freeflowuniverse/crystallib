@@ -1,5 +1,7 @@
 module vlang
 
+import freeflowuniverse.crystallib.osal
+
 // install vlang will return true if it was already installed
 pub fn install() ! {
 	// install vlang if it was already done will return true
@@ -9,7 +11,7 @@ pub fn install() ! {
 		return
 	}
 
-	if cmd_exists('v') {
+	if osal.cmd_exists('v') {
 		println('Vlang was already installed.')
 		return
 	}

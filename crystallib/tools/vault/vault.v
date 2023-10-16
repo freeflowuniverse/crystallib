@@ -12,23 +12,23 @@ pub mut:
 }
 
 // scan dir & subdirs, create a vault for it
-pub fn do(path string) ?Vault {
-	mut vault2 := get(path)?
-	vault2.shelve()?
+pub fn do(path string) !Vault {
+	mut vault2 := get(path)!
+	vault2.shelve()!
 	return vault2
 }
 
 // get the vault object from existing dir
-pub fn get(path string) ?Vault {
-	mut p := pathlib.get_dir(path, false)?
+pub fn get(path string) !Vault {
+	mut p := pathlib.get_dir(path, false)!
 	p.absolute()
-	mut vault2 := scan(p.name(), mut p)?
+	mut vault2 := scan(p.name(), mut p)!
 	return vault2
 }
 
 // scan dir & subdirs, create a vault for it
 // will not do the shelving let, will just create or load the vault attached to it
-pub fn scan(name string, mut path pathlib.Path) ?Vault {
+pub fn scan(name string, mut path pathlib.Path) !Vault {
 	mut vault := Vault{
 		name: name
 	}
@@ -39,25 +39,25 @@ pub fn scan(name string, mut path pathlib.Path) ?Vault {
 	if !path.is_dir() {
 		return error('Can only create a shelve for a dir, now: ${path.path}')
 	}
-	vault.scan_recursive(mut path)?
+	vault.scan_recursive(mut path)!
 	return vault
 }
 
 // walk over the dir's and find shelves and process them
-fn (mut vault Vault) scan_recursive(mut path pathlib.Path) ? {
-	vault.shelve_get(mut path)?
-	mut llist := path.list(recursive: false)?
+fn (mut vault Vault) scan_recursive(mut path pathlib.Path) ! {
+	vault.shelve_get(mut path)!
+	mut llist := path.list(recursive: false)!
 	for mut diritem in llist {
 		if diritem.name().starts_with('.') || diritem.name().starts_with('_') {
 			continue
 		}
 		if diritem.is_dir() {
-			vault.scan_recursive(mut diritem)?
+			vault.scan_recursive(mut diritem)!
 		}
 	}
 }
 
-pub fn (mut vault Vault) shelve_get(mut path pathlib.Path) ?Shelve {
+pub fn (mut vault Vault) shelve_get(mut path pathlib.Path) !Shelve {
 	// check if the shelve already exists, not the most efficient way for a big vault, but ok for now
 	for shelve0 in vault.shelves {
 		if shelve0.path.path == path.path {
@@ -76,7 +76,7 @@ pub fn (mut vault Vault) shelve_get(mut path pathlib.Path) ?Shelve {
 	mut shelve := Shelve{
 		path: path
 	}
-	shelve.load()?
+	shelve.load()!
 
 	vault.shelves << shelve
 
@@ -84,16 +84,16 @@ pub fn (mut vault Vault) shelve_get(mut path pathlib.Path) ?Shelve {
 }
 
 // walk over the vault and re-shelve all dir's as owned by the vault
-pub fn (mut vault Vault) shelve() ? {
+pub fn (mut vault Vault) shelve() ! {
 	for mut shelve in vault.shelves {
-		shelve.shelve()?
+		shelve.shelve()!
 	}
 }
 
 // delete the vault remove all dirs
-pub fn (mut vault Vault) delete() ? {
+pub fn (mut vault Vault) delete() ! {
 	for mut shelve in vault.shelves {
-		shelve.delete()?
+		shelve.delete()!
 	}
 }
 
@@ -114,8 +114,8 @@ pub fn (mut vault Vault) hash() string {
 // restore to the unixtime state
 // only implemented to go to 0, which is the first state
 // TODO: implement restore on other times
-pub fn (mut vault Vault) restore(unixtime int) ? {
+pub fn (mut vault Vault) restore(unixtime int) ! {
 	for mut shelve in vault.shelves {
-		shelve.restore(unixtime)?
+		shelve.restore(unixtime)!
 	}
 }
