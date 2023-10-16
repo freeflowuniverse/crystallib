@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.data.paramsparser
 pub struct MacroObj {
 pub mut:
 	cmd    string
-	params params.Params
+	params paramsparser.Params
 }
 
 // fix cmd to remain lower case and dots only
@@ -39,7 +39,7 @@ pub fn macro_parse(line_ string) !MacroObj {
 	}
 	r.cmd = cmd_fix(splitted[0])!
 	line = line.all_after(splitted[0])
-	p := params.parse(line)!
+	p := paramsparser.parse(line)!
 	r.params = p
 	return r
 }

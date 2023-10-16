@@ -8,7 +8,7 @@ pub mut:
 	content string
 	remarks string
 	name    string
-	params  params.Params
+	params  paramsparser.Params
 	result  string
 }
 

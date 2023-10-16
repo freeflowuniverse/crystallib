@@ -76,7 +76,7 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 				content := filepath.read()!
 				if content.trim_space() != '' {
 					// means there are params in there
-					mut params_ := params.parse(content)!
+					mut params_ := paramsparser.parse(content)!
 					if params_.exists('name') {
 						name = params_.get('name')!
 					}

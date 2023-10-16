@@ -10,8 +10,8 @@ pub mut:
 	guid         string // unique jobid (unique per actor which is unique per twin)
 	twinid       u32    // which twin needs to execute the action
 	action       string // actionname in long form includes domain & actor
-	args         params.Params
-	result       params.Params
+	args         paramsparser.Params
+	result       paramsparser.Params
 	state        string
 	start        i64      // epoch
 	end          i64      // epoch
