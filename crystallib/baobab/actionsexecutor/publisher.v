@@ -1,4 +1,4 @@
-module publisher
+module actionsexecutor
 
 import freeflowuniverse.crystallib.data.actionsparser  { ActionsArgs }
 import freeflowuniverse.crystallib.data.paramsparser 

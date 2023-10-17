@@ -5,7 +5,7 @@ fn domain_check(c string, block string) ! {
 		return error('domain not specified\nFor block: ${block}')
 	}
 
-	if c.len < 5 {
+	if c.len < 5 && c != 'core' {
 		return error("domain bad specified (len min 5), found '${c}'.\nFor block: ${block}")
 	}
 	if c.len > 20 {
