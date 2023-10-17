@@ -2,7 +2,7 @@ module threelang
 
 import log
 import freeflowuniverse.crystallib.baobab.actions
-import freeflowuniverse.crystallib.rpcwebsocket { RpcWsClient }
+import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
 import threefoldtech.web3gw.tfgrid as tfgrid_client
 import threefoldtech.web3gw.tfchain as tfchain_client
 import threefoldtech.web3gw.stellar as stellar_client
