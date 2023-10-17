@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.rpcwebsocket
+import freeflowuniverse.crystallib.data.rpcwebsocket
 import threefoldtech.web3gw.tfgrid
 import flag
 import log
