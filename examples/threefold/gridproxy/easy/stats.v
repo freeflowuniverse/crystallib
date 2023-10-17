@@ -1,5 +1,4 @@
 import freeflowuniverse.crystallib.threefold.gridproxy
-import freeflowuniverse.crystallib.threefold.gridproxy.model
 
 
 fn get_online_grid_stats_example()!{
