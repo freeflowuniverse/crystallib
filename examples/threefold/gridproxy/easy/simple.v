@@ -1,4 +1,4 @@
-import threefoldtech.vgrid.gridproxy
+import freeflowuniverse.crystallib.threefold.gridproxy
 
 fn do() ! {
 	mut gp_client := gridproxy.get(.test, true)!

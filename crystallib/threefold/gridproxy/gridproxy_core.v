@@ -186,7 +186,7 @@ pub fn (mut c GridProxyClient) get_nodes(params NodeFilter) ![]Node {
 // * `country_contains` (string): Node partial country filter. [optional].
 // * `country` (string): Node country filter. [optional].
 // * `dedicated` (bool): Set to true to get the dedicated nodes only. [optional].
-// * `domain` (string): Set to true to filter nodes with domain. [optional].
+// * `domain` (bool): Set to true to filter nodes with domain. [optional].
 // * `farm_ids` ([]u64): List of farm ids. [optional].
 // * `farm_name_contains` (string): Get nodes for specific farm. [optional].
 // * `farm_name` (string): Get nodes for specific farm. [optional].
