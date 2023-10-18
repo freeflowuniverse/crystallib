@@ -1,6 +1,6 @@
 module tfgrid
 
-import threefoldtech.web3gw.tfgrid as tfgrid_client { TFGridClient }
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid as tfgrid_client { TFGridClient }
 import freeflowuniverse.crystallib.baobab.actions { Action }
 import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
 import log { Logger }

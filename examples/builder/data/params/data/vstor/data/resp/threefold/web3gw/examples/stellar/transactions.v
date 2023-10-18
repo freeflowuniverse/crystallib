@@ -1,7 +1,7 @@
 module main
 
 import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
-import threefoldtech.web3gw.stellar
+import freeflowuniverse.crystallib.threefold.web3gw.stellar
 import flag
 import log
 import os

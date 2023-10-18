@@ -1,7 +1,7 @@
 module main
 
-import threefoldtech.web3gw.tfgrid { TFGridClient }
-import threefoldtech.web3gw.tfgrid.applications.peertube { PeertubeResult }
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid { TFGridClient }
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid.applications.peertube { PeertubeResult }
 import log { Logger }
 import flag { FlagParser }
 import os
