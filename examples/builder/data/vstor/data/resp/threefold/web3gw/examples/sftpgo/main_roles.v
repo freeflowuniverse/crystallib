@@ -1,6 +1,6 @@
 module main
 
-import threefoldtech.web3gw.sftpgo
+import freeflowuniverse.crystallib.threefold.web3gw.sftpgo
 import flag
 import os
 import log

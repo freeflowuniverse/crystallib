@@ -1,7 +1,7 @@
 module tfgrid
 
 import freeflowuniverse.crystallib.baobab.actions { Action }
-import threefoldtech.web3gw.tfgrid as tfgrid_client { ZDBDeployment }
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid as tfgrid_client { ZDBDeployment }
 import rand
 
 fn (mut t TFGridHandler) zdb(action Action) ! {

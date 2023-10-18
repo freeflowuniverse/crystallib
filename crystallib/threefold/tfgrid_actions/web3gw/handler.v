@@ -3,7 +3,7 @@ module web3gw
 import log { Logger }
 import freeflowuniverse.crystallib.baobab.actions { Action }
 import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
-import threefoldtech.web3gw.threelang.clients { Clients }
+import freeflowuniverse.crystallib.threefold.web3gw.threelang.clients { Clients }
 
 [heap]
 pub struct Web3GWHandler {

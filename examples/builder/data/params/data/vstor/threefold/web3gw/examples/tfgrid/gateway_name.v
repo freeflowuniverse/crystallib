@@ -1,6 +1,6 @@
 module main
 
-import threefoldtech.web3gw.tfgrid { GatewayName, TFGridClient }
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid { GatewayName, TFGridClient }
 import log { Logger }
 import flag { FlagParser }
 import os

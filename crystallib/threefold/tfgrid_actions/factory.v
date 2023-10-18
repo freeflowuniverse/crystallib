@@ -3,15 +3,15 @@ module threelang
 import log
 import freeflowuniverse.crystallib.baobab.actions
 import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
-import threefoldtech.web3gw.tfgrid as tfgrid_client
-import threefoldtech.web3gw.tfchain as tfchain_client
-import threefoldtech.web3gw.stellar as stellar_client
-import threefoldtech.web3gw.eth as eth_client
-import threefoldtech.web3gw.btc as btc_client
-import threefoldtech.web3gw.threelang.tfgrid { TFGridHandler }
-import threefoldtech.web3gw.threelang.web3gw { Web3GWHandler }
-import threefoldtech.web3gw.threelang.clients { Clients }
-import threefoldtech.web3gw.threelang.stellar { StellarHandler }
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid as tfgrid_client
+import freeflowuniverse.crystallib.threefold.web3gw.tfchain as tfchain_client
+import freeflowuniverse.crystallib.threefold.web3gw.stellar as stellar_client
+import freeflowuniverse.crystallib.threefold.web3gw.eth as eth_client
+import freeflowuniverse.crystallib.threefold.web3gw.btc as btc_client
+import freeflowuniverse.crystallib.threefold.web3gw.threelang.tfgrid { TFGridHandler }
+import freeflowuniverse.crystallib.threefold.web3gw.threelang.web3gw { Web3GWHandler }
+import freeflowuniverse.crystallib.threefold.web3gw.threelang.clients { Clients }
+import freeflowuniverse.crystallib.threefold.web3gw.threelang.stellar { StellarHandler }
 
 const (
 	tfgrid_book  = 'tfgrid'

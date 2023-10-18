@@ -1,7 +1,7 @@
 module tfgrid
 
 import freeflowuniverse.crystallib.baobab.actions { Action }
-import threefoldtech.web3gw.tfgrid as tfgrid_client { AddWorkerToK8sCluster, K8sCluster, K8sNode, RemoveWorkerFromK8sCluster }
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid as tfgrid_client { AddWorkerToK8sCluster, K8sCluster, K8sNode, RemoveWorkerFromK8sCluster }
 import rand
 
 fn (mut t TFGridHandler) k8s(action Action) ! {

@@ -1,7 +1,7 @@
 module main
 
-import threefoldtech.web3gw.tfgrid { TFGridClient }
-import threefoldtech.web3gw.tfgrid.applications.taiga { TaigaResult }
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid { TFGridClient }
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid.applications.taiga { TaigaResult }
 import log { Logger }
 import flag { FlagParser }
 import os
