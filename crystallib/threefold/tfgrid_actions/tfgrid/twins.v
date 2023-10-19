@@ -6,9 +6,6 @@ import freeflowuniverse.crystallib.threefold.web3gw.tfgrid { FindTwins, Limit, T
 pub fn (mut h TFGridHandler) twins(action Action) ! {
 	match action.name {
 		'get' {
-			network := action.params.get_default('network', 'main')!
-			h.explorer.load(network)!
-
 			mut filter := TwinFilter{}
 			if action.params.exists('twin_id') {
 				filter.twin_id = action.params.get_u64('twin_id')!
