@@ -8,6 +8,7 @@
 	name:"info_cloud"
 	git_url: 'https://github.com/freeflowuniverse/crystallib/tree/development/examples/cli/hero'
 	git_root: '/tmp/code'
+    git_reset: true
     git_pull: true
     heal: false
 	
