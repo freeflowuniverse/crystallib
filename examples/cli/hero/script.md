@@ -1,7 +1,7 @@
 ```js
 
 !!knowledgetree.collections_scan
-	git_url: 'https://github.com/threefoldfoundation/info_cloud_production'
+	git_url: 'https://github.com/threefoldfoundation/info_cloud_production/src'
 	git_root: '/tmp/code'
 
 !!knowledgetree.book_generate
