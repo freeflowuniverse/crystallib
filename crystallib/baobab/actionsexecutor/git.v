@@ -10,8 +10,9 @@ fn git(mut actions actionsparser.Actions, action actionsparser.Action) ! {
 		mut gs := gittools.get()!
 		url := action.params.get('url')!
 		branch := action.params.get_default('branch', '')!
-		reset := action.params.get_default_false('reset')!
-		pull := action.params.get_default_false('pull')!
-		mut gr := gs.repo_get_from_url(url: url, branch: branch, pull: pull, reset: reset)!
+		reset := action.params.get_default_false('reset')
+		pull := action.params.get_default_false('pull')
+		// TODO: fix git
+		// mut gr := gs.repo_get_from_url(url: url, branch: branch, pull: pull, reset: reset)
 	}
 }

@@ -8,7 +8,7 @@ fn test_macro() {
 
 	r := MacroObj{
 		cmd: 'command.1.x'
-		params: params.Params{
+		params: paramsparser.Params{
 			params: [params.Param{
 				key: 'color'
 				value: 'red'

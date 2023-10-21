@@ -13,33 +13,36 @@ pub fn sal_downloader(action actionsparser.Action) ! {
 		"downloader" {
 			match action.name {
 				"get" {
-					downloader_get(action)!
+					downloader_get(action: action)!
+				} else {
+					return error('actions not supported yet')
 				}
 			}
-			
+		} else {
+			return error('actor not supported yet')
 		}
 	}
 }
 
-fn downloader_get(args ActionExecArg) ! {
+fn downloader_get(args ActionExecArgs) ! {
 	action:=args.action
 	// session:=args.action or {panic("no context")} //if we need it here
 	mut name := action.params.get_default('name', '')!
 	mut downloadpath := action.params.get_default('downloadpath', '')!
 	mut url := action.params.get_default('url', '')!
-	mut reset := action.params.get_default_false('reset')!
-	mut gitpull := action.params.get_default_false('gitpull')!
+	mut reset := action.params.get_default_false('reset')
+	mut gitpull := action.params.get_default_false('gitpull')
 
 	mut minsize_kb := action.params.get_u32_default('minsize_kb', 0)!
 	mut maxsize_kb := action.params.get_u32_default('maxsize_kb', 0)!
 
-	mut destlink := action.params.get_default_false('destlink', '')!
+	mut destlink := action.params.get_default_false('destlink')
 
 	mut dest := action.params.get_default('dest', '')!
 	mut hash := action.params.get_default('hash', '')!
 	mut metapath := action.params.get_default('metapath', '')!
 
-	mut meta := downloader.get(
+	mut meta := downloader.download(
 		name: name
 		downloadpath: downloadpath
 		url: url
@@ -51,7 +54,7 @@ fn downloader_get(args ActionExecArg) ! {
 		dest: dest
 		hash: hash
 		metapath: metapath
-		session:session //TO IMPLEMENT (also optional)
+		// session:session // TODO IMPLEMENT (also optional)
 	)!	
 
 }

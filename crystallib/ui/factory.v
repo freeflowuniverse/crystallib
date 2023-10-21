@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.data.paramsparser
 pub struct UserInterfaceArgs {
 pub mut:
 	channel ChannelType
-	params  params.Params // to pass arguments to implementation
+	params  paramsparser.Params // to pass arguments to implementation
 }
 
 pub fn new(args UserInterfaceArgs) !UserInterface {

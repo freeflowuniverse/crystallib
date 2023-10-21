@@ -20,7 +20,7 @@ fn find_item(myfilter params.ParamsFilter) !string {
 
 	for {
 		mut r := buffered_reader.read_line() or { break }
-		p := params.parse(r)!
+		p := paramsparser.parse(r)!
 		if p.filter_match(myfilter)! {
 			return r
 		}

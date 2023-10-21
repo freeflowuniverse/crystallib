@@ -18,7 +18,7 @@ pub fn new(user_id string) UITelegram {
 }
 
 fn (ui UITelegram) send_question(msg string) !string {
-	mut j_params := params.Params{}
+	mut j_params := paramsparser.Params{}
 	j_params.kwarg_add('question', msg)
 
 	// job := ui.baobab.job_new(
@@ -34,7 +34,7 @@ fn (ui UITelegram) send_question(msg string) !string {
 }
 
 fn (ui UITelegram) send_exit_message(msg string) ! {
-	mut j_params := params.Params{}
+	mut j_params := paramsparser.Params{}
 	j_params.kwarg_add('message', msg)
 
 	job := ui.baobab.job_new(
