@@ -11,6 +11,7 @@ pub struct PackageItem {
 pub mut:
 	names  []string
 	recipe &DockerBuilderRecipe [str: skip]
+	platform PlatformType
 }
 
 // add one of more name (alpine packages), no need to do update, upgrade first,
@@ -18,6 +19,7 @@ pub fn (mut b DockerBuilderRecipe) add_package(args PackageArgs) ! {
 	mut package := PackageItem{
 		recipe: &b
 		names: args.names
+		platform: b.platform
 	}
 	if args.name == '' && args.names == [] {
 		return error('name or names cannot be empty, name can be comma separated')
@@ -57,6 +59,12 @@ pub fn (mut b DockerBuilderRecipe) add_package(args PackageArgs) ! {
 				apk upgrade
 				'
 			) or { return error('Failed to add run') }
+		} else if b.platform == .ubuntu {
+			b.add_run(
+				cmd: '
+				apt-get update
+				apt-get install -y apt-transport-https'
+			)!
 		} else {
 			panic('implement for ubuntu')
 		}
@@ -91,5 +99,9 @@ pub fn (mut i PackageItem) render() !string {
 	for name in i.names {
 		names += ' ${name} '
 	}
-	return 'RUN apk add --no-cache ${names}'
+	mut pkg_manager := 'apk add --no-cache'
+	if i.platform == .ubuntu {
+		pkg_manager = 'apt-get -y install'
+	}
+	return 'RUN ${pkg_manager} ${names}'
 }

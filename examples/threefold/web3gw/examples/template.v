@@ -1,16 +1,11 @@
 module main
 
-import freeflowuniverse.crystallib.rpcwebsocket { RpcWsClient }
-import threefoldtech.web3gw.eth
-import threefoldtech.web3gw.tfgrid
-import threefoldtech.web3gw.stellar
-import threefoldtech.web3gw.tfchain
-import threefoldtech.web3gw.nostr
+import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
 // ADD NEW CLIENTS HERE
+
 import flag
 import log
 import os
-import time
 
 const (
 	default_server_address = 'ws://127.0.0.1:8080'

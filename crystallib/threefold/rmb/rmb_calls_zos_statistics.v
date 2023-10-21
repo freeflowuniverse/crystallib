@@ -1,7 +1,7 @@
 module rmb
 
 import json
-import base64
+import encoding.base64
 
 pub struct ZosResources {
 pub mut:

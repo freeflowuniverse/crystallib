@@ -1,6 +1,6 @@
 module main
 
-import threefoldtech.web3gw.tfgrid
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid
 import os
 
 fn do() ! {

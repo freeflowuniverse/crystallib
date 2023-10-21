@@ -1,4 +1,4 @@
-import base64
+import encoding.base64
 
 fn basic_auth(users map[string]string, request http.Request) ?bool {
 	mut processed_users := map[string]string{}

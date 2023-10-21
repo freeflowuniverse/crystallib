@@ -2,7 +2,7 @@ module mail
 
 import log
 import freeflowuniverse.crystallib.data.jsonrpc
-import freeflowuniverse.crystallib.rpcwebsocket
+import freeflowuniverse.crystallib.data.rpcwebsocket
 import x.json2
 
 // client for reverse echo json rpc ws server

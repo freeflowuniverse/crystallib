@@ -1,6 +1,6 @@
 module rmb
 
-import base64
+import encoding.base64
 import json
 
 // if true the ZOS has a public ip address

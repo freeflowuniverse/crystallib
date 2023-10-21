@@ -1,10 +1,10 @@
 module main
 
-import threefoldtech.web3gw.tfgrid { GatewayFQDN, TFGridClient }
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid { GatewayFQDN, TFGridClient }
 import log { Logger }
 import flag { FlagParser }
 import os
-import freeflowuniverse.crystallib.rpcwebsocket
+import freeflowuniverse.crystallib.data.rpcwebsocket
 
 const (
 	default_server_address = 'ws://127.0.0.1:8080'

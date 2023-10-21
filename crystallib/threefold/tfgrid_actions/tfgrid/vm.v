@@ -1,7 +1,7 @@
 module tfgrid
 
-import freeflowuniverse.crystallib.data.actionsparser { Action }
-import threefoldtech.web3gw.tfgrid as tfgrid_client { RemoveVM, VM }
+import freeflowuniverse.crystallib.baobab.actions { Action }
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid as tfgrid_client { RemoveVM, VM }
 import rand
 
 fn (mut t TFGridHandler) vm(action Action) ! {

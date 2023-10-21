@@ -1,5 +1,5 @@
-import threefoldtech.vgrid.gridproxy { TFGridNet }
-import threefoldtech.vgrid.gridproxy.model { Node, NodeFilter }
+import freeflowuniverse.crystallib.threefold.gridproxy { TFGridNet }
+import freeflowuniverse.crystallib.threefold.gridproxy.model { Node, NodeFilter }
 import os
 
 fn main() {

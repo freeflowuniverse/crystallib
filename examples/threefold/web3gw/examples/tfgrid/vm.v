@@ -1,10 +1,10 @@
 module main
 
-import threefoldtech.web3gw.tfgrid { DeployVM, NetworkDeployment, TFGridClient, VMDeployment }
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid { DeployVM, NetworkDeployment, TFGridClient, VMDeployment }
 import log { Logger }
 import flag { FlagParser }
 import os
-import freeflowuniverse.crystallib.rpcwebsocket
+import freeflowuniverse.crystallib.data.rpcwebsocket
 import rand
 
 const (

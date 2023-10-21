@@ -1,10 +1,10 @@
 module main
 
-import freeflowuniverse.crystallib.rpcwebsocket { RpcWsClient }
-import threefoldtech.web3gw.eth
-import threefoldtech.web3gw.stellar
-import threefoldtech.web3gw.tfchain
-import threefoldtech.web3gw.tfgrid
+import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
+import freeflowuniverse.crystallib.threefold.web3gw.eth
+import freeflowuniverse.crystallib.threefold.web3gw.stellar
+import freeflowuniverse.crystallib.threefold.web3gw.tfchain
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid
 import flag
 import log
 import os
