@@ -7,10 +7,3 @@ import freeflowuniverse.crystallib.clients.redisclient
 import freeflowuniverse.crystallib.core.texttools
 
 
-[heap]
-pub struct CircleDB {
-pub mut:
-	sessions map[string]Session
-	contexts map[string]Context
-}
-

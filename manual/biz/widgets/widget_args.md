@@ -1,3 +1,5 @@
+# widget args
+
 ## params
 
 - title: title of the tables widget

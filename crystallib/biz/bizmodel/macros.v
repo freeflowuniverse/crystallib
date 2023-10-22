@@ -47,7 +47,7 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 		}
 
 		supported_actions := ['sheet_wiki', 'graph_pie_row', 'graph_line_row', 'graph_bar_row',
-			'graph_title_row', 'wiki_row_overview', 'employee_wiki', 'employees_wiki']
+			'graph_title_row', 'wiki_row_overview']
 
 		if action.name in supported_actions {
 			rowname := p.get_default('rowname', '')!

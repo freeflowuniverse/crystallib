@@ -3,19 +3,11 @@ module bizmodel
 import freeflowuniverse.crystallib.biz.spreadsheet
 import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.knowledgetree
 import freeflowuniverse.crystallib.data.actionsparser
 import os
-
-// import freeflowuniverse.crystallib.baobab.hero
-// import freeflowuniverse.crystallib.baobab.context
-// import freeflowuniverse.crystallib.data.currency
-// import freeflowuniverse.crystallib.data.knowledgetree
-// import freeflowuniverse.crystallib.biz.spreadsheet
-// import cli { Command }
-
-const manualpath = os.dir(@FILE) + '/manual'
 
 __global (
 	bizmodels shared map[string]BizModel
@@ -25,7 +17,7 @@ pub struct BizModel {
 pub mut:
 	sheet     spreadsheet.Sheet
 	params    BizModelArgs
-	employees map[string]&Employee //
+	employees map[string]&Employee
 	// currencies currency.Currencies
 }
 
@@ -38,23 +30,11 @@ pub mut:
 	git_reset   bool
 	git_root    string
 	git_pull    bool
-	git_branch  string
 	mdbook_name string // if empty will be same as name of bizmodel
 	mdbook_path string
 	mdbook_dest string // if empty is /tmp/mdbooks/$name
 }
 
-pub struct Employee {
-pub:
-	name                 string
-	description          string
-	department           string
-	cost                 string
-	cost_percent_revenue f64
-	nrpeople             string
-	indexation           f64
-	cost_center          string
-}
 
 pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 	mut args := args_
@@ -73,19 +53,25 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 	}
 
 	if args.name == '' {
-		args.name = texttools.name_fix(args.name)
+		return error("bizmodel needs to have a name")
 	}
+	
+	args.name = texttools.name_fix(args.name)
 
 	if args.mdbook_name == '' {
 		args.mdbook_name = args.name
 	}
 
-	tree_name := 'kapok'
+	tree_name := 'bizmodel_${args.name}'
 	mut tree := knowledgetree.new(name: tree_name)!
 
 	mp := macroprocessor_new(args_.name)
 	tree.macroprocessor_add(mp)!
 
+	if args.git_url.len>0{
+		args.path=gittools.code_get(coderoot:args.git_root,url:args.git_url,pull:args.git_pull,reset:args.git_reset,reload:false)!
+	}
+	
 	tree.scan(
 		name: tree_name
 		path: args.path
@@ -95,28 +81,8 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 	tree.scan(
 		name: tree_name
 		path: bizmodel.manualpath
-		heal: false
+		heal: true
 	)!
-
-	// mut tree := args.context.knowledgetree('bizmodel_${args.name}')!
-
-	// mut gs := c.gitstructure('default')!
-	// if args.git_root.len > 0 {
-	// 	c.gitstructure_new(name: 'bizmodel_${args.name}', root: args.git_root, light: true)
-	// }
-
-	// if args.git_url.len > 0 {
-	// 	gs = c.gitstructure()!
-	// 	mut gr := gs.repo_get_from_url(
-	// 		url: args.git_url
-	// 		branch: args.git_branch
-	// 		pull: args.git_pull
-	// 		reset: args.git_reset
-	// 	)!
-	// 	args.path = gr.path_content_get()
-	// }
-
-	// tree.scan(path: args.path)!
 
 	mut book := knowledgetree.book_generate(
 		path: args.mdbook_path
@@ -124,8 +90,6 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 		tree: tree
 		dest: args.mdbook_dest
 	)!
-
-	// mut book := knowledgetree.MDBook{}
 
 	return *book
 }

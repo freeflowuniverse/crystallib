@@ -12,5 +12,5 @@
 ```
 
 <!-- TODO: check what goes wrong -->
-<!-- !!include:widget_args -->
+!!include:widget_args
 
