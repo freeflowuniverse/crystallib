@@ -5,10 +5,10 @@ import freeflowuniverse.crystallib.core.texttools
 
 pub struct Action {
 pub mut:
-	name     string        [required]
+	name     string              [required]
 	domain   string = 'core'
-	actor    string        [required]  //is not always an actor in strict sense, is just the 2nd element
-	circle   string        [required]
+	actor    string              [required] // is not always an actor in strict sense, is just the 2nd element
+	circle   string              [required]
 	priority u8 = 10 // 0 is highest, do 10 as default
 	params   paramsparser.Params
 	context  FileContext // pointer to index of item in doc

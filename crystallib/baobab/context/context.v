@@ -12,13 +12,13 @@ __global (
 
 pub struct Context {
 pub mut:
-	id    string 
-	alias  string
-	start  ourtime.OurTime
+	id    string
+	alias string
+	start ourtime.OurTime
 	// end  ourtime.OurTime
-	params paramsparser.Params
-	gitstructure ?gittools.GitStructure //optional
-	done   []string
+	params       paramsparser.Params
+	gitstructure ?gittools.GitStructure // optional
+	done         []string
 }
 
 // get a context object based on the name /
@@ -46,12 +46,11 @@ pub fn new(args_ ContextNewArgs) !&Context {
 		}
 	}
 	lock contexts {
-		c:=contexts[args.id] or { return error('Could not find context ${args.id}') }
+		c := contexts[args.id] or { return error('Could not find context ${args.id}') }
 		return c
 	}
 	panic('bug')
 }
-
 
 // save the context to redis & mem
 pub fn (mut context Context) load() ! {

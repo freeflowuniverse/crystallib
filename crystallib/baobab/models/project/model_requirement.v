@@ -8,7 +8,7 @@ pub mut:
 	story       system.SmartId   [required; root_object: Story]
 	title       string
 	description string
-	assignment  []system.SmartId         [root_object: 'Person, Team']
+	assignment  []system.SmartId [root_object: 'Person, Team']
 	priority    Priority
 	state       RequirementState
 }

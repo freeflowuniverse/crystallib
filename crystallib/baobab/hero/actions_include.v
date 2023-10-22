@@ -19,7 +19,7 @@ fn (mut s Session) actions_include(myactions []actionsparser.Action) ![]actionsp
 
 			m := downloader.download(url: sourceurl, reset: false)!
 
-			ap_include := actions.new(path: m.path)!
+			ap_include := actionsparser.new(path: m.path)!
 			mut actions_include := ap_include.filtersort(actor: 'runner')!
 			for action_include in actions_include {
 				actionsprocessed << action_include

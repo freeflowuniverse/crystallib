@@ -1,19 +1,19 @@
 module main
 
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 import os
 
 const testpath3 = os.dir(@FILE) + '/test_path'
 
 // if we return True then it means the dir or file is processed
 fn filter_1(mut path pathlib.Path, mut params paramsparser.Params) !bool {
-	// print(" - check $path.path")
+	print(" - check $path.path")
 	if path.name().starts_with('.') {
-		// println(" FALSE")
+		println(" FALSE")
 		return false
 	} else if path.name().starts_with('_') {
-		// println(" FALSE")
+		println(" FALSE")
 		return false
 	}
 	// println(" TRUE")
@@ -21,8 +21,7 @@ fn filter_1(mut path pathlib.Path, mut params paramsparser.Params) !bool {
 }
 
 fn executor_1(mut patho pathlib.Path, mut params paramsparser.Params) !paramsparser.Params {
-	// println("- ${patho.path}")
-	// println( " - exec: $patho.path" )
+	println( " - exec: $patho.path" )
 	params.arg_add(patho.path)
 	return params
 }

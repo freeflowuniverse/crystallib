@@ -17,7 +17,7 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 	mut r := knowledgetree.MacroResult{
 		state: .stop
 	}
-	ap := actions.new(text: code)!
+	ap := actionsparser.new(text: code)!
 	mut actions2 := ap.filtersort(actor: 'bizmodel')!
 	for action in actions2 {
 		p := action.params

@@ -1,6 +1,5 @@
 module bizmodel
 
-
 pub struct Employee {
 pub:
 	name                 string

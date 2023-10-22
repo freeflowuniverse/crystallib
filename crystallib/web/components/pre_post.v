@@ -1,11 +1,11 @@
-
 module components
+
 import db.sqlite
 import nedpals.vex.ctx
 import freeflowuniverse.crystallib.core.texttools
 
-pub fn html_pre(req &ctx.Req)!string{
-	out:='
+pub fn html_pre(req &ctx.Req) !string {
+	out := '
 	<!DOCTYPE html>
 	<html lang="en">
 	<head>
@@ -17,16 +17,12 @@ pub fn html_pre(req &ctx.Req)!string{
 	<body>
 	'
 	return texttools.dedent(out)
-
 }
 
-pub fn html_post(req &ctx.Req)!string{
-	out:='
+pub fn html_post(req &ctx.Req) !string {
+	out := '
 	</body>
 	</html>
 	'
 	return texttools.dedent(out)
 }
-
-
-

@@ -39,17 +39,23 @@ pub fn scan(args_ TreeScannerArgs) ! {
 
 // walk over directory find dirs with .book or .collection inside and add to the tree
 // a path will not be added unless .collection is in the path of a collection dir or .book in a book
-pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
+pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 	// $if debug{println(" - collections find recursive: $path.path")}
-	mut args_ := args
-	if args_.git_url.len > 0 {
-		args.path=gittools.code_get(coderoot:args.git_root,url:args.git_url,pull:args.git_pull,reset:args.git_reset,reload:false)!
+	mut args := args_
+	if args.git_url.len > 0 {
+		args.path = gittools.code_get(
+			coderoot: args.git_root
+			url: args.git_url
+			pull: args.git_pull
+			reset: args.git_reset
+			reload: false
+		)!
 	}
 
-	if args_.path.len < 3 {
+	if args.path.len < 3 {
 		return error('Path needs to be not empty.')
 	}
-	mut path := pathlib.get_dir(args_.path, false)!
+	mut path := pathlib.get_dir(args.path, false)!
 
 	if path.is_dir() {
 		mut name := path.name()
@@ -78,8 +84,8 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 						tree.collection_new(
 							path: path.path
 							name: name
-							heal: args_.heal
-							load: args_.load
+							heal: args.heal
+							load: args.load
 						)!
 						return
 					}
@@ -91,15 +97,15 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 		}
 
 		// QUESTION: is this necessary?
-		// if !args_.strict {
+		// if !args.strict {
 		// 	for dir in path.dir_list()! {
 		// 		// dont double count collections already added
 		// 		if !dir.file_exists('.collection') || !dir.file_exists('.site') {
 		// 			tree.collection_new(
 		// 				path: dir.path
 		// 				name: name
-		// 				heal: args_.heal
-		// 				load: args_.load
+		// 				heal: args.heal
+		// 				load: args.load
 		// 			)!
 		// 		}
 		// 	}
@@ -114,7 +120,7 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 					continue
 				}
 
-				tree.scan(path: p_in.path, heal: args_.heal, load: args_.load) or {
+				tree.scan(path: p_in.path, heal: args.heal, load: args.load) or {
 					msg := 'Cannot process recursive on ${p_in.path}\n${err}'
 					return error(msg)
 				}
@@ -141,11 +147,11 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 // }
 
 // QUESTION: healing doesn't work in scanning, is it ok to separate?
-pub fn (mut tree Tree) heal(args TreeScannerArgs) ! {
-	mut args_ := args
-	if args_.heal {
+pub fn (mut tree Tree) heal(args_ TreeScannerArgs) ! {
+	mut args := args_
+	if args.heal {
 		for _, mut collection in tree.collections {
-			if !args_.load {
+			if !args.load {
 				collection.scan()!
 			}
 			collection.fix()!

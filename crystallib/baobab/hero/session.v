@@ -11,11 +11,11 @@ import freeflowuniverse.crystallib.osal.gittools
 pub struct Session {
 pub mut:
 	name     string
-	path     pathlib.Path      [skip] // is the base directory of the session
+	path     pathlib.Path           [skip] // is the base directory of the session
 	vars     map[string]string
-	actions  []actionsparser.Action  [skip]
+	actions  []actionsparser.Action [skip]
 	includes []string
-	runner   &Runner           [skip; str: skip]
+	runner   &Runner                [skip; str: skip]
 }
 
 [params]
@@ -127,7 +127,7 @@ pub fn (mut session Session) actions_add(args_ ActionsAddArgs) ! {
 		actions_path = downloadpath.path
 	}
 
-	mut ap := actions.new(path: actions_path)!
+	mut ap := actionsparser.new(path: actions_path)!
 	for a in ap.actions {
 		session.actions << a
 	}

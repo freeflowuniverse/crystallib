@@ -6,11 +6,11 @@ type Filter0 = fn (mut Path, mut paramsparser.Params) !bool
 
 type Executor0 = fn (mut Path, mut paramsparser.Params) !paramsparser.Params
 
-// the filters are function which needs to return true if to process with alle executors
-// see examples dir in pathlib to see how to use
-// if any of the filters returns false then we don't continue
-// if we return True then it means the dir or file is processed
-//```
+// the filters are function which needs to return true if to process with alle executors .
+// see examples dir in pathlib to see how to use .
+// if any of the filters returns false then we don't continue .
+// if we return True then it means the dir or file is processed .
+//```golang
 // fn filter_1(mut path pathlib.Path, mut params paramsparser.Params) !bool{
 // 	// print(" - check $path.path")
 // 	if path.name().starts_with('.') {
@@ -23,14 +23,12 @@ type Executor0 = fn (mut Path, mut paramsparser.Params) !paramsparser.Params
 // 	// println(" TRUE")
 // 	return true
 // }
-
 // fn executor_1(mut patho pathlib.Path, mut params paramsparser.Params)!paramsparser.Params{
 // 	// println("- ${patho.path}")
 // 	// println( " - exec: $patho.path" )
 // 	params.arg_add(patho.path)
 // 	return params
 // }
-
 // 	mut p := pathlib.get_dir(testpath,false)!
 // 	mut params := paramsparser.Params{}
 // 	mut params2 := p.scan(mut params, [filter_1], [executor_1])!

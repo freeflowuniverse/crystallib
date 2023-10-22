@@ -3,29 +3,29 @@ module actionsexecutor
 import freeflowuniverse.crystallib.data.actionsparser
 import freeflowuniverse.crystallib.osal.downloader
 
-//can start with sal, dal, ... the 2nd name is typicall the actor (or topic)
-//do this function public and then it breaches out to detail functionality
-
-
+// can start with sal, dal, ... the 2nd name is typicall the actor (or topic)
+// do this function public and then it breaches out to detail functionality
 
 pub fn sal_downloader(action actionsparser.Action) ! {
 	match action.actor {
-		"downloader" {
+		'downloader' {
 			match action.name {
-				"get" {
+				'get' {
 					downloader_get(action: action)!
-				} else {
+				}
+				else {
 					return error('actions not supported yet')
 				}
 			}
-		} else {
+		}
+		else {
 			return error('actor not supported yet')
 		}
 	}
 }
 
 fn downloader_get(args ActionExecArgs) ! {
-	action:=args.action
+	action := args.action
 	// session:=args.action or {panic("no context")} //if we need it here
 	mut name := action.params.get_default('name', '')!
 	mut downloadpath := action.params.get_default('downloadpath', '')!
@@ -55,6 +55,5 @@ fn downloader_get(args ActionExecArgs) ! {
 		hash: hash
 		metapath: metapath
 		// session:session // TODO IMPLEMENT (also optional)
-	)!	
-
+	)!
 }

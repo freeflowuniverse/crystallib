@@ -4,7 +4,7 @@ import os
 import io
 import benchmark
 import time
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 
 const testpath = '/tmp/test'
 

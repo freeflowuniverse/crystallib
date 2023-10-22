@@ -21,7 +21,7 @@ const (
 )
 
 fn test_git_do_action() {
-	ap := actions.new(
+	ap := actionsparser.new(
 		text: gittools.git_do_action
 	)!
 
@@ -30,7 +30,7 @@ fn test_git_do_action() {
 }
 
 fn test_git_get_action() {
-	ap := actions.new(
+	ap := actionsparser.new(
 		text: gittools.git_get_action
 	)!
 

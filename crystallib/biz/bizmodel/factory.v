@@ -35,7 +35,6 @@ pub mut:
 	mdbook_dest string // if empty is /tmp/mdbooks/$name
 }
 
-
 pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 	mut args := args_
 
@@ -53,9 +52,9 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 	}
 
 	if args.name == '' {
-		return error("bizmodel needs to have a name")
+		return error('bizmodel needs to have a name')
 	}
-	
+
 	args.name = texttools.name_fix(args.name)
 
 	if args.mdbook_name == '' {
@@ -68,19 +67,25 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 	mp := macroprocessor_new(args_.name)
 	tree.macroprocessor_add(mp)!
 
-	if args.git_url.len>0{
-		args.path=gittools.code_get(coderoot:args.git_root,url:args.git_url,pull:args.git_pull,reset:args.git_reset,reload:false)!
+	if args.git_url.len > 0 {
+		args.path = gittools.code_get(
+			coderoot: args.git_root
+			url: args.git_url
+			pull: args.git_pull
+			reset: args.git_reset
+			reload: false
+		)!
 	}
-	
+
 	tree.scan(
 		name: tree_name
-		url: "https://github.com/freeflowuniverse/crystallib/tree/development_circles/manual/biz" //TODO: needs to be come development 
+		git_url: 'https://github.com/freeflowuniverse/crystallib/tree/development_circles/manual/biz' // TODO: needs to be come development
 		heal: false
 	)!
 
 	tree.scan(
 		name: tree_name
-		path: bizmodel.manualpath
+		path: args.path
 		heal: true
 	)!
 
@@ -109,7 +114,7 @@ pub fn (mut m BizModel) load() ! {
 	println('ACTIONS LOAD ${m.params.name}')
 
 	m.replace_smart_ids()!
-	ap := actions.new(path: m.params.path, defaultcircle: 'bizmodel_${m.params.name}')!
+	ap := actionsparser.new(path: m.params.path, defaultcircle: 'bizmodel_${m.params.name}')!
 	m.revenue_actions(ap)!
 	m.hr_actions(ap)!
 	m.funding_actions(ap)!

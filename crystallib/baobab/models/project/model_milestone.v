@@ -14,7 +14,7 @@ pub mut:
 	deadline     ourtime.OurTime
 	percent_done f64
 	state        State
-	project_id   system.SmartId       [root_object: Project]
-	owners       []system.SmartId     [root_object: Person]
-	epics        []system.SmartId     [root_object: Epic]
+	project_id   system.SmartId   [root_object: Project]
+	owners       []system.SmartId [root_object: Person]
+	epics        []system.SmartId [root_object: Epic]
 }
