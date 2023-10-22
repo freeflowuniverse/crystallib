@@ -2,14 +2,14 @@
 
 # Grant
 
-id:***
+id:b
 
-- Received Grant Before: No  id:****
+- Received Grant Before: No
 - Grant amount total; 500k
 - Grant Id: 36
 - Completion: 60%
 - User Id: 168 (maybe this should be relocated)
-- id:**** Company or Organization: ThreeFold
+- Company or Organization: ThreeFold
 
 ## Short Description
 

@@ -21,7 +21,7 @@ fn sids_replace(cid string,txt_ string) !string {
 			// now replace the first found one, we can't replace them all
 			word2 := word.trim_space() // needed because of regex
 			sidnew := sid_new(cid)!
-			mut word3 := word.replace(word2, 'id:${sidnew}') // to maintain line ending
+			mut word3 := word.replace(word2, 'id:\'${sidnew}\'') // to maintain line ending
 			txt = txt.replace_once(word, word3)
 			break // go out of inner loop
 		}
