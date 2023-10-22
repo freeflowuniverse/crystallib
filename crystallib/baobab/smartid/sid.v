@@ -2,6 +2,7 @@ module smartid
 
 import freeflowuniverse.crystallib.clients.redisclient
 import math
+import freeflowuniverse.crystallib.core.texttools.regext
 // import rand
 
 // each part min3 max 6 chars, each char = a...z or 0...9
@@ -15,7 +16,7 @@ pub fn sid_new(cid string) !string {
 }
 
 // make sure redis knows about it, will return true if its not known in redis yet
-pub fn sid_aknowledge(cid string, sid string) !bool {
+fn sid_acknowledge(cid string, sid string) !bool {
 	mut redis := redisclient.core_get()!
 	sidlast := redis.get('circle:${cid}:sid')! // is the last sid
 	sidlasti := sidlast.u32()
@@ -26,6 +27,16 @@ pub fn sid_aknowledge(cid string, sid string) !bool {
 	}
 	return false
 }
+
+// set the sids in redis, so we remember them all, and we know which one is the latest 
+// this is for all sids as found in text
+pub fn sids_acknowledge(text string, cid string) ! {
+	res := regext.find_sid(text)
+	for sid in res {
+		sid_acknowledge(sid, cid)!
+	}
+}
+
 
 // // make sure that we don't use an existing one
 // pub fn sid_new_unique(existing []string) !string {

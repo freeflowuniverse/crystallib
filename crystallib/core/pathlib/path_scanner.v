@@ -10,26 +10,7 @@ type Executor0 = fn (mut Path, mut paramsparser.Params) !paramsparser.Params
 // see https://github.com/freeflowuniverse/crystallib/blob/development_circles/examples/core/pathlib/examples/scanner/path_scanner.v .
 // if any of the filters returns false then we don't continue .
 // if we return True then it means the dir or file is processed .
-//```golang
-// fn filter_1(mut path pathlib.Path, mut params paramsparser.Params) !bool{
-// 	if path.name().starts_with('.') {
-// 		return false
-// 	} else if path.name().starts_with('_') {
-// 		// println(" FALSE")
-// 		return false
-// 	}
-// 	return true
-// }
-// fn executor_1(mut patho pathlib.Path, mut params paramsparser.Params)!paramsparser.Params{
-// 	// println( " - exec: $patho.path" )
-// 	params.arg_add(patho.path)
-// 	return params
-// }
-// 	mut p := pathlib.get_dir(testpath,false)!
-// 	mut params := paramsparser.Params{}
-// 	mut params2 := p.scan(mut params, [filter_1], [executor_1])!
-//```
-//
+// .
 // type Filter0 = fn (mut Path, mut paramsparser.Params) bool
 // type Executor0 = fn (mut Path, mut paramsparser.Params) !paramsparser.Params
 //
@@ -61,12 +42,12 @@ fn scan_recursive(mut path Path, mut parameters paramsparser.Params, filters []F
 				return error(msg)
 			}
 		}
-		mut llist := path.list(recursive: false) or {
+		mut pl := path.list(recursive: false) or {
 			return error('cannot list: ${path.path} \n${error}')
 		}
 		// llist.sort()
 		// first process the files and link
-		for mut p_in in llist {
+		for mut p_in in pl.paths {
 			if !p_in.is_dir() {
 				scan_recursive(mut p_in, mut parameters, filters, executors) or {
 					msg := 'Cannot process recursive on ${p_in.path}\n${error}'
@@ -76,7 +57,7 @@ fn scan_recursive(mut path Path, mut parameters paramsparser.Params, filters []F
 			}
 		}
 		// now process the dirs
-		for mut p_in in llist {
+		for mut p_in in pl.paths {
 			if p_in.is_dir() {
 				scan_recursive(mut p_in, mut parameters, filters, executors) or {
 					msg := 'Cannot process recursive on ${p_in.path}\n${error}'

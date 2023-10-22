@@ -1,12 +1,11 @@
 module smartid
 
-import freeflowuniverse.crystallib.core.pathlib
 import regex
 
 // find parts of text in form sid:*** till sid:******  .
 // replace all occurrences with new sid's which are unique .
 // cid = is the circle id for which we find the id's
-pub fn sids_empty_replace(txt_ string, cid string) !string {
+pub fn sids_replace(txt_ string, cid string) !string {
 	mut txt := txt_
 	pattern := r'id:[\*]{3,6}[\s$]'
 	mut re := regex.regex_opt(pattern) or { panic(err) }
@@ -28,10 +27,3 @@ pub fn sids_empty_replace(txt_ string, cid string) !string {
 	return txt
 }
 
-// will read the content of the file or directory .
-// find parts of text in form sid:*** till sid:******  .
-// replace all occurrences with new sid's which are unique
-// cid = is the circle id for which we find the id's
-pub fn sids_empty_process(txt_ string, cid string) ! {
-	// mut path pathlib.Path
-}

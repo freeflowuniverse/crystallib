@@ -111,10 +111,10 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 		// 	}
 		// }
 
-		mut llist := path.list(recursive: false) or {
+		mut pl := path.list(recursive: false) or {
 			return error('cannot list: ${path.path} \n${error}')
 		}
-		for mut p_in in llist {
+		for mut p_in in pl.paths {
 			if p_in.is_dir() {
 				if p_in.name().starts_with('.') || p_in.name().starts_with('_') {
 					continue

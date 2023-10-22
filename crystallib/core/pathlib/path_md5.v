@@ -37,9 +37,9 @@ pub fn (mut path Path) md5() ![]u8 {
 		md5bytes := d.checksum()
 		return md5bytes
 	} else {
-		mut paths := path.list(recursive: true)!
+		mut pl := path.list(recursive: true)!
 		mut out := []string{}
-		for mut p in paths {
+		for mut p in pl.paths {
 			md5bytes := p.md5()!
 			out << hex.encode(md5bytes)
 		}

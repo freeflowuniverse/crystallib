@@ -46,8 +46,8 @@ pub fn scan(name string, mut path pathlib.Path) !Vault {
 // walk over the dir's and find shelves and process them
 fn (mut vault Vault) scan_recursive(mut path pathlib.Path) ! {
 	vault.shelve_get(mut path)!
-	mut llist := path.list(recursive: false)!
-	for mut diritem in llist {
+	mut pl := path.list(recursive: false)!
+	for mut diritem in pl.paths {
 		if diritem.name().starts_with('.') || diritem.name().starts_with('_') {
 			continue
 		}
