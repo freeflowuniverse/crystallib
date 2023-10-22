@@ -1,27 +1,51 @@
 module pathlib
 
 import os
-import regex { RE }
-
-pub struct EmptyRegex {
-}
-
-type OurRegex = EmptyRegex | RE
+import regex
 
 [params]
 pub struct ListArgs {
 pub mut:
-	regex         OurRegex
-	recursive     bool // std off, means we recursive not over dirs by default
+	regex         []string
+	recursive     bool = true 
 	ignoredefault bool = true // ignore files starting with . and _
 }
 
-// list all files & dirs, follow symlinks
-// will sort all items
-// return as list of Paths
-// param tofind: part of name (relative to string)
-// param recursive: if recursive behaviour
-pub fn (path Path) list(args ListArgs) ![]Path {
+// list all files & dirs, follow symlinks .
+// will sort all items .
+// return as list of Paths .
+// .
+// params: .
+// ```golang
+// regex         []regex.RE
+// recursive     bool // std off, means we recursive not over dirs by default
+// ignoredefault bool = true // ignore files starting with . and _
+// ```
+//
+pub fn (path Path) list(args_ ListArgs) ![]Path {
+	mut r:=[]regex.RE{}
+	for regexstr in args_.regex{
+		mut re := regex.regex_opt(regexstr) or { return error("cannot create regex for:'${regexstr}'") }
+		println(re.get_query())		
+		r << re
+	}
+	mut args:=ListArgsInternal{
+		regex:r
+		recursive:args_.recursive
+		ignoredefault:args_.ignoredefault
+	}
+	return path.list_internal(args)!
+}
+
+[params]
+pub struct ListArgsInternal {
+mut:
+	regex         []regex.RE
+	recursive     bool = true 
+	ignoredefault bool = true // ignore files starting with . and _
+}
+
+fn (path Path) list_internal(args ListArgsInternal) ![]Path {
 	if path.cat !in [Category.dir, Category.linkdir] {
 		return error('Path must be directory or link to directory')
 	}
@@ -39,27 +63,24 @@ pub fn (path Path) list(args ListArgs) ![]Path {
 		if new_path.is_dir() {
 			// If recusrive
 			if args.recursive {
-				mut rec_list := new_path.list(args)!
+				mut rec_list := new_path.list_internal(args)!
 				all_list << rec_list
 			}
 		}
-		// Check if tofound is a part of the path
-		mut r := args.regex
-		mut continuebool := false
-		if r is RE {
-			// println(r)
-			// panic("s")
-			// continuebool = r.matches_string(item) //returns true if it matches
+		mut addthefile := true
+		for r in args.regex{
+			if !(r.matches_string(item)){
+				addthefile=false
+			}
 		}
 		if args.ignoredefault {
 			if item.starts_with('_') || item.starts_with('.') {
-				continuebool = true
+				addthefile=false
 			}
 		}
-		if continuebool {
-			continue
-		}
-		all_list << new_path
+		if addthefile {
+			all_list << new_path
+		}	
 	}
 	return all_list
 }

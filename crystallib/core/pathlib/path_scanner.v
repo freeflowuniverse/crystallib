@@ -7,24 +7,20 @@ type Filter0 = fn (mut Path, mut paramsparser.Params) !bool
 type Executor0 = fn (mut Path, mut paramsparser.Params) !paramsparser.Params
 
 // the filters are function which needs to return true if to process with alle executors .
-// see examples dir in pathlib to see how to use .
+// see https://github.com/freeflowuniverse/crystallib/blob/development_circles/examples/core/pathlib/examples/scanner/path_scanner.v .
 // if any of the filters returns false then we don't continue .
 // if we return True then it means the dir or file is processed .
 //```golang
 // fn filter_1(mut path pathlib.Path, mut params paramsparser.Params) !bool{
-// 	// print(" - check $path.path")
 // 	if path.name().starts_with('.') {
-// 		// println(" FALSE")
 // 		return false
 // 	} else if path.name().starts_with('_') {
 // 		// println(" FALSE")
 // 		return false
 // 	}
-// 	// println(" TRUE")
 // 	return true
 // }
 // fn executor_1(mut patho pathlib.Path, mut params paramsparser.Params)!paramsparser.Params{
-// 	// println("- ${patho.path}")
 // 	// println( " - exec: $patho.path" )
 // 	params.arg_add(patho.path)
 // 	return params
@@ -32,7 +28,6 @@ type Executor0 = fn (mut Path, mut paramsparser.Params) !paramsparser.Params
 // 	mut p := pathlib.get_dir(testpath,false)!
 // 	mut params := paramsparser.Params{}
 // 	mut params2 := p.scan(mut params, [filter_1], [executor_1])!
-// 	println( params2)
 //```
 //
 // type Filter0 = fn (mut Path, mut paramsparser.Params) bool
@@ -40,7 +35,7 @@ type Executor0 = fn (mut Path, mut paramsparser.Params) !paramsparser.Params
 //
 pub fn (mut path Path) scan(mut parameters paramsparser.Params, filters []Filter0, executors []Executor0) !paramsparser.Params {
 	if !path.is_dir() {
-		return error('can only scan on dir')
+		return error('can only scan on dir.\n$path')
 	}
 	return scan_recursive(mut path, mut parameters, filters, executors)
 }
