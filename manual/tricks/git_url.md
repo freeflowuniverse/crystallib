@@ -10,7 +10,7 @@ Below you can see a snippet which demonstrates how you have a params struct with
 - git_reset means we ignore the files which are changed in the repo and will discard those local changes (dangerous)
 - reload: gets the git cache to be reloaded
 
-```go
+```golang
 [params]
 pub struct TreeScannerArgs {
 pub mut:
@@ -24,7 +24,8 @@ pub mut:
 pub fn scan(args TreeScannerArgs) ! {
 	mut args_ := args
 	if args_.git_url.len > 0 {
-		args.path=gittools.code_get(coderoot:args.git_root,url:args.git_url,pull:args.git_pull,reset:args.git_reset,reload:false)!
+		args.path=gittools.code_get(coderoot:args.git_root,url:args.git_url,
+                pull:args.git_pull,reset:args.git_reset,reload:false)!
 	}
 
 ```
