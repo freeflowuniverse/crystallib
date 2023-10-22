@@ -1,3 +1,4 @@
+# git url usage
 
 Below you can see a snippet which demonstrates how you have a params struct with path and git_url.
 
@@ -21,9 +22,9 @@ pub mut:
 	git_root  string
 	git_pull  bool
 }
-pub fn scan(args TreeScannerArgs) ! {
-	mut args_ := args
-	if args_.git_url.len > 0 {
+pub fn scan(args_ TreeScannerArgs) ! {
+	mut args := args_
+	if args.git_url.len > 0 {
 		args.path=gittools.code_get(coderoot:args.git_root,url:args.git_url,
                 pull:args.git_pull,reset:args.git_reset,reload:false)!
 	}
