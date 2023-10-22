@@ -139,7 +139,7 @@ pub fn (mut pathlist PathList) delete()!{
 }
 
 //sids_acknowledge .
-pub fn (mut pathlist PathList) sids_acknowledge(cid string)!{
+pub fn (mut pathlist PathList) sids_acknowledge(cid smartid.CID)!{
 	for mut path in pathlist.paths{
 		path.sids_acknowledge(cid)!
 	}
@@ -150,7 +150,7 @@ pub fn (mut pathlist PathList) sids_acknowledge(cid string)!{
 // replace all occurrences with new sid's which are unique .
 // cid = is the circle id for which we find the id's .
 // sids will be replaced in the files if they are different
-pub fn (mut pathlist PathList) sids_replace(cid string)!{
+pub fn (mut pathlist PathList) sids_replace(cid smartid.CID)!{
 	for mut path in pathlist.paths{
 		path.sids_replace(cid)!
 	}	

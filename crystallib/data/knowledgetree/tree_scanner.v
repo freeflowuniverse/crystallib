@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.texttools
 import os
+import freeflowuniverse.crystallib.baobab.smartid
 
 [params]
 pub struct TreeScannerArgs {
@@ -18,6 +19,7 @@ pub mut:
 	git_reset bool
 	git_root  string
 	git_pull  bool
+	cid smartid.CID
 }
 
 pub fn scan(args_ TreeScannerArgs) ! {

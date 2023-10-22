@@ -255,7 +255,8 @@ fn (mut book MDBook) add_missing_pages_to_summary() ! {
 	mut path_summary := pathlib.get('${book.dest_md}/src/SUMMARY.md')
 	summary_content := os.read_file(path_summary.path)!
 	dest_md_path := pathlib.get('${book.dest_md}/src')
-	mut files := dest_md_path.file_list(recursive: true)!
+	mut fl:=dest_md_path.file_list(recursive: true)!
+	mut files :=  fl.paths
 
 	mut missing_links := []string{}
 	for mut file in files.filter(!it.path.ends_with('SUMMARY.md')) {

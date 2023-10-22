@@ -2,7 +2,7 @@ module bizmodel
 
 import freeflowuniverse.crystallib.biz.spreadsheet
 import freeflowuniverse.crystallib.baobab.smartid
-import freeflowuniverse.crystallib.core.pathlib
+// import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.knowledgetree
@@ -33,6 +33,7 @@ pub mut:
 	mdbook_name string // if empty will be same as name of bizmodel
 	mdbook_path string
 	mdbook_dest string // if empty is /tmp/mdbooks/$name
+	cid smartid.CID
 }
 
 pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
@@ -78,15 +79,17 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 	}
 
 	tree.scan(
-		name: tree_name
+		name: "crystal_manual"
 		git_url: 'https://github.com/freeflowuniverse/crystallib/tree/development_circles/manual/biz' // TODO: needs to be come development
 		heal: false
+		cid: args.cid
 	)!
 
 	tree.scan(
 		name: tree_name
 		path: args.path
 		heal: true
+		cid: args.cid
 	)!
 
 	mut book := knowledgetree.book_generate(
@@ -97,17 +100,6 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 	)!
 
 	return *book
-}
-
-pub fn (mut m BizModel) replace_smart_ids() ! {
-	dir_path := pathlib.get(m.params.path)
-	files := dir_path.file_list(recursive: true)!
-
-	for file in files {
-		content_ := os.read_file(file.path)!
-		content := smartid.sids_empty_replace(content_, '')!
-		os.write_file(file.path, content)!
-	}
 }
 
 pub fn (mut m BizModel) load() ! {
