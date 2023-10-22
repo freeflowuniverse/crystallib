@@ -74,7 +74,7 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 	
 	tree.scan(
 		name: tree_name
-		path: args.path
+		url: "https://github.com/freeflowuniverse/crystallib/tree/development_circles/manual/biz" //TODO: needs to be come development 
 		heal: false
 	)!
 

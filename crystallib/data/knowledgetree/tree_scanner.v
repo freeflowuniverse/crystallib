@@ -43,16 +43,7 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 	// $if debug{println(" - collections find recursive: $path.path")}
 	mut args_ := args
 	if args_.git_url.len > 0 {
-		// panic('fix git')
-		gittools.configure(name: 'tree', root: args_.git_root)!
-		mut gs := gittools.get(name: 'tree')!
-		mut locator := gs.locator_new(args.git_url)!
-		gs.repo_get(
-			locator: locator
-			pull: args_.git_pull
-			reset: args_.git_reset
-		)!
-		args_.path = locator.path_on_fs()!.path
+		args.path=gittools.code_get(coderoot:args.git_root,url:args.git_url,pull:args.git_pull,reset:args.git_reset,reload:false)!
 	}
 
 	if args_.path.len < 3 {
