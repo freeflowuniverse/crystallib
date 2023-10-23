@@ -4,14 +4,13 @@ import json
 import freeflowuniverse.crystallib.threefold.grid.models
 import log
 
-
 fn test_deploy_deployment() {
 	mnemonics := ''
 	mut logger := log.Log{
 		level: .debug
 	}
 	mut deployer := new_deployer(mnemonics, .dev, mut logger)!
-	
+
 	node_id := u32(14)
 	twin_id := u32(49)
 	node_twin_id := u32(22)
@@ -95,7 +94,7 @@ fn test_deploy_deployment() {
 	payload := deployment.json_encode()
 	print('payload: ${payload}')
 	exit(0)
-	mut res := deployer.client.rmb_call(node_twin_id, "zos.deployment.deploy", payload) or {
+	mut res := deployer.client.rmb_call(node_twin_id, 'zos.deployment.deploy', payload) or {
 		print('error: ${err}')
 		exit(1)
 	}

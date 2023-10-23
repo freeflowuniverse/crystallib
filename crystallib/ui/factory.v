@@ -2,14 +2,14 @@ module ui
 
 import freeflowuniverse.crystallib.ui.generic { ChannelType, UserInterface }
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 // import freeflowuniverse.crystallib.ui.telegram
 
 [params]
 pub struct UserInterfaceArgs {
 pub mut:
 	channel ChannelType
-	params  params.Params // to pass arguments to implementation
+	params  paramsparser.Params // to pass arguments to implementation
 }
 
 pub fn new(args UserInterfaceArgs) !UserInterface {

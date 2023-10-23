@@ -32,8 +32,8 @@ pub mut:
 	downloadpath string // the directory or file where we will download, will be /tmp/downloads/$name
 	url          string // url can be ssh:// http(s):// git:// file:// http(s)file:// or just a path
 	reset        bool   // to remove all changes
-	// gitpull    bool   // if you want to force to pull the information
-	minsize_kb   u32 // is always in kb
+	gitpull      bool   // if you want to force to pull the information
+	minsize_kb   u32    // is always in kb
 	maxsize_kb   u32
 	dest         string // if the dir or file needs to be copied somewhere
 	destlink     bool = true // if bool then will link the downloaded content to the dest

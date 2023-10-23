@@ -9,8 +9,8 @@ pub mut:
 
 pub struct PackageItem {
 pub mut:
-	names  []string
-	recipe &DockerBuilderRecipe [str: skip]
+	names    []string
+	recipe   &DockerBuilderRecipe [str: skip]
 	platform PlatformType
 }
 

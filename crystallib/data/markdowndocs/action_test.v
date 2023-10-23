@@ -1,6 +1,6 @@
 module markdowndocs
 
-import freeflowuniverse.crystallib.data.params { Param, Params }
+import freeflowuniverse.crystallib.data.paramsparser { Param, Params }
 
 fn test_action_no_action_name_should_fail() {
 	mut docs := new(

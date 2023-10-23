@@ -2,9 +2,9 @@ module archiver
 
 // import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 
-fn filter_base(mut path pathlib.Path, mut params params.Params) !bool {
+fn filter_base(mut path pathlib.Path, mut params paramsparser.Params) !bool {
 	// print(" - check $path.path")
 	if path.name().starts_with('.') {
 		// println(" FALSE")
@@ -20,26 +20,26 @@ fn filter_base(mut path pathlib.Path, mut params params.Params) !bool {
 	return true
 }
 
-fn executor(mut patho pathlib.Path, mut params params.Params) !params.Params {
+fn executor(mut patho pathlib.Path, mut params paramsparser.Params) !paramsparser.Params {
 	println(' - exec: ${patho.path}')
 	if patho.is_dir {
 	}
 	return params
 }
 
-type Filter0 = fn (mut Path, mut params.Params) bool
+type Filter0 = fn (mut Path, mut paramsparser.Params) bool
 
-type Executor0 = fn (mut Path, mut params.Params) !params.Params
+type Executor0 = fn (mut Path, mut paramsparser.Params) !paramsparser.Params
 
 pub fn (mut a Archiver) add() ! {
 	mut p := pathlib.get_dir(testpath, false)!
-	mut params := params.Params{}
+	mut params := paramsparser.Params{}
 	params.kwarg_add('path_meta')
 	params.kwarg_add('path_stor')
 	mut params2 := p.scan(mut params, [filter_base], [executor])!
 }
 
-// pub fn (mut path Path) scan(mut params params.Params, filters []Filter0, executors []Executor0) !params.Params {
+// pub fn (mut path Path) scan(mut params paramsparser.Params, filters []Filter0, executors []Executor0) !paramsparser.Params {
 // 	if !path.is_dir() {
 // 		return error('can only scan on dir')
 // 	}

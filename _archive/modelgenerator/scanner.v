@@ -122,7 +122,7 @@ fn (mut generator CodeGenerator) parse(mut p pathlib.Path, mut domain Domain, mu
 		if line.starts_with('[root') {
 			// example [root ; domain:'generic' ; actor:'usermanager' ; features:'remarks,timestamps,tags,guid' ; index:'tags,name']
 			line = line.all_after_first('root').all_before_last(']').replace(';', '')
-			mut params := params.parse(line)!
+			mut params := paramsparser.parse(line)!
 			model_last = Model{
 				root: true
 			}
@@ -201,7 +201,7 @@ fn (mut generator CodeGenerator) parse(mut p pathlib.Path, mut domain Domain, mu
 				}
 				// means we have [...] part
 				tags := line.all_after_first('[').all_before_last(']').replace(';', '')
-				mut params := params.parse(tags)!
+				mut params := paramsparser.parse(tags)!
 				field.tag = params.exists('tag')
 				field.index = params.exists('index')
 				field.strskip = params.exists('strskip')

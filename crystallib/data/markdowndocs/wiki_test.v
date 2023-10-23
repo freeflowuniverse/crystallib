@@ -1,6 +1,6 @@
 module markdowndocs
 
-import freeflowuniverse.crystallib.data.params { Param, Params }
+import freeflowuniverse.crystallib.data.paramsparser { Param, Params }
 
 fn test_wiki_headers_paragraphs() {
 	content := '

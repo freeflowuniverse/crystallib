@@ -13,9 +13,9 @@ pub fn (mut path Path) size() !f64 {
 	if path.cat == .file {
 		return os.file_size(path.path)
 	} else {
-		mut paths := path.list(recursive: true)!
+		mut pl := path.list(recursive: true)!
 		mut totsize := 0.0
-		for mut p in paths {
+		for mut p in pl.paths {
 			totsize += p.size()!
 		}
 		return totsize

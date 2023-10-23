@@ -1,3 +1,0 @@
-# Vegetables
-
-- [Tomato](./tomato.md)

@@ -1,7 +1,7 @@
 module circles
 
-import freeflowuniverse.crystallib.baobab.actions
-import freeflowuniverse.crystallib.data.params as paramslib
+import freeflowuniverse.crystallib.data.actionsparser
+import freeflowuniverse.crystallib.data.paramsparser 
 
 __global (
 	@{model_param.name}_actors map[string]shared @{model_param.typ.symbol}Actor

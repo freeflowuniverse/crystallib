@@ -3,21 +3,21 @@ module context
 import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.clients.redisclient
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 
 pub struct Session {
 pub mut:
-	sid     string // unique id for session (session id), there can be more than 1 per cid
+	sid     string // unique id for session (session id), there can be more than 1 per id
 	name    string
 	start   ourtime.OurTime
 	end     ourtime.OurTime
-	context &Context        [skip; str: skip]
+	context Context         [skip; str: skip]
 }
 
 [params]
 pub struct SessionNewArgs {
 pub mut:
-	sid   string // unique id for session (session id), there can be more than 1 per cid
+	sid   string // unique id for session (session id), there can be more than 1 per id
 	name  string
 	start string // can be e.g. +1h
 	load  bool = true // get it from the redis backend
@@ -56,11 +56,11 @@ pub fn (mut session Session) load() ! {
 	if session.sid.len == 2 {
 		return error('sid should be at least 2 char')
 	}
-	t := r.hget('session.${session.context.cid}', session.sid)!
+	t := r.hget('session.${session.context.id}', session.sid)!
 	if t == '' {
 		return
 	}
-	p := params.new(t)!
+	p := paramsparser.new(t)!
 	if session.name == '' {
 		session.name = p.get_default('name', '')!
 	}
@@ -71,7 +71,7 @@ pub fn (mut session Session) load() ! {
 // save the session to redis & mem
 pub fn (session Session) save() ! {
 	mut r := redisclient.core_get()!
-	r.hset('session.${session.context.cid}', session.sid, session.str2())!
+	r.hset('session.${session.context.id}', session.sid, session.str2())!
 }
 
 // save the session to redis & mem
@@ -80,7 +80,7 @@ pub fn (session Session) str() string {
 }
 
 fn (session Session) str2() string {
-	mut out := 'cid:${session.context.cid} sid:${session.sid}'
+	mut out := 'id:${session.context.id} sid:${session.sid}'
 	if session.name.len > 0 {
 		out += ' name:${session.name}'
 	}

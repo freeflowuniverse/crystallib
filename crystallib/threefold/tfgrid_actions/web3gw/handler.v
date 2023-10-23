@@ -1,7 +1,7 @@
 module web3gw
 
 import log { Logger }
-import freeflowuniverse.crystallib.baobab.actions { Action }
+import freeflowuniverse.crystallib.data.actionsparser { Action }
 import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
 import freeflowuniverse.crystallib.threefold.web3gw.threelang.clients { Clients }
 

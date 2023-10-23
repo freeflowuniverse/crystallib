@@ -1,14 +1,14 @@
 module system
 
 import json
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.algo.encoder
 
 [heap]
 pub struct Base {
 pub mut:
 	smartid     SmartId
-	params      ?params.Params
+	params      ?paramsparser.Params
 	version     u8 = 1
 	id          string // human readbale id
 	description string
@@ -19,7 +19,7 @@ pub fn (mut o Base) json() string {
 	return json.encode(o)
 }
 
-// pub fn (mut o Base) params_add(text string) !params.Params {
+// pub fn (mut o Base) params_add(text string) !paramsparser.Params {
 // 	o.params = params.new(text)!
 // 	return o.params
 // }

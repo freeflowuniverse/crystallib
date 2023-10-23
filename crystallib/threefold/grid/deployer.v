@@ -5,7 +5,7 @@ import json
 import time
 import log
 import freeflowuniverse.crystallib.threefold.grid.models
-import freeflowuniverse.crystallib.threefold.griddriver 
+import freeflowuniverse.crystallib.threefold.griddriver
 
 pub struct Deployer {
 pub:
@@ -15,7 +15,7 @@ pub:
 	relay_url     string
 	env           string
 pub mut:
-	client 		  griddriver.Client
+	client griddriver.Client
 	logger log.Log
 }
 
@@ -90,7 +90,8 @@ pub fn (mut d Deployer) deploy(node_id u32, mut dl models.Deployment, body strin
 	public_ips := dl.count_public_ips()
 	hash_hex := dl.challenge_hash().hex()
 
-	contract_id := d.client.create_node_contract(node_id, body, hash_hex, public_ips, solution_provider)!
+	contract_id := d.client.create_node_contract(node_id, body, hash_hex, public_ips,
+		solution_provider)!
 	d.logger.info('ContractID: ${contract_id}')
 	dl.contract_id = contract_id
 

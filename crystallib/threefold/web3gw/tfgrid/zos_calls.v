@@ -1,6 +1,5 @@
 module tfgrid
 
-
 pub fn (mut t TFGridClient) zos_node_statistics(request ZOSNodeRequest) !NodeStatistics {
 	return t.client.send_json_rpc[[]ZOSNodeRequest, NodeStatistics]('tfgrid.ZOSStatisticsGet',
 		[

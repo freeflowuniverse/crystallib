@@ -11,7 +11,9 @@ Each action/macro starts with !, !!,!!!  or !!!!
 ### wal = world abstraction layer
 
 - !!! : world dsl action = WAL
-  - $domain.$actorname.$actionname
+  - $domain.$topicname.$actionname
+      - domain means vendor domain, the people maintaining the relevant code
+      - topicname to be further defined, what it means
   - the actorname and actionname can be anything, but always compliant with our namefix transformer (unify a name)
   - domain is optional, if not mentioned then is core.  which is our default
 

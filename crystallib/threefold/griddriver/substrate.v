@@ -4,7 +4,7 @@ import os
 import strconv
 
 pub fn (mut c Client) get_node_twin(node_id u64) !u32 {
-	res := os.execute('griddriver node-twin --substrate \"${c.substrate}\"  --node_id ${node_id}')
+	res := os.execute("griddriver node-twin --substrate \"${c.substrate}\"  --node_id ${node_id}")
 	if res.exit_code != 0 {
 		return error(res.output)
 	}
@@ -22,7 +22,7 @@ pub fn (mut c Client) get_user_twin() !u32 {
 }
 
 pub fn (mut c Client) create_node_contract(node_id u32, body string, hash string, public_ips u32, solution_provider u64) !u64 {
-	println("url: ${c.substrate}")
+	println('url: ${c.substrate}')
 	res := os.execute("griddriver new-node-cn --substrate \"${c.substrate}\" --mnemonics \"${c.mnemonic}\" --node_id ${node_id} --hash \"${hash}\" --public_ips ${public_ips} --body \"${body}\" --solution_provider ${solution_provider}")
 	if res.exit_code != 0 {
 		return error(res.output)
@@ -53,4 +53,3 @@ pub fn (mut c Client) cancel_contract(contract_id u64) ! {
 		return error(res.output)
 	}
 }
-

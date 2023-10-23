@@ -1,8 +1,8 @@
 module people
 
-import freeflowuniverse.crystallib.baobab.actions { Actions }
+import freeflowuniverse.crystallib.data.actionsparser { Actions }
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 
 fn (mut m MemDB) actions(actions_ Actions) ! {
 	mut actions2 := actions_.filtersort(actor: 'people')!

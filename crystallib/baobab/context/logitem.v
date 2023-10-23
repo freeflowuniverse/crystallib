@@ -2,7 +2,7 @@ module context
 
 import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.core.texttools
-// import freeflowuniverse.crystallib.data.params
+// import freeflowuniverse.crystallib.data.paramsparser
 import os
 
 pub struct LogItem {

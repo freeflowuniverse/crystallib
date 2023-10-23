@@ -1,3 +1,0 @@
-# BTC examples
-
-TODO

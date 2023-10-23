@@ -1,7 +1,7 @@
 module main
 
 import freeflowuniverse.crystallib.baobab.actions
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 import os
 
 const testpath = os.dir(@FILE) + '/data'

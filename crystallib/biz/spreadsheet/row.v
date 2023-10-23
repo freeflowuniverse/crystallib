@@ -1,6 +1,6 @@
 module spreadsheet
 
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 
 [heap]
 pub struct Row {
@@ -143,7 +143,7 @@ pub fn (row Row) filter(args_ RowGetArgs) !bool {
 
 	if args.namefilter.len > 0 || args.includefilter.len > 0 || args.excludefilter.len > 0 {
 		if args.includefilter.len > 0 || args.excludefilter.len > 0 {
-			tagstofilter := params.parse(row.tags)!
+			tagstofilter := paramsparser.parse(row.tags)!
 			ok = tagstofilter.filter_match(
 				include: args.includefilter
 				exclude: args.excludefilter

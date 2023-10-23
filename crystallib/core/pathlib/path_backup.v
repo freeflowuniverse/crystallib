@@ -128,7 +128,8 @@ pub fn (mut path Path) restore(args BackupArgs) ! {
 }
 
 pub fn (mut path Path) backups_remove(args BackupArgs) ! {
-	for mut p in path.list(recursive: true)! {
+	mut pl:=path.list(recursive: true)!
+	for mut p in pl.paths {
 		if p.is_dir() {
 			if p.name() == '.backup' {
 				p.delete()!

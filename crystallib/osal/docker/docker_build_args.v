@@ -1,6 +1,6 @@
 module docker
 
-import freeflowuniverse.crystallib.data.params { Params }
+import freeflowuniverse.crystallib.data.paramsparser { Params }
 
 [params]
 pub struct BuildArgs {

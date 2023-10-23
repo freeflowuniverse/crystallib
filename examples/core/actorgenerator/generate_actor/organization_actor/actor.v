@@ -1,7 +1,7 @@
 module example
 
 import freeflowuniverse.crystallib.baobab.actions as actionslib { Actions, ActionsArgs }
-import freeflowuniverse.crystallib.data.params as paramslib { Params }
+import freeflowuniverse.crystallib.data.paramsparser as paramslib { Params }
 
 __global (
 	actor_factory map[string]shared ExampleActor
