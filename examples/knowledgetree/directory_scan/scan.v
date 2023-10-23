@@ -6,8 +6,8 @@ import freeflowuniverse.crystallib.core.pathlib
 
 import os
 
-const orgpath = os.dir(@FILE) + '/../data/smallbook_original'
-const workpath = '/tmp/smallbook'
+const orgpath = os.dir(@FILE) + '/../data'
+const workpath = '/tmp/booktest'
 
 fn do() ! {
 
@@ -25,12 +25,9 @@ fn do() ! {
 
 
 	assert tree.page_exists("smallbook1:decentralized_cloud")
+	assert tree.page_exists("smallbook2:decentralized_cloud")
 	assert tree.page_exists("grant.md") //should work because there is only 1
 	
-	mut error:=false
-	mypage:=tree.page_get("decentralized_cloud") or {error=true} //should fail because there are 2 now
-	assert error
-
 	mut error:=false
 	mypage:=tree.page_get("decentralized_cloud") or {error=true} //should fail because there are 2 now
 	assert error
@@ -38,7 +35,7 @@ fn do() ! {
 
 	//todo: test include works see /Users/despiegk1/code/github/freeflowuniverse/crystallib/examples/knowledgetree/data/smallbook2/decentralized_cloud.md
 	
-
+	//todo: generate the mdbook, see it works
 
 	// println(mypage)
 
