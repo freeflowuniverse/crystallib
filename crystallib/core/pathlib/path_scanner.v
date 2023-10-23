@@ -16,7 +16,7 @@ type Executor0 = fn (mut Path, mut paramsparser.Params) !paramsparser.Params
 //
 pub fn (mut path Path) scan(mut parameters paramsparser.Params, filters []Filter0, executors []Executor0) !paramsparser.Params {
 	if !path.is_dir() {
-		return error('can only scan on dir.\n$path')
+		return error('can only scan on dir.\n${path}')
 	}
 	return scan_recursive(mut path, mut parameters, filters, executors)
 }

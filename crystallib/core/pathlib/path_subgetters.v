@@ -52,14 +52,18 @@ pub fn (err SubGetError) code() int {
 }
 
 // will get dir or file underneith a dir .
-// will return SubGetError if error .
+// e.g. mypath.sub_get(name:"mysub_file.md",name_fix_find:true,name_fix:true)! .
+// this will find Mysubfile.md as well as mysub_File.md and rename to mysub_file.md and open .
 // params: .
-//		- name
-// 		- name_fix_find bool :means we will also find if name is same as the name_fix .
-// 		- name_fix bool	   :if file found and name fix was different than file on filesystem, will rename .
-// 		- dir_ensure bool	   :if dir_ensure on will fail if its not a dir .
+//		- name .
+// 		- name_fix_find bool :means we will also find if name is same as the name_fix.
+// 		- name_fix bool	   	 :if file found and name fix was different than file on filesystem, will rename .
+// 		- dir_ensure bool	 :if dir_ensure on will fail if its not a dir .
 // 		- file_ensure bool   :if file_ensure on will fail if its not a dir .
+// .
+// will return SubGetError if error .
 //
+// returns a path
 pub fn (mut path Path) sub_get(args_ SubGetParams) !Path {
 	mut args := args_
 	if path.cat != Category.dir {

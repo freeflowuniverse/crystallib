@@ -8,11 +8,11 @@ import freeflowuniverse.crystallib.baobab.smartid
 pub struct ListArgs {
 pub mut:
 	regex         []string
-	recursive     bool = true 
+	recursive     bool = true
 	ignoredefault bool = true // ignore files starting with . and _
 }
 
-//the result of pathlist 
+// the result of pathlist
 pub struct PathList {
 pub mut:
 	// is the root under which all paths are, think about it like a changeroot environment
@@ -26,7 +26,7 @@ pub mut:
 // .
 // params: .
 // ```golang
-// regex         []string  
+// regex         []string
 // recursive     bool // std off, means we recursive not over dirs by default
 // ignoredefault bool = true // ignore files starting with . and _
 // ```
@@ -35,19 +35,24 @@ pub mut:
 // .
 // e.g. p.list(regex:[r'.*\.v$'])!  //notice the r in front of string, this is regex for all files ending with .v
 pub fn (path Path) list(args_ ListArgs) !PathList {
-	mut r:=[]regex.RE{}
-	for regexstr in args_.regex{
-		mut re := regex.regex_opt(regexstr) or { return error("cannot create regex for:'${regexstr}'") }
-		println(re.get_query())		
+	mut r := []regex.RE{}
+	for regexstr in args_.regex {
+		mut re := regex.regex_opt(regexstr) or {
+			return error("cannot create regex for:'${regexstr}'")
+		}
+		println(re.get_query())
 		r << re
 	}
-	mut args:=ListArgsInternal{
-		regex:r
-		recursive:args_.recursive
-		ignoredefault:args_.ignoredefault
+	mut args := ListArgsInternal{
+		regex: r
+		recursive: args_.recursive
+		ignoredefault: args_.ignoredefault
 	}
-	paths:=path.list_internal(args)!
-	mut pl:=PathList{root:path.path,paths:paths}
+	paths := path.list_internal(args)!
+	mut pl := PathList{
+		root: path.path
+		paths: paths
+	}
 	return pl
 }
 
@@ -55,7 +60,7 @@ pub fn (path Path) list(args_ ListArgs) !PathList {
 pub struct ListArgsInternal {
 mut:
 	regex         []regex.RE
-	recursive     bool = true 
+	recursive     bool = true
 	ignoredefault bool = true // ignore files starting with . and _
 }
 
@@ -82,19 +87,19 @@ fn (path Path) list_internal(args ListArgsInternal) ![]Path {
 			}
 		}
 		mut addthefile := true
-		for r in args.regex{
-			if !(r.matches_string(item)){
-				addthefile=false
+		for r in args.regex {
+			if !(r.matches_string(item)) {
+				addthefile = false
 			}
 		}
 		if args.ignoredefault {
 			if item.starts_with('_') || item.starts_with('.') {
-				addthefile=false
+				addthefile = false
 			}
 		}
 		if addthefile {
 			all_list << new_path
-		}	
+		}
 	}
 	return all_list
 }
@@ -103,7 +108,7 @@ fn (path Path) list_internal(args ListArgsInternal) ![]Path {
 // see path.list() for more info in how to use the args
 pub fn (path Path) dir_list(args ListArgs) !PathList {
 	mut pl := path.list(args)!
-	pl.paths =   pl.paths.filter(it.cat == Category.dir)
+	pl.paths = pl.paths.filter(it.cat == Category.dir)
 	return pl
 }
 
@@ -118,40 +123,39 @@ pub fn (path Path) file_list(args ListArgs) !PathList {
 // find links (don't follow) .
 // see path.list() for more info in how to use the args
 pub fn (mut path Path) link_list(args ListArgs) !PathList {
-	mut pl  := path.list(args)!
+	mut pl := path.list(args)!
 	pl.paths = pl.paths.filter(it.cat in [Category.linkdir, Category.linkfile])
 	return pl
 }
 
 // copy all
-pub fn (mut pathlist PathList) copy(dest string)!{
-	for mut path in pathlist.paths{
-		path.copy(dest)!
-	}	
-
+pub fn (mut pathlist PathList) copy(dest string) ! {
+	for mut path in pathlist.paths {
+		path.copy(dest:dest)!
+	}
 }
 
-//delete all
-pub fn (mut pathlist PathList) delete()!{
-	for mut path in pathlist.paths{
+// delete all
+pub fn (mut pathlist PathList) delete() ! {
+	for mut path in pathlist.paths {
 		path.delete()!
-	}	
+	}
 }
 
-//sids_acknowledge .
-pub fn (mut pathlist PathList) sids_acknowledge(cid smartid.CID)!{
-	for mut path in pathlist.paths{
+// sids_acknowledge .
+pub fn (mut pathlist PathList) sids_acknowledge(cid smartid.CID) ! {
+	for mut path in pathlist.paths {
 		path.sids_acknowledge(cid)!
 	}
 }
 
-//sids_replace .
+// sids_replace .
 // find parts of text in form sid:*** till sid:******  .
 // replace all occurrences with new sid's which are unique .
 // cid = is the circle id for which we find the id's .
 // sids will be replaced in the files if they are different
-pub fn (mut pathlist PathList) sids_replace(cid smartid.CID)!{
-	for mut path in pathlist.paths{
+pub fn (mut pathlist PathList) sids_replace(cid smartid.CID) ! {
+	for mut path in pathlist.paths {
 		path.sids_replace(cid)!
-	}	
+	}
 }

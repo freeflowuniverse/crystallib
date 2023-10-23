@@ -19,7 +19,7 @@ pub mut:
 	git_reset bool
 	git_root  string
 	git_pull  bool
-	cid smartid.CID
+	cid       smartid.CID
 }
 
 pub fn scan(args_ TreeScannerArgs) ! {

@@ -37,7 +37,7 @@ fn test_list_dirs() {
 fn test_list_files() {
 	println('************ TEST_list_files ************')
 	mut test_path_dir := pathlib.get('${testpath}')
-	mut fl:=test_path_dir.file_list(recursive: true) or { panic(err) }
+	mut fl := test_path_dir.file_list(recursive: true) or { panic(err) }
 	result := fl.paths
 	assert result.paths.len == 3
 }

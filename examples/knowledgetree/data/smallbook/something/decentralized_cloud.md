@@ -13,7 +13,7 @@ We might not realise everyday but the internet is in the hands of a handful of l
 - network providers: mostly the Tier 1 players that have been working together since the inception of the internet to guide and direct traffic and have been providing interconnect services for lower tiers, national and regional players to the rest of the world.
 - datacenter (or a more modern version of them, cloud) providers.  Datacenters are the end point for all the networks  Datacenters are (literally) massive warehouses that house servers on which (most, if not all today) of the internet content and services are processed and stored.  This includes today public services, private services, freemium services bot also mostly all of the blockchain projects rely on massive cloud providers providing them with data processing and storage services.
 
-![threefold_architecture](img/threefold_supernode.jpg)
+![threefold_architecture](threefold_supernode.jpg)
 
 > results in double but is ok, just a test
 

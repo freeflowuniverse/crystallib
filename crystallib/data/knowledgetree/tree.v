@@ -19,7 +19,7 @@ pub mut:
 	macroprocessors []IMacroProcessor
 	// spawner         &spawner.Spawner
 	// context context.Context
-	cid 			smartid.CID
+	cid smartid.CID
 }
 
 pub enum TreeState {

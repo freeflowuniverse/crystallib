@@ -6,9 +6,9 @@ import regex
 // replace all occurrences with new sid's which are unique .
 // cid = is the circle id for which we find the id's .
 // does also do a sid_acknowledge
-fn sids_replace(cid string,txt_ string) !string {
+fn sids_replace(cid string, txt_ string) !string {
 	mut txt := txt_
-	sids_acknowledge(cid,txt)! //just to make sure
+	sids_acknowledge(cid, txt)! // just to make sure
 	pattern := r'id:[\*]{3,6}[\s$]'
 	mut re := regex.regex_opt(pattern) or { panic(err) }
 	// re.replace_by_fn(txt,sid_empty_replace_unit)
@@ -28,4 +28,3 @@ fn sids_replace(cid string,txt_ string) !string {
 	}
 	return txt
 }
-

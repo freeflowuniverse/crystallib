@@ -33,7 +33,7 @@ pub mut:
 	mdbook_name string // if empty will be same as name of bizmodel
 	mdbook_path string
 	mdbook_dest string // if empty is /tmp/mdbooks/$name
-	cid smartid.CID
+	cid         smartid.CID
 }
 
 pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
@@ -79,7 +79,7 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 	}
 
 	tree.scan(
-		name: "crystal_manual"
+		name: 'crystal_manual'
 		git_url: 'https://github.com/freeflowuniverse/crystallib/tree/development_circles/manual/biz' // TODO: needs to be come development
 		heal: false
 		cid: args.cid

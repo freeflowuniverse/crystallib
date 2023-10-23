@@ -5,8 +5,6 @@ import freeflowuniverse.crystallib.tools.imagemagick
 import freeflowuniverse.crystallib.core.pathlib { Path }
 import freeflowuniverse.crystallib.data.markdowndocs
 
-
-
 pub enum CollectionState {
 	init
 	initdone
@@ -33,7 +31,6 @@ pub mut:
 	state           CollectionState
 	heal            bool
 	tree            &Tree             [str: skip]
-	
 }
 
 // format of name is $collectionname:$pagename or $pagename

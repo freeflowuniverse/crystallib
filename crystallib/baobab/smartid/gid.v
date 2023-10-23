@@ -6,19 +6,19 @@ module smartid
 // global smart if, represents an object on global level
 pub struct GID {
 pub mut:
-	cid   CID
+	cid CID
 mut:
 	region u32
-	id    u32
+	id     u32
 }
 
 [params]
 pub struct GIDNewArgs {
 pub mut:
-	gid_str   string // rid.cid.oid format
+	gid_str string // rid.cid.oid format
 	// gid_coord []int  // 3 coordinates first one is region
-	id		  string 
-	cid       string
+	id  string
+	cid string
 	// rid       string // can be empty
 }
 
@@ -30,7 +30,7 @@ pub mut:
 // id empty then will generate unique one, circle needs to be specified if new one
 fn gid_get(args GIDNewArgs) !GID {
 	mut o := GID{}
-	if args.gid_str.len>0{
+	if args.gid_str.len > 0 {
 		gid := args.gid_str
 		mut ids := gid.split('.')
 		if ids.len > 3 {
@@ -50,10 +50,10 @@ fn gid_get(args GIDNewArgs) !GID {
 		}
 		if r.len == 2 {
 			o.region = r[0]
-			o.cid =cid_get(id_int:r[1])!
+			o.cid = cid_get(id_int: r[1])!
 			o.id = r[2]
 		} else if r.len == 1 {
-			o.cid = cid_get(id_int:r[0])!
+			o.cid = cid_get(id_int: r[0])!
 			o.id = r[1]
 		} else if r.len == 0 {
 			o.id = r[0]
@@ -61,14 +61,14 @@ fn gid_get(args GIDNewArgs) !GID {
 			return error('gsmartid string not properly constructed.\n${gid}')
 		}
 	}
-	if args.cid==""{
-		return error("cid cannot be empty.$args")
+	if args.cid == '' {
+		return error('cid cannot be empty.${args}')
 	}
-	o.cid=cid_get(id_string:args.cid)!
-	o.id=sid_int(args.id)
-	if o.id==0{
-		id_string:=sid_new(args.cid)!
-		o.id=sid_int(id_string)
+	o.cid = cid_get(id_string: args.cid)!
+	o.id = sid_int(args.id)
+	if o.id == 0 {
+		id_string := sid_new(args.cid)!
+		o.id = sid_int(id_string)
 	}
 	return o
 }
@@ -100,7 +100,6 @@ pub fn gid_test(gid string) ! {
 	}
 }
 
-
 // fn (gid GID) check() !{
 // 	if gid.id == 0{
 // 		return error("gid cannot be 0.\n$gid")
@@ -110,23 +109,17 @@ pub fn gid_test(gid string) ! {
 // 	}
 // }
 
-
-
-//object id in u32
-pub fn (gid GID) oid() u32{
+// object id in u32
+pub fn (gid GID) oid() u32 {
 	return gid.id
 }
 
-//object id as string
-pub fn (gid GID) ostr() string{
+// object id as string
+pub fn (gid GID) ostr() string {
 	return sid_str(gid.id)
 }
 
-
-
-//object id as string
-pub fn (gid GID) str() string{
-	return "${gid.cid.str()}.${gid.ostr()}"
+// object id as string
+pub fn (gid GID) str() string {
+	return '${gid.cid.str()}.${gid.ostr()}'
 }
-
-

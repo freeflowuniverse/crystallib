@@ -118,25 +118,17 @@ pub fn (mut executor ExecutorSSH) download(source string, dest string) ! {
 	if executor.ipaddr.cat == .ipv6 {
 		cmd_ipaddr = '[${executor.ipaddr.addr}]'
 	}
-	mut job := osal.Job{}
-	job = osal.exec(
+	mut job := osal.exec(
 		cmd: 'rsync -avHPe "ssh -p${port}" ${executor.user}@${cmd_ipaddr}:${source} ${dest}'
 		die: false
 	)!
 	if job.exit_code > 0 {
 		if job.output.contains('rsync: command not found') {
-			executor.exec('apt update && apt install rsync -y') or {
-				// TODO, not good enough because we need to check which platform
-				return error('could install rsync, was maybe not ubuntu.\n${executor}')
-			}
-			job = osal.exec(
-				cmd: 'rsync -avHPe "ssh -p${port}" ${executor.user}@${cmd_ipaddr}:${source} ${dest}'
-				die: false
-			)!
+			return error('rsync: command not found')
 		}
 	}
 	if job.exit_code > 0 {
-		return error('could rsync.\n${job}')
+		return error('could not rsync for download.\n${job}')
 	}
 }
 
@@ -144,16 +136,25 @@ pub fn (mut executor ExecutorSSH) download(source string, dest string) ! {
 pub fn (mut executor ExecutorSSH) upload(source string, dest string) ! {
 	port := executor.ipaddr.port
 	if executor.debug {
-		println(' - ${executor.ipaddr.addr} file upload: ${source} -> ${dest}')
+		println(' - ${executor.ipaddr.addr} upload: ${source} -> ${dest}')
 	}
 	// detection about ipv4/ipv6 for use [] or not
 	mut cmd_ipaddr := '${executor.ipaddr.addr}'
 	if executor.ipaddr.cat == .ipv6 {
 		cmd_ipaddr = '[${executor.ipaddr.addr}]'
 	}
-	osal.exec(
+	mut job := osal.exec(
 		cmd: 'rsync -avHPe "ssh -p${port}" ${source} -e ssh ${executor.user}@${cmd_ipaddr}:${dest}'
-	) or { panic(@FN + ': Cannot execute job') }
+		die: false
+	)!
+	if job.exit_code > 0 {
+		if job.output.contains('rsync: command not found') {
+			return error('rsync: command not found')
+		}
+	}
+	if job.exit_code > 0 {
+		return error('could not rsync for upload.\n${job}')
+	}
 }
 
 // get environment variables from the executor

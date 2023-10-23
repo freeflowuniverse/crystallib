@@ -9,13 +9,13 @@ import freeflowuniverse.crystallib.core.texttools.regext
 // to create a new one we need to know the circle
 fn sid_new(cid string) !string {
 	mut redis := redisclient.core_get()!
-	key:='circle:sid:${cid}'
+	key := 'circle:sid:${cid}'
 	mut sidlast := redis.get(key)! // is the last sid
-	if sidlast==""{
+	if sidlast == '' {
 		redis.set(key, '10')!
-		sidlast = redis.get(key)! //need to make sure we reserve the first 10 ones
+		sidlast = redis.get(key)! // need to make sure we reserve the first 10 ones
 	}
-	sidlasti := sidlast.u32()+1 //is a new one
+	sidlasti := sidlast.u32() + 1 // is a new one
 	redis.set(key, '${sidlasti}')!
 	return sid_str(sidlasti)
 }
@@ -23,9 +23,9 @@ fn sid_new(cid string) !string {
 // make sure redis knows about it, will return true if its not known in redis yet
 fn sid_acknowledge(cid string, sid string) !bool {
 	mut redis := redisclient.core_get()!
-	key:='circle:sid:${cid}'
+	key := 'circle:sid:${cid}'
 	sidlast := redis.get(key)! // is the last sid
-	sidlasti := sidlast.u32() 
+	sidlasti := sidlast.u32()
 	sidnewi := sid_int(sid)
 	if sidnewi > sidlasti {
 		redis.set(key, '${sidnewi}')!
@@ -34,15 +34,14 @@ fn sid_acknowledge(cid string, sid string) !bool {
 	return false
 }
 
-// set the sids in redis, so we remember them all, and we know which one is the latest 
+// set the sids in redis, so we remember them all, and we know which one is the latest
 // this is for all sids as found in text
-fn sids_acknowledge(cid string,text string) ! {
+fn sids_acknowledge(cid string, text string) ! {
 	res := regext.find_sid(text)
 	for sid in res {
 		sid_acknowledge(cid, sid)!
 	}
 }
-
 
 // // make sure that we don't use an existing one
 // pub fn sid_new_unique(existing []string) !string {
@@ -117,5 +116,3 @@ fn sid_test(sid string) ! {
 		return error('sid:${sid} is not valid.')
 	}
 }
-
-

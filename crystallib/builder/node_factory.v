@@ -19,13 +19,33 @@ pub fn (mut builder BuilderFactory) node_get(name string) !&Node {
 	return error("can't find node '${name}'")
 }
 
+// format ipaddr: localhost:7777 .
+// format ipaddr: 192.168.6.6:7777 .
+// format ipaddr: 192.168.6.6 .
+// format ipaddr: any ipv6 addr .
+// format ipaddr: if only name used then is localhost .
+[params]
+pub struct NodeArguments {
+pub mut:
+	ipaddr string
+	name   string = 'default'
+	user   string = 'root'
+	debug  bool
+	reload bool
+}
+
+
 // the factory which returns an node, based on the arguments will chose ssh executor or the local one
-//- format ipaddr: localhost:7777
-//- format ipaddr: 192.168.6.6:7777
-//- format ipaddr: 192.168.6.6
-//- format ipaddr: any ipv6 addr
-//- if only name used then is localhost with localhost executor
-//
+// .
+//```
+// - format ipaddr: localhost:7777
+// - format ipaddr: myuser@192.168.6.6:7777
+// - format ipaddr: 192.168.6.6
+// - format ipaddr: any ipv6 addr
+// - if only name used then is localhost with localhost executor
+//``` 
+// its possible to put a user as user@ .. in front of an ip addr .
+// .
 //```
 // pub struct NodeArguments {
 // 	ipaddr string
@@ -35,7 +55,8 @@ pub fn (mut builder BuilderFactory) node_get(name string) !&Node {
 // 	reset bool
 // 	}
 //```
-pub fn (mut builder BuilderFactory) node_new(args NodeArguments) !&Node {
+pub fn (mut builder BuilderFactory) node_new(args_ NodeArguments) !&Node {
+	mut args:=args_
 	if args.name == '' {
 		return error('need to specify name')
 	}
@@ -44,6 +65,10 @@ pub fn (mut builder BuilderFactory) node_new(args NodeArguments) !&Node {
 		if node.name == args.name {
 			return &node
 		}
+	}
+
+	if args.ipaddr.contains("@"){
+		args.user ,args.ipaddr = args.ipaddr.split_once('@') or {panic('bug')}
 	}
 
 	eargs := ExecutorNewArguments{
