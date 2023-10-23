@@ -60,7 +60,7 @@ fn (mut file File) exists() !bool {
 
 fn (mut file File) copy(dest string) ! {
 	mut dest2 := pathlib.get(dest)
-	file.path.copy(dest2.path) or {
+	file.path.copy(dest:dest2.path) or {
 		return error('Could not copy file: ${file.path.path} to ${dest} .\n${err}\n${file}')
 	}
 }

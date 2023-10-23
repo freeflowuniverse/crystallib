@@ -111,30 +111,6 @@ fn (path Path) list_internal(args ListArgsInternal) ![]Path {
 	return all_list
 }
 
-// // find dir underneith path .
-// // see path.list() for more info in how to use the args
-// pub fn (path Path) dir_list(args ListArgs) !PathList {
-// 	mut pl := path.list(args)!
-// 	pl.paths = pl.paths.filter(it.cat == Category.dir)
-// 	return pl
-// }
-
-// // find file underneith path .
-// // see path.list() for more info in how to use the args
-// pub fn (path Path) file_list(args ListArgs) !PathList {
-// 	mut pl := path.list(args)!
-// 	pl.paths = pl.paths.filter(it.cat == Category.file)
-// 	return pl
-// }
-
-// // find links (don't follow) .
-// // see path.list() for more info in how to use the args
-// pub fn (mut path Path) link_list(args ListArgs) !PathList {
-// 	mut pl := path.list(args)!
-// 	pl.paths = pl.paths.filter(it.cat in [Category.linkdir, Category.linkfile])
-// 	return pl
-// }
-
 // copy all
 pub fn (mut pathlist PathList) copy(dest string) ! {
 	for mut path in pathlist.paths {

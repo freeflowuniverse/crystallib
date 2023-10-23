@@ -71,7 +71,7 @@ pub fn (mut v_executor VExecutor) add_dir_to_end(directory_path_ string) ! {
 	mut directory_path := pathlib.get(directory_path_)
 	directory_path.check()
 
-	mut fl := directory_path.file_list(pathlib.ListArgs{}) or {
+	mut fl := directory_path.list() or {
 		return error('Failed to get file_paths of directory at ' + @FN + ' : ${err}')
 	}
 	// mut count := 0

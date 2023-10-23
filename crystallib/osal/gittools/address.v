@@ -47,7 +47,7 @@ fn (addr GitAddr) path_account() pathlib.Path {
 		panic('cannot be empty')
 	}
 	path := pathlib.get_dir(path:'${addr.gsconfig.root}/${addr.provider}/${addr.account}',
-		true) or { panic('couldnt get directory') }
+		create:true) or { panic('couldnt get directory') }
 	return path
 }
 

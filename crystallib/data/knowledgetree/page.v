@@ -130,7 +130,7 @@ fn (mut page Page) link_update(mut link Link) ! {
 		if fileobj.path.path == dest.path {
 			panic('source and destination is same when trying to fix link (copy).')
 		}
-		fileobj.path.copy(dest.path)!
+		fileobj.path.copy(dest:dest.path)!
 		collection.image_new(mut dest)! // make sure collection knows about the new file
 		fileobj.path = dest
 

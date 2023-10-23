@@ -51,7 +51,7 @@ fn (vparser VParser) parse_vpath(mut path pathlib.Path) ![]CodeItem {
 			}
 		}
 
-		mut fl := path.file_list()!
+		mut fl := path.list()!
 		for mut file in fl.paths {
 			code << vparser.parse_vpath(mut file)!
 		}

@@ -18,7 +18,7 @@ pub mut:
 // if ssh_target used then will copy over ssh e.g. .
 // dest needs to be a directory or file . 
 // return Path of the destination file or dir .
-pub fn (mut path Path) copy(args_ CopyArgs) !Path {
+pub fn (mut path Path) copy(args_ CopyArgs) ! {
 	mut args:=args_
 	if args.ignore.len>0 || args.ignore_default || args.ssh_target.len>0{
 		args.rsync=true
@@ -54,8 +54,6 @@ pub fn (mut path Path) copy(args_ CopyArgs) !Path {
 		os.cp_all(path.path, dest.path, true)! // Always overwite if needed
 
 		dest.check()
-		return dest
 	}
-	panic("bug")
 	
 }

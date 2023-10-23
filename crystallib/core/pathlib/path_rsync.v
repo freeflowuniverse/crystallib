@@ -32,12 +32,12 @@ pub fn rsync(args_ RsyncArgs) ! {
 		pathlib.get_dir(path:args.source)!
 	}
 	cmd:=rsync_cmd(args)!
-	// println(cmd)
-	os.execvp('/bin/bash', ["-c '${cmd}'"])!
-	// r:=os.execute(cmd)
-	// if r.exit_code>0{
-	// 	return error("Could not execute the rsync.\n$r")
-	// }
+	println(cmd)
+	// os.execvp('/bin/bash', ["-c '${cmd}'"])!
+	r:=os.execute(cmd)
+	if r.exit_code>0{
+		return error("Could not execute the rsync.\n$r")
+	}
 }
 
 
