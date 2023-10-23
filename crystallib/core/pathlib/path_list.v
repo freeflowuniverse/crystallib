@@ -61,13 +61,13 @@ pub fn (path Path) list(args_ ListArgs) !PathList {
 [params]
 pub struct ListArgsInternal {
 mut:
-	regex         []regex.RE //only put files in which follow one of the regexes
+	regex         []regex.RE // only put files in which follow one of the regexes
 	recursive     bool = true
 	ignoredefault bool = true // ignore files starting with . and _
 }
 
 fn (path Path) list_internal(args ListArgsInternal) ![]Path {
-	if path.cat !in [Category.dir] {
+	if path.cat != Category.dir {
 		// return error('Path must be directory or link to directory')
 		return []Path{}
 	}
@@ -84,19 +84,18 @@ fn (path Path) list_internal(args ListArgsInternal) ![]Path {
 		}
 		if new_path.is_link() {
 			continue
-		}		
+		}
 		if args.ignoredefault {
 			if item.starts_with('_') || item.starts_with('.') {
 				continue
 			}
-		}		
+		}
 		if new_path.is_dir() {
 			// If recusrive
 			if args.recursive {
 				mut rec_list := new_path.list_internal(args)!
 				all_list << rec_list
 			}
-			continue
 		}
 		mut addthefile := true
 		for r in args.regex {
@@ -114,7 +113,7 @@ fn (path Path) list_internal(args ListArgsInternal) ![]Path {
 // copy all
 pub fn (mut pathlist PathList) copy(dest string) ! {
 	for mut path in pathlist.paths {
-		path.copy(dest:dest)!
+		path.copy(dest: dest)!
 	}
 }
 
