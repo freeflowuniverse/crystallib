@@ -27,6 +27,8 @@ pub mut:
 //  ignore_default bool = true //if set will ignore a common set
 //  stdout bool = true
 // ```
+// .
+// see https://github.com/freeflowuniverse/crystallib/blob/development_circles/examples/osal/rsync/rsync_example.v
 pub fn rsync(args RsyncArgs) ! {
 	cmd:=rsync_cmd(args)!
 	println(cmd)
@@ -35,7 +37,6 @@ pub fn rsync(args RsyncArgs) ! {
 	}else{
 		execute_silent(cmd)!
 	}
-	
 }
 
 //return the cmd with all rsync arguments .
@@ -68,6 +69,9 @@ pub fn rsync_cmd(args_ RsyncArgs) !string {
 	for excl in args.ignore{
 		exclude+= " --exclude='${excl}'"
 	}
+
+	args.source = args.source.trim_right("/ ")+"/"
+	args.dest = args.dest.trim_right("/ ")+"/"
 
 	if args.ipaddr_src.len>0 && args.ipaddr_dst.len==0{
 		sshpart,addrpart=rsync_ipaddr_format(args.ipaddr_src)

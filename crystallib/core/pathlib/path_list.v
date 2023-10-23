@@ -34,13 +34,15 @@ pub mut:
 // example see https://github.com/freeflowuniverse/crystallib/blob/development_circles/examples/core/pathlib/examples/list/path_list.v
 // .
 // e.g. p.list(regex:[r'.*\.v$'])!  //notice the r in front of string, this is regex for all files ending with .v
+// .
+// please note links are ignored for walking over dirstructure (for files and dirs)
 pub fn (path Path) list(args_ ListArgs) !PathList {
 	mut r := []regex.RE{}
 	for regexstr in args_.regex {
 		mut re := regex.regex_opt(regexstr) or {
 			return error("cannot create regex for:'${regexstr}'")
 		}
-		println(re.get_query())
+		// println(re.get_query())
 		r << re
 	}
 	mut args := ListArgsInternal{
@@ -59,14 +61,15 @@ pub fn (path Path) list(args_ ListArgs) !PathList {
 [params]
 pub struct ListArgsInternal {
 mut:
-	regex         []regex.RE
+	regex         []regex.RE //only put files in which follow one of the regexes
 	recursive     bool = true
 	ignoredefault bool = true // ignore files starting with . and _
 }
 
 fn (path Path) list_internal(args ListArgsInternal) ![]Path {
-	if path.cat !in [Category.dir, Category.linkdir] {
-		return error('Path must be directory or link to directory')
+	if path.cat !in [Category.dir] {
+		// return error('Path must be directory or link to directory')
+		return []Path{}
 	}
 	mut ls_result := os.ls(path.path) or { []string{} }
 	ls_result.sort()
@@ -79,21 +82,25 @@ fn (path Path) list_internal(args ListArgsInternal) ![]Path {
 			// to deal with broken link
 			continue
 		}
+		if new_path.is_link() {
+			continue
+		}		
+		if args.ignoredefault {
+			if item.starts_with('_') || item.starts_with('.') {
+				continue
+			}
+		}		
 		if new_path.is_dir() {
 			// If recusrive
 			if args.recursive {
 				mut rec_list := new_path.list_internal(args)!
 				all_list << rec_list
 			}
+			continue
 		}
 		mut addthefile := true
 		for r in args.regex {
 			if !(r.matches_string(item)) {
-				addthefile = false
-			}
-		}
-		if args.ignoredefault {
-			if item.starts_with('_') || item.starts_with('.') {
 				addthefile = false
 			}
 		}
@@ -104,29 +111,29 @@ fn (path Path) list_internal(args ListArgsInternal) ![]Path {
 	return all_list
 }
 
-// find dir underneith path .
-// see path.list() for more info in how to use the args
-pub fn (path Path) dir_list(args ListArgs) !PathList {
-	mut pl := path.list(args)!
-	pl.paths = pl.paths.filter(it.cat == Category.dir)
-	return pl
-}
+// // find dir underneith path .
+// // see path.list() for more info in how to use the args
+// pub fn (path Path) dir_list(args ListArgs) !PathList {
+// 	mut pl := path.list(args)!
+// 	pl.paths = pl.paths.filter(it.cat == Category.dir)
+// 	return pl
+// }
 
-// find file underneith path .
-// see path.list() for more info in how to use the args
-pub fn (path Path) file_list(args ListArgs) !PathList {
-	mut pl := path.list(args)!
-	pl.paths = pl.paths.filter(it.cat == Category.file)
-	return pl
-}
+// // find file underneith path .
+// // see path.list() for more info in how to use the args
+// pub fn (path Path) file_list(args ListArgs) !PathList {
+// 	mut pl := path.list(args)!
+// 	pl.paths = pl.paths.filter(it.cat == Category.file)
+// 	return pl
+// }
 
-// find links (don't follow) .
-// see path.list() for more info in how to use the args
-pub fn (mut path Path) link_list(args ListArgs) !PathList {
-	mut pl := path.list(args)!
-	pl.paths = pl.paths.filter(it.cat in [Category.linkdir, Category.linkfile])
-	return pl
-}
+// // find links (don't follow) .
+// // see path.list() for more info in how to use the args
+// pub fn (mut path Path) link_list(args ListArgs) !PathList {
+// 	mut pl := path.list(args)!
+// 	pl.paths = pl.paths.filter(it.cat in [Category.linkdir, Category.linkfile])
+// 	return pl
+// }
 
 // copy all
 pub fn (mut pathlist PathList) copy(dest string) ! {
