@@ -103,7 +103,7 @@ pub fn configuration_set(args_ ConfigurationArgs) ! {
 		}
 		osal.file_write('/etc/caddy/Caddyfile', args.content)!
 	} else {
-		mut p := pathlib.get_file(args.path, true)!
+		mut p := pathlib.get_file(path:args.path, create:true)!
 		content := p.read()!
 		if !os.exists('/etc/caddy') {
 			os.mkdir_all('/etc/caddy')!

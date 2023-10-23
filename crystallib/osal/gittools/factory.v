@@ -199,7 +199,7 @@ fn new(config_ GitStructureConfig) !GitStructure {
 
 	mut gs := GitStructure{
 		config: config
-		rootpath: pathlib.get_dir(config.root, true) or { panic('this should never happen') }
+		rootpath: pathlib.get_dir(path:config.root, create:true) or { panic('this should never happen') }
 	}
 
 	if os.exists(gs.config.root) {

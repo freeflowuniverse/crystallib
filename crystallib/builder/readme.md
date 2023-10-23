@@ -6,10 +6,9 @@
 import freeflowuniverse.crystallib.builder
 mut b:=builder.new()
 mut n:=b.node_get(ipaddr:"root@195.192.213.2:2222") //shorter way how to specify, user can also be done separate
-
-
-
 ```
+
+see a more complete example in https://github.com/freeflowuniverse/crystallib/blob/development_circles/examples/builder/simple/simple.v
 
 ## NODE DB
 

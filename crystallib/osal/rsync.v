@@ -1,5 +1,6 @@
 module osal
 import os
+import freeflowuniverse.crystallib.core.pathlib
 
 [params]
 pub struct RsyncArgs {
@@ -31,7 +32,10 @@ pub mut:
 // see https://github.com/freeflowuniverse/crystallib/blob/development_circles/examples/osal/rsync/rsync_example.v
 pub fn rsync(args RsyncArgs) ! {
 	cmd:=rsync_cmd(args)!
-	println(cmd)
+	if args.ipaddr_src.len==0{
+		pathlib.get_dir(path:args.source,false)!
+	}
+	// println(cmd)
 	if args.stdout{
 		execute_stdout(cmd)!
 	}else{

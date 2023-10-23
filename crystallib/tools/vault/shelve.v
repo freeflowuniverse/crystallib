@@ -32,7 +32,7 @@ pub fn (mut shelve Shelve) save() ! {
 // get the data from the directory
 fn (mut shelve Shelve) path_meta() !pathlib.Path {
 	pathmeta := '${shelve.path.path}/.vault/meta'
-	return pathlib.get_file(pathmeta, true)
+	return pathlib.get_file(path:pathmeta, create:true)
 }
 
 // load the shelve, if its not there yet, then will return empty

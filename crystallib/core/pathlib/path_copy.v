@@ -16,7 +16,7 @@ pub mut:
 // return Path of the destination file or dir .
 pub fn (mut path Path) copy(args CopyArgs) !Path {
 	path.check()
-	mut dest := get_dir(args.dest, false)!
+	mut dest := get_dir(path:args.dest)!
 	if dest.exists() {
 		if !(path.cat in [.file, .dir] && dest.cat in [.file, .dir]) {
 			return error('Source or Destination path is not file or directory.\n\n${path.path}-${path.cat}---${dest.path}-${dest.cat}')

@@ -37,7 +37,7 @@ pub fn (addr GitAddr) path() !pathlib.Path {
 	if addr.gsconfig.multibranch {
 		path_string += '/${addr.branch}'
 	}
-	path := pathlib.get_dir(path_string, false)!
+	path := pathlib.get_dir(path:path_string)!
 	return path
 }
 
@@ -46,7 +46,7 @@ fn (addr GitAddr) path_account() pathlib.Path {
 	if addr.gsconfig.root == '' {
 		panic('cannot be empty')
 	}
-	path := pathlib.get_dir('${addr.gsconfig.root}/${addr.provider}/${addr.account}',
+	path := pathlib.get_dir(path:'${addr.gsconfig.root}/${addr.provider}/${addr.account}',
 		true) or { panic('couldnt get directory') }
 	return path
 }

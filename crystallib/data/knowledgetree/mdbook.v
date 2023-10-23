@@ -131,7 +131,7 @@ pub fn book_create(args_ BookNewArgs) !&MDBook {
 		return error('Path cannot be empty.')
 	}
 
-	mut p := pathlib.get_file(args.path, false)! // makes sure we have the right path
+	mut p := pathlib.get_file(path:args.path)! // makes sure we have the right path
 	if !p.exists() {
 		return error('cannot find book on path: ${args.path}')
 	}

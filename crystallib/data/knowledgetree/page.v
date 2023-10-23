@@ -123,7 +123,7 @@ fn (mut page Page) link_update(mut link Link) ! {
 			println('${link}')
 		}
 		mut dest := pathlib.get('${page.path.path_dir()}/img/${fileobj.path.name()}')
-		pathlib.get_dir('${page.path.path_dir()}/img', true)! // make sure it exists
+		pathlib.get_dir(path:'${page.path.path_dir()}/img', create:true)! // make sure it exists
 		$if debug {
 			println('*** COPY: ${fileobj.path.path} to ${dest.path}')
 		}
@@ -322,7 +322,7 @@ pub fn (mut page Page) export(args_ PageSaveArgs) ! {
 	}
 	// QUESTION: okay convention?
 	out := page.doc or { panic('this should never happen') }.markdown()
-	mut p := pathlib.get_file(args.dest, true)!
+	mut p := pathlib.get_file(path:args.dest, create:true)!
 	p.write(out)!
 
 	// mutate page to save updated doc
@@ -344,7 +344,7 @@ pub fn (mut page Page) save(args_ PageSaveArgs) ! {
 	page.fix_links()! // always need to make sure that the links are now clean
 	// QUESTION: okay convention?
 	out := page.doc or { panic('this should never happen') }.wiki()
-	mut p := pathlib.get_file(args.dest, true)!
+	mut p := pathlib.get_file(path:args.dest,check:false)!
 	p.write(out)!
 
 	// mutate page to save updated doc

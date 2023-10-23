@@ -38,11 +38,15 @@ fn do2() ! {
 	assert !(h2==h3)
 
 	n.upload(source:"/tmp/myexamplepath2",dest:"/tmp/myexamplepath3",delete:true)!
-	//now hash should be the same
+	
+	//now hash should be the same, hashes work over all files in a dir
+	//its a good trick to compare if 2 directories are the same
 	h3=p3.md5hex()!
 	assert h2==h3
+
+	//there is also a size function, this one is in KByte
 	size:=p3.size_kb() or {0}
-	println("size: ${size}")
+	println("size: ${size} KB")
 	
 
 }
