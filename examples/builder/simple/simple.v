@@ -31,8 +31,8 @@ fn do2() ! {
 	assert r=="something"
 	
 
-	mut p2:=pathlib.get_dir("/tmp/myexamplepath2",false)! //needs to exist, and is a dir
-	mut p3:=pathlib.get_dir("/tmp/myexamplepath3",false)!
+	mut p2:=pathlib.get_dir(path:"/tmp/myexamplepath2")! //needs to exist, and is a dir
+	mut p3:=pathlib.get_dir(path:"/tmp/myexamplepath3")!
 	h2:=p2.md5hex()!
 	mut h3:=p3.md5hex()!
 	assert !(h2==h3)

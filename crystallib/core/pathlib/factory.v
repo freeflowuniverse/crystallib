@@ -4,6 +4,12 @@ import os
 
 // gets Path object, will check if it exists, is dir_file, ...
 pub fn get(path_ string) Path {
+	mut p2:=get_no_check(path_)
+	p2.check()
+	return p2
+}
+
+pub fn get_no_check(path_ string) Path {
 	mut path := path_
 	if path.contains('~') {
 		path = path.replace('~', os.home_dir())
@@ -14,16 +20,8 @@ pub fn get(path_ string) Path {
 	mut p2 := Path{
 		path: path
 	}
-	p2.check()
 	if p2.path.contains('..') {
 		p2.path = p2.absolute()
-	}
-	return p2
-}
-
-pub fn get_no_check(path string) Path {
-	mut p2 := Path{
-		path: path
 	}
 	return p2
 }
@@ -47,9 +45,9 @@ pub fn get_dir(args_ GetArgs) !Path {
 	if args.create{
 		args.check=true
 	}
-	mut p2 := get(args.path)
+	mut p2 := get_no_check(args.path)
 	if args.check{
-		// p2.check()
+		p2.check()
 		p2.absolute()
 		if p2.exist == .no {
 			os.mkdir_all(p2.absolute()) or { return error('cannot create path ${p2}') } // Make sure that all the needed paths created		
@@ -73,9 +71,9 @@ pub fn get_file(args_ GetArgs) !Path {
 	if args.create{
 		args.check=true
 	}
-	mut p2 := get(args.path)
+	mut p2 := get_no_check(args.path)
 	if args.check{
-		// p2.check()
+		p2.check()
 		if args.create{
 			parent_ := p2.parent()!
 			if parent_.exist == .no {
