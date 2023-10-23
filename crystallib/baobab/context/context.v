@@ -12,22 +12,13 @@ __global (
 
 pub struct Context {
 pub mut:
-	id    string 
-	alias  string
-	start  ourtime.OurTime
-	// end  ourtime.OurTime
-	params paramsparser.Params
-	gitstructure ?gittools.GitStructure //optional
-	done   []string
-}
-
-[params]
-pub struct ContextNewArgs {
-pub mut:
 	id    string
-	alias  string
-	start  string // can be e.g. +1h
-	params ?paramsparser.Params
+	alias string
+	start ourtime.OurTime
+	// end  ourtime.OurTime
+	params       paramsparser.Params
+	gitstructure ?gittools.GitStructure // optional
+	done         []string
 }
 
 // get a context object based on the name /
@@ -39,7 +30,7 @@ pub mut:
 // start string  //can be e.g. +1h
 // ```
 //
-pub fn get(args_ ContextNewArgs) !&Context {
+pub fn new(args_ ContextNewArgs) !&Context {
 	mut args := args_
 	args.id = texttools.name_fix(args.id)
 	if args.id !in contexts {
@@ -55,7 +46,8 @@ pub fn get(args_ ContextNewArgs) !&Context {
 		}
 	}
 	lock contexts {
-		return contexts[args.id] or { return error('Could not find context ${args.id}') }
+		c := contexts[args.id] or { return error('Could not find context ${args.id}') }
+		return c
 	}
 	panic('bug')
 }

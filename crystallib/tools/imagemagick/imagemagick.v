@@ -73,7 +73,7 @@ pub fn scan(args ScanArgs) !paramsparser.Params {
 	if !installed() {
 		panic('cannot scan because imagemagic not installed.')
 	}
-	mut path := pathlib.get_dir(args.path, false)!
+	mut path := pathlib.get_dir(path:args.path)!
 	mut params_ := paramsparser.Params{}
 	if args.backupdir != '' {
 		params_.kwarg_add('backup', args.backupdir)

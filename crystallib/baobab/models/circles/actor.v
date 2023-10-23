@@ -1,7 +1,7 @@
 module circles
 
 import freeflowuniverse.crystallib.data.actionsparser
-import freeflowuniverse.crystallib.data.paramsparser 
+import freeflowuniverse.crystallib.data.paramsparser
 
 __global (
 	circle_actor shared CircleActor

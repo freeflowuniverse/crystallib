@@ -31,13 +31,13 @@ fn test_get() {
 
 fn test_exists() {
 	println('************ TEST_exists ************')
-	mut p1 := pathlib.get_file('${testpath}/testfile1', false) or { panic('${err}') }
+	mut p1 := pathlib.get_file(path:'${testpath}/testfile1') or { panic('${err}') }
 	assert p1.exists()
 	println('File found')
-	mut p2 := pathlib.get_file('${testpath}/NotARealFile', false) or { panic('${err}') }
+	mut p2 := pathlib.get_file(path:'${testpath}/NotARealFile') or { panic('${err}') }
 	assert !p2.exists()
 	println('File not found')
-	mut p3 := pathlib.get_file('${testpath}/NotARealFile2', true) or { panic('${err}') }
+	mut p3 := pathlib.get_file(path:'${testpath}/NotARealFile2') or { panic('${err}') }
 	assert p3.exists()
 	println('File found')
 	p3.delete() or { panic('${err}') }

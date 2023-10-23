@@ -1,2 +1,3 @@
 # Widgets
 
+!!include macros.md

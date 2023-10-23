@@ -1,7 +1,7 @@
 module actionsexecutor
 
-import freeflowuniverse.crystallib.data.actionsparser  { ActionsArgs }
-import freeflowuniverse.crystallib.data.paramsparser 
+import freeflowuniverse.crystallib.data.actionsparser { ActionsArgs }
+import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.pathlib

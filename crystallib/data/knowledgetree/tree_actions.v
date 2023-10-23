@@ -31,7 +31,7 @@ import freeflowuniverse.crystallib.core.pathlib
 // 				collection_name := action.params.get('collection')!
 // 				page_path := action.params.get('path')!
 
-// 				mut p := pathlib.get_file(page_path, false)!
+// 				mut p := pathlib.get_file(path:page_path)!
 // 				if !p.exists() {
 // 					return error('cannot find page: ${p}')
 // 				}
@@ -43,7 +43,7 @@ import freeflowuniverse.crystallib.core.pathlib
 // 				collection_name := action.params.get('collection')!
 // 				page_path := action.params.get('path')!
 
-// 				mut p := pathlib.get_file(page_path, false)!
+// 				mut p := pathlib.get_file(path:page_path)!
 // 				if !p.exists() {
 // 					return error('cannot find page: ${p}')
 // 				}
@@ -55,7 +55,7 @@ import freeflowuniverse.crystallib.core.pathlib
 // 				collection_name := action.params.get('collection')!
 // 				page_path := action.params.get('path')!
 
-// 				mut p := pathlib.get_file(page_path, false)!
+// 				mut p := pathlib.get_file(path:page_path)!
 // 				if !p.exists() {
 // 					return error('cannot find page: ${p}')
 // 				}

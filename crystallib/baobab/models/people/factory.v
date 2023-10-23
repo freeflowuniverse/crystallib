@@ -39,6 +39,6 @@ pub fn new(args NewArgs) !MemDB {
 }
 
 pub fn (mut m MemDB) actions_import(path string) ! {
-	ap := actions.new(path: path)!
+	ap := actionsparser.new(path: path)!
 	m.actions(ap)!
 }

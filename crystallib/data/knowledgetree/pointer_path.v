@@ -24,7 +24,7 @@ pub mut:
 
 // will return a pointer to filepath (needs to be a file, cannot be a dir)
 pub fn pointerpath_new(args PointerPathArgs) !PointerPath {
-	mut mypath := pathlib.get_file(args.path, false)!
+	mut mypath := pathlib.get_file(path:args.path)!
 	if args.needs_to_exist && mypath.exists() == false {
 		return error('path ${args.path} needs to exist, when creating a pointer path.')
 	}

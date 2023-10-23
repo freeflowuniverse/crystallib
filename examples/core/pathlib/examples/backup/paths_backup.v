@@ -2,7 +2,7 @@ module main
 
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.tools.vault
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 import os
 
 const testpath = os.dir(@FILE) + '/test_path/test_parent/readme.md'

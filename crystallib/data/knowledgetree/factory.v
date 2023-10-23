@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.baobab.context
 import log
+import freeflowuniverse.crystallib.baobab.smartid
 
 __global (
 	knowledgetrees shared map[string]Tree
@@ -13,6 +14,7 @@ __global (
 pub struct ArgsNew {
 pub mut:
 	name string = 'default'
+	cid  smartid.CID
 }
 
 // get a new tree initialized
@@ -33,13 +35,13 @@ pub fn new(args_ ArgsNew) !Tree {
 		logger: &log.Log{
 			level: level
 		}
+		cid: args.cid
 	}
 	t.init()! // initialize mdbooks embed logic
 	return t
 }
 
 // get a new global tree initialized
-// will create a new tree instance, be careful
 pub fn new_global(args_ ArgsNew) ! {
 	lock knowledgetrees {
 		tree := new(args_)!

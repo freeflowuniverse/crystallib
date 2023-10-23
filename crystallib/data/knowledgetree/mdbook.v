@@ -131,7 +131,7 @@ pub fn book_create(args_ BookNewArgs) !&MDBook {
 		return error('Path cannot be empty.')
 	}
 
-	mut p := pathlib.get_file(args.path, false)! // makes sure we have the right path
+	mut p := pathlib.get_file(path:args.path)! // makes sure we have the right path
 	if !p.exists() {
 		return error('cannot find book on path: ${args.path}')
 	}
@@ -255,7 +255,8 @@ fn (mut book MDBook) add_missing_pages_to_summary() ! {
 	mut path_summary := pathlib.get('${book.dest_md}/src/SUMMARY.md')
 	summary_content := os.read_file(path_summary.path)!
 	dest_md_path := pathlib.get('${book.dest_md}/src')
-	mut files := dest_md_path.file_list(recursive: true)!
+	mut fl := dest_md_path.list()!
+	mut files := fl.paths
 
 	mut missing_links := []string{}
 	for mut file in files.filter(!it.path.ends_with('SUMMARY.md')) {

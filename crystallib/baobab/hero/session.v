@@ -11,11 +11,11 @@ import freeflowuniverse.crystallib.osal.gittools
 pub struct Session {
 pub mut:
 	name     string
-	path     pathlib.Path      [skip] // is the base directory of the session
+	path     pathlib.Path           [skip] // is the base directory of the session
 	vars     map[string]string
-	actions  []actionsparser.Action  [skip]
+	actions  []actionsparser.Action [skip]
 	includes []string
-	runner   &Runner           [skip; str: skip]
+	runner   &Runner                [skip; str: skip]
 }
 
 [params]
@@ -39,7 +39,7 @@ pub fn (mut r Runner) session_new(args_ SessionArgs) !Session {
 	}
 
 	args.name = texttools.name_fix(args.name)
-	mut p := pathlib.get_dir('${r.path.path}/sessions/${args.name}', true)!
+	mut p := pathlib.get_dir(path:'${r.path.path}/sessions/${args.name}',create:true)!
 	mut session := Session{
 		runner: &r
 		name: args.name
@@ -91,7 +91,7 @@ pub fn (mut session Session) downloadpath(name_ string) !pathlib.Path {
 	} else {
 		name = texttools.name_fix(name)
 	}
-	mut p := pathlib.get_dir('${session.path.path}/downloads/${name}', true)!
+	mut p := pathlib.get_dir(path:'${session.path.path}/downloads/${name}')!
 	return p
 }
 
@@ -127,7 +127,7 @@ pub fn (mut session Session) actions_add(args_ ActionsAddArgs) ! {
 		actions_path = downloadpath.path
 	}
 
-	mut ap := actions.new(path: actions_path)!
+	mut ap := actionsparser.new(path: actions_path)!
 	for a in ap.actions {
 		session.actions << a
 	}
@@ -161,8 +161,7 @@ pub fn (mut s Session) run(args RunArgs) ! {
 				if root.len > 0 {
 					s.runner.args.root = root
 				}
-				s.runner.path = pathlib.get_dir('${s.runner.args.root}/${s.runner.args.cid}',
-					true)!
+				s.runner.path = pathlib.get_dir(path:'${s.runner.args.root}/${s.runner.args.cid}')!
 			}
 		} else if (action.actor == 'runner' || action.actor == 'session')
 			&& action.name == 'var_set' {
@@ -209,13 +208,13 @@ pub fn (mut s Session) run(args RunArgs) ! {
 					reset: reset
 					gitstructure: s.runner.args.gitstructure
 				)!
-				mut downloadpath := pathlib.get_dir(m.path, false)!
+				mut downloadpath := pathlib.get_dir(path:m.path)!
 				// needs to be a dir
 				for mut subdir in downloadpath.dir_list()! {
 					alias = texttools.name_fix(subdir.name())
 					dest := '${s.runner.path.path}/recipes/${alias}'
 					if m.downloadtype == .pathdir {
-						mut destpath := pathlib.get_dir(dest, true)!
+						mut destpath := pathlib.get_dir(path:dest, create:true)!
 						subdir.copy(destpath.path)!
 					} else if m.downloadtype == .git {
 						subdir.link(dest, true)!

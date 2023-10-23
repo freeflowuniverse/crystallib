@@ -9,14 +9,14 @@ fn test_macro() {
 	r := MacroObj{
 		cmd: 'command.1.x'
 		params: paramsparser.Params{
-			params: [params.Param{
-				key: 'color'
+			params: [params.Param, {
+				key:   'color'
 				value: 'red'
-			}, params.Param{
-				key: 'priority'
+			}, params.Param, {
+				key:   'priority'
 				value: 'incredible'
-			}, params.Param{
-				key: 'description'
+			}, params.Param, {
+				key:   'description'
 				value: 'with spaces, lets see if ok'
 			}]
 			args: ['arg1', 'arg2']

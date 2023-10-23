@@ -8,7 +8,7 @@ pub struct Story {
 	system.Base
 pub mut:
 	name             string
-	project          system.SmartId           [root_object: Project]
+	project          system.SmartId   [root_object: Project]
 	title            string
 	description      string
 	priority         Priority
@@ -18,10 +18,10 @@ pub mut:
 	owners           []string         [root_object: Person]
 	assignment       []system.SmartId [root_object: 'Person, Team']
 	state            State
-	epics            []system.SmartId         [root_object: Epic]
-	costcenters      []system.SmartId         [root_object: CostCenter]
+	epics            []system.SmartId [root_object: Epic]
+	costcenters      []system.SmartId [root_object: CostCenter]
 	milestones       []system.SmartId [root_object: Milestone]
-	requirements     []system.SmartId         [root_object: Requirement]
+	requirements     []system.SmartId [root_object: Requirement]
 }
 
 // pub enum StoryStatus {

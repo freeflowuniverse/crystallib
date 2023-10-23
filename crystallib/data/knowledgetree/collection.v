@@ -3,9 +3,7 @@ module knowledgetree
 // import os
 import freeflowuniverse.crystallib.tools.imagemagick
 import freeflowuniverse.crystallib.core.pathlib { Path }
-import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.data.markdowndocs
-import os
 
 pub enum CollectionState {
 	init

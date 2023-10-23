@@ -17,7 +17,7 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 	mut r := knowledgetree.MacroResult{
 		state: .stop
 	}
-	ap := actions.new(text: code)!
+	ap := actionsparser.new(text: code)!
 	mut actions2 := ap.filtersort(actor: 'bizmodel')!
 	for action in actions2 {
 		p := action.params
@@ -47,7 +47,7 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 		}
 
 		supported_actions := ['sheet_wiki', 'graph_pie_row', 'graph_line_row', 'graph_bar_row',
-			'graph_title_row', 'wiki_row_overview', 'employee_wiki', 'employees_wiki']
+			'graph_title_row', 'wiki_row_overview']
 
 		if action.name in supported_actions {
 			rowname := p.get_default('rowname', '')!

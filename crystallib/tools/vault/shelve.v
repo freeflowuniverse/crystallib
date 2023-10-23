@@ -32,7 +32,7 @@ pub fn (mut shelve Shelve) save() ! {
 // get the data from the directory
 fn (mut shelve Shelve) path_meta() !pathlib.Path {
 	pathmeta := '${shelve.path.path}/.vault/meta'
-	return pathlib.get_file(pathmeta, true)
+	return pathlib.get_file(path:pathmeta, create:true)
 }
 
 // load the shelve, if its not there yet, then will return empty
@@ -146,7 +146,7 @@ pub fn (mut shelve Shelve) add(mut path pathlib.Path) !Item {
 	newname := item_new.name_nr()
 	mut dest := pathlib.get_no_check('${shelve.path.path}/.vault/${newname}')
 	println('------ ${dest}')
-	path.copy(dest.path)!
+	path.copy(dest:dest.path)!
 	shelve.items << item_new
 	shelve.changed = true
 	return item_new

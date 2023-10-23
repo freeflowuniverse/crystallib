@@ -1,6 +1,6 @@
 module btc
 
-import freeflowuniverse.crystallib.rpcwebsocket { RpcWsClient }
+import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
 
 const (
 	default_timeout = 500000

@@ -162,7 +162,9 @@ fn (mut actions Actions) parse_actions(blocks Blocks) ! {
 
 // go over block, fill in default circle or actor if needed
 fn (mut actions Actions) parse_block(block Block) ! {
-	params_ := paramsparser.parse(block.content) or { return error('Failed to parse block: ${err}') }
+	params_ := paramsparser.parse(block.content) or {
+		return error('Failed to parse block: ${err}')
+	}
 
 	mut domain := ''
 	mut circle := ''

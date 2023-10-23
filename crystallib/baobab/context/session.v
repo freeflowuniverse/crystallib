@@ -11,7 +11,7 @@ pub mut:
 	name    string
 	start   ourtime.OurTime
 	end     ourtime.OurTime
-	context Context        [skip; str: skip]
+	context Context         [skip; str: skip]
 }
 
 [params]
