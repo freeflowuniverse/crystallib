@@ -6,42 +6,41 @@ import freeflowuniverse.crystallib.core.pathlib
 
 import os
 
-const testpath = os.dir(@FILE) + '/../data'
 const orgpath = os.dir(@FILE) + '/../data/smallbook_original'
-const workpath = os.dir(@FILE) + '/../data/smallbook'
+const workpath = '/tmp/smallbook'
 
 fn do() ! {
 
 	mut p:=pathlib.get(orgpath)
-	h:=p.md5hex()!
-	// assert h=="5b7460284b629e31d57de2f9e146b107"
-
-	p.copy(dest:workpath)!
-	h2:=p.md5hex()!
-	assert h2==h
-
-	println(h)
-
+	p.copy(dest:workpath,delete:true)! //make sure we have the destination in sync with source
 
 	mut tree := knowledgetree.new(
 		cid:smartid.cid_get(name:"testknowledgetree")!
 	)!
 
 	tree.scan(
-		path: testpath
+		path: workpath
 		heal: true
 	)!
 
 
-	assert tree.page_exists("decentralized_cloud")
-	mypage:=tree.page_get("decentralized_cloud")!
+	assert tree.page_exists("smallbook1:decentralized_cloud")
+	assert tree.page_exists("grant.md") //should work because there is only 1
+	
+	mut error:=false
+	mypage:=tree.page_get("decentralized_cloud") or {error=true} //should fail because there are 2 now
+	assert error
+
+	mut error:=false
+	mypage:=tree.page_get("decentralized_cloud") or {error=true} //should fail because there are 2 now
+	assert error
 
 
-
+	//todo: test include works see /Users/despiegk1/code/github/freeflowuniverse/crystallib/examples/knowledgetree/data/smallbook2/decentralized_cloud.md
 	
 
 
-	println(mypage)
+	// println(mypage)
 
 	println('OK')
 }
