@@ -195,14 +195,14 @@ fn (mut link Link) parse() Link {
 	link.url = link.url.trim_left(' ')
 
 	// deal with special cases where file is not the only thing in ()
-	if link.url.contains(' ') {
+	if link.url.trim(' ').contains(' ') {
 		// to support something like
 		//![](./img/license_threefoldfzc.png ':size=800x900')
 		splitted := link.url.trim(' ').split(' ')
 		link.filename = splitted[0]
 		link.extra = splitted[1]
 	} else {
-		link.filename = link.url
+		link.filename = link.url.trim(' ')
 	}
 
 	if link.filename.contains('/') {
