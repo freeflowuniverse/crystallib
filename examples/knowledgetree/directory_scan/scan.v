@@ -29,7 +29,8 @@ fn do() ! {
 		heal: true
 	)!
 
-	logger.info('Making sure all pages exist.')
+	logger.info('Making sure all pages exist.') // todo: test there are 2 collections and the names should be ok
+
 	assert tree.page_exists('smallbook1:decentralized_cloud')
 	assert tree.page_exists('smallbook2:decentralized_cloud')
 	assert tree.page_exists('grant.md') // should work because there is only 1
@@ -43,7 +44,7 @@ fn do() ! {
 
 	// todo: test include works see /Users/despiegk1/code/github/freeflowuniverse/crystallib/examples/knowledgetree/data/smallbook2/decentralized_cloud.md
 
-	// todo: generate the mdbook, see it works
+	// todo: generate the mdbook, see it works (see summary in the data dir)
 
 	// println(mypage)
 
