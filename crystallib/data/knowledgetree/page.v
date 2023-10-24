@@ -93,7 +93,8 @@ fn (mut page Page) link_update(mut link Link) ! {
 			file_search = false
 			fileobj = collection.image_get(file_name)!
 		} else {
-			collection.error(path: page.path, msg: 'image not found', cat: .image_not_found)
+			msg := "'${file_name}' not found for page:${page.path.path}, we looked over all collections."
+			collection.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
 		}
 	} else if link.cat == .file {
 		if collection.file_exists(file_name) {
