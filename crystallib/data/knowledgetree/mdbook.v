@@ -54,7 +54,7 @@ pub mut:
 	dest        string // path where book will be generated	
 	dest_md     string // path where the md files will be generated
 	title       string
-	pages       map[string]&Page // needs to be a new copy
+	pages       map[string]Page // needs to be a new copy
 	files       map[string]&File
 	images      map[string]&File
 	path        Path
@@ -131,7 +131,7 @@ pub fn book_create(args_ BookNewArgs) !&MDBook {
 		return error('Path cannot be empty.')
 	}
 
-	mut p := pathlib.get_file(path:args.path)! // makes sure we have the right path
+	mut p := pathlib.get_file(path: args.path)! // makes sure we have the right path
 	if !p.exists() {
 		return error('cannot find book on path: ${args.path}')
 	}
@@ -154,6 +154,7 @@ pub fn book_create(args_ BookNewArgs) !&MDBook {
 	book.load_summary()!
 	book.link_pages_files_images()!
 	book.fix_summary()!
+	book.process()!
 	book.errors_report()!
 	book.export()!
 	pages_str := book.pages.values().map('\n${it.name}\npages_included:${it.pages_linked.map(it.name)}')
@@ -163,10 +164,11 @@ pub fn book_create(args_ BookNewArgs) !&MDBook {
 
 // load the summary
 fn (mut book MDBook) load_summary() ! {
-	mut path_summary := book.path.sub_get(name: 'summary.md', file_ensure: true, name_fix: true) or {
-		return error('Cannot find a summary for ${book.path.path}')
-	}
-	doc := markdowndocs.new(path: path_summary.path) or {
+	// QUESTION: do we assume that passed path is the path of summary file?
+	// mut path_summary := book.path.sub_get(name: 'summary.md', file_ensure: true, name_fix: true) or {
+	// 	return error('Cannot find a summary for ${book.path.path}')
+	// }
+	doc := markdowndocs.new(path: book.path.path) or {
 		return error('cannot book parse summary for ${book.path.path}: ${err}')
 	}
 	book.doc_summary = &doc
@@ -256,7 +258,13 @@ fn (mut book MDBook) add_missing_pages_to_summary() ! {
 	summary_content := os.read_file(path_summary.path)!
 	dest_md_path := pathlib.get('${book.dest_md}/src')
 	mut fl := dest_md_path.list()!
-	mut files := fl.paths
+
+	mut files := []Path{}
+	for mut path in fl.paths {
+		if path.is_file() {
+			files << path
+		}
+	}
 
 	mut missing_links := []string{}
 	for mut file in files.filter(!it.path.ends_with('SUMMARY.md')) {
@@ -418,18 +426,26 @@ fn (mut book MDBook) export_linked_pages(md_path string, mut linked_pages []&Pag
 	}
 }
 
+// process processes the pages in an mdbook
+pub fn (mut book MDBook) process() ! {
+	book.process_includes() or { return error('Failed to process includes, ${err}') }
+	logger.info('Processing pages in book')
+	for _, mut page in book.pages {
+		page.process()!
+	}
+}
+
 // export an mdbook to its html representation
 pub fn (mut book MDBook) export() ! {
 	pages_str := book.pages.values().map('\n${it.name}\npages_included:${it.pages_linked.map(it.name)}')
 	logger.info('Exporting MDBook: ${book.name}')
 	book.template_install()! // make sure all required template files are in collection
-	md_path := book.md_path('').path + '/src'
+	md_path := book.md_path('').path + 'src'
 	html_path := book.html_path('').path
 
 	logger.info('Exporting pages in MDBook: ${book.name}')
 
 	for _, mut page in book.pages {
-		page.process()!
 		if page.pages_linked.len > 0 {
 			book.export_linked_pages(md_path, mut page.pages_linked)!
 		}

@@ -63,7 +63,7 @@ pub fn book_generate(args_ BookGenerateArgs) !&MDBook {
 		return error('Path cannot be empty.')
 	}
 
-	mut p := pathlib.get_file(path:args.path)! // makes sure we have the right path
+	mut p := pathlib.get_file(path: args.path)! // makes sure we have the right path
 	if !p.exists() {
 		return error('cannot find book on path: ${args.path}')
 	}
@@ -81,6 +81,7 @@ pub fn book_generate(args_ BookGenerateArgs) !&MDBook {
 	book.load_summary()!
 	book.link_pages_files_images()!
 	book.fix_summary()!
+	book.process()!
 	book.errors_report()!
 	book.export()!
 	pages_str := book.pages.values().map('\n${it.name}\npages_included:${it.pages_linked.map(it.name)}')
