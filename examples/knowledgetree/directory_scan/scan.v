@@ -57,8 +57,14 @@ fn do() ! {
 	including_page := os.read_file('${bookdest}/smallbook2/decentralized_cloud.html')!	
 	assert including_page.contains('ThreeFold is a project the seeks true decentralization for traditional IT capacity generation.')
 
-	
 	logger.info('Testing second include produces error in smallbook2:decentralized_cloud.md')
+	assert including_page.contains('ThreeFold is a project the seeks true decentralization for traditional IT capacity generation.')
+
+	logger.info('Testing opening exported book. The book should open in a browser.')
+	book.read()!
+
+	logger.info('All assertions have passed. The example has worked without errors.')
+	logger.info('Please inspect the opened book to see all errors and expected behaviours are in place.')
 }
 
 fn main() {
