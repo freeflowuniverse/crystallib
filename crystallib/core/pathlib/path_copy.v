@@ -1,38 +1,39 @@
 module pathlib
+
 import os
 
 [params]
-pub struct CopyArgs{
+pub struct CopyArgs {
 pub mut:
-	dest string //path 
-	delete bool //if true will remove files which are on dest which are not on source
-	rsync bool = true //we use rsync as default
-	ssh_target string // e.g. root@195.192.213.2:999 
-	ignore []string //arguments to ignore e.g. ['*.pyc','*.bak']
-	ignore_default bool = true //if set will ignore a common set
-
+	dest           string   // path
+	delete         bool     // if true will remove files which are on dest which are not on source
+	rsync          bool = true // we use rsync as default
+	ssh_target     string   // e.g. root@195.192.213.2:999
+	ignore         []string // arguments to ignore e.g. ['*.pyc','*.bak']
+	ignore_default bool = true // if set will ignore a common set
 }
-
 
 // copy file,dir is always recursive
 // if ssh_target used then will copy over ssh e.g. .
-// dest needs to be a directory or file . 
+// dest needs to be a directory or file .
 // return Path of the destination file or dir .
 pub fn (mut path Path) copy(args_ CopyArgs) ! {
-	mut args:=args_
-	if args.ignore.len>0 || args.ignore_default || args.ssh_target.len>0{
-		args.rsync=true
+	mut args := args_
+	if args.ignore.len > 0 || args.ignore_default || args.ssh_target.len > 0 {
+		args.rsync = true
 	}
 	path.check()
-	if args.rsync{
-		rsync(source:path.path,dest:args.dest,delete:args.delete,
-					ipaddr_dst:args.ssh_target,
-					ignore:args.ignore,
-					ignore_default:args.ignore_default
-					)!
-
-	}else{
-		mut dest := get_dir(path:args.dest)!
+	if args.rsync {
+		rsync(
+			source: path.path
+			dest: args.dest
+			delete: args.delete
+			ipaddr_dst: args.ssh_target
+			ignore: args.ignore
+			ignore_default: args.ignore_default
+		)!
+	} else {
+		mut dest := get(args.dest)
 		if dest.exists() {
 			if !(path.cat in [.file, .dir] && dest.cat in [.file, .dir]) {
 				return error('Source or Destination path is not file or directory.\n\n${path.path}-${path.cat}---${dest.path}-${dest.cat}')
@@ -55,5 +56,4 @@ pub fn (mut path Path) copy(args_ CopyArgs) ! {
 
 		dest.check()
 	}
-	
 }
