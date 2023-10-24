@@ -1,0 +1,1 @@
+**This chapter demonstrates that the correcct errors are raised for certain troublesome pages**

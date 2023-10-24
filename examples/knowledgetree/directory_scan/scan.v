@@ -6,9 +6,11 @@ import freeflowuniverse.crystallib.core.pathlib
 import log
 import os
 
-const orgpath = os.dir(@FILE) + '/../data'
-
-const workpath = '/tmp/booktest'
+const (
+	orgpath  = os.dir(@FILE) + '/../data'
+	workpath = '/tmp/booktest'
+	bookdest = '/tmp/mdbook_export/testknowledgetree'
+)
 
 fn do() ! {
 	mut logger := log.Logger(&log.Log{
@@ -29,26 +31,34 @@ fn do() ! {
 		heal: true
 	)!
 
-	logger.info('Making sure all pages exist.') // todo: test there are 2 collections and the names should be ok
-
+	logger.info('Testing there are two collections and all pages exist.')
+	assert tree.collection_exists('smallbook1')
+	assert tree.collection_exists('smallbook2')
 	assert tree.page_exists('smallbook1:decentralized_cloud')
 	assert tree.page_exists('smallbook2:decentralized_cloud')
 	assert tree.page_exists('grant.md') // should work because there is only 1
 
-	logger.info('Making sure `page_get` fails for two pages with same name.')
+	logger.info('Testing `page_get` fails for two pages with same name.')
 	if _ := tree.page_get('decentralized_cloud') {
 		assert false
 	} else {
 		assert true
 	} // should fail because there are 2 now
 
-	// todo: test include works see /Users/despiegk1/code/github/freeflowuniverse/crystallib/examples/knowledgetree/data/smallbook2/decentralized_cloud.md
+	mut book := knowledgetree.book_generate(
+		name: 'testknowledgetree'
+		tree: tree
+		path: '${workpath}/summary.md'
+	)!
 
-	// todo: generate the mdbook, see it works (see summary in the data dir)
+	book.export()!
 
-	// println(mypage)
+	logger.info('Testing include works in smallbook2:decentralized_cloud.md')
+	including_page := os.read_file('${bookdest}/smallbook2/decentralized_cloud.html')!	
+	assert including_page.contains('ThreeFold is a project the seeks true decentralization for traditional IT capacity generation.')
 
-	println('OK')
+	
+	logger.info('Testing second include produces error in smallbook2:decentralized_cloud.md')
 }
 
 fn main() {

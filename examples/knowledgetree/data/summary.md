@@ -5,4 +5,5 @@
 -  [Problem should give error](smallbook1:problem.md) 
 -  [Problem](smallbook1:problem.md)
 -  [Decentralized Cloud](smallbook2:decentralized_cloud.md)
-
+-  [Troublesome Pages](smallbook2:troublesome_pages.md)
+    - [Circular Include](smallbook2:circular_include.md) 
