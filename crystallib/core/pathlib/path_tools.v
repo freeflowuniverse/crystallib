@@ -39,7 +39,7 @@ pub fn (mut path Path) expand(dest string) !Path {
 	if dest.len < 4 {
 		return error("Path dest needs to be mentioned and +4 char. Now '${dest}'")
 	}
-	desto := get_dir(path:dest, create:true)!
+	desto := get_dir(path: dest, create: true)!
 	println(desto)
 	if path.name().to_lower().ends_with('.tar.gz') || path.name().to_lower().ends_with('.tgz') {
 		cmd := 'tar -xzvf ${path.path} -C ${desto.path}'
@@ -114,13 +114,13 @@ pub fn (path Path) parent() !Path {
 		return Path{
 			path: '/'
 			cat: Category.dir
-			exist: .yes
+			exist: .unknown
 		}
 	}
 	return Path{
 		path: parent
 		cat: Category.dir
-		exist: .yes
+		exist: .unknown
 	}
 }
 
@@ -237,7 +237,6 @@ pub fn (mut path Path) read() !string {
 		}
 	}
 }
-
 
 // recalc path between target & source .
 // we only support if source_ is an existing dir, links will not be supported .
