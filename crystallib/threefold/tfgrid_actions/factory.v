@@ -66,7 +66,7 @@ pub fn new(args RunnerArgs, debug_log bool) !Runner {
 	return runner
 }
 
-pub fn (mut r Runner) run(mut acs actions.Actions) ! {
+pub fn (mut r Runner) run(mut acs actionsparser.Actions) ! {
 	for action in acs.actions {
 		match action.book {
 			threelang.tfgrid_book {
