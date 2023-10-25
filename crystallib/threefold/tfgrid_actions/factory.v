@@ -1,4 +1,4 @@
-module threelang
+module tfgrid_actions
 
 import log
 import freeflowuniverse.crystallib.data.actionsparser
@@ -8,10 +8,10 @@ import freeflowuniverse.crystallib.threefold.web3gw.tfchain as tfchain_client
 import freeflowuniverse.crystallib.threefold.web3gw.stellar as stellar_client
 import freeflowuniverse.crystallib.threefold.web3gw.eth as eth_client
 import freeflowuniverse.crystallib.threefold.web3gw.btc as btc_client
-import freeflowuniverse.crystallib.threefold.web3gw.threelang.tfgrid { TFGridHandler }
-import freeflowuniverse.crystallib.threefold.web3gw.threelang.web3gw { Web3GWHandler }
-import freeflowuniverse.crystallib.threefold.web3gw.threelang.clients { Clients }
-import freeflowuniverse.crystallib.threefold.web3gw.threelang.stellar { StellarHandler }
+import freeflowuniverse.crystallib.threefold.tfgrid_actions.tfgrid { TFGridHandler }
+import freeflowuniverse.crystallib.threefold.tfgrid_actions.web3gw { Web3GWHandler }
+import freeflowuniverse.crystallib.threefold.tfgrid_actions.clients { Clients }
+import freeflowuniverse.crystallib.threefold.tfgrid_actions.stellar { StellarHandler }
 
 const (
 	tfgrid_book  = 'tfgrid'
@@ -66,7 +66,7 @@ pub fn new(args RunnerArgs, debug_log bool) !Runner {
 	return runner
 }
 
-pub fn (mut r Runner) run(mut acs actions.Actions) ! {
+pub fn (mut r Runner) run(mut acs actionsparser.Actions) ! {
 	for action in acs.actions {
 		match action.book {
 			threelang.tfgrid_book {
