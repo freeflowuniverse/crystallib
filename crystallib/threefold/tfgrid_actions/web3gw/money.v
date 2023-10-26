@@ -97,10 +97,14 @@ pub fn (mut h Web3GWHandler) money_swap(action Action) ! {
 	amount := action.params.get('amount')!
 
 	if from == 'eth' && to == 'tft' {
-		res := h.clients.eth_client.swap_eth_for_tft(amount)!
+		res := h.clients.eth_client.swap(amount: amount, source_asset: from, destination_asset: to)!
 		h.logger.info(res)
 	} else if from == 'tft' && to == 'eth' {
-		res := h.clients.eth_client.swap_tft_for_eth(amount)!
+		res := h.clients.eth_client.swap(
+			amount: amount
+			source_asset: from
+			destination_asset: to
+		)!
 		h.logger.info(res)
 	} else if from == 'tft' && to == 'xlm' {
 		res := h.clients.str_client.swap(

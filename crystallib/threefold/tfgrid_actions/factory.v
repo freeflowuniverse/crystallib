@@ -68,18 +68,18 @@ pub fn new(args RunnerArgs, debug_log bool) !Runner {
 
 pub fn (mut r Runner) run(mut acs actionsparser.Actions) ! {
 	for action in acs.actions {
-		match action.book {
-			threelang.tfgrid_book {
+		match action.domain {
+			tfgrid_actions.tfgrid_book {
 				r.tfgrid_handler.handle_action(action)!
 			}
-			threelang.web3gw_book {
+			tfgrid_actions.web3gw_book {
 				r.web3gw_handler.handle_action(action)!
 			}
-			threelang.stellar_book {
+			tfgrid_actions.stellar_book {
 				r.stellar_handler.handle_action(action)!
 			}
 			else {
-				return error('module ${action.book} is invalid')
+				return error('module ${action.domain} is invalid')
 			}
 		}
 	}
