@@ -18,12 +18,12 @@ pub struct QuantumSafeFSConfig {
 }
 
 pub struct Encryption {
-	algorithm string // format?
-	key       []u8   // TODO: how to create challenge, document
+	algorithm string = 'AES' // configuration to use for the encryption stage. Currently only AES is supported.
+	key       []u8   // 64 long hex encoded encryption key (e.g. 0000000000000000000000000000000000000000000000000000000000000000).
 }
 
 pub struct QuantumSafeMeta {
-	type_  string            [json: 'type']
+	type_  string            [json: 'type'] = 'ZDB' // configuration for the metadata store to use, currently only ZDB is supported.
 	config QuantumSafeConfig
 }
 
@@ -32,17 +32,17 @@ pub struct ZDBGroup {
 }
 
 pub struct ZDBBackend {
-	address   string // format?
-	namespace string
-	password  string
+	address   string // Address of backend ZDB (e.g. [300:a582:c60c:df75:f6da:8a92:d5ed:71ad]:9900 or 60.60.60.60:9900).
+	namespace string // ZDB namespace.
+	password  string // Namespace password.
 }
 
 pub struct QuantumCompression {
-	algorithm string // format?
+	algorithm string = 'snappy' // configuration to use for the compression stage. Currently only snappy is supported.
 }
 
 pub struct QuantumSafeConfig {
-	prefix     string
+	prefix     string // Data stored on the remote metadata is prefixed with.
 	encryption Encryption
 	backends   []ZDBBackend
 }
