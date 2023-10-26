@@ -4,8 +4,8 @@ import json
 import freeflowuniverse.crystallib.threefold.grid.models
 import log
 
-fn test_deploy_deployment() {
-	mnemonics := 'route visual hundred rabbit wet crunch ice castle milk model inherit outside'
+fn test_create_and_update_deployment() {
+	mnemonics := ''
 	mut logger := log.Log{
 		level: .debug
 	}
@@ -135,30 +135,15 @@ fn test_deploy_deployment() {
 	}
 	gw_name_wl := gw_name.to_workload(name: 'mygwname')
 
-	mut gw_dl := models.Deployment{
-		version: 0
-		twin_id: twin_id
-		description: 'second dl'
-		workloads: [gw_name_wl]
-		signature_requirement: models.SignatureRequirement{
-			weight_required: 1
-			requests: [
-				models.SignatureRequest{
-					twin_id: twin_id
-					weight: 1
-				},
-			]
-		}
-	}
-
 	name_contract_id := deployer.client.create_name_contract('mygwname')!
 	deployer.logger.info('name contract id: ${name_contract_id}')
 
-	gw_contract_id := deployer.deploy(node_id, mut gw_dl, gw_dl.metadata, solution_provider)!
+	deployment.workloads << gw_name_wl
+	deployer.update_deployment(node_id, mut deployment, deployment.metadata)!
 }
 
-fn test_cancel_deployment(){
-	mnemonics := 'route visual hundred rabbit wet crunch ice castle milk model inherit outside'
+fn test_cancel_deployment() {
+	mnemonics := ''
 	mut logger := log.Log{
 		level: .debug
 	}

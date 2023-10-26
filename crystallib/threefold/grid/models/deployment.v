@@ -43,7 +43,7 @@ pub mut:
 }
 
 // Challenge computes challenge for SignatureRequest
-pub fn (mut requirement SignatureRequirement) challenge() string {
+pub fn (requirement SignatureRequirement) challenge() string {
 	mut out := []string{}
 
 	for request in requirement.requests {
@@ -62,7 +62,7 @@ pub struct Deployment {
 pub mut:
 	// increments for each new interation of this model
 	// signature needs to be achieved when version goes up
-	version int = 1
+	version u32 = 1
 	// the twin who is responsible for this deployment
 	twin_id u32
 	// each deployment has unique id (in relation to originator)
@@ -80,7 +80,7 @@ pub mut:
 
 [params]
 pub struct DeploymentArgs {
-	version               ?int
+	version               ?u32
 	twin_id               u32
 	contract_id           u64
 	expiration            ?i64
@@ -90,7 +90,7 @@ pub struct DeploymentArgs {
 	signature_requirement SignatureRequirement
 }
 
-pub fn (mut deployment Deployment) challenge() string {
+pub fn (deployment Deployment) challenge() string {
 	// we need to scape `"` with `\"`char when sending the payload to be a valid json but when calculating the challenge we should remove `\` so we don't get invlaid signature
 	metadata := deployment.metadata.replace('\\"', '"')
 	mut out := []string{}
@@ -99,7 +99,7 @@ pub fn (mut deployment Deployment) challenge() string {
 	out << '${metadata}'
 	out << '${deployment.description}'
 	out << '${deployment.expiration}'
-	for mut workload in deployment.workloads {
+	for workload in deployment.workloads {
 		out << workload.challenge()
 	}
 	out << deployment.signature_requirement.challenge()
@@ -109,7 +109,7 @@ pub fn (mut deployment Deployment) challenge() string {
 
 // ChallengeHash computes the hash of the challenge signed
 // by the user. used for validation
-pub fn (mut deployment Deployment) challenge_hash() []u8 {
+pub fn (deployment Deployment) challenge_hash() []u8 {
 	return md5.sum(deployment.challenge().bytes())
 }
 
