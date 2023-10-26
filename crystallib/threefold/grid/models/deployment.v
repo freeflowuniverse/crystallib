@@ -84,7 +84,7 @@ pub struct DeploymentArgs {
 	twin_id               u32
 	contract_id           u64
 	expiration            ?i64
-	metadata              ?string
+	metadata              DeploymentData
 	description           ?string
 	workloads             []Workload
 	signature_requirement SignatureRequirement
@@ -154,7 +154,7 @@ pub fn new_deployment(args DeploymentArgs) Deployment {
 		twin_id: args.twin_id
 		contract_id: args.contract_id
 		expiration: args.expiration or { 0 }
-		metadata: args.metadata or { '' }
+		metadata: args.metadata.json_encode()
 		description: args.description or { '' }
 		workloads: args.workloads
 		signature_requirement: args.signature_requirement
@@ -168,7 +168,7 @@ pub:
 	project_name string [json: 'projectName']
 }
 
-pub fn (mut data DeploymentData) json_encode() string {
+pub fn (data DeploymentData) json_encode() string {
 	return "{\\\"type\\\":\\\"${data.type_}\\\",\\\"name\\\":\\\"${data.name}\\\",\\\"projectName\\\":\\\"${data.project_name}\\\"}"
 }
 

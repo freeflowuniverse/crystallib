@@ -74,7 +74,7 @@ pub fn new_deployer(mnemonics string, chain_network ChainNetwork, mut logger log
 	}
 }
 
-fn (mut d Deployer) handel_deploy(node_id u32, mut dl models.Deployment, body string, solution_provider u64, hash_hex string) !u64 {
+fn (mut d Deployer) handle_deploy(node_id u32, mut dl models.Deployment, body string, solution_provider u64, hash_hex string) !u64 {
 	signature := d.client.sign_deployment(hash_hex)!
 	dl.add_signature(d.twin_id, signature)
 	payload := dl.json_encode()
@@ -95,7 +95,7 @@ pub fn (mut d Deployer) deploy(node_id u32, mut dl models.Deployment, body strin
 	d.logger.info('ContractID: ${contract_id}')
 	dl.contract_id = contract_id
 
-	return d.handel_deploy(node_id, mut dl, body, solution_provider, hash_hex) or {
+	return d.handle_deploy(node_id, mut dl, body, solution_provider, hash_hex) or {
 		d.logger.info('Rolling back...')
 		d.logger.info('deleting contract id: ${contract_id}')
 		d.client.cancel_contract(contract_id)!
