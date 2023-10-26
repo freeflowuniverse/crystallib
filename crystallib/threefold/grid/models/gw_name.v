@@ -4,9 +4,9 @@ import json
 
 pub struct GatewayNameProxy {
 	tls_passthrough bool
-	backends        []string // format?
-	network         ?string  // format?
-	name            string   // format?
+	backends        []string // The backends of the gateway proxy. must be in the format ip:port if tls_passthrough is set, otherwise the format should be http://ip[:port]
+	network         ?string  // Network name to join, if backend IP is private.
+	name            string   // Domain prefix. The fqdn will be <name>.<gateway-domain>.  This has to be unique within the deployment. Must contain only alphanumeric and underscore characters.
 }
 
 pub fn (g GatewayNameProxy) challenge() string {

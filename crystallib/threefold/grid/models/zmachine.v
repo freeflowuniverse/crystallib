@@ -17,9 +17,9 @@ pub mut:
 
 pub struct ZmachineNetwork {
 pub mut:
-	public_ip  string // name of public ip address
-	interfaces []ZNetworkInterface
-	planetary  bool
+	public_ip  string // PublicIP optional public IP attached to this machine. If set it must be a valid name of a PublicIP workload in the same deployment
+	interfaces []ZNetworkInterface // Interfaces list of user znets to join
+	planetary  bool // Planetary support planetary network
 }
 
 pub struct ZNetworkInterface {
