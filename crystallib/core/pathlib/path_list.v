@@ -31,7 +31,7 @@ pub mut:
 // ignoredefault bool = true // ignore files starting with . and _
 // ```
 // .
-// example see https://github.com/freeflowuniverse/crystallib/blob/development_circles/examples/core/pathlib/examples/list/path_list.v
+// example see https://github.com/freeflowuniverse/crystallib/blob/development/examples/core/pathlib/examples/list/path_list.v
 // .
 // e.g. p.list(regex:[r'.*\.v$'])!  //notice the r in front of string, this is regex for all files ending with .v
 // .

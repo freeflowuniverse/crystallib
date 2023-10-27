@@ -28,7 +28,7 @@ pub mut:
 //  stdout bool = true
 // ```
 // .
-// see https://github.com/freeflowuniverse/crystallib/blob/development_circles/examples/pathlib.rsync/rsync_example.v
+// see https://github.com/freeflowuniverse/crystallib/blob/development/examples/pathlib.rsync/rsync_example.v
 pub fn rsync(args_ RsyncArgs) ! {
 	mut args:=args_
 	if args.ipaddr_src.len==0{
