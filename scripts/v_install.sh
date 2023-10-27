@@ -57,7 +57,7 @@ function os_update {
         apt-get -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" upgrade -q -y --allow-downgrades --allow-remove-essential --allow-change-held-packages
         apt-mark hold grub-efi-amd64-signed
         apt update -y
-        os_package_install "mc curl tmux net-tools git htop ca-certificates lsb-release mc"
+        os_package_install "mc curl tmux net-tools git htop ca-certificates lsb-release"
         #gnupg
         apt upgrade -y
     elif [[ "$OSTYPE" == "darwin"* ]]; then
@@ -77,6 +77,15 @@ function redis_install {
     fi
 }
 
+if [[ -z "$SSH_AUTH_SOCK" ]]; then
+    echo "SSH agent is not running."
+    export keys=''
+else 
+    export keys=$(ssh-add -l)
+fi
+
+
+
 function crystal_lib_get {
     mkdir -p $DIR_CODE/github/freeflowuniverse
     if [[ -d "$DIR_CODE/github/freeflowuniverse/crystallib" ]]
@@ -87,7 +96,12 @@ function crystal_lib_get {
         popd 2>&1 >> /dev/null
     else
         pushd $DIR_CODE/github/freeflowuniverse 2>&1 >> /dev/null
-        git clone --depth 1 --no-single-branch git@github.com:freeflowuniverse/crystallib.git
+        if [[ -z "$keys" ]]; then
+            git clone --depth 1 --no-single-branch https://github.com/freeflowuniverse/crystallib.git
+        else
+            git clone --depth 1 --no-single-branch git@github.com:freeflowuniverse/crystallib.git
+        fi        
+        
         cd crystallib
         git checkout $CLBRANCH
         popd 2>&1 >> /dev/null
@@ -132,7 +146,6 @@ function buildx_install {
     mkdir -p $HOME/.docker/cli-plugins/
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
         export BUILDXURL='https://github.com/docker/buildx/releases/download/v0.10.2/buildx-v0.10.2.linux-amd64' 
-
         rm -f $BUILDXDEST
         curl -Lk $BUILDXURL > $BUILDXDEST
         chmod +x $BUILDXDEST
