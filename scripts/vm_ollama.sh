@@ -38,7 +38,7 @@ function sourceenv() {
 set +e
 
 sourceenv
-myexec "vm_prepare.sh" "https://raw.githubusercontent.com/freeflowuniverse/crystallib/$CLBRANCH/scripts/vm_prepare.sh"
+bootstrap "vm_prepare.sh" "https://raw.githubusercontent.com/freeflowuniverse/crystallib/$CLBRANCH/scripts/vm_prepare.sh"
 
 echo "VM PREPARE DONE"
 
