@@ -13,16 +13,18 @@ fi
 if [ -z "$TERM" ]; then
     export TERM=xterm
 fi
-
-export DIR_BASE="$HOME/play"
+export OURHOME="$HOME/play"
+export DIR_BASE="$HOME"
 export DIR_BUILD="/tmp"
-export DIR_CODE="$OURHOME/code"
+export DIR_CODE="$DIR_BASE/code"
 export DIR_CODEWIKI="$OURHOME/codewiki"
 export DIR_CODE_INT="$OURHOME/_code"
-export DIR_BIN="$DIR_BASE/bin"
-export DIR_SCRIPTS="$DIR_BASE/bin"
+export DIR_BIN="$OURHOME/bin"
+export DIR_SCRIPTS="$OURHOME/bin"
+
+export DIR_BOOTSTRAP="$DIR_CODE/github/freeflowuniverse/crystallib/scripts"
+
 export DEBIAN_FRONTEND=noninteractive
-export OURHOME="$HOME/play"
 
 mkdir -p $DIR_BASE
 mkdir -p $DIR_CODE
@@ -48,6 +50,31 @@ fi
 
 
 #############################################
+
+function bootstrap() {
+    local script_name="$1"
+    local download_url="$2"
+    local scriptpath="$DIR_BOOTSTRAP/$script_name"
+    
+    # Check if the script exists in the current directory
+    if [ -f scriptpath ]; then
+        echo "Script '$scriptpath' exists in bootstrap."
+        chmod +x $scriptpath
+        bash $scriptpath
+    else
+        # Attempt to download the script
+        echo "Script '$script_name' not found. Downloading from '$download_url'..."
+        if curl -o "/tmp/$script_name" -s "$download_url"; then
+            echo "Download successful. Script '$script_name' is now available in the current directory."
+            chmod +x "/tmp/$script_name" # Make the script executable if needed
+            bash "/tmp/$script_name"
+        else
+            echo "Error: Download failed. Script '$script_name' could not be downloaded."
+            exit 1
+        fi
+    fi
+}
+
 
 function myexecdownload() {
     local script_name="$1"

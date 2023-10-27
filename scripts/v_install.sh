@@ -6,32 +6,31 @@ if [[ -z "${CLBRANCH}" ]]; then
     export CLBRANCH="development"
 fi
 
-function myapt {
-    apt -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" install $1 -q -y --allow-downgrades --allow-remove-essential 
+function mycmdinstall {
+    local command_name="$1"
+    if command -v "$command_name" >/dev/null 2>&1; then
+        echo
+    else    
+        myapt '$command_name'
+    fi
 }
 
 function sourceenv() {
     local script_name=~/env.sh
     local download_url="https://raw.githubusercontent.com/freeflowuniverse/crystallib/${CLBRANCH}/scripts/env.sh"    
-    
-    if [ -f "$script_name" ]; then
-        echo "env.sh exists "
+
+    if [ -f "~/code/github/freeflowuniverse/crystallib/scripts/env.sh" ]; then
+        cp ~/code/github/freeflowuniverse/crystallib/scripts/env.sh ~/env.sh
     else
-        if [ -f "env.sh" ]; then
-            cp env.sh ~/env.sh
+        mycmdinstall curl
+        if curl -o "$script_name" -s $download_url; then
+            echo "Download successful. Script '$script_name' is now available in the current directory."
         else
-            echo env not found, downloading from $download_url
-            myapt curl
-            if curl -o "$script_name" -s $download_url; then
-                echo "Download successful. Script '$script_name' is now available in the current directory."
-            else
-                echo "Error: Download failed. Script '$script_name' could not be downloaded."
-                exit 1
-            fi
+            echo "Error: Download failed. Script '$script_name' could not be downloaded."
+            exit 1
         fi
     fi
     source $script_name
-
 }
 
 ##################### ABOVE IS STD FOR ALL SCRIPTS #############################
