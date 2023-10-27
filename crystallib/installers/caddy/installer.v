@@ -140,20 +140,3 @@ pub fn restart() ! {
 	stop()!
 	start()!
 }
-
-// if cmd_exists('caddy') {
-// 	println('Caddy was already installed.')
-// 	//! should we set caddy as done here !
-// 	return
-// }
-// //TODO: better to start from a build one
-// osal.execute_silent("
-// 	sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https gpg sudo
-// 	rm -f /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-// 	curl -1sLfk 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-// 	curl -1sLfk 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list
-// 	apt update
-// 	apt install caddy
-// ") or {
-// 	return error('Cannot install caddy.\n${err}')
-// }

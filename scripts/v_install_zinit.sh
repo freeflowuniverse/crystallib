@@ -88,22 +88,3 @@ set -e
 
 mkdir -p /etc/zinit/
 
-#### zinit restart
-
-if pgrep zinit >/dev/null; then
-    # If running, kill Redis server
-    echo "zinit is running. Stopping..."
-    pkill zinit
-    echo "zinit server has been stopped."
-else
-    echo "zinit server is not running."
-fi
-
-if [ -x /sbin/init ]; then
-    echo "initd is installed."
-else
-    echo "initd is not installed."
-    zinit init &
-fi
-
-echo "zinit installed ok"

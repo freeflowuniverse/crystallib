@@ -506,12 +506,14 @@ if pgrep redis >/dev/null; then
     pkill redis-server
 fi
 set -e
-redis-server --port 7777
+redis-server
 "
-# exec: redis-server --port 7777
+    # --port 7777
+
     zinitcmd="
-test: redis-cli -p 7777 PING
+test: redis-cli  PING
 "
+    #-p 7777
     zinitinstall "redis"
     unset zinitcmd
 }
