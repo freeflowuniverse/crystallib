@@ -55,7 +55,7 @@ mkdir -p /etc/zinit/cmds
 ##################### STARTUP SCRIPTS #############################
 
 #configure the redis in zinit
-function zinit_configure_hero {
+function zinit_configure_vm {
     myreset    
     cmd="
 #!/bin/bash
@@ -71,7 +71,7 @@ after:
 }
 
 zinit_configure_redis
-zinit_configure_hero
+zinit_configure_vm
 
 # zinit monitor crystalinstall
 

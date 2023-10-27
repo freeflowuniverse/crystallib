@@ -305,7 +305,7 @@ redis_install
     cmd="
 #!/bin/bash
 if pgrep redis >/dev/null; then
-    echo "redis is running. Stopping..."
+    echo redis is running. Stopping...
     pkill redis-server
 fi
 set -e
