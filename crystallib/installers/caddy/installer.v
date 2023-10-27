@@ -36,7 +36,7 @@ pub fn install(args InstallArgs) ! {
 	)!
 
 	mut caddyfile := dest.file_get('caddy')! // file in the dest
-	caddyfile.copy('/usr/local/bin')!
+	caddyfile.copy(dest:'/usr/local/bin',delete:true)!
 	caddyfile.chmod(0o770)! // includes read & write & execute
 
 	osal.done_set('install_caddy', 'OK')!
