@@ -92,6 +92,7 @@ gitcheck() {
 
 
 function mycommit {
+    gitcheck
     # Check if we are inside a Git repository
     if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
         git_root=$(git rev-parse --show-toplevel)
@@ -104,24 +105,16 @@ function mycommit {
         echo
     else
         git remote set-url origin git@github.com:freeflowuniverse/crystallib.git
-    fi      
-    gitcheck
-    local cmd="
-#!/bin/bash 
-set -ex
-source ~/env.sh
-cd $DIR_CODE/github/freeflowuniverse/crystallib
-if [[ \$(git status -s) ]]; then
-    echo There are uncommitted changes in the Git repository crystallib.
-    git add . -A
-    git commit -m \"improvements to crystallib\"
-    git pull
-    git push
-fi
-
-"
-    echo "$cmd" > /tmp/mycrystalcommit.sh
-    bash /tmp/mycrystalcommit.sh
+    fi          
+    if [[ \$(git status -s) ]]; then
+        echo There are uncommitted changes in the Git repository crystallib.
+        git add . -A
+        echo "Please enter a commit message:"
+        read commit_message
+        git commit -m "$commit_message"
+        git pull
+        git push
+    fi
 }
 
 
