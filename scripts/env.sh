@@ -115,6 +115,8 @@ function mycommit {
         git commit -m "$commit_message"
         git pull
         git push
+    else
+        echo "no changes"
     fi
     popd   2>&1 >/dev/null
 }
@@ -450,6 +452,7 @@ function os_update {
         echo 
     fi
     touch "$HOME/.vmodules/done_os"
+    echo "os update ok"
 }
 
 
@@ -544,31 +547,41 @@ function myreset {
 
 function myupdate {
     myreset
-    local cmd="
-#!/bin/bash 
-set -ex
-source ~/env.sh
-os_update
-crystal_lib_get
-
-"
-    echo "$cmd" > /tmp/myupdate.sh
-    bash /tmp/myupdate.sh
+    (os_update)
+    if [ $? -ne 0 ]; then
+        echo "Could not execute os_update."
+        exit 1
+    fi
+    (crystal_lib_get)
+    if [ $? -ne 0 ]; then
+        echo "Could not get crystal lib."
+        exit 1
+    fi
+    (crystal_install)
+    if [ $? -ne 0 ]; then
+        echo "Could not install crystal."
+        exit 1
+    fi  
 }
 
 function mycrystal {
     myreset
-    local cmd="
-#!/bin/bash 
-set -ex
-source ~/env.sh
-os_update
-crystal_lib_get
-crystal_install
-"
-    echo "$cmd" > /tmp/myupdate.sh
-    bash /tmp/myupdate.sh
+    (crystal_lib_get)
+    if [ $? -ne 0 ]; then
+        echo "Could not get crystal lib."
+        exit 1
+    fi
+    (crystal_install)
+    if [ $? -ne 0 ]; then
+        echo "Could not install crystal."
+        exit 1
+    fi    
 }
+
+function cdcrystal {
+    cd "$HOME/code/github/freeflowuniverse/crystallib"
+}
+
 
 
 function myinit {
