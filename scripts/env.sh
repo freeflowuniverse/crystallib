@@ -90,6 +90,41 @@ gitcheck() {
     fi
 }
 
+
+function mycommit {
+    # Check if we are inside a Git repository
+    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        git_root=$(git rev-parse --show-toplevel)
+        echo "You are inside a Git repository $git_root."
+        cd "$git_root"        
+    else
+        cd $DIR_CODE/github/freeflowuniverse/crystallib
+    fi
+    if [[ -z "$sshkeys" ]]; then
+        echo
+    else
+        git remote set-url origin git@github.com:freeflowuniverse/crystallib.git
+    fi      
+    gitcheck
+    local cmd="
+#!/bin/bash 
+set -ex
+source ~/env.sh
+cd $DIR_CODE/github/freeflowuniverse/crystallib
+if [[ \$(git status -s) ]]; then
+    echo There are uncommitted changes in the Git repository crystallib.
+    git add . -A
+    git commit -m \"improvements to crystallib\"
+    git pull
+    git push
+fi
+
+"
+    echo "$cmd" > /tmp/mycrystalcommit.sh
+    bash /tmp/mycrystalcommit.sh
+}
+
+
 # Function to add a directory to the PATH if not already present
 add_directory_to_path() {
     local new_path="$1"
@@ -538,32 +573,6 @@ crystal_install
 "
     echo "$cmd" > /tmp/myupdate.sh
     bash /tmp/myupdate.sh
-}
-
-function mycrystalcommit {
-    cd $DIR_CODE/github/freeflowuniverse/crystallib
-    if [[ -z "$sshkeys" ]]; then
-        echo
-    else
-        git remote set-url origin git@github.com:freeflowuniverse/crystallib.git
-    fi      
-    gitcheck
-    local cmd="
-#!/bin/bash 
-set -ex
-source ~/env.sh
-cd $DIR_CODE/github/freeflowuniverse/crystallib
-if [[ \$(git status -s) ]]; then
-    echo There are uncommitted changes in the Git repository crystallib.
-    git add . -A
-    git commit -m \"improvements to crystallib\"
-    git pull
-    git push
-fi
-
-"
-    echo "$cmd" > /tmp/mycrystalcommit.sh
-    bash /tmp/mycrystalcommit.sh
 }
 
 
