@@ -6,12 +6,12 @@ if [[ -z "${CLBRANCH}" ]]; then
     export CLBRANCH="development"
 fi
 
-function mycmdinstall {
+function package_check_install {
     local command_name="$1"
     if command -v "$command_name" >/dev/null 2>&1; then
         echo
     else    
-        myapt '$command_name'
+        package_install '$command_name'
     fi
 }
 
@@ -22,7 +22,7 @@ function sourceenv() {
     if [[ -f "${HOME}/code/github/freeflowuniverse/crystallib/scripts/env.sh" ]]; then
         cp ~/code/github/freeflowuniverse/crystallib/scripts/env.sh ~/env.sh
     else
-        mycmdinstall curl
+        package_check_install curl
         if curl -o "$script_name" -s $download_url; then
             echo "Download successful. Script '$script_name' is now available in the current directory."
         else

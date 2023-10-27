@@ -123,7 +123,7 @@ function mycommit {
 
 
 pathmunge () {
-    if ! echo "$PATH" | /bin/grep -Eq "(^|:)$1($|:)" ; then
+    if ! echo "$PATH" | grep -Eq "(^|:)$1($|:)" ; then
         if [ "$2" = "after" ] ; then
             PATH="$PATH:$1"
         else
@@ -173,18 +173,22 @@ function github_keyscan {
 
 }
 
-function mycmdinstall {
+function package_check_install {
     local command_name="$1"
     if command -v "$command_name" >/dev/null 2>&1; then
         echo "command '$command_name' is already installed."
     else    
-        myapt '$command_name'
+        package_install '$command_name'
     fi
 }
 
-function myapt {
+function package_install {
     local command_name="$1"
-    apt -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" install $1 -q -y --allow-downgrades --allow-remove-essential 
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then         
+        apt -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" install $1 -q -y --allow-downgrades --allow-remove-essential 
+    else
+        brew install $command_name
+    fi
 }
 
 
@@ -273,7 +277,7 @@ function docker_install {
         
         apt-get update -y
 
-        myapt docker-ce docker-ce-cli containerd.io docker-compose-plugin binfmt-support
+        package_install docker-ce docker-ce-cli containerd.io docker-compose-plugin binfmt-support
         # mkdir -p /proc/sys/fs/binfmt_misc
         docker run hello-world
     fi
@@ -323,7 +327,7 @@ function v_install {
         pushd $DIR_CODE_INT
         sudo rm -rf $DIR_CODE_INT/v
         if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
-            myapt "libgc-dev gcc make libpq-dev"
+            package_install "libgc-dev gcc make libpq-dev"
         elif [[ "$OSTYPE" == "darwin"* ]]; then
             brew install bdw-gc
         else
@@ -434,7 +438,7 @@ function os_update {
         apt-get -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" upgrade -q -y --allow-downgrades --allow-remove-essential --allow-change-held-packages
         apt-mark hold grub-efi-amd64-signed
         apt update -y
-        myapt "mc curl tmux net-tools git htop ca-certificates lsb-release"
+        package_install "mc curl tmux net-tools git htop ca-certificates lsb-release"
         #gnupg
         apt upgrade -y
     elif [[ "$OSTYPE" == "darwin"* ]]; then
@@ -447,8 +451,8 @@ function os_update {
 
 function redis_install {
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
-        # myapt "libssl-dev redis"
-        myapt "redis"
+        # package_install "libssl-dev redis"
+        package_install "redis"
         set +e
         /etc/init.d/redis-server stop
         update-rc.d redis-server disable
@@ -478,33 +482,36 @@ function myinit0 {
         
         mkdir -p $HOME/.vmodules
 
-        myapt curl
+        package_install curl
 
         github_keyscan
 
-        # Check if the /etc/os-release file exists
-        if [ -e /etc/os-release ]; then
-            # Read the ID field from the /etc/os-release file
-            os_id=$(grep '^ID=' /etc/os-release | cut -d= -f2)
-            
-            # Check if the ID is "ubuntu" (case-insensitive)
-            if [ "${os_id,,}" == "ubuntu" ]; then
-                echo "This system is running Ubuntu."
+        if [[ "$OSTYPE" == "linux-gnu"* ]]; then        
+
+            # Check if the /etc/os-release file exists
+            if [ -e /etc/os-release ]; then
+                # Read the ID field from the /etc/os-release file
+                os_id=$(grep '^ID=' /etc/os-release | cut -d= -f2)
+                
+                # Check if the ID is "ubuntu" (case-insensitive)
+                if [ "${os_id,,}" == "ubuntu" ]; then
+                    echo "This system is running Ubuntu."
+                else
+                    echo "This system is not running Ubuntu."
+                    exit 1
+                fi
             else
-                echo "This system is not running Ubuntu."
+                echo "The /etc/os-release file does not exist. Unable to determine the operating system."
                 exit 1
             fi
-        else
-            echo "The /etc/os-release file does not exist. Unable to determine the operating system."
-            exit 1
-        fi
 
-        # Check if the processor architecture is 64-bit
-        if [ "$(uname -m)" == "x86_64" ]; then
-            echo "This system is running a 64-bit processor."
-        else
-            echo "This system is not running a 64-bit processor."
-            exit 1
+            # Check if the processor architecture is 64-bit
+            if [ "$(uname -m)" == "x86_64" ]; then
+                echo "This system is running a 64-bit processor."
+            else
+                echo "This system is not running a 64-bit processor."
+                exit 1
+            fi
         fi
 
         profile_file="$HOME/.profile"
