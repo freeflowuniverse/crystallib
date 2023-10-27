@@ -19,7 +19,7 @@ function sourceenv() {
     local script_name=~/env.sh
     local download_url="https://raw.githubusercontent.com/freeflowuniverse/crystallib/${CLBRANCH}/scripts/env.sh"    
 
-    if [[ -f "${HOME}/code/github/freeflowuniverse/crystallib/scripts/env.sh" ]]; then
+    if [ -f "~/code/github/freeflowuniverse/crystallib/scripts/env.sh" ]; then
         cp ~/code/github/freeflowuniverse/crystallib/scripts/env.sh ~/env.sh
     else
         mycmdinstall curl
@@ -31,17 +31,10 @@ function sourceenv() {
         fi
     fi
     source $script_name
-    exit 0
 }
 
 ##################### ABOVE IS STD FOR ALL SCRIPTS #############################
 
-if command -v "zinit" >/dev/null 2>&1; then
-    echo ""
-else
-    echo "zinit is already installed."
-    exit 0
-fi
 
 set +e
 

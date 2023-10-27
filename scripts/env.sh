@@ -56,7 +56,7 @@ function bootstrap() {
     local scriptpath="$DIR_BOOTSTRAP/$script_name"
     
     # Check if the script exists in the current directory
-    if [ -f scriptpath ]; then
+    if [[ -f scriptpath ]]  ; then
         echo "Script '$scriptpath' exists in bootstrap."
         chmod +x $scriptpath
         bash $scriptpath
@@ -122,19 +122,18 @@ function mycommit {
 }
 
 
-# Function to add a directory to the PATH if not already present
-add_directory_to_path() {
-    local new_path="$1"
-    # Check if the directory is already in the PATH
-    if [[ ":$PATH:" != *":$new_path:"* ]]; then
-        export PATH="$new_path:$PATH"
-        # echo "Added '$new_path' to PATH."
+pathmunge () {
+    if ! echo "$PATH" | /bin/grep -Eq "(^|:)$1($|:)" ; then
+        if [ "$2" = "after" ] ; then
+            PATH="$PATH:$1"
+        else
+            PATH="$1:$PATH"
+        fi
     fi
 }
-
-add_directory_to_path $DIR_BIN
-add_directory_to_path $DIR_SCRIPTS
-add_directory_to_path $DIR_BUILD
+pathmunge $DIR_BIN
+pathmunge $DIR_SCRIPTS
+pathmunge $DIR_BUILD
 
 function myexecdownload() {
     local script_name="$1"
@@ -391,15 +390,7 @@ function crystal_lib_get {
 
 #configure the redis in zinit
 function zinit_configure_redis {
-    cmd="
-#!/bin/bash
-set -e
-source ~/env.sh
-redis_install
-"
-    zinitinstall "redisinstall" -oneshot
-    unset cmd
-
+    redis_install
     cmd="
 #!/bin/bash
 if pgrep redis >/dev/null; then
@@ -412,8 +403,6 @@ redis-server --port 7777
 # exec: redis-server --port 7777
     zinitcmd="
 test: redis-cli -p 7777 PING
-after:
-- redisinstall
 "
     zinitinstall "redis"
     unset zinitcmd
