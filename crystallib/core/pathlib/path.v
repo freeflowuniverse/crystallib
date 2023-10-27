@@ -25,14 +25,14 @@ pub enum UYN {
 	no
 }
 
-// return absolute path
+// return absolute path .
 // careful symlinks will not be resolved
 pub fn (path Path) absolute() string {
 	mut p := path.path.replace('~', os.home_dir())
 	return os.abs_path(p)
 }
 
-// return absolute path
+// return absolute path .
 // careful the symlinks will be followed !!!
 pub fn (path Path) realpath() string {
 	mut p := path.path.replace('~', os.home_dir())

@@ -48,11 +48,11 @@ pub fn load_interactive() !string {
 	}
 
 	// now means nothing in ssh-agent, lets see if we find 1 key in .ssh directory
-	mut sshdirpath := pathlib.get_dir('${os.home_dir()}/.ssh', true)!
+	mut sshdirpath := pathlib.get_dir(path:'${os.home_dir()}/.ssh', create:true)!
 
 	pubkeys = []string{}
- 	pl:=sshdirpath.file_list(recursive: false)!
-	for p in pl.paths{
+	pl := sshdirpath.list(recursive: false)!
+	for p in pl.paths {
 		if p.path.ends_with('.pub') {
 			pubkeys << p.path.replace('.pub', '')
 		}
@@ -121,10 +121,10 @@ pub fn pubkey_guess() !string {
 		return error('There is more than 1 ssh-key loaded in ssh-agent, cannot identify which one to use.')
 	}
 	// now means nothing in ssh-agent, lets see if we find 1 key in .ssh directory
-	mut sshdirpath := pathlib.get_dir('${os.home_dir()}/.ssh', true)!
+	mut sshdirpath := pathlib.get_dir(path:'${os.home_dir()}/.ssh', create:true)!
 
 	// todo: use ourregex field to nly list .pub files
-	mut fl:=sshdirpath.file_list(pathlib.ListArgs{})!
+	mut fl := sshdirpath.list()!
 	mut sshfiles := fl.paths
 	mut keypaths := sshfiles.filter(it.path.ends_with('.pub'))
 	// println(keypaths)

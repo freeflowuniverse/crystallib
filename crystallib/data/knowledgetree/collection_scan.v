@@ -84,7 +84,7 @@ fn (mut collection Collection) scan_internal(mut p pathlib.Path) ! {
 				if ext != '' {
 					// only process files which do have extension
 					if ext == 'md' {
-						p_in.sids_replace(collection.tree.cid)! //replace all found id:***
+						p_in.sids_replace(collection.tree.cid)! // replace all found id:***
 						collection.page_new(mut p_in)!
 					} else {
 						collection.file_image_remember(mut p_in)!

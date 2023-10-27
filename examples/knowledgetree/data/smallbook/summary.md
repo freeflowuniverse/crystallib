@@ -1,6 +1,0 @@
-- [Grant](solution:grant.md)
-    - [Solution](solution:solution.md)
-        - [Decentralized Cloud](solution:decentralized_cloud)
-    - [solution](solution:solution.md)
--  [Problem should give error](solution:problem.md) 
--  [Problem](solution:problem.md)

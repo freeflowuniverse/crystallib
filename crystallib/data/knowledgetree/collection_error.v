@@ -14,21 +14,15 @@ pub enum CollectionErrorCat {
 	circular_import
 }
 
-pub struct CollectionErrorArgs {
-pub:
-	path Path
-	msg  string
-	cat  CollectionErrorCat
-}
-
 pub struct CollectionError {
+	Error
 pub mut:
 	path Path
 	msg  string
 	cat  CollectionErrorCat
 }
 
-pub fn (mut collection Collection) error(args CollectionErrorArgs) {
+pub fn (mut collection Collection) error(args CollectionError) {
 	collection.errors << CollectionError{
 		path: args.path
 		msg: args.msg

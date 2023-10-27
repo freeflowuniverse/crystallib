@@ -14,7 +14,7 @@ __global (
 pub struct ArgsNew {
 pub mut:
 	name string = 'default'
-	cid smartid.CID
+	cid  smartid.CID
 }
 
 // get a new tree initialized
@@ -35,7 +35,7 @@ pub fn new(args_ ArgsNew) !Tree {
 		logger: &log.Log{
 			level: level
 		}
-		cid:args.cid
+		cid: args.cid
 	}
 	t.init()! // initialize mdbooks embed logic
 	return t

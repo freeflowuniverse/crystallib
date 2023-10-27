@@ -15,36 +15,35 @@ fn test_sid() {
 		cleanup() or { panic(err) }
 	}
 
-	cid:=cid_get(name:'test')or  { panic(err) }
+	cid := cid_get(name: 'test') or { panic(err) }
 
 	for i in 0 .. 10000 {
 		cid.gid_new() or { panic(err) }
 	}
 
+	gid := cid.gid_get('aa') or { panic(err) }
 
-	gid:=cid.gid_get("aa") or { panic(err) }
-
-
-	assert gid==smartid.GID{
+	assert gid == GID{
 		region: 0
-		cid: CID{circle:11}
+		cid: CID{
+			circle: 11
+		}
 		id: 370
 	}
 
-	gid2:=cid.gid_get("ab") or { panic(err) }
+	gid2 := cid.gid_get('ab') or { panic(err) }
 
-
-	assert gid2==smartid.GID{
+	assert gid2 == GID{
 		region: 0
-		cid: CID{circle:11}
+		cid: CID{
+			circle: 11
+		}
 		id: 371
 	}
-	
-	assert gid2.str()=="b.ab"
-	assert gid2.ostr()=="ab"
-	assert gid2.oid()==371
 
-		
+	assert gid2.str() == 'b.ab'
+	assert gid2.ostr() == 'ab'
+	assert gid2.oid() == 371
 
 	// TODO: acknowledge sid's, do tests if the right ones are in there, ...	
 

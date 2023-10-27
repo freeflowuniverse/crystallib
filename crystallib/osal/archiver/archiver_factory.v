@@ -27,8 +27,8 @@ pub fn new(args ArchiverConfig) !Archiver {
 		args.pathmeta = '${os.home_dir}/stor/meta'
 	}
 	mut archiver := Archiver{
-		pathstor: pathlib.get_dir(args.pathstor, true)!
-		pathmeta: pathlib.get_dir(args.pathmeta, true)!
+		pathstor: pathlib.get_dir(path:args.pathstor, create:true)!
+		pathmeta: pathlib.get_dir(path:args.pathmeta, create:true)!
 	}
 
 	return archiver

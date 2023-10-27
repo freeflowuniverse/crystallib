@@ -19,7 +19,7 @@ pub mut:
 	git_reset bool
 	git_root  string
 	git_pull  bool
-	cid smartid.CID
+	cid       smartid.CID
 }
 
 pub fn scan(args_ TreeScannerArgs) ! {
@@ -57,7 +57,7 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 	if args.path.len < 3 {
 		return error('Path needs to be not empty.')
 	}
-	mut path := pathlib.get_dir(args.path, false)!
+	mut path := pathlib.get_dir(path:args.path)!
 
 	if path.is_dir() {
 		mut name := path.name()

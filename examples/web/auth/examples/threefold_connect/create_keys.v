@@ -3,6 +3,7 @@ import os
 import libsodium
 import encoding.base64
 import term
+import freeflowuniverse.crystallib.core.pathlib
 
 fn create_keys() ! {
 	sk_key := []u8{len: 32}
@@ -11,17 +12,17 @@ fn create_keys() ! {
 
 	encoded_pk := base64.encode(pk_key)
 	encoded_sk := base64.encode(sk_key)
-	mut file_path := os.args_after('.')
-	if file_path.len <= 1 {
-		println(term.red('You have to pass the path that you want to create the file in when you run create_keys file'))
-		println(term.yellow('e.g.'))
-		println(term.green('v run create_keys ../'))
-		return
+	mut key_path := ""
+	if os.args.len>1{
+		key_path = os.args[1]
 	}
-	println(os.abs_path(file_path[1]))
-	os.create(os.abs_path('${file_path[1]}/keys.toml'))!
-	os.write_file('${file_path[1]}/keys.toml', '[server]\nSERVER_PUBLIC_KEY="${encoded_pk}"\nSERVER_SECRET_KEY="${encoded_sk}"')!
-	println('Public, Private keys generated at ${file_path[1]}')
+	if key_path==""{
+		key_path=os.getwd() 
+	}
+	mut p:=pathlib.get_dir(path:key_path,create:true)!
+	mut keyspath:=p.file_get_new("keys.toml")!
+	keyspath.write('[server]\nSERVER_PUBLIC_KEY="${encoded_pk}"\nSERVER_SECRET_KEY="${encoded_sk}"')!
+	println('Public, Private keys generated at ${keyspath.path}')
 }
 
 fn main() {

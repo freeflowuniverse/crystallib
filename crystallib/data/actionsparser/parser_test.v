@@ -90,7 +90,7 @@ fn test_parse_into_blocks() {
 
 fn test_file_parse() {
 	mut actionsmgr := new(
-		path: '${actions.testpath}/testfile.md'
+		path: '${actionsparser.testpath}/testfile.md'
 		defaultactor: 'people'
 		defaultcircle: 'aaa'
 	)!
@@ -100,7 +100,7 @@ fn test_file_parse() {
 
 fn test_dir_load() {
 	mut actionsmgr := new(
-		path: '${actions.testpath}'
+		path: '${actionsparser.testpath}'
 		defaultactor: 'people'
 		defaultcircle: 'aaa'
 	)!
@@ -114,7 +114,7 @@ fn test_dir_load() {
 
 fn test_text_add() ! {
 	mut parser := new(
-		text: actions.text
+		text: actionsparser.text
 		defaultactor: 'people'
 		defaultcircle: 'aaa'
 	)!

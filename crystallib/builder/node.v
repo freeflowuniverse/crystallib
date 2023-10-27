@@ -33,19 +33,6 @@ pub mut:
 	params      Params
 }
 
-// format ipaddr: localhost:7777
-// format ipaddr: 192.168.6.6:7777
-// format ipaddr: 192.168.6.6
-// format ipaddr: any ipv6 addr
-// format ipaddr: if only name used then is localhost
-[params]
-pub struct NodeArguments {
-	ipaddr string
-	name   string
-	user   string = 'root'
-	debug  bool
-	reload bool
-}
 
 // get unique key for the node, as used in caching environment
 pub fn (mut node Node) key() string {
@@ -67,7 +54,7 @@ pub fn (mut node Node) readfromsystem() ! {
 	node.save()!
 }
 
-// load the node from redis cache, if not there will load from system
+// load the node from redis cache, if not there will load from system .
 // return true if the data was in redis (cache)
 pub fn (mut node Node) load() !bool {
 	data := node.factory.redis.hget('nodes', node.key())!
