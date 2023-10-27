@@ -35,14 +35,25 @@ function sourceenv() {
 
 ##################### ABOVE IS STD FOR ALL SCRIPTS #############################
 
-set -e
+set +e
 
 sourceenv
 myexec "vm_prepare.sh" "https://raw.githubusercontent.com/freeflowuniverse/crystallib/$CLBRANCH/scripts/vm_prepare.sh"
 
+echo "VM PREPARE DONE"
+
+
 ##################### STARTUP SCRIPTS #############################
 
+set -ex
+
+echo "OLLAMA CONFIG"
+
 #### ollama main
+X=""
+if ! [ -x "$(command -v ollama)" ]; then
+X="curl https://ollama.ai/install.sh | sh"
+fi
 
 cmd="
 #!/bin/bash
@@ -51,10 +62,8 @@ source ~/env.sh
 myapt cuda-command-line-tools-12-2 
 myapt cuda-nvcc-12-2
 myapt lshw
+$X
 nvcc --version
-if ! [ -x "$(command -v ollama)" ]; then
-curl https://ollama.ai/install.sh | sh
-fi
 ollama serve
 "
 zinitcmd="
@@ -87,3 +96,5 @@ else
 fi
 
 zinit init &
+
+echo "OLLAMA IN INIT"
