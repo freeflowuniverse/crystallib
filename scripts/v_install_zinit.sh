@@ -41,12 +41,12 @@ function sourceenv() {
 
 ##################### ABOVE IS STD FOR ALL SCRIPTS #############################
 
-if command -v "zinit" >/dev/null 2>&1; then
-    echo ""
-else
-    echo "zinit is already installed."
-    exit 0
-fi
+# if command -v "zinit" >/dev/null 2>&1; then
+#     echo ""
+# else
+#     echo "zinit is already installed."
+#     exit 0
+# fi
 
 set +e
 
@@ -87,5 +87,23 @@ chmod 770 $destination_path
 set -e
 
 mkdir -p /etc/zinit/
+
+#### zinit restart
+
+if pgrep zinit >/dev/null; then
+    # If running, kill Redis server
+    echo "zinit is running. Stopping..."
+    pkill zinit
+    echo "zinit server has been stopped."
+else
+    echo "zinit server is not running."
+fi
+
+if [ -x /sbin/init ]; then
+    echo "initd is installed."
+else
+    echo "initd is not installed."
+    zinit init &
+fi
 
 echo "zinit installed ok"
