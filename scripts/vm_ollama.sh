@@ -16,7 +16,6 @@ function mycmdinstall {
 }
 
 function sourceenv() {
-    set -ex
     local script_name=~/env.sh
     local download_url="https://raw.githubusercontent.com/freeflowuniverse/crystallib/${CLBRANCH}/scripts/env.sh"    
 
@@ -37,7 +36,6 @@ function sourceenv() {
 
 ##################### ABOVE IS STD FOR ALL SCRIPTS #############################
 
-set -ex
 
 sourceenv
 bootstrap "vm_prepare.sh" "https://raw.githubusercontent.com/freeflowuniverse/crystallib/$CLBRANCH/scripts/vm_prepare.sh"

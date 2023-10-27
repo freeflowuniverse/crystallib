@@ -31,6 +31,7 @@ function sourceenv() {
         fi
     fi
     source $script_name
+    exit 0
 }
 
 ##################### ABOVE IS STD FOR ALL SCRIPTS #############################
@@ -58,7 +59,7 @@ function zinit_configure_vm {
     myreset    
     cmd="
 #!/bin/bash
-set -ex
+set -e
 source ~/env.sh
 crystal_install
 "
