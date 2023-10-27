@@ -1,6 +1,8 @@
 #!/bin/bash
 
-set -e
+set -ex
+
+echo "v install zinit"
 
 if [[ -z "${CLBRANCH}" ]]; then 
     export CLBRANCH="development"
@@ -36,6 +38,8 @@ function sourceenv() {
 ##################### ABOVE IS STD FOR ALL SCRIPTS #############################
 
 if command -v "zinit" >/dev/null 2>&1; then
+    echo ""
+else
     echo "zinit is already installed."
     exit 0
 fi
