@@ -23,7 +23,7 @@ function sourceenv() {
             echo "env not found, downloading from '$download_url'..."
             myapt curl
             exit 1
-            if curl -o "$script_name" -s "$download_url"; then
+            if curl -o "$script_name" -s $download_url; then
                 echo "Download successful. Script '$script_name' is now available in the current directory."
             else
                 echo "Error: Download failed. Script '$script_name' could not be downloaded."

@@ -9,12 +9,13 @@ curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/s
 bash /tmp/install.sh
 ```
 
-on linux can do the following using tmux (recommended)
+on linux can do the following using zinit (recommended)
 
 ```bash
-curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/v_install_tmux.sh > /tmp/install_tmux.sh
-bash /tmp/install_tmux.sh
+curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/vm_prepare.sh > /tmp/install_vm.sh
+bash /tmp/install_vm.sh
 ```
+
 
 
 requirements
