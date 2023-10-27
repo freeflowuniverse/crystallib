@@ -297,6 +297,8 @@ function crystal_lib_get {
     if [[ -d "$DIR_CODE/github/freeflowuniverse/crystallib" ]]
     then
         pushd $DIR_CODE/github/freeflowuniverse/crystallib 2>&1 >> /dev/null
+        git add . -A
+        git commit -m "just to be sure"
         git pull
         git checkout $CLBRANCH
         popd 2>&1 >> /dev/null
@@ -466,6 +468,23 @@ function myinit0 {
 
 function myreset {
     find $HOME/.vmodules/ -type f -name "done_*" -exec rm {} \;
+    if [ -f "~/code/github/freeflowuniverse/crystallib/scripts/env.sh" ]; then
+        echo "copy env.sh to root"
+        cp ~/code/github/freeflowuniverse/crystallib/scripts/env.sh ~/env.sh
+    fi    
+}
+
+
+function myupdate {
+    myreset
+    cmd="
+set -ex
+source ~/env.sh
+os_update
+crystal_lib_get
+"
+    echo cmd > /tmp/myupdate.sh
+    bash /tmp/myupdate.sh
 }
 
 
