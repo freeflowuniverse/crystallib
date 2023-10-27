@@ -35,7 +35,7 @@ function sourceenv() {
 
 ##################### ABOVE IS STD FOR ALL SCRIPTS #############################
 
-set -e
+set +e
 
 sourceenv
 myexec "vm_prepare.sh" "https://raw.githubusercontent.com/freeflowuniverse/crystallib/$CLBRANCH/scripts/vm_prepare.sh"
@@ -43,6 +43,8 @@ myexec "vm_prepare.sh" "https://raw.githubusercontent.com/freeflowuniverse/cryst
 ##################### STARTUP SCRIPTS #############################
 
 #### ollama main
+
+set -e
 
 cmd="
 #!/bin/bash
