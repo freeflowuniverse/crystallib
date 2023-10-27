@@ -97,9 +97,10 @@ function mycommit {
     if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
         git_root=$(git rev-parse --show-toplevel)
         echo "You are inside a Git repository $git_root."
-        cd "$git_root"        
+        pushd "$git_root"        
     else
-        cd $DIR_CODE/github/freeflowuniverse/crystallib
+        echo commit crystallib
+        pushd "$DIR_CODE/github/freeflowuniverse/crystallib" > /dev/null 2>&1
     fi
     if [[ -z "$sshkeys" ]]; then
         echo
@@ -107,7 +108,7 @@ function mycommit {
         git remote set-url origin git@github.com:freeflowuniverse/crystallib.git
     fi          
     if [[ $(git status -s) ]]; then
-        echo There are uncommitted changes in the Git repository crystallib.
+        echo There are uncommitted changes.
         git add . -A
         echo "Please enter a commit message:"
         read commit_message
@@ -115,6 +116,7 @@ function mycommit {
         git pull
         git push
     fi
+    popd  >/dev/null 2>&1
 }
 
 
