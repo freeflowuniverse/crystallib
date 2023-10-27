@@ -63,8 +63,6 @@ nvcc --version
 unset cmd
 zinitcmd="
 exec: ollama serve
-after:
-  - crystalinstall
 "
 zinitinstall "ollama"  
 
