@@ -6,29 +6,33 @@ if [[ -z "${CLBRANCH}" ]]; then
     export CLBRANCH="development"
 fi
 
-export DEBIAN_FRONTEND=noninteractive
+function os_package_install {
+    apt -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" install $1 -q -y --allow-downgrades --allow-remove-essential 
+}
 
-export OURHOME="$HOME"
-export DIR_CODE="$OURHOME/code"
-export OURHOME="$HOME/play"
-mkdir -p $OURHOME
+function sourceenv() {
+    local script_name="env.sh"
+    local download_url="https://raw.githubusercontent.com/freeflowuniverse/crystallib/${CLBRANCH}/scripts/env.sh"
+    
+    if [ -f "./$script_name" ]; then
+        echo "Script '$script_name' already exists in the current directory."
+    else
+        echo "env not found, downloading from '$download_url'..."
+        os_package_install curl
+        exit 1
+        if curl -o "./$script_name" -s "$download_url"; then
+            echo "Download successful. Script '$script_name' is now available in the current directory."
+            source env.sh
+        else
+            echo "Error: Download failed. Script '$script_name' could not be downloaded."
+            exit 1
+        fi
+    fi
+}
 
-if [ -z "$TERM" ]; then
-    export TERM=xterm
-fi
 
-#!/bin/bash
-
-rm -f /tmp/v_install.sh
 set +e
-curl -k https://raw.githubusercontent.com/freeflowuniverse/crystallib/$CLBRANCH/scripts/v_install.sh > /tmp/v_install.sh
-if [ $? -eq 0 ]; then
-    echo "v install downloaded"
-else
-    echo "Error: Unable to download the v_install script."
-    echo "source location was:  https://raw.githubusercontent.com/freeflowuniverse/crystallib/$CLBRANCH/scripts/v_install.sh"
-    exit 1
-fi
+
 rm -f /usr/local/bin/zinit
 curl https://github.com/freeflowuniverse/freeflow_binary/raw/main/x86_64/zinit /usr/local/bin/zinit
 
@@ -67,13 +71,4 @@ set -e
 
 mkdir -p /etc/zinit/
 
-#!/bin/bash
-
-
-start1="#!/bin/bash
-exec: redis-server --port 7777
-test: redis-cli -p 7777 PING
-after:
-  - redis-init
-"
-echo "$start1" > "/etc/zinit/redis-server"
+echo "zinit installed ok"
