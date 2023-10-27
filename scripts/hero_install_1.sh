@@ -6,7 +6,7 @@ if [[ -z "${CLBRANCH}" ]]; then
     export CLBRANCH="development"
 fi
 
-function os_package_install {
+function myapt {
     apt -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" install $1 -q -y --allow-downgrades --allow-remove-essential 
 }
 
@@ -21,7 +21,7 @@ function sourceenv() {
             cp env.sh ~/env.sh
         else
             echo "env not found, downloading from '$download_url'..."
-            os_package_install curl
+            myapt curl
             exit 1
             if curl -o "$script_name" -s "$download_url"; then
                 echo "Download successful. Script '$script_name' is now available in the current directory."
@@ -55,16 +55,23 @@ mkdir -p /etc/zinit/cmds
 
 ##################### STARTUP SCRIPTS #############################
 
-
-cmd="
+#configure the redis in zinit
+function zinit_configure_hero {
+    myreset    
+    cmd="
 #!/bin/bash
 set -ex
 source ~/env.sh
+crystal_install
 "
-testcmd="
+    zinitcmd="
+after:
+  - redis
 "
-zinitinstall "vinstall" -oneshot
-unset cmd
+    zinitinstall "crystalinstall" -oneshot
+}
+
+zinit_configure_hero
 
 if pgrep zinit >/dev/null; then
     # If running, kill Redis server

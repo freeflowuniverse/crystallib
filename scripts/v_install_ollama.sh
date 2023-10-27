@@ -43,7 +43,7 @@ else
 fi
 
 
-function os_package_install {
+function myapt {
     apt -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" install $1 -q -y --allow-downgrades --allow-remove-essential 
 }
 

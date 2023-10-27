@@ -135,10 +135,11 @@ check_for_oneshot() {
 }
 
 function zinitinstall {
+    set -x
+    local script_name="$1"
+    local script_name_test="$2"    
     rm -f "/etc/zinit/cmds/$script_name.sh"
     rm -f "/etc/zinit/$script_name.yaml"
-    local script_name="$1"
-    local script_name_test="$2"
     mkdir -p /etc/zinit/cmds
     mkdir -p /etc/zinit/cmdstest
     if [[ -n "$cmd" ]]; then        
@@ -151,11 +152,11 @@ function zinitinstall {
         chmod 770 "/etc/zinit/cmdstest/$script_name.sh"
     fi    
     echo "$zinitcmd" > "/etc/zinit/$script_name.yaml"
-    if ! [[ -n "$cmd" ]]; then
-        echo "exec: bash -c \"/etc/zinit/cmds/$script_name.sh\""
+    if [[ -n "$cmd" ]]; then
+        echo "exec: bash -c \"/etc/zinit/cmds/$script_name.sh\"" >> "/etc/zinit/$script_name.yaml"
     fi    
     if [[ -n "$cmdtest" ]]; then
-        echo "test: bash -c \"/etc/zinit/cmdstest/$script_name.sh\""
+        echo "test: bash -c \"/etc/zinit/cmdstest/$script_name.sh\"" >> "/etc/zinit/$script_name.yaml"
     fi    
     if check_for_oneshot "$@"; then
         echo "oneshot: true" >> "/etc/zinit/$script_name.yaml"
@@ -237,7 +238,7 @@ function v_install {
         pushd $DIR_CODE_INT
         sudo rm -rf $DIR_CODE_INT/v
         if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
-            os_package_install "libgc-dev gcc make libpq-dev"
+            myapt "libgc-dev gcc make libpq-dev"
         elif [[ "$OSTYPE" == "darwin"* ]]; then
             brew install bdw-gc
         else
@@ -293,21 +294,21 @@ function crystal_lib_get {
 
 #configure the redis in zinit
 function zinit_configure_redis {
-    local cmd="
-    #!/bin/bash
-    set -ex
-    source ~/env.sh
-    redis_install
-    "
+    cmd="
+#!/bin/bash
+set -ex
+source ~/env.sh
+redis_install
+"
     zinitinstall "redisinstall" -oneshot
     unset cmd
 
-    local zinitcmd="
-    exec: redis-server --port 7777
-    test: redis-cli -p 7777 PING
-    after:
-    - redisinstall
-    "
+    zinitcmd="
+exec: redis-server --port 7777
+test: redis-cli -p 7777 PING
+after:
+- redisinstall
+"
     zinitinstall "redis"
     unset zinitcmd
 }
@@ -338,7 +339,7 @@ function os_update {
         apt-get -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" upgrade -q -y --allow-downgrades --allow-remove-essential --allow-change-held-packages
         apt-mark hold grub-efi-amd64-signed
         apt update -y
-        os_package_install "mc curl tmux net-tools git htop ca-certificates lsb-release"
+        myapt "mc curl tmux net-tools git htop ca-certificates lsb-release"
         #gnupg
         apt upgrade -y
     elif [[ "$OSTYPE" == "darwin"* ]]; then
@@ -350,9 +351,12 @@ function os_update {
 
 function redis_install {
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
-        # os_package_install "libssl-dev redis"
+        # myapt "libssl-dev redis"
         myapt "redis"
-        # /etc/init.d/redis-server start
+        set +e
+        /etc/init.d/redis-server stop
+        update-rc.d redis-server disable
+        set -e
     elif [[ "$OSTYPE" == "darwin"* ]]; then
         if ! [ -x "$(command -v redis-server)" ]; then
             brew install redis

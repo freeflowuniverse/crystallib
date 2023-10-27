@@ -6,7 +6,7 @@ if [[ -z "${CLBRANCH}" ]]; then
     export CLBRANCH="development"
 fi
 
-function os_package_install {
+function myapt {
     apt -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" install $1 -q -y --allow-downgrades --allow-remove-essential 
 }
 
@@ -18,7 +18,7 @@ function sourceenv() {
         echo "Script '$script_name' already exists in the current directory."
     else
         echo "env not found, downloading from '$download_url'..."
-        os_package_install curl
+        myapt curl
         exit 1
         if curl -o "./$script_name" -s "$download_url"; then
             echo "Download successful. Script '$script_name' is now available in the current directory."
