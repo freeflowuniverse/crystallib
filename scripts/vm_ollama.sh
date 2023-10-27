@@ -44,34 +44,48 @@ myexec "vm_prepare.sh" "https://raw.githubusercontent.com/freeflowuniverse/cryst
 
 ##################### STARTUP SCRIPTS #############################
 
-#### ollama installer
-cmd="
-#!/bin/bash
-set -ex
-source ~/env.sh
-
-"
-zinitcmd="
-after:
-  - crystalinstall
-"
-zinitinstall "ollamainstall" -oneshot
-
 #### ollama main
 
 cmd="
 #!/bin/bash
 set -ex
 source ~/env.sh
-
+myapt cuda-command-line-tools-12-2 
+myapt cuda-nvcc-12-2
+myapt lshw
+nvcc --version
+if ! [ -x "$(command -v ollama)" ]; then
+curl https://ollama.ai/install.sh | sh
+fi
+ollama serve
 "
 zinitcmd="
 after:
-  - ollamainstall
+  - crystalinstall
 "
 zinitinstall "ollama"  
 
+cmd="
+#!/bin/bash
+set -ex
+source ~/env.sh
+ollama pull mystral
+"
+zinitcmd="
+after:
+  - ollama
+"
+zinitinstall "ollama" -oneshot
+
 #### zinit restart
 
-zinit restart ollamainstall
-zinit restart ollama
+if pgrep zinit >/dev/null; then
+    # If running, kill Redis server
+    echo "zinit is running. Stopping..."
+    pkill zinit
+    echo "zinit server has been stopped."
+else
+    echo "zinit server is not running."
+fi
+
+zinit init &

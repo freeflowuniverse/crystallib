@@ -295,13 +295,22 @@ function crystal_lib_get {
 function zinit_configure_redis {
     cmd="
 #!/bin/bash
-set -ex
+set -e
 source ~/env.sh
 redis_install
 "
     zinitinstall "redisinstall" -oneshot
     unset cmd
 
+    cmd="
+#!/bin/bash
+if pgrep redis >/dev/null; then
+    echo "redis is running. Stopping..."
+    pkill redis-server
+fi
+set -e
+redis-server --port 7777
+"
     zinitcmd="
 exec: redis-server --port 7777
 test: redis-cli -p 7777 PING
