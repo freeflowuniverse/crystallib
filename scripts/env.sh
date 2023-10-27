@@ -90,6 +90,38 @@ gitcheck() {
     fi
 }
 
+
+function mycommit {
+    gitcheck
+    # Check if we are inside a Git repository
+    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        git_root=$(git rev-parse --show-toplevel)
+        echo "You are inside a Git repository $git_root."
+        pushd "$git_root"        
+    else
+        echo commit crystallib
+        pushd "$DIR_CODE/github/freeflowuniverse/crystallib"  2>&1 > /dev/null
+    fi
+    if [[ -z "$sshkeys" ]]; then
+        echo
+    else
+        git remote set-url origin git@github.com:freeflowuniverse/crystallib.git
+    fi          
+    if [[ $(git status -s) ]]; then
+        echo There are uncommitted changes.
+        git add . -A
+        echo "Please enter a commit message:"
+        read commit_message
+        git commit -m "$commit_message"
+        git pull
+        git push
+    else
+        echo "no changes"
+    fi
+    popd   2>&1 >/dev/null
+}
+
+
 # Function to add a directory to the PATH if not already present
 add_directory_to_path() {
     local new_path="$1"
@@ -325,7 +357,7 @@ function crystal_lib_get {
     if [[ -d "$DIR_CODE/github/freeflowuniverse/crystallib" ]]
     then
         pushd $DIR_CODE/github/freeflowuniverse/crystallib 2>&1 >> /dev/null     
-        if [[ -z "$keys" ]]; then
+        if [[ -z "$sshkeys" ]]; then
             echo
         else
             git remote set-url origin git@github.com:freeflowuniverse/crystallib.git
@@ -420,6 +452,7 @@ function os_update {
         echo 
     fi
     touch "$HOME/.vmodules/done_os"
+    echo "os update ok"
 }
 
 
@@ -514,51 +547,41 @@ function myreset {
 
 function myupdate {
     myreset
-    local cmd="
-#!/bin/bash 
-set -ex
-source ~/env.sh
-os_update
-crystal_lib_get
-
-"
-    echo "$cmd" > /tmp/myupdate.sh
-    bash /tmp/myupdate.sh
+    (os_update)
+    if [ $? -ne 0 ]; then
+        echo "Could not execute os_update."
+        exit 1
+    fi
+    (crystal_lib_get)
+    if [ $? -ne 0 ]; then
+        echo "Could not get crystal lib."
+        exit 1
+    fi
+    (crystal_install)
+    if [ $? -ne 0 ]; then
+        echo "Could not install crystal."
+        exit 1
+    fi  
 }
 
 function mycrystal {
     myreset
-    local cmd="
-#!/bin/bash 
-set -ex
-source ~/env.sh
-os_update
-crystal_lib_get
-crystal_install
-"
-    echo "$cmd" > /tmp/myupdate.sh
-    bash /tmp/myupdate.sh
+    (crystal_lib_get)
+    if [ $? -ne 0 ]; then
+        echo "Could not get crystal lib."
+        exit 1
+    fi
+    (crystal_install)
+    if [ $? -ne 0 ]; then
+        echo "Could not install crystal."
+        exit 1
+    fi    
 }
 
-function mycrystalcommit {
-    gitcheck
-    local cmd="
-#!/bin/bash 
-set -ex
-source ~/env.sh
-cd $DIR_CODE/github/freeflowuniverse/crystallib
-if [[ $(git status -s) ]]; then
-    echo There are uncommitted changes in the Git repository crystallib.
-    git add . -A
-    git commit -m \"improvements to crystallib\"
-    git pull
-    git push
-fi
-
-"
-    echo "$cmd" > /tmp/mycrystalcommit.sh
-    bash /tmp/mycrystalcommit.sh
+function cdcrystal {
+    cd "$HOME/code/github/freeflowuniverse/crystallib"
 }
+
 
 
 function myinit {
