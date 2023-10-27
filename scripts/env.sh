@@ -296,9 +296,13 @@ function crystal_lib_get {
     mkdir -p $DIR_CODE/github/freeflowuniverse
     if [[ -d "$DIR_CODE/github/freeflowuniverse/crystallib" ]]
     then
-        pushd $DIR_CODE/github/freeflowuniverse/crystallib 2>&1 >> /dev/null
-        git add . -A
-        git commit -m "just to be sure"
+        pushd $DIR_CODE/github/freeflowuniverse/crystallib 2>&1 >> /dev/null        
+        if [[ $(git status -s) ]]; then
+            echo "There are uncommitted changes in the Git repository crystallib."
+            # git add . -A
+            # git commit -m "just to be sure"
+            exit 1
+        fi
         git pull
         git checkout $CLBRANCH
         popd 2>&1 >> /dev/null
