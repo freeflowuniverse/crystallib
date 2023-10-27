@@ -26,7 +26,7 @@ pub fn (mut e IpfsClient) store_file(content []byte) !string {
 }
 
 // Gets file content from ipfs based on cid
-pub fn (mut e IpfsClient) get_file(path:cid string) !string {
+pub fn (mut e IpfsClient) get_file(cid string) !string {
 	return e.client.send_json_rpc[[]string, string]('ipfs.GetFile', [cid], ipfs.default_timeout)!
 }
 
