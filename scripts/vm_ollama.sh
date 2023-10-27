@@ -69,13 +69,13 @@ cmd="
 #!/bin/bash
 set -ex
 source ~/env.sh
-ollama pull mystral
+ollama pull mistral
 "
 zinitcmd="
 after:
   - ollama
 "
-zinitinstall "ollama" -oneshot
+zinitinstall "ollamapull" -oneshot
 
 #### zinit restart
 
