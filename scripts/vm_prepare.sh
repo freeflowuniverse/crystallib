@@ -20,9 +20,8 @@ function sourceenv() {
         if [ -f "env.sh" ]; then
             cp env.sh ~/env.sh
         else
-            echo "env not found, downloading from '$download_url'..."
+            echo env not found, downloading from $download_url
             myapt curl
-            exit 1
             if curl -o "$script_name" -s $download_url; then
                 echo "Download successful. Script '$script_name' is now available in the current directory."
             else

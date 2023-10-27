@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# https://github.com/threefoldtech/zinit/blob/master/docs/readme.md
-
 set -e
 
 if [[ -z "${CLBRANCH}" ]]; then 
@@ -13,24 +11,30 @@ function myapt {
 }
 
 function sourceenv() {
-    local script_name="env.sh"
-    local download_url="https://raw.githubusercontent.com/freeflowuniverse/crystallib/${CLBRANCH}/scripts/env.sh"
+    local script_name=~/env.sh
+    local download_url="https://raw.githubusercontent.com/freeflowuniverse/crystallib/${CLBRANCH}/scripts/env.sh"    
     
-    if [ -f "./$script_name" ]; then
-        echo "Script '$script_name' already exists in the current directory."
+    if [ -f "$script_name" ]; then
+        echo "env.sh exists "
     else
-        echo "env not found, downloading from '$download_url'..."
-        myapt curl
-        exit 1
-        if curl -o "./$script_name" -s "$download_url"; then
-            echo "Download successful. Script '$script_name' is now available in the current directory."
-            source env.sh
+        if [ -f "env.sh" ]; then
+            cp env.sh ~/env.sh
         else
-            echo "Error: Download failed. Script '$script_name' could not be downloaded."
-            exit 1
+            echo env not found, downloading from $download_url
+            myapt curl
+            if curl -o "$script_name" -s $download_url; then
+                echo "Download successful. Script '$script_name' is now available in the current directory."
+            else
+                echo "Error: Download failed. Script '$script_name' could not be downloaded."
+                exit 1
+            fi
         fi
     fi
+    source $script_name
+
 }
+
+##################### ABOVE IS STD FOR ALL SCRIPTS #############################
 
 
 set +e
