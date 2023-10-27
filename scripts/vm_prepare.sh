@@ -62,10 +62,6 @@ set -ex
 source ~/env.sh
 crystal_install
 "
-    zinitcmd="
-after:
-  - redisinstall
-"
     zinitinstall "crystalinstall" -oneshot
 }
 
