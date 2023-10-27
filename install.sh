@@ -9,15 +9,15 @@ rm -f ~/.vmodules/freeflowuniverse/crystallib
 ln -s $ABS_DIR_OF_SCRIPT/crystallib ~/.vmodules/freeflowuniverse/crystallib
 
 
-#TODO: needs to become part of hero
-v ${ABS_DIR_OF_SCRIPT}/cli/crystallib.v
-rm -f /usr/local/cli/crystallib
-sudo cp ${ABS_DIR_OF_SCRIPT}/cli/crystallib /usr/local/bin/crystallib
-rm -f ${ABS_DIR_OF_SCRIPT}/cli/crystallib
-
 cp ~/code/github/freeflowuniverse/crystallib/scripts/vrun /usr/local/bin/
 chmod 770  /usr/local/bin/vrun
 
+
+#TODO: needs to become part of hero
+# v ${ABS_DIR_OF_SCRIPT}/cli/crystallib.v
+# rm -f /usr/local/cli/crystallib
+# sudo cp ${ABS_DIR_OF_SCRIPT}/cli/crystallib /usr/local/bin/crystallib
+# rm -f ${ABS_DIR_OF_SCRIPT}/cli/crystallib
 
 
 echo "INSTALL OK"

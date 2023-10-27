@@ -56,7 +56,9 @@ function os_update {
         apt-mark hold grub-efi-amd64-signed
         apt-get -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" upgrade -q -y --allow-downgrades --allow-remove-essential --allow-change-held-packages
         apt-mark hold grub-efi-amd64-signed
-        os_package_install "mc curl tmux net-tools git htop ca-certificates gnupg lsb-release mc"
+        apt update -y
+        os_package_install "mc curl tmux net-tools git htop ca-certificates lsb-release mc"
+        #gnupg
         apt upgrade -y
     elif [[ "$OSTYPE" == "darwin"* ]]; then
         echo 
