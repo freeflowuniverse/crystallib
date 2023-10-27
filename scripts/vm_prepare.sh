@@ -65,7 +65,7 @@ crystal_install
 "
     zinitcmd="
 after:
-  - redis
+  - redisinstall
 "
     zinitinstall "crystalinstall" -oneshot
 }

@@ -311,8 +311,8 @@ fi
 set -e
 redis-server --port 7777
 "
+# exec: redis-server --port 7777
     zinitcmd="
-exec: redis-server --port 7777
 test: redis-cli -p 7777 PING
 after:
 - redisinstall
