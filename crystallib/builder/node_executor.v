@@ -141,15 +141,14 @@ pub fn (mut node Node) delete(path string) ! {
 [params]
 pub struct SyncArgs {
 pub mut:
-	source string
-	dest string
-	delete bool //do we want to delete the destination
-	ipaddr string //e.g. root@192.168.5.5:33 (can be without root@ or :port)
-	ignore []string //arguments to ignore e.g. ['*.pyc','*.bak']
-	ignore_default bool = true //if set will ignore a common set
-	stdout bool = true
+	source         string
+	dest           string
+	delete         bool     // do we want to delete the destination
+	ipaddr         string   // e.g. root@192.168.5.5:33 (can be without root@ or :port)
+	ignore         []string // arguments to ignore e.g. ['*.pyc','*.bak']
+	ignore_default bool = true // if set will ignore a common set
+	stdout         bool = true
 }
-
 
 // download files using rsync (can be ssh or local)
 // args: .

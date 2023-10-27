@@ -193,7 +193,9 @@ pub fn (mut path Path) file_get_new(tofind string) !Path {
 	if path.cat != Category.dir || !(path.exists()) {
 		return error('is not a dir or dir does not exist: ${path.path}')
 	}
-	mut p := path.file_get(tofind) or { return get_file(path:'${path.path}/${tofind}', create:true)! }
+	mut p := path.file_get(tofind) or {
+		return get_file(path: '${path.path}/${tofind}', create: true)!
+	}
 	return p
 }
 
@@ -283,6 +285,8 @@ pub fn (mut path Path) dir_get_new(tofind string) !Path {
 	if path.cat != Category.dir || !(path.exists()) {
 		return error('is not a dir or dir does not exist: ${path.path}')
 	}
-	mut p := path.dir_get(tofind) or { return get_dir(path:'${path.path}/${tofind}', create:true)! }
+	mut p := path.dir_get(tofind) or {
+		return get_dir(path: '${path.path}/${tofind}', create: true)!
+	}
 	return p
 }

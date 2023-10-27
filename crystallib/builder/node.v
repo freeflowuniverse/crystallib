@@ -33,7 +33,6 @@ pub mut:
 	params      Params
 }
 
-
 // get unique key for the node, as used in caching environment
 pub fn (mut node Node) key() string {
 	// for now we will use name, but this is not good enough, will have to become something more unique	

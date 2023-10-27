@@ -20,7 +20,7 @@ pub fn do(path string) !Vault {
 
 // get the vault object from existing dir
 pub fn get(path string) !Vault {
-	mut p := pathlib.get_dir(path:path)!
+	mut p := pathlib.get_dir(path: path)!
 	p.absolute()
 	mut vault2 := scan(p.name(), mut p)!
 	return vault2

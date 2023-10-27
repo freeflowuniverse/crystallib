@@ -47,9 +47,9 @@ pub fn new(args_ InstallArgs) !Postgresql {
 	}
 
 	mut s := Postgresql{
-		path_config: pathlib.get_dir(path:'${args.path}/config', create:true)!
-		path_data: pathlib.get_dir(path:'${args.path}/data', create:true)!
-		path_export: pathlib.get_dir(path:'${args.path}/exports', create:true)!
+		path_config: pathlib.get_dir(path: '${args.path}/config', create: true)!
+		path_data: pathlib.get_dir(path: '${args.path}/data', create: true)!
+		path_export: pathlib.get_dir(path: '${args.path}/exports', create: true)!
 		passwd: args.passwd
 	}
 

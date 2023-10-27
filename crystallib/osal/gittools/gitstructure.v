@@ -44,7 +44,7 @@ pub fn (mut gitstructure GitStructure) repo_from_path(path string) !GitRepo {
 		addr: GitAddr{
 			gsconfig: gitstructure.config
 		}
-		path: pathlib.get_dir(path:path)!
+		path: pathlib.get_dir(path: path)!
 	}
 	// r.load_from_path()!
 	return r

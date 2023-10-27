@@ -56,7 +56,7 @@ pub fn new(args_ InstallArgs) !Gitea {
 	db.db_create('gitea')!
 
 	mut s := Gitea{
-		path_config: pathlib.get_dir(path:'${args.path}/config', create:true)!
+		path_config: pathlib.get_dir(path: '${args.path}/config', create: true)!
 		args: args
 	}
 
@@ -87,7 +87,7 @@ pub fn install(reset bool) ! {
 
 	// TODO: does not download well
 
-	mut giteafile := pathlib.get_file(path:'/tmp/download/gitea')! // file in the dest
+	mut giteafile := pathlib.get_file(path: '/tmp/download/gitea')! // file in the dest
 	println(giteafile)
 	giteafile.copy('/usr/local/bin')!
 	giteafile.chmod(0o770)! // includes read & write & execute
