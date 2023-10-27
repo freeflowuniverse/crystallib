@@ -37,7 +37,6 @@ if [ -z "$TERM" ]; then
     export TERM=xterm
 fi
 
-export PATH=$DIR_BIN:$DIR_SCRIPTS:$PATH
 
 
 if [[ -z "$SSH_AUTH_SOCK" ]]; then
@@ -75,6 +74,35 @@ function bootstrap() {
     fi
 }
 
+gitcheck() {
+    # Check if Git email is set
+    if [ -z "$(git config user.email)" ]; then
+        # If not set, prompt the user to enter it
+        echo "Git email is not set."
+        read -p "Enter your Git email: " git_email
+
+        # Set the Git email
+        git config --global user.email "$git_email"
+        echo "Git email set to '$git_email'."
+    else
+        # Git email is already set
+        echo "Git email is set to: $(git config user.email)"
+    fi
+}
+
+# Function to add a directory to the PATH if not already present
+add_directory_to_path() {
+    local new_path="$1"
+    # Check if the directory is already in the PATH
+    if [[ ":$PATH:" != *":$new_path:"* ]]; then
+        export PATH="$new_path:$PATH"
+        # echo "Added '$new_path' to PATH."
+    fi
+}
+
+add_directory_to_path $DIR_BIN
+add_directory_to_path $DIR_SCRIPTS
+add_directory_to_path $DIR_BUILD
 
 function myexecdownload() {
     local script_name="$1"
@@ -296,7 +324,12 @@ function crystal_lib_get {
     mkdir -p $DIR_CODE/github/freeflowuniverse
     if [[ -d "$DIR_CODE/github/freeflowuniverse/crystallib" ]]
     then
-        pushd $DIR_CODE/github/freeflowuniverse/crystallib 2>&1 >> /dev/null        
+        pushd $DIR_CODE/github/freeflowuniverse/crystallib 2>&1 >> /dev/null     
+        if [[ -z "$keys" ]]; then
+            echo
+        else
+            git remote set-url origin git@github.com:freeflowuniverse/crystallib.git
+        fi               
         if [[ $(git status -s) ]]; then
             echo "There are uncommitted changes in the Git repository crystallib."
             # git add . -A
@@ -471,11 +504,10 @@ function myinit0 {
 }
 
 function myreset {
-    set +x  
     find $HOME/.vmodules/ -type f -name "done_*" -exec rm {} \;
-    if [ -f "~/code/github/freeflowuniverse/crystallib/scripts/env.sh" ]; then
+    if [[ -f "$HOME/code/github/freeflowuniverse/crystallib/scripts/env.sh" ]]; then
         echo "copy env.sh to root"
-        cp ~/code/github/freeflowuniverse/crystallib/scripts/env.sh ~/env.sh
+        cp $HOME/code/github/freeflowuniverse/crystallib/scripts/env.sh ~/env.sh
     fi    
 }
 
@@ -506,6 +538,26 @@ crystal_install
 "
     echo "$cmd" > /tmp/myupdate.sh
     bash /tmp/myupdate.sh
+}
+
+function mycrystalcommit {
+    gitcheck
+    local cmd="
+#!/bin/bash 
+set -ex
+source ~/env.sh
+cd $DIR_CODE/github/freeflowuniverse/crystallib
+if [[ $(git status -s) ]]; then
+    echo There are uncommitted changes in the Git repository crystallib.
+    git add . -A
+    git commit -m \"improvements to crystallib\"
+    git pull
+    git push
+fi
+
+"
+    echo "$cmd" > /tmp/mycrystalcommit.sh
+    bash /tmp/mycrystalcommit.sh
 }
 
 
