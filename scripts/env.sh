@@ -106,7 +106,7 @@ function mycommit {
     else
         git remote set-url origin git@github.com:freeflowuniverse/crystallib.git
     fi          
-    if [[ \$(git status -s) ]]; then
+    if [[ $(git status -s) ]]; then
         echo There are uncommitted changes in the Git repository crystallib.
         git add . -A
         echo "Please enter a commit message:"
