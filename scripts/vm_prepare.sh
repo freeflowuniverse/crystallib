@@ -19,7 +19,7 @@ function sourceenv() {
     local script_name=~/env.sh
     local download_url="https://raw.githubusercontent.com/freeflowuniverse/crystallib/${CLBRANCH}/scripts/env.sh"    
 
-    if [[ -f "~/code/github/freeflowuniverse/crystallib/scripts/env.sh" ]]; then
+    if [[ -f "${HOME}/code/github/freeflowuniverse/crystallib/scripts/env.sh" ]]; then
         cp ~/code/github/freeflowuniverse/crystallib/scripts/env.sh ~/env.sh
     else
         mycmdinstall curl
@@ -45,7 +45,7 @@ if [[ "$1" = "reset" ]]; then
 fi
 
 if ! [[ -f "$HOME/.vmodules/done_zinit" ]]; then
-    myexec "v_install_zinit.sh" "https://raw.githubusercontent.com/freeflowuniverse/crystallib/$CLBRANCH/scripts/v_install_zinit.sh"
+    bootstrap "v_install_zinit.sh" "https://raw.githubusercontent.com/freeflowuniverse/crystallib/$CLBRANCH/scripts/v_install_zinit.sh"
     touch "$HOME/.vmodules/done_zinit"
 fi
 
