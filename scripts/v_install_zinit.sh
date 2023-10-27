@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# https://github.com/threefoldtech/zinit/blob/master/docs/readme.md
+
 set -e
 
 if [[ -z "${CLBRANCH}" ]]; then 

@@ -135,7 +135,6 @@ check_for_oneshot() {
 }
 
 function zinitinstall {
-    set -x
     local script_name="$1"
     local script_name_test="$2"    
     rm -f "/etc/zinit/cmds/$script_name.sh"
@@ -356,6 +355,15 @@ function redis_install {
         set +e
         /etc/init.d/redis-server stop
         update-rc.d redis-server disable
+        set -e
+        if pgrep redis >/dev/null; then
+            # If running, kill Redis server
+            echo "redis is running. Stopping..."
+            pkill redis-server
+            echo "redis server has been stopped."
+        else
+            echo "redis server is not running."
+        fi
         set -e
     elif [[ "$OSTYPE" == "darwin"* ]]; then
         if ! [ -x "$(command -v redis-server)" ]; then
