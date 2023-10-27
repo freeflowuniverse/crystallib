@@ -52,21 +52,17 @@ echo "OLLAMA CONFIG"
 #### ollama main
 X=""
 if ! [ -x "$(command -v ollama)" ]; then
-X="curl https://ollama.ai/install.sh | sh"
+curl https://ollama.ai/install.sh | sh
 fi
-
-cmd="
-#!/bin/bash
-set -ex
-source ~/env.sh
 myapt cuda-command-line-tools-12-2 
 myapt cuda-nvcc-12-2
 myapt lshw
-$X
 nvcc --version
-ollama serve
-"
+
+
+unset cmd
 zinitcmd="
+exec: ollama serve
 after:
   - crystalinstall
 "
