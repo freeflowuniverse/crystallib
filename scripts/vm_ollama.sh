@@ -37,12 +37,41 @@ function sourceenv() {
 
 ##################### ABOVE IS STD FOR ALL SCRIPTS #############################
 
-set -ex
+set -e
 
 sourceenv
+myexec "vm_prepare.sh" "https://raw.githubusercontent.com/freeflowuniverse/crystallib/$CLBRANCH/scripts/vm_prepare.sh"
 
-if [[ "$1" = "reset" ]]; then
-    myreset
-fi
+##################### STARTUP SCRIPTS #############################
 
-crystal_install
+#### ollama installer
+cmd="
+#!/bin/bash
+set -ex
+source ~/env.sh
+
+"
+zinitcmd="
+after:
+  - crystalinstall
+"
+zinitinstall "ollamainstall" -oneshot
+
+#### ollama main
+
+cmd="
+#!/bin/bash
+set -ex
+source ~/env.sh
+
+"
+zinitcmd="
+after:
+  - ollamainstall
+"
+zinitinstall "ollama"  
+
+#### zinit restart
+
+zinit restart ollamainstall
+zinit restart ollama
