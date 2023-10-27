@@ -100,7 +100,7 @@ function mycommit {
         pushd "$git_root"        
     else
         echo commit crystallib
-        pushd "$DIR_CODE/github/freeflowuniverse/crystallib" > /dev/null 2>&1
+        pushd "$DIR_CODE/github/freeflowuniverse/crystallib"  2>&1 > /dev/null
     fi
     if [[ -z "$sshkeys" ]]; then
         echo
@@ -116,7 +116,7 @@ function mycommit {
         git pull
         git push
     fi
-    popd  >/dev/null 2>&1
+    popd   2>&1 >/dev/null
 }
 
 
