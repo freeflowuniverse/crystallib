@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
 # set +x
 
+if [[ -e $HOME/code/github/freeflowuniverse/crystallib/scripts/env.sh ]]; then
+    if [ -h "$HOME/.env.sh" ]; then
+        echo
+    else
+        ln -s $HOME/code/github/freeflowuniverse/crystallib/scripts/env.sh $HOME/.env.sh
+        echo "Created a symbolic link from ~/code/github/freeflowuniverse/crystallib/scripts/env.sh to ~/.env.sh."
+    fi
+fi
+
+
 if [[ -z "${CLBRANCH}" ]]; then 
     # echo " - DEFAULT BRANCH FOR CRYSTALLIB SET"
     export CLBRANCH="development"
@@ -514,16 +524,30 @@ function myinit0 {
             fi
         fi
 
-        profile_file="$HOME/.profile"
-        env_file="$HOME/env.sh"
-        # Check if env.sh is already loaded in .profile
-        if grep -q "source $env_file" "$profile_file"; then
-            echo "env.sh is already loaded in .profile."
+        if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
+            profile_file="$HOME/.profile"
+            env_file="$HOME/env.sh"
+            # Check if env.sh is already loaded in .profile
+            if grep -q "source $env_file" "$profile_file"; then
+                echo "env.sh is already loaded in .profile."
+            else
+                # Append the 'source' command to load env.sh in .profile
+                echo "Adding 'source $env_file' to .profile..."
+                echo "source $env_file" >> "$profile_file"
+                echo "env.sh has been added to .profile."
+            fi
         else
-            # Append the 'source' command to load env.sh in .profile
-            echo "Adding 'source $env_file' to .profile..."
-            echo "source $env_file" >> "$profile_file"
-            echo "env.sh has been added to .profile."
+            profile_file="$HOME/.zprofile"
+            env_file="$HOME/env.sh"
+            # Check if env.sh is already loaded in .profile
+            if grep -q "source $env_file" "$profile_file"; then
+                echo "env.sh is already loaded in .zprofile."
+            else
+                # Append the 'source' command to load env.sh in .profile
+                echo "Adding 'source $env_file' to .zprofile..."
+                echo "source $env_file" >> "$profile_file"
+                echo "env.sh has been added to .zprofile."
+            fi        
         fi
 
         touch "$HOME/.vmodules/done_init"
