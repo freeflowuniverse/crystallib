@@ -467,6 +467,7 @@ function myinit0 {
 }
 
 function myreset {
+    set +x  
     find $HOME/.vmodules/ -type f -name "done_*" -exec rm {} \;
     if [ -f "~/code/github/freeflowuniverse/crystallib/scripts/env.sh" ]; then
         echo "copy env.sh to root"
@@ -477,13 +478,29 @@ function myreset {
 
 function myupdate {
     myreset
-    cmd="
+    local cmd="
+#!/bin/bash 
 set -ex
 source ~/env.sh
 os_update
 crystal_lib_get
+
 "
-    echo cmd > /tmp/myupdate.sh
+    echo "$cmd" > /tmp/myupdate.sh
+    bash /tmp/myupdate.sh
+}
+
+function mycrystal {
+    myreset
+    local cmd="
+#!/bin/bash 
+set -ex
+source ~/env.sh
+os_update
+crystal_lib_get
+crystal_install
+"
+    echo "$cmd" > /tmp/myupdate.sh
     bash /tmp/myupdate.sh
 }
 
