@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 # set +x
+set -e
 
 if [[ -e $HOME/code/github/freeflowuniverse/crystallib/scripts/env.sh ]]; then
-    if [ -h "$HOME/.env.sh" ]; then
-        echo
-    else
-        ln -s $HOME/code/github/freeflowuniverse/crystallib/scripts/env.sh $HOME/.env.sh
-        echo "Created a symbolic link from ~/code/github/freeflowuniverse/crystallib/scripts/env.sh to ~/.env.sh."
+    rm -f $HOME/.env.sh
+    if [[ -h "$HOME/env.sh" ]] || [[ -L "$HOME/env.sh" ]]; then
+        echo 
+    else   
+        rm -f $HOME/env.sh        
+        ln -s $HOME/code/github/freeflowuniverse/crystallib/scripts/env.sh $HOME/env.sh
     fi
 fi
 
@@ -145,6 +147,7 @@ pathmunge $DIR_BIN
 pathmunge $DIR_SCRIPTS
 pathmunge $DIR_BUILD
 
+
 function myexecdownload() {
     local script_name="$1"
     local download_url="$2"
@@ -209,7 +212,6 @@ function resetcheck {
         echo
     else
         rm -rf ~/.vmodules
-        rm -f ~/env.sh    
         rm -rf ~/code  
     fi  
 
@@ -218,7 +220,6 @@ function resetcheck {
         echo
     else
         rm -rf ~/.vmodules
-        rm -f ~/env.sh    
     fi  
 
 }
@@ -430,7 +431,11 @@ function crystal_install {
         fi
 
         os_update
-        zinit_configure_redis
+        if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
+            zinit_configure_redis
+        else
+            redis_install
+        fi
         sudo rm -rf ~/.vmodules/
         mkdir -p ~/.vmodules/freeflowuniverse/
         mkdir -p ~/.vmodules/threefoldtech/   
