@@ -70,7 +70,10 @@ after:
     zinitinstall "crystalinstall" -oneshot
 }
 
+zinit_configure_redis
 zinit_configure_hero
+
+# zinit monitor crystalinstall
 
 if pgrep zinit >/dev/null; then
     # If running, kill Redis server
@@ -80,5 +83,4 @@ if pgrep zinit >/dev/null; then
 else
     echo "zinit server is not running."
 fi
-
 zinit init &
