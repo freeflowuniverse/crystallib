@@ -38,7 +38,7 @@ pub fn new(args_ RunnerArgs) !Runner {
 	}
 
 	mut r := Runner{
-		path: pathlib.get_dir(path:'${args.root}/${args.cid}',create:true)!
+		path: pathlib.get_dir(path: '${args.root}/${args.cid}', create: true)!
 		args: args
 	}
 

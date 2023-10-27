@@ -1,7 +1,7 @@
 module tfgrid
 
 import freeflowuniverse.crystallib.data.actionsparser { Action }
-import freeflowuniverse.crystallib.threefold.web3gw.tfgrid as tfgrid_client {DeployVM, Disk, RemoveVMFromNetworkDeployment, VMDeployment }
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid as tfgrid_client { DeployVM, RemoveVMFromNetworkDeployment }
 import rand
 
 fn (mut t TFGridHandler) vm(action Action) ! {
@@ -22,7 +22,9 @@ fn (mut t TFGridHandler) vm(action Action) ! {
 			add_wireguard_access := action.params.get_default_false('add_wireguard_access')
 			ssh_key_name := action.params.get_default('sshkey', 'default')!
 			ssh_key := t.get_ssh_key(ssh_key_name)!
-			env_vars := {ssh_key_name: ssh_key}
+			env_vars := {
+				ssh_key_name: ssh_key
+			}
 			deploy_res := t.tfgrid.deploy_vm(DeployVM{
 				name: name
 				node_id: u32(node_id)
@@ -30,7 +32,7 @@ fn (mut t TFGridHandler) vm(action Action) ! {
 				flist: flist
 				entrypoint: entrypoint
 				public_ip: public_ip
-				public_ip6:public_ip6
+				public_ip6: public_ip6
 				planetary: planetary
 				cpu: u32(cpu)
 				memory: u64(memory)
@@ -62,7 +64,9 @@ fn (mut t TFGridHandler) vm(action Action) ! {
 		'delete' {
 			network := action.params.get('network')!
 
-			t.tfgrid.cancel_network_deployment(network) or { return error('failed to delete vm network: ${err}') }
+			t.tfgrid.cancel_network_deployment(network) or {
+				return error('failed to delete vm network: ${err}')
+			}
 		}
 		else {
 			return error('operation ${action.name} is not supported on vms')

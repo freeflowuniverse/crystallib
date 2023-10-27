@@ -21,7 +21,7 @@ pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 		return error('Collection already exits')
 	}
 
-	mut pp := pathlib.get_dir(path:args.path)! // will raise error if path doesn't exist
+	mut pp := pathlib.get_dir(path: args.path)! // will raise error if path doesn't exist
 	mut collection := &Collection{
 		name: args.name
 		tree_name: tree.name

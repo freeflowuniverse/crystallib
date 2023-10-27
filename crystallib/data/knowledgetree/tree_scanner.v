@@ -57,7 +57,7 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 	if args.path.len < 3 {
 		return error('Path needs to be not empty.')
 	}
-	mut path := pathlib.get_dir(path:args.path)!
+	mut path := pathlib.get_dir(path: args.path)!
 
 	if path.is_dir() {
 		mut name := path.name()

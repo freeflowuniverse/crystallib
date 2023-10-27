@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # set +x
-set -e
 
 if [[ -e $HOME/code/github/freeflowuniverse/crystallib/scripts/env.sh ]]; then
     rm -f $HOME/.env.sh
@@ -484,8 +483,8 @@ function redis_install {
     elif [[ "$OSTYPE" == "darwin"* ]]; then
         if ! [ -x "$(command -v redis-server)" ]; then
             brew install redis
-        fi
-        brew services start redis
+            brew services start redis
+        fi        
     fi
 }
 
