@@ -335,5 +335,8 @@ fi
 # git status
 # popd
 
-echo "**** INSTALL WAS OK ****"
+echo "**** V INSTALL WAS OK ****"
 
+bash ~/code/github/freeflowuniverse/crystallib/cli/hero/compile.sh
+
+echo "**** V INSTALL + HERO WAS OK ****"

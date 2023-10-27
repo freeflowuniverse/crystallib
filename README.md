@@ -9,6 +9,14 @@ curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/s
 bash /tmp/install.sh
 ```
 
+on linux can do the following using tmux (recommended)
+
+```bash
+curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/v_install_tmux.sh > /tmp/install_tmux.sh
+bash /tmp/install_tmux.sh
+```
+
+
 requirements
 
 - ssh key loaded for access to github
