@@ -16,8 +16,8 @@ function mycmdinstall {
 }
 
 function sourceenv() {
-    local script_name=~/env.sh
-    local download_url="https://raw.githubusercontent.com/freeflowuniverse/crystallib/${CLBRANCH}/scripts/env.sh"    
+    script_name=~/env.sh
+    download_url="https://raw.githubusercontent.com/freeflowuniverse/crystallib/${CLBRANCH}/scripts/env.sh"    
 
     if [ -f "~/code/github/freeflowuniverse/crystallib/scripts/env.sh" ]; then
         cp ~/code/github/freeflowuniverse/crystallib/scripts/env.sh ~/env.sh

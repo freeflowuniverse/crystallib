@@ -35,6 +35,10 @@ function sourceenv() {
 
 ##################### ABOVE IS STD FOR ALL SCRIPTS #############################
 
+if command -v "zinit" >/dev/null 2>&1; then
+    echo "zinit is already installed."
+    exit 0
+fi
 
 set +e
 
