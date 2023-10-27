@@ -325,7 +325,7 @@ function crystal_lib_get {
     if [[ -d "$DIR_CODE/github/freeflowuniverse/crystallib" ]]
     then
         pushd $DIR_CODE/github/freeflowuniverse/crystallib 2>&1 >> /dev/null     
-        if [[ -z "$keys" ]]; then
+        if [[ -z "$sshkeys" ]]; then
             echo
         else
             git remote set-url origin git@github.com:freeflowuniverse/crystallib.git
@@ -542,7 +542,7 @@ crystal_install
 
 function mycrystalcommit {
     cd $DIR_CODE/github/freeflowuniverse/crystallib
-    if [[ -z "$keys" ]]; then
+    if [[ -z "$sshkeys" ]]; then
         echo
     else
         git remote set-url origin git@github.com:freeflowuniverse/crystallib.git
