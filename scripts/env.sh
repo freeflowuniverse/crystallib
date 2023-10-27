@@ -542,6 +542,12 @@ crystal_install
 
 function mycrystalcommit {
     gitcheck
+    cd $DIR_CODE/github/freeflowuniverse/crystallib
+    if [[ -z "$keys" ]]; then
+        echo
+    else
+        git remote set-url origin git@github.com:freeflowuniverse/crystallib.git
+    fi      
     local cmd="
 #!/bin/bash 
 set -ex
