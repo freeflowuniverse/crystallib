@@ -86,6 +86,8 @@ pub fn (mut zp ZProcess) load() ! {
 	mut pathyaml := zp.zinit.pathcmds.file_get(zp.name + '.yaml')!
 	contentyaml := pathyaml.read()!
 
+	//the parsing of the file is needed to find the info which we can't get from the zinit daemon
+	
 	mut st := ''
 	for line in contentyaml.split_into_lines() {
 		if line.starts_with('exec:') && zp.cmd.len == 0 {
