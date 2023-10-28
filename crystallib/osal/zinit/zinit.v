@@ -4,6 +4,7 @@ import os
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 
+
 [heap]
 pub struct Zinit {
 pub mut:
@@ -15,9 +16,9 @@ pub mut:
 
 pub fn new()! Zinit {
 	mut obj := Zinit{
-			path:pathlib.get_dir("/etc/zinit",true)!
-			pathcmds:pathlib.get_dir("/etc/zinit/cmds",true)!
-			pathtests:pathlib.get_dir("/etc/zinit/tests",true)!
+			path:pathlib.get_dir(path:"/etc/zinit",create:true)!
+			pathcmds:pathlib.get_dir(path:"/etc/zinit/cmds",create:true)!
+			pathtests:pathlib.get_dir(path:"/etc/zinit/tests",create:true)!
 		}
 
 	cmd:="zinit list"
@@ -30,10 +31,56 @@ pub fn new()! Zinit {
 		}
 		if state=="ok" && line.contains(":") {
 			name:=line.split(":")[0].to_lower().trim_space()
-			zp:=ZProcess{name:name,zinit:&obj}
+			mut zp:=ZProcess{name:name,zinit:&obj}
 			zp.load()!
 			obj.processes[name]=zp
 		}
 	}
 	return obj
+}
+
+
+[params]
+pub struct ZProcessNewArgs {
+pub mut:
+	name string [required]
+	cmd string [required]
+	cmd_file bool
+	test string
+	test_file bool
+	after []string
+	env []string
+	oneshot bool
+}
+pub fn (mut zinit Zinit) new(mut args_ ZProcessNewArgs)!ZProcess {
+	mut args:=args_
+
+	mut zp:=ZProcess{name:args.name,zinit:&zinit}
+
+	if args.cmd.contains("\n") || args.cmd_file{
+		//means we can load the special cmd
+		mut pathcmd:=zinit.pathcmds.file_get(args.name)!
+		pathcmd.write(args.cmd)!
+		zp.cmd = args.cmd
+	}
+
+	if args.test.contains("\n") || args.test_file{
+		//means we can load the special cmd
+		mut pathcmd:=zinit.pathtests.file_get(args.name)!
+		pathcmd.write(args.test)!
+		zp.test = args.test
+	}
+
+	zp.oneshot = args.oneshot
+	zp.env = args.env
+	zp.after = args.after
+
+	mut pathyaml:=zinit.path.file_get(zp.name+".yaml")!
+	pathyaml.write(zp.str())!
+
+
+	zinit.processes[args.name]=zp
+
+	return zp
+
 }

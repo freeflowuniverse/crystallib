@@ -181,7 +181,7 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 				downloadpath.link('${args.dest}/${filename}', true)!
 			} else {
 				mut desto := pathlib.get(args.dest)
-				downloadpath.copy(desto.path)!
+				downloadpath.copy(dest:desto.path)!
 			}
 		} else {
 			if args.destlink {
@@ -190,7 +190,7 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 				} // delete the dest link
 			} else {
 				mut desto := pathlib.get(args.dest)
-				downloadpath.copy(desto.path)!
+				downloadpath.copy(dest:desto.path)!
 			}
 		}
 	}
