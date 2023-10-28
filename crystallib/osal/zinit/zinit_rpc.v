@@ -1,6 +1,8 @@
 import net.unix
 import json
 
+//TODO: implement all features from https://github.com/threefoldtech/zinit/blob/master/docs/protocol.md
+
 fn connect() !unix.StreamConn {
 	mut s := unix.connect_stream('/var/run/zinit.sock')!
 	return s
