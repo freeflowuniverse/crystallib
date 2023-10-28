@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.pathlib
 import os
 
-const url="https://github.com/threefoldtech/zinit.git"
+const url = 'https://github.com/threefoldtech/zinit.git'
 
 // install zinit will return true if it was already installed
 pub fn build(args InstallArgs) ! {
@@ -18,7 +18,7 @@ pub fn build(args InstallArgs) ! {
 	// install zinit if it was already done will return true
 	println(' - build zinit')
 
-	gitpath:=gittools.code_get(coderoot:"/tmp/builder",url:url,reset:true)!
+	gitpath := gittools.code_get(coderoot: '/tmp/builder', url: zinit.url, reset: true)!
 
 	cmd := '
 	cd ${gitpath}
@@ -30,8 +30,5 @@ pub fn build(args InstallArgs) ! {
 	// 	return error('only support ubuntu for now')
 	// }
 
-
-
 	return
 }
-

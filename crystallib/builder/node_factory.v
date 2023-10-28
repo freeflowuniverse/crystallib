@@ -1,4 +1,5 @@
 module builder
+
 import freeflowuniverse.crystallib.core.texttools
 
 // get node connection to local machine
@@ -31,7 +32,7 @@ pub mut:
 	ipaddr string
 	name   string
 	user   string = 'root'
-	debug  bool = true
+	debug  bool   = true
 	reload bool
 }
 
@@ -58,15 +59,15 @@ pub mut:
 pub fn (mut builder BuilderFactory) node_new(args_ NodeArguments) !&Node {
 	mut args := args_
 	if args.name == '' {
-		if args.ipaddr.len>0{
-			args.name=args.ipaddr
-			if args.name.contains(":"){
-				args.name,_=args.name.split_once(":")
+		if args.ipaddr.len > 0 {
+			args.name = args.ipaddr
+			if args.name.contains(':') {
+				args.name, _ = args.name.split_once(':')
 			}
-		}else{
-			args.name="default"
-		}		
-		args.name=texttools.name_fix(args.name).replace(".","_")
+		} else {
+			args.name = 'default'
+		}
+		args.name = texttools.name_fix(args.name).replace('.', '_')
 	}
 
 	for node in builder.nodes {
