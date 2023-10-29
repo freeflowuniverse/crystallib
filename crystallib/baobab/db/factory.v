@@ -56,7 +56,9 @@ pub mut:
 pub fn set(args_ DBSetArgs) ! {
 	mut args := args_
 	lock dbs {
-		mut mydb := dbs[args.gid.cid.str()] or { return error('cannot find db with cid: ${args.gid.cid}') }
+		mut mydb := dbs[args.gid.cid.str()] or {
+			return error('cannot find db with cid: ${args.gid.cid}')
+		}
 		table_set(mut mydb, mut args)!
 	}
 }
@@ -73,7 +75,7 @@ pub mut:
 // create required tables for requested object
 pub fn create(args_ DBTableCreateArgs) ! {
 	mut args := args_
-	mut tablename:=""
+	mut tablename := ''
 	lock dbs {
 		mydb := dbs[args.cid.str()] or { return error('cannot find db with cid: ${args.cid}') }
 		tablename = table_name(mydb, args.objtype)
@@ -94,4 +96,7 @@ pub fn create(args_ DBTableCreateArgs) ! {
 	}
 }
 
-
+pub fn read(gid smartid.GID) ![]u8 {
+	mut mydb := dbs[gid.cid.str()] or { return error('cannot find db with cid: ${gid.cid.str()}') }
+	return table_read(mut mydb, gid)!
+}

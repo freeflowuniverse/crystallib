@@ -46,8 +46,8 @@ pub fn (o MyStruct) set() ! {
 }
 
 pub fn (o MyStruct) dumpb() ![]u8 {
-	mut e := encoder.new()
-	e.add_int(1) // always add a version, this allows to deserialize multiple versions	
+	mut e := encoder.new() // this already adds a version = 1 to the encoded data
+
 	e.add_u32(o.gid.cid.u32())
 	e.add_u32(o.gid.oid())
 	e.add_string(o.name)
@@ -60,8 +60,8 @@ pub fn (o MyStruct) dumpb() ![]u8 {
 }
 
 pub fn (mut o MyStruct) loadb(data []u8) ! {
-	mut d := encoder.decoder_new(data)
-	assert d.get_int() == 1 // for now just fail if not right version
+	mut d := encoder.decoder_new(data) // this already reads the first byte and ensures version == 1
+	// assert d.get_() == 1 // for now just fail if not right version
 	cid_int := int(d.get_u32())
 	oid_int := int(d.get_u32())
 	o.gid = smartid.gid(cid_int: cid_int, oid_int: oid_int)!
@@ -103,6 +103,10 @@ fn do() ! {
 
 	o.set()!
 
+	read_o_dump := db.read(o.gid)!
+	mut read_o := MyStruct{}
+	read_o.loadb(read_o_dump)!
+	println('read struct: ${read_o}')
 	// TODO: check the data write
 	// TODO: check performance, do a perf test for 100k objects
 	// TODO: implement the get object code
