@@ -100,3 +100,20 @@ pub fn read(gid smartid.GID) ![]u8 {
 	mut mydb := dbs[gid.cid.str()] or { return error('cannot find db with cid: ${gid.cid.str()}') }
 	return table_read(mut mydb, gid)!
 }
+
+[params]
+pub struct DBQueryArgs {
+pub mut:
+	cid          smartid.CID
+	objtype      string
+	query_int    map[string]int
+	query_string map[string]string
+}
+
+pub fn query(args DBQueryArgs) ![][]u8 {
+	mut mydb := dbs[args.cid.str()] or {
+		return error('cannot find db with cid: ${args.cid.str()}')
+	}
+
+	return table_query(mut mydb, args)
+}
