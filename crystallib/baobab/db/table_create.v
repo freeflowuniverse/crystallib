@@ -1,9 +1,5 @@
 module db
 
-import db.sqlite
-// import freeflowuniverse.crystallib.baobab.smartid
-// import freeflowuniverse.crystallib.core.texttools
-
 fn table_create(mut db DB, mut args DBTableCreateArgs) ! {
 	tablename, tablecmd, indexsql := table_create_statements(mut db, mut args)!
 	db.sqlitedb.exec(tablecmd)!
