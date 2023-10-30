@@ -1,6 +1,5 @@
 module zinit
 
-import os
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 
@@ -44,13 +43,13 @@ pub fn new() !Zinit {
 [params]
 pub struct ZProcessNewArgs {
 pub mut:
-	name      string   [required]
-	cmd       string   [required]
+	name      string            [required]
+	cmd       string            [required]
 	cmd_file  bool
 	test      string
 	test_file bool
 	after     []string
-	env       []string
+	env       map[string]string
 	oneshot   bool
 }
 
@@ -77,7 +76,7 @@ pub fn (mut zinit Zinit) new(mut args_ ZProcessNewArgs) !ZProcess {
 	}
 
 	zp.oneshot = args.oneshot
-	zp.env = args.env
+	zp.env = args.env.move()
 	zp.after = args.after
 
 	mut pathyaml := zinit.path.file_get(zp.name + '.yaml')!

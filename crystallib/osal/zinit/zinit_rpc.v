@@ -1,14 +1,26 @@
+module zinit
+
 import net.unix
 import json
 
-//TODO: implement all features from https://github.com/threefoldtech/zinit/blob/master/docs/protocol.md
+// TODO: implement all features from https://github.com/threefoldtech/zinit/blob/master/docs/protocol.md
 
-fn connect() !unix.StreamConn {
+enum State {
+	ok  [json: 'ok']
+	error  [json: 'error']
+}
+
+struct ZinitResponse {
+	state State
+	body  string [raw]
+}
+
+fn connect() !&unix.StreamConn {
 	mut s := unix.connect_stream('/var/run/zinit.sock')!
 	return s
 }
 
-fn shutdown(sc unix.StreamConn) {
+fn close(sc &unix.StreamConn) {
 	unix.shutdown(sc.sock.handle)
 }
 
@@ -16,27 +28,20 @@ fn shutdown(sc unix.StreamConn) {
 fn rpc(cmd string) !string {
 	mut c := connect()!
 	c.write_string(cmd + '\n')!
-	mut res := []u8{}
-	c.read(mut res)!
-
-	shutdown(c)
-	return ''
+	mut res := []u8{len: 1000, cap: 1000}
+	n := c.read(mut res)!
+	close(c)
+	return res[..n].bytestr()
 }
 
-struct ZinitServiceList {
-	state string
-	body  map[string]string
-}
+pub fn list() !map[string]string {
+	response := rpc('list')!
+	decoded_response := json.decode(ZinitResponse, response)!
+	if decoded_response.state == .error {
+		return error('zinit list failed: ${decoded_response.body}')
+	}
 
-fn list() !map[string]string {
-	r := rpc('list')!
-	sl := json.decode(ZinitServiceList, r)!
-	return sl.body
-}
-
-struct ZinitServiceStatus {
-	state string
-	body  ServiceStatus
+	return json.decode(map[string]string, decoded_response.body)!
 }
 
 struct ServiceStatus {
@@ -49,8 +54,78 @@ struct ServiceStatus {
 
 //{"state":"ok","body":{"after":{"delay":"Success"},"name":"redis","pid":320996,"state":"Running","target":"Up"}}
 
-fn status(name string) !ServiceStatus {
-	r := rpc('status ${name}')!
-	sl := json.decode(ZinitServiceStatus, r)!
-	return sl.body
+pub fn status(name string) !ServiceStatus {
+	response := rpc('status ${name}')!
+	decoded_response := json.decode(ZinitResponse, response)!
+	if decoded_response.state == .error {
+		return error('service ${name} status failed: ${decoded_response.body}')
+	}
+
+	return json.decode(ServiceStatus, decoded_response.body)!
+}
+
+pub fn start(name string) ! {
+	response := rpc('start ${name}')!
+	decoded_response := json.decode(ZinitResponse, response)!
+	if decoded_response.state == .error {
+		return error('service ${name} start failed: ${decoded_response.body}')
+	}
+}
+
+pub fn stop(name string) ! {
+	response := rpc('stop ${name}')!
+	decoded_response := json.decode(ZinitResponse, response)!
+	if decoded_response.state == .error {
+		return error('service ${name} stop failed: ${decoded_response.body}')
+	}
+}
+
+pub fn forget(name string) ! {
+	response := rpc('forget ${name}')!
+	decoded_response := json.decode(ZinitResponse, response)!
+	if decoded_response.state == .error {
+		return error('service ${name} forget failed: ${decoded_response.body}')
+	}
+}
+
+pub fn monitor(name string) ! {
+	response := rpc('monitor ${name}')!
+	decoded_response := json.decode(ZinitResponse, response)!
+	if decoded_response.state == .error {
+		return error('service ${name} monitor failed: ${decoded_response.body}')
+	}
+}
+
+pub fn kill(name string, signal string) ! {
+	response := rpc('kill ${name} ${signal}')!
+	decoded_response := json.decode(ZinitResponse, response)!
+	if decoded_response.state == .error {
+		return error('service ${name} kill failed: ${decoded_response.body}')
+	}
+}
+
+pub fn shutdown() ! {
+	response := rpc('shutdown')!
+	decoded_response := json.decode(ZinitResponse, response)!
+	if decoded_response.state == .error {
+		return error('zinit shutdown failed: ${decoded_response.body}')
+	}
+}
+
+pub fn reboot() ! {
+	response := rpc('reboot')!
+	decoded_response := json.decode(ZinitResponse, response)!
+	if decoded_response.state == .error {
+		return error('zinit reboot failed: ${decoded_response.body}')
+	}
+}
+
+pub fn log() !string {
+	response := rpc('log')!
+	decoded_response := json.decode(ZinitResponse, response)!
+	if decoded_response.state == .error {
+		return error('zinit log failed: ${decoded_response.body}')
+	}
+
+	return decoded_response.body as string
 }
