@@ -3,7 +3,6 @@ module zinit
 import net.unix
 import json
 
-// TODO: implement all features from https://github.com/threefoldtech/zinit/blob/master/docs/protocol.md
 pub struct Client {
 	socket_path string = '/var/run/zinit.sock'
 }
