@@ -136,5 +136,5 @@ pub fn (z Client) log() !string {
 		return error('zinit log failed: ${decoded_response.body}')
 	}
 
-	return decoded_response.body as string
+	return decoded_response.body
 }
