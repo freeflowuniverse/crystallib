@@ -35,7 +35,6 @@ fn extract_data_from_row(row_vals []string) ![]u8 {
 
 fn table_query(mut db DB, args DBQueryArgs) ![][]u8 {
 	sql_statement := table_query_statement(mut db, args)
-
 	mut oids := []int{}
 	mut cids := []int{}
 
@@ -91,13 +90,12 @@ fn table_query_statement(mut db DB, args DBQueryArgs) string {
 
 fn multiple_data_query(cids []int, oids []int) string {
 	mut b := strings.new_builder(20)
-	b.write_string('SELECT data FROM data WHERE ')
-	or_str := 'OR '
-	for id in cids {
-		b.write_string('( cid = ${cids[id]} AND oid = ${oids[id]} ) ${or_str}')
+	b.write_string('SELECT data FROM data WHERE oid IN (')
+	for id, _ in cids {
+		b.write_string('${oids[id]}, ')
 	}
 
-	b.cut_last(or_str.len)
-	b.write_byte(`;`)
+	b.cut_last(2)
+	b.write_string(' );')
 	return b.str()
 }

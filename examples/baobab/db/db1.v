@@ -3,6 +3,7 @@ module main
 import freeflowuniverse.crystallib.baobab.db
 import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.algo.encoder
+import time
 
 struct MyStruct {
 pub mut:
@@ -46,97 +47,54 @@ pub fn (o MyStruct) set() ! {
 }
 
 pub fn get(gid smartid.GID) !MyStruct {
+	data := db.read(gid)!
+	return loadb(data)!
+}
 
-	data:=db.delete(
-		gid: o.gid
+pub fn find(args db.DBQueryArgs) ![]MyStruct {
+	data := db.find(args)!
+	mut read_o := []MyStruct{}
+	for d in data {
+		read_o << loadb(d)!
+	}
 
-	)!
-
-	mut o:= loadb(data!)
-	
-	return o
-
+	return read_o
 }
 
 [params]
-struct MyStructQuery {
-pub mut:
-	name        string
-	nr          int
-	color       string
-	nr2         int
-}
-
-pub fn find(arg MyStructQuery) ![]MyStruct {
-
-	data:=db.find(
-		//todo
-
-	)!
-
-	//todo: implement
-	
-	return []MyStruct{}
-
-}
-
-pub fn (o MyStruct) delete() ! {
-
-	data:=db.delete(
-		gid: o.gid
-		objtype: 'mystruct'
-	)!
-}
-
-
-[params]
-pub struct DumpArgs{
+pub struct DumpArgs {
 pub mut:
 	json bool
 }
 
-//this is the method to dump binary form
+// this is the method to dump binary form
 pub fn (o MyStruct) dumpb(args DumpArgs) ![]u8 {
-	mut e := encoder.new() 
-	if args.json {
-		e.add_u8(2)
-		data:=json.ecode(o)!
-		e.add_binary(data)
-	}else{
-		e.add_u8(1)
-		e.add_u32(o.gid.cid.u32())
-		e.add_u32(o.gid.oid())
-		e.add_string(o.name)
-		e.add_int(o.nr)
-		e.add_string(o.color)
-		e.add_string(o.description)
-		e.add_int(o.nr2)
-		e.add_list_u32(o.listu32)
-	}
+	mut e := encoder.new()
+	e.add_u32(o.gid.cid.u32())
+	e.add_u32(o.gid.oid())
+	e.add_string(o.name)
+	e.add_int(o.nr)
+	e.add_string(o.color)
+	e.add_string(o.description)
+	e.add_int(o.nr2)
+	e.add_list_u32(o.listu32)
+
 	return e.data
 }
 
-//this is the method to load binary form
+// this is the method to load binary form
 pub fn loadb(data []u8) !MyStruct {
-
-	mut o:=MyStruct{}
+	mut o := MyStruct{}
 	mut d := encoder.decoder_new(data) // this already reads the first byte and ensures version == 1
-	version:=d.get_() == 1 // for now just fail if not right version
-	if version==1{
-		cid_int := int(d.get_u32())
-		oid_int := int(d.get_u32())
-		o.gid = smartid.gid(cid_int: cid_int, oid_int: oid_int)!
-		o.name = d.get_string()
-		o.nr = d.get_int()
-		o.color = d.get_string()
-		o.description = d.get_string()
-		o.nr2 = d.get_int()
-		o.listu32 = d.get_list_u32()
-	}else if version==2{
-		//json form
-		jsondata := d.get_binary() //does this exist?
-		o =json.decode(MyStruct,jsondata)
-	}
+	cid_int := int(d.get_u32())
+	oid_int := int(d.get_u32())
+	o.gid = smartid.gid(cid_int: cid_int, oid_int: oid_int)!
+	o.name = d.get_string()
+	o.nr = d.get_int()
+	o.color = d.get_string()
+	o.description = d.get_string()
+	o.nr2 = d.get_int()
+	o.listu32 = d.get_list_u32()
 
 	return o
 }
@@ -144,20 +102,6 @@ pub fn loadb(data []u8) !MyStruct {
 fn do() ! {
 	cid := smartid.cid(name: 'dbtest')!
 	db.new(cid: cid)!
-
-	// cid smartid.CID
-	// objtype string //unique type name for obj class
-	// index_int []string
-	// index_string []string
-	db.create(
-		cid: cid
-		objtype: 'smartcookie'
-		index_int: ['a', 'b']
-		index_string: [
-			'c',
-			'd',
-		]
-	)!
 
 	mut o := MyStruct{
 		gid: cid.gid()!
@@ -168,20 +112,85 @@ fn do() ! {
 		nr2: 10
 		listu32: [u32(2), u32(3), u32(4)]
 	}
-
 	o.set()!
 
+	mut o2 := MyStruct{
+		gid: cid.gid()!
+		name: 'my second name'
+		nr: 2
+		color: 'blue'
+		nr2: 11
+		listu32: [u32(5), u32(6), u32(7)]
+	}
+	o2.set()!
+
 	read_o_dump := db.read(o.gid)!
-	mut read_o := MyStruct{}
-	read_o.loadb(read_o_dump)!
-	println('read struct: ${read_o}')
-	// TODO: check the data write
 
-	o.delete()!
-	o.find(...!
+	read_o := loadb(read_o_dump)!
+	println('read result: ${read_o}')
 
-	// TODO: check performance, do a perf test for 100k objects
-	// TODO: implement the get object code
+	find_result := find(
+		cid: cid
+		objtype: 'mystruct'
+		query_int: {
+			'nr': 2
+		}
+	)!
+	println('find result: ${find_result}')
+
+	db.delete(gid: o.gid, objtype: 'mystruct')!
+	db.delete(gid: o2.gid, objtype: 'mystruct')!
+
+	perf_write(cid)!
+	perf_find(cid)!
+	perf_delete(cid)!
+}
+
+fn perf_write(cid smartid.CID) ! {
+	now := time.now()
+	for i in 0 .. 1000 {
+		o := MyStruct{
+			gid: cid.gid()!
+			name: 'my ${i} record'
+			nr: 1
+			color: 'blue'
+			nr2: 2
+			listu32: [u32(5), u32(6), u32(7)]
+		}
+		o.set()!
+	}
+	diff := time.since(now)
+	println('writing 1000 objects took ${diff.seconds()} seconds.\n')
+}
+
+fn perf_find(cid smartid.CID) ! {
+	now := time.now()
+	find(
+		cid: cid
+		objtype: 'mystruct'
+		query_int: {
+			'nr': 1
+		}
+	)!
+	diff := time.since(now)
+	println('querying 1000 objects took ${diff.seconds()} seconds.\n')
+}
+
+fn perf_delete(cid smartid.CID) ! {
+	find_res := find(
+		cid: cid
+		objtype: 'mystruct'
+		query_int: {
+			'nr': 1
+		}
+	)!
+
+	now := time.now()
+	for obj in find_res {
+		db.delete(gid: obj.gid, objtype: 'mystruct')!
+	}
+	diff := time.since(now)
+	println('deleting 1000 objects took ${diff.seconds()} seconds.\n')
 }
 
 fn main() {

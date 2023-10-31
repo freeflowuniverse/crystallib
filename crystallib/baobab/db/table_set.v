@@ -39,7 +39,5 @@ fn table_set_statements(mut db DB, mut args DBSetArgs) !(string, string) {
 
 	mut setstatements := 'INSERT OR REPLACE INTO ${tablename} (${tosetitemsstr}) VALUES (${tosetvalsstr});'
 
-	println(setstatements)
-
 	return tablename, setstatements
 }

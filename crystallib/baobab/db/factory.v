@@ -110,10 +110,27 @@ pub mut:
 	query_string map[string]string
 }
 
-pub fn query(args DBQueryArgs) ![][]u8 {
+pub fn find(args DBQueryArgs) ![][]u8 {
 	mut mydb := dbs[args.cid.str()] or {
 		return error('cannot find db with cid: ${args.cid.str()}')
 	}
 
 	return table_query(mut mydb, args)
+}
+
+[params]
+pub struct DBDeleteArgs {
+pub mut:
+	gid     smartid.GID
+	objtype string
+}
+
+pub fn delete(args DBDeleteArgs) ! {
+	lock dbs {
+		mut mydb := dbs[args.gid.cid.str()] or {
+			return error('cannot find db with cid: ${args.gid.cid.str()}')
+		}
+
+		table_delete(mut mydb, args)!
+	}
 }
