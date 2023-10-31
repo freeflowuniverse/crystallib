@@ -58,7 +58,4 @@ fn test_zinit() {
 	time.sleep(time.millisecond * 10)
 	st = client.status('service_1')!
 	assert st.state.contains('SIGTERM')
-
-	// ls := client.list()!
-	// println('zinit list ${ls}')
 }

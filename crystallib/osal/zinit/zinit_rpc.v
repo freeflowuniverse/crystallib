@@ -54,6 +54,7 @@ pub fn (z Client) list() !map[string]string {
 }
 
 struct ServiceStatus {
+pub:
 	after  map[string]string
 	name   string
 	pid    int
