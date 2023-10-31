@@ -64,17 +64,17 @@ pub fn bootstrapper() ! {
 			panic('sdsdsds')
 		}
 
-		if !n.done_exists('keydb') {
-			n.exec_cmd(
-				cmd: '
-					echo "deb https://download.keydb.dev/open-source-dist $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/keydb.list
-					wget -O /etc/apt/trusted.gpg.d/keydb.gpg https://download.keydb.dev/open-source-dist/keyring.gpg
-					apt update
-					apt install keydb
-					'
-			)!
-			n.done_set('keydb', 'OK')!
-		}
+		// if !n.done_exists('keydb') {
+		// 	n.exec_cmd(
+		// 		cmd: '
+		// 			echo "deb https://download.keydb.dev/open-source-dist $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/keydb.list
+		// 			wget -O /etc/apt/trusted.gpg.d/keydb.gpg https://download.keydb.dev/open-source-dist/keyring.gpg
+		// 			apt update
+		// 			apt install keydb
+		// 			'
+		// 	)!
+		// 	n.done_set('keydb', 'OK')!
+		// }
 	}
 }
 
