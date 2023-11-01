@@ -5,7 +5,7 @@ import time
 
 fn do() ! {
 	
-	mydb:=mystruct.db_new("testcircle")!
+	mydb:=mystruct.db_new("testcircle",1)!  //2nd argument is version, 1 is binary, 2 is json, 3 is 3script
 
 	mydb.delete_all()!
 

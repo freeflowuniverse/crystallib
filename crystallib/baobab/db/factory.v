@@ -14,6 +14,7 @@ __global (
 pub struct DB {
 pub mut:
 	cid      smartid.CID
+	version u8
 	sqlitedb sqlite.DB
 }
 
@@ -21,6 +22,7 @@ pub mut:
 pub struct DBArgs {
 pub mut:
 	cid smartid.CID
+	version u8 = 1
 }
 
 pub fn new(args_ DBArgs) ! {
@@ -34,6 +36,7 @@ pub fn new(args_ DBArgs) ! {
 	mut db := DB{
 		cid: args.cid
 		sqlitedb: sqlitedb
+		version:args.version
 	}
 
 	tables_create_core(mut db)!

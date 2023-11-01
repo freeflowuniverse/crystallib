@@ -6,11 +6,11 @@ import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.algo.encoder
 import json
 
-const version=1 //1 is binary, 2 is json, 3 is 3script
 
 pub struct DB {
 pub:
 	cid         smartid.CID
+	version     u8 = 1
 }
 
 
@@ -25,10 +25,10 @@ pub mut:
 	listu32     []u32
 }
 
-pub fn db_new(circlename string)!DB{
+pub fn db_new(circlename string,version u8)!DB{
 	cid := smartid.cid(name: circlename)!
-	db.new(cid: cid)!
-	mut dbobj:=DB{cid:cid}
+	db.new(cid: cid,version:version)!
+	mut dbobj:=DB{cid:cid,version:version}
 	return dbobj
 }
 
@@ -114,7 +114,7 @@ pub fn (mydb DB) find(args FindArgs) ![]MyStruct {
 // this is the method to dump binary form
 pub fn (mydb DB) dumpb(o MyStruct)![]u8 {
 	mut e := encoder.new()
-	if version==1{
+	if mydb.version==1{
 		e.add_u8(1)//this is version 1, for binary
 		e.add_u32(mydb.cid.u32())
 		e.add_u32(o.gid.oid())
@@ -124,12 +124,12 @@ pub fn (mydb DB) dumpb(o MyStruct)![]u8 {
 		e.add_string(o.description)
 		e.add_int(o.nr2)
 		e.add_list_u32(o.listu32)
-	}else if version==2{
+	}else if mydb.version==2{
 		//json
-		data:=json.encode(o).bytes()
+		data:=json.encode(o)
 		e.add_u8(2)//this is version 1, for binary
-		e.add_bytes(data)
-	}else if version==3{
+		e.add_string(data)
+	}else if mydb.version==3{
 		e.add_u8(3)//this is version 1, for binary
 		//3script
 		panic("not implemented")
@@ -156,8 +156,8 @@ pub fn (mydb DB) loadb(data []u8) !MyStruct {
 		o.listu32 = d.get_list_u32()
 	}else if v==2{
 		//json
-		data2:=d.get_bytes()
-		o=json.decode(MyStruct,data2.str())!
+		data2:=d.get_string()
+		o=json.decode(MyStruct,data2)!
 	}else if v==3{
 		//3script
 		panic("not implemented")
