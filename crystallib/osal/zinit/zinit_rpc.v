@@ -3,7 +3,6 @@ module zinit
 import net.unix
 import json
 
-// TODO: implement all features from https://github.com/threefoldtech/zinit/blob/master/docs/protocol.md
 pub struct Client {
 	socket_path string = '/var/run/zinit.sock'
 }
@@ -54,6 +53,7 @@ pub fn (z Client) list() !map[string]string {
 }
 
 struct ServiceStatus {
+pub:
 	after  map[string]string
 	name   string
 	pid    int
@@ -136,5 +136,5 @@ pub fn (z Client) log() !string {
 		return error('zinit log failed: ${decoded_response.body}')
 	}
 
-	return decoded_response.body as string
+	return decoded_response.body
 }
