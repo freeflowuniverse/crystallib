@@ -1,6 +1,7 @@
 module db
 
 import freeflowuniverse.crystallib.data.ourtime
+import encoding.base32
 
 // gid smartid.GID
 // objtype string //unique type name for obj class
@@ -10,9 +11,8 @@ import freeflowuniverse.crystallib.data.ourtime
 fn table_set(mut db DB, mut args DBSetArgs) ! {
 	_, setstatements := table_set_statements(mut db, mut args)!
 	db.sqlitedb.exec(setstatements)!
-
 	// for now we just replace the data, but eventually will keep history and do content addressed
-	datastr := args.data.str()
+	datastr := base32.encode_to_string(args.data)
 	mut datasql := 'INSERT OR REPLACE INTO data (cid,oid,data) VALUES (${args.gid.cid.u32()},${args.gid.oid()},\'${datastr}\');'
 	db.sqlitedb.exec(datasql)!
 }

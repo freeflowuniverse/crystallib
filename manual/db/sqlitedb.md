@@ -1,3 +1,9 @@
+
+# sqlite db
+
+example how to set and get objects from sqlite db
+
+```golang
 module main
 
 import freeflowuniverse.crystallib.baobab.db
@@ -16,6 +22,44 @@ pub mut:
 	listu32     []u32
 }
 
+```
+
+define your object, as you would normally do, see the usage of our gid property, which is the default global id we should use in these situations,
+
+## set with json serialization 
+
+which is the shorter form
+
+```golang
+pub fn (o MyStruct) set() ! {
+	// the next will create the table if it doesn't exist yet, only checks once per mem session
+	db.create(
+		cid: o.gid.cid
+		objtype: 'mystruct'
+		index_int: ['nr', 'nr2']
+		index_string: ['name','color']
+	)!
+	db.set(
+		gid: o.gid
+		objtype: 'mystruct'
+		index_int: map[string]int{
+                'nr':o.nr
+                'nr2':o.nr2
+                }
+		index_string: map[string]string{
+                'name':o.name
+                'color':o.color
+                }
+	)!
+}
+
+```
+
+in this case there is no data serialization so json will be used automatically
+
+## set with binary serialization 
+
+```golang
 pub fn (o MyStruct) set() ! {
 	// the next will create the table if it doesn't exist yet, only checks once per mem session
 	db.create(
@@ -46,6 +90,34 @@ pub fn (o MyStruct) set() ! {
 	)!
 }
 
+// this is the method to dump binary form
+pub fn (o MyStruct) dumpb() ![]u8 {
+	mut e := encoder.new()
+	e.add_u32(o.gid.cid.u32())
+	e.add_u32(o.gid.oid())
+	e.add_string(o.name)
+	e.add_int(o.nr)
+	e.add_string(o.color)
+	e.add_string(o.description)
+	e.add_int(o.nr2)
+	e.add_list_u32(o.listu32)
+
+	return e.data
+}
+
+
+```
+
+in a set you need to chose which properties are important for the indexing and you can see how we implement the serialization
+
+
+
+## get
+
+
+
+```golang
+
 pub fn get(gid smartid.GID) !MyStruct {
 	data := db.read(gid)!
 	return loadb(data)!
@@ -67,20 +139,6 @@ pub mut:
 	json bool
 }
 
-// this is the method to dump binary form
-pub fn (o MyStruct) dumpb(args DumpArgs) ![]u8 {
-	mut e := encoder.new()
-	e.add_u32(o.gid.cid.u32())
-	e.add_u32(o.gid.oid())
-	e.add_string(o.name)
-	e.add_int(o.nr)
-	e.add_string(o.color)
-	e.add_string(o.description)
-	e.add_int(o.nr2)
-	e.add_list_u32(o.listu32)
-
-	return e.data
-}
 
 // this is the method to load binary form
 pub fn loadb(data []u8) !MyStruct {
@@ -196,3 +254,5 @@ fn perf_delete(cid smartid.CID) ! {
 fn main() {
 	do() or { panic(err) }
 }
+
+```

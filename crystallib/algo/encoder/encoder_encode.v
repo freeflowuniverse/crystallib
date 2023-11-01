@@ -7,13 +7,11 @@ const kb = 1024
 
 pub struct Encoder {
 pub mut:
-	version u8 = 1 // is important
 	data    []u8
 }
 
 pub fn new() Encoder {
 	mut e := Encoder{}
-	e.add_u8(e.version) // make sure when we decode, we need to check that version corresponds !
 	return e
 }
 

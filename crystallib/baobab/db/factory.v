@@ -50,7 +50,9 @@ pub mut:
 	objtype      string // unique type name for obj class
 	index_int    map[string]int
 	index_string map[string]string
-	data         []u8
+	data         []u8 //if empty will do json
+	json bool //we can set as json or as binary data
+
 }
 
 pub fn set(args_ DBSetArgs) ! {
@@ -96,9 +98,10 @@ pub fn create(args_ DBTableCreateArgs) ! {
 	}
 }
 
-pub fn read(gid smartid.GID) ![]u8 {
+//get the data from DB if you know the gid
+pub fn get(gid smartid.GID) ![]u8 {
 	mut mydb := dbs[gid.cid.str()] or { return error('cannot find db with cid: ${gid.cid.str()}') }
-	return table_read(mut mydb, gid)!
+	return table_get(mut mydb, gid)!
 }
 
 [params]
@@ -115,20 +118,21 @@ pub fn find(args DBQueryArgs) ![][]u8 {
 		return error('cannot find db with cid: ${args.cid.str()}')
 	}
 
-	return table_query(mut mydb, args)
+	return table_find(mut mydb, args)
 }
 
 [params]
 pub struct DBDeleteArgs {
 pub mut:
-	gid     smartid.GID
-	objtype string
+	cid 	smartid.CID [required]
+	gid     ?smartid.GID
+	objtype string [required]
 }
 
 pub fn delete(args DBDeleteArgs) ! {
 	lock dbs {
-		mut mydb := dbs[args.gid.cid.str()] or {
-			return error('cannot find db with cid: ${args.gid.cid.str()}')
+		mut mydb := dbs[args.cid.str()] or {
+			return error('cannot find db with cid: ${args.cid.str()}')
 		}
 
 		table_delete(mut mydb, args)!

@@ -13,10 +13,6 @@ pub fn decoder_new(data []u8) Decoder {
 	mut e := Decoder{}
 	e.data = data
 	// e.data = data.reverse()
-	e.version = e.get_u8()
-	if e.version != 1 {
-		panic('the version needs to be 1, incompatible serialization format.')
-	}
 	return e
 }
 
