@@ -1,6 +1,5 @@
 module mystruct
 
-import freeflowuniverse.crystallib.baobab.models.system
 import freeflowuniverse.crystallib.baobab.db
 import freeflowuniverse.crystallib.baobab.smartid
 import json
@@ -33,45 +32,26 @@ pub fn db_new(args DBArgs)!MyDB{
 	return mydb
 }
 
-
 pub fn  (mydb MyDB) set(o MyStruct)  ! {
-	// the next will create the table if it doesn't exist yet, only checks once per mem session
-	db.create(
-		cid: o.gid.cid
-		objtype: objtype
-		index_int: ['nr', 'nr2']
-		index_string: [
-			'name',
-			'color',
-		]
-	)!
-	// get the serialization (v1 is a quite efficient small serialization protocol)
 	data := mydb.serialize(o)!
-	db.set(
+	mydb.set_data(
 		gid: o.gid
 		objtype: objtype
 		index_int: {'nr':o.nr,'nr2':o.nr2}
 		index_string: {'name':o.name'color':o.color}
 		data: data
+		baseobj:o.Base
 	)!
 }
 
 pub fn  (mydb MyDB)  get(gid smartid.GID) !MyStruct {
-	data := db.get(gid:gid,objtype: objtype)!
+	data := mydb.get_date(gid:gid)!
 	return mydb.unserialize(data)
 }
 
-pub fn  (mydb MyDB)  delete(gid smartid.GID) ! {
-	db.delete(cid:mydb.cid,gid:gid,objtype:objtype)!
-}
-
-pub fn  (mydb MyDB)  delete_all() ! {
-	db.delete(cid:mydb.cid,objtype:objtype)!
-}
-
-
 [params]
 pub struct FindArgs {
+	db.BaseFindArgs
 pub mut:
 	name        string
 	color       string
@@ -81,6 +61,7 @@ pub mut:
 
 
 pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {
+	// mydb.basefind(args.BaseFindArgs) //TODO: see how to integrate the query mechanism on base into the the bigger one
 	mut query_int:=map[string]int{}
 	if args.nr>0{
 		query_int["nr"]=args.nr	
