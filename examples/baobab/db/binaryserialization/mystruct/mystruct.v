@@ -1,38 +1,31 @@
 module mystruct
 
-
+import freeflowuniverse.crystallib.baobab.models.system
 import freeflowuniverse.crystallib.baobab.db
-import freeflowuniverse.crystallib.baobab.smartid
-import freeflowuniverse.crystallib.algo.encoder
 import json
 
 const objtype = 'mystruct'
-
 
 pub struct MyDB {
 	db.DB
 }
 
-
 pub struct MyStruct {
+	system.Base	
 pub mut:
-	gid         smartid.GID
-	name        string
 	nr          int
 	color       string
-	description string
 	nr2         int
 	listu32     []u32
 }
 
+//TODO: use enumerator and do differently (despiegk)
 [params]
 pub struct DBArgs {
 pub mut:
 	circlename string
 	version u8 = 1 //1 is bin, 2 is json, 3 is 3script
 }
-
-
 pub fn db_new(args DBArgs)!MyDB{
 	mut mydb:= MyDB{circlename:args.circlename,version:args.version,objtype:objtype}
 	mydb.init()!
@@ -120,56 +113,52 @@ pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {
 
 // this is the method to dump binary form
 pub fn (mydb MyDB) serialize(o MyStruct)[]u8 {
-	mut e := encoder.new()
-	if mydb.version==1{
-		e.add_u8(1)//this is version 1, for binary
-		e.add_u32(mydb.cid.u32())
-		e.add_u32(o.gid.oid())
-		e.add_string(o.name)
-		e.add_int(o.nr)
-		e.add_string(o.color)
-		e.add_string(o.description)
-		e.add_int(o.nr2)
-		e.add_list_u32(o.listu32)
-	}else if mydb.version==2{
-		//json
-		data:=json.encode(o)
-		e.add_u8(2)//this is version 1, for binary
-		e.add_string(data)
-	}else if mydb.version==3{
-		e.add_u8(3)//this is version 1, for binary
-		//3script
-		panic("not implemented")
-	}else{
-		panic("not implemented")
-	}
+		
+	mut e:=o.bin_encoder()!
+	e.add_int(o.nr)
+	e.add_string(o.color)
+	e.add_int(o.nr2)
+	e.add_list_u32(o.listu32)
+
+	// if mydb.version==1{
+	// }else if mydb.version==2{
+	// 	panic("not implemented")
+	// 	//json
+	// 	// data:=json.encode(o)
+	// 	// e.add_u8(2)//this is version 1, for binary
+	// 	// e.add_string(data)
+	// }else if mydb.version==3{
+	// 	// e.add_u8(3)//this is version 1, for binary
+	// 	//3script
+	// 	panic("not implemented")
+	// }else{
+	// 	panic("not implemented")
+	// }
 	return e.data
 }
 
 // this is the method to load binary form
 pub fn (mydb MyDB) unserialize(data []u8) MyStruct {
 	mut o := MyStruct{}
-	mut d := encoder.decoder_new(data) 
-	v:=d.get_u8() //get version out
-	if v==1{
-		cid_int := int(d.get_u32())
-		oid_int := int(d.get_u32())
-		o.gid = smartid.gid(cid_int: cid_int, oid_int: oid_int)!
-		o.name = d.get_string()
-		o.nr = d.get_int()
-		o.color = d.get_string()
-		o.description = d.get_string()
-		o.nr2 = d.get_int()
-		o.listu32 = d.get_list_u32()
-	}else if v==2{
-		//json
-		data2:=d.get_string()
-		o=json.decode(MyStruct,data2) or {MyStruct{}}
-	}else if v==3{
-		//3script
-		panic("not implemented")
-	}else{
-		panic("not implemented")
-	}
+	// mut d := encoder.decoder_new(data) 
+	mut d,base:=base_decoder(data)!
+	mut o:=MyStruct{Base:base}
+	o.nr = d.get_int()
+	o.color = d.get_string()
+	o.nr2 = d.get_int()
+	o.listu32 = d.get_list_u32()
+
+	// if v==1{
+	// }else if v==2{
+	// 	panic("not implemented")
+	// 	//json
+	// 	// data2:=d.get_string()
+	// 	// o=json.decode(MyStruct,data2) or {MyStruct{}}
+	// }else if v==3{
+	// 	//3script
+	// 	panic("not implemented")
+	// }else{
+	// 	panic("not implemented")
+	// }
 	return o
 }
