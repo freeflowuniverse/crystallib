@@ -29,8 +29,6 @@ module db
 // 	return o
 // }
 
-
-
 // fn test_base() {
 // 	m := create_struct()
 

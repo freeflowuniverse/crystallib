@@ -95,7 +95,7 @@ pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {
 	if args.color.len>0{
 		query_str["color"]=args.color	
 	}
-	mut query_args:=db.DBQueryArgs{
+	mut query_args:=db.DBFindArgs{
 		cid          :mydb.cid
 		objtype      : objtype
 		query_int    : query_int

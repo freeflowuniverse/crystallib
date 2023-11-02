@@ -1,4 +1,5 @@
 module db
+
 import freeflowuniverse.crystallib.baobab.smartid
 
 fn table_delete(mut db DB, args DBDeleteArgs) ! {
@@ -11,13 +12,12 @@ fn table_delete(mut db DB, args DBDeleteArgs) ! {
 }
 
 fn table_delete_statement(name string, args DBDeleteArgs) string {
-	gid:=args.gid or {smartid.GID{}}
-	oid:=gid.oid()
-	q:=if oid> 0 {
+	gid := args.gid or { smartid.GID{} }
+	oid := gid.oid()
+	q := if oid > 0 {
 		'DELETE from ${name} WHERE cid = ${args.cid.u32()} AND oid = ${oid}'
-	}else{
+	} else {
 		'DELETE from ${name} WHERE cid = ${args.cid.u32()}'
 	}
-	return q	
+	return q
 }
-

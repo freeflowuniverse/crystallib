@@ -6,7 +6,6 @@ import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.algo.encoder
 import freeflowuniverse.crystallib.baobab.smartid
 
-
 [heap]
 pub struct Base {
 pub mut:
@@ -14,11 +13,11 @@ pub mut:
 	params             paramsparser.Params
 	version_base       u8 = 1 // so we know how to do the serialize or unserialize
 	serialization_type SerializationType
-	name string
-	description string
-	remarks     Remarks
-	mtime ourtime.OurTime //modification time
-	ctime ourtime.OurTime //creation time
+	name               string
+	description        string
+	remarks            Remarks
+	mtime              ourtime.OurTime // modification time
+	ctime              ourtime.OurTime // creation time
 }
 
 pub enum SerializationType {

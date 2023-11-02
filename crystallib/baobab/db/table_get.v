@@ -1,7 +1,6 @@
 module db
 
 import freeflowuniverse.crystallib.baobab.smartid
-import strings
 import encoding.base32
 
 fn table_get(mut db DB, g smartid.GID) ![]u8 {
@@ -17,6 +16,6 @@ fn table_get(mut db DB, g smartid.GID) ![]u8 {
 		return error('${rows.len} records matched the provided gid, while only one is expected')
 	}
 
-	data_str:=base32.decode_string_to_string(rows[0].vals[0])!
+	data_str := base32.decode_string_to_string(rows[0].vals[0])!
 	return data_str.bytes()
 }

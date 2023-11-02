@@ -1,10 +1,9 @@
 module db
 
-import freeflowuniverse.crystallib.baobab.smartid
 import strings
 import encoding.base32
 
-fn table_find(mut db DB, args DBQueryArgs) ![][]u8 {
+fn table_find(mut db DB, args DBFindArgs) ![][]u8 {
 	sql_statement := table_find_statement(mut db, args)
 	mut oids := []int{}
 	mut cids := []int{}
@@ -27,13 +26,13 @@ fn table_find(mut db DB, args DBQueryArgs) ![][]u8 {
 
 	mut data := [][]u8{}
 	for _, data_row in data_rows {
-		data_str:=base32.decode_string_to_string(data_row.vals[0])!
+		data_str := base32.decode_string_to_string(data_row.vals[0])!
 		data << data_str.bytes()
-	}		
+	}
 	return data
 }
 
-fn table_find_statement(mut db DB, args DBQueryArgs) string {
+fn table_find_statement(mut db DB, args DBFindArgs) string {
 	tn := table_name(db, args.objtype)
 	mut b := strings.new_builder(15)
 	b.write_string('SELECT cid, oid FROM ${tn}')
@@ -44,6 +43,15 @@ fn table_find_statement(mut db DB, args DBQueryArgs) string {
 
 	and_str := 'AND '
 	b.write_string(' WHERE ')
+
+	for k, v in args.query_int_less {
+		b.write_string('${k} < ${v} ${and_str}')
+	}
+
+	for k, v in args.query_int_greater {
+		b.write_string('${k} > ${v} ${and_str}')
+	}
+
 	for k, v in args.query_int {
 		b.write_string('${k} = ${v} ${and_str}')
 	}
