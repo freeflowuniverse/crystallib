@@ -6,13 +6,13 @@ import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.data.paramsparser
 
 [heap]
-struct Remarks {
+pub struct Remarks {
 pub mut:
 	remarks []Remark
 }
 
 [heap]
-struct Remark {
+pub struct Remark {
 pub mut:
 	content string
 	time    ourtime.OurTime
@@ -124,7 +124,7 @@ pub fn remark_unserialize_binary(data []u8) !Remark {
 	remark.rtype = remarktype(d.get_u8())
 	remark.content = d.get_string()
 	remark.time = ourtime.OurTime{unix:i64(d.get_int())}
-	remark.author = smartid.gid(oid_u32:d.get_u32())!
+	remark.author = smartid.GID{id:d.get_u32()}
 	remark.params=paramsparser.new(d.get_string())!
 	return remark
 }

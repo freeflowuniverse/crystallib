@@ -8,6 +8,21 @@ pub mut:
 	nr int
 }
 
+//example of how we should implement binary serialization
+pub fn (o MyStruct) serialize_binary() ![]u8{
+	mut b:=o.bin_encoder()!
+	b.add_string(o.color)
+	b.add_int(o.nr)
+	return b.data
+}
+
+pub fn load(data []u8) !MyStruct{
+	mut d,base:=base_decoder(data)!
+	mut o:=MyStruct{Base:base}
+	o.color=d.get_string()
+	o.nr=d.get_int()
+	return o
+}
 
 
 fn test_base() {
@@ -45,9 +60,16 @@ fn test_base() {
 
 	println(m)
 
+	data:=m.serialize_binary() or {panic(err)}
+	m2:=load(data) or {panic(err)}
+
+	println(m2)
+	
+	if true{
+		panic('55ss')
+	}
 	//TODO: do lots more tests
 
 
 }
 
-//todo: test the binary serialization / deserialization

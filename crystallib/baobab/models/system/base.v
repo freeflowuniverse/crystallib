@@ -46,7 +46,7 @@ pub fn (mut o Base) params_add(text string) ! {
 }
 
 // returns bin encoder already populated with all base properties
-pub fn (mut o Base) bin_encoder() !encoder.Encoder {
+pub fn (o Base) bin_encoder() !encoder.Encoder {
 	mut b := encoder.new()
 	b.add_u8(o.version_base) // remember which version this is	
 	b.add_u32(o.gid.oid()) // remember which version this is
@@ -59,16 +59,16 @@ pub fn (mut o Base) bin_encoder() !encoder.Encoder {
 }
 
 
-pub fn base_unserialize_binary(data []u8) !encoder.Decoder {
+pub fn base_decoder(data []u8) !(encoder.Decoder,Base) {
 	mut o:=Base{}
 	mut d := encoder.decoder_new(data) 
 	assert d.get_u8()==1
-	o.gid=smartid.gid(oid_u32:d.get_u32())!
+	o.gid=smartid.GID{id:d.get_u32()}
 	o.params=paramsparser.new(d.get_string())!
 	o.name=d.get_string()
 	o.description=d.get_string()
 	remarksbytes:=d.get_bytes()
 	o.remarks = remarks_unserialize_binary(remarksbytes)!
 	o.serialization_type = .bin	
-	return d
+	return d,o
 }
