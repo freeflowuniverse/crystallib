@@ -76,7 +76,7 @@ pub fn scan(args ScanArgs) !paramsparser.Params {
 	mut path := pathlib.get_dir(path: args.path)!
 	mut params_ := paramsparser.Params{}
 	if args.backupdir != '' {
-		params_.kwarg_add('backup', args.backupdir)
+		params_.kwarg_set('backup', args.backupdir)
 	}
 	params_ = path.scan(mut params_, [filter_imagemagic], [executor_imagemagic])!
 	return params_

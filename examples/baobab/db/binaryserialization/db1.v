@@ -5,7 +5,8 @@ import time
 
 fn do() ! {
 	
-	mydb:=mystruct.db_new("testcircle",1)!  //2nd argument is version, 1 is binary, 2 is json, 3 is 3script
+	mydb:=mystruct.db_new(circlename:"testcircle")!
+	println(mydb)
 
 	mydb.delete_all()!
 
@@ -60,35 +61,35 @@ fn do() ! {
 	objs_6:=mydb.find()!	
 	assert objs_6.len==0
 
-	perf_write(mydb)!
-	perf_find(mydb)!
+	// perf_write(mydb)!
+	// perf_find(mydb)!
 
 	mydb.delete_all()!
 }
 
-fn perf_write(mydb mystruct.DB) ! {
-	now := time.now()
-	for i in 0 .. 1000 {
-		o := mystruct.MyStruct{
-			gid: mydb.cid.gid()!
-			name: 'my ${i} record'
-			nr: 1
-			color: 'blue'
-			nr2: 2
-			listu32: [u32(5), u32(6), u32(7)]
-		}
-		mydb.set(o)!
-	}
-	diff := time.since(now)
-	println('writing 1000 objects took ${diff.seconds()} seconds.\n')
-}
+// fn perf_write(mydb mystruct.DB) ! {
+// 	now := time.now()
+// 	for i in 0 .. 1000 {
+// 		o := mystruct.MyStruct{
+// 			gid: mydb.cid.gid()!
+// 			name: 'my ${i} record'
+// 			nr: 1
+// 			color: 'blue'
+// 			nr2: 2
+// 			listu32: [u32(5), u32(6), u32(7)]
+// 		}
+// 		mydb.set(o)!
+// 	}
+// 	diff := time.since(now)
+// 	println('writing 1000 objects took ${diff.seconds()} seconds.\n')
+// }
 
-fn perf_find(mydb mystruct.DB) ! {
-	now := time.now()
-	mydb.find(nr:1)!
-	diff := time.since(now)
-	println('querying 1000 objects took ${diff.seconds()} seconds.\n')
-}
+// fn perf_find(mydb mystruct.DB) ! {
+// 	now := time.now()
+// 	mydb.find(nr:1)!
+// 	diff := time.since(now)
+// 	println('querying 1000 objects took ${diff.seconds()} seconds.\n')
+// }
 
 
 

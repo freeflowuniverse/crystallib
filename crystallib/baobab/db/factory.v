@@ -3,10 +3,9 @@ module db
 import db.sqlite
 import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.core.pathlib
-// import freeflowuniverse.crystallib.core.texttools
-
+import freeflowuniverse.crystallib.core.texttools
 __global (
-	dbs      shared map[string]DB
+	dbs      shared map[string]DB //key is cidstr__objtype
 	dbs_init shared map[string]bool
 )
 
@@ -14,37 +13,29 @@ __global (
 pub struct DB {
 pub mut:
 	cid      smartid.CID
-	version u8
+	version u8 //1 is binary, 2 is json, 3 is 3script
+	circlename string
+	objtype string
 	sqlitedb sqlite.DB
+	datapath ?pathlib.Path
 }
 
-[params]
-pub struct DBArgs {
-pub mut:
-	cid smartid.CID
-	version u8 = 1
+fn key (cid smartid.CID,objtype_ string)string{
+	objtype:=texttools.name_fix(objtype_)
+	return "${cid.str()}__${objtype}"
 }
 
-pub fn new(args_ DBArgs) ! {
-	mut args := args_
-	name := args.cid.str()
-
+pub fn (mut mydb DB) init() ! {
+	mydb.cid = smartid.cid(name:mydb.circlename)!
 	mut heropath := pathlib.get_dir(path: '~/hero/db', create: true)!
-
-	mut sqlitedb := sqlite.connect('${heropath.path}/${name}.db')!
-
-	mut db := DB{
-		cid: args.cid
-		sqlitedb: sqlitedb
-		version:args.version
-	}
-
-	tables_create_core(mut db)!
-
+	mut sqlitedb := sqlite.connect('${heropath.path}/${mydb.cid.str()}.db')!
+	mydb.sqlitedb=sqlitedb
+	tables_create_core(mut mydb)!
 	lock dbs {
-		dbs[name] = &db
+		dbs[key(mydb.cid,mydb.objtype)] = &mydb
 	}
 }
+
 
 [params]
 pub struct DBSetArgs {
@@ -61,8 +52,9 @@ pub mut:
 pub fn set(args_ DBSetArgs) ! {
 	mut args := args_
 	lock dbs {
-		mut mydb := dbs[args.gid.cid.str()] or {
-			return error('cannot find db with cid: ${args.gid.cid}')
+		k:=key(args.gid.cid,args.objtype)
+		mut mydb := dbs[k] or {
+			return error('cannot find db with key: ${k} for set')
 		}
 		table_set(mut mydb, mut args)!
 	}
@@ -81,8 +73,9 @@ pub mut:
 pub fn create(args_ DBTableCreateArgs) ! {
 	mut args := args_
 	mut tablename := ''
-	lock dbs {
-		mydb := dbs[args.cid.str()] or { return error('cannot find db with cid: ${args.cid}') }
+	k:=key(args.cid,args.objtype)
+	lock dbs {		
+		mydb := dbs[k] or { return error('cannot find db with key:$k for create.') }
 		tablename = table_name(mydb, args.objtype)
 	}
 
@@ -92,8 +85,8 @@ pub fn create(args_ DBTableCreateArgs) ! {
 		}
 	}
 	lock dbs {
-		println('create table for ${args_}')
-		mut mydb2 := dbs[args.cid.str()] or { return error('cannot find db with cid: ${args.cid}') }
+		// println('create table for ${args_}')
+		mut mydb2 := dbs[k]or { return error('cannot find db with key: ${k} for create 2.') }
 		table_create(mut mydb2, mut args)!
 	}
 	lock dbs_init {
@@ -101,10 +94,18 @@ pub fn create(args_ DBTableCreateArgs) ! {
 	}
 }
 
+[params]
+pub struct DBTableGetArgs {
+pub mut:
+	gid          smartid.GID [required]
+	objtype      string [required]
+}
+
 //get the data from DB if you know the gid
-pub fn get(gid smartid.GID) ![]u8 {
-	mut mydb := dbs[gid.cid.str()] or { return error('cannot find db with cid: ${gid.cid.str()}') }
-	return table_get(mut mydb, gid)!
+pub fn get(args DBTableGetArgs) ![]u8 {
+	k:=key(args.gid.cid,args.objtype)
+	mut mydb := dbs[k] or { return error('cannot find db with key:$k for get') }
+	return table_get(mut mydb, args.gid)!
 }
 
 [params]
@@ -117,7 +118,7 @@ pub mut:
 }
 
 pub fn find(args DBQueryArgs) ![][]u8 {
-	mut mydb := dbs[args.cid.str()] or {
+	mut mydb := dbs[key(args.cid,args.objtype)]or {
 		return error('cannot find db with cid: ${args.cid.str()}')
 	}
 
@@ -134,7 +135,7 @@ pub mut:
 
 pub fn delete(args DBDeleteArgs) ! {
 	lock dbs {
-		mut mydb := dbs[args.cid.str()] or {
+		mut mydb := dbs[key(args.cid,args.objtype)]or {
 			return error('cannot find db with cid: ${args.cid.str()}')
 		}
 

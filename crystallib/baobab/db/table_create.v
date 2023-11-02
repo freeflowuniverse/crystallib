@@ -22,7 +22,7 @@ fn tables_create_core(mut db DB) ! {
 		db.sqlitedb.exec(indextable)!
 	}
 
-	println(datatable)
+	// println(datatable)
 }
 
 fn index_exists(mut db DB, name string) bool {

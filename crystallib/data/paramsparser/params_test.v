@@ -281,6 +281,58 @@ fn test_params_default_true() {
 	assert params.get_default_true('certified4') == true
 }
 
+fn test_kwargs_add() {
+	mut params := parse(paramsparser.textin2) or { panic(err) }
+
+	println(params.params)
+
+	assert params.params.len == 10
+
+	params.kwarg_set("name3","anotherhi")
+	assert params.params.len == 10
+	params.kwarg_set("name7","anotherhi")
+	assert params.params.len == 11 //because is new one
+
+	assert params.get("name3") or {""}=="anotherhi"
+
+}
+
+
+fn test_args_add() {
+	mut params := parse("urgency:yes red green") or { panic(err) }
+
+	println(params.args)
+
+	assert params.params.len == 1
+	assert params.args.len == 2
+
+	params.arg_set("red")
+	assert params.args.len == 2
+	params.arg_set("yellow")
+	assert params.args.len == 3
+
+}
+
+
+fn test_merge() {
+	mut params := parse("urgency:yes red green") or { panic(err) }
+
+	println(params.args)
+
+	params.merge("urgency:green blue") or {panic("s")}
+
+	println(params.args)
+
+	assert params.params.len == 1
+	assert params.args.len == 3
+
+	assert params.get("urgency") or {""}=="green"
+
+
+}
+
+
+
 /*
 fn test_to_resp_from_resp() {
 	mut input := Params{
@@ -379,3 +431,5 @@ expected_result := "
 		'333'
 	"
 */
+
+

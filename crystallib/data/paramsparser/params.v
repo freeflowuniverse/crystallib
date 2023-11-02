@@ -22,7 +22,21 @@ pub fn new_params() Params {
 	return Params{}
 }
 
-pub fn (mut result Params) kwarg_add(key string, value string) {
+
+pub fn (mut params Params) kwarg_delete(key string) {
+	key2 := key.to_lower().trim_space()
+	if params.exists(key){
+		mut params_out:=[]Param{}
+		for p in params.params{
+			if p.key != key2{
+				params_out<<p
+			}
+		}
+		params.params=params_out
+	}
+}
+
+pub fn (mut params Params) kwarg_set(key string, value string) {
 	mut key2 := ''
 	mut value2 := ''
 
@@ -33,16 +47,38 @@ pub fn (mut result Params) kwarg_add(key string, value string) {
 	value2 = value2.replace('\\n', '\n')
 	value2 = value2.trim_right(' ')
 
-	result.params << Param{
+	params.kwarg_delete(key)
+	params.params << Param{
 		key: key2
 		value: value2
 	}
 }
 
-pub fn (mut result Params) arg_add(value string) {
+
+pub fn (mut params Params) arg_delete(key string) {
+	key2 := key.to_lower().trim_space()
+	if params.arg_exists(key2){
+		params.args.delete(params.args.index(key2))
+	}
+}
+
+pub fn (mut params Params) arg_set(value string) {
 	mut value2 := value.trim(" '")
 	value2 = value2.replace('<<BR>>', '\n')
-	result.args << value2
+	if ! params.arg_exists(value2){
+		params.args << value2
+	}
+}
+
+//parse new txt as params and merge into params
+pub fn (mut params Params) merge(txt string)! {
+	paramsnew:=parse(txt)!
+	for p in paramsnew.params{
+		params.kwarg_set(p.key,p.value)
+	}
+	for a in paramsnew.args{
+		params.arg_set(a)
+	}
 }
 
 pub fn (mut p Params) empty() bool {
@@ -52,7 +88,7 @@ pub fn (mut p Params) empty() bool {
 	return false
 }
 
-pub fn (mut p Params) str() string {
+pub fn (p Params) str() string {
 	mut out := ''
 	out = p.export(indent: '    ')
 	out = out.trim_right('\n')

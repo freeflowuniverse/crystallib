@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.baobab.smartid
 pub struct GIDNewArgs {
 pub mut:
 	gid_str  string // rid.cid.oid format
+	oid_u32  u32
 	oid_int  int
 	oid_str  string // e.g. aaa, is 1...6 letter representation of a unique id
 	cid_int  int    // int representation of cid

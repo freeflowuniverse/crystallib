@@ -6,11 +6,11 @@ import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.algo.encoder
 import json
 
+const objtype = 'mystruct'
 
-pub struct DB {
-pub:
-	cid         smartid.CID
-	version     u8 = 1
+
+pub struct MyDB {
+	db.DB
 }
 
 
@@ -25,19 +25,26 @@ pub mut:
 	listu32     []u32
 }
 
-pub fn db_new(circlename string,version u8)!DB{
-	cid := smartid.cid(name: circlename)!
-	db.new(cid: cid,version:version)!
-	mut dbobj:=DB{cid:cid,version:version}
-	return dbobj
+[params]
+pub struct DBArgs {
+pub mut:
+	circlename string
+	version u8 = 1 //1 is bin, 2 is json, 3 is 3script
 }
 
 
-pub fn  (mydb DB) set(o MyStruct)  ! {
+pub fn db_new(args DBArgs)!MyDB{
+	mut mydb:= MyDB{circlename:args.circlename,version:args.version,objtype:objtype}
+	mydb.init()!
+	return mydb
+}
+
+
+pub fn  (mydb MyDB) set(o MyStruct)  ! {
 	// the next will create the table if it doesn't exist yet, only checks once per mem session
 	db.create(
 		cid: o.gid.cid
-		objtype: 'mystruct'
+		objtype: objtype
 		index_int: ['nr', 'nr2']
 		index_string: [
 			'name',
@@ -45,27 +52,27 @@ pub fn  (mydb DB) set(o MyStruct)  ! {
 		]
 	)!
 	// get the serialization (v1 is a quite efficient small serialization protocol)
-	data := mydb.dumpb(o)!
+	data := mydb.serialize(o)
 	db.set(
 		gid: o.gid
-		objtype: 'mystruct'
+		objtype: objtype
 		index_int: {'nr':o.nr,'nr2':o.nr2}
 		index_string: {'name':o.name'color':o.color}
 		data: data
 	)!
 }
 
-pub fn  (mydb DB)  get(gid smartid.GID) !MyStruct {
-	data := db.get(gid)!
-	return mydb.loadb(data)!
+pub fn  (mydb MyDB)  get(gid smartid.GID) !MyStruct {
+	data := db.get(gid:gid,objtype: objtype)!
+	return mydb.unserialize(data)
 }
 
-pub fn  (mydb DB)  delete(gid smartid.GID) ! {
-	db.delete(cid:mydb.cid,gid:gid,objtype:"mystruct")!
+pub fn  (mydb MyDB)  delete(gid smartid.GID) ! {
+	db.delete(cid:mydb.cid,gid:gid,objtype:objtype)!
 }
 
-pub fn  (mydb DB)  delete_all() ! {
-	db.delete(cid:mydb.cid,objtype:"mystruct")!
+pub fn  (mydb MyDB)  delete_all() ! {
+	db.delete(cid:mydb.cid,objtype:objtype)!
 }
 
 
@@ -79,7 +86,7 @@ pub mut:
 }
 
 
-pub fn (mydb DB) find(args FindArgs) ![]MyStruct {
+pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {
 	mut query_int:=map[string]int{}
 	if args.nr>0{
 		query_int["nr"]=args.nr	
@@ -96,15 +103,15 @@ pub fn (mydb DB) find(args FindArgs) ![]MyStruct {
 	}
 	mut query_args:=db.DBQueryArgs{
 		cid          :mydb.cid
-		objtype      : 'mystruct'
+		objtype      : objtype
 		query_int    : query_int
 		query_string : query_str
 	}
-	println(query_args)
+	// println(query_args)
 	data := db.find(query_args)!
 	mut read_o := []MyStruct{}
 	for d in data {
-		read_o << mydb.loadb(d)!
+		read_o << mydb.unserialize(d)
 	}
 	return read_o
 }
@@ -112,7 +119,7 @@ pub fn (mydb DB) find(args FindArgs) ![]MyStruct {
 //////////////////////serialization
 
 // this is the method to dump binary form
-pub fn (mydb DB) dumpb(o MyStruct)![]u8 {
+pub fn (mydb MyDB) serialize(o MyStruct)[]u8 {
 	mut e := encoder.new()
 	if mydb.version==1{
 		e.add_u8(1)//this is version 1, for binary
@@ -140,7 +147,7 @@ pub fn (mydb DB) dumpb(o MyStruct)![]u8 {
 }
 
 // this is the method to load binary form
-pub fn (mydb DB) loadb(data []u8) !MyStruct {
+pub fn (mydb MyDB) unserialize(data []u8) MyStruct {
 	mut o := MyStruct{}
 	mut d := encoder.decoder_new(data) 
 	v:=d.get_u8() //get version out
@@ -157,7 +164,7 @@ pub fn (mydb DB) loadb(data []u8) !MyStruct {
 	}else if v==2{
 		//json
 		data2:=d.get_string()
-		o=json.decode(MyStruct,data2)!
+		o=json.decode(MyStruct,data2) or {MyStruct{}}
 	}else if v==3{
 		//3script
 		panic("not implemented")
