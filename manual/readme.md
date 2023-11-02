@@ -13,11 +13,13 @@ this is example rscript which will build the manual, above cmd can run it.
 !!circle.select name:'crmanual' id:'***' 
 
 !!knowledgetree.collections_scan
-	git_url: ' https://github.com/freeflowuniverse/crystallib/blob/development/manual'
+    git_root: '/tmp/code'
+	git_url: 'https://github.com/freeflowuniverse/crystallib/blob/development/manual'
 
 !!knowledgetree.book_generate
+    git_root: '/tmp/code'
 	name:"crystal_manual"
-	git_url: ' https://github.com/freeflowuniverse/crystallib/blob/development/manual'
+	git_url: 'https://github.com/freeflowuniverse/crystallib/blob/development/manual'
     // heal: false
 	
 
