@@ -1,1 +1,1 @@
-> TODO
+!!include crmanual_bizmodel:summary.md
