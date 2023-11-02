@@ -1,4 +1,5 @@
-module system
+module db
+
 import freeflowuniverse.crystallib.baobab.smartid
 
 pub struct MyStruct {

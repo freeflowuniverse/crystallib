@@ -1,17 +1,9 @@
 module db
 
-fn table_create(mut db DB, mut args DBTableCreateArgs) ! {
-	tablename, tablecmd, indexsql := table_create_statements(mut db, mut args)!
-	db.sqlitedb.exec(tablecmd)!
-	if !(index_exists(mut db, tablename)) {
-		db.sqlitedb.exec(indexsql)!
-	}
-}
 
 fn tables_create_core(mut db DB) ! {
 	mut datatable := 'CREATE TABLE IF NOT EXISTS data (\n'
 	datatable += 'data BLOB,\n'
-	datatable += 'cid INTEGER,\n'
 	datatable += 'oid INTEGER\n'
 	datatable += '\n);\n'
 
@@ -21,8 +13,6 @@ fn tables_create_core(mut db DB) ! {
 		indextable := 'CREATE INDEX data_index ON data (cid,oid);'
 		db.sqlitedb.exec(indextable)!
 	}
-
-	// println(datatable)
 }
 
 fn index_exists(mut db DB, name string) bool {
@@ -38,16 +28,18 @@ fn index_exists(mut db DB, name string) bool {
 	return false
 }
 
-fn table_create_statements(mut db DB, mut args DBTableCreateArgs) !(string, string, string) {
+fn tables_create(mut db DB, mut args DBTableCreateArgs) ! {
 	if args.objtype.len == 0 {
 		return error('objtype needs to be specified')
 	}
+
 	tablename := table_name(db, args.objtype)
 	mut searchtable := 'CREATE TABLE IF NOT EXISTS ${tablename} (\n'
-	mut toindex := ['cid', 'oid', 'mtime']
-	searchtable += 'cid INTEGER,\n'
+	mut toindex := ['oid', 'mtime','ctime','name','']
 	searchtable += 'oid INTEGER,\n'
+	searchtable += 'ctime INTEGER,\n'
 	searchtable += 'mtime INTEGER,\n'
+	searchtable += 'name STRING,\n'
 	for key in args.index_int {
 		searchtable += '${key} INTEGER,\n'
 		toindex << key
@@ -62,9 +54,10 @@ fn table_create_statements(mut db DB, mut args DBTableCreateArgs) !(string, stri
 	toindexstr := toindex.join(',').trim_right(',')
 
 	indextable := 'CREATE INDEX ${tablename}_index ON ${tablename} (${toindexstr});'
+	db.sqlitedb.exec(tablecmd)!
+	if !(index_exists(mut db, tablename)) {
+		db.sqlitedb.exec(indexsql)!
+	}	
 
-	// println(searchtable)
-	// println(indextable)
-
-	return tablename, searchtable, indextable
+	return
 }

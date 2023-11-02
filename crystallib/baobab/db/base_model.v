@@ -1,9 +1,11 @@
-module system
+module db
 
 import json
 import freeflowuniverse.crystallib.data.paramsparser
+import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.algo.encoder
 import freeflowuniverse.crystallib.baobab.smartid
+
 
 [heap]
 pub struct Base {
@@ -15,6 +17,8 @@ pub mut:
 	name string
 	description string
 	remarks     Remarks
+	mtime ourtime.OurTime
+	ctime ourtime.OurTime
 }
 
 pub enum SerializationType{

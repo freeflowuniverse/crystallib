@@ -3,9 +3,9 @@ module mystruct
 import freeflowuniverse.crystallib.baobab.models.system
 import freeflowuniverse.crystallib.baobab.db
 import freeflowuniverse.crystallib.baobab.smartid
-import json
+// import json
 
-const objtype = 'mystruct'
+const objtype = 'context'
 
 pub struct MyDB {
 	db.DB
