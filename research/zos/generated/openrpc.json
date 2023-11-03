@@ -1,12 +1,13 @@
 {
   "openrpc": "1.0.0",
   "info": {
-    "title": "Zero OS JSON-RPC API",
+    "title": "Zero OS OpenRPC API",
     "version": "1.0.0"
   },
   "methods": [
     {
       "name": "zos.ZosDeploymentGet",
+      "description": "retrieve deployment from a zos",
       "params": [
         {
           "name": "params",
@@ -16,9 +17,9 @@
         }
       ],
       "result": {
-        "name": "void",
+        "name": "ZOSDeployment",
         "schema": {
-          "type": "null"
+          "$ref": "#\/components\/schemas\/ZOSDeployment"
         }
       }
     },
@@ -603,6 +604,26 @@
           "name": {
             "description": "deployment name",
             "type": "string"
+          }
+        }
+      },
+      "ZOSDeployment": {
+        "title": "ZOSDeployment",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "contracts_id": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "expiration": {
+            "$ref": "#\/components\/schemas\/Time"
           }
         }
       },

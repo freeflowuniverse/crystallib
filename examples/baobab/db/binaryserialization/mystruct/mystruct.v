@@ -80,7 +80,6 @@ pub mut:
 // name       string
 //```
 pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {	
-	mut query_int := map[string]int{}
 	dbfindoargs:=db.DBFindArgs{
 				query_int: {
 					'nr':  args.nr

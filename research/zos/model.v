@@ -72,3 +72,4 @@ type EncryptionKey = []byte
 struct QuantumCompression {
 	algorithm string
 }
+

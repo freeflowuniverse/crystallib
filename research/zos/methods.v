@@ -14,7 +14,9 @@ struct ZOSDeployment {
 	expiration   time.Time
 }
 
+//retrieve deployment from a zos
 pub fn (client ZOSClient) zos_deployment_get(params GetParams) ZOSDeployment {
+	return ZOSDeployment{}
 }
 
 pub fn (client ZOSClient) zos_deployment_list() {
