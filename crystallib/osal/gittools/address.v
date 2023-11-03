@@ -37,7 +37,13 @@ pub fn (addr GitAddr) path() !pathlib.Path {
 	if addr.gsconfig.multibranch {
 		path_string += '/${addr.branch}'
 	}
-	path := pathlib.get_dir(path:path_string)!
+
+	// QUESTION: checking and creating path is causing unintended consequenses,
+	// it is expected that this method doesn't create the path, right?
+	path := pathlib.get_dir(
+		path: path_string
+		check: false
+	)!
 	return path
 }
 
@@ -46,8 +52,10 @@ fn (addr GitAddr) path_account() pathlib.Path {
 	if addr.gsconfig.root == '' {
 		panic('cannot be empty')
 	}
-	path := pathlib.get_dir(path:'${addr.gsconfig.root}/${addr.provider}/${addr.account}',
-		create:true) or { panic('couldnt get directory') }
+	path := pathlib.get_dir(
+		path: '${addr.gsconfig.root}/${addr.provider}/${addr.account}'
+		create: true
+	) or { panic('couldnt get directory') }
 	return path
 }
 
