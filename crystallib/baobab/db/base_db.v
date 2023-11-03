@@ -4,6 +4,9 @@ module db
 // import freeflowuniverse.crystallib.algo.encoder
 import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.data.ourtime
+import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.data.actionsparser
+import freeflowuniverse.crystallib.data.paramsparser
 
 [params]
 pub struct DBSetArgs {
@@ -14,12 +17,23 @@ pub mut:
 	index_string map[string]string
 	data         []u8 // if empty will do json
 	baseobj      Base
-	json         bool // we can set as json or as binary data
 }
 
+// set data in database, need to pass the base obj as well
+// ```js
+// gid          smartid.GID
+// objtype      string // unique type name for obj class
+// index_int    map[string]int
+// index_string map[string]string
+// data         []u8 // if empty will do json
+// baseobj      Base
+// ```
 pub fn (db DB) set_data(args_ DBSetArgs) ! {
 	// create the table if it doesn't exist yet
 	mut args := args_
+
+	args.baseobj.mtime.check() // make sure time is filled in
+	args.baseobj.ctime.check() // make sure time is filled in
 
 	args.index_int['mtime'] = args.baseobj.mtime.int()
 	args.index_int['ctime'] = args.baseobj.ctime.int()
@@ -27,13 +41,13 @@ pub fn (db DB) set_data(args_ DBSetArgs) ! {
 
 	create(
 		cid: db.cid
-		objtype: 'base_${db.objtype}'
+		objtype: db.objtype
 		index_int: args.index_int.keys()
 		index_string: args.index_string.keys()
 	)!
 	set(
 		gid: args.gid
-		objtype: 'base_${db.objtype}'
+		objtype: db.objtype
 		index_int: args.index_int
 		index_string: args.index_string
 		data: args.data
@@ -53,16 +67,101 @@ pub fn (db DB) delete_all() ! {
 	delete(cid: db.cid, objtype: db.objtype)!
 }
 
+// find data based on find statements
+//```js
+// cid               smartid.CID
+// objtype           string
+// query_int         map[string]int
+// query_string      map[string]string
+// query_int_less    map[string]int
+// query_int_greater map[string]int
+//```
+pub fn (db DB) find(args DBFindArgs) ![][]u8 {
+	return find(args)!
+}
+
 [params]
 pub struct BaseFindArgs {
 pub mut:
-	mtime_from ourtime.OurTime
-	mtime_to   ourtime.OurTime
-	ctime_from ourtime.OurTime
-	ctime_to   ourtime.OurTime
+	mtime_from ?ourtime.OurTime
+	mtime_to   ?ourtime.OurTime
+	ctime_from ?ourtime.OurTime
+	ctime_to   ?ourtime.OurTime
 	name       string
 }
 
-pub fn (db DB) basefind(args DBFindArgs) ![][]u8 {
-	return find(args)!
+// add the basefind args to the generic dbfind args .
+// complete the missing statements in basefind args
+pub fn (mut a DBFindArgs) complete(args BaseFindArgs) ! {
+	if args.name.len > 0 {
+		a.query_string['name'] = args.name
+	}
+	mtime_from := args.mtime_from or { ourtime.OurTime{} }
+	mtime_to := args.mtime_from or { ourtime.OurTime{} }
+	ctime_from := args.mtime_from or { ourtime.OurTime{} }
+	ctime_to := args.mtime_from or { ourtime.OurTime{} }
+
+	if !mtime_from.empty() {
+		a.query_int_greater['mtime'] = mtime_from.int()
+	}
+	if !mtime_to.empty() {
+		a.query_int_less['mtime'] = mtime_from.int()
+	}
+	if !ctime_from.empty() {
+		a.query_int_greater['ctime'] = mtime_from.int()
+	}
+	if !ctime_to.empty() {
+		a.query_int_less['ctime'] = mtime_from.int()
+	}
+}
+
+pub struct DecoderActionItem{
+pub:
+	base Base
+	params paramsparser.Params
+}
+
+
+pub fn  (db DB) base_decoder_3script(txt string) ![]DecoderActionItem {
+	
+	res:=[]DecoderActionItem{}
+	remarks:=map[string][]paramsparser.Params //key is the gid of the base obj
+
+	mut parser := actionsparser.new(defaultcircle: 'aaa', text: txt)!
+	actions := parser.filtersort(actor:${db.objtype})!
+	actions_remarks := parser.filtersort(actor:"remark")!
+
+	for action in actions_remarks{
+		if action.name=="define"{
+			//now we are in remark define
+			gid_str:=action.params.get_default("gid","")!
+			if oidstr.len>0 {
+				gid:=gid.new(gid_str:gid_str)!
+				remarks[gid.str()]<<action.params //get all remarks per gid
+			}
+		}
+	}
+
+	for action in actions{
+		if action.name=="define"{
+			//now we will find the rootobject define action
+			mut p:=action.params
+			mut o := Base{}
+			o.gid = smartid.gid(gid_str: p.get_default("gid",""))!
+			o.params = paramsparser.new(p.get_default("params",""))!
+			o.name = p.get_default("name","")
+			o.description = p.get_default("description","")
+			//TODO: check gid is not empty
+
+			//now find all remarks who are linked to this obj
+			if o.gid.str() in remarks{
+				for remarkparam in remarks[o.gid.str()]{
+					remark:=remark_unserialize_params(remarkparam)!
+					o.remarks<<remark
+				}	
+			}
+			res<<DecoderActionItem{base:o,params:p}
+		}
+	}
+	return res
 }

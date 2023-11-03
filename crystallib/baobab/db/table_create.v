@@ -4,13 +4,12 @@ fn tables_create_core(mut db DB) ! {
 	mut datatable := 'CREATE TABLE IF NOT EXISTS data (\n'
 	datatable += 'data BLOB,\n'
 	datatable += 'oid INTEGER,\n'
-	datatable += 'cid INTEGER\n'
 	datatable += '\n);\n'
 
 	db.sqlitedb.exec(datatable)!
 
 	if !(index_exists(mut db, 'data')) {
-		indextable := 'CREATE INDEX data_index ON data (cid,oid);'
+		indextable := 'CREATE INDEX data_index ON data (oid);'
 		db.sqlitedb.exec(indextable)!
 	}
 }
@@ -36,10 +35,6 @@ fn tables_create(mut db DB, mut args DBTableCreateArgs) ! {
 	tablename := table_name(db, args.objtype)
 	mut searchtable := 'CREATE TABLE IF NOT EXISTS ${tablename} (\n'
 	mut toindex := []string{}
-	// searchtable += 'oid INTEGER,\n'
-	// searchtable += 'ctime INTEGER,\n'
-	// searchtable += 'mtime INTEGER,\n'
-	// searchtable += 'name STRING,\n'
 	for key in args.index_int {
 		searchtable += '${key} INTEGER,\n'
 		toindex << key

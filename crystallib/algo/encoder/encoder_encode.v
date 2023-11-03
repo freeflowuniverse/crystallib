@@ -7,8 +7,28 @@ const kb = 1024
 
 pub struct Encoder {
 pub mut:
-	data    []u8
+	data      []u8
+	datatypes []DataType
 }
+
+// enum DataType{
+// 	string
+// 	int
+// 	bytes
+// 	u8
+// 	u16
+// 	u32
+// 	u64
+// 	time
+// 	list_string
+// 	list_int
+// 	list_u8
+// 	list_u16
+// 	list_u32
+// 	list_u64
+// 	map_string
+// 	map_bytes
+// }
 
 pub fn new() Encoder {
 	mut e := Encoder{}

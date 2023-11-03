@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.baobab.smartid
 import encoding.base32
 
 fn table_get(mut db DB, g smartid.GID) ![]u8 {
-	statement := 'SELECT data FROM data WHERE cid = ${g.cid.u32()} AND oid = ${g.oid()};'
+	statement := 'SELECT data FROM data WHERE oid = ${g.oid()};'
 	rows := db.sqlitedb.exec(statement)!
 
 	if rows.len == 0 {

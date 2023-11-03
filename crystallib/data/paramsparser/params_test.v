@@ -288,50 +288,42 @@ fn test_kwargs_add() {
 
 	assert params.params.len == 10
 
-	params.kwarg_set("name3","anotherhi")
+	params.kwarg_set('name3', 'anotherhi')
 	assert params.params.len == 10
-	params.kwarg_set("name7","anotherhi")
-	assert params.params.len == 11 //because is new one
+	params.kwarg_set('name7', 'anotherhi')
+	assert params.params.len == 11 // because is new one
 
-	assert params.get("name3") or {""}=="anotherhi"
-
+	assert params.get('name3') or { '' } == 'anotherhi'
 }
-
 
 fn test_args_add() {
-	mut params := parse("urgency:yes red green") or { panic(err) }
+	mut params := parse('urgency:yes red green') or { panic(err) }
 
 	println(params.args)
 
 	assert params.params.len == 1
 	assert params.args.len == 2
 
-	params.arg_set("red")
+	params.arg_set('red')
 	assert params.args.len == 2
-	params.arg_set("yellow")
+	params.arg_set('yellow')
 	assert params.args.len == 3
-
 }
-
 
 fn test_merge() {
-	mut params := parse("urgency:yes red green") or { panic(err) }
+	mut params := parse('urgency:yes red green') or { panic(err) }
 
 	println(params.args)
 
-	params.merge("urgency:green blue") or {panic("s")}
+	params.merge('urgency:green blue') or { panic('s') }
 
 	println(params.args)
 
 	assert params.params.len == 1
 	assert params.args.len == 3
 
-	assert params.get("urgency") or {""}=="green"
-
-
+	assert params.get('urgency') or { '' } == 'green'
 }
-
-
 
 /*
 fn test_to_resp_from_resp() {
@@ -431,5 +423,3 @@ expected_result := "
 		'333'
 	"
 */
-
-

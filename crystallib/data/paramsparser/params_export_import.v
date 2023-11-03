@@ -2,45 +2,150 @@ module paramsparser
 
 import freeflowuniverse.crystallib.core.texttools
 import crypto.sha256
-// BACKLOG: better to use the binary one, not sure?
 
-[params]
-pub struct ExportArgs {
-	indent string
+struct ParamExportItem {
+mut:
+	key       string
+	txt       string // if empty then is arg
+	firstline bool
+	multiline bool
 }
 
-// standardised export format
-// it outputs a default way sorted and readable
-pub fn (p Params) export(args ExportArgs) string {
-	mut out := []string{}
+// will first do the args, then the kwargs
+// presort means will always come first
+fn (p Params) export_helper(args_ ExportArgs) ![]ParamExportItem {
+	mut args := args_
+
+	if p.args.len > 0 && args.args_allowed == false {
+		return error('args are not allowed')
+	}
+
+	mut res := []ParamExportItem{}
+	mut res_delayed := []ParamExportItem{}
 	mut keys := []string{}
 	mut keys_val := map[string]string{}
 	for param in p.params {
 		mut key := texttools.name_fix(param.key)
-		keys << key
-		keys_val[key] = param.value.trim_space()
-	}
-	keys.sort()
-
-	for keyname in keys {
-		mut val := keys_val[keyname]
+		if key !in args.presort {
+			keys << key
+		}
+		mut val := param.value.trim_space()
 		val = val.replace('\n', '\\n')
 		val = val.replace('\t', '    ')
 		if val.contains(' ') {
 			val = "'${val}'"
 		}
-		out << '${keyname}:${val}'
+		keys_val[key] = val
 	}
-	mut args2 := p.args.clone()
-	args2.sort()
-	for arg in args2 {
-		out << arg.trim_space()
+	keys.sort()
+
+	mut firstlinesize := 0
+
+	if args.args_remove == false {
+		mut args2 := p.args.clone()
+		args2.sort()
+		for mut arg in args2 {
+			arg = texttools.name_fix(arg)
+			res << ParamExportItem{
+				key: arg
+				firstline: true
+			}
+			firstlinesize += arg.len + 1
+		}
 	}
-	mut outstr := out.join_lines()
+
+	for key in args.presort.reverse() {
+		keys.prepend(key) // make sure we have the presorted once first
+	}
+
+	for keyname in keys {
+		mut val := keys_val[keyname]
+		firstlinesize += keyname.len + val.len + 2
+		mut firstline := true
+		if firstlinesize > args.maxcolsize || val.len > 25 {
+			firstline = false
+			firstlinesize -= keyname.len + val.len + 2
+		}
+		if args.oneline {
+			firstline = true
+		}
+		// println("++ $firstline $firstlinesize $val")
+		mut multiline := val.contains('\\n')
+		if args.multiline == false || args.oneline {
+			multiline = false
+		}
+		if firstline {
+			res << ParamExportItem{
+				key: keyname
+				txt: val
+				firstline: firstline
+				multiline: multiline
+			}
+		} else {
+			res_delayed << ParamExportItem{
+				key: keyname
+				txt: val
+				firstline: firstline
+				multiline: multiline
+			}
+		}
+	}
+	res << res_delayed
+	return res
+}
+
+[params]
+pub struct ExportArgs {
+pub mut:
+	presort      []string
+	args_allowed bool = true
+	args_remove  bool
+	maxcolsize   int = 120
+	oneline      bool // if set then will put all on oneline
+	multiline    bool = true // if we will put the multiline strings as multiline in output
+	indent       string
+	pre          string
+}
+
+// standardised export format .
+// .
+// it outputs a default way sorted and readable .
+//```js
+// presort []string //if mentioned will always put these arguments first
+// args_allowed bool=true //if args are allowed
+// args_remove bool
+// maxcolsize int 80
+// oneline bool //if set then will put all on oneline	
+// multiline bool = true //if we will put the multiline strings as multiline in output
+//```
+pub fn (p Params) export(args ExportArgs) string {
+	mut out := '${args.pre}'
+	items := p.export_helper(args) or { panic('bug, should not use args.') }
+	for item in items {
+		if item.multiline {
+			mut txt := item.txt.trim(' \'"').replace('\\n', '\n')
+			out += '\n    ${item.key}:\''
+			out += '\n'
+			out += texttools.indent(txt, '        ')
+			out += "    '"
+		} else {
+			if !item.firstline {
+				out += '\n    '
+			}
+			out += '${item.key}:${item.txt}'
+			if item.firstline {
+				out += ' '
+			}
+		}
+	}
+	out = out.trim_right(' \n')
+	if out.contains('\n') {
+		out += '\n' // if its a multiline needs to make sure last is \n
+	}
 	if args.indent.len > 0 {
-		outstr = texttools.indent(outstr, args.indent)
+		out = texttools.indent(out, args.indent)
 	}
-	return outstr
+	return out
 }
 
 pub fn importparams(txt string) !Params {
@@ -58,6 +163,6 @@ pub fn (p Params) equal(p2 Params) bool {
 
 // returns a unique sha256 in hex, will allways return the same independent of order of params
 pub fn (p Params) hexhash() string {
-	a := p.export()
+	a := p.export(oneline: true, multiline: false)
 	return sha256.hexhash(a)
 }

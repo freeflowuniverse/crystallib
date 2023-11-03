@@ -36,12 +36,12 @@ pub mut:
 // ```
 pub fn gid(args_ GIDNewArgs) !GID {
 	mut args := args_
-	if args.oid_u32>0{
+	if args.oid_u32 > 0 {
 		args.oid_int = int(args.oid_u32)
 	}
 	mut o := GID{}
 	if args.gid_str.len > 0 {
-		if  args.oid_int > 0 || args.cid_int > 0 || args.oid_str.len > 0 || args.cid_str.len > 0
+		if args.oid_int > 0 || args.cid_int > 0 || args.oid_str.len > 0 || args.cid_str.len > 0
 			|| args.cid_name.len > 0 {
 			return error('if gid_str used cannot use any of the other properties')
 		}

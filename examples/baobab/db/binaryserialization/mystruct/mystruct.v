@@ -2,10 +2,10 @@ module mystruct
 
 import freeflowuniverse.crystallib.baobab.db
 import freeflowuniverse.crystallib.baobab.smartid
+import freeflowuniverse.crystallib.data.paramsparser
+
 import json
 import time
-
-const objtype = 'mystruct'
 
 pub struct MyDB {
 	db.DB
@@ -32,7 +32,7 @@ pub fn db_new(args DBArgs) !MyDB {
 	mut mydb := MyDB{
 		circlename: args.circlename
 		version: args.version
-		objtype: mystruct.objtype
+		objtype: 'mystruct'
 	}
 	mydb.init()!
 	return mydb
@@ -71,24 +71,7 @@ pub mut:
 	nr2   int
 }
 
-pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {
-	// mydb.basefind(args.BaseFindArgs) //TODO: see how to integrate the query mechanism on base into the the bigger one
-	mut query_int_less := map[string]int{}
-	if args.mtime_to.int() > 0 {
-		query_int_less['mtime'] = args.mtime_to.int()
-	}
-	if args.ctime_to.int() > 0 {
-		query_int_less['ctime'] = args.ctime_to.int()
-	}
-
-	mut query_int_greater := map[string]int{}
-	if args.mtime_from.int() > 0 {
-		query_int_greater['mtime'] = args.mtime_from.int()
-	}
-	if args.ctime_from.int() > 0 {
-		query_int_greater['ctime'] = args.ctime_from.int()
-	}
-
+pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {	
 	mut query_int := map[string]int{}
 	if args.nr > 0 {
 		query_int['nr'] = args.nr
@@ -111,7 +94,8 @@ pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {
 		query_int: query_int
 		query_string: query_str
 	}
-	// println(query_args)
+	query_args.complete(args.BaseFindArgs) //will add the time and name find args
+	println(query_args)
 	data := db.find(query_args)!
 	mut read_o := []MyStruct{}
 	for d in data {
@@ -129,28 +113,26 @@ pub fn (mydb MyDB) serialize(o MyStruct) ![]u8 {
 	e.add_string(o.color)
 	e.add_int(o.nr2)
 	e.add_list_u32(o.listu32)
-
-	// if mydb.version==1{
-	// }else if mydb.version==2{
-	// 	panic("not implemented")
-	// 	//json
-	// 	// data:=json.encode(o)
-	// 	// e.add_u8(2)//this is version 1, for binary
-	// 	// e.add_string(data)
-	// }else if mydb.version==3{
-	// 	// e.add_u8(3)//this is version 1, for binary
-	// 	//3script
-	// 	panic("not implemented")
-	// }else{
-	// 	panic("not implemented")
-	// }
 	return e.data
 }
+
+// serialize to 3script
+pub fn (mydb MyDB) serialize_kwargs(o MyStruct) map[string]string {
+	mut kwargs := o.Base.kwargs()
+	kwargs<< {
+		"nr":"${o.nr}"
+		"nr2":"${o.nr2}"
+		"color":o.color
+		"listu32":",".join(o.listu32)
+	}
+	return kwargs
+}
+
 
 // this is the method to load binary form
 pub fn (mydb MyDB) unserialize(data []u8) !MyStruct {
 	// mut d := encoder.decoder_new(data)
-	mut d, base := db.base_decoder(data)!
+	mut d, base := mydb.base_decoder(data)!
 	mut o := MyStruct{
 		Base: base
 	}
@@ -158,18 +140,27 @@ pub fn (mydb MyDB) unserialize(data []u8) !MyStruct {
 	o.color = d.get_string()
 	o.nr2 = d.get_int()
 	o.listu32 = d.get_list_u32()
-
-	// if v==1{
-	// }else if v==2{
-	// 	panic("not implemented")
-	// 	//json
-	// 	// data2:=d.get_string()
-	// 	// o=json.decode(MyStruct,data2) or {MyStruct{}}
-	// }else if v==3{
-	// 	//3script
-	// 	panic("not implemented")
-	// }else{
-	// 	panic("not implemented")
-	// }
 	return o
+}
+
+
+// serialize to 3script
+pub fn (mydb MyDB) serialize_3script(o MyStruct) !string {
+	p:=paramsparser.new_from_dict(mydb.serialize_kwargs(o))!
+	return p.export(pre:"!!${mydb.objtype}.define ")
+}
+
+
+pub fn (mydb MyDB) unserialize_3script(txt string) ![]MyStruct {
+	mut res:=[]MyStruct{}
+	for r in mydb.base_decoder_3script(txt)!{
+		mut o := MyStruct{Base: r.base}
+		p:=r.params
+		o.nr = p.get_int("nr")
+		o.color = d.get_string("color")
+		o.nr2 = d.get_int("nr")
+		o.listu32 = d.get_list_u32("listu32")
+		res<<o
+	}
+	return res
 }

@@ -12,33 +12,37 @@ pub struct MyDB {
 }
 
 pub struct MyStruct {
-	system.Base	
+	system.Base
 pub mut:
-	nr          int
-	color       string
-	nr2         int
-	listu32     []u32
+	nr      int
+	color   string
+	nr2     int
+	listu32 []u32
 }
 
-//TODO: use enumerator and do differently (despiegk)
+// TODO: use enumerator and do differently (despiegk)
 [params]
 pub struct DBArgs {
 pub mut:
 	circlename string
-	version u8 = 1 //1 is bin, 2 is json, 3 is 3script
+	version    u8 = 1 // 1 is bin, 2 is json, 3 is 3script
 }
-pub fn db_new(args DBArgs)!MyDB{
-	mut mydb:= MyDB{circlename:args.circlename,version:args.version,objtype:objtype}
+
+pub fn db_new(args DBArgs) !MyDB {
+	mut mydb := MyDB{
+		circlename: args.circlename
+		version: args.version
+		objtype: mystruct.objtype
+	}
 	mydb.init()!
 	return mydb
 }
 
-
-pub fn  (mydb MyDB) set(o MyStruct)  ! {
+pub fn (mydb MyDB) set(o MyStruct) ! {
 	// the next will create the table if it doesn't exist yet, only checks once per mem session
 	db.create(
 		cid: o.gid.cid
-		objtype: objtype
+		objtype: mystruct.objtype
 		index_int: ['nr', 'nr2']
 		index_string: [
 			'name',
@@ -49,57 +53,61 @@ pub fn  (mydb MyDB) set(o MyStruct)  ! {
 	data := mydb.serialize(o)!
 	db.set(
 		gid: o.gid
-		objtype: objtype
-		index_int: {'nr':o.nr,'nr2':o.nr2}
-		index_string: {'name':o.name'color':o.color}
+		objtype: mystruct.objtype
+		index_int: {
+			'nr':  o.nr
+			'nr2': o.nr2
+		}
+		index_string: {
+			'name':  o.name
+			'color': o.color
+		}
 		data: data
 	)!
 }
 
-pub fn  (mydb MyDB)  get(gid smartid.GID) !MyStruct {
-	data := db.get(gid:gid,objtype: objtype)!
+pub fn (mydb MyDB) get(gid smartid.GID) !MyStruct {
+	data := db.get(gid: gid, objtype: mystruct.objtype)!
 	return mydb.unserialize(data)
 }
 
-pub fn  (mydb MyDB)  delete(gid smartid.GID) ! {
-	db.delete(cid:mydb.cid,gid:gid,objtype:objtype)!
+pub fn (mydb MyDB) delete(gid smartid.GID) ! {
+	db.delete(cid: mydb.cid, gid: gid, objtype: mystruct.objtype)!
 }
 
-pub fn  (mydb MyDB)  delete_all() ! {
-	db.delete(cid:mydb.cid,objtype:objtype)!
+pub fn (mydb MyDB) delete_all() ! {
+	db.delete(cid: mydb.cid, objtype: mystruct.objtype)!
 }
-
 
 [params]
 pub struct FindArgs {
 pub mut:
-	name        string
-	color       string
-	nr          int
-	nr2         int
+	name  string
+	color string
+	nr    int
+	nr2   int
 }
 
-
 pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {
-	mut query_int:=map[string]int{}
-	if args.nr>0{
-		query_int["nr"]=args.nr	
+	mut query_int := map[string]int{}
+	if args.nr > 0 {
+		query_int['nr'] = args.nr
 	}
-	if args.nr2>0{
-		query_int["nr2"]=args.nr	
+	if args.nr2 > 0 {
+		query_int['nr2'] = args.nr
 	}
-	mut query_str:=map[string]string{}
-	if args.name.len>0{
-		query_str["name"]=args.name	
+	mut query_str := map[string]string{}
+	if args.name.len > 0 {
+		query_str['name'] = args.name
 	}
-	if args.color.len>0{
-		query_str["color"]=args.color	
+	if args.color.len > 0 {
+		query_str['color'] = args.color
 	}
-	mut query_args:=db.DBFindArgs{
-		cid          :mydb.cid
-		objtype      : objtype
-		query_int    : query_int
-		query_string : query_str
+	mut query_args := db.DBFindArgs{
+		cid: mydb.cid
+		objtype: mystruct.objtype
+		query_int: query_int
+		query_string: query_str
 	}
 	// println(query_args)
 	data := db.find(query_args)!
@@ -113,9 +121,8 @@ pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {
 //////////////////////serialization
 
 // this is the method to dump binary form
-pub fn (mydb MyDB) serialize(o MyStruct)![]u8 {
-		
-	mut e:=o.bin_encoder()!
+pub fn (mydb MyDB) serialize(o MyStruct) ![]u8 {
+	mut e := o.bin_encoder()!
 	e.add_int(o.nr)
 	e.add_string(o.color)
 	e.add_int(o.nr2)
@@ -140,9 +147,11 @@ pub fn (mydb MyDB) serialize(o MyStruct)![]u8 {
 
 // this is the method to load binary form
 pub fn (mydb MyDB) unserialize(data []u8) !MyStruct {
-	// mut d := encoder.decoder_new(data) 
-	mut d,base:=system.base_decoder(data)!
-	mut o:=MyStruct{Base:base}
+	// mut d := encoder.decoder_new(data)
+	mut d, base := system.base_decoder(data)!
+	mut o := MyStruct{
+		Base: base
+	}
 	o.nr = d.get_int()
 	o.color = d.get_string()
 	o.nr2 = d.get_int()

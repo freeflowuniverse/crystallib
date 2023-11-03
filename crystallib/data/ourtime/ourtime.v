@@ -52,6 +52,13 @@ pub fn now() OurTime {
 	return ot
 }
 
+// will check if the time is empty, if yes then will fill it in
+pub fn (mut ot OurTime) check() {
+	if ot.unix == 0 {
+		ot.now()
+	}
+}
+
 // print the wiki formatting for time
 pub fn (ot OurTime) md() string {
 	return ot.time().format()
