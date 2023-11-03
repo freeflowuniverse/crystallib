@@ -67,32 +67,11 @@ pub fn (db DB) delete_all() ! {
 	delete(cid: db.cid, objtype: db.objtype)!
 }
 
-// find data based on find statements
-//```js
-// cid               smartid.CID
-// objtype           string
-// query_int         map[string]int
-// query_string      map[string]string
-// query_int_less    map[string]int
-// query_int_greater map[string]int
-//```
-pub fn (db DB) find(args DBFindArgs) ![][]u8 {
-	return find(args)!
-}
 
-[params]
-pub struct BaseFindArgs {
-pub mut:
-	mtime_from ?ourtime.OurTime
-	mtime_to   ?ourtime.OurTime
-	ctime_from ?ourtime.OurTime
-	ctime_to   ?ourtime.OurTime
-	name       string
-}
 
 // add the basefind args to the generic dbfind args .
 // complete the missing statements in basefind args
-pub fn (mut a DBFindArgs) complete(args BaseFindArgs) ! {
+fn (mut a DBFindArgs) complete(args BaseFindArgs) ! {
 	if args.name.len > 0 {
 		a.query_string['name'] = args.name
 	}
@@ -114,6 +93,63 @@ pub fn (mut a DBFindArgs) complete(args BaseFindArgs) ! {
 		a.query_int_less['ctime'] = mtime_from.int()
 	}
 }
+
+
+
+[params]
+pub struct BaseFindArgs {
+pub mut:
+	mtime_from ?ourtime.OurTime
+	mtime_to   ?ourtime.OurTime
+	ctime_from ?ourtime.OurTime
+	ctime_to   ?ourtime.OurTime
+	name       string
+}
+
+// find data based on find statements
+// there are 2 parts to make up the find
+// BaseFindArgs
+//```js
+// mtime_from ?ourtime.OurTime
+// mtime_to   ?ourtime.OurTime
+// ctime_from ?ourtime.OurTime
+// ctime_to   ?ourtime.OurTime
+// name       string
+//```
+// DBFindArgs, is the more generic part .
+//```js
+// query_int         map[string]int
+// query_string      map[string]string
+// query_int_less    map[string]int
+// query_int_greater map[string]int
+//```
+pub fn (db DB) find(base_args BaseFindArgs,args_ DBFindArgs) ![][]u8 {
+	mut args:=args_
+	//remove the empty ones, TODO: can't this be done more elegant?
+	toremove:=[]string{}
+	for key,val in args.query_string{
+		if val==""{
+			toremove<<key
+		}
+	}
+	for t in toremove{
+		args.query_string.del(t)
+	}
+	toremove2:=[]string{}
+	for key,val in args.query_int{
+		if val==""{
+			toremove2<<key
+		}
+	}
+	for t in toremove2{
+		args.query_int.del(t)
+	}
+	args.complete(base_args)! //this fills in the base_args into the other args
+	args.cid=db.cid
+	args.objtype=db.objtype
+	return find(args)!
+}
+
 
 pub struct DecoderActionItem{
 pub:

@@ -67,24 +67,31 @@ pub mut:
 	nr2   int
 }
 
+//find on our database
+//```js
+// name  string
+// color string
+// nr    int
+// nr2   int
+// mtime_from ?ourtime.OurTime
+// mtime_to   ?ourtime.OurTime
+// ctime_from ?ourtime.OurTime
+// ctime_to   ?ourtime.OurTime
+// name       string
+//```
 pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {	
 	mut query_int := map[string]int{}
-	if args.nr > 0 {
-		query_int['nr'] = args.nr
-	}
-	if args.nr2 > 0 {
-		query_int['nr2'] = args.nr
-	}
-	mut query_str := map[string]string{}
-	if args.name.len > 0 {
-		query_str['name'] = args.name
-	}
-	if args.color.len > 0 {
-		query_str['color'] = args.color
-	}
 	data := db.find(
-		query_int: query_int
-		query_string: query_str		
+		args.BaseFindArgs,{
+			query_int: {
+				'nr':  args.nr
+				'nr2': args.nr2
+			}
+			query_string: {
+				'name':  args.name
+				'color': args.color
+			}			
+		}
 	)!
 	mut read_o := []MyStruct{}
 	for d in data {

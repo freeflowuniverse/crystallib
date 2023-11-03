@@ -111,7 +111,6 @@ pub fn find(args DBFindArgs) ![][]u8 {
 	mut mydb := dbs[key(args.cid, args.objtype)] or {
 		return error('cannot find db with cid: ${args.cid.str()}')
 	}
-
 	return table_find(mut mydb, args)
 }
 
