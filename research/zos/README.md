@@ -12,3 +12,10 @@ openrpc docgen -t "Zero OS OpenRPC API" -o generated methods.v
 
 Read more about OpenRPC Document generation at [crystallib.core.openrpc](../openrpc/README.md)
 
+
+
+- [playground](https://playground.open-rpc.org/?uiSchema%5BappBar%5D%5Bui:splitView%5D=false&schemaUrl=https://raw.githubusercontent.com/freeflowuniverse/crystallib/development_db/research/zos/generated/openrpc.json&uiSchema%5BappBar%5D%5Bui:input%5D=false)
+
+
+Can also manual use the playground: https://playground.open-rpc.org/ and copy paste the openrpc.json document in it.
+
