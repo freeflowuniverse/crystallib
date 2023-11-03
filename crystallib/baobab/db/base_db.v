@@ -122,23 +122,23 @@ pub mut:
 pub fn (db DB) find(base_args BaseFindArgs, args_ DBFindArgs) ![][]u8 {
 	mut args := args_
 	// remove the empty ones, TODO: can't this be done more elegant?
-	toremove := []string{}
+	mut toremove := []string{}
 	for key, val in args.query_string {
 		if val == '' {
 			toremove << key
 		}
 	}
 	for t in toremove {
-		args.query_string.del(t)
+		args.query_string.delete(t)
 	}
-	toremove2 := []string{}
+	mut toremove2 := []string{}
 	for key, val in args.query_int {
-		if val == '' {
+		if val == 0 {
 			toremove2 << key
 		}
 	}
 	for t in toremove2 {
-		args.query_int.del(t)
+		args.query_int.delete(t)
 	}
 	args.complete(base_args)! // this fills in the base_args into the other args
 	args.cid = db.cid
