@@ -81,18 +81,17 @@ pub mut:
 //```
 pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {	
 	mut query_int := map[string]int{}
-	data := db.find(
-		args.BaseFindArgs,{
-			query_int: {
-				'nr':  args.nr
-				'nr2': args.nr2
-			}
-			query_string: {
-				'name':  args.name
-				'color': args.color
-			}			
-		}
-	)!
+	dbfindoargs:=db.DBFindArgs{
+				query_int: {
+					'nr':  args.nr
+					'nr2': args.nr2
+				}
+				query_string: {
+					'name':  args.name
+					'color': args.color
+				}	
+			}	
+	data := mydb.find_base(args.BaseFindArgs,dbfindoargs)!
 	mut read_o := []MyStruct{}
 	for d in data {
 		read_o << mydb.unserialize(d)!

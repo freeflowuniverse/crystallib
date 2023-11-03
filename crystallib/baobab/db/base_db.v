@@ -4,7 +4,7 @@ module db
 // import freeflowuniverse.crystallib.algo.encoder
 import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.data.ourtime
-import freeflowuniverse.crystallib.core.texttools
+// import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.actionsparser
 import freeflowuniverse.crystallib.data.paramsparser
 
@@ -119,7 +119,7 @@ pub mut:
 // query_int_less    map[string]int
 // query_int_greater map[string]int
 //```
-pub fn (db DB) find(base_args BaseFindArgs, args_ DBFindArgs) ![][]u8 {
+pub fn (db DB) find_base(base_args BaseFindArgs, args_ DBFindArgs) ![][]u8 {
 	mut args := args_
 	// remove the empty ones, TODO: can't this be done more elegant?
 	mut toremove := []string{}
