@@ -20,18 +20,15 @@ pub mut:
 	listu32 []u32
 }
 
-// TODO: use enumerator and do differently (despiegk)
 [params]
 pub struct DBArgs {
 pub mut:
 	circlename string
-	version    u8 = 1 // 1 is bin, 2 is json, 3 is 3script
 }
 
 pub fn db_new(args DBArgs) !MyDB {
 	mut mydb := MyDB{
 		circlename: args.circlename
-		version: args.version
 		objtype: 'mystruct'
 	}
 	mydb.init()!
@@ -42,7 +39,6 @@ pub fn (mydb MyDB) set(o MyStruct) ! {
 	data := mydb.serialize(o)!
 	mydb.set_data(
 		gid: o.gid
-		objtype: mystruct.objtype
 		index_int: {
 			'nr':  o.nr
 			'nr2': o.nr2
@@ -79,7 +75,6 @@ pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {
 	if args.nr2 > 0 {
 		query_int['nr2'] = args.nr
 	}
-
 	mut query_str := map[string]string{}
 	if args.name.len > 0 {
 		query_str['name'] = args.name
@@ -87,16 +82,10 @@ pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {
 	if args.color.len > 0 {
 		query_str['color'] = args.color
 	}
-
-	mut query_args := db.DBFindArgs{
-		cid: mydb.cid
-		objtype: mystruct.objtype
+	data := db.find(
 		query_int: query_int
-		query_string: query_str
-	}
-	query_args.complete(args.BaseFindArgs) //will add the time and name find args
-	println(query_args)
-	data := db.find(query_args)!
+		query_string: query_str		
+	)!
 	mut read_o := []MyStruct{}
 	for d in data {
 		read_o << mydb.unserialize(d)!

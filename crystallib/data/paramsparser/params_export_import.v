@@ -104,7 +104,7 @@ pub mut:
 	oneline      bool // if set then will put all on oneline
 	multiline    bool = true // if we will put the multiline strings as multiline in output
 	indent       string
-	pre          string
+	pre          string //e.g. can be used to insert action e.g. !!remark.define (pre=prefix on the first line)
 }
 
 // standardised export format .
@@ -166,3 +166,6 @@ pub fn (p Params) hexhash() string {
 	a := p.export(oneline: true, multiline: false)
 	return sha256.hexhash(a)
 }
+
+
+//TODO: args are still wrong will show as argname1: ... instead of argname1 argname2 ...
