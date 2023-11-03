@@ -3,9 +3,9 @@ module db
 fn tables_create_core(mut db DB) ! {
 	mut datatable := 'CREATE TABLE IF NOT EXISTS data (\n'
 	datatable += 'data BLOB,\n'
-	datatable += 'oid INTEGER,\n'
+	datatable += 'oid INTEGER\n'
 	datatable += '\n);\n'
-
+	println(datatable)
 	db.sqlitedb.exec(datatable)!
 
 	if !(index_exists(mut db, 'data')) {
