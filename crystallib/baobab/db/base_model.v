@@ -86,17 +86,3 @@ pub fn (o Base) serialize_kwargs() map[string]string {
 	}
 	return kwargs
 }
-
-
-pub fn (o Base) serialize_kwargs() map[string]string {
-	kwargs := {
-		'gid':         '${o.gid}'
-		'params':      o.params.export(oneline: true)
-		'name':        o.name
-		'description': o.description
-		'mtime':       o.mtime.str()
-		'ctime':       o.ctime.str()
-	}
-	return kwargs
-}
-

@@ -67,8 +67,6 @@ pub fn (db DB) delete_all() ! {
 	delete(cid: db.cid, objtype: db.objtype)!
 }
 
-
-
 // add the basefind args to the generic dbfind args .
 // complete the missing statements in basefind args
 fn (mut a DBFindArgs) complete(args BaseFindArgs) ! {
@@ -93,8 +91,6 @@ fn (mut a DBFindArgs) complete(args BaseFindArgs) ! {
 		a.query_int_less['ctime'] = mtime_from.int()
 	}
 }
-
-
 
 [params]
 pub struct BaseFindArgs {
@@ -123,80 +119,83 @@ pub mut:
 // query_int_less    map[string]int
 // query_int_greater map[string]int
 //```
-pub fn (db DB) find(base_args BaseFindArgs,args_ DBFindArgs) ![][]u8 {
-	mut args:=args_
-	//remove the empty ones, TODO: can't this be done more elegant?
-	toremove:=[]string{}
-	for key,val in args.query_string{
-		if val==""{
-			toremove<<key
+pub fn (db DB) find(base_args BaseFindArgs, args_ DBFindArgs) ![][]u8 {
+	mut args := args_
+	// remove the empty ones, TODO: can't this be done more elegant?
+	toremove := []string{}
+	for key, val in args.query_string {
+		if val == '' {
+			toremove << key
 		}
 	}
-	for t in toremove{
+	for t in toremove {
 		args.query_string.del(t)
 	}
-	toremove2:=[]string{}
-	for key,val in args.query_int{
-		if val==""{
-			toremove2<<key
+	toremove2 := []string{}
+	for key, val in args.query_int {
+		if val == '' {
+			toremove2 << key
 		}
 	}
-	for t in toremove2{
+	for t in toremove2 {
 		args.query_int.del(t)
 	}
-	args.complete(base_args)! //this fills in the base_args into the other args
-	args.cid=db.cid
-	args.objtype=db.objtype
+	args.complete(base_args)! // this fills in the base_args into the other args
+	args.cid = db.cid
+	args.objtype = db.objtype
 	return find(args)!
 }
 
-
-pub struct DecoderActionItem{
+pub struct DecoderActionItem {
 pub:
-	base Base
+	base   Base
 	params paramsparser.Params
 }
 
-
-pub fn  (db DB) base_decoder_3script(txt string) ![]DecoderActionItem {
-	
-	res:=[]DecoderActionItem{}
-	remarks:=map[string][]paramsparser.Params //key is the gid of the base obj
+pub fn (db DB) base_decoder_3script(txt string) ![]DecoderActionItem {
+	mut res := []DecoderActionItem{}
+	mut remarks := map[string][]paramsparser.Params{} // key is the gid of the base obj
 
 	mut parser := actionsparser.new(defaultcircle: 'aaa', text: txt)!
-	actions := parser.filtersort(actor:${db.objtype})!
-	actions_remarks := parser.filtersort(actor:"remark")!
+	actions := parser.filtersort(actor: db.objtype)!
+	actions_remarks := parser.filtersort(actor: 'remark')!
 
-	for action in actions_remarks{
-		if action.name=="define"{
-			//now we are in remark define
-			gid_str:=action.params.get_default("gid","")!
-			if oidstr.len>0 {
-				gid:=gid.new(gid_str:gid_str)!
-				remarks[gid.str()]<<action.params //get all remarks per gid
+	for action in actions_remarks {
+		if action.name == 'define' {
+			// now we are in remark define
+			gid_str := action.params.get_default('gid', '')!
+			if gid_str.len > 0 {
+				gid := smartid.gid(gid_str: gid_str)!
+				if gid.str() !in remarks {
+					remarks[gid.str()] = []paramsparser.Params{}
+				}
+				remarks[gid.str()] << action.params // get all remarks per gid
 			}
 		}
 	}
 
-	for action in actions{
-		if action.name=="define"{
-			//now we will find the rootobject define action
-			mut p:=action.params
+	for action in actions {
+		if action.name == 'define' {
+			// now we will find the rootobject define action
+			mut p := action.params
 			mut o := Base{}
-			o.gid = smartid.gid(gid_str: p.get_default("gid",""))!
-			o.params = paramsparser.new(p.get_default("params",""))!
-			o.name = p.get_default("name","")
-			o.description = p.get_default("description","")
-			//TODO: check gid is not empty
+			o.gid = smartid.gid(gid_str: p.get_default('gid', '')!)!
+			o.params = paramsparser.new(p.get_default('params', '')!)!
+			o.name = p.get_default('name', '')!
+			o.description = p.get_default('description', '')!
+			// TODO: check gid is not empty
 
-			//now find all remarks who are linked to this obj
-			if o.gid.str() in remarks{
-				for remarkparam in remarks[o.gid.str()]{
-					remark:=remark_unserialize_params(remarkparam)!
-					o.remarks<<remark
-				}	
+			// now find all remarks who are linked to this obj
+			if o.gid.str() in remarks {
+				for remarkparam in remarks[o.gid.str()] {
+					remark := remark_unserialize_params(remarkparam)!
+					o.remarks.remarks << remark
+				}
 			}
-			res<<DecoderActionItem{base:o,params:p}
+			res << DecoderActionItem{
+				base: o
+				params: p
+			}
 		}
 	}
 	return res

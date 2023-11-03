@@ -39,14 +39,13 @@ fn remarktype(t u8) RemarkType {
 
 fn remarktype(t string) RemarkType {
 	match t {
-		"comment" { return .comment }
-		"log" { return .log }
-		"audit" { return .audit }
+		'comment' { return .comment }
+		'log' { return .log }
+		'audit' { return .audit }
 		else { return .comment }
 	}
 	return .comment
 }
-
 
 pub fn (mut o Remark) params_set(text string) ! {
 	o.params = paramsparser.new(text)!
@@ -192,7 +191,7 @@ pub fn (remarks Remarks) serialize_3script(oid string) !string {
 	return out
 }
 
-//specifiy the gid for which we generate the 3script output
+// specifiy the gid for which we generate the 3script output
 pub fn (r Remark) serialize_3script(gid string) !string {
 	author := r.author or { smartid.GID{} }
 	p := paramsparser.new_from_dict({
@@ -205,22 +204,18 @@ pub fn (r Remark) serialize_3script(gid string) !string {
 	return p.export(pre: "!!remark.define gid:'${gid}' ")
 }
 
-
 pub fn remark_unserialize_params(p paramsparser.Params) !Remark {
-	
 	mut remark := Remark{}
-	remark.content = d.get_default("content","")
+	remark.content = d.get_default('content', '')
 	remark.time = ourtime.OurTime{
-		unix: i64(d.get_int_default("time",0))
+		unix: i64(d.get_int_default('time', 0))
 	}
-	author_gid_str := d.get_default("author","")
+	author_gid_str := d.get_default('author', '')
 	if author_gid_str != '0.0' && author_gid_str != '' {
 		remark.author = smartid.gid(gid_str: author_gid_str)!
 	}
-	remark.params = paramsparser.new(d.get_default("params",""))!	
-	remark.rtype = remarktype(d.get_default("rtype","comment"))
+	remark.params = paramsparser.new(d.get_default('params', ''))!
+	remark.rtype = remarktype(d.get_default('rtype', 'comment'))
 
 	return remark
-
-
 }

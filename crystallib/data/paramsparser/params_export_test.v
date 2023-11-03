@@ -61,7 +61,7 @@ fn test_export_helper2() {
 	// multiline bool = true //if we will put the multiline strings as multiline in output
 	// indent string
 	o := params.export_helper(
-		presort: ['id', 'gid','cid', 'oid', 'name']
+		presort: ['id', 'gid', 'cid', 'oid', 'name']
 		indent: '    '
 		maxcolsize: 120
 		multiline: true
