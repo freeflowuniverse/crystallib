@@ -39,7 +39,7 @@ pub fn (mut r Runner) session_new(args_ SessionArgs) !Session {
 	}
 
 	args.name = texttools.name_fix(args.name)
-	mut p := pathlib.get_dir(path:'${r.path.path}/sessions/${args.name}',create:true)!
+	mut p := pathlib.get_dir(path: '${r.path.path}/sessions/${args.name}', create: true)!
 	mut session := Session{
 		runner: &r
 		name: args.name
@@ -91,7 +91,7 @@ pub fn (mut session Session) downloadpath(name_ string) !pathlib.Path {
 	} else {
 		name = texttools.name_fix(name)
 	}
-	mut p := pathlib.get_dir(path:'${session.path.path}/downloads/${name}')!
+	mut p := pathlib.get_dir(path: '${session.path.path}/downloads/${name}')!
 	return p
 }
 
@@ -115,6 +115,7 @@ pub fn (mut session Session) actions_add(args_ ActionsAddArgs) ! {
 		if args.reset {
 			downloadpath.empty()!
 		}
+		println('debugzo: at downloader: ${downloadpath}')
 
 		// if not a dir and not exist we need to download
 		// will link if git
@@ -126,6 +127,8 @@ pub fn (mut session Session) actions_add(args_ ActionsAddArgs) ! {
 		)!
 		actions_path = downloadpath.path
 	}
+
+	println('debugzo: at parser')
 
 	mut ap := actionsparser.new(path: actions_path)!
 	for a in ap.actions {
@@ -161,7 +164,7 @@ pub fn (mut s Session) run(args RunArgs) ! {
 				if root.len > 0 {
 					s.runner.args.root = root
 				}
-				s.runner.path = pathlib.get_dir(path:'${s.runner.args.root}/${s.runner.args.cid}')!
+				s.runner.path = pathlib.get_dir(path: '${s.runner.args.root}/${s.runner.args.cid}')!
 			}
 		} else if (action.actor == 'runner' || action.actor == 'session')
 			&& action.name == 'var_set' {
@@ -208,14 +211,19 @@ pub fn (mut s Session) run(args RunArgs) ! {
 					reset: reset
 					gitstructure: s.runner.args.gitstructure
 				)!
-				mut downloadpath := pathlib.get_dir(path:m.path)!
+				mut downloadpath := pathlib.get_dir(path: m.path)!
 				// needs to be a dir
-				for mut subdir in downloadpath.dir_list()! {
+				mut path_list := downloadpath.list(recursive: false)!
+				for mut subdir in path_list.paths {
+					// TODO: we use to have dir_list, find cleaner way to replace it
+					if !subdir.is_dir() {
+						continue
+					}
 					alias = texttools.name_fix(subdir.name())
 					dest := '${s.runner.path.path}/recipes/${alias}'
 					if m.downloadtype == .pathdir {
-						mut destpath := pathlib.get_dir(path:dest, create:true)!
-						subdir.copy(destpath.path)!
+						mut destpath := pathlib.get_dir(path: dest, create: true)!
+						subdir.copy(dest: destpath.path)!
 					} else if m.downloadtype == .git {
 						subdir.link(dest, true)!
 					} else {

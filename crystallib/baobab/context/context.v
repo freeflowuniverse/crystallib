@@ -21,6 +21,17 @@ pub mut:
 	done         []string
 }
 
+pub struct ContextNewArgs {
+pub mut:
+	id    string
+	alias string
+	start string
+	// end  ourtime.OurTime
+	params       ?paramsparser.Params
+	gitstructure ?gittools.GitStructure // optional
+	done         []string
+}
+
 // get a context object based on the name /
 // params:
 //
