@@ -114,13 +114,16 @@ pub fn (mydb MyDB) serialize(o MyStruct) ![]u8 {
 
 // serialize to 3script
 pub fn (mydb MyDB) serialize_kwargs(o MyStruct) map[string]string {
-	mut kwargs := o.Base.kwargs()
-	kwargs<< {
-		"nr":"${o.nr}"
-		"nr2":"${o.nr2}"
-		"color":o.color
-		"listu32":",".join(o.listu32)
+	mut kwargs := o.Base.serialize_kwargs()
+	kwargs["nr"]="${o.nr}"
+	kwargs["nr2"]="${o.nr2}"
+	kwargs["color"]=o.color
+	mut listu32:=""
+	for i in listu32{
+		listu32+="${i},"
 	}
+	listu32=listu32.trim_string_right(",")
+	kwargs["listu32"]=listu32
 	return kwargs
 }
 
@@ -128,7 +131,7 @@ pub fn (mydb MyDB) serialize_kwargs(o MyStruct) map[string]string {
 // this is the method to load binary form
 pub fn (mydb MyDB) unserialize(data []u8) !MyStruct {
 	// mut d := encoder.decoder_new(data)
-	mut d, base := mydb.base_decoder(data)!
+	mut d, base := db.base_decoder(data)!
 	mut o := MyStruct{
 		Base: base
 	}
@@ -152,10 +155,10 @@ pub fn (mydb MyDB) unserialize_3script(txt string) ![]MyStruct {
 	for r in mydb.base_decoder_3script(txt)!{
 		mut o := MyStruct{Base: r.base}
 		p:=r.params
-		o.nr = p.get_int("nr")
-		o.color = d.get_string("color")
-		o.nr2 = d.get_int("nr")
-		o.listu32 = d.get_list_u32("listu32")
+		o.nr = p.get_int_default("nr",0)!
+		o.color = p.get_default("color","")!
+		o.nr2 = p.get_int_default("nr",0)!
+		o.listu32 = p.get_list_u32("listu32")!
 		res<<o
 	}
 	return res
