@@ -34,7 +34,6 @@ pub fn (mut mydb DB) init() ! {
 	mut heropath := pathlib.get_dir(path: '~/hero/db', create: true)!
 	mut sqlitedb := sqlite.connect('${heropath.path}/${mydb.cid.str()}.db')!
 	mydb.sqlitedb = sqlitedb
-	tables_create_core(mut mydb)! // creates the data table
 	lock dbs {
 		k:=key(mydb.cid, mydb.objtype)
 		println('init key: ${k}')
@@ -65,17 +64,16 @@ pub fn create(args_ DBTableCreateArgs) ! {
 	mut args := args_
 	mut tablename := ''
 	k := key(args.cid, args.objtype)
-	println('create key: ${k}')
 	lock dbs {
 		mydb := dbs[k] or { return error('cannot find db with key:${k} for create.') }
-		tablename = table_name(mydb, args.objtype)
+		tablename = table_name_find(mydb)
 	}
-
 	lock dbs_init {
 		if tablename in dbs_init {
 			return
 		}
 	}
+	println('create db & tables: ${k}')
 	lock dbs {
 		// println('create table for ${args_}')
 		mut mydb2 := dbs[k] or { return error('cannot find db with key: ${k} for create 2.') }
@@ -104,8 +102,8 @@ pub fn get(args DBTableGetArgs) ![]u8 {
 }
 
 [params]
-pub struct DBFindArgs {
-pub mut:
+struct DBFindArgsI {
+mut:
 	cid               smartid.CID [required]
 	objtype           string [required]
 	query_int         map[string]int
@@ -114,13 +112,13 @@ pub mut:
 	query_int_greater map[string]int
 }
 
-pub fn find(args DBFindArgs) ![][]u8 {
+pub fn find(args DBFindArgsI) ![][]u8 {
 	lock dbs {
 		k:=key(args.cid, args.objtype)
 		mut mydb := dbs[k] or {
 			return error('cannot find db with cid: ${k} for find')
 		}
-		return table_find(mut mydb, args)
+		return table_find(mydb, args)
 	}
 	panic("bug")
 }

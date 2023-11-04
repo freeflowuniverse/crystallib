@@ -15,7 +15,7 @@ fn table_set(mut db DB, mut args DBSetArgs) ! {
 	db.sqlitedb.exec(setstatements)!
 	// for now we just replace the data, but eventually will keep history and do content addressed
 	datastr := base32.encode_to_string(args.data)
-	mut datasql := 'INSERT OR REPLACE INTO data (oid,data) VALUES (${args.gid.oid()},\'${datastr}\');'
+	mut datasql := 'INSERT OR REPLACE INTO ${table_name_data(db)} (oid,data) VALUES (${args.gid.oid()},\'${datastr}\');'
 	db.sqlitedb.exec(datasql)!
 }
 
@@ -24,7 +24,6 @@ fn table_set_statements(mut db DB, mut args DBSetArgs) !(string, string) {
 		return error('objtype needs to be specified')
 	}
 	now := ourtime.now()
-	tablename := table_name(db, args.objtype)
 	mut tosetitems := ['oid', 'mtime', 'ctime']
 	mut tosetvals := [args.gid.cid.u32().str(), args.gid.oid().str(),
 		now.unix_time().str()]
@@ -39,7 +38,7 @@ fn table_set_statements(mut db DB, mut args DBSetArgs) !(string, string) {
 	tosetitemsstr := tosetitems.join(',').trim_right(',')
 	tosetvalsstr := tosetvals.join(',').trim_right(',')
 
-	mut setstatements := 'INSERT OR REPLACE INTO ${tablename} (${tosetitemsstr}) VALUES (${tosetvalsstr});'
+	mut setstatements := 'INSERT OR REPLACE INTO ${table_name_find(db)} (${tosetitemsstr}) VALUES (${tosetvalsstr});'
 
-	return tablename, setstatements
+	return table_name_find(db), setstatements
 }

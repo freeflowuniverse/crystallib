@@ -3,8 +3,7 @@ module db
 import freeflowuniverse.crystallib.baobab.smartid
 
 fn table_delete(mut db DB, args DBDeleteArgs) ! {
-	name := table_name(db, args.objtype)
-	mut statement := table_delete_statement(name, args)
+	mut statement := table_delete_statement(table_name_find(db), args)
 	db.sqlitedb.exec(statement)!
 
 	statement = table_delete_statement('data', args)

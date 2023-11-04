@@ -69,7 +69,7 @@ pub fn (db DB) delete_all() ! {
 
 // add the basefind args to the generic dbfind args .
 // complete the missing statements in basefind args
-fn (mut a DBFindArgs) complete(args BaseFindArgs) ! {
+fn (mut a DBFindArgsI) complete(args BaseFindArgs) ! {
 	if args.name.len > 0 {
 		a.query_string['name'] = args.name
 	}
@@ -100,6 +100,18 @@ pub mut:
 	ctime_from ?ourtime.OurTime
 	ctime_to   ?ourtime.OurTime
 	name       string
+}
+
+
+
+
+[params]
+pub struct DBFindArgs {
+pub mut:
+	query_int         map[string]int
+	query_string      map[string]string
+	query_int_less    map[string]int
+	query_int_greater map[string]int
 }
 
 // find data based on find statements
@@ -140,10 +152,16 @@ pub fn (db DB) find_base(base_args BaseFindArgs, args_ DBFindArgs) ![][]u8 {
 	for t in toremove2 {
 		args.query_int.delete(t)
 	}
-	args.complete(base_args)! // this fills in the base_args into the other args
-	args.cid = db.cid
-	args.objtype = db.objtype
-	return find(args)!
+	mut argsi:=DBFindArgsI{
+		cid : db.cid
+		objtype : db.objtype
+		query_int:args.query_int
+		query_string:args.query_string
+		query_int_less:args.query_int_less
+		query_int_greater:args.query_int_greater
+	}
+	argsi.complete(base_args)! // this fills in the base_args into the other args
+	return find(argsi)!
 }
 
 pub struct DecoderActionItem {
