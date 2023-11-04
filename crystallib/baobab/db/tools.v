@@ -25,10 +25,10 @@ fn (mydb DB) sql_table_exist(name string) !bool {
 	q:="SELECT name FROM sqlite_master WHERE type='table' AND name='${name}'"
 	r:=mydb.sqlitedb.exec(q)!
 	if r.len>0{
-		println(" table $name exists")
+		// println(" table $name exists")
 		return true
 	}
-	println(" table $name does NOT exists")
+	// println(" table $name does NOT exists")
 	return false
 	
 }

@@ -13,28 +13,36 @@ fn do() ! {
 	objs_start := mydb.find()!
 	assert objs_start.len == 0
 
-	mut o1 := mystruct.MyStruct{
-		gid: mydb.cid.gid()!
+	// params             string
+	// name               string
+	// description        string
+	// mtime              string// modification time
+	// ctime              string // creation time
+	// nr      int
+	// color   string
+	// nr2     int
+	// listu32 []u32
+
+	mut o1 := mydb.new(		
 		name: 'my name'
 		nr: 2
 		color: 'red'
 		description: 'is this a serious descripion'
 		nr2: 10
 		listu32: [u32(2), u32(3), u32(4)]
-	}
+	)!
 	mydb.set(o1)!
 
 	objs_4 := mydb.find()!
 	assert objs_4.len == 1
 
-	mut o2 := mystruct.MyStruct{
-		gid: mydb.cid.gid()!
+	mut o2 := mydb.new(
 		name: 'my second name'
 		nr: 2
 		color: 'blue'
 		nr2: 11
 		listu32: [u32(5), u32(6), u32(7)]
-	}
+	)!
 	mydb.set(o2)!
 
 	objs_5 := mydb.find()!
@@ -47,12 +55,19 @@ fn do() ! {
 	o3data := mydb.serialize(o3)!
 	assert o1data == o3data
 
+	script3:=mydb.serialize_3script(o1)!
+	println(script3)
+
+	if true{
+		panic('s')
+	}
+
 	objs := mydb.find(
 		nr: 1
 	)!
 	objs2 := mydb.find(
 		nr: 2
-		mtime_from: ourtime.now()
+		// mtime_from: ourtime.new("-1h") //TODO, doesn't work
 	)!
 	println(objs2)
 	assert objs.len == 0
@@ -63,6 +78,8 @@ fn do() ! {
 
 	objs_6 := mydb.find()!
 	assert objs_6.len == 0
+
+
 
 	perf_write(mydb)!
 	perf_find(mydb)!
@@ -89,9 +106,10 @@ fn perf_write(mydb mystruct.MyDB) ! {
 
 fn perf_find(mydb mystruct.MyDB) ! {
 	now := time.now()
-	mydb.find(nr: 1)!
+	objs:=mydb.find(nr: 1)!
 	diff := time.since(now)
 	println('querying 1000 objects took ${diff.seconds()} seconds.\n')
+	assert objs.len==1000
 }
 
 fn main() {

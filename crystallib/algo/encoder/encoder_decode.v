@@ -1,6 +1,7 @@
 module encoder
 
 import encoding.binary as bin
+import freeflowuniverse.crystallib.data.ourtime
 import time
 
 pub struct Decoder {
@@ -60,9 +61,21 @@ pub fn (mut d Decoder) get_u64() u64 {
 	return bin.little_endian_u64(v)
 }
 
-pub fn (mut d Decoder) get_time() time.Time {
-	return time.unix_nanosecond(i64(d.get_u64()), d.get_int())
+pub fn (mut d Decoder) get_i64() i64 {
+	v := d.data[..8]
+	d.data.delete_many(0, 8)
+	return u64(bin.little_endian_u64(v))
 }
+
+
+pub fn (mut d Decoder) get_time() time.Time {
+	return time.unix(d.get_i64())
+}
+
+pub fn (mut d Decoder) get_ourtime() ourtime.OurTime {
+	return ourtime.OurTime{unix:d.get_i64()}
+}
+
 
 pub fn (mut d Decoder) get_list_string() []string {
 	n := d.get_u16()

@@ -24,7 +24,7 @@ fn tables_create(mut db DB, mut args DBTableCreateArgs) ! {
 	datatable += 'data BLOB,\n'
 	datatable += 'oid INTEGER '
 	datatable += ');\n'
-	println(datatable)
+	// println(datatable)
 	db.sql_exec_one(datatable)!
 
 	if !(index_exists(mut db, table_name_data(db))) {

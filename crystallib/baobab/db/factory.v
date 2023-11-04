@@ -36,7 +36,7 @@ pub fn (mut mydb DB) init() ! {
 	mydb.sqlitedb = sqlitedb
 	lock dbs {
 		k:=key(mydb.cid, mydb.objtype)
-		println('init key: ${k}')
+		// println('init key: ${k}')
 		dbs[k] = &mydb
 	}
 }
@@ -73,7 +73,7 @@ pub fn create(args_ DBTableCreateArgs) ! {
 			return
 		}
 	}
-	println('create db & tables: ${k}')
+	// println('create db & tables: ${k}')
 	lock dbs {
 		// println('create table for ${args_}')
 		mut mydb2 := dbs[k] or { return error('cannot find db with key: ${k} for create 2.') }

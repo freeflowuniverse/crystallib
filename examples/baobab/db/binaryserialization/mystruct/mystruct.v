@@ -32,6 +32,39 @@ pub fn db_new(args DBArgs) !MyDB {
 	return mydb
 }
 
+
+[params]
+pub struct MyStructArgs {
+pub mut:
+	params             string
+	name               string
+	description        string
+	mtime              string// modification time
+	ctime              string // creation time
+	nr      int
+	color   string
+	nr2     int
+	listu32 []u32
+}
+
+pub fn (mydb MyDB) new(args MyStructArgs) !MyStruct {
+	base:=mydb.new_base(
+		params:args.params
+		name:args.name
+		description:args.description
+		mtime:args.mtime
+		ctime:args.ctime
+	)!
+	mut o:=MyStruct{
+		Base:base
+		nr:args.nr
+		color:args.color
+		nr2:args.nr2
+		listu32:args.listu32
+	}
+	return o
+}
+
 pub fn (mydb MyDB) set(o MyStruct) ! {
 	data := mydb.serialize(o)!
 	mydb.set_data(
@@ -141,7 +174,11 @@ pub fn (mydb MyDB) unserialize(data []u8) !MyStruct {
 // serialize to 3script
 pub fn (mydb MyDB) serialize_3script(o MyStruct) !string {
 	p:=paramsparser.new_from_dict(mydb.serialize_kwargs(o))!
-	return p.export(pre:"!!${mydb.objtype}.define ")
+	return p.export(
+		pre:"!!${mydb.objtype}.define "
+		presort: ['gid', 'name']
+		postsort: ['mtime', 'ctime']
+	)
 }
 
 
