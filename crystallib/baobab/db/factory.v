@@ -27,14 +27,18 @@ fn key(cid smartid.CID, objtype_ string) string {
 }
 
 pub fn (mut mydb DB) init() ! {
+	if mydb.circlename.len==0{
+		return error("circle name needs to be specified")
+	}
 	mydb.cid = smartid.cid(name: mydb.circlename)!
 	mut heropath := pathlib.get_dir(path: '~/hero/db', create: true)!
 	mut sqlitedb := sqlite.connect('${heropath.path}/${mydb.cid.str()}.db')!
 	mydb.sqlitedb = sqlitedb
 	tables_create_core(mut mydb)! // creates the data table
 	lock dbs {
-		println('init key: ${key(mydb.cid, mydb.objtype)}')
-		dbs[key(mydb.cid, 'base_${mydb.objtype}')] = &mydb
+		k:=key(mydb.cid, mydb.objtype)
+		println('init key: ${k}')
+		dbs[k] = &mydb
 	}
 }
 
@@ -91,16 +95,19 @@ pub mut:
 
 // get the data from DB if you know the gid
 pub fn get(args DBTableGetArgs) ![]u8 {
-	k := key(args.gid.cid, args.objtype)
-	mut mydb := dbs[k] or { return error('cannot find db with key:${k} for get') }
-	return table_get(mut mydb, args.gid)!
+	lock dbs {
+		k := key(args.gid.cid, args.objtype)
+		mut mydb := dbs[k] or { return error('cannot find db with key:${k} for get') }
+		return table_get(mut mydb, args.gid)!
+	}
+	panic("bug")
 }
 
 [params]
 pub struct DBFindArgs {
 pub mut:
-	cid               smartid.CID
-	objtype           string
+	cid               smartid.CID [required]
+	objtype           string [required]
 	query_int         map[string]int
 	query_string      map[string]string
 	query_int_less    map[string]int
@@ -108,10 +115,14 @@ pub mut:
 }
 
 pub fn find(args DBFindArgs) ![][]u8 {
-	mut mydb := dbs[key(args.cid, args.objtype)] or {
-		return error('cannot find db with cid: ${args.cid.str()}')
+	lock dbs {
+		k:=key(args.cid, args.objtype)
+		mut mydb := dbs[k] or {
+			return error('cannot find db with cid: ${k} for find')
+		}
+		return table_find(mut mydb, args)
 	}
-	return table_find(mut mydb, args)
+	panic("bug")
 }
 
 [params]
@@ -124,8 +135,9 @@ pub mut:
 
 pub fn delete(args DBDeleteArgs) ! {
 	lock dbs {
-		mut mydb := dbs[key(args.cid, args.objtype)] or {
-			return error('cannot find db with cid: ${args.cid.str()}')
+		k := key(args.cid, args.objtype)
+		mut mydb := dbs[k] or {
+			return error('cannot find db with cid: ${k} for delete')
 		}
 
 		table_delete(mut mydb, args)!
