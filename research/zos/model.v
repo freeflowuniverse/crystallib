@@ -13,7 +13,7 @@ struct Peer {
 	endpoint      string
 }
 
-type IP = []byte
+type IP = []byte //TODO: this is a weird format, not usable for our customers
 type IPMask = []byte
 
 // Unit defines a capacity unit in "bytes"

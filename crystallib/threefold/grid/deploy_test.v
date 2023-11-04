@@ -1,4 +1,4 @@
-module tfgrid
+module grid
 
 import json
 import freeflowuniverse.crystallib.threefold.grid.models

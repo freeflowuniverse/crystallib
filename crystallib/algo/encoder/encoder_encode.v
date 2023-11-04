@@ -7,7 +7,7 @@ const kb = 1024
 
 pub struct Encoder {
 pub mut:
-	data      []u8
+	data []u8
 	// datatypes []DataType
 }
 
