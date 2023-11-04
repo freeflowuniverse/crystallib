@@ -25,11 +25,11 @@ fn tables_create(mut db DB, mut args DBTableCreateArgs) ! {
 	datatable += 'oid INTEGER '
 	datatable += ');\n'
 	println(datatable)
-	db.sqlitedb.exec(datatable)!
+	db.sql_exec_one(datatable)!
 
 	if !(index_exists(mut db, table_name_data(db))) {
 		datatable_index := 'CREATE INDEX ${table_name_data(db)}_index ON ${table_name_data(db)} (oid);'
-		db.sqlitedb.exec(datatable_index)!
+		db.sql_exec_one(datatable_index)!
 	}	
 
 	//NOW CREATE THE TABLES FOR FIND
@@ -52,7 +52,7 @@ fn tables_create(mut db DB, mut args DBTableCreateArgs) ! {
 	indexsql := 'CREATE INDEX ${tablename}_index ON ${tablename} (${toindexstr})'
 	db.sqlitedb.exec(searchtable)!
 	if !(index_exists(mut db, tablename)) {
-		db.sqlitedb.exec(indexsql)!
+		db.sql_exec_one(indexsql)!
 	}
 
 	return

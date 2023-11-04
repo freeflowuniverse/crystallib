@@ -48,8 +48,8 @@ fn handle_client1(mut socket net.TcpConn) {
 }
 
 fn server2() {
-	// mut server := net.listen_tcp(.ip6, ':12346') or {panic(err)}
-	mut server := net.listen_tcp(.unix, '/tmp/mysocket') or {panic(err)} //TODO: doesn't work
+	mut server := net.listen_tcp(.ip6, ':12346') or {panic(err)}
+	// mut server := net.listen_tcp(.unix, '/tmp/mysocket') or {panic(err)} //TODO: doesn't work
 	laddr := server.addr()or {panic(err)}
 	eprintln('Listen on ${laddr} ...')
 	for {

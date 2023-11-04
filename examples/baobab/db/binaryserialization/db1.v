@@ -8,9 +8,10 @@ fn do() ! {
 	mydb := mystruct.db_new(circlename: 'testcircle')!
 	println(mydb)
 
-	mydb.delete_all() or { println('failed to delete: ${err}') }
+	mydb.delete_all()!
 
-	mydb.find() or { println('failed to query: ${err}') }
+	objs_start := mydb.find()!
+	assert objs_start.len == 0
 
 	mut o1 := mystruct.MyStruct{
 		gid: mydb.cid.gid()!
@@ -40,6 +41,8 @@ fn do() ! {
 	assert objs_5.len == 2
 
 	o3 := mydb.get(o1.gid)!
+	println(o1)
+	println(o3)
 	o1data := mydb.serialize(o1)!
 	o3data := mydb.serialize(o3)!
 	assert o1data == o3data

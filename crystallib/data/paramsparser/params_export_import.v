@@ -9,6 +9,7 @@ mut:
 	txt       string // if empty then is arg
 	firstline bool
 	multiline bool
+	isarg bool
 }
 
 // will first do the args, then the kwargs
@@ -49,6 +50,7 @@ fn (p Params) export_helper(args_ ExportArgs) ![]ParamExportItem {
 			res << ParamExportItem{
 				key: arg
 				firstline: true
+				isarg: true
 			}
 			firstlinesize += arg.len + 1
 		}
@@ -60,6 +62,9 @@ fn (p Params) export_helper(args_ ExportArgs) ![]ParamExportItem {
 
 	for keyname in keys {
 		mut val := keys_val[keyname]
+		if val.len==0{
+			continue
+		}
 		firstlinesize += keyname.len + val.len + 2
 		mut firstline := true
 		if firstlinesize > args.maxcolsize || val.len > 25 {
@@ -132,7 +137,11 @@ pub fn (p Params) export(args ExportArgs) string {
 			if !item.firstline {
 				out += '\n    '
 			}
-			out += '${item.key}:${item.txt}'
+			if item.isarg{
+				out += '${item.key}'
+			}else{
+				out += '${item.key}:${item.txt}'
+			}
 			if item.firstline {
 				out += ' '
 			}

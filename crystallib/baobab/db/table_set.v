@@ -24,9 +24,8 @@ fn table_set_statements(mut db DB, mut args DBSetArgs) !(string, string) {
 		return error('objtype needs to be specified')
 	}
 	now := ourtime.now()
-	mut tosetitems := ['oid', 'mtime', 'ctime']
-	mut tosetvals := [args.gid.cid.u32().str(), args.gid.oid().str(),
-		now.unix_time().str()]
+	mut tosetitems := [ 'oid']
+	mut tosetvals := [ args.gid.oid().str()]
 	for key, val in args.index_int {
 		tosetitems << '${key}'
 		tosetvals << val.str()
