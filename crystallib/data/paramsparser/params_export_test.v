@@ -66,7 +66,7 @@ fn test_export_helper2() {
 		maxcolsize: 120
 		multiline: true
 	) or { panic(err) }
-	println("2")
+	println('2')
 	println(params)
 	hh := sha256.hexhash(o.str())
 	assert hh == '4bdf0c219fd146f6f1e4634013b97e16d3cc9888ca86149f5352b6edcfd5242b'
@@ -96,7 +96,7 @@ fn test_export_helper3() {
 		maxcolsize: 120
 		multiline: true
 	)!
-	println("3")
+	println('3')
 	println(o)
 
 	hh := sha256.hexhash(o)
@@ -120,7 +120,7 @@ fn test_export_helper4() {
 		oneline: true
 	)
 	println(o)
-	println("4")
+	println('4')
 	hh := sha256.hexhash(o)
 	assert hh == '0863331010844ece9ac6e754cc285677011ede1a1d0cbabdb6a1a24bd8f6b75c'
 	println(hh)

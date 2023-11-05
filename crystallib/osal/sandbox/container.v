@@ -19,11 +19,11 @@ pub mut:
 [params]
 pub struct ContainerArgs {
 pub mut:
-	name        string = 'ubuntu'
-	path_prefix string = '/tmp'
-	path_config string = '@PREFIX/data/@NAME/config'
-	path_root   string = '@PREFIX/data/containers/@NAME/fs'
-	path_io     string = '@PREFIX/data/containers/@NAME/io'
+	name        string   = 'ubuntu'
+	path_prefix string   = '/tmp'
+	path_config string   = '@PREFIX/data/@NAME/config'
+	path_root   string   = '@PREFIX/data/containers/@NAME/fs'
+	path_io     string   = '@PREFIX/data/containers/@NAME/io'
 	startcmd    []string = ['/bin/bash']
 }
 
@@ -67,7 +67,7 @@ pub fn (mut c Container) debootstrap(args_ DebootstrapArgs) ! {
 pub fn (mut c Container) start() ! {
 	mut configpath := c.path_config.file_get_new('config.json')!
 	commandargs := json.encode(c.startcmd)
-	
+
 	t := $tmpl('templates/config.json')
 	configpath.write(t)!
 

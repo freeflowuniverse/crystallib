@@ -85,7 +85,6 @@ pub fn (mut b Encoder) add_i64(data i64) {
 	b.data << d
 }
 
-
 pub fn (mut b Encoder) add_time(data time.Time) {
 	b.add_u64(u64(data.unix_time())) // add as epoch time
 }
@@ -93,7 +92,6 @@ pub fn (mut b Encoder) add_time(data time.Time) {
 pub fn (mut b Encoder) add_ourtime(data ourtime.OurTime) {
 	b.add_i64(data.unix)
 }
-
 
 pub fn (mut b Encoder) add_list_string(data []string) {
 	if data.len > 64 * encoder.kb {

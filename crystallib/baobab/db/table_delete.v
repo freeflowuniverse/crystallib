@@ -3,11 +3,10 @@ module db
 import freeflowuniverse.crystallib.baobab.smartid
 
 fn table_delete(mut mydb DB, args DBDeleteArgs) ! {
-	
-	if mydb.sql_table_exist(table_name_find(mydb))!{
+	if mydb.sql_table_exist(table_name_find(mydb))! {
 		mydb.sql_exec_one(table_delete_statement(table_name_find(mydb), args))!
 	}
-	if mydb.sql_table_exist(table_name_data(mydb))!{
+	if mydb.sql_table_exist(table_name_data(mydb))! {
 		mydb.sql_exec_one(table_delete_statement(table_name_data(mydb), args))!
 	}
 }

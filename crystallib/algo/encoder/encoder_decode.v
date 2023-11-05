@@ -67,15 +67,15 @@ pub fn (mut d Decoder) get_i64() i64 {
 	return u64(bin.little_endian_u64(v))
 }
 
-
 pub fn (mut d Decoder) get_time() time.Time {
 	return time.unix(d.get_i64())
 }
 
 pub fn (mut d Decoder) get_ourtime() ourtime.OurTime {
-	return ourtime.OurTime{unix:d.get_i64()}
+	return ourtime.OurTime{
+		unix: d.get_i64()
+	}
 }
-
 
 pub fn (mut d Decoder) get_list_string() []string {
 	n := d.get_u16()
