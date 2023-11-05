@@ -101,7 +101,7 @@ fn relative_sec(timestr string) !i64 {
 }
 
 fn get_unix_from_relative(timestr string) !i64 {
-	r:=relative_sec(timestr)!
+	r := relative_sec(timestr)!
 	time_unix := i64(r) + time.now().unix_time()
 	return time_unix
 }

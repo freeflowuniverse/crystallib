@@ -23,8 +23,8 @@ fn table_set_statements(mut db DB, mut args DBSetArgs) !(string, string) {
 	if args.objtype.len == 0 {
 		return error('objtype needs to be specified')
 	}
-	mut tosetitems := [ 'oid']
-	mut tosetvals := [ args.gid.oid().str()]
+	mut tosetitems := ['oid']
+	mut tosetvals := [args.gid.oid().str()]
 	for key, val in args.index_int {
 		tosetitems << '${key}'
 		tosetvals << val.str()

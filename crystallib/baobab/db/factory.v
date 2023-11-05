@@ -27,15 +27,15 @@ fn key(cid smartid.CID, objtype_ string) string {
 }
 
 pub fn (mut mydb DB) init() ! {
-	if mydb.circlename.len==0{
-		return error("circle name needs to be specified")
+	if mydb.circlename.len == 0 {
+		return error('circle name needs to be specified')
 	}
 	mydb.cid = smartid.cid(name: mydb.circlename)!
 	mut heropath := pathlib.get_dir(path: '~/hero/db', create: true)!
 	mut sqlitedb := sqlite.connect('${heropath.path}/${mydb.cid.str()}.db')!
 	mydb.sqlitedb = sqlitedb
 	lock dbs {
-		k:=key(mydb.cid, mydb.objtype)
+		k := key(mydb.cid, mydb.objtype)
 		// println('init key: ${k}')
 		dbs[k] = &mydb
 	}
@@ -98,14 +98,14 @@ pub fn get(args DBTableGetArgs) ![]u8 {
 		mut mydb := dbs[k] or { return error('cannot find db with key:${k} for get') }
 		return table_get(mut mydb, args.gid)!
 	}
-	panic("bug")
+	panic('bug')
 }
 
 [params]
 struct DBFindArgsI {
 mut:
-	cid               smartid.CID [required]
-	objtype           string [required]
+	cid               smartid.CID       [required]
+	objtype           string            [required]
 	query_int         map[string]int
 	query_string      map[string]string
 	query_int_less    map[string]int
@@ -114,13 +114,11 @@ mut:
 
 pub fn find(args DBFindArgsI) ![][]u8 {
 	lock dbs {
-		k:=key(args.cid, args.objtype)
-		mut mydb := dbs[k] or {
-			return error('cannot find db with cid: ${k} for find')
-		}
+		k := key(args.cid, args.objtype)
+		mut mydb := dbs[k] or { return error('cannot find db with cid: ${k} for find') }
 		return table_find(mydb, args)
 	}
-	panic("bug")
+	panic('bug')
 }
 
 [params]
@@ -134,9 +132,7 @@ pub mut:
 pub fn delete(args DBDeleteArgs) ! {
 	lock dbs {
 		k := key(args.cid, args.objtype)
-		mut mydb := dbs[k] or {
-			return error('cannot find db with cid: ${k} for delete')
-		}
+		mut mydb := dbs[k] or { return error('cannot find db with cid: ${k} for delete') }
 
 		table_delete(mut mydb, args)!
 	}

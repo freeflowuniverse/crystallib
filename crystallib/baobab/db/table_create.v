@@ -17,8 +17,8 @@ fn tables_create(mut db DB, mut args DBTableCreateArgs) ! {
 	if args.objtype.len == 0 {
 		return error('objtype needs to be specified')
 	}
-	if ! ("oid" in args.index_int){
-		args.index_int<<"oid"
+	if 'oid' !in args.index_int {
+		args.index_int << 'oid'
 	}
 	mut datatable := 'CREATE TABLE IF NOT EXISTS ${table_name_data(db)} (\n'
 	datatable += 'data BLOB,\n'
@@ -30,9 +30,9 @@ fn tables_create(mut db DB, mut args DBTableCreateArgs) ! {
 	if !(index_exists(mut db, table_name_data(db))) {
 		datatable_index := 'CREATE INDEX ${table_name_data(db)}_index ON ${table_name_data(db)} (oid);'
 		db.sql_exec_one(datatable_index)!
-	}	
+	}
 
-	//NOW CREATE THE TABLES FOR FIND
+	// NOW CREATE THE TABLES FOR FIND
 	tablename := table_name_find(db)
 	mut searchtable := 'CREATE TABLE IF NOT EXISTS ${tablename} (\n'
 	mut toindex := []string{}

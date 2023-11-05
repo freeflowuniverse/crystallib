@@ -98,7 +98,6 @@ pub fn (t OurTime) empty() bool {
 	return t.unix == 0
 }
 
-
 // move the time, e.g. +1h means we go 1 h further
 // ## Relative time
 // #### time periods:
@@ -111,7 +110,7 @@ pub fn (t OurTime) empty() bool {
 // - Y : year
 // input string example: "+1w +2d -4h"
 //
-pub fn (mut t OurTime) warp(warp string) !{
+pub fn (mut t OurTime) warp(warp string) ! {
 	println(relative_sec(warp)!)
-	t.unix+=relative_sec(warp)!
+	t.unix += relative_sec(warp)!
 }

@@ -33,7 +33,7 @@ fn table_find(db DB, args DBFindArgsI) ![][]u8 {
 		oids << row.vals[0].int()
 	}
 
-	sql_statement_multiget := sql_build_multiget(db,oids)
+	sql_statement_multiget := sql_build_multiget(db, oids)
 	data_rows := db.sqlitedb.exec(sql_statement_multiget)!
 	// println(sql_statement_multiget)
 	// println(data_rows)

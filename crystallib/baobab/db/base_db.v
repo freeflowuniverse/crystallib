@@ -8,16 +8,14 @@ import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.data.actionsparser
 import freeflowuniverse.crystallib.data.paramsparser
 
-
-
 [params]
 pub struct DBBaseNewArgs {
 pub mut:
-	params             string
-	name               string
-	description        string
-	mtime              string// modification time
-	ctime              string // creation time
+	params      string
+	name        string
+	description string
+	mtime       string // modification time
+	ctime       string // creation time
 }
 
 //```
@@ -28,17 +26,16 @@ pub mut:
 // ctime              string // creation time
 //```
 pub fn (db DB) new_base(args DBBaseNewArgs) !Base {
-	b:=Base{
-		gid: smartid.gid(cid_str:db.cid.str())!
-		params:paramsparser.new(args.params)!
-		name:args.name
-		description:args.description
-		mtime:ourtime.new(args.mtime)!
-		ctime:ourtime.new(args.ctime)!
+	b := Base{
+		gid: smartid.gid(cid_str: db.cid.str())!
+		params: paramsparser.new(args.params)!
+		name: args.name
+		description: args.description
+		mtime: ourtime.new(args.mtime)!
+		ctime: ourtime.new(args.ctime)!
 	}
 	return b
 }
-
 
 [params]
 pub struct DBSetArgs {
@@ -50,7 +47,6 @@ pub mut:
 	data         []u8 // if empty will do json
 	baseobj      Base
 }
-
 
 // set data in database, need to pass the base obj as well
 // ```js
@@ -68,7 +64,6 @@ pub fn (db DB) set_data(args_ DBSetArgs) ! {
 	args.baseobj.mtime.check() // make sure time is filled in
 	args.baseobj.ctime.check() // make sure time is filled in
 
-	
 	args.index_int['mtime'] = args.baseobj.mtime.int()
 	args.index_int['ctime'] = args.baseobj.ctime.int()
 	args.index_string['name'] = args.baseobj.name
@@ -136,9 +131,6 @@ pub mut:
 	name       string
 }
 
-
-
-
 [params]
 pub struct DBFindArgs {
 pub mut:
@@ -186,13 +178,13 @@ pub fn (db DB) find_base(base_args BaseFindArgs, args_ DBFindArgs) ![][]u8 {
 	for t in toremove2 {
 		args.query_int.delete(t)
 	}
-	mut argsi:=DBFindArgsI{
-		cid : db.cid
-		objtype : db.objtype
-		query_int:args.query_int
-		query_string:args.query_string
-		query_int_less:args.query_int_less
-		query_int_greater:args.query_int_greater
+	mut argsi := DBFindArgsI{
+		cid: db.cid
+		objtype: db.objtype
+		query_int: args.query_int
+		query_string: args.query_string
+		query_int_less: args.query_int_less
+		query_int_greater: args.query_int_greater
 	}
 	argsi.complete(base_args)! // this fills in the base_args into the other args
 	return find(argsi)!
