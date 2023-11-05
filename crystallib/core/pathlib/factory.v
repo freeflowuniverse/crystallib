@@ -50,8 +50,11 @@ pub fn get_dir(args_ GetArgs) !Path {
 		p2.check()
 		p2.absolute()
 		if p2.exist == .no {
-			os.mkdir_all(p2.absolute()) or { return error('cannot create path ${p2}') } // Make sure that all the needed paths created		
-			p2.check()
+			if args.create{
+				os.mkdir_all(p2.absolute()) or { return error('cannot create path ${p2}') } // Make sure that all the needed paths created		
+				p2.check()
+			}
+			return p2
 		}
 		if !p2.is_dir() {
 			return error('Path ${args.path} is not a dir.')
