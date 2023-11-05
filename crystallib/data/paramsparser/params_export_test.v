@@ -66,10 +66,10 @@ fn test_export_helper2() {
 		maxcolsize: 120
 		multiline: true
 	) or { panic(err) }
+	println("2")
 	println(params)
-
 	hh := sha256.hexhash(o.str())
-	assert hh == '7d62892dd61c5632393b94f3e935ea2067ff075ff85279993728d901c9ebb072'
+	assert hh == '4bdf0c219fd146f6f1e4634013b97e16d3cc9888ca86149f5352b6edcfd5242b'
 	// println(hh)
 
 	// println(params)
@@ -90,20 +90,17 @@ fn test_export_helper3() {
 		maxcolsize: 120
 		multiline: true
 	)
-	println(o)
 	o2 := params.export_helper(
 		presort: ['id', 'cid', 'oid', 'name']
 		args_remove: true
 		maxcolsize: 120
 		multiline: true
 	)!
-	println(o2)
+	println("3")
+	println(o)
 
 	hh := sha256.hexhash(o)
-	assert hh == 'f9186395fcb8069bd2ed28b4033d4d0e9771bd2063ef3242f1e90897dba73738'
-	println(hh)
-
-	println(params)
+	assert hh == 'c76b65708aefbc86ac60199c57d5106bad76ed77a569eacc292caa6571cbb3ca'
 }
 
 fn test_export_helper4() {
@@ -123,9 +120,9 @@ fn test_export_helper4() {
 		oneline: true
 	)
 	println(o)
-
+	println("4")
 	hh := sha256.hexhash(o)
-	assert hh == '39807e3adf14885c87efb8d2a6a28ce571c98fb3e95d85f64ad8c0b44293f3cf'
+	assert hh == '0863331010844ece9ac6e754cc285677011ede1a1d0cbabdb6a1a24bd8f6b75c'
 	println(hh)
 
 	println(params)

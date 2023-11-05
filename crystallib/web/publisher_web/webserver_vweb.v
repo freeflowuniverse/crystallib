@@ -1,9 +1,9 @@
-module publisher_core
+module publisher_web
 
 import freeflowuniverse.crystallib.core.texttools
 import os
 import vweb
-import publisher_config
+// import publisher_config
 import json
 import gittools
 import rest

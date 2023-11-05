@@ -1,19 +1,5 @@
 module db
 
-fn tables_create_core(mut db DB) ! {
-	mut datatable := 'CREATE TABLE IF NOT EXISTS data (\n'
-	datatable += 'data BLOB,\n'
-	datatable += 'oid INTEGER\n'
-	datatable += '\n);\n'
-	println(datatable)
-	db.sqlitedb.exec(datatable)!
-
-	if !(index_exists(mut db, 'data')) {
-		indextable := 'CREATE INDEX data_index ON data (oid);'
-		db.sqlitedb.exec(indextable)!
-	}
-}
-
 fn index_exists(mut db DB, name string) bool {
 	r := db.sqlitedb.exec("
     	SELECT 1 FROM sqlite_master
@@ -31,8 +17,23 @@ fn tables_create(mut db DB, mut args DBTableCreateArgs) ! {
 	if args.objtype.len == 0 {
 		return error('objtype needs to be specified')
 	}
+	if ! ("oid" in args.index_int){
+		args.index_int<<"oid"
+	}
+	mut datatable := 'CREATE TABLE IF NOT EXISTS ${table_name_data(db)} (\n'
+	datatable += 'data BLOB,\n'
+	datatable += 'oid INTEGER '
+	datatable += ');\n'
+	// println(datatable)
+	db.sql_exec_one(datatable)!
 
-	tablename := table_name(db, args.objtype)
+	if !(index_exists(mut db, table_name_data(db))) {
+		datatable_index := 'CREATE INDEX ${table_name_data(db)}_index ON ${table_name_data(db)} (oid);'
+		db.sql_exec_one(datatable_index)!
+	}	
+
+	//NOW CREATE THE TABLES FOR FIND
+	tablename := table_name_find(db)
 	mut searchtable := 'CREATE TABLE IF NOT EXISTS ${tablename} (\n'
 	mut toindex := []string{}
 	for key in args.index_int {
@@ -51,7 +52,7 @@ fn tables_create(mut db DB, mut args DBTableCreateArgs) ! {
 	indexsql := 'CREATE INDEX ${tablename}_index ON ${tablename} (${toindexstr})'
 	db.sqlitedb.exec(searchtable)!
 	if !(index_exists(mut db, tablename)) {
-		db.sqlitedb.exec(indexsql)!
+		db.sql_exec_one(indexsql)!
 	}
 
 	return

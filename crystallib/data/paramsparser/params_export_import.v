@@ -9,6 +9,7 @@ mut:
 	txt       string // if empty then is arg
 	firstline bool
 	multiline bool
+	isarg bool
 }
 
 // will first do the args, then the kwargs
@@ -26,13 +27,15 @@ fn (p Params) export_helper(args_ ExportArgs) ![]ParamExportItem {
 	mut keys_val := map[string]string{}
 	for param in p.params {
 		mut key := texttools.name_fix(param.key)
-		if key !in args.presort {
+		if key !in args.presort && key !in args.postsort {
 			keys << key
 		}
 		mut val := param.value.trim_space()
 		val = val.replace('\n', '\\n')
 		val = val.replace('\t', '    ')
 		if val.contains(' ') {
+			val = "'${val}'"
+		}else if key in ["cid","oid","gid"] {
 			val = "'${val}'"
 		}
 		keys_val[key] = val
@@ -49,17 +52,29 @@ fn (p Params) export_helper(args_ ExportArgs) ![]ParamExportItem {
 			res << ParamExportItem{
 				key: arg
 				firstline: true
+				isarg: true
 			}
 			firstlinesize += arg.len + 1
 		}
 	}
 
-	for key in args.presort.reverse() {
-		keys.prepend(key) // make sure we have the presorted once first
+	keysexisting:=keys_val.keys()
+	for key in args.presort.reverse(){
+		if  key in keysexisting{
+			keys.prepend(key) // make sure we have the presorted once first
+		}
 	}
+	for key in args.postsort {
+		if  key in keysexisting{
+			keys << key //now add the ones at the end
+		}
+	}	
 
 	for keyname in keys {
 		mut val := keys_val[keyname]
+		if val.len==0{
+			continue
+		}
 		firstlinesize += keyname.len + val.len + 2
 		mut firstline := true
 		if firstlinesize > args.maxcolsize || val.len > 25 {
@@ -74,7 +89,7 @@ fn (p Params) export_helper(args_ ExportArgs) ![]ParamExportItem {
 		if args.multiline == false || args.oneline {
 			multiline = false
 		}
-		if firstline {
+		if firstline && !(keyname in args.postsort) {
 			res << ParamExportItem{
 				key: keyname
 				txt: val
@@ -98,6 +113,7 @@ fn (p Params) export_helper(args_ ExportArgs) ![]ParamExportItem {
 pub struct ExportArgs {
 pub mut:
 	presort      []string
+	postsort      []string
 	args_allowed bool = true
 	args_remove  bool
 	maxcolsize   int = 120
@@ -132,7 +148,11 @@ pub fn (p Params) export(args ExportArgs) string {
 			if !item.firstline {
 				out += '\n    '
 			}
-			out += '${item.key}:${item.txt}'
+			if item.isarg{
+				out += '${item.key}'
+			}else{
+				out += '${item.key}:${item.txt}'
+			}
 			if item.firstline {
 				out += ' '
 			}

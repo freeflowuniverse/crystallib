@@ -10,7 +10,7 @@ pub mut:
 	regex         []string
 	recursive     bool = true
 	ignoredefault bool = true // ignore files starting with . and _
-	dirs_only 	 bool
+	dirs_only     bool
 }
 
 // the result of pathlist
@@ -50,7 +50,7 @@ pub fn (path Path) list(args_ ListArgs) !PathList {
 		regex: r
 		recursive: args_.recursive
 		ignoredefault: args_.ignoredefault
-		dirs_only:args_.dirs_only
+		dirs_only: args_.dirs_only
 	}
 	paths := path.list_internal(args)!
 	mut pl := PathList{
@@ -66,7 +66,7 @@ mut:
 	regex         []regex.RE // only put files in which follow one of the regexes
 	recursive     bool = true
 	ignoredefault bool = true // ignore files starting with . and _
-	dirs_only 	 bool
+	dirs_only     bool
 }
 
 fn (path Path) list_internal(args ListArgsInternal) ![]Path {
@@ -106,7 +106,7 @@ fn (path Path) list_internal(args ListArgsInternal) ![]Path {
 				addthefile = false
 			}
 		}
-		if addthefile && args.dirs_only==false{
+		if addthefile && args.dirs_only == false {
 			all_list << new_path
 		}
 	}

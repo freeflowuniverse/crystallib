@@ -2,22 +2,23 @@ module db
 
 import freeflowuniverse.crystallib.baobab.smartid
 
-fn table_delete(mut db DB, args DBDeleteArgs) ! {
-	name := table_name(db, args.objtype)
-	mut statement := table_delete_statement(name, args)
-	db.sqlitedb.exec(statement)!
-
-	statement = table_delete_statement('data', args)
-	db.sqlitedb.exec(statement)!
+fn table_delete(mut mydb DB, args DBDeleteArgs) ! {
+	
+	if mydb.sql_table_exist(table_name_find(mydb))!{
+		mydb.sql_exec_one(table_delete_statement(table_name_find(mydb), args))!
+	}
+	if mydb.sql_table_exist(table_name_data(mydb))!{
+		mydb.sql_exec_one(table_delete_statement(table_name_data(mydb), args))!
+	}
 }
 
 fn table_delete_statement(name string, args DBDeleteArgs) string {
 	gid := args.gid or { smartid.GID{} }
 	oid := gid.oid()
 	q := if oid > 0 {
-		'DELETE from ${name} WHERE cid = ${args.cid.u32()} AND oid = ${oid}'
+		'DELETE from ${name} WHERE oid = ${oid};'
 	} else {
-		'DELETE from ${name} WHERE cid = ${args.cid.u32()}'
+		'DELETE from ${name};'
 	}
 	return q
 }

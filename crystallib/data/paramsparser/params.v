@@ -98,6 +98,7 @@ pub fn (p Params) str() string {
 	mut out := ''
 	out = p.export(
 		presort: ['id', 'cid', 'oid', 'name']
+		postsort: ['mtime', 'ctime', 'time']
 		indent: '    '
 		maxcolsize: 120
 		multiline: true

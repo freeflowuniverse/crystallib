@@ -27,14 +27,17 @@ fn key(cid smartid.CID, objtype_ string) string {
 }
 
 pub fn (mut mydb DB) init() ! {
+	if mydb.circlename.len==0{
+		return error("circle name needs to be specified")
+	}
 	mydb.cid = smartid.cid(name: mydb.circlename)!
 	mut heropath := pathlib.get_dir(path: '~/hero/db', create: true)!
 	mut sqlitedb := sqlite.connect('${heropath.path}/${mydb.cid.str()}.db')!
 	mydb.sqlitedb = sqlitedb
-	tables_create_core(mut mydb)! // creates the data table
 	lock dbs {
-		println('init key: ${key(mydb.cid, mydb.objtype)}')
-		dbs[key(mydb.cid, 'base_${mydb.objtype}')] = &mydb
+		k:=key(mydb.cid, mydb.objtype)
+		// println('init key: ${k}')
+		dbs[k] = &mydb
 	}
 }
 
@@ -61,17 +64,16 @@ pub fn create(args_ DBTableCreateArgs) ! {
 	mut args := args_
 	mut tablename := ''
 	k := key(args.cid, args.objtype)
-	println('create key: ${k}')
 	lock dbs {
 		mydb := dbs[k] or { return error('cannot find db with key:${k} for create.') }
-		tablename = table_name(mydb, args.objtype)
+		tablename = table_name_find(mydb)
 	}
-
 	lock dbs_init {
 		if tablename in dbs_init {
 			return
 		}
 	}
+	// println('create db & tables: ${k}')
 	lock dbs {
 		// println('create table for ${args_}')
 		mut mydb2 := dbs[k] or { return error('cannot find db with key: ${k} for create 2.') }
@@ -91,27 +93,34 @@ pub mut:
 
 // get the data from DB if you know the gid
 pub fn get(args DBTableGetArgs) ![]u8 {
-	k := key(args.gid.cid, args.objtype)
-	mut mydb := dbs[k] or { return error('cannot find db with key:${k} for get') }
-	return table_get(mut mydb, args.gid)!
+	lock dbs {
+		k := key(args.gid.cid, args.objtype)
+		mut mydb := dbs[k] or { return error('cannot find db with key:${k} for get') }
+		return table_get(mut mydb, args.gid)!
+	}
+	panic("bug")
 }
 
 [params]
-pub struct DBFindArgs {
-pub mut:
-	cid               smartid.CID
-	objtype           string
+struct DBFindArgsI {
+mut:
+	cid               smartid.CID [required]
+	objtype           string [required]
 	query_int         map[string]int
 	query_string      map[string]string
 	query_int_less    map[string]int
 	query_int_greater map[string]int
 }
 
-pub fn find(args DBFindArgs) ![][]u8 {
-	mut mydb := dbs[key(args.cid, args.objtype)] or {
-		return error('cannot find db with cid: ${args.cid.str()}')
+pub fn find(args DBFindArgsI) ![][]u8 {
+	lock dbs {
+		k:=key(args.cid, args.objtype)
+		mut mydb := dbs[k] or {
+			return error('cannot find db with cid: ${k} for find')
+		}
+		return table_find(mydb, args)
 	}
-	return table_find(mut mydb, args)
+	panic("bug")
 }
 
 [params]
@@ -124,8 +133,9 @@ pub mut:
 
 pub fn delete(args DBDeleteArgs) ! {
 	lock dbs {
-		mut mydb := dbs[key(args.cid, args.objtype)] or {
-			return error('cannot find db with cid: ${args.cid.str()}')
+		k := key(args.cid, args.objtype)
+		mut mydb := dbs[k] or {
+			return error('cannot find db with cid: ${k} for delete')
 		}
 
 		table_delete(mut mydb, args)!

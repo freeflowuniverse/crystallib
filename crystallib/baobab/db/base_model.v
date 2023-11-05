@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.algo.encoder
 import freeflowuniverse.crystallib.baobab.smartid
+import time
 
 [heap]
 pub struct Base {
@@ -57,7 +58,8 @@ pub fn (o Base) bin_encoder() !encoder.Encoder {
 	b.add_string(o.name)
 	b.add_string(o.description)
 	b.add_bytes(o.remarks.serialize_binary())
-
+	b.add_ourtime(o.mtime)
+	b.add_ourtime(o.ctime)
 	return b
 }
 
@@ -72,6 +74,8 @@ pub fn base_decoder(data []u8) !(encoder.Decoder, Base) {
 	remarksbytes := d.get_bytes()
 	o.remarks = remarks_unserialize_binary(remarksbytes)!
 	o.serialization_type = .bin
+	o.mtime = d.get_ourtime()
+	o.ctime = d.get_ourtime()
 	return d, o
 }
 
