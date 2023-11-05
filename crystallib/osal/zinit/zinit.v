@@ -1,8 +1,9 @@
 module zinit
 
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.osal.initd
 import freeflowuniverse.crystallib.core.pathlib
-
+import os
 [heap]
 pub struct Zinit {
 pub mut:
@@ -12,6 +13,42 @@ pub mut:
 	pathtests pathlib.Path
 }
 
+[params]
+struct InitDProcGet{
+	delete bool
+	start bool = true
+}
+
+fn initd_proc_get(args InitDProcGet)!initd.IProcess{
+	mut initdfactory:=initd.new()!
+	mut initdprocess:=initdfactory.new(
+		cmd:'/usr/local/bin/zinit init'
+		name:'zinit'
+		description:'a super easy to use startup manager.'
+	)!
+	if args.delete{
+		initdprocess.remove()!		
+	}
+	if args.start{
+		initdprocess.start()!		
+	}	
+	return initdprocess
+}
+
+//remove all know services to zinit
+pub fn destroy() ! {
+	initd_proc_get(delete:true,start:false)!
+	mut zinitpath:=pathlib.get_dir(path:'/etc/zinit',create:true)!	
+	zinitpath.empty()!
+	println(" - zinit destroyed")
+}
+
+pub fn start() ! {
+	println(" - zinit start")
+	initd_proc_get(delete:true,start:true)!
+}
+
+
 pub fn new() !Zinit {
 	mut obj := Zinit{
 		path: pathlib.get_dir(path: '/etc/zinit', create: true)!
@@ -20,9 +57,21 @@ pub fn new() !Zinit {
 	}
 
 	cmd := 'zinit list'
-	r := osal.execute_silent(cmd)!
+	mut res:=os.execute(cmd)
+	if res.exit_code > 0 {
+		if res.output.contains("failed to connect"){
+			start()!
+			res=os.execute(cmd)
+			if res.exit_code > 0 {
+				return error("can't do zinit list, after start of zinit.\n$res")
+			}
+		}else{
+			return error("can't do zinit list.\n$res")
+		}
+		
+	}
 	mut state := ''
-	for line in r.split_into_lines() {
+	for line in res.output.split_into_lines() {
 		if line.starts_with('---') {
 			state = 'ok'
 			continue
@@ -45,7 +94,7 @@ pub struct ZProcessNewArgs {
 pub mut:
 	name      string            [required]
 	cmd       string            [required]
-	cmd_file  bool
+	cmd_file  bool  //if we wanna force to run it as a file which is given to bash -c  (not just a cmd in zinit)
 	test      string
 	test_file bool
 	after     []string
@@ -53,7 +102,7 @@ pub mut:
 	oneshot   bool
 }
 
-pub fn (mut zinit Zinit) new(mut args_ ZProcessNewArgs) !ZProcess {
+pub fn (mut zinit Zinit) new(args_ ZProcessNewArgs) !ZProcess {
 	mut args := args_
 
 	mut zp := ZProcess{
@@ -65,14 +114,14 @@ pub fn (mut zinit Zinit) new(mut args_ ZProcessNewArgs) !ZProcess {
 		// means we can load the special cmd
 		mut pathcmd := zinit.pathcmds.file_get(args.name)!
 		pathcmd.write(args.cmd)!
-		zp.cmd = "/bin/bash -c ${pathcmd.path}"
+		// zp.cmd = "/bin/bash -c ${pathcmd.path}"
 	}
 
 	if args.test.contains('\n') || args.test_file {
 		// means we can load the special cmd
 		mut pathcmd := zinit.pathtests.file_get(args.name)!
 		pathcmd.write(args.test)!
-		zp.test = "/bin/bash -c ${pathcmd.path}"
+		// zp.test = "/bin/bash -c ${pathcmd.path}"
 	}
 
 	zp.oneshot = args.oneshot

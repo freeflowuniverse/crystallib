@@ -18,6 +18,6 @@ fn do() ! {
 		description:'a super easy to use startup manager.'
 	)!
 	p.start()!
-	// p.remove()!
+	p.remove()!
 
 }

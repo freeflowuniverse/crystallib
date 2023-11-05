@@ -19,7 +19,7 @@ pub enum IProcessStatus {
 	unknown
 	running
 	exited
-	deleteds
+	deleted
 }
 
 // pub fn (zp IProcess) cmd() string {
@@ -77,7 +77,7 @@ pub fn (mut zp IProcess) refresh() ! {
 
 pub fn (mut zp IProcess) remove() ! {
 
-    mut p:=pathlib.get_file(path:"${zp.initd.path.path}/${zp.name}.service")!
+    mut p:=pathlib.get_file(path:"${zp.initd.path.path}/${zp.name}.service",create:true)!
 	cmd:="
 	systemctl daemon-reload
 	systemctl disable ${zp.name}
