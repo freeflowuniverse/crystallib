@@ -4,7 +4,6 @@ import os
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 
-
 [heap]
 pub struct Zinit {
 pub mut:
