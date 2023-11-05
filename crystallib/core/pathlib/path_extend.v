@@ -17,7 +17,7 @@ pub fn (mut p Path) extend_dir_create(parts ...string) !Path {
 		out += '/' + part2.trim('/')
 	}
 	out = out.replace('//', '/')
-	mut p2 := get_dir(out, true)!
+	mut p2 := get_dir(path: out, create: true)!
 	return p2
 }
 
@@ -36,7 +36,7 @@ pub fn (mut p Path) extend_file(name string) !Path {
 	}
 	out += '/' + name.trim('/')
 	out = out.replace('//', '/')
-	mut p2 := get_file(out, false)!
+	mut p2 := get_file(path: out)!
 	return p2
 }
 

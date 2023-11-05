@@ -14,7 +14,7 @@ pub fn (mut path Path) md5hex() !string {
 // calculate md5 in reproducable way for directory as well as large file
 pub fn (mut path Path) md5() ![]u8 {
 	path.check_exists()!
-	// println(" - filesize: $path.path")
+	// println(" - md5: $path.path")
 	if path.cat == .file {
 		mut d := md5.new()
 		mut ff := os.open(path.path)!
@@ -37,9 +37,9 @@ pub fn (mut path Path) md5() ![]u8 {
 		md5bytes := d.checksum()
 		return md5bytes
 	} else {
-		mut paths := path.list(recursive: true)!
+		mut pl := path.list(recursive: true)!
 		mut out := []string{}
-		for mut p in paths {
+		for mut p in pl.paths {
 			md5bytes := p.md5()!
 			out << hex.encode(md5bytes)
 		}

@@ -25,7 +25,7 @@ pub fn new(args_ KeysSafeNewArgs) !KeysSafe {
 	if args.path.len == 0 {
 		args.path = '~/.twin'
 	}
-	pathlib.get_dir(args.path, true)!
+	pathlib.get_dir(path: args.path, create: true)!
 	mut db := sqlite.connect('${args.path}/keysafe.db')!
 	mut safe := KeysSafe{
 		db: db

@@ -16,5 +16,5 @@ fn (mut client ClientApp) abort(status int, message string) {
 
 fn main() {
 	println(term.green('Client app started'))
-	vweb.run(&ClientApp{}, 8080)
+	vweb.run(&ClientApp{}, 8000)
 }

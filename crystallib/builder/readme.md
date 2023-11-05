@@ -2,9 +2,13 @@
 
 ## Initialization
 
-```vlang
-
+```golang
+import freeflowuniverse.crystallib.builder
+mut b:=builder.new()!
+mut n:=b.node_get(ipaddr:"root@195.192.213.2:2222")! //shorter way how to specify, user can also be done separate
 ```
+
+see a more complete example in https://github.com/freeflowuniverse/crystallib/blob/development/examples/builder/simple/simple.v
 
 ## NODE DB
 
@@ -34,21 +38,3 @@ Each executor implements the following methods
 - debug_off()
 - debug_on()
 
-## TMUX
-
-TMUX is a very capable process manager, this class makes it easier to operate.
-
-example:
-
-```v
-
-
-```
-
-A cool feature is that we can run TMUX remote over an SSH node.
-
-### Concepts
-
-- tmux = is the factory, it represents the tmux process manager, linked to a node
-- session = is a set of windows, it has a name and groups windows
-- window = is typically one process running (you can have panes but in our implementation we skip this)

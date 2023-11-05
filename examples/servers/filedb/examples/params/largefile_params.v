@@ -4,7 +4,7 @@ import os
 import io
 import benchmark
 import time
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 
 const testpath = '/tmp/test'
 
@@ -20,7 +20,7 @@ fn find_item(myfilter params.ParamsFilter) !string {
 
 	for {
 		mut r := buffered_reader.read_line() or { break }
-		p := params.parse(r)!
+		p := paramsparser.parse(r)!
 		if p.filter_match(myfilter)! {
 			return r
 		}

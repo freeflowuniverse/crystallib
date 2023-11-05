@@ -23,23 +23,23 @@ fn (mut shelve Shelve) meta_data(current_time time.Time) string {
 }
 
 // save the metadata for the backups
-pub fn (mut shelve Shelve) save() ? {
-	mut mpath := shelve.path_meta()?
+pub fn (mut shelve Shelve) save() ! {
+	mut mpath := shelve.path_meta()!
 	out := shelve.meta_data(time.now())
-	mpath.write(out)?
+	mpath.write(out)!
 }
 
 // get the data from the directory
-fn (mut shelve Shelve) path_meta() ?pathlib.Path {
+fn (mut shelve Shelve) path_meta() !pathlib.Path {
 	pathmeta := '${shelve.path.path}/.vault/meta'
-	return pathlib.get_file(pathmeta, true)
+	return pathlib.get_file(path: pathmeta, create: true)
 }
 
 // load the shelve, if its not there yet, then will return empty
-pub fn (mut shelve Shelve) load() ? {
-	mut mpath := shelve.path_meta()?
+pub fn (mut shelve Shelve) load() ! {
+	mut mpath := shelve.path_meta()!
 	if mpath.exists() {
-		text := mpath.read()?
+		text := mpath.read()!
 		for line in text.split_into_lines() {
 			if line.trim_space() == '' {
 				continue
@@ -62,18 +62,18 @@ pub fn (mut shelve Shelve) load() ? {
 }
 
 // walk over the directory which is represented by the shelve, walk over it and find new elements
-pub fn (mut shelve Shelve) shelve() ? {
+pub fn (mut shelve Shelve) shelve() ! {
 	// means the diretory was not processed yet, walk over all files in the directory and add
-	mut llist := shelve.path.list(recursive: false)?
+	mut llist := shelve.path.list(recursive: false)!
 	for mut file in llist {
 		if file.name().starts_with('.') || file.name().starts_with('_') {
 			continue
 		}
 		if file.is_file() {
-			shelve.add(mut file)?
+			shelve.add(mut file)!
 		}
 	}
-	shelve.save()?
+	shelve.save()!
 }
 
 // find the latest item for specific name, if it does not exist will create
@@ -117,7 +117,7 @@ pub fn (mut shelve Shelve) latest(name string) Item {
 }
 
 // add a file to the shelve
-pub fn (mut shelve Shelve) add(mut path pathlib.Path) ?Item {
+pub fn (mut shelve Shelve) add(mut path pathlib.Path) !Item {
 	println(' - shelve: ${path}')
 	if !path.exists() {
 		error("cannot find path to add to shell: '${path}'")
@@ -127,7 +127,7 @@ pub fn (mut shelve Shelve) add(mut path pathlib.Path) ?Item {
 	}
 
 	name := path.name()
-	sha := path.sha256()?
+	sha := path.sha256()!
 
 	// get the latest one if it exists
 	mut item := shelve.latest(name)
@@ -146,17 +146,17 @@ pub fn (mut shelve Shelve) add(mut path pathlib.Path) ?Item {
 	newname := item_new.name_nr()
 	mut dest := pathlib.get_no_check('${shelve.path.path}/.vault/${newname}')
 	println('------ ${dest}')
-	path.copy(mut dest)?
+	path.copy(dest: dest.path)!
 	shelve.items << item_new
 	shelve.changed = true
 	return item_new
 }
 
 // delete the shelve info
-pub fn (mut shelve Shelve) delete() ? {
+pub fn (mut shelve Shelve) delete() ! {
 	pp := '${shelve.path.path}/.vault'
 	if os.exists(pp) {
-		os.rmdir_all(pp)?
+		os.rmdir_all(pp)!
 	}
 	shelve.items = []Item{}
 }
@@ -173,8 +173,8 @@ pub fn (mut shelve Shelve) superlist() string {
 // restore to the unixtime state
 // only implemented to go to 0, which is the first state
 // TODO: implement restore on other times
-// pub fn (mut shelve Shelve) restore(unixtime int )? {
+// pub fn (mut shelve Shelve) restore(unixtime int )! {
 // 	for mut item in shelve.items {
-// 		item.restore(unixtime int)?
+// 		item.restore(unixtime int)!
 // 	}
 // }

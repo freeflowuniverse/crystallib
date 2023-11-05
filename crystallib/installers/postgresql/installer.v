@@ -1,6 +1,6 @@
 module postgresql
 
-import freeflowuniverse.crystallib.tmux
+import freeflowuniverse.crystallib.tools.tmux
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
@@ -47,9 +47,9 @@ pub fn new(args_ InstallArgs) !Postgresql {
 	}
 
 	mut s := Postgresql{
-		path_config: pathlib.get_dir('${args.path}/config', true)!
-		path_data: pathlib.get_dir('${args.path}/data', true)!
-		path_export: pathlib.get_dir('${args.path}/exports', true)!
+		path_config: pathlib.get_dir(path: '${args.path}/config', create: true)!
+		path_data: pathlib.get_dir(path: '${args.path}/data', create: true)!
+		path_export: pathlib.get_dir(path: '${args.path}/exports', create: true)!
 		passwd: args.passwd
 	}
 

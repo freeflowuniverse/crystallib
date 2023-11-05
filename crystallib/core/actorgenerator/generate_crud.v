@@ -7,9 +7,9 @@ import os
 [params]
 struct GenerateCrudMethods {
 pub:
-	actor_name string [required] // name of actor struct
+	actor_name  string                [required] // name of actor struct
 	actor_field codemodel.StructField [required] // field in actor belonging to root object
-	root_struct codemodel.Struct [required]
+	root_struct codemodel.Struct      [required]
 }
 
 // generate_crud_methods generates CRUD actor methods for a provided structure
@@ -60,7 +60,7 @@ rlock actor {
 // generate_crud_methods generates CRUD actor methods for a provided structure
 fn (generator ActorGenerator) generate_set_method(params GenerateCrudMethods) codemodel.Function {
 	param_getters := generate_param_getters(
-		structure: params.root_struct, 
+		structure: params.root_struct
 		prefix: ''
 		only_mutable: true
 	)
@@ -138,7 +138,7 @@ lock actor {
 // generate_crud_methods generates CRUD actor methods for a provided structure
 fn (generator ActorGenerator) generate_create_method(params GenerateCrudMethods) codemodel.Function {
 	param_getters := generate_param_getters(
-		structure: params.root_struct, 
+		structure: params.root_struct
 		prefix: ''
 		only_mutable: false
 	)
@@ -181,8 +181,8 @@ lock actor{
 
 [params]
 struct GenerateParamGetters {
-	structure codemodel.Struct
-	prefix string
+	structure    codemodel.Struct
+	prefix       string
 	only_mutable bool // if true generates param.get methods for only mutable  struct fields. Used for updating.
 }
 
@@ -193,9 +193,9 @@ fn generate_param_getters(params GenerateParamGetters) []string {
 	} else {
 		params.structure.fields.filter(it.is_pub)
 	}
-	for field in fields{
+	for field in fields {
 		if field.typ.symbol.starts_with_capital() {
-			subgetters := generate_param_getters(GenerateParamGetters{		
+			subgetters := generate_param_getters(GenerateParamGetters{
 				...params
 				structure: field.structure
 				prefix: '${field.name}_'
@@ -212,7 +212,7 @@ fn generate_param_getters(params GenerateParamGetters) []string {
 				param_getters << '${field.name}: ${field.structure.name}{'
 			}
 			param_getters << subgetters
-			param_getters << if field.typ.is_array {'}]'} else { '}' }
+			param_getters << if field.typ.is_array { '}]' } else { '}' }
 			continue
 		}
 
@@ -235,7 +235,7 @@ fn generate_param_getters(params GenerateParamGetters) []string {
 [params]
 struct GetChildField {
 	parent codemodel.Struct [required]
-	child codemodel.Struct [required]
+	child  codemodel.Struct [required]
 }
 
 fn get_child_field(params GetChildField) codemodel.StructField {

@@ -32,8 +32,8 @@ pub mut:
 	downloadpath string // the directory or file where we will download, will be /tmp/downloads/$name
 	url          string // url can be ssh:// http(s):// git:// file:// http(s)file:// or just a path
 	reset        bool   // to remove all changes
-	// gitpull    bool   // if you want to force to pull the information
-	minsize_kb   u32 // is always in kb
+	gitpull      bool   // if you want to force to pull the information
+	minsize_kb   u32    // is always in kb
 	maxsize_kb   u32
 	dest         string // if the dir or file needs to be copied somewhere
 	destlink     bool = true // if bool then will link the downloaded content to the dest
@@ -43,7 +43,7 @@ pub mut:
 	expand       bool
 }
 
-fn getlastname(url string) string {
+pub fn getlastname(url string) string {
 	mut lastname := url.split('/').last()
 	if lastname.contains('?') {
 		lastname = lastname.split('?')[0]
@@ -62,7 +62,6 @@ fn getlastname(url string) string {
 // if dest specified will link to the dest or copy depending param:destlink
 pub fn download(args_ DownloadArgs) !DownloadMeta {
 	// println(" -- DOWNLOAD ${args_.url}\n$args_")
-	println('downloading: ${args_}')
 	mut args := args_
 
 	if args.name == '' {
@@ -88,14 +87,14 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 	if u.starts_with('http://') || u.starts_with('https://') || u.starts_with('git://') {
 		// might be git based checkout
 		if args.gitstructure == none {
-			mut gs2 := gittools.new(light: true)!
+			mut gs2 := gittools.get()!
 			args.gitstructure = gs2
 		}
 		mut gs := args.gitstructure or { return error('cannot find gitstructure') }
-		mut gr := gs.repo_get_from_url(url: args.url, pull: args.reset, reset: args.reset)!
-
-		downloadpath = pathlib.get_dir(gr.path_content_get(), false)!
-
+		mut locator := gs.locator_new(args.url)!
+		mut gr := gs.repo_get(locator: locator, pull: args.reset, reset: args.reset)!
+		fs_path := locator.path_on_fs()!
+		downloadpath = fs_path
 		downloadtype = .git
 	} else if u.starts_with('ssh://') || u.starts_with('ftp://') {
 		return error('Cannot download for runner, unsupported methods:\n${args}')
@@ -176,10 +175,13 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 		if downloadpath.is_file() {
 			// means its a file need to link differently
 			if args.destlink {
-				downloadpath.link(args.dest, true)!
+				// here we link the file *INTO* dir
+				// TODO: consider duplicate filenames
+				filename := downloadpath.name()
+				downloadpath.link('${args.dest}/${filename}', true)!
 			} else {
 				mut desto := pathlib.get(args.dest)
-				downloadpath.copy(mut desto)!
+				downloadpath.copy(dest: desto.path)!
 			}
 		} else {
 			if args.destlink {
@@ -188,7 +190,7 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 				} // delete the dest link
 			} else {
 				mut desto := pathlib.get(args.dest)
-				downloadpath.copy(mut desto)!
+				downloadpath.copy(dest: desto.path)!
 			}
 		}
 	}

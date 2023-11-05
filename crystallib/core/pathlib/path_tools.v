@@ -3,6 +3,7 @@ module pathlib
 import os
 import freeflowuniverse.crystallib.core.texttools
 import time
+import crypto.md5
 
 // check path exists
 pub fn (mut path Path) exists() bool {
@@ -32,13 +33,13 @@ pub fn (mut path Path) rename(name string) ! {
 
 // TODO: make part of pathlib of Path
 
-// uncompress to specified directory
+// uncompress to specified directory .
 // if copy then will keep the original
 pub fn (mut path Path) expand(dest string) !Path {
 	if dest.len < 4 {
 		return error("Path dest needs to be mentioned and +4 char. Now '${dest}'")
 	}
-	desto := get_dir(dest, true)!
+	desto := get_dir(path: dest, create: true)!
 	println(desto)
 	if path.name().to_lower().ends_with('.tar.gz') || path.name().to_lower().ends_with('.tgz') {
 		cmd := 'tar -xzvf ${path.path} -C ${desto.path}'
@@ -74,14 +75,14 @@ pub fn (mut path Path) chmod(mode int) ! {
 	os.chmod(path.path, mode)!
 }
 
-// get relative path in relation to destpath
+// get relative path in relation to destpath .
 // will not resolve symlinks
 pub fn (path Path) path_relative(destpath string) !string {
 	// println(" - path relative: '$path.path' '$destpath'")
 	return path_relative(destpath, path.path)
 }
 
-// recursively finds the least common ancestor of array of paths
+// recursively finds the least common ancestor of array of paths .
 // will always return the absolute path (relative gets changed to absolute)
 pub fn find_common_ancestor(paths_ []string) string {
 	for p in paths_ {
@@ -113,13 +114,13 @@ pub fn (path Path) parent() !Path {
 		return Path{
 			path: '/'
 			cat: Category.dir
-			exist: .yes
+			exist: .unknown
 		}
 	}
 	return Path{
 		path: parent
 		cat: Category.dir
-		exist: .yes
+		exist: .unknown
 	}
 }
 
@@ -237,45 +238,14 @@ pub fn (mut path Path) read() !string {
 	}
 }
 
-// copy file,dir is always recursive
-// dest needs to be a directory or file
-// need to check than only valid items can be done
-// return Path of the destination file or dir
-pub fn (mut path Path) copy(dest_ string) !Path {
-	path.check()
-	mut dest := get_dir(dest_, false)!
-	if dest.exists() {
-		if !(path.cat in [.file, .dir] && dest.cat in [.file, .dir]) {
-			return error('Source or Destination path is not file or directory.\n\n${path.path}-${path.cat}---${dest.path}-${dest.cat}')
-		}
-		if path.cat == .dir && dest.cat == .file {
-			return error("Can't copy directory to file")
-		}
-	}
-	if path.cat == .file && dest.cat == .dir {
-		// In case src is a file and dest is dir, we need to join the file name to the dest file
-		file_name := os.base(path.path)
-		dest.path = os.join_path(dest.path, file_name)
-	}
-
-	if !os.exists(dest.path_dir()) {
-		os.mkdir_all(dest.path_dir())!
-	}
-
-	os.cp_all(path.path, dest.path, true)! // Always overwite if needed
-
-	dest.check()
-	return dest
-}
-
-// recalc path between target & source
-// we only support if source_ is an existing dir, links will not be supported
-// a0 := pathlib.path_relative('$testpath/a/b/c', '$testpath/a/d.txt') or { panic(err) }
-// assert a0 == '../../d.txt'
-// a2 := pathlib.path_relative('$testpath/a/b/c', '$testpath/d.txt') or { panic(err) }
-// assert a2 == '../../../d.txt'
-// a8 := pathlib.path_relative('$testpath/a/b/c', '$testpath/a/b/c/d/e/e.txt') or { panic(err) }
-// assert a8 == 'd/e/e.txt'
+// recalc path between target & source .
+// we only support if source_ is an existing dir, links will not be supported .
+// a0 := pathlib.path_relative('$testpath/a/b/c', '$testpath/a/d.txt') or { panic(err) } .
+// assert a0 == '../../d.txt' .
+// a2 := pathlib.path_relative('$testpath/a/b/c', '$testpath/d.txt') or { panic(err) } .
+// assert a2 == '../../../d.txt' .
+// a8 := pathlib.path_relative('$testpath/a/b/c', '$testpath/a/b/c/d/e/e.txt') or { panic(err) } .
+// assert a8 == 'd/e/e.txt' .
 pub fn path_relative(source_ string, linkpath_ string) !string {
 	mut source := os.abs_path(source_)
 	mut linkpath := os.abs_path(linkpath_)
@@ -332,26 +302,6 @@ pub fn path_relative(source_ string, linkpath_ string) !string {
 	return dest
 }
 
-// pub fn path_relative(source_ string, dest_ string) !string {
-// 	mut source := source_.trim_right('/')
-// 	mut dest := dest_.replace('//', '/').trim_right('/')
-// 	// println("path relative: '$source' '$dest' ")
-// 	if source !="" {
-// 		if source.starts_with('/') && !dest.starts_with('/') {
-// 			return error('if source starts with / then dest needs to start with / as well.\n - $source\n - $dest')
-// 		}
-// 		if !source.starts_with('/') && dest.starts_with('/') {
-// 			return error('if source starts with / then dest needs to start with / as well\n - $source\n - $dest')
-// 		}
-// 	}
-// 	if dest.starts_with(source) {
-// 		return dest[source.len..]
-// 	} else {
-// 		msg := "Destination path is not in source directory: $source_ $dest_"
-// 		return error(msg)
-// 	}
-// }
-
 [params]
 pub struct TMPWriteArgs {
 pub mut:
@@ -373,7 +323,9 @@ pub fn temp_write(args_ TMPWriteArgs) !string {
 				args.tmpdir = '/tmp'
 			}
 		}
-		t := time.now().format_ss_milli().replace(' ', '-').replace('.', ':')
+		mut t := time.now().format_ss_milli().replace(' ', '-').replace('.', ':')
+		texthash := md5.hexhash(args.text)
+		t += '_${texthash}'
 		mut tmppath := '${args.tmpdir}/execscripts/${t}.sh'
 		if args.name.len > 0 {
 			tmppath = '${args.tmpdir}/execscripts/${args.name}_${t}.sh'
@@ -405,3 +357,23 @@ pub fn temp_write(args_ TMPWriteArgs) !string {
 	os.chmod(args.path, 0o777)!
 	return args.path
 }
+
+// pub fn path_relative(source_ string, dest_ string) !string {
+// 	mut source := source_.trim_right('/')
+// 	mut dest := dest_.replace('//', '/').trim_right('/')
+// 	// println("path relative: '$source' '$dest' ")
+// 	if source !="" {
+// 		if source.starts_with('/') && !dest.starts_with('/') {
+// 			return error('if source starts with / then dest needs to start with / as well.\n - $source\n - $dest')
+// 		}
+// 		if !source.starts_with('/') && dest.starts_with('/') {
+// 			return error('if source starts with / then dest needs to start with / as well\n - $source\n - $dest')
+// 		}
+// 	}
+// 	if dest.starts_with(source) {
+// 		return dest[source.len..]
+// 	} else {
+// 		msg := "Destination path is not in source directory: $source_ $dest_"
+// 		return error(msg)
+// 	}
+// }

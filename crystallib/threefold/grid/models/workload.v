@@ -1,6 +1,7 @@
 module models
 
 import json
+import crypto.md5
 
 pub struct WorkloadTypes {
 pub:
@@ -115,7 +116,7 @@ pub mut:
 	result WorkloadResult
 }
 
-pub fn (mut workload Workload) challenge() string {
+pub fn (workload Workload) challenge() string {
 	mut out := []string{}
 	out << '${workload.version}'
 	out << '${workload.name}'
@@ -125,6 +126,10 @@ pub fn (mut workload Workload) challenge() string {
 	out << challenge(workload.data, workload.type_) or { return out.join('') }
 
 	return out.join('')
+}
+
+pub fn (workload Workload) challenge_hash() []u8 {
+	return md5.sum(workload.challenge().bytes())
 }
 
 pub fn (mut w Workload) json_encode() string {

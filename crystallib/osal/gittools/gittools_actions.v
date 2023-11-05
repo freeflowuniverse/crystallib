@@ -3,31 +3,30 @@ module gittools
 import freeflowuniverse.crystallib.ui as gui
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.baobab.actions
+import freeflowuniverse.crystallib.data.actionsparser
+import os
 
-pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) {
+pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {
 	mut r := [][]string{}
-	for g in gitstructure.repos_get(args) {
-		need_commit := g.needcommit() or { panic('issue in repo need_commit. ${err}') }
-		need_pull := g.needpull() or { panic('issue in repo need_pull. ${err}') }
-		need_push := g.needpush() or { panic('issue in repo need_push. ${err}') }
+	for mut g in gitstructure.repos_get(args) {
+		st := g.status()!
 		pr := g.path.shortpath()
 		mut s := ''
-		if need_commit {
+		if st.need_commit {
 			s += 'COMMIT,'
 		}
-		if need_pull {
+		if st.need_pull {
 			s += 'PULL,'
 		}
-		if need_push {
+		if st.need_push {
 			s += 'PUSH,'
 		}
 		s = s.trim(',')
 		r << [' - ${pr}', '[${g.addr.branch}]', s]
 	}
 	// println(args)
-	console.clear()
-	println('\n ==== repositories on your disk ===\n')
+	// console.clear()
+	println('\n ==== repositories on coderoot: ${gitstructure.config.root} ===\n')
 	texttools.print_array2(r, '  ', true)
 	println('')
 }
@@ -67,22 +66,74 @@ pub mut:
 // 		commitpush     bool .
 // 		commitpullpush bool .
 // 		msg            string .
-// 		delete         bool // remove the repo . 
+// 		delete         bool // remove the repo .
 // 		script         bool = true // run non interactive (default for actions) .
 // 		cachereset     bool //remove redis cache .
 // gittools.git_get .
 // 		coderoot //location where code will be checked out .
 // 		pull           bool // means when getting new repo will pull even when repo is already there .
 // 		pullreset      bool // means we will force a pull and reset old content	 .
-pub fn (mut gs GitStructure) action(action actions.Action) ! {
-	//gittools.git_do:
-		// see freeflowuniverse/crystallib/crystallib/baobab/hero/executor/mycmds/git_do.v
-		//TODO: execute the actions as mentioned above
+pub fn action(action actionsparser.Action) ! {
+	match action.name {
+		'git_do' {
+			git_do_action(action)!
+		}
+		'git_get' {
+			git_get_action(action)!
+		}
+		else {
+			return error('action ${action.name} not supported by gittools')
+		}
+	}
+}
 
-	//fittools.git_get:
-		//see freeflowuniverse/crystallib/crystallib/baobab/hero/executor/mycmds/git_get.v
-		//TODO: execute the actions as mentioned above
+pub fn git_do_action(action actionsparser.Action) ! {
+	mut coderoot := action.params.get_default('coderoot', '')!
+	mut gs := get(coderoot: coderoot) or {
+		return error("Could not find gittools on '${coderoot}'\n${err}")
+	}
+	mut repo := action.params.get_default('repo', '')!
+	mut account := action.params.get_default('account', '')!
+	mut provider := action.params.get_default('provider', '')!
+	mut filter := action.params.get_default('filter', '')!
+	if repo == '' && account == '' && provider == '' && filter == '' {
+		curdir := os.getwd()
+		if os.exists('${curdir}/.git') {
+			// we are in current directory
+			r0 := gs.repo_from_path(curdir)!
+			repo = r0.addr.name
+			account = r0.addr.account
+			provider = r0.addr.provider
+		}
+	}
 
+	gs.do(
+		filter: action.params.get_default('filter', '')!
+		repo: repo
+		account: account
+		provider: provider
+		pull: action.params.get_default_false('pull')
+		pullreset: action.params.get_default_false('pullreset')
+		commit: action.params.get_default_false('commit')
+		commitpull: action.params.get_default_false('commitpull')
+		commitpullpush: action.params.get_default_false('commitpullpush')
+		delete: action.params.get_default_false('delete')
+		script: action.params.get_default_false('script')
+		cachereset: action.params.get_default_false('cachereset')
+		msg: action.params.get_default('message', '')!
+	)!
+	println(gs)
+}
+
+pub fn git_get_action(action actionsparser.Action) ! {
+	url := action.params.get('url')!
+	r := code_get(
+		url: url
+		coderoot: action.params.get_default('coderoot', '')!
+		pull: action.params.get_default_false('pull')
+		reset: action.params.get_default_false('reset')
+	)!
+	println("Pulled code from '${url}'\nCan be found in: '${r}'")
 }
 
 // filter   string // if used will only show the repo's which have the filter string inside .
@@ -100,19 +151,31 @@ pub fn (mut gs GitStructure) action(action actions.Action) ! {
 // delete bool (remove the repo) .
 // script bool (run non interactive) .
 // root string //the location of coderoot if its another one .
+// cachereset
 pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 	mut args := args_
+	// println(args)
 
 	mut ui := gui.new()!
 
-	for g in gs.repos_get(
-		filter: args.filter
-		name: args.repo
-		account: args.account
-		provider: args.provider
-	) {
-		if args.cachereset {
-			g.refresh(reload: true)!
+	if args.filter == '' && args.cachereset {
+		// println("-- cache reset for all repo's")
+		cache_delete(gs.name())!
+		gs.load()!
+		if true {
+			panic('cache reset for all repo')
+		}
+	} else {
+		for mut g in gs.repos_get(
+			filter: args.filter
+			name: args.repo
+			account: args.account
+			provider: args.provider
+		) {
+			if args.cachereset {
+				// println("-- cache reset of ${g.addr.name}")
+				g.load()!
+			}
 		}
 	}
 
@@ -122,28 +185,23 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 			name: args.repo
 			account: args.account
 			provider: args.provider
-		)
+		)!
 	}
 
 	mut need_commit := false
 	mut need_pull := false
 	mut need_push := false
-	for g in gs.repos_get(
+	for mut g in gs.repos_get(
 		filter: args.filter
 		name: args.repo
 		account: args.account
 		provider: args.provider
 	) {
-		if g.needcommit()! {
-			need_commit = true
-		}
-		if g.needpull()! {
-			need_pull = true
-		}
-		if g.needpush()! {
-			need_push = true
-		}
-		// println(" ---- ${g.addr.name} $need_commit $need_pull  $need_push")		
+		st := g.status()!
+		need_commit = false || st.need_commit
+		need_pull = false || st.need_pull
+		need_push = false || st.need_push
+		// println(" --- git_do ${g.addr.name} ${st.need_commit} ${st.need_pull}  ${st.need_push}")		
 	}
 
 	if args.print {
@@ -192,15 +250,15 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 
 	mut changed := false
 
-	for g in gs.repos_get(
+	for mut g in gs.repos_get(
 		filter: args.filter
 		name: args.repo
 		account: args.account
 		provider: args.provider
 	) {
 		if args.commit || args.commitpush || args.commitpullpush || args.commitpull {
-			cod := g.needcommit()!
-			if cod {
+			st := g.status()!
+			if st.need_commit {
 				mut msg := args.msg
 				if msg.len == 0 {
 					if args.script {
@@ -211,7 +269,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 					)
 				}
 				println(' - commit ${g.addr.account}/${g.addr.name}')
-				g.commit(msg)!
+				g.commit(msg: msg, reload: true)!
 				changed = true
 			} else {
 				println(' - no need to commit, no changes for ${g.addr.account}/${g.addr.name}')
@@ -234,7 +292,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 	}
 
 	if changed {
-		console.clear()
+		// console.clear()
 		println('\nCompleted required actions.\n')
 
 		if args.print {
@@ -243,7 +301,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 				name: args.repo
 				account: args.account
 				provider: args.provider
-			)
+			)!
 		}
 	}
 }

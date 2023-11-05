@@ -5,24 +5,19 @@ import os
 const (
 	testpath         = os.dir(@FILE) + '/example/chapter1'
 	collections_path = os.dir(@FILE) + '/testdata/collections'
-	tree_name        = 'collection_test_tree'
 )
 
-fn testsuite_begin() {
-	new(name: knowledgetree.tree_name)!
-	scan(
-		name: knowledgetree.tree_name
+fn test_page_get() {
+	mut tree := new()!
+	tree.scan(
 		path: knowledgetree.collections_path
 	)!
-}
 
-fn test_page_get() {
 	apple_page_name := 'apple'
-	fruits_collection_name := 'fruits'
+	fruits_collection_name := 'test_fruits'
 	apple_page_path := '${os.dir(@FILE)}/testdata/collections/fruits/apple.md'
 
 	// test with existing page
-	tree := knowledgetrees[knowledgetree.tree_name]
 	collection := tree.collection_get(fruits_collection_name)!
 	apple_page := collection.page_get(apple_page_name)!
 	assert apple_page.path.path == apple_page_path
@@ -52,12 +47,16 @@ fn test_page_get() {
 }
 
 fn test_file_get() {
+	mut tree := new()!
+	tree.scan(
+		path: knowledgetree.collections_path
+	)!
+
 	banana_file_name := 'banana'
-	banana_file_collection := 'fruits'
+	banana_file_collection := 'test_fruits'
 	banana_file_path := '${os.dir(@FILE)}/testdata/collections/fruits/banana.txt'
 
 	// test with existing page
-	tree := knowledgetrees[knowledgetree.tree_name]
 	collection := tree.collection_get(banana_file_collection)!
 	banana_file := collection.file_get(banana_file_name)!
 	assert banana_file.path.path == banana_file_path
@@ -80,11 +79,15 @@ fn test_file_get() {
 }
 
 fn test_page_exists() {
+	mut tree := new()!
+	tree.scan(
+		path: knowledgetree.collections_path
+	)!
+
 	apple_page_name := 'apple'
-	fruits_collection_name := 'fruits'
+	fruits_collection_name := 'test_fruits'
 
 	// test with existing page
-	tree := knowledgetrees[knowledgetree.tree_name]
 	collection := tree.collection_get(fruits_collection_name)!
 	assert collection.page_exists(apple_page_name)
 
@@ -102,11 +105,15 @@ fn test_page_exists() {
 }
 
 fn test_file_exists() {
+	mut tree := new()!
+	tree.scan(
+		path: knowledgetree.collections_path
+	)!
+
 	banana_file_name := 'banana'
-	fruits_collection_name := 'fruits'
+	fruits_collection_name := 'test_fruits'
 
 	// test with existing page
-	tree := knowledgetrees[knowledgetree.tree_name]
 	collection := tree.collection_get(fruits_collection_name)!
 	assert collection.file_exists(banana_file_name)
 

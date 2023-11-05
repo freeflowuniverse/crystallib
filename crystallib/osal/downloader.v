@@ -1,7 +1,7 @@
 module osal
 
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.core.texttools
+// import freeflowuniverse.crystallib.core.texttools
 
 [params]
 pub struct DownloadArgs {
@@ -44,16 +44,16 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 		args.dest = '/tmp/${args.name}'
 	}
 
-	u := args.url.to_lower().trim_space()
+	_ := args.url.to_lower().trim_space()
 
 	if !cmd_exists('curl') {
 		return error('please make sure curl has been installed.')
 	}
 
-	mut dest := pathlib.get_file(args.dest, false)!
+	mut dest := pathlib.get_file(path: args.dest)!
 
 	// now check to see the url is not different
-	mut meta := pathlib.get_file(args.dest + '.meta', true)!
+	mut meta := pathlib.get_file(path: args.dest + '.meta', create: true)!
 	metadata := meta.read()!
 	if metadata.trim_space() != args.url.trim_space() {
 		// means is a new one need to delete
@@ -62,7 +62,7 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 	}
 
 	if args.reset {
-		mut dest_delete := pathlib.get_file(args.dest + '_', false)!
+		mut dest_delete := pathlib.get_file(path: args.dest + '_')!
 		dest_delete.delete()!
 	}
 
@@ -90,7 +90,7 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 		}
 	}
 
-	mut dest0 := pathlib.get_file(args.dest + '_', false)!
+	mut dest0 := pathlib.get_file(path: args.dest + '_')!
 	cmd := '
 		rm -f ${dest0.path}_
 		cd /tmp

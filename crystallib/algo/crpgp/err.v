@@ -1,6 +1,6 @@
 module crpgp
 
-fn construct_error() ?int {
+fn construct_error() !int {
 	// todo: call the func to get the error length
 	err_buf := unsafe { malloc(1024) }
 	C.error_message(err_buf, 1024)

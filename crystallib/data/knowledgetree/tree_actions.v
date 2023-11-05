@@ -1,12 +1,12 @@
 module knowledgetree
 
-import freeflowuniverse.crystallib.baobab.actions
+import freeflowuniverse.crystallib.data.actionsparser
 import freeflowuniverse.crystallib.core.pathlib
 
 // need to become part of baobab.actionexecutor...
 // and not everything file,page, ... all doesn't need to be added, that will never happen from a 3script
 
-// pub fn (mut tree Tree) execute(parser actions.Actions) ! {
+// pub fn (mut tree Tree) execute(parser actionsparser.Actions) ! {
 // 	for action in parser.actions {
 // 		tree.logger.debug('Executing action: ${action}')
 
@@ -31,7 +31,7 @@ import freeflowuniverse.crystallib.core.pathlib
 // 				collection_name := action.params.get('collection')!
 // 				page_path := action.params.get('path')!
 
-// 				mut p := pathlib.get_file(page_path, false)!
+// 				mut p := pathlib.get_file(path:page_path)!
 // 				if !p.exists() {
 // 					return error('cannot find page: ${p}')
 // 				}
@@ -43,7 +43,7 @@ import freeflowuniverse.crystallib.core.pathlib
 // 				collection_name := action.params.get('collection')!
 // 				page_path := action.params.get('path')!
 
-// 				mut p := pathlib.get_file(page_path, false)!
+// 				mut p := pathlib.get_file(path:page_path)!
 // 				if !p.exists() {
 // 					return error('cannot find page: ${p}')
 // 				}
@@ -55,7 +55,7 @@ import freeflowuniverse.crystallib.core.pathlib
 // 				collection_name := action.params.get('collection')!
 // 				page_path := action.params.get('path')!
 
-// 				mut p := pathlib.get_file(page_path, false)!
+// 				mut p := pathlib.get_file(path:page_path)!
 // 				if !p.exists() {
 // 					return error('cannot find page: ${p}')
 // 				}

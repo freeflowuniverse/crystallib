@@ -18,8 +18,8 @@ fn (mut collection Collection) scan_internal(mut p pathlib.Path) ! {
 	$if debug {
 		println('scan ${p.path}')
 	}
-	mut llist := p.list(recursive: false)!
-	for mut p_in in llist {
+	mut pl := p.list(recursive: false)!
+	for mut p_in in pl.paths {
 		if p_in.exists() == false {
 			collection.error(path: p_in, msg: 'probably a broken link', cat: .unknown)
 			continue // means broken link
@@ -84,6 +84,7 @@ fn (mut collection Collection) scan_internal(mut p pathlib.Path) ! {
 				if ext != '' {
 					// only process files which do have extension
 					if ext == 'md' {
+						p_in.sids_replace(collection.tree.cid)! // replace all found id:***
 						collection.page_new(mut p_in)!
 					} else {
 						collection.file_image_remember(mut p_in)!

@@ -1,7 +1,7 @@
 module caddy
 
 import freeflowuniverse.crystallib.installers.base
-import freeflowuniverse.crystallib.tmux
+import freeflowuniverse.crystallib.tools.tmux
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
@@ -36,7 +36,7 @@ pub fn install(args InstallArgs) ! {
 	)!
 
 	mut caddyfile := dest.file_get('caddy')! // file in the dest
-	caddyfile.copy('/usr/local/bin')!
+	caddyfile.copy(dest: '/usr/local/bin', delete: true)!
 	caddyfile.chmod(0o770)! // includes read & write & execute
 
 	osal.done_set('install_caddy', 'OK')!
@@ -103,7 +103,7 @@ pub fn configuration_set(args_ ConfigurationArgs) ! {
 		}
 		osal.file_write('/etc/caddy/Caddyfile', args.content)!
 	} else {
-		mut p := pathlib.get_file(args.path, true)!
+		mut p := pathlib.get_file(path: args.path, create: true)!
 		content := p.read()!
 		if !os.exists('/etc/caddy') {
 			os.mkdir_all('/etc/caddy')!
@@ -140,20 +140,3 @@ pub fn restart() ! {
 	stop()!
 	start()!
 }
-
-// if cmd_exists('caddy') {
-// 	println('Caddy was already installed.')
-// 	//! should we set caddy as done here !
-// 	return
-// }
-// //TODO: better to start from a build one
-// osal.execute_silent("
-// 	sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https gpg sudo
-// 	rm -f /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-// 	curl -1sLfk 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-// 	curl -1sLfk 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list
-// 	apt update
-// 	apt install caddy
-// ") or {
-// 	return error('Cannot install caddy.\n${err}')
-// }

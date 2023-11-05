@@ -1,7 +1,7 @@
 module tfgrid
 
-import freeflowuniverse.crystallib.baobab.actions { Action }
-import threefoldtech.web3gw.tfgrid { FarmFilter, FindFarms, Limit }
+import freeflowuniverse.crystallib.data.actionsparser { Action }
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid { FarmFilter, FindFarms, Limit }
 
 pub fn (mut h TFGridHandler) farms(action Action) ! {
 	match action.name {

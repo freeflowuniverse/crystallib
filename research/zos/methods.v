@@ -14,12 +14,13 @@ struct ZOSDeployment {
 	expiration   time.Time
 }
 
+//retrieve deployment from a zos
 pub fn (client ZOSClient) zos_deployment_get(params GetParams) ZOSDeployment {
+	return ZOSDeployment{}
 }
 
 pub fn (client ZOSClient) zos_deployment_list() {
 }
-
 struct NetworkCreateParams {
 	deployment_name       string // deployment name
 	name                  string // network name

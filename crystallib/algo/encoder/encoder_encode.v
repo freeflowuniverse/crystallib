@@ -2,18 +2,37 @@ module encoder
 
 import time
 import encoding.binary as bin
+import freeflowuniverse.crystallib.data.ourtime
 
 const kb = 1024
 
 pub struct Encoder {
 pub mut:
-	version u8 = 1 // is important
-	data    []u8
+	data []u8
+	// datatypes []DataType
 }
+
+// enum DataType{
+// 	string
+// 	int
+// 	bytes
+// 	u8
+// 	u16
+// 	u32
+// 	u64
+// 	time
+// 	list_string
+// 	list_int
+// 	list_u8
+// 	list_u16
+// 	list_u32
+// 	list_u64
+// 	map_string
+// 	map_bytes
+// }
 
 pub fn new() Encoder {
 	mut e := Encoder{}
-	e.add_u8(e.version) // make sure when we decode, we need to check that version corresponds !
 	return e
 }
 
@@ -60,10 +79,21 @@ pub fn (mut b Encoder) add_u64(data u64) {
 	b.data << d
 }
 
+pub fn (mut b Encoder) add_i64(data i64) {
+	mut d := []u8{len: 8}
+	bin.little_endian_put_u64(mut d, u64(data))
+	b.data << d
+}
+
+
 pub fn (mut b Encoder) add_time(data time.Time) {
 	b.add_u64(u64(data.unix_time())) // add as epoch time
-	b.add_int(data.nanosecond)
 }
+
+pub fn (mut b Encoder) add_ourtime(data ourtime.OurTime) {
+	b.add_i64(data.unix)
+}
+
 
 pub fn (mut b Encoder) add_list_string(data []string) {
 	if data.len > 64 * encoder.kb {

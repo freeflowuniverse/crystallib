@@ -1,10 +1,10 @@
 module clients
 
-import threefoldtech.web3gw.tfgrid { TFGridClient }
-import threefoldtech.web3gw.tfchain { TfChainClient }
-import threefoldtech.web3gw.stellar { StellarClient }
-import threefoldtech.web3gw.eth { EthClient }
-import threefoldtech.web3gw.btc { BtcClient }
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid { TFGridClient }
+import freeflowuniverse.crystallib.threefold.web3gw.tfchain { TfChainClient }
+import freeflowuniverse.crystallib.threefold.web3gw.stellar { StellarClient }
+import freeflowuniverse.crystallib.threefold.web3gw.eth { EthClient }
+import freeflowuniverse.crystallib.threefold.web3gw.btc { BtcClient }
 
 pub struct Clients {
 pub mut:

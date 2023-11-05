@@ -1,7 +1,7 @@
 module spreadsheet
 
 import freeflowuniverse.crystallib.data.currency
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 
 [heap]
 pub struct Sheet {
@@ -81,7 +81,7 @@ pub fn (mut s Sheet) group2row(args Group2RowArgs) !&Row {
 		aggregatetype: args.aggregatetype
 	)!
 	for _, row in s.rows {
-		tagstofilter := params.parse(row.tags)!
+		tagstofilter := paramsparser.parse(row.tags)!
 		matched := tagstofilter.filter_match(include: args.include, exclude: args.exclude)!
 		if matched {
 			// println("MMMMMAAAAATCH: \n${args.include} ${row.tags}")

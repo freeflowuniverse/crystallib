@@ -2,7 +2,7 @@ module threebot
 
 import log
 import freeflowuniverse.threebot.mail
-import freeflowuniverse.crystallib.rpcwebsocket
+import freeflowuniverse.crystallib.data.rpcwebsocket
 
 pub struct Threebot {
 	mail mail.Mail

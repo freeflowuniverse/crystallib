@@ -42,9 +42,9 @@ pub fn (mut f Factory) container_new(args_ ContainerArgs) !Container {
 
 	mut c := Container{
 		name: args.name
-		path_config: pathlib.get_dir(args.path_config, true)!
-		path_root: pathlib.get_dir(args.path_root, true)!
-		path_io: pathlib.get_dir(args.path_io, true)!
+		path_config: pathlib.get_dir(path: args.path_config, create: true)!
+		path_root: pathlib.get_dir(path: args.path_root, create: true)!
+		path_io: pathlib.get_dir(path: args.path_io, create: true)!
 		startcmd: args.startcmd
 		factory: &f
 	}
@@ -57,7 +57,7 @@ pub fn (mut c Container) debootstrap(args_ DebootstrapArgs) ! {
 	// osal.exec(cmd:"rsync -rav --delete ${path}/ ${c.path_root.path}/")!
 
 	// mut path:="${f.path_images.path}/lunar"
-	// mut patho:= pathlib.get_dir(path,true)!
+	// mut patho:= pathlib.get_dir(path:path,true)!
 	// if args.reset{
 	// 	patho.empty()!
 	// }

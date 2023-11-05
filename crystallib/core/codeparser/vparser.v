@@ -45,14 +45,14 @@ fn (vparser VParser) parse_vpath(mut path pathlib.Path) ![]CodeItem {
 
 		if vparser.recursive {
 			// parse subdirs if configured recursive
-			mut subdirs := path.dir_list()!
-			for mut subdir in subdirs {
+			mut flist := path.list(dirs_only: true, recursive: false)!
+			for mut subdir in flist.paths {
 				code << vparser.parse_vpath(mut subdir)!
 			}
 		}
 
-		mut files := path.file_list()!
-		for mut file in files {
+		mut fl := path.list()!
+		for mut file in fl.paths {
 			code << vparser.parse_vpath(mut file)!
 		}
 	} else if path.is_file() {
@@ -409,4 +409,3 @@ fn (vparser VParser) parse_variants(variants []ast.TypeNode, table &ast.Table) [
 	}
 	return types
 }
-

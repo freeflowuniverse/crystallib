@@ -104,6 +104,9 @@ pub fn (f &FarmFilter) to_map() map[string]string {
 	if f.certification_type != '' {
 		m['certification_type'] = f.certification_type
 	}
+	if f.country != '' {
+		m['country'] = f.country
+	}
 	match f.dedicated {
 		EmptyOption {}
 		bool {

@@ -1,59 +1,47 @@
-module tfgrid
+module grid
 
-import os
 import json
-import crystallib.threefold.grid.models
+import freeflowuniverse.crystallib.threefold.grid.models
 
+// TODO: decode/encode the params/result here
 pub fn (mut d Deployer) rmb_deployment_changes(dst u32, contract_id u64) !string {
-	res := os.execute("grid-cli rmb-dl-changes --substrate ${d.substrate_url} --mnemonics \"${d.mnemonics}\" --relay ${d.relay_url} --dst ${dst} --contract_id '${contract_id}'")
-	if res.exit_code != 0 {
-		return error(res.output)
-	}
-
-	return res.output
+	payload := json.encode({
+		'contract_id': contract_id
+	})
+	res := d.client.rmb_call(dst, 'zos.deployment.changes', payload)!
+	return res
 }
 
 pub fn (mut d Deployer) rmb_deployment_get(dst u32, data string) !string {
-	res := os.execute("grid-cli rmb-dl-get --substrate ${d.substrate_url} --mnemonics \"${d.mnemonics}\" --relay ${d.relay_url} --dst ${dst} --data '${data}'")
-	if res.exit_code != 0 {
-		return error(res.output)
-	}
+	res := d.client.rmb_call(dst, 'zos.deployment.get', data)!
+	return res
+}
 
-	return res.output
+pub fn (mut d Deployer) rmb_deployment_deploy(dst u32, data string) !string {
+	return d.client.rmb_call(dst, 'zos.deployment.deploy', data)!
+}
+
+pub fn (mut d Deployer) rmb_deployment_update(dst u32, data string) !string {
+	return d.client.rmb_call(dst, 'zos.deployment.update', data)!
+}
+
+pub fn (mut d Deployer) rmb_deployment_delete(dst u32, data string) !string {
+	return d.client.rmb_call(dst, 'zos.deployment.delete', data)!
 }
 
 pub fn (mut d Deployer) get_node_pub_config(node_id u32) !models.PublicConfig {
-	node_twin := get_node_twin(node_id, d.substrate_url)!
-	res := os.execute("grid-cli rmb-node-pubConfig --substrate ${d.substrate_url} --mnemonics \"${d.mnemonics}\" --relay ${d.relay_url} --dst ${node_twin} ")
-	if res.exit_code != 0 {
-		return error(res.output.trim_space())
-	}
-
-	public_config := json.decode(models.PublicConfig, res.output) or { return err }
-
+	node_twin := d.client.get_node_twin(node_id)!
+	res := d.client.rmb_call(node_twin, 'zos.network.public_config_get', '')!
+	public_config := json.decode(models.PublicConfig, res)!
 	return public_config
 }
 
 pub fn (mut d Deployer) assign_wg_port(node_id u32) !u16 {
-	node_twin := get_node_twin(node_id, d.substrate_url)!
-	res := os.execute("grid-cli rmb-taken-ports --substrate ${d.substrate_url} --mnemonics \"${d.mnemonics}\" --relay ${d.relay_url} --dst ${node_twin} ")
-	if res.exit_code != 0 {
-		return error(res.output)
-	}
-
-	taken_ports := json.decode([]u16, res.output) or {
+	node_twin := d.client.get_node_twin(node_id)!
+	res := d.client.rmb_call(node_twin, 'zos.network.list_wg_ports', '')!
+	taken_ports := json.decode([]u16, res) or {
 		return error("can't parse node taken ports: ${err}")
 	}
 	port := models.rand_port(taken_ports) or { return error("can't assign wireguard port: ${err}") }
-
 	return port
-}
-
-pub fn (mut d Deployer) rmb_deployment_deploy(dst u32, data string) !string {
-	res := os.execute("grid-cli rmb-dl-deploy --substrate ${d.substrate_url} --mnemonics \"${d.mnemonics}\" --relay ${d.relay_url} --dst ${dst} --data '${data}'")
-	if res.exit_code != 0 {
-		return error(res.output)
-	}
-
-	return res.output
 }

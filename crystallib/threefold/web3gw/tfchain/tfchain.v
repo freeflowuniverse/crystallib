@@ -1,6 +1,6 @@
 module tfchain
 
-import freeflowuniverse.crystallib.rpcwebsocket { RpcWsClient }
+import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
 import math.unsigned { Uint128, uint128_from_dec_str }
 
 const (

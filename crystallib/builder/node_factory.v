@@ -1,5 +1,7 @@
 module builder
 
+import freeflowuniverse.crystallib.core.texttools
+
 // get node connection to local machine
 // pass your redis client there
 pub fn (mut builder BuilderFactory) node_local() !&Node {
@@ -19,31 +21,63 @@ pub fn (mut builder BuilderFactory) node_get(name string) !&Node {
 	return error("can't find node '${name}'")
 }
 
+// format ipaddr: localhost:7777 .
+// format ipaddr: 192.168.6.6:7777 .
+// format ipaddr: 192.168.6.6 .
+// format ipaddr: any ipv6 addr .
+// format ipaddr: if only name used then is localhost .
+[params]
+pub struct NodeArguments {
+pub mut:
+	ipaddr string
+	name   string
+	user   string = 'root'
+	debug  bool   = true
+	reload bool
+}
+
 // the factory which returns an node, based on the arguments will chose ssh executor or the local one
-//- format ipaddr: localhost:7777
-//- format ipaddr: 192.168.6.6:7777
-//- format ipaddr: 192.168.6.6
-//- format ipaddr: any ipv6 addr
-//- if only name used then is localhost with localhost executor
-//
+// .
+//```
+// - format ipaddr: localhost:7777
+// - format ipaddr: myuser@192.168.6.6:7777
+// - format ipaddr: 192.168.6.6
+// - format ipaddr: any ipv6 addr
+// - if only name used then is localhost with localhost executor
+//```
+// its possible to put a user as user@ .. in front of an ip addr .
+// .
 //```
 // pub struct NodeArguments {
 // 	ipaddr string
-// 	name   string
+// 	name   string //if not filled in will come from ipaddr
 // 	user   string = "root"
 // 	debug  bool
 // 	reset bool
 // 	}
 //```
-pub fn (mut builder BuilderFactory) node_new(args NodeArguments) !&Node {
+pub fn (mut builder BuilderFactory) node_new(args_ NodeArguments) !&Node {
+	mut args := args_
 	if args.name == '' {
-		return error('need to specify name')
+		if args.ipaddr.len > 0 {
+			args.name = args.ipaddr
+			if args.name.contains(':') {
+				args.name, _ = args.name.split_once(':')
+			}
+		} else {
+			args.name = 'default'
+		}
+		args.name = texttools.name_fix(args.name).replace('.', '_')
 	}
 
 	for node in builder.nodes {
 		if node.name == args.name {
 			return &node
 		}
+	}
+
+	if args.ipaddr.contains('@') {
+		args.user, args.ipaddr = args.ipaddr.split_once('@') or { panic('bug') }
 	}
 
 	eargs := ExecutorNewArguments{

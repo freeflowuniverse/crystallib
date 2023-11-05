@@ -14,17 +14,24 @@ const (
 )
 
 ['/login']
-fn (mut clinet ClientApp) login() !vweb.Result {
-	app_id := clinet.get_header('Host')
+fn (mut client ClientApp) login() !vweb.Result {
+	app_id := client.get_header('Host')
 	mut server_public_key := ''
-	mut file_path := os.args_after('.')
-	if file_path.len <= 1 {
-		clinet.abort(400, file_dose_not_exist)
+
+
+	mut key_path := ""
+	if os.args.len>1{
+		key_path = os.args[1]
 	}
-	file_path << '.'
-	keys := parse_keys(file_path[1])!
+	if key_path==""{
+		key_path=os.getwd() 
+	}
+	mut p:=pathlib.get_dir(path:key_path,create:false)!
+	mut keyspath:=p.file_get_new("keys.toml")!
+
+	keys := parse_keys(keyspath.path)!
 	if keys.value('server') == toml.Any(toml.Null{}) {
-		clinet.abort(400, file_dose_not_exist)
+		client.abort(400, file_dose_not_exist)
 	} else {
 		server_public_key = keys.value('server.SERVER_PUBLIC_KEY').string()
 	}
@@ -45,19 +52,19 @@ fn (mut clinet ClientApp) login() !vweb.Result {
 		'redirecturl': '/callback'
 		'publickey':   base64.encode(server_curve_pk[..])
 	}
-	return clinet.redirect('${redirect_url}?${url_encode(params)}')
+	return client.redirect('${redirect_url}?${url_encode(params)}')
 }
 
 ['/callback']
-fn (mut clinet ClientApp) callback() !vweb.Result {
+fn (mut client ClientApp) callback() !vweb.Result {
 	data := SignedAttempt{}
-	query := clinet.query.clone()
+	query := client.query.clone()
 
 	if query == {} {
-		clinet.abort(400, signed_attempt_missing)
+		client.abort(400, signed_attempt_missing)
 	}
 
 	initial_data := data.load(query)!
 	res := request_to_server_to_verify(initial_data)!
-	return clinet.text('${res.body}')
+	return client.text('${res.body}')
 }

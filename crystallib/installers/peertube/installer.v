@@ -1,7 +1,7 @@
 module peertube
 
 import freeflowuniverse.crystallib.installers.base
-import freeflowuniverse.crystallib.tmux
+import freeflowuniverse.crystallib.tools.tmux
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
@@ -13,7 +13,7 @@ pub mut:
 	reset bool
 }
 
-//TODO: make installer for peertube
+// TODO: make installer for peertube
 
 // install peertube will return true if it was already installed
 pub fn install(args InstallArgs) ! {
@@ -105,7 +105,7 @@ pub fn configuration_set(args_ ConfigurationArgs) ! {
 		}
 		osal.file_write('/etc/peertube/Peertubefile', args.content)!
 	} else {
-		mut p := pathlib.get_file(args.path, true)!
+		mut p := pathlib.get_file(path: args.path, create: true)!
 		content := p.read()!
 		if !os.exists('/etc/peertube') {
 			os.mkdir_all('/etc/peertube')!

@@ -44,7 +44,7 @@ pub mut:
 //       from that SigningKey we can derivate PrivateKey needed to encrypt
 
 pub fn keysafe_get(path0 string, secret string) !KeysSafe {
-	mut path := pathlib.get_file_dir_create(path0 + '/.keys')!
+	mut path := pathlib.get_file(path: path0 + '/.keys', create: true)!
 	mut safe := KeysSafe{
 		path: path
 		secret: secret

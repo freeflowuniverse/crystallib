@@ -1,6 +1,6 @@
 module builder
 
-import ipaddress
+import freeflowuniverse.crystallib.data.ipaddress
 
 type Executor = ExecutorLocal | ExecutorSSH
 
@@ -8,7 +8,7 @@ pub struct ExecutorNewArguments {
 	local  bool // if this set then will always be the local machine
 	ipaddr string
 	user   string = 'root'
-	debug  bool
+	debug  bool   = true
 }
 
 // create new executor (is way how to execute in std way onto a local or remote machine)

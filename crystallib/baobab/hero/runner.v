@@ -15,7 +15,7 @@ pub mut:
 [params]
 pub struct RunnerArgs {
 pub mut:
-	cid       string //circleid
+	cid          string // circleid
 	root         string // default ~/3bot/circles
 	reset        bool   // will reset the content as fetched of url when true
 	url          string // url can be ssh:// http(s):// git:// file:// path:// http(s)file://
@@ -33,12 +33,12 @@ pub fn new(args_ RunnerArgs) !Runner {
 		args.cid = 'default'
 	}
 	if args.gitstructure == none {
-		mut gs := gittools.get(light: true)!
+		mut gs := gittools.get()!
 		args.gitstructure = gs
 	}
 
 	mut r := Runner{
-		path: pathlib.get_dir('${args.root}/${args.cid}', true)!
+		path: pathlib.get_dir(path: '${args.root}/${args.cid}', create: true)!
 		args: args
 	}
 
@@ -59,4 +59,10 @@ pub fn (mut r Runner) str() string {
 		out += '${*session}\n'
 	}
 	return out
+}
+
+pub fn (mut r Runner) run() ! {
+	for mut session in r.sessions {
+		session.run()!
+	}
 }

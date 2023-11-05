@@ -1,7 +1,7 @@
 module tfgrid
 
-import freeflowuniverse.crystallib.baobab.actions { Action }
-import threefoldtech.web3gw.tfgrid { GetStatistics }
+import freeflowuniverse.crystallib.data.actionsparser { Action }
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid { GetStatistics }
 
 pub fn (mut h TFGridHandler) stats(action Action) ! {
 	match action.name {

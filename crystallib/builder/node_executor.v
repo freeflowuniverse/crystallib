@@ -2,6 +2,7 @@ module builder
 
 import time
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.osal
 
 // 	exec(cmd string) !string
 // 	exec_silent(cmd string) !string
@@ -137,37 +138,92 @@ pub fn (mut node Node) delete(path string) ! {
 	panic('did not find right executor')
 }
 
-// 	download(source string, dest string) !
-// 	upload(source string, dest string) !
-// 	environ_get() !map[string]string
-// 	info() map[string]string
-// 	shell(cmd string) !
+[params]
+pub struct SyncArgs {
+pub mut:
+	source         string
+	dest           string
+	delete         bool     // do we want to delete the destination
+	ipaddr         string   // e.g. root@192.168.5.5:33 (can be without root@ or :port)
+	ignore         []string // arguments to ignore e.g. ['*.pyc','*.bak']
+	ignore_default bool = true // if set will ignore a common set
+	stdout         bool = true
+}
 
-pub fn (mut node Node) download(source string, dest string) ! {
+// download files using rsync (can be ssh or local) .
+// args: .
+// ```
+// source string
+// dest string
+// delete bool //do we want to delete the destination
+// ignore []string //arguments to ignore e.g. ['*.pyc','*.bak']
+// ignore_default bool = true //if set will ignore a common set
+// stdout bool = true
+// ```
+// .
+pub fn (mut node Node) download(args_ SyncArgs) ! {
+	mut args := args_
+	if args.source.contains('~') {
+		myenv := node.environ_get()!
+		if 'HOME' !in myenv {
+			return error('Cannot find home in env for ${node}')
+		}
+		mut myhome := myenv['HOME']
+		args.source.replace('~', myhome)
+	}
 	if mut node.executor is ExecutorLocal {
-		return node.executor.download(source, dest)
+		return node.executor.download(args)
 	} else if mut node.executor is ExecutorSSH {
-		return node.executor.download(source, dest)
+		return node.executor.download(args)
 	}
 	panic('did not find right executor')
 }
 
-pub fn (mut node Node) upload(source string, dest string) ! {
+// upload files using rsync (can be ssh or local)
+// args: .
+// ```
+// source string
+// dest string
+// delete bool //do we want to delete the destination
+// ignore []string //arguments to ignore e.g. ['*.pyc','*.bak']
+// ignore_default bool = true //if set will ignore a common set
+// stdout bool = true
+// ```
+// .
+pub fn (mut node Node) upload(args_ SyncArgs) ! {
+	mut args := args_
+	if args.dest.contains('~') {
+		myenv := node.environ_get()!
+		if 'HOME' !in myenv {
+			return error('Cannot find home in env for ${node}')
+		}
+		mut myhome := myenv['HOME']
+		args.dest.replace('~', myhome)
+	}
 	if mut node.executor is ExecutorLocal {
-		return node.executor.upload(source, dest)
+		return node.executor.upload(args)
 	} else if mut node.executor is ExecutorSSH {
-		return node.executor.upload(source, dest)
+		return node.executor.upload(args)
 	}
 	panic('did not find right executor')
 }
 
-pub fn (mut node Node) environ_get() !map[string]string {
-	if mut node.executor is ExecutorLocal {
-		return node.executor.environ_get()
-	} else if mut node.executor is ExecutorSSH {
-		return node.executor.environ_get()
+[params]
+pub struct EnvGetParams {
+pub mut:
+	reload bool
+}
+
+pub fn (mut node Node) environ_get(args EnvGetParams) !map[string]string {
+	if args.reload {
+		if mut node.executor is ExecutorLocal {
+			return node.executor.environ_get()
+		} else if mut node.executor is ExecutorSSH {
+			return node.executor.environ_get()
+		}
+		panic('did not find right executor')
 	}
-	panic('did not find right executor')
+	return node.environment
 }
 
 pub fn (mut node Node) info() map[string]string {
@@ -227,12 +283,3 @@ pub fn (mut node Node) debug_on() {
 	}
 	panic('did not find right executor')
 }
-
-// pub fn (mut node Node) upload(source string, dest string) ! {
-// 	if mut node.executor is ExecutorLocal {
-// 		return node.executor.upload(source,dest)!
-// 	} else if mut node.executor is ExecutorSSH {
-// 		return node.executor.upload(source,dest)!
-// 	}
-// 	panic('did not find right executor')
-// }

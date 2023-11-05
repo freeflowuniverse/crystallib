@@ -1,14 +1,11 @@
 module tfgrid
 
-import freeflowuniverse.crystallib.baobab.actions { Action }
-import threefoldtech.web3gw.tfgrid { FindTwins, Limit, TwinFilter }
+import freeflowuniverse.crystallib.data.actionsparser { Action }
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid { FindTwins, Limit, TwinFilter }
 
 pub fn (mut h TFGridHandler) twins(action Action) ! {
 	match action.name {
 		'get' {
-			network := action.params.get_default('network', 'main')!
-			h.explorer.load(network)!
-
 			mut filter := TwinFilter{}
 			if action.params.exists('twin_id') {
 				filter.twin_id = action.params.get_u64('twin_id')!

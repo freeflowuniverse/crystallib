@@ -21,7 +21,7 @@ pub fn new(args_ FactoryArgs) !Factory {
 	mut args := args_
 
 	mut f := Factory{
-		path_images: pathlib.get_dir(args.path_images, true)!
+		path_images: pathlib.get_dir(path: args.path_images, create: true)!
 	}
 
 	return f
@@ -37,7 +37,7 @@ pub mut:
 
 pub fn (mut f Factory) debootstrap(args DebootstrapArgs) ! {
 	mut path := '${f.path_images.path}/lunar'
-	mut patho := pathlib.get_dir(path, true)!
+	mut patho := pathlib.get_dir(path: path, create: true)!
 	if args.reset {
 		patho.empty()!
 	}

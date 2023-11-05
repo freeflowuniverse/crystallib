@@ -1,9 +1,9 @@
-module publisher_core
+module publisher_web
 
 import freeflowuniverse.crystallib.core.texttools
 import os
 import vweb
-import publisher_config
+// import publisher_config
 import json
 import gittools
 import rest
@@ -571,7 +571,7 @@ pub fn webserver_run(mut publisher Publisher) ? {
 	publisher.check()?
 	publisher.config.update_staticfiles(false)?
 
-	mut gt := gittools.new()
+	mut gt := gittools.get()
 	mut repo := gt.repos_get(filter: 'threefold_data')[0]
 	data_path := os.join_path(repo.path(), 'content')
 

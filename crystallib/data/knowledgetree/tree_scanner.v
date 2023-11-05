@@ -1,9 +1,11 @@
 module knowledgetree
 
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
+import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.texttools
 import os
+import freeflowuniverse.crystallib.baobab.smartid
 
 [params]
 pub struct TreeScannerArgs {
@@ -17,6 +19,7 @@ pub mut:
 	git_reset bool
 	git_root  string
 	git_pull  bool
+	cid       smartid.CID
 }
 
 pub fn scan(args_ TreeScannerArgs) ! {
@@ -38,24 +41,23 @@ pub fn scan(args_ TreeScannerArgs) ! {
 
 // walk over directory find dirs with .book or .collection inside and add to the tree
 // a path will not be added unless .collection is in the path of a collection dir or .book in a book
-pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
+pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 	// $if debug{println(" - collections find recursive: $path.path")}
-	mut args_ := args
-	if args_.git_url.len > 0 {
-		panic('fix git')
-		// mut gs := gittools.get(root: args_.git_root)!
-		// mut gr := gs.repo_get_from_url(
-		// 	url: args_.git_url
-		// 	pull: args_.git_pull
-		// 	reset: args_.git_reset
-		// )!
-		// args_.path = gr.path_content_get()
+	mut args := args_
+	if args.git_url.len > 0 {
+		args.path = gittools.code_get(
+			coderoot: args.git_root
+			url: args.git_url
+			pull: args.git_pull
+			reset: args.git_reset
+			reload: false
+		)!
 	}
 
-	if args_.path.len < 3 {
+	if args.path.len < 3 {
 		return error('Path needs to be not empty.')
 	}
-	mut path := pathlib.get_dir(args_.path, false)!
+	mut path := pathlib.get_dir(path: args.path)!
 
 	if path.is_dir() {
 		mut name := path.name()
@@ -73,7 +75,7 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 				content := filepath.read()!
 				if content.trim_space() != '' {
 					// means there are params in there
-					mut params_ := params.parse(content)!
+					mut params_ := paramsparser.parse(content)!
 					if params_.exists('name') {
 						name = params_.get('name')!
 					}
@@ -84,8 +86,8 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 						tree.collection_new(
 							path: path.path
 							name: name
-							heal: args_.heal
-							load: args_.load
+							heal: args.heal
+							load: args.load
 						)!
 						return
 					}
@@ -97,30 +99,30 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 		}
 
 		// QUESTION: is this necessary?
-		// if !args_.strict {
+		// if !args.strict {
 		// 	for dir in path.dir_list()! {
 		// 		// dont double count collections already added
 		// 		if !dir.file_exists('.collection') || !dir.file_exists('.site') {
 		// 			tree.collection_new(
 		// 				path: dir.path
 		// 				name: name
-		// 				heal: args_.heal
-		// 				load: args_.load
+		// 				heal: args.heal
+		// 				load: args.load
 		// 			)!
 		// 		}
 		// 	}
 		// }
 
-		mut llist := path.list(recursive: false) or {
+		mut pl := path.list(recursive: false) or {
 			return error('cannot list: ${path.path} \n${error}')
 		}
-		for mut p_in in llist {
+		for mut p_in in pl.paths {
 			if p_in.is_dir() {
 				if p_in.name().starts_with('.') || p_in.name().starts_with('_') {
 					continue
 				}
 
-				tree.scan(path: p_in.path, heal: args_.heal, load: args_.load) or {
+				tree.scan(path: p_in.path, heal: args.heal, load: args.load) or {
 					msg := 'Cannot process recursive on ${p_in.path}\n${err}'
 					return error(msg)
 				}
@@ -147,11 +149,11 @@ pub fn (mut tree Tree) scan(args TreeScannerArgs) ! {
 // }
 
 // QUESTION: healing doesn't work in scanning, is it ok to separate?
-pub fn (mut tree Tree) heal(args TreeScannerArgs) ! {
-	mut args_ := args
-	if args_.heal {
+pub fn (mut tree Tree) heal(args_ TreeScannerArgs) ! {
+	mut args := args_
+	if args.heal {
 		for _, mut collection in tree.collections {
-			if !args_.load {
+			if !args.load {
 				collection.scan()!
 			}
 			collection.fix()!

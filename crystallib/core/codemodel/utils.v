@@ -2,10 +2,9 @@ module codemodel
 
 pub struct GetStruct {
 	code []CodeItem
-	mod string
+	mod  string
 	name string
 }
-
 
 pub fn get_struct(params GetStruct) ?Struct {
 	structs_ := params.code.filter(it is Struct).map(it as Struct)
@@ -22,9 +21,9 @@ pub fn inflate_types(mut code []CodeItem) {
 	for mut item in code {
 		if item is Struct {
 			// TODO: handle this when refactoring types / structs
-			
+
 			inflate_struct_fields(code, mut item)
-		} 
+		}
 	}
 }
 
@@ -35,7 +34,7 @@ pub fn inflate_struct_fields(code []CodeItem, mut struct_ CodeItem) {
 			field.structure = get_struct(
 				code: code
 				name: field.typ.symbol
-			) or {continue}
+			) or { continue }
 		}
 	}
 }

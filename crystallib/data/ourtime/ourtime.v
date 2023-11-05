@@ -13,13 +13,13 @@ pub mut:
 // ```
 // ## Relative time
 // #### time periods:
-// - s -> second
-// - h -> hour
-// - d -> day
-// - w -> week
-// - M -> month
-// - Q -> quarter
-// - Y -> year
+// - s : second
+// - h : hour
+// - d : day
+// - w : week
+// - M : month
+// - Q : quarter
+// - Y : year
 // 0 means right now
 // input string example: "+1w +2d -4h"
 //
@@ -50,6 +50,13 @@ pub fn now() OurTime {
 	mut ot := OurTime{}
 	ot.now()
 	return ot
+}
+
+// will check if the time is empty, if yes then will fill it in
+pub fn (mut ot OurTime) check() {
+	if ot.unix == 0 {
+		ot.now()
+	}
 }
 
 // print the wiki formatting for time
@@ -89,4 +96,22 @@ pub fn (t OurTime) unix_time() i64 {
 
 pub fn (t OurTime) empty() bool {
 	return t.unix == 0
+}
+
+
+// move the time, e.g. +1h means we go 1 h further
+// ## Relative time
+// #### time periods:
+// - s : second
+// - h : hour
+// - d : day
+// - w : week
+// - M : month
+// - Q : quarter
+// - Y : year
+// input string example: "+1w +2d -4h"
+//
+pub fn (mut t OurTime) warp(warp string) !{
+	println(relative_sec(warp)!)
+	t.unix+=relative_sec(warp)!
 }

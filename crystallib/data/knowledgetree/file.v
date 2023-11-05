@@ -45,8 +45,7 @@ fn (mut file File) delete() ! {
 }
 
 fn (mut file File) mv(dest string) ! {
-	os.mkdir_all(os.dir(dest))!
-	mut desto := pathlib.get_file_dir_create(dest)!
+	mut desto := pathlib.get_dir(path: dest)! // will fail if dir doesn't exist
 	os.mv(file.path.path, desto.path) or {
 		return error('could not rename ${file.path.path} to ${desto.path} .\n${err}\n${file}')
 	}
@@ -61,7 +60,7 @@ fn (mut file File) exists() !bool {
 
 fn (mut file File) copy(dest string) ! {
 	mut dest2 := pathlib.get(dest)
-	file.path.copy(dest2.path) or {
+	file.path.copy(dest: dest2.path) or {
 		return error('Could not copy file: ${file.path.path} to ${dest} .\n${err}\n${file}')
 	}
 }

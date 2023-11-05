@@ -1,7 +1,7 @@
 module imagemagick
 
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.osal
 
 fn installed0() bool {
@@ -22,7 +22,7 @@ pub fn installed() bool {
 }
 
 // scan a directory
-fn filter_imagemagic(mut path pathlib.Path, mut params_ params.Params) !bool {
+fn filter_imagemagic(mut path pathlib.Path, mut params_ paramsparser.Params) !bool {
 	// print(" - check $path.path")
 	// println(" ===== "+path.name_no_ext())
 	if path.name().starts_with('.') {
@@ -44,7 +44,7 @@ fn filter_imagemagic(mut path pathlib.Path, mut params_ params.Params) !bool {
 	return true
 }
 
-fn executor_imagemagic(mut path pathlib.Path, mut params_ params.Params) !params.Params {
+fn executor_imagemagic(mut path pathlib.Path, mut params_ paramsparser.Params) !paramsparser.Params {
 	mut backupdir := ''
 	if params_.exists('backupdir') {
 		backupdir = params_.get('backupdir') or { panic(error) }
@@ -69,14 +69,14 @@ pub:
 // 	backupdir string //if you want a backup dir
 // }
 // will return params with OK and ERROR if it was not ok
-pub fn scan(args ScanArgs) !params.Params {
+pub fn scan(args ScanArgs) !paramsparser.Params {
 	if !installed() {
 		panic('cannot scan because imagemagic not installed.')
 	}
-	mut path := pathlib.get_dir(args.path, false)!
-	mut params_ := params.Params{}
+	mut path := pathlib.get_dir(path: args.path)!
+	mut params_ := paramsparser.Params{}
 	if args.backupdir != '' {
-		params_.kwarg_add('backup', args.backupdir)
+		params_.kwarg_set('backup', args.backupdir)
 	}
 	params_ = path.scan(mut params_, [filter_imagemagic], [executor_imagemagic])!
 	return params_

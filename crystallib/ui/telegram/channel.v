@@ -2,7 +2,7 @@ module telegram
 
 import dariotarantini.vgram
 // import freeflowuniverse.crystallib.baobab.client
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 
 pub struct UITelegram {
 pub mut:
@@ -18,8 +18,8 @@ pub fn new(user_id string) UITelegram {
 }
 
 fn (ui UITelegram) send_question(msg string) !string {
-	mut j_params := params.Params{}
-	j_params.kwarg_add('question', msg)
+	mut j_params := paramsparser.Params{}
+	j_params.kwarg_set('question', msg)
 
 	// job := ui.baobab.job_new(
 	// 	// todo twinid
@@ -34,8 +34,8 @@ fn (ui UITelegram) send_question(msg string) !string {
 }
 
 fn (ui UITelegram) send_exit_message(msg string) ! {
-	mut j_params := params.Params{}
-	j_params.kwarg_add('message', msg)
+	mut j_params := paramsparser.Params{}
+	j_params.kwarg_set('message', msg)
 
 	job := ui.baobab.job_new(
 		// todo twinid

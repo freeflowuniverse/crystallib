@@ -1,7 +1,7 @@
 module gitea
 
 import freeflowuniverse.crystallib.installers.base
-import freeflowuniverse.crystallib.tmux
+import freeflowuniverse.crystallib.tools.tmux
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
@@ -56,7 +56,7 @@ pub fn new(args_ InstallArgs) !Gitea {
 	db.db_create('gitea')!
 
 	mut s := Gitea{
-		path_config: pathlib.get_dir('${args.path}/config', true)!
+		path_config: pathlib.get_dir(path: '${args.path}/config', create: true)!
 		args: args
 	}
 
@@ -87,7 +87,7 @@ pub fn install(reset bool) ! {
 
 	// TODO: does not download well
 
-	mut giteafile := pathlib.get_file('/tmp/download/gitea', false)! // file in the dest
+	mut giteafile := pathlib.get_file(path: '/tmp/download/gitea')! // file in the dest
 	println(giteafile)
 	giteafile.copy('/usr/local/bin')!
 	giteafile.chmod(0o770)! // includes read & write & execute

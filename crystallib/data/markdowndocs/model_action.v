@@ -1,6 +1,6 @@
 module markdowndocs
 
-import freeflowuniverse.crystallib.data.params
+import freeflowuniverse.crystallib.data.paramsparser
 // import freeflowuniverse.crystallib.core.texttools
 
 pub struct Action {
@@ -8,7 +8,7 @@ pub mut:
 	content string
 	remarks string
 	name    string
-	params  params.Params
+	params  paramsparser.Params
 	result  string
 }
 

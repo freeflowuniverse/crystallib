@@ -3,7 +3,7 @@ module builder
 import os
 import rand
 import freeflowuniverse.crystallib.osal
-import ipaddress
+import freeflowuniverse.crystallib.data.ipaddress
 
 [heap]
 pub struct ExecutorSSH {
@@ -73,7 +73,7 @@ pub fn (mut executor ExecutorSSH) file_write(path string, text string) ! {
 	}
 	local_path := '/tmp/${rand.uuid_v4()}'
 	os.write_file(local_path, text)!
-	executor.upload(local_path, path)!
+	executor.upload(source: local_path, dest: path)!
 	os.rm(local_path)!
 }
 
@@ -82,7 +82,7 @@ pub fn (mut executor ExecutorSSH) file_read(path string) !string {
 		println(' - ${executor.ipaddr.addr} file read: ${path}')
 	}
 	local_path := '/tmp/${rand.uuid_v4()}'
-	executor.download(path, local_path)!
+	executor.download(source: path, dest: local_path)!
 	r := os.read_file(local_path)!
 	os.rm(local_path) or { panic(err) }
 	return r
@@ -108,52 +108,31 @@ pub fn (mut executor ExecutorSSH) delete(path string) ! {
 }
 
 // upload from local FS to executor FS
-pub fn (mut executor ExecutorSSH) download(source string, dest string) ! {
-	port := executor.ipaddr.port
-	if executor.debug {
-		println(' - ${executor.ipaddr.addr} file download: ${source}')
+pub fn (mut executor ExecutorSSH) download(args SyncArgs) ! {
+	mut rsargs := osal.RsyncArgs{
+		source: args.source
+		dest: args.dest
+		delete: args.delete
+		ipaddr_src: '${executor.user}@${executor.ipaddr.addr}:${executor.ipaddr.port}'
+		ignore: args.ignore
+		ignore_default: args.ignore_default
+		stdout: args.stdout
 	}
-	// detection about ipv4/ipv6 for use [] or not
-	mut cmd_ipaddr := '${executor.ipaddr.addr}'
-	if executor.ipaddr.cat == .ipv6 {
-		cmd_ipaddr = '[${executor.ipaddr.addr}]'
-	}
-	mut job := osal.Job{}
-	job = osal.exec(
-		cmd: 'rsync -avHPe "ssh -p${port}" ${executor.user}@${cmd_ipaddr}:${source} ${dest}'
-		die: false
-	)!
-	if job.exit_code > 0 {
-		if job.output.contains('rsync: command not found') {
-			executor.exec('apt update && apt install rsync -y') or {
-				// TODO, not good enough because we need to check which platform
-				return error('could install rsync, was maybe not ubuntu.\n${executor}')
-			}
-			job = osal.exec(
-				cmd: 'rsync -avHPe "ssh -p${port}" ${executor.user}@${cmd_ipaddr}:${source} ${dest}'
-				die: false
-			)!
-		}
-	}
-	if job.exit_code > 0 {
-		return error('could rsync.\n${job}')
-	}
+	osal.rsync(rsargs)!
 }
 
 // download from executor FS to local FS
-pub fn (mut executor ExecutorSSH) upload(source string, dest string) ! {
-	port := executor.ipaddr.port
-	if executor.debug {
-		println(' - ${executor.ipaddr.addr} file upload: ${source} -> ${dest}')
+pub fn (mut executor ExecutorSSH) upload(args SyncArgs) ! {
+	mut rsargs := osal.RsyncArgs{
+		source: args.source
+		dest: args.dest
+		delete: args.delete
+		ipaddr_dst: '${executor.user}@${executor.ipaddr.addr}:${executor.ipaddr.port}'
+		ignore: args.ignore
+		ignore_default: args.ignore_default
+		stdout: args.stdout
 	}
-	// detection about ipv4/ipv6 for use [] or not
-	mut cmd_ipaddr := '${executor.ipaddr.addr}'
-	if executor.ipaddr.cat == .ipv6 {
-		cmd_ipaddr = '[${executor.ipaddr.addr}]'
-	}
-	osal.exec(
-		cmd: 'rsync -avHPe "ssh -p${port}" ${source} -e ssh ${executor.user}@${cmd_ipaddr}:${dest}'
-	) or { panic(@FN + ': Cannot execute job') }
+	osal.rsync(rsargs)!
 }
 
 // get environment variables from the executor

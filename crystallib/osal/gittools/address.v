@@ -8,14 +8,13 @@ import freeflowuniverse.crystallib.core.pathlib
 // can be translated to location on filesystem
 // can be translated to url of the git repository online
 pub struct GitAddr {
-	gs &GitStructure [skip; str: skip]
+	gsconfig GitStructureConfig
 pub mut:
-	// root string
-	provider     string
-	account      string
-	name         string // is the name of the repository
-	branch       string
-	url_original string
+	provider   string
+	account    string
+	name       string // is the name of the repository
+	branch     string
+	remote_url string
 }
 
 // internal function to check git address
@@ -31,24 +30,26 @@ pub fn (addr GitAddr) path() !pathlib.Path {
 	provider := texttools.name_fix(addr.provider)
 	name := texttools.name_fix(addr.name)
 	account := texttools.name_fix(addr.account)
-	mut path_string := '${addr.gs.rootpath.path}/${provider}/${account}/${name}'
-	if addr.gs.rootpath.path == '' {
-		panic('roorpath cannot be empty')
+	mut path_string := '${addr.gsconfig.root}/${provider}/${account}/${name}'
+	if addr.gsconfig.root == '' {
+		panic('rootpath cannot be empty')
 	}
-	if addr.gs.config.multibranch {
+	if addr.gsconfig.multibranch {
 		path_string += '/${addr.branch}'
 	}
-	path := pathlib.get_dir(path_string, false)!
+	path := pathlib.get_dir(path: path_string)!
 	return path
 }
 
 fn (addr GitAddr) path_account() pathlib.Path {
 	addr.check()
-	if addr.gs.rootpath.path == '' {
+	if addr.gsconfig.root == '' {
 		panic('cannot be empty')
 	}
-	path := pathlib.get_dir('${addr.gs.rootpath.path}/${addr.provider}/${addr.account}',
-		true) or { panic('couldnt get directory') }
+	path := pathlib.get_dir(
+		path: '${addr.gsconfig.root}/${addr.provider}/${addr.account}'
+		create: true
+	) or { panic('couldnt get directory') }
 	return path
 }
 
@@ -91,9 +92,22 @@ fn (addr GitAddr) url_http_with_branch_get() string {
 }
 
 pub fn (addr GitAddr) str() string {
-	addr.check()
-	if addr.branch == '' {
-		panic('bug, addr branch should never be empty')
-	}
 	return '${addr.provider}:${addr.account}/${addr.name}[${addr.branch}]'
+}
+
+// CACHE ARGS
+
+fn (addr GitAddr) cache_key_status() string {
+	cache_key := gitstructure_cache_key(addr.gsconfig.name)
+	return '${cache_key}:${addr.cache_key_provider_account_name()}'
+}
+
+fn (addr GitAddr) cache_key_path(path string) string {
+	cache_key := gitstructure_cache_key(addr.gsconfig.name)
+	return '${cache_key}:${path}'
+}
+
+fn (addr GitAddr) cache_key_provider_account_name() string {
+	addr.check()
+	return '${addr.provider}__${addr.account}__${addr.name}'
 }

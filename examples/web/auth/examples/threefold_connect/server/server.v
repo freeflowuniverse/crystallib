@@ -8,12 +8,18 @@ import os
 
 ['/verify'; post]
 fn (mut server ServerApp) verify() !vweb.Result {
-	mut file_path := os.args_after('.')
-	if file_path.len <= 1 {
-		server.abort(400, file_dose_not_exist)
+
+	mut key_path := ""
+	if os.args.len>1{
+		key_path = os.args[1]
 	}
-	file_path << '.'
-	keys := parse_keys(file_path[1])!
+	if key_path==""{
+		key_path=os.getwd() 
+	}
+	mut p:=pathlib.get_dir(path:key_path,create:false)!
+	mut keyspath:=p.file_get_new("keys.toml")!
+
+	keys := parse_keys(keyspath.path)!
 	server_public_key := keys.value('server.SERVER_PUBLIC_KEY').string()
 	server_private_key := keys.value('server.SERVER_SECRET_KEY').string()
 	server_pk_decoded_32 := [32]u8{}

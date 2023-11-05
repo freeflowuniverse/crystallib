@@ -13,7 +13,12 @@ pub mut:
 }
 
 // will use url to get git locator (is a pointer to a file, dir or part of file)
-pub fn (gitstructure GitStructure) locator_new(url string) !GitLocator {
+pub fn (mut gs GitStructure) locator_new(url string) !GitLocator {
+	return locator_new(gs.config, url)!
+}
+
+// will use url to get git locator (is a pointer to a file, dir or part of file)
+pub fn locator_new(gsconfig GitStructureConfig, url string) !GitLocator {
 	// println(" ** URL: $url **")
 	mut urllower := url.to_lower()
 	urllower = urllower.trim_space()
@@ -70,12 +75,12 @@ pub fn (gitstructure GitStructure) locator_new(url string) !GitLocator {
 	account := parts[1]
 	name := parts[2]
 	mut ga := GitAddr{
+		gsconfig: gsconfig
 		provider: provider
 		account: account
 		name: name
 		branch: branch
-		url_original: url
-		gs: &gitstructure
+		remote_url: url
 	}
 	if ga.provider == 'github.com' {
 		ga.provider = 'github'
@@ -92,7 +97,7 @@ pub fn (gitstructure GitStructure) locator_new(url string) !GitLocator {
 pub fn (mut l GitLocator) path_on_fs() !pathlib.Path {
 	addrpath := l.addr.path()!
 	if l.path.len > 0 {
-		return pathlib.get('{addrpath.path}/l.path')
+		return pathlib.get('${addrpath.path}/${l.path}')
 	} else {
 		return addrpath
 	}

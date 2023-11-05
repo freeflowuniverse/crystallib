@@ -13,7 +13,7 @@ pub mut:
 	pull     bool
 	reset    bool
 	buildcmd string = 'go run build.go '
-	copycmd  string = ''
+	copycmd  string
 	name     string
 }
 
