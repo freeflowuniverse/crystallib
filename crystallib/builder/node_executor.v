@@ -162,15 +162,15 @@ pub mut:
 // ```
 // .
 pub fn (mut node Node) download(args_ SyncArgs) ! {
-	mut args:=args_
-	if args.source.contains("~"){
-		myenv:=node.environ_get()!
-		if !("HOME" in myenv){
-			return error("Cannot find home in env for $node")
+	mut args := args_
+	if args.source.contains('~') {
+		myenv := node.environ_get()!
+		if 'HOME' !in myenv {
+			return error('Cannot find home in env for ${node}')
 		}
-		mut myhome:=myenv["HOME"]
-		args.source.replace("~",myhome)
-	}	
+		mut myhome := myenv['HOME']
+		args.source.replace('~', myhome)
+	}
 	if mut node.executor is ExecutorLocal {
 		return node.executor.download(args)
 	} else if mut node.executor is ExecutorSSH {
@@ -191,14 +191,14 @@ pub fn (mut node Node) download(args_ SyncArgs) ! {
 // ```
 // .
 pub fn (mut node Node) upload(args_ SyncArgs) ! {
-	mut args:=args_
-	if args.dest.contains("~"){
-		myenv:=node.environ_get()!
-		if !("HOME" in myenv){
-			return error("Cannot find home in env for $node")
+	mut args := args_
+	if args.dest.contains('~') {
+		myenv := node.environ_get()!
+		if 'HOME' !in myenv {
+			return error('Cannot find home in env for ${node}')
 		}
-		mut myhome:=myenv["HOME"]
-		args.dest.replace("~",myhome)
+		mut myhome := myenv['HOME']
+		args.dest.replace('~', myhome)
 	}
 	if mut node.executor is ExecutorLocal {
 		return node.executor.upload(args)
@@ -208,7 +208,6 @@ pub fn (mut node Node) upload(args_ SyncArgs) ! {
 	panic('did not find right executor')
 }
 
-
 [params]
 pub struct EnvGetParams {
 pub mut:
@@ -216,7 +215,7 @@ pub mut:
 }
 
 pub fn (mut node Node) environ_get(args EnvGetParams) !map[string]string {
-	if args.reload{
+	if args.reload {
 		if mut node.executor is ExecutorLocal {
 			return node.executor.environ_get()
 		} else if mut node.executor is ExecutorSSH {

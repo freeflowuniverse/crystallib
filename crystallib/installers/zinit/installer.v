@@ -14,7 +14,6 @@ pub mut:
 
 // install zinit will return true if it was already installed
 pub fn install(args InstallArgs) ! {
-
 	if osal.platform() != .ubuntu {
 		return error('only support ubuntu for now')
 	}
@@ -34,16 +33,13 @@ pub fn install(args InstallArgs) ! {
 		reset: true
 		expand_dir: '/tmp/zinitserver'
 	)!
-	
+
 	osal.done_set('install_zinit', 'OK')!
 	return
 }
 
-
-
 // start zinit
 pub fn start() ! {
-
 }
 
 pub fn stop() ! {

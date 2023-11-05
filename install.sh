@@ -9,7 +9,7 @@ rm -f ~/.vmodules/freeflowuniverse/crystallib
 ln -s $ABS_DIR_OF_SCRIPT/crystallib ~/.vmodules/freeflowuniverse/crystallib
 
 
-cp ~/code/github/freeflowuniverse/crystallib/scripts/vrun /usr/local/bin/
+cp ~/code/github/freeflowuniverse/crystallib/scripts/node/vrun /usr/local/bin/
 chmod 770  /usr/local/bin/vrun
 
 

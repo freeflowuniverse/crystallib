@@ -1,7 +1,7 @@
 module main
 
 import time
-import freeflowuniverse.crystallib.context
+import freeflowuniverse.crystallib.baobab.context
 
 fn do2() ! {
 	for i in 10 .. 1000 {

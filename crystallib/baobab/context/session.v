@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.data.paramsparser
 
 pub struct Session {
 pub mut:
-	sid     string // unique id for session (session id), there can be more than 1 per id
+	sid     string // unique id for session (session id), can be more than one per context
 	name    string
 	start   ourtime.OurTime
 	end     ourtime.OurTime

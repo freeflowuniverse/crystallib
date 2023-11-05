@@ -15,15 +15,15 @@ fn test_sid() {
 		cleanup() or { panic(err) }
 	}
 
-	cid := cid_get(name: 'test') or { panic(err) }
+	cid1 := cid(name: 'test') or { panic(err) }
 
 	for i in 0 .. 10000 {
-		cid.gid_new() or { panic(err) }
+		cid1.gid() or { panic(err) }
 	}
 
-	gid := cid.gid_get('aa') or { panic(err) }
+	gid1 := cid1.gid(oid_str: 'aa') or { panic(err) }
 
-	assert gid == GID{
+	assert gid1 == GID{
 		region: 0
 		cid: CID{
 			circle: 11
@@ -31,7 +31,7 @@ fn test_sid() {
 		id: 370
 	}
 
-	gid2 := cid.gid_get('ab') or { panic(err) }
+	gid2 := cid1.gid(oid_str: 'ab') or { panic(err) }
 
 	assert gid2 == GID{
 		region: 0

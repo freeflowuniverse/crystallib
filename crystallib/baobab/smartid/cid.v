@@ -3,23 +3,41 @@ module smartid
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.clients.redisclient
 
+pub struct CID {
+pub mut:
+	circle u32
+}
+
 [params]
 pub struct CIDGet {
 pub mut:
-	name      string
-	id_int    u32
-	id_string string
+	name       string
+	cid_int    u32
+	cid_string string
 }
 
-// get a cid id based on cidname, id_int or id_string
-pub fn cid_get(args CIDGet) !CID {
-	if args.id_int > 0 {
+// get a circle id .
+// circle's are unique per twin .
+// params: .
+// ```
+// name       string
+// cid_int    u32
+// cid_string string
+// ```
+// returns circle ..
+// ```
+// struct CID {
+// 		circle u32
+// }
+// ```
+pub fn cid(args CIDGet) !CID {
+	if args.cid_int > 0 {
 		return CID{
-			circle: args.id_int
+			circle: args.cid_int
 		}
-	} else if args.id_string.len > 0 {
+	} else if args.cid_string.len > 0 {
 		return CID{
-			circle: sid_int(args.id_string)
+			circle: sid_int(args.cid_string)
 		}
 	} else if args.name.len > 0 {
 		cidname := texttools.name_fix(args.name)
@@ -39,7 +57,7 @@ pub fn cid_get(args CIDGet) !CID {
 			circle: sid_int(cid)
 		}
 	} else {
-		return error('need to specify name, id_int or id_string')
+		return error('need to specify name, cid_int or cid_string')
 	}
 	panic('bug')
 }
@@ -50,11 +68,6 @@ pub fn cid_core() CID {
 		circle: 0
 	}
 	return cid
-}
-
-pub struct CID {
-pub mut:
-	circle u32
 }
 
 pub fn (cid CID) u32() u32 {
@@ -78,12 +91,15 @@ pub fn (cid CID) name() string {
 	return name
 }
 
-pub fn (cid CID) gid_get(id string) !GID {
-	return gid_get(id: id, cid: cid.str())
+[params]
+pub struct OIDGetArgs {
+pub mut:
+	oid_int int    // int representation of cid
+	oid_str string // string representation of cid
 }
 
-pub fn (cid CID) gid_new() !GID {
-	return gid_get(cid: cid.str())
+pub fn (cid CID) gid(args OIDGetArgs) !GID {
+	return gid(cid_str: cid.str(), oid_int: args.oid_int, oid_str: args.oid_str)
 }
 
 pub fn (cid CID) sids_replace(txt string) !string {
