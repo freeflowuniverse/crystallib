@@ -1,31 +1,24 @@
 module main
 
-// import freeflowuniverse.crystallib.tmux
-// import freeflowuniverse.crystallib.installers.caddy
 import freeflowuniverse.crystallib.osal.sandbox
 import os
 
-// const configpath = os.dir(@FILE) + '/config'
 
 fn do() ! {
-	// kill the full tmux session, we will create new one
-	// mut t := tmux.new()!
-
-	// t.session_delete("main")! //kill the full tmux, is not done gracefully
-
-	// t.window_new(name: 'mc', cmd: 'mc', reset: true)!	 //launch a window with mc
-
-	// caddy.install(reset:true)! //will get the binary and put in /usr/local/bin
-	// caddy.configuration_set(path:"${configpath}/Caddyfile",restart:true)!
-
 	sandbox.install()! // will also do an upgrade of the OS
-	x := sandbox.FactoryArgs{path_images: "/tmp/images"}
-	mut f := sandbox.new(x)!
 
-	cmd := sandbox.ContainerArgs{startcmd: ["ls", "/", "/proc"]}
-	mut c := f.container_new(cmd)!
-	c.debootstrap()!
-	c.start()!
+	mut f := sandbox.new(path_images: "/var/sandbox/images")!
+	
+	//get 2 bootstraps to work from
+	f.debootstrap(imagename:'debian',reset:false)! //if reset then will download again
+	f.debootstrap(imagename:'ubuntu22',
+			repository:'http://de.archive.ubuntu.com/ubuntu'
+			release:'jammy'
+			reset:false
+			)!
+
+	// mut c := f.container_new(startcmd: ["ls", "/", "/proc"])!
+	// c.start()!
 }
 
 fn main() {
