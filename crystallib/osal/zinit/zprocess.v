@@ -13,6 +13,7 @@ pub mut:
 	pid     int
 	after   []string
 	env     map[string]string
+	env     map[string]string
 	oneshot bool
 	zinit   &Zinit
 }
