@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.tools.tmux
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.installers.zinit
 import os
 
 [params]
@@ -17,6 +18,7 @@ pub mut:
 pub fn install(args InstallArgs) ! {
 	// make sure we install base on the node
 	base.install()!
+	zinit.install()!
 
 	if args.reset == false && osal.done_exists('install_caddy') {
 		return

@@ -3,11 +3,13 @@ module fungistor
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.rust
 import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.installers.zinit
 
 pub fn install() ! {
 	rust.install()!
+	zinit.install()!
 	println(' - install fungistor')
-	if !osal.done_exists('install_fungistor') || !osal.cmd_exists('rst') {
+	if !osal.done_exists('install_fungistor') || !osal.cmd_exists('rfs') {
 
 
 		osal.package_install("musl-dev,musl-tools")!

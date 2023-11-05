@@ -43,6 +43,7 @@ pub fn (mut repo GitRepo) load() !GitRepoStatus {
 	}
 	mut st := repo_load(repo.addr, repo.path.path)!
 	repo.status_set(st)!
+	println(" - status:\n$st")
 	return st
 }
 
@@ -225,10 +226,11 @@ pub fn (mut repo GitRepo) push(args_ ActionArgs) ! {
 		args.reload = false
 	}
 	$if debug {
-		println('   - PUSH: ${repo.url_get(true)}')
+		println('   - PUSH: ${repo.url_get(true)} on ${repo.path}')
 	}
 	st := repo.status()!
 	if st.need_push {
+		println('    - PUSH THE CHANGES')
 		cmd := 'cd ${repo.path.path} && git push'
 		osal.execute_silent(cmd) or {
 			return error('Cannot push repo: ${repo.path.path}. Error was ${err}')

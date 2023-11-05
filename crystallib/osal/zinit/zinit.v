@@ -65,14 +65,14 @@ pub fn (mut zinit Zinit) new(mut args_ ZProcessNewArgs) !ZProcess {
 		// means we can load the special cmd
 		mut pathcmd := zinit.pathcmds.file_get(args.name)!
 		pathcmd.write(args.cmd)!
-		zp.cmd = args.cmd
+		zp.cmd = "/bin/bash -c ${pathcmd.path}"
 	}
 
 	if args.test.contains('\n') || args.test_file {
 		// means we can load the special cmd
 		mut pathcmd := zinit.pathtests.file_get(args.name)!
 		pathcmd.write(args.test)!
-		zp.test = args.test
+		zp.test = "/bin/bash -c ${pathcmd.path}"
 	}
 
 	zp.oneshot = args.oneshot
