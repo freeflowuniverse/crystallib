@@ -105,7 +105,7 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 pub fn (mut m BizModel) load() ! {
 	println('ACTIONS LOAD ${m.params.name}')
 
-	m.replace_smart_ids()!
+	// m.replace_smart_ids()!
 	ap := actionsparser.new(path: m.params.path, defaultcircle: 'bizmodel_${m.params.name}')!
 	m.revenue_actions(ap)!
 	m.hr_actions(ap)!

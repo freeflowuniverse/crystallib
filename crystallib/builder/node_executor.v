@@ -150,7 +150,7 @@ pub mut:
 	stdout         bool = true
 }
 
-// download files using rsync (can be ssh or local)
+// download files using rsync (can be ssh or local) .
 // args: .
 // ```
 // source string
@@ -161,7 +161,16 @@ pub mut:
 // stdout bool = true
 // ```
 // .
-pub fn (mut node Node) download(args SyncArgs) ! {
+pub fn (mut node Node) download(args_ SyncArgs) ! {
+	mut args:=args_
+	if args.source.contains("~"){
+		myenv:=node.environ_get()!
+		if !("HOME" in myenv){
+			return error("Cannot find home in env for $node")
+		}
+		mut myhome:=myenv["HOME"]
+		args.source.replace("~",myhome)
+	}	
 	if mut node.executor is ExecutorLocal {
 		return node.executor.download(args)
 	} else if mut node.executor is ExecutorSSH {
@@ -181,7 +190,16 @@ pub fn (mut node Node) download(args SyncArgs) ! {
 // stdout bool = true
 // ```
 // .
-pub fn (mut node Node) upload(args SyncArgs) ! {
+pub fn (mut node Node) upload(args_ SyncArgs) ! {
+	mut args:=args_
+	if args.dest.contains("~"){
+		myenv:=node.environ_get()!
+		if !("HOME" in myenv){
+			return error("Cannot find home in env for $node")
+		}
+		mut myhome:=myenv["HOME"]
+		args.dest.replace("~",myhome)
+	}
 	if mut node.executor is ExecutorLocal {
 		return node.executor.upload(args)
 	} else if mut node.executor is ExecutorSSH {
@@ -190,13 +208,23 @@ pub fn (mut node Node) upload(args SyncArgs) ! {
 	panic('did not find right executor')
 }
 
-pub fn (mut node Node) environ_get() !map[string]string {
-	if mut node.executor is ExecutorLocal {
-		return node.executor.environ_get()
-	} else if mut node.executor is ExecutorSSH {
-		return node.executor.environ_get()
+
+[params]
+pub struct EnvGetParams {
+pub mut:
+	reload bool
+}
+
+pub fn (mut node Node) environ_get(args EnvGetParams) !map[string]string {
+	if args.reload{
+		if mut node.executor is ExecutorLocal {
+			return node.executor.environ_get()
+		} else if mut node.executor is ExecutorSSH {
+			return node.executor.environ_get()
+		}
+		panic('did not find right executor')
 	}
-	panic('did not find right executor')
+	return node.environment
 }
 
 pub fn (mut node Node) info() map[string]string {

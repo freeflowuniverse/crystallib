@@ -2,8 +2,7 @@ module zinit
 
 import os
 import freeflowuniverse.crystallib.osal
-import yaml
-import net.unix
+
 
 pub struct ZProcess {
 pub:
@@ -14,6 +13,7 @@ pub mut:
 	status ZProcessStatus
 	pid int
 	after []string
+	env map[string]string
 	oneshot bool
 	zinit &Zinit
 }
@@ -27,17 +27,35 @@ pub enum ZProcessStatus{
 	spawned
 }
 
-pub enum YamlState{
-	start
-	after
-	env
+pub fn (zp ZProcess) cmd() string {
+	p:="/etc/zinit/cmd/${zp.name}.sh"
+	if os.exists(p){
+		return "bash -c \"${p}\""
+	}else{
+		if zp.cmd.contains("\n"){
+			panic("cmd cannot have \\n and not have cmd file on disk on ${p}")
+		}
+	}
+	return "${zp.cmd}"
 }
+
+pub fn (zp ZProcess) cmdtest() string {
+	p:="/etc/zinit/tests/${zp.name}.sh"
+	if os.exists(p){
+		return "bash -c \"${p}\""
+	}else{
+		if zp.test.contains("\n"){
+			panic("cmd cannot have \\n and not have cmd file on disk on ${p}")
+		}
+	}
+	return "${zp.test}"
+}
+
 
 
 pub fn (mut zp ZProcess) load()! {
 	cmd:="zinit status ${zp.name}"
 	r:=osal.execute_silent(cmd)!
-	mut state:=""
 	for line in r.split_into_lines(){
 		if line.starts_with("pid"){
 			zp.pid=line.split("pid:")[1].trim_space().int()
@@ -59,19 +77,19 @@ pub fn (mut zp ZProcess) load()! {
 
 	if zp.zinit.pathcmds.file_exists(zp.name){
 		//means we can load the special cmd
-		pathcmd:=zp.zinit.pathcmds.file_get(zp_name)!
+		mut pathcmd:=zp.zinit.pathcmds.file_get(zp.name)!
 		zp.cmd = pathcmd.read()!
 	}
 	if zp.zinit.pathtests.file_exists(zp.name){
 		//means we can load the special cmd
-		pathtest:=zp.zinit.path.cmds.file_get(zp_name)!
+		mut pathtest:=zp.zinit.path.file_get(zp.name)!
 		zp.test = pathtest.read()!
 	}
 
-	pathyaml:=zp.zinit.pathcmds.file_get(zp.name+".yaml")!
+	mut pathyaml:=zp.zinit.pathcmds.file_get(zp.name+".yaml")!
 	contentyaml:=pathyaml.read()!
 	
-	mut st:=YamlState{}
+	mut st:=""
 	for line in contentyaml.split_into_lines(){
 		if line.starts_with("exec:") && zp.cmd.len==0 {
 			zp.cmd=line.split("exec:")[1].trim("'\" ")
@@ -80,16 +98,16 @@ pub fn (mut zp ZProcess) load()! {
 			zp.test=line.split("test:")[1].trim("'\" ")
 		}
 		if line.starts_with("after:")  {	
-			st=.after
+			st="after"
 			continue
 		}
 		if line.starts_with("env:")  {	
-			st=.env
+			st="env"
 			continue
 		}	
-		if st==.after{
+		if st=="after"{
 			if line.trim_space()==""{
-				st=.start
+				st="start"
 			}else{
 				line.trim_space().starts_with("-"){
 					_,after:=line.split_once("-") or {panic("bug")}
@@ -97,9 +115,9 @@ pub fn (mut zp ZProcess) load()! {
 				}
 			}			
 		}	
-		if st==.env{
+		if st=="env"{
 			if line.trim_space()==""{
-				st=.start
+				st="start"
 			}else{
 				line.contains("="){
 					key,val:=line.split_once("=") or {panic("bug")}
@@ -112,30 +130,16 @@ pub fn (mut zp ZProcess) load()! {
 }
 
 
-[params]
-pub struct ZProcessNewArgs {
-pub mut:
-	name string
-	exec string
-	test string
-	after []string
-	env []string
-}
-pub fn (mut args_ ZProcessNewArgs) new()! {
-	mut args:=args_
 
+pub fn (zp ZProcess) str() string {
 
-}
-
-pub fn (mut zp ZProcess) str()! {
-
-	mut out:="""
-exec: \"${exec}\"
-test: \"${test}\"
+	mut out:="
+exec: \"${zp.cmd()}\"
+test: \"${zp.cmdtest()}\"
 signal:
   stop: SIGKILL
 log: ring
-"""
+"
 	if zp.oneshot{
 		out+="oneshot: true\n"	
 	}
@@ -151,5 +155,5 @@ log: ring
 			out+="  ${key}:${val}\n"
 		}
 	}
-
+	return out
 }

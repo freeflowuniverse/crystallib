@@ -32,7 +32,7 @@ pub mut:
 pub fn rsync(args_ RsyncArgs) ! {
 	mut args := args_
 	if args.ipaddr_src.len == 0 {
-		pathlib.get_dir(path: args.source)!
+		pathlib.get(args.source)
 	}
 	args2 := pathlib.RsyncArgs{
 		source: args.source

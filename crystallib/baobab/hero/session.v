@@ -210,12 +210,13 @@ pub fn (mut s Session) run(args RunArgs) ! {
 				)!
 				mut downloadpath := pathlib.get_dir(path: m.path)!
 				// needs to be a dir
-				for mut subdir in downloadpath.dir_list()! {
+				mut pl:=downloadpath.list()!
+				for mut subdir in pl.paths {
 					alias = texttools.name_fix(subdir.name())
 					dest := '${s.runner.path.path}/recipes/${alias}'
 					if m.downloadtype == .pathdir {
 						mut destpath := pathlib.get_dir(path: dest, create: true)!
-						subdir.copy(destpath.path)!
+						subdir.copy(dest:destpath.path)!
 					} else if m.downloadtype == .git {
 						subdir.link(dest, true)!
 					} else {
