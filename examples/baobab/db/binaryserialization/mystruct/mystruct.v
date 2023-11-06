@@ -157,16 +157,16 @@ pub fn (mydb MyDB) serialize(o MyStruct) ![]u8 {
 }
 
 // serialize to 3script
-pub fn (mydb MyDB) serialize_kwargs(o MyStruct) map[string]string {
-	mut kwargs := o.Base.serialize_kwargs()
+pub fn (mydb MyDB) serialize_kwargs(o MyStruct) !map[string]string {
+	mut kwargs := o.Base.serialize_kwargs()!
 	kwargs['nr'] = '${o.nr}'
 	kwargs['nr2'] = '${o.nr2}'
 	kwargs['color'] = o.color
 	mut listu32 := ''
-	for i in listu32 {
-		listu32 += '${i},'
+	for i in o.listu32 {
+		listu32 += '${i}, '
 	}
-	listu32 = listu32.trim_string_right(',')
+	listu32 = listu32.trim_string_right(', ')
 	kwargs['listu32'] = listu32
 	return kwargs
 }
@@ -187,12 +187,13 @@ pub fn (mydb MyDB) unserialize(data []u8) !MyStruct {
 
 // serialize to 3script
 pub fn (mydb MyDB) serialize_3script(o MyStruct) !string {
-	p := paramsparser.new_from_dict(mydb.serialize_kwargs(o))!
-	return p.export(
+	p := paramsparser.new_from_dict(mydb.serialize_kwargs(o)!)!
+	ex := p.export(
 		pre: '!!${mydb.objtype}.define '
-		presort: ['gid', 'name']
+		presort: ['gid', 'name', 'listu32']
 		postsort: ['mtime', 'ctime']
 	)
+	return ex
 }
 
 pub fn (mydb MyDB) unserialize_3script(txt string) ![]MyStruct {
@@ -204,7 +205,7 @@ pub fn (mydb MyDB) unserialize_3script(txt string) ![]MyStruct {
 		p := r.params
 		o.nr = p.get_int_default('nr', 0)!
 		o.color = p.get_default('color', '')!
-		o.nr2 = p.get_int_default('nr', 0)!
+		o.nr2 = p.get_int_default('nr2', 0)!
 		o.listu32 = p.get_list_u32('listu32')!
 		res << o
 	}

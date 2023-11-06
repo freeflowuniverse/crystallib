@@ -54,7 +54,22 @@ fn do() ! {
 	assert o1data == o3data
 
 	script3 := mydb.serialize_3script(o1)!
-	println(script3)
+	deserialized_3script := mydb.unserialize_3script(script3)!
+
+	deserialized_o := deserialized_3script[0]
+	assert deserialized_o.gid == o1.gid
+	assert deserialized_o.params == o1.params
+	assert deserialized_o.version_base == o1.version_base
+	assert deserialized_o.serialization_type == o1.serialization_type
+	assert deserialized_o.name == o1.name
+	assert deserialized_o.description == o1.description
+	assert deserialized_o.remarks == o1.remarks
+	assert deserialized_o.mtime.str() == o1.mtime.str()
+	assert deserialized_o.ctime.str() == o1.ctime.str()
+	assert deserialized_o.nr == o1.nr
+	assert deserialized_o.color == o1.color
+	assert deserialized_o.nr2 == o1.nr2
+	assert deserialized_o.listu32 == o1.listu32
 
 	objs := mydb.find(
 		nr: 1

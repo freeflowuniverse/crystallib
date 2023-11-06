@@ -183,10 +183,10 @@ pub fn (remarks Remarks) find_remark(args FindRemarkArgs) ![]Remark {
 	return res
 }
 
-pub fn (remarks Remarks) serialize_3script(oid string) !string {
+pub fn (remarks Remarks) serialize_3script(gid string) !string {
 	mut out := ''
 	for remark in remarks.remarks {
-		out += remark.serialize_3script(oid)!
+		out += remark.serialize_3script(gid)! + '\n'
 	}
 	return out
 }
@@ -196,7 +196,7 @@ pub fn (r Remark) serialize_3script(gid string) !string {
 	author := r.author or { smartid.GID{} }
 	p := paramsparser.new_from_dict({
 		'content': r.content
-		'time':    r.time.str()
+		'time':    r.time.int().str()
 		'author':  '${author.str()}'
 		'rtype':   '${r.rtype.str()}'
 		'params':  r.params.export(oneline: true)
