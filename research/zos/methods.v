@@ -2,162 +2,86 @@ module zos
 
 import time
 
-struct GetParams {
-	name string // deployment name
-}
 
-struct ZOSDeployment {
-	name         string
+struct Deployment {
+	name         Name
+	// probably not needed in v4 since we will use micro payments
+	// directly against twin
 	contracts_id string
 	metadata     string
 	description  string
-	expiration   time.Time
 }
 
-pub fn (client ZOSClient) zos_deployment_get(params GetParams) ZOSDeployment {
+// create a new empty deployment
+pub fn (client ZOSClient) deployment_create(deployment Deployment) {
 }
 
-pub fn (client ZOSClient) zos_deployment_list() {
+// get deployment by name
+pub fn (client ZOSClient) deployment_get(deployment Name) Deployment {
 }
 
-struct NetworkCreateParams {
-	deployment_name       string // deployment name
-	name                  string // network name
-	version               u32    // deployment version
-	description           string // network description
-	metadata              string // network metadata (UserAccessIP, PrivateKey, PublicNodeID)
-	ip_range              string // network ip range
-	subnet                IPNet  // network subnet
-	wireguard_private_key string // network private key
-	wireguard_listen_port u16    // network listen port
-	peers                 []Peer // ["network list of peers"]
+pub fn (client ZOSClient) deployment_list() []Deployment {
 }
 
-pub fn (client ZOSClient) zos_deployment_network_create(params NetworkCreateParams) {
+// return the state of the given workloads in that deployment.
+// ? can we pass multiple names
+// this is needed because any call to one of the _create methods does not mean
+// the object has been created but that the request has been accepted and the object
+// will be scheduled for creation.
+// it means the client either has to poll for state, OR handle "notifications"
+// until the workload is ready before it can move on.
+pub fn (client ZOSClient) workload_state(deployment Name, name Name) Workload {
+
 }
 
-struct NetworkUpdateParams {
-	deployment_name       string // deployment name
-	name                  string // network name
-	version               u32    // deployment version
-	description           string // network description
-	metadata              string // network metadata (UserAccessIP, PrivateKey, PublicNodeID)
-	ip_range              string // network ip range
-	subnet                IPNet  // network subnet
-	wireguard_private_key string // network private key
-	wireguard_listen_port u16    // network listen port
-	peers                 []Peer // ["network list of peers"]
+// list all the "states" of a deployment
+pub fn (client ZOSClient) workload_list(deployment Name) []Workload {
+
 }
 
-pub fn (client ZOSClient) zos_deployment_network_update(params NetworkUpdateParams) {
+// deployment_network_set sets the network on the given deployment
+// since you can only have one network per deployment, there is no create
+// other calls to nework_set will reconfigure the network to match Network
+pub fn (client ZOSClient) network_set(params Network) {
 }
 
-struct NetworkGetParams {
-	deployment_name string // deployment name
-	name            string // network name
+pub fn (client ZOSClient) network_get(deployment Name) Network {
 }
 
-pub fn (client ZOSClient) zos_deployment_network_get(params NetworkGetParams) {
+
+pub fn (client ZOSClient) vm_create(deployment Name, vm VM) {
 }
 
-struct NetworkDeleteParams {
-	deployment_name string // deployment name
-	name            string // network name
+
+// this is not as simple and i think we should leave it for later,
+// and add specific VM update methods that can work on "running vm"
+// pub fn (client ZOSClient) deployment_vm_update(deployment Name, vm VM) {
+// }
+// for example
+
+pub fn (client ZOSClient) vm_disk_attach(deployment Name, vm Name, disk Mount) {
 }
 
-pub fn (client ZOSClient) zos_deployment_network_delete(params NetworkDeleteParams) {
+pub fn (client ZOSClient) vm_disk_detach(deployment Name, vm Name, disk Name) {
 }
 
-struct VmCreateParams {
-	deployment_name string   // deployment name
-	name            string   // vm name
-	version         u32      // deployment version
-	description     string   // vm description
-	flist           string   // vm flist
-	network         string   // vm network
-	size            Unit     // disk size in GB
-	capacity        Capacity // cpu and memory
-	mounts          []Mount  // [{"name":"mount name","point":"mount point"}]
-	entrypoint      string   // vm entry point
-	env             map[string]string // {"key":"value"}
-	corex           bool  // vm corex
-	gpus            []GPU // ["vm list of gpus"]
+pub fn (client ZOSClient) vm_get(deployment Name, vm Name) {
 }
 
-pub fn (client ZOSClient) zos_deployment_vm_create(params VmCreateParams) {
+pub fn (client ZOSClient) vm_delete(deployment Name, vm Name) {
 }
 
-struct VmUpdateParams {
-	deployment_name string   // deployment name
-	name            string   // vm name
-	version         u32      // deployment version
-	description     string   // vm description
-	flist           string   // vm flist
-	network         string   // vm network
-	size            Unit     // disk size in GB
-	capacity        Capacity // cpu and memory
-	mounts          []Mount  // [{"name":"mount name","point":"mount point"}]
-	entrypoint      string   // vm entry point
-	env             map[string]string // {"key":"value"}
-	corex           bool  // vm corex
-	gpus            []GPU // ["vm list of gpus"]
+
+pub fn (client ZOSClient) disk_create(deployment Name, params Disk) {
 }
 
-pub fn (client ZOSClient) zos_deployment_vm_update(params VmUpdateParams) {
+pub fn (client ZOSClient) disk_update(deployment Name, params Disk) {
 }
 
-struct VmGetParams {
-	deployment_name string // deployment name
-	name            string // vm name
+pub fn (client ZOSClient) disk_get(deployment Name, disk Name) Disk {
 }
 
-pub fn (client ZOSClient) zos_deployment_vm_get(params VmGetParams) {
-}
-
-struct VmDeleteParams {
-	deployment_name string // deployment name
-	name            string // vm name
-}
-
-pub fn (client ZOSClient) zos_deployment_vm_delete(params VmDeleteParams) {
-}
-
-struct DiskCreateParams {
-	deployment_name string // deployment name
-	name            string // disk name
-	version         u32    // deployment version
-	description     string // disk description
-	size            Unit   // disk size
-}
-
-pub fn (client ZOSClient) zos_deployment_disk_create(params DiskCreateParams) {
-}
-
-struct DiskUpdateParams {
-	deployment_name string // deployment name
-	name            string // disk name
-	version         u32    // deployment version
-	description     string // disk description
-	size            Unit   // disk size
-}
-
-pub fn (client ZOSClient) zos_deployment_disk_update(params DiskUpdateParams) {
-}
-
-struct DiskGetParams {
-	deployment_name string // deployment name
-	name            string // disk name
-}
-
-pub fn (client ZOSClient) zos_deployment_disk_get(params DiskGetParams) {
-}
-
-struct DiskDeleteParams {
-	deployment_name string // deployment name
-	name            string // disk name
-}
-
-pub fn (client ZOSClient) zos_deployment_disk_delete(params DiskDeleteParams) {
+pub fn (client ZOSClient) disk_delete(deployment name, disk Name) {
 }
 
 struct ZdbCreateParams {
@@ -170,7 +94,7 @@ struct ZdbCreateParams {
 	public          bool    // if zdb gets a public ip6
 }
 
-pub fn (client ZOSClient) zos_deployment_zdb_create(params ZdbCreateParams) {
+pub fn (client ZOSClient) deployment_zdb_create(params ZdbCreateParams) {
 }
 
 struct ZdbUpdateParams {
@@ -183,7 +107,7 @@ struct ZdbUpdateParams {
 	public          bool    // if zdb gets a public ip6
 }
 
-pub fn (client ZOSClient) zos_deployment_zdb_update(params ZdbUpdateParams) {
+pub fn (client ZOSClient) deployment_zdb_update(params ZdbUpdateParams) {
 }
 
 struct ZdbGetParams {
@@ -191,7 +115,7 @@ struct ZdbGetParams {
 	name            string // zdb name
 }
 
-pub fn (client ZOSClient) zos_deployment_zdb_get(params ZdbGetParams) {
+pub fn (client ZOSClient) deployment_zdb_get(params ZdbGetParams) {
 }
 
 struct ZdbDeleteParams {
@@ -199,7 +123,7 @@ struct ZdbDeleteParams {
 	name            string // zdb name
 }
 
-pub fn (client ZOSClient) zos_deployment_zdb_delete(params ZdbDeleteParams) {
+pub fn (client ZOSClient) deployment_zdb_delete(params ZdbDeleteParams) {
 }
 
 struct QsfsParams {
@@ -218,10 +142,10 @@ struct QsfsParams {
 	compression           QuantumCompression // qsfs compression
 }
 
-pub fn (client ZOSClient) zos_deployment_qsfs_create(params QsfsParams) {
+pub fn (client ZOSClient) deployment_qsfs_create(params QsfsParams) {
 }
 
-pub fn (client ZOSClient) zos_deployment_qsfs_update(params QsfsParams) {
+pub fn (client ZOSClient) deployment_qsfs_update(params QsfsParams) {
 }
 
 struct QsfsGetParams {
@@ -229,7 +153,7 @@ struct QsfsGetParams {
 	name            string // qsfs name
 }
 
-pub fn (client ZOSClient) zos_deployment_qsfs_get(params QsfsGetParams) {
+pub fn (client ZOSClient) deployment_qsfs_get(params QsfsGetParams) {
 }
 
 struct ZlogParams {
@@ -240,10 +164,10 @@ struct ZlogParams {
 	output          string // zlog output
 }
 
-pub fn (client ZOSClient) zos_deployment_zlog_create(params ZlogParams) {
+pub fn (client ZOSClient) deployment_zlog_create(params ZlogParams) {
 }
 
-pub fn (client ZOSClient) zos_deployment_zlog_update(params ZlogParams) {
+pub fn (client ZOSClient) deployment_zlog_update(params ZlogParams) {
 }
 
 struct ZlogGetParams {
@@ -251,7 +175,7 @@ struct ZlogGetParams {
 	name            string // zlog name
 }
 
-pub fn (client ZOSClient) zos_deployment_zlog_get(params ZlogGetParams) {
+pub fn (client ZOSClient) deployment_zlog_get(params ZlogGetParams) {
 }
 
 struct ZlogDeleteParams {
@@ -259,7 +183,7 @@ struct ZlogDeleteParams {
 	name            string // zlog name
 }
 
-pub fn (client ZOSClient) zos_deployment_zlog_delete(params ZlogDeleteParams) {
+pub fn (client ZOSClient) deployment_zlog_delete(params ZlogDeleteParams) {
 }
 
 struct GatewayFqdnParams {
@@ -272,10 +196,10 @@ struct GatewayFqdnParams {
 	backends        []Backend // ["list of backends"]
 }
 
-pub fn (client ZOSClient) zos_deployment_gateway_fqdn_create(params GatewayFqdnParams) {
+pub fn (client ZOSClient) deployment_gateway_fqdn_create(params GatewayFqdnParams) {
 }
 
-pub fn (client ZOSClient) zos_deployment_gateway_fqdn_update(params GatewayFqdnParams) {
+pub fn (client ZOSClient) deployment_gateway_fqdn_update(params GatewayFqdnParams) {
 }
 
 struct GatewayFqdnGetParams {
@@ -283,7 +207,7 @@ struct GatewayFqdnGetParams {
 	name            string // gateway name
 }
 
-pub fn (client ZOSClient) zos_deployment_gateway_fqdn_get(params GatewayFqdnGetParams) {
+pub fn (client ZOSClient) deployment_gateway_fqdn_get(params GatewayFqdnGetParams) {
 }
 
 struct GatewayNameParams {
@@ -295,12 +219,12 @@ struct GatewayNameParams {
 	backends        []Backend // ["list of backends"]
 }
 
-pub fn (client ZOSClient) zos_deployment_gateway_name_create(params GatewayNameParams) {
+pub fn (client ZOSClient) deployment_gateway_name_create(params GatewayNameParams) {
 }
 
 type Backend = string
 
-pub fn (client ZOSClient) zos_deployment_gateway_name_update(params GatewayNameParams) {
+pub fn (client ZOSClient) deployment_gateway_name_update(params GatewayNameParams) {
 }
 
 struct GatewayNameGetParams {
@@ -308,7 +232,7 @@ struct GatewayNameGetParams {
 	name            string // gateway name
 }
 
-pub fn (client ZOSClient) zos_deployment_gateway_name_get(params GatewayNameGetParams) {
+pub fn (client ZOSClient) deployment_gateway_name_get(params GatewayNameGetParams) {
 }
 
 struct PublicIpParams {
@@ -319,10 +243,10 @@ struct PublicIpParams {
 	ipv6            bool   // if you want an ipv6
 }
 
-pub fn (client ZOSClient) zos_deployment_public_ip_create(params PublicIpParams) {
+pub fn (client ZOSClient) deployment_public_ip_create(params PublicIpParams) {
 }
 
-pub fn (client ZOSClient) zos_deployment_public_ip_update(params PublicIpParams) {
+pub fn (client ZOSClient) deployment_public_ip_update(params PublicIpParams) {
 }
 
 struct PublicIpGetParams {
@@ -330,7 +254,7 @@ struct PublicIpGetParams {
 	name            string // public_ip name
 }
 
-pub fn (client ZOSClient) zos_deployment_public_ip_get(params PublicIpGetParams) {
+pub fn (client ZOSClient) deployment_public_ip_get(params PublicIpGetParams) {
 }
 
 struct PublicIpDeleteParams {
@@ -338,5 +262,5 @@ struct PublicIpDeleteParams {
 	name            string // public_ip name
 }
 
-pub fn (client ZOSClient) zos_deployment_public_ip_delete(params PublicIpDeleteParams) {
+pub fn (client ZOSClient) deployment_public_ip_delete(params PublicIpDeleteParams) {
 }
