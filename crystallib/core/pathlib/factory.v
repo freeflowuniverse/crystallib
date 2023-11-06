@@ -49,7 +49,7 @@ pub fn get_dir(args_ GetArgs) !Path {
 	if args.check {
 		p2.check()
 		p2.absolute()
-		if p2.exist == .no {
+		if p2.exist == .no && args.create {
 			os.mkdir_all(p2.absolute()) or { return error('cannot create path ${p2}') } // Make sure that all the needed paths created		
 			p2.check()
 		}
