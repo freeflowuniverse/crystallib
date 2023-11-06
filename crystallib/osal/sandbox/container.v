@@ -67,19 +67,12 @@ pub fn (mut c Container) debootstrap(args_ DebootstrapArgs) ! {
 pub fn (mut c Container) start() ! {
 	mut configpath := c.path_config.file_get_new('config.json')!
 	commandargs := json.encode(c.startcmd)
-
 	t := $tmpl('templates/config.json')
 	configpath.write(t)!
 
 	osal.exec(
 		cmd: 'runc run ${c.name}'
 		work_folder: c.path_config.path
+		debug:true
 	)!
 }
-
-//   {
-//     "destination": "/dev/ptmx",
-//     "type": "bind",
-//     "source": "/dev/ptmx",
-//     "options": ["bind"]
-// }

@@ -60,7 +60,7 @@ This is the most basic usecase
 ```v
 import gittools
 
-mut gs:=gittools.get()?
+mut gs:=gittools.get()!
 url := "https://github.com/threefoldfoundation/www_examplesite/tree/development/manual"
 mut gr := gs.repo_get_from_url(url:url,pull:false, reset:false)
 

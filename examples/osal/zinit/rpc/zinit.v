@@ -11,7 +11,6 @@ fn main() {
 fn do() ! {
 	start_zinit()!
 	client := zinit.new_rpc_client('crystallib/osal/zinit/zinit/zinit.sock')
-
 	list_services(client)!
 	get_service_status(client, 'service_2')!
 	stop_service(client, 'service_2')!

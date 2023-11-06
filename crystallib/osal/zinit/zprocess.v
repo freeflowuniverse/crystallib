@@ -13,9 +13,8 @@ pub mut:
 	pid     int
 	after   []string
 	env     map[string]string
-	env     map[string]string
 	oneshot bool
-	zinit   &Zinit
+	zinit   &Zinit [skip; str: skip]
 }
 
 pub enum ZProcessStatus {
@@ -35,6 +34,9 @@ pub fn (zp ZProcess) cmd() string {
 		if zp.cmd.contains('\n') {
 			panic('cmd cannot have \\n and not have cmd file on disk on ${p}')
 		}
+		if zp.cmd=="" {
+			return error("cmd cannot be empty")
+		}
 	}
 	return '${zp.cmd}'
 }
@@ -46,6 +48,9 @@ pub fn (zp ZProcess) cmdtest() string {
 	} else {
 		if zp.test.contains('\n') {
 			panic('cmd cannot have \\n and not have cmd file on disk on ${p}')
+		}
+		if zp.test=="" {
+			return error("cmd cannot be empty")
 		}
 	}
 	return '${zp.test}'
@@ -65,9 +70,6 @@ pub fn (mut zp ZProcess) load() ! {
 				else { .unknown }
 			}
 		}
-		// if line.starts_with("after"){
-		// 	panic("implement")
-		// }
 	}
 	if !zp.zinit.path.file_exists(zp.name + '.yaml') {
 		return error('there should be a file ${zp.name}.yaml in /etc/zinit')
