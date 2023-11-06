@@ -5,7 +5,6 @@ import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.algo.encoder
 import freeflowuniverse.crystallib.baobab.smartid
-import time
 
 [heap]
 pub struct Base {

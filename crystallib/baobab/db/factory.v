@@ -26,6 +26,7 @@ fn key(cid smartid.CID, objtype_ string) string {
 	return '${cid.str()}__${objtype}'
 }
 
+// init creates the db file, creates an sqlite db connection pool, and adds the pool to the dbs map
 pub fn (mut mydb DB) init() ! {
 	if mydb.circlename.len == 0 {
 		return error('circle name needs to be specified')

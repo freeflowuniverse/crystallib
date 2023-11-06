@@ -20,8 +20,6 @@ fn table_find(db DB, args DBFindArgsI) ![][]u8 {
 	mut oids := []int{}
 
 	rows := db.sqlitedb.exec(sql_statement_find)!
-	// println(sql_statement_find)
-	// println(rows)
 	if rows.len == 0 {
 		return [][]u8{}
 	}
@@ -35,8 +33,6 @@ fn table_find(db DB, args DBFindArgsI) ![][]u8 {
 
 	sql_statement_multiget := sql_build_multiget(db, oids)
 	data_rows := db.sqlitedb.exec(sql_statement_multiget)!
-	// println(sql_statement_multiget)
-	// println(data_rows)
 	mut data := [][]u8{}
 	for _, data_row in data_rows {
 		data_str := base32.decode_string_to_string(data_row.vals[0])!
