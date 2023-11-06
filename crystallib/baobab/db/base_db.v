@@ -16,6 +16,7 @@ pub mut:
 	description string
 	mtime       string // modification time
 	ctime       string // creation time
+	remarks     Remarks
 }
 
 //```
@@ -33,6 +34,7 @@ pub fn (db DB) new_base(args DBBaseNewArgs) !Base {
 		description: args.description
 		mtime: ourtime.new(args.mtime)!
 		ctime: ourtime.new(args.ctime)!
+		remarks: args.remarks
 	}
 	return b
 }

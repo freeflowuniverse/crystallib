@@ -1,7 +1,6 @@
 module main
 
 import mystruct
-import freeflowuniverse.crystallib.data.ourtime
 import time
 
 fn do() ! {
@@ -10,8 +9,7 @@ fn do() ! {
 
 	mydb.delete_all()!
 
-	objs_start := mydb.find()!
-	assert objs_start.len == 0
+	mydb.find() or { println('this should fail, tables are still not created. ${err}') }
 
 	// params             string
 	// name               string
@@ -23,7 +21,7 @@ fn do() ! {
 	// nr2     int
 	// listu32 []u32
 
-	mut o1 := mydb.new(		
+	mut o1 := mydb.new(
 		name: 'my name'
 		nr: 2
 		color: 'red'
@@ -55,12 +53,8 @@ fn do() ! {
 	o3data := mydb.serialize(o3)!
 	assert o1data == o3data
 
-	script3:=mydb.serialize_3script(o1)!
+	script3 := mydb.serialize_3script(o1)!
 	println(script3)
-
-	if true{
-		panic('s')
-	}
 
 	objs := mydb.find(
 		nr: 1
@@ -78,8 +72,6 @@ fn do() ! {
 
 	objs_6 := mydb.find()!
 	assert objs_6.len == 0
-
-
 
 	perf_write(mydb)!
 	perf_find(mydb)!
@@ -106,10 +98,10 @@ fn perf_write(mydb mystruct.MyDB) ! {
 
 fn perf_find(mydb mystruct.MyDB) ! {
 	now := time.now()
-	objs:=mydb.find(nr: 1)!
+	objs := mydb.find(nr: 1)!
 	diff := time.since(now)
 	println('querying 1000 objects took ${diff.seconds()} seconds.\n')
-	assert objs.len==1000
+	assert objs.len == 1000
 }
 
 fn main() {
