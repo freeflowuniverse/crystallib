@@ -157,8 +157,8 @@ pub fn (mydb MyDB) serialize[T](obj T) ![]u8 {
 }
 
 // serialize to 3script
-pub fn (mydb MyDB) serialize_kwargs[T](obj T) map[string]string {
-	mut kwargs := obj.Base.serialize_kwargs()
+pub fn (mydb MyDB) serialize_kwargs[T](obj T) ! map[string]string {
+	mut kwargs := obj.Base.serialize_kwargs()!
 	
 	$for field in T.fields {
 		$if field.typ is int {
@@ -209,7 +209,7 @@ pub fn (mydb MyDB) unserialize[T](data []u8) !T {
 
 // serialize to 3script
 pub fn (mydb MyDB) serialize_3script[T](obj T) !string {
-	p:=paramsparser.new_from_dict(mydb.serialize_kwargs[T](obj))!
+	p:=paramsparser.new_from_dict(mydb.serialize_kwargs[T](obj)!)!
 	return p.export(pre:"!!${mydb.objtype}.define ")
 }
 
