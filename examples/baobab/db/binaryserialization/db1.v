@@ -1,7 +1,6 @@
 module main
 
 import mystruct
-import freeflowuniverse.crystallib.data.ourtime
 import time
 
 fn do() ! {
@@ -10,8 +9,7 @@ fn do() ! {
 
 	mydb.delete_all()!
 
-	objs_start := mydb.find()!
-	assert objs_start.len == 0
+	mydb.find() or { println('this should fail, tables are still not created. ${err}') }
 
 	// params             string
 	// name               string
@@ -23,7 +21,7 @@ fn do() ! {
 	// nr2     int
 	// listu32 []u32
 
-	mut o1 := mydb.new(		
+	mut o1 := mydb.new(
 		name: 'my name'
 		nr: 2
 		color: 'red'
@@ -55,12 +53,23 @@ fn do() ! {
 	o3data := mydb.serialize(o3)!
 	assert o1data == o3data
 
-	script3:=mydb.serialize_3script(o1)!
-	println(script3)
+	script3 := mydb.serialize_3script(o1)!
+	deserialized_3script := mydb.unserialize_3script(script3)!
 
-	if true{
-		panic('s')
-	}
+	deserialized_o := deserialized_3script[0]
+	assert deserialized_o.gid == o1.gid
+	assert deserialized_o.params == o1.params
+	assert deserialized_o.version_base == o1.version_base
+	assert deserialized_o.serialization_type == o1.serialization_type
+	assert deserialized_o.name == o1.name
+	assert deserialized_o.description == o1.description
+	assert deserialized_o.remarks == o1.remarks
+	assert deserialized_o.mtime.str() == o1.mtime.str()
+	assert deserialized_o.ctime.str() == o1.ctime.str()
+	assert deserialized_o.nr == o1.nr
+	assert deserialized_o.color == o1.color
+	assert deserialized_o.nr2 == o1.nr2
+	assert deserialized_o.listu32 == o1.listu32
 
 	objs := mydb.find(
 		nr: 1
@@ -78,8 +87,6 @@ fn do() ! {
 
 	objs_6 := mydb.find()!
 	assert objs_6.len == 0
-
-
 
 	perf_write(mydb)!
 	perf_find(mydb)!
@@ -106,10 +113,10 @@ fn perf_write(mydb mystruct.MyDB) ! {
 
 fn perf_find(mydb mystruct.MyDB) ! {
 	now := time.now()
-	objs:=mydb.find(nr: 1)!
+	objs := mydb.find(nr: 1)!
 	diff := time.since(now)
 	println('querying 1000 objects took ${diff.seconds()} seconds.\n')
-	assert objs.len==1000
+	assert objs.len == 1000
 }
 
 fn main() {

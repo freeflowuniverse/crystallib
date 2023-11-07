@@ -139,9 +139,10 @@ pub fn (p Params) export(args ExportArgs) string {
 	items := p.export_helper(args) or { panic('bug, should not use args.') }
 	for item in items {
 		if item.multiline {
-			mut txt := item.txt.trim(' \'"').replace('\\n', '\n')
+			mut txt := item.txt.trim(' ').replace('\\n', '\n')
+			txt = txt[1..txt.len - 1] // remove extra quotes
 			out += '\n    ${item.key}:\''
-			out += '\n'
+			// out += '\n'
 			out += texttools.indent(txt, '        ')
 			out += "    '"
 		} else {
@@ -153,9 +154,9 @@ pub fn (p Params) export(args ExportArgs) string {
 			} else {
 				out += '${item.key}:${item.txt}'
 			}
-			if item.firstline {
-				out += ' '
-			}
+			out += ' '
+			// if item.firstline {
+			// }
 		}
 	}
 	out = out.trim_right(' \n')

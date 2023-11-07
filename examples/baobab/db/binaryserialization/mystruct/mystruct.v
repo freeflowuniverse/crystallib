@@ -3,6 +3,7 @@ module mystruct
 import freeflowuniverse.crystallib.baobab.db
 import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.data.paramsparser
+import freeflowuniverse.crystallib.data.ourtime
 
 pub struct MyDB {
 	db.DB
@@ -32,35 +33,50 @@ pub fn db_new(args DBArgs) !MyDB {
 	return mydb
 }
 
-
 [params]
 pub struct MyStructArgs {
 pub mut:
-	params             string
-	name               string
-	description        string
-	mtime              string// modification time
-	ctime              string // creation time
-	nr      int
-	color   string
-	nr2     int
-	listu32 []u32
+	params      string
+	name        string
+	description string
+	mtime       string // modification time
+	ctime       string // creation time
+	nr          int
+	color       string
+	nr2         int
+	listu32     []u32
 }
 
 pub fn (mydb MyDB) new(args MyStructArgs) !MyStruct {
-	base:=mydb.new_base(
-		params:args.params
-		name:args.name
-		description:args.description
-		mtime:args.mtime
-		ctime:args.ctime
+	remarks := db.Remarks{
+		remarks: [
+			db.Remark{
+				content: 'my remark content'
+				time: ourtime.now()
+				rtype: .comment
+			},
+			db.Remark{
+				content: 'my second remark content'
+				time: ourtime.now()
+				rtype: .log
+			},
+		]
+	}
+
+	base := mydb.new_base(
+		params: args.params
+		name: args.name
+		description: args.description
+		mtime: args.mtime
+		ctime: args.ctime
+		remarks: remarks
 	)!
-	mut o:=MyStruct{
-		Base:base
-		nr:args.nr
-		color:args.color
-		nr2:args.nr2
-		listu32:args.listu32
+	mut o := MyStruct{
+		Base: base
+		nr: args.nr
+		color: args.color
+		nr2: args.nr2
+		listu32: args.listu32
 	}
 	return o
 }
@@ -97,7 +113,7 @@ pub mut:
 	nr2   int
 }
 
-//find on our database
+// find on our database
 //```js
 // name  string
 // color string
@@ -109,18 +125,18 @@ pub mut:
 // ctime_to   ?ourtime.OurTime
 // name       string
 //```
-pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {	
-	dbfindoargs:=db.DBFindArgs{
-				query_int: {
-					'nr':  args.nr
-					'nr2': args.nr2
-				}
-				query_string: {
-					'name':  args.name
-					'color': args.color
-				}	
-			}	
-	data := mydb.find_base(args.BaseFindArgs,dbfindoargs)!
+pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {
+	dbfindoargs := db.DBFindArgs{
+		query_int: {
+			'nr':  args.nr
+			'nr2': args.nr2
+		}
+		query_string: {
+			'name':  args.name
+			'color': args.color
+		}
+	}
+	data := mydb.find_base(args.BaseFindArgs, dbfindoargs)!
 	mut read_o := []MyStruct{}
 	for d in data {
 		read_o << mydb.unserialize(d)!
@@ -141,20 +157,19 @@ pub fn (mydb MyDB) serialize(o MyStruct) ![]u8 {
 }
 
 // serialize to 3script
-pub fn (mydb MyDB) serialize_kwargs(o MyStruct) map[string]string {
-	mut kwargs := o.Base.serialize_kwargs()
-	kwargs["nr"]="${o.nr}"
-	kwargs["nr2"]="${o.nr2}"
-	kwargs["color"]=o.color
-	mut listu32:=""
-	for i in listu32{
-		listu32+="${i},"
+pub fn (mydb MyDB) serialize_kwargs(o MyStruct) !map[string]string {
+	mut kwargs := o.Base.serialize_kwargs()!
+	kwargs['nr'] = '${o.nr}'
+	kwargs['nr2'] = '${o.nr2}'
+	kwargs['color'] = o.color
+	mut listu32 := ''
+	for i in o.listu32 {
+		listu32 += '${i}, '
 	}
-	listu32=listu32.trim_string_right(",")
-	kwargs["listu32"]=listu32
+	listu32 = listu32.trim_string_right(', ')
+	kwargs['listu32'] = listu32
 	return kwargs
 }
-
 
 // this is the method to load binary form
 pub fn (mydb MyDB) unserialize(data []u8) !MyStruct {
@@ -170,28 +185,29 @@ pub fn (mydb MyDB) unserialize(data []u8) !MyStruct {
 	return o
 }
 
-
 // serialize to 3script
 pub fn (mydb MyDB) serialize_3script(o MyStruct) !string {
-	p:=paramsparser.new_from_dict(mydb.serialize_kwargs(o))!
-	return p.export(
-		pre:"!!${mydb.objtype}.define "
-		presort: ['gid', 'name']
+	p := paramsparser.new_from_dict(mydb.serialize_kwargs(o)!)!
+	ex := p.export(
+		pre: '!!${mydb.objtype}.define '
+		presort: ['gid', 'name', 'listu32']
 		postsort: ['mtime', 'ctime']
 	)
+	return ex
 }
 
-
 pub fn (mydb MyDB) unserialize_3script(txt string) ![]MyStruct {
-	mut res:=[]MyStruct{}
-	for r in mydb.base_decoder_3script(txt)!{
-		mut o := MyStruct{Base: r.base}
-		p:=r.params
-		o.nr = p.get_int_default("nr",0)!
-		o.color = p.get_default("color","")!
-		o.nr2 = p.get_int_default("nr",0)!
-		o.listu32 = p.get_list_u32("listu32")!
-		res<<o
+	mut res := []MyStruct{}
+	for r in mydb.base_decoder_3script(txt)! {
+		mut o := MyStruct{
+			Base: r.base
+		}
+		p := r.params
+		o.nr = p.get_int_default('nr', 0)!
+		o.color = p.get_default('color', '')!
+		o.nr2 = p.get_int_default('nr2', 0)!
+		o.listu32 = p.get_list_u32('listu32')!
+		res << o
 	}
 	return res
 }

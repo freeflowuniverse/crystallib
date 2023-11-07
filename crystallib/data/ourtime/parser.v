@@ -128,9 +128,9 @@ pub fn get_unix_from_absolute(timestr_ string) !i64 {
 		return error("format of date/time not correct, no - or / in time: '${timestr_}'")
 	}
 
-	split := datepart.split(':')
+	split := datepart.split('-')
 	if split.len != 3 {
-		return error("unrecognized dat format, time must either be YYYY/MM/DD or DD/MM/YYYY, or : in stead of /. Input was:'${timestr_}'")
+		return error("unrecognized date format, time must either be YYYY/MM/DD or DD/MM/YYYY, or : in stead of /. Input was:'${timestr_}'")
 	}
 	if split[2].len == 4 {
 		datepart = split.reverse().join('-')
