@@ -17,6 +17,7 @@ import encoding.base32
 // return list of data blocks which then need to be deserialized based on the DBFindArgs
 fn table_find(db DB, args DBFindArgsI) ![][]u8 {
 	sql_statement_find := sql_build_find(db, args)
+	println('find sql: ${sql_statement_find}')
 	mut oids := []int{}
 
 	rows := db.sqlitedb.exec(sql_statement_find)!
@@ -44,36 +45,29 @@ fn table_find(db DB, args DBFindArgsI) ![][]u8 {
 // build sql statement based on DBFindArgs
 fn sql_build_find(db DB, args DBFindArgsI) string {
 	mut b := strings.new_builder(15)
-	b.write_string('SELECT oid FROM ${table_name_find(db)}')
-	if args.query_int.len == 0 && args.query_string.len == 0 {
-		b.write_byte(`;`)
-		return b.str()
-	}
-
-	and_str := 'AND '
-	b.write_string(' WHERE ')
+	b.write_string('SELECT oid FROM ${table_name_find(db)} WHERE ')
 
 	for k, v in args.query_int_less {
-		b.write_string('${k} < ${v} ${and_str}')
+		b.write_string('${k} < ${v} AND')
 	}
 
 	for k, v in args.query_int_greater {
-		b.write_string('${k} > ${v} ${and_str}')
+		b.write_string('${k} > ${v} AND')
 	}
 
 	for k, v in args.query_int {
-		b.write_string('${k} = ${v} ${and_str}')
+		b.write_string('${k} = ${v} AND')
 	}
 
 	for k, v in args.query_string {
-		b.write_string('${k} = \'${v}\' ${and_str}')
+		b.write_string('${k} = \'${v}\' AND')
 	}
 
-	b.cut_last(and_str.len)
+	mut str := b.str()
+	str = str.trim_string_right('AND')
+	str = str.trim_string_right('WHERE ')
 
-	b.write_byte(`;`)
-
-	return b.str()
+	return str
 }
 
 fn sql_build_multiget(db DB, oids []int) string {

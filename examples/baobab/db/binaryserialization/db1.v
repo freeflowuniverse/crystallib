@@ -2,6 +2,7 @@ module main
 
 import mystruct
 import time
+import freeflowuniverse.crystallib.data.ourtime
 
 fn do() ! {
 	mydb := mystruct.db_new(circlename: 'testcircle')!
@@ -20,6 +21,9 @@ fn do() ! {
 	)!
 	mydb.set(o1)!
 
+	time.sleep(time.second)
+	before_creating_o2 := ourtime.now()
+	time.sleep(time.second)
 	objs_4 := mydb.find()!
 	assert objs_4.len == 1
 
@@ -31,6 +35,14 @@ fn do() ! {
 		listu32: [u32(5), u32(6), u32(7)]
 	)!
 	mydb.set(o2)!
+
+	objs_7 := mydb.find(ctime_to: before_creating_o2)!
+	assert objs_7.len == 1
+	are_equal(objs_7[0], o1)
+
+	objs_8 := mydb.find(ctime_from: before_creating_o2)!
+	assert objs_8.len == 1
+	are_equal(objs_8[0], o2)
 
 	objs_5 := mydb.find()!
 	assert objs_5.len == 2
