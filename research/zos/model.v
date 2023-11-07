@@ -183,9 +183,9 @@ struct PublicIp {
 }
 
 enum State {
-	init,
-	ok,
-	error,
+	init
+	ok
+	error
 	paused
 }
 

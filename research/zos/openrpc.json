@@ -1,17 +1,18 @@
 {
   "openrpc": "1.0.0",
   "info": {
-    "title": "Zero OS JSON-RPC API",
+    "title": "Zero OS OpenRPC API",
     "version": "1.0.0"
   },
   "methods": [
     {
-      "name": "zos.ZosDeploymentGet",
+      "name": "zos.DeploymentCreate",
+      "description": "Deployment operations create a new empty deployment",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/GetParams"
+            "$ref": "#\/components\/schemas\/Deployment"
           }
         }
       ],
@@ -23,23 +24,31 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentList",
+      "name": "zos.DeploymentGet",
+      "description": "get deployment by name",
       "params": [
+        {
+          "name": "deployment",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        }
       ],
       "result": {
-        "name": "void",
+        "name": "Deployment",
         "schema": {
-          "type": "null"
+          "$ref": "#\/components\/schemas\/Deployment"
         }
       }
     },
     {
-      "name": "zos.ZosDeploymentNetworkCreate",
+      "name": "zos.DeploymentDelete",
+      "description": "delete deployment by name",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/NetworkCreateParams"
+            "$ref": "#\/components\/schemas\/Name"
           }
         }
       ],
@@ -51,12 +60,73 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentNetworkUpdate",
+      "name": "zos.DeploymentList",
+      "description": "list deployments",
+      "params": [
+      ],
+      "result": {
+        "name": "Deployment",
+        "schema": {
+          "$ref": "#\/components\/schemas\/Deployment"
+        }
+      }
+    },
+    {
+      "name": "zos.WorkloadState",
+      "description": "return the state of the given workloads in that deployment. ? can we pass multiple names this is needed because any call to one of the _create methods does not mean the object has been created but that the request has been accepted and the object will be scheduled for creation. it means the client either has to poll for state, OR handle \"notifications\" until the workload is ready before it can move on.",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/NetworkUpdateParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "workload",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        }
+      ],
+      "result": {
+        "name": "Workload",
+        "schema": {
+          "$ref": "#\/components\/schemas\/Workload"
+        }
+      }
+    },
+    {
+      "name": "zos.WorkloadList",
+      "description": "list all the \"states\" of a deployment",
+      "params": [
+        {
+          "name": "deployment",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        }
+      ],
+      "result": {
+        "name": "Workload",
+        "schema": {
+          "$ref": "#\/components\/schemas\/Workload"
+        }
+      }
+    },
+    {
+      "name": "zos.NetworkSet",
+      "description": "Network operations sets the network on the given deployment since you can only have one network per deployment, there is no create other calls to network_set will reconfigure the network to match Network",
+      "params": [
+        {
+          "name": "deployment",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "network",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Network"
           }
         }
       ],
@@ -68,12 +138,36 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentNetworkGet",
+      "name": "zos.NetworkGet",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/NetworkGetParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        }
+      ],
+      "result": {
+        "name": "Network",
+        "schema": {
+          "$ref": "#\/components\/schemas\/Network"
+        }
+      }
+    },
+    {
+      "name": "zos.VmCreate",
+      "description": "VM operations",
+      "params": [
+        {
+          "name": "deployment",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "vm",
+          "schema": {
+            "$ref": "#\/components\/schemas\/VM"
           }
         }
       ],
@@ -85,12 +179,18 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentNetworkDelete",
+      "name": "zos.VmUpdate",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/NetworkDeleteParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "vm",
+          "schema": {
+            "$ref": "#\/components\/schemas\/VM"
           }
         }
       ],
@@ -102,12 +202,41 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentVmCreate",
+      "name": "zos.VmGet",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/VmCreateParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "vm",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        }
+      ],
+      "result": {
+        "name": "VM",
+        "schema": {
+          "$ref": "#\/components\/schemas\/VM"
+        }
+      }
+    },
+    {
+      "name": "zos.VmDelete",
+      "params": [
+        {
+          "name": "deployment",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "vm",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
           }
         }
       ],
@@ -119,12 +248,25 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentVmUpdate",
+      "name": "zos.VmDiskAttach",
+      "description": "this is not as simple and i think we should leave it for later, and add specific VM update methods that can work on \"running vm\" pub fn (client ZOSClient) vm_update(deployment Name, vm VM) { } for example",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/VmUpdateParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "vm",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "disk",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Mount"
           }
         }
       ],
@@ -136,12 +278,24 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentVmGet",
+      "name": "zos.VmDiskDetach",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/VmGetParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "vm",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "disk",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
           }
         }
       ],
@@ -153,12 +307,19 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentVmDelete",
+      "name": "zos.DiskCreate",
+      "description": "Disk operations",
       "params": [
+        {
+          "name": "deployment",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
         {
           "name": "params",
           "schema": {
-            "$ref": "#\/components\/schemas\/VmDeleteParams"
+            "$ref": "#\/components\/schemas\/Disk"
           }
         }
       ],
@@ -170,12 +331,18 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentDiskCreate",
+      "name": "zos.DiskUpdate",
       "params": [
+        {
+          "name": "deployment",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
         {
           "name": "params",
           "schema": {
-            "$ref": "#\/components\/schemas\/DiskCreateParams"
+            "$ref": "#\/components\/schemas\/Disk"
           }
         }
       ],
@@ -187,12 +354,41 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentDiskUpdate",
+      "name": "zos.DiskGet",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/DiskUpdateParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "disk",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        }
+      ],
+      "result": {
+        "name": "Disk",
+        "schema": {
+          "$ref": "#\/components\/schemas\/Disk"
+        }
+      }
+    },
+    {
+      "name": "zos.DiskDelete",
+      "params": [
+        {
+          "name": "deployment",
+          "schema": {
+            "type": "name"
+          }
+        },
+        {
+          "name": "disk",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
           }
         }
       ],
@@ -204,12 +400,19 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentDiskGet",
+      "name": "zos.ZdbCreate",
+      "description": "ZDB operations",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/DiskGetParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "zdb",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Zdb"
           }
         }
       ],
@@ -221,12 +424,18 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentDiskDelete",
+      "name": "zos.ZdbUpdate",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/DiskDeleteParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "zdb",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Zdb"
           }
         }
       ],
@@ -238,12 +447,41 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentZdbCreate",
+      "name": "zos.ZdbGet",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/ZdbCreateParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "zdb",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        }
+      ],
+      "result": {
+        "name": "Zdb",
+        "schema": {
+          "$ref": "#\/components\/schemas\/Zdb"
+        }
+      }
+    },
+    {
+      "name": "zos.ZdbDelete",
+      "params": [
+        {
+          "name": "deployment",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "zdb",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
           }
         }
       ],
@@ -255,12 +493,19 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentZdbUpdate",
+      "name": "zos.QsfsCreate",
+      "description": "QSFS operations",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/ZdbUpdateParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "qsfs",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Qsfs"
           }
         }
       ],
@@ -272,12 +517,18 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentZdbGet",
+      "name": "zos.QsfsUpdate",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/ZdbGetParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "qsfs",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Qsfs"
           }
         }
       ],
@@ -289,12 +540,41 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentZdbDelete",
+      "name": "zos.QsfsGet",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/ZdbDeleteParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "qsfs",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        }
+      ],
+      "result": {
+        "name": "Qsfs",
+        "schema": {
+          "$ref": "#\/components\/schemas\/Qsfs"
+        }
+      }
+    },
+    {
+      "name": "zos.QsfsDelete",
+      "params": [
+        {
+          "name": "deployment",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "qsfs",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
           }
         }
       ],
@@ -306,12 +586,19 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentQsfsCreate",
+      "name": "zos.ZlogCreate",
+      "description": "Zlog operations",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/QsfsParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "zlog",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Zlog"
           }
         }
       ],
@@ -323,12 +610,18 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentQsfsUpdate",
+      "name": "zos.ZlogUpdate",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/QsfsParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "zlog",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Zlog"
           }
         }
       ],
@@ -340,12 +633,41 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentQsfsGet",
+      "name": "zos.ZlogGet",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/QsfsGetParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "zlog",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        }
+      ],
+      "result": {
+        "name": "Zlog",
+        "schema": {
+          "$ref": "#\/components\/schemas\/Zlog"
+        }
+      }
+    },
+    {
+      "name": "zos.ZlogDelete",
+      "params": [
+        {
+          "name": "deployment",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "zlog",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
           }
         }
       ],
@@ -357,12 +679,19 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentZlogCreate",
+      "name": "zos.GatewayFqdnCreate",
+      "description": "gateway FQDN operations",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/ZlogParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "fqdn",
+          "schema": {
+            "$ref": "#\/components\/schemas\/GatewayFqdn"
           }
         }
       ],
@@ -374,12 +703,18 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentZlogUpdate",
+      "name": "zos.GatewayFqdnUpdate",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/ZlogParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "fqdn",
+          "schema": {
+            "$ref": "#\/components\/schemas\/GatewayFqdn"
           }
         }
       ],
@@ -391,12 +726,41 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentZlogGet",
+      "name": "zos.GatewayFqdnGet",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/ZlogGetParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "fqdn",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        }
+      ],
+      "result": {
+        "name": "GatewayFqdn",
+        "schema": {
+          "$ref": "#\/components\/schemas\/GatewayFqdn"
+        }
+      }
+    },
+    {
+      "name": "zos.GatewayFqdnDelete",
+      "params": [
+        {
+          "name": "deployment",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "fqdn",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
           }
         }
       ],
@@ -408,12 +772,19 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentZlogDelete",
+      "name": "zos.GatewayNameCreate",
+      "description": "gateway name operations",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/ZlogDeleteParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "gateway_name",
+          "schema": {
+            "$ref": "#\/components\/schemas\/GatewayName"
           }
         }
       ],
@@ -425,12 +796,18 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentGatewayFqdnCreate",
+      "name": "zos.GatewayNameUpdate",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/GatewayFqdnParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "gateway_name",
+          "schema": {
+            "$ref": "#\/components\/schemas\/GatewayName"
           }
         }
       ],
@@ -442,12 +819,41 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentGatewayFqdnUpdate",
+      "name": "zos.GatewayNameGet",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/GatewayFqdnParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "gateway_name",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        }
+      ],
+      "result": {
+        "name": "GatewayName",
+        "schema": {
+          "$ref": "#\/components\/schemas\/GatewayName"
+        }
+      }
+    },
+    {
+      "name": "zos.GatewayNameDelete",
+      "params": [
+        {
+          "name": "deployment",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "gateway_name",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
           }
         }
       ],
@@ -459,12 +865,19 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentGatewayFqdnGet",
+      "name": "zos.PublicIpCreate",
+      "description": "public ip operations",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/GatewayFqdnGetParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "public_ip",
+          "schema": {
+            "$ref": "#\/components\/schemas\/PublicIp"
           }
         }
       ],
@@ -476,12 +889,18 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentGatewayNameCreate",
+      "name": "zos.PublicIpUpdate",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/GatewayNameParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "public_ip",
+          "schema": {
+            "$ref": "#\/components\/schemas\/PublicIp"
           }
         }
       ],
@@ -493,97 +912,41 @@
       }
     },
     {
-      "name": "zos.ZosDeploymentGatewayNameUpdate",
+      "name": "zos.PublicIpGet",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/GatewayNameParams"
+            "$ref": "#\/components\/schemas\/Name"
+          }
+        },
+        {
+          "name": "public_ip",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Name"
           }
         }
       ],
       "result": {
-        "name": "void",
+        "name": "PublicIp",
         "schema": {
-          "type": "null"
+          "$ref": "#\/components\/schemas\/PublicIp"
         }
       }
     },
     {
-      "name": "zos.ZosDeploymentGatewayNameGet",
+      "name": "zos.PublicIpDelete",
       "params": [
         {
-          "name": "params",
+          "name": "deployment",
           "schema": {
-            "$ref": "#\/components\/schemas\/GatewayNameGetParams"
+            "$ref": "#\/components\/schemas\/Name"
           }
-        }
-      ],
-      "result": {
-        "name": "void",
-        "schema": {
-          "type": "null"
-        }
-      }
-    },
-    {
-      "name": "zos.ZosDeploymentPublicIpCreate",
-      "params": [
+        },
         {
-          "name": "params",
+          "name": "public_ip",
           "schema": {
-            "$ref": "#\/components\/schemas\/PublicIpParams"
-          }
-        }
-      ],
-      "result": {
-        "name": "void",
-        "schema": {
-          "type": "null"
-        }
-      }
-    },
-    {
-      "name": "zos.ZosDeploymentPublicIpUpdate",
-      "params": [
-        {
-          "name": "params",
-          "schema": {
-            "$ref": "#\/components\/schemas\/PublicIpParams"
-          }
-        }
-      ],
-      "result": {
-        "name": "void",
-        "schema": {
-          "type": "null"
-        }
-      }
-    },
-    {
-      "name": "zos.ZosDeploymentPublicIpGet",
-      "params": [
-        {
-          "name": "params",
-          "schema": {
-            "$ref": "#\/components\/schemas\/PublicIpGetParams"
-          }
-        }
-      ],
-      "result": {
-        "name": "void",
-        "schema": {
-          "type": "null"
-        }
-      }
-    },
-    {
-      "name": "zos.ZosDeploymentPublicIpDelete",
-      "params": [
-        {
-          "name": "params",
-          "schema": {
-            "$ref": "#\/components\/schemas\/PublicIpDeleteParams"
+            "$ref": "#\/components\/schemas\/Name"
           }
         }
       ],
@@ -597,41 +960,57 @@
   ],
   "components": {
     "schemas": {
-      "GetParams": {
-        "title": "GetParams",
+      "ZOSClient": {
+        "title": "ZOSClient"
+      },
+      "Deployment": {
+        "title": "Deployment",
+        "description": "Generic object name name must be a valid object name (validation?) Deployment will hold any user deployments (contracts)",
         "properties": {
           "name": {
-            "description": "deployment name",
+            "$ref": "#\/components\/schemas\/Name"
+          },
+          "contracts_id": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "twin_id": {
+            "type": "integer"
+          }
+        }
+      },
+      "Peer": {
+        "title": "Peer",
+        "description": "IPNet is a subnet always in the CIDR format <ip>\/mask it's up to implementation to deserialize that into usable lanuage specific types Unit defines a capacity unit in \"bytes\" Any \"value\" of type Unit must be in bytes only hence use the Unit mutliplies below to set the write value Peer is the description of a peer of a NetResource",
+        "properties": {
+          "subnet": {
+            "$ref": "#\/components\/schemas\/IPNet"
+          },
+          "wireguard_public_key": {
+            "type": "string"
+          },
+          "allowed_ips": {
+            "$ref": "#\/components\/schemas\/IPNet"
+          },
+          "endpoint": {
             "type": "string"
           }
         }
       },
-      "NetworkCreateParams": {
-        "title": "NetworkCreateParams",
+      "Network": {
+        "title": "Network",
         "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
-          "name": {
-            "description": "network name",
-            "type": "string"
-          },
-          "version": {
-            "description": "deployment version",
-            "type": "integer"
-          },
           "description": {
             "description": "network description",
             "type": "string"
           },
-          "metadata": {
-            "description": "network metadata (UserAccessIP, PrivateKey, PublicNodeID)",
-            "type": "string"
-          },
           "ip_range": {
-            "description": "network ip range",
-            "type": "string"
+            "$ref": "#\/components\/schemas\/IPNet"
           },
           "subnet": {
             "$ref": "#\/components\/schemas\/IPNet"
@@ -646,103 +1025,72 @@
           },
           "peers": {
             "$ref": "#\/components\/schemas\/Peer"
-          }
-        }
-      },
-      "NetworkUpdateParams": {
-        "title": "NetworkUpdateParams",
-        "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
-          "name": {
-            "description": "network name",
-            "type": "string"
-          },
-          "version": {
-            "description": "deployment version",
-            "type": "integer"
-          },
-          "description": {
-            "description": "network description",
-            "type": "string"
           },
           "metadata": {
-            "description": "network metadata (UserAccessIP, PrivateKey, PublicNodeID)",
+            "$ref": "#\/components\/schemas\/NetworkMetadata"
+          }
+        }
+      },
+      "NetworkMetadata": {
+        "title": "NetworkMetadata",
+        "properties": {
+          "User_access_ip": {
             "type": "string"
           },
-          "ip_range": {
-            "description": "network ip range",
+          "private_key": {
             "type": "string"
           },
-          "subnet": {
-            "$ref": "#\/components\/schemas\/IPNet"
-          },
-          "wireguard_private_key": {
-            "description": "network private key",
-            "type": "string"
-          },
-          "wireguard_listen_port": {
-            "description": "network listen port",
+          "public_node_id": {
             "type": "integer"
-          },
-          "peers": {
-            "$ref": "#\/components\/schemas\/Peer"
           }
         }
       },
-      "NetworkGetParams": {
-        "title": "NetworkGetParams",
+      "Disk": {
+        "title": "Disk",
         "properties": {
-          "deployment_name": {
-            "description": "deployment name",
+          "name": {
+            "description": "disk name",
             "type": "string"
           },
-          "name": {
-            "description": "network name",
+          "description": {
+            "description": "disk description",
             "type": "string"
+          },
+          "size": {
+            "$ref": "#\/components\/schemas\/Unit"
           }
         }
       },
-      "NetworkDeleteParams": {
-        "title": "NetworkDeleteParams",
+      "Capacity": {
+        "title": "Capacity",
+        "description": "Capacity the expected capacity of a workload",
         "properties": {
-          "deployment_name": {
-            "description": "deployment name",
+          "cru": {
             "type": "string"
           },
-          "name": {
-            "description": "network name",
-            "type": "string"
+          "sru": {
+            "$ref": "#\/components\/schemas\/Unit"
+          },
+          "hru": {
+            "$ref": "#\/components\/schemas\/Unit"
+          },
+          "mru": {
+            "$ref": "#\/components\/schemas\/Unit"
           }
         }
       },
-      "VmCreateParams": {
-        "title": "VmCreateParams",
+      "VM": {
+        "title": "VM",
         "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
           "name": {
-            "description": "vm name",
-            "type": "string"
-          },
-          "version": {
-            "description": "deployment version",
-            "type": "integer"
+            "$ref": "#\/components\/schemas\/Name"
           },
           "description": {
             "description": "vm description",
             "type": "string"
           },
           "flist": {
-            "description": "vm flist",
-            "type": "string"
-          },
-          "network": {
-            "description": "vm network",
+            "description": "vm flist network is not needed it can only be the deployment network. We don't have to reference it by name anymore what to do if deployment have no network ? NOTE: this might change later during development if we need to support other networking modes network        bool   \/\/ vm network",
             "type": "string"
           },
           "size": {
@@ -771,173 +1119,45 @@
           }
         }
       },
-      "VmUpdateParams": {
-        "title": "VmUpdateParams",
+      "Mount": {
+        "title": "Mount",
         "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
           "name": {
-            "description": "vm name",
-            "type": "string"
+            "$ref": "#\/components\/schemas\/Name"
           },
-          "version": {
-            "description": "deployment version",
-            "type": "integer"
-          },
-          "description": {
-            "description": "vm description",
-            "type": "string"
-          },
-          "flist": {
-            "description": "vm flist",
-            "type": "string"
-          },
-          "network": {
-            "description": "vm network",
-            "type": "string"
-          },
-          "size": {
-            "$ref": "#\/components\/schemas\/Unit"
-          },
-          "capacity": {
-            "$ref": "#\/components\/schemas\/Capacity"
-          },
-          "mounts": {
-            "$ref": "#\/components\/schemas\/Mount"
-          },
-          "entrypoint": {
-            "description": "vm entry point",
-            "type": "string"
-          },
-          "env": {
-            "description": "{\"key\":\"value\"}",
-            "type": "object"
-          },
-          "corex": {
-            "description": "vm corex",
-            "type": "boolean"
-          },
-          "gpus": {
-            "$ref": "#\/components\/schemas\/GPU"
-          }
-        }
-      },
-      "VmGetParams": {
-        "title": "VmGetParams",
-        "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
-          "name": {
-            "description": "vm name",
+          "target": {
             "type": "string"
           }
         }
       },
-      "VmDeleteParams": {
-        "title": "VmDeleteParams",
+      "ZDBGroup": {
+        "title": "ZDBGroup",
         "properties": {
-          "deployment_name": {
-            "description": "deployment name",
+          "backends": {
+            "$ref": "#\/components\/schemas\/ZDBBackend"
+          }
+        }
+      },
+      "ZDBBackend": {
+        "title": "ZDBBackend",
+        "properties": {
+          "address": {
             "type": "string"
           },
-          "name": {
-            "description": "vm name",
+          "namespace": {
+            "type": "string"
+          },
+          "password": {
             "type": "string"
           }
         }
       },
-      "DiskCreateParams": {
-        "title": "DiskCreateParams",
+      "Zdb": {
+        "title": "Zdb",
         "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
-          "name": {
-            "description": "disk name",
-            "type": "string"
-          },
-          "version": {
-            "description": "deployment version",
-            "type": "integer"
-          },
-          "description": {
-            "description": "disk description",
-            "type": "string"
-          },
-          "size": {
-            "$ref": "#\/components\/schemas\/Unit"
-          }
-        }
-      },
-      "DiskUpdateParams": {
-        "title": "DiskUpdateParams",
-        "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
-          "name": {
-            "description": "disk name",
-            "type": "string"
-          },
-          "version": {
-            "description": "deployment version",
-            "type": "integer"
-          },
-          "description": {
-            "description": "disk description",
-            "type": "string"
-          },
-          "size": {
-            "$ref": "#\/components\/schemas\/Unit"
-          }
-        }
-      },
-      "DiskGetParams": {
-        "title": "DiskGetParams",
-        "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
-          "name": {
-            "description": "disk name",
-            "type": "string"
-          }
-        }
-      },
-      "DiskDeleteParams": {
-        "title": "DiskDeleteParams",
-        "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
-          "name": {
-            "description": "disk name",
-            "type": "string"
-          }
-        }
-      },
-      "ZdbCreateParams": {
-        "title": "ZdbCreateParams",
-        "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
           "name": {
             "description": "zdb name",
             "type": "string"
-          },
-          "version": {
-            "description": "deployment version",
-            "type": "integer"
           },
           "mode": {
             "$ref": "#\/components\/schemas\/ZDBMode"
@@ -954,76 +1174,56 @@
           }
         }
       },
-      "ZdbUpdateParams": {
-        "title": "ZdbUpdateParams",
+      "QuantumSafeMeta": {
+        "title": "QuantumSafeMeta",
         "properties": {
-          "deployment_name": {
-            "description": "deployment name",
+          "typ_": {
             "type": "string"
           },
-          "name": {
-            "description": "zdb name",
-            "type": "string"
-          },
-          "version": {
-            "description": "deployment version",
-            "type": "integer"
-          },
-          "mode": {
-            "$ref": "#\/components\/schemas\/ZDBMode"
-          },
-          "size": {
-            "$ref": "#\/components\/schemas\/Unit"
-          },
-          "password": {
-            "type": "string"
-          },
-          "public": {
-            "description": "if zdb gets a public ip6",
-            "type": "boolean"
+          "config": {
+            "$ref": "#\/components\/schemas\/QuantumSafeConfig"
           }
         }
       },
-      "ZdbGetParams": {
-        "title": "ZdbGetParams",
+      "QuantumSafeConfig": {
+        "title": "QuantumSafeConfig",
         "properties": {
-          "deployment_name": {
-            "description": "deployment name",
+          "prefix": {
             "type": "string"
           },
-          "name": {
-            "description": "zdb name",
-            "type": "string"
+          "encryption": {
+            "$ref": "#\/components\/schemas\/Encryption"
+          },
+          "backends": {
+            "$ref": "#\/components\/schemas\/ZDBBackend"
           }
         }
       },
-      "ZdbDeleteParams": {
-        "title": "ZdbDeleteParams",
+      "Encryption": {
+        "title": "Encryption",
         "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
+          "algorithm": {
+            "$ref": "#\/components\/schemas\/EncryptionAlgorithm"
           },
-          "name": {
-            "description": "zdb name",
+          "key": {
+            "$ref": "#\/components\/schemas\/EncryptionKey"
+          }
+        }
+      },
+      "QuantumCompression": {
+        "title": "QuantumCompression",
+        "properties": {
+          "algorithm": {
             "type": "string"
           }
         }
       },
-      "QsfsParams": {
-        "title": "QsfsParams",
+      "Qsfs": {
+        "title": "Qsfs",
         "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
           "name": {
             "description": "qsfs name",
             "type": "string"
-          },
-          "version": {
-            "description": "deployment version",
-            "type": "integer"
           },
           "cache": {
             "$ref": "#\/components\/schemas\/Unit"
@@ -1062,33 +1262,12 @@
           }
         }
       },
-      "QsfsGetParams": {
-        "title": "QsfsGetParams",
+      "Zlog": {
+        "title": "Zlog",
         "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
-          "name": {
-            "description": "qsfs name",
-            "type": "string"
-          }
-        }
-      },
-      "ZlogParams": {
-        "title": "ZlogParams",
-        "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
           "name": {
             "description": "zlog name",
             "type": "string"
-          },
-          "version": {
-            "description": "deployment version",
-            "type": "integer"
           },
           "vm_name": {
             "description": "vm name",
@@ -1100,45 +1279,11 @@
           }
         }
       },
-      "ZlogGetParams": {
-        "title": "ZlogGetParams",
+      "GatewayFqdn": {
+        "title": "GatewayFqdn",
         "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
-          "name": {
-            "description": "zlog name",
-            "type": "string"
-          }
-        }
-      },
-      "ZlogDeleteParams": {
-        "title": "ZlogDeleteParams",
-        "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
-          "name": {
-            "description": "zlog name",
-            "type": "string"
-          }
-        }
-      },
-      "GatewayFqdnParams": {
-        "title": "GatewayFqdnParams",
-        "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
           "name": {
             "description": "gateway name",
-            "type": "string"
-          },
-          "version": {
-            "description": "deployment version",
             "type": "string"
           },
           "fqdn": {
@@ -1158,33 +1303,12 @@
           }
         }
       },
-      "GatewayFqdnGetParams": {
-        "title": "GatewayFqdnGetParams",
+      "GatewayName": {
+        "title": "GatewayName",
         "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
           "name": {
             "description": "gateway name",
             "type": "string"
-          }
-        }
-      },
-      "GatewayNameParams": {
-        "title": "GatewayNameParams",
-        "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
-          "name": {
-            "description": "gateway name",
-            "type": "string"
-          },
-          "version": {
-            "description": "deployment version",
-            "type": "integer"
           },
           "tls_passthrough": {
             "description": "tls passthrough is optional",
@@ -1199,67 +1323,44 @@
           }
         }
       },
-      "GatewayNameGetParams": {
-        "title": "GatewayNameGetParams",
+      "PublicIp": {
+        "title": "PublicIp",
         "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
-          "name": {
-            "description": "gateway name",
-            "type": "string"
-          }
-        }
-      },
-      "PublicIpParams": {
-        "title": "PublicIpParams",
-        "properties": {
-          "deployment_name": {
-            "description": "deployment name",
-            "type": "string"
-          },
           "name": {
             "description": "public_ip name",
             "type": "string"
           },
-          "version": {
-            "description": "deployment version",
-            "type": "integer"
-          },
           "ipv4": {
-            "description": "if you want an ipv4",
+            "description": "if it contains an ipv4",
             "type": "boolean"
           },
           "ipv6": {
-            "description": "if you want an ipv6",
+            "description": "if it contains an ipv6",
             "type": "boolean"
           }
         }
       },
-      "PublicIpGetParams": {
-        "title": "PublicIpGetParams",
+      "Workload": {
+        "title": "Workload",
         "properties": {
-          "deployment_name": {
-            "description": "deployment name",
+          "name": {
             "type": "string"
           },
-          "name": {
-            "description": "public_ip name",
-            "type": "string"
-          }
-        }
-      },
-      "PublicIpDeleteParams": {
-        "title": "PublicIpDeleteParams",
-        "properties": {
-          "deployment_name": {
-            "description": "deployment name",
+          "kind": {
             "type": "string"
           },
-          "name": {
-            "description": "public_ip name",
+          "err": {
             "type": "string"
+          },
+          "version": {
+            "type": "integer"
+          },
+          "state": {
+            "$ref": "#\/components\/schemas\/State"
+          },
+          "data": {
+            "description": "kind specific data",
+            "type": "any"
           }
         }
       }
