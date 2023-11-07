@@ -90,8 +90,9 @@ pub fn (mydb MyDB) set(o MyStruct) ! {
 			'nr2': o.nr2
 		}
 		index_string: {
-			'name':  o.name
-			'color': o.color
+			'name':    o.name
+			'color':   o.color
+			'listu32': o.listu32.map(it.str()).join(',')
 		}
 		data: data
 		baseobj: o.Base
@@ -107,10 +108,11 @@ pub fn (mydb MyDB) get(gid smartid.GID) !MyStruct {
 pub struct FindArgs {
 	db.BaseFindArgs
 pub mut:
-	name  string
-	color string
-	nr    int
-	nr2   int
+	name    string
+	color   string
+	nr      int
+	nr2     int
+	listu32 []u32
 }
 
 // find on our database
@@ -132,8 +134,9 @@ pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {
 			'nr2': args.nr2
 		}
 		query_string: {
-			'name':  args.name
-			'color': args.color
+			'name':    args.name
+			'color':   args.color
+			'listu32': args.listu32.map(it.str()).join(',')
 		}
 	}
 	data := mydb.find_base(args.BaseFindArgs, dbfindoargs)!
