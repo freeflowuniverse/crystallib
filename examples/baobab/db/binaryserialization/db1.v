@@ -54,7 +54,9 @@ fn do() ! {
 	assert o1data == o3data
 
 	script3 := mydb.serialize_3script(o1)!
+	println('serialized script3:\n${script3}\n')
 	deserialized_3script := mydb.unserialize_3script(script3)!
+	println('deserialized script3: \n${deserialized_3script[0]}\n')
 
 	deserialized_o := deserialized_3script[0]
 	assert deserialized_o.gid == o1.gid

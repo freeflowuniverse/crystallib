@@ -193,7 +193,9 @@ pub fn (mydb MyDB) serialize_3script(o MyStruct) !string {
 		presort: ['gid', 'name', 'listu32']
 		postsort: ['mtime', 'ctime']
 	)
-	return ex
+	p2 := o.Base.remarks.serialize_3script(o.Base.gid.str())!
+
+	return '${ex}\n${p2}'
 }
 
 pub fn (mydb MyDB) unserialize_3script(txt string) ![]MyStruct {
