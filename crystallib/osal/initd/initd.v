@@ -2,7 +2,6 @@ module initd
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
-
 import freeflowuniverse.crystallib.core.texttools
 // function initdinstall {
 //     set -x
@@ -14,13 +13,11 @@ import freeflowuniverse.crystallib.core.texttools
 //         spath="/etc/systemd/system/${script_name}.service"
 //         rm -f $spath
 //         echo "$servicefile" > $spath
-//         systemctl daemon-reload 
+//         systemctl daemon-reload
 //         systemctl enable $script_name
 //         systemctl start $script_name
 //     fi
 // }
-
-
 
 [heap]
 pub struct Initd {
@@ -49,44 +46,44 @@ fn (mut initdobj Initd) load() ! {
 		}
 		if line.contains('LOAD') {
 			break
-		}		
-		line=line.trim(" ")
-		if line==""{
+		}
+		line = line.trim(' ')
+		if line == '' {
 			continue
 		}
-		for{
-			if line.contains("  "){
-				line=line.replace("  "," ")
-			}else{
+		for {
+			if line.contains('  ') {
+				line = line.replace('  ', ' ')
+			} else {
 				break
 			}
 		}
-		
-		items:=line.split_nth(" ",5)
-		mut pobj:=IProcess{
-			name:items[0]	
-			description:items[4]	
-			initd:&initdobj
+
+		items := line.split_nth(' ', 5)
+		mut pobj := IProcess{
+			name: items[0]
+			description: items[4]
+			initd: &initdobj
 		}
-		pobj.name=pobj.name.replace(".service","")
-		status:=items[3]
-		if status=="exited"{
-			pobj.status=.exited
-		}else if status=="running"{
-			pobj.status=.running
-		}else{
+		pobj.name = pobj.name.replace('.service', '')
+		status := items[3]
+		if status == 'exited' {
+			pobj.status = .exited
+		} else if status == 'running' {
+			pobj.status = .running
+		} else {
 			return error("Can't find right status: ${status}")
 		}
-		name:=texttools.name_fix(items[0])
-		initdobj.processes[name]=pobj
+		name := texttools.name_fix(items[0])
+		initdobj.processes[name] = pobj
 	}
 }
 
 [params]
 pub struct IProcessNewArgs {
 pub mut:
-	name      string            [required]
-	cmd       string            [required]
+	name        string [required]
+	cmd         string [required]
 	description string [required]
 	// env       map[string]string
 }
@@ -101,7 +98,7 @@ pub fn (mut initd Initd) new(args_ IProcessNewArgs) !IProcess {
 
 	mut zp := IProcess{
 		name: args.name
-		description: args.description		
+		description: args.description
 		cmd: args.cmd
 		initd: &initd
 	}
@@ -110,7 +107,7 @@ pub fn (mut initd Initd) new(args_ IProcessNewArgs) !IProcess {
 		// means we can load the special cmd
 		mut pathcmd := initd.path.file_get(args.name)!
 		pathcmd.write(zp.cmd)!
-		zp.cmd = "/bin/bash -c ${pathcmd.path}"
+		zp.cmd = '/bin/bash -c ${pathcmd.path}'
 	}
 	// zp.env = args.env.move()
 
@@ -120,16 +117,16 @@ pub fn (mut initd Initd) new(args_ IProcessNewArgs) !IProcess {
 }
 
 pub fn (mut initd Initd) get(name_ string) !IProcess {
-	name:=texttools.name_fix(name_)
-	if name in initd.processes{
+	name := texttools.name_fix(name_)
+	if name in initd.processes {
 		return initd.processes[name]
 	}
-	return error("Can't find process with name $name")
+	return error("Can't find process with name ${name}")
 }
 
 pub fn (mut initd Initd) exists(name_ string) bool {
-	name:=texttools.name_fix(name_)
-	if name in initd.processes{
+	name := texttools.name_fix(name_)
+	if name in initd.processes {
 		return true
 	}
 	return false

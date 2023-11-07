@@ -73,6 +73,6 @@ pub fn (mut c Container) start() ! {
 	osal.exec(
 		cmd: 'runc run ${c.name}'
 		work_folder: c.path_config.path
-		debug:true
+		debug: true
 	)!
 }

@@ -14,7 +14,7 @@ pub mut:
 	after   []string
 	env     map[string]string
 	oneshot bool
-	zinit   &Zinit [skip; str: skip]
+	zinit   &Zinit            [skip; str: skip]
 }
 
 pub enum ZProcessStatus {
@@ -34,8 +34,8 @@ pub fn (zp ZProcess) cmd() string {
 		if zp.cmd.contains('\n') {
 			panic('cmd cannot have \\n and not have cmd file on disk on ${p}')
 		}
-		if zp.cmd=="" {
-			return error("cmd cannot be empty")
+		if zp.cmd == '' {
+			return error('cmd cannot be empty')
 		}
 	}
 	return '${zp.cmd}'
@@ -49,8 +49,8 @@ pub fn (zp ZProcess) cmdtest() string {
 		if zp.test.contains('\n') {
 			panic('cmd cannot have \\n and not have cmd file on disk on ${p}')
 		}
-		if zp.test=="" {
-			return error("cmd cannot be empty")
+		if zp.test == '' {
+			return error('cmd cannot be empty')
 		}
 	}
 	return '${zp.test}'

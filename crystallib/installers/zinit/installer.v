@@ -29,7 +29,7 @@ pub fn install(args InstallArgs) ! {
 
 	mut dest := osal.download(
 		// url: 'https://github.com/zinitserver/zinit/releases/download/v2.7.4/zinit_2.7.4_linux_amd64.tar.gz'
-		url:="https://raw.githubusercontent.com/freeflowuniverse/freeflow_binary/main/x86_64/zinit"
+		url: 'https://raw.githubusercontent.com/freeflowuniverse/freeflow_binary/main/x86_64/zinit'
 		minsize_kb: 5000
 		reset: true
 		// expand_dir: '/tmp/zinitserver'

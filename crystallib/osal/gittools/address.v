@@ -38,7 +38,7 @@ pub fn (addr GitAddr) path() !pathlib.Path {
 	if addr.gsconfig.multibranch {
 		path_string += '/${addr.branch}'
 	}
-	path := pathlib.get_dir(path: path_string,create:false)!
+	path := pathlib.get_dir(path: path_string, create: false)!
 	return path
 }
 

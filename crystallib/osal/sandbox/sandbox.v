@@ -9,7 +9,7 @@ import json
 
 // install runc
 pub fn install() ! {
-	if !(osal.cmd_exists('runc')) || !(osal.cmd_exists('debootstrap')){
+	if !(osal.cmd_exists('runc')) || !(osal.cmd_exists('debootstrap')) {
 		println('installing runc')
 		osal.upgrade()!
 		osal.package_install('runc,debootstrap')!
