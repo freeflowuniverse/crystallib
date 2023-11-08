@@ -4,13 +4,12 @@ import freeflowuniverse.crystallib.core.texttools
 import os
 
 __global (
-	donedb  shared  map[string]string
+	donedb shared map[string]string
 )
-
 
 // Marks the execution of a command with a specific key as done by putting it in the hset exec.done in redis
 pub fn done_set(key string, val string) ! {
-	donedb_set(key,val)!
+	donedb_set(key, val)!
 }
 
 // Tries to retrieve the value (string value) of a command that was executed by looking in the hset exec.done in redis, this function returns none in case it is not found in the hset
@@ -23,13 +22,13 @@ pub fn done_delete(key string) ! {
 }
 
 pub fn done_get_str(key string) string {
-	val:=done_get(key) or { panic(err) }
+	val := done_get(key) or { panic(err) }
 	return val
 }
 
 // Tries to retrieve the value (integer value) of a command that was executed by looking in the hset exec.done in redis, this function returns 0 in case it is not found in the hset
 pub fn done_get_int(key string) int {
-	val:=done_get(key) or { panic(err) }
+	val := done_get(key) or { panic(err) }
 	return val.int()
 }
 
@@ -53,66 +52,61 @@ pub fn done_reset() ! {
 	donedb_reset()!
 }
 
+// the core functions with lock
 
-
-//the core functions with lock 
-
-
-fn dbpathdir() string{
-	mut h:=os.getenv("HOME")
-	if h==""{
+fn dbpathdir() string {
+	mut h := os.getenv('HOME')
+	if h == '' {
 		panic("can't find home env")
 	}
-	return "${h}/hero/db"
+	return '${h}/hero/db'
 }
 
-fn dbpath() string{
-	return "${dbpathdir()}/dbdone.db"
+fn dbpath() string {
+	return '${dbpathdir()}/dbdone.db'
 }
-
 
 fn donedb_get(name_ string) ?string {
-	name:=texttools.name_fix(name_)
-	rlock donedb{		
-		if name in donedb{
+	name := texttools.name_fix(name_)
+	rlock donedb {
+		if name in donedb {
 			return donedb[name]
 		}
-	}	
+	}
 	return none
 }
 
 fn donedb_delete(name_ string) ! {
-	name:=texttools.name_fix(name_)
-	rlock donedb{		
-		if name in donedb{
+	name := texttools.name_fix(name_)
+	rlock donedb {
+		if name in donedb {
 			donedb.delete(name)
-		}else{
+		} else {
 			return
 		}
-	}	
+	}
 	donedb_save()!
 }
 
-
 fn donedb_set(name_ string, val string) ! {
-	name:=texttools.name_fix(name_)
+	name := texttools.name_fix(name_)
 	donedb_load()!
-	lock donedb{		
-		if name in donedb{
-			if donedb[name] == val{
+	lock donedb {
+		if name in donedb {
+			if donedb[name] == val {
 				return
 			}
 		}
-		donedb[name]=val
-	}	
+		donedb[name] = val
+	}
 	donedb_save()!
 }
 
 fn donedb_exists(name_ string) !bool {
-	name:=texttools.name_fix(name_)
+	name := texttools.name_fix(name_)
 	donedb_load()!
-	rlock donedb{		
-		if name in donedb{
+	rlock donedb {
+		if name in donedb {
 			return true
 		}
 	}
@@ -120,12 +114,11 @@ fn donedb_exists(name_ string) !bool {
 }
 
 fn donedb_keys() []string {
-	rlock donedb{		
+	rlock donedb {
 		return donedb.keys()
 	}
-	panic("bug")
+	panic('bug')
 }
-
 
 // //find key which has his value
 // fn donedb_key_from_val(id string) !string {
@@ -139,21 +132,20 @@ fn donedb_keys() []string {
 // 	return error("Didn't find val in donedb with id:'$id'")
 // }
 
-
 fn donedb_load() ! {
-	lock donedb{
-		if donedb.keys().len==0{
-			if os.exists(dbpath()){
-				d:=os.read_file(dbpath())!
-				for line in d.split_into_lines(){
-					if line.contains(":"){
-						parts:=line.split(":")
-						if parts.len!=2{
-							panic("error in donedb, wrong parts")
+	lock donedb {
+		if donedb.keys().len == 0 {
+			if os.exists(dbpath()) {
+				d := os.read_file(dbpath())!
+				for line in d.split_into_lines() {
+					if line.contains(':') {
+						parts := line.split(':')
+						if parts.len != 2 {
+							panic('error in donedb, wrong parts')
 						}
-						key:=parts[0].trim_space()
-						data:=parts[1].trim_space()
-						donedb[key]=data
+						key := parts[0].trim_space()
+						data := parts[1].trim_space()
+						donedb[key] = data
 					}
 				}
 			}
@@ -161,30 +153,26 @@ fn donedb_load() ! {
 	}
 }
 
-
-fn donedb_save() !{
-	mut out:=[]string{}
-	rlock donedb{		
-		if donedb.len==0{
+fn donedb_save() ! {
+	mut out := []string{}
+	rlock donedb {
+		if donedb.len == 0 {
 			return
 		}
-		for key,val in donedb{
-			out<<"$key:$val\n"
+		for key, val in donedb {
+			out << '${key}:${val}\n'
 		}
 	}
-	if donedb.len<2{
+	if donedb.len < 2 {
 		os.mkdir_all(dbpathdir())!
 	}
-	os.write_file(dbpath(),out.join_lines())!
+	os.write_file(dbpath(), out.join_lines())!
 	// println("write: ${out.len}")
 }
 
-fn donedb_reset() !{
-	rlock donedb{		
-		donedb=map[string]string{}
+fn donedb_reset() ! {
+	rlock donedb {
+		donedb = map[string]string{}
 	}
 	donedb_save()!
 }
-
-
-

@@ -1,20 +1,18 @@
 module smartid
 
-
 fn test_cid() {
-
-	a:=sid_str(100)
-	assert a=="2s"
+	a := sid_str(100)
+	assert a == '2s'
 	cid00 := cid(name: 'test')!
-	assert cid00.circle==1
-	assert cid00.str() == "1"
+	assert cid00.circle == 1
+	assert cid00.str() == '1'
 	// println(cid00)
 	for i in 0 .. 100 {
 		cid2 := cid(name: 'test_${i}')!
 	}
 	// if true{panic("s")}
 
-	//TODO: fix test
+	// TODO: fix test
 
 	// cid1 := cid(cid_int: 9999)!
 	// assert cid1.str() == '7pr'

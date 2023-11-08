@@ -2,6 +2,7 @@ module s3
 
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.osal.zinit as zinitosal
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.zinit
 
@@ -70,4 +71,11 @@ pub fn start(args_ StartArgs) ! {
 	}
 	cmd += ' --access-key ${args.access_key}'
 	cmd += ' --secret-key ${args.secret_key}'
+
+	mut z:=zinitosal.new()!
+    p:=z.new(
+        name:"s3"
+        cmd:cmd
+    )!	
+
 }
