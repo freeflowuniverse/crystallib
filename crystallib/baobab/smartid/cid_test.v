@@ -1,6 +1,5 @@
 module smartid
 
-import freeflowuniverse.crystallib.clients.redisclient
 
 fn cleanup() ! {
 	mut r := redisclient.core_get()!

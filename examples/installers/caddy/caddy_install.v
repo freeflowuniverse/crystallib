@@ -6,12 +6,12 @@ import freeflowuniverse.crystallib.installers.zdb
 import freeflowuniverse.crystallib.installers.s3
 
 fn do() ! {
-	fungistor.install()!
-	zdb.install()!
-	s3.install()!
-	caddy.install()!
-	caddy.configure_examples()!
-	caddy.restart()!
+	// fungistor.install()!
+	// zdb.install()!
+	s3.build()!
+	// caddy.install()!
+	// caddy.configure_examples()!
+	// caddy.restart()!
 }
 
 fn main() {

@@ -1,7 +1,19 @@
 module smartid
 
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.clients.redisclient
+import freeflowuniverse.crystallib.core.pathlib
+import json
+
+__global (
+	ciddb  shared  CIDName2Int
+)
+
+pub struct CIDName2Int{
+pub mut:
+	cid2int map[string]int
+}
+
+const cid_name_db_location:="~/hero/db/cid_names.json"
 
 pub struct CID {
 pub mut:
@@ -108,4 +120,35 @@ pub fn (cid CID) sids_replace(txt string) !string {
 
 pub fn (cid CID) sids_acknowledge(txt string) ! {
 	sids_acknowledge(cid.str(), txt)!
+}
+
+
+fn cid_from_name(name string) !CID {
+	name2:=texttools.name_fix(name)
+	if 
+	if name2 in cid_name2int{
+		return CID{circle:cid_name2int[name2]}
+	}
+	json.encode()
+
+}
+
+
+fn cid_db_save() ! {
+	d:=json.encode(cid_name2int)!
+	p:=pathlib.get_file(path:cid_name_db_location,create:true)!
+	p.write(d)!
+}
+
+fn cid_db_load() ! {
+	if cid_name_db_location.keys().len==0{
+		p:=pathlib.get_file(path:cid_name_db_location,create:true)!
+		mut d:=p.read(d)!
+		if d.len==""{
+			cid_name_db_location["core"]=1
+			cid_db_save()
+			d:=p.read(d)!
+		}
+		d:=json.decode(cid_name2int,d)!
+	}
 }

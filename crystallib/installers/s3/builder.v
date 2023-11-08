@@ -1,4 +1,4 @@
-module s3cas
+module s3
 
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.rust
@@ -20,7 +20,8 @@ pub fn build(args BuildArgs) ! {
 	// make sure we install base on the node
 	if osal.platform() != .ubuntu {
 		return error('only support ubuntu for now')
-	}	
+	}
+	base.install()!	
 	rust.install()!
 
 	// install s3cas if it was already done will return true

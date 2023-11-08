@@ -10,20 +10,9 @@ pub fn install() ! {
 	base.install()!
 	zinit.install()!
 	println(' - package_install install s3')
-	if !osal.done_exists('install_s3') && !osal.cmd_exists('s3') {
+	if !osal.done_exists('install_s3') && !osal.cmd_exists('s3-cas') {
 
 		
-		osal.package_install("libssl-dev,pkg-config")!
-
-		path := gittools.code_get(url: 'https://github.com/leesmet/s3-cas', reset: false, pull: true)!
-		cmd := '
-		set -ex
-		cd ${path}
-		cargo build --all-features
-		cp /root/code/github/leesmet/s3-cas/target/debug/s3-cas /usr/local/bin
-		'
-		osal.execute_stdout(cmd) or { return error('Cannot install s3.\n${err}') }
-		//osal.done_set('install_s3', 'OK')!
 	}
 }
 
