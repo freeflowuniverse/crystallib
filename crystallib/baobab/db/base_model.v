@@ -5,7 +5,6 @@ import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.algo.encoder
 import freeflowuniverse.crystallib.baobab.smartid
-import encoding.base64
 
 [heap]
 pub struct Base {
@@ -87,7 +86,6 @@ pub fn (o Base) serialize_kwargs() !map[string]string {
 		'description': o.description
 		'mtime':       o.mtime.str()
 		'ctime':       o.ctime.str()
-		'remarks':     base64.encode_str(o.remarks.serialize_3script(o.gid.str())!)
 	}
 	return kwargs
 }

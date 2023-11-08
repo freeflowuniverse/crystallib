@@ -90,8 +90,9 @@ pub fn (mydb MyDB) set(o MyStruct) ! {
 			'nr2': o.nr2
 		}
 		index_string: {
-			'name':  o.name
-			'color': o.color
+			'name':    o.name
+			'color':   o.color
+			'listu32': o.listu32.map(it.str()).join(',')
 		}
 		data: data
 		baseobj: o.Base
@@ -107,10 +108,11 @@ pub fn (mydb MyDB) get(gid smartid.GID) !MyStruct {
 pub struct FindArgs {
 	db.BaseFindArgs
 pub mut:
-	name  string
-	color string
-	nr    int
-	nr2   int
+	name    ?string
+	color   ?string
+	nr      ?int
+	nr2     ?int
+	listu32 ?[]u32
 }
 
 // find on our database
@@ -126,15 +128,46 @@ pub mut:
 // name       string
 //```
 pub fn (mydb MyDB) find(args FindArgs) ![]MyStruct {
+	mut query_int := map[string]int{}
+	if nr := args.nr {
+		query_int['nr'] = nr
+	}
+	if nr2 := args.nr2 {
+		query_int['nr2'] = nr2
+	}
+
+	mut query_string := map[string]string{}
+	if name := args.name {
+		query_string['name'] = name
+	}
+	if color := args.color {
+		query_string['color'] = color
+	}
+	if listu32 := args.listu32 {
+		query_string['listu32'] = listu32.map(it.str()).join(',')
+	}
+
+	mut query_int_less := map[string]int{}
+	if ctime_to := args.ctime_to {
+		query_int_less['ctime'] = ctime_to.int()
+	}
+	if mtime_to := args.mtime_to {
+		query_int_less['mtime'] = mtime_to.int()
+	}
+
+	mut query_int_greater := map[string]int{}
+	if ctime_from := args.ctime_from {
+		query_int_greater['ctime'] = ctime_from.int()
+	}
+	if mtime_from := args.mtime_from {
+		query_int_greater['mtime'] = mtime_from.int()
+	}
+
 	dbfindoargs := db.DBFindArgs{
-		query_int: {
-			'nr':  args.nr
-			'nr2': args.nr2
-		}
-		query_string: {
-			'name':  args.name
-			'color': args.color
-		}
+		query_int: query_int
+		query_string: query_string
+		query_int_greater: query_int_greater
+		query_int_less: query_int_less
 	}
 	data := mydb.find_base(args.BaseFindArgs, dbfindoargs)!
 	mut read_o := []MyStruct{}
@@ -193,7 +226,9 @@ pub fn (mydb MyDB) serialize_3script(o MyStruct) !string {
 		presort: ['gid', 'name', 'listu32']
 		postsort: ['mtime', 'ctime']
 	)
-	return ex
+	p2 := o.Base.remarks.serialize_3script(o.Base.gid.str())!
+
+	return '${ex}\n${p2}'
 }
 
 pub fn (mydb MyDB) unserialize_3script(txt string) ![]MyStruct {

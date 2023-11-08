@@ -7,7 +7,6 @@ import freeflowuniverse.crystallib.data.ourtime
 // import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.actionsparser
 import freeflowuniverse.crystallib.data.paramsparser
-import encoding.base64
 
 [params]
 pub struct DBBaseNewArgs {
@@ -201,26 +200,25 @@ pub:
 
 pub fn (db DB) base_decoder_3script(txt string) ![]DecoderActionItem {
 	mut res := []DecoderActionItem{}
-	// mut remarks := map[string][]paramsparser.Params{} // key is the gid of the base obj
+	mut remarks := map[string][]paramsparser.Params{} // key is the gid of the base obj
 
 	mut parser := actionsparser.new(defaultcircle: 'aaa', text: txt)!
-	// println('[base_decoder_3script]: actionparser: ${parser}')
 	actions := parser.filtersort(actor: db.objtype)!
-	// actions_remarks := parser.filtersort(actor: 'remark')!
+	actions_remarks := parser.filtersort(actor: 'remark')!
 
-	// for action in actions_remarks {
-	// 	if action.name == 'define' {
-	// 		// now we are in remark define
-	// 		gid_str := action.params.get_default('gid', '')!
-	// 		if gid_str.len > 0 {
-	// 			gid := smartid.gid(gid_str: gid_str)!
-	// 			if gid.str() !in remarks {
-	// 				remarks[gid.str()] = []paramsparser.Params{}
-	// 			}
-	// 			remarks[gid.str()] << action.params // get all remarks per gid
-	// 		}
-	// 	}
-	// }
+	for action in actions_remarks {
+		if action.name == 'define' {
+			// now we are in remark define
+			gid_str := action.params.get_default('gid', '')!
+			if gid_str.len > 0 {
+				gid := smartid.gid(gid_str: gid_str)!
+				if gid.str() !in remarks {
+					remarks[gid.str()] = []paramsparser.Params{}
+				}
+				remarks[gid.str()] << action.params // get all remarks per gid
+			}
+		}
+	}
 	for action in actions {
 		if action.name == 'define' {
 			// now we will find the rootobject define action
@@ -230,26 +228,16 @@ pub fn (db DB) base_decoder_3script(txt string) ![]DecoderActionItem {
 			o.params = paramsparser.new(p.get_default('params', '')!)!
 			o.name = p.get_default('name', '')!
 			o.description = p.get_default('description', '')!
-			rems := p.get('remarks')!
-			base64_decoded_remarks := base64.decode_str(rems)
-			remarks_actions := actionsparser.new(defaultcircle: 'aaa', text: base64_decoded_remarks)!.filtersort(
-				actor: 'remark'
-			)!
-			for ac in remarks_actions {
-				if ac.name == 'define' {
-					o.remarks.remarks << remark_unserialize_params(ac.params)!
-				}
-			}
 			o.mtime = ourtime.new(p.get('mtime')!)!
 			o.ctime = ourtime.new(p.get('ctime')!)!
 
 			// now find all remarks who are linked to this obj
-			// if o.gid.str() in remarks {
-			// 	for remarkparam in remarks[o.gid.str()] {
-			// 		remark := remark_unserialize_params(remarkparam)!
-			// 		o.remarks.remarks << remark
-			// 	}
-			// }
+			if o.gid.str() in remarks {
+				for remarkparam in remarks[o.gid.str()] {
+					remark := remark_unserialize_params(remarkparam)!
+					o.remarks.remarks << remark
+				}
+			}
 			res << DecoderActionItem{
 				base: o
 				params: p
