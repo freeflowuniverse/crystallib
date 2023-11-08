@@ -105,7 +105,7 @@ pub fn gid_check(gid string) bool {
 		return false
 	}
 	for id in ids {
-		if id.len > 6 || id.len < 2 {
+		if id.len > 6 || id.len < 1 {
 			return false
 		}
 		for cha in id {
