@@ -34,7 +34,7 @@ pub fn (db DB) new[T](args NewArgs[T]) !T {
 	return o
 }
 
-// set serializes and registers an object to the db with its index fields 
+// set serializes and registers an object to the db with its index fields
 pub fn (db DB) set[T](object T) ! {
 	data := db.serialize[T](object)!
 

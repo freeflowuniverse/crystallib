@@ -28,7 +28,7 @@ pub mut:
 // }
 // ```
 pub fn cid(args_ CIDGet) !CID {
-	mut args:=args_
+	mut args := args_
 	if args.cid_int > 0 {
 		return CID{
 			circle: args.cid_int
