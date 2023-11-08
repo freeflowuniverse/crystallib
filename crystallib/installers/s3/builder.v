@@ -1,4 +1,4 @@
-module s3cas
+module s3
 
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.rust
