@@ -6,12 +6,12 @@ import freeflowuniverse.crystallib.core.pathlib
 
 pub struct IProcess {
 pub mut:
-	name string
-	cmd     string
-	status  IProcessStatus
-	pid     int
-	env     map[string]string
-	initd   &Initd [skip; str: skip]
+	name        string
+	cmd         string
+	status      IProcessStatus
+	pid         int
+	env         map[string]string
+	initd       &Initd            [skip; str: skip]
 	description string
 }
 
@@ -53,38 +53,34 @@ pub enum IProcessStatus {
 // }
 
 pub fn (mut zp IProcess) start() ! {
+	mut p := pathlib.get_file(path: '${zp.initd.path.path}/${zp.name}.service', create: true)!
 
-    mut p:=pathlib.get_file(path:"${zp.initd.path.path}/${zp.name}.service",create:true)!
-
-	servicecontent:=$tmpl('templates/service.yaml')
+	servicecontent := $tmpl('templates/service.yaml')
 	p.write(servicecontent)!
-	cmd:="
+	cmd := '
 	systemctl daemon-reload 
 	systemctl enable ${zp.name}
 	systemctl start ${zp.name}
-	"	
+	'
 	r := osal.execute_silent(cmd)!
 	zp.refresh()!
-
 }
 
-//get status from system
+// get status from system
 pub fn (mut zp IProcess) refresh() ! {
-	zp.initd.load()!	
-	initdobj2:=zp.initd.get(zp.name)!
+	zp.initd.load()!
+	initdobj2 := zp.initd.get(zp.name)!
 	zp.status = initdobj2.status
 }
 
 pub fn (mut zp IProcess) remove() ! {
-
-    mut p:=pathlib.get_file(path:"${zp.initd.path.path}/${zp.name}.service",create:true)!
-	cmd:="
+	mut p := pathlib.get_file(path: '${zp.initd.path.path}/${zp.name}.service', create: true)!
+	cmd := '
 	systemctl daemon-reload
 	systemctl disable ${zp.name}
 	systemctl stop ${zp.name}
-	"	
+	'
 	r := osal.execute_silent(cmd)!
 	p.delete()!
-	zp.status=.deleted
-
+	zp.status = .deleted
 }

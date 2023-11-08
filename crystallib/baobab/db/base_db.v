@@ -16,6 +16,7 @@ pub mut:
 	description string
 	mtime       string // modification time
 	ctime       string // creation time
+	remarks     Remarks
 }
 
 //```
@@ -33,6 +34,7 @@ pub fn (db DB) new_base(args DBBaseNewArgs) !Base {
 		description: args.description
 		mtime: ourtime.new(args.mtime)!
 		ctime: ourtime.new(args.ctime)!
+		remarks: args.remarks
 	}
 	return b
 }
@@ -217,17 +219,17 @@ pub fn (db DB) base_decoder_3script(txt string) ![]DecoderActionItem {
 			}
 		}
 	}
-
 	for action in actions {
 		if action.name == 'define' {
 			// now we will find the rootobject define action
 			mut p := action.params
 			mut o := Base{}
-			o.gid = smartid.gid(gid_str: p.get_default('gid', '')!)!
+			o.gid = smartid.gid(gid_str: p.get('gid')!)!
 			o.params = paramsparser.new(p.get_default('params', '')!)!
 			o.name = p.get_default('name', '')!
 			o.description = p.get_default('description', '')!
-			// TODO: check gid is not empty
+			o.mtime = ourtime.new(p.get('mtime')!)!
+			o.ctime = ourtime.new(p.get('ctime')!)!
 
 			// now find all remarks who are linked to this obj
 			if o.gid.str() in remarks {

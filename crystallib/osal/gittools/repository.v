@@ -43,7 +43,7 @@ pub fn (mut repo GitRepo) load() !GitRepoStatus {
 	}
 	mut st := repo_load(repo.addr, repo.path.path)!
 	repo.status_set(st)!
-	println(" - status:\n$st")
+	println(' - status:\n${st}')
 	return st
 }
 

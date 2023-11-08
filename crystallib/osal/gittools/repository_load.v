@@ -5,7 +5,9 @@ import freeflowuniverse.crystallib.clients.redisclient
 import json
 
 fn repo_load(addr GitAddr, path string) !GitRepoStatus {
-	$if debug{println(" - git repo get: ${path}")}
+	$if debug {
+		println(' - git repo get: ${path}')
+	}
 
 	mut redis := redisclient.core_get()!
 

@@ -13,5 +13,5 @@ pub mut:
 	nr      int [index]
 	color   string [index]
 	nr2     int [index]
-	listu32 []u32 
+	listu32 []u32 [index]
 }

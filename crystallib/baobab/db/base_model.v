@@ -5,7 +5,6 @@ import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.algo.encoder
 import freeflowuniverse.crystallib.baobab.smartid
-import time
 
 [heap]
 pub struct Base {
@@ -79,7 +78,7 @@ pub fn base_decoder(data []u8) !(encoder.Decoder, Base) {
 	return d, o
 }
 
-pub fn (o Base) serialize_kwargs() map[string]string {
+pub fn (o Base) serialize_kwargs() !map[string]string {
 	kwargs := {
 		'gid':         '${o.gid}'
 		'params':      o.params.export(oneline: true)

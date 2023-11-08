@@ -179,8 +179,7 @@ pub fn code_get(args CodeGetFromUrlArgs) !string {
 	return s.path
 }
 
-
-pub fn repo_get(args CodeGetFromUrlArgs)!GitRepo{
+pub fn repo_get(args CodeGetFromUrlArgs) !GitRepo {
 	mut gs := get(name: args.gitstructure_name, coderoot: args.coderoot)!
 	mut locator := gs.locator_new(args.url)!
 	println(locator)
@@ -191,9 +190,8 @@ pub fn repo_get(args CodeGetFromUrlArgs)!GitRepo{
 	if args.reset {
 		g.remove_changes()!
 	}
-	return g	
+	return g
 }
-
 
 // get new gitstructure .
 // has also support for os.environ variables .

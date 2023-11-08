@@ -38,7 +38,6 @@ pub fn (mut gitstructure GitStructure) list(args ReposGetArgs) ! {
 	println('')
 }
 
-
 pub fn (mut gitstructure GitStructure) repo_from_path(path string) !GitRepo {
 	mut r := GitRepo{
 		gs: &gitstructure

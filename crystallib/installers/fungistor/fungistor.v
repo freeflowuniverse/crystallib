@@ -10,9 +10,7 @@ pub fn install() ! {
 	zinit.install()!
 	println(' - install fungistor')
 	if !osal.done_exists('install_fungistor') || !osal.cmd_exists('rfs') {
-
-
-		osal.package_install("musl-dev,musl-tools")!
+		osal.package_install('musl-dev,musl-tools')!
 
 		path := gittools.code_get(url: 'https://github.com/threefoldtech/rfs', reset: true)!
 		cmd := '
@@ -22,7 +20,7 @@ pub fn install() ! {
 
 		cp ~/code/github/threefoldtech/rfs/target/x86_64-unknown-linux-musl/release/rfs /usr/local/bin/
 		'
-		println(" - build fungistor")
+		println(' - build fungistor')
 		osal.execute_stdout(cmd)!
 		osal.done_set('install_fungistor', 'OK')!
 	}

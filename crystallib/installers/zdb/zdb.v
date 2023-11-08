@@ -9,7 +9,11 @@ pub fn install() ! {
 	base.install()!
 	println(' - package_install install zdb')
 	if !osal.done_exists('install_zdb') && !osal.cmd_exists('zdb') {
-		path := gittools.code_get(url: 'git@github.com:threefoldtech/0-db.git', reset: false, pull: true)!
+		path := gittools.code_get(
+			url: 'git@github.com:threefoldtech/0-db.git'
+			reset: false
+			pull: true
+		)!
 		cmd := '
 		set -ex
 		cd ${path}

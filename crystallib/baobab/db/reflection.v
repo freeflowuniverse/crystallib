@@ -1,63 +1,45 @@
-module dbreflection
+module db
 
-import mystruct {MyStruct}
-import freeflowuniverse.crystallib.baobab.db
 import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.algo.encoder
 import freeflowuniverse.crystallib.data.paramsparser
-
 import json
 import time
-
-pub struct MyDB {
-	db.DB
-}
-
-[params]
-pub struct DBArgs {
-pub mut:
-	circlename string
-}
-
-pub fn db_new(args DBArgs) !MyDB {
-	mut mydb := MyDB{
-		circlename: args.circlename
-		objtype: 'mystruct'
-	}
-	mydb.init()!
-	return mydb
-}
 
 [params]
 pub struct NewArgs[T] {
 pub mut:
-	params             string
-	name               string
-	description        string
-	mtime              string// modification time
-	ctime              string // creation time
-	object T
+	params      string // QUESTION: what are params for
+	name        string // name of object
+	description string // description of object
+	mtime       string // modification time
+	ctime       string // creation time
+	object      T      // object that is being created
 }
 
-pub fn (mydb MyDB) new[T](args NewArgs[T]) !T {
-	base:=mydb.new_base(
-		params:args.params
-		name:args.name
-		description:args.description
-		mtime:args.mtime
-		ctime:args.ctime
+// new creates a new root object with id and base
+// It doesn't register the created object to the db,
+// the returned object must still be added using the set method.
+pub fn (db DB) new[T](args NewArgs[T]) !T {
+	base := db.new_base(
+		params: args.params
+		name: args.name
+		description: args.description
+		mtime: args.mtime
+		ctime: args.ctime
 	)!
-	mut o:=args.object{}
+	mut o := args.object
 	o.Base = base
 	return o
 }
 
-pub fn (mydb MyDB) set[T](object T) ! {
-	data := mydb.serialize[T](object)!
-	
-	mut index_int := map[string]int
-	mut index_string := map[string]string
+// set serializes and registers an object to the db with its index fields 
+pub fn (db DB) set[T](object T) ! {
+	data := db.serialize[T](object)!
+
+	mut index_int := map[string]int{}
+	mut index_string := map[string]string{}
 	$for field in T.fields {
 		if field.attrs.contains('index') {
 			$if field.typ is int {
@@ -68,8 +50,7 @@ pub fn (mydb MyDB) set[T](object T) ! {
 			}
 		}
 	}
-
-	mydb.set_data(
+	db.set_data(
 		gid: object.gid
 		index_int: index_int
 		index_string: index_string
@@ -78,23 +59,23 @@ pub fn (mydb MyDB) set[T](object T) ! {
 	)!
 }
 
-pub fn (mydb MyDB) get[T](gid smartid.GID) !T {
-	data := mydb.get_data(gid)!
-	return mydb.unserialize[T](data)
+pub fn (db DB) get[T](gid smartid.GID) !T {
+	data := db.get_data(gid)!
+	return db.unserialize[T](data)
 }
 
 [params]
 pub struct FindArgs[T] {
-	db.BaseFindArgs
+	BaseFindArgs
 pub mut:
-	object T
+	object     T
 	mtime_from ?ourtime.OurTime
 	mtime_to   ?ourtime.OurTime
 	ctime_from ?ourtime.OurTime
 	ctime_to   ?ourtime.OurTime
 }
 
-//find on our database
+// find on our database
 //```js
 // name  string
 // color string
@@ -103,9 +84,9 @@ pub mut:
 
 // name       string
 //```
-pub fn (mydb MyDB) find[T](args FindArgs[T]) ![]T {	
-	mut query_int := map[string]int
-	mut query_string := map[string]string
+pub fn (db DB) find[T](args FindArgs[T]) ![]T {
+	mut query_int := map[string]int{}
+	mut query_string := map[string]string{}
 
 	$for field in T.fields {
 		if field.attrs.contains('index') {
@@ -117,16 +98,15 @@ pub fn (mydb MyDB) find[T](args FindArgs[T]) ![]T {
 			}
 		}
 	}
-	
-	dbfindoargs:=db.DBFindArgs{
+	dbfindoargs := DBFindArgs{
 		query_int: query_int
 		query_string: query_string
 	}
 
-	data := mydb.find_base(args.BaseFindArgs,dbfindoargs)!
+	data := db.find_base(args.BaseFindArgs, dbfindoargs)!
 	mut read_o := []T{}
 	for d in data {
-		read_o << mydb.unserialize[T](d)!
+		read_o << db.unserialize[T](d)!
 	}
 	return read_o
 }
@@ -134,14 +114,13 @@ pub fn (mydb MyDB) find[T](args FindArgs[T]) ![]T {
 //////////////////////serialization
 
 // this is the method to dump binary form
-pub fn (mydb MyDB) serialize[T](obj T) ![]u8 {
+pub fn (db DB) serialize[T](obj T) ![]u8 {
 	mut enc := encoder.Encoder{}
 	$for field in T.fields {
-		$if field.typ is db.Base {
+		$if field.typ is Base {
 			enc = obj.$(field.name).bin_encoder()!
 		}
 	}
-
 	$for field in T.fields {
 		$if field.typ is int {
 			enc.add_int(obj.$(field.name))
@@ -157,40 +136,39 @@ pub fn (mydb MyDB) serialize[T](obj T) ![]u8 {
 }
 
 // serialize to 3script
-pub fn (mydb MyDB) serialize_kwargs[T](obj T) ! map[string]string {
+pub fn (db DB) serialize_kwargs[T](obj T) !map[string]string {
 	mut kwargs := obj.Base.serialize_kwargs()!
-	
+
 	$for field in T.fields {
 		$if field.typ is int {
 			val_int := obj.$(field.name)
-			kwargs[field.name]="${val_int}"
+			kwargs[field.name] = '${val_int}'
 		}
 		$if field.typ is string {
-			kwargs[field.name]=obj.$(field.name)
+			kwargs[field.name] = obj.$(field.name)
 		}
 		$if field.typ is []u32 {
-			mut listu32:=""
-			for i in obj.$(field.name){
-				listu32+="${i},"
+			mut listu32 := ''
+			for i in obj.$(field.name) {
+				listu32 += '${i},'
 			}
-			listu32=listu32.trim_string_right(",")
-			kwargs["listu32"]=listu32
+			listu32 = listu32.trim_string_right(',')
+			kwargs['listu32'] = listu32
 		}
 	}
 	return kwargs
 }
 
-
 // this is the method to load binary form
-pub fn (mydb MyDB) unserialize[T](data []u8) !T {
+pub fn (db DB) unserialize[T](data []u8) !T {
 	// mut d := encoder.decoder_new(data)
-	
-	mut dec, base := db.base_decoder(data)!
+
+	mut dec, base := base_decoder(data)!
 	mut obj := T{
 		Base: base
 	}
 	$for field in T.fields {
-		$if field.typ is db.Base {
+		$if field.typ is Base {
 			// base already decoded above
 		}
 		$if field.typ is int {
@@ -206,35 +184,32 @@ pub fn (mydb MyDB) unserialize[T](data []u8) !T {
 	return obj
 }
 
-
 // serialize to 3script
-pub fn (mydb MyDB) serialize_3script[T](obj T) !string {
-	p:=paramsparser.new_from_dict(mydb.serialize_kwargs[T](obj)!)!
-	return p.export(pre:"!!${mydb.objtype}.define ")
+pub fn (db DB) serialize_3script[T](obj T) !string {
+	p := paramsparser.new_from_dict(db.serialize_kwargs[T](obj)!)!
+	return p.export(pre: '!!${db.objtype}.define ')
 }
 
-
-pub fn (mydb MyDB) unserialize_3script[T](txt string) ![]T {
-	mut res:=[]T{}
-	for r in mydb.base_decoder_3script(txt)!{
-		mut o := T{Base: r.base}
-		p:=r.params
+pub fn (db DB) unserialize_3script[T](txt string) ![]T {
+	mut res := []T{}
+	for r in db.base_decoder_3script(txt)! {
+		mut o := T{
+			Base: r.base
+		}
+		p := r.params
 
 		$for field in T.fields {
-			$if field.typ is db.Base {
-				// base already decoded above
-			}
 			$if field.typ is int {
-				obj.$(field.name) = p.get_int_default(field.name,0)!
+				obj.$(field.name) = p.get_int_default(field.name, 0)!
 			}
 			$if field.typ is string {
-				obj.$(field.name) = p.get_default(field.name,"")!
+				obj.$(field.name) = p.get_default(field.name, '')!
 			}
 			$if field.typ is []u32 {
 				obj.$(field.name) = dec.get_list_u32(field.name)!
 			}
 		}
-		res<<o
+		res << o
 	}
 	return res
 }

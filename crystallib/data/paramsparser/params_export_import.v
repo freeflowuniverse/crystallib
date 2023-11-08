@@ -140,8 +140,8 @@ pub fn (p Params) export(args ExportArgs) string {
 	for item in items {
 		if item.multiline {
 			mut txt := item.txt.trim(' \'"').replace('\\n', '\n')
+			// txt = txt[1..txt.len - 1] // remove extra quotes (who says there are always quotes???)
 			out += '\n    ${item.key}:\''
-			out += '\n'
 			out += texttools.indent(txt, '        ')
 			out += "    '"
 		} else {
