@@ -14,17 +14,19 @@ const(
 )
 
 __global(
+	test_begin ourtime.OurTime
 	test_db DB
 )
 
 struct TestStruct {
 	Base
-	text string
-	number int
+	text string [index]
+	number int [index]
 	u32s []u32
 }
 
 fn testsuite_begin() {
+	test_begin = ourtime.now()
 	test_db = DB{
 		circlename: circlename
 		objtype: objtype
@@ -73,8 +75,6 @@ fn test_set() {
 	// test that serialized object exists in db table
 	serialized := test_db.serialize[TestStruct](object)!
 	assert serialized == table_get(mut test_db, object.gid)!
-
-	// TODO: test that object is written to find table with indeces.
 }
 
 fn test_get() {
@@ -91,9 +91,9 @@ fn test_get() {
 	assert object == test_db.get[TestStruct](object.gid)!
 }
 
-fn test_find() {
+fn test_find_by_name() {
 	object := test_db.new[TestStruct](
-		name: 'FindTester'
+		name: 'FindByName'
 		description: 'A test object created for the sake of testing.'
 		object: TestStruct {
 			text: 'Test text'
@@ -102,32 +102,134 @@ fn test_find() {
 		}
 	)!
 	test_db.set[TestStruct](object)!
-
-	assert find_by_name(object)
-	assert find_by_mtime(object)
-	assert find_by_ctime(object)
-}
-
-fn find_by_name(object TestStruct) bool {
 	found_objs := test_db.find[TestStruct](
 		name: object.name
 		object: TestStruct{}
 	)!
-	return found_objs.len == 1 && found_objs[0] == object
+	assert found_objs.len == 1 
+	assert found_objs[0] == object
 }
 
-fn find_by_mtime(object TestStruct) bool {
+fn test_find_by_mtime() {
+	object := test_db.new[TestStruct](
+		name: 'FindByMTime'
+		description: 'A test object created for the sake of testing.'
+		object: TestStruct {
+			text: 'Test text'
+			number: 42
+			u32s: [u32(11), u32(101)]
+		}
+	)!
+	test_db.set[TestStruct](object)!
 	found_objs := test_db.find[TestStruct](
-		name: object.name
+		mtime_from: test_begin
+		mtime_to: ourtime.now()
 		object: TestStruct{}
 	)!
-	return found_objs.len == 1 && found_objs[0] == object
+	assert found_objs.len == 4
+	assert found_objs[3] == object
 }
 
-fn find_by_ctime(object TestStruct) bool {
+fn test_find_by_ctime() {
+	object := test_db.new[TestStruct](
+		name: 'FindByCTime'
+		description: 'A test object created for the sake of testing.'
+		object: TestStruct {
+			text: 'Test text'
+			number: 42
+			u32s: [u32(11), u32(101)]
+		}
+	)!
+	test_db.set[TestStruct](object)!
 	found_objs := test_db.find[TestStruct](
-		name: object.name
+		ctime_from: test_begin
+		ctime_to: ourtime.now()
 		object: TestStruct{}
 	)!
-	return found_objs.len == 1 && found_objs[0] == object
+	assert found_objs.len == 5
+	assert found_objs[4] == object
+}
+
+fn test_find_by_index() {
+	object := test_db.new[TestStruct](
+		name: 'FindTester'
+		description: 'A test object created for the sake of testing.'
+		object: TestStruct {
+			text: 'indextext'
+			number: 77
+			u32s: [u32(11), u32(101)]
+		}
+	)!
+	test_db.set[TestStruct](object)!
+	
+	// find by string index
+	mut found_objs := test_db.find[TestStruct](
+		object: TestStruct{
+			text: 'indextext'
+		}
+	)!
+	assert found_objs.len == 1
+	assert found_objs[0] == object
+	
+	// find by wrong string index
+	found_objs = test_db.find[TestStruct](
+		object: TestStruct{
+			text: 'someindextext'
+		}
+	)!
+	assert found_objs.len == 0
+
+	// find by number index 
+	found_objs = test_db.find[TestStruct](
+		object: TestStruct{
+			number: 77
+		}
+	)!
+	assert found_objs.len == 1
+	assert found_objs[0] == object
+
+	// find by wrong number index 
+	found_objs = test_db.find[TestStruct](
+		object: TestStruct{
+			number: 33
+		}
+	)!
+	assert found_objs.len == 0
+
+	// // attempt find by non-index field
+	// found_objs = test_db.find[TestStruct](
+	// 	object: TestStruct{
+	// 		u32s: [u32(11), u32(101)]
+	// 	}
+	// )!
+	// assert found_objs.len == 0
+}
+
+fn test_find() {
+	object := test_db.new[TestStruct](
+		name: 'FindTester'
+		description: 'A test object created for the sake of testing.'
+		object: TestStruct {
+			text: 'test_find'
+			number: 42
+			u32s: [u32(11), u32(101)]
+		}
+	)!
+	test_db.set[TestStruct](object)!
+
+	// find without args
+	mut found_objs := test_db.find[TestStruct](
+		object: TestStruct{}
+	)!
+	assert found_objs.len == 7
+
+	// find with both ctime and index
+	found_objs = test_db.find[TestStruct](
+		ctime_from: test_begin
+		ctime_to: ourtime.now()
+		object: TestStruct{
+			text: 'test_find'
+		}
+	)!
+	assert found_objs.len == 1
 }
