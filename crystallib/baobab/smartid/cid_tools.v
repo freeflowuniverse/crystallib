@@ -1,78 +1,35 @@
 module smartid
 
 import freeflowuniverse.crystallib.core.texttools
-import json
 import os
 
 
 __global (
-	ciddb  shared  []CIDDB
+	ciddb  shared  map[string]u32
 )
 
-pub struct CIDDB{
-pub mut:
-	cid2u32 map[string]u32
-}
 
 
 fn cid_from_name(name string) !CID {
-	name2:=texttools.name_fix(name)
-	println(1)
-	mut cdb:=cid_db_get()!
-	println(2)
-	if name2 in cdb.cid2u32{
-		cidid:=cdb.cid2u32[name2] or {u32(0)}
+	if ciddb_exists(name)!{
+		cidid:=ciddb_get(name)!
 		return CID{circle:cidid}
 	}
-	mut highest:=1
-	for _,val in cdb.cid2u32{
-		if val > highest{
-			highest=val
-		}
-	}
-	cdb.cid2u32[name2]=u32(highest+1)
-	println(3)
-	cid_db_set(cdb)!
-	return CID{circle:cdb.cid2u32[name2]}
+	h:=ciddb_highest()
+	ciddb_set(name,h)!
+	return CID{circle:h}
 }
 
-fn name_from_u32(id u32) !string {
-	mut cdb:=cid_db_get()!
-	for key,val in cdb.cid2u32{
-		if val==id{
-			return key
-		}
-	}
-	return error("Didn't find cid with id:'$id'")
+fn name_from_u32(id u32) !string{
+ 	return ciddb_key_from_val(id)!
 }
+
 
 
 //the core functions with lock 
 
-fn cid_db_get() !CIDDB {
-	lock ciddb{
-		if ciddb.len==0{
-			ciddb<< CIDDB{}
-		}
-		println(ciddb[0].cid2u32)
-		if ciddb[0].cid2u32.keys().len==0{
-			println(":check disk")
-			if os.exists("${dbpath()}//ciddb.json"){
-				d:=os.read_file("${dbpath()}//ciddb.json")!
-				cdb:=json.decode(CIDDB,d)!
-				ciddb[0]=cdb
-				println(":decode")
-			}else{
-				ciddb[0].cid2u32["core"]=1
-				println(":exists")
-			}
-		}
-		return ciddb[0]
-	}
-	panic("bug")
-}
 
-fn dbpath() string{
+fn dbpathdir() string{
 	mut h:=os.getenv("HOME")
 	if h==""{
 		panic("can't find home env")
@@ -80,16 +37,110 @@ fn dbpath() string{
 	return "${h}/hero/db"
 }
 
-fn cid_db_set(cdb CIDDB) !{
-	mut d:=""
-	lock ciddb{
-		if ciddb.len==0{
-			ciddb<< cdb
-		}				
-		d=json.encode(ciddb[0])
-	}
-	println("write1")
-	os.mkdir_all(dbpath())!
-	os.write_file("${dbpath()}/ciddb.json",d)!
-	println("write2")
+fn dbpath() string{
+	return "${dbpathdir()}/cid_map.db"
 }
+
+
+fn ciddb_get(name_ string) !u32 {
+	name:=texttools.name_fix(name_)
+	rlock ciddb{		
+		if name in ciddb{
+			return ciddb[name]
+		}
+	}	
+	return error("cann't find $name in ciddb")
+}
+
+fn ciddb_set(name_ string, val u32) ! {
+	name:=texttools.name_fix(name_)
+	ciddb_load()!
+	lock ciddb{		
+		if name in ciddb{
+			if ciddb[name] == val{
+				return
+			}
+		}
+		ciddb[name]=val
+	}	
+	ciddb_save()!
+}
+
+fn ciddb_exists(name_ string) !bool {
+	name:=texttools.name_fix(name_)
+	ciddb_load()!
+	rlock ciddb{		
+		if name in ciddb{
+			return true
+		}
+	}
+	return false
+}
+
+fn ciddb_highest() u32 {
+	mut highest:=u32(1)
+	rlock ciddb{
+		for _,val in ciddb{
+			if val > highest{
+				highest=val
+			}
+		}
+	}
+	return highest
+}
+
+//find key which has his value
+fn ciddb_key_from_val(id u32) !string {
+	rlock ciddb{
+		for key,val in ciddb{
+			if val==id{
+				return key
+			}
+		}
+	}
+	return error("Didn't find val in ciddb with id:'$id'")
+}
+
+
+fn ciddb_load() ! {
+	lock ciddb{
+		if ciddb.keys().len==0{
+			ciddb["core"]=1
+			println(":check disk")
+			if os.exists(dbpath()){
+				d:=os.read_file(dbpath())!
+				for line in d.split_into_lines(){
+					if line.contains(":"){
+						parts:=line.split(":")
+						if parts.len!=2{
+							panic("error in ciddb, wrong parts")
+						}
+						key:=parts[0].trim_space()
+						data:=parts[1].trim_space().u32()
+						ciddb[key]=data
+					}
+				}
+			}
+		}
+	}
+}
+
+
+fn ciddb_save() !{
+	mut out:=[]string{}
+	rlock ciddb{		
+		if ciddb.len==0{
+			return
+		}
+		for key,val in ciddb{
+			out<<"$key:$val\n"
+		}
+	}
+	if ciddb.len<2{
+		os.mkdir_all(dbpathdir())!
+	}
+	os.write_file(dbpath(),out.join_lines())!
+	// println("write: ${out.len}")
+}
+
+
