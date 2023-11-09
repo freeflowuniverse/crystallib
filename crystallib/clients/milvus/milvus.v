@@ -29,11 +29,16 @@ struct MilvusResponse {
 fn (c Client) do_request(mut req http.Request) !string {
 	c.add_headers(mut req)!
 	res := req.do()!
+	if res.status() != http.Status.ok {
+		return error('${res.status_code} ${res.status_msg}')
+	}
+
 	milvus_response := json.decode(MilvusResponse, res.body) or {
 		return error('failed to decode milvus response: ${err}')
 	}
-	if res.status() != http.Status.ok {
-		return error('milvus error code ${milvus_response.code}: ${milvus_response.message}')
+
+	if milvus_response.code != 200 {
+		return error('milvus error ${milvus_response.code}: ${milvus_response.message}')
 	}
 
 	return milvus_response.data

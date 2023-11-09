@@ -5,16 +5,16 @@ import net.http
 
 pub struct Collection {
 pub:
-	collection_name string [json: 'collectionName'; required] // The name of the collection to create.
-	db_name         string [json: 'dbName'] // The name of the database.
-	description     string [required]       // The description of the collection
-	dimension       u32 // The number of dimensions for the vector field of the collection. For performance-optimized CUs, this value ranges from 1 to 32768. For capacity-optimized and cost-optimized CUs, this value ranges from 32 to 32768. The value ranges from 1 to 32768.
-	metric_type     string [json: 'metricType']   = 'L2' // The distance metric used for the collection. The value defaults to L2.
-	primary_field   string [json: 'primaryField'] = 'id' // The primary key field. The value defaults to id.
-	vector_field    string [json: 'vectorField']  = 'vector' // The vector field. The value defaults to vector.
+	collection_name string  [json: 'collectionName'; required] // The name of the collection to create.
+	db_name         ?string [json: 'dbName'] // The name of the database.
+	description     ?string // The description of the collection
+	dimension       u16     [required] // The number of dimensions for the vector field of the collection. For performance-optimized CUs, this value ranges from 1 to 32768. For capacity-optimized and cost-optimized CUs, this value ranges from 32 to 32768. The value ranges from 1 to 32768.
+	metric_type     string  [json: 'metricType']   = 'L2' // The distance metric used for the collection. The value defaults to L2.
+	primary_field   string  [json: 'primaryField'] = 'id' // The primary key field. The value defaults to id.
+	vector_field    string  [json: 'vectorField']  = 'vector' // The vector field. The value defaults to vector.
 }
 
-pub fn (c Client) create_collections(collection Collection) ! {
+pub fn (c Client) create_collection(collection Collection) ! {
 	url := '${c.endpoint}/v1/vector/collections/create'
 	body := json.encode(collection)
 	mut req := http.new_request(http.Method.post, url, body)
@@ -78,8 +78,8 @@ pub fn (c Client) describe_collection(args DescribeCollectionArgs) !CollectionDe
 
 [params]
 pub struct DropCollectionArgs {
-	collection_name string  [json: 'collectionName'; required]
-	db_name         ?string [json: 'dbName']
+	collection_name string  [json: 'collectionName'; required] // The name of the collection to describe.
+	db_name         ?string [json: 'dbName'] // The name of the database.
 }
 
 pub fn (c Client) drop_collection(args DropCollectionArgs) ! {
