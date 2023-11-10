@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.core.texttools
 pub struct Action {
 pub mut:
 	name     string              [required]
-	domain   string = 'core'
+	cid   string = 'core'
 	actor    string              [required] // is not always an actor in strict sense, is just the 2nd element
 	circle   string              [required]
 	priority u8 = 10 // 0 is highest, do 10 as default
@@ -27,7 +27,7 @@ pub struct DocPointer {
 pub struct Actions {
 pub mut:
 	actions       []Action // should be empty after filter action
-	defaultdomain string = 'core'
+	defaultcid string = 'core'
 	defaultcircle string
 	defaultactor  string
 	errors        []ActionError
@@ -58,8 +58,8 @@ pub fn (actions Actions) str() string {
 
 pub fn (action Action) str() string {
 	mut out := '!!'
-	if action.domain != 'core' {
-		out += '${action.domain}.'
+	if action.cid != 'core' {
+		out += '${action.cid}.'
 	}
 	if action.actor != '' {
 		out += '${action.actor}.'

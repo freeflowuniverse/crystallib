@@ -1,8 +1,5 @@
 module smartid
 
-import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.clients.redisclient
-
 pub struct CID {
 pub mut:
 	circle u32
@@ -30,7 +27,8 @@ pub mut:
 // 		circle u32
 // }
 // ```
-pub fn cid(args CIDGet) !CID {
+pub fn cid(args_ CIDGet) !CID {
+	mut args := args_
 	if args.cid_int > 0 {
 		return CID{
 			circle: args.cid_int
@@ -40,22 +38,7 @@ pub fn cid(args CIDGet) !CID {
 			circle: sid_int(args.cid_string)
 		}
 	} else if args.name.len > 0 {
-		cidname := texttools.name_fix(args.name)
-		key := 'circle:names:${cidname}'
-		mut redis := redisclient.core_get()!
-		mut cid := redis.get(key)!
-		if cid == '' {
-			// means we don't have it het
-			cid0 := cid_core()
-			cid = sid_new(cid0.str())!
-			redis.set(key, '${cid}')!
-			cid = redis.get(key) or { panic('bug') }
-			id2name_key := 'circle:id2name:${cid}'
-			redis.set(id2name_key, '${cidname}')!
-		}
-		return CID{
-			circle: sid_int(cid)
-		}
+		return cid_from_name(args.name)!
 	} else {
 		return error('need to specify name, cid_int or cid_string')
 	}
@@ -78,17 +61,11 @@ pub fn (cid CID) str() string {
 	return sid_str(cid.circle)
 }
 
-pub fn (cid CID) name() string {
-	if cid.circle == 0 {
+pub fn (cid CID) name() !string {
+	if cid.circle == 1 {
 		return 'core'
 	}
-	mut redis := redisclient.core_get() or { panic("can't connect to redis") }
-	id2name_key := 'circle:id2name:${cid}' // is the string representation
-	name := redis.get(id2name_key) or { panic("can't connect to redis") }
-	if name == '' {
-		panic('name should not be empty in redis for ${cid}')
-	}
-	return name
+	return name_from_u32(cid.circle)
 }
 
 [params]

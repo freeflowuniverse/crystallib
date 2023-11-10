@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.data.paramsparser
 [params]
 pub struct FilterArgs {
 pub:
-	domain       string = 'core'
+	cid       string = 'core'
 	actor        string   // can be empty, this means will not filter based on actor
 	circle       string   // can be empty, this means will not filter based on circle	
 	names_filter []string // can be empty, then no filter, unix glob filters are allowed
@@ -23,7 +23,7 @@ pub fn (parser Actions) filtersort(args FilterArgs) ![]Action {
 	mut result := []Action{}
 	for action_ in parser.actions {
 		mut action := action_
-		if args.domain != '' && args.domain != action.domain {
+		if args.cid != '' && args.cid != action.cid {
 			continue
 		}
 		if args.circle != '' && args.circle != '*' && args.circle != action.circle {

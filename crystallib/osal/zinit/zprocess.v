@@ -35,7 +35,7 @@ pub fn (zp ZProcess) cmd() string {
 			panic('cmd cannot have \\n and not have cmd file on disk on ${p}')
 		}
 		if zp.cmd == '' {
-			return error('cmd cannot be empty')
+			panic('cmd cannot be empty')
 		}
 	}
 	return '${zp.cmd}'
@@ -50,7 +50,7 @@ pub fn (zp ZProcess) cmdtest() string {
 			panic('cmd cannot have \\n and not have cmd file on disk on ${p}')
 		}
 		if zp.test == '' {
-			return error('cmd cannot be empty')
+			panic('cmd cannot be empty')
 		}
 	}
 	return '${zp.test}'

@@ -18,15 +18,15 @@ example
 the first one is the action, the rest are the params
 
 
-## to select domain, actor or circle
+## to select cid, actor or circle
 
 ```go
-!!select_domain core
+!!select_cid core
 !!select_circle aaa
 !!select_actor people
 ```
 
-Depending specified domain or circle or actor, we make a default selection
+Depending specified cid or circle or actor, we make a default selection
 
 ## way how to use for a module
 

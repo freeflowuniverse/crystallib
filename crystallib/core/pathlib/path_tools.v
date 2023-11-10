@@ -4,6 +4,7 @@ import os
 import freeflowuniverse.crystallib.core.texttools
 import time
 import crypto.md5
+import rand
 
 // check path exists
 pub fn (mut path Path) exists() bool {
@@ -36,14 +37,15 @@ pub fn (mut path Path) rename(name string) ! {
 // uncompress to specified directory .
 // if copy then will keep the original
 pub fn (mut path Path) expand(dest string) !Path {
+	$if debug{println(" - expand ${path.path}")}
 	if dest.len < 4 {
 		return error("Path dest needs to be mentioned and +4 char. Now '${dest}'")
 	}
-	desto := get_dir(path: dest, create: true)!
-	println(desto)
+	mut desto := get_dir(path: dest, create: true)!
+	desto.empty()!
 	if path.name().to_lower().ends_with('.tar.gz') || path.name().to_lower().ends_with('.tgz') {
 		cmd := 'tar -xzvf ${path.path} -C ${desto.path}'
-		println(cmd)
+		// println(cmd)
 		res := os.execute(cmd)
 		if res.exit_code > 0 {
 			return error('Could not expand.\n${res}')
@@ -56,6 +58,22 @@ pub fn (mut path Path) expand(dest string) !Path {
 		if res.exit_code > 0 {
 			return error('Could not expand xz.\n${res}')
 		}
+	} else if path.name().to_lower().ends_with('.zip') {
+		cmd := 'unzip  ${path.path} -d ${dest}'
+		// println(cmd)
+		res := os.execute(cmd)
+		// println(res)
+		if res.exit_code > 0 {
+			return error('Could not expand zip.\n${res}')
+		}		
+	} else if path.name().to_lower().ends_with('.bz2') {
+		cmd := 'bunzip2 -k ${path.path}'
+		// println(cmd)
+		res := os.execute(cmd)
+		// println(res)
+		if res.exit_code > 0 {
+			return error('Could not expand bz2.\n${res}')
+		}			
 	} else {
 		println(path)
 		panic('not implemented yet')
@@ -122,6 +140,59 @@ pub fn (path Path) parent() !Path {
 		cat: Category.dir
 		exist: .unknown
 	}
+}
+
+pub struct MoveArgs {
+pub mut:
+	dest           string   // path
+	delete         bool     // if true will remove files which are on dest which are not on source
+	chmod_execute  bool
+}
+
+//move to other location
+// ```
+// dest           string   // path
+// delete         bool     // if true will remove files which are on dest which are not on source
+// ```
+pub fn (mut path Path) move(args MoveArgs) ! {
+	mut d:=get(args.dest)
+	if d.exists(){
+		if args.delete{
+			d.delete()!
+		}else{
+			return error("Found dest dir in move and can't delete. \n$args")
+		}
+	}
+	os.mv(path.path,d.path)!
+	if args.chmod_execute{
+		d.chmod(0o770)!
+	}
+}
+
+//the path will move itself up 1 level .
+//e.g. path is /tmp/rclone and there is /tmp/rclone/rclone-v1.64.2-linux-amd64 .
+// that last dir needs to move 1 up
+pub fn (mut path Path) moveup_single_subdir() ! {
+	mut plist:=path.list(recursive:false,ignoredefault:true,dirs_only:true)!
+	println(plist)
+	if plist.paths.len!=1{
+		return error("could not find one subdir in $path.path , so cannot move up")
+	}
+	mut pdest:=plist.paths[0]
+	pdest.moveup()!
+}
+
+//the path will move itself up 1 level .
+//the e.g. /tmp/rclone/rclone-v1.64.2-linux-amd64/ -> /tmp/rclone
+pub fn (mut path Path) moveup() ! {
+	println("move up: $path")
+	pdest:=path.parent()!
+	tmpdir:="${os.temp_dir()}/${rand.u16()}"
+	path.move(dest:tmpdir,delete:true)!
+	mut tmpdirpath:=get_dir(path:tmpdir)!
+	tmpdirpath.move(dest:pdest.path,delete:true)!
+	path.path = pdest.path
+	path.check()
 }
 
 // returns extension without .

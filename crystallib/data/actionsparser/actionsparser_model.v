@@ -1,15 +1,15 @@
 module actionsparser
 
-fn domain_check(c string, block string) ! {
+fn cid_check(c string, block string) ! {
 	if c.len == 0 {
-		return error('domain not specified\nFor block: ${block}')
+		return error('cid not specified\nFor block: ${block}')
 	}
 
 	if c.len < 5 && c != 'core' {
-		return error("domain bad specified (len min 5), found '${c}'.\nFor block: ${block}")
+		return error("cid bad specified (len min 5), found '${c}'.\nFor block: ${block}")
 	}
 	if c.len > 20 {
-		return error("domain bad specified (len max 20), found '${c}'.\nFor block: ${block}")
+		return error("cid bad specified (len max 20), found '${c}'.\nFor block: ${block}")
 	}
 }
 

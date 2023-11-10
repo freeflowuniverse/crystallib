@@ -2,13 +2,16 @@ module s3
 
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.osal.zinit as zinitosal
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.zinit
+import freeflowuniverse.crystallib.installers.rclone
 
 // install s3 will return true if it was already installed
 pub fn install() ! {
 	base.install()!
 	zinit.install()!
+	rclone.install()!
 	println(' - package_install install s3')
 	if !osal.done_exists('install_s3') && !osal.cmd_exists('s3') {
 		osal.package_install('libssl-dev,pkg-config')!
@@ -70,4 +73,11 @@ pub fn start(args_ StartArgs) ! {
 	}
 	cmd += ' --access-key ${args.access_key}'
 	cmd += ' --secret-key ${args.secret_key}'
+
+	mut z:=zinitosal.new()!
+    p:=z.new(
+        name:"s3"
+        cmd:cmd
+    )!	
+
 }

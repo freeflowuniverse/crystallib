@@ -30,6 +30,7 @@ pub mut:
 // regex         []string
 // recursive     bool // std off, means we recursive not over dirs by default
 // ignoredefault bool = true // ignore files starting with . and _
+// dirs_only     bool
 // ```
 // .
 // example see https://github.com/freeflowuniverse/crystallib/blob/development/examples/core/pathlib/examples/list/path_list.v
@@ -37,7 +38,8 @@ pub mut:
 // e.g. p.list(regex:[r'.*\.v$'])!  //notice the r in front of string, this is regex for all files ending with .v
 // .
 // please note links are ignored for walking over dirstructure (for files and dirs)
-pub fn (path Path) list(args_ ListArgs) !PathList {
+pub fn (mut path Path) list(args_ ListArgs) !PathList {
+	$if debug{println( ' - list: ${args_}')}
 	mut r := []regex.RE{}
 	for regexstr in args_.regex {
 		mut re := regex.regex_opt(regexstr) or {
@@ -69,15 +71,19 @@ mut:
 	dirs_only     bool
 }
 
-fn (path Path) list_internal(args ListArgsInternal) ![]Path {
+fn (mut path Path) list_internal(args ListArgsInternal) ![]Path {
+	debug:=false
+	path.check()
 	if path.cat != Category.dir {
 		// return error('Path must be directory or link to directory')
 		return []Path{}
 	}
+	if debug{println( ' - ${path.path}')}
 	mut ls_result := os.ls(path.path) or { []string{} }
 	ls_result.sort()
 	mut all_list := []Path{}
 	for item in ls_result {
+		if debug{println( '  - ${item}')}
 		p := os.join_path(path.path, item)
 		mut new_path := get(p)
 		// Check for dir and linkdir
@@ -98,7 +104,10 @@ fn (path Path) list_internal(args ListArgsInternal) ![]Path {
 			if args.recursive {
 				mut rec_list := new_path.list_internal(args)!
 				all_list << rec_list
+			}else{
+				all_list << new_path
 			}
+			
 		}
 		mut addthefile := true
 		for r in args.regex {

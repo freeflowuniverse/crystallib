@@ -50,7 +50,7 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 		return error('please make sure curl has been installed.')
 	}
 
-	mut dest := pathlib.get_file(path: args.dest)!
+	mut dest := pathlib.get_file(path: args.dest,check:false)!
 
 	// now check to see the url is not different
 	mut meta := pathlib.get_file(path: args.dest + '.meta', create: true)!
@@ -62,70 +62,77 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 	}
 
 	if args.reset {
-		mut dest_delete := pathlib.get_file(path: args.dest + '_')!
+		mut dest_delete := pathlib.get_file(path: args.dest + '_',check:false)!
 		dest_delete.delete()!
 	}
 
 	meta.write(args.url.trim_space())!
 
 	// check if the file exists, if yes and right size lets return
+	mut todownload:=true
 	if dest.exists() {
 		size := dest.size_kb()!
 		if args.minsize_kb > 0 {
 			if size > args.minsize_kb {
 				if args.maxsize_kb > 0 {
 					if size < args.maxsize_kb {
-						if args.expand_dir.len > 0 {
-							return dest.expand(args.expand_dir)!
-						}
-						return dest
+						todownload=false
 					}
 				} else {
 					if args.expand_dir.len > 0 {
-						return dest.expand(args.expand_dir)!
+						todownload=false
 					}
-					return dest
 				}
 			}
 		}
 	}
 
-	mut dest0 := pathlib.get_file(path: args.dest + '_')!
-	cmd := '
-		rm -f ${dest0.path}_
-		cd /tmp
-		curl -L ${args.url} -o ${dest0.path}
-		'
-	exec(
-		cmd: cmd
-		timeout: args.timeout
-		retry: args.retry
-		debug: false
-		description: 'download ${args.url} to ${dest0.path}'
-	)!
+	
+	if todownload{
+		mut dest0 := pathlib.get_file(path: args.dest + '_')!
+	
+		cmd := '
+			rm -f ${dest0.path}_
+			cd /tmp
+			curl -L ${args.url} -o ${dest0.path}
+			'
+		exec(
+			cmd: cmd
+			timeout: args.timeout
+			retry: args.retry
+			debug: true
+			description: 'download ${args.url} to ${dest0.path}'
+			stdout:true
+		)!
 
-	if dest0.exists() {
-		size0 := dest0.size_kb()!
-		println(size0)
-		if args.minsize_kb > 0 {
-			if size0 < args.minsize_kb {
-				return error('Could not download ${args.url} to ${dest0.path}, size (${size0}) was smaller than ${args.minsize_kb}')
+		if dest0.exists() {
+			size0 := dest0.size_kb()!
+			// println(size0)
+			if args.minsize_kb > 0 {
+				if size0 < args.minsize_kb {
+					return error('Could not download ${args.url} to ${dest0.path}, size (${size0}) was smaller than ${args.minsize_kb}')
+				}
+			}
+			if args.maxsize_kb > 0 {
+				if size0 > args.maxsize_kb {
+					return error('Could not download ${args.url} to ${dest0.path}, size (${size0}) was larger than ${args.maxsize_kb}')
+				}
 			}
 		}
-		if args.maxsize_kb > 0 {
-			if size0 > args.maxsize_kb {
-				return error('Could not download ${args.url} to ${dest0.path}, size (${size0}) was larger than ${args.maxsize_kb}')
-			}
-		}
+		dest0.rename(dest.name())!
+		dest.check()
 	}
-	dest0.rename(dest.name())!
+
+	println(dest)
+
+	// if true{panic("s")}
 
 	if args.expand_dir.len > 0 {
-		return dest0.expand(args.expand_dir)!
+		return dest.expand(args.expand_dir)!
 	}
 	if args.expand_file.len > 0 {
-		return dest0.expand(args.expand_file)!
+		return dest.expand(args.expand_file)!
 	}
 
-	return dest0
+	return dest
 }

@@ -10,8 +10,8 @@ import time
 pub struct MyStruct {
 	db.Base
 pub mut:
-	nr      int
-	color   string
-	nr2     int
-	listu32 []u32
+	nr      int [index]
+	color   string [index]
+	nr2     int [index]
+	listu32 []u32 [index]
 }
