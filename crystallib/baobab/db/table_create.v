@@ -22,7 +22,7 @@ fn tables_create(mut db DB, mut args DBTableCreateArgs) ! {
 	}
 	mut datatable := 'CREATE TABLE IF NOT EXISTS ${table_name_data(db)} (\n'
 	datatable += 'data BLOB,\n'
-	datatable += 'oid INTEGER '
+	datatable += 'oid INTEGER PRIMARY KEY'
 	datatable += ');\n'
 	// println(datatable)
 	db.sql_exec_one(datatable)!
