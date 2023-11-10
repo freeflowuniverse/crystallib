@@ -32,7 +32,6 @@ pub fn configure()!{
 		"        
 		config=texttools.dedent(config)
 		out+="\n${config}\n"
-
     }
 }
 

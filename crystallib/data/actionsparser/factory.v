@@ -5,8 +5,7 @@ pub struct ActionsArgs {
 pub:
 	text          string
 	path          string // can be dir or file
-	defaultcid string = 'core'
-	defaultcircle string = 'acircle'
+	defaultcircle string 
 	defaultactor  string
 	actor_filter []string
 	action_filter []string
