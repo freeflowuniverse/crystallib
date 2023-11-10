@@ -39,7 +39,9 @@ pub mut:
 // .
 // please note links are ignored for walking over dirstructure (for files and dirs)
 pub fn (mut path Path) list(args_ ListArgs) !PathList {
-	$if debug{println( ' - list: ${args_}')}
+	$if debug {
+		println(' - list: ${args_}')
+	}
 	mut r := []regex.RE{}
 	for regexstr in args_.regex {
 		mut re := regex.regex_opt(regexstr) or {
@@ -72,18 +74,22 @@ mut:
 }
 
 fn (mut path Path) list_internal(args ListArgsInternal) ![]Path {
-	debug:=false
+	debug := false
 	path.check()
 	if path.cat != Category.dir {
 		// return error('Path must be directory or link to directory')
 		return []Path{}
 	}
-	if debug{println( ' - ${path.path}')}
+	if debug {
+		println(' - ${path.path}')
+	}
 	mut ls_result := os.ls(path.path) or { []string{} }
 	ls_result.sort()
 	mut all_list := []Path{}
 	for item in ls_result {
-		if debug{println( '  - ${item}')}
+		if debug {
+			println('  - ${item}')
+		}
 		p := os.join_path(path.path, item)
 		mut new_path := get(p)
 		// Check for dir and linkdir
@@ -104,10 +110,9 @@ fn (mut path Path) list_internal(args ListArgsInternal) ![]Path {
 			if args.recursive {
 				mut rec_list := new_path.list_internal(args)!
 				all_list << rec_list
-			}else{
+			} else {
 				all_list << new_path
 			}
-			
 		}
 		mut addthefile := true
 		for r in args.regex {

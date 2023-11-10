@@ -1,5 +1,7 @@
 # Circle
 
+> TODO: not good yet, need quite some change
+
 - has a unique CID = circle id (is a SID)
 - has following components
   - context 

@@ -63,7 +63,7 @@ pub fn get_dir(args_ GetArgs) !Path {
 		if args.empty {
 			p2.empty()!
 		}
-		if args.delete{
+		if args.delete {
 			p2.delete()!
 		}
 	}
@@ -97,10 +97,9 @@ pub fn get_file(args_ GetArgs) !Path {
 		if p2.exists() && !p2.is_file() {
 			return error('Path ${args.path} is not a file.')
 		}
-		if args.delete{
+		if args.delete {
 			p2.delete()!
 		}
-
 	}
 	return p2
 }

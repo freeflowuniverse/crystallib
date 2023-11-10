@@ -18,7 +18,6 @@ pub fn install(args InstallArgs) ! {
 		return error('only support ubuntu for now')
 	}
 
-
 	if args.reset == false && osal.done_exists('install_restic') && osal.cmd_exists('restic') {
 		return
 	}
@@ -28,7 +27,7 @@ pub fn install(args InstallArgs) ! {
 	// make sure we install base on the node
 	base.install()!
 
-	mut binpath:=pathlib.get_file(path:"/tmp/restic_0.16.2_linux_amd64",delete:true)!
+	mut binpath := pathlib.get_file(path: '/tmp/restic_0.16.2_linux_amd64', delete: true)!
 
 	mut dest := osal.download(
 		url: 'https://github.com/restic/restic/releases/download/v0.16.2/restic_0.16.2_linux_amd64.bz2'
@@ -37,8 +36,8 @@ pub fn install(args InstallArgs) ! {
 		expand_dir: '/tmp/restic'
 	)!
 
-	binpath.move(dest:"/usr/local/bin/restic",delete:true,chmod_execute:true)!
-	
+	binpath.move(dest: '/usr/local/bin/restic', delete: true, chmod_execute: true)!
+
 	osal.done_set('install_restic', 'OK')!
 
 	return

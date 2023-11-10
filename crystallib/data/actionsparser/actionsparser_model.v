@@ -13,19 +13,6 @@ fn cid_check(c string, block string) ! {
 	}
 }
 
-fn circle_check(c string, block string) ! {
-	if c.len == 0 {
-		return error('circle not specified\nFor block: ${block}')
-	}
-
-	if c.len < 3 {
-		return error("circle bad specified (len min 3), found '${c}'.\nFor block: ${block}")
-	}
-	if c.len > 30 {
-		return error("circle bad specified (len max 30), found '${c}'.\nFor block: ${block}")
-	}
-}
-
 fn actor_check(c string, block string) ! {
 	if c.len == 0 {
 		return error('actor not specified\nFor block: ${block}')

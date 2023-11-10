@@ -1,95 +1,143 @@
 module actionsparser
 
 import freeflowuniverse.crystallib.data.paramsparser
-
+import freeflowuniverse.crystallib.baobab.smartid
 [params]
 pub struct FilterArgs {
 pub:
-	cid       string = 'core'
-	actor        string   // can be empty, this means will not filter based on actor
-	circle       string   // can be empty, this means will not filter based on circle	
-	names_filter []string // can be empty, then no filter, unix glob filters are allowed
+	cids         []smartid.CID
+	actor_names  []string
+	action_names []string
 }
 
-// make sure that only actions are remembered linked to the actor or circle and also sorted in right order
-// will also sort using the names filter
+[params]
+pub struct FilterSortArgs {
+pub:
+	priorties map[u8]FilterArgs // filter and give priority
+}
+
+// filter actions based on the criteria
+//```
 // args ActionsGetArgs:
-//   actor    string [required]  //can be empty, this means will not filter based on actor
-//   circle     string	[required]  //can be empty, this means will not filter based on circle	
-//   names_filter    []string //can be empty, then no filter, unix glob filters are allowed
-//
+// cid          []u32 		//if empty will match all
+// actor_names  []string 	//if empty will match all,
+// action_names []string 	//if empty will match all
+//```
+// the action_names or actor_names can be a glob in match_glob .
+// see https://modules.vlang.io/index.html#string.match_glob .
 // return  []Action
-pub fn (parser Actions) filtersort(args FilterArgs) ![]Action {
-	mut result := []Action{}
-	for action_ in parser.actions {
-		mut action := action_
-		if args.cid != '' && args.cid != action.cid {
+pub fn (actions Actions) filter(args FilterArgs) Actions {
+	mut result := Actions{}
+	result.items = []Action{}
+	for action in actions.items {
+		if action.checkmatch(args) == false {
 			continue
 		}
-		if args.circle != '' && args.circle != '*' && args.circle != action.circle {
-			continue
-		}
-		if args.actor != '' && args.actor != action.actor {
-			continue
-		}
+		result.items << action
+	}
+	return result
+}
 
-		// if name filter is not set, just push to result
-		if args.names_filter.len == 0 {
-			result << action
-			continue
-		}
+// filter actions based on the criteria
+//```
+// struct  FilterArgs:
+//   cid          []u32 		//if empty will match all
+//   actor_names  []string 	//if empty will match all,
+//   action_names []string 	//if empty will match all
+//
+// struct FilterSortArgs {
+// 	 priorties  map[u8]FilterArgs //filter and give priority
+//```
+// the action_names or actor_names can be a glob in match_glob .
+// see https://modules.vlang.io/index.html#string.match_glob .
+// the highest priority will always be chosen . (it can be a match happens 2x)
+// return  []Action
+pub fn (actions Actions) filtersort(args FilterSortArgs) Actions {
+	mut result := map[u8][]Action{}
+	mut done := []string{}
 
-		mut prio := 0 // highest prio
-		for name_filter in args.names_filter {
-			if name_filter.contains('*') || name_filter.contains('?') || name_filter.contains('[') {
-				if action.name.match_glob(name_filter) {
-					action.priority = u8(prio)
-					result << action
-					continue
-				} else if action.name == name_filter.to_lower() {
-					action.priority = u8(prio)
-					result << action
-					continue
-				}
-			} else if action.name == name_filter.to_lower() {
-				action.priority = u8(prio)
-				result << action
-				continue
+	for prio, argsfilter in args.priorties {
+		for mut actionfiltered in actions.filter(argsfilter).items {
+			actionfiltered.priority = prio
+			if prio !in result {
+				result[prio] = []Action{}
 			}
-			prio += 1
+			result[prio] << actionfiltered
 		}
 	}
-	mut resultsorted := []Action{}
+	// lets now fill in the result
+	mut resultsorted := Actions{}
+	resultsorted.items = []Action{}
 
-	// if name filter is not set, return unsorted
-	if args.names_filter.len == 0 {
-		return result
-	}
-
-	for prioselect in 0 .. args.names_filter.len {
-		// walk over all prio's
-		for action2 in result {
-			if action2.priority == prioselect {
-				resultsorted << action2
-			}
+	mut prios := result.keys()
+	prios.sort()
+	for prio in prios {
+		for action in result[prio] {
+			resultsorted.items << action
 		}
 	}
 	return resultsorted
 }
 
-// find 1 actions based on name, if 0 or more than 1 then error
-pub fn (parser Actions) params_get(name string) !paramsparser.Params {
-	mut result := []Action{}
-	for action in parser.actions {
-		if action.name == name.to_lower() {
-			result << action
+// check if the action matches following the filter args .
+// the action_names or actor_names can be a glob in match_glob .
+// see https://modules.vlang.io/index.html#string.match_glob
+fn (action Action) checkmatch(args FilterArgs) bool {
+	mut ok := true
+	if args.cids.len > 0 {
+		ok = false
+		for cid in args.cids {
+			if cid.circle == action.cid.circle {
+				ok = true
+			}
+		}
+		if ok == false {
+			return false
 		}
 	}
-	if result.len == 0 {
-		return error("could not find params from action with name:'${name}'")
+	if args.actor_names.len > 0 {
+		ok = false
+		for actorname in args.actor_names {
+			if actorname.contains('*') || actorname.contains('?') || actorname.contains('[') {
+				if action.actor.match_glob(actorname) {
+					ok = true
+				} else if action.actor == actorname.to_lower() {
+					ok = true
+				}
+			}
+		}
+		if ok == false {
+			return false
+		}
 	}
-	if result.len > 1 {
-		return error("found more than one action with name:'${name}'")
+	if args.action_names.len > 0 {
+		ok = false
+		for actionname in args.action_names {
+			if actionname.contains('*') || actionname.contains('?') || actionname.contains('[') {
+				if action.name.match_glob(actionname) {
+					ok = true
+				} else if action.name == actionname.to_lower() {
+					ok = true
+				}
+			}
+		}
+		if ok == false {
+			return false
+		}
 	}
-	return result[0].params
+	return true
 }
+
+// find all relevant actions, return the params out of one
+pub fn (actions Actions) params_get(args FilterArgs) !paramsparser.Params {
+	mut result := actions.filter(args)
+	mut paramsresult := paramsparser.new("")!
+	for action in result.items {
+		paramsresult.merge(action.params)!
+	}
+	return paramsresult
+}
+
+
+
+//TODO: need tests for the sorted filtering

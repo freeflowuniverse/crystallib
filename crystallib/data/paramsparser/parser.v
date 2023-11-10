@@ -73,7 +73,7 @@ pub fn parse(text string) !Params {
 				continue
 			} else if ch == ' ' {
 				state = ParamStatus.start
-				result.arg_set(key)
+				result.set_arg(key)
 				key = ''
 				continue
 			} else if !validchars.contains(ch) {
@@ -96,7 +96,7 @@ pub fn parse(text string) !Params {
 		if state == ParamStatus.value {
 			if ch == ' ' {
 				state = ParamStatus.start
-				result.kwarg_set(key, value)
+				result.set(key, value)
 				key = ''
 				value = ''
 			} else {
@@ -107,7 +107,7 @@ pub fn parse(text string) !Params {
 		if state == ParamStatus.quote {
 			if ch == "'" {
 				state = ParamStatus.start
-				result.kwarg_set(key, value)
+				result.set(key, value)
 				key = ''
 				value = ''
 			} else {
@@ -119,12 +119,12 @@ pub fn parse(text string) !Params {
 
 	// last value
 	if state == ParamStatus.value || state == ParamStatus.quote {
-		result.kwarg_set(key, value)
+		result.set(key, value)
 	}
 
 	if state == ParamStatus.name {
 		if key != '' {
-			result.arg_set(key)
+			result.set_arg(key)
 		}
 	}
 

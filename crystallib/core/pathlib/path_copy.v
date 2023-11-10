@@ -23,7 +23,7 @@ pub fn (mut path Path) copy(args_ CopyArgs) ! {
 		args.rsync = true
 	}
 	path.check()
-	if args.rsync {		
+	if args.rsync {
 		rsync(
 			source: path.path
 			dest: args.dest
@@ -51,7 +51,9 @@ pub fn (mut path Path) copy(args_ CopyArgs) ! {
 		if !os.exists(dest.path_dir()) {
 			os.mkdir_all(dest.path_dir())!
 		}
-		$if debug {println(" - copy: ${path.path} ${dest.path}")}		
+		$if debug {
+			println(' - copy: ${path.path} ${dest.path}')
+		}
 		os.cp_all(path.path, dest.path, true)! // Always overwite if needed
 
 		dest.check()

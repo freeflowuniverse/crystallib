@@ -20,7 +20,6 @@ struct InitDProcGet {
 	start  bool = true
 }
 
-
 // pub fn start() ! {
 // 	println(' - rclone start')
 // 	initd_proc_get(delete: true, start: true)!

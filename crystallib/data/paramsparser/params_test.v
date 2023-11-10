@@ -142,9 +142,9 @@ fn test_args_get() {
 	mut text := "arg1  color:red priority:'2' description:'with spaces, lets see if ok' x:5 arg2"
 	mut params := parse(text) or { panic(err) }
 
-	assert params.arg_exists('arg1')
-	assert params.arg_exists('arg2')
-	assert !params.arg_exists('arg')
+	assert params.exists_arg('arg1')
+	assert params.exists_arg('arg2')
+	assert !params.exists_arg('arg')
 
 	mut x := params.get_int('x') or { panic(err) }
 	assert x == 5
@@ -161,7 +161,7 @@ fn test_args_get() {
 
 // 	mut params := parse(textin) or { panic(err) }
 
-// 	d:=params.json_export()
+// 	d:=params.export_json()
 
 // 	mut params2 := json_import(d) or {panic(err)}
 
@@ -288,9 +288,9 @@ fn test_kwargs_add() {
 
 	assert params.params.len == 10
 
-	params.kwarg_set('name3', 'anotherhi')
+	params.set('name3', 'anotherhi')
 	assert params.params.len == 10
-	params.kwarg_set('name7', 'anotherhi')
+	params.set('name7', 'anotherhi')
 	assert params.params.len == 11 // because is new one
 
 	assert params.get('name3') or { '' } == 'anotherhi'
@@ -304,9 +304,9 @@ fn test_args_add() {
 	assert params.params.len == 1
 	assert params.args.len == 2
 
-	params.arg_set('red')
+	params.set_arg('red')
 	assert params.args.len == 2
-	params.arg_set('yellow')
+	params.set_arg('yellow')
 	assert params.args.len == 3
 }
 

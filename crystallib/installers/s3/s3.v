@@ -74,10 +74,9 @@ pub fn start(args_ StartArgs) ! {
 	cmd += ' --access-key ${args.access_key}'
 	cmd += ' --secret-key ${args.secret_key}'
 
-	mut z:=zinitosal.new()!
-    p:=z.new(
-        name:"s3"
-        cmd:cmd
-    )!	
-
+	mut z := zinitosal.new()!
+	p := z.new(
+		name: 's3'
+		cmd: cmd
+	)!
 }

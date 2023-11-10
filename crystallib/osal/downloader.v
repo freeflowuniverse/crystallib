@@ -50,7 +50,7 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 		return error('please make sure curl has been installed.')
 	}
 
-	mut dest := pathlib.get_file(path: args.dest,check:false)!
+	mut dest := pathlib.get_file(path: args.dest, check: false)!
 
 	// now check to see the url is not different
 	mut meta := pathlib.get_file(path: args.dest + '.meta', create: true)!
@@ -62,35 +62,34 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 	}
 
 	if args.reset {
-		mut dest_delete := pathlib.get_file(path: args.dest + '_',check:false)!
+		mut dest_delete := pathlib.get_file(path: args.dest + '_', check: false)!
 		dest_delete.delete()!
 	}
 
 	meta.write(args.url.trim_space())!
 
 	// check if the file exists, if yes and right size lets return
-	mut todownload:=true
+	mut todownload := true
 	if dest.exists() {
 		size := dest.size_kb()!
 		if args.minsize_kb > 0 {
 			if size > args.minsize_kb {
 				if args.maxsize_kb > 0 {
 					if size < args.maxsize_kb {
-						todownload=false
+						todownload = false
 					}
 				} else {
 					if args.expand_dir.len > 0 {
-						todownload=false
+						todownload = false
 					}
 				}
 			}
 		}
 	}
 
-	
-	if todownload{
+	if todownload {
 		mut dest0 := pathlib.get_file(path: args.dest + '_')!
-	
+
 		cmd := '
 			rm -f ${dest0.path}_
 			cd /tmp
@@ -102,7 +101,7 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 			retry: args.retry
 			debug: true
 			description: 'download ${args.url} to ${dest0.path}'
-			stdout:true
+			stdout: true
 		)!
 
 		if dest0.exists() {

@@ -21,7 +21,7 @@ pub fn new(txt string) !Params {
 pub fn new_from_dict(kwargs map[string]string) !Params {
 	mut p := Params{}
 	for key, val in kwargs {
-		p.kwarg_set(key, val)
+		p.set(key, val)
 	}
 	return p
 }
@@ -30,7 +30,7 @@ pub fn new_params() Params {
 	return Params{}
 }
 
-pub fn (mut params Params) kwarg_delete(key string) {
+pub fn (mut params Params) delete(key string) {
 	key2 := key.to_lower().trim_space()
 	if params.exists(key) {
 		mut params_out := []Param{}
@@ -43,7 +43,7 @@ pub fn (mut params Params) kwarg_delete(key string) {
 	}
 }
 
-pub fn (mut params Params) kwarg_set(key string, value string) {
+pub fn (mut params Params) set(key string, value string) {
 	mut key2 := ''
 	mut value2 := ''
 
@@ -54,40 +54,49 @@ pub fn (mut params Params) kwarg_set(key string, value string) {
 	value2 = value2.replace('\\n', '\n')
 	value2 = value2.trim_right(' ')
 
-	params.kwarg_delete(key)
+	params.delete(key)
 	params.params << Param{
 		key: key2
 		value: value2
 	}
 }
 
-pub fn (mut params Params) arg_delete(key string) {
+pub fn (mut params Params) delete_arg(key string) {
 	key2 := key.to_lower().trim_space()
-	if params.arg_exists(key2) {
+	if params.exists_arg(key2) {
 		params.args.delete(params.args.index(key2))
 	}
 }
 
-pub fn (mut params Params) arg_set(value string) {
+pub fn (mut params Params) set_arg(value string) {
 	mut value2 := value.trim(" '")
 	value2 = value2.replace('<<BR>>', '\n')
-	if !params.arg_exists(value2) {
+	if !params.exists_arg(value2) {
 		params.args << value2
 	}
 }
 
 // parse new txt as params and merge into params
-pub fn (mut params Params) merge(txt string) ! {
+pub fn (mut params Params) merge_text(txt string) ! {
 	paramsnew := parse(txt)!
 	for p in paramsnew.params {
-		params.kwarg_set(p.key, p.value)
+		params.set(p.key, p.value)
 	}
 	for a in paramsnew.args {
-		params.arg_set(a)
+		params.set_arg(a)
 	}
 }
 
-pub fn (mut p Params) empty() bool {
+pub fn (mut params Params) merge(params_to_merge Params) ! {
+	for p in params_to_merge.params {
+		params.set(p.key, p.value)
+	}
+	for a in params_to_merge.args {
+		params.set_arg(a)
+	}
+}
+
+pub fn (p Params) empty() bool {
 	if p.params.len == 0 && p.args.len == 0 {
 		return true
 	}

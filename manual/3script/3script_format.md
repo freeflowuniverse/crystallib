@@ -8,7 +8,10 @@ Below you can find an example of an action in 3script.
 !!$domain.$toolname.$actionname  attribute1:value1 flag1 attribute2:value2 flag2
 ```
 
+domain today is empty because we are the authors defining the current actions.
+
 Formatting the action as shown below results in the same behavior.
+
 ```js
 !!$domain.$toolname.$actionname
     attribute1:value1

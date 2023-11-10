@@ -3,6 +3,7 @@ module actionsparser
 import os
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.baobab.smartid
 
 enum ParseBlockStatus {
 	start
@@ -165,59 +166,57 @@ fn (mut actions Actions) parse_block(block Block) ! {
 	params_ := paramsparser.parse(block.content) or {
 		return error('Failed to parse block: ${err}')
 	}
-
-	mut cid := ''
-	mut circle := ''
+	mut cid := smartid.cid(cid_int:0)!
 	mut actor := ''
 
 	name := block.name.all_after_last('.').trim_space().to_lower()
 	splitted := block.name.split('.')
 
-	if splitted.len == 1 {
-		cid = actions.defaultcid
-		circle = actions.defaultcircle
-		actor = actions.defaultactor
-	} else if splitted.len == 2 {
-		cid = actions.defaultcid
-		circle = actions.defaultcircle
-		actor = block.name.all_before_last('.')
-	} else if splitted.len == 3 {
-		cid = actions.defaultcid
-		circle = splitted[0]
-		actor = splitted[1]
-	} else if splitted.len == 4 {
-		cid = splitted[0]
-		circle = splitted[1]
-		actor = splitted[2]
-	} else {
-		cid = ''
-		circle = ''
-		actor = ''
-		return error('max 3 . in block.\n${block}')
+	println(splitted)
+
+	if true{
+		panic("s")
 	}
+
+	// if splitted.len == 1 {
+	// 	cid = actions.default_cid.circle
+	// 	actor = actions.defaultactor
+	// } else if splitted.len == 2 {
+	// 	cid = actions.default_cid.circle
+	// 	actor = block.name.all_before_last('.')
+	// } else if splitted.len == 3 {
+	// 	cid = actions.default_cid.circle
+	// 	actor = splitted[1]
+	// } else if splitted.len == 4 {
+	// 	cid = actions.default_cid.circle
+	// 	actor = splitted[2]
+	// } else {
+	// 	cid = 1
+	// 	actor = ''
+	// 	return error('max 2 . in block.\n${block}')
+	// }
 
 	// !!select_cid core
 	// !!select_circle aaa
 	// !!select_actor people
-	if name == 'select_cid' {
-		actions.defaultcid = params_.get_arg(0, 1)! // means there needs to be 1 arg
-		return
-	}
-	if name == 'select_circle' {
-		actions.defaultcircle = params_.get_arg(0, 1)! // means there needs to be 1 arg
-		return
-	}
-	if name == 'select_actor' {
-		actions.defaultactor = params_.get_arg(0, 1)! // means there needs to be 1 arg
-		return
-	}
+	// if name == 'select_cid' {
+	// 	actions.default_cid.circle = params_.get_arg(0, 1)! // means there needs to be 1 arg
+	// 	return
+	// }
+	// if name == 'select_circle' {
+	// 	actions.defaultcircle = params_.get_arg(0, 1)! // means there needs to be 1 arg
+	// 	return
+	// }
+	// if name == 'select_actor' {
+	// 	actions.defaultactor = params_.get_arg(0, 1)! // means there needs to be 1 arg
+	// 	return
+	// }
 
 	$if debug {
-		eprintln('${cid} - ${circle} - ${actor} - ${name}')
+		eprintln('${cid} - ${actor} - ${name}')
 	}
 
 	cid_check(cid, block.content)!
-	circle_check(circle, block.content)!
 	if name != 'include' {
 		actor_check(actor, block.content)!
 	}
@@ -229,9 +228,9 @@ fn (mut actions Actions) parse_block(block Block) ! {
 		return error('priority cannot be higher than 10. \n${block}')
 	}
 
-	actions.actions << Action{
+	actions.items << Action{
 		name: name
-		circle: circle
+		cid: cid
 		actor: actor
 		params: params_
 		priority: u8(prio)

@@ -18,7 +18,6 @@ pub fn install(args InstallArgs) ! {
 		return error('only support ubuntu for now')
 	}
 
-
 	if args.reset == false && osal.done_exists('install_rclone') && osal.cmd_exists('rclone') {
 		return
 	}
@@ -37,12 +36,12 @@ pub fn install(args InstallArgs) ! {
 		expand_dir: '/tmp/rclone'
 	)!
 
-	//will find the one dir in the destination and move that one up 1 level
+	// will find the one dir in the destination and move that one up 1 level
 	dest.moveup_single_subdir()!
 
-	mut binpath:=dest.file_get("rclone")!
-	binpath.move(dest:"/usr/local/bin/rclone",delete:true)!
-	
+	mut binpath := dest.file_get('rclone')!
+	binpath.move(dest: '/usr/local/bin/rclone', delete: true)!
+
 	osal.done_set('install_rclone', 'OK')!
 
 	return

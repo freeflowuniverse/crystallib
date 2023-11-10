@@ -14,7 +14,7 @@ import json
 // 	value string
 // }
 
-pub fn (mut params Params) json_export() string {
+pub fn (mut params Params) export_json() string {
 	return json.encode(params)
 }
 

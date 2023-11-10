@@ -92,53 +92,52 @@ fn test_file_parse() {
 	mut actionsmgr := new(
 		path: '${actionsparser.testpath}/testfile.md'
 		defaultactor: 'people'
-		defaultcircle: 'aaa'
+		default_cid_int: 1
 	)!
 
-	assert actionsmgr.actions.len == 13
+	assert actionsmgr.items.len == 13
 }
 
 fn test_dir_load() {
 	mut actionsmgr := new(
 		path: '${actionsparser.testpath}'
 		defaultactor: 'people'
-		defaultcircle: 'aaa'
+		default_cid_int: 1
 	)!
-	assert actionsmgr.actions.len == 14
+	assert actionsmgr.items.len == 14
 
-	mut a := actionsmgr.actions.last()
+	mut a := actionsmgr.items.last()
 	assert a.name == 'select'
 	assert a.actor == 'people'
-	assert a.circle == 'aaa'
 }
 
 fn test_text_add() ! {
 	mut parser := new(
 		text: actionsparser.text
 		defaultactor: 'people'
-		defaultcircle: 'aaa'
+		default_cid_int: 1
 	)!
 
 	// confirm first action
-	mut action := parser.actions[0]
+	mut action := parser.items[0]
 	assert action.name == 'actor_select'
-	mut arg := action.params.get_arg(0, 1)!
+	mut arg := action.params.get_arg(0)!
 	assert arg == 'people'
 
 	// confirm second action
-	action = parser.actions[1]
+	action = parser.items[1]
 	assert action.name == 'person_delete'
 	mut param := action.params.get('cid')!
 	assert param == '1gt'
 
 	// confirm third action
-	action = parser.actions[1]
+	action = parser.items[1]
 	assert action.name == 'person_delete'
 	param = action.params.get('cid')!
 	assert param == '1gt'
 
 	// confirm last action
-	action = parser.actions.last()
+	action = parser.items.last()
 	assert action.name == 'person_define'
 	param = action.params.get('name')!
 	assert param == 'despiegk'

@@ -40,7 +40,7 @@ pub mut:
 }
 
 fn (mut actions Actions) process() ! {
-	for mut action in actions.actions {
+	for mut action in actions.items {
 		action.process()!
 	}
 }
@@ -55,7 +55,7 @@ fn (actions Actions) html() string {
 
 // fn (actions Actions) str() string {
 // 	mut out := '**** ACTIONS\n'
-// 	for action in actions.actions {
+// 	for action in actions.items {
 // 		out += '  ** ACTION ${action.name}\n'
 // 	}
 // 	return out
