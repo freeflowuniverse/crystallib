@@ -1,6 +1,6 @@
 module gittools
 
-import freeflowuniverse.crystallib.data.actionsparser
+import freeflowuniverse.crystallib.data.actionparser
 import os
 
 const (
@@ -21,7 +21,7 @@ const (
 )
 
 fn test_git_do_action() {
-	ap := actionsparser.new(
+	ap := actionparser.new(
 		text: gittools.git_do_action
 	)!
 
@@ -30,7 +30,7 @@ fn test_git_do_action() {
 }
 
 fn test_git_get_action() {
-	ap := actionsparser.new(
+	ap := actionparser.new(
 		text: gittools.git_get_action
 	)!
 

@@ -1,6 +1,6 @@
 module spreadsheet
 
-import freeflowuniverse.crystallib.data.markdowndocs
+import freeflowuniverse.crystallib.data.markdownparser
 
 pub fn (mut s Sheet) wiki_title_chart(args RowGetArgs) string {
 	if args.title.len > 0 {
@@ -18,7 +18,7 @@ pub fn (mut s Sheet) wiki_title_chart(args RowGetArgs) string {
 
 pub fn (mut s_ Sheet) wiki_row_overview(args RowGetArgs) !string {
 	mut s := s_.filter(args)!
-	table := markdowndocs.Table{
+	table := markdownparser.Table{
 		header: ['Row Name', 'Description', 'Tags']
 		// TODO: need to use the build in mechanism to filter rows
 		rows: s.rows.values().map([it.name, it.description, it.tags])

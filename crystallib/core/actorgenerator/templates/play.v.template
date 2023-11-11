@@ -1,4 +1,4 @@
-import freeflowuniverse.crystallib.data.actionsparser  {ActionsArgs, Actions}
+import freeflowuniverse.crystallib.data.actionparser  {ActionsArgs, Actions}
 import freeflowuniverse.crystallib.data.paramsparser  {Params}
 
 __global(
@@ -13,12 +13,12 @@ pub struct Play {
 
 pub fn play(params Play) ! {
 	actions := if params.actions.len > 0 {
-		ap := actionsparser.Actions{
+		ap := actionparser.Actions{
 			actions: params.actions
 		}
 		ap.filtersort(actor: '@actor_name')!
 	} else {
-		ap := actionsparser.new(params.ActionsArgs)!
+		ap := actionparser.new(params.ActionsArgs)!
 		ap.filtersort(actor: '@actor_name')!
 	}
 

@@ -1,6 +1,6 @@
 module tfgrid
 
-import freeflowuniverse.crystallib.data.actionsparser { Action }
+import freeflowuniverse.crystallib.data.actionparser { Action }
 import freeflowuniverse.crystallib.threefold.web3gw.tfgrid { FindTwins, Limit, TwinFilter }
 
 pub fn (mut h TFGridHandler) twins(action Action) ! {

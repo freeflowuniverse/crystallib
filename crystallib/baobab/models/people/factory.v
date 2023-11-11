@@ -1,6 +1,6 @@
 module people
 
-import freeflowuniverse.crystallib.data.actionsparser
+import freeflowuniverse.crystallib.data.actionparser
 import freeflowuniverse.crystallib.baobab.models.system
 import db.sqlite
 
@@ -39,6 +39,6 @@ pub fn new(args NewArgs) !MemDB {
 }
 
 pub fn (mut m MemDB) actions_import(path string) ! {
-	ap := actionsparser.new(path: path)!
+	ap := actionparser.new(path: path)!
 	m.actions(ap)!
 }

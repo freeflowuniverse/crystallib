@@ -50,16 +50,16 @@ fn (item ParamExportItem) afterline() string{
 	mut out:=""
 	if item.value.contains("\n"){
 		if item.comment.len>0{
-			out += texttools.indent(item.comment, '    // ')
+			out += texttools.indent(item.comment, ' // ')
 		}		
-		out += '    ${item.key}:\'\n'
-		out += texttools.indent(item.value, '        ')
-		out += "        '"
+		out += '${item.key}:\'\n'
+		out += texttools.indent(item.value, '    ')
+		out += "    '"
 	}else{
 		if item.comment.contains("\n"){
-			out += texttools.indent(item.comment, '    // ')
+			out += texttools.indent(item.comment, '// ')
 		}
-		out+= '    ${item.key}:${item.getval()}'
+		out+= '${item.key}:${item.getval()}'
 		if item.comment.len>0 && ! item.comment.contains("\n"){
 			out+= ' //${item.comment}'
 		}

@@ -1,8 +1,8 @@
 module actionsexecutor
 
-import freeflowuniverse.crystallib.data.actionsparser
+import freeflowuniverse.crystallib.data.actionparser
 
-// fn git(mut actions actionsparser.Actions, action actionsparser.Action) ! {
+// fn git(mut actions actionparser.Actions, action actionparser.Action) ! {
 // 	if action.name == 'init' {
 // 		// means we support initialization afterwards
 // 		c.bizmodel_init(mut actions, action)!
