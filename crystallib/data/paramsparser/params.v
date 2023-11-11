@@ -5,6 +5,7 @@ pub struct Params {
 pub mut:
 	params []Param
 	args   []string
+	comments []string
 }
 
 pub struct Param {
@@ -45,22 +46,25 @@ pub fn (mut params Params) delete(key string) {
 }
 
 pub fn (mut params Params) set(key string, value string) {
-	mut key2 := ''
-	mut value2 := ''
-
-	key2 = key.to_lower().trim_space()
-
-	value2 = value.trim(" '")
-	value2 = value2.replace('<<BR>>', '\n')
-	value2 = value2.replace('\\n', '\n')
-	value2 = value2.trim_right(' ')
-
-	params.delete(key)
+	key2 := key.to_lower().trim_space().trim_left("/")
+	params.delete(key2)
 	params.params << Param{
 		key: key2
-		value: value2
+		value: str_normalize(value)
 	}
 }
+
+pub fn (mut params Params) set_with_comment(key string, value string, comment string) {
+	key2 := key.to_lower().trim_space().trim_left("/")
+	params.delete(key2)
+	params.params << Param{
+		key: key2
+		value: str_normalize(value)
+		comment: str_normalize(comment)
+	}
+}
+
+
 
 pub fn (mut params Params) delete_arg(key string) {
 	key2 := key.to_lower().trim_space()
@@ -70,11 +74,36 @@ pub fn (mut params Params) delete_arg(key string) {
 }
 
 pub fn (mut params Params) set_arg(value string) {
-	mut value2 := value.trim(" '")
+	mut value2 := value.trim(" '").trim_left("/")
 	value2 = value2.replace('<<BR>>', '\n')
+	value2 = value2.replace('<BR>', '\n')
 	if !params.exists_arg(value2) {
 		params.args << value2
 	}
+}
+
+pub fn (mut params Params) set_arg_with_comment(value string, comment string) {
+	value2 := value.trim(" '").trim_left("/")
+	if !params.exists_arg(str_normalize(value2)) {
+		params.args << value2
+		if comment.len>0{
+			params.comments << str_normalize(comment)
+		}		
+	}
+	
+}
+
+
+fn str_normalize(comment_ string)string{
+	mut comment:=comment_
+	// println(comment+"\n----")
+	comment=comment.replace("\\\\n","\n")
+	comment=comment.replace("\\\'","'")
+	comment=comment.replace("<<BR>>","\n")
+	comment = comment.replace('<BR>', '\n')
+	comment=comment.trim_right("-")
+	// println(comment)
+	return comment.trim_space()
 }
 
 // parse new txt as params and merge into params
@@ -104,7 +133,7 @@ pub fn (p Params) empty() bool {
 	return false
 }
 
-pub fn (p Params) str() string {
+pub fn (p Params) script3() string {
 	mut out := ''
 	out = p.export(
 		presort: ['id', 'cid', 'oid', 'name']
@@ -115,3 +144,4 @@ pub fn (p Params) str() string {
 	)
 	return out
 }
+

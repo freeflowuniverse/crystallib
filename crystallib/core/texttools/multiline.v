@@ -57,7 +57,7 @@ pub fn multiline_to_single(text string) !string {
 			// deal with comments
 			mut commentpart := ''
 			line2_trimmed, commentpart = comment_start_check(mut res, line2_trimmed)
-			println(" - comment_start_check:  line2_trimmed:'${line2_trimmed}' commentpart:'${commentpart}'")
+			// println(" - comment_start_check:  line2_trimmed:'${line2_trimmed}' commentpart:'${commentpart}'")
 			if commentpart.len > 0 {
 				state = .comment
 				comment = []string{}

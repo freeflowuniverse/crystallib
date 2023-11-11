@@ -6,107 +6,177 @@ import crypto.sha256
 struct ParamExportItem {
 mut:
 	key       string
-	txt       string // if empty then is arg
-	firstline bool
-	multiline bool
+	value     string
+	comment   string
+	firstline bool //done by us to know if it still fits on the first line
 	isarg     bool
 }
+
+fn (mut item ParamExportItem) check(){
+	//should not be needed in theory
+	item.value=item.value.replace("\\n","\n").trim_space()
+	item.comment=item.comment.replace("\\n","\n").trim_space()
+}
+
+//is to put on first line typically
+fn (item ParamExportItem) oneline() string{
+	if item.isarg {
+		return '${item.key}'
+	} else if item.comment.len>0 && item.value.len==0{
+		comment:=item.comment.replace("\n","\\n")
+		return '//${comment}-/'
+	} else {		
+		txt:='${item.key}:${item.getval()}'
+		if item.comment.len>0{
+			comment:=item.comment.replace("\n","\\n")
+			return '//${comment}-/ ${txt}'
+		}else{
+			return txt
+		}
+	}	
+}
+
+fn (item ParamExportItem) getval() string{
+	mut val:=item.value
+	val=val.replace("\n","\\n")	
+	if val.contains(' ') || val.contains('\n') || item.key in ['cid', 'oid', 'gid'] {
+		val = "'${val}'"
+	}	
+	return val
+}
+
+//to put after the first line
+fn (item ParamExportItem) afterline() string{
+	mut out:=""
+	if item.value.contains("\n"){
+		if item.comment.len>0{
+			out += texttools.indent(item.comment, '    // ')
+		}		
+		out += '    ${item.key}:\'\n'
+		out += texttools.indent(item.value, '        ')
+		out += "        '"
+	}else{
+		if item.comment.contains("\n"){
+			out += texttools.indent(item.comment, '    // ')
+		}
+		out+= '    ${item.key}:${item.getval()}'
+		if item.comment.len>0 && ! item.comment.contains("\n"){
+			out+= ' //${item.comment}'
+		}
+	}
+	return out.trim_right(" \n")
+}
+
 
 // will first do the args, then the kwargs
 // presort means will always come first
 fn (p Params) export_helper(args_ ExportArgs) ![]ParamExportItem {
 	mut args := args_
-
+	if args.sortdefault && args.presort.len==0 {
+		args.presort=["id","cid","gid","oid","name","alias"]
+	}
 	if p.args.len > 0 && args.args_allowed == false {
 		return error('args are not allowed')
 	}
+	mut args_done := []string{}
+	mut order := []string{}
+	mut order_delayed := []string{}
+	mut keys_to_be_sorted := []string{}
+	mut keys_existing := []string{}
+	mut dict_param := map[string]ParamExportItem{}
+	mut result_params := []ParamExportItem{} //the ones who always need to come first
+	mut firstlinesize:=0
 
-	mut res := []ParamExportItem{}
-	mut res_delayed := []ParamExportItem{}
-	mut keys := []string{}
-	mut keys_val := map[string]string{}
-	for param in p.params {
-		mut key := texttools.name_fix(param.key)
-		if key !in args.presort && key !in args.postsort {
-			keys << key
+	//comments are always 1st
+	if args.comments_remove == false {		
+		for comment in p.comments{			
+			result_params<<ParamExportItem{
+				key: ""
+				isarg: false
+				comment: comment
+				firstline: args.oneline
+			}			
 		}
-		mut val := param.value.trim_space()
-		val = val.replace('\n', '\\n')
-		val = val.replace('\t', '    ')
-		if val.contains(' ') {
-			val = "'${val}'"
-		} else if key in ['cid', 'oid', 'gid'] {
-			val = "'${val}'"
-		}
-		keys_val[key] = val
 	}
-	keys.sort()
 
-	mut firstlinesize := 0
 
-	if args.args_remove == false {
+	//args are always 2nd
+	if args.args_remove == false {		
 		mut args2 := p.args.clone()
 		args2.sort()
 		for mut arg in args2 {
 			arg = texttools.name_fix(arg)
-			res << ParamExportItem{
-				key: arg
-				firstline: true
-				isarg: true
+			if arg in args_done{
+				return error("Double arg: $arg")
 			}
+			args_done<<arg
+			result_params<<ParamExportItem{
+				key: arg
+				
+				isarg: true
+				comment: ""
+				firstline: true
+			}			
 			firstlinesize += arg.len + 1
 		}
 	}
 
-	keysexisting := keys_val.keys()
-	for key in args.presort.reverse() {
-		if key in keysexisting {
-			keys.prepend(key) // make sure we have the presorted once first
+	//now we will process the params (comments and args done)
+	for param in p.params {
+		mut key := texttools.name_fix(param.key)
+		keys_existing<<key
+		if key !in args.presort && key !in args.postsort {
+			keys_to_be_sorted << key
 		}
-	}
-	for key in args.postsort {
-		if key in keysexisting {
-			keys << key // now add the ones at the end
+		dict_param[key]=ParamExportItem{
+				key: key				
+				value:param.value
+				comment:param.comment
+				firstline: false
 		}
 	}
 
-	for keyname in keys {
-		mut val := keys_val[keyname]
-		if val.len == 0 {
-			continue
-		}
-		firstlinesize += keyname.len + val.len + 2
-		mut firstline := true
-		if firstlinesize > args.maxcolsize || val.len > 25 {
-			firstline = false
-			firstlinesize -= keyname.len + val.len + 2
-		}
-		if args.oneline {
-			firstline = true
-		}
-		// println("++ $firstline $firstlinesize $val")
-		mut multiline := val.contains('\\n')
-		if args.multiline == false || args.oneline {
-			multiline = false
-		}
-		if firstline && keyname !in args.postsort {
-			res << ParamExportItem{
-				key: keyname
-				txt: val
-				firstline: firstline
-				multiline: multiline
-			}
-		} else {
-			res_delayed << ParamExportItem{
-				key: keyname
-				txt: val
-				firstline: firstline
-				multiline: multiline
-			}
+	keys_to_be_sorted.sort()
+	for key in args.presort.reverse() {
+		if key in keys_existing{
+			keys_to_be_sorted.prepend(key) // make sure we have the presorted once first
+		}		
+	}
+	for key in args.postsort {
+		if key in keys_existing{
+			keys_to_be_sorted << key // now add the ones at the end
 		}
 	}
-	res << res_delayed
-	return res
+
+	//now we have all keys sorted	
+	for keyname in keys_to_be_sorted {
+		param_export_item := dict_param[keyname]// or { panic("bug: can't find $keyname in dict in export/import for params.") }}
+		val:=param_export_item.value
+		// if val.len == 0 {
+		// 	continue
+		// }		
+		if val.len>25 || param_export_item.comment.len>0 || firstlinesize > args.maxcolsize || val.contains('\\n') {
+			order_delayed<< keyname
+			continue
+		}
+		order << keyname
+		firstlinesize += keyname.len + val.len + 2
+	}
+
+	for key in order{
+		mut param_export_item:=dict_param[key]// or { panic("bug: can't find $keyname in dict in export/import for params.") }
+		param_export_item.check()
+		param_export_item.firstline=true
+		result_params << param_export_item
+	}	
+
+	for key in order_delayed{
+		mut param_export_item:=dict_param[key]// or { panic("bug: can't find $keyname in dict in export/import for params.") }
+		param_export_item.check()
+		result_params << param_export_item
+	}	
+
+	return result_params
 }
 
 [params]
@@ -114,8 +184,10 @@ pub struct ExportArgs {
 pub mut:
 	presort      []string
 	postsort     []string
+	sortdefault bool = true //if set will do the default sorting
 	args_allowed bool = true
 	args_remove  bool
+	comments_remove bool 
 	maxcolsize   int = 120
 	oneline      bool // if set then will put all on oneline
 	multiline    bool = true // if we will put the multiline strings as multiline in output
@@ -127,45 +199,65 @@ pub mut:
 // .
 // it outputs a default way sorted and readable .
 //```js
-// presort []string //if mentioned will always put these arguments first
-// args_allowed bool=true //if args are allowed
-// args_remove bool
-// maxcolsize int 80
-// oneline bool //if set then will put all on oneline	
-// multiline bool = true //if we will put the multiline strings as multiline in output
+// presort      []string
+// postsort     []string
+// sortdefault bool = true //if set will do the default sorting
+// args_allowed bool = true
+// args_remove  bool
+// comments_remove bool 
+// maxcolsize   int = 120
+// oneline      bool // if set then will put all on oneline
+// multiline    bool = true // if we will put the multiline strings as multiline in output
+// indent       string
+// pre          string // e.g. can be used to insert action e.g. !!remark.define (pre=prefix on the first line)
 //```
 pub fn (p Params) export(args ExportArgs) string {
-	mut out := '${args.pre}'
-	items := p.export_helper(args) or { panic('bug, should not use args.') }
+	items := p.export_helper(args) or { panic(err) }
+	mut out_pre:=[]string{}
+	mut out:=[]string{}
+	mut out_post:=[]string{}
 	for item in items {
-		if item.multiline {
-			mut txt := item.txt.trim(' \'"').replace('\\n', '\n')
-			// txt = txt[1..txt.len - 1] // remove extra quotes (who says there are always quotes???)
-			out += '\n    ${item.key}:\''
-			out += texttools.indent(txt, '        ')
-			out += "    '"
-		} else {
-			if !item.firstline {
-				out += '\n    '
+		if args.oneline{
+			out<<item.oneline()
+		}else{
+			if item.key=="" && item.comment.len>0{
+				out_pre<<texttools.indent(item.comment,"// ")
+				continue
 			}
 			if item.isarg {
-				out += '${item.key}'
-			} else {
-				out += '${item.key}:${item.txt}'
+				assert item.comment.len==0
+				out<< item.key
+				continue
 			}
-			if item.firstline {
-				out += ' '
+			if item.firstline{
+				out<<item.oneline()
+			}else{
+				out_post<<item.afterline()
 			}
 		}
 	}
-	out = out.trim_right(' \n')
-	if out.contains('\n') {
-		out += '\n' // if its a multiline needs to make sure last is \n
+	mut outstr:=""
+	if args.oneline{
+		if args.pre.len>0{
+			outstr+=args.pre+" "
+		}
+		outstr+=out.join(" ")
+	}else{
+		comments:=out_pre.join("\n")
+		oneliner:=out.join(" ")+"\n"
+		poststr:=out_post.join("\n")
+		if args.pre.len>0{
+			outstr+=comments
+			outstr+=args.pre+" "+oneliner
+			outstr+=poststr
+		}else{
+			outstr+=comments
+			outstr+=oneliner
+			outstr+=poststr
+		}
+
 	}
-	if args.indent.len > 0 {
-		out = texttools.indent(out, args.indent)
-	}
-	return out
+	return outstr
 }
 
 pub fn importparams(txt string) !Params {
@@ -184,7 +276,7 @@ pub fn (p Params) equal(p2 Params) bool {
 // returns a unique sha256 in hex, will allways return the same independent of order of params
 pub fn (p Params) hexhash() string {
 	a := p.export(oneline: true, multiline: false)
+	println(a)
 	return sha256.hexhash(a)
 }
 
-// TODO: args are still wrong will show as argname1: ... instead of argname1 argname2 ...
