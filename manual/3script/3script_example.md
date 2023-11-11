@@ -2,7 +2,9 @@
 
 3script is normally put in a markdown file.
 
-### Example
+### Example 
+
+the following statements are for DAL actions.
 
 ```js
 
@@ -35,18 +37,6 @@
 		this is a comment
 		can be multiline
     author:'despiegk' //is optional
-
-!!tree.circle_select name:'my_circle'
-
-!!wallet.define
-	user:fatayera
-	name: 'TF Wallet'
-	blockchain: 'stellar'
-	account: ''
-	description: 'TF Wallet for TFT' 
-
-
-!!user.delete id:1ge //will fail because we selected another circle
 
 
 ```

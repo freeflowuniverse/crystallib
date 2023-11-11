@@ -1,7 +1,8 @@
-module actionsparser
+module hero
 
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.baobab.smartid
+
 [params]
 pub struct FilterArgs {
 pub:
@@ -16,7 +17,7 @@ pub:
 	priorties map[u8]FilterArgs // filter and give priority
 }
 
-// filter actions based on the criteria
+// filter parser based on the criteria
 //```
 // args ActionsGetArgs:
 // cid          []u32 		//if empty will match all
@@ -26,19 +27,19 @@ pub:
 // the action_names or actor_names can be a glob in match_glob .
 // see https://modules.vlang.io/index.html#string.match_glob .
 // return  []Action
-pub fn (actions Actions) filter(args FilterArgs) Actions {
-	mut result := Actions{}
-	result.items = []Action{}
-	for action in actions.items {
+pub fn (parser Parser) filter(args FilterArgs) Parser {
+	mut result := Parser{}
+	result.actions = []Action{}
+	for action in parser.actions {
 		if action.checkmatch(args) == false {
 			continue
 		}
-		result.items << action
+		result.actions << action
 	}
 	return result
 }
 
-// filter actions based on the criteria
+// filter parser based on the criteria
 //```
 // struct  FilterArgs:
 //   cid          []u32 		//if empty will match all
@@ -52,12 +53,12 @@ pub fn (actions Actions) filter(args FilterArgs) Actions {
 // see https://modules.vlang.io/index.html#string.match_glob .
 // the highest priority will always be chosen . (it can be a match happens 2x)
 // return  []Action
-pub fn (actions Actions) filtersort(args FilterSortArgs) Actions {
+pub fn (parser Parser) filtersort(args FilterSortArgs) Parser {
 	mut result := map[u8][]Action{}
 	mut done := []string{}
 
 	for prio, argsfilter in args.priorties {
-		for mut actionfiltered in actions.filter(argsfilter).items {
+		for mut actionfiltered in parser.filter(argsfilter).actions {
 			actionfiltered.priority = prio
 			if prio !in result {
 				result[prio] = []Action{}
@@ -66,14 +67,14 @@ pub fn (actions Actions) filtersort(args FilterSortArgs) Actions {
 		}
 	}
 	// lets now fill in the result
-	mut resultsorted := Actions{}
-	resultsorted.items = []Action{}
+	mut resultsorted := Parser{}
+	resultsorted.actions = []Action{}
 
 	mut prios := result.keys()
 	prios.sort()
 	for prio in prios {
 		for action in result[prio] {
-			resultsorted.items << action
+			resultsorted.actions << action
 		}
 	}
 	return resultsorted
@@ -128,16 +129,14 @@ fn (action Action) checkmatch(args FilterArgs) bool {
 	return true
 }
 
-// find all relevant actions, return the params out of one
-pub fn (actions Actions) params_get(args FilterArgs) !paramsparser.Params {
-	mut result := actions.filter(args)
-	mut paramsresult := paramsparser.new("")!
-	for action in result.items {
+// find all relevant parser, return the params out of one
+pub fn (parser Parser) params_get(args FilterArgs) !paramsparser.Params {
+	mut result := parser.filter(args)
+	mut paramsresult := paramsparser.new('')!
+	for action in result.actions {
 		paramsresult.merge(action.params)!
 	}
 	return paramsresult
 }
 
-
-
-//TODO: need tests for the sorted filtering
+// TODO: need tests for the sorted filtering

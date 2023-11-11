@@ -9,8 +9,9 @@ pub mut:
 
 pub struct Param {
 pub mut:
-	key   string
-	value string
+	key     string
+	value   string
+	comment string
 }
 
 // get params from txt, same as parse()

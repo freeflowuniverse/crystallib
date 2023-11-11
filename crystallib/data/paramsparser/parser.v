@@ -8,15 +8,8 @@ enum ParamStatus {
 	value_wait // wait for value to start (can be quote or end of spaces and first meaningful char)
 	value // value started, so was no quote
 	quote // quote found means value in between ''
+	comment
 }
-
-// need to do something to get out # and // at end of a line but not in ''
-// if line2.contains('#') {
-// 	line2 = line2.all_before('#')
-// }
-// if line2.contains('//') {
-// 	line2 = line2.all_before('//')
-// }
 
 // convert text with e.g. color:red or color:'red' to arguments
 // multiline is supported
@@ -48,14 +41,16 @@ pub fn parse(text string) !Params {
 	validchars := 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,./'
 
 	mut ch := ''
+	mut ch_prev := ''
 	mut state := ParamStatus.start
 	mut result := Params{}
 	mut key := ''
 	mut value := ''
+	mut comment := ''
 
 	for i in 0 .. text2.len {
 		ch = text2[i..i + 1]
-		// println(" - $ch ${state}")
+		println(' - ${ch} ${state}')
 		// check for comments end
 		if state == ParamStatus.start {
 			if ch == ' ' {
@@ -73,7 +68,7 @@ pub fn parse(text string) !Params {
 				continue
 			} else if ch == ' ' {
 				state = ParamStatus.start
-				result.set_arg(key)
+				result.set_arg_with_comment(key, comment)
 				key = ''
 				continue
 			} else if !validchars.contains(ch) {
@@ -96,7 +91,7 @@ pub fn parse(text string) !Params {
 		if state == ParamStatus.value {
 			if ch == ' ' {
 				state = ParamStatus.start
-				result.set(key, value)
+				result.set_with_comment(key, value, comment)
 				key = ''
 				value = ''
 			} else {
@@ -115,6 +110,23 @@ pub fn parse(text string) !Params {
 			}
 			continue
 		}
+
+		if state == ParamStatus.value || state == ParamStatus.start {
+			if (ch == '/' && ch_prev == '/') {
+				// we are now comment
+				state == ParamStatus.comment
+			}
+		}
+
+		if state == ParamStatus.comment {
+			if (ch == '/' && ch_prev == '/') {
+				state == ParamStatus.start
+				continue
+			}
+			comment += ch
+		}
+
+		ch_prev = ch
 	}
 
 	// last value

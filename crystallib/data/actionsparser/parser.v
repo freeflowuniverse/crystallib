@@ -27,71 +27,75 @@ mut:
 
 struct Block {
 mut:
-	name     string
-	content  string
-	src_path string
-	index    int
+	name       string // is the first line, before the first params
+	content    string // will have all the param values inside
+	comments   []string
+	src_path   string
+	index      int
+	actiontype ActionType
+	readwrite  bool
+	cid        smartid.CID
+}
+
+pub enum ActionType {
+	unknown
+	dal
+	sal
+	wal
+	macro
+}
+
+[params]
+pub struct ParserAddArgs {
+pub mut:
+	text      string
+	path      string
+	readwrite bool
+	cid       smartid.CID
 }
 
 // path can be a directory or a file
-pub fn (mut actions Actions) path_add(path string) ! {
-	// recursive behavior for when dir
-	// println(" -- add: $path")
-	if os.is_dir(path) {
-		mut items := os.ls(path)!
-		items.sort() // make sure we sort the items before we go in
-		// process dirs first, make sure we go deepest possible
-		for path0 in items {
-			if path0.starts_with('_') {
-				continue
-			}
-			pathtocheck := '${path}/${path0}'
-			if os.is_dir(pathtocheck) {
-				actions.path_add(pathtocheck)!
-			}
+pub fn (mut parser Parser) add(args ParserAddArgs) ! {
+	if args.text.len > 0 {
+		println(' -- addcontent: ${args.text}')
+		blocks := parse_into_blocks(args.text, args.path, args.readwrite, args.cid)!
+		println(blocks)
+		parser.parse_actions(blocks)!
+	} else {
+		println(' -- add: ${args.path}')
+		if !os.exists(args.path) {
+			return error('Cannot find path: ${args.path}')
 		}
-		// now process files in order
-		for path1 in items {
-			pathtocheck := '${path}/${path1}'
-			if os.is_file(pathtocheck) {
-				actions.path_add(pathtocheck)!
+		base := os.base(args.path)
+		if base.starts_with('_') || base.starts_with('.') {
+			return
+		}
+		if os.is_dir(args.path) {
+			mut items := os.ls(args.path)!
+			for item in items {
+				items.sort() // make sure we sort the actions before we go in
+				parser.add(path: '${args.path}/${item}', readwrite: args.readwrite, cid: args.cid)!
+			}
+		} else if os.is_file(args.path) {
+			if args.path.to_lower().ends_with('.md') || args.path.to_lower().ends_with('.txt') {
+				content := os.read_file(args.path) or {
+					return error('Failed to load file ${args.path}: ${err}')
+				}
+				parser.add(path: args.path, readwrite: args.readwrite, text: content, cid: args.cid)!
 			}
 		}
 	}
-
-	// make sure we only process markdown files
-	if os.is_file(path) {
-		if path.to_lower().ends_with('.md') {
-			actions.file_parse(path)!
-		}
-	}
 }
-
-fn (mut actions Actions) file_parse(path string) ! {
-	if !os.exists(path) {
-		return error("path: '${path}' does not exist, cannot parse.")
-	}
-	content := os.read_file(path) or { return error('Failed to load file ${path}: ${err}') }
-	// actions.text_add(content)!
-	blocks := parse_into_blocks(content, path)!
-	actions.parse_actions(blocks)!
-}
-
-fn (mut actions Actions) text_add(content string) ! {
-	blocks := parse_into_blocks(content, '')!
-	actions.parse_actions(blocks)!
-}
-
-// DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL actions BY DESIGN
-// THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 
 // each block is name of action and the full content behind
-fn parse_into_blocks(text string, path string) !Blocks {
+fn parse_into_blocks(text string, path string, readwrite bool, cid smartid.CID) !Blocks {
 	mut state := ParseBlockStatus.start
 	mut blocks := Blocks{}
 	mut block := Block{
 		src_path: path
 		index: 0
+		readwrite: readwrite
+		cid: cid
 	}
 	mut pos := 0
 	mut line2 := ''
@@ -106,13 +110,18 @@ fn parse_into_blocks(text string, path string) !Blocks {
 		// remove lines with comments
 		if line2_nospace.starts_with('<!--') || line2_nospace.starts_with('#')
 			|| line2_nospace.starts_with('//') {
+			block.add_comment(line2)
 			continue
 		}
 		if state == ParseBlockStatus.action {
 			if (line2.starts_with(' ') || line2 == '') && !line2.contains('!!') {
 				// starts with tab or space, means block continues
 				block.content += '\n'
-				block.content += line2
+				// if line2.contains("//"){
+				// 	block.add_comment(line2.all_after_last("//"))
+				// 	line2=line2.all_before("//")
+				// }
+				block.content += line2.trim_space()
 			} else {
 				// means block stops
 				state = ParseBlockStatus.start
@@ -123,20 +132,40 @@ fn parse_into_blocks(text string, path string) !Blocks {
 				block = Block{
 					src_path: path
 					index: block_index
+					readwrite: readwrite
+					cid: cid
 				} // new block
 			}
 		}
 		if state == ParseBlockStatus.start {
-			if line2.starts_with('!!') || line2.starts_with('#!!') || line2.starts_with('//!!') {
+			if line2.starts_with('!') {
 				state = ParseBlockStatus.action
 				pos = line2.index(' ') or { 0 }
 				if pos > 0 {
 					block.name = line2[0..pos]
-					block.content = line2[pos..]
+					mut line4 := line2[pos..].trim_space()
+					// if line4.contains("//"){
+					// 	block.add_comment( line4.all_after_last("//"))
+					// 	line4=line4.all_before("//")
+					// }					
+					block.content = line4
 				} else {
 					block.name = line2.trim_space() // means no arguments
 				}
-				block.name = block.name.trim_space().trim_left('#/!')
+				block.name = block.name.trim_space().trim_left('!')
+				if line2.starts_with('!!!!!') {
+					error('there is no action starting with 5 !')
+				} else if line2.starts_with('!!!!') {
+					block.actiontype = .macro
+				} else if line2.starts_with('!!!') {
+					block.actiontype = .wal
+				} else if line2.starts_with('!!') {
+					block.actiontype = .sal
+				} else if line2.starts_with('!') {
+					block.actiontype = .dal
+				} else {
+					panic('bug')
+				}
 			}
 			continue
 		}
@@ -155,18 +184,31 @@ fn (mut block Block) clean() {
 	block.content = texttools.dedent(block.content) // remove leading space
 }
 
-fn (mut actions Actions) parse_actions(blocks Blocks) ! {
+fn (mut block Block) add_comment(comment_ string) {
+	mut comment := comment_
+	if comment.starts_with('<!--') {
+		comment = comment[4..]
+	}
+	comment = comment.trim('# ')
+	if comment.ends_with('-->') {
+		comment = comment[..(comment.len - 3)]
+	}
+	comment = comment.trim('# ')
+	block.comments << comment
+}
+
+fn (mut parser Parser) parse_actions(blocks Blocks) ! {
+	println(blocks)
 	for block in blocks.blocks {
-		actions.parse_block(block)!
+		parser.parse_block(block)!
 	}
 }
 
 // go over block, fill in default circle or actor if needed
-fn (mut actions Actions) parse_block(block Block) ! {
+fn (mut parser Parser) parse_block(block Block) ! {
 	params_ := paramsparser.parse(block.content) or {
 		return error('Failed to parse block: ${err}')
 	}
-	mut cid := smartid.cid(cid_int:0)!
 	mut actor := ''
 
 	name := block.name.all_after_last('.').trim_space().to_lower()
@@ -174,21 +216,21 @@ fn (mut actions Actions) parse_block(block Block) ! {
 
 	println(splitted)
 
-	if true{
-		panic("s")
+	if true {
+		panic('s')
 	}
 
 	// if splitted.len == 1 {
-	// 	cid = actions.default_cid.circle
-	// 	actor = actions.defaultactor
+	// 	cid = parser.default_cid.circle
+	// 	actor = parser.defaultactor
 	// } else if splitted.len == 2 {
-	// 	cid = actions.default_cid.circle
+	// 	cid = parser.default_cid.circle
 	// 	actor = block.name.all_before_last('.')
 	// } else if splitted.len == 3 {
-	// 	cid = actions.default_cid.circle
+	// 	cid = parser.default_cid.circle
 	// 	actor = splitted[1]
 	// } else if splitted.len == 4 {
-	// 	cid = actions.default_cid.circle
+	// 	cid = parser.default_cid.circle
 	// 	actor = splitted[2]
 	// } else {
 	// 	cid = 1
@@ -200,15 +242,15 @@ fn (mut actions Actions) parse_block(block Block) ! {
 	// !!select_circle aaa
 	// !!select_actor people
 	// if name == 'select_cid' {
-	// 	actions.default_cid.circle = params_.get_arg(0, 1)! // means there needs to be 1 arg
+	// 	parser.default_cid.circle = params_.get_arg(0, 1)! // means there needs to be 1 arg
 	// 	return
 	// }
 	// if name == 'select_circle' {
-	// 	actions.defaultcircle = params_.get_arg(0, 1)! // means there needs to be 1 arg
+	// 	parser.defaultcircle = params_.get_arg(0, 1)! // means there needs to be 1 arg
 	// 	return
 	// }
 	// if name == 'select_actor' {
-	// 	actions.defaultactor = params_.get_arg(0, 1)! // means there needs to be 1 arg
+	// 	parser.defaultactor = params_.get_arg(0, 1)! // means there needs to be 1 arg
 	// 	return
 	// }
 
@@ -216,7 +258,7 @@ fn (mut actions Actions) parse_block(block Block) ! {
 		eprintln('${cid} - ${actor} - ${name}')
 	}
 
-	cid_check(cid, block.content)!
+	cid_check(cid.str(), block.content)!
 	if name != 'include' {
 		actor_check(actor, block.content)!
 	}
@@ -228,14 +270,14 @@ fn (mut actions Actions) parse_block(block Block) ! {
 		return error('priority cannot be higher than 10. \n${block}')
 	}
 
-	actions.items << Action{
+	parser.actions << Action{
 		name: name
 		cid: cid
 		actor: actor
 		params: params_
 		priority: u8(prio)
-		context: FileContext{
-			source_file: block.src_path
+		sourcelink: SourceLink{
+			path: block.src_path
 			block_index: block.index
 		}
 	}

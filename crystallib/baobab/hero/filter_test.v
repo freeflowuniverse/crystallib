@@ -1,4 +1,4 @@
-module actionsparser
+module hero
 
 const text2 = "
 //select the circle, can come from context as has been set before
@@ -56,7 +56,7 @@ const text2 = "
 
 !!person_define
   cid: 'eg'
-  name: despiegk
+  name: despiegk //this is a remark
 
 "
 
@@ -65,52 +65,52 @@ const text2 = "
 
 fn test_filter_on_circle_aaa() ! {
 	// test filter circle:aaa
-	mut actions := new(default_cid_int: 1, text: actionsparser.text2)!
-	assert actions.items.len == 8
-	sorted := actions.filtersort(circle: 'aaa')!
+	mut parser := new(default_cid: 1, text: actionsparser.text2)!
+	assert parser.actions.len == 8
+	sorted := parser.filtersort(circle: 'aaa')!
 	assert sorted.len == 7
 }
 
 fn test_filter_on_actor_people_and_circle_aaa() ! {
 	// test filter circle:aaa actor:people
-	mut actions := new(default_cid_int: 1, text: actionsparser.text2)!
-	assert actions.items.len == 8
-	sorted := actions.filtersort(actor: 'people', circle: 'aaa')! // QUESTION: can you leave actor blank? ANSWER: Yes you can, I added a test on top
+	mut parser := new(default_cid: 1, text: actionsparser.text2)!
+	assert parser.actions.len == 8
+	sorted := parser.filtersort(actor: 'people', circle: 'aaa')! // QUESTION: can you leave actor blank? ANSWER: Yes you can, I added a test on top
 	assert sorted.len == 6
 }
 
 fn test_filter_on_actor_people_and_circle_bbb() ! {
 	// test filter actor:people
-	mut actions := new(default_cid_int: 1, text: actionsparser.text2)!
-	assert actions.items.len == 8
-	sorted := actions.filtersort(actor: 'people', circle: 'bbb')!
+	mut parser := new(default_cid: 1, text: actionsparser.text2)!
+	assert parser.actions.len == 8
+	sorted := parser.filtersort(actor: 'people', circle: 'bbb')!
 	assert sorted.len == 1
 }
 
 fn test_filter_on_actor_people_and_circle_ccc() ! {
 	// test filter circle:ccc actor:people
-	mut actions := new(default_cid_int: 1, text: actionsparser.text2)!
-	assert actions.items.len == 8
-	sorted := actions.filtersort(actor: 'people', circle: 'ccc')!
+	mut parser := new(default_cid: 1, text: actionsparser.text2)!
+	assert parser.actions.len == 8
+	sorted := parser.filtersort(actor: 'people', circle: 'ccc')!
 	assert sorted.len == 0
 }
 
 // test filter circle:aaa actor:test
 fn test_filter_on_actor_test_and_circle_aaa() ! {
-	mut actions := new(default_cid_int: 1, text: actionsparser.text2)!
-	assert actions.items.len == 8
-	sorted := actions.filtersort(actor: 'test', circle: 'aaa')!
+	mut parser := new(default_cid: 1, text: actionsparser.text2)!
+	assert parser.actions.len == 8
+	sorted := parser.filtersort(actor: 'test', circle: 'aaa')!
 	assert sorted.len == 1
 }
 
 // test filter with names:[*]
 fn test_filter_with_names_asterix() ! {
-	mut actions := new(default_cid_int: 1, text: actionsparser.text2)!
-	assert actions.items.len == 8
-	assert actions.items.map(it.name) == ['person_delete', 'person_define', 'circle_link',
+	mut parser := new(default_cid: 1, text: actionsparser.text2)!
+	assert parser.actions.len == 8
+	assert parser.actions.map(it.name) == ['person_delete', 'person_define', 'circle_link',
 		'circle_comment', 'circle_comment', 'digital_payment_add', 'test_action', 'person_define']
 
-	sorted := actions.filtersort(actor: 'people', circle: 'aaa', names_filter: ['*'])!
+	sorted := parser.filtersort(actor: 'people', circle: 'aaa', names_filter: ['*'])!
 	assert sorted.len == 6
 	assert sorted.map(it.name) == ['person_delete', 'person_define', 'circle_link', 'circle_comment',
 		'circle_comment', 'digital_payment_add']
@@ -119,28 +119,28 @@ fn test_filter_with_names_asterix() ! {
 // test filtering with names_filter with one empty string
 fn test_filter_with_names_list_with_empty_string() ! {
 	// QUESTION: should this return empty list?
-	// ANSWER: I think yes as you technically want the actions where the name is an empty string
-	mut actions := new(
-		default_cid_int: 1
+	// ANSWER: I think yes as you technically want the parser where the name is an empty string
+	mut parser := new(
+		default_cid: 1
 		text: actionsparser.text2
 	)!
 
-	assert actions.items.map(it.name) == ['person_delete', 'person_define', 'circle_link',
+	assert parser.actions.map(it.name) == ['person_delete', 'person_define', 'circle_link',
 		'circle_comment', 'circle_comment', 'digital_payment_add', 'test_action', 'person_define']
 
-	sorted := actions.filtersort(actor: 'people', circle: 'aaa', names_filter: [''])!
+	sorted := parser.filtersort(actor: 'people', circle: 'aaa', names_filter: [''])!
 	assert sorted.len == 0
 	assert sorted.map(it.name) == []
 }
 
-// test filter with names in same order as actions
+// test filter with names in same order as parser
 fn test_filter_with_names_in_same_order() ! {
-	mut actions := new(
-		default_cid_int: 1
+	mut parser := new(
+		default_cid: 1
 		text: actionsparser.text2
 	)!
 
-	sorted := actions.filtersort(
+	sorted := parser.filtersort(
 		actor: 'people'
 		circle: 'aaa'
 		names_filter: [
@@ -156,14 +156,14 @@ fn test_filter_with_names_in_same_order() ! {
 		'circle_comment', 'digital_payment_add']
 }
 
-// test filter with names in different order than actions
+// test filter with names in different order than parser
 fn test_filter_with_names_in_different_order() ! {
-	mut actions := new(
-		default_cid_int: 1
+	mut parser := new(
+		default_cid: 1
 		text: actionsparser.text2
 	)!
 
-	sorted := actions.filtersort(
+	sorted := parser.filtersort(
 		actor: 'people'
 		circle: 'aaa'
 		names_filter: [
@@ -183,12 +183,12 @@ fn test_filter_with_names_in_different_order() ! {
 fn test_filter_with_only_two_names_in_filter() ! {
 	// QUESTION: if we only have one name, is it just that action?
 	// ANSWER: yes
-	mut actions := new(
-		default_cid_int: 1
+	mut parser := new(
+		default_cid: 1
 		text: actionsparser.text2
 	)!
 
-	sorted := actions.filtersort(
+	sorted := parser.filtersort(
 		actor: 'people'
 		circle: 'aaa'
 		names_filter: [

@@ -30,3 +30,14 @@ pub fn ascii_clean(r string) string {
 }
 
 // https://en.wikipedia.org/wiki/Unicode#Standardized_subsets
+
+pub fn remove_empty_lines(text string) string {
+	mut out := []string{}
+	for l in text.split_into_lines() {
+		if l.trim_space() == '' {
+			continue
+		}
+		out << l
+	}
+	return out.join('\n')
+}

@@ -1,10 +1,10 @@
 # 3script
 
-is our small language which allows us to execute actions
+is our small language which allows us to execute parser
 
-## actions
+## parser
 
-are text based representatsions of actions which need to be executed
+are text based representatsions of parser which need to be executed
 
 example
 
@@ -30,9 +30,9 @@ Depending specified cid or circle or actor, we make a default selection
 
 ## way how to use for a module
 
-The idea is we can use 3script (our actions script) to do things with a module
+The idea is we can use 3script (our parser script) to do things with a module
 
-The generic actions()... is used to make all happen.
+The generic parser()... is used to make all happen.
 
 
 ```go
@@ -43,16 +43,16 @@ import freeflowuniverse.crystallib.data.actionsparser
 //     growth:'1:5,60:30' cost:'4000USD' indexation:'5%'
 //     department:'engineering'
 
-pub actions(actions actionsparser.Actions) ! {
+pub parser(parser actionsparser.Parser) ! {
     
     mut bizmodel:=...
-    bizmodel.hr_actions(actions actionsparser.Actions)!
+    bizmodel.hr_actions(parser actionsparser.Parser)!
 
 }
 
 // populate the params for hr
-fn (mut m BizModel) hr_actions(actions actionsparser.Actions) ! {
-	mut actions2 := actions.filtersort(actor: 'hr')!
+fn (mut m BizModel) hr_actions(parser actionsparser.Parser) ! {
+	mut actions2 := parser.filtersort(actor: 'hr')!
 	for action in actions2 {
 		if action.name == 'employee_define' {
 			mut name := action.params.get_default('name', '')!

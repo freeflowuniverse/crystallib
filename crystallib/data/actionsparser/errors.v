@@ -8,12 +8,12 @@ pub mut:
 	msg    string [required]
 }
 
-pub fn (mut actions Actions) error_add(action Action, msg string) {
+pub fn (mut parser Parser) error_add(action Action, msg string) {
 	e := ActionError{
 		action: action
 		msg: msg
 	}
-	actions.errors << e
+	parser.errors << e
 }
 
 pub fn (error ActionError) str() string {

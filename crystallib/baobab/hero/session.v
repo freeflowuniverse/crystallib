@@ -11,11 +11,10 @@ import freeflowuniverse.crystallib.osal.gittools
 pub struct Session {
 pub mut:
 	name     string
-	path     pathlib.Path           [skip] // is the base directory of the session
-	vars     map[string]string
-	actions  []actionsparser.Action [skip]
+	path     pathlib.Path            [skip] // is the base directory of the session
+	actions  []actionsparser.Actions [skip]
 	includes []string
-	runner   &Runner                [skip; str: skip]
+	runner   &Runner                 [skip; str: skip]
 }
 
 [params]

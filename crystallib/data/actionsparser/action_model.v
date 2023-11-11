@@ -6,23 +6,20 @@ import freeflowuniverse.crystallib.baobab.smartid
 
 pub struct Action {
 pub mut:
-	name     string              [required]
-	cid      smartid.CID
-	actor    string              [required] // is not always an actor in strict sense, is just the 2nd element
-	priority u8 = 10 // 0 is highest, do 10 as default
-	params   paramsparser.Params
-	result   paramsparser.Params // can be used to remember outputs
-	context  FileContext         // pointer to index of item in doc
+	id         smartid.CID
+	name       string              [required]
+	cid        smartid.CID
+	actor      string              [required] // is not always an actor in strict sense, is just the 2nd element
+	priority   u8 = 10 // 0 is highest, do 10 as default
+	params     paramsparser.Params
+	result     paramsparser.Params // can be used to remember outputs
+	sourcelink SourceLink          // pointer to index of item in doc
 }
 
-pub struct FileContext {
-	source_file string // path of file where action is declared in
+pub struct SourceLink {
+	path        string // path of file where action is declared in
 	block_index int    // index of action block within source_file
-}
-
-pub struct DocPointer {
-	doc_path   string
-	item_index int
+	md_index    int
 }
 
 pub fn (action Action) str() string {

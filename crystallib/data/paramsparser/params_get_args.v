@@ -13,8 +13,8 @@ pub fn (params &Params) get_arg(nr int) !string {
 }
 
 // return the arg with nr, 0 is the first
-//check the length of the args
-pub fn (params &Params) get_arg_check(nr int,checknrargs int) !string {
+// check the length of the args
+pub fn (params &Params) get_arg_check(nr int, checknrargs int) !string {
 	params.check_arg_len(checknrargs)!
 	return params.get_arg(nr)
 }
@@ -24,8 +24,6 @@ pub fn (params &Params) check_arg_len(checknrargs int) ! {
 		return error('the amount of expected args is ${checknrargs}, we found different.\n${params}')
 	}
 }
-
-
 
 // return arg, if the nr is larger than amount of args, will return the defval
 pub fn (params &Params) get_arg_default(nr int, defval string) !string {
