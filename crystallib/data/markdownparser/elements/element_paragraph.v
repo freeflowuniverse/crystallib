@@ -19,13 +19,13 @@ fn (mut self Paragraph) process() !int {
 	return 1
 }
 
-fn (self Paragraph) markdown() string {
-	mut out:=self.Base.markdown()
+fn (mut self Paragraph) markdown() string {
+	mut out:=self.DocBase.markdown()
 	out+=self.content
 	return out
 }
 
-fn (self Paragraph) html() string {
+fn (mut self Paragraph) html() string {
 	return self.markdown()
 }
 

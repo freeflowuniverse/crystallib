@@ -1,12 +1,12 @@
 module elements
 
-pub struct HTML {
+pub struct @{eo.classname} {
 	DocBase	
 pub mut:
 	replaceme string
 }
 
-fn (mut self HTML) process() !int {
+fn (mut self @{eo.classname}) process() !int {
 	self.parent.elements<<self
 	if self.processed{		
 		return 0
@@ -15,27 +15,27 @@ fn (mut self HTML) process() !int {
 	return 1
 }
 
-fn (mut self HTML) markdown() string {
+fn (mut self @{eo.classname}) markdown() string {
 	return self.Base.markdown()
 }
 
-fn (mut self HTML) html() string {
+fn (mut self @{eo.classname}) html() string {
 	return self.Base.html()
 }
 
 
 [params]
-pub HTMLNewArgs{
+pub struct @{eo.classname}NewArgs{
 	ElementNewArgs
 pub mut:
 	replaceme string
 }
 
-fn html_new(args HTMLNewArgs) !Action {
-	mut a:=html{
+fn @{eo.name}_new(args @{eo.classname}NewArgs) !Action {
+	mut a:=@{eo.name}{
 		content: args.content
 		parent: args.parent
-		replaceme string
+		replaceme: string
 	}
 	if args.add2parent{
 		args.parent.elements << a

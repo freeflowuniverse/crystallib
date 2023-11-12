@@ -18,7 +18,7 @@ pub mut:
 
 
 [params]
-pub ElementNewArgs{
+pub struct ElementNewArgs{
 pub mut:
 	parent &DocElement
 	content string

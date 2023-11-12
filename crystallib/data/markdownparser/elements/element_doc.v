@@ -1,7 +1,6 @@
 module elements
 
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.baobab.smartid
 
 pub struct Doc {
@@ -18,12 +17,12 @@ fn (mut self Doc) process() !int {
 	return 0
 }
 
-fn (self Doc) markdown() string {
-	return self.Base.markdown()
+fn (mut self Doc) markdown() string {
+	return self.DocBase.markdown()
 }
 
-fn (self Doc) html() string {
-	return self.Base.html()
+fn (mut self Doc) html() string {
+	return self.DocBase.html()
 }
 
 // add a css or script link to a document

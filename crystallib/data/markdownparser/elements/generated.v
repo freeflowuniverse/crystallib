@@ -1,7 +1,7 @@
 
 module elements
 
-type DocElement = HTML
+type DocElement = HTML | None | Paragraph | Text | Action
 
 fn (mut self DocBase) process_elements() !int {
 	//loop over the process table, only when no changes are further done we stop
@@ -14,6 +14,18 @@ fn (mut self DocBase) process_elements() !int {
 			match mut element {
 
 				HTML {
+					changes+=element.process()!
+				}
+				None {
+					changes+=element.process()!
+				}
+				Paragraph {
+					changes+=element.process()!
+				}
+				Text {
+					changes+=element.process()!
+				}
+				Action {
 					changes+=element.process()!
 				}
 				else{
@@ -35,6 +47,10 @@ pub fn (mut self DocBase) markdown() string {
 		match mut element {
 
 			HTML { out += element.markdown() }
+			None { out += element.markdown() }
+			Paragraph { out += element.markdown() }
+			Text { out += element.markdown() }
+			Action { out += element.markdown() }
 			else{return error("Cannot find element $element")}
 		}
 	}
@@ -47,6 +63,10 @@ pub fn (mut self DocBase) html() string {
 		match mut element {
 
 			HTML { out += element.html() }
+			None { out += element.html() }
+			Paragraph { out += element.html() }
+			Text { out += element.html() }
+			Action { out += element.html() }
 			else{return error("Cannot find element $element")}
 		}
 	}

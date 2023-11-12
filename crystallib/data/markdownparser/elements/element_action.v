@@ -26,7 +26,7 @@ fn (mut self Action) html() string {
 }
 
 [params]
-pub ActionNewArgs{
+pub struct ActionNewArgs{
 	ElementNewArgs
 pub mut:
 	action actionparser.Action

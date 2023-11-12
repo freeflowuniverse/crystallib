@@ -1,4 +1,4 @@
-module markdownparser
+module parsers
 
 import freeflowuniverse.crystallib.data.markdownparser.elements
 import regex

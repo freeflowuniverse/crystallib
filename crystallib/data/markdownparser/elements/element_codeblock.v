@@ -30,7 +30,7 @@ fn (mut self CodeBlock) process() !int {
 }
 
 
-fn (self CodeBlock) markdown() string {
+fn (mut self CodeBlock) markdown() string {
 	mut out := ''
 	out += '```${self.category}\n'
 	out += self.content.trim_space()
@@ -38,6 +38,6 @@ fn (self CodeBlock) markdown() string {
 	return out
 }
 
-fn (self CodeBlock) html() string {
+fn (mut self CodeBlock) html() string {
 	return self.markdown()
 }

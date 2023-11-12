@@ -1,17 +1,17 @@
-module markdownparser
+module elements
 
 pub struct None {
 	DocBase
 }
 
-fn (mut o None) process(mut elements []DocElement) !int {
+fn (mut self None) process(mut elements []DocElement) !int {
 	return 0	
 }
 
-fn (o None) markdown() string {
+fn (mut self None) markdown() string {
 	return "none"
 }
 
-fn (o None) html() string {
-	return o.markdown()
+fn (mut self None) html() string {
+	return self.markdown()
 }

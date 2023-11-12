@@ -4,6 +4,7 @@ import os
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 
+
 [params]
 struct ElementCat{
 mut:
@@ -25,16 +26,27 @@ fn new(args_ ElementCat)ElementCat{
 }
 
 
+
+fn get_generator_names() []ElementCat {
+	mut elementsobj:=[]ElementCat{}
+	
+	//HERE ADD YOUR DIFFERENT ELEMENTS
+	elementsobj<<new(name:"html",classname:"HTML")
+	elementsobj<<new(name:"none")
+	elementsobj<<new(name:"paragraph")
+	elementsobj<<new(name:"text")
+	elementsobj<<new(name:"action")
+
+	return elementsobj
+}
+	
+
 fn do() ! {
 
-	outpathloc := os.dir(@FILE) + '/elements'
-
-	mut elementsobj:=[]ElementCat{}
-
-	elementsobj<<new(name:"html",classname:"HTML")
-
+	elementsobj:=get_generator_names()
 	println(elementsobj)
 
+	outpathloc:= os.dir(@FILE) + '../elements/'
 
 	// e.g.	type DocElement = Action | CodeBlock | Text | None
 	mut elementtypes:=""
