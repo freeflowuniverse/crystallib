@@ -131,14 +131,14 @@ pub fn parse(text string) !Params {
 		}
 
 		if state == .value || state == ParamStatus.start {
-			if (ch == '/' && ch_prev == '/') {
+			if ch == '/' && ch_prev == '/' {
 				// we are now comment
 				state = .comment
 			}
 		}
 
 		if state == ParamStatus.comment {
-			if (ch == '/' && ch_prev == '-') {
+			if ch == '/' && ch_prev == '-' {
 				state = .start
 				ch_prev = ch
 				continue

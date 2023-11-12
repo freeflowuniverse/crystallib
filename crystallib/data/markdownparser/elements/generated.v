@@ -1,7 +1,7 @@
 
 module elements
 
-type DocElement = Action | CodeBlock | Text | None
+type DocElement = HTML
 
 fn (mut self DocBase) process_elements() !int {
 	//loop over the process table, only when no changes are further done we stop
@@ -12,15 +12,11 @@ fn (mut self DocBase) process_elements() !int {
 		self.elements = []DocElement{}
 		for mut element in elements {
 			match mut element {
-				Action {
+
+				HTML {
 					changes+=element.process()!
 				}
-				CodeBlock {
-					changes+=element.process()!
-				}
-				Text {
-					changes+=element.process()!
-				}else{
+				else{
 					return error("element $element not supported")
 				}
 			}
@@ -33,14 +29,12 @@ fn (mut self DocBase) process_elements() !int {
 	return 0
 }
 
-
 pub fn (mut self DocBase) markdown() string {
 	mut out := ''
 	for mut element in self.elements {
 		match mut element {
-			Action { out += element.markdown() }
-			CodeBlock { out += element.markdown() }
-			Text { out += element.markdown() }
+
+			HTML { out += element.markdown() }
 			else{return error("Cannot find element $element")}
 		}
 	}
@@ -51,9 +45,9 @@ pub fn (mut self DocBase) html() string {
 	mut out := ''
 	for mut element in self.elements {
 		match mut element {
-			Action { out += element.html() }
-			CodeBlock { out += element.html() }
-			Text { out += element.html() }
+
+			HTML { out += element.html() }
+			else{return error("Cannot find element $element")}
 		}
 	}
 	return out

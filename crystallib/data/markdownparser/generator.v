@@ -1,13 +1,12 @@
 module main
 
+import os
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 
-const templatespath = os.dir(@FILE) + '/templates'
-const outpath = os.dir(@FILE) + '/elements'
-
 [params]
 struct ElementCat{
+mut:
 	name string
 	classname string
 }
@@ -16,40 +15,49 @@ fn new(args_ ElementCat)ElementCat{
 	mut args:=args_
 	args.name = texttools.name_fix(args.name)
 	if args.classname==""{
-		args.classname=args.name[0].to_upper()
+		args.classname=args.name[0..1].to_upper()
 		args.classname+=args.name[1..]
 		if args.classname.contains("_"){
 			panic("Cannot have _ name if classname not specified.")
 		}
 	}	
+	return args
 }
 
 
 fn do() ! {
 
-	mut elements:=[]ElementCat{}
+	outpathloc := os.dir(@FILE) + '/elements'
 
-	elements<<new(name:"html")
+	mut elementsobj:=[]ElementCat{}
+
+	elementsobj<<new(name:"html",classname:"HTML")
+
+	println(elementsobj)
 
 
 	// e.g.	type DocElement = Action | CodeBlock | Text | None
 	mut elementtypes:=""
-	for element in elements{
+	for element in elementsobj{
 		elementtypes+= "${element.classname} | "
 	}
 	elementtypes=elementtypes.trim_right(" |")
 
-
-	content:=$tmpl("${templatespath}/generated.vtemplate")
-	mut outpath:=pathlib.get_file(path:"${outpath}/generated.",create:true)!
+	content:=$tmpl("templates/generated.vtemplate").replace("&&","$")
+	gpath:="${outpathloc}/generated.v"
+	mut outpath:=pathlib.get_file(path:gpath,create:true)!
+	println(" - write ${gpath}")
 	outpath.write(content)!
 
-	for element in elements{
-		content2:=$tmpl("${templatespath}/element_x.vtemplate")
-		mut outpath2:=pathlib.get_file(path:"${outpath}/element_${element.name}.v",create:true)!
-		outpath2.write(content2)!		
+	for eo in elementsobj{
+		content2:=$tmpl("templates/element_x.vtemplate")
+		e_path:="${outpathloc}/element_${eo.name}.v"
+		if !os.exists(e_path){
+			mut outpath2:=pathlib.get_file(path:e_path,create:true)!
+			println(" - write ${e_path}")
+			outpath2.write(content2)!		
+		}
 	}
-
 }
 
 fn main() {
