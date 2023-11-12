@@ -8,7 +8,7 @@ fn test_charparser1() {
 	p2.parse()!
 	assert p2 == Paragraph{
 		content: ''
-		items: []
+		elements: []
 		changed: false
 	}
 }
@@ -57,8 +57,8 @@ fn test_charparser3() {
 	// TODO decide what to do in this case
 	// assert p2 == Paragraph {
 	// 	content: '!['
-	// 	items: [
-	// 		ParagraphItem(Link {
+	// 	elements: [
+	// 		ParagraphElement(Link {
 	// 			content: '!['
 	// 			cat: .page
 	// 			isexternal: false
@@ -86,8 +86,8 @@ fn test_charparser_link() {
 	p2.parse()!
 	assert p2 == Paragraph{
 		content: '![a](b)'
-		items: [
-			ParagraphItem(Link{
+		elements: [
+			ParagraphElement(Link{
 				content: '![a](b)'
 				cat: .page
 				isexternal: false
@@ -115,8 +115,8 @@ fn test_charparser_link_ignore_trailing_spaces() {
 	}
 	p2.parse()!
 
-	assert p2.items.len == 1
-	assert p2.items.last().content == '![a](b)'
+	assert p2.elements.len == 1
+	assert p2.elements.last().content == '![a](b)'
 }
 
 fn test_charparser_link_ignore_trailing_newlines() {
@@ -126,8 +126,8 @@ fn test_charparser_link_ignore_trailing_newlines() {
 	}
 	p2.parse()!
 
-	assert p2.items.len == 1
-	assert p2.items.last().content == '![a](b)'
+	assert p2.elements.len == 1
+	assert p2.elements.last().content == '![a](b)'
 }
 
 fn test_charparser_link_comment_text() {
@@ -141,22 +141,22 @@ sometext
 	}
 	p2.process()!
 
-	assert p2.items.len == 5
-	assert p2.items[0] is Text
-	assert p2.items[0].content == '- list\n'
-	assert p2.items[1] is Link
-	item_1 := p2.items[1] as Link
+	assert p2.elements.len == 5
+	assert p2.elements[0] is Text
+	assert p2.elements[0].content == '- list\n'
+	assert p2.elements[1] is Link
+	item_1 := p2.elements[1] as Link
 	assert item_1.cat == .image
 	assert item_1.filename == 'b.jpg'
 	assert item_1.description == 'a'
-	assert p2.items[2] is Text
-	assert p2.items[2].content == ' '
-	assert p2.items[3] is Comment
-	item_3 := p2.items[3] as Comment
+	assert p2.elements[2] is Text
+	assert p2.elements[2].content == ' '
+	assert p2.elements[3] is Comment
+	item_3 := p2.elements[3] as Comment
 	assert item_3.content == 'comment'
 	assert item_3.singleline == true
-	assert p2.items[4] is Text
-	assert p2.items[4].content == 'sometext'
+	assert p2.elements[4] is Text
+	assert p2.elements[4].content == 'sometext'
 
 	assert '${txt.trim_space()}\n\n' == p2.wiki()
 }
@@ -173,26 +173,26 @@ sometext
 	}
 	p2.process()!
 
-	assert p2.items.len == 6
-	assert p2.items[0] is Text
-	assert p2.items[0].content == '- list\n'
-	assert p2.items[1] is Link
-	item_1 := p2.items[1] as Link
+	assert p2.elements.len == 6
+	assert p2.elements[0] is Text
+	assert p2.elements[0].content == '- list\n'
+	assert p2.elements[1] is Link
+	item_1 := p2.elements[1] as Link
 	assert item_1.cat == .image
 	assert item_1.filename == 'b.jpg'
 	assert item_1.description == 'a'
-	assert p2.items[2] is Comment
-	item_2 := p2.items[2] as Comment
+	assert p2.elements[2] is Comment
+	item_2 := p2.elements[2] as Comment
 	assert item_2.content == 'comment1'
 	assert item_2.singleline == false
-	assert p2.items[3] is Text
-	assert p2.items[3].content == '\n'
-	assert p2.items[4] is Comment
-	item_4 := p2.items[4] as Comment
+	assert p2.elements[3] is Text
+	assert p2.elements[3].content == '\n'
+	assert p2.elements[4] is Comment
+	item_4 := p2.elements[4] as Comment
 	assert item_4.content == 'comment2'
 	assert item_4.singleline == false
-	assert p2.items[5] is Text
-	assert p2.items[5].content == '\nsometext'
+	assert p2.elements[5] is Text
+	assert p2.elements[5].content == '\nsometext'
 
 	assert '${txt.trim_space()}\n\n' == p2.wiki()
 }

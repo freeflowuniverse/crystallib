@@ -6,7 +6,7 @@ module markdownparser
 fn (mut para Paragraph) parse() ! {
 	mut parser := parser_char_new_text(para.content.trim_space())
 
-	para.items << Text{}
+	para.elements << Text{}
 	mut potential_link := false
 
 	for {
@@ -14,7 +14,7 @@ fn (mut para Paragraph) parse() ! {
 			break
 		}
 
-		mut llast := para.items.last()
+		mut llast := para.elements.last()
 		mut char_ := parser.char_current()
 
 		// check for comments end
@@ -22,7 +22,7 @@ fn (mut para Paragraph) parse() ! {
 			if char_ == '\n' {
 				if llast.singleline {
 					// means we are at end of line of a single line comment
-					para.items << Text{}
+					para.elements << Text{}
 					parser.next()
 					char_ = ''
 					continue
@@ -36,7 +36,7 @@ fn (mut para Paragraph) parse() ! {
 				llast.content += char_ // need to add current content
 				// need to move forward not to have the 3 next
 				parser.forward(3)
-				para.items << Text{}
+				para.elements << Text{}
 				parser.next()
 				char_ = ''
 				continue
@@ -48,13 +48,13 @@ fn (mut para Paragraph) parse() ! {
 				if !parser.text_next_is('(', 1) {
 					// means is not link, need to convert link to normal text
 					mut c := llast.content
-					para.items.delete_last() // remove the link
-					para.items << Text{
+					para.elements.delete_last() // remove the link
+					para.elements << Text{
 						content: c
 					} // we need to re-add the content
-					llast = para.items.last() // fetch last again
+					llast = para.elements.last() // fetch last again
 					llast.content += char_ // need to add current content
-					para.items << Text{}
+					para.elements << Text{}
 					parser.next()
 					// println("\n!!!!!!!!!!!!!!!!!!!!!\n")
 					char_ = ''
@@ -65,7 +65,7 @@ fn (mut para Paragraph) parse() ! {
 			if char_ == ')' && potential_link {
 				// end of link
 				llast.content += char_ // need to add current content
-				para.items << Text{}
+				para.elements << Text{}
 				parser.next()
 				char_ = ''
 				potential_link = false
@@ -79,8 +79,8 @@ fn (mut para Paragraph) parse() ! {
 				for totry in ['<!--', '//'] {
 					if parser.text_next_is(totry, 0) {
 						// we are now in comment
-						para.items << Comment{}
-						mut llast2 := para.items.last()
+						para.elements << Comment{}
+						mut llast2 := para.elements.last()
 						if totry == '//' {
 							if mut llast2 is Comment {
 								llast2.singleline = true
@@ -98,7 +98,7 @@ fn (mut para Paragraph) parse() ! {
 					if parser.text_next_is(totry, 0) {
 						mut l := link_new()
 						l.content = totry
-						para.items << l
+						para.elements << l
 						parser.forward(totry.len - 1)
 						char_ = ''
 						break
@@ -123,24 +123,24 @@ fn (mut para Paragraph) parse() ! {
 
 	mut toremovelist := []int{}
 	mut counter := 0
-	for mut item in para.items {
-		match mut item {
+	for mut element in para.elements {
+		match mut element {
 			Text {
-				item.process()!
-				if item.content == '' {
+				element.process()!
+				if element.content == '' {
 					toremovelist << counter
 				}
 			}
 			Link {
-				item.process()!
+				element.process()!
 			}
 			Comment {
-				item.process()!
+				element.process()!
 			}
 		}
 		counter += 1
 	}
 	for toremove in toremovelist.reverse() {
-		para.items.delete(toremove)
+		para.elements.delete(toremove)
 	}
 }

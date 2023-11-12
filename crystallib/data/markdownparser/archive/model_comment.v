@@ -1,9 +1,5 @@
 module markdownparser
 
-// enum CommentPrefix {
-// 	short
-// 	multi
-// }
 
 pub struct Comment {
 pub mut:
@@ -12,7 +8,7 @@ pub mut:
 	singleline bool
 }
 
-fn (mut o Comment) process(mut items []DocItem) !int {
+fn (mut o Comment) process(mut elements []DocElement) !int {
 	return
 }
 

@@ -22,22 +22,22 @@ To initialize tmux on a local or [remote node](mysite:page.md), simply build the
 '
 	mut docs := new(content: content)!
 
-	assert docs.items.len == 5
-	assert docs.items[0] is Header
-	assert docs.items[1] is Paragraph
-	paragraph1 := docs.items[1] as Paragraph
-	assert paragraph1.items.len == 1
-	assert paragraph1.items[0] is Text
-	assert docs.items[2] is Header
-	assert docs.items[3] is Paragraph
-	paragraph2 := docs.items[3] as Paragraph
-	assert paragraph2.items.len == 5
-	assert paragraph2.items[0] is Text
-	assert paragraph2.items[1] is Link
-	assert paragraph2.items[2] is Text
-	assert paragraph2.items[3] is Link
-	assert paragraph2.items[4] is Text
-	assert docs.items[4] is Header
+	assert docs.elements.len == 5
+	assert docs.elements[0] is Header
+	assert docs.elements[1] is Paragraph
+	paragraph1 := docs.elements[1] as Paragraph
+	assert paragraph1.elements.len == 1
+	assert paragraph1.elements[0] is Text
+	assert docs.elements[2] is Header
+	assert docs.elements[3] is Paragraph
+	paragraph2 := docs.elements[3] as Paragraph
+	assert paragraph2.elements.len == 5
+	assert paragraph2.elements[0] is Text
+	assert paragraph2.elements[1] is Link
+	assert paragraph2.elements[2] is Text
+	assert paragraph2.elements[3] is Link
+	assert paragraph2.elements[4] is Text
+	assert docs.elements[4] is Header
 	assert content.trim_space() == docs.wiki().trim_space()
 }
 
@@ -60,15 +60,15 @@ some extra text
 '
 	mut docs := new(content: content)!
 
-	assert docs.items.len == 5
-	assert docs.items[0] is Header
-	assert docs.items[1] is Paragraph
-	paragraph1 := docs.items[1] as Paragraph
-	assert paragraph1.items.len == 1
-	assert paragraph1.items[0] is Text
-	assert docs.items[2] is Header
-	assert docs.items[3] is Table
-	table1 := docs.items[3] as Table
+	assert docs.elements.len == 5
+	assert docs.elements[0] is Header
+	assert docs.elements[1] is Paragraph
+	paragraph1 := docs.elements[1] as Paragraph
+	assert paragraph1.elements.len == 1
+	assert paragraph1.elements[0] is Text
+	assert docs.elements[2] is Header
+	assert docs.elements[3] is Table
+	table1 := docs.elements[3] as Table
 	assert table1.num_columns == 3
 	assert table1.header.len == 3
 	assert table1.alignments.len == 3
@@ -76,10 +76,10 @@ some extra text
 	for row in table1.rows {
 		assert row.len == 3
 	}
-	assert docs.items[4] is Paragraph
-	paragraph2 := docs.items[4] as Paragraph
-	assert paragraph2.items.len == 1
-	assert paragraph2.items[0] is Text
+	assert docs.elements[4] is Paragraph
+	paragraph2 := docs.elements[4] as Paragraph
+	assert paragraph2.elements.len == 1
+	assert paragraph2.elements[0] is Text
 	assert content.trim_space() == docs.wiki().trim_space()
 }
 
@@ -95,10 +95,10 @@ fn test_wiki_action() {
 '
 	mut docs := new(content: content)!
 
-	assert docs.items.len == 2
-	assert docs.items[0] is Header
-	assert docs.items[1] is Action
-	action := docs.items[1] as Action
+	assert docs.elements.len == 2
+	assert docs.elements[0] is Header
+	assert docs.elements[1] is Action
+	action := docs.elements[1] as Action
 	assert action.name == 'farmerbot.nodemanager.define'
 	assert action.params == Params{
 		params: [Param{
@@ -143,15 +143,15 @@ for x in list {
 '
 	mut docs := new(content: content)!
 
-	assert docs.items.len == 5
-	assert docs.items[0] is Header
-	assert docs.items[1] is CodeBlock
-	codeblock1 := docs.items[1] as CodeBlock
+	assert docs.elements.len == 5
+	assert docs.elements[0] is Header
+	assert docs.elements[1] is CodeBlock
+	codeblock1 := docs.elements[1] as CodeBlock
 	assert codeblock1.category == 'v'
-	assert docs.items[2] is Header
-	assert docs.items[3] is CodeBlock
-	codeblock2 := docs.items[3] as CodeBlock
-	assert docs.items[4] is Header
+	assert docs.elements[2] is Header
+	assert docs.elements[3] is CodeBlock
+	codeblock2 := docs.elements[3] as CodeBlock
+	assert docs.elements[4] is Header
 	assert content.trim_space() == docs.wiki().trim_space()
 }
 
@@ -168,20 +168,20 @@ fn test_wiki_links() {
 '
 	mut docs := new(content: content)!
 
-	assert docs.items.len == 4
-	assert docs.items[0] is Header
-	assert docs.items[1] is Paragraph
-	paragraph1 := docs.items[1] as Paragraph
-	assert paragraph1.items.len == 4
-	assert paragraph1.items[0] is Text
-	assert paragraph1.items[1] is Link
-	assert paragraph1.items[2] is Text
-	assert paragraph1.items[3] is Link
-	assert docs.items[2] is Header
-	assert docs.items[3] is Paragraph
-	paragraph2 := docs.items[3] as Paragraph
-	assert paragraph2.items.len == 1
-	assert paragraph2.items[0] is Link
+	assert docs.elements.len == 4
+	assert docs.elements[0] is Header
+	assert docs.elements[1] is Paragraph
+	paragraph1 := docs.elements[1] as Paragraph
+	assert paragraph1.elements.len == 4
+	assert paragraph1.elements[0] is Text
+	assert paragraph1.elements[1] is Link
+	assert paragraph1.elements[2] is Text
+	assert paragraph1.elements[3] is Link
+	assert docs.elements[2] is Header
+	assert docs.elements[3] is Paragraph
+	paragraph2 := docs.elements[3] as Paragraph
+	assert paragraph2.elements.len == 1
+	assert paragraph2.elements[0] is Link
 	assert content.trim_space() == docs.wiki().trim_space()
 }
 
@@ -197,8 +197,8 @@ fn test_wiki_header_too_long() {
 ##### Is ok
 '
 
-	assert docs.items.len == 1
-	assert docs.items[0] is Header
+	assert docs.elements.len == 1
+	assert docs.elements[0] is Header
 	assert expected_wiki.trim_space() == docs.wiki().trim_space()
 }
 
@@ -257,16 +257,16 @@ Example:
 	twinid:105
 "
 	mut docs := new(content: content)!
-	assert docs.items.len == 10
-	assert docs.items[0] is Header
-	assert docs.items[1] is Paragraph
-	assert docs.items[2] is Header
-	assert docs.items[3] is Paragraph
-	assert docs.items[4] is Header
-	assert docs.items[5] is Paragraph
-	assert docs.items[6] is Table
-	assert docs.items[7] is Header
-	assert docs.items[8] is Paragraph
-	assert docs.items[9] is Action
+	assert docs.elements.len == 10
+	assert docs.elements[0] is Header
+	assert docs.elements[1] is Paragraph
+	assert docs.elements[2] is Header
+	assert docs.elements[3] is Paragraph
+	assert docs.elements[4] is Header
+	assert docs.elements[5] is Paragraph
+	assert docs.elements[6] is Table
+	assert docs.elements[7] is Header
+	assert docs.elements[8] is Paragraph
+	assert docs.elements[9] is Action
 	assert content.trim_space() == docs.wiki().trim_space()
 }

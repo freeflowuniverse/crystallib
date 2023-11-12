@@ -15,7 +15,7 @@ pub mut:
 	rows        [][]string
 }
 
-fn (mut o Table) process(mut items []DocItem) !int {
+fn (mut o Table) process(mut elements []DocElement) !int {
 	rows := o.content.split_into_lines()
 	if rows.len > 2 {
 		for row_string in rows[2..] {

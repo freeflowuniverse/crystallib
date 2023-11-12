@@ -8,9 +8,9 @@ fn test_table_no_rows() {
 
 '
 	)!
-	assert docs.items.len == 1
-	assert docs.items[0] is Table
-	table := docs.items[0] as Table
+	assert docs.elements.len == 1
+	assert docs.elements[0] is Table
+	table := docs.elements[0] as Table
 	assert table.num_columns == 3
 	assert table.header == ['Column1', 'Column2', 'Column3']
 	assert table.alignments == [.left, .left, .left]
@@ -30,9 +30,9 @@ fn test_table_one_row() {
 
 '
 	)!
-	assert docs.items.len == 1
-	assert docs.items[0] is Table
-	table := docs.items[0] as Table
+	assert docs.elements.len == 1
+	assert docs.elements[0] is Table
+	table := docs.elements[0] as Table
 	assert table.num_columns == 3
 	assert table.header == ['Column1', 'Column2', 'Column3']
 	assert table.alignments == [.left, .left, .left]
@@ -56,9 +56,9 @@ fn test_table_two_rows() {
 
 '
 	)!
-	assert docs.items.len == 1
-	assert docs.items[0] is Table
-	table := docs.items[0] as Table
+	assert docs.elements.len == 1
+	assert docs.elements[0] is Table
+	table := docs.elements[0] as Table
 	assert table.num_columns == 3
 	assert table.header == ['Column1', 'Column2', 'Column3']
 	assert table.alignments == [.left, .left, .left]
@@ -84,9 +84,9 @@ fn test_table_two_rows_one_is_half_filled() {
 
 '
 	)!
-	assert docs.items.len == 1
-	assert docs.items[0] is Table
-	table := docs.items[0] as Table
+	assert docs.elements.len == 1
+	assert docs.elements[0] is Table
+	table := docs.elements[0] as Table
 	assert table.num_columns == 3
 	assert table.header == ['Column1', 'Column2', 'Column3']
 	assert table.alignments == [.left, .left, .left]
@@ -112,9 +112,9 @@ fn test_table_two_rows_one_is_filled_too_much() {
 
 '
 	)!
-	assert docs.items.len == 1
-	assert docs.items[0] is Table
-	table := docs.items[0] as Table
+	assert docs.elements.len == 1
+	assert docs.elements[0] is Table
+	table := docs.elements[0] as Table
 	assert table.num_columns == 3
 	assert table.header == ['Column1', 'Column2', 'Column3']
 	assert table.alignments == [.left, .left, .left]
@@ -140,9 +140,9 @@ Row2Col1  | Row2Col2     | Row2Col3
 
 '
 	)!
-	assert docs.items.len == 1
-	assert docs.items[0] is Table
-	table := docs.items[0] as Table
+	assert docs.elements.len == 1
+	assert docs.elements[0] is Table
+	table := docs.elements[0] as Table
 	assert table.num_columns == 3
 	assert table.header == ['Column1', 'Column2', 'Column3']
 	assert table.alignments == [.left, .left, .left]
@@ -167,9 +167,9 @@ fn test_table_one_row_alignment_left() {
 
 '
 	)!
-	assert docs.items.len == 1
-	assert docs.items[0] is Table
-	table := docs.items[0] as Table
+	assert docs.elements.len == 1
+	assert docs.elements[0] is Table
+	table := docs.elements[0] as Table
 	assert table.num_columns == 3
 	assert table.alignments == [.left, .left, .left]
 	assert table.wiki() == '| Column1 | Column2 | Column3 |
@@ -188,9 +188,9 @@ fn test_table_one_row_alignment_right() {
 
 '
 	)!
-	assert docs.items.len == 1
-	assert docs.items[0] is Table
-	table := docs.items[0] as Table
+	assert docs.elements.len == 1
+	assert docs.elements[0] is Table
+	table := docs.elements[0] as Table
 	assert table.num_columns == 3
 	assert table.alignments == [.right, .right, .right]
 	assert table.wiki() == '| Column1 | Column2 | Column3 |
@@ -209,9 +209,9 @@ fn test_table_one_row_alignment_center() {
 
 '
 	)!
-	assert docs.items.len == 1
-	assert docs.items[0] is Table
-	table := docs.items[0] as Table
+	assert docs.elements.len == 1
+	assert docs.elements[0] is Table
+	table := docs.elements[0] as Table
 	assert table.num_columns == 3
 	assert table.alignments == [.center, .center, .center]
 	assert table.wiki() == '| Column1 | Column2 | Column3 |
@@ -230,9 +230,9 @@ fn test_table_one_row_alignment_mixed() {
 
 '
 	)!
-	assert docs.items.len == 1
-	assert docs.items[0] is Table
-	table := docs.items[0] as Table
+	assert docs.elements.len == 1
+	assert docs.elements[0] is Table
+	table := docs.elements[0] as Table
 	assert table.num_columns == 4
 	assert table.alignments == [.left, .center, .right, .left]
 	assert table.wiki() == '| Column1 | Column2 | Column3 | Column4 |

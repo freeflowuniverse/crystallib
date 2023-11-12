@@ -21,9 +21,9 @@ fn test_action_empty_params() {
 '
 	)!
 
-	assert docs.items.len == 1
-	assert docs.items[0] is Action
-	action := docs.items[0] as Action
+	assert docs.elements.len == 1
+	assert docs.elements[0] is Action
+	action := docs.elements[0] as Action
 	assert action.name == 'farmerbot.powermanager.poweroff'
 	assert action.params == Params{
 		params: []
@@ -42,9 +42,9 @@ fn test_action_some_params_multiline() {
 '
 	)!
 
-	assert docs.items.len == 1
-	assert docs.items[0] is Action
-	action := docs.items[0] as Action
+	assert docs.elements.len == 1
+	assert docs.elements[0] is Action
+	action := docs.elements[0] as Action
 	assert action.name == 'farmerbot.nodemanager.define'
 	assert action.params == Params{
 		params: [Param{
@@ -71,9 +71,9 @@ fn test_action_some_params_inline() {
 '
 	)!
 
-	assert docs.items.len == 1
-	assert docs.items[0] is Action
-	action := docs.items[0] as Action
+	assert docs.elements.len == 1
+	assert docs.elements[0] is Action
+	action := docs.elements[0] as Action
 	assert action.name == 'farmerbot.nodemanager.define'
 	assert action.params == Params{
 		params: [Param{
@@ -104,9 +104,9 @@ fn test_action_some_params_some_arguments_multi_line() {
 '
 	)!
 
-	assert docs.items.len == 1
-	assert docs.items[0] is Action
-	action := docs.items[0] as Action
+	assert docs.elements.len == 1
+	assert docs.elements[0] is Action
+	action := docs.elements[0] as Action
 	assert action.name == 'farmerbot.nodemanager.define'
 	assert action.params == Params{
 		params: [Param{
@@ -127,9 +127,9 @@ fn test_action_some_params_some_arguments_single_line() {
 '
 	)!
 
-	assert docs.items.len == 1
-	assert docs.items[0] is Action
-	action := docs.items[0] as Action
+	assert docs.elements.len == 1
+	assert docs.elements[0] is Action
+	action := docs.elements[0] as Action
 	assert action.name == 'farmerbot.nodemanager.define'
 	assert action.params == Params{
 		params: [Param{

@@ -32,26 +32,21 @@ fn test_parse_1() {
 	println(a.script3())
 
 	println("EXPECTED OUTPUT:
-	!!payment.add account:something description:'TF Wallet for TFT' person:fatayera preferred:false
-		name:'TF Wallet' //comment for name
-		blockchain:stellar //holochain maybe?	
-	")
+		// comment for the action
+		!!payment.add account:something description:'TF Wallet for TFT' person:fatayera preferred:false
+			name:'TF Wallet' //comment for name
+			blockchain:stellar //holochain maybe?
 
-	assert sha256.hexhash(a.str()) == "9e33a11c276f1dfada99f5f8ecf48b1fd59f778bafdee686545d4da10f63691c"
-
-	// b:=parse(text:a.str()) or {panic(err)}
-
-	// println(b)
-
-	// println("EXPECTED OUTPUT 2:
-	// !!payment.add account:something description:'TF Wallet for TFT' person:fatayera preferred:false
-	// 	name:'TF Wallet' //comment for name
-	// 	blockchain:stellar //holochain maybe?	
-	// ")
+		// comment2
+		!!payment.add name:'TF Wallet2' person:despiegk
 
 
 
-	// assert sha256.hexhash(b.str()) == "9e33a11c276f1dfada99f5f8ecf48b1fd59f778bafdee686545d4da10f63691c"
+		free comment
+		a:=this is something else
+		")
+
+	assert sha256.hexhash(a.str()) == "daf0a54b8f2572cf8f3a565d313801d6576c1eb153c79cf7b1a3a5ea7579f7f9"
 
 
 }

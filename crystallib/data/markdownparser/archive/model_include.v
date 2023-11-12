@@ -5,7 +5,7 @@ pub mut:
 	content string
 }
 
-fn (mut include Include) process(mut items []DocItem) !int {
+fn (mut include Include) process(mut elements []DocElement) !int {
 }
 
 fn (include Include) wiki() string {

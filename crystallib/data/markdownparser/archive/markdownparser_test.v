@@ -16,8 +16,8 @@ const testpath = os.dir(@FILE) + '/testdata'
 // **** Paragraph
 //     ![this is link2](something.jpg)'
 
-// 	assert doc.items[0] is Header
-// 	header_item := doc.items[0] as Header
+// 	assert doc.elements[0] is Header
+// 	header_item := doc.elements[0] as Header
 // 	assert header_item.content == 'this is a test'
 // 	assert header_item.depth == 1
 // }
@@ -36,8 +36,8 @@ fn test_parsing_using_path() {
 **** Paragraph
     ![this is link2](something.jpg)'
 
-	assert doc.items[0] is Header
-	header_item := doc.items[0] as Header
+	assert doc.elements[0] is Header
+	header_item := doc.elements[0] as Header
 	assert header_item.content == 'this is a test'
 	assert header_item.depth == 1
 }

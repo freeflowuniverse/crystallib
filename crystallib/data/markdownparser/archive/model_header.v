@@ -6,7 +6,7 @@ pub mut:
 	depth   int
 }
 
-fn (mut o Header) process(mut items []DocItem) !int {
+fn (mut o Header) process(mut elements []DocElement) !int {
 	return
 }
 

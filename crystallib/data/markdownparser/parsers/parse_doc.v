@@ -1,11 +1,12 @@
 module markdownparser
 
+import freeflowuniverse.crystallib.data.markdownparser.elements
 import regex
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
-fn (mut doc Doc) parse() ! {
-	mut parser := parser_line_new(mut &doc)!
+fn parse_doc(mut doc elements.Doc) ! {
+	mut parser := parser_line_new(mut doc)!
 	re_header_row := regex.regex_opt('^:?-+:?$') or { return error("regex doesn't work") }
 
 	for {
@@ -82,7 +83,7 @@ fn (mut doc Doc) parse() ! {
 							}
 							alignments << alignment
 						}
-						doc.items << Table{
+						doc.elements << Table{
 							content: '${line}\n${line2}\n'
 							num_columns: header.len
 							header: header
@@ -97,7 +98,7 @@ fn (mut doc Doc) parse() ! {
 			// parse includes
 			if line.starts_with('!!include ') {
 				content := line.all_after_first('!!include ').trim_space()
-				doc.items << Include{
+				doc.elements << Include{
 					content: content
 				}
 				parser.next_start()
@@ -105,7 +106,7 @@ fn (mut doc Doc) parse() ! {
 			}
 			// parse action
 			if line.starts_with('!') {
-				doc.items << Action{
+				doc.elements << Action{
 					content: line
 				}
 				parser.next()
@@ -114,7 +115,7 @@ fn (mut doc Doc) parse() ! {
 
 			// find codeblock
 			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
-				doc.items << CodeBlock{
+				doc.elements << CodeBlock{
 					category: line.substr(3, line.len).to_lower().trim_space()
 				}
 				parser.next()
@@ -133,7 +134,7 @@ fn (mut doc Doc) parse() ! {
 						parser.next_start()
 						continue
 					}
-					doc.items << Header{
+					doc.elements << Header{
 						content: line.all_after_first(line[..d]).trim_space()
 						depth: d
 					}
@@ -143,7 +144,7 @@ fn (mut doc Doc) parse() ! {
 			}
 
 			if line.trim_space().to_lower().starts_with('<html') {
-				doc.items << Html{}
+				doc.elements << Html{}
 				parser.next()
 				continue
 			}
@@ -165,44 +166,5 @@ fn (mut doc Doc) parse() ! {
 		parser.next()
 	}
 
-	//loop over the process table, only when no changes are further done we stop
-	for {
-		mut result:=[]DocItem{}
-		mut changes:=0
-		for mut item in doc.items {
-			match mut item {
-				Table {
-					changes+=item.process(mut result)!
-				}
-				Action {
-					changes+=item.process(mut result)!
-				}
-				Actions {
-					changes+=item.process(mut result)!
-				}
-				Header {
-					changes+=item.process(mut result)!
-				}
-				Paragraph {
-					changes+=item.process(mut result)!
-				}
-				Html {
-					changes+=item.process(mut result)!
-				}
-				Include {
-					changes+=item.process(mut result)!
-				}
-				CodeBlock {
-					changes+=item.process(mut result)!
-				}
-				Link {
-					changes+=item.process(mut result)!
-				}
-			}
-		}
-		if changes==0{
-			break
-		}
-		doc.items = result		
-	}
+
 }

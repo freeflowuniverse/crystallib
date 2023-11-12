@@ -61,7 +61,7 @@ pub fn (mut link Link) name_fix_no_underscore_no_ext() string {
 	// return link.filename.all_before_last('.').trim_right('_').to_lower()
 }
 
-fn (mut o Link) process(mut items []DocItem) !int {
+fn (mut o Link) process(mut elements []DocElement) !int {
 	o.parse()
 }
 

@@ -4,14 +4,14 @@ pub struct None {
 	DocBase
 }
 
-fn (mut o None) process(mut items []DocItem) !int {
+fn (mut o None) process(mut elements []DocElement) !int {
 	return 0	
 }
 
-fn (o None) wiki() string {
+fn (o None) markdown() string {
 	return "none"
 }
 
 fn (o None) html() string {
-	return o.wiki()
+	return o.markdown()
 }

@@ -12,15 +12,16 @@ pub mut:
 
 
 
-pub fn (collection ActionsCollection) str2() string {
-	mut out := ''
-	for action in collection.actions{
-		out+="${action}\n"
-	}
+pub fn (collection ActionsCollection) str() string {
+// 	mut out := ''
+// 	for action in collection.actions{
+// 		out+="${action}\n"
+// 	}
 
-	out+= "OTHERTEXT:\n${collection.othertext}"
+// 	out+= "OTHERTEXT:\n${collection.othertext}"
 
-	return out
+// 	return out
+	return collection.script3()
 }
 
 // serialize to 3script
