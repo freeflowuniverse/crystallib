@@ -1,17 +1,17 @@
 module elements
 
 pub struct Header {
-	DocBase	
+	DocBase
 pub mut:
 	replaceme string
-	depth int
+	depth     int
 }
 
 pub fn (mut self Header) process() !int {
-	for mut parent in self.parents{
-		parent.elements<<self
-	}	
-	if self.processed{		
+	for mut parent in self.parents {
+		parent.elements << self
+	}
+	if self.processed {
 		return 0
 	}
 	self.processed = true
@@ -30,26 +30,25 @@ pub fn (mut self Header) html() string {
 	return '<h${self.depth}>${self.content}</h${self.depth}>\n'
 }
 
-
 [params]
-pub struct HeaderNewArgs{
+pub struct HeaderNewArgs {
 	ElementNewArgs
 pub mut:
 	depth int
 }
 
 pub fn header_new(args_ HeaderNewArgs) Header {
-	mut args:=args_
-	mut a:=Header{
+	mut args := args_
+	mut a := Header{
 		content: args.content
 		depth: args.depth
-		typename:"header"
-		parents:args.parents
+		type_name: 'header'
+		parents: args.parents
 	}
-	if args.add2parent{
-		for mut parent in a.parents{
+	if args.add2parent {
+		for mut parent in a.parents {
 			parent.elements << a
 		}
-	}	
+	}
 	return a
 }

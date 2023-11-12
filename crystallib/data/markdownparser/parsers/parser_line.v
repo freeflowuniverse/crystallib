@@ -1,4 +1,5 @@
 module parsers
+
 import freeflowuniverse.crystallib.data.markdownparser.elements
 
 // is a line parser, useful to quickly parse a file in any format as long as it is line based
@@ -13,7 +14,7 @@ mut:
 
 struct Parser {
 mut:
-	doc    elements.Doc
+	doc    &elements.Doc
 	linenr int
 	lines  []string
 	errors []ParserError

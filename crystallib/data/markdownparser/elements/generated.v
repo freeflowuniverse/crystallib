@@ -1,57 +1,66 @@
 
 module elements
 
-type DocElement = Doc | Html | None | Paragraph | Text | Action | Table | Header | Comment | Include | CodeBlock
+type DocElement = Action
+	| CodeBlock
+	| Comment
+	| Doc
+	| Header
+	| Html
+	| Include
+	| None
+	| Paragraph
+	| Table
+	| Text
 
 fn (mut self DocBase) process_elements() !int {
-	//loop over the process table, only when no changes are further done we stop
+	// loop over the process table, only when no changes are further done we stop
 	for {
-		mut result:=[]DocElement{}
-		mut changes:=0
+		mut result := []DocElement{}
+		mut changes := 0
 		mut elements := self.elements.clone()
 		self.elements = []DocElement{}
 		for mut element in elements {
 			match mut element {
-
 				Doc {
-					changes+=element.process()!
+					changes += element.process()!
 				}
 				Html {
-					changes+=element.process()!
+					changes += element.process()!
 				}
 				None {
-					changes+=element.process()!
+					changes += element.process()!
 				}
 				Paragraph {
-					changes+=element.process()!
+					changes += element.process()!
 				}
 				Text {
-					changes+=element.process()!
+					changes += element.process()!
 				}
 				Action {
-					changes+=element.process()!
+					changes += element.process()!
 				}
 				Table {
-					changes+=element.process()!
+					changes += element.process()!
 				}
 				Header {
-					changes+=element.process()!
+					changes += element.process()!
 				}
 				Comment {
-					changes+=element.process()!
+					changes += element.process()!
 				}
 				Include {
-					changes+=element.process()!
+					changes += element.process()!
 				}
 				CodeBlock {
-					changes+=element.process()!
+					changes += element.process()!
 				}
 			}
 		}
-		if changes==0{
+		if changes == 0 {
 			break
 		}
-		self.elements = result		
+		self.elements = result
 	}
 	return 0
 }
@@ -60,7 +69,6 @@ pub fn (mut self DocBase) markdown() string {
 	mut out := ''
 	for mut element in self.elements {
 		match mut element {
-
 			Doc { out += element.markdown() }
 			Html { out += element.markdown() }
 			None { out += element.markdown() }
@@ -81,7 +89,6 @@ pub fn (mut self DocBase) html() string {
 	mut out := ''
 	for mut element in self.elements {
 		match mut element {
-
 			Doc { out += element.html() }
 			Html { out += element.html() }
 			None { out += element.html() }

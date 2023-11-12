@@ -1,6 +1,7 @@
 module parsers
 
 import freeflowuniverse.crystallib.data.markdownparser.elements
+import freeflowuniverse.crystallib.data.actionparser
 // import regex
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
@@ -16,7 +17,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		}
 		// go out of loop if end of file
 		mut line := parser.line_current()
-		line=line.replace("\t","    ")
+		line = line.replace('\t', '    ')
 		// println(line)
 
 		mut llast := parser.lastitem()
@@ -34,9 +35,11 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		}
 
 		if mut llast is elements.Action {
-			if line.starts_with(' '){
+			if line.starts_with(' ') {
 				// starts with tab or space, means block continues for action
 				llast.content += '${line}\n'
+			} else if line.trim_space() != '' {
+				return error('actions should end with an empty line')
 			} else {
 				parser.next_start()
 				continue
@@ -64,7 +67,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		}
 
 		if mut llast is elements.Paragraph {
-			//TODO: support tables
+			// TODO: support tables
 
 			// if line.starts_with('|') && line.ends_with('|') {
 			// 	//TODO: tab;e doesn't seem to be on right place, should be done on paragraph level
@@ -101,13 +104,13 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			// parse includes
 			if line.starts_with('!!include ') {
 				content := line.all_after_first('!!include ').trim_space()
-				doc.elements << elements.include_new(content:content)
+				doc.elements << elements.include_new(content: content)
 				parser.next_start()
 				continue
 			}
 			// parse action
 			if line.starts_with('!') {
-				doc.elements << elements.action_new(content: line,parents:[&doc])
+				doc.elements << elements.action_new(content: line, parents: [&doc])
 				parser.next()
 				continue
 			}
@@ -115,8 +118,9 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			// find codeblock
 			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
 				doc.elements << elements.codeblock_new(
-					category: line.substr(3, line.len).to_lower().trim_space(),parents:[&doc]
-					)
+					category: line.substr(3, line.len).to_lower().trim_space()
+					parents: [&doc]
+				)
 				parser.next()
 				continue
 			}
@@ -149,9 +153,8 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			}
 		}
 
-
-		if mut llast is elements.Paragraph || mut llast is elements.Html || mut llast is elements.CodeBlock
-			|| mut llast is elements.Include {
+		if mut llast is elements.Paragraph || mut llast is elements.Html
+			|| mut llast is elements.CodeBlock || mut llast is elements.Include {
 			if parser.endlf == false && parser.next_is_eof() {
 				llast.content += line
 			} else {
@@ -166,5 +169,10 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		parser.next()
 	}
 
-
+	// parse action elements
+	for mut element in doc.elements {
+		if mut element is elements.Action {
+			element.action = actionparser.parse(text: element.content)!
+		}
+	}
 }

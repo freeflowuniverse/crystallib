@@ -5,13 +5,13 @@ import freeflowuniverse.crystallib.baobab.smartid
 pub struct Doc {
 	DocBase
 pub mut:
-	gid 	smartid.GID
-	pre     []HtmlSource
+	gid smartid.GID
+	pre []HtmlSource
 }
 
 pub fn (mut self Doc) process() !int {
 	self.process_elements()!
-	self.processed=true
+	self.processed = true
 	return 0
 }
 
@@ -35,7 +35,6 @@ pub fn (mut self Doc) pre_add(arg HtmlSource) string {
 	return ''
 }
 
-
 [param]
 pub struct HtmlSource {
 pub mut:
@@ -51,5 +50,3 @@ enum HtmlSourceCat {
 	css
 	script
 }
-
-
