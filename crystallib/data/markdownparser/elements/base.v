@@ -9,18 +9,19 @@ pub mut:
 	id int //the unique id while loading of the element in the parser
 	content string
 	elements   []DocElement [skip; str: skip]
-	parent  &DocElement [skip; str: skip]
+	parents  []&DocElement [skip; str: skip]
 	path    ?pathlib.Path 
 	processed bool
 	params ?paramsparser.Params
 	changed bool	
+	typename string
 }
 
 
 [params]
 pub struct ElementNewArgs{
 pub mut:
-	parent &DocElement
+	parents[]&DocElement
 	content string
 	add2parent bool=true //means we will add to elemnts of parent
 }

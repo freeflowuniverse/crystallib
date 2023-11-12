@@ -1,30 +1,54 @@
 module elements
 
-
 pub struct Text {
-	DocBase		
+	DocBase	
 pub mut:
-	content string
-	endlf   bool // if there is a linefeed or \n at end	
+	replaceme string
 }
 
-fn (mut self Text) process() !int {
-	self.processed = true
-	self.parent.elements<<self
-	return 0
-}
-
-fn (mut self Text) markdown() string {
-	return self.content
-}
-
-fn (mut self Text) html() string {
-	return self.markdown()
-}
-
-fn text_new(parent DocElement, content string) !Text {
-	return Text{
-		content: content
-		parent: &parent
+pub fn (mut self Text) process() !int {
+	for mut parent in self.parents{
+		parent.elements<<self
+	}	
+	if self.processed{		
+		return 0
 	}
+	self.processed = true
+	return 1
+}
+
+pub fn (mut self Text) markdown() string {
+	mut out:= self.content
+	out+=self.DocBase.markdown()
+	return out
+}
+
+pub fn (mut self Text) html() string {
+	mut out:= self.content
+	out+=self.DocBase.html()
+	return out
+}
+
+
+[params]
+pub struct TextNewArgs{
+	ElementNewArgs
+pub mut:
+	replaceme string
+}
+
+pub fn text_new(args_ TextNewArgs) Text {
+	mut args:=args_
+	mut a:=Text{
+		content: args.content
+		replaceme: args.replaceme
+		typename:"text"
+		parents:args.parents
+	}
+	if args.add2parent{
+		for mut parent in a.parents{
+			parent.elements << a
+		}
+	}	
+	return a
 }

@@ -8,8 +8,10 @@ pub mut:
 	category string
 }
 
-fn (mut self CodeBlock) process() !int {
-	self.parent.elements<<self
+pub fn (mut self CodeBlock) process() !int {
+	for mut parent in self.parents{
+		parent.elements<<self
+	}	
 	if self.processed{		
 		return 0
 	}
@@ -20,17 +22,16 @@ fn (mut self CodeBlock) process() !int {
 	
 	//now see if there is something left in codeblock, if yess add that one to the parent_elements
 	if collection.othertext.len>0{
-		action_new(parent:self.parent,content:collection.othertext)!
+		action_new(parents:self.parents,content:collection.othertext)
 	}
 
 	self.process_elements()!
 	self.processed=true
-	parent_elements << self
 	return 1
 }
 
 
-fn (mut self CodeBlock) markdown() string {
+pub fn (mut self CodeBlock) markdown() string {
 	mut out := ''
 	out += '```${self.category}\n'
 	out += self.content.trim_space()
@@ -38,6 +39,30 @@ fn (mut self CodeBlock) markdown() string {
 	return out
 }
 
-fn (mut self CodeBlock) html() string {
+pub fn (mut self CodeBlock) html() string {
 	return self.markdown()
+}
+
+
+[params]
+pub struct CodeBlockArgs{
+	ElementNewArgs
+pub mut:
+	category string
+}
+
+pub fn codeblock_new(args_ CodeBlockArgs) CodeBlock {
+	mut args:=args_
+	mut a:=CodeBlock{
+		content: args.content
+		typename:"header"
+		parents:args.parents
+		category:args.category
+	}
+	if args.add2parent{
+		for mut parent in a.parents{
+			parent.elements << a
+		}
+	}	
+	return a
 }

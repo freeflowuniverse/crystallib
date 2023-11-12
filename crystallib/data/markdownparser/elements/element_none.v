@@ -4,14 +4,19 @@ pub struct None {
 	DocBase
 }
 
-fn (mut self None) process(mut elements []DocElement) !int {
+pub fn (mut self None) process() !int {
 	return 0	
 }
 
-fn (mut self None) markdown() string {
+pub fn (mut self None) markdown() string {
 	return "none"
 }
 
-fn (mut self None) html() string {
+pub fn (mut self None) html() string {
 	return self.markdown()
+}
+
+
+pub fn none_new(args_ TableNewArgs) None {
+	return None{}
 }

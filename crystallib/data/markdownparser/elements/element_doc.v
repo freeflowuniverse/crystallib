@@ -1,6 +1,5 @@
 module elements
 
-import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.baobab.smartid
 
 pub struct Doc {
@@ -10,18 +9,17 @@ pub mut:
 	pre     []HtmlSource
 }
 
-fn (mut self Doc) process() !int {
+pub fn (mut self Doc) process() !int {
 	self.process_elements()!
 	self.processed=true
-	parent_elements << self
 	return 0
 }
 
-fn (mut self Doc) markdown() string {
+pub fn (mut self Doc) markdown() string {
 	return self.DocBase.markdown()
 }
 
-fn (mut self Doc) html() string {
+pub fn (mut self Doc) html() string {
 	return self.DocBase.html()
 }
 

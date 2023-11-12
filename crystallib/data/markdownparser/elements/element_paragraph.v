@@ -11,7 +11,9 @@ pub struct Paragraph {
 }
 
 fn (mut self Paragraph) process() !int {
-	self.parent.elements<<self
+	for mut parent in self.parents{
+		parent.elements<<self
+	}	
 	if self.processed{		
 		return 0
 	}

@@ -9,7 +9,9 @@ pub mut:
 }
 
 fn (mut self Action) process() !int {
-	self.parent.elements<<self
+	for mut parent in self.parents{
+		parent.elements<<self
+	}	
 	if self.processed{		
 		return 0
 	}
@@ -32,14 +34,16 @@ pub mut:
 	action actionparser.Action
 }
 
-fn action_new(args ActionNewArgs) !Action {
+pub fn action_new(args ActionNewArgs) Action {
 	mut a:=Action{
 		content: args.content
-		parent: args.parent
+		parents: args.parents
 		action: args.action
 	}
 	if args.add2parent{
-		args.parent.elements << a
+		for mut parent in a.parents{
+			parent.elements << a
+		}
 	}
 	return a
 }

@@ -1,12 +1,12 @@
 module elements
 
-pub struct @{eo.classname} {
+pub struct Include {
 	DocBase	
 pub mut:
 	replaceme string
 }
 
-pub fn (mut self @{eo.classname}) process() !int {
+pub fn (mut self Include) process() !int {
 	for mut parent in self.parents{
 		parent.elements<<self
 	}	
@@ -17,13 +17,13 @@ pub fn (mut self @{eo.classname}) process() !int {
 	return 1
 }
 
-pub fn (mut self @{eo.classname}) markdown() string {
+pub fn (mut self Include) markdown() string {
 	mut out:= self.content
 	out+=self.DocBase.markdown()
 	return out
 }
 
-pub fn (mut self @{eo.classname}) html() string {
+pub fn (mut self Include) html() string {
 	mut out:= self.content
 	out+=self.DocBase.html()
 	return out
@@ -31,18 +31,18 @@ pub fn (mut self @{eo.classname}) html() string {
 
 
 [params]
-pub struct @{eo.classname}NewArgs{
+pub struct IncludeNewArgs{
 	ElementNewArgs
 pub mut:
 	replaceme string
 }
 
-pub fn @{eo.name}_new(args_ @{eo.classname}NewArgs) @{eo.classname} {
+pub fn include_new(args_ IncludeNewArgs) Include {
 	mut args:=args_
-	mut a:=@{eo.classname}{
+	mut a:=Include{
 		content: args.content
 		replaceme: args.replaceme
-		typename:"@{eo.name}"
+		typename:"include"
 		parents:args.parents
 	}
 	if args.add2parent{

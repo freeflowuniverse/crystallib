@@ -8,7 +8,7 @@ fn (mut self DocBase) process_elements() !int {
 	for {
 		mut result:=[]DocElement{}
 		mut changes:=0
-		mut elements := self.elements
+		mut elements := self.elements.clone()
 		self.elements = []DocElement{}
 		for mut element in elements {
 			match mut element {
@@ -17,9 +17,6 @@ fn (mut self DocBase) process_elements() !int {
 					changes+=element.process()!
 				}
 				@end
-				else{
-					return error("element &&element not supported")
-				}
 			}
 		}
 		if changes==0{
@@ -37,7 +34,6 @@ pub fn (mut self DocBase) markdown() string {
 			@for eo in elementsobj
 			@eo.classname { out += element.markdown() }
 			@end			
-			else{return error("Cannot find element &&element")}
 		}
 	}
 	return out
@@ -50,7 +46,6 @@ pub fn (mut self DocBase) html() string {
 			@for eo in elementsobj
 			@eo.classname { out += element.html() }
 			@end			
-			else{return error("Cannot find element &&element")}
 		}
 	}
 	return out

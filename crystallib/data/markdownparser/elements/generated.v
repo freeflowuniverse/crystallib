@@ -1,19 +1,22 @@
 
 module elements
 
-type DocElement = HTML | None | Paragraph | Text | Action
+type DocElement = Doc | Html | None | Paragraph | Text | Action | Table | Header | Comment | Include | CodeBlock
 
 fn (mut self DocBase) process_elements() !int {
 	//loop over the process table, only when no changes are further done we stop
 	for {
 		mut result:=[]DocElement{}
 		mut changes:=0
-		mut elements := self.elements
+		mut elements := self.elements.clone()
 		self.elements = []DocElement{}
 		for mut element in elements {
 			match mut element {
 
-				HTML {
+				Doc {
+					changes+=element.process()!
+				}
+				Html {
 					changes+=element.process()!
 				}
 				None {
@@ -28,8 +31,20 @@ fn (mut self DocBase) process_elements() !int {
 				Action {
 					changes+=element.process()!
 				}
-				else{
-					return error("element $element not supported")
+				Table {
+					changes+=element.process()!
+				}
+				Header {
+					changes+=element.process()!
+				}
+				Comment {
+					changes+=element.process()!
+				}
+				Include {
+					changes+=element.process()!
+				}
+				CodeBlock {
+					changes+=element.process()!
 				}
 			}
 		}
@@ -46,12 +61,17 @@ pub fn (mut self DocBase) markdown() string {
 	for mut element in self.elements {
 		match mut element {
 
-			HTML { out += element.markdown() }
+			Doc { out += element.markdown() }
+			Html { out += element.markdown() }
 			None { out += element.markdown() }
 			Paragraph { out += element.markdown() }
 			Text { out += element.markdown() }
 			Action { out += element.markdown() }
-			else{return error("Cannot find element $element")}
+			Table { out += element.markdown() }
+			Header { out += element.markdown() }
+			Comment { out += element.markdown() }
+			Include { out += element.markdown() }
+			CodeBlock { out += element.markdown() }
 		}
 	}
 	return out
@@ -62,12 +82,17 @@ pub fn (mut self DocBase) html() string {
 	for mut element in self.elements {
 		match mut element {
 
-			HTML { out += element.html() }
+			Doc { out += element.html() }
+			Html { out += element.html() }
 			None { out += element.html() }
 			Paragraph { out += element.html() }
 			Text { out += element.html() }
 			Action { out += element.html() }
-			else{return error("Cannot find element $element")}
+			Table { out += element.html() }
+			Header { out += element.html() }
+			Comment { out += element.html() }
+			Include { out += element.html() }
+			CodeBlock { out += element.html() }
 		}
 	}
 	return out
