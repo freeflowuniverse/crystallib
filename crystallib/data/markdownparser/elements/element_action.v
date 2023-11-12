@@ -39,6 +39,7 @@ pub fn action_new(args ActionNewArgs) Action {
 		content: args.content
 		parents: args.parents
 		action: args.action
+		typename:"action"
 	}
 	if args.add2parent{
 		for mut parent in a.parents{

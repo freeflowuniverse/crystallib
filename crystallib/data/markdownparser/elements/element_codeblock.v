@@ -22,7 +22,7 @@ pub fn (mut self CodeBlock) process() !int {
 	
 	//now see if there is something left in codeblock, if yess add that one to the parent_elements
 	if collection.othertext.len>0{
-		action_new(parents:self.parents,content:collection.othertext)
+		text_new(parents:self.parents,content:collection.othertext)
 	}
 
 	self.process_elements()!
@@ -55,7 +55,7 @@ pub fn codeblock_new(args_ CodeBlockArgs) CodeBlock {
 	mut args:=args_
 	mut a:=CodeBlock{
 		content: args.content
-		typename:"header"
+		typename:"codeblock"
 		parents:args.parents
 		category:args.category
 	}
