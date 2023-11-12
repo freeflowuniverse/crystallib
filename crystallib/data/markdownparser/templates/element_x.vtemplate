@@ -1,0 +1,44 @@
+module elements
+
+pub struct ${element.classname} {
+	DocBase	
+pub mut:
+	replaceme string
+}
+
+fn (mut self ${element.classname}) process() !int {
+	self.parent.elements<<self
+	if self.processed{		
+		return 0
+	}
+	self.processed = true
+	return 1
+}
+
+fn (mut self ${element.classname}) markdown() string {
+	return self.Base.markdown()
+}
+
+fn (mut self ${element.classname}) html() string {
+	return self.Base.html()
+}
+
+
+[params]
+pub ${element.classname}NewArgs{
+	ElementNewArgs
+pub mut:
+	replaceme string
+}
+
+fn ${element.name}_new(args ${element.classname}NewArgs) !Action {
+	mut a:=${element.name}{
+		content: args.content
+		parent: args.parent
+		replaceme string
+	}
+	if args.add2parent{
+		args.parent.elements << a
+	}
+	return a
+}
