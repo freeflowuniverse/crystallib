@@ -1,10 +1,9 @@
 module milvus
 
-import json
 import net.http
 import x.json2
 
-type ID = []string | []u64 | string
+type ID = []string | []u64 | string | u64
 
 [params]
 pub struct VectorDeleteArgs {
@@ -15,7 +14,7 @@ pub struct VectorDeleteArgs {
 
 pub fn (c Client) delete_vector(args VectorDeleteArgs) ! {
 	url := '${c.endpoint}/v1/vector/delete'
-	body := json.encode(args)
+	body := json2.encode(args)
 
 	mut req := http.new_request(http.Method.post, url, body)
 	c.do_request(mut req)!
@@ -31,46 +30,47 @@ pub struct VectorGetArgs {
 
 pub fn (c Client) get_vector(args VectorGetArgs) !json2.Any {
 	url := '${c.endpoint}/v1/vector/get'
-	body := json.encode(args)
+	body := json2.encode(args)
 
 	mut req := http.new_request(http.Method.post, url, body)
 	data := c.do_request(mut req)!
-
-	response := json2.raw_decode(data)!
-
-	return response
+	return data
 }
 
 [params]
-pub struct InsertVectorArgs {
-	db_name         ?string     [json: 'dbName'] // The name of the database.
-	collection_name string      [json: 'collectionName'; required] // The name of the collection to which entities will be inserted.
-	data            []json2.Any [required] // An array of entity objects. Note that the keys in an entity object should match the collection schema
+pub struct InsertVectorArgs[T] {
+	db_name         ?string [json: 'dbName'] // The name of the database.
+	collection_name string  [json: 'collectionName'; required] // The name of the collection to which entities will be inserted.
+	data            []T     [required] // An array of entity objects. Note that the keys in an entity object should match the collection schema
 }
 
 struct InsertVectorResponse {
 	insert_count u32 [json: 'insertCount']
 }
 
-pub fn (c Client) insert_vector(args InsertVectorArgs) !u32 {
+pub fn (c Client) insert_vector[T](args InsertVectorArgs[T]) !u32 {
 	url := '${c.endpoint}/v1/vector/insert'
 	body := json2.encode(args)
 
 	mut req := http.new_request(http.Method.post, url, body)
 	data := c.do_request(mut req)!
 
-	response := json.decode(InsertVectorResponse, data)!
+	return decode_insert_vector(data)
+}
 
-	return response.insert_count
+fn decode_insert_vector(data json2.Any) !u32 {
+	mp := data.as_map()
+	count := mp['insertCount'] or { return error('invalid response data: ${data}') }
+	return u32(count.u64())
 }
 
 [params]
 pub struct QueryVectorArgs {
-	db_name         string   [json: 'dbName'] // The name of the database.
+	db_name         ?string  [json: 'dbName'] // The name of the database.
 	collection_name string   [json: 'collectionName'; required] // The name of the collection to which this operation applies.
 	filter          string   [required] // The filter used to find matches for the search.
 	limit           u8 = 100 // The maximum number of entities to return. The sum of this value and that of offset should be less than 16384. The value ranges from 1 to 100.
-	offset          u16 // The number of entities to skip in the search results. The sum of this value and that of limit should be less than 16384. The maximum value is 16384.
+	offset          ?u16 // The number of entities to skip in the search results. The sum of this value and that of limit should be less than 16384. The maximum value is 16384.
 	output_fields   []string [json: 'outputFields'] // An array of fields to return along with the search results.
 }
 
@@ -80,9 +80,7 @@ pub fn (c Client) query_vector(args QueryVectorArgs) !json2.Any {
 
 	mut req := http.new_request(http.Method.post, url, body)
 	data := c.do_request(mut req)!
-
-	response := json2.raw_decode(data)!
-	return response
+	return data
 }
 
 [params]
@@ -107,10 +105,9 @@ pub fn (c Client) search_vector(args SearchVectorArgs) !json2.Any {
 	body := json2.encode(args)
 
 	mut req := http.new_request(http.Method.post, url, body)
-	data := c.do_request(mut req)!
+	mut data := c.do_request(mut req)!
 
-	response := json2.raw_decode(data)!
-	return response
+	return data
 }
 
 [params]
@@ -131,7 +128,25 @@ pub fn (c Client) upsert_vector(args UpsertVectorArgs) !UpsertVectorResponse {
 
 	mut req := http.new_request(http.Method.post, url, body)
 	data := c.do_request(mut req)!
+	return decode_upsert_vector_data(data)
+}
 
-	response := json2.decode[UpsertVectorResponse](data)!
-	return response
+fn decode_upsert_vector_data(data json2.Any) !UpsertVectorResponse {
+	mp := data.as_map()
+	count := mp['upsertCount'] or {
+		return error('invalid response data: missing "upsertCount" field: ${data}')
+	}
+	mut ids := []ID{}
+
+	upsert_ids := mp['upsertIds'] or {
+		return error('invalid response data: missing "upsertIds" field: ${data}')
+	}
+	for a in upsert_ids.arr() {
+		ids << a.u64()
+	}
+
+	return UpsertVectorResponse{
+		upsert_count: u32(count.u64())
+		upsert_ids: ids
+	}
 }

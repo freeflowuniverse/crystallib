@@ -1,10 +1,11 @@
 module milvus
 
-import json
+import x.json2
 import net.http
+import json
 
 pub struct Collection {
-pub:
+pub mut:
 	collection_name string  [json: 'collectionName'; required] // The name of the collection to create.
 	db_name         ?string [json: 'dbName'] // The name of the database.
 	description     ?string // The description of the collection
@@ -16,7 +17,7 @@ pub:
 
 pub fn (c Client) create_collection(collection Collection) ! {
 	url := '${c.endpoint}/v1/vector/collections/create'
-	body := json.encode(collection)
+	body := json2.encode(collection)
 	mut req := http.new_request(http.Method.post, url, body)
 	c.do_request(mut req)!
 }
@@ -31,23 +32,23 @@ possible errors:
 */
 
 pub struct Field {
-pub:
+pub mut:
 	auto_id     bool   [json: 'autoId'] // Whether the primary key automatically increments.
 	description string // An optional description of the field.
 	name        string // The name of the field.
 	primary_key bool   [json: 'primaryKey'] // Whether the field is a primary field.
-	type_       bool   [json: 'type']       // The data type of the values in this field.
+	type_       string [json: 'type'] // The data type of the values in this field.
 }
 
 pub struct Index {
-pub:
+pub mut:
 	field_name  string [json: 'fieldName']  // The name of the indexed field.
 	index_name  string [json: 'indexName']  // The name of the generated index files.
 	metric_type string [json: 'metricType'] // The metric type used in the index process.
 }
 
 pub struct CollectionDescription {
-pub:
+pub mut:
 	collection_name      string  [json: 'collectionName'] // The name of the collection.
 	description          string // An optional description of the collection.
 	fields               []Field
@@ -71,8 +72,82 @@ pub fn (c Client) describe_collection(args DescribeCollectionArgs) !CollectionDe
 
 	mut req := http.new_request(http.Method.get, url, '')
 	data := c.do_request(mut req)!
+	return decode_collection_description(data)
+}
 
-	description := json.decode(CollectionDescription, data)!
+fn decode_collection_description(data json2.Any) CollectionDescription {
+	mp := data.as_map()
+	mut description := CollectionDescription{}
+	if name := mp['collectionName'] {
+		description.collection_name = name.str()
+	}
+
+	if desc := mp['description'] {
+		description.description = desc.str()
+	}
+
+	if fields_array := mp['fields'] {
+		arr := fields_array.arr()
+		mut field := Field{}
+		for a in arr {
+			field_map := a.as_map()
+			if id := field_map['autoId'] {
+				field.auto_id = id.bool()
+			}
+
+			if desc := field_map['description'] {
+				field.description = desc.str()
+			}
+
+			if name := field_map['name'] {
+				field.name = name.str()
+			}
+
+			if primary_key := field_map['primaryKey'] {
+				field.primary_key = primary_key.bool()
+			}
+
+			if type_ := field_map['type'] {
+				field.type_ = type_.str()
+			}
+		}
+
+		description.fields << field
+	}
+
+	if index_array := mp['indexes'] {
+		arr := index_array.arr()
+		mut index := Index{}
+		for a in arr {
+			index_map := a.as_map()
+			if field_name := index_map['fieldName'] {
+				index.field_name = field_name.str()
+			}
+
+			if index_name := index_map['indexName'] {
+				index.index_name = index_name.str()
+			}
+
+			if metric_type := index_map['metricType'] {
+				index.metric_type = metric_type.str()
+			}
+		}
+
+		description.indexes << index
+	}
+
+	if load := mp['load'] {
+		description.load = load.str()
+	}
+
+	if shards_number := mp['shardNum'] {
+		description.shards_number = u32(shards_number.u64())
+	}
+
+	if enable_dynamic_field := mp['enableDynamicField'] {
+		description.enable_dynamic_field = enable_dynamic_field.bool()
+	}
+
 	return description
 }
 
@@ -96,6 +171,16 @@ pub fn (c Client) list_collections() ![]string {
 	mut req := http.new_request(http.Method.get, url, '')
 	data := c.do_request(mut req)!
 
-	collections := json.decode([]string, data)!
-	return collections
+	return decode_collection_list(data)
+}
+
+fn decode_collection_list(data json2.Any) []string {
+	mut list := []string{}
+
+	arr := data.arr()
+	for a in arr {
+		list << a.str()
+	}
+
+	return list
 }

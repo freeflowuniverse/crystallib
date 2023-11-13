@@ -1,7 +1,7 @@
 module milvus
 
 import net.http
-import json
+import x.json2
 
 pub struct Client {
 	endpoint string = 'http://localhost:19530'
@@ -17,29 +17,35 @@ pub fn new(endpoint string, token string) Client {
 
 fn (c Client) add_headers(mut r http.Request) ! {
 	r.add_custom_header('Authorization', 'Bearer ${c.token}')!
-	r.add_custom_header('Content-Type', 'application/json')!
+	r.add_custom_header('content-type', 'application/json')!
+	r.add_custom_header('accept', 'application/json')!
 }
 
-struct MilvusResponse {
+pub struct MilvusResponse {
+pub mut:
 	code    u32
-	data    string [raw]
-	message string
+	data    json2.Any
+	message ?string
 }
 
-fn (c Client) do_request(mut req http.Request) !string {
+fn (c Client) do_request(mut req http.Request) !json2.Any {
 	c.add_headers(mut req)!
 	res := req.do()!
 	if res.status() != http.Status.ok {
 		return error('${res.status_code} ${res.status_msg}')
 	}
 
-	milvus_response := json.decode(MilvusResponse, res.body) or {
+	milvus_response := json2.raw_decode(res.body) or {
 		return error('failed to decode milvus response: ${err}')
 	}
 
-	if milvus_response.code != 200 {
-		return error('milvus error ${milvus_response.code}: ${milvus_response.message}')
+	mp := milvus_response.as_map()
+	code := mp['code'] or { return error('invalid response body: ${milvus_response}') }
+	if code.u64() != 200 {
+		message := mp['message'] or { '' }
+		return error('milvus error ${code.u64()}: ${message}')
 	}
 
-	return milvus_response.data
+	data := mp['data'] or { return error('invalid response body: ${milvus_response}') }
+	return data
 }
