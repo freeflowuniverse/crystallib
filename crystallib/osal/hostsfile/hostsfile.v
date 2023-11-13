@@ -3,13 +3,29 @@ module hostsfile
 import os
 import freeflowuniverse.crystallib.osal
 
+//TODO: will be broken now
+
 [heap]
 pub struct HostsFile {
 pub mut:
-	hosts map[string][]map[string]string
+	sections []Section
 }
 
-pub fn load() HostsFile {
+pub struct Section {
+pub mut:
+	name string
+	hosts Host[]
+}
+
+
+pub struct Host {
+pub mut:
+	ip string
+	domain string
+}
+
+
+pub fn new() HostsFile {
 	mut obj := HostsFile{}
 
 	mut content := os.read_file('/etc/hosts') or { panic(err) }
@@ -68,11 +84,18 @@ pub fn (mut hostsfile HostsFile) reset(sections []string) &HostsFile {
 	return hostsfile
 }
 
-pub fn (mut hostsfile HostsFile) add(ip string, domain string, section string) &HostsFile {
-	if section !in hostsfile.hosts {
-		hostsfile.hosts[section] = []map[string]string{}
+pub struct HostItemArg{
+pub args:
+	ip string
+	domain string
+	section string = "main"
+}
+
+pub fn (mut hostsfile HostsFile) add(args HostItemArg) &HostsFile {
+	if args.section !in hostsfile.hosts {
+		hostsfile.hosts[args.section] = []map[string]string{}
 	}
-	hostsfile.hosts[section] << {
+	hostsfile.hosts[args.section] << {
 		ip: domain
 	}
 	return hostsfile

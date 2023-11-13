@@ -5,10 +5,11 @@ module zola
 // import log
 // import os
 
+//TODO: the idea is we can also pull in parts of websites in one mother website e.g. for blogs, just like we do for wiki
 
-pub struct ZBookCollection {
+pub struct ZSiteCollection {
 pub mut:
-	book &ZBook [skip; str: skip]
+	site &ZSite [skip; str: skip]
 	name string
 	url string
 	reset bool
@@ -17,7 +18,7 @@ pub mut:
 }
 
 [params]
-pub struct ZBookCollectionArgs {
+pub struct ZSiteCollectionArgs {
 pub mut:
 	name string
 	url string
@@ -27,13 +28,13 @@ pub mut:
 
 
 
-pub fn (mut self ZBookCollection) get()!{
+pub fn (mut self ZSiteCollection) get()!{
 
 	println(" - zola collection get: $self.url")
-	mut gs:=self.book.books.gitstructure
+	mut gs:=self.site.sites.gitstructure
 	mut locator := gs.locator_new(self.url)!
 	mut repo := gs.repo_get(locator: locator,reset:self.reset,pull:self.pull)!
-	self.book.books.gitrepos[repo.key()] = repo
+	self.site.sites.gitrepos[repo.key()] = repo
 	
 	mut srcpath:=locator.path_on_fs()!
 

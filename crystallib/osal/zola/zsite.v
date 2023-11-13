@@ -6,52 +6,52 @@ module zola
 import freeflowuniverse.crystallib.core.pathlib
 
 [heap]
-pub struct ZBook {
+pub struct ZSite {
 pub mut:
-	books &ZBooks [skip; str: skip]
+	sites &Zola [skip; str: skip]
 	name string
 	path_src pathlib.Path
 	path_export pathlib.Path
-	collections []ZBookCollection
+	collections []ZSiteCollection
 	gitrepokey string	
 }
 
 
 [params]
-pub struct ZBookArgs {
+pub struct ZSiteArgs {
 pub mut:
 	name string [required]
 	url string [required] //url of the summary.md file
 }
 
 
-pub fn (mut books ZBooks) book_new(args ZBookArgs)!&ZBook{
+pub fn (mut sites Zola) site_new(args ZSiteArgs)!&ZSite{
 
 	path_src:="/tmp/zolas_builder/${args.name}" //where builds happen
-	path_export:="${books.path.path}/${args.name}"
+	path_export:="${sites.path.path}/${args.name}"
 
-	mut book:=ZBook{
+	mut site:=ZSite{
 		name:args.name
 		path_src:pathlib.get_dir(path:path_src,create:true)!
 		path_export:pathlib.get_dir(path:path_export,create:true)!
-		books:&books
+		sites:&sites
 	}
 
-	books.books<<&book
+	sites.sites<<&site
 
-	return &book
+	return &site
 }
 
 
-pub fn (mut b ZBook) collection_add(args_ ZBookCollectionArgs)!{
+pub fn (mut b ZSite) collection_add(args_ ZSiteCollectionArgs)!{
 	mut args:=args_
-	mut c:=ZBookCollection{url:args.url,name:args.name,book:&b}
+	mut c:=ZSiteCollection{url:args.url,name:args.name,site:&b}
 	c.get()!
 	b.collections << c
 }
 
 
-pub fn (mut b ZBook) generate()!{
-	println (" - book generate: ${b.name} on ${b.path_src}")
+pub fn (mut b ZSite) generate()!{
+	println (" - site generate: ${b.name} on ${b.path_src}")
 }
 
