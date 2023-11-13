@@ -96,6 +96,10 @@ pub fn (addr GitAddr) str() string {
 	return '${addr.provider}:${addr.account}/${addr.name}[${addr.branch}]'
 }
 
+pub fn (addr GitAddr) key() string {
+	return '${addr.provider}_${addr.account}_${addr.name}'
+}
+
 // CACHE ARGS
 
 fn (addr GitAddr) cache_key_status() string {

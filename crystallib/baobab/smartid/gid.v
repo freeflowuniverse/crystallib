@@ -87,7 +87,7 @@ pub fn gid(args_ GIDNewArgs) !GID {
 		return error('cannot specify oid_int and oid_str')
 	}
 	if args.oid_str.len > 0 {
-		args.oid_int = sid_int(args.oid_str)
+		args.oid_int = int(sid_int(args.oid_str))
 	}
 	o.id = u32(args.oid_int)
 	if o.id == 0 {

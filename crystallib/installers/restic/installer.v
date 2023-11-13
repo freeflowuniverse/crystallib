@@ -19,6 +19,7 @@ pub fn install(args InstallArgs) ! {
 	}
 
 	if args.reset == false && osal.done_exists('install_restic') && osal.cmd_exists('restic') {
+		println(" - restic already installed")
 		return
 	}
 

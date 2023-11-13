@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.installers.zinit
+import freeflowuniverse.crystallib.osal.zinit as zinitmgmt
 import os
 
 [params]
@@ -31,7 +32,7 @@ pub fn install(args InstallArgs) ! {
 		return error('only support ubuntu for now')
 	}
 	mut dest := osal.download(
-		url: 'https://github.com/caddyserver/caddy/releases/download/v2.7.4/caddy_2.7.4_linux_amd64.tar.gz'
+		url: 'https://github.com/caddyserver/caddy/releases/download/v2.7.5/caddy_2.7.5_linux_amd64.tar.gz'
 		minsize_kb: 10000
 		reset: true
 		expand_dir: '/tmp/caddyserver'
@@ -121,15 +122,25 @@ pub fn configuration_set(args_ ConfigurationArgs) ! {
 // start caddy
 pub fn start() ! {
 	if !os.exists('/etc/caddy/Caddyfile') {
+		return error("didn't find caddyfile")
 	}
-	mut t := tmux.new()!
-	mut w := t.window_new(
-		name: 'caddy'
-		cmd: '
+	mut z:=zinitmgmt.new()!
+    p:=z.new(
+        name:"test"
+        cmd: '
 			caddy run --config /etc/caddy/Caddyfile
 			echo CADDY STOPPED
 			/bin/bash'
 	)!
+
+	// mut t := tmux.new()!
+	// mut w := t.window_new(
+	// 	name: 'caddy'
+	// 	cmd: '
+	// 		caddy run --config /etc/caddy/Caddyfile
+	// 		echo CADDY STOPPED
+	// 		/bin/bash'
+	// )!
 }
 
 pub fn stop() ! {

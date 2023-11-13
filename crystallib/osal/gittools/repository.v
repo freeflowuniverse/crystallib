@@ -26,6 +26,11 @@ pub mut:
 	remote_url  string
 }
 
+pub fn (repo GitRepo) key() string {
+	return repo.addr.key()
+}
+
+
 fn (repo GitRepo) cache_delete() ! {
 	mut redis := redisclient.core_get()!
 	redis.del(repo.addr.cache_key_status())!
@@ -92,6 +97,11 @@ pub fn (mut repo GitRepo) status() !GitRepoStatus {
 	st := json.decode(GitRepoStatus, data)!
 	repo.status_set(st)!
 	return st
+}
+
+pub fn (mut repo GitRepo) need_pull() !bool {
+	s:=repo.status()!
+	return s.need_pull
 }
 
 // relative path inside the gitstructure, pointing to the repo

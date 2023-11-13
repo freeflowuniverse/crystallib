@@ -19,6 +19,7 @@ pub fn install(args InstallArgs) ! {
 	}
 
 	if args.reset == false && osal.done_exists('install_rclone') && osal.cmd_exists('rclone') {
+		println(" - rclone already installed")
 		return
 	}
 
