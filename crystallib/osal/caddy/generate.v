@@ -4,8 +4,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 
-
-//EXAMPLEs
+// EXAMPLEs
 
 // api.ourworld.tf {
 //     reverse_proxy localhost:8000
@@ -23,18 +22,12 @@ import freeflowuniverse.crystallib.core.texttools
 //     encode gzip
 // }
 
-
-
 pub fn (mut self Caddy) generate() string {
-
-	//TODO create the caddy file
-
-
+	// TODO create the caddy file
 }
 
-
-//generate the file and write
+// generate the file and write
 pub fn (mut self Caddy) save() ! {
-	c:=self.generate()
+	c := self.generate()
 	self.path.write(c)!
 }

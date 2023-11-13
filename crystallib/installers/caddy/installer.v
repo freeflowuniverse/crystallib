@@ -19,7 +19,7 @@ pub mut:
 pub fn install(args InstallArgs) ! {
 	// make sure we install base on the node
 	base.install()!
-	zinit.install()!
+	zinit.install(reset: args.reset)!
 
 	if args.reset == false && osal.done_exists('install_caddy') {
 		return
@@ -124,10 +124,10 @@ pub fn start() ! {
 	if !os.exists('/etc/caddy/Caddyfile') {
 		return error("didn't find caddyfile")
 	}
-	mut z:=zinitmgmt.new()!
-    p:=z.new(
-        name:"test"
-        cmd: '
+	mut z := zinitmgmt.new()!
+	p := z.new(
+		name: 'test'
+		cmd: '
 			caddy run --config /etc/caddy/Caddyfile
 			echo CADDY STOPPED
 			/bin/bash'
