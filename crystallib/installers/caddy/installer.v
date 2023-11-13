@@ -42,6 +42,8 @@ pub fn install(args InstallArgs) ! {
 	caddyfile.copy(dest: '/usr/local/bin', delete: true)!
 	caddyfile.chmod(0o770)! // includes read & write & execute
 
+	println(' CADDY INSTALLED')
+
 	osal.done_set('install_caddy', 'OK')!
 	return
 }
@@ -120,18 +122,20 @@ pub fn configuration_set(args_ ConfigurationArgs) ! {
 }
 
 // start caddy
-pub fn start() ! {
+pub fn start() !zinitmgmt.ZProcess {
 	if !os.exists('/etc/caddy/Caddyfile') {
 		return error("didn't find caddyfile")
 	}
 	mut z := zinitmgmt.new()!
-	p := z.new(
-		name: 'test'
+	p := z.process_new(
+		name: 'caddy'
 		cmd: '
 			caddy run --config /etc/caddy/Caddyfile
 			echo CADDY STOPPED
 			/bin/bash'
 	)!
+
+	p.stop()!
 
 	// mut t := tmux.new()!
 	// mut w := t.window_new(
@@ -141,15 +145,16 @@ pub fn start() ! {
 	// 		echo CADDY STOPPED
 	// 		/bin/bash'
 	// )!
+	return p
 }
 
 pub fn stop() ! {
-	mut t := tmux.new()!
-	t.window_delete(name: 'caddy')!
+	// mut z := zinitmgmt.new()!
+	// t.window_delete(name: 'caddy')!
 	// osal.execute_silent('caddy stop') or {}
 }
 
-pub fn restart() ! {
+pub fn restart() !zinitmgmt.ZProcess {
 	stop()!
-	start()!
+	return start()!
 }

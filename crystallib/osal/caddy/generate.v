@@ -23,7 +23,20 @@ import freeflowuniverse.crystallib.core.texttools
 // }
 
 pub fn (mut self Caddy) generate() string {
+	return self.sites.map(generate_site(it)).join('\n')
+
 	// TODO create the caddy file
+}
+
+// generates config for site in caddyfile
+pub fn (mut self Caddy) generate_site(site Site) string {
+	mut config := '
+	for domain in site.domain {
+		'${domain.domain}:${domain.port}
+			root * sites
+			fileserver
+		'
+	}
 }
 
 // generate the file and write

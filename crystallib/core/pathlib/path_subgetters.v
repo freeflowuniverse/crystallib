@@ -181,7 +181,7 @@ fn (mut path Path) file_name_get_ignorecase(tofind string) string {
 // find file underneith path, if exists return as Path, otherwise error .
 pub fn (mut path Path) file_get(tofind string) !Path {
 	if path.cat != Category.dir || !(path.exists()) {
-		return error('is not a dir or dir does not exist: ${path.path}')
+		return error('File get for ${tofind} in ${path.path}: is not a dir or dir does not exist.')
 	}
 	if path.file_exists(tofind) {
 		file_path := os.join_path(path.path, tofind)
@@ -191,16 +191,16 @@ pub fn (mut path Path) file_get(tofind string) !Path {
 			exist: .yes
 		}
 	}
-	return error('${tofind} is not in ${path.path}')
+	return error("Could not find file '${tofind}' in ${path.path}.")
 }
 
 pub fn (mut path Path) file_get_ignorecase(tofind string) !Path {
 	if path.cat != Category.dir || !(path.exists()) {
-		return error('is not a dir or dir does not exist: ${path.path}')
+		return error('File get ignore case for ${tofind} in ${path.path}: is not a dir or dir does not exist.')
 	}
 	filename:=path.file_name_get_ignorecase(tofind)
 	if filename==""{
-		return error("could not find filename:${tofind} in ${path.path}")
+		return error("Could not find file (igore case) '${tofind}' in ${path.path}.")
 	}
 	file_path := os.join_path(path.path, filename)
 	return Path{
@@ -213,7 +213,7 @@ pub fn (mut path Path) file_get_ignorecase(tofind string) !Path {
 // get file, if not exist make new one
 pub fn (mut path Path) file_get_new(tofind string) !Path {
 	if path.cat != Category.dir || !(path.exists()) {
-		return error('is not a dir or dir does not exist: ${path.path}')
+		return error('File get new for ${tofind} in ${path.path}: is not a dir or dir does not exist.')
 	}
 	mut p := path.file_get(tofind) or {
 		return get_file(path: '${path.path}/${tofind}', create: true)!
@@ -258,7 +258,7 @@ pub fn (mut path Path) link_exists_ignorecase(tofind string) bool {
 // tofind is part of link name
 pub fn (mut path Path) link_get(tofind string) !Path {
 	if path.cat != Category.dir || !(path.exists()) {
-		return error('is not a dir or dir does not exist: ${path.path}')
+		return error('Link get for ${tofind} in ${path.path}: is not a dir or dir does not exist.')
 	}
 	if path.link_exists(tofind) {
 		file_path := os.join_path(path.path, tofind)
@@ -268,7 +268,7 @@ pub fn (mut path Path) link_get(tofind string) !Path {
 			exist: .yes
 		}
 	}
-	return error('${tofind} is not in ${path.path}')
+	return error("Could not find link '${tofind}' in ${path.path}.")
 }
 
 ///////// DIR
