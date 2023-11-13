@@ -41,7 +41,7 @@ pub mut:
 // }
 // ```
 pub fn (mut t Tmux) window_new(args WindowArgs) !Window {
-	mut s := t.session_create(name: "main", reset: false)!
+	mut s := t.session_create(name: 'main', reset: false)!
 	mut w := s.window_new(args)!
 	return w
 }
@@ -66,7 +66,9 @@ pub fn (mut t Tmux) window_delete(args WindowGetArgs) ! {
 // }
 // ```
 pub fn (mut s Session) window_new(args WindowArgs) !Window {
-	$if debug { println(" - start window: \n$args")}
+	$if debug {
+		println(' - start window: \n${args}')
+	}
 	namel := texttools.name_fix(args.name)
 	if s.window_exist(name: namel) {
 		if args.reset {
@@ -135,20 +137,25 @@ pub fn (mut s Session) window_delete(args_ WindowGetArgs) ! {
 
 pub fn (mut w Window) create() ! {
 	// tmux new-window -P -c /tmp -e good=1 -e bad=0 -n koekoe -t main bash
-	if w.cmd.contains("\n"){
-		//means is multiline need to write it
+	if w.cmd.contains('\n') {
+		// means is multiline need to write it
 		// scriptpath         string // is the path where the script will be put which is executed
 		// scriptkeep         bool   // means we don't remove the script
-		os.mkdir_all("/tmp/tmux/${w.session.name}")!
-		w.cmd=osal.exec_string(cmd:w.cmd,scriptpath:"/tmp/tmux/${w.session.name}/${w.name}.sh",scriptkeep:true)!
+		os.mkdir_all('/tmp/tmux/${w.session.name}')!
+		w.cmd = osal.exec_string(
+			cmd: w.cmd
+			scriptpath: '/tmp/tmux/${w.session.name}/${w.name}.sh'
+			scriptkeep: true
+		)!
 	}
 	if w.active == false {
 		res_opt := "-P -F '#{session_name}|#{window_name}|#{window_id}|#{pane_active}|#{pane_id}|#{pane_pid}|#{pane_start_command}'"
 		cmd := 'tmux new-window  ${res_opt} -t ${w.session.name} -n ${w.name} \'/bin/bash -c ${w.cmd}\''
 		println(cmd)
-		res := osal.exec(cmd:cmd,stdout:false,name:'tmux_window_create') or {
+		res := osal.exec(cmd: cmd, stdout: false, name: 'tmux_window_create') or {
 			return error("Can't create new window ${w.name} \n${cmd}\n${err}")
 		}
+		println('debug55 ${res}')
 		// now look at output to get the window id = wid
 		line_arr := res.output.split('|')
 		wid := line_arr[2] or { panic('cannot split line for window create.\n${line_arr}') }
@@ -170,14 +177,18 @@ pub fn (mut w Window) check() ! {
 // restart the window
 pub fn (mut w Window) restart() ! {
 	w.stop()!
+	println('debug1: stopped')
 	w.create()!
 }
 
 // stop the window
 pub fn (mut w Window) stop() ! {
-	osal.exec(cmd:'tmux kill-window -t @${w.id}',stdout:false,name:"tmux_kill-window",die:false) or {
-		return error("Can't kill window with id:${w.id}")
-	}
+	osal.exec(
+		cmd: 'tmux kill-window -t @${w.id}'
+		stdout: false
+		name: 'tmux_kill-window'
+		die: false
+	) or { return error("Can't kill window with id:${w.id}") }
 	w.pid = 0
 	w.active = false
 }
@@ -205,7 +216,7 @@ pub fn (mut w Window) environment_print() ! {
 
 // capture the output
 pub fn (mut w Window) output_print() ! {
-	o:=w.output()!
+	o := w.output()!
 	println(o)
 }
 
@@ -213,7 +224,7 @@ pub fn (mut w Window) output_print() ! {
 pub fn (mut w Window) output() !string {
 	//-S is start, minus means go in history, otherwise its only the active output
 	// tmux capture-pane -t your-session-name:your-window-number -S -1000
-	cmd:='tmux capture-pane -t ${w.session.name}:@${w.id} -S -1000 && tmux show-buffer'
+	cmd := 'tmux capture-pane -t ${w.session.name}:@${w.id} -S -1000 && tmux show-buffer'
 	res := osal.execute_silent(cmd) or {
 		return error('Couldnt show enviroment cmd: ${w.cmd} \n${err}')
 	}
@@ -221,24 +232,23 @@ pub fn (mut w Window) output() !string {
 }
 
 pub fn (mut w Window) output_wait(c_ string, timeoutsec int) ! {
-	mut t:=ourtime.now()
-	start:=t.unix_time()
-	c:=c_.replace("\n","")
-	for i in 0..2000{
-		o:=w.output()!
+	mut t := ourtime.now()
+	start := t.unix_time()
+	c := c_.replace('\n', '')
+	for i in 0 .. 2000 {
+		o := w.output()!
 		// println(o)
-		$if debug{println(" - tmux ${w.name}: wait for: '$c'")}
-		//need to replace \n because can be wrapped because of size of pane
-		if o.replace("\n","").contains(c){
-			return 
+		$if debug {
+			println(" - tmux ${w.name}: wait for: '${c}'")
 		}
-		mut t2:=ourtime.now()
-		if t2.unix_time()>start+timeoutsec{
-			return error("timeout on output wait for tmux.\n$w .\nwaiting for:\n$c")
+		// need to replace \n because can be wrapped because of size of pane
+		if o.replace('\n', '').contains(c) {
+			return
+		}
+		mut t2 := ourtime.now()
+		if t2.unix_time() > start + timeoutsec {
+			return error('timeout on output wait for tmux.\n${w} .\nwaiting for:\n${c}')
 		}
 		time.sleep(100 * time.millisecond)
 	}
 }
-
-
-

@@ -33,6 +33,8 @@ pub fn (session Session) log(args_ LogArgs) !LogItem {
 		time: ourtime.now()
 	}
 
+	//TODO: get string output and put to redis
+
 	return l
 }
 

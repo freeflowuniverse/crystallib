@@ -6,16 +6,16 @@ import freeflowuniverse.crystallib.texttools
 [params]
 pub struct DownloadArgs {
 pub mut:
-	name       string // optional (otherwise derived out of filename)
-	url        string
-	reset      bool   // will remove
-	hash       string // if hash is known, will verify what hash is
-	dest       string // if specified will copy to that destination	
-	timeout    int = 180
-	retry      int = 3
-	minsize_kb u32 = 10 // is always in kb
-	maxsize_kb u32
-	expand_dir string
+	name        string // optional (otherwise derived out of filename)
+	url         string
+	reset       bool   // will remove
+	hash        string // if hash is known, will verify what hash is
+	dest        string // if specified will copy to that destination	
+	timeout     int = 180
+	retry       int = 3
+	minsize_kb  u32 = 10 // is always in kb
+	maxsize_kb  u32
+	expand_dir  string
 	expand_file string
 }
 
@@ -23,7 +23,6 @@ pub mut:
 // if the last ends in an extension like .md .txt .log .text ... the file will be downloaded
 pub fn download(args_ DownloadArgs) !pathlib.Path {
 	mut args := args_
-
 	mut lastname := args.url.split('/').last()
 	if lastname.contains('?') {
 		return error('cannot get name from url if ? in the last part after /')
@@ -83,13 +82,15 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 				} else {
 					if args.expand_dir.len > 0 {
 						return dest.expand(args.expand_dir)!
+					} else if args.expand_file.len > 0 {
+						// QUESTION: how do we feel about this?
+						return dest.expand_file(args.expand_file)!
 					}
 					return dest
 				}
 			}
 		}
 	}
-
 	mut dest0 := pathlib.get_file(args.dest + '_', false)!
 	cmd := '
 		rm -f ${dest0.path}_
@@ -126,7 +127,6 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 	if args.expand_file.len > 0 {
 		return dest0.expand(args.expand_file)!
 	}
-
 
 	return dest0
 }
