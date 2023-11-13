@@ -5,9 +5,9 @@ import freeflowuniverse.crystallib.clients.redisclient
 import json
 
 fn repo_load(addr GitAddr, path string) !GitRepoStatus {
-	$if debug {
-		println(' - git repo get: ${path}')
-	}
+	// $if debug {
+	// 	println(' - git repo get: ${path}')
+	// }
 
 	mut redis := redisclient.core_get()!
 
@@ -68,9 +68,9 @@ fn repo_load(addr GitAddr, path string) !GitRepoStatus {
 	mut addr2 := *locator.addr
 	addr2.branch = st.branch
 
-	$if debug {
-		println(' - loaded repo ${path}     --------     addr: ${addr2}')
-	}
+	// $if debug {
+	// 	println(' - loaded repo ${path}     --------     addr: ${addr2}')
+	// }
 
 	jsondata := json.encode(st)
 	redis.set(addr2.cache_key_status(), jsondata)!

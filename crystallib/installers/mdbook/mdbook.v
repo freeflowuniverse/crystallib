@@ -11,6 +11,9 @@ pub fn install() ! {
 		cmd := '
 		.cargo/bin/cargo install mdbook
     	.cargo/bin/cargo install mdbook-mermaid
+		.cargo/bin/cargo install mdbook-echarts
+		.cargo/bin/cargo install mdbook-plantuml
+		.cargo/bin/cargo install mdbook-pdf --features fetch
 		'
 		osal.execute_stdout(cmd)!
 		osal.done_set('install_mdbook', 'OK')!

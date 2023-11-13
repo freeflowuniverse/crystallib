@@ -20,6 +20,8 @@ additional-js = ["mermaid.min.js", "mermaid-init.js","echarts.min.js"]
 [build]
 create-missing = false
 
+[output.html.print]
+enable = true
 
 [preprocessor]
 
