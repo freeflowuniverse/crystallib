@@ -42,7 +42,7 @@ pub fn @{eo.name}_new(args_ @{eo.classname}NewArgs) @{eo.classname} {
 	mut a:=@{eo.classname}{
 		content: args.content
 		replaceme: args.replaceme
-		typename:"@{eo.name}"
+		type_"@{eo.name}"
 		parents:args.parents
 	}
 	if args.add2parent{

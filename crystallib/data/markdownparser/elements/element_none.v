@@ -5,17 +5,16 @@ pub struct None {
 }
 
 pub fn (mut self None) process() !int {
-	return 0	
+	return 0
 }
 
 pub fn (mut self None) markdown() string {
-	return "none"
+	return 'none'
 }
 
 pub fn (mut self None) html() string {
 	return self.markdown()
 }
-
 
 pub fn none_new(args_ TableNewArgs) None {
 	return None{}

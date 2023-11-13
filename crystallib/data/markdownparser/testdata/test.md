@@ -3,6 +3,13 @@
 - [this is link](something.md)
 - ![this is link2](something.jpg)
 
+!!hello.world k:v k2:v2
+
 ## ts 
 
-![this is link2](something.jpg)
+!!domain.actor
+    key1: val1
+    key2:val2
+
+!!domain2.actor2
+    key:val

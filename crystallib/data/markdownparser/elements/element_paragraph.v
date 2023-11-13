@@ -1,20 +1,18 @@
 module elements
 
-
 // type ParagraphElement = Comment | Link | Text
 
 [heap]
 pub struct Paragraph {
-	DocBase	
-// pub mut:
+	DocBase // pub mut:
 	// elements   []ParagraphElement
 }
 
 fn (mut self Paragraph) process() !int {
-	for mut parent in self.parents{
-		parent.elements<<self
-	}	
-	if self.processed{		
+	for mut parent in self.parents {
+		parent.elements << self
+	}
+	if self.processed {
 		return 0
 	}
 	self.processed = true
@@ -22,8 +20,8 @@ fn (mut self Paragraph) process() !int {
 }
 
 fn (mut self Paragraph) markdown() string {
-	mut out:=self.DocBase.markdown()
-	out+=self.content
+	mut out := self.DocBase.markdown()
+	out += self.content
 	return out
 }
 
@@ -67,5 +65,4 @@ fn (mut self Paragraph) html() string {
 // 	return out
 // }
 
-
->>TODO: complete
+// TODO: complete
