@@ -3,11 +3,12 @@ import os
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.mdbook as mdbookmgmt
-// import freeflowuniverse.crystallib.installers.mdbook
+import freeflowuniverse.crystallib.osal.zola
+
 
 const infopath='/var/www/info'
 
-fn websites_get() ! {
+fn wikis_get() ! {
 
 	mut books:= mdbookmgmt.new(
 			path:"/tmp/mdbooks"
@@ -28,11 +29,32 @@ fn websites_get() ! {
 
 }
 
+fn websites_get() ! {
+
+	//TODO need to be fixed
+
+	// mut sites:= mdsitemgmt.new(
+	// 		path:"/tmp/mdsites"
+	// 		coderoot:"/tmp/mdsites_src"
+	// 		install:false
+	// )!
+
+	// mut site1:=sites.site_new(
+	// 		name:"datacenter",
+	// 		url:"https://github.com/ourworldventures/ourworld_sites/blob/development/sites/datacenter/src/SUMMARY.md"
+	// 	)!
+
+	// sites.watch(period:10) //will every 10 sec check with git sources if changes
+
+}
+
+
 fn requirements() ! {
 	// mdbook.install()!
 }
 
 fn main() {
-	// requirements() or { panic(err) }
+	requirements() or { panic(err) }
+	wikis_get() or { panic(err) }
 	websites_get() or { panic(err) }
 }
