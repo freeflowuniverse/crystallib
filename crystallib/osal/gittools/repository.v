@@ -48,7 +48,7 @@ pub fn (mut repo GitRepo) load() !GitRepoStatus {
 	}
 	mut st := repo_load(repo.addr, repo.path.path)!
 	repo.status_set(st)!
-	println(' - status:\n${st}')
+	// println(' - status:\n${st}')
 	return st
 }
 
@@ -164,14 +164,25 @@ pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 	if st.need_commit {
 		return error('Cannot pull repo: ${repo.path.path} because there are changes in the dir.')
 	}
-	if st.need_pull {
-		cmd2 := 'cd ${repo.path.path} && git pull'
-		osal.execute_silent(cmd2) or {
-			println(' GIT PULL FAILED: ${cmd2}')
-			return error('Cannot pull repo: ${repo.path}. Error was ${err}')
-		}
-		repo.load()!
+	//pull can't see the status
+	cmd2 := 'cd ${repo.path.path} && git pull'
+	osal.execute_silent(cmd2) or {
+		println(' GIT PULL FAILED: ${cmd2}')
+		return error('Cannot pull repo: ${repo.path}. Error was ${err}')
 	}
+	repo.load()!
+}
+
+pub fn (mut repo GitRepo) rev() !string {
+	// $if debug {
+	// 	println('   - REV: ${repo.url_get(true)}')
+	// }
+	cmd2 := 'cd ${repo.path.path} && git rev-parse HEAD'
+	res:=osal.execute_silent(cmd2) or {
+		println(' GIT REV FAILED: ${cmd2}')
+		return error('Cannot rev repo: ${repo.path}. Error was ${err}')
+	}
+	return res.trim_space()
 }
 
 pub fn (mut repo GitRepo) commit(args_ ActionArgs) ! {
@@ -223,8 +234,8 @@ pub fn (mut repo GitRepo) remove_changes(args_ ActionArgs) ! {
 		osal.execute_silent(cmd) or {
 			return error('Cannot commit repo: ${repo.path.path}. Error was ${err}')
 		}
-	} else {
-		println('     > nothing to remove, no changes  ${repo.path.path}')
+	// } else {
+	// 	println('     > nothing to remove, no changes  ${repo.path.path}')
 	}
 	repo.load()!
 }

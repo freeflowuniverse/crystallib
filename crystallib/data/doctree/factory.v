@@ -37,7 +37,7 @@ pub fn new(args_ ArgsNew) !Tree {
 		}
 		cid: args.cid
 	}
-	t.init()! // initialize mdbooks embed logic
+	// t.init()! // initialize mdbooks embed logic
 	return t
 }
 

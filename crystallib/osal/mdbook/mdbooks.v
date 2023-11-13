@@ -5,15 +5,18 @@ import freeflowuniverse.crystallib.installers.mdbook
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.data.ourtime
+import time
+import v.embed_file
 
 [heap]
 pub struct MDBooks {
 pub mut:
-	books []&MDBook
-	path pathlib.Path
+	books []&MDBook  [skip; str: skip]
+	path pathlib.Path 
 	gitrepos map[string]gittools.GitRepo
 	coderoot string
-	gitstructure gittools.GitStructure
+	gitstructure gittools.GitStructure  [skip; str: skip]
+	embedded_files  []embed_file.EmbedFileData [skip; str: skip]
 
 }
 
@@ -36,33 +39,59 @@ pub fn new(args MDBooksArgs)!MDBooks{
 		coderoot:args.coderoot
 		gitstructure: gs
 	}
+	books.init()! // initialize mdbooks embed logic
 	return books
 }
 
 
+fn (mut tree MDBooks) init() ! {
+	tree.embedded_files << $embed_file('template/css/print.css')
+	tree.embedded_files << $embed_file('template/css/variables.css')
+	tree.embedded_files << $embed_file('template/css/general.css')
+	tree.embedded_files << $embed_file('template/mermaid-init.js')
+	tree.embedded_files << $embed_file('template/echarts.min.js')
+	tree.embedded_files << $embed_file('template/mermaid.min.js')
+}
+
+pub struct ToDo{
+pub mut:
+	key string
+	rev string
+}
+
 pub fn (mut self MDBooks) check()!{
-	mut repos_changed:=[]string{}
+	println(self)
+	mut todo:=[]ToDo{}
 	for key,repo_ in self.gitrepos{
 		mut repo:=repo_
-		if repo.need_pull()!{
-			repo.pull_reset()!
-			repos_changed << key
+		repo.pull_reset()!	
+		rev:=repo.rev()!
+		lastrev:=osal.done_get("mdbookrev_${key}") or {""}
+		// println("lastrev:$lastrev")
+		// println("newrev:$rev")
+		if lastrev!=rev{
+			todo<<ToDo{key:key,rev:rev}
 		}
 	}
 	//now we know which repo's changed
-	for key in repos_changed{
+	for todoitem in todo{
 		for mut book in self.books{
+			println(" - book check: ${book.name}")
 			mut changed:=false
-			if book.gitrepokey == key{
+			if book.gitrepokey == todoitem.key{
 				changed=true
 			}
 			for collection in book.collections{
-				if collection.gitrepokey == key{
+				if collection.gitrepokey == todoitem.key{
 					changed=true
 				}
 			}
+			// println(changed)
 			if changed{
 				book.generate()!
+				osal.done_set("mdbookrev_${todoitem.key}",todoitem.rev)!
+				lastrev:=osal.done_get("mdbookrev_${todoitem.key}") or {""}
+				// println("lastrev set:$lastrev")				
 			}
 		}
 	}
@@ -79,11 +108,13 @@ pub fn (mut self MDBooks) watch(args WatchArgs){
 	mut last:=i64(0)
 	for {		
 		t.now()
+		println("${t} ${t.unix_time()} period:${args.period}")
 		if t.unix_time() > last + args.period{
 			println(" - will try to check the mdbooks")
 			self.check() or {" - ERROR: couldn't check the repo's.\n$err"}
-		}
-		last=t.unix_time()
+			last=t.unix_time()
+		}		
+		time.sleep(time.second)
 	}
 
 }

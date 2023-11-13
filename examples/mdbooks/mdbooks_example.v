@@ -17,7 +17,7 @@ fn websites_get() ! {
 
 	mut book1:=books.book_new(
 			name:"datacenter",
-			url:"https://github.com/ourworldventures/ourworld_books/blob/development/books/datacenter/src/SUMMARY.md"
+			url:"https://github.com/ourworldventures/ourworld_books/blob/development/books/datacenter/src"
 		)!
 	book1.collection_add(name:"datacenter",url:'https://github.com/ourworldventures/ourworld_books/tree/development/content/datacenter')!
 	book1.collection_add(name:"cyberpandemic",url:'https://github.com/threefoldfoundation/books/tree/main/content/cyberpandemic/cyberpandemic')!
