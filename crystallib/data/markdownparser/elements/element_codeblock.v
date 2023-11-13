@@ -22,7 +22,7 @@ pub fn (mut self CodeBlock) process() !int {
 	
 	//now see if there is something left in codeblock, if yess add that one to the parent_elements
 	if collection.othertext.len>0{
-		text_new(parents:self.parents,content:collection.othertext)
+		self.elements<<text_new(parents:self.parents,content:collection.othertext)
 	}
 
 	self.process_elements()!

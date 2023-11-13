@@ -7,7 +7,7 @@ const textin = "
 	id:a1 name6:aaaaa
 	name:'need to do something 1' 
 	//comment
-	description:
+	description:'
 		## markdown works in it
 
 		description can be multiline
@@ -23,6 +23,7 @@ const textin = "
 		def test():
 			print()
 		```
+		'
 
 	name2:   test
 	name3: hi name10:'this is with space'  name11:aaa11
