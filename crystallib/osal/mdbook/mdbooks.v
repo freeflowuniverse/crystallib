@@ -1,16 +1,19 @@
 module mdbook
 
-import os
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.installers.mdbook
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.data.ourtime
 
 [heap]
 pub struct MDBooks {
 pub mut:
-	books []MDBook
-	path_src pathlib.Path
+	books []&MDBook
+	path pathlib.Path
+	gitrepos map[string]gittools.GitRepo
+	coderoot string
+	gitstructure gittools.GitStructure
 
 }
 
@@ -18,53 +21,69 @@ pub mut:
 pub struct MDBooksArgs {
 pub mut:
 	path string [required]
+	coderoot string
+	install bool = true
 }
 
 
-pub fn new(args MDBooksArgs)MDBooks{
-	mdbook.install()!
-	mut book=MDBook{
-		name:args.name
+pub fn new(args MDBooksArgs)!MDBooks{
+	if args.install{
+		mdbook.install()!
+	}	
+	mut gs := gittools.get(coderoot:args.coderoot)!
+	mut books:=MDBooks{
 		path:pathlib.get_dir(path:args.path,create:true)!
+		coderoot:args.coderoot
+		gitstructure: gs
 	}
-	return book
+	return books
 }
 
 
-pub fn (b MDBook) collection_add(args_ MDBookCollectionArgs)!{
-	mut args:=args_
-	mut c:=MDBookCollection{url:args.url,name:args.name,book:&b}
-	c.pull()!
-	b.collections << c
-}
-
-
-pub fn (b MDBook) check()!{
-	mut changed:=false
-	for key,repo in b.gitrepos{
+pub fn (mut self MDBooks) check()!{
+	mut repos_changed:=[]string{}
+	for key,repo_ in self.gitrepos{
+		mut repo:=repo_
 		if repo.need_pull()!{
 			repo.pull_reset()!
-			changed=true
+			repos_changed << key
 		}
 	}
-	if changed{
-		b.generate()!
+	//now we know which repo's changed
+	for key in repos_changed{
+		for mut book in self.books{
+			mut changed:=false
+			if book.gitrepokey == key{
+				changed=true
+			}
+			for collection in book.collections{
+				if collection.gitrepokey == key{
+					changed=true
+				}
+			}
+			if changed{
+				book.generate()!
+			}
+		}
 	}
 }
 
 
-pub fn (self MDBookCollection) pull()!{
-
-	println(" - mdbook collection get: $self.url")
-
-	mut gs := gittools.get()!
-	locator := gs.locator_new(self.url)!
-	mut repo := gs.repo_get(locator: locator)!
-	b.book.gitrepos[repo.key()] = repo
-	args.path = repo.path.path
-
-	path:=gittools.code_get(pull:self.pull,reset:self.reset,url:self.url)!
-	println(" - mdbook collection: $path")
-
+[params]
+pub struct WatchArgs {
+pub mut:
+	period int = 300 //5 min default
+}
+pub fn (mut self MDBooks) watch(args WatchArgs){
+	mut t:=ourtime.now()
+	mut last:=i64(0)
+	for {		
+		t.now()
+		if t.unix_time() > last + args.period{
+			println(" - will try to check the mdbooks")
+			self.check() or {" - ERROR: couldn't check the repo's.\n$err"}
+		}
+		last=t.unix_time()
+	}
 
 }

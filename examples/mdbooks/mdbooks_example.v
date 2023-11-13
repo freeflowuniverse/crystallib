@@ -3,23 +3,28 @@ import os
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.mdbook as mdbookmgmt
-import freeflowuniverse.crystallib.installers.mdbook
+// import freeflowuniverse.crystallib.installers.mdbook
 
 const infopath='/var/www/info'
 
 fn websites_get() ! {
 
-	mut mdbook:=mdbookmgmt.new(
+	mut books:= mdbookmgmt.new(
+			path:"/tmp/mdbooks"
+			coderoot:"/tmp/mdbooks_src"
+			install:false
+	)!
+
+	mut book1:=books.book_new(
 			name:"datacenter",
 			url:"https://github.com/ourworldventures/ourworld_books/blob/development/books/datacenter/src/SUMMARY.md"
-			path:'${infopath}/datacenter'
-		)
-	mdbook.collection_add(name:"datacenter",url:'https://github.com/ourworldventures/ourworld_books/tree/development/content/datacenter')!
-	mdbook.collection_add(name:"cyberpandemic",url:'https://github.com/threefoldfoundation/books/tree/main/content/cyberpandemic/cyberpandemic')!
-	mdbook.collection_add(name:"abundance_internet",url:'https://github.com/threefoldfoundation/books/tree/main/content/abundance_internet')!
-	mdbook.generate()!
+		)!
+	book1.collection_add(name:"datacenter",url:'https://github.com/ourworldventures/ourworld_books/tree/development/content/datacenter')!
+	book1.collection_add(name:"cyberpandemic",url:'https://github.com/threefoldfoundation/books/tree/main/content/cyberpandemic/cyberpandemic')!
+	book1.collection_add(name:"abundance_internet",url:'https://github.com/threefoldfoundation/books/tree/main/content/abundance_internet')!
+	book1.generate()!
 
-	mdbook.watch(period:10)! //will every 10 sec check with git sources if changes
+	books.watch(period:10) //will every 10 sec check with git sources if changes
 
 }
 

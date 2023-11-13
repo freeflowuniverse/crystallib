@@ -1,14 +1,14 @@
 module mdbook
 
-import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.osal
-import log
-import os
+// import freeflowuniverse.crystallib.core.pathlib
+// import freeflowuniverse.crystallib.osal
+// import log
+// import os
 
 
 pub struct MDBookCollection {
-	book &MDBook
 pub mut:
+	book &MDBook [skip; str: skip]
 	name string
 	url string
 	reset bool
@@ -23,4 +23,22 @@ pub mut:
 	url string
 	reset bool
 	pull bool
+}
+
+
+
+pub fn (mut self MDBookCollection) get()!{
+
+	println(" - mdbook collection get: $self.url")
+	mut gs:=self.book.books.gitstructure
+	mut locator := gs.locator_new(self.url)!
+	mut repo := gs.repo_get(locator: locator,reset:self.reset,pull:self.pull)!
+	self.book.books.gitrepos[repo.key()] = repo
+	
+	mut srcpath:=locator.path_on_fs()!
+
+	
+	println(" - mdbook collection: $srcpath")
+
+
 }
