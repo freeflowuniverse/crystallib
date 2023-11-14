@@ -103,7 +103,7 @@ pub fn (path Path) path_relative(destpath string) !string {
 }
 
 // recursively finds the least common ancestor of array of paths .
-// will always return the absolute path (relative gets changed to absolute)
+// will always return the absolute path (relative gets changed to absolute).
 pub fn find_common_ancestor(paths_ []string) string {
 	for p in paths_ {
 		if p.trim_space() == '' {
@@ -111,7 +111,29 @@ pub fn find_common_ancestor(paths_ []string) string {
 		}
 	}
 	paths := paths_.map(os.abs_path(os.real_path(it))) // get the real path (symlinks... resolved)
-	// println(paths)
+	println(paths)
+	parts := paths[0].split('/')
+	mut totest_prev := '/'
+	for i in 1 .. parts.len {
+		totest := parts[0..i + 1].join('/')
+		if paths.any(!it.starts_with(totest)) {
+			return totest_prev
+		}
+		totest_prev = totest
+	}
+	return totest_prev
+}
+
+// same as above but will treat symlinks as if normal links
+// allowing finding relative paths between links as well
+// QUESTION: should we merge with above?
+pub fn find_simple_common_ancestor(paths_ []string) string {
+	for p in paths_ {
+		if p.trim_space() == '' {
+			panic('cannot find commone ancestors if any of items in paths is empty.\n${paths_}')
+		}
+	}
+	paths := paths_.map(os.abs_path(it))
 	parts := paths[0].split('/')
 	mut totest_prev := '/'
 	for i in 1 .. parts.len {
@@ -267,6 +289,9 @@ pub fn (mut path Path) delete() ! {
 		}
 		path.exist = .no
 	}
+	if os.is_link(path.path) {
+		os.rm(path.path.replace('//', '/'))!
+	}
 }
 
 // remove all content but if dir let the dir exist
@@ -319,6 +344,7 @@ pub fn (mut path Path) read() !string {
 // assert a2 == '../../../d.txt' .
 // a8 := pathlib.path_relative('$testpath/a/b/c', '$testpath/a/b/c/d/e/e.txt') or { panic(err) } .
 // assert a8 == 'd/e/e.txt' .
+// symlinks will not be resolved, as it leads to unexpected behaviour
 pub fn path_relative(source_ string, linkpath_ string) !string {
 	mut source := os.abs_path(source_)
 	mut linkpath := os.abs_path(linkpath_)
@@ -337,13 +363,11 @@ pub fn path_relative(source_ string, linkpath_ string) !string {
 		return error('Cannot do path_relative()! if source is not a dir and exists. Now:${source_}')
 	}
 
-	// println(" + source:$source compare:$linkpath")
-
-	common := find_common_ancestor([source, linkpath])
-	// println(" + common:$common")
+	common := find_simple_common_ancestor([source, linkpath])
 
 	// if source is common, returns source
 	if source.len <= common.len + 1 {
+		// TODO: this should be safer
 		path := linkpath_.trim_string_left(source)
 		if path.starts_with('/') {
 			return path[1..]
@@ -352,11 +376,15 @@ pub fn path_relative(source_ string, linkpath_ string) !string {
 		}
 	}
 
+	println('common: ${common}')
 	mut source_short := source[(common.len)..]
 	mut linkpath_short := linkpath[(common.len)..]
 
 	source_short = source_short.trim_string_left('/')
 	linkpath_short = linkpath_short.trim_string_left('/')
+
+	println('source: ${source_short}')
+	println('link: ${linkpath_short}')
 
 	source_count := source_short.count('/')
 	// link_count := linkpath_short.count('/')
