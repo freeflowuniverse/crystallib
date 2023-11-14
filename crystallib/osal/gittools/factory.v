@@ -215,7 +215,7 @@ fn new(config_ GitStructureConfig) !GitStructure {
 	mut gs := GitStructure{
 		config: config
 		rootpath: pathlib.get_dir(path: config.root, create: true) or {
-			panic('this should never happen')
+			panic('this should never happen: ${err}')
 		}
 	}
 
