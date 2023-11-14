@@ -3,6 +3,8 @@ module zinit
 import net.unix
 import json
 
+// these need to be all private (non pub)
+
 pub struct Client {
 	socket_path string = '/var/run/zinit.sock'
 }
@@ -17,9 +19,14 @@ struct ZinitResponse {
 	body  string [raw]
 }
 
-pub fn new_rpc_client(socket_path string) Client {
+[params]
+struct ZinitClientArgs {
+	socket_path string = '/var/run/zinit.sock'
+}
+
+pub fn new_rpc_client(args ZinitClientArgs) Client {
 	return Client{
-		socket_path: socket_path
+		socket_path: args.socket_path
 	}
 }
 
@@ -42,18 +49,16 @@ fn (z Client) rpc(cmd string) !string {
 	return res[..n].bytestr()
 }
 
-pub fn (z Client) list() !map[string]string {
+fn (z Client) list() !map[string]string {
 	response := z.rpc('list')!
 	decoded_response := json.decode(ZinitResponse, response)!
 	if decoded_response.state == .error {
 		return error('zinit list failed: ${decoded_response.body}')
 	}
-
 	return json.decode(map[string]string, decoded_response.body)!
 }
 
-struct ServiceStatus {
-pub:
+struct ServiceStatusRaw {
 	after  map[string]string
 	name   string
 	pid    int
@@ -63,17 +68,24 @@ pub:
 
 //{"state":"ok","body":{"after":{"delay":"Success"},"name":"redis","pid":320996,"state":"Running","target":"Up"}}
 
-pub fn (z Client) status(name string) !ServiceStatus {
+fn (z Client) status(name string) !ServiceStatusRaw {
+	// println (" -- status rpc: '$name'")
+	r := z.list()!
+	if name !in r {
+		return error("cannot ask status over rpc, service with name:'${name}' not found in rpc daemon.\nFOUND:${r}")
+	}
+
 	response := z.rpc('status ${name}')!
 	decoded_response := json.decode(ZinitResponse, response)!
+
 	if decoded_response.state == .error {
 		return error('service ${name} status failed: ${decoded_response.body}')
 	}
 
-	return json.decode(ServiceStatus, decoded_response.body)!
+	return json.decode(ServiceStatusRaw, decoded_response.body)!
 }
 
-pub fn (z Client) start(name string) ! {
+fn (z Client) start(name string) ! {
 	response := z.rpc('start ${name}')!
 	decoded_response := json.decode(ZinitResponse, response)!
 	if decoded_response.state == .error {
@@ -81,7 +93,7 @@ pub fn (z Client) start(name string) ! {
 	}
 }
 
-pub fn (z Client) stop(name string) ! {
+fn (z Client) stop(name string) ! {
 	response := z.rpc('stop ${name}')!
 	decoded_response := json.decode(ZinitResponse, response)!
 	if decoded_response.state == .error {
@@ -89,7 +101,7 @@ pub fn (z Client) stop(name string) ! {
 	}
 }
 
-pub fn (z Client) forget(name string) ! {
+fn (z Client) forget(name string) ! {
 	response := z.rpc('forget ${name}')!
 	decoded_response := json.decode(ZinitResponse, response)!
 	if decoded_response.state == .error {
@@ -97,7 +109,7 @@ pub fn (z Client) forget(name string) ! {
 	}
 }
 
-pub fn (z Client) monitor(name string) ! {
+fn (z Client) monitor(name string) ! {
 	response := z.rpc('monitor ${name}')!
 	decoded_response := json.decode(ZinitResponse, response)!
 	if decoded_response.state == .error {
@@ -105,7 +117,7 @@ pub fn (z Client) monitor(name string) ! {
 	}
 }
 
-pub fn (z Client) kill(name string, signal string) ! {
+fn (z Client) kill(name string, signal string) ! {
 	response := z.rpc('kill ${name} ${signal}')!
 	decoded_response := json.decode(ZinitResponse, response)!
 	if decoded_response.state == .error {
@@ -113,7 +125,7 @@ pub fn (z Client) kill(name string, signal string) ! {
 	}
 }
 
-pub fn (z Client) shutdown() ! {
+fn (z Client) shutdown() ! {
 	response := z.rpc('shutdown')!
 	decoded_response := json.decode(ZinitResponse, response)!
 	if decoded_response.state == .error {
@@ -121,7 +133,7 @@ pub fn (z Client) shutdown() ! {
 	}
 }
 
-pub fn (z Client) reboot() ! {
+fn (z Client) reboot() ! {
 	response := z.rpc('reboot')!
 	decoded_response := json.decode(ZinitResponse, response)!
 	if decoded_response.state == .error {
@@ -129,7 +141,7 @@ pub fn (z Client) reboot() ! {
 	}
 }
 
-pub fn (z Client) log() !string {
+fn (z Client) log() !string {
 	response := z.rpc('log')!
 	decoded_response := json.decode(ZinitResponse, response)!
 	if decoded_response.state == .error {

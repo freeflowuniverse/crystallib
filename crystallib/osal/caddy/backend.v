@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.core.pathlib
 pub struct Backend {
 pub mut:
 	addr      string = "localhost"
-	port      8000
+	port      int = 8000
 	description string //always optional
 }
 

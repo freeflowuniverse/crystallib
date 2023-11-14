@@ -36,10 +36,10 @@ pub fn build(args BuildArgs) ! {
 	'
 	osal.execute_stdout(cmd)!
 
-	// if args.bin_push {
-	// 	installers.bin_push(
-	// 		cmdname: 'zinit'
-	// 		source: '/tmp/builder/github/threefoldtech/zinit/target/x86_64-unknown-linux-musl/release/zinit'
-	// 	)!
-	// }
+	if args.bin_push {
+		installers.bin_push(
+			cmdname: 'zinit'
+			source: '/tmp/builder/github/threefoldtech/zinit/target/x86_64-unknown-linux-musl/release/zinit'
+		)!
+	}
 }
