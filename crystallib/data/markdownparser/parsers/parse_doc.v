@@ -18,19 +18,20 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		// go out of loop if end of file
 		mut line := parser.line_current()
 		line = line.replace('\t', '    ')
+		trimmed_line := line.trim_space()
 		// println(line)
 
 		mut llast := parser.lastitem()
 		// println(llast)
 
 		if mut llast is elements.Table {
-			if line.trim_space() == '' {
-				parser.next_start()
+			if trimmed_line.starts_with('|') && trimmed_line.ends_with('|') {
+				llast.content += '\n${line}'
+				parser.next()
 				continue
-			} else {
-				llast.content += '${line}\n'
 			}
-			parser.next()
+
+			parser.next_start()
 			continue
 		}
 
@@ -142,6 +143,12 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 					parser.next_start()
 					continue
 				}
+			}
+
+			if trimmed_line.starts_with('|') && trimmed_line.ends_with('|') {
+				doc.elements << elements.table_new(content: line)
+				parser.next()
+				continue
 			}
 
 			if line.trim_space().to_lower().starts_with('<html') {
