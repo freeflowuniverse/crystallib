@@ -32,7 +32,7 @@ pub fn build(args BuildArgs) ! {
 	cmd := '
 
 	cd ${gitpath}
-	make
+	make release
 	'
 	osal.execute_stdout(cmd)!
 
