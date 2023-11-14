@@ -1,10 +1,10 @@
 module project
 
-import freeflowuniverse.crystallib.baobab.models.system
+import freeflowuniverse.crystallib.baobab.db
 import freeflowuniverse.crystallib.data.ourtime
 
 pub struct Epic {
-	system.Base
+	db.Base
 pub mut:
 	name        string
 	description string

@@ -1,27 +1,27 @@
 module project
 
-import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.baobab.models.system
+import freeflowuniverse.crystallib.baobab.db
+import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.data.ourtime
 
 pub struct Story {
-	system.Base
+	db.Base
 pub mut:
 	name             string
-	project          system.SmartId   [root_object: Project]
+	project          smartid.GID     [root_object: Project]
 	title            string
 	description      string
 	priority         Priority
 	deadline         ourtime.OurTime
 	effort_demaining int
 	percent_done     f64
-	owners           []string         [root_object: Person]
-	assignment       []system.SmartId [root_object: 'Person, Team']
+	owners           []string        [root_object: Person]
+	assignment       []smartid.GID   [root_object: 'Person, Team']
 	state            State
-	epics            []system.SmartId [root_object: Epic]
-	costcenters      []system.SmartId [root_object: CostCenter]
-	milestones       []system.SmartId [root_object: Milestone]
-	requirements     []system.SmartId [root_object: Requirement]
+	epics            []smartid.GID   [root_object: Epic]
+	costcenters      []smartid.GID   [root_object: CostCenter]
+	milestones       []smartid.GID   [root_object: Milestone]
+	requirements     []smartid.GID   [root_object: Requirement]
 }
 
 // pub enum StoryStatus {
