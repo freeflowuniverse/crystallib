@@ -38,8 +38,6 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			if line.starts_with(' ') {
 				// starts with tab or space, means block continues for action
 				llast.content += '${line}\n'
-			} else if line.trim_space() != '' {
-				return error('actions should end with an empty line')
 			} else {
 				parser.next_start()
 				continue
@@ -153,17 +151,19 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			}
 		}
 
-		if mut llast is elements.Paragraph || mut llast is elements.Html
-			|| mut llast is elements.CodeBlock || mut llast is elements.Include {
-			if parser.endlf == false && parser.next_is_eof() {
-				llast.content += line
-			} else {
-				llast.content += line + '\n'
+		match mut llast {
+			elements.Paragraph, elements.Html, elements.Include, elements.CodeBlock {
+				if parser.endlf == false && parser.next_is_eof() {
+					llast.content += line
+				} else {
+					llast.content += line + '\n'
+				}
 			}
-		} else {
-			println(line)
-			println(llast)
-			panic('parser error, means we got element which is not supported')
+			else {
+				println(line)
+				println(llast)
+				panic('parser error, means we got element which is not supported')
+			}
 		}
 
 		parser.next()
