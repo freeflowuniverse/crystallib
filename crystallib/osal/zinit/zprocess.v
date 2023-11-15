@@ -46,6 +46,7 @@ pub fn (mut zinit Zinit) process_new(args_ ZProcessNewArgs) !ZProcess {
 		mut pathcmd := zinit.pathcmds.file_get_new(args.name + '.sh')!
 		args.cmd = texttools.dedent(args.cmd)
 		pathcmd.write(args.cmd)!
+		pathcmd.chmod(0x770)!
 		zp.cmd = '/bin/bash -c ${pathcmd.path}'
 	}
 
@@ -55,6 +56,7 @@ pub fn (mut zinit Zinit) process_new(args_ ZProcessNewArgs) !ZProcess {
 			mut pathcmd := zinit.pathtests.file_get_new(args.name + '.sh')!
 			args.test = texttools.dedent(args.test)
 			pathcmd.write(args.test)!
+			pathcmd.chmod(0x770)!
 			zp.test = '/bin/bash -c ${pathcmd.path}'
 		}
 	}
@@ -132,10 +134,12 @@ log: ring
 
 pub fn (zp ZProcess) start() ! {
 	mut client := new_rpc_client()
-	st := client.status(zp.name)!
+	if !client.isloaded(zp.name){
+		client.monitor(zp.name)! //means will check it out
+	}
+	st := client.status
 	println(st)
-	if true{panic("SS")}
-
+	if true{panic("SS")}		
 	client.start(zp.name)!
 }
 
