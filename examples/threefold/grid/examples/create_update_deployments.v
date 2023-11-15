@@ -1,15 +1,18 @@
-module grid
+module main
 
 import json
 import freeflowuniverse.crystallib.threefold.grid.models
 import log
+import freeflowuniverse.crystallib.threefold.grid
 
-fn test_create_and_update_deployment() {
-	mnemonics := ''
+const pubkey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDTwULSsUubOq3VPWL6cdrDvexDmjfznGydFPyaNcn7gAL9lRxwFbCDPMj7MbhNSpxxHV2+/iJPQOTVJu4oc1N7bPP3gBCnF51rPrhTpGCt5pBbTzeyNweanhedkKDsCO2mIEh/92Od5Hg512dX4j7Zw6ipRWYSaepapfyoRnNSriW/s3DH/uewezVtL5EuypMdfNngV/u2KZYWoeiwhrY/yEUykQVUwDysW/xUJNP5o+KSTAvNSJatr3FbuCFuCjBSvageOLHePTeUwu6qjqe+Xs4piF1ByO/6cOJ8bt5Vcx0bAtI8/MPApplUU/JWevsPNApvnA/ntffI+u8DCwgP"
+
+fn test_create_and_update_deployment()! {
 	mut logger := log.Log{
 		level: .debug
 	}
-	mut deployer := new_deployer(mnemonics, .dev, mut logger)!
+	mnemonics := grid.get_mnemonics()!
+	mut deployer := grid.new_deployer(mnemonics, .dev, mut logger)!
 
 	twin_id := deployer.client.get_user_twin()!
 
@@ -17,7 +20,7 @@ fn test_create_and_update_deployment() {
 		ip_range: '10.1.0.0/16'
 		subnet: '10.1.1.0/24'
 		wireguard_private_key: 'GDU+cjKrHNJS9fodzjFDzNFl5su3kJXTZ3ipPgUjOUE='
-		wireguard_listen_port: 3011
+		wireguard_listen_port: 3012
 		peers: [
 			models.Peer{
 				subnet: '10.1.2.0/24'
@@ -28,7 +31,7 @@ fn test_create_and_update_deployment() {
 	}
 	mut znet_workload := models.Workload{
 		version: 0
-		name: 'network'
+		name: 'networkaa'
 		type_: models.workload_types.network
 		data: json.encode_pretty(network)
 		description: 'test network2'
@@ -58,7 +61,7 @@ fn test_create_and_update_deployment() {
 			public_ip: public_ip_name
 			interfaces: [
 				models.ZNetworkInterface{
-					network: 'network'
+					network: 'networkaa'
 					ip: '10.1.1.3'
 				},
 			]
@@ -69,7 +72,7 @@ fn test_create_and_update_deployment() {
 			memory: i64(1024) * 1024 * 1024 * 2
 		}
 		env: {
-			'SSH_KEY': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC3OCaZ3mHWVqu5pvi14XDYR+F7A4SEVWMDFyBPjtUfTORuxLSR4/29TzT3Dbc60sY8/Lr5OjR27Ubouh8f5xDc6P89UoyTDLe0HWYnnsYRGt1zHbhU0wYOypQsgWObEAKOo78/20JgcDkx7Aga59w6QAS+OUfZ4HrSfyeG7NedN9H0YiLuKVA1rtvpzF/SZiPt3zTIP3qLVJoW5QphTB4m5cHR5+mmYIAco8U/C/H83IYv98Powi9OLxeGOi/WMTjNcA2EdNcIGO13krSKU+xx8vm7wPPNKaex1Ps9bP6DTDALgf/El2Y33MJWA4V9vKlm1kV1N58c5kurUURPdVVN8B1pRKKP8esQIyOx3hQu5RQ3cBm7kYiUQLnjQIRpIPtTYtqugCJuPG57nMzNL4KZdSmjK++KDSNtUAR78QnjvRJgRKtO7GJdusdeHudGEvP/DgjjRdIunf8hHoB6AYbC5D2ToCTWrHcjU9WKAdzSHbzqSlC3G6k026tcnrx+LFE= plumber@mario'
+			'SSH_KEY': pubkey
 		}
 		mounts: [mount]
 	}
@@ -130,27 +133,20 @@ fn test_create_and_update_deployment() {
 	}
 
 	gw_name := models.GatewayNameProxy{
-		name: 'mygwname'
+		name: 'mygwname1'
 		backends: ['http://[${zmachine_ygg_ip}]:9000']
 	}
-	gw_name_wl := gw_name.to_workload(name: 'mygwname')
+	gw_name_wl := gw_name.to_workload(name: 'mygwname1')
 
-	name_contract_id := deployer.client.create_name_contract('mygwname')!
+	name_contract_id := deployer.client.create_name_contract('mygwname1')!
 	deployer.logger.info('name contract id: ${name_contract_id}')
 
 	deployment.workloads << gw_name_wl
 	deployer.update_deployment(node_id, mut deployment, deployment.metadata)!
 }
 
-fn test_cancel_deployment() {
-	mnemonics := ''
-	mut logger := log.Log{
-		level: .debug
-	}
-	mut deployer := new_deployer(mnemonics, .dev, mut logger)!
 
-	contract_id := u64(43885)
-	deployer.client.cancel_contract(contract_id)!
 
-	deployer.logger.info('contract ${contract_id} is canceled')
+fn main(){
+	test_create_and_update_deployment() or {println("error happened")}
 }
