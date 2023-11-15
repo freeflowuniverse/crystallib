@@ -56,7 +56,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		}
 
 		if mut llast is elements.CodeBlock {
-			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
+			if line.starts_with('```') {
 				parser.next_start()
 				continue
 			} else {

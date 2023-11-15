@@ -5,11 +5,21 @@
 
 !!hello.world k:v k2:v2
 
-## ts 
+## ts
 
 !!domain.actor
-    key1: val1
-    key2:val2
+  key1: val1
+  key2:val2
 
 !!domain2.actor2
-    key:val
+  key:val
+
+```
+""" this is a doc string"""
+def name(x){
+
+y = """ this is a y"""
+print(x)
+```
+
+}
