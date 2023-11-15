@@ -154,6 +154,15 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				parser.next()
 				continue
 			}
+
+			if trimmed_line.starts_with('<!--') && trimmed_line.ends_with('-->') {
+				mut comment := trimmed_line.all_after_first('<!--')
+				comment = comment.all_before('-->')
+				doc.elements << elements.comment_new(content: comment)
+
+				parser.next_start()
+				continue
+			}
 		}
 
 		match mut llast {

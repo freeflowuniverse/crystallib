@@ -35,3 +35,5 @@ this text is part of the html element
     codeblock too
 ```
 </html>this is ignored too
+
+<!-- comment -->
