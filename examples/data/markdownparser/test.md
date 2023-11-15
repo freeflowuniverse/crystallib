@@ -25,3 +25,13 @@ text in paragaph
         println('hello world')
     }
 ```
+
+!!include this is an include
+
+<html>text on same line as beginning tag is ignored
+this text is part of the html element
+# this header too
+``` 
+    codeblock too
+```
+</html>this is ignored too
