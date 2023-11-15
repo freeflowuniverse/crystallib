@@ -167,6 +167,7 @@ pub mut:
 pub fn code_get(args CodeGetFromUrlArgs) !string {
 	mut gs := get(name: args.gitstructure_name, coderoot: args.coderoot)!
 	mut locator := gs.locator_new(args.url)!
+	println(locator)
 	mut g := gs.repo_get(locator: locator)!
 	if args.reload {
 		g.load()!
@@ -176,6 +177,20 @@ pub fn code_get(args CodeGetFromUrlArgs) !string {
 	}
 	s := locator.path_on_fs()!
 	return s.path
+}
+
+pub fn repo_get(args CodeGetFromUrlArgs) !GitRepo {
+	mut gs := get(name: args.gitstructure_name, coderoot: args.coderoot)!
+	mut locator := gs.locator_new(args.url)!
+	println(locator)
+	mut g := gs.repo_get(locator: locator)!
+	if args.reload {
+		g.load()!
+	}
+	if args.reset {
+		g.remove_changes()!
+	}
+	return g
 }
 
 // get new gitstructure .
@@ -200,7 +215,7 @@ fn new(config_ GitStructureConfig) !GitStructure {
 	mut gs := GitStructure{
 		config: config
 		rootpath: pathlib.get_dir(path: config.root, create: true) or {
-			panic('this should never happen')
+			panic('this should never happen: ${err}')
 		}
 	}
 

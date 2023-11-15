@@ -28,7 +28,8 @@ fn (addr GitAddr) check() {
 pub fn (addr GitAddr) path() !pathlib.Path {
 	addr.check()
 	provider := texttools.name_fix(addr.provider)
-	name := texttools.name_fix(addr.name)
+	// name := texttools.name_fix(addr.name)
+	name := addr.name
 	account := texttools.name_fix(addr.account)
 	mut path_string := '${addr.gsconfig.root}/${provider}/${account}/${name}'
 	if addr.gsconfig.root == '' {
@@ -37,7 +38,7 @@ pub fn (addr GitAddr) path() !pathlib.Path {
 	if addr.gsconfig.multibranch {
 		path_string += '/${addr.branch}'
 	}
-	path := pathlib.get_dir(path: path_string)!
+	path := pathlib.get_dir(path: path_string, create: false)!
 	return path
 }
 
@@ -93,6 +94,10 @@ fn (addr GitAddr) url_http_with_branch_get() string {
 
 pub fn (addr GitAddr) str() string {
 	return '${addr.provider}:${addr.account}/${addr.name}[${addr.branch}]'
+}
+
+pub fn (addr GitAddr) key() string {
+	return '${addr.provider}_${addr.account}_${addr.name}'
 }
 
 // CACHE ARGS

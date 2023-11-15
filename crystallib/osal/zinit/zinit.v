@@ -1,8 +1,10 @@
 module zinit
 
-import os
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.osal.initd
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.core.texttools
+import os
 
 [heap]
 pub struct Zinit {
@@ -13,77 +15,38 @@ pub mut:
 	pathtests pathlib.Path
 }
 
-pub fn new() !Zinit {
-	mut obj := Zinit{
-		path: pathlib.get_dir(path: '/etc/zinit', create: true)!
-		pathcmds: pathlib.get_dir(path: '/etc/zinit/cmds', create: true)!
-		pathtests: pathlib.get_dir(path: '/etc/zinit/tests', create: true)!
-	}
-
-	cmd := 'zinit list'
-	r := osal.execute_silent(cmd)!
-	mut state := ''
-	for line in r.split_into_lines() {
-		if line.starts_with('---') {
-			state = 'ok'
-			continue
-		}
-		if state == 'ok' && line.contains(':') {
-			name := line.split(':')[0].to_lower().trim_space()
-			mut zp := ZProcess{
-				name: name
-				zinit: &obj
-			}
-			zp.load()!
-			obj.processes[name] = zp
-		}
-	}
-	return obj
+[params]
+struct InitDProcGet {
+	delete bool
+	start  bool = true
 }
 
 [params]
 pub struct ZProcessNewArgs {
 pub mut:
-	name      string   [required]
-	cmd       string   [required]
-	cmd_file  bool
+	name      string            [required]
+	cmd       string            [required]
+	cmd_file  bool // if we wanna force to run it as a file which is given to bash -c  (not just a cmd in zinit)
 	test      string
 	test_file bool
 	after     []string
-	env       []string
+	env       map[string]string
 	oneshot   bool
 }
 
-pub fn (mut zinit Zinit) new(mut args_ ZProcessNewArgs) !ZProcess {
-	mut args := args_
-
-	mut zp := ZProcess{
-		name: args.name
-		zinit: &zinit
+// start  it with initd, because the zinit by itself needs to run somewhere
+fn initd_proc_get(args InitDProcGet) !initd.IProcess {
+	mut initdfactory := initd.new()!
+	mut initdprocess := initdfactory.new(
+		cmd: '/usr/local/bin/zinit init'
+		name: 'zinit'
+		description: 'a super easy to use startup manager.'
+	)!
+	if args.delete {
+		initdprocess.remove()!
 	}
-
-	if args.cmd.contains('\n') || args.cmd_file {
-		// means we can load the special cmd
-		mut pathcmd := zinit.pathcmds.file_get(args.name)!
-		pathcmd.write(args.cmd)!
-		zp.cmd = args.cmd
+	if args.start {
+		initdprocess.start()!
 	}
-
-	if args.test.contains('\n') || args.test_file {
-		// means we can load the special cmd
-		mut pathcmd := zinit.pathtests.file_get(args.name)!
-		pathcmd.write(args.test)!
-		zp.test = args.test
-	}
-
-	zp.oneshot = args.oneshot
-	zp.env = args.env
-	zp.after = args.after
-
-	mut pathyaml := zinit.path.file_get(zp.name + '.yaml')!
-	pathyaml.write(zp.str())!
-
-	zinit.processes[args.name] = zp
-
-	return zp
+	return initdprocess
 }

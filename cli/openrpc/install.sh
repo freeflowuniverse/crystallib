@@ -1,2 +1,5 @@
-v $(dirname "$0")/cli.v
-mv $(dirname "$0")/cli /usr/local/bin/openrpc
+set -ex
+cd $(dirname "$0")
+v -enable-globals openrpc.v
+sudo mv openrpc /usr/local/bin/openrpc
+echo "compiled openrpc"

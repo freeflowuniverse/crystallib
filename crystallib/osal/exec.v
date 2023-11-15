@@ -121,6 +121,7 @@ pub fn exec(cmd Command) !Job {
 	}
 
 	if cmd.shell {
+		println(' - cmd shell')
 		if cmd.retry > 0 {
 			job.error = 'cmd retry cannot be >0 if shell used'
 			return JobError{
@@ -145,7 +146,6 @@ pub fn exec(cmd Command) !Job {
 				p.set_environment(job.cmd.environment)
 			}
 			p.set_redirect_stdio()
-
 			p.set_args(process_args[1..process_args.len])
 			p.run()
 			if p.is_alive() {
@@ -266,16 +266,17 @@ fn (mut job Job) cmd_to_process_args(insert_noninteractive_statements bool) ![]s
 	// use bash debug and die on error features
 	mut firstlines := '#!/bin/bash\n'
 	if job.cmd.die {
-		firstlines += 'set -e\n'
+		firstlines += 'set -e\nexec 2>&1\n'
 	} else {
-		firstlines += 'set +e\n'
+		firstlines += 'set +e\nexec 2>&1\n'
 	}
 	if job.cmd.debug {
-		firstlines += 'set -x\n'
+		firstlines += 'set -x\nexec 2>&1\n'
 	}
 
 	if insert_noninteractive_statements {
-		firstlines += 'export DEBIAN_FRONTEND=noninteractive TERM=xterm\n\n'
+		// firstlines += 'export DEBIAN_FRONTEND=noninteractive TERM=xterm\n\n'
+		firstlines += 'export DEBIAN_FRONTEND=noninteractive\n\n'
 	}
 
 	cmd = firstlines + '\n' + cmd
@@ -291,8 +292,8 @@ fn (mut job Job) cmd_to_process_args(insert_noninteractive_statements bool) ![]s
 	}
 
 	os.chmod(job.cmd.scriptpath, 0o777)!
-	// return ['/bin/bash', '-c', '/bin/bash ${job.cmd.scriptpath} 2>&1']
-	return [job.cmd.scriptpath]
+	return ['/bin/bash', job.cmd.scriptpath]
+	// return [job.cmd.scriptpath] //WHY DID SOMEONE CHANGE THIS, IT DID MISS STDERR BECAUSE OF IT !
 }
 
 // shortcut to execute a job silent

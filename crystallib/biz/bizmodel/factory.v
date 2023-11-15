@@ -5,8 +5,8 @@ import freeflowuniverse.crystallib.baobab.smartid
 // import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.data.knowledgetree
-import freeflowuniverse.crystallib.data.actionsparser
+import freeflowuniverse.crystallib.data.doctree
+import freeflowuniverse.crystallib.data.actionparser
 import os
 
 __global (
@@ -36,7 +36,7 @@ pub mut:
 	cid         smartid.CID
 }
 
-pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
+pub fn new(args_ BizModelArgs) !doctree.MDBook {
 	mut args := args_
 
 	// mut cs := currency.new()
@@ -63,7 +63,7 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 	}
 
 	tree_name := 'bizmodel_${args.name}'
-	mut tree := knowledgetree.new(name: tree_name)!
+	mut tree := doctree.new(name: tree_name)!
 
 	mp := macroprocessor_new(args_.name)
 	tree.macroprocessor_add(mp)!
@@ -92,7 +92,7 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 		cid: args.cid
 	)!
 
-	mut book := knowledgetree.book_generate(
+	mut book := doctree.book_generate(
 		path: args.mdbook_path
 		name: args.mdbook_name
 		tree: tree
@@ -106,7 +106,7 @@ pub fn (mut m BizModel) load() ! {
 	println('ACTIONS LOAD ${m.params.name}')
 
 	// m.replace_smart_ids()!
-	ap := actionsparser.new(path: m.params.path, defaultcircle: 'bizmodel_${m.params.name}')!
+	ap := actionparser.new(path: m.params.path, defaultcircle: 'bizmodel_${m.params.name}')!
 	m.revenue_actions(ap)!
 	m.hr_actions(ap)!
 	m.funding_actions(ap)!

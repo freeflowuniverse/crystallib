@@ -1,9 +1,9 @@
 module bizmodel
 
-import freeflowuniverse.crystallib.data.knowledgetree
-import freeflowuniverse.crystallib.data.actionsparser
+import freeflowuniverse.crystallib.data.doctree
+import freeflowuniverse.crystallib.data.actionparser
 import freeflowuniverse.crystallib.biz.spreadsheet
-import freeflowuniverse.crystallib.data.markdowndocs
+import freeflowuniverse.crystallib.data.markdownparser
 
 pub struct MacroProcessorBizmodel {
 	bizmodel_name string // name of bizmodel the macro will use for processing
@@ -13,11 +13,11 @@ pub fn macroprocessor_new(bizmodel_name string) MacroProcessorBizmodel {
 	return MacroProcessorBizmodel{bizmodel_name}
 }
 
-pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.MacroResult {
-	mut r := knowledgetree.MacroResult{
+pub fn (processor MacroProcessorBizmodel) process(code string) !doctree.MacroResult {
+	mut r := doctree.MacroResult{
 		state: .stop
 	}
-	ap := actionsparser.new(text: code)!
+	ap := actionparser.new(text: code)!
 	mut actions2 := ap.filtersort(actor: 'bizmodel')!
 	for action in actions2 {
 		p := action.params
@@ -33,7 +33,7 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 			}
 			employee := model.employees[id]
 
-			employee_table := markdowndocs.Table{
+			employee_table := markdownparser.Table{
 				header: ['Key', 'Value']
 				rows: [
 					['cost', employee.cost],

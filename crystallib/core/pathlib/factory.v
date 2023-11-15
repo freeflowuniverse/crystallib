@@ -33,6 +33,7 @@ pub mut:
 	create bool
 	check  bool = true // means will check the dir or file exists
 	empty  bool // will empty the dir or the file
+	delete bool
 }
 
 // get a directory, or needs to be created
@@ -50,14 +51,20 @@ pub fn get_dir(args_ GetArgs) !Path {
 		p2.check()
 		p2.absolute()
 		if p2.exist == .no {
-			os.mkdir_all(p2.absolute()) or { return error('cannot create path ${p2}') } // Make sure that all the needed paths created		
-			p2.check()
+			if args.create {
+				os.mkdir_all(p2.absolute()) or { return error('cannot create path ${p2}, ${err}') } // Make sure that all the needed paths created		
+				p2.check()
+			}
+			return p2
 		}
 		if !p2.is_dir() {
 			return error('Path ${args.path} is not a dir.')
 		}
 		if args.empty {
 			p2.empty()!
+		}
+		if args.delete {
+			p2.delete()!
 		}
 	}
 	return p2
@@ -87,8 +94,11 @@ pub fn get_file(args_ GetArgs) !Path {
 				p2.check()
 			}
 		}
-		if !p2.is_file() {
+		if p2.exists() && !p2.is_file() {
 			return error('Path ${args.path} is not a file.')
+		}
+		if args.delete {
+			p2.delete()!
 		}
 	}
 	return p2

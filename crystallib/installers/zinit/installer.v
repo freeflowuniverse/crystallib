@@ -2,9 +2,9 @@ module zinit
 
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.core.texttools
-import os
+// import freeflowuniverse.crystallib.core.pathlib
+// import freeflowuniverse.crystallib.core.texttools
+// import os
 
 [params]
 pub struct InstallArgs {
@@ -27,12 +27,15 @@ pub fn install(args InstallArgs) ! {
 
 	println(' - install zinit')
 
-	mut dest := osal.download(
-		url: 'https://github.com/zinitserver/zinit/releases/download/v2.7.4/zinit_2.7.4_linux_amd64.tar.gz'
-		minsize_kb: 10000
-		reset: true
-		expand_dir: '/tmp/zinitserver'
-	)!
+	build()!
+
+	// mut dest := osal.download(
+	// 	// url: 'https://github.com/zinitserver/zinit/releases/download/v2.7.4/zinit_2.7.4_linux_amd64.tar.gz'
+	// 	url: 'https://raw.githubusercontent.com/freeflowuniverse/freeflow_binary/main/x86_64/zinit'
+	// 	minsize_kb: 5000
+	// 	reset: true
+	// 	// expand_dir: '/tmp/zinitserver'
+	// )!
 
 	osal.done_set('install_zinit', 'OK')!
 	return

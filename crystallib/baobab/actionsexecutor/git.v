@@ -1,9 +1,9 @@
 module actionsexecutor
 
-import freeflowuniverse.crystallib.data.actionsparser
+import freeflowuniverse.crystallib.data.actionparser
 import freeflowuniverse.crystallib.osal.gittools
 
-fn git(mut actions actionsparser.Actions, action actionsparser.Action) ! {
+fn git(mut actions actionparser.Actions, action actionparser.Action) ! {
 	if action.name == 'get' {
 		name := action.params.get('name')!
 		gitname := action.params.get_default('gitname', 'default')!

@@ -1,4 +1,4 @@
-module twinsafe
+module ed25519
 
 import libsodium
 // import encoding.hex

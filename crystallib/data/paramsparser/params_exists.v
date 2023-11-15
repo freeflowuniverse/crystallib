@@ -6,9 +6,9 @@ module paramsparser
 // arg1 is an arg
 // description is a kwarg
 pub fn (params &Params) exists(key_ string) bool {
-	key := key_.to_lower()
+	key := key_.to_lower().trim_space()
 	for p in params.params {
-		if p.key == key && p.value != '' {
+		if p.key == key {
 			return true
 		}
 	}
@@ -20,8 +20,8 @@ pub fn (params &Params) exists(key_ string) bool {
 //    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok
 // arg1 is an arg
 // description is a kwarg
-pub fn (params &Params) arg_exists(key_ string) bool {
-	key := key_.to_lower()
+pub fn (params &Params) exists_arg(key_ string) bool {
+	key := key_.to_lower().trim_space()
 	for p in params.args {
 		if p == key {
 			return true

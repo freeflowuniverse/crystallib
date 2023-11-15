@@ -82,7 +82,7 @@ pub fn rsync_cmd(args_ RsyncArgs) !string {
 	if !src_path.is_file() {
 		args.source = args.source + '/'
 	}
-	mut dest_path := get(args.dest)
+
 	if !src_path.is_file() {
 		args.dest = args.dest + '/'
 	}

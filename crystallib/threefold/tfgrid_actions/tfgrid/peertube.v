@@ -1,6 +1,6 @@
 module tfgrid
 
-import freeflowuniverse.crystallib.data.actionsparser { Action }
+import freeflowuniverse.crystallib.data.actionparser { Action }
 import rand
 
 fn (mut t TFGridHandler) peertube(action Action) ! {

@@ -1,6 +1,6 @@
 module stellar
 
-import freeflowuniverse.crystallib.data.actionsparser { Action }
+import freeflowuniverse.crystallib.data.actionparser { Action }
 
 fn (mut h StellarHandler) account(action Action) ! {
 	match action.name {

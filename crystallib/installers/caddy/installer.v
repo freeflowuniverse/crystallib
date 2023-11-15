@@ -1,10 +1,11 @@
 module caddy
 
 import freeflowuniverse.crystallib.installers.base
-import freeflowuniverse.crystallib.tools.tmux
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.installers.zinit
+import freeflowuniverse.crystallib.osal.zinit as zinitmgmt
 import os
 
 [params]
@@ -17,6 +18,7 @@ pub mut:
 pub fn install(args InstallArgs) ! {
 	// make sure we install base on the node
 	base.install()!
+	zinit.install(reset: args.reset)!
 
 	if args.reset == false && osal.done_exists('install_caddy') {
 		return
@@ -29,7 +31,7 @@ pub fn install(args InstallArgs) ! {
 		return error('only support ubuntu for now')
 	}
 	mut dest := osal.download(
-		url: 'https://github.com/caddyserver/caddy/releases/download/v2.7.4/caddy_2.7.4_linux_amd64.tar.gz'
+		url: 'https://github.com/caddyserver/caddy/releases/download/v2.7.5/caddy_2.7.5_linux_amd64.tar.gz'
 		minsize_kb: 10000
 		reset: true
 		expand_dir: '/tmp/caddyserver'
@@ -38,6 +40,8 @@ pub fn install(args InstallArgs) ! {
 	mut caddyfile := dest.file_get('caddy')! // file in the dest
 	caddyfile.copy(dest: '/usr/local/bin', delete: true)!
 	caddyfile.chmod(0o770)! // includes read & write & execute
+
+	println(' CADDY INSTALLED')
 
 	osal.done_set('install_caddy', 'OK')!
 	return
@@ -117,26 +121,39 @@ pub fn configuration_set(args_ ConfigurationArgs) ! {
 }
 
 // start caddy
-pub fn start() ! {
+pub fn start() !zinitmgmt.ZProcess {
 	if !os.exists('/etc/caddy/Caddyfile') {
+		return error("didn't find caddyfile")
 	}
-	mut t := tmux.new()!
-	mut w := t.window_new(
+	mut z := zinitmgmt.new()!
+	p := z.process_new(
 		name: 'caddy'
 		cmd: '
 			caddy run --config /etc/caddy/Caddyfile
 			echo CADDY STOPPED
 			/bin/bash'
 	)!
+
+	p.start()!
+
+	// mut t := tmux.new()!
+	// mut w := t.window_new(
+	// 	name: 'caddy'
+	// 	cmd: '
+	// 		caddy run --config /etc/caddy/Caddyfile
+	// 		echo CADDY STOPPED
+	// 		/bin/bash'
+	// )!
+	return p
 }
 
 pub fn stop() ! {
-	mut t := tmux.new()!
-	t.window_delete(name: 'caddy')!
+	// mut z := zinitmgmt.new()!
+	// t.window_delete(name: 'caddy')!
 	// osal.execute_silent('caddy stop') or {}
 }
 
-pub fn restart() ! {
+pub fn restart() !zinitmgmt.ZProcess {
 	stop()!
-	start()!
+	return start()!
 }

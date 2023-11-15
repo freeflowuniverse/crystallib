@@ -4,6 +4,7 @@ import os
 import freeflowuniverse.crystallib.core.texttools
 import time
 import crypto.md5
+import rand
 
 // check path exists
 pub fn (mut path Path) exists() bool {
@@ -36,14 +37,17 @@ pub fn (mut path Path) rename(name string) ! {
 // uncompress to specified directory .
 // if copy then will keep the original
 pub fn (mut path Path) expand(dest string) !Path {
+	$if debug {
+		println(' - expand ${path.path}')
+	}
 	if dest.len < 4 {
 		return error("Path dest needs to be mentioned and +4 char. Now '${dest}'")
 	}
-	desto := get_dir(path: dest, create: true)!
-	println(desto)
+	mut desto := get_dir(path: dest, create: true)!
+	desto.empty()!
 	if path.name().to_lower().ends_with('.tar.gz') || path.name().to_lower().ends_with('.tgz') {
 		cmd := 'tar -xzvf ${path.path} -C ${desto.path}'
-		println(cmd)
+		// println(cmd)
 		res := os.execute(cmd)
 		if res.exit_code > 0 {
 			return error('Could not expand.\n${res}')
@@ -55,6 +59,22 @@ pub fn (mut path Path) expand(dest string) !Path {
 		println(res)
 		if res.exit_code > 0 {
 			return error('Could not expand xz.\n${res}')
+		}
+	} else if path.name().to_lower().ends_with('.zip') {
+		cmd := 'unzip  ${path.path} -d ${dest}'
+		// println(cmd)
+		res := os.execute(cmd)
+		// println(res)
+		if res.exit_code > 0 {
+			return error('Could not expand zip.\n${res}')
+		}
+	} else if path.name().to_lower().ends_with('.bz2') {
+		cmd := 'bunzip2 -k ${path.path}'
+		// println(cmd)
+		res := os.execute(cmd)
+		// println(res)
+		if res.exit_code > 0 {
+			return error('Could not expand bz2.\n${res}')
 		}
 	} else {
 		println(path)
@@ -83,7 +103,7 @@ pub fn (path Path) path_relative(destpath string) !string {
 }
 
 // recursively finds the least common ancestor of array of paths .
-// will always return the absolute path (relative gets changed to absolute)
+// will always return the absolute path (relative gets changed to absolute).
 pub fn find_common_ancestor(paths_ []string) string {
 	for p in paths_ {
 		if p.trim_space() == '' {
@@ -91,7 +111,29 @@ pub fn find_common_ancestor(paths_ []string) string {
 		}
 	}
 	paths := paths_.map(os.abs_path(os.real_path(it))) // get the real path (symlinks... resolved)
-	// println(paths)
+	println(paths)
+	parts := paths[0].split('/')
+	mut totest_prev := '/'
+	for i in 1 .. parts.len {
+		totest := parts[0..i + 1].join('/')
+		if paths.any(!it.starts_with(totest)) {
+			return totest_prev
+		}
+		totest_prev = totest
+	}
+	return totest_prev
+}
+
+// same as above but will treat symlinks as if normal links
+// allowing finding relative paths between links as well
+// QUESTION: should we merge with above?
+pub fn find_simple_common_ancestor(paths_ []string) string {
+	for p in paths_ {
+		if p.trim_space() == '' {
+			panic('cannot find commone ancestors if any of items in paths is empty.\n${paths_}')
+		}
+	}
+	paths := paths_.map(os.abs_path(it))
 	parts := paths[0].split('/')
 	mut totest_prev := '/'
 	for i in 1 .. parts.len {
@@ -122,6 +164,59 @@ pub fn (path Path) parent() !Path {
 		cat: Category.dir
 		exist: .unknown
 	}
+}
+
+pub struct MoveArgs {
+pub mut:
+	dest          string // path
+	delete        bool   // if true will remove files which are on dest which are not on source
+	chmod_execute bool
+}
+
+// move to other location
+// ```
+// dest           string   // path
+// delete         bool     // if true will remove files which are on dest which are not on source
+// ```
+pub fn (mut path Path) move(args MoveArgs) ! {
+	mut d := get(args.dest)
+	if d.exists() {
+		if args.delete {
+			d.delete()!
+		} else {
+			return error("Found dest dir in move and can't delete. \n${args}")
+		}
+	}
+	os.mv(path.path, d.path)!
+	if args.chmod_execute {
+		d.chmod(0o770)!
+	}
+}
+
+// the path will move itself up 1 level .
+// e.g. path is /tmp/rclone and there is /tmp/rclone/rclone-v1.64.2-linux-amd64 .
+// that last dir needs to move 1 up
+pub fn (mut path Path) moveup_single_subdir() ! {
+	mut plist := path.list(recursive: false, ignoredefault: true, dirs_only: true)!
+	println(plist)
+	if plist.paths.len != 1 {
+		return error('could not find one subdir in ${path.path} , so cannot move up')
+	}
+	mut pdest := plist.paths[0]
+	pdest.moveup()!
+}
+
+// the path will move itself up 1 level .
+// the e.g. /tmp/rclone/rclone-v1.64.2-linux-amd64/ -> /tmp/rclone
+pub fn (mut path Path) moveup() ! {
+	println('move up: ${path}')
+	pdest := path.parent()!
+	tmpdir := '${os.temp_dir()}/${rand.u16()}'
+	path.move(dest: tmpdir, delete: true)!
+	mut tmpdirpath := get_dir(path: tmpdir)!
+	tmpdirpath.move(dest: pdest.path, delete: true)!
+	path.path = pdest.path
+	path.check()
 }
 
 // returns extension without .
@@ -194,6 +289,9 @@ pub fn (mut path Path) delete() ! {
 		}
 		path.exist = .no
 	}
+	if os.is_link(path.path) {
+		os.rm(path.path.replace('//', '/'))!
+	}
 }
 
 // remove all content but if dir let the dir exist
@@ -246,6 +344,7 @@ pub fn (mut path Path) read() !string {
 // assert a2 == '../../../d.txt' .
 // a8 := pathlib.path_relative('$testpath/a/b/c', '$testpath/a/b/c/d/e/e.txt') or { panic(err) } .
 // assert a8 == 'd/e/e.txt' .
+// symlinks will not be resolved, as it leads to unexpected behaviour
 pub fn path_relative(source_ string, linkpath_ string) !string {
 	mut source := os.abs_path(source_)
 	mut linkpath := os.abs_path(linkpath_)
@@ -264,13 +363,11 @@ pub fn path_relative(source_ string, linkpath_ string) !string {
 		return error('Cannot do path_relative()! if source is not a dir and exists. Now:${source_}')
 	}
 
-	// println(" + source:$source compare:$linkpath")
-
-	common := find_common_ancestor([source, linkpath])
-	// println(" + common:$common")
+	common := find_simple_common_ancestor([source, linkpath])
 
 	// if source is common, returns source
 	if source.len <= common.len + 1 {
+		// TODO: this should be safer
 		path := linkpath_.trim_string_left(source)
 		if path.starts_with('/') {
 			return path[1..]
@@ -279,11 +376,15 @@ pub fn path_relative(source_ string, linkpath_ string) !string {
 		}
 	}
 
+	println('common: ${common}')
 	mut source_short := source[(common.len)..]
 	mut linkpath_short := linkpath[(common.len)..]
 
 	source_short = source_short.trim_string_left('/')
 	linkpath_short = linkpath_short.trim_string_left('/')
+
+	println('source: ${source_short}')
+	println('link: ${linkpath_short}')
 
 	source_count := source_short.count('/')
 	// link_count := linkpath_short.count('/')

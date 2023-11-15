@@ -49,7 +49,7 @@ fn parse(timestr string) !i64 {
 	return error('bug')
 }
 
-pub fn get_unix_from_relative(timestr string) !i64 {
+fn relative_sec(timestr string) !i64 {
 	// removes all spaces from the string
 	mut full_exp := timestr.replace(' ', '')
 
@@ -97,7 +97,12 @@ pub fn get_unix_from_relative(timestr string) !i64 {
 		exp_int := exp.int() * mult
 		total += exp_int
 	}
-	time_unix := total + time.now().unix_time()
+	return total
+}
+
+fn get_unix_from_relative(timestr string) !i64 {
+	r := relative_sec(timestr)!
+	time_unix := i64(r) + time.now().unix_time()
 	return time_unix
 }
 
@@ -123,9 +128,9 @@ pub fn get_unix_from_absolute(timestr_ string) !i64 {
 		return error("format of date/time not correct, no - or / in time: '${timestr_}'")
 	}
 
-	split := datepart.split(':')
+	split := datepart.split('-')
 	if split.len != 3 {
-		return error("unrecognized dat format, time must either be YYYY/MM/DD or DD/MM/YYYY, or : in stead of /. Input was:'${timestr_}'")
+		return error("unrecognized date format, time must either be YYYY/MM/DD or DD/MM/YYYY, or : in stead of /. Input was:'${timestr_}'")
 	}
 	if split[2].len == 4 {
 		datepart = split.reverse().join('-')

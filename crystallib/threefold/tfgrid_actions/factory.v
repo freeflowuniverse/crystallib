@@ -1,7 +1,7 @@
 module tfgrid_actions
 
 import log
-import freeflowuniverse.crystallib.data.actionsparser
+import freeflowuniverse.crystallib.data.actionparser
 import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
 import freeflowuniverse.crystallib.threefold.web3gw.tfgrid as tfgrid_client
 import freeflowuniverse.crystallib.threefold.web3gw.tfchain as tfchain_client
@@ -37,7 +37,7 @@ pub mut:
 }
 
 pub fn new(args RunnerArgs, debug_log bool) !Runner {
-	mut ap := actionsparser.new(path: args.path)!
+	mut ap := actionparser.new(path: args.path)!
 
 	mut logger := log.Logger(&log.Log{
 		level: if debug_log { .debug } else { .info }
@@ -66,7 +66,7 @@ pub fn new(args RunnerArgs, debug_log bool) !Runner {
 	return runner
 }
 
-pub fn (mut r Runner) run(mut acs actionsparser.Actions) ! {
+pub fn (mut r Runner) run(mut acs actionparser.Actions) ! {
 	for action in acs.actions {
 		match action.book {
 			threelang.tfgrid_book {

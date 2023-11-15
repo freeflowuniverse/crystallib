@@ -1,6 +1,6 @@
 module blockchain
 
-import freeflowuniverse.crystallib.data.actionsparser { Actions }
+import freeflowuniverse.crystallib.data.actionparser { Actions }
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.paramsparser
 
