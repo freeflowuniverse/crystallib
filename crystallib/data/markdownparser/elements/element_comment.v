@@ -18,7 +18,10 @@ pub fn (mut self Comment) process() !int {
 }
 
 pub fn (self Comment) markdown() string {
-	mut out := self.content
+	mut out := '<!--'
+	out += self.content
+	out += '-->'
+
 	out += self.DocBase.markdown()
 	return out
 }
