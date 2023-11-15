@@ -36,7 +36,7 @@ pub fn (self CodeBlock) markdown() string {
 	mut out := ''
 	out += '```${self.category}\n'
 	out += self.content.trim_space()
-	out += '\n```\n\n'
+	out += '\n```\n'
 	return out
 }
 
