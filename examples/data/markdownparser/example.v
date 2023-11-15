@@ -11,9 +11,13 @@ fn main() {
 }
 
 fn do(mut logger log.Log) ! {
-	doc := markdownparser.new(
+	doc1 := markdownparser.new(
 		path: '/home/mariocs/cs/crystallib/examples/data/markdownparser/test.md'
 	)!
+	content1 := doc1.markdown()
 
-	println(doc.markdown())
+	doc2 := markdownparser.new(content: content1)!
+	content2 := doc2.markdown()
+
+	assert content1 == content2
 }
