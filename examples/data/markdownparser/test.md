@@ -19,3 +19,9 @@ text in paragaph
 
 | table |
 | hamada |
+
+```vlang
+    fn main(){
+        println('hello world')
+    }
+```

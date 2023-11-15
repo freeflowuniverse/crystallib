@@ -19,14 +19,12 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		mut line := parser.line_current()
 		line = line.replace('\t', '    ')
 		trimmed_line := line.trim_space()
-		// println(line)
 
 		mut llast := parser.lastitem()
-		// println(llast)
 
 		if mut llast is elements.Table {
 			if trimmed_line.starts_with('|') && trimmed_line.ends_with('|') {
-				llast.content += '\n${line}'
+				llast.content += '${line}\n'
 				parser.next()
 				continue
 			}
@@ -47,20 +45,20 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			continue
 		}
 
-		if mut llast is elements.Html {
-			if line.trim_space().to_lower().starts_with('</html') {
-				parser.next_start()
-				continue
-			}
-		}
+		// if mut llast is elements.Html {
+		// 	if line.trim_space().to_lower().starts_with('</html') {
+		// 		parser.next_start()
+		// 		continue
+		// 	}
+		// }
 
 		if mut llast is elements.CodeBlock {
-			if line.starts_with('```') {
+			if trimmed_line == '```' {
 				parser.next_start()
 				continue
-			} else {
-				llast.content += '${line}\n'
 			}
+
+			llast.content += '${line}\n'
 			parser.next()
 			continue
 		}
@@ -115,7 +113,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			}
 
 			// find codeblock
-			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
+			if line.starts_with('```') {
 				doc.elements << elements.codeblock_new(
 					category: line.substr(3, line.len).to_lower().trim_space()
 					parents: [&doc]
@@ -146,16 +144,16 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			}
 
 			if trimmed_line.starts_with('|') && trimmed_line.ends_with('|') {
-				doc.elements << elements.table_new(content: line)
+				doc.elements << elements.table_new(content: '${line}\n')
 				parser.next()
 				continue
 			}
 
-			if line.trim_space().to_lower().starts_with('<html') {
-				doc.elements << elements.Html{}
-				parser.next()
-				continue
-			}
+			// if line.trim_space().to_lower().starts_with('<html') {
+			// 	doc.elements << elements.Html{}
+			// 	parser.next()
+			// 	continue
+			// }
 		}
 
 		match mut llast {
