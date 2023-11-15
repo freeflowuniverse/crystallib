@@ -29,7 +29,6 @@ pub mut:
 	pull bool	
 }
 
-
 pub fn (mut books MDBooks) book_new(args MDBookArgs)!&MDBook{
 
 	path_build:="/tmp/mdbooks_build/${args.name}" //where builds happen
@@ -70,6 +69,8 @@ pub fn (mut books MDBooks) book_new(args MDBookArgs)!&MDBook{
 pub fn (mut book MDBook) generate()!{
 	println (" - book generate: ${book.name} on ${book.path_build.path}")	
 	book.template_install()!
+
+	book.summary_image_set()!
 
 	osal.exec(cmd: 'mdbook build ${book.path_build.path} --dest-dir ${book.path_export.path}', retry: 0)!
 
@@ -115,4 +116,28 @@ fn (mut book MDBook) template_install() ! {
 
 }
 
+
+fn (mut book MDBook) summary_image_set()!{
+
+	//this is needed to link the first image dir in the summary to the src, otherwise empty home image
+
+	summaryfile:="/tmp/mdbooks_build/${book.name}/src/SUMMARY.md" 
+	mut p:=pathlib.get_file(path:summaryfile)!
+	c:=p.read()!
+	mut first:=true
+	for line in c.split_into_lines(){
+		if line.contains("](") && first{
+				folder_first:=line.all_after("](").all_before_last(")")
+				folder_first_dir_img:="/tmp/mdbooks_build/${book.name}/src/${folder_first.all_before_last("/")}/img"
+				if os.exists(folder_first_dir_img){
+					mut image_dir:=pathlib.get_dir(path:folder_first_dir_img)!
+					image_dir.link("/tmp/mdbooks_build/${book.name}/src/img",true)!
+				}
+				
+				first=false
+
+		}
+	}
+
+}
 

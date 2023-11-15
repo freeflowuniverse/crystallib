@@ -1,7 +1,6 @@
 module zinit
 
 import os
-import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.texttools
 
 pub struct ZProcess {
@@ -137,10 +136,10 @@ pub fn (zp ZProcess) start() ! {
 	if !client.isloaded(zp.name){
 		client.monitor(zp.name)! //means will check it out
 	}
-	st := client.status
-	println(st)
-	if true{panic("SS")}		
-	client.start(zp.name)!
+	// st := client.status
+	// println(st)
+	// if true{panic("SS")}		
+	// client.start(zp.name)!
 }
 
 

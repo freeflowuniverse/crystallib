@@ -44,10 +44,10 @@ pub fn (mut self MDBookCollection) get() ! {
 	self.gitrepokey = repo.key()
 
 	mut srcpath := locator.path_on_fs()!
-	println('debugzo: ${srcpath}')
+	// println('debugzo: ${srcpath}')
 	srcpath.link('${self.book.path_build.path}/src/${self.name}', true)!
 
 	// println(srcpath)
 
-	println(' - mdbook collection: ${srcpath}')
+	// println(' - mdbook collection: ${srcpath}')
 }
