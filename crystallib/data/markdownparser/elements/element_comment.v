@@ -17,7 +17,7 @@ pub fn (mut self Comment) process() !int {
 	return 1
 }
 
-pub fn (mut self Comment) markdown() string {
+pub fn (self Comment) markdown() string {
 	mut out := self.content
 	out += self.DocBase.markdown()
 	return out

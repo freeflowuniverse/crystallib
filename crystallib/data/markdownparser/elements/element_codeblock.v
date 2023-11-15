@@ -32,7 +32,7 @@ pub fn (mut self CodeBlock) process() !int {
 	return 1
 }
 
-pub fn (mut self CodeBlock) markdown() string {
+pub fn (self CodeBlock) markdown() string {
 	mut out := ''
 	out += '```${self.category}\n'
 	out += self.content.trim_space()

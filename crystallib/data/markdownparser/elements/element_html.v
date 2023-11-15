@@ -17,7 +17,7 @@ pub fn (mut self Html) process() !int {
 	return 1
 }
 
-pub fn (mut self Html) markdown() string {
+pub fn (self Html) markdown() string {
 	mut out := self.content
 	out += self.DocBase.markdown()
 	return out
