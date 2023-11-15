@@ -135,7 +135,7 @@ pub fn start() !zinitmgmt.ZProcess {
 			/bin/bash'
 	)!
 
-	p.stop()!
+	p.start()!
 
 	// mut t := tmux.new()!
 	// mut w := t.window_new(

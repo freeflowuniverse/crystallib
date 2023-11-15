@@ -130,9 +130,21 @@ log: ring
 	return out
 }
 
+pub fn (zp ZProcess) start() ! {
+	mut client := new_rpc_client()
+	st := client.status(zp.name)!
+	println(st)
+	if true{panic("SS")}
+
+	client.start(zp.name)!
+}
+
+
 pub fn (zp ZProcess) stop() ! {
 	mut client := new_rpc_client()
 	st := client.status(zp.name)!
 
 	client.stop(zp.name)!
 }
+
+

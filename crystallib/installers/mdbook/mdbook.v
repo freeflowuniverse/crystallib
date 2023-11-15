@@ -9,11 +9,13 @@ pub fn install() ! {
 	println(' - package_install install mdbook')
 	if !osal.done_exists('install_mdbook') && !osal.cmd_exists('mdbook') {
 		cmd := '
-		.cargo/bin/cargo install mdbook
-    	.cargo/bin/cargo install mdbook-mermaid
-		.cargo/bin/cargo install mdbook-echarts
-		.cargo/bin/cargo install mdbook-plantuml
-		.cargo/bin/cargo install mdbook-pdf --features fetch
+		source ~/.cargo/env
+		cargo install mdbook
+    	cargo install mdbook-mermaid
+		cargo install mdbook-echarts
+		cargo install mdbook-plantuml
+		cargo install mdbook-pdf --features fetch
+		
 		'
 		osal.execute_stdout(cmd)!
 		osal.done_set('install_mdbook', 'OK')!
