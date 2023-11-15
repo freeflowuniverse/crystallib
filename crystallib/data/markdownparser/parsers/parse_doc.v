@@ -29,7 +29,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				continue
 			}
 
-			parser.ensure_last_is_paragraph()
+			parser.append_paragraph()
 			continue
 		}
 
@@ -41,16 +41,16 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				continue
 			}
 
-			parser.ensure_last_is_paragraph()
+			parser.append_paragraph()
 			continue
 		}
 
-		// if mut llast is elements.Html {
-		// 	if line.trim_space().to_lower().starts_with('</html') {
-		// 		parser.next_start()
-		// 		continue
-		// 	}
-		// }
+		if mut llast is elements.Html {
+			if line.trim_space().to_lower().starts_with('</html>') {
+				parser.next_start()
+				continue
+			}
+		}
 
 		if mut llast is elements.CodeBlock {
 			if trimmed_line == '```' {
@@ -149,11 +149,11 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				continue
 			}
 
-			// if line.trim_space().to_lower().starts_with('<html') {
-			// 	doc.elements << elements.Html{}
-			// 	parser.next()
-			// 	continue
-			// }
+			if trimmed_line.to_lower().starts_with('<html>') {
+				doc.elements << elements.html_new()
+				parser.next()
+				continue
+			}
 		}
 
 		match mut llast {

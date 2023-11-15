@@ -18,7 +18,9 @@ pub fn (mut self Html) process() !int {
 }
 
 pub fn (self Html) markdown() string {
-	mut out := self.content
+	mut out := '<html>\n'
+	out += self.content
+	out += '</html>\n'
 	out += self.DocBase.markdown()
 	return out
 }

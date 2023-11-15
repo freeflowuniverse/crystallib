@@ -101,14 +101,14 @@ fn (mut parser Parser) next() {
 // move further and reset the state
 fn (mut parser Parser) next_start() {
 	// means we need to add paragraph because we don't know what comes next
-	parser.ensure_last_is_paragraph()
-	parser.next()
-}
-
-fn (mut parser Parser) ensure_last_is_paragraph() {
 	if parser.doc.elements.last() !is elements.Paragraph {
 		parser.doc.elements << elements.Paragraph{}
 	}
+	parser.next()
+}
+
+fn (mut parser Parser) append_paragraph() {
+	parser.doc.elements << elements.Paragraph{}
 }
 
 // return true if end of file
