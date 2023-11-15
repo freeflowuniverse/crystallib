@@ -31,7 +31,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				continue
 			}
 
-			parser.next_start()
+			parser.ensure_last_is_paragraph()
 			continue
 		}
 
@@ -39,11 +39,11 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			if line.starts_with(' ') {
 				// starts with tab or space, means block continues for action
 				llast.content += '${line}\n'
-			} else {
-				parser.next_start()
+				parser.next()
 				continue
 			}
-			parser.next()
+
+			parser.ensure_last_is_paragraph()
 			continue
 		}
 

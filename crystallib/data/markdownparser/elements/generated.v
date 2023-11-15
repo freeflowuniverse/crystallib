@@ -64,10 +64,10 @@ fn (mut self DocBase) process_elements() !int {
 	return 0
 }
 
-pub fn (mut self DocBase) markdown() string {
+pub fn (self DocBase) markdown() string {
 	mut out := ''
-	for mut element in self.elements {
-		match mut element {
+	for element in self.elements {
+		match element {
 			Doc { out += element.markdown() }
 			Html { out += element.markdown() }
 			None { out += element.markdown() }

@@ -14,5 +14,6 @@ fn do(mut logger log.Log) ! {
 	doc := markdownparser.new(
 		path: '/home/mariocs/cs/crystallib/examples/data/markdownparser/test.md'
 	)!
-	println(doc)
+
+	println(doc.markdown())
 }

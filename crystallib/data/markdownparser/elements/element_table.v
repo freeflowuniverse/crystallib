@@ -17,7 +17,7 @@ pub fn (mut self Table) process() !int {
 	return 1
 }
 
-pub fn (mut self Table) markdown() string {
+pub fn (self Table) markdown() string {
 	mut out := self.content
 	out += self.DocBase.markdown()
 	return out

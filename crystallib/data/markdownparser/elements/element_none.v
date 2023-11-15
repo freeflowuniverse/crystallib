@@ -8,7 +8,7 @@ pub fn (mut self None) process() !int {
 	return 0
 }
 
-pub fn (mut self None) markdown() string {
+pub fn (self None) markdown() string {
 	return 'none'
 }
 

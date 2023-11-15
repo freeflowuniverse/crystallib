@@ -19,7 +19,7 @@ fn (mut self Action) process() !int {
 	return 1
 }
 
-fn (mut self Action) markdown() string {
+fn (self Action) markdown() string {
 	return self.action.script3()
 }
 
