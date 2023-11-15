@@ -1,19 +1,18 @@
-module tfgrid
+module main
 
 import json
 import freeflowuniverse.crystallib.threefold.grid.models
-import freeflowuniverse.crystallib.threefold.gridproxy
-import freeflowuniverse.crystallib.threefold.gridproxy.model
 import log
+import freeflowuniverse.crystallib.threefold.grid
 
-const pubkey = <PUBKEY>
+const pubkey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDTwULSsUubOq3VPWL6cdrDvexDmjfznGydFPyaNcn7gAL9lRxwFbCDPMj7MbhNSpxxHV2+/iJPQOTVJu4oc1N7bPP3gBCnF51rPrhTpGCt5pBbTzeyNweanhedkKDsCO2mIEh/92Od5Hg512dX4j7Zw6ipRWYSaepapfyoRnNSriW/s3DH/uewezVtL5EuypMdfNngV/u2KZYWoeiwhrY/yEUykQVUwDysW/xUJNP5o+KSTAvNSJatr3FbuCFuCjBSvageOLHePTeUwu6qjqe+Xs4piF1ByO/6cOJ8bt5Vcx0bAtI8/MPApplUU/JWevsPNApvnA/ntffI+u8DCwgP"
 
-fn test_create_and_update_deployment() {
+fn test_create_and_update_deployment()! {
 	mut logger := log.Log{
 		level: .debug
 	}
-	mnemonics := get_mnemonics()!
-	mut deployer := new_deployer(mnemonics, .dev, mut logger)!
+	mnemonics := grid.get_mnemonics()!
+	mut deployer := grid.new_deployer(mnemonics, .dev, mut logger)!
 
 	twin_id := deployer.client.get_user_twin()!
 
@@ -73,7 +72,7 @@ fn test_create_and_update_deployment() {
 			memory: i64(1024) * 1024 * 1024 * 2
 		}
 		env: {
-			'SSH_KEY': tfgrid.pubkey
+			'SSH_KEY': pubkey
 		}
 		mounts: [mount]
 	}
@@ -146,29 +145,8 @@ fn test_create_and_update_deployment() {
 	deployer.update_deployment(node_id, mut deployment, deployment.metadata)!
 }
 
-fn test_get_contracts() {
-	mut logger := log.Log{
-		level: .debug
-	}
-	mnemonics := get_mnemonics()!
-	mut deployer := new_deployer(mnemonics, .dev, mut logger)!
-	mut grid_proxy := gridproxy.get(.dev, false)!
-	contracts := grid_proxy.get_contracts(
-		twin_id: model.OptionU64(u64(deployer.twin_id))
-		state: 'created'
-	)!
-	deployer.logger.info('${contracts}')
-}
 
-fn test_cancel_deployment() {
-	mut logger := log.Log{
-		level: .debug
-	}
-	mnemonics := get_mnemonics()!
-	mut deployer := new_deployer(mnemonics, .dev, mut logger)!
-	contract_ids = [u64(45684), u64(45685)]
-	for cont_id in contract_ids {
-		deployer.client.cancel_contract(cont_id)!
-		deployer.logger.info('contract ${cont_id} is canceled')
-	}
+
+fn main(){
+	test_create_and_update_deployment() or {println("error happened")}
 }

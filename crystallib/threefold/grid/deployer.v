@@ -1,4 +1,4 @@
-module tfgrid
+module grid
 
 import os
 import json
@@ -58,17 +58,17 @@ pub fn get_mnemonics() !string {
 pub fn new_deployer(mnemonics string, chain_network ChainNetwork, mut logger log.Log) !Deployer {
 	mut client := griddriver.Client{
 		mnemonic: mnemonics
-		substrate: tfgrid.substrate_url[chain_network]
-		relay: tfgrid.relay_url[chain_network]
+		substrate: grid.substrate_url[chain_network]
+		relay: grid.relay_url[chain_network]
 	}
 	twin_id := client.get_user_twin()!
 
 	return Deployer{
 		mnemonics: mnemonics
-		substrate_url: tfgrid.substrate_url[chain_network]
+		substrate_url: grid.substrate_url[chain_network]
 		twin_id: twin_id
-		relay_url: tfgrid.relay_url[chain_network]
-		env: tfgrid.envs[chain_network]
+		relay_url: grid.relay_url[chain_network]
+		env: grid.envs[chain_network]
 		logger: logger
 		client: client
 	}

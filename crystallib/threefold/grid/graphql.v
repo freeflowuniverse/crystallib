@@ -1,4 +1,4 @@
-module tfgrid
+module grid
 
 import net.http
 import json
