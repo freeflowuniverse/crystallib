@@ -1,24 +1,21 @@
 module main
 
 import freeflowuniverse.crystallib.threefold.gridproxy
-import freeflowuniverse.crystallib.threefold.gridproxy.model
 import freeflowuniverse.crystallib.threefold.grid
 import log
 
-fn test_get_contracts() ! {
+fn get_contract_billing(contract_id u64) ! {
 	mut logger := log.Log{
 		level: .debug
 	}
 	mnemonics := grid.get_mnemonics()!
 	mut deployer := grid.new_deployer(mnemonics, .dev, mut logger)!
 	mut grid_proxy := gridproxy.get(.dev, false)!
-	contracts := grid_proxy.get_contracts(
-		twin_id: model.OptionU64(u64(deployer.twin_id))
-		state: 'created'
-	)!
-	deployer.logger.info('${contracts}')
+	bills := grid_proxy.get_contract_hourly_bill(contract_id)!
+	deployer.logger.info('${bills}')
 }
 
 fn main() {
-	test_get_contracts() or { println('error happened: ${err}') }
+	contract_id := u64(47488)
+	get_contract_billing(contract_id) or { println('error happened: ${err}') }
 }
