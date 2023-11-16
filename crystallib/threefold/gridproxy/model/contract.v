@@ -25,6 +25,13 @@ pub:
 	details       NodeContractDetails [json: details]
 }
 
+pub struct Bill {
+pub:
+	amount_billed     u64      [json: amountBilled]
+	timestamp         UnixTime [json: timestamp]
+	discount_received string   [json: discountReceived]
+}
+
 // total_billed returns the total amount billed for the contract.
 //
 // returns: `DropTFTUnit`
