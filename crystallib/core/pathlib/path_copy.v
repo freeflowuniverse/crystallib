@@ -19,11 +19,11 @@ pub mut:
 // return Path of the destination file or dir .
 pub fn (mut path Path) copy(args_ CopyArgs) ! {
 	mut args := args_
-	if args.ignore.len > 0 || args.ignore_default || args.ssh_target.len > 0 {
+	if args.ignore.len > 0 || args.ssh_target.len > 0 {
 		args.rsync = true
 	}
 	path.check()
-	if args.rsync {
+	if args.rsync == true{
 		rsync(
 			source: path.path
 			dest: args.dest

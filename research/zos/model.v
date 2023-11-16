@@ -38,18 +38,6 @@ struct Mount {
 	point string
 }
 
-type ZDBMode = string
-
-struct ZDBGroup {
-	backends []ZDBBackend
-}
-
-struct ZDBBackend {
-	address   string
-	namespace string
-	password  string
-}
-
 struct QuantumSafeMeta {
 	typ_   string            [json: 'type']
 	config QuantumSafeConfig

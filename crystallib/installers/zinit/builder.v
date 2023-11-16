@@ -19,7 +19,7 @@ pub mut:
 pub fn build(args BuildArgs) ! {
 	// make sure we install base on the node
 	if osal.platform() != .ubuntu {
-		return error('only support ubuntu for now')
+		return
 	}
 	base.install()!
 	rust.install()!
@@ -36,10 +36,9 @@ pub fn build(args BuildArgs) ! {
 	'
 	osal.execute_stdout(cmd)!
 
-	if args.bin_push {
-		installers.bin_push(
-			cmdname: 'zinit'
-			source: '/tmp/builder/github/threefoldtech/zinit/target/x86_64-unknown-linux-musl/release/zinit'
-		)!
-	}
+	osal.bin_copy(
+		cmdname: 'zinit'
+		source: '/tmp/builder/github/threefoldtech/zinit/target/x86_64-unknown-linux-musl/release/zinit'
+	)!
+
 }

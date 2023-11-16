@@ -119,3 +119,13 @@ pub fn cputype() CPUType {
 pub fn is_osx() bool {
 	return platform() == .osx
 }
+
+
+pub fn is_osx_arm() bool {
+	return platform() == .osx && cputype()==.arm
+}
+
+
+pub fn is_ubuntu() bool {
+	return platform() == .ubuntu
+}

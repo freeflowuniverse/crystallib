@@ -14,9 +14,6 @@ pub mut:
 
 // install restic will return true if it was already installed
 pub fn install(args InstallArgs) ! {
-	if osal.platform() != .ubuntu {
-		return error('only support ubuntu for now')
-	}
 
 	if args.reset == false && osal.done_exists('install_restic') && osal.cmd_exists('restic') {
 		println(' - restic already installed')
@@ -25,19 +22,32 @@ pub fn install(args InstallArgs) ! {
 
 	println(' - install restic')
 
+	mut url:=""
+	mut binpath_:=""
+	if osal.is_ubuntu(){
+		url= 'https://github.com/restic/restic/releases/download/v0.16.2/restic_0.16.2_linux_amd64.bz2'
+		binpath_='/tmp/restic_0.16.2_linux_amd64'
+	}else if osal.is_osx_arm(){
+		url="https://github.com/restic/restic/releases/download/v0.16.2/restic_0.16.2_darwin_arm64.bz2"
+		binpath_='/tmp/restic_0.16.2_darwin_arm64'
+	}else{
+		return error('only support ubuntu & osx arm for now')
+	}
+
 	// make sure we install base on the node
 	base.install()!
 
-	mut binpath := pathlib.get_file(path: '/tmp/restic_0.16.2_linux_amd64', delete: true)!
 
 	mut dest := osal.download(
-		url: 'https://github.com/restic/restic/releases/download/v0.16.2/restic_0.16.2_linux_amd64.bz2'
 		minsize_kb: 5000
 		reset: true
 		expand_dir: '/tmp/restic'
 	)!
 
-	binpath.move(dest: '/usr/local/bin/restic', delete: true, chmod_execute: true)!
+	osal.bin_copy(
+		cmdname: 'restic'
+		source: binpath_
+	)!	
 
 	osal.done_set('install_restic', 'OK')!
 
