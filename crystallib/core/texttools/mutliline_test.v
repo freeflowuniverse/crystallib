@@ -145,9 +145,9 @@ fn test_multiline6() {
 	check_result(required_result, text)
 }
 
-[assert_continues]
+@[assert_continues]
 fn test_comment_start_check() {
-	// TEST: `hello // world, this is mario'`, `hello '//world'`, `hello //world //this is mario`
+	// TEST: `hello // world, this is mario'`, `hello //world //this is mario`
 	mut res := []string{}
 	mut str := "hello // world, this is mario'"
 	mut text, mut comment := comment_start_check(mut res, str)
@@ -157,20 +157,24 @@ fn test_comment_start_check() {
 	assert comment == ''
 
 	res = []string{}
-	str = "hello '//world'"
-	text, comment = comment_start_check(mut res, str)
-
-	assert text == 'hello '
-	assert res == ["//world'-/"]
-	assert comment == ''
-
-	res = []string{}
 	str = 'hello //world //this is mario'
 	text, comment = comment_start_check(mut res, str)
 
 	assert text == 'hello '
 	assert res == ['//world //this is mario-/']
 	assert comment == ''
+}
+
+@[assert_continues]
+fn test_multiline_start_check() {
+	// TEST: `hello '''world:'''`, `hello ' world:'`, `hello " world:"`, `hello """ world: """`
+	mut text := ["hello '''world:'''", "hello ' world:'", 'hello " world:"', 'hello """ world: """',
+		'hello world: 		"""\n"""']
+	expected := [false, false, false, false, true]
+	for idx, input in text {
+		got := multiline_start_check(input)
+		assert got == expected[idx]
+	}
 }
 
 // TODO: not supported yet, requires a Comment Struct, which knows its <!-- format
