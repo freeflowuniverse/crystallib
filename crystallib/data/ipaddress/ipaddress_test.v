@@ -15,7 +15,7 @@ fn test_ping_fails() {
 }
 
 fn test_ipv6() {
-	mut addr := ipaddress_new('202:6a34:cd78:b0d7:5521:8de7:218e:6680') or { panic(err) }
+	mut addr := new('202:6a34:cd78:b0d7:5521:8de7:218e:6680') or { panic(err) }
 
 	assert addr.ping(timeout: 3) == false
 }

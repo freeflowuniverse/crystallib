@@ -27,7 +27,7 @@ pub enum IpAddressType {
 // format ipv6: [x:x:x:x:x:x:x:x]:p TODO: implement
 // format ipv6: x:x:x:x:x:x:x:x
 // format ipv6: x::x/96
-pub fn ipaddress_new(addr_string string) !IPAddress {
+pub fn new(addr_string string) !IPAddress {
 	mut cat := IpAddressType.ipv4
 	mut addr := addr_string
 	mut port := ''
