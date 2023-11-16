@@ -145,6 +145,34 @@ fn test_multiline6() {
 	check_result(required_result, text)
 }
 
+[assert_continues]
+fn test_comment_start_check() {
+	// TEST: `hello // world, this is mario'`, `hello '//world'`, `hello //world //this is mario`
+	mut res := []string{}
+	mut str := "hello // world, this is mario'"
+	mut text, mut comment := comment_start_check(mut res, str)
+
+	assert text == 'hello '
+	assert res == ["//world, this is mario'-/"]
+	assert comment == ''
+
+	res = []string{}
+	str = "hello '//world'"
+	text, comment = comment_start_check(mut res, str)
+
+	assert text == 'hello '
+	assert res == ["//world'-/"]
+	assert comment == ''
+
+	res = []string{}
+	str = 'hello //world //this is mario'
+	text, comment = comment_start_check(mut res, str)
+
+	assert text == 'hello '
+	assert res == ['//world //this is mario-/']
+	assert comment == ''
+}
+
 // TODO: not supported yet, requires a Comment Struct, which knows its <!-- format
 // fn test_multiline7() {
 // 	mut text := "
