@@ -7,14 +7,16 @@ import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.data.ourtime
 import time
 import v.embed_file
+import os
 
 [heap]
 pub struct MDBooks {
 pub mut:
 	books          []&MDBook                   [skip; str: skip]
-	path           pathlib.Path
 	gitrepos       map[string]gittools.GitRepo
 	coderoot       string
+	path_build      string
+	path_publish    string	
 	gitstructure   gittools.GitStructure       [skip; str: skip]
 	embedded_files []embed_file.EmbedFileData  [skip; str: skip]
 }
@@ -22,8 +24,9 @@ pub mut:
 [params]
 pub struct MDBooksArgs {
 pub mut:
-	path     string [required]
-	coderoot string
+	coderoot       string = "${os.home_dir()}/hero/code"
+	buildroot      string = "${os.home_dir()}/hero/var/build"
+	publishroot    string = "${os.home_dir()}/hero/www/info"
 	install  bool = true
 }
 
@@ -33,8 +36,9 @@ pub fn new(args MDBooksArgs) !MDBooks {
 	}
 	mut gs := gittools.get(coderoot: args.coderoot)!
 	mut books := MDBooks{
-		path: pathlib.get_dir(path: args.path, create: true)!
 		coderoot: args.coderoot
+		path_build: args.buildroot
+		path_publish: args.publishroot
 		gitstructure: gs
 	}
 	books.init()! // initialize mdbooks embed logic
