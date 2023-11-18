@@ -24,8 +24,6 @@ pub mut:
 	name  string [required]
 	title string
 	url   string [required] // url of the summary.md file
-	reset bool
-	pull  bool
 }
 
 pub fn (mut books MDBooks) book_new(args MDBookArgs) !&MDBook {
@@ -43,30 +41,43 @@ pub fn (mut books MDBooks) book_new(args MDBookArgs) !&MDBook {
 
 	mut gs := books.gitstructure
 	mut locator := gs.locator_new(book.url)!
-	mut repo := gs.repo_get(locator: locator, reset: args.reset, pull: args.pull)!
+	mut repo := gs.repo_get(locator: locator, reset:false, pull: false)! //don't pull this happens later
 	books.gitrepos[repo.key()] = repo
 	book.gitrepokey = repo.key()
-	mut path_summary_dir := locator.path_on_fs()!
-
-	mut path_summary := path_summary_dir.file_get_ignorecase('summary.md')!
-
-	os.mkdir_all('${path_build}/src')!
-
-	path_summary.copy(dest: '${path_build}/src/SUMMARY.md', delete: true, rsync: false)!
-
-	println(' - mdbook summary: ${path_summary}')
 
 	books.books << &book
 
 	return &book
 }
 
-pub fn (mut book MDBook) generate() ! {
-	println(' - book generate: ${book.name} on ${book.path_build.path}')
-	book.template_install()!
 
+//only executes at init time
+fn (mut book MDBook) prepare() ! {
+
+	mut gs := book.books.gitstructure
+	mut locator := gs.locator_new(book.url)!
+	mut path_summary_dir := locator.path_on_fs()!
+	mut path_summary := path_summary_dir.file_get_ignorecase('summary.md')!
+	os.mkdir_all('${book.path_build.path}/src')!
+	path_summary.link('${book.path_build.path}/src/SUMMARY.md',true)!
+
+	println(' - mdbook summary: ${path_summary.path}')
+
+	for mut c in book.collections{
+		c.prepare()!
+	}
+	book.template_install()!
 	book.summary_image_set()!
 
+	println(' - mdbook prepared: ${book.path_build.path}')
+
+}
+
+pub fn (mut book MDBook) generate() ! {
+	if book.changed() == false{
+		return
+	}
+	println(' - book generate: ${book.name} on ${book.path_build.path}')
 	osal.exec(
 		cmd: 'mdbook build ${book.path_build.path} --dest-dir ${book.path_publish.path}'
 		retry: 0
@@ -128,4 +139,32 @@ fn (mut book MDBook) summary_image_set() ! {
 			first = false
 		}
 	}
+}
+
+//all the gitrepo keys
+fn (mut book MDBook) gitrepo_keys() []string {
+	mut res:=[]string{}
+	res << book.gitrepokey
+	for collection in book.collections{
+		if !(collection.gitrepokey in res){
+			res << collection.gitrepokey
+		}
+	}
+	return res
+}
+
+
+//is there change in repo since last build?
+fn (mut book MDBook) changed() bool {
+	mut change:=false
+	gitrepokeys:=book.gitrepo_keys()
+	for key,status in book.books.gitrepos_status{
+		if key in gitrepokeys{
+			//means this book is using that gitrepo, so if it changed the book changed
+			if status.revlast != status.revlast{
+				change=true
+			}
+		}
+	}
+	return change
 }
