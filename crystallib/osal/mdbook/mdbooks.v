@@ -66,7 +66,7 @@ fn (mut tree MDBooks) init() ! {
 
 
 fn (mut self MDBooks) prepare() ! {
-	self.pull_reset()!
+	self.pull()!
 	for mut book in self.books{
 		book.prepare()!
 	}
