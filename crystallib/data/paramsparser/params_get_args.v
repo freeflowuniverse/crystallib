@@ -1,12 +1,14 @@
 module paramsparser
 
+import strconv
+
 pub fn (params &Params) len_arg() int {
 	return params.args.len
 }
 
 // return the arg with nr, 0 is the first
 pub fn (params &Params) get_arg(nr int) !string {
-	if nr > params.args.len {
+	if nr >= params.args.len {
 		return error('Looking for arg nr ${nr}, not enough args available.\n${params}')
 	}
 	return params.args[nr] or { panic('error, above should have catched') }
@@ -27,7 +29,7 @@ pub fn (params &Params) check_arg_len(checknrargs int) ! {
 
 // return arg, if the nr is larger than amount of args, will return the defval
 pub fn (params &Params) get_arg_default(nr int, defval string) !string {
-	if nr > params.args.len {
+	if nr >= params.args.len {
 		return defval
 	}
 	r := params.get_arg(nr)!
@@ -37,11 +39,11 @@ pub fn (params &Params) get_arg_default(nr int, defval string) !string {
 // get arg return as int, if checknrargs is not 0, it will make sure the nr of args corresponds
 pub fn (params &Params) get_arg_int(nr int) !int {
 	r := params.get_arg(nr)!
-	return r.int()
+	return strconv.atoi(r) or { return error('failed to convert argument ${r} to int: ${err}') }
 }
 
 // get arg return as int. defval is the default value specified
 pub fn (params &Params) get_arg_int_default(nr int, defval int) !int {
 	r := params.get_arg_default(nr, '${defval}')!
-	return r.int()
+	return strconv.atoi(r) or { return error('failed to convert argument ${r} to int: ${err}') }
 }
