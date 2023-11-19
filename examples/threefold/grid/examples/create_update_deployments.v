@@ -13,18 +13,19 @@ fn test_create_and_update_deployment() ! {
 	}
 	mnemonics := grid.get_mnemonics()!
 	mut deployer := grid.new_deployer(mnemonics, .dev, mut logger)!
-
+	node_privkey := deployer.client.generate_wg_priv_key()!
+	user_privkey := deployer.client.generate_wg_priv_key()!
 	twin_id := deployer.client.get_user_twin()!
-
+	println('your wireguard privatekey is ${user_privkey[0]}')
 	mut network := models.Znet{
 		ip_range: '10.1.0.0/16'
 		subnet: '10.1.1.0/24'
-		wireguard_private_key: 'GDU+cjKrHNJS9fodzjFDzNFl5su3kJXTZ3ipPgUjOUE='
+		wireguard_private_key: node_privkey[0] // node private key
 		wireguard_listen_port: 3012
 		peers: [
 			models.Peer{
 				subnet: '10.1.2.0/24'
-				wireguard_public_key: '4KTvZS2KPWYfMr+GbiUUly0ANVg8jBC7xP9Bl79Z8zM='
+				wireguard_public_key: user_privkey[1] // user public key
 				allowed_ips: ['10.1.2.0/24', '100.64.1.2/32']
 			},
 		]
