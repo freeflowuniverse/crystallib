@@ -177,7 +177,7 @@ fn (p Params) export_helper(args_ ExportArgs) ![]ParamExportItem {
 	return result_params
 }
 
-[params]
+@[params]
 pub struct ExportArgs {
 pub mut:
 	presort         []string
