@@ -58,9 +58,12 @@ pub fn (params &Params) get_float_default(key string, defval f64) !f64 {
 pub fn (params &Params) get_percentage(key string) !f64 {
 	mut valuestr := params.get(key)!
 	valuestr = valuestr.replace('%', '')
-	v := valuestr.f64()
+	v := strconv.atof64(valuestr) or {
+		return error('Parameter ${key} = ${valuestr} is not a valid 64-bit float')
+	}
+
 	if v > 100 || v < 0 {
-		return error('percentage needs to be between 0 and 100')
+		return error('percentage "${v}" needs to be between 0 and 100')
 	}
 	return v / 100
 }
@@ -68,9 +71,11 @@ pub fn (params &Params) get_percentage(key string) !f64 {
 pub fn (params &Params) get_percentage_default(key string, defval string) !f64 {
 	mut v := params.get_default(key, defval)!
 	v = v.replace('%', '')
-	v2 := v.f64()
+	v2 := strconv.atof64(v) or {
+		return error('Parameter ${key} = ${v} is not a valid 64-bit float')
+	}
 	if v2 > 100 || v2 < 0 {
-		return error('percentage needs to be between 0 and 100')
+		return error('percentage "${v2}" needs to be between 0 and 100')
 	}
 	return v2 / 100
 }
@@ -165,14 +170,13 @@ fn matchhashmap(hashmap map[string]string, tofind_ string) string {
 
 pub fn (params &Params) get_from_hashmap(key_ string, defval string, hashmap map[string]string) !string {
 	key := texttools.name_fix(key_)
-	for p in params.params {
-		if p.key == key {
-			r := matchhashmap(hashmap, p.value)
-			if r.len > 0 {
-				return r
-			}
+	if val := params.get(key) {
+		r := matchhashmap(hashmap, val)
+		if r.len > 0 {
+			return r
 		}
 	}
+
 	r := matchhashmap(hashmap, defval)
 	if r.len > 0 {
 		return r
