@@ -13,9 +13,7 @@ fn test_get_path() {
 	params := new(text)!
 
 	if _ := params.get_path('key1') {
-		assert false
-	} else {
-		assert true
+		assert false, '"path "v1" is invalid'
 	}
 	assert params.get_path('key2')! == '/tmp/f1'
 }
