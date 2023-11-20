@@ -50,9 +50,6 @@ pub fn (context Context) get(args_ SessionNewArgs) !Session {
 	return s
 }
 
-
-
-
 // // save the session to redis & mem
 // pub fn (mut session Session) load() ! {
 // 	mut r := redisclient.core_get()!

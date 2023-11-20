@@ -68,16 +68,15 @@ struct ServiceStatusRaw {
 
 //{"state":"ok","body":{"after":{"delay":"Success"},"name":"redis","pid":320996,"state":"Running","target":"Up"}}
 
-//check if the service is known
+// check if the service is known
 fn (z Client) isloaded(name string) bool {
 	// println (" -- status rpc: '$name'")
-	r := z.list() or {return false}
+	r := z.list() or { return false }
 	if name !in r {
 		return false
 	}
 	return true
 }
-
 
 fn (z Client) status(name string) !ServiceStatusRaw {
 	// println (" -- status rpc: '$name'")

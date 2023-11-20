@@ -7,30 +7,27 @@ import freeflowuniverse.crystallib.core.pathlib
 pub struct Site {
 pub mut:
 	name        string
-	domains     []Domain 
-	backends     []Backend
-	paths        []pathlib.Path
-	caddy       &Caddy            [skip; str: skip]
+	domains     []Domain
+	backends    []Backend
+	paths       []pathlib.Path
+	caddy       &Caddy         [skip; str: skip]
 	description string
-	status SiteStatus
-
+	status      SiteStatus
 }
 
 pub enum SiteStatus {
 	unknown
-	running //not used for now
-	failed 
+	running // not used for now
+	failed
 }
-
-
 
 [params]
 pub struct SiteNewArgs {
 pub mut:
-	name    string [required]
-	domains []Domain
-	backends     []Backend
-	paths    []string //for serving local directory
+	name        string    [required]
+	domains     []Domain
+	backends    []Backend
+	paths       []string // for serving local directory
 	description string
 }
 
@@ -46,10 +43,9 @@ pub fn (mut caddy Caddy) site_add(args_ SiteNewArgs) !Site {
 		name: args.name
 		description: args.description
 		caddy: &caddy
-		domains:args.domains
-		backends:args.backends
+		domains: args.domains
+		backends: args.backends
 	}
-
 
 	return p
 }

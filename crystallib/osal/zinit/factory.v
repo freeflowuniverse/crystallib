@@ -6,8 +6,7 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 import os
 
-
-//will initialize a zinit session and start it when needed
+// will initialize a zinit session and start it when needed
 pub fn new() !Zinit {
 	mut obj := Zinit{
 		path: pathlib.get_dir(path: '/etc/zinit', create: true)!
@@ -47,7 +46,6 @@ pub fn new() !Zinit {
 	// println(obj)
 	return obj
 }
-
 
 // remove all know services to zinit
 pub fn destroy() ! {

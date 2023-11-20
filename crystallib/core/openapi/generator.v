@@ -1,4 +1,5 @@
 module openapi
+
 // import json
 // import os
 // import freeflowuniverse.crystallib.core.pathlib
@@ -26,6 +27,5 @@ module openapi
 //     println('Encoded JSON: $encoded_json')
 
 // 	// now the code to generate the rest client needs to follow
-
 
 // }

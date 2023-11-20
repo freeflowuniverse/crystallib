@@ -49,7 +49,7 @@ pub mut:
 [heap]
 pub struct MDBook {
 pub mut:
-	tree        &Tree             [str: skip]
+	tree        &Tree               [str: skip]
 	name        string
 	dest        string // path where book will be generated	
 	dest_md     string // path where the md files will be generated

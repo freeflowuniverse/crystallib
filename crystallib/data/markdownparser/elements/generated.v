@@ -1,4 +1,3 @@
-
 module elements
 
 type DocElement = Action

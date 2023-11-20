@@ -4,21 +4,19 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 
-
 [heap]
 pub struct Caddy {
 pub mut:
-	sites 	  []Site
-	path      pathlib.Path
+	sites []Site
+	path  pathlib.Path
 }
 
 [params]
 pub struct CaddyArgs {
 pub mut:
-	reset bool = true
-	path string = "/etc/caddy"
+	reset bool   = true
+	path  string = '/etc/caddy'
 }
-
 
 pub fn new(args CaddyArgs) !Caddy {
 	mut caddyobj := Caddy{
@@ -27,7 +25,6 @@ pub fn new(args CaddyArgs) !Caddy {
 	return caddyobj
 }
 
-
 fn (mut caddyobj Caddy) load() ! {
 	panic("we won't implement this for now, we always generate")
 }
@@ -35,7 +32,7 @@ fn (mut caddyobj Caddy) load() ! {
 pub fn (mut caddy Caddy) get(name_ string) !Site {
 	name := texttools.name_fix(name_)
 	if site in caddy.sites {
-		if site.name == name{
+		if site.name == name {
 			return site
 		}
 	}
@@ -45,7 +42,7 @@ pub fn (mut caddy Caddy) get(name_ string) !Site {
 pub fn (mut caddy Caddy) exists(name_ string) bool {
 	name := texttools.name_fix(name_)
 	if site in caddy.sites {
-		if site.name == name{
+		if site.name == name {
 			return true
 		}
 	}

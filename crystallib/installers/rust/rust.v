@@ -1,4 +1,5 @@
 module rust
+
 import os
 import freeflowuniverse.crystallib.osal
 // install rust will return true if it was already installed
@@ -26,7 +27,7 @@ pub fn install() ! {
 
 	// path := "export PATH='/usr/bin:/bin:/root/.cargo/bin'"
 	osal.execute_silent("echo 'source ${os.home_dir()}/.cargo/env' >> ${os.home_dir()}/.profile") or {
-		return error('Cannot add path to .profile: $err')
+		return error('Cannot add path to .profile: ${err}')
 	}
 	// osal.execute_silent("echo $path >> .bashrc") or {
 	// 	return error('Cannot add path to .bashrc: $err')

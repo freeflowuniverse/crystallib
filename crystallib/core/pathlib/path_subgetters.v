@@ -159,23 +159,23 @@ pub fn (path Path) file_exists(tofind string) bool {
 
 // is case insensitive
 pub fn (mut path Path) file_exists_ignorecase(tofind string) bool {
-	return path.file_name_get_ignorecase(tofind)!=""
+	return path.file_name_get_ignorecase(tofind) != ''
 }
 
 fn (mut path Path) file_name_get_ignorecase(tofind string) string {
 	if path.cat != Category.dir {
-		return ""
+		return ''
 	}
 	files := os.ls(path.path) or { []string{} }
-	for item in files{
-		if tofind.to_lower()==item.to_lower(){
+	for item in files {
+		if tofind.to_lower() == item.to_lower() {
 			file_path := os.join_path(path.path, item)
 			if os.is_file(file_path) {
 				return item
 			}
 		}
 	}
-	return ""
+	return ''
 }
 
 // find file underneith path, if exists return as Path, otherwise error .
@@ -198,8 +198,8 @@ pub fn (mut path Path) file_get_ignorecase(tofind string) !Path {
 	if path.cat != Category.dir || !(path.exists()) {
 		return error('File get ignore case for ${tofind} in ${path.path}: is not a dir or dir does not exist.')
 	}
-	filename:=path.file_name_get_ignorecase(tofind)
-	if filename==""{
+	filename := path.file_name_get_ignorecase(tofind)
+	if filename == '' {
 		return error("Could not find file (igore case) '${tofind}' in ${path.path}.")
 	}
 	file_path := os.join_path(path.path, filename)

@@ -12,8 +12,8 @@ pub mut:
 	sites       &Zola             [skip; str: skip]
 	url         string // url of site repo
 	name        string
-	path_src    pathlib.Path
-	path_export pathlib.Path
+	path_build  pathlib.Path
+	path_publish pathlib.Path
 	collections []ZSiteCollection
 	gitrepokey  string
 }
@@ -23,49 +23,73 @@ pub struct ZSiteArgs {
 pub mut:
 	name  string [required]
 	url   string [required] // url of the summary.md file
-	reset bool
 	pull  bool
 }
 
 pub fn (mut sites Zola) site_new(args ZSiteArgs) !&ZSite {
-	path_src := '/tmp/zolas_builder/${args.name}' // where builds happen
-	path_export := '${sites.path.path}/${args.name}'
-
-	mut gs := sites.gitstructure
-	mut locator := gs.locator_new(args.url)!
-	mut repo := gs.repo_get(locator: locator, reset: args.reset, pull: args.pull)!
-	sites.gitrepos[repo.key()] = repo
-	mut path_site_dir := locator.path_on_fs()!
-
-	os.mkdir_all('/tmp/mdbooks_build/${args.name}/src')!
+	path_build := '${sites.path_build}/${args.name}' 
+	path_publish := '${sites.path_publish}/${args.name}'
 
 	mut site := ZSite{
 		name: args.name
 		url: args.url
-		path_src: path_site_dir
-		path_export: pathlib.get_dir(path: path_export, create: true)!
+		path_build: pathlib.get_dir(path: path_build, create: true)!
+		path_publish: pathlib.get_dir(path: path_publish, create: true)!
 		sites: &sites
-		gitrepokey: repo.key()
 	}
-	sites.sites << &site
+	sites.sites << &site	
+
+	mut gs := sites.gitstructure
+	mut locator := gs.locator_new(args.url)!
+	mut repo := gs.repo_get(locator: locator, reset:false, pull: false)!
+	sites.gitrepos[repo.key()] = repo
+	site.gitrepokey = repo.key()
+	// mut path_site_dir := locator.path_on_fs()!
 
 	return &site
 }
 
-pub fn (mut b ZSite) collection_add(args_ ZSiteCollectionArgs) ! {
-	mut args := args_
-	mut c := ZSiteCollection{
-		url: args.url
-		name: args.name
-		site: &b
-	}
-	c.get()!
-	b.collections << c
+pub fn (mut self ZSite) prepare() ! {
+	// os.mkdir_all('${site.path_build.path}/src')!
+
 }
 
-pub fn (mut b ZSite) generate() ! {
-	println(' - site generate: ${b.name} on ${b.path_src}')
-	println('bash ${b.path_src.path}/build.sh')
-	os.execute('bash ${b.path_src.path}/build.sh')
-	os.mv('${b.path_src.path}/public', b.path_export.path)!
+pub fn (mut site ZSite) generate() ! {
+	if site.changed() == false{
+		return
+	}	
+	println(' - site generate: ${site.name} on ${site.path_build.path}')
+	println('bash ${site.path_build.path}/build.sh')
+	//TODO: should not be the build, it should be the native command without the build script
+	os.execute('bash ${site.path_build.path}/build.sh')
+	os.mv('${site.path_build.path}/public', site.path_publish.path)!
+}
+
+
+//all the gitrepo keys
+fn (mut site ZSite) gitrepo_keys() []string {
+	mut res:=[]string{}
+	res << site.gitrepokey
+	for collection in site.collections{
+		if !(collection.gitrepokey in res){
+			res << collection.gitrepokey
+		}
+	}
+	return res
+}
+
+
+//is there change in repo since last build?
+fn (mut site ZSite) changed() bool {
+	mut change:=false
+	gitrepokeys:=site.gitrepo_keys()
+	for key,status in site.sites.gitrepos_status{
+		if key in gitrepokeys{
+			//means this site is using that gitrepo, so if it changed the site changed
+			if status.revlast != status.revlast{
+				change=true
+			}
+		}
+	}
+	return change
 }

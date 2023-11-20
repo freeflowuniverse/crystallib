@@ -32,8 +32,7 @@ fn testsuite_begin() {
 	if os.exists(doctree.book_destination) {
 		os.rmdir_all(doctree.book_destination)!
 	}
-	os.cp_all(doctree.testdata_path, '${doctree.testdata_path}_previous',
-		true)!
+	os.cp_all(doctree.testdata_path, '${doctree.testdata_path}_previous', true)!
 }
 
 fn testsuite_end() {

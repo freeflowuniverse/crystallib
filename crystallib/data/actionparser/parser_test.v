@@ -17,8 +17,7 @@ const text1 = "
 "
 
 fn test_parse_1() {
-
-	a:=parse(text:actionparser.text1) or {panic(err)}
+	a := parse(text: actionparser.text1) or { panic(err) }
 
 	println(a)
 
@@ -28,9 +27,9 @@ fn test_parse_1() {
 		blockchain:stellar //holochain maybe?	
 	")
 
-	assert sha256.hexhash(a.str()) == "9e33a11c276f1dfada99f5f8ecf48b1fd59f778bafdee686545d4da10f63691c"
+	assert sha256.hexhash(a.str()) == '9e33a11c276f1dfada99f5f8ecf48b1fd59f778bafdee686545d4da10f63691c'
 
-	b:=parse(text:a.str()) or {panic(err)}
+	b := parse(text: a.str()) or { panic(err) }
 
 	println(b)
 
@@ -40,7 +39,5 @@ fn test_parse_1() {
 		blockchain:stellar //holochain maybe?	
 	")
 
-	assert sha256.hexhash(b.str()) == "9e33a11c276f1dfada99f5f8ecf48b1fd59f778bafdee686545d4da10f63691c"
-
-
+	assert sha256.hexhash(b.str()) == '9e33a11c276f1dfada99f5f8ecf48b1fd59f778bafdee686545d4da10f63691c'
 }

@@ -6,32 +6,30 @@ module actionparser
 
 pub struct ActionsCollection {
 pub mut:
-	actions []Action
-	othertext string //in case there is text outside of the actions
+	actions   []Action
+	othertext string // in case there is text outside of the actions
 }
 
-
-
 pub fn (collection ActionsCollection) str() string {
-// 	mut out := ''
-// 	for action in collection.actions{
-// 		out+="${action}\n"
-// 	}
+	// 	mut out := ''
+	// 	for action in collection.actions{
+	// 		out+="${action}\n"
+	// 	}
 
-// 	out+= "OTHERTEXT:\n${collection.othertext}"
+	// 	out+= "OTHERTEXT:\n${collection.othertext}"
 
-// 	return out
+	// 	return out
 	return collection.script3()
 }
 
 // serialize to 3script
 pub fn (collection ActionsCollection) script3() string {
 	mut out := ''
-	for action in collection.actions{
-		out+="${action.script3()}\n"
+	for action in collection.actions {
+		out += '${action.script3()}\n'
 	}
-	if collection.othertext.len>0{
-		out+="${collection.othertext}"
+	if collection.othertext.len > 0 {
+		out += '${collection.othertext}'
 	}
 
 	return out
@@ -46,4 +44,3 @@ pub fn (collection ActionsCollection) names() []string {
 	}
 	return names
 }
-

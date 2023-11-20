@@ -1,73 +1,8 @@
 module zos
 
 import time
+import freeflowuniverse.crystallib.data.ipaddress
 
-struct GetParams {
-	name string // deployment name
-}
-
-struct ZOSDeployment {
-	name         string
-	contracts_id string
-	metadata     string
-	description  string
-	expiration   time.Time
-}
-
-//retrieve deployment from a zos
-pub fn (client ZOSClient) zos_deployment_get(params GetParams) ZOSDeployment {
-	return ZOSDeployment{}
-}
-
-pub fn (client ZOSClient) zos_deployment_list() {
-}
-struct NetworkCreateParams {
-	deployment_name       string // deployment name
-	name                  string // network name
-	version               u32    // deployment version
-	description           string // network description
-	metadata              string // network metadata (UserAccessIP, PrivateKey, PublicNodeID)
-	ip_range              string // network ip range
-	subnet                IPNet  // network subnet
-	wireguard_private_key string // network private key
-	wireguard_listen_port u16    // network listen port
-	peers                 []Peer // ["network list of peers"]
-}
-
-pub fn (client ZOSClient) zos_deployment_network_create(params NetworkCreateParams) {
-}
-
-struct NetworkUpdateParams {
-	deployment_name       string // deployment name
-	name                  string // network name
-	version               u32    // deployment version
-	description           string // network description
-	metadata              string // network metadata (UserAccessIP, PrivateKey, PublicNodeID)
-	ip_range              string // network ip range
-	subnet                IPNet  // network subnet
-	wireguard_private_key string // network private key
-	wireguard_listen_port u16    // network listen port
-	peers                 []Peer // ["network list of peers"]
-}
-
-pub fn (client ZOSClient) zos_deployment_network_update(params NetworkUpdateParams) {
-}
-
-struct NetworkGetParams {
-	deployment_name string // deployment name
-	name            string // network name
-}
-
-pub fn (client ZOSClient) zos_deployment_network_get(params NetworkGetParams) {
-}
-
-struct NetworkDeleteParams {
-	deployment_name string // deployment name
-	name            string // network name
-}
-
-pub fn (client ZOSClient) zos_deployment_network_delete(params NetworkDeleteParams) {
-}
 
 struct VmCreateParams {
 	deployment_name string   // deployment name

@@ -21,7 +21,6 @@ struct InitDProcGet {
 	start  bool = true
 }
 
-
 [params]
 pub struct ZProcessNewArgs {
 pub mut:
@@ -35,8 +34,7 @@ pub mut:
 	oneshot   bool
 }
 
-
-//start  it with initd, because the zinit by itself needs to run somewhere
+// start  it with initd, because the zinit by itself needs to run somewhere
 fn initd_proc_get(args InitDProcGet) !initd.IProcess {
 	mut initdfactory := initd.new()!
 	mut initdprocess := initdfactory.new(

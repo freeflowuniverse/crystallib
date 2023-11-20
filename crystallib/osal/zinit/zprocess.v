@@ -133,8 +133,8 @@ log: ring
 
 pub fn (zp ZProcess) start() ! {
 	mut client := new_rpc_client()
-	if !client.isloaded(zp.name){
-		client.monitor(zp.name)! //means will check it out
+	if !client.isloaded(zp.name) {
+		client.monitor(zp.name)! // means will check it out
 	}
 	// st := client.status
 	// println(st)
@@ -142,12 +142,9 @@ pub fn (zp ZProcess) start() ! {
 	// client.start(zp.name)!
 }
 
-
 pub fn (zp ZProcess) stop() ! {
 	mut client := new_rpc_client()
 	st := client.status(zp.name)!
 
 	client.stop(zp.name)!
 }
-
-

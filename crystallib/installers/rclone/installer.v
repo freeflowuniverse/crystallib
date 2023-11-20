@@ -19,7 +19,7 @@ pub fn install(args InstallArgs) ! {
 	}
 
 	if args.reset == false && osal.done_exists('install_rclone') && osal.cmd_exists('rclone') {
-		println(" - rclone already installed")
+		println(' - rclone already installed')
 		return
 	}
 
@@ -41,7 +41,12 @@ pub fn install(args InstallArgs) ! {
 	dest.moveup_single_subdir()!
 
 	mut binpath := dest.file_get('rclone')!
-	binpath.move(dest: '/usr/local/bin/rclone', delete: true)!
+	
+	osal.bin_copy(
+		cmdname: 'rclone'
+		source: binpath.path
+	)!	
+
 
 	osal.done_set('install_rclone', 'OK')!
 

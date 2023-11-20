@@ -17,15 +17,15 @@ pub mut:
 	path            pathlib.Path
 	pathrel         string // relative path in the collection
 	state           PageStatus
-	pages_included  []&Page           [str: skip]
-	pages_linked    []&Page           [str: skip]
-	files_linked    []&File           [str: skip]
+	pages_included  []&Page             [str: skip]
+	pages_linked    []&Page             [str: skip]
+	files_linked    []&File             [str: skip]
 	categories      []string
 	doc             ?markdownparser.Doc [str: skip]
 	readonly        bool
 	changed         bool
 	tree_name       string
-	tree            &Tree             [str: skip]
+	tree            &Tree               [str: skip]
 	collection_name string
 }
 

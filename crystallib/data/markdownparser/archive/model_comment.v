@@ -1,6 +1,5 @@
 module markdownparser
 
-
 pub struct Comment {
 pub mut:
 	content string

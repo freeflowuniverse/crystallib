@@ -1,4 +1,5 @@
 module zinit
+
 import os
 import freeflowuniverse.crystallib.osal
 

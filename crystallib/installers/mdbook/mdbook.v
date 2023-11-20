@@ -20,8 +20,7 @@ pub fn install() ! {
 		osal.execute_stdout(cmd)!
 		osal.done_set('install_mdbook', 'OK')!
 		println(' - mdbook installed')
-	}else{
+	} else {
 		println(' - mdbook already installed')
 	}
-
 }

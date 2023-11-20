@@ -25,8 +25,7 @@ a:=this is something else
 "
 
 fn test_parse_1() {
-
-	a:=parse_collection(text:actionparser.text1) or {panic(err)}
+	a := parse_collection(text: actionparser.text1) or { panic(err) }
 
 	println(a)
 	println(a.script3())
@@ -46,7 +45,5 @@ fn test_parse_1() {
 		a:=this is something else
 		")
 
-	assert sha256.hexhash(a.str()) == "daf0a54b8f2572cf8f3a565d313801d6576c1eb153c79cf7b1a3a5ea7579f7f9"
-
-
+	assert sha256.hexhash(a.str()) == 'daf0a54b8f2572cf8f3a565d313801d6576c1eb153c79cf7b1a3a5ea7579f7f9'
 }

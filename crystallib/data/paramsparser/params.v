@@ -3,8 +3,8 @@ module paramsparser
 [heap]
 pub struct Params {
 pub mut:
-	params []Param
-	args   []string
+	params   []Param
+	args     []string
 	comments []string
 }
 
@@ -46,7 +46,7 @@ pub fn (mut params Params) delete(key string) {
 }
 
 pub fn (mut params Params) set(key string, value string) {
-	key2 := key.to_lower().trim_space().trim_left("/")
+	key2 := key.to_lower().trim_space().trim_left('/')
 	params.delete(key2)
 	params.params << Param{
 		key: key2
@@ -55,7 +55,7 @@ pub fn (mut params Params) set(key string, value string) {
 }
 
 pub fn (mut params Params) set_with_comment(key string, value string, comment string) {
-	key2 := key.to_lower().trim_space().trim_left("/")
+	key2 := key.to_lower().trim_space().trim_left('/')
 	params.delete(key2)
 	params.params << Param{
 		key: key2
@@ -63,8 +63,6 @@ pub fn (mut params Params) set_with_comment(key string, value string, comment st
 		comment: str_normalize(comment)
 	}
 }
-
-
 
 pub fn (mut params Params) delete_arg(key string) {
 	key2 := key.to_lower().trim_space()
@@ -74,7 +72,7 @@ pub fn (mut params Params) delete_arg(key string) {
 }
 
 pub fn (mut params Params) set_arg(value string) {
-	mut value2 := value.trim(" '").trim_left("/")
+	mut value2 := value.trim(" '").trim_left('/')
 	value2 = value2.replace('<<BR>>', '\n')
 	value2 = value2.replace('<BR>', '\n')
 	if !params.exists_arg(value2) {
@@ -83,25 +81,23 @@ pub fn (mut params Params) set_arg(value string) {
 }
 
 pub fn (mut params Params) set_arg_with_comment(value string, comment string) {
-	value2 := value.trim(" '").trim_left("/")
+	value2 := value.trim(" '").trim_left('/')
 	if !params.exists_arg(str_normalize(value2)) {
 		params.args << value2
-		if comment.len>0{
+		if comment.len > 0 {
 			params.comments << str_normalize(comment)
-		}		
+		}
 	}
-	
 }
 
-
-fn str_normalize(comment_ string)string{
-	mut comment:=comment_
+fn str_normalize(comment_ string) string {
+	mut comment := comment_
 	// println(comment+"\n----")
-	comment=comment.replace("\\\\n","\n")
-	comment=comment.replace("\\\'","'")
-	comment=comment.replace("<<BR>>","\n")
+	comment = comment.replace('\\\\n', '\n')
+	comment = comment.replace("\\'", "'")
+	comment = comment.replace('<<BR>>', '\n')
 	comment = comment.replace('<BR>', '\n')
-	comment=comment.trim_right("-")
+	comment = comment.trim_right('-')
 	// println(comment)
 	return comment.trim_space()
 }
@@ -144,4 +140,3 @@ pub fn (p Params) script3() string {
 	)
 	return out
 }
-

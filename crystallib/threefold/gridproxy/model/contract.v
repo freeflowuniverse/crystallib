@@ -17,28 +17,27 @@ pub:
 
 pub struct Contract {
 pub:
-	contract_id   u64                 [json: contractId]
-	twin_id       u64                 [json: twinId]
+	contract_id   u64
+	twin_id       u64
 	state         string              [json: state]
 	created_at    UnixTime            [json: created_at]
 	contract_type string              [json: 'type']
 	details       NodeContractDetails [json: details]
-	billing       []ContractBilling   [json: billing]
 }
 
 // total_billed returns the total amount billed for the contract.
 //
 // returns: `DropTFTUnit`
-pub fn (c &Contract) total_billed() DropTFTUnit {
-	if c.billing.len == 0 {
-		return 0
-	}
-	mut total := u64(0)
-	for b in c.billing {
-		total += b.amount_billed
-	}
-	return DropTFTUnit(total)
-}
+// pub fn (c &Contract) total_billed() DropTFTUnit {
+// 	if c.billing.len == 0 {
+// 		return 0
+// 	}
+// 	mut total := u64(0)
+// 	for b in c.billing {
+// 		total += b.amount_billed
+// 	}
+// 	return DropTFTUnit(total)
+// }
 
 // TODO: Implement Limit struct (size, page, retcount, randomize)
 // and embeded it in other structs like Contract to avoid duplicated code

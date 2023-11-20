@@ -28,7 +28,6 @@ pub enum TreeState {
 	error
 }
 
-
 // pub fn (mut tree Tree) reset() ! {
 // 	// tree.collections = map[string]
 // }

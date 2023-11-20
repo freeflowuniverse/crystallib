@@ -1,6 +1,6 @@
 module mdbook
 
-// import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.osal
 // import log
 // import os
@@ -13,6 +13,7 @@ pub mut:
 	reset      bool
 	pull       bool
 	gitrepokey string
+	path pathlib.Path
 }
 
 [params]
@@ -20,8 +21,6 @@ pub struct MDBookCollectionArgs {
 pub mut:
 	name  string
 	url   string
-	reset bool
-	pull  bool
 }
 
 pub fn (mut book MDBook) collection_add(args_ MDBookCollectionArgs) ! {
@@ -31,23 +30,19 @@ pub fn (mut book MDBook) collection_add(args_ MDBookCollectionArgs) ! {
 		name: args.name
 		book: &book
 	}
-	c.get()!
-	book.collections << c
+	book.collections << c	
 }
 
-pub fn (mut self MDBookCollection) get() ! {
-	println(' - mdbook collection get: ${self.url}')
+fn (mut self MDBookCollection) prepare() ! {
+	println(' - mdbook collection prepare: ${self.url}')
 	mut gs := self.book.books.gitstructure
 	mut locator := gs.locator_new(self.url)!
-	mut repo := gs.repo_get(locator: locator, reset: self.reset, pull: self.pull)!
+	mut repo := gs.repo_get(locator: locator, reset: false, pull: false)!
 	self.book.books.gitrepos[repo.key()] = repo
 	self.gitrepokey = repo.key()
-
-	mut srcpath := locator.path_on_fs()!
+	self.path = locator.path_on_fs()!
 	// println('debugzo: ${srcpath}')
-	srcpath.link('${self.book.path_build.path}/src/${self.name}', true)!
-
+	self.path.link('${self.book.path_build.path}/src/${self.name}', true)!
 	// println(srcpath)
-
 	// println(' - mdbook collection: ${srcpath}')
 }

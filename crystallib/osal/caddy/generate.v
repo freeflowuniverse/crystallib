@@ -22,25 +22,25 @@ import freeflowuniverse.crystallib.core.texttools
 //     encode gzip
 // }
 
-pub fn (mut self Caddy) generate() string {
-	return self.sites.map(generate_site(it)).join('\n')
+// pub fn (mut self Caddy) generate() string {
+// 	return self.sites.map(generate_site(it)).join('\n')
 
-	// TODO create the caddy file
-}
+// 	// TODO create the caddy file
+// }
 
-// generates config for site in caddyfile
-pub fn (mut self Caddy) generate_site(site Site) string {
-	mut config := '
-	for domain in site.domain {
-		'${domain.domain}:${domain.port}
-			root * sites
-			fileserver
-		'
-	}
-}
+// // generates config for site in caddyfile
+// pub fn (mut self Caddy) generate_site(site Site) string {
+// 	mut config := '
+// 	for domain in site.domain {
+// 		'${domain.domain}:${domain.port}
+// 			root * sites
+// 			fileserver
+// 		'
+// 	}
+// }
 
-// generate the file and write
-pub fn (mut self Caddy) save() ! {
-	c := self.generate()
-	self.path.write(c)!
-}
+// // generate the file and write
+// pub fn (mut self Caddy) save() ! {
+// 	c := self.generate()
+// 	self.path.write(c)!
+// }

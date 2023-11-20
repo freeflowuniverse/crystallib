@@ -59,7 +59,6 @@ pub fn parse(text string) !Params {
 			state = .name
 		}
 		if state == .name {
-
 			if ch_prev == '/' && ch == '/' {
 				// we are now comment
 				state = .comment
@@ -119,7 +118,7 @@ pub fn parse(text string) !Params {
 		if state == .quote {
 			if ch == "'" {
 				state = .start
-				result.set_with_comment(key, value,comment)
+				result.set_with_comment(key, value, comment)
 				key = ''
 				value = ''
 				comment = ''
@@ -151,7 +150,7 @@ pub fn parse(text string) !Params {
 
 	// last value
 	if state == ParamStatus.value || state == ParamStatus.quote {
-		result.set_with_comment(key, value,comment)
+		result.set_with_comment(key, value, comment)
 	}
 
 	if state == ParamStatus.name {

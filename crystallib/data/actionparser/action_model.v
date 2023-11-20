@@ -6,12 +6,12 @@ import freeflowuniverse.crystallib.core.texttools
 
 pub struct Action {
 pub mut:
-	name       string            
-	actor      string            
+	name       string
+	actor      string
 	priority   u8 = 10 // 0 is highest, do 10 as default
 	params     paramsparser.Params
 	result     paramsparser.Params // can be used to remember outputs
-	execute    bool = true         // certain actions can be defined but meant to be executed directly
+	execute    bool = true // certain actions can be defined but meant to be executed directly
 	actiontype ActionType
 	comments   string
 }
@@ -24,13 +24,12 @@ pub enum ActionType {
 	macro
 }
 
-
 pub fn (action Action) str2() string {
 	mut out := '!!'
 	if action.actor != '' {
 		out += '${action.actor}.'
 	}
-	out+=action.script3()
+	out += action.script3()
 	if !action.result.empty() {
 		out += '\n\nResult:\n'
 		out += texttools.indent(action.result.script3(), '    ')
@@ -41,20 +40,20 @@ pub fn (action Action) str2() string {
 // serialize to 3script
 pub fn (action Action) script3() string {
 	mut out := ''
-	if action.comments.len>0{
-		out += texttools.indent(action.comments,"// ")
-	}	
+	if action.comments.len > 0 {
+		out += texttools.indent(action.comments, '// ')
+	}
 	out += '!!'
 	if action.actor != '' {
 		out += '${action.actor}.'
 	}
 	out += '${action.name} '
 	if !action.params.empty() {
-		script3:=action.params.script3()
-		script3_lines:=script3.split_into_lines()
-		out+=script3_lines[0]+"\n"
-		for line in script3_lines[1..]{
-			out+="    "+line+"\n"
+		script3 := action.params.script3()
+		script3_lines := script3.split_into_lines()
+		out += script3_lines[0] + '\n'
+		for line in script3_lines[1..] {
+			out += '    ' + line + '\n'
 		}
 	}
 	return out

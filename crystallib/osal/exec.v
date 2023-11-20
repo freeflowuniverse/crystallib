@@ -121,7 +121,7 @@ pub fn exec(cmd Command) !Job {
 	}
 
 	if cmd.shell {
-		println(" - cmd shell")
+		println(' - cmd shell')
 		if cmd.retry > 0 {
 			job.error = 'cmd retry cannot be >0 if shell used'
 			return JobError{

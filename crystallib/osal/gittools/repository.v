@@ -30,7 +30,6 @@ pub fn (repo GitRepo) key() string {
 	return repo.addr.key()
 }
 
-
 fn (repo GitRepo) cache_delete() ! {
 	mut redis := redisclient.core_get()!
 	redis.del(repo.addr.cache_key_status())!
@@ -100,7 +99,7 @@ pub fn (mut repo GitRepo) status() !GitRepoStatus {
 }
 
 pub fn (mut repo GitRepo) need_pull() !bool {
-	s:=repo.status()!
+	s := repo.status()!
 	return s.need_pull
 }
 
@@ -164,7 +163,7 @@ pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 	if st.need_commit {
 		return error('Cannot pull repo: ${repo.path.path} because there are changes in the dir.')
 	}
-	//pull can't see the status
+	// pull can't see the status
 	cmd2 := 'cd ${repo.path.path} && git pull'
 	osal.execute_silent(cmd2) or {
 		println(' GIT PULL FAILED: ${cmd2}')
@@ -178,7 +177,7 @@ pub fn (mut repo GitRepo) rev() !string {
 	// 	println('   - REV: ${repo.url_get(true)}')
 	// }
 	cmd2 := 'cd ${repo.path.path} && git rev-parse HEAD'
-	res:=osal.execute_silent(cmd2) or {
+	res := osal.execute_silent(cmd2) or {
 		println(' GIT REV FAILED: ${cmd2}')
 		return error('Cannot rev repo: ${repo.path}. Error was ${err}')
 	}
@@ -234,8 +233,8 @@ pub fn (mut repo GitRepo) remove_changes(args_ ActionArgs) ! {
 		osal.execute_silent(cmd) or {
 			return error('Cannot commit repo: ${repo.path.path}. Error was ${err}')
 		}
-	// } else {
-	// 	println('     > nothing to remove, no changes  ${repo.path.path}')
+		// } else {
+		// 	println('     > nothing to remove, no changes  ${repo.path.path}')
 	}
 	repo.load()!
 }

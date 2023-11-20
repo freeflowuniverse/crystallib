@@ -56,67 +56,77 @@ const textin2 = "
 	name5:   'aab' //somecomment 3
 "
 
-const textin3 = "
+const textin3 = '
 	zz //comment 1
 	id:a1 name6:aaaaa //comment 2
-"
+'
 
 fn test_textin2() {
-	params := parse(textin2) or { panic(err) }
+	params := parse(paramsparser.textin2) or { panic(err) }
 	println(params)
-	assert params==Params{
-		params: [Param{
+	assert params == Params{
+		params: [
+			Param{
 				key: 'id'
 				value: 'a1'
 				comment: 'this is a cool piece of text
 
 now end of comment'
-			}, Param{
+			},
+			Param{
 				key: 'name6'
 				value: 'aaaaa'
 				comment: ''
-			}, Param{
+			},
+			Param{
 				key: 'name'
 				value: 'need to do something 1'
 				comment: ''
-			}, Param{
+			},
+			Param{
 				key: 'description'
 				value: 'something\\nyes'
 				comment: 'comment 1'
-			}, Param{
+			},
+			Param{
 				key: 'name2'
 				value: 'test'
 				comment: ''
-			}, Param{
+			},
+			Param{
 				key: 'name3'
 				value: 'hi'
 				comment: ''
-			}, Param{
+			},
+			Param{
 				key: 'name10'
 				value: 'this is with space'
 				comment: ''
-			}, Param{
+			},
+			Param{
 				key: 'name11'
 				value: 'aaa11'
 				comment: ''
-			}, Param{
+			},
+			Param{
 				key: 'name4'
 				value: 'aaa'
 				comment: 'some comment 2'
-			}, Param{
+			},
+			Param{
 				key: 'name5'
 				value: 'aab'
 				comment: 'somecomment 3'
-			}]
-			args: ['aa', 'bb']
-			comments: ['arg comment']
-		}
+			},
+		]
+		args: ['aa', 'bb']
+		comments: ['arg comment']
+	}
 }
 
-
 fn test_textin3() {
-	params := parse(textin3) or { panic(err) }
-	assert params==Params{
+	params := parse(paramsparser.textin3) or { panic(err) }
+	assert params == Params{
 		params: [Param{
 			key: 'id'
 			value: 'a1'
@@ -130,9 +140,6 @@ fn test_textin3() {
 		comments: ['comment 1']
 	}
 }
-
-
-
 
 fn test_macro_args() {
 	mut text := "arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok'"
@@ -268,7 +275,7 @@ fn test_args_get() {
 // }
 
 fn test_hexhash() {
-	mut params := parse(textin2)!
+	mut params := parse(paramsparser.textin2)!
 	h := params.hexhash()
 	assert h == 'e3517c4daa5526cf7a6f200de10a81a9db95460ecd469a53d8dca9d659228c20'
 }

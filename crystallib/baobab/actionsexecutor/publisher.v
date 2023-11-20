@@ -16,7 +16,7 @@ __global (
 struct PublisherActor {
 mut:
 	doctree shared doctree.Tree
-	books         shared map[string]&doctree.MDBook
+	books   shared map[string]&doctree.MDBook
 }
 
 // PlayConfig. If actions are provided runs actions. Otherwise loads and runs actions in path.
