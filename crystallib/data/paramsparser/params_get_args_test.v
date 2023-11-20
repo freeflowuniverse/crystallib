@@ -46,10 +46,22 @@ fn test_check_arg_len() {
 
 	params := new(text)!
 
-	params.check_arg_len(0) or { assert true }
-	params.check_arg_len(1) or { assert true }
+	if _ := params.check_arg_len(0) {
+		assert false
+	} else {
+		assert true
+	}
+	if _ := params.check_arg_len(1) {
+		assert false
+	} else {
+		assert true
+	}
 	params.check_arg_len(2) or { assert false }
-	params.check_arg_len(3) or { assert true }
+	if _ := params.check_arg_len(3) {
+		assert false
+	} else {
+		assert true
+	}
 }
 
 fn test_get_arg_default() {
@@ -81,10 +93,22 @@ fn test_get_arg_int() {
 
 	params := new(text)!
 
-	params.get_arg_int(0) or { assert true }
-	params.get_arg_int(1) or { assert true }
+	if _ := params.get_arg_int(0) {
+		assert false
+	} else {
+		assert true
+	}
+	if _ := params.get_arg_int(1) {
+		assert false
+	} else {
+		assert true
+	}
 	assert params.get_arg_int(2)! == 13
-	params.get_arg_int(3) or { assert true }
+	if _ := params.get_arg_int(3) {
+		assert false
+	} else {
+		assert true
+	}
 }
 
 fn test_get_arg_int_default() {
@@ -99,8 +123,16 @@ fn test_get_arg_int_default() {
 
 	params := new(text)!
 
-	params.get_arg_int_default(0, 5) or { assert true }
-	params.get_arg_int_default(1, 5) or { assert true }
+	if _ := params.get_arg_int_default(0, 5) {
+		assert false
+	} else {
+		assert true
+	}
+	if _ := params.get_arg_int_default(1, 5) {
+		assert false
+	} else {
+		assert true
+	}
 	assert params.get_arg_int_default(2, 5)! == 13
 	assert params.get_arg_int_default(3, 5)! == 5
 }

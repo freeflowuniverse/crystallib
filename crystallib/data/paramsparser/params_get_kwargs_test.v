@@ -9,8 +9,16 @@ fn test_get() {
 	params := new(text)!
 
 	assert params.get('key1')! == 'val1'
-	params.get('key2') or { assert true }
-	params.get('arg1') or { assert true }
+	if _ := params.get('key2') {
+		assert false
+	} else {
+		assert true
+	}
+	if _ := params.get('arg1') {
+		assert false
+	} else {
+		assert true
+	}
 }
 
 fn test_get_default() {
@@ -35,9 +43,17 @@ fn test_get_int() {
 
 	params := new(text)!
 
-	params.get_int('key1') or { assert true }
+	if _ := params.get_int('key1') {
+		assert false
+	} else {
+		assert true
+	}
 	assert params.get_int('key2')! == 19
-	params.get_int('arg1') or { assert true }
+	if _ := params.get_int('arg1') {
+		assert false
+	} else {
+		assert true
+	}
 }
 
 fn test_get_int_default() {
@@ -49,7 +65,11 @@ fn test_get_int_default() {
 
 	params := new(text)!
 
-	params.get_int_default('key1', 10) or { assert true }
+	if _ := params.get_int_default('key1', 10) {
+		assert false
+	} else {
+		assert true
+	}
 	assert params.get_int_default('key2', 10)! == 19
 	assert params.get_int_default('arg1', 10)! == 10
 }
@@ -64,10 +84,18 @@ fn test_get_float() {
 
 	params := new(text)!
 
-	params.get_float('key1') or { assert true }
+	if _ := params.get_float('key1') {
+		assert false
+	} else {
+		assert true
+	}
 	assert params.get_float('key2')! == 19
 	assert params.get_float('key3')! == 1.9
-	params.get_float('arg1') or { assert true }
+	if _ := params.get_float('arg1') {
+		assert false
+	} else {
+		assert true
+	}
 }
 
 fn test_get_float_default() {
@@ -80,7 +108,11 @@ fn test_get_float_default() {
 
 	params := new(text)!
 
-	params.get_float_default('key1', 1.23) or { assert true }
+	if _ := params.get_float_default('key1', 1.23) {
+		assert false
+	} else {
+		assert true
+	}
 	assert params.get_float_default('key2', 1.23)! == 19
 	assert params.get_float_default('key3', 1.23)! == 1.9
 	assert params.get_float_default('arg1', 1.23)! == 1.23
@@ -96,10 +128,18 @@ fn test_get_percentage() {
 
 	params := new(text)!
 
-	params.get_percentage('key1') or { assert true }
+	if _ := params.get_percentage('key1') {
+		assert false
+	} else {
+		assert true
+	}
 	assert params.get_percentage('key2')! == 0.19
 	assert params.get_percentage('key3')! == .019
-	params.get_percentage('key4') or { assert true }
+	if _ := params.get_percentage('key4') {
+		assert false
+	} else {
+		assert true
+	}
 }
 
 fn test_get_percentage_default() {
@@ -112,10 +152,18 @@ fn test_get_percentage_default() {
 
 	params := new(text)!
 
-	params.get_percentage_default('key1', '.17') or { assert true }
+	if _ := params.get_percentage_default('key1', '.17') {
+		assert false
+	} else {
+		assert true
+	}
 	assert params.get_percentage_default('key2', '.17')! == 0.19
 	assert params.get_percentage_default('key3', '.17')! == .019
-	params.get_percentage_default('key4', '.17') or { assert true }
+	if _ := params.get_percentage_default('key4', '.17') {
+		assert false
+	} else {
+		assert true
+	}
 	assert params.get_percentage_default('key5', '17')! == 0.17
 }
 
@@ -127,9 +175,17 @@ fn test_get_u64() {
 
 	params := new(text)!
 
-	params.get_u64('key1') or { assert true }
+	if _ := params.get_u64('key1') {
+		assert false
+	} else {
+		assert true
+	}
 	assert params.get_u64('key2')! == 19
-	params.get_u64('key3') or { assert true }
+	if _ := params.get_u64('key3') {
+		assert false
+	} else {
+		assert true
+	}
 }
 
 fn test_get_u64_default() {
@@ -140,7 +196,11 @@ fn test_get_u64_default() {
 
 	params := new(text)!
 
-	params.get_u64_default('key1', 17) or { assert true }
+	if _ := params.get_u64_default('key1', 17) {
+		assert false
+	} else {
+		assert true
+	}
 	assert params.get_u64_default('key2', 17)! == 19
 	assert params.get_u64_default('key3', 17)! == 17
 }
@@ -153,9 +213,17 @@ fn test_get_u32() {
 
 	params := new(text)!
 
-	params.get_u32('key1') or { assert true }
+	if _ := params.get_u32('key1') {
+		assert false
+	} else {
+		assert true
+	}
 	assert params.get_u32('key2')! == 19
-	params.get_u32('key3') or { assert true }
+	if _ := params.get_u32('key3') {
+		assert false
+	} else {
+		assert true
+	}
 }
 
 fn test_get_u32_default() {
@@ -166,7 +234,11 @@ fn test_get_u32_default() {
 
 	params := new(text)!
 
-	params.get_u32_default('key1', 17) or { assert true }
+	if _ := params.get_u32_default('key1', 17) {
+		assert false
+	} else {
+		assert true
+	}
 	assert params.get_u32_default('key2', 17)! == 19
 	assert params.get_u32_default('key3', 17)! == 17
 }
@@ -179,9 +251,17 @@ fn test_get_u8() {
 
 	params := new(text)!
 
-	params.get_u8('key1') or { assert true }
+	if _ := params.get_u8('key1') {
+		assert false
+	} else {
+		assert true
+	}
 	assert params.get_u8('key2')! == 19
-	params.get_u8('key3') or { assert true }
+	if _ := params.get_u8('key3') {
+		assert false
+	} else {
+		assert true
+	}
 }
 
 fn test_get_u8_default() {
@@ -192,7 +272,11 @@ fn test_get_u8_default() {
 
 	params := new(text)!
 
-	params.get_u8_default('key1', 17) or { assert true }
+	if _ := params.get_u8_default('key1', 17) {
+		assert false
+	} else {
+		assert true
+	}
 	assert params.get_u8_default('key2', 17)! == 19
 	assert params.get_u8_default('key3', 17)! == 17
 }
