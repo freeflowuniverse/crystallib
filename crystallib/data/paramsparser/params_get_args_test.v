@@ -47,20 +47,14 @@ fn test_check_arg_len() {
 	params := new(text)!
 
 	if _ := params.check_arg_len(0) {
-		assert false
-	} else {
-		assert true
+		assert false, 'arg len should be 2'
 	}
 	if _ := params.check_arg_len(1) {
-		assert false
-	} else {
-		assert true
+		assert false, 'arg len should be 2'
 	}
 	params.check_arg_len(2) or { assert false }
 	if _ := params.check_arg_len(3) {
-		assert false
-	} else {
-		assert true
+		assert false, 'arg len should be 2'
 	}
 }
 
@@ -94,20 +88,14 @@ fn test_get_arg_int() {
 	params := new(text)!
 
 	if _ := params.get_arg_int(0) {
-		assert false
-	} else {
-		assert true
+		assert false, 'first argument is a string, not an int'
 	}
 	if _ := params.get_arg_int(1) {
-		assert false
-	} else {
-		assert true
+		assert false, 'second argument is a string, not an int'
 	}
 	assert params.get_arg_int(2)! == 13
 	if _ := params.get_arg_int(3) {
-		assert false
-	} else {
-		assert true
+		assert false, 'there is no 4th argument'
 	}
 }
 
@@ -124,14 +112,10 @@ fn test_get_arg_int_default() {
 	params := new(text)!
 
 	if _ := params.get_arg_int_default(0, 5) {
-		assert false
-	} else {
-		assert true
+		assert false, '1st argument is a string, not an int'
 	}
 	if _ := params.get_arg_int_default(1, 5) {
-		assert false
-	} else {
-		assert true
+		assert false, '2nd argument is a string, not an int'
 	}
 	assert params.get_arg_int_default(2, 5)! == 13
 	assert params.get_arg_int_default(3, 5)! == 5
