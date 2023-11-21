@@ -288,9 +288,9 @@ pub fn (mut collection Collection) fix() ! {
 	$if debug {
 		println('collection fix: ${collection.name}')
 	}
-	for _, mut page in collection.pages {
-		page.fix()!
-	}
+	// for _, mut page in collection.pages {
+	// 	page.fix()!
+	// }
 	collection.errors_report('${collection.path.path}/errors.md')!
 }
 
