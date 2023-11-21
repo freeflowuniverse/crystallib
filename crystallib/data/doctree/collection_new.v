@@ -3,7 +3,7 @@ module doctree
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 
-[params]
+@[params]
 pub struct CollectionNewArgs {
 mut:
 	name string @[required]

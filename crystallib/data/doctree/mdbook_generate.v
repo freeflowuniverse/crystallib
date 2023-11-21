@@ -1,15 +1,12 @@
 module doctree
 
 import freeflowuniverse.crystallib.osal.gittools
-import freeflowuniverse.crystallib.tools.imagemagick
 import freeflowuniverse.crystallib.data.markdownparser
+import freeflowuniverse.crystallib.data.markdownparser.elements
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.osal
-import log
-import os
 
-[params]
+@[params]
 pub struct BookGenerateArgs {
 pub mut:
 	name      string @[required] // name of the book
@@ -75,7 +72,7 @@ pub fn book_generate(args_ BookGenerateArgs) !&MDBook {
 		path: p
 		dest: args.dest
 		dest_md: args.dest_md
-		doc_summary: &markdownparser.Doc{}
+		doc_summary: &elements.Doc{}
 	}
 	book.reset()! // clean the destination
 	book.load_summary()!

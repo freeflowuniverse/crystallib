@@ -1,7 +1,8 @@
 module doctree
 
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.data.markdownparser { Action, Include, Link, Paragraph }
+import freeflowuniverse.crystallib.data.markdownparser.elements { Action, Doc, Include, Paragraph }
+import freeflowuniverse.crystallib.data.markdownparser
 import os
 
 pub enum PageStatus {
@@ -10,22 +11,22 @@ pub enum PageStatus {
 	error
 }
 
-[heap]
+@[heap]
 pub struct Page {
 pub mut:
 	name            string // received a name fix
 	path            pathlib.Path
 	pathrel         string // relative path in the collection
 	state           PageStatus
-	pages_included  []&Page             [str: skip]
-	pages_linked    []&Page             [str: skip]
-	files_linked    []&File             [str: skip]
+	pages_included  []&Page      @[str: skip]
+	pages_linked    []&Page      @[str: skip]
+	files_linked    []&File      @[str: skip]
 	categories      []string
-	doc             ?markdownparser.Doc [str: skip]
+	doc             ?Doc         @[str: skip]
 	readonly        bool
 	changed         bool
 	tree_name       string
-	tree            &Tree               [str: skip]
+	tree            &Tree        @[str: skip]
 	collection_name string
 }
 
@@ -190,12 +191,12 @@ fn (mut page Page) fix() ! {
 // walk over all links and fix them with location
 fn (mut page Page) fix_links() ! {
 	mut doc := page.doc or { return error('no doc yet on page') }
-	for x in 0 .. doc.items.len {
-		if doc.items[x] is Paragraph {
-			mut paragraph := doc.items[x] as Paragraph
-			for y in 0 .. paragraph.items.len {
-				if paragraph.items[y] is Link {
-					mut item_link := paragraph.items[y] as Link
+	for x in 0 .. doc.elements.len {
+		if doc.elements[x] is Paragraph {
+			mut paragraph := doc.elements[x] as Paragraph
+			for y in 0 .. paragraph.elements.len {
+				if paragraph.elements[y] is Link {
+					mut item_link := paragraph.elements[y] as Link
 					if item_link.filename == 'threefold_cloud.md' {
 						print('${item_link}')
 					}
@@ -207,10 +208,10 @@ fn (mut page Page) fix_links() ! {
 					} else if item_link.cat == .page {
 						page.link_to_page_update(mut item_link)!
 					}
-					paragraph.items[y] = item_link
+					paragraph.elements[y] = item_link
 				}
 			}
-			doc.items[x] = paragraph
+			doc.elements[x] = paragraph
 		}
 	}
 }
@@ -243,9 +244,9 @@ fn (mut book MDBook) process_page_includes(mut page Page, mut include_tree []str
 
 	// find the files to import
 	mut pages_to_include := map[int]Page{}
-	for x in 0 .. doc.items.len {
-		if doc.items[x] is Include {
-			include := doc.items[x] as Include
+	for x in 0 .. doc.elements.len {
+		if doc.elements[x] is Include {
+			include := doc.elements[x] as Include
 			$if debug {
 				println('Including page ${include.content} into ${page.path.path}')
 			}
@@ -275,9 +276,9 @@ fn (mut page Page) include(pages_to_include map[int]Page) ! {
 	mut offset := 0
 	for x, page_to_include in pages_to_include {
 		docinclude := page_to_include.doc or { panic('no doc on include page') }
-		doc.items.delete(x + offset)
-		doc.items.insert(x + offset, docinclude.items)
-		offset += doc.items.len - 1
+		doc.elements.delete(x + offset)
+		doc.elements.insert(x + offset, docinclude.elements)
+		offset += doc.elements.len - 1
 	}
 	page.doc = doc
 }
@@ -340,10 +341,10 @@ fn (mut page Page) include(pages_to_include map[int]Page) ! {
 fn (mut page Page) process_macros() ! {
 	logger.info('Processing macros in page ${page.name}')
 	mut doc := page.doc or { return error('no doc yet on page') }
-	for x in 0 .. doc.items.len {
-		if doc.items[x] is Action {
-			macro := doc.items[x] as Action
-			logger.info('Process macro: ${macro.name} into page: ${page.name}')
+	for x in 0 .. doc.elements.len {
+		if doc.elements[x] is Action {
+			macro := doc.elements[x] as Action
+			logger.info('Process macro: ${macro.action.name} into page: ${page.name}')
 			mut out := ''
 
 			for mut mp in page.tree.macroprocessors {
@@ -356,9 +357,9 @@ fn (mut page Page) process_macros() ! {
 				mut para := Paragraph{
 					content: res.result
 				}
-				para.process()!
-				doc.items.delete(x)
-				doc.items.insert(x, para)
+				// para.process()!
+				doc.elements.delete(x)
+				doc.elements.insert(x, para)
 				if res.state == .stop {
 					break
 				}
@@ -369,7 +370,7 @@ fn (mut page Page) process_macros() ! {
 	page.doc = doc
 }
 
-[params]
+@[params]
 pub struct PageSaveArgs {
 pub mut:
 	dest string
@@ -411,7 +412,7 @@ pub fn (mut page Page) save(args_ PageSaveArgs) ! {
 	page.process_macros()!
 	page.fix_links()! // always need to make sure that the links are now clean
 	// QUESTION: okay convention?
-	out := page.doc or { panic('this should never happen') }.wiki()
+	out := page.doc or { panic('this should never happen') }.markdown()
 	mut p := pathlib.get_file(path: args.dest, check: false)!
 	p.write(out)!
 

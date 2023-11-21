@@ -3,6 +3,7 @@ module doctree
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.tools.imagemagick
 import freeflowuniverse.crystallib.data.markdownparser
+import freeflowuniverse.crystallib.data.markdownparser.elements
 import freeflowuniverse.crystallib.core.pathlib { Path }
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.osal
@@ -33,23 +34,23 @@ pub enum BookErrorCat {
 	sidebar
 }
 
-[heap]
+@[heap]
 struct BookErrorArgs {
 	msg string
 	cat BookErrorCat
 }
 
-[heap]
+@[heap]
 struct BookError {
 pub mut:
 	msg string
 	cat BookErrorCat
 }
 
-[heap]
+@[heap]
 pub struct MDBook {
 pub mut:
-	tree        &Tree               [str: skip]
+	tree        &Tree            @[str: skip]
 	name        string
 	dest        string // path where book will be generated	
 	dest_md     string // path where the md files will be generated
@@ -60,7 +61,7 @@ pub mut:
 	path        Path
 	errors      []BookError
 	state       BookState
-	doc_summary &markdownparser.Doc [str: skip]
+	doc_summary &elements.Doc    @[str: skip]
 }
 
 pub fn (mut book MDBook) error(args BookErrorArgs) {
@@ -70,7 +71,7 @@ pub fn (mut book MDBook) error(args BookErrorArgs) {
 	}
 }
 
-[params]
+@[params]
 pub struct BookNewArgs {
 pub mut:
 	name      string @[required] // name of the book
@@ -148,7 +149,7 @@ pub fn book_create(args_ BookNewArgs) !&MDBook {
 		path: p
 		dest: args.dest
 		dest_md: args.dest_md
-		doc_summary: &markdownparser.Doc{}
+		doc_summary: &elements.Doc{}
 	}
 	book.reset()! // clean the destination
 	book.load_summary()!
@@ -246,7 +247,7 @@ fn (mut book MDBook) fix_summary() ! {
 					}
 				}
 			}
-			book.doc_summary.items[y] = paragraph
+			book.doc_summary.elements[y] = paragraph
 		}
 	}
 	book.tree.logger.debug('finished fixing summary')
@@ -256,7 +257,7 @@ fn (mut book MDBook) fix_summary() ! {
 fn (mut book MDBook) add_missing_pages_to_summary() ! {
 	mut path_summary := pathlib.get('${book.dest_md}/src/SUMMARY.md')
 	summary_content := os.read_file(path_summary.path)!
-	dest_md_path := pathlib.get('${book.dest_md}/src')
+	mut dest_md_path := pathlib.get('${book.dest_md}/src')
 	mut fl := dest_md_path.list()!
 
 	mut files := []Path{}
@@ -375,7 +376,7 @@ fn (mut book MDBook) errors_report() ! {
 		)
 	}
 	// Lets link the errors in the errors.md file
-	c := $tmpl('template/errors.md')
+	c := $tmpl('../../osal/mdbook/template/errors.md')
 	mut p2 := pathlib.get('${book.dest_md}/src/errors.md')
 	if book.errors.len == 0 {
 		p2.delete()!
@@ -383,8 +384,8 @@ fn (mut book MDBook) errors_report() ! {
 	}
 	p2.write(c)!
 
-	mut paragraph := markdownparser.Paragraph{}
-	paragraph.items << markdownparser.Text{
+	mut paragraph := elements.Paragraph{}
+	paragraph.elements << elements.Text{
 		content: '- '
 	}
 	paragraph.items << markdownparser.Link{
@@ -393,7 +394,7 @@ fn (mut book MDBook) errors_report() ! {
 		filename: 'errors.md'
 	}
 	for collection_name, _ in collection_errors {
-		paragraph.items << markdownparser.Text{
+		paragraph.elements << elements.Text{
 			content: '\n  - '
 		}
 		paragraph.items << markdownparser.Link{
@@ -402,7 +403,7 @@ fn (mut book MDBook) errors_report() ! {
 			filename: 'errors_${collection_name}.md'
 		}
 	}
-	book.doc_summary.items << paragraph
+	book.doc_summary.elements << paragraph
 }
 
 // return path where the book will be created (exported and built from)
@@ -514,6 +515,6 @@ fn (mut book MDBook) template_install() ! {
 		md_path := item.path.all_after_first('/')
 		book.template_write(md_path, item.to_string())!
 	}
-	c := $tmpl('template/book.toml')
+	c := $tmpl('../../osal/mdbook/template/book.toml')
 	book.template_write('book.toml', c)!
 }

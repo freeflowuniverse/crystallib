@@ -13,7 +13,7 @@ pub enum CollectionState {
 	ok
 }
 
-[heap]
+@[heap]
 pub struct Collection {
 pub:
 	name      string
@@ -30,7 +30,7 @@ pub mut:
 	errors          []CollectionError
 	state           CollectionState
 	heal            bool
-	tree            &Tree             [str: skip]
+	tree            &Tree             @[str: skip]
 }
 
 // format of name is $collectionname:$pagename or $pagename
@@ -311,6 +311,6 @@ pub fn (collection Collection) errors_report(where string) ! {
 		p.delete()!
 		return
 	}
-	c := $tmpl('template/errors_collection.md')
+	c := $tmpl('../../osal/mdbook/template/errors_collection.md')
 	p.write(c)!
 }
