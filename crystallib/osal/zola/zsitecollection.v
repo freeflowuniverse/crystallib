@@ -9,20 +9,20 @@ import freeflowuniverse.crystallib.core.pathlib
 
 pub struct ZSiteCollection {
 pub mut:
-	site       &ZSite [skip; str: skip]
+	site       &ZSite       [skip; str: skip]
 	name       string
 	url        string
 	reset      bool
 	pull       bool
 	gitrepokey string
-	path pathlib.Path
+	path       pathlib.Path
 }
 
 [params]
 pub struct ZSiteCollectionArgs {
 pub mut:
-	name  string
-	url   string
+	name string
+	url  string
 }
 
 pub fn (mut b ZSite) collection_add(args_ ZSiteCollectionArgs) ! {
@@ -44,6 +44,5 @@ pub fn (mut self ZSiteCollection) prepare() ! {
 	self.gitrepokey = repo.key()
 	self.path = locator.path_on_fs()!
 	// println('debugzo: ${srcpath}')
-	self.path.link('${self.site.path_build.path}/src/${self.name}', true)!		
-
+	self.path.link('${self.site.path_build.path}/src/${self.name}', true)!
 }

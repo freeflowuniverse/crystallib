@@ -40,5 +40,4 @@ pub fn build(args BuildArgs) ! {
 		cmdname: 'zinit'
 		source: '/tmp/builder/github/threefoldtech/zinit/target/x86_64-unknown-linux-musl/release/zinit'
 	)!
-
 }

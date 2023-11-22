@@ -23,7 +23,7 @@ pub fn (mut path Path) copy(args_ CopyArgs) ! {
 		args.rsync = true
 	}
 	path.check()
-	if args.rsync == true{
+	if args.rsync == true {
 		rsync(
 			source: path.path
 			dest: args.dest

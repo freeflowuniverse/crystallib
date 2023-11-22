@@ -12,7 +12,9 @@ pub fn install() ! {
 	base.install()!
 	zinit.install()!
 	rclone.install()!
-	if osal.done_exists('install_s3') {return}
+	if osal.done_exists('install_s3') {
+		return
+	}
 
 	println(' - package_install install s3')
 
@@ -28,11 +30,10 @@ pub fn install() ! {
 
 	osal.bin_copy(
 		// cmdname: ''
-		source: "${path}/target/debug/s3-cas"
-	)!	
+		source: '${path}/target/debug/s3-cas'
+	)!
 
 	osal.done_set('install_s3', 'OK')!
-
 }
 
 // --fs-root <fs-root>             [default: .]

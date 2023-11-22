@@ -41,12 +41,11 @@ pub fn install(args InstallArgs) ! {
 	dest.moveup_single_subdir()!
 
 	mut binpath := dest.file_get('rclone')!
-	
+
 	osal.bin_copy(
 		cmdname: 'rclone'
 		source: binpath.path
-	)!	
-
+	)!
 
 	osal.done_set('install_rclone', 'OK')!
 
