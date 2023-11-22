@@ -1,6 +1,7 @@
 module docker
 
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.installers.base
 
 // install docker will return true if it was already installed
 pub fn install() ! {
@@ -8,7 +9,10 @@ pub fn install() ! {
 	if osal.platform() != .ubuntu {
 		return error('only support ubuntu for now')
 	}
-	if (!osal.done_exists('install_docker') && !osal.cmd_exists('docker')) {
+
+	base.install()!
+
+	if !osal.done_exists('install_docker') && !osal.cmd_exists('docker') {
 		osal.upgrade()!
 		osal.package_install('mc,wget,htop,apt-transport-https,ca-certificates,curl,software-properties-common')!
 		cmd := '

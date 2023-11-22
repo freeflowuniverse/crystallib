@@ -341,5 +341,5 @@ pub fn exec_string(cmd Command) !string {
 	}
 	job.start = time.now()
 	process_args := job.cmd_to_process_args(cmd.insert_noninteractive_statements)!
-	return process_args[0]
+	return process_args[process_args.len-1]
 }
