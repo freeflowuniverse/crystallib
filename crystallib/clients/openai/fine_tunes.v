@@ -50,7 +50,7 @@ pub:
 [params]
 pub struct FineTuneCreateArgs {
 pub mut:
-	training_file                  string [required]
+	training_file                  string @[required]
 	model                          string
 	n_epochs                       int = 4
 	batch_size                     int

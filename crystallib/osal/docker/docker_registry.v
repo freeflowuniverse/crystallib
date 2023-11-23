@@ -16,12 +16,12 @@ pub mut:
 [params]
 pub struct DockerRegistryArgs {
 pub mut:
-	name      string [required] = 'default'
+	name      string @[required] = 'default'
 	datapath  string
 	ssl       bool
 	reset     bool // if reset will reset existing running one
 	reset_ssl bool // if reset will reset the sslkey
-	secret    string [required] = '1234'
+	secret    string @[required] = '1234'
 }
 
 // registry:

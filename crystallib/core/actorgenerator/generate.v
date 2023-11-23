@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.core.pathlib
 
 [params]
 pub struct GenerateParams {
-	source_model pathlib.Path [required] // path of model(s) for which actor(s) will be generated
+	source_model pathlib.Path @[required] // path of model(s) for which actor(s) will be generated
 	destination  pathlib.Path // path where actor code will be outputted to
 }
 

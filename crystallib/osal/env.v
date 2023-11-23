@@ -5,8 +5,8 @@ import os
 [params]
 pub struct EnvSet {
 pub mut:
-	key       string [required]
-	value     string [required]
+	key       string @[required]
+	value     string @[required]
 	overwrite bool = true
 }
 

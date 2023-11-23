@@ -16,8 +16,8 @@ fn do() ! {
 	zinit.destroy()!
 	mut z:=zinit.new()!
 
-	// name      string            [required]
-	// cmd       string            [required]
+	// name      string            @[required]
+	// cmd       string            @[required]
 	// cmd_file  bool  //if we wanna force to run it as a file which is given to bash -c  (not just a cmd in zinit)
 	// test      string
 	// test_file bool
@@ -28,6 +28,13 @@ fn do() ! {
 		name:"test"
 		cmd:'/bin/bash'
 	)!
+
+	output:=p.log()!
+	println(output)
+
+	p.check()! //will check the process is up and running
+
+	p.stop()!
 
 }
 

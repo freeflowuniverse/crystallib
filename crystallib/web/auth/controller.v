@@ -21,7 +21,7 @@ pub fn (mut app Controller) before_request() {
 [params]
 pub struct ControllerConfig {
 	logger        &log.Logger
-	authenticator Authenticator [required]
+	authenticator Authenticator @[required]
 }
 
 pub fn new_controller(config ControllerConfig) Controller {

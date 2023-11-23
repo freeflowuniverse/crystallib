@@ -38,8 +38,8 @@ pub mut:
 
 pub struct Pet{
 pub mut:
-    id i64 [required]
-    name string [required]
+    id i64 @[required]
+    name string @[required]
     tag string
 }
 

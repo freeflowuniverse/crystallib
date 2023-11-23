@@ -52,8 +52,8 @@ pub fn new(config AuthenticatorConfig) Authenticator {
 pub struct SendMailConfig {
 	email string
 	mail  VerificationMail
-	smtp  SmtpConfig       [required]
-	link  string           [required]
+	smtp  SmtpConfig       @[required]
+	link  string           @[required]
 }
 
 pub struct VerificationMail {
@@ -218,7 +218,7 @@ pub fn (mut auth Authenticator) authenticate(email string, cypher string) ! {
 }
 
 pub struct AwaitAuthParams {
-	email   string        [required]
+	email   string        @[required]
 	timeout time.Duration = 3 * time.minute
 }
 

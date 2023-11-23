@@ -17,7 +17,7 @@ pub mut:
 pub struct LogArgs {
 pub mut:
 	cat string
-	log string [required]
+	log string @[required]
 }
 
 // cat & log are the arguments .

@@ -7,7 +7,7 @@ import freeflowuniverse.spiderlib.auth.jwt
 
 // session controller that be be added to vweb projects
 pub struct Client {
-	url string [required]
+	url string @[required]
 }
 
 struct PostParams {

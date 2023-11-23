@@ -34,8 +34,8 @@ pub:
 [params]
 pub struct ComposeServiceArgs {
 pub:
-	name    string [required]
-	image   string [required]
+	name    string @[required]
+	image   string @[required]
 	params  string
 	content string // optional, if this is set then will not render
 }

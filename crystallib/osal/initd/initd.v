@@ -82,16 +82,16 @@ fn (mut initdobj Initd) load() ! {
 [params]
 pub struct IProcessNewArgs {
 pub mut:
-	name        string [required]
-	cmd         string [required]
-	description string [required]
+	name        string @[required]
+	cmd         string @[required]
+	description string @[required]
 	// env       map[string]string
 }
 
 //```
-// name      string            [required]
-// cmd       string            [required]
-// description string [required]
+// name      string            @[required]
+// cmd       string            @[required]
+// description string @[required]
 //```
 pub fn (mut initd Initd) new(args_ IProcessNewArgs) !IProcess {
 	mut args := args_

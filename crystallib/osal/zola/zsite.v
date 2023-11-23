@@ -21,8 +21,8 @@ pub mut:
 [params]
 pub struct ZSiteArgs {
 pub mut:
-	name string [required]
-	url  string [required] // url of the summary.md file
+	name string @[required]
+	url  string @[required] // url of the summary.md file
 	pull bool
 }
 

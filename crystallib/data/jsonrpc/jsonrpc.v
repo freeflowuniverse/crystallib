@@ -9,10 +9,10 @@ const (
 
 pub struct JsonRpcRequest[T] {
 pub mut:
-	jsonrpc string [required]
-	method  string [required]
-	params  T      [required]
-	id      string [required]
+	jsonrpc string @[required]
+	method  string @[required]
+	params  T      @[required]
+	id      string @[required]
 }
 
 pub fn (j &JsonRpcRequest[T]) to_json() string {
@@ -21,9 +21,9 @@ pub fn (j &JsonRpcRequest[T]) to_json() string {
 
 pub struct JsonRpcResponse[D] {
 pub mut:
-	jsonrpc string [required]
+	jsonrpc string @[required]
 	result  D
-	id      string [required]
+	id      string @[required]
 }
 
 pub fn (j &JsonRpcResponse[D]) to_json() string {
@@ -32,15 +32,15 @@ pub fn (j &JsonRpcResponse[D]) to_json() string {
 
 pub struct JsonRpcError {
 pub mut:
-	jsonrpc string            [required]
-	error   InnerJsonRpcError [required]
-	id      string            [required]
+	jsonrpc string            @[required]
+	error   InnerJsonRpcError @[required]
+	id      string            @[required]
 }
 
 struct InnerJsonRpcError {
 pub mut:
-	code    int    [required]
-	message string [required]
+	code    int    @[required]
+	message string @[required]
 	data    string
 }
 
@@ -83,9 +83,9 @@ pub fn jsonrpcrequest_decode[T](data string) !JsonRpcRequest[T] {
 
 struct JsonRpcRequestAny {
 pub mut:
-	jsonrpc string [required]
-	method  string [required]
-	id      string [required]
+	jsonrpc string @[required]
+	method  string @[required]
+	id      string @[required]
 }
 
 pub fn jsonrpcrequest_decode_method(data string) !string {

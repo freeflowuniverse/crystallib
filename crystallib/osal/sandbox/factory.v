@@ -32,7 +32,7 @@ pub fn new(args_ FactoryArgs) !Factory {
 [params]
 pub struct DebootstrapArgs {
 pub mut:
-	imagename  string [required]
+	imagename  string @[required]
 	reset      bool   = true
 	release    string = 'stable'
 	repository string = 'http://deb.debian.org/debian/'

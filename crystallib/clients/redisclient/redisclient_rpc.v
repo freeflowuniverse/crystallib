@@ -20,8 +20,8 @@ pub fn (mut r Redis) rpc_get(key string) RedisRpc {
 
 pub struct RPCArgs {
 pub:
-	cmd     string [required]
-	data    string [required]
+	cmd     string @[required]
+	data    string @[required]
 	timeout u64  = 60000 // 60 sec
 	wait    bool = true
 }
@@ -43,8 +43,8 @@ pub:
 // send data to a queue and wait till return comes back
 // timeout in milliseconds
 // params
-// 	cmd string [required]
-// 	data string [required]
+// 	cmd string @[required]
+// 	data string @[required]
 // 	timeout u64=60000  //60 sec
 // 	wait bool=true
 pub fn (mut q RedisRpc) call(args RPCArgs) !string {

@@ -22,8 +22,8 @@ pub mut:
 pub struct PersonNewArgs {
 pub mut:
 	id          string // needs to be unique
-	firstname   string [required]
-	lastname    string [required]
+	firstname   string @[required]
+	lastname    string @[required]
 	description string
 }
 

@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.core.pathlib
 pub struct BinCopyArgs {
 pub mut:
 	cmdname string
-	source  string [required] // path where the binary is
+	source  string @[required] // path where the binary is
 	// bin_repo_url string = 'https://github.com/freeflowuniverse/freeflow_binary' // binary where we put the results
 }
 

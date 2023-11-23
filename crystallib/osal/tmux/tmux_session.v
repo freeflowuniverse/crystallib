@@ -49,7 +49,7 @@ pub fn (mut t Tmux) session_delete(name_ string) ! {
 [params]
 pub struct SessionCreateArgs {
 pub mut:
-	name  string [required]
+	name  string @[required]
 	reset bool
 }
 

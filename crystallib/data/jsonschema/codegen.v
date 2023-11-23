@@ -43,7 +43,7 @@ pub fn (schema Schema) vstructs_encode() ![]string {
 
 		properties += '\n\t${name} ${typesymbol}'
 		if name in schema.required {
-			properties += ' [required]'
+			properties += ' @[required]'
 		}
 	}
 	schemas << $tmpl('templates/struct.vtemplate')

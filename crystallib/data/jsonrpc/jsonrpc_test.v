@@ -2,7 +2,7 @@ module jsonrpc
 
 struct MyParams {
 pub mut:
-	attr1 string [required]
+	attr1 string @[required]
 }
 
 struct MyResult {

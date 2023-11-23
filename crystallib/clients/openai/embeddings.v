@@ -16,8 +16,8 @@ fn embedding_model_str(e EmbeddingModel) string {
 
 [params]
 pub struct EmbeddingCreateArgs {
-	input []string       [required]
-	model EmbeddingModel [required]
+	input []string       @[required]
+	model EmbeddingModel @[required]
 	user  string
 }
 

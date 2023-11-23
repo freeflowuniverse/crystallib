@@ -22,7 +22,7 @@ mut:
 [params]
 pub struct ControllerParams {
 	logger        &log.Logger
-	authenticator Authenticator [required]
+	authenticator Authenticator @[required]
 }
 
 pub fn new_controller(params ControllerParams) Controller {

@@ -6,7 +6,7 @@ pub struct NodeIterator {
 pub mut:
 	filter NodeFilter
 pub:
-	get_func NodeGetter [required]
+	get_func NodeGetter @[required]
 }
 
 pub fn (mut i NodeIterator) next() ?[]Node {
@@ -31,7 +31,7 @@ pub struct FarmIterator {
 pub mut:
 	filter FarmFilter
 pub:
-	get_func FarmGetter [required]
+	get_func FarmGetter @[required]
 }
 
 pub fn (mut i FarmIterator) next() ?[]Farm {
@@ -56,7 +56,7 @@ pub struct ContractIterator {
 pub mut:
 	filter ContractFilter
 pub:
-	get_func ContractGetter [required]
+	get_func ContractGetter @[required]
 }
 
 pub fn (mut i ContractIterator) next() ?[]Contract {
@@ -81,7 +81,7 @@ pub struct TwinIterator {
 pub mut:
 	filter TwinFilter
 pub:
-	get_func TwinGetter [required]
+	get_func TwinGetter @[required]
 }
 
 pub fn (mut i TwinIterator) next() ?[]Twin {

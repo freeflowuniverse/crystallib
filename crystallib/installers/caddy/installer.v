@@ -8,7 +8,7 @@ import freeflowuniverse.crystallib.installers.zinit
 import freeflowuniverse.crystallib.osal.zinit as zinitmgmt
 import os
 
-[params]
+@[params]
 pub struct InstallArgs {
 pub mut:
 	reset bool
@@ -47,7 +47,7 @@ pub fn install(args InstallArgs) ! {
 	return
 }
 
-[params]
+@[params]
 pub struct WebConfig {
 pub mut:
 	path   string = '/var/www'
@@ -87,7 +87,7 @@ pub fn configuration_get() !string {
 	return c
 }
 
-[params]
+@[params]
 pub struct ConfigurationArgs {
 pub mut:
 	content string

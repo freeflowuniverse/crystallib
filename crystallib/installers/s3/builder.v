@@ -1,16 +1,14 @@
 module s3
 
-import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.rust
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.gittools
-import freeflowuniverse.crystallib.installers
 
 [params]
 pub struct BuildArgs {
 pub mut:
 	reset    bool
-	bin_push bool = true
+	// bin_push bool = true
 }
 
 // install s3cas will return true if it was already installed
@@ -34,10 +32,9 @@ pub fn build(args BuildArgs) ! {
 	'
 	osal.execute_stdout(cmd) or { return error('Cannot install s3.\n${err}') }
 
-	if args.bin_push {
-		installers.bin_push(
-			cmdname: 's3-cas'
-			source: '/root/code/github/leesmet/s3-cas/target/debug/s3-cas'
-		)!
-	}
+	osal.bin_copy(
+		// cmdname: ''
+		source: '${path}/target/debug/s3-cas'
+	)!
+
 }

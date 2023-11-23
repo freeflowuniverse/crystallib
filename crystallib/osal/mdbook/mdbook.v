@@ -21,9 +21,9 @@ pub mut:
 [params]
 pub struct MDBookArgs {
 pub mut:
-	name  string [required]
+	name  string @[required]
 	title string
-	url   string [required] // url of the summary.md file
+	url   string @[required] // url of the summary.md file
 }
 
 pub fn (mut books MDBooks) book_new(args MDBookArgs) !&MDBook {

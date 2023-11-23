@@ -1,9 +1,8 @@
 module zinit
 
-import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.osal.initd
+// import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.core.texttools
+// import freeflowuniverse.crystallib.core.texttools
 import os
 
 // will initialize a zinit session and start it when needed
@@ -21,9 +20,11 @@ pub fn new() !Zinit {
 			start()!
 			res = os.execute(cmd)
 			if res.exit_code > 0 {
+				$if debug {print_backtrace()}
 				return error("can't do zinit list, after start of zinit.\n${res}")
 			}
 		} else {
+			$if debug {print_backtrace()}
 			return error("can't do zinit list.\n${res}")
 		}
 	}
@@ -39,7 +40,7 @@ pub fn new() !Zinit {
 				name: name
 				zinit: &obj
 			}
-			zp.load()!
+			zp.load() or {}
 			obj.processes[name] = zp
 		}
 	}

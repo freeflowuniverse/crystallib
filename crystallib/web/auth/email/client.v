@@ -6,7 +6,7 @@ import json
 
 // session controller that be be added to vweb projects
 pub struct EmailClient {
-	url string [required]
+	url string @[required]
 }
 
 struct PostParams {

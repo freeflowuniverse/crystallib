@@ -9,7 +9,7 @@ pub enum PingResult {
 [params]
 pub struct PingArgs {
 pub mut:
-	address string [required]
+	address string @[required]
 	count   u8  = 1 // the ping is successful if it got count amount of replies from the other side
 	timeout u16 = 1 // the time in which the other side should respond in seconds
 	retry   u8
