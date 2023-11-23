@@ -1,6 +1,6 @@
 module postgresql
 
-import freeflowuniverse.crystallib.tools.tmux
+import freeflowuniverse.crystallib.osal.tmux
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools

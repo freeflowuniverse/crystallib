@@ -1,11 +1,12 @@
 module gitea
 
 import freeflowuniverse.crystallib.installers.base
-import freeflowuniverse.crystallib.tools.tmux
+import freeflowuniverse.crystallib.osal.tmux
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.core.texttools
+// import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.installers.postgresql
+import json
 import os
 
 [params]
@@ -19,10 +20,21 @@ pub mut:
 	postgresql_passwd string // for now all on default port
 	mail_from         string = 'git@meet.tf'
 	smtp_addr         string = 'smtp-relay.brevo.com'
+	smtp_login	      string [required]
 	smpt_port         int    = 587
 	smtp_passwd       string
-	appname           string [required]
-	domain            string [required]
+	name           	  string = "main"
+	domain			  string [required]
+	jwt_secret        string
+	lfs_jwt_secret    string 
+	internal_token    string
+	secret_key        string
+}
+
+[params]
+pub struct GetArgs {
+pub mut:
+	name           string = "main"
 }
 
 pub struct Gitea {
@@ -31,69 +43,100 @@ pub mut:
 	args        InstallArgs
 }
 
-// run gitea as docker compose
-pub fn new(args_ InstallArgs) !Gitea {
+fn key_get(name string) string {
+	return "gitea_install_args_${name}"
+}
+
+pub fn new(getargs GetArgs) !Gitea {
+	data:=osal.done_get(key_get(getargs.name)) or { 
+		return error("can't get gitea because install has not happened before. Can't find the installer data.")
+	}
+	mut args:=json.decode(InstallArgs,data)!
+
+	mut s := Gitea{
+		path_config: pathlib.get_dir(path: '${args.path}/config', create: true)!
+		args: args
+	}
+	return s
+}
+
+
+// install gitea will return true if it was already installed
+pub fn install(args_ InstallArgs) !Gitea {
 	mut args := args_
 
-	if args.postgresql_passwd == '' {
-		args.postgresql_passwd = args.passwd
+	if args.reset == false && osal.done_exists(key_get(args.name)) {
+		return new(name:args_.name)
 	}
 
-	if args.reset {
-		mut t := tmux.new()!
-		t.window_delete(name: 'gitea')!
-		osal.dir_delete(args.path)!
-		osal.done_delete('gitea_started')!
+	if osal.platform() != .ubuntu {
+		return error('only support ubuntu for now')
 	}
 
-	install(args.reset)!
+	// make sure we install base on the node
+	base.install()!
+
 
 	mut db := postgresql.new(
 		passwd: args.postgresql_passwd
 		path: args.postgresql_path
 		reset: args.postgresql_reset
 	)!
-	db.db_create('gitea')!
+	db.start()!
+	db.db_create('gitea_${args.name}')!
+		
 
-	mut s := Gitea{
-		path_config: pathlib.get_dir(path: '${args.path}/config', create: true)!
-		args: args
-	}
-
-	return s
-}
-
-// install gitea will return true if it was already installed
-pub fn install(reset bool) ! {
-	// make sure we install base on the node
-	base.install()!
-
-	if reset == false && osal.done_exists('install_gitea') {
-		return
-	}
-
-	// install gitea if it was already done will return true
-	println(' - package_install install gitea')
-
-	if osal.platform() != .ubuntu {
-		return error('only support ubuntu for now')
-	}
+	version:="1.21.0"
+	url:='https://github.com/go-gitea/gitea/releases/download/v${version}/gitea-${version}-linux-amd64.xz'
+	println (" download ${url}")
 	mut dest := osal.download(
-		url: 'https://github.com/go-gitea/gitea/releases/download/v1.20.4/gitea-1.20.4-linux-amd64.xz'
+		url: url
 		minsize_kb: 40000
 		reset: true
 		expand_file: '/tmp/download/gitea'
 	)!
 
-	// TODO: does not download well
+	binpath:=pathlib.get_file(path:"/tmp/download/gitea",create:false)!
+	osal.bin_copy(
+		cmdname: 'gitea'
+		source: binpath.path
+	)!	
 
-	mut giteafile := pathlib.get_file(path: '/tmp/download/gitea')! // file in the dest
-	println(giteafile)
-	giteafile.copy('/usr/local/bin')!
-	giteafile.chmod(0o770)! // includes read & write & execute
+	if args.postgresql_passwd == '' {
+		args.postgresql_passwd = args.passwd
+	}
 
-	osal.done_set('install_gitea', 'OK')!
-	return
+	// jwt_secret        string
+	// lfs_jwt_secret    string 
+	// internal_token    string
+	// secret_key        string
+
+	if args.jwt_secret == '' {
+		r:=os.execute_or_panic("gitea generate secret JWT_SECRET")
+		args.jwt_secret = r.output.trim_space()
+	}
+	if args.lfs_jwt_secret == '' {
+		r:=os.execute_or_panic("gitea generate secret LFS_JWT_SECRET")
+		args.lfs_jwt_secret = r.output.trim_space()
+	}
+	if args.internal_token == '' {
+		r:=os.execute_or_panic("gitea generate secret INTERNAL_TOKEN")
+		args.internal_token = r.output.trim_space()
+	}
+	if args.secret_key == '' {
+		r:=os.execute_or_panic("gitea generate secret SECRET_KEY")
+		args.secret_key = r.output.trim_space()
+	}
+
+	println(args)
+	// install gitea if it was already done will return true
+	println(' - package_install install gitea: $args.name')
+
+
+	data:=json.encode(args)
+	osal.done_set(key_get(args.name),data)!
+
+	return new(name:args_.name)
 }
 
 // run Gitea as docker compose
