@@ -15,16 +15,16 @@ pub struct Authenticator {
 	secret string
 mut:
 	backend IBackend // Backend for authenticator
-	logger   &log.Logger = &log.Logger(&log.Log{
-		level: .info
-	})
+	logger  &log.Logger = &log.Logger(&log.Log{
+	level: .info
+})
 }
 
 // Is initialized when an auth link is sent
 // Represents the state of the authentication session
 pub struct AuthSession {
 pub mut:
-	email		string
+	email         string
 	timeout       time.Time
 	auth_code     string // hex representation of 64 bytes
 	attempts_left int = 3
@@ -33,15 +33,15 @@ pub mut:
 
 [params]
 pub struct AuthenticatorConfig {
-	secret string
+	secret  string
 	backend IBackend
-	logger &log.Logger = &log.Logger(&log.Log{
-		level: .debug
-	})
+	logger  &log.Logger = &log.Logger(&log.Log{
+	level: .debug
+})
 }
 
 pub fn new(config AuthenticatorConfig) Authenticator {
-	return Authenticator {
+	return Authenticator{
 		backend: config.backend
 		logger: config.logger
 		secret: config.secret
@@ -51,9 +51,9 @@ pub fn new(config AuthenticatorConfig) Authenticator {
 [params]
 pub struct SendMailConfig {
 	email string
-	mail VerificationMail
-	smtp SmtpConfig [required]
-	link string [required]
+	mail  VerificationMail
+	smtp  SmtpConfig       [required]
+	link  string           [required]
 }
 
 pub struct VerificationMail {
@@ -64,9 +64,9 @@ pub:
 }
 
 pub struct SmtpConfig {
-	server string
-	from string
-	port int
+	server   string
+	from     string
+	port     int
 	username string
 	password string
 }
@@ -109,15 +109,11 @@ pub fn (mut auth Authenticator) send_verification_mail(config SendMailConfig) ! 
 }
 
 // sends mail with login link
-pub fn (mut auth Authenticator) send_login_link(config SendMailConfig) ! {	
+pub fn (mut auth Authenticator) send_login_link(config SendMailConfig) ! {
 	expiration := time.now().add(5 * time.minute)
 	data := '${config.email}.${expiration}' // data to be signed
-	signature := hmac.new(
-		hex.decode(auth.secret) or {panic(err)},
-		data.bytes(),
-		sha256.sum,
-		sha256.block_size
-	)
+	signature := hmac.new(hex.decode(auth.secret) or { panic(err) }, data.bytes(), sha256.sum,
+		sha256.block_size)
 
 	encoded_signature := base64.url_encode(signature.bytestr().bytes())
 	link := '<a href="${config.link}/${config.email}/${expiration.unix_time()}/${encoded_signature}">Click to login</a>'
@@ -146,13 +142,13 @@ pub fn (mut auth Authenticator) send_login_link(config SendMailConfig) ! {
 
 pub struct LoginAttempt {
 pub:
-	email string
+	email      string
 	expiration time.Time
-	signature string
+	signature  string
 }
 
 // sends mail with login link
-pub fn (mut auth Authenticator) authenticate_login_attempt(attempt LoginAttempt) ! {	
+pub fn (mut auth Authenticator) authenticate_login_attempt(attempt LoginAttempt) ! {
 	auth.logger.info('Email Authenticator: Authenticating login attempt for ${attempt.email}')
 
 	if time.now() > attempt.expiration {
@@ -160,13 +156,9 @@ pub fn (mut auth Authenticator) authenticate_login_attempt(attempt LoginAttempt)
 	}
 
 	data := '${attempt.email}.${attempt.expiration}' // data to be signed
-	signature_mirror := hmac.new(
-		hex.decode(auth.secret) or {panic(err)},
-		data.bytes(),
-		sha256.sum,
-		sha256.block_size
-	).bytestr().bytes()
-	
+	signature_mirror := hmac.new(hex.decode(auth.secret) or { panic(err) }, data.bytes(),
+		sha256.sum, sha256.block_size).bytestr().bytes()
+
 	decoded_signature := base64.url_decode(attempt.signature)
 
 	if !hmac.equal(decoded_signature, signature_mirror) {
@@ -199,12 +191,12 @@ struct AuthError {
 // TODO: max allowed request per seccond to prevent dos
 pub fn (mut auth Authenticator) authenticate(email string, cypher string) ! {
 	session := auth.backend.read_auth_session(email) or {
-		return AuthError {
+		return AuthError{
 			reason: .session_not_found
 		}
 	}
 	if session.attempts_left <= 0 { // checks if remaining attempts
-		return AuthError {
+		return AuthError{
 			reason: .no_remaining_attempts
 		}
 	}
@@ -212,23 +204,21 @@ pub fn (mut auth Authenticator) authenticate(email string, cypher string) ! {
 	// authenticates if cypher in link matches authcode
 	if cypher == session.auth_code {
 		auth.logger.debug('Email Authenticator: email ${email} authenticated')
-		auth.backend.set_session_authenticated(email) or {
-			panic(err)
-		}
+		auth.backend.set_session_authenticated(email) or { panic(err) }
 	} else {
 		updated_session := AuthSession{
 			...session
 			attempts_left: session.attempts_left - 1
 		}
 		auth.backend.update_auth_session(updated_session)!
-		return AuthError {
+		return AuthError{
 			reason: .cypher_mismatch
 		}
 	}
 }
 
 pub struct AwaitAuthParams {
-	email string [required]
+	email   string        [required]
 	timeout time.Duration = 3 * time.minute
 }
 
@@ -236,7 +226,9 @@ pub struct AwaitAuthParams {
 pub fn (mut auth Authenticator) await_authentication(params AwaitAuthParams) ! {
 	stopwatch := time.new_stopwatch()
 	for stopwatch.elapsed() < params.timeout {
-		if auth.is_authenticated(params.email)! { return }
+		if auth.is_authenticated(params.email)! {
+			return
+		}
 		time.sleep(2 * time.second)
 	}
 	return error('Authentication timeout.')
@@ -244,8 +236,6 @@ pub fn (mut auth Authenticator) await_authentication(params AwaitAuthParams) ! {
 
 // function to check if an email is authenticated
 pub fn (mut auth Authenticator) is_authenticated(email string) !bool {
-	session := auth.backend.read_auth_session(email) or {
-		return error('Cant find session')
-	}
+	session := auth.backend.read_auth_session(email) or { return error('Cant find session') }
 	return session.authenticated
 }
