@@ -95,7 +95,7 @@ pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []GitRepo {
 		...args_
 		provider: texttools.name_fix(args_.provider)
 		// name: texttools.name_fix(args_.name)
-		account: texttools.name_fix(args_.account)
+		// account: texttools.name_fix(args_.account)
 		name: args_.name
 		// account: args_.account
 	}

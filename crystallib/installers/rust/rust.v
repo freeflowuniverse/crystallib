@@ -4,13 +4,19 @@ import os
 import freeflowuniverse.crystallib.osal
 // install rust will return true if it was already installed
 
-pub fn install() ! {
+[params]
+pub struct InstallArgs{
+pub mut:
+	reset bool
+}
+
+pub fn install(args InstallArgs) ! {
 	// install rust if it was already done will return true
 	println(' - start install rust')
 
 	// osal.done_delete('install_rust')!
 
-	if osal.done_exists('install_rust') {
+	if !args.reset && osal.done_exists('install_rust') {
 		println(' - rust was already installed')
 		return
 	}

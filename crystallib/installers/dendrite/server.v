@@ -17,18 +17,14 @@ pub mut:
 	name           	  string = "default"
 	reset             bool
 	path              string = '/data/dendrite'
-	passwd            string
+	passwd            string @[required]
 	postgresql_name   string = "default"
-	mail_from         string = 'git@meet.tf'
-	smtp_addr         string = 'smtp-relay.brevo.com'
-	smtp_login	      string @[required]
-	smpt_port         int = 587
-	smtp_passwd       string
 	domain			  string @[required]
-	jwt_secret        string
-	lfs_jwt_secret    string 
-	internal_token    string
-	secret_key        string
+	registration_shared_secret string @[required]
+	recaptcha_public_key string @[required]
+	recaptcha_private_key string @[required]
+	recaptcha_bypass_secret string @[required]
+			
 }
 
 
@@ -48,7 +44,7 @@ pub mut:
 //```
 // if name exists already in the config DB, it will load for that name
 pub fn new(args_ Config) !Server {
-	install()! //make sure it has been build & ready to be used
+	install(reset:args_.reset)! //make sure it has been build & ready to be used
 	mut args := args_
 	if args.passwd == ""{
 		args.passwd = rand.string(12)
@@ -119,29 +115,44 @@ pub fn (mut server Server) start() ! {
 	//now create the DB
 	db.db_create("dendrite")!
 
-	t1 := $tmpl('templates/dendrite.yml')
-	mut config_path := server.path_config.file_get_new('dendrite.yml')!
+	t1 := $tmpl('templates/dendrite.yaml').replace("??","@")
+	mut config_path := server.path_config.file_get_new('dendrite.yaml')!
 	config_path.write(t1)!
 
 
-	// mut z := zinit.new()!
-	// processname:='dendrite_${server.name}'
-	// mut p := z.process_new(
-	// 	name: processname
-	// 	cmd: '
-	// 	cd /tmp
-	// 	sudo -u git bash -c \'dendrite web --config ${config_path.path} --verbose\'
-	// 	'
-	// )!
+	kpath1:="${server.path_config.path}/matrix_key.pem"
+	if ! os.exists(kpath1){
+		osal.exec(cmd:"dendrite-generate-keys --private-key ${kpath1}")!
+	}
 
-	// p.output_wait("Starting new Web server: tcp:0.0.0.0:3000",120)!
+
+	keyspath:="/caddy/certificates/acme-v02.api.letsencrypt.org-directory/${server.config.domain}"
+	if ! os.exists(keyspath){
+		return error("cannot find letsencrypt keys for caddy in: $keyspath")
+	}
+
+	os.cp("${keyspath}/${server.config.domain}.crt","${server.path_config.path}/server.crt")!
+	os.cp("${keyspath}/${server.config.domain}.key","${server.path_config.path}/server.key")!
 	
-	// o:=p.log()!
-	// println(o)
 
-	// server.check()!
+	mut z := zinit.new()!
+	processname:='dendrite_${server.name}'
+	mut p := z.process_new(
+		name: processname
+		cmd: '
+		cd ${server.path_config.path}
+		dendrite
+		'
+	)!
 
-	// println(" - dendrite start ok.")
+	p.output_wait("Starting external listener on :8008",120)!
+	
+	o:=p.log()!
+	println(o)
+
+	server.check()!
+
+	println(" - dendrite start ok.")
 
 }
 
@@ -177,4 +188,28 @@ pub fn (mut server Server) ok() bool {
 pub fn (mut server Server) destroy() ! {
 	server.stop()!
 	server.path_config.delete()!
+}
+
+
+[params]
+pub struct UserAddArgs{
+pub mut:
+	name string @[required]
+	passwd string @[required]
+	admin bool
+}
+
+//remove all data
+pub fn (mut server Server) user_add(args UserAddArgs) ! {
+	mut admin:=""
+	if args.admin{
+		admin="-admin"
+	}
+	cmd:='
+		cd ${server.path_config.path}	
+		dendrite-create-account --config dendrite.yaml -username ${args.name} -password ${args.passwd} $admin -url http://localhost:8008
+		'
+	println(cmd)
+	job:=osal.exec(cmd:cmd,die:false)!
+
 }

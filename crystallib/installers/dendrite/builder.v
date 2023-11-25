@@ -28,17 +28,17 @@ pub fn build(args BuildArgs) ! {
 	gitpath := gittools.code_get(coderoot: '/tmp/builder', url: dendrite.url, reset: true, pull: true)!
 
 	cmd := '
-
+	source ${osal.profile_path()} //source the go path
 	cd ${gitpath}
 	go build -o bin/ ./cmd/...
-	exit 1 #todo
+
+	cp /tmp/builder/github/matrix-org/dendrite/bin/dendrite /usr/local/bin/dendrite
+	cp /tmp/builder/github/matrix-org/dendrite/bin/generate-keys /usr/local/bin/dendrite-generate-keys
+	cp /tmp/builder/github/matrix-org/dendrite/bin/create-account /usr/local/bin/dendrite-create-account
+	cp /tmp/builder/github/matrix-org/dendrite/bin/furl /usr/local/bin/furl
+
 	'
 	osal.execute_stdout(cmd)!
-
-	// osal.bin_copy(
-	// 	cmdname: 'dendrite'
-	// 	source: binpath.path
-	// )!	
 
 
 }
