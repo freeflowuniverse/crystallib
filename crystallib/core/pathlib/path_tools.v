@@ -48,9 +48,12 @@ pub fn (mut path Path) expand(dest string) !Path {
 	// the ones who return a filepath
 	if filext == ".xz" {
 		cmd := 'xz --decompress ${path.path} --stdout > ${dest}'
-		if os.is_dir(dest){
-			os.rmdir(dest)!
-		}		
+		if os.is_file(dest){			
+			os.rm(dest)!
+		}				
+		os.mkdir_all(dest)!
+		os.rmdir(dest)!
+
 		res := os.execute(cmd)
 		// println(res)
 		if res.exit_code > 0 {

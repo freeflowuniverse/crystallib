@@ -55,6 +55,15 @@ pub fn profile_path_add(path string) ! {
 	}
 }
 
+pub fn profile_path() string {
+	if is_osx() {
+		return '${os.home_dir()}/.zprofile'
+	} else {
+		return '${os.home_dir()}/.bash_profile'
+	}
+}
+
+
 fn profile_paths_get(content string) []string {
 	mut paths := []string{}
 	for line in content.split_into_lines() {

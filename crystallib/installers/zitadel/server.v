@@ -1,4 +1,4 @@
-module gitea
+module zitadel
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.zinit 
@@ -16,8 +16,9 @@ pub struct Config {
 pub mut:
 	name           	  string = "default"
 	reset             bool
-	path              string = '/data/gitea'
-	passwd            string
+	path              string = '/data/zitadel'
+	passwd			  string 	@[required]
+	secret            string
 	postgresql_name   string = "default"
 	mail_from         string = 'git@meet.tf'
 	smtp_addr         string = 'smtp-relay.brevo.com'
@@ -25,10 +26,7 @@ pub mut:
 	smpt_port         int = 587
 	smtp_passwd       string
 	domain			  string @[required]
-	jwt_secret        string
-	lfs_jwt_secret    string 
-	internal_token    string
-	secret_key        string
+	orgname			  string = 'default'
 }
 
 
@@ -40,46 +38,31 @@ pub mut:
 	path_config pathlib.Path
 }
 
-// get the gitea server
+// get the zitadel server
 //```js
-// name        string = 'default'
-// path        string = '/data/gitea'
-// passwd      string
+// name           	  string = "default"
+// reset             bool
+// path              string = '/data/zitadel'
+// passwd            string
+// postgresql_name   string = "default"
+// mail_from         string = 'git@meet.tf'
+// smtp_addr         string = 'smtp-relay.brevo.com'
+// smtp_login	      string @[required]
+// smpt_port         int = 587
+// smtp_passwd       string
+// domain			  string @[required]
 //```
 // if name exists already in the config DB, it will load for that name
 pub fn new(args_ Config) !Server {
 	install()! //make sure it has been build & ready to be used
 	mut args := args_
-	if args.passwd == ""{
-		args.passwd = rand.string(12)
+	if args.secret == ""{
+		args.secret = rand.string(32)
 	}
 	args.name=texttools.name_fix(args.name)
-	key:="gitea_config_${args.name}"
+	key:="zitadel_config_${args.name}"
 	mut kvs:=fskvs.new(name:"config")!
-	if !kvs.exists(key){
-
-		// jwt_secret        string
-		// lfs_jwt_secret    string 
-		// internal_token    string
-		// secret_key        string
-
-		if args.jwt_secret == '' {
-			r:=os.execute_or_panic("gitea generate secret JWT_SECRET")
-			args.jwt_secret = r.output.trim_space()
-		}
-		if args.lfs_jwt_secret == '' {
-			r:=os.execute_or_panic("gitea generate secret LFS_JWT_SECRET")
-			args.lfs_jwt_secret = r.output.trim_space()
-		}
-		if args.internal_token == '' {
-			r:=os.execute_or_panic("gitea generate secret INTERNAL_TOKEN")
-			args.internal_token = r.output.trim_space()
-		}
-		if args.secret_key == '' {
-			r:=os.execute_or_panic("gitea generate secret SECRET_KEY")
-			args.secret_key = r.output.trim_space()
-		}		
-
+	if args.reset || !kvs.exists(key){
 		data:=json.encode(args)
 		kvs.set(key,data)!		
 	}
@@ -89,9 +72,9 @@ pub fn new(args_ Config) !Server {
 
 
 pub fn get(name_ string) !Server {
-	println(" - get gitea server $name_")
+	println(" - get zitadel server $name_")
 	name:=texttools.name_fix(name_)
-	key:="gitea_config_${name}"
+	key:="zitadel_config_${name}"
 	mut kvs:=fskvs.new(name:"config")!
 	if kvs.exists(key){
 		data:=kvs.get(key)!	
@@ -104,7 +87,7 @@ pub fn get(name_ string) !Server {
 		}
 
 		mut z := zinit.new()!
-		processname:='gitea_${name}'
+		processname:='zitadel_${name}'
 		if z.process_exists(processname){
 			server.process=z.process_get(processname)!
 		}
@@ -112,7 +95,7 @@ pub fn get(name_ string) !Server {
 		server.start()!
 		return server	
 	}
-	return error ("can't find server gitea with name $name")
+	return error ("can't find server zitadel with name $name")
 }
 
 
@@ -133,54 +116,54 @@ pub fn (mut server Server) status() zinit.ZProcessStatus {
 }
 
 
-// run gitea as docker compose
+// run zitadel as docker compose
 pub fn (mut server Server) start() ! {
 
 	// if server.ok(){
 	// 	return 
 	// }
 
-	println (" - start gitea: ${server.name}")
+	println (" - start zitadel: ${server.name}")
 	mut db := postgresql.get(server.config.postgresql_name)!
 
+	println(db)
+
+	if server.config.reset{
+		db.db_delete("zitadel")!
+	}
+
 	//now create the DB
-	db.db_create("gitea")!
+	db.db_create("zitadel")!
 
 	// if true{
 	// 	panic("sd")
 	// }
 
-	//TODO: postgresql can be on other server, need to fill in all arguments in template
-	t1 := $tmpl('templates/app.ini')
-	mut config_path := server.path_config.file_get_new('app.ini')!
+	t1 := $tmpl('templates/defaults.yaml')
+	mut config_path := server.path_config.file_get_new('defaults.yaml')!
 	config_path.write(t1)!
 
+	// mut z := zinit.new()!
+	// processname:='zitadel_${server.name}'
+	// mut p := z.process_new(
+	// 	name: processname
+	// 	cmd: '
+	// 	cd /tmp
+	// 	export ZITADEL_EXTERNALSECURE=false 
+	// 	zitadel start-from-init --config ${config_path.path} --masterkey "${server.config.secret}" --tlsMode disabled
+	// 	'
+	// )!
 
-	osal.user_add(name:"git")!
+	// p.stop()!
 
-	osal.exec(cmd:'
-		chown -R  git:root ${server.config.path}
-		chmod -R 777 /usr/local/bin
-		')!	
-
-	mut z := zinit.new()!
-	processname:='gitea_${server.name}'
-	mut p := z.process_new(
-		name: processname
-		cmd: '
-		cd /tmp
-		sudo -u git bash -c \'gitea web --config ${config_path.path} --verbose\'
-		'
-	)!
-
-	p.output_wait("Starting new Web server: tcp:0.0.0.0:3000",120)!
+	// p.output_wait("Starting new Web server: tcp:0.0.0.0:3000",120)!
 	
-	o:=p.log()!
-	println(o)
+	// o:=p.log()!
+	// println(o)
 
-	server.check()!
+	// server.check()!
 
-	println(" - gitea start ok.")
+	// println(" - zitadel start ok.")
 
 }
 
@@ -190,8 +173,8 @@ pub fn (mut server Server) restart() ! {
 }
 
 pub fn (mut server Server) stop() !{
-	print_backtrace()
-	println (" - stop gitea: ${server.name}")
+	// print_backtrace()
+	println (" - stop zitadel: ${server.name}")
 	mut process := server.process or {return}
 	return process.stop()
 }
@@ -200,7 +183,7 @@ pub fn (mut server Server) stop() !{
 pub fn (mut server Server) check() ! {
 	mut p:=server.process or {return error("can't find process for server.")}
 	p.check()!
-	//TODO: need to do some other checks to gitea e.g. rest calls
+	//TODO: need to do some other checks to zitadel e.g. rest calls
 }
 
 // check health, return true if ok
@@ -214,6 +197,9 @@ pub fn (mut server Server) ok() bool {
 
 //remove all data
 pub fn (mut server Server) destroy() ! {
-	server.stop()!
+	mut process := server.process or {panic("didnt find process")}
+	process.destroy()!
 	server.path_config.delete()!
+	mut db := postgresql.get(server.config.postgresql_name)!
+	db.db_delete("zitadel")!
 }

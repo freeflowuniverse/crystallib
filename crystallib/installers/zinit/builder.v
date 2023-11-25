@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.rust
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.gittools
-import freeflowuniverse.crystallib.installers
+// import freeflowuniverse.crystallib.installers
 
 const url = 'https://github.com/threefoldtech/zinit.git'
 
@@ -29,8 +29,10 @@ pub fn build(args BuildArgs) ! {
 
 	gitpath := gittools.code_get(coderoot: '/tmp/builder', url: zinit.url, reset: true, pull: true)!
 
-	cmd := '
+	// source ${osal.profile_path()}
 
+	cmd := '
+	source ~/.cargo/env
 	cd ${gitpath}
 	make release
 	'

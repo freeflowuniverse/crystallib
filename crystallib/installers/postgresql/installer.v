@@ -15,7 +15,7 @@ pub fn install() ! {
 		host_remove()!
 		docker.install()! // make sure docker is installed and working properly
 		zinitinstaller.install()!
-		osal.package_install('libpq-dev,postgresql-client-16')!
+		osal.package_install('libpq-dev,postgresql-client')!
 		osal.done_set('postgres_install', 'OK')!
 		println(" - postgresql installed")
 	}else{
