@@ -1,38 +1,37 @@
 set -ex
-pushd ~/code/github/freeflowuniverse/crystallib
+# pushd ~/code/github/freeflowuniverse/crystallib
 bash doc.sh
-v -stats test baobab/actions
-v -stats test algo/encoder
-v -stats test codeparser
-v -stats test clients/coinmarketcap
-v -stats test console
-v -stats test crystaljson
-v -stats test currency
-v -stats test docker
-v -stats test algo/encoder
-v -stats test imagemagick
-v -stats test ipaddress
-v -stats test markdowndocs
-v -stats test mnemonic
-v -stats test params
-v -stats test pathlib
-v -stats test redisclient
-v -stats test resp
-v -stats test texttools
-v -stats test timetools
-v -stats test gittools
-v -stats test jsonrpc
-v -stats test openrpc
-v -stats test markdowndocs
-v -stats test jsonschema
-v -stats test osal
+v -enable-globals -stats test crystallib/data/actionparser
+v -enable-globals -stats test crystallib/algo/encoder
+v -enable-globals -stats test crystallib/core/codeparser
+v -enable-globals -stats test crystallib/clients/coinmarketcap
+v -enable-globals -stats test crystallib/ui/console
+v -enable-globals -stats test crystallib/core/crystaljson
+v -enable-globals -stats test crystallib/data/currency
+v -enable-globals -stats test crystallib/osal/docker
+v -enable-globals -stats test crystallib/algo/encoder
+v -enable-globals -stats test crystallib/tools/imagemagick
+v -enable-globals -stats test crystallib/data/ipaddress
+v -enable-globals -stats test crystallib/data/markdownparser
+v -enable-globals -stats test crystallib/data/mnemonic
+v -enable-globals -stats test crystallib/data/paramsparser
+v -enable-globals -stats test crystallib/core/pathlib
+v -enable-globals -stats test crystallib/clients/redisclient
+v -enable-globals -stats test crystallib/data/resp
+v -enable-globals -stats test crystallib/core/texttools
+v -enable-globals -stats test crystallib/data/ourtime
+v -enable-globals -stats test crystallib/osal/gittools
+v -enable-globals -stats test crystallib/data/jsonrpc
+v -enable-globals -stats test crystallib/core/openrpc
+v -enable-globals -stats test crystallib/data/jsonschema
+v -enable-globals -stats test crystallib/osal
 
 # OK TO IGNORE FOR NOW
 # v -stats test tmux
 # v -stats test knowledgetree
 # v -stats test crpgp
 
-popd
+# popd
 
 
 echo "TESTS OK"
