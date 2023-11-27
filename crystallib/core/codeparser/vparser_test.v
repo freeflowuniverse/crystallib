@@ -16,10 +16,10 @@ const testcode = {
 				description: ''
 				name: ''
 				typ: codemodel.Type{
-					symbol: ''
+					symbol: 'void'
 				}
 			}
-			mod: 'codeparser.testdata.flatdir'
+			mod: 'core.codeparser.testdata.flatdir'
 			description: 'is the first function of file'
 			params: []
 			body: ''
@@ -39,10 +39,10 @@ const testcode = {
 				description: ''
 				name: ''
 				typ: codemodel.Type{
-					symbol: ''
+					symbol: 'void'
 				}
 			}
-			mod: 'codeparser.testdata.flatdir'
+			mod: 'core.codeparser.testdata.flatdir'
 			description: 'is the second function of file'
 			params: [
 				codemodel.Param{
@@ -67,6 +67,13 @@ const testcode = {
 		CodeItem(Struct{
 			name: 'AnotherfileStruct0'
 			description: 'AnotherfileStruct0 defines the configuration params of anotherfile_func2'
+			mod: 'core.codeparser.testdata.flatdir'
+			is_pub: true
+			attrs: [codemodel.Attribute{
+				name: 'params'
+				has_arg: false
+				arg: ''
+			}]
 			fields: [
 				codemodel.StructField{
 					comments: []
@@ -105,10 +112,10 @@ const testcode = {
 				description: ''
 				name: ''
 				typ: codemodel.Type{
-					symbol: ''
+					symbol: 'void'
 				}
 			}
-			mod: 'codeparser.testdata.flatdir'
+			mod: 'core.codeparser.testdata.flatdir'
 			description: 'is the third function of the file'
 			params: [
 				codemodel.Param{
@@ -133,6 +140,8 @@ const testcode = {
 		CodeItem(Struct{
 			name: 'AnotherfileStruct1'
 			description: ''
+			mod: 'core.codeparser.testdata.flatdir'
+			is_pub: true
 			fields: [
 				codemodel.StructField{
 					comments: []
@@ -157,10 +166,10 @@ const testcode = {
 				description: ''
 				name: ''
 				typ: codemodel.Type{
-					symbol: ''
+					symbol: 'void'
 				}
 			}
-			mod: 'codeparser.testdata.flatdir'
+			mod: 'core.codeparser.testdata.flatdir'
 			description: 'is the fourth function of the file is does something with param1 and param2 and creates AnotherfileStruct1'
 			params: [
 				codemodel.Param{
@@ -199,10 +208,10 @@ const testcode = {
 				description: ''
 				name: ''
 				typ: codemodel.Type{
-					symbol: ''
+					symbol: 'void'
 				}
 			}
-			mod: 'codeparser.testdata.flatdir'
+			mod: 'core.codeparser.testdata.flatdir'
 			description: 'is the first function of file'
 			params: []
 			body: ''
@@ -222,10 +231,10 @@ const testcode = {
 				description: ''
 				name: ''
 				typ: codemodel.Type{
-					symbol: ''
+					symbol: 'void'
 				}
 			}
-			mod: 'codeparser.testdata.flatdir'
+			mod: 'core.codeparser.testdata.flatdir'
 			description: 'is the second function of file'
 			params: [
 				codemodel.Param{
@@ -250,6 +259,13 @@ const testcode = {
 		CodeItem(Struct{
 			name: 'SubfileStruct0'
 			description: 'SubfileStruct0 defines the configuration params of subfile_func2'
+			mod: 'core.codeparser.testdata.flatdir'
+			is_pub: true
+			attrs: [codemodel.Attribute{
+				name: 'params'
+				has_arg: false
+				arg: ''
+			}]
 			fields: [
 				codemodel.StructField{
 					comments: []
@@ -288,10 +304,10 @@ const testcode = {
 				description: ''
 				name: ''
 				typ: codemodel.Type{
-					symbol: ''
+					symbol: 'void'
 				}
 			}
-			mod: 'codeparser.testdata.flatdir'
+			mod: 'core.codeparser.testdata.flatdir'
 			description: 'is the third function of the file'
 			params: [
 				codemodel.Param{
@@ -316,6 +332,8 @@ const testcode = {
 		CodeItem(Struct{
 			name: 'SubfileStruct1'
 			description: ''
+			mod: 'core.codeparser.testdata.flatdir'
+			is_pub: true
 			fields: [
 				codemodel.StructField{
 					comments: []
@@ -340,10 +358,10 @@ const testcode = {
 				description: ''
 				name: ''
 				typ: codemodel.Type{
-					symbol: ''
+					symbol: 'void'
 				}
 			}
-			mod: 'codeparser.testdata.flatdir'
+			mod: 'core.codeparser.testdata.flatdir'
 			description: 'is the fourth function of the file is does something with param1 and param2 and creates SubfileStruct1'
 			params: [
 				codemodel.Param{
@@ -382,10 +400,10 @@ const testcode = {
 				description: ''
 				name: ''
 				typ: codemodel.Type{
-					symbol: ''
+					symbol: 'void'
 				}
 			}
-			mod: 'codeparser.testdata'
+			mod: 'core.codeparser.testdata'
 			description: 'is the first function of file'
 			params: []
 			body: ''
@@ -405,10 +423,10 @@ const testcode = {
 				description: ''
 				name: ''
 				typ: codemodel.Type{
-					symbol: ''
+					symbol: 'void'
 				}
 			}
-			mod: 'codeparser.testdata'
+			mod: 'core.codeparser.testdata'
 			description: 'is the second function of file'
 			params: [
 				codemodel.Param{
@@ -433,6 +451,13 @@ const testcode = {
 		CodeItem(Struct{
 			name: 'FileStruct0'
 			description: 'FileStruct0 defines the configuration params of file_func2'
+			mod: 'core.codeparser.testdata'
+			is_pub: true
+			attrs: [codemodel.Attribute{
+				name: 'params'
+				has_arg: false
+				arg: ''
+			}]
 			fields: [
 				codemodel.StructField{
 					comments: []
@@ -471,10 +496,10 @@ const testcode = {
 				description: ''
 				name: ''
 				typ: codemodel.Type{
-					symbol: ''
+					symbol: 'void'
 				}
 			}
-			mod: 'codeparser.testdata'
+			mod: 'core.codeparser.testdata'
 			description: 'is the third function of the file'
 			params: [
 				codemodel.Param{
@@ -500,6 +525,8 @@ const testcode = {
 			name: 'FileStruct1'
 			description: ''
 			fields: []
+			mod: 'core.codeparser.testdata'
+			is_pub: true
 		}),
 		CodeItem(Function{
 			name: 'file_func3'
@@ -508,10 +535,10 @@ const testcode = {
 				description: ''
 				name: ''
 				typ: codemodel.Type{
-					symbol: ''
+					symbol: 'void'
 				}
 			}
-			mod: 'codeparser.testdata'
+			mod: 'core.codeparser.testdata'
 			description: 'is the fourth function of the file is does something with param1 and param2 and creates FileStruct1'
 			params: [
 				codemodel.Param{
@@ -555,14 +582,14 @@ fn test_vparse_flat_directory() ! {
 	assert code.len == 12
 	assert code[0] == codeparser.testcode['anotherfile.v'][0]
 	assert code[0..6] == codeparser.testcode['anotherfile.v'][0..6], '<${code[0..6]}> vs <${codeparser.testcode['anotherfile.v'][0..6]}>'
-	assert code[6..12] == codeparser.testcode['subfile.v'][0..6]
+	assert code[6..12] == codeparser.testcode['subfile.v'][0..6], '<${code[6..12]}> vs <${codeparser.testcode['subfile.v'][0..6]}>'
 }
 
 fn test_vparse_non_recursive() ! {
 	code := parse_v(codeparser.testpath)!
 	assert code.len == 6
 	assert code[0] == codeparser.testcode['file.v'][0]
-	assert code[0..6] == codeparser.testcode['file.v'][0..6]
+	assert code[0..6] == codeparser.testcode['file.v'][0..6], '<${code[0..6]}> vs <${codeparser.testcode['file.v'][0..6]}>'
 }
 
 fn test_vparse_recursive() ! {
