@@ -81,7 +81,7 @@ pub fn book_generate(args_ BookGenerateArgs) !&MDBook {
 	book.process()!
 	book.errors_report()!
 	book.export()!
-	pages_str := book.pages.values().map('\n${it.name}\npages_included:${it.pages_linked.map(it.name)}')
+	// pages_str := book.pages.values().map('\n${it.name}\npages_included:${it.pages_linked.map(it.name)}')
 
 	return book
 }
