@@ -7,7 +7,7 @@ fn test_string() {
 	mut e := new()
 	e.add_string('a')
 	e.add_string('bc')
-	assert e.data == [e.version, 1, 0, 97, 2, 0, 98, 99]
+	assert e.data == [ u8(1), 0, 97, 2, 0, 98, 99]
 
 	mut d := decoder_new(e.data)
 	assert d.get_string() == 'a'
@@ -18,7 +18,7 @@ fn test_int() {
 	mut e := new()
 	e.add_int(math.min_i32)
 	e.add_int(math.max_i32)
-	assert e.data == [e.version, 0x00, 0x00, 0x00, 0x80, 0xff, 0xff, 0xff, 0x7f]
+	assert e.data == [ u8(0x00), 0x00, 0x00, 0x80, 0xff, 0xff, 0xff, 0x7f]
 
 	mut d := decoder_new(e.data)
 	assert d.get_int() == math.min_i32
@@ -30,7 +30,7 @@ fn test_bytes() {
 
 	mut e := new()
 	e.add_list_u8(sb)
-	assert e.data == [e.version, 6, 0, 97, 98, 99, 100, 101, 102]
+	assert e.data == [ u8(6), 0, 97, 98, 99, 100, 101, 102]
 
 	mut d := decoder_new(e.data)
 	assert d.get_list_u8() == sb
@@ -40,7 +40,7 @@ fn test_u8() {
 	mut e := new()
 	e.add_u8(math.min_u8)
 	e.add_u8(math.max_u8)
-	assert e.data == [e.version, 0x00, 0xff]
+	assert e.data == [ u8(0x00), 0xff]
 
 	mut d := decoder_new(e.data)
 	assert d.get_u8() == math.min_u8
@@ -51,7 +51,7 @@ fn test_u16() {
 	mut e := new()
 	e.add_u16(math.min_u16)
 	e.add_u16(math.max_u16)
-	assert e.data == [e.version, 0x00, 0x00, 0xff, 0xff]
+	assert e.data == [ u8(0x00), 0x00, 0xff, 0xff]
 
 	mut d := decoder_new(e.data)
 	assert d.get_u16() == math.min_u16
@@ -62,7 +62,7 @@ fn test_u32() {
 	mut e := new()
 	e.add_u32(math.min_u32)
 	e.add_u32(math.max_u32)
-	assert e.data == [e.version, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff]
+	assert e.data == [ u8(0x00), 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff]
 
 	mut d := decoder_new(e.data)
 	assert d.get_u32() == math.min_u32
@@ -73,7 +73,7 @@ fn test_u64() {
 	mut e := new()
 	e.add_u64(math.min_u64)
 	e.add_u64(math.max_u64)
-	assert e.data == [e.version, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff,
+	assert e.data == [ u8(0x00), 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff,
 		0xff, 0xff, 0xff, 0xff, 0xff]
 
 	mut d := decoder_new(e.data)
@@ -95,7 +95,7 @@ fn test_list_string() {
 
 	mut e := new()
 	e.add_list_string(list)
-	assert e.data == [e.version, 3, 0, 1, 0, 97, 2, 0, 98, 99, 3, 0, 100, 101, 102]
+	assert e.data == [ u8(3), 0, 1, 0, 97, 2, 0, 98, 99, 3, 0, 100, 101, 102]
 
 	mut d := decoder_new(e.data)
 	assert d.get_list_string() == list
@@ -106,7 +106,7 @@ fn test_list_int() {
 
 	mut e := new()
 	e.add_list_int(list)
-	assert e.data == [e.version, 3, 0, 0x95, 0xea, 0x2f, 0x87, 0, 0, 0, 0, 0x8f, 0xe6, 0xf2, 0xfd]
+	assert e.data == [ u8(3), 0, 0x95, 0xea, 0x2f, 0x87, 0, 0, 0, 0, 0x8f, 0xe6, 0xf2, 0xfd]
 
 	mut d := decoder_new(e.data)
 	assert d.get_list_int() == list
@@ -117,7 +117,7 @@ fn test_list_u8() {
 
 	mut e := new()
 	e.add_list_u8(list)
-	assert e.data == [e.version, 3, 0, 153, 0, 22]
+	assert e.data == [ u8(3), 0, 153, 0, 22]
 
 	mut d := decoder_new(e.data)
 	assert d.get_list_u8() == list
@@ -128,7 +128,7 @@ fn test_list_u16() {
 
 	mut e := new()
 	e.add_list_u16(list)
-	assert e.data == [e.version, 3, 0, 0x25, 0x87, 0, 0, 0xff, 0xfd]
+	assert e.data == [ u8(3), 0, 0x25, 0x87, 0, 0, 0xff, 0xfd]
 
 	mut d := decoder_new(e.data)
 	assert d.get_list_u16() == list
@@ -139,7 +139,7 @@ fn test_list_u32() {
 
 	mut e := new()
 	e.add_list_u32(list)
-	assert e.data == [e.version, 3, 0, 0x95, 0xea, 0x2f, 0x87, 0, 0, 0, 0, 0x8f, 0xe6, 0xf2, 0xfd]
+	assert e.data == [ u8(3), 0, 0x95, 0xea, 0x2f, 0x87, 0, 0, 0, 0, 0x8f, 0xe6, 0xf2, 0xfd]
 
 	mut d := decoder_new(e.data)
 	assert d.get_list_u32() == list
@@ -153,7 +153,7 @@ fn test_map_string() {
 
 	mut e := new()
 	e.add_map_string(mp)
-	assert e.data == [e.version, 2, 0, 1, 0, 49, 1, 0, 97, 1, 0, 50, 2, 0, 98, 99]
+	assert e.data == [ u8(2), 0, 1, 0, 49, 1, 0, 97, 1, 0, 50, 2, 0, 98, 99]
 
 	mut d := decoder_new(e.data)
 	assert d.get_map_string() == mp
@@ -167,7 +167,7 @@ fn test_map_bytes() {
 
 	mut e := new()
 	e.add_map_bytes(mp)
-	assert e.data == [e.version, 2, 0, 1, 0, 49, 1, 0, 0, 0, 97, 1, 0, 50, 2, 0, 0, 0, 98, 99]
+	assert e.data == [ u8(2), 0, 1, 0, 49, 1, 0, 0, 0, 97, 1, 0, 50, 2, 0, 0, 0, 98, 99]
 
 	mut d := decoder_new(e.data)
 	assert d.get_map_bytes() == mp
