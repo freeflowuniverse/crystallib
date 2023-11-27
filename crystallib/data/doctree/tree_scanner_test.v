@@ -19,11 +19,15 @@ fn test_scan() ! {
 		heal: false
 	)!
 
-	// mut c := tree.collection_get('solution')!
+	mut c := tree.collection_get('rpc')!
 
-	// assert c.page_exists('grant')
+	pages := ['rpc', 'eth', 'stellar', 'tfchain']
+	for page in pages {
+		assert c.page_exists(page)
+	}
+
+	// assert c.page_exists('rpc')
 	// assert c.page_exists('grant3') == false
-	// assert c.image_exists('centralized_internet.jpg')
 	// assert c.image_exists('centralized_internet_.jpg')
 	// mut i := c.image_get('centralized_internet_.jpg')!
 	// println(i)
