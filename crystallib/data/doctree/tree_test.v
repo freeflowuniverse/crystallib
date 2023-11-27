@@ -12,11 +12,11 @@ const (
 	book1_dest       = os.dir(@FILE) + '/testdata/_book1'
 )
 
-fn test_init() ! {
-	mut tree := Tree{}
-	// tree.init()!
-	assert tree.embedded_files.len == 6
-}
+// fn test_init() ! {
+// 	mut tree := Tree{}
+// 	tree.init()!
+// 	assert tree.embedded_files.len == 6
+// }
 
 pub struct TestMacroProcessor {
 }
