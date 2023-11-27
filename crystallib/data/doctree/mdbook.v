@@ -487,7 +487,9 @@ pub fn (mut book MDBook) export() ! {
 	book.add_missing_pages_to_summary()!
 
 	// lets now build
-	osal.exec(cmd: 'mdbook build ${book.md_path('').path} --dest-dir ${html_path}', retry: 0)!
+	osal.exec(cmd: 'mdbook build ${book.md_path('').path} --dest-dir ${html_path}', retry: 0) or {
+		return error('failed to build mdbook: ${err}')
+	}
 	for item in book.tree.embedded_files {
 		if item.path.ends_with('.css') {
 			logger.info('Writing css files into MDBook')
