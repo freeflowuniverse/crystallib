@@ -66,7 +66,7 @@ module auth
 // [params]
 // pub struct AccessTokenParams {
 // 	expiration    time.Time = time.now().add(15 * time.minute)
-// 	refresh_token jwt.SignedJWT [required]
+// 	refresh_token jwt.SignedJWT @[required]
 // }
 
 // pub fn (mut auth Authenticator) new_access_token(params AccessTokenParams) !string {

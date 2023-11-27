@@ -24,7 +24,7 @@ pub mut:
 
 pub struct VMConfiguration {
 pub mut:
-	name        string            [required] // machine name
+	name        string            @[required] // machine name
 	node_id     u32    // node id to deploy on, if 0, a random eligible node will be selected
 	farm_id     u32    // farm id to deploy on, if 0, a random eligible farm will be selected
 	flist       string = 'https://hub.grid.tf/tf-official-apps/base:latest.flist' // flist of the machine
@@ -49,8 +49,8 @@ pub mut:
 
 pub struct Disk {
 pub:
-	size        u32    [required]    // disk size in GBs
-	mountpoint  string [required] // mountpoint of the disk on the machine
+	size        u32    @[required]    // disk size in GBs
+	mountpoint  string @[required] // mountpoint of the disk on the machine
 	description string // disk description
 	// computed
 	name string // disk name
@@ -58,20 +58,20 @@ pub:
 
 pub struct QSFS {
 pub:
-	mountpoint            string   [required] // mountpoint of the qsfs on the machine
-	encryption_key        string   [required] // 64 long hex encoded encryption key (e.g. 0000000000000000000000000000000000000000000000000000000000000000).
-	cache                 u32      [required]    // The size of the fuse mountpoint on the node in MBs (holds qsfs local data before pushing).
-	minimal_shards        u32      [required]    // The minimum amount of shards which are needed to recover the original data.
-	expected_shards       u32      [required]    // The amount of shards which are generated when the data is encoded. Essentially, this is the amount of shards which is needed to be able to recover the data, and some disposable shards which could be lost. The amount of disposable shards can be calculated as expected_shards - minimal_shards.
-	redundant_groups      u32      [required]    // The amount of groups which one should be able to loose while still being able to recover the original data.
-	redundant_nodes       u32      [required]    // The amount of nodes that can be lost in every group while still being able to recover the original data.
+	mountpoint            string   @[required] // mountpoint of the qsfs on the machine
+	encryption_key        string   @[required] // 64 long hex encoded encryption key (e.g. 0000000000000000000000000000000000000000000000000000000000000000).
+	cache                 u32      @[required]    // The size of the fuse mountpoint on the node in MBs (holds qsfs local data before pushing).
+	minimal_shards        u32      @[required]    // The minimum amount of shards which are needed to recover the original data.
+	expected_shards       u32      @[required]    // The amount of shards which are generated when the data is encoded. Essentially, this is the amount of shards which is needed to be able to recover the data, and some disposable shards which could be lost. The amount of disposable shards can be calculated as expected_shards - minimal_shards.
+	redundant_groups      u32      @[required]    // The amount of groups which one should be able to loose while still being able to recover the original data.
+	redundant_nodes       u32      @[required]    // The amount of nodes that can be lost in every group while still being able to recover the original data.
 	encryption_algorithm  string = 'AES' // configuration to use for the encryption stage. Currently only AES is supported.
 	compression_algorithm string = 'snappy' // configuration to use for the compression stage. Currently only snappy is supported.
-	metadata              Metadata [required] // metadata configs
+	metadata              Metadata @[required] // metadata configs
 	description           string              // qsfs description
 
-	max_zdb_data_dir_size u32     [required] // Maximum size of the data dir in MiB, if this is set and the sum of the file sizes in the data dir gets higher than this value, the least used, already encoded file will be removed.
-	groups                []Group [required] // groups configs
+	max_zdb_data_dir_size u32     @[required] // Maximum size of the data dir in MiB, if this is set and the sum of the file sizes in the data dir gets higher than this value, the least used, already encoded file will be removed.
+	groups                []Group @[required] // groups configs
 	// computed
 	name             string // qsfs name
 	metrics_endpoint string // metrics endpoint for the qsfs
@@ -80,9 +80,9 @@ pub:
 pub struct Metadata {
 pub:
 	type_                string    [json: 'type'] = 'zdb' // configuration for the metadata store to use, currently only ZDB is supported.
-	prefix               string    [required]     // Data stored on the remote metadata is prefixed with.
+	prefix               string    @[required]     // Data stored on the remote metadata is prefixed with.
 	encryption_algorithm string = 'AES' // configuration to use for the encryption stage. Currently only AES is supported.
-	encryption_key       string    [required] // 64 long hex encoded encryption key (e.g. 0000000000000000000000000000000000000000000000000000000000000000).
+	encryption_key       string    @[required] // 64 long hex encoded encryption key (e.g. 0000000000000000000000000000000000000000000000000000000000000000).
 	backends             []Backend         // backends configs
 }
 
@@ -93,9 +93,9 @@ pub:
 
 pub struct Backend {
 pub:
-	address   string [required] // Address of backend ZDB (e.g. [300:a582:c60c:df75:f6da:8a92:d5ed:71ad]:9900 or 60.60.60.60:9900).
-	namespace string [required] // ZDB namespace.
-	password  string [required] // Namespace password.
+	address   string @[required] // Address of backend ZDB (e.g. [300:a582:c60c:df75:f6da:8a92:d5ed:71ad]:9900 or 60.60.60.60:9900).
+	namespace string @[required] // ZDB namespace.
+	password  string @[required] // Namespace password.
 }
 
 pub struct Zlog {
@@ -505,7 +505,7 @@ pub:
 	ssh_key     string // public ssh key to access the instance in a later stage
 	public_ipv6 bool   // if true, a public ipv6 will be added to the instance
 	// admin configuration
-	admin_email    string [required] // admin email to access admin dashboard
+	admin_email    string @[required] // admin email to access admin dashboard
 	admin_username string // admin username to access admin dashboard
 	admin_password string // admin password to access admin dashboard
 }
@@ -544,11 +544,11 @@ pub:
 [params]
 pub struct DeployPresearch {
 pub:
-	name              string [required] // identifier for the instance, must be unique
+	name              string @[required] // identifier for the instance, must be unique
 	farm_id           u64    // farm id to deploy on, if 0, a random eligible node on a random farm will be selected
 	disk_size         u32    // size of disk to mount on instance. must be in GB
 	ssh_key           string // public ssh key to access the instance in a later stage
-	registration_code string [required] // You need to sign up on Presearch in order to get your Presearch Registration Code.
+	registration_code string @[required] // You need to sign up on Presearch in order to get your Presearch Registration Code.
 	public_ipv4       bool // if true, a public ipv4 will be added to the instance
 	public_ipv6       bool // if true, a public ipv6 will be added to the instance
 	// presearch config for restoring old nodes

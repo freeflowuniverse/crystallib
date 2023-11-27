@@ -7,20 +7,20 @@ import freeflowuniverse.crystallib.core.pathlib
 
 pub struct MDBookCollection {
 pub mut:
-	book       &MDBook [skip; str: skip]
+	book       &MDBook      [skip; str: skip]
 	name       string
 	url        string
 	reset      bool
 	pull       bool
 	gitrepokey string
-	path pathlib.Path
+	path       pathlib.Path
 }
 
 [params]
 pub struct MDBookCollectionArgs {
 pub mut:
-	name  string
-	url   string
+	name string
+	url  string
 }
 
 pub fn (mut book MDBook) collection_add(args_ MDBookCollectionArgs) ! {
@@ -30,7 +30,7 @@ pub fn (mut book MDBook) collection_add(args_ MDBookCollectionArgs) ! {
 		name: args.name
 		book: &book
 	}
-	book.collections << c	
+	book.collections << c
 }
 
 fn (mut self MDBookCollection) prepare() ! {

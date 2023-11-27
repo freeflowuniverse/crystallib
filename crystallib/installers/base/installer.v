@@ -26,7 +26,7 @@ pub fn install() ! {
 			println(' - Ubuntu prepare')
 			osal.execute_silent('
 			apt update
-			apt install iputils-ping net-tools git rsync curl mc tmux libsqlite3-dev -y
+			apt install iputils-ping net-tools git rsync curl mc tmux libsqlite3-dev xz-utils -y
 			')!
 		} else {
 			panic('only ubuntu and osx supported for now')

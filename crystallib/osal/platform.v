@@ -1,10 +1,5 @@
 module osal
 
-const (
-	redis_key_platform = 'osal.platform'
-	redis_key_cputype  = 'osal.cputype'
-)
-
 // Returns the enum value that matches the provided string for PlatformType
 pub fn platform_enum_from_string(platform string) PlatformType {
 	return match platform.to_lower() {
@@ -41,21 +36,12 @@ pub enum CPUType {
 	arm32
 }
 
-// Returns the platform of the system and caches it into redis, will return one of osx, ubuntu, alpine or unknown
 pub fn platform() PlatformType {
 	mut logger := get_logger()
 	mut platform_ := PlatformType.unknown
-	mut redis := get_redis()
-	cached := redis.exists(osal.redis_key_platform) or { false }
-	if cached {
-		platform_from_redis := redis.get(osal.redis_key_platform) or {
-			logger.error('Failed to get value from redis key ${osal.redis_key_platform}')
-			'unknown'
-		}
-		platform_ = platform_enum_from_string(platform_from_redis)
-		if platform_ != PlatformType.unknown {
-			return platform_
-		}
+	platform_ = platform_enum_from_string(memdb_get("platformtype"))
+	if platform_ != PlatformType.unknown {
+		return platform_
 	}
 	if cmd_exists('sw_vers') {
 		platform_ = PlatformType.osx
@@ -67,28 +53,17 @@ pub fn platform() PlatformType {
 		logger.error('Unknown platform')
 	}
 	if platform_ != PlatformType.unknown {
-		redis.set(osal.redis_key_platform, platform_.str()) or {
-			logger.error('Failed to cache platform in redis')
-		}
+		memdb_set("platformtype",  platform_.str())
 	}
 	return platform_
 }
 
-// Returns the cpu type of the system and caches it in redis, will return one of unknown, intel, arm, intel32 or arm32
 pub fn cputype() CPUType {
 	mut logger := get_logger()
 	mut cputype_ := CPUType.unknown
-	mut redis := get_redis()
-	cached := redis.exists(osal.redis_key_cputype) or { false }
-	if cached {
-		cputype_from_redis := redis.get(osal.redis_key_cputype) or {
-			logger.error('Failed to get value from redis key ${osal.redis_key_cputype}')
-			'unknown'
-		}
-		cputype_ = cputype_enum_from_string(cputype_from_redis)
-		if cputype_ != CPUType.unknown {
-			return cputype_
-		}
+	cputype_ = cputype_enum_from_string(memdb_get("cputype"))
+	if cputype_ != CPUType.unknown {
+		return cputype_
 	}
 	sys_info := execute_stdout('uname -m') or {
 		logger.error('Failed to execute uname to get the cputype: ${err}')
@@ -109,9 +84,7 @@ pub fn cputype() CPUType {
 	}
 
 	if cputype_ != CPUType.unknown {
-		redis.set(osal.redis_key_cputype, cputype_.str()) or {
-			logger.error('Failed to cache cputype in redis')
-		}
+		memdb_set("cputype", cputype_.str())
 	}
 	return cputype_
 }
@@ -120,11 +93,9 @@ pub fn is_osx() bool {
 	return platform() == .osx
 }
 
-
 pub fn is_osx_arm() bool {
-	return platform() == .osx && cputype()==.arm
+	return platform() == .osx && cputype() == .arm
 }
-
 
 pub fn is_ubuntu() bool {
 	return platform() == .ubuntu

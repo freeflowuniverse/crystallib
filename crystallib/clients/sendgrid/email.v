@@ -6,20 +6,20 @@ pub struct Content {
 }
 
 struct Recipient {
-	email string  [required]
+	email string  @[required]
 	name  ?string
 }
 
 struct Attachment {
-	content     string  [required]
+	content     string  @[required]
 	type_       ?string [json: 'type']
-	filename    string  [required]
+	filename    string  @[required]
 	disposition ?string
 	content_id  ?string
 }
 
 struct UnsubscribeGroups {
-	group_id         i64   [required]
+	group_id         i64   @[required]
 	group_to_display []i64
 }
 
@@ -88,10 +88,10 @@ struct TrackingSettings {
 
 pub struct Email {
 pub mut:
-	personalizations  []Personalizations [required]
-	from              Recipient          [required]
-	subject           string             [required]
-	content           []Content          [required]
+	personalizations  []Personalizations @[required]
+	from              Recipient          @[required]
+	subject           string             @[required]
+	content           []Content          @[required]
 	reply_to          ?Recipient
 	reply_to_list     ?[]Recipient
 	attachments       ?[]Attachment

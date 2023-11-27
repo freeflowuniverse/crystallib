@@ -19,7 +19,7 @@ pub mut:
 [params]
 pub struct ComposeArgs {
 pub mut:
-	name        string [required]
+	name        string @[required]
 	params      string
 	composepath string // can be empty, if empty will be buildpath/compose
 }

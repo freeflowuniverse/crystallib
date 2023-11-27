@@ -6,8 +6,8 @@ import freeflowuniverse.crystallib.data.jsonschema
 // todo: report bug: when comps is optional, doesnt work
 pub struct OpenAPI {
 pub:
-	openapi             string                 [required] // This string MUST be the version number of the OpenAPI Specification that the OpenAPI document uses. The openapi field SHOULD be used by tooling to interpret the OpenAPI document. This is not related to the API info.version string.
-	info                Info                   [required]   // Provides metadata about the API. The metadata MAY be used by tooling as required.
+	openapi             string                 @[required] // This string MUST be the version number of the OpenAPI Specification that the OpenAPI document uses. The openapi field SHOULD be used by tooling to interpret the OpenAPI document. This is not related to the API info.version string.
+	info                Info                   @[required]   // Provides metadata about the API. The metadata MAY be used by tooling as required.
 	json_schema_dialect ?string   // The default value for the $schema keyword within Schema Objects contained within this OAS document. This MUST be in the form of a URI.
 	servers             ?[]Server // An array of Server Objects, which provide connectivity information to a target server. If the servers property is not provided, or is an empty array, the default value would be a Server Object with a url value of /.
 	paths               map[string]PathItem // The available paths and operations for the API.
@@ -42,13 +42,13 @@ pub fn (spec OpenAPI) plain() string {
 // ```
 // The object provides metadata about the API. The metadata MAY be used by the clients if needed, and MAY be presented in editing or documentation generation tools for convenience.
 pub struct Info {
-	title            string  [required] // The title of the API
+	title            string  @[required] // The title of the API
 	summary          string  // A short summary of the API.
 	description      string  // A description of the API. CommonMark syntax MAY be used for rich text representation.
 	terms_of_service string  // A URL to the Terms of Service for the API. This MUST be in the form of a URL.
 	contact          Contact // The contact information for the exposed API.
 	license          License // The license information for the exposed API.
-	version          string  [required] // The version of the OpenAPI document (which is distinct from the OpenAPI Specification version or the API implementation version).
+	version          string  @[required] // The version of the OpenAPI document (which is distinct from the OpenAPI Specification version or the API implementation version).
 }
 
 // ```{
@@ -69,7 +69,7 @@ pub struct Contact {
 // }```
 // License information for the exposed API.
 pub struct License {
-	name       string [required] // The license name used for the API.
+	name       string @[required] // The license name used for the API.
 	identifier string // An SPDX license expression for the API. The identifier field is mutually exclusive of the url field.
 	url        string // A URL to the license used for the API. This MUST be in the form of a URL. The url field is mutually exclusive of the identifier field.
 }
@@ -79,7 +79,7 @@ pub struct License {
 //   "description": "Development server"
 // }```
 pub struct Server {
-	url         string                            [required] // A URL to the target host. This URL supports Server Variables and MAY be relative, to indicate that the host location is relative to the location where the OpenAPI document is being served. Variable substitutions will be made when a variable is named in {brackets}.
+	url         string                            @[required] // A URL to the target host. This URL supports Server Variables and MAY be relative, to indicate that the host location is relative to the location where the OpenAPI document is being served. Variable substitutions will be made when a variable is named in {brackets}.
 	description string // An optional string describing the host designated by the URL. CommonMark syntax MAY be used for rich text representation.
 	variables   map[string]openrpc.ServerVariable // A map between a variable name and its value. The value is used for substitution in the server’s URL template.
 }
@@ -175,7 +175,7 @@ pub struct Header {}
 pub struct Request {}
 
 pub struct Response {
-	description string                [required] // A description of the response. CommonMark syntax MAY be used for rich text representation.
+	description string                @[required] // A description of the response. CommonMark syntax MAY be used for rich text representation.
 	headers     ?map[string]HeaderRef // Maps a header name to its definition. [RFC7230] states header names are case insensitive. If a response header is defined with the name "Content-Type", it SHALL be ignored.
 	content     map[string]MediaType  // A map containing descriptions of potential response payloads. The key is a media type or media type range and the value describes it. For responses that match multiple keys, only the most specific key is applicable. e.g. text/plain overrides text/*
 	links       map[string]LinkRef    // A map of operations links that can be followed from the response. The key of the map is a short name for the link, following the naming constraints of the names for Component Objects.
@@ -198,7 +198,7 @@ pub struct Encoding {
 }
 
 pub struct Parameter {
-	name              string [required] // The name of the parameter. Parameter names are case sensitive.
+	name              string @[required] // The name of the parameter. Parameter names are case sensitive.
 	in_               string [json: 'in'; required] // The location of the parameter. Possible values are "query", "header", "path" or "cookie".
 	description       string // A brief description of the parameter. This could contain examples of use. CommonMark syntax MAY be used for rich text representation.
 	required          bool   // Determines whether this parameter is mandatory. If the parameter location is "path", this property is REQUIRED and its value MUST be true. Otherwise, the property MAY be included and its default value is false.

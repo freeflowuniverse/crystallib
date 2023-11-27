@@ -23,7 +23,7 @@ pub mut:
 	pages           map[string]&Page // markdown pages in collection
 	files           map[string]&File
 	images          map[string]&File
-	external_pages  map[string]&Page
+	external_pages  map[string]&Page // question: why do we have the external ones, what is they key
 	external_files  map[string]&File
 	external_images map[string]&File
 	path            Path

@@ -4,21 +4,11 @@ import os
 import freeflowuniverse.crystallib.osal
 
 pub fn (mut zp ZProcess) load() ! {
-	cmd := 'zinit status ${zp.name}'
-	r := osal.execute_silent(cmd)!
-	for line in r.split_into_lines() {
-		if line.starts_with('pid') {
-			zp.pid = line.split('pid:')[1].trim_space().int()
-		}
-		if line.starts_with('state') {
-			st := line.split('state:')[1].trim_space().to_lower()
-			zp.status = match st {
-				'spawned' { .spawned }
-				else { .unknown }
-			}
-		}
-	}
+
+	zp.status()!
+
 	if !zp.zinit.path.file_exists(zp.name + '.yaml') {
+		$if debug {print_backtrace()}
 		return error('there should be a file ${zp.name}.yaml in /etc/zinit')
 	}
 

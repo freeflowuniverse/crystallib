@@ -24,7 +24,7 @@ pub enum SiteStatus {
 [params]
 pub struct SiteNewArgs {
 pub mut:
-	name        string    [required]
+	name        string    @[required]
 	domains     []Domain
 	backends    []Backend
 	paths       []string // for serving local directory
@@ -32,7 +32,7 @@ pub mut:
 }
 
 //```
-// name    string [required]
+// name    string @[required]
 // domains []Domain
 // description string
 //```

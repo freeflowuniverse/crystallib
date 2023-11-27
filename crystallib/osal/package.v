@@ -1,5 +1,7 @@
 module osal
 
+
+
 // update the package list
 pub fn package_refresh() ! {
 	platform_ := platform()
@@ -37,7 +39,7 @@ pub fn package_install(name string) ! {
 			cmd: '
 			export TERM=xterm
 			export DEBIAN_FRONTEND=noninteractive
-			apt install -y ${name}  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+			apt install -y ${name}  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --allow-downgrades --allow-remove-essential --allow-change-held-packages
 			'
 		) or { return error('could not install package:${name}\nerror:\n${err}') }
 	} else if platform_ == .alpine {

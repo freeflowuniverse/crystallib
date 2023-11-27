@@ -73,7 +73,7 @@ pub fn (mut book MDBook) error(args BookErrorArgs) {
 [params]
 pub struct BookNewArgs {
 pub mut:
-	name      string [required] // name of the book
+	name      string @[required] // name of the book
 	path      string // path exists
 	dest      string // path where book will be generated
 	dest_md   string // path where the md files will be generated
@@ -91,7 +91,7 @@ pub fn (book MDBook) read() ! {
 
 // get a new book
 //
-// name      string [required] // name of the book
+// name      string @[required] // name of the book
 // path      string // path exists
 // dest      string // path where book will be generated
 // dest_md   string // path where the md files will be generated

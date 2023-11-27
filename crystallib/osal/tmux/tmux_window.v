@@ -142,12 +142,16 @@ pub fn (mut w Window) create() ! {
 		// scriptpath         string // is the path where the script will be put which is executed
 		// scriptkeep         bool   // means we don't remove the script
 		os.mkdir_all('/tmp/tmux/${w.session.name}')!
-		w.cmd = osal.exec_string(
+		cmd_new := osal.exec_string(
 			cmd: w.cmd
 			scriptpath: '/tmp/tmux/${w.session.name}/${w.name}.sh'
 			scriptkeep: true
 		)!
+		w.cmd = cmd_new
 	}
+
+	// println(w)
+
 	if w.active == false {
 		res_opt := "-P -F '#{session_name}|#{window_name}|#{window_id}|#{pane_active}|#{pane_id}|#{pane_pid}|#{pane_start_command}'"
 		cmd := 'tmux new-window  ${res_opt} -t ${w.session.name} -n ${w.name} \'/bin/bash -c ${w.cmd}\''
@@ -162,6 +166,7 @@ pub fn (mut w Window) create() ! {
 		$if debug {
 			println(' - WINDOW - Window: ${w.name} created in session: ${w.session.name}')
 		}
+
 	} else {
 		return error('cannot create window, it already exists.\n${w.name}:${w.id}:${w.cmd}')
 	}

@@ -14,8 +14,8 @@ const factory = init_factory()
 [params]
 pub struct HTTPConnectionArgs {
 pub:
-	name  string [required]
-	url   string [required]
+	name  string @[required]
+	url   string @[required]
 	cache bool
 	retry int = 1
 }

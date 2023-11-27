@@ -11,31 +11,30 @@ import os
 [heap]
 pub struct Zola {
 pub mut:
-	sites          []&ZSite                    [skip; str: skip]
-	gitrepos       map[string]gittools.GitRepo
+	sites           []&ZSite                    [skip; str: skip]
+	gitrepos        map[string]gittools.GitRepo
 	gitrepos_status map[string]RepoStatus
-	coderoot       string
+	coderoot        string
 	path_build      string
-	path_publish    string		
-	gitstructure   gittools.GitStructure       [skip; str: skip]
-	reset bool
+	path_publish    string
+	gitstructure    gittools.GitStructure       [skip; str: skip]
+	reset           bool
 }
 
 pub struct RepoStatus {
 pub mut:
 	revlast string
-	revnew string
+	revnew  string
 }
-
 
 [params]
 pub struct ZolaArgs {
 pub mut:
-	coderoot       string = "${os.home_dir()}/hero/code"
-	buildroot      string = "${os.home_dir()}/hero/var/wsbuild"
-	publishroot    string = "${os.home_dir()}/hero/www"
-	install  bool = true
-	reset bool
+	coderoot    string = '${os.home_dir()}/hero/code'
+	buildroot   string = '${os.home_dir()}/hero/var/wsbuild'
+	publishroot string = '${os.home_dir()}/hero/www'
+	install     bool   = true
+	reset       bool
 }
 
 pub fn new(args ZolaArgs) !Zola {
@@ -48,42 +47,40 @@ pub fn new(args ZolaArgs) !Zola {
 		path_build: args.buildroot
 		path_publish: args.publishroot
 		gitstructure: gs
-		reset:args.reset
+		reset: args.reset
 	}
 
 	return sites
 }
 
 fn (mut self Zola) generate() ! {
-	//now we generate all sites
-	for mut site in self.sites{
+	// now we generate all sites
+	for mut site in self.sites {
 		site.generate()!
 	}
-	//now we have to reset the rev keys, so we remember current status
+	// now we have to reset the rev keys, so we remember current status
 	for key, mut status in self.gitrepos_status {
 		osal.done_set('zolarev_${key}', status.revnew)!
-		status.revlast=status.revnew
-	}	
+		status.revlast = status.revnew
+	}
 }
 
-
-
-//get all content
+// get all content
 pub fn (mut self Zola) pull() ! {
 	println(self)
 	for key, repo_ in self.gitrepos {
 		mut repo := repo_
-		if self.reset{
-			repo.pull_reset(reload:true)! //need to overwrite all changes
-		}else{
-			repo.pull(reload:true)! //will not overwrite changes
+		if self.reset {
+			repo.pull_reset(reload: true)! // need to overwrite all changes
+		} else {
+			repo.pull(reload: true)! // will not overwrite changes
 		}
 		revnew := repo.rev()!
 		lastrev := osal.done_get('zolarev_${key}') or { '' }
-		self.gitrepos_status[key]=RepoStatus{
-				revnew: revnew
-				revlast:lastrev
-			}
+		self.gitrepos_status[key] = RepoStatus{
+			revnew: revnew
+			revlast: lastrev
+		}
 	}
 	self.generate()!
 }
@@ -106,7 +103,7 @@ pub fn (mut self Zola) watch(args WatchArgs) {
 			last = t.unix_time()
 		}
 		time.sleep(time.second)
-		if args.period==0{
+		if args.period == 0 {
 			return
 		}
 	}

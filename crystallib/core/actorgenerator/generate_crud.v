@@ -7,9 +7,9 @@ import os
 [params]
 struct GenerateCrudMethods {
 pub:
-	actor_name  string                [required] // name of actor struct
-	actor_field codemodel.StructField [required] // field in actor belonging to root object
-	root_struct codemodel.Struct      [required]
+	actor_name  string                @[required] // name of actor struct
+	actor_field codemodel.StructField @[required] // field in actor belonging to root object
+	root_struct codemodel.Struct      @[required]
 }
 
 // generate_crud_methods generates CRUD actor methods for a provided structure
@@ -234,8 +234,8 @@ fn generate_param_getters(params GenerateParamGetters) []string {
 
 [params]
 struct GetChildField {
-	parent codemodel.Struct [required]
-	child  codemodel.Struct [required]
+	parent codemodel.Struct @[required]
+	child  codemodel.Struct @[required]
 }
 
 fn get_child_field(params GetChildField) codemodel.StructField {

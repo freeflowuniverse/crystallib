@@ -8,11 +8,11 @@ struct MemoryBackend {
 mut:
 	sessions map[string]AuthSession
 	logger   &log.Logger = &log.Logger(&log.Log{
-		level: .info
-	})
+	level: .info
+})
 }
 
-// factory for 
+// factory for
 pub fn new_memory_backend() !MemoryBackend {
 	return MemoryBackend{}
 }

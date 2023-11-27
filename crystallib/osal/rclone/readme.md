@@ -15,8 +15,8 @@ fn main() {
 fn do() ! {
 	mut z:=rclone.new()!
 
-	// name      string            [required]
-	// cmd       string            [required]
+	// name      string            @[required]
+	// cmd       string            @[required]
 	// cmd_file  bool  //if we wanna force to run it as a file which is given to bash -c  (not just a cmd in rclone)
 	// test      string
 	// test_file bool

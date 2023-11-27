@@ -22,12 +22,12 @@ pub fn install(args InstallArgs) ! {
 	// install zola if it was already done will return true
 	println(' - install zola')
 
-	mut url:=""
-	if osal.is_ubuntu(){
-		url= 'https://github.com/getzola/zola/releases/download/v0.17.2/zola-v0.17.2-x86_64-unknown-linux-gnu.tar.gz'
-	}else if osal.is_osx_arm(){
-		url="https://github.com/getzola/zola/releases/download/v0.17.2/zola-v0.17.2-x86_64-apple-darwin.tar.gz"
-	}else{
+	mut url := ''
+	if osal.is_ubuntu() {
+		url = 'https://github.com/getzola/zola/releases/download/v0.17.2/zola-v0.17.2-x86_64-unknown-linux-gnu.tar.gz'
+	} else if osal.is_osx_arm() {
+		url = 'https://github.com/getzola/zola/releases/download/v0.17.2/zola-v0.17.2-x86_64-apple-darwin.tar.gz'
+	} else {
 		return error('only support ubuntu & osx arm for now')
 	}
 
@@ -43,8 +43,7 @@ pub fn install(args InstallArgs) ! {
 	osal.bin_copy(
 		// cmdname: ''
 		source: zolafile.path
-	)!	
-
+	)!
 
 	println(' zola INSTALLED')
 
