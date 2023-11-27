@@ -10,7 +10,7 @@ import encoding.base64
 import log
 
 // Creates and updates, authenticates email authentication sessions
-[noinit]
+@[noinit]
 pub struct Authenticator {
 	secret string
 mut:
@@ -31,7 +31,7 @@ pub mut:
 	authenticated bool
 }
 
-[params]
+@[params]
 pub struct AuthenticatorConfig {
 	secret  string
 	backend IBackend
@@ -48,7 +48,7 @@ pub fn new(config AuthenticatorConfig) Authenticator {
 	}
 }
 
-[params]
+@[params]
 pub struct SendMailConfig {
 	email string
 	mail  VerificationMail

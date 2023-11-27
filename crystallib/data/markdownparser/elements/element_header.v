@@ -30,7 +30,7 @@ pub fn (mut self Header) html() string {
 	return '<h${self.depth}>${self.content}</h${self.depth}>\n'
 }
 
-[params]
+@[params]
 pub struct HeaderNewArgs {
 	ElementNewArgs
 pub mut:

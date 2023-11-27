@@ -4,7 +4,7 @@ import os
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 
-[params]
+@[params]
 struct ElementCat {
 mut:
 	name      string

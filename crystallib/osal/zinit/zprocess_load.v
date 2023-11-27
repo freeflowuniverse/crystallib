@@ -4,11 +4,12 @@ import os
 import freeflowuniverse.crystallib.osal
 
 pub fn (mut zp ZProcess) load() ! {
-
 	zp.status()!
 
 	if !zp.zinit.path.file_exists(zp.name + '.yaml') {
-		$if debug {print_backtrace()}
+		$if debug {
+			print_backtrace()
+		}
 		return error('there should be a file ${zp.name}.yaml in /etc/zinit')
 	}
 

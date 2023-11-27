@@ -6,15 +6,15 @@ import freeflowuniverse.crystallib.algo.aes_symmetric
 // this is me, my representation
 pub struct MyConfig {
 pub mut:
-	id          u32       [primary; sql: serial]
-	name        string    [nonull; unique]
+	id          u32       @[primary; sql: serial]
+	name        string    @[nonull; unique]
 	description string
-	config      string    [skip]    // this is 3script which holds the initialization content for configuration of anything
-	keysafe     &KeysSafe [skip] // allows us to remove ourselves from mem, or go to db
+	config      string    @[skip]    // this is 3script which holds the initialization content for configuration of anything
+	keysafe     &KeysSafe @[skip] // allows us to remove ourselves from mem, or go to db
 	config_enc  string
 }
 
-[params]
+@[params]
 pub struct MyConfigAddArgs {
 pub:
 	name        string

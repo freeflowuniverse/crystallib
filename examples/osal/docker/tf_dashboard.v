@@ -1,14 +1,13 @@
 import freeflowuniverse.crystallib.osal.docker
 
-pub fn main()  {
-	mut engine := docker.new(prefix: "", localonly: true)!
-  
-  mut recipe := engine.recipe_new(name: "tf_dashboard", platform: .alpine)
-	
-  println(' - build dashboard')
+pub fn main() {
+	mut engine := docker.new(prefix: '', localonly: true)!
 
+	mut recipe := engine.recipe_new(name: 'tf_dashboard', platform: .alpine)
 
-  recipe.add_from(image: 'nginx', tag: 'alpine')!
+	println(' - build dashboard')
+
+	recipe.add_from(image: 'nginx', tag: 'alpine')!
 
 	recipe.add_nodejsbuilder()!
 

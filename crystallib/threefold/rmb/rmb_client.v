@@ -9,7 +9,7 @@ pub mut:
 	relay_url        string
 	tfchain_url      string
 	tfchain_mnemonic string
-	redis            &redisclient.Redis [str: skip]
+	redis            &redisclient.Redis @[str: skip]
 }
 
 pub enum TFNetType {
@@ -20,7 +20,7 @@ pub enum TFNetType {
 	qa
 }
 
-[params]
+@[params]
 pub struct RMBClientArgs {
 pub:
 	nettype     TFNetType

@@ -10,19 +10,16 @@ import freeflowuniverse.crystallib.installers.zinit as zinitinstaller
 
 // run postgresql as docker compose
 pub fn install() ! {
-
 	if !osal.done_exists('postgres_install') {
 		host_remove()!
 		docker.install()! // make sure docker is installed and working properly
 		zinitinstaller.install()!
 		osal.package_install('libpq-dev,postgresql-client')!
 		osal.done_set('postgres_install', 'OK')!
-		println(" - postgresql installed")
-	}else{
-		println(" - postgresql already installed")
+		println(' - postgresql installed')
+	} else {
+		println(' - postgresql already installed')
 	}
-
-
 }
 
 // remove postgresql from the system

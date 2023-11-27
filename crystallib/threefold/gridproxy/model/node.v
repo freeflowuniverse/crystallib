@@ -35,44 +35,44 @@ pub:
 pub struct Node_ {
 pub:
 	id                string
-	node_id           u64           [json: nodeId]
-	farm_id           u64           [json: farmId]
-	twin_id           u64           [json: twinId]
-	grid_version      u64           [json: gridVersion]
+	node_id           u64           @[json: nodeId]
+	farm_id           u64           @[json: farmId]
+	twin_id           u64           @[json: twinId]
+	grid_version      u64           @[json: gridVersion]
 	uptime            SecondUnit
-	created           UnixTime      [json: created]
-	farming_policy_id u64           [json: farmingPolicyId]
-	updated_at        UnixTime      [json: updatedAt]
+	created           UnixTime      @[json: created]
+	farming_policy_id u64           @[json: farmingPolicyId]
+	updated_at        UnixTime      @[json: updatedAt]
 	total_resources   NodeResources
 	used_resources    NodeResources
 	location          NodeLocation
-	public_config     PublicConfig  [json: publicConfig]
-	certification     string        [json: certificationType]
+	public_config     PublicConfig  @[json: publicConfig]
+	certification     string        @[json: certificationType]
 	status            string
 	dedicated         bool
-	rent_contract_id  u64           [json: rentContractId]
-	rented_by_twin_id u64           [json: rentedByTwinId]
+	rent_contract_id  u64           @[json: rentContractId]
+	rented_by_twin_id u64           @[json: rentedByTwinId]
 }
 
 pub struct Node {
 pub:
 	id                string
-	node_id           u64          [json: nodeId]
-	farm_id           u64          [json: farmId]
-	twin_id           u64          [json: twinId]
-	grid_version      u64          [json: gridVersion]
+	node_id           u64          @[json: nodeId]
+	farm_id           u64          @[json: farmId]
+	twin_id           u64          @[json: twinId]
+	grid_version      u64          @[json: gridVersion]
 	uptime            SecondUnit
-	created           UnixTime     [json: created]
-	farming_policy_id u64          [json: farmingPolicyId]
-	updated_at        UnixTime     [json: updatedAt]
+	created           UnixTime     @[json: created]
+	farming_policy_id u64          @[json: farmingPolicyId]
+	updated_at        UnixTime     @[json: updatedAt]
 	capacity          NodeCapacity
 	location          NodeLocation
-	public_config     PublicConfig [json: publicConfig]
-	certification     string       [json: certificationType]
+	public_config     PublicConfig @[json: publicConfig]
+	certification     string       @[json: certificationType]
 	status            string
 	dedicated         bool
-	rent_contract_id  u64          [json: rentContractId]
-	rented_by_twin_id u64          [json: rentedByTwinId]
+	rent_contract_id  u64          @[json: rentContractId]
+	rented_by_twin_id u64          @[json: rentedByTwinId]
 }
 
 fn calc_available_resources(total_resources NodeResources, used_resources NodeResources) NodeResources {

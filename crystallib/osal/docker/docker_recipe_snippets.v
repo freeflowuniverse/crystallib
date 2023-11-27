@@ -21,7 +21,7 @@ pub fn (mut r DockerBuilderRecipe) add_zinit() ! {
 	r.add_entrypoint(cmd: '/sbin/zinit init --container')!
 }
 
-[params]
+@[params]
 pub struct ExecuteArgs {
 pub mut:
 	source string // is the filename, needs to be embedded

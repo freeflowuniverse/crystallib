@@ -2,7 +2,7 @@ module builder
 
 import freeflowuniverse.crystallib.clients.redisclient
 
-[heap]
+@[heap]
 pub struct BuilderFactory {
 pub mut:
 	nodes []Node
@@ -17,7 +17,7 @@ pub fn new() !BuilderFactory {
 	return bf
 }
 
-[params]
+@[params]
 pub struct NodeLocalArgs {
 pub:
 	reload bool

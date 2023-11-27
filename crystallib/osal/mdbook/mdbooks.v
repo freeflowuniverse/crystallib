@@ -9,17 +9,17 @@ import time
 import v.embed_file
 import os
 
-[heap]
+@[heap]
 pub struct MDBooks {
 pub mut:
-	books           []&MDBook                   [skip; str: skip]
+	books           []&MDBook                   @[skip; str: skip]
 	gitrepos        map[string]gittools.GitRepo
 	gitrepos_status map[string]RepoStatus
 	coderoot        string
 	path_build      string
 	path_publish    string
-	gitstructure    gittools.GitStructure       [skip; str: skip]
-	embedded_files  []embed_file.EmbedFileData  [skip; str: skip]
+	gitstructure    gittools.GitStructure       @[skip; str: skip]
+	embedded_files  []embed_file.EmbedFileData  @[skip; str: skip]
 	reset           bool
 }
 
@@ -29,7 +29,7 @@ pub mut:
 	revnew  string
 }
 
-[params]
+@[params]
 pub struct MDBooksArgs {
 pub mut:
 	coderoot    string = '${os.home_dir()}/hero/code'
@@ -102,7 +102,7 @@ pub fn (mut self MDBooks) pull() ! {
 	self.generate()!
 }
 
-[params]
+@[params]
 pub struct WatchArgs {
 pub mut:
 	period int = 300 // 5 min default

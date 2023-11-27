@@ -29,7 +29,7 @@ pub fn (mut self Text) html() string {
 	return out
 }
 
-[params]
+@[params]
 pub struct TextNewArgs {
 	ElementNewArgs
 pub mut:

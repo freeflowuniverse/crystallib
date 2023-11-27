@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.osal.initd
 import freeflowuniverse.crystallib.core.pathlib
 import os
 
-[heap]
+@[heap]
 pub struct Zinit {
 pub mut:
 	processes map[string]ZProcess
@@ -14,7 +14,7 @@ pub mut:
 	pathtests pathlib.Path
 }
 
-[params]
+@[params]
 struct InitDProcGet {
 	delete bool
 	start  bool = true
@@ -65,7 +65,7 @@ pub fn new() !Zinit {
 	return obj
 }
 
-[params]
+@[params]
 pub struct ZProcessNewArgs {
 pub mut:
 	name      string            @[required]

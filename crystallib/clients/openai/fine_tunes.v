@@ -47,7 +47,7 @@ pub:
 	data   []FineTuneEvent
 }
 
-[params]
+@[params]
 pub struct FineTuneCreateArgs {
 pub mut:
 	training_file                  string @[required]

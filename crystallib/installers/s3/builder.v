@@ -4,10 +4,10 @@ import freeflowuniverse.crystallib.installers.rust
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.gittools
 
-[params]
+@[params]
 pub struct BuildArgs {
 pub mut:
-	reset    bool
+	reset bool
 	// bin_push bool = true
 }
 
@@ -36,5 +36,4 @@ pub fn build(args BuildArgs) ! {
 		// cmdname: ''
 		source: '${path}/target/debug/s3-cas'
 	)!
-
 }

@@ -8,7 +8,7 @@ import freeflowuniverse.crystallib.timetools { time_from_string }
 // budget_item_person
 // This file deals with a person's budget line item
 
-[heap]
+@[heap]
 pub struct BudgetItemPerson {
 	BudgetItemBase
 pub mut:

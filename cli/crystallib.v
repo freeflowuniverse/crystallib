@@ -42,6 +42,6 @@ fn cmd_build_examples_execute(cmd Command) ! {
 	// os.execute('v -enable-globals ${file_dir}/build-examples.v')
 	// command := 'v run ${file_dir}/build_examples.v'
 	// os.chdir('${os.dir(file_dir)}')!
-	
+
 	os.execvp('${file_dir}/build-examples.sh', []) or { panic(err) }
 }

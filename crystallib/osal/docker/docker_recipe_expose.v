@@ -1,6 +1,6 @@
 module docker
 
-[params]
+@[params]
 pub struct ExposeARgs {
 pub mut:
 	ports []string
@@ -9,7 +9,7 @@ pub mut:
 pub struct ExposeItem {
 pub mut:
 	ports  []string
-	recipe &DockerBuilderRecipe [str: skip]
+	recipe &DockerBuilderRecipe @[str: skip]
 }
 
 // to do something like: 'Expose 8080/udp'

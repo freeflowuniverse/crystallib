@@ -20,5 +20,4 @@ pub fn new(secret string) !GithubClient {
 	}
 }
 
-
 // curl -X GET "http://localhost:3000/api/v1/admin/cron" -H "Authorization: token ????"

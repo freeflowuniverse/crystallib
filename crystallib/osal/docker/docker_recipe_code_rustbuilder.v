@@ -3,7 +3,7 @@ module docker
 // import freeflowuniverse.crystallib.osal.gittools
 // import freeflowuniverse.crystallib.core.pathlib
 
-[params]
+@[params]
 pub struct RustBuildArgs {
 pub mut:
 	url      string // e.g.  https://github.com/valeriansaliou/sonic
@@ -44,7 +44,7 @@ pub fn (mut r DockerBuilderRecipe) add_rustbuild_from_code(args RustBuildArgs) !
 	}
 }
 
-[params]
+@[params]
 pub struct RustPackageArgs {
 pub mut:
 	name    string // can be comma separated

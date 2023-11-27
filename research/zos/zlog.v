@@ -1,4 +1,3 @@
-
 module zos
 
 struct ZlogParams {

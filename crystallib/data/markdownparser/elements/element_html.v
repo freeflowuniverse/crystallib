@@ -31,7 +31,7 @@ pub fn (mut self Html) html() string {
 	return out
 }
 
-[params]
+@[params]
 pub struct HtmlNewArgs {
 	ElementNewArgs
 pub mut:

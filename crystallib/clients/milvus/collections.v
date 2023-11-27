@@ -6,13 +6,13 @@ import json
 
 pub struct Collection {
 pub mut:
-	collection_name string  [json: 'collectionName'; required] // The name of the collection to create.
-	db_name         ?string [json: 'dbName'] // The name of the database.
+	collection_name string  @[json: 'collectionName'; required] // The name of the collection to create.
+	db_name         ?string @[json: 'dbName'] // The name of the database.
 	description     ?string // The description of the collection
-	dimension       u16     [required] // The number of dimensions for the vector field of the collection. For performance-optimized CUs, this value ranges from 1 to 32768. For capacity-optimized and cost-optimized CUs, this value ranges from 32 to 32768. The value ranges from 1 to 32768.
-	metric_type     string  [json: 'metricType']   = 'L2' // The distance metric used for the collection. The value defaults to L2.
-	primary_field   string  [json: 'primaryField'] = 'id' // The primary key field. The value defaults to id.
-	vector_field    string  [json: 'vectorField']  = 'vector' // The vector field. The value defaults to vector.
+	dimension       u16     @[required] // The number of dimensions for the vector field of the collection. For performance-optimized CUs, this value ranges from 1 to 32768. For capacity-optimized and cost-optimized CUs, this value ranges from 32 to 32768. The value ranges from 1 to 32768.
+	metric_type     string   = 'L2'  @[json: 'metricType'] // The distance metric used for the collection. The value defaults to L2.
+	primary_field   string = 'id'  @[json: 'primaryField'] // The primary key field. The value defaults to id.
+	vector_field    string  = 'vector'  @[json: 'vectorField'] // The vector field. The value defaults to vector.
 }
 
 pub fn (c Client) create_collection(collection Collection) ! {
@@ -33,34 +33,34 @@ possible errors:
 
 pub struct Field {
 pub mut:
-	auto_id     bool   [json: 'autoId'] // Whether the primary key automatically increments.
+	auto_id     bool   @[json: 'autoId'] // Whether the primary key automatically increments.
 	description string // An optional description of the field.
 	name        string // The name of the field.
-	primary_key bool   [json: 'primaryKey'] // Whether the field is a primary field.
-	type_       string [json: 'type'] // The data type of the values in this field.
+	primary_key bool   @[json: 'primaryKey'] // Whether the field is a primary field.
+	type_       string @[json: 'type'] // The data type of the values in this field.
 }
 
 pub struct Index {
 pub mut:
-	field_name  string [json: 'fieldName']  // The name of the indexed field.
-	index_name  string [json: 'indexName']  // The name of the generated index files.
-	metric_type string [json: 'metricType'] // The metric type used in the index process.
+	field_name  string @[json: 'fieldName']  // The name of the indexed field.
+	index_name  string @[json: 'indexName']  // The name of the generated index files.
+	metric_type string @[json: 'metricType'] // The metric type used in the index process.
 }
 
 pub struct CollectionDescription {
 pub mut:
-	collection_name      string  [json: 'collectionName'] // The name of the collection.
+	collection_name      string  @[json: 'collectionName'] // The name of the collection.
 	description          string // An optional description of the collection.
 	fields               []Field
 	indexes              []Index
 	load                 string // The load status of the collection. Possible values are unload, loading, and loaded.
-	shards_number        u32     [json: 'shardsNum'] // The number of shards in the collection.
-	enable_dynamic_field bool    [json: 'enableDynamicField'] // Whether the dynamic JSON feature is enabled for this collection.
+	shards_number        u32     @[json: 'shardsNum'] // The number of shards in the collection.
+	enable_dynamic_field bool    @[json: 'enableDynamicField'] // Whether the dynamic JSON feature is enabled for this collection.
 }
 
-[params]
+@[params]
 pub struct DescribeCollectionArgs {
-	collection_name string  [required] // The name of the collection to describe.
+	collection_name string  @[required] // The name of the collection to describe.
 	db_name         ?string // The name of the database.
 }
 
@@ -151,10 +151,10 @@ fn decode_collection_description(data json2.Any) CollectionDescription {
 	return description
 }
 
-[params]
+@[params]
 pub struct DropCollectionArgs {
-	collection_name string  [json: 'collectionName'; required] // The name of the collection to describe.
-	db_name         ?string [json: 'dbName'] // The name of the database.
+	collection_name string  @[json: 'collectionName'; required] // The name of the collection to describe.
+	db_name         ?string @[json: 'dbName'] // The name of the database.
 }
 
 pub fn (c Client) drop_collection(args DropCollectionArgs) ! {

@@ -26,7 +26,7 @@ pub const natsclient_version = '${natsclient_version_major}.${natsclient_version
 
 type ConsumerList = []string
 
-[heap]
+@[heap]
 pub struct NATSClient {
 mut:
 	uuid                string

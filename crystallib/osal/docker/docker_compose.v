@@ -5,18 +5,18 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.osal { exec, file_write }
 import os
 
-[heap]
+@[heap]
 pub struct DockerComposeRecipe {
 pub mut:
 	name    string
 	content string
 	params  Params
-	engine  &DockerEngine     [str: skip]
+	engine  &DockerEngine     @[str: skip]
 	items   []&ComposeService
 	path    string
 }
 
-[params]
+@[params]
 pub struct ComposeArgs {
 pub mut:
 	name        string @[required]

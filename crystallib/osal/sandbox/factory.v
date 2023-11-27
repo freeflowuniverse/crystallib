@@ -5,14 +5,14 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.osal
 import os
 
-[heap]
+@[heap]
 pub struct Factory {
 pub mut:
 	path_images  pathlib.Path
 	imagesources map[string]ImageSource
 }
 
-[params]
+@[params]
 pub struct FactoryArgs {
 pub mut:
 	path_images string = '/data/containers/images'
@@ -29,7 +29,7 @@ pub fn new(args_ FactoryArgs) !Factory {
 	return f
 }
 
-[params]
+@[params]
 pub struct DebootstrapArgs {
 pub mut:
 	imagename  string @[required]

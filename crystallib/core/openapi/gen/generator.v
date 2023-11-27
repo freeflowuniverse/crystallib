@@ -49,7 +49,7 @@ fn (mut gen ClientGenerator) generate_method_structs(structs []Struct) []Struct 
 	return structs
 }
 
-[params]
+@[params]
 pub struct ClientMethodConfig {
 	receiver   codemodel.Param
 	name       string // name of method

@@ -3,7 +3,7 @@ module mail
 import log
 import json
 import freeflowuniverse.crystallib.data.jsonrpc { jsonrpcrequest_decode }
-import freeflowuniverse.crystallib.core.openrpc as crystallib.core.openrpc { OpenRpcHandler }
+import freeflowuniverse.crystallib.core.openrpc { OpenRpcHandler }
 import freeflowuniverse.crystallib.rpchandler
 
 struct MailOpenRpcHandler {

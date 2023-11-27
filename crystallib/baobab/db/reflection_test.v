@@ -20,8 +20,8 @@ __global (
 
 struct TestStruct {
 	Base
-	text   string [index]
-	number int    [index]
+	text   string @[index]
+	number int    @[index]
 	u32s   []u32
 }
 

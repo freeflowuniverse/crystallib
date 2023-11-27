@@ -6,14 +6,14 @@ const (
 	default_timeout = 500000
 )
 
-[openrpc: exclude]
-[noinit]
+@[openrpc: exclude]
+@[noinit]
 pub struct NostrClient {
 mut:
 	client &RpcWsClient
 }
 
-[openrpc: exclude]
+@[openrpc: exclude]
 pub fn new(mut client RpcWsClient) NostrClient {
 	return NostrClient{
 		client: &client

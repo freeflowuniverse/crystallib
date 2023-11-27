@@ -12,7 +12,7 @@ __global (
 	actor_factory map[string]&PublisherActor
 )
 
-[noinit]
+@[noinit]
 struct PublisherActor {
 mut:
 	doctree shared doctree.Tree

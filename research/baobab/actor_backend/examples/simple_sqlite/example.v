@@ -11,10 +11,11 @@ const (
 	db_path = '${os.dir(@FILE)}/example.sqlite'
 )
 
-[table: 'example_structs'; root_struct]
+@[table: 'example_structs']
+@[root_struct]
 pub struct ExampleStruct {
-	id int // unique serial root object id
-	name string [index]
+	id          int // unique serial root object id
+	name        string @[index]
 	description string
 }
 
@@ -47,10 +48,8 @@ pub fn do() ! {
 	object := backend.get[ExampleStruct](id)!
 	logger.info('Backend returned: ${object}')
 
-	logger.info('Getting backend root object of type ExampleStruct with invalid id ${id+1}')
-	backend.get[ExampleStruct](id+1) or {
-		logger.error('Backend returned error: ${err}')
-	}
+	logger.info('Getting backend root object of type ExampleStruct with invalid id ${id + 1}')
+	backend.get[ExampleStruct](id + 1) or { logger.error('Backend returned error: ${err}') }
 
 	example_obj1 := ExampleStruct{
 		name: 'another_example'
@@ -62,7 +61,9 @@ pub fn do() ! {
 
 	logger.info('Filtering backend root objects of type ExampleStruct with name ${example_obj1.name}')
 	filtered_objects := backend.filter[ExampleStruct](
-		indices: {'name': 'another_example'}
+		indices: {
+			'name': 'another_example'
+		}
 	)!
 	logger.info('Backend returned: ${filtered_objects}')
 }

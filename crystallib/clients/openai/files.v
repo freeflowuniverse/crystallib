@@ -9,7 +9,7 @@ const (
 	jsonl_mime_type = 'text/jsonl'
 )
 
-[params]
+@[params]
 pub struct FileUploadArgs {
 pub:
 	filepath string

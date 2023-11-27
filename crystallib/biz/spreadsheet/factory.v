@@ -2,7 +2,7 @@ module spreadsheet
 
 import freeflowuniverse.crystallib.data.currency
 
-[params]
+@[params]
 pub struct SheetNewArgs {
 pub mut:
 	name          string = 'main'

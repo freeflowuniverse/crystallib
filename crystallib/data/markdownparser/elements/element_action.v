@@ -27,7 +27,7 @@ fn (mut self Action) html() string {
 	return self.markdown()
 }
 
-[params]
+@[params]
 pub struct ActionNewArgs {
 	ElementNewArgs
 pub mut:

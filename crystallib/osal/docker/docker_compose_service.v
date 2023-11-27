@@ -3,14 +3,14 @@ module docker
 import v.embed_file
 import freeflowuniverse.crystallib.data.paramsparser { Params }
 
-[heap]
+@[heap]
 pub struct ComposeService {
 pub mut:
 	name    string
 	content string // optional
 	params  Params
 	files   []embed_file.EmbedFileData
-	recipe  &DockerComposeRecipe       [str: skip]
+	recipe  &DockerComposeRecipe       @[str: skip]
 	render  bool = true
 	env     map[string]string
 	ports   []PortMap
@@ -31,7 +31,7 @@ pub:
 	containerpath string
 }
 
-[params]
+@[params]
 pub struct ComposeServiceArgs {
 pub:
 	name    string @[required]

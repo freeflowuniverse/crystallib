@@ -1,4 +1,3 @@
-
 struct GatewayFqdnParams {
 	deployment_name string    // deployment name
 	name            string    // gateway name

@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.clients.redisclient
 import freeflowuniverse.crystallib.core.texttools
 
-[heap]
+@[heap]
 pub struct GitStructure {
 	config   GitStructureConfig // configuration settings
 	rootpath pathlib.Path = pathlib.get('~/code') // path to root code directory

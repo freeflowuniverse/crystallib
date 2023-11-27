@@ -20,7 +20,7 @@ pub fn (mut node Node) exec(cmd string) !string {
 	panic('did not find right executor')
 }
 
-[params]
+@[params]
 pub struct ExecFileArgs {
 pub:
 	path    string
@@ -47,7 +47,7 @@ pub fn (mut node Node) exec_file(args ExecFileArgs) ! {
 	}
 }
 
-[params]
+@[params]
 pub struct ExecRetryArgs {
 pub:
 	cmd          string
@@ -138,7 +138,7 @@ pub fn (mut node Node) delete(path string) ! {
 	panic('did not find right executor')
 }
 
-[params]
+@[params]
 pub struct SyncArgs {
 pub mut:
 	source         string
@@ -208,7 +208,7 @@ pub fn (mut node Node) upload(args_ SyncArgs) ! {
 	panic('did not find right executor')
 }
 
-[params]
+@[params]
 pub struct EnvGetParams {
 pub mut:
 	reload bool

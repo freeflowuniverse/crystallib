@@ -5,10 +5,10 @@ import os
 // import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.pathlib
 
-[heap]
+@[heap]
 pub struct MDBook {
 pub mut:
-	books        &MDBooks           [skip; str: skip]
+	books        &MDBooks           @[skip; str: skip]
 	name         string
 	url          string
 	path_build   pathlib.Path
@@ -18,7 +18,7 @@ pub mut:
 	title        string
 }
 
-[params]
+@[params]
 pub struct MDBookArgs {
 pub mut:
 	name  string @[required]

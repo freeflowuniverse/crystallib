@@ -8,8 +8,8 @@ pub struct DocBase {
 pub mut:
 	id        int // the unique id while loading of the element in the parser
 	content   string
-	elements  []DocElement        [skip; str: skip]
-	parents   []&DocElement       [skip; str: skip]
+	elements  []DocElement        @[skip; str: skip]
+	parents   []&DocElement       @[skip; str: skip]
 	path      pathlib.Path
 	processed bool
 	params    paramsparser.Params
@@ -17,7 +17,7 @@ pub mut:
 	changed   bool
 }
 
-[params]
+@[params]
 pub struct ElementNewArgs {
 pub mut:
 	parents    []&DocElement

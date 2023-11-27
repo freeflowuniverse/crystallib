@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal
 import os
 
-[params]
+@[params]
 pub struct DownsizeArgs {
 	backup      bool
 	backup_root string

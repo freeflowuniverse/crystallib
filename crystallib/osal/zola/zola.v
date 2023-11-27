@@ -8,16 +8,16 @@ import freeflowuniverse.crystallib.data.ourtime
 import time
 import os
 
-[heap]
+@[heap]
 pub struct Zola {
 pub mut:
-	sites           []&ZSite                    [skip; str: skip]
+	sites           []&ZSite                    @[skip; str: skip]
 	gitrepos        map[string]gittools.GitRepo
 	gitrepos_status map[string]RepoStatus
 	coderoot        string
 	path_build      string
 	path_publish    string
-	gitstructure    gittools.GitStructure       [skip; str: skip]
+	gitstructure    gittools.GitStructure       @[skip; str: skip]
 	reset           bool
 }
 
@@ -27,7 +27,7 @@ pub mut:
 	revnew  string
 }
 
-[params]
+@[params]
 pub struct ZolaArgs {
 pub mut:
 	coderoot    string = '${os.home_dir()}/hero/code'
@@ -85,7 +85,7 @@ pub fn (mut self Zola) pull() ! {
 	self.generate()!
 }
 
-[params]
+@[params]
 pub struct WatchArgs {
 pub mut:
 	period int = 300 // 5 min default

@@ -10,7 +10,7 @@ enum FFToolsState {
 	error
 }
 
-[heap]
+@[heap]
 pub struct FFTools {
 pub mut:
 	vscode_extensions_dir string

@@ -2,7 +2,7 @@ module osal
 
 import freeflowuniverse.crystallib.core.pathlib
 
-[params]
+@[params]
 pub struct RsyncArgs {
 pub mut:
 	source         string

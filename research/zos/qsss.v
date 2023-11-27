@@ -1,6 +1,3 @@
-
-
-
 struct QsfsParams {
 	deployment_name       string             // deployment name
 	name                  string             // qsfs name
@@ -30,4 +27,3 @@ struct QsfsGetParams {
 
 pub fn (client ZOSClient) zos_deployment_qsfs_get(params QsfsGetParams) {
 }
-

@@ -2,7 +2,7 @@ module gittools
 
 import freeflowuniverse.crystallib.core.texttools
 
-[params]
+@[params]
 pub struct RepoGetArgs {
 pub mut:
 	locator GitLocator
@@ -81,7 +81,7 @@ pub fn (mut gitstructure GitStructure) repo_exists(l GitLocator) !bool {
 
 // get a list of repo's which are in line to the args
 //
-[params]
+@[params]
 pub struct ReposGetArgs {
 pub mut:
 	filter   string // if used will only show the repo's which have the filter string inside

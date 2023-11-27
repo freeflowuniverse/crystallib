@@ -29,7 +29,7 @@ pub fn (mut self Include) html() string {
 	return out
 }
 
-[params]
+@[params]
 pub struct IncludeNewArgs {
 	ElementNewArgs
 pub mut:

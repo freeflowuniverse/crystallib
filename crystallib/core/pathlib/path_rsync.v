@@ -2,7 +2,7 @@ module pathlib
 
 import os
 
-[params]
+@[params]
 pub struct RsyncArgs {
 pub mut:
 	source         string

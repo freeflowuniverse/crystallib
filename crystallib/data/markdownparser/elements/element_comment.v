@@ -32,7 +32,7 @@ pub fn (mut self Comment) html() string {
 	return out
 }
 
-[params]
+@[params]
 pub struct CommentNewArgs {
 	ElementNewArgs
 pub mut:

@@ -26,7 +26,7 @@ pub fn new(redis_address string) !Client {
 }
 
 // Arguments for creating a new job
-[params]
+@[params]
 pub struct JobNewArgs {
 pub mut:
 	twinid       u32

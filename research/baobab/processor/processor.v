@@ -13,7 +13,7 @@ const (
 // client that is used to get jobs from redis, a logger
 // to log usefull information and an attribute running
 // that can be used to stop a running processor.
-[noinit]
+@[noinit]
 pub struct Processor {
 mut:
 	client client.Client

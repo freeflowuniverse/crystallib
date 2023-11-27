@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.data.actionparser { Action }
 import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
 import freeflowuniverse.crystallib.threefold.tfgrid_actions.clients { Clients }
 
-[heap]
+@[heap]
 pub struct Web3GWHandler {
 pub mut:
 	logger   Logger

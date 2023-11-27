@@ -2,12 +2,12 @@ module circles
 
 import time
 
-[root_object]
+@[root_object]
 pub struct Calendar {
 	title string
 }
 
-[root_object]
+@[root_object]
 pub struct Event {
 	title       string
 	description string

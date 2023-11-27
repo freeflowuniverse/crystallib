@@ -13,7 +13,7 @@ struct Peer {
 	endpoint      string
 }
 
-type IP = []byte //TODO: this is a weird format, not usable for our customers
+type IP = []byte // TODO: this is a weird format, not usable for our customers
 type IPMask = []byte
 
 // Unit defines a capacity unit in "bytes"
@@ -39,7 +39,7 @@ struct Mount {
 }
 
 struct QuantumSafeMeta {
-	typ_   string            [json: 'type']
+	typ_   string            @[json: 'type']
 	config QuantumSafeConfig
 }
 
@@ -60,4 +60,3 @@ type EncryptionKey = []byte
 struct QuantumCompression {
 	algorithm string
 }
-

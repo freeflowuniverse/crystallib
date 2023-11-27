@@ -1,4 +1,4 @@
-[translated]
+@[translated]
 module verasure
 
 #include "@VMODROOT/jerasure-simple.h"

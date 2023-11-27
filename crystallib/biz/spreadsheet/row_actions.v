@@ -14,7 +14,7 @@ pub enum RowAction {
 	forwardavg // try to find 12 forward looking cells and do avg where we are
 }
 
-[params]
+@[params]
 pub struct RowActionArgs {
 pub mut:
 	name          string

@@ -20,11 +20,15 @@ pub fn new() !Zinit {
 			start()!
 			res = os.execute(cmd)
 			if res.exit_code > 0 {
-				$if debug {print_backtrace()}
+				$if debug {
+					print_backtrace()
+				}
 				return error("can't do zinit list, after start of zinit.\n${res}")
 			}
 		} else {
-			$if debug {print_backtrace()}
+			$if debug {
+				print_backtrace()
+			}
 			return error("can't do zinit list.\n${res}")
 		}
 	}

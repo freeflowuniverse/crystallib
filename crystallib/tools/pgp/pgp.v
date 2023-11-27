@@ -9,7 +9,7 @@ pub enum PGPFactoryStatus {
 	error
 }
 
-[heap]
+@[heap]
 struct PGPFactory {
 mut:
 	path      string

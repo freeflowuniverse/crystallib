@@ -3,7 +3,7 @@ module osal
 import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.core.texttools
 
-[params]
+@[params]
 pub struct DownloadArgs {
 pub mut:
 	name        string // optional (otherwise derived out of filename)

@@ -12,7 +12,7 @@ mut:
 	id     u32
 }
 
-[params]
+@[params]
 pub struct GIDNewArgs {
 pub mut:
 	gid_str  string // rid.cid.oid format

@@ -8,7 +8,7 @@ import v.pref
 
 // VParser holds configuration of parsing
 // has methods that implement parsing
-[params]
+@[params]
 pub struct VParser {
 	exclude_dirs  []string // directories to be excluded from parsing
 	exclude_files []string // files to be excluded from parsing
@@ -153,7 +153,7 @@ fn (vparser VParser) parse_vfile(path string) []CodeItem {
 	return code
 }
 
-[params]
+@[params]
 struct VFuncArgs {
 	comments []ast.Comment // v comments that belong to the function
 	fn_decl  ast.FnDecl    // v.ast parsed function declaration
@@ -208,7 +208,7 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 	}
 }
 
-[params]
+@[params]
 struct ParamsArgs {
 	comments []ast.Comment // comments of the function
 	params   []ast.Param   // ast type of what function returns
@@ -238,7 +238,7 @@ fn (vparser VParser) parse_params(args ParamsArgs) []Param {
 	return params
 }
 
-[params]
+@[params]
 struct ParamArgs {
 	comments []ast.Comment // comments of the function
 	param    ast.Param     // ast type of what function returns

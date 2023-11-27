@@ -7,9 +7,9 @@ pub struct SQLiteBackend {
 	db sqlite.DB
 }
 
-[table: 'root_objects']
+@[table: 'root_objects']
 pub struct RootObject {
-	id int [primary; sql: serial] // unique serial root object id
+	id    int    @[primary; sql: serial] // unique serial root object id
 	table string // name of table root object is in
 }
 
@@ -35,11 +35,11 @@ pub fn (mut backend SQLiteBackend) new[T](obj T) !int {
 	}
 
 	sql backend.db {
-    	insert row into RootObject
+		insert row into RootObject
 	}!
 
 	id := backend.db.last_id()
-	
+
 	// create table for root object if it doesn't exist
 	backend.create_root_struct_table[T]()!
 
@@ -49,7 +49,7 @@ pub fn (mut backend SQLiteBackend) new[T](obj T) !int {
 	mut values := ['${id}', "'${obj_encoded}'"]
 	$for field in T.fields {
 		$if field.typ is string {
-			if field.attrs.contains('index'){
+			if field.attrs.contains('index') {
 				indices << '${field.name}'
 				val := obj.$(field.name)
 				values << "'${val}'"
@@ -69,7 +69,6 @@ pub fn (mut backend SQLiteBackend) set[T](mut obj T) ! {
 			table_name = attr.arg
 		}
 	}
-
 	obj_encoded := json.encode(obj)
 
 	// todo: check table and entry exists
@@ -84,12 +83,11 @@ pub fn (mut backend SQLiteBackend) delete[T](id int) ! {
 			table_name = attr.arg
 		}
 	}
-
 	obj_encoded := json.encode(obj)
 
 	// todo: check table and entry exists
-	db.exec("delete from ${table_name} where id=${id}")!
-	db.exec("delete from root_objects where id=${id}")!
+	db.exec('delete from ${table_name} where id=${id}')!
+	db.exec('delete from root_objects where id=${id}')!
 }
 
 // save the session to redis & mem
@@ -101,16 +99,20 @@ pub fn (mut backend SQLiteBackend) get[T](id int) !T {
 	table_name := get_table_name[T]()
 
 	// check root object and table exists
-	result0 := backend.db.exec("select * from ${table_name} where id=${id}")!
+	result0 := backend.db.exec('select * from ${table_name} where id=${id}')!
 	if result0.len == 0 {
 		return error('Root object not found')
-	} else if result0.len > 1 { 
-		panic('More than one result with same id found. This should never happen.') 
+	} else if result0.len > 1 {
+		panic('More than one result with same id found. This should never happen.')
 	}
 
-	responses := backend.db.exec("select * from ${table_name} where id=${id}") or {panic(err)}
-	if responses.len == 0 { panic('Root object found in root objects but not in object table. This should never happen.') }
-	if responses.len > 1 { panic('More than one result with same id found. This should never happen.') }
+	responses := backend.db.exec('select * from ${table_name} where id=${id}') or { panic(err) }
+	if responses.len == 0 {
+		panic('Root object found in root objects but not in object table. This should never happen.')
+	}
+	if responses.len > 1 {
+		panic('More than one result with same id found. This should never happen.')
+	}
 
 	return json.decode(T, responses[0].vals[1])
 }
@@ -122,16 +124,16 @@ pub fn (mut backend SQLiteBackend) list[T]() ![]T {
 	}
 
 	table_name := get_table_name[T]()
-	
-	responses := backend.db.exec("select * from ${table_name}") or {panic(err)}
-	return responses.map(json.decode(T, it.vals[1]) or {panic('JSON decode failed.')})
+
+	responses := backend.db.exec('select * from ${table_name}') or { panic(err) }
+	return responses.map(json.decode(T, it.vals[1]) or { panic('JSON decode failed.') })
 }
 
-[params]
+@[params]
 pub struct FilterParams {
-	indices map[string]string // map of index values that are being filtered by, in order of priority.
-	limit int // limit to the number of values to be returned, in order of priority
-	fuzzy bool // if fuzzy matching is enabled in matching indices
+	indices     map[string]string // map of index values that are being filtered by, in order of priority.
+	limit       int  // limit to the number of values to be returned, in order of priority
+	fuzzy       bool // if fuzzy matching is enabled in matching indices
 	matches_all bool // if results should match all indices or any
 }
 
@@ -142,9 +144,7 @@ pub fn (mut backend SQLiteBackend) filter[T](params FilterParams) ![]T {
 	}
 
 	table_name := get_table_name[T]()
-	table_indices := backend.get_table_indices(table_name) or {
-		panic(err)
-	}
+	table_indices := backend.get_table_indices(table_name) or { panic(err) }
 
 	for index, _ in params.indices {
 		if index !in table_indices {
@@ -152,8 +152,8 @@ pub fn (mut backend SQLiteBackend) filter[T](params FilterParams) ![]T {
 		}
 	}
 
-	mut select_stmt := "select * from ${table_name}"
-	
+	mut select_stmt := 'select * from ${table_name}'
+
 	if params.indices.len > 0 {
 		select_stmt += ' where'
 		for index, value in params.indices {
@@ -162,17 +162,17 @@ pub fn (mut backend SQLiteBackend) filter[T](params FilterParams) ![]T {
 	}
 
 	println(select_stmt)
-	responses := backend.db.exec(select_stmt) or {panic(err)}
-	objects := responses.map(json.decode(T, it.vals[1]) or {panic(err)})
+	responses := backend.db.exec(select_stmt) or { panic(err) }
+	objects := responses.map(json.decode(T, it.vals[1]) or { panic(err) })
 
 	return if params.limit == 0 { objects } else { objects[..params.limit] }
 }
 
 // create_root_struct_table creates a table for a root_struct with columns for each index field
-fn (mut backend SQLiteBackend) create_root_struct_table[T]()! {
+fn (mut backend SQLiteBackend) create_root_struct_table[T]() ! {
 	table_name := get_table_name[T]()
 	mut columns := ['id integer primary key AUTOINCREMENT', 'data TEXT']
-	
+
 	// create columns for fields marked as index
 	$for field in T.fields {
 		if field.attrs.contains('index') {

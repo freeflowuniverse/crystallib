@@ -8,7 +8,7 @@ pub enum PMState {
 	old
 }
 
-[heap]
+@[heap]
 pub struct ProcessMap {
 pub mut:
 	processes []&ProcessInfo
@@ -16,7 +16,7 @@ pub mut:
 	state     PMState
 }
 
-[heap]
+@[heap]
 pub struct ProcessInfo {
 pub mut:
 	cpu_perc f32

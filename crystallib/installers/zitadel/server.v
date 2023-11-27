@@ -1,7 +1,7 @@
 module zitadel
 
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.osal.zinit 
+import freeflowuniverse.crystallib.osal.zinit
 import freeflowuniverse.crystallib.data.fskvs
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
@@ -14,27 +14,26 @@ import time
 @[params]
 pub struct Config {
 pub mut:
-	name           	  string = "default"
-	reset             bool
-	path              string = '/data/zitadel'
-	passwd			  string 	@[required]
-	secret            string
-	postgresql_name   string = "default"
-	mail_from         string = 'git@meet.tf'
-	smtp_addr         string = 'smtp-relay.brevo.com'
-	smtp_login	      string @[required]
-	smpt_port         int = 587
-	smtp_passwd       string
-	domain			  string @[required]
-	orgname			  string = 'default'
+	name            string = 'default'
+	reset           bool
+	path            string = '/data/zitadel'
+	passwd          string @[required]
+	secret          string
+	postgresql_name string = 'default'
+	mail_from       string = 'git@meet.tf'
+	smtp_addr       string = 'smtp-relay.brevo.com'
+	smtp_login      string @[required]
+	smpt_port       int = 587
+	smtp_passwd     string
+	domain          string @[required]
+	orgname         string = 'default'
 }
-
 
 pub struct Server {
 pub mut:
-	name string
-	config Config
-	process ?zinit.ZProcess
+	name        string
+	config      Config
+	process     ?zinit.ZProcess
 	path_config pathlib.Path
 }
 
@@ -54,50 +53,47 @@ pub mut:
 //```
 // if name exists already in the config DB, it will load for that name
 pub fn new(args_ Config) !Server {
-	install()! //make sure it has been build & ready to be used
+	install()! // make sure it has been build & ready to be used
 	mut args := args_
-	if args.secret == ""{
+	if args.secret == '' {
 		args.secret = rand.string(32)
 	}
-	args.name=texttools.name_fix(args.name)
-	key:="zitadel_config_${args.name}"
-	mut kvs:=fskvs.new(name:"config")!
-	if args.reset || !kvs.exists(key){
-		data:=json.encode(args)
-		kvs.set(key,data)!		
+	args.name = texttools.name_fix(args.name)
+	key := 'zitadel_config_${args.name}'
+	mut kvs := fskvs.new(name: 'config')!
+	if args.reset || !kvs.exists(key) {
+		data := json.encode(args)
+		kvs.set(key, data)!
 	}
 	return get(args.name)!
 }
 
-
-
 pub fn get(name_ string) !Server {
-	println(" - get zitadel server $name_")
-	name:=texttools.name_fix(name_)
-	key:="zitadel_config_${name}"
-	mut kvs:=fskvs.new(name:"config")!
-	if kvs.exists(key){
-		data:=kvs.get(key)!	
-		args:=json.decode(Config,data)!
+	println(' - get zitadel server ${name_}')
+	name := texttools.name_fix(name_)
+	key := 'zitadel_config_${name}'
+	mut kvs := fskvs.new(name: 'config')!
+	if kvs.exists(key) {
+		data := kvs.get(key)!
+		args := json.decode(Config, data)!
 
 		mut server := Server{
-			name:name
-			config:args
-			path_config: pathlib.get_dir(path:"${args.path}/cfg",create:true)!
+			name: name
+			config: args
+			path_config: pathlib.get_dir(path: '${args.path}/cfg', create: true)!
 		}
 
 		mut z := zinit.new()!
-		processname:='zitadel_${name}'
-		if z.process_exists(processname){
-			server.process=z.process_get(processname)!
+		processname := 'zitadel_${name}'
+		if z.process_exists(processname) {
+			server.process = z.process_get(processname)!
 		}
 		// println(" - server get ok")
 		server.start()!
-		return server	
+		return server
 	}
-	return error ("can't find server zitadel with name $name")
+	return error("can't find server zitadel with name ${name}")
 }
-
 
 // return status
 // ```
@@ -111,29 +107,27 @@ pub fn get(name_ string) !Server {
 // }
 // ```
 pub fn (mut server Server) status() zinit.ZProcessStatus {
-	mut process := server.process or {return .unknown}
-	return process.status() or {return .unknown}
+	mut process := server.process or { return .unknown }
+	return process.status() or { return .unknown }
 }
-
 
 // run zitadel as docker compose
 pub fn (mut server Server) start() ! {
-
 	// if server.ok(){
-	// 	return 
+	// 	return
 	// }
 
-	println (" - start zitadel: ${server.name}")
+	println(' - start zitadel: ${server.name}')
 	mut db := postgresql.get(server.config.postgresql_name)!
 
 	println(db)
 
-	if server.config.reset{
-		db.db_delete("zitadel")!
+	if server.config.reset {
+		db.db_delete('zitadel')!
 	}
 
-	//now create the DB
-	db.db_create("zitadel")!
+	// now create the DB
+	db.db_create('zitadel')!
 
 	// if true{
 	// 	panic("sd")
@@ -149,7 +143,7 @@ pub fn (mut server Server) start() ! {
 	// 	name: processname
 	// 	cmd: '
 	// 	cd /tmp
-	// 	export ZITADEL_EXTERNALSECURE=false 
+	// 	export ZITADEL_EXTERNALSECURE=false
 	// 	zitadel start-from-init --config ${config_path.path} --masterkey "${server.config.secret}" --tlsMode disabled
 	// 	'
 	// )!
@@ -157,14 +151,13 @@ pub fn (mut server Server) start() ! {
 	// p.stop()!
 
 	// p.output_wait("Starting new Web server: tcp:0.0.0.0:3000",120)!
-	
+
 	// o:=p.log()!
 	// println(o)
 
 	// server.check()!
 
 	// println(" - zitadel start ok.")
-
 }
 
 pub fn (mut server Server) restart() ! {
@@ -172,34 +165,31 @@ pub fn (mut server Server) restart() ! {
 	server.start()!
 }
 
-pub fn (mut server Server) stop() !{
+pub fn (mut server Server) stop() ! {
 	// print_backtrace()
-	println (" - stop zitadel: ${server.name}")
-	mut process := server.process or {return}
+	println(' - stop zitadel: ${server.name}')
+	mut process := server.process or { return }
 	return process.stop()
 }
 
 // check health, return true if ok
 pub fn (mut server Server) check() ! {
-	mut p:=server.process or {return error("can't find process for server.")}
+	mut p := server.process or { return error("can't find process for server.") }
 	p.check()!
-	//TODO: need to do some other checks to zitadel e.g. rest calls
+	// TODO: need to do some other checks to zitadel e.g. rest calls
 }
 
 // check health, return true if ok
 pub fn (mut server Server) ok() bool {
-	server.check() or {
-		return false
-	}
+	server.check() or { return false }
 	return true
 }
 
-
-//remove all data
+// remove all data
 pub fn (mut server Server) destroy() ! {
-	mut process := server.process or {panic("didnt find process")}
+	mut process := server.process or { panic('didnt find process') }
 	process.destroy()!
 	server.path_config.delete()!
 	mut db := postgresql.get(server.config.postgresql_name)!
-	db.db_delete("zitadel")!
+	db.db_delete('zitadel')!
 }

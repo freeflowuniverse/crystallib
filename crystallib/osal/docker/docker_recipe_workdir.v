@@ -1,6 +1,6 @@
 module docker
 
-[params]
+@[params]
 pub struct WorkDirArgs {
 pub mut:
 	workdir string
@@ -9,7 +9,7 @@ pub mut:
 pub struct WorkDirItem {
 pub mut:
 	workdir string
-	recipe  &DockerBuilderRecipe [str: skip]
+	recipe  &DockerBuilderRecipe @[str: skip]
 }
 
 // to do something like: 'FROM alpine:latest'

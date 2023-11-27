@@ -3,7 +3,7 @@ module spreadsheet
 import freeflowuniverse.crystallib.data.currency
 import freeflowuniverse.crystallib.data.paramsparser
 
-[heap]
+@[heap]
 pub struct Sheet {
 pub mut:
 	name     string
@@ -52,7 +52,7 @@ pub fn (mut s Sheet) names_width() []int {
 	return res
 }
 
-[params]
+@[params]
 pub struct Group2RowArgs {
 pub mut:
 	name          string
@@ -98,7 +98,7 @@ pub fn (mut s Sheet) group2row(args Group2RowArgs) !&Row {
 	return rowout
 }
 
-[params]
+@[params]
 pub struct ToYearQuarterArgs {
 pub mut:
 	name          string

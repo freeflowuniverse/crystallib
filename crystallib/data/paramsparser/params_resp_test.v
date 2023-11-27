@@ -1,6 +1,6 @@
 module paramsparser
 
-fn test_to_resp(){
+fn test_to_resp() {
 	text := '
 		key1: {replace_me}
 		key2: {Value}

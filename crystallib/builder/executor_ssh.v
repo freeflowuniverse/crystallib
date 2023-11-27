@@ -5,7 +5,7 @@ import rand
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.data.ipaddress
 
-[heap]
+@[heap]
 pub struct ExecutorSSH {
 pub mut:
 	ipaddr      ipaddress.IPAddress

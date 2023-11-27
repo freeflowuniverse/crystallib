@@ -12,15 +12,15 @@ fn create_keys() ! {
 
 	encoded_pk := base64.encode(pk_key)
 	encoded_sk := base64.encode(sk_key)
-	mut key_path := ""
-	if os.args.len>1{
+	mut key_path := ''
+	if os.args.len > 1 {
 		key_path = os.args[1]
 	}
-	if key_path==""{
-		key_path=os.getwd() 
+	if key_path == '' {
+		key_path = os.getwd()
 	}
-	mut p:=pathlib.get_dir(path:key_path,create:true)!
-	mut keyspath:=p.file_get_new("keys.toml")!
+	mut p := pathlib.get_dir(path: key_path, create: true)!
+	mut keyspath := p.file_get_new('keys.toml')!
 	keyspath.write('[server]\nSERVER_PUBLIC_KEY="${encoded_pk}"\nSERVER_SECRET_KEY="${encoded_sk}"')!
 	println('Public, Private keys generated at ${keyspath.path}')
 }

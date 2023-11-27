@@ -19,7 +19,7 @@ import freeflowuniverse.crystallib.core.texttools
 //     fi
 // }
 
-[heap]
+@[heap]
 pub struct Initd {
 pub mut:
 	processes map[string]IProcess
@@ -79,7 +79,7 @@ fn (mut initdobj Initd) load() ! {
 	}
 }
 
-[params]
+@[params]
 pub struct IProcessNewArgs {
 pub mut:
 	name        string @[required]

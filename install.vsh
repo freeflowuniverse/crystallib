@@ -6,7 +6,7 @@ fn sh(cmd string) {
 }
 
 vroot := @VROOT
-abs_dir_of_script:=dir(@FILE)
+abs_dir_of_script := dir(@FILE)
 
 sh('
 set -ex

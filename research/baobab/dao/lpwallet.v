@@ -4,7 +4,7 @@ import time
 
 // asset = money stored in liqduitity pool, is owned by an account
 // is like your private wallet on top of your treasury
-[heap]
+@[heap]
 pub struct LPWallet {
 pub mut:
 	account        &Account // pointer to account who owns position

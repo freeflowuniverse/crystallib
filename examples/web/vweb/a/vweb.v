@@ -7,7 +7,6 @@ import os
 
 const pubpath = os.dir(@FILE) + '/public'
 
-
 // fn print_req_info(mut req ctx.Req, mut res ctx.Resp) {
 // 	// println(req)
 // 	println('${req.method} ${req.path}')
@@ -17,12 +16,11 @@ const pubpath = os.dir(@FILE) + '/public'
 // 	println('incoming request!')
 // }
 
-
 struct App {
 	vweb.Context
-    middlewares map[string][]vweb.Middleware
+	middlewares map[string][]vweb.Middleware
 pub mut:
-    user_id string
+	user_id string
 }
 
 fn main() {
@@ -31,19 +29,18 @@ fn main() {
 	vweb.run_at(new_app(), vweb.RunParams{
 		port: 8081
 	}) or { panic(err) }
-
 }
 
 pub fn (mut app App) before_request() {
-    app.user_id = app.get_cookie('id') or { '0' }
+	app.user_id = app.get_cookie('id') or { '0' }
 }
 
 fn new_app() &App {
 	mut app := &App{
-        middlewares: {
-			'/':         [midleware_debug]
-		}        
-    }
+		middlewares: {
+			'/': [midleware_debug]
+		}
+	}
 	// makes all static files available.
 	app.mount_static_folder_at(os.resource_abs_path('.'), '/')
 	return app

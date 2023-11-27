@@ -35,7 +35,7 @@ pub fn (mut self Doc) pre_add(arg HtmlSource) string {
 	return ''
 }
 
-[param]
+@[param]
 pub struct HtmlSource {
 pub mut:
 	url         string

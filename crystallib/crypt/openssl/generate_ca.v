@@ -3,7 +3,7 @@ module openssl
 import freeflowuniverse.crystallib.builder
 import json
 
-[params]
+@[params]
 pub struct OpenSSLCAGenerateArgs {
 	name   string = 'default'
 	domain string = 'myregistry.domain.com'

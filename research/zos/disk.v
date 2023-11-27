@@ -39,5 +39,3 @@ struct DiskDeleteParams {
 
 pub fn (client ZOSClient) zos_deployment_disk_delete(params DiskDeleteParams) {
 }
-
-

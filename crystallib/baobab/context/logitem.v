@@ -7,13 +7,13 @@ import os
 
 pub struct LogItem {
 pub mut:
-	session &Session        [skip; str: skip]
+	session &Session        @[skip; str: skip]
 	time    ourtime.OurTime
 	cat     string
 	log     string
 }
 
-[params]
+@[params]
 pub struct LogArgs {
 pub mut:
 	cat string

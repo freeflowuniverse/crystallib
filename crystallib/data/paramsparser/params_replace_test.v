@@ -1,6 +1,6 @@
 module paramsparser
 
-fn test_replace(){
+fn test_replace() {
 	text := '
 		key1: {replace_me}
 		key2: {Value}
@@ -10,7 +10,7 @@ fn test_replace(){
 	mut params := new(text)!
 
 	mp := {
-		'value': 'replaced_value'
+		'value':      'replaced_value'
 		'replace_me': 'also_replaced_value'
 	}
 

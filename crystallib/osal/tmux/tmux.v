@@ -5,14 +5,14 @@ import freeflowuniverse.crystallib.osal
 import os
 import time
 
-[heap]
+@[heap]
 pub struct Tmux {
 pub mut:
 	sessions  []&Session
 	sessionid string // unique link to job
 }
 
-[params]
+@[params]
 pub struct TmuxNewArgs {
 	sessionid string
 }

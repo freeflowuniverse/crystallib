@@ -2,13 +2,13 @@ module main3
 
 import pg
 
-[table: 'customers']
+@[table: 'customers']
 struct Customer {
-	id          int    [primary; sql: serial] // a field named `id` of integer type must be the first field
-	name        string [nonull]
+	id          int    @[primary; sql: serial] // a field named `id` of integer type must be the first field
+	name        string @[nonull]
 	description string
 	nr_orders   int
-	country     string [nonull]
+	country     string @[nonull]
 }
 
 fn do() ? {

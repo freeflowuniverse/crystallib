@@ -3,7 +3,6 @@ module zos
 import time
 import freeflowuniverse.crystallib.data.ipaddress
 
-
 struct VmCreateParams {
 	deployment_name string   // deployment name
 	name            string   // vm name

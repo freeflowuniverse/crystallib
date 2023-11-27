@@ -14,7 +14,7 @@ const (
 	mainnet_ethereum_node  = 'ws://185.69.167.224:8546'
 )
 
-[params]
+@[params]
 pub struct Arguments {
 	eth_secret       string
 	tfchain_mnemonic string

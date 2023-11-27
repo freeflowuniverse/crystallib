@@ -2,7 +2,7 @@ module elements
 
 // type ParagraphElement = Comment | Link | Text
 
-[heap]
+@[heap]
 pub struct Paragraph {
 	DocBase // pub mut:
 	// elements   []ParagraphElement

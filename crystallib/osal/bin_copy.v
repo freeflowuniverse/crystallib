@@ -63,7 +63,6 @@ pub fn profile_path() string {
 	}
 }
 
-
 fn profile_paths_get(content string) []string {
 	mut paths := []string{}
 	for line in content.split_into_lines() {

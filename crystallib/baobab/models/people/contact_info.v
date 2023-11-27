@@ -1,12 +1,12 @@
 module people
 
-[params]
+@[params]
 pub struct Email {
 pub mut:
 	addr string
 }
 
-[params]
+@[params]
 pub struct Tel {
 pub mut:
 	addr        string

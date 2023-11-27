@@ -29,7 +29,7 @@ pub fn (mut self Table) html() string {
 	return out
 }
 
-[params]
+@[params]
 pub struct TableNewArgs {
 	ElementNewArgs
 pub mut:

@@ -3,7 +3,7 @@ module hero
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.baobab.smartid
 
-[params]
+@[params]
 pub struct FilterArgs {
 pub:
 	cids         []smartid.CID
@@ -11,7 +11,7 @@ pub:
 	action_names []string
 }
 
-[params]
+@[params]
 pub struct FilterSortArgs {
 pub:
 	priorties map[u8]FilterArgs // filter and give priority

@@ -4,23 +4,23 @@ import json
 import net.http
 import encoding.base64
 
-[openrpc: exclude]
-[noinit]
+@[openrpc: exclude]
+@[noinit]
 pub struct SFTPGoClient {
 pub mut:
 	address string
 	header  http.Header
 }
 
-[openrpc: exlude]
-[params]
+@[openrpc: exlude]
+@[params]
 pub struct SFTPGOClientArgs {
 pub:
 	address string = 'http://localhost:8080/api/v2'
 	key     string
 }
 
-[params]
+@[params]
 pub struct APIKeyParams {
 pub:
 	address     string = 'http://localhost:8080/api/v2'
@@ -32,7 +32,7 @@ pub:
 	admin       string
 }
 
-[openrpc: exclude]
+@[openrpc: exclude]
 pub fn new(args SFTPGOClientArgs) !SFTPGoClient {
 	header := http.new_custom_header_from_map({
 		'X-SFTPGO-API-KEY': args.key
@@ -43,7 +43,7 @@ pub fn new(args SFTPGOClientArgs) !SFTPGoClient {
 	}
 }
 
-[params]
+@[params]
 pub struct JWTArgs {
 pub mut:
 	address  string
@@ -65,7 +65,7 @@ pub fn generate_jwt_token(args JWTArgs) !string {
 	return resp.body
 }
 
-[params]
+@[params]
 pub struct APIKeyData {
 pub mut:
 	name        string

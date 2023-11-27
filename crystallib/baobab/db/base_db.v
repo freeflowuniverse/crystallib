@@ -8,7 +8,7 @@ import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.data.actionparser
 import freeflowuniverse.crystallib.data.paramsparser
 
-[params]
+@[params]
 pub struct DBBaseNewArgs {
 pub mut:
 	params      string
@@ -39,7 +39,7 @@ pub fn (db DB) new_base(args DBBaseNewArgs) !Base {
 	return b
 }
 
-[params]
+@[params]
 pub struct DBSetArgs {
 pub mut:
 	gid          smartid.GID
@@ -123,7 +123,7 @@ fn (mut a DBFindArgsI) complete(args BaseFindArgs) ! {
 	}
 }
 
-[params]
+@[params]
 pub struct BaseFindArgs {
 pub mut:
 	mtime_from ?ourtime.OurTime
@@ -133,7 +133,7 @@ pub mut:
 	name       string
 }
 
-[params]
+@[params]
 pub struct DBFindArgs {
 pub mut:
 	query_int         map[string]int

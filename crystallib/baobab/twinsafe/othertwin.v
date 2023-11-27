@@ -6,15 +6,15 @@ import freeflowuniverse.crystallib.algo.secp256k1
 pub struct OtherTwin {
 	conn_type_str string
 pub mut:
-	id          u32                 [primary; sql: serial]
-	name        string              [nonull; unique]
+	id          u32                 @[primary; sql: serial]
+	name        string              @[nonull; unique]
 	description string
-	conn_type   TwinConnectionType  [skip]
+	conn_type   TwinConnectionType  @[skip]
 	addr        string // ipv4 or ipv6 or redis connection string
-	keysafe     &KeysSafe           [skip] // allows us to remove ourselves from mem, or go to db
-	state       TwinState           [skip] // only keep this in mem, does not have to be in sqlitedb
+	keysafe     &KeysSafe           @[skip] // allows us to remove ourselves from mem, or go to db
+	state       TwinState           @[skip] // only keep this in mem, does not have to be in sqlitedb
 	pubkey_str  string // pubkey is given in hex
-	pubkey      secp256k1.Secp256k1 [skip] // to be used for signing, verifying, only to be filled in when public key	
+	pubkey      secp256k1.Secp256k1 @[skip] // to be used for signing, verifying, only to be filled in when public key	
 }
 
 pub enum TwinConnectionType {
@@ -31,7 +31,7 @@ pub enum TwinState {
 
 // ADD
 
-[params]
+@[params]
 pub struct OtherTwinAddArgs {
 pub:
 	name        string

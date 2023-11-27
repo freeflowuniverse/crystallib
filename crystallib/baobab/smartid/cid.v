@@ -5,7 +5,7 @@ pub mut:
 	circle u32
 }
 
-[params]
+@[params]
 pub struct CIDGet {
 pub mut:
 	name       string
@@ -68,7 +68,7 @@ pub fn (cid CID) name() !string {
 	return name_from_u32(cid.circle)
 }
 
-[params]
+@[params]
 pub struct OIDGetArgs {
 pub mut:
 	oid_int int    // int representation of cid

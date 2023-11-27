@@ -18,7 +18,7 @@ pub mut:
 	listu32 []u32
 }
 
-[params]
+@[params]
 pub struct DBArgs {
 pub mut:
 	circlename string
@@ -33,7 +33,7 @@ pub fn db_new(args DBArgs) !MyDB {
 	return mydb
 }
 
-[params]
+@[params]
 pub struct MyStructArgs {
 pub mut:
 	params      string
@@ -104,7 +104,7 @@ pub fn (mydb MyDB) get(gid smartid.GID) !MyStruct {
 	return mydb.unserialize(data)
 }
 
-[params]
+@[params]
 pub struct FindArgs {
 	db.BaseFindArgs
 pub mut:

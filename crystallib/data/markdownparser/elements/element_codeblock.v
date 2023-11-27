@@ -44,7 +44,7 @@ pub fn (mut self CodeBlock) html() string {
 	return self.markdown()
 }
 
-[params]
+@[params]
 pub struct CodeBlockArgs {
 	ElementNewArgs
 pub mut:

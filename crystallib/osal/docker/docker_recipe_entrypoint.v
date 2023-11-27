@@ -2,7 +2,7 @@ module docker
 
 // import freeflowuniverse.crystallib.builder
 
-[params]
+@[params]
 pub struct EntryPointArgs {
 pub mut:
 	cmd string
@@ -11,7 +11,7 @@ pub mut:
 pub struct EntryPointItem {
 pub mut:
 	cmd    string
-	recipe &DockerBuilderRecipe [str: skip]
+	recipe &DockerBuilderRecipe @[str: skip]
 }
 
 pub fn (mut b DockerBuilderRecipe) add_entrypoint(args EntryPointArgs) ! {

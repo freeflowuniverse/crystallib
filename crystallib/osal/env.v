@@ -2,7 +2,7 @@ module osal
 
 import os
 
-[params]
+@[params]
 pub struct EnvSet {
 pub mut:
 	key       string @[required]
@@ -10,7 +10,7 @@ pub mut:
 	overwrite bool = true
 }
 
-[params]
+@[params]
 pub struct EnvSetAll {
 pub mut:
 	env                 map[string]string
