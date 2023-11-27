@@ -11,10 +11,10 @@ const agent = 'Email Authentication Controller'
 [heap]
 pub struct Controller {
 	vweb.Context
-	callback      string               [vweb_global]
+	callback string [vweb_global]
 mut:
-	authenticator Authenticator [vweb_global]
-	logger &log.Logger [vweb_global] = &log.Logger(&log.Log{
+	authenticator EmailAuthenticator [vweb_global]
+	logger        &log.Logger        [vweb_global] = &log.Logger(&log.Log{
 	level: .debug
 })
 }
@@ -22,7 +22,7 @@ mut:
 [params]
 pub struct ControllerParams {
 	logger        &log.Logger
-	authenticator Authenticator [required]
+	authenticator EmailAuthenticator [required]
 }
 
 pub fn new_controller(params ControllerParams) Controller {
@@ -38,9 +38,9 @@ pub fn new_controller(params ControllerParams) Controller {
 pub fn (mut app Controller) send_verification_mail() !vweb.Result {
 	config := json.decode(SendMailConfig, app.req.data)!
 	app.logger.debug('${email.agent}: received request to verify email')
-		app.authenticator.send_verification_mail(config) or { panic(err) }
-		app.logger.debug('${email.agent}: Sent verification email')
-		return app.ok('')
+	app.authenticator.send_verification_mail(config) or { panic(err) }
+	app.logger.debug('${email.agent}: Sent verification email')
+	return app.ok('')
 	// app.logger.debug('${email.agent}: sent verification email')
 	// return app.html('timeout')
 }
@@ -79,16 +79,15 @@ pub fn (mut app Controller) email_authentication() vweb.Result {
 		config_
 	}
 
-
-		app.authenticator.send_verification_mail(config) or { panic(err) }
+	app.authenticator.send_verification_mail(config) or { panic(err) }
 
 	// checks if email verified every 2 seconds
 	for {
-			if app.authenticator.is_authenticated(config.email) or { panic(err) } {
-				// returns success message once verified
-				app.logger.debug('${email.agent}: verified email')
-				return app.ok('ok')
-			}
+		if app.authenticator.is_authenticated(config.email) or { panic(err) } {
+			// returns success message once verified
+			app.logger.debug('${email.agent}: verified email')
+			return app.ok('ok')
+		}
 		time.sleep(2 * time.second)
 	}
 	return app.ok('success!')
@@ -112,8 +111,7 @@ pub fn (mut app Controller) verify() vweb.Result {
 		config_
 	}
 
-		app.authenticator.send_verification_mail(config) or { panic(err) }
-	
+	app.authenticator.send_verification_mail(config) or { panic(err) }
 
 	// checks if email verified every 2 seconds
 	stopwatch := time.new_stopwatch()
@@ -151,9 +149,9 @@ pub fn (mut app Controller) authenticate() !vweb.Result {
 
 ['/authentication_link/:address/:cypher']
 pub fn (mut app Controller) authentication_link(address string, cypher string) !vweb.Result {
-		app.authenticator.authenticate(address, cypher) or {
-			app.set_status(401, err.msg())
-			return app.text('Failed to authenticate')
-		}
+	app.authenticator.authenticate(address, cypher) or {
+		app.set_status(401, err.msg())
+		return app.text('Failed to authenticate')
+	}
 	return app.html('Authentication successful')
 }
