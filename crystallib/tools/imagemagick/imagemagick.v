@@ -22,7 +22,7 @@ pub fn installed() bool {
 }
 
 fn filter_imagemagic(mut path pathlib.Path, mut params_ paramsparser.Params) !bool {
-	println(" - check $path.path")
+	// println(" - check $path.path")
 	// println(" ===== "+path.name_no_ext())
 	if path.name().starts_with('.') {
 		// println(" FALSE")
@@ -57,6 +57,7 @@ fn executor_imagemagic(mut path pathlib.Path, mut params_ paramsparser.Params) !
 	if path.is_dir(){
 		return params_
 	}
+	println(" - image check $path.path")
 	mut backupdir := ''
 	if params_.exists('backupdir') {
 		backupdir = params_.get('backupdir') or { panic(error) }
