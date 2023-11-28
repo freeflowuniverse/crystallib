@@ -40,6 +40,14 @@ fn filter_imagemagic(mut path pathlib.Path, mut params_ paramsparser.Params) !bo
 	} else if !path.is_image_jpg_png() {
 		return false
 	}
+	parent:=path.parent()!
+	if parent.file_exists(".done"){
+		p:=parent.file_get(".done")!
+		c:=p.read()!
+		if contains(path.name()){
+			return false
+		}
+	}
 	// println(" TRUE")
 	return true
 }

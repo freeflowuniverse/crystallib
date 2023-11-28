@@ -41,7 +41,7 @@ fn (mut image Image) skip() bool {
 	if image.path.name_no_ext().ends_with('_') {
 		return true
 	}
-	if image.size_kbyte < 601 {
+	if image.size_kbyte < 500 {
 		// println("SMALLER  $image.path (size: $image.size_kbyte)")
 		return true
 	}

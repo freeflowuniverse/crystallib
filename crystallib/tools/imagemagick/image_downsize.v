@@ -90,12 +90,21 @@ pub fn (mut image Image) downsize(args DownsizeArgs) ! {
 		}
 	}
 	// means we should not process next time, we do this by adding _ at end of name
-	path_dest2 := image.path.path_get_name_with_underscore()
-	image.init_()!
-	// println('   - add _ at end of image: $path_dest2')
-	if os.exists(path_dest2) {
-		os.rm(path_dest2)!
+	// path_dest2 := image.path.path_get_name_with_underscore()
+	// image.init_()!
+	// // println('   - add _ at end of image: $path_dest2')
+	// if os.exists(path_dest2) {
+	// 	os.rm(path_dest2)!
+	// }
+	// os.mv(image.path.path, path_dest2)!
+	// image.path = pathlib.get(path_dest2)
+
+	parent:=path.parent()!
+	p:=parent.file_get_new(".done")!
+	c:=p.read()!
+	if c.contains(path.name()){
+		panic("bug")
 	}
-	os.mv(image.path.path, path_dest2)!
-	image.path = pathlib.get(path_dest2)
+	c+="${path.name()}\n"
+	p.write(c)!
 }
