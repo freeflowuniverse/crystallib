@@ -69,11 +69,13 @@ const testcode = {
 			description: 'AnotherfileStruct0 defines the configuration params of anotherfile_func2'
 			mod: 'core.codeparser.testdata.flatdir'
 			is_pub: true
-			attrs: [codemodel.Attribute{
-				name: 'params'
-				has_arg: false
-				arg: ''
-			}]
+			attrs: [
+				codemodel.Attribute{
+					name: 'params'
+					has_arg: false
+					arg: ''
+				},
+			]
 			fields: [
 				codemodel.StructField{
 					comments: []
@@ -261,11 +263,13 @@ const testcode = {
 			description: 'SubfileStruct0 defines the configuration params of subfile_func2'
 			mod: 'core.codeparser.testdata.flatdir'
 			is_pub: true
-			attrs: [codemodel.Attribute{
-				name: 'params'
-				has_arg: false
-				arg: ''
-			}]
+			attrs: [
+				codemodel.Attribute{
+					name: 'params'
+					has_arg: false
+					arg: ''
+				},
+			]
 			fields: [
 				codemodel.StructField{
 					comments: []
@@ -453,11 +457,13 @@ const testcode = {
 			description: 'FileStruct0 defines the configuration params of file_func2'
 			mod: 'core.codeparser.testdata'
 			is_pub: true
-			attrs: [codemodel.Attribute{
-				name: 'params'
-				has_arg: false
-				arg: ''
-			}]
+			attrs: [
+				codemodel.Attribute{
+					name: 'params'
+					has_arg: false
+					arg: ''
+				},
+			]
 			fields: [
 				codemodel.StructField{
 					comments: []

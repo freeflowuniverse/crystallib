@@ -5,22 +5,20 @@ import freeflowuniverse.crystallib.data.markdownparser.elements
 import os
 import time
 
-const (
-	testdata_path     = os.dir(@FILE) + '/testdata'
-	collections_path  = os.dir(@FILE) + '/testdata/collections'
-	books_path        = os.dir(@FILE) + '/testdata/books'
-	destinations_path = os.dir(@FILE) + '/testdata/destinations'
-	tree_name         = 'mdbook_test_tree'
-	book_source       = os.dir(@FILE) + '/testdata/book/source'
-	book_destination  = os.dir(@FILE) + '/testdata/book/destination'
+const testdata_path = os.dir(@FILE) + '/testdata'
+const collections_path = os.dir(@FILE) + '/testdata/collections'
+const books_path = os.dir(@FILE) + '/testdata/books'
+const destinations_path = os.dir(@FILE) + '/testdata/destinations'
+const tree_name = 'mdbook_test_tree'
+const book_source = os.dir(@FILE) + '/testdata/book/source'
+const book_destination = os.dir(@FILE) + '/testdata/book/destination'
 
-	test_books        = {
-		'fruits_vegetables': TestBook{
-			src_path: os.dir(@FILE) + '/testdata/books/fruits_vegetables/source/summary.md'
-			dest_path: os.dir(@FILE) + '/testdata/books/fruits_vegetables/destination'
-		}
+const test_books = {
+	'fruits_vegetables': TestBook{
+		src_path: os.dir(@FILE) + '/testdata/books/fruits_vegetables/source/summary.md'
+		dest_path: os.dir(@FILE) + '/testdata/books/fruits_vegetables/destination'
 	}
-)
+}
 
 struct TestBook {
 	src_path      string

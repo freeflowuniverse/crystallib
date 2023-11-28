@@ -2,10 +2,8 @@ module doctree
 
 import os
 
-const (
-	testpath         = os.dir(@FILE) + '/example/chapter1'
-	collections_path = os.dir(@FILE) + '/testdata/collections'
-)
+const testpath = os.dir(@FILE) + '/example/chapter1'
+const collections_path = os.dir(@FILE) + '/testdata/collections'
 
 fn test_page_get() {
 	mut tree := new()!

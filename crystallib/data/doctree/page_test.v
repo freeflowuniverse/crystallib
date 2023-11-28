@@ -4,11 +4,9 @@ import os
 import freeflowuniverse.crystallib.data.markdownparser.elements
 import freeflowuniverse.crystallib.core.pathlib
 
-const (
-	testpath         = os.dir(@FILE) + '/testdata/broken_chapter'
-	collections_path = os.dir(@FILE) + '/testdata/collections'
-	tree_name        = 'page_test_tree'
-)
+const testpath = os.dir(@FILE) + '/testdata/broken_chapter'
+const collections_path = os.dir(@FILE) + '/testdata/collections'
+const tree_name = 'page_test_tree'
 
 fn testsuite_end() {
 	// reset testdata changes after running tests

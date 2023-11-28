@@ -5,13 +5,13 @@ import db.sqlite
 import time
 import log
 
-[noinit]
+@[noinit]
 pub struct DBBackend {
 mut:
 	db sqlite.DB
 }
 
-[params]
+@[params]
 pub struct DBBackendConfig {
 	db_path string = 'identity.sqlite'
 mut:

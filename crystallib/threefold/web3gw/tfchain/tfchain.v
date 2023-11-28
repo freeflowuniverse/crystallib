@@ -3,9 +3,7 @@ module tfchain
 import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
 import math.unsigned { Uint128, uint128_from_dec_str }
 
-const (
-	default_timeout = 500000
-)
+const default_timeout = 500000
 
 @[openrpc: exclude]
 @[noinit]

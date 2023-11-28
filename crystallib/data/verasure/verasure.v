@@ -34,13 +34,12 @@ struct Drand48_data {
 	__a     i64
 }
 
-const ( // empty enum
-	fp_nan       = 0
-	fp_infinite  = 1
-	fp_zero      = 2
-	fp_subnormal = 3
-	fp_normal    = 4
-)
+// empty enum
+const fp_nan = 0
+const fp_infinite = 1
+const fp_zero = 2
+const fp_subnormal = 3
+const fp_normal = 4
 
 struct Erasure_t {
 	k      int

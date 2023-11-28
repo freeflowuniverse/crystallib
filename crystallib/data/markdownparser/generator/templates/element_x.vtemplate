@@ -7,9 +7,9 @@ pub mut:
 }
 
 pub fn (mut self @{eo.classname}) process() !int {
-	for mut parent in self.parents{
-		parent.elements<<self
-	}	
+	// for mut parent in self.parents{
+	// 	parent.elements<<self
+	// }	
 	if self.processed{		
 		return 0
 	}
@@ -24,7 +24,8 @@ pub fn (mut self @{eo.classname}) markdown() string {
 }
 
 pub fn (mut self @{eo.classname}) html() string {
-	mut out:= self.content
+	panic("implement")
+	//TODO: implement html
 	out+=self.DocBase.html()
 	return out
 }

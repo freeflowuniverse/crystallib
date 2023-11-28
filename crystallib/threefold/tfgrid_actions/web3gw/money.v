@@ -3,14 +3,12 @@ module web3gw
 import freeflowuniverse.crystallib.data.actionparser { Action }
 import strconv
 
-const (
-	default_currencies = {
-		'bitcoin':  'btc'
-		'ethereum': 'eth'
-		'stellar':  'xlm'
-		'tfchain':  'tft'
-	}
-)
+const default_currencies = {
+	'bitcoin':  'btc'
+	'ethereum': 'eth'
+	'stellar':  'xlm'
+	'tfchain':  'tft'
+}
 
 pub fn (mut h Web3GWHandler) money_send(action Action) ! {
 	channel := action.params.get('channel')!

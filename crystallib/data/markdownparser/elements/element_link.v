@@ -1,7 +1,27 @@
-module markdownparser
-
+module elements
 import freeflowuniverse.crystallib.core.texttools
 import os
+
+pub struct Link {
+	DocBase	
+pub mut:
+	cat         LinkType
+	isexternal  bool // is not linked to a wiki (sites)
+	include     bool // means we will not link to the remote location, content will be shown in context of local site
+	newtab      bool // means needs to be opened on a new tab
+	moresites   bool // this means we can look for the content on multiple source sites, site does not have to be specified
+	description string
+	url         string
+	// identification of link:
+	filename string // is the name of the page/file where the link points too
+	path     string // is path in the site
+	site     string // is the sitename where the link points too
+	extra    string // e.g. ':size=800x900'
+	// internal
+	state     LinkState
+	error_msg string
+
+}
 
 pub enum LinkType {
 	file
@@ -21,26 +41,83 @@ pub enum LinkState {
 	error
 }
 
-// support for quite some types
-pub struct Link {
-pub mut:
-	// content = string //how link was put in the document
-	content     string
-	cat         LinkType
-	isexternal  bool // is not linked to a wiki (sites)
-	include     bool // means we will not link to the remote location, content will be shown in context of local site
-	newtab      bool // means needs to be opened on a new tab
-	moresites   bool // this means we can look for the content on multiple source sites, site does not have to be specified
-	description string
-	url         string
-	// identification of link:
-	filename string // is the name of the page/file where the link points too
-	path     string // is path in the site
-	site     string // is the sitename where the link points too
-	extra    string // e.g. ':size=800x900'
-	// internal
-	state     LinkState
-	error_msg string
+
+pub fn (mut self Link) process() !int {
+	if self.processed{		
+		return 0
+	}
+	self.processed = true
+	return 1
+}
+
+pub fn (mut self Link) markdown() string {
+	mut link_filename := self.filename
+	mut out := ""
+	if self.path != '' {
+		link_filename = '${self.path}/${link_filename}'
+	}
+	if self.cat == LinkType.image {
+		if self.extra.trim_space() == '' {
+			out = '![${self.description}](${link_filename})'
+		} else {
+			out = '![${self.description}](${link_filename} ${self.extra})'
+		}
+	}
+	if self.cat == LinkType.file {
+		if self.extra.trim_space() == '' {
+			out = '[${self.description}](${link_filename})'
+		} else {
+			out = '[${self.description}](${link_filename} ${self.extra})'
+		}
+	}
+	if self.cat == LinkType.page {
+		if self.filename.contains(':') {
+			return "should not have ':' in link for page or file.\n${self}"
+		}
+		if self.site != '' {
+			link_filename = '${self.site}:${link_filename}'
+		}
+		if self.include {
+			link_filename = '@${link_filename}'
+		}
+		if self.newtab {
+			link_filename = '!${link_filename}'
+		}
+		if self.moresites {
+			link_filename = '*${link_filename}'
+		}
+
+		out = '[${self.description}](${link_filename})'
+	}
+	// out+=self.DocBase.markdown()
+	return out
+}
+
+pub fn (mut self Link) html() string {
+	panic("implement")
+	//TODO: implement	
+	return ""
+}
+
+
+[params]
+pub struct LinkNewArgs{
+	ElementNewArgs
+}
+
+pub fn link_new(args_ LinkNewArgs) Link {
+	mut args:=args_
+	mut a:=Link{
+		content: args.content
+		type_name:"link"
+		parents:args.parents
+	}
+	if args.add2parent{
+		for mut parent in a.parents {
+			parent.elements << a
+		}
+	}	
+	return a
 }
 
 // return path of the filename in the site
@@ -61,94 +138,8 @@ pub fn (mut link Link) name_fix_no_underscore_no_ext() string {
 	// return link.filename.all_before_last('.').trim_right('_').to_lower()
 }
 
-fn (mut o Link) process(mut elements []DocElement) !int {
-	o.parse()
-}
 
-// return how to represent link on source
-pub fn (link Link) wiki() string {
-	mut link_filename := link.filename
-	if link.path != '' {
-		link_filename = '${link.path}/${link_filename}'
-	}
-	if link.cat == LinkType.image {
-		if link.extra.trim_space() == '' {
-			return '![${link.description}](${link_filename})'
-		} else {
-			return '![${link.description}](${link_filename} ${link.extra})'
-		}
-	}
-	if link.cat == LinkType.file {
-		if link.extra.trim_space() == '' {
-			return '[${link.description}](${link_filename})'
-		} else {
-			return '[${link.description}](${link_filename} ${link.extra})'
-		}
-	}
-	if link.cat == LinkType.page {
-		if link.filename.contains(':') {
-			return "should not have ':' in link for page or file.\n${link}"
-		}
-		if link.site != '' {
-			link_filename = '${link.site}:${link_filename}'
-		}
-		if link.include {
-			link_filename = '@${link_filename}'
-		}
-		if link.newtab {
-			link_filename = '!${link_filename}'
-		}
-		if link.moresites {
-			link_filename = '*${link_filename}'
-		}
 
-		return '[${link.description}](${link_filename})'
-	}
-	return link.content
-}
-
-// return how to represent link on source
-pub fn (link Link) markdown() string {
-	mut link_filename := link.filename
-	if link.path != '' {
-		link_filename = '${link.path}/${link_filename}'
-	}
-	if link.cat == LinkType.image {
-		if link.extra.trim_space() == '' {
-			return '![${link.description}](${link_filename})'
-		} else {
-			return '![${link.description}](${link_filename} ${link.extra})'
-		}
-	} else {
-		if link.extra.trim_space() == '' {
-			return '[${link.description}](${link_filename})'
-		} else {
-			return '[${link.description}](${link_filename} ${link.extra})'
-		}
-	}
-
-	return link.content
-}
-
-fn (o Link) html() string {
-	return o.wiki()
-}
-
-// fn ( o Link) str() string{
-// 	return "**** Link: ${o.wiki()}\n"
-// }
-
-// fn (link Link) original_get_with_ignore() string {
-// 	mut l := "[$descr]($link.url ':ignore')"
-// 	if link.isimage {
-// 		l = '!$l'
-// 	}
-// 	return l
-// }
-
-fn link_new() Link {
-	return Link{}
-}
 
 // add link to a paragraph of a doc
 fn (mut link Link) parse() Link {

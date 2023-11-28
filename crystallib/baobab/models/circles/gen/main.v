@@ -2,11 +2,9 @@ module main
 
 import os
 
-const (
-	source_model   = '${os.dir(os.dir(@FILE))}/model.v'
-	actor_target   = '${os.dir(os.dir(@FILE))}/actor2.v'
-	methods_target = '${os.dir(os.dir(@FILE))}/methods2.v'
-)
+const source_model = '${os.dir(os.dir(@FILE))}/model.v'
+const actor_target = '${os.dir(os.dir(@FILE))}/actor2.v'
+const methods_target = '${os.dir(os.dir(@FILE))}/methods2.v'
 
 pub fn main() {
 	do() or { panic(err) }

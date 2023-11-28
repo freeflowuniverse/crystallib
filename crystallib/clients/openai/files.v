@@ -5,9 +5,7 @@ import freeflowuniverse.crystallib.clients.httpconnection
 import os
 import net.http
 
-const (
-	jsonl_mime_type = 'text/jsonl'
-)
+const jsonl_mime_type = 'text/jsonl'
 
 @[params]
 pub struct FileUploadArgs {

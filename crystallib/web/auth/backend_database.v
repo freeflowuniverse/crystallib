@@ -4,7 +4,7 @@ import db.sqlite
 import log
 
 // Creates and updates, authenticates email authentication sessions
-[noinit]
+@[noinit]
 struct DatabaseBackend {
 mut:
 	db     sqlite.DB
@@ -14,19 +14,19 @@ mut:
 }
 
 struct UserSessions {
-	id       int       [primary]
+	id       int       @[primary]
 	user_id  string
-	sessions []Session [fkey: 'fid']
+	sessions []Session @[fkey: 'fid']
 }
 
 struct Session {
 pub:
-	session_id string [primary]
+	session_id string @[primary]
 	user_id    string
 	fid        int
 }
 
-[params]
+@[params]
 pub struct DatabaseBackendConfig {
 	db_path string = 'session_authenticator.sqlite'
 mut:

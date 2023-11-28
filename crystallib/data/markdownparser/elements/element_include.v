@@ -7,9 +7,6 @@ pub mut:
 }
 
 pub fn (mut self Include) process() !int {
-	for mut parent in self.parents {
-		parent.elements << self
-	}
 	if self.processed {
 		return 0
 	}

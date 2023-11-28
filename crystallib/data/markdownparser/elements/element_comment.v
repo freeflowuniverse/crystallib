@@ -4,12 +4,10 @@ pub struct Comment {
 	DocBase
 pub mut:
 	replaceme string
+	singleline bool
 }
 
 pub fn (mut self Comment) process() !int {
-	for mut parent in self.parents {
-		parent.elements << self
-	}
 	if self.processed {
 		return 0
 	}
@@ -22,7 +20,7 @@ pub fn (self Comment) markdown() string {
 	out += self.content
 	out += '-->'
 
-	out += self.DocBase.markdown()
+	// out += self.DocBase.markdown()
 	return out
 }
 

@@ -2,10 +2,8 @@ module gittools
 
 import os
 
-const (
-	gitstructure_name = 'test_gitstructure'
-	gitstructure_root = '${os.home_dir()}/testroot'
-)
+const gitstructure_name = 'test_gitstructure'
+const gitstructure_root = '${os.home_dir()}/testroot'
 
 fn test_new() ! {
 	assert !os.exists(gittools.gitstructure_root)

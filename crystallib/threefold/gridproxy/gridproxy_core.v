@@ -22,14 +22,12 @@ json parsing error code: 10
 http client error code: 11
 invalid response from server (e.g. empty response) error code: 24
 */
-const (
-	// clinet error codes
-	err_not_found    = 4
-	err_json_parse   = 10
-	err_http_client  = 11
-	err_invalid_resp = 24
-	err_grid_client  = 30
-)
+// clinet error codes
+const err_not_found = 4
+const err_json_parse = 10
+const err_http_client = 11
+const err_invalid_resp = 24
+const err_grid_client = 30
 
 // get_node_by_id fetchs specific node information by node id.
 //

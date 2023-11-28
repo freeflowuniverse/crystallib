@@ -6,21 +6,19 @@ import net.websocket
 import rand
 import time
 
-const (
-	logger_prefix            = '[NATSClient ]'
-	natsclient_version_major = u8(0)
-	natsclient_version_minor = u8(0)
-	natsclient_version_patch = u8(1)
-	inbox_stream_create      = 'stream.create'
-	inbox_consumer_create    = 'consumer.create'
-	inbox_message            = 'message'
-	inbox_kv_create          = 'kv.create'
-	inbox_kv_add             = 'kv.add'
-	inbox_kv_get             = 'kv.get'
-	inbox_kv_set             = 'kv.set'
-	kv_stream_prefix         = 'KV_'
-	kv_subject_prefix        = '\$KV.'
-)
+const logger_prefix = '[NATSClient ]'
+const natsclient_version_major = u8(0)
+const natsclient_version_minor = u8(0)
+const natsclient_version_patch = u8(1)
+const inbox_stream_create = 'stream.create'
+const inbox_consumer_create = 'consumer.create'
+const inbox_message = 'message'
+const inbox_kv_create = 'kv.create'
+const inbox_kv_add = 'kv.add'
+const inbox_kv_get = 'kv.get'
+const inbox_kv_set = 'kv.set'
+const kv_stream_prefix = 'KV_'
+const kv_subject_prefix = '\$KV.'
 
 pub const natsclient_version = '${natsclient_version_major}.${natsclient_version_minor}.${natsclient_version_patch}'
 

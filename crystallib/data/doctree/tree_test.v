@@ -5,12 +5,10 @@ import v.embed_file
 import freeflowuniverse.crystallib.data.markdownparser.elements
 import os
 
-const (
-	collections_path = os.dir(@FILE) + '/testdata/collections'
-	tree_name        = 'tree_test_tree'
-	book1_path       = os.dir(@FILE) + '/testdata/book1'
-	book1_dest       = os.dir(@FILE) + '/testdata/_book1'
-)
+const collections_path = os.dir(@FILE) + '/testdata/collections'
+const tree_name = 'tree_test_tree'
+const book1_path = os.dir(@FILE) + '/testdata/book1'
+const book1_dest = os.dir(@FILE) + '/testdata/_book1'
 
 // fn test_init() ! {
 // 	mut tree := Tree{}

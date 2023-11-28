@@ -30,16 +30,17 @@ fn get_generator_names() []ElementCat {
 
 	// HERE ADD YOUR DIFFERENT ELEMENTS
 	elementsobj << new(name: 'doc')
-	elementsobj << new(name: 'html', overwrite: true)
+	elementsobj << new(name: 'html')
 	elementsobj << new(name: 'none')
 	elementsobj << new(name: 'paragraph')
-	elementsobj << new(name: 'text', overwrite: true)
 	elementsobj << new(name: 'action')
-	elementsobj << new(name: 'table', overwrite: true)
+	elementsobj << new(name: 'table')
 	elementsobj << new(name: 'header')
-	elementsobj << new(name: 'comment', overwrite: true)
-	elementsobj << new(name: 'include', overwrite: true)
-	elementsobj << new(name: 'codeblock', classname: 'CodeBlock')
+	elementsobj << new(name: 'text')
+	elementsobj << new(name: 'comment')
+	elementsobj << new(name: 'include')
+	elementsobj << new(name: 'codeblock')
+	elementsobj << new(name: 'link')
 	return elementsobj
 }
 
@@ -49,7 +50,7 @@ fn do() ! {
 
 	outpathloc := os.dir(@FILE) + '/../elements/'
 
-	// e.g.	type DocElement = Action | CodeBlock | Text | None
+	// e.g.	type DocElement = Action | Codeblock | Text | None
 	mut elementtypes := ''
 	for element in elementsobj {
 		elementtypes += '${element.classname} | '

@@ -7,9 +7,6 @@ pub mut:
 }
 
 pub fn (mut self Text) process() !int {
-	for mut parent in self.parents {
-		parent.elements << self
-	}
 	if self.processed {
 		return 0
 	}
@@ -32,15 +29,12 @@ pub fn (mut self Text) html() string {
 @[params]
 pub struct TextNewArgs {
 	ElementNewArgs
-pub mut:
-	replaceme string
 }
 
 pub fn text_new(args_ TextNewArgs) Text {
 	mut args := args_
 	mut a := Text{
 		content: args.content
-		replaceme: args.replaceme
 		type_name: 'text'
 		parents: args.parents
 	}

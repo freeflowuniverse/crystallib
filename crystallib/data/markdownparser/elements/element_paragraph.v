@@ -1,7 +1,5 @@
 module elements
 
-// type ParagraphElement = Comment | Link | Text
-
 @[heap]
 pub struct Paragraph {
 	DocBase // pub mut:
@@ -9,60 +7,40 @@ pub struct Paragraph {
 }
 
 fn (mut self Paragraph) process() !int {
-	for mut parent in self.parents {
-		parent.elements << self
-	}
 	if self.processed {
 		return 0
 	}
+	self.parse()!
 	self.processed = true
 	return 1
 }
 
-fn (self Paragraph) markdown() string {
+fn (mut self Paragraph) markdown() string {
 	mut out := self.DocBase.markdown()
-	out += self.content
+	// out += self.content  // the children should have all the content
 	return out
 }
 
 fn (mut self Paragraph) html() string {
-	return self.markdown()
+	mut out := self.DocBase.html()  //the children should have all the content
 }
 
-// pub fn (mut paragraph Paragraph) wiki() string {
-// 	mut out := ''
-// 	for mut element in paragraph.elements {
-// 		match mut element {
-// 			Text { out += element.wiki() }
-// 			Link { out += element.wiki() }
-// 			Comment { out += element.wiki() }
-// 		}
-// 	}
-// 	return out + '\n\n'
-// }
+@[params]
+pub struct ParagraphNewArgs {
+	ElementNewArgs
+}
 
-// pub fn (mut paragraph Paragraph) markdown() string {
-// 	mut out := ''
-// 	for mut element in paragraph.elements {
-// 		match mut element {
-// 			Text { out += element.wiki() }
-// 			Link { out += element.markdown() }
-// 			Comment { out += element.wiki() }
-// 		}
-// 	}
-// 	return out + '\n\n'
-// }
-
-// pub fn (mut paragraph Paragraph) html() string {
-// 	mut out := ''
-// 	for mut element in paragraph.elements {
-// 		match mut element {
-// 			Text { out += element.html() }
-// 			Link { out += element.html() }
-// 			Comment { out += element.html() }
-// 		}
-// 	}
-// 	return out
-// }
-
-// TODO: complete
+pub fn paragraph_new(args_ ParagraphNewArgs) Paragraph {
+	mut args := args_
+	mut a := Paragraph{
+		content: args.content
+		type_name: 'paragraph'
+		parents: args.parents
+	}
+	if args.add2parent {
+		for mut parent in a.parents {
+			parent.elements << a
+		}
+	}
+	return a
+}

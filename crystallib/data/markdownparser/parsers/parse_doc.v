@@ -1,21 +1,21 @@
 module parsers
 
 import freeflowuniverse.crystallib.data.markdownparser.elements
-import freeflowuniverse.crystallib.data.actionparser
 // import regex
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 pub fn parse_doc(mut doc elements.Doc) ! {
 	mut parser := parser_line_new(mut doc)!
-	// re_header_row := regex.regex_opt('^:?-+:?$') or { return error("regex doesn't work") }
+	
 
 	for {
 		if parser.eof() {
+			// go out of loop if end of file
 			// println("---end")
 			break
 		}
-		// go out of loop if end of file
+		
 		mut line := parser.line_current()
 		line = line.replace('\t', '    ')
 		trimmed_line := line.trim_space()
@@ -52,7 +52,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			}
 		}
 
-		if mut llast is elements.CodeBlock {
+		if mut llast is elements.Codeblock {
 			if trimmed_line == '```' {
 				parser.next_start()
 				continue
@@ -64,44 +64,11 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		}
 
 		if mut llast is elements.Paragraph {
-			// TODO: support tables
 
-			// if line.starts_with('|') && line.ends_with('|') {
-			// 	//TODO: tab;e doesn't seem to be on right place, should be done on paragraph level
-			// 	if !parser.next_is_eof() {
-			// 		header := line.trim('|').split('|').map(it.trim(' \t'))
-			// 		line2 := parser.line_next()
-			// 		second_row := line2.trim('|').split('|').map(it.trim(' \t')).filter(re_header_row.matches_string(it))
-			// 		if header.len == second_row.len {
-			// 			// from now on we know it is a valid map
-			// 			mut alignments := []Alignment{}
-			// 			for cell in second_row {
-			// 				mut alignment := Alignment.left
-			// 				if cell[0] == 58 { // == ":"
-			// 					if cell[cell.len - 1] == 58 { // == ":"
-			// 						alignment = Alignment.center
-			// 					}
-			// 				} else if cell[cell.len - 1] == 58 { // == ":"
-			// 					alignment = Alignment.right
-			// 				}
-			// 				alignments << alignment
-			// 			}
-			// 			doc.elements << elements.Table{
-			// 				content: '${line}\n${line2}\n'
-			// 				num_columns: header.len
-			// 				header: header
-			// 				alignments: alignments
-			// 			}
-			// 			parser.next()
-			// 			parser.next()
-			// 			continue
-			// 		}
-			// 	}
-			// }
 			// parse includes
 			if line.starts_with('!!include ') {
 				content := line.all_after_first('!!include ').trim_space()
-				doc.elements << elements.include_new(content: content)
+				doc.elements << elements.include_new(content: content, parents: [&doc])
 				parser.next_start()
 				continue
 			}
@@ -144,13 +111,13 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			}
 
 			if trimmed_line.starts_with('|') && trimmed_line.ends_with('|') {
-				doc.elements << elements.table_new(content: '${line}\n')
+				doc.elements << elements.table_new(content: '${line}\n', parents: [&doc])
 				parser.next()
 				continue
 			}
 
 			if trimmed_line.to_lower().starts_with('<html>') {
-				doc.elements << elements.html_new()
+				doc.elements << elements.html_new(parents: [&doc])
 				parser.next()
 				continue
 			}
@@ -158,7 +125,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			if trimmed_line.starts_with('<!--') && trimmed_line.ends_with('-->') {
 				mut comment := trimmed_line.all_after_first('<!--')
 				comment = comment.all_before('-->')
-				doc.elements << elements.comment_new(content: comment)
+				doc.elements << elements.comment_new(content: comment, parents: [&doc])
 
 				parser.next_start()
 				continue
@@ -166,7 +133,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		}
 
 		match mut llast {
-			elements.Paragraph, elements.Html, elements.Include, elements.CodeBlock {
+			elements.Paragraph, elements.Html, elements.Include, elements.Codeblock, elements.Action {
 				if parser.endlf == false && parser.next_is_eof() {
 					llast.content += line
 				} else {
@@ -183,10 +150,5 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		parser.next()
 	}
 
-	// parse action elements
-	for mut element in doc.elements {
-		if mut element is elements.Action {
-			element.action = actionparser.parse(text: element.content)!
-		}
-	}
+
 }

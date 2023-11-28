@@ -7,9 +7,6 @@ pub mut:
 }
 
 pub fn (mut self Html) process() !int {
-	for mut parent in self.parents {
-		parent.elements << self
-	}
 	if self.processed {
 		return 0
 	}
@@ -17,7 +14,7 @@ pub fn (mut self Html) process() !int {
 	return 1
 }
 
-pub fn (self Html) markdown() string {
+pub fn (mut self Html) markdown() string {
 	mut out := '<html>\n'
 	out += self.content
 	out += '</html>\n'

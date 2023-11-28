@@ -3,14 +3,10 @@ module elements
 pub struct Header {
 	DocBase
 pub mut:
-	replaceme string
 	depth     int
 }
 
 pub fn (mut self Header) process() !int {
-	for mut parent in self.parents {
-		parent.elements << self
-	}
 	if self.processed {
 		return 0
 	}

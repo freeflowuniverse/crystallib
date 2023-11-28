@@ -47,7 +47,7 @@ fn (vparser VParser) parse_vpath(mut path pathlib.Path) ![]CodeItem {
 			// parse subdirs if configured recursive
 			mut flist := path.list(recursive: true)!
 			for mut subdir in flist.paths {
-				if subdir.is_dir(){
+				if subdir.is_dir() {
 					code << vparser.parse_vpath(mut subdir)!
 				}
 			}
@@ -55,7 +55,7 @@ fn (vparser VParser) parse_vpath(mut path pathlib.Path) ![]CodeItem {
 
 		mut fl := path.list(recursive: false)!
 		for mut file in fl.paths {
-			if !file.is_dir(){
+			if !file.is_dir() {
 				code << vparser.parse_vpath(mut file)!
 			}
 		}

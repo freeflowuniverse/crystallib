@@ -8,10 +8,8 @@ import json
 import os
 import time
 
-const (
-	circlename = 'testci'
-	objtype    = 'TestStruct'
-)
+const circlename = 'testci'
+const objtype = 'TestStruct'
 
 __global (
 	test_begin ourtime.OurTime
