@@ -1,7 +1,7 @@
 module herocmds
 
 import freeflowuniverse.crystallib.osal.gittools
-import freeflowuniverse.crystallib.baobab.hero
+// import freeflowuniverse.crystallib.baobab.hero
 import cli { Command, Flag }
 import os
 
@@ -77,27 +77,27 @@ pub fn cmd_3script_do(mut cmdroot Command) {
 }
 
 fn cmd_3script_execute(cmd Command) ! {
-	coderoot := cmd.flags.get_string('coderoot') or { '' }
-	mut path := cmd.flags.get_string('path') or { '' }
-	mut circle := cmd.flags.get_string('circle') or { 'test' }
-	mut url := cmd.flags.get_string('url') or { '' }
-	if path == '' {
-		path = url
-	}
+	// coderoot := cmd.flags.get_string('coderoot') or { '' }
+	// mut path := cmd.flags.get_string('path') or { '' }
+	// mut circle := cmd.flags.get_string('circle') or { 'test' }
+	// mut url := cmd.flags.get_string('url') or { '' }
+	// if path == '' {
+	// 	path = url
+	// }
 
-	mut gs := gittools.get(coderoot: coderoot) or {
-		return error("Could not find gittools on '${coderoot}'\n${err}")
-	}
+	// mut gs := gittools.get(coderoot: coderoot) or {
+	// 	return error("Could not find gittools on '${coderoot}'\n${err}")
+	// }
 
-	mut h := hero.new(
-		cid: circle
-		gitstructure: gs
-		url: path
-	)!
+	// mut h := hero.new(
+	// 	cid: circle
+	// 	gitstructure: gs
+	// 	url: path
+	// )!
 
-	println(h)
+	// println(h)
 
-	if cmd.flags.get_bool('run') or { false } {
-		h.run()!
-	}
+	// if cmd.flags.get_bool('run') or { false } {
+	// 	h.run()!
+	// }
 }

@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.osal
 import os
 
 [params]
-pub struct DownsizeArgs {
+pub struct DownsizeArgsInternal {
 	backup      bool
 	backup_root string
 	backup_dest string
@@ -34,7 +34,7 @@ pub struct DownsizeArgs {
 // }
 
 // will downsize to reasonable size based on x
-pub fn (mut image Image) downsize(args DownsizeArgs) ! {
+pub fn (mut image Image) downsize(args DownsizeArgsInternal) ! {
 	if image.path.is_link() {
 		return error('cannot downsize if path is link.\n${image}')
 	}
@@ -99,12 +99,13 @@ pub fn (mut image Image) downsize(args DownsizeArgs) ! {
 	// os.mv(image.path.path, path_dest2)!
 	// image.path = pathlib.get(path_dest2)
 
-	parent:=path.parent()!
-	p:=parent.file_get_new(".done")!
-	c:=p.read()!
-	if c.contains(path.name()){
+	mut parent:=image.path.parent()!
+	mut p:=parent.file_get_new(".done")!
+	mut c:=p.read()!
+	if c.contains(image.path.name()){
+		print_backtrace()
 		panic("bug")
 	}
-	c+="${path.name()}\n"
+	c+="${image.path.name()}\n"
 	p.write(c)!
 }

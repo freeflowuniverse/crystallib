@@ -22,7 +22,7 @@ import os
 // cachereset, make sure cache empty
 pub fn cmd_git_do(mut cmdroot Command) {
 	mut cmd_run := Command{
-		name: 'git_do'
+		name: 'git'
 		description: 'Work with your repos, list, commit, pull, reset, ...'
 		required_args: 0
 		usage: ''
