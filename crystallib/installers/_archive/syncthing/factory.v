@@ -11,7 +11,7 @@ pub mut:
 	last_gid int
 }
 
-[params]
+@[params]
 pub struct AppArgs {
 pub mut:
 	instance        string = 'default'

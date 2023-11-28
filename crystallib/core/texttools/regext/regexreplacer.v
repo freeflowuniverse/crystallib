@@ -107,7 +107,7 @@ pub fn (mut ri ReplaceInstructions) add(replacelist []string) ! {
 	}
 }
 
-[params]
+@[params]
 pub struct ReplaceArgs {
 pub mut:
 	text   string
@@ -168,7 +168,7 @@ pub fn (mut self ReplaceInstructions) replace(args ReplaceArgs) !string {
 	return x
 }
 
-[params]
+@[params]
 pub struct ReplaceDirArgs {
 pub mut:
 	path       string

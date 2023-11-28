@@ -13,11 +13,9 @@ import freeflowuniverse.crystallib.threefold.tfgrid_actions.web3gw { Web3GWHandl
 import freeflowuniverse.crystallib.threefold.tfgrid_actions.clients { Clients }
 import freeflowuniverse.crystallib.threefold.tfgrid_actions.stellar { StellarHandler }
 
-const (
-	tfgrid_book  = 'tfgrid'
-	web3gw_book  = 'web3gw'
-	stellar_book = 'stellar'
-)
+const tfgrid_book = 'tfgrid'
+const web3gw_book = 'web3gw'
+const stellar_book = 'stellar'
 
 pub struct Runner {
 pub mut:
@@ -28,7 +26,7 @@ pub mut:
 	stellar_handler StellarHandler
 }
 
-[params]
+@[params]
 pub struct RunnerArgs {
 pub mut:
 	name    string

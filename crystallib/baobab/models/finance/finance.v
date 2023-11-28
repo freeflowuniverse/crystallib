@@ -3,7 +3,7 @@ module people
 import freeflowuniverse.protocolme.models.backoffice.finance
 import time
 
-[heap]
+@[heap]
 pub struct PersonFinance {
 pub mut:
 	paymentmethods []finance.PaymentMethod

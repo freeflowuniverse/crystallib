@@ -4,11 +4,13 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal
 import os
 
-[params]
-pub struct DownsizeArgs {
+@[params]
+pub struct DownsizeArgsInternal {
 	backup      bool
 	backup_root string
 	backup_dest string
+	redo        bool
+	convertpng  bool
 }
 
 // // backupdir, put on empty if not used
@@ -34,7 +36,7 @@ pub struct DownsizeArgs {
 // }
 
 // will downsize to reasonable size based on x
-pub fn (mut image Image) downsize(args DownsizeArgs) ! {
+pub fn (mut image Image) downsize(args DownsizeArgsInternal) ! {
 	if image.path.is_link() {
 		return error('cannot downsize if path is link.\n${image}')
 	}
@@ -52,9 +54,9 @@ pub fn (mut image Image) downsize(args DownsizeArgs) ! {
 	if args.backup {
 		image.path.backup(dest: args.backup_dest, root: args.backup_root)!
 	}
-	if image.size_kbyte > 600 && image.size_x > 2400 {
+	if image.size_kbyte > 500 && image.size_x > 2400 {
 		image.size_kbyte = 0
-		println('   - convert image resize 50%: ${image.path.path}')
+		println('   - resize 50%: ${image.path.path}')
 		cmd := "convert '${image.path.path}' -resize 50% '${image.path.path}'"
 		// TODO:
 		osal.execute_silent(cmd) or {
@@ -62,9 +64,9 @@ pub fn (mut image Image) downsize(args DownsizeArgs) ! {
 		}
 		// println(image)
 		image.init_()!
-	} else if image.size_kbyte > 600 && image.size_x > 1800 {
+	} else if image.size_kbyte > 500 && image.size_x > 1600 {
 		image.size_kbyte = 0
-		println('   - convert image resize 75%: ${image.path.path}')
+		println('   - resize 75%: ${image.path.path}')
 		cmd := "convert '${image.path.path}' -resize 75% '${image.path.path}'"
 		osal.execute_silent(cmd) or {
 			return error('could not convert png to png --resize 75%.\n${cmd} \n${error}')
@@ -72,10 +74,14 @@ pub fn (mut image Image) downsize(args DownsizeArgs) ! {
 		image.init_()!
 	}
 
-	if image.is_png() {
-		if image.size_kbyte > 600 && !image.transparent {
+	if image.is_png() && args.convertpng {
+		if image.size_kbyte > 500 {
+			if image.transparent && image.size_kbyte < 900 {
+				println(' - image ${image.path.path} sizekb:${image.size_kbyte} transparent so skip. ')
+				return
+			}
 			path_dest := image.path.path_no_ext() + '.jpg'
-			println('   - convert image jpg: ${path_dest}')
+			println('   - convert to png: ${path_dest}')
 			cmd := "convert '${image.path.path}' '${path_dest}'"
 			if os.exists(path_dest) {
 				os.rm(path_dest)!
@@ -90,12 +96,22 @@ pub fn (mut image Image) downsize(args DownsizeArgs) ! {
 		}
 	}
 	// means we should not process next time, we do this by adding _ at end of name
-	path_dest2 := image.path.path_get_name_with_underscore()
-	image.init_()!
-	// println('   - add _ at end of image: $path_dest2')
-	if os.exists(path_dest2) {
-		os.rm(path_dest2)!
+	// path_dest2 := image.path.path_get_name_with_underscore()
+	// image.init_()!
+	// // println('   - add _ at end of image: $path_dest2')
+	// if os.exists(path_dest2) {
+	// 	os.rm(path_dest2)!
+	// }
+	// os.mv(image.path.path, path_dest2)!
+	// image.path = pathlib.get(path_dest2)
+
+	mut parent := image.path.parent()!
+	mut p := parent.file_get_new('.done')!
+	mut c := p.read()!
+	if c.contains(image.path.name()) {
+		print_backtrace()
+		panic('bug')
 	}
-	os.mv(image.path.path, path_dest2)!
-	image.path = pathlib.get(path_dest2)
+	c += '${image.path.name()}\n'
+	p.write(c)!
 }

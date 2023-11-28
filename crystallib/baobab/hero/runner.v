@@ -12,14 +12,14 @@ pub mut:
 	sessions []&Session
 }
 
-[params]
+@[params]
 pub struct RunnerArgs {
 pub mut:
 	cid          string // circleid
 	root         string // default ~/3bot/circles
 	reset        bool   // will reset the content as fetched of url when true
 	url          string // url can be ssh:// http(s):// git:// file:// path:// http(s)file://
-	gitstructure ?gittools.GitStructure [skip; str: skip]
+	gitstructure ?gittools.GitStructure @[skip; str: skip]
 }
 
 // open a runner a path is the only thing needed, config and everything else needs to come after

@@ -1,16 +1,16 @@
 module osal
+
 import os
 
-[params]
+@[params]
 pub struct UserArgs {
 pub mut:
-	name string [required]
+	name string @[required]
 }
 
-
 pub fn user_exists(username string) bool {
-	res:=os.execute("id $username")
-	if res.exit_code>0{
+	res := os.execute('id ${username}')
+	if res.exit_code > 0 {
 		println(res.exit_code)
 		// return error("cannot execute id ... code to see if username exist")
 		return false
@@ -19,17 +19,16 @@ pub fn user_exists(username string) bool {
 }
 
 pub fn user_id_get(username string) !int {
-	res:=os.execute("id $username")
-	if res.exit_code>0{
-		return error("cannot execute id ... code to see if username exist")
+	res := os.execute('id ${username}')
+	if res.exit_code > 0 {
+		return error('cannot execute id ... code to see if username exist')
 	}
-	return res.output.all_before("(").all_after_first("=").int()
+	return res.output.all_before('(').all_after_first('=').int()
 }
 
-
-//add's a user if the user does not exist yet
+// add's a user if the user does not exist yet
 pub fn user_add(args UserArgs) !int {
-	if user_exists(args.name){
+	if user_exists(args.name) {
 		return user_id_get(args.name)!
 	}
 	mut cmd := ''
@@ -43,4 +42,3 @@ pub fn user_add(args UserArgs) !int {
 
 	return user_id_get(args.name)!
 }
-

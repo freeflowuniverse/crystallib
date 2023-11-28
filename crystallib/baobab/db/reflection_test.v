@@ -8,10 +8,8 @@ import json
 import os
 import time
 
-const (
-	circlename = 'testci'
-	objtype    = 'TestStruct'
-)
+const circlename = 'testci'
+const objtype = 'TestStruct'
 
 __global (
 	test_begin ourtime.OurTime
@@ -20,8 +18,8 @@ __global (
 
 struct TestStruct {
 	Base
-	text   string [index]
-	number int    [index]
+	text   string @[index]
+	number int    @[index]
 	u32s   []u32
 }
 

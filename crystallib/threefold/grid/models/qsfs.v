@@ -23,7 +23,7 @@ pub struct Encryption {
 }
 
 pub struct QuantumSafeMeta {
-	type_  string            [json: 'type'] = 'ZDB' // configuration for the metadata store to use, currently only ZDB is supported.
+	type_  string = 'ZDB'            @[json: 'type'] // configuration for the metadata store to use, currently only ZDB is supported.
 	config QuantumSafeConfig
 }
 

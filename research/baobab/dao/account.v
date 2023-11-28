@@ -3,7 +3,7 @@ module dao
 import freeflowuniverse.crystallib.core.texttools
 
 // is the account on the blockchain
-[heap]
+@[heap]
 pub struct Account {
 pub mut:
 	name       string

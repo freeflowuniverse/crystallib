@@ -1,6 +1,6 @@
 module docker
 
-[params]
+@[params]
 pub struct FromArgs {
 pub mut:
 	image string
@@ -12,7 +12,7 @@ pub struct FromItem {
 pub mut:
 	image  string
 	tag    string
-	recipe &DockerBuilderRecipe [str: skip]
+	recipe &DockerBuilderRecipe @[str: skip]
 	alias  string
 }
 

@@ -7,7 +7,7 @@ import encoding.hex
 #include <crpgp.h>
 
 // KeyParams
-[params]
+@[params]
 pub struct KeyParams {
 	name     string      @[required]
 	email    string      @[required]

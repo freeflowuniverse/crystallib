@@ -13,10 +13,10 @@ pub mut:
 	path_root   pathlib.Path
 	path_io     pathlib.Path
 	startcmd    []string
-	factory     &Factory     [skip; str: skip]
+	factory     &Factory     @[skip; str: skip]
 }
 
-[params]
+@[params]
 pub struct ContainerArgs {
 pub mut:
 	name        string   = 'ubuntu'

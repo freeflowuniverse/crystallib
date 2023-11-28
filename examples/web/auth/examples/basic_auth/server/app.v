@@ -10,11 +10,11 @@ mut:
 	db sqlite.DB
 }
 
-[table: 'User']
+@[table: 'User']
 struct User {
-	id       int    [primary; sql: serial]
-	username string [sql: 'username'; unique]
-	password string [nonull]
+	id       int    @[primary; sql: serial]
+	username string @[sql: 'username'; unique]
+	password string @[nonull]
 }
 
 fn (u User) to_json() string {

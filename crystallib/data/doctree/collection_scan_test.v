@@ -3,11 +3,9 @@ module doctree
 import freeflowuniverse.crystallib.core.pathlib
 import os
 
-const (
-	testpath    = os.dir(@FILE) + '/example/chapter1'
-	fruits_path = os.dir(@FILE) + '/testdata/collections/fruits'
-	tree_name   = 'collection_scan_test_tree'
-)
+const testpath = os.dir(@FILE) + '/example/chapter1'
+const fruits_path = os.dir(@FILE) + '/testdata/collections/fruits'
+const tree_name = 'collection_scan_test_tree'
 
 fn test_scan_internal() ! {
 	new(name: doctree.tree_name)!

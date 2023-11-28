@@ -21,7 +21,7 @@ pub mut:
 }
 
 // TODO: use enumerator and do differently (despiegk)
-[params]
+@[params]
 pub struct DBArgs {
 pub mut:
 	circlename string
@@ -79,7 +79,7 @@ pub fn (mydb MyDB) delete_all() ! {
 	db.delete(cid: mydb.cid, objtype: mystruct.objtype)!
 }
 
-[params]
+@[params]
 pub struct FindArgs {
 pub mut:
 	name  string

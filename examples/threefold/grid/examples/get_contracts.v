@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.threefold.gridproxy.model
 import freeflowuniverse.crystallib.threefold.grid
 import log
 
-fn test_get_contracts() !{
+fn test_get_contracts() ! {
 	mut logger := log.Log{
 		level: .debug
 	}
@@ -19,6 +19,6 @@ fn test_get_contracts() !{
 	deployer.logger.info('${contracts}')
 }
 
-fn main(){
-	test_get_contracts() or {println("error happened")}
+fn main() {
+	test_get_contracts() or { println('error happened: ${err}') }
 }

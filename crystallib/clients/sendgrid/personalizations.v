@@ -1,6 +1,6 @@
 module sendgrid
 
-[params]
+@[params]
 pub struct Personalizations {
 pub mut:
 	to                    []Recipient        @[required]

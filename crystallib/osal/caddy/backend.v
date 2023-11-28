@@ -4,7 +4,7 @@ module caddy
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 
-[heap]
+@[heap]
 pub struct Backend {
 pub mut:
 	addr        string = 'localhost'

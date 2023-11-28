@@ -11,7 +11,7 @@ fn init_factory() HTTPConnections {
 // Singleton creation
 const factory = init_factory()
 
-[params]
+@[params]
 pub struct HTTPConnectionArgs {
 pub:
 	name  string @[required]

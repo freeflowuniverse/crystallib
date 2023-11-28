@@ -3,7 +3,7 @@ module email
 import log
 
 // Creates and updates, authenticates email authentication sessions
-[noinit]
+@[noinit]
 struct MemoryBackend {
 mut:
 	sessions map[string]AuthSession

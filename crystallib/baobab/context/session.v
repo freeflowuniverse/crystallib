@@ -11,10 +11,10 @@ pub mut:
 	name    string
 	start   ourtime.OurTime
 	end     ourtime.OurTime
-	context Context         [skip; str: skip]
+	context Context         @[skip; str: skip]
 }
 
-[params]
+@[params]
 pub struct SessionNewArgs {
 pub mut:
 	sid   string // unique id for session (session id), there can be more than 1 per id

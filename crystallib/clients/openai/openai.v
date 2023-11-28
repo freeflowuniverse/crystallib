@@ -8,7 +8,7 @@ mut:
 	connection &httpconnection.HTTPConnection
 }
 
-[params]
+@[params]
 pub struct OpenAIFactoryArgs {
 pub:
 	openaikey string

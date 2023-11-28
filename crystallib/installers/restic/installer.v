@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.core.texttools
 // import os
 
-[params]
+@[params]
 pub struct InstallArgs {
 pub mut:
 	reset bool

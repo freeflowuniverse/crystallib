@@ -18,10 +18,5 @@ pub fn install() ! {
 
 	println(' - install s3')
 
-
 	osal.done_set('install_s3', 'OK')!
 }
-
-
-
-

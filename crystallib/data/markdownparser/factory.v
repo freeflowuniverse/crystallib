@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.data.markdownparser.elements
 import freeflowuniverse.crystallib.data.markdownparser.parsers
 import os
 
-[params]
+@[params]
 pub struct NewDocArgs {
 pub:
 	path    string
@@ -15,7 +15,7 @@ pub:
 // get a parsed document, path is the path to the file, if not given content is needed
 pub fn new(args_ NewDocArgs) !elements.Doc {
 	mut args := args_
-	mut doc := elements.Doc{}
+	mut doc := elements.doc_new()!
 	if args.path == '' {
 		if args.content.trim_space() == '' {
 			return error('cannot process doc where content is empty if path not given. \n${args}')

@@ -2,7 +2,6 @@ module zos
 
 import time
 
-
 struct NetworkCreateParams {
 	name                  string // network name
 	description           string // network description

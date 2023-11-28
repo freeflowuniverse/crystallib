@@ -2,9 +2,10 @@ module email
 
 import db.sqlite
 import log
+import time
 
 // Creates and updates, authenticates email authentication sessions
-[noinit]
+@[noinit]
 struct DatabaseBackend {
 mut:
 	db     sqlite.DB
@@ -13,7 +14,7 @@ mut:
 })
 }
 
-[params]
+@[params]
 pub struct DatabaseBackendConfig {
 	db_path string = 'email_authenticator.sqlite'
 mut:
@@ -25,7 +26,6 @@ mut:
 
 // factory for
 pub fn new_database_backend(config DatabaseBackendConfig) !DatabaseBackend {
-	println('c:${config.db_path}')
 	db := sqlite.connect(config.db_path) or { panic(err) }
 
 	sql db {
@@ -38,7 +38,11 @@ pub fn new_database_backend(config DatabaseBackendConfig) !DatabaseBackend {
 	}
 }
 
-pub fn (auth DatabaseBackend) create_auth_session(session AuthSession) ! {
+pub fn (auth DatabaseBackend) create_auth_session(session_ AuthSession) ! {
+	mut session := session_
+	if session.timeout.unix == 0 {
+		session.timeout = time.now().add_seconds(180)
+	}
 	sql auth.db {
 		insert session into AuthSession
 	} or { panic('err:${err}') }

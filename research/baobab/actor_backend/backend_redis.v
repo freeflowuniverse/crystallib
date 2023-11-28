@@ -10,7 +10,6 @@ pub struct RedisBackend {
 
 // save the session to redis & mem
 pub fn (mut backend RedisBackend) get[T](id string) ?T {
-	
 	mut r := redisclient.core_get()!
 	if session.sid.len == 2 {
 		return error('sid should be at least 2 char')

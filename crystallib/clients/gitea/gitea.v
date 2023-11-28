@@ -4,7 +4,6 @@ module gitea
 import freeflowuniverse.crystallib.clients.httpconnection
 import os
 
-
 pub struct GiteaClient {
 mut:
 	connection &httpconnection.HTTPConnection
@@ -28,6 +27,5 @@ pub fn new() !GiteaClient {
 		connection: conn
 	}
 }
-
 
 // curl -X GET "http://localhost:3000/api/v1/admin/cron" -H "Authorization: token $GITEA_TOKEN

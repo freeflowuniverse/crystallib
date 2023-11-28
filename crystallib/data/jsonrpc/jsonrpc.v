@@ -3,9 +3,7 @@ module jsonrpc
 import json
 import rand
 
-const (
-	jsonrpc_version = '2.0'
-)
+const jsonrpc_version = '2.0'
 
 pub struct JsonRpcRequest[T] {
 pub mut:

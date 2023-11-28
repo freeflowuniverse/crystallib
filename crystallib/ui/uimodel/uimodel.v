@@ -1,6 +1,6 @@
 module uimodel
 
-[params]
+@[params]
 pub struct DropDownArgs {
 pub mut:
 	description string
@@ -14,7 +14,7 @@ pub mut:
 	}
 }
 
-[params]
+@[params]
 pub struct QuestionArgs {
 pub mut:
 	description string
@@ -31,7 +31,7 @@ pub mut:
 
 // validation responds with either true or an error message
 
-[params]
+@[params]
 pub struct YesNoArgs {
 pub mut:
 	description string

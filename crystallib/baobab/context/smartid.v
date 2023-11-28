@@ -2,7 +2,7 @@ module context
 
 import freeflowuniverse.crystallib.baobab.smartid
 
-[params]
+@[params]
 pub struct GIDNewArgs {
 pub mut:
 	gid_str  string // rid.cid.oid format

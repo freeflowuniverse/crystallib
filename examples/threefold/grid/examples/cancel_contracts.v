@@ -1,10 +1,9 @@
 module main
 
-import freeflowuniverse.crystallib.threefold.gridproxy
 import log
 import freeflowuniverse.crystallib.threefold.grid
 
-fn test_cancel_contracts(contracts_ids []u64) !{
+fn test_cancel_contracts(contracts_ids []u64) ! {
 	mut logger := log.Log{
 		level: .debug
 	}
@@ -16,6 +15,6 @@ fn test_cancel_contracts(contracts_ids []u64) !{
 	}
 }
 
-fn main(){
-	test_cancel_contracts([u64(47185), u64(47186)]) or {println("error happened")}
+fn main() {
+	test_cancel_contracts([u64(47218), u64(47219)]) or { println('error happened: ${err}') }
 }

@@ -16,14 +16,14 @@ __global (
 
 const default_read_timeout = net.infinite_timeout
 
-[heap]
+@[heap]
 struct RedisInternal {
 mut:
 	socket net.TcpConn
 	addr   string
 }
 
-[heap]
+@[heap]
 pub struct Redis {
 pub:
 	// current int

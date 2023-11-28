@@ -2,29 +2,27 @@ module elements
 
 import freeflowuniverse.crystallib.data.actionparser
 
-pub struct CodeBlock {
+[heap]
+pub struct Codeblock {
 	DocBase
 pub mut:
 	category string
 }
 
-pub fn (mut self CodeBlock) process() !int {
-	for mut parent in self.parents {
-		parent.elements << self
-	}
+pub fn (mut self Codeblock) process() !int {
 	if self.processed {
 		return 0
 	}
 	mut collection := actionparser.parse_collection(text: self.content)!
-	for action in collection.actions {
-		self.elements << Action{
-			action: action
-		}
+	mut d:=self.doc or {panic("no doc")}
+	for mut action in collection.actions {
+		mut a :=d.action_new(parent: self.id)
+		a.action = action
 	}
 
-	// now see if there is something left in codeblock, if yess add that one to the parent_elements
+	// now see if there is something left in codeblock, if yes add that one to the parent_elements
 	if collection.othertext.len > 0 {
-		text_new(parents: self.parents, content: collection.othertext)
+		d.text_new(parent: self.id, content: collection.othertext)
 	}
 
 	self.process_elements()!
@@ -32,37 +30,17 @@ pub fn (mut self CodeBlock) process() !int {
 	return 1
 }
 
-pub fn (mut self CodeBlock) markdown() string {
+pub fn (self Codeblock) markdown() string {
 	mut out := ''
 	out += '```${self.category}\n'
 	out += self.content.trim_space()
-	out += '\n```\n\n'
+	out += '\n```\n'
 	return out
 }
 
-pub fn (mut self CodeBlock) html() string {
-	return self.markdown()
+pub fn (mut self Codeblock) html() string {
+	panic("implement")
+	//TODO: implement html
+	return ""
 }
 
-[params]
-pub struct CodeBlockArgs {
-	ElementNewArgs
-pub mut:
-	category string
-}
-
-pub fn codeblock_new(args_ CodeBlockArgs) CodeBlock {
-	mut args := args_
-	mut a := CodeBlock{
-		content: args.content
-		type_name: 'codeblock'
-		parents: args.parents
-		category: args.category
-	}
-	if args.add2parent {
-		for mut parent in a.parents {
-			parent.elements << a
-		}
-	}
-	return a
-}

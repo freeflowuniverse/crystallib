@@ -21,7 +21,7 @@ pub mut:
 	// currencies currency.Currencies
 }
 
-[params]
+@[params]
 pub struct BizModelArgs {
 pub mut:
 	name        string = 'default' // name of bizmodel

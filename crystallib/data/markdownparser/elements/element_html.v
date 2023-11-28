@@ -1,5 +1,6 @@
 module elements
 
+[heap]
 pub struct Html {
 	DocBase
 pub mut:
@@ -7,9 +8,6 @@ pub mut:
 }
 
 pub fn (mut self Html) process() !int {
-	for mut parent in self.parents {
-		parent.elements << self
-	}
 	if self.processed {
 		return 0
 	}
@@ -18,7 +16,9 @@ pub fn (mut self Html) process() !int {
 }
 
 pub fn (mut self Html) markdown() string {
-	mut out := self.content
+	mut out := '<html>\n'
+	out += self.content
+	out += '</html>\n'
 	out += self.DocBase.markdown()
 	return out
 }
@@ -29,25 +29,8 @@ pub fn (mut self Html) html() string {
 	return out
 }
 
-[params]
+@[params]
 pub struct HtmlNewArgs {
-	ElementNewArgs
-pub mut:
-	replaceme string
+	ElementNewArgs	
 }
 
-pub fn html_new(args_ HtmlNewArgs) Html {
-	mut args := args_
-	mut a := Html{
-		content: args.content
-		replaceme: args.replaceme
-		type_name: 'html'
-		parents: args.parents
-	}
-	if args.add2parent {
-		for mut parent in a.parents {
-			parent.elements << a
-		}
-	}
-	return a
-}

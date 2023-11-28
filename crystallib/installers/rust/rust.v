@@ -4,8 +4,8 @@ import os
 import freeflowuniverse.crystallib.osal
 // install rust will return true if it was already installed
 
-[params]
-pub struct InstallArgs{
+@[params]
+pub struct InstallArgs {
 pub mut:
 	reset bool
 }
@@ -23,7 +23,7 @@ pub fn install(args InstallArgs) ! {
 
 	osal.execute_stdout("curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y")!
 
-	osal.profile_path_add("${os.home_dir()}/.cargo/bin")!
+	osal.profile_path_add('${os.home_dir()}/.cargo/bin')!
 
 	osal.done_set('install_rust', 'OK')!
 	return

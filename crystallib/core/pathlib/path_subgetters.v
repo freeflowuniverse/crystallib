@@ -3,7 +3,7 @@ module pathlib
 import freeflowuniverse.crystallib.core.texttools
 import os
 
-[params]
+@[params]
 pub struct SubGetParams {
 pub mut:
 	name          string

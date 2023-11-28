@@ -5,10 +5,8 @@ import freeflowuniverse.crystallib.core.codeparser
 import freeflowuniverse.crystallib.core.texttools
 import os
 
-const (
-	// path to the circles module
-	circles_path = os.dir(os.dir(@FILE))
-)
+// path to the circles module
+const circles_path = os.dir(os.dir(@FILE))
 
 pub struct GenerateDefinersParams {
 	model_path   string

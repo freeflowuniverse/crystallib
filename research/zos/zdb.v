@@ -12,7 +12,6 @@ struct ZDBBackend {
 	password  string
 }
 
-
 struct ZdbCreateParams {
 	deployment_name string  // deployment name
 	name            string  // zdb name

@@ -8,7 +8,7 @@ pub fn (client Client) ping() string {
 	return 'pong'
 }
 
-[params]
+@[params]
 pub struct AnimalArgs {
 	name    string
 	species string

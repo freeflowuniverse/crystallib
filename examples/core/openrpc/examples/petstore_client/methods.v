@@ -10,9 +10,9 @@ pub fn (mut client Client) get_pets(tags []string, limit int) []Pet {
 	return []Pet{}
 }
 
-[params]
+@[params]
 struct NewPet {
-	name string [required]
+	name string @[required]
 	tag  string
 }
 

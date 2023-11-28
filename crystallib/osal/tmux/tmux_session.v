@@ -4,10 +4,10 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.texttools
 import os
 
-[heap]
+@[heap]
 struct Session {
 pub mut:
-	tmux    &Tmux     [str: skip] // reference back
+	tmux    &Tmux     @[str: skip] // reference back
 	windows []&Window // session has windows
 	name    string
 }
@@ -46,7 +46,7 @@ pub fn (mut t Tmux) session_delete(name_ string) ! {
 	t.sessions.delete(i)
 }
 
-[params]
+@[params]
 pub struct SessionCreateArgs {
 pub mut:
 	name  string @[required]

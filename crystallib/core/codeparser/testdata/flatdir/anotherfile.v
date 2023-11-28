@@ -8,7 +8,7 @@ fn anotherfile_func0() {}
 pub fn anotherfile_func1(name string) {}
 
 // AnotherfileStruct0 defines the configuration params of anotherfile_func2
-[params]
+@[params]
 pub struct AnotherfileStruct0 {
 	param1 string //
 	param2 int    //

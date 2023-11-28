@@ -14,12 +14,12 @@ import io
 // or
 // telnet 127.0.0.1 12345
 fn server1() {
-	mut server := net.listen_tcp(.ip6, ':12345') or {panic(err)}
+	mut server := net.listen_tcp(.ip6, ':12345') or { panic(err) }
 	// mut server := net.listen_tcp(.ip, ':12345') or {panic(err)}
-	laddr := server.addr()or {panic(err)}
+	laddr := server.addr() or { panic(err) }
 	eprintln('Listen on ${laddr} ...')
 	for {
-		mut socket := server.accept()or {panic(err)}
+		mut socket := server.accept() or { panic(err) }
 		go handle_client1(mut socket)
 	}
 }
@@ -48,12 +48,12 @@ fn handle_client1(mut socket net.TcpConn) {
 }
 
 fn server2() {
-	mut server := net.listen_tcp(.ip6, ':12346') or {panic(err)}
+	mut server := net.listen_tcp(.ip6, ':12346') or { panic(err) }
 	// mut server := net.listen_tcp(.unix, '/tmp/mysocket') or {panic(err)} //TODO: doesn't work
-	laddr := server.addr()or {panic(err)}
+	laddr := server.addr() or { panic(err) }
 	eprintln('Listen on ${laddr} ...')
 	for {
-		mut socket := server.accept()or {panic(err)}
+		mut socket := server.accept() or { panic(err) }
 		go handle_client2(mut socket)
 	}
 }
@@ -81,13 +81,9 @@ fn handle_client2(mut socket net.TcpConn) {
 	}
 }
 
-
-
 fn foo1(ch chan string) {
 	for {
-		m := <-ch or {
-			println('channel 1 has been closed')
-		}
+		m := <-ch or { println('channel 1 has been closed') }
 		println('1 ${m}')
 		// coroutines.sleep(1 * time.second)
 	}
@@ -95,18 +91,13 @@ fn foo1(ch chan string) {
 
 fn foo2(ch chan string) {
 	for {
-		m := <-ch or {
-			println('channel 1 has been closed')
-		}
+		m := <-ch or { println('channel 1 has been closed') }
 		println('2 ${m}')
 		// coroutines.sleep(1 * time.second)
 	}
 }
 
-
-
 fn main() {
-
 	ch1 := chan string{}
 	ch2 := chan string{}
 
@@ -120,12 +111,12 @@ fn main() {
 	} $else {
 		println('IS COROUTINE=false')
 	}
-	mut counter:=0
+	mut counter := 0
 	for {
-		counter +=1
+		counter += 1
 		println('hello from MAIN')
-		ch1 <- "${counter}"
-		ch2 <- "${counter}"
+		ch1 <- '${counter}'
+		ch2 <- '${counter}'
 		coroutines.sleep(1000 * time.millisecond)
 	}
 	println('done')

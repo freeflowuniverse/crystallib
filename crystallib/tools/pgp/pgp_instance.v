@@ -3,7 +3,7 @@ module pgp
 // import freeflowuniverse.crystallib.builder
 import os
 
-[heap]
+@[heap]
 struct PGPInstance {
 mut:
 	name   string

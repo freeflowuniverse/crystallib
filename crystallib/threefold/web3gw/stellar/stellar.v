@@ -2,18 +2,16 @@ module stellar
 
 import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
 
-const (
-	default_timeout = 500000
-)
+const default_timeout = 500000
 
-[openrpc: exclude]
-[noinit]
+@[openrpc: exclude]
+@[noinit]
 pub struct StellarClient {
 mut:
 	client &RpcWsClient
 }
 
-[openrpc: exclude]
+@[openrpc: exclude]
 pub fn new(mut client RpcWsClient) StellarClient {
 	return StellarClient{
 		client: &client

@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.osal.gittools
 
 const url = 'https://github.com/rclone/rclone'
 
-[params]
+@[params]
 pub struct BuildArgs {
 pub mut:
 	reset    bool

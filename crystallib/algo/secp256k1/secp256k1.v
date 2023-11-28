@@ -1,4 +1,4 @@
-[translated]
+@[translated]
 module secp256k1
 
 import encoding.hex
@@ -95,7 +95,7 @@ fn C.secp256k1_public_key(secp &Secp256k1_t) &u8
 
 fn C.secp256k1_generate_key(secp &Secp256k1_t) int
 
-[params]
+@[params]
 pub struct Secp256NewArgs {
 pub:
 	keyhex  string // old way, same as privhex

@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.core.pathlib
 
 pub struct ZSiteCollection {
 pub mut:
-	site       &ZSite       [skip; str: skip]
+	site       &ZSite       @[skip; str: skip]
 	name       string
 	url        string
 	reset      bool
@@ -18,7 +18,7 @@ pub mut:
 	path       pathlib.Path
 }
 
-[params]
+@[params]
 pub struct ZSiteCollectionArgs {
 pub mut:
 	name string

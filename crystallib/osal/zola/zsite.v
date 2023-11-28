@@ -6,10 +6,10 @@ module zola
 import freeflowuniverse.crystallib.core.pathlib
 import os
 
-[heap]
+@[heap]
 pub struct ZSite {
 pub mut:
-	sites        &Zola             [skip; str: skip]
+	sites        &Zola             @[skip; str: skip]
 	url          string // url of site repo
 	name         string
 	path_build   pathlib.Path
@@ -18,7 +18,7 @@ pub mut:
 	gitrepokey   string
 }
 
-[params]
+@[params]
 pub struct ZSiteArgs {
 pub mut:
 	name string @[required]

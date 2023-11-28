@@ -14,7 +14,7 @@ pub enum DockerContainerStatus {
 }
 
 // need to fill in what is relevant
-[heap]
+@[heap]
 pub struct DockerContainer {
 pub mut:
 	id              string
@@ -27,9 +27,9 @@ pub mut:
 	ssh_port        int // ssh port on node that is used to get ssh
 	ports           []string
 	networks        []string
-	labels          map[string]string       [str: skip]
-	image           &DockerImage            [str: skip]
-	engine          &DockerEngine           [str: skip]
+	labels          map[string]string       @[str: skip]
+	image           &DockerImage            @[str: skip]
+	engine          &DockerEngine           @[str: skip]
 	status          DockerContainerStatus
 	memsize         int // in MB
 	command         string
@@ -40,7 +40,7 @@ pub struct DockerContainerVolume {
 	dest string
 }
 
-[params]
+@[params]
 pub struct DockerContainerCreateArgs {
 	name             string
 	hostname         string
@@ -98,7 +98,7 @@ pub fn (mut container DockerContainer) export(path string) ! {
 // 	container.engine.node.shell(cmd)!
 // }
 
-[params]
+@[params]
 pub struct DockerShellArgs {
 pub mut:
 	cmd string

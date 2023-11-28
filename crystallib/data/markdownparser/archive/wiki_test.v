@@ -145,12 +145,12 @@ for x in list {
 
 	assert docs.elements.len == 5
 	assert docs.elements[0] is Header
-	assert docs.elements[1] is CodeBlock
-	codeblock1 := docs.elements[1] as CodeBlock
+	assert docs.elements[1] is Codeblock
+	codeblock1 := docs.elements[1] as Codeblock
 	assert codeblock1.category == 'v'
 	assert docs.elements[2] is Header
-	assert docs.elements[3] is CodeBlock
-	codeblock2 := docs.elements[3] as CodeBlock
+	assert docs.elements[3] is Codeblock
+	codeblock2 := docs.elements[3] as Codeblock
 	assert docs.elements[4] is Header
 	assert content.trim_space() == docs.wiki().trim_space()
 }

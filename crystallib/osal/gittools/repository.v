@@ -7,11 +7,11 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.clients.redisclient
 import json
 
-[heap]
+@[heap]
 pub struct GitRepo {
 	id int
 mut:
-	gs &GitStructure [skip; str: skip]
+	gs &GitStructure @[skip; str: skip]
 pub mut:
 	addr GitAddr
 	path pathlib.Path
@@ -124,7 +124,7 @@ pub fn (mut repo GitRepo) pull_reset(args_ ActionArgs) ! {
 	repo.pull(args)!
 }
 
-[params]
+@[params]
 pub struct ActionArgs {
 pub mut:
 	reload bool = true

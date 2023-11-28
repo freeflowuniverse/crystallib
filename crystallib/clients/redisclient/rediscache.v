@@ -2,7 +2,7 @@ module redisclient
 
 pub struct RedisCache {
 mut:
-	redis     &Redis [str: skip]
+	redis     &Redis @[str: skip]
 	namespace string
 	enabled   bool = true
 }

@@ -14,21 +14,21 @@ fn server() {
 	}
 
 	// create TCP listener
-	mut listener := net.listen_tcp(.ip, 'localhost:9001') or {panic(err)}
+	mut listener := net.listen_tcp(.ip, 'localhost:9001') or { panic(err) }
 	defer {
 		listener.close() or {}
 	}
-	addr := listener.addr()or {panic(err)}
+	addr := listener.addr() or { panic(err) }
 	eprintln('Listening on ${addr}')
 	eprintln('Type `stop` to stop the server')
 
 	// create file descriptor notifier
-	mut notifier := notify.new()or {panic(err)}
+	mut notifier := notify.new() or { panic(err) }
 	defer {
 		notifier.close() or {}
 	}
-	notifier.add(os.stdin().fd, .read) or {panic(err)}
-	notifier.add(listener.sock.handle, .read)or {panic(err)}
+	notifier.add(os.stdin().fd, .read) or { panic(err) }
+	notifier.add(listener.sock.handle, .read) or { panic(err) }
 
 	for {
 		for event in notifier.wait(time.infinite) {
@@ -73,12 +73,9 @@ fn server() {
 	}
 }
 
-
 fn foo1(ch chan string) {
 	for {
-		m := <-ch or {
-			println('channel 1 has been closed')
-		}
+		m := <-ch or { println('channel 1 has been closed') }
 		println('1 ${m}')
 		// coroutines.sleep(1 * time.second)
 	}
@@ -86,18 +83,13 @@ fn foo1(ch chan string) {
 
 fn foo2(ch chan string) {
 	for {
-		m := <-ch or {
-			println('channel 1 has been closed')
-		}
+		m := <-ch or { println('channel 1 has been closed') }
 		println('2 ${m}')
 		// coroutines.sleep(1 * time.second)
 	}
 }
 
-
-
 fn main() {
-
 	ch1 := chan string{}
 	ch2 := chan string{}
 
@@ -110,12 +102,12 @@ fn main() {
 	} $else {
 		println('IS COROUTINE=false')
 	}
-	mut counter:=0
+	mut counter := 0
 	for {
-		counter +=1
+		counter += 1
 		println('hello from MAIN')
-		ch1 <- "${counter}"
-		ch2 <- "${counter}"
+		ch1 <- '${counter}'
+		ch2 <- '${counter}'
 		coroutines.sleep(1000 * time.millisecond)
 	}
 	println('done')

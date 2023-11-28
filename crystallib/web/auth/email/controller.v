@@ -8,18 +8,18 @@ import log
 const agent = 'Email Authentication Controller'
 
 // email authentication controller that be be added to vweb projects
-[heap]
+@[heap]
 pub struct Controller {
 	vweb.Context
-	callback string [vweb_global]
+	callback string @[vweb_global]
 mut:
-	authenticator Authenticator [vweb_global]
-	logger        &log.Logger   [vweb_global] = &log.Logger(&log.Log{
+	authenticator Authenticator @[vweb_global]
+	logger        &log.Logger = &log.Logger(&log.Log{
 	level: .debug
-})
+})   @[vweb_global]
 }
 
-[params]
+@[params]
 pub struct ControllerParams {
 	logger        &log.Logger
 	authenticator Authenticator @[required]
@@ -34,7 +34,7 @@ pub fn new_controller(params ControllerParams) Controller {
 }
 
 // route responsible for verifying email, email form should be posted here
-[POST]
+@[POST]
 pub fn (mut app Controller) send_verification_mail() !vweb.Result {
 	config := json.decode(SendMailConfig, app.req.data)!
 	app.logger.debug('${email.agent}: received request to verify email')
@@ -46,7 +46,7 @@ pub fn (mut app Controller) send_verification_mail() !vweb.Result {
 }
 
 // route responsible for verifying email, email form should be posted here
-[POST]
+@[POST]
 pub fn (mut app Controller) is_verified() vweb.Result {
 	address := app.req.data
 	// checks if email verified every 2 seconds
@@ -62,7 +62,7 @@ pub fn (mut app Controller) is_verified() vweb.Result {
 }
 
 // route responsible for verifying email, email form should be posted here
-[POST]
+@[POST]
 pub fn (mut app Controller) email_authentication() vweb.Result {
 	app.logger.debug('${email.agent}: received email authentication request')
 
@@ -94,7 +94,7 @@ pub fn (mut app Controller) email_authentication() vweb.Result {
 }
 
 // route responsible for verifying email, email form should be posted here
-[POST]
+@[POST]
 pub fn (mut app Controller) verify() vweb.Result {
 	app.logger.debug('${email.agent}: received request to verify email')
 	config_ := json.decode(SendMailConfig, app.req.data) or {
@@ -137,7 +137,7 @@ pub:
 	cypher  string
 }
 
-[POST]
+@[POST]
 pub fn (mut app Controller) authenticate() !vweb.Result {
 	attempt := json.decode(AuthAttempt, app.req.data)!
 	app.authenticator.authenticate(attempt.address, attempt.cypher) or {
@@ -147,7 +147,7 @@ pub fn (mut app Controller) authenticate() !vweb.Result {
 	return app.ok('Authentication successful')
 }
 
-['/authentication_link/:address/:cypher']
+@['/authentication_link/:address/:cypher']
 pub fn (mut app Controller) authentication_link(address string, cypher string) !vweb.Result {
 	app.authenticator.authenticate(address, cypher) or {
 		app.set_status(401, err.msg())

@@ -1,7 +1,5 @@
 module osal
 
-
-
 // update the package list
 pub fn package_refresh() ! {
 	platform_ := platform()

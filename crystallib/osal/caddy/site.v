@@ -10,7 +10,7 @@ pub mut:
 	domains     []Domain
 	backends    []Backend
 	paths       []pathlib.Path
-	caddy       &Caddy         [skip; str: skip]
+	caddy       &Caddy         @[skip; str: skip]
 	description string
 	status      SiteStatus
 }
@@ -21,7 +21,7 @@ pub enum SiteStatus {
 	failed
 }
 
-[params]
+@[params]
 pub struct SiteNewArgs {
 pub mut:
 	name        string    @[required]

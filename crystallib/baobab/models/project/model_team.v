@@ -3,14 +3,14 @@ module project
 import freeflowuniverse.crystallib.baobab.db
 import freeflowuniverse.crystallib.baobab.smartid
 
-[root_object]
+@[root_object]
 pub struct Team {
 	db.Base
 pub mut:
 	name        string
 	title       string
 	description string
-	members     []smartid.GID [root_object: Person] // id's users who are part of team
+	members     []smartid.GID @[root_object: Person] // id's users who are part of team
 }
 
 // import time

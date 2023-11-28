@@ -1,6 +1,6 @@
 module docker
 
-[params]
+@[params]
 pub struct CmdArgs {
 pub mut:
 	cmd string
@@ -9,7 +9,7 @@ pub mut:
 pub struct CmdItem {
 pub mut:
 	cmd    string
-	recipe &DockerBuilderRecipe [str: skip]
+	recipe &DockerBuilderRecipe @[str: skip]
 }
 
 // add run command to docker, is the cmd which is run when docker get's built

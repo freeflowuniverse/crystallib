@@ -6,7 +6,7 @@ import time
 import rand
 
 // Arguments of schedule_actions
-[params]
+@[params]
 pub struct ScheduleActionsArgs {
 	twinid     u32
 	src_twinid u32

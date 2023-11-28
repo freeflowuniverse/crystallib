@@ -10,7 +10,7 @@ __global (
 	knowledgetrees shared map[string]Tree
 )
 
-[params]
+@[params]
 pub struct ArgsNew {
 pub mut:
 	name string = 'default'
@@ -65,7 +65,7 @@ pub fn macroprocessor_add(args_ MacroProcessorArgs) ! {
 	}
 }
 
-[params]
+@[params]
 pub struct ArgsGet {
 pub mut:
 	treename string = 'default'

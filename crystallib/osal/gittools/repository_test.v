@@ -2,10 +2,8 @@ module gittools
 
 import os
 
-const (
-	github_dir     = '${os.home_dir()}/testcode/github'
-	crystallib_url = 'https://github.com/freeflowuniverse/crystallib.git'
-)
+const github_dir = '${os.home_dir()}/testcode/github'
+const crystallib_url = 'https://github.com/freeflowuniverse/crystallib.git'
 
 fn testsuite_begin() {
 	os.mkdir_all('${gittools.github_dir}/freeflowuniverse')!

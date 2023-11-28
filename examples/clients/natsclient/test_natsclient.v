@@ -57,8 +57,7 @@ fn main() {
 		return
 	}
 
-	t_process_messages := spawn process_messages(ch_receive_message, mut client, mut
-		&logger)
+	t_process_messages := spawn process_messages(ch_receive_message, mut client, mut &logger)
 	t_listen := spawn client.listen()
 
 	store := 'mykeyvaluestore'

@@ -13,7 +13,7 @@ pub mut:
 	myconfigs  map[string]MyConfig
 }
 
-[params]
+@[params]
 pub struct KeysSafeNewArgs {
 pub mut:
 	path   string // location where sqlite db will be which holds the keys

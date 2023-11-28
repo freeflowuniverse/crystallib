@@ -2,7 +2,7 @@ module docker
 
 import freeflowuniverse.crystallib.osal { file_read }
 
-[params]
+@[params]
 pub struct AddFileEmbeddedArgs {
 pub mut:
 	source          string // is the filename, needs to be embedded
@@ -14,7 +14,7 @@ pub struct AddFileEmbeddedItem {
 pub mut:
 	source          string
 	dest            string // in the container we're building
-	recipe          &DockerBuilderRecipe [str: skip]
+	recipe          &DockerBuilderRecipe @[str: skip]
 	make_executable bool
 	check_embed     bool = true
 }

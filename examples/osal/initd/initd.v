@@ -9,15 +9,14 @@ fn main() {
 }
 
 fn do() ! {
-	mut id:=initd.new()!
+	mut id := initd.new()!
 	println(id)
 
-	mut p:=id.new(
-		cmd:'/usr/local/bin/zinit init'
-		name:'zinit'
-		description:'a super easy to use startup manager.'
+	mut p := id.new(
+		cmd: '/usr/local/bin/zinit init'
+		name: 'zinit'
+		description: 'a super easy to use startup manager.'
 	)!
 	p.start()!
 	p.remove()!
-
 }

@@ -9,7 +9,7 @@ import time
 import v.embed_file
 import os
 
-[heap]
+@[heap]
 pub struct MDBooks {
 pub mut:
 	books           []&MDBook                   @[skip; str: skip]
@@ -29,7 +29,7 @@ pub mut:
 	revnew  string
 }
 
-[params]
+@[params]
 pub struct MDBooksArgs {
 pub mut:
 	coderoot    string = '${os.home_dir()}/hero/code'
@@ -117,7 +117,7 @@ pub fn (mut self MDBooks) pull() ! {
 	}
 }
 
-[params]
+@[params]
 pub struct WatchArgs {
 pub mut:
 	period int = 300 // 5 min default

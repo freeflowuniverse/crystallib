@@ -4,7 +4,7 @@ import time
 
 // is the top struct holds everything of the DAO
 // liquidity pool is just the start
-[heap]
+@[heap]
 pub struct DAO {
 pub mut:
 	accounts     map[string]&Account

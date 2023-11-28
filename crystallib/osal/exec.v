@@ -41,7 +41,7 @@ fn (err JobError) code() int {
 	return err.job.exit_code
 }
 
-[params]
+@[params]
 pub struct Command {
 pub mut:
 	name                             string // to give a name to your command, good to see logs...
@@ -349,5 +349,5 @@ pub fn exec_string(cmd Command) !string {
 	}
 	job.start = time.now()
 	process_args := job.cmd_to_process_args(cmd.insert_noninteractive_statements)!
-	return process_args[process_args.len-1]
+	return process_args[process_args.len - 1]
 }

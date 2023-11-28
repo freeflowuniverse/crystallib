@@ -3,7 +3,7 @@ module docker
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 
-[params]
+@[params]
 pub struct WriteFileArgs {
 pub mut:
 	name            string // such a file needs to have a name

@@ -6,10 +6,10 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.ourtime
 import time
 
-[heap]
+@[heap]
 struct Window {
 pub mut:
-	session &Session          [skip]
+	session &Session          @[skip]
 	name    string
 	id      int
 	active  bool
@@ -166,7 +166,6 @@ pub fn (mut w Window) create() ! {
 		$if debug {
 			println(' - WINDOW - Window: ${w.name} created in session: ${w.session.name}')
 		}
-
 	} else {
 		return error('cannot create window, it already exists.\n${w.name}:${w.id}:${w.cmd}')
 	}

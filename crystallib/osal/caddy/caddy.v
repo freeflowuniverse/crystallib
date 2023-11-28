@@ -4,14 +4,14 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 
-[heap]
+@[heap]
 pub struct Caddy {
 pub mut:
 	sites []Site
 	path  pathlib.Path
 }
 
-[params]
+@[params]
 pub struct CaddyArgs {
 pub mut:
 	reset bool   = true

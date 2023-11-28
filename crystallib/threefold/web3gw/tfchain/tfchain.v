@@ -3,18 +3,16 @@ module tfchain
 import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
 import math.unsigned { Uint128, uint128_from_dec_str }
 
-const (
-	default_timeout = 500000
-)
+const default_timeout = 500000
 
-[openrpc: exclude]
-[noinit]
+@[openrpc: exclude]
+@[noinit]
 pub struct TfChainClient {
 mut:
 	client &RpcWsClient
 }
 
-[openrpc: exclude]
+@[openrpc: exclude]
 pub fn new(mut client RpcWsClient) TfChainClient {
 	return TfChainClient{
 		client: &client

@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.osal
 
 // TODO: will be broken now
 
-[heap]
+@[heap]
 pub struct HostsFile {
 pub mut:
 	sections []Section

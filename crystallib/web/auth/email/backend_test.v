@@ -8,7 +8,7 @@ const test_email = 'test@example.com'
 
 const test_auth_code = '123ABC'
 
-const test_db_name = 'email_authenticator.db'
+const test_db_name = 'email_authenticator.sqlite'
 
 fn testsuite_begin() {
 	db := sqlite.connect(email.test_db_name) or { panic(err) }

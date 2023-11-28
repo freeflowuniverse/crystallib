@@ -5,7 +5,7 @@ import time
 
 pub struct Item {
 mut:
-	shelve &Shelve [str: skip]
+	shelve &Shelve @[str: skip]
 pub:
 	sha256 string
 	time   time.Time

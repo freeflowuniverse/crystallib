@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.algo.encoder
 import freeflowuniverse.crystallib.baobab.smartid
 
-[heap]
+@[heap]
 pub struct Base {
 pub mut:
 	gid                smartid.GID

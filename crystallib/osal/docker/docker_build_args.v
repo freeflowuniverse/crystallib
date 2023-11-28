@@ -2,7 +2,7 @@ module docker
 
 import freeflowuniverse.crystallib.data.paramsparser { Params }
 
-[params]
+@[params]
 pub struct BuildArgs {
 pub mut:
 	reset  bool // resets the docker state, will build again

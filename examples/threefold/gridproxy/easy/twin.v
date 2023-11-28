@@ -14,8 +14,8 @@ fn get_twins_with_filter_example() ! {
 	println(twin)
 }
 
-fn get_twin_iterator_example()!{
-		mut gp_client := gridproxy.get(.dev, true)!
+fn get_twin_iterator_example() ! {
+	mut gp_client := gridproxy.get(.dev, true)!
 
 	max_page_iteration := u64(5) // set maximum pages to iterate on
 
@@ -34,11 +34,10 @@ fn get_twin_iterator_example()!{
 		}
 	}
 	println(iterator_twins)
-
 }
+
 fn main() {
 	get_all_twins_example()!
 	get_twins_with_filter_example()!
 	get_twin_iterator_example()!
 }
-

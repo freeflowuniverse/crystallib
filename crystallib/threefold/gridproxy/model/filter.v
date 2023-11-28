@@ -5,7 +5,7 @@ import json
 type OptionU64 = EmptyOption | u64
 type OptionBool = EmptyOption | bool
 
-[params]
+@[params]
 pub struct FarmFilter {
 pub mut:
 	page               OptionU64  = EmptyOption{}
@@ -161,7 +161,7 @@ pub fn (f &FarmFilter) to_map() map[string]string {
 	return m
 }
 
-[params]
+@[params]
 pub struct ContractFilter {
 pub mut:
 	page                 OptionU64  = EmptyOption{}
@@ -248,7 +248,7 @@ pub fn (f &ContractFilter) to_map() map[string]string {
 	return m
 }
 
-[params]
+@[params]
 pub struct NodeFilter {
 pub mut:
 	page               OptionU64  = EmptyOption{}
@@ -484,7 +484,7 @@ pub enum NodeStatus {
 	online
 }
 
-[params]
+@[params]
 pub struct ResourceFilter {
 pub mut:
 	free_mru_gb u64
@@ -493,13 +493,13 @@ pub mut:
 	free_ips    u64
 }
 
-[params]
+@[params]
 pub struct StatFilter {
 pub mut:
 	status NodeStatus
 }
 
-[params]
+@[params]
 pub struct TwinFilter {
 pub mut:
 	page       OptionU64  = EmptyOption{}

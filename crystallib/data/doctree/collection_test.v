@@ -2,10 +2,8 @@ module doctree
 
 import os
 
-const (
-	testpath         = os.dir(@FILE) + '/example/chapter1'
-	collections_path = os.dir(@FILE) + '/testdata/collections'
-)
+const testpath = os.dir(@FILE) + '/example/chapter1'
+const collections_path = os.dir(@FILE) + '/testdata/collections'
 
 fn test_page_get() {
 	mut tree := new()!
@@ -14,7 +12,7 @@ fn test_page_get() {
 	)!
 
 	apple_page_name := 'apple'
-	fruits_collection_name := 'test_fruits'
+	fruits_collection_name := 'fruits'
 	apple_page_path := '${os.dir(@FILE)}/testdata/collections/fruits/apple.md'
 
 	// test with existing page
@@ -53,7 +51,7 @@ fn test_file_get() {
 	)!
 
 	banana_file_name := 'banana'
-	banana_file_collection := 'test_fruits'
+	banana_file_collection := 'fruits'
 	banana_file_path := '${os.dir(@FILE)}/testdata/collections/fruits/banana.txt'
 
 	// test with existing page
@@ -85,7 +83,7 @@ fn test_page_exists() {
 	)!
 
 	apple_page_name := 'apple'
-	fruits_collection_name := 'test_fruits'
+	fruits_collection_name := 'fruits'
 
 	// test with existing page
 	collection := tree.collection_get(fruits_collection_name)!
@@ -111,7 +109,7 @@ fn test_file_exists() {
 	)!
 
 	banana_file_name := 'banana'
-	fruits_collection_name := 'test_fruits'
+	fruits_collection_name := 'fruits'
 
 	// test with existing page
 	collection := tree.collection_get(fruits_collection_name)!

@@ -18,7 +18,7 @@ fn moderation_model_str(m ModerationModel) string {
 	}
 }
 
-[params]
+@[params]
 pub struct ModerationRequest {
 mut:
 	input string
@@ -37,13 +37,13 @@ pub mut:
 	sexual                 bool
 	hate                   bool
 	harassment             bool
-	selfharm               bool [json: 'self-harm']
-	sexual_minors          bool [json: 'sexual/minors']
-	hate_threatening       bool [json: 'hate/threatening']
-	violence_graphic       bool [json: 'violence/graphic']
-	selfharm_intent        bool [json: 'self-harm/intent']
-	selfharm_instructions  bool [json: 'self-harm/instructions']
-	harassment_threatening bool [json: 'harassment/threatening']
+	selfharm               bool @[json: 'self-harm']
+	sexual_minors          bool @[json: 'sexual/minors']
+	hate_threatening       bool @[json: 'hate/threatening']
+	violence_graphic       bool @[json: 'violence/graphic']
+	selfharm_intent        bool @[json: 'self-harm/intent']
+	selfharm_instructions  bool @[json: 'self-harm/instructions']
+	harassment_threatening bool @[json: 'harassment/threatening']
 	violence               bool
 }
 
@@ -52,13 +52,13 @@ pub mut:
 	sexual                 f32
 	hate                   f32
 	harassment             f32
-	selfharm               f32 [json: 'self-harm']
-	sexual_minors          f32 [json: 'sexual/minors']
-	hate_threatening       f32 [json: 'hate/threatening']
-	violence_graphic       f32 [json: 'violence/graphic']
-	selfharm_intent        f32 [json: 'self-harm/intent']
-	selfharm_instructions  f32 [json: 'self-harm/instructions']
-	harassment_threatening f32 [json: 'harassment/threatening']
+	selfharm               f32 @[json: 'self-harm']
+	sexual_minors          f32 @[json: 'sexual/minors']
+	hate_threatening       f32 @[json: 'hate/threatening']
+	violence_graphic       f32 @[json: 'violence/graphic']
+	selfharm_intent        f32 @[json: 'self-harm/intent']
+	selfharm_instructions  f32 @[json: 'self-harm/instructions']
+	harassment_threatening f32 @[json: 'harassment/threatening']
 	violence               f32
 }
 

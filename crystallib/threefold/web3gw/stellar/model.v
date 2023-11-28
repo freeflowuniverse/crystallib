@@ -1,13 +1,13 @@
 module stellar
 
-[params]
+@[params]
 pub struct Load {
 pub:
 	network string = 'public'
 	secret  string
 }
 
-[params]
+@[params]
 pub struct Transactions {
 pub:
 	account        string // filter the transactions on the account with the address from this argument, leave empty for your account
@@ -101,11 +101,11 @@ pub struct Signer {
 pub:
 	weight      int
 	key         string
-	signer_type string [json: 'type']
+	signer_type string @[json: 'type']
 	sponsor     string
 }
 
-[params]
+@[params]
 pub struct Swap {
 pub:
 	amount            string
@@ -113,7 +113,7 @@ pub:
 	destination_asset string
 }
 
-[params]
+@[params]
 pub struct Transfer {
 pub:
 	amount      string
@@ -121,28 +121,28 @@ pub:
 	memo        string
 }
 
-[params]
+@[params]
 pub struct AccountBalance {
 pub:
 	address string
 	asset   string = 'xlm'
 }
 
-[params]
+@[params]
 pub struct BridgeToEth {
 pub:
 	amount      string
 	destination string
 }
 
-[params]
+@[params]
 pub struct BridgeToTfchain {
 pub:
 	amount  string
 	twin_id u32
 }
 
-[params]
+@[params]
 pub struct AwaitBridgedFromEthereum {
 pub:
 	memo                            string // the memo to look for

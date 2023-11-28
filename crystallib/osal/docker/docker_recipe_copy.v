@@ -1,6 +1,6 @@
 module docker
 
-[params]
+@[params]
 pub struct CopyArgs {
 pub mut:
 	from            string
@@ -14,7 +14,7 @@ pub mut:
 	from            string
 	source          string
 	dest            string
-	recipe          &DockerBuilderRecipe [str: skip]
+	recipe          &DockerBuilderRecipe @[str: skip]
 	make_executable bool // if set will make the file copied executable
 	// check_embed bool = true
 }

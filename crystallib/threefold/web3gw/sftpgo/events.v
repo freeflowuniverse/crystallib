@@ -2,7 +2,7 @@ module sftpgo
 
 import net.http
 
-[params]
+@[params]
 pub struct EventRequest {
 	start int    // start_timestamp
 	end   int    // end_timestamp

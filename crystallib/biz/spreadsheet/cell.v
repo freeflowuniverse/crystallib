@@ -9,7 +9,7 @@ pub struct NoVal {}
 pub struct Cell {
 pub mut:
 	val   f64
-	row   &Row [skip; str: skip]
+	row   &Row @[skip; str: skip]
 	empty bool = true
 }
 

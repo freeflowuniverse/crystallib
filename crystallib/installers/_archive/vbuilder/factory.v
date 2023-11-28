@@ -10,7 +10,7 @@ pub mut:
 	docker   docker.DockerEngine
 }
 
-[params]
+@[params]
 pub struct AppArgs {
 pub mut:
 	instance        string = 'default'

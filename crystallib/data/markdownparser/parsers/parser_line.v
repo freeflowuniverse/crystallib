@@ -1,7 +1,5 @@
 module parsers
-
 import freeflowuniverse.crystallib.data.markdownparser.elements
-
 // is a line parser, useful to quickly parse a file in any format as long as it is line based
 
 // error while parsing
@@ -25,7 +23,7 @@ fn parser_line_new(mut doc elements.Doc) !Parser {
 	mut parser := Parser{
 		doc: doc
 	}
-	parser.doc.elements << elements.Paragraph{}
+	doc.paragraph_new()
 	parser.lines = doc.content.split_into_lines()
 	if doc.content.ends_with('\n') {
 		parser.endlf = true
@@ -35,8 +33,8 @@ fn parser_line_new(mut doc elements.Doc) !Parser {
 	return parser
 }
 
-fn (mut parser Parser) lastitem() elements.DocElement {
-	return parser.doc.elements.last()
+fn (mut parser Parser) lastitem() &elements.DocElement {
+	return parser.doc.last()
 }
 
 // return a specific line
@@ -70,7 +68,7 @@ fn (mut parser Parser) elementname() string {
 	if parser.doc.elements.len == 0 {
 		return 'start'
 	}
-	return parser.doc.elements.last().type_name().all_after_last('.').to_lower()
+	return parser.doc.last().type_name().all_after_last('.').to_lower()
 }
 
 // get next line, if end of file will return **EOF**
@@ -101,11 +99,15 @@ fn (mut parser Parser) next() {
 // move further and reset the state
 fn (mut parser Parser) next_start() {
 	// means we need to add paragraph because we don't know what comes next
-	if parser.doc.elements.last() !is elements.Paragraph {
-		parser.doc.elements << elements.Paragraph{}
+	if parser.doc.last() !is elements.Paragraph {
+		parser.doc.paragraph_new()
 	}
 	parser.next()
 }
+
+// fn (mut parser Parser) append_paragraph() {
+// 	 elements.paragraph_new(parent:parser.doc)
+// }
 
 // return true if end of file
 fn (mut parser Parser) eof() bool {

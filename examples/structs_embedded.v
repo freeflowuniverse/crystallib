@@ -2,7 +2,7 @@ module main
 
 pub struct StructB {
 pub mut:
-	a_link none|StructA [str: skip]
+	a_link none|StructA @[str: skip]
 	c      string = 'koekoe'
 }
 

@@ -22,7 +22,7 @@ pub mut:
 	done         []string
 }
 
-[params]
+@[params]
 pub struct ContextNewArgs {
 pub mut:
 	gid_str      string // rid.cid.oid format

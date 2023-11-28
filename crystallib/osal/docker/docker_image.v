@@ -3,7 +3,7 @@ module docker
 import freeflowuniverse.crystallib.osal { exec }
 import time
 
-[heap]
+@[heap]
 pub struct DockerImage {
 pub mut:
 	repo    string
@@ -12,7 +12,7 @@ pub mut:
 	digest  string
 	size    int // size in MB
 	created time.Time
-	engine  &DockerEngine [str: skip]
+	engine  &DockerEngine @[str: skip]
 }
 
 // delete docker image
@@ -61,7 +61,7 @@ pub fn (mut e DockerEngine) images_load() ! {
 	}
 }
 
-[params]
+@[params]
 pub struct ImageGetArgs {
 pub:
 	repo   string
