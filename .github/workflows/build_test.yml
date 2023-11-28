@@ -32,12 +32,9 @@ jobs:
 
       - name: Install crystallib
         run: |
-          SOURCE=${BASH_SOURCE[0]}
-          DIR_OF_THIS_SCRIPT="$( dirname "$SOURCE" )"
-          ABS_DIR_OF_SCRIPT="$( realpath $DIR_OF_THIS_SCRIPT )"
           mkdir -p ~/.vmodules/freeflowuniverse
           rm -f ~/.vmodules/freeflowuniverse/crystallib
-          ln -s $ABS_DIR_OF_SCRIPT/crystallib ~/.vmodules/freeflowuniverse/crystallib
+          ln -s $(pwd)/crystallib ~/.vmodules/freeflowuniverse/crystallib
 
       - name: Check formatting
         run: |
