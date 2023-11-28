@@ -2,7 +2,7 @@ module gittools
 
 import freeflowuniverse.crystallib.ui as gui
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.data.actionparser
 import os
 

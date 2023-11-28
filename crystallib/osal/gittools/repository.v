@@ -116,6 +116,11 @@ pub fn (mut repo GitRepo) pull_reset(args_ ActionArgs) ! {
 		args.reload = false
 	}
 	repo.remove_changes(args)!
+	if true{
+		println(repo)
+		print_backtrace()
+		panic("ss")
+	}
 	repo.pull(args)!
 }
 
@@ -222,19 +227,21 @@ pub fn (mut repo GitRepo) remove_changes(args_ ActionArgs) ! {
 		println(' - remove change ${repo.path.path}')
 		cmd := '
 		cd ${repo.path.path}
-		set +e
-		#checkout . -f
+		rm -f .git/index
+		#git fetch --all
 		git reset HEAD --hard
-		git clean -fd		
-		#git clean -xfd && git checkout .
-		git checkout .
+		git clean -xfd		
+		git checkout . -f
 		echo ""
-		'
-		osal.execute_silent(cmd) or {
-			return error('Cannot commit repo: ${repo.path.path}. Error was ${err}')
+		'		
+		res:=osal.exec(cmd:cmd,raise_error:false)!
+		println(cmd)
+		println(res)
+		if res.exit_code>0{
+			println(" - could not remove changes, will re-clone ${repo.path.path}")
+			repo.path.delete()! //remove path, this will re-clone the full thing
+			repo.load_from_url()!
 		}
-		// } else {
-		// 	println('     > nothing to remove, no changes  ${repo.path.path}')
 	}
 	repo.load()!
 }

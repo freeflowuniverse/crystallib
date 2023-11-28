@@ -50,7 +50,7 @@ pub fn (mut t Tmux) stop() ! {
 	}
 
 	cmd := 'tmux kill-server'
-	_ := osal.exec(cmd: cmd, stdout: false, name: 'tmux_kill_server', die: false) or {
+	_ := osal.exec(cmd: cmd, stdout: false, name: 'tmux_kill_server', ignore_error: true) or {
 		panic('bug')
 	}
 	os.log('TMUX - All sessions stopped .')
@@ -90,7 +90,7 @@ pub fn (mut t Tmux) windows_get() []&Window {
 
 // checks whether tmux server is running
 pub fn (mut t Tmux) is_running() !bool {
-	res := osal.exec(cmd: 'tmux info', stdout: false, name: 'tmux_info', die: false) or {
+	res := osal.exec(cmd: 'tmux info', stdout: false, name: 'tmux_info', raise_error: false) or {
 		panic('bug')
 	}
 	if res.error.contains('no server running') {
