@@ -2,6 +2,7 @@ module elements
 import freeflowuniverse.crystallib.core.texttools
 import os
 
+[heap]
 pub struct Link {
 	DocBase	
 pub mut:
@@ -103,21 +104,6 @@ pub fn (mut self Link) html() string {
 [params]
 pub struct LinkNewArgs{
 	ElementNewArgs
-}
-
-pub fn link_new(args_ LinkNewArgs) Link {
-	mut args:=args_
-	mut a:=Link{
-		content: args.content
-		type_name:"link"
-		parents:args.parents
-	}
-	if args.add2parent{
-		for mut parent in a.parents {
-			parent.elements << a
-		}
-	}	
-	return a
 }
 
 // return path of the filename in the site

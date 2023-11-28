@@ -1,5 +1,6 @@
 module elements
 
+[heap]
 pub struct Text {
 	DocBase
 pub mut:
@@ -14,7 +15,7 @@ pub fn (mut self Text) process() !int {
 	return 1
 }
 
-pub fn (self Text) markdown() string {
+pub fn (mut self Text) markdown() string {
 	mut out := self.content
 	out += self.DocBase.markdown()
 	return out
@@ -31,17 +32,3 @@ pub struct TextNewArgs {
 	ElementNewArgs
 }
 
-pub fn text_new(args_ TextNewArgs) Text {
-	mut args := args_
-	mut a := Text{
-		content: args.content
-		type_name: 'text'
-		parents: args.parents
-	}
-	if args.add2parent {
-		for mut parent in a.parents {
-			parent.elements << a
-		}
-	}
-	return a
-}

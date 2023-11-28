@@ -2,6 +2,7 @@ module elements
 
 import freeflowuniverse.crystallib.data.actionparser
 
+[heap]
 pub struct Codeblock {
 	DocBase
 pub mut:
@@ -13,17 +14,15 @@ pub fn (mut self Codeblock) process() !int {
 		return 0
 	}
 	mut collection := actionparser.parse_collection(text: self.content)!
-	for action in collection.actions {
-		self.elements << Action{
-			action: action
-		}
+	mut d:=self.doc or {panic("no doc")}
+	for mut action in collection.actions {
+		mut a :=d.action_new(parent: self.id)
+		a.action = action
 	}
-
-	if true{panic("action codeblock")}
 
 	// now see if there is something left in codeblock, if yes add that one to the parent_elements
 	if collection.othertext.len > 0 {
-		text_new(parents: self.parents, content: collection.othertext)
+		d.text_new(parent: self.id, content: collection.othertext)
 	}
 
 	self.process_elements()!
@@ -45,25 +44,3 @@ pub fn (mut self Codeblock) html() string {
 	return ""
 }
 
-@[params]
-pub struct CodeBlockArgs {
-	ElementNewArgs
-pub mut:
-	category string
-}
-
-pub fn codeblock_new(args_ CodeBlockArgs) Codeblock {
-	mut args := args_
-	mut a := Codeblock{
-		content: args.content
-		type_name: 'codeblock'
-		parents: args.parents
-		category: args.category
-	}
-	if args.add2parent {
-		for mut parent in a.parents {
-			parent.elements << a
-		}
-	}
-	return a
-}

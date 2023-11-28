@@ -1,12 +1,15 @@
-module elements
+module parsers
+import freeflowuniverse.crystallib.data.markdownparser.elements
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT REALITIES
 // adds the found links, text, comments to the paragraph
-fn (mut para Paragraph) parse() ! {
+pub fn paragraph_parse(mut para elements.Paragraph)  ! {
 	mut parser := parser_char_new_text(para.content.trim_space())
 
-	text_new(parents:[&para]) //the initial one
+	mut d:=para.doc or {panic("no doc")}
+	
+	d.text_new(parent:para.id) //the initial one
 
 	mut potential_link := false
 
@@ -15,15 +18,15 @@ fn (mut para Paragraph) parse() ! {
 			break
 		}
 
-		mut llast := para.elements.last()
+		mut llast := d.last()
 		mut char_ := parser.char_current()
 
 		// check for comments end
-		if mut llast is Comment {
+		if mut llast is elements.Comment {
 			if char_ == '\n' {
 				if llast.singleline {
 					// means we are at end of line of a single line comment
-					text_new(parents:[&para])
+					d.text_new(parent:para.id)
 					parser.next()
 					char_ = ''
 					continue
@@ -37,23 +40,22 @@ fn (mut para Paragraph) parse() ! {
 				llast.content += char_ // need to add current content
 				// need to move forward not to have the 3 next
 				parser.forward(3)
-				text_new(parents:[&para])
+				d.text_new(parent:para.id)
 				parser.next()
 				char_ = ''
 				continue
 			}
 		}
 
-		if mut llast is Link {
+		if mut llast is elements.Link {
 			if char_ == ']' {
 				if !parser.text_next_is('(', 1) {
 					// means is not link, need to convert link to normal text
 					mut c := llast.content
-					para.elements.delete_last() // remove the link
-					text_new(content:c,parents:[&para])
-					llast = para.elements.last() // fetch last again
+					d.delete_last() // remove the link
+					d.text_new(parent:para.id)
+					llast = d.last() // fetch last again
 					llast.content += char_ // need to add current content
-					para.elements << Text{}
 					parser.next()
 					// println("\n!!!!!!!!!!!!!!!!!!!!!\n")
 					char_ = ''
@@ -64,7 +66,7 @@ fn (mut para Paragraph) parse() ! {
 			if char_ == ')' && potential_link {
 				// end of link
 				llast.content += char_ // need to add current content
-				text_new(parents:[&para])
+				d.text_new(parent:para.id)
 				parser.next()
 				char_ = ''
 				potential_link = false
@@ -72,16 +74,16 @@ fn (mut para Paragraph) parse() ! {
 			}
 		}
 
-		if mut llast is Text {
+		if mut llast is elements.Text {
 			if char_ != '' {
 				// check for comments start
 				for totry in ['<!--', '//'] {
 					if parser.text_next_is(totry, 0) {
 						// we are now in comment
-						comment_new(parents:[&para])
-						mut llast2 := para.elements.last()
+						d.comment_new(parent:para.id)
+						mut llast2 := d.last()
 						if totry == '//' {
-							if mut llast2 is Comment {
+							if mut llast2 is elements.Comment {
 								llast2.singleline = true
 							}
 						}
@@ -95,7 +97,7 @@ fn (mut para Paragraph) parse() ! {
 				// try to find link
 				for totry in ['![', '['] {
 					if parser.text_next_is(totry, 0) {
-						para.elements << link_new(content:totry, parents:[&para])
+						d.link_new(content:totry, parent:para.id)
 						parser.forward(totry.len - 1)
 						char_ = ''
 						break
@@ -106,25 +108,5 @@ fn (mut para Paragraph) parse() ! {
 		llast.content += char_
 		parser.next()
 	}
-
-	//now we need to remove all empty text elements, doesn' seem to be the most efficient code?
-
-	mut toremovelist := []int{}
-	mut counter := 0
-	for mut element in para.elements {
-		match mut element {
-			Text {
-				if element.content == '' {
-					toremovelist << counter
-				}
-			}
-			else{}
-		}
-		counter += 1
-	}
-	for toremove in toremovelist.reverse() {
-		para.elements.delete(toremove)
-	}
-
 
 }

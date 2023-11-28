@@ -1,5 +1,6 @@
 module elements
 
+[heap]
 pub struct Comment {
 	DocBase
 pub mut:
@@ -32,23 +33,5 @@ pub fn (mut self Comment) html() string {
 
 @[params]
 pub struct CommentNewArgs {
-	ElementNewArgs
-pub mut:
-	replaceme string
-}
-
-pub fn comment_new(args_ CommentNewArgs) Comment {
-	mut args := args_
-	mut a := Comment{
-		content: args.content
-		replaceme: args.replaceme
-		type_name: 'comment'
-		parents: args.parents
-	}
-	if args.add2parent {
-		for mut parent in a.parents {
-			parent.elements << a
-		}
-	}
-	return a
+	ElementNewArgs	
 }

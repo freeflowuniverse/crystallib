@@ -1,5 +1,6 @@
 module elements
 
+[heap]
 pub struct Html {
 	DocBase
 pub mut:
@@ -30,23 +31,6 @@ pub fn (mut self Html) html() string {
 
 @[params]
 pub struct HtmlNewArgs {
-	ElementNewArgs
-pub mut:
-	replaceme string
+	ElementNewArgs	
 }
 
-pub fn html_new(args_ HtmlNewArgs) Html {
-	mut args := args_
-	mut a := Html{
-		content: args.content
-		replaceme: args.replaceme
-		type_name: 'html'
-		parents: args.parents
-	}
-	if args.add2parent {
-		for mut parent in a.parents {
-			parent.elements << a
-		}
-	}
-	return a
-}

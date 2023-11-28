@@ -1,20 +1,19 @@
 module parsers
 
 import freeflowuniverse.crystallib.data.markdownparser.elements
-// import regex
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 pub fn parse_doc(mut doc elements.Doc) ! {
 	mut parser := parser_line_new(mut doc)!
 	
-
 	for {
 		if parser.eof() {
 			// go out of loop if end of file
-			// println("---end")
+			println("--- end")
 			break
 		}
+
 		
 		mut line := parser.line_current()
 		line = line.replace('\t', '    ')
@@ -22,14 +21,15 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 
 		mut llast := parser.lastitem()
 
+		println (" -- line: ${llast.type_name} $line")
+
 		if mut llast is elements.Table {
 			if trimmed_line.starts_with('|') && trimmed_line.ends_with('|') {
 				llast.content += '${line}\n'
 				parser.next()
 				continue
 			}
-
-			parser.append_paragraph()
+			parser.next_start()
 			continue
 		}
 
@@ -41,7 +41,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				continue
 			}
 
-			parser.append_paragraph()
+			parser.next_start()
 			continue
 		}
 
@@ -50,41 +50,40 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				parser.next_start()
 				continue
 			}
+			llast.content += '${line}\n'
+			parser.next()
+			continue			
 		}
 
 		if mut llast is elements.Codeblock {
-			if trimmed_line == '```' {
+			if trimmed_line == '```' || trimmed_line == '\'\'\'' {
 				parser.next_start()
 				continue
 			}
-
 			llast.content += '${line}\n'
 			parser.next()
 			continue
 		}
 
 		if mut llast is elements.Paragraph {
-
 			// parse includes
 			if line.starts_with('!!include ') {
 				content := line.all_after_first('!!include ').trim_space()
-				doc.elements << elements.include_new(content: content, parents: [&doc])
-				parser.next_start()
+				doc.include_new(content: content)
+				parser.next()
 				continue
 			}
 			// parse action
 			if line.starts_with('!') {
-				doc.elements << elements.action_new(content: line, parents: [&doc])
+				doc.action_new(content: line)
 				parser.next()
 				continue
 			}
 
 			// find codeblock
-			if line.starts_with('```') {
-				doc.elements << elements.codeblock_new(
-					category: line.substr(3, line.len).to_lower().trim_space()
-					parents: [&doc]
-				)
+			if line.starts_with('```') || line.starts_with('\'\'\'')  {
+				mut e:=doc.codeblock_new()
+				e.category=line.substr(3, line.len).to_lower().trim_space()
 				parser.next()
 				continue
 			}
@@ -101,23 +100,23 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 						parser.next_start()
 						continue
 					}
-					doc.elements << elements.Header{
-						content: line.all_after_first(line[..d]).trim_space()
-						depth: d
-					}
+					mut e:=doc.header_new(content: line.all_after_first(line[..d]).trim_space())
+					e.depth=d
 					parser.next_start()
 					continue
 				}
+				parser.next()
+				continue				
 			}
 
 			if trimmed_line.starts_with('|') && trimmed_line.ends_with('|') {
-				doc.elements << elements.table_new(content: '${line}\n', parents: [&doc])
+				doc.table_new(content: '${line}\n')
 				parser.next()
 				continue
 			}
 
 			if trimmed_line.to_lower().starts_with('<html>') {
-				doc.elements << elements.html_new(parents: [&doc])
+				doc.html_new()
 				parser.next()
 				continue
 			}
@@ -125,15 +124,15 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			if trimmed_line.starts_with('<!--') && trimmed_line.ends_with('-->') {
 				mut comment := trimmed_line.all_after_first('<!--')
 				comment = comment.all_before('-->')
-				doc.elements << elements.comment_new(content: comment, parents: [&doc])
-
+				doc.comment_new(content: comment)
 				parser.next_start()
 				continue
 			}
 		}
 
+
 		match mut llast {
-			elements.Paragraph, elements.Html, elements.Include, elements.Codeblock, elements.Action {
+			elements.Paragraph {
 				if parser.endlf == false && parser.next_is_eof() {
 					llast.content += line
 				} else {
@@ -149,6 +148,6 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 
 		parser.next()
 	}
-
+	doc.process_elements()! //now do the processing
 
 }

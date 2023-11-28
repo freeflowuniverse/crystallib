@@ -29,9 +29,9 @@ fn get_generator_names() []ElementCat {
 	mut elementsobj := []ElementCat{}
 
 	// HERE ADD YOUR DIFFERENT ELEMENTS
-	elementsobj << new(name: 'doc')
-	elementsobj << new(name: 'html')
-	elementsobj << new(name: 'none')
+	// elementsobj << new(name: 'doc')
+	// elementsobj << new(name: 'none')
+	elementsobj << new(name: 'html')	
 	elementsobj << new(name: 'paragraph')
 	elementsobj << new(name: 'action')
 	elementsobj << new(name: 'table')

@@ -5,38 +5,42 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.data.actionparser
 
+@[heap]
 pub struct DocBase {
 pub mut:
-	id        int // the unique id while loading of the element in the parser
+	
+	id        int 
 	content   string
-	elements  []DocElement        @[skip; str: skip]
-	parents    []&DocElement        @[skip; str: skip]
+	doc      ?&Doc        @[skip; str: skip]
 	path      pathlib.Path
 	processed bool
 	params    paramsparser.Params
 	type_name string
 	changed   bool
+	parent int
+	children  []int
 }
+
+fn (mut self DocBase) process_base() !{
+	for mut element in self.children(){
+		//remove the elements which are empty
+		if element.content.trim_space() == '' {
+			self.children.delete(element.id)
+		}
+	}
+}
+
 
 @[params]
 pub struct ElementNewArgs {
 pub mut:
-	parents    []&DocElement
 	content    string
-	add2parent bool = true // means we will add to elements of parent
+	parent	   int
 }
-
-// pub fn (mut self DocBase) save_markdown() ! {
-// 	// mut path := self.path or { pathlib.Path{} }
-// 	if self.path.str().len > 0 {
-// 		self.path.write(self.content)!
-// 	}
-// }
-
 
 pub fn (self DocBase) actions() []actionparser.Action {
 	mut out := []actionparser.Action{}
-	for element in self.elements {
+	for element in self.children() {
 		// println(element.type_name)
 		match element {
 			Action { 
@@ -49,3 +53,43 @@ pub fn (self DocBase) actions() []actionparser.Action {
 	}
 	return out
 }
+
+
+pub fn (self DocBase) treeview() string {
+	mut out:=[]string{}
+	self.treeview_("",mut out)
+	return out.join_lines()
+}
+
+pub fn (self DocBase) children() []&DocElement {
+	mut d:=self.doc or {panic("no doc")}
+	mut res := []&DocElement{}
+	for id in self.children{
+		mut e:= d.elements[id] or {panic("cant find doc with id: $id")}
+		res << e
+	}
+	return res
+}
+pub fn (self DocBase) parent() &DocElement {
+	mut d:=self.doc or {panic("no doc")}
+	return d.elements[self.parent] or {panic("cant find doc with id: ${self.parent}")}
+}
+
+
+
+// pub fn (self DocBase) markdown() !string {
+// 	mut out:=[]string{}
+// 	for _, element in self.children(){
+// 		out<<element.markdown()!
+// 	}
+// 	return out.join_lines()
+// }
+
+// pub fn (self DocBase) html()! string {
+// 	mut out:=[]string{}
+// 	for _, element in self.children(){
+// 		out<<element.html()!
+// 	}
+// 	return out.join_lines()
+// }
+

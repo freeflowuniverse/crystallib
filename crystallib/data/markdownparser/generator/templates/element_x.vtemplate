@@ -13,6 +13,7 @@ pub fn (mut self @{eo.classname}) process() !int {
 	if self.processed{		
 		return 0
 	}
+	self.process_()
 	self.processed = true
 	return 1
 }
@@ -31,25 +32,8 @@ pub fn (mut self @{eo.classname}) html() string {
 }
 
 
-[params]
+@[params]
 pub struct @{eo.classname}NewArgs{
 	ElementNewArgs
-pub mut:
-	replaceme string
 }
 
-pub fn @{eo.name}_new(args_ @{eo.classname}NewArgs) @{eo.classname} {
-	mut args:=args_
-	mut a:=@{eo.classname}{
-		content: args.content
-		replaceme: args.replaceme
-		type_"@{eo.name}"
-		parents:args.parents
-	}
-	if args.add2parent{
-		for mut parent in a.parents{
-			parent.elements << a
-		}
-	}	
-	return a
-}

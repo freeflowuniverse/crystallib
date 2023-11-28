@@ -1,6 +1,7 @@
 module elements
 import regex
 
+[heap]
 pub struct Table {
 	DocBase
 pub mut:
@@ -58,21 +59,6 @@ pub fn (mut self Table) html() string {
 @[params]
 pub struct TableNewArgs {
 	ElementNewArgs
-}
-
-pub fn table_new(args_ TableNewArgs) Table {
-	mut args := args_
-	mut a := Table{
-		content: args.content
-		type_name: 'table'
-		parents: args.parents
-	}
-	if args.add2parent {
-		for mut parent in a.parents {
-			parent.elements << a
-		}
-	}
-	return a
 }
 
 

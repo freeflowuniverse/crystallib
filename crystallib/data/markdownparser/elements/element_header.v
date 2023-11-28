@@ -1,5 +1,6 @@
 module elements
 
+[heap]
 pub struct Header {
 	DocBase
 pub mut:
@@ -31,20 +32,6 @@ pub struct HeaderNewArgs {
 	ElementNewArgs
 pub mut:
 	depth int
+	
 }
 
-pub fn header_new(args_ HeaderNewArgs) Header {
-	mut args := args_
-	mut a := Header{
-		content: args.content
-		depth: args.depth
-		type_name: 'header'
-		parents: args.parents
-	}
-	if args.add2parent {
-		for mut parent in a.parents {
-			parent.elements << a
-		}
-	}
-	return a
-}
