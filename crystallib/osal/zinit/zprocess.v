@@ -70,23 +70,22 @@ pub fn (mut zinit Zinit) process_new(args_ ZProcessNewArgs) !ZProcess {
 	}
 
 
-	if zp.cmd.contains('\n') || args.cmd_file {
-		// means we can load the special cmd
-		mut pathcmd := zinit.pathcmds.file_get_new(args.name + '.sh')!
-		zp.cmd = texttools.dedent(zp.cmd)
-		pathcmd.write(zp.cmd)!
-		pathcmd.chmod(0x770)!
-		zp.cmd = '/bin/bash -c ${pathcmd.path}'
-	}
+	// means we can load the special cmd
+	mut pathcmd := zinit.pathcmds.file_get_new(args.name + '.sh')!		
+	
+	zp.cmd = "echo === START ======== ${ourtime.now().str()} === \n"+texttools.dedent(zp.cmd)
+	pathcmd.write(zp.cmd)!
+	pathcmd.chmod(0x770)!
+	zp.cmd = '/bin/bash -c ${pathcmd.path}'
 
 	if args.test.len > 0 {
 		if args.test.contains('\n') || args.test_file {
 			// means we can load the special cmd
-			mut pathcmd := zinit.pathtests.file_get_new(args.name + '.sh')!
+			mut pathcmd2 := zinit.pathtests.file_get_new(args.name + '.sh')!
 			args.test = texttools.dedent(args.test)
-			pathcmd.write(args.test)!
-			pathcmd.chmod(0x770)!
-			zp.test = '/bin/bash -c ${pathcmd.path}'
+			pathcmd2.write(args.test)!
+			pathcmd2.chmod(0x770)!
+			zp.test = '/bin/bash -c ${pathcmd2.path}'
 		}
 	}
 
@@ -205,7 +204,7 @@ pub fn (mut zp ZProcess) output_wait(c_ string, timeoutsec int) ! {
 	c := c_.replace('\n', '')
 	for i in 0 .. 2000 {
 		o := zp.log()!
-		// println(o)
+		println(o)
 		$if debug {
 			println(" - zinit ${zp.name}: wait for: '${c}'")
 		}
@@ -225,13 +224,23 @@ pub fn (mut zp ZProcess) output_wait(c_ string, timeoutsec int) ! {
 
 //check if process is running if yes return the log
 pub fn (zp ZProcess) log() !string {	
+	assert zp.name.len>2
 	cmd:="zinit log ${zp.name} -s"
 	res:=os.execute(cmd)
 	if res.exit_code>0{
 		$if debug {print_backtrace()}
-		return error("could not execute $cmd")
+		return error("zprocesslog: could not execute $cmd")
 	}
-	return res.output
+	mut out:=[]string{}
+
+	for line in res.output.split_into_lines(){
+		if line.contains("=== START ========"){
+			out=[]string{}
+		}
+		out<< line
+	}
+
+	return out.join_lines()
 }
 
 // return status of process

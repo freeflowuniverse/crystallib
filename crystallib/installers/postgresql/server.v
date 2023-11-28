@@ -174,21 +174,52 @@ pub fn (mut server Server) ok() bool {
 	return true
 }
 
+pub fn (mut server Server) db_exists(name_ string) !bool {
+	db := pg.connect(host: 'localhost', user: 'root', password: server.config.passwd, dbname: 'postgres')!
+
+	// SELECT datname FROM pg_database WHERE datname='gitea';
+	r := db.exec("SELECT datname FROM pg_database WHERE datname='${name_}';")!
+	if r.len == 1 {
+		println(" - db exists: $name_")
+		return true
+	}
+	if r.len > 1 {
+		return error("should not have more than 1 db with name $name_")
+	}
+	return false
+}
+
 pub fn (mut server Server) db_create(name_ string) ! {
 	name := texttools.name_fix(name_)
 	server.check()!
 	db := pg.connect(host: 'localhost', user: 'root', password: server.config.passwd, dbname: 'postgres')!
-
-	r := db.exec("SELECT 1 FROM pg_database WHERE datname='${name}';")!
-	if r.len == 1 {
-		return
+	db_exists:=server.db_exists(name_)!
+	if ! db_exists{
+		println(" - db create: $name_")
+		db.exec('CREATE DATABASE ${name};')!
 	}
-	db.exec('CREATE DATABASE ${name};')!
-	r2 := db.exec("SELECT 1 FROM pg_database WHERE datname='${name}';")!
-	if r2.len != 1 {
-		return error('Could not create db: ${name}, could not find in DB.')
+	db_exists2:=server.db_exists(name_)!
+	if !db_exists2 {
+		return error('Could not create db: ${name_}, could not find in DB.')
 	}
 }
+
+
+pub fn (mut server Server) db_delete(name_ string) ! {
+	name := texttools.name_fix(name_)
+	server.check()!
+	db := pg.connect(host: 'localhost', user: 'root', password: server.config.passwd, dbname: 'postgres')!
+	db_exists:=server.db_exists(name_)!
+	if  db_exists{
+		println(" - db delete: $name_")
+		db.exec('DROP DATABASE ${name};')!
+	}
+	db_exists2:=server.db_exists(name_)!
+	if db_exists2 {
+		return error('Could not delete db: ${name_}, could not find in DB.')
+	}	
+}
+
 
 
 //remove all data

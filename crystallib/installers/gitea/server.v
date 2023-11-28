@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.installers.postgresql
 import json
 import rand
 import os
-
+import time
 
 @[params]
 pub struct Config {
@@ -136,35 +136,51 @@ pub fn (mut server Server) status() zinit.ZProcessStatus {
 // run gitea as docker compose
 pub fn (mut server Server) start() ! {
 
-	if server.ok(){
-		return 
-	}
+	// if server.ok(){
+	// 	return 
+	// }
 
 	println (" - start gitea: ${server.name}")
 	mut db := postgresql.get(server.config.postgresql_name)!
+
+	//now create the DB
+	db.db_create("gitea")!
+
+	// if true{
+	// 	panic("sd")
+	// }
 
 	//TODO: postgresql can be on other server, need to fill in all arguments in template
 	t1 := $tmpl('templates/app.ini')
 	mut config_path := server.path_config.file_get_new('app.ini')!
 	config_path.write(t1)!
 
-	t2 := $tmpl('templates/bootcmd.sh')
-	mut bootcmd_path := server.path_config.file_get_new('bootcmd.sh')!		
-	bootcmd_path.write(t2)!
-	bootcmd_path.chmod(0770)!
+
+	osal.user_add(name:"git")!
+
+	osal.exec(cmd:'
+		chown -R  git:root ${server.config.path}
+		chmod -R 777 /usr/local/bin
+		')!	
 
 	mut z := zinit.new()!
 	processname:='gitea_${server.name}'
 	mut p := z.process_new(
 		name: processname
-		cmd: bootcmd_path.path
+		cmd: '
+		cd /tmp
+		sudo -u git bash -c \'gitea web --config ${config_path.path} --verbose\'
+		'
 	)!
 
-	p.output_wait("database system is ready to accept connections",120)!		
+	p.output_wait("Starting new Web server: tcp:0.0.0.0:3000",120)!
+	
+	o:=p.log()!
+	println(o)
 
 	server.check()!
 
-	println(" - gitea login check worked")
+	println(" - gitea start ok.")
 
 }
 

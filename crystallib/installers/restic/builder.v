@@ -1,10 +1,9 @@
 module restic
 
-import freeflowuniverse.crystallib.installers.base
+// import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.golang
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.gittools
-import freeflowuniverse.crystallib.installers
 
 const url = 'https://github.com/restic/restic'
 
@@ -29,7 +28,7 @@ pub fn build(args BuildArgs) ! {
 	gitpath := gittools.code_get(coderoot: '/tmp/builder', url: restic.url, reset: true, pull: true)!
 
 	cmd := '
-
+	source ~/.cargo/env
 	cd ${gitpath}
 	exit 1 #todo
 	'

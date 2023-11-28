@@ -14,6 +14,7 @@ pub fn install() ! {
 
 	if osal.done_exists('gitea_install') {		
 		println(" - gitea binaraies already installed")
+		return
 	}
 
 	// make sure we install base on the node
@@ -36,6 +37,8 @@ pub fn install() ! {
 		source: binpath.path
 	)!	
 
-	osal.done_exists('gitea_install') 
+	osal.done_set('gitea_install',"OK") !
+
+	println(" - gitea installed properly.")
 
 }

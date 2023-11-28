@@ -7,3 +7,4 @@ vls.*
 vls.log
 node_modules/
 docs/
+.env

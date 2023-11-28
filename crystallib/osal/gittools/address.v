@@ -30,8 +30,8 @@ pub fn (addr GitAddr) path() !pathlib.Path {
 	provider := texttools.name_fix(addr.provider)
 	// name := texttools.name_fix(addr.name)
 	name := addr.name
-	account := texttools.name_fix(addr.account)
-	mut path_string := '${addr.gsconfig.root}/${provider}/${account}/${name}'
+	// account := texttools.name_fix(addr.account)
+	mut path_string := '${addr.gsconfig.root}/${provider}/${addr.account}/${name}'
 	if addr.gsconfig.root == '' {
 		panic('rootpath cannot be empty')
 	}
