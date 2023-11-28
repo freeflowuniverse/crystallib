@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.core.texttools
 import os
 import freeflowuniverse.crystallib.baobab.smartid
 
-[params]
+@[params]
 pub struct TreeScannerArgs {
 pub mut:
 	name string = 'default' // name of tree
@@ -116,6 +116,7 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 		mut pl := path.list(recursive: false) or {
 			return error('cannot list: ${path.path} \n${error}')
 		}
+
 		for mut p_in in pl.paths {
 			if p_in.is_dir() {
 				if p_in.name().starts_with('.') || p_in.name().starts_with('_') {

@@ -1,6 +1,6 @@
 module redisclient
 
-[params]
+@[params]
 pub struct RedisURL {
 	address string = '127.0.0.1'
 	port    u16    = 6379

@@ -3,7 +3,7 @@ module pathlib
 import os
 // import time
 
-[params]
+@[params]
 pub struct BackupArgs {
 pub mut:
 	root      string

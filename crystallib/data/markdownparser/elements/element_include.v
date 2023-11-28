@@ -17,7 +17,7 @@ pub fn (mut self Include) process() !int {
 	return 1
 }
 
-pub fn (mut self Include) markdown() string {
+pub fn (self Include) markdown() string {
 	mut out := self.content
 	out += self.DocBase.markdown()
 	return out
@@ -29,7 +29,7 @@ pub fn (mut self Include) html() string {
 	return out
 }
 
-[params]
+@[params]
 pub struct IncludeNewArgs {
 	ElementNewArgs
 pub mut:

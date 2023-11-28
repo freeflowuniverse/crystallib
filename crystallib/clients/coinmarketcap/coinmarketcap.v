@@ -34,7 +34,7 @@ struct CoinMarketResult {
 }
 
 struct CoinMarketResultData {
-	tft CoinMarketResultTFT [json: 'TFT']
+	tft CoinMarketResultTFT @[json: 'TFT']
 }
 
 struct CoinMarketResultTFT {
@@ -42,7 +42,7 @@ struct CoinMarketResultTFT {
 }
 
 struct CoinMarketResultQuote {
-	usd CoinMarketResultUSD [json: 'USD']
+	usd CoinMarketResultUSD @[json: 'USD']
 }
 
 struct CoinMarketResultUSD {

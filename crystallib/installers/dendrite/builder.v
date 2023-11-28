@@ -8,10 +8,10 @@ import freeflowuniverse.crystallib.installers
 
 const url = 'https://github.com/matrix-org/dendrite'
 
-[params]
+@[params]
 pub struct BuildArgs {
 pub mut:
-	reset    bool
+	reset bool
 }
 
 // install dendrite will return true if it was already installed
@@ -25,7 +25,12 @@ pub fn build(args BuildArgs) ! {
 	// install dendrite if it was already done will return true
 	println(' - build dendrite')
 
-	gitpath := gittools.code_get(coderoot: '/tmp/builder', url: dendrite.url, reset: true, pull: true)!
+	gitpath := gittools.code_get(
+		coderoot: '/tmp/builder'
+		url: dendrite.url
+		reset: true
+		pull: true
+	)!
 
 	cmd := '
 	source ${osal.profile_path()} //source the go path
@@ -39,6 +44,4 @@ pub fn build(args BuildArgs) ! {
 
 	'
 	osal.execute_stdout(cmd)!
-
-
 }

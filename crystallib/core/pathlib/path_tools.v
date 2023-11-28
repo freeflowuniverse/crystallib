@@ -43,14 +43,14 @@ pub fn (mut path Path) expand(dest string) !Path {
 	if dest.len < 4 {
 		return error("Path dest needs to be mentioned and +4 char. Now '${dest}'")
 	}
-	filext:=os.file_ext(path.name()).to_lower()
+	filext := os.file_ext(path.name()).to_lower()
 
 	// the ones who return a filepath
-	if filext == ".xz" {
+	if filext == '.xz' {
 		cmd := 'xz --decompress ${path.path} --stdout > ${dest}'
-		if os.is_file(dest){			
+		if os.is_file(dest) {
 			os.rm(dest)!
-		}				
+		}
 		os.mkdir_all(dest)!
 		os.rmdir(dest)!
 
@@ -60,7 +60,7 @@ pub fn (mut path Path) expand(dest string) !Path {
 			// println(cmd)
 			return error('Could not expand xz.\n${res}')
 		}
-		return get_file(path:dest,create:false)!
+		return get_file(path: dest, create: false)!
 	}
 
 	mut desto := get_dir(path: dest, create: true)!
@@ -73,7 +73,6 @@ pub fn (mut path Path) expand(dest string) !Path {
 		if res.exit_code > 0 {
 			return error('Could not expand.\n${res}')
 		}
-
 	} else if path.name().to_lower().ends_with('.zip') {
 		cmd := 'unzip  ${path.path} -d ${dest}'
 		// println(cmd)
@@ -91,7 +90,7 @@ pub fn (mut path Path) expand(dest string) !Path {
 			return error('Could not expand bz2.\n${res}')
 		}
 	} else {
-		panic('expand not implemented yet for : $path')
+		panic('expand not implemented yet for : ${path}')
 	}
 	return desto
 }
@@ -415,7 +414,7 @@ pub fn path_relative(source_ string, linkpath_ string) !string {
 	return dest
 }
 
-[params]
+@[params]
 pub struct TMPWriteArgs {
 pub mut:
 	name   string // optional name to remember it more easily

@@ -5,11 +5,12 @@ import freeflowuniverse.crystallib.installers.base
 
 const go_version = '1.20.6'
 
-[params]
-pub struct InstallArgs{
+@[params]
+pub struct InstallArgs {
 pub mut:
 	reset bool
 }
+
 // install golang will return true if it was already installed
 pub fn install(args InstallArgs) ! {
 	// make sure we install base on the node
@@ -31,7 +32,7 @@ pub fn install(args InstallArgs) ! {
 		echo need to implement
 		exit 1 
 		'
-		osal.profile_path_add("/usr/local/go/bin")!
+		osal.profile_path_add('/usr/local/go/bin')!
 	}
 	if osal.platform() == .ubuntu {
 		cmd = '
@@ -41,11 +42,10 @@ pub fn install(args InstallArgs) ! {
 		rm -rf /usr/local/go
 		tar -C /usr/local -xzf go${golang.go_version}.linux-amd64.tar.gz
 		'
-		osal.profile_path_add("/usr/local/go/bin")!
+		osal.profile_path_add('/usr/local/go/bin')!
 	} else {
 		panic('only ubuntu and osx supported for now')
 	}
-
 
 	osal.execute_silent(cmd)!
 	osal.done_set('install_golang', 'OK')!

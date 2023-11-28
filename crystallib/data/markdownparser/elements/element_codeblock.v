@@ -32,11 +32,11 @@ pub fn (mut self CodeBlock) process() !int {
 	return 1
 }
 
-pub fn (mut self CodeBlock) markdown() string {
+pub fn (self CodeBlock) markdown() string {
 	mut out := ''
 	out += '```${self.category}\n'
 	out += self.content.trim_space()
-	out += '\n```\n\n'
+	out += '\n```\n'
 	return out
 }
 
@@ -44,7 +44,7 @@ pub fn (mut self CodeBlock) html() string {
 	return self.markdown()
 }
 
-[params]
+@[params]
 pub struct CodeBlockArgs {
 	ElementNewArgs
 pub mut:

@@ -6,16 +6,15 @@ fn get_farms_example() ! {
 	filter := model.FarmFilter{}
 	farms := gp_client.get_farms(filter)!
 	println(farms)
-
-
 }
-fn get_farm_by_name_example(farm_name string)!{
+
+fn get_farm_by_name_example(farm_name string) ! {
 	mut gp_client := gridproxy.get(.dev, true)!
-	farms := gp_client.get_farms(name:farm_name)!
+	farms := gp_client.get_farms(name: farm_name)!
 	println(farms)
 }
 
-fn get_farms_iterator_example()! {
+fn get_farms_iterator_example() ! {
 	mut gp_client := gridproxy.get(.dev, true)!
 
 	max_page_iteration := u64(2) // set maximum pages to iterate on
@@ -37,8 +36,7 @@ fn get_farms_iterator_example()! {
 	println(iterator_available_farms)
 }
 
-
-fn main(){
+fn main() {
 	get_farms_example()!
 	// get_farm_by_name_example("freefarm")!
 	// get_farms_iterator_example()!

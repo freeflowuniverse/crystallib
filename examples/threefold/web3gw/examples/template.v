@@ -2,7 +2,6 @@ module main
 
 import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
 // ADD NEW CLIENTS HERE
-
 import flag
 import log
 import os

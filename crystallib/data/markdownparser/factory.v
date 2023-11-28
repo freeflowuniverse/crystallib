@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.data.markdownparser.elements
 import freeflowuniverse.crystallib.data.markdownparser.parsers
 import os
 
-[params]
+@[params]
 pub struct NewDocArgs {
 pub:
 	path    string

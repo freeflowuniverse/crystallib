@@ -26,7 +26,7 @@ pub fn get_no_check(path_ string) Path {
 	return p2
 }
 
-[params]
+@[params]
 pub struct GetArgs {
 pub mut:
 	path   string

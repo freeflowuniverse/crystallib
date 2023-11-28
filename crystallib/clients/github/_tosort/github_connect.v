@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.clients.redisclient { RedisURL }
 import freeflowuniverse.crystallib.core.crystaljson
 import os
 
-[heap]
+@[heap]
 struct GithubConnection {
 mut:
 	url           string = 'https://api.github.com'

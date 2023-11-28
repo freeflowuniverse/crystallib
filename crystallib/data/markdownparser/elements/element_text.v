@@ -17,7 +17,7 @@ pub fn (mut self Text) process() !int {
 	return 1
 }
 
-pub fn (mut self Text) markdown() string {
+pub fn (self Text) markdown() string {
 	mut out := self.content
 	out += self.DocBase.markdown()
 	return out
@@ -29,7 +29,7 @@ pub fn (mut self Text) html() string {
 	return out
 }
 
-[params]
+@[params]
 pub struct TextNewArgs {
 	ElementNewArgs
 pub mut:

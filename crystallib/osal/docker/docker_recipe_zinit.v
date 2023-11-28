@@ -20,7 +20,7 @@ enum ZinitLogType {
 	null
 }
 
-[params]
+@[params]
 pub struct ZinitAddArgs {
 pub mut:
 	// more info see https://github.com/threefoldtech/zinit/tree/master/docs

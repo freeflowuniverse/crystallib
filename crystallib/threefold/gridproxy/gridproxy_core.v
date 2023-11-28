@@ -2,7 +2,8 @@ module gridproxy
 
 // client library for threefold gridproxy API.
 import json
-import freeflowuniverse.crystallib.threefold.gridproxy.model { Contract, ContractFilter, ContractIterator, Farm, FarmFilter, FarmIterator, GridStat, Node, NodeFilter, NodeIterator, NodeStats, Node_, StatFilter, Twin, TwinFilter, TwinIterator }
+import math
+import freeflowuniverse.crystallib.threefold.gridproxy.model { Bill, Contract, ContractFilter, ContractIterator, Farm, FarmFilter, FarmIterator, GridStat, Node, NodeFilter, NodeIterator, NodeStats, Node_, StatFilter, Twin, TwinFilter, TwinIterator }
 
 /*
 all errors returned by the gridproxy API or the client are wrapped in a standard `Error` object with two fields.
@@ -346,6 +347,49 @@ pub fn (mut c GridProxyClient) get_contracts(params ContractFilter) ![]Contract 
 			gridproxy.err_json_parse)
 	}
 	return contracts
+}
+
+pub fn (mut c GridProxyClient) get_contract_bill(contract_id u64) ![]Bill {
+	// needed to allow to use threads
+	mut http_client := c.http_client.clone()!
+
+	res := http_client.send(prefix: 'contracts/', id: '${contract_id}/bills') or {
+		return error_with_code('http client error: ${err.msg()}', gridproxy.err_http_client)
+	}
+
+	if !res.is_ok() {
+		return error_with_code(res.data, res.code)
+	}
+
+	if res.data == '' {
+		return error_with_code('empty response', gridproxy.err_invalid_resp)
+	}
+	println(res.data)
+	bills := json.decode([]Bill, res.data) or {
+		return error_with_code('error to get jsonstr for billing data, json decode: contract_id id: ${contract_id}, data: ${res.data}',
+			gridproxy.err_json_parse)
+	}
+	return bills
+}
+
+pub fn (mut c GridProxyClient) get_contract_hourly_bill(contract_id u64) !f64 {
+	bills := c.get_contract_bill(contract_id)!
+	if bills.len == 0 {
+		return f64(0)
+	}
+	mut duration := u64(0)
+	if bills.len >= 2 {
+		duration = (bills[0].timestamp - bills[1].timestamp) / 3600 // one hour
+	} else if bills.len == 1 {
+		contracts := c.get_contracts(contract_id: contract_id)!
+		if contracts.len > 0 {
+			duration = (bills[0].timestamp - contracts[0].created_at) / 3600
+		}
+	}
+	if duration > 0 {
+		return bills[0].amount_billed / duration / math.pow(10, 7)
+	}
+	return f64(0)
 }
 
 // get_farms fetchs farms information and public ips.

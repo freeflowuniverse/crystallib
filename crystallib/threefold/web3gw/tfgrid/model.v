@@ -1,12 +1,12 @@
 module tfgrid
 
-[params]
+@[params]
 pub struct Load {
 	mnemonic string // secret mnemonic
 	network  string // grid network [dev, qa, test, main]
 }
 
-[params]
+@[params]
 pub struct DeployVM {
 	VMConfiguration
 pub mut:
@@ -79,7 +79,7 @@ pub:
 
 pub struct Metadata {
 pub:
-	type_                string    [json: 'type'] = 'zdb' // configuration for the metadata store to use, currently only ZDB is supported.
+	type_                string = 'zdb'    @[json: 'type'] // configuration for the metadata store to use, currently only ZDB is supported.
 	prefix               string    @[required]     // Data stored on the remote metadata is prefixed with.
 	encryption_algorithm string = 'AES' // configuration to use for the encryption stage. Currently only AES is supported.
 	encryption_key       string    @[required] // 64 long hex encoded encryption key (e.g. 0000000000000000000000000000000000000000000000000000000000000000).
@@ -103,7 +103,7 @@ pub:
 	output string // Url of the remote location receiving logs. URLs should use one of `redis, ws, wss` schema. e.g. wss://example_ip.com:9000
 }
 
-[params]
+@[params]
 pub struct NetworkDeployment {
 pub mut:
 	name        string // identifier for the network deployment, must be unique
@@ -113,7 +113,7 @@ pub mut:
 	vms         []VMConfiguration    // VM configurations
 }
 
-[params]
+@[params]
 pub struct NetworkConfiguration {
 pub mut:
 	name                 string // network name
@@ -123,21 +123,21 @@ pub mut:
 	wireguard_config string // wireguard configuration, if any
 }
 
-[params]
+@[params]
 pub struct AddVMToNetworkDeployment {
 	VMConfiguration
 pub mut:
 	network string // unique id of the networkdeployment where the new vm should be added to
 }
 
-[params]
+@[params]
 pub struct RemoveVMFromNetworkDeployment {
 pub mut:
 	vm      string // unique id of the vm that should be removed from the network deployment
 	network string // unique id of the networkdeployment where the new vm should be removed from
 }
 
-[params]
+@[params]
 pub struct K8sCluster {
 pub mut:
 	name          string    // cluster name
@@ -167,21 +167,21 @@ pub mut:
 	ygg_ip       string // ygg ip attached to this node, if any
 }
 
-[params]
+@[params]
 pub struct AddWorkerToK8sCluster {
 pub mut:
 	worker       K8sNode // the new worker to add to the cluster
 	cluster_name string  // the name of the k8s cluster to add the new worker to
 }
 
-[params]
+@[params]
 pub struct RemoveWorkerFromK8sCluster {
 pub mut:
 	cluster_name string // the name of the k8s cluster to remove the worker from
 	worker_name  string // the name of the worker that should be removed from the k8s cluster
 }
 
-[params]
+@[params]
 pub struct ZDBDeployment {
 pub mut:
 	node_id     u32    // node id of the ZDB
@@ -197,27 +197,27 @@ pub mut:
 	ips       []string // Computed IPs of the ZDB. Two IPs are returned: a public IPv6, and a YggIP, in this order
 }
 
-[params]
+@[params]
 pub struct GatewayName {
 pub mut:
-	name            string   [json: 'name']    // identifier for the gateway, must be unique
-	node_id         u32      [json: 'node_id']    // node to deploy the gateway workload on, if 0, a random elibile node will be selected
-	tls_passthrough bool     [json: 'tls_passthrough'] // True to enable TLS encryption
-	backends        []string [json: 'backends'] // The backend that the gateway will point to
+	name            string   @[json: 'name']    // identifier for the gateway, must be unique
+	node_id         u32      @[json: 'node_id']    // node to deploy the gateway workload on, if 0, a random elibile node will be selected
+	tls_passthrough bool     @[json: 'tls_passthrough'] // True to enable TLS encryption
+	backends        []string @[json: 'backends'] // The backend that the gateway will point to
 	// computed
 	fqdn             string // the full domain name for this instance
 	name_contract_id u32    // name contract id
 	contract_id      u32    // contract id for the gateway
 }
 
-[params]
+@[params]
 pub struct GatewayFQDN {
 pub mut:
-	name            string   [json: 'name']    // name of the instance
-	node_id         u32      [json: 'node_id']    // node id that the instance was deployed on
-	tls_passthrough bool     [json: 'tls_passthrough'] // whether or not tls was enables
-	backends        []string [json: 'backends'] // backends that this gateway is pointing to
-	fqdn            string   [json: 'fqdn']       // fully qualified domain name pointing to this gatewat
+	name            string   @[json: 'name']    // name of the instance
+	node_id         u32      @[json: 'node_id']    // node id that the instance was deployed on
+	tls_passthrough bool     @[json: 'tls_passthrough'] // whether or not tls was enables
+	backends        []string @[json: 'backends'] // backends that this gateway is pointing to
+	fqdn            string   @[json: 'fqdn']       // fully qualified domain name pointing to this gatewat
 	// computed
 	contract_id u32 // contract id for the gateway
 }
@@ -229,107 +229,107 @@ pub:
 	randomize bool
 }
 
-[params]
+@[params]
 pub struct FindNodes {
 pub mut:
 	filters    NodeFilter
 	pagination Limit
 }
 
-[params]
+@[params]
 pub struct FindFarms {
 pub mut:
 	filters    FarmFilter
 	pagination Limit
 }
 
-[params]
+@[params]
 pub struct FindContracts {
 pub mut:
 	filters    ContractFilter
 	pagination Limit
 }
 
-[params]
+@[params]
 pub struct FindTwins {
 pub mut:
 	filters    TwinFilter
 	pagination Limit
 }
 
-[params]
+@[params]
 pub struct GetStatistics {
 pub mut:
-	status ?string [json: 'Status']
+	status ?string @[json: 'Status']
 }
 
 // available options for filtering nodes
 pub struct NodeFilter {
 pub mut:
-	status             ?string [json: 'Status']
-	free_mru           ?u64    [json: 'FreeMru']
-	free_hru           ?u64    [json: 'FreeHru']
-	free_sru           ?u64    [json: 'FreeSru']
-	total_mru          ?u64    [json: 'TotalMru']
-	total_hru          ?u64    [json: 'TotalHru']
-	total_sru          ?u64    [json: 'TotalSru']
-	total_cru          ?u64    [json: 'TotalCru']
-	country            ?string [json: 'Country']
-	country_contains   ?string [json: 'CountryContains']
-	city               ?string [json: 'City']
-	city_contains      ?string [json: 'CityContains']
-	farm_name          ?string [json: 'FarmName']
-	farm_name_contains ?string [json: 'FarmNameContains']
-	farm_ids           ?[]u64  [json: 'FarmIds']
-	free_ips           ?u64    [json: 'FreeIps']
-	ipv4               ?bool   [json: 'IPv4']
-	ipv6               ?bool   [json: 'IPv6']
-	domain             ?bool   [json: 'Domain']
-	dedicated          ?bool   [json: 'Dedicated']
-	rentable           ?bool   [json: 'Rentable']
-	rented             ?bool   [json: 'Rented']
-	rented_by          ?u64    [json: 'RentedBy']
-	available_for      ?u64    [json: 'AvailableFor']
-	node_id            ?u64    [json: 'NodeID']
-	twin_id            ?u64    [json: 'TwinID']
+	status             ?string @[json: 'Status']
+	free_mru           ?u64    @[json: 'FreeMru']
+	free_hru           ?u64    @[json: 'FreeHru']
+	free_sru           ?u64    @[json: 'FreeSru']
+	total_mru          ?u64    @[json: 'TotalMru']
+	total_hru          ?u64    @[json: 'TotalHru']
+	total_sru          ?u64    @[json: 'TotalSru']
+	total_cru          ?u64    @[json: 'TotalCru']
+	country            ?string @[json: 'Country']
+	country_contains   ?string @[json: 'CountryContains']
+	city               ?string @[json: 'City']
+	city_contains      ?string @[json: 'CityContains']
+	farm_name          ?string @[json: 'FarmName']
+	farm_name_contains ?string @[json: 'FarmNameContains']
+	farm_ids           ?[]u64  @[json: 'FarmIds']
+	free_ips           ?u64    @[json: 'FreeIps']
+	ipv4               ?bool   @[json: 'IPv4']
+	ipv6               ?bool   @[json: 'IPv6']
+	domain             ?bool   @[json: 'Domain']
+	dedicated          ?bool   @[json: 'Dedicated']
+	rentable           ?bool   @[json: 'Rentable']
+	rented             ?bool   @[json: 'Rented']
+	rented_by          ?u64    @[json: 'RentedBy']
+	available_for      ?u64    @[json: 'AvailableFor']
+	node_id            ?u64    @[json: 'NodeID']
+	twin_id            ?u64    @[json: 'TwinID']
 }
 
 // available options for filtering farms
 pub struct FarmFilter {
 pub mut:
-	free_ips           ?u64    [json: 'FreeIPs']
-	total_ips          ?u64    [json: 'TotalIPs']
-	stellar_address    ?string [json: 'StellarAddress']
-	pricing_policy_id  ?u64    [json: 'PricingPolicyId']
-	farm_id            ?u64    [json: 'FarmId']
-	twin_id            ?u64    [json: 'TwinId']
-	name               ?string [json: 'Name']
-	name_contains      ?string [json: 'NameContains']
-	certification_type ?string [json: 'CertificationType']
-	dedicated          ?bool   [json: 'Dedicated']
+	free_ips           ?u64    @[json: 'FreeIPs']
+	total_ips          ?u64    @[json: 'TotalIPs']
+	stellar_address    ?string @[json: 'StellarAddress']
+	pricing_policy_id  ?u64    @[json: 'PricingPolicyId']
+	farm_id            ?u64    @[json: 'FarmId']
+	twin_id            ?u64    @[json: 'TwinId']
+	name               ?string @[json: 'Name']
+	name_contains      ?string @[json: 'NameContains']
+	certification_type ?string @[json: 'CertificationType']
+	dedicated          ?bool   @[json: 'Dedicated']
 }
 
 // available options for filtering twins
 pub struct TwinFilter {
 pub mut:
-	twin_id    ?u64    [json: 'TwinID']
-	account_id ?string [json: 'AccountID']
-	relay      ?string [json: 'Relay']
-	public_key ?string [json: 'PublicKey']
+	twin_id    ?u64    @[json: 'TwinID']
+	account_id ?string @[json: 'AccountID']
+	relay      ?string @[json: 'Relay']
+	public_key ?string @[json: 'PublicKey']
 }
 
 // available options for filtering contracts
 pub struct ContractFilter {
 pub mut:
-	contract_id          ?u64    [json: 'ContractID']
-	twin_id              ?u64    [json: 'TwinID']
-	node_id              ?u64    [json: 'NodeID']
-	type_                ?string [json: 'Type']
-	state                ?string [json: 'State']
-	name                 ?string [json: 'Name']
-	number_of_public_ips ?u64    [json: 'NumberOfPublicIps']
-	deployment_data      ?string [json: 'DeploymentData']
-	deployment_hash      ?string [json: 'DeploymentHash']
+	contract_id          ?u64    @[json: 'ContractID']
+	twin_id              ?u64    @[json: 'TwinID']
+	node_id              ?u64    @[json: 'NodeID']
+	type_                ?string @[json: 'Type']
+	state                ?string @[json: 'State']
+	name                 ?string @[json: 'Name']
+	number_of_public_ips ?u64    @[json: 'NumberOfPublicIps']
+	deployment_data      ?string @[json: 'DeploymentData']
+	deployment_hash      ?string @[json: 'DeploymentHash']
 }
 
 pub struct NodesResult {
@@ -358,27 +358,27 @@ pub:
 
 pub struct Node {
 pub:
-	id                 string       [json: 'id']
-	node_id            int          [json: 'nodeId']
-	farm_id            int          [json: 'farmId']
-	twin_id            u64          [json: 'twinId']
-	country            string       [json: 'country']
-	grid_version       int          [json: 'gridVersion']
-	city               string       [json: 'city']
-	uptime             i64          [json: 'uptime']
-	created            i64          [json: 'created']
-	farming_policy_id  int          [json: 'farmingPolicyId']
-	updated_at         i64          [json: 'updatedAt']
-	total_resources    Capacity     [json: 'total_resources']
-	used_resources     Capacity     [json: 'used_resources']
-	location           Location     [json: 'location']
-	public_config      PublicConfig [json: 'publicConfig']
-	status             string       [json: 'status']
-	certification_type string       [json: 'certificationType']
-	dedicated          bool         [json: 'dedicated']
-	rent_contract_id   u32          [json: 'rentContractId']
-	rented_by_twin_id  u32          [json: 'rentedByTwinId']
-	serial_number      string       [json: 'serialNumber']
+	id                 string       @[json: 'id']
+	node_id            int          @[json: 'nodeId']
+	farm_id            int          @[json: 'farmId']
+	twin_id            u64          @[json: 'twinId']
+	country            string       @[json: 'country']
+	grid_version       int          @[json: 'gridVersion']
+	city               string       @[json: 'city']
+	uptime             i64          @[json: 'uptime']
+	created            i64          @[json: 'created']
+	farming_policy_id  int          @[json: 'farmingPolicyId']
+	updated_at         i64          @[json: 'updatedAt']
+	total_resources    Capacity     @[json: 'total_resources']
+	used_resources     Capacity     @[json: 'used_resources']
+	location           Location     @[json: 'location']
+	public_config      PublicConfig @[json: 'publicConfig']
+	status             string       @[json: 'status']
+	certification_type string       @[json: 'certificationType']
+	dedicated          bool         @[json: 'dedicated']
+	rent_contract_id   u32          @[json: 'rentContractId']
+	rented_by_twin_id  u32          @[json: 'rentedByTwinId']
+	serial_number      string       @[json: 'serialNumber']
 }
 
 pub struct Capacity {
@@ -409,13 +409,13 @@ pub:
 pub struct Farm {
 pub:
 	name               string
-	farm_id            int        [json: 'farmId']
-	twin_id            int        [json: 'twinId']
-	pricing_policy_id  int        [json: 'pricingPolicyId']
-	certification_type string     [json: 'certificationType']
-	stellar_address    string     [json: 'stellarAddress']
-	dedicated          bool       [json: 'dedicated']
-	public_ips         []PublicIP [json: 'publicIps']
+	farm_id            int        @[json: 'farmId']
+	twin_id            int        @[json: 'twinId']
+	pricing_policy_id  int        @[json: 'pricingPolicyId']
+	certification_type string     @[json: 'certificationType']
+	stellar_address    string     @[json: 'stellarAddress']
+	dedicated          bool       @[json: 'dedicated']
+	public_ips         []PublicIP @[json: 'publicIps']
 }
 
 pub struct PublicIP {
@@ -429,21 +429,21 @@ pub:
 
 pub struct Twin {
 pub:
-	twin_id    u64    [json: 'twinId']
-	account_id string [json: 'accountId']
-	relay      string [json: 'relay']
-	public_key string [json: 'publicKey']
+	twin_id    u64    @[json: 'twinId']
+	account_id string @[json: 'accountId']
+	relay      string @[json: 'relay']
+	public_key string @[json: 'publicKey']
 }
 
 pub struct Contract {
 pub:
-	contract_id u32               [json: 'contractId']
-	twin_id     u32               [json: 'twinId']
-	state       string            [json: 'state']
-	created_at  u32               [json: 'created_at']
-	type_       string            [json: 'type']
-	details     string            [json: 'details']
-	billing     []ContractBilling [json: 'billing']
+	contract_id u32               @[json: 'contractId']
+	twin_id     u32               @[json: 'twinId']
+	state       string            @[json: 'state']
+	created_at  u32               @[json: 'created_at']
+	type_       string            @[json: 'type']
+	details     string            @[json: 'details']
+	billing     []ContractBilling @[json: 'billing']
 }
 
 pub struct ContractBilling {
@@ -458,19 +458,19 @@ pub:
 	nodes              i64
 	farms              i64
 	countries          i64
-	total_cru          i64            [json: 'totalCru']
-	total_sru          i64            [json: 'totalSru']
-	total_mru          i64            [json: 'totalMru']
-	total_hru          i64            [json: 'totalHru']
-	public_ips         i64            [json: 'publicIps']
-	access_nodes       i64            [json: 'accessNodes']
+	total_cru          i64            @[json: 'totalCru']
+	total_sru          i64            @[json: 'totalSru']
+	total_mru          i64            @[json: 'totalMru']
+	total_hru          i64            @[json: 'totalHru']
+	public_ips         i64            @[json: 'publicIps']
+	access_nodes       i64            @[json: 'accessNodes']
 	gateways           i64
 	twins              i64
 	contracts          i64
-	nodes_distribution map[string]i64 [json: 'nodesDistribution']
+	nodes_distribution map[string]i64 @[json: 'nodesDistribution']
 }
 
-[params]
+@[params]
 pub struct DeployDiscourse {
 pub:
 	name            string // identifier for the instance, must be unique
@@ -496,7 +496,7 @@ pub:
 	fqdn   string // fully qualified domain name pointing to the instance
 }
 
-[params]
+@[params]
 pub struct DeployFunkwhale {
 pub:
 	name        string // identifier for the instance, must be unique
@@ -518,7 +518,7 @@ pub:
 	fqdn   string // fully qualified domain name pointing to the instance
 }
 
-[params]
+@[params]
 pub struct DeployPeertube {
 pub:
 	name        string // identifier for the instance, must be unique
@@ -541,7 +541,7 @@ pub:
 	fqdn   string // fully qualified domain name pointing to the instance
 }
 
-[params]
+@[params]
 pub struct DeployPresearch {
 pub:
 	name              string @[required] // identifier for the instance, must be unique
@@ -564,7 +564,7 @@ pub:
 	fqdn   string // fully qualified domain name pointing to the instance
 }
 
-[params]
+@[params]
 pub struct DeployTaiga {
 pub:
 	name        string // identifier for the instance, must be unique
@@ -621,7 +621,7 @@ pub struct SystemSection {
 pub:
 	handleline   string
 	typestr      string
-	section_type int                [json: 'type']
+	section_type int                @[json: 'type']
 	subsections  []SystemSubsection
 }
 
@@ -649,7 +649,7 @@ pub struct Workload {
 pub:
 	version       u32
 	name          string
-	workload_type string         [json: 'type']
+	workload_type string         @[json: 'type']
 	data          ZDBWorkload
 	metadata      string
 	description   string

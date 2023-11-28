@@ -16,7 +16,7 @@ enum State {
 	reset
 }
 
-[heap]
+@[heap]
 pub struct Publisher {
 pub mut:
 	// node  &builder.Node
@@ -84,11 +84,11 @@ pub fn (mut p Publisher) auth_add(email_req bool, email_auth bool) &Authenticati
 	return &auth
 }
 
-[heap]
+@[heap]
 pub struct Site {
 pub:
 	name      string // correspond to key, uses namefix from texttoolsmap[string]Page
-	publisher &Publisher [str: skip] // pointer to sites
+	publisher &Publisher @[str: skip] // pointer to sites
 	sitetype  SiteType
 pub mut:
 	path           Path // path where site can be found
@@ -295,7 +295,7 @@ pub fn (p Publisher) get_right(username string, sitename string) Right {
 // if acl not empty then is obliged to use, if email required email need to match USER and the ACE/ACL
 // if in combination with email_authenticated, it means we make sure that email is correct, so becomes string
 // in future will be compatible with TFConnect
-[heap]
+@[heap]
 pub struct Authentication {
 pub mut:
 	email_required      bool   // if true means users need to give their email address (just a form)
@@ -306,7 +306,7 @@ pub mut:
 }
 
 // Access Control List
-[heap]
+@[heap]
 pub struct ACL {
 pub mut:
 	name    string
@@ -314,7 +314,7 @@ pub mut:
 }
 
 // Access Control Entry
-[heap]
+@[heap]
 pub struct ACE {
 pub mut:
 	groups []&Group // pointer to the object as is in the publisher one
@@ -322,7 +322,7 @@ pub mut:
 	right  Right
 }
 
-[heap]
+@[heap]
 pub struct Group {
 pub:
 	name string
@@ -330,7 +330,7 @@ pub mut:
 	users []&User
 }
 
-[heap]
+@[heap]
 pub struct User {
 pub:
 	name string

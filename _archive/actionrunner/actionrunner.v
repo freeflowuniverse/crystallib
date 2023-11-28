@@ -13,7 +13,7 @@ const (
 // a list of actors that it manages and a client that it
 // uses to create jobs in redis and to submit the to the
 // processor
-[heap]
+@[heap]
 pub struct ActionRunner {
 pub mut:
 	client                 &Client

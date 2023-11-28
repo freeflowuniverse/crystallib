@@ -2,14 +2,14 @@ module organization
 
 import time
 
-[root_object]
+@[root_object]
 pub struct Epic {
 pub mut:
 	stories []string
 	sprints []string
 }
 
-[root_object]
+@[root_object]
 pub struct Sprint {
 pub mut:
 	title       string
@@ -17,7 +17,7 @@ pub mut:
 	stories     []string
 }
 
-[root_object]
+@[root_object]
 pub struct Story {
 	created_at time.Time
 pub mut:
@@ -34,7 +34,7 @@ pub enum StoryStatus {
 pub struct Task {
 	created_at time.Time
 pub:
-	story_id string [root_object: 'Story']
+	story_id string @[root_object: 'Story']
 pub mut:
 	asignee     string
 	title       string

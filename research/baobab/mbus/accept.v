@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.algo.secp256k1
 import freeflowuniverse.crystallib.clients.redisclient
 import time
 
-[params]
+@[params]
 pub struct AcceptRPCArgs {
 pub:
 	address string // ipaddress or redis connection string

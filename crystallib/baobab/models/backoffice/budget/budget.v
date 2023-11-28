@@ -5,7 +5,7 @@ import freeflowuniverse.protocolme.people
 // budget
 // This file deals with the main budget item
 
-[heap]
+@[heap]
 pub struct Budget {
 pub mut:
 	allocation []BudgetAllocation

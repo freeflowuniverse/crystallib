@@ -1,7 +1,7 @@
 module btc
 
 // configurations to load bitcoin client
-[params]
+@[params]
 pub struct Load {
 	host string
 	user string
@@ -9,7 +9,7 @@ pub struct Load {
 }
 
 // send amount of token to address, with/without comment
-[params]
+@[params]
 pub struct Transfer {
 	address    string
 	amount     i64
@@ -17,7 +17,7 @@ pub struct Transfer {
 	comment_to string // is intended to be used for who the transaction is being sent to.
 }
 
-[params]
+@[params]
 pub struct EstimateSmartFee {
 	conf_target i64    = 1 // confirmation target in blocks
 	mode        string = 'CONSERVATIVE' // defines the different fee estimation modes, should be one of UNSET, ECONOMICAL or CONSERVATIVE
@@ -29,7 +29,7 @@ pub struct EstimateSmartFeeResult {
 	blocks  i64
 }
 
-[params]
+@[params]
 pub struct GetChainTxStats {
 	amount_of_blocks int    // provide statistics for amount_of_blocks blocks, if 0 for all blocks
 	block_hash_end   string // provide statistics for amount_of_blocks blocks up until the block with the hash provided in block_hash_end
@@ -75,7 +75,7 @@ pub struct GetBlockVerboseTxResult {
 	weight            int
 	height            i64
 	version           int
-	version_hex       string        [json: 'versionHex']
+	version_hex       string        @[json: 'versionHex']
 	merkleroot        string
 	tx                []TxRawResult
 	rawtx             []TxRawResult
@@ -109,27 +109,27 @@ pub struct VIn {
 	coinbase    string
 	txid        string
 	vout        u32
-	script_sig  &ScriptSig [json: 'scriptSig']
+	script_sig  &ScriptSig @[json: 'scriptSig']
 	sequence    u32
 	txinwitness []string
 }
 
 pub struct ScriptSig {
-	asm_ string [json: 'asm']
+	asm_ string @[json: 'asm']
 	hex  string
 }
 
 pub struct VOut {
 	value          f64
 	n              u32
-	script_pub_key ScriptPubKeyResult [json: 'scriptPubKey']
+	script_pub_key ScriptPubKeyResult @[json: 'scriptPubKey']
 }
 
 pub struct ScriptPubKeyResult {
-	asm_      string   [json: 'asm']
+	asm_      string   @[json: 'asm']
 	hex       string
-	req_sigs  int      [json: 'reqSigs']
-	type_     string   [json: 'type']
+	req_sigs  int      @[json: 'reqSigs']
+	type_     string   @[json: 'type']
 	addresses []string
 }
 

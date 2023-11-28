@@ -4,7 +4,7 @@ import os
 import regex
 import freeflowuniverse.crystallib.baobab.smartid
 
-[params]
+@[params]
 pub struct ListArgs {
 pub mut:
 	regex         []string
@@ -64,7 +64,7 @@ pub fn (mut path Path) list(args_ ListArgs) !PathList {
 	return pl
 }
 
-[params]
+@[params]
 pub struct ListArgsInternal {
 mut:
 	regex         []regex.RE // only put files in which follow one of the regexes
@@ -112,15 +112,17 @@ fn (mut path Path) list_internal(args ListArgsInternal) ![]Path {
 				all_list << rec_list
 			} else {
 				all_list << new_path
+				continue
 			}
 		}
+
 		mut addthefile := true
 		for r in args.regex {
 			if !(r.matches_string(item)) {
 				addthefile = false
 			}
 		}
-		if addthefile && args.dirs_only == false {
+		if addthefile && !args.dirs_only {
 			all_list << new_path
 		}
 	}

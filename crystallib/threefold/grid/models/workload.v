@@ -94,7 +94,7 @@ pub mut:
 	created i64
 	state   ResultState
 	error   string
-	data    string      [raw] // also json.RawMessage
+	data    string      @[raw] // also json.RawMessage
 	message string
 }
 
@@ -103,9 +103,9 @@ pub mut:
 	version u32
 	// unique name per Deployment
 	name  string
-	type_ WorkloadType [json: 'type']
+	type_ WorkloadType @[json: 'type']
 	// this should be something like json.RawMessage in golang
-	data        string [raw] // serialize({size: 10}) ---> "data": {size:10},
+	data        string @[raw] // serialize({size: 10}) ---> "data": {size:10},
 	metadata    string
 	description string
 	// list of Access Control Entries
@@ -155,7 +155,7 @@ type WorkloadDataResult = GatewayProxyResult
 // 	return w.challenge()
 // }
 
-[params]
+@[params]
 pub struct WorkloadArgs {
 	version     ?u32
 	name        string

@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.core.texttools
 
 // dao pools are done per currency
 // they group money on behalf of users in the DAO
-[heap]
+@[heap]
 pub struct Pool {
 pub mut:
 	currency      string    // symbol of currency

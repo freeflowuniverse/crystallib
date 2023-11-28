@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.core.codeparser
 import freeflowuniverse.crystallib.core.texttools
 
 // configuration parameters for OpenRPC Document generation.
-[params]
+@[params]
 pub struct DocGenConfig {
 	title         string   // Title of the JSON-RPC API
 	description   string   // Description of the JSON-RPC API

@@ -1,7 +1,7 @@
 module postgresql
 
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.osal.zinit 
+import freeflowuniverse.crystallib.osal.zinit
 import freeflowuniverse.crystallib.data.fskvs
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
@@ -9,26 +9,23 @@ import json
 import rand
 import db.pg
 
-
-[params]
+@[params]
 pub struct Config {
 pub mut:
-	name        string = 'default'
-	path        string = '/data/postgresql'
-	passwd      string
+	name   string = 'default'
+	path   string = '/data/postgresql'
+	passwd string
 }
-
 
 pub struct Server {
 pub mut:
-	name string
-	config Config
-	process ?zinit.ZProcess
+	name        string
+	config      Config
+	process     ?zinit.ZProcess
 	path_config pathlib.Path
 	path_data   pathlib.Path
 	path_export pathlib.Path
 }
-
 
 // get the postgres server
 //```js
@@ -38,54 +35,51 @@ pub mut:
 //```
 // if name exists already in the config DB, it will load for that name
 pub fn new(args_ Config) !Server {
-	install()! //make sure it has been build & ready to be used
+	install()! // make sure it has been build & ready to be used
 	mut args := args_
-	if args.passwd == ""{
+	if args.passwd == '' {
 		args.passwd = rand.string(12)
 	}
 	if args.path == '' {
 		args.path = '/data/postgresql'
 	}
-	args.name=texttools.name_fix(args.name)
-	key:="postgres_config_${args.name}"
-	mut kvs:=fskvs.new(name:"config")!
-	if !kvs.exists(key){
-		data:=json.encode(args)
-		kvs.set(key,data)!		
+	args.name = texttools.name_fix(args.name)
+	key := 'postgres_config_${args.name}'
+	mut kvs := fskvs.new(name: 'config')!
+	if !kvs.exists(key) {
+		data := json.encode(args)
+		kvs.set(key, data)!
 	}
 	return get(args.name)!
 }
 
-
-
 pub fn get(name_ string) !Server {
-	println(" - get postgresql server $name_")
-	name:=texttools.name_fix(name_)
-	key:="postgres_config_${name}"
-	mut kvs:=fskvs.new(name:"config")!
-	if kvs.exists(key){
-		data:=kvs.get(key)!	
-		args:=json.decode(Config,data)!
+	println(' - get postgresql server ${name_}')
+	name := texttools.name_fix(name_)
+	key := 'postgres_config_${name}'
+	mut kvs := fskvs.new(name: 'config')!
+	if kvs.exists(key) {
+		data := kvs.get(key)!
+		args := json.decode(Config, data)!
 
 		mut server := Server{
-			name:name
-			config:args
+			name: name
+			config: args
 			path_config: pathlib.get_dir(path: '${args.path}/config', create: true)!
 			path_data: pathlib.get_dir(path: '${args.path}/data', create: true)!
 			path_export: pathlib.get_dir(path: '${args.path}/exports', create: true)!
 		}
 		mut z := zinit.new()!
-		processname:='postgres_${name}'
-		if z.process_exists(processname){
-			server.process=z.process_get(processname)!
+		processname := 'postgres_${name}'
+		if z.process_exists(processname) {
+			server.process = z.process_get(processname)!
 		}
 		// println(" - server get ok")
 		server.start()!
-		return server	
+		return server
 	}
-	return error ("can't find server postgres with name $name")
+	return error("can't find server postgres with name ${name}")
 }
-
 
 // return status
 // ```
@@ -99,19 +93,17 @@ pub fn get(name_ string) !Server {
 // }
 // ```
 pub fn (mut server Server) status() zinit.ZProcessStatus {
-	mut process := server.process or {return .unknown}
-	return process.status() or {return .unknown}
+	mut process := server.process or { return .unknown }
+	return process.status() or { return .unknown }
 }
-
 
 // run postgresql as docker compose
 pub fn (mut server Server) start() ! {
-
-	if server.ok(){
-		return 
+	if server.ok() {
+		return
 	}
 
-	println (" - start postgresql: ${server.name}")
+	println(' - start postgresql: ${server.name}')
 
 	t1 := $tmpl('templates/compose.yaml')
 	mut p1 := server.path_config.file_get_new('compose.yaml')!
@@ -132,18 +124,17 @@ pub fn (mut server Server) start() ! {
 	echo "DOCKER COMPOSE ENDED, EXIT TO BASH"
 	'
 	mut z := zinit.new()!
-	processname:='postgres_${server.name}'
+	processname := 'postgres_${server.name}'
 	mut p := z.process_new(
 		name: processname
 		cmd: cmd
 	)!
 
-	p.output_wait("database system is ready to accept connections",120)!		
+	p.output_wait('database system is ready to accept connections', 120)!
 
 	server.check()!
 
-	println(" - postgres login check worked")
-
+	println(' - postgres login check worked')
 }
 
 pub fn (mut server Server) restart() ! {
@@ -151,40 +142,48 @@ pub fn (mut server Server) restart() ! {
 	server.start()!
 }
 
-pub fn (mut server Server) stop() !{
+pub fn (mut server Server) stop() ! {
 	print_backtrace()
-	println (" - stop postgresql: ${server.name}")
-	mut process := server.process or {return}
+	println(' - stop postgresql: ${server.name}')
+	mut process := server.process or { return }
 	return process.stop()
 }
 
 // check health, return true if ok
 pub fn (mut server Server) check() ! {
-	db := pg.connect(host: 'localhost', user: 'root', password: server.config.passwd, dbname: 'postgres') or {
-		return error("cant connect to postgresql server:\n$server")
+	db := pg.connect(
+		host: 'localhost'
+		user: 'root'
+		password: server.config.passwd
+		dbname: 'postgres'
+	) or { return error('cant connect to postgresql server:\n${server}') }
+	db.exec('SELECT version();') or {
+		return error('can\t select version from database.\n${server}')
 	}
-	db.exec("SELECT version();") or { return error("can\t select version from database.\n$server")}
 }
 
 // check health, return true if ok
 pub fn (mut server Server) ok() bool {
-	server.check() or {
-		return false
-	}
+	server.check() or { return false }
 	return true
 }
 
 pub fn (mut server Server) db_exists(name_ string) !bool {
-	db := pg.connect(host: 'localhost', user: 'root', password: server.config.passwd, dbname: 'postgres')!
+	db := pg.connect(
+		host: 'localhost'
+		user: 'root'
+		password: server.config.passwd
+		dbname: 'postgres'
+	)!
 
 	// SELECT datname FROM pg_database WHERE datname='gitea';
 	r := db.exec("SELECT datname FROM pg_database WHERE datname='${name_}';")!
 	if r.len == 1 {
-		println(" - db exists: $name_")
+		println(' - db exists: ${name_}')
 		return true
 	}
 	if r.len > 1 {
-		return error("should not have more than 1 db with name $name_")
+		return error('should not have more than 1 db with name ${name_}')
 	}
 	return false
 }
@@ -192,40 +191,47 @@ pub fn (mut server Server) db_exists(name_ string) !bool {
 pub fn (mut server Server) db_create(name_ string) ! {
 	name := texttools.name_fix(name_)
 	server.check()!
-	db := pg.connect(host: 'localhost', user: 'root', password: server.config.passwd, dbname: 'postgres')!
-	db_exists:=server.db_exists(name_)!
-	if ! db_exists{
-		println(" - db create: $name_")
+	db := pg.connect(
+		host: 'localhost'
+		user: 'root'
+		password: server.config.passwd
+		dbname: 'postgres'
+	)!
+	db_exists := server.db_exists(name_)!
+	if !db_exists {
+		println(' - db create: ${name_}')
 		db.exec('CREATE DATABASE ${name};')!
 	}
-	db_exists2:=server.db_exists(name_)!
+	db_exists2 := server.db_exists(name_)!
 	if !db_exists2 {
 		return error('Could not create db: ${name_}, could not find in DB.')
 	}
 }
 
-
 pub fn (mut server Server) db_delete(name_ string) ! {
 	name := texttools.name_fix(name_)
 	server.check()!
-	db := pg.connect(host: 'localhost', user: 'root', password: server.config.passwd, dbname: 'postgres')!
-	db_exists:=server.db_exists(name_)!
-	if  db_exists{
-		println(" - db delete: $name_")
+	db := pg.connect(
+		host: 'localhost'
+		user: 'root'
+		password: server.config.passwd
+		dbname: 'postgres'
+	)!
+	db_exists := server.db_exists(name_)!
+	if db_exists {
+		println(' - db delete: ${name_}')
 		db.exec('DROP DATABASE ${name};')!
 	}
-	db_exists2:=server.db_exists(name_)!
+	db_exists2 := server.db_exists(name_)!
 	if db_exists2 {
 		return error('Could not delete db: ${name_}, could not find in DB.')
-	}	
+	}
 }
 
-
-
-//remove all data
+// remove all data
 pub fn (mut server Server) destroy() ! {
 	server.stop()!
 	server.path_data.delete()!
 	server.path_export.delete()!
-	//TODO: need to do more
+	// TODO: need to do more
 }

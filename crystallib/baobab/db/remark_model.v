@@ -5,13 +5,13 @@ import freeflowuniverse.crystallib.algo.encoder
 import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.data.paramsparser
 
-[heap]
+@[heap]
 pub struct Remarks {
 pub mut:
 	remarks []Remark
 }
 
-[heap]
+@[heap]
 pub struct Remark {
 pub mut:
 	content string
@@ -56,7 +56,7 @@ pub fn (mut o Remark) params_add(text string) ! {
 	o.params.merge(text)!
 }
 
-[heap]
+@[heap]
 struct RemarkAddArgs {
 pub mut:
 	content string
@@ -138,7 +138,7 @@ pub fn remarks_unserialize_binary(data []u8) !Remarks {
 	return remarks
 }
 
-[params]
+@[params]
 pub struct FindRemarkArgs {
 	params_filter ?string
 	author        ?smartid.GID

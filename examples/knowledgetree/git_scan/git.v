@@ -8,7 +8,7 @@ const reset = true
 
 fn do() ! {
 	mut tree := knowledgetree.new(
-		cid:smartid.cid_get(name:"testknowledgetree")!
+		cid: smartid.cid_get(name: 'testknowledgetree')!
 	)!
 
 	tree.scan(
@@ -16,7 +16,7 @@ fn do() ! {
 		git_url: 'https://github.com/threefoldfoundation/books/tree/main/content'
 		load: true
 		heal: false
-		git_reset: reset		
+		git_reset: reset
 	)!
 
 	p1 := tree.page_get('funny_Comparison')!

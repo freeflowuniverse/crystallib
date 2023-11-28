@@ -4,7 +4,7 @@ module caddy
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 
-[heap]
+@[heap]
 pub struct Domain {
 pub mut:
 	domain      string // e.g. www.ourworld.tf

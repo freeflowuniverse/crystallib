@@ -1,6 +1,6 @@
 module paramsparser
 
-[heap]
+@[heap]
 pub struct Params {
 pub mut:
 	params   []Param

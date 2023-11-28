@@ -13,21 +13,20 @@ const (
 	sign_len     = 64
 )
 
-['/login']
+@['/login']
 fn (mut client ClientApp) login() !vweb.Result {
 	app_id := client.get_header('Host')
 	mut server_public_key := ''
 
-
-	mut key_path := ""
-	if os.args.len>1{
+	mut key_path := ''
+	if os.args.len > 1 {
 		key_path = os.args[1]
 	}
-	if key_path==""{
-		key_path=os.getwd() 
+	if key_path == '' {
+		key_path = os.getwd()
 	}
-	mut p:=pathlib.get_dir(path:key_path,create:false)!
-	mut keyspath:=p.file_get_new("keys.toml")!
+	mut p := pathlib.get_dir(path: key_path, create: false)!
+	mut keyspath := p.file_get_new('keys.toml')!
 
 	keys := parse_keys(keyspath.path)!
 	if keys.value('server') == toml.Any(toml.Null{}) {
@@ -55,7 +54,7 @@ fn (mut client ClientApp) login() !vweb.Result {
 	return client.redirect('${redirect_url}?${url_encode(params)}')
 }
 
-['/callback']
+@['/callback']
 fn (mut client ClientApp) callback() !vweb.Result {
 	data := SignedAttempt{}
 	query := client.query.clone()

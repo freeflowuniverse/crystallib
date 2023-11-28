@@ -6,7 +6,7 @@ import encoding.base64
 struct ZosPoolJSON {
 mut:
 	name      string
-	pool_type string [json: 'type'] // TODO: this should be an enum and we need to define what it is
+	pool_type string @[json: 'type'] // TODO: this should be an enum and we need to define what it is
 	size      int // TODO: what does it mean? used how much what type?
 	used      int // TODO: what does it mean? used how much what type?
 }

@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.core.texttools
 import threefoldtech.vgrid.gridproxy
 import rand
 
-[heap]
+@[heap]
 struct TFVM {
 pub mut:
 	description    string
@@ -16,7 +16,7 @@ pub mut:
 	disks          []TFVMDisk
 }
 
-[heap]
+@[heap]
 struct TFVMDisk {
 pub mut:
 	name        string

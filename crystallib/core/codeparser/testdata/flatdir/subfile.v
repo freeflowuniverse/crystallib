@@ -8,7 +8,7 @@ fn subfile_func0() {}
 pub fn subfile_func1(name string) {}
 
 // SubfileStruct0 defines the configuration params of subfile_func2
-[params]
+@[params]
 pub struct SubfileStruct0 {
 	param1 string //
 	param2 int    //

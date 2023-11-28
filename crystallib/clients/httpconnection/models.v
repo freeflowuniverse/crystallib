@@ -18,23 +18,23 @@ pub mut:
 	match_headers     bool // cache the request header to be matched later
 }
 
-[heap]
+@[heap]
 pub struct HTTPConnection {
 pub mut:
-	redis          Redis       [str: skip]
+	redis          Redis       @[str: skip]
 	base_url       string // the base url
 	default_header Header
-	cache          CacheConfig [str: skip]
+	cache          CacheConfig @[str: skip]
 	retry          int = 5
 }
 
-[heap]
+@[heap]
 pub struct HTTPConnections {
 pub mut:
 	connections map[string]&HTTPConnection
 }
 
-[params]
+@[params]
 pub struct Request {
 pub mut:
 	method        Method

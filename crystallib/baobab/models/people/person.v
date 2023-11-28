@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.baobab.models.system
 // import json
 // import freeflowuniverse.crystallib.algo.encoder
 
-[heap]
+@[heap]
 pub struct Person {
 	system.Base
 pub mut:

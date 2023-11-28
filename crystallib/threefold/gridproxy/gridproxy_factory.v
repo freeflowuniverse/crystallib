@@ -2,7 +2,7 @@ module gridproxy
 
 import freeflowuniverse.crystallib.clients.httpconnection
 
-[heap]
+@[heap]
 pub struct GridProxyClient {
 pub mut:
 	http_client httpconnection.HTTPConnection
@@ -15,7 +15,7 @@ pub enum TFGridNet {
 	qa
 }
 
-[heap]
+@[heap]
 struct GridproxyFactory {
 mut:
 	instances map[string]&GridProxyClient

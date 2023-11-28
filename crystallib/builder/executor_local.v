@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.osal
 // import freeflowuniverse.crystallib.core.pathlib
 import os
 
-[heap]
+@[heap]
 pub struct ExecutorLocal {
 	retry int = 1 // nr of times something will be retried before failing, need to check also what error is, only things which should be retried need to be done, default 1 because is local
 pub mut:

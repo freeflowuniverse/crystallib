@@ -14,8 +14,8 @@ const host = 'http://localhost:${port}'
 struct App {
 	vweb.Context
 	vweb.Controller
-	logger         &log.Logger    [vweb_global]
-	session_client session.Client [vweb_global]
+	logger         &log.Logger    @[vweb_global]
+	session_client session.Client @[vweb_global]
 }
 
 pub fn (mut app App) get_username() bool {
@@ -32,7 +32,7 @@ pub fn (mut app App) get_username() bool {
 	return true
 }
 
-[middleware: get_username]
+@[middleware: get_username]
 pub fn (mut app App) index() vweb.Result {
 	login_form := '
 	<form>
@@ -46,7 +46,7 @@ pub fn (mut app App) index() vweb.Result {
 	return app.html(user_display)
 }
 
-[POST]
+@[POST]
 pub fn (mut app App) login() !vweb.Result {
 	data := http.parse_form(app.req.data)
 	username := data['username']

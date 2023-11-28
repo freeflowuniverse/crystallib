@@ -25,7 +25,7 @@ pub mut:
 	path         string
 }
 
-[params]
+@[params]
 pub struct DownloadArgs {
 pub mut:
 	name         string // name of the download, if not specified then last part  of url
@@ -39,7 +39,7 @@ pub mut:
 	destlink     bool = true // if bool then will link the downloaded content to the dest
 	hash         string // if specified then will check the hash of the downloaded content
 	metapath     string // if not specified then will not write
-	gitstructure ?gittools.GitStructure [skip; str: skip]
+	gitstructure ?gittools.GitStructure @[skip; str: skip]
 	expand       bool
 }
 

@@ -4,15 +4,15 @@ import nedpals.vex.ctx
 import nedpals.vex.session
 import nedpals.vex.router
 
-[table: 'Session']
-[params]
+@[table: 'Session']
+@[params]
 pub struct Session {
 pub mut:
-	id             int    [primary; sql: serial]
+	id             int    @[primary; sql: serial]
 	email          string
 	description    string
-	firstname      string [nonull]
-	lastname       string [nonull]
+	firstname      string @[nonull]
+	lastname       string @[nonull]
 	company        string
 	email_verified bool
 }

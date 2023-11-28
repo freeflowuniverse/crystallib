@@ -26,7 +26,7 @@ pub fn (mut builder BuilderFactory) node_get(name string) !&Node {
 // format ipaddr: 192.168.6.6 .
 // format ipaddr: any ipv6 addr .
 // format ipaddr: if only name used then is localhost .
-[params]
+@[params]
 pub struct NodeArguments {
 pub mut:
 	ipaddr string

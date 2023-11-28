@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.data.paramsparser
 import json
 import time
 
-[params]
+@[params]
 pub struct NewArgs[T] {
 pub mut:
 	params      string // QUESTION: what are params for
@@ -64,7 +64,7 @@ pub fn (db DB) get[T](gid smartid.GID) !T {
 	return db.unserialize[T](data)
 }
 
-[params]
+@[params]
 pub struct FindArgs[T] {
 	BaseFindArgs
 pub mut:

@@ -1,6 +1,6 @@
 module docker
 
-[params]
+@[params]
 pub struct PackageArgs {
 pub mut:
 	name  string
@@ -10,7 +10,7 @@ pub mut:
 pub struct PackageItem {
 pub mut:
 	names    []string
-	recipe   &DockerBuilderRecipe [str: skip]
+	recipe   &DockerBuilderRecipe @[str: skip]
 	platform PlatformType
 }
 

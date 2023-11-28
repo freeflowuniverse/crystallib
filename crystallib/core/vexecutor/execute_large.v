@@ -42,7 +42,7 @@ fn posix_wait4_to_exit_status(waitret int) (int, bool) {
 	}
 }
 
-[manualfree]
+@[manualfree]
 pub fn execute_large(cmd string) Result {
 	// if cmd.contains(';') || cmd.contains('&&') || cmd.contains('||') || cmd.contains('\n') {
 	// return Result{ exit_code: -1, output: ';, &&, || and \\n are not allowed in shell commands' }

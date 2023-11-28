@@ -6,18 +6,17 @@ import encoding.base64
 import libsodium
 import os
 
-['/verify'; post]
+@['/verify'; post]
 fn (mut server ServerApp) verify() !vweb.Result {
-
-	mut key_path := ""
-	if os.args.len>1{
+	mut key_path := ''
+	if os.args.len > 1 {
 		key_path = os.args[1]
 	}
-	if key_path==""{
-		key_path=os.getwd() 
+	if key_path == '' {
+		key_path = os.getwd()
 	}
-	mut p:=pathlib.get_dir(path:key_path,create:false)!
-	mut keyspath:=p.file_get_new("keys.toml")!
+	mut p := pathlib.get_dir(path: key_path, create: false)!
+	mut keyspath := p.file_get_new('keys.toml')!
 
 	keys := parse_keys(keyspath.path)!
 	server_public_key := keys.value('server.SERVER_PUBLIC_KEY').string()

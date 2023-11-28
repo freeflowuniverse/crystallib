@@ -3,7 +3,7 @@ module docker
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal { download }
 
-[params]
+@[params]
 pub struct DownloadArgs {
 pub mut:
 	name       string // unique name which will be used in the cache

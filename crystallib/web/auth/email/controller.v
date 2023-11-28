@@ -13,16 +13,16 @@ pub struct Controller {
 	vweb.Context
 	callback string @[vweb_global]
 mut:
-	authenticator EmailAuthenticator @[vweb_global]
+	authenticator Authenticator @[vweb_global]
 	logger        &log.Logger = &log.Logger(&log.Log{
 	level: .debug
-})        @[vweb_global]
+})   @[vweb_global]
 }
 
 @[params]
 pub struct ControllerParams {
 	logger        &log.Logger
-	authenticator EmailAuthenticator @[required]
+	authenticator Authenticator @[required]
 }
 
 pub fn new_controller(params ControllerParams) Controller {

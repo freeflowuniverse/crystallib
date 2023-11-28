@@ -10,7 +10,7 @@ const (
 	default_server_address = 'http://127.0.0.1:8080'
 )
 
-[params]
+@[params]
 pub struct Arguments {
 	network          string = 'main'
 	deployment_name  string

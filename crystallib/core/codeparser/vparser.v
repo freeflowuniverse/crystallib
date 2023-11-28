@@ -8,7 +8,7 @@ import v.pref
 
 // VParser holds configuration of parsing
 // has methods that implement parsing
-[params]
+@[params]
 pub struct VParser {
 	exclude_dirs  []string // directories to be excluded from parsing
 	exclude_files []string // files to be excluded from parsing
@@ -45,15 +45,19 @@ fn (vparser VParser) parse_vpath(mut path pathlib.Path) ![]CodeItem {
 
 		if vparser.recursive {
 			// parse subdirs if configured recursive
-			mut flist := path.list(dirs_only: true, recursive: false)!
+			mut flist := path.list(recursive: true)!
 			for mut subdir in flist.paths {
-				code << vparser.parse_vpath(mut subdir)!
+				if subdir.is_dir(){
+					code << vparser.parse_vpath(mut subdir)!
+				}
 			}
 		}
 
-		mut fl := path.list()!
+		mut fl := path.list(recursive: false)!
 		for mut file in fl.paths {
-			code << vparser.parse_vpath(mut file)!
+			if !file.is_dir(){
+				code << vparser.parse_vpath(mut file)!
+			}
 		}
 	} else if path.is_file() {
 		file_is_excluded := vparser.exclude_files.any(path.path.ends_with(it))
@@ -153,7 +157,7 @@ fn (vparser VParser) parse_vfile(path string) []CodeItem {
 	return code
 }
 
-[params]
+@[params]
 struct VFuncArgs {
 	comments []ast.Comment // v comments that belong to the function
 	fn_decl  ast.FnDecl    // v.ast parsed function declaration
@@ -208,7 +212,7 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 	}
 }
 
-[params]
+@[params]
 struct ParamsArgs {
 	comments []ast.Comment // comments of the function
 	params   []ast.Param   // ast type of what function returns
@@ -238,7 +242,7 @@ fn (vparser VParser) parse_params(args ParamsArgs) []Param {
 	return params
 }
 
-[params]
+@[params]
 struct ParamArgs {
 	comments []ast.Comment // comments of the function
 	param    ast.Param     // ast type of what function returns

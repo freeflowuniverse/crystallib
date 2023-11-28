@@ -6,7 +6,7 @@ import time
 fn conn_for_thread(c int) {
 	println('thread ${c}')
 	// time.sleep(100 * time.millisecond)
-	mut redis := redisclient.core_get() or {panic(err)}
+	mut redis := redisclient.core_get() or { panic(err) }
 	println('ok ${c}')
 	redis.set('test', 'some data') or { panic('set ' + err.str() + '\n' + c.str()) }
 	redis.get('test') or { panic('get ' + err.str() + '\n' + c.str()) }

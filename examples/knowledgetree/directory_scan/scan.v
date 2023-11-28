@@ -54,7 +54,7 @@ fn do() ! {
 	book.export()!
 
 	logger.info('Testing include works in smallbook2:decentralized_cloud.md')
-	including_page := os.read_file('${bookdest}/smallbook2/decentralized_cloud.html')!	
+	including_page := os.read_file('${bookdest}/smallbook2/decentralized_cloud.html')!
 	assert including_page.contains('ThreeFold is a project the seeks true decentralization for traditional IT capacity generation.')
 
 	logger.info('Testing second include produces error in smallbook2:decentralized_cloud.md')

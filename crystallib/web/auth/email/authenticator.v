@@ -11,7 +11,7 @@ import log
 
 // Creates and updates, authenticates email authentication sessions
 @[noinit]
-pub struct EmailAuthenticator {
+pub struct Authenticator {
 	secret string
 mut:
 	backend IBackend // Backend for authenticator
@@ -40,8 +40,8 @@ pub struct AuthenticatorConfig {
 })
 }
 
-pub fn new(config AuthenticatorConfig) EmailAuthenticator {
-	return EmailAuthenticator{
+pub fn new(config AuthenticatorConfig) Authenticator {
+	return Authenticator{
 		backend: config.backend
 		logger: config.logger
 		secret: config.secret
@@ -71,18 +71,19 @@ pub struct SmtpConfig {
 	password string
 }
 
-pub fn (mut auth EmailAuthenticator) email_authentication(config SendMailConfig) ! {
-	auth.send_login_link(config)!
+pub fn (mut auth Authenticator) email_authentication(config SendMailConfig) ! {
+	auth.send_verification_mail(config)!
 	auth.await_authentication(email: config.email)!
 }
 
 // sends mail with verification link
-pub fn (mut auth EmailAuthenticator) send_verification_mail(config SendMailConfig) ! {
+pub fn (mut auth Authenticator) send_verification_mail(config SendMailConfig) ! {
 	// create auth session
 	auth_code := rand.bytes(64) or { panic(err) }
 	auth.backend.create_auth_session(
 		email: config.email
 		auth_code: auth_code.hex()
+		timeout: time.now().add_seconds(180)
 	)!
 
 	link := '<a href="${config.link}/${config.email}/${auth_code.hex()}">Click to authenticate</a>'
@@ -103,20 +104,19 @@ pub fn (mut auth EmailAuthenticator) send_verification_mail(config SendMailConfi
 		password: config.smtp.password
 	)!
 	client.send(mail) or { panic('Error resolving email address') }
-	auth.logger.debug('Email EmailAuthenticator: Sent authentication email to ${config.email}')
+	auth.logger.debug('Email Authenticator: Sent authentication email to ${config.email}')
 	client.quit() or { panic('Could not close connection to server') }
 }
 
 // sends mail with login link
-pub fn (mut auth EmailAuthenticator) send_login_link(config SendMailConfig) ! {
-	expiration := time.now().add_seconds(180)
+pub fn (mut auth Authenticator) send_login_link(config SendMailConfig) ! {
+	expiration := time.now().add(5 * time.minute)
 	data := '${config.email}.${expiration}' // data to be signed
 	signature := hmac.new(hex.decode(auth.secret) or { panic(err) }, data.bytes(), sha256.sum,
 		sha256.block_size)
 
 	encoded_signature := base64.url_encode(signature.bytestr().bytes())
 	link := '<a href="${config.link}/${config.email}/${expiration.unix_time()}/${encoded_signature}">Click to login</a>'
-
 	auth.logger.debug('Email authenticator: Created login link ${link}')
 
 	mail := smtp.Mail{
@@ -135,11 +135,8 @@ pub fn (mut auth EmailAuthenticator) send_login_link(config SendMailConfig) ! {
 		username: config.smtp.username
 		password: config.smtp.password
 	)!
-	auth.backend.create_auth_session(
-		email: config.email
-	)!
 	client.send(mail) or { panic('Error resolving email address') }
-	auth.logger.debug('Email EmailAuthenticator: Sent login link to ${config.email}')
+	auth.logger.debug('Email Authenticator: Sent login link to ${config.email}')
 	client.quit() or { panic('Could not close connection to server') }
 }
 
@@ -151,8 +148,8 @@ pub:
 }
 
 // sends mail with login link
-pub fn (mut auth EmailAuthenticator) authenticate_login_attempt(attempt LoginAttempt) ! {
-	auth.logger.info('Email EmailAuthenticator: Authenticating login attempt for ${attempt.email}')
+pub fn (mut auth Authenticator) authenticate_login_attempt(attempt LoginAttempt) ! {
+	auth.logger.info('Email Authenticator: Authenticating login attempt for ${attempt.email}')
 
 	if time.now() > attempt.expiration {
 		return error('link expired')
@@ -164,22 +161,9 @@ pub fn (mut auth EmailAuthenticator) authenticate_login_attempt(attempt LoginAtt
 
 	decoded_signature := base64.url_decode(attempt.signature)
 
-	session := auth.backend.read_auth_session(attempt.email) or {
-		return AuthError{
-			reason: .session_not_found
-		}
-	}
-
 	if !hmac.equal(decoded_signature, signature_mirror) {
-		updated_session := AuthSession{
-			...session
-			attempts_left: session.attempts_left - 1
-		}
-		auth.backend.update_auth_session(updated_session)!
-		return error('${decoded_signature} == ${signature_mirror}  signature mismatch')
+		return error('signature mismatch')
 	}
-
-	auth.backend.set_session_authenticated(attempt.email) or { panic(err) }
 }
 
 // result of an authentication attempt
@@ -205,7 +189,7 @@ struct AuthError {
 // authenticates if email/cypher combo correct within timeout and remaining attemts
 // TODO: address based request limits recognition to prevent brute
 // TODO: max allowed request per seccond to prevent dos
-pub fn (mut auth EmailAuthenticator) authenticate(email string, cypher string) ! {
+pub fn (mut auth Authenticator) authenticate(email string, cypher string) ! {
 	session := auth.backend.read_auth_session(email) or {
 		return AuthError{
 			reason: .session_not_found
@@ -219,7 +203,7 @@ pub fn (mut auth EmailAuthenticator) authenticate(email string, cypher string) !
 
 	// authenticates if cypher in link matches authcode
 	if cypher == session.auth_code {
-		auth.logger.debug('Email EmailAuthenticator: email ${email} authenticated')
+		auth.logger.debug('Email Authenticator: email ${email} authenticated')
 		auth.backend.set_session_authenticated(email) or { panic(err) }
 	} else {
 		updated_session := AuthSession{
@@ -239,7 +223,7 @@ pub struct AwaitAuthParams {
 }
 
 // function to check if an email is authenticated
-pub fn (mut auth EmailAuthenticator) await_authentication(params AwaitAuthParams) ! {
+pub fn (mut auth Authenticator) await_authentication(params AwaitAuthParams) ! {
 	stopwatch := time.new_stopwatch()
 	for stopwatch.elapsed() < params.timeout {
 		if auth.is_authenticated(params.email)! {
@@ -251,7 +235,7 @@ pub fn (mut auth EmailAuthenticator) await_authentication(params AwaitAuthParams
 }
 
 // function to check if an email is authenticated
-pub fn (mut auth EmailAuthenticator) is_authenticated(email string) !bool {
+pub fn (mut auth Authenticator) is_authenticated(email string) !bool {
 	session := auth.backend.read_auth_session(email) or { return error('Cant find session') }
 	return session.authenticated
 }

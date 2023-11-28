@@ -3,7 +3,7 @@ module actionparser
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.paramsparser
 
-[params]
+@[params]
 pub struct ParserArgs {
 pub:
 	text    string

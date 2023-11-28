@@ -68,7 +68,10 @@ pub fn (mut d Decoder) get_i64() i64 {
 }
 
 pub fn (mut d Decoder) get_time() time.Time {
-	return time.unix(d.get_i64())
+	nano_time := d.get_i64()
+	seconds := nano_time / int(1e9);
+	nano_seconds := int(nano_time % int(1e9));
+	return time.unix_nanosecond(seconds, nano_seconds)
 }
 
 pub fn (mut d Decoder) get_ourtime() ourtime.OurTime {

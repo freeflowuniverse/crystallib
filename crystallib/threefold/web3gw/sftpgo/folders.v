@@ -3,7 +3,7 @@ module sftpgo
 import json
 import net.http
 
-[params]
+@[params]
 pub struct Folder {
 pub mut:
 	name        string

@@ -31,7 +31,7 @@ pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {
 	println('')
 }
 
-[params]
+@[params]
 pub struct ReposActionsArgs {
 pub mut:
 	filter         string // if used will only show the repo's which have the filter string inside

@@ -17,8 +17,8 @@ __global (
 struct Task {
 	db.Base
 mut:
-	title    string [index]
-	priority int    [index]
+	title    string @[index]
+	priority int    @[index]
 }
 
 fn (task Task) str() string {
@@ -107,7 +107,7 @@ fn prioritize_tasks(example_db ExampleDB, mut logger log.Logger) ! {
 	basic_task.priority = 1
 	example_db.set[Task](basic_task)!
 	logger.info('Prioritized basic_task: ${basic_task}')
-	
+
 	important_tasks := example_db.find[Task](
 		name: 'important_task'
 		object: Task{}

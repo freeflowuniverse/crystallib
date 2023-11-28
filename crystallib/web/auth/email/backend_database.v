@@ -5,7 +5,7 @@ import log
 import time
 
 // Creates and updates, authenticates email authentication sessions
-[noinit]
+@[noinit]
 struct DatabaseBackend {
 mut:
 	db     sqlite.DB
@@ -14,7 +14,7 @@ mut:
 })
 }
 
-[params]
+@[params]
 pub struct DatabaseBackendConfig {
 	db_path string = 'email_authenticator.sqlite'
 mut:

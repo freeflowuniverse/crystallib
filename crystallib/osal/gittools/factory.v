@@ -10,7 +10,7 @@ __global (
 	instances shared map[string]GitStructure
 )
 
-[params]
+@[params]
 pub struct GitStructureConfig {
 pub mut:
 	name        string = 'default'
@@ -79,7 +79,7 @@ pub fn configure(config_ GitStructureConfig) ! {
 	redis.set(gitstructure_config_key(config_.name), datajson)!
 }
 
-[params]
+@[params]
 pub struct GitStructureGetArgs {
 pub mut:
 	name     string = 'default'

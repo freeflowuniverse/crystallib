@@ -27,7 +27,7 @@ pub mut:
 	sshkey    string
 }
 
-[heap]
+@[heap]
 struct TerraformDeployment {
 pub:
 	name     string

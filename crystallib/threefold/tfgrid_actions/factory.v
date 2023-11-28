@@ -28,7 +28,7 @@ pub mut:
 	stellar_handler StellarHandler
 }
 
-[params]
+@[params]
 pub struct RunnerArgs {
 pub mut:
 	name    string

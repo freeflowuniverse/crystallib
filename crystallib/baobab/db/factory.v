@@ -10,7 +10,7 @@ __global (
 	dbs_init shared map[string]bool
 )
 
-[heap]
+@[heap]
 pub struct DB {
 pub mut:
 	cid        smartid.CID
@@ -51,7 +51,7 @@ pub fn set(args_ DBSetArgs) ! {
 	}
 }
 
-[params]
+@[params]
 pub struct DBTableCreateArgs {
 pub mut:
 	cid          smartid.CID
@@ -85,7 +85,7 @@ pub fn create(args_ DBTableCreateArgs) ! {
 	}
 }
 
-[params]
+@[params]
 pub struct DBTableGetArgs {
 pub mut:
 	gid     smartid.GID @[required]
@@ -102,7 +102,7 @@ pub fn get(args DBTableGetArgs) ![]u8 {
 	panic('bug')
 }
 
-[params]
+@[params]
 struct DBFindArgsI {
 mut:
 	cid               smartid.CID       @[required]
@@ -122,7 +122,7 @@ pub fn find(args DBFindArgsI) ![][]u8 {
 	panic('bug')
 }
 
-[params]
+@[params]
 pub struct DBDeleteArgs {
 pub mut:
 	cid     smartid.CID  @[required]

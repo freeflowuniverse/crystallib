@@ -87,7 +87,7 @@ pub struct Server {
 pub struct Path {}
 
 pub struct Reference {
-	ref         string [json: 'ref'; required] // The reference identifier. This MUST be in the form of a URI.
+	ref         string @[json: 'ref'; required] // The reference identifier. This MUST be in the form of a URI.
 	summary     string // A short summary which by default SHOULD override that of the referenced component. If the referenced object-type does not allow a summary field, then this field has no effect.
 	description string // A description which by default SHOULD override that of the referenced component. CommonMark syntax MAY be used for rich text representation. If the referenced object-type does not allow a description field, then this field has no effect.
 }
@@ -108,12 +108,12 @@ pub struct Components {
 }
 
 pub struct Schema {
-	type_       string            [json: 'type']
+	type_       string            @[json: 'type']
 	description string
-	enum_       []string          [json: 'enum']
+	enum_       []string          @[json: 'enum']
 	properties  map[string]Schema
 	format      string
-	ref         string            [json: '\$ref']
+	ref         string            @[json: '\$ref']
 	example     string
 	nullable    bool
 	required    ?[]string
@@ -150,10 +150,10 @@ pub struct Operation {
 	tags          []string //	A list of tags for API documentation control. Tags can be used for logical grouping of operations by resources or any other qualifier.
 	summary       string   //	A short summary of what the operation does.
 	description   string   // A verbose explanation of the operation behavior. CommonMark syntax MAY be used for rich text representation.
-	external_docs ExternalDocumentation  [json: 'externalDocs'] // Additional external documentation for this operation.
-	operation_id  string                 [json: 'operationId'] // Unique string used to identify the operation. The id MUST be unique among all operations described in the API. The operationId value is case-sensitive. Tools and libraries MAY use the operationId to uniquely identify an operation, therefore, it is RECOMMENDED to follow common programming naming conventions.
+	external_docs ExternalDocumentation  @[json: 'externalDocs'] // Additional external documentation for this operation.
+	operation_id  string                 @[json: 'operationId'] // Unique string used to identify the operation. The id MUST be unique among all operations described in the API. The operationId value is case-sensitive. Tools and libraries MAY use the operationId to uniquely identify an operation, therefore, it is RECOMMENDED to follow common programming naming conventions.
 	parameters    []Parameter // A list of parameters that are applicable for this operation. If a parameter is already defined at the Path Item, the new definition will override it but can never remove it. The list MUST NOT include duplicated parameters. A unique parameter is defined by a combination of a name and location. The list can use the Reference Object to link to parameters that are defined at the OpenAPI Object’s components/parameters.
-	request_body  RequestRef             [json: 'requestBody'] // The request body applicable for this operation. The requestBody is fully supported in HTTP methods where the HTTP 1.1 specification [RFC7231] has explicitly defined semantics for request bodies. In other cases where the HTTP spec is vague (such as GET, HEAD and DELETE), requestBody is permitted but does not have well-defined semantics and SHOULD be avoided if possible.
+	request_body  RequestRef             @[json: 'requestBody'] // The request body applicable for this operation. The requestBody is fully supported in HTTP methods where the HTTP 1.1 specification [RFC7231] has explicitly defined semantics for request bodies. In other cases where the HTTP spec is vague (such as GET, HEAD and DELETE), requestBody is permitted but does not have well-defined semantics and SHOULD be avoided if possible.
 	responses     map[string]Response    // The list of possible responses as they are returned from executing this operation.
 	callbacks     map[string]CallbackRef // A map of possible out-of band callbacks related to the parent operation. The key is a unique identifier for the Callback Object. Each value in the map is a Callback Object that describes a request that may be initiated by the API provider and the expected responses.
 	deprecated    bool // Declares this operation to be deprecated. Consumers SHOULD refrain from usage of the declared operation. Default value is false.
@@ -190,7 +190,7 @@ pub struct MediaType {
 }
 
 pub struct Encoding {
-	content_type   string               [json: 'contentType'] //	The Content-Type for encoding a specific property. Default value depends on the property type: for object - application/json; for array – the default is defined based on the inner type; for all other cases the default is application/octet-stream. The value can be a specific media type (e.g. application/json), a wildcard media type (e.g. image/*), or a comma-separated list of the two types.
+	content_type   string               @[json: 'contentType'] //	The Content-Type for encoding a specific property. Default value depends on the property type: for object - application/json; for array – the default is defined based on the inner type; for all other cases the default is application/octet-stream. The value can be a specific media type (e.g. application/json), a wildcard media type (e.g. image/*), or a comma-separated list of the two types.
 	headers        map[string]HeaderRef //	A map allowing additional information to be provided as headers, for example Content-Disposition. Content-Type is described separately and SHALL be ignored in this section. This property SHALL be ignored if the request body media type is not a multipart.
 	style          string // Describes how a specific property value will be serialized depending on its type. See Parameter Object for details on the style property. The behavior follows the same values as query parameters, including default values. This property SHALL be ignored if the request body media type is not application/x-www-form-urlencoded or multipart/form-data. If a value is explicitly defined, then the value of contentType (implicit or explicit) SHALL be ignored.
 	explode        bool   // When this is true, property values of type array or object generate separate parameters for each value of the array, or key-value-pair of the map. For other types of properties this property has no effect. When style is form, the default value is true. For all other styles, the default value is false. This property SHALL be ignored if the request body media type is not application/x-www-form-urlencoded or multipart/form-data. If a value is explicitly defined, then the value of contentType (implicit or explicit) SHALL be ignored.
@@ -199,11 +199,11 @@ pub struct Encoding {
 
 pub struct Parameter {
 	name              string @[required] // The name of the parameter. Parameter names are case sensitive.
-	in_               string [json: 'in'; required] // The location of the parameter. Possible values are "query", "header", "path" or "cookie".
+	in_               string @[json: 'in'; required] // The location of the parameter. Possible values are "query", "header", "path" or "cookie".
 	description       string // A brief description of the parameter. This could contain examples of use. CommonMark syntax MAY be used for rich text representation.
 	required          bool   // Determines whether this parameter is mandatory. If the parameter location is "path", this property is REQUIRED and its value MUST be true. Otherwise, the property MAY be included and its default value is false.
 	deprecated        bool   // Specifies that a parameter is deprecated and SHOULD be transitioned out of usage. Default value is false.
-	allow_empty_value bool   [json: 'allowEmptyValue'] //	Sets the ability to pass empty-valued parameters. This is valid only for query parameters and allows sending a parameter with an empty value. Default value is false. If style is used, and if behavior is n/a (cannot be serialized), the value of allowEmptyValue SHALL be ignored. Use of this property is NOT RECOMMENDED, as it is likely to be removed in a later revision.
+	allow_empty_value bool   @[json: 'allowEmptyValue'] //	Sets the ability to pass empty-valued parameters. This is valid only for query parameters and allows sending a parameter with an empty value. Default value is false. If style is used, and if behavior is n/a (cannot be serialized), the value of allowEmptyValue SHALL be ignored. Use of this property is NOT RECOMMENDED, as it is likely to be removed in a later revision.
 	schema            Schema // The schema defining the type used for the parameter.
 }
 

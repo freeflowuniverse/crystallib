@@ -17,7 +17,7 @@ pub mut:
 	after   []string
 	env     map[string]string
 	oneshot bool
-	zinit   &Zinit            [skip; str: skip]
+	zinit   &Zinit            @[skip; str: skip]
 }
 
 pub enum ZProcessStatus {
@@ -28,52 +28,51 @@ pub enum ZProcessStatus {
 	error
 	blocked
 	spawned
-
 }
 
 pub fn (mut zinit Zinit) process_get(name_ string) !ZProcess {
-	name:=texttools.name_fix(name_)
+	name := texttools.name_fix(name_)
 	// println(zinit)
-	return zinit.processes[name] or {return error("cannot find process in zinit:'$name'")}
+	return zinit.processes[name] or { return error("cannot find process in zinit:'${name}'") }
 }
 
 pub fn (mut zinit Zinit) process_exists(name_ string) bool {
-	name:=texttools.name_fix(name_)
-	if name in zinit.processes{
+	name := texttools.name_fix(name_)
+	if name in zinit.processes {
 		return true
 	}
 	return false
 }
 
-
 pub fn (mut zinit Zinit) process_new(args_ ZProcessNewArgs) !ZProcess {
 	mut args := args_
 
-	args.name=texttools.name_fix(args.name)
+	args.name = texttools.name_fix(args.name)
 
 	println(' - zinit process new: ${args.name}')
 
 	if args.cmd.len == 0 {
-		$if debug {print_backtrace()}
+		$if debug {
+			print_backtrace()
+		}
 		return error('cmd cannot be empty for ${args} in zinit.')
 	}
 
-	if zinit.process_exists(args.name){
-		mut p:=zinit.process_get(args.name)!
+	if zinit.process_exists(args.name) {
+		mut p := zinit.process_get(args.name)!
 		p.destroy()!
 	}
 
 	mut zp := ZProcess{
 		name: args.name
 		zinit: &zinit
-		cmd : args.cmd
+		cmd: args.cmd
 	}
 
-
 	// means we can load the special cmd
-	mut pathcmd := zinit.pathcmds.file_get_new(args.name + '.sh')!		
-	
-	zp.cmd = "echo === START ======== ${ourtime.now().str()} === \n"+texttools.dedent(zp.cmd)
+	mut pathcmd := zinit.pathcmds.file_get_new(args.name + '.sh')!
+
+	zp.cmd = 'echo === START ======== ${ourtime.now().str()} === \n' + texttools.dedent(zp.cmd)
 	pathcmd.write(zp.cmd)!
 	pathcmd.chmod(0x770)!
 	zp.cmd = '/bin/bash -c ${pathcmd.path}'
@@ -161,7 +160,7 @@ log: ring
 }
 
 pub fn (zp ZProcess) start() ! {
-	println(" - start ${zp.name}")
+	println(' - start ${zp.name}')
 	mut client := new_rpc_client()
 	if !client.isloaded(zp.name) {
 		client.monitor(zp.name)! // means will check it out
@@ -169,9 +168,9 @@ pub fn (zp ZProcess) start() ! {
 }
 
 pub fn (mut zp ZProcess) stop() ! {
-	println(" - stop ${zp.name}")
-	st:=zp.status()!
-	if st in [.unknown,.error,.killed]{
+	println(' - stop ${zp.name}')
+	st := zp.status()!
+	if st in [.unknown, .error, .killed] {
 		return
 	}
 	mut client := new_rpc_client()
@@ -180,7 +179,7 @@ pub fn (mut zp ZProcess) stop() ! {
 }
 
 pub fn (mut zp ZProcess) destroy() ! {
-	println(" - destroy ${zp.name}")
+	println(' - destroy ${zp.name}')
 	zp.stop()!
 	mut client := new_rpc_client()
 	client.forget(zp.name) or {}
@@ -193,8 +192,7 @@ pub fn (mut zp ZProcess) destroy() ! {
 	// if true{panic("Sd")}
 }
 
-
-//how long to wait till the specified output shows up, timeout in sec
+// how long to wait till the specified output shows up, timeout in sec
 pub fn (mut zp ZProcess) output_wait(c_ string, timeoutsec int) ! {
 	zp.start()!
 	mut client := new_rpc_client()
@@ -218,26 +216,26 @@ pub fn (mut zp ZProcess) output_wait(c_ string, timeoutsec int) ! {
 		}
 		time.sleep(100 * time.millisecond)
 	}
-
-
 }
 
-//check if process is running if yes return the log
-pub fn (zp ZProcess) log() !string {	
-	assert zp.name.len>2
-	cmd:="zinit log ${zp.name} -s"
-	res:=os.execute(cmd)
-	if res.exit_code>0{
-		$if debug {print_backtrace()}
-		return error("zprocesslog: could not execute $cmd")
-	}
-	mut out:=[]string{}
-
-	for line in res.output.split_into_lines(){
-		if line.contains("=== START ========"){
-			out=[]string{}
+// check if process is running if yes return the log
+pub fn (zp ZProcess) log() !string {
+	assert zp.name.len > 2
+	cmd := 'zinit log ${zp.name} -s'
+	res := os.execute(cmd)
+	if res.exit_code > 0 {
+		$if debug {
+			print_backtrace()
 		}
-		out<< line
+		return error('zprocesslog: could not execute ${cmd}')
+	}
+	mut out := []string{}
+
+	for line in res.output.split_into_lines() {
+		if line.contains('=== START ========') {
+			out = []string{}
+		}
+		out << line
 	}
 
 	return out.join_lines()
@@ -265,15 +263,15 @@ pub fn (mut zp ZProcess) status() !ZProcessStatus {
 		if line.starts_with('state') {
 			st := line.split('state:')[1].trim_space().to_lower()
 			// println(" status string: $st")	
-			if st.contains("sigkill") {
-				zp.status = .killed		
-			}else if st.contains("error"){
-				zp.status = .error		
-			}else if st.contains("spawned") {
+			if st.contains('sigkill') {
+				zp.status = .killed
+			} else if st.contains('error') {
 				zp.status = .error
-			}else if st.contains("running") {
+			} else if st.contains('spawned') {
+				zp.status = .error
+			} else if st.contains('running') {
 				zp.status = .ok
-			}else{
+			} else {
 				zp.status = .unknown
 			}
 		}
@@ -292,24 +290,19 @@ pub fn (mut zp ZProcess) status() !ZProcessStatus {
 	return zp.status
 }
 
-
-//will check that process is running
+// will check that process is running
 pub fn (mut zp ZProcess) check() ! {
-	status:=zp.status()!
+	status := zp.status()!
 	if status != .ok {
-		return error("process is not running.\n$zp")
+		return error('process is not running.\n${zp}')
 	}
 }
 
-
-
-
-//will check that process is running
+// will check that process is running
 pub fn (mut zp ZProcess) isrunning() !bool {
-	status:=zp.status()!
+	status := zp.status()!
 	if status != .ok {
 		return false
 	}
 	return true
 }
-

@@ -10,7 +10,7 @@ pub enum BlockchainType {
 	smartchain
 }
 
-[heap]
+@[heap]
 pub struct PaymentMethodDigital {
 pub mut:
 	name        string // optional //? should this be required to allow easy switching between payment methods
@@ -30,7 +30,7 @@ pub mut:
 	preferred   bool //? Is this false by default?
 }
 
-[heap]
+@[heap]
 pub struct PaymentMethodIban {
 pub mut:
 	name        string // optional

@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.core.pathlib
 
 pub struct MDBookCollection {
 pub mut:
-	book       &MDBook      [skip; str: skip]
+	book       &MDBook      @[skip; str: skip]
 	name       string
 	url        string
 	reset      bool
@@ -16,7 +16,7 @@ pub mut:
 	path       pathlib.Path
 }
 
-[params]
+@[params]
 pub struct MDBookCollectionArgs {
 pub mut:
 	name string

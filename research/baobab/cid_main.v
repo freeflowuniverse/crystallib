@@ -2,8 +2,7 @@ module main
 
 import freeflowuniverse.crystallib.baobab.smartid
 
-fn test_cid()!{
-
+fn test_cid() ! {
 	cid00 := smartid.cid(name: 'test')!
 	// assert cid00.circle==2
 	// assert cid00.str() == "2"
@@ -11,7 +10,9 @@ fn test_cid()!{
 	for i in 0 .. 10000 {
 		cid2 := smartid.cid(name: 'test_${i}')!
 	}
-	if true{panic("s")}
+	if true {
+		panic('s')
+	}
 
 	// cid1 := cid(cid_int: 9999)!
 	// assert cid1.str() == '7pr'
@@ -54,8 +55,6 @@ fn test_cid()!{
 	// }
 }
 
-
-fn main(){
-
-	test_cid() or {panic(err)}
+fn main() {
+	test_cid() or { panic(err) }
 }

@@ -6,7 +6,7 @@ pub enum PingResult {
 	unknownhost // means we don't know the hostname its a dns issue
 }
 
-[params]
+@[params]
 pub struct PingArgs {
 pub mut:
 	address string @[required]

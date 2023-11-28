@@ -3,7 +3,7 @@ module pathlib
 import freeflowuniverse.crystallib.core.texttools
 import os
 
-[heap]
+@[heap]
 pub struct Path {
 pub mut:
 	path  string

@@ -107,6 +107,10 @@ fn (mut parser Parser) next_start() {
 	parser.next()
 }
 
+fn (mut parser Parser) append_paragraph() {
+	parser.doc.elements << elements.Paragraph{}
+}
+
 // return true if end of file
 fn (mut parser Parser) eof() bool {
 	if parser.linenr > (parser.lines.len - 1) {

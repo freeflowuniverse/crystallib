@@ -24,7 +24,7 @@ pub fn (log Logger) info(msg string) {
 	log.output('${time.now()} | ' + 'INFO' + '\t| ' + msg, .info)
 }
 
-[if debug]
+@[if debug]
 pub fn (log Logger) debug(msg string) {
 	log.output('${time.now()} | ' + color_fg('DEBUG', 'blue') + '\t| ' + color_fg(msg, 'light_blue'),
 		.debug)

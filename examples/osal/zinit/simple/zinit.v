@@ -10,7 +10,7 @@ fn main() {
 
 fn do() ! {
 	zinit.destroy()!
-	mut z:=zinit.new()!
+	mut z := zinit.new()!
 
 	// name      string            [required]
 	// cmd       string            [required]
@@ -21,12 +21,10 @@ fn do() ! {
 	// env       map[string]string
 	// oneshot   bool
 
-	p:=z.new(
-		name:"test"
-		cmd:'/bin/bash'
+	p := z.new(
+		name: 'test'
+		cmd: '/bin/bash'
 	)!
 
 	println(p)
-
 }
-

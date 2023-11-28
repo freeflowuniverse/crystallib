@@ -18,19 +18,18 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		// go out of loop if end of file
 		mut line := parser.line_current()
 		line = line.replace('\t', '    ')
-		// println(line)
+		trimmed_line := line.trim_space()
 
 		mut llast := parser.lastitem()
-		// println(llast)
 
 		if mut llast is elements.Table {
-			if line.trim_space() == '' {
-				parser.next_start()
-				continue
-			} else {
+			if trimmed_line.starts_with('|') && trimmed_line.ends_with('|') {
 				llast.content += '${line}\n'
+				parser.next()
+				continue
 			}
-			parser.next()
+
+			parser.append_paragraph()
 			continue
 		}
 
@@ -38,30 +37,28 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			if line.starts_with(' ') {
 				// starts with tab or space, means block continues for action
 				llast.content += '${line}\n'
-			} else if line.trim_space() != '' {
-				return error('actions should end with an empty line')
-			} else {
-				parser.next_start()
+				parser.next()
 				continue
 			}
-			parser.next()
+
+			parser.append_paragraph()
 			continue
 		}
 
 		if mut llast is elements.Html {
-			if line.trim_space().to_lower().starts_with('</html') {
+			if line.trim_space().to_lower().starts_with('</html>') {
 				parser.next_start()
 				continue
 			}
 		}
 
 		if mut llast is elements.CodeBlock {
-			if line.starts_with('```') {
+			if trimmed_line == '```' {
 				parser.next_start()
 				continue
-			} else {
-				llast.content += '${line}\n'
 			}
+
+			llast.content += '${line}\n'
 			parser.next()
 			continue
 		}
@@ -116,7 +113,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			}
 
 			// find codeblock
-			if line.starts_with('```') || line.starts_with('"""') || line.starts_with("'''") {
+			if line.starts_with('```') {
 				doc.elements << elements.codeblock_new(
 					category: line.substr(3, line.len).to_lower().trim_space()
 					parents: [&doc]
@@ -146,24 +143,41 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				}
 			}
 
-			if line.trim_space().to_lower().starts_with('<html') {
-				doc.elements << elements.Html{}
+			if trimmed_line.starts_with('|') && trimmed_line.ends_with('|') {
+				doc.elements << elements.table_new(content: '${line}\n')
 				parser.next()
+				continue
+			}
+
+			if trimmed_line.to_lower().starts_with('<html>') {
+				doc.elements << elements.html_new()
+				parser.next()
+				continue
+			}
+
+			if trimmed_line.starts_with('<!--') && trimmed_line.ends_with('-->') {
+				mut comment := trimmed_line.all_after_first('<!--')
+				comment = comment.all_before('-->')
+				doc.elements << elements.comment_new(content: comment)
+
+				parser.next_start()
 				continue
 			}
 		}
 
-		if mut llast is elements.Paragraph || mut llast is elements.Html
-			|| mut llast is elements.CodeBlock || mut llast is elements.Include {
-			if parser.endlf == false && parser.next_is_eof() {
-				llast.content += line
-			} else {
-				llast.content += line + '\n'
+		match mut llast {
+			elements.Paragraph, elements.Html, elements.Include, elements.CodeBlock {
+				if parser.endlf == false && parser.next_is_eof() {
+					llast.content += line
+				} else {
+					llast.content += line + '\n'
+				}
 			}
-		} else {
-			println(line)
-			println(llast)
-			panic('parser error, means we got element which is not supported')
+			else {
+				println(line)
+				println(llast)
+				panic('parser error, means we got element which is not supported')
+			}
 		}
 
 		parser.next()

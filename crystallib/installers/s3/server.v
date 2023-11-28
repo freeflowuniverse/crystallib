@@ -1,7 +1,7 @@
 module s3
 
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.osal.zinit 
+import freeflowuniverse.crystallib.osal.zinit
 import freeflowuniverse.crystallib.data.fskvs
 import freeflowuniverse.crystallib.core.texttools
 import json
@@ -15,25 +15,24 @@ import rand
 // --port <port>                   [default: 8014]
 // --access-key <access-key>
 // --secret-key <secret-key>
-[params]
+@[params]
 pub struct Config {
 pub mut:
-	name 	    string = 'default'
+	name        string = 'default'
 	fs_root     string = '/var/data/s3'
 	host        string = 'localhost'
 	meta_root   string = '/var/data/s3_meta'
 	metric_host string = 'localhost'
-	metric_port int = 9100
-	port        int = 8014
+	metric_port int    = 9100
+	port        int    = 8014
 	access_key  string
 	secret_key  string
 }
 
-
 pub struct Server {
 pub mut:
-	name string
-	config Config
+	name    string
+	config  Config
 	process ?zinit.ZProcess
 }
 
@@ -50,48 +49,45 @@ pub mut:
 //```
 // if name exists already in the config DB, it will load for that name
 pub fn new(args_ Config) !Server {
-	install()! //make sure it has been build & ready to be used
+	install()! // make sure it has been build & ready to be used
 	mut args := args_
-	args.name=texttools.name_fix(args.name)
-	key:="s3_config_${args.name}"
-	mut kvs:=fskvs.new(name:"config")!
-	if ! kvs.exists(key){
-		if args.access_key == ""{
-			args.access_key =  rand.string(12)
+	args.name = texttools.name_fix(args.name)
+	key := 's3_config_${args.name}'
+	mut kvs := fskvs.new(name: 'config')!
+	if !kvs.exists(key) {
+		if args.access_key == '' {
+			args.access_key = rand.string(12)
 		}
-		if args.secret_key == ""{
+		if args.secret_key == '' {
 			args.secret_key = rand.string(12)
-		}		
-		data:=json.encode(args)
-		println("set config s3")
-		kvs.set(key,data)!		
+		}
+		data := json.encode(args)
+		println('set config s3')
+		kvs.set(key, data)!
 	}
 	return get(args.name)!
 }
 
 pub fn get(name_ string) !Server {
-	name:=texttools.name_fix(name_)
-	key:="s3_config_${name}"
-	mut kvs:=fskvs.new(name:"config")!
-	if kvs.exists(key){
-
-		data:=kvs.get(key)!	
-		args:=json.decode(Config,data)!
-		mut server:=Server{
-			name:name
-			config:args
-		}	
-		mut z := zinit.new()!
-		processname:='s3_${args.name}'
-		if z.process_exists(processname){
-			server.process=z.process_get(processname)!
+	name := texttools.name_fix(name_)
+	key := 's3_config_${name}'
+	mut kvs := fskvs.new(name: 'config')!
+	if kvs.exists(key) {
+		data := kvs.get(key)!
+		args := json.decode(Config, data)!
+		mut server := Server{
+			name: name
+			config: args
 		}
-		return server	
+		mut z := zinit.new()!
+		processname := 's3_${args.name}'
+		if z.process_exists(processname) {
+			server.process = z.process_get(processname)!
+		}
+		return server
 	}
-	return error("can't find S3 server with name:'$name'")
-
+	return error("can't find S3 server with name:'${name}'")
 }
-
 
 pub fn (mut server Server) start() ! {
 	mut args := server.config
@@ -116,8 +112,7 @@ pub fn (mut server Server) start() ! {
 	)!
 
 	p.status()!
-	p.output_wait("server is running at",10)!
-
+	p.output_wait('server is running at', 10)!
 }
 
 // return status
@@ -132,19 +127,18 @@ pub fn (mut server Server) start() ! {
 // }
 // ```
 pub fn (mut server Server) status() !zinit.ZProcessStatus {
-	mut process := server.process or {return error("can't find process yet.")}
+	mut process := server.process or { return error("can't find process yet.") }
 	return process.status()!
 }
 
-//will check if running
-pub fn (mut server Server) check() !{
-	mut process := server.process or {return error("can't find process yet.")}
+// will check if running
+pub fn (mut server Server) check() ! {
+	mut process := server.process or { return error("can't find process yet.") }
 	process.check()!
-	//TODO: need to do more checks S3 checks
-
+	// TODO: need to do more checks S3 checks
 }
 
-pub fn (mut server Server) stop() !{
-	mut process := server.process or {return error("can't find process yet.")}
+pub fn (mut server Server) stop() ! {
+	mut process := server.process or { return error("can't find process yet.") }
 	return process.stop()
 }

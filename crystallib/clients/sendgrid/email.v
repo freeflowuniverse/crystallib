@@ -1,7 +1,7 @@
 module sendgrid
 
 pub struct Content {
-	type_ string [json: 'type'] = 'text/html'
+	type_ string = 'text/html' @[json: 'type']
 	value string
 }
 
@@ -12,7 +12,7 @@ struct Recipient {
 
 struct Attachment {
 	content     string  @[required]
-	type_       ?string [json: 'type']
+	type_       ?string @[json: 'type']
 	filename    string  @[required]
 	disposition ?string
 	content_id  ?string
@@ -101,7 +101,7 @@ pub mut:
 	custom_args       ?string
 	send_at           ?i64
 	batch_id          ?string
-	asm_              ?UnsubscribeGroups [json: 'asm']
+	asm_              ?UnsubscribeGroups @[json: 'asm']
 	ip_pool_name      ?string
 	mail_settings     ?MailSettings
 	tracking_settings ?TrackingSettings

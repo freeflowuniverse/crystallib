@@ -2,7 +2,7 @@ module pathlib
 
 import os
 
-[params]
+@[params]
 pub struct CopyArgs {
 pub mut:
 	dest           string   // path

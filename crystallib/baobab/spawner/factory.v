@@ -2,13 +2,13 @@ module spawner
 
 import sync
 
-[heap]
+@[heap]
 pub struct Spawner {
 pub mut:
 	threads map[string]&OurThread
 }
 
-[params]
+@[params]
 pub struct RPCArg {
 pub mut:
 	tname  string // name of the thread

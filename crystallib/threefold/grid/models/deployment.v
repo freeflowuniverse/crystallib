@@ -78,7 +78,7 @@ pub mut:
 	signature_requirement SignatureRequirement
 }
 
-[params]
+@[params]
 pub struct DeploymentArgs {
 	version               ?u32
 	twin_id               u32
@@ -163,9 +163,9 @@ pub fn new_deployment(args DeploymentArgs) Deployment {
 
 pub struct DeploymentData {
 pub:
-	type_        string [json: 'type']
+	type_        string @[json: 'type']
 	name         string
-	project_name string [json: 'projectName']
+	project_name string @[json: 'projectName']
 }
 
 pub fn (data DeploymentData) json_encode() string {

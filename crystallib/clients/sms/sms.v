@@ -17,7 +17,7 @@ pub mut:
 	logger log.Log
 }
 
-[params]
+@[params]
 pub struct Credentials {
 pub:
 	sid    string
@@ -25,7 +25,7 @@ pub:
 	source string
 }
 
-[params]
+@[params]
 pub struct Message {
 pub:
 	content     string

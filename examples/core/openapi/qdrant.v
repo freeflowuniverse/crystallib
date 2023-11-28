@@ -15,4 +15,3 @@ pub fn do() ! {
 	spec := json.decode(openapi.OpenAPI, spec_json)!
 	println(spec.components)
 }
-

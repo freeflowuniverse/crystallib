@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.rust
 
-[params]
+@[params]
 pub struct InstallArgs {
 pub mut:
 	reset bool

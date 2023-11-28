@@ -39,7 +39,7 @@ pub enum CPUType {
 pub fn platform() PlatformType {
 	mut logger := get_logger()
 	mut platform_ := PlatformType.unknown
-	platform_ = platform_enum_from_string(memdb_get("platformtype"))
+	platform_ = platform_enum_from_string(memdb_get('platformtype'))
 	if platform_ != PlatformType.unknown {
 		return platform_
 	}
@@ -53,7 +53,7 @@ pub fn platform() PlatformType {
 		logger.error('Unknown platform')
 	}
 	if platform_ != PlatformType.unknown {
-		memdb_set("platformtype",  platform_.str())
+		memdb_set('platformtype', platform_.str())
 	}
 	return platform_
 }
@@ -61,7 +61,7 @@ pub fn platform() PlatformType {
 pub fn cputype() CPUType {
 	mut logger := get_logger()
 	mut cputype_ := CPUType.unknown
-	cputype_ = cputype_enum_from_string(memdb_get("cputype"))
+	cputype_ = cputype_enum_from_string(memdb_get('cputype'))
 	if cputype_ != CPUType.unknown {
 		return cputype_
 	}
@@ -84,7 +84,7 @@ pub fn cputype() CPUType {
 	}
 
 	if cputype_ != CPUType.unknown {
-		memdb_set("cputype", cputype_.str())
+		memdb_set('cputype', cputype_.str())
 	}
 	return cputype_
 }

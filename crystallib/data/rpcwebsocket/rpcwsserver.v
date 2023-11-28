@@ -5,7 +5,7 @@ import net.websocket { Client, Message, Server, ServerClient }
 
 type MessageHandler = fn (client &Client, message string) string
 
-[heap]
+@[heap]
 pub struct RpcWsServer {
 pub mut:
 	server  &Server

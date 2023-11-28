@@ -3,7 +3,7 @@ module docker
 import freeflowuniverse.crystallib.osal.gittools
 // import freeflowuniverse.crystallib.core.pathlib
 
-[params]
+@[params]
 pub struct CodeGetArgs {
 pub mut:
 	url string // e.g.  https://github.com/vlang/v

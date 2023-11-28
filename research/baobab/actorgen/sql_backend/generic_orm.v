@@ -8,16 +8,16 @@ pub struct SQLiteBackend {
 	db sqlite.DB
 }
 
-[table: 'root_objects']
+@[table: 'root_objects']
 pub struct RootObject {
-	id int [primary; sql: serial] // unique serial root object id
+	id    int    @[primary; sql: serial] // unique serial root object id
 	table string // name of table root object is in
 }
 
-[table: 'example_structs']
+@[table: 'example_structs']
 pub struct ExampleStruct {
-	id int // unique serial root object id
-	name string [index]
+	id          int // unique serial root object id
+	name        string @[index]
 	description string
 }
 
@@ -29,17 +29,16 @@ pub fn (mut backend SQLiteBackend) new[T](mut obj T) ! {
 			table_name = attr.arg
 		}
 	}
-
 	row := RootObject{
 		table: table_name
 	}
 
 	sql backend.db {
-    	insert row into RootObject
+		insert row into RootObject
 	}!
 
 	id := backend.db.last_id()
-	
+
 	// create table for root object if it doesn't exist
 	mut columns := ['id integer primary key AUTOINCREMENT', 'data TEXT']
 	$for field in T.fields {
@@ -56,7 +55,7 @@ pub fn (mut backend SQLiteBackend) new[T](mut obj T) ! {
 	mut values := ['${id}', "'${obj_encoded}'"]
 	$for field in T.fields {
 		$if field.typ is string {
-			if field.attrs.contains('index'){
+			if field.attrs.contains('index') {
 				indices << '${field.name}'
 				val := obj.$(field.name)
 				values << "'${val}'"
@@ -75,7 +74,6 @@ pub fn (mut backend SQLiteBackend) set[T](mut obj T) ! {
 			table_name = attr.arg
 		}
 	}
-
 	obj_encoded := json.encode(obj)
 
 	// todo: check table and entry exists
@@ -90,10 +88,8 @@ pub fn (mut backend SQLiteBackend) get[T](id int) ?T {
 			table_name = attr.arg
 		}
 	}
-
 	// todo: check table and entry exists
-	db.exec("select * from ${table_name} where id=${id}")!
-
+	db.exec('select * from ${table_name} where id=${id}')!
 }
 
 // save the session to redis & mem
@@ -104,9 +100,8 @@ pub fn (mut backend SQLiteBackend) list[T]() []T {
 			table_name = attr.arg
 		}
 	}
-
-	todo: check table and entry exists
-	response := db.exec("select * from ${table_name}") or {panic(err)}
+	// todo: check table and entry exists
+	response := db.exec('select * from ${table_name}') or { panic(err) }
 	if response.len == 0 {
 		panic('response shouldnt be 0')
 	}
@@ -119,7 +114,6 @@ pub fn main() {
 }
 
 pub fn do() ! {
-
 	mut backend := SQLiteBackend{
 		db: sqlite.connect('example.sqlite')!
 	}
@@ -136,5 +130,4 @@ pub fn do() ! {
 	backend.new[ExampleStruct](mut example_obj)!
 	items := backend.list[ExampleStruct]()
 	println('items: ${items}')
-
 }

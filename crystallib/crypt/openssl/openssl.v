@@ -6,7 +6,7 @@ pub struct OpenSSL {
 	certpath Path
 }
 
-[params]
+@[params]
 pub struct OpenSSLArgs {
 	certpath string = '~/.openssl'
 }

@@ -6,18 +6,18 @@ import os
 import log
 
 const (
-	example_git_root := 
-	example_repo_url := 'https://github.com/threefoldfoundation/www_mycelium.git'
-	example_repo_name := 'www_mycelium'
-	example_file_url := 'httpsfile://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js'
-	example_file_name := 'echarts.min.js'
-	example_file_dest := 
+	example_git_root  = ''
+	example_repo_url  = 'https://github.com/threefoldfoundation/www_mycelium.git'
+	example_repo_name = 'www_mycelium'
+	example_file_url  = 'httpsfile://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js'
+	example_file_name = 'echarts.min.js'
+	example_file_dest = ''
 
-	script_path := '${os.dir(@FILE)}/3script.md'
+	script_path       = '${os.dir(@FILE)}/3script.md'
 )
 
 fn main() {
-	do() or {panic(err)}
+	do() or { panic(err) }
 }
 
 fn do() ! {
@@ -45,9 +45,8 @@ fn do() ! {
     maxsize_kb: 5000	
 "
 
-
 	mut logger := log.Logger(&log.Log{
-		level: $if debug {.debug} $else {.info}
+		level: $if debug { .debug } $else { .info }
 	})
 	ap := actionsparser.new(path: script_path)!
 
@@ -65,6 +64,5 @@ fn do() ! {
 	}
 
 	if os.exists('/tmp/download/echarts.min.js') {
-
 	}
 }

@@ -18,11 +18,11 @@ pub enum CPUType {
 	arm32
 }
 
-[heap]
+@[heap]
 pub struct Node {
 mut:
-	factory  &BuilderFactory [skip; str: skip]
-	executor Executor        [skip; str: skip]
+	factory  &BuilderFactory @[skip; str: skip]
+	executor Executor        @[skip; str: skip]
 pub:
 	name string = 'mymachine'
 pub mut:

@@ -14,7 +14,7 @@ pub mut:
 	path    pathlib.Path
 }
 
-[params]
+@[params]
 pub struct PointerPathArgs {
 pub mut:
 	path           string

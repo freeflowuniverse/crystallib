@@ -11,7 +11,7 @@ pub mut:
 	status      IProcessStatus
 	pid         int
 	env         map[string]string
-	initd       &Initd            [skip; str: skip]
+	initd       &Initd            @[skip; str: skip]
 	description string
 }
 

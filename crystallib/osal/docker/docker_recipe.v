@@ -59,7 +59,7 @@ pub fn (mut e DockerEngine) recipe_new(args RecipeArgs) DockerBuilderRecipe {
 	}
 }
 
-[heap]
+@[heap]
 pub struct DockerBuilderRecipe {
 pub mut:
 	name     string
@@ -67,7 +67,7 @@ pub mut:
 	tag      string
 	params   Params
 	files    []embed_file.EmbedFileData
-	engine   &DockerEngine              [str: skip]
+	engine   &DockerEngine              @[str: skip]
 	items    []RecipeItem
 	platform PlatformType
 	zinit    bool
