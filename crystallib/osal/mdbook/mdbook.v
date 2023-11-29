@@ -68,16 +68,16 @@ fn (mut book MDBook) prepare() ! {
 	book.template_install()!
 	book.summary_image_set()!
 	println(' - mdbook prepared: ${book.path_build.path}')
-	if true{
-		panic("ddd")
-	}	
+	// if true{
+	// 	panic("ddd")
+	// }
 }
 
-
 pub fn (mut book MDBook) generate() ! {
-	if book.changed() == false {
-		return
-	}
+	// TODO: uncomment when fixed
+	// if book.changed() == false {
+	// 	return
+	// }
 	println(' - book generate: ${book.name} on ${book.path_build.path}')
 
 	// write the css files
@@ -102,7 +102,6 @@ pub fn (mut book MDBook) generate() ! {
 		cmd: 'mdbook build ${book.path_build.path} --dest-dir ${book.path_publish.path}'
 		retry: 0
 	)!
-
 }
 
 fn (mut book MDBook) template_install() ! {
@@ -113,7 +112,7 @@ fn (mut book MDBook) template_install() ! {
 	// get embedded files to the mdbook dir
 	for item in book.books.embedded_files {
 		dpath := '${book.path_build.path}/${item.path.all_after_first('/')}'
-		println(" - embed: $dpath")
+		println(' - embed: ${dpath}')
 		mut dpatho := pathlib.get_file(path: dpath, create: true)!
 		dpatho.write(item.to_string())!
 	}
@@ -121,21 +120,20 @@ fn (mut book MDBook) template_install() ! {
 	c := $tmpl('template/book.toml')
 	mut tomlfile := book.path_build.file_get_new('book.toml')!
 	tomlfile.write(c)!
-
-
 }
 
 fn (mut book MDBook) summary_image_set() ! {
 	// this is needed to link the first image dir in the summary to the src, otherwise empty home image
 
-	summaryfile := '${book.path_build.path}/${book.name}/src/SUMMARY.md'
-	mut p := pathlib.get_file(path: summaryfile)!
+	summaryfile := '${book.path_build.path}/src/SUMMARY.md'
+	mut p := pathlib.get_linked_file(path: summaryfile)!
 	c := p.read()!
 	mut first := true
 	for line in c.split_into_lines() {
 		if line.contains('](') && first {
 			folder_first := line.all_after('](').all_before_last(')')
 			folder_first_dir_img := '${book.path_build.path}/${book.name}/src/${folder_first.all_before_last('/')}/img'
+			println('debugzo: ${folder_first_dir_img}')
 			if os.exists(folder_first_dir_img) {
 				mut image_dir := pathlib.get_dir(path: folder_first_dir_img)!
 				image_dir.link('${book.path_build.path}/${book.name}/src/img', true)!

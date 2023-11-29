@@ -66,13 +66,13 @@ fn (mut tree MDBooks) load() ! {
 pub fn (mut self MDBooks) init() ! {
 	self.load()!
 	for mut book in self.books {
-		book.clone()! //first make sure we know the repo's, don't pull
+		book.clone()! // first make sure we know the repo's, don't pull
 	}
-	self.pull()! //now pull all the repo's
+	self.pull()! // now pull all the repo's
 	for mut book in self.books {
-		book.prepare()! //now make sure we prepare
+		book.prepare()! // now make sure we prepare
 	}
-	self.reset_state()! //now forget the state
+	self.reset_state()! // now forget the state
 }
 
 fn (mut self MDBooks) generate() ! {
@@ -80,9 +80,9 @@ fn (mut self MDBooks) generate() ! {
 	for mut book in self.books {
 		book.generate()!
 	}
-	if true{
-		panic("generate")
-	}
+	// if true {
+	// 	panic('generate')
+	// }
 	// now we have to reset the rev keys, so we remember current status
 	for key, mut status in self.gitrepos_status {
 		osal.done_set('mdbookrev_${key}', status.revnew)!
@@ -90,17 +90,17 @@ fn (mut self MDBooks) generate() ! {
 	}
 }
 
-//make sure all intial states for the revisions are reset
+// make sure all intial states for the revisions are reset
 pub fn (mut self MDBooks) reset_state() ! {
 	for key, mut status in self.gitrepos_status {
-		osal.done_set('mdbookrev_${key}', "")!
-		status.revlast = ""
+		osal.done_set('mdbookrev_${key}', '')!
+		status.revlast = ''
 	}
 }
 
 // get all content
 pub fn (mut self MDBooks) pull() ! {
-	println (" - pull all mdbooks")
+	println(' - pull all mdbooks')
 	for key, repo_ in self.gitrepos {
 		mut repo := repo_
 		if self.reset {
@@ -131,8 +131,8 @@ pub fn (mut self MDBooks) watch(args WatchArgs) {
 		println('${t} ${t.unix_time()} period:${args.period}')
 		if t.unix_time() > last + args.period {
 			println(' - will try to check the mdbooks')
-			self.pull() or { panic(" - ERROR: couldn't pull the repo's.\n${err}")} 
-			self.generate() or { panic(" - ERROR: couldn't generate the repo's.\n${err}")} 
+			self.pull() or { panic(" - ERROR: couldn't pull the repo's.\n${err}") }
+			self.generate() or { panic(" - ERROR: couldn't generate the repo's.\n${err}") }
 			last = t.unix_time()
 		}
 		time.sleep(time.second)

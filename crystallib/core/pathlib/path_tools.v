@@ -387,7 +387,6 @@ pub fn path_relative(source_ string, linkpath_ string) !string {
 		}
 	}
 
-	println('common: ${common}')
 	mut source_short := source[(common.len)..]
 	mut linkpath_short := linkpath[(common.len)..]
 

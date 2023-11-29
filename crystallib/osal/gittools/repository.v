@@ -119,7 +119,7 @@ pub fn (mut repo GitRepo) pull_reset(args_ ActionArgs) ! {
 	if true{
 		println(repo)
 		print_backtrace()
-		panic("ss")
+		// panic("ss")
 	}
 	repo.pull(args)!
 }

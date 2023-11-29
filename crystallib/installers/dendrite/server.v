@@ -195,5 +195,5 @@ pub fn (mut server Server) user_add(args UserAddArgs) ! {
 		dendrite-create-account --config dendrite.yaml -username ${args.name} -password ${args.passwd} ${admin} -url http://localhost:8008
 		'
 	println(cmd)
-	job := osal.exec(cmd: cmd, die: false)!
+	job := osal.exec(cmd: cmd)!
 }
