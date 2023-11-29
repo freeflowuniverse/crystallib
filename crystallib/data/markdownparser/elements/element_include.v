@@ -1,13 +1,13 @@
 module elements
 
-[heap]
+@[heap]
 pub struct Include {
 	DocBase
 pub mut:
 	replaceme string
 }
 
-pub fn (mut self Include) process() !int {
+pub fn (mut self Include) process(mut doc Doc) !int {
 	if self.processed {
 		return 0
 	}
@@ -16,7 +16,8 @@ pub fn (mut self Include) process() !int {
 }
 
 pub fn (mut self Include) markdown() string {
-	mut out := self.content
+	mut out := '!!include '
+	out += self.content + '\n'
 	out += self.DocBase.markdown()
 	return out
 }
@@ -31,4 +32,3 @@ pub fn (mut self Include) html() string {
 pub struct IncludeNewArgs {
 	ElementNewArgs
 }
-

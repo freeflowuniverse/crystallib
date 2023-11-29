@@ -1,14 +1,14 @@
 module elements
 
-[heap]
+@[heap]
 pub struct Comment {
 	DocBase
 pub mut:
-	replaceme string
+	replaceme  string
 	singleline bool
 }
 
-pub fn (mut self Comment) process() !int {
+pub fn (mut self Comment) process(mut doc Doc) !int {
 	if self.processed {
 		return 0
 	}
@@ -33,5 +33,5 @@ pub fn (mut self Comment) html() string {
 
 @[params]
 pub struct CommentNewArgs {
-	ElementNewArgs	
+	ElementNewArgs
 }

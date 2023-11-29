@@ -1,10 +1,11 @@
 module elements
+
 import freeflowuniverse.crystallib.core.texttools
 import os
 
-[heap]
+@[heap]
 pub struct Link {
-	DocBase	
+	DocBase
 pub mut:
 	cat         LinkType
 	isexternal  bool // is not linked to a wiki (sites)
@@ -21,7 +22,6 @@ pub mut:
 	// internal
 	state     LinkState
 	error_msg string
-
 }
 
 pub enum LinkType {
@@ -42,9 +42,8 @@ pub enum LinkState {
 	error
 }
 
-
-pub fn (mut self Link) process() !int {
-	if self.processed{		
+pub fn (mut self Link) process(mut doc Doc) !int {
+	if self.processed {
 		return 0
 	}
 	self.processed = true
@@ -53,7 +52,7 @@ pub fn (mut self Link) process() !int {
 
 pub fn (mut self Link) markdown() string {
 	mut link_filename := self.filename
-	mut out := ""
+	mut out := ''
 	if self.path != '' {
 		link_filename = '${self.path}/${link_filename}'
 	}
@@ -95,14 +94,13 @@ pub fn (mut self Link) markdown() string {
 }
 
 pub fn (mut self Link) html() string {
-	panic("implement")
-	//TODO: implement	
-	return ""
+	panic('implement')
+	// TODO: implement	
+	return ''
 }
 
-
-[params]
-pub struct LinkNewArgs{
+@[params]
+pub struct LinkNewArgs {
 	ElementNewArgs
 }
 
@@ -123,9 +121,6 @@ pub fn (mut link Link) name_fix_no_underscore_no_ext() string {
 	return texttools.name_fix_no_underscore_no_ext(link.filename)
 	// return link.filename.all_before_last('.').trim_right('_').to_lower()
 }
-
-
-
 
 // add link to a paragraph of a doc
 fn (mut link Link) parse() Link {

@@ -8,88 +8,81 @@ import freeflowuniverse.crystallib.data.actionparser
 @[heap]
 pub struct DocBase {
 pub mut:
-	
-	id        int 
+	id        int
 	content   string
-	doc      ?&Doc        @[skip; str: skip]
 	path      pathlib.Path
 	processed bool
 	params    paramsparser.Params
 	type_name string
 	changed   bool
-	parent int
-	children  []int
+	children  []Element
 }
 
-fn (mut self DocBase) process_base() !{
-	for mut element in self.children(){
-		//remove the elements which are empty
+fn (mut self DocBase) process_base() ! {
+	for mut element in self.children() {
+		// remove the elements which are empty
 		if element.content.trim_space() == '' {
 			self.children.delete(element.id)
 		}
 	}
 }
 
-
-@[params]
-pub struct ElementNewArgs {
-pub mut:
-	content    string
-	parent	   int
-}
-
 pub fn (self DocBase) actions() []actionparser.Action {
 	mut out := []actionparser.Action{}
 	for element in self.children() {
-		// println(element.type_name)
 		match element {
-			Action { 
-				println(1)
+			Action {
 				out << element.action
-				out << element.actions() 
+				out << element.actions()
 			}
-			else{}
+			else {}
 		}
 	}
 	return out
 }
 
-
 pub fn (self DocBase) treeview() string {
-	mut out:=[]string{}
-	self.treeview_("",mut out)
+	mut out := []string{}
+	self.treeview_('', mut out)
 	return out.join_lines()
 }
 
-pub fn (self DocBase) children() []&DocElement {
-	mut d:=self.doc or {panic("no doc")}
-	mut res := []&DocElement{}
-	for id in self.children{
-		mut e:= d.elements[id] or {panic("cant find doc with id: $id")}
-		res << e
+pub fn (self DocBase) children() []Element {
+	return self.children
+}
+
+pub fn (mut self DocBase) process_elements(mut doc Doc) !int {
+	for {
+		mut changes := 0
+		for mut element in self.children {
+			changes += element.process(mut doc)!
+		}
+		if changes == 0 {
+			break
+		}
 	}
-	return res
-}
-pub fn (self DocBase) parent() &DocElement {
-	mut d:=self.doc or {panic("no doc")}
-	return d.elements[self.parent] or {panic("cant find doc with id: ${self.parent}")}
+	return 0
 }
 
+fn (self DocBase) treeview_(prefix string, mut out []string) {
+	out << '${prefix}- ${self.type_name:-30} ${self.content.len}'
+	for mut element in self.children() {
+		element.treeview_(prefix + ' ', mut out)
+	}
+}
 
+pub fn (mut self DocBase) html() string {
+	mut out := ''
+	for mut element in self.children() {
+		out += element.html()
+	}
+	return out
+}
 
-// pub fn (self DocBase) markdown() !string {
-// 	mut out:=[]string{}
-// 	for _, element in self.children(){
-// 		out<<element.markdown()!
-// 	}
-// 	return out.join_lines()
-// }
-
-// pub fn (self DocBase) html()! string {
-// 	mut out:=[]string{}
-// 	for _, element in self.children(){
-// 		out<<element.html()!
-// 	}
-// 	return out.join_lines()
-// }
-
+pub fn (mut self DocBase) markdown() string {
+	mut out := ''
+	for mut element in self.children() {
+		out += element.markdown()
+	}
+	return out
+}

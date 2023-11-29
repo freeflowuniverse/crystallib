@@ -1,13 +1,10 @@
 module markdownparser
 
-import freeflowuniverse.crystallib.data.paramsparser { Param, Params }
-
+import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.texttools
 
 fn test_action1() {
-
-
-	mut c:='
+	mut c := '
 	# header
 
 	some text
@@ -35,14 +32,14 @@ fn test_action1() {
 
 	'
 
-	c=texttools.dedent(c)
+	c = texttools.dedent(c)
 
-	mut doc := new(content: c) or {panic(err)}
+	mut doc := new(content: c) or { panic(err) }
 
 	println(doc.treeview())
 	println(doc)
 
-	if true{panic("sdsds")}
-
-
+	if true {
+		panic('sdsds')
+	}
 }

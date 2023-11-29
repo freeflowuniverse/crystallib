@@ -1,13 +1,13 @@
 module elements
 
-[heap]
+@[heap]
 pub struct Text {
 	DocBase
 pub mut:
 	replaceme string
 }
 
-pub fn (mut self Text) process() !int {
+pub fn (mut self Text) process(mut doc Doc) !int {
 	if self.processed {
 		return 0
 	}
@@ -31,4 +31,3 @@ pub fn (mut self Text) html() string {
 pub struct TextNewArgs {
 	ElementNewArgs
 }
-
