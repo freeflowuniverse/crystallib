@@ -25,7 +25,7 @@ pub fn (self Comment) markdown() string {
 	return out
 }
 
-pub fn (mut self Comment) html() string {
+pub fn (self Comment) html() string {
 	mut out := self.content
 	out += self.DocBase.html()
 	return out

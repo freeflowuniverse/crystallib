@@ -4,6 +4,8 @@ module elements
 import freeflowuniverse.crystallib.data.paramsparser
 
 interface Element {
+	markdown() string
+	html() string
 mut:
 	id        int
 	content   string
@@ -13,8 +15,6 @@ mut:
 	changed   bool
 	children  []Element
 	process(mut doc Doc) !int
-	markdown() string
-	html() string
 	treeview_(prefix string, mut out []string)
 }
 
@@ -32,9 +32,9 @@ pub fn (mut self Doc) process_elements() !int {
 	return 0
 }
 
-pub fn (mut self Doc) markdown() string {
+pub fn (self Doc) markdown() string {
 	mut out := ''
-	for mut element in self.children {
+	for element in self.children {
 		out += element.markdown()
 	}
 	return out

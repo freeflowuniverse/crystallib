@@ -89,7 +89,7 @@ fn (self DocBase) treeview_(prefix string, mut out []string) {
 	}
 }
 
-pub fn (mut self DocBase) html() string {
+pub fn (self DocBase) html() string {
 	mut out := ''
 	for mut element in self.children() {
 		out += element.html()
@@ -97,7 +97,7 @@ pub fn (mut self DocBase) html() string {
 	return out
 }
 
-pub fn (mut self DocBase) markdown() string {
+pub fn (self DocBase) markdown() string {
 	mut out := ''
 	for mut element in self.children() {
 		out += element.markdown()

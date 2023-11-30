@@ -24,6 +24,6 @@ fn (self Action) markdown() string {
 	return self.action.script3()
 }
 
-fn (mut self Action) html() string {
+fn (self Action) html() string {
 	return self.markdown()
 }

@@ -52,7 +52,7 @@ pub fn (mut self Link) process(mut doc Doc) !int {
 	return 1
 }
 
-pub fn (mut self Link) markdown() string {
+pub fn (self Link) markdown() string {
 	mut link_filename := self.filename
 	mut out := ''
 	if self.path != '' {
@@ -99,7 +99,7 @@ pub fn (mut self Link) markdown() string {
 	return out
 }
 
-pub fn (mut self Link) html() string {
+pub fn (self Link) html() string {
 	panic('implement')
 	// TODO: implement	
 	return ''

@@ -15,13 +15,13 @@ pub fn (mut self Text) process(mut doc Doc) !int {
 	return 1
 }
 
-pub fn (mut self Text) markdown() string {
+pub fn (self Text) markdown() string {
 	mut out := self.content
 	out += self.DocBase.markdown()
 	return out
 }
 
-pub fn (mut self Text) html() string {
+pub fn (self Text) html() string {
 	mut out := self.content
 	out += self.DocBase.html()
 	return out

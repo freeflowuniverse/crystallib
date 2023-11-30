@@ -46,7 +46,7 @@ pub fn (self Codeblock) markdown() string {
 	return out
 }
 
-pub fn (mut self Codeblock) html() string {
+pub fn (self Codeblock) html() string {
 	panic('implement')
 	// TODO: implement html
 	return ''

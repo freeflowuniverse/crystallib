@@ -50,7 +50,7 @@ pub fn (self Table) markdown() string {
 	return '${out}\n'
 }
 
-pub fn (mut self Table) html() string {
+pub fn (self Table) html() string {
 	// TODO: implement html
 	panic('implement')
 }
