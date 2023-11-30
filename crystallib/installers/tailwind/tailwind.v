@@ -24,6 +24,8 @@ pub fn install(args InstallArgs) ! {
 	} else if osal.is_osx_arm() {
 		url = 'https://github.com/tailwindlabs/tailwindcss/releases/download/v3.3.5/tailwindcss-macos-arm64'
 		// binpath_ = '/tmp/tailwind_0.16.2_darwin_arm64'
+	} else if osal.is_osx_intel() {
+		url = 'https://github.com/tailwindlabs/tailwindcss/releases/download/v3.3.5/tailwindcss-macos-x64'
 	} else {
 		return error('only support ubuntu & osx arm for now')
 	}
