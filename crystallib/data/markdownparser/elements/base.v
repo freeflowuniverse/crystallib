@@ -19,12 +19,30 @@ pub mut:
 }
 
 fn (mut self DocBase) process_base() ! {
-	for mut element in self.children() {
+	mut to_delete := []int{}
+	for id, element in self.children {
 		// remove the elements which are empty
 		if element.content.trim_space() == '' {
-			self.children.delete(element.id)
+			to_delete << id
 		}
 	}
+
+	self.delete_from_children(to_delete)
+}
+
+fn (mut self DocBase) delete_from_children(to_delete []int) {
+	mut write := 0
+	mut delete_ind := 0
+	for i := 0; i < self.children.len; i++ {
+		if delete_ind < to_delete.len && i == to_delete[delete_ind] {
+			delete_ind++
+			continue
+		}
+		self.children[write] = self.children[i]
+		write++
+	}
+
+	self.children = self.children[0..write]
 }
 
 pub fn (self DocBase) actions() []actionparser.Action {
