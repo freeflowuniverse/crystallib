@@ -10,6 +10,10 @@ fn (mut self Paragraph) process(mut doc Doc) !int {
 	if self.processed {
 		return 0
 	}
+
+	paragraph_parse(mut doc, mut self)!
+	self.process_base()!
+	self.process_elements(mut doc)!
 	self.processed = true
 	return 1
 }
