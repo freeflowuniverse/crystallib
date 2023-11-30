@@ -46,6 +46,8 @@ pub fn (mut self Link) process(mut doc Doc) !int {
 	if self.processed {
 		return 0
 	}
+
+	self.parse()
 	self.processed = true
 	return 1
 }
@@ -70,6 +72,10 @@ pub fn (mut self Link) markdown() string {
 			out = '[${self.description}](${link_filename} ${self.extra})'
 		}
 	}
+	if self.cat == LinkType.html {
+		out = '[${self.description}](${self.url})'
+	}
+
 	if self.cat == LinkType.page {
 		if self.filename.contains(':') {
 			return "should not have ':' in link for page or file.\n${self}"
@@ -123,7 +129,7 @@ pub fn (mut link Link) name_fix_no_underscore_no_ext() string {
 }
 
 // add link to a paragraph of a doc
-fn (mut link Link) parse() Link {
+fn (mut link Link) parse() {
 	link.content = link.content.trim_space()
 	if link.content.starts_with('!') {
 		link.cat = LinkType.image
@@ -153,12 +159,12 @@ fn (mut link Link) parse() Link {
 
 	if link.url.starts_with('http') {
 		link.cat = LinkType.html
-		return link
+		return
 	}
 
 	if link.url.starts_with('#') {
 		link.cat = LinkType.anchor
-		return link
+		return
 	}
 
 	// AT THIS POINT LINK IS A PAGE OR A FILE
@@ -221,7 +227,7 @@ fn (mut link Link) parse() Link {
 			link.filename = splitted2[1]
 		} else if splitted2.len > 2 {
 			link.error('link can only have 1 x ":"/n${link}')
-			return link
+			return
 		} else {
 			('should never be here')
 		}
@@ -255,25 +261,25 @@ fn (mut link Link) parse() Link {
 			link.cat = LinkType.page
 		} else if ext in ['html', 'htm'] {
 			link.cat = LinkType.html
-			return link
+			return
 		} else if ext in ['v', 'py', 'js', 'c', 'sh'] {
 			link.cat = LinkType.code
-			return link
+			return
 		} else if ext in ['doc', 'docx', 'zip', 'xls', 'pdf', 'xlsx', 'ppt', 'pptx'] {
 			link.cat = LinkType.file
-			return link
+			return
 		} else if ext in ['json', 'yaml', 'yml', 'toml'] {
 			link.cat = LinkType.data
-			return link
+			return
 		} else if link.url.starts_with('mailto:') {
 			link.cat = LinkType.email
-			return link
+			return
 		} else if !link.url.contains_any('./!&;') {
 			// link.cat = LinkType.page
 			panic('need to figure out what to do with ${link.url} ')
 		} else {
 			link.error("${link.url} (no match), ext was:'${ext}'")
-			return link
+			return
 		}
 		if link.filename.contains(':') {
 			panic("should not have ':' in link for page or file (2).\n${link}")
@@ -283,8 +289,7 @@ fn (mut link Link) parse() Link {
 		if !link.url.trim(' ').starts_with('#') {
 			link.state = LinkState.error
 			link.error('EMPTY LINK.')
-			return link
+			return
 		}
 	}
-	return link
 }

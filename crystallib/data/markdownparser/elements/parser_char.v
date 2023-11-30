@@ -1,4 +1,4 @@
-module parsers
+module elements
 
 import os
 
@@ -18,7 +18,7 @@ mut:
 	errors []ParserCharError
 }
 
-pub fn parser_char_new_path(path string) !ParserChar {
+fn parser_char_new_path(path string) !ParserChar {
 	if !os.exists(path) {
 		return error("path: '${path}' does not exist, cannot parse.")
 	}

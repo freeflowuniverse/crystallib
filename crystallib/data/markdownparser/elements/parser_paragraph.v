@@ -1,17 +1,15 @@
-module parsers
-
-import freeflowuniverse.crystallib.data.markdownparser.elements
+module elements
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT REALITIES
 // adds the found links, text, comments to the paragraph
-pub fn paragraph_parse(mut d elements.Doc, mut paragraph elements.Paragraph) ! {
+fn paragraph_parse(mut d Doc, mut paragraph Paragraph) ! {
 	para := paragraph
 	mut parser := parser_char_new_text(para.content.trim_space())
 
 	// mut d := para.doc or { panic('no doc') }
 	d.text_new(
-		parent: elements.ElementRef{
+		parent: ElementRef{
 			ref: paragraph
 		}
 	) // the initial one
@@ -23,16 +21,16 @@ pub fn paragraph_parse(mut d elements.Doc, mut paragraph elements.Paragraph) ! {
 			break
 		}
 
-		mut llast := d.last()!
+		mut llast := paragraph.children.last()
 		mut char_ := parser.char_current()
 
 		// check for comments end
-		if mut llast is elements.Comment {
+		if mut llast is Comment {
 			if char_ == '\n' {
 				if llast.singleline {
 					// means we are at end of line of a single line comment
 					d.text_new(
-						parent: elements.ElementRef{
+						parent: ElementRef{
 							ref: paragraph
 						}
 					)
@@ -50,7 +48,7 @@ pub fn paragraph_parse(mut d elements.Doc, mut paragraph elements.Paragraph) ! {
 				// need to move forward not to have the 3 next
 				parser.forward(3)
 				d.text_new(
-					parent: elements.ElementRef{
+					parent: ElementRef{
 						ref: paragraph
 					}
 				)
@@ -60,19 +58,19 @@ pub fn paragraph_parse(mut d elements.Doc, mut paragraph elements.Paragraph) ! {
 			}
 		}
 
-		if mut llast is elements.Link {
+		if mut llast is Link {
 			if char_ == ']' {
 				if !parser.text_next_is('(', 1) {
 					// means is not link, need to convert link to normal text
 					mut c := llast.content
-					d.delete_last()! // remove the link
+					paragraph.children.delete_last() // remove the link
 					d.text_new(
-						parent: elements.ElementRef{
+						parent: ElementRef{
 							ref: paragraph
 						}
 					)
-					llast = d.last()! // fetch last again
-					llast.content += char_ // need to add current content
+					llast = paragraph.children.last() // fetch last again
+					llast.content += c + char_ // need to add current content
 					parser.next()
 					// println("\n!!!!!!!!!!!!!!!!!!!!!\n")
 					char_ = ''
@@ -84,7 +82,7 @@ pub fn paragraph_parse(mut d elements.Doc, mut paragraph elements.Paragraph) ! {
 				// end of link
 				llast.content += char_ // need to add current content
 				d.text_new(
-					parent: elements.ElementRef{
+					parent: ElementRef{
 						ref: paragraph
 					}
 				)
@@ -95,20 +93,20 @@ pub fn paragraph_parse(mut d elements.Doc, mut paragraph elements.Paragraph) ! {
 			}
 		}
 
-		if mut llast is elements.Text {
+		if mut llast is Text {
 			if char_ != '' {
 				// check for comments start
 				for totry in ['<!--', '//'] {
 					if parser.text_next_is(totry, 0) {
 						// we are now in comment
 						d.comment_new(
-							parent: elements.ElementRef{
+							parent: ElementRef{
 								ref: paragraph
 							}
 						)
-						mut llast2 := d.last()!
+						mut llast2 := paragraph.children.last()
 						if totry == '//' {
-							if mut llast2 is elements.Comment {
+							if mut llast2 is Comment {
 								llast2.singleline = true
 							}
 						}
@@ -124,7 +122,7 @@ pub fn paragraph_parse(mut d elements.Doc, mut paragraph elements.Paragraph) ! {
 					if parser.text_next_is(totry, 0) {
 						d.link_new(
 							content: totry
-							parent: elements.ElementRef{
+							parent: ElementRef{
 								ref: paragraph
 							}
 						)
