@@ -49,7 +49,7 @@ command = "mdbook-mermaid"
 # footer-template = "<p style='font-size:10px; margin-left: 48%'><span class='pageNumber'></span> / <span class='totalPages'></span></p>"
 # prefer-css-page-size = false
 
-[preprocessor.plantuml]
-plantuml-cmd="http://localhost:8080/plantuml"
-# plantuml-cmd="http://www.plantuml.com/plantuml"
-use-data-uris=true
+# [preprocessor.plantuml]
+# plantuml-cmd="http://localhost:8080/plantuml"
+# # plantuml-cmd="http://www.plantuml.com/plantuml"
+# use-data-uris=true

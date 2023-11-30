@@ -51,6 +51,12 @@ pub fn (mut books MDBooks) book_new(args MDBookArgs) !&MDBook {
 }
 
 // only executes at init time
+fn (mut book MDBook) clone() ! {
+	for mut c in book.collections {
+		c.clone()!
+	}
+}
+
 fn (mut book MDBook) prepare() ! {
 	mut gs := book.books.gitstructure
 	mut locator := gs.locator_new(book.url)!
@@ -58,27 +64,21 @@ fn (mut book MDBook) prepare() ! {
 	mut path_summary := path_summary_dir.file_get_ignorecase('summary.md')!
 	os.mkdir_all('${book.path_build.path}/src')!
 	path_summary.link('${book.path_build.path}/src/SUMMARY.md', true)!
-
 	println(' - mdbook summary: ${path_summary.path}')
-
-	for mut c in book.collections {
-		c.prepare()!
-	}
 	book.template_install()!
 	book.summary_image_set()!
-
 	println(' - mdbook prepared: ${book.path_build.path}')
+	// if true{
+	// 	panic("ddd")
+	// }
 }
 
 pub fn (mut book MDBook) generate() ! {
-	if book.changed() == false {
-		return
-	}
+	// TODO: uncomment when fixed
+	// if book.changed() == false {
+	// 	return
+	// }
 	println(' - book generate: ${book.name} on ${book.path_build.path}')
-	osal.exec(
-		cmd: 'mdbook build ${book.path_build.path} --dest-dir ${book.path_publish.path}'
-		retry: 0
-	)!
 
 	// write the css files
 	for item in book.books.embedded_files {
@@ -91,12 +91,17 @@ pub fn (mut book MDBook) generate() ! {
 			mut dpatho := pathlib.get_file(path: dpath, create: true)!
 			dpatho.write(item.to_string())!
 
-			// ugly hack
-			dpath2 := '${book.path_publish.path}/${css_name}'
-			mut dpatho2 := pathlib.get_file(path: dpath2, create: true)!
-			dpatho2.write(item.to_string())!
+			// // ugly hack
+			// dpath2 := '${book.path_publish.path}/${css_name}'
+			// mut dpatho2 := pathlib.get_file(path: dpath2, create: true)!
+			// dpatho2.write(item.to_string())!
 		}
 	}
+
+	osal.exec(
+		cmd: 'mdbook build ${book.path_build.path} --dest-dir ${book.path_publish.path}'
+		retry: 0
+	)!
 }
 
 fn (mut book MDBook) template_install() ! {
@@ -107,7 +112,7 @@ fn (mut book MDBook) template_install() ! {
 	// get embedded files to the mdbook dir
 	for item in book.books.embedded_files {
 		dpath := '${book.path_build.path}/${item.path.all_after_first('/')}'
-		// println(" - embed: $dpath")
+		println(' - embed: ${dpath}')
 		mut dpatho := pathlib.get_file(path: dpath, create: true)!
 		dpatho.write(item.to_string())!
 	}
@@ -120,14 +125,15 @@ fn (mut book MDBook) template_install() ! {
 fn (mut book MDBook) summary_image_set() ! {
 	// this is needed to link the first image dir in the summary to the src, otherwise empty home image
 
-	summaryfile := '${book.path_build.path}/${book.name}/src/SUMMARY.md'
-	mut p := pathlib.get_file(path: summaryfile)!
+	summaryfile := '${book.path_build.path}/src/SUMMARY.md'
+	mut p := pathlib.get_linked_file(path: summaryfile)!
 	c := p.read()!
 	mut first := true
 	for line in c.split_into_lines() {
 		if line.contains('](') && first {
 			folder_first := line.all_after('](').all_before_last(')')
 			folder_first_dir_img := '${book.path_build.path}/${book.name}/src/${folder_first.all_before_last('/')}/img'
+			println('debugzo: ${folder_first_dir_img}')
 			if os.exists(folder_first_dir_img) {
 				mut image_dir := pathlib.get_dir(path: folder_first_dir_img)!
 				image_dir.link('${book.path_build.path}/${book.name}/src/img', true)!

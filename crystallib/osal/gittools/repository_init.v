@@ -35,10 +35,11 @@ fn (mut repo GitRepo) load_from_url() ! {
 			// println("GIT: PULL USING HTTP")
 			cmd = repo.get_clone_cmd(true)
 		}
-		osal.execute_silent(cmd) or {
+		osal.exec(cmd:cmd,debug:true) or {
 			println(' GIT FAILED: ${cmd}')
 			return error('Cannot pull repo: ${repo.addr.path()}. Error was ${err}')
 		}
+		if true{panic('sdsdsd')}
 		repo.load()!
 	}
 }
