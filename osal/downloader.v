@@ -101,7 +101,7 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 		cmd: cmd
 		timeout: args.timeout
 		retry: args.retry
-		debug: false
+		debug: true
 		description: 'download ${args.url} to ${dest0.path}'
 	)!
 

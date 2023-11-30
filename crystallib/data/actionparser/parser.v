@@ -42,7 +42,7 @@ pub fn parse_collection(args ParserArgs) !ActionsCollection {
 		line := line_.replace('\t', '    ')
 		line_strip := line.trim_space()
 
-		println(" - ${state} action:'${action.name}' comments:'${comments.len}' -> '${line}'")
+		// println(" - ${state} action:'${action.name}' comments:'${comments.len}' -> '${line}'")
 
 		if state == .action {
 			if !line.starts_with('  ') || line_strip == '' || line_strip.starts_with('!') {
@@ -53,7 +53,7 @@ pub fn parse_collection(args ParserArgs) !ActionsCollection {
 				comments = []string{}
 				paramsdata = []string{}
 				action = Action{}
-				println(' - action end')
+				// println(' - action end')
 			} else {
 				paramsdata << line_strip
 			}
@@ -86,8 +86,8 @@ pub fn parse_collection(args ParserArgs) !ActionsCollection {
 				}
 				action.comments = comments.join('\n')
 				comments = []string{}
-				println(' - action new')
-				println(' - comment delete')
+				// println(' - action new')
+				// println(' - comment delete')
 
 				comments = []string{}
 				mut actionname := line.all_before(' ').trim_space()
