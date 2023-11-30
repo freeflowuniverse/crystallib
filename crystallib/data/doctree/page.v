@@ -311,7 +311,6 @@ fn (mut page Page) include(pages_to_include map[int]Page) ! {
 // 				println('Including page ${include.content} into ${page.path.path}')
 // 			}
 // 			mut page_to_include := page.tree.page_get(include.content) or {
-// 				println('debugzo')
 // 				msg := "include:'${include.content}' not found for page:${page.path.path}"
 // 				page.tree.collections[collection.name].error(path: page.path, msg: 'include ${msg}', cat: .page_not_found)
 // 				continue

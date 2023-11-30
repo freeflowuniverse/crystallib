@@ -43,6 +43,5 @@ pub fn (mut self ZSiteCollection) prepare() ! {
 	self.site.sites.gitrepos[repo.key()] = repo
 	self.gitrepokey = repo.key()
 	self.path = locator.path_on_fs()!
-	// println('debugzo: ${srcpath}')
 	self.path.link('${self.site.path_build.path}/src/${self.name}', true)!
 }

@@ -66,11 +66,7 @@ fn (mut book MDBook) prepare() ! {
 	path_summary.link('${book.path_build.path}/src/SUMMARY.md', true)!
 	println(' - mdbook summary: ${path_summary.path}')
 	book.template_install()!
-	book.summary_image_set()!
 	println(' - mdbook prepared: ${book.path_build.path}')
-	// if true{
-	// 	panic("ddd")
-	// }
 }
 
 pub fn (mut book MDBook) generate() ! {
@@ -97,9 +93,11 @@ pub fn (mut book MDBook) generate() ! {
 			// dpatho2.write(item.to_string())!
 		}
 	}
-
+	book.summary_image_set()!
 	osal.exec(
-		cmd: 'mdbook build ${book.path_build.path} --dest-dir ${book.path_publish.path}'
+		cmd: '	
+				cd ${book.path_build.path}
+				mdbook build --dest-dir ${book.path_publish.path}'
 		retry: 0
 	)!
 }
@@ -120,6 +118,19 @@ fn (mut book MDBook) template_install() ! {
 	c := $tmpl('template/book.toml')
 	mut tomlfile := book.path_build.file_get_new('book.toml')!
 	tomlfile.write(c)!
+
+
+	c1 := $tmpl('template/build.sh')
+	mut file1 := book.path_build.file_get_new('build.sh')!
+	file1.write(c1)!
+	file1.chmod(0700)!
+
+
+	c2 := $tmpl('template/develop.sh')
+	mut file2 := book.path_build.file_get_new('develop.sh')!
+	file2.write(c2)!	
+	file2.chmod(0700)!
+
 }
 
 fn (mut book MDBook) summary_image_set() ! {
@@ -130,13 +141,17 @@ fn (mut book MDBook) summary_image_set() ! {
 	c := p.read()!
 	mut first := true
 	for line in c.split_into_lines() {
+		if ! (line.trim_space().starts_with("-")){
+			continue
+		}
 		if line.contains('](') && first {
 			folder_first := line.all_after('](').all_before_last(')')
-			folder_first_dir_img := '${book.path_build.path}/${book.name}/src/${folder_first.all_before_last('/')}/img'
-			println('debugzo: ${folder_first_dir_img}')
+			folder_first_dir_img := '${book.path_build.path}/src/${folder_first.all_before_last('/')}/img'
+			// println(folder_first_dir_img)
+			// if true{panic("s")}
 			if os.exists(folder_first_dir_img) {
 				mut image_dir := pathlib.get_dir(path: folder_first_dir_img)!
-				image_dir.link('${book.path_build.path}/${book.name}/src/img', true)!
+				image_dir.copy(dest:'${book.path_build.path}/src/img')!
 			}
 
 			first = false

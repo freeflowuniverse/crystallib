@@ -53,7 +53,6 @@ fn (mut self MDBookCollection) clone() ! {
 fn (mut self MDBookCollection) link() ! {
 	println(' - link collection: ${self.path.path} -> ${self.book.path_build.path}/src/${self.name}')
 	self.path.link('${self.book.path_build.path}/src/${self.name}', true)!
-	println(' debugzo: ${self.book.path_build.path}/src/${self.name}')
 	// println(' - mdbook collection: ${srcpath}')
 	// panic('link collection')
 }
