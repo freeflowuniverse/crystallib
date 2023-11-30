@@ -17,7 +17,7 @@ mut:
 pub enum ErrorType {
 	exec
 	timeout
-	args	
+	args
 }
 
 fn (err JobError) msg() string {
@@ -50,12 +50,12 @@ pub mut:
 	timeout                          int  = 3600 // timeout in sec
 	stdout                           bool = true
 	stdout_log                       bool = true
-	raise_error                      bool = true //if false, will not raise an error but still error report
-	ignore_error					 bool   //means if error will just exit and not raise, there will be no error reporting
+	raise_error                      bool = true // if false, will not raise an error but still error report
+	ignore_error                     bool // means if error will just exit and not raise, there will be no error reporting
 	work_folder                      string // location where cmd will be executed
 	environment                      map[string]string // env variables
 	ignore_error_codes               []int
-	scriptpath                       string            // is the path where the script will be put which is executed
+	scriptpath                       string // is the path where the script will be put which is executed
 	scriptkeep                       bool   // means we don't remove the script
 	debug                            bool   // if debug will put +ex in the script which is being executed and will make sure script stays
 	shell                            bool   // means we will execute it in a shell interactive
@@ -65,10 +65,10 @@ pub mut:
 
 pub struct Job {
 pub mut:
-	start     time.Time
-	end       time.Time
-	cmd       Command
-	output    string
+	start  time.Time
+	end    time.Time
+	cmd    Command
+	output string
 	// error     string
 	exit_code int
 }
@@ -112,7 +112,8 @@ pub fn exec(cmd Command) !Job {
 			// println(job.cmd.scriptpath)	
 			os.rm(job.cmd.scriptpath) or { panic('cannot remove ${job.cmd.scriptpath}') }
 		}
-		if job.cmd.ignore_error == false && job.cmd.scriptkeep == false && os.exists(job.cmd.scriptpath) {
+		if job.cmd.ignore_error == false && job.cmd.scriptkeep == false
+			&& os.exists(job.cmd.scriptpath) {
 			os.rm(job.cmd.scriptpath) or { panic('cannot remove ${job.cmd.scriptpath}') }
 		}
 	}
@@ -134,7 +135,7 @@ pub fn exec(cmd Command) !Job {
 
 		os.execvp(process_args[0], process_args[1..process_args.len])!
 	} else {
-		mut output:=[]string{}
+		mut output := []string{}
 		start := time.now().unix_time()
 		for x in 0 .. job.cmd.retry + 1 {
 			// println(process_args)	
@@ -183,7 +184,7 @@ pub fn exec(cmd Command) !Job {
 				job.exit_code = p.code
 				output << p.stdout_read().split_into_lines()
 				output << p.stderr_read().split_into_lines() // TODO: might block? need to see
-				job.cmd.scriptkeep=true
+				job.cmd.scriptkeep = true
 				job.output = output.join_lines()
 				if job.cmd.retry > 0 && x < job.cmd.retry {
 					time.sleep(time.millisecond * 100) // wait 0.1 sec
@@ -196,12 +197,11 @@ pub fn exec(cmd Command) !Job {
 			}
 		}
 	}
-	
+
 	job.end = time.now()
 
 	if job.exit_code > 0 && job.exit_code !in job.cmd.ignore_error_codes {
-		if ! job.cmd.ignore_error {
-
+		if !job.cmd.ignore_error {
 			errorpath := job.cmd.scriptpath.all_before_last('.sh') + '_error.json'
 			errorjson := json.encode_pretty(job)
 			os.write_file(errorpath, errorjson) or {
@@ -227,10 +227,9 @@ pub fn exec(cmd Command) !Job {
 				println('Job Error')
 				println(je.msg())
 			}
-			if job.cmd.raise_error{
+			if job.cmd.raise_error {
 				return je
 			}
-			
 		}
 	}
 	if !cmd.debug && job.cmd.scriptkeep == false {
@@ -271,7 +270,7 @@ fn (mut job Job) cmd_to_process_args(insert_noninteractive_statements bool) ![]s
 
 	// use bash debug and die on error features
 	mut firstlines := '#!/bin/bash\n'
-	if ! job.cmd.ignore_error {
+	if !job.cmd.ignore_error {
 		firstlines += 'set -e\nexec 2>&1\n'
 	} else {
 		firstlines += 'set +e\nexec 2>&1\n'
@@ -319,8 +318,8 @@ pub fn execute_interactive(cmd string) ! {
 }
 
 pub fn cmd_exists(cmd string) bool {
-	res:=os.execute('which ${cmd}')
-	if res.exit_code>0{
+	res := os.execute('which ${cmd}')
+	if res.exit_code > 0 {
 		return false
 	}
 	return true

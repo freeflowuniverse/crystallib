@@ -45,55 +45,50 @@ pub fn (collection ActionsCollection) names() []string {
 	return names
 }
 
-
-[params]
-pub struct ActionFindArg{
+@[params]
+pub struct ActionFindArg {
 pub mut:
-	name string
-	actor string	
+	name  string
+	actor string
 }
 
 pub fn (collection ActionsCollection) exists(args ActionFindArg) bool {
-	res:=collection.find(args)
-	if res.len>0{
+	res := collection.find(args)
+	if res.len > 0 {
 		return true
 	}
 	return false
 }
 
 pub fn (collection ActionsCollection) exists_once(args ActionFindArg) bool {
-	res:=collection.find(args)
-	if res.len==1{
+	res := collection.find(args)
+	if res.len == 1 {
 		return true
 	}
 	return false
 }
 
 pub fn (collection ActionsCollection) get(args ActionFindArg) !Action {
-	res:=collection.find(args)
-	if res.len==1{
+	res := collection.find(args)
+	if res.len == 1 {
 		return res[0]
 	}
-	return error("can't find action with args:$args")
+	return error("can't find action with args:${args}")
 }
 
-
-
 pub fn (collection ActionsCollection) find(args ActionFindArg) []Action {
-	mut res:=[]Action{}
+	mut res := []Action{}
 	for action in collection.actions {
-		mut found:=true
-		if args.name!="" && action.name != args.name{
-			found=false
+		mut found := true
+		if args.name != '' && action.name != args.name {
+			found = false
 		}
-		if args.actor!="" && action.actor != args.actor{
-			found=false
+		if args.actor != '' && action.actor != args.actor {
+			found = false
 		}
-		if found{
-			res<< action
-		}		
-
-	}	
+		if found {
+			res << action
+		}
+	}
 	return res
-
 }

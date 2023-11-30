@@ -11,8 +11,8 @@ pub:
 	name string
 pub mut:
 	logger &log.Logger = &log.Log{
-		level: .info
-	} @[skip; str: skip]
+	level: .info
+} @[skip; str: skip]
 	collections     map[string]&Collection
 	embedded_files  []embed_file.EmbedFileData // this where we have the templates for exporting a book
 	state           TreeState

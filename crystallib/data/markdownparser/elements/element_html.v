@@ -1,6 +1,6 @@
 module elements
 
-[heap]
+@[heap]
 pub struct Html {
 	DocBase
 pub mut:
@@ -31,6 +31,5 @@ pub fn (mut self Html) html() string {
 
 @[params]
 pub struct HtmlNewArgs {
-	ElementNewArgs	
+	ElementNewArgs
 }
-

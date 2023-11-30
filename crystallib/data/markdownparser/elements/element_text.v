@@ -1,6 +1,6 @@
 module elements
 
-[heap]
+@[heap]
 pub struct Text {
 	DocBase
 pub mut:
@@ -31,4 +31,3 @@ pub fn (mut self Text) html() string {
 pub struct TextNewArgs {
 	ElementNewArgs
 }
-

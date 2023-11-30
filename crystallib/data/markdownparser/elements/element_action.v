@@ -2,7 +2,7 @@ module elements
 
 import freeflowuniverse.crystallib.data.actionparser
 
-[heap]
+@[heap]
 pub struct Action {
 	DocBase
 pub mut:

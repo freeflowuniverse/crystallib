@@ -6,22 +6,21 @@ import freeflowuniverse.crystallib.data.markdownparser.elements
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
 pub fn parse_doc(mut doc elements.Doc) ! {
 	mut parser := parser_line_new(mut doc)!
-	
+
 	for {
 		if parser.eof() {
 			// go out of loop if end of file
-			println("--- end")
+			println('--- end')
 			break
 		}
 
-		
 		mut line := parser.line_current()
 		line = line.replace('\t', '    ')
 		trimmed_line := line.trim_space()
 
 		mut llast := parser.lastitem()
 
-		println (" -- line: ${llast.type_name} $line")
+		println(' -- line: ${llast.type_name} ${line}')
 
 		if mut llast is elements.Table {
 			if trimmed_line.starts_with('|') && trimmed_line.ends_with('|') {
@@ -52,11 +51,11 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			}
 			llast.content += '${line}\n'
 			parser.next()
-			continue			
+			continue
 		}
 
 		if mut llast is elements.Codeblock {
-			if trimmed_line == '```' || trimmed_line == '\'\'\'' {
+			if trimmed_line == '```' || trimmed_line == "'''" {
 				parser.next_start()
 				continue
 			}
@@ -81,9 +80,9 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			}
 
 			// find codeblock
-			if line.starts_with('```') || line.starts_with('\'\'\'')  {
-				mut e:=doc.codeblock_new()
-				e.category=line.substr(3, line.len).to_lower().trim_space()
+			if line.starts_with('```') || line.starts_with("'''") {
+				mut e := doc.codeblock_new()
+				e.category = line.substr(3, line.len).to_lower().trim_space()
 				parser.next()
 				continue
 			}
@@ -100,13 +99,13 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 						parser.next_start()
 						continue
 					}
-					mut e:=doc.header_new(content: line.all_after_first(line[..d]).trim_space())
-					e.depth=d
+					mut e := doc.header_new(content: line.all_after_first(line[..d]).trim_space())
+					e.depth = d
 					parser.next_start()
 					continue
 				}
 				parser.next()
-				continue				
+				continue
 			}
 
 			if trimmed_line.starts_with('|') && trimmed_line.ends_with('|') {
@@ -130,7 +129,6 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			}
 		}
 
-
 		match mut llast {
 			elements.Paragraph {
 				if parser.endlf == false && parser.next_is_eof() {
@@ -148,6 +146,5 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 
 		parser.next()
 	}
-	doc.process_elements()! //now do the processing
-
+	doc.process_elements()! // now do the processing
 }

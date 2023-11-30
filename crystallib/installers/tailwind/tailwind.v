@@ -1,4 +1,5 @@
 module tailwind
+
 import freeflowuniverse.crystallib.osal
 
 @[params]
@@ -27,9 +28,8 @@ pub fn install(args InstallArgs) ! {
 		return error('only support ubuntu & osx arm for now')
 	}
 
-
 	mut dest := osal.download(
-		url:url
+		url: url
 		minsize_kb: 40000
 		// reset: true
 	)!

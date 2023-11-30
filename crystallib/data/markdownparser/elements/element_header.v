@@ -1,10 +1,10 @@
 module elements
 
-[heap]
+@[heap]
 pub struct Header {
 	DocBase
 pub mut:
-	depth     int
+	depth int
 }
 
 pub fn (mut self Header) process() !int {
@@ -32,6 +32,4 @@ pub struct HeaderNewArgs {
 	ElementNewArgs
 pub mut:
 	depth int
-	
 }
-

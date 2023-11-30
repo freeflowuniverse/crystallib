@@ -1,10 +1,10 @@
 module elements
 
-[heap]
+@[heap]
 pub struct Comment {
 	DocBase
 pub mut:
-	replaceme string
+	replaceme  string
 	singleline bool
 }
 
@@ -33,5 +33,5 @@ pub fn (mut self Comment) html() string {
 
 @[params]
 pub struct CommentNewArgs {
-	ElementNewArgs	
+	ElementNewArgs
 }

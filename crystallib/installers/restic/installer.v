@@ -37,7 +37,7 @@ pub fn install(args InstallArgs) ! {
 	base.install()!
 
 	mut dest := osal.download(
-		url:url
+		url: url
 		minsize_kb: 5000
 		reset: true
 		expand_dir: '/tmp/restic'

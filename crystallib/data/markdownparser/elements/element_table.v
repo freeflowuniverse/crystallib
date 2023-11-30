@@ -1,7 +1,8 @@
 module elements
+
 import regex
 
-[heap]
+@[heap]
 pub struct Table {
 	DocBase
 pub mut:
@@ -13,9 +14,8 @@ pub mut:
 
 pub struct Row {
 pub mut:
-	cells  []string
+	cells []string
 }
-
 
 pub enum Alignment as u8 {
 	left
@@ -34,7 +34,6 @@ pub fn (mut self Table) process() !int {
 	return 1
 }
 
-
 pub fn (self Table) markdown() string {
 	mut out := '| ${self.header.join(' | ')} |\n'
 	// TODO: default alignment row, currently if emtpy table doesnt render
@@ -52,8 +51,8 @@ pub fn (self Table) markdown() string {
 }
 
 pub fn (mut self Table) html() string {
-	// TODO: implement html 
-	panic("implement")
+	// TODO: implement html
+	panic('implement')
 }
 
 @[params]
@@ -61,14 +60,12 @@ pub struct TableNewArgs {
 	ElementNewArgs
 }
 
-
-//get all relevant info out of table
+// get all relevant info out of table
 pub fn (mut self Table) parse() ! {
-
 	rows := self.content.split_into_lines()
 
-	if rows.len<3{
-		return error("table needs to have 3 rows at least.\n$self")
+	if rows.len < 3 {
+		return error('table needs to have 3 rows at least.\n${self}')
 	}
 
 	re_header_row := regex.regex_opt('^:?-+:?$') or { return error("regex doesn't work") }
@@ -91,19 +88,17 @@ pub fn (mut self Table) parse() ! {
 
 	self.num_columns = header.len
 	self.header = header
-	self.alignments = alignments		
+	self.alignments = alignments
 
 	for line in rows[2..] {
 		columns := line.trim('| ').split('|')
 		mut row := Row{}
-		if columns.len !=  self.num_columns{
-			return error("wrongly formatted row.\n$self\n$line")
+		if columns.len != self.num_columns {
+			return error('wrongly formatted row.\n${self}\n${line}')
 		}
 		for cell in columns {
 			row.cells << cell.trim_space()
 		}
 		self.rows << row
 	}
-
 }
-

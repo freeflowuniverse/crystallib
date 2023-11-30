@@ -2,7 +2,7 @@ module elements
 
 import freeflowuniverse.crystallib.data.actionparser
 
-[heap]
+@[heap]
 pub struct Codeblock {
 	DocBase
 pub mut:
@@ -14,9 +14,9 @@ pub fn (mut self Codeblock) process() !int {
 		return 0
 	}
 	mut collection := actionparser.parse_collection(text: self.content)!
-	mut d:=self.doc or {panic("no doc")}
+	mut d := self.doc or { panic('no doc') }
 	for mut action in collection.actions {
-		mut a :=d.action_new(parent: self.id)
+		mut a := d.action_new(parent: self.id)
 		a.action = action
 	}
 
@@ -39,8 +39,7 @@ pub fn (self Codeblock) markdown() string {
 }
 
 pub fn (mut self Codeblock) html() string {
-	panic("implement")
-	//TODO: implement html
-	return ""
+	panic('implement')
+	// TODO: implement html
+	return ''
 }
-

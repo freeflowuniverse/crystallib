@@ -1,6 +1,6 @@
 module elements
 
-[heap]
+@[heap]
 pub struct Include {
 	DocBase
 pub mut:
@@ -31,4 +31,3 @@ pub fn (mut self Include) html() string {
 pub struct IncludeNewArgs {
 	ElementNewArgs
 }
-
