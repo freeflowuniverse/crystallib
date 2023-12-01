@@ -39,9 +39,6 @@ fn (mut repo GitRepo) load_from_url() ! {
 			println(' GIT FAILED: ${cmd}')
 			return error('Cannot pull repo: ${repo.addr.path()}. Error was ${err}')
 		}
-		if true {
-			panic('sdsdsd')
-		}
 		repo.load()!
 	}
 }

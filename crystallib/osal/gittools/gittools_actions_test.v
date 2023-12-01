@@ -3,35 +3,36 @@ module gittools
 import freeflowuniverse.crystallib.data.actionparser
 import os
 
-const git_do_action = "
-!!gittools.git_do
-	coderoot: '${os.home_dir()}/code'
-	repo: 'crystallib'
-	account: 'freeflowuniverse'
-	provider: 'github'
-"
-const git_get_action = "
-!!gittools.git_get
-	coderoot: '${os.home_dir()}/code'
-	url: 'https://github.com/freeflowuniverse/crystallib'
-	pull: false
-	reset: false
-"
 
-fn test_git_do_action() {
-	ap := actionparser.new(
-		text: gittools.git_do_action
+fn test_git() {
+	actionscollection := actionparser.parse_collection(
+		text: "
+		!!gittools.clone
+			coderoot: '/tmp/codetest'
+			url: 'https://github.com/freeflowuniverse/webcomponents/tree/main'
+
+		!!gittools.clone
+			coderoot: '/tmp/codetest'
+			url: 'https://github.com/freeflowuniverse/crystallib'
+
+		!!gittools.pull
+			coderoot: '/tmp/codetest'
+			repo: 'crystallib'
+			account: 'freeflowuniverse'
+			provider: 'github'			
+
+
+		!!gittools.push
+			coderoot: '/tmp/codetest'
+			repo: 'webcomponents'
+
+		!!gittools.list
+			coderoot: '/tmp/codetest'
+
+		"
 	)!
-
-	git_do_action(ap.actions[0])!
-	assert true
-}
-
-fn test_git_get_action() {
-	ap := actionparser.new(
-		text: gittools.git_get_action
-	)!
-
-	git_get_action(ap.actions[0])!
-	assert true
+	println(actionscollection)
+	actions(actionscollection.actions)!
+	assert false
+	
 }

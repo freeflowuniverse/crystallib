@@ -66,6 +66,7 @@ fn (mut repo GitRepo) status_set(st GitRepoStatus) ! {
 		locator := repo.gs.locator_new(st.remote_url)!
 		repo.addr = locator.addr
 		repo.addr.branch = st.branch
+		// println(repo)
 	}
 }
 

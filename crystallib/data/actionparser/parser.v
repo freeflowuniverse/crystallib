@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.data.paramsparser
 
 @[params]
 pub struct ParserArgs {
-pub:
+pub mut:
 	text    string
 	execute bool = true
 	prio    u8   = 10
@@ -29,7 +29,10 @@ enum State {
 
 // return strings which are found which are not actions
 // return the actionscollection
-pub fn parse_collection(args ParserArgs) !ActionsCollection {
+pub fn parse_collection(args_ ParserArgs) !ActionsCollection {
+	mut args:=args_
+
+	args.text = texttools.dedent(args.text)
 	mut ac := ActionsCollection{}
 
 	mut state := State.start
@@ -102,6 +105,7 @@ pub fn parse_collection(args ParserArgs) !ActionsCollection {
 				} else if actionname.starts_with('!') {
 					action.actiontype = .dal
 				} else {
+					print_backtrace()
 					panic('bug')
 				}
 				actionname = actionname.trim_left('!')
@@ -113,6 +117,7 @@ pub fn parse_collection(args ParserArgs) !ActionsCollection {
 						action.actor = texttools.name_fix(splitted[0])
 						action.name = texttools.name_fix(splitted[1])
 					} else {
+						print_backtrace()
 						return error('for now we only support actions with 1 or 2 parts.\n${actionname}')
 					}
 				}
