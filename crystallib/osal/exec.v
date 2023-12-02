@@ -15,9 +15,9 @@ mut:
 }
 
 pub enum ErrorType {
+	exec
 	timeout
 	args
-	exec
 }
 
 fn (err JobError) msg() string {
@@ -27,7 +27,7 @@ fn (err JobError) msg() string {
 	if err.error_type == .timeout {
 		return 'Execution failed timeout\n${err.job}'
 	}
-	mut msg := 'Execution failed with code ${err.job.exit_code}\n${err.job.error}\n${err.job}'
+	mut msg := 'Execution failed with code ${err.job.exit_code}\n${err.job}'
 	if err.job.cmd.scriptpath.len > 0 {
 		msg += '\nscript path:${err.job.cmd.scriptpath}'
 	}
@@ -50,11 +50,12 @@ pub mut:
 	timeout                          int  = 3600 // timeout in sec
 	stdout                           bool = true
 	stdout_log                       bool = true
-	die                              bool = true
+	raise_error                      bool = true // if false, will not raise an error but still error report
+	ignore_error                     bool // means if error will just exit and not raise, there will be no error reporting
 	work_folder                      string // location where cmd will be executed
 	environment                      map[string]string // env variables
 	ignore_error_codes               []int
-	scriptpath                       string            // is the path where the script will be put which is executed
+	scriptpath                       string // is the path where the script will be put which is executed
 	scriptkeep                       bool   // means we don't remove the script
 	debug                            bool   // if debug will put +ex in the script which is being executed and will make sure script stays
 	shell                            bool   // means we will execute it in a shell interactive
@@ -64,11 +65,11 @@ pub mut:
 
 pub struct Job {
 pub mut:
-	start     time.Time
-	end       time.Time
-	cmd       Command
-	output    string
-	error     string
+	start  time.Time
+	end    time.Time
+	cmd    Command
+	output string
+	// error     string
 	exit_code int
 }
 
@@ -111,7 +112,8 @@ pub fn exec(cmd Command) !Job {
 			// println(job.cmd.scriptpath)	
 			os.rm(job.cmd.scriptpath) or { panic('cannot remove ${job.cmd.scriptpath}') }
 		}
-		if job.cmd.die == false && job.cmd.scriptkeep == false && os.exists(job.cmd.scriptpath) {
+		if job.cmd.ignore_error == false && job.cmd.scriptkeep == false
+			&& os.exists(job.cmd.scriptpath) {
 			os.rm(job.cmd.scriptpath) or { panic('cannot remove ${job.cmd.scriptpath}') }
 		}
 	}
@@ -123,7 +125,8 @@ pub fn exec(cmd Command) !Job {
 	if cmd.shell {
 		println(' - cmd shell')
 		if cmd.retry > 0 {
-			job.error = 'cmd retry cannot be >0 if shell used'
+			job.output = 'cmd retry cannot be > 0 if shell used'
+			job.exit_code = 999
 			return JobError{
 				job: job
 				error_type: .args
@@ -132,6 +135,7 @@ pub fn exec(cmd Command) !Job {
 
 		os.execvp(process_args[0], process_args[1..process_args.len])!
 	} else {
+		mut output := []string{}
 		start := time.now().unix_time()
 		for x in 0 .. job.cmd.retry + 1 {
 			// println(process_args)	
@@ -157,7 +161,8 @@ pub fn exec(cmd Command) !Job {
 							print(out)
 						}
 						if job.cmd.stdout_log {
-							job.output += out
+							// println(texttools.indent(out, " ........... : "))
+							output << out.split_into_lines()
 						}
 					}
 					if time.now().unix_time() > start + job.cmd.timeout * 1000 {
@@ -175,15 +180,19 @@ pub fn exec(cmd Command) !Job {
 				}
 			}
 			if p.code > 0 {
+				// println(" ########## P CODE IS > 0")
 				job.exit_code = p.code
-				job.output += p.stdout_read()
-				job.error += p.stderr_read() // TODO: might block? need to see
-
+				output << p.stdout_read().split_into_lines()
+				output << p.stderr_read().split_into_lines() // TODO: might block? need to see
+				job.cmd.scriptkeep = true
+				job.output = output.join_lines()
 				if job.cmd.retry > 0 && x < job.cmd.retry {
 					time.sleep(time.millisecond * 100) // wait 0.1 sec
 				}
 				p.close()
 			} else {
+				p.close()
+				job.output = output.join_lines()
 				break // go out of retry loop
 			}
 		}
@@ -192,11 +201,7 @@ pub fn exec(cmd Command) !Job {
 	job.end = time.now()
 
 	if job.exit_code > 0 && job.exit_code !in job.cmd.ignore_error_codes {
-		if job.cmd.die {
-			if job.error == '' {
-				job.error = 'unknown'
-			}
-
+		if !job.cmd.ignore_error {
 			errorpath := job.cmd.scriptpath.all_before_last('.sh') + '_error.json'
 			errorjson := json.encode_pretty(job)
 			os.write_file(errorpath, errorjson) or {
@@ -210,7 +215,7 @@ pub fn exec(cmd Command) !Job {
 			errortxt += '## OUTPUT:\n\n'
 			errortxt += job.output
 			os.write_file(errorpath2, errortxt) or {
-				msg := 'cannot write errortxt to ${errorpath2}'
+				msg := 'cannot write error to ${errorpath2}'
 				return error(msg)
 			}
 
@@ -222,14 +227,14 @@ pub fn exec(cmd Command) !Job {
 				println('Job Error')
 				println(je.msg())
 			}
-
-			return je
-		}
-	} else {
-		if !cmd.debug && job.cmd.scriptkeep == false {
-			if os.exists(job.cmd.scriptpath) {
-				os.rm(job.cmd.scriptpath)!
+			if job.cmd.raise_error {
+				return je
 			}
+		}
+	}
+	if !cmd.debug && job.cmd.scriptkeep == false {
+		if os.exists(job.cmd.scriptpath) {
+			os.rm(job.cmd.scriptpath)!
 		}
 	}
 	return job
@@ -265,7 +270,7 @@ fn (mut job Job) cmd_to_process_args(insert_noninteractive_statements bool) ![]s
 
 	// use bash debug and die on error features
 	mut firstlines := '#!/bin/bash\n'
-	if job.cmd.die {
+	if !job.cmd.ignore_error {
 		firstlines += 'set -e\nexec 2>&1\n'
 	} else {
 		firstlines += 'set +e\nexec 2>&1\n'
@@ -286,7 +291,6 @@ fn (mut job Job) cmd_to_process_args(insert_noninteractive_statements bool) ![]s
 	} else {
 		''
 	}
-
 	job.cmd.scriptpath = pathlib.temp_write(text: cmd, path: scriptpath, name: job.cmd.name) or {
 		return error('error: cannot write script to execute: ${err}')
 	}
@@ -314,7 +318,10 @@ pub fn execute_interactive(cmd string) ! {
 }
 
 pub fn cmd_exists(cmd string) bool {
-	exec(cmd: 'which ${cmd}', retry: 0, stdout: false) or { return false }
+	res := os.execute('which ${cmd}')
+	if res.exit_code > 0 {
+		return false
+	}
 	return true
 }
 

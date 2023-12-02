@@ -103,3 +103,37 @@ pub fn get_file(args_ GetArgs) !Path {
 	}
 	return p2
 }
+
+pub fn get_linked_file(args_ GetArgs) !Path {
+	mut args := args_
+	if args.empty {
+		args.create = true
+	}
+	if args.create {
+		args.check = true
+	}
+	mut p2 := get_no_check(args.path)
+	if args.check {
+		p2.check()
+		if args.create {
+			mut parent_ := p2.parent()!
+			parent_.check()
+			if parent_.exist == .no {
+				os.mkdir_all(parent_.path) or { return error('cannot create path:${args.path}') }
+			}
+			if p2.exist == .no || args.empty {
+				os.write_file(args.path, '') or {
+					return error('cannot create empty file:${args.path} ${err}')
+				}
+				p2.check()
+			}
+		}
+		if p2.exists() && !p2.is_link() {
+			return error('Path ${args.path} is not a link.')
+		}
+		if args.delete {
+			p2.delete()!
+		}
+	}
+	return p2
+}

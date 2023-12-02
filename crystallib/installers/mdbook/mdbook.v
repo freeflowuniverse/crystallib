@@ -13,7 +13,7 @@ pub fn install() ! {
 		cargo install mdbook
     	cargo install mdbook-mermaid
 		cargo install mdbook-echarts
-		cargo install mdbook-plantuml
+		#cargo install mdbook-plantuml
 		cargo install mdbook-pdf --features fetch
 		
 		'

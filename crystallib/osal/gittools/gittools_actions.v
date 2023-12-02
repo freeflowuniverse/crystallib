@@ -2,9 +2,13 @@ module gittools
 
 import freeflowuniverse.crystallib.ui as gui
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.data.actionparser
 import os
+
+
+pub const gitcmds="clone,commit,pull,push,delete,reload,list,edit,sourcetree"
 
 pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {
 	mut r := [][]string{}
@@ -34,177 +38,170 @@ pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {
 @[params]
 pub struct ReposActionsArgs {
 pub mut:
+	cmd			   string // clone,commit,pull,push,delete,reload,list,edit,sourcetree
 	filter         string // if used will only show the repo's which have the filter string inside
 	repo           string
 	account        string
 	provider       string
-	print          bool = true
-	pull           bool // means when getting new repo will pull even when repo is already there
-	pullreset      bool // means we will force a pull and reset old content	
-	commit         bool
-	commitpull     bool
-	commitpush     bool
-	commitpullpush bool
 	msg            string
-	delete         bool // remove the repo
-	script         bool = true // run non interactiv
-	cachereset     bool
+	url 		   string
+	script         bool = true // run non interactive
+	reset		   bool = true // means we will lose changes (only relevant for clone, pull)
 }
 
+// list of actions to proces .
+// action is clone,commit,pull,push,delete,reload,list,edit,sourcetree .
 // PARAMS: .
-// gittools.git_do .
-// 		coderoot //location where code will be checked out .
-// 		filter // if used will only show the repo's which have the filter string inside .
-// 		repo            .
-// 		account         .
-// 		provider        .
-// 		print          bool = true .
-// 		pull           bool // means when getting new repo will pull even when repo is already there .
-// 		pullreset      bool // means we will force a pull and reset old content	 .
-// 		commit         bool .
-// 		commitpull     bool .
-// 		commitpush     bool .
-// 		commitpullpush bool .
-// 		msg            string .
-// 		delete         bool // remove the repo .
-// 		script         bool = true // run non interactive (default for actions) .
-// 		cachereset     bool //remove redis cache .
-// gittools.git_get .
-// 		coderoot //location where code will be checked out .
-// 		pull           bool // means when getting new repo will pull even when repo is already there .
-// 		pullreset      bool // means we will force a pull and reset old content	 .
-pub fn action(action actionparser.Action) ! {
-	match action.name {
-		'git_do' {
-			git_do_action(action)!
-		}
-		'git_get' {
-			git_get_action(action)!
-		}
-		else {
-			return error('action ${action.name} not supported by gittools')
-		}
+//```
+// filter         string  // if used will only show the repo's which have the filter string inside
+// repo           string
+// account        string
+// provider       string
+// msg            string
+// script         bool = true // run non interactive
+// reset		   bool = true // means we will lose changes (only relevant for clone, pull)
+//```
+pub fn actions(actions []actionparser.Action) ! {
+	for a in actions{
+		action(a)!
 	}
 }
 
-pub fn git_do_action(action actionparser.Action) ! {
+
+// gittools.$actionname .
+// action is clone,commit,pull,push,delete,reload,list,edit,sourcetree .
+// PARAMS: .
+//```
+// filter         string  // if used will only show the repo's which have the filter string inside
+// repo           string
+// account        string
+// provider       string
+// msg            string
+// script         bool = true // run non interactive
+// reset		   bool = true // means we will lose changes (only relevant for clone, pull)
+//```
+pub fn action(action actionparser.Action) ! {
 	mut coderoot := action.params.get_default('coderoot', '')!
 	mut gs := get(coderoot: coderoot) or {
 		return error("Could not find gittools on '${coderoot}'\n${err}")
 	}
+	mut cmd :=action.name
+
 	mut repo := action.params.get_default('repo', '')!
 	mut account := action.params.get_default('account', '')!
 	mut provider := action.params.get_default('provider', '')!
 	mut filter := action.params.get_default('filter', '')!
 	if repo == '' && account == '' && provider == '' && filter == '' {
 		curdir := os.getwd()
-		if os.exists('${curdir}/.git') {
-			// we are in current directory
-			r0 := gs.repo_from_path(curdir)!
+		mut curdiro:=pathlib.get_dir(path:curdir,create:false)!
+		mut parentpath:=curdiro.parent_find(".git") or {
+			pathlib.Path{}
+		}
+		if parentpath.path!="" {
+			r0 := gs.repo_from_path(parentpath.path)!
 			repo = r0.addr.name
 			account = r0.addr.account
 			provider = r0.addr.provider
 		}
 	}
-
 	gs.do(
+		cmd:cmd
 		filter: action.params.get_default('filter', '')!
 		repo: repo
 		account: account
 		provider: provider
-		pull: action.params.get_default_false('pull')
-		pullreset: action.params.get_default_false('pullreset')
-		commit: action.params.get_default_false('commit')
-		commitpull: action.params.get_default_false('commitpull')
-		commitpullpush: action.params.get_default_false('commitpullpush')
-		delete: action.params.get_default_false('delete')
 		script: action.params.get_default_false('script')
-		cachereset: action.params.get_default_false('cachereset')
+		reset: action.params.get_default_false('reset')
 		msg: action.params.get_default('message', '')!
+		url: action.params.get_default('url', '')!
 	)!
 	println(gs)
 }
 
-pub fn git_get_action(action actionparser.Action) ! {
-	url := action.params.get('url')!
-	r := code_get(
-		url: url
-		coderoot: action.params.get_default('coderoot', '')!
-		pull: action.params.get_default_false('pull')
-		reset: action.params.get_default_false('reset')
-	)!
-	println("Pulled code from '${url}'\nCan be found in: '${r}'")
-}
 
-// filter   string // if used will only show the repo's which have the filter string inside .
-// repo     string .
-// account  string .
-// provider string .
-// print bool = true  //default .
-// pull     bool // means when getting new repo will pull even when repo is already there .
-// pullreset bool // means we will force a pull and reset old content .
-// commit bool .
-// commitpush bool .
-// commitpull bool .
-// commitpullpush bool .
-// msg string .
-// delete bool (remove the repo) .
-// script bool (run non interactive) .
-// root string //the location of coderoot if its another one .
-// cachereset
+// do group actions on repo
+// PARAMS
+//```
+// cmd			  string // clone,commit,pull,push,delete,reload,list,edit,sourcetree
+// filter         string // if used will only show the repo's which have the filter string inside
+// repo           string
+// account        string
+// provider       string
+// msg            string
+// script         bool = true // run non interactive
+// reset		   bool = true // means we will lose changes (only relevant for clone, pull)
+//```
 pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 	mut args := args_
 	// println(args)
+	
+
+	args.cmd=args.cmd.trim_space().to_lower()
 
 	mut ui := gui.new()!
 
-	if args.filter == '' && args.cachereset {
-		// println("-- cache reset for all repo's")
-		cache_delete(gs.name())!
-		gs.load()!
-		if true {
-			panic('cache reset for all repo')
-		}
-	} else {
-		for mut g in gs.repos_get(
-			filter: args.filter
-			name: args.repo
-			account: args.account
-			provider: args.provider
-		) {
-			if args.cachereset {
-				// println("-- cache reset of ${g.addr.name}")
-				g.load()!
-			}
-		}
+	if args.cmd == "reload" {
+		println(" - reload gitstructure ${gs.name()}")
+		gs.reload()!
+		return
 	}
 
-	if args.print {
+	if args.cmd == "list"  {
 		gs.repos_print(
 			filter: args.filter
 			name: args.repo
 			account: args.account
 			provider: args.provider
 		)!
+		return
 	}
 
-	mut need_commit := false
-	mut need_pull := false
-	mut need_push := false
-	for mut g in gs.repos_get(
+	mut repos:=gs.repos_get(
 		filter: args.filter
 		name: args.repo
 		account: args.account
-		provider: args.provider
-	) {
-		st := g.status()!
-		need_commit = false || st.need_commit
-		need_pull = false || st.need_pull
-		need_push = false || st.need_push
-		// println(" --- git_do ${g.addr.name} ${st.need_commit} ${st.need_pull}  ${st.need_push}")		
+		provider: args.provider)
+
+	if args.cmd == "clone" {
+		mut locator := gs.locator_new(args.url)!
+		// println(locator)
+		mut g := gs.repo_get(locator: locator)!
+		g.load()!
+		if args.reset {
+			g.remove_changes()!
+		}		
+		return
 	}
 
-	if args.print {
+	if args.cmd in "pull,push,commit,delete".split(",") {
+
+		gs.repos_print(
+			filter: args.filter
+			name: args.repo
+			account: args.account
+			provider: args.provider
+		)!
+
+		mut need_commit := false
+		mut need_pull := false
+		mut need_push := false
+
+		if repos.len==0{
+			println( " - nothing to do.")
+			return
+		}
+
+		//check on repos who needs what
+		for mut g in repos {
+			g.load()!
+			st := g.status()!
+			// println(st)
+			need_commit =  st.need_commit || need_commit
+			need_pull =  args.cmd in "pull,push".split(",") //always do pull when push and pull
+			need_push =  args.cmd =="push" && (st.need_push || need_push)
+		}
+
+		mut ok:=false
 		if need_commit || need_pull || need_push {
 			mut out := '\n ** NEED TO '
 			if need_commit {
@@ -216,49 +213,42 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 			if need_push {
 				out += 'PUSH '
 			}
+			if args.reset{
+				out += " (changes will be lost!)"
+			}
 			println(out + ' ** \n')
+			if args.script{
+				ok = true
+			}else{
+				ok = ui.ask_yesno(question: 'Is above ok?')
+			}
+			
 		}
-	}
+		if args.cmd=="delete" {
+			if args.script{
+				ok = true
+			}else{
 
-	if !(args.script) {
-		mut ok := true
-		// need to ask if ok
-		if args.pullreset && need_pull {
-			ok0 := ui.ask_yesno(question: 'ok to pull and reset the changes?')
-			ok = ok && ok0
-		}
-		if args.commitpullpush {
-			if need_commit || need_pull || need_push {
-				ok0 := ui.ask_yesno(question: 'ok to commit, pull and push the changes?')
-				ok = ok && ok0
+				ok = ui.ask_yesno(question: 'Is it ok to delete above repos? (DANGEROUS)')
 			}
 		}
-		if args.commitpull {
-			if need_commit || need_pull {
-				ok0 := ui.ask_yesno(question: 'ok to commit, pull the changes?')
-				ok = ok && ok0
-			}
-		}
-		if args.delete {
-			ok0 := ui.ask_yesno(question: 'ok to delete, the repos?')
-			ok = ok && ok0
-		}
+
 		if ok == false {
 			return error('cannot continue with action, you asked me to stop.\n${args}')
 		}
-	}
 
-	mut changed := false
+		mut changed := false
 
-	for mut g in gs.repos_get(
-		filter: args.filter
-		name: args.repo
-		account: args.account
-		provider: args.provider
-	) {
-		if args.commit || args.commitpush || args.commitpullpush || args.commitpull {
+		for mut g in repos {
+
 			st := g.status()!
-			if st.need_commit {
+			need_commit_repo :=  (st.need_commit || need_commit) && args.cmd in "commit,pull,push".split(",")
+			need_pull_repo :=  args.cmd in "pull,push".split(",") //always do pull when push and pull
+			need_push_repo :=  args.cmd in "push".split(",") && (st.need_push || need_push)
+			// println(" --- git_do ${g.addr.name} ${st.need_commit} ${st.need_pull}  ${st.need_push}")		
+
+
+			if need_commit_repo {
 				mut msg := args.msg
 				if msg.len == 0 {
 					if args.script {
@@ -271,31 +261,31 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 				println(' - commit ${g.addr.account}/${g.addr.name}')
 				g.commit(msg: msg, reload: true)!
 				changed = true
-			} else {
-				println(' - no need to commit, no changes for ${g.addr.account}/${g.addr.name}')
+			}
+			if need_pull_repo {
+				if args.reset {
+					println(' - remove changes ${g.addr.account}/${g.addr.name}')
+					g.remove_changes()!
+				}
+				println(' - pull ${g.addr.account}/${g.addr.name}')
+				g.pull()!
+				changed = true
+			}
+			if need_push_repo {
+				println(' - push ${g.addr.account}/${g.addr.name}')
+				g.push()!
+				changed = true
+			}
+			if args.cmd=="delete"{
+				g.delete()!
+				changed = true
 			}
 		}
-		if args.pull || args.pullreset || args.commitpullpush || args.commitpull {
-			if args.pullreset {
-				println(' - remove changes ${g.addr.account}/${g.addr.name}')
-				g.remove_changes()!
-			}
-			println(' - pull ${g.addr.account}/${g.addr.name}')
-			g.pull()!
-			changed = true
-		}
-		if args.commitpush || args.commitpullpush {
-			println(' - push ${g.addr.account}/${g.addr.name}')
-			g.push()!
-			changed = true
-		}
-	}
+		
+		if changed {
+			// console.clear()
+			println('\nCompleted required actions.\n')
 
-	if changed {
-		// console.clear()
-		println('\nCompleted required actions.\n')
-
-		if args.print {
 			gs.repos_print(
 				filter: args.filter
 				name: args.repo
@@ -303,5 +293,31 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 				provider: args.provider
 			)!
 		}
+		
+		return
+
+	} //end for the commit, pull, push, delete
+
+	if args.cmd in "sourcetree,edit".split(",") {
+		if repos.len==0{
+			return error("please specify at least 1 repo for cmd:${args.cmd}")
+		}
+		if repos.len>5{
+			return error("more than 5 repo found for cmd:${args.cmd}")
+		}
+		for r in repos {
+			if args.cmd=="edit" {
+				cmd3 := "open -a \"Visual Studio Code\" ${r.path.path}"
+				osal.execute_interactive(cmd3) or { panic(err) }
+			}
+			if args.cmd=="sourcetree" {
+				cmd4 := 'open -a SourceTree ${r.path.path}'
+				println(cmd4)
+				osal.execute_interactive(cmd4) or { panic(err) }
+			}
+		}
+		return
 	}
+	$if debug{print_backtrace()}
+	return error("did not find cmd: $args.cmd")
 }

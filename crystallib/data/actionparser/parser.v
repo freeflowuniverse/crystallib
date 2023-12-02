@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.data.paramsparser
 
 @[params]
 pub struct ParserArgs {
-pub:
+pub mut:
 	text    string
 	execute bool = true
 	prio    u8   = 10
@@ -29,7 +29,10 @@ enum State {
 
 // return strings which are found which are not actions
 // return the actionscollection
-pub fn parse_collection(args ParserArgs) !ActionsCollection {
+pub fn parse_collection(args_ ParserArgs) !ActionsCollection {
+	mut args:=args_
+
+	args.text = texttools.dedent(args.text)
 	mut ac := ActionsCollection{}
 
 	mut state := State.start
@@ -42,7 +45,7 @@ pub fn parse_collection(args ParserArgs) !ActionsCollection {
 		line := line_.replace('\t', '    ')
 		line_strip := line.trim_space()
 
-		println(" - ${state} action:'${action.name}' comments:'${comments.len}' -> '${line}'")
+		// println(" - ${state} action:'${action.name}' comments:'${comments.len}' -> '${line}'")
 
 		if state == .action {
 			if !line.starts_with('  ') || line_strip == '' || line_strip.starts_with('!') {
@@ -53,7 +56,7 @@ pub fn parse_collection(args ParserArgs) !ActionsCollection {
 				comments = []string{}
 				paramsdata = []string{}
 				action = Action{}
-				println(' - action end')
+				// println(' - action end')
 			} else {
 				paramsdata << line_strip
 			}
@@ -86,8 +89,8 @@ pub fn parse_collection(args ParserArgs) !ActionsCollection {
 				}
 				action.comments = comments.join('\n')
 				comments = []string{}
-				println(' - action new')
-				println(' - comment delete')
+				// println(' - action new')
+				// println(' - comment delete')
 
 				comments = []string{}
 				mut actionname := line.all_before(' ').trim_space()
@@ -102,6 +105,7 @@ pub fn parse_collection(args ParserArgs) !ActionsCollection {
 				} else if actionname.starts_with('!') {
 					action.actiontype = .dal
 				} else {
+					print_backtrace()
 					panic('bug')
 				}
 				actionname = actionname.trim_left('!')
@@ -113,6 +117,7 @@ pub fn parse_collection(args ParserArgs) !ActionsCollection {
 						action.actor = texttools.name_fix(splitted[0])
 						action.name = texttools.name_fix(splitted[1])
 					} else {
+						print_backtrace()
 						return error('for now we only support actions with 1 or 2 parts.\n${actionname}')
 					}
 				}

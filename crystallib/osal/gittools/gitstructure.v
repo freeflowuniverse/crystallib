@@ -2,7 +2,7 @@ module gittools
 
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.clients.redisclient
-import freeflowuniverse.crystallib.core.texttools
+// import freeflowuniverse.crystallib.core.texttools
 
 @[heap]
 pub struct GitStructure {

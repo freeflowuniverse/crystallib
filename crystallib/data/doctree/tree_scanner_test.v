@@ -36,7 +36,7 @@ fn test_scan() ! {
 	mut i := c2.image_get('digital_twin.png')!
 	println(i)
 
-	if true{
-		panic("iii")
+	if true {
+		panic('iii')
 	}
 }
