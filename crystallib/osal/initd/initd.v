@@ -3,6 +3,7 @@ module initd
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
+import os
 // function initdinstall {
 //     set -x
 //     if [[ "$OSTYPE" == "linux-gnu"* ]]; then     
@@ -35,9 +36,15 @@ pub fn new() !Initd {
 }
 
 fn (mut initdobj Initd) load() ! {
+	println(" - initd load")
 	cmd := 'systemctl list-units --type=service'
 	r := osal.execute_silent(cmd)!
-	for mut line in r.split_into_lines() {
+	res:=os.execute(cmd)
+	if res.exit_code>0{
+		return error("could not execute: $cmd")
+	}
+	for mut line in res.output.split_into_lines() {
+		println(line)
 		if line.starts_with('---') {
 			continue
 		}
@@ -47,7 +54,7 @@ fn (mut initdobj Initd) load() ! {
 		if line.contains('LOAD') {
 			break
 		}
-		line = line.trim(' ')
+		line = line.trim_space()
 		if line == '' {
 			continue
 		}
@@ -61,8 +68,14 @@ fn (mut initdobj Initd) load() ! {
 
 		items := line.split_nth(' ', 5)
 		mut pobj := IProcess{
-			name: items[0]
-			description: items[4]
+			name: items[0]or {
+				print_backtrace()
+				panic("bug '$line', has no part 0")
+			}
+			description: items[4] or {
+				print_backtrace()
+				panic("bug '$line', has no part 4")
+			}
 			initd: &initdobj
 		}
 		pobj.name = pobj.name.replace('.service', '')
