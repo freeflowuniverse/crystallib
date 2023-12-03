@@ -89,11 +89,13 @@ fn test_book_load_summary() {
 		)!
 		book.load_summary()!
 
-		assert book.doc_summary.children.len == 2
-		assert book.doc_summary.children[1] is elements.Paragraph
-		// toc_paragraph := book.doc_summary.children[1] as elements.Paragraph
-		// toc_links := toc_paragraph.children.filter(it is elements.Link)
-		// assert toc_links.len == 6
+		assert book.doc_summary.children.len == 3
+		assert book.doc_summary.children[0] is elements.Paragraph // empty paragraph
+		assert book.doc_summary.children[1] is elements.Header
+		assert book.doc_summary.children[2] is elements.Paragraph
+		toc_paragraph := book.doc_summary.children[2]
+		toc_links := toc_paragraph.children.filter(it is elements.Link)
+		assert toc_links.len == 6
 	}
 }
 
