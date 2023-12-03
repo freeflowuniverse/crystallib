@@ -224,8 +224,9 @@ fn (mut book MDBook) fix_summary() ! {
 										newlink)
 									newpath := collectionname + '/' + page.pathrel
 									link.path = newpath.all_before_last('/').trim_right('/')
+									link.url = '${link.path}/${link.filename}'
 									link.content = newlink
-									paragraph.children[x] = link
+									link.cat = elements.LinkType.file
 								}
 							} else {
 								book.error(
@@ -247,7 +248,6 @@ fn (mut book MDBook) fix_summary() ! {
 					}
 				}
 			}
-			book.doc_summary.children[y] = paragraph
 		}
 	}
 	book.tree.logger.debug('finished fixing summary')
@@ -443,7 +443,6 @@ pub fn (mut book MDBook) export() ! {
 	book.template_install()! // make sure all required template files are in collection
 	md_path := book.md_path('').path + 'src'
 	html_path := book.html_path('').path
-
 	logger.info('Exporting pages in MDBook: ${book.name}')
 
 	for _, mut page in book.pages {
@@ -512,11 +511,25 @@ fn (mut book MDBook) template_install() ! {
 		book.title = book.name
 	}
 
+	template_files := {
+		'print.css':       $embed_file('../../osal/mdbook/template/css/print.css')
+		'variable.css':    $embed_file('../../osal/mdbook/template/css/variables.css')
+		'general.css':     $embed_file('../../osal/mdbook/template/css/general.css')
+		'mermaid-init.js': $embed_file('../../osal/mdbook/template/mermaid-init.js')
+		'echarts.min.js':  $embed_file('../../osal/mdbook/template/echarts.min.js')
+		'mermaid.min.js':  $embed_file('../../osal/mdbook/template/mermaid.min.js')
+	}
+
+	for k, v in template_files {
+		book.template_write(k, v.to_string())!
+	}
+
 	// get embedded files to the mdbook dir
 	for item in book.tree.embedded_files {
 		md_path := item.path.all_after_first('/')
 		book.template_write(md_path, item.to_string())!
 	}
+
 	c := $tmpl('../../osal/mdbook/template/book.toml')
 	book.template_write('book.toml', c)!
 }
