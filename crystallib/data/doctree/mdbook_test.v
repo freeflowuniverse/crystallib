@@ -38,99 +38,99 @@ fn testsuite_end() {
 	os.mv('${doctree.testdata_path}_previous', doctree.testdata_path)!
 }
 
-// fn test_book_generate() {
-// 	mut tree := new()!
-// 	tree.scan(
-// 		path: doctree.collections_path
-// 	)!
+fn test_book_generate() {
+	mut tree := new()!
+	tree.scan(
+		path: doctree.collections_path
+	)!
 
-// 	for name, test_book in doctree.test_books {
-// 		mut book := book_generate(
-// 			name: name
-// 			path: test_book.src_path
-// 			dest: test_book.dest_path
-// 			tree: tree
-// 		)!
-// 	}
-// }
+	for name, test_book in doctree.test_books {
+		mut book := book_generate(
+			name: name
+			path: test_book.src_path
+			dest: test_book.dest_path
+			tree: tree
+		)!
+	}
+}
 
-// fn test_book_reset() {
-// 	mut tree := new()!
-// 	tree.scan(
-// 		path: doctree.collections_path
-// 	)!
+fn test_book_reset() {
+	mut tree := new()!
+	tree.scan(
+		path: doctree.collections_path
+	)!
 
-// 	for name, test_book in doctree.test_books {
-// 		mut book := book_generate(
-// 			name: 'book1'
-// 			path: test_book.src_path
-// 			dest: test_book.dest_path
-// 			tree: tree
-// 		)!
+	for name, test_book in doctree.test_books {
+		mut book := book_generate(
+			name: 'book1'
+			path: test_book.src_path
+			dest: test_book.dest_path
+			tree: tree
+		)!
 
-// 		assert os.exists(test_book.dest_path)
-// 		book.reset()!
-// 		assert !os.exists(test_book.dest_path)
-// 	}
-// }
+		assert os.exists(test_book.dest_path)
+		book.reset()!
+		assert !os.exists(test_book.dest_path)
+	}
+}
 
-// fn test_book_load_summary() {
-// 	mut tree := new()!
-// 	tree.scan(
-// 		path: doctree.collections_path
-// 	)!
+fn test_book_load_summary() {
+	mut tree := new()!
+	tree.scan(
+		path: doctree.collections_path
+	)!
 
-// 	for name, test_book in doctree.test_books {
-// 		mut book := book_generate(
-// 			name: name
-// 			path: test_book.src_path
-// 			dest: test_book.dest_path
-// 			tree: tree
-// 		)!
-// 		book.load_summary()!
+	for name, test_book in doctree.test_books {
+		mut book := book_generate(
+			name: name
+			path: test_book.src_path
+			dest: test_book.dest_path
+			tree: tree
+		)!
+		book.load_summary()!
 
-// 		assert book.doc_summary.elements.len == 2
-// 		assert book.doc_summary.elements[1] is elements.Paragraph
-// 		toc_paragraph := book.doc_summary.elements[1] as elements.Paragraph
-// 		// toc_links := toc_paragraph.elements.filter(it is elements.Link)
-// 		// assert toc_links.len == 6
-// 	}
-// }
+		assert book.doc_summary.children.len == 2
+		assert book.doc_summary.children[1] is elements.Paragraph
+		// toc_paragraph := book.doc_summary.children[1] as elements.Paragraph
+		// toc_links := toc_paragraph.children.filter(it is elements.Link)
+		// assert toc_links.len == 6
+	}
+}
 
-// fn test_book_fix_summary() {
-// 	mut tree := new()!
-// 	tree.scan(
-// 		path: doctree.collections_path
-// 	)!
+fn test_book_fix_summary() {
+	mut tree := new()!
+	tree.scan(
+		path: doctree.collections_path
+	)!
 
-// 	for name, test_book in doctree.test_books {
-// 		mut book := book_generate(
-// 			name: name
-// 			path: test_book.src_path
-// 			dest: test_book.dest_path
-// 			tree: tree
-// 		)!
-// 		book.load_summary()!
-// 		summary_links_before := '${book.doc_summary.elements}'
-// 		book.fix_summary()!
-// 		summary_links_after := '${book.doc_summary.elements}'
-// 		assert summary_links_before != summary_links_after
-// 	}
-// }
+	for name, test_book in doctree.test_books {
+		mut book := book_generate(
+			name: name
+			path: test_book.src_path
+			dest: test_book.dest_path
+			tree: tree
+		)!
+		book.load_summary()!
+		summary_links_before := '${book.doc_summary.children}'
+		book.fix_summary()!
+		summary_links_after := '${book.doc_summary.children}'
+		assert summary_links_before != summary_links_after
+	}
+}
 
-// fn test_book_export() {
-// 	mut tree := new()!
-// 	tree.scan(
-// 		path: doctree.collections_path
-// 	)!
+fn test_book_export() {
+	mut tree := new()!
+	tree.scan(
+		path: doctree.collections_path
+	)!
 
-// 	for name, test_book in doctree.test_books {
-// 		mut book := book_generate(
-// 			name: name
-// 			path: test_book.src_path
-// 			dest: test_book.dest_path
-// 			tree: tree
-// 		)!
-// 		book.export() or { panic(err) }
-// 	}
-// }
+	for name, test_book in doctree.test_books {
+		mut book := book_generate(
+			name: name
+			path: test_book.src_path
+			dest: test_book.dest_path
+			tree: tree
+		)!
+		book.export() or { panic(err) }
+	}
+}
