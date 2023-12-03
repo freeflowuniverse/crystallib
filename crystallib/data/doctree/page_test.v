@@ -44,13 +44,22 @@ fn test_fix() ! {
 
 	assert test_page.doc or { panic('doesnt exist') } != doc_before // page was actually modified
 
-	paragraph := test_page.doc or { panic('doesnt exist') }.children[1]
-	// wrong_link := paragraph.elements[1] as elements.Link
-	// right_link := paragraph.elements[3] as elements.Link
+	paragraph := test_page.doc or { panic('doesnt exist') }.children[2]
+	wrong_link := paragraph.children[1]
+	if wrong_link is elements.Link {
+		assert wrong_link.description == 'Image with wrong link'
+		assert wrong_link.url == './threefold_supernode.jpg'
+	} else {
+		assert false, 'element ${wrong_link} is not a link'
+	}
 
-	// assert wrong_link.path :=
-	// println(test_page.doc)
-	// panic('s')
+	right_link := paragraph.children[3]
+	if right_link is elements.Link {
+		assert right_link.description == 'Image with correct link'
+		assert right_link.url == './img/threefold_supernode.jpg'
+	} else {
+		assert false, 'element ${right_link} is not a link'
+	}
 }
 
 fn test_fix_links() ! {}
