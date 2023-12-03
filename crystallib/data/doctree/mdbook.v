@@ -224,8 +224,9 @@ fn (mut book MDBook) fix_summary() ! {
 										newlink)
 									newpath := collectionname + '/' + page.pathrel
 									link.path = newpath.all_before_last('/').trim_right('/')
+									link.url = '${link.path}/${link.filename}'
 									link.content = newlink
-									paragraph.children[x] = link
+									link.cat = elements.LinkType.file
 								}
 							} else {
 								book.error(
@@ -247,7 +248,6 @@ fn (mut book MDBook) fix_summary() ! {
 					}
 				}
 			}
-			book.doc_summary.children[y] = paragraph
 		}
 	}
 	book.tree.logger.debug('finished fixing summary')
@@ -443,7 +443,6 @@ pub fn (mut book MDBook) export() ! {
 	book.template_install()! // make sure all required template files are in collection
 	md_path := book.md_path('').path + 'src'
 	html_path := book.html_path('').path
-
 	logger.info('Exporting pages in MDBook: ${book.name}')
 
 	for _, mut page in book.pages {
@@ -517,6 +516,8 @@ fn (mut book MDBook) template_install() ! {
 		md_path := item.path.all_after_first('/')
 		book.template_write(md_path, item.to_string())!
 	}
+
+	js_files_path := '${os.home_dir()}/.vmodules/freeflowuniverse/crystallib/osal/mdbook/template'
 	c := $tmpl('../../osal/mdbook/template/book.toml')
 	book.template_write('book.toml', c)!
 }
