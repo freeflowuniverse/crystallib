@@ -123,13 +123,13 @@ fn (mut book MDBook) template_install() ! {
 	c1 := $tmpl('template/build.sh')
 	mut file1 := book.path_build.file_get_new('build.sh')!
 	file1.write(c1)!
-	file1.chmod(0700)!
+	file1.chmod(0o770)!
 
 
 	c2 := $tmpl('template/develop.sh')
 	mut file2 := book.path_build.file_get_new('develop.sh')!
 	file2.write(c2)!	
-	file2.chmod(0700)!
+	file2.chmod(0o770)!
 
 }
 
