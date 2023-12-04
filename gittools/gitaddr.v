@@ -134,14 +134,16 @@ pub fn addr_get_from_path(path string) ?GitAddr {
 
 	cmd := "cd $path && git config --get remote.origin.url"
 	url := os.execute_or_panic(cmd).output.trim(" \n")
+	mut addr := addr_get_from_url(url) ?
 
+	cmd1 := 'cd $path && ls -l .git/refs/heads'
+	if os.execute_or_panic(cmd1).output.trim(" \n") == 'total 0' {
+		return addr
+	}
+	
 	cmd2 := "cd $path && git rev-parse --abbrev-ref HEAD"
 	branch := os.execute_or_panic(cmd2).output.trim(" \n")
-	
-	mut addr := addr_get_from_url(url) ?
 	addr.branch = branch
-
-	
 
 	// println(addr)
 	return addr

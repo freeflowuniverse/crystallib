@@ -10,7 +10,7 @@ pub mut:
 	cmd        string
 	timeout    int = 1200
 	stdout     bool = true
-	stdout_log bool
+	stdout_log bool = true
 	debug      bool
 	die        bool = true
 	args       map[string]string
