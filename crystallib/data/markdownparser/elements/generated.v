@@ -2,10 +2,12 @@
 module elements
 
 import freeflowuniverse.crystallib.data.paramsparser
+import freeflowuniverse.crystallib.data.actionparser
 
 interface Element {
 	markdown() string
 	html() string
+	actions() []actionparser.Action
 mut:
 	id        int
 	content   string

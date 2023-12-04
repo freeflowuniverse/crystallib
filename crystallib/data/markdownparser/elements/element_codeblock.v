@@ -19,8 +19,10 @@ pub fn (mut self Codeblock) process(mut doc Doc) !int {
 			parent: ElementRef{
 				ref: self
 			}
+			content: action.script3()
 		)
 		a.action = action
+		a.processed = true
 	}
 
 	// now see if there is something left in codeblock, if yes add that one to the parent_elements

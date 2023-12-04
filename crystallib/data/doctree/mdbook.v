@@ -188,66 +188,66 @@ fn (mut mdbook MDBook) reset() ! {
 fn (mut book MDBook) fix_summary() ! {
 	// add linked pages to summary if they dont exist in summary
 
-	for y in 0 .. book.doc_summary.elements.len {
-		if book.doc_summary.elements[y] is elements.Paragraph {
-			mut paragraph := book.doc_summary.elements[y] as elements.Paragraph
-			for x in 0 .. paragraph.elements.len {
-				// if paragraph.elements[x] is elements.Link {
-				// 	mut link := paragraph.elements[x] as elements.Link
-				// 	if link.isexternal {
-				// 		msge := 'external link not supported yet in summary for:\n ${book}'
-				// 		book.error(cat: .unknown, msg: msge)
-				// 	} else {
-				// 		book.tree.logger.debug('book ${book.name} summary:${link.pathfull()}')
-				// 		mut collectionname := link.url.all_before(':')
-				// 		if collectionname == '' {
-				// 			// means collection has not been specified
-				// 			return error('collection needs to be specified in summary, is the first part of path e.g. collectionname/...')
-				// 		}
-				// 		pagename := link.filename
-				// 		if book.tree.collection_exists(collectionname) {
-				// 			// clone collection so that changes don't mutate collection in doctree
-				// 			collection_ := book.tree.collection_get(collectionname)!
-				// 			mut collection := Collection{
-				// 				...collection_
-				// 			}
+	for y in 0 .. book.doc_summary.children.len {
+		mut paragraph := book.doc_summary.children[y]
+		if mut paragraph is elements.Paragraph {
+			for x in 0 .. paragraph.children.len {
+				mut link := paragraph.children[x]
+				if mut link is elements.Link {
+					if link.isexternal {
+						msge := 'external link not supported yet in summary for:\n ${book}'
+						book.error(cat: .unknown, msg: msge)
+					} else {
+						book.tree.logger.debug('book ${book.name} summary:${link.pathfull()}')
+						mut collectionname := link.url.all_before(':')
+						if collectionname == '' {
+							// means collection has not been specified
+							return error('collection needs to be specified in summary, is the first part of path e.g. collectionname/...')
+						}
+						pagename := link.filename
+						if book.tree.collection_exists(collectionname) {
+							// clone collection so that changes don't mutate collection in doctree
+							collection_ := book.tree.collection_get(collectionname)!
+							mut collection := Collection{
+								...collection_
+							}
 
-				// 			// now we can process the page where the link goes to
-				// 			if collection.page_exists(pagename) {
-				// 				page := collection.page_get(pagename)!
-				// 				book.tree.logger.debug('found page: ${page.path.path}')
-				// 				newlink := '[${link.description}](${collectionname}/${page.pathrel})'
-				// 				book.pages['${collection.name}:${page.name}'] = page
-				// 				if newlink != link.content {
-				// 					book.tree.logger.debug('change: ${link.content} -> ${newlink}')
-				// 					paragraph.content = paragraph.content.replace(link.content,
-				// 						newlink)
-				// 					newpath := collectionname + '/' + page.pathrel
-				// 					link.path = newpath.all_before_last('/').trim_right('/')
-				// 					link.content = newlink
-				// 					paragraph.elements[x] = link
-				// 				}
-				// 			} else {
-				// 				book.error(
-				// 					cat: .page_not_found
-				// 					msg: "Cannot find page:'${pagename}' in collection:'${collectionname}'"
-				// 				)
-				// 				continue
-				// 			}
-				// 		} else {
-				// 			collectionnames := book.tree.collectionnames().join('\n- ')
-				// 			msg := 'Cannot find collection: ${collectionname} \ncollectionnames known::\n\n${collectionnames} '
-				// 			book.tree.logger.error(msg)
-				// 			book.error(
-				// 				cat: .collection_not_found
-				// 				msg: msg
-				// 			)
-				// 			continue
-				// 		}
-				// 	}
-				// }
+							// now we can process the page where the link goes to
+							if collection.page_exists(pagename) {
+								page := collection.page_get(pagename)!
+								book.tree.logger.debug('found page: ${page.path.path}')
+								newlink := '[${link.description}](${collectionname}/${page.pathrel})'
+								book.pages['${collection.name}:${page.name}'] = page
+								if newlink != link.content {
+									book.tree.logger.debug('change: ${link.content} -> ${newlink}')
+									paragraph.content = paragraph.content.replace(link.content,
+										newlink)
+									newpath := collectionname + '/' + page.pathrel
+									link.path = newpath.all_before_last('/').trim_right('/')
+									link.url = '${link.path}/${link.filename}'
+									link.content = newlink
+									link.cat = elements.LinkType.file
+								}
+							} else {
+								book.error(
+									cat: .page_not_found
+									msg: "Cannot find page:'${pagename}' in collection:'${collectionname}'"
+								)
+								continue
+							}
+						} else {
+							collectionnames := book.tree.collectionnames().join('\n- ')
+							msg := 'Cannot find collection: ${collectionname} \ncollectionnames known::\n\n${collectionnames} '
+							book.tree.logger.error(msg)
+							book.error(
+								cat: .collection_not_found
+								msg: msg
+							)
+							continue
+						}
+					}
+				}
 			}
-			book.doc_summary.elements[y] = paragraph
 		}
 	}
 	book.tree.logger.debug('finished fixing summary')
@@ -289,52 +289,52 @@ fn (mut book MDBook) link_pages_files_images() ! {
 	for _, page in book.pages {
 		logger.info('Linking pages, files, and images in MDBook: ${book.name} page: ${page.name}')
 		doc := page.doc or { return }
-		for paragraph in doc.elements.filter(it is elements.Paragraph) {
+		for paragraph in doc.children.filter(it is elements.Paragraph) {
 			if paragraph is elements.Paragraph {
-				for item in paragraph.elements {
-					// if item is elements.Link {
-					// 	link := item
+				for item in paragraph.children {
+					if item is elements.Link {
+						link := item
 
-					// 	if link.cat == .page {
-					// 		logger.info('Linking page ${link.filename} from ${link.path} into ${page.name}')
-					// 		collection := book.tree.collection_get(page.collection_name) or {
-					// 			logger.error('Could not link page ')
-					// 			panic('couldnt find book collection')
-					// 		}
-					// 		pageobj := collection.page_get(link.filename) or {
-					// 			book.error(
-					// 				cat: .page_not_found
-					// 				msg: '${page.path.path}: Cannot find page ${link.filename} in ${page.collection_name}'
-					// 			)
-					// 			continue
-					// 		}
-					// 		book.pages['${pageobj.collection_name}:${pageobj.name}'] = pageobj
-					// 	} else if link.cat == .file {
-					// 		collection := book.tree.collection_get(page.collection_name) or {
-					// 			panic('couldnt find book collection')
-					// 		}
-					// 		fileobj := collection.file_get(link.filename) or {
-					// 			book.error(
-					// 				cat: .file_not_found
-					// 				msg: '${page.path.path}: Cannot find file ${link.filename} in ${page.collection_name}'
-					// 			)
-					// 			continue
-					// 		}
-					// 		// book.files['${fileobj.collection.name}:${fileobj.name}'] = fileobj
-					// 	} else if link.cat == .image {
-					// 		collection := book.tree.collection_get(page.collection_name) or {
-					// 			panic('couldnt find book collection')
-					// 		}
-					// 		imageobj := collection.image_get(link.filename) or {
-					// 			book.error(
-					// 				cat: .image_not_found
-					// 				msg: '${page.path.path}: Cannot find image ${link.filename} in ${page.collection_name}'
-					// 			)
-					// 			continue
-					// 		}
-					// 		// book.images['${imageobj.collection.name}:${imageobj.name}'] = imageobj
-					// 	}
-					// }
+						if link.cat == .page {
+							logger.info('Linking page ${link.filename} from ${link.path} into ${page.name}')
+							collection := book.tree.collection_get(page.collection_name) or {
+								logger.error('Could not link page ')
+								panic('couldnt find book collection')
+							}
+							pageobj := collection.page_get(link.filename) or {
+								book.error(
+									cat: .page_not_found
+									msg: '${page.path.path}: Cannot find page ${link.filename} in ${page.collection_name}'
+								)
+								continue
+							}
+							book.pages['${pageobj.collection_name}:${pageobj.name}'] = pageobj
+						} else if link.cat == .file {
+							collection := book.tree.collection_get(page.collection_name) or {
+								panic('couldnt find book collection')
+							}
+							fileobj := collection.file_get(link.filename) or {
+								book.error(
+									cat: .file_not_found
+									msg: '${page.path.path}: Cannot find file ${link.filename} in ${page.collection_name}'
+								)
+								continue
+							}
+							// book.files['${fileobj.collection.name}:${fileobj.name}'] = fileobj
+						} else if link.cat == .image {
+							collection := book.tree.collection_get(page.collection_name) or {
+								panic('couldnt find book collection')
+							}
+							imageobj := collection.image_get(link.filename) or {
+								book.error(
+									cat: .image_not_found
+									msg: '${page.path.path}: Cannot find image ${link.filename} in ${page.collection_name}'
+								)
+								continue
+							}
+							// book.images['${imageobj.collection.name}:${imageobj.name}'] = imageobj
+						}
+					}
 				}
 			}
 		}
@@ -385,25 +385,25 @@ fn (mut book MDBook) errors_report() ! {
 	p2.write(c)!
 
 	mut paragraph := elements.Paragraph{}
-	paragraph.elements << elements.Text{
+	paragraph.children << elements.Text{
 		content: '- '
 	}
-	// paragraph.elements << elements.Link{
-	// 	cat: .page
-	// 	description: 'Errors'
-	// 	filename: 'errors.md'
-	// }
+	paragraph.children << elements.Link{
+		cat: .page
+		description: 'Errors'
+		filename: 'errors.md'
+	}
 	for collection_name, _ in collection_errors {
-		paragraph.elements << elements.Text{
+		paragraph.children << elements.Text{
 			content: '\n  - '
 		}
-		// paragraph.elements << elements.Link{
-		// 	cat: .page
-		// 	description: 'Errors in collection ${collection_name}'
-		// 	filename: 'errors_${collection_name}.md'
-		// }
+		paragraph.children << elements.Link{
+			cat: .page
+			description: 'Errors in collection ${collection_name}'
+			filename: 'errors_${collection_name}.md'
+		}
 	}
-	book.doc_summary.elements << paragraph
+	book.doc_summary.children << paragraph
 }
 
 // return path where the book will be created (exported and built from)
@@ -443,7 +443,6 @@ pub fn (mut book MDBook) export() ! {
 	book.template_install()! // make sure all required template files are in collection
 	md_path := book.md_path('').path + 'src'
 	html_path := book.html_path('').path
-
 	logger.info('Exporting pages in MDBook: ${book.name}')
 
 	for _, mut page in book.pages {
@@ -517,6 +516,8 @@ fn (mut book MDBook) template_install() ! {
 		md_path := item.path.all_after_first('/')
 		book.template_write(md_path, item.to_string())!
 	}
+
+	js_files_path := '${os.home_dir()}/.vmodules/freeflowuniverse/crystallib/osal/mdbook/template'
 	c := $tmpl('../../osal/mdbook/template/book.toml')
 	book.template_write('book.toml', c)!
 }

@@ -47,14 +47,12 @@ fn (mut self DocBase) delete_from_children(to_delete []int) {
 
 pub fn (self DocBase) actions() []actionparser.Action {
 	mut out := []actionparser.Action{}
-	for element in self.children() {
-		match element {
-			Action {
-				out << element.action
-				out << element.actions()
-			}
-			else {}
+	for element in self.children {
+		if element is Action{
+			out << element.action
 		}
+		
+		out << element.actions()
 	}
 	return out
 }

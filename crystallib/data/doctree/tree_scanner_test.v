@@ -35,8 +35,4 @@ fn test_scan() ! {
 	assert c2.image_exists('digital_twin.png')
 	mut i := c2.image_get('digital_twin.png')!
 	println(i)
-
-	if true {
-		panic('iii')
-	}
 }
