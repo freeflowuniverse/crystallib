@@ -73,7 +73,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				continue
 			}
 			// parse action
-			if line.starts_with('!') {
+			if line.starts_with('!!') {
 				doc.action_new(content: line)
 				parser.next()
 				continue
