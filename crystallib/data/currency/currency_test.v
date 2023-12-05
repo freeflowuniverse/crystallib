@@ -23,6 +23,7 @@ pub fn test_rates_get() {
 			name: 'AED'
 			usdval: 0.25
 		}
+		default_set('USD', 1.0)
 
 		mut u := amount_get('1$')!
 		u2 := u.exchange(get('tft')!)!
