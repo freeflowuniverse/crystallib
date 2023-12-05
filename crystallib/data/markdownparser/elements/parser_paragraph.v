@@ -33,6 +33,7 @@ fn paragraph_parse(mut d Doc, mut paragraph Paragraph) ! {
 						parent: ElementRef{
 							ref: paragraph
 						}
+						content: '\n'
 					)
 					parser.next()
 					char_ = ''

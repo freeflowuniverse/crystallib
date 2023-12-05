@@ -44,7 +44,7 @@ fn test_fix() ! {
 
 	assert test_page.doc or { panic('doesnt exist') } != doc_before // page was actually modified
 
-	paragraph := test_page.doc or { panic('doesnt exist') }.children[2]
+	paragraph := test_page.doc or { panic('doesnt exist') }.children[1]
 	wrong_link := paragraph.children[1]
 	if wrong_link is elements.Link {
 		assert wrong_link.description == 'Image with wrong link'

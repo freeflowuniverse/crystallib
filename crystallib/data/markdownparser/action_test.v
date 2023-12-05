@@ -11,8 +11,8 @@ fn test_action_empty_params() {
 '
 	)!
 
-	assert docs.children.len == 2
-	action := docs.children[1]
+	assert docs.children.len == 1
+	action := docs.children[0]
 	if action is Action {
 		assert action.action.actor == 'farmerbot_powermanager'
 		assert action.action.name == 'poweroff'
@@ -21,7 +21,7 @@ fn test_action_empty_params() {
 			args: []
 		}
 	} else {
-		assert false, 'element ${docs.children[1]} is not an action'
+		assert false, 'element ${docs.children[0]} is not an action'
 	}
 }
 
@@ -36,8 +36,8 @@ fn test_action_some_params_multiline() {
 '
 	)!
 
-	assert docs.children.len == 2
-	action := docs.children[1]
+	assert docs.children.len == 1
+	action := docs.children[0]
 	if action is Action {
 		assert action.action.actor == 'farmerbot_nodemanager'
 		assert action.action.name == 'define'
@@ -69,8 +69,8 @@ fn test_action_some_params_inline() {
 '
 	)!
 
-	assert docs.children.len == 2
-	action := docs.children[1]
+	assert docs.children.len == 1
+	action := docs.children[0]
 	if action is Action {
 		assert action.action.actor == 'farmerbot_nodemanager'
 		assert action.action.name == 'define'
@@ -106,8 +106,8 @@ fn test_action_some_params_some_arguments_multi_line() {
 '
 	)!
 
-	assert docs.children.len == 2
-	action := docs.children[1]
+	assert docs.children.len == 1
+	action := docs.children[0]
 	if action is Action {
 		assert action.action.actor == 'farmerbot_nodemanager'
 		assert action.action.name == 'define'
@@ -133,8 +133,8 @@ fn test_action_some_params_some_arguments_single_line() {
 '
 	)!
 
-	assert docs.children.len == 2
-	action := docs.children[1]
+	assert docs.children.len == 1
+	action := docs.children[0]
 	if action is Action {
 		assert action.action.actor == 'farmerbot_nodemanager'
 		assert action.action.name == 'define'

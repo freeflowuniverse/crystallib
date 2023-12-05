@@ -20,8 +20,8 @@ fn test_table_one_row() {
 |   Row1Col1  | Row1Col2     | Row1Col3   |
 '
 	)!
-	assert docs.children.len == 2
-	table := docs.children[1]
+	assert docs.children.len == 1
+	table := docs.children[0]
 	if table is Table {
 		assert table.num_columns == 3
 		assert table.header == ['Column1', 'Column2', 'Column3']
@@ -48,8 +48,8 @@ fn test_table_two_rows() {
 |   Row2Col1  | Row2Col2     | Row2Col3   |
 '
 	)!
-	assert docs.children.len == 2
-	table := docs.children[1]
+	assert docs.children.len == 1
+	table := docs.children[0]
 	if table is Table {
 		assert table.num_columns == 3
 		assert table.header == ['Column1', 'Column2', 'Column3']
@@ -106,8 +106,8 @@ fn test_table_two_rows_weird_format_yet_valid() {
 Row2Col1  | Row2Col2     | Row2Col3       
 '
 	)!
-	assert docs.children.len == 2
-	table := docs.children[1]
+	assert docs.children.len == 1
+	table := docs.children[0]
 	if table is Table {
 		assert table.num_columns == 3
 		assert table.header == ['Column1', 'Column2', 'Column3']
@@ -137,8 +137,8 @@ fn test_table_one_row_alignment_left() {
 |   Row1Col1  | Row1Col2     | Row1Col3   |
 '
 	)!
-	assert docs.children.len == 2
-	table := docs.children[1]
+	assert docs.children.len == 1
+	table := docs.children[0]
 	if table is Table {
 		assert table.num_columns == 3
 		assert table.alignments == [.left, .left, .left]
@@ -158,8 +158,8 @@ fn test_table_one_row_alignment_right() {
 |   Row1Col1  | Row1Col2     | Row1Col3   |
 '
 	)!
-	assert docs.children.len == 2
-	table := docs.children[1]
+	assert docs.children.len == 1
+	table := docs.children[0]
 	if table is Table {
 		assert table.num_columns == 3
 		assert table.alignments == [.right, .right, .right]
@@ -179,8 +179,8 @@ fn test_table_one_row_alignment_center() {
 |   Row1Col1  | Row1Col2     | Row1Col3   |
 '
 	)!
-	assert docs.children.len == 2
-	table := docs.children[1]
+	assert docs.children.len == 1
+	table := docs.children[0]
 	if table is Table {
 		assert table.num_columns == 3
 		assert table.alignments == [.center, .center, .center]
@@ -200,8 +200,8 @@ fn test_table_one_row_alignment_mixed() {
 |   Row1Col1  | Row1Col2     | Row1Col3   | Row1Col4  |
 '
 	)!
-	assert docs.children.len == 2
-	table := docs.children[1]
+	assert docs.children.len == 1
+	table := docs.children[0]
 	if table is Table {
 		assert table.num_columns == 4
 		assert table.alignments == [.left, .center, .right, .left]
