@@ -5,10 +5,10 @@ fn test_get_tft_usdt_price() {
 	mut args := LiquidArgs{
 		secret: key
 	}
-	mut l := new(args)
+	mut l := new(args)!
 
 	// TFT/USDT price
-	pair_tft_usdt := l.token_price_usdt() or { panic(err) }
+	pair_tft_usdt := l.token_price_usdt()!
 	println('Market Pid for TFT/USDT pair = ${pair_tft_usdt}')
 }
 
@@ -17,9 +17,9 @@ fn test_get_tft_btc_price() {
 	mut args := LiquidArgs{
 		secret: key
 	}
-	mut l := new(args)
+	mut l := new(args)!
 
 	// TFT/BTC price
-	pair_tft_btc := l.token_price_btc() or { panic(err) }
+	pair_tft_btc := l.token_price_btc()!
 	println('Market Pid for TFT/BTC pair = ${pair_tft_btc}')
 }

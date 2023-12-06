@@ -1,6 +1,6 @@
 module bizmodel
 
-import freeflowuniverse.crystallib.data.actionparser { Actions }
+import freeflowuniverse.crystallib.data.actionparser { ActionsCollection }
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.paramsparser
 
@@ -15,8 +15,8 @@ import freeflowuniverse.crystallib.data.paramsparser
 // - revenue_monthly_delay
 // - cogs_perc: what is percentage of the cogs (can change over time) e.g. 0:5%,12:10%.
 //
-fn (mut m BizModel) revenue_actions(actions_ Actions) ! {
-	mut actions2 := actions_.filtersort(actor: 'revenue')!
+fn (mut m BizModel) revenue_actions(actions_ ActionsCollection) ! {
+	mut actions2 := actions_.find(actor: 'revenue')
 	for action in actions2 {
 		if action.name == 'define' {
 			// !!revenue.define
