@@ -54,13 +54,8 @@ pub fn new(args MDBooksArgs) !MDBooks {
 	return books
 }
 
-fn (mut tree MDBooks) load() ! {
-	tree.embedded_files << $embed_file('template/css/print.css')
-	tree.embedded_files << $embed_file('template/css/variables.css')
-	tree.embedded_files << $embed_file('template/css/general.css')
-	tree.embedded_files << $embed_file('template/mermaid-init.js')
-	tree.embedded_files << $embed_file('template/echarts.min.js')
-	tree.embedded_files << $embed_file('template/mermaid.min.js')
+pub fn (mut tree MDBooks) load() ! {
+	tree.embedded_files << get_embedded_files()
 }
 
 pub fn (mut self MDBooks) init() ! {

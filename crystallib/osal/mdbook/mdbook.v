@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.osal
 import os
 // import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.pathlib
+import v.embed_file
 
 @[heap]
 pub struct MDBook {
@@ -65,7 +66,18 @@ fn (mut book MDBook) prepare() ! {
 	os.mkdir_all('${book.path_build.path}/src')!
 	path_summary.link('${book.path_build.path}/src/SUMMARY.md', true)!
 	println(' - mdbook summary: ${path_summary.path}')
-	book.template_install()!
+
+	mut title := book.title
+	if title == ' ' {
+		title = book.name
+	}
+	mut params := Params{
+		title: title
+		embedded_files: book.books.embedded_files
+		path_build: book.path_build
+		path_publish: book.path_publish
+	}
+	template_install(mut params)!
 	println(' - mdbook prepared: ${book.path_build.path}')
 }
 
@@ -102,37 +114,6 @@ pub fn (mut book MDBook) generate() ! {
 	)!
 }
 
-fn (mut book MDBook) template_install() ! {
-	if book.title == '' {
-		book.title = book.name
-	}
-
-	// get embedded files to the mdbook dir
-	for item in book.books.embedded_files {
-		dpath := '${book.path_build.path}/${item.path.all_after_first('/')}'
-		println(' - embed: ${dpath}')
-		mut dpatho := pathlib.get_file(path: dpath, create: true)!
-		dpatho.write(item.to_string())!
-	}
-
-	c := $tmpl('template/book.toml')
-	mut tomlfile := book.path_build.file_get_new('book.toml')!
-	tomlfile.write(c)!
-
-
-	c1 := $tmpl('template/build.sh')
-	mut file1 := book.path_build.file_get_new('build.sh')!
-	file1.write(c1)!
-	file1.chmod(0700)!
-
-
-	c2 := $tmpl('template/develop.sh')
-	mut file2 := book.path_build.file_get_new('develop.sh')!
-	file2.write(c2)!	
-	file2.chmod(0700)!
-
-}
-
 fn (mut book MDBook) summary_image_set() ! {
 	// this is needed to link the first image dir in the summary to the src, otherwise empty home image
 
@@ -141,7 +122,7 @@ fn (mut book MDBook) summary_image_set() ! {
 	c := p.read()!
 	mut first := true
 	for line in c.split_into_lines() {
-		if ! (line.trim_space().starts_with("-")){
+		if !(line.trim_space().starts_with('-')) {
 			continue
 		}
 		if line.contains('](') && first {
@@ -151,7 +132,7 @@ fn (mut book MDBook) summary_image_set() ! {
 			// if true{panic("s")}
 			if os.exists(folder_first_dir_img) {
 				mut image_dir := pathlib.get_dir(path: folder_first_dir_img)!
-				image_dir.copy(dest:'${book.path_build.path}/src/img')!
+				image_dir.copy(dest: '${book.path_build.path}/src/img')!
 			}
 
 			first = false
@@ -184,4 +165,40 @@ fn (mut book MDBook) changed() bool {
 		}
 	}
 	return change
+}
+
+@[params]
+pub struct Params {
+pub mut:
+	title          string                     @[required]
+	embedded_files []embed_file.EmbedFileData
+	path_build     pathlib.Path               @[required]
+	path_publish   pathlib.Path               @[required]
+}
+
+pub fn template_install(mut book Params) ! {
+	// get embedded files to the mdbook dir
+	for item in book.embedded_files {
+		dpath := '${book.path_build.path}/${item.path.all_after_first('/')}'
+		println(' - embed: ${dpath}')
+		mut dpatho := pathlib.get_file(path: dpath, create: true)!
+		dpatho.write(item.to_string())!
+	}
+
+	c := $tmpl('template/book.toml')
+	mut tomlfile := book.path_build.file_get_new('book.toml')!
+	tomlfile.write(c)!
+}
+
+pub fn get_embedded_files() []embed_file.EmbedFileData {
+	files := [
+		$embed_file('template/css/print.css'),
+		$embed_file('template/css/variables.css'),
+		$embed_file('template/css/general.css'),
+		$embed_file('template/mermaid-init.js'),
+		$embed_file('template/echarts.min.js'),
+		$embed_file('template/mermaid.min.js'),
+	]
+
+	return files
 }

@@ -7,6 +7,7 @@ import freeflowuniverse.crystallib.data.markdownparser.elements
 import freeflowuniverse.crystallib.core.pathlib { Path }
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.osal.mdbook
 import log
 import os
 
@@ -175,11 +176,11 @@ fn (mut book MDBook) load_summary() ! {
 }
 
 // reset all, just to make sure we regenerate fresh
-fn (mut mdbook MDBook) reset() ! {
+fn (mut book MDBook) reset() ! {
 	// delete where the mdbook are created
-	mut a := pathlib.get(mdbook.dest)
+	mut a := pathlib.get(book.dest)
 	a.delete()!
-	mut b := pathlib.get(mdbook.dest_md)
+	mut b := pathlib.get(book.dest_md)
 	b.delete()!
 }
 
@@ -438,7 +439,16 @@ pub fn (mut book MDBook) process() ! {
 // export an mdbook to its html representation
 pub fn (mut book MDBook) export() ! {
 	logger.info('Exporting MDBook: ${book.name}')
-	book.template_install()! // make sure all required template files are in collection
+
+	embedded_files := mdbook.get_embedded_files()
+	mut params := mdbook.Params{
+		title: book.title
+		embedded_files: embedded_files
+		path_build: pathlib.get_dir(path: book.md_path('').path, create: true)!
+		path_publish: pathlib.get_dir(path: book.html_path('').path, create: true)!
+	}
+	mdbook.template_install(mut params)!
+
 	md_path := book.md_path('').path + 'src'
 	html_path := book.html_path('').path
 	logger.info('Exporting pages in MDBook: ${book.name}')
@@ -502,32 +512,4 @@ pub fn (mut book MDBook) export() ! {
 fn (mut book MDBook) template_write(path string, content string) ! {
 	mut dest_path := book.md_path(path)
 	dest_path.write(content)!
-}
-
-fn (mut book MDBook) template_install() ! {
-	if book.title == '' {
-		book.title = book.name
-	}
-
-	template_files := {
-		'print.css':       $embed_file('../../osal/mdbook/template/css/print.css')
-		'variable.css':    $embed_file('../../osal/mdbook/template/css/variables.css')
-		'general.css':     $embed_file('../../osal/mdbook/template/css/general.css')
-		'mermaid-init.js': $embed_file('../../osal/mdbook/template/mermaid-init.js')
-		'echarts.min.js':  $embed_file('../../osal/mdbook/template/echarts.min.js')
-		'mermaid.min.js':  $embed_file('../../osal/mdbook/template/mermaid.min.js')
-	}
-
-	for k, v in template_files {
-		book.template_write(k, v.to_string())!
-	}
-
-	// get embedded files to the mdbook dir
-	for item in book.tree.embedded_files {
-		md_path := item.path.all_after_first('/')
-		book.template_write(md_path, item.to_string())!
-	}
-
-	c := $tmpl('../../osal/mdbook/template/book.toml')
-	book.template_write('book.toml', c)!
 }
