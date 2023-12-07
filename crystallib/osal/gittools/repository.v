@@ -160,6 +160,11 @@ pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 	$if debug {
 		println('   - PULL: ${repo.url_get(true)}')
 	}
+	repo.ssh_key_load()!
+	defer {
+		repo.ssh_key_forget() or { panic(err) }
+	}
+
 	mut args := args_
 	if args.reload {
 		repo.load()!
@@ -176,6 +181,7 @@ pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 		return error('Cannot pull repo: ${repo.path}. Error was ${err}')
 	}
 	repo.load()!
+	repo.ssh_key_forget()!
 }
 
 pub fn (mut repo GitRepo) rev() !string {
@@ -256,6 +262,10 @@ pub fn (mut repo GitRepo) push(args_ ActionArgs) ! {
 	$if debug {
 		println('   - PUSH: ${repo.url_get(true)} on ${repo.path}')
 	}
+	repo.ssh_key_load()!
+	defer {
+		repo.ssh_key_forget() or { panic(err) }
+	}
 	st := repo.status()!
 	if st.need_push {
 		println('    - PUSH THE CHANGES')
@@ -265,6 +275,7 @@ pub fn (mut repo GitRepo) push(args_ ActionArgs) ! {
 		}
 	}
 	repo.load()!
+	repo.ssh_key_forget()!
 }
 
 pub fn (mut repo GitRepo) branch_switch(branchname string) ! {
@@ -288,12 +299,17 @@ pub fn (mut repo GitRepo) branch_switch(branchname string) ! {
 }
 
 pub fn (mut repo GitRepo) fetch_all() ! {
-	cmd := 'cd ${repo.path.path} && git fetch --all'
+	repo.ssh_key_load()!
+	defer {
+		repo.ssh_key_forget() or { panic(err) }
+	}	
+	cmd := 'cd ${repo.path.path} && git fetch --all'	
 	osal.execute_silent(cmd) or {
 		// println('GIT FETCH FAILED: $cmd_checkout')
 		return error('Cannot fetch repo: ${repo.path.path}. Error was ${err} \n cmd: ${cmd}')
 	}
 	repo.load()!
+	repo.ssh_key_forget()!
 }
 
 // deletes git repository
@@ -309,14 +325,28 @@ pub fn (mut repo GitRepo) delete() ! {
 	repo.cache_delete()!
 }
 
+//////////////////////////KEY MGMT
+//////////////////////////////////
+
+
+
+//set the key (private ssh key)
+pub fn (repo GitRepo) ssh_key_set(key string) ! {
+	mut p:=pathlib.get_file(path:repo.ssh_key_path(),create:true)!
+	p.write(key)!
+
+}
+
+fn (repo GitRepo) ssh_key_path() string {
+	return '${os.home_dir()}/.ssh/${repo.key()}'
+}
+
+
 // check if sshkey for a repo exists in the homedir/.ssh
 // we check on name, if nameof repo is same as name of key we will load
 // will return true if the key did exist, which means we need to connect over ssh !!!
-fn (repo GitRepo) ssh_key_load_if_exists() !bool {
-	mut key_path := '${os.home_dir()}/.ssh/${repo.addr.name}'
-	if !os.exists(key_path) {
-		key_path = '.ssh/${repo.addr.name}'
-	}
+fn (repo GitRepo) ssh_key_load() !bool {
+	key_path := repo.ssh_key_path()
 	if !os.exists(key_path) {
 		// tried local path to where we are, no key as well
 		return false
@@ -339,4 +369,9 @@ fn (repo GitRepo) ssh_key_load_if_exists() !bool {
 		// did not find the key nothing to do
 		return false
 	}
+}
+
+
+pub fn (repo GitRepo) ssh_key_forget() ! {
+	// sshagent.key_unload(repo.ssh_key_path())!
 }

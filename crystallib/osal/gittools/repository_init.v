@@ -15,7 +15,7 @@ fn (mut repo GitRepo) load_from_url() ! {
 		mut needs_to_be_ssh := false
 
 		// check if there is a custom key to be used (sshkey)
-		needs_to_be_ssh0 := repo.ssh_key_load_if_exists()!
+		needs_to_be_ssh0 := repo.ssh_key_load()!
 		if needs_to_be_ssh0 {
 			needs_to_be_ssh = true
 		}

@@ -49,3 +49,33 @@ pub fn (mut gitstructure GitStructure) repo_from_path(path string) !GitRepo {
 	// r.load_from_path()!
 	return r
 }
+
+
+pub struct RepoAddArgs{
+pub mut:
+	url string
+	branch string
+	sshkey string
+	pull bool = true
+}
+
+//add repository to gitstructure
+pub fn (mut gs GitStructure) repo_add(args RepoAddArgs) ! {
+
+	mut locator := gs.locator_new(args.url)!
+	if args.branch.len>0{
+		// repo.branch_switch(args.branch)!
+		locator.addr.branch = args.branch
+	}	
+	if gs.repo_exists(locator)!{
+		return
+	}
+	mut repo := gs.repo_get(locator: locator, reset: false, pull: false)!
+	if args.sshkey.len>0{
+		repo.ssh_key_set(args.sshkey)!
+	}
+	if args.pull{
+		repo.pull()!
+	}
+	gs.repos<<&repo
+}
