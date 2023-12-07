@@ -14,6 +14,7 @@ import log
 pub struct Authenticator {
 	secret string
 mut:
+	client  smtp.Client @[required]
 	backend IBackend // Backend for authenticator
 	logger  &log.Logger = &log.Logger(&log.Log{
 	level: .info
@@ -34,14 +35,31 @@ pub mut:
 @[params]
 pub struct AuthenticatorConfig {
 	secret  string
+	smtp    SmtpConfig
 	backend IBackend
 	logger  &log.Logger = &log.Logger(&log.Log{
 	level: .debug
 })
 }
 
-pub fn new(config AuthenticatorConfig) Authenticator {
+pub fn new(config AuthenticatorConfig) !Authenticator {
+	// send email with link in body
+	// mut client := smtp.new_client(
+	// 	server: config.smtp.server
+	// 	from: config.smtp.from
+	// 	port: config.smtp.port
+	// 	username: config.smtp.username
+	// 	password: config.smtp.password
+	// )!
+
 	return Authenticator{
+		client: smtp.new_client(
+			server: config.smtp.server
+			from: config.smtp.from
+			port: config.smtp.port
+			username: config.smtp.username
+			password: config.smtp.password
+		)!
 		backend: config.backend
 		logger: config.logger
 		secret: config.secret
@@ -52,8 +70,7 @@ pub fn new(config AuthenticatorConfig) Authenticator {
 pub struct SendMailConfig {
 	email string
 	mail  VerificationMail
-	smtp  SmtpConfig       @[required]
-	link  string           @[required]
+	link  string
 }
 
 pub struct VerificationMail {
@@ -95,17 +112,9 @@ pub fn (mut auth Authenticator) send_verification_mail(config SendMailConfig) ! 
 		body: '${config.mail.body}\n${link}'
 	}
 
-	// send email with link in body
-	mut client := smtp.new_client(
-		server: config.smtp.server
-		from: config.smtp.from
-		port: config.smtp.port
-		username: config.smtp.username
-		password: config.smtp.password
-	)!
-	client.send(mail) or { panic('Error resolving email address') }
+	auth.client.send(mail) or { panic('Error resolving email address') }
 	auth.logger.debug('Email Authenticator: Sent authentication email to ${config.email}')
-	client.quit() or { panic('Could not close connection to server') }
+	auth.client.quit() or { panic('Could not close connection to server') }
 }
 
 // sends mail with login link
@@ -127,17 +136,9 @@ pub fn (mut auth Authenticator) send_login_link(config SendMailConfig) ! {
 		body: '${config.mail.body}\n${link}'
 	}
 
-	// send email with link in body
-	mut client := smtp.new_client(
-		server: config.smtp.server
-		from: config.smtp.from
-		port: config.smtp.port
-		username: config.smtp.username
-		password: config.smtp.password
-	)!
-	client.send(mail) or { panic('Error resolving email address') }
+	auth.client.send(mail) or { panic('Error resolving email address') }
 	auth.logger.debug('Email Authenticator: Sent login link to ${config.email}')
-	client.quit() or { panic('Could not close connection to server') }
+	auth.client.quit() or { panic('Could not close connection to server') }
 }
 
 pub struct LoginAttempt {
