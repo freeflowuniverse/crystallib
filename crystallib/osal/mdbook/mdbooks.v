@@ -63,6 +63,7 @@ fn (mut tree MDBooks) load() ! {
 	tree.embedded_files << $embed_file('template/mermaid.min.js')
 }
 
+
 pub fn (mut self MDBooks) init() ! {
 	self.load()!
 	for mut book in self.books {

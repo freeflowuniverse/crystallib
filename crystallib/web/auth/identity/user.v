@@ -20,12 +20,14 @@ pub mut:
 	email string
 }
 
-pub fn (mut auth IdentityManager) login_user(email string) ?User {
-	return auth.backend.read_user(email: email)
+pub fn (mut auth IdentityManager) login_user(email string) !User {
+	return auth.backend.read_user(email: email) or {
+		return error('user not found')
+	}
 }
 
-pub fn (mut auth IdentityManager) register_user(email string) User {
-	return auth.backend.create_user(email)
+pub fn (mut auth IdentityManager) register_user(identifier string) User {
+	return auth.backend.create_user(identifier)
 }
 
 pub fn (mut auth IdentityManager) get_user(user User) ?User {
@@ -33,4 +35,9 @@ pub fn (mut auth IdentityManager) get_user(user User) ?User {
 		id: user.id
 		email: user.email
 	) or { return none }
+}
+
+pub fn (mut auth IdentityManager) get_users() ![]User {
+	println('getting users')
+	return auth.backend.read_users()!
 }

@@ -79,7 +79,7 @@ pub fn parse_collection(args_ ParserArgs) !ActionsCollection {
 		}
 
 		if state == .start {
-			if line_strip.starts_with('!') {
+			if line_strip.starts_with('!') && !line_strip.starts_with('![') {
 				state = .action
 
 				// start with new action

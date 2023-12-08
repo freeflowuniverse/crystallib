@@ -38,6 +38,7 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !GitRepo {
 				r2.branch_switch(r2.addr.branch)!
 			}
 		} else {
+			print_backtrace()
 			return error('branch should have been known for ${r2.addr.remote_url}')
 		}
 		r2

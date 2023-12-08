@@ -50,5 +50,5 @@ fn test_fetch_all() {
 fn test_delete() {
 }
 
-fn test_ssh_key_load_if_exists() {
+fn test_ssh_key_load() {
 }
