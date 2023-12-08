@@ -14,11 +14,7 @@ level = 0
 
 [output.html]
 no-section-label = true
-additional-js = [
-    "@js_files_path/mermaid.min.js",
-    "@js_files_path/mermaid-init.js",
-    "@js_files_path/echarts.min.js",
-]
+additional-js = ["mermaid.min.js", "mermaid-init.js", "echarts.min.js"]
 
 
 [build]

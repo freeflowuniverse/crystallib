@@ -23,12 +23,12 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		println(' -- line: ${llast.type_name} ${line}')
 
 		if mut llast is elements.Table {
-			if trimmed_line.starts_with('|') && trimmed_line.ends_with('|') {
+			if trimmed_line != '' {
 				llast.content += '${line}\n'
 				parser.next()
 				continue
 			}
-			parser.ensure_last_is_paragraph()!
+			parser.next_start()!
 			continue
 		}
 
@@ -73,7 +73,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				continue
 			}
 			// parse action
-			if line.starts_with('!') {
+			if line.starts_with('!!') {
 				doc.action_new(content: line)
 				parser.next()
 				continue

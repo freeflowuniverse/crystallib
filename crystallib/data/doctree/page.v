@@ -36,7 +36,7 @@ fn (mut page Page) link_to_page_update(mut link Link) ! {
 	}
 	mut file_name := link.filename
 
-	mut other_page := Page{
+	mut other_page := &Page{
 		tree: page.tree
 	}
 
@@ -56,7 +56,7 @@ fn (mut page Page) link_to_page_update(mut link Link) ! {
 		)
 		return
 	}
-	page.pages_linked << &other_page
+	page.pages_linked << other_page
 
 	linkcompare1 := link.description + link.url + link.filename + link.content
 	imagelink_rel := pathlib.path_relative(page.path.path_dir(), other_page.path.path)!
@@ -85,7 +85,7 @@ fn (mut page Page) link_update(mut link Link) ! {
 	mut file_search := true
 	// fileobj := File{collection: }
 
-	mut fileobj := File{
+	mut fileobj := &File{
 		collection: collection
 	}
 
@@ -143,9 +143,9 @@ fn (mut page Page) link_update(mut link Link) ! {
 	}
 
 	// hack around
-	fileobj_copy := fileobj
+	fileobj_copy := &(*fileobj)
 	// means we now found the file or image
-	page.files_linked << &fileobj_copy
+	page.files_linked << fileobj_copy
 	linkcompare1 := link.description + link.url + link.filename + link.content
 	imagelink_rel := pathlib.path_relative(page.path.path_dir(), fileobj.path.path)!
 
@@ -349,15 +349,10 @@ fn (mut page Page) process_macros() ! {
 		mut macro := doc.children[x]
 		if mut macro is Action {
 			logger.info('Process macro: ${macro.action.name} into page: ${page.name}')
-			mut out := ''
 
 			for mut mp in page.tree.macroprocessors {
 				res := mp.process('!!${macro.content}')!
-				if res.error == '' {
-					out += res.result + '\n'
-				} else {
-					out += '>> ERROR:\n${res.error}\n'
-				}
+
 				mut para := Paragraph{
 					content: res.result
 				}
@@ -390,7 +385,6 @@ pub fn (mut page Page) process() ! {
 // save the page on the requested dest
 // make sure the macro's are being executed
 pub fn (mut page Page) export(args_ PageSaveArgs) ! {
-	mut doc := page.doc or { return error('no doc yet on page') }
 	mut args := args_
 	if args.dest == '' {
 		args.dest = page.path.path
@@ -408,7 +402,6 @@ pub fn (mut page Page) export(args_ PageSaveArgs) ! {
 // save the page on the requested dest
 // make sure the macro's are being executed
 pub fn (mut page Page) save(args_ PageSaveArgs) ! {
-	mut doc := page.doc or { return error('no doc yet on page') }
 	mut args := args_
 	if args.dest == '' {
 		args.dest = page.path.path

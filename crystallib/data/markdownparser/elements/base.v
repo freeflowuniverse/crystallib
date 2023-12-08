@@ -22,7 +22,7 @@ fn (mut self DocBase) process_base() ! {
 	mut to_delete := []int{}
 	for id, element in self.children {
 		// remove the elements which are empty
-		if element.content.trim_space() == '' {
+		if element.content == '' {
 			to_delete << id
 		}
 	}
@@ -48,10 +48,10 @@ fn (mut self DocBase) delete_from_children(to_delete []int) {
 pub fn (self DocBase) actions() []actionparser.Action {
 	mut out := []actionparser.Action{}
 	for element in self.children {
-		if element is Action{
+		if element is Action {
 			out << element.action
 		}
-		
+
 		out << element.actions()
 	}
 	return out

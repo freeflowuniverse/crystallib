@@ -158,7 +158,6 @@ pub fn book_create(args_ BookNewArgs) !&MDBook {
 	book.process()!
 	book.errors_report()!
 	book.export()!
-	pages_str := book.pages.values().map('\n${it.name}\npages_included:${it.pages_linked.map(it.name)}')
 
 	return book
 }
@@ -313,7 +312,7 @@ fn (mut book MDBook) link_pages_files_images() ! {
 							collection := book.tree.collection_get(page.collection_name) or {
 								panic('couldnt find book collection')
 							}
-							fileobj := collection.file_get(link.filename) or {
+							collection.file_get(link.filename) or {
 								book.error(
 									cat: .file_not_found
 									msg: '${page.path.path}: Cannot find file ${link.filename} in ${page.collection_name}'
@@ -325,7 +324,7 @@ fn (mut book MDBook) link_pages_files_images() ! {
 							collection := book.tree.collection_get(page.collection_name) or {
 								panic('couldnt find book collection')
 							}
-							imageobj := collection.image_get(link.filename) or {
+							collection.image_get(link.filename) or {
 								book.error(
 									cat: .image_not_found
 									msg: '${page.path.path}: Cannot find image ${link.filename} in ${page.collection_name}'
@@ -438,7 +437,6 @@ pub fn (mut book MDBook) process() ! {
 
 // export an mdbook to its html representation
 pub fn (mut book MDBook) export() ! {
-	pages_str := book.pages.values().map('\n${it.name}\npages_included:${it.pages_linked.map(it.name)}')
 	logger.info('Exporting MDBook: ${book.name}')
 	book.template_install()! // make sure all required template files are in collection
 	md_path := book.md_path('').path + 'src'
@@ -511,13 +509,29 @@ fn (mut book MDBook) template_install() ! {
 		book.title = book.name
 	}
 
+	template_files := {
+		'print.css':       $embed_file('../../osal/mdbook/template/css/print.css')
+		'variable.css':    $embed_file('../../osal/mdbook/template/css/variables.css')
+		'general.css':     $embed_file('../../osal/mdbook/template/css/general.css')
+		'mermaid-init.js': $embed_file('../../osal/mdbook/template/mermaid-init.js')
+		'echarts.min.js':  $embed_file('../../osal/mdbook/template/echarts.min.js')
+		'mermaid.min.js':  $embed_file('../../osal/mdbook/template/mermaid.min.js')
+	}
+
+	for k, v in template_files {
+		book.template_write(k, v.to_string())!
+	}
+
 	// get embedded files to the mdbook dir
 	for item in book.tree.embedded_files {
 		md_path := item.path.all_after_first('/')
 		book.template_write(md_path, item.to_string())!
 	}
 
+<<<<<<< HEAD
 	js_files_path := '${os.home_dir()}/.vmodules/freeflowuniverse/crystallib/osal/mdbook/template'
+=======
+>>>>>>> b78caae95d859304b900d1ab4adddf8d7fed844a
 	c := $tmpl('../../osal/mdbook/template/book.toml')
 	book.template_write('book.toml', c)!
 }

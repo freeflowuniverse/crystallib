@@ -1,7 +1,7 @@
 module twinsafe
 
-import freeflowuniverse.crystallib.algo.secp256k1
-import freeflowuniverse.crystallib.algo.aes_symmetric
+import freeflowuniverse.crystallib.crypt.secp256k1
+import freeflowuniverse.crystallib.crypt.aes_symmetric
 import freeflowuniverse.crystallib.data.mnemonic
 import encoding.hex
 

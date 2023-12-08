@@ -1,7 +1,7 @@
 module twinsafe
 
 import encoding.hex
-import freeflowuniverse.crystallib.algo.aes_symmetric
+import freeflowuniverse.crystallib.crypt.aes_symmetric
 
 // this is me, my representation
 pub struct MyConfig {
