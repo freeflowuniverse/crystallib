@@ -50,7 +50,7 @@ pub fn new_global(args_ ArgsNew) ! {
 }
 
 pub struct MacroProcessorArgs {
-mut:
+pub mut:
 	processor IMacroProcessor
 	name      string
 }

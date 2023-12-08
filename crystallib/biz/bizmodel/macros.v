@@ -3,7 +3,7 @@ module bizmodel
 import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.data.actionparser
 import freeflowuniverse.crystallib.biz.spreadsheet
-import freeflowuniverse.crystallib.data.markdownparser
+import freeflowuniverse.crystallib.data.markdownparser.elements
 
 pub struct MacroProcessorBizmodel {
 	bizmodel_name string // name of bizmodel the macro will use for processing
@@ -17,8 +17,8 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !doctree.MacroRes
 	mut r := doctree.MacroResult{
 		state: .stop
 	}
-	ap := actionparser.new(text: code)!
-	mut actions2 := ap.filtersort(actor: 'bizmodel')!
+	ap := actionparser.parse_collection(text: code)!
+	mut actions2 := ap.find(actor: 'bizmodel')
 	for action in actions2 {
 		p := action.params
 
@@ -33,15 +33,21 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !doctree.MacroRes
 			}
 			employee := model.employees[id]
 
-			employee_table := markdownparser.Table{
+			employee_table := elements.Table{
 				header: ['Key', 'Value']
 				rows: [
-					['cost', employee.cost],
-					['department', employee.department],
-					['indexation', '${employee.indexation}'],
+					elements.Row{
+						cells: ['cost', employee.cost]
+					},
+					elements.Row{
+						cells: ['department', employee.department]
+					},
+					elements.Row{
+						cells: ['indexation', '${employee.indexation}']
+					},
 				]
 				alignments: [.left, .left]
-			}.wiki()
+			}.markdown()
 			r.result = $tmpl('./templates/employee.md')
 			return r
 		}
@@ -78,7 +84,6 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !doctree.MacroRes
 				return error('period type needs to be in year,month,quarter')
 			}
 
-			aggregate := p.get_default_false('aggregate')
 			rowname_show := p.get_default_true('rowname_show')
 
 			// namefilter    []string // only include the exact names as secified for the rows

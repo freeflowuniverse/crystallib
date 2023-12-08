@@ -24,6 +24,6 @@ pub:
 }
 
 pub fn node_local(args NodeLocalArgs) !&Node {
-	mut builder := new()!
-	return builder.node_new(name: 'localhost', reload: args.reload)
+	mut bldr := new()!
+	return bldr.node_new(name: 'localhost', reload: args.reload)
 }

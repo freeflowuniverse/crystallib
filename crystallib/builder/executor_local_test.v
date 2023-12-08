@@ -25,7 +25,9 @@ fn test_environ_get() {
 }
 
 fn test_node_new() {
-	mut factory := new()
-	mut node := factory.node_new(name: 'localhost') or { panic("Can't get new node: ${err}") }
+	mut factory := new()!
+	mut node := factory.node_new(name: 'localhost', reload: true) or {
+		panic("Can't get new node: ${err}")
+	}
 	println(node)
 }

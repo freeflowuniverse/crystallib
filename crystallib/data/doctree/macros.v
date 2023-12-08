@@ -15,7 +15,7 @@ pub mut:
 	state  MacroResultState
 }
 
-interface IMacroProcessor {
+pub interface IMacroProcessor {
 mut:
 	// spawner &spawner.Spawner
 	process(code string) !MacroResult

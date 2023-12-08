@@ -22,12 +22,7 @@ pub mut:
 	mask        int    // e.g. 24, default not specified
 	cat         IpAddressType = .ipv4
 	description string
-}
-
-pub struct IPServerAddress {
-	IPAddress
-pub mut:
-	port int
+	port        int
 }
 
 pub enum IpAddressType {
