@@ -36,12 +36,12 @@ pub fn new() !Initd {
 }
 
 fn (mut initdobj Initd) load() ! {
-	println(" - initd load")
+	println(' - initd load')
 	cmd := 'systemctl list-units --type=service'
 	r := osal.execute_silent(cmd)!
-	res:=os.execute(cmd)
-	if res.exit_code>0{
-		return error("could not execute: $cmd")
+	res := os.execute(cmd)
+	if res.exit_code > 0 {
+		return error('could not execute: ${cmd}')
 	}
 	for mut line in res.output.split_into_lines() {
 		println(line)
@@ -68,13 +68,13 @@ fn (mut initdobj Initd) load() ! {
 
 		items := line.split_nth(' ', 5)
 		mut pobj := IProcess{
-			name: items[0]or {
+			name: items[0] or {
 				print_backtrace()
-				panic("bug '$line', has no part 0")
+				panic("bug '${line}', has no part 0")
 			}
 			description: items[4] or {
 				print_backtrace()
-				panic("bug '$line', has no part 4")
+				panic("bug '${line}', has no part 4")
 			}
 			initd: &initdobj
 		}

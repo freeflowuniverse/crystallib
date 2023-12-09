@@ -145,8 +145,8 @@ pub fn pubkey_guess() !string {
 // will ignore errors, if there is an error will just return empty list
 pub fn pubkeys_get() []string {
 	mut pubkeys := []string{}
-	for sshkey in keys_get(){
-		pubkeys<<sshkey.pubkey
+	for sshkey in keys_get() {
+		pubkeys << sshkey.pubkey
 	}
 	return pubkeys
 }
@@ -159,21 +159,18 @@ pub fn keys_get() []SSHKey {
 			if line.trim(' ') == '' {
 				continue
 			}
-			if line.contains(' ') {				
-				splitted:=line.split(" ")
-				sshkey:=SSHKey{
-					pubkey:splitted[1]
-					//TODO: need to do the other parts to, but be careful the -L doesn't always return same stuff
+			if line.contains(' ') {
+				splitted := line.split(' ')
+				sshkey := SSHKey{
+					pubkey: splitted[1]
+					// TODO: need to do the other parts to, but be careful the -L doesn't always return same stuff
 				}
-				keys<<sshkey
+				keys << sshkey
 			}
 		}
 	}
 	return keys
 }
-
-
-
 
 // is the ssh-agent loaded?
 pub fn loaded() bool {
@@ -220,8 +217,8 @@ pub fn key_load_single(key string) ! {
 }
 
 pub fn key_load(keypath string) ! {
-	if ! os.exists(keypath){
-		return error("cannot find sshkey: $keypath")
+	if !os.exists(keypath) {
+		return error('cannot find sshkey: ${keypath}')
 	}
 	res := os.execute('ssh-add ${keypath}')
 	if res.exit_code > 0 {
@@ -229,17 +226,16 @@ pub fn key_load(keypath string) ! {
 	}
 }
 
-//forget the specified key
+// forget the specified key
 pub fn key_forget(keypath string) ! {
-	if ! os.exists(keypath){
-		return error("cannot find sshkey: $keypath")
+	if !os.exists(keypath) {
+		return error('cannot find sshkey: ${keypath}')
 	}
 	res := os.execute('ssh-add -d ${keypath}')
 	if res.exit_code > 0 {
 		return error('cannot delete ssh-key with path ${keypath}')
 	}
 }
-
 
 pub fn key_load_with_passphrase(keypath string, passphrase string) ! {
 	res := os.execute('ssh-add ${keypath}')

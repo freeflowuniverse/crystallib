@@ -14,7 +14,7 @@ fn padded_length(source []u8, blocksize int) int {
 }
 
 pub fn encrypt_str(data string, secret string) string {
-	mut d:=encrypt(data.bytes(),secret)
+	mut d := encrypt(data.bytes(), secret)
 	return d.bytestr()
 }
 
@@ -46,10 +46,9 @@ pub fn encrypt(data []u8, secret string) []u8 {
 }
 
 pub fn decrypt_str(data string, secret string) string {
-	mut d := decrypt(data.bytes(),secret)
+	mut d := decrypt(data.bytes(), secret)
 	return d.bytestr()
 }
-
 
 pub fn decrypt(data []u8, secret string) []u8 {
 	key := md5.hexhash(secret)

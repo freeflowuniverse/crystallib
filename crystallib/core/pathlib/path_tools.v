@@ -420,6 +420,7 @@ pub mut:
 	tmpdir string
 	text   string // text to put in file
 	path   string // to overrule the path where script will be stored
+	ext    string = "sh"
 }
 
 // write temp file and return path
@@ -437,9 +438,9 @@ pub fn temp_write(args_ TMPWriteArgs) !string {
 		mut t := time.now().format_ss_milli().replace(' ', '-').replace('.', ':')
 		texthash := md5.hexhash(args.text)
 		t += '_${texthash}'
-		mut tmppath := '${args.tmpdir}/execscripts/${t}.sh'
+		mut tmppath := '${args.tmpdir}/execscripts/${t}.${args.ext}'
 		if args.name.len > 0 {
-			tmppath = '${args.tmpdir}/execscripts/${args.name}_${t}.sh'
+			tmppath = '${args.tmpdir}/execscripts/${args.name}_${t}.${args.ext}'
 		}
 
 		if !os.exists('${args.tmpdir}/execscripts/') {
@@ -450,7 +451,7 @@ pub fn temp_write(args_ TMPWriteArgs) !string {
 		if os.exists(tmppath) {
 			for i in 1 .. 200 {
 				// println(i)
-				tmppath = '${args.tmpdir}/execscripts/{${t}}_${i}.sh'
+				tmppath = '${args.tmpdir}/execscripts/{${t}}_${i}.${args.ext}'
 				if !os.exists(tmppath) {
 					break
 				}

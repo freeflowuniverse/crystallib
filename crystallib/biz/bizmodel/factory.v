@@ -107,11 +107,11 @@ pub fn (mut m BizModel) load() ! {
 
 	// m.replace_smart_ids()!
 	mut tree := doctree.new(name: 'bizmodel_${m.params.name}')!
-	tree.scan( path: m.params.path)!
+	tree.scan(path: m.params.path)!
 	mut actions_collections := actionparser.ActionsCollection{}
-	for collection in tree.collections.values(){
-		for page in collection.pages.values(){
-			if d := page.doc{
+	for collection in tree.collections.values() {
+		for page in collection.pages.values() {
+			if d := page.doc {
 				actions_collections.actions << d.actions()
 			}
 		}

@@ -1,6 +1,5 @@
 module sshagent
 
-
 // [params]
 // pub struct KeyExistsArgs{
 // 	pubkey string
@@ -15,4 +14,4 @@ module sshagent
 // 	return pubkey in pubkeys
 // }
 
-//TODO: kristof refactor sshagent
+// TODO: kristof refactor sshagent

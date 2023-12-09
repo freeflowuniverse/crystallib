@@ -7,15 +7,15 @@ import os
 
 pub struct KVS {
 pub mut:
-	path pathlib.Path
-	secret string 
+	path   pathlib.Path
+	secret string
 }
 
 @[params]
 pub struct KVSArgs {
 pub mut:
-	name string = 'default'
-	secret string 
+	name       string = 'default'
+	secret     string
 	encryption bool
 }
 
@@ -25,10 +25,10 @@ pub fn new(args_ KVSArgs) !KVS {
 	mut args := args_
 	args.name = texttools.name_fix(args.name)
 
-	if args.encryption{
+	if args.encryption {
 		if 'MYSECRET' in os.environ() {
 			args.secret = os.environ()['MYSECRET']
-		}else{
+		} else {
 			return error("'MYSECRET' not set in env, or not given to arguments.")
 		}
 	}
@@ -45,23 +45,23 @@ pub fn (mut db KVS) get(name_ string) !string {
 	name := texttools.name_fix(name_)
 	mut datafile := db.path.file_get_new(name)!
 	mut data := datafile.read()!
-	if db.secret.len>0{
-		data = aes_symmetric.decrypt_str(data,db.secret)
+	if db.secret.len > 0 {
+		data = aes_symmetric.decrypt_str(data, db.secret)
 	}
 	return data
 }
 
 pub fn (mut db KVS) set(name_ string, data_ string) ! {
-	mut data:=data_
+	mut data := data_
 	name := texttools.name_fix(name_)
 	mut datafile := db.path.file_get_new(name)!
-	if db.secret.len>0{
-		data = aes_symmetric.encrypt_str(data,db.secret)
+	if db.secret.len > 0 {
+		data = aes_symmetric.encrypt_str(data, db.secret)
 		println(data)
-		if true{
-			panic("Sd")
-		}		
-	}	
+		if true {
+			panic('Sd')
+		}
+	}
 	datafile.write(data)!
 }
 

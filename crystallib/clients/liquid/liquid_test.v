@@ -1,4 +1,5 @@
 module liquid
+
 // liquid doesn't have tft right now so disable the tests for now
 
 fn test_get_tft_usdt_price() {

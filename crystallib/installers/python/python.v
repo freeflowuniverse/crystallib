@@ -4,7 +4,6 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
 
 pub fn install() ! {
-
 	if !osal.done_exists('install_python') && !osal.cmd_exists('python') {
 		base.install()!
 		println(' - package install install python')

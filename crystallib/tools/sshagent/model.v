@@ -1,13 +1,12 @@
 module sshagent
 
-pub struct SSHKey{
+pub struct SSHKey {
 pub mut:
-	path string
+	path   string
 	pubkey string
 	loaded bool
-	email string
+	email  string
 }
-
 
 // [params]
 // pub struct KeyExistsArgs{

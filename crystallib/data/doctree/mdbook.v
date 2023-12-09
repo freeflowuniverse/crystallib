@@ -513,7 +513,6 @@ fn (mut book MDBook) template_write(path string, content string) ! {
 	mut dest_path := book.md_path(path)
 	dest_path.write(content)!
 }
-<<<<<<< HEAD
 
 fn (mut book MDBook) template_install() ! {
 	if book.title == '' {
@@ -539,12 +538,7 @@ fn (mut book MDBook) template_install() ! {
 		book.template_write(md_path, item.to_string())!
 	}
 
-<<<<<<< HEAD
 	js_files_path := '${os.home_dir()}/.vmodules/freeflowuniverse/crystallib/osal/mdbook/template'
-=======
->>>>>>> b78caae95d859304b900d1ab4adddf8d7fed844a
 	c := $tmpl('../../osal/mdbook/template/book.toml')
 	book.template_write('book.toml', c)!
 }
-=======
->>>>>>> 5d80116c624795399db3ac0fbcf217edbf950f17

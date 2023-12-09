@@ -302,8 +302,8 @@ pub fn (mut repo GitRepo) fetch_all() ! {
 	repo.ssh_key_load()!
 	defer {
 		repo.ssh_key_forget() or { panic(err) }
-	}	
-	cmd := 'cd ${repo.path.path} && git fetch --all'	
+	}
+	cmd := 'cd ${repo.path.path} && git fetch --all'
 	osal.execute_silent(cmd) or {
 		// println('GIT FETCH FAILED: $cmd_checkout')
 		return error('Cannot fetch repo: ${repo.path.path}. Error was ${err} \n cmd: ${cmd}')
@@ -328,19 +328,15 @@ pub fn (mut repo GitRepo) delete() ! {
 //////////////////////////KEY MGMT
 //////////////////////////////////
 
-
-
-//set the key (private ssh key)
+// set the key (private ssh key)
 pub fn (repo GitRepo) ssh_key_set(key string) ! {
-	mut p:=pathlib.get_file(path:repo.ssh_key_path(),create:true)!
+	mut p := pathlib.get_file(path: repo.ssh_key_path(), create: true)!
 	p.write(key)!
-
 }
 
 fn (repo GitRepo) ssh_key_path() string {
 	return '${os.home_dir()}/.ssh/${repo.key()}'
 }
-
 
 // check if sshkey for a repo exists in the homedir/.ssh
 // we check on name, if nameof repo is same as name of key we will load
@@ -370,7 +366,6 @@ fn (repo GitRepo) ssh_key_load() !bool {
 		return false
 	}
 }
-
 
 pub fn (repo GitRepo) ssh_key_forget() ! {
 	// sshagent.key_unload(repo.ssh_key_path())!

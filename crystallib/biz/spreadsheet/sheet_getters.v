@@ -26,7 +26,7 @@ pub mut:
 	title_sub     string
 	size          string
 	rowname_show  bool = true // show the name of the row
-	description string
+	description   string
 }
 
 pub enum UnitType {

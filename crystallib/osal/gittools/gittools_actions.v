@@ -7,8 +7,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.data.actionparser
 import os
 
-
-pub const gitcmds="clone,commit,pull,push,delete,reload,list,edit,sourcetree"
+pub const gitcmds = 'clone,commit,pull,push,delete,reload,list,edit,sourcetree'
 
 pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {
 	mut r := [][]string{}
@@ -38,15 +37,15 @@ pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {
 @[params]
 pub struct ReposActionsArgs {
 pub mut:
-	cmd			   string // clone,commit,pull,push,delete,reload,list,edit,sourcetree
-	filter         string // if used will only show the repo's which have the filter string inside
-	repo           string
-	account        string
-	provider       string
-	msg            string
-	url 		   string
-	script         bool = true // run non interactive
-	reset		   bool = true // means we will lose changes (only relevant for clone, pull)
+	cmd      string // clone,commit,pull,push,delete,reload,list,edit,sourcetree
+	filter   string // if used will only show the repo's which have the filter string inside
+	repo     string
+	account  string
+	provider string
+	msg      string
+	url      string
+	script   bool = true // run non interactive
+	reset    bool = true // means we will lose changes (only relevant for clone, pull)
 }
 
 // list of actions to proces .
@@ -62,11 +61,10 @@ pub mut:
 // reset		   bool = true // means we will lose changes (only relevant for clone, pull)
 //```
 pub fn actions(actions []actionparser.Action) ! {
-	for a in actions{
+	for a in actions {
 		action(a)!
 	}
 }
-
 
 // gittools.$actionname .
 // action is clone,commit,pull,push,delete,reload,list,edit,sourcetree .
@@ -85,7 +83,7 @@ pub fn action(action actionparser.Action) ! {
 	mut gs := get(coderoot: coderoot) or {
 		return error("Could not find gittools on '${coderoot}'\n${err}")
 	}
-	mut cmd :=action.name
+	mut cmd := action.name
 
 	mut repo := action.params.get_default('repo', '')!
 	mut account := action.params.get_default('account', '')!
@@ -93,11 +91,9 @@ pub fn action(action actionparser.Action) ! {
 	mut filter := action.params.get_default('filter', '')!
 	if repo == '' && account == '' && provider == '' && filter == '' {
 		curdir := os.getwd()
-		mut curdiro:=pathlib.get_dir(path:curdir,create:false)!
-		mut parentpath:=curdiro.parent_find(".git") or {
-			pathlib.Path{}
-		}
-		if parentpath.path!="" {
+		mut curdiro := pathlib.get_dir(path: curdir, create: false)!
+		mut parentpath := curdiro.parent_find('.git') or { pathlib.Path{} }
+		if parentpath.path != '' {
 			r0 := gs.repo_from_path(parentpath.path)!
 			repo = r0.addr.name
 			account = r0.addr.account
@@ -105,7 +101,7 @@ pub fn action(action actionparser.Action) ! {
 		}
 	}
 	gs.do(
-		cmd:cmd
+		cmd: cmd
 		filter: action.params.get_default('filter', '')!
 		repo: repo
 		account: account
@@ -117,7 +113,6 @@ pub fn action(action actionparser.Action) ! {
 	)!
 	println(gs)
 }
-
 
 // do group actions on repo
 // PARAMS
@@ -134,19 +129,18 @@ pub fn action(action actionparser.Action) ! {
 pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 	mut args := args_
 	// println(args)
-	
 
-	args.cmd=args.cmd.trim_space().to_lower()
+	args.cmd = args.cmd.trim_space().to_lower()
 
 	mut ui := gui.new()!
 
-	if args.cmd == "reload" {
-		println(" - reload gitstructure ${gs.name()}")
+	if args.cmd == 'reload' {
+		println(' - reload gitstructure ${gs.name()}')
 		gs.reload()!
 		return
 	}
 
-	if args.cmd == "list"  {
+	if args.cmd == 'list' {
 		gs.repos_print(
 			filter: args.filter
 			name: args.repo
@@ -156,25 +150,25 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 		return
 	}
 
-	mut repos:=gs.repos_get(
+	mut repos := gs.repos_get(
 		filter: args.filter
 		name: args.repo
 		account: args.account
-		provider: args.provider)
+		provider: args.provider
+	)
 
-	if args.cmd == "clone" {
+	if args.cmd == 'clone' {
 		mut locator := gs.locator_new(args.url)!
 		// println(locator)
 		mut g := gs.repo_get(locator: locator)!
 		g.load()!
 		if args.reset {
 			g.remove_changes()!
-		}		
+		}
 		return
 	}
 
-	if args.cmd in "pull,push,commit,delete".split(",") {
-
+	if args.cmd in 'pull,push,commit,delete'.split(',') {
 		gs.repos_print(
 			filter: args.filter
 			name: args.repo
@@ -186,22 +180,22 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 		mut need_pull := false
 		mut need_push := false
 
-		if repos.len==0{
-			println( " - nothing to do.")
+		if repos.len == 0 {
+			println(' - nothing to do.')
 			return
 		}
 
-		//check on repos who needs what
+		// check on repos who needs what
 		for mut g in repos {
 			g.load()!
 			st := g.status()!
 			// println(st)
-			need_commit =  st.need_commit || need_commit
-			need_pull =  args.cmd in "pull,push".split(",") //always do pull when push and pull
-			need_push =  args.cmd =="push" && (st.need_push || need_push)
+			need_commit = st.need_commit || need_commit
+			need_pull = args.cmd in 'pull,push'.split(',') // always do pull when push and pull
+			need_push = args.cmd == 'push' && (st.need_push || need_push)
 		}
 
-		mut ok:=false
+		mut ok := false
 		if need_commit || need_pull || need_push {
 			mut out := '\n ** NEED TO '
 			if need_commit {
@@ -213,22 +207,20 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 			if need_push {
 				out += 'PUSH '
 			}
-			if args.reset{
-				out += " (changes will be lost!)"
+			if args.reset {
+				out += ' (changes will be lost!)'
 			}
 			println(out + ' ** \n')
-			if args.script{
+			if args.script {
 				ok = true
-			}else{
+			} else {
 				ok = ui.ask_yesno(question: 'Is above ok?')
 			}
-			
 		}
-		if args.cmd=="delete" {
-			if args.script{
+		if args.cmd == 'delete' {
+			if args.script {
 				ok = true
-			}else{
-
+			} else {
 				ok = ui.ask_yesno(question: 'Is it ok to delete above repos? (DANGEROUS)')
 			}
 		}
@@ -240,13 +232,12 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 		mut changed := false
 
 		for mut g in repos {
-
 			st := g.status()!
-			need_commit_repo :=  (st.need_commit || need_commit) && args.cmd in "commit,pull,push".split(",")
-			need_pull_repo :=  args.cmd in "pull,push".split(",") //always do pull when push and pull
-			need_push_repo :=  args.cmd in "push".split(",") && (st.need_push || need_push)
+			need_commit_repo := (st.need_commit || need_commit)
+				&& args.cmd in 'commit,pull,push'.split(',')
+			need_pull_repo := args.cmd in 'pull,push'.split(',') // always do pull when push and pull
+			need_push_repo := args.cmd in 'push'.split(',') && (st.need_push || need_push)
 			// println(" --- git_do ${g.addr.name} ${st.need_commit} ${st.need_pull}  ${st.need_push}")		
-
 
 			if need_commit_repo {
 				mut msg := args.msg
@@ -276,12 +267,12 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 				g.push()!
 				changed = true
 			}
-			if args.cmd=="delete"{
+			if args.cmd == 'delete' {
 				g.delete()!
 				changed = true
 			}
 		}
-		
+
 		if changed {
 			// console.clear()
 			println('\nCompleted required actions.\n')
@@ -293,24 +284,24 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 				provider: args.provider
 			)!
 		}
-		
+
 		return
+	}
+	// end for the commit, pull, push, delete
 
-	} //end for the commit, pull, push, delete
-
-	if args.cmd in "sourcetree,edit".split(",") {
-		if repos.len==0{
-			return error("please specify at least 1 repo for cmd:${args.cmd}")
+	if args.cmd in 'sourcetree,edit'.split(',') {
+		if repos.len == 0 {
+			return error('please specify at least 1 repo for cmd:${args.cmd}')
 		}
-		if repos.len>5{
-			return error("more than 5 repo found for cmd:${args.cmd}")
+		if repos.len > 5 {
+			return error('more than 5 repo found for cmd:${args.cmd}')
 		}
 		for r in repos {
-			if args.cmd=="edit" {
+			if args.cmd == 'edit' {
 				cmd3 := "open -a \"Visual Studio Code\" ${r.path.path}"
 				osal.execute_interactive(cmd3) or { panic(err) }
 			}
-			if args.cmd=="sourcetree" {
+			if args.cmd == 'sourcetree' {
 				cmd4 := 'open -a SourceTree ${r.path.path}'
 				println(cmd4)
 				osal.execute_interactive(cmd4) or { panic(err) }
@@ -318,6 +309,8 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 		}
 		return
 	}
-	$if debug{print_backtrace()}
-	return error("did not find cmd: $args.cmd")
+	$if debug {
+		print_backtrace()
+	}
+	return error('did not find cmd: ${args.cmd}')
 }

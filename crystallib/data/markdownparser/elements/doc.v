@@ -90,10 +90,10 @@ pub fn doc_new(args DocNewArgs) !Doc {
 pub fn (self Doc) actions() []actionparser.Action {
 	mut out := []actionparser.Action{}
 	for element in self.children {
-		if element is Action{
+		if element is Action {
 			out << element.action
 		}
-		
+
 		out << element.actions()
 	}
 	return out
