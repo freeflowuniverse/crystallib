@@ -9,9 +9,9 @@ import freeflowuniverse.crystallib.ui.uimodel { DropDownArgs }
 // 	items       []string
 // 	warning     string
 // 	clear       bool = true
-pub fn (mut c UserInterface) ask_dropdown(args DropDownArgs) int {
+pub fn (mut c UserInterface) ask_dropdown(args DropDownArgs) !int {
 	return match mut c.channel {
-		UIConsole { c.channel.ask_dropdown(args) }
+		UIConsole { c.channel.ask_dropdown(args)! }
 		// UITelegram { return c.ask_dropdown(args) }
 		else { panic("can't find channel") }
 	}
@@ -22,9 +22,9 @@ pub fn (mut c UserInterface) ask_dropdown(args DropDownArgs) int {
 // 	items       []string
 // 	warning     string
 // 	clear       bool = true
-pub fn (mut c UserInterface) ask_dropdown_multiple(args DropDownArgs) []string {
+pub fn (mut c UserInterface) ask_dropdown_multiple(args DropDownArgs) ![]string {
 	return match mut c.channel {
-		UIConsole { c.channel.ask_dropdown_multiple(args) }
+		UIConsole { c.channel.ask_dropdown_multiple(args)! }
 		else { panic("can't find channel") }
 	}
 }
@@ -34,9 +34,9 @@ pub fn (mut c UserInterface) ask_dropdown_multiple(args DropDownArgs) []string {
 // 	items       []string
 // 	warning     string
 // 	clear       bool = true
-pub fn (mut c UserInterface) ask_dropdown_string(args DropDownArgs) string {
+pub fn (mut c UserInterface) ask_dropdown_string(args DropDownArgs) !string {
 	return match mut c.channel {
-		UIConsole { c.channel.ask_dropdown_string(args) }
+		UIConsole { c.channel.ask_dropdown_string(args)! }
 		else { panic("can't find channel") }
 	}
 }

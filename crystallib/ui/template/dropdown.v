@@ -12,7 +12,7 @@ pub fn (mut c UIExample) ask_dropdown(args DropDownArgs) int {
 	return 0
 }
 
-// result can be multiple, aloso can select all
+// result can be multiple, also can select all
 // 	description string
 // 	items       []string
 // 	warning     string

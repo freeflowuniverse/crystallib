@@ -16,6 +16,7 @@ fn do() ! {
 	// herocmds.cmd_3script_do(mut cmd)
 	herocmds.cmd_git(mut cmd)
 	herocmds.cmd_imagedownsize(mut cmd)
+	herocmds.cmd_gen(mut cmd)
 
 	cmd.setup()
 	cmd.parse(os.args)

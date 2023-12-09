@@ -11,9 +11,9 @@ import freeflowuniverse.crystallib.ui.uimodel
 // - warning string
 // - clear bool = true
 //
-pub fn (mut c UserInterface) ask_yesno(args uimodel.YesNoArgs) bool {
+pub fn (mut c UserInterface) ask_yesno(args uimodel.YesNoArgs) !bool {
 	return match mut c.channel {
-		UIConsole { c.channel.ask_yesno(args) }
+		UIConsole { c.channel.ask_yesno(args)! }
 		// UITelegram{ return c.ask_yesno(args) }
 		else { panic("can't find channel") }
 	}

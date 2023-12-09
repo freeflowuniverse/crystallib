@@ -12,17 +12,16 @@ import freeflowuniverse.crystallib.ui.uimodel { QuestionArgs }
 // - regex: to check what result need to be part of
 // - minlen: min nr of chars
 //
-pub fn (mut c UIConsole) ask_question(args QuestionArgs) string {
+pub fn (mut c UIConsole) ask_question(args QuestionArgs) !string {
 	mut question := args.question
 	if args.clear {
 		clear() // clears the screen
 	}
 	if args.description.len > 0 {
-		println(style(args.description, 'bold'))
+		cprintln(text:args.description)
 	}
 	if args.warning.len > 0 {
-		println(color_fg(args.warning, 'red'))
-		println('\n')
+		cprintln(foreground:.red,text:args.warning+"\n")
 	}
 	if question == '' {
 		question = 'Please provide answer: '
