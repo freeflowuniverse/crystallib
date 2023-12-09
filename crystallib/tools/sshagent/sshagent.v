@@ -20,14 +20,14 @@ fn listsplit(key string) string {
 // or if not, if there is 1 ssh key in ~/.ssh/ if yes will load
 // if we were able to define the key to use, it will be returned here
 // will return the key which will be used
-pub fn load_interactive() !string {
+pub fn load_interactive() ! {
 	mut pubkeys := pubkeys_get()
 	mut c := console.UIConsole{}
 	pubkeys.map(listsplit)
 	if pubkeys.len == 1 {
 		c.ask_yesno(
 			description: 'We found sshkey ${pubkeys[0]} in sshagent, want to use this one?'
-		)
+		)!
 		{
 			key_load(pubkeys[0])!
 			return pubkeys[0]
@@ -36,7 +36,7 @@ pub fn load_interactive() !string {
 	if pubkeys.len > 1 {
 		if c.ask_yesno(
 			description: 'We found more than 1 sshkey in sshagent, want to use one of those!'
-		)
+		)!
 		{
 			// keytouse := console.ask_dropdown(
 			// 	items: pubkeys
@@ -50,7 +50,7 @@ pub fn load_interactive() !string {
 	// now means nothing in ssh-agent, lets see if we find 1 key in .ssh directory
 	mut sshdirpath := pathlib.get_dir(path: '${os.home_dir()}/.ssh', create: true)!
 
-	pubkeys = []string{}
+	mut pubkeys := []string{}
 	pl := sshdirpath.list(recursive: false)!
 	for p in pl.paths {
 		if p.path.ends_with('.pub') {
@@ -62,7 +62,7 @@ pub fn load_interactive() !string {
 	if pubkeys.len == 1 {
 		if c.ask_yesno(
 			description: 'We found sshkey ${pubkeys[0]} in ~/.ssh dir, want to use this one?'
-		)
+		)!
 		{
 			key_load(pubkeys[0])!
 			return pubkeys[0]
@@ -71,7 +71,7 @@ pub fn load_interactive() !string {
 	if pubkeys.len > 1 {
 		if c.ask_yesno(
 			description: 'We found more than 1 sshkey in ~/.ssh dir, want to use one of those?'
-		)
+		)!
 		{
 			// keytouse := console.ask_dropdown(
 			// 	items: pubkeys
@@ -95,7 +95,7 @@ pub fn load_interactive() !string {
 		// 	return error("Cannot continue, did not find sshkey to use")
 		// }
 		// key_load_with_passphrase(keytouse, passphrase)!
-	}
+	}!
 	return error('Cannot continue, did not find sshkey to use')
 
 	// url_github_add := "https://library.threefold.me/info/publishtools/#/sshkey_github"
