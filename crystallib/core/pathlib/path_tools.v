@@ -420,7 +420,7 @@ pub mut:
 	tmpdir string
 	text   string // text to put in file
 	path   string // to overrule the path where script will be stored
-	ext    string = "sh"
+	ext    string = 'sh'
 }
 
 // write temp file and return path

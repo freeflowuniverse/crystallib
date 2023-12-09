@@ -57,8 +57,8 @@ mut:
 
 pub fn new_database_backend(config DatabaseBackendConfig) !DatabaseBackend {
 	db := sqlite.connect(config.db_path) or { panic(err) }
+	// create table UserSessions
 	sql db {
-		// create table UserSessions
 		create table Session
 	} or { panic(err) }
 
@@ -69,8 +69,8 @@ pub fn new_database_backend(config DatabaseBackendConfig) !DatabaseBackend {
 }
 
 pub fn sqlite_database_backend(db sqlite.DB) !DatabaseBackend {
+	// create table UserSessions
 	sql db {
-		// create table UserSessions
 		create table Session
 	} or { panic(err) }
 

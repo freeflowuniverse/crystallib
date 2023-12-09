@@ -188,11 +188,11 @@ pub fn (mut job Job) execute() ! {
 	// start:=job.start.unix_time()
 
 	process_args := job.cmd_to_process_args()!
-	
+
 	// println(" - process execute ${process_args[0]}")
 
 	mut p := os.new_process(process_args[0])
-	
+
 	if job.cmd.work_folder.len > 0 {
 		p.set_work_folder(job.cmd.work_folder)
 	}
@@ -219,21 +219,19 @@ pub mut:
 
 fn (mut job Job) read() !ReceiveResult {
 	mut result := ReceiveResult{}
-	
-	mut p:=job.process or {
-		return error("there is not process on job")
-	}
 
-	out_std:=p.pipe_read(.stdout) or {""}
-	if out_std.len>0{
+	mut p := job.process or { return error('there is not process on job') }
+
+	out_std := p.pipe_read(.stdout) or { '' }
+	if out_std.len > 0 {
 		if job.cmd.stdout {
 			print(out_std)
 		}
 		job.output << out_std.split_into_lines()
 		result.error = out_std
 	}
-	out_error:=p.pipe_read(.stderr) or {""}
-	if out_error.len>0{
+	out_error := p.pipe_read(.stderr) or { '' }
+	if out_error.len > 0 {
 		if job.cmd.stdout {
 			print(out_error)
 		}
@@ -246,14 +244,13 @@ fn (mut job Job) read() !ReceiveResult {
 // process (read std.err and std.out of process)
 pub fn (mut job Job) process() !ReceiveResult {
 	// $if debug{println(" - job process: $job")}
-	if job.status == .init{
+	if job.status == .init {
 		job.execute()!
-	}	
-	mut p:=job.process or {
-		return error("there is not process on job")
-	}	
-	mut result:=job.read()!
-	if p.is_alive() {		
+	}
+	mut p := job.process or { return error('there is not process on job') }
+
+	mut result := job.read()!
+	if p.is_alive() {
 		// result=job.read()!
 		if time.now().unix_time() > job.start.unix_time() + job.cmd.timeout * 1000 {
 			p.signal_pgkill()
@@ -291,12 +288,12 @@ pub fn (mut job Job) process() !ReceiveResult {
 
 // wait till the job finishes or goes in error
 pub fn (mut job Job) wait() ! {
-	if job.status != .running && job.status != .init{
-		return error("can only wait for running job")
+	if job.status != .running && job.status != .init {
+		return error('can only wait for running job')
 	}
-	mut counter:=0
+	mut counter := 0
 	for {
-		counter+=1
+		counter += 1
 		// println("loop $counter")
 		result := job.process()!
 		// println(result)
@@ -311,9 +308,8 @@ pub fn (mut job Job) wait() ! {
 
 // will wait & close
 pub fn (mut job Job) close() ! {
-	mut p:=job.process or {
-		return error("there is not process on job")
-	}		
+	mut p := job.process or { return error('there is not process on job') }
+
 	p.signal_pgkill()
 	p.wait()
 	p.close()
@@ -394,15 +390,15 @@ fn (mut job Job) cmd_to_process_args() ![]string {
 	// use bash debug and die on error features
 	mut firstlines := '#!/bin/bash\n'
 	if !job.cmd.ignore_error {
-		firstlines += 'set -e\n' //exec 2>&1\n
+		firstlines += 'set -e\n' // exec 2>&1\n
 	} else {
-		firstlines += 'set +e\n' //exec 2>&1\n
+		firstlines += 'set +e\n' // exec 2>&1\n
 	}
 	if job.cmd.debug {
-		firstlines += 'set -x\n' //exec 2>&1\n
+		firstlines += 'set -x\n' // exec 2>&1\n
 	}
 
-	if !job.cmd.interactive && job.cmd.runtime==.bash{
+	if !job.cmd.interactive && job.cmd.runtime == .bash {
 		// firstlines += 'export DEBIAN_FRONTEND=noninteractive TERM=xterm\n\n'
 		firstlines += 'export DEBIAN_FRONTEND=noninteractive\n\n'
 	}
