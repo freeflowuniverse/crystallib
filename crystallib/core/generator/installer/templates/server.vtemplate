@@ -11,24 +11,6 @@ import rand
 import os
 import time
 
-@[params]
-pub struct Config {
-pub mut:
-	name                       string = 'default'
-	reset                      bool
-	path                       string = '/data/${args.name}'
-	passwd                     string @[required]
-	postgresql_name            string = 'default'
-	domain                     string @[required]
-	title string
-	reset bool
-	timezone string = "Africa/Kinshasa"
-	mail_from       string @[required]
-	smtp_addr       string @[required]
-	smtp_login      string @[required]
-	smpt_port       int = 587
-	smtp_passwd     string @[required]	
-}
 
 pub struct Server {
 pub mut:
@@ -38,56 +20,53 @@ pub mut:
 	path_config pathlib.Path
 }
 
-// get the @@{args.name} server
+// get the server of type ${args.name}
 //```js
 // name        string = 'default'
 // path        string = '/data/${args.name}'
 // passwd      string
 //```
 // if name exists already in the config DB, it will load for that name
-pub fn new(args_ Config) !Server {	
-	mut args := args_
-	if args.passwd == '' {
-		args.passwd = rand.string(12)
+pub fn server_new(myconfig_ Config) !Server {	
+	mut myconfig := myconfig_
+	if myconfig.passwd == '' {
+		myconfig.passwd = rand.string(12)
 	}
-	args.name = texttools.name_fix(args.name)
-	key := '${args.name}_config_${args.name}'
+	myconfig.name = texttools.name_fix(myconfig.name)
+	key := '${args.name}_config_??{myconfig.name}'
 	mut kvs := fskvs.new(name: 'config')!
-	if args.reset || !kvs.exists(key) {
-		data := json.encode(args)
+	if myconfig.reset || !kvs.exists(key) {
+		data := json.encode(myconfig)
 		kvs.set(key, data)!
 	}
-	return get(args.name)!
+	return server_get(myconfig.name)!
 }
 
-pub fn get(name_ string) !Server {
-	println(' - get ${args.name} server ${name_}')
+pub fn server_get(name_ string) !Server {
 	name := texttools.name_fix(name_)
-	key := '${args.name}_config_${name}'
+	println(' - get ${args.name} server ??{name}')
+	key := '${args.name}_config_??{name}'
 	mut kvs := fskvs.new(name: 'config')!
 	if kvs.exists(key) {
 		data := kvs.get(key)!
-		args := json.decode(Config, data)!
+		myconfig := json.decode(Config, data)!
 
-		install(args)!
+		mut server := Server{
+			name: name
+			config: myconfig
+			path_config: pathlib.get_dir(path: '??{myconfig.dest}/cfg', create: true)!
+		}
 
-
-		// mut server := Server{
-		// 	name: name
-		// 	config: args
-		// 	path_config: pathlib.get_dir(path: '${args.path}/cfg', create: true)!
-		// }
-
-		// mut z := zinit.new()!
-		// processname := '${args.name}_${name}'
-		// if z.process_exists(processname) {
-		// 	server.process = z.process_get(processname)!
-		// }
-		// // println(" - server get ok")
-		// server.start()!
-		// return server
+		mut z := zinit.new()!
+		processname := '${args.name}_??{name}'
+		if z.process_exists(processname) {
+			server.process = z.process_get(processname)!
+		}
+		// println(" - server get ok")
+		server.start()!
+		return server
 	}
-	return error("can't find server ${args.name} with name @@{name}")
+	return error("can't find server ${args.name} with name ??{name}")
 }
 
 // return status
@@ -112,18 +91,18 @@ pub fn (mut server Server) status() zinit.ZProcessStatus {
 
 // run ${args.name} as docker compose
 pub fn (mut server Server) start() ! {
-	println(' - start ${args.name}: @@{server.name}')
+	println(' - start ${args.name}: ??{server.name}')
 	mut db := postgresql.get(server.config.postgresql_name)!
 
 	// now create the DB
 	db.db_create('${args.name}')!
 
 	// mut z := zinit.new()!
-	// processname := '${args.name}_${server.name}'
+	// processname := '${args.name}_??{server.name}'
 	// mut p := z.process_new(
 	// 	name: processname
 	// 	cmd: '
-	// 	cd ${server.path_config.path}
+	// 	cd ??{server.path_config.path}
 	// 	${args.name}
 	// 	'
 	// )!
@@ -167,13 +146,5 @@ pub fn (mut server Server) ok() bool {
 pub fn (mut server Server) destroy() ! {
 	server.stop()!
 	server.path_config.delete()!
-}
-
-@[params]
-pub struct UserAddArgs {
-pub mut:
-	name   string @[required]
-	passwd string @[required]
-	admin  bool
 }
 

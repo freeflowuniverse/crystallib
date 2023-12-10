@@ -14,20 +14,20 @@ import time
 @[params]
 pub struct Config {
 pub mut:
-	name                       string = 'default'
-	reset                      bool
-	path                       string = '/data/mediacms'
-	passwd                     string @[required]
-	postgresql_name            string = 'default'
-	domain                     string @[required]
-	title string
-	reset bool
-	timezone string = "Africa/Kinshasa"
+	name            string = 'default'
+	reset           bool
+	path            string = '/data/mediacms'
+	passwd          string @[required]
+	postgresql_name string = 'default'
+	domain          string @[required]
+	title           string
+	reset           bool
+	timezone        string = 'Africa/Kinshasa'
 	mail_from       string @[required]
 	smtp_addr       string @[required]
 	smtp_login      string @[required]
 	smpt_port       int = 587
-	smtp_passwd     string @[required]	
+	smtp_passwd     string @[required]
 }
 
 pub struct Server {
@@ -45,7 +45,7 @@ pub mut:
 // passwd      string
 //```
 // if name exists already in the config DB, it will load for that name
-pub fn new(args_ Config) !Server {	
+pub fn new(args_ Config) !Server {
 	mut args := args_
 	if args.passwd == '' {
 		args.passwd = rand.string(12)
@@ -70,7 +70,6 @@ pub fn get(name_ string) !Server {
 		args := json.decode(Config, data)!
 
 		install(args)!
-
 
 		// mut server := Server{
 		// 	name: name
@@ -105,10 +104,6 @@ pub fn (mut server Server) status() zinit.ZProcessStatus {
 	mut process := server.process or { return .unknown }
 	return process.status() or { return .unknown }
 }
-
-
-
-
 
 // run mediacms as docker compose
 pub fn (mut server Server) start() ! {

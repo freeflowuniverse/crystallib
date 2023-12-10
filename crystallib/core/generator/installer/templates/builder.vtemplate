@@ -4,12 +4,18 @@ import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.installers
-@if args.build_deps == .rust
+@if "rust" in args.build_deps
 import freeflowuniverse.crystallib.installers.rust
+@end
+@if "golang" in args.build_deps
+import freeflowuniverse.crystallib.installers.golang
+@end
+@if "python" in args.build_deps
+import freeflowuniverse.crystallib.installers.python
 @end
 
 
-@[params]
+^^[params]
 pub struct BuildArgs {
 pub mut:
 	reset bool
@@ -20,10 +26,16 @@ pub fn build(args BuildArgs) ! {
 
 	checkplatform()!
 	
-	base.install()
+	base.install()!
 
-	@if args.build_deps == .rust
+	@if "rust" in args.build_deps
 	rust.install()!
+	@end
+	@if "golang" in args.build_deps
+	golang.install()!
+	@end
+	@if "python" in args.build_deps
+	python.install()!
 	@end
 	
 	// install ${args.name} if it was already done will return true
@@ -38,8 +50,8 @@ pub fn build(args BuildArgs) ! {
 	// )!
 
 	// cmd := '
-	// source @@{osal.profile_path()} //source the go path
-	// cd @@{gitpath}
+	// source ??{osal.profile_path()} //source the go path
+	// cd ??{gitpath}
 
 
 	// '

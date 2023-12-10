@@ -15,11 +15,12 @@ pub mut:
 pub fn new(args UserInterfaceArgs) !UserInterface {
 	mut ch := match args.channel {
 		.console { console.new() }
-		// .telegram { telegram.new() }
 		else { panic("can't find channel") }
 	}
 
-	return UserInterface{
+	// .telegram { telegram.new() }
+
+	return UserInterface {
 		channel: ch
 	}
 	// return error("Channel type not understood, only console supported now.") // input is necessarily valid

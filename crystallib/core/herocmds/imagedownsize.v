@@ -63,5 +63,6 @@ fn cmd_imagedownsize_execute(cmd Command) ! {
 		print_backtrace()
 		print(err)
 		panic(err)
+		
 	}
 }

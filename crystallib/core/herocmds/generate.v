@@ -1,7 +1,7 @@
 module herocmds
 
 import freeflowuniverse.crystallib.core.generator.installer
-
+import freeflowuniverse.crystallib.ui.console
 import cli { Command, Flag }
 import os
 
@@ -21,17 +21,31 @@ pub fn cmd_gen(mut cmdroot Command) {
 		execute: cmd_gen_execute
 		description: 'will generate code for installers, execute in the directory where to generate.'
 	}
+	
 
 	mut allcmdsref_gen := [&gen_command]
 
 	for mut c in allcmdsref_gen {
 		c.add_flag(Flag{
 			flag: .bool
-			required: true
 			name: 'reset'
 			abbrev: 'r'
 			description: 'do you want to reset all? Dangerous!'
 		})
+		c.add_flag(Flag{
+			flag: .bool
+			name: 'script'
+			abbrev: 's'
+			description: 'run non interactive!'
+		})
+		c.add_flag(Flag{
+			flag: .string
+			name: 'path'
+			abbrev: 'p'
+			description: 'path where to generate code!'
+		})
+
+		cmd_run.add_command(*c)
 	}
 	cmdroot.add_command(cmd_run)
 }
@@ -39,12 +53,17 @@ pub fn cmd_gen(mut cmdroot Command) {
 fn cmd_gen_execute(cmd Command) ! {
 
 	mut reset := cmd.flags.get_bool('reset') or {false }
+	mut isscript := cmd.flags.get_bool('script') or {false }
+	mut path := cmd.flags.get_string('path') or {""}
+
+	if !isscript{
+		console.clear()
+	}		
 
 	if cmd.name=="installer" {
-		installer.generate(reset:reset)!
+		installer.generate(reset:reset,interactive:!isscript,path:path)!
 		return
 	} else {
-		// println(" Supported commands are: ${gentools.gencmds}")
-		return error('Specify sub command: installer')
+		return error(cmd.help_message())
 	}
 }

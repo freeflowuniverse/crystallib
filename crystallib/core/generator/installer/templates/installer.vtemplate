@@ -5,8 +5,18 @@ module ${args.name}
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal.gittools
+@if "rust" in args.install_deps
+import freeflowuniverse.crystallib.installers.rust
+@end
+@if "golang" in args.install_deps
+import freeflowuniverse.crystallib.installers.golang
+@end
+@if "python" in args.install_deps
+import freeflowuniverse.crystallib.installers.python
+@end
 
-@[params]
+
+^^[params]
 pub struct InstallArgs {
 pub mut:
 	reset bool
@@ -20,6 +30,17 @@ pub fn install(args InstallArgs) ! {
 		println(' - ${args.name} already installed')
 		return
 	}
+
+	@if "rust" in args.install_deps
+	rust.install()!
+	@end
+	@if "golang" in args.install_deps
+	golang.install()!
+	@end
+	@if "python" in args.install_deps
+	python.install()!
+	@end
+		
 
 	build()!
 

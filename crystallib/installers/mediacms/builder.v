@@ -5,7 +5,6 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.installers
 
-
 @[params]
 pub struct BuildArgs {
 pub mut:

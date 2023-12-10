@@ -8,8 +8,8 @@ import freeflowuniverse.crystallib.ui.uimodel { DropDownArgs }
 // 	items       []string
 // 	warning     string
 // 	clear       bool = true
-pub fn (mut c UIExample) ask_dropdown(args DropDownArgs) int {
-	return 0
+pub fn (mut c UIExample) ask_dropdown(args DropDownArgs) !string {
+	return ""
 }
 
 // result can be multiple, also can select all
@@ -17,7 +17,7 @@ pub fn (mut c UIExample) ask_dropdown(args DropDownArgs) int {
 // 	items       []string
 // 	warning     string
 // 	clear       bool = true
-pub fn (mut c UIExample) ask_dropdown_multiple(args DropDownArgs) []string {
+pub fn (mut c UIExample) ask_dropdown_multiple(args DropDownArgs) ![]string {
 	return []string{}
 }
 
@@ -26,6 +26,6 @@ pub fn (mut c UIExample) ask_dropdown_multiple(args DropDownArgs) []string {
 // 	items       []string
 // 	warning     string
 // 	clear       bool = true
-pub fn (mut c UIExample) ask_dropdown_string(args DropDownArgs) string {
-	return ''
+pub fn (mut c UIExample) ask_dropdown_int(args DropDownArgs) !int {
+	return 1
 }

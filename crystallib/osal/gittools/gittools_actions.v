@@ -214,14 +214,14 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 			if args.script {
 				ok = true
 			} else {
-				ok = ui.ask_yesno(question: 'Is above ok?')
+				ok = ui.ask_yesno(question: 'Is above ok?')!
 			}
 		}
 		if args.cmd == 'delete' {
 			if args.script {
 				ok = true
 			} else {
-				ok = ui.ask_yesno(question: 'Is it ok to delete above repos? (DANGEROUS)')
+				ok = ui.ask_yesno(question: 'Is it ok to delete above repos? (DANGEROUS)')!
 			}
 		}
 
@@ -247,7 +247,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 					}
 					msg = ui.ask_question(
 						question: 'commit message for repo: ${g.addr.account}/${g.addr.name} '
-					)
+					)!
 				}
 				println(' - commit ${g.addr.account}/${g.addr.name}')
 				g.commit(msg: msg, reload: true)!

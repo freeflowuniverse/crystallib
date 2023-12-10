@@ -201,6 +201,6 @@ fn cmd_git_execute(cmd Command) ! {
 		return
 	} else {
 		// println(" Supported commands are: ${gittools.gitcmds}")
-		return error('Specify sub command: ${gittools.gitcmds}')
+		return error(cmd.help_message())
 	}
 }

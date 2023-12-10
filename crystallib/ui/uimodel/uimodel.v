@@ -4,12 +4,13 @@ module uimodel
 pub struct DropDownArgs {
 pub mut:
 	description string
-	question    string // WARNING, this was changed to be question
+	question    string
 	items       []string
 	default     []string
 	warning     string
 	clear       bool
 	all         bool
+	choice_message string
 	validation  fn (string) bool = fn (s string) bool {
 		return true
 	}
@@ -41,7 +42,7 @@ pub mut:
 	warning     string
 	clear       bool
 	reset       bool
-	default 	bool
+	default     bool
 	validation  fn (string) bool = fn (s string) bool {
 		return true
 	}
