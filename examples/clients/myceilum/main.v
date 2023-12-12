@@ -1,7 +1,7 @@
 module main
 
 import encoding.base64
-import freeflowuniverse.crystallib.clients.myceilum { get_msg_status, receive_msg, reply_msg, send_msg }
+import freeflowuniverse.crystallib.clients.mycelium { get_msg_status, receive_msg, reply_msg, send_msg }
 
 fn main() {
 	payload := 'hello'
