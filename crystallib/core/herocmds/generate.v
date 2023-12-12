@@ -21,7 +21,6 @@ pub fn cmd_gen(mut cmdroot Command) {
 		execute: cmd_gen_execute
 		description: 'will generate code for installers, execute in the directory where to generate.'
 	}
-	
 
 	mut allcmdsref_gen := [&gen_command]
 
@@ -51,17 +50,16 @@ pub fn cmd_gen(mut cmdroot Command) {
 }
 
 fn cmd_gen_execute(cmd Command) ! {
+	mut reset := cmd.flags.get_bool('reset') or { false }
+	mut isscript := cmd.flags.get_bool('script') or { false }
+	mut path := cmd.flags.get_string('path') or { '' }
 
-	mut reset := cmd.flags.get_bool('reset') or {false }
-	mut isscript := cmd.flags.get_bool('script') or {false }
-	mut path := cmd.flags.get_string('path') or {""}
-
-	if !isscript{
+	if !isscript {
 		console.clear()
-	}		
+	}
 
-	if cmd.name=="installer" {
-		installer.generate(reset:reset,interactive:!isscript,path:path)!
+	if cmd.name == 'installer' {
+		installer.generate(reset: reset, interactive: !isscript, path: path)!
 		return
 	} else {
 		return error(cmd.help_message())

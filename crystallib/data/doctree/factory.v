@@ -7,19 +7,30 @@ import log
 import freeflowuniverse.crystallib.baobab.smartid
 
 __global (
-	knowledgetrees shared map[string]Tree
+	knowledgetrees shared map[string]&Tree
 )
 
 @[params]
-pub struct ArgsNew {
+pub struct TreeArgsGet {
 pub mut:
 	name string = 'default'
-	cid  smartid.CID
+	cid  string = '000'
 }
 
-// get a new tree initialized
-// will create a new tree instance, be careful
-pub fn new(args_ ArgsNew) !Tree {
+pub fn tree_key(args_ TreeArgsGet) string {
+	mut args := args_
+	args.name = texttools.name_fix(args.name)
+	return '${args.cid}__${args.name}'
+}
+
+// get a new tree initialized, doesn't get remembered in global .
+// will create a new tree instance .
+//```
+// name string = 'default'
+// cid  string
+//```	
+// all arguments are optional
+pub fn tree_create(args_ TreeArgsGet) !&Tree {
 	mut args := args_
 	args.name = texttools.name_fix(args.name)
 	level := match osal.env_get_default('KNOWLEDGETREE_LOG_LEVEL', 'INFO') {
@@ -37,59 +48,24 @@ pub fn new(args_ ArgsNew) !Tree {
 		}
 		cid: args.cid
 	}
-	// t.init()! // initialize mdbooks embed logic
-	return t
+	return &t
 }
 
-// get a new global tree initialized
-pub fn new_global(args_ ArgsNew) ! {
+// get the tree out of memory .
+// will create a new tree instance if it didn't exist yet.
+//```
+// name string = 'default'
+// cid  string
+//```	
+// all arguments are optional
+pub fn tree_get(args TreeArgsGet) !&Tree {
+	key := tree_key(args)
 	lock knowledgetrees {
-		tree := new(args_)!
-		knowledgetrees[tree.name] = tree
-	}
-}
-
-pub struct MacroProcessorArgs {
-pub mut:
-	processor IMacroProcessor
-	name      string
-}
-
-pub fn macroprocessor_add(args_ MacroProcessorArgs) ! {
-	mut args := args_
-	args.name = texttools.name_fix(args.name)
-	lock knowledgetrees {
-		mut tree := knowledgetrees[args.name] or { return error('cannot find tree: ${args.name}') }
-		tree.macroprocessor_add(args_.processor)!
-		knowledgetrees[args.name] = tree
-	}
-}
-
-@[params]
-pub struct ArgsGet {
-pub mut:
-	treename string = 'default'
-	name     string
-}
-
-pub fn collection_get(args_ ArgsGet) !Collection {
-	mut args := args_
-	args.treename = texttools.name_fix(args.treename)
-	rlock knowledgetrees {
-		mut tree := knowledgetrees[args.treename] or {
-			return error('cannot find tree: ${args.treename}')
+		if key !in knowledgetrees {
+			mut tree := tree_create(args)!
+			knowledgetrees[key] = tree
 		}
-		return tree.collection_get(args.name)!
+		return knowledgetrees[key] or { panic("can't find tree") }
 	}
-	panic('should not get here')
+	return error('bug')
 }
-
-// pub fn mdbook_generate( treename string, collectionname string) !Collection {
-// 	treename2:=texttools.name_fix(treename)
-// 	rlock knowledgetrees{
-// 		mut tree:=knowledgetrees[treename2] or { return error("cannot find tree: $treename2") }
-// 		return tree.collection_get(collectionname)!
-// 	}
-// 	panic("should not get here")
-
-// }

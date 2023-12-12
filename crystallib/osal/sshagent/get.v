@@ -2,7 +2,6 @@ module sshagent
 
 import freeflowuniverse.crystallib.core.texttools
 
-
 @[params]
 pub struct KeyGetArgs {
 pub mut:
@@ -32,20 +31,20 @@ pub fn (mut agent SSHAgent) get(args_ KeyGetArgs) ?SSHKey {
 }
 
 fn (mut agent SSHAgent) pop(pubkey_ string) {
-	mut x:=0
-	mut result:=9999
+	mut x := 0
+	mut result := 9999
 	for key in agent.keys {
 		if key.pubkey == pubkey_ {
-			result=x
+			result = x
 			break
 		}
-		x+=1
+		x += 1
 	}
-	if result!=9999{
-		if agent.keys.len>result{
+	if result != 9999 {
+		if agent.keys.len > result {
 			agent.keys.delete(x)
-		}else{
-			panic("bug")
+		} else {
+			panic('bug')
 		}
 	}
 }

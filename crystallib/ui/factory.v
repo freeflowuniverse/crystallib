@@ -20,7 +20,7 @@ pub fn new(args UserInterfaceArgs) !UserInterface {
 
 	// .telegram { telegram.new() }
 
-	return UserInterface {
+	return UserInterface{
 		channel: ch
 	}
 	// return error("Channel type not understood, only console supported now.") // input is necessarily valid

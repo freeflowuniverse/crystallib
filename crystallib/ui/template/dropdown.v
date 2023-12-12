@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.ui.uimodel { DropDownArgs }
 // 	warning     string
 // 	clear       bool = true
 pub fn (mut c UIExample) ask_dropdown(args DropDownArgs) !string {
-	return ""
+	return ''
 }
 
 // result can be multiple, also can select all

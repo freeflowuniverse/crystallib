@@ -43,7 +43,8 @@ pub fn cmd_sshagent(mut cmdroot Command) {
 		description: 'Unload ssh-key from agent.'
 	}
 
-	mut allcmdsref_gen := [&sshagent_command_list,&sshagent_command_generate,&sshagent_command_load,&sshagent_command_unload ]
+	mut allcmdsref_gen := [&sshagent_command_list, &sshagent_command_generate, &sshagent_command_load,
+		&sshagent_command_unload]
 
 	for mut c in allcmdsref_gen {
 		// c.add_flag(Flag{
@@ -65,20 +66,18 @@ pub fn cmd_sshagent(mut cmdroot Command) {
 }
 
 fn cmd_sshagent_execute(cmd Command) ! {
-
 	// mut reset := cmd.flags.get_bool('reset') or {false }
-	mut isscript := cmd.flags.get_bool('script') or {false }
+	mut isscript := cmd.flags.get_bool('script') or { false }
 
-	mut agent:=sshagent.new()!
+	mut agent := sshagent.new()!
 
-	if cmd.name=="list" {
-		if !isscript{
+	if cmd.name == 'list' {
+		if !isscript {
 			console.clear()
-		}		
+		}
 		println(agent)
 		return
 	} else {
-		
 		// println(1)
 		return error(cmd.help_message())
 		// println(" Supported commands are: ${gentools.gencmds}")

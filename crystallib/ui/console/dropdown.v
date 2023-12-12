@@ -5,7 +5,6 @@ module console
 import freeflowuniverse.crystallib.ui.uimodel { DropDownArgs }
 import os
 
-
 fn (mut c UIConsole) ask_dropdown_internal(args DropDownArgs) !string {
 	if args.clear {
 		clear() // clears the screen
@@ -35,14 +34,13 @@ fn (mut c UIConsole) ask_dropdown_internal(args DropDownArgs) !string {
 	choice := os.get_raw_line().trim(' \n')
 	if choice.trim_space() == '*' {
 		// means we return all
-		return "999999"
+		return '999999'
 	}
 	if choice.trim_space() == '' && args.default.len > 0 {
-		return "999998"
+		return '999998'
 	}
 	return choice
 }
-
 
 // return the dropdown as an int
 // 	description string
@@ -50,14 +48,13 @@ fn (mut c UIConsole) ask_dropdown_internal(args DropDownArgs) !string {
 // 	warning     string
 // 	clear       bool = true
 pub fn (mut c UIConsole) ask_dropdown_int(args_ DropDownArgs) !int {
+	mut args := args_
 
-	mut args:=args_
+	choice := c.ask_dropdown_internal(args)!
 
-	choice:=c.ask_dropdown_internal(args)!
+	nr := args.items.len
 
-	nr:=args.items.len
-
-	if choice.contains(","){
+	if choice.contains(',') {
 		return c.ask_dropdown_int(
 			clear: true
 			description: args.description
@@ -73,10 +70,10 @@ pub fn (mut c UIConsole) ask_dropdown_int(args_ DropDownArgs) !int {
 	if choice_int == 999999 {
 		return 1
 	} else if choice_int == 999998 {
-		default:= args.default[0] or {return 1}
-		return args.items.index(default)+1
-	} 
-	
+		default := args.default[0] or { return 1 }
+		return args.items.index(default) + 1
+	}
+
 	if choice_int < 1 || choice_int > nr {
 		return c.ask_dropdown_int(
 			clear: true
@@ -96,7 +93,7 @@ pub fn (mut c UIConsole) ask_dropdown_int(args_ DropDownArgs) !int {
 // 	warning     string
 // 	clear       bool = true
 pub fn (mut c UIConsole) ask_dropdown_multiple(args_ DropDownArgs) ![]string {
-	mut args:=args_
+	mut args := args_
 
 	res := c.ask_dropdown_internal(
 		clear: args.clear
@@ -105,27 +102,27 @@ pub fn (mut c UIConsole) ask_dropdown_multiple(args_ DropDownArgs) ![]string {
 		items: args.items
 		default: args.default
 		warning: args.warning
-		choice_message:"(multiple is possible)"
+		choice_message: '(multiple is possible)'
 	)!
-	if res == "999999" {
+	if res == '999999' {
 		return args.items
-	} else if res == "999998" {
+	} else if res == '999998' {
 		return args.default
-	} 
+	}
 
-	//check valid input
-	mut bad:=false
-	nr:=args.items.len
-	for item in res.split(","){
-		if item.trim_space().len>0{
-			choice_int:=item.int()
+	// check valid input
+	mut bad := false
+	nr := args.items.len
+	for item in res.split(',') {
+		if item.trim_space().len > 0 {
+			choice_int := item.int()
 			if choice_int < 1 || choice_int > nr {
-				bad=true
+				bad = true
 			}
 		}
 	}
 
-	if bad{
+	if bad {
 		return c.ask_dropdown_multiple(
 			clear: true
 			description: args.description
@@ -136,15 +133,14 @@ pub fn (mut c UIConsole) ask_dropdown_multiple(args_ DropDownArgs) ![]string {
 		)!
 	}
 
-	mut res2:=[]string{}
-	for item in res.split(","){
-		if item.trim_space().len>0{
-			i:=item.int()
-			res2<<args.items[i-1] or {panic("bug")}
+	mut res2 := []string{}
+	for item in res.split(',') {
+		if item.trim_space().len > 0 {
+			i := item.int()
+			res2 << args.items[i - 1] or { panic('bug') }
 		}
 	}
 	return res2
-
 }
 
 // will return the string as given as response
@@ -162,10 +158,10 @@ pub fn (mut c UIConsole) ask_dropdown(args DropDownArgs) !string {
 		warning: ''
 	)!
 	if res == 999998 {
-		if args.default.len>1{
-			return error("more than 1 default for single choice.\n$args")
+		if args.default.len > 1 {
+			return error('more than 1 default for single choice.\n${args}')
 		}
-		println(args	)
+		println(args)
 		return args.default[0] or { panic('bug in default args for ask_dropdown_string.\n') }
 	}
 	return args.items[res - 1]

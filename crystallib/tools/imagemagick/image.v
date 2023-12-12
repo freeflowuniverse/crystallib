@@ -13,7 +13,7 @@ pub mut:
 	transparent  bool
 }
 
-pub fn (mut image Image) init_() ! {
+fn (mut image Image) init_() ! {
 	if image.size_kbyte == 0 {
 		image.size_kbyte = image.path.size_kb() or {
 			return error('cannot define size file in kb.\n${err}')
@@ -39,6 +39,7 @@ pub fn (mut image Image) is_png() bool {
 
 fn (mut image Image) skip() bool {
 	if image.path.name_no_ext().ends_with('_') {
+		// TODO: we need to change the image back without _ at the end (was something we did before)
 		return true
 	}
 	if image.size_kbyte < 500 {

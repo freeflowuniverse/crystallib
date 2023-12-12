@@ -3,15 +3,15 @@ module uimodel
 @[params]
 pub struct DropDownArgs {
 pub mut:
-	description string
-	question    string
-	items       []string
-	default     []string
-	warning     string
-	clear       bool
-	all         bool
+	description    string
+	question       string
+	items          []string
+	default        []string
+	warning        string
+	clear          bool
+	all            bool
 	choice_message string
-	validation  fn (string) bool = fn (s string) bool {
+	validation     fn (string) bool = fn (s string) bool {
 		return true
 	}
 }

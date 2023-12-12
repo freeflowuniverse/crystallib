@@ -3,15 +3,15 @@ module sshagent
 import os
 import freeflowuniverse.crystallib.core.pathlib
 
-[heap]
+@[heap]
 pub struct SSHKey {
 pub mut:
-	name        string
-	pubkey      string
-	loaded      bool
-	email       string
-	agent       &SSHAgent @[skip; str: skip]
-	cat         SSHKeyCat
+	name   string
+	pubkey string
+	loaded bool
+	email  string
+	agent  &SSHAgent @[skip; str: skip]
+	cat    SSHKeyCat
 }
 
 pub enum SSHKeyCat {
@@ -20,18 +20,18 @@ pub enum SSHKeyCat {
 }
 
 pub fn (mut key SSHKey) keypath() !pathlib.Path {
-	if key.name.len==0{
-		return error("cannot have key name empty to get path.")
+	if key.name.len == 0 {
+		return error('cannot have key name empty to get path.')
 	}
-	return key.agent.homepath.file_get_new("${key.name}")!
+	return key.agent.homepath.file_get_new('${key.name}')!
 }
 
 pub fn (mut key SSHKey) keypath_pub() !pathlib.Path {
-	if key.name.len==0{
-		return error("cannot have key name empty to get path.")
+	if key.name.len == 0 {
+		return error('cannot have key name empty to get path.')
 	}
-	mut p:=key.agent.homepath.file_get_new("${key.name}.pub")!
-	if !(os.exists("${key.agent.homepath.path}/${key.name}.pub")){
+	mut p := key.agent.homepath.file_get_new('${key.name}.pub')!
+	if !(os.exists('${key.agent.homepath.path}/${key.name}.pub')) {
 		p.write(key.pubkey)!
 	}
 	return p
@@ -39,10 +39,12 @@ pub fn (mut key SSHKey) keypath_pub() !pathlib.Path {
 
 // load the key, they key is content, other keys will be unloaded
 pub fn (mut key SSHKey) forget() ! {
-	if key.loaded==false{
+	if key.loaded == false {
 		return
 	}
-	mut keypath := key.keypath_pub() or { return error('keypath not set or known on sshkey: ${key}') }
+	mut keypath := key.keypath_pub() or {
+		return error('keypath not set or known on sshkey: ${key}')
+	}
 	if !os.exists(keypath.path) {
 		return error('cannot find sshkey: ${keypath}')
 	}
@@ -63,14 +65,18 @@ pub fn (mut key SSHKey) str() string {
 }
 
 pub fn (mut key SSHKey) load() ! {
-	$if debug{println(" - sshkey load: '$key'")}
-	if key.name.len==0{
-		return error("can only load keys which are on filesystem and as such have a name.")
+	$if debug {
+		println(" - sshkey load: '${key}'")
 	}
-	patho := key.keypath() or { return error("cannot load because privkey not on fs.\n$err\n$key") }
+	if key.name.len == 0 {
+		return error('can only load keys which are on filesystem and as such have a name.')
+	}
+	patho := key.keypath() or {
+		return error('cannot load because privkey not on fs.\n${err}\n${key}')
+	}
 	res := os.execute('ssh-add ${patho.path}')
 	if res.exit_code > 0 {
-		return error('cannot add ssh-key with path ${patho.path}.\n$res')
+		return error('cannot add ssh-key with path ${patho.path}.\n${res}')
 	}
 	key.agent.init()!
 }

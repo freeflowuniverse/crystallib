@@ -216,58 +216,6 @@ fn (mut page Page) fix_links() ! {
 	}
 }
 
-fn (mut book MDBook) process_includes() ! {
-	for _, mut page in book.pages {
-		mut include_tree := []string{}
-		book.process_page_includes(mut page, mut include_tree) or {
-			if err is CollectionError {
-				book.tree.collections[page.collection_name].error(err)
-			} else {
-				return err
-			}
-		}
-	}
-}
-
-fn (mut book MDBook) process_page_includes(mut page Page, mut include_tree []string) ! {
-	mut doc := page.doc or { return error('no doc yet on page') }
-	// check for circular imports
-	if '${page.collection_name}:${page.name}' in include_tree {
-		history := include_tree.join(' -> ')
-		return CollectionError{
-			path: page.path
-			msg: 'Found a circular include: ${history}'
-			cat: .circular_import
-		}
-	}
-	include_tree << '${page.collection_name}:${page.name}'
-
-	// find the files to import
-	mut pages_to_include := map[int]Page{}
-	for x in 0 .. doc.children.len {
-		mut include := doc.children[x]
-		if mut include is Include {
-			$if debug {
-				println('Including page ${include.content} into ${page.path.path}')
-			}
-			mut page_to_include := book.tree.page_get(include.content) or {
-				book.tree.collections[page.collection_name].error(CollectionError{
-					path: page.path
-					msg: "include:'${include.content}' not found for page:${page.path.path}"
-					cat: .page_not_found
-				})
-				continue
-			}
-			$if debug {
-				println('Found page in collection ${page_to_include.collection_name}')
-			}
-			book.process_page_includes(mut page_to_include, mut include_tree)!
-			pages_to_include[x] = page_to_include
-		}
-	}
-	page.include(pages_to_include)!
-}
-
 // include receives a map of pagess to include indexed to
 // the position of the include statement the page is supposed to replace
 fn (mut page Page) include(pages_to_include map[int]Page) ! {
@@ -343,29 +291,30 @@ fn (mut page Page) process_includes(mut include_tree []string) ! {
 
 // will process the macro's and return string
 fn (mut page Page) process_macros() ! {
-	logger.info('Processing macros in page ${page.name}')
+	page.tree.logger.info('Processing macros in page ${page.name}')
 	mut doc := page.doc or { return error('no doc yet on page') }
 	for x in 0 .. doc.children.len {
 		mut macro := doc.children[x]
 		if mut macro is Action {
-			logger.info('Process macro: ${macro.action.name} into page: ${page.name}')
+			page.tree.logger.info('Process macro: ${macro.action.name} into page: ${page.name}')
 
-			for mut mp in page.tree.macroprocessors {
-				res := mp.process('!!${macro.content}')!
+			// TODO: need to use other way how to do macros (despiegk)
 
-				mut para := Paragraph{
-					content: res.result
-				}
-				// para.process()!
-				doc.children.delete(x)
-				doc.children.insert(x, elements.Element(para))
-				if res.state == .stop {
-					break
-				}
-			}
+			// for mut mp in page.tree.macroprocessors {
+			// 	res := mp.process('!!${macro.content}')!
+
+			// 	mut para := Paragraph{
+			// 		content: res.result
+			// 	}
+			// 	// para.process()!
+			// 	doc.children.delete(x)
+			// 	doc.children.insert(x, elements.Element(para))
+			// 	if res.state == .stop {
+			// 		break
+			// 	}
+			// }
 		}
 	}
-	// QUESTION: is this best practice? alternatives are also difficult and hacky
 	page.doc = doc
 }
 

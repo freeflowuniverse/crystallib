@@ -9,15 +9,14 @@ pub mut:
 	homepath string
 }
 
-
 pub fn new(args_ SSHAgentNewArgs) !SSHAgent {
-	mut args:=args_
-	if args.homepath.len==0{
-		args.homepath = "${os.home_dir()}/.ssh"
+	mut args := args_
+	if args.homepath.len == 0 {
+		args.homepath = '${os.home_dir()}/.ssh'
 	}
 
 	mut agent := SSHAgent{
-		homepath:pathlib.get_dir(path:args.homepath,create:true)!
+		homepath: pathlib.get_dir(path: args.homepath, create: true)!
 	}
 	res := os.execute('ssh-add -l')
 	if res.exit_code == 0 {

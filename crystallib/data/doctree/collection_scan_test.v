@@ -8,9 +8,8 @@ const fruits_path = os.dir(@FILE) + '/testdata/collections/fruits'
 const tree_name = 'collection_scan_test_tree'
 
 fn test_scan_internal() ! {
-	new(name: doctree.tree_name)!
+	mut tree := tree_create(cid: 'abc', name: 'test')!
 
-	mut tree := knowledgetrees[doctree.tree_name]
 	mut collection := tree.collection_new(
 		name: 'fruits'
 		path: doctree.fruits_path

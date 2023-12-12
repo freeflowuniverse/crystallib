@@ -11,7 +11,7 @@ import freeflowuniverse.crystallib.ui.uimodel { DropDownArgs }
 // 	clear       bool = true
 pub fn (mut c UserInterface) ask_dropdown(args DropDownArgs) !string {
 	match mut c.channel {
-		UIConsole { return c.channel.ask_dropdown(args)! } 
+		UIConsole { return c.channel.ask_dropdown(args)! }
 		else { panic("can't find channel") }
 	}
 }
@@ -23,8 +23,12 @@ pub fn (mut c UserInterface) ask_dropdown(args DropDownArgs) !string {
 // 	clear       bool = true
 pub fn (mut c UserInterface) ask_dropdown_multiple(args DropDownArgs) ![]string {
 	match mut c.channel {
-			UIConsole { return c.channel.ask_dropdown_multiple(args)!
-		} else { panic("can't find channel") }
+		UIConsole {
+			return c.channel.ask_dropdown_multiple(args)!
+		}
+		else {
+			panic("can't find channel")
+		}
 	}
 }
 
@@ -35,7 +39,11 @@ pub fn (mut c UserInterface) ask_dropdown_multiple(args DropDownArgs) ![]string 
 // 	clear       bool = true
 pub fn (mut c UserInterface) ask_dropdown_int(args DropDownArgs) !int {
 	match mut c.channel {
-			UIConsole { return c.channel.ask_dropdown_int(args)!
-		} else { panic("can't find channel") }
+		UIConsole {
+			return c.channel.ask_dropdown_int(args)!
+		}
+		else {
+			panic("can't find channel")
+		}
 	}
 }

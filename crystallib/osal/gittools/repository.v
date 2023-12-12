@@ -338,8 +338,6 @@ fn (repo GitRepo) ssh_key_path() string {
 	return '${os.home_dir()}/.ssh/${repo.key()}'
 }
 
-
-
 // // check if sshkey for a repo exists in the homedir/.ssh
 // // we check on name, if nameof repo is same as name of key we will load
 // // will return true if the key did exist, which means we need to connect over ssh !!!

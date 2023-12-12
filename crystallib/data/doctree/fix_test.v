@@ -4,22 +4,17 @@ import os
 import freeflowuniverse.crystallib.data.markdownparser.elements
 import freeflowuniverse.crystallib.core.pathlib
 
-const testpath = os.dir(@FILE) + '/testdata/broken_chapter'
 const collections_path = os.dir(@FILE) + '/testdata/collections'
-const tree_name = 'page_test_tree'
+const collections_path_original = os.dir(@FILE) + '/testdata/original'
 
-fn testsuite_end() {
-	// reset testdata changes after running tests
-	os.execute('git checkout ${doctree.testpath}')
-}
+// TODO:  do good tests around fixing links, also images need to point to right location
 
-fn create_tree() !Tree {
-	new_global(name: doctree.tree_name)!
-	scan(
-		name: doctree.tree_name
-		path: doctree.collections_path
-	)!
-	return knowledgetrees[doctree.tree_name]
+fn restore() {
+	// put back the original data
+	mut p := pathlib.dir_get(path: doctree.collections_path_original) or {
+		panic("can't restore original, do manual")
+	}
+	p.copy(dest: doctree.collections_path, delete: true)! // make sure all original is being restored for next test
 }
 
 fn test_link_update() ! {}
@@ -27,18 +22,23 @@ fn test_link_update() ! {}
 fn test_fix_external_link() ! {}
 
 fn test_fix() ! {
-	mut tree := create_tree()!
-	mut test_collection := tree.collection_new(
-		name: 'Collection1'
-		path: doctree.testpath
-	) or { panic('Cannot create new collection: ${err}') }
+	defer {
+		// copy back the original
+		restore()
+	}
 
-	mut page_path := pathlib.get('${doctree.testpath}/wrong_links/page_with_wrong_links.md')
+	// TODO: this one is broken, need to fix and improve
+
+	mut tree := tree_create(cid: 'abc', name: 'test')!
+	tree.scan(path: doctree.collections_path)!
+
+	mut test_collection := tree.collection_get('broken')!
+
+	mut page_path := pathlib.get('${testpath}/wrong_links/page_with_wrong_links.md')
 	test_collection.page_new(mut page_path) or { panic('Cannot create page: ${err}') }
 	mut test_page := test_collection.page_get('page_with_wrong_links.md')!
 
 	doc_before := (*test_page).doc or { panic('doesnt exist') }
-	// test_page.fix() or { panic('Cannot fix page: ${err}') }
 
 	assert !test_page.changed // should be set to false after fix
 
@@ -60,10 +60,6 @@ fn test_fix() ! {
 	} else {
 		assert false, 'element ${right_link} is not a link'
 	}
+
+	// test_page.fix() or { panic('Cannot fix page: ${err}') }
 }
-
-fn test_fix_links() ! {}
-
-fn test_process_macro_include() {}
-
-fn test_save() ! {}

@@ -5,35 +5,13 @@ import freeflowuniverse.crystallib.osal
 import os
 
 @[params]
-pub struct DownsizeArgsInternal {
+struct DownsizeArgsInternal {
 	backup      bool
 	backup_root string
 	backup_dest string
 	redo        bool
 	convertpng  bool
 }
-
-// // backupdir, put on empty if not used
-// pub fn image_downsize(args DownsizeArgs) !Image {
-// 	mut image := image_new(mut path)!
-// 	if path.is_link() {
-// 		mut path_linked := path.getlink()!
-// 		mut image_linked := image_new(mut path_linked)!
-// 		pathlib.BackupArg{
-// 			dest:backupdir
-// 		}
-// 		image_linked.downsize(backupdir)!
-// 		if image.path.path != image_linked.path.path {
-// 			// means downsize worked, now we need to re-link
-// 			image.path.delete()!
-// 			image.path.path = image.path.path_dir() + '/' + image_linked.path.name()
-// 			image.path = image_linked.path.link(image.path.path, true)!
-// 		}
-// 	} else {
-// 		image.downsize(backupdir)!
-// 	}
-// 	return image
-// }
 
 // will downsize to reasonable size based on x
 pub fn (mut image Image) downsize(args DownsizeArgsInternal) ! {
@@ -58,7 +36,6 @@ pub fn (mut image Image) downsize(args DownsizeArgsInternal) ! {
 		image.size_kbyte = 0
 		println('   - resize 50%: ${image.path.path}')
 		cmd := "convert '${image.path.path}' -resize 50% '${image.path.path}'"
-		// TODO:
 		osal.execute_silent(cmd) or {
 			return error('could not convert png to png --resize 50%.\n${cmd} .\n${error}')
 		}
@@ -95,15 +72,6 @@ pub fn (mut image Image) downsize(args DownsizeArgsInternal) ! {
 			image.path = pathlib.get(path_dest)
 		}
 	}
-	// means we should not process next time, we do this by adding _ at end of name
-	// path_dest2 := image.path.path_get_name_with_underscore()
-	// image.init_()!
-	// // println('   - add _ at end of image: $path_dest2')
-	// if os.exists(path_dest2) {
-	// 	os.rm(path_dest2)!
-	// }
-	// os.mv(image.path.path, path_dest2)!
-	// image.path = pathlib.get(path_dest2)
 
 	mut parent := image.path.parent()!
 	mut p := parent.file_get_new('.done')!

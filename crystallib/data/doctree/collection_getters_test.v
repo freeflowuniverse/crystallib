@@ -5,7 +5,7 @@ import os
 const testpath = os.dir(@FILE) + '/testdata/collections'
 
 fn test_collection_get() {
-	mut tree := new()!
+	mut tree := tree_create(cid: 'abc', name: 'test')!
 	tree.scan(
 		path: doctree.testpath
 		heal: false
@@ -21,7 +21,7 @@ fn test_collection_get() {
 }
 
 fn test_collection_exists() {
-	mut tree := new()!
+	mut tree := tree_create(cid: 'abc', name: 'test')!
 	tree.scan(
 		path: doctree.testpath
 		heal: false

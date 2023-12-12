@@ -86,11 +86,6 @@ pub mut:
 	git_pull  bool
 }
 
-// export an mdbook to its html representation and open the html
-pub fn (book MDBook) read() ! {
-	osal.exec(cmd: 'open ${book.html_path('').path}/index.html', shell: true)!
-}
-
 // get a new book
 //
 // name      string @[required] // name of the book

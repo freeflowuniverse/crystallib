@@ -7,8 +7,8 @@ import freeflowuniverse.crystallib.core.pathlib
 @[heap]
 pub struct SSHAgent {
 pub mut:
-	keys   []SSHKey
-	active bool
+	keys     []SSHKey
+	active   bool
 	homepath pathlib.Path
 }
 
@@ -24,9 +24,9 @@ pub fn (mut agent SSHAgent) init() ! {
 			}
 			if line.contains(' ') {
 				splitted := line.split(' ')
-				if splitted.len<2{
+				if splitted.len < 2 {
 					panic('bug')
-				}				
+				}
 				pubkey := splitted[1]
 				mut sshkey := SSHKey{
 					pubkey: pubkey
@@ -36,9 +36,8 @@ pub fn (mut agent SSHAgent) init() ! {
 				if splitted[0].contains('ed25519') {
 					sshkey.cat = .ed25519
 					if splitted.len > 2 {
-						sshkey.email = splitted[2] or { panic("bug") }
+						sshkey.email = splitted[2] or { panic('bug') }
 					}
-
 				} else if splitted[0].contains('rsa') {
 					sshkey.cat = .rsa
 				} else {
@@ -61,7 +60,7 @@ pub fn (mut agent SSHAgent) init() ! {
 		mut c := pkp.read()!
 		c = c.replace('  ', ' ').replace('  ', ' ') // deal with double spaces, or tripple (need to do this 2x
 		splitted := c.trim_space().split(' ')
-		if splitted.len<2{
+		if splitted.len < 2 {
 			panic('bug')
 		}
 		mut name := pkp.name()
@@ -154,9 +153,9 @@ pub fn (mut agent SSHAgent) forget(name string) ! {
 
 pub fn (mut agent SSHAgent) str() string {
 	mut out := []string{}
-	out<<"\n## SSHAGENT:\n"
+	out << '\n## SSHAGENT:\n'
 	for mut key in agent.keys {
 		out << key.str()
 	}
-	return out.join_lines()+"\n"
+	return out.join_lines() + '\n'
 }
