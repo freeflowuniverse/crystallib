@@ -43,7 +43,13 @@ pub fn (collection Collection) page_get(name_ string) !&Page {
 }
 
 pub fn (collection Collection) image_get(name_ string) !&File {
-	return collection.file_get(name_)!
+	_, name := name_parse(name_)!
+	return collection.images[name] or {
+		return ObjNotFound{
+			collection: collection.name
+			name: name
+		}
+	}
 }
 
 pub fn (collection Collection) file_get(name_ string) !&File {
@@ -107,7 +113,7 @@ fn (mut collection Collection) file_image_remember(mut p Path) ! {
 			$if debug {
 				println('downsizing image ${p.path}')
 			}
-			image.downsize(backup: false)!
+			imagemagick.downsize(path: p.path)!
 			// after downsize it could be the path has been changed, need to set it on the file
 			if p.path != image.path.path {
 				p.path = image.path.path
@@ -137,13 +143,15 @@ fn (mut collection Collection) file_image_remember(mut p Path) ! {
 		}
 	} else if ptr.is_file_video_html() {
 		// now we are working on non image
-		if collection.file_exists(ptr.pointer.name) {
-			mut filedouble := collection.file_get(ptr.pointer.name)!
-			mut pathdouble := filedouble.path
-			collection.error(path: pathdouble, msg: 'duplicate file', cat: .image_double)
-		} else {
-			collection.file_new(mut ptr.path)!
-		}
+		// if collection.file_exists(ptr.pointer.name) {
+		// 	mut filedouble := collection.file_get(ptr.pointer.name)!
+		// 	mut pathdouble := filedouble.path
+		// 	collection.error(path: pathdouble, msg: 'duplicate file', cat: .image_double)
+		// } else {
+		// }
+
+		// file existence is checked in file_new
+		collection.file_new(mut ptr.path)!
 	} else {
 		panic('unknown obj type, bug')
 	}
@@ -155,7 +163,7 @@ pub fn (mut collection Collection) page_new(mut p Path) ! {
 	$if debug {
 		println('collection: ${collection.name} page new: ${p.path}')
 	}
-	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: true)!
+	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: false)!
 	// in case heal is true pointerpath_new can normalize the path
 	p = ptr.path
 	if collection.page_exists(ptr.pointer.name) {
@@ -241,9 +249,9 @@ pub fn (mut collection Collection) fix() ! {
 	$if debug {
 		println('collection fix: ${collection.name}')
 	}
-	// for _, mut page in collection.pages {
-	// 	page.fix()!
-	// }
+	for _, mut page in collection.pages {
+		page.fix()!
+	}
 	collection.errors_report('${collection.path.path}/errors.md')!
 }
 

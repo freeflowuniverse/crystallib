@@ -21,6 +21,9 @@ fn (mut collection Collection) scan_internal(mut p pathlib.Path) ! {
 	mut pl := p.list(recursive: false)!
 	for mut p_in in pl.paths {
 		if p_in.exists() == false {
+			// links are ignored in p.list()
+			// this should probably only happen if file was deleted midway
+			// between list() call and the exists() call
 			collection.error(path: p_in, msg: 'probably a broken link', cat: .unknown)
 			continue // means broken link
 		}
@@ -31,6 +34,8 @@ fn (mut collection Collection) scan_internal(mut p pathlib.Path) ! {
 			continue
 		}
 
+		// Q: list ignores links, this can't happen, no?
+		// Q: a path can't b both, a link and a file, no? maybe it was intended to be ||
 		if mut p_in.is_link() && p_in.is_file() {
 			link_real_path := p_in.realpath() // this is with the symlink resolved
 			collection_abs_path := collection.path.absolute()

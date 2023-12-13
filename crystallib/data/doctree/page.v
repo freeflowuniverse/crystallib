@@ -76,6 +76,7 @@ fn (mut page Page) link_update(mut link Link) ! {
 	// mut linkout := link
 	mut file_name := link.filename
 	println('get link ${link.content} with name:\'${file_name}\' for page: ${page.path.path}')
+	name_without_ext := file_name.all_before('.')
 
 	mut collection := page.tree.collections[page.collection_name] or {
 		return error("2could not find collection:'${page.collection_name}' in tree: ${page.tree_name}")
@@ -88,19 +89,18 @@ fn (mut page Page) link_update(mut link Link) ! {
 	mut fileobj := &File{
 		collection: collection
 	}
-
 	if link.cat == .image {
-		if collection.image_exists(file_name) {
+		if collection.image_exists(name_without_ext) {
 			file_search = false
-			fileobj = collection.image_get(file_name)!
+			fileobj = collection.image_get(name_without_ext)!
 		} else {
-			msg := "'${file_name}' not found for page:${page.path.path}, we looked over all collections."
+			msg := "'${name_without_ext}' not found for page:${page.path.path}, we looked over all collections."
 			collection.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
 		}
 	} else if link.cat == .file {
-		if collection.file_exists(file_name) {
+		if collection.file_exists(name_without_ext) {
 			file_search = false
-			fileobj = collection.file_get(file_name)!
+			fileobj = collection.file_get(name_without_ext)!
 		} else {
 			collection.error(path: page.path, msg: 'file not found', cat: .file_not_found)
 		}
@@ -112,8 +112,8 @@ fn (mut page Page) link_update(mut link Link) ! {
 		// if the collection is filled in then it means we need to copy the file here,
 		// or the image is not found, then we need to try and find it somewhere else
 		// we need to copy the image here
-		fileobj = page.tree.image_get(file_name) or {
-			msg := "'${file_name}' not found for page:${page.path.path}, we looked over all collections."
+		fileobj = page.tree.image_get(name_without_ext) or {
+			msg := "'${name_without_ext}' not found for page:${page.path.path}, we looked over all collections."
 			collection.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
 			return
 		}
