@@ -1,0 +1,19 @@
+<div id="list"></div>
+{% if section.extra.group_pages_by %}
+    <div class="flex flex-col md:grid md:grid-cols-2 md:gap-12 lg:flex lg:flex-row justify-around text-center">
+        {% set taxonomy = get_taxonomy(kind=section.extra.group_pages_by) %}
+        {% set roles = taxonomy.items %}
+        {% for role in roles %}
+        <div class="flex flex-col items-start text-left my-8 mx-4 md:mx-8 lg:mx-4 flex-1 w-72">
+            {% set icon_path = config.extra.taxonomies["roles"][role.name].icon_path | as_str %}
+            <img src="{{icon_path}}" alt="role category icon" class="h-10 my-4">
+            {% set path = role.name | slugify %}
+            {% set fullpath = "/roles/" ~ path %}
+            <a href={{fullpath}} class="text-2xl text-black font-normal lg:mb-8 cursor-pointer"> {{role.name}} </a>
+            {% for page in role.pages %}
+                {% include "partials/pageBox.html"%}
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+{% endif %}
