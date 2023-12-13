@@ -40,7 +40,7 @@ pub:
 
 // generate the html and open in browser
 pub fn new(args TailWindArgs) !Tailwind {
-	// tailwindinstaller.install()!
+	tailwindinstaller.install()!
 
 	// mut p := pathlib.get_dir(path: '/tmp/flowrift/${args.name}', create: true)!
 	mut p := pathlib.get_dir(path: args.path_build, create: true)!
