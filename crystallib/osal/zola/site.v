@@ -56,7 +56,10 @@ pub fn new_site(config SiteConfig) !ZolaSite {
 
 pub fn (mut site ZolaSite) prepare() ! {
 	site.template_install()!
-	cp_all(site.path_content.path, '${site.path_build.path}/content', true)!
+	if os.exists('${site.path_publish.path}/content') {
+		os.rmdir_all('${site.path_publish.path}/content')!
+	}
+	os.cp_all(site.path_content.path, '${site.path_build.path}/content', true)!
 	preprocessor.preprocess('${site.path_build.path}/content')!
 }
 
@@ -65,7 +68,6 @@ pub fn (mut site ZolaSite) generate() ! {
 		return
 	}
 	println(' - site generate: ${site.name} on ${site.path_build.path}')
-
 	css_source := '${site.path_build.path}/css/index.css'
 	css_dest := '${site.path_build.path}/static/css/index.css'
 	site.tailwind.compile(css_source, css_dest)!

@@ -37,7 +37,7 @@ span.ge {
 
 pre,
 code {
-  @apply font-mono;
+  font-family: "Lucida Console", "Courier New", monospace;
 }
 
 code {
