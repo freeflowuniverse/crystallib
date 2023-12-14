@@ -1,0 +1,9 @@
+<div class="mb-8 flex flex-col">
+    <a href="{{page.permalink}}" class="text-lg font-medium cursor-pointer text-blue-400 py-4">
+        {{page.title | safe}}
+    </a>
+    {% include "partials/categories.html" %}
+    <p>
+        {{page.description | safe}}
+    </p>
+</div>

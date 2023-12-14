@@ -1,0 +1,38 @@
+
+<div class="mx-8 md:mx-4 flex flex-col">
+    <div class="flex flex-col mb-12 mr-8 lg:mr-24">
+        <h4 class="text-base not-italic font-medium leading-6 text-gray-600 mb-6"> FILTER PRODUCTS BY</h4>
+        <a id="all" class="mb-3 text-black font-normal" href="/products">All</a>
+        {% set taxonomy = get_taxonomy(kind="items") %}
+        {% set items = taxonomy.items %}
+        {% for item in items %}
+            {% set path = item.name | slugify %}
+            {% set fullpath = "/items/" ~ path %}
+            <a id="{{path}}" class="mb-3 text-black font-normal" href={{fullpath}}> {{item.name}} </a>
+        {% endfor %}
+    </div>
+
+{% set section = get_section(path="products/_index.md")%}
+
+    <div class="lg:pt-6 flex flex-col mb-12 w-64 mr-8 lg:mr-24">
+        <h4 class="text-base not-italic font-medium leading-6 text-gray-600 mb-6"> FEATURED POSTS</h4>
+
+        {% for page in section.pages %}
+        {% if page.extra.isFeatured %}
+            <a class="mb-3 text-blue-700" href={{page.permalink}}>{{ page.title }}</a>
+        {% endif %}
+        {% endfor %}
+        
+    </div>
+</div>
+
+<script>
+    function setActiveProduct() {
+        let activeProduct = window.location.pathname.split("/")[2]    
+        if (typeof activeProduct === "undefined") { activeLink = document.getElementById("all") }
+        else { activeLink = document.getElementById(activeProduct)}
+        activeLink.className = activeLink.className.replace("text-black font-normal", "text-black font-semibold");
+    }
+
+    setActiveProduct()
+</script>

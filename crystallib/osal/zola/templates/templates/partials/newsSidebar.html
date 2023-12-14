@@ -1,0 +1,38 @@
+
+<div class="mx-8 md:mx-4 flex flex-col">
+    <div class="flex flex-col mb-12 mr-8 lg:mr-24">
+        <h4 class="text-base not-italic font-medium leading-6 text-gray-600 mb-6"> FILTER NEWS BY</h4>
+        <a id="all" class="mb-3 text-black font-normal" href="/newsroom">All</a>
+        {% set taxonomy = get_taxonomy(kind="news-category") %}
+        {% set categories = taxonomy.items %}
+        {% for category in categories %}
+            {% set path = category.name | slugify %}
+            {% set fullpath = "/news-category/" ~ path %}
+            <a id="{{path}}" class="mb-3 text-black font-normal" href={{fullpath}}> {{category.name}} </a>
+        {% endfor %}
+    </div>
+
+{% set section = get_section(path="newsroom/_index.md")%}
+
+    <div class="lg:pt-6 flex flex-col mb-12 w-64 mr-8 lg:mr-24">
+        <h4 class="text-base not-italic font-medium leading-6 text-gray-600 mb-6"> FEATURED NEWS</h4>
+
+        {% for page in section.pages %}
+        {% if page.extra.isFeatured %}
+            <a class="mb-3 text-blue-700" href={{page.permalink}}>{{ page.title }}</a>
+        {% endif %}
+        {% endfor %}
+        
+    </div>
+</div>
+
+<script>
+    function setActiveCategory() {
+        let activeCategory = window.location.pathname.split("/")[2]    
+        if (typeof activeCategory === "undefined") { activeLink = document.getElementById("all") }
+        else { activeLink = document.getElementById(activeCategory)}
+        activeLink.className = activeLink.className.replace("text-black font-normal", "text-black font-semibold");
+    }
+
+    setActiveCategory()
+</script>

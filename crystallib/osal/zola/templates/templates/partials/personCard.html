@@ -1,0 +1,26 @@
+<div class="flex flex-col px-0 sm:px-4 pb-2">
+    <a href="{{page.permalink}}" class="border-0 text-gray-700 hover:!text-gray-700 font-normal text-left">
+        {% set url = get_url(path='/' ~ page.relative_path | replace(from='_', to='-') | replace(from='index.md', to=page.extra.imgPath)) %}
+        <img src="{{url}}" alt="{{page.title ~ ' Picture'}}" />
+        <div>
+            <h2 class="text-2xl">{{page.title}}</h2>
+            <div class="text-md text-gray-700 text-left line-clamp-3 text-ellipsis">
+                {% if page.description %}
+                    {{page.description}}
+                {% else %}
+                    {{page.content | safe}}
+                {% endif %}
+            </div>
+            <div class="my-2 flex flex-row items-start flex-wrap">
+            {% if page.taxonomies.memberships %}
+            {% for tag in page.taxonomies.memberships %}
+                <a href="{{'/memberships/' ~ tag | replace(from='_', to='-' )}}" class="border-1 text-xs font-light bg-transparent hover:text-blue-700 py-1 px-2 mr-2 my-1 border hover:border-blue-500 border-gray-600 text-gray-700 rounded-full ">
+                    {{tag}}
+                </a>
+            {% endfor %}
+            {% endif %}
+            </div>
+        </div>
+    </a>
+</div>
+

@@ -1,0 +1,18 @@
+{% extends "_default/base.html" %}
+{% import "macros.html" as macros %}
+
+{% block content %}
+
+<main class="lg:mt-6">
+    <div class="flex">
+        <div class="w-4/6 pr-20">
+            {{ section.content | safe}}
+        </div>
+        <div class="w-2/6 pl-20">
+            {{ macros::page_list(item_type="page-box", group=false) }}
+        </div>
+    </div>
+    <hr>
+</main> 
+ 
+{% endblock content %}

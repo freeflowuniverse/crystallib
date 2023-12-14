@@ -108,3 +108,5 @@ pub fn (mut self Zola) watch(args WatchArgs) {
 		}
 	}
 }
+
+pub fn build()
