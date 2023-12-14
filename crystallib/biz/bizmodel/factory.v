@@ -106,11 +106,22 @@ pub fn (mut m BizModel) load() ! {
 	println('ACTIONS LOAD ${m.params.name}')
 
 	// m.replace_smart_ids()!
-	ap := actionparser.new(path: m.params.path, defaultcircle: 'bizmodel_${m.params.name}')!
-	m.revenue_actions(ap)!
-	m.hr_actions(ap)!
-	m.funding_actions(ap)!
-	m.overhead_actions(ap)!
+	mut tree := doctree.new(name: 'bizmodel_${m.params.name}')!
+	tree.scan(path: m.params.path)!
+	mut actions_collections := actionparser.ActionsCollection{}
+	for collection in tree.collections.values() {
+		for page in collection.pages.values() {
+			if d := page.doc {
+				actions_collections.actions << d.actions()
+			}
+		}
+	}
+
+	// ap := actionparser.parse(path: m.params.path, defaultcircle: 'bizmodel_${m.params.name}')!
+	m.revenue_actions(actions_collections)!
+	m.hr_actions(actions_collections)!
+	m.funding_actions(actions_collections)!
+	m.overhead_actions(actions_collections)!
 
 	// tr.scan(
 	// 	path: wikipath

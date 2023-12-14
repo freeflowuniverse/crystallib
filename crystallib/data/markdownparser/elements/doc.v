@@ -1,15 +1,26 @@
 module elements
 
 import freeflowuniverse.crystallib.baobab.smartid
+import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.data.paramsparser
+import freeflowuniverse.crystallib.data.actionparser
 
 @[heap]
 pub struct Doc {
-	DocBase
 pub mut:
-	elements map[int]&DocElement //   @[skip; str: skip]
+	children []Element
 	gid      smartid.GID
 	pre      []HtmlSource
 	lastid   int
+
+	id      int
+	content string
+	// doc      ?&Doc        @[skip; str: skip]
+	path      pathlib.Path
+	processed bool
+	params    paramsparser.Params
+	type_name string
+	changed   bool
 }
 
 pub fn (mut self Doc) newid() int {
@@ -17,12 +28,20 @@ pub fn (mut self Doc) newid() int {
 	return self.lastid
 }
 
-pub fn (mut self Doc) last() &DocElement {
-	return self.elements[self.lastid] or { panic('cant find last') }
+pub fn (mut self Doc) last() !Element {
+	if self.children.len == 0 {
+		return error('doc has no children')
+	}
+
+	return self.children.last()
 }
 
-pub fn (mut self Doc) delete_last() {
-	self.elements.delete(self.lastid)
+pub fn (mut self Doc) delete_last() ! {
+	if self.children.len == 0 {
+		return error('doc has no children')
+	}
+
+	self.children.delete_last()
 }
 
 // add a css or script link to a document
@@ -66,4 +85,16 @@ pub fn doc_new(args DocNewArgs) !Doc {
 		pre: args.pre
 	}
 	return d
+}
+
+pub fn (self Doc) actions() []actionparser.Action {
+	mut out := []actionparser.Action{}
+	for element in self.children {
+		if element is Action {
+			out << element.action
+		}
+
+		out << element.actions()
+	}
+	return out
 }

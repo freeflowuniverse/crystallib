@@ -3,7 +3,7 @@ module db
 import json
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.data.ourtime
-import freeflowuniverse.crystallib.algo.encoder
+import freeflowuniverse.crystallib.data.encoder
 import freeflowuniverse.crystallib.baobab.smartid
 
 @[heap]

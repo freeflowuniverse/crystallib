@@ -1,6 +1,6 @@
 module twinsafe
 
-import freeflowuniverse.crystallib.algo.secp256k1
+import freeflowuniverse.crystallib.crypt.secp256k1
 // import freeflowuniverse.crystallib.baobab.mbus
 
 pub struct OtherTwin {

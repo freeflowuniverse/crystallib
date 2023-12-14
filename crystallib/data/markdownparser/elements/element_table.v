@@ -23,7 +23,7 @@ pub enum Alignment as u8 {
 	right
 }
 
-pub fn (mut self Table) process() !int {
+pub fn (mut self Table) process(mut doc Doc) !int {
 	if self.processed {
 		return 0
 	}
@@ -50,7 +50,7 @@ pub fn (self Table) markdown() string {
 	return '${out}\n'
 }
 
-pub fn (mut self Table) html() string {
+pub fn (self Table) html() string {
 	// TODO: implement html
 	panic('implement')
 }

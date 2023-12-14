@@ -30,14 +30,13 @@ pub fn (mut collection Collection) error(args CollectionError) {
 	}
 }
 
-pub struct CollectionObjNotFound {
+pub struct ObjNotFound {
 	Error
 pub:
 	name       string
-	cat        string
 	collection string
 }
 
-pub fn (err CollectionObjNotFound) msg() string {
-	return '"Could not find object of type ${err.cat} with name ${err.name} in collection:${err.collection}'
+pub fn (err ObjNotFound) msg() string {
+	return '"Could not find object with name ${err.name} in collection:${err.collection}'
 }

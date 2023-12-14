@@ -72,7 +72,7 @@ fn (mut backend DBBackend) read_user(params ReadUserParams) ?User {
 
 fn (mut backend DBBackend) read_users() ![]User {
 	// users := sql backend.db {
-	// 	select from User 
+	// 	select from User
 	// }!
 	// return users
 	return []User{}

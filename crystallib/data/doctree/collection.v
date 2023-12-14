@@ -16,95 +16,49 @@ pub enum CollectionState {
 @[heap]
 pub struct Collection {
 pub:
-	name      string
-	tree_name string
+	name string
 pub mut:
-	title           string
-	pages           map[string]&Page // markdown pages in collection
-	files           map[string]&File
-	images          map[string]&File
-	external_pages  map[string]&Page // question: why do we have the external ones, what is they key
-	external_files  map[string]&File
-	external_images map[string]&File
-	path            Path
-	errors          []CollectionError
-	state           CollectionState
-	heal            bool
-	tree            &Tree             @[str: skip]
+	title  string
+	pages  map[string]&Page // markdown pages in collection
+	files  map[string]&File
+	images map[string]&File
+	path   Path
+	errors []CollectionError
+	state  CollectionState
+	tree   &Tree             @[str: skip]
+	heal   bool
 }
 
 // format of name is $collectionname:$pagename or $pagename
 // look if we can find page in the local collection is collection name not specified
 // if collectionname specified will look for page in that specific collection
-pub fn (collection Collection) page_get(name string) !&Page {
-	cat := 'page'
-	ptr := pointer_new(name)!
-	if ptr.collection != '' && ptr.collection != collection.name {
-		return error("Can't get in collection, collection name asked for is ${ptr.collection} while we are in chaptner ${collection.name}")
-	}
-	if ptr.name in collection.pages {
-		return collection.pages[ptr.name] or {
-			return CollectionObjNotFound{
-				cat: cat
-				collection: collection.name
-				name: ptr.name
-			}
+pub fn (collection Collection) page_get(name_ string) !&Page {
+	_, name := name_parse(name_)!
+	return collection.pages[name] or {
+		return ObjNotFound{
+			collection: collection.name
+			name: name
 		}
-	}
-	return CollectionObjNotFound{
-		cat: cat
-		collection: collection.name
-		name: ptr.name
 	}
 }
 
-pub fn (collection Collection) file_get(name string) !&File {
-	cat := 'file'
-	ptr := pointer_new(name)!
-	if ptr.collection != '' && ptr.collection != collection.name {
-		return error("Can't get in collection, collection name asked for is ${ptr.collection} while we are in chaptner ${collection.name}")
-	}
-	if ptr.name in collection.files {
-		return collection.files[ptr.name] or {
-			return CollectionObjNotFound{
-				cat: cat
-				collection: collection.name
-				name: ptr.name
-			}
-		}
-	}
-	return CollectionObjNotFound{
-		cat: cat
-		collection: collection.name
-		name: ptr.name
-	}
+pub fn (collection Collection) image_get(name_ string) !&File {
+	return collection.file_get(name_)!
 }
 
-pub fn (collection Collection) image_get(name string) !&File {
-	cat := 'image'
-	ptr := pointer_new(name)!
-	if ptr.collection != '' && ptr.collection != collection.name {
-		return error("Can't get in collection, collection name asked for is ${ptr.collection} while we are in chaptner ${collection.name}")
-	}
-	if ptr.name in collection.images {
-		return collection.images[ptr.name] or {
-			return CollectionObjNotFound{
-				cat: cat
-				collection: collection.name
-				name: ptr.name
-			}
+pub fn (collection Collection) file_get(name_ string) !&File {
+	_, name := name_parse(name_)!
+	return collection.files[name] or {
+		return ObjNotFound{
+			collection: collection.name
+			name: name
 		}
-	}
-	return CollectionObjNotFound{
-		cat: cat
-		collection: collection.name
-		name: ptr.name
 	}
 }
 
 pub fn (collection Collection) page_exists(name string) bool {
 	_ := collection.page_get(name) or {
-		if err is CollectionObjNotFound {
+		if err is ObjNotFound {
 			return false
 		} else {
 			panic(err) // catch unforseen errors
@@ -115,7 +69,7 @@ pub fn (collection Collection) page_exists(name string) bool {
 
 pub fn (collection Collection) image_exists(name string) bool {
 	_ := collection.image_get(name) or {
-		if err is CollectionObjNotFound {
+		if err is ObjNotFound {
 			return false
 		} else {
 			panic(err)
@@ -126,7 +80,7 @@ pub fn (collection Collection) image_exists(name string) bool {
 
 pub fn (collection Collection) file_exists(name string) bool {
 	_ := collection.file_get(name) or {
-		if err is CollectionObjNotFound {
+		if err is ObjNotFound {
 			return false
 		} else {
 			panic(err)
@@ -143,7 +97,7 @@ fn (mut collection Collection) file_image_remember(mut p Path) ! {
 	$if debug {
 		println('file or image remember: ${p.path}')
 	}
-	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: true)! // TODO: seems like some overkill
+	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: true)!
 	p = ptr.path
 	if ptr.is_image() {
 		if collection.heal && imagemagick.installed() {
@@ -212,7 +166,7 @@ pub fn (mut collection Collection) page_new(mut p Path) ! {
 		)
 		return
 	}
-	mut doc := markdownparser.new(path: p.path) or { panic('cannot parse,${err}') }
+	mut doc := markdownparser.new(path: p.path)!
 	mut page := &Page{
 		doc: doc
 		pathrel: p.path_relative(collection.path.path)!.trim('/')
@@ -220,7 +174,6 @@ pub fn (mut collection Collection) page_new(mut p Path) ! {
 		path: p
 		readonly: false
 		pages_linked: []&Page{}
-		tree_name: collection.tree_name
 		tree: collection.tree
 		collection_name: collection.name
 	}
@@ -305,12 +258,12 @@ pub fn (collection Collection) pagenames() []string {
 }
 
 // write errors.md in the collection, this allows us to see what the errors are
-pub fn (collection Collection) errors_report(where string) ! {
+fn (collection Collection) errors_report(where string) ! {
 	mut p := pathlib.get('${where}')
 	if collection.errors.len == 0 {
 		p.delete()!
 		return
 	}
-	c := $tmpl('../../osal/mdbook/template/errors_collection.md')
+	c := $tmpl('template/errors_collection.md')
 	p.write(c)!
 }

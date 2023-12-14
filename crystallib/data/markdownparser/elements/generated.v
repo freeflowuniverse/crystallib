@@ -1,52 +1,59 @@
 module elements
 
-type DocElement = Action
-	| Codeblock
-	| Comment
-	| Header
-	| Html
-	| Include
-	| Link
-	| Paragraph
-	| Table
-	| Text
+import freeflowuniverse.crystallib.data.paramsparser
+import freeflowuniverse.crystallib.data.actionparser
 
-pub fn (mut self DocBase) process_elements() !int {
+interface Element {
+	markdown() string
+	html() string
+	actions() []actionparser.Action
+mut:
+	id        int
+	content   string
+	processed bool
+	params    paramsparser.Params
+	type_name string
+	changed   bool
+	children  []Element
+	process(mut doc Doc) !int
+	treeview_(prefix string, mut out []string)
+}
+
+fn (mut self Doc) remove_empty_elements() ! {
+	mut to_delete := []int{}
+	for id, element in self.children {
+		// remove the elements which are empty
+		if element.content.trim_space() == '' {
+			to_delete << id
+		}
+	}
+
+	self.delete_from_children(to_delete)
+}
+
+fn (mut self Doc) delete_from_children(to_delete []int) {
+	mut write := 0
+	mut delete_ind := 0
+	for i := 0; i < self.children.len; i++ {
+		if delete_ind < to_delete.len && i == to_delete[delete_ind] {
+			delete_ind++
+			continue
+		}
+		self.children[write] = self.children[i]
+		write++
+	}
+
+	self.children = self.children[0..write]
+}
+
+pub fn (mut self Doc) process_elements() !int {
+	self.remove_empty_elements()!
+
 	for {
 		mut changes := 0
-		for mut element in self.children() {
-			match mut element {
-				Html {
-					changes += element.process()!
-				}
-				Paragraph {
-					changes += element.process()!
-				}
-				Action {
-					changes += element.process()!
-				}
-				Table {
-					changes += element.process()!
-				}
-				Header {
-					changes += element.process()!
-				}
-				Text {
-					changes += element.process()!
-				}
-				Comment {
-					changes += element.process()!
-				}
-				Include {
-					changes += element.process()!
-				}
-				Codeblock {
-					changes += element.process()!
-				}
-				Link {
-					changes += element.process()!
-				}
-			}
+		for id, _ in self.children {
+			mut element := self.children[id]
+			changes += element.process(mut self)!
 		}
 		if changes == 0 {
 			break
@@ -55,59 +62,27 @@ pub fn (mut self DocBase) process_elements() !int {
 	return 0
 }
 
-pub fn (mut self DocBase) markdown() string {
+pub fn (self Doc) markdown() string {
 	mut out := ''
-	for mut element in self.children() {
-		match mut element {
-			Html { out += element.markdown() }
-			Paragraph { out += element.markdown() }
-			Action { out += element.markdown() }
-			Table { out += element.markdown() }
-			Header { out += element.markdown() }
-			Text { out += element.markdown() }
-			Comment { out += element.markdown() }
-			Include { out += element.markdown() }
-			Codeblock { out += element.markdown() }
-			Link { out += element.markdown() }
-		}
+	for element in self.children {
+		print('element ${element.id} markdown: ${element.markdown()}')
+		out += element.markdown()
 	}
 	return out
 }
 
-pub fn (mut self DocBase) html() string {
+pub fn (mut self Doc) html() string {
 	mut out := ''
-	for mut element in self.children() {
-		match mut element {
-			Html { out += element.html() }
-			Paragraph { out += element.html() }
-			Action { out += element.html() }
-			Table { out += element.html() }
-			Header { out += element.html() }
-			Text { out += element.html() }
-			Comment { out += element.html() }
-			Include { out += element.html() }
-			Codeblock { out += element.html() }
-			Link { out += element.html() }
-		}
+	for mut element in self.children {
+		out += element.html()
 	}
 	return out
 }
 
-fn (self DocBase) treeview_(prefix string, mut out []string) {
+fn (mut self Doc) treeview_(prefix string, mut out []string) {
 	out << '${prefix}- ${self.type_name:-30} ${self.content.len}'
-	for element in self.children() {
-		match element {
-			Html { element.treeview_(prefix + '  ', mut out) }
-			Paragraph { element.treeview_(prefix + '  ', mut out) }
-			Action { element.treeview_(prefix + '  ', mut out) }
-			Table { element.treeview_(prefix + '  ', mut out) }
-			Header { element.treeview_(prefix + '  ', mut out) }
-			Text { element.treeview_(prefix + '  ', mut out) }
-			Comment { element.treeview_(prefix + '  ', mut out) }
-			Include { element.treeview_(prefix + '  ', mut out) }
-			Codeblock { element.treeview_(prefix + '  ', mut out) }
-			Link { element.treeview_(prefix + '  ', mut out) }
-		}
+	for mut element in self.children {
+		element.treeview_(prefix + '  ', mut out)
 	}
 }
 
@@ -115,33 +90,41 @@ pub fn (mut doc Doc) html_new(args ElementNewArgs) &Html {
 	mut a := Html{
 		content: args.content
 		type_name: 'html'
-		doc: doc
 		id: doc.newid()
-		parent: args.parent
 	}
-	if a.parent > 0 {
-		a.parent().children << a.id
-	} else {
-		doc.children << a.id
-	}
-	doc.elements[a.id] = &a
+
+	set_children(mut doc, &a, args.parent)
+
 	return &a
+}
+
+fn set_children(mut doc Doc, element Element, args ?ElementRef) {
+	if mut parent := args {
+		parent.ref.children << element
+	} else {
+		doc.children << element
+	}
+}
+
+@[params]
+pub struct ElementNewArgs {
+pub mut:
+	content string
+	parent  ?ElementRef
+}
+
+pub struct ElementRef {
+pub mut:
+	ref Element
 }
 
 pub fn (mut doc Doc) paragraph_new(args ElementNewArgs) &Paragraph {
 	mut a := Paragraph{
 		content: args.content
 		type_name: 'paragraph'
-		doc: doc
 		id: doc.newid()
-		parent: args.parent
 	}
-	if a.parent > 0 {
-		a.parent().children << a.id
-	} else {
-		doc.children << a.id
-	}
-	doc.elements[a.id] = &a
+	set_children(mut doc, &a, args.parent)
 	return &a
 }
 
@@ -149,16 +132,9 @@ pub fn (mut doc Doc) action_new(args ElementNewArgs) &Action {
 	mut a := Action{
 		content: args.content
 		type_name: 'action'
-		doc: doc
 		id: doc.newid()
-		parent: args.parent
 	}
-	if a.parent > 0 {
-		a.parent().children << a.id
-	} else {
-		doc.children << a.id
-	}
-	doc.elements[a.id] = &a
+	set_children(mut doc, &a, args.parent)
 	return &a
 }
 
@@ -166,16 +142,9 @@ pub fn (mut doc Doc) table_new(args ElementNewArgs) &Table {
 	mut a := Table{
 		content: args.content
 		type_name: 'table'
-		doc: doc
 		id: doc.newid()
-		parent: args.parent
 	}
-	if a.parent > 0 {
-		a.parent().children << a.id
-	} else {
-		doc.children << a.id
-	}
-	doc.elements[a.id] = &a
+	set_children(mut doc, &a, args.parent)
 	return &a
 }
 
@@ -183,16 +152,9 @@ pub fn (mut doc Doc) header_new(args ElementNewArgs) &Header {
 	mut a := Header{
 		content: args.content
 		type_name: 'header'
-		doc: doc
 		id: doc.newid()
-		parent: args.parent
 	}
-	if a.parent > 0 {
-		a.parent().children << a.id
-	} else {
-		doc.children << a.id
-	}
-	doc.elements[a.id] = &a
+	set_children(mut doc, &a, args.parent)
 	return &a
 }
 
@@ -200,16 +162,9 @@ pub fn (mut doc Doc) text_new(args ElementNewArgs) &Text {
 	mut a := Text{
 		content: args.content
 		type_name: 'text'
-		doc: doc
 		id: doc.newid()
-		parent: args.parent
 	}
-	if a.parent > 0 {
-		a.parent().children << a.id
-	} else {
-		doc.children << a.id
-	}
-	doc.elements[a.id] = &a
+	set_children(mut doc, &a, args.parent)
 	return &a
 }
 
@@ -217,16 +172,9 @@ pub fn (mut doc Doc) comment_new(args ElementNewArgs) &Comment {
 	mut a := Comment{
 		content: args.content
 		type_name: 'comment'
-		doc: doc
 		id: doc.newid()
-		parent: args.parent
 	}
-	if a.parent > 0 {
-		a.parent().children << a.id
-	} else {
-		doc.children << a.id
-	}
-	doc.elements[a.id] = &a
+	set_children(mut doc, &a, args.parent)
 	return &a
 }
 
@@ -234,16 +182,9 @@ pub fn (mut doc Doc) include_new(args ElementNewArgs) &Include {
 	mut a := Include{
 		content: args.content
 		type_name: 'include'
-		doc: doc
 		id: doc.newid()
-		parent: args.parent
 	}
-	if a.parent > 0 {
-		a.parent().children << a.id
-	} else {
-		doc.children << a.id
-	}
-	doc.elements[a.id] = &a
+	set_children(mut doc, &a, args.parent)
 	return &a
 }
 
@@ -251,16 +192,9 @@ pub fn (mut doc Doc) codeblock_new(args ElementNewArgs) &Codeblock {
 	mut a := Codeblock{
 		content: args.content
 		type_name: 'codeblock'
-		doc: doc
 		id: doc.newid()
-		parent: args.parent
 	}
-	if a.parent > 0 {
-		a.parent().children << a.id
-	} else {
-		doc.children << a.id
-	}
-	doc.elements[a.id] = &a
+	set_children(mut doc, &a, args.parent)
 	return &a
 }
 
@@ -268,15 +202,8 @@ pub fn (mut doc Doc) link_new(args ElementNewArgs) &Link {
 	mut a := Link{
 		content: args.content
 		type_name: 'link'
-		doc: doc
 		id: doc.newid()
-		parent: args.parent
 	}
-	if a.parent > 0 {
-		a.parent().children << a.id
-	} else {
-		doc.children << a.id
-	}
-	doc.elements[a.id] = &a
+	set_children(mut doc, &a, args.parent)
 	return &a
 }

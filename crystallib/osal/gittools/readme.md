@@ -54,24 +54,27 @@ gittools.git_get .
   - always has GitAddress
   - a gitlocator is nothing without gitaddress
 
-## Get a repo
-
-This is the most basic usecase
-
->> TODO: check
+## get gitstructure and repo
 
 ```v
-import gittools
+import freeflowuniverse.crystallib.osal.gittools
 
-mut gs:=gittools.get()!
-url := "https://github.com/threefoldfoundation/www_examplesite/tree/development/manual"
-mut gr := gs.repo_get_from_url(url:url,pull:false, reset:false)
+coderoot := '/tmp/code_test'
+mut gs := gittools.get(coderoot: coderoot)!
 
-println(gr)
+mut path := gittools.code_get(
+    coderoot: coderoot
+    pull: true
+    reset: true    
+    url: 'https://github.com/despiegk/ourworld_data'
+)!
 
-println(gr.path_content_get())
+gs_default.list()!
+gs.list()!
+
 
 ```
+
 
 result is something like
 
@@ -94,7 +97,7 @@ GitRepo{
 }
 
 #THIS IS THE PATH WHERE THE CONTENT GOT CHECKED OUT
-/Users/despiegk1/code/github/threefoldfoundation/www_examplesite/manual
+~/code/github/threefoldfoundation/www_examplesite/manual
 
 - bettertoken/info_bettertoken                 development             CHANGED
 - despiegk/data                                master                  CHANGED

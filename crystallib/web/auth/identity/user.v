@@ -21,9 +21,7 @@ pub fn new() !IdentityManager {
 // }
 
 pub fn (mut auth IdentityManager) login_user(email string) !User {
-	return auth.backend.read_user(email: email) or {
-		return error('user not found')
-	}
+	return auth.backend.read_user(email: email) or { return error('user not found') }
 }
 
 pub fn (mut auth IdentityManager) register_user(identifier string) User {

@@ -7,7 +7,7 @@ pub mut:
 	replaceme string
 }
 
-pub fn (mut self Html) process() !int {
+pub fn (mut self Html) process(mut doc Doc) !int {
 	if self.processed {
 		return 0
 	}
@@ -15,7 +15,7 @@ pub fn (mut self Html) process() !int {
 	return 1
 }
 
-pub fn (mut self Html) markdown() string {
+pub fn (self Html) markdown() string {
 	mut out := '<html>\n'
 	out += self.content
 	out += '</html>\n'
@@ -23,7 +23,7 @@ pub fn (mut self Html) markdown() string {
 	return out
 }
 
-pub fn (mut self Html) html() string {
+pub fn (self Html) html() string {
 	mut out := self.content
 	out += self.DocBase.html()
 	return out

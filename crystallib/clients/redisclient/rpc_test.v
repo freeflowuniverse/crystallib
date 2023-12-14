@@ -9,7 +9,7 @@ fn setup() !&redisclient.Redis {
 
 fn cleanup(mut redis redisclient.Redis) ! {
 	redis.flushall()!
-	redis.disconnect()
+	// redis.disconnect()
 }
 
 fn process_test(cmd string, data string) !string {

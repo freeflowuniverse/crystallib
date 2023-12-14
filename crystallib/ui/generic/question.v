@@ -12,9 +12,9 @@ import freeflowuniverse.crystallib.ui.uimodel { QuestionArgs }
 // - regex: to check what result need to be part of
 // - minlen: min nr of chars
 //
-pub fn (mut c UserInterface) ask_question(args QuestionArgs) string {
-	return match mut c.channel {
-		UIConsole { c.channel.ask_question(args) }
+pub fn (mut c UserInterface) ask_question(args QuestionArgs) !string {
+	match mut c.channel {
+		UIConsole { return c.channel.ask_question(args)! }
 		// UITelegram { return c.ask_question(args) }
 		else { panic("can't find channel") }
 	}

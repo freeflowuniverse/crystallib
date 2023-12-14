@@ -1,7 +1,7 @@
 module gittools
 
 // import os
-// import freeflowuniverse.crystallib.tools.sshagent
+// import freeflowuniverse.crystallib.osal.sshagent
 import freeflowuniverse.crystallib.core.pathlib
 
 // location of a file, dir or part of file in a GitAddr
@@ -21,9 +21,11 @@ pub fn (mut gs GitStructure) locator_new(url string) !GitLocator {
 pub fn locator_new(gsconfig GitStructureConfig, url string) !GitLocator {
 	// println(" ** URL: $url **")
 	mut urllower := url.to_lower()
-	if url.trim_space()==""{
-		$if debug{print_backtrace()}
-		return error("url cannot be empty")
+	if url.trim_space() == '' {
+		$if debug {
+			print_backtrace()
+		}
+		return error('url cannot be empty')
 	}
 	urllower = urllower.trim_space()
 	if urllower.starts_with('ssh://') {
@@ -45,11 +47,11 @@ pub fn locator_new(gsconfig GitStructureConfig, url string) !GitLocator {
 	urllower = urllower.replace('//', '/')
 	urllower = urllower.trim('/')
 	urllower = urllower.replace('/blob/', '/')
-	urllower = urllower.replace('/src/branch/', '/tree/') //to deal with gitea who has other scheme
+	urllower = urllower.replace('/src/branch/', '/tree/') // to deal with gitea who has other scheme
 	urllower = urllower.replace('/tree/', '/')
 
 	// println(" ** URL2: $urllower **")
-	//https://github.com/ourworldventures/www_ourworld_tf/tree/development_template/templates
+	// https://github.com/ourworldventures/www_ourworld_tf/tree/development_template/templates
 	// https://git.ourworld.tf/drc/info_all4drc/src/branch/main/collections/all4drc
 
 	mut parts := urllower.split('/')

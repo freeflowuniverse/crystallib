@@ -2,12 +2,6 @@ module doctree
 
 import freeflowuniverse.crystallib.core.pathlib
 
-pub enum PointerPathState {
-	unknown
-	ok
-	error
-}
-
 pub struct PointerPath {
 pub mut:
 	pointer Pointer

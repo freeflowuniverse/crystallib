@@ -8,7 +8,7 @@ pub mut:
 	singleline bool
 }
 
-pub fn (mut self Comment) process() !int {
+pub fn (mut self Comment) process(mut doc Doc) !int {
 	if self.processed {
 		return 0
 	}
@@ -25,7 +25,7 @@ pub fn (self Comment) markdown() string {
 	return out
 }
 
-pub fn (mut self Comment) html() string {
+pub fn (self Comment) html() string {
 	mut out := self.content
 	out += self.DocBase.html()
 	return out

@@ -24,7 +24,6 @@ pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 	mut pp := pathlib.get_dir(path: args.path)! // will raise error if path doesn't exist
 	mut collection := &Collection{
 		name: args.name
-		tree_name: tree.name
 		tree: tree
 		path: pp
 		heal: args.heal

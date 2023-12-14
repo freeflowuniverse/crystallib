@@ -17,12 +17,11 @@ fn (mut gitstructure GitStructure) load() ! {
 		os.mkdir_all(gitstructure.rootpath.path)!
 	}
 	gitstructure.load_recursive(git_path.path, mut done)!
-	for mut repo in gitstructure.repos {		
+	for mut repo in gitstructure.repos {
 		repo.status()!
 		// println(repo)
 	}
 }
-
 
 fn (mut gitstructure GitStructure) reload() ! {
 	// print_backtrace()
@@ -35,11 +34,10 @@ fn (mut gitstructure GitStructure) reload() ! {
 		os.mkdir_all(gitstructure.rootpath.path)!
 	}
 	gitstructure.load_recursive(git_path.path, mut done)!
-	for mut repo in gitstructure.repos {		
+	for mut repo in gitstructure.repos {
 		repo.load()!
 	}
 }
-
 
 // fn (mut gitstructure GitStructure) reload() ! {
 // 	gitstructure.repos.clear()
@@ -59,7 +57,6 @@ fn (mut gitstructure GitStructure) reload() ! {
 // 	}
 // }
 
-
 // // internal function to be executed in thread
 // fn repo_refresh(addr GitAddr, path string) {
 // 	repo_load(addr, path) or { panic(err) }
@@ -69,7 +66,7 @@ fn (mut gitstructure GitStructure) reload() ! {
 // }
 
 // pub fn (mut gs GitStructure) reload() ! {
-	
+
 // 	mut done := []string{}
 // 	gs.load_recursive(gs.rootpath.path, mut done)!
 // 	// mut threads := []thread{}

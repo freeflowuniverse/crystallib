@@ -37,7 +37,7 @@ pub:
 }
 
 pub fn send_msg(pk string, payload string, wait bool) !InboundMessage {
-	mut url := myceilum.server_url
+	mut url := mycelium.server_url
 	if wait {
 		url = '${url}?reply_timeout=120'
 	}
@@ -58,7 +58,7 @@ pub fn send_msg(pk string, payload string, wait bool) !InboundMessage {
 }
 
 pub fn receive_msg(wait bool) !InboundMessage {
-	mut url := myceilum.server_url
+	mut url := mycelium.server_url
 	if wait {
 		url = '${url}?timeout=60'
 	}
@@ -72,14 +72,14 @@ pub fn receive_msg(wait bool) !InboundMessage {
 }
 
 pub fn get_msg_status(id string) !MessageStatusResponse {
-	mut url := '${myceilum.server_url}/status/${id}'
+	mut url := '${mycelium.server_url}/status/${id}'
 	res := http.get(url)!
 	msg_res := json.decode(MessageStatusResponse, res.body)!
 	return msg_res
 }
 
 pub fn reply_msg(id string, pk string, payload string) !http.Status {
-	mut url := '${myceilum.server_url}/reply/${id}'
+	mut url := '${mycelium.server_url}/reply/${id}'
 	msg_req := PushMessageBody{
 		dst: MessageDestination{
 			pk: pk

@@ -10,37 +10,25 @@ import freeflowuniverse.crystallib.baobab.smartid
 @[params]
 pub struct TreeScannerArgs {
 pub mut:
-	name string = 'default' // name of tree
-	path string
-	heal bool // healing means we fix images, if selected will automatically load, remove stale links
-	load bool = true
-	// strict    bool // means we assume all dir's in root directory of scanning to be collections
+	path      string
+	heal      bool // healing means we fix images, if selected will automatically load, remove stale links
 	git_url   string
 	git_reset bool
 	git_root  string
 	git_pull  bool
-	cid       smartid.CID
+	load      bool = true // means we scan automatically the added collection
 }
 
-pub fn scan(args_ TreeScannerArgs) ! {
-	mut args := args_
-	args.name = texttools.name_fix(args.name)
-	lock knowledgetrees {
-		mut tree := knowledgetrees[args.name] or { return error('cannot find tree: ${args.name}') }
-		tree.scan(args)!
-		knowledgetrees[args.name] = tree
-		// knowledgetrees[args.name] or { return error('cannot find tree: ${args.name}') }.scan(args)!
-	}
-
-	lock knowledgetrees {
-		mut tree := knowledgetrees[args.name] or { return error('cannot find tree: ${args.name}') }
-		tree.heal(args)!
-		knowledgetrees[args.name] = tree
-	}
-}
-
-// walk over directory find dirs with .book or .collection inside and add to the tree
+// walk over directory find dirs with .book or .collection inside and add to the tree .
 // a path will not be added unless .collection is in the path of a collection dir or .book in a book
+// ```
+// path string
+// heal bool // healing means we fix images, if selected will automatically load, remove stale links
+// git_url   string
+// git_reset bool
+// git_root  string
+// git_pull  bool
+// ```	
 pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 	// $if debug{println(" - collections find recursive: $path.path")}
 	mut args := args_
@@ -98,21 +86,6 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 			}
 		}
 
-		// QUESTION: is this necessary?
-		// if !args.strict {
-		// 	for dir in path.dir_list()! {
-		// 		// dont double count collections already added
-		// 		if !dir.file_exists('.collection') || !dir.file_exists('.site') {
-		// 			tree.collection_new(
-		// 				path: dir.path
-		// 				name: name
-		// 				heal: args.heal
-		// 				load: args.load
-		// 			)!
-		// 		}
-		// 	}
-		// }
-
 		mut pl := path.list(recursive: false) or {
 			return error('cannot list: ${path.path} \n${error}')
 		}
@@ -129,6 +102,16 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 				}
 			}
 		}
+	}
+
+	if args.heal {
+		tree.heal()!
+	}
+}
+
+pub fn (mut tree Tree) heal() ! {
+	for _, mut collection in tree.collections {
+		collection.fix()!
 	}
 }
 
@@ -148,16 +131,3 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 // 		}
 // 	}
 // }
-
-// QUESTION: healing doesn't work in scanning, is it ok to separate?
-pub fn (mut tree Tree) heal(args_ TreeScannerArgs) ! {
-	mut args := args_
-	if args.heal {
-		for _, mut collection in tree.collections {
-			if !args.load {
-				collection.scan()!
-			}
-			collection.fix()!
-		}
-	}
-}

@@ -2,7 +2,7 @@ module people
 
 import freeflowuniverse.crystallib.baobab.models.system
 // import json
-// import freeflowuniverse.crystallib.algo.encoder
+// import freeflowuniverse.crystallib.data.encoder
 
 @[heap]
 pub struct Person {

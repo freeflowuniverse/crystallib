@@ -18,17 +18,17 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		line = line.replace('\t', '    ')
 		trimmed_line := line.trim_space()
 
-		mut llast := parser.lastitem()
+		mut llast := parser.lastitem()!
 
 		println(' -- line: ${llast.type_name} ${line}')
 
 		if mut llast is elements.Table {
-			if trimmed_line.starts_with('|') && trimmed_line.ends_with('|') {
+			if trimmed_line != '' {
 				llast.content += '${line}\n'
 				parser.next()
 				continue
 			}
-			parser.next_start()
+			parser.next_start()!
 			continue
 		}
 
@@ -40,13 +40,13 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				continue
 			}
 
-			parser.next_start()
+			parser.ensure_last_is_paragraph()!
 			continue
 		}
 
 		if mut llast is elements.Html {
 			if line.trim_space().to_lower().starts_with('</html>') {
-				parser.next_start()
+				parser.next_start()!
 				continue
 			}
 			llast.content += '${line}\n'
@@ -56,7 +56,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 
 		if mut llast is elements.Codeblock {
 			if trimmed_line == '```' || trimmed_line == "'''" {
-				parser.next_start()
+				parser.next_start()!
 				continue
 			}
 			llast.content += '${line}\n'
@@ -69,11 +69,11 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			if line.starts_with('!!include ') {
 				content := line.all_after_first('!!include ').trim_space()
 				doc.include_new(content: content)
-				parser.next()
+				parser.next_start()!
 				continue
 			}
 			// parse action
-			if line.starts_with('!') {
+			if line.starts_with('!!') {
 				doc.action_new(content: line)
 				parser.next()
 				continue
@@ -96,12 +96,12 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				if d < line.len && line[d] == 32 {
 					if d >= 6 {
 						parser.error_add('header should be max 5 deep')
-						parser.next_start()
+						parser.next_start()!
 						continue
 					}
 					mut e := doc.header_new(content: line.all_after_first(line[..d]).trim_space())
 					e.depth = d
-					parser.next_start()
+					parser.next_start()!
 					continue
 				}
 				parser.next()
@@ -124,7 +124,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				mut comment := trimmed_line.all_after_first('<!--')
 				comment = comment.all_before('-->')
 				doc.comment_new(content: comment)
-				parser.next_start()
+				parser.next_start()!
 				continue
 			}
 		}
@@ -146,5 +146,6 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 
 		parser.next()
 	}
+
 	doc.process_elements()! // now do the processing
 }

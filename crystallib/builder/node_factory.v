@@ -4,16 +4,16 @@ import freeflowuniverse.crystallib.core.texttools
 
 // get node connection to local machine
 // pass your redis client there
-pub fn (mut builder BuilderFactory) node_local() !&Node {
-	return builder.node_new(name: 'localhost')
+pub fn (mut bldr BuilderFactory) node_local() !&Node {
+	return bldr.node_new(name: 'localhost')
 }
 
 // retrieve node from the factory, will throw error if not there
-pub fn (mut builder BuilderFactory) node_get(name string) !&Node {
+pub fn (mut bldr BuilderFactory) node_get(name string) !&Node {
 	if name == '' {
 		return error('need to specify name')
 	}
-	for node in builder.nodes {
+	for node in bldr.nodes {
 		if node.name == name {
 			return &node
 		}
@@ -56,7 +56,7 @@ pub mut:
 // 	reset bool
 // 	}
 //```
-pub fn (mut builder BuilderFactory) node_new(args_ NodeArguments) !&Node {
+pub fn (mut bldr BuilderFactory) node_new(args_ NodeArguments) !&Node {
 	mut args := args_
 	if args.name == '' {
 		if args.ipaddr.len > 0 {
@@ -70,7 +70,7 @@ pub fn (mut builder BuilderFactory) node_new(args_ NodeArguments) !&Node {
 		args.name = texttools.name_fix(args.name).replace('.', '_')
 	}
 
-	for node in builder.nodes {
+	for node in bldr.nodes {
 		if node.name == args.name {
 			return &node
 		}
@@ -89,7 +89,7 @@ pub fn (mut builder BuilderFactory) node_new(args_ NodeArguments) !&Node {
 	mut node := Node{
 		name: args.name
 		executor: executor
-		factory: &builder
+		factory: &bldr
 	}
 
 	wasincache := node.load()!
@@ -98,7 +98,7 @@ pub fn (mut builder BuilderFactory) node_new(args_ NodeArguments) !&Node {
 		node.readfromsystem()!
 	}
 
-	builder.nodes << node
+	bldr.nodes << node
 
 	return &node
 }

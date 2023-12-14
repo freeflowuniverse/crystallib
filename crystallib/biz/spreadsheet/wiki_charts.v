@@ -1,6 +1,6 @@
 module spreadsheet
 
-import freeflowuniverse.crystallib.data.markdownparser
+import freeflowuniverse.crystallib.data.markdownparser.elements
 
 pub fn (mut s Sheet) wiki_title_chart(args RowGetArgs) string {
 	if args.title.len > 0 {
@@ -18,13 +18,22 @@ pub fn (mut s Sheet) wiki_title_chart(args RowGetArgs) string {
 
 pub fn (mut s_ Sheet) wiki_row_overview(args RowGetArgs) !string {
 	mut s := s_.filter(args)!
-	table := markdownparser.Table{
+
+	rows_values := s.rows.values().map([it.name, it.description, it.tags])
+	mut rows := []elements.Row{}
+	for values in rows_values {
+		rows << elements.Row{
+			cells: values
+		}
+	}
+
+	table := elements.Table{
 		header: ['Row Name', 'Description', 'Tags']
 		// TODO: need to use the build in mechanism to filter rows
-		rows: s.rows.values().map([it.name, it.description, it.tags])
+		rows: rows
 		alignments: [.left, .left, .left]
 	}
-	return table.wiki()
+	return table.markdown()
 }
 
 // produce a nice looking bar chart see

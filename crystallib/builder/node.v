@@ -42,7 +42,10 @@ pub fn (mut node Node) key() string {
 // get remote environment arguments in memory
 pub fn (mut node Node) readfromsystem() ! {
 	node.platform_load()!
-	node.environment = node.environ_get() or { return error('can not load env.\n ${err}') }
+	node.environment = node.environ_get(reload: true) or {
+		return error('can not load env.\n ${err}')
+	}
+
 	home := node.environment['HOME'] or {
 		return error('could not find HOME in environment variables.\n ${node}')
 	}

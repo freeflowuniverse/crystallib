@@ -10,44 +10,49 @@ pub struct DocBase {
 pub mut:
 	id        int
 	content   string
-	doc       ?&Doc               @[skip; str: skip]
 	path      pathlib.Path
 	processed bool
 	params    paramsparser.Params
 	type_name string
 	changed   bool
-	parent    int
-	children  []int
+	children  []Element
 }
 
 fn (mut self DocBase) process_base() ! {
-	for mut element in self.children() {
+	mut to_delete := []int{}
+	for id, element in self.children {
 		// remove the elements which are empty
-		if element.content.trim_space() == '' {
-			self.children.delete(element.id)
+		if element.content == '' {
+			to_delete << id
 		}
 	}
+
+	self.delete_from_children(to_delete)
 }
 
-@[params]
-pub struct ElementNewArgs {
-pub mut:
-	content string
-	parent  int
+fn (mut self DocBase) delete_from_children(to_delete []int) {
+	mut write := 0
+	mut delete_ind := 0
+	for i := 0; i < self.children.len; i++ {
+		if delete_ind < to_delete.len && i == to_delete[delete_ind] {
+			delete_ind++
+			continue
+		}
+		self.children[write] = self.children[i]
+		write++
+	}
+
+	self.children = self.children[0..write]
 }
 
 pub fn (self DocBase) actions() []actionparser.Action {
 	mut out := []actionparser.Action{}
-	for element in self.children() {
-		// println(element.type_name)
-		match element {
-			Action {
-				println(1)
-				out << element.action
-				out << element.actions()
-			}
-			else {}
+	for element in self.children {
+		if element is Action {
+			out << element.action
 		}
+
+		out << element.actions()
 	}
 	return out
 }
@@ -58,33 +63,42 @@ pub fn (self DocBase) treeview() string {
 	return out.join_lines()
 }
 
-pub fn (self DocBase) children() []&DocElement {
-	mut d := self.doc or { panic('no doc') }
-	mut res := []&DocElement{}
-	for id in self.children {
-		mut e := d.elements[id] or { panic('cant find doc with id: ${id}') }
-		res << e
+pub fn (self DocBase) children() []Element {
+	return self.children
+}
+
+pub fn (mut self DocBase) process_elements(mut doc Doc) !int {
+	for {
+		mut changes := 0
+		for mut element in self.children {
+			changes += element.process(mut doc)!
+		}
+		if changes == 0 {
+			break
+		}
 	}
-	return res
+	return 0
 }
 
-pub fn (self DocBase) parent() &DocElement {
-	mut d := self.doc or { panic('no doc') }
-	return d.elements[self.parent] or { panic('cant find doc with id: ${self.parent}') }
+fn (self DocBase) treeview_(prefix string, mut out []string) {
+	out << '${prefix}- ${self.type_name:-30} ${self.content.len}'
+	for mut element in self.children() {
+		element.treeview_(prefix + ' ', mut out)
+	}
 }
 
-// pub fn (self DocBase) markdown() !string {
-// 	mut out:=[]string{}
-// 	for _, element in self.children(){
-// 		out<<element.markdown()!
-// 	}
-// 	return out.join_lines()
-// }
+pub fn (self DocBase) html() string {
+	mut out := ''
+	for mut element in self.children() {
+		out += element.html()
+	}
+	return out
+}
 
-// pub fn (self DocBase) html()! string {
-// 	mut out:=[]string{}
-// 	for _, element in self.children(){
-// 		out<<element.html()!
-// 	}
-// 	return out.join_lines()
-// }
+pub fn (self DocBase) markdown() string {
+	mut out := ''
+	for mut element in self.children() {
+		out += element.markdown()
+	}
+	return out
+}

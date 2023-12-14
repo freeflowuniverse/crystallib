@@ -46,7 +46,6 @@ pub fn install(args InstallArgs) ! {
 // start zinit
 pub fn start() ! {
 	zinit.start()!
-	
 }
 
 // pub fn stop() ! {

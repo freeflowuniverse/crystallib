@@ -1,9 +1,9 @@
 module doctree
 
 import log
-import v.embed_file
+// import v.embed_file
 // import freeflowuniverse.crystallib.baobab.context
-import freeflowuniverse.crystallib.baobab.smartid
+// import freeflowuniverse.crystallib.baobab.smartid
 
 @[heap]
 pub struct Tree {
@@ -13,13 +13,13 @@ pub mut:
 	logger &log.Logger = &log.Log{
 	level: .info
 } @[skip; str: skip]
-	collections     map[string]&Collection
-	embedded_files  []embed_file.EmbedFileData // this where we have the templates for exporting a book
-	state           TreeState
-	macroprocessors []IMacroProcessor
+	collections map[string]&Collection
+	// embedded_files  []embed_file.EmbedFileData // this where we have the templates for exporting a book
+	state TreeState
+	// macroprocessors []IMacroProcessor
 	// spawner         &spawner.Spawner
 	// context context.Context
-	cid smartid.CID
+	cid string
 }
 
 pub enum TreeState {
@@ -28,15 +28,21 @@ pub enum TreeState {
 	error
 }
 
+// the unique key to remember a tree .
+// is unique per circle (based on cid)
+pub fn (tree Tree) key() string {
+	return '${tree.cid}__${tree.name}'
+}
+
 // pub fn (mut tree Tree) reset() ! {
 // 	// tree.collections = map[string]
 // }
 
 // add macroprocessor to the tree
 // see interface IMacroProcessor for how macroprocessor needs to be implemented
-pub fn (mut tree Tree) macroprocessor_add(mp IMacroProcessor) ! {
-	tree.macroprocessors << mp
-}
+// pub fn (mut tree Tree) macroprocessor_add(mp IMacroProcessor) ! {
+// 	tree.macroprocessors << mp
+// }
 
 // fix all loaded tree
 pub fn (mut tree Tree) fix() ! {
@@ -139,7 +145,7 @@ pub fn (mut tree Tree) file_get(pointerstr string) !&File {
 // exists or too many
 pub fn (mut tree Tree) page_exists(name string) bool {
 	_ := tree.page_get(name) or {
-		if err is CollectionNotFound || err is CollectionObjNotFound || err is NoOrTooManyObjFound {
+		if err is CollectionNotFound || err is ObjNotFound || err is NoOrTooManyObjFound {
 			return false
 		} else {
 			panic(err)
@@ -151,7 +157,7 @@ pub fn (mut tree Tree) page_exists(name string) bool {
 // exists or too many
 pub fn (mut tree Tree) image_exists(name string) bool {
 	_ := tree.image_get(name) or {
-		if err is CollectionNotFound || err is CollectionObjNotFound || err is NoOrTooManyObjFound {
+		if err is CollectionNotFound || err is ObjNotFound || err is NoOrTooManyObjFound {
 			return false
 		} else {
 			panic(err)
@@ -163,7 +169,7 @@ pub fn (mut tree Tree) image_exists(name string) bool {
 // exists or too many
 pub fn (mut tree Tree) file_exists(name string) bool {
 	_ := tree.file_get(name) or {
-		if err is CollectionNotFound || err is CollectionObjNotFound || err is NoOrTooManyObjFound {
+		if err is CollectionNotFound || err is ObjNotFound || err is NoOrTooManyObjFound {
 			return false
 		} else {
 			panic(err)

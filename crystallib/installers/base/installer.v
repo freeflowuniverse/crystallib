@@ -19,9 +19,12 @@ pub fn install() ! {
 				}
 			}
 			println(' - OSX prepare')
-			osal.execute_silent('
+			osal.exec(
+				cmd: '
+			brew update
 			brew install mc tmux git rsync curl tmux
-			')!
+			'
+			)!
 		} else if pl == .ubuntu {
 			println(' - Ubuntu prepare')
 			osal.execute_silent('

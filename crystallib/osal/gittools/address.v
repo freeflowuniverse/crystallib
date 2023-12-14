@@ -1,7 +1,6 @@
 module gittools
 
-
-import freeflowuniverse.crystallib.tools.sshagent
+import freeflowuniverse.crystallib.osal.sshagent
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 
@@ -16,19 +15,17 @@ pub mut:
 	name       string // is the name of the repository
 	branch     string
 	remote_url string
-	
 }
 
 // internal function to check git address
-fn ( addr GitAddr) check() {
+fn (addr GitAddr) check() {
 	if addr.provider == '' || addr.account == '' || addr.name == '' {
 		panic('provider, account or name is empty: ${addr.provider}/${addr.account}/${addr.name}')
 	}
 }
 
-
 pub fn (addr GitAddr) is_github() bool {
-	if addr.provider.starts_with("github"){
+	if addr.provider.starts_with('github') {
 		return true
 	}
 	return false
@@ -96,9 +93,9 @@ fn (addr GitAddr) url_http_with_branch_get() string {
 	addr.check()
 	u := addr.url_http_get()
 	if addr.branch != '' {
-		if addr.is_github(){
+		if addr.is_github() {
 			return '${u}/src/branch/${addr.branch}'
-		}else{
+		} else {
 			return '${u}/tree/${addr.branch}'
 		}
 	} else {

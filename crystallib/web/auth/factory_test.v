@@ -1,6 +1,5 @@
 module main
 
-
 // import freeflowuniverse.spiderlib.auth.jwt
 // import freeflowuniverse.crystallib.web.auth.email
 // import freeflowuniverse.crystallib.web.auth.authorization
@@ -15,10 +14,9 @@ import vweb
 
 // Authenticator deals and authenticates refresh and access tokens
 pub struct Authenticator1 {
-	vweb.Context
-	// refresh_secret string = jwt.create_secret() // secret used for signing/verifying refresh tokens
+	vweb.Context // refresh_secret string = jwt.create_secret() // secret used for signing/verifying refresh tokens
 	// access_secret  string = jwt.create_secret() // secret used for signing/verifying refresh tokens
-// pub mut:
+	// pub mut:
 	// identity  identity.IdentityManager     @[vweb_global]
 	// email     email.Authenticator
 	// analytics analytics.Analytics
@@ -26,9 +24,8 @@ pub struct Authenticator1 {
 	// backend   DatabaseBackend
 	// logger    &log.Logger = &log.Logger(&log.Log{
 	// level: .debug
-// })
+	// })
 }
-
 
 @[params]
 pub struct Authenticator1Config {
@@ -36,9 +33,9 @@ pub struct Authenticator1Config {
 	// access_secret  string = jwt.create_secret() // secret used for signing/verifying refresh tokens
 	// authorizer       authorization.Authorizer
 	// backend        DatabaseBackend [required]
-// 	logger &log.Logger = &log.Logger(&log.Log{
-// 	level: .debug
-// })
+	// 	logger &log.Logger = &log.Logger(&log.Log{
+	// 	level: .debug
+	// })
 }
 
 pub fn new1(config Authenticator1Config) !Authenticator1 {
@@ -54,6 +51,6 @@ pub fn new1(config Authenticator1Config) !Authenticator1 {
 	}
 }
 
-fn test_new(){
+fn test_new() {
 	auth := new1()!
 }

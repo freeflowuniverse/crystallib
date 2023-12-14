@@ -4,6 +4,48 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.osal
 
+pub struct DownsizeArgs {
+pub:
+	path       string // can be single file or dir
+	backupdir  string
+	redo       bool // if you want to check the file again, even if processed
+	convertpng bool // if yes will go from png to jpg
+}
+
+// struct ScanArgs{
+// 	path string //where to start from
+// 	backupdir string //if you want a backup dir
+// }
+// will return the paths of the images which were downsized
+pub fn downsize(args DownsizeArgs) ! {
+	if !installed() {
+		panic('cannot scan because imagemagic not installed.')
+	}
+	mut path := pathlib.get(args.path)
+
+	mut params_ := paramsparser.Params{}
+	if args.backupdir != '' {
+		params_.set('backup', args.backupdir)
+	}
+	if args.redo {
+		params_.set('redo', '1')
+	}
+
+	if args.convertpng {
+		params_.set('convertpng', '1')
+	}
+
+	if path.is_dir() {
+		path.scan(mut params_, [filter_imagemagic], [executor_imagemagic])!
+	} else if path.is_file() {
+		executor_imagemagic(mut path, mut params_)!
+	} else {
+		return error('can only process path or dir')
+	}
+}
+
+/////////////////
+
 fn installed0() bool {
 	// println(' - init imagemagick')
 	out := osal.execute_silent('convert -version') or { return false }
@@ -74,41 +116,7 @@ fn executor_imagemagic(mut path pathlib.Path, mut params_ paramsparser.Params) !
 	if backupdir.len > 0 {
 		image.downsize(backup: true, backup_dest: backupdir, redo: redo, convertpng: convertpng)!
 	} else {
-		image.downsize(redo: redo)!
+		image.downsize(redo: redo, convertpng: convertpng)!
 	}
-	return params_
-}
-
-pub struct DownsizeArgs {
-pub:
-	path       string
-	backupdir  string
-	redo       bool
-	convertpng bool
-}
-
-// struct ScanArgs{
-// 	path string //where to start from
-// 	backupdir string //if you want a backup dir
-// }
-// will return params with OK and ERROR if it was not ok
-pub fn downsize(args DownsizeArgs) !paramsparser.Params {
-	if !installed() {
-		panic('cannot scan because imagemagic not installed.')
-	}
-	mut path := pathlib.get_dir(path: args.path)!
-	mut params_ := paramsparser.Params{}
-	if args.backupdir != '' {
-		params_.set('backup', args.backupdir)
-	}
-	if args.redo {
-		params_.set('redo', '1')
-	}
-
-	if args.convertpng {
-		params_.set('convertpng', '1')
-	}
-
-	params_ = path.scan(mut params_, [filter_imagemagic], [executor_imagemagic])!
 	return params_
 }

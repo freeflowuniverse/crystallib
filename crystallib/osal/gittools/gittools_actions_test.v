@@ -3,7 +3,6 @@ module gittools
 import freeflowuniverse.crystallib.data.actionparser
 import os
 
-
 fn test_git() {
 	actionscollection := actionparser.parse_collection(
 		text: "
@@ -34,5 +33,4 @@ fn test_git() {
 	println(actionscollection)
 	actions(actionscollection.actions)!
 	assert false
-	
 }

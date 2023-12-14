@@ -119,18 +119,15 @@ fn (mut book MDBook) template_install() ! {
 	mut tomlfile := book.path_build.file_get_new('book.toml')!
 	tomlfile.write(c)!
 
-
 	c1 := $tmpl('template/build.sh')
 	mut file1 := book.path_build.file_get_new('build.sh')!
 	file1.write(c1)!
-	file1.chmod(0700)!
-
+	file1.chmod(0o770)!
 
 	c2 := $tmpl('template/develop.sh')
 	mut file2 := book.path_build.file_get_new('develop.sh')!
-	file2.write(c2)!	
-	file2.chmod(0700)!
-
+	file2.write(c2)!
+	file2.chmod(0o770)!
 }
 
 fn (mut book MDBook) summary_image_set() ! {
@@ -141,7 +138,7 @@ fn (mut book MDBook) summary_image_set() ! {
 	c := p.read()!
 	mut first := true
 	for line in c.split_into_lines() {
-		if ! (line.trim_space().starts_with("-")){
+		if !(line.trim_space().starts_with('-')) {
 			continue
 		}
 		if line.contains('](') && first {
@@ -151,7 +148,7 @@ fn (mut book MDBook) summary_image_set() ! {
 			// if true{panic("s")}
 			if os.exists(folder_first_dir_img) {
 				mut image_dir := pathlib.get_dir(path: folder_first_dir_img)!
-				image_dir.copy(dest:'${book.path_build.path}/src/img')!
+				image_dir.copy(dest: '${book.path_build.path}/src/img')!
 			}
 
 			first = false

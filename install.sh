@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
+cd ~/code/github/freeflowuniverse/crystallib
 SOURCE=${BASH_SOURCE[0]}
 DIR_OF_THIS_SCRIPT="$( dirname "$SOURCE" )"
 ABS_DIR_OF_SCRIPT="$( realpath $DIR_OF_THIS_SCRIPT )"
@@ -9,7 +10,7 @@ rm -f ~/.vmodules/freeflowuniverse/crystallib
 ln -s $ABS_DIR_OF_SCRIPT/crystallib ~/.vmodules/freeflowuniverse/crystallib
 
 
-cp ./scripts/node/vrun /usr/local/bin/
+cp ~/code/github/freeflowuniverse/crystallib/scripts/node/vrun /usr/local/bin/
 chmod 770  /usr/local/bin/vrun
 
 

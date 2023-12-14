@@ -30,7 +30,7 @@ enum State {
 // return strings which are found which are not actions
 // return the actionscollection
 pub fn parse_collection(args_ ParserArgs) !ActionsCollection {
-	mut args:=args_
+	mut args := args_
 
 	args.text = texttools.dedent(args.text)
 	mut ac := ActionsCollection{}
@@ -121,7 +121,11 @@ pub fn parse_collection(args_ ParserArgs) !ActionsCollection {
 						return error('for now we only support actions with 1 or 2 parts.\n${actionname}')
 					}
 				}
-				paramsdata << line.all_after_first(' ').trim_space().trim_left('!')
+				if line.contains(' ') {
+					// if action is only "!!actor.name" line.all_after_first(' ') will return "!!actor.name"
+					paramsdata << line.all_after_first(' ').trim_space().trim_left('!')
+				}
+				// paramsdata << line.all_after_first(' ').trim_space().trim_left('!')
 				continue
 			} else if line.starts_with('//') {
 				state = .comment_for_action_maybe

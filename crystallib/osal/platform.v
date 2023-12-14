@@ -101,7 +101,6 @@ pub fn is_osx_intel() bool {
 	return platform() == .osx && cputype() != .arm
 }
 
-
 pub fn is_ubuntu() bool {
 	return platform() == .ubuntu
 }

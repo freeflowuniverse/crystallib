@@ -19,23 +19,21 @@ fn test_actionscan() ! {
 	assert c.page_exists('actions1')
 	assert c.page_exists('actions2')
 
-	mut page := c.page_get('actions1')!
+	if d1 := c.page_get('actions1')!.doc {
+		mut a1 := d1.actions()
+		assert a1.len == 1
+		assert a1[0].actor == 'payment3'
+		assert a1[0].name == 'add'
+	} else {
+		assert false, 'doc for page actions1 is missing'
+	}
 
-	println(page.doc)
-
-	mut d1 := page.doc or { panic("doc doesn't exist") }
-	mut d2 := page.doc or { panic("doc doesn't exist") }
-
-	mut md1 := d1.markdown()
-	println(md1)
-
-	mut a1 := d1.actions()
-	println(a1)
-
-	mut a2 := d2.actions()
-	println(a2)
-
-	if true {
-		panic('iii')
+	if d2 := c.page_get('actions2')!.doc {
+		mut a2 := d2.actions()
+		assert a2.len == 2
+		assert a2[0].name == 'add'
+		assert a2[1].name == 'add2'
+	} else {
+		assert false, 'doc for page actions2 is missing'
 	}
 }

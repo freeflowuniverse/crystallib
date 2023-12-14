@@ -7,7 +7,7 @@ pub mut:
 	replaceme string
 }
 
-pub fn (mut self Include) process() !int {
+pub fn (mut self Include) process(mut doc Doc) !int {
 	if self.processed {
 		return 0
 	}
@@ -15,13 +15,14 @@ pub fn (mut self Include) process() !int {
 	return 1
 }
 
-pub fn (mut self Include) markdown() string {
-	mut out := self.content
+pub fn (self Include) markdown() string {
+	mut out := '!!include '
+	out += self.content + '\n'
 	out += self.DocBase.markdown()
 	return out
 }
 
-pub fn (mut self Include) html() string {
+pub fn (self Include) html() string {
 	mut out := self.content
 	out += self.DocBase.html()
 	return out
