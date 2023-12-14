@@ -83,6 +83,10 @@ pub fn sqlite_database_backend(db sqlite.DB) !DatabaseBackend {
 // add session id iadds the id of a session to the user's sessions
 fn (mut backend DatabaseBackend) add_session(session Session) {
 	println('adding sesh: ${session}')
+	session_ := Session{
+		session_id: 'sessionid'
+		user_id: 'userid'
+	}
 	sql backend.db {
 		insert session into Session
 	} or { panic('err:${err}') }
