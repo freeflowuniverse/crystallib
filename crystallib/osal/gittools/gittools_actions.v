@@ -115,16 +115,17 @@ pub fn action(action actionparser.Action) ! {
 }
 
 // do group actions on repo
-// PARAMS
+// args
 //```
-// cmd			  string // clone,commit,pull,push,delete,reload,list,edit,sourcetree
-// filter         string // if used will only show the repo's which have the filter string inside
-// repo           string
-// account        string
-// provider       string
-// msg            string
-// script         bool = true // run non interactive
-// reset		   bool = true // means we will lose changes (only relevant for clone, pull)
+// filter: filter
+// repo: repo
+// account: account
+// provider: provider
+// cmd: cmd.name
+// script: cmd.flags.get_bool('script') or { false }
+// reset: cmd.flags.get_bool('reset') or { false }
+// msg: cmd.flags.get_string('message') or { '' }
+// url: cmd.flags.get_string('url') or { '' }
 //```
 pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 	mut args := args_
@@ -157,11 +158,15 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 		provider: args.provider
 	)
 
-	if args.cmd == 'clone' {
+
+	if args.cmd == 'clone' || (args.cmd == 'pull'  && args.url.len>0){
 		mut locator := gs.locator_new(args.url)!
 		// println(locator)
 		mut g := gs.repo_get(locator: locator)!
 		g.load()!
+		if args.cmd == 'pull' {
+			g.pull()!
+		}
 		if args.reset {
 			g.remove_changes()!
 		}
@@ -189,8 +194,11 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 		for mut g in repos {
 			g.load()!
 			st := g.status()!
-			// println(st)
+			println(st)
 			need_commit = st.need_commit || need_commit
+			if args.cmd=="push" && need_commit{
+				need_push = true
+			}
 			need_pull = args.cmd in 'pull,push'.split(',') // always do pull when push and pull
 			need_push = args.cmd == 'push' && (st.need_push || need_push)
 		}

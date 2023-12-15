@@ -1,8 +1,8 @@
 set -ex
 cd ~/code/github/freeflowuniverse/crystallib/cli/hero
-bash compile.sh
+bash compile_debug.sh
 
-hero git_get https://github.com/freeflowuniverse/freeflow_binary.git
+hero git pull -u https://github.com/freeflowuniverse/freeflow_binary.git
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     ASSET="linux"
@@ -15,10 +15,16 @@ elif [[ "$(uname -m)" == "arm64"* ]]; then
     ASSET="${ASSET}_arm"
 fi
 
-mkdir -p ~/code/github/freeflowuniverse/freeflow_binary/$ASSET
-cp ~/Downloads/hero ~/code/github/freeflowuniverse/freeflow_binary/$ASSET/
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    export HEROPATH='/usr/local/bin/hero'
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    export HEROPATH=$HOME/hero/bin/hero
+fi
 
-hero git_do -f freeflow_binary -cpp -m "new release hero" -script
+mkdir -p ~/code/github/freeflowuniverse/freeflow_binary/$ASSET
+cp $HEROPATH ~/code/github/freeflowuniverse/freeflow_binary/$ASSET/
+
+hero git push -f freeflow_binary -m "new release hero" -script
 
 echo " ** HERO COMPILE PUSH OK"
 

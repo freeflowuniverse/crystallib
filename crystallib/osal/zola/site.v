@@ -1,7 +1,6 @@
 module zola
+import freeflowuniverse.crystallib.installers.zola as zola_installer
 
-// import freeflowuniverse.crystallib.osal
-// import os
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.webcomponents.preprocessor
@@ -27,11 +26,14 @@ pub struct SiteConfig {
 	name string
 	url string
 	path_content string
-	path_build   string [required] = 'tmp/zola/build'
-	path_publish string [required] = 'tmp/zola/publish'
+	path_build   string [required] = '/tmp/zola/build'
+	path_publish string [required] = '/tmp/zola/publish'
 }
 
 pub fn new_site(config SiteConfig) !ZolaSite {
+
+	zola_installer.install()!
+
 	return ZolaSite {
 		path_content: pathlib.get_dir(
 			path: config.path_content
@@ -71,7 +73,10 @@ pub fn (mut site ZolaSite) generate() ! {
 	css_source := '${site.path_build.path}/css/index.css'
 	css_dest := '${site.path_build.path}/static/css/index.css'
 	site.tailwind.compile(css_source, css_dest)!
-	osal.exec(cmd:'zola -r ${site.path_build.path} build -f -o ${site.path_publish.path}')!
+	osal.exec(cmd:'
+		source ${osal.profile_path()}
+		zola -r ${site.path_build.path} build -f -o ${site.path_publish.path}
+		')!
 	// execute('rsync -a ${dir(@FILE)}/tmp_content/ ${dir(@FILE)}/content/')
 	// rmdir_all('${dir(@FILE)}/tmp_content')!
 

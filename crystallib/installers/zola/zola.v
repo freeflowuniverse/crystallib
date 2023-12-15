@@ -3,6 +3,8 @@ module zola
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.rust
+import freeflowuniverse.crystallib.installers.tailwind
+import os
 
 @[params]
 pub struct InstallArgs {
@@ -11,9 +13,20 @@ pub mut:
 }
 
 // install zola will return true if it was already installed
-pub fn install(args InstallArgs) ! {
+pub fn install(args_ InstallArgs) ! {
+	mut args:=args_
 	// make sure we install base on the node
 	base.install()!
+	tailwind.install()!
+
+	res:=os.execute("source ${osal.profile_path()} && zola -V")
+	if res.exit_code == 0 {
+		if !(res.output.contains("0.17.2")){
+			args.reset=true
+		}		
+	}else{
+		args.reset=true
+	}
 
 	if args.reset == false && osal.done_exists('install_zola') {
 		return

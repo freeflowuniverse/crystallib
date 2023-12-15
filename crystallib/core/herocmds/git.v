@@ -86,7 +86,7 @@ pub fn cmd_git(mut cmdroot Command) {
 	for mut c in allcmdscommit {
 		c.add_flag(Flag{
 			flag: .string
-			required: true
+			required: false
 			name: 'message'
 			abbrev: 'm'
 			description: 'which message to use for commit.'
@@ -99,6 +99,14 @@ pub fn cmd_git(mut cmdroot Command) {
 		name: 'url'
 		abbrev: 'u'
 		description: 'url for clone operation.'
+	})
+
+	pull_command.add_flag(Flag{
+		flag: .string
+		required: true
+		name: 'url'
+		abbrev: 'u'
+		description: 'url for pull operation.'
 	})
 
 	for mut c in allcmdsref {

@@ -1,7 +1,8 @@
 set -ex
 cd ~/code/github/freeflowuniverse/crystallib/cli/hero
-v -enable-globals hero.v 
+v -cg -enable-globals hero.v 
 chmod +x hero
+
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     export HEROPATH='/usr/local/bin/hero'
