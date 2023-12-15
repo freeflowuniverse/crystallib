@@ -82,7 +82,7 @@ fn cmd_zola_execute(cmd Command) ! {
 		if path == '' {
 			path = os.getwd()
 		}	
-		if os.exists("${path}/content"){
+		if ! os.exists("${path}/content"){
 			return error("can't find path for content for the website, tried: ${path}/content")
 		}		
 

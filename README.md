@@ -58,9 +58,18 @@ bash doc.sh
 
 hero is our "hero" tool to execute 3script, deal with git, ...
 
+hero will be installed in
+
+- /usr/local/bin for linux
+- ~/hero/bin for osx
+
 ```bash
 curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/hero_install.sh > /tmp/hero_install.sh
 bash /tmp/hero_install.sh
+#to use hero make sure you restart your shell or you do (if osx)
+source ~/.zprofile 
+#check how to use, can also do on each of the subcommands
+hero -help
 ```
 
 requirements
