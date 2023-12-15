@@ -1,6 +1,7 @@
 module osal
 
 import time
+import os
 
 pub enum PMState {
 	init
@@ -103,4 +104,12 @@ fn (mut pm ProcessMap) scan() ! {
 	pm.state = PMState.ok
 
 	// println(pm)
+}
+
+pub fn whoami() !string {
+	res:=os.execute("whoami")
+	if res.exit_code > 0 {
+		return error('Could not do whoami\n${res}')
+	}
+	return res.output.trim_space()
 }
