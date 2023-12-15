@@ -13,12 +13,12 @@ pub fn new() !IdentityManager {
 	}
 }
 
-pub struct User {
-pub:
-	id string @[primary]
-pub mut:
-	email string
-}
+// pub struct User {
+// pub:
+// 	id string @[primary]
+// pub mut:
+// 	email string
+// }
 
 pub fn (mut auth IdentityManager) login_user(email string) !User {
 	return auth.backend.read_user(email: email) or { return error('user not found') }
