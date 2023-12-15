@@ -77,26 +77,25 @@ pub fn develop(args InstallArgs) ! {
 	coderoot:="${os.home_dir()}/code_"
 	iam:=osal.whoami()!
 	cmd:=pathlib.template_replace($tmpl("templates/vinstaller.sh"))
-	osal.exec(cmd:cmd)!		
+	// osal.exec(cmd:cmd)!		
 
 
 	mut gs := gittools.get()!
 
 	mut path := gittools.code_get(
-		coderoot: coderoot
 		pull: true
 		reset: false
 		url: 'https://github.com/freeflowuniverse/crystallib/tree/development_db'
 	)!
 
 	mut path2 := gittools.code_get(
-		coderoot: coderoot
 		pull: true
 		reset: false
 		url: 'https://github.com/freeflowuniverse/webcomponents.git'
 	)!
 
 	cmd_hero:=pathlib.template_replace($tmpl("templates/hero.sh"))
+	osal.exec(cmd:cmd_hero)!			
 
 	println(path)
 	println(path2)

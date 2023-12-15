@@ -1,4 +1,4 @@
-
+export PATH=??HOME/hero/bin:??PATH
 cd ~/code/github/freeflowuniverse/crystallib/cli/hero
 v -enable-globals hero.v 
 chmod +x hero
