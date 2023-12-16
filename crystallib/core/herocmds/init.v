@@ -30,6 +30,14 @@ pub fn cmd_init(mut cmdroot Command) {
 		description: 'will put system in development mode.'
 	})
 
+		cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'hero'
+		description: 'will compile hero.'
+	})
+
+
 
 	cmdroot.add_command(cmd_run)
 	
@@ -38,10 +46,13 @@ pub fn cmd_init(mut cmdroot Command) {
 fn cmd_init_execute(cmd Command) ! {
 	mut develop := cmd.flags.get_bool('develop') or { false }
 	mut reset := cmd.flags.get_bool('reset') or { false }
+	mut hero := cmd.flags.get_bool('hero') or { false }
 
 	base.install()!
 
-	if develop{
+	if hero{
+		base.hero()!
+	}else if develop{
 		base.develop(reset:reset)!
 	}
 	

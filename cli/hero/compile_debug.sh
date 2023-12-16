@@ -1,4 +1,4 @@
-set -ex
+set -e
 cd ~/code/github/freeflowuniverse/crystallib/cli/hero
 v -cg -enable-globals hero.v 
 chmod +x hero

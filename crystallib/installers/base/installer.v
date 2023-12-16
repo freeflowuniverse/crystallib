@@ -54,7 +54,7 @@ pub fn develop(args InstallArgs) ! {
 	pl := osal.platform()
 
 	if args.reset == false && osal.done_exists('crystal_development') {
-		println('V & Crystallib Already installed for development.')
+		println(' - V & Crystallib Already installed for development.')
 		return
 	}
 
@@ -77,13 +77,13 @@ pub fn develop(args InstallArgs) ! {
 	coderoot:="${os.home_dir()}/code_"
 	iam:=osal.whoami()!
 	cmd:=pathlib.template_replace($tmpl("templates/vinstaller.sh"))
-	// osal.exec(cmd:cmd)!		
+	osal.exec(cmd:cmd)!		
 
 
 	mut gs := gittools.get()!
 
 	mut path := gittools.code_get(
-		pull: true
+		pull: false
 		reset: false
 		url: 'https://github.com/freeflowuniverse/crystallib/tree/development_db'
 	)!
@@ -94,16 +94,29 @@ pub fn develop(args InstallArgs) ! {
 		url: 'https://github.com/freeflowuniverse/webcomponents.git'
 	)!
 
+	c:="
+	echo - link modules
+	mkdir -p ~/.vmodules/freeflowuniverse
+	rm -f ~/.vmodules/freeflowuniverse/crystallib
+	rm -f ~/.vmodules/freeflowuniverse/webcomponents
+	ln -s ${path}/crystallib ~/.vmodules/freeflowuniverse/crystallib
+	ln -s ${path2}/webcomponents ~/.vmodules/freeflowuniverse/webcomponents
+			
+	"
+	osal.exec(cmd:c)!		
+
+	hero(args)!
+
+	osal.done_set('crystal_development', 'OK')!
+
+	
+}
+
+
+pub fn hero(args InstallArgs) ! {
+	pl := osal.platform()
+
 	cmd_hero:=pathlib.template_replace($tmpl("templates/hero.sh"))
-	osal.exec(cmd:cmd_hero)!			
-
-	println(path)
-	println(path2)
-	if true{
-		panic("Ss")
-	}
-
-	// osal.done_set('crystal_development', 'OK')!
-
+	osal.exec(cmd:cmd_hero,stdout:false)!			
 	
 }
