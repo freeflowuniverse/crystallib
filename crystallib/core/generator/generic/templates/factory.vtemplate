@@ -5,7 +5,7 @@ module ${args.name}
 // import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.texttools
 @if "mail" in args.clients
-
+// import freeflowuniverse.crystallib.clients.mail
 @end
 @if "postgres" in args.clients
 
@@ -16,12 +16,6 @@ pub struct ${args.name.capitalize()} {
 pub mut:
 	name string
 	config Config
-	@if "mail" in args.clients
-
-	@end
-	@if "postgres" in args.clients
-
-	@end	
 }
 
 pub fn new (args_ Config) !${args.name.capitalize()} {
@@ -29,22 +23,24 @@ pub fn new (args_ Config) !${args.name.capitalize()} {
 	mut args:=args_
 	args.name = texttools.name_fix(args.name)
 
-	configure_init(mut args)!
+	configure_init(args.reset, mut args)!
 
-	@if "mail" in args.clients
+	mut o:= ${args.name.capitalize()} {
+		name:args.name
+		config:args
+	}
 
-	@end
-	@if "postgres" in args.clients
-
-	@end	
+	return o
 
 }
 
 
-pub fn (mut self ${args.name.capitalize()} ) configure(interactive bool, args Config) ! {
+pub fn (mut self ${args.name.capitalize()} ) configure(interactive bool, mut args Config) ! {
+	@if args.configure_interactive	
 	if interactive{
 		configure_ask(mut args)!
 	}
+	@end
 	//reset the values on the disk
 	configure_init(true, mut args)!
 }

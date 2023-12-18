@@ -1,4 +1,3 @@
-
 module herocmds
 
 import freeflowuniverse.crystallib.osal
@@ -12,7 +11,6 @@ pub fn cmd_init(mut cmdroot Command) {
 		required_args: 0
 		execute: cmd_init_execute
 	}
-
 
 	cmd_run.add_flag(Flag{
 		flag: .bool
@@ -30,17 +28,14 @@ pub fn cmd_init(mut cmdroot Command) {
 		description: 'will put system in development mode.'
 	})
 
-		cmd_run.add_flag(Flag{
+	cmd_run.add_flag(Flag{
 		flag: .bool
 		required: false
 		name: 'hero'
 		description: 'will compile hero.'
 	})
 
-
-
 	cmdroot.add_command(cmd_run)
-	
 }
 
 fn cmd_init_execute(cmd Command) ! {
@@ -50,14 +45,13 @@ fn cmd_init_execute(cmd Command) ! {
 
 	base.install()!
 
-	if hero{
+	if hero {
 		base.hero()!
-	}else if develop{
-		base.develop(reset:reset)!
+	} else if develop {
+		base.develop(reset: reset)!
 	}
-	
-	r:=osal.profile_path_add_hero()!
-	println(" - add path ${r} to profile.")
-	println(" - hero init ok.")
 
+	r := osal.profile_path_add_hero()!
+	println(' - add path ${r} to profile.')
+	println(' - hero init ok.')
 }

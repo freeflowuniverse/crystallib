@@ -1,6 +1,6 @@
 module zola
-import freeflowuniverse.crystallib.installers.zola as zola_installer
 
+import freeflowuniverse.crystallib.installers.zola as zola_installer
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.webcomponents.preprocessor
@@ -13,28 +13,27 @@ pub struct ZolaSite {
 pub mut:
 	url          string // url of site repo
 	name         string
-	path_content  pathlib.Path
+	path_content pathlib.Path
 	path_build   pathlib.Path
 	path_publish pathlib.Path
 	collections  []ZSiteCollection
 	gitrepokey   string
-	tailwind tailwind.Tailwind
-	tailwindcss bool // whether sie uses tailwindcss
+	tailwind     tailwind.Tailwind
+	tailwindcss  bool // whether sie uses tailwindcss
 }
 
 pub struct SiteConfig {
-	name string
-	url string
+	name         string
+	url          string
 	path_content string
-	path_build   string [required] = '/tmp/zola/build'
-	path_publish string [required] = '/tmp/zola/publish'
+	path_build   string = '/tmp/zola/build' @[required]
+	path_publish string = '/tmp/zola/publish' @[required]
 }
 
 pub fn new_site(config SiteConfig) !ZolaSite {
-
 	zola_installer.install()!
 
-	return ZolaSite {
+	return ZolaSite{
 		path_content: pathlib.get_dir(
 			path: config.path_content
 			create: true
@@ -49,12 +48,11 @@ pub fn new_site(config SiteConfig) !ZolaSite {
 		tailwind: tailwind.new(
 			name: config.name
 			path_build: config.path_build
-			content_paths: ['${config.path_build}/templates/**/*.html', '${config.path_build}/content/**/*.md']
+			content_paths: ['${config.path_build}/templates/**/*.html',
+				'${config.path_build}/content/**/*.md']
 		)!
-
 	}
-		
-} 
+}
 
 pub fn (mut site ZolaSite) prepare() ! {
 	site.template_install()!
@@ -73,10 +71,12 @@ pub fn (mut site ZolaSite) generate() ! {
 	css_source := '${site.path_build.path}/css/index.css'
 	css_dest := '${site.path_build.path}/static/css/index.css'
 	site.tailwind.compile(css_source, css_dest)!
-	osal.exec(cmd:'
+	osal.exec(
+		cmd: '
 		source ${osal.profile_path()}
 		zola -r ${site.path_build.path} build -f -o ${site.path_publish.path}
-		')!
+		'
+	)!
 	// execute('rsync -a ${dir(@FILE)}/tmp_content/ ${dir(@FILE)}/content/')
 	// rmdir_all('${dir(@FILE)}/tmp_content')!
 
@@ -88,11 +88,11 @@ pub struct App {
 	path pathlib.Path @[vweb_global]
 }
 
-['/:path...']
+@['/:path...']
 pub fn (mut app App) index(path string) vweb.Result {
 	if path == '/' {
-		return app.html(os.read_file('${app.path.path}/index.html') or { 
-			return app.server_error(500) 
+		return app.html(os.read_file('${app.path.path}/index.html') or {
+			return app.server_error(500)
 		})
 	}
 	if !path.all_after_last('/').contains('.') {
@@ -103,20 +103,21 @@ pub fn (mut app App) index(path string) vweb.Result {
 	return app.not_found()
 }
 
-
 pub struct ServeParams {
 	port int
 	open bool
 }
 
-pub fn (mut site ZolaSite) serve(params ServeParams) !{
-	mut app := App{path:site.path_publish}
+pub fn (mut site ZolaSite) serve(params ServeParams) ! {
+	mut app := App{
+		path: site.path_publish
+	}
 	app.mount_static_folder_at('${site.path_publish.path}', '/')
 	spawn vweb.run(&app, params.port)
 	if params.open {
-		osal.exec(cmd:'open http://localhost:${params.port}')!
+		osal.exec(cmd: 'open http://localhost:${params.port}')!
 	}
-	for{}
+	for {}
 }
 
 // all the gitrepo keys
@@ -135,7 +136,7 @@ fn (mut site ZolaSite) gitrepo_keys() []string {
 fn (mut site ZolaSite) changed() bool {
 	mut change := false
 	gitrepokeys := site.gitrepo_keys()
-	//todo
+	// todo
 	// for key, status in site.sites.gitrepos_status {
 	// 	if key in gitrepokeys {
 	// 		// means this site is using that gitrepo, so if it changed the site changed
@@ -155,8 +156,9 @@ fn (mut site ZolaSite) template_install() ! {
 	config := $tmpl('./templates/config.toml')
 	mut config_dest := pathlib.get('${site.path_build.path}/config.toml')
 	config_dest.write(config)!
-	
+
 	os.cp('${os.dir(@FILE)}/templates/vercel.json', '${site.path_build.path}/vercel.json')!
 	os.cp_all('${os.dir(@FILE)}/templates/css', '${site.path_build.path}/css', true)!
-	os.cp_all('${os.dir(@FILE)}/templates/templates', '${site.path_build.path}/templates', true)!
+	os.cp_all('${os.dir(@FILE)}/templates/templates', '${site.path_build.path}/templates',
+		true)!
 }

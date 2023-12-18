@@ -5,13 +5,11 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal.gittools
 import os
 
-
 @[params]
 pub struct InstallArgs {
 pub mut:
 	reset bool
 }
-
 
 // install base will return true if it was already installed
 pub fn install(args InstallArgs) ! {
@@ -46,7 +44,6 @@ pub fn install(args InstallArgs) ! {
 		panic('only ubuntu and osx supported for now')
 	}
 	osal.done_set('platform_prepare', 'OK')!
-	
 }
 
 pub fn develop(args InstallArgs) ! {
@@ -61,24 +58,23 @@ pub fn develop(args InstallArgs) ! {
 	install()!
 	if pl == .osx {
 		println(' - OSX prepare for development.')
-		osal.package_install("bdw-gc")!
+		osal.package_install('bdw-gc')!
 		if !osal.cmd_exists('clang') {
 			osal.execute_silent('xcode-select --install') or {
 				return error('cannot install xcode-select --install, something went wrong.\n${err}')
 			}
-		}			
+		}
 	} else if pl == .ubuntu {
 		println(' - Ubuntu prepare')
-		osal.package_install("libgc-dev,gcc,make,libpq-dev")!
+		osal.package_install('libgc-dev,gcc,make,libpq-dev')!
 	} else {
 		panic('only ubuntu and osx supported for now')
 	}
 
-	coderoot:="${os.home_dir()}/code_"
-	iam:=osal.whoami()!
-	cmd:=pathlib.template_replace($tmpl("templates/vinstaller.sh"))
-	osal.exec(cmd:cmd)!		
-
+	coderoot := '${os.home_dir()}/code_'
+	iam := osal.whoami()!
+	cmd := pathlib.template_replace($tmpl('templates/vinstaller.sh'))
+	osal.exec(cmd: cmd)!
 
 	mut gs := gittools.get()!
 
@@ -94,7 +90,7 @@ pub fn develop(args InstallArgs) ! {
 		url: 'https://github.com/freeflowuniverse/webcomponents.git'
 	)!
 
-	c:="
+	c := '
 	echo - link modules
 	mkdir -p ~/.vmodules/freeflowuniverse
 	rm -f ~/.vmodules/freeflowuniverse/crystallib
@@ -102,21 +98,17 @@ pub fn develop(args InstallArgs) ! {
 	ln -s ${path}/crystallib ~/.vmodules/freeflowuniverse/crystallib
 	ln -s ${path2}/webcomponents ~/.vmodules/freeflowuniverse/webcomponents
 			
-	"
-	osal.exec(cmd:c)!		
+	'
+	osal.exec(cmd: c)!
 
 	hero(args)!
 
 	osal.done_set('crystal_development', 'OK')!
-
-	
 }
-
 
 pub fn hero(args InstallArgs) ! {
 	pl := osal.platform()
 
-	cmd_hero:=pathlib.template_replace($tmpl("templates/hero.sh"))
-	osal.exec(cmd:cmd_hero,stdout:false)!			
-	
+	cmd_hero := pathlib.template_replace($tmpl('templates/hero.sh'))
+	osal.exec(cmd: cmd_hero, stdout: false)!
 }

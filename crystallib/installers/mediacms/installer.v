@@ -7,23 +7,20 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.installers.docker
 
-
 pub fn install(args Config) ! {
-    
-    checkplatform()!
-    docker.install()!
+	checkplatform()!
+	docker.install()!
 
-    if osal.done_exists('mediacms_install') {
-        println(' - mediacms already installed')
-        return
-    }
+	if osal.done_exists('mediacms_install') {
+		println(' - mediacms already installed')
+		return
+	}
 
+	docker.install()!
 
-    docker.install()!
+	build(args)!
 
-    build(args)!
+	osal.done_set('mediacms_install', 'OK')!
 
-    osal.done_set('mediacms_install', 'OK')!
-
-    println(' - mediacms installed properly.')
+	println(' - mediacms installed properly.')
 }

@@ -2,10 +2,12 @@ module ${args.name}
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.core.texttools
+import json
+import freeflowuniverse.crystallib.data.fskvs
 @if args.configure_interactive
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.data.fskvs
 @end
 // import freeflowuniverse.crystallib.osal.gittools
 import os
@@ -15,7 +17,8 @@ pub struct Config {
 pub mut:
 	name                       string = 'default'
 	dest                       string = '/data/${args.name}'
-	passwd                     string ^^[required]
+	passwd                     string
+	reset					 bool
 	@if "mail" in args.clients
 	mailclient_name		   	   string = 'default'
 	@end
@@ -25,12 +28,11 @@ pub mut:
 }
 
 fn configure_init(reset bool,mut args Config) ! {
-	mut args:=args_
 	args.name = texttools.name_fix(args.name)
 
 	key := '${args.name}_config_??{args.name}'
 	mut kvs := fskvs.new(name: 'config')!
-	if args.reset || !kvs.exists(key) {
+	if reset || !kvs.exists(key) {
 		data := json.encode_pretty(args)
 		kvs.set(key, data)!
 	}
@@ -46,7 +48,7 @@ fn configure_init(reset bool,mut args Config) ! {
 
 	@for t in template_items
 	pathlib.template_write(??tmpl("templates/${t.path}"),
-								  "??{dest}/${t.path}",args.reset)!
+								  "??{dest}/${t.path}",reset)!
 	@end	
 
 	??if debug{println(' - ${args.name} configured properly.')}

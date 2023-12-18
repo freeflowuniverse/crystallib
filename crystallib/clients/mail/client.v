@@ -19,7 +19,7 @@ pub mut:
 	smpt_port   int = 465
 	smtp_passwd string
 	ssl         bool
-	starttls     bool = true
+	starttls    bool = true
 	script3     string
 	reset       bool
 }
@@ -33,22 +33,21 @@ pub mut:
 pub fn get(args_ MailClientConfig) !MailClient {
 	mut args := args_
 	args.name = texttools.name_fix(args.name)
-	args=configure(args)!
+	args = configure(args)!
 	// println(args)
-	mut smtp_client:= smtp.new_client(
-			server: args.smtp_addr
-			port: args.smpt_port
-			username: args.smtp_login
-			password: args.smtp_passwd
-			from: args.mail_from
-			ssl: args.ssl
-			starttls: args.starttls
-		)!
+	mut smtp_client := smtp.new_client(
+		server: args.smtp_addr
+		port: args.smpt_port
+		username: args.smtp_login
+		password: args.smtp_passwd
+		from: args.mail_from
+		ssl: args.ssl
+		starttls: args.starttls
+	)!
 	// println(smtp_client)
 	return MailClient{
 		name: args.name
-		smtp_client:smtp_client
-
+		smtp_client: smtp_client
 	}
 }
 
@@ -87,55 +86,54 @@ pub fn configure_interactive(args_ MailClientConfig) ! {
 	mut myui := ui.new()!
 
 	console.clear()
-	println("\n## Configure Mail Client")
-	println("========================\n\n")
+	println('\n## Configure Mail Client')
+	println('========================\n\n')
 
 	args.name = myui.ask_question(
-		question: "name for mail client"
-		default:args.name
+		question: 'name for mail client'
+		default: args.name
 	)!
 
 	args.smtp_login = myui.ask_question(
-		question: "smtp login"
-		minlen:3
-		default:args.smtp_login
+		question: 'smtp login'
+		minlen: 3
+		default: args.smtp_login
 	)!
 	args.mail_from = myui.ask_question(
-		question: "mail_from e.g. myname@domain.com"
-		minlen:5
-		default:args.mail_from
+		question: 'mail_from e.g. myname@domain.com'
+		minlen: 5
+		default: args.mail_from
 	)!
 
 	args.smtp_addr = myui.ask_question(
-		question: "smtp addr e.g. smtp-relay.brevo.com"
-		minlen:5
-		default:args.smtp_addr
+		question: 'smtp addr e.g. smtp-relay.brevo.com'
+		minlen: 5
+		default: args.smtp_addr
 	)!
 
 	args.smtp_passwd = myui.ask_question(
-		question: "smtp passwd"
-		minlen:3
-		default:args.smtp_passwd
+		question: 'smtp passwd'
+		minlen: 3
+		default: args.smtp_passwd
 	)!
 	mut smpt_port := myui.ask_question(
-		question: "smtp port"
-		default:"${args.smpt_port}"
+		question: 'smtp port'
+		default: '${args.smpt_port}'
 	)!
 	args.smpt_port = smpt_port.int()
 
 	args.starttls = myui.ask_yesno(
-			question: "starttls, means encrypted"
-			default: args.starttls
-		)!
+		question: 'starttls, means encrypted'
+		default: args.starttls
+	)!
 	args.ssl = myui.ask_yesno(
-			question: "ssl, prob no"
-			default: args.ssl
-		)!		
-	args.reset=true
+		question: 'ssl, prob no'
+		default: args.ssl
+	)!
+	args.reset = true
 	println(args)
 	configure(args)!
 }
-
 
 @[params]
 pub struct SendArgs {
@@ -173,7 +171,7 @@ enum BodyType {
 // 	body      string
 // ```
 pub fn (mut cl MailClient) send(args_ SendArgs) ! {
-	mut args:=args_
+	mut args := args_
 	args.body = texttools.dedent(args.body)
 	mut body_type := smtp.BodyType.text
 	if args.body_type == .html || args.body_type == .markdown {

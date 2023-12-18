@@ -14,10 +14,10 @@ pub fn template_write(template_ string, dest string, overwrite bool) ! {
 	}
 }
 
-//replace '^^', '@' .
-//replace '??', '$' .
-//replace '\t', '    ' .
-pub fn template_replace(template_ string, ) string {
+// replace '^^', '@' .
+// replace '??', '$' .
+// replace '\t', '    ' .
+pub fn template_replace(template_ string) string {
 	mut template := template_
 	template = template.replace('^^', '@')
 	template = template.replace('???', '$(')

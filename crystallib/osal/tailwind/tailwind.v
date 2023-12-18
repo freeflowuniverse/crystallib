@@ -29,12 +29,11 @@ pub fn (mut tw Tailwind) add(args AddArgs) ! {
 	path_index.write(c_index)!
 }
 
-
 @[params]
 pub struct TailWindArgs {
 pub:
-	name string = 'test'
-	path_build string
+	name          string = 'test'
+	path_build    string
 	content_paths []string // list of sources of the tailwind content, where html with tailwind is
 }
 
@@ -44,7 +43,7 @@ pub fn new(args TailWindArgs) !Tailwind {
 
 	// mut p := pathlib.get_dir(path: '/tmp/flowrift/${args.name}', create: true)!
 	mut p := pathlib.get_dir(path: args.path_build, create: true)!
-	
+
 	path_build := pathlib.get_dir(
 		path: args.path_build
 		create: true

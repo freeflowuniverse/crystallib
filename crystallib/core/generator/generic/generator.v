@@ -1,4 +1,4 @@
-module installer
+module generic
 
 import os
 import freeflowuniverse.crystallib.core.pathlib
@@ -10,14 +10,13 @@ import freeflowuniverse.crystallib.core.texttools
 @[params]
 pub struct GeneratorArgs {
 pub mut:
-	name                string
-	clients				[]string
-	configure_interactive			bool
-	reset bool
-	interactive bool
-	path                string	
+	name                  string
+	clients               []string
+	configure_interactive bool
+	reset                 bool
+	interactive           bool
+	path                  string
 }
-
 
 pub struct TemplateItem {
 pub mut:
@@ -26,7 +25,8 @@ pub mut:
 	path string // where template is in the template dir
 }
 
-pub fn generate(args_ GeneratorArgs) ! {
+// ask the questions & generate
+pub fn do(args_ GeneratorArgs) ! {
 	mut args := args_
 
 	if args.path.len == 0 {
@@ -73,7 +73,7 @@ pub fn generate(args_ GeneratorArgs) ! {
 			args.configure_interactive = myui.ask_yesno(
 				question: 'Do you want your module to configure interactively?'
 			)!
-		} 
+		}
 
 		if args.clients.len == 0 {
 			if args.interactive {
@@ -88,15 +88,39 @@ pub fn generate(args_ GeneratorArgs) ! {
 				return error('please specify build_clients')
 			}
 		}
+		clients_check(args)!
 		mut p_config := pathlib.get_file(path: config_path, create: true)!
 		args.reset = false
 		data := json.encode_pretty(args)
+		println('\n## Your arguments, will be saved for next time.')
+		println(args)
 		p_config.write(data)!
 	}
-	clients_check(args)!
-	println('\n## Your arguments, will be saved for next time.')
-	println(args)
+	generate(args)!
+}
 
+pub fn clients_ask(mut args GeneratorArgs) ! {
+	mut myui := ui.new()!
+	if args.clients.len == 0 {
+		if args.interactive {
+			args.clients = myui.ask_dropdown_multiple(
+				question: 'Which clients to you want?'
+				items: [
+					'mail',
+					'postgres',
+				]
+			)!
+		} else {
+			return error('please specify build_clients')
+		}
+	}
+	clients_check(args)!
+}
+
+// generate based on the args
+pub fn generate(args_ GeneratorArgs) ! {
+	mut args := args_
+	clients_check(args)!
 	mut template_items := []TemplateItem{}
 
 	tpath := '${args.path}/templates'
@@ -130,7 +154,6 @@ pub fn generate(args_ GeneratorArgs) ! {
 
 	mut c := $tmpl('templates/factory.vtemplate')
 	pathlib.template_write(c, '${args.path}/factory.v', args.reset)!
-
 }
 
 fn clients_check(args GeneratorArgs) ! {

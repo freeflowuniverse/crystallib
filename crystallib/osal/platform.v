@@ -52,7 +52,7 @@ pub fn platform() PlatformType {
 	} else if cmd_exists('apk') {
 		platform_ = PlatformType.alpine
 	} else if cmd_exists('pacman') {
-		platform_ = PlatformType.arch		
+		platform_ = PlatformType.arch
 	} else {
 		logger.error('Unknown platform')
 	}

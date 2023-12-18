@@ -158,8 +158,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 		provider: args.provider
 	)
 
-
-	if args.cmd == 'clone' || (args.cmd == 'pull'  && args.url.len>0){
+	if args.cmd == 'clone' || (args.cmd == 'pull' && args.url.len > 0) {
 		mut locator := gs.locator_new(args.url)!
 		// println(locator)
 		mut g := gs.repo_get(locator: locator)!
@@ -196,7 +195,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 			st := g.status()!
 			println(st)
 			need_commit = st.need_commit || need_commit
-			if args.cmd=="push" && need_commit{
+			if args.cmd == 'push' && need_commit {
 				need_push = true
 			}
 			need_pull = args.cmd in 'pull,push'.split(',') // always do pull when push and pull

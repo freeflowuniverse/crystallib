@@ -5,23 +5,23 @@ import freeflowuniverse.crystallib.core.pathlib
 import json
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.core.texttools
-// import freeflowuniverse.crystallib.core.generator.configure
+// import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.core.generator.generic
 
 @[params]
 pub struct GeneratorArgs {
 pub mut:
-	name                string
-	title               string
-	build_deps          []string
-	install_deps        []string
-	supported_platforms []string
-	clients				[]string
-	configure_interactive bool	
-	reset               bool // regenerate all, dangerous !!!
-	interactive         bool = true
-	path                string
-	isserver            bool
+	name                  string
+	title                 string
+	build_deps            []string
+	install_deps          []string
+	supported_platforms   []string
+	clients               []string
+	configure_interactive bool
+	reset                 bool // regenerate all, dangerous !!!
+	interactive           bool = true
+	path                  string
+	isserver              bool
 }
 
 pub struct TemplateItem {
@@ -31,7 +31,7 @@ pub mut:
 	path string // where template is in the template dir
 }
 
-pub fn generate(args_ GeneratorArgs) ! {
+pub fn do(args_ GeneratorArgs) ! {
 	mut args := args_
 
 	if args.path.len == 0 {
@@ -121,55 +121,47 @@ pub fn generate(args_ GeneratorArgs) ! {
 				return error('please specify install_deps')
 			}
 		}
+
 		if args.supported_platforms.len == 0 {
 			if args.interactive {
 				args.supported_platforms = myui.ask_dropdown_multiple(
 					question: 'Which platforms do you support?'
-					items: ['ubuntu', 'osx','arch']
+					items: ['ubuntu', 'osx', 'arch']
 				)!
 			} else {
 				return error('please specify supported_platforms')
 			}
 		}
 
+		// call the generic ones
+		mut args_generic := generic.GeneratorArgs{
+			name: args.name
+			configure_interactive: args.configure_interactive
+			reset: args.reset
+			interactive: args.interactive
+			path: args.path
+			clients: args.clients
+		}
+		generic.clients_ask(mut args_generic)!
+		generic.generate(args_generic)!		
+
 		mut p_config := pathlib.get_file(path: config_path, create: true)!
 		args.reset = false
 		data := json.encode(args)
+		deps_check(args)!
+		platform_check(args)!
+		println('\n## Your arguments, will be saved for next time.')
+		println(args)
+
 		p_config.write(data)!
 	}
-	deps_check(args)!
-	platform_check(args)!
-	println('\n## Your arguments, will be saved for next time.')
-	println(args)
+	generate(args)!
 
-	mut template_items := []TemplateItem{}
 
-	tpath := '${args.path}/templates'
-	if os.exists(tpath) {
-		mut p := pathlib.get_dir(path: tpath)!
-		mut pl := p.list(recursive: true)!
-		for mut p_in in pl.paths {
-			if p_in.exists() == false {
-				return error('cannot process template file: ${p_in.path}')
-			}
-			if !(p_in.is_file()) {
-				continue
-			}
-			mut p_name := p_in.name()
-			if p_name.starts_with('.') {
-				continue
-			} else if p_name.starts_with('_') {
-				continue
-			}
-			p_name = texttools.name_fix(p_name).replace('.', '_') + '_templ'
-			relpath := p_in.path.all_after_first('/templates/')
-			template_items << TemplateItem{
-				name: p_name
-				path: relpath
-			}
-		}
-	}
+}
 
+pub fn generate(args_ GeneratorArgs) ! {
+	mut args := args_
 	mut a := $tmpl('templates/builder.vtemplate')
 	pathlib.template_write(a, '${args.path}/builder.v', args.reset)!
 
@@ -224,7 +216,7 @@ pub fn (args GeneratorArgs) platform_check_str() string {
 	}
 	if 'arch' in args.supported_platforms {
 		out += 'myplatform == .arch ||'
-	}	
+	}
 	out = out.trim_right('|')
 	return out
 }

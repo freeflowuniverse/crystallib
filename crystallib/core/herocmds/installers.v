@@ -1,4 +1,3 @@
-
 module herocmds
 
 import freeflowuniverse.crystallib.installers.caddy
@@ -29,14 +28,13 @@ pub fn cmd_installers(mut cmdroot Command) {
 
 	cmdroot.add_command(cmd_run)
 	cmd_run.add_command(caddy_cmd)
-	
 }
 
 fn cmd_installers_execute(cmd Command) ! {
 	mut reset := cmd.flags.get_bool('reset') or { false }
 
 	if cmd.name == 'caddy' {
-		caddy.install(reset:reset)!
+		caddy.install(reset: reset)!
 		return
 	} else {
 		return error(cmd.help_message())

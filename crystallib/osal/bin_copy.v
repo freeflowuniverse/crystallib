@@ -31,15 +31,15 @@ pub fn bin_copy(args_ BinCopyArgs) ! {
 	mut destpath := '${dest}/${args.cmdname}'
 	sourcepath.copy(dest: destpath, rsync: false)!
 
-	//check if there is other file
-	res:=os.execute("which ${args.cmdname}")
+	// check if there is other file
+	res := os.execute('which ${args.cmdname}')
 	if res.exit_code == 0 {
-		existing_path:=res.output.trim_space()
-		if dest!=existing_path{
+		existing_path := res.output.trim_space()
+		if dest != existing_path {
 			os.rm(existing_path)!
 		}
 	}
-	
+
 	// if true{
 	// 	println(path)
 	// 	panic("sd")
@@ -64,7 +64,6 @@ pub fn profile_path_add_hero() !string {
 	profile_path_add(dest)!
 	return dest
 }
-
 
 // add the following path to a profile
 pub fn profile_path_add(path string) ! {

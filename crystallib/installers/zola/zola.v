@@ -14,18 +14,18 @@ pub mut:
 
 // install zola will return true if it was already installed
 pub fn install(args_ InstallArgs) ! {
-	mut args:=args_
+	mut args := args_
 	// make sure we install base on the node
 	base.install()!
 	tailwind.install()!
 
-	res:=os.execute("source ${osal.profile_path()} && zola -V")
+	res := os.execute('source ${osal.profile_path()} && zola -V')
 	if res.exit_code == 0 {
-		if !(res.output.contains("0.17.2")){
-			args.reset=true
-		}		
-	}else{
-		args.reset=true
+		if !(res.output.contains('0.17.2')) {
+			args.reset = true
+		}
+	} else {
+		args.reset = true
 	}
 
 	if args.reset == false && osal.done_exists('install_zola') {

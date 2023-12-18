@@ -2,6 +2,7 @@ module tailwind
 
 import freeflowuniverse.crystallib.osal
 import os
+
 @[params]
 pub struct InstallArgs {
 pub mut:
@@ -9,15 +10,15 @@ pub mut:
 }
 
 pub fn install(args_ InstallArgs) ! {
-	mut args:=args_
+	mut args := args_
 
-	res:=os.execute("source ${osal.profile_path()} && tailwind -help")
+	res := os.execute('source ${osal.profile_path()} && tailwind -help')
 	if res.exit_code == 0 {
-		if !(res.output.contains("tailwindcss v3.3.6")){
-			args.reset=true
-		}		
-	}else{
-		args.reset=true
+		if !(res.output.contains('tailwindcss v3.3.6')) {
+			args.reset = true
+		}
+	} else {
+		args.reset = true
 	}
 
 	if args.reset == false && osal.done_exists('install_tailwind') && osal.cmd_exists('tailwind') {
@@ -26,7 +27,6 @@ pub fn install(args_ InstallArgs) ! {
 	}
 
 	println(' - install tailwind')
-
 
 	mut url := ''
 	mut binpath_ := ''

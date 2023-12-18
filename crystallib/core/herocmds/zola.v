@@ -1,4 +1,3 @@
-
 module herocmds
 
 import freeflowuniverse.crystallib.installers.zola as zola_installer
@@ -37,7 +36,6 @@ pub fn cmd_zola(mut cmdroot Command) {
 		description: 'serve the content over webserver.'
 	})
 
-
 	zola_run_cmd.add_flag(Flag{
 		flag: .string
 		required: false
@@ -62,34 +60,29 @@ pub fn cmd_zola(mut cmdroot Command) {
 		description: 'Name of the website.'
 	})
 
-
 	zola_cmd.add_command(zola_run_cmd)
 
 	cmdroot.add_command(zola_cmd)
-	
-	
 }
 
 fn cmd_zola_execute(cmd Command) ! {
-
 	if cmd.name == 'run' {
-
 		mut reset := cmd.flags.get_bool('reset') or { false }
 
 		zola_installer.install()!
-		
+
 		mut path := cmd.flags.get_string('path') or { '' }
 		if path == '' {
 			path = os.getwd()
-		}	
-		if ! os.exists("${path}/content"){
+		}
+		if !os.exists('${path}/content') {
 			return error("can't find path for content for the website, tried: ${path}/content")
-		}		
+		}
 
 		mut dest := cmd.flags.get_string('dest') or { '' }
 		if dest == '' {
-			dest = "${path}/public"
-		}	
+			dest = '${path}/public'
+		}
 
 		mut name := cmd.flags.get_string('name') or { 'default' }
 
@@ -98,18 +91,18 @@ fn cmd_zola_execute(cmd Command) ! {
 		mut site := zola.new_site(
 			name: name
 			url: 'http://localhost:8089'
-			path_content: "${path}/content"
+			path_content: '${path}/content'
 			path_build: '/tmp/zola_build_${name}'
 			path_publish: dest
 		)!
 
 		site.prepare()!
 		site.generate()!
-		if serve{
+		if serve {
 			site.serve(
 				port: 8089
 				open: true
-			)!		
+			)!
 		}
 
 		return

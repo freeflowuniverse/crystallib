@@ -107,7 +107,7 @@ fn (mut pm ProcessMap) scan() ! {
 }
 
 pub fn whoami() !string {
-	res:=os.execute("whoami")
+	res := os.execute('whoami')
 	if res.exit_code > 0 {
 		return error('Could not do whoami\n${res}')
 	}
