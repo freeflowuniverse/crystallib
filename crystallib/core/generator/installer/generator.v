@@ -6,7 +6,7 @@ import json
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.core.generator.configure
+// import freeflowuniverse.crystallib.core.generator.configure
 
 @[params]
 pub struct GeneratorArgs {
@@ -173,8 +173,8 @@ pub fn generate(args_ GeneratorArgs) ! {
 	mut a := $tmpl('templates/builder.vtemplate')
 	pathlib.template_write(a, '${args.path}/builder.v', args.reset)!
 
-	mut b := $tmpl('templates/configure.vtemplate')
-	pathlib.template_write(b, '${args.path}/configure.v', args.reset)!
+	// mut b := $tmpl('templates/configure.vtemplate')
+	// pathlib.template_write(b, '${args.path}/configure.v', args.reset)!
 
 	mut c := $tmpl('templates/installer.vtemplate')
 	pathlib.template_write(c, '${args.path}/installer.v', args.reset)!

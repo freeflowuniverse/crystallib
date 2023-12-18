@@ -15,6 +15,7 @@ pub mut:
 	configure_interactive			bool
 	reset bool
 	interactive bool
+	path                string	
 }
 
 
@@ -74,14 +75,13 @@ pub fn generate(args_ GeneratorArgs) ! {
 			)!
 		} 
 
-		if args.build_clients.len == 0 {
+		if args.clients.len == 0 {
 			if args.interactive {
 				args.clients = myui.ask_dropdown_multiple(
 					question: 'Which clients to you want?'
 					items: [
-						'none',
 						'mail',
-						'postgresql',
+						'postgres',
 					]
 				)!
 			} else {
@@ -127,10 +127,14 @@ pub fn generate(args_ GeneratorArgs) ! {
 
 	mut b := $tmpl('templates/configure.vtemplate')
 	pathlib.template_write(b, '${args.path}/configure.v', args.reset)!
+
+	mut c := $tmpl('templates/factory.vtemplate')
+	pathlib.template_write(c, '${args.path}/factory.v', args.reset)!
+
 }
 
 fn clients_check(args GeneratorArgs) ! {
-	ok := 'none,postgresql,mail'
+	ok := 'postgres,mail'
 	ok2 := ok.split(',')
 	for i in args.clients {
 		if i !in ok2 {

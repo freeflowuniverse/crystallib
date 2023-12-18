@@ -4,12 +4,24 @@ module ${args.name}
 // import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.texttools
+@if "mail" in args.clients
+
+@end
+@if "postgres" in args.clients
+
+@end
 import os
 
 pub struct ${args.name.capitalize()} {
 pub mut:
 	name string
 	config Config
+	@if "mail" in args.clients
+
+	@end
+	@if "postgres" in args.clients
+
+	@end	
 }
 
 pub fn new (args_ Config) !${args.name.capitalize()} {
@@ -18,6 +30,13 @@ pub fn new (args_ Config) !${args.name.capitalize()} {
 	args.name = texttools.name_fix(args.name)
 
 	configure_init(mut args)!
+
+	@if "mail" in args.clients
+
+	@end
+	@if "postgres" in args.clients
+
+	@end	
 
 }
 

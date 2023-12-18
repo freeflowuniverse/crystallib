@@ -72,8 +72,8 @@ pub fn new(addr_string string) !IPAddress {
 		cat = IpAddressType.ipv6
 	} else if addr.contains('.') && addr.count('.') == 3 {
 		cat = IpAddressType.ipv4
-	} else {
-		return error('Invalid Ip address string')
+	// } else {
+	// 	return error('Invalid Ip address string')
 	}
 
 	mut ip := IPAddress{

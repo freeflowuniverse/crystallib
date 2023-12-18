@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.core.pathlib
 @if args.configure_interactive
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.data.fskvs
 @end
 // import freeflowuniverse.crystallib.osal.gittools
 import os
@@ -15,22 +16,19 @@ pub mut:
 	name                       string = 'default'
 	dest                       string = '/data/${args.name}'
 	passwd                     string ^^[required]
+	@if "mail" in args.clients
+	mailclient_name		   	   string = 'default'
+	@end
+	@if "postgres" in args.clients
 	postgresql_name            string = 'default'
-	domain                     string ^^[required]
-	title string
-	timezone string = "Africa/Kinshasa"
-	mail_from       string ^^[required]
-	smtp_addr       string ^^[required]
-	smtp_login      string ^^[required]
-	smpt_port       int = 587
-	smtp_passwd     string ^^[required]	
+	@end
 }
 
 fn configure_init(reset bool,mut args Config) ! {
 	mut args:=args_
 	args.name = texttools.name_fix(args.name)
 
-	key := '${args.name}_config_${args.name}'
+	key := '${args.name}_config_??{args.name}'
 	mut kvs := fskvs.new(name: 'config')!
 	if args.reset || !kvs.exists(key) {
 		data := json.encode_pretty(args)
