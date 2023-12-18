@@ -6,6 +6,7 @@ import json
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.core.generator.configure
 
 @[params]
 pub struct GeneratorArgs {
@@ -15,6 +16,8 @@ pub mut:
 	build_deps          []string
 	install_deps        []string
 	supported_platforms []string
+	clients				[]string
+	configure_interactive bool	
 	reset               bool // regenerate all, dangerous !!!
 	interactive         bool = true
 	path                string
@@ -89,6 +92,8 @@ pub fn generate(args_ GeneratorArgs) ! {
 				args.build_deps = myui.ask_dropdown_multiple(
 					question: 'Which build deps do you want?'
 					items: [
+						'none',
+						'docker',
 						'golang',
 						'python',
 						'nodejs',
@@ -104,6 +109,8 @@ pub fn generate(args_ GeneratorArgs) ! {
 				args.install_deps = myui.ask_dropdown_multiple(
 					question: 'Which install deps do you want?'
 					items: [
+						'none',
+						'docker',
 						'golang',
 						'python',
 						'nodejs',
@@ -118,12 +125,13 @@ pub fn generate(args_ GeneratorArgs) ! {
 			if args.interactive {
 				args.supported_platforms = myui.ask_dropdown_multiple(
 					question: 'Which platforms do you support?'
-					items: ['ubuntu', 'osx']
+					items: ['ubuntu', 'osx','arch']
 				)!
 			} else {
 				return error('please specify supported_platforms')
 			}
 		}
+
 		mut p_config := pathlib.get_file(path: config_path, create: true)!
 		args.reset = false
 		data := json.encode(args)
@@ -181,7 +189,7 @@ pub fn generate(args_ GeneratorArgs) ! {
 }
 
 fn deps_check(args GeneratorArgs) ! {
-	ok := 'rust,golang,php,nodejs,python'
+	ok := 'rust,golang,php,nodejs,python,none,docker'
 	ok2 := ok.split(',')
 	for i in args.build_deps {
 		if i !in ok2 {
@@ -196,7 +204,7 @@ fn deps_check(args GeneratorArgs) ! {
 }
 
 fn platform_check(args GeneratorArgs) ! {
-	ok := 'osx,ubuntu'
+	ok := 'osx,ubuntu,arch'
 	ok2 := ok.split(',')
 	for i in args.supported_platforms {
 		if i !in ok2 {
@@ -214,6 +222,9 @@ pub fn (args GeneratorArgs) platform_check_str() string {
 	if 'ubuntu' in args.supported_platforms {
 		out += 'myplatform == .ubuntu ||'
 	}
+	if 'arch' in args.supported_platforms {
+		out += 'myplatform == .arch ||'
+	}	
 	out = out.trim_right('|')
 	return out
 }

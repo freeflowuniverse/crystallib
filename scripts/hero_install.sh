@@ -9,9 +9,6 @@ ASSET=""
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     ASSET="linux"
-    echo "Linux binary not yet available :(."
-    echo "Try compiling hero yourself by running compile.sh in crystallib/baobab/hero/executor"
-    exit 1
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     ASSET="osx"
 fi

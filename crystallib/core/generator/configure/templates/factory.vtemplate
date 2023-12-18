@@ -1,0 +1,33 @@
+module ${args.name}
+
+// import freeflowuniverse.crystallib.osal
+// import freeflowuniverse.crystallib.core.pathlib
+// import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.core.texttools
+import os
+
+pub struct ${args.name.capitalize()} {
+pub mut:
+	name string
+	config Config
+}
+
+pub fn new (args_ Config) !${args.name.capitalize()} {
+
+	mut args:=args_
+	args.name = texttools.name_fix(args.name)
+
+	configure_init(mut args)!
+
+}
+
+
+pub fn (mut self ${args.name.capitalize()} ) configure(interactive bool, args Config) ! {
+	if interactive{
+		configure_ask(mut args)!
+	}
+	//reset the values on the disk
+	configure_init(true, mut args)!
+}
+
+

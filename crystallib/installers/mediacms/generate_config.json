@@ -1,0 +1,17 @@
+{
+    "name": "mediacms",
+    "title": "mediacms",
+    "build_deps": [
+        "docker"
+    ],
+    "install_deps": [
+        "docker"
+    ],
+    "supported_platforms": [
+        "arch","ubuntu"
+    ],
+    "reset": false,
+    "interactive": true,
+    "path": "/root/code/github/freeflowuniverse/crystallib/crystallib/installers/mediacms",
+    "isserver": true
+}

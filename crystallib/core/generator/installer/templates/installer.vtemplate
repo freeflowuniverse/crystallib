@@ -14,6 +14,9 @@ import freeflowuniverse.crystallib.installers.golang
 @if "python" in args.install_deps
 import freeflowuniverse.crystallib.installers.python
 @end
+@if "docker" in args.install_deps
+import freeflowuniverse.crystallib.installers.docker
+@end
 
 
 ^^[params]
@@ -40,7 +43,9 @@ pub fn install(args InstallArgs) ! {
 	@if "python" in args.install_deps
 	python.install()!
 	@end
-		
+	@if "docker" in args.install_deps
+	docker.install()!
+	@end		
 
 	build()!
 

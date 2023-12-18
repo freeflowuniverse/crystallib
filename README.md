@@ -9,15 +9,6 @@ curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/s
 bash /tmp/install.sh
 ```
 
-on linux can do the following using zinit (recommended)
-
-```bash
-curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/vm_prepare.sh > /tmp/install_vm.sh
-bash /tmp/install_vm.sh
-```
-
-
-
 requirements
 
 - ssh key loaded for access to github

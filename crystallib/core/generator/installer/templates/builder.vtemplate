@@ -13,7 +13,9 @@ import freeflowuniverse.crystallib.installers.golang
 @if "python" in args.build_deps
 import freeflowuniverse.crystallib.installers.python
 @end
-
+@if "docker" in args.build_deps
+import freeflowuniverse.crystallib.installers.docker
+@end
 
 ^^[params]
 pub struct BuildArgs {
@@ -37,7 +39,10 @@ pub fn build(args BuildArgs) ! {
 	@if "python" in args.build_deps
 	python.install()!
 	@end
-	
+	@if "docker" in args.build_deps
+	docker.install()!
+	@end
+		
 	// install ${args.name} if it was already done will return true
 	println(' - build ${args.name}')
 

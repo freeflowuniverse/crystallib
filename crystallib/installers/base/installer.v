@@ -85,7 +85,7 @@ pub fn develop(args InstallArgs) ! {
 	mut path := gittools.code_get(
 		pull: false
 		reset: false
-		url: 'https://github.com/freeflowuniverse/crystallib/tree/development_db'
+		url: 'https://github.com/freeflowuniverse/crystallib/tree/development'
 	)!
 
 	mut path2 := gittools.code_get(

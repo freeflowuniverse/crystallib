@@ -51,7 +51,7 @@ pub fn new(args_ Config) !Server {
 	key := 'dendrite_config_${args.name}'
 	mut kvs := fskvs.new(name: 'config')!
 	if args.reset || !kvs.exists(key) {
-		data := json.encode(args)
+		data := json.encode_pretty(args)
 		kvs.set(key, data)!
 	}
 	return get(args.name)!

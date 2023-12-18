@@ -6,6 +6,7 @@ pub fn platform_enum_from_string(platform string) PlatformType {
 		'osx' { .osx }
 		'ubuntu' { .ubuntu }
 		'alpine' { .alpine }
+		'arch' { .arch }
 		else { .unknown }
 	}
 }
@@ -15,6 +16,7 @@ pub enum PlatformType {
 	osx
 	ubuntu
 	alpine
+	arch
 }
 
 // Returns the enum value that matches the provided string for CPUType
@@ -49,6 +51,8 @@ pub fn platform() PlatformType {
 		platform_ = PlatformType.ubuntu
 	} else if cmd_exists('apk') {
 		platform_ = PlatformType.alpine
+	} else if cmd_exists('pacman') {
+		platform_ = PlatformType.arch		
 	} else {
 		logger.error('Unknown platform')
 	}

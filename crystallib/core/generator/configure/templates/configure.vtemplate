@@ -2,6 +2,10 @@ module ${args.name}
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
+@if args.configure_interactive
+import freeflowuniverse.crystallib.ui
+import freeflowuniverse.crystallib.ui.console
+@end
 // import freeflowuniverse.crystallib.osal.gittools
 import os
 
@@ -9,7 +13,6 @@ import os
 pub struct Config {
 pub mut:
 	name                       string = 'default'
-	reset                      bool
 	dest                       string = '/data/${args.name}'
 	passwd                     string ^^[required]
 	postgresql_name            string = 'default'
@@ -23,29 +26,48 @@ pub mut:
 	smtp_passwd     string ^^[required]	
 }
 
-pub fn configure(myargs Config) ! {
+fn configure_init(reset bool,mut args Config) ! {
+	mut args:=args_
+	args.name = texttools.name_fix(args.name)
 
-	checkplatform()!
-	
-	dest:=myargs.dest
+	key := '${args.name}_config_${args.name}'
+	mut kvs := fskvs.new(name: 'config')!
+	if args.reset || !kvs.exists(key) {
+		data := json.encode_pretty(args)
+		kvs.set(key, data)!
+	}
+	data := kvs.get(key)!
+	args = json.decode(Config, data)!
+
+	@if template_items.len>0
+	dest:=args.dest
 	if !(os.exists("??{dest}")){
 		return error("can't find dest: ??{dest}")
 	}
+	@end
 
 	@for t in template_items
 	pathlib.template_write(??tmpl("templates/${t.path}"),
-								  "??{dest}/${t.path}",myargs.reset)!
+								  "??{dest}/${t.path}",args.reset)!
 	@end	
 
 	??if debug{println(' - ${args.name} configured properly.')}
-}
-
-
-fn checkplatform() ! {
-	myplatform:=osal.platform()
-	if !(${args.platform_check_str()}) {
-		return error('platform not supported')
-	}	
 
 }
 
+
+@if args.configure_interactive
+fn configure_ask(mut args Config) ! {
+	mut myui := ui.new()!
+	console.clear()
+
+	// ok := myui.ask_yesno(
+	// 	question: "are you sure you want to ...'?"
+	// )!
+	// if !ok {
+	// 	return error("can't continue, user aborted.")
+	// }
+	// args.email_from=mygui.ask_question(question:"email from addr.")
+
+}
+@end
