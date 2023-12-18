@@ -14,7 +14,7 @@ pub fn cmd_installers(mut cmdroot Command) {
 	mut caddy_cmd := Command{
 		sort_flags: true
 		name: 'caddy'
-		execute: cmd_git_execute
+		execute: cmd_installers_execute
 		description: ''
 	}
 

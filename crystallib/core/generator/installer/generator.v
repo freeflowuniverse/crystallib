@@ -143,7 +143,7 @@ pub fn do(args_ GeneratorArgs) ! {
 			clients: args.clients
 		}
 		generic.clients_ask(mut args_generic)!
-		generic.generate(args_generic)!		
+		generic.generate(args_generic)!
 
 		mut p_config := pathlib.get_file(path: config_path, create: true)!
 		args.reset = false
@@ -156,8 +156,6 @@ pub fn do(args_ GeneratorArgs) ! {
 		p_config.write(data)!
 	}
 	generate(args)!
-
-
 }
 
 pub fn generate(args_ GeneratorArgs) ! {

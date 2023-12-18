@@ -3,47 +3,34 @@ module peertube
 // import freeflowuniverse.crystallib.osal
 // import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.osal.gittools
-import freeflowuniverse.crystallib.core.texttools
-
 // import freeflowuniverse.crystallib.clients.mail
-
-
+import freeflowuniverse.crystallib.core.texttools
 import os
 
 pub struct Peertube {
 pub mut:
-    name string
-    config Config
-
-
+	name   string
+	config Config
 }
 
-pub fn new (args_ Config) !Peertube {
+pub fn new(args_ Config) !Peertube {
+	mut args := args_
+	args.name = texttools.name_fix(args.name)
 
-    mut args:=args_
-    args.name = texttools.name_fix(args.name)
+	configure_init(args.reset, mut args)!
 
-    configure_init(args.reset, mut args)!
+	mut o := Peertube{
+		name: args.name
+		config: args
+	}
 
-
-
-
-    mut o:= Peertube {
-        name:args.name
-        config:args
-    }
-
-    return o
-
+	return o
 }
 
-
-pub fn (mut self Peertube ) configure(mut args Config) ! {
-    //reset the values on the disk
-    configure_init(true, mut args)!
+pub fn (mut self Peertube) configure(mut args Config) ! {
+	// reset the values on the disk
+	configure_init(true, mut args)!
 }
-
-
 
 fn checkplatform() ! {
 	myplatform := osal.platform()

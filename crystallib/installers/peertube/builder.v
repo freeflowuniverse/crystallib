@@ -4,29 +4,24 @@ import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.installers
-
-
-
-
+import freeflowuniverse.crystallib.installers.docker
 
 @[params]
 pub struct BuildArgs {
 pub mut:
-    reset bool
+	reset bool
 }
 
 // install peertube will return true if it was already installed
 pub fn build(args BuildArgs) ! {
+	checkplatform()!
 
-    checkplatform()!
-    
-    base.install()!
+	base.install()!
 
 	docker.install()!
 
-    // install peertube if it was already done will return true
-    println(' - build peertube')
-
+	// install peertube if it was already done will return true
+	println(' - build peertube')
 
 	mut gs := gittools.get()!
 
@@ -36,16 +31,10 @@ pub fn build(args BuildArgs) ! {
 		reset: true
 	)!
 
-        
+	// cmd := '
+	// source ${osal.profile_path()} //source the go path
+	// cd ${gitpath}
 
-
-    // cmd := '
-    // source ${osal.profile_path()} //source the go path
-    // cd ${gitpath}
-
-
-    // '
-    // osal.execute_stdout(cmd)!
-
-
+	// '
+	// osal.execute_stdout(cmd)!
 }

@@ -23,6 +23,7 @@ fn do() ! {
 	herocmds.cmd_installers(mut cmd)
 	herocmds.cmd_zola(mut cmd)
 	herocmds.cmd_configure(mut cmd)
+	herocmds.cmd_postgres(mut cmd)
 
 	cmd.setup()
 	cmd.parse(os.args)

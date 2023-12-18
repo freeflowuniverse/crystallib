@@ -11,43 +11,39 @@ import os
 @[params]
 pub struct Config {
 pub mut:
-    name                       string = 'default'
-    dest                       string = '/data/peertube'
-    passwd                     string
-    reset                     bool
+	name   string = 'default'
+	dest   string = '/data/peertube'
+	passwd string
+	reset  bool
 
-    mailclient_name                  string = 'default'
+	mailclient_name string = 'default'
 
-    postgresql_name            string = 'default'
+	postgresql_name string = 'default'
 }
 
-fn configure_init(reset bool,mut args Config) ! {
-    args.name = texttools.name_fix(args.name)
+fn configure_init(reset bool, mut args Config) ! {
+	args.name = texttools.name_fix(args.name)
 
-    key := 'peertube_config_${args.name}'
-    mut kvs := fskvs.new(name: 'config')!
-    if reset || !kvs.exists(key) {
-        data := json.encode_pretty(args)
-        kvs.set(key, data)!
-    }
-    data := kvs.get(key)!
-    args = json.decode(Config, data)!
+	key := 'peertube_config_${args.name}'
+	mut kvs := fskvs.new(name: 'config')!
+	if reset || !kvs.exists(key) {
+		data := json.encode_pretty(args)
+		kvs.set(key, data)!
+	}
+	data := kvs.get(key)!
+	args = json.decode(Config, data)!
 
+	dest := args.dest
+	// if !(os.exists("${dest}")){
+	//     return error("can't find dest: ${dest}")
+	// }
 
-    dest:=args.dest
-    // if !(os.exists("${dest}")){
-    //     return error("can't find dest: ${dest}")
-    // }
+	// pathlib.template_write($tmpl("templates/Dockerfile"),
+	//                               "${dest}/Dockerfile",reset)!
+	// pathlib.template_write($tmpl("templates/entrypoint.sh"),
+	//                               "${dest}/entrypoint.sh",reset)!
 
-
-    // pathlib.template_write($tmpl("templates/Dockerfile"),
-    //                               "${dest}/Dockerfile",reset)!
-    // pathlib.template_write($tmpl("templates/entrypoint.sh"),
-    //                               "${dest}/entrypoint.sh",reset)!
-
-    $if debug{println(' - peertube configured properly.')}
-
+	$if debug {
+		println(' - peertube configured properly.')
+	}
 }
-
-
-

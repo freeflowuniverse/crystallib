@@ -3,8 +3,11 @@ module herocmds
 import freeflowuniverse.crystallib.clients.mail
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.builder
+import freeflowuniverse.crystallib.data.fskvs
+import freeflowuniverse.crystallib.core.texttools
 import cli { Command, Flag }
 import os
+import json
 
 pub fn cmd_configure(mut cmdroot Command) {
 	mut cmd_run := Command{
@@ -14,52 +17,49 @@ pub fn cmd_configure(mut cmdroot Command) {
 		execute: cmd_configure_execute
 	}
 
-	mut mail_cmd := Command{
-		sort_flags: true
-		name: 'mail'
-		execute: cmd_configure_execute
-		description: ''
-	}
-	mut allcmdsref := [&mail_cmd]
-	for mut c in allcmdsref {
-		c.add_flag(Flag{
-			flag: .string
-			required: false
-			name: 'name'
-			abbrev: 'n'
-			description: 'name of the instance to configure.'
-		})
-		c.add_flag(Flag{
-			flag: .bool
-			required: false
-			name: 'reset'
-			abbrev: 'r'
-			description: 'will reset.'
-		})
-		c.add_flag(Flag{
-			flag: .bool
-			required: false
-			name: 'show'
-			abbrev: 's'
-			description: 'will show the command.'
-		})
-		c.add_flag(Flag{
-			flag: .bool
-			required: false
-			name: 'test'
-			abbrev: 't'
-			description: 'do a test.'
-		})
-		c.add_flag(Flag{
-			flag: .string
-			required: false
-			name: 'push'
-			abbrev: 'p'
-			description: 'push this config to a destination over ssh e.g. root@212.3.247.26'
-		})
-	}
+	cmd_run.add_flag(Flag{
+		flag: .string
+		required: false
+		name: 'category'
+		abbrev: 'c'
+		description: 'name of the configure item e.g. mail, postgres.'
+	})
+	cmd_run.add_flag(Flag{
+		flag: .string
+		required: false
+		name: 'instance'
+		abbrev: 'i'
+		description: 'instance name'
+	})
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'reset'
+		abbrev: 'r'
+		description: 'will reset.'
+	})
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'show'
+		abbrev: 's'
+		description: 'will show the command.'
+	})
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'test'
+		abbrev: 't'
+		description: 'do a test.'
+	})
+	cmd_run.add_flag(Flag{
+		flag: .string
+		required: false
+		name: 'push'
+		abbrev: 'p'
+		description: 'push this config to a destination over ssh e.g. root@212.3.247.26'
+	})
 
-	cmd_run.add_command(mail_cmd)
 	cmdroot.add_command(cmd_run)
 }
 
@@ -67,18 +67,23 @@ fn cmd_configure_execute(cmd Command) ! {
 	mut reset := cmd.flags.get_bool('reset') or { false }
 	mut show := cmd.flags.get_bool('show') or { false }
 	mut test := cmd.flags.get_bool('test') or { false }
-	mut name := cmd.flags.get_string('name') or { 'default' }
+	mut category := cmd.flags.get_string('category') or { panic('bug') }
+	mut instance := cmd.flags.get_string('instance') or { 'default' }
 	mut push := cmd.flags.get_string('push') or { '' }
-	if name == '' {
-		name = 'default'
+	if instance == '' {
+		instance = 'default'
 	}
-
-	if cmd.name == 'mail' {
+	category = texttools.name_fix(category)
+	instance = texttools.name_fix(instance)
+	if instance.len == 0 || category.len == 0 {
+		return error(cmd.help_message())
+	}
+	if category == 'mail' {
 		if show {
-			cl := mail.configure(name: name)!
+			cl := mail.configure(name: instance)!
 			println(cl)
 		} else if test {
-			mut cl := mail.get(name: name)!
+			mut cl := mail.get(name: instance)!
 			// println(cl)
 			mut myui := ui.new()!
 			to := myui.ask_question(
@@ -86,15 +91,18 @@ fn cmd_configure_execute(cmd Command) ! {
 			)!
 			cl.send(to: to, subject: 'this is test mail', body: 'this is example mail.')!
 		} else if push == '' {
-			mail.configure_interactive(reset: reset, name: name)!
+			mail.configure_interactive(reset: reset, name: instance)!
 		}
 	} else {
-		return error(cmd.help_message())
+		mut kvs := fskvs.new(name: 'config')!
+		key := '${category}_config_${instance}'
+		data := kvs.get(key) or { return error('cannot find object with key: ${key}') }
+		println(data)
 	}
 	if push.len > 0 {
-		println(" - will push config: ${name} to '${push}'")
-		path := '${os.home_dir()}/hero/db/config/${cmd.name}_config_${name}'
-		path_dest := '~/hero/db/config/${cmd.name}_config_${name}'
+		println(" - will push config: ${instance} to '${push}'")
+		path := '${os.home_dir()}/hero/db/config/${category}_config_${instance}'
+		path_dest := '~/hero/db/config/${category}_config_${instance}'
 		if !os.exists(path) {
 			return error('cannot find the source config on: ${path}')
 		}
