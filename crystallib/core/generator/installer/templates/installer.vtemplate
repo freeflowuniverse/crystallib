@@ -53,3 +53,11 @@ pub fn install(args InstallArgs) ! {
 
 	println(' - ${args.name} installed properly.')
 }
+
+
+fn checkplatform() ! {
+	myplatform := osal.platform()
+	if !(myplatform == .ubuntu || myplatform == .arch) {
+		return error('platform not supported')
+	}
+}
