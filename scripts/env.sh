@@ -24,12 +24,12 @@ fi
 if [ -z "$TERM" ]; then
     export TERM=xterm
 fi
-export OURHOME="$HOME/play"
+export OURHOME="$HOME/hero"
 export DIR_BASE="$HOME"
 export DIR_BUILD="/tmp"
 export DIR_CODE="$DIR_BASE/code"
 export DIR_CODEWIKI="$OURHOME/codewiki"
-export DIR_CODE_INT="$OURHOME/_code"
+export DIR_CODE_INT="$HOME/_code"
 export DIR_BIN="$OURHOME/bin"
 export DIR_SCRIPTS="$OURHOME/bin"
 
@@ -196,10 +196,15 @@ function package_check_install {
 
 function package_install {
     local command_name="$1"
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then         
+    if [[ "$OSNAME" == "ubuntu" ]]; then         
         apt -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" install $1 -q -y --allow-downgrades --allow-remove-essential 
-    else
+    elif [[ "$OSNAME" == "darwin"* ]]; then            
         brew install $command_name
+    elif [[ "$OSNAME" == "alpine"* ]]; then            
+        sudo -s apk add $command_name
+    else
+        echo "platform : $OSNAME not supported"
+        exit 1
     fi
 }
 
@@ -422,6 +427,18 @@ function v_install {
         fi
     fi
 
+    if [[ "$OSNAME" == "ubuntu"* ]]; then 
+        package_install "libgc-dev gcc make libpq-dev"
+    elif [[ "$OSNAME" == "darwin"* ]]; then
+        brew install bdw-gc
+    elif [[ "$OSNAME" == "alpine"* ]]; then
+        sudo -s apk update
+        sudo -s apk add mc make gcc libc-dev curl rsync htop redis bash     
+    else
+        echo "ONLY SUPPORT OSX AND LINUX FOR NOW"
+        exit 1
+    fi        
+
     if [[ -d "$DIR_CODE_INT/v" ]]; then
         pushd $DIR_CODE_INT/v
         git pull
@@ -430,34 +447,30 @@ function v_install {
         mkdir -p $DIR_CODE_INT
         pushd $DIR_CODE_INT
         sudo rm -rf $DIR_CODE_INT/v
-        if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
-            package_install "libgc-dev gcc make libpq-dev"
-        elif [[ "$OSTYPE" == "darwin"* ]]; then
-            brew install bdw-gc
-        else
-            echo "ONLY SUPPORT OSX AND LINUX FOR NOW"
-            exit 1
-        fi    
-        git clone https://github.com/vlang/v
+        git clone  --depth 1  https://github.com/vlang/v
         popd "$@" > /dev/null
     fi
 
     pushd $DIR_CODE_INT/v
     make
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
-        sudo ./v symlink
-    elif [[ "$OSTYPE" == "darwin"* ]]; then
-        ./v symlink
-    fi
+    mkdir -p ${HOME}/hero/bin
+    rm -f ${HOME}/hero/bin/v
+    ln -s ${DIR_CODE_INT}/v/v ${HOME}/hero/bin/v
+    touch ~/.profile
+    echo 'export PATH="${HOME}/hero/bin:$PATH"' >> ~/.profile    
     popd "$@" > /dev/null
+    export PATH="${HOME}/hero/bin:$PATH"
 
+    if ! [[ "$OSNAME" == "alpine"* ]]; then
     v -e "$(curl -fksSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh)"
+    fi
 
     if ! [ -x "$(command -v v)" ]; then
     echo 'vlang is not installed.' >&2
     exit 1
     fi
 }
+
 
 function crystal_lib_get {
     mkdir -p $DIR_CODE/github/freeflowuniverse
@@ -469,14 +482,14 @@ function crystal_lib_get {
         else
             git remote set-url origin git@github.com:freeflowuniverse/crystallib.git
         fi               
-        if [[ $(git status -s) ]]; then
-            echo "There are uncommitted changes in the Git repository crystallib."
-            # git add . -A
-            # git commit -m "just to be sure"
-            exit 1
-        fi
-        git pull
-        git checkout $CLBRANCH
+        # if [[ $(git status -s) ]]; then
+        #     echo "There are uncommitted changes in the Git repository crystallib."
+        #     # git add . -A
+        #     # git commit -m "just to be sure"
+        #     exit 1
+        # fi
+        # git pull
+        # git checkout $CLBRANCH
         popd 2>&1 >> /dev/null
     else
         pushd $DIR_CODE/github/freeflowuniverse 2>&1 >> /dev/null
@@ -490,11 +503,13 @@ function crystal_lib_get {
         git checkout $CLBRANCH
         popd 2>&1 >> /dev/null
     fi
-    pushd $DIR_CODE/github/freeflowuniverse/crystallib
-    bash install.sh
-    popd
+
+    mkdir -p ~/.vmodules/freeflowuniverse
+    rm -f ~/.vmodules/freeflowuniverse/crystallib
+    ln -s "$DIR_CODE/github/freeflowuniverse/crystallib" ~/.vmodules/freeflowuniverse/crystallib
 
 }
+
 
 #configure the redis in zinit
 function zinit_configure_redis {
@@ -527,11 +542,6 @@ function crystal_install {
 
         os_update
         redis_install
-        # if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
-        #     zinit_configure_redis
-        # else
-        #     redis_install
-        # fi
         sudo rm -rf ~/.vmodules/
         mkdir -p ~/.vmodules/freeflowuniverse/
         mkdir -p ~/.vmodules/threefoldtech/   
@@ -540,18 +550,33 @@ function crystal_install {
     fi
 }
 
+function hero_install {
+
+    crystal_install
+
+
+
+}
+
 
 
 function os_update {
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
+    if [[ "$OSNAME" == "ubuntu" ]]; then 
+        rm -f /var/lib/apt/lists/lock
+        rm -f /var/cache/apt/archives/lock
+        rm -f /var/lib/dpkg/lock*		
+        export TERM=xterm
+        export DEBIAN_FRONTEND=noninteractive
+        dpkg --configure -a
         apt update -y
+        set +e
         apt-mark hold grub-efi-amd64-signed
-        apt-get -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" upgrade -q -y --allow-downgrades --allow-remove-essential --allow-change-held-packages
-        apt-mark hold grub-efi-amd64-signed
+        set -e
         apt update -y
+        apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+        apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+        apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         package_install "mc curl tmux net-tools git htop ca-certificates lsb-release"
-        #gnupg
-        apt upgrade -y
     elif [[ "$OSTYPE" == "darwin"* ]]; then
         echo 
     fi

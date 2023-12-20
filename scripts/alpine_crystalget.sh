@@ -1,56 +1,32 @@
+#!/bin/bash
 set -ex
 
-function crystal_lib_get {
-    mkdir -p $DIR_CODE/github/freeflowuniverse
-    if [[ -d "$DIR_CODE/github/freeflowuniverse/crystallib" ]]
-    then
-        pushd $DIR_CODE/github/freeflowuniverse/crystallib 2>&1 >> /dev/null     
-        if [[ -z "$sshkeys" ]]; then
-            echo
-        else
-            git remote set-url origin git@github.com:freeflowuniverse/crystallib.git
-        fi               
-        if [[ $(git status -s) ]]; then
-            echo "There are uncommitted changes in the Git repository crystallib."
-            # git add . -A
-            # git commit -m "just to be sure"
-            exit 1
-        fi
-        git pull
-        git checkout $CLBRANCH
-        popd 2>&1 >> /dev/null
-    else
-        pushd $DIR_CODE/github/freeflowuniverse 2>&1 >> /dev/null
-        if [[ -z "$keys" ]]; then
-            git clone --depth 1 --no-single-branch https://github.com/freeflowuniverse/crystallib.git
-        else
-            git clone --depth 1 --no-single-branch git@github.com:freeflowuniverse/crystallib.git
-        fi        
-        
-        cd crystallib
-        git checkout $CLBRANCH
-        popd 2>&1 >> /dev/null
-    fi
-    pushd $DIR_CODE/github/freeflowuniverse/crystallib
-    bash install.sh
-    popd
-
-}
-
+#will link users code to the home code
 source_dir="/Users/${USER}/code"
 target_dir="${HOME}/code"
 if [ ! -e "$target_dir" ]; then
-    if [ ! -e "$source_dir" ]; then
-        DIR_CODE="${source_dir}"
-        crystal_lib_get    
-    fi
-    # Check if the source directory exists
     if [ -d "$source_dir" ]; then
             ln -s "$source_dir" "$target_dir"
-            echo "Created a symbolic link from $source_dir to $target_dir."
-        fi
+    fi
+fi
+CLBRANCH="development"
+script_name=~/env.sh
+download_url="https://raw.githubusercontent.com/freeflowuniverse/crystallib/${CLBRANCH}/scripts/env.sh"    
+if [[ -f "${HOME}/code/github/freeflowuniverse/crystallib/scripts/env.sh" ]]; then
+    rm -f $HOME/.env.sh
+    if [[ -h "$HOME/env.sh" ]] || [[ -L "$HOME/env.sh" ]]; then
+        echo 
+    else   
+        rm -f $HOME/env.sh        
+        ln -s $HOME/code/github/freeflowuniverse/crystallib/scripts/env.sh $HOME/env.sh
+    fi
+else
+    package_check_install curl
+    if curl -o "$script_name" -s $download_url; then
+        echo "Download successful. Script '$script_name' is now available in the current directory."
     else
-        echo "$source_dir does not exist."
+        echo "Error: Download failed. Script '$script_name' could not be downloaded."
         exit 1
     fi
 fi
+
