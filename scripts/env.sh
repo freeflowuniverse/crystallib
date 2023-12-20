@@ -593,7 +593,32 @@ function redis_install {
     fi
 }
 
+function myplatform {
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        export OSNAME='darwin'
+    elif [ -e /etc/os-release ]; then
+        # Read the ID field from the /etc/os-release file
+        export OSNAME=$(grep '^ID=' /etc/os-release | cut -d= -f2)
+        if [ "${os_id,,}" == "ubuntu" ]; then
+            export OSNAME="ubuntu"          
+        fi
+    else
+        echo "Unable to determine the operating system."
+        exit 1        
+    fi
+
+    # if [ "$(uname -m)" == "x86_64" ]; then
+    #     echo "This system is running a 64-bit processor."
+    # else
+    #     echo "This system is not running a 64-bit processor."
+    #     exit 1
+    # fi    
+
+}
+
 function myinit0 {
+
+    myplatform
 
     if ! [[ -f "$HOME/.vmodules/done_init" ]]; then
 
@@ -601,51 +626,7 @@ function myinit0 {
         
         mkdir -p $HOME/.vmodules
 
-        package_install curl
-
-        github_keyscan
-
-        if [[ "$OSTYPE" == "linux-gnu"* ]]; then        
-
-            # Check if the /etc/os-release file exists
-            if [ -e /etc/os-release ]; then
-                # Read the ID field from the /etc/os-release file
-                os_id=$(grep '^ID=' /etc/os-release | cut -d= -f2)
-                
-                # Check if the ID is "ubuntu" (case-insensitive)
-                if [ "${os_id,,}" == "ubuntu" ]; then
-                    echo "This system is running Ubuntu."
-                else
-                    echo "This system is not running Ubuntu."
-                    exit 1
-                fi
-            else
-                echo "The /etc/os-release file does not exist. Unable to determine the operating system."
-                exit 1
-            fi
-
-            # Check if the processor architecture is 64-bit
-            if [ "$(uname -m)" == "x86_64" ]; then
-                echo "This system is running a 64-bit processor."
-            else
-                echo "This system is not running a 64-bit processor."
-                exit 1
-            fi
-        fi
-
-        if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
-            profile_file="$HOME/.profile"
-            env_file="$HOME/env.sh"
-            # Check if env.sh is already loaded in .profile
-            if grep -q "source $env_file" "$profile_file"; then
-                echo "env.sh is already loaded in .profile."
-            else
-                # Append the 'source' command to load env.sh in .profile
-                echo "Adding 'source $env_file' to .profile..."
-                echo "source $env_file" >> "$profile_file"
-                echo "env.sh has been added to .profile."
-            fi
-        else
+        if [[ "$OSNAME" == "darwin" ]]; then 
             profile_file="$HOME/.zprofile"
             env_file="$HOME/env.sh"
             # Check if env.sh is already loaded in .profile
@@ -656,8 +637,24 @@ function myinit0 {
                 echo "Adding 'source $env_file' to .zprofile..."
                 echo "source $env_file" >> "$profile_file"
                 echo "env.sh has been added to .zprofile."
+            fi    
+        else
+            profile_file="$HOME/.profile"
+            env_file="$HOME/env.sh"
+            # Check if env.sh is already loaded in .profile
+            if grep -q "source $env_file" "$profile_file"; then
+                echo "env.sh is already loaded in .profile."
+            else
+                # Append the 'source' command to load env.sh in .profile
+                echo "Adding 'source $env_file' to .profile..."
+                echo "source $env_file" >> "$profile_file"
+                echo "env.sh has been added to .profile."
             fi        
         fi
+
+        package_install curl
+
+        github_keyscan
 
         touch "$HOME/.vmodules/done_init"
 
@@ -669,7 +666,7 @@ function myreset {
     find $HOME/.vmodules/ -type f -name "done_*" -exec rm {} \;
     if [[ -f "$HOME/code/github/freeflowuniverse/crystallib/scripts/env.sh" ]]; then
         echo "copy env.sh to root"
-        cp $HOME/code/github/freeflowuniverse/crystallib/scripts/env.sh ~/env.sh
+        ln -s $HOME/code/github/freeflowuniverse/crystallib/scripts/env.sh ~/env.sh
     fi    
 }
 

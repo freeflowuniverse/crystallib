@@ -15,6 +15,21 @@ function package_check_install {
     fi
 }
 
+function package_install {
+    local command_name="$1"
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then         
+        apt -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" install $1 -q -y --allow-downgrades --allow-remove-essential 
+    if [[ "$OSTYPE" == "alpine"* ]]; then
+        apk add 
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        brew install $command_name
+    else
+        echo 'cant find platform, only support alpine, darwin, ubuntu'
+        exit 1
+    fi
+}
+
+
 function sourceenv() {
     local script_name=~/env.sh
     local download_url="https://raw.githubusercontent.com/freeflowuniverse/crystallib/${CLBRANCH}/scripts/env.sh"    
