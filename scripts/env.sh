@@ -202,6 +202,8 @@ function package_install {
         brew install $command_name
     elif [[ "$OSNAME" == "alpine"* ]]; then            
         sudo -s apk add $command_name
+    elif [[ "$OSNAME" == "arch"* ]]; then            
+        sudo -s pacman -S $command_name --noconfirm
     else
         echo "platform : $OSNAME not supported"
         exit 1
@@ -558,8 +560,6 @@ function hero_install {
 
 }
 
-
-
 function os_update {
     if [[ "$OSNAME" == "ubuntu" ]]; then 
         rm -f /var/lib/apt/lists/lock
@@ -579,6 +579,10 @@ function os_update {
         package_install "mc curl tmux net-tools git htop ca-certificates lsb-release"
     elif [[ "$OSTYPE" == "darwin"* ]]; then
         echo 
+    elif [[ "$OSTYPE" == "arch"* ]]; then
+        pacman -Syy --noconfirm
+        pacman -Syu --noconfirm
+        pacman -Su mc --noconfirm
     fi
     touch "$HOME/.vmodules/done_os"
     echo "os update ok"
@@ -619,6 +623,7 @@ function redis_install {
 }
 
 function myplatform {
+    set -ex
     if [[ "$OSTYPE" == "darwin"* ]]; then
         export OSNAME='darwin'
     elif [ -e /etc/os-release ]; then
@@ -627,6 +632,9 @@ function myplatform {
         if [ "${os_id,,}" == "ubuntu" ]; then
             export OSNAME="ubuntu"          
         fi
+        if [ "${OSNAME}" == "archarm" ]; then
+            export OSNAME="arch"          
+        fi        
     else
         echo "Unable to determine the operating system."
         exit 1        
@@ -739,6 +747,7 @@ function myinit {
     myinit0
 }
 
+myplatform
 resetcheck
 myinit
 
