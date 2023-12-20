@@ -85,6 +85,18 @@ pub fn (mut db KVS) keys() ![]string {
 	return res
 }
 
+pub fn (mut db KVS) prefix(prefix string) ![]string {
+	mut res := []string{}
+	for item in db.keys()! {
+		// println(" ---- $item ($prefix)")
+		if item.trim_space().starts_with(prefix) {
+			// println("888")
+			res << item
+		}
+	}
+	return res
+}
+
 // delete all data
 pub fn (mut db KVS) destroy() ! {
 	db.path.empty()!

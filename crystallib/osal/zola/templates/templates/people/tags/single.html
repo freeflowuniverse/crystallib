@@ -1,0 +1,14 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+<main class="pt-16">
+
+    <div class="flex flex-col md:flex-row">
+        {% include "partials/tagsCards.html" %}
+        {% include "partials/tagsSidebar.html" %}
+    </div>
+ </main> 
+ 
+ {% endblock content %}
+

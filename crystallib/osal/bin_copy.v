@@ -31,12 +31,38 @@ pub fn bin_copy(args_ BinCopyArgs) ! {
 	mut destpath := '${dest}/${args.cmdname}'
 	sourcepath.copy(dest: destpath, rsync: false)!
 
+	// check if there is other file
+	res := os.execute('which ${args.cmdname}')
+	if res.exit_code == 0 {
+		existing_path := res.output.trim_space()
+		if dest != existing_path {
+			os.rm(existing_path)!
+		}
+	}
+
+	// if true{
+	// 	println(path)
+	// 	panic("sd")
+	// }
+
 	mut destfile := pathlib.get_file(path: destpath, create: false)!
 
 	destfile.chmod(0o770)! // includes read & write & execute
 
 	// lets make sure this path is in profile
 	profile_path_add(dest)!
+}
+
+pub fn profile_path_add_hero() !string {
+	mut dest := ''
+	if is_osx() {
+		dest = '${os.home_dir()}/hero/bin'
+		dir_ensure(dest)!
+	} else {
+		dest = '/usr/local/bin'
+	}
+	profile_path_add(dest)!
+	return dest
 }
 
 // add the following path to a profile

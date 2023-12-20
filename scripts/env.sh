@@ -526,11 +526,12 @@ function crystal_install {
         fi
 
         os_update
-        if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
-            zinit_configure_redis
-        else
-            redis_install
-        fi
+        redis_install
+        # if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
+        #     zinit_configure_redis
+        # else
+        #     redis_install
+        # fi
         sudo rm -rf ~/.vmodules/
         mkdir -p ~/.vmodules/freeflowuniverse/
         mkdir -p ~/.vmodules/threefoldtech/   
@@ -560,6 +561,14 @@ function os_update {
 
 
 function redis_install {
+
+    export response=$(redis-cli PING)
+
+    # Check if the response is PONG
+    if [ "$response" == "PONG" ]; then
+        return 
+    fi
+
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
         # package_install "libssl-dev redis"
         package_install "redis"

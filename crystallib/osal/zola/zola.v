@@ -38,9 +38,7 @@ pub mut:
 }
 
 pub fn new(args ZolaArgs) !Zola {
-	if args.install {
-		zola_installer.install()!
-	}
+	zola_installer.install()!
 	mut gs := gittools.get(coderoot: args.coderoot)!
 	mut sites := Zola{
 		coderoot: args.coderoot
@@ -108,3 +106,5 @@ pub fn (mut self Zola) watch(args WatchArgs) {
 		}
 	}
 }
+
+pub fn build()

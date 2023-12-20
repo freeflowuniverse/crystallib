@@ -49,7 +49,7 @@ fn (mut c UIConsole) ask_dropdown_internal(args DropDownArgs) !string {
 // 	clear       bool = true
 pub fn (mut c UIConsole) ask_dropdown_int(args_ DropDownArgs) !int {
 	mut args := args_
-
+	args.items.sort()
 	choice := c.ask_dropdown_internal(args)!
 
 	nr := args.items.len
@@ -94,7 +94,7 @@ pub fn (mut c UIConsole) ask_dropdown_int(args_ DropDownArgs) !int {
 // 	clear       bool = true
 pub fn (mut c UIConsole) ask_dropdown_multiple(args_ DropDownArgs) ![]string {
 	mut args := args_
-
+	args.items.sort()
 	res := c.ask_dropdown_internal(
 		clear: args.clear
 		description: args.description

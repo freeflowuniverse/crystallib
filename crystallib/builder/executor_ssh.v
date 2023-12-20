@@ -53,7 +53,7 @@ pub fn (mut executor ExecutorSSH) exec(cmd string) !string {
 		println(' .. execute ${executor.ipaddr.addr}: ${cmd}')
 	}
 	res := osal.exec(cmd: cmd2, stdout: true, stdout_log: true)!
-	return res.output
+	return res.output.join_lines()
 }
 
 pub fn (mut executor ExecutorSSH) exec_silent(cmd string) !string {
@@ -64,7 +64,7 @@ pub fn (mut executor ExecutorSSH) exec_silent(cmd string) !string {
 	}
 	cmd2 := 'ssh ${executor.user}@${executor.ipaddr.addr} -p ${executor.ipaddr.port} "${cmd}"'
 	res := osal.exec(cmd: cmd2, stdout: stdout)!
-	return res.output
+	return res.output.join_lines()
 }
 
 pub fn (mut executor ExecutorSSH) file_write(path string, text string) ! {

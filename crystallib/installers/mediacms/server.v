@@ -11,25 +11,6 @@ import rand
 import os
 import time
 
-@[params]
-pub struct Config {
-pub mut:
-	name            string = 'default'
-	reset           bool
-	path            string = '/data/mediacms'
-	passwd          string @[required]
-	postgresql_name string = 'default'
-	domain          string @[required]
-	title           string
-	reset           bool
-	timezone        string = 'Africa/Kinshasa'
-	mail_from       string @[required]
-	smtp_addr       string @[required]
-	smtp_login      string @[required]
-	smpt_port       int = 587
-	smtp_passwd     string @[required]
-}
-
 pub struct Server {
 pub mut:
 	name        string
@@ -38,53 +19,51 @@ pub mut:
 	path_config pathlib.Path
 }
 
-// get the mediacms server
+// get the server of type mediacms
 //```js
 // name        string = 'default'
 // path        string = '/data/mediacms'
 // passwd      string
 //```
 // if name exists already in the config DB, it will load for that name
-pub fn new(args_ Config) !Server {
-	mut args := args_
-	if args.passwd == '' {
-		args.passwd = rand.string(12)
+pub fn server_new(myconfig_ Config) !Server {
+	mut myconfig := myconfig_
+	if myconfig.passwd == '' {
+		myconfig.passwd = rand.string(12)
 	}
-	args.name = texttools.name_fix(args.name)
-	key := 'mediacms_config_${args.name}'
+	myconfig.name = texttools.name_fix(myconfig.name)
+	key := 'mediacms_config_${myconfig.name}'
 	mut kvs := fskvs.new(name: 'config')!
-	if args.reset || !kvs.exists(key) {
-		data := json.encode(args)
+	if myconfig.reset || !kvs.exists(key) {
+		data := json.encode(myconfig)
 		kvs.set(key, data)!
 	}
-	return get(args.name)!
+	return server_get(myconfig.name)!
 }
 
-pub fn get(name_ string) !Server {
-	println(' - get mediacms server ${name_}')
+pub fn server_get(name_ string) !Server {
 	name := texttools.name_fix(name_)
+	println(' - get mediacms server ${name}')
 	key := 'mediacms_config_${name}'
 	mut kvs := fskvs.new(name: 'config')!
 	if kvs.exists(key) {
 		data := kvs.get(key)!
-		args := json.decode(Config, data)!
+		myconfig := json.decode(Config, data)!
 
-		install(args)!
+		mut server := Server{
+			name: name
+			config: myconfig
+			path_config: pathlib.get_dir(path: '${myconfig.dest}/cfg', create: true)!
+		}
 
-		// mut server := Server{
-		// 	name: name
-		// 	config: args
-		// 	path_config: pathlib.get_dir(path: '${args.path}/cfg', create: true)!
-		// }
-
-		// mut z := zinit.new()!
-		// processname := 'mediacms_${name}'
-		// if z.process_exists(processname) {
-		// 	server.process = z.process_get(processname)!
-		// }
-		// // println(" - server get ok")
-		// server.start()!
-		// return server
+		mut z := zinit.new()!
+		processname := 'mediacms_${name}'
+		if z.process_exists(processname) {
+			server.process = z.process_get(processname)!
+		}
+		// println(" - server get ok")
+		server.start()!
+		return server
 	}
 	return error("can't find server mediacms with name ${name}")
 }
@@ -92,12 +71,12 @@ pub fn get(name_ string) !Server {
 // return status
 // ```
 // pub enum ZProcessStatus {
-// 	unknown
-// 	init
-// 	ok
-// 	error
-// 	blocked
-// 	spawned
+//     unknown
+//     init
+//     ok
+//     error
+//     blocked
+//     spawned
 // }
 // ```
 pub fn (mut server Server) status() zinit.ZProcessStatus {
@@ -116,11 +95,11 @@ pub fn (mut server Server) start() ! {
 	// mut z := zinit.new()!
 	// processname := 'mediacms_${server.name}'
 	// mut p := z.process_new(
-	// 	name: processname
-	// 	cmd: '
-	// 	cd ${server.path_config.path}
-	// 	mediacms
-	// 	'
+	//     name: processname
+	//     cmd: '
+	//     cd ${server.path_config.path}
+	//     mediacms
+	//     '
 	// )!
 
 	// p.output_wait('Starting external listener on :8008', 120)!
@@ -140,7 +119,7 @@ pub fn (mut server Server) restart() ! {
 
 pub fn (mut server Server) stop() ! {
 	print_backtrace()
-	println(' - stop mediacms: ${server.name}')
+	println(' - stop mediacms: @{server.name}')
 	mut process := server.process or { return }
 	return process.stop()
 }
@@ -163,25 +142,3 @@ pub fn (mut server Server) destroy() ! {
 	server.stop()!
 	server.path_config.delete()!
 }
-
-@[params]
-pub struct UserAddArgs {
-pub mut:
-	name   string @[required]
-	passwd string @[required]
-	admin  bool
-}
-
-// // remove all data
-// pub fn (mut server Server) user_add(args UserAddArgs) ! {
-// 	mut admin := ''
-// 	if args.admin {
-// 		admin = '-admin'
-// 	}
-// 	cmd := '
-// 		cd ${server.path_config.path}	
-// 		mediacms-create-account --config mediacms.yaml -username ${args.name} -password ${args.passwd} ${admin} -url http://localhost:8008
-// 		'
-// 	println(cmd)
-// 	job := osal.exec(cmd: cmd)!
-// }

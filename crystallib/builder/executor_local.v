@@ -13,7 +13,7 @@ pub mut:
 
 pub fn (mut executor ExecutorLocal) exec(cmd string) !string {
 	res := osal.exec(cmd: cmd, stdout: true)!
-	return res.output
+	return res.output.join_lines()
 }
 
 pub fn (mut executor ExecutorLocal) exec_silent(cmd string) !string {
@@ -22,7 +22,7 @@ pub fn (mut executor ExecutorLocal) exec_silent(cmd string) !string {
 		stdout = true
 	}
 	res := osal.exec(cmd: cmd, stdout: stdout)!
-	return res.output
+	return res.output.join_lines()
 }
 
 pub fn (mut executor ExecutorLocal) file_write(path string, text string) ! {

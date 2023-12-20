@@ -12,7 +12,7 @@ services:
       ENABLE_CELERY_LONG: 'no'
       ENABLE_CELERY_BEAT: 'no'
       ADMIN_USER: 'admin'
-      ADMIN_EMAIL: 'admin@localhost'
+      ADMIN_EMAIL: 'admin^^localhost'
       #ADMIN_PASSWORD: 'uncomment_and_set_password_here'
     command: "./deploy/docker/prestart.sh"
     restart: on-failure
@@ -72,7 +72,7 @@ services:
       POSTGRES_DB: mediacms
       TZ: Europe/London
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "--host=db", "--dbname=$POSTGRES_DB", "--username=$POSTGRES_USER"]
+      test: ["CMD-SHELL", "pg_isready", "--host=db", "--dbname=??POSTGRES_DB", "--username=??POSTGRES_USER"]
       interval: 10s
       timeout: 5s
       retries: 5

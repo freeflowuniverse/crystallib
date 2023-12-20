@@ -16,10 +16,15 @@ fn do() ! {
 	// herocmds.cmd_biztools(mut cmd)
 	// herocmds.cmd_3script_do(mut cmd)
 	herocmds.cmd_git(mut cmd)
+	herocmds.cmd_init(mut cmd)
 	herocmds.cmd_imagedownsize(mut cmd)
 	herocmds.cmd_gen(mut cmd)
 	herocmds.cmd_sshagent(mut cmd)
-	
+	herocmds.cmd_installers(mut cmd)
+	herocmds.cmd_zola(mut cmd)
+	herocmds.cmd_configure(mut cmd)
+	herocmds.cmd_postgres(mut cmd)
+
 	cmd.setup()
 	cmd.parse(os.args)
 

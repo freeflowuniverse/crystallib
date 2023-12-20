@@ -145,7 +145,7 @@ fn (mut node Node) platform_load() ! {
 			node.platform = PlatformType.osx
 		} else if node.cmd_exists('apt-get') {
 			node.platform = PlatformType.ubuntu
-			node.package_refresh() or {}
+			// node.package_refresh() or {}
 		} else if node.cmd_exists('apk') {
 			node.platform = PlatformType.alpine
 		} else {

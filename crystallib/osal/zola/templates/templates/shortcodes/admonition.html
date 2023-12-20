@@ -1,0 +1,65 @@
+<!-- admonition shortcode for adding admonition in md-->
+
+{% set classes = "" %}
+
+{% set first_line = body | split(pat="\n") | first %}
+{% set parsed_first_line = first_line | split(pat=" ") %}
+{% set admonition = parsed_first_line | first %}
+{% set style = "" %}
+
+{% set content = body | split(pat="\n") | slice(start=2) | join(sep="\n") %}
+
+<!-- sets admonition type depending on qualifiers and modifiers 
+    hides content if doesn't adhere to admonition formatting -->
+{% if admonition == "!!!" %}
+    {% set classes = "admonition" %}
+{% elif admonition == "???" %}
+    {% set style = "collapsible closed" %}
+    {% set classes = "admonition" %}
+{% elif admonition == "???+" %}
+    {% set style = "collapsible open" %}
+    {% set classes = "admonition" %}
+{% else %}
+    {% set classes = "hidden" %}
+{% endif %}
+
+{% if "inline end" in first_line %}
+    {% set classes = classes ~ " inline end" %}
+    {% set parsed_first_line = parsed_first_line | slice(end=-2)%}
+{% elif "inline" in first_line %}
+    {% set classes = classes ~ " inline" %}
+    {% set parsed_first_line = parsed_first_line | slice(end=-1)%}
+{% endif %}
+
+{% if classes != "hidden"%}
+    {% if parsed_first_line[1] %}
+        {% set classes = classes ~ " " ~ parsed_first_line[1] %}
+    {% endif %}
+    {% if parsed_first_line[2] %}
+        {% if not parsed_first_line[2] == '""' %}
+            {% set title = parsed_first_line | slice(start=2) | join(sep=" ") %}     
+        {% endif %}
+    {% else %}
+        {% if parsed_first_line[1] %}
+            {% set title = parsed_first_line[1] | title %}
+        {% endif %}
+    {% endif %}
+{% endif %}
+
+
+{% if "collapsible" in style %}
+    <details class="{{classes}}" 
+    {% if "open" in style %} {{ "open='open'" }} {% endif %}>
+        {% if title %}
+            <summary class="admonition-title">{{ title | trim_start_matches(pat='"') | trim_end_matches(pat='"') }}</summary>
+            <p>{{ content }}</p>
+        {% endif %}
+    </details>
+{% else %}
+    <div class="{{classes}}">
+        {% if title %}
+            <div class="admonition-title">{{ title | trim_start_matches(pat='"') | trim_end_matches(pat='"') }}</div>
+        {% endif %}
+        <p>{{ content }}</p>
+    </div>
+{% endif %}

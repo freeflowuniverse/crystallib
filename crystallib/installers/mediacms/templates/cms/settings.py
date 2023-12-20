@@ -6,10 +6,10 @@ DEBUG = False
 
 # PORTAL NAME, this is the portal title and
 # is also shown on several places as emails
-PORTAL_NAME = "${args.title}"
+PORTAL_NAME = "${myargs.title}"
 PORTAL_DESCRIPTION = ""
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = "${args.timezone}"
+TIME_ZONE = "${myargs.timezone}"
 
 # who can add media
 # valid options include 'all', 'email_verified', 'advancedUser'
@@ -61,13 +61,13 @@ VIDEO_PLAYER_FEATURED_VIDEO_ON_INDEX_PAGE = False
 PRE_UPLOAD_MEDIA_MESSAGE = ""
 
 # email settings
-DEFAULT_FROM_EMAIL = "${args.mail_from}"
-EMAIL_HOST_PASSWORD = "${args.smtp_passwd}"
-EMAIL_HOST_USER = "${args.smtp_login}"
+DEFAULT_FROM_EMAIL = "${myargs.mail_from}"
+EMAIL_HOST_PASSWORD = "${myargs.smtp_passwd}"
+EMAIL_HOST_USER = "${myargs.smtp_login}"
 EMAIL_USE_TLS = True
-SERVER_EMAIL = "${args.smtp_login}"
-EMAIL_HOST = "${args.smtp_addr}"
-EMAIL_PORT = ${args.smpt_port}
+SERVER_EMAIL = "${myargs.smtp_login}"
+EMAIL_HOST = "${myargs.smtp_addr}"
+EMAIL_PORT = ${myargs.smtp_port}
 ADMIN_EMAIL_LIST = [DEFAULT_FROM_EMAIL]
 
 
@@ -141,8 +141,7 @@ REST_FRAMEWORK = {
 }
 
 
-SECRET_KEY = "2dii4cog7k=5n37$fz)8dst)kg(s3&10)^qa*gv(kk+nv-z&cu"
-# TODO: this needs to be changed!
+SECRET_KEY = "${myargs.passwd}"
 
 TEMP_DIRECTORY = "/tmp"  # Don't use a temp directory inside BASE_DIR!!!
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -481,11 +480,11 @@ if GLOBAL_LOGIN_REQUIRED:
     # this should go after the AuthenticationMiddleware middleware
     MIDDLEWARE.insert(5, "login_required.middleware.LoginRequiredMiddleware")
     LOGIN_REQUIRED_IGNORE_PATHS = [
-        r'/accounts/login/$',
-        r'/accounts/logout/$',
-        r'/accounts/signup/$',
-        r'/accounts/password/.*/$',
-        r'/accounts/confirm-email/.*/$',
+        r'/accounts/login/??',
+        r'/accounts/logout/??',
+        r'/accounts/signup/??',
+        r'/accounts/password/.*/??',
+        r'/accounts/confirm-email/.*/??',
         r'/api/v[0-9]+/',
     ]
 

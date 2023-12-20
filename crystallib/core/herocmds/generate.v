@@ -1,6 +1,7 @@
 module herocmds
 
 import freeflowuniverse.crystallib.core.generator.installer
+import freeflowuniverse.crystallib.core.generator.generic
 import freeflowuniverse.crystallib.ui.console
 import cli { Command, Flag }
 import os
@@ -22,7 +23,14 @@ pub fn cmd_gen(mut cmdroot Command) {
 		description: 'will generate code for installers, execute in the directory where to generate.'
 	}
 
-	mut allcmdsref_gen := [&gen_command]
+	mut gen_command_generic := Command{
+		sort_flags: true
+		name: 'generic'
+		execute: cmd_gen_execute
+		description: 'will generate code for installers, execute in the directory where to generate.'
+	}
+
+	mut allcmdsref_gen := [&gen_command, &gen_command_generic]
 
 	for mut c in allcmdsref_gen {
 		c.add_flag(Flag{
@@ -59,7 +67,10 @@ fn cmd_gen_execute(cmd Command) ! {
 	}
 
 	if cmd.name == 'installer' {
-		installer.generate(reset: reset, interactive: !isscript, path: path)!
+		installer.do(reset: reset, interactive: !isscript, path: path)!
+		return
+	} else if cmd.name == 'generic' {
+		generic.do(reset: reset, interactive: !isscript, path: path)!
 		return
 	} else {
 		return error(cmd.help_message())

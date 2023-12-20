@@ -1,0 +1,8 @@
+
+{% set height = 52 %}
+{% if size %}
+    {% if size == "small" %}
+        {% set height = 28 %}
+    {% endif %}
+{% endif %}
+<div class="h-20 lg:h-{{height}}"></div>

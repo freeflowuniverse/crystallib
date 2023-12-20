@@ -1,0 +1,14 @@
+{% extends "_default/base.html" %}
+{% block content %}
+
+<!-- Page template for blog posts and basic informative markdown files -->
+<h1 class="title">
+  {{ section.title }}
+</h1>
+<ul>
+  {% for page in section.pages %}
+  <li>{{ page.date | date(format="%B %e, %Y", timezone="America/Chicago") }} &bull; <a href="{{ page.permalink | safe }}">{{ page.title }}</a></li>
+  {% endfor %}
+</ul>
+<p>This comes from /templates/_default/list.html.</p>
+{% endblock content %}
