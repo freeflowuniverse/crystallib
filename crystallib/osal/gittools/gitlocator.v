@@ -52,7 +52,7 @@ pub fn locator_new(gsconfig GitStructureConfig, url string) !GitLocator {
 
 	// println(" ** URL2: $urllower **")
 	// https://github.com/ourworldventures/www_ourworld_tf/tree/development_template/templates
-	// https://git.ourworld.tf/drc/info_all4drc/src/branch/main/collections/all4drc
+	// https://git.ourworld.tf/drc/info_all4drc/src/branch/main/playbooks/all4drc
 
 	mut parts := urllower.split('/')
 	mut anker := ''

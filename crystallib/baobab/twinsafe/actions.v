@@ -1,11 +1,11 @@
 module twinsafe
 
-import freeflowuniverse.crystallib.data.actionparser
+import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.core.texttools
 
 // this allows you to input the required info into the keysafe
 
-fn (mut ks KeysSafe) actions(act actionparser.Actions) ! {
+fn (mut ks KeysSafe) actions(act playbook.Actions) ! {
 	mut actions2 := act.filtersort(actor: 'twinsafe')!
 	for action in actions2 {
 		if action.name == 'mytwin_define' {

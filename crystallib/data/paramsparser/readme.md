@@ -1,5 +1,18 @@
 # Params
 
+```v
+import freeflowuniverse.crystallib.data.paramsparser
+
+mut p:=paramsparser.new('
+    id:a1 name6:aaaaa
+    name:'need to do something 1' 
+)!
+
+assert "a1"==p.get_default("id","")!
+
+
+```
+
 example text to parse
 
 ```yaml

@@ -6,7 +6,7 @@ import os
 import time
 
 const testdata_path = os.dir(@FILE) + '/testdata'
-const collections_path = os.dir(@FILE) + '/testdata/collections'
+const playbooks_path = os.dir(@FILE) + '/testdata/playbooks'
 const books_path = os.dir(@FILE) + '/testdata/books'
 const destinations_path = os.dir(@FILE) + '/testdata/destinations'
 const tree_name = 'mdbook_test_tree'
@@ -41,7 +41,7 @@ fn testsuite_end() {
 fn test_book_generate() {
 	mut tree := new()!
 	tree.scan(
-		path: doctree.collections_path
+		path: doctree.playbooks_path
 	)!
 
 	for name, test_book in doctree.test_books {
@@ -57,7 +57,7 @@ fn test_book_generate() {
 fn test_book_reset() {
 	mut tree := new()!
 	tree.scan(
-		path: doctree.collections_path
+		path: doctree.playbooks_path
 	)!
 
 	for name, test_book in doctree.test_books {
@@ -77,7 +77,7 @@ fn test_book_reset() {
 fn test_book_load_summary() {
 	mut tree := new()!
 	tree.scan(
-		path: doctree.collections_path
+		path: doctree.playbooks_path
 	)!
 
 	for name, test_book in doctree.test_books {
@@ -101,7 +101,7 @@ fn test_book_load_summary() {
 fn test_book_fix_summary() {
 	mut tree := new()!
 	tree.scan(
-		path: doctree.collections_path
+		path: doctree.playbooks_path
 	)!
 
 	for name, test_book in doctree.test_books {
@@ -122,7 +122,7 @@ fn test_book_fix_summary() {
 fn test_book_export() {
 	mut tree := new()!
 	tree.scan(
-		path: doctree.collections_path
+		path: doctree.playbooks_path
 	)!
 
 	for name, test_book in doctree.test_books {

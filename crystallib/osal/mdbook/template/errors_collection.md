@@ -1,6 +1,6 @@
 # Errors
 
-@for error in collection.errors
+@for error in playbook.errors
 
 ## @error.cat 
 

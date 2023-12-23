@@ -22,8 +22,8 @@ pub mut:
 	cat  CollectionErrorCat
 }
 
-pub fn (mut collection Collection) error(args CollectionError) {
-	collection.errors << CollectionError{
+pub fn (mut playbook Collection) error(args CollectionError) {
+	playbook.errors << CollectionError{
 		path: args.path
 		msg: args.msg
 		cat: args.cat
@@ -34,9 +34,9 @@ pub struct ObjNotFound {
 	Error
 pub:
 	name       string
-	collection string
+	playbook string
 }
 
 pub fn (err ObjNotFound) msg() string {
-	return '"Could not find object with name ${err.name} in collection:${err.collection}'
+	return '"Could not find object with name ${err.name} in playbook:${err.playbook}'
 }

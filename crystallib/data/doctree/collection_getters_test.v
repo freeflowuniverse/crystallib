@@ -2,38 +2,38 @@ module doctree
 
 import os
 
-const testpath = os.dir(@FILE) + '/testdata/collections'
+const testpath = os.dir(@FILE) + '/testdata/playbooks'
 
-fn test_collection_get() {
+fn test_playbook_get() {
 	mut tree := tree_create(cid: 'abc', name: 'test')!
 	tree.scan(
 		path: doctree.testpath
 		heal: false
 	)!
 
-	mut c := tree.collection_get('fruits')!
+	mut c := tree.playbook_get('fruits')!
 	assert c.name == 'fruits'
 	assert c.pages.keys().len == 4
 
-	c = tree.collection_get('rpc')!
+	c = tree.playbook_get('rpc')!
 	assert c.name == 'rpc'
 	assert c.pages.keys().len == 5
 }
 
-fn test_collection_exists() {
+fn test_playbook_exists() {
 	mut tree := tree_create(cid: 'abc', name: 'test')!
 	tree.scan(
 		path: doctree.testpath
 		heal: false
 	)!
 
-	collections := ['btc_examples', 'eth_examples', 'explorer_examples', 'ipfs_examples',
+	playbooks := ['btc_examples', 'eth_examples', 'explorer_examples', 'ipfs_examples',
 		'metrics_examples', 'nostr_examples', 'sftpgo_examples', 'stellar_examples',
 		'tfchain_examples', 'tfgrid_examples', 'fruits', 'playground', 'rpc', 'server',
 		'test_vegetables']
-	for collection in collections {
-		assert tree.collection_exists(collection)
+	for playbook in playbooks {
+		assert tree.playbook_exists(playbook)
 	}
 
-	assert tree.collection_exists('non_existent_collection') == false
+	assert tree.playbook_exists('non_existent_playbook') == false
 }

@@ -3,64 +3,62 @@ module fskvs
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.crypt.aes_symmetric
-import os
 
+@[heap]
 pub struct KVS {
 pub mut:
-	path   pathlib.Path
-	secret string
+	name       string
+	path       pathlib.Path
+	encryption bool
+	parent     &KVSContext  @[skip; str: skip]
 }
 
 @[params]
-pub struct KVSArgs {
+pub struct KVSGet {
 pub mut:
 	name       string = 'default'
-	secret     string
 	encryption bool
 }
 
-// will check on evn variable "MYSECRET" if found will use to encrypt/decrypt .
-// make sure to set secret if you don't want to use the 'MYSECRET' as mybe set in os.env arguments
-pub fn new(args_ KVSArgs) !KVS {
+// get a KVS from the context
+pub fn (mut db KVSContext) get(args_ KVSGet) !KVS {
 	mut args := args_
 	args.name = texttools.name_fix(args.name)
-
-	if args.encryption {
-		if 'MYSECRET' in os.environ() {
-			args.secret = os.environ()['MYSECRET']
-		} else {
-			return error("'MYSECRET' not set in env, or not given to arguments.")
-		}
-	}
-
-	mut p := pathlib.get_dir(create: true, path: '${os.home_dir()}/hero/db/${args.name}')!
-	mut db := KVS{
+	mut p := pathlib.get_dir(create: true, path: '${db.path.path}/${args.name}')!
+	mut db2 := KVS{
+		name: args.name
 		path: p
-		secret: args.secret
+		encryption: args.encryption
+		parent: &db
 	}
-	return db
+	if args.encryption {
+		assert db.config.secret.len > 3
+	}
+	return db2
 }
 
 pub fn (mut db KVS) get(name_ string) !string {
 	name := texttools.name_fix(name_)
 	mut datafile := db.path.file_get_new(name)!
 	mut data := datafile.read()!
-	if db.secret.len > 0 {
-		data = aes_symmetric.decrypt_str(data, db.secret)
+	if data.len == 0 {
+		return ''
+	}
+	if db.encryption {
+		data = aes_symmetric.decrypt_str(data, db.parent.config.secret)
 	}
 	return data
 }
 
 pub fn (mut db KVS) set(name_ string, data_ string) ! {
 	mut data := data_
+	if data.len == 0 {
+		return error('data cannot be empty')
+	}
 	name := texttools.name_fix(name_)
 	mut datafile := db.path.file_get_new(name)!
-	if db.secret.len > 0 {
-		data = aes_symmetric.encrypt_str(data, db.secret)
-		println(data)
-		if true {
-			panic('Sd')
-		}
+	if db.encryption {
+		data = aes_symmetric.encrypt_str(data, db.parent.config.secret)
 	}
 	datafile.write(data)!
 }

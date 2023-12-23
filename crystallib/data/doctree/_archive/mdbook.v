@@ -30,8 +30,8 @@ pub enum BookErrorCat {
 	file_not_found
 	image_not_found
 	page_not_found
-	collection_not_found
-	collection_error
+	playbook_not_found
+	playbook_error
 	sidebar
 }
 
@@ -194,30 +194,30 @@ fn (mut book MDBook) fix_summary() ! {
 						book.error(cat: .unknown, msg: msge)
 					} else {
 						book.tree.logger.debug('book ${book.name} summary:${link.pathfull()}')
-						mut collectionname := link.url.all_before(':')
-						if collectionname == '' {
-							// means collection has not been specified
-							return error('collection needs to be specified in summary, is the first part of path e.g. collectionname/...')
+						mut playbookname := link.url.all_before(':')
+						if playbookname == '' {
+							// means playbook has not been specified
+							return error('playbook needs to be specified in summary, is the first part of path e.g. playbookname/...')
 						}
 						pagename := link.filename
-						if book.tree.collection_exists(collectionname) {
-							// clone collection so that changes don't mutate collection in doctree
-							collection_ := book.tree.collection_get(collectionname)!
-							mut collection := Collection{
-								...collection_
+						if book.tree.playbook_exists(playbookname) {
+							// clone playbook so that changes don't mutate playbook in doctree
+							playbook_ := book.tree.playbook_get(playbookname)!
+							mut playbook := Collection{
+								...playbook_
 							}
 
 							// now we can process the page where the link goes to
-							if collection.page_exists(pagename) {
-								page := collection.page_get(pagename)!
+							if playbook.page_exists(pagename) {
+								page := playbook.page_get(pagename)!
 								book.tree.logger.debug('found page: ${page.path.path}')
-								newlink := '[${link.description}](${collectionname}/${page.pathrel})'
-								book.pages['${collection.name}:${page.name}'] = page
+								newlink := '[${link.description}](${playbookname}/${page.pathrel})'
+								book.pages['${playbook.name}:${page.name}'] = page
 								if newlink != link.content {
 									book.tree.logger.debug('change: ${link.content} -> ${newlink}')
 									paragraph.content = paragraph.content.replace(link.content,
 										newlink)
-									newpath := collectionname + '/' + page.pathrel
+									newpath := playbookname + '/' + page.pathrel
 									link.path = newpath.all_before_last('/').trim_right('/')
 									link.url = '${link.path}/${link.filename}'
 									link.content = newlink
@@ -226,16 +226,16 @@ fn (mut book MDBook) fix_summary() ! {
 							} else {
 								book.error(
 									cat: .page_not_found
-									msg: "Cannot find page:'${pagename}' in collection:'${collectionname}'"
+									msg: "Cannot find page:'${pagename}' in playbook:'${playbookname}'"
 								)
 								continue
 							}
 						} else {
-							collectionnames := book.tree.collectionnames().join('\n- ')
-							msg := 'Cannot find collection: ${collectionname} \ncollectionnames known::\n\n${collectionnames} '
+							playbooknames := book.tree.playbooknames().join('\n- ')
+							msg := 'Cannot find playbook: ${playbookname} \nplaybooknames known::\n\n${playbooknames} '
 							book.tree.logger.error(msg)
 							book.error(
-								cat: .collection_not_found
+								cat: .playbook_not_found
 								msg: msg
 							)
 							continue
@@ -292,42 +292,42 @@ fn (mut book MDBook) link_pages_files_images() ! {
 
 						if link.cat == .page {
 							logger.info('Linking page ${link.filename} from ${link.path} into ${page.name}')
-							collection := book.tree.collection_get(page.collection_name) or {
+							playbook := book.tree.playbook_get(page.playbook_name) or {
 								logger.error('Could not link page ')
-								panic('couldnt find book collection')
+								panic('couldnt find book playbook')
 							}
-							pageobj := collection.page_get(link.filename) or {
+							pageobj := playbook.page_get(link.filename) or {
 								book.error(
 									cat: .page_not_found
-									msg: '${page.path.path}: Cannot find page ${link.filename} in ${page.collection_name}'
+									msg: '${page.path.path}: Cannot find page ${link.filename} in ${page.playbook_name}'
 								)
 								continue
 							}
-							book.pages['${pageobj.collection_name}:${pageobj.name}'] = pageobj
+							book.pages['${pageobj.playbook_name}:${pageobj.name}'] = pageobj
 						} else if link.cat == .file {
-							collection := book.tree.collection_get(page.collection_name) or {
-								panic('couldnt find book collection')
+							playbook := book.tree.playbook_get(page.playbook_name) or {
+								panic('couldnt find book playbook')
 							}
-							collection.file_get(link.filename) or {
+							playbook.file_get(link.filename) or {
 								book.error(
 									cat: .file_not_found
-									msg: '${page.path.path}: Cannot find file ${link.filename} in ${page.collection_name}'
+									msg: '${page.path.path}: Cannot find file ${link.filename} in ${page.playbook_name}'
 								)
 								continue
 							}
-							// book.files['${fileobj.collection.name}:${fileobj.name}'] = fileobj
+							// book.files['${fileobj.playbook.name}:${fileobj.name}'] = fileobj
 						} else if link.cat == .image {
-							collection := book.tree.collection_get(page.collection_name) or {
-								panic('couldnt find book collection')
+							playbook := book.tree.playbook_get(page.playbook_name) or {
+								panic('couldnt find book playbook')
 							}
-							collection.image_get(link.filename) or {
+							playbook.image_get(link.filename) or {
 								book.error(
 									cat: .image_not_found
-									msg: '${page.path.path}: Cannot find image ${link.filename} in ${page.collection_name}'
+									msg: '${page.path.path}: Cannot find image ${link.filename} in ${page.playbook_name}'
 								)
 								continue
 							}
-							// book.images['${imageobj.collection.name}:${imageobj.name}'] = imageobj
+							// book.images['${imageobj.playbook.name}:${imageobj.name}'] = imageobj
 						}
 					}
 				}
@@ -338,36 +338,36 @@ fn (mut book MDBook) link_pages_files_images() ! {
 }
 
 fn (mut book MDBook) errors_report() ! {
-	// Look for errors in linked collections
-	mut collection_errors := map[string]&Collection{}
+	// Look for errors in linked playbooks
+	mut playbook_errors := map[string]&Collection{}
 	for _, mut page in book.pages {
-		collection := book.tree.collection_get(page.collection_name) or {
-			panic('couldnt find book collection')
+		playbook := book.tree.playbook_get(page.playbook_name) or {
+			panic('couldnt find book playbook')
 		}
-		if collection.errors.len > 0 {
-			collection_errors[page.collection_name] = &collection
+		if playbook.errors.len > 0 {
+			playbook_errors[page.playbook_name] = &playbook
 		}
 	}
 
 	for _, mut file in book.files {
-		if file.collection.errors.len > 0 {
-			collection_errors[file.collection.name] = file.collection
+		if file.playbook.errors.len > 0 {
+			playbook_errors[file.playbook.name] = file.playbook
 		}
 	}
 
 	for _, mut image in book.images {
-		if image.collection.errors.len > 0 {
-			collection_errors[image.collection.name] = image.collection
+		if image.playbook.errors.len > 0 {
+			playbook_errors[image.playbook.name] = image.playbook
 		}
 	}
-	// Export the errors of the collections that contain errors
-	for collection_name, collection in collection_errors {
-		collection.errors_report('${book.md_path('').path}/src/errors_${collection_name}.md') or {
-			return error('failed to report errors for collection ${collection_name}')
+	// Export the errors of the playbooks that contain errors
+	for playbook_name, playbook in playbook_errors {
+		playbook.errors_report('${book.md_path('').path}/src/errors_${playbook_name}.md') or {
+			return error('failed to report errors for playbook ${playbook_name}')
 		}
 		book.error(
-			cat: .collection_error
-			msg: 'There were one or more errors in collection ${collection_name}, please take a look at [the collection\'s error page](errors_${collection_name}.md)'
+			cat: .playbook_error
+			msg: 'There were one or more errors in playbook ${playbook_name}, please take a look at [the playbook\'s error page](errors_${playbook_name}.md)'
 		)
 	}
 	// Lets link the errors in the errors.md file
@@ -388,14 +388,14 @@ fn (mut book MDBook) errors_report() ! {
 		description: 'Errors'
 		filename: 'errors.md'
 	}
-	for collection_name, _ in collection_errors {
+	for playbook_name, _ in playbook_errors {
 		paragraph.children << elements.Text{
 			content: '\n  - '
 		}
 		paragraph.children << elements.Link{
 			cat: .page
-			description: 'Errors in collection ${collection_name}'
-			filename: 'errors_${collection_name}.md'
+			description: 'Errors in playbook ${playbook_name}'
+			filename: 'errors_${playbook_name}.md'
 		}
 	}
 	book.doc_summary.children << paragraph
@@ -416,7 +416,7 @@ fn (mut book MDBook) export_linked_pages(md_path string, mut linked_pages []&Pag
 		if page_linked.pages_linked.len > 0 {
 			book.export_linked_pages(md_path, mut page_linked.pages_linked)!
 		}
-		dest := '${md_path.trim_right('/')}/${page_linked.collection_name}/${page_linked.pathrel}'
+		dest := '${md_path.trim_right('/')}/${page_linked.playbook_name}/${page_linked.pathrel}'
 		book.tree.logger.info('export: ${dest}')
 		page_linked.save(dest: dest)!
 	}
@@ -453,7 +453,7 @@ pub fn (mut book MDBook) export() ! {
 			book.export_linked_pages(md_path, mut page.pages_linked)!
 		}
 
-		dest := '${md_path}/${page.collection_name}/${page.pathrel}'
+		dest := '${md_path}/${page.playbook_name}/${page.pathrel}'
 		logger.info('Exporting page: ${page.name}')
 		page.export(dest: dest)!
 		logger.info('Exported page: ${page.name}')
@@ -461,12 +461,12 @@ pub fn (mut book MDBook) export() ! {
 
 	logger.info('Exporting files in MDBook: ${book.name}')
 	for _, mut file in book.files {
-		dest := '${md_path}/${file.collection.name}/${file.pathrel}'
+		dest := '${md_path}/${file.playbook.name}/${file.pathrel}'
 		logger.info('Exporting file: ${dest}')
 	}
 
 	for _, mut image in book.images {
-		mut dest := '${md_path}/${image.collection.name}/${image.pathrel}'
+		mut dest := '${md_path}/${image.playbook.name}/${image.pathrel}'
 		book.tree.logger.info('export image: ${dest}')
 		image.copy(dest)!
 

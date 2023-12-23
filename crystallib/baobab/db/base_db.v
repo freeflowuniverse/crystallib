@@ -5,7 +5,7 @@ module db
 import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.data.ourtime
 // import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.data.actionparser
+import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.data.paramsparser
 
 @[params]
@@ -202,7 +202,7 @@ pub fn (db DB) base_decoder_3script(txt string) ![]DecoderActionItem {
 	mut res := []DecoderActionItem{}
 	mut remarks := map[string][]paramsparser.Params{} // key is the gid of the base obj
 
-	mut parser := actionparser.new(defaultcircle: 'aaa', text: txt)!
+	mut parser := playbook.new(defaultcircle: 'aaa', text: txt)!
 	actions := parser.filtersort(actor: db.objtype)!
 	actions_remarks := parser.filtersort(actor: 'remark')!
 

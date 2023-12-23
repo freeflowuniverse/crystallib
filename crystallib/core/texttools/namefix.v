@@ -64,17 +64,17 @@ pub fn name_fix(name string) string {
 
 // get name back keep extensions and underscores, but when end on .md then remove extension
 pub fn name_fix_no_md(name string) string {
-	pagename := name_fix_keepext(name)
-	if pagename.ends_with('.md') {
-		fixed_pagename := pagename[0..pagename.len - 3]
-		return fixed_pagename
+	name2 := name_fix_keepext(name)
+	if name2.ends_with('.md') {
+		name3 := name2[0..name2.len - 3]
+		return name3
 	}
-	return pagename
+	return name2
 }
 
 pub fn name_fix_no_underscore(name string) string {
-	mut pagename := name_fix_keepext(name)
-	x := pagename.replace('_', '')
+	mut name2 := name_fix_keepext(name)
+	x := name2.replace('_', '')
 
 	return x
 }
@@ -111,7 +111,7 @@ pub fn name_fix_no_ext(name_ string) string {
 }
 
 pub fn name_fix_keepext(name_ string) string {
-	mut name := name_.to_lower()
+	mut name := name_.to_lower().trim_space()
 	if name.contains('#') {
 		old_name := name
 		name = old_name.split('#')[0]

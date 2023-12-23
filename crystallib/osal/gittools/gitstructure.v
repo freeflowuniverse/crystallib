@@ -6,10 +6,10 @@ import freeflowuniverse.crystallib.clients.redisclient
 
 @[heap]
 pub struct GitStructure {
-	config   GitStructureConfig // configuration settings
-	rootpath pathlib.Path = pathlib.get('~/code') // path to root code directory
+	config GitStructureConfig // configuration settings
 pub mut:
-	repos []&GitRepo // repositories in gitstructure
+	rootpath pathlib.Path = pathlib.get('~/code') // path to root code directory
+	repos    []&GitRepo // repositories in gitstructure
 }
 
 fn (gs GitStructure) cache_key() string {

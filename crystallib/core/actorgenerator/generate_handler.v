@@ -24,7 +24,7 @@ pub fn (generator ActorGenerator) generate_handler_method(methods []codemodel.Fu
 			codemodel.Param{
 				name: 'action'
 				typ: codemodel.Type{
-					symbol: 'actionparser.Action'
+					symbol: 'playbook.Action'
 				}
 			},
 		]

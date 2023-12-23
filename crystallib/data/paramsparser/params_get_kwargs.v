@@ -15,6 +15,14 @@ pub fn (params &Params) get(key_ string) !string {
 	return error('Did not find key:${key} in ${params}')
 }
 
+pub fn (params &Params) get_map() map[string]string {
+	mut r := map[string]string{}
+	for p in params.params {
+		r[p.key] = p.value
+	}
+	return r
+}
+
 // get kwarg return as string, ifn't exist return the defval
 // line:
 //    arg1 arg2 color:red priority:'incredible' description:'with spaces, lets see if ok

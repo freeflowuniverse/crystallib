@@ -1,6 +1,6 @@
 module blockchain
 
-// import freeflowuniverse.crystallib.data.actionparser
+// import freeflowuniverse.crystallib.core.playbook
 
 pub struct Controller {
 }

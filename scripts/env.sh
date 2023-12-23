@@ -11,7 +11,6 @@ if [[ -e $HOME/code/github/freeflowuniverse/crystallib/scripts/env.sh ]]; then
     fi
 fi
 
-
 if [[ -z "${CLBRANCH}" ]]; then 
     # echo " - DEFAULT BRANCH FOR CRYSTALLIB SET"
     export CLBRANCH="development"
@@ -747,7 +746,7 @@ function myinit {
     myinit0
 }
 
-myplatform
-resetcheck
-myinit
+# myplatform
+# resetcheck
+# myinit
 

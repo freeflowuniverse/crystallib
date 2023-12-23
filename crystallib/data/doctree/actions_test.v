@@ -5,16 +5,16 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.paramsparser
 import os
 
-const collections_path = os.dir(@FILE) + '/testdata/collections'
+const playbooks_path = os.dir(@FILE) + '/testdata/playbooks'
 
 fn test_actionscan() ! {
 	mut tree := new()!
 	tree.scan(
-		path: doctree.collections_path
+		path: doctree.playbooks_path
 		heal: false
 	)!
 
-	mut c := tree.collection_get('actions')!
+	mut c := tree.playbook_get('actions')!
 
 	assert c.page_exists('actions1')
 	assert c.page_exists('actions2')

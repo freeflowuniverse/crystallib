@@ -8,7 +8,7 @@ type ID = []string | []u64 | string | u64
 @[params]
 pub struct VectorDeleteArgs {
 	db_name         ?string @[json: 'dbName'] // The name of the database.
-	collection_name string  @[json: 'collectionName'; required] // The name of the collection to which this operation applies.
+	playbook_name string  @[json: 'playbookName'; required] // The name of the playbook to which this operation applies.
 	id              ID      @[required] // An array of ID/IDs of the entities to be retrieved. This could be a string, list of strings, or list of integers, depending on the id type.
 }
 
@@ -23,7 +23,7 @@ pub fn (c Client) delete_vector(args VectorDeleteArgs) ! {
 @[params]
 pub struct VectorGetArgs {
 	db_name         ?string   @[json: 'dbName'] // The name of the database.
-	collection_name string    @[json: 'collectionName'; required] // The name of the collection to which this operation applies.
+	playbook_name string    @[json: 'playbookName'; required] // The name of the playbook to which this operation applies.
 	output_fields   ?[]string @[json: 'outputFields'] // An array of fields to return along with the search results.
 	id              ID        @[required] // An array of ID/IDs of the entities to be retrieved. This could be a string, list of strings, or list of integers, depending on the id type.
 }
@@ -40,8 +40,8 @@ pub fn (c Client) get_vector(args VectorGetArgs) !json2.Any {
 @[params]
 pub struct InsertVectorArgs[T] {
 	db_name         ?string @[json: 'dbName'] // The name of the database.
-	collection_name string  @[json: 'collectionName'; required] // The name of the collection to which entities will be inserted.
-	data            []T     @[required] // An array of entity objects. Note that the keys in an entity object should match the collection schema
+	playbook_name string  @[json: 'playbookName'; required] // The name of the playbook to which entities will be inserted.
+	data            []T     @[required] // An array of entity objects. Note that the keys in an entity object should match the playbook schema
 }
 
 struct InsertVectorResponse {
@@ -67,7 +67,7 @@ fn decode_insert_vector(data json2.Any) !u32 {
 @[params]
 pub struct QueryVectorArgs {
 	db_name         ?string  @[json: 'dbName'] // The name of the database.
-	collection_name string   @[json: 'collectionName'; required] // The name of the collection to which this operation applies.
+	playbook_name string   @[json: 'playbookName'; required] // The name of the playbook to which this operation applies.
 	filter          string   @[required] // The filter used to find matches for the search.
 	limit           u8 = 100 // The maximum number of entities to return. The sum of this value and that of offset should be less than 16384. The value ranges from 1 to 100.
 	offset          ?u16 // The number of entities to skip in the search results. The sum of this value and that of limit should be less than 16384. The maximum value is 16384.
@@ -86,7 +86,7 @@ pub fn (c Client) query_vector(args QueryVectorArgs) !json2.Any {
 @[params]
 pub struct SearchVectorArgs {
 	db_name         ?string       @[json: 'dbName'] // The name of the database.
-	collection_name string        @[json: 'collectionName'; required] // The name of the collection to which this operation applies.
+	playbook_name string        @[json: 'playbookName'; required] // The name of the playbook to which this operation applies.
 	filter          string        @[required] // The filter used to find matches for the search.
 	limit           u8 = 100 // The maximum number of entities to return. The sum of this value and that of offset should be less than 16384. The value ranges from 1 to 100.
 	offset          ?u16 // The number of entities to skip in the search results. The sum of this value and that of limit should be less than 16384. The maximum value is 16384.
@@ -113,8 +113,8 @@ pub fn (c Client) search_vector(args SearchVectorArgs) !json2.Any {
 @[params]
 pub struct UpsertVectorArgs {
 	db_name         ?string     @[json: 'dbName'] // The name of the database.
-	collection_name string      @[json: 'collectionName'; required] // The name of the collection to which entities will be inserted.
-	data            []json2.Any @[required] // An array of entity objects. Note that the keys in an entity object should match the collection schema
+	playbook_name string      @[json: 'playbookName'; required] // The name of the playbook to which entities will be inserted.
+	data            []json2.Any @[required] // An array of entity objects. Note that the keys in an entity object should match the playbook schema
 }
 
 pub struct UpsertVectorResponse {

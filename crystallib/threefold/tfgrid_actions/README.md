@@ -17,6 +17,6 @@ takes input in 3script language and can then call v clients to talk to e.g. web3
   - While creating a new Runner, the new handler should be initialized, then saved to the Runner's state.
   - The new handler should have its actions exposed in the Runner.run() method
   - The new handler must implement a handle_action method.
-  - The handle_action method receives an actionparser.Action, and executes the action however it sees fit.
+  - The handle_action method receives an playbook.Action, and executes the action however it sees fit.
   - Handlers are responsible for logging their output, if any.
   - To add documentation on how to use the new book, create a new folder [here](../../manual/src/threelang/) with the book's name, and add all needed documentation files in this folder.

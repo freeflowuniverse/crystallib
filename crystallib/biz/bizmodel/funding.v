@@ -1,6 +1,6 @@
 module bizmodel
 
-import freeflowuniverse.crystallib.data.actionparser { ActionsCollection }
+import freeflowuniverse.crystallib.core.playbook { PlayBook }
 import freeflowuniverse.crystallib.core.texttools
 
 // populate the params for hr .
@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.core.texttools
 // - descr: description of the funding .
 // - investment is month:amount,month:amount, ... .
 // - type: loan or capital .
-fn (mut m BizModel) funding_actions(actions_ ActionsCollection) ! {
+fn (mut m BizModel) funding_actions(actions_ PlayBook) ! {
 	mut actions2 := actions_.find(actor: 'funding')
 	for action in actions2 {
 		if action.name == 'define' {

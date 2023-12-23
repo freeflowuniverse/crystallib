@@ -1,10 +1,10 @@
 module gittools
 
-import freeflowuniverse.crystallib.data.actionparser
+import freeflowuniverse.crystallib.core.playbook
 import os
 
 fn test_git() {
-	actionscollection := actionparser.parse_collection(
+	actionsplaybook := playbook.parse_playbook(
 		text: "
 		!!gittools.clone
 			coderoot: '/tmp/codetest'
@@ -30,7 +30,7 @@ fn test_git() {
 
 		"
 	)!
-	println(actionscollection)
-	actions(actionscollection.actions)!
+	println(actionsplaybook)
+	actions(actionsplaybook.actions)!
 	assert false
 }

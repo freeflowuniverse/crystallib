@@ -1,6 +1,6 @@
 module rclone
 
-import freeflowuniverse.crystallib.data.actionparser
+import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.core.texttools
 
 const configfile = '${HOME}/.config/rclone/rclone.conf'
@@ -17,7 +17,7 @@ const configfile = '${HOME}/.config/rclone/rclone.conf'
 //     url:''
 //```
 pub fn configure() ! {
-	actions := actionparser.new(
+	actions := playbook.new(
 		path: rclone.configfile
 		actor_filter: ['config']
 		action_filter: [

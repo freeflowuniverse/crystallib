@@ -133,7 +133,7 @@ global:
     # if you are running more than one Dendrite server on the same NATS deployment.
     topic_prefix: Dendrite
 
-  # Configuration for Prometheus metric collection.
+  # Configuration for Prometheus metric playbook.
   metrics:
     enabled: false
     basic_auth:

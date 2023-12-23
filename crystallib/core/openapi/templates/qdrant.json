@@ -3,7 +3,7 @@
         "/telemetry": {
             "get": {
                 "summary": "Collect telemetry data",
-                "description": "Collect telemetry data including app info, system info, collections info, cluster info, configs and statistics",
+                "description": "Collect telemetry data including app info, system info, playbooks info, cluster info, configs and statistics",
                 "operationId": "telemetry",
                 "tags": [
                     "service"
@@ -72,7 +72,7 @@
         "/metrics": {
             "get": {
                 "summary": "Collect Prometheus metrics data",
-                "description": "Collect metrics data including app info, collections info, cluster info and statistics",
+                "description": "Collect metrics data including app info, playbooks info, cluster info and statistics",
                 "operationId": "metrics",
                 "tags": [
                     "service"
@@ -95,7 +95,7 @@
                             "text/plain": {
                                 "schema": {
                                     "type": "string",
-                                    "example": "# HELP app_info information about qdrant server\n# TYPE app_info counter\napp_info{name=\"qdrant\",version=\"0.11.1\"} 1\n# HELP cluster_enabled is cluster support enabled\n# TYPE cluster_enabled gauge\ncluster_enabled 0\n# HELP collections_total number of collections\n# TYPE collections_total gauge\ncollections_total 1\n"
+                                    "example": "# HELP app_info information about qdrant server\n# TYPE app_info counter\napp_info{name=\"qdrant\",version=\"0.11.1\"} 1\n# HELP cluster_enabled is cluster support enabled\n# TYPE cluster_enabled gauge\ncluster_enabled 0\n# HELP playbooks_total number of playbooks\n# TYPE playbooks_total gauge\nplaybooks_total 1\n"
                                 }
                             }
                         }
@@ -109,7 +109,7 @@
         "/locks": {
             "post": {
                 "summary": "Set lock options",
-                "description": "Set lock options. If write is locked, all write operations and collection creation are forbidden. Returns previous lock options",
+                "description": "Set lock options. If write is locked, all write operations and playbook creation are forbidden. Returns previous lock options",
                 "operationId": "post_locks",
                 "tags": [
                     "service"
@@ -175,7 +175,7 @@
             },
             "get": {
                 "summary": "Get lock options",
-                "description": "Get lock options. If write is locked, all write operations and collection creation are forbidden",
+                "description": "Get lock options. If write is locked, all write operations and playbook creation are forbidden",
                 "operationId": "get_locks",
                 "tags": [
                     "service"
@@ -501,14 +501,14 @@
                 }
             }
         },
-        "/collections": {
+        "/playbooks": {
             "get": {
                 "tags": [
-                    "collections"
+                    "playbooks"
                 ],
-                "summary": "List collections",
-                "description": "Get list name of all existing collections",
-                "operationId": "get_collections",
+                "summary": "List playbooks",
+                "description": "Get list name of all existing playbooks",
+                "operationId": "get_playbooks",
                 "responses": {
                     "default": {
                         "description": "error",
@@ -559,19 +559,19 @@
                 }
             }
         },
-        "/collections/{collection_name}": {
+        "/playbooks/{playbook_name}": {
             "get": {
                 "tags": [
-                    "collections"
+                    "playbooks"
                 ],
                 "summary": "Collection info",
-                "description": "Get detailed information about specified existing collection",
-                "operationId": "get_collection",
+                "description": "Get detailed information about specified existing playbook",
+                "operationId": "get_playbook",
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to retrieve",
+                        "description": "Name of the playbook to retrieve",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -629,13 +629,13 @@
             },
             "put": {
                 "tags": [
-                    "collections"
+                    "playbooks"
                 ],
-                "summary": "Create collection",
-                "description": "Create new collection with given parameters",
-                "operationId": "create_collection",
+                "summary": "Create playbook",
+                "description": "Create new playbook with given parameters",
+                "operationId": "create_playbook",
                 "requestBody": {
-                    "description": "Parameters of a new collection",
+                    "description": "Parameters of a new playbook",
                     "content": {
                         "application/json": {
                             "schema": {
@@ -646,9 +646,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the new collection",
+                        "description": "Name of the new playbook",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -714,11 +714,11 @@
             },
             "patch": {
                 "tags": [
-                    "collections"
+                    "playbooks"
                 ],
-                "summary": "Update collection parameters",
-                "description": "Update parameters of the existing collection",
-                "operationId": "update_collection",
+                "summary": "Update playbook parameters",
+                "description": "Update parameters of the existing playbook",
+                "operationId": "update_playbook",
                 "requestBody": {
                     "description": "New parameters",
                     "content": {
@@ -731,9 +731,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to update",
+                        "description": "Name of the playbook to update",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -799,16 +799,16 @@
             },
             "delete": {
                 "tags": [
-                    "collections"
+                    "playbooks"
                 ],
-                "summary": "Delete collection",
-                "description": "Drop collection and all associated data",
-                "operationId": "delete_collection",
+                "summary": "Delete playbook",
+                "description": "Drop playbook and all associated data",
+                "operationId": "delete_playbook",
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to delete",
+                        "description": "Name of the playbook to delete",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -873,12 +873,12 @@
                 }
             }
         },
-        "/collections/aliases": {
+        "/playbooks/aliases": {
             "post": {
                 "tags": [
-                    "collections"
+                    "playbooks"
                 ],
-                "summary": "Update aliases of the collections",
+                "summary": "Update aliases of the playbooks",
                 "operationId": "update_aliases",
                 "requestBody": {
                     "description": "Alias update operations",
@@ -950,19 +950,19 @@
                 }
             }
         },
-        "/collections/{collection_name}/index": {
+        "/playbooks/{playbook_name}/index": {
             "put": {
                 "tags": [
-                    "collections"
+                    "playbooks"
                 ],
-                "summary": "Create index for field in collection",
-                "description": "Create index for field in collection",
+                "summary": "Create index for field in playbook",
+                "description": "Create index for field in playbook",
                 "operationId": "create_field_index",
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection",
+                        "description": "Name of the playbook",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1047,19 +1047,19 @@
                 }
             }
         },
-        "/collections/{collection_name}/index/{field_name}": {
+        "/playbooks/{playbook_name}/index/{field_name}": {
             "delete": {
                 "tags": [
-                    "collections"
+                    "playbooks"
                 ],
-                "summary": "Delete index for field in collection",
-                "description": "Delete field index for collection",
+                "summary": "Delete index for field in playbook",
+                "description": "Delete field index for playbook",
                 "operationId": "delete_field_index",
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection",
+                        "description": "Name of the playbook",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1143,20 +1143,20 @@
                 }
             }
         },
-        "/collections/{collection_name}/cluster": {
+        "/playbooks/{playbook_name}/cluster": {
             "get": {
                 "tags": [
-                    "collections",
+                    "playbooks",
                     "cluster"
                 ],
                 "summary": "Collection cluster info",
-                "description": "Get cluster information for a collection",
-                "operationId": "collection_cluster_info",
+                "description": "Get cluster information for a playbook",
+                "operationId": "playbook_cluster_info",
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to retrieve the cluster info for",
+                        "description": "Name of the playbook to retrieve the cluster info for",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1214,11 +1214,11 @@
             },
             "post": {
                 "tags": [
-                    "collections",
+                    "playbooks",
                     "cluster"
                 ],
-                "summary": "Update collection cluster setup",
-                "operationId": "update_collection_cluster",
+                "summary": "Update playbook cluster setup",
+                "operationId": "update_playbook_cluster",
                 "requestBody": {
                     "description": "Collection cluster update operations",
                     "content": {
@@ -1231,9 +1231,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection on which to to apply the cluster update operation",
+                        "description": "Name of the playbook on which to to apply the cluster update operation",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1298,19 +1298,19 @@
                 }
             }
         },
-        "/collections/{collection_name}/aliases": {
+        "/playbooks/{playbook_name}/aliases": {
             "get": {
                 "tags": [
-                    "collections"
+                    "playbooks"
                 ],
-                "summary": "List aliases for collection",
-                "description": "Get list of all aliases for a collection",
-                "operationId": "get_collection_aliases",
+                "summary": "List aliases for playbook",
+                "description": "Get list of all aliases for a playbook",
+                "operationId": "get_playbook_aliases",
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection",
+                        "description": "Name of the playbook",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1370,11 +1370,11 @@
         "/aliases": {
             "get": {
                 "tags": [
-                    "collections"
+                    "playbooks"
                 ],
-                "summary": "List collections aliases",
-                "description": "Get list of all existing collections aliases",
-                "operationId": "get_collections_aliases",
+                "summary": "List playbooks aliases",
+                "description": "Get list of all existing playbooks aliases",
+                "operationId": "get_playbooks_aliases",
                 "responses": {
                     "default": {
                         "description": "error",
@@ -1425,20 +1425,20 @@
                 }
             }
         },
-        "/collections/{collection_name}/snapshots/upload": {
+        "/playbooks/{playbook_name}/snapshots/upload": {
             "post": {
                 "tags": [
                     "snapshots",
-                    "collections"
+                    "playbooks"
                 ],
                 "summary": "Recover from an uploaded snapshot",
-                "description": "Recover local collection data from an uploaded snapshot. This will overwrite any data, stored on this node, for the collection. If collection does not exist - it will be created.",
+                "description": "Recover local playbook data from an uploaded snapshot. This will overwrite any data, stored on this node, for the playbook. If playbook does not exist - it will be created.",
                 "operationId": "recover_from_uploaded_snapshot",
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection",
+                        "description": "Name of the playbook",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1552,20 +1552,20 @@
                 }
             }
         },
-        "/collections/{collection_name}/snapshots/recover": {
+        "/playbooks/{playbook_name}/snapshots/recover": {
             "put": {
                 "tags": [
                     "snapshots",
-                    "collections"
+                    "playbooks"
                 ],
                 "summary": "Recover from a snapshot",
-                "description": "Recover local collection data from a snapshot. This will overwrite any data, stored on this node, for the collection. If collection does not exist - it will be created.",
+                "description": "Recover local playbook data from a snapshot. This will overwrite any data, stored on this node, for the playbook. If playbook does not exist - it will be created.",
                 "operationId": "recover_from_snapshot",
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection",
+                        "description": "Name of the playbook",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1664,20 +1664,20 @@
                 }
             }
         },
-        "/collections/{collection_name}/snapshots": {
+        "/playbooks/{playbook_name}/snapshots": {
             "get": {
                 "tags": [
                     "snapshots",
-                    "collections"
+                    "playbooks"
                 ],
-                "summary": "List collection snapshots",
-                "description": "Get list of snapshots for a collection",
+                "summary": "List playbook snapshots",
+                "description": "Get list of snapshots for a playbook",
                 "operationId": "list_snapshots",
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection",
+                        "description": "Name of the playbook",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1739,16 +1739,16 @@
             "post": {
                 "tags": [
                     "snapshots",
-                    "collections"
+                    "playbooks"
                 ],
-                "summary": "Create collection snapshot",
-                "description": "Create new snapshot for a collection",
+                "summary": "Create playbook snapshot",
+                "description": "Create new snapshot for a playbook",
                 "operationId": "create_snapshot",
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection for which to create a snapshot",
+                        "description": "Name of the playbook for which to create a snapshot",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1837,20 +1837,20 @@
                 }
             }
         },
-        "/collections/{collection_name}/snapshots/{snapshot_name}": {
+        "/playbooks/{playbook_name}/snapshots/{snapshot_name}": {
             "delete": {
                 "tags": [
                     "snapshots",
-                    "collections"
+                    "playbooks"
                 ],
-                "summary": "Delete collection snapshot",
-                "description": "Delete snapshot for a collection",
+                "summary": "Delete playbook snapshot",
+                "description": "Delete snapshot for a playbook",
                 "operationId": "delete_snapshot",
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection for which to delete a snapshot",
+                        "description": "Name of the playbook for which to delete a snapshot",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1950,16 +1950,16 @@
             "get": {
                 "tags": [
                     "snapshots",
-                    "collections"
+                    "playbooks"
                 ],
-                "summary": "Download collection snapshot",
-                "description": "Download specified snapshot from a collection as a file",
+                "summary": "Download playbook snapshot",
+                "description": "Download specified snapshot from a playbook as a file",
                 "operationId": "get_snapshot",
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection",
+                        "description": "Name of the playbook",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -2314,20 +2314,20 @@
                 }
             }
         },
-        "/collections/{collection_name}/shards/{shard_id}/snapshots/upload": {
+        "/playbooks/{playbook_name}/shards/{shard_id}/snapshots/upload": {
             "post": {
                 "tags": [
                     "snapshots",
-                    "collections"
+                    "playbooks"
                 ],
                 "summary": "Recover shard from an uploaded snapshot",
-                "description": "Recover shard of a local collection from an uploaded snapshot. This will overwrite any data, stored on this node, for the collection shard.",
+                "description": "Recover shard of a local playbook from an uploaded snapshot. This will overwrite any data, stored on this node, for the playbook shard.",
                 "operationId": "recover_shard_from_uploaded_snapshot",
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection",
+                        "description": "Name of the playbook",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -2450,20 +2450,20 @@
                 }
             }
         },
-        "/collections/{collection_name}/shards/{shard_id}/snapshots/recover": {
+        "/playbooks/{playbook_name}/shards/{shard_id}/snapshots/recover": {
             "put": {
                 "tags": [
                     "snapshots",
-                    "collections"
+                    "playbooks"
                 ],
                 "summary": "Recover from a snapshot",
-                "description": "Recover shard of a local collection data from a snapshot. This will overwrite any data, stored in this shard, for the collection.",
+                "description": "Recover shard of a local playbook data from a snapshot. This will overwrite any data, stored in this shard, for the playbook.",
                 "operationId": "recover_shard_from_snapshot",
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection",
+                        "description": "Name of the playbook",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -2571,20 +2571,20 @@
                 }
             }
         },
-        "/collections/{collection_name}/shards/{shard_id}/snapshots": {
+        "/playbooks/{playbook_name}/shards/{shard_id}/snapshots": {
             "get": {
                 "tags": [
                     "snapshots",
-                    "collections"
+                    "playbooks"
                 ],
-                "summary": "List shards snapshots for a collection",
-                "description": "Get list of snapshots for a shard of a collection",
+                "summary": "List shards snapshots for a playbook",
+                "description": "Get list of snapshots for a shard of a playbook",
                 "operationId": "list_shard_snapshots",
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection",
+                        "description": "Name of the playbook",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -2655,16 +2655,16 @@
             "post": {
                 "tags": [
                     "snapshots",
-                    "collections"
+                    "playbooks"
                 ],
                 "summary": "Create shard snapshot",
-                "description": "Create new snapshot of a shard for a collection",
+                "description": "Create new snapshot of a shard for a playbook",
                 "operationId": "create_shard_snapshot",
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection for which to create a snapshot",
+                        "description": "Name of the playbook for which to create a snapshot",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -2762,20 +2762,20 @@
                 }
             }
         },
-        "/collections/{collection_name}/shards/{shard_id}/snapshots/{snapshot_name}": {
+        "/playbooks/{playbook_name}/shards/{shard_id}/snapshots/{snapshot_name}": {
             "delete": {
                 "tags": [
                     "snapshots",
-                    "collections"
+                    "playbooks"
                 ],
                 "summary": "Delete shard snapshot",
-                "description": "Delete snapshot of a shard for a collection",
+                "description": "Delete snapshot of a shard for a playbook",
                 "operationId": "delete_shard_snapshot",
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection for which to delete a snapshot",
+                        "description": "Name of the playbook for which to delete a snapshot",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -2884,16 +2884,16 @@
             "get": {
                 "tags": [
                     "snapshots",
-                    "collections"
+                    "playbooks"
                 ],
-                "summary": "Download collection snapshot",
-                "description": "Download specified snapshot of a shard from a collection as a file",
+                "summary": "Download playbook snapshot",
+                "description": "Download specified snapshot of a shard from a playbook as a file",
                 "operationId": "get_shard_snapshot",
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection",
+                        "description": "Name of the playbook",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -2953,7 +2953,7 @@
                 }
             }
         },
-        "/collections/{collection_name}/points/{id}": {
+        "/playbooks/{playbook_name}/points/{id}": {
             "get": {
                 "tags": [
                     "points"
@@ -2963,9 +2963,9 @@
                 "operationId": "get_point",
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to retrieve from",
+                        "description": "Name of the playbook to retrieve from",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -3040,7 +3040,7 @@
                 }
             }
         },
-        "/collections/{collection_name}/points": {
+        "/playbooks/{playbook_name}/points": {
             "post": {
                 "tags": [
                     "points"
@@ -3060,9 +3060,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to retrieve from",
+                        "description": "Name of the playbook to retrieve from",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -3149,9 +3149,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to update from",
+                        "description": "Name of the playbook to update from",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -3226,7 +3226,7 @@
                 }
             }
         },
-        "/collections/{collection_name}/points/delete": {
+        "/playbooks/{playbook_name}/points/delete": {
             "post": {
                 "tags": [
                     "points"
@@ -3246,9 +3246,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to delete from",
+                        "description": "Name of the playbook to delete from",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -3323,7 +3323,7 @@
                 }
             }
         },
-        "/collections/{collection_name}/points/vectors": {
+        "/playbooks/{playbook_name}/points/vectors": {
             "put": {
                 "tags": [
                     "points"
@@ -3343,9 +3343,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to update from",
+                        "description": "Name of the playbook to update from",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -3420,7 +3420,7 @@
                 }
             }
         },
-        "/collections/{collection_name}/points/vectors/delete": {
+        "/playbooks/{playbook_name}/points/vectors/delete": {
             "post": {
                 "tags": [
                     "points"
@@ -3440,9 +3440,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to delete from",
+                        "description": "Name of the playbook to delete from",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -3517,7 +3517,7 @@
                 }
             }
         },
-        "/collections/{collection_name}/points/payload": {
+        "/playbooks/{playbook_name}/points/payload": {
             "post": {
                 "tags": [
                     "points"
@@ -3537,9 +3537,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to set from",
+                        "description": "Name of the playbook to set from",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -3632,9 +3632,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to set from",
+                        "description": "Name of the playbook to set from",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -3709,7 +3709,7 @@
                 }
             }
         },
-        "/collections/{collection_name}/points/payload/delete": {
+        "/playbooks/{playbook_name}/points/payload/delete": {
             "post": {
                 "tags": [
                     "points"
@@ -3729,9 +3729,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to delete from",
+                        "description": "Name of the playbook to delete from",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -3806,7 +3806,7 @@
                 }
             }
         },
-        "/collections/{collection_name}/points/payload/clear": {
+        "/playbooks/{playbook_name}/points/payload/clear": {
             "post": {
                 "tags": [
                     "points"
@@ -3826,9 +3826,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to clear payload from",
+                        "description": "Name of the playbook to clear payload from",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -3903,7 +3903,7 @@
                 }
             }
         },
-        "/collections/{collection_name}/points/batch": {
+        "/playbooks/{playbook_name}/points/batch": {
             "post": {
                 "tags": [
                     "points"
@@ -3923,9 +3923,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to apply operations on",
+                        "description": "Name of the playbook to apply operations on",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -4003,7 +4003,7 @@
                 }
             }
         },
-        "/collections/{collection_name}/points/scroll": {
+        "/playbooks/{playbook_name}/points/scroll": {
             "post": {
                 "tags": [
                     "points"
@@ -4023,9 +4023,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to retrieve from",
+                        "description": "Name of the playbook to retrieve from",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -4091,7 +4091,7 @@
                 }
             }
         },
-        "/collections/{collection_name}/points/search": {
+        "/playbooks/{playbook_name}/points/search": {
             "post": {
                 "tags": [
                     "points"
@@ -4111,9 +4111,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to search in",
+                        "description": "Name of the playbook to search in",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -4182,7 +4182,7 @@
                 }
             }
         },
-        "/collections/{collection_name}/points/search/batch": {
+        "/playbooks/{playbook_name}/points/search/batch": {
             "post": {
                 "tags": [
                     "points"
@@ -4202,9 +4202,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to search in",
+                        "description": "Name of the playbook to search in",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -4276,7 +4276,7 @@
                 }
             }
         },
-        "/collections/{collection_name}/points/search/groups": {
+        "/playbooks/{playbook_name}/points/search/groups": {
             "post": {
                 "tags": [
                     "points"
@@ -4296,9 +4296,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to search in",
+                        "description": "Name of the playbook to search in",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -4364,7 +4364,7 @@
                 }
             }
         },
-        "/collections/{collection_name}/points/recommend": {
+        "/playbooks/{playbook_name}/points/recommend": {
             "post": {
                 "tags": [
                     "points"
@@ -4384,9 +4384,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to search in",
+                        "description": "Name of the playbook to search in",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -4455,7 +4455,7 @@
                 }
             }
         },
-        "/collections/{collection_name}/points/recommend/batch": {
+        "/playbooks/{playbook_name}/points/recommend/batch": {
             "post": {
                 "tags": [
                     "points"
@@ -4475,9 +4475,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to search in",
+                        "description": "Name of the playbook to search in",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -4549,7 +4549,7 @@
                 }
             }
         },
-        "/collections/{collection_name}/points/recommend/groups": {
+        "/playbooks/{playbook_name}/points/recommend/groups": {
             "post": {
                 "tags": [
                     "points"
@@ -4569,9 +4569,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to search in",
+                        "description": "Name of the playbook to search in",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -4637,7 +4637,7 @@
                 }
             }
         },
-        "/collections/{collection_name}/points/count": {
+        "/playbooks/{playbook_name}/points/count": {
             "post": {
                 "tags": [
                     "points"
@@ -4657,9 +4657,9 @@
                 },
                 "parameters": [
                     {
-                        "name": "collection_name",
+                        "name": "playbook_name",
                         "in": "path",
-                        "description": "Name of the collection to count in",
+                        "description": "Name of the playbook to count in",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -4721,7 +4721,7 @@
     "security": [],
     "info": {
         "title": "Qdrant API",
-        "description": "API description for Qdrant vector search engine.\n\nThis document describes CRUD and search operations on collections of points (vectors with payload).\n\nQdrant supports any combinations of `should`, `must` and `must_not` conditions, which makes it possible to use in applications when object could not be described solely by vector. It could be location features, availability flags, and other custom properties businesses should take into account.\n## Examples\nThis examples cover the most basic use-cases - collection creation and basic vector search.\n### Create collection\nFirst - let's create a collection with dot-production metric.\n```\ncurl -X PUT 'http://localhost:6333/collections/test_collection' \\\n  -H 'Content-Type: application/json' \\\n  --data-raw '{\n    \"vectors\": {\n      \"size\": 4,\n      \"distance\": \"Dot\"\n    }\n  }'\n\n```\nExpected response:\n```\n{\n    \"result\": true,\n    \"status\": \"ok\",\n    \"time\": 0.031095451\n}\n```\nWe can ensure that collection was created:\n```\ncurl 'http://localhost:6333/collections/test_collection'\n```\nExpected response:\n```\n{\n  \"result\": {\n    \"status\": \"green\",\n    \"vectors_count\": 0,\n    \"segments_count\": 5,\n    \"disk_data_size\": 0,\n    \"ram_data_size\": 0,\n    \"config\": {\n      \"params\": {\n        \"vectors\": {\n          \"size\": 4,\n          \"distance\": \"Dot\"\n        }\n      },\n      \"hnsw_config\": {\n        \"m\": 16,\n        \"ef_construct\": 100,\n        \"full_scan_threshold\": 10000\n      },\n      \"optimizer_config\": {\n        \"deleted_threshold\": 0.2,\n        \"vacuum_min_vector_number\": 1000,\n        \"max_segment_number\": 5,\n        \"memmap_threshold\": 50000,\n        \"indexing_threshold\": 20000,\n        \"flush_interval_sec\": 1\n      },\n      \"wal_config\": {\n        \"wal_capacity_mb\": 32,\n        \"wal_segments_ahead\": 0\n      }\n    }\n  },\n  \"status\": \"ok\",\n  \"time\": 2.1199e-05\n}\n```\n\n### Add points\nLet's now add vectors with some payload:\n```\ncurl -L -X PUT 'http://localhost:6333/collections/test_collection/points?wait=true' \\ -H 'Content-Type: application/json' \\ --data-raw '{\n  \"points\": [\n    {\"id\": 1, \"vector\": [0.05, 0.61, 0.76, 0.74], \"payload\": {\"city\": \"Berlin\"}},\n    {\"id\": 2, \"vector\": [0.19, 0.81, 0.75, 0.11], \"payload\": {\"city\": [\"Berlin\", \"London\"] }},\n    {\"id\": 3, \"vector\": [0.36, 0.55, 0.47, 0.94], \"payload\": {\"city\": [\"Berlin\", \"Moscow\"] }},\n    {\"id\": 4, \"vector\": [0.18, 0.01, 0.85, 0.80], \"payload\": {\"city\": [\"London\", \"Moscow\"] }},\n    {\"id\": 5, \"vector\": [0.24, 0.18, 0.22, 0.44], \"payload\": {\"count\": [0]}},\n    {\"id\": 6, \"vector\": [0.35, 0.08, 0.11, 0.44]}\n  ]\n}'\n```\nExpected response:\n```\n{\n    \"result\": {\n        \"operation_id\": 0,\n        \"status\": \"completed\"\n    },\n    \"status\": \"ok\",\n    \"time\": 0.000206061\n}\n```\n### Search with filtering\nLet's start with a basic request:\n```\ncurl -L -X POST 'http://localhost:6333/collections/test_collection/points/search' \\ -H 'Content-Type: application/json' \\ --data-raw '{\n    \"vector\": [0.2,0.1,0.9,0.7],\n    \"top\": 3\n}'\n```\nExpected response:\n```\n{\n    \"result\": [\n        { \"id\": 4, \"score\": 1.362, \"payload\": null, \"version\": 0 },\n        { \"id\": 1, \"score\": 1.273, \"payload\": null, \"version\": 0 },\n        { \"id\": 3, \"score\": 1.208, \"payload\": null, \"version\": 0 }\n    ],\n    \"status\": \"ok\",\n    \"time\": 0.000055785\n}\n```\nBut result is different if we add a filter:\n```\ncurl -L -X POST 'http://localhost:6333/collections/test_collection/points/search' \\ -H 'Content-Type: application/json' \\ --data-raw '{\n    \"filter\": {\n        \"should\": [\n            {\n                \"key\": \"city\",\n                \"match\": {\n                    \"value\": \"London\"\n                }\n            }\n        ]\n    },\n    \"vector\": [0.2, 0.1, 0.9, 0.7],\n    \"top\": 3\n}'\n```\nExpected response:\n```\n{\n    \"result\": [\n        { \"id\": 4, \"score\": 1.362, \"payload\": null, \"version\": 0 },\n        { \"id\": 2, \"score\": 0.871, \"payload\": null, \"version\": 0 }\n    ],\n    \"status\": \"ok\",\n    \"time\": 0.000093972\n}\n```\n",
+        "description": "API description for Qdrant vector search engine.\n\nThis document describes CRUD and search operations on playbooks of points (vectors with payload).\n\nQdrant supports any combinations of `should`, `must` and `must_not` conditions, which makes it possible to use in applications when object could not be described solely by vector. It could be location features, availability flags, and other custom properties businesses should take into account.\n## Examples\nThis examples cover the most basic use-cases - playbook creation and basic vector search.\n### Create playbook\nFirst - let's create a playbook with dot-production metric.\n```\ncurl -X PUT 'http://localhost:6333/playbooks/test_playbook' \\\n  -H 'Content-Type: application/json' \\\n  --data-raw '{\n    \"vectors\": {\n      \"size\": 4,\n      \"distance\": \"Dot\"\n    }\n  }'\n\n```\nExpected response:\n```\n{\n    \"result\": true,\n    \"status\": \"ok\",\n    \"time\": 0.031095451\n}\n```\nWe can ensure that playbook was created:\n```\ncurl 'http://localhost:6333/playbooks/test_playbook'\n```\nExpected response:\n```\n{\n  \"result\": {\n    \"status\": \"green\",\n    \"vectors_count\": 0,\n    \"segments_count\": 5,\n    \"disk_data_size\": 0,\n    \"ram_data_size\": 0,\n    \"config\": {\n      \"params\": {\n        \"vectors\": {\n          \"size\": 4,\n          \"distance\": \"Dot\"\n        }\n      },\n      \"hnsw_config\": {\n        \"m\": 16,\n        \"ef_construct\": 100,\n        \"full_scan_threshold\": 10000\n      },\n      \"optimizer_config\": {\n        \"deleted_threshold\": 0.2,\n        \"vacuum_min_vector_number\": 1000,\n        \"max_segment_number\": 5,\n        \"memmap_threshold\": 50000,\n        \"indexing_threshold\": 20000,\n        \"flush_interval_sec\": 1\n      },\n      \"wal_config\": {\n        \"wal_capacity_mb\": 32,\n        \"wal_segments_ahead\": 0\n      }\n    }\n  },\n  \"status\": \"ok\",\n  \"time\": 2.1199e-05\n}\n```\n\n### Add points\nLet's now add vectors with some payload:\n```\ncurl -L -X PUT 'http://localhost:6333/playbooks/test_playbook/points?wait=true' \\ -H 'Content-Type: application/json' \\ --data-raw '{\n  \"points\": [\n    {\"id\": 1, \"vector\": [0.05, 0.61, 0.76, 0.74], \"payload\": {\"city\": \"Berlin\"}},\n    {\"id\": 2, \"vector\": [0.19, 0.81, 0.75, 0.11], \"payload\": {\"city\": [\"Berlin\", \"London\"] }},\n    {\"id\": 3, \"vector\": [0.36, 0.55, 0.47, 0.94], \"payload\": {\"city\": [\"Berlin\", \"Moscow\"] }},\n    {\"id\": 4, \"vector\": [0.18, 0.01, 0.85, 0.80], \"payload\": {\"city\": [\"London\", \"Moscow\"] }},\n    {\"id\": 5, \"vector\": [0.24, 0.18, 0.22, 0.44], \"payload\": {\"count\": [0]}},\n    {\"id\": 6, \"vector\": [0.35, 0.08, 0.11, 0.44]}\n  ]\n}'\n```\nExpected response:\n```\n{\n    \"result\": {\n        \"operation_id\": 0,\n        \"status\": \"completed\"\n    },\n    \"status\": \"ok\",\n    \"time\": 0.000206061\n}\n```\n### Search with filtering\nLet's start with a basic request:\n```\ncurl -L -X POST 'http://localhost:6333/playbooks/test_playbook/points/search' \\ -H 'Content-Type: application/json' \\ --data-raw '{\n    \"vector\": [0.2,0.1,0.9,0.7],\n    \"top\": 3\n}'\n```\nExpected response:\n```\n{\n    \"result\": [\n        { \"id\": 4, \"score\": 1.362, \"payload\": null, \"version\": 0 },\n        { \"id\": 1, \"score\": 1.273, \"payload\": null, \"version\": 0 },\n        { \"id\": 3, \"score\": 1.208, \"payload\": null, \"version\": 0 }\n    ],\n    \"status\": \"ok\",\n    \"time\": 0.000055785\n}\n```\nBut result is different if we add a filter:\n```\ncurl -L -X POST 'http://localhost:6333/playbooks/test_playbook/points/search' \\ -H 'Content-Type: application/json' \\ --data-raw '{\n    \"filter\": {\n        \"should\": [\n            {\n                \"key\": \"city\",\n                \"match\": {\n                    \"value\": \"London\"\n                }\n            }\n        ]\n    },\n    \"vector\": [0.2, 0.1, 0.9, 0.7],\n    \"top\": 3\n}'\n```\nExpected response:\n```\n{\n    \"result\": [\n        { \"id\": 4, \"score\": 1.362, \"payload\": null, \"version\": 0 },\n        { \"id\": 2, \"score\": 0.871, \"payload\": null, \"version\": 0 }\n    ],\n    \"status\": \"ok\",\n    \"time\": 0.000093972\n}\n```\n",
         "contact": {
             "email": "andrey@vasnetsov.com"
         },
@@ -4757,8 +4757,8 @@
     ],
     "tags": [
         {
-            "name": "collections",
-            "description": "Searchable collections of points."
+            "name": "playbooks",
+            "description": "Searchable playbooks of points."
         },
         {
             "name": "points",
@@ -4770,7 +4770,7 @@
         },
         {
             "name": "snapshots",
-            "description": "Storage and collections snapshots"
+            "description": "Storage and playbooks snapshots"
         }
     ],
     "components": {
@@ -4801,10 +4801,10 @@
             "CollectionsResponse": {
                 "type": "object",
                 "required": [
-                    "collections"
+                    "playbooks"
                 ],
                 "properties": {
-                    "collections": {
+                    "playbooks": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/CollectionDescription"
@@ -4824,7 +4824,7 @@
                 }
             },
             "CollectionInfo": {
-                "description": "Current statistics and configuration of the collection",
+                "description": "Current statistics and configuration of the playbook",
                 "type": "object",
                 "required": [
                     "config",
@@ -4844,25 +4844,25 @@
                         "$ref": "#/components/schemas/OptimizersStatus"
                     },
                     "vectors_count": {
-                        "description": "Number of vectors in collection All vectors in collection are available for querying Calculated as `points_count x vectors_per_point` Where `vectors_per_point` is a number of named vectors in schema",
+                        "description": "Number of vectors in playbook All vectors in playbook are available for querying Calculated as `points_count x vectors_per_point` Where `vectors_per_point` is a number of named vectors in schema",
                         "type": "integer",
                         "format": "uint",
                         "minimum": 0
                     },
                     "indexed_vectors_count": {
-                        "description": "Number of indexed vectors in the collection. Indexed vectors in large segments are faster to query, as it is stored in vector index (HNSW)",
+                        "description": "Number of indexed vectors in the playbook. Indexed vectors in large segments are faster to query, as it is stored in vector index (HNSW)",
                         "type": "integer",
                         "format": "uint",
                         "minimum": 0
                     },
                     "points_count": {
-                        "description": "Number of points (vectors + payloads) in collection Each point could be accessed by unique id",
+                        "description": "Number of points (vectors + payloads) in playbook Each point could be accessed by unique id",
                         "type": "integer",
                         "format": "uint",
                         "minimum": 0
                     },
                     "segments_count": {
-                        "description": "Number of segments in collection. Each segment has independent vector as payload indexes",
+                        "description": "Number of segments in playbook. Each segment has independent vector as payload indexes",
                         "type": "integer",
                         "format": "uint",
                         "minimum": 0
@@ -4880,7 +4880,7 @@
                 }
             },
             "CollectionStatus": {
-                "description": "Current state of the collection. `Green` - all good. `Yellow` - optimization is running, `Red` - some operations failed and was not recovered",
+                "description": "Current state of the playbook. `Green` - all good. `Yellow` - optimization is running, `Red` - some operations failed and was not recovered",
                 "type": "string",
                 "enum": [
                     "green",
@@ -4889,7 +4889,7 @@
                 ]
             },
             "OptimizersStatus": {
-                "description": "Current state of the collection",
+                "description": "Current state of the playbook",
                 "oneOf": [
                     {
                         "description": "Optimizers are reporting as expected",
@@ -4957,7 +4957,7 @@
                         "$ref": "#/components/schemas/VectorsConfig"
                     },
                     "shard_number": {
-                        "description": "Number of shards the collection has",
+                        "description": "Number of shards the playbook has",
                         "default": 1,
                         "type": "integer",
                         "format": "uint32",
@@ -4971,7 +4971,7 @@
                         "minimum": 1
                     },
                     "write_consistency_factor": {
-                        "description": "Defines how many replicas should apply the operation for us to consider it successful. Increasing this number will make the collection more resilient to inconsistencies, but will also make it fail if not enough replicas are available. Does not have any performance impact.",
+                        "description": "Defines how many replicas should apply the operation for us to consider it successful. Increasing this number will make the playbook more resilient to inconsistencies, but will also make it fail if not enough replicas are available. Does not have any performance impact.",
                         "default": 1,
                         "type": "integer",
                         "format": "uint32",
@@ -5023,7 +5023,7 @@
                         "$ref": "#/components/schemas/Distance"
                     },
                     "hnsw_config": {
-                        "description": "Custom params for HNSW index. If none - values from collection configuration are used.",
+                        "description": "Custom params for HNSW index. If none - values from playbook configuration are used.",
                         "anyOf": [
                             {
                                 "$ref": "#/components/schemas/HnswConfigDiff"
@@ -5034,7 +5034,7 @@
                         ]
                     },
                     "quantization_config": {
-                        "description": "Custom params for quantization. If none - values from collection configuration are used.",
+                        "description": "Custom params for quantization. If none - values from playbook configuration are used.",
                         "anyOf": [
                             {
                                 "$ref": "#/components/schemas/QuantizationConfig"
@@ -6333,7 +6333,7 @@
                 ]
             },
             "RecommendRequest": {
-                "description": "Recommendation request. Provides positive and negative examples of the vectors, which can be ids of points that are already stored in the collection, raw vectors, or even ids and vectors combined.\n\nService should look for the points which are closer to positive examples and at the same time further to negative examples. The concrete way of how to compare negative and positive distances is up to the `strategy` chosen.",
+                "description": "Recommendation request. Provides positive and negative examples of the vectors, which can be ids of points that are already stored in the playbook, raw vectors, or even ids and vectors combined.\n\nService should look for the points which are closer to positive examples and at the same time further to negative examples. The concrete way of how to compare negative and positive distances is up to the `strategy` chosen.",
                 "type": "object",
                 "required": [
                     "limit"
@@ -6443,7 +6443,7 @@
                         ]
                     },
                     "lookup_from": {
-                        "description": "The location used to lookup vectors. If not specified - use current collection. Note: the other collection should have the same vector size as the current collection",
+                        "description": "The location used to lookup vectors. If not specified - use current playbook. Note: the other playbook should have the same vector size as the current playbook",
                         "default": null,
                         "anyOf": [
                             {
@@ -6486,18 +6486,18 @@
                 ]
             },
             "LookupLocation": {
-                "description": "Defines a location to use for looking up the vector. Specifies collection and vector field name.",
+                "description": "Defines a location to use for looking up the vector. Specifies playbook and vector field name.",
                 "type": "object",
                 "required": [
-                    "collection"
+                    "playbook"
                 ],
                 "properties": {
-                    "collection": {
-                        "description": "Name of the collection used for lookup",
+                    "playbook": {
+                        "description": "Name of the playbook used for lookup",
                         "type": "string"
                     },
                     "vector": {
-                        "description": "Optional name of the vector field within the collection. If not provided, the default vector field will be used.",
+                        "description": "Optional name of the vector field within the playbook. If not provided, the default vector field will be used.",
                         "default": null,
                         "type": "string",
                         "nullable": true
@@ -6581,7 +6581,7 @@
                 }
             },
             "CreateCollection": {
-                "description": "Operation for creating new collection and (optionally) specify index params",
+                "description": "Operation for creating new playbook and (optionally) specify index params",
                 "type": "object",
                 "required": [
                     "vectors"
@@ -6591,7 +6591,7 @@
                         "$ref": "#/components/schemas/VectorsConfig"
                     },
                     "shard_number": {
-                        "description": "Number of shards in collection. Default is 1 for standalone, otherwise equal to the number of nodes Minimum is 1",
+                        "description": "Number of shards in playbook. Default is 1 for standalone, otherwise equal to the number of nodes Minimum is 1",
                         "default": null,
                         "type": "integer",
                         "format": "uint32",
@@ -6607,7 +6607,7 @@
                         "nullable": true
                     },
                     "write_consistency_factor": {
-                        "description": "Defines how many replicas should apply the operation for us to consider it successful. Increasing this number will make the collection more resilient to inconsistencies, but will also make it fail if not enough replicas are available. Does not have any performance impact.",
+                        "description": "Defines how many replicas should apply the operation for us to consider it successful. Increasing this number will make the playbook more resilient to inconsistencies, but will also make it fail if not enough replicas are available. Does not have any performance impact.",
                         "default": null,
                         "type": "integer",
                         "format": "uint32",
@@ -6654,7 +6654,7 @@
                         ]
                     },
                     "init_from": {
-                        "description": "Specify other collection to copy data from.",
+                        "description": "Specify other playbook to copy data from.",
                         "default": null,
                         "anyOf": [
                             {
@@ -6759,23 +6759,23 @@
                 }
             },
             "InitFrom": {
-                "description": "Operation for creating new collection and (optionally) specify index params",
+                "description": "Operation for creating new playbook and (optionally) specify index params",
                 "type": "object",
                 "required": [
-                    "collection"
+                    "playbook"
                 ],
                 "properties": {
-                    "collection": {
+                    "playbook": {
                         "type": "string"
                     }
                 }
             },
             "UpdateCollection": {
-                "description": "Operation for updating parameters of the existing collection",
+                "description": "Operation for updating parameters of the existing playbook",
                 "type": "object",
                 "properties": {
                     "vectors": {
-                        "description": "Map of vector data parameters to update for each named vector. To update parameters in a collection having a single unnamed vector, use an empty string as name.",
+                        "description": "Map of vector data parameters to update for each named vector. To update parameters in a playbook having a single unnamed vector, use an empty string as name.",
                         "anyOf": [
                             {
                                 "$ref": "#/components/schemas/VectorsConfigDiff"
@@ -6808,7 +6808,7 @@
                         ]
                     },
                     "hnsw_config": {
-                        "description": "HNSW parameters to update for the collection index. If none - it is left unchanged.",
+                        "description": "HNSW parameters to update for the playbook index. If none - it is left unchanged.",
                         "anyOf": [
                             {
                                 "$ref": "#/components/schemas/HnswConfigDiff"
@@ -6926,7 +6926,7 @@
                 }
             },
             "ChangeAliasesOperation": {
-                "description": "Operation for performing changes of collection aliases. Alias changes are atomic, meaning that no collection modifications can happen between alias operations.",
+                "description": "Operation for performing changes of playbook aliases. Alias changes are atomic, meaning that no playbook modifications can happen between alias operations.",
                 "type": "object",
                 "required": [
                     "actions"
@@ -6941,7 +6941,7 @@
                 }
             },
             "AliasOperations": {
-                "description": "Group of all the possible operations related to collection aliases",
+                "description": "Group of all the possible operations related to playbook aliases",
                 "anyOf": [
                     {
                         "$ref": "#/components/schemas/CreateAliasOperation"
@@ -6966,14 +6966,14 @@
                 }
             },
             "CreateAlias": {
-                "description": "Create alternative name for a collection. Collection will be available under both names for search, retrieve,",
+                "description": "Create alternative name for a playbook. Collection will be available under both names for search, retrieve,",
                 "type": "object",
                 "required": [
                     "alias_name",
-                    "collection_name"
+                    "playbook_name"
                 ],
                 "properties": {
-                    "collection_name": {
+                    "playbook_name": {
                         "type": "string"
                     },
                     "alias_name": {
@@ -7518,7 +7518,7 @@
                 }
             },
             "CountRequest": {
-                "description": "Count Request Counts the number of points which satisfy the given filter. If filter is not provided, the count of all points in the collection will be returned.",
+                "description": "Count Request Counts the number of points which satisfy the given filter. If filter is not provided, the count of all points in the playbook will be returned.",
                 "type": "object",
                 "properties": {
                     "filter": {
@@ -7554,7 +7554,7 @@
                 }
             },
             "CollectionClusterInfo": {
-                "description": "Current clustering distribution for the collection",
+                "description": "Current clustering distribution for the playbook",
                 "type": "object",
                 "required": [
                     "local_shards",
@@ -7695,7 +7695,7 @@
                 "required": [
                     "app",
                     "cluster",
-                    "collections",
+                    "playbooks",
                     "id",
                     "requests"
                 ],
@@ -7706,7 +7706,7 @@
                     "app": {
                         "$ref": "#/components/schemas/AppBuildTelemetry"
                     },
-                    "collections": {
+                    "playbooks": {
                         "$ref": "#/components/schemas/CollectionsTelemetry"
                     },
                     "cluster": {
@@ -7824,15 +7824,15 @@
             "CollectionsTelemetry": {
                 "type": "object",
                 "required": [
-                    "number_of_collections"
+                    "number_of_playbooks"
                 ],
                 "properties": {
-                    "number_of_collections": {
+                    "number_of_playbooks": {
                         "type": "integer",
                         "format": "uint",
                         "minimum": 0
                     },
-                    "collections": {
+                    "playbooks": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/CollectionTelemetryEnum"
@@ -8118,7 +8118,7 @@
                         "$ref": "#/components/schemas/Indexes"
                     },
                     "quantization_config": {
-                        "description": "Vector specific quantization config that overrides collection config",
+                        "description": "Vector specific quantization config that overrides playbook config",
                         "anyOf": [
                             {
                                 "$ref": "#/components/schemas/QuantizationConfig"
@@ -8160,7 +8160,7 @@
                 "description": "Vector index configuration",
                 "oneOf": [
                     {
-                        "description": "Do not use any index, scan whole vector collection during search. Guarantee 100% precision, but may be time consuming on large collections.",
+                        "description": "Do not use any index, scan whole vector playbook during search. Guarantee 100% precision, but may be time consuming on large playbooks.",
                         "type": "object",
                         "required": [
                             "options",
@@ -8179,7 +8179,7 @@
                         }
                     },
                     {
-                        "description": "Use filterable HNSW index for approximate search. Is very fast even on a very huge collections, but require additional space to store index and additional time to build it.",
+                        "description": "Use filterable HNSW index for approximate search. Is very fast even on a very huge playbooks, but require additional space to store index and additional time to build it.",
                         "type": "object",
                         "required": [
                             "options",
@@ -8828,7 +8828,7 @@
                 ],
                 "properties": {
                     "location": {
-                        "description": "Examples: - URL `http://localhost:8080/collections/my_collection/snapshots/my_snapshot` - Local path `file:///qdrant/snapshots/test_collection-2022-08-04-10-49-10.snapshot`",
+                        "description": "Examples: - URL `http://localhost:8080/playbooks/my_playbook/snapshots/my_snapshot` - Local path `file:///qdrant/snapshots/test_playbook-2022-08-04-10-49-10.snapshot`",
                         "type": "string",
                         "format": "uri"
                     },
@@ -8873,19 +8873,19 @@
                 "type": "object",
                 "required": [
                     "alias_name",
-                    "collection_name"
+                    "playbook_name"
                 ],
                 "properties": {
                     "alias_name": {
                         "type": "string"
                     },
-                    "collection_name": {
+                    "playbook_name": {
                         "type": "string"
                     }
                 }
             },
             "WriteOrdering": {
-                "description": "Defines write ordering guarantees for collection operations\n\n* `weak` - write operations may be reordered, works faster, default\n\n* `medium` - write operations go through dynamically selected leader, may be inconsistent for a short period of time in case of leader change\n\n* `strong` - Write operations go through the permanent leader, consistent, but may be unavailable if leader is down",
+                "description": "Defines write ordering guarantees for playbook operations\n\n* `weak` - write operations may be reordered, works faster, default\n\n* `medium` - write operations go through dynamically selected leader, may be inconsistent for a short period of time in case of leader change\n\n* `strong` - Write operations go through the permanent leader, consistent, but may be unavailable if leader is down",
                 "type": "string",
                 "enum": [
                     "weak",
@@ -9110,7 +9110,7 @@
                         "minimum": 1
                     },
                     "with_lookup": {
-                        "description": "Look for points in another collection using the group ids",
+                        "description": "Look for points in another playbook using the group ids",
                         "anyOf": [
                             {
                                 "$ref": "#/components/schemas/WithLookupInterface"
@@ -9135,11 +9135,11 @@
             "WithLookup": {
                 "type": "object",
                 "required": [
-                    "collection"
+                    "playbook"
                 ],
                 "properties": {
-                    "collection": {
-                        "description": "Name of the collection to use for points lookup",
+                    "playbook": {
+                        "description": "Name of the playbook to use for points lookup",
                         "type": "string"
                     },
                     "with_payload": {
@@ -9268,7 +9268,7 @@
                         ]
                     },
                     "lookup_from": {
-                        "description": "The location used to lookup vectors. If not specified - use current collection. Note: the other collection should have the same vector size as the current collection",
+                        "description": "The location used to lookup vectors. If not specified - use current playbook. Note: the other playbook should have the same vector size as the current playbook",
                         "default": null,
                         "anyOf": [
                             {
@@ -9297,7 +9297,7 @@
                         "minimum": 1
                     },
                     "with_lookup": {
-                        "description": "Look for points in another collection using the group ids",
+                        "description": "Look for points in another playbook using the group ids",
                         "anyOf": [
                             {
                                 "$ref": "#/components/schemas/WithLookupInterface"

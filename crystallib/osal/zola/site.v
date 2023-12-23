@@ -16,7 +16,7 @@ pub mut:
 	path_content pathlib.Path
 	path_build   pathlib.Path
 	path_publish pathlib.Path
-	collections  []ZSiteCollection
+	playbooks  []ZSiteCollection
 	gitrepokey   string
 	tailwind     tailwind.Tailwind
 	tailwindcss  bool // whether sie uses tailwindcss
@@ -124,9 +124,9 @@ pub fn (mut site ZolaSite) serve(params ServeParams) ! {
 fn (mut site ZolaSite) gitrepo_keys() []string {
 	mut res := []string{}
 	res << site.gitrepokey
-	for collection in site.collections {
-		if collection.gitrepokey !in res {
-			res << collection.gitrepokey
+	for playbook in site.playbooks {
+		if playbook.gitrepokey !in res {
+			res << playbook.gitrepokey
 		}
 	}
 	return res

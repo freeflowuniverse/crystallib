@@ -103,7 +103,7 @@ fn str_normalize(comment_ string) string {
 }
 
 // parse new txt as params and merge into params
-pub fn (mut params Params) merge_text(txt string) ! {
+pub fn (mut params Params) add(txt string) ! {
 	paramsnew := parse(txt)!
 	for p in paramsnew.params {
 		params.set(p.key, p.value)

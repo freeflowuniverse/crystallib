@@ -5,17 +5,17 @@ import freeflowuniverse.crystallib.data.markdownparser.elements
 import freeflowuniverse.crystallib.core.pathlib
 
 const testdata_path = os.dir(@FILE) + '/testdata'
-const collections_path = os.dir(@FILE) + '/testdata/collections'
-const collections_path_original = os.dir(@FILE) + '/testdata/original'
+const playbooks_path = os.dir(@FILE) + '/testdata/playbooks'
+const playbooks_path_original = os.dir(@FILE) + '/testdata/original'
 
 // TODO:  do good tests around fixing links, also images need to point to right location
 
 fn restore() ! {
 	// put back the original data
-	mut p := pathlib.get_dir(path: doctree.collections_path_original) or {
+	mut p := pathlib.get_dir(path: doctree.playbooks_path_original) or {
 		panic("can't restore original, do manual")
 	}
-	p.copy(dest: doctree.collections_path, delete: true)! // make sure all original is being restored for next test
+	p.copy(dest: doctree.playbooks_path, delete: true)! // make sure all original is being restored for next test
 }
 
 fn test_link_update() ! {}
@@ -29,13 +29,13 @@ fn test_fix() ! {
 	// }
 
 	mut tree := tree_create(cid: 'abc', name: 'test')!
-	tree.scan(path: doctree.collections_path)!
+	tree.scan(path: doctree.playbooks_path)!
 
-	mut test_collection := tree.collection_get('broken')!
-	println('testcoll: ${test_collection}')
-	mut page_path := pathlib.get('${doctree.collections_path}/wrong_links/page_with_wrong_links.md')
-	test_collection.page_new(mut page_path) or { panic('Cannot create page: ${err}') }
-	mut test_page := test_collection.page_get('page_with_wrong_links')!
+	mut test_playbook := tree.playbook_get('broken')!
+	println('testcoll: ${test_playbook}')
+	mut page_path := pathlib.get('${doctree.playbooks_path}/wrong_links/page_with_wrong_links.md')
+	test_playbook.page_new(mut page_path) or { panic('Cannot create page: ${err}') }
+	mut test_page := test_playbook.page_get('page_with_wrong_links')!
 
 	doc_before := (*test_page).doc or { panic('doesnt exist') }
 
@@ -63,7 +63,7 @@ fn test_fix() ! {
 	test_page.fix() or { panic('Cannot fix page: ${err}') }
 }
 
-// tests collection errors are properly created
+// tests playbook errors are properly created
 fn test_errors_created() {
 	/*
 		errors could happen because of:
@@ -75,11 +75,11 @@ fn test_errors_created() {
 	*/
 	mut tree := tree_create(cid: 'abc', name: 'test')!
 	tree.scan(path: doctree.testdata_path + '/errors', heal: true)!
-	collection := tree.collection_get('errors')!
-	assert collection.errors.len == 2
-	assert collection.errors.filter(it.cat == .file_double).len == 1
-	assert collection.errors.filter(it.cat == .page_double).len == 1
-	collection.errors_report(doctree.testdata_path + '/errors/errors.md')!
+	playbook := tree.playbook_get('errors')!
+	assert playbook.errors.len == 2
+	assert playbook.errors.filter(it.cat == .file_double).len == 1
+	assert playbook.errors.filter(it.cat == .page_double).len == 1
+	playbook.errors_report(doctree.testdata_path + '/errors/errors.md')!
 }
 
 /*

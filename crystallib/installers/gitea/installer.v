@@ -1,6 +1,7 @@
 module gitea
 
 import freeflowuniverse.crystallib.installers.zinit as zinitinstaller
+import freeflowuniverse.crystallib.installers.postgres as postgresinstaller
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
@@ -17,6 +18,7 @@ pub fn install() ! {
 
 	// make sure we install base on the node
 	base.install()!
+	postgresinstaller.install()!
 	zinitinstaller.install()!
 
 	version := '1.21.0'

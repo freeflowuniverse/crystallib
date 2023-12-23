@@ -77,7 +77,7 @@ pub fn cmd_3script_do(mut cmdroot Command) {
 }
 
 fn cmd_3script_execute(cmd Command) ! {
-	// coderoot := cmd.flags.get_string('coderoot') or { '' }
+	// coderoot := cmd.flags.get_path('coderoot') or { '' }
 	// mut path := cmd.flags.get_string('path') or { '' }
 	// mut circle := cmd.flags.get_string('circle') or { 'test' }
 	// mut url := cmd.flags.get_string('url') or { '' }

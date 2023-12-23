@@ -13,7 +13,7 @@ pub mut:
 	url          string
 	path_build   pathlib.Path
 	path_publish pathlib.Path
-	collections  []MDBookCollection
+	playbooks  []MDBookCollection
 	gitrepokey   string
 	title        string
 }
@@ -52,7 +52,7 @@ pub fn (mut books MDBooks) book_new(args MDBookArgs) !&MDBook {
 
 // only executes at init time
 fn (mut book MDBook) clone() ! {
-	for mut c in book.collections {
+	for mut c in book.playbooks {
 		c.clone()!
 	}
 }
@@ -160,9 +160,9 @@ fn (mut book MDBook) summary_image_set() ! {
 fn (mut book MDBook) gitrepo_keys() []string {
 	mut res := []string{}
 	res << book.gitrepokey
-	for collection in book.collections {
-		if collection.gitrepokey !in res {
-			res << collection.gitrepokey
+	for playbook in book.playbooks {
+		if playbook.gitrepokey !in res {
+			res << playbook.gitrepokey
 		}
 	}
 	return res

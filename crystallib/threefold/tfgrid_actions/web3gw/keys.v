@@ -1,6 +1,6 @@
 module web3gw
 
-import freeflowuniverse.crystallib.data.actionparser { Action }
+import freeflowuniverse.crystallib.core.playbook { Action }
 
 pub fn (mut h Web3GWHandler) keys_define(action Action) ! {
 	tfc_mnemonic := action.params.get_default('mnemonic', '')!

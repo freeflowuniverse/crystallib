@@ -3,7 +3,7 @@ module elements
 import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.data.paramsparser
-import freeflowuniverse.crystallib.data.actionparser
+import freeflowuniverse.crystallib.core.playbook
 
 @[heap]
 pub struct DocBase {
@@ -45,8 +45,8 @@ fn (mut self DocBase) delete_from_children(to_delete []int) {
 	self.children = self.children[0..write]
 }
 
-pub fn (self DocBase) actions() []actionparser.Action {
-	mut out := []actionparser.Action{}
+pub fn (self DocBase) actions() []playbook.Action {
+	mut out := []playbook.Action{}
 	for element in self.children {
 		if element is Action {
 			out << element.action

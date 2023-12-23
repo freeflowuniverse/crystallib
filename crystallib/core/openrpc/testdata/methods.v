@@ -25,5 +25,5 @@ pub struct Params {
 	param4 []string
 }
 
-pub fn method_with_params(params Params) {
+pub fn method_with_params(paramsparser.Params) {
 }

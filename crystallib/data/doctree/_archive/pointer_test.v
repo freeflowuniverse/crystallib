@@ -8,7 +8,7 @@ fn test_pointerpath() {
 	println(p1)
 	p1_compare := PointerPath{
 		pointer: Pointer{
-			collection: ''
+			playbook: ''
 			name: 'a_file'
 			cat: .page
 			extension: 'md'
@@ -26,7 +26,7 @@ fn test_pointerpath() {
 	p2 := pointerpath_new(path: '/tmp/ss/A__file.jpeg') or { panic(err) }
 	p2_compare := PointerPath{
 		pointer: Pointer{
-			collection: ''
+			playbook: ''
 			name: 'a_file'
 			cat: .image
 			extension: 'jpeg'
@@ -47,7 +47,7 @@ fn test_pointer() {
 	p := pointer_new('Page__.md') or { panic(err) }
 	println(p)
 	p_compare := Pointer{
-		collection: ''
+		playbook: ''
 		name: 'page'
 		cat: .page
 		extension: 'md'
@@ -58,13 +58,13 @@ fn test_pointer() {
 }
 
 fn test_pointer2() {
-	p := pointer_new('collectionAAA:Page__.md') or { panic(err) }
+	p := pointer_new('playbookAAA:Page__.md') or { panic(err) }
 	println(p)
 	p_compare := Pointer{
 		name: 'page'
 		cat: .page
 		extension: 'md'
-		collection: 'collectionaaa'
+		playbook: 'playbookaaa'
 		error: ''
 		state: .unknown
 	}
@@ -72,13 +72,13 @@ fn test_pointer2() {
 }
 
 fn test_pointer3() {
-	p := pointer_new('MY_Book:collection_AAA:Page__.md') or { panic(err) }
+	p := pointer_new('MY_Book:playbook_AAA:Page__.md') or { panic(err) }
 	println(p)
 	p_compare := Pointer{
 		name: 'page'
 		cat: .page
 		extension: 'md'
-		collection: 'collection_aaa'
+		playbook: 'playbook_aaa'
 		book: 'my_book'
 		error: ''
 		state: .unknown
@@ -87,13 +87,13 @@ fn test_pointer3() {
 }
 
 fn test_pointer4() {
-	p := pointer_new('MY_Book:collection_AAA:aImage__.jpg') or { panic(err) }
+	p := pointer_new('MY_Book:playbook_AAA:aImage__.jpg') or { panic(err) }
 	println(p)
 	p_compare := Pointer{
 		name: 'aimage'
 		cat: .image
 		extension: 'jpg'
-		collection: 'collection_aaa'
+		playbook: 'playbook_aaa'
 		book: 'my_book'
 		error: ''
 		state: .unknown
@@ -108,7 +108,7 @@ fn test_pointer5() {
 		name: 'aimage'
 		cat: .image
 		extension: 'jpg'
-		collection: ''
+		playbook: ''
 		book: 'my_book'
 		error: ''
 		state: .unknown
@@ -127,8 +127,8 @@ fn test_pointer6() {
 	assert p3.str() == 'aimage.jpg'
 
 	i := 40
-	p4 := pointer_new('collectionAAA:Page__${i}.md') or { panic(err) }
-	assert p4.str() == 'collectionaaa:page_40.md'
+	p4 := pointer_new('playbookAAA:Page__${i}.md') or { panic(err) }
+	assert p4.str() == 'playbookaaa:page_40.md'
 }
 
 fn test_pointer7() {

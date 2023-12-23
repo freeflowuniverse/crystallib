@@ -1,19 +1,23 @@
-module actionparser
+module playbook
 
+import crypto.blake2b
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.baobab.smartid
 
 pub struct Action {
 pub mut:
+	id		int
+	cid		 string
 	name       string
 	actor      string
-	priority   u8 = 10 // 0 is highest, do 10 as default
+	priority   int = 10 // 0 is highest, do 10 as default
 	params     paramsparser.Params
 	result     paramsparser.Params // can be used to remember outputs
 	execute    bool = true // certain actions can be defined but meant to be executed directly
 	actiontype ActionType
 	comments   string
+	done       bool // if done then no longer need to process
 }
 
 pub enum ActionType {
@@ -24,12 +28,8 @@ pub enum ActionType {
 	macro
 }
 
-pub fn (action Action) str2() string {
-	mut out := '!!'
-	if action.actor != '' {
-		out += '${action.actor}.'
-	}
-	out += action.script3()
+pub fn (action Action) str() string {
+	mut out := action.script3()
 	if !action.result.empty() {
 		out += '\n\nResult:\n'
 		out += texttools.indent(action.result.script3(), '    ')
@@ -48,6 +48,9 @@ pub fn (action Action) script3() string {
 		out += '${action.actor}.'
 	}
 	out += '${action.name} '
+	if action.id>0{
+		out += 'id:${action.id} '
+	}
 	if !action.params.empty() {
 		script3 := action.params.script3()
 		script3_lines := script3.split_into_lines()
@@ -75,4 +78,11 @@ pub enum ActionState {
 	restart
 	error
 	done // means we don't process the next ones
+}
+
+// get hash from the action, should always be the same for the same action
+pub fn (action Action) hashkey() string {
+	txt := action.script3()
+	bs := blake2b.sum160(txt.bytes())
+	return bs.hex()
 }

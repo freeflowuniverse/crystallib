@@ -1,6 +1,6 @@
 module people
 
-import freeflowuniverse.crystallib.data.actionparser
+import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.baobab.models.system
 import db.sqlite
 
@@ -39,6 +39,6 @@ pub fn new(args NewArgs) !MemDB {
 }
 
 pub fn (mut m MemDB) actions_import(path string) ! {
-	ap := actionparser.new(path: path)!
+	ap := playbook.new(path: path)!
 	m.actions(ap)!
 }

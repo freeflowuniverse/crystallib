@@ -13,7 +13,7 @@ pub mut:
 	logger &log.Logger = &log.Log{
 	level: .info
 } @[skip; str: skip]
-	collections map[string]&Collection
+	playbooks map[string]&Collection
 	// embedded_files  []embed_file.EmbedFileData // this where we have the templates for exporting a book
 	state TreeState
 	// macroprocessors []IMacroProcessor
@@ -35,7 +35,7 @@ pub fn (tree Tree) key() string {
 }
 
 // pub fn (mut tree Tree) reset() ! {
-// 	// tree.collections = map[string]
+// 	// tree.playbooks = map[string]
 // }
 
 // add macroprocessor to the tree
@@ -49,8 +49,8 @@ pub fn (mut tree Tree) fix() ! {
 	if tree.state == .ok {
 		return
 	}
-	for _, mut collection in tree.collections {
-		collection.fix()!
+	for _, mut playbook in tree.playbooks {
+		playbook.fix()!
 	}
 }
 
@@ -70,15 +70,15 @@ pub fn (err NoOrTooManyObjFound) msg() string {
 	return 'No obj found for ${err.tree.name}. Pointer: ${err.pointer}'
 }
 
-// get the page from pointer string: $tree:$collection:$name or
-// $collection:$name or $name
+// get the page from pointer string: $tree:$playbook:$name or
+// $playbook:$name or $name
 pub fn (tree Tree) page_get(pointerstr string) !&Page {
 	p := pointer_new(pointerstr)!
 	mut res := []&Page{}
-	for _, collection in tree.collections {
-		if p.collection == '' || p.collection == collection.name {
-			if collection.page_exists(pointerstr) {
-				res << collection.page_get(pointerstr) or { panic('BUG') }
+	for _, playbook in tree.playbooks {
+		if p.playbook == '' || p.playbook == playbook.name {
+			if playbook.page_exists(pointerstr) {
+				res << playbook.page_get(pointerstr) or { panic('BUG') }
 			}
 		}
 	}
@@ -93,18 +93,18 @@ pub fn (tree Tree) page_get(pointerstr string) !&Page {
 	}
 }
 
-// get the page from pointer string: $tree:$collection:$name or
-// $collection:$name or $name
+// get the page from pointer string: $tree:$playbook:$name or
+// $playbook:$name or $name
 pub fn (tree Tree) image_get(pointerstr string) !&File {
 	p := pointer_new(pointerstr)!
-	// println("collection:'$p.collection' name:'$p.name'")
+	// println("playbook:'$p.playbook' name:'$p.name'")
 	mut res := []&File{}
-	for _, collection in tree.collections {
-		// println(collection.name)
-		if p.collection == '' || p.collection == collection.name {
-			// println("in collection")
-			if collection.image_exists(pointerstr) {
-				res << collection.image_get(pointerstr) or { panic('BUG') }
+	for _, playbook in tree.playbooks {
+		// println(playbook.name)
+		if p.playbook == '' || p.playbook == playbook.name {
+			// println("in playbook")
+			if playbook.image_exists(pointerstr) {
+				res << playbook.image_get(pointerstr) or { panic('BUG') }
 			}
 		}
 	}
@@ -119,15 +119,15 @@ pub fn (tree Tree) image_get(pointerstr string) !&File {
 	}
 }
 
-// get the file from pointer string: $tree:$collection:$name or
-// $collection:$name or $name
+// get the file from pointer string: $tree:$playbook:$name or
+// $playbook:$name or $name
 pub fn (mut tree Tree) file_get(pointerstr string) !&File {
 	p := pointer_new(pointerstr)!
 	mut res := []&File{}
-	for _, collection in tree.collections {
-		if p.collection == '' || p.collection == collection.name {
-			if collection.file_exists(pointerstr) {
-				res << collection.file_get(pointerstr) or { panic('BUG') }
+	for _, playbook in tree.playbooks {
+		if p.playbook == '' || p.playbook == playbook.name {
+			if playbook.file_exists(pointerstr) {
+				res << playbook.file_get(pointerstr) or { panic('BUG') }
 			}
 		}
 	}

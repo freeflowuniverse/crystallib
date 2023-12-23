@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.ui as gui
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.data.actionparser
+import freeflowuniverse.crystallib.core.playbook
 import os
 
 pub const gitcmds = 'clone,commit,pull,push,delete,reload,list,edit,sourcetree'
@@ -44,92 +44,40 @@ pub mut:
 	provider string
 	msg      string
 	url      string
+	pull     bool
 	script   bool = true // run non interactive
 	reset    bool = true // means we will lose changes (only relevant for clone, pull)
-}
-
-// list of actions to proces .
-// action is clone,commit,pull,push,delete,reload,list,edit,sourcetree .
-// PARAMS: .
-//```
-// filter         string  // if used will only show the repo's which have the filter string inside
-// repo           string
-// account        string
-// provider       string
-// msg            string
-// script         bool = true // run non interactive
-// reset		   bool = true // means we will lose changes (only relevant for clone, pull)
-//```
-pub fn actions(actions []actionparser.Action) ! {
-	for a in actions {
-		action(a)!
-	}
-}
-
-// gittools.$actionname .
-// action is clone,commit,pull,push,delete,reload,list,edit,sourcetree .
-// PARAMS: .
-//```
-// filter         string  // if used will only show the repo's which have the filter string inside
-// repo           string
-// account        string
-// provider       string
-// msg            string
-// script         bool = true // run non interactive
-// reset		   bool = true // means we will lose changes (only relevant for clone, pull)
-//```
-pub fn action(action actionparser.Action) ! {
-	mut coderoot := action.params.get_default('coderoot', '')!
-	mut gs := get(coderoot: coderoot) or {
-		return error("Could not find gittools on '${coderoot}'\n${err}")
-	}
-	mut cmd := action.name
-
-	mut repo := action.params.get_default('repo', '')!
-	mut account := action.params.get_default('account', '')!
-	mut provider := action.params.get_default('provider', '')!
-	mut filter := action.params.get_default('filter', '')!
-	if repo == '' && account == '' && provider == '' && filter == '' {
-		curdir := os.getwd()
-		mut curdiro := pathlib.get_dir(path: curdir, create: false)!
-		mut parentpath := curdiro.parent_find('.git') or { pathlib.Path{} }
-		if parentpath.path != '' {
-			r0 := gs.repo_from_path(parentpath.path)!
-			repo = r0.addr.name
-			account = r0.addr.account
-			provider = r0.addr.provider
-		}
-	}
-	gs.do(
-		cmd: cmd
-		filter: action.params.get_default('filter', '')!
-		repo: repo
-		account: account
-		provider: provider
-		script: action.params.get_default_false('script')
-		reset: action.params.get_default_false('reset')
-		msg: action.params.get_default('message', '')!
-		url: action.params.get_default('url', '')!
-	)!
-	println(gs)
 }
 
 // do group actions on repo
 // args
 //```
-// filter: filter
-// repo: repo
-// account: account
-// provider: provider
-// cmd: cmd.name
-// script: cmd.flags.get_bool('script') or { false }
-// reset: cmd.flags.get_bool('reset') or { false }
-// msg: cmd.flags.get_string('message') or { '' }
-// url: cmd.flags.get_string('url') or { '' }
+// cmd      string // clone,commit,pull,push,delete,reload,list,edit,sourcetree
+// filter   string // if used will only show the repo's which have the filter string inside
+// repo     string
+// account  string
+// provider string
+// msg      string
+// url      string
+// pull     bool
+// script   bool = true // run non interactive
+// reset    bool = true // means we will lose changes (only relevant for clone, pull)
 //```
 pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 	mut args := args_
 	// println(args)
+
+	if args.repo == '' && args.account == '' && args.provider == '' && args.filter == '' {
+		curdir := os.getwd()
+		mut curdiro := pathlib.get_dir(path: curdir, create: false)!
+		mut parentpath := curdiro.parent_find('.git') or { pathlib.Path{} }
+		if parentpath.path != '' {
+			r0 := gs.repo_from_path(parentpath.path)!
+			args.repo = r0.addr.name
+			args.account = r0.addr.account
+			args.provider = r0.addr.provider
+		}
+	}
 
 	args.cmd = args.cmd.trim_space().to_lower()
 
@@ -158,16 +106,50 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 		provider: args.provider
 	)
 
-	if args.cmd == 'clone' || (args.cmd == 'pull' && args.url.len > 0) {
+	if args.url.len > 0 {
 		mut locator := gs.locator_new(args.url)!
 		// println(locator)
 		mut g := gs.repo_get(locator: locator)!
 		g.load()!
-		if args.cmd == 'pull' {
+		if args.cmd == 'pull' || args.pull {
 			g.pull()!
+		}
+		if args.cmd == 'push' {
+			st := g.status()!
+			if st.need_commit {
+				if args.msg.len == 0 {
+					return error('please specify message with -m ...')
+				}
+				g.commit_pull_push(msg: args.msg)!
+			}
+			g.push()!
 		}
 		if args.reset {
 			g.remove_changes()!
+		}
+		if args.cmd == 'pull' || args.cmd == 'clone' || args.cmd == 'push' {
+			return
+		}
+		repos = [g]
+	}
+
+	if args.cmd in 'sourcetree,edit'.split(',') {
+		if repos.len == 0 {
+			return error('please specify at least 1 repo for cmd:${args.cmd}')
+		}
+		if repos.len > 5 {
+			return error('more than 5 repo found for cmd:${args.cmd}')
+		}
+		for r in repos {
+			if args.cmd == 'edit' {
+				cmd3 := "open -a \"Visual Studio Code\" ${r.path.path}"
+				osal.execute_interactive(cmd3) or { panic(err) }
+			}
+			if args.cmd == 'sourcetree' {
+				cmd4 := 'open -a SourceTree ${r.path.path}'
+				println(cmd4)
+				osal.execute_interactive(cmd4) or { panic(err) }
+			}
 		}
 		return
 	}
@@ -193,7 +175,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 		for mut g in repos {
 			g.load()!
 			st := g.status()!
-			println(st)
+			// println(st)
 			need_commit = st.need_commit || need_commit
 			if args.cmd == 'push' && need_commit {
 				need_push = true
@@ -296,26 +278,6 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 	}
 	// end for the commit, pull, push, delete
 
-	if args.cmd in 'sourcetree,edit'.split(',') {
-		if repos.len == 0 {
-			return error('please specify at least 1 repo for cmd:${args.cmd}')
-		}
-		if repos.len > 5 {
-			return error('more than 5 repo found for cmd:${args.cmd}')
-		}
-		for r in repos {
-			if args.cmd == 'edit' {
-				cmd3 := "open -a \"Visual Studio Code\" ${r.path.path}"
-				osal.execute_interactive(cmd3) or { panic(err) }
-			}
-			if args.cmd == 'sourcetree' {
-				cmd4 := 'open -a SourceTree ${r.path.path}'
-				println(cmd4)
-				osal.execute_interactive(cmd4) or { panic(err) }
-			}
-		}
-		return
-	}
 	$if debug {
 		print_backtrace()
 	}

@@ -1,6 +1,6 @@
 module circles
 
-import freeflowuniverse.crystallib.data.actionparser
+import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.data.paramsparser
 
 __global (
@@ -12,7 +12,7 @@ mut:
 	circles map[string]&Circle
 }
 
-pub fn (shared actor CircleActor) act(action actionparser.Action) ! {
+pub fn (shared actor CircleActor) act(action playbook.Action) ! {
 	match action.name {
 		'add_milestone' { actor.add_milestone(action.params)! }
 		'add_member' { actor.add_member(action.params)! }

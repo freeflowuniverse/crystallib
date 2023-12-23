@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.doctree
-import freeflowuniverse.crystallib.data.actionparser
+import freeflowuniverse.crystallib.core.playbook
 import os
 
 __global (
@@ -108,20 +108,20 @@ pub fn (mut m BizModel) load() ! {
 	// m.replace_smart_ids()!
 	mut tree := doctree.new(name: 'bizmodel_${m.params.name}')!
 	tree.scan(path: m.params.path)!
-	mut actions_collections := actionparser.ActionsCollection{}
-	for collection in tree.collections.values() {
-		for page in collection.pages.values() {
+	mut actions_playbooks := playbook.PlayBook{}
+	for playbook in tree.playbooks.values() {
+		for page in playbook.pages.values() {
 			if d := page.doc {
-				actions_collections.actions << d.actions()
+				actions_playbooks.actions << d.actions()
 			}
 		}
 	}
 
-	// ap := actionparser.parse(path: m.params.path, defaultcircle: 'bizmodel_${m.params.name}')!
-	m.revenue_actions(actions_collections)!
-	m.hr_actions(actions_collections)!
-	m.funding_actions(actions_collections)!
-	m.overhead_actions(actions_collections)!
+	// ap := playbook.parse(path: m.params.path, defaultcircle: 'bizmodel_${m.params.name}')!
+	m.revenue_actions(actions_playbooks)!
+	m.hr_actions(actions_playbooks)!
+	m.funding_actions(actions_playbooks)!
+	m.overhead_actions(actions_playbooks)!
 
 	// tr.scan(
 	// 	path: wikipath

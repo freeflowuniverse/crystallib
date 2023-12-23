@@ -84,7 +84,7 @@ pub fn parse(text string) !Params {
 				ch_prev = ch
 				continue
 			} else if !validchars.contains(ch) {
-				return error("text to params processor: parameters can only be A-Za-z0-9 and _., here found: '${key}${ch}' in\n${text2}\n\n")
+				return error("text to params processor: parameters can only be A-Za-z0-9 and _., found illegal char: '${key}${ch}' in\n${text2}\n\n")
 			} else {
 				key += ch
 				ch_prev = ch

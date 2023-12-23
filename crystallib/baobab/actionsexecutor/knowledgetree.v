@@ -1,9 +1,9 @@
 module actionsexecutor
 
-// import freeflowuniverse.crystallib.data.actionparser
+// import freeflowuniverse.crystallib.core.playbook
 // import freeflowuniverse.crystallib.data.doctree
 
-// fn doctree(mut actions actionparser.Actions, action actionparser.Action) ! {
+// fn doctree(mut actions playbook.Actions, action playbook.Action) ! {
 // 	if action.name == 'scan' {
 // 		mut name := action.params.get_default('name', 'default')!
 

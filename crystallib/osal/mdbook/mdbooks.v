@@ -63,6 +63,15 @@ fn (mut tree MDBooks) load() ! {
 	tree.embedded_files << $embed_file('template/mermaid.min.js')
 }
 
+pub fn (mut self MDBooks) get(name string) !&MDBook {
+	for book in self.books {
+		if book.name == name {
+			return book
+		}
+	}
+	return error("can't find book with name ${name}")
+}
+
 pub fn (mut self MDBooks) init() ! {
 	self.load()!
 	for mut book in self.books {

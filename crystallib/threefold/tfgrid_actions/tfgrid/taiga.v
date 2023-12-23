@@ -1,6 +1,6 @@
 module tfgrid
 
-import freeflowuniverse.crystallib.data.actionparser { Action }
+import freeflowuniverse.crystallib.core.playbook { Action }
 import rand
 
 fn (mut t TFGridHandler) taiga(action Action) ! {

@@ -2,7 +2,6 @@
 
 is our small language which allows us to execute parser
 
->> TODO: needs to be revisted
 
 ## parser
 
@@ -10,7 +9,7 @@ are text based representatsions of parser which need to be executed
 
 example
 
-```
+```js
 !!tflibrary.circlesmanager.circle_add 
     gitsource:'books'
     path:'technology/src'
@@ -18,6 +17,12 @@ example
 ```
 
 the first one is the action, the rest are the params
+
+```v
+import freeflowuniverse.crystallib.core.playbook
+mut plbook := new(text: "....") or { panic(err) }
+
+```
 
 
 ## to select cid, actor or circle
@@ -38,23 +43,17 @@ The generic parser()... is used to make all happen.
 
 
 ```go
-import freeflowuniverse.crystallib.data.actionparser
+import freeflowuniverse.crystallib.core.playbook
 
 // !!hr.employee_define
 //     descr:'Junior Engineer'
 //     growth:'1:5,60:30' cost:'4000USD' indexation:'5%'
 //     department:'engineering'
 
-pub parser(parser actionparser.Parser) ! {
-    
-    mut bizmodel:=...
-    bizmodel.hr_actions(parser actionparser.Parser)!
-
-}
 
 // populate the params for hr
-fn (mut m BizModel) hr_actions(parser actionparser.Parser) ! {
-	mut actions2 := parser.filtersort(actor: 'hr')!
+fn (mut m BizModel) hr_actions(actions playbook.PlayBook) ! {
+	mut actions2 := actions.find('hr.*,vm.start')!
 	for action in actions2 {
 		if action.name == 'employee_define' {
 			mut name := action.params.get_default('name', '')!

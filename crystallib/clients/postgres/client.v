@@ -3,7 +3,7 @@ module postgres
 import db.pg
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.fskvs
-import freeflowuniverse.crystallib.data.actionparser
+import freeflowuniverse.crystallib.core.playbook
 import json
 // import time
 import freeflowuniverse.crystallib.ui
@@ -115,7 +115,7 @@ pub fn configure(args_ PostgresClientConfig) !PostgresClientConfig {
 
 	if args.script3.len > 0 {
 		// means 3script used to configure this client
-		mut ap := actionparser.parse_collection(text: args.script3)!
+		mut ap := playbook.parse_playbook(text: args.script3)!
 		for action in ap.actions {
 			if action.actor == 'postgres_client' && action.name == 'define' {
 				args.name = action.params.get_default('name', 'default')!

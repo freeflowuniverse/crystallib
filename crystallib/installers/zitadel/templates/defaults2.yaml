@@ -5,7 +5,7 @@ Log:
 
 # Exposes metrics on /debug/metrics
 Metrics:
-  # Select type otel (OpenTelemetry) or none (disables collection and endpoint)
+  # Select type otel (OpenTelemetry) or none (disables playbook and endpoint)
   Type: otel # ZITADEL_METRICS_TYPE
 
 Tracing:

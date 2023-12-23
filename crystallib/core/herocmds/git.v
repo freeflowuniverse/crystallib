@@ -93,21 +93,22 @@ pub fn cmd_git(mut cmdroot Command) {
 		})
 	}
 
-	clone_command.add_flag(Flag{
-		flag: .string
-		required: true
-		name: 'url'
-		abbrev: 'u'
-		description: 'url for clone operation.'
-	})
-
-	pull_command.add_flag(Flag{
-		flag: .string
-		required: true
-		name: 'url'
-		abbrev: 'u'
-		description: 'url for pull operation.'
-	})
+	mut urlcmds := [&clone_command, &pull_command, &push_command, &editor_command, &sourcetree_command]
+	for mut c in urlcmds {
+		c.add_flag(Flag{
+			flag: .string
+			required: false
+			name: 'url'
+			abbrev: 'u'
+			description: 'url for clone operation.'
+		})
+		c.add_flag(Flag{
+			flag: .bool
+			required: false
+			name: 'pull'
+			description: 'force a pull.'
+		})
+	}
 
 	for mut c in allcmdsref {
 		c.add_flag(Flag{
@@ -202,6 +203,7 @@ fn cmd_git_execute(cmd Command) ! {
 			provider: provider
 			cmd: cmd.name
 			script: cmd.flags.get_bool('script') or { false }
+			pull: cmd.flags.get_bool('pull') or { false }
 			reset: cmd.flags.get_bool('reset') or { false }
 			msg: cmd.flags.get_string('message') or { '' }
 			url: cmd.flags.get_string('url') or { '' }

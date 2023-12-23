@@ -1,6 +1,6 @@
 module tfgrid
 
-import freeflowuniverse.crystallib.data.actionparser { Action }
+import freeflowuniverse.crystallib.core.playbook { Action }
 import freeflowuniverse.crystallib.threefold.web3gw.tfgrid as tfgrid_client { GatewayName }
 import rand
 

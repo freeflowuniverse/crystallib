@@ -1,6 +1,6 @@
 module web3gw
 
-import freeflowuniverse.crystallib.data.actionparser { Action }
+import freeflowuniverse.crystallib.core.playbook { Action }
 import strconv
 
 const default_currencies = {

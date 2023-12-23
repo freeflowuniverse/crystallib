@@ -3,7 +3,7 @@ module elements
 import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.paramsparser
-import freeflowuniverse.crystallib.data.actionparser
+import freeflowuniverse.crystallib.core.playbook
 
 @[heap]
 pub struct Doc {
@@ -87,8 +87,8 @@ pub fn doc_new(args DocNewArgs) !Doc {
 	return d
 }
 
-pub fn (self Doc) actions() []actionparser.Action {
-	mut out := []actionparser.Action{}
+pub fn (self Doc) actions() []playbook.Action {
+	mut out := []playbook.Action{}
 	for element in self.children {
 		if element is Action {
 			out << element.action

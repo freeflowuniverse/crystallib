@@ -65,7 +65,7 @@ const text2 = "
 
 fn test_filter_on_circle_aaa() ! {
 	// test filter circle:aaa
-	mut parser := new(default_cid: 1, text: actionparser.text2)!
+	mut parser := new(default_cid: 1, text: playbook.text2)!
 	assert parser.actions.len == 8
 	sorted := parser.filtersort(circle: 'aaa')!
 	assert sorted.len == 7
@@ -73,7 +73,7 @@ fn test_filter_on_circle_aaa() ! {
 
 fn test_filter_on_actor_people_and_circle_aaa() ! {
 	// test filter circle:aaa actor:people
-	mut parser := new(default_cid: 1, text: actionparser.text2)!
+	mut parser := new(default_cid: 1, text: playbook.text2)!
 	assert parser.actions.len == 8
 	sorted := parser.filtersort(actor: 'people', circle: 'aaa')! // QUESTION: can you leave actor blank? ANSWER: Yes you can, I added a test on top
 	assert sorted.len == 6
@@ -81,7 +81,7 @@ fn test_filter_on_actor_people_and_circle_aaa() ! {
 
 fn test_filter_on_actor_people_and_circle_bbb() ! {
 	// test filter actor:people
-	mut parser := new(default_cid: 1, text: actionparser.text2)!
+	mut parser := new(default_cid: 1, text: playbook.text2)!
 	assert parser.actions.len == 8
 	sorted := parser.filtersort(actor: 'people', circle: 'bbb')!
 	assert sorted.len == 1
@@ -89,7 +89,7 @@ fn test_filter_on_actor_people_and_circle_bbb() ! {
 
 fn test_filter_on_actor_people_and_circle_ccc() ! {
 	// test filter circle:ccc actor:people
-	mut parser := new(default_cid: 1, text: actionparser.text2)!
+	mut parser := new(default_cid: 1, text: playbook.text2)!
 	assert parser.actions.len == 8
 	sorted := parser.filtersort(actor: 'people', circle: 'ccc')!
 	assert sorted.len == 0
@@ -97,7 +97,7 @@ fn test_filter_on_actor_people_and_circle_ccc() ! {
 
 // test filter circle:aaa actor:test
 fn test_filter_on_actor_test_and_circle_aaa() ! {
-	mut parser := new(default_cid: 1, text: actionparser.text2)!
+	mut parser := new(default_cid: 1, text: playbook.text2)!
 	assert parser.actions.len == 8
 	sorted := parser.filtersort(actor: 'test', circle: 'aaa')!
 	assert sorted.len == 1
@@ -105,7 +105,7 @@ fn test_filter_on_actor_test_and_circle_aaa() ! {
 
 // test filter with names:[*]
 fn test_filter_with_names_asterix() ! {
-	mut parser := new(default_cid: 1, text: actionparser.text2)!
+	mut parser := new(default_cid: 1, text: playbook.text2)!
 	assert parser.actions.len == 8
 	assert parser.actions.map(it.name) == ['person_delete', 'person_define', 'circle_link',
 		'circle_comment', 'circle_comment', 'digital_payment_add', 'test_action', 'person_define']
@@ -122,7 +122,7 @@ fn test_filter_with_names_list_with_empty_string() ! {
 	// ANSWER: I think yes as you technically want the parser where the name is an empty string
 	mut parser := new(
 		default_cid: 1
-		text: actionparser.text2
+		text: playbook.text2
 	)!
 
 	assert parser.actions.map(it.name) == ['person_delete', 'person_define', 'circle_link',
@@ -137,7 +137,7 @@ fn test_filter_with_names_list_with_empty_string() ! {
 fn test_filter_with_names_in_same_order() ! {
 	mut parser := new(
 		default_cid: 1
-		text: actionparser.text2
+		text: playbook.text2
 	)!
 
 	sorted := parser.filtersort(
@@ -160,7 +160,7 @@ fn test_filter_with_names_in_same_order() ! {
 fn test_filter_with_names_in_different_order() ! {
 	mut parser := new(
 		default_cid: 1
-		text: actionparser.text2
+		text: playbook.text2
 	)!
 
 	sorted := parser.filtersort(
@@ -185,7 +185,7 @@ fn test_filter_with_only_two_names_in_filter() ! {
 	// ANSWER: yes
 	mut parser := new(
 		default_cid: 1
-		text: actionparser.text2
+		text: playbook.text2
 	)!
 
 	sorted := parser.filtersort(

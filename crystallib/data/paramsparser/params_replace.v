@@ -19,11 +19,16 @@ pub fn (mut params Params) replace(args map[string]string) {
 		for i in regext.find_simple_vars(p.value) {
 			i2 := texttools.name_fix(i)
 			if i2 in args {
-				// println("$i -> ${args[i2]}")
-				p.value = p.value.replace(i, args[i2])
+				println('${i} -> ${args[i2]}')
+				p.value = p.value.replace('\{${i}\}', args[i2])
 			}
 		}
 	}
+}
+
+pub fn (mut params Params) replace_from_params(params_ Params) {
+	p := params_.get_map()
+	params.replace(p)
 }
 
 // func main() {

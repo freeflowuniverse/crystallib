@@ -17,7 +17,7 @@ pub enum FileType {
 @[heap]
 pub struct File {
 pub mut:
-	collection   &Collection  @[str: skip]
+	playbook   &Collection  @[str: skip]
 	name         string // received a name fix
 	path         pathlib.Path
 	pathrel      string
@@ -33,7 +33,7 @@ fn (mut file File) init() {
 
 	file.name = file.path.name_fix_no_ext()
 
-	path_rel := file.path.path_relative(file.collection.path.path) or {
+	path_rel := file.path.path_relative(file.playbook.path.path) or {
 		panic('cannot get relative path.\n${err}')
 	}
 
@@ -49,8 +49,8 @@ fn (mut file File) mv(dest string) ! {
 	os.mv(file.path.path, desto.path) or {
 		return error('could not rename ${file.path.path} to ${desto.path} .\n${err}\n${file}')
 	}
-	// need to get relative path in, in relation to collection
-	file.pathrel = desto.path_relative(file.collection.path.path)!
+	// need to get relative path in, in relation to playbook
+	file.pathrel = desto.path_relative(file.playbook.path.path)!
 	file.path = desto
 }
 

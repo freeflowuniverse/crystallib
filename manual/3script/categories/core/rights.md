@@ -59,7 +59,6 @@ The default is deny all.
     range_allow:'
             !task.define,!task.get,!task.list
             !issue.define,!issue.get,!issue.list
-            !
             '
 
 

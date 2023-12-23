@@ -1,6 +1,6 @@
 module elements
 
-import freeflowuniverse.crystallib.data.actionparser
+import freeflowuniverse.crystallib.core.playbook
 
 @[heap]
 pub struct Codeblock {
@@ -13,8 +13,8 @@ pub fn (mut self Codeblock) process(mut doc Doc) !int {
 	if self.processed {
 		return 0
 	}
-	mut collection := actionparser.parse_collection(text: self.content)!
-	for mut action in collection.actions {
+	mut playbook := playbook.parse_playbook(text: self.content)!
+	for mut action in playbook.actions {
 		mut a := doc.action_new(
 			parent: ElementRef{
 				ref: self
@@ -26,12 +26,12 @@ pub fn (mut self Codeblock) process(mut doc Doc) !int {
 	}
 
 	// now see if there is something left in codeblock, if yes add that one to the parent_elements
-	if collection.othertext.len > 0 {
+	if playbook.othertext.len > 0 {
 		doc.text_new(
 			parent: ElementRef{
 				ref: self
 			}
-			content: collection.othertext
+			content: playbook.othertext
 		)
 	}
 

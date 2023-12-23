@@ -39,7 +39,7 @@ fn (item ParamExportItem) oneline() string {
 fn (item ParamExportItem) getval() string {
 	mut val := item.value
 	val = val.replace('\n', '\\n')
-	if val.contains(' ') || val.contains('\n') || item.key in ['cid', 'oid', 'gid'] {
+	if val.contains(' ') || val.contains(',') || val.contains('\\n') || item.key in ['cid', 'oid', 'gid'] {
 		val = "'${val}'"
 	}
 	return val

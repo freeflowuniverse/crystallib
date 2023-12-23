@@ -36,7 +36,7 @@ pub fn cmd_biztools(mut cmdroot Command) {
 		required: false
 		name: 'inputdir'
 		abbrev: 'i'
-		description: 'path to the collections, can be more than 1, if not specifieds is current dir.'
+		description: 'path to the playbooks, can be more than 1, if not specifieds is current dir.'
 	})
 
 	cmdroot.add_command(cmd_run)
@@ -83,7 +83,7 @@ fn cmd_biztools_execute(cmd Command) ! {
 	// mut book := bizmodel.new(
 	// 	name: 'example'
 	// 	mdbook_name: 'biz_book'
-	// 	mdbook_path: summarydir // TODO: need to make sure we support collections not to be on same place as summary
+	// 	mdbook_path: summarydir // TODO: need to make sure we support playbooks not to be on same place as summary
 	// 	mdbook_dest: outputdir
 	// 	path: inputdir
 	// )!

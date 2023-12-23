@@ -260,7 +260,7 @@ pub fn (mut repo GitRepo) push(args_ ActionArgs) ! {
 		args.reload = false
 	}
 	$if debug {
-		println('   - PUSH: ${repo.url_get(true)} on ${repo.path}')
+		println('   - PUSH: ${repo.url_get(true)} on ${repo.path.path}')
 	}
 	// repo.ssh_key_load()!
 	// defer {

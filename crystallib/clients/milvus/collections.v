@@ -6,18 +6,18 @@ import json
 
 pub struct Collection {
 pub mut:
-	collection_name string  @[json: 'collectionName'; required] // The name of the collection to create.
+	playbook_name string  @[json: 'playbookName'; required] // The name of the playbook to create.
 	db_name         ?string @[json: 'dbName'] // The name of the database.
-	description     ?string // The description of the collection
-	dimension       u16     @[required] // The number of dimensions for the vector field of the collection. For performance-optimized CUs, this value ranges from 1 to 32768. For capacity-optimized and cost-optimized CUs, this value ranges from 32 to 32768. The value ranges from 1 to 32768.
-	metric_type     string   = 'L2'  @[json: 'metricType'] // The distance metric used for the collection. The value defaults to L2.
+	description     ?string // The description of the playbook
+	dimension       u16     @[required] // The number of dimensions for the vector field of the playbook. For performance-optimized CUs, this value ranges from 1 to 32768. For capacity-optimized and cost-optimized CUs, this value ranges from 32 to 32768. The value ranges from 1 to 32768.
+	metric_type     string   = 'L2'  @[json: 'metricType'] // The distance metric used for the playbook. The value defaults to L2.
 	primary_field   string = 'id'  @[json: 'primaryField'] // The primary key field. The value defaults to id.
 	vector_field    string  = 'vector'  @[json: 'vectorField'] // The vector field. The value defaults to vector.
 }
 
-pub fn (c Client) create_collection(collection Collection) ! {
-	url := '${c.endpoint}/v1/vector/collections/create'
-	body := json2.encode(collection)
+pub fn (c Client) create_playbook(playbook Collection) ! {
+	url := '${c.endpoint}/v1/vector/playbooks/create'
+	body := json2.encode(playbook)
 	mut req := http.new_request(http.Method.post, url, body)
 	c.do_request(mut req)!
 }
@@ -28,7 +28,7 @@ possible errors:
 		1800	user hasn't authenticate
 		1801	can only accept json format request
 		1802	missing required parameters
-		1803	fail to marshal collection schema
+		1803	fail to marshal playbook schema
 */
 
 pub struct Field {
@@ -49,37 +49,37 @@ pub mut:
 
 pub struct CollectionDescription {
 pub mut:
-	collection_name      string  @[json: 'collectionName'] // The name of the collection.
-	description          string // An optional description of the collection.
+	playbook_name      string  @[json: 'playbookName'] // The name of the playbook.
+	description          string // An optional description of the playbook.
 	fields               []Field
 	indexes              []Index
-	load                 string // The load status of the collection. Possible values are unload, loading, and loaded.
-	shards_number        u32     @[json: 'shardsNum'] // The number of shards in the collection.
-	enable_dynamic_field bool    @[json: 'enableDynamicField'] // Whether the dynamic JSON feature is enabled for this collection.
+	load                 string // The load status of the playbook. Possible values are unload, loading, and loaded.
+	shards_number        u32     @[json: 'shardsNum'] // The number of shards in the playbook.
+	enable_dynamic_field bool    @[json: 'enableDynamicField'] // Whether the dynamic JSON feature is enabled for this playbook.
 }
 
 @[params]
 pub struct DescribeCollectionArgs {
-	collection_name string  @[required] // The name of the collection to describe.
+	playbook_name string  @[required] // The name of the playbook to describe.
 	db_name         ?string // The name of the database.
 }
 
-pub fn (c Client) describe_collection(args DescribeCollectionArgs) !CollectionDescription {
-	mut url := '${c.endpoint}/v1/vector/collections/describe?collectionName=${args.collection_name}'
+pub fn (c Client) describe_playbook(args DescribeCollectionArgs) !CollectionDescription {
+	mut url := '${c.endpoint}/v1/vector/playbooks/describe?playbookName=${args.playbook_name}'
 	if db_name := args.db_name {
 		url = '${url}&dbName=${db_name}'
 	}
 
 	mut req := http.new_request(http.Method.get, url, '')
 	data := c.do_request(mut req)!
-	return decode_collection_description(data)
+	return decode_playbook_description(data)
 }
 
-fn decode_collection_description(data json2.Any) CollectionDescription {
+fn decode_playbook_description(data json2.Any) CollectionDescription {
 	mp := data.as_map()
 	mut description := CollectionDescription{}
-	if name := mp['collectionName'] {
-		description.collection_name = name.str()
+	if name := mp['playbookName'] {
+		description.playbook_name = name.str()
 	}
 
 	if desc := mp['description'] {
@@ -153,28 +153,28 @@ fn decode_collection_description(data json2.Any) CollectionDescription {
 
 @[params]
 pub struct DropCollectionArgs {
-	collection_name string  @[json: 'collectionName'; required] // The name of the collection to describe.
+	playbook_name string  @[json: 'playbookName'; required] // The name of the playbook to describe.
 	db_name         ?string @[json: 'dbName'] // The name of the database.
 }
 
-pub fn (c Client) drop_collection(args DropCollectionArgs) ! {
-	url := '${c.endpoint}/v1/vector/collections/drop'
+pub fn (c Client) drop_playbook(args DropCollectionArgs) ! {
+	url := '${c.endpoint}/v1/vector/playbooks/drop'
 	body := json.encode(args)
 
 	mut req := http.new_request(http.Method.post, url, body)
 	c.do_request(mut req)!
 }
 
-pub fn (c Client) list_collections() ![]string {
-	url := '${c.endpoint}/v1/vector/collections'
+pub fn (c Client) list_playbooks() ![]string {
+	url := '${c.endpoint}/v1/vector/playbooks'
 
 	mut req := http.new_request(http.Method.get, url, '')
 	data := c.do_request(mut req)!
 
-	return decode_collection_list(data)
+	return decode_playbook_list(data)
 }
 
-fn decode_collection_list(data json2.Any) []string {
+fn decode_playbook_list(data json2.Any) []string {
 	mut list := []string{}
 
 	arr := data.arr()

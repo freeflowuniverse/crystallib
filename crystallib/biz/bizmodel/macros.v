@@ -1,7 +1,7 @@
 module bizmodel
 
 import freeflowuniverse.crystallib.data.doctree
-import freeflowuniverse.crystallib.data.actionparser
+import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.biz.spreadsheet
 import freeflowuniverse.crystallib.data.markdownparser.elements
 
@@ -17,7 +17,7 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !doctree.MacroRes
 	mut r := doctree.MacroResult{
 		state: .stop
 	}
-	ap := actionparser.parse_collection(text: code)!
+	ap := playbook.parse_playbook(text: code)!
 	mut actions2 := ap.find(actor: 'bizmodel')
 	for action in actions2 {
 		p := action.params
