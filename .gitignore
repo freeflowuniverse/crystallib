@@ -7,3 +7,5 @@ vls.*
 vls.log
 node_modules/
 docs/
+photonwrapper.so
+x
