@@ -37,9 +37,6 @@ pub fn (addr GitAddr) path() !pathlib.Path {
 	if addr.gsconfig.multibranch {
 		path_string += '/${addr.branch}'
 	}
-
-	// QUESTION: checking and creating path is causing unintended consequenses,
-	// it is expected that this method doesn't create the path, right?
 	path := pathlib.get_dir(
 		path: path_string
 		check: false

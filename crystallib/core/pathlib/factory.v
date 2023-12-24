@@ -49,12 +49,16 @@ pub fn get_dir(args_ GetArgs) !Path {
 	if args.check {
 		p2.check()
 		p2.absolute()
-		if p2.exist == .no {
-			os.mkdir_all(p2.absolute()) or { return error('cannot create path ${p2}') } // Make sure that all the needed paths created		
-			p2.check()
-		}
 		if !p2.is_dir() {
 			return error('Path ${args.path} is not a dir.')
+		}		
+		if p2.exist == .no {
+			if args.create{
+				os.mkdir_all(p2.absolute()) or { return error('cannot create path ${p2}') } // Make sure that all the needed paths created		
+				p2.check()
+			}else{
+				return error('Path ${args.path} does not exist.')	
+			}			
 		}
 		if args.empty {
 			p2.empty()!
@@ -78,13 +82,20 @@ pub fn get_file(args_ GetArgs) !Path {
 			mut parent_ := p2.parent()!
 			parent_.check()
 			if parent_.exist == .no {
-				os.mkdir_all(parent_.path) or { return error('cannot create path:${args.path}') }
+				if args.create{
+					os.mkdir_all(parent_.path) or { return error('cannot create path:${args.path}') }
+					os.write_file(args.path, '') or {
+						return error('cannot create empty file:${args.path} ${err}')
+					}
+					p2.check()					
+				}else{
+					return error('Path ${args.path} does not exist.')	
+				}
 			}
-			if p2.exist == .no || args.empty {
+			if args.empty {
 				os.write_file(args.path, '') or {
 					return error('cannot create empty file:${args.path} ${err}')
 				}
-				p2.check()
 			}
 		}
 		if !p2.is_file() {
