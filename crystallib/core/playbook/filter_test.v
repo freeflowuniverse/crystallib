@@ -66,7 +66,7 @@ const text2 = "
 
 fn test_filter_on_circle_aaa() ! {
 	// test filter circle:aaa
-	mut parser := new( text: playbook.text2)!
+	mut parser := new(text: playbook.text2)!
 	assert parser.actions.len == 8
 	sorted := parser.filtersort(circle: 'aaa')!
 	assert sorted.len == 7
@@ -74,7 +74,7 @@ fn test_filter_on_circle_aaa() ! {
 
 fn test_filter_on_actor_people_and_circle_aaa() ! {
 	// test filter circle:aaa actor:people
-	mut parser := new( text: playbook.text2)!
+	mut parser := new(text: playbook.text2)!
 	assert parser.actions.len == 8
 	sorted := parser.filtersort(actor: 'people', circle: 'aaa')! // QUESTION: can you leave actor blank? ANSWER: Yes you can, I added a test on top
 	assert sorted.len == 6
@@ -82,7 +82,7 @@ fn test_filter_on_actor_people_and_circle_aaa() ! {
 
 fn test_filter_on_actor_people_and_circle_bbb() ! {
 	// test filter actor:people
-	mut parser := new( text: playbook.text2)!
+	mut parser := new(text: playbook.text2)!
 	assert parser.actions.len == 8
 	sorted := parser.filtersort(actor: 'people', circle: 'bbb')!
 	assert sorted.len == 1
@@ -90,7 +90,7 @@ fn test_filter_on_actor_people_and_circle_bbb() ! {
 
 fn test_filter_on_actor_people_and_circle_ccc() ! {
 	// test filter circle:ccc actor:people
-	mut parser := new( text: playbook.text2)!
+	mut parser := new(text: playbook.text2)!
 	assert parser.actions.len == 8
 	sorted := parser.filtersort(actor: 'people', circle: 'ccc')!
 	assert sorted.len == 0
@@ -98,7 +98,7 @@ fn test_filter_on_actor_people_and_circle_ccc() ! {
 
 // test filter circle:aaa actor:test
 fn test_filter_on_actor_test_and_circle_aaa() ! {
-	mut parser := new( text: playbook.text2)!
+	mut parser := new(text: playbook.text2)!
 	assert parser.actions.len == 8
 	sorted := parser.filtersort(actor: 'test', circle: 'aaa')!
 	assert sorted.len == 1
@@ -106,7 +106,7 @@ fn test_filter_on_actor_test_and_circle_aaa() ! {
 
 // test filter with names:[*]
 fn test_filter_with_names_asterix() ! {
-	mut parser := new( text: playbook.text2)!
+	mut parser := new(text: playbook.text2)!
 	assert parser.actions.len == 8
 	assert parser.actions.map(it.name) == ['person_delete', 'person_define', 'circle_link',
 		'circle_comment', 'circle_comment', 'digital_payment_add', 'test_action', 'person_define']

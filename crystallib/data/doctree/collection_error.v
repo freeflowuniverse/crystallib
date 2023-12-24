@@ -33,7 +33,7 @@ pub fn (mut playbook Collection) error(args CollectionError) {
 pub struct ObjNotFound {
 	Error
 pub:
-	name       string
+	name     string
 	playbook string
 }
 

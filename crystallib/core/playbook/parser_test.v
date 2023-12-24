@@ -19,16 +19,16 @@ fn test_parse_1() {
 	println(a.actions)
 
 	assert a.actions.len == 1
-	mut s:=a.actions_sorted()!
+	mut s := a.actions_sorted()!
 	assert s.len == 1
-	mut sorted:=a.actions_sorted(filtered:true)!
-	assert sorted.len == 0	
+	mut sorted := a.actions_sorted(filtered: true)!
+	assert sorted.len == 0
 
-	mut myaction:=s[0] or {panic("bug")}
+	mut myaction := s[0] or { panic('bug') }
 
-	assert myaction.comments=='comment for the action'
-	assert myaction.params.params.len==6
-	assert myaction.id==1
+	assert myaction.comments == 'comment for the action'
+	assert myaction.params.params.len == 6
+	assert myaction.id == 1
 
 	println("EXPECTED OUTPUT:
 	!!payment.add id:1 account:something description:'TF Wallet for TFT' person:fatayera preferred:false
@@ -36,9 +36,9 @@ fn test_parse_1() {
 		blockchain:stellar //holochain maybe?
 	")
 
-	assert a.hashkey()  == '89444b5d8ea4f7ded66cced6067b7c822cecf1c3'
-	c:= a.script3()!
-	b := new(text:c) or { panic(err) }
+	assert a.hashkey() == '89444b5d8ea4f7ded66cced6067b7c822cecf1c3'
+	c := a.script3()!
+	b := new(text: c) or { panic(err) }
 
 	println(b)
 	assert b.hashkey() == '89444b5d8ea4f7ded66cced6067b7c822cecf1c3'
@@ -46,7 +46,7 @@ fn test_parse_1() {
 
 fn test_parser() {
 	mut pb := new(text: playbook.text1) or { panic(err) }
-	mut a:=pb.actions[0]
+	mut a := pb.actions[0]
 	assert a.actor == 'payment'
 	assert a.name == 'add'
 	assert a.params.get('name')! == 'TF Wallet'

@@ -4,7 +4,6 @@ import freeflowuniverse.crystallib.core.play
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
 
-
 @[params]
 pub struct Config {
 pub mut:
@@ -18,36 +17,37 @@ pub mut:
 	starttls    bool = true
 }
 
-//return a config object even if from partial info
-pub fn config(args Config)Config{
+// return a config object even if from partial info
+pub fn config(args Config) Config {
 	return args
 }
 
-//get the configurator
-pub fn configurator(instance string, playargs play.PlayArgs)!play.Configurator[Config] {	
-	mut c:=play.configurator_new[Config](name:'mailclient',instance:instance,playargs:playargs)!
+// get the configurator
+pub fn configurator(instance string, playargs play.PlayArgs) !play.Configurator[Config] {
+	mut c := play.configurator_new[Config](
+		name: 'mailclient'
+		instance: instance
+		playargs: playargs
+	)!
 	return c
-} 
-
+}
 
 pub fn play_session(mut session play.Session) ! {
-	
-	for mut action in session.plbook.find(filter:'mailclient.define')! {
-		mut p := action.params		
-		mut args:=config()
-		args.instance = p.get_default('name','')!
-		if args.instance == ""{
+	for mut action in session.plbook.find(filter: 'mailclient.define')! {
+		mut p := action.params
+		mut args := config()
+		args.instance = p.get_default('name', '')!
+		if args.instance == '' {
 			args.instance = p.get_default('instance', 'default')!
-		}				
+		}
 		args.mail_from = p.get('mail_from')!
 		args.smtp_addr = p.get('smtp_addr')!
 		args.smtp_login = p.get('smtp_login')!
 		args.smtp_passwd = p.get('smtp_passwd')!
-		args.smpt_port = p.get_int('smpt_port')!		
-		mut c:=configurator(args.instance,session:session)!
+		args.smpt_port = p.get_int('smpt_port')!
+		mut c := configurator(args.instance, session: session)!
 		c.set(args)!
 	}
-
 }
 
 pub fn configure_interactive(mut args Config, mut session play.Session) ! {
@@ -97,6 +97,6 @@ pub fn configure_interactive(mut args Config, mut session play.Session) ! {
 		question: 'ssl, prob no'
 		default: args.ssl
 	)!
-	mut c:=configurator(args.instance,session:session)!
-	c.set(args)!	
+	mut c := configurator(args.instance, session: session)!
+	c.set(args)!
 }

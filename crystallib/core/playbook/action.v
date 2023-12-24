@@ -7,8 +7,8 @@ import freeflowuniverse.crystallib.core.texttools
 
 pub struct Action {
 pub mut:
-	id		int
-	cid		 string
+	id         int
+	cid        string
 	name       string
 	actor      string
 	priority   int = 10 // 0 is highest, do 10 as default
@@ -48,7 +48,7 @@ pub fn (action Action) script3() string {
 		out += '${action.actor}.'
 	}
 	out += '${action.name} '
-	if action.id>0{
+	if action.id > 0 {
 		out += 'id:${action.id} '
 	}
 	if !action.params.empty() {

@@ -13,12 +13,12 @@ pub enum PointerCat {
 // links to a page, image or file
 pub struct Pointer {
 pub mut:
-	playbook string // is the key of a playbook
-	name       string // is name without extension, all namefixed (lowercase...)
-	cat        PointerCat
-	extension  string // e.g. jpg
-	error      string // if there is an error on the pointer, then will be visible in this property
-	tree       string
+	playbook  string // is the key of a playbook
+	name      string // is name without extension, all namefixed (lowercase...)
+	cat       PointerCat
+	extension string // e.g. jpg
+	error     string // if there is an error on the pointer, then will be visible in this property
+	tree      string
 }
 
 // will return a clean pointer to a page, image or file

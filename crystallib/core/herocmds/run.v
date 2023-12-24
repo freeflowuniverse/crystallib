@@ -2,7 +2,6 @@ module herocmds
 
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.play
-
 import cli { Command, Flag }
 import os
 
@@ -46,7 +45,7 @@ pub fn cmd_run(mut cmdroot Command) {
 		name: 'contextname'
 		abbrev: 'cn'
 		description: 'name for the session (optional).'
-	})	
+	})
 	cmd_run.add_flag(Flag{
 		flag: .string
 		required: false
@@ -62,7 +61,6 @@ pub fn cmd_run(mut cmdroot Command) {
 		abbrev: 'gp'
 		description: 'will try to pull.'
 	})
-
 
 	cmd_run.add_flag(Flag{
 		flag: .bool
@@ -111,12 +109,10 @@ pub fn cmd_run(mut cmdroot Command) {
 		description: 'runs non interactive!'
 	})
 
-
 	cmdroot.add_command(cmd_run)
 }
 
 fn cmd_3script_execute(cmd Command) ! {
-
 	mut circle := cmd.flags.get_string('circle') or { 'test' }
 
 	mut path := cmd.flags.get_string('path') or { '' }
@@ -132,13 +128,13 @@ fn cmd_3script_execute(cmd Command) ! {
 
 	reset := cmd.flags.get_bool('gitreset') or { false }
 	pull := cmd.flags.get_bool('gitpull') or { false }
-	interactive := ! cmd.flags.get_bool('script') or { false }
+	interactive := !cmd.flags.get_bool('script') or { false }
 
 	run := cmd.flags.get_bool('run') or { false }
 	editor := cmd.flags.get_bool('editor') or { false }
 	sourcetree := cmd.flags.get_bool('sourcetree') or { false }
 
-	if url.len>0{
+	if url.len > 0 {
 		path = gittools.code_get(
 			coderoot: coderoot
 			pull: pull
@@ -147,29 +143,27 @@ fn cmd_3script_execute(cmd Command) ! {
 		)!
 	}
 
-	mut session:=play.session_new(
-				session_name:sessionname, 
-				context_name:contextname, 
-				coderoot:coderoot
-				interactive:interactive
-				)!
-
+	mut session := play.session_new(
+		session_name: sessionname
+		context_name: contextname
+		coderoot: coderoot
+		interactive: interactive
+	)!
 
 	// println(h)
 	if editor || sourcetree {
 		mut gs := gittools.get(coderoot: coderoot) or {
 			return error("Could not find gittools on '${coderoot}'\n${err}")
 		}
-		mut cmdname:="edit"
-		if sourcetree{
-			 cmdname="sourcetree"
+		mut cmdname := 'edit'
+		if sourcetree {
+			cmdname = 'sourcetree'
 		}
 		gs.do(
 			cmd: cmdname
 			script: !interactive
 			url: cmd.flags.get_string('url') or { '' }
-		)!		
-
+		)!
 	}
 
 	if cmd.flags.get_bool('run') or { false } {

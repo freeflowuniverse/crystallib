@@ -10,21 +10,21 @@ pub mut:
 	reset bool
 }
 
-pub fn install_multi(args_ InstallArgs)!{
-	mut args:=args_
-	mut items:=[]string{}
-	for item in args.names.split(",").map(it.trim_space()){
-		if ! (item in items){
-			items<<item
+pub fn install_multi(args_ InstallArgs) ! {
+	mut args := args_
+	mut items := []string{}
+	for item in args.names.split(',').map(it.trim_space()) {
+		if item !in items {
+			items << item
 		}
 	}
-	for item in items{
-
+	for item in items {
 		match item {
-			"vscode"{
-				vscode.install(reset:args.reset)!
-			}else{
-			return error("cannot find installer for: $item")
+			'vscode' {
+				vscode.install(reset: args.reset)!
+			}
+			else {
+				return error('cannot find installer for: ${item}')
 			}
 		}
 	}

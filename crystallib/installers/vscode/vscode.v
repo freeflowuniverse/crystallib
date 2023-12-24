@@ -8,17 +8,17 @@ pub fn install() ! {
 	// base.install()!
 	println(' - package_install install vscode')
 	if !osal.done_exists('install_vscode') && !osal.cmd_exists('vscode') {
-		mut url:=""
-		if osal.platform() in [.alpine,.arch,.ubuntu]{
-			if osal.cputype()==.arm{
+		mut url := ''
+		if osal.platform() in [.alpine, .arch, .ubuntu] {
+			if osal.cputype() == .arm {
 				url = 'https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-arm64'
-			}else{
+			} else {
 				url = 'https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-x64'
 			}
-		}else if osal.platform() == .osx{
-			if osal.cputype()==.arm{
+		} else if osal.platform() == .osx {
+			if osal.cputype() == .arm {
 				url = 'https://code.visualstudio.com/sha/download?build=stable&os=cli-darwin-arm64'
-			}else{
+			} else {
 				url = 'https://code.visualstudio.com/sha/download?build=stable&os=cli-darwin-x64'
 			}
 		}
@@ -27,12 +27,9 @@ pub fn install() ! {
 			url: url
 			minsize_kb: 40000
 			reset: true
-			dest:"/tmp/vscode.zip"
+			dest: '/tmp/vscode.zip'
 			// expand_file: '/tmp/download/vscode'
-		)!		
-
-		
-
+		)!
 
 		// osal.done_set('install_vscode', 'OK')!
 	}

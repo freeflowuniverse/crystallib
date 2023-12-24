@@ -14,20 +14,20 @@ pub enum PageStatus {
 @[heap]
 pub struct Page {
 pub mut:
-	name            string // received a name fix
-	path            pathlib.Path
-	pathrel         string // relative path in the playbook
-	state           PageStatus
-	pages_included  []&Page      @[str: skip]
-	pages_linked    []&Page      @[str: skip]
-	files_linked    []&File      @[str: skip]
-	categories      []string
-	doc             ?Doc         @[str: skip]
-	readonly        bool
-	changed         bool
-	tree_name       string
-	tree            &Tree        @[str: skip]
-	playbook_name string
+	name           string // received a name fix
+	path           pathlib.Path
+	pathrel        string // relative path in the playbook
+	state          PageStatus
+	pages_included []&Page      @[str: skip]
+	pages_linked   []&Page      @[str: skip]
+	files_linked   []&File      @[str: skip]
+	categories     []string
+	doc            ?Doc         @[str: skip]
+	readonly       bool
+	changed        bool
+	tree_name      string
+	tree           &Tree        @[str: skip]
+	playbook_name  string
 }
 
 fn (mut page Page) link_to_page_update(mut link Link) ! {

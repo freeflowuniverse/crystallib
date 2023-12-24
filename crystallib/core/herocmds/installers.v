@@ -48,6 +48,5 @@ fn cmd_installers_execute(cmd Command) ! {
 	// 	return error(cmd.help_message())
 	// }
 
-	tools.install_multi(reset:reset,names:names)!
-
+	tools.install_multi(reset: reset, names: names)!
 }

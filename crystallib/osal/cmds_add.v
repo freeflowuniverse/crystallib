@@ -7,8 +7,8 @@ pub struct CmdAddArgs {
 pub mut:
 	cmdname string
 	source  string @[required] // path where the binary is
-	symlink bool //if rather than copy do a symlink
-	reset bool //if existing cmd will delete
+	symlink bool // if rather than copy do a symlink
+	reset   bool // if existing cmd will delete
 	// bin_repo_url string = 'https://github.com/freeflowuniverse/freeflow_binary' // binary where we put the results
 }
 
@@ -37,20 +37,20 @@ pub fn cmd_add(args_ CmdAddArgs) ! {
 	if res.exit_code == 0 {
 		existing_path := res.output.trim_space()
 		if dest != existing_path {
-			if args.reset{
+			if args.reset {
 				os.rm(existing_path)!
-			}else{
+			} else {
 				return error("existing cmd found on: ${existing_path} and can't delete.")
 			}
 		}
 	}
 
-	if args.symlink{
+	if args.symlink {
 		sourcepath.link(destpath, true)!
-	}else{
+	} else {
 		sourcepath.copy(dest: destpath, rsync: false)!
 	}
-	
+
 	mut destfile := pathlib.get_file(path: destpath, create: false)!
 
 	destfile.chmod(0o770)! // includes read & write & execute

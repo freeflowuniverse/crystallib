@@ -13,7 +13,7 @@ pub mut:
 	url          string
 	path_build   pathlib.Path
 	path_publish pathlib.Path
-	playbooks  []MDBookCollection
+	playbooks    []MDBookCollection
 	gitrepokey   string
 	title        string
 }

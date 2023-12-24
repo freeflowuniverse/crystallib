@@ -235,22 +235,22 @@ fn new(config_ GitStructureConfig) !GitStructure {
 @[params]
 pub struct GitDirGetArgs {
 pub mut:
-	path        string 
+	path string
 }
 
-
-//look for git dir at (.git location), 
-//if path not specified will take current path,
-//will give error if we can't find the .git location
+// look for git dir at (.git location),
+// if path not specified will take current path,
+// will give error if we can't find the .git location
 pub fn git_dir_get(args_ GitDirGetArgs) !string {
-	mut args:=args_
-	if args.path==""{
-		args.path= os.getwd()
+	mut args := args_
+	if args.path == '' {
+		args.path = os.getwd()
 	}
-		
+
 	mut curdiro := pathlib.get_dir(path: args.path, create: false)!
-	mut parentpath := curdiro.parent_find('.git') or { return error("cannot find git dir in $args.path") }
+	mut parentpath := curdiro.parent_find('.git') or {
+		return error('cannot find git dir in ${args.path}')
+	}
 
 	return parentpath.path
-
 }

@@ -7,12 +7,12 @@ import json
 pub struct Collection {
 pub mut:
 	playbook_name string  @[json: 'playbookName'; required] // The name of the playbook to create.
-	db_name         ?string @[json: 'dbName'] // The name of the database.
-	description     ?string // The description of the playbook
-	dimension       u16     @[required] // The number of dimensions for the vector field of the playbook. For performance-optimized CUs, this value ranges from 1 to 32768. For capacity-optimized and cost-optimized CUs, this value ranges from 32 to 32768. The value ranges from 1 to 32768.
-	metric_type     string   = 'L2'  @[json: 'metricType'] // The distance metric used for the playbook. The value defaults to L2.
-	primary_field   string = 'id'  @[json: 'primaryField'] // The primary key field. The value defaults to id.
-	vector_field    string  = 'vector'  @[json: 'vectorField'] // The vector field. The value defaults to vector.
+	db_name       ?string @[json: 'dbName'] // The name of the database.
+	description   ?string // The description of the playbook
+	dimension     u16     @[required] // The number of dimensions for the vector field of the playbook. For performance-optimized CUs, this value ranges from 1 to 32768. For capacity-optimized and cost-optimized CUs, this value ranges from 32 to 32768. The value ranges from 1 to 32768.
+	metric_type   string   = 'L2'  @[json: 'metricType'] // The distance metric used for the playbook. The value defaults to L2.
+	primary_field string = 'id'  @[json: 'primaryField'] // The primary key field. The value defaults to id.
+	vector_field  string  = 'vector'  @[json: 'vectorField'] // The vector field. The value defaults to vector.
 }
 
 pub fn (c Client) create_playbook(playbook Collection) ! {
@@ -49,7 +49,7 @@ pub mut:
 
 pub struct CollectionDescription {
 pub mut:
-	playbook_name      string  @[json: 'playbookName'] // The name of the playbook.
+	playbook_name        string  @[json: 'playbookName'] // The name of the playbook.
 	description          string // An optional description of the playbook.
 	fields               []Field
 	indexes              []Index
@@ -61,7 +61,7 @@ pub mut:
 @[params]
 pub struct DescribeCollectionArgs {
 	playbook_name string  @[required] // The name of the playbook to describe.
-	db_name         ?string // The name of the database.
+	db_name       ?string // The name of the database.
 }
 
 pub fn (c Client) describe_playbook(args DescribeCollectionArgs) !CollectionDescription {
@@ -154,7 +154,7 @@ fn decode_playbook_description(data json2.Any) CollectionDescription {
 @[params]
 pub struct DropCollectionArgs {
 	playbook_name string  @[json: 'playbookName'; required] // The name of the playbook to describe.
-	db_name         ?string @[json: 'dbName'] // The name of the database.
+	db_name       ?string @[json: 'dbName'] // The name of the database.
 }
 
 pub fn (c Client) drop_playbook(args DropCollectionArgs) ! {

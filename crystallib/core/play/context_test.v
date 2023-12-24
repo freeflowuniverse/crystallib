@@ -1,4 +1,5 @@
 module play
+
 import freeflowuniverse.crystallib.data.paramsparser
 import os
 
@@ -23,8 +24,7 @@ fn test_one() {
 	println(session.context)
 
 	println(session.params)
-	assert session.params == 
-		paramsparser.Params{
+	assert session.params == paramsparser.Params{
 		params: [paramsparser.Param{
 			key: 'param1'
 			value: '111'
@@ -37,5 +37,4 @@ fn test_one() {
 		args: []
 		comments: []
 	}
-
 }

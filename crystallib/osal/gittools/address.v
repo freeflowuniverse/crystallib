@@ -1,6 +1,6 @@
 module gittools
 
-import freeflowuniverse.crystallib.tools.sshagent
+import freeflowuniverse.crystallib.osal.sshagent
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 
@@ -42,6 +42,10 @@ pub fn (addr GitAddr) path() !pathlib.Path {
 		check: false
 	)!
 	return path
+}
+
+pub fn (addr GitAddr) key() string {
+	return '${addr.provider}:${addr.account}:${addr.name}:${addr.branch}'
 }
 
 fn (addr GitAddr) path_account() pathlib.Path {

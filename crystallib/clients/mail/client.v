@@ -5,22 +5,21 @@ import freeflowuniverse.crystallib.core.texttools
 import net.smtp
 import time
 
-
 pub struct MailClient {
 	play.Base
 pub mut:
 	smtp_client smtp.Client
 }
 
-[params]
+@[params]
 pub struct ClientArgs {
 pub mut:
-	instance        string      @[required]
-	playargs 	play.PlayArgs
+	instance string        @[required]
+	playargs play.PlayArgs
 }
 
 pub fn get(clientargs ClientArgs) !MailClient {
-	mut cfg:=configurator(clientargs.instance, clientargs.playargs)!
+	mut cfg := configurator(clientargs.instance, clientargs.playargs)!
 	args := cfg.get()!
 	// println(args)
 	mut smtp_client := smtp.new_client(
@@ -33,10 +32,10 @@ pub fn get(clientargs ClientArgs) !MailClient {
 		starttls: args.starttls
 	)!
 	// println(smtp_client)
-	mut client:= MailClient{
+	mut client := MailClient{
 		instance: args.instance
 		smtp_client: smtp_client
-		session:clientargs.playargs.session
+		session: clientargs.playargs.session
 	}
 	return client
 }

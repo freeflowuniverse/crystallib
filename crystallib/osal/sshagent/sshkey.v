@@ -1,4 +1,5 @@
 module sshagent
+
 import os
 import freeflowuniverse.crystallib.core.pathlib
 

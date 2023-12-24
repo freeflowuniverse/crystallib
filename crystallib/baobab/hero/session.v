@@ -1,6 +1,6 @@
 module hero
 
-import freeflowuniverse.crystallib.data.playbook
+import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.osal.downloader
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
@@ -11,14 +11,14 @@ import freeflowuniverse.crystallib.osal.gittools
 pub struct Session {
 pub mut:
 	name     string
-	path     pathlib.Path           [skip] // is the base directory of the session
+	path     pathlib.Path      @[skip] // is the base directory of the session
 	vars     map[string]string
-	actions  []playbook.Action [skip]
+	actions  []playbook.Action @[skip]
 	includes []string
-	runner   &Runner                [skip; str: skip]
+	runner   &Runner           @[skip; str: skip]
 }
 
-[params]
+@[params]
 pub struct SessionArgs {
 pub mut:
 	name        string // name given to the session
@@ -54,7 +54,7 @@ pub fn (mut r Runner) session_new(args_ SessionArgs) !Session {
 	return session
 }
 
-[params]
+@[params]
 pub struct SessionRecipeArgs {
 pub mut:
 	recipename string // name given to the session
@@ -73,7 +73,7 @@ pub fn (mut r Runner) session_recipe_run(args_ SessionRecipeArgs) !Session {
 	return r.session_new(name: args.name, reset: args.reset, run: args.run, actions_url: dest)
 }
 
-[params]
+@[params]
 pub struct ActionsAddArgs {
 pub mut:
 	downloadname string // optional, if mentioned will use that name for download dir
@@ -140,7 +140,7 @@ pub fn (mut session Session) actions_add(args_ ActionsAddArgs) ! {
 	}
 }
 
-[params]
+@[params]
 pub struct RunArgs {
 pub mut:
 	actions_runner_config_enable bool

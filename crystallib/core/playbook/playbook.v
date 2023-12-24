@@ -7,78 +7,75 @@ import crypto.blake2b
 
 pub struct PlayBook {
 pub mut:
-	actions   []&Action
-	priorities 	map[int][]int
-	othertext string // in case there is text outside of the actions
-	nractions int
-	done []int //which actions did we already find
+	actions    []&Action
+	priorities map[int][]int
+	othertext  string // in case there is text outside of the actions
+	nractions  int
+	done       []int // which actions did we already find
 }
-
 
 @[params]
 pub struct ActionNewArgs {
 pub mut:
-	cid		 string
+	cid        string
 	name       string
 	actor      string
-	priority   int = 10 // 0 is highest, do 10 as default
+	priority   int  = 10 // 0 is highest, do 10 as default
 	execute    bool = true // certain actions can be defined but meant to be executed directly
 	actiontype ActionType
 }
 
-//add action to the book
+// add action to the book
 fn (mut plbook PlayBook) action_new(args ActionNewArgs) &Action {
-	plbook.nractions+=1
-	mut a:=Action{
-			id:plbook.nractions
-			cid:args.cid
-			name:args.name
-			actor:args.actor
-			priority:args.priority
-			execute:args.execute
-			actiontype:args.actiontype
-		}
-	plbook.actions<<&a
+	plbook.nractions += 1
+	mut a := Action{
+		id: plbook.nractions
+		cid: args.cid
+		name: args.name
+		actor: args.actor
+		priority: args.priority
+		execute: args.execute
+		actiontype: args.actiontype
+	}
+	plbook.actions << &a
 	return &a
 }
 
-
 pub fn (mut plbook PlayBook) str() string {
-	return plbook.script3() or {"Cannot visualize playbook properly.\n${plbook.actions}"}
+	return plbook.script3() or { 'Cannot visualize playbook properly.\n${plbook.actions}' }
 }
 
 @[params]
 pub struct SortArgs {
 pub mut:
-	filtered bool //if true only show the actions which were filtered
+	filtered bool // if true only show the actions which were filtered
 }
 
 pub fn (mut plbook PlayBook) actions_sorted(args SortArgs) ![]&Action {
-	mut res:=[]&Action{}
-	mut nrs:=plbook.priorities.keys()
+	mut res := []&Action{}
+	mut nrs := plbook.priorities.keys()
 	nrs.sort()
-	for nr in nrs{
-		action_ids:=plbook.priorities[nr] or {panic("bug")}
-		for id in action_ids{
-			mut a:= plbook.action_get(id)!
-			res<<a
+	for nr in nrs {
+		action_ids := plbook.priorities[nr] or { panic('bug') }
+		for id in action_ids {
+			mut a := plbook.action_get(id)!
+			res << a
 		}
 	}
-	assert plbook.done.len == res.len //amount in done and in priorities should be same
+	assert plbook.done.len == res.len // amount in done and in priorities should be same
 
-	if args.filtered{
+	if args.filtered {
 		return res
 	}
 
-	for action in plbook.actions{
-		if !(action.id in plbook.done){
-			res<<action
+	for action in plbook.actions {
+		if action.id !in plbook.done {
+			res << action
 		}
 	}
 
 	return res
 }
-
 
 // serialize to 3script
 pub fn (mut plbook PlayBook) script3() !string {
@@ -102,19 +99,48 @@ pub fn (mut plbook PlayBook) names() ![]string {
 	return names
 }
 
-
 pub fn (plbook PlayBook) action_exists(id int) bool {
-	for a in plbook.actions{
-		if a.id == id{
+	for a in plbook.actions {
+		if a.id == id {
 			return true
 		}
 	}
 	return false
 }
 
+@[params]
+pub struct ActionGetArgs {
+pub mut:
+	actor string
+	name  string
+}
+
+pub fn (plbook PlayBook) action_exists_once(args ActionGetArgs) bool {
+	mut counter := 0
+	for a in plbook.actions {
+		if a.name == args.name && a.actor == args.actor {
+			counter += 1
+		}
+	}
+	// if counter>1{
+	// 	return
+	// 	return error("more than 1 for $actor.$name")
+	// }
+	return counter > 0
+}
+
+pub fn (mut plbook PlayBook) action_get_by_name(args ActionGetArgs) !&Action {
+	for a in plbook.actions {
+		if a.name == args.name && a.actor == args.actor {
+			return a
+		}
+	}
+	return error("can't find action with args:${args}")
+}
+
 pub fn (mut plbook PlayBook) action_get(id int) !&Action {
-	for a in plbook.actions{
-		if a.id == id{
+	for a in plbook.actions {
+		if a.id == id {
 			return a
 		}
 	}

@@ -60,18 +60,17 @@ const text3 = "
 
 // test filter with only two names in filter
 fn test_filter1() ! {
-
 	mut plbook := new(
 		text: playbook.text3
 	)!
 
-	assert plbook.actions.len==10
+	assert plbook.actions.len == 10
 
-	println(plbook)	
+	println(plbook)
 
-	assert plbook.hashkey() == 'ea9dea6e28bfaf836719e821953e646a155dd9eb'	
+	assert plbook.hashkey() == 'ea9dea6e28bfaf836719e821953e646a155dd9eb'
 
-	//struct FilterArgs
+	// struct FilterArgs
 	//   actor_names  []string 	//if empty will match all,
 	//   action_names []string 	//if empty will match all
 	//
@@ -80,22 +79,30 @@ fn test_filter1() ! {
 	//
 
 	plbook.filtersort(
-		priorities:{2:"digital_payment:*"}
+		priorities: {
+			2: 'digital_payment:*'
+		}
 	)!
 	assert plbook.done.len == 1
-		
+
 	plbook.filtersort(
-		priorities:{5:"circle*:*"}
+		priorities: {
+			5: 'circle*:*'
+		}
 	)!
 	assert plbook.done.len == 2
 
 	plbook.filtersort(
-		priorities:{50:"*:*circle*"}
+		priorities: {
+			50: '*:*circle*'
+		}
 	)!
-	assert plbook.done.len == 5	
+	assert plbook.done.len == 5
 
-	mut asorted:=plbook.actions_sorted()!
+	mut asorted := plbook.actions_sorted()!
 	println(asorted)
 
-	assert asorted.map("${it.actor}:${it.name}") == ['digital_payment:add', 'circle:comment', 'core:select_circle', 'core:circle_link', 'people:circle_comment', 'core:select_actor', 'person:delete', 'person:define', 'test:myaction', 'person:define']
+	assert asorted.map('${it.actor}:${it.name}') == ['digital_payment:add', 'circle:comment',
+		'core:select_circle', 'core:circle_link', 'people:circle_comment', 'core:select_actor',
+		'person:delete', 'person:define', 'test:myaction', 'person:define']
 }

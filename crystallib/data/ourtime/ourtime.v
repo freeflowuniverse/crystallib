@@ -68,7 +68,7 @@ pub fn (ot OurTime) md() string {
 // "YYYY_MM_DD_HH_mm_ss"
 pub fn (ot OurTime) key() string {
 	t := ot.time()
-	mut o := t.ymmdd() +"_"+ t.hhmmss()
+	mut o := t.ymmdd() + '_' + t.hhmmss()
 	o = o.replace('-', '_')
 	o = o.replace(':', '_')
 	return o

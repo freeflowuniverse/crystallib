@@ -15,9 +15,9 @@ pub mut:
 	name         string // a unique name in cid
 	params       paramsparser.Params
 	snippets     map[string]paramsparser.Params
-	gitstructure &gittools.GitStructure  @[skip; str: skip]	
-	redis        &redisclient.Redis @[skip; str: skip]	
-	kvs 		 &fskvs.KVSContext @[skip; str: skip]	
+	gitstructure &gittools.GitStructure         @[skip; str: skip]
+	redis        &redisclient.Redis             @[skip; str: skip]
+	kvs          &fskvs.KVSContext              @[skip; str: skip]
 }
 
 @[params]
@@ -126,7 +126,7 @@ pub fn (mut self Context) script3() !string {
 	mut out := '!!core.context_define ${self.str2()}\n'
 	if !self.params.empty() {
 		out += '\n!!core.params_context_set'
-		out += texttools.indent(self.params.script3(),"    ") + '\n'
+		out += texttools.indent(self.params.script3(), '    ') + '\n'
 	}
 	// if self.snippets.len > 0 {
 	// 	for key, snippet in self.snippets {

@@ -5,7 +5,7 @@ import crypto.sha256
 
 const testpath = os.dir(@FILE) + '/testdata'
 
-//TODO: fix
+// TODO: fix
 
 const text1 = "
 //comment for the action

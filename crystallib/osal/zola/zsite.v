@@ -14,7 +14,7 @@ pub mut:
 	name         string
 	path_build   pathlib.Path
 	path_publish pathlib.Path
-	playbooks  []ZSiteCollection
+	playbooks    []ZSiteCollection
 	gitrepokey   string
 	tailwindcss  bool // whether site uses tailwindcss
 }

@@ -34,12 +34,10 @@ pub mut:
 // if playbookname specified will look for page in that specific playbook
 pub fn (playbook Collection) page_get(name_ string) !&Page {
 	_, name := name_parse(name_)!
-	return playbook.pages[name] or {
-		return ObjNotFound{
-			playbook: playbook.name
-			name: name
-		}
-	}
+	return playbook.pages[name] or { return ObjNotFound{
+		playbook: playbook.name
+		name: name
+	} }
 }
 
 pub fn (playbook Collection) image_get(name_ string) !&File {
@@ -54,12 +52,10 @@ pub fn (playbook Collection) image_get(name_ string) !&File {
 
 pub fn (playbook Collection) file_get(name_ string) !&File {
 	_, name := name_parse(name_)!
-	return playbook.files[name] or {
-		return ObjNotFound{
-			playbook: playbook.name
-			name: name
-		}
-	}
+	return playbook.files[name] or { return ObjNotFound{
+		playbook: playbook.name
+		name: name
+	} }
 }
 
 pub fn (playbook Collection) page_exists(name string) bool {

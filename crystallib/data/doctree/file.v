@@ -17,7 +17,7 @@ pub enum FileType {
 @[heap]
 pub struct File {
 pub mut:
-	playbook   &Collection  @[str: skip]
+	playbook     &Collection  @[str: skip]
 	name         string // received a name fix
 	path         pathlib.Path
 	pathrel      string

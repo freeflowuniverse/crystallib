@@ -6,16 +6,16 @@ import freeflowuniverse.crystallib.data.ourtime
 @[params]
 pub struct PlayArgs {
 pub mut:
-	script3           string
-	context           ?&Context
-	session           ?&Session
-	context_name      string = 'default'
-	session_name      string
-	coderoot          string
-	interactive       bool
-	fsdb_encrypted    bool
-	playbook_priorities  map[int]string //filter and give priority
-	playbook_core_execute bool = true //executes ssh & git actions
+	script3               string
+	context               ?&Context
+	session               ?&Session
+	context_name          string = 'default'
+	session_name          string
+	coderoot              string
+	interactive           bool
+	fsdb_encrypted        bool
+	playbook_priorities   map[int]string // filter and give priority
+	playbook_core_execute bool = true // executes ssh & git actions
 }
 
 // return a session which has link to the actions and params on context and session level
@@ -23,7 +23,7 @@ pub mut:
 pub fn session_new(args_ PlayArgs) !&Session {
 	mut args := args_
 
-	mut plbook:=playbook.new(text: args.script3)!
+	mut plbook := playbook.new(text: args.script3)!
 
 	mut context := args.context or {
 		mut c := new(
@@ -46,11 +46,11 @@ pub fn session_new(args_ PlayArgs) !&Session {
 		&session
 	}
 
-	session.plbook=plbook
+	session.plbook = plbook
 
-	session.plbook.filtersort(priorities:args.playbook_priorities)!
+	session.plbook.filtersort(priorities: args.playbook_priorities)!
 
-	if args.playbook_core_execute{
+	if args.playbook_core_execute {
 		session.playbook_core_execute()!
 	}
 

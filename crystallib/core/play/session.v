@@ -6,21 +6,21 @@ import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.data.fskvs
 
-[heap]
+@[heap]
 pub struct Session {
 pub mut:
-	name     	string // unique id for session (session id), can be more than one per context
-	plbook      playbook.PlayBook
-	params      paramsparser.Params
-	start   ourtime.OurTime 
-	end     ourtime.OurTime 
-	context Context               @[skip; str: skip]	
+	name    string // unique id for session (session id), can be more than one per context
+	plbook  playbook.PlayBook
+	params  paramsparser.Params
+	start   ourtime.OurTime
+	end     ourtime.OurTime
+	context Context             @[skip; str: skip]
 }
 
 @[params]
 pub struct SessionNewArgs {
 pub mut:
-	name         string // unique id for session (session id), there can be more than 1 per id
+	name        string // unique id for session (session id), there can be more than 1 per id
 	start       string // can be e.g. +1h
 	load        bool = true // get it from the redis backend
 	save        bool
@@ -62,13 +62,12 @@ fn (mut self Session) key() string {
 	return 'sessions:${self.guid()}'
 }
 
-
 fn (mut self Session) db_get(name string) !fskvs.KVS {
- return self.context.kvs.get(name:name)!
+	return self.context.kvs.get(name: name)!
 }
 
 fn (mut self Session) db_config_get() !fskvs.KVS {
- return self.context.kvs.get(name:'config')!
+	return self.context.kvs.get(name: 'config')!
 }
 
 // save the session to redis & mem
@@ -79,7 +78,7 @@ pub fn (mut self Session) load() ! {
 		return
 	}
 	// self.script3_load(t)!
-	panic("to implement")
+	panic('to implement')
 }
 
 // save the self to redis & mem
@@ -104,13 +103,13 @@ pub fn (mut c Session) str() string {
 
 pub fn (mut c Session) script3() !string {
 	mut out := '!!core.session_define ${c.str2()}\n'
-	if ! c.params.empty() {
+	if !c.params.empty() {
 		out += '\n!!core.params_session_set\n'
-		out += texttools.indent(c.params.script3(),"    ") + '\n'
+		out += texttools.indent(c.params.script3(), '    ') + '\n'
 	}
-	if c.plbook.actions.len>0 {
-		out += "${c.plbook}" + '\n'
-	}	
+	if c.plbook.actions.len > 0 {
+		out += '${c.plbook}' + '\n'
+	}
 	return out
 }
 
