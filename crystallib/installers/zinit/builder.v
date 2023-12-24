@@ -38,7 +38,7 @@ pub fn build(args BuildArgs) ! {
 	'
 	osal.execute_stdout(cmd)!
 
-	osal.bin_copy(
+	osal.cmd_add(
 		cmdname: 'zinit'
 		source: '/tmp/builder/github/threefoldtech/zinit/target/x86_64-unknown-linux-musl/release/zinit'
 	)!

@@ -48,7 +48,7 @@ pub fn install(args_ InstallArgs) ! {
 
 	// println(dest)
 
-	osal.bin_copy(
+	osal.cmd_add(
 		cmdname: 'tailwind'
 		source: dest.path
 	)!

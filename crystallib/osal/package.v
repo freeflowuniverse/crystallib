@@ -49,30 +49,30 @@ pub fn package_install(name string) ! {
 	}
 }
 
-// upgrade the OS, only implemented for ubuntu right now
-pub fn upgrade() ! {
-	platform_ := platform()
-	if platform_ == .ubuntu {
-		upgrade_cmds := '
-			set +ex
-			sudo killall apt apt-get > /dev/null 2>&1
-			set -ex
-			rm -f /var/lib/apt/lists/lock
-			rm -f /var/cache/apt/archives/lock
-			rm -f /var/lib/dpkg/lock*		
-			dpkg --configure -a
-			apt update
-			apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-			apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-			apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-			'
+// // upgrade the OS, only implemented for ubuntu right now
+// pub fn upgrade() ! {
+// 	platform_ := platform()
+// 	if platform_ == .ubuntu {
+// 		upgrade_cmds := '
+// 			set +ex
+// 			sudo killall apt apt-get > /dev/null 2>&1
+// 			set -ex
+// 			rm -f /var/lib/apt/lists/lock
+// 			rm -f /var/cache/apt/archives/lock
+// 			rm -f /var/lib/dpkg/lock*		
+// 			dpkg --configure -a
+// 			apt update
+// 			apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+// 			apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+// 			apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+// 			'
 
-		exec(
-			cmd: upgrade_cmds
-			retry: 2
-			description: 'upgrade operating system packages'
-		)!
-	} else {
-		return error('Only ubuntu is supported for now')
-	}
-}
+// 		exec(
+// 			cmd: upgrade_cmds
+// 			retry: 2
+// 			description: 'upgrade operating system packages'
+// 		)!
+// 	} else {
+// 		return error('Only ubuntu is supported for now')
+// 	}
+// }

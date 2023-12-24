@@ -32,7 +32,7 @@ pub fn install() ! {
 	)!
 
 	binpath := pathlib.get_file(path: '/tmp/download/gitea', create: false)!
-	osal.bin_copy(
+	osal.cmd_add(
 		cmdname: 'gitea'
 		source: binpath.path
 	)!

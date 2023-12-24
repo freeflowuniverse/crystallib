@@ -5,12 +5,12 @@ import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.pathlib
 
 @[params]
-pub struct ParserArgs {
+pub struct PLayBookAddArgs {
 pub mut:
 	path    string
 	text    string
-	execute bool = true
-	prio    int   = 5
+	prio    int   = 99
+	execute bool
 }
 
 enum State {
@@ -20,7 +20,7 @@ enum State {
 	othertext
 }
 
-pub fn (mut plbook PlayBook) add(args_ ParserArgs)! {
+pub fn (mut plbook PlayBook) add(args_ PLayBookAddArgs)! {
 	mut args := args_
 
 	// println("PLBOOK ADD:\n$args_")
@@ -155,12 +155,14 @@ pub fn (mut plbook PlayBook) add(args_ ParserArgs)! {
 			action.params = paramsparser.new(paramsdata.join('\n'))!
 			action.params.delete("id")
 		}
-}
+	}
 	if state == .comment_for_action_maybe {
 		plbook.othertext += comments.join('\n')
 	}
 	// if state == .start{
 	// 	plbook.othertext+=line_strip
 	// }	
+
+
 
 }

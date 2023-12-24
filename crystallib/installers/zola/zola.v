@@ -53,7 +53,7 @@ pub fn install(args_ InstallArgs) ! {
 
 	mut zolafile := dest.file_get('zola')! // file in the dest
 
-	osal.bin_copy(
+	osal.cmd_add(
 		// cmdname: ''
 		source: zolafile.path
 	)!

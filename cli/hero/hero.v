@@ -14,7 +14,7 @@ fn do() ! {
 	}
 
 	// herocmds.cmd_biztools(mut cmd)
-	// herocmds.cmd_3script_do(mut cmd)
+	herocmds.cmd_run(mut cmd)
 	herocmds.cmd_git(mut cmd)
 	herocmds.cmd_init(mut cmd)
 	herocmds.cmd_imagedownsize(mut cmd)
@@ -24,6 +24,7 @@ fn do() ! {
 	herocmds.cmd_zola(mut cmd)
 	herocmds.cmd_configure(mut cmd)
 	herocmds.cmd_postgres(mut cmd)
+
 
 	cmd.setup()
 	cmd.parse(os.args)

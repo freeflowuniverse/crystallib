@@ -3,7 +3,7 @@ module pathlib
 import os
 
 // path needs to be existing
-// linkpath is where the link will be pointing to path
+// linkpath is where the link will be (the symlink who points to path)
 pub fn (mut path Path) link(linkpath string, delete_exists bool) !Path {
 	if !path.exists() {
 		return error('cannot link because source ${path.path} does not exist')

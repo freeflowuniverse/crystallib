@@ -17,7 +17,7 @@ pub mut:
 	snippets     map[string]paramsparser.Params
 	gitstructure &gittools.GitStructure  @[skip; str: skip]	
 	redis        &redisclient.Redis @[skip; str: skip]	
-	fsdb_context &fskvs.KVSContext @[skip; str: skip]	
+	kvs 		 &fskvs.KVSContext @[skip; str: skip]	
 }
 
 @[params]
@@ -50,7 +50,7 @@ fn new(args ContextNewArgs) !Context {
 	mut gs := gittools.get(coderoot: args.coderoot)!
 	mut r := redisclient.core_get()!
 
-	mut fsdb_context := fskvs.new(
+	mut kvs := fskvs.new(
 		context: args.name
 		encryption: args.fsdb_encryption
 		interactive: args.interactive
@@ -62,11 +62,11 @@ fn new(args ContextNewArgs) !Context {
 		params: p
 		gitstructure: &gs
 		redis: &r
-		fsdb_context: &fsdb_context
+		kvs: &kvs
 	}
 	if args.script3.len > 0 {
-		mut actions1 := playbook.parse_playbook(text: args.script3)!
-		c.actions_execute(mut actions1)!
+		mut plbook := playbook.new(text: args.script3)!
+		c.playbook_core_execute(mut plbook)!
 	}
 	c.check()!
 	return c
@@ -94,8 +94,8 @@ pub fn (mut self Context) load() ! {
 	if t == '' {
 		return
 	}
-	mut actions1 := playbook.parse_playbook(text: t)!
-	self.actions_execute(mut actions1)!
+	mut plbook := playbook.new(text: t)!
+	self.playbook_core_execute(mut plbook)!
 }
 
 // save the self to redis & mem

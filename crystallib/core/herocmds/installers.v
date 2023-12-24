@@ -1,6 +1,6 @@
 module herocmds
 
-import freeflowuniverse.crystallib.installers.caddy
+import freeflowuniverse.crystallib.installers.tools
 import cli { Command, Flag }
 
 pub fn cmd_installers(mut cmdroot Command) {
@@ -11,13 +11,20 @@ pub fn cmd_installers(mut cmdroot Command) {
 		execute: cmd_installers_execute
 	}
 
-	mut caddy_cmd := Command{
-		sort_flags: true
-		name: 'caddy'
-		execute: cmd_installers_execute
-		description: ''
-	}
+	// mut caddy_cmd := Command{
+	// 	sort_flags: true
+	// 	name: 'caddy'
+	// 	execute: cmd_installers_execute
+	// 	description: ''
+	// }
 
+	caddy_cmd.add_flag(Flag{
+		flag: .string
+		required: false
+		name: 'names'
+		abbrev: 'n'
+		description: 'Comma separated list of installers to call.'
+	})
 	caddy_cmd.add_flag(Flag{
 		flag: .bool
 		required: false
@@ -27,16 +34,20 @@ pub fn cmd_installers(mut cmdroot Command) {
 	})
 
 	cmdroot.add_command(cmd_run)
-	cmd_run.add_command(caddy_cmd)
+	// cmd_run.add_command(caddy_cmd)
 }
 
 fn cmd_installers_execute(cmd Command) ! {
 	mut reset := cmd.flags.get_bool('reset') or { false }
+	mut names := cmd.flags.get_string('names') or { false }
 
-	if cmd.name == 'caddy' {
-		caddy.install(reset: reset)!
-		return
-	} else {
-		return error(cmd.help_message())
-	}
+	// if cmd.name == 'caddy' {
+	// 	caddy.install(reset: reset)!
+	// 	return
+	// } else {
+	// 	return error(cmd.help_message())
+	// }
+
+	tools.install_multi(reset:reset,names:names)!
+
 }

@@ -3,10 +3,12 @@ module osal
 import os
 import freeflowuniverse.crystallib.core.pathlib
 
-pub struct BinCopyArgs {
+pub struct CmdAddArgs {
 pub mut:
 	cmdname string
 	source  string @[required] // path where the binary is
+	symlink bool //if rather than copy do a symlink
+	reset bool //if existing cmd will delete
 	// bin_repo_url string = 'https://github.com/freeflowuniverse/freeflow_binary' // binary where we put the results
 }
 
@@ -14,7 +16,7 @@ pub mut:
 // e.g. is /usr/local/bin on linux .
 // e.g. is ~/hero/bin on osx .
 // will also add the bin location to the path of .zprofile and .zshrc (different per platform)
-pub fn bin_copy(args_ BinCopyArgs) ! {
+pub fn cmd_add(args_ CmdAddArgs) ! {
 	mut args := args_
 	if args.cmdname == '' {
 		args.cmdname = os.base(args.source)
@@ -29,22 +31,26 @@ pub fn bin_copy(args_ BinCopyArgs) ! {
 
 	mut sourcepath := pathlib.get_file(path: args.source, create: false)!
 	mut destpath := '${dest}/${args.cmdname}'
-	sourcepath.copy(dest: destpath, rsync: false)!
 
 	// check if there is other file
 	res := os.execute('which ${args.cmdname}')
 	if res.exit_code == 0 {
 		existing_path := res.output.trim_space()
 		if dest != existing_path {
-			os.rm(existing_path)!
+			if args.reset{
+				os.rm(existing_path)!
+			}else{
+				return error("existing cmd found on: ${existing_path} and can't delete.")
+			}
 		}
 	}
 
-	// if true{
-	// 	println(path)
-	// 	panic("sd")
-	// }
-
+	if args.symlink{
+		sourcepath.link(destpath, true)!
+	}else{
+		sourcepath.copy(dest: destpath, rsync: false)!
+	}
+	
 	mut destfile := pathlib.get_file(path: destpath, create: false)!
 
 	destfile.chmod(0o770)! // includes read & write & execute

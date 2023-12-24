@@ -32,7 +32,7 @@ pub fn build(args BuildArgs) ! {
 	'
 	osal.execute_stdout(cmd) or { return error('Cannot install s3.\n${err}') }
 
-	osal.bin_copy(
+	osal.cmd_add(
 		// cmdname: ''
 		source: '${path}/target/debug/s3-cas'
 	)!

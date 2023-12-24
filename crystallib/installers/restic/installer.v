@@ -43,7 +43,7 @@ pub fn install(args InstallArgs) ! {
 		expand_dir: '/tmp/restic'
 	)!
 
-	osal.bin_copy(
+	osal.cmd_add(
 		cmdname: 'restic'
 		source: binpath_
 	)!

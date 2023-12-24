@@ -26,7 +26,7 @@ pub fn (mut plbook PlayBook) filtersort(args FilterSortArgs) ! {
 	nrs.sort()
 	for prio in nrs  {
 		argsfilter := args.priorities[prio] or {panic("bug")}
-		mut actionsfound:=plbook.find(argsfilter)!
+		mut actionsfound:=plbook.find(filter:argsfilter)!
 		// println(" -- ${prio}:(${actionsfound.len})\n${argsfilter}")
 		for mut actionfiltered in actionsfound{
 			if actionfiltered.id in plbook.done{
@@ -44,11 +44,21 @@ pub fn (mut plbook PlayBook) filtersort(args FilterSortArgs) ! {
 	}
 }
 
+
+
+@[params]
+pub struct FindArgs {
+pub:
+	filter string
+	include_done bool
+}
+
+
 //filter is of form $actor.$action, ... name and globs are possible (*,?) .
 //comma separated, actor and name needs to be specified, if more than one use * glob .
 // e.g. find("core.person_select,myactor.*,green*.*")
-pub fn (mut plbook PlayBook) find(filter_ string) ![]&Action {
-	filter:=filter_.replace(":",".").trim_space()
+pub fn (mut plbook PlayBook) find(args FindArgs) ![]&Action {
+	filter:=args.filter.replace(":",".").trim_space()
 	mut res:=[]&Action{}
 	mut items:=[]string{}
 	if filter.contains(","){
@@ -60,7 +70,10 @@ pub fn (mut plbook PlayBook) find(filter_ string) ![]&Action {
 		// println("${action.actor}:${action.name}:${action.id}")
 		if action.match_items(items){
 			// println(" OK")
-			res<<action
+			if ! args.include_done && action.done{
+				continue
+			}	
+			res<<action		
 		}
 	}
 	return res
@@ -133,7 +146,7 @@ fn (action Action) checkmatch(args MatchFilter) bool {
 // e.g. find("core.person_select,myactor.*,green*.*")
 pub fn (mut plbook PlayBook) params_get(filter string) !paramsparser.Params {
 	mut paramsresult := paramsparser.new('')!
-	for action in plbook.find(filter)! {
+	for action in plbook.find(filter:filter)! {
 		paramsresult.merge(action.params)!
 	}
 	return paramsresult

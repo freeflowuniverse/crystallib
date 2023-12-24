@@ -3,8 +3,8 @@ module play
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.osal.gittools
 
-fn (mut context Context) actions_execute(mut plbook playbook.PlayBook) ! {
-	for mut action in plbook.find(actor: 'core', name: 'context_set')! {
+fn (mut context Context) playbook_core_execute(mut plbook playbook.PlayBook) ! {
+	for mut action in plbook.find(filter:'core.context_set')! {
 		mut p := action.params
 		if p.exists('name') || context.name == '' {
 			context.name = p.get_default('name', 'default')!
@@ -13,10 +13,10 @@ fn (mut context Context) actions_execute(mut plbook playbook.PlayBook) ! {
 			context.cid = p.get_default('cid', '000')!
 		}
 		if p.exists('interactive') {
-			context.fsdb_context.config.interactive = p.get_default_false('interactive')
+			context.kvs.config.interactive = p.get_default_false('interactive')
 		}
 		if p.exists('fsdb_encryption') {
-			context.fsdb_context.config.encryption = p.get_default_false('fsdb_encryption')
+			context.kvs.config.encryption = p.get_default_false('fsdb_encryption')
 		}
 		if p.exists('coderoot') {
 			mut coderoot := p.get_path('coderoot')!
@@ -28,7 +28,7 @@ fn (mut context Context) actions_execute(mut plbook playbook.PlayBook) ! {
 		action.done = true
 	}
 
-	for mut action in plbook.find(actor: 'core', name: 'coderoot_set')! {
+	for mut action in plbook.find(filter:'core.coderoot_set')! {
 		mut p := action.params
 		if p.exists('coderoot') {
 			coderoot := p.get_path('coderoot')!
@@ -43,7 +43,7 @@ fn (mut context Context) actions_execute(mut plbook playbook.PlayBook) ! {
 	}
 
 	// !!core.snippet snippetname:codeargs pull:true reset:false
-	for mut action in plbook.find(actor: 'core', name: 'snippet')! {
+	for mut action in plbook.find(filter:'core.snippet')! {
 		mut p := action.params
 
 		panic("implement")
@@ -52,11 +52,10 @@ fn (mut context Context) actions_execute(mut plbook playbook.PlayBook) ! {
 		p.delete("snippetname")
 
 		context.snippets[snippetname]=p
-
 		action.done = true
 	}
 
-	for action in plbook.find(actor: 'core', name: 'params_context_set')! {
+	for action in plbook.find(filter:'core.params_context_set')! {
 		mut p := action.params
 		for param in p.params{
 			context.params.set(param.key,param.value)
@@ -65,10 +64,17 @@ fn (mut context Context) actions_execute(mut plbook playbook.PlayBook) ! {
 }
 
 fn (mut session Session) actions_execute(mut plbook playbook.PlayBook) ! {
-	for action in plbook.find(actor: 'core', name: 'params_session_set')! {
+	for mut action in plbook.find(filter:'core.params_session_set')! {
 		mut p := action.params
 		for param in p.params{
 			session.params.set(param.key,param.value)
 		}
+		action.done = true
 	}
+}
+
+
+fn (mut session Session) playbook_core_execute()!{
+	play_git(mut session)!
+	play_ssh(mut session)!
 }

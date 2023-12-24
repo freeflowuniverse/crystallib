@@ -33,7 +33,7 @@ pub fn install() ! {
 		path: '/tmp/download/zitadel/zitadel-linux-amd64/zitadel'
 		create: false
 	)!
-	osal.bin_copy(
+	osal.cmd_add(
 		cmdname: 'zitadel'
 		source: binpath.path
 	)!

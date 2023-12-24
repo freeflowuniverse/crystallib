@@ -4,14 +4,14 @@ import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.playbook
-
+import freeflowuniverse.crystallib.data.fskvs
 
 [heap]
 pub struct Session {
 pub mut:
-	sid     string // unique id for session (session id), can be more than one per context
-	actions      playbook.PlayBook
-	params       paramsparser.Params
+	name     	string // unique id for session (session id), can be more than one per context
+	plbook      playbook.PlayBook
+	params      paramsparser.Params
 	start   ourtime.OurTime 
 	end     ourtime.OurTime 
 	context Context               @[skip; str: skip]	
@@ -20,7 +20,7 @@ pub mut:
 @[params]
 pub struct SessionNewArgs {
 pub mut:
-	sid         string // unique id for session (session id), there can be more than 1 per id
+	name         string // unique id for session (session id), there can be more than 1 per id
 	start       string // can be e.g. +1h
 	load        bool = true // get it from the redis backend
 	save        bool
@@ -30,15 +30,13 @@ pub mut:
 // get a session object based on the name /
 // params:
 // ```
-// uid	string //unique id
 // name string
-// start string  //can be e.g. +1h
 // ```
 pub fn (context Context) session_new(args_ SessionNewArgs) !Session {
 	mut args := args_
 	t := ourtime.new(args.start)!
 	mut s := Session{
-		sid: args.sid
+		name: args.name
 		start: t
 		context: &context
 	}
@@ -64,6 +62,15 @@ fn (mut self Session) key() string {
 	return 'sessions:${self.guid()}'
 }
 
+
+fn (mut self Session) db_get(name string) !fskvs.KVS {
+ return self.context.kvs.get(name:name)!
+}
+
+fn (mut self Session) db_config_get() !fskvs.KVS {
+ return self.context.kvs.get(name:'config')!
+}
+
 // save the session to redis & mem
 pub fn (mut self Session) load() ! {
 	mut r := self.context.redis
@@ -86,8 +93,8 @@ pub fn (mut self Session) save() ! {
 ////////// REPRESENTATION
 
 pub fn (mut self Session) check() ! {
-	if self.sid.len < 4 {
-		return error('sid should be at least 3 char')
+	if self.name.len < 4 {
+		return error('name should be at least 3 char')
 	}
 }
 
@@ -101,18 +108,18 @@ pub fn (mut c Session) script3() !string {
 		out += '\n!!core.params_session_set\n'
 		out += texttools.indent(c.params.script3(),"    ") + '\n'
 	}
-	if c.actions.actions.len>0 {
-		out += "${c.actions}" + '\n'
+	if c.plbook.actions.len>0 {
+		out += "${c.plbook}" + '\n'
 	}	
 	return out
 }
 
 pub fn (mut self Session) guid() string {
-	return '${self.context.guid()}:${self.sid}'
+	return '${self.context.guid()}:${self.name}'
 }
 
 fn (self Session) str2() string {
-	mut out := 'sid:${self.sid}'
+	mut out := 'name:${self.name}'
 	out += ' start:\'${self.start}\''
 	if !self.end.empty() {
 		out += ' end:\'${self.end}\''

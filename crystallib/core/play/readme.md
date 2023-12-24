@@ -4,33 +4,39 @@
 
 **The PlayArgs:**
 
-- script3 string
-- actions playbook.PlayBook
-- context ?&Context
-- session ?&Session
-- context_name string = "default"
-- sid string
-- coderoot string
-- interactive bool
-- fsdb_encrypted bool
-- action_name  string //to filter actions (optional)
-- action_actor string //to filter actions (optional)
-- action_priorities []string //form of 'actorname:actionname' or 'actorname'	
-- action_filter []string //same as priorities but will remove all the ones who don't match in the filter statements
+- script3           string
+- plbook            playbook.PlayBook
+- context           ?&Context
+- session           ?&Session
+- context_name      string = 'default'
+- session_name      string
+- coderoot          string
+- interactive       bool
+- fsdb_encrypted    bool
+- playbook_priorities  map[int]string //filter and give priority
+- playbook_core_execute bool = true //executes ssh & git actions
 
 ```v
 import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.osal.gittools
 
 mut session:=play.session_new(
-    context:context
-    sid:'mysession
-    action_filter:["git","someactor:someactionname"]
+    context_name:'default'
+    session_name:''
+    coderoot:'/tmp/code'
+    interactive:true
 )!
 
-for action in session.actions.actions{
-    if action.name=='something'{
-    }
+//THE next could be in a module which we call
+
+pub fn play_git(mut session Session) ! {
+	for mut action in session.plbook.find(filter:'gittools.*')! {
+		mut p := action.params
+		mut repo := p.get_default('repo', '')!
+        ... do whatever is required to 
+	}
 }
+
 
 ```
 

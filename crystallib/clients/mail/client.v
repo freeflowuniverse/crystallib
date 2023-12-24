@@ -1,24 +1,27 @@
 module mail
 
+import freeflowuniverse.crystallib.core.play
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.data.fskvs
-import freeflowuniverse.crystallib.core.playbook
-import json
 import net.smtp
 import time
-import freeflowuniverse.crystallib.ui
-import freeflowuniverse.crystallib.ui.console
+
 
 pub struct MailClient {
+	play.Base
 pub mut:
-	name        string      @[required]
 	smtp_client smtp.Client
 }
 
-pub fn get(args_ Config) !MailClient {
-	mut args := args_
-	args.name = texttools.name_fix(args.name)
-	args = configure(args)!
+[params]
+pub struct ClientArgs {
+pub mut:
+	instance        string      @[required]
+	playargs 	play.PlayArgs
+}
+
+pub fn get(clientargs ClientArgs) !MailClient {
+	mut cfg:=configurator(clientargs.instance, clientargs.playargs)!
+	args := cfg.get()!
 	// println(args)
 	mut smtp_client := smtp.new_client(
 		server: args.smtp_addr
@@ -30,10 +33,12 @@ pub fn get(args_ Config) !MailClient {
 		starttls: args.starttls
 	)!
 	// println(smtp_client)
-	return MailClient{
-		name: args.name
+	mut client:= MailClient{
+		instance: args.instance
 		smtp_client: smtp_client
+		session:clientargs.playargs.session
 	}
+	return client
 }
 
 @[params]

@@ -1,14 +1,10 @@
 module play
-
+import freeflowuniverse.crystallib.data.paramsparser
 import os
 
 fn test_one() {
 	text := "
 	!!core.context_set name:'mybooks' cid:'000' interactive:false fsdb_encrypted:true coderoot:'~/hero/code'
-
-	!!core.coderoot_set '~/hero/code'
-
-	!!core.snippet codeargs pull:true reset:false
 
 	//sets the params in current session
 	!!core.params_session_set
@@ -16,15 +12,30 @@ fn test_one() {
 		param2:'222'
 
 	!!core.params_context_set
-		param1:'111'
-		param2:'222'
+		param1:'1111'
+		param2:'2222'
 
 
 	"
 
-	mut session := session_new(script3: "")!
-	println(session)
-	if true {
-		panic('sdsds')
+	mut session := session_new(script3: text)!
+	println(*session)
+	println(session.context)
+
+	println(session.params)
+	assert session.params == 
+		paramsparser.Params{
+		params: [paramsparser.Param{
+			key: 'param1'
+			value: '111'
+			comment: ''
+		}, paramsparser.Param{
+			key: 'param2'
+			value: '222'
+			comment: ''
+		}]
+		args: []
+		comments: []
 	}
+
 }
