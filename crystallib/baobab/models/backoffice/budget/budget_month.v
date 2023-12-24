@@ -6,7 +6,7 @@ import freeflowuniverse.protocolme.models.backoffice.finance
 // This file deals with all definitions and functions for creating
 // the budget for a certain month
 
-[heap]
+@[heap]
 pub struct BudgetMonth {
 pub mut:
 	month int

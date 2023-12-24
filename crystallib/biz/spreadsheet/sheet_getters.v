@@ -11,7 +11,7 @@ fn remove_empty_line(txt string) string {
 	return out
 }
 
-[params]
+@[params]
 pub struct RowGetArgs {
 pub mut:
 	rowname       string   // if specified then its one name
@@ -26,6 +26,7 @@ pub mut:
 	title_sub     string
 	size          string
 	rowname_show  bool = true // show the name of the row
+	description   string
 }
 
 pub enum UnitType {

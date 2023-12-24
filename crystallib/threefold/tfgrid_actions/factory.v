@@ -1,23 +1,21 @@
-module threelang
+module tfgrid_actions
 
 import log
-import freeflowuniverse.crystallib.data.actionsparser
+import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
 import freeflowuniverse.crystallib.threefold.web3gw.tfgrid as tfgrid_client
 import freeflowuniverse.crystallib.threefold.web3gw.tfchain as tfchain_client
 import freeflowuniverse.crystallib.threefold.web3gw.stellar as stellar_client
 import freeflowuniverse.crystallib.threefold.web3gw.eth as eth_client
 import freeflowuniverse.crystallib.threefold.web3gw.btc as btc_client
-import freeflowuniverse.crystallib.threefold.web3gw.threelang.tfgrid { TFGridHandler }
-import freeflowuniverse.crystallib.threefold.web3gw.threelang.web3gw { Web3GWHandler }
-import freeflowuniverse.crystallib.threefold.web3gw.threelang.clients { Clients }
-import freeflowuniverse.crystallib.threefold.web3gw.threelang.stellar { StellarHandler }
+import freeflowuniverse.crystallib.threefold.tfgrid_actions.tfgrid { TFGridHandler }
+import freeflowuniverse.crystallib.threefold.tfgrid_actions.web3gw { Web3GWHandler }
+import freeflowuniverse.crystallib.threefold.tfgrid_actions.clients { Clients }
+import freeflowuniverse.crystallib.threefold.tfgrid_actions.stellar { StellarHandler }
 
-const (
-	tfgrid_book  = 'tfgrid'
-	web3gw_book  = 'web3gw'
-	stellar_book = 'stellar'
-)
+const tfgrid_book = 'tfgrid'
+const web3gw_book = 'web3gw'
+const stellar_book = 'stellar'
 
 pub struct Runner {
 pub mut:
@@ -28,7 +26,7 @@ pub mut:
 	stellar_handler StellarHandler
 }
 
-[params]
+@[params]
 pub struct RunnerArgs {
 pub mut:
 	name    string
@@ -37,7 +35,7 @@ pub mut:
 }
 
 pub fn new(args RunnerArgs, debug_log bool) !Runner {
-	mut ap := actionsparser.new(path: args.path)!
+	mut ap := playbook.new(path: args.path)!
 
 	mut logger := log.Logger(&log.Log{
 		level: if debug_log { .debug } else { .info }
@@ -66,7 +64,7 @@ pub fn new(args RunnerArgs, debug_log bool) !Runner {
 	return runner
 }
 
-pub fn (mut r Runner) run(mut acs actions.Actions) ! {
+pub fn (mut r Runner) run(mut acs playbook.Actions) ! {
 	for action in acs.actions {
 		match action.book {
 			threelang.tfgrid_book {

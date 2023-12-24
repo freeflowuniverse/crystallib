@@ -8,7 +8,7 @@ import time
 // budget_item
 // This file deals with the budget item base and...
 
-[heap]
+@[heap]
 pub struct BudgetItemBase {
 pub mut:
 	// budget_item_type BudgetItemType

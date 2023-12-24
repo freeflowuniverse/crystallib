@@ -2,10 +2,9 @@ module regext
 
 import regex
 
-// find parts of text which are in form {NAME}
+// find parts of text which are in form ${NAME}
 // .
 // NAME is as follows: .
-//   Uppercase letters: A-Z .
 //   Lowercase letters: a-z .
 //   Digits: 0-9 .
 //   Underscore: _ .
@@ -17,6 +16,7 @@ pub fn find_simple_vars(txt string) []string {
 	// println(re.get_query())
 	mut words := re.find_all_str(txt)
 	// println(words)
+	words = words.map(it.trim('{} '))
 	return words
 }
 

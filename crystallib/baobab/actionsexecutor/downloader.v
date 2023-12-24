@@ -1,12 +1,12 @@
 module actionsexecutor
 
-import freeflowuniverse.crystallib.data.actionsparser
+import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.osal.downloader
 
 // can start with sal, dal, ... the 2nd name is typicall the actor (or topic)
 // do this function public and then it breaches out to detail functionality
 
-pub fn sal_downloader(action actionsparser.Action) ! {
+pub fn sal_downloader(action playbook.Action) ! {
 	match action.actor {
 		'downloader' {
 			match action.name {

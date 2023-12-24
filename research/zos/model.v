@@ -13,7 +13,7 @@ struct Peer {
 	endpoint      string
 }
 
-type IP = []byte
+type IP = []byte // TODO: this is a weird format, not usable for our customers
 type IPMask = []byte
 
 // Unit defines a capacity unit in "bytes"
@@ -38,20 +38,8 @@ struct Mount {
 	point string
 }
 
-type ZDBMode = string
-
-struct ZDBGroup {
-	backends []ZDBBackend
-}
-
-struct ZDBBackend {
-	address   string
-	namespace string
-	password  string
-}
-
 struct QuantumSafeMeta {
-	typ_   string            [json: 'type']
+	typ_   string            @[json: 'type']
 	config QuantumSafeConfig
 }
 

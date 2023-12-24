@@ -1,6 +1,6 @@
 module docker
 
-[params]
+@[params]
 pub struct VolumeArgs {
 pub mut:
 	mount_points []string
@@ -9,7 +9,7 @@ pub mut:
 pub struct VolumeItem {
 pub mut:
 	mount_points []string
-	recipe       &DockerBuilderRecipe [str: skip]
+	recipe       &DockerBuilderRecipe @[str: skip]
 }
 
 // to do something like: 'Volume /data'

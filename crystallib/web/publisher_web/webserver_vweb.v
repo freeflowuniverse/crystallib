@@ -1,9 +1,9 @@
-module publisher_core
+module publisher_web
 
 import freeflowuniverse.crystallib.core.texttools
 import os
 import vweb
-import publisher_config
+// import publisher_config
 import json
 import gittools
 import rest
@@ -388,7 +388,7 @@ fn (mut app App) get[T](id string) ?T {
 	return data_loader.get[T](id)
 }
 
-['/api/data/blog']
+@['/api/data/blog']
 pub fn (mut app App) list_blogs() vweb.Result {
 	result := app.list[rest.Blog]() or {
 		println(err)
@@ -398,7 +398,7 @@ pub fn (mut app App) list_blogs() vweb.Result {
 	return app.json_pretty[[]rest.Blog](result)
 }
 
-['/api/data/news']
+@['/api/data/news']
 pub fn (mut app App) list_news() vweb.Result {
 	result := app.list[rest.News]() or {
 		println(err)
@@ -408,7 +408,7 @@ pub fn (mut app App) list_news() vweb.Result {
 	return app.json_pretty[[]rest.News](result)
 }
 
-['/api/data/project']
+@['/api/data/project']
 pub fn (mut app App) list_projects() vweb.Result {
 	result := app.list[rest.Project]() or {
 		println(err)
@@ -418,7 +418,7 @@ pub fn (mut app App) list_projects() vweb.Result {
 	return app.json_pretty[[]rest.Project](result)
 }
 
-['/api/data/person']
+@['/api/data/person']
 pub fn (mut app App) list_persons() vweb.Result {
 	result := app.list[rest.Person]() or {
 		println(err)
@@ -428,7 +428,7 @@ pub fn (mut app App) list_persons() vweb.Result {
 	return app.json_pretty[[]rest.Person](result)
 }
 
-['/api/data/blog/:id']
+@['/api/data/blog/:id']
 pub fn (mut app App) get_blog(id string) vweb.Result {
 	result := app.get[rest.Blog](id) or {
 		println(err)
@@ -438,7 +438,7 @@ pub fn (mut app App) get_blog(id string) vweb.Result {
 	return app.json_pretty[rest.Blog](result)
 }
 
-['/api/data/news/:id']
+@['/api/data/news/:id']
 pub fn (mut app App) get_news(id string) vweb.Result {
 	result := app.get[rest.News](id) or {
 		println(err)
@@ -448,7 +448,7 @@ pub fn (mut app App) get_news(id string) vweb.Result {
 	return app.json_pretty[rest.News](result)
 }
 
-['/api/data/project/:id']
+@['/api/data/project/:id']
 pub fn (mut app App) get_project(id string) vweb.Result {
 	result := app.get[rest.Project](id) or {
 		println(err)
@@ -458,7 +458,7 @@ pub fn (mut app App) get_project(id string) vweb.Result {
 	return app.json_pretty[rest.Project](result)
 }
 
-['/api/data/person/:id']
+@['/api/data/person/:id']
 pub fn (mut app App) get_person(id string) vweb.Result {
 	result := app.get[rest.Person](id) or {
 		println(err)
@@ -478,7 +478,7 @@ pub fn (mut app App) get_person(id string) vweb.Result {
 // 	return app.file(file)
 // }
 
-['/:path...']
+@['/:path...']
 pub fn (mut app App) handler(_path string) vweb.Result {
 	config, publisherobj := rlock app.ctx {
 		app.ctx.config, app.ctx.publisher

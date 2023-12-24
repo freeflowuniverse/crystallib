@@ -4,12 +4,12 @@ import freeflowuniverse.crystallib.core.codemodel
 import freeflowuniverse.crystallib.core.codeparser
 import os
 
-[params]
+@[params]
 struct GenerateCrudMethods {
 pub:
-	actor_name  string                [required] // name of actor struct
-	actor_field codemodel.StructField [required] // field in actor belonging to root object
-	root_struct codemodel.Struct      [required]
+	actor_name  string                @[required] // name of actor struct
+	actor_field codemodel.StructField @[required] // field in actor belonging to root object
+	root_struct codemodel.Struct      @[required]
 }
 
 // generate_crud_methods generates CRUD actor methods for a provided structure
@@ -179,7 +179,7 @@ lock actor{
 	return create_method
 }
 
-[params]
+@[params]
 struct GenerateParamGetters {
 	structure    codemodel.Struct
 	prefix       string
@@ -232,10 +232,10 @@ fn generate_param_getters(params GenerateParamGetters) []string {
 	return param_getters
 }
 
-[params]
+@[params]
 struct GetChildField {
-	parent codemodel.Struct [required]
-	child  codemodel.Struct [required]
+	parent codemodel.Struct @[required]
+	child  codemodel.Struct @[required]
 }
 
 fn get_child_field(params GetChildField) codemodel.StructField {

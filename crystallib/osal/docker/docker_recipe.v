@@ -59,7 +59,7 @@ pub fn (mut e DockerEngine) recipe_new(args RecipeArgs) DockerBuilderRecipe {
 	}
 }
 
-[heap]
+@[heap]
 pub struct DockerBuilderRecipe {
 pub mut:
 	name     string
@@ -67,7 +67,7 @@ pub mut:
 	tag      string
 	params   Params
 	files    []embed_file.EmbedFileData
-	engine   &DockerEngine              [str: skip]
+	engine   &DockerEngine              @[str: skip]
 	items    []RecipeItem
 	platform PlatformType
 	zinit    bool
@@ -234,8 +234,7 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 	cmd := '
 		set -ex
 		cd ${destpath}
-		#docker buildx build . -t ${b.name}:${b.tag} --ssh default=\${SSH_AUTH_SOCK} ${nocache} ${bplatform} ${bpush}
-		docker build . -t ${b.name}:${b.tag} --ssh default=\${SSH_AUTH_SOCK} ${nocache} ${bplatform} ${bpush}
+		docker buildx build . -t ${b.name}:${b.tag} --ssh default=\${SSH_AUTH_SOCK} ${nocache} ${bplatform} ${bpush}
 		'
 
 	mut cmdshell := 'set -ex\ncd ${destpath}\ndocker rm ${b.name} -f > /dev/null 2>&1\ndocker run --name ${b.name} '

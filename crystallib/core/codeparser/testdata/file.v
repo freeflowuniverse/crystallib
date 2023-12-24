@@ -8,7 +8,7 @@ fn file_func0() {}
 pub fn file_func1(name string) {}
 
 // FileStruct0 defines the configuration params of file_func2
-[params]
+@[params]
 pub struct FileStruct0 {
 	param1 string //
 	param2 int    //

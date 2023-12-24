@@ -1,6 +1,6 @@
 module bizmodel
 
-import freeflowuniverse.crystallib.data.actionsparser { Actions }
+import freeflowuniverse.crystallib.core.playbook { PlayBook }
 import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.paramsparser
@@ -16,8 +16,8 @@ import rand
 //     department:'engineering'
 //	   cost_percent_revenue e.g. 4%, will make sure the cost will be at least 4% of revenue
 
-fn (mut m BizModel) hr_actions(actions_ Actions) ! {
-	mut actions2 := actions_.filtersort(actor: 'hr')!
+fn (mut m BizModel) hr_actions(actions_ PlayBook) ! {
+	mut actions2 := actions_.find(actor: 'hr')
 	for action in actions2 {
 		if action.name == 'employee_define' {
 			mut name := action.params.get_default('name', '')!

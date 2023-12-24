@@ -2,15 +2,15 @@ module osal
 
 import os
 
-[params]
+@[params]
 pub struct EnvSet {
 pub mut:
-	key       string [required]
-	value     string [required]
+	key       string @[required]
+	value     string @[required]
 	overwrite bool = true
 }
 
-[params]
+@[params]
 pub struct EnvSetAll {
 pub mut:
 	env                 map[string]string

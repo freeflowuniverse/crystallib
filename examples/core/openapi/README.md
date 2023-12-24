@@ -1,0 +1,1 @@
+This example demonstrates that the Qdrant OpenAPI specification can be decoded into its memory structure.

@@ -2,18 +2,16 @@ module btc
 
 import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
 
-const (
-	default_timeout = 500000
-)
+const default_timeout = 500000
 
-[openrpc: exclude]
-[noinit]
+@[openrpc: exclude]
+@[noinit]
 pub struct BtcClient {
 mut:
 	client &RpcWsClient
 }
 
-[openrpc: exclude]
+@[openrpc: exclude]
 pub fn new(mut client RpcWsClient) BtcClient {
 	return BtcClient{
 		client: &client

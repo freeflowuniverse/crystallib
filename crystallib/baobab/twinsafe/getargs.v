@@ -28,7 +28,7 @@ fn (err GetError) code() int {
 }
 
 // standardised way how to get an object
-[params]
+@[params]
 pub struct GetArgs {
 pub:
 	name string

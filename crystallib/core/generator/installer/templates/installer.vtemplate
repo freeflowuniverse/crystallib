@@ -1,0 +1,63 @@
+module ${args.name}
+
+// import freeflowuniverse.crystallib.installers.zinit as zinitinstaller
+// import freeflowuniverse.crystallib.installers.base
+import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.osal.gittools
+@if "rust" in args.install_deps
+import freeflowuniverse.crystallib.installers.rust
+@end
+@if "golang" in args.install_deps
+import freeflowuniverse.crystallib.installers.golang
+@end
+@if "python" in args.install_deps
+import freeflowuniverse.crystallib.installers.python
+@end
+@if "docker" in args.install_deps
+import freeflowuniverse.crystallib.installers.docker
+@end
+
+
+^^[params]
+pub struct InstallArgs {
+pub mut:
+	reset bool
+}
+
+pub fn install(args InstallArgs) ! {
+	
+	checkplatform()!
+
+	if osal.done_exists('${args.name}_install') {
+		println(' - ${args.name} already installed')
+		return
+	}
+
+	@if "rust" in args.install_deps
+	rust.install()!
+	@end
+	@if "golang" in args.install_deps
+	golang.install()!
+	@end
+	@if "python" in args.install_deps
+	python.install()!
+	@end
+	@if "docker" in args.install_deps
+	docker.install()!
+	@end		
+
+	build()!
+
+	osal.done_set('${args.name}_install', 'OK')!
+
+	println(' - ${args.name} installed properly.')
+}
+
+
+fn checkplatform() ! {
+	myplatform := osal.platform()
+	if !(myplatform == .ubuntu || myplatform == .arch) {
+		return error('platform not supported')
+	}
+}

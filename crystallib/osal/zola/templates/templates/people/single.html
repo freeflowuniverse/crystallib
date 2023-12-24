@@ -1,0 +1,55 @@
+{% extends "_default/base.html" %}
+{% block content %}
+
+{% set page_path = term.path ~ 'index.md' | replace(from='-', to='_') | trim_start_matches(pat="/") %}
+{% set people = get_section(path="people/_index.md") %}
+{% set pages_str = people.pages | json_encode() | as_str %}
+{% if pages_str is containing(term.name) %}
+    {% set page = get_page(path=page_path) %}
+
+
+<div class="container sm:pxi-0 lg:w-5/6 mx-auto min-h-screen overflow-x-hidden pt-24">
+    <div class="flex flex-row flex-wrap items-start mx-4 sm:mx-0">
+        <div class="w-full md:w-1/6 mx-auto sm:mx-0">
+            <img src="{{page.extra.imgPath}}" alt="" class="rounded bg-gray-200 w-48 border-2 border-gray-400 mx-auto md:mx-0 g-image g-image--lazy g-image--loaded my-4">
+        </div>
+        <div class="w-full md:w-5/6 text-center md:text-left md:pl-8">
+            <div class="flex flex-row items-center">
+                <h1 class="pb-0 mb-0 mt-0 text-4xl font-normal tracking-wide my-1">
+                    {{page.title}}
+                </h1>
+            </div>
+            <div class="text-gray-700 my-4">
+                {{page.content | safe }}
+            </div>
+            <div class="flex items-center">
+                <div class="flex justify-between items-center">
+                    <ul class="list-none flex author-list m-0 py-2">
+                        {% for org in page.extra.organizations %}
+                            <li>
+                                <a href="">
+                                    <img src="" alt="">
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% if page.taxonomies.memberships %}
+            {% for tag in page.taxonomies.memberships %}
+                <a href="{{'/memberships/' ~ tag | replace(from='_', to='-' )}}" class="border-1 font-light text-xs bg-transparent hover:text-blue-700 py-2 px-4 mr-2 border hover:border-blue-500 border-gray-600 text-gray-700 rounded-full ">
+                    {{tag}}
+                </a>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+    <div class="my-8">
+        <hr/>
+        <br/>
+        <hr/>
+    </div>
+</div>
+{% endif %}
+
+{% endblock content %}

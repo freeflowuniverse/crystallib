@@ -2,6 +2,8 @@ module paramsparser
 
 import freeflowuniverse.crystallib.data.resp
 
+// TODO: fix this. encoding some params and redecoding them does not work.
+
 // encode using resp (redis procotol)
 pub fn (mut p Params) to_resp() ![]u8 {
 	mut b_main := resp.builder_new()

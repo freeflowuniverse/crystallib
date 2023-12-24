@@ -5,7 +5,7 @@ import log
 import net.websocket { Client, Message }
 import time
 
-[heap]
+@[heap]
 pub struct RpcWsClient {
 pub mut:
 	client                    &Client

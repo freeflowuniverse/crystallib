@@ -1,11 +1,11 @@
 module tfgrid
 
 import freeflowuniverse.crystallib.threefold.web3gw.tfgrid as tfgrid_client { TFGridClient }
-import freeflowuniverse.crystallib.data.actionsparser { Action }
+import freeflowuniverse.crystallib.core.playbook { Action }
 import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
 import log { Logger }
 
-[heap]
+@[heap]
 pub struct TFGridHandler {
 pub mut:
 	tfgrid   TFGridClient

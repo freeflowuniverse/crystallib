@@ -18,11 +18,11 @@ pub enum CPUType {
 	arm32
 }
 
-[heap]
+@[heap]
 pub struct Node {
 mut:
-	factory  &BuilderFactory [skip; str: skip]
-	executor Executor        [skip; str: skip]
+	factory  &BuilderFactory @[skip; str: skip]
+	executor Executor        @[skip; str: skip]
 pub:
 	name string = 'mymachine'
 pub mut:
@@ -33,7 +33,6 @@ pub mut:
 	params      Params
 }
 
-
 // get unique key for the node, as used in caching environment
 pub fn (mut node Node) key() string {
 	// for now we will use name, but this is not good enough, will have to become something more unique	
@@ -43,7 +42,10 @@ pub fn (mut node Node) key() string {
 // get remote environment arguments in memory
 pub fn (mut node Node) readfromsystem() ! {
 	node.platform_load()!
-	node.environment = node.environ_get() or { return error('can not load env.\n ${err}') }
+	node.environment = node.environ_get(reload: true) or {
+		return error('can not load env.\n ${err}')
+	}
+
 	home := node.environment['HOME'] or {
 		return error('could not find HOME in environment variables.\n ${node}')
 	}

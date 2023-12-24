@@ -10,7 +10,7 @@ __global (
 	instances shared map[string]GitStructure
 )
 
-[params]
+@[params]
 pub struct GitStructureConfig {
 pub mut:
 	name        string = 'default'
@@ -79,7 +79,7 @@ pub fn configure(config_ GitStructureConfig) ! {
 	redis.set(gitstructure_config_key(config_.name), datajson)!
 }
 
-[params]
+@[params]
 pub struct GitStructureGetArgs {
 pub mut:
 	name     string = 'default'
@@ -167,6 +167,7 @@ pub mut:
 pub fn code_get(args CodeGetFromUrlArgs) !string {
 	mut gs := get(name: args.gitstructure_name, coderoot: args.coderoot)!
 	mut locator := gs.locator_new(args.url)!
+	// println(locator)
 	mut g := gs.repo_get(locator: locator)!
 	if args.reload {
 		g.load()!
@@ -176,6 +177,20 @@ pub fn code_get(args CodeGetFromUrlArgs) !string {
 	}
 	s := locator.path_on_fs()!
 	return s.path
+}
+
+pub fn repo_get(args CodeGetFromUrlArgs) !GitRepo {
+	mut gs := get(name: args.gitstructure_name, coderoot: args.coderoot)!
+	mut locator := gs.locator_new(args.url)!
+	println(locator)
+	mut g := gs.repo_get(locator: locator)!
+	if args.reload {
+		g.load()!
+	}
+	if args.reset {
+		g.remove_changes()!
+	}
+	return g
 }
 
 // get new gitstructure .
@@ -199,7 +214,9 @@ fn new(config_ GitStructureConfig) !GitStructure {
 
 	mut gs := GitStructure{
 		config: config
-		rootpath: pathlib.get_dir(path:config.root, create:true) or { panic('this should never happen') }
+		rootpath: pathlib.get_dir(path: config.root, create: true) or {
+			panic('this should never happen: ${err}')
+		}
 	}
 
 	if os.exists(gs.config.root) {
@@ -213,4 +230,27 @@ fn new(config_ GitStructureConfig) !GitStructure {
 	}
 
 	return gs
+}
+
+@[params]
+pub struct GitDirGetArgs {
+pub mut:
+	path        string 
+}
+
+
+//look for git dir at (.git location), 
+//if path not specified will take current path,
+//will give error if we can't find the .git location
+pub fn git_dir_get(args_ GitDirGetArgs) !string {
+	mut args:=args_
+	if args.path==""{
+		args.path= os.getwd()
+	}
+		
+	mut curdiro := pathlib.get_dir(path: args.path, create: false)!
+	mut parentpath := curdiro.parent_find('.git') or { return error("cannot find git dir in $args.path") }
+
+	return parentpath.path
+
 }

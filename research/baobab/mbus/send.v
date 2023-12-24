@@ -10,7 +10,7 @@ pub enum ConnectionType {
 	redis
 }
 
-[params]
+@[params]
 pub struct SendRPCArgs {
 pub:
 	address       string // ipaddress (if empty then will stay in local redis)

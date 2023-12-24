@@ -1,0 +1,73 @@
+{% extends "_default/base.html" %}
+{% block content %}
+
+
+<div class="container mx-auto">
+    {% include "partials/filter_bar.html" %}
+    
+    <div class="text-center main-title px-0 md:w-full">
+      <h1
+        class="tracking-tight text-5xl text-left text-2xl sm:text-3xl md:text-4xl lg:text-5xl fw-500 leading-snug font-normal mb-10"
+      >
+      {% set path_array = current_path | split(pat="/") %}
+      {% set taxonomy = path_array[1] %}
+      {% set category = path_array[2] %}
+        {{category | replace(from='-', to=' ' ) | title}}
+      </h1>
+      <div>
+        <div class="mt-12 grid gap-5 max-w-lg mx-auto lg:grid-cols-2 xl:grid-cols-4 lg:max-w-none">
+          {%- for page in paginator.pages %} 
+            {% if "Engineering" == "Engineering"%}
+                {% include "partials/person_card.html" %} 
+            {%endif%} {%- endfor %}
+        </div>
+        <hr class="mt-6" />
+        <p class="text-center text-sm mt-2 mb-16">
+          {% if paginator.previous %}
+          <a
+            class="border-transparent"
+            aria-label="First page"
+            href="{{ paginator.first }}"
+            >{% include "partials/icons/svgPrevPageIcon.html" %}{% include
+            "partials/icons/svgPrevPageIcon.html" %}</a
+          >
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a
+            class="border-transparent"
+            aria-label="Previous page"
+            href="{{ paginator.previous }}"
+            >{% include "partials/icons/svgPrevPageIcon.html" %}</a
+          >
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {% else %} {%
+          include "partials/icons/svgFirstPageIcon.html" %}{% include
+          "partials/icons/svgFirstPageIcon.html" %}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {% include
+          "partials/icons/svgFirstPageIcon.html" %}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {% endif %} {% if
+          paginator.next %}
+          <a
+            class="border-transparent"
+            aria-label="Next page"
+            href="{{ paginator.next }}"
+            >{% include "partials/icons/svgNextPageIcon.html" %}</a
+          >
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a
+            class="border-transparent"
+            aria-label="Last page"
+            href="{{ paginator.last }}"
+            >{% include "partials/icons/svgNextPageIcon.html" %}{% include
+            "partials/icons/svgNextPageIcon.html" %}</a
+          >
+          {% else %} {% include "partials/icons/svgLastPageIcon.html" %}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {% include
+          "partials/icons/svgLastPageIcon.html" %}{% include
+          "partials/icons/svgLastPageIcon.html" %} {% endif %}
+        </p>
+      </div>
+    </div>
+</div>
+
+{% endblock content %}

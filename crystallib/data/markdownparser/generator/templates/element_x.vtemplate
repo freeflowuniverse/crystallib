@@ -1,0 +1,39 @@
+module elements
+
+pub struct @{eo.classname} {
+	DocBase	
+pub mut:
+	replaceme string
+}
+
+pub fn (mut self @{eo.classname}) process() !int {
+	// for mut parent in self.parents{
+	// 	parent.elements<<self
+	// }	
+	if self.processed{		
+		return 0
+	}
+	self.process_()
+	self.processed = true
+	return 1
+}
+
+pub fn (mut self @{eo.classname}) markdown() string {
+	mut out:= self.content
+	out+=self.DocBase.markdown()
+	return out
+}
+
+pub fn (mut self @{eo.classname}) html() string {
+	panic("implement")
+	//TODO: implement html
+	out+=self.DocBase.html()
+	return out
+}
+
+
+@[params]
+pub struct @{eo.classname}NewArgs{
+	ElementNewArgs
+}
+

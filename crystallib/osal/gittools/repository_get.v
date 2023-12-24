@@ -2,7 +2,7 @@ module gittools
 
 import freeflowuniverse.crystallib.core.texttools
 
-[params]
+@[params]
 pub struct RepoGetArgs {
 pub mut:
 	locator GitLocator
@@ -38,6 +38,7 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !GitRepo {
 				r2.branch_switch(r2.addr.branch)!
 			}
 		} else {
+			print_backtrace()
 			return error('branch should have been known for ${r2.addr.remote_url}')
 		}
 		r2
@@ -81,7 +82,7 @@ pub fn (mut gitstructure GitStructure) repo_exists(l GitLocator) !bool {
 
 // get a list of repo's which are in line to the args
 //
-[params]
+@[params]
 pub struct ReposGetArgs {
 pub mut:
 	filter   string // if used will only show the repo's which have the filter string inside
@@ -93,8 +94,6 @@ pub mut:
 pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []GitRepo {
 	mut args := ReposGetArgs{
 		...args_
-		name: texttools.name_fix(args_.name)
-		account: texttools.name_fix(args_.account)
 	}
 	mut res := []GitRepo{}
 	// println(args)

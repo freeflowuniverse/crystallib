@@ -1,4 +1,4 @@
-module tfgrid
+module grid
 
 import net.http
 import json
@@ -14,18 +14,18 @@ pub mut:
 
 pub struct Contract {
 pub:
-	contract_id     string [json: contractID]
-	deployment_data string [json: deploymentData]
+	contract_id     string @[json: contractID]
+	deployment_data string @[json: deploymentData]
 	state           string
-	node_id         u32    [json: nodeID]
+	node_id         u32    @[json: nodeID]
 	name            string
 }
 
 pub struct Contracts {
 pub mut:
-	name_contracts []Contract [json: nameContracts]
-	node_contracts []Contract [json: nodeContracts]
-	rent_contracts []Contract [json: rentContracts]
+	name_contracts []Contract @[json: nameContracts]
+	node_contracts []Contract @[json: nodeContracts]
+	rent_contracts []Contract @[json: rentContracts]
 }
 
 // contractsList, err := c.ListContractsByTwinID([]string{"Created, GracePeriod"})

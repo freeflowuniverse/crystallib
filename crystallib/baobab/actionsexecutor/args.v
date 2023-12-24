@@ -1,11 +1,11 @@
 module actionsexecutor
 
-import freeflowuniverse.crystallib.data.actionsparser
+import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.baobab.context
 
-[params]
+@[params]
 pub struct ActionExecArgs {
 pub mut:
 	session ?context.Session
-	action  actionsparser.Action
+	action  playbook.Action
 }

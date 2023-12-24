@@ -3,7 +3,7 @@ module docker
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 
-[params]
+@[params]
 pub struct WriteFileArgs {
 pub mut:
 	name            string // such a file needs to have a name
@@ -24,7 +24,7 @@ pub fn (mut r DockerBuilderRecipe) write_file(args WriteFileArgs) ! {
 	if args.dest == '' {
 		return error('dest cant be empty, \n ${r}')
 	}
-	mut ff := pathlib.get_file(path:r.path() + '/snippets/${args.name}', create:true)!
+	mut ff := pathlib.get_file(path: r.path() + '/snippets/${args.name}', create: true)!
 	content := texttools.dedent(args.content)
 	ff.write(content)!
 	r.add_copy(

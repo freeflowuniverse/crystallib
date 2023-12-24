@@ -13,18 +13,16 @@ pub enum AudioRespType {
 	vtt
 }
 
-const (
-	audio_model      = 'whisper-1'
-	audio_mime_types = {
-		'.mp3':  'audio/mpeg'
-		'.mp4':  'audio/mp4'
-		'.mpeg': 'audio/mpeg'
-		'.mpga': 'audio/mp4'
-		'.m4a':  'audio/mp4'
-		'.wav':  'audio/vnd.wav'
-		'.webm': 'application/octet-stream'
-	}
-)
+const audio_model = 'whisper-1'
+const audio_mime_types = {
+	'.mp3':  'audio/mpeg'
+	'.mp4':  'audio/mp4'
+	'.mpeg': 'audio/mpeg'
+	'.mpga': 'audio/mp4'
+	'.m4a':  'audio/mp4'
+	'.wav':  'audio/vnd.wav'
+	'.webm': 'application/octet-stream'
+}
 
 fn audio_resp_type_str(i AudioRespType) string {
 	return match i {

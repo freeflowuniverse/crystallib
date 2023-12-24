@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.clients.httpconnection
 import freeflowuniverse.crystallib.osal { exec }
 import os
 
-[heap]
+@[heap]
 pub struct DockerRegistry {
 pub mut:
 	name     string = 'default'
@@ -13,15 +13,15 @@ pub mut:
 	ssl      bool
 }
 
-[params]
+@[params]
 pub struct DockerRegistryArgs {
 pub mut:
-	name      string [required] = 'default'
+	name      string = 'default' @[required]
 	datapath  string
 	ssl       bool
 	reset     bool // if reset will reset existing running one
 	reset_ssl bool // if reset will reset the sslkey
-	secret    string [required] = '1234'
+	secret    string = '1234' @[required]
 }
 
 // registry:

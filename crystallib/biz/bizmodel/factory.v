@@ -5,8 +5,8 @@ import freeflowuniverse.crystallib.baobab.smartid
 // import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.data.knowledgetree
-import freeflowuniverse.crystallib.data.actionsparser
+import freeflowuniverse.crystallib.data.doctree
+import freeflowuniverse.crystallib.core.playbook
 import os
 
 __global (
@@ -21,7 +21,7 @@ pub mut:
 	// currencies currency.Currencies
 }
 
-[params]
+@[params]
 pub struct BizModelArgs {
 pub mut:
 	name        string = 'default' // name of bizmodel
@@ -36,7 +36,7 @@ pub mut:
 	cid         smartid.CID
 }
 
-pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
+pub fn new(args_ BizModelArgs) !doctree.MDBook {
 	mut args := args_
 
 	// mut cs := currency.new()
@@ -63,7 +63,7 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 	}
 
 	tree_name := 'bizmodel_${args.name}'
-	mut tree := knowledgetree.new(name: tree_name)!
+	mut tree := doctree.new(name: tree_name)!
 
 	mp := macroprocessor_new(args_.name)
 	tree.macroprocessor_add(mp)!
@@ -80,7 +80,7 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 
 	tree.scan(
 		name: 'crystal_manual'
-		git_url: 'https://github.com/freeflowuniverse/crystallib/tree/development_circles/manual/biz' // TODO: needs to be come development
+		git_url: 'https://github.com/freeflowuniverse/crystallib/tree/development/manual/biz' // TODO: needs to be come development
 		heal: false
 		cid: args.cid
 	)!
@@ -92,7 +92,7 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 		cid: args.cid
 	)!
 
-	mut book := knowledgetree.book_generate(
+	mut book := doctree.book_generate(
 		path: args.mdbook_path
 		name: args.mdbook_name
 		tree: tree
@@ -105,13 +105,23 @@ pub fn new(args_ BizModelArgs) !knowledgetree.MDBook {
 pub fn (mut m BizModel) load() ! {
 	println('ACTIONS LOAD ${m.params.name}')
 
-	// QUESTION: what do we use here instead
 	// m.replace_smart_ids()!
-	ap := actionsparser.new(path: m.params.path, defaultcircle: 'bizmodel_${m.params.name}')!
-	m.revenue_actions(ap)!
-	m.hr_actions(ap)!
-	m.funding_actions(ap)!
-	m.overhead_actions(ap)!
+	mut tree := doctree.new(name: 'bizmodel_${m.params.name}')!
+	tree.scan(path: m.params.path)!
+	mut actions_playbooks := playbook.PlayBook{}
+	for playbook in tree.playbooks.values() {
+		for page in playbook.pages.values() {
+			if d := page.doc {
+				actions_playbooks.actions << d.actions()
+			}
+		}
+	}
+
+	// ap := playbook.parse(path: m.params.path, defaultcircle: 'bizmodel_${m.params.name}')!
+	m.revenue_actions(actions_playbooks)!
+	m.hr_actions(actions_playbooks)!
+	m.funding_actions(actions_playbooks)!
+	m.overhead_actions(actions_playbooks)!
 
 	// tr.scan(
 	// 	path: wikipath

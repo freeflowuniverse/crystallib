@@ -1,11 +1,11 @@
 module bizmodel
 
-import freeflowuniverse.crystallib.data.knowledgetree
+import freeflowuniverse.crystallib.data.doctree
 import os
 
 fn test_scan() ! {
-	knowledgetree.new(name: 'test_tree')!
-	knowledgetree.scan(
+	mut tree := doctree.new(name: 'test_tree')!
+	tree.scan(
 		name: 'test_tree'
 		path: '${os.dir(@FILE)}/example/wiki'
 		heal: true
@@ -13,5 +13,4 @@ fn test_scan() ! {
 	rlock knowledgetrees {
 		println(knowledgetrees)
 	}
-	panic('sh')
 }

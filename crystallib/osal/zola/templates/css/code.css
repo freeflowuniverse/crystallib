@@ -1,0 +1,90 @@
+code.language-html,
+code.language-css,
+code.language-md,
+code.language-cmd,
+code.language-bash,
+code.language-text,
+code.language-js,
+span.o,
+span.nx {
+  color: rgb(255, 255, 255);
+  line-height: 1.4;
+}
+span.c {
+  color: hsl(120, 100%, 20%);
+}
+
+span.p,
+span.s1,
+span.s2,
+span.nt {
+  color: hsl(40, 100%, 30%);
+}
+
+span.gs,
+span.gh,
+span.ge {
+  color: hsl(208, 100%, 50%);
+}
+
+span.gs {
+  font-weight: bold;
+}
+
+span.ge {
+  font-style: italic;
+}
+
+pre,
+code {
+  font-family: "Lucida Console", "Courier New", monospace;
+}
+
+code {
+  background-color: hsl(0, 0%, 98%);
+  border-radius: 3px;
+  color: hsl(120, 100%, 20%);
+  font-size: 85%;
+}
+
+pre {
+  margin: 0;
+  margin: 0;
+  padding: 1rem;
+  overflow: scroll;
+}
+
+pre code {
+  background-color: transparent;
+  color: inherit;
+  font-size: 100%;
+  padding: 0;
+}
+
+.highlight {
+  background-color: transparent;
+  border-radius: 3px;
+  margin: 0 0 0.5rem;
+  padding: 0;
+
+  & pre {
+    margin-bottom: 0;
+    overflow-x: auto;
+  }
+
+  & .lineno {
+    color: hsla(0, 0%, 67%, 0.72);
+    display: inline-block; /* Ensures the null space also isn't selectable */
+    padding: 0 0.75rem 0 0.25rem;
+    /* Make sure numbers aren't selectable */
+  }
+}
+
+/* TODO: dark theme for future
+@media (prefers-color-scheme: dark) {
+  code {
+    color: #fff;
+    background: hsl(200, 63%, 15%);
+  }
+}
+*/

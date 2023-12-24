@@ -1,20 +1,22 @@
 module uimodel
 
-[params]
+@[params]
 pub struct DropDownArgs {
 pub mut:
-	description string
-	question    string // WARNING, this was changed to be question
-	items       []string
-	warning     string
-	clear       bool
-	all         bool
-	validation  fn (string) bool = fn (s string) bool {
+	description    string
+	question       string
+	items          []string
+	default        []string
+	warning        string
+	clear          bool
+	all            bool
+	choice_message string
+	validation     fn (string) bool = fn (s string) bool {
 		return true
 	}
 }
 
-[params]
+@[params]
 pub struct QuestionArgs {
 pub mut:
 	description string
@@ -24,6 +26,7 @@ pub mut:
 	regex       string
 	minlen      int
 	reset       bool
+	default     string
 	validation  fn (string) bool = fn (s string) bool {
 		return true
 	}
@@ -31,7 +34,7 @@ pub mut:
 
 // validation responds with either true or an error message
 
-[params]
+@[params]
 pub struct YesNoArgs {
 pub mut:
 	description string
@@ -39,6 +42,7 @@ pub mut:
 	warning     string
 	clear       bool
 	reset       bool
+	default     bool
 	validation  fn (string) bool = fn (s string) bool {
 		return true
 	}

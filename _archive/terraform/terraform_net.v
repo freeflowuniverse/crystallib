@@ -2,7 +2,7 @@ module terraform
 
 import os
 
-[heap]
+@[heap]
 struct TFNet {
 pub mut:
 	description     string

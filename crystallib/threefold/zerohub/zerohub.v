@@ -13,7 +13,7 @@ pub mut:
 	header http.Header
 }
 
-[params]
+@[params]
 pub struct ZeroHubClientArgs {
 pub:
 	url    string = 'hub.grid.tf'

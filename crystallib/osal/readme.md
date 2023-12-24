@@ -42,7 +42,7 @@ mut job2:=osal.exec(cmd:"ls /")?
 println(job2)
 
 //wont die, the result can be found in /tmp/execscripts
-mut job:=osal.exec(cmd:"ls dsds",die:false)?
+mut job:=osal.exec(cmd:"ls dsds",ignore_error:true)?
 //this one has an error
 println(job) 
 ```

@@ -2,16 +2,16 @@ module gittools
 
 import os
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.tools.sshagent
+import freeflowuniverse.crystallib.osal.sshagent
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.clients.redisclient
 import json
 
-[heap]
+@[heap]
 pub struct GitRepo {
 	id int
 mut:
-	gs &GitStructure [skip; str: skip]
+	gs &GitStructure @[skip; str: skip]
 pub mut:
 	addr GitAddr
 	path pathlib.Path
@@ -24,6 +24,10 @@ pub mut:
 	need_pull   bool
 	branch      string
 	remote_url  string
+}
+
+pub fn (repo GitRepo) key() string {
+	return repo.addr.key()
 }
 
 fn (repo GitRepo) cache_delete() ! {
@@ -43,6 +47,7 @@ pub fn (mut repo GitRepo) load() !GitRepoStatus {
 	}
 	mut st := repo_load(repo.addr, repo.path.path)!
 	repo.status_set(st)!
+	// println(' - status:\n${st}')
 	return st
 }
 
@@ -61,6 +66,7 @@ fn (mut repo GitRepo) status_set(st GitRepoStatus) ! {
 		locator := repo.gs.locator_new(st.remote_url)!
 		repo.addr = locator.addr
 		repo.addr.branch = st.branch
+		// println(repo)
 	}
 }
 
@@ -93,6 +99,11 @@ pub fn (mut repo GitRepo) status() !GitRepoStatus {
 	return st
 }
 
+pub fn (mut repo GitRepo) need_pull() !bool {
+	s := repo.status()!
+	return s.need_pull
+}
+
 // relative path inside the gitstructure, pointing to the repo
 pub fn (repo GitRepo) path_relative() string {
 	return repo.path.path_relative(repo.gs.rootpath.path) or { panic('couldnt get relative path') } // TODO: check if works well
@@ -106,10 +117,15 @@ pub fn (mut repo GitRepo) pull_reset(args_ ActionArgs) ! {
 		args.reload = false
 	}
 	repo.remove_changes(args)!
+	if true {
+		println(repo)
+		print_backtrace()
+		// panic("ss")
+	}
 	repo.pull(args)!
 }
 
-[params]
+@[params]
 pub struct ActionArgs {
 pub mut:
 	reload bool = true
@@ -144,6 +160,11 @@ pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 	$if debug {
 		println('   - PULL: ${repo.url_get(true)}')
 	}
+	// repo.ssh_key_load()!
+	// defer {
+	// 	repo.ssh_key_forget() or { panic("bug") }
+	// }
+
 	mut args := args_
 	if args.reload {
 		repo.load()!
@@ -153,14 +174,26 @@ pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 	if st.need_commit {
 		return error('Cannot pull repo: ${repo.path.path} because there are changes in the dir.')
 	}
-	if st.need_pull {
-		cmd2 := 'cd ${repo.path.path} && git pull'
-		osal.execute_silent(cmd2) or {
-			println(' GIT PULL FAILED: ${cmd2}')
-			return error('Cannot pull repo: ${repo.path}. Error was ${err}')
-		}
-		repo.load()!
+	// pull can't see the status
+	cmd2 := 'cd ${repo.path.path} && git pull'
+	osal.execute_silent(cmd2) or {
+		println(' GIT PULL FAILED: ${cmd2}')
+		return error('Cannot pull repo: ${repo.path}. Error was ${err}')
 	}
+	repo.load()!
+	// repo.ssh_key_forget()!
+}
+
+pub fn (mut repo GitRepo) rev() !string {
+	// $if debug {
+	// 	println('   - REV: ${repo.url_get(true)}')
+	// }
+	cmd2 := 'cd ${repo.path.path} && git rev-parse HEAD'
+	res := osal.execute_silent(cmd2) or {
+		println(' GIT REV FAILED: ${cmd2}')
+		return error('Cannot rev repo: ${repo.path}. Error was ${err}')
+	}
+	return res.trim_space()
 }
 
 pub fn (mut repo GitRepo) commit(args_ ActionArgs) ! {
@@ -201,19 +234,21 @@ pub fn (mut repo GitRepo) remove_changes(args_ ActionArgs) ! {
 		println(' - remove change ${repo.path.path}')
 		cmd := '
 		cd ${repo.path.path}
-		set +e
-		#checkout . -f
+		rm -f .git/index
+		#git fetch --all
 		git reset HEAD --hard
-		git clean -fd		
-		#git clean -xfd && git checkout .
-		git checkout .
+		git clean -xfd		
+		git checkout . -f
 		echo ""
 		'
-		osal.execute_silent(cmd) or {
-			return error('Cannot commit repo: ${repo.path.path}. Error was ${err}')
+		res := osal.exec(cmd: cmd, raise_error: false)!
+		println(cmd)
+		println(res)
+		if res.exit_code > 0 {
+			println(' - could not remove changes, will re-clone ${repo.path.path}')
+			repo.path.delete()! // remove path, this will re-clone the full thing
+			repo.load_from_url()!
 		}
-	} else {
-		println('     > nothing to remove, no changes  ${repo.path.path}')
 	}
 	repo.load()!
 }
@@ -225,16 +260,22 @@ pub fn (mut repo GitRepo) push(args_ ActionArgs) ! {
 		args.reload = false
 	}
 	$if debug {
-		println('   - PUSH: ${repo.url_get(true)}')
+		println('   - PUSH: ${repo.url_get(true)} on ${repo.path.path}')
 	}
+	// repo.ssh_key_load()!
+	// defer {
+	// 	repo.ssh_key_forget() or { panic(err) }
+	// }
 	st := repo.status()!
 	if st.need_push {
+		println('    - PUSH THE CHANGES')
 		cmd := 'cd ${repo.path.path} && git push'
 		osal.execute_silent(cmd) or {
 			return error('Cannot push repo: ${repo.path.path}. Error was ${err}')
 		}
 	}
 	repo.load()!
+	// repo.ssh_key_forget()!
 }
 
 pub fn (mut repo GitRepo) branch_switch(branchname string) ! {
@@ -258,12 +299,17 @@ pub fn (mut repo GitRepo) branch_switch(branchname string) ! {
 }
 
 pub fn (mut repo GitRepo) fetch_all() ! {
+	// repo.ssh_key_load()!
+	// defer {
+	// 	repo.ssh_key_forget() or { panic(err) }
+	// }
 	cmd := 'cd ${repo.path.path} && git fetch --all'
 	osal.execute_silent(cmd) or {
 		// println('GIT FETCH FAILED: $cmd_checkout')
 		return error('Cannot fetch repo: ${repo.path.path}. Error was ${err} \n cmd: ${cmd}')
 	}
 	repo.load()!
+	// repo.ssh_key_forget()!
 }
 
 // deletes git repository
@@ -279,34 +325,50 @@ pub fn (mut repo GitRepo) delete() ! {
 	repo.cache_delete()!
 }
 
-// check if sshkey for a repo exists in the homedir/.ssh
-// we check on name, if nameof repo is same as name of key we will load
-// will return true if the key did exist, which means we need to connect over ssh !!!
-fn (repo GitRepo) ssh_key_load_if_exists() !bool {
-	mut key_path := '${os.home_dir()}/.ssh/${repo.addr.name}'
-	if !os.exists(key_path) {
-		key_path = '.ssh/${repo.addr.name}'
-	}
-	if !os.exists(key_path) {
-		// tried local path to where we are, no key as well
-		return false
-	}
-	// exists means the key has been loaded
-	// nrkeys is how many keys were loaded in sshagent in first place
-	exists, nrkeys := sshagent.key_loaded(repo.addr.name)
-	// println(' >>> $repo.addr.name $nrkeys, $exists')
+//////////////////////////KEY MGMT
+//////////////////////////////////
 
-	if (!exists) || nrkeys > 0 {
-		// means we did not find the key but there were other keys loaded
-		// only choice we have now is to reset and use this key
-		sshagent.reset()!
-		sshagent.key_load(key_path)!
-		return true
-	} else if exists && nrkeys == 1 {
-		// means the right key was loaded
-		return true
-	} else {
-		// did not find the key nothing to do
-		return false
-	}
+// set the key (private ssh key)
+pub fn (repo GitRepo) ssh_key_set(key string) ! {
+	mut p := pathlib.get_file(path: repo.ssh_key_path(), create: true)!
+	p.write(key)!
 }
+
+fn (repo GitRepo) ssh_key_path() string {
+	return '${os.home_dir()}/.ssh/${repo.key()}'
+}
+
+// // check if sshkey for a repo exists in the homedir/.ssh
+// // we check on name, if nameof repo is same as name of key we will load
+// // will return true if the key did exist, which means we need to connect over ssh !!!
+// fn (repo GitRepo) ssh_key_load() !bool {
+// 	key_path := repo.ssh_key_path()
+// 	if !os.exists(key_path) {
+// 		// tried local path to where we are, no key as well
+// 		return false
+// 	}
+// 	// panic('implement')
+// 	// exists means the key has been loaded
+// 	// nrkeys is how many keys were loaded in sshagent in first place
+// 	// exists, nrkeys := sshagent.key_loaded(repo.addr.name)
+// 	// // println(' >>> $repo.addr.name $nrkeys, $exists')
+
+// 	// if (!exists) || nrkeys > 0 {
+// 	// 	// means we did not find the key but there were other keys loaded
+// 	// 	// only choice we have now is to reset and use this key
+// 	// 	sshagent.reset()!
+// 	// 	sshagent.key_load(key_path)!
+// 	// 	return true
+// 	// } else if exists && nrkeys == 1 {
+// 	// 	// means the right key was loaded
+// 	// 	return true
+// 	// } else {
+// 	// 	// did not find the key nothing to do
+// 	// 	return false
+// 	// }
+// 	return true
+// }
+
+// pub fn (repo GitRepo) ssh_key_forget() ! {
+// 	// sshagent.key_unload(repo.ssh_key_path())!
+// }

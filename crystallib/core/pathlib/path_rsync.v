@@ -2,7 +2,7 @@ module pathlib
 
 import os
 
-[params]
+@[params]
 pub struct RsyncArgs {
 pub mut:
 	source         string
@@ -33,7 +33,9 @@ pub fn rsync(args_ RsyncArgs) ! {
 		get(args.source)
 	}
 	cmd := rsync_cmd(args)!
-	println(cmd)
+	$if debug {
+		println(' - rsync command:\n${cmd}')
+	}
 	// os.execvp('/bin/bash', ["-c '${cmd}'"])!
 	r := os.execute(cmd)
 	if r.exit_code > 0 {
@@ -80,7 +82,7 @@ pub fn rsync_cmd(args_ RsyncArgs) !string {
 	if !src_path.is_file() {
 		args.source = args.source + '/'
 	}
-	mut dest_path := get(args.dest)
+
 	if !src_path.is_file() {
 		args.dest = args.dest + '/'
 	}

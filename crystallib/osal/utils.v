@@ -1,7 +1,30 @@
 module osal
 
-import freeflowuniverse.crystallib.clients.redisclient
 import log
+
+__global (
+	memdb shared map[string]string
+)
+
+pub fn memdb_set(key string, val string) {
+	lock memdb {
+		memdb[key] = val
+	}
+}
+
+pub fn memdb_get(key string) string {
+	lock memdb {
+		return memdb[key] or { return '' }
+	}
+	return ''
+}
+
+pub fn memdb_exists(key string) bool {
+	if memdb_get(key).len > 0 {
+		return true
+	}
+	return false
+}
 
 // Returns a logger object and allows you to specify via environment argument OSAL_LOG_LEVEL the debug level
 pub fn get_logger() log.Logger {
@@ -15,12 +38,4 @@ pub fn get_logger() log.Logger {
 			else { .info }
 		}
 	})
-}
-
-// Returns a redis client object and allows you to specify via environment argument OSAL_REDIS_ADDRESS on which address to connect to
-pub fn get_redis() redisclient.Redis {
-	redis_address := env_get('OSAL_REDIS_ADDRESS') or {
-		return redisclient.core_get() or { panic('OSAL has hard dependency to redis!') }
-	}
-	return redisclient.get(redis_address) or { panic('Osal has hard dependency to redis!') }
 }

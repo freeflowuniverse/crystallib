@@ -1,27 +1,27 @@
 module twinsafe
 
-import freeflowuniverse.crystallib.algo.secp256k1
-import freeflowuniverse.crystallib.algo.aes_symmetric
+import freeflowuniverse.crystallib.crypt.secp256k1
+import freeflowuniverse.crystallib.crypt.aes_symmetric
 import freeflowuniverse.crystallib.data.mnemonic
 import encoding.hex
 
 // this is me, my representation
 pub struct MyTwin {
 pub mut:
-	id          u32                 [primary; sql: serial]
-	name        string              [nonull; unique]
+	id          u32                 @[primary; sql: serial]
+	name        string              @[nonull; unique]
 	description string
-	privkey     secp256k1.Secp256k1 [skip] // to be used for signing, verifying, only to be filled in when private key	
-	keysafe     &KeysSafe           [skip] // allows us to remove ourselves from mem, or go to db
+	privkey     secp256k1.Secp256k1 @[skip] // to be used for signing, verifying, only to be filled in when private key	
+	keysafe     &KeysSafe           @[skip] // allows us to remove ourselves from mem, or go to db
 	privkey_str string
 }
 
 // ADD
 
-[params]
+@[params]
 pub struct MyTwinAddArgs {
 pub:
-	name        string [sql: unique]
+	name        string @[sql: unique]
 	description string
 	privkey     string // given in hex
 }

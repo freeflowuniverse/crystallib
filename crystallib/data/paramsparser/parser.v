@@ -8,15 +8,8 @@ enum ParamStatus {
 	value_wait // wait for value to start (can be quote or end of spaces and first meaningful char)
 	value // value started, so was no quote
 	quote // quote found means value in between ''
+	comment
 }
-
-// need to do something to get out # and // at end of a line but not in ''
-// if line2.contains('#') {
-// 	line2 = line2.all_before('#')
-// }
-// if line2.contains('//') {
-// 	line2 = line2.all_before('//')
-// }
 
 // convert text with e.g. color:red or color:'red' to arguments
 // multiline is supported
@@ -42,89 +35,127 @@ pub fn parse(text string) !Params {
 	// println(text2)
 	// println("****PARSER END")
 	text2 = texttools.multiline_to_single(text2)!
-	text2 = text2.replace('\\n', '<<BR>>')
-	text2 = text2.replace('\n', ' ')
-
+	// println(text2)
 	validchars := 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,./'
 
 	mut ch := ''
+	mut ch_prev := ''
 	mut state := ParamStatus.start
 	mut result := Params{}
 	mut key := ''
 	mut value := ''
+	mut comment := ''
 
 	for i in 0 .. text2.len {
 		ch = text2[i..i + 1]
-		// println(" - $ch ${state}")
+		// println(" - '${ch_prev}${ch}' ${state}")
 		// check for comments end
-		if state == ParamStatus.start {
+		if state == .start {
 			if ch == ' ' {
+				ch_prev = ch
 				continue
 			}
-			state = ParamStatus.name
+
+			state = .name
 		}
-		if state == ParamStatus.name {
+		if state == .name {
+			if ch_prev == '/' && ch == '/' {
+				// we are now comment
+				state = .comment
+				ch_prev = ch
+				continue
+			}
+
 			if ch == ' ' && key == '' {
+				ch_prev = ch
 				continue
 			}
 			// waiting for :
 			if ch == ':' {
 				state = ParamStatus.value_wait
+				ch_prev = ch
 				continue
 			} else if ch == ' ' {
 				state = ParamStatus.start
-				result.arg_add(key)
+				result.set_arg_with_comment(key, comment)
 				key = ''
+				comment = ''
+				value = ''
+				ch_prev = ch
 				continue
 			} else if !validchars.contains(ch) {
-				return error("text to params processor: parameters can only be A-Za-z0-9 and _., here found: '${key}${ch}' in\n${text2}\n\n")
+				return error("text to params processor: parameters can only be A-Za-z0-9 and _., found illegal char: '${key}${ch}' in\n${text2}\n\n")
 			} else {
 				key += ch
+				ch_prev = ch
 				continue
 			}
 		}
-		if state == ParamStatus.value_wait {
+		if state == .value_wait {
 			if ch == "'" {
-				state = ParamStatus.quote
+				state = .quote
+				ch_prev = ch
 				continue
 			}
 			// means the value started, we can go to next state
 			if ch != ' ' {
-				state = ParamStatus.value
+				state = .value
 			}
 		}
-		if state == ParamStatus.value {
+		if state == .value {
 			if ch == ' ' {
-				state = ParamStatus.start
-				result.kwarg_add(key, value)
+				state = .start
+				result.set_with_comment(key, value, comment)
 				key = ''
 				value = ''
+				comment = ''
 			} else {
 				value += ch
 			}
+			ch_prev = ch
 			continue
 		}
-		if state == ParamStatus.quote {
+		if state == .quote {
 			if ch == "'" {
-				state = ParamStatus.start
-				result.kwarg_add(key, value)
+				state = .start
+				result.set_with_comment(key, value, comment)
 				key = ''
 				value = ''
+				comment = ''
 			} else {
 				value += ch
 			}
+			ch_prev = ch
 			continue
 		}
+
+		if state == .value || state == ParamStatus.start {
+			if ch == '/' && ch_prev == '/' {
+				// we are now comment
+				state = .comment
+			}
+		}
+
+		if state == ParamStatus.comment {
+			if ch == '/' && ch_prev == '-' {
+				state = .start
+				ch_prev = ch
+				continue
+			}
+			comment += ch
+		}
+
+		ch_prev = ch
 	}
 
 	// last value
 	if state == ParamStatus.value || state == ParamStatus.quote {
-		result.kwarg_add(key, value)
+		result.set_with_comment(key, value, comment)
 	}
 
 	if state == ParamStatus.name {
 		if key != '' {
-			result.arg_add(key)
+			result.set_arg_with_comment(key, comment)
 		}
 	}
 

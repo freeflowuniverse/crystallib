@@ -7,7 +7,7 @@ type Filter0 = fn (mut Path, mut paramsparser.Params) !bool
 type Executor0 = fn (mut Path, mut paramsparser.Params) !paramsparser.Params
 
 // the filters are function which needs to return true if to process with alle executors .
-// see https://github.com/freeflowuniverse/crystallib/blob/development_circles/examples/core/pathlib/examples/scanner/path_scanner.v .
+// see https://github.com/freeflowuniverse/crystallib/blob/development/examples/core/pathlib/examples/scanner/path_scanner.v .
 // if any of the filters returns false then we don't continue .
 // if we return True then it means the dir or file is processed .
 // .

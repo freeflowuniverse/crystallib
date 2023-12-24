@@ -49,7 +49,7 @@ fn parse(timestr string) !i64 {
 	return error('bug')
 }
 
-pub fn get_unix_from_relative(timestr string) !i64 {
+fn relative_sec(timestr string) !i64 {
 	// removes all spaces from the string
 	mut full_exp := timestr.replace(' ', '')
 
@@ -97,7 +97,12 @@ pub fn get_unix_from_relative(timestr string) !i64 {
 		exp_int := exp.int() * mult
 		total += exp_int
 	}
-	time_unix := total + time.now().unix_time()
+	return total
+}
+
+fn get_unix_from_relative(timestr string) !i64 {
+	r := relative_sec(timestr)!
+	time_unix := i64(r) + time.now().unix_time()
 	return time_unix
 }
 
@@ -113,7 +118,7 @@ pub fn get_unix_from_absolute(timestr_ string) !i64 {
 		// there is a date and time part
 		datepart = split_time_hour[0]
 		timepart = split_time_hour[1]
-	} else if split_time_hour.len == 2 {
+	} else if split_time_hour.len == 1 {
 		datepart = split_time_hour[0]
 	} else {
 		return error("format of date/time not correct: '${timestr_}'")
@@ -123,9 +128,9 @@ pub fn get_unix_from_absolute(timestr_ string) !i64 {
 		return error("format of date/time not correct, no - or / in time: '${timestr_}'")
 	}
 
-	split := datepart.split(':')
+	split := datepart.split('-')
 	if split.len != 3 {
-		return error("unrecognized dat format, time must either be YYYY/MM/DD or DD/MM/YYYY, or : in stead of /. Input was:'${timestr_}'")
+		return error("unrecognized date format, time must either be YYYY/MM/DD or DD/MM/YYYY, or : in stead of /. Input was:'${timestr_}'")
 	}
 	if split[2].len == 4 {
 		datepart = split.reverse().join('-')
@@ -134,14 +139,18 @@ pub fn get_unix_from_absolute(timestr_ string) !i64 {
 	}
 
 	timparts := timepart.split(':')
+	if timparts.len > 3 {
+		return error("format of date/time not correct, in time part: '${timepart}'")
+	}
+
 	if timparts.len == 2 {
 		timepart = '${timepart}:00'
 	} else if timparts.len == 1 {
-		timepart = '${timepart}:00:00'
-	} else if timparts.len == 0 {
-		timepart = '00:00:00'
-	} else {
-		return error("format of date/time not correct, in time part: '${timestr_}'")
+		if timepart.len == 0 {
+			timepart = '00:00:00'
+		} else {
+			timepart = '${timepart}:00:00'
+		}
 	}
 
 	full_string := '${datepart} ${timepart}'

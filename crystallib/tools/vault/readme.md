@@ -9,7 +9,7 @@ the result will be .vault folders in each directory which have the history of fi
 ./.vault
 ./.vault/newfile1.1
 ./.vault/meta
-./markdowndocs
+./markdownparser
 ./newfile1
 ./test_parent
 ./test_parent/.test_ignore

@@ -5,11 +5,9 @@ import freeflowuniverse.crystallib.clients.httpconnection
 import os
 import net.http
 
-const (
-	jsonl_mime_type = 'text/jsonl'
-)
+const jsonl_mime_type = 'text/jsonl'
 
-[params]
+@[params]
 pub struct FileUploadArgs {
 pub:
 	filepath string
@@ -80,7 +78,7 @@ pub fn (mut f OpenAIFactory) delete_file(file_id string) !DeleteResp {
 }
 
 // returns a single file metadata
-pub fn (mut f OpenAIFactory) get_file(path:file_id string) !File {
+pub fn (mut f OpenAIFactory) get_file(file_id string) !File {
 	r := f.connection.get(prefix: 'files/' + file_id)!
 	return json.decode(File, r)!
 }

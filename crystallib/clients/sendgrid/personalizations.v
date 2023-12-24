@@ -1,9 +1,9 @@
 module sendgrid
 
-[params]
+@[params]
 pub struct Personalizations {
 pub mut:
-	to                    []Recipient        [required]
+	to                    []Recipient        @[required]
 	from                  ?Recipient
 	cc                    ?[]Recipient
 	bcc                   ?[]Recipient
@@ -42,7 +42,7 @@ fn (mut p Personalizations) set_subject(s string) {
 	p.subject = s
 }
 
-// add_headers adds a collection of key/value pairs to specify handling instructions for your email.
+// add_headers adds a playbook of key/value pairs to specify handling instructions for your email.
 // if some of the new headers already existed, their values are overwritten.
 fn (mut p Personalizations) add_headers(new_headers map[string]string) {
 	p.headers or {
@@ -55,7 +55,7 @@ fn (mut p Personalizations) add_headers(new_headers map[string]string) {
 	}
 }
 
-// add_substitution adds a collection of key/value pairs to allow you to insert data without using Dynamic Transactional Templates.
+// add_substitution adds a playbook of key/value pairs to allow you to insert data without using Dynamic Transactional Templates.
 // if some of the keys already existed, their values are overwritten.
 fn (mut p Personalizations) add_substitution(new_subs map[string]string) {
 	p.substitutions or {
@@ -68,7 +68,7 @@ fn (mut p Personalizations) add_substitution(new_subs map[string]string) {
 	}
 }
 
-// add_dynamic_template_data adds a collection of key/value pairs to dynamic template data.
+// add_dynamic_template_data adds a playbook of key/value pairs to dynamic template data.
 // Dynamic template data is available using Handlebars syntax in Dynamic Transactional Templates.
 // if some of the keys already existed, their values are overwritten.
 fn (mut p Personalizations) add_dynamic_template_data(new_dynamic_template_data map[string]string) {
@@ -82,7 +82,7 @@ fn (mut p Personalizations) add_dynamic_template_data(new_dynamic_template_data 
 	}
 }
 
-// add_custom_args adds a collection of key/value pairs to custom_args.
+// add_custom_args adds a playbook of key/value pairs to custom_args.
 // custom args are values that are specific to this personalization that will be carried along with the email and its activity data.
 // if some of the keys already existed, their values are overwritten.
 fn (mut p Personalizations) add_custom_args(new_custom_args map[string]string) {

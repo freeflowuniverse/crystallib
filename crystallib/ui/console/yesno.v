@@ -11,26 +11,22 @@ import os
 // - warning string
 // - clear bool = true
 //
-pub fn (mut c UIConsole) ask_yesno(args YesNoArgs) bool {
+pub fn (mut c UIConsole) ask_yesno(args YesNoArgs) !bool {
 	mut question := args.question
 	if args.clear {
 		clear() // clears the screen
 	}
 	if args.description.len > 0 {
-		println(style(args.description, 'bold'))
+		cprintln(text: args.description)
 	}
 	if args.warning.len > 0 {
-		println(color_fg(args.warning, 'red'))
-		println('\n')
+		cprintln(foreground: .red, text: args.warning + '\n')
 	}
 	if question == '' {
-		question = 'Yes or No, default is Yes (y/n)'
+		question = 'Yes or No, default is Yes.'
 	}
-	print('${question}: ')
+	print('${question} (y/n) : ')
 	choice := os.get_raw_line().trim(' \n').to_lower()
-	if choice == '' {
-		return true
-	}
 	if choice.starts_with('y') {
 		return true
 	}

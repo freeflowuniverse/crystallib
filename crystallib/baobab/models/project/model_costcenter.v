@@ -1,10 +1,10 @@
 module project
 
-import freeflowuniverse.crystallib.baobab.models.system
+import freeflowuniverse.crystallib.baobab.db
 
-[root_object]
+@[root_object]
 pub struct CostCenter {
-	system.Base
+	db.Base
 pub mut:
 	name        string
 	title       string

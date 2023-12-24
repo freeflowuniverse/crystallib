@@ -20,7 +20,7 @@ pub fn (mut node Node) exec(cmd string) !string {
 	panic('did not find right executor')
 }
 
-[params]
+@[params]
 pub struct ExecFileArgs {
 pub:
 	path    string
@@ -47,7 +47,7 @@ pub fn (mut node Node) exec_file(args ExecFileArgs) ! {
 	}
 }
 
-[params]
+@[params]
 pub struct ExecRetryArgs {
 pub:
 	cmd          string
@@ -138,20 +138,19 @@ pub fn (mut node Node) delete(path string) ! {
 	panic('did not find right executor')
 }
 
-[params]
+@[params]
 pub struct SyncArgs {
 pub mut:
-	source string
-	dest string
-	delete bool //do we want to delete the destination
-	ipaddr string //e.g. root@192.168.5.5:33 (can be without root@ or :port)
-	ignore []string //arguments to ignore e.g. ['*.pyc','*.bak']
-	ignore_default bool = true //if set will ignore a common set
-	stdout bool = true
+	source         string
+	dest           string
+	delete         bool     // do we want to delete the destination
+	ipaddr         string   // e.g. root@192.168.5.5:33 (can be without root@ or :port)
+	ignore         []string // arguments to ignore e.g. ['*.pyc','*.bak']
+	ignore_default bool = true // if set will ignore a common set
+	stdout         bool = true
 }
 
-
-// download files using rsync (can be ssh or local)
+// download files using rsync (can be ssh or local) .
 // args: .
 // ```
 // source string
@@ -162,7 +161,16 @@ pub mut:
 // stdout bool = true
 // ```
 // .
-pub fn (mut node Node) download(args SyncArgs) ! {
+pub fn (mut node Node) download(args_ SyncArgs) ! {
+	mut args := args_
+	if args.source.contains('~') {
+		myenv := node.environ_get()!
+		if 'HOME' !in myenv {
+			return error('Cannot find home in env for ${node}')
+		}
+		mut myhome := myenv['HOME']
+		args.source.replace('~', myhome)
+	}
 	if mut node.executor is ExecutorLocal {
 		return node.executor.download(args)
 	} else if mut node.executor is ExecutorSSH {
@@ -182,7 +190,16 @@ pub fn (mut node Node) download(args SyncArgs) ! {
 // stdout bool = true
 // ```
 // .
-pub fn (mut node Node) upload(args SyncArgs) ! {
+pub fn (mut node Node) upload(args_ SyncArgs) ! {
+	mut args := args_
+	if args.dest.contains('~') {
+		myenv := node.environ_get()!
+		if 'HOME' !in myenv {
+			return error('Cannot find home in env for ${node}')
+		}
+		mut myhome := myenv['HOME']
+		args.dest.replace('~', myhome)
+	}
 	if mut node.executor is ExecutorLocal {
 		return node.executor.upload(args)
 	} else if mut node.executor is ExecutorSSH {
@@ -191,13 +208,22 @@ pub fn (mut node Node) upload(args SyncArgs) ! {
 	panic('did not find right executor')
 }
 
-pub fn (mut node Node) environ_get() !map[string]string {
-	if mut node.executor is ExecutorLocal {
-		return node.executor.environ_get()
-	} else if mut node.executor is ExecutorSSH {
-		return node.executor.environ_get()
+@[params]
+pub struct EnvGetParams {
+pub mut:
+	reload bool
+}
+
+pub fn (mut node Node) environ_get(args EnvGetParams) !map[string]string {
+	if args.reload {
+		if mut node.executor is ExecutorLocal {
+			return node.executor.environ_get()
+		} else if mut node.executor is ExecutorSSH {
+			return node.executor.environ_get()
+		}
+		panic('did not find right executor')
 	}
-	panic('did not find right executor')
+	return node.environment
 }
 
 pub fn (mut node Node) info() map[string]string {

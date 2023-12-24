@@ -5,7 +5,7 @@ import time
 
 pub struct Item {
 mut:
-	shelve &Shelve [str: skip]
+	shelve &Shelve @[str: skip]
 pub:
 	sha256 string
 	time   time.Time
@@ -21,7 +21,7 @@ pub fn (i Item) meta() string {
 // get path object representing the vaulted item
 fn (i Item) path() !pathlib.Path {
 	pathstr := '${i.shelve.path.path}/.vault/${i.name_nr}'
-	return pathlib.get_file(path:pathstr, create:true)
+	return pathlib.get_file(path: pathstr, create: true)
 }
 
 // content of the vaulted item

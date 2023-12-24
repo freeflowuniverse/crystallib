@@ -1,31 +1,21 @@
 set -ex
 pushd ~/code/github/freeflowuniverse/crystallib
 bash doc.sh
-v -stats test baobab/actions
-v -stats test algo/encoder
-v -stats test codeparser
-v -stats test clients/coinmarketcap
-v -stats test console
-v -stats test crystaljson
-v -stats test currency
-v -stats test docker
-v -stats test algo/encoder
-v -stats test imagemagick
-v -stats test ipaddress
-v -stats test markdowndocs
-v -stats test mnemonic
-v -stats test params
-v -stats test pathlib
-v -stats test redisclient
-v -stats test resp
-v -stats test texttools
-v -stats test timetools
-v -stats test gittools
-v -stats test jsonrpc
-v -stats test openrpc
-v -stats test markdowndocs
-v -stats test jsonschema
-v -stats test osal
+v -enable-globals -stats test crystallib/algo
+v -enable-globals -stats test crystallib/baobab
+v -enable-globals -stats test crystallib/biz
+v -enable-globals -stats test crystallib/builder
+v -enable-globals -stats test crystallib/clients
+v -enable-globals -stats test crystallib/core
+v -enable-globals -stats test crystallib/crypt
+v -enable-globals -stats test crystallib/data
+v -enable-globals -stats test crystallib/installers
+v -enable-globals -stats test crystallib/osal
+v -enable-globals -stats test crystallib/servers
+v -enable-globals -stats test crystallib/threefold
+v -enable-globals -stats test crystallib/tools
+v -enable-globals -stats test crystallib/ui
+v -enable-globals -stats test crystallib/web
 
 # OK TO IGNORE FOR NOW
 # v -stats test tmux

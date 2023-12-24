@@ -7,23 +7,23 @@ import freeflowuniverse.crystallib.data.jsonschema { Reference, SchemaRef }
 // How this object is constructed or stored is outside the scope of the OpenRPC Specification.
 pub struct OpenRPC {
 pub mut:
-	openrpc       string          [required] = '1.0.0' // This string MUST be the semantic version number of the OpenRPC Specification version that the OpenRPC document uses.
-	info          Info            [required]   // Provides metadata about the API.
+	openrpc       string = '1.0.0'          @[required] // This string MUST be the semantic version number of the OpenRPC Specification version that the OpenRPC document uses.
+	info          Info            @[required]   // Provides metadata about the API.
 	servers       ?[]Server // An array of Server Objects, which provide connectivity information to a target server.
-	methods       []Method        [required] // The available methods for the API.
+	methods       []Method        @[required] // The available methods for the API.
 	components    ?Components // An element to hold various schemas for the specification.
-	external_docs ?[]ExternalDocs [json: externalDocs] // Additional external documentation.
+	external_docs ?[]ExternalDocs @[json: externalDocs] // Additional external documentation.
 }
 
 // The object provides metadata about the API.
 // The metadata MAY be used by the clients if needed, and MAY be presented in editing or documentation generation tools for convenience.
 pub struct Info {
-	title            string   [required] // The title of the application.
+	title            string   @[required] // The title of the application.
 	description      ?string // A verbose description of the application.
-	terms_of_service ?string  [json: termsOfService] // A URL to the Terms of Service for the API. MUST be in the format of a URL.
+	terms_of_service ?string  @[json: termsOfService] // A URL to the Terms of Service for the API. MUST be in the format of a URL.
 	contact          ?Contact // The contact information for the exposed API.
 	license          ?License // The license information for the exposed API.
-	version          string   [required] // The version of the OpenRPC document (which is distinct from the OpenRPC Specification version or the API implementation version).
+	version          string   @[required] // The version of the OpenRPC document (which is distinct from the OpenRPC Specification version or the API implementation version).
 }
 
 // Contact information for the exposed API.
@@ -35,15 +35,15 @@ pub struct Contact {
 
 // License information for the exposed API.
 pub struct License {
-	name string  [required] // The license name used for the API.
+	name string  @[required] // The license name used for the API.
 	url  ?string // A URL to the license used for the API. MUST be in the format of a URL.
 }
 
 // An object representing a Server.
 // TODO: make variables field optional bug fixed: https://github.com/vlang/v/issues/18000
 pub struct Server {
-	name        string                    [required] // A name to be used as the cannonical name for the server.
-	url         RuntimeExpression         [required] // A URL to the target host. This URL supports Server Variables and MAY be relative, to indicate that the host location is relative to the location where the OpenRPC document is being served. Server Variables are passed into the Runtime Expression to produce a server URL.
+	name        string                    @[required] // A name to be used as the cannonical name for the server.
+	url         RuntimeExpression         @[required] // A URL to the target host. This URL supports Server Variables and MAY be relative, to indicate that the host location is relative to the location where the OpenRPC document is being served. Server Variables are passed into the Runtime Expression to produce a server URL.
 	summary     ?string // A short summary of what the server is.
 	description ?string // An optional string describing the host designated by the URL.
 	variables   map[string]ServerVariable // A map between a variable name and its value. The value is passed into the Runtime Expression to produce a server URL.
@@ -51,8 +51,8 @@ pub struct Server {
 
 // An object representing a Server Variable for server URL template substitution.
 pub struct ServerVariable {
-	enum_       ?[]string [json: 'enum'] // An enumeration of string values to be used if the substitution options are from a limited set.
-	default_    string    [json: 'default'; required] // The default value to use for substitution, which SHALL be sent if an alternate value is not supplied. Note this behavior is different than the Schema Object’s treatment of default values, because in those cases parameter values are optional.
+	enum_       ?[]string @[json: 'enum'] // An enumeration of string values to be used if the substitution options are from a limited set.
+	default_    string    @[json: 'default'; required] // The default value to use for substitution, which SHALL be sent if an alternate value is not supplied. Note this behavior is different than the Schema Object’s treatment of default values, because in those cases parameter values are optional.
 	description ?string // An optional description for the server variable. GitHub Flavored Markdown syntax MAY be used for rich text representation.
 }
 
@@ -60,18 +60,18 @@ pub struct ServerVariable {
 // TODO: make result optional once issue is solved: https://github.com/vlang/v/issues/18001
 pub struct Method {
 pub:
-	name            string                 [required] // The cannonical name for the method. The name MUST be unique within the methods array.
+	name            string                 @[required] // The cannonical name for the method. The name MUST be unique within the methods array.
 	tags            ?[]TagRef // A list of tags for API documentation control. Tags can be used for logical grouping of methods by resources or any other qualifier.
 	summary         ?string   // A short summary of what the method does.
 	description     ?string   // A verbose explanation of the method behavior.
-	external_docs   ?ExternalDocs          [json: externalDocs] // Additional external documentation for this method.
-	params          []ContentDescriptorRef [required] // A list of parameters that are applicable for this method. The list MUST NOT include duplicated parameters and therefore require name to be unique. The list can use the Reference Object to link to parameters that are defined by the Content Descriptor Object. All optional params (content descriptor objects with “required”: false) MUST be positioned after all required params in the list.
+	external_docs   ?ExternalDocs          @[json: externalDocs] // Additional external documentation for this method.
+	params          []ContentDescriptorRef @[required] // A list of parameters that are applicable for this method. The list MUST NOT include duplicated parameters and therefore require name to be unique. The list can use the Reference Object to link to parameters that are defined by the Content Descriptor Object. All optional params (content descriptor objects with “required”: false) MUST be positioned after all required params in the list.
 	result          ContentDescriptorRef // The description of the result returned by the method. If defined, it MUST be a Content Descriptor or Reference Object. If undefined, the method MUST only be used as a notification.
 	deprecated      ?bool       // Declares this method to be deprecated. Consumers SHOULD refrain from usage of the declared method. Default value is false.
 	servers         ?[]Server   // An alternative servers array to service this method. If an alternative servers array is specified at the Root level, it will be overridden by this value.
 	errors          ?[]ErrorRef // A list of custom application defined errors that MAY be returned. The Errors MUST have unique error codes.
 	links           ?[]LinkRef  // A list of possible links from this method call.
-	param_structure ?ParamStructure        [json: paramStructure] // The expected format of the parameters. As per the JSON-RPC 2.0 specification, the params of a JSON-RPC request object may be an array, object, or either (represented as by-position, by-name, and either respectively). When a method has a paramStructure value of by-name, callers of the method MUST send a JSON-RPC request object whose params field is an object. Further, the key names of the params object MUST be the same as the contentDescriptor.names for the given method. Defaults to "either".
+	param_structure ?ParamStructure        @[json: paramStructure] // The expected format of the parameters. As per the JSON-RPC 2.0 specification, the params of a JSON-RPC request object may be an array, object, or either (represented as by-position, by-name, and either respectively). When a method has a paramStructure value of by-name, callers of the method MUST send a JSON-RPC request object whose params field is an object. Further, the key names of the params object MUST be the same as the contentDescriptor.names for the given method. Defaults to "either".
 	examples        ?[]ExamplePairing // Array of Example Pairing Object where each example includes a valid params-to-result Content Descriptor pairing.
 }
 
@@ -88,11 +88,11 @@ pub type ContentDescriptorRef = ContentDescriptor | Reference
 // They MUST have a schema.
 pub struct ContentDescriptor {
 pub:
-	name        string    [required] // Name of the content that is being described. If the content described is a method parameter assignable by-name, this field SHALL define the parameter’s key (ie name).
+	name        string    @[required] // Name of the content that is being described. If the content described is a method parameter assignable by-name, this field SHALL define the parameter’s key (ie name).
 	summary     ?string // A short summary of the content that is being described.
 	description ?string // A verbose explanation of the content descriptor behavior.
 	required    ?bool   // Determines if the content is a required field. Default value is false.
-	schema      SchemaRef [required] // Schema that describes the content.
+	schema      SchemaRef @[required] // Schema that describes the content.
 	deprecated  ?bool // Specifies that the content is deprecated and SHOULD be transitioned out of usage. Default value is false.
 }
 
@@ -115,7 +115,7 @@ pub struct Example {
 	summary        ?string // Short description for the example.
 	description    ?string // A verbose explanation of the example.
 	value          ?string // Embedded literal example. The value field and externalValue field are mutually exclusive. To represent examples of media types that cannot naturally represented in JSON, use a string value to contain the example, escaping where necessary.
-	external_value ?string [json: externalValue] // A URL that points to the literal example. This provides the capability to reference examples that cannot easily be included in JSON documents. The value field and externalValue field are mutually exclusive.
+	external_value ?string @[json: externalValue] // A URL that points to the literal example. This provides the capability to reference examples that cannot easily be included in JSON documents. The value field and externalValue field are mutually exclusive.
 }
 
 type LinkRef = Link | Reference
@@ -147,8 +147,8 @@ type ErrorRef = Error | Reference
 // TODO: handle any type for data field
 // Defines an application level error.
 pub struct Error {
-	code    int     [required]    // A Number that indicates the error type that occurred. This MUST be an integer. The error codes from and including -32768 to -32000 are reserved for pre-defined errors. These pre-defined errors SHOULD be assumed to be returned from any JSON-RPC api.
-	message string  [required] // A String providing a short description of the error. The message SHOULD be limited to a concise single sentence.
+	code    int     @[required]    // A Number that indicates the error type that occurred. This MUST be an integer. The error codes from and including -32768 to -32000 are reserved for pre-defined errors. These pre-defined errors SHOULD be assumed to be returned from any JSON-RPC api.
+	message string  @[required] // A String providing a short description of the error. The message SHOULD be limited to a concise single sentence.
 	data    ?string // A Primitive or Structured value that contains additional information about the error. This may be omitted. The value of this member is defined by the Server (e.g. detailed error information, nested errors etc.).
 }
 
@@ -157,12 +157,12 @@ pub struct Error {
 // All objects defined within the components object will have no effect on the API unless they are explicitly referenced from properties outside the components object.
 // All the fixed fields declared above are objects that MUST use keys that match the regular expression: ^[a-zA-Z0-9\.\-_]+$
 pub struct Components {
-	content_descriptors     map[string]ContentDescriptor [json: contentDescriptors] // An object to hold reusable Content Descriptor Objects.
+	content_descriptors     map[string]ContentDescriptor @[json: contentDescriptors] // An object to hold reusable Content Descriptor Objects.
 	schemas                 map[string]SchemaRef // An object to hold reusable Schema Objects.
 	examples                map[string]Example   // An object to hold reusable Example Objects.
 	links                   map[string]Link      // An object to hold reusable Link Objects.
 	error                   map[string]Error     // An object to hold reusable Error Objects.
-	example_pairing_objects map[string]ExamplePairing    [json: examplePairingObjects] // An object to hold reusable Example Pairing Objects.
+	example_pairing_objects map[string]ExamplePairing    @[json: examplePairingObjects] // An object to hold reusable Example Pairing Objects.
 	tags                    map[string]Tag // An object to hold reusable Tag Objects.
 }
 
@@ -171,16 +171,16 @@ type TagRef = Reference | Tag
 // Adds metadata to a single tag that is used by the Method Object.
 // It is not mandatory to have a Tag Object per tag defined in the Method Object instances.
 pub struct Tag {
-	name          string        [required] // The name of the tag.
+	name          string        @[required] // The name of the tag.
 	summary       ?string // A short summary of the tag.
 	description   ?string // A verbose explanation for the tag.
-	external_docs ?ExternalDocs [json: externalDocs] // Additional external documentation for this tag.
+	external_docs ?ExternalDocs @[json: externalDocs] // Additional external documentation for this tag.
 }
 
 // Allows referencing an external resource for extended documentation.
 pub struct ExternalDocs {
 	description ?string // A verbose explanation of the target documentation.
-	url         string  [required] // The URL for the target documentation. Value MUST be in the format of a URL.
+	url         string  @[required] // The URL for the target documentation. Value MUST be in the format of a URL.
 }
 
 // todo: implement specification extensions

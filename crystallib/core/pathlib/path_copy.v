@@ -2,7 +2,7 @@ module pathlib
 
 import os
 
-[params]
+@[params]
 pub struct CopyArgs {
 pub mut:
 	dest           string   // path
@@ -19,11 +19,11 @@ pub mut:
 // return Path of the destination file or dir .
 pub fn (mut path Path) copy(args_ CopyArgs) ! {
 	mut args := args_
-	if args.ignore.len > 0 || args.ignore_default || args.ssh_target.len > 0 {
+	if args.ignore.len > 0 || args.ssh_target.len > 0 {
 		args.rsync = true
 	}
 	path.check()
-	if args.rsync {
+	if args.rsync == true {
 		rsync(
 			source: path.path
 			dest: args.dest
@@ -51,7 +51,9 @@ pub fn (mut path Path) copy(args_ CopyArgs) ! {
 		if !os.exists(dest.path_dir()) {
 			os.mkdir_all(dest.path_dir())!
 		}
-
+		$if debug {
+			println(' - copy: ${path.path} ${dest.path}')
+		}
 		os.cp_all(path.path, dest.path, true)! // Always overwite if needed
 
 		dest.check()

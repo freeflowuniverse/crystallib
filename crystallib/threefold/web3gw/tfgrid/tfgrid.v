@@ -3,15 +3,15 @@ module tfgrid
 import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
 
 // TFGridClient is a client containing an RpcWsClient instance, and implements all tfgrid functionality
-[openrpc: exclude]
-[noinit]
+@[openrpc: exclude]
+@[noinit]
 pub struct TFGridClient {
 mut:
 	client  &RpcWsClient
 	timeout int
 }
 
-[openrpc: exclude]
+@[openrpc: exclude]
 pub fn new(mut client RpcWsClient) TFGridClient {
 	return TFGridClient{
 		client: &client

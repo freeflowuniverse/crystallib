@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.osal
 // import freeflowuniverse.crystallib.core.pathlib
 import os
 
-[heap]
+@[heap]
 pub struct ExecutorLocal {
 	retry int = 1 // nr of times something will be retried before failing, need to check also what error is, only things which should be retried need to be done, default 1 because is local
 pub mut:
@@ -13,7 +13,7 @@ pub mut:
 
 pub fn (mut executor ExecutorLocal) exec(cmd string) !string {
 	res := osal.exec(cmd: cmd, stdout: true)!
-	return res.output
+	return res.output.join_lines()
 }
 
 pub fn (mut executor ExecutorLocal) exec_silent(cmd string) !string {
@@ -22,7 +22,7 @@ pub fn (mut executor ExecutorLocal) exec_silent(cmd string) !string {
 		stdout = true
 	}
 	res := osal.exec(cmd: cmd, stdout: stdout)!
-	return res.output
+	return res.output.join_lines()
 }
 
 pub fn (mut executor ExecutorLocal) file_write(path string, text string) ! {
@@ -78,28 +78,28 @@ pub fn (mut executor ExecutorLocal) info() map[string]string {
 
 // upload from local FS to executor FS
 pub fn (mut executor ExecutorLocal) upload(args SyncArgs) ! {
-	mut rsargs:=osal.RsyncArgs{
-		source:args.source
-		dest:args.dest
-		delete:args.delete
-		ignore:args.ignore
-		ignore_default:args.ignore_default
-		stdout:args.stdout
+	mut rsargs := osal.RsyncArgs{
+		source: args.source
+		dest: args.dest
+		delete: args.delete
+		ignore: args.ignore
+		ignore_default: args.ignore_default
+		stdout: args.stdout
 	}
-	osal.rsync(rsargs)!	
+	osal.rsync(rsargs)!
 }
 
 // download from executor FS to local FS
 pub fn (mut executor ExecutorLocal) download(args SyncArgs) ! {
-	mut rsargs:=osal.RsyncArgs{
-		source:args.source
-		dest:args.dest
-		delete:args.delete
-		ignore:args.ignore
-		ignore_default:args.ignore_default
-		stdout:args.stdout
+	mut rsargs := osal.RsyncArgs{
+		source: args.source
+		dest: args.dest
+		delete: args.delete
+		ignore: args.ignore
+		ignore_default: args.ignore_default
+		stdout: args.stdout
 	}
-	osal.rsync(rsargs)!	
+	osal.rsync(rsargs)!
 }
 
 pub fn (mut executor ExecutorLocal) shell(cmd string) ! {

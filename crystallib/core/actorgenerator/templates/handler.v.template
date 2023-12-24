@@ -1,4 +1,4 @@
-pub fn (shared actor CircleActor) act(action actionsparser.Action) ! {
+pub fn (shared actor CircleActor) act(action playbook.Action) ! {
 	match action.name {
 @for handler in handlers
 @{handler}

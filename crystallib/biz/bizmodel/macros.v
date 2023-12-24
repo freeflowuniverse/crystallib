@@ -1,9 +1,9 @@
 module bizmodel
 
-import freeflowuniverse.crystallib.data.knowledgetree
-import freeflowuniverse.crystallib.data.actionsparser
+import freeflowuniverse.crystallib.data.doctree
+import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.biz.spreadsheet
-import freeflowuniverse.crystallib.data.markdowndocs
+import freeflowuniverse.crystallib.data.markdownparser.elements
 
 pub struct MacroProcessorBizmodel {
 	bizmodel_name string // name of bizmodel the macro will use for processing
@@ -13,12 +13,12 @@ pub fn macroprocessor_new(bizmodel_name string) MacroProcessorBizmodel {
 	return MacroProcessorBizmodel{bizmodel_name}
 }
 
-pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.MacroResult {
-	mut r := knowledgetree.MacroResult{
+pub fn (processor MacroProcessorBizmodel) process(code string) !doctree.MacroResult {
+	mut r := doctree.MacroResult{
 		state: .stop
 	}
-	ap := actionsparser.new(text: code)!
-	mut actions2 := ap.filtersort(actor: 'bizmodel')!
+	ap := playbook.parse_playbook(text: code)!
+	mut actions2 := ap.find(actor: 'bizmodel')
 	for action in actions2 {
 		p := action.params
 
@@ -33,15 +33,21 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 			}
 			employee := model.employees[id]
 
-			employee_table := markdowndocs.Table{
+			employee_table := elements.Table{
 				header: ['Key', 'Value']
 				rows: [
-					['cost', employee.cost],
-					['department', employee.department],
-					['indexation', '${employee.indexation}'],
+					elements.Row{
+						cells: ['cost', employee.cost]
+					},
+					elements.Row{
+						cells: ['department', employee.department]
+					},
+					elements.Row{
+						cells: ['indexation', '${employee.indexation}']
+					},
 				]
 				alignments: [.left, .left]
-			}.wiki()
+			}.markdown()
 			r.result = $tmpl('./templates/employee.md')
 			return r
 		}
@@ -78,7 +84,6 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !knowledgetree.Ma
 				return error('period type needs to be in year,month,quarter')
 			}
 
-			aggregate := p.get_default_false('aggregate')
 			rowname_show := p.get_default_true('rowname_show')
 
 			// namefilter    []string // only include the exact names as secified for the rows

@@ -9,6 +9,6 @@ import freeflowuniverse.crystallib.ui.uimodel { YesNoArgs }
 // - warning string
 // - clear bool = true
 //
-pub fn (mut c UIExample) ask_yesno(args YesNoArgs) bool {
+pub fn (mut c UIExample) ask_yesno(args YesNoArgs) !bool {
 	return true
 }

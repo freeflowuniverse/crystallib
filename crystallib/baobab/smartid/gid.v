@@ -12,25 +12,40 @@ mut:
 	id     u32
 }
 
-[params]
+@[params]
 pub struct GIDNewArgs {
 pub mut:
-	gid_str string // rid.cid.oid format
-	// gid_coord []int  // 3 coordinates first one is region
-	id  string
-	cid string
-	// rid       string // can be empty
+	gid_str  string // rid.cid.oid format
+	oid_u32  u32
+	oid_int  int
+	oid_str  string // e.g. aaa, is 1...6 letter representation of a unique id
+	cid_int  int    // int representation of cid
+	cid_str  string // string representation of cid
+	cid_name string // chosen name of circle
 }
 
-// TODO: tyes, coimur, needs to be implemented, needs to support txt or coordinates, and then use sid_new for getting new sid
-
-// smartid is of form region.circle.id .
-// each part (also called smartid) min3 max 6 chars, each char = a...z or 0...9 .
-///return global smartid .
-// id empty then will generate unique one, circle needs to be specified if new one
-fn gid_get(args GIDNewArgs) !GID {
+// get global unique id .
+// params: .
+// ```
+// gid_str  string // rid.cid.oid format
+// oid_int  int
+// oid_str  string // e.g. aaa, is 1...6 letter representation of a unique id
+// cid_int  int    // int representation of cid
+// cid_str  string // string representation of cid
+// cid_name string // chosen name of circle
+// ```
+pub fn gid(args_ GIDNewArgs) !GID {
+	mut args := args_
+	if args.oid_u32 > 0 {
+		args.oid_int = int(args.oid_u32)
+	}
 	mut o := GID{}
 	if args.gid_str.len > 0 {
+		if args.oid_int > 0 || args.cid_int > 0 || args.oid_str.len > 0 || args.cid_str.len > 0
+			|| args.cid_name.len > 0 {
+			return error('if gid_str used cannot use any of the other properties')
+		}
+
 		gid := args.gid_str
 		mut ids := gid.split('.')
 		if ids.len > 3 {
@@ -38,7 +53,7 @@ fn gid_get(args GIDNewArgs) !GID {
 		}
 		mut r := []u32{}
 		for id in ids {
-			if id.len > 6 || id.len < 2 {
+			if id.len > 6 || id.len < 1 {
 				return error('one of the parts is too small or too large, needs to be 2...5 \n${gid}')
 			}
 			for cha in id {
@@ -48,26 +63,35 @@ fn gid_get(args GIDNewArgs) !GID {
 			}
 			r << sid_int(id)
 		}
-		if r.len == 2 {
+		if r.len == 3 {
 			o.region = r[0]
-			o.cid = cid_get(id_int: r[1])!
+			o.cid = cid(cid_int: r[1])!
 			o.id = r[2]
-		} else if r.len == 1 {
-			o.cid = cid_get(id_int: r[0])!
+		} else if r.len == 2 {
+			o.cid = cid(cid_int: r[0])!
 			o.id = r[1]
-		} else if r.len == 0 {
+		} else if r.len == 1 {
 			o.id = r[0]
 		} else {
 			return error('gsmartid string not properly constructed.\n${gid}')
 		}
+		return o
 	}
-	if args.cid == '' {
-		return error('cid cannot be empty.${args}')
+	if args.cid_int == 0 && args.cid_str.len == 0 && args.cid_name.len == 0 {
+		return error('need to specify cid_int, cid_str or cid_name')
 	}
-	o.cid = cid_get(id_string: args.cid)!
-	o.id = sid_int(args.id)
+
+	o.cid = cid(cid_int: u32(args.cid_int), cid_string: args.cid_str, name: args.cid_name)!
+
+	if args.oid_int > 0 && args.oid_str.len > 0 {
+		return error('cannot specify oid_int and oid_str')
+	}
+	if args.oid_str.len > 0 {
+		args.oid_int = int(sid_int(args.oid_str))
+	}
+	o.id = u32(args.oid_int)
 	if o.id == 0 {
-		id_string := sid_new(args.cid)!
+		id_string := sid_new(o.cid.str())!
 		o.id = sid_int(id_string)
 	}
 	return o
@@ -81,7 +105,7 @@ pub fn gid_check(gid string) bool {
 		return false
 	}
 	for id in ids {
-		if id.len > 6 || id.len < 2 {
+		if id.len > 6 || id.len < 1 {
 			return false
 		}
 		for cha in id {

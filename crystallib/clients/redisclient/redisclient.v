@@ -16,14 +16,14 @@ __global (
 
 const default_read_timeout = net.infinite_timeout
 
-[heap]
+@[heap]
 struct RedisInternal {
 mut:
 	socket net.TcpConn
 	addr   string
 }
 
-[heap]
+@[heap]
 pub struct Redis {
 pub:
 	// current int
@@ -54,6 +54,7 @@ pub enum KeyType {
 //   localhost:6379
 //   /tmp/redis-default.sock
 pub fn new(addrs []string) !Redis {
+	// print_backtrace()
 	mut connection_nrs := []int{}
 	lock redis_connections {
 		// toadd:=[]string{}		
@@ -91,6 +92,7 @@ pub fn get(addr string) !Redis {
 }
 
 fn (mut r RedisInternal) socket_connect() ! {
+	// print_backtrace()
 	addr := os.expand_tilde_to_home(r.addr)
 	// print(' - REDIS CONNECT: ${addr}')
 	r.socket = net.dial_tcp(addr)!

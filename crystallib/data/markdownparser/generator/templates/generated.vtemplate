@@ -1,0 +1,78 @@
+
+module elements
+
+type DocElement = ${elementtypes}
+
+pub fn (mut self DocBase) process_elements() !int {
+	for {
+		mut changes:=0
+		for mut element in self.children() {
+			match mut element {
+				@for eo in elementsobj
+				@eo.classname {
+					changes+=element.process()!
+				}
+				@end
+			}
+		}
+		if changes==0{
+			break
+		}
+	}
+	return 0
+}
+
+pub fn (mut self DocBase) markdown() string {
+	mut out := ''
+	for mut element in self.children() {
+		match mut element {
+			@for eo in elementsobj
+			@eo.classname { out += element.markdown() }
+			@end			
+		}
+	}
+	return out
+}
+
+pub fn (mut self DocBase) html() string {
+	mut out := ''
+	for mut element in self.children() {
+		match mut element {
+			@for eo in elementsobj
+			@eo.classname { out += element.html() }
+			@end			
+		}
+	}
+	return out
+}
+
+fn (self DocBase) treeview_(prefix string, mut out []string) {
+	out << "&&{prefix}- &&{self.type_name:-30} &&{self.content.len}"
+	for element in self.children() {
+		match element {
+			@for eo in elementsobj
+			@eo.classname { element.treeview_(prefix+"  ",mut out) }
+			@end			
+		}		
+		
+	}	
+}
+
+@for eo in elementsobj
+pub fn (mut doc Doc) @{eo.name}_new(args ElementNewArgs) &@{eo.classname} {
+	mut a:=@{eo.classname}{
+		content: args.content
+		type_name: "@{eo.name}"
+		doc: doc
+		id: doc.newid()	
+		parent: args.parent	
+	}
+	if a.parent>0{
+		a.parent().children<<a.id
+	}else{
+		doc.children<<a.id
+	}
+	doc.elements[a.id]=&a
+	return &a
+}
+@end

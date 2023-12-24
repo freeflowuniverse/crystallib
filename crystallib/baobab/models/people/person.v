@@ -2,9 +2,9 @@ module people
 
 import freeflowuniverse.crystallib.baobab.models.system
 // import json
-// import freeflowuniverse.crystallib.algo.encoder
+// import freeflowuniverse.crystallib.data.encoder
 
-[heap]
+@[heap]
 pub struct Person {
 	system.Base
 pub mut:
@@ -22,8 +22,8 @@ pub mut:
 pub struct PersonNewArgs {
 pub mut:
 	id          string // needs to be unique
-	firstname   string [required]
-	lastname    string [required]
+	firstname   string @[required]
+	lastname    string @[required]
 	description string
 }
 

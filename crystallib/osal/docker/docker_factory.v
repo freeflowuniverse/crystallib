@@ -1,6 +1,6 @@
 module docker
 
-[params]
+@[params]
 pub struct DockerEngineArgs {
 pub mut:
 	sshkeys_allowed []string // ssh keys which will be inserted when a docker gets deployed (is not implemented yet)

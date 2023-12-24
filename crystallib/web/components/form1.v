@@ -5,15 +5,15 @@ import nedpals.vex.ctx
 import nedpals.vex.router
 import context
 
-[table: 'Form1']
-[params]
+@[table: 'Form1']
+@[params]
 pub struct Form1 {
 pub mut:
-	id          int    [primary; sql: serial]
+	id          int    @[primary; sql: serial]
 	title       string
 	description string
-	firstname   string [nonull]
-	lastname    string [nonull]
+	firstname   string @[nonull]
+	lastname    string @[nonull]
 	company     string
 	email       string
 	subject     string

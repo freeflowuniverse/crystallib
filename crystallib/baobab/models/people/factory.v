@@ -1,10 +1,10 @@
 module people
 
-import freeflowuniverse.crystallib.data.actionsparser
+import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.baobab.models.system
 import db.sqlite
 
-[heap]
+@[heap]
 pub struct MemDB {
 	system.ModelFactoryBase
 pub mut:
@@ -18,13 +18,13 @@ pub mut:
 	db     sqlite.DB
 }
 
-[table: 'Person']
+@[table: 'Person']
 struct PersonTable {
-	cid       int    [primary; sql: serial] // is unique per circle
-	id        string [unique] // needs to be unique as well per circle
-	firstname string [nonull]
-	lastname  string [nonull]
-	data      string [nonull] // will have the data
+	cid       int    @[primary; sql: serial] // is unique per circle
+	id        string @[unique] // needs to be unique as well per circle
+	firstname string @[nonull]
+	lastname  string @[nonull]
+	data      string @[nonull] // will have the data
 }
 
 pub fn new(args NewArgs) !MemDB {
@@ -39,6 +39,6 @@ pub fn new(args NewArgs) !MemDB {
 }
 
 pub fn (mut m MemDB) actions_import(path string) ! {
-	ap := actionsparser.new(path: path)!
+	ap := playbook.new(path: path)!
 	m.actions(ap)!
 }

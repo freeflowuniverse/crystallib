@@ -20,7 +20,7 @@ enum ZinitLogType {
 	null
 }
 
-[params]
+@[params]
 pub struct ZinitAddArgs {
 pub mut:
 	// more info see https://github.com/threefoldtech/zinit/tree/master/docs
@@ -108,7 +108,7 @@ pub fn (mut b DockerBuilderRecipe) add_zinit_cmd(args ZinitAddArgs) ! {
 	if args.oneshot {
 		zinitfilecontent += 'oneshot: true\n'
 	}
-	mut ff := pathlib.get_file(path:b.path() + '/zinit/${args.name}.yaml', create:true)!
+	mut ff := pathlib.get_file(path: b.path() + '/zinit/${args.name}.yaml', create: true)!
 	ff.write(zinitfilecontent)!
 }
 

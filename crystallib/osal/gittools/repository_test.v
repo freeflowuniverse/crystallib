@@ -2,10 +2,8 @@ module gittools
 
 import os
 
-const (
-	github_dir     = '${os.home_dir()}/testcode/github'
-	crystallib_url = 'https://github.com/freeflowuniverse/crystallib.git'
-)
+const github_dir = '${os.home_dir()}/testcode/github'
+const crystallib_url = 'https://github.com/freeflowuniverse/crystallib.git'
 
 fn testsuite_begin() {
 	os.mkdir_all('${gittools.github_dir}/freeflowuniverse')!
@@ -52,5 +50,5 @@ fn test_fetch_all() {
 fn test_delete() {
 }
 
-fn test_ssh_key_load_if_exists() {
+fn test_ssh_key_load() {
 }

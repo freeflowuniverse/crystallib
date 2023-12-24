@@ -1,6 +1,7 @@
 module osal
 
 import time
+import os
 
 pub enum PMState {
 	init
@@ -8,7 +9,7 @@ pub enum PMState {
 	old
 }
 
-[heap]
+@[heap]
 pub struct ProcessMap {
 pub mut:
 	processes []&ProcessInfo
@@ -16,7 +17,7 @@ pub mut:
 	state     PMState
 }
 
-[heap]
+@[heap]
 pub struct ProcessInfo {
 pub mut:
 	cpu_perc f32
@@ -103,4 +104,12 @@ fn (mut pm ProcessMap) scan() ! {
 	pm.state = PMState.ok
 
 	// println(pm)
+}
+
+pub fn whoami() !string {
+	res := os.execute('whoami')
+	if res.exit_code > 0 {
+		return error('Could not do whoami\n${res}')
+	}
+	return res.output.trim_space()
 }

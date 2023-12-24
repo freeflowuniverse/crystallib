@@ -1,0 +1,66 @@
+module ${args.name}
+
+import freeflowuniverse.crystallib.installers.base
+import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.installers
+@if "rust" in args.build_deps
+import freeflowuniverse.crystallib.installers.rust
+@end
+@if "golang" in args.build_deps
+import freeflowuniverse.crystallib.installers.golang
+@end
+@if "python" in args.build_deps
+import freeflowuniverse.crystallib.installers.python
+@end
+@if "docker" in args.build_deps
+import freeflowuniverse.crystallib.installers.docker
+@end
+
+^^[params]
+pub struct BuildArgs {
+pub mut:
+	reset bool
+}
+
+// install ${args.name} will return true if it was already installed
+pub fn build(args BuildArgs) ! {
+
+	checkplatform()!
+	
+	base.install()!
+
+	@if "rust" in args.build_deps
+	rust.install()!
+	@end
+	@if "golang" in args.build_deps
+	golang.install()!
+	@end
+	@if "python" in args.build_deps
+	python.install()!
+	@end
+	@if "docker" in args.build_deps
+	docker.install()!
+	@end
+		
+	// install ${args.name} if it was already done will return true
+	println(' - build ${args.name}')
+
+	// mut gs := gittools.get()!
+
+	// mut gitpath := gittools.code_get(
+	// 	url: "https://github.com/xxxx/yyy"
+	// 	pull: true
+	// 	reset: true
+	// )!
+
+	// cmd := '
+	// source ??{osal.profile_path()} //source the go path
+	// cd ??{gitpath}
+
+
+	// '
+	// osal.execute_stdout(cmd)!
+
+
+}

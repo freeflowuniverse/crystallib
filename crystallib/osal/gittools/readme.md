@@ -1,5 +1,8 @@
 # GitTools
 
+
+> can change coderoot with: ```export CODEROOT="/tmp/codetest"```
+
 Are good tools to allow you to work with GIT in a programatic way
 
 Git repo's get checked out under
@@ -11,29 +14,24 @@ Git repo's get checked out under
 
 ## 3script
 
+- cmd      string // clone,commit,pull,push,delete
+- filter   string // if used will only show the repo's which have the filter string inside
+- repo     string
+- account  string
+- provider string
+- msg      string
+- url      string
+- pull     bool
+- reset    bool = true // means we will lose changes (only relevant for clone, pull)
+- coderoot string //where do we want to checkout the code
+}
+
 ```js
 
-gittools.git_do .
-    coderoot //location where code will be checked out .
-    filter // if used will only show the repo's which have the filter string inside .
-    repo            .
-    account         .
-    provider        .
-    print          bool = true .
-    pull           bool // means when getting new repo will pull even when repo is already there .
-    pullreset      bool // means we will force a pull and reset old content	 .
-    commit         bool .
-    commitpull     bool .
-    commitpush     bool .
-    commitpullpush bool .
-    msg            string .
-    delete         bool // remove the repo . 
-    script         bool = true // run non interactive (default for actions) .
-    cachereset     bool //remove redis cache .
-gittools.git_get .
-    coderoot //location where code will be checked out .
-    pull           bool // means when getting new repo will pull even when repo is already there .
-    pullreset      bool // means we will force a pull and reset old content	 .
+// clone,commit,pull,push,delete
+!!gittools.clone coderoot:'/tmp/code' pull:true reset:true 
+        url:'https://git.ourworld.tf/home/info_freeflowuniverse' 
+
 
 ```
 
@@ -51,24 +49,27 @@ gittools.git_get .
   - always has GitAddress
   - a gitlocator is nothing without gitaddress
 
-## Get a repo
-
-This is the most basic usecase
-
->> TODO: check
+## get gitstructure and repo
 
 ```v
-import gittools
+import freeflowuniverse.crystallib.osal.gittools
 
-mut gs:=gittools.get()?
-url := "https://github.com/threefoldfoundation/www_examplesite/tree/development/manual"
-mut gr := gs.repo_get_from_url(url:url,pull:false, reset:false)
+coderoot := '/tmp/code_test'
+mut gs := gittools.get(coderoot: coderoot)!
 
-println(gr)
+mut path := gittools.code_get(
+    coderoot: coderoot
+    pull: true
+    reset: true    
+    url: 'https://github.com/despiegk/ourworld_data'
+)!
 
-println(gr.path_content_get())
+gs_default.list()!
+gs.list()!
+
 
 ```
+
 
 result is something like
 
@@ -91,7 +92,7 @@ GitRepo{
 }
 
 #THIS IS THE PATH WHERE THE CONTENT GOT CHECKED OUT
-/Users/despiegk1/code/github/threefoldfoundation/www_examplesite/manual
+~/code/github/threefoldfoundation/www_examplesite/manual
 
 - bettertoken/info_bettertoken                 development             CHANGED
 - despiegk/data                                master                  CHANGED

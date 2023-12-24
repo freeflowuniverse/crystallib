@@ -5,23 +5,24 @@ import freeflowuniverse.crystallib.installers.base
 
 const go_version = '1.20.6'
 
+@[params]
+pub struct InstallArgs {
+pub mut:
+	reset bool
+}
+
 // install golang will return true if it was already installed
-pub fn install() ! {
+pub fn install(args InstallArgs) ! {
 	// make sure we install base on the node
 	base.install()!
 
 	// install golang if it was already done will return true
-	println(' - package_install install golang')
-	if osal.done_exists('install_golang') {
-		println('    package_install was already done')
+	println(' - install golang')
+	if !args.reset && osal.done_exists('install_golang') {
+		println(' - go already installed')
 		return
 	}
 
-	if osal.cmd_exists('go') {
-		println('Golang was already installed.')
-		osal.done_set('install_golang', 'OK')!
-		return
-	}
 	mut cmd := ''
 	if osal.platform() == .osx {
 		cmd = '
@@ -30,8 +31,8 @@ pub fn install() ! {
 		curl -L hhttps://go.dev/dl/go${golang.go_version}.darwin-amd64.pkg > go${golang.go_version}.darwin-amd64.pkg
 		echo need to implement
 		exit 1 
-		echo \'export PATH=\$PATH:/usr/local/go/bin\' >> \$HOME/.profile
 		'
+		osal.profile_path_add('/usr/local/go/bin')!
 	}
 	if osal.platform() == .ubuntu {
 		cmd = '
@@ -40,9 +41,8 @@ pub fn install() ! {
 		curl -L https://go.dev/dl/go${golang.go_version}.linux-amd64.tar.gz > go${golang.go_version}.linux-amd64.tar.gz
 		rm -rf /usr/local/go
 		tar -C /usr/local -xzf go${golang.go_version}.linux-amd64.tar.gz
-		#TODO: should use a replacement command rather than just adding e.g. use line editor
-		echo \'export PATH=\$PATH:/usr/local/go/bin\' >> \$HOME/.profile
 		'
+		osal.profile_path_add('/usr/local/go/bin')!
 	} else {
 		panic('only ubuntu and osx supported for now')
 	}

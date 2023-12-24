@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.data.paramsparser
 // import freeflowuniverse.crystallib.ui.telegram
 
-[params]
+@[params]
 pub struct UserInterfaceArgs {
 pub mut:
 	channel ChannelType
@@ -15,9 +15,10 @@ pub mut:
 pub fn new(args UserInterfaceArgs) !UserInterface {
 	mut ch := match args.channel {
 		.console { console.new() }
-		// .telegram { telegram.new() }
 		else { panic("can't find channel") }
 	}
+
+	// .telegram { telegram.new() }
 
 	return UserInterface{
 		channel: ch

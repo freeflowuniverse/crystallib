@@ -11,7 +11,7 @@ pub mut:
 	people people.MemDB
 }
 
-[params]
+@[params]
 pub struct DBArgs {
 pub mut:
 	circle_name string

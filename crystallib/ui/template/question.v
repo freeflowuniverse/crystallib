@@ -12,6 +12,6 @@ import freeflowuniverse.crystallib.ui.uimodel { QuestionArgs }
 // - regex: to check what result need to be part of
 // - minlen: min nr of chars
 //
-pub fn (mut c UIExample) ask_question(args QuestionArgs) string {
+pub fn (mut c UIExample) ask_question(args QuestionArgs) !string {
 	return ''
 }

@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.core.texttools
 
 // https://docs.docker.com/reference/
 
-[heap]
+@[heap]
 pub struct DockerEngine {
 	name string
 pub mut:
@@ -93,7 +93,7 @@ pub fn (mut e DockerEngine) containers_load() ! {
 
 // EXISTS, GET
 
-[params]
+@[params]
 pub struct ContainerGetArgs {
 pub mut:
 	name     string

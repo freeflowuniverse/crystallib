@@ -4,12 +4,13 @@ import os
 import regex
 import freeflowuniverse.crystallib.baobab.smartid
 
-[params]
+@[params]
 pub struct ListArgs {
 pub mut:
 	regex         []string
 	recursive     bool = true
 	ignoredefault bool = true // ignore files starting with . and _
+	dirs_only     bool
 }
 
 // the result of pathlist
@@ -25,18 +26,22 @@ pub mut:
 // return as list of Paths .
 // .
 // params: .
-// ```golang
+// ```
 // regex         []string
 // recursive     bool // std off, means we recursive not over dirs by default
 // ignoredefault bool = true // ignore files starting with . and _
-// ```
-// .
-// example see https://github.com/freeflowuniverse/crystallib/blob/development_circles/examples/core/pathlib/examples/list/path_list.v
-// .
+// dirs_only     bool
+//
+// example see https://github.com/freeflowuniverse/crystallib/blob/development/examples/core/pathlib/examples/list/path_list.v
+//
 // e.g. p.list(regex:[r'.*\.v$'])!  //notice the r in front of string, this is regex for all files ending with .v
-// .
+//
+// ```
 // please note links are ignored for walking over dirstructure (for files and dirs)
-pub fn (path Path) list(args_ ListArgs) !PathList {
+pub fn (mut path Path) list(args_ ListArgs) !PathList {
+	// $if debug {
+	// 	println(' - list: ${args_}')
+	// }
 	mut r := []regex.RE{}
 	for regexstr in args_.regex {
 		mut re := regex.regex_opt(regexstr) or {
@@ -49,6 +54,7 @@ pub fn (path Path) list(args_ ListArgs) !PathList {
 		regex: r
 		recursive: args_.recursive
 		ignoredefault: args_.ignoredefault
+		dirs_only: args_.dirs_only
 	}
 	paths := path.list_internal(args)!
 	mut pl := PathList{
@@ -58,23 +64,32 @@ pub fn (path Path) list(args_ ListArgs) !PathList {
 	return pl
 }
 
-[params]
+@[params]
 pub struct ListArgsInternal {
 mut:
 	regex         []regex.RE // only put files in which follow one of the regexes
 	recursive     bool = true
 	ignoredefault bool = true // ignore files starting with . and _
+	dirs_only     bool
 }
 
-fn (path Path) list_internal(args ListArgsInternal) ![]Path {
+fn (mut path Path) list_internal(args ListArgsInternal) ![]Path {
+	debug := false
+	path.check()
 	if path.cat != Category.dir {
 		// return error('Path must be directory or link to directory')
 		return []Path{}
+	}
+	if debug {
+		println(' - ${path.path}')
 	}
 	mut ls_result := os.ls(path.path) or { []string{} }
 	ls_result.sort()
 	mut all_list := []Path{}
 	for item in ls_result {
+		if debug {
+			println('  - ${item}')
+		}
 		p := os.join_path(path.path, item)
 		mut new_path := get(p)
 		// Check for dir and linkdir
@@ -95,15 +110,19 @@ fn (path Path) list_internal(args ListArgsInternal) ![]Path {
 			if args.recursive {
 				mut rec_list := new_path.list_internal(args)!
 				all_list << rec_list
+			} else {
+				all_list << new_path
+				continue
 			}
 		}
+
 		mut addthefile := true
 		for r in args.regex {
 			if !(r.matches_string(item)) {
 				addthefile = false
 			}
 		}
-		if addthefile {
+		if addthefile && !args.dirs_only {
 			all_list << new_path
 		}
 	}

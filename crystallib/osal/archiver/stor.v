@@ -32,10 +32,10 @@ type Filter0 = fn (mut Path, mut paramsparser.Params) bool
 type Executor0 = fn (mut Path, mut paramsparser.Params) !paramsparser.Params
 
 pub fn (mut a Archiver) add() ! {
-	mut p := pathlib.get_dir(path:testpath)!
+	mut p := pathlib.get_dir(path: testpath)!
 	mut params := paramsparser.Params{}
-	params.kwarg_add('path_meta')
-	params.kwarg_add('path_stor')
+	params.set('path_meta')
+	params.set('path_stor')
 	mut params2 := p.scan(mut params, [filter_base], [executor])!
 }
 

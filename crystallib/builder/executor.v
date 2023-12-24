@@ -8,7 +8,7 @@ pub struct ExecutorNewArguments {
 	local  bool // if this set then will always be the local machine
 	ipaddr string
 	user   string = 'root'
-	debug  bool
+	debug  bool   = true
 }
 
 // create new executor (is way how to execute in std way onto a local or remote machine)
@@ -29,7 +29,7 @@ fn executor_new(args ExecutorNewArguments) !Executor {
 			debug: args.debug
 		}
 	} else {
-		ipaddr := ipaddress.ipaddress_new(args.ipaddr) or {
+		ipaddr := ipaddress.new(args.ipaddr) or {
 			return error('can not initialize ip address.\n ${err}')
 		}
 		mut e := ExecutorSSH{

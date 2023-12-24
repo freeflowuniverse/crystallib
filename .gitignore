@@ -9,3 +9,4 @@ node_modules/
 docs/
 photonwrapper.so
 x
+.env

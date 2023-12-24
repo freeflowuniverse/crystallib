@@ -1,0 +1,20 @@
+{
+    "name": "peertube",
+    "title": "peertube",
+    "build_deps": [
+        "docker"
+    ],
+    "install_deps": [
+        "docker"
+    ],
+    "supported_platforms": [
+        "arch",
+        "ubuntu"
+    ],
+    "clients": [],
+    "configure_interactive": false,
+    "reset": false,
+    "interactive": true,
+    "path": "/Users/despiegk1/code/github/freeflowuniverse/crystallib/crystallib/installers/peertube",
+    "isserver": true
+}

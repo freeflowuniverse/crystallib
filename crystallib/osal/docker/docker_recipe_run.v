@@ -2,7 +2,7 @@ module docker
 
 import freeflowuniverse.crystallib.core.texttools
 
-[params]
+@[params]
 pub struct RunArgs {
 pub mut:
 	cmd string
@@ -11,7 +11,7 @@ pub mut:
 pub struct RunItem {
 pub mut:
 	cmd    string
-	recipe &DockerBuilderRecipe [str: skip]
+	recipe &DockerBuilderRecipe @[str: skip]
 }
 
 // to do something like: 'FROM alpine:latest'

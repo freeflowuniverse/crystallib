@@ -10,7 +10,7 @@ fn (mut app App) before_request() {
 	}, mut app) or { panic(err) }
 }
 
-['/users'; post]
+@['/users'; post]
 fn (mut app App) register() vweb.Result {
 	// Register a new user into database
 	// to make sure that login function working well.
@@ -37,7 +37,7 @@ fn (mut app App) register() vweb.Result {
 	return app.json(created.to_json())
 }
 
-['/users'; get]
+@['/users'; get]
 fn (mut app App) login() ?vweb.Result {
 	// To test basic_auth middleware, we need to check if the credentials are valid.
 	// Then we can make a condition on request based on this valid.

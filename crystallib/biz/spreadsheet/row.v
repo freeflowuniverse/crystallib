@@ -2,14 +2,14 @@ module spreadsheet
 
 import freeflowuniverse.crystallib.data.paramsparser
 
-[heap]
+@[heap]
 pub struct Row {
 pub mut:
 	name          string
 	alias         string
 	description   string
 	cells         []Cell
-	sheet         &Sheet           [skip; str: skip]
+	sheet         &Sheet           @[skip; str: skip]
 	aggregatetype RowAggregateType
 	reprtype      ReprType // how to represent it
 	tags          string
@@ -30,7 +30,7 @@ pub enum RowAggregateType {
 	min
 }
 
-[params]
+@[params]
 pub struct RowNewParams {
 pub mut:
 	name          string

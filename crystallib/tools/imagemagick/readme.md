@@ -1,7 +1,28 @@
 # Imagemagick
 
+### example how to use
 
-example output of image once identified
+```v
+import freeflowuniverse.crystallib.tools.imagemagick
+
+imagemagick.downsize(
+    path:"/tmp/mydir"
+    backupdir:"/tmp/mybackup"
+    redo:true //will re-process
+    convertpng:true //will convert from png to jpeg
+)!
+
+imagemagick.downsize(
+    path:"/tmp/mydir/myimage.png"
+    backupdir:"/tmp/mybackup"
+    redo:true //will re-process
+    convertpng:false //will not convert to jpeg
+)!
+
+
+```
+
+### example output of image once identified
 
 ```json
 Image{

@@ -1,38 +1,45 @@
 module tfgrid
 
-import freeflowuniverse.crystallib.data.actionsparser { Action }
-import freeflowuniverse.crystallib.threefold.web3gw.tfgrid as tfgrid_client { RemoveVM, VM }
+import freeflowuniverse.crystallib.core.playbook { Action }
+import freeflowuniverse.crystallib.threefold.web3gw.tfgrid as tfgrid_client { DeployVM, RemoveVMFromNetworkDeployment }
 import rand
 
 fn (mut t TFGridHandler) vm(action Action) ! {
 	match action.name {
 		'create' {
 			name := action.params.get_default('name', rand.string(6).to_lower())!
-			network := action.params.get_default('network', rand.string(6).to_lower())!
+			node_id := action.params.get_int_default('node_id', 0)!
 			farm_id := action.params.get_int_default('farm_id', 0)!
-			capacity := action.params.get_default('capacity', 'meduim')!
-			times := action.params.get_int_default('times', 1)!
-			disk_size := action.params.get_storagecapacity_in_gigabytes('disk_size') or { 0 }
+			flist := action.params.get_default('flist', 'https://hub.grid.tf/tf-official-apps/base:latest.flist')!
+			entrypoint := action.params.get_default('entrypoint', '/sbin/zinit init')!
+			public_ip := action.params.get_default_false('add_public_ipv4')
+			public_ip6 := action.params.get_default_false('add_public_ipv6')
+			planetary := action.params.get_default_true('planetary')
+			cpu := action.params.get_int_default('cpu', 1)!
+			memory := action.params.get_int_default('memory', 1024)!
+			rootfs := action.params.get_int_default('rootfs', 2048)!
 			gateway := action.params.get_default_false('gateway')
-			wg := action.params.get_default_false('add_wireguard_access')
-			public_ipv4 := action.params.get_default_false('add_public_ipv4')
-			public_ipv6 := action.params.get_default_false('add_public_ipv6')
-
+			add_wireguard_access := action.params.get_default_false('add_wireguard_access')
 			ssh_key_name := action.params.get_default('sshkey', 'default')!
 			ssh_key := t.get_ssh_key(ssh_key_name)!
-
-			deploy_res := t.tfgrid.deploy_vm(VM{
+			env_vars := {
+				ssh_key_name: ssh_key
+			}
+			deploy_res := t.tfgrid.deploy_vm(DeployVM{
 				name: name
-				network: network
+				node_id: u32(node_id)
 				farm_id: u32(farm_id)
-				capacity: capacity
-				ssh_key: ssh_key
-				times: u32(times)
-				disk_size: u32(disk_size)
+				flist: flist
+				entrypoint: entrypoint
+				public_ip: public_ip
+				public_ip6: public_ip6
+				planetary: planetary
+				cpu: u32(cpu)
+				memory: u64(memory)
+				rootfs_size: u64(rootfs)
+				env_vars: env_vars
+				add_wireguard_access: add_wireguard_access
 				gateway: gateway
-				add_wireguard_access: wg
-				add_public_ipv4: public_ipv4
-				add_public_ipv6: public_ipv6
 			})!
 
 			t.logger.info('${deploy_res}')
@@ -40,7 +47,7 @@ fn (mut t TFGridHandler) vm(action Action) ! {
 		'get' {
 			network := action.params.get('network')!
 
-			get_res := t.tfgrid.get_vm(network)!
+			get_res := t.tfgrid.get_vm_deployment(network)!
 
 			t.logger.info('${get_res}')
 		}
@@ -48,16 +55,18 @@ fn (mut t TFGridHandler) vm(action Action) ! {
 			network := action.params.get('network')!
 			machine := action.params.get('machine')!
 
-			remove_res := t.tfgrid.remove_vm(RemoveVM{
+			remove_res := t.tfgrid.remove_vm_from_network_deployment(RemoveVMFromNetworkDeployment{
 				network: network
-				vm_name: machine
+				vm: machine
 			})!
 			t.logger.info('${remove_res}')
 		}
 		'delete' {
 			network := action.params.get('network')!
 
-			t.tfgrid.delete_vm(network) or { return error('failed to delete vm network: ${err}') }
+			t.tfgrid.cancel_network_deployment(network) or {
+				return error('failed to delete vm network: ${err}')
+			}
 		}
 		else {
 			return error('operation ${action.name} is not supported on vms')

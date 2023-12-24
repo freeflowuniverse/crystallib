@@ -4,10 +4,10 @@ services:
     image: postgres:latest
     environment:
       - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=${s.passwd}
-      - PGPASSWORD=${s.passwd}
+      - POSTGRES_PASSWORD=${server.config.passwd}
+      - PGPASSWORD=${server.config.passwd}
     volumes:
-      - ${s.path_data.path}:/var/lib/postgresql/data
+      - ${server.path_data.path}:/var/lib/postgresql/data
     ports:
       - "5432:5432"
 

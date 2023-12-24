@@ -3,13 +3,26 @@ module ipaddress
 import os
 import freeflowuniverse.crystallib.osal
 
+pub struct IPNetwork {
+	IPAddress
+}
+
+// specifies a range out of which e.g. ipaddresses can be chosen .
+// note that checks need to be done to make sure that the IPAddresses are part of subnet as specified by parent object
+pub struct IPNetworkRange {
+	IPAddress
+pub mut:
+	from IPAddress
+	to   IPAddress
+}
+
 pub struct IPAddress {
 pub mut:
-	addr string
-	// e.g. 24, default not specified
-	mask int
-	port int
-	cat  IpAddressType = .ipv4
+	addr        string // e.g. 192.168.6.6 or x:x:x:x:x:x:x:x
+	mask        int    // e.g. 24, default not specified
+	cat         IpAddressType = .ipv4
+	description string
+	port        int
 }
 
 pub enum IpAddressType {
@@ -27,7 +40,7 @@ pub enum IpAddressType {
 // format ipv6: [x:x:x:x:x:x:x:x]:p TODO: implement
 // format ipv6: x:x:x:x:x:x:x:x
 // format ipv6: x::x/96
-pub fn ipaddress_new(addr_string string) !IPAddress {
+pub fn new(addr_string string) !IPAddress {
 	mut cat := IpAddressType.ipv4
 	mut addr := addr_string
 	mut port := ''
@@ -59,8 +72,8 @@ pub fn ipaddress_new(addr_string string) !IPAddress {
 		cat = IpAddressType.ipv6
 	} else if addr.contains('.') && addr.count('.') == 3 {
 		cat = IpAddressType.ipv4
-	} else {
-		return error('Invalid Ip address string')
+		// } else {
+		// 	return error('Invalid Ip address string')
 	}
 
 	mut ip := IPAddress{
@@ -75,7 +88,7 @@ pub fn ipaddress_new(addr_string string) !IPAddress {
 	return ip
 }
 
-[params]
+@[params]
 pub struct PingArgs {
 pub mut:
 	retry   int

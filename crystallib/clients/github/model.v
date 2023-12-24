@@ -14,8 +14,8 @@ pub struct ProjectNodes {
 }
 
 pub struct OrganizationDetails {
-	project_v2  ProjectDetails [json: 'projectV2']
-	projects_v2 ProjectNodes   [json: 'projectsV2']
+	project_v2  ProjectDetails @[json: 'projectV2']
+	projects_v2 ProjectNodes   @[json: 'projectsV2']
 }
 
 pub struct DataResp {
@@ -60,7 +60,7 @@ pub struct ProjectInfoField {
 
 pub struct ProjectInfoNode {
 	id           string
-	field_values ProjectInfoField   [json: 'fieldValues']
+	field_values ProjectInfoField   @[json: 'fieldValues']
 	content      ProjectInfoContent
 }
 

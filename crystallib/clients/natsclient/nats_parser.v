@@ -1,9 +1,7 @@
 module natsclient
 
-const (
-	msg_ping = 'PING\r\n'
-	msg_pong = 'PONG\r\n'
-)
+const msg_ping = 'PING\r\n'
+const msg_pong = 'PONG\r\n'
 
 pub struct NATSMessage {
 pub mut:

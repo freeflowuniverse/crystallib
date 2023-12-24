@@ -2,18 +2,16 @@ module ipfs
 
 import freeflowuniverse.crystallib.data.rpcwebsocket { RpcWsClient }
 
-const (
-	default_timeout = 500000
-)
+const default_timeout = 500000
 
-[openrpc: exclude]
-[noinit]
+@[openrpc: exclude]
+@[noinit]
 pub struct IpfsClient {
 mut:
 	client &RpcWsClient
 }
 
-[openrpc: exclude]
+@[openrpc: exclude]
 pub fn new(mut client RpcWsClient) IpfsClient {
 	return IpfsClient{
 		client: &client
@@ -26,7 +24,7 @@ pub fn (mut e IpfsClient) store_file(content []byte) !string {
 }
 
 // Gets file content from ipfs based on cid
-pub fn (mut e IpfsClient) get_file(path:cid string) !string {
+pub fn (mut e IpfsClient) get_file(cid string) !string {
 	return e.client.send_json_rpc[[]string, string]('ipfs.GetFile', [cid], ipfs.default_timeout)!
 }
 

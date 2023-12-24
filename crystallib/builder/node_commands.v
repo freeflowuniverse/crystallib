@@ -35,10 +35,10 @@ pub fn (mut node Node) ipaddr_pub_get() !string {
 	return ipaddr.trim('\n').trim(' \n')
 }
 
-// cmd: cmd to execute
-// period in sec, e.g. if 3600, means will only execute this if not done yet within the hour
-//
-// ARGS:
+// cmd: cmd to execute .
+// period in sec, e.g. if 3600, means will only execute this if not done yet within the hour .
+// .
+// ARGS: .
 //```
 // struct NodeExecCmd{
 // 	cmd string
@@ -101,7 +101,7 @@ pub fn (mut node Node) exec_cmd(args_ NodeExecCmd) !string {
 		}
 	}
 	r_path := '${args.tmpdir}/installer.sh'
-	osal.file_write(r_path, cmd)!
+	node.file_write(r_path, cmd)!
 	cmd = "mkdir -p ${args.tmpdir} && cd ${args.tmpdir} && export TMPDIR='${args.tmpdir}' && bash ${r_path}"
 	if args.remove_installer {
 		cmd += ' && rm -f ${r_path}'
@@ -145,7 +145,7 @@ fn (mut node Node) platform_load() ! {
 			node.platform = PlatformType.osx
 		} else if node.cmd_exists('apt-get') {
 			node.platform = PlatformType.ubuntu
-			node.package_refresh() or {}
+			// node.package_refresh() or {}
 		} else if node.cmd_exists('apk') {
 			node.platform = PlatformType.alpine
 		} else {

@@ -1,0 +1,36 @@
+{% extends "_default/base.html" %}
+{% block content %}
+
+<div class="container sm:pxi-0 mx-auto overflow-x-hidden pt-6 px-4 text-center">
+
+  <div class="py-12">
+    <section class="
+      post-content
+      container
+      mx-auto
+      relative
+      font-serif
+      text-gray-900 text-center
+    ">
+      <img class="mx-auto w-3/4" src={{page.extra.imgPath}} />
+      <div class="post-content-text text-xl text-center mx-auto my-5">{{ page.content | safe }}</div>
+    </section>
+
+    <button class="
+      inline-block
+      bg-white
+      text-lg
+      learn-button
+      hover:bg-gray-400
+      px-12
+      py-1
+      mr-5
+      my-8
+      border-2
+      shadow
+      border-black
+      capitalize
+    "><a href="{{page.extra.link}}">{{ page.extra.button }}</a></button>
+  </div>
+</div>
+{% endblock content %}

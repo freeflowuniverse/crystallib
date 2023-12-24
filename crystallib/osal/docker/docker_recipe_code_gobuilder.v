@@ -6,7 +6,7 @@ pub fn (mut r DockerBuilderRecipe) add_gobuilder() ! {
 	r.add_workdir(workdir: '/app')!
 }
 
-[params]
+@[params]
 pub struct GoBuildArgs {
 pub mut:
 	url      string // e.g.  https://github.com/valeriansaliou/sonic
@@ -39,7 +39,7 @@ pub fn (mut r DockerBuilderRecipe) add_gobuild_from_code(args GoBuildArgs) ! {
 	)!
 }
 
-[params]
+@[params]
 pub struct GoPackageArgs {
 pub mut:
 	name    string // can be comma separated, can also be url e.g. github.com/caddyserver/xcaddy/cmd/xcaddy@latest

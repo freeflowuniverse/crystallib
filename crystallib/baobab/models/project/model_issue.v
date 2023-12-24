@@ -1,22 +1,23 @@
 module project
 
-import freeflowuniverse.crystallib.baobab.models.system
+import freeflowuniverse.crystallib.baobab.db
+import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.data.ourtime
 
-[root_object]
+@[root_object]
 pub struct Issue {
-	system.Base
+	db.Base
 pub mut:
 	title            string
 	type_            IssueType
 	description      string
 	priority         Priority
 	deadline         ourtime.OurTime
-	assignment       []system.SmartId [root_object: 'Person, Team']
+	assignment       []smartid.GID   @[root_object: 'Person, Team']
 	effort_remaining int // remaining hours
 	percent_done     f64
 	state            State
-	costcenters      []system.SmartId [root_object: CostCenter]
+	costcenters      []smartid.GID   @[root_object: CostCenter]
 }
 
 pub enum IssueType {

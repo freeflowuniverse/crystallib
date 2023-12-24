@@ -5,7 +5,7 @@ import rand
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.data.ipaddress
 
-[heap]
+@[heap]
 pub struct ExecutorSSH {
 pub mut:
 	ipaddr      ipaddress.IPAddress
@@ -53,7 +53,7 @@ pub fn (mut executor ExecutorSSH) exec(cmd string) !string {
 		println(' .. execute ${executor.ipaddr.addr}: ${cmd}')
 	}
 	res := osal.exec(cmd: cmd2, stdout: true, stdout_log: true)!
-	return res.output
+	return res.output.join_lines()
 }
 
 pub fn (mut executor ExecutorSSH) exec_silent(cmd string) !string {
@@ -64,7 +64,7 @@ pub fn (mut executor ExecutorSSH) exec_silent(cmd string) !string {
 	}
 	cmd2 := 'ssh ${executor.user}@${executor.ipaddr.addr} -p ${executor.ipaddr.port} "${cmd}"'
 	res := osal.exec(cmd: cmd2, stdout: stdout)!
-	return res.output
+	return res.output.join_lines()
 }
 
 pub fn (mut executor ExecutorSSH) file_write(path string, text string) ! {
@@ -73,7 +73,7 @@ pub fn (mut executor ExecutorSSH) file_write(path string, text string) ! {
 	}
 	local_path := '/tmp/${rand.uuid_v4()}'
 	os.write_file(local_path, text)!
-	executor.upload(source:local_path, dest:path)!
+	executor.upload(source: local_path, dest: path)!
 	os.rm(local_path)!
 }
 
@@ -82,7 +82,7 @@ pub fn (mut executor ExecutorSSH) file_read(path string) !string {
 		println(' - ${executor.ipaddr.addr} file read: ${path}')
 	}
 	local_path := '/tmp/${rand.uuid_v4()}'
-	executor.download(source:path, dest:local_path)!
+	executor.download(source: path, dest: local_path)!
 	r := os.read_file(local_path)!
 	os.rm(local_path) or { panic(err) }
 	return r
@@ -109,28 +109,28 @@ pub fn (mut executor ExecutorSSH) delete(path string) ! {
 
 // upload from local FS to executor FS
 pub fn (mut executor ExecutorSSH) download(args SyncArgs) ! {
-	mut rsargs:=osal.RsyncArgs{
-		source:args.source
-		dest:args.dest
-		delete:args.delete
-		ipaddr_src:"${executor.user}@${executor.ipaddr.addr}:${executor.ipaddr.port}"
-		ignore:args.ignore
-		ignore_default:args.ignore_default
-		stdout:args.stdout
+	mut rsargs := osal.RsyncArgs{
+		source: args.source
+		dest: args.dest
+		delete: args.delete
+		ipaddr_src: '${executor.user}@${executor.ipaddr.addr}:${executor.ipaddr.port}'
+		ignore: args.ignore
+		ignore_default: args.ignore_default
+		stdout: args.stdout
 	}
 	osal.rsync(rsargs)!
 }
 
 // download from executor FS to local FS
 pub fn (mut executor ExecutorSSH) upload(args SyncArgs) ! {
-	mut rsargs:=osal.RsyncArgs{
-		source:args.source
-		dest:args.dest
-		delete:args.delete
-		ipaddr_dst:"${executor.user}@${executor.ipaddr.addr}:${executor.ipaddr.port}"
-		ignore:args.ignore
-		ignore_default:args.ignore_default
-		stdout:args.stdout
+	mut rsargs := osal.RsyncArgs{
+		source: args.source
+		dest: args.dest
+		delete: args.delete
+		ipaddr_dst: '${executor.user}@${executor.ipaddr.addr}:${executor.ipaddr.port}'
+		ignore: args.ignore
+		ignore_default: args.ignore_default
+		stdout: args.stdout
 	}
 	osal.rsync(rsargs)!
 }

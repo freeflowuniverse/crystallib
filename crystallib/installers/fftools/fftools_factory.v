@@ -1,7 +1,7 @@
 module fftools
 
 import freeflowuniverse.crystallib.builder
-import freeflowuniverse.crystallib.tools.sshagent
+import freeflowuniverse.crystallib.osal.sshagent
 import os
 
 enum FFToolsState {
@@ -10,7 +10,7 @@ enum FFToolsState {
 	error
 }
 
-[heap]
+@[heap]
 pub struct FFTools {
 pub mut:
 	vscode_extensions_dir string

@@ -1,4 +1,4 @@
-fn (shared actor CircleActor) @{function.name}(params paramsparser.Params) ! {
+fn (shared actor CircleActor) @{function.name}(params params.Params) ! {
 @for getter in params_getters
 @{getter}
 @end

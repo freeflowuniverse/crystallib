@@ -10,13 +10,13 @@ pub struct Event {
 	sig        string     // 64-bytes hex of the signature of the sha256 hash of the serialized event data, which is the same as the "id" field
 }
 
-[params]
+@[params]
 pub struct TextNote {
 	tags    []string // event tags
 	content string   // text note content
 }
 
-[params]
+@[params]
 pub struct Metadata {
 	tags     []string      // event tags
 	metadata NostrMetadata // metadata details
@@ -28,7 +28,7 @@ pub struct NostrMetadata {
 	picture string // user picture URL
 }
 
-[params]
+@[params]
 pub struct DirectMessage {
 	receiver string   // 32-bytes lowercase hex-encoded public key of the message receiver
 	tags     []string // event tags
@@ -72,7 +72,7 @@ pub struct ProductCreateInput {
 	product Product  // product details
 }
 
-[params]
+@[params]
 pub struct CreateChannelInput {
 	tags    []string // event tags
 	name    string   // new channel name
@@ -88,7 +88,7 @@ pub struct RelayChannel {
 	id      string // event ID of channel creation
 }
 
-[params]
+@[params]
 pub struct CreateChannelMessageInput {
 	content    string // message content
 	channel_id string // event id of the channel to send the message to
@@ -96,12 +96,12 @@ pub struct CreateChannelMessageInput {
 	public_key string // Public Key of author to reply to
 }
 
-[params]
+@[params]
 pub struct SubscribeChannelMessageInput {
 	id string // Id of the channel or message to make a subscription for
 }
 
-[params]
+@[params]
 pub struct FetchChannelMessageInput {
 	channel_id string // channel ID to fetch messages from
 }
@@ -113,7 +113,7 @@ pub struct RelayChannelMessage {
 	id      string     // message event ID
 }
 
-[params]
+@[params]
 pub struct GetSubscriptionEvents {
 	id    string // subscription id
 	count u32    // number of events to read

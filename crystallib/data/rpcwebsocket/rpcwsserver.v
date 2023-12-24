@@ -5,12 +5,12 @@ import net.websocket { Client, Message, Server, ServerClient }
 
 type MessageHandler = fn (client &Client, message string) string
 
-[heap]
+@[heap]
 pub struct RpcWsServer {
 pub mut:
 	server  &Server
 	logger  &log.Logger
-	handler MessageHandler [required]
+	handler MessageHandler @[required]
 }
 
 fn (mut rws RpcWsServer) on_message(mut client Client, msg &Message) ! {

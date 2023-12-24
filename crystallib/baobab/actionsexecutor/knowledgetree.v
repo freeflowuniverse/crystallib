@@ -1,13 +1,13 @@
 module actionsexecutor
 
-// import freeflowuniverse.crystallib.data.actionsparser
-// import freeflowuniverse.crystallib.data.knowledgetree
+// import freeflowuniverse.crystallib.core.playbook
+// import freeflowuniverse.crystallib.data.doctree
 
-// fn knowledgetree(mut actions actionsparser.Actions, action actionsparser.Action) ! {
+// fn doctree(mut actions playbook.Actions, action playbook.Action) ! {
 // 	if action.name == 'scan' {
 // 		mut name := action.params.get_default('name', 'default')!
 
-// 		knowledgetree.new(name: name)!
+// 		doctree.new(name: name)!
 
 // 		mut path := action.params.get_default('path', '')!
 // 		mut heal := action.params.get_default_false('heal')
@@ -17,7 +17,7 @@ module actionsexecutor
 // 		mut git_root := action.params.get_default('git_root', '')!
 // 		mut git_pull := action.params.get_default_false('git_pull')
 
-// 		knowledgetree.scan(
+// 		doctree.scan(
 // 			name: name
 // 			path: path
 // 			heal: heal
@@ -33,7 +33,7 @@ module actionsexecutor
 // 		mut name := action.params.get('name')!
 // 		mut tree_name := action.params.get('tree_name')!
 
-// 		knowledgetree.new(name: name)!
+// 		doctree.new(name: name)!
 
 // 		mut path := action.params.get_default('path', '')!
 // 		mut git_url := action.params.get_default('git_url', '')!
@@ -44,7 +44,7 @@ module actionsexecutor
 // 		mut dest_md := action.params.get('dest_md')!
 
 // 		// populate the book and export
-// 		knowledgetree.book_create(
+// 		doctree.book_create(
 // 			tree_name: tree_name
 // 			name: name
 // 			path: path

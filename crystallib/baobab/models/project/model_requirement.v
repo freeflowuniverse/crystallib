@@ -1,14 +1,14 @@
 module project
 
-import freeflowuniverse.crystallib.baobab.models.system
+import freeflowuniverse.crystallib.baobab.db
 
 pub struct Requirement {
-	system.Base
+	db.Base
 pub mut:
-	story       system.SmartId   [required; root_object: Story]
+	story       smartid.GID      @[required; root_object: Story]
 	title       string
 	description string
-	assignment  []system.SmartId [root_object: 'Person, Team']
+	assignment  []smartid.GID    @[root_object: 'Person, Team']
 	priority    Priority
 	state       RequirementState
 }

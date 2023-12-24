@@ -1,13 +1,14 @@
 module caddy
 
 import freeflowuniverse.crystallib.installers.base
-import freeflowuniverse.crystallib.tools.tmux
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.installers.zinit
+import freeflowuniverse.crystallib.osal.zinit as zinitmgmt
 import os
 
-[params]
+@[params]
 pub struct InstallArgs {
 pub mut:
 	reset bool
@@ -17,6 +18,7 @@ pub mut:
 pub fn install(args InstallArgs) ! {
 	// make sure we install base on the node
 	base.install()!
+	zinit.install(reset: args.reset)!
 
 	if args.reset == false && osal.done_exists('install_caddy') {
 		return
@@ -29,21 +31,23 @@ pub fn install(args InstallArgs) ! {
 		return error('only support ubuntu for now')
 	}
 	mut dest := osal.download(
-		url: 'https://github.com/caddyserver/caddy/releases/download/v2.7.4/caddy_2.7.4_linux_amd64.tar.gz'
+		url: 'https://github.com/caddyserver/caddy/releases/download/v2.7.5/caddy_2.7.5_linux_amd64.tar.gz'
 		minsize_kb: 10000
 		reset: true
 		expand_dir: '/tmp/caddyserver'
 	)!
 
 	mut caddyfile := dest.file_get('caddy')! // file in the dest
-	caddyfile.copy('/usr/local/bin')!
+	caddyfile.copy(dest: '/usr/local/bin', delete: true)!
 	caddyfile.chmod(0o770)! // includes read & write & execute
+
+	println(' CADDY INSTALLED')
 
 	osal.done_set('install_caddy', 'OK')!
 	return
 }
 
-[params]
+@[params]
 pub struct WebConfig {
 pub mut:
 	path   string = '/var/www'
@@ -83,7 +87,7 @@ pub fn configuration_get() !string {
 	return c
 }
 
-[params]
+@[params]
 pub struct ConfigurationArgs {
 pub mut:
 	content string
@@ -103,7 +107,7 @@ pub fn configuration_set(args_ ConfigurationArgs) ! {
 		}
 		osal.file_write('/etc/caddy/Caddyfile', args.content)!
 	} else {
-		mut p := pathlib.get_file(path:args.path, create:true)!
+		mut p := pathlib.get_file(path: args.path, create: true)!
 		content := p.read()!
 		if !os.exists('/etc/caddy') {
 			os.mkdir_all('/etc/caddy')!
@@ -117,43 +121,39 @@ pub fn configuration_set(args_ ConfigurationArgs) ! {
 }
 
 // start caddy
-pub fn start() ! {
+pub fn start() !zinitmgmt.ZProcess {
 	if !os.exists('/etc/caddy/Caddyfile') {
+		return error("didn't find caddyfile")
 	}
-	mut t := tmux.new()!
-	mut w := t.window_new(
+	mut z := zinitmgmt.new()!
+	p := z.process_new(
 		name: 'caddy'
 		cmd: '
 			caddy run --config /etc/caddy/Caddyfile
 			echo CADDY STOPPED
 			/bin/bash'
 	)!
+
+	p.start()!
+
+	// mut t := tmux.new()!
+	// mut w := t.window_new(
+	// 	name: 'caddy'
+	// 	cmd: '
+	// 		caddy run --config /etc/caddy/Caddyfile
+	// 		echo CADDY STOPPED
+	// 		/bin/bash'
+	// )!
+	return p
 }
 
 pub fn stop() ! {
-	mut t := tmux.new()!
-	t.window_delete(name: 'caddy')!
+	// mut z := zinitmgmt.new()!
+	// t.window_delete(name: 'caddy')!
 	// osal.execute_silent('caddy stop') or {}
 }
 
-pub fn restart() ! {
+pub fn restart() !zinitmgmt.ZProcess {
 	stop()!
-	start()!
+	return start()!
 }
-
-// if cmd_exists('caddy') {
-// 	println('Caddy was already installed.')
-// 	//! should we set caddy as done here !
-// 	return
-// }
-// //TODO: better to start from a build one
-// osal.execute_silent("
-// 	sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https gpg sudo
-// 	rm -f /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-// 	curl -1sLfk 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-// 	curl -1sLfk 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list
-// 	apt update
-// 	apt install caddy
-// ") or {
-// 	return error('Cannot install caddy.\n${err}')
-// }

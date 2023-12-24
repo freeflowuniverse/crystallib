@@ -1,0 +1,11 @@
+{% extends "_default/base.html" %}
+
+{% block content %}
+
+<main class="lg:-mt-6">
+    {{ section.content | safe}}
+    <!-- <hr> -->
+    {% include "partials/page_list.html" %}
+ </main> 
+ 
+ {% endblock content %}

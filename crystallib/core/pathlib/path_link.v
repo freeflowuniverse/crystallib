@@ -3,7 +3,7 @@ module pathlib
 import os
 
 // path needs to be existing
-// linkpath is where the link will be pointing to path
+// linkpath is where the link will be (the symlink who points to path)
 pub fn (mut path Path) link(linkpath string, delete_exists bool) !Path {
 	if !path.exists() {
 		return error('cannot link because source ${path.path} does not exist')
@@ -78,7 +78,7 @@ pub fn (mut path Path) unlink() ! {
 	// 	println(" - copy source file:'$link_real_path' of link to link loc:'$link_abs_path'")
 	// }
 	mut destpath := get(link_abs_path + '.temp') // lets first copy to the .temp location
-	link_path.copy(dest:destpath.path)! // copy to the temp location
+	link_path.copy(dest: destpath.path)! // copy to the temp location
 	path.delete()! // remove the file or dir which is link
 	destpath.rename(path.name())! // rename to the new path
 	path.path = destpath.path // put path back

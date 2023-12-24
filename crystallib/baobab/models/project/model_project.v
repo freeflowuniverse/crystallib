@@ -1,19 +1,20 @@
 module project
 
-import freeflowuniverse.crystallib.baobab.models.system
+import freeflowuniverse.crystallib.baobab.db
+import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.data.ourtime
 
-[root_object]
+@[root_object]
 pub struct Project {
-	system.Base
+	db.Base
 pub mut:
 	name        string
 	title       string
 	description string
 	deadline    ourtime.OurTime
 	state       State
-	milestones  []system.SmartId [root_object: Milestone]
-	stories     []system.SmartId [root_object: Story]
+	milestones  []smartid.GID   @[root_object: Milestone]
+	stories     []smartid.GID   @[root_object: Story]
 }
 
 // pub enum ProjectStatus {

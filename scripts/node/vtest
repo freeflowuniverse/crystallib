@@ -1,0 +1,13 @@
+#!/bin/bash
+
+
+# Check if no arguments are provided
+if [[ $# -eq 0 ]]; then
+    echo "No arguments provided for the V Command."
+    exit 1
+fi
+
+# Pass all arguments to the v command
+v -cg -enable-globals test $@
+
+

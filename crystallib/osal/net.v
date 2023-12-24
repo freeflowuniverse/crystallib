@@ -6,10 +6,10 @@ pub enum PingResult {
 	unknownhost // means we don't know the hostname its a dns issue
 }
 
-[params]
+@[params]
 pub struct PingArgs {
 pub mut:
-	address string [required]
+	address string @[required]
 	count   u8  = 1 // the ping is successful if it got count amount of replies from the other side
 	timeout u16 = 1 // the time in which the other side should respond in seconds
 	retry   u8
@@ -56,5 +56,5 @@ pub fn ping(args PingArgs) PingResult {
 pub fn ipaddr_pub_get() !string {
 	cmd := 'dig @resolver4.opendns.com myip.opendns.com +short'
 	ipaddr := exec(cmd: cmd)!
-	return ipaddr.output.trim('\n').trim(' \n')
+	return ipaddr.output.join_lines().trim('\n').trim(' \n')
 }

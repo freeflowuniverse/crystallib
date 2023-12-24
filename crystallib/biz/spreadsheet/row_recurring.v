@@ -2,7 +2,7 @@ module spreadsheet
 
 import math
 
-[params]
+@[params]
 pub struct RowRecurringArgs {
 pub mut:
 	name          string

@@ -1,6 +1,6 @@
 module hero
 
-import freeflowuniverse.crystallib.data.actionsparser
+import freeflowuniverse.crystallib.data.playbook
 import freeflowuniverse.crystallib.osal.downloader
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
@@ -13,7 +13,7 @@ pub mut:
 	name     string
 	path     pathlib.Path           [skip] // is the base directory of the session
 	vars     map[string]string
-	actions  []actionsparser.Action [skip]
+	actions  []playbook.Action [skip]
 	includes []string
 	runner   &Runner                [skip; str: skip]
 }
@@ -130,7 +130,7 @@ pub fn (mut session Session) actions_add(args_ ActionsAddArgs) ! {
 
 	println('debugzo: at parser')
 
-	mut ap := actionsparser.new(path: actions_path)!
+	mut ap := playbook.new(path: actions_path)!
 	for a in ap.actions {
 		session.actions << a
 	}
@@ -150,8 +150,8 @@ pub mut:
 pub fn (mut s Session) run(args RunArgs) ! {
 	// lets first resolve the includes and process after including
 	mut actionsprocessed := s.actions_include(s.actions)!
-	mut actionsprocessed2 := []actionsparser.Action{}
-	mut actionsprocessed3 := []actionsparser.Action{}
+	mut actionsprocessed2 := []playbook.Action{}
+	mut actionsprocessed3 := []playbook.Action{}
 	for mut action in actionsprocessed {
 		if action.actor == 'runner' && action.name == 'config' {
 			if args.actions_runner_config_enable {

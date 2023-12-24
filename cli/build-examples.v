@@ -4,14 +4,14 @@ import os
 import vlang.testing
 import v.pref
 
-//TODO: is kind of complicated, build .sh, then go to a .v script, can all be in 1 cmd in hero
+// TODO: is kind of complicated, build .sh, then go to a .v script, can all be in 1 cmd in hero
 
 // ln -s ../../code/utils/v/cmd/tools/modules/testing .
 
 const vroot = os.dir(os.real_path(os.getenv_opt('VEXE') or { @VEXE }))
 
 // build as a project folder
-//TODO: shouldn't this be more dynamic?
+// TODO: shouldn't this be more dynamic?
 const efolders = [
 	'examples/viewer',
 	'examples/vweb_orm_jwt',

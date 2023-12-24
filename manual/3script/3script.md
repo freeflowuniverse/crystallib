@@ -45,7 +45,22 @@ when executing 3script the following order will always be maintained
 
 - {$defname} or {$collectionname:defname} will get transformed to a link to the page which has defined the concept of definition
 
+### last sid
+
+Sid's are created automatically if needed and added to an actionstatement if not there yet.
+
+```js
+
+'***' will fill in a sid automatically (always a new one)
+'*-1' will reuse the last given sid can be handy in scripts where we need to relate to a previous one
+'*-2' goes back 2 times, can go back as far as you want
+
+```
+
+
+
 ### circle selection
 
-- !!tree.circle_select id:... name:...
+- !!circle_select id:... name:...
+- can specify with integer, circlestring or its name
 - will make sure that all following actions (dal, sal, wal) are executed in that specified circle

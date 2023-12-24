@@ -1,6 +1,6 @@
 module paramsparser
 
-[params]
+@[params]
 pub struct ParamsFilter {
 pub mut:
 	include []string

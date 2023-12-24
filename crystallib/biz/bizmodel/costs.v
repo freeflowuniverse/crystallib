@@ -1,6 +1,6 @@
 module bizmodel
 
-import freeflowuniverse.crystallib.data.actionsparser { Actions }
+import freeflowuniverse.crystallib.core.playbook { PlayBook }
 import freeflowuniverse.crystallib.core.texttools
 
 // populate the params for hr
@@ -12,8 +12,8 @@ import freeflowuniverse.crystallib.core.texttools
 //     department:'engineering'
 //	   cost_percent_revenue e.g. 4%, will make sure the cost will be at least 4% of revenue
 
-fn (mut m BizModel) overhead_actions(actions_ Actions) ! {
-	mut actions2 := actions_.filtersort(actor: 'costs')!
+fn (mut m BizModel) overhead_actions(actions_ PlayBook) ! {
+	mut actions2 := actions_.find(actor: 'costs')
 	for action in actions2 {
 		if action.name == 'define' {
 			mut name := action.params.get_default('name', '')!
@@ -87,11 +87,4 @@ fn (mut m BizModel) overhead_actions(actions_ Actions) ! {
 			}
 		}
 	}
-
-	mut hr_cost_row := m.sheet.group2row(
-		name: 'overhead_cost_total'
-		include: ['ocost']
-		tags: 'pl'
-		descr: 'total cost for overhead.'
-	)!
 }
