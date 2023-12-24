@@ -1,15 +1,24 @@
 # postgres client
 
-## use hero to configure
+## use hero to work with postgres
 
-```markdown
+```bash
 
-hero configure postgres
+Usage: hero postgres [flags] [commands]
 
-## Configure Postgresql Client
-==============================
+manage postgresql
 
+Flags:
+  -help               Prints help information.
+  -man                Prints the auto-generated manpage.
 
+Commands:
+  exec                execute a query
+  check               check the postgresql connection
+  configure           configure a postgresl connection.
+  backup              backup
+  print               print configure info.
+  list                list databases
 
 ```
 

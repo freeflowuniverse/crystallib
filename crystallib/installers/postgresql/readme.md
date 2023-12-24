@@ -1,5 +1,7 @@
 # postgresql
 
+see the clients.postgresql for much more functionality
+
 ## see local config
 
 ```bash
@@ -30,7 +32,6 @@ mut db := postgresql.get(server.config.postgresql_name)!
 // now create the DB
 db.db_create('gitea')!
 
-//now we need to do some custom sql statements
 
 ```
 
