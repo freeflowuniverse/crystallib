@@ -1,13 +1,13 @@
 function redis_install {
 
-    export response=$(redis-cli PING)
+    local response=$(redis-cli PING)
 
     # Check if the response is PONG
-    if [ "$response" == "PONG" ]; then
+    if [[ "${response}" == "PONG" ]]; then
         return 
     fi
 
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
+    if [[ "${OSTYPE}" == "linux-gnu"* ]]; then 
         # package_install "libssl-dev redis"
         package_install "redis"
         set +e
@@ -22,7 +22,7 @@ function redis_install {
         else
             echo "redis server is not running."
         fi
-    elif [[ "$OSTYPE" == "darwin"* ]]; then
+    elif [[ "${OSTYPE}" == "darwin"* ]]; then
         if ! [ -x "$(command -v redis-server)" ]; then
             brew install redis
             brew services start redis
@@ -34,7 +34,7 @@ function redis_install {
 #configure the redis in zinit
 function zinit_add_redis {
     redis_install
-    cmd="
+    local cmd="
 #!/bin/bash
 if pgrep redis >/dev/null; then
     echo redis is running. Stopping...
@@ -44,10 +44,10 @@ redis-server
 "
     # --port 7777
 
-    zinitcmd="
+    local zinitcmd="
 test: redis-cli  PING
 "
     #-p 7777
-    zinitinstall "redis"
+    zinitinstall "redis" "${cmd}" "${zinitcmd}"
     unset zinitcmd
 }

@@ -1,10 +1,9 @@
-module main
+#!/usr/bin/env v -enable-globals run
 
 import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.core.pathlib
 import os
 
-const myexamplepath = os.dir(@FILE) + '/../..'
 
 fn do1() ! {
 	mut b := builder.new()!
@@ -43,7 +42,5 @@ fn do2() ! {
 	println('size: ${size} KB')
 }
 
-fn main() {
-	do1() or { panic(err) }
-	do2() or { panic(err) }
-}
+do1()
+do2()

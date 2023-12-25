@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 # set +x
 
-if [[ -e $HOME/code/github/freeflowuniverse/crystallib/scripts/env.sh ]]; then
-    rm -f $HOME/.env.sh
-    sed -i '/env\.sh/d' "~/.zprofile"
-    sed -i '/env\.sh/d' "~/.bashrc"
-    sed -i '/env\.sh/d' "~/.profile"
-
-fi
+rm -f ${HOME}/.env.sh
+sed -i '/env\.sh/d' "${$HOME}/.zprofile"
+sed -i '/env\.sh/d' "${$HOME}/.bashrc"
+sed -i '/env\.sh/d' "${$HOME}/.profile"
+touch ~/.profile
+sed -i '/hero/bin/d' "${$HOME}/.profile"
+sed -i '/hero/bin/d' "${$HOME}/.bash_profile"
+echo 'export PATH="${HOME}/hero/bin:$PATH"' >> ~/.profile
+echo 'export PATH="${HOME}/hero/bin:$PATH"' >> ~/.bash_profile
 
 if [[ -z "${CLBRANCH}" ]]; then 
     export CLBRANCH="development"

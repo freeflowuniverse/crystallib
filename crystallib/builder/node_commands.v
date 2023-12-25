@@ -3,7 +3,8 @@ module builder
 import freeflowuniverse.crystallib.core.texttools
 import crypto.md5
 import time
-import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.data.ourtime
+// import freeflowuniverse.crystallib.osal
 
 // check command exists on the platform, knows how to deal with different platforms
 pub fn (mut node Node) cmd_exists(cmd string) bool {
@@ -12,6 +13,7 @@ pub fn (mut node Node) cmd_exists(cmd string) bool {
 
 pub struct NodeExecCmd {
 pub mut:
+	name			   string = "default"
 	cmd                string
 	period             int  // period in which we check when this was done last, if 0 then period is indefinite
 	reset              bool = true // means do again or not
@@ -100,14 +102,15 @@ pub fn (mut node Node) exec_cmd(args_ NodeExecCmd) !string {
 			args.tmpdir = node.environment['TMPDIR']
 		}
 	}
-	r_path := '${args.tmpdir}/installer.sh'
+	now := ourtime.now()
+	r_path := '${args.tmpdir}/installer_${args.name}_${now.key()}.sh'
 	node.file_write(r_path, cmd)!
 	cmd = "mkdir -p ${args.tmpdir} && cd ${args.tmpdir} && export TMPDIR='${args.tmpdir}' && bash ${r_path}"
 	if args.remove_installer {
 		cmd += ' && rm -f ${r_path}'
 	}
-	// println("   - exec cmd:$cmd on $node.name")
-	res := node.exec(cmd) or { return error(err.msg() + '\noriginal cmd:\n${args.cmd}') }
+	$if debug{println("   - exec ${r_path} on ${node.name}")}
+	res := node.exec(cmd) or { return error( 'cmd:\n${args.cmd}\n${err.msg()}') }
 
 	node.done_set('exec_${hhash}', '${now_str}|${res}')!
 	return res
@@ -154,8 +157,7 @@ fn (mut node Node) platform_load() ! {
 	echo ***\${OSNAME}:\${UNAME}
 
 	'
-	println(cmd)
-	out:=node.exec_file(cmd:cmd)!
+	out:=node.exec_cmd(cmd:cmd,name:"platform_load")!
 
 	out2:=out.split_into_lines().map(if it.starts_with("***") {it.trim_left("*")}else{""}).first()
 	osname:=out2.all_before(":").trim_space()
@@ -181,21 +183,6 @@ fn (mut node Node) platform_load() ! {
 		println(osname)
 		panic('only ubuntu, arch and osx supported for now')
 	}
-
-	// if node.platform == PlatformType.unknown {
-	// 	if node.cmd_exists('sw_vers') {
-	// 		node.platform = PlatformType.osx
-	// 	} else if node.cmd_exists('apt-get') {
-	// 		node.platform = PlatformType.ubuntu
-	// 		// node.package_refresh() or {}
-	// 	} else if node.cmd_exists('apk') {
-	// 		node.platform = PlatformType.alpine
-	// 	} else if node.cmd_exists('pacman') {
-	// 		node.platform = PlatformType.arch			
-	// 	} else {
-	// 		panic('only ubuntu, alpine and osx supported for now')
-	// 	}
-	// }
 }
 
 pub fn (mut node Node) package_refresh() ! {
@@ -226,31 +213,5 @@ pub fn (mut node Node) package_install(package Package) ! {
 		}		
 	} else {
 		panic('only ubuntu, alpine,arch and osx supported for now')
-	}
-}
-
-fn (mut node Node) upgrade() ! {
-	if node.platform == PlatformType.ubuntu {
-		upgrade_cmds := '
-			sudo killall apt apt-get
-			rm -f /var/lib/apt/lists/lock
-			rm -f /var/cache/apt/archives/lock
-			rm -f /var/lib/dpkg/lock*		
-			export TERM=xterm
-			export DEBIAN_FRONTEND=noninteractive
-			dpkg --configure -a
-			set -ex
-			apt update
-			apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-			apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-			apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-			'
-
-		node.exec_cmd(
-			cmd: upgrade_cmds
-			period: 48 * 3600
-			reset: false
-			description: 'upgrade operating system packages'
-		)!
 	}
 }

@@ -1,11 +1,9 @@
-module main
+#!/usr/bin/env v -enable-globals run
+
 
 import freeflowuniverse.crystallib.osal.python
 import  json
 
-fn main() {
-	do1() or { panic(err) }
-}
 
 pub struct Person {
     name     string
@@ -15,23 +13,17 @@ pub struct Person {
 }
 
 
+mut py:=python.new(name:'test')! //a python env with name test
+py.update()!
+py.pip("ipython")!
 
-fn do1() ! {
+cmd:=$tmpl("pythonexample.py")
+// for i in 0..100{
+// 	println(i)
+// 	res:=py.exec(cmd:cmd)!
+// }
+res:=py.exec(cmd:cmd)!
 
-
-	mut py:=python.new(name:'test')! //a python env with name test
-	py.update()!
-	py.pip("ipython")!
-
-	cmd:=$tmpl("pythonexample.py")
-	// for i in 0..100{
-	// 	println(i)
-	// 	res:=py.exec(cmd:cmd)!
-	// }
-	res:=py.exec(cmd:cmd)!
-
-	person:=json.decode(Person,res)!
-	println(person)
-
-}
+person:=json.decode(Person,res)!
+println(person)
 

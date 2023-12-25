@@ -1,5 +1,0 @@
-
-{% set path = body | split(pat="href=") | slice(start=1) | first | split(pat=">") | first | trim_start_matches(pat='"') | trim_end_matches(pat='"') %}
-<button onclick="window.location='{{path}}'" class="border-transparent flex flex-col border-2 w-full items-start rounded h-16 md:h-24 transition hover:first:text-gray-500 hover:border-stone-200 hover:bg-stone-100 p-2 text-left">
-    {{ body | trim_start_matches(pat="<p>") | safe}}
-</button>

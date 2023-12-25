@@ -5,9 +5,9 @@ function hero_install {
     RELEASES="https://github.com/freeflowuniverse/freeflow_binary/raw/main"
     ASSET=""
 
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    if [[ "${OSTYPE}" == "linux-gnu"* ]]; then
         ASSET="linux"
-    elif [[ "$OSTYPE" == "darwin"* ]]; then
+    elif [[ "${OSTYPE}" == "darwin"* ]]; then
         ASSET="osx"
     fi
     if [[ "$(uname -m)" == "x86_64"* ]]; then
@@ -16,9 +16,9 @@ function hero_install {
         ASSET="${ASSET}_arm"
     fi
 
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    if [[ "${OSTYPE}" == "linux-gnu"* ]]; then
         export HEROPATH='/usr/local/bin/hero'
-    elif [[ "$OSTYPE" == "darwin"* ]]; then
+    elif [[ "${OSTYPE}" == "darwin"* ]]; then
         export HEROPATH=$HOME/hero/bin/hero
     fi
 

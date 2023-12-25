@@ -27,9 +27,15 @@ fn (err JobError) msg() string {
 	if err.error_type == .timeout {
 		return 'Execution failed timeout\n${err.job}'
 	}
-	mut msg := 'Execution failed with code ${err.job.exit_code}\n${err.job}'
+	mut msg := 'Execution failed with code ${err.job.exit_code}\n'
 	if err.job.cmd.scriptpath.len > 0 {
 		msg += '\nscript path:${err.job.cmd.scriptpath}'
+	}
+	if err.job.output.len > 0 {
+		msg += "\n\n## stdout:\n${err.job.output.join_lines()}"
+	}
+	if err.job.error.len > 0 {
+		msg += "\n\n## stderr:\n${err.job.error.join_lines()}"
 	}
 	return msg
 }

@@ -39,7 +39,7 @@ function crystal_lib_get {
 
     mkdir -p ~/.vmodules/freeflowuniverse
     rm -f ~/.vmodules/freeflowuniverse/crystallib
-    ln -s "$DIR_CODE/github/freeflowuniverse/crystallib" ~/.vmodules/freeflowuniverse/crystallib
+    ln -s "$DIR_CODE/github/freeflowuniverse/crystallib/crystallib" ~/.vmodules/freeflowuniverse/crystallib
 
     crystal_web_get
 }
@@ -47,9 +47,7 @@ function crystal_lib_get {
 
 function crystal_web_get {
     
-    rm -rf ~/.vmodules/freeflowuniverse/
     mkdir -p ~/.vmodules/freeflowuniverse/
-
     mkdir -p $DIR_CODE/github/freeflowuniverse
     if [[ -d "$DIR_CODE/github/freeflowuniverse/webcomponents" ]]
     then
@@ -67,12 +65,12 @@ function crystal_web_get {
         else
             git clone --depth 1 --no-single-branch git@github.com:freeflowuniverse/webcomponents.git
         fi        
-        popd 2>&1 >> /dev/null
+        popd 2>&1 >> /dev/null || exit
     fi
 
     mkdir -p ~/.vmodules/freeflowuniverse
     rm -f ~/.vmodules/freeflowuniverse/webcomponents
-    ln -s "$DIR_CODE/github/freeflowuniverse/webcomponents" ~/.vmodules/freeflowuniverse/webcomponents
+    ln -s "$DIR_CODE/github/freeflowuniverse/webcomponents/webcomponents" ~/.vmodules/freeflowuniverse/webcomponents
 
 }
 

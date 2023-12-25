@@ -14,16 +14,18 @@ function v_install {
         fi
     fi
 
-    if [[ "$OSNAME" == "ubuntu"* ]]; then 
-        package_install "libgc-dev gcc make libpq-dev"
-    elif [[ "$OSNAME" == "darwin"* ]]; then
-        brew install bdw-gc
-    elif [[ "$OSNAME" == "alpine"* ]]; then
-        sudo -s apk add make gcc libc-dev gcompat libstdc++       
-    else
-        echo "ONLY SUPPORT OSX AND LINUX FOR NOW"
-        exit 1
-    fi        
+	if [[ ${OSNAME} == "ubuntu"* ]]; then
+		package_install "libgc-dev gcc make libpq-dev"
+	elif [[ ${OSNAME} == "darwin"* ]]; then
+		brew install bdw-gc
+	elif [[ ${OSNAME} == "alpine"* ]]; then
+		package_install "make gcc libc-dev gcompat libstdc++"
+	elif [[ ${OSNAME} == "arch" ]]; then
+		package_install "make tcc gcc"
+	else
+		echo "ONLY SUPPORT OSX AND LINUX FOR NOW"
+		exit 1
+	fi
 
     if [[ -d "$DIR_CODE_INT/v" ]]; then
         pushd $DIR_CODE_INT/v
@@ -42,12 +44,10 @@ function v_install {
     mkdir -p ${HOME}/hero/bin
     rm -f ${HOME}/hero/bin/v
     ln -s ${DIR_CODE_INT}/v/v ${HOME}/hero/bin/v
-    touch ~/.profile
-    echo 'export PATH="${HOME}/hero/bin:$PATH"' >> ~/.profile    
     popd "$@" > /dev/null
     export PATH="${HOME}/hero/bin:$PATH"
 
-    if ! [[ "$OSNAME" == "alpine"* ]]; then
+    if ! [[ "${OSNAME}" == "alpine"* ]]; then
     v -e "$(curl -fksSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh)"
     fi
 

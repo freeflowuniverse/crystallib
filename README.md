@@ -5,7 +5,7 @@
 the following script will install vlang and crystallib
 
 ```bash
-curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/v_install.sh > /tmp/install.sh
+curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/installer.sh > /tmp/install.sh
 bash /tmp/install.sh
 ```
 

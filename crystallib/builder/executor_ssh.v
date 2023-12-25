@@ -52,7 +52,7 @@ pub fn (mut executor ExecutorSSH) exec(cmd string) !string {
 	if executor.debug {
 		println(' .. execute ${executor.ipaddr.addr}: ${cmd}')
 	}
-	res := osal.exec(cmd: cmd2, stdout: true, stdout_log: true)!
+	res := osal.exec(cmd: cmd2, stdout: true, stdout_log: true, debug:executor.debug)!
 	return res.output.join_lines()
 }
 

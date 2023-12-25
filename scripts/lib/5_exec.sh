@@ -22,5 +22,5 @@ function myexec() {
     local script_name="$1"
     local download_url="$2"
     myexecdownload "$1" "$2"
-    bash "$script_name"
+    bash "${script_name}"
 }

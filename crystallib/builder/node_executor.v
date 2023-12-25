@@ -21,27 +21,27 @@ pub fn (mut node Node) exec(cmd string) !string {
 	panic('did not find right executor')
 }
 
-@[params]
-pub struct ExecFileArgs {
-pub mut:
-	path    string
-	cmd     string
-}
+// @[params]
+// pub struct ExecFileArgs {
+// pub mut:
+// 	path    string
+// 	cmd     string
+// }
 
-pub fn (mut node Node) exec_file(args_ ExecFileArgs) !string {
-	mut args:=args_
-	if args.path == '' {
-		now := ourtime.now()
-		args.path="/tmp/myexec_${now.key()}.sh"
-	}
-	if args.cmd == '' {
-		return error('need to specify cmd')
-	}
-	args.cmd = texttools.dedent(args.cmd)
-	node.file_write(args.path, args.cmd)!
-	return node.exec_silent('chmod +x ${args.path} && bash ${args.path} && rm -f  ${args.path}')!
-	// 
-}
+// pub fn (mut node Node) exec_file(args_ ExecFileArgs) !string {
+// 	mut args:=args_
+// 	if args.path == '' {
+// 		now := ourtime.now()
+// 		args.path="/tmp/myexec_${now.key()}.sh"
+// 	}
+// 	if args.cmd == '' {
+// 		return error('need to specify cmd')
+// 	}
+// 	args.cmd = texttools.dedent(args.cmd)
+// 	node.file_write(args.path, args.cmd)!
+// 	return node.exec_silent('chmod +x ${args.path} && bash ${args.path} && rm -f  ${args.path}')!
+// 	//
+// }
 
 @[params]
 pub struct ExecRetryArgs {

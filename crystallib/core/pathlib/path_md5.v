@@ -34,7 +34,7 @@ pub fn (mut path Path) md5() ![]u8 {
 			}
 			d.write(buffer[0..bytes_read])!
 		}
-		md5bytes := d.checksum()
+		md5bytes := d.sum([]u8{})
 		return md5bytes
 	} else {
 		mut pl := path.list(recursive: true)!
@@ -50,7 +50,7 @@ pub fn (mut path Path) md5() ![]u8 {
 			md5bytes2 := hex.decode(o)!
 			d.write(md5bytes2)!
 		}
-		md5bytes := d.checksum()
-		return md5bytes
+		md5bytes2 := d.sum([]u8{})
+		return md5bytes2
 	}
 }
