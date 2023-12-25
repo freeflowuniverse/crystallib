@@ -79,11 +79,13 @@ fn cmd_configure_execute(cmd Command) ! {
 		return error(cmd.help_message())
 	}
 	if category == 'mail' {
+		mut cnfg:=mail.configurator(instance)!
+		mut args:=cnfg.get()!
 		if show {
-			cl := mail.configure(name: instance)!
+			cl := mail.get(instance:instance)!
 			println(cl)
 		} else if test {
-			mut cl := mail.get(name: instance)!
+			mut cl := mail.get(instance:instance)!
 			// println(cl)
 			mut myui := ui.new()!
 			to := myui.ask_question(
@@ -91,13 +93,14 @@ fn cmd_configure_execute(cmd Command) ! {
 			)!
 			cl.send(to: to, subject: 'this is test mail', body: 'this is example mail.')!
 		} else if push == '' {
-			mail.configure_interactive(reset: reset, name: instance)!
+			mail.configure_interactive(mut args ,mut cnfg.session )!
 		}
 	} else {
-		mut kvs := fskvs.new(name: 'config')!
-		key := '${category}_config_${instance}'
-		data := kvs.get(key) or { return error('cannot find object with key: ${key}') }
-		println(data)
+		panic("implement")
+		// mut kvs := fskvs.new(name: 'config')!
+		// key := '${category}_config_${instance}'
+		// data := kvs.get(key) or { return error('cannot find object with key: ${key}') }
+		// println(data)
 	}
 	if push.len > 0 {
 		println(" - will push config: ${instance} to '${push}'")

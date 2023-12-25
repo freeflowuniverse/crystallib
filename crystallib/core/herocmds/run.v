@@ -167,6 +167,6 @@ fn cmd_3script_execute(cmd Command) ! {
 	}
 
 	if cmd.flags.get_bool('run') or { false } {
-		session.run()!
+		// session.run()!
 	}
 }

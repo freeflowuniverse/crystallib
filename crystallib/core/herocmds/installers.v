@@ -18,14 +18,14 @@ pub fn cmd_installers(mut cmdroot Command) {
 	// 	description: ''
 	// }
 
-	caddy_cmd.add_flag(Flag{
+	cmd_run.add_flag(Flag{
 		flag: .string
 		required: false
 		name: 'names'
 		abbrev: 'n'
 		description: 'Comma separated list of installers to call.'
 	})
-	caddy_cmd.add_flag(Flag{
+	cmd_run.add_flag(Flag{
 		flag: .bool
 		required: false
 		name: 'reset'
@@ -33,13 +33,23 @@ pub fn cmd_installers(mut cmdroot Command) {
 		description: 'will reset.'
 	})
 
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'uninstall'
+		abbrev: 'u'
+		description: 'will uninstall in stead of install.'
+	})
+
+
 	cmdroot.add_command(cmd_run)
 	// cmd_run.add_command(caddy_cmd)
 }
 
 fn cmd_installers_execute(cmd Command) ! {
 	mut reset := cmd.flags.get_bool('reset') or { false }
-	mut names := cmd.flags.get_string('names') or { false }
+	mut uninstall := cmd.flags.get_bool('uninstall') or { false }
+	mut names := cmd.flags.get_string('names') or { "" }
 
 	// if cmd.name == 'caddy' {
 	// 	caddy.install(reset: reset)!
@@ -47,6 +57,5 @@ fn cmd_installers_execute(cmd Command) ! {
 	// } else {
 	// 	return error(cmd.help_message())
 	// }
-
-	tools.install_multi(reset: reset, names: names)!
+	tools.install_multi(reset: reset, names: names, uninstall:uninstall)!
 }

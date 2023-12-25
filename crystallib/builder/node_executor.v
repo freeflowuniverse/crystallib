@@ -3,6 +3,7 @@ module builder
 import time
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.data.ourtime
 
 // 	exec(cmd string) !string
 // 	exec_silent(cmd string) !string
@@ -22,29 +23,24 @@ pub fn (mut node Node) exec(cmd string) !string {
 
 @[params]
 pub struct ExecFileArgs {
-pub:
+pub mut:
 	path    string
 	cmd     string
-	execute bool = true
-	dedent  bool = true
 }
 
-pub fn (mut node Node) exec_file(args ExecFileArgs) ! {
+pub fn (mut node Node) exec_file(args_ ExecFileArgs) !string {
+	mut args:=args_
 	if args.path == '' {
-		return error('need to specify path')
+		now := ourtime.now()
+		args.path="/tmp/myexec_${now.key()}.sh"
 	}
 	if args.cmd == '' {
 		return error('need to specify cmd')
 	}
-	mut cmd2 := args.cmd
-	if args.dedent {
-		cmd2 = texttools.dedent(cmd2)
-	}
-	osal.file_write(args.path, cmd2)!
-	node.exec_silent('chmod +x ${args.path}')!
-	if args.execute {
-		node.exec('bash ${args.path}')!
-	}
+	args.cmd = texttools.dedent(args.cmd)
+	node.file_write(args.path, args.cmd)!
+	return node.exec_silent('chmod +x ${args.path} && bash ${args.path} && rm -f  ${args.path}')!
+	// 
 }
 
 @[params]
@@ -70,7 +66,7 @@ pub fn (mut node Node) exec_retry(args ExecRetryArgs) !string {
 		if run_time > start_time + args.timeout * 1000 {
 			return error('timeout on exec retry for ${args}')
 		}
-		println(args.cmd)
+		// println(args.cmd)
 		r := node.exec_silent(args.cmd) or { 'error' }
 		if r != 'error' {
 			return r

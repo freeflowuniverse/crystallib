@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env v
 
 fn sh(cmd string) {
 	println('❯ ${cmd}')

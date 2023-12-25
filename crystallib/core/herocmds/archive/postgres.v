@@ -88,7 +88,7 @@ pub fn cmd_postgres(mut cmdroot Command) {
 
 fn cmd_postgres_execute(cmd Command) ! {
 	mut name := cmd.flags.get_string('name') or { 'default' }
-	mut cl := postgres.get(name: name)!
+	mut cl := postgres.get(instance: name)!
 	rows := cl.exec(cmd.args[0])!
 	for row in rows {
 		println(row)
@@ -96,7 +96,7 @@ fn cmd_postgres_execute(cmd Command) ! {
 }
 
 fn cmd_postgres_list(cmd Command) ! {
-	mut cl := postgres.get(name: 'default')!
+	mut cl := postgres.get(instance: 'default')!
 	println('## Postgresql Connections:\n')
 	items := cl.db_names()!
 	for item in items {
@@ -106,7 +106,7 @@ fn cmd_postgres_list(cmd Command) ! {
 
 fn cmd_postgres_check(cmd Command) ! {
 	mut name := cmd.flags.get_string('name') or { 'default' }
-	mut cl := postgres.get(name: name)!
+	mut cl := postgres.get(instance: name)!
 	cl.check()!
 	println('DB is answering.')
 }
@@ -118,21 +118,25 @@ fn cmd_postgres_backupall(cmd Command) ! {
 		return error("can't find dest:${dest}")
 	}
 	println(" backup db name:'${name}' dest:'${dest}")
-	mut cl := postgres.get(name: name)!
+	mut cl := postgres.get(instance: name)!
 	cl.backup(dest: dest, dbname: name)!
 }
 
 fn cmd_postgres_configure(cmd Command) ! {
-	mut name := cmd.flags.get_string('name') or { 'default' }
-	if name == '' {
-		name = 'default'
+	mut instance := cmd.flags.get_string('name') or { 'default' }
+	if instance == '' {
+		instance = 'default'
 	}
-	postgres.configure_interactive(name: name)!
+	mut cnfg:=postgres.configurator(instance)!
+	mut args:=cnfg.get()!	
+	postgres.configure_interactive(mut args ,mut cnfg.session )!
+
 }
 
 fn cmd_postgres_print(cmd Command) ! {
 	mut name := cmd.flags.get_string('name') or { 'default' }
-	postgres.configprint(name: name)!
+	panic("implement")
+	// postgres.configprint(name: name)!
 }
 
 fn postgres_help(cmd Command) ! {

@@ -128,10 +128,39 @@ pub fn (mut node Node) exec_ok(cmd string) bool {
 }
 
 fn (mut node Node) platform_load() ! {
-	// TODO: should rewrite this with one bash script, which gets the required info & returns e.g. env, platform, ... is much faster
+	if node.platform != PlatformType.unknown {
+		return
+	}
+
 	println(' - platform load')
-	mut cputype := node.exec_silent('uname -m')!
-	cputype = cputype.to_lower().trim_space()
+	cmd:='
+    if [[ "\$OSTYPE" == "darwin"* ]]; then
+        export OSNAME="darwin"
+    elif [ -e /etc/os-release ]; then
+        # Read the ID field from the /etc/os-release file
+        export OSNAME=$(grep \'^ID=\' /etc/os-release | cut -d= -f2)
+        if [ "\${os_id,,}" == "ubuntu" ]; then
+            export OSNAME="ubuntu"          
+        fi
+        if [ "\${OSNAME}" == "archarm" ]; then
+            export OSNAME="arch"          
+        fi        
+    else
+        echo "Unable to determine the operating system."
+        exit 1        
+    fi
+
+	export UNAME=\$(uname -m)
+	echo ***\${OSNAME}:\${UNAME}
+
+	'
+	println(cmd)
+	out:=node.exec_file(cmd:cmd)!
+
+	out2:=out.split_into_lines().map(if it.starts_with("***") {it.trim_left("*")}else{""}).first()
+	osname:=out2.all_before(":").trim_space()
+	cputype:=out2.all_after(":").trim_space()
+
 	if cputype == 'x86_64' {
 		node.cputype = CPUType.intel
 	} else if cputype == 'arm64' {
@@ -140,18 +169,33 @@ fn (mut node Node) platform_load() ! {
 		return error("did not find cpu type, implement more types e.g. 32 bit. found: '${cputype}'")
 	}
 
-	if node.platform == PlatformType.unknown {
-		if node.cmd_exists('sw_vers') {
-			node.platform = PlatformType.osx
-		} else if node.cmd_exists('apt-get') {
-			node.platform = PlatformType.ubuntu
-			// node.package_refresh() or {}
-		} else if node.cmd_exists('apk') {
-			node.platform = PlatformType.alpine
-		} else {
-			panic('only ubuntu, alpine and osx supported for now')
-		}
+	if osname=="arch"{
+		node.platform = PlatformType.arch	
+	}else if osname=="ubuntu" {
+		node.platform = PlatformType.ubuntu	
+	}else if osname=="darwin" {
+		node.platform = PlatformType.osx	
+	}else if osname=="alpine" {
+		node.platform = PlatformType.alpine			
+	}else{
+		println(osname)
+		panic('only ubuntu, arch and osx supported for now')
 	}
+
+	// if node.platform == PlatformType.unknown {
+	// 	if node.cmd_exists('sw_vers') {
+	// 		node.platform = PlatformType.osx
+	// 	} else if node.cmd_exists('apt-get') {
+	// 		node.platform = PlatformType.ubuntu
+	// 		// node.package_refresh() or {}
+	// 	} else if node.cmd_exists('apk') {
+	// 		node.platform = PlatformType.alpine
+	// 	} else if node.cmd_exists('pacman') {
+	// 		node.platform = PlatformType.arch			
+	// 	} else {
+	// 		panic('only ubuntu, alpine and osx supported for now')
+	// 	}
+	// }
 }
 
 pub fn (mut node Node) package_refresh() ! {
@@ -176,8 +220,12 @@ pub fn (mut node Node) package_install(package Package) ! {
 		node.exec('apk install ${name}') or {
 			return error('could not install package:${package.name}\nerror:\n${err}')
 		}
+	} else if node.platform == PlatformType.alpine {
+		node.exec('pacman -Su ${name}') or {
+			return error('could not install package:${package.name}\nerror:\n${err}')
+		}		
 	} else {
-		panic('only ubuntu, alpine and osx supported for now')
+		panic('only ubuntu, alpine,arch and osx supported for now')
 	}
 }
 

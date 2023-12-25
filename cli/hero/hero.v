@@ -14,16 +14,19 @@ fn do() ! {
 	}
 
 	// herocmds.cmd_biztools(mut cmd)
+
+	herocmds.cmd_bootstrap(mut cmd)
 	herocmds.cmd_run(mut cmd)
 	herocmds.cmd_git(mut cmd)
 	herocmds.cmd_init(mut cmd)
 	herocmds.cmd_imagedownsize(mut cmd)
-	herocmds.cmd_gen(mut cmd)
-	herocmds.cmd_sshagent(mut cmd)
+	// herocmds.cmd_gen(mut cmd)
+	// herocmds.cmd_sshagent(mut cmd)
 	herocmds.cmd_installers(mut cmd)
-	herocmds.cmd_zola(mut cmd)
-	herocmds.cmd_configure(mut cmd)
-	herocmds.cmd_postgres(mut cmd)
+	// herocmds.cmd_zola(mut cmd)
+	// herocmds.cmd_configure(mut cmd)
+	// herocmds.cmd_postgres(mut cmd)
+	
 
 
 	cmd.setup()

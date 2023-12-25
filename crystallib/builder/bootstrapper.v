@@ -2,24 +2,61 @@ module builder
 
 import os
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.installers.bashscripts
+import v.embed_file
 
 const crystalpath_ = os.dir(@FILE) + '/../'
 
 const heropath_ = os.dir(@FILE) + '/../../cli'
+const envpath_ = os.dir(@FILE) + '/../../scripts/installer.sh'
+
+
+pub struct BootStrapper {
+pub mut:
+	embedded_files  []embed_file.EmbedFileData  @[skip; str: skip]
+}
+
+
+@[params]
+pub struct BootstrapperArgs {
+pub mut:
+	addr 		[]string
+	reset       bool
+}
+
+pub fn boostrapper_new(args MDBooksArgs) !MDBooks {
+	if args.install {
+		mdbook.install()!
+	}
+	mut gs := gittools.get(coderoot: args.coderoot)!
+	mut books := MDBooks{
+		coderoot: args.coderoot
+		path_build: args.buildroot
+		path_publish: args.publishroot
+		gitstructure: gs
+		reset: args.reset
+	}
+	return books
+}
+
+
+fn (mut bs BootStrapper) load() ! {
+	bs.embedded_files << $embed_file(builder.envpath_)
+}
 
 // to use do something like: export NODES="195.192.213.3" .
-pub fn bootstrapper() ! {
-	mut b := new()!
-	nodes_str := os.environ()['NODES'] or {
-		panic('need NODES in env var\n.Do something like: export NODES="195.192.213.3" ')
-	}
-	for nodestr in nodes_str.split(',') {
-		ipaddr := nodestr.trim_space()
+pub fn bootstrapper(args_ BootstrapperArgs) !BootStrapper {
+	mut args:=args_
+	mut builder := new()!
+	for addr in args.addr{
 		mut n := b.node_new(ipaddr: ipaddr)!
+		n.crystal_install()!
+	}
 
 		// println(n)
 
-		n.crystal_install()!
+
 
 		// will only upload if changes for the cli's
 		mut heropath := pathlib.get_dir(path: os.abs_path(builder.heropath_), create: false)!
@@ -106,20 +143,16 @@ fn (mut node Node) github_keyscan() ! {
 	}
 }
 
-fn (mut node Node) crystal_install() ! {
-	if node.platform == PlatformType.ubuntu {
-		node.github_keyscan()!
+pub fn (mut node Node) crystal_install() ! {
+	node.github_keyscan()!
 
-		args := node.bootstrap_args()
-		mut crystal_install := $tmpl('templates/crystal_install.sh').replace('??', '@').replace('!!',
-			'$')
-		crystal_install += 'v_install\n'
-		// mut f:=pathlib.get_file(path:"/tmp/v_install.sh",create:true)!
-		// f.write(crystal_install)!
-		node.exec_cmd(
-			cmd: crystal_install
-			reset: false
-			description: 'crystal_install'
-		)!
-	}
+	args := node.bootstrap_args()
+	t:=$tmpl('templates/crystal_install.sh').replace("!!!!","$")
+	mut crystal_install := texttools.template_replace(t)
+	crystal_install += 'v_install\n'
+	node.exec_cmd(
+		cmd: crystal_install
+		reset: false
+		description: 'crystal_install'
+	)!		
 }

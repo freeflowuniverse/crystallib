@@ -1,0 +1,59 @@
+
+function v_install {
+    if [[ -z "${DIR_CODE_INT}" ]]; then 
+        echo 'Make sure to source env.sh before calling this script.'
+        exit 1
+    fi
+    if [ -d "$HOME/.vmodules" ]
+    then
+        if [[ -z "${USER}" ]]; then
+            sudo chown -R $USER:$USER ~/.vmodules
+        else
+            USER="$(whoami)"
+            sudo chown -R $USER ~/.vmodules
+        fi
+    fi
+
+    if [[ "$OSNAME" == "ubuntu"* ]]; then 
+        package_install "libgc-dev gcc make libpq-dev"
+    elif [[ "$OSNAME" == "darwin"* ]]; then
+        brew install bdw-gc
+    elif [[ "$OSNAME" == "alpine"* ]]; then
+        sudo -s apk add make gcc libc-dev gcompat libstdc++       
+    else
+        echo "ONLY SUPPORT OSX AND LINUX FOR NOW"
+        exit 1
+    fi        
+
+    if [[ -d "$DIR_CODE_INT/v" ]]; then
+        pushd $DIR_CODE_INT/v
+        git pull
+        popd "$@" > /dev/null
+    else
+        mkdir -p $DIR_CODE_INT
+        pushd $DIR_CODE_INT
+        sudo rm -rf $DIR_CODE_INT/v
+        git clone  --depth 1  https://github.com/vlang/v
+        popd "$@" > /dev/null
+    fi
+
+    pushd $DIR_CODE_INT/v
+    make
+    mkdir -p ${HOME}/hero/bin
+    rm -f ${HOME}/hero/bin/v
+    ln -s ${DIR_CODE_INT}/v/v ${HOME}/hero/bin/v
+    touch ~/.profile
+    echo 'export PATH="${HOME}/hero/bin:$PATH"' >> ~/.profile    
+    popd "$@" > /dev/null
+    export PATH="${HOME}/hero/bin:$PATH"
+
+    if ! [[ "$OSNAME" == "alpine"* ]]; then
+    v -e "$(curl -fksSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh)"
+    fi
+
+    if ! [ -x "$(command -v v)" ]; then
+    echo 'vlang is not installed.' >&2
+    exit 1
+    fi
+}
+

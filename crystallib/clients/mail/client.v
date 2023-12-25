@@ -15,11 +15,12 @@ pub mut:
 pub struct ClientArgs {
 pub mut:
 	instance string        @[required]
-	playargs play.PlayArgs
+	playargs ?play.PlayArgs
 }
 
 pub fn get(clientargs ClientArgs) !MailClient {
-	mut cfg := configurator(clientargs.instance, clientargs.playargs)!
+	mut plargs:=clientargs.playargs or {play.PlayArgs{}}
+	mut cfg := configurator(clientargs.instance, plargs)!
 	args := cfg.get()!
 	// println(args)
 	mut smtp_client := smtp.new_client(
@@ -35,7 +36,7 @@ pub fn get(clientargs ClientArgs) !MailClient {
 	mut client := MailClient{
 		instance: args.instance
 		smtp_client: smtp_client
-		session: clientargs.playargs.session
+		session: plargs.session
 	}
 	return client
 }

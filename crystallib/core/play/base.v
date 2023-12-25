@@ -88,18 +88,18 @@ pub fn (mut self Configurator[T]) list() ![]string {
 	panic('implement')
 }
 
-pub fn (mut self Configurator[T]) configprint(args PrintArgs) !T {
+pub fn (mut self Configurator[T]) configprint(args PrintArgs) ! {
 	mut kvs := self.session.db_config_get()!
 	if args.name.len > 0 {
 		key := 'postgrescl_config_${args.name}'
 		// println(" === $key")
 		if kvs.exists(self.config_key()) {
 			data := kvs.get(self.config_key())!
-			c := json.decode(PostgresClientConfig, data)!
+			c := json.decode(T, data)!
 			println(c)
 			println('')
 		} else {
-			return error("Can't find postgresql DB connection with name: ${args.name}")
+			return error("Can't find connection with name: ${args.name}")
 		}
 	} else {
 		panic('implement')

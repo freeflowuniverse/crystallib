@@ -5,7 +5,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     export HEROPATH='/usr/local/bin/hero'
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     export HEROPATH=$HOME/hero/bin/hero
-    brew install libpq
+    # brew install libpq
 fi
 
 

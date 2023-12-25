@@ -3,6 +3,7 @@ module base
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.core.texttools
 import os
 
 @[params]
@@ -73,7 +74,7 @@ pub fn develop(args InstallArgs) ! {
 
 	coderoot := '${os.home_dir()}/code_'
 	iam := osal.whoami()!
-	cmd := pathlib.template_replace($tmpl('templates/vinstaller.sh'))
+	cmd := texttools.template_replace($tmpl('templates/vinstaller.sh'))
 	osal.exec(cmd: cmd)!
 
 	mut gs := gittools.get()!
@@ -109,6 +110,6 @@ pub fn develop(args InstallArgs) ! {
 pub fn hero(args InstallArgs) ! {
 	pl := osal.platform()
 
-	cmd_hero := pathlib.template_replace($tmpl('templates/hero.sh'))
+	cmd_hero := texttools.template_replace($tmpl('templates/hero.sh'))
 	osal.exec(cmd: cmd_hero, stdout: false)!
 }

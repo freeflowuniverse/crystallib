@@ -15,16 +15,17 @@ pub mut:
 pub struct ClientArgs {
 pub mut:
 	instance string        @[required]
-	playargs play.PlayArgs
+	playargs ?play.PlayArgs
 }
 
 pub fn get(clientargs ClientArgs) !PostgresClient {
-	mut cfg := configurator(clientargs.instance, clientargs.playargs)!
+	mut plargs:=clientargs.playargs or {play.PlayArgs{}}	
+	mut cfg := configurator(clientargs.instance, plargs)!
 	mut args := cfg.get()!
 
-	args.name = texttools.name_fix(args.name)
-	if args.name == '' {
-		args.name = 'default'
+	args.instance = texttools.name_fix(args.instance)
+	if args.instance == '' {
+		args.instance = 'default'
 	}
 	// println(args)
 	mut db := pg.connect(
@@ -36,7 +37,7 @@ pub fn get(clientargs ClientArgs) !PostgresClient {
 	)!
 	// println(postgres_client)
 	return PostgresClient{
-		instance: args.name
+		instance: args.instance
 		db: db
 		config: args
 	}

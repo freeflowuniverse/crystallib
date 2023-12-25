@@ -24,13 +24,20 @@ pub mut:
 pub fn download(args_ DownloadArgs) !pathlib.Path {
 	mut args := args_
 
-	mut lastname := args.url.split('/').last()
-	if lastname.contains('?') {
-		return error('cannot get name from url if ? in the last part after /')
-	}
 
 	if args.name == '' {
-		args.name = lastname
+		if args.dest != '' {		
+			args.name=args.dest.split('/').last()
+		}else{
+			mut lastname := args.url.split('/').last()
+			if lastname.contains('?') {
+				return error('cannot get name from url if ? in the last part after /')
+			}
+			args.name = lastname
+		}
+		if args.name==""{
+			return error("cannot find name for download")
+		}
 	}
 
 	if args.dest.contains('@name') {
@@ -43,8 +50,6 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 	if args.dest == '' {
 		args.dest = '/tmp/${args.name}'
 	}
-
-	_ := args.url.to_lower().trim_space()
 
 	if !cmd_exists('curl') {
 		return error('please make sure curl has been installed.')
@@ -91,9 +96,9 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 		mut dest0 := pathlib.get_file(path: args.dest + '_')!
 
 		cmd := '
-			rm -f ${dest0.path}_
+			rm -f ${dest0.path}
 			cd /tmp
-			curl -L ${args.url} -o ${dest0.path}
+			curl -L \'${args.url}\' -o ${dest0.path}
 			'
 		exec(
 			cmd: cmd

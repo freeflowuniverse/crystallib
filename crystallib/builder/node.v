@@ -8,6 +8,7 @@ pub enum PlatformType {
 	osx
 	ubuntu
 	alpine
+	arch
 }
 
 pub enum CPUType {
