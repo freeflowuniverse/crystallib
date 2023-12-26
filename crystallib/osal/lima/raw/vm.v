@@ -4,7 +4,7 @@ import os
 import json
 
 pub fn list() ![]VM{
-    println (" - list vm")
+    // println (" - list vm")
 	cmd := 'limactl list --json'
 	res := os.execute(cmd)
 	if res.exit_code > 0 {
@@ -39,7 +39,7 @@ pub mut:
     ssh_config_file string [json: sshConfigFile]
     host_agent_pid  int [json: hostAgentPID]
     driver_pid     int [json: driverPID]
-    config         Config
+    // config         Config
     ssh_address    string [json: sshAddress]
     protected      bool
     host_os        string [json: HostOS]

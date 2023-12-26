@@ -41,3 +41,24 @@ pub fn remove_empty_lines(text string) string {
 	}
 	return out.join('\n')
 }
+
+pub fn remove_double_lines(text string) string {
+	mut out := []string{}
+	mut prev:=true
+	for l in text.split_into_lines() {
+		if l.trim_space() == '' {
+			if prev{
+				continue
+			}
+			out<<""
+			prev=true
+			continue
+		}
+		prev=false
+		out << l
+	}
+	if out.len>0 && out.last()==""{
+		out.pop()
+	}
+	return out.join('\n')
+}

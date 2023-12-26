@@ -1,6 +1,7 @@
 module builder
 
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.ui.console
 
 // get node connection to local machine
 // pass your redis client there
@@ -32,7 +33,7 @@ pub mut:
 	ipaddr string
 	name   string
 	user   string = 'root'
-	debug  bool   = true
+	debug  bool
 	reload bool
 }
 
@@ -70,11 +71,11 @@ pub fn (mut bldr BuilderFactory) node_new(args_ NodeArguments) !&Node {
 		args.name = texttools.name_fix(args.name).replace('.', '_')
 	}
 
-	for node in bldr.nodes {
-		if node.name == args.name {
-			return &node
-		}
-	}
+	// for node in bldr.nodes {
+	// 	if node.name == args.name{
+	// 		return &node
+	// 	}
+	// }
 
 	if args.ipaddr.contains('@') {
 		args.user, args.ipaddr = args.ipaddr.split_once('@') or { panic('bug') }
@@ -92,11 +93,14 @@ pub fn (mut bldr BuilderFactory) node_new(args_ NodeArguments) !&Node {
 		factory: &bldr
 	}
 
-	wasincache := node.load()!
 
-	if wasincache && args.reload {
-		node.readfromsystem()!
-	}
+	// wasincache := node.load()!
+
+	// if wasincache && args.reload {
+		// node.readfromsystem()!
+	// }
+
+	node.readfromsystem()!
 
 	bldr.nodes << node
 

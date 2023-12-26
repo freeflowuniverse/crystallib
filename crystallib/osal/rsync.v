@@ -44,11 +44,12 @@ pub fn rsync(args_ RsyncArgs) ! {
 		ignore_default: args.ignore_default
 	}
 
-	cmd := pathlib.rsync_cmd(args2)!
-	// println(cmd)
-	if args.stdout {
-		execute_stdout(cmd)!
-	} else {
-		execute_silent(cmd)!
+	cmdoptions := pathlib.rsync_cmd_options(args2)!
+	cmd:="rsync ${cmdoptions}"
+	$if debug {
+		if args_.stdout{
+			println(' - rsync command (osal):\n${cmd}')
+		}
 	}
+	exec(cmd:cmd,stdout:args_.stdout)!
 }

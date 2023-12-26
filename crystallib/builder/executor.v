@@ -1,6 +1,7 @@
 module builder
 
 import freeflowuniverse.crystallib.data.ipaddress
+import freeflowuniverse.crystallib.ui.console
 
 type Executor = ExecutorLocal | ExecutorSSH
 
@@ -8,7 +9,7 @@ pub struct ExecutorNewArguments {
 	local  bool // if this set then will always be the local machine
 	ipaddr string
 	user   string = 'root'
-	debug  bool   = true
+	debug  bool
 }
 
 // create new executor (is way how to execute in std way onto a local or remote machine)
@@ -23,8 +24,9 @@ pub struct ExecutorNewArguments {
 //- format ipaddr: any ipv6 addr
 //- if ipaddr is empty or starts with localhost or 127.0.0.1 -> will be the ExecutorLocal
 fn executor_new(args ExecutorNewArguments) !Executor {
-	if args.ipaddr == '' || args.ipaddr.starts_with('localhost')
-		|| args.ipaddr.starts_with('127.0.0.1') {
+	hasport:=args.ipaddr.contains(":")
+	if args.ipaddr == '' || (args.ipaddr.starts_with('localhost') && hasport==false)
+		|| (args.ipaddr.starts_with('127.0.0.1')  && hasport==false) {
 		return ExecutorLocal{
 			debug: args.debug
 		}
@@ -40,4 +42,12 @@ fn executor_new(args ExecutorNewArguments) !Executor {
 		e.init()!
 		return e
 	}
+}
+
+
+[params]
+pub struct ExecArgs{
+pub mut:
+	cmd string
+	stdout bool
 }

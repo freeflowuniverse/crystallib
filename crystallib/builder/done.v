@@ -1,4 +1,5 @@
 module builder
+import freeflowuniverse.crystallib.ui.console
 
 pub fn (mut node Node) done_set(key string, val string) ! {
 	if key in node.done {
@@ -38,9 +39,9 @@ pub fn (mut node Node) done_exists(key string) bool {
 }
 
 pub fn (mut node Node) done_print() {
-	println('   DONE: ${node.name} ')
+	console.print_header('DONE: ${node.name} ')
 	for key, val in node.done {
-		println('   . ${key} = ${val}')
+		console.print_item('${key} = ${val}')
 	}
 }
 

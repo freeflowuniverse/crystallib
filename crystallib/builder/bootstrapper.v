@@ -18,6 +18,7 @@ pub mut:
 @[params]
 pub struct BootstrapperArgs {
 pub mut:
+	name        string
 	addr 		string //format:  root@something:33, 192.168.7.7:222, 192.168.7.7, despiegk@something
 	reset       bool
 	debug       bool
@@ -39,7 +40,7 @@ pub fn (mut bs BootStrapper) run(args_ BootstrapperArgs) ! {
 	addr:=texttools.toarray(args.addr)
 	mut b := new()!
 	for a in addr{
-		mut n := b.node_new(ipaddr: a)!
+		mut n := b.node_new(ipaddr: a,name:args.name)!
 		n.crystal_install()!
 	}
 }

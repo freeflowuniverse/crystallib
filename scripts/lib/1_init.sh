@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# set +x
+set -e
 
 rm -f ${HOME}/.env.sh
-sed -i '/env\.sh/d' "${$HOME}/.zprofile"
-sed -i '/env\.sh/d' "${$HOME}/.bashrc"
-sed -i '/env\.sh/d' "${$HOME}/.profile"
+# sed -i '/env\.sh/d' "${HOME}/.zprofile"
+# sed -i '/env\.sh/d' "${HOME}/.bashrc"
+# sed -i '/env\.sh/d' "${HOME}/.profile"
+# sed -i '/hero/bin/d' "${HOME}/.profile"
+# sed -i '/hero/bin/d' "${HOME}/.bash_profile"
 touch ~/.profile
-sed -i '/hero/bin/d' "${$HOME}/.profile"
-sed -i '/hero/bin/d' "${$HOME}/.bash_profile"
 echo 'export PATH="${HOME}/hero/bin:$PATH"' >> ~/.profile
 echo 'export PATH="${HOME}/hero/bin:$PATH"' >> ~/.bash_profile
 
@@ -52,7 +52,7 @@ pathmunge $DIR_BUILD
 
 #keys used to see how to checkout code, don't remove
 if [[ -z "$SSH_AUTH_SOCK" ]]; then
-    echo "SSH agent is not running."
+    echo " - SSH agent is not running."
     export sshkeys=''
 else 
     export sshkeys=$(ssh-add -l)

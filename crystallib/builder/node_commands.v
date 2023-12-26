@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.core.texttools
 import crypto.md5
 import time
 import freeflowuniverse.crystallib.data.ourtime
+import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.osal
 
 // check command exists on the platform, knows how to deal with different platforms
@@ -30,7 +31,7 @@ pub mut:
 pub fn (mut node Node) ipaddr_pub_get() !string {
 	if !node.done_exists('ipaddr') {
 		cmd := 'dig @resolver4.opendns.com myip.opendns.com +short'
-		res := node.exec(cmd)!
+		res := node.exec(cmd:cmd,stdout:false)!
 		node.done_set('ipaddr', res.trim('\n').trim(' \n'))!
 	}
 	mut ipaddr := node.done_get('ipaddr') or { return 'Error: ipaddr is none' }
@@ -90,7 +91,7 @@ pub fn (mut node Node) exec_cmd(args_ NodeExecCmd) !string {
 		// println("   - check exec cmd:$cmd on $node.name: time:$exec_last_time")
 		if exec_last_time > now_epoch - args.period {
 			hours := args.period / 3600
-			println('   - exec cmd:${description} on ${node.name}: was already done, period ${hours} h')
+			console.print_header('exec cmd:${description} on ${node.name}: was already done, period ${hours} h')
 			return lastoutput
 		}
 	}
@@ -104,13 +105,15 @@ pub fn (mut node Node) exec_cmd(args_ NodeExecCmd) !string {
 	}
 	now := ourtime.now()
 	r_path := '${args.tmpdir}/installer_${args.name}_${now.key()}.sh'
+
 	node.file_write(r_path, cmd)!
 	cmd = "mkdir -p ${args.tmpdir} && cd ${args.tmpdir} && export TMPDIR='${args.tmpdir}' && bash ${r_path}"
+
 	if args.remove_installer {
 		cmd += ' && rm -f ${r_path}'
 	}
-	$if debug{println("   - exec ${r_path} on ${node.name}")}
-	res := node.exec(cmd) or { return error( 'cmd:\n${args.cmd}\n${err.msg()}') }
+	$if debug{console.print_header("exec ${r_path} on ${node.name}")}
+	res := node.exec(cmd:cmd, stdout:args.stdout) or { return error( 'cmd:\n${args.cmd}\n${err.msg()}') }
 
 	node.done_set('exec_${hhash}', '${now_str}|${res}')!
 	return res
@@ -131,11 +134,11 @@ pub fn (mut node Node) exec_ok(cmd string) bool {
 }
 
 fn (mut node Node) platform_load() ! {
-	if node.platform != PlatformType.unknown {
-		return
-	}
+	// if node.platform != PlatformType.unknown {
+	// 	return
+	// }
 
-	println(' - platform load')
+	console.print_header('platform load')
 	cmd:='
     if [[ "\$OSTYPE" == "darwin"* ]]; then
         export OSNAME="darwin"
@@ -157,7 +160,7 @@ fn (mut node Node) platform_load() ! {
 	echo ***\${OSNAME}:\${UNAME}
 
 	'
-	out:=node.exec_cmd(cmd:cmd,name:"platform_load")!
+	out:=node.exec_cmd(cmd:cmd,name:"platform_load",stdout:false)!
 
 	out2:=out.split_into_lines().map(if it.starts_with("***") {it.trim_left("*")}else{""}).first()
 	osname:=out2.all_before(":").trim_space()
@@ -165,7 +168,7 @@ fn (mut node Node) platform_load() ! {
 
 	if cputype == 'x86_64' {
 		node.cputype = CPUType.intel
-	} else if cputype == 'arm64' {
+	} else if cputype == 'arm64' ||  cputype == 'aarch64' {
 		node.cputype = CPUType.arm
 	} else {
 		return error("did not find cpu type, implement more types e.g. 32 bit. found: '${cputype}'")
@@ -180,14 +183,15 @@ fn (mut node Node) platform_load() ! {
 	}else if osname=="alpine" {
 		node.platform = PlatformType.alpine			
 	}else{
-		println(osname)
+		console.print_stderr(osname)
 		panic('only ubuntu, arch and osx supported for now')
 	}
 }
 
 pub fn (mut node Node) package_refresh() ! {
 	if node.platform == PlatformType.ubuntu {
-		node.exec('apt-get update') or {
+		console.print_header( "package refresh")
+		node.exec(cmd:'apt-get update',stdout:false) or {
 			return error('could not update packages list\nerror:\n${err}')
 		}
 	}
@@ -196,19 +200,19 @@ pub fn (mut node Node) package_refresh() ! {
 pub fn (mut node Node) package_install(package Package) ! {
 	name := package.name
 	if node.platform == PlatformType.osx {
-		node.exec('brew install ${name}') or {
+		node.exec(cmd:'brew install ${name}') or {
 			return error('could not install package:${package.name}\nerror:\n${err}')
 		}
 	} else if node.platform == PlatformType.ubuntu {
-		node.exec('apt install -y ${name}') or {
+		node.exec(cmd:'apt install -y ${name}') or {
 			return error('could not install package:${package.name}\nerror:\n${err}')
 		}
 	} else if node.platform == PlatformType.alpine {
-		node.exec('apk install ${name}') or {
+		node.exec(cmd:'apk install ${name}') or {
 			return error('could not install package:${package.name}\nerror:\n${err}')
 		}
 	} else if node.platform == PlatformType.alpine {
-		node.exec('pacman -Su ${name}') or {
+		node.exec(cmd:'pacman -Su ${name}') or {
 			return error('could not install package:${package.name}\nerror:\n${err}')
 		}		
 	} else {

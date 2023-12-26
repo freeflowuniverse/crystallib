@@ -1,9 +1,7 @@
 module builder
 
 import time
-import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.data.ourtime
+import freeflowuniverse.crystallib.ui.console
 
 // 	exec(cmd string) !string
 // 	exec_silent(cmd string) !string
@@ -12,11 +10,11 @@ import freeflowuniverse.crystallib.data.ourtime
 // 	file_exists(path string) bool
 // 	delete(path string) !
 
-pub fn (mut node Node) exec(cmd string) !string {
+pub fn (mut node Node) exec(args ExecArgs) !string {
 	if mut node.executor is ExecutorLocal {
-		return node.executor.exec(cmd)
+		return node.executor.exec(cmd:args.cmd,stdout:args.stdout)
 	} else if mut node.executor is ExecutorSSH {
-		return node.executor.exec(cmd)
+		return node.executor.exec(cmd:args.cmd,stdout:args.stdout)
 	}
 	panic('did not find right executor')
 }
@@ -50,6 +48,7 @@ pub:
 	retrymax     int = 10 // how may times maximum to retry
 	period_milli int = 100 // sleep in between retry in milliseconds
 	timeout      int = 2 // timeout for al the tries together
+	stdout bool = true
 }
 
 // a cool way to execute something until it succeeds
@@ -67,7 +66,7 @@ pub fn (mut node Node) exec_retry(args ExecRetryArgs) !string {
 			return error('timeout on exec retry for ${args}')
 		}
 		// println(args.cmd)
-		r := node.exec_silent(args.cmd) or { 'error' }
+		r := node.exec(cmd:args.cmd,stdout:args.stdout) or { 'error' }
 		if r != 'error' {
 			return r
 		}
@@ -79,9 +78,9 @@ pub fn (mut node Node) exec_retry(args ExecRetryArgs) !string {
 // silently execute a command
 pub fn (mut node Node) exec_silent(cmd string) !string {
 	if mut node.executor is ExecutorLocal {
-		return node.executor.exec_silent(cmd)
+		return node.executor.exec(cmd:cmd,stdout:false)
 	} else if mut node.executor is ExecutorSSH {
-		return node.executor.exec_silent(cmd)
+		return node.executor.exec(cmd:cmd,stdout:false)
 	}
 	panic('did not find right executor')
 }

@@ -2,6 +2,7 @@ module builder
 
 import json
 import freeflowuniverse.crystallib.data.paramsparser { Params }
+import freeflowuniverse.crystallib.ui.console
 
 pub enum PlatformType {
 	unknown
@@ -60,22 +61,23 @@ pub fn (mut node Node) readfromsystem() ! {
 // load the node from redis cache, if not there will load from system .
 // return true if the data was in redis (cache)
 pub fn (mut node Node) load() !bool {
-	data := node.factory.redis.hget('nodes', node.key())!
-	if data == '' {
-		node.readfromsystem()!
-		return false
-	}
-	data2 := json.decode(Node, data)!
+	return false
+	// data := node.factory.redis.hget('nodes', node.key())!
+	// if data == '' {
+	// 	node.readfromsystem()!
+	// 	return false
+	// }
+	// data2 := json.decode(Node, data)!
 
-	node.platform = data2.platform
-	node.cputype = data2.cputype
-	node.done = data2.done.clone()
-	node.environment = data2.environment.clone()
-	node.params = data2.params
-	if node.environment.len == 0 {
-		node.readfromsystem()!
-	}
-	return true
+	// node.platform = data2.platform
+	// node.cputype = data2.cputype
+	// node.done = data2.done.clone()
+	// node.environment = data2.environment.clone()
+	// node.params = data2.params
+	// if node.environment.len == 0 {
+	// 	node.readfromsystem()!
+	// }
+	// return true
 }
 
 // get remote environment arguments in memory

@@ -172,12 +172,15 @@ pub fn cprint(args PrintArgs) {
 	if args.reset_after {
 		out << reset()
 	}
-	println(out.join(''))
+	print(out.join(''))
 }
 
 pub fn cprintln(args_ PrintArgs) {
 	mut args := args_
-	args.text += '\n'
+	args.text=trim(args.text)
+	if !(args.text.ends_with("\n")){
+		args.text += '\n'
+	}
 	cprint(args)
 }
 

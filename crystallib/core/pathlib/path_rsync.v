@@ -12,6 +12,7 @@ pub mut:
 	delete         bool     // do we want to delete the destination
 	ignore         []string // arguments to ignore e.g. ['*.pyc','*.bak']
 	ignore_default bool = true // if set will ignore a common set
+	debug bool = true
 }
 
 // flexible tool to sync files from to, does even support ssh .
@@ -32,20 +33,24 @@ pub fn rsync(args_ RsyncArgs) ! {
 	if args.ipaddr_src.len == 0 {
 		get(args.source)
 	}
-	cmd := rsync_cmd(args)!
+	cmdoptions := rsync_cmd_options(args)!
 	$if debug {
-		println(' - rsync command:\n${cmd}')
+		println(' - rsync command:\n${cmdoptions}')
 	}
-	// os.execvp('/bin/bash', ["-c '${cmd}'"])!
-	r := os.execute(cmd)
+	r  := os.execute("which rsync")
 	if r.exit_code > 0 {
-		return error('Could not execute the rsync.\n${r}')
+		return error('Could not find the rsync command, please install.')
 	}
+	rsyncpath:=r.output.trim_space()
+	// execute(cmd:cmd,stdout:args.debug)!
+	cmdoptions2:=cmdoptions.replace("  "," ").split(" ")
+	os.execvp(rsyncpath, cmdoptions2)!
+
 }
 
 // return the cmd with all rsync arguments .
 // see rsync for usage of args
-pub fn rsync_cmd(args_ RsyncArgs) !string {
+pub fn rsync_cmd_options(args_ RsyncArgs) !string {
 	mut args := args_
 	mut cmd := ''
 
@@ -88,32 +93,42 @@ pub fn rsync_cmd(args_ RsyncArgs) !string {
 	}
 
 	if args.ipaddr_src.len > 0 && args.ipaddr_dst.len == 0 {
-		sshpart, addrpart = rsync_ipaddr_format(args.ipaddr_src)
-		cmd = 'rsync  ${options} ${delete} ${exclude} ${sshpart} ${addrpart}:${args.source} ${args.dest}'
+		sshpart, addrpart = rsync_ipaddr_format(ipaddr:args.ipaddr_src)
+		cmd = '${options} ${delete} ${exclude} ${sshpart} ${addrpart}:${args.source} ${args.dest}'
 	} else if args.ipaddr_dst.len > 0 && args.ipaddr_src.len == 0 {
-		sshpart, addrpart = rsync_ipaddr_format(args.ipaddr_dst)
-		cmd = 'rsync  ${options} ${delete} ${exclude} ${sshpart} ${args.source} ${addrpart}:${args.dest}'
+		sshpart, addrpart = rsync_ipaddr_format(ipaddr:args.ipaddr_dst)
+		cmd = '${options} ${delete} ${exclude} ${sshpart} ${args.source} ${addrpart}:${args.dest}'
 	} else if args.ipaddr_dst.len > 0 && args.ipaddr_src.len > 0 {
 		return error('cannot have source and dest as ssh')
 	} else {
-		cmd = 'rsync ${options} ${delete} ${exclude} ${args.source} ${args.dest}'
+		cmd = '${options} ${delete} ${exclude} ${args.source} ${args.dest}'
 	}
 	return cmd
 }
 
-fn rsync_ipaddr_format(ipaddr_ string) (string, string) {
-	mut ipaddr := ipaddr_
-	mut user := 'root'
-	mut port := '22'
-	if ipaddr.contains('@') {
-		user, ipaddr = ipaddr.split_once('@') or { panic('bug') }
+@[params]
+struct RsyncFormatArgs{
+mut:
+	ipaddr string
+	user string = 'root'
+	port int = 22
+}
+
+fn rsync_ipaddr_format(args_ RsyncFormatArgs) (string,string) {
+	mut args:=args_
+	if args.ipaddr.contains('@') {
+		args.user, args.ipaddr = args.ipaddr.split_once('@') or { panic('bug') }
 	}
-	println("- '${ipaddr_}' ${user} ${ipaddr}")
-	if ipaddr.contains(':') {
-		ipaddr, port = ipaddr.rsplit_once(':') or { panic('bug') }
+	if args.ipaddr.contains(':') {
+		mut port:=""
+		args.ipaddr, port = args.ipaddr.rsplit_once(':') or { panic('bug') }
+		args.port = port.int()
 	}
-	if ipaddr.len == 0 {
+	args.user=args.user.trim_space()
+	args.ipaddr=args.ipaddr.trim_space()
+	if args.ipaddr.len == 0 {
 		panic('ip addr cannot be empty')
 	}
-	return '-e \'ssh -p ${port}\'', '${user}@${ipaddr}'
+	// println("- rsync cmd: ${args.user}@${args.ipaddr}:${args.port}")
+	return '-e \'ssh -o StrictHostKeyChecking=no -p ${args.port}\'', '${args.user}@${args.ipaddr}'
 }

@@ -11,22 +11,13 @@ pub mut:
 	debug bool
 }
 
-pub fn (mut executor ExecutorLocal) exec(cmd string) !string {
-	res := osal.exec(cmd: cmd, stdout: true)!
-	return res.output.join_lines()
-}
-
-pub fn (mut executor ExecutorLocal) exec_silent(cmd string) !string {
-	mut stdout := false
-	if executor.debug {
-		stdout = true
-	}
-	res := osal.exec(cmd: cmd, stdout: stdout)!
+pub fn (mut executor ExecutorLocal) exec(args ExecArgs) !string {
+	res := osal.exec(cmd: args.cmd, stdout: args.stdout ,debug:executor.debug)!
 	return res.output.join_lines()
 }
 
 pub fn (mut executor ExecutorLocal) file_write(path string, text string) ! {
-	println('local write ${path}')
+	// println('local write ${path}')
 	return os.write_file(path, text)
 }
 

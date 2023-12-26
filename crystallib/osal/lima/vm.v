@@ -1,6 +1,8 @@
 module lima
 import os
 import raw
+import freeflowuniverse.crystallib.builder
+import freeflowuniverse.crystallib.ui.console
 
 pub struct VM {
 pub mut:	
@@ -22,7 +24,7 @@ pub mut:
 pub enum VMStatus{
 	unknown
 	running
-
+	stopped
 }
 
 pub fn vm_get(name string) !VM{
@@ -75,7 +77,7 @@ pub fn vm_list() ![]string{
 pub fn vm_get_all() ![]VM{
 	mut vms:=[]VM{}
 	for vm in raw.list()!{
-		println(vm)
+		// println(vm)
 		mut vm2:=VM{
 			name:vm.name
 			dir:vm.dir
@@ -91,7 +93,7 @@ pub fn vm_get_all() ![]VM{
 			"Running"{
 				vm2.status=.running
 			}"Stopped"{
-				vm2.status=.running			
+				vm2.status=.stopped			
 			}else{
 				println(vm.status)
 				panic("unknown status")
@@ -110,41 +112,64 @@ pub:
     force bool
 }
 
+pub fn (mut vm VM) load(args ActionArgs) !{
+	console.print_header("vm: ${vm.name} load")
+	mut vm_system:=vm_get(vm.name)!
+	assert vm.name==vm_system.name
+
+	vm.status = vm_system.status
+	vm.dir = vm_system.dir
+	vm.arch = vm_system.arch
+	vm.cpus = vm_system.cpus
+	vm.memory = vm_system.memory
+	vm.disk = vm_system.disk
+	vm.ssh_local_port = vm_system.ssh_local_port
+	vm.ssh_address = vm_system.ssh_address
+	vm.identity_file = vm_system.identity_file
+}
+
 pub fn (mut vm VM) stop(args ActionArgs) !{
+	console.print_header("vm: ${vm.name} stop")
 	cmd := 'limactl stop ${vm.name} -f'
 	res := os.execute(cmd)
 	if res.exit_code > 0 {
 		return error('could not stop lima vm.\n${res}')
 	}
+	vm.load()!
 }
 
 pub fn (mut vm VM) start(args ActionArgs) !{
+	console.print_header("vm: ${vm.name} start")
 	cmd := 'limactl start ${vm.name}'
 	res := os.execute(cmd)
 	if res.exit_code > 0 {
 		return error('could not start lima vm.\n${res}')
 	}
+	vm.load()!
 }
 
 pub fn (mut vm VM) delete(args ActionArgs) !{
+	console.print_header("vm: ${vm.name} delete")
 	vm.stop()!
 	vm_delete(vm.name)!
 }
 
 
 pub fn vm_stop(name string) !{	
+	console.print_header("vm: ${name} stop")
 	cmd := 'limactl stop ${name}'
-	res := os.execute(cmd)
+	os.execute(cmd)
 	// if res.exit_code > 0 {
 	// 	return error('could not delete lima vm.\n${res}')
 	// }
 	cmd2 := 'limactl stop ${name} -f'
-	res2 := os.execute(cmd2)
+	os.execute(cmd2)
 
 }
 
 
 pub fn vm_delete(name string) !{	
+	console.print_header("vm: ${name} delete")	
 	vm_stop(name)!
 	cmd := 'limactl delete ${name} -f'
 	res := os.execute(cmd)
@@ -152,3 +177,20 @@ pub fn vm_delete(name string) !{
 		return error('could not delete lima vm.\n${res}')
 	}
 }
+
+
+
+pub fn (mut vm VM) install_crystal() !{
+	console.print_header("vm: ${vm.name} install crystal")
+	if vm.status==.stopped{
+		vm.start()!
+	}
+	localport:=vm.ssh_local_port
+	if localport == 0{
+		return error("port should never be 0, means vm not started.\n$vm")
+	}
+	mut b := builder.bootstrapper()
+	mut address:='root@localhost:${localport}'
+	b.run(name:vm.name,addr:address,debug:true)!
+}
+

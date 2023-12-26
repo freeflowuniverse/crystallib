@@ -2,6 +2,7 @@ module osal
 
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 import json
 import os
 import time
@@ -148,7 +149,7 @@ pub fn exec(cmd Command) !Job {
 
 	if job.cmd.debug {
 		job.cmd.stdout = true
-		// println(' - execute: \n${job.cmd}')
+		println(' - execute: \n${job.cmd}')
 	}
 
 	if cmd.shell {
@@ -196,7 +197,6 @@ pub fn (mut job Job) execute() ! {
 	process_args := job.cmd_to_process_args()!
 
 	// println(" - process execute ${process_args[0]}")
-
 	mut p := os.new_process(process_args[0])
 
 	if job.cmd.work_folder.len > 0 {
@@ -208,6 +208,9 @@ pub fn (mut job Job) execute() ! {
 	p.set_redirect_stdio()
 	// println("process setargs ${process_args[1..process_args.len]}")
 	p.set_args(process_args[1..process_args.len])
+	if job.cmd.stdout{
+		println("")
+	}
 	p.run()
 	job.process = p
 	// println( p.is_alive() )
@@ -231,7 +234,7 @@ fn (mut job Job) read() !ReceiveResult {
 	out_std := p.pipe_read(.stdout) or { '' }
 	if out_std.len > 0 {
 		if job.cmd.stdout {
-			print(out_std)
+			console.print_stdout(out_std)
 		}
 		job.output << out_std.split_into_lines()
 		result.error = out_std
@@ -239,7 +242,7 @@ fn (mut job Job) read() !ReceiveResult {
 	out_error := p.pipe_read(.stderr) or { '' }
 	if out_error.len > 0 {
 		if job.cmd.stdout {
-			print(out_error)
+			console.print_stderr(out_error)
 		}
 		job.error << out_error.split_into_lines()
 		result.error = out_error
