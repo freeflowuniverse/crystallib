@@ -166,17 +166,7 @@ pub mut:
 // ```
 pub fn code_get(args CodeGetFromUrlArgs) !string {
 	mut gs := get(name: args.gitstructure_name, coderoot: args.coderoot)!
-	mut locator := gs.locator_new(args.url)!
-	// println(locator)
-	mut g := gs.repo_get(locator: locator)!
-	if args.reload {
-		g.load()!
-	}
-	if args.reset {
-		g.remove_changes()!
-	}
-	s := locator.path_on_fs()!
-	return s.path
+	return gs.code_get(url:args.url,pull:args.pull,reset:args.reset,reload:args.reload)
 }
 
 pub fn repo_get(args CodeGetFromUrlArgs) !GitRepo {

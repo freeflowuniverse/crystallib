@@ -170,7 +170,7 @@ function package_install {
     elif [[ "${OSNAME}" == "alpine"* ]]; then
         sudo -s apk add $command_name
     elif [[ "${OSNAME}" == "arch"* ]]; then
-        sudo -s pacman -S $command_name --noconfirm
+        sudo -s pacman --noconfirm -Su $command_name
     else
         echo "platform : ${OSNAME} not supported"
         exit 1
@@ -428,7 +428,7 @@ function os_update {
     elif [[ "${OSNAME}" == "arch"* ]]; then
         pacman -Syy --noconfirm
         pacman -Syu --noconfirm
-        pacman -Su mc git tmux curl htop --noconfirm
+        pacman -Su --noconfirm mc git tmux curl htop
     fi
 }
 
@@ -534,9 +534,14 @@ function v_install {
     popd "$@" > /dev/null
     export PATH="${HOME}/hero/bin:$PATH"
 
-    if ! [[ "${OSNAME}" == "alpine"* ]]; then
-    v -e "$(curl -fksSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh)"
-    fi
+    # set -x
+    pushd /tmp
+    source ~/.profile
+    rm -f install.sh
+    curl -fksSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh > install.vsh
+    v run install.vsh  --no-interaction
+    popd "$@" > /dev/null
+    # set +x
 
     if ! [ -x "$(command -v v)" ]; then
     echo 'vlang is not installed.' >&2
@@ -701,6 +706,8 @@ function dagu_tmux {
 }
 function freeflow_dev_env_install {
 
+    crystal_lib_get
+
     if ! [ -x "$(command -v v)" ]; then
         v_install
     fi
@@ -708,13 +715,15 @@ function freeflow_dev_env_install {
         redis_install
     fi
 
-    crystal_lib_get
+    echo " - compile hero"
+    ~/code/github/freeflowuniverse/crystallib/cli/hero/compile_debug.sh
+    source ~/.profile
+
+    hero init
 
 }
-
 
 myplatform
 os_update
 github_keyscan
-
 

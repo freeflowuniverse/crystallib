@@ -1,6 +1,8 @@
 
 function freeflow_dev_env_install {
 
+    crystal_lib_get
+
     if ! [ -x "$(command -v v)" ]; then
         v_install
     fi
@@ -8,13 +10,15 @@ function freeflow_dev_env_install {
         redis_install
     fi
 
-    crystal_lib_get
+    echo " - compile hero"
+    ~/code/github/freeflowuniverse/crystallib/cli/hero/compile_debug.sh
+    source ~/.profile
+
+    hero init
 
 }
-
 
 myplatform
 os_update
 github_keyscan
-
 

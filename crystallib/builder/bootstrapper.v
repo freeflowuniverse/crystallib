@@ -46,7 +46,7 @@ pub fn (mut bs BootStrapper) run(args_ BootstrapperArgs) ! {
 }
 
 
-fn (mut node Node) upgrade() ! {
+pub fn (mut node Node) upgrade() ! {
 	mut bs:=bootstrapper()
 	installer_base_content:=bs.embedded_files["installer_base.sh"].to_string()
 	cmd:="${installer_base_content}\n"
@@ -58,7 +58,7 @@ fn (mut node Node) upgrade() ! {
 	)!
 }
 
-fn (mut node Node) crystal_install() ! {
+pub fn (mut node Node) crystal_install() ! {
 	mut bs:=bootstrapper()
 	installer_base_content:=bs.embedded_files["installer_base.sh"].to_string()
 	cmd:="${installer_base_content}\nfreeflow_dev_env_install\n"

@@ -47,9 +47,14 @@ function v_install {
     popd "$@" > /dev/null
     export PATH="${HOME}/hero/bin:$PATH"
 
-    if ! [[ "${OSNAME}" == "alpine"* ]]; then
-    v -e "$(curl -fksSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh)"
-    fi
+    # set -x
+    pushd /tmp
+    source ~/.profile
+    rm -f install.sh
+    curl -fksSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh > install.vsh
+    v run install.vsh  --no-interaction
+    popd "$@" > /dev/null
+    # set +x
 
     if ! [ -x "$(command -v v)" ]; then
     echo 'vlang is not installed.' >&2

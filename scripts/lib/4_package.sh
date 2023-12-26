@@ -17,7 +17,7 @@ function package_install {
     elif [[ "${OSNAME}" == "alpine"* ]]; then
         sudo -s apk add $command_name
     elif [[ "${OSNAME}" == "arch"* ]]; then
-        sudo -s pacman -S $command_name --noconfirm
+        sudo -s pacman --noconfirm -Su $command_name
     else
         echo "platform : ${OSNAME} not supported"
         exit 1

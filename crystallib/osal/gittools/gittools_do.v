@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.ui.console
 import os
 
 pub const gitcmds = 'clone,commit,pull,push,delete,reload,list,edit,sourcetree'
@@ -27,11 +28,10 @@ pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {
 		s = s.trim(',')
 		r << [' - ${pr}', '[${g.addr.branch}]', s]
 	}
-	// println(args)
-	// console.clear()
-	println('\n ==== repositories on coderoot: ${gitstructure.config.root} ===\n')
-	texttools.print_array2(r, '  ', true)
-	println('')
+	console.clear()
+	console.print_header('repositories on coderoot: ${gitstructure.config.root}')
+	console.print_array(r, '  ', true)
+	console.lf()
 }
 
 @[params]
@@ -84,7 +84,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 	mut ui := gui.new()!
 
 	if args.cmd == 'reload' {
-		println(' - reload gitstructure ${gs.name()}')
+		console.print_header(' - reload gitstructure ${gs.name()}')
 		gs.reload()!
 		return
 	}
@@ -164,7 +164,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 		mut need_push := false
 
 		if repos.len == 0 {
-			println(' - nothing to do.')
+			console.print_header(' - nothing to do.')
 			return
 		}
 
@@ -235,21 +235,21 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 						question: 'commit message for repo: ${g.addr.account}/${g.addr.name} '
 					)!
 				}
-				println(' - commit ${g.addr.account}/${g.addr.name}')
+				console.print_header(' - commit ${g.addr.account}/${g.addr.name}')
 				g.commit(msg: msg, reload: true)!
 				changed = true
 			}
 			if need_pull_repo {
 				if args.reset {
-					println(' - remove changes ${g.addr.account}/${g.addr.name}')
+					console.print_header(' - remove changes ${g.addr.account}/${g.addr.name}')
 					g.remove_changes()!
 				}
-				println(' - pull ${g.addr.account}/${g.addr.name}')
+				console.print_header(' - pull ${g.addr.account}/${g.addr.name}')
 				g.pull()!
 				changed = true
 			}
 			if need_push_repo {
-				println(' - push ${g.addr.account}/${g.addr.name}')
+				console.print_header(' - push ${g.addr.account}/${g.addr.name}')
 				g.push()!
 				changed = true
 			}
@@ -261,7 +261,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 
 		if changed {
 			// console.clear()
-			println('\nCompleted required actions.\n')
+			console.print_header('\nCompleted required actions.\n')
 
 			gs.repos_print(
 				filter: args.filter

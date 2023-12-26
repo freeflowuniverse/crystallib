@@ -3,6 +3,7 @@ module gittools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.clients.redisclient
 // import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct GitStructure {
@@ -76,4 +77,46 @@ pub fn (mut gs GitStructure) repo_add(args RepoAddArgs) ! {
 		repo.pull()!
 	}
 	gs.repos << &repo
+}
+
+
+pub struct GSCodeGetFromUrlArgs {
+pub mut:
+	url               string
+	pull   bool // will pull if this is set
+	reset  bool // this means will pull and reset all changes
+	reload bool // reload the cache
+}
+
+
+// will get repo starting from url, if the repo does not exist, only then will pull .
+// if pull is set on true, will then pull as well .
+// url examples: .
+// ```
+// https://github.com/threefoldtech/tfgrid-sdk-ts
+// https://github.com/threefoldtech/tfgrid-sdk-ts.git
+// git@github.com:threefoldtech/tfgrid-sdk-ts.git
+//
+// # to specify a branch and a folder in the branch
+// https://github.com/threefoldtech/tfgrid-sdk-ts/tree/development/docs
+//
+// args:
+// url               string
+// pull   bool 		 // will pull if this is set
+// reset  bool // this means will pull and reset all changes
+// reload bool // reload the cache
+// ```
+pub fn (mut gs GitStructure)  code_get(args GSCodeGetFromUrlArgs) !string {
+	console.print_header('code get ${args.url}')
+	mut locator := gs.locator_new(args.url)!
+	// println(locator)
+	mut g := gs.repo_get(locator: locator)!
+	if args.reload {
+		g.load()!
+	}
+	if args.reset {
+		g.remove_changes()!
+	}
+	s := locator.path_on_fs()!
+	return s.path
 }

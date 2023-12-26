@@ -3,6 +3,7 @@ module playbook
 // import freeflowuniverse.crystallib.data.paramsparser
 // import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.baobab.smartid
+import freeflowuniverse.crystallib.ui.console
 import crypto.blake2b
 
 pub struct PlayBook {

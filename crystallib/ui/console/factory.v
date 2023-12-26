@@ -49,13 +49,13 @@ fn get()&UIConsole{
 	return consoles["main"] or {panic("bug")}
 }
 
-fn trim(c_ string)string{
+pub fn trim(c_ string)string{
 	c:=texttools.remove_double_lines(c_)
 	return c
 }
 
 //line feed
-fn lf(){
+pub fn lf(){
 	mut c:=get()
 	if c.prev_lf{
 		return

@@ -1,8 +1,7 @@
-// make sure that the names are always normalized so its easy to find them back
-module texttools
+module console
 
 // print 2 dimensional array, delimeter is between columns
-pub fn print_array2(arr [][]string, delimiter string, sort bool) {
+pub fn print_array(arr [][]string, delimiter string, sort bool) {
 	if arr.len == 0 {
 		return
 	}
@@ -38,7 +37,7 @@ pub fn print_array2(arr [][]string, delimiter string, sort bool) {
 		res.sort_ignore_case()
 	}
 	// println(res)
-	println(res.join_lines())
+	print_stdout(res.join_lines())
 }
 
 // expand text till length l, with string which is normally ' '
@@ -51,6 +50,3 @@ pub fn expand(txt_ string, l int, with string) string {
 	return txt
 }
 
-pub fn print_clear() {
-	print('\033[2J')
-}

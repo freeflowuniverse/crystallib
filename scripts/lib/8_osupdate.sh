@@ -26,7 +26,7 @@ function os_update {
     elif [[ "${OSNAME}" == "arch"* ]]; then
         pacman -Syy --noconfirm
         pacman -Syu --noconfirm
-        pacman -Su mc git tmux curl htop --noconfirm
+        pacman -Su --noconfirm mc git tmux curl htop
     fi
 }
 

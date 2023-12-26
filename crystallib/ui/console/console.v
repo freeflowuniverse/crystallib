@@ -6,7 +6,7 @@ pub fn clear() {
 }
 
 pub fn print_header(txt string) {
-	txt2:=trim(texttools.indent(txt," - "))
+	txt2:=trim(texttools.indent(txt.trim_left(" -")," - "))
 	mut c:=get()
 	c.reset()
 	if !c.prev_title{
@@ -76,3 +76,5 @@ pub fn print_stderr(txt string) {
 
 // import freeflowuniverse.crystallib.ui.console
 // console.print_header()
+
+

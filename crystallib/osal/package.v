@@ -1,4 +1,5 @@
 module osal
+import freeflowuniverse.crystallib.ui.console
 
 // update the package list
 pub fn package_refresh() ! {
@@ -21,6 +22,7 @@ pub fn package_refresh() ! {
 
 // install a package will use right commands per platform
 pub fn package_install(name string) ! {
+	console.print_header("package install: $name")
 	if name.contains(',') {
 		for n in name.split(',') {
 			package_install(n.trim_space())!
@@ -41,7 +43,11 @@ pub fn package_install(name string) ! {
 			'
 		) or { return error('could not install package:${name}\nerror:\n${err}') }
 	} else if platform_ == .alpine {
-		exec(cmd: 'apk install ${name}') or {
+		exec(cmd: 'apk add ${name}') or {
+			return error('could not install package:${name}\nerror:\n${err}')
+		}
+	} else if platform_ == .arch {
+		exec(cmd: 'pacman --noconfirm -Su ${name}') or {
 			return error('could not install package:${name}\nerror:\n${err}')
 		}
 	} else {

@@ -3,6 +3,7 @@ module playbook
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct PLayBookAddArgs {
@@ -23,10 +24,9 @@ enum State {
 pub fn (mut plbook PlayBook) add(args_ PLayBookAddArgs) ! {
 	mut args := args_
 
-	// println("PLBOOK ADD:\n$args_")
-
 	// walk over directory
 	if args.path.len > 0 {
+		console.print_header("PLBOOK add path:'${args.path}'")
 		mut p := pathlib.get(args.path)
 		if !p.exists() {
 			return error("can't find path:${p.path}")
@@ -45,6 +45,8 @@ pub fn (mut plbook PlayBook) add(args_ PLayBookAddArgs) ! {
 		}
 		return error("can't process path: ${args.path}, unknown type.")
 	}
+	console.print_header("PLBOOK add text")
+	console.print_stdout(args.text)
 
 	args.text = texttools.dedent(args.text)
 	mut state := State.start
