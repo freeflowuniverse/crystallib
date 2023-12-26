@@ -1,0 +1,38 @@
+vmType: "vz"
+images:
+- location: "https://cloud-images.ubuntu.com/releases/23.10/release-20231011/ubuntu-23.10-server-cloudimg-arm64.img"
+  arch: "aarch64"
+  digest: "sha256:78d35a2f551d281912ee7e5202660d94d713aa1b5de86a17e261328cc2f093d4"
+
+containerd:
+  system: false
+  user: false
+
+mounts:
+- location: "~"
+  writable: true
+- location: "/tmp/lima"
+  writable: true
+mountType: "virtiofs"
+
+provision:
+- mode: system
+  script: |
+    #!/bin/sh
+    set -eux -o pipefail
+    exec &> /var/log/install_system.log
+    mkdir -p /root/.ssh
+    export TERM=xterm
+    export DEBIAN_FRONTEND=noninteractive
+    dpkg --configure -a
+    apt update -y
+    apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+    apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+    apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+    package_install "mc curl tmux net-tools git htop ca-certificates lsb-release"    
+- mode: user
+  script: |
+    #!/bin/bash
+    set -eux -o pipefail
+    exec &> ~/install_user.log
+    sudo -s cp ~/.ssh/authorized_keys /root/.ssh/authorized_keys
