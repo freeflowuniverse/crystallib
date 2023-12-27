@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.osal
 
+
 @[params]
 pub struct VMNewArgs {
 pub mut:
@@ -27,10 +28,12 @@ pub enum TemplateName{
     arch
 }
 
+
 // valid template names: .alpine,.arch .
-pub fn vm_new(args VMNewArgs) ! {
+pub fn (mut lf LimaFactory) vm_new(args VMNewArgs) !VM {
+
 	if args.reset {
-		vm_delete(args.name)!
+		lf.vm_delete(args.name)!
 	} else {
 		return error("can't create vm, does already exist.")
 	}
@@ -66,10 +69,12 @@ pub fn vm_new(args VMNewArgs) ! {
 		osal.exec(cmd: cmd2, stdout: true)!
 	}
 
-	if args.install_crystal{
-		mut vm:=lima.vm_get(args.name)!
-		vm.install_crystal()!
+	mut vm:=lf.vm_get(args.name)!
 
+	if args.install_crystal{
+		vm.install_crystal()!
 	}
+
+	return vm
 
 }

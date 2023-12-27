@@ -14,7 +14,7 @@ pub mut:
 
 pub fn install(args_ InstallArgs) ! {
 	mut args:=args_
-	// base.install()!
+
 	if args.reset || args.uninstall{
 		console.print_header('uninstall lima')
 		uninstall()!
