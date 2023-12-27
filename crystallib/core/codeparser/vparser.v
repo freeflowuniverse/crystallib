@@ -22,7 +22,7 @@ pub fn parse_v(path_ string, vparser VParser) ![]CodeItem {
 	mut path := pathlib.get(path_)
 
 	$if debug {
-		eprintln('Parsing path `${path.path}` with cofiguration:\n${vparser}\n')
+		console.print_debug('Parsing path `${path.path}` with cofiguration:\n${vparser}\n')
 	}
 
 	if !path.exists() {
@@ -76,7 +76,7 @@ fn (vparser VParser) parse_vpath(mut path pathlib.Path) ![]CodeItem {
 // parse_vfile parses and returns code items from a v code file
 fn (vparser VParser) parse_vfile(path string) []CodeItem {
 	$if debug {
-		eprintln('Parsing file `${path}`')
+		console.print_debug('Parsing file `${path}`')
 	}
 	mut code := []CodeItem{}
 
@@ -167,7 +167,7 @@ struct VFuncArgs {
 // parse_vfunc parses function args into function struct
 pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 	$if debug {
-		eprintln('Parsing function: ${args.fn_decl.short_name}')
+		console.print_debug('Parsing function: ${args.fn_decl.short_name}')
 	}
 
 	// get function params excluding receiver
@@ -323,7 +323,7 @@ struct VStructArgs {
 // parse_params parses struct args into struct
 fn (vparser VParser) parse_vstruct(args VStructArgs) Struct {
 	$if debug {
-		eprintln('Parsing struct: ${args.struct_decl.name}')
+		console.print_debug('Parsing struct: ${args.struct_decl.name}')
 	}
 
 	comments := args.comments.map(it.text.trim_string_left('\u0001').trim_space())
@@ -347,7 +347,7 @@ struct VSumTypeArgs {
 // parse_params parses struct args into struct
 fn (vparser VParser) parse_vsumtype(args VSumTypeArgs) Sumtype {
 	$if debug {
-		eprintln('Parsing sumtype: ${args.sumtype_decl.name}')
+		console.print_debug('Parsing sumtype: ${args.sumtype_decl.name}')
 	}
 
 	comments := args.comments.map(it.text.trim_string_left('\u0001').trim_space())

@@ -50,7 +50,7 @@ pub fn form1_get(req &ctx.Req, mut res ctx.Resp) {
 
 pub fn form1_post(req &ctx.Req, mut res ctx.Resp) {
 	post_data := req.parse_form() or {
-		eprintln('Failed to parse form data.')
+		console.print_debug('Failed to parse form data.')
 		return
 	}
 

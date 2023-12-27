@@ -19,7 +19,7 @@ pub fn build(args BuildArgs) ! {
 	}
 
 	// install mediacms if it was already done will return true
-	println(' - build mediacms')
+	console.print_header('build mediacms')
 
 	// gitpath := gittools.code_get(
 	// 	coderoot: '/tmp/builder'

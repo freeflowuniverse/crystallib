@@ -85,8 +85,8 @@ pub fn execute_large(cmd string) Result {
 pub fn execute_large_or_panic(cmd string) Result {
 	res := execute_large(cmd)
 	if res.exit_code != 0 {
-		eprintln('failed    cmd: ${cmd}')
-		eprintln('failed   code: ${res.exit_code}')
+		console.print_debug('failed    cmd: ${cmd}')
+		console.print_debug('failed   code: ${res.exit_code}')
 		panic(res.output)
 	}
 	return res

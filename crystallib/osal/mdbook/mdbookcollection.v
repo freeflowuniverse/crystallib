@@ -1,11 +1,11 @@
 module mdbook
-
+import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.osal
 // import log
 // import os
 
-// is playbook for one specific book
+// is collection for one specific book
 pub struct MDBookCollection {
 pub mut:
 	book       &MDBook      @[skip; str: skip]
@@ -24,7 +24,7 @@ pub mut:
 	url  string
 }
 
-pub fn (mut book MDBook) playbook_add(args_ MDBookCollectionArgs) ! {
+pub fn (mut book MDBook) collection_add(args_ MDBookCollectionArgs) ! {
 	mut args := args_
 	mut c := MDBookCollection{
 		url: args.url
@@ -32,28 +32,28 @@ pub fn (mut book MDBook) playbook_add(args_ MDBookCollectionArgs) ! {
 		book: &book
 	}
 	c.clone()! // don't pull if it exists
-	book.playbooks << c
+	book.collections << c
 }
 
 fn (mut self MDBookCollection) clone() ! {
-	println(' - mdbook playbook clone no pull: ${self.url}')
+	console.print_header(' mdbook collection clone no pull: ${self.url}')
 	mut gs := self.book.books.gitstructure
 	mut locator := gs.locator_new(self.url)!
 	mut repo := gs.repo_get(locator: locator, reset: false, pull: false)! // here no reset will be done later
 	self.book.books.gitrepos[repo.key()] = repo
 	self.gitrepokey = repo.key()
 	self.path = locator.path_on_fs()!
-	// Question: is this a good place to link playbooks
+	// Question: is this a good place to link collections
 	self.link()!
 
 	// self.path.link('${self.book.path_build.path}/src/${self.name}', true)!
 	// println(srcpath)
-	// println(' - mdbook playbook: ${srcpath}')
+	// console.print_header(' mdbook collection: ${srcpath}')
 }
 
 fn (mut self MDBookCollection) link() ! {
-	println(' - link playbook: ${self.path.path} -> ${self.book.path_build.path}/src/${self.name}')
+	console.print_header('link collection: ${self.path.path} -> ${self.book.path_build.path}/src/${self.name}')
 	self.path.link('${self.book.path_build.path}/src/${self.name}', true)!
-	// println(' - mdbook playbook: ${srcpath}')
-	// panic('link playbook')
+	// console.print_header(' mdbook collection: ${srcpath}')
+	// panic('link collection')
 }

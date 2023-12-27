@@ -2,6 +2,7 @@ module vscode
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
+import freeflowuniverse.crystallib.ui.console
 
 import os
 @[params]
@@ -13,7 +14,7 @@ pub mut:
 pub fn install(args_ InstallArgs) ! {
 	mut args:=args_
 	// base.install()!
-	println(' - package_install install vscode')
+	console.print_header('package_install install vscode')
 	if !args.reset && osal.done_exists('install_vscode') && osal.cmd_exists('code') {
 		println(" - already installed")
 		return

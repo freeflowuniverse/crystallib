@@ -3,6 +3,7 @@ module gittools
 import freeflowuniverse.crystallib.osal.sshagent
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
+// import freeflowuniverse.crystallib.ui.console
 
 // unique identification of a git repository
 // can be translated to location on filesystem

@@ -7,7 +7,7 @@ fn (mut image Image) identify_verbose() ! {
 		// means was already done
 		return
 	}
-	// println(' - identify: $image.path')
+	// console.print_header(' identify: $image.path')
 	out := osal.execute_silent("identify -verbose '${image.path.path}'") or {
 		return error('Could not get info from image ${image.path.path} \nError:${err}')
 	}
@@ -84,7 +84,7 @@ pub fn (mut image Image) identify() ! {
 		// means was already done
 		return
 	}
-	// println(' - identify: $image.path')
+	// console.print_header(' identify: $image.path')
 	mut out := osal.execute_silent("identify -ping '${image.path.path}'") or {
 		return error('Could not get info from image, error:${err}')
 	}

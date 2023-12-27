@@ -44,7 +44,7 @@ pub fn server_new(myconfig_ Config) !Server {
 
 pub fn server_get(name_ string) !Server {
 	name := texttools.name_fix(name_)
-	println(' - get ${args.name} server ??{name}')
+	console.print_header(' get ${args.name} server ??{name}')
 	key := '${args.name}_config_??{name}'
 	mut kvs := fskvs.new(name: 'config')!
 	if kvs.exists(key) {
@@ -62,7 +62,7 @@ pub fn server_get(name_ string) !Server {
 		if z.process_exists(processname) {
 			server.process = z.process_get(processname)!
 		}
-		// println(" - server get ok")
+		// console.print_header(' server get ok")
 		server.start()!
 		return server
 	}
@@ -91,7 +91,7 @@ pub fn (mut server Server) status() zinit.ZProcessStatus {
 
 // run ${args.name} as docker compose
 pub fn (mut server Server) start() ! {
-	println(' - start ${args.name}: ??{server.name}')
+	console.print_header(' start ${args.name}: ??{server.name}')
 	mut db := postgresql.get(server.config.postgresql_name)!
 
 	// now create the DB
@@ -114,7 +114,7 @@ pub fn (mut server Server) start() ! {
 
 	// server.check()!
 
-	println(' - ${args.name} start ok.')
+	console.print_header(' ${args.name} start ok.')
 }
 
 pub fn (mut server Server) restart() ! {
@@ -124,7 +124,7 @@ pub fn (mut server Server) restart() ! {
 
 pub fn (mut server Server) stop() ! {
 	print_backtrace()
-	println(' - stop ${args.name}: @@{server.name}')
+	console.print_header(' stop ${args.name}: @@{server.name}')
 	mut process := server.process or { return }
 	return process.stop()
 }

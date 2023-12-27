@@ -29,16 +29,16 @@ provision:
     apk update
     apk add mc curl rsync htop bash bash-completion tmux
     sed -i 's#/bin/ash#/bin/bash#g' /etc/passwd
-    export 
+    ##### COMMON PART
+    echo ' - ssh authorization'
     mkdir -p /root/.ssh/
-    mkdir -p /Users/${iam}/code 
+    echo "iam:${iam}"
+    ls  /home/${iam}.linux/.ssh
+    cp  /home/${iam}.linux/.ssh/authorized_keys /root/.ssh/authorized_keys
+    chmod 0600 /root/.ssh/authorized_keys
+    mkdir -p /Users/${iam}/code
     ln -s /Users/${iam}/code /root/code
-- mode: user
-  script: |
-    #!/bin/bash
-    set -eux -o pipefail
-    exec &> ~/install_user.log
-    sudo -s cp ~/.ssh/authorized_keys /root/.ssh/authorized_keys
+    echo "install done " >> /var/log/install_system.log
 
 probes:
 - mode: readiness

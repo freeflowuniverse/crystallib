@@ -67,7 +67,7 @@ pub fn (mut t Tmux) window_delete(args WindowGetArgs) ! {
 // ```
 pub fn (mut s Session) window_new(args WindowArgs) !Window {
 	$if debug {
-		println(' - start window: \n${args}')
+		console.print_header(' start window: \n${args}')
 	}
 	namel := texttools.name_fix(args.name)
 	if s.window_exist(name: namel) {
@@ -164,7 +164,7 @@ pub fn (mut w Window) create() ! {
 		wid := line_arr[2] or { panic('cannot split line for window create.\n${line_arr}') }
 		w.id = wid.replace('@', '').int()
 		$if debug {
-			println(' - WINDOW - Window: ${w.name} created in session: ${w.session.name}')
+			console.print_header(' WINDOW - Window: ${w.name} created in session: ${w.session.name}')
 		}
 	} else {
 		return error('cannot create window, it already exists.\n${w.name}:${w.id}:${w.cmd}')

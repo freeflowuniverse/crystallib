@@ -8,7 +8,7 @@ import freeflowuniverse.crystallib.core.pathlib
 
 // install mediacms will return true if it was already installed
 pub fn build(myargs Config) ! {
-	println(' - build mediacms')
+	console.print_header('build mediacms')
 
 	checkplatform()!
 

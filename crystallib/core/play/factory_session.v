@@ -46,12 +46,15 @@ pub fn session_new(args_ PlayArgs) !&Session {
 		&session
 	}
 
+
+
 	session.plbook = plbook
 
 	session.plbook.filtersort(priorities: args.playbook_priorities)!
 
 	if args.playbook_core_execute {
-		session.playbook_core_execute()!
+		session.play_ssh()!
+		session.play_git()!
 	}
 
 	return session

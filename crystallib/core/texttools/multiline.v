@@ -24,7 +24,7 @@ pub fn multiline_to_single(text string) !string {
 		line2 = line
 		line2 = line2.replace('\t', '    ')
 		mut line2_trimmed := line2.trim_space()
-		// println(" - ${state:-15} $line2_trimmed")	
+		// console.print_header(' ${state:-15} $line2_trimmed")	
 		if state == .multiline {
 			// println("MULTI:'$line2'")
 			if multiline_end_check(line2_trimmed) {
@@ -57,7 +57,7 @@ pub fn multiline_to_single(text string) !string {
 			// deal with comments
 			mut commentpart := ''
 			line2_trimmed, commentpart = comment_start_check(mut res, line2_trimmed)
-			// println(" - comment_start_check:  line2_trimmed:'${line2_trimmed}' commentpart:'${commentpart}'")
+			// console.print_header(' comment_start_check:  line2_trimmed:'${line2_trimmed}' commentpart:'${commentpart}'")
 			if commentpart.len > 0 {
 				state = .comment
 				comment = []string{}

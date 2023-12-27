@@ -2,7 +2,7 @@ module chrome
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
-
+import freeflowuniverse.crystallib.ui.console
 import os
 @[params]
 pub struct InstallArgs {
@@ -15,14 +15,14 @@ pub fn install(args_ InstallArgs) ! {
 	mut args:=args_
 	// base.install()!
 	if args.reset || args.uninstall{
-		println(' - uninstall chrome')
+		console.print_header('uninstall chrome')
 		uninstall()!
 		println(" - ok")
 		if args.uninstall{
 			return 
 		}		
 	}
-	println(' - package_install install chrome')
+	console.print_header('package_install install chrome')
 	if !args.reset && osal.done_exists('install_chrome') && exists()! {
 		println(" - already installed")
 		return

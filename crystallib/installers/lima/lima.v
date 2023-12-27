@@ -2,6 +2,7 @@ module lima
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
+import freeflowuniverse.crystallib.ui.console
 
 import os
 @[params]
@@ -15,14 +16,14 @@ pub fn install(args_ InstallArgs) ! {
 	mut args:=args_
 	// base.install()!
 	if args.reset || args.uninstall{
-		println(' - uninstall lima')
+		console.print_header('uninstall lima')
 		uninstall()!
 		println(" - ok")
 		if args.uninstall{
 			return 
 		}		
 	}
-	println(' - package_install install lima')
+	console.print_header('package_install install lima')
 	if !args.reset && osal.done_exists('install_lima') && exists()! {
 		println(" - already installed")
 		return
@@ -44,7 +45,7 @@ pub fn install(args_ InstallArgs) ! {
 		}
 		dest_on_os="/"
 	}
-	println(' - download ${url}')
+	console.print_header('download ${url}')
 	osal.download(
 		url: url
 		minsize_kb: 45000

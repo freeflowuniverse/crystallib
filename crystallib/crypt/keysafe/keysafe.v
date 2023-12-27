@@ -181,7 +181,7 @@ pub fn (mut ks KeysSafe) load() {
 
 pub fn (mut ks KeysSafe) deserialize(input string) {
 	mut pks := json.decode(PersistantKeysSafe, input) or {
-		eprintln('Failed to decode json, wrong secret or corrupted file: ${err}')
+		console.print_debug('Failed to decode json, wrong secret or corrupted file: ${err}')
 		return
 	}
 

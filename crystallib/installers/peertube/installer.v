@@ -17,7 +17,7 @@ pub fn install(args InstallArgs) ! {
 	checkplatform()!
 
 	if osal.done_exists('peertube_install') {
-		println(' - peertube already installed')
+		console.print_header('peertube already installed')
 		return
 	}
 
@@ -28,5 +28,5 @@ pub fn install(args InstallArgs) ! {
 
 	osal.done_set('peertube_install', 'OK')!
 
-	println(' - peertube installed properly.')
+	console.print_header('peertube installed properly.')
 }

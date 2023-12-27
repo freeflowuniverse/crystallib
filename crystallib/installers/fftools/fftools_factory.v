@@ -82,7 +82,7 @@ fn vscode_install() ? {
 
 	// # export PATH="\$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"	
 
-	println(' - visual studio code installed OK')
+	console.print_header('visual studio code installed OK')
 }
 
 fn vscode_uninstall() {

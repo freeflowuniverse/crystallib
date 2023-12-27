@@ -32,7 +32,7 @@ pub fn configure(myargs Config) ! {
 	}
 
 	$if debug {
-		println(' - mediacms configured properly.')
+		console.print_header('mediacms configured properly.')
 	}
 }
 

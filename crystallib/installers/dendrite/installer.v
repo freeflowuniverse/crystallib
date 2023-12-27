@@ -17,7 +17,7 @@ pub fn install(args InstallArgs) ! {
 	}
 
 	if osal.done_exists('dendrite_install') {
-		println(' - dendrite binaraies already installed')
+		console.print_header('dendrite binaraies already installed')
 		return
 	}
 
@@ -25,5 +25,5 @@ pub fn install(args InstallArgs) ! {
 
 	osal.done_set('dendrite_install', 'OK')!
 
-	println(' - dendrite installed properly.')
+	console.print_header('dendrite installed properly.')
 }

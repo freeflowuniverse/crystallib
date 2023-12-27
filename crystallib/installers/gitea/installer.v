@@ -12,7 +12,7 @@ pub fn install() ! {
 	}
 
 	if osal.done_exists('gitea_install') {
-		println(' - gitea binaraies already installed')
+		console.print_header('gitea binaraies already installed')
 		return
 	}
 
@@ -39,5 +39,5 @@ pub fn install() ! {
 
 	osal.done_set('gitea_install', 'OK')!
 
-	println(' - gitea installed properly.')
+	console.print_header('gitea installed properly.')
 }

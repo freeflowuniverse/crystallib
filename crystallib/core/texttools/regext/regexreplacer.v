@@ -2,6 +2,7 @@ module regext
 
 import freeflowuniverse.crystallib.core.texttools
 import regex
+import freeflowuniverse.crystallib.ui.console
 import os
 
 pub struct ReplaceInstructions {
@@ -212,7 +213,7 @@ fn (mut self ReplaceInstructions) replace_in_dir_recursive(path1 string, extensi
 		// }
 		// done << pathnew
 		if os.is_dir(pathnew) {
-			// println(" - $pathnew")		
+			// console.print_header(' $pathnew")		
 			if item.starts_with('.') {
 				continue
 			}
@@ -229,9 +230,9 @@ fn (mut self ReplaceInstructions) replace_in_dir_recursive(path1 string, extensi
 				txtold := os.read_file(pathnew)!
 				txtnew := self.replace(text: txtold, dedent: false)!
 				if txtnew.trim(' \n') == txtold.trim(' \n') {
-					println(' - nothing to do : ${pathnew}')
+					console.print_header(' nothing to do : ${pathnew}')
 				} else {
-					println(' - replace done  : ${pathnew}')
+					console.print_header(' replace done  : ${pathnew}')
 					count++
 					if !dryrun {
 						// now write the file back

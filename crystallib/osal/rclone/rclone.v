@@ -21,7 +21,7 @@ struct InitDProcGet {
 }
 
 // pub fn start() ! {
-// 	println(' - rclone start')
+// 	console.print_header(' rclone start')
 // 	initd_proc_get(delete: true, start: true)!
 // }
 

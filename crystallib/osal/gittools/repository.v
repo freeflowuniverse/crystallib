@@ -2,7 +2,7 @@ module gittools
 
 import os
 import freeflowuniverse.crystallib.osal
-// import freeflowuniverse.crystallib.osal.sshagent
+import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.clients.redisclient
 import json
@@ -47,7 +47,7 @@ pub fn (mut repo GitRepo) load() !GitRepoStatus {
 	}
 	mut st := repo_load(repo.addr, repo.path.path)!
 	repo.status_set(st)!
-	// println(' - status:\n${st}')
+	// console.print_header(' status:\n${st}')
 	return st
 }
 
@@ -231,7 +231,7 @@ pub fn (mut repo GitRepo) remove_changes(args_ ActionArgs) ! {
 	}
 	st := repo.status()!
 	if st.need_commit {
-		println(' - remove change ${repo.path.path}')
+		console.print_header(' remove change ${repo.path.path}')
 		cmd := '
 		cd ${repo.path.path}
 		rm -f .git/index
@@ -245,7 +245,7 @@ pub fn (mut repo GitRepo) remove_changes(args_ ActionArgs) ! {
 		println(cmd)
 		println(res)
 		if res.exit_code > 0 {
-			println(' - could not remove changes, will re-clone ${repo.path.path}')
+			console.print_header(' could not remove changes, will re-clone ${repo.path.path}')
 			repo.path.delete()! // remove path, this will re-clone the full thing
 			repo.load_from_url()!
 		}

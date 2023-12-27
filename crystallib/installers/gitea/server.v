@@ -85,7 +85,7 @@ pub fn new(args_ Config) !Server {
 }
 
 pub fn get(name_ string) !Server {
-	println(' - get gitea server ${name_}')
+	console.print_header('get gitea server ${name_}')
 	name := texttools.name_fix(name_)
 	key := 'gitea_config_${name}'
 	mut kvs := fskvs.new(name: 'config')!
@@ -133,7 +133,7 @@ pub fn (mut server Server) start() ! {
 	// 	return
 	// }
 
-	println(' - start gitea: ${server.name}')
+	console.print_header('start gitea: ${server.name}')
 	mut db := postgresql.get(server.config.postgresql_name)!
 
 	// now create the DB
@@ -174,7 +174,7 @@ pub fn (mut server Server) start() ! {
 
 	server.check()!
 
-	println(' - gitea start ok.')
+	console.print_header('gitea start ok.')
 }
 
 pub fn (mut server Server) restart() ! {
@@ -184,7 +184,7 @@ pub fn (mut server Server) restart() ! {
 
 pub fn (mut server Server) stop() ! {
 	print_backtrace()
-	println(' - stop gitea: ${server.name}')
+	console.print_header('stop gitea: ${server.name}')
 	mut process := server.process or { return }
 	return process.stop()
 }

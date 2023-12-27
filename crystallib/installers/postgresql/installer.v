@@ -16,9 +16,9 @@ pub fn install() ! {
 		zinitinstaller.install()!
 		osal.package_install('libpq-dev,postgresql-client')!
 		osal.done_set('postgres_install', 'OK')!
-		println(' - postgresql installed')
+		console.print_header('postgresql installed')
 	} else {
-		println(' - postgresql already installed')
+		console.print_header('postgresql already installed')
 	}
 }
 

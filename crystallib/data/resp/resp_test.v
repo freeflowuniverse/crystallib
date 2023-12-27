@@ -96,7 +96,7 @@ fn test_3() {
 // 	assert buff.len == 1
 // 	for i in 0 .. 8 {
 // 		z := stream.read(mut buff) or { -1 }
-// 		println(' - reader buff len $buff.len ($i:$buff) | readresult: $z')
+// 		console.print_header(' reader buff len $buff.len ($i:$buff) | readresult: $z')
 // 	}
 // 	panic('s')
 // }
@@ -110,7 +110,7 @@ fn test_3() {
 // 	assert buff.len == 1
 // 	for i in 0 .. 8 {
 // 		z := stream.read(mut buff) or { -1 }
-// 		println(' - reader buff len $buff.len ($i:$buff) | readresult: $z')
+// 		console.print_header(' reader buff len $buff.len ($i:$buff) | readresult: $z')
 // 	}
 
 // 	// panic('s')

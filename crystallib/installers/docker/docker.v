@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.installers.base
 
 // install docker will return true if it was already installed
 pub fn install() ! {
-	println(' - package install install docker')
+	console.print_header('package install install docker')
 	if osal.platform() != .ubuntu {
 		return error('only support ubuntu for now')
 	}
@@ -28,7 +28,7 @@ pub fn install() ! {
 		check()!
 		osal.done_set('install_docker', 'OK')!
 	}
-	println(' - docker already done')
+	console.print_header('docker already done')
 }
 
 pub fn check() ! {

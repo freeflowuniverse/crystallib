@@ -12,7 +12,7 @@ pub mut:
 //   localhost:6379
 //   /tmp/redis-default.sock
 pub fn get(addr string, auth string, namespace string) !ZDB {
-	println(' - ZDB get: addr:${addr} namespace:${namespace}')
+	console.print_header(' ZDB get: addr:${addr} namespace:${namespace}')
 	mut redis := redisclient.get(addr)!
 	mut zdb := ZDB{
 		redis: redis

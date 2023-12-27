@@ -8,7 +8,7 @@ import freeflowuniverse.crystallib.installers.zinit
 pub fn install() ! {
 	rust.install()!
 	zinit.install()!
-	println(' - install fungistor')
+	console.print_header('install fungistor')
 	if !osal.done_exists('install_fungistor') || !osal.cmd_exists('rfs') {
 		osal.package_install('musl-dev,musl-tools')!
 
@@ -20,9 +20,9 @@ pub fn install() ! {
 
 		cp ~/code/github/threefoldtech/rfs/target/x86_64-unknown-linux-musl/release/rfs /usr/local/bin/
 		'
-		println(' - build fungistor')
+		console.print_header('build fungistor')
 		osal.execute_stdout(cmd)!
 		osal.done_set('install_fungistor', 'OK')!
 	}
-	println(' - fungistor already done')
+	console.print_header('fungistor already done')
 }

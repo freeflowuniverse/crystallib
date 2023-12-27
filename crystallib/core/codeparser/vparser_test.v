@@ -600,7 +600,7 @@ fn test_vparse_non_recursive() ! {
 
 fn test_vparse_recursive() ! {
 	$if debug {
-		eprintln('\nTEST: test_vparse_recursive\n')
+		console.print_debug('\nTEST: test_vparse_recursive\n')
 	}
 	code := parse_v(codeparser.testpath, recursive: true)!
 	assert code.len == 18

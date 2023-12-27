@@ -69,7 +69,7 @@ pub fn new(args_ Config) !Server {
 }
 
 pub fn get(name_ string) !Server {
-	println(' - get zitadel server ${name_}')
+	console.print_header('get zitadel server ${name_}')
 	name := texttools.name_fix(name_)
 	key := 'zitadel_config_${name}'
 	mut kvs := fskvs.new(name: 'config')!
@@ -117,7 +117,7 @@ pub fn (mut server Server) start() ! {
 	// 	return
 	// }
 
-	println(' - start zitadel: ${server.name}')
+	console.print_header('start zitadel: ${server.name}')
 	mut db := postgresql.get(server.config.postgresql_name)!
 
 	println(db)
@@ -167,7 +167,7 @@ pub fn (mut server Server) restart() ! {
 
 pub fn (mut server Server) stop() ! {
 	// print_backtrace()
-	println(' - stop zitadel: ${server.name}')
+	console.print_header('stop zitadel: ${server.name}')
 	mut process := server.process or { return }
 	return process.stop()
 }

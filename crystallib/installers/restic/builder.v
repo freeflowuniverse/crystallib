@@ -4,6 +4,7 @@ module restic
 import freeflowuniverse.crystallib.installers.golang
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.ui.console
 
 const url = 'https://github.com/restic/restic'
 
@@ -23,7 +24,7 @@ pub fn build(args BuildArgs) ! {
 	golang.install()!
 
 	// install restic if it was already done will return true
-	println(' - build restic')
+	console.print_header('build restic')
 
 	gitpath := gittools.code_get(coderoot: '/tmp/builder', url: restic.url, reset: true, pull: true)!
 

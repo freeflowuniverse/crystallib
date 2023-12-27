@@ -21,7 +21,7 @@ pub fn build(args BuildArgs) ! {
 	docker.install()!
 
 	// install peertube if it was already done will return true
-	println(' - build peertube')
+	console.print_header('build peertube')
 
 	mut gs := gittools.get()!
 

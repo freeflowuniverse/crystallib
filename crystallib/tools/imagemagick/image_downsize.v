@@ -2,6 +2,7 @@ module imagemagick
 
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.ui.console
 import os
 
 @[params]
@@ -22,7 +23,7 @@ pub fn (mut image Image) downsize(args DownsizeArgsInternal) ! {
 	if image.skip() {
 		return
 	}
-	// $if debug{println(' - downsize $image.path')}
+	// $if debug{console.print_header(' downsize $image.path')}
 	if image.is_png() {
 		image.identify_verbose()!
 	} else {
@@ -54,7 +55,7 @@ pub fn (mut image Image) downsize(args DownsizeArgsInternal) ! {
 	if image.is_png() && args.convertpng {
 		if image.size_kbyte > 500 {
 			if image.transparent && image.size_kbyte < 900 {
-				println(' - image ${image.path.path} sizekb:${image.size_kbyte} transparent so skip. ')
+				console.print_header(' image ${image.path.path} sizekb:${image.size_kbyte} transparent so skip. ')
 				return
 			}
 			path_dest := image.path.path_no_ext() + '.jpg'

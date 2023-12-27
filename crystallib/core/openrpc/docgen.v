@@ -22,7 +22,7 @@ pub struct DocGenConfig {
 // returns generated OpenRPC struct which can be encoded into json using `OpenRPC.encode()`
 pub fn docgen(config DocGenConfig) !OpenRPC {
 	$if debug {
-		eprintln('Generating OpenRPC Document from path: ${config.source}')
+		console.print_debug('Generating OpenRPC Document from path: ${config.source}')
 	}
 
 	// parse source code into code items
@@ -69,7 +69,7 @@ pub fn docgen(config DocGenConfig) !OpenRPC {
 // fn_to_method turns a codemodel function into a openrpc method description
 fn fn_to_method(function Function) Method {
 	$if debug {
-		eprintln('Creating openrpc method description for function: ${function.name}')
+		console.print_debug('Creating openrpc method description for function: ${function.name}')
 	}
 
 	params := params_to_descriptors(function.params)

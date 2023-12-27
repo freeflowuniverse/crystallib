@@ -25,7 +25,7 @@ pub fn install(args InstallArgs) ! {
 	}
 
 	// install caddy if it was already done will return true
-	println(' - package_install install caddy')
+	console.print_header('package_install install caddy')
 
 	if osal.platform() != .ubuntu {
 		return error('only support ubuntu for now')

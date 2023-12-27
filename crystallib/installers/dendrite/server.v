@@ -58,7 +58,7 @@ pub fn new(args_ Config) !Server {
 }
 
 pub fn get(name_ string) !Server {
-	println(' - get dendrite server ${name_}')
+	console.print_header('get dendrite server ${name_}')
 	name := texttools.name_fix(name_)
 	key := 'dendrite_config_${name}'
 	mut kvs := fskvs.new(name: 'config')!
@@ -102,7 +102,7 @@ pub fn (mut server Server) status() zinit.ZProcessStatus {
 
 // run dendrite as docker compose
 pub fn (mut server Server) start() ! {
-	println(' - start dendrite: ${server.name}')
+	console.print_header('start dendrite: ${server.name}')
 	mut db := postgresql.get(server.config.postgresql_name)!
 
 	// now create the DB
@@ -142,7 +142,7 @@ pub fn (mut server Server) start() ! {
 
 	server.check()!
 
-	println(' - dendrite start ok.')
+	console.print_header('dendrite start ok.')
 }
 
 pub fn (mut server Server) restart() ! {
@@ -152,7 +152,7 @@ pub fn (mut server Server) restart() ! {
 
 pub fn (mut server Server) stop() ! {
 	print_backtrace()
-	println(' - stop dendrite: ${server.name}')
+	console.print_header('stop dendrite: ${server.name}')
 	mut process := server.process or { return }
 	return process.stop()
 }

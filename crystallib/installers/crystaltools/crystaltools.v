@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.osal
 
 pub fn install() ! {
 	// install crystaltools if it was already done will return true
-	println(' - package_install install crystaltools')
+	console.print_header('package_install install crystaltools')
 	if !(i.state == .reset) && osal.done_exists('install_crystaltools') {
 		println('    package_install was already done')
 		return
@@ -19,7 +19,7 @@ pub fn install() ! {
 }
 
 pub fn update() ! {
-	println(' - package_install update crystaltools')
+	console.print_header('package_install update crystaltools')
 	if !(i.state == .reset) && osal.done_exists('install_crystaltools') {
 		println('    package_install was already done')
 		return

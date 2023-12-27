@@ -23,7 +23,7 @@ pub fn build(args BuildArgs) ! {
 	golang.install()!
 
 	// install dendrite if it was already done will return true
-	println(' - build dendrite')
+	console.print_header('build dendrite')
 
 	gitpath := gittools.code_get(
 		coderoot: '/tmp/builder'

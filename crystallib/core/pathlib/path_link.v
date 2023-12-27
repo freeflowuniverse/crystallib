@@ -1,6 +1,7 @@
 module pathlib
 
 import os
+// import freeflowuniverse.crystallib.ui.console
 
 // path needs to be existing
 // linkpath is where the link will be (the symlink who points to path)
@@ -75,7 +76,7 @@ pub fn (mut path Path) unlink() ! {
 	link_real_path := path.realpath() // this is with the symlink resolved
 	mut link_path := get(link_real_path)
 	// $if debug {
-	// 	println(" - copy source file:'$link_real_path' of link to link loc:'$link_abs_path'")
+	// 	console.print_header(' copy source file:'$link_real_path' of link to link loc:'$link_abs_path'")
 	// }
 	mut destpath := get(link_abs_path + '.temp') // lets first copy to the .temp location
 	link_path.copy(dest: destpath.path)! // copy to the temp location
@@ -88,9 +89,9 @@ pub fn (mut path Path) unlink() ! {
 
 // return string
 pub fn (mut path Path) readlink() !string {
-	// println('path: $path')
+	// console.print_stdout('path: $path')
 	if path.is_link() {
-		// println('path2: $path')
+		// console.print_stdout('path2: $path')
 		cmd := 'readlink ${path.path}'
 		res := os.execute(cmd)
 		if res.exit_code > 0 {

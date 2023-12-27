@@ -100,7 +100,7 @@ fn cmd_postgres_list(cmd Command) ! {
 	println('## Postgresql Connections:\n')
 	items := cl.db_names()!
 	for item in items {
-		println(' - ${item}')
+		console.print_header(' ${item}')
 	}
 }
 

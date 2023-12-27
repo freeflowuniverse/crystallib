@@ -8,6 +8,7 @@ import freeflowuniverse.crystallib.data.ourtime
 import time
 import v.embed_file
 import os
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct MDBooks {
@@ -109,7 +110,7 @@ pub fn (mut self MDBooks) reset_state() ! {
 
 // get all content
 pub fn (mut self MDBooks) pull() ! {
-	println(' - pull all mdbooks')
+	console.print_header(' pull all mdbooks')
 	for key, repo_ in self.gitrepos {
 		mut repo := repo_
 		if self.reset {
@@ -137,9 +138,9 @@ pub fn (mut self MDBooks) watch(args WatchArgs) {
 	mut last := i64(0)
 	for {
 		t.now()
-		println('${t} ${t.unix_time()} period:${args.period}')
+		console.print_stdout('${t} ${t.unix_time()} period:${args.period}')
 		if t.unix_time() > last + args.period {
-			println(' - will try to check the mdbooks')
+			console.print_header(' will try to check the mdbooks')
 			self.pull() or { panic(" - ERROR: couldn't pull the repo's.\n${err}") }
 			self.generate() or { panic(" - ERROR: couldn't generate the repo's.\n${err}") }
 			last = t.unix_time()

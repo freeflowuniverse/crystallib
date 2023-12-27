@@ -2,6 +2,7 @@ module restic
 
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.core.texttools
 // import os
@@ -15,11 +16,11 @@ pub mut:
 // install restic will return true if it was already installed
 pub fn install(args InstallArgs) ! {
 	if args.reset == false && osal.done_exists('install_restic') && osal.cmd_exists('restic') {
-		println(' - restic already installed')
+		console.print_header('restic already installed')
 		return
 	}
 
-	println(' - install restic')
+	console.print_header('install restic')
 
 	mut url := ''
 	mut binpath_ := ''

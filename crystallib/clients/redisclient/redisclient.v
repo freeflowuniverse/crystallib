@@ -103,7 +103,7 @@ fn (mut r RedisInternal) socket_connect() ! {
 
 fn (mut r RedisInternal) socket_check() ! {
 	r.socket.peer_addr() or {
-		// eprintln(' - re-connect socket for redis')
+		// console.print_debug(' - re-connect socket for redis')
 		r.socket_connect()!
 	}
 }

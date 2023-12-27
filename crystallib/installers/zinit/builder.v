@@ -25,7 +25,7 @@ pub fn build(args BuildArgs) ! {
 	rust.install()!
 
 	// install zinit if it was already done will return true
-	println(' - build zinit')
+	console.print_header('build zinit')
 
 	gitpath := gittools.code_get(coderoot: '/tmp/builder', url: zinit.url, reset: true, pull: true)!
 

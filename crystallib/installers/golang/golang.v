@@ -2,7 +2,7 @@ module golang
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
-
+import freeflowuniverse.crystallib.ui.console
 const go_version = '1.20.6'
 
 @[params]
@@ -17,9 +17,9 @@ pub fn install(args InstallArgs) ! {
 	base.install()!
 
 	// install golang if it was already done will return true
-	println(' - install golang')
+	console.print_header('install golang')
 	if !args.reset && osal.done_exists('install_golang') {
-		println(' - go already installed')
+		console.print_header('go already installed')
 		return
 	}
 

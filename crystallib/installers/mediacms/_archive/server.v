@@ -61,7 +61,7 @@ pub fn new(args_ Config) !Server {
 }
 
 pub fn get(name_ string) !Server {
-	println(' - get mediacms server ${name_}')
+	console.print_header('get mediacms server ${name_}')
 	name := texttools.name_fix(name_)
 	key := 'mediacms_config_${name}'
 	mut kvs := fskvs.new(name: 'config')!
@@ -107,7 +107,7 @@ pub fn (mut server Server) status() zinit.ZProcessStatus {
 
 // run mediacms as docker compose
 pub fn (mut server Server) start() ! {
-	println(' - start mediacms: ${server.name}')
+	console.print_header('start mediacms: ${server.name}')
 	mut db := postgresql.get(server.config.postgresql_name)!
 
 	// now create the DB
@@ -130,7 +130,7 @@ pub fn (mut server Server) start() ! {
 
 	// server.check()!
 
-	println(' - mediacms start ok.')
+	console.print_header('mediacms start ok.')
 }
 
 pub fn (mut server Server) restart() ! {
@@ -140,7 +140,7 @@ pub fn (mut server Server) restart() ! {
 
 pub fn (mut server Server) stop() ! {
 	print_backtrace()
-	println(' - stop mediacms: ${server.name}')
+	console.print_header('stop mediacms: ${server.name}')
 	mut process := server.process or { return }
 	return process.stop()
 }

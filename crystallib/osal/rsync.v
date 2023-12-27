@@ -1,6 +1,7 @@
 module osal
 
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct RsyncArgs {
@@ -48,7 +49,7 @@ pub fn rsync(args_ RsyncArgs) ! {
 	cmd:="rsync ${cmdoptions}"
 	$if debug {
 		if args_.stdout{
-			println(' - rsync command (osal):\n${cmd}')
+			console.print_header(' rsync command (osal):\n${cmd}')
 		}
 	}
 	exec(cmd:cmd,stdout:args_.stdout)!

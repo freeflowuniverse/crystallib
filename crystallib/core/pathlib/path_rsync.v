@@ -1,7 +1,7 @@
 module pathlib
 
 import os
-
+import freeflowuniverse.crystallib.ui.console
 @[params]
 pub struct RsyncArgs {
 pub mut:
@@ -35,7 +35,7 @@ pub fn rsync(args_ RsyncArgs) ! {
 	}
 	cmdoptions := rsync_cmd_options(args)!
 	$if debug {
-		println(' - rsync command:\n${cmdoptions}')
+		console.print_header(' rsync command:\n${cmdoptions}')
 	}
 	r  := os.execute("which rsync")
 	if r.exit_code > 0 {

@@ -20,7 +20,7 @@ pub fn build(args BuildArgs) ! {
 	rust.install()!
 
 	// install s3cas if it was already done will return true
-	println(' - build s3cas')
+	console.print_header('build s3cas')
 
 	osal.package_install('libssl-dev,pkg-config')!
 

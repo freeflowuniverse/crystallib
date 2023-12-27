@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.rust
 import freeflowuniverse.crystallib.installers.tailwind
+import freeflowuniverse.crystallib.ui.console
 import os
 
 @[params]
@@ -33,7 +34,7 @@ pub fn install(args_ InstallArgs) ! {
 	}
 
 	// install zola if it was already done will return true
-	println(' - install zola')
+	console.print_header('install zola')
 
 	mut url := ''
 	if osal.is_ubuntu() {
@@ -67,7 +68,7 @@ pub fn install(args_ InstallArgs) ! {
 // install zola will return true if it was already installed
 pub fn build() ! {
 	rust.install()!
-	println(' - install zola')
+	console.print_header('install zola')
 	if !osal.done_exists('install_zola') && !osal.cmd_exists('zola') {
 		// USE OUR PRIMITIVES (TODO, needs to change)
 		cmd := '
@@ -83,9 +84,9 @@ pub fn build() ! {
 		'
 		osal.execute_stdout(cmd)!
 		osal.done_set('install_zola', 'OK')!
-		println(' - zola installed')
+		console.print_header('zola installed')
 	} else {
-		println(' - zola already installed')
+		console.print_header('zola already installed')
 	}
 }
 

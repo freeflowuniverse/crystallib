@@ -132,7 +132,7 @@ pub fn (mut executor ExecutorSSH) upload(args SyncArgs) ! {
 pub fn (mut executor ExecutorSSH) environ_get() !map[string]string {
 	env := executor.exec(cmd:'env',stdout:false) or { return error('can not get environment') }
 	// if executor.debug {
-	// 	println(' - ${executor.ipaddr.addr} env get')
+	// 	console.print_header(' ${executor.ipaddr.addr} env get')
 	// }
 
 	mut res := map[string]string{}

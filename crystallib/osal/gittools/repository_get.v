@@ -1,6 +1,7 @@
 module gittools
 
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct RepoGetArgs {
@@ -34,7 +35,7 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !GitRepo {
 			mut branchname := st.branch
 			// println( " - branch detected: $branchname, branch on repo obj:'$r2.addr.branch'")
 			if st.branch != r2.addr.branch && args.pull {
-				println(' - branch switch ${branchname} -> ${r2.addr.branch} for ${r2.addr.remote_url}')
+				console.print_header(' branch switch ${branchname} -> ${r2.addr.branch} for ${r2.addr.remote_url}')
 				r2.branch_switch(r2.addr.branch)!
 			}
 		} else {
@@ -44,7 +45,7 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !GitRepo {
 		r2
 	}
 	if args.reset {
-		println(' - remove git changes: ${r.path.path}')
+		console.print_header(' remove git changes: ${r.path.path}')
 		r.remove_changes(reload: false)!
 	}
 	if args.pull {

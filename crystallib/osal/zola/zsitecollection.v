@@ -36,7 +36,7 @@ pub fn (mut b ZSite) playbook_add(args_ ZSiteCollectionArgs) ! {
 }
 
 pub fn (mut self ZSiteCollection) prepare() ! {
-	println(' - zola playbook prepare: ${self.url}')
+	console.print_header(' zola playbook prepare: ${self.url}')
 	mut gs := self.site.sites.gitstructure
 	mut locator := gs.locator_new(self.url)!
 	mut repo := gs.repo_get(locator: locator, reset: false, pull: false)!

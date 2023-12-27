@@ -3,6 +3,7 @@ module rclone
 import freeflowuniverse.crystallib.installers.golang
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.ui.console
 
 const url = 'https://github.com/rclone/rclone'
 
@@ -22,7 +23,7 @@ pub fn build(args BuildArgs) ! {
 	golang.install()!
 
 	// install rclone if it was already done will return true
-	println(' - build rclone')
+	console.print_header('build rclone')
 
 	gitpath := gittools.code_get(coderoot: '/tmp/builder', url: rclone.url, reset: true, pull: true)!
 

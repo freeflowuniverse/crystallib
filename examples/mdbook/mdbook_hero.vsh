@@ -3,7 +3,16 @@
 // import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.installers.mdbook
+import freeflowuniverse.crystallib.installers.restic
+import freeflowuniverse.crystallib.installers.zola
 import os
+
+console.print_header('Install some tools')
+mdbook.install()!
+restic.install()!
+zola.install()!
+
 
 console.print_header("Some test with mdbook.")
 
@@ -26,5 +35,5 @@ path_my_actions := '${os.dir(@FILE)}/books_actions/'
 session.plbook.add(path:path_my_actions)!
 
 //run all the actions
-session.plbook.run() 
+session.run()!
 

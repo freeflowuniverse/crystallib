@@ -30,7 +30,7 @@ pub fn install(args InstallArgs) ! {
 	checkplatform()!
 
 	if osal.done_exists('${args.name}_install') {
-		println(' - ${args.name} already installed')
+		console.print_header(' ${args.name} already installed')
 		return
 	}
 
@@ -51,7 +51,7 @@ pub fn install(args InstallArgs) ! {
 
 	osal.done_set('${args.name}_install', 'OK')!
 
-	println(' - ${args.name} installed properly.')
+	console.print_header(' ${args.name} installed properly.')
 }
 
 

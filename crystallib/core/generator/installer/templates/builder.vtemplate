@@ -44,7 +44,7 @@ pub fn build(args BuildArgs) ! {
 	@end
 		
 	// install ${args.name} if it was already done will return true
-	println(' - build ${args.name}')
+	console.print_header(' build ${args.name}')
 
 	// mut gs := gittools.get()!
 

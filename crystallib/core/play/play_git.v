@@ -2,7 +2,7 @@ module play
 
 import freeflowuniverse.crystallib.osal.gittools
 
-pub fn play_git(mut session Session) ! {
+pub fn (mut session Session) play_git() ! {
 	for mut action in session.plbook.find(filter: 'gittools.*')! {
 		mut p := action.params
 		mut repo := p.get_default('repo', '')!

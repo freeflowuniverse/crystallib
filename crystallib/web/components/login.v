@@ -39,7 +39,7 @@ pub fn login_new(req &ctx.Req, mut res ctx.Resp) {
 // on login post
 pub fn login_post(req &ctx.Req, mut res ctx.Resp) {
 	post_data := req.parse_form() or {
-		eprintln('Failed to parse form data.')
+		console.print_debug('Failed to parse form data.')
 		return
 	}
 

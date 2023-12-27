@@ -6,7 +6,7 @@ import json
 
 fn repo_load(addr GitAddr, path string) !GitRepoStatus {
 	// $if debug {
-	// println(' - git repo get: ${path}')
+	// console.print_header(' git repo get: ${path}')
 	// }
 
 	mut redis := redisclient.core_get()!
@@ -69,7 +69,7 @@ fn repo_load(addr GitAddr, path string) !GitRepoStatus {
 	addr2.branch = st.branch
 
 	// $if debug {
-	// 	println(' - loaded repo ${path}     --------     addr: ${addr2}')
+	// 	console.print_header(' loaded repo ${path}     --------     addr: ${addr2}')
 	// }
 
 	jsondata := json.encode(st)

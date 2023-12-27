@@ -171,7 +171,7 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 
 	if args.dest.len > 0 && args.dest != downloadpath.path {
 		// means we need to link or copy the downloaded content to a different location
-		// println(' - downloader dest link: ${args.dest}')
+		// console.print_header(' downloader dest link: ${args.dest}')
 		if downloadpath.is_file() {
 			// means its a file need to link differently
 			if args.destlink {

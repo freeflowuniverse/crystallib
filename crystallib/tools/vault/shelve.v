@@ -118,7 +118,7 @@ pub fn (mut shelve Shelve) latest(name string) Item {
 
 // add a file to the shelve
 pub fn (mut shelve Shelve) add(mut path pathlib.Path) !Item {
-	println(' - shelve: ${path}')
+	console.print_header(' shelve: ${path}')
 	if !path.exists() {
 		error("cannot find path to add to shell: '${path}'")
 	}

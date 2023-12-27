@@ -24,12 +24,18 @@ provision:
     #!/bin/bash
     set -eux -o pipefail
     exec &> /var/log/install_system.log
-    mkdir -p /root/.ssh    
-    # pacman -Syy --noconfirm
-    # pacman -Syu  --noconfirm mc 
-- mode: user
-  script: |
-    #!/bin/bash
-    set -eux -o pipefail
-    exec &> ~/install_user.log
-    sudo -s cp ~/.ssh/authorized_keys /root/.ssh/authorized_keys
+    set +e
+    yes | pacman -Syu --noconfirm
+    yes | pacman -Syu --noconfirm
+    yes | pacman -Sy --noconfirm rsync
+    set -e
+    ##### COMMON PART
+    echo ' - ssh authorization'
+    mkdir -p /root/.ssh
+    echo "iam:${iam}"
+    ls  /home/${iam}.linux/.ssh
+    cp  /home/${iam}.linux/.ssh/authorized_keys /root/.ssh/authorized_keys
+    chmod 0600 /root/.ssh/authorized_keys
+    mkdir -p /Users/${iam}/code
+    ln -s /Users/${iam}/code /root/code
+    echo "install done " >> /var/log/install_system.log

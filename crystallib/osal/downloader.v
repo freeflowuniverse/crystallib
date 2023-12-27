@@ -2,6 +2,7 @@ module osal
 
 import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct DownloadArgs {
@@ -24,7 +25,7 @@ pub mut:
 pub fn download(args_ DownloadArgs) !pathlib.Path {
 	mut args := args_
 
-
+	console.print_header("download: ${args.url}")
 	if args.name == '' {
 		if args.dest != '' {		
 			args.name=args.dest.split('/').last()
@@ -104,7 +105,7 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 			cmd: cmd
 			timeout: args.timeout
 			retry: args.retry
-			debug: true
+			debug: false
 			description: 'download ${args.url} to ${dest0.path}'
 			stdout: true
 		)!
@@ -127,7 +128,7 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 		dest.check()
 	}
 
-	println(dest)
+	// println(dest)
 
 	// if true{panic("s")}
 

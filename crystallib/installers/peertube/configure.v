@@ -44,6 +44,6 @@ fn configure_init(reset bool, mut args Config) ! {
 	//                               "${dest}/entrypoint.sh",reset)!
 
 	$if debug {
-		println(' - peertube configured properly.')
+		console.print_header('peertube configured properly.')
 	}
 }

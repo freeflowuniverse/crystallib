@@ -149,11 +149,11 @@ pub fn exec(cmd Command) !Job {
 
 	if job.cmd.debug {
 		job.cmd.stdout = true
-		println(' - execute: \n${job.cmd}')
+		console.print_header(' execute: \n${job.cmd}')
 	}
 
 	if cmd.shell {
-		println(' - cmd shell')
+		console.print_header(' cmd shell')
 		process_args := job.cmd_to_process_args()!
 		if cmd.retry > 0 {
 			job.error << 'cmd retry cannot be > 0 if shell used'

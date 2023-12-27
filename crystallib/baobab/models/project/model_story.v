@@ -71,7 +71,7 @@ pub mut:
 // 	mut comments := Comments{}
 // 	lines << '# END'
 // 	for line in lines {
-// 		println(' -- ${line}')
+// 		console.print_header('- ${line}')
 // 		argsfound, params := line_parser_params(line)?
 // 		if argsfound {
 // 			story.params_process(params)?

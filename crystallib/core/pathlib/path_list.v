@@ -3,7 +3,7 @@ module pathlib
 import os
 import regex
 import freeflowuniverse.crystallib.baobab.smartid
-
+import freeflowuniverse.crystallib.ui.console
 @[params]
 pub struct ListArgs {
 pub mut:
@@ -40,7 +40,7 @@ pub mut:
 // please note links are ignored for walking over dirstructure (for files and dirs)
 pub fn (mut path Path) list(args_ ListArgs) !PathList {
 	// $if debug {
-	// 	println(' - list: ${args_}')
+	// 	console.print_header(' list: ${args_}')
 	// }
 	mut r := []regex.RE{}
 	for regexstr in args_.regex {
@@ -81,14 +81,14 @@ fn (mut path Path) list_internal(args ListArgsInternal) ![]Path {
 		return []Path{}
 	}
 	if debug {
-		println(' - ${path.path}')
+		console.print_header(' ${path.path}')
 	}
 	mut ls_result := os.ls(path.path) or { []string{} }
 	ls_result.sort()
 	mut all_list := []Path{}
 	for item in ls_result {
 		if debug {
-			println('  - ${item}')
+			console.print_stdout('  - ${item}')
 		}
 		p := os.join_path(path.path, item)
 		mut new_path := get(p)

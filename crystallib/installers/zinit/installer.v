@@ -26,7 +26,7 @@ pub fn install(args InstallArgs) ! {
 		return
 	}
 
-	println(' - install zinit')
+	console.print_header('install zinit')
 
 	build()!
 	start()!

@@ -54,7 +54,7 @@ pub enum IProcessStatus {
 
 pub fn (mut zp IProcess) start() ! {
 	mut p := pathlib.get_file(path: '${zp.initd.path.path}/${zp.name}.service', create: true)!
-	println(' - initd write service: ${p.path}')
+	console.print_header(' initd write service: ${p.path}')
 	servicecontent := $tmpl('templates/service.yaml')
 	p.write(servicecontent)!
 	cmd := '

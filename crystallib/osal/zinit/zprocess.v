@@ -49,7 +49,7 @@ pub fn (mut zinit Zinit) process_new(args_ ZProcessNewArgs) !ZProcess {
 
 	args.name = texttools.name_fix(args.name)
 
-	println(' - zinit process new: ${args.name}')
+	console.print_header(' zinit process new: ${args.name}')
 
 	if args.cmd.len == 0 {
 		$if debug {
@@ -160,7 +160,7 @@ log: ring
 }
 
 pub fn (zp ZProcess) start() ! {
-	println(' - start ${zp.name}')
+	console.print_header(' start ${zp.name}')
 	mut client := new_rpc_client()
 	if !client.isloaded(zp.name) {
 		client.monitor(zp.name)! // means will check it out
@@ -168,7 +168,7 @@ pub fn (zp ZProcess) start() ! {
 }
 
 pub fn (mut zp ZProcess) stop() ! {
-	println(' - stop ${zp.name}')
+	console.print_header(' stop ${zp.name}')
 	st := zp.status()!
 	if st in [.unknown, .error, .killed] {
 		return
@@ -179,7 +179,7 @@ pub fn (mut zp ZProcess) stop() ! {
 }
 
 pub fn (mut zp ZProcess) destroy() ! {
-	println(' - destroy ${zp.name}')
+	console.print_header(' destroy ${zp.name}')
 	zp.stop()!
 	mut client := new_rpc_client()
 	client.forget(zp.name) or {}

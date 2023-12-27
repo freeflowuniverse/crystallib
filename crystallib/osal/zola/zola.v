@@ -96,7 +96,7 @@ pub fn (mut self Zola) watch(args WatchArgs) {
 		t.now()
 		println('${t} ${t.unix_time()} period:${args.period}')
 		if t.unix_time() > last + args.period {
-			println(' - will try to check the websites for zola.')
+			console.print_header(' will try to check the websites for zola.')
 			self.pull() or { " - ERROR: couldn't check the repo's.\n${err}" }
 			last = t.unix_time()
 		}

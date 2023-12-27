@@ -3,6 +3,7 @@ module imagemagick
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.ui.console
 
 pub struct DownsizeArgs {
 pub:
@@ -47,7 +48,7 @@ pub fn downsize(args DownsizeArgs) ! {
 /////////////////
 
 fn installed0() bool {
-	// println(' - init imagemagick')
+	// console.print_header(' init imagemagick')
 	out := osal.execute_silent('convert -version') or { return false }
 	if !out.contains('ImageMagick') {
 		return false
@@ -99,7 +100,7 @@ fn executor_imagemagic(mut path pathlib.Path, mut params_ paramsparser.Params) !
 	if path.is_dir() {
 		return params_
 	}
-	println(' - image check ${path.path}')
+	console.print_header(' image check ${path.path}')
 	mut backupdir := ''
 	if params_.exists('backupdir') {
 		backupdir = params_.get('backupdir') or { panic(error) }

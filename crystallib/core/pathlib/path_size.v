@@ -9,7 +9,7 @@ pub fn (mut path Path) size_kb() !int {
 
 pub fn (mut path Path) size() !f64 {
 	path.check_exists()!
-	// println(" - filesize: $path.path")
+	// console.print_header(' filesize: $path.path")
 	if path.cat == .file {
 		return os.file_size(path.path)
 	} else {

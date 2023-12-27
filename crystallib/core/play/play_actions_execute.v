@@ -72,8 +72,3 @@ fn (mut session Session) actions_execute(mut plbook playbook.PlayBook) ! {
 		action.done = true
 	}
 }
-
-fn (mut session Session) playbook_core_execute() ! {
-	play_git(mut session)!
-	play_ssh(mut session)!
-}

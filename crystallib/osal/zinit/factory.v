@@ -57,10 +57,10 @@ pub fn destroy() ! {
 	initd_proc_get(delete: true, start: false)!
 	mut zinitpath := pathlib.get_dir(path: '/etc/zinit', create: true)!
 	zinitpath.empty()!
-	println(' - zinit destroyed')
+	console.print_header(' zinit destroyed')
 }
 
 pub fn start() ! {
-	println(' - zinit start')
+	console.print_header(' zinit start')
 	initd_proc_get(delete: true, start: true)!
 }

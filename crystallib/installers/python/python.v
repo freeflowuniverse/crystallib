@@ -6,14 +6,14 @@ import freeflowuniverse.crystallib.installers.base
 pub fn install() ! {
 	if !osal.done_exists('install_python') && !osal.cmd_exists('python') {
 		base.install()!
-		println(' - package install install python')
+		console.print_header('package install install python')
 		osal.package_install('python3')!
 		// cmd := '
 		// '
 		// osal.execute_silent(cmd)!
 		osal.done_set('install_python', 'OK')!
 	}
-	// println(' - python already done')
+	// console.print_header('python already done')
 }
 
 pub fn check() ! {

@@ -25,7 +25,7 @@ pub fn (mut plbook PlayBook) filtersort(args FilterSortArgs) ! {
 	for prio in nrs {
 		argsfilter := args.priorities[prio] or { panic('bug') }
 		mut actionsfound := plbook.find(filter: argsfilter)!
-		// println(" -- ${prio}:(${actionsfound.len})\n${argsfilter}")
+		// console.print_header('- ${prio}:(${actionsfound.len})\n${argsfilter}")
 		for mut actionfiltered in actionsfound {
 			if actionfiltered.id in plbook.done {
 				continue
@@ -89,7 +89,7 @@ fn (action Action) match_items(items []string) bool {
 			name = p.trim_space()
 			actor = 'core'
 		}
-		// println(" -- checkmatch:${actor}:${name}")
+		// console.print_header('- checkmatch:${actor}:${name}")
 		if action.checkmatch(actor: actor, name: name) {
 			return true
 		}

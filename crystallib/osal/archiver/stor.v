@@ -21,7 +21,7 @@ fn filter_base(mut path pathlib.Path, mut params paramsparser.Params) !bool {
 }
 
 fn executor(mut patho pathlib.Path, mut params paramsparser.Params) !paramsparser.Params {
-	println(' - exec: ${patho.path}')
+	console.print_header(' exec: ${patho.path}')
 	if patho.is_dir {
 	}
 	return params

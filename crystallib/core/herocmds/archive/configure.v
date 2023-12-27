@@ -103,7 +103,7 @@ fn cmd_configure_execute(cmd Command) ! {
 		// println(data)
 	}
 	if push.len > 0 {
-		println(" - will push config: ${instance} to '${push}'")
+		console.print_header(' will push config: ${instance} to '${push}'")
 		path := '${os.home_dir()}/hero/db/config/${category}_config_${instance}'
 		path_dest := '~/hero/db/config/${category}_config_${instance}'
 		if !os.exists(path) {

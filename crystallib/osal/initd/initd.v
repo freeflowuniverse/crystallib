@@ -36,7 +36,7 @@ pub fn new() !Initd {
 }
 
 fn (mut initdobj Initd) load() ! {
-	println(' - initd load')
+	console.print_header(' initd load')
 	cmd := 'systemctl list-units --type=service'
 	r := osal.execute_silent(cmd)!
 	res := os.execute(cmd)

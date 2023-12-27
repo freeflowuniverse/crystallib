@@ -14,7 +14,7 @@ pub fn generate()! {
 
     // Decoding the JSON string into the Openapi struct
     mut api_data := json.decode(OpenAPI, json_str) or {
-        eprintln('Failed to decode JSON: $err')
+        console.print_debug('Failed to decode JSON: $err')
         return
     }
 

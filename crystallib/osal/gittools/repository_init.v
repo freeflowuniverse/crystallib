@@ -2,16 +2,18 @@ module gittools
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.sshagent
+import freeflowuniverse.crystallib.ui.console
+
 
 // this will clone the repo if it doesn't exist yet
 fn (mut repo GitRepo) load_from_url() ! {
 	// first check if path does not exist yet, if not need to clone
 	if !(repo.path.exists()) {
 		url := repo.addr.url_http_with_branch_get()
-		// println(' - check repo:$url, pull:$args.pull, reset:$args.reset')
+		// console.print_header(' check repo:$url, pull:$args.pull, reset:$args.reset')
 		// println(repo.addr)
 		// need to get the status of the repo
-		// println(' - repo $repo.name() check')
+		// console.print_header(' repo $repo.name() check')
 		mut needs_to_be_ssh := false
 
 		// check if there is a custom key to be used (sshkey)
@@ -20,7 +22,7 @@ fn (mut repo GitRepo) load_from_url() ! {
 		// 	needs_to_be_ssh = true
 		// }
 
-		println(' - missing repo, pull: ${url} -> ${repo.path.path}')
+		console.print_header(' missing repo, pull: ${url} -> ${repo.path.path}')
 		if !needs_to_be_ssh && sshagent.loaded() {
 			needs_to_be_ssh = true
 		}
@@ -35,8 +37,8 @@ fn (mut repo GitRepo) load_from_url() ! {
 			// println("GIT: PULL USING HTTP")
 			cmd = repo.get_clone_cmd(true)
 		}
-		osal.exec(cmd: cmd, debug: true) or {
-			println(' GIT FAILED: ${cmd}')
+		osal.exec(cmd: cmd, debug: false) or {
+			console.print_stderr('GIT FAILED: ${cmd}')
 			return error('Cannot pull repo: ${repo.addr.path()}. Error was ${err}')
 		}
 		repo.load()!
@@ -46,7 +48,7 @@ fn (mut repo GitRepo) load_from_url() ! {
 // path needs to exit, load all from disk
 fn (mut repo GitRepo) load_from_path() ! {
 	$if debug {
-		println(' - load from path: ${repo.path.path}')
+		console.print_header(' load from path: ${repo.path.path}')
 	}
 
 	repo.status()!

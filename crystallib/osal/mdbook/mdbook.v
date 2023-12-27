@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.osal
 import os
 // import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct MDBook {
@@ -13,7 +14,7 @@ pub mut:
 	url          string
 	path_build   pathlib.Path
 	path_publish pathlib.Path
-	playbooks    []MDBookCollection
+	collections    []MDBookCollection
 	gitrepokey   string
 	title        string
 }
@@ -52,7 +53,7 @@ pub fn (mut books MDBooks) book_new(args MDBookArgs) !&MDBook {
 
 // only executes at init time
 fn (mut book MDBook) clone() ! {
-	for mut c in book.playbooks {
+	for mut c in book.collections {
 		c.clone()!
 	}
 }
@@ -64,9 +65,9 @@ fn (mut book MDBook) prepare() ! {
 	mut path_summary := path_summary_dir.file_get_ignorecase('summary.md')!
 	os.mkdir_all('${book.path_build.path}/src')!
 	path_summary.link('${book.path_build.path}/src/SUMMARY.md', true)!
-	println(' - mdbook summary: ${path_summary.path}')
+	console.print_header(' mdbook summary: ${path_summary.path}')
 	book.template_install()!
-	println(' - mdbook prepared: ${book.path_build.path}')
+	console.print_header(' mdbook prepared: ${book.path_build.path}')
 }
 
 pub fn (mut book MDBook) generate() ! {
@@ -74,7 +75,7 @@ pub fn (mut book MDBook) generate() ! {
 	// if book.changed() == false {
 	// 	return
 	// }
-	println(' - book generate: ${book.name} on ${book.path_build.path}')
+	console.print_header(' book generate: ${book.name} on ${book.path_build.path}')
 
 	// write the css files
 	for item in book.books.embedded_files {
@@ -83,7 +84,7 @@ pub fn (mut book MDBook) generate() ! {
 			// osal.file_write('${html_path.trim_right('/')}/css/${css_name}', item.to_string())!
 
 			dpath := '${book.path_publish.path}/css/${css_name}'
-			println(' - templ ${dpath}')
+			console.print_header(' templ ${dpath}')
 			mut dpatho := pathlib.get_file(path: dpath, create: true)!
 			dpatho.write(item.to_string())!
 
@@ -110,7 +111,7 @@ fn (mut book MDBook) template_install() ! {
 	// get embedded files to the mdbook dir
 	for item in book.books.embedded_files {
 		dpath := '${book.path_build.path}/${item.path.all_after_first('/')}'
-		println(' - embed: ${dpath}')
+		console.print_header(' embed: ${dpath}')
 		mut dpatho := pathlib.get_file(path: dpath, create: true)!
 		dpatho.write(item.to_string())!
 	}
@@ -160,9 +161,9 @@ fn (mut book MDBook) summary_image_set() ! {
 fn (mut book MDBook) gitrepo_keys() []string {
 	mut res := []string{}
 	res << book.gitrepokey
-	for playbook in book.playbooks {
-		if playbook.gitrepokey !in res {
-			res << playbook.gitrepokey
+	for collection in book.collections {
+		if collection.gitrepokey !in res {
+			res << collection.gitrepokey
 		}
 	}
 	return res

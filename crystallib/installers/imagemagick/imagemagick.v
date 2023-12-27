@@ -1,6 +1,7 @@
 module imagemagick
 
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.ui.console
 import os
 import freeflowuniverse.crystallib.installers.base
 import process
@@ -10,7 +11,7 @@ const installername = os.base(os.dir(@FILE))
 
 // install imagemagick will return true if it was already installed
 pub fn install() ! {
-	println(' - package_install install ${imagemagick.installername}')
+	console.print_header('package_install install ${imagemagick.installername}')
 	if !osal.done_exists('install_${imagemagick.installername}') {
 		if osal.platform() == .ubuntu {
 			osal.package_install(name: 'imagemagick')!
@@ -19,5 +20,5 @@ pub fn install() ! {
 		}
 		osal.done_set('install_${imagemagick.installername}', 'OK')!
 	}
-	println(' - ${imagemagick.installername} already done')
+	console.print_header('${imagemagick.installername} already done')
 }

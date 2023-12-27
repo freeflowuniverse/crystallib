@@ -60,7 +60,7 @@ fn do() ! {
 	content := $tmpl('templates/generated.vtemplate').replace('&&', '$')
 	gpath := '${outpathloc}/generated.v'
 	mut outpath := pathlib.get_file(path: gpath, create: true)!
-	println(' - write ${gpath}')
+	console.print_header(' write ${gpath}')
 	outpath.write(content)!
 
 	for eo in elementsobj {
@@ -68,7 +68,7 @@ fn do() ! {
 		e_path := '${outpathloc}/element_${eo.name}.v'
 		if !os.exists(e_path) || eo.overwrite {
 			mut outpath2 := pathlib.get_file(path: e_path, create: true)!
-			println(' - write ${e_path}')
+			console.print_header(' write ${e_path}')
 			outpath2.write(content2)!
 		}
 	}

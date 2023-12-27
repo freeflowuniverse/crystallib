@@ -11,7 +11,7 @@ pub fn install() ! {
 	}
 
 	if osal.done_exists('zitadel_install') {
-		println(' - zitadel binaraies already installed')
+		console.print_header('zitadel binaraies already installed')
 		return
 	}
 
@@ -40,5 +40,5 @@ pub fn install() ! {
 
 	osal.done_set('zitadel_install', 'OK')!
 
-	println(' - zitadel installed properly.')
+	console.print_header('zitadel installed properly.')
 }

@@ -12,7 +12,7 @@ pub fn install(args Config) ! {
 	docker.install()!
 
 	if osal.done_exists('mediacms_install') {
-		println(' - mediacms already installed')
+		console.print_header('mediacms already installed')
 		return
 	}
 
@@ -22,5 +22,5 @@ pub fn install(args Config) ! {
 
 	osal.done_set('mediacms_install', 'OK')!
 
-	println(' - mediacms installed properly.')
+	console.print_header('mediacms installed properly.')
 }

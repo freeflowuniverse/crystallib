@@ -2,7 +2,7 @@ module podman
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
-
+import freeflowuniverse.crystallib.ui.console
 import os
 @[params]
 pub struct InstallArgs {
@@ -15,14 +15,14 @@ pub fn install(args_ InstallArgs) ! {
 	mut args:=args_
 	// base.install()!
 	if args.reset || args.uninstall{
-		println(' - uninstall podman')
+		console.print_header('uninstall podman')
 		uninstall()!
 		println(" - ok")
 		if args.uninstall{
 			return 
 		}		
 	}
-	println(' - package_install install podman')
+	console.print_header('package_install install podman')
 	if !args.reset && osal.done_exists('install_podman') && exists()! {
 		println(" - already installed")
 		return
@@ -43,7 +43,7 @@ pub fn install(args_ InstallArgs) ! {
 		}
 		dest='/tmp/podman.tar.gz'
 	}
-	println(' - download ${url}')
+	console.print_header('download ${url}')
 	osal.download(
 		url: url
 		minsize_kb: 75000

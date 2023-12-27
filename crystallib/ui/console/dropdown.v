@@ -21,10 +21,10 @@ fn (mut c UIConsole) ask_dropdown_internal(args DropDownArgs) !string {
 	mut nr := 0
 	for item in items2 {
 		nr += 1
-		println(' - ${nr} : ${item}')
+		console.print_header(' ${nr} : ${item}')
 	}
 	if args.all {
-		println(' - all : *')
+		console.print_header(' all : *')
 	}
 	if args.default.len > 0 {
 		println('\n - default : ${args.default.join(',')} (press enter to select default)')

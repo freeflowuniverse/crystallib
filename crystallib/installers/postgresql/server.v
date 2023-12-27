@@ -54,7 +54,7 @@ pub fn new(args_ Config) !Server {
 }
 
 pub fn get(name_ string) !Server {
-	println(' - get postgresql server ${name_}')
+	console.print_header('get postgresql server ${name_}')
 	name := texttools.name_fix(name_)
 	key := 'postgres_config_${name}'
 	mut kvs := fskvs.new(name: 'config')!
@@ -103,7 +103,7 @@ pub fn (mut server Server) start() ! {
 		return
 	}
 
-	println(' - start postgresql: ${server.name}')
+	console.print_header('start postgresql: ${server.name}')
 
 	t1 := $tmpl('templates/compose.yaml')
 	mut p1 := server.path_config.file_get_new('compose.yaml')!
@@ -134,7 +134,7 @@ pub fn (mut server Server) start() ! {
 
 	server.check()!
 
-	println(' - postgres login check worked')
+	console.print_header('postgres login check worked')
 }
 
 pub fn (mut server Server) restart() ! {
@@ -144,7 +144,7 @@ pub fn (mut server Server) restart() ! {
 
 pub fn (mut server Server) stop() ! {
 	print_backtrace()
-	println(' - stop postgresql: ${server.name}')
+	console.print_header('stop postgresql: ${server.name}')
 	mut process := server.process or { return }
 	return process.stop()
 }
@@ -179,7 +179,7 @@ pub fn (mut server Server) db_exists(name_ string) !bool {
 	// SELECT datname FROM pg_database WHERE datname='gitea';
 	r := db.exec("SELECT datname FROM pg_database WHERE datname='${name_}';")!
 	if r.len == 1 {
-		println(' - db exists: ${name_}')
+		console.print_header('db exists: ${name_}')
 		return true
 	}
 	if r.len > 1 {
@@ -199,7 +199,7 @@ pub fn (mut server Server) db_create(name_ string) ! {
 	)!
 	db_exists := server.db_exists(name_)!
 	if !db_exists {
-		println(' - db create: ${name_}')
+		console.print_header('db create: ${name_}')
 		db.exec('CREATE DATABASE ${name};')!
 	}
 	db_exists2 := server.db_exists(name_)!
@@ -219,7 +219,7 @@ pub fn (mut server Server) db_delete(name_ string) ! {
 	)!
 	db_exists := server.db_exists(name_)!
 	if db_exists {
-		println(' - db delete: ${name_}')
+		console.print_header('db delete: ${name_}')
 		db.exec('DROP DATABASE ${name};')!
 	}
 	db_exists2 := server.db_exists(name_)!

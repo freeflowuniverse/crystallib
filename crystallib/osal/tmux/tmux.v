@@ -39,7 +39,7 @@ pub fn (mut tmux Tmux) load() ! {
 
 pub fn (mut t Tmux) stop() ! {
 	$if debug {
-		eprintln('Stopping tmux...')
+		console.print_debug('Stopping tmux...')
 	}
 
 	t.sessions = []&Session{}

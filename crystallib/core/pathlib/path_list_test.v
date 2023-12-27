@@ -21,21 +21,21 @@ fn testsuite_end() {
 }
 
 fn test_list() {
-	println('************ TEST_list ************')
+	console.print_stdout('************ TEST_list ************')
 	mut test_path_dir := pathlib.get('${testpath}')
 	result := test_path_dir.list(recursive: true) or { panic(err) }
 	println(result)
 }
 
 fn test_list_dirs() {
-	println('************ TEST_list_dir ************')
+	console.print_stdout('************ TEST_list_dir ************')
 	mut test_path_dir := pathlib.get('${testpath}')
 	result := test_path_dir.dir_list(recursive: true) or { panic(err) }
 	println(result)
 }
 
 fn test_list_files() {
-	println('************ TEST_list_files ************')
+	console.print_stdout('************ TEST_list_files ************')
 	mut test_path_dir := pathlib.get('${testpath}')
 	mut fl := test_path_dir.list() or { panic(err) }
 	result := fl.paths
@@ -43,7 +43,7 @@ fn test_list_files() {
 }
 
 fn test_list_links() {
-	println('************ TEST_list_link ************')
+	console.print_stdout('************ TEST_list_link ************')
 	mut test_path_dir := pathlib.get('${testpath}')
 	result := test_path_dir.link_list(pathlib.ListArgs{}) or { panic(err) }
 	println(result)

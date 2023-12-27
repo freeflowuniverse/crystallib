@@ -2,6 +2,7 @@ module rclone
 
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.core.texttools
 // import os
@@ -19,11 +20,11 @@ pub fn install(args InstallArgs) ! {
 	}
 
 	if args.reset == false && osal.done_exists('install_rclone') && osal.cmd_exists('rclone') {
-		println(' - rclone already installed')
+		console.print_header('rclone already installed')
 		return
 	}
 
-	println(' - install rclone')
+	console.print_header('install rclone')
 
 	// make sure we install base on the node
 	base.install()!

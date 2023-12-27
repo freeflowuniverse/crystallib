@@ -2,6 +2,7 @@ module herocmds
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
+import freeflowuniverse.crystallib.ui.console
 import cli { Command, Flag }
 
 pub fn cmd_init(mut cmdroot Command) {
@@ -52,6 +53,6 @@ fn cmd_init_execute(cmd Command) ! {
 	}
 
 	r := osal.profile_path_add_hero()!
-	println(' - add path ${r} to profile.')
-	println(' - hero init ok.')
+	console.print_header(' add path ${r} to profile.')
+	console.print_header(' hero init ok.')
 }

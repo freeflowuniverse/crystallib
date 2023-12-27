@@ -63,7 +63,7 @@ pub fn (mut plbook PlayBook) add(args_ PLayBookAddArgs) ! {
 			continue
 		}
 
-		// println(" - state:${state} action:'${action.name}' comments:'${comments.len}' -> '${line}'")
+		// console.print_header(' state:${state} action:'${action.name}' comments:'${comments.len}' -> '${line}'")
 
 		if state == .action {
 			if !line.starts_with('  ') || line_strip == '' || line_strip.starts_with('!') {
@@ -74,7 +74,7 @@ pub fn (mut plbook PlayBook) add(args_ PLayBookAddArgs) ! {
 				comments = []string{}
 				paramsdata = []string{}
 				action = &Action{}
-				// println(' - action end')
+				// console.print_header(' action end')
 			} else {
 				paramsdata << line_strip
 			}
@@ -140,7 +140,7 @@ pub fn (mut plbook PlayBook) add(args_ PLayBookAddArgs) ! {
 					print_backtrace()
 					return error('for now we only support actions with 1 or 2 parts.\n${actionname}')
 				}
-				// println(' - action new: ${action.actor}:${action.name} params:${paramsdata}')
+				// console.print_header(' action new: ${action.actor}:${action.name} params:${paramsdata}')
 				continue
 			} else if line.starts_with('//') {
 				state = .comment_for_action_maybe

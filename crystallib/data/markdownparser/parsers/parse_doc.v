@@ -20,7 +20,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 
 		mut llast := parser.lastitem()!
 
-		println(' -- line: ${llast.type_name} ${line}')
+		console.print_header('- line: ${llast.type_name} ${line}')
 
 		if mut llast is elements.Table {
 			if trimmed_line != '' {

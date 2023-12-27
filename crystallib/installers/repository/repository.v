@@ -1,6 +1,7 @@
 module repository
 
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.ui.console
 // install repository will return true if it was already installed
 
 pub fn install(repo_url string) ! {
@@ -8,7 +9,7 @@ pub fn install(repo_url string) ! {
 	mut repo_name := split_url[split_url.len - 1].trim_string_right('.git')
 	mut repo_owner := split_url[split_url.len - 2]
 	// install repository if it was already done will return true
-	println(' - package_install install repository: ${repo_owner}/${repo_name}')
+	console.print_header('package_install install repository: ${repo_owner}/${repo_name}')
 	if !(i.state == .reset) && osal.done_exists('install_${repo_owner}/${repo_name}') {
 		println('    package_install ${repo_owner}/${repo_name} was already done')
 		return

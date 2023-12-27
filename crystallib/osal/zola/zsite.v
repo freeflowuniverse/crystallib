@@ -58,7 +58,7 @@ pub fn (mut site ZSite) generate() ! {
 	if site.changed() == false {
 		return
 	}
-	println(' - site generate: ${site.name} on ${site.path_build.path}')
+	console.print_header(' site generate: ${site.name} on ${site.path_build.path}')
 	println('bash ${site.path_build.path}/build.sh')
 	// TODO: should not be the build, it should be the native command without the build script
 	os.execute('bash ${site.path_build.path}/build.sh')

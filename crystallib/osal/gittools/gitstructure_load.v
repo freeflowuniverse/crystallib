@@ -60,7 +60,7 @@ fn (mut gitstructure GitStructure) reload() ! {
 // // internal function to be executed in thread
 // fn repo_refresh(addr GitAddr, path string) {
 // 	repo_load(addr, path) or { panic(err) }
-// 	// println(' - thread done: ${path}')
+// 	// console.print_header(' thread done: ${path}')
 // 	// println(" ==== ${addr.name}")
 // 	// r.load() or {panic(err)}
 // }
@@ -78,7 +78,7 @@ fn (mut gitstructure GitStructure) reload() ! {
 // 	// println(" - wait for threads")
 // 	// time.sleep(time.Duration(time.second)*10)
 // 	// threads.wait()
-// 	// println(' - all repo refresh jobs finished.')
+// 	// console.print_header(' all repo refresh jobs finished.')
 // }
 
 fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []string) ! {

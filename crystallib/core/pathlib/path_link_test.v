@@ -18,7 +18,7 @@ fn testsuite_end() {
 }
 
 fn test_link() {
-	println('************ TEST_link ************')
+	console.print_stdout('************ TEST_link ************')
 	mut source1 := pathlib.get('${testpath}/test_parent/testfile2.md')
 	mut source2 := pathlib.get('${testpath}/test_parent/testfile3.md')
 	mut source3 := pathlib.get('${testpath}/testfile1.md')
@@ -58,11 +58,11 @@ fn test_link() {
 	assert dest.realpath() == source2.path // dest reamins unchanged
 
 	dest.delete()!
-	println('Link function working correctly')
+	console.print_stdout('Link function working correctly')
 }
 
 fn test_readlink() {
-	println('************ TEST_readlink ************')
+	console.print_stdout('************ TEST_readlink ************')
 	// test with none link path
 	mut source := pathlib.get('${testpath}/test_parent/testfile2.md')
 	mut dest_ := '${testpath}/test_readlink.md'
@@ -80,11 +80,11 @@ fn test_readlink() {
 	assert link_source == 'test_parent/testfile2.md'
 
 	dest.delete()!
-	println('Readlink function working correctly')
+	console.print_stdout('Readlink function working correctly')
 }
 
 fn test_unlink() {
-	println('************ TEST_unlink ************')
+	console.print_stdout('************ TEST_unlink ************')
 	// test with filelink path
 
 	mut source := pathlib.get('${testpath}/test_parent/testfile2.md')
@@ -103,11 +103,11 @@ fn test_unlink() {
 	dest.delete()!
 
 	// TODO: maybe more edge cases?
-	println('Unlink function working correctly')
+	console.print_stdout('Unlink function working correctly')
 }
 
 fn test_relink() {
-	println('************ TEST_relink ************')
+	console.print_stdout('************ TEST_relink ************')
 
 	mut source := pathlib.get('${testpath}/test_parent/testfile2.md')
 	mut dest_ := '${testpath}/test_relink.md'

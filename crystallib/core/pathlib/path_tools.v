@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.core.texttools
 import time
 import crypto.md5
 import rand
+import freeflowuniverse.crystallib.ui.console
 
 // check path exists
 pub fn (mut path Path) exists() bool {
@@ -38,7 +39,7 @@ pub fn (mut path Path) rename(name string) ! {
 // if copy then will keep the original
 pub fn (mut path Path) expand(dest string) !Path {
 	$if debug {
-		println(' - expand ${path.path}')
+		console.print_header('expand ${path.path}')
 	}
 	if dest.len < 4 {
 		return error("Path dest needs to be mentioned and +4 char. Now '${dest}'")
@@ -82,15 +83,17 @@ pub fn (mut path Path) expand(dest string) !Path {
 			return error('Could not expand zip.\n${res}')
 		}
 	} else if path.name().to_lower().ends_with('.bz2') {
-		cmd := 'bunzip2 -k ${path.path}'
+		cmd := '
+			bunzip2 -f -k ${path.path}
+			'
 		// println(cmd)
 		res := os.execute(cmd)
 		// println(res)
 		if res.exit_code > 0 {
-			return error('Could not expand bz2.\n${res}')
+			return error('Could not expand bz2.\n${res.output}')
 		}
 	} else {
-		panic('expand not implemented yet for : ${path}')
+		panic('expand not implemented yet for : ${path.path}')
 	}
 	return desto
 }
@@ -109,7 +112,7 @@ pub fn (mut path Path) chmod(mode int) ! {
 // get relative path in relation to destpath .
 // will not resolve symlinks
 pub fn (path Path) path_relative(destpath string) !string {
-	// println(" - path relative: '$path.path' '$destpath'")
+	// console.print_header(' path relative: '$path.path' '$destpath'")
 	return path_relative(destpath, path.path)
 }
 
@@ -220,7 +223,7 @@ pub fn (mut path Path) moveup_single_subdir() ! {
 // the path will move itself up 1 level .
 // the e.g. /tmp/rclone/rclone-v1.64.2-linux-amd64/ -> /tmp/rclone
 pub fn (mut path Path) moveup() ! {
-	println('move up: ${path}')
+	console.print_stdout('move up: ${path}')
 	pdest := path.parent()!
 	tmpdir := '${os.temp_dir()}/${rand.u16()}'
 	path.move(dest: tmpdir, delete: true)!
@@ -393,8 +396,8 @@ pub fn path_relative(source_ string, linkpath_ string) !string {
 	source_short = source_short.trim_string_left('/')
 	linkpath_short = linkpath_short.trim_string_left('/')
 
-	println('source: ${source_short}')
-	println('link: ${linkpath_short}')
+	// console.print_stdout('source: ${source_short}')
+	// console.print_stdout('link: ${linkpath_short}')
 
 	source_count := source_short.count('/')
 	// link_count := linkpath_short.count('/')

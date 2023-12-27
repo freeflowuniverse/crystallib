@@ -144,7 +144,7 @@ fn site_www_deliver(config publisher_config.ConfigRoot, domain string, path stri
 	path2 = os.join_path(site_path, path2)
 
 	if !os.exists(path2) {
-		println(' - ERROR: cannot find path:${path2}')
+		console.print_header(' ERROR: cannot find path:${path2}')
 		return app.not_found()
 	} else {
 		if os.is_dir(path2) {
@@ -262,7 +262,7 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path str
 		}
 	} else {
 		filetype, path2 := path_wiki_get(config, sitename, name) or {
-			println(' - ERROR: could not get path for: ${sitename}:${name}\n${err}')
+			console.print_header(' ERROR: could not get path for: ${sitename}:${name}\n${err}')
 			return app.not_found()
 		}
 		if debug {
@@ -274,7 +274,7 @@ fn site_wiki_deliver(config publisher_config.ConfigRoot, domain string, path str
 		} else {
 			if !os.exists(path2) {
 				if debug {
-					println(' - ERROR: cannot find path:${path2}')
+					console.print_header(' ERROR: cannot find path:${path2}')
 				}
 				return app.not_found()
 			} else {

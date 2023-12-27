@@ -16,7 +16,7 @@ pub fn install() ! {
 
 	build()!
 
-	println(' - install s3')
+	console.print_header('install s3')
 
 	osal.done_set('install_s3', 'OK')!
 }

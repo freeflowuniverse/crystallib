@@ -51,7 +51,7 @@ fn configure_init(reset bool,mut args Config) ! {
 								  "??{dest}/${t.path}",reset)!
 	@end	
 
-	??if debug{println(' - ${args.name} configured properly.')}
+	??if debug{console.print_header(' ${args.name} configured properly.')}
 
 }
 

@@ -3,6 +3,7 @@ module vscode
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.vscode as vscodeinstaller
 import os
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct OpenArgs {

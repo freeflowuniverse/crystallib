@@ -25,7 +25,7 @@ pub fn (mut self PostgresClient) db_exists(name_ string) !bool {
 	mut db := self.db
 	r := db.exec("SELECT datname FROM pg_database WHERE datname='${name_}';")!
 	if r.len == 1 {
-		// println(' - db exists: ${name_}')
+		// console.print_header(' db exists: ${name_}')
 		return true
 	}
 	if r.len > 1 {
@@ -39,7 +39,7 @@ pub fn (mut self PostgresClient) db_create(name_ string) ! {
 	mut db := self.db
 	db_exists := self.db_exists(name_)!
 	if !db_exists {
-		println(' - db create: ${name}')
+		console.print_header(' db create: ${name}')
 		db.exec('CREATE DATABASE ${name};')!
 	}
 	db_exists2 := self.db_exists(name_)!
@@ -54,7 +54,7 @@ pub fn (mut self PostgresClient) db_delete(name_ string) ! {
 	self.check()!
 	db_exists := self.db_exists(name_)!
 	if db_exists {
-		println(' - db delete: ${name_}')
+		console.print_header(' db delete: ${name_}')
 		db.exec('DROP DATABASE ${name};')!
 	}
 	db_exists2 := self.db_exists(name_)!
