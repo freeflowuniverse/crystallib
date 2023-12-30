@@ -1,7 +1,7 @@
 module playbook
 
 // import freeflowuniverse.crystallib.data.paramsparser
-// import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.baobab.smartid
 import freeflowuniverse.crystallib.ui.console
 import crypto.blake2b
@@ -78,15 +78,24 @@ pub fn (mut plbook PlayBook) actions_sorted(args SortArgs) ![]&Action {
 	return res
 }
 
+@[params]
+pub struct Script3Args {
+	show_done bool = true
+}
+
 // serialize to 3script
-pub fn (mut plbook PlayBook) script3() !string {
+pub fn (mut plbook PlayBook) script3(args Script3Args) !string {
 	mut out := ''
 	for action in plbook.actions_sorted()! {
+		if args.show_done == false && action.done {
+			continue
+		}
 		out += '${action.script3()}\n'
 	}
 	if plbook.othertext.len > 0 {
 		out += '${plbook.othertext}'
 	}
+	out = texttools.remove_empty_js_blocks(out)
 	return out
 }
 
@@ -109,36 +118,6 @@ pub fn (plbook PlayBook) action_exists(id int) bool {
 	return false
 }
 
-@[params]
-pub struct ActionGetArgs {
-pub mut:
-	actor string
-	name  string
-}
-
-pub fn (plbook PlayBook) action_exists_once(args ActionGetArgs) bool {
-	mut counter := 0
-	for a in plbook.actions {
-		if a.name == args.name && a.actor == args.actor {
-			counter += 1
-		}
-	}
-	// if counter>1{
-	// 	return
-	// 	return error("more than 1 for $actor.$name")
-	// }
-	return counter > 0
-}
-
-pub fn (mut plbook PlayBook) action_get_by_name(args ActionGetArgs) !&Action {
-	for a in plbook.actions {
-		if a.name == args.name && a.actor == args.actor {
-			return a
-		}
-	}
-	return error("can't find action with args:${args}")
-}
-
 pub fn (mut plbook PlayBook) action_get(id int) !&Action {
 	for a in plbook.actions {
 		if a.id == id {
@@ -156,4 +135,18 @@ pub fn (plbook PlayBook) hashkey() string {
 	txt := out.join_lines()
 	bs := blake2b.sum160(txt.bytes())
 	return bs.hex()
+}
+
+// check if playbook is empty,if not will give error, means there are actions left to be exected
+pub fn (mut plbook PlayBook) empty_check() ! {
+	mut actions := []&Action{}
+	for a in plbook.actions {
+		if a.done == false {
+			actions << a
+		}
+	}
+	if actions.len > 0 {
+		msg := plbook.script3(show_done: false)!
+		return error('There are actions left to execute.\n\n${msg}')
+	}
 }

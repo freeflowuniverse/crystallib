@@ -24,9 +24,10 @@ pub struct ExecutorNewArguments {
 //- format ipaddr: any ipv6 addr
 //- if ipaddr is empty or starts with localhost or 127.0.0.1 -> will be the ExecutorLocal
 fn executor_new(args ExecutorNewArguments) !Executor {
-	hasport:=args.ipaddr.contains(":")
-	if args.ipaddr == '' || (args.ipaddr.starts_with('localhost') && hasport==false)
-		|| (args.ipaddr.starts_with('127.0.0.1')  && hasport==false) {
+	hasport := args.ipaddr.contains(':')
+	if args.ipaddr == ''
+		|| (args.ipaddr.starts_with('localhost') && hasport == false)
+		|| (args.ipaddr.starts_with('127.0.0.1') && hasport == false) {
 		return ExecutorLocal{
 			debug: args.debug
 		}
@@ -44,10 +45,9 @@ fn executor_new(args ExecutorNewArguments) !Executor {
 	}
 }
 
-
-[params]
-pub struct ExecArgs{
+@[params]
+pub struct ExecArgs {
 pub mut:
-	cmd string
+	cmd    string
 	stdout bool
 }

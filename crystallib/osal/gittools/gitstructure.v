@@ -79,15 +79,13 @@ pub fn (mut gs GitStructure) repo_add(args RepoAddArgs) ! {
 	gs.repos << &repo
 }
 
-
 pub struct GSCodeGetFromUrlArgs {
 pub mut:
-	url               string
+	url    string
 	pull   bool // will pull if this is set
 	reset  bool // this means will pull and reset all changes
 	reload bool // reload the cache
 }
-
 
 // will get repo starting from url, if the repo does not exist, only then will pull .
 // if pull is set on true, will then pull as well .
@@ -106,7 +104,7 @@ pub mut:
 // reset  bool // this means will pull and reset all changes
 // reload bool // reload the cache
 // ```
-pub fn (mut gs GitStructure)  code_get(args GSCodeGetFromUrlArgs) !string {
+pub fn (mut gs GitStructure) code_get(args GSCodeGetFromUrlArgs) !string {
 	console.print_header('code get ${args.url}')
 	mut locator := gs.locator_new(args.url)!
 	// println(locator)

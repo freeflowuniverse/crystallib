@@ -1,4 +1,4 @@
-module actionsexecutor
+module playcmds
 
 // import freeflowuniverse.crystallib.core.playbook
 // import freeflowuniverse.crystallib.data.doctree

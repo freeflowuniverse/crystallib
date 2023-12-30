@@ -41,7 +41,6 @@ pub fn cmd_installers(mut cmdroot Command) {
 		description: 'will uninstall in stead of install.'
 	})
 
-
 	cmdroot.add_command(cmd_run)
 	// cmd_run.add_command(caddy_cmd)
 }
@@ -49,7 +48,7 @@ pub fn cmd_installers(mut cmdroot Command) {
 fn cmd_installers_execute(cmd Command) ! {
 	mut reset := cmd.flags.get_bool('reset') or { false }
 	mut uninstall := cmd.flags.get_bool('uninstall') or { false }
-	mut names := cmd.flags.get_string('names') or { "" }
+	mut names := cmd.flags.get_string('names') or { '' }
 
 	// if cmd.name == 'caddy' {
 	// 	caddy.install(reset: reset)!
@@ -57,5 +56,5 @@ fn cmd_installers_execute(cmd Command) ! {
 	// } else {
 	// 	return error(cmd.help_message())
 	// }
-	tools.install_multi(reset: reset, names: names, uninstall:uninstall)!
+	tools.install_multi(reset: reset, names: names, uninstall: uninstall)!
 }

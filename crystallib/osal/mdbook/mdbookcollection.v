@@ -1,4 +1,5 @@
 module mdbook
+
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.osal
@@ -8,11 +9,11 @@ import freeflowuniverse.crystallib.core.pathlib
 // is collection for one specific book
 pub struct MDBookCollection {
 pub mut:
-	book       &MDBook      @[skip; str: skip]
-	name       string
-	url        string
-	reset      bool
-	pull       bool
+	book &MDBook @[skip; str: skip]
+	name string
+	url  string
+	// reset      bool
+	// pull       bool
 	gitrepokey string
 	path       pathlib.Path
 }

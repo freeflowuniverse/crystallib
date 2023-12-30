@@ -12,7 +12,7 @@ pub mut:
 }
 
 pub fn (mut executor ExecutorLocal) exec(args ExecArgs) !string {
-	res := osal.exec(cmd: args.cmd, stdout: args.stdout ,debug:executor.debug)!
+	res := osal.exec(cmd: args.cmd, stdout: args.stdout, debug: executor.debug)!
 	return res.output.join_lines()
 }
 

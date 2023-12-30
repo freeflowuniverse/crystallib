@@ -1,4 +1,4 @@
-module actionsexecutor
+module playcmds
 
 // fn currency_actions(actions_ []playbook.Action) ! {
 // 	mut actions2 := actions.filtersort(actions: actions_, actor: 'currency', book: '*')!

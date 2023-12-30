@@ -33,10 +33,10 @@ fn (err JobError) msg() string {
 		msg += '\nscript path:${err.job.cmd.scriptpath}'
 	}
 	if err.job.output.len > 0 {
-		msg += "\n\n## stdout:\n${err.job.output.join_lines()}"
+		msg += '\n\n## stdout:\n${err.job.output.join_lines()}'
 	}
 	if err.job.error.len > 0 {
-		msg += "\n\n## stderr:\n${err.job.error.join_lines()}"
+		msg += '\n\n## stderr:\n${err.job.error.join_lines()}'
 	}
 	return msg
 }
@@ -153,7 +153,9 @@ pub fn exec(cmd Command) !Job {
 	}
 
 	if cmd.shell {
-		console.print_header(' cmd shell')
+		$if debug {
+			console.print_debug('cmd shell: ${cmd.cmd}')
+		}
 		process_args := job.cmd_to_process_args()!
 		if cmd.retry > 0 {
 			job.error << 'cmd retry cannot be > 0 if shell used'
@@ -208,8 +210,8 @@ pub fn (mut job Job) execute() ! {
 	p.set_redirect_stdio()
 	// println("process setargs ${process_args[1..process_args.len]}")
 	p.set_args(process_args[1..process_args.len])
-	if job.cmd.stdout{
-		println("")
+	if job.cmd.stdout {
+		println('')
 	}
 	p.run()
 	job.process = p
@@ -446,7 +448,17 @@ pub fn execute_interactive(cmd string) ! {
 }
 
 pub fn cmd_exists(cmd string) bool {
-	res := os.execute('which ${cmd}')
+	cmd1 := 'which ${cmd}'
+	res := os.execute(cmd1)
+	if res.exit_code > 0 {
+		return false
+	}
+	return true
+}
+
+pub fn cmd_exists_profile(cmd string) bool {
+	cmd1 := '${profile_path_source_and()} which ${cmd}'
+	res := os.execute(cmd1)
 	if res.exit_code > 0 {
 		return false
 	}

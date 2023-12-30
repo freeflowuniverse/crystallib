@@ -93,11 +93,10 @@ pub fn (mut bldr BuilderFactory) node_new(args_ NodeArguments) !&Node {
 		factory: &bldr
 	}
 
-
 	// wasincache := node.load()!
 
 	// if wasincache && args.reload {
-		// node.readfromsystem()!
+	// node.readfromsystem()!
 	// }
 
 	node.readfromsystem()!

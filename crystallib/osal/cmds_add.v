@@ -95,6 +95,25 @@ pub fn profile_path() string {
 	}
 }
 
+// return the source statement if the profile exists
+pub fn profile_path_source() string {
+	pp := profile_path()
+	if os.exists(pp) {
+		return 'source ${pp}'
+	}
+	return ''
+}
+
+// return source $path &&  .
+// or empty if it doesn't exist
+pub fn profile_path_source_and() string {
+	pp := profile_path()
+	if os.exists(pp) {
+		return 'source ${pp} &&'
+	}
+	return ''
+}
+
 fn profile_paths_get(content string) []string {
 	mut paths := []string{}
 	for line in content.split_into_lines() {

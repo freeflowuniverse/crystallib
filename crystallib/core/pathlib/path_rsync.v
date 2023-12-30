@@ -2,6 +2,7 @@ module pathlib
 
 import os
 import freeflowuniverse.crystallib.ui.console
+
 @[params]
 pub struct RsyncArgs {
 pub mut:
@@ -12,7 +13,7 @@ pub mut:
 	delete         bool     // do we want to delete the destination
 	ignore         []string // arguments to ignore e.g. ['*.pyc','*.bak']
 	ignore_default bool = true // if set will ignore a common set
-	debug bool = true
+	debug          bool = true
 }
 
 // flexible tool to sync files from to, does even support ssh .
@@ -35,17 +36,20 @@ pub fn rsync(args_ RsyncArgs) ! {
 	}
 	cmdoptions := rsync_cmd_options(args)!
 	$if debug {
-		console.print_header(' rsync command:\n${cmdoptions}')
+		console.print_debug(' rsync command:\nrsync ${cmdoptions}')
 	}
-	r  := os.execute("which rsync")
+	r := os.execute('which rsync')
 	if r.exit_code > 0 {
 		return error('Could not find the rsync command, please install.')
 	}
-	rsyncpath:=r.output.trim_space()
-	// execute(cmd:cmd,stdout:args.debug)!
-	cmdoptions2:=cmdoptions.replace("  "," ").split(" ")
-	os.execvp(rsyncpath, cmdoptions2)!
-
+	rsyncpath := r.output.trim_space()
+	cmd := 'rsync ${cmdoptions}'
+	res := os.execute(cmd)
+	if res.exit_code > 0 {
+		return error('could not execute rsync:\n${cmd}')
+	}
+	// cmdoptions2:=cmdoptions.replace("  "," ").split(" ").filter(it.trim_space()!="")
+	// os.execvp(rsyncpath, cmdoptions2)!
 }
 
 // return the cmd with all rsync arguments .
@@ -93,10 +97,10 @@ pub fn rsync_cmd_options(args_ RsyncArgs) !string {
 	}
 
 	if args.ipaddr_src.len > 0 && args.ipaddr_dst.len == 0 {
-		sshpart, addrpart = rsync_ipaddr_format(ipaddr:args.ipaddr_src)
+		sshpart, addrpart = rsync_ipaddr_format(ipaddr: args.ipaddr_src)
 		cmd = '${options} ${delete} ${exclude} ${sshpart} ${addrpart}:${args.source} ${args.dest}'
 	} else if args.ipaddr_dst.len > 0 && args.ipaddr_src.len == 0 {
-		sshpart, addrpart = rsync_ipaddr_format(ipaddr:args.ipaddr_dst)
+		sshpart, addrpart = rsync_ipaddr_format(ipaddr: args.ipaddr_dst)
 		cmd = '${options} ${delete} ${exclude} ${sshpart} ${args.source} ${addrpart}:${args.dest}'
 	} else if args.ipaddr_dst.len > 0 && args.ipaddr_src.len > 0 {
 		return error('cannot have source and dest as ssh')
@@ -107,25 +111,25 @@ pub fn rsync_cmd_options(args_ RsyncArgs) !string {
 }
 
 @[params]
-struct RsyncFormatArgs{
+struct RsyncFormatArgs {
 mut:
 	ipaddr string
-	user string = 'root'
-	port int = 22
+	user   string = 'root'
+	port   int    = 22
 }
 
-fn rsync_ipaddr_format(args_ RsyncFormatArgs) (string,string) {
-	mut args:=args_
+fn rsync_ipaddr_format(args_ RsyncFormatArgs) (string, string) {
+	mut args := args_
 	if args.ipaddr.contains('@') {
 		args.user, args.ipaddr = args.ipaddr.split_once('@') or { panic('bug') }
 	}
 	if args.ipaddr.contains(':') {
-		mut port:=""
+		mut port := ''
 		args.ipaddr, port = args.ipaddr.rsplit_once(':') or { panic('bug') }
 		args.port = port.int()
 	}
-	args.user=args.user.trim_space()
-	args.ipaddr=args.ipaddr.trim_space()
+	args.user = args.user.trim_space()
+	args.ipaddr = args.ipaddr.trim_space()
 	if args.ipaddr.len == 0 {
 		panic('ip addr cannot be empty')
 	}

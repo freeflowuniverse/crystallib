@@ -5,7 +5,6 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
 // install rust will return true if it was already installed
 
-
 @[params]
 pub struct InstallArgs {
 pub mut:

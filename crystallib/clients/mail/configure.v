@@ -23,11 +23,11 @@ pub fn config(args Config) Config {
 }
 
 // get the configurator
-pub fn configurator(instance string, playargs play.PlayArgs) !play.Configurator[Config] {
+pub fn configurator(instance string, mut context play.Context) !play.Configurator[Config] {
 	mut c := play.configurator_new[Config](
 		name: 'mailclient'
 		instance: instance
-		playargs: playargs
+		context: context
 	)!
 	return c
 }

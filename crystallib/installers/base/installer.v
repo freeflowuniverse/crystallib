@@ -33,11 +33,11 @@ pub fn install(args InstallArgs) ! {
 		osal.package_install('mc,tmux,git,rsync,curl,tmux')!
 	} else if pl == .ubuntu {
 		console.print_header(' - Ubuntu prepare')
-			osal.package_install('iputils-ping,net-tools,git,rsync,curl,mc,tmux,libsqlite3-dev,xz-utils')!
-		} else if pl == .alpine {
-			osal.package_install('git,curl,mc,tmux')!
-		} else if pl == .arch {
-			osal.package_install('git,curl,mc,tmux')!
+		osal.package_install('iputils-ping,net-tools,git,rsync,curl,mc,tmux,libsqlite3-dev,xz-utils')!
+	} else if pl == .alpine {
+		osal.package_install('git,curl,mc,tmux')!
+	} else if pl == .arch {
+		osal.package_install('git,curl,mc,tmux')!
 	} else {
 		panic('only ubuntu, arch, alpine and osx supported for now')
 	}
@@ -77,7 +77,6 @@ pub fn develop(args InstallArgs) ! {
 	iam := osal.whoami()!
 	cmd := texttools.template_replace($tmpl('templates/vinstaller.sh'))
 	osal.exec(cmd: cmd)!
-
 
 	mut path := gittools.code_get(
 		pull: false

@@ -20,10 +20,10 @@ pub mut:
 fn (mut executor ExecutorSSH) init() ! {
 	if !executor.initialized {
 		if executor.ipaddr.port == 0 {
-			return error("port cannot be 0.\n$executor")
+			return error('port cannot be 0.\n${executor}')
 		}
 		// TODO: need to call code from SSHAGENT do not reimplement here
-		osal.exec(cmd: 'pgrep -x ssh-agent || eval `ssh-agent -s`',stdout:false) or {
+		osal.exec(cmd: 'pgrep -x ssh-agent || eval `ssh-agent -s`', stdout: false) or {
 			return error('Could not start ssh-agent, error was: ${err}')
 		}
 		if executor.sshkey != '' {
@@ -48,15 +48,13 @@ pub fn (mut executor ExecutorSSH) debug_off() {
 	executor.debug = false
 }
 
-
-
 pub fn (mut executor ExecutorSSH) exec(args_ ExecArgs) !string {
-	mut args:=args_
+	mut args := args_
 	if executor.debug {
 		console.print_debug('execute ${executor.ipaddr.addr}: ${args.cmd}')
 	}
 	args.cmd = 'ssh -o StrictHostKeyChecking=no ${executor.user}@${executor.ipaddr.addr} -p ${executor.ipaddr.port} "${args.cmd}"'
-	res := osal.exec(cmd: args.cmd, stdout: args.stdout, debug:executor.debug)!
+	res := osal.exec(cmd: args.cmd, stdout: args.stdout, debug: executor.debug)!
 	return res.output.join_lines()
 }
 
@@ -66,7 +64,7 @@ pub fn (mut executor ExecutorSSH) file_write(path string, text string) ! {
 	}
 	local_path := '/tmp/${rand.uuid_v4()}'
 	os.write_file(local_path, text)!
-	executor.upload(source: local_path, dest: path,stdout:false)!
+	executor.upload(source: local_path, dest: path, stdout: false)!
 	os.rm(local_path)!
 }
 
@@ -85,7 +83,9 @@ pub fn (mut executor ExecutorSSH) file_exists(path string) bool {
 	if executor.debug {
 		console.print_debug('${executor.ipaddr.addr} file exists: ${path}')
 	}
-	output := executor.exec(cmd:'test -f ${path} && echo found || echo not found',stdout:false) or { return false }
+	output := executor.exec(cmd: 'test -f ${path} && echo found || echo not found', stdout: false) or {
+		return false
+	}
 	if output == 'found' {
 		return true
 	}
@@ -97,7 +97,7 @@ pub fn (mut executor ExecutorSSH) delete(path string) ! {
 	if executor.debug {
 		console.print_debug('${executor.ipaddr.addr} file delete: ${path}')
 	}
-	executor.exec(cmd:'rm -rf ${path}',stdout:false) or { panic(err) }
+	executor.exec(cmd: 'rm -rf ${path}', stdout: false) or { panic(err) }
 }
 
 // upload from local FS to executor FS
@@ -130,7 +130,7 @@ pub fn (mut executor ExecutorSSH) upload(args SyncArgs) ! {
 
 // get environment variables from the executor
 pub fn (mut executor ExecutorSSH) environ_get() !map[string]string {
-	env := executor.exec(cmd:'env',stdout:false) or { return error('can not get environment') }
+	env := executor.exec(cmd: 'env', stdout: false) or { return error('can not get environment') }
 	// if executor.debug {
 	// 	console.print_header(' ${executor.ipaddr.addr} env get')
 	// }
@@ -172,7 +172,8 @@ pub fn (mut executor ExecutorSSH) shell(cmd string) ! {
 	if cmd.len > 0 {
 		panic('TODO IMPLEMENT SHELL EXEC OVER SSH')
 	}
-	os.execvp('ssh', ['-o StrictHostKeyChecking=no','${executor.user}@${executor.ipaddr.addr}', '-p ${p}'])!
+	os.execvp('ssh', ['-o StrictHostKeyChecking=no', '${executor.user}@${executor.ipaddr.addr}',
+		'-p ${p}'])!
 }
 
 pub fn (mut executor ExecutorSSH) list(path string) ![]string {
@@ -180,7 +181,7 @@ pub fn (mut executor ExecutorSSH) list(path string) ![]string {
 		panic('Dir Not found')
 	}
 	mut res := []string{}
-	output := executor.exec(cmd:'ls ${path}',stdout:false)!
+	output := executor.exec(cmd: 'ls ${path}', stdout: false)!
 	for line in output.split('\n') {
 		res << line
 	}
@@ -188,7 +189,9 @@ pub fn (mut executor ExecutorSSH) list(path string) ![]string {
 }
 
 pub fn (mut executor ExecutorSSH) dir_exists(path string) bool {
-	output := executor.exec(cmd:'test -d ${path} && echo found || echo not found',stdout:false) or { return false }
+	output := executor.exec(cmd: 'test -d ${path} && echo found || echo not found', stdout: false) or {
+		return false
+	}
 	if output.trim_space() == 'found' {
 		return true
 	}

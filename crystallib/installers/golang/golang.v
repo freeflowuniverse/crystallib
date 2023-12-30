@@ -3,6 +3,7 @@ module golang
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.ui.console
+
 const go_version = '1.20.6'
 
 @[params]

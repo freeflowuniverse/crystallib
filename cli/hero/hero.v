@@ -26,6 +26,7 @@ fn do() ! {
 	// herocmds.cmd_zola(mut cmd)
 	// herocmds.cmd_configure(mut cmd)
 	// herocmds.cmd_postgres(mut cmd)
+	herocmds.cmd_mdbook(mut cmd)
 	
 
 

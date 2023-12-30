@@ -1,8 +1,9 @@
-module play
+module playcmds
 
 import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.core.play
 
-pub fn (mut session Session) play_git() ! {
+pub fn play_git(mut session play.Session) ! {
 	for mut action in session.plbook.find(filter: 'gittools.*')! {
 		mut p := action.params
 		mut repo := p.get_default('repo', '')!
@@ -37,7 +38,7 @@ pub fn (mut session Session) play_git() ! {
 			msg: action.params.get_default('message', '')!
 			url: url
 		)!
-		// println(gs)
+		println(' ${cmd} ${account}:${repo}')
 		action.done = true
 	}
 }

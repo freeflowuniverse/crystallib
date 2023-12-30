@@ -3,8 +3,8 @@ module vscode
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.ui.console
-
 import os
+
 @[params]
 pub struct InstallArgs {
 pub mut:
@@ -12,11 +12,11 @@ pub mut:
 }
 
 pub fn install(args_ InstallArgs) ! {
-	mut args:=args_
+	mut args := args_
 	// base.install()!
 	console.print_header('package_install install vscode')
 	if !args.reset && osal.done_exists('install_vscode') && osal.cmd_exists('code') {
-		println(" - already installed")
+		println(' - already installed')
 		return
 	}
 	mut url := ''
@@ -48,11 +48,10 @@ pub fn install(args_ InstallArgs) ! {
 		reset: true
 	)!
 
-	extensions_install(default:true)!
+	extensions_install(default: true)!
 
 	osal.done_set('install_vscode', 'OK')!
 }
-
 
 @[params]
 pub struct ExtensionsInstallArgs {
@@ -67,7 +66,7 @@ pub fn extensions_install(args_ ExtensionsInstallArgs) ! {
 	for item in args.extensions.split(',').map(it.trim_space()) {
 		if item.trim_space() == '' {
 			continue
-		}		
+		}
 		if item !in items {
 			items << item
 		}
@@ -107,7 +106,7 @@ pub fn extensions_install(args_ ExtensionsInstallArgs) ! {
 	}
 	for item in items {
 		cmd := 'code --install-extension ${item}'
-		println(" - extension install: ${item}")
+		println(' - extension install: ${item}')
 		res := os.execute(cmd)
 		if res.exit_code > 0 {
 			return error("could not install visual studio code extension:'${item}'.\n${res}")

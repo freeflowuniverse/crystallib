@@ -14,7 +14,7 @@ pub mut:
 	cid          string // rid.cid or just cid
 	name         string // a unique name in cid
 	params       paramsparser.Params
-	snippets     map[string]paramsparser.Params
+	snippets     map[string]string
 	gitstructure &gittools.GitStructure         @[skip; str: skip]
 	redis        &redisclient.Redis             @[skip; str: skip]
 	kvs          &fskvs.KVSContext              @[skip; str: skip]
@@ -44,10 +44,14 @@ pub mut:
 // script3      string //if context is created from a 3script
 // ```
 //
-fn new(args ContextNewArgs) !Context {
+fn new(args_ ContextNewArgs) !Context {
+	mut args := args_
 	mut p := paramsparser.new(args.params)!
 
-	mut gs := gittools.get(coderoot: args.coderoot)!
+	if args.name == '' {
+		args.name = 'default'
+	}
+
 	mut r := redisclient.core_get()!
 
 	mut kvs := fskvs.new(
@@ -55,6 +59,15 @@ fn new(args ContextNewArgs) !Context {
 		encryption: args.fsdb_encryption
 		interactive: args.interactive
 	)!
+
+	mut kvsconfig := kvs.get(name: 'config', encryption: false)! // if encryption set, needs to always be encrypted TODO:despiegk
+	if args.coderoot == '' {
+		args.coderoot = kvsconfig.get('coderoot')!
+	} else {
+		kvsconfig.set('coderoot', args.coderoot)!
+	}
+
+	mut gs := gittools.get(coderoot: args.coderoot)!
 
 	mut c := Context{
 		cid: args.cid
@@ -64,17 +77,8 @@ fn new(args ContextNewArgs) !Context {
 		redis: &r
 		kvs: &kvs
 	}
-	if args.script3.len > 0 {
-		mut plbook := playbook.new(text: args.script3)!
-		c.playbook_core_execute(mut plbook)!
-	}
 	c.check()!
 	return c
-}
-
-fn (mut self Context) snippet_add(name_ string, params paramsparser.Params) {
-	name := texttools.name_fix(name_)
-	self.snippets[name] = params
 }
 
 pub fn (mut self Context) coderoot() string {
@@ -94,8 +98,6 @@ pub fn (mut self Context) load() ! {
 	if t == '' {
 		return
 	}
-	mut plbook := playbook.new(text: t)!
-	self.playbook_core_execute(mut plbook)!
 }
 
 // save the self to redis & mem
@@ -109,14 +111,15 @@ pub fn (mut self Context) save() ! {
 //////DATA
 
 pub fn (mut self Context) check() ! {
-	if self.name.len < 5 {
-		return error('name of context needs to be 5 or more chars')
+	if self.name.len < 4 {
+		print_backtrace()
+		return error('name of context needs to be 4 or more chars. Now was: "${self.name}"')
 	}
 }
 
-pub fn (mut self Context) str() string {
-	return self.script3() or { "BUG: can't represent the object properly, I try raw" }
-}
+// pub fn (mut self Context) str() string {
+// 	return self.script3() or { "BUG: can't represent the object properly, I try raw" }
+// }
 
 fn (mut self Context) str2() string {
 	return 'cid:${self.cid} name:${self.name}'
@@ -139,4 +142,12 @@ pub fn (mut self Context) script3() !string {
 
 pub fn (mut self Context) guid() string {
 	return '${self.cid}:${self.name}'
+}
+
+fn (mut self Context) db_get(name string) !fskvs.KVS {
+	return self.kvs.get(name: name)!
+}
+
+fn (mut self Context) db_config_get() !fskvs.KVS {
+	return self.kvs.get(name: 'config')!
 }

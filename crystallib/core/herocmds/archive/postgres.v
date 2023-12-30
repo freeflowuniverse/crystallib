@@ -127,15 +127,14 @@ fn cmd_postgres_configure(cmd Command) ! {
 	if instance == '' {
 		instance = 'default'
 	}
-	mut cnfg:=postgres.configurator(instance)!
-	mut args:=cnfg.get()!	
-	postgres.configure_interactive(mut args ,mut cnfg.session )!
-
+	mut cnfg := postgres.configurator(instance)!
+	mut args := cnfg.get()!
+	postgres.configure_interactive(mut args, mut cnfg.session)!
 }
 
 fn cmd_postgres_print(cmd Command) ! {
 	mut name := cmd.flags.get_string('name') or { 'default' }
-	panic("implement")
+	panic('implement')
 	// postgres.configprint(name: name)!
 }
 

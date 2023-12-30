@@ -166,7 +166,7 @@ pub mut:
 // ```
 pub fn code_get(args CodeGetFromUrlArgs) !string {
 	mut gs := get(name: args.gitstructure_name, coderoot: args.coderoot)!
-	return gs.code_get(url:args.url,pull:args.pull,reset:args.reset,reload:args.reload)
+	return gs.code_get(url: args.url, pull: args.pull, reset: args.reset, reload: args.reload)
 }
 
 pub fn repo_get(args CodeGetFromUrlArgs) !GitRepo {

@@ -28,13 +28,13 @@ pub fn open(args_ OpenArgs) ! {
 
 // check visual studio code is installed
 pub fn exists() bool {
-	return osal.cmd_exists('vscode') 
+	return osal.cmd_exists('vscode')
 }
 
 pub fn check() ! {
 	if exists() == false {
 		vscodeinstaller.install()!
-		if exists() == false {		
+		if exists() == false {
 			return error('Visual studio code is not installed.\nPlease see https://code.visualstudio.com/download')
 		}
 	}
@@ -46,4 +46,3 @@ pub fn check() ! {
 // 	source := '/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code'
 // 	osal.cmd_add(cmdname: 'code', source: source, symlink: true, reset: true)!
 // }
-

@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.ui.console
 @[params]
 pub struct Config {
 pub mut:
-	instance     string = 'default'
+	instance string = 'default'
 	user     string = 'root'
 	port     int    = 5432
 	host     string = 'localhost'
@@ -23,11 +23,11 @@ pub fn config(args Config) Config {
 }
 
 // get the configurator
-pub fn configurator(instance string, playargs play.PlayArgs) !play.Configurator[Config] {
+pub fn configurator(instance string, mut context play.Context) !play.Configurator[Config] {
 	mut c := play.configurator_new[Config](
 		name: 'postgresclient'
 		instance: instance
-		playargs: playargs
+		context: context
 	)!
 	return c
 }
@@ -92,6 +92,6 @@ pub fn configure_interactive(mut args Config, mut session play.Session) ! {
 	)!
 	args.port = port.int()
 
-	mut c := configurator(args.instance, session: session)!
+	mut c := configurator(args.instance, context: session.context)!
 	c.set(args)!
 }

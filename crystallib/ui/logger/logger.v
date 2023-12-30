@@ -41,11 +41,11 @@ pub fn (log Logger) success(msg string) {
 }
 
 pub fn (log Logger) error(msg string) {
-	console.print_debug('${time.now()} | ' + style(color_fg('ERROR', 'red'), 'bold') + '\t| ' +
+	print_debug('${time.now()} | ' + style(color_fg('ERROR', 'red'), 'bold') + '\t| ' +
 		color_fg(msg, 'light_red'))
 }
 
 pub fn (log Logger) critical(msg string) {
-	console.print_debug('${time.now()} | ' + style(color_bg('CRITICAL', 'red'), 'bold') + '\t| ' +
+	print_debug('${time.now()} | ' + style(color_bg('CRITICAL', 'red'), 'bold') + '\t| ' +
 		style(color_bg(msg, 'light_red'), 'bold'))
 }

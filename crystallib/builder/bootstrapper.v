@@ -3,53 +3,49 @@ module builder
 import os
 import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.core.pathlib
-
 import v.embed_file
 
 const crystalpath_ = os.dir(@FILE) + '/../'
 
-
 pub struct BootStrapper {
 pub mut:
-	embedded_files  map[string]embed_file.EmbedFileData  @[skip; str: skip]
+	embedded_files map[string]embed_file.EmbedFileData @[skip; str: skip]
 }
-
 
 @[params]
 pub struct BootstrapperArgs {
 pub mut:
-	name        string
-	addr 		string //format:  root@something:33, 192.168.7.7:222, 192.168.7.7, despiegk@something
-	reset       bool
-	debug       bool
+	name  string
+	addr  string // format:  root@something:33, 192.168.7.7:222, 192.168.7.7, despiegk@something
+	reset bool
+	debug bool
 }
 
 fn (mut bs BootStrapper) load() {
-	bs.embedded_files["installer_base.sh"] = $embed_file('../../scripts/installer_base.sh')
+	bs.embedded_files['installer_base.sh'] = $embed_file('../../scripts/installer_base.sh')
 }
 
 // to use do something like: export NODES="195.192.213.3" .
 pub fn bootstrapper() BootStrapper {
-	mut bs:=BootStrapper{}
+	mut bs := BootStrapper{}
 	bs.load()
 	return bs
 }
 
 pub fn (mut bs BootStrapper) run(args_ BootstrapperArgs) ! {
-	mut args:=args_
-	addr:=texttools.toarray(args.addr)
+	mut args := args_
+	addr := texttools.toarray(args.addr)
 	mut b := new()!
-	for a in addr{
-		mut n := b.node_new(ipaddr: a,name:args.name)!
+	for a in addr {
+		mut n := b.node_new(ipaddr: a, name: args.name)!
 		n.crystal_install()!
 	}
 }
 
-
 pub fn (mut node Node) upgrade() ! {
-	mut bs:=bootstrapper()
-	installer_base_content:=bs.embedded_files["installer_base.sh"].to_string()
-	cmd:="${installer_base_content}\n"
+	mut bs := bootstrapper()
+	installer_base_content := bs.embedded_files['installer_base.sh'].to_string()
+	cmd := '${installer_base_content}\n'
 	node.exec_cmd(
 		cmd: cmd
 		period: 48 * 3600
@@ -59,14 +55,11 @@ pub fn (mut node Node) upgrade() ! {
 }
 
 pub fn (mut node Node) crystal_install() ! {
-	mut bs:=bootstrapper()
-	installer_base_content:=bs.embedded_files["installer_base.sh"].to_string()
-	cmd:="${installer_base_content}\nfreeflow_dev_env_install\n"
+	mut bs := bootstrapper()
+	installer_base_content := bs.embedded_files['installer_base.sh'].to_string()
+	cmd := '${installer_base_content}\nfreeflow_dev_env_install\n'
 	node.exec_cmd(cmd: cmd)!
 }
-
-
-
 
 // println(n)
 // // will only upload if changes for the cli's

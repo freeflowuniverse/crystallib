@@ -2,7 +2,7 @@ module regext
 
 import regex
 
-// find parts of text which are in form ${NAME}
+// find parts of text which are in form {NAME}
 // .
 // NAME is as follows: .
 //   Lowercase letters: a-z .

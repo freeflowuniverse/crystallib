@@ -1,6 +1,7 @@
 module playbook
 
 import freeflowuniverse.crystallib.data.paramsparser
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct FilterSortArgs {
@@ -25,7 +26,7 @@ pub fn (mut plbook PlayBook) filtersort(args FilterSortArgs) ! {
 	for prio in nrs {
 		argsfilter := args.priorities[prio] or { panic('bug') }
 		mut actionsfound := plbook.find(filter: argsfilter)!
-		// console.print_header('- ${prio}:(${actionsfound.len})\n${argsfilter}")
+		// console.print_header('- ${prio}:(${actionsfound.len})\n${argsfilter}')
 		for mut actionfiltered in actionsfound {
 			if actionfiltered.id in plbook.done {
 				continue
@@ -74,8 +75,27 @@ pub fn (mut plbook PlayBook) find(args FindArgs) ![]&Action {
 	return res
 }
 
-pub fn (mut plbook PlayBook) find_by_name(args ActionGetArgs) ![]&Action {
-	return plbook.find(filter: '${args.actor}.${args.name}')
+pub fn (mut plbook PlayBook) exists_once(args FindArgs) bool {
+	mut res := plbook.find(args) or { [] }
+	return res.len == 1
+}
+
+pub fn (mut plbook PlayBook) find_one(args FindArgs) !&Action {
+	mut res := plbook.find(args)!
+	if res.len == 0 {
+		return error("can't find action: '${args.filter}'")
+	} else if res.len > 1 {
+		return error("found more than one action: '${args.filter}'")
+	}
+	return res[0] or { panic('bug') }
+}
+
+pub fn (mut plbook PlayBook) find_max_one(args FindArgs) ![]&Action {
+	mut res := plbook.find(args)!
+	if res.len > 1 {
+		return error("found more than one action: '${args.filter}'")
+	}
+	return res
 }
 
 fn (action Action) match_items(items []string) bool {

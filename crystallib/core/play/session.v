@@ -5,16 +5,19 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.data.fskvs
+import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct Session {
 pub mut:
-	name    string // unique id for session (session id), can be more than one per context
-	plbook  playbook.PlayBook
-	params  paramsparser.Params
-	start   ourtime.OurTime
-	end     ourtime.OurTime
-	context Context             @[skip; str: skip]
+	name                string // unique id for session (session id), can be more than one per context
+	plbook              playbook.PlayBook
+	params              paramsparser.Params
+	start               ourtime.OurTime
+	end                 ourtime.OurTime
+	playbook_priorities map[int]string      @[skip; str: skip]
+	context             Context             @[skip; str: skip]
 }
 
 @[params]
@@ -54,6 +57,47 @@ pub fn (context Context) session_new(args_ SessionNewArgs) !Session {
 	// 	s.save()!
 	// }
 	return s
+}
+
+
+//add playbook context to session
+//```
+// path    string
+// text    string
+// prio    int = 99
+//```	
+pub fn (mut session Session) add_playbook(args_ playbook.PLayBookAddArgs) ! {
+
+	mut args := args_
+
+	// walk over directory
+	if args.path.len > 0 {
+		console.print_header("Session add plbook from path:'${args.path}'")
+		mut p := pathlib.get(args.path)
+		if !p.exists() {
+			return error("can't find path:${p.path}")
+		}
+		if p.is_file() {
+			c := p.read()!
+			session.add_playbook(text: c, prio: args.prio)!
+			return
+		} else if p.is_dir() {
+			mut ol := p.list(recursive: true, regex: [r'.*\.md$'])!
+			for mut p2 in ol.paths {
+				c2 := p2.read()!
+				session.add_playbook(text: c2, prio: args.prio)!
+			}
+			return
+		}
+		return error("can't process path: ${args.path}, unknown type.")
+	}
+	console.print_header('Session add plbook add text')
+	console.print_stdout(args.text)
+
+	args.text = texttools.dedent(args.text)	
+	args.text=session.context.pre_process(text:args.text)!
+
+	session.plbook.add(text:args.text,prio:args.prio)!
 }
 
 ///////// LOAD & SAVE

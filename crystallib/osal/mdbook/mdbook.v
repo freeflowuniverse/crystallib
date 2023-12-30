@@ -5,18 +5,21 @@ import os
 // import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.core.play
 
 @[heap]
 pub struct MDBook {
+	play.Base
 pub mut:
 	books        &MDBooks           @[skip; str: skip]
 	name         string
 	url          string
 	path_build   pathlib.Path
 	path_publish pathlib.Path
-	collections    []MDBookCollection
+	collections  []MDBookCollection
 	gitrepokey   string
 	title        string
+	initdone     bool
 }
 
 @[params]
@@ -58,6 +61,21 @@ fn (mut book MDBook) clone() ! {
 	}
 }
 
+pub fn (mut book MDBook) edit() ! {
+	console.print_header('edit book: ${book.name}')
+	cmd := 'code \'${book.path_build.path}/src\''
+	console.print_debug(cmd)
+	osal.exec(cmd: cmd)!
+}
+
+pub fn (mut book MDBook) open() ! {
+	console.print_header('open book: ${book.name}')
+	cmd := 'open \'${book.path_build.path}/book/index.html\''
+	console.print_debug(cmd)
+	// cmd:='bash ${book.path_build.path}/develop.sh'
+	osal.exec(cmd: cmd)!
+}
+
 fn (mut book MDBook) prepare() ! {
 	mut gs := book.books.gitstructure
 	mut locator := gs.locator_new(book.url)!
@@ -77,6 +95,10 @@ pub fn (mut book MDBook) generate() ! {
 	// }
 	console.print_header(' book generate: ${book.name} on ${book.path_build.path}')
 
+	if book.initdone == false {
+		book.books.init()!
+	}
+
 	// write the css files
 	for item in book.books.embedded_files {
 		if item.path.ends_with('.css') {
@@ -84,14 +106,9 @@ pub fn (mut book MDBook) generate() ! {
 			// osal.file_write('${html_path.trim_right('/')}/css/${css_name}', item.to_string())!
 
 			dpath := '${book.path_publish.path}/css/${css_name}'
-			console.print_header(' templ ${dpath}')
+			// console.print_stdout(' templ ${dpath}')
 			mut dpatho := pathlib.get_file(path: dpath, create: true)!
 			dpatho.write(item.to_string())!
-
-			// // ugly hack
-			// dpath2 := '${book.path_publish.path}/${css_name}'
-			// mut dpatho2 := pathlib.get_file(path: dpath2, create: true)!
-			// dpatho2.write(item.to_string())!
 		}
 	}
 	book.summary_image_set()!
@@ -111,7 +128,7 @@ fn (mut book MDBook) template_install() ! {
 	// get embedded files to the mdbook dir
 	for item in book.books.embedded_files {
 		dpath := '${book.path_build.path}/${item.path.all_after_first('/')}'
-		console.print_header(' embed: ${dpath}')
+		// console.print_debug(' embed: ${dpath}')
 		mut dpatho := pathlib.get_file(path: dpath, create: true)!
 		dpatho.write(item.to_string())!
 	}

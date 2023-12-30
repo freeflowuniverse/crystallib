@@ -2,6 +2,7 @@ module herocmds
 
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.playcmds
 import cli { Command, Flag }
 import os
 
@@ -18,12 +19,17 @@ pub fn cmd_run(mut cmdroot Command) {
 		usage: ''
 		execute: cmd_3script_execute
 	}
+	cmds_run_add(mut cmd_run)
+	cmdroot.add_command(cmd_run)
+}
+
+pub fn cmds_run_add(mut cmd_run Command) {
 	cmd_run.add_flag(Flag{
 		flag: .string
 		required: false
 		name: 'path'
 		abbrev: 'p'
-		description: 'path where 3script can be found.'
+		description: 'path where 3scripts can be found.'
 	})
 	cmd_run.add_flag(Flag{
 		flag: .string
@@ -44,7 +50,7 @@ pub fn cmd_run(mut cmdroot Command) {
 		required: false
 		name: 'contextname'
 		abbrev: 'cn'
-		description: 'name for the session (optional).'
+		description: 'name for the context (optional).'
 	})
 	cmd_run.add_flag(Flag{
 		flag: .string
@@ -108,8 +114,6 @@ pub fn cmd_run(mut cmdroot Command) {
 		abbrev: 's'
 		description: 'runs non interactive!'
 	})
-
-	cmdroot.add_command(cmd_run)
 }
 
 fn cmd_3script_execute(cmd Command) ! {
@@ -166,7 +170,15 @@ fn cmd_3script_execute(cmd Command) ! {
 		)!
 	}
 
+	if url.len > 0 {
+		// get code from git, will be found in ~/hero/var/mdbook_test
+		path = session.context.gitstructure.code_get(url: url)!
+	}
+
+	// add all actions inside to the playbook
+	session.plbook.add(path: path)!
+
 	if cmd.flags.get_bool('run') or { false } {
-		// session.run()!
+		playcmds.run(mut session)!
 	}
 }

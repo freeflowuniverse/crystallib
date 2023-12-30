@@ -1,4 +1,5 @@
 module osal
+
 import freeflowuniverse.crystallib.ui.console
 
 // update the package list
@@ -22,7 +23,7 @@ pub fn package_refresh() ! {
 
 // install a package will use right commands per platform
 pub fn package_install(name string) ! {
-	console.print_header("package install: $name")
+	console.print_header('package install: ${name}')
 	if name.contains(',') {
 		for n in name.split(',') {
 			package_install(n.trim_space())!

@@ -1,4 +1,5 @@
 module mdbook
+
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.rust

@@ -46,11 +46,9 @@ pub fn rsync(args_ RsyncArgs) ! {
 	}
 
 	cmdoptions := pathlib.rsync_cmd_options(args2)!
-	cmd:="rsync ${cmdoptions}"
+	cmd := 'rsync ${cmdoptions}'
 	$if debug {
-		if args_.stdout{
-			console.print_header(' rsync command (osal):\n${cmd}')
-		}
+		console.print_debug('rsync command (osal):\n${cmd}')
 	}
-	exec(cmd:cmd,stdout:args_.stdout)!
+	exec(cmd: cmd, stdout: args_.stdout)!
 }

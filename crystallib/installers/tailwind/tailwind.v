@@ -17,11 +17,11 @@ pub fn install(args_ InstallArgs) ! {
 	if res.exit_code == 0 {
 		if !(res.output.contains('tailwindcss v3.3.6')) {
 			args.reset = true
-			console.print_stdout("did find tailwind, but was wrong verison.")
+			console.print_stdout('did find tailwind, but was wrong verison.')
 		}
 	} else {
 		args.reset = true
-		console.print_stdout("did not find tailwind.")
+		console.print_stdout('did not find tailwind.')
 	}
 
 	if args.reset == false && osal.done_exists('install_tailwind') {

@@ -1,6 +1,7 @@
 import freeflowuniverse.crystallib.core.pathlib
 import os
 import freeflowuniverse.crystallib.ui.console
+
 const testpath = os.dir(@FILE) + '/examples/test_path'
 
 fn testsuite_begin() {

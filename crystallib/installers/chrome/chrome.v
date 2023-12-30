@@ -4,33 +4,34 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.ui.console
 import os
+
 @[params]
 pub struct InstallArgs {
 pub mut:
-	reset bool
+	reset     bool
 	uninstall bool
 }
 
 pub fn install(args_ InstallArgs) ! {
-	mut args:=args_
+	mut args := args_
 	// base.install()!
-	if args.reset || args.uninstall{
+	if args.reset || args.uninstall {
 		console.print_header('uninstall chrome')
 		uninstall()!
-		println(" - ok")
-		if args.uninstall{
-			return 
-		}		
+		println(' - ok')
+		if args.uninstall {
+			return
+		}
 	}
 	console.print_header('package_install install chrome')
 	if !args.reset && osal.done_exists('install_chrome') && exists()! {
-		println(" - already installed")
+		println(' - already installed')
 		return
 	}
 	mut url := ''
 	if osal.platform() in [.alpine, .arch, .ubuntu] {
 		// url = 'https://dl.google.com/chrome/mac/stable/GGRO/googlechrome.dmg'
-		panic("not implemented yet")
+		panic('not implemented yet')
 	} else if osal.platform() == .osx {
 		url = 'https://dl.google.com/chrome/mac/stable/GGRO/googlechrome.dmg'
 	}
@@ -42,7 +43,7 @@ pub fn install(args_ InstallArgs) ! {
 		dest: '/tmp/googlechrome.dmg'
 	)!
 
-	cmd:="
+	cmd := "
 	hdiutil attach /tmp/googlechrome.dmg
 	echo ' - copy chrome into app folder'
 	echo ' - will now copy all files to Application folder, this can take a while'
@@ -52,16 +53,15 @@ pub fn install(args_ InstallArgs) ! {
 	hdiutil detach /Volumes/Google\\ Chrome/
 	rm -f /tmp/googlechrome.dmg	
 	"
-	osal.exec(cmd:cmd)!
-	println(" - copy done to Application folder.")
+	osal.exec(cmd: cmd)!
+	println(' - copy done to Application folder.')
 
-	if exists()!{
-		println(" - exists check ok.")
+	if exists()! {
+		println(' - exists check ok.')
 	}
 
 	osal.done_set('install_chrome', 'OK')!
 }
-
 
 @[params]
 pub struct ExtensionsInstallArgs {
@@ -89,20 +89,20 @@ pub fn install_path() !string {
 }
 
 pub fn uninstall() ! {
-	cmd:="
+	cmd := '
 	# Quit Google Chrome
-	osascript -e 'quit app \"Google Chrome\"'
+	osascript -e \'quit app "Google Chrome"\'
 
 	# Wait a bit to ensure Chrome has completely quit
 	sleep 2
 
 	# Remove the Google Chrome Application
-	rm -rf \"/Applications/Google Chrome.app\"
+	rm -rf "/Applications/Google Chrome.app"
 
 	# Remove Chrome’s Application Support Data
 	rm -rf ~/Library/Application\\ Support/Google/Chrome
 
-	# Remove Chrome's Caches
+	# Remove Chrome\'s Caches
 	rm -rf ~/Library/Caches/Google/Chrome
 
 	# Delete Chrome Preferences
@@ -111,9 +111,8 @@ pub fn uninstall() ! {
 	# Clear Chrome Saved Application State
 	rm -rf ~/Library/Saved\\ Application\\ State/com.google.Chrome.savedState
 
-	"
-	osal.exec(cmd:cmd)!
-
+	'
+	osal.exec(cmd: cmd)!
 }
 
 // # Optional: Empty the Trash

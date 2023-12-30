@@ -44,14 +44,13 @@ pub fn cmd_bootstrap(mut cmdroot Command) {
 		description: 'install crystal lib + vlang.'
 	})
 
-
 	cmd_run.add_flag(Flag{
 		flag: .string
 		required: true
 		name: 'address'
 		abbrev: 'a'
 		description: 'address in form root@212.3.4.5:2222 or root@212.3.4.5 or root@info.three.com'
-	})	
+	})
 
 	cmdroot.add_command(cmd_run)
 }
@@ -61,16 +60,14 @@ fn cmd_bootstrap_execute(cmd Command) ! {
 	mut reset := cmd.flags.get_bool('reset') or { false }
 	mut hero := cmd.flags.get_bool('hero') or { false }
 	mut crystal := cmd.flags.get_bool('crystal') or { false }
-	mut address := cmd.flags.get_string('address') or { "" }
+	mut address := cmd.flags.get_string('address') or { '' }
 
-	
-	mut b:=builder.new()!
-	mut n:=b.node_new(ipaddr:address)! 
+	mut b := builder.new()!
+	mut n := b.node_new(ipaddr: address)!
 
-	if crystal{
+	if crystal {
 		n.crystal_install()!
-	}else{
+	} else {
 		return error(cmd.help_message())
 	}
-	
 }

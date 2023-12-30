@@ -1,8 +1,9 @@
 #!/usr/bin/env v -w -cg -enable-globals run
 
-// import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.playcmds
 import freeflowuniverse.crystallib.installers.mdbook
 import freeflowuniverse.crystallib.installers.restic
 import freeflowuniverse.crystallib.installers.zola
@@ -16,11 +17,9 @@ zola.install()!
 
 console.print_header("Some test with mdbook.")
 
-coderoot:="~/hero/var/mdbook_test"
-
 mut session := play.session_new(
-	context_name: "my_mdbook_test"
-	coderoot: coderoot
+	context_name: "test"
+	coderoot: "~/hero/var/mdbook_test"
 	interactive: true
 )!
 
@@ -29,11 +28,11 @@ session.context.gitstructure.code_get(url: "https://github.com/freeflowuniverse/
 
 
 //get path local to the current script
-path_my_actions := '${os.dir(@FILE)}/books_actions/'
+path_my_actions := '${os.dir(@FILE)}/books_actions'
 
-//add all actions inside to the playbook
+// //add all actions inside to the playbook
 session.plbook.add(path:path_my_actions)!
 
-//run all the actions
-session.run()!
+// //run all the actions known
+playcmds.run(mut session)!
 

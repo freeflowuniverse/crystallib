@@ -49,4 +49,3 @@ pub fn expand(txt_ string, l int, with string) string {
 	}
 	return txt
 }
-

@@ -44,21 +44,66 @@ pub fn remove_empty_lines(text string) string {
 
 pub fn remove_double_lines(text string) string {
 	mut out := []string{}
-	mut prev:=true
+	mut prev := true
 	for l in text.split_into_lines() {
 		if l.trim_space() == '' {
-			if prev{
+			if prev {
 				continue
 			}
-			out<<""
-			prev=true
+			out << ''
+			prev = true
 			continue
 		}
-		prev=false
+		prev = false
 		out << l
 	}
-	if out.len>0 && out.last()==""{
+	if out.len > 0 && out.last() == '' {
 		out.pop()
 	}
 	return out.join('\n')
+}
+
+// remove ```??  ``` , can be over multiple lines .
+// also removes double lines
+pub fn remove_empty_js_blocks(text string) string {
+	mut out := []string{}
+	mut block_capture_pre := ''
+	mut block_capture_inside := []string{}
+	mut foundblock := false
+	for l in text.split_into_lines() {
+		// println(" --- $l")
+		lt := l.trim_space()
+		if lt.starts_with('```') || lt.starts_with("'''") || lt.starts_with('"""') {
+			// println("FOUND")
+			if foundblock {
+				// println(";;;")
+				// println(block_capture_inside.filter(it.trim_space() != ''))
+				// println(";;;")
+				if block_capture_inside.filter(it.trim_space() != '').len > 0 {
+					// now we know the block inside is not empty
+					println('not empty')
+					out << block_capture_pre
+					out << block_capture_inside
+					out << l // the last line
+				}
+				foundblock = false
+				block_capture_pre = ''
+				block_capture_inside = []string{}
+				continue
+			} else {
+				foundblock = true
+				block_capture_pre = l
+				continue
+			}
+		}
+		if foundblock {
+			block_capture_inside << l
+		} else {
+			out << l
+		}
+	}
+	if out.len > 0 && out.last() == '' {
+		out.pop()
+	}
+	return remove_double_lines(out.join('\n'))
 }

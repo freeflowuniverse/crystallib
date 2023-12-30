@@ -47,7 +47,9 @@ pub fn encrypt(data []u8, secret string) []u8 {
 
 pub fn decrypt_str(data string, secret string) string {
 	if data.len == 0 {
-		panic('data cannot be empty')
+		return ''
+		// print_backtrace()
+		// panic('data cannot be empty (decrypt aes)')
 	}
 	mut d := decrypt(data.bytes(), secret)
 	return d.bytestr()

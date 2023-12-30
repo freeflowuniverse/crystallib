@@ -4,7 +4,6 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.sshagent
 import freeflowuniverse.crystallib.ui.console
 
-
 // this will clone the repo if it doesn't exist yet
 fn (mut repo GitRepo) load_from_url() ! {
 	// first check if path does not exist yet, if not need to clone

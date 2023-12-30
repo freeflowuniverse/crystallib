@@ -14,12 +14,12 @@ pub mut:
 @[params]
 pub struct ClientArgs {
 pub mut:
-	instance string        @[required]
+	instance string         @[required]
 	playargs ?play.PlayArgs
 }
 
 pub fn get(clientargs ClientArgs) !MailClient {
-	mut plargs:=clientargs.playargs or {play.PlayArgs{}}
+	mut plargs := clientargs.playargs or { play.PlayArgs{} }
 	mut cfg := configurator(clientargs.instance, plargs)!
 	args := cfg.get()!
 	// println(args)

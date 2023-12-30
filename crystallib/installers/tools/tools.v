@@ -9,8 +9,8 @@ import freeflowuniverse.crystallib.installers.lima
 @[params]
 pub struct InstallArgs {
 pub mut:
-	names string
-	reset bool
+	names     string
+	reset     bool
 	uninstall bool
 }
 
@@ -25,17 +25,17 @@ pub fn install_multi(args_ InstallArgs) ! {
 	for item in items {
 		match item {
 			'vscode' {
-				vscode.install(reset: args.reset )!
+				vscode.install(reset: args.reset)!
 			}
-			'chrome' { 
-				chrome.install(reset: args.reset, uninstall:args.uninstall )!
-			}		
-			'podman' { 
-				podman.install(reset: args.reset, uninstall:args.uninstall )!
-			}	
-			'lima' { 
-				lima.install(reset: args.reset, uninstall:args.uninstall )!
-			}								
+			'chrome' {
+				chrome.install(reset: args.reset, uninstall: args.uninstall)!
+			}
+			'podman' {
+				podman.install(reset: args.reset, uninstall: args.uninstall)!
+			}
+			'lima' {
+				lima.install(reset: args.reset, uninstall: args.uninstall)!
+			}
 			else {
 				return error('cannot find installer for: ${item}')
 			}

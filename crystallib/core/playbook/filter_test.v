@@ -1,4 +1,4 @@
-module hero
+module playbook
 
 const text2 = "
 //select the circle, can come from context as has been set before
@@ -68,40 +68,8 @@ fn test_filter_on_circle_aaa() ! {
 	// test filter circle:aaa
 	mut parser := new(text: playbook.text2)!
 	assert parser.actions.len == 8
-	sorted := parser.filtersort(circle: 'aaa')!
+	sorted := parser.filtersort()!
 	assert sorted.len == 7
-}
-
-fn test_filter_on_actor_people_and_circle_aaa() ! {
-	// test filter circle:aaa actor:people
-	mut parser := new(text: playbook.text2)!
-	assert parser.actions.len == 8
-	sorted := parser.filtersort(actor: 'people', circle: 'aaa')! // QUESTION: can you leave actor blank? ANSWER: Yes you can, I added a test on top
-	assert sorted.len == 6
-}
-
-fn test_filter_on_actor_people_and_circle_bbb() ! {
-	// test filter actor:people
-	mut parser := new(text: playbook.text2)!
-	assert parser.actions.len == 8
-	sorted := parser.filtersort(actor: 'people', circle: 'bbb')!
-	assert sorted.len == 1
-}
-
-fn test_filter_on_actor_people_and_circle_ccc() ! {
-	// test filter circle:ccc actor:people
-	mut parser := new(text: playbook.text2)!
-	assert parser.actions.len == 8
-	sorted := parser.filtersort(actor: 'people', circle: 'ccc')!
-	assert sorted.len == 0
-}
-
-// test filter circle:aaa actor:test
-fn test_filter_on_actor_test_and_circle_aaa() ! {
-	mut parser := new(text: playbook.text2)!
-	assert parser.actions.len == 8
-	sorted := parser.filtersort(actor: 'test', circle: 'aaa')!
-	assert sorted.len == 1
 }
 
 // test filter with names:[*]

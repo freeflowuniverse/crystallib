@@ -177,8 +177,8 @@ pub fn cprint(args PrintArgs) {
 
 pub fn cprintln(args_ PrintArgs) {
 	mut args := args_
-	args.text=trim(args.text)
-	if !(args.text.ends_with("\n")){
+	args.text = trim(args.text)
+	if !(args.text.ends_with('\n')) {
 		args.text += '\n'
 	}
 	cprint(args)

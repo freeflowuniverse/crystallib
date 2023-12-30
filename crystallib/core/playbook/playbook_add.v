@@ -11,7 +11,6 @@ pub mut:
 	path    string
 	text    string
 	prio    int = 99
-	execute bool
 }
 
 enum State {
@@ -26,27 +25,27 @@ pub fn (mut plbook PlayBook) add(args_ PLayBookAddArgs) ! {
 
 	// walk over directory
 	if args.path.len > 0 {
-		console.print_header("PLBOOK add path:'${args.path}'")
+		// console.print_header("PLBOOK add path:'${args.path}'")
 		mut p := pathlib.get(args.path)
 		if !p.exists() {
 			return error("can't find path:${p.path}")
 		}
 		if p.is_file() {
 			c := p.read()!
-			plbook.add(text: c, execute: args.execute, prio: args.prio)!
+			plbook.add(text: c, prio: args.prio)!
 			return
 		} else if p.is_dir() {
 			mut ol := p.list(recursive: true, regex: [r'.*\.md$'])!
 			for mut p2 in ol.paths {
 				c2 := p2.read()!
-				plbook.add(text: c2, execute: args.execute, prio: args.prio)!
+				plbook.add(text: c2,  prio: args.prio)!
 			}
 			return
 		}
 		return error("can't process path: ${args.path}, unknown type.")
 	}
-	console.print_header("PLBOOK add text")
-	console.print_stdout(args.text)
+	// console.print_header('PLBOOK add text')
+	// console.print_stdout(args.text)
 
 	args.text = texttools.dedent(args.text)
 	mut state := State.start
@@ -104,7 +103,7 @@ pub fn (mut plbook PlayBook) add(args_ PLayBookAddArgs) ! {
 				state = .action
 				action = plbook.action_new(
 					priority: args.prio
-					execute: args.execute
+					
 				)
 				action.comments = comments.join('\n')
 				comments = []string{}

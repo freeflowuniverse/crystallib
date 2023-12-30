@@ -25,19 +25,19 @@ pub mut:
 pub fn download(args_ DownloadArgs) !pathlib.Path {
 	mut args := args_
 
-	console.print_header("download: ${args.url}")
+	console.print_header('download: ${args.url}')
 	if args.name == '' {
-		if args.dest != '' {		
-			args.name=args.dest.split('/').last()
-		}else{
+		if args.dest != '' {
+			args.name = args.dest.split('/').last()
+		} else {
 			mut lastname := args.url.split('/').last()
 			if lastname.contains('?') {
 				return error('cannot get name from url if ? in the last part after /')
 			}
 			args.name = lastname
 		}
-		if args.name==""{
-			return error("cannot find name for download")
+		if args.name == '' {
+			return error('cannot find name for download')
 		}
 	}
 
