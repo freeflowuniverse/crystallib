@@ -4,14 +4,14 @@ import freeflowuniverse.crystallib.core.openrpc
 
 // todo: report bug: when comps is optional, doesnt work
 pub struct OpenAPI {
-pub:
+pub mut:
 	openapi             string                 @[required] // This string MUST be the version number of the OpenAPI Specification that the OpenAPI document uses. The openapi field SHOULD be used by tooling to interpret the OpenAPI document. This is not related to the API info.version string.
 	info                Info                   @[required]   // Provides metadata about the API. The metadata MAY be used by tooling as required.
 	json_schema_dialect ?string   // The default value for the $schema keyword within Schema Objects contained within this OAS document. This MUST be in the form of a URI.
 	servers             ?[]Server // An array of Server Objects, which provide connectivity information to a target server. If the servers property is not provided, or is an empty array, the default value would be a Server Object with a url value of /.
 	paths               map[string]PathItem // The available paths and operations for the API.
 	webhooks            ?map[string]PathRef // The incoming webhooks that MAY be received as part of this API and that the API consumer MAY choose to implement. Closely related to the callbacks feature, this section describes requests initiated other than by an API call, for example by an out of band registration. The key name is a unique string to refer to each webhook, while the (optionally referenced) Path Item Object describes a request that may be initiated by the API provider and the expected responses. An example is available.
-	components          Components // An element to hold various schemas for the document.
+	components          ?Components // An element to hold various schemas for the document.
 	security            ?[]SecurityRequirement // A declaration of which security mechanisms can be used across the API. The list of values includes alternative security requirement objects that can be used. Only one of the security requirement objects need to be satisfied to authorize a request. Individual operations can override this definition. To make security optional, an empty security requirement ({}) can be included in the array.
 	tags                ?[]Tag // A list of tags used by the document with additional metadata. The order of the tags can be used to reflect on their order by the parsing tools. Not all tags that are used by the Operation Object must be declared. The tags that are not declared MAY be organized randomly or based on the tools’ logic. Each tag name in the list MUST be unique.
 	external_docs       ?ExternalDocumentation // Additional external documentation.
@@ -41,12 +41,13 @@ pub fn (spec OpenAPI) plain() string {
 // ```
 // The object provides metadata about the API. The metadata MAY be used by the clients if needed, and MAY be presented in editing or documentation generation tools for convenience.
 pub struct Info {
+mut:
 	title            string  @[required] // The title of the API
-	summary          string  // A short summary of the API.
-	description      string  // A description of the API. CommonMark syntax MAY be used for rich text representation.
-	terms_of_service string  // A URL to the Terms of Service for the API. This MUST be in the form of a URL.
-	contact          Contact // The contact information for the exposed API.
-	license          License // The license information for the exposed API.
+	summary          ?string  // A short summary of the API.
+	description      ?string  // A description of the API. CommonMark syntax MAY be used for rich text representation.
+	terms_of_service ?string  // A URL to the Terms of Service for the API. This MUST be in the form of a URL.
+	contact          ?Contact // The contact information for the exposed API.
+	license          ?License // The license information for the exposed API.
 	version          string  @[required] // The version of the OpenAPI document (which is distinct from the OpenAPI Specification version or the API implementation version).
 }
 
@@ -68,9 +69,10 @@ pub struct Contact {
 // }```
 // License information for the exposed API.
 pub struct License {
+mut:
 	name       string @[required] // The license name used for the API.
-	identifier string // An SPDX license expression for the API. The identifier field is mutually exclusive of the url field.
-	url        string // A URL to the license used for the API. This MUST be in the form of a URL. The url field is mutually exclusive of the identifier field.
+	identifier ?string // An SPDX license expression for the API. The identifier field is mutually exclusive of the url field.
+	url        ?string // A URL to the license used for the API. This MUST be in the form of a URL. The url field is mutually exclusive of the identifier field.
 }
 
 // ```{
@@ -130,6 +132,7 @@ type PathItemRef = PathItem | Reference
 type RequestRef = Reference | Request
 
 pub struct PathItem {
+mut:
 	ref         ?string      // Allows for a referenced definition of this path item. The referenced structure MUST be in the form of a Path Item Object. In case a Path Item Object field appears both in the defined object and the referenced object, the behavior is undefined. See the rules for resolving Relative References.
 	summary     ?string      // An optional, string summary, intended to apply to all operations in this path.
 	description ?string      //	An optional, string description, intended to apply to all operations in this path. CommonMark syntax MAY be used for rich text representation.
@@ -146,18 +149,19 @@ pub struct PathItem {
 }
 
 pub struct Operation {
-	tags          []string //	A list of tags for API documentation control. Tags can be used for logical grouping of operations by resources or any other qualifier.
-	summary       string   //	A short summary of what the operation does.
-	description   string   // A verbose explanation of the operation behavior. CommonMark syntax MAY be used for rich text representation.
-	external_docs ExternalDocumentation  @[json: 'externalDocs'] // Additional external documentation for this operation.
-	operation_id  string                 @[json: 'operationId'] // Unique string used to identify the operation. The id MUST be unique among all operations described in the API. The operationId value is case-sensitive. Tools and libraries MAY use the operationId to uniquely identify an operation, therefore, it is RECOMMENDED to follow common programming naming conventions.
-	parameters    []Parameter // A list of parameters that are applicable for this operation. If a parameter is already defined at the Path Item, the new definition will override it but can never remove it. The list MUST NOT include duplicated parameters. A unique parameter is defined by a combination of a name and location. The list can use the Reference Object to link to parameters that are defined at the OpenAPI Object’s components/parameters.
-	request_body  RequestRef             @[json: 'requestBody'] // The request body applicable for this operation. The requestBody is fully supported in HTTP methods where the HTTP 1.1 specification [RFC7231] has explicitly defined semantics for request bodies. In other cases where the HTTP spec is vague (such as GET, HEAD and DELETE), requestBody is permitted but does not have well-defined semantics and SHOULD be avoided if possible.
-	responses     map[string]ResponseRef // The list of possible responses as they are returned from executing this operation.
-	callbacks     map[string]CallbackRef // A map of possible out-of band callbacks related to the parent operation. The key is a unique identifier for the Callback Object. Each value in the map is a Callback Object that describes a request that may be initiated by the API provider and the expected responses.
-	deprecated    bool // Declares this operation to be deprecated. Consumers SHOULD refrain from usage of the declared operation. Default value is false.
-	security      []SecurityRequirement //	A declaration of which security mechanisms can be used for this operation. The list of values includes alternative security requirement objects that can be used. Only one of the security requirement objects need to be satisfied to authorize a request. To make security optional, an empty security requirement ({}) can be included in the array. This definition overrides any declared top-level security. To remove a top-level security declaration, an empty array can be used.
-	servers       []Server // An alternative server array to service this operation. If an alternative server object is specified at the Path Item Object or Root level, it will be overridden by this value.
+mut:
+	tags          ?[]string //	A list of tags for API documentation control. Tags can be used for logical grouping of operations by resources or any other qualifier.
+	summary       ?string   //	A short summary of what the operation does.
+	description   ?string   // A verbose explanation of the operation behavior. CommonMark syntax MAY be used for rich text representation.
+	external_docs ?ExternalDocumentation  @[json: 'externalDocs'] // Additional external documentation for this operation.
+	operation_id  ?string                 @[json: 'operationId'] // Unique string used to identify the operation. The id MUST be unique among all operations described in the API. The operationId value is case-sensitive. Tools and libraries MAY use the operationId to uniquely identify an operation, therefore, it is RECOMMENDED to follow common programming naming conventions.
+	parameters    ?[]Parameter // A list of parameters that are applicable for this operation. If a parameter is already defined at the Path Item, the new definition will override it but can never remove it. The list MUST NOT include duplicated parameters. A unique parameter is defined by a combination of a name and location. The list can use the Reference Object to link to parameters that are defined at the OpenAPI Object’s components/parameters.
+	request_body  ?RequestRef             @[json: 'requestBody'] // The request body applicable for this operation. The requestBody is fully supported in HTTP methods where the HTTP 1.1 specification [RFC7231] has explicitly defined semantics for request bodies. In other cases where the HTTP spec is vague (such as GET, HEAD and DELETE), requestBody is permitted but does not have well-defined semantics and SHOULD be avoided if possible.
+	responses     ?map[string]ResponseRef // The list of possible responses as they are returned from executing this operation.
+	callbacks     ?map[string]CallbackRef // A map of possible out-of band callbacks related to the parent operation. The key is a unique identifier for the Callback Object. Each value in the map is a Callback Object that describes a request that may be initiated by the API provider and the expected responses.
+	deprecated    ?bool // Declares this operation to be deprecated. Consumers SHOULD refrain from usage of the declared operation. Default value is false.
+	security      ?[]SecurityRequirement //	A declaration of which security mechanisms can be used for this operation. The list of values includes alternative security requirement objects that can be used. Only one of the security requirement objects need to be satisfied to authorize a request. To make security optional, an empty security requirement ({}) can be included in the array. This definition overrides any declared top-level security. To remove a top-level security declaration, an empty array can be used.
+	servers       ?[]Server // An alternative server array to service this operation. If an alternative server object is specified at the Path Item Object or Root level, it will be overridden by this value.
 }
 
 // TODO: currently using map[string]Response
@@ -197,13 +201,14 @@ pub struct Encoding {
 }
 
 pub struct Parameter {
+mut:
 	name              string @[required] // The name of the parameter. Parameter names are case sensitive.
 	in_               string @[json: 'in'; required] // The location of the parameter. Possible values are "query", "header", "path" or "cookie".
-	description       string // A brief description of the parameter. This could contain examples of use. CommonMark syntax MAY be used for rich text representation.
-	required          bool   // Determines whether this parameter is mandatory. If the parameter location is "path", this property is REQUIRED and its value MUST be true. Otherwise, the property MAY be included and its default value is false.
-	deprecated        bool   // Specifies that a parameter is deprecated and SHOULD be transitioned out of usage. Default value is false.
-	allow_empty_value bool   @[json: 'allowEmptyValue'] //	Sets the ability to pass empty-valued parameters. This is valid only for query parameters and allows sending a parameter with an empty value. Default value is false. If style is used, and if behavior is n/a (cannot be serialized), the value of allowEmptyValue SHALL be ignored. Use of this property is NOT RECOMMENDED, as it is likely to be removed in a later revision.
-	schema            Schema // The schema defining the type used for the parameter.
+	description       ?string // A brief description of the parameter. This could contain examples of use. CommonMark syntax MAY be used for rich text representation.
+	required          bool   @[required]// Determines whether this parameter is mandatory. If the parameter location is "path", this property is REQUIRED and its value MUST be true. Otherwise, the property MAY be included and its default value is false.
+	deprecated        ?bool   // Specifies that a parameter is deprecated and SHOULD be transitioned out of usage. Default value is false.
+	allow_empty_value ?bool   @[json: 'allowEmptyValue'] //	Sets the ability to pass empty-valued parameters. This is valid only for query parameters and allows sending a parameter with an empty value. Default value is false. If style is used, and if behavior is n/a (cannot be serialized), the value of allowEmptyValue SHALL be ignored. Use of this property is NOT RECOMMENDED, as it is likely to be removed in a later revision.
+	schema            ?Schema // The schema defining the type used for the parameter.
 }
 
 pub struct Example {}
@@ -257,6 +262,7 @@ type SecurityRequirement = map[string][]string
 pub struct Tag {}
 
 pub struct ExternalDocumentation {
+mut:
 	description string
 	url         string @[required]
 }
