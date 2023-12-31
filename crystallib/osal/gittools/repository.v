@@ -5,6 +5,8 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.clients.redisclient
+import freeflowuniverse.crystallib.osal.vscode
+import freeflowuniverse.crystallib.osal.sourcetree
 import json
 
 @[heap]
@@ -337,6 +339,22 @@ pub fn (repo GitRepo) ssh_key_set(key string) ! {
 fn (repo GitRepo) ssh_key_path() string {
 	return '${os.home_dir()}/.ssh/${repo.key()}'
 }
+
+
+//////////////////////////EDIT CODE MGMT
+//////////////////////////////////
+
+//open sourcetree for the git repo
+pub fn (repo GitRepo) sourcetree()! {
+	sourcetree.open(path:repo.path.path)!		
+}
+
+//open visual studio code for repo
+pub fn (repo GitRepo) vscode()! {
+	vscode.open(path:repo.path.path)!		
+}
+
+
 
 // // check if sshkey for a repo exists in the homedir/.ssh
 // // we check on name, if nameof repo is same as name of key we will load

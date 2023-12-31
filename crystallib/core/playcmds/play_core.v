@@ -23,7 +23,7 @@ pub fn play_core(mut session play.Session)  ! {
 			session.context.kvs.config.encryption = p.get_default_false('fsdb_encryption')
 		}
 		if p.exists('coderoot') {
-			mut coderoot := p.get_path('coderoot')!
+			mut coderoot := p.get_path_create('coderoot')!
 			if session.context.gitstructure.rootpath.path != coderoot {
 				mut gs := gittools.get(coderoot: coderoot)!
 				session.context.gitstructure = &gs
@@ -35,7 +35,7 @@ pub fn play_core(mut session play.Session)  ! {
 	for mut action in session.plbook.find(filter: 'core.coderoot_set')! {
 		mut p := action.params
 		if p.exists('coderoot') {
-			coderoot := p.get_path('coderoot')!
+			coderoot := p.get_path_create('coderoot')!
 			if session.context.coderoot() != coderoot {
 				mut gs := gittools.get(coderoot: coderoot)!
 				session.context.gitstructure = &gs
@@ -47,11 +47,12 @@ pub fn play_core(mut session play.Session)  ! {
 	}
 
 
-	for action in session.plbook.find(filter: 'core.params_context_set')! {
+	for mut action in session.plbook.find(filter: 'core.params_context_set')! {
 		mut p := action.params
 		for param in p.params {
 			session.context.params.set(param.key, param.value)
 		}
+		action.done = true
 	}
 
 	for mut action in session.plbook.find(filter: 'core.params_session_set')! {

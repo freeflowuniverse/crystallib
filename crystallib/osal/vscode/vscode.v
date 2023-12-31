@@ -1,9 +1,8 @@
 module vscode
 
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.installers.vscode as vscodeinstaller
 import os
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct OpenArgs {
@@ -28,12 +27,12 @@ pub fn open(args_ OpenArgs) ! {
 
 // check visual studio code is installed
 pub fn exists() bool {
-	return osal.cmd_exists('vscode')
+	return osal.cmd_exists('vscode') || osal.cmd_exists('code')
 }
 
 pub fn check() ! {
 	if exists() == false {
-		vscodeinstaller.install()!
+		// vscodeinstaller.install()!
 		if exists() == false {
 			return error('Visual studio code is not installed.\nPlease see https://code.visualstudio.com/download')
 		}

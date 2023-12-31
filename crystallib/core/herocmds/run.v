@@ -3,6 +3,8 @@ module herocmds
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.play
 import freeflowuniverse.crystallib.core.playcmds
+import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.osal.vscode
 import cli { Command, Flag }
 import os
 
@@ -20,6 +22,32 @@ pub fn cmd_run(mut cmdroot Command) {
 		execute: cmd_3script_execute
 	}
 	cmds_run_add(mut cmd_run)
+
+
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'edit'
+		abbrev: 'e'
+		description: 'Open visual studio code for where we found the 3script.'
+	})
+
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'sourcetree'
+		abbrev: 'st'
+		description: 'Open visual studio code for where we found the 3script.'
+	})
+
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'run'
+		abbrev: 'r'
+		description: 'Run the actions.'
+	})
+
 	cmdroot.add_command(cmd_run)
 }
 
@@ -31,13 +59,13 @@ pub fn cmds_run_add(mut cmd_run Command) {
 		abbrev: 'p'
 		description: 'path where 3scripts can be found.'
 	})
-	cmd_run.add_flag(Flag{
-		flag: .string
-		required: false
-		name: 'circle'
-		abbrev: 'c'
-		description: 'circle id or circle name.'
-	})
+	// cmd_run.add_flag(Flag{
+	// 	flag: .string
+	// 	required: false
+	// 	name: 'circle'
+	// 	abbrev: 'c'
+	// 	description: 'circle id or circle name.'
+	// })
 	cmd_run.add_flag(Flag{
 		flag: .string
 		required: false
@@ -76,29 +104,6 @@ pub fn cmds_run_add(mut cmd_run Command) {
 		description: 'will reset the git repo if there are changes inside, will also pull, CAREFUL.'
 	})
 
-	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'editor'
-		abbrev: 'code'
-		description: 'Open visual studio code for where we found the 3script.'
-	})
-
-	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'sourcetree'
-		abbrev: 'st'
-		description: 'Open visual studio code for where we found the 3script.'
-	})
-
-	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'run'
-		abbrev: 'r'
-		description: 'Run the actions.'
-	})
 
 	cmd_run.add_flag(Flag{
 		flag: .string
@@ -117,7 +122,7 @@ pub fn cmds_run_add(mut cmd_run Command) {
 }
 
 fn cmd_3script_execute(cmd Command) ! {
-	mut circle := cmd.flags.get_string('circle') or { 'test' }
+	// mut circle := cmd.flags.get_string('circle') or { 'test' }
 
 	mut path := cmd.flags.get_string('path') or { '' }
 	mut url := cmd.flags.get_string('url') or { '' }
@@ -135,7 +140,7 @@ fn cmd_3script_execute(cmd Command) ! {
 	interactive := !cmd.flags.get_bool('script') or { false }
 
 	run := cmd.flags.get_bool('run') or { false }
-	editor := cmd.flags.get_bool('editor') or { false }
+	edit := cmd.flags.get_bool('edit') or { false }
 	sourcetree := cmd.flags.get_bool('sourcetree') or { false }
 
 	if url.len > 0 {
@@ -154,31 +159,18 @@ fn cmd_3script_execute(cmd Command) ! {
 		interactive: interactive
 	)!
 
-	// println(h)
-	if editor || sourcetree {
-		mut gs := gittools.get(coderoot: coderoot) or {
-			return error("Could not find gittools on '${coderoot}'\n${err}")
-		}
-		mut cmdname := 'edit'
-		if sourcetree {
-			cmdname = 'sourcetree'
-		}
-		gs.do(
-			cmd: cmdname
-			script: !interactive
-			url: cmd.flags.get_string('url') or { '' }
-		)!
-	}
-
-	if url.len > 0 {
-		// get code from git, will be found in ~/hero/var/mdbook_test
-		path = session.context.gitstructure.code_get(url: url)!
-	}
-
-	// add all actions inside to the playbook
-	session.plbook.add(path: path)!
-
-	if cmd.flags.get_bool('run') or { false } {
+	if sourcetree {
+		mut repo:=gittools.git_repo_get(coderoot: coderoot,path:path)!
+		repo.sourcetree()!
+	}else if edit{
+		vscode.open(path:path)!
+	}else if run{		
+		// add all actions inside to the playbook
+		session.playbook_add(path: path)!
+		session.process()!
+		console.print_stdout(session.plbook.str())
 		playcmds.run(mut session)!
+	}else{
+		return error(cmd.help_message())
 	}
 }

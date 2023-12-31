@@ -119,6 +119,7 @@ fn (mut self MDBooks) reset_state() ! {
 // get all content
 pub fn (mut self MDBooks) pull(reset bool) ! {
 	console.print_header(' pull mdbooks')
+	print_backtrace()
 	self.init()!
 	for key, repo_ in self.gitrepos {
 		mut repo := repo_

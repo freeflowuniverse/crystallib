@@ -29,7 +29,7 @@ pub mut:
 	coderoot        string
 	interactive     bool
 	fsdb_encryption bool
-	script3         string // if context is created from a 3script
+	// script3         string // if context is created from a 3script
 }
 
 // create context object .
@@ -41,7 +41,6 @@ pub mut:
 // coderoot	 string
 // interactive  bool
 // fsdb_encryption bool	
-// script3      string //if context is created from a 3script
 // ```
 //
 fn new(args_ ContextNewArgs) !Context {

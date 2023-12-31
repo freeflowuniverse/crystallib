@@ -27,9 +27,6 @@ pub fn play_mdbook(mut session play.Session) ! {
 		if p.exists('publishroot') {
 			publishroot = p.get('publishroot')!
 		}
-		if p.exists('publishroot') {
-			pull = true
-		}
 		if p.exists('install') {
 			install = p.get_default_true('install')
 		}
@@ -84,8 +81,8 @@ pub fn play_mdbook(mut session play.Session) ! {
 
 	for mut action in session.plbook.find(filter: 'books:generate')! {
 		mut p := action.params
-		// need to make sure we rebuild the state in case previous actions were not defined
-		if pull {
+		mut pull2 := p.get_default_false('pull')
+		if pull2 {
 			books.pull(reset)!
 		}
 		mut name := p.get_default('name', '')!
@@ -103,6 +100,7 @@ pub fn play_mdbook(mut session play.Session) ! {
 		} else if name == '' {
 			for mut book2 in books.books {
 				book2.generate()!
+				mdbook.save_to_config(*book2, mut session.context) !
 			}
 		} else {
 			mut book2 := mdbook.new_from_config(
@@ -112,6 +110,7 @@ pub fn play_mdbook(mut session play.Session) ! {
 				context: &session.context
 			)!
 			book2.generate()!
+			mdbook.save_to_config(*book2, mut session.context) !
 		}
 		action.done = true
 	}

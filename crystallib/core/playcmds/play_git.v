@@ -16,7 +16,7 @@ pub fn play_git(mut session play.Session) ! {
 
 		mut coderoot := ''
 		if p.exists('coderoot') {
-			coderoot = p.get_path('coderoot')!
+			coderoot = p.get_path_create('coderoot')!
 		}
 
 		if (repo == '' || account == '' || provider == '') && url == '' {

@@ -2,6 +2,7 @@ module play
 
 import json
 
+@[heap]
 pub struct Configurator[T] {
 pub mut:
 	context  &Context
@@ -14,7 +15,7 @@ pub struct ConfiguratorArgs {
 pub mut:
 	context  &Context
 	name     string
-	instance string
+	instance string [required]
 }
 
 // name is e.g. mailclient (the type of configuration setting)
@@ -43,7 +44,7 @@ pub fn (mut self Configurator[T]) set(args_ T) ! {
 pub fn (mut self Configurator[T]) get() !T {
 	mut kvs := self.context.db_config_get()!
 	if !kvs.exists(self.config_key()) {
-		return error("can't find configuration with name: ${self.config_key()}")
+		return error("can't find configuration with name: ${self.config_key()} in context:'${self.context.name}'")
 	}
 	data := kvs.get(self.config_key())!
 	return json.decode(T, data)!

@@ -61,68 +61,13 @@ const textin3 = '
 	id:a1 name6:aaaaa //comment 2
 '
 
-// fn test_textin2() {
-// 	params := parse(paramsparser.textin2) or { panic(err) }
-// 	println(params)
-// 	assert params == Params{
-// 		params: [
-// 			Param{
-// 				key: 'id'
-// 				value: 'a1'
-// 				comment: 'this is a cool piece of text
+fn test_hexhash() {
+	mut params := parse(paramsparser.textin2)!
+	println(params)
+	h := params.hexhash()
+	assert h == 'fca5c320391e7a91ec91999b1b3d66bf5cb7658905284c431777ff6d2fa4a4c3'
+}
 
-// now end of comment'
-// 			},
-// 			Param{
-// 				key: 'name6'
-// 				value: 'aaaaa'
-// 				comment: ''
-// 			},
-// 			Param{
-// 				key: 'name'
-// 				value: 'need to do something 1'
-// 				comment: ''
-// 			},
-// 			Param{
-// 				key: 'description'
-// 				value: 'something\\nyes'
-// 				comment: 'comment 1'
-// 			},
-// 			Param{
-// 				key: 'name2'
-// 				value: 'test'
-// 				comment: ''
-// 			},
-// 			Param{
-// 				key: 'name3'
-// 				value: 'hi'
-// 				comment: ''
-// 			},
-// 			Param{
-// 				key: 'name10'
-// 				value: 'this is with space'
-// 				comment: ''
-// 			},
-// 			Param{
-// 				key: 'name11'
-// 				value: 'aaa11'
-// 				comment: ''
-// 			},
-// 			Param{
-// 				key: 'name4'
-// 				value: 'aaa'
-// 				comment: 'some comment 2'
-// 			},
-// 			Param{
-// 				key: 'name5'
-// 				value: 'aab'
-// 				comment: 'somecomment 3'
-// 			},
-// 		]
-// 		args: ['aa', 'bb']
-// 		comments: ['arg comment']
-// 	}
-// }
 
 fn test_textin3() {
 	params := parse(paramsparser.textin3) or { panic(err) }
@@ -185,6 +130,17 @@ fn test_args_get() {
 	mut y := params.get('priority') or { panic(err) }
 	assert y == '2'
 }
+
+fn test_url1() {
+	mut text := "color:red url:'https://github.com/freeflowuniverse/crystallib/tree/development/examples/mdbook/books_to_include1'"
+	mut params := parse(text) or { panic(err) }
+	mut text2 := "color:red url:\"https://github.com/freeflowuniverse/crystallib/tree/development/examples/mdbook/books_to_include1 \""
+	mut params2 := parse(text2) or { panic(err) }
+	assert params.get("url")?=='https://github.com/freeflowuniverse/crystallib/tree/development/examples/mdbook/books_to_include1'
+	assert params2.get("url")?=='https://github.com/freeflowuniverse/crystallib/tree/development/examples/mdbook/books_to_include1'
+}
+
+
 
 // // fn test_json() {
 
@@ -274,11 +230,6 @@ fn test_args_get() {
 // 	assert params.equal(params2)
 // }
 
-fn test_hexhash() {
-	mut params := parse(paramsparser.textin2)!
-	h := params.hexhash()
-	assert h == '2f4ac8a42553a7dabc4b9326e6a23e7b21cede0cee1e8ffaaa76771c25b8949b'
-}
 
 // fn test_params_default_false() {
 // 	mut params := parse('
@@ -352,4 +303,69 @@ fn test_hexhash() {
 // 	assert params.args.len == 3
 
 // 	assert params.get('urgency') or { '' } == 'green'
+// }
+
+
+
+// fn test_textin2() {
+// 	params := parse(paramsparser.textin2) or { panic(err) }
+// 	println(params)
+// 	assert params == Params{
+// 		params: [
+// 			Param{
+// 				key: 'id'
+// 				value: 'a1'
+// 				comment: 'this is a cool piece of text
+
+// now end of comment'
+// 			},
+// 			Param{
+// 				key: 'name6'
+// 				value: 'aaaaa'
+// 				comment: ''
+// 			},
+// 			Param{
+// 				key: 'name'
+// 				value: 'need to do something 1'
+// 				comment: ''
+// 			},
+// 			Param{
+// 				key: 'description'
+// 				value: 'something\\nyes'
+// 				comment: 'comment 1'
+// 			},
+// 			Param{
+// 				key: 'name2'
+// 				value: 'test'
+// 				comment: ''
+// 			},
+// 			Param{
+// 				key: 'name3'
+// 				value: 'hi'
+// 				comment: ''
+// 			},
+// 			Param{
+// 				key: 'name10'
+// 				value: 'this is with space'
+// 				comment: ''
+// 			},
+// 			Param{
+// 				key: 'name11'
+// 				value: 'aaa11'
+// 				comment: ''
+// 			},
+// 			Param{
+// 				key: 'name4'
+// 				value: 'aaa'
+// 				comment: 'some comment 2'
+// 			},
+// 			Param{
+// 				key: 'name5'
+// 				value: 'aab'
+// 				comment: 'somecomment 3'
+// 			},
+// 		]
+// 		args: ['aa', 'bb']
+// 		comments: ['arg comment']
+// 	}
 // }

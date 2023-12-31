@@ -60,7 +60,7 @@ pub fn (mut params Params) set_with_comment(key string, value string, comment st
 	params.params << Param{
 		key: key2
 		value: str_normalize(value)
-		comment: str_normalize(comment)
+		comment: comment_normalize(comment)
 	}
 }
 
@@ -85,22 +85,25 @@ pub fn (mut params Params) set_arg_with_comment(value string, comment string) {
 	if !params.exists_arg(str_normalize(value2)) {
 		params.args << value2
 		if comment.len > 0 {
-			params.comments << str_normalize(comment)
+			params.comments << comment_normalize(comment)
 		}
 	}
 }
 
-fn str_normalize(comment_ string) string {
-	mut comment := comment_
-	// println(comment+"\n----")
-	comment = comment.replace('\\\\n', '\n')
-	comment = comment.replace("\\'", "'")
-	comment = comment.replace('<<BR>>', '\n')
-	comment = comment.replace('<BR>', '\n')
-	comment = comment.trim_right('-')
-	// println(comment)
-	return comment.trim_space()
+fn str_normalize(txt_ string) string {
+	mut txt := txt_
+	txt = txt.replace('\\\\n', '\n')
+	txt = txt.replace("\\'", "'")
+	txt = txt.replace('<<BR>>', '\n')
+	txt = txt.replace('<BR>', '\n')	// println(txt)
+	return txt.trim_space()
 }
+
+fn comment_normalize(txt_ string) string {
+	mut txt := str_normalize(txt_)
+	return txt.trim_space().trim_right("-").trim_space()
+}
+
 
 // parse new txt as params and merge into params
 pub fn (mut params Params) add(txt string) ! {

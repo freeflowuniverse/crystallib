@@ -1,5 +1,5 @@
 module play
-
+import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.core.texttools.regext
@@ -7,21 +7,27 @@ import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.data.paramsparser
 
 
-@[params]
-pub struct PreProcessArgs {
-pub mut:
-	text        string @[required]
-}
-
-
-pub fn (mut context Context) pre_process(args_ PreProcessArgs) !string {
+fn (mut session Session) pre_process() ! {
 	mut out:=[]string{}
-	mut args:=args_
-	for line_ in args.text.split_into_lines() {
+	
+	session.nrtimes_processed+=1
+
+	if session.nrtimes_processed > 20{
+		println(session.script3_preprocess)
+		panic("recursive behavior pre-process out of bound")
+	}
+
+	for line_ in session.script3_preprocess.split_into_lines() {
+
 		line := line_.replace('\t', '    ')
 		line_strip := line.trim_space()
 
-		if line_strip.len == 0 {
+		if line_strip==""{
+			out<<""
+			continue
+		}
+
+		if line_strip.starts_with("'''") || line_strip.starts_with("\"\"\"")  || line_strip.starts_with("```") {
 			continue
 		}
 
@@ -37,9 +43,9 @@ pub fn (mut context Context) pre_process(args_ PreProcessArgs) !string {
 				}
 				mut coderoot := ''
 				if p1.exists('coderoot') {
-					coderoot = p1.get_path('coderoot')!
+					coderoot = p1.get_path_create('coderoot')!
 				}
-
+				// console.print_debug("gittools in $coderoot: can take a while to load if first time.")
 				mut gs := gittools.get(coderoot: coderoot) or {
 					return error("Could not find gittools on '${coderoot}'\n${err}")
 				}
@@ -49,10 +55,14 @@ pub fn (mut context Context) pre_process(args_ PreProcessArgs) !string {
 			
 			mut p:=pathlib.get(path)
 			out << p.recursive_text()!	
-
+			e:=p.recursive_text()!
 			continue			
-
 		}
+
+		if line_strip.contains("!!include"){
+			return error("cannot have include in text (e.g. commented), which is not at start of line. \n$line_strip")
+		}
+
 
 		if line_strip.starts_with("!!snippet"){
 			mut p2:=paramsparser.new(line_strip[10..])!
@@ -65,34 +75,38 @@ pub fn (mut context Context) pre_process(args_ PreProcessArgs) !string {
 
 			name=texttools.name_fix(name)
 
-			context.snippets[name]=p2.str()
+			session.context.snippets[name]=p2.script3().trim_space()
 
 			continue
 
 		}
-
 		out<<line
+	}
+	session.script3_preprocess  = out.join_lines()
+	session.snippets_apply()!
 
+	if session.check_for_further_process(){
+		session.pre_process() !
 	}
-	out2 := context.snippets_apply(out.join_lines())!
-	if out2.contains("!!include"){
-		return context.pre_process(text:out2) !
+
+}
+
+fn (mut session Session) check_for_further_process()bool{
+	if session.script3_preprocess.contains("!!include") { return true}
+	for line in session.script3_preprocess.split_into_lines(){
+		line_strip := line.trim_space()
+		if line_strip.starts_with("'''") || line_strip.starts_with("\"\"\"")  || line_strip.starts_with("```") {
+			return true
+		}
 	}
-	return out2
+	return false
 }
 
 
 
-
 //apply snippets to the text given
-pub fn (mut context Context) snippets_apply(text_ string) !string {
-	mut text:=text_
-	for key,snippet in context.snippets{
-		text=text.replace("\{${key}\}",snippet)
+ fn (mut session Session) snippets_apply() ! {
+	for key,snippet in session.context.snippets{
+		session.script3_preprocess=session.script3_preprocess.replace("\{${key}\}",snippet)
 	}
-	return text
-	// vars:=regext.find_simple_vars(text)!
-	// for var in vars{
-	// 	text.replace("\{${var}\}",)
-	// }
 }

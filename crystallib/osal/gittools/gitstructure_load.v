@@ -2,7 +2,8 @@ module gittools
 
 import os
 import freeflowuniverse.crystallib.core.pathlib
-import time
+import freeflowuniverse.crystallib.ui.console
+// import time
 
 // the factory for getting the gitstructure
 // git is checked uderneith $/code
@@ -82,6 +83,7 @@ fn (mut gitstructure GitStructure) reload() ! {
 // }
 
 fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []string) ! {
+	// console.print_debug("gs load: $path1")
 	path1o := pathlib.get(path1)
 	relpath := path1o.path_relative(gitstructure.rootpath.path)!
 	if relpath.count('/') > 4 {

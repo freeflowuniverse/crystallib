@@ -29,9 +29,13 @@ session.context.gitstructure.code_get(url: "https://github.com/freeflowuniverse/
 
 //get path local to the current script
 path_my_actions := '${os.dir(@FILE)}/books_actions'
+// path_my_actions:="/Users/despiegk1/code/github/freeflowuniverse/crystallib/examples/mdbook/books_actions/sshkey.md"
 
 // //add all actions inside to the playbook
-session.plbook.add(path:path_my_actions)!
+session.playbook_add(path:path_my_actions)!
+session.process()!
+
+println(session.plbook)
 
 // //run all the actions known
 playcmds.run(mut session)!

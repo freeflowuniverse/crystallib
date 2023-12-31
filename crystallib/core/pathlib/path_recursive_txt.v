@@ -1,7 +1,7 @@
 module pathlib
 
 
-// import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.ui.console
 
 
 
@@ -9,8 +9,8 @@ module pathlib
 //get all text for path and underneith (works for dir & file)
 pub fn (mut path Path) recursive_text() ![]string {
 	mut res:=[]string{}
-	path.check_exists()!
-	// console.print_debug('recursive_text: $path.path")
+	// path.check_exists()!
+	// console.print_debug("path recursive text: $path.path")
 	if path.cat == .file {
 		c:=path.read()!
 		res<<c.split_into_lines()		

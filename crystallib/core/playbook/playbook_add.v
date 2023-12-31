@@ -10,7 +10,7 @@ pub struct PLayBookAddArgs {
 pub mut:
 	path    string
 	text    string
-	prio    int = 99
+	prio    int = 50
 }
 
 enum State {
@@ -68,6 +68,7 @@ pub fn (mut plbook PlayBook) add(args_ PLayBookAddArgs) ! {
 			if !line.starts_with('  ') || line_strip == '' || line_strip.starts_with('!') {
 				state = .start
 				// means we found end of action
+				// println("+++${paramsdata.join('\n')}+++")
 				action.params = paramsparser.new(paramsdata.join('\n'))!
 				action.params.delete('id')
 				comments = []string{}
@@ -75,7 +76,7 @@ pub fn (mut plbook PlayBook) add(args_ PLayBookAddArgs) ! {
 				action = &Action{}
 				// console.print_header(' action end')
 			} else {
-				paramsdata << line_strip
+				paramsdata << line
 			}
 		}
 
@@ -144,8 +145,8 @@ pub fn (mut plbook PlayBook) add(args_ PLayBookAddArgs) ! {
 			} else if line.starts_with('//') {
 				state = .comment_for_action_maybe
 				comments << line_strip.trim_left('/ ')
-			} else {
-				plbook.othertext += '${line_strip}\n'
+			// } else {
+				// plbook.othertext += '${line_strip}\n'
 			}
 		}
 	}

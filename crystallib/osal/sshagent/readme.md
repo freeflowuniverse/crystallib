@@ -15,6 +15,7 @@ FbJDzBkCJ5TDec1zGwOJAAAABWJvb2tz
 -----END OPENSSH PRIVATE KEY-----
 '
 
+//make sure the name chose is same as original name of the key
 mut sshkey:=agent.add("mykey:,privkey)!
 
 

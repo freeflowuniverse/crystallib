@@ -7,6 +7,7 @@ import freeflowuniverse.crystallib.core.pathlib
 // import os
 
 // is collection for one specific book
+@[heap]
 pub struct MDBookCollection {
 pub mut:
 	book &MDBook @[skip; str: skip]

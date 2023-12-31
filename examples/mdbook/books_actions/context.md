@@ -7,7 +7,7 @@
 
 !!snippet name:test color:red
 
-!!include url: pull:false reset:false coderoot:'/tmp/testinclude'
+!!include url:'https://github.com/freeflowuniverse/crystallib/tree/development/examples/mdbook/books_to_include1' 
 
 
 !!books.configure 	coderoot:'~/hero/code'

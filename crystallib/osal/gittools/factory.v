@@ -163,6 +163,13 @@ pub mut:
 //
 // # to specify a branch and a folder in the branch
 // https://github.com/threefoldtech/tfgrid-sdk-ts/tree/development/docs
+// args:
+// coderoot          string
+// gitstructure_name string = 'default' // optional, if not mentioned is default, tmp is another good one
+// url               string
+// pull   bool // will pull if this is set
+// reset  bool // this means will pull and reset all changes
+// reload bool // reload the cache
 // ```
 pub fn code_get(args CodeGetFromUrlArgs) !string {
 	mut gs := get(name: args.gitstructure_name, coderoot: args.coderoot)!
@@ -231,6 +238,10 @@ pub mut:
 // look for git dir at (.git location),
 // if path not specified will take current path,
 // will give error if we can't find the .git location
+//```
+// params:
+// 		path string
+//```
 pub fn git_dir_get(args_ GitDirGetArgs) !string {
 	mut args := args_
 	if args.path == '' {
@@ -243,4 +254,30 @@ pub fn git_dir_get(args_ GitDirGetArgs) !string {
 	}
 
 	return parentpath.path
+}
+
+@[params]
+pub struct GitRepoGetArgs {
+pub mut:
+	path string
+	coderoot string
+}
+
+
+// look for git dir at (.git location), .
+// if path not specified will take current path, .
+// will give error if we can't find the .git location .
+// will then opern repo from that location
+//```
+// params:
+// 		path string
+// 		coderoot string
+//```
+pub fn git_repo_get(args_ GitRepoGetArgs) !GitRepo {
+	mut args:=args_
+	path:=git_dir_get(path:args.path)!
+	mut gs := gittools.get(coderoot: args.coderoot) or {
+		return error("Could not find gittools on '${args.coderoot}'\n${err}")
+	}
+	return gs.repo_from_path(path)
 }

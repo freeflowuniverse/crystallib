@@ -41,6 +41,17 @@ pub fn (mut plbook PlayBook) filtersort(args FilterSortArgs) ! {
 			}
 		}
 	}
+
+	//the remainder now needs to be put on prio 50
+	for mut action in plbook.actions {
+		if !(50 in plbook.priorities) {
+			plbook.priorities[50] = []int{}
+		}		
+		if !(action.id in plbook.done) {
+			plbook.priorities[50] << action.id
+			plbook.done << action.id
+		}
+	}
 }
 
 @[params]

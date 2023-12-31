@@ -6,6 +6,8 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.ui.console
+
+
 import os
 
 pub const gitcmds = 'clone,commit,pull,push,delete,reload,list,edit,sourcetree'
@@ -133,23 +135,23 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 		repos = [g]
 	}
 
-	// if args.cmd in 'sourcetree,edit'.split(',') {
-	// 	if repos.len == 0 {
-	// 		return error('please specify at least 1 repo for cmd:${args.cmd}')
-	// 	}
-	// 	if repos.len > 5 {
-	// 		return error('more than 5 repo found for cmd:${args.cmd}')
-	// 	}
-	// 	for r in repos {
-	// 		if args.cmd == 'edit' {
-	// 			visualstudiocode.open(path:r.path.path)!
-	// 		}
-	// 		if args.cmd == 'sourcetree' {
-	// 			sourcetree.open(path:r.path.path)!		
-	// 		}
-	// 	}
-	// 	return
-	// }
+	if args.cmd in 'sourcetree,edit'.split(',') {
+		if repos.len == 0 {
+			return error('please specify at least 1 repo for cmd:${args.cmd}')
+		}
+		if repos.len > 4 {
+			return error('more than 4 repo found for cmd:${args.cmd}')
+		}
+		for r in repos {
+			if args.cmd == 'edit' {
+				r.vscode()!
+			}
+			if args.cmd == 'sourcetree' {
+				r.sourcetree()!
+			}
+		}
+		return
+	}
 
 	if args.cmd in 'pull,push,commit,delete'.split(',') {
 		gs.repos_print(

@@ -15,10 +15,16 @@ pub fn cmd_mdbook(mut cmdroot Command) {
 		description: ''
 		required_args: 0
 		usage: ''
-		execute: cmd_mdbook_execute
 	}
 
-	cmd_run(mut cmd_mdbook) // add the run command as sub to the mdbook
+	mut cmd_mdbook_run := Command{
+		name: 'run'
+		description: 'run actions from 3script'
+		required_args: 0
+		usage: ''
+		execute: cmd_mdbook_execute
+	}
+	cmd_run(mut cmd_mdbook_run) // add the run command as sub to the mdbook
 
 	mut cmd_mdbook_open := Command{
 		name: 'open'
@@ -53,7 +59,7 @@ pub fn cmd_mdbook(mut cmdroot Command) {
 			description: 'reset, means lose changes of your repos.'
 		})
 
-		cmd_mdbook.add_flag(Flag{
+		c.add_flag(Flag{
 			flag: .string
 			required: false
 			name: 'context'
@@ -61,10 +67,11 @@ pub fn cmd_mdbook(mut cmdroot Command) {
 			description: 'name for the context (optional).'
 		})
 	}
-
-	cmdroot.add_command(cmd_mdbook)
+	cmd_mdbook.add_command(cmd_mdbook_run)
 	cmd_mdbook.add_command(cmd_mdbook_open)
 	cmd_mdbook.add_command(cmd_mdbook_edit)
+
+	cmdroot.add_command(cmd_mdbook)
 }
 
 fn cmd_mdbook_execute(cmd Command) ! {
@@ -77,15 +84,20 @@ fn cmd_mdbook_execute(cmd Command) ! {
 		interactive: true
 	)!
 
-	if cmd.name == 'edit' {
-		// little bit hackish for now, in future need to use the KVS in the context		
+	if cmd.name == 'edit' {	
 		mut book2 := mdbook.new_from_config(instance: name, reset: reset, context: &session.context)!
 		book2.edit()!
-	}
-
-	if cmd.name == 'open' {
+	}else if cmd.name == 'open' {
 		mut book2 := mdbook.new_from_config(instance: name, reset: reset, context: &session.context)!
 		book2.generate()!
-		book2.edit()!
+		book2.open()!
+	}else if cmd.name == 'run'{
+		cmd_3script_execute(cmd)!
+		mut book2 := mdbook.new_from_config(instance: name, reset: reset, context: &session.context)!
+		book2.generate()!
+		book2.open()!
+	}else{
+		return error(cmd.help_message())
 	}
+	
 }
