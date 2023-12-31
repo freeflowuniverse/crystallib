@@ -1,7 +1,6 @@
 module openapi
 
 import freeflowuniverse.crystallib.core.openrpc
-import freeflowuniverse.crystallib.data.jsonschema
 
 // todo: report bug: when comps is optional, doesnt work
 pub struct OpenAPI {
@@ -154,7 +153,7 @@ pub struct Operation {
 	operation_id  string                 @[json: 'operationId'] // Unique string used to identify the operation. The id MUST be unique among all operations described in the API. The operationId value is case-sensitive. Tools and libraries MAY use the operationId to uniquely identify an operation, therefore, it is RECOMMENDED to follow common programming naming conventions.
 	parameters    []Parameter // A list of parameters that are applicable for this operation. If a parameter is already defined at the Path Item, the new definition will override it but can never remove it. The list MUST NOT include duplicated parameters. A unique parameter is defined by a combination of a name and location. The list can use the Reference Object to link to parameters that are defined at the OpenAPI Object’s components/parameters.
 	request_body  RequestRef             @[json: 'requestBody'] // The request body applicable for this operation. The requestBody is fully supported in HTTP methods where the HTTP 1.1 specification [RFC7231] has explicitly defined semantics for request bodies. In other cases where the HTTP spec is vague (such as GET, HEAD and DELETE), requestBody is permitted but does not have well-defined semantics and SHOULD be avoided if possible.
-	responses     map[string]Response    // The list of possible responses as they are returned from executing this operation.
+	responses     map[string]ResponseRef // The list of possible responses as they are returned from executing this operation.
 	callbacks     map[string]CallbackRef // A map of possible out-of band callbacks related to the parent operation. The key is a unique identifier for the Callback Object. Each value in the map is a Callback Object that describes a request that may be initiated by the API provider and the expected responses.
 	deprecated    bool // Declares this operation to be deprecated. Consumers SHOULD refrain from usage of the declared operation. Default value is false.
 	security      []SecurityRequirement //	A declaration of which security mechanisms can be used for this operation. The list of values includes alternative security requirement objects that can be used. Only one of the security requirement objects need to be satisfied to authorize a request. To make security optional, an empty security requirement ({}) can be included in the array. This definition overrides any declared top-level security. To remove a top-level security declaration, an empty array can be used.
@@ -209,12 +208,55 @@ pub struct Parameter {
 
 pub struct Example {}
 
-pub struct SecurityScheme {}
+// Define a struct for the security scheme object
+struct SecurityScheme {
+	type_               string      @[json: 'type'; required] // The type of the security scheme (e.g., apiKey, http, oauth2, openIdConnect)
+	description         ?string // The description of the security scheme
+	name                ?string // The name of the header or query parameter to be used
+	in_                 ?string     @[json: 'in'] // The location of the API key (e.g., query, header, cookie)
+	scheme              ?string     @[required]   // The name of the HTTP Authorization scheme to be used
+	bearer_format       ?string     @[json: 'bearerFormat'] // A hint to the client to identify how the bearer token is formatted
+	flows               ?OAuthFlows // An object containing configuration information for the flow types supported
+	open_id_connect_url ?string     @[json: 'openIdConnectUrl'] // The OpenId Connect URL to discover OAuth2 configuration values
+}
 
-pub struct RequestBody {}
+// Define a struct for OAuthFlows
+struct OAuthFlows {
+	implicit           ?OAuthFlow // Configuration for the OAuth2 implicit flow
+	password           ?OAuthFlow // Configuration for the OAuth2 password flow
+	client_credentials ?OAuthFlow @[json: 'clientCredentials'] // Configuration for the OAuth2 client credentials flow
+	authorization_code ?OAuthFlow @[json: 'authorizationCode'] // Configuration for the OAuth2 authorization code flow
+}
 
-pub struct SecurityRequirement {}
+// Define a struct for OAuthFlow
+struct OAuthFlow {
+	authorization_url string             @[json: 'authorizationUrl'; required] // The authorization URL to be used for this flow
+	token_url         string             @[json: 'tokenUrl'; required] // The token URL to be used for this flow
+	refresh_url       ?string            @[json: 'refreshUrl'] // The URL to be used for obtaining refresh tokens
+	scopes            ?map[string]string @[json: 'scopes'] // The available scopes for the OAuth2 flow
+}
+
+pub struct RequestBody {
+	description ?string // Description of the request body (optional)
+	content     ContentObject @[required] // Content of the request body
+}
+
+pub struct ContentObject {
+	media_type string       @[required]       // Media type (e.g., application/json)
+	schema     SchemaObject @[required] // Schema of the content
+}
+
+pub struct SchemaObject {
+	type_      string                  @[json: 'type'] // The name is "type_", but it will be interpreted as "type" in JSON
+	properties map[string]SchemaObject // Additional properties of the schema (if any)
+}
+
+// pub struct SecurityRequirement {}
+type SecurityRequirement = map[string][]string
 
 pub struct Tag {}
 
-pub struct ExternalDocumentation {}
+pub struct ExternalDocumentation {
+	description string
+	url         string @[required]
+}

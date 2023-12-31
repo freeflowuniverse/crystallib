@@ -13,7 +13,7 @@ pub mut:
 
 fn (mut gen ClientGenerator) generate_client() CodeFile {
 	return CodeFile{
-		name: 'client'
+		// name: 'client'
 		mod: '${gen.api_name}_client'
 		imports: []
 		items: [gen.client_struct]
@@ -22,7 +22,7 @@ fn (mut gen ClientGenerator) generate_client() CodeFile {
 
 fn (mut gen ClientGenerator) generate_model(structs []Struct) !CodeFile {
 	return CodeFile{
-		name: 'model'
+		// name: 'model'
 		mod: '${gen.api_name}_client'
 		items: structs.map(CodeItem(it))
 	}
@@ -39,7 +39,7 @@ fn (mut gen ClientGenerator) generate_methods(paths []Path) !CodeFile {
 		}
 	}
 	return CodeFile{
-		name: 'methods'
+		// name: 'methods'
 		items: code
 	}
 }
