@@ -29,7 +29,7 @@ pub fn cmd_run(mut cmdroot Command) {
 		required: false
 		name: 'edit'
 		abbrev: 'e'
-		description: 'Open visual studio code for where we found the 3script.'
+		description: 'Open visual studio code for where we found the 3scripts.'
 	})
 
 	cmd_run.add_flag(Flag{
@@ -37,7 +37,7 @@ pub fn cmd_run(mut cmdroot Command) {
 		required: false
 		name: 'sourcetree'
 		abbrev: 'st'
-		description: 'Open visual studio code for where we found the 3script.'
+		description: 'Open sourcetree (git mgmt) for the repo where we found the 3scripts.'
 	})
 
 	cmd_run.add_flag(Flag{

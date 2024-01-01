@@ -24,7 +24,7 @@ pub fn cmd_mdbook(mut cmdroot Command) {
 		usage: ''
 		execute: cmd_mdbook_execute
 	}
-	cmd_run(mut cmd_mdbook_run) // add the run command as sub to the mdbook
+	cmds_run_add(mut cmd_mdbook_run) // add the run command as sub to the mdbook
 
 	mut cmd_mdbook_open := Command{
 		name: 'open'

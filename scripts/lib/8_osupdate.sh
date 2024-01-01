@@ -18,7 +18,12 @@ function os_update {
         apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         package_install "mc curl tmux net-tools git htop ca-certificates lsb-release"
     elif [[ "${OSNAME}" == "darwin"* ]]; then
-        echo 
+        if command -v brew >/dev/null 2>&1; then
+            echo 'homebrew installed'
+        else 
+            export HOMEBREW_NO_INSTALL_FROM_API=1
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"            
+        fi
     elif [[ "${OSNAME}" == "alpine"* ]]; then
         sudo -s apk update
         sudo -s apk add mc curl rsync htop redis bash bash-completion yq jq tmux git
