@@ -1,7 +1,5 @@
 module openapi
 
-import freeflowuniverse.crystallib.core.openrpc
-
 // todo: report bug: when comps is optional, doesnt work
 pub struct OpenAPI {
 pub mut:
@@ -42,13 +40,13 @@ pub fn (spec OpenAPI) plain() string {
 // The object provides metadata about the API. The metadata MAY be used by the clients if needed, and MAY be presented in editing or documentation generation tools for convenience.
 pub struct Info {
 mut:
-	title            string  @[required] // The title of the API
+	title            string   @[required] // The title of the API
 	summary          ?string  // A short summary of the API.
 	description      ?string  // A description of the API. CommonMark syntax MAY be used for rich text representation.
 	terms_of_service ?string  // A URL to the Terms of Service for the API. This MUST be in the form of a URL.
 	contact          ?Contact // The contact information for the exposed API.
 	license          ?License // The license information for the exposed API.
-	version          string  @[required] // The version of the OpenAPI document (which is distinct from the OpenAPI Specification version or the API implementation version).
+	version          string   @[required] // The version of the OpenAPI document (which is distinct from the OpenAPI Specification version or the API implementation version).
 }
 
 // ```{
@@ -70,7 +68,7 @@ pub struct Contact {
 // License information for the exposed API.
 pub struct License {
 mut:
-	name       string @[required] // The license name used for the API.
+	name       string  @[required] // The license name used for the API.
 	identifier ?string // An SPDX license expression for the API. The identifier field is mutually exclusive of the url field.
 	url        ?string // A URL to the license used for the API. This MUST be in the form of a URL. The url field is mutually exclusive of the identifier field.
 }
@@ -82,13 +80,15 @@ mut:
 pub struct Server {
 	url         string                            @[required] // A URL to the target host. This URL supports Server Variables and MAY be relative, to indicate that the host location is relative to the location where the OpenAPI document is being served. Variable substitutions will be made when a variable is named in {brackets}.
 	description string // An optional string describing the host designated by the URL. CommonMark syntax MAY be used for rich text representation.
-	variables   map[string]openrpc.ServerVariable // A map between a variable name and its value. The value is used for substitution in the server’s URL template.
+	variables   map[string]ServerVariable // A map between a variable name and its value. The value is used for substitution in the server’s URL template.
 }
+
+pub struct ServerVariable{}
 
 pub struct Path {}
 
 pub struct Reference {
-	ref         string @[json: 'ref'; required] // The reference identifier. This MUST be in the form of a URI.
+	ref         string @[json: '\$ref'; required] // The reference identifier. This MUST be in the form of a URI.
 	summary     string // A short summary which by default SHOULD override that of the referenced component. If the referenced object-type does not allow a summary field, then this field has no effect.
 	description string // A description which by default SHOULD override that of the referenced component. CommonMark syntax MAY be used for rich text representation. If the referenced object-type does not allow a description field, then this field has no effect.
 }
@@ -100,9 +100,9 @@ pub struct Components {
 	responses        map[string]ResponseRef       //	An object to hold reusable Response Objects.
 	parameters       map[string]ParameterRef      // An object to hold reusable Parameter Objects.
 	examples         map[string]ExampleRef        //	An object to hold reusable Example Objects.
-	request_bodies   map[string]RequestBodyRef    // An object to hold reusable Request Body Objects.
+	request_bodies   map[string]RequestRef    // An object to hold reusable Request Body Objects.
 	headers          map[string]HeaderRef         //	An object to hold reusable Header Objects.
-	security_schemes map[string]SecuritySchemeRef // An object to hold reusable Security Scheme Objects.
+	security_schemes map[string]SecuritySchemeRef @[json: 'securitySchemes'] // An object to hold reusable Security Scheme Objects.
 	links            map[string]LinkRef     // An object to hold reusable Link Objects.
 	callbacks        map[string]CallbackRef //	An object to hold reusable Callback Objects.
 	path_items       map[string]PathItemRef // An object to hold reusable Path Item Object.
@@ -114,7 +114,7 @@ pub struct Schema {
 	enum_       []string          @[json: 'enum']
 	properties  map[string]Schema
 	format      string
-	ref         string            @[json: '\$ref']
+	ref         string            @[json: "\$ref"]
 	example     string
 	nullable    bool
 	required    ?[]string
@@ -124,12 +124,12 @@ type ResponseRef = Reference | Response
 type ParameterRef = Parameter | Reference
 type SecuritySchemeRef = Reference | SecurityScheme
 type ExampleRef = Example | Reference
-type RequestBodyRef = Reference | RequestBody
+// type RequestBodyRef = Reference | RequestBody
 type HeaderRef = Header | Reference
 type LinkRef = Link | Reference
 type CallbackRef = Callback | Reference
 type PathItemRef = PathItem | Reference
-type RequestRef = Reference | Request
+type RequestRef = Reference | RequestBody
 
 pub struct PathItem {
 mut:
@@ -173,11 +173,17 @@ pub struct Callback {}
 
 pub struct Link {}
 
-pub struct Header {}
+pub struct Header {
+	description       ?string 
+	required          bool    
+	deprecated        ?bool 
+	allow_empty_value ?bool   @[json: 'allowEmptyValue'] 
+}
 
-pub struct Request {}
+// pub struct Request {}
 
 pub struct Response {
+mut:
 	description string                @[required] // A description of the response. CommonMark syntax MAY be used for rich text representation.
 	headers     ?map[string]HeaderRef // Maps a header name to its definition. [RFC7230] states header names are case insensitive. If a response header is defined with the name "Content-Type", it SHALL be ignored.
 	content     map[string]MediaType  // A map containing descriptions of potential response payloads. The key is a media type or media type range and the value describes it. For responses that match multiple keys, only the most specific key is applicable. e.g. text/plain overrides text/*
@@ -186,6 +192,7 @@ pub struct Response {
 
 // TODO: media type example any field
 pub struct MediaType {
+mut:
 	schema   Schema // The schema defining the content of the request, response, or parameter.
 	example  string // Example of the media type. The example object SHOULD be in the correct format as specified by the media type. The example field is mutually exclusive of the examples field. Furthermore, if referencing a schema which contains an example, the example value SHALL override the example provided by the schema.
 	examples map[string]ExampleRef // Examples of the media type. Each example object SHOULD match the media type and specified schema if present. The examples field is mutually exclusive of the example field. Furthermore, if referencing a schema which contains an example, the examples value SHALL override the example provided by the schema.
@@ -202,16 +209,21 @@ pub struct Encoding {
 
 pub struct Parameter {
 mut:
-	name              string @[required] // The name of the parameter. Parameter names are case sensitive.
-	in_               string @[json: 'in'; required] // The location of the parameter. Possible values are "query", "header", "path" or "cookie".
+	name              string  @[required] // The name of the parameter. Parameter names are case sensitive.
+	in_               string  @[json: 'in'; required] // The location of the parameter. Possible values are "query", "header", "path" or "cookie".
 	description       ?string // A brief description of the parameter. This could contain examples of use. CommonMark syntax MAY be used for rich text representation.
-	required          bool   @[required]// Determines whether this parameter is mandatory. If the parameter location is "path", this property is REQUIRED and its value MUST be true. Otherwise, the property MAY be included and its default value is false.
-	deprecated        ?bool   // Specifies that a parameter is deprecated and SHOULD be transitioned out of usage. Default value is false.
+	required          bool    @[required] // Determines whether this parameter is mandatory. If the parameter location is "path", this property is REQUIRED and its value MUST be true. Otherwise, the property MAY be included and its default value is false.
+	deprecated        ?bool // Specifies that a parameter is deprecated and SHOULD be transitioned out of usage. Default value is false.
 	allow_empty_value ?bool   @[json: 'allowEmptyValue'] //	Sets the ability to pass empty-valued parameters. This is valid only for query parameters and allows sending a parameter with an empty value. Default value is false. If style is used, and if behavior is n/a (cannot be serialized), the value of allowEmptyValue SHALL be ignored. Use of this property is NOT RECOMMENDED, as it is likely to be removed in a later revision.
 	schema            ?Schema // The schema defining the type used for the parameter.
 }
 
-pub struct Example {}
+pub struct Example {
+	summary string
+	description string
+	value string
+	external_value string @[json: 'externalValue']
+}
 
 // Define a struct for the security scheme object
 struct SecurityScheme {
@@ -243,13 +255,13 @@ struct OAuthFlow {
 
 pub struct RequestBody {
 	description ?string // Description of the request body (optional)
-	content     ContentObject @[required] // Content of the request body
+	content     map[string]MediaType @[required] // Content of the request body
 }
 
-pub struct ContentObject {
-	media_type string       @[required]       // Media type (e.g., application/json)
-	schema     SchemaObject @[required] // Schema of the content
-}
+// pub struct ContentObject {
+// 	media_type string       @[required]       // Media type (e.g., application/json)
+// 	schema     SchemaObject @[required] // Schema of the content
+// }
 
 pub struct SchemaObject {
 	type_      string                  @[json: 'type'] // The name is "type_", but it will be interpreted as "type" in JSON
@@ -259,7 +271,11 @@ pub struct SchemaObject {
 // pub struct SecurityRequirement {}
 type SecurityRequirement = map[string][]string
 
-pub struct Tag {}
+pub struct Tag {
+	name          string                @[required]
+	description   string
+	external_docs ExternalDocumentation @[json: 'externalDocs']
+}
 
 pub struct ExternalDocumentation {
 mut:
