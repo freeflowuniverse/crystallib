@@ -230,7 +230,7 @@ fn parse_parameter(p json2.Any) !Parameter{
 
 	name := mp['name'] or { return error('parameter name is required') }
 	in_ := mp['in'] or { return error('parameter location is required') }
-	required := mp['required'] or {return error('parameter required field is required')}
+	required := mp['required'] or {'false'}
 	mut ret := Parameter{
 		name: name.str()
 		in_: in_.str()
