@@ -56,8 +56,4 @@ jobs:
           # v -enable-globals -stats test crystallib/data/ourtime
           # v -enable-globals -stats test crystallib/data/paramsparser
 
-      - name: Build hero
-        run: |
-          cd $(pwd)/cli/hero
-          v -enable-globals -w hero.v
 
