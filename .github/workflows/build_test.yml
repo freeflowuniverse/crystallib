@@ -48,7 +48,7 @@ jobs:
 
       - name: Check formatting
         run: |
-          v fmt -w .
+          v fmt -w $(pwd)/crystallib
       
       - name: Run tests
         env:
