@@ -51,15 +51,16 @@ jobs:
 
       - name: Build hero
         run: |
-          cd $(pwd)/cli/hero
+          pushd cli/hero
           v -enable-globals -w hero.v
           chmod +x hero
           find $(pwd)
+          popd
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: hero-${{ matrix.os }}
-          path: ${HOME}/work/crystallib/crystallib/cli/hero/hero
+          path: cli/hero/hero
           if-no-files-found: error
           
