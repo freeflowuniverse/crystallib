@@ -14,8 +14,6 @@ jobs:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref_name }} and your repository is ${{ github.repository }}."
-      - run: echo "🔎 The architecture is $(uname -m)"
-      - run: echo "🔎 The current user is $(whoami) on dir $(pwd)"
       - name: Install dependencies
         run: |
           if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
@@ -40,7 +38,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: freeflowuniverse/webcomponents
-          path: /tmp/webcomponents
+          path: webcomponents
 
 
       - name: Install crystallib
@@ -49,7 +47,7 @@ jobs:
           rm -f ~/.vmodules/freeflowuniverse/crystallib
           ln -s $(pwd)/crystallib ~/.vmodules/freeflowuniverse/crystallib
           rm -f ~/.vmodules/freeflowuniverse/webcomponents
-          ln -s /tmp/webcomponents/webcomponents ~/.vmodules/freeflowuniverse/webcomponents          
+          ln -s webcomponents/webcomponents ~/.vmodules/freeflowuniverse/webcomponents          
 
       - name: Build hero
         run: |
