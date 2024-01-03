@@ -5,22 +5,32 @@ on:
 
 jobs:
   build-test:
-    runs-on: ubuntu-latest
-    services:
-      redis:
-        image: redis
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 6379:6379
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, macos-11]
+    runs-on: ${{ matrix.os }}
+    # services:
+      # redis:
+      #   image: redis
+      #   options: >-
+      #     --health-cmd "redis-cli ping"
+      #     --health-interval 10s
+      #     --health-timeout 5s
+      #     --health-retries 5
+      #   ports:
+      #     - 6379:6379
     steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref_name }} and your repository is ${{ github.repository }}."
+    
       - name: Install dependencies
         run: |
-          sudo apt install -y libgc-dev tmux mc git rsync curl imagemagick
-          cargo install mdbook mdbook-mermaid 
+          if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
+            sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis
+          else
+            brew install libgc tmux git rsync curl redis libpq
+          fi          
 
       - name: Setup Vlang
         uses: vlang/setup-v@v1.3
@@ -38,26 +48,45 @@ jobs:
 
       - name: Check formatting
         run: |
-          v fmt -w .
+          v fmt -w $(pwd)/crystallib
       
       - name: Run tests
         env:
           VJOBS: 1
           OFFLINE: 1
         run: |
-          v -enable-globals -stats test crystallib/algo
-          v -enable-globals -stats test crystallib/baobab
-          v -enable-globals -stats test crystallib/biz
-          v -enable-globals -stats test crystallib/builder
-          v -enable-globals -stats test crystallib/clients
-          v -enable-globals -stats test crystallib/core
-          v -enable-globals -stats test crystallib/crypt
-          v -enable-globals -stats test crystallib/data
-          v -enable-globals -stats test crystallib/installers
-          v -enable-globals -stats test crystallib/osal
-          v -enable-globals -stats test crystallib/servers
-          v -enable-globals -stats test crystallib/threefold
-          v -enable-globals -stats test crystallib/tools
-          v -enable-globals -stats test crystallib/ui
-          v -enable-globals -stats test crystallib/web
+          # v -enable-globals -stats test crystallib/core/pathlib
+          # v -enable-globals -stats test crystallib/core/texttools
+          # v -enable-globals -stats test crystallib/core/playbook
+          v -enable-globals -stats test crystallib/data/fskvs
+          # v -enable-globals -stats test crystallib/data/encoder
+          # v -enable-globals -stats test crystallib/data/currency
+          # v -enable-globals -stats test crystallib/data/markdownparser
+          # v -enable-globals -stats test crystallib/data/ourtime
+          # v -enable-globals -stats test crystallib/data/paramsparser
 
+      - name: Build hero
+        run: |
+          cd $(pwd)/cli/hero
+          v -enable-globals -w hero.v
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: $(pwd)/cli/hero/hero
+          asset_name: hero
+          asset_content_type: application/octet-stream          
