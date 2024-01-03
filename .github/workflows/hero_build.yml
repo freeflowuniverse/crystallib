@@ -1,13 +1,14 @@
-name: build_test
+name: Build & Create Hero
 on:
   push:
-  workflow_dispatch:
+    branches:
+      - development
 
 jobs:
   build-test:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, macos-11]
     runs-on: ${{ matrix.os }}
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
@@ -37,27 +38,13 @@ jobs:
           rm -f ~/.vmodules/freeflowuniverse/crystallib
           ln -s $(pwd)/crystallib ~/.vmodules/freeflowuniverse/crystallib
 
-      - name: Check formatting
-        run: |
-          v fmt -w $(pwd)/crystallib
-      
-      - name: Run tests
-        env:
-          VJOBS: 1
-          OFFLINE: 1
-        run: |
-          # v -enable-globals -stats test crystallib/core/pathlib
-          # v -enable-globals -stats test crystallib/core/texttools
-          # v -enable-globals -stats test crystallib/core/playbook
-          v -enable-globals -stats test crystallib/data/fskvs
-          # v -enable-globals -stats test crystallib/data/encoder
-          # v -enable-globals -stats test crystallib/data/currency
-          # v -enable-globals -stats test crystallib/data/markdownparser
-          # v -enable-globals -stats test crystallib/data/ourtime
-          # v -enable-globals -stats test crystallib/data/paramsparser
-
       - name: Build hero
         run: |
           cd $(pwd)/cli/hero
           v -enable-globals -w hero.v
 
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: hero
+          path: $(pwd)/cli/hero/hero
