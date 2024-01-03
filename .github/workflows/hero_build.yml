@@ -71,8 +71,8 @@ jobs:
       #     repo-token: ${{ secrets.GITHUB_TOKEN }}
 
 
-      # - name: Extract tag name
-      #   run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+      - name: Extract tag name
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
   
       - name: Create Release
         id: create_release
