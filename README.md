@@ -31,6 +31,17 @@ bash install.sh
 
 ```
 
+## get latest hero
+
+```
+curl -L https://api.github.com/repos/freeflowuniverse/crystallib/actions/artifacts | jq -r '.artifacts | map(select(.name == "hero-macos-11.zip")) | sort_by(.updated_at) | last' |  jq -r '.archive_download_url'
+
+wget --header='Authorization: token YOUR_GITHUB_TOKEN' -O filename.zip 'https://api.github.com/repos/freeflowuniverse/crystallib/actions/artifacts/1145996741/zip'
+
+wget  -O filename.zip 'https://api.github.com/repos/freeflowuniverse/crystallib/actions/artifacts/1145996741/zip'
+```
+
+
 ## manual
 
 The v documentation is on [https://freeflowuniverse.github.io/crystallib](https://freeflowuniverse.github.io/crystallib)
