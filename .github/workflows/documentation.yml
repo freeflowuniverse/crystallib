@@ -34,7 +34,7 @@ jobs:
 
       - name: Generate documentation
         run: |
-          bash "$(pwd)/doc.sh
+          bash "$(pwd)/doc.sh"
           # v doc -all -m . -o /tmp/crystallib -f html -readme
 
       - name: Setup Pages

@@ -53,11 +53,14 @@ jobs:
         run: |
           cd $(pwd)/cli/hero
           v -enable-globals -w hero.v
+          find .
+          chmod +x hero
+          cp hero $(pwd)/hero
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: hero-${{ matrix.os }}-${{ matrix.version }}
-          path: $(pwd)/cli/hero/hero
+          path: $(pwd)/hero
           if-no-files-found: error
           
