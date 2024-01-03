@@ -47,10 +47,7 @@ jobs:
           rm -f ~/.vmodules/freeflowuniverse/crystallib
           ln -s $(pwd)/crystallib ~/.vmodules/freeflowuniverse/crystallib
           rm -f ~/.vmodules/freeflowuniverse/webcomponents
-          find $(pwd)/webcomponents
           ln -s $(pwd)/webcomponents/webcomponents ~/.vmodules/freeflowuniverse/webcomponents    
-          ls ~/.vmodules/freeflowuniverse/webcomponents
-          find ~/.vmodules/freeflowuniverse/webcomponents    
 
       - name: Build hero
         run: |

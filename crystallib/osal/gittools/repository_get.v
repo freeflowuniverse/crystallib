@@ -42,7 +42,7 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !GitRepo {
 		// 	print_backtrace()
 		// 	return error('branch should have been known for ${r2.addr.remote_url}')
 		}
-		r2.path.check()! //make sure we check state of path
+		r2.path.check() //make sure we check state of path
 		r2
 	}
 	if args.reset {

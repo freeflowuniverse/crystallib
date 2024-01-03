@@ -43,7 +43,7 @@ fn (repo GitRepo) cache_key_path() string {
 }
 
 pub fn (mut repo GitRepo) load() !GitRepoStatus {
-	repo.path.check()! //could be that path changed
+	repo.path.check() //could be that path changed
 	if !repo.path.exists() {
 		return error("cannot load from path, doesn't exist for '${repo.path}'")
 	}
