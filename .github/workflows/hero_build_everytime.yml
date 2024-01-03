@@ -65,6 +65,7 @@ jobs:
       - name: S3 Upload
         run: |
           set -x
+          export bucket=threefold
           export B2_APPLICATION_KEY_ID=${{ secrets.S3KEYID }}
           export B2_APPLICATION_KEY=${{ secrets.S3APPID }}
           b2 authorize-account
