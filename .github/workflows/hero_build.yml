@@ -18,11 +18,12 @@ jobs:
       - name: Install dependencies
         run: |
           if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
-            sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis
+            sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis            
           else
             brew install libgc tmux git rsync curl redis libpq
-          fi
-          redis-cli ping    
+            brew services start redis
+          fi          
+          redis-cli ping
 
       - name: Setup Vlang
         uses: vlang/setup-v@v1.3
