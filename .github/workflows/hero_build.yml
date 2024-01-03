@@ -2,9 +2,9 @@ name: Build & Create Hero
 
 on:
   push:
-    branches: ["development"] 
-    # tags:
-    #   - '*'
+    tags:
+      - '*'
+    # branches: ["development"] 
 jobs:
   build-test:
     strategy:
@@ -58,12 +58,12 @@ jobs:
           find $(pwd)
           popd
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: hero-${{ matrix.os }}.zip
-          path: cli/hero/hero
-          if-no-files-found: error
+      # - name: Upload Artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: hero-${{ matrix.os }}.zip
+      #     path: cli/hero/hero
+      #     if-no-files-found: error
           
       # - uses: AButler/upload-release-assets@v3.0
       #   with:
@@ -74,45 +74,25 @@ jobs:
       # - name: Extract tag name
       #   run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
   
-      # - name: Create Release
-      #   id: create_release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ env.TAG_NAME }}
-      #     release_name: Release ${{ env.TAG_NAME }}
-      #     draft: false
-      #     prerelease: false
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.TAG_NAME }}
+          release_name: Release ${{ env.TAG_NAME }}
+          draft: false
+          prerelease: false
+        continue-on-error
 
-      # - name: Upload Release Asset
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: cli/hero/hero
-      #     asset_name: hero-${{ matrix.os }}
-      #     asset_content_type: application/octet-stream
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: cli/hero/hero
+          asset_name: hero-${{ matrix.os }}
+          asset_content_type: application/octet-stream
 
-
-      # - name: Get latest release
-      #   id: get-latest-release
-      #   uses: actions/github-script@v4
-      #   with:
-      #     script: |
-      #       const release = await github.rest.repos.getLatestRelease({
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo
-      #       });
-      #       return release.data.tag_name;
-
-      # - name: Upload binary to latest release
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.get-latest-release.outputs.upload_url }}
-      #     asset_path: cli/hero/hero
-      #     asset_name: binary-${{ matrix.os }}
-      #     asset_content_type: application/octet-stream      
