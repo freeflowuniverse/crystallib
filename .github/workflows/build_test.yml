@@ -21,7 +21,7 @@ jobs:
           else
             brew install libgc tmux git rsync curl redis libpq
           fi
-          redis-cli ping    
+          # redis-cli ping    
 
       - name: Setup Vlang
         uses: vlang/setup-v@v1.3
