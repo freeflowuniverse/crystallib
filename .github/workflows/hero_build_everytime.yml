@@ -23,7 +23,7 @@ jobs:
             sudo systemctl start redis         
             wget https://github.com/Backblaze/B2_Command_Line_Tool/releases/latest/download/b2-linux
             chmod +x  b2-linux
-            cp b2-linux /usr/local/bin/
+            mv b2-linux /usr/local/bin/b2
           else
             brew install libgc tmux git rsync curl redis libpq b2-tools
             brew services start redis
