@@ -9,16 +9,16 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, macos-11]
     runs-on: ${{ matrix.os }}
-    services:
-      redis:
-        image: redis
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 6379:6379
+    # services:
+      # redis:
+      #   image: redis
+      #   options: >-
+      #     --health-cmd "redis-cli ping"
+      #     --health-interval 10s
+      #     --health-timeout 5s
+      #     --health-retries 5
+      #   ports:
+      #     - 6379:6379
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
@@ -27,9 +27,9 @@ jobs:
       - name: Install dependencies
         run: |
           if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
-            sudo apt install -y libgc-dev tmux git rsync curl imagemagick
+            sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis
           else
-            brew install libgc tmux git rsync curl
+            brew install libgc tmux git rsync curl redis
           fi          
 
       - name: Setup Vlang
