@@ -25,6 +25,21 @@ jobs:
           fi          
           redis-cli ping
 
+      - name: Wait for Redis to be ready
+        run: |
+          count=0
+          max_attempts=10
+          until redis-cli ping || [ $count -eq $max_attempts ]; do
+            count=$((count+1))
+            echo "Waiting for Redis to start... Attempt $count"
+            sleep 1
+          done
+          if [ $count -eq $max_attempts ]; then
+            echo "Redis failed to start within the expected time."
+            exit 1
+          fi
+          echo "Redis is up and running."          
+
       - name: Setup Vlang
         uses: vlang/setup-v@v1.3
         with:
