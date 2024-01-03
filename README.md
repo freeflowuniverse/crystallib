@@ -33,6 +33,8 @@ bash install.sh
 
 ## manual
 
+The v documentation is on [https://freeflowuniverse.github.io/crystallib](https://freeflowuniverse.github.io/crystallib)
+
 > todo: there is some content underneath manual, but we are in process to use hero to generate mdbook. Stay tuned.
 
 

@@ -1,9 +1,9 @@
 name: Build & Create Hero
+
 on:
   push:
-    branches:
-      - development
-
+    tags:
+      - '*'
 jobs:
   build-test:
     strategy:
@@ -57,10 +57,35 @@ jobs:
           find $(pwd)
           popd
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+
+      - name: Extract tag name
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+  
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: hero-${{ matrix.os }}
-          path: cli/hero/hero
-          if-no-files-found: error
+          tag_name: ${{ env.TAG_NAME }}
+          release_name: Release ${{ env.TAG_NAME }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./path/to/your/binary
+          asset_name: binary-name
+          asset_content_type: application/octet-stream
+
+      # - name: Upload Artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: hero-${{ matrix.os }}
+      #     path: cli/hero/hero
+      #     if-no-files-found: error
           
