@@ -53,15 +53,13 @@ jobs:
         run: |
           cd $(pwd)/cli/hero
           v -enable-globals -w hero.v
-          echo $(pwd)
-          find $(pwd)
           chmod +x hero
-          # cp hero $(pwd)/hero
+          find $(pwd)
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: hero-${{ matrix.os }}-${{ matrix.version }}
-          path: $(pwd)/hero
+          path: /home/runner/work/crystallib/crystallib/cli/hero/hero
           if-no-files-found: error
           
