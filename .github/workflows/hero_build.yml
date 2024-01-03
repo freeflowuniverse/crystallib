@@ -83,14 +83,35 @@ jobs:
       #     asset_name: hero-${{ matrix.os }}
       #     asset_content_type: application/octet-stream
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: hero-${{ matrix.os }}
-          path: cli/hero/hero
-          if-no-files-found: error
+      # - name: Upload Artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: hero-${{ matrix.os }}
+      #     path: cli/hero/hero
+      #     if-no-files-found: error
           
-      - uses: AButler/upload-release-assets@v3.0
+      # - uses: AButler/upload-release-assets@v3.0
+      #   with:
+      #     files: "artifacts/*"
+      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get latest release
+        id: get-latest-release
+        uses: actions/github-script@v4
         with:
-          files: "artifacts/*"
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const release = await github.rest.repos.getLatestRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            return release.data.tag_name;
+
+      - name: Upload binary to latest release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.get-latest-release.outputs.upload_url }}
+          asset_path: cli/hero/hero
+          asset_name: hero-${{ matrix.os }}
+          asset_content_type: application/octet-stream      
