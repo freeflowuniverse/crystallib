@@ -65,10 +65,10 @@ jobs:
           path: cli/hero/hero
           if-no-files-found: error
           
-      - uses: AButler/upload-release-assets@v3.0
-        with:
-          files: "artifacts/*"
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      # - uses: AButler/upload-release-assets@v3.0
+      #   with:
+      #     files: "artifacts/*"
+      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
 
 
       # - name: Extract tag name
