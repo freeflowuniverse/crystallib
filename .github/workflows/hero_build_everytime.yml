@@ -2,8 +2,8 @@ name: Build & Create Hero
 
 on:
   push:
-    tags:
-      - '*'
+    branches: ["development"]
+  workflow_dispatch:
 
 jobs:
   build-test:
@@ -18,10 +18,10 @@ jobs:
       - name: Install dependencies
         run: |
           if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
-            sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis   
+            sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis b2-tools
             sudo systemctl start redis         
           else
-            brew install libgc tmux git rsync curl redis libpq
+            brew install libgc tmux git rsync curl redis libpq b2-tools
             brew services start redis
           fi          
           sleep 2
@@ -58,40 +58,10 @@ jobs:
           find $(pwd)
           popd
 
-      # - name: Upload Artifact
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: hero-${{ matrix.os }}.zip
-      #     path: cli/hero/hero
-      #     if-no-files-found: error
-          
-      # - uses: AButler/upload-release-assets@v3.0
-      #   with:
-      #     files: "artifacts/*"
-      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
-
-
-      - name: Extract tag name
-        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-  
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ env.TAG_NAME }}
-          release_name: Release ${{ env.TAG_NAME }}
-          draft: false
-          prerelease: false
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: cli/hero/hero
-          asset_name: hero-${{ matrix.os }}
-          asset_content_type: application/octet-stream
-
+      - name: S3 Upload
+        run: |
+          set -x
+          export B2_APPLICATION_KEY_ID=${S3KEYID}
+          export B2_APPLICATION_KEY=${S3APPID}
+          b2 authorize-account
+          b2 upload_file ${bucket} cli/hero/hero hero/hero-${{ matrix.os }}
