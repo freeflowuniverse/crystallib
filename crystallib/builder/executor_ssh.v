@@ -58,6 +58,13 @@ pub fn (mut executor ExecutorSSH) exec(args_ ExecArgs) !string {
 	return res.output.join_lines()
 }
 
+pub fn (mut executor ExecutorSSH) exec_interactive(args_ ExecArgs) ! {
+	mut args := args_
+	args.cmd = 'ssh -tt -o StrictHostKeyChecking=no ${executor.user}@${executor.ipaddr.addr} -p ${executor.ipaddr.port} "${args.cmd}"'
+	osal.execute_interactive(args.cmd)!
+}
+
+
 pub fn (mut executor ExecutorSSH) file_write(path string, text string) ! {
 	if executor.debug {
 		console.print_debug('${executor.ipaddr.addr} file write: ${path}')

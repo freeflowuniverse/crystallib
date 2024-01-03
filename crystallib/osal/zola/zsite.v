@@ -1,5 +1,5 @@
 module zola
-
+import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.osal
 // import os
 // import freeflowuniverse.crystallib.osal.gittools
@@ -9,12 +9,12 @@ import os
 @[heap]
 pub struct ZSite {
 pub mut:
-	sites        &Zola             @[skip; str: skip]
+	zola        &Zola             @[skip; str: skip]
 	url          string // url of site repo
 	name         string
 	path_build   pathlib.Path
 	path_publish pathlib.Path
-	playbooks    []ZSiteCollection
+	collections    []ZSiteCollection
 	gitrepokey   string
 	tailwindcss  bool // whether site uses tailwindcss
 }
@@ -23,7 +23,7 @@ pub mut:
 pub struct ZSiteArgs {
 pub mut:
 	name string @[required]
-	url  string @[required] // url of the summary.md file
+	// url  string @[required] // url of the summary.md file
 	pull bool
 }
 
@@ -33,18 +33,18 @@ pub fn (mut sites Zola) site_new(args ZSiteArgs) !&ZSite {
 
 	mut site := ZSite{
 		name: args.name
-		url: args.url
+		// url: args.url
 		path_build: pathlib.get_dir(path: path_build, create: true)!
 		path_publish: pathlib.get_dir(path: path_publish, create: true)!
-		sites: &sites
+		zola: &sites
 	}
 	sites.sites << &site
 
-	mut gs := sites.gitstructure
-	mut locator := gs.locator_new(args.url)!
-	mut repo := gs.repo_get(locator: locator, reset: false, pull: false)!
-	sites.gitrepos[repo.key()] = repo
-	site.gitrepokey = repo.key()
+	// mut gs := sites.gitstructure
+	// mut locator := gs.locator_new(args.url)!
+	// mut repo := gs.repo_get(locator: locator, reset: false, pull: false)!
+	// sites.gitrepos[repo.key()] = repo
+	// site.gitrepokey = repo.key()
 	// mut path_site_dir := locator.path_on_fs()!
 
 	return &site
@@ -69,9 +69,9 @@ pub fn (mut site ZSite) generate() ! {
 fn (mut site ZSite) gitrepo_keys() []string {
 	mut res := []string{}
 	res << site.gitrepokey
-	for playbook in site.playbooks {
-		if playbook.gitrepokey !in res {
-			res << playbook.gitrepokey
+	for collection in site.collections {
+		if collection.gitrepokey !in res {
+			res << collection.gitrepokey
 		}
 	}
 	return res
@@ -81,7 +81,7 @@ fn (mut site ZSite) gitrepo_keys() []string {
 fn (mut site ZSite) changed() bool {
 	mut change := false
 	gitrepokeys := site.gitrepo_keys()
-	for key, status in site.sites.gitrepos_status {
+	for key, status in site.zola.gitrepos_status {
 		if key in gitrepokeys {
 			// means this site is using that gitrepo, so if it changed the site changed
 			if status.revlast != status.revlast {

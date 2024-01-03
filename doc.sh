@@ -12,4 +12,8 @@ v doc -m -f html . -readme -comments -no-timestamp -o ../
 cd ..
 
 mv _docs docs
-open docs/index.html
+
+if ! [[ ${OSTYPE} == "linux-gnu"* ]]; then
+    open docs/index.html
+fi
+

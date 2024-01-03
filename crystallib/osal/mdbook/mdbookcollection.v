@@ -45,7 +45,8 @@ fn (mut self MDBookCollection) clone() ! {
 	self.book.books.gitrepos[repo.key()] = repo
 	self.gitrepokey = repo.key()
 	self.path = locator.path_on_fs()!
-	// Question: is this a good place to link collections
+	// println(locator)
+	// console.print_debug('path: ${self.path.path}')
 	self.link()!
 
 	// self.path.link('${self.book.path_build.path}/src/${self.name}', true)!
@@ -56,6 +57,4 @@ fn (mut self MDBookCollection) clone() ! {
 fn (mut self MDBookCollection) link() ! {
 	console.print_header('link collection: ${self.path.path} -> ${self.book.path_build.path}/src/${self.name}')
 	self.path.link('${self.book.path_build.path}/src/${self.name}', true)!
-	// console.print_header(' mdbook collection: ${srcpath}')
-	// panic('link collection')
 }

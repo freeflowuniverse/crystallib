@@ -16,6 +16,10 @@ pub fn (mut executor ExecutorLocal) exec(args ExecArgs) !string {
 	return res.output.join_lines()
 }
 
+pub fn (mut executor ExecutorLocal) exec_interactive(args ExecArgs) ! {
+	osal.execute_interactive(args.cmd)!
+}
+
 pub fn (mut executor ExecutorLocal) file_write(path string, text string) ! {
 	// println('local write ${path}')
 	return os.write_file(path, text)

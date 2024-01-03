@@ -9,6 +9,9 @@ fn repo_load(addr GitAddr, path string) !GitRepoStatus {
 	console.print_debug(' git repo get: ${path}')
 	}
 
+	if !os.exists(path){
+		echo error("Can't load git repo from a path:'${path}' because doesn't exist.")
+	}
 	mut redis := redisclient.core_get()!
 
 	mut st := GitRepoStatus{}

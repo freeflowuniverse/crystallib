@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.installers.zola as zola_installer
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.data.ourtime
+import freeflowuniverse.crystallib.ui.console
 import time
 import os
 

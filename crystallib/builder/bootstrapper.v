@@ -58,7 +58,17 @@ pub fn (mut node Node) crystal_install() ! {
 	mut bs := bootstrapper()
 	installer_base_content := bs.embedded_files['installer_base.sh'].to_string()
 	cmd := '${installer_base_content}\nfreeflow_dev_env_install\n'
-	node.exec_cmd(cmd: cmd)!
+	if node.platform==.osx{
+		//we have no choice then to do it interactive
+		myenv:=node.environ_get()!
+		homedir:=myenv["HOME"] or {return error("can't find HOME in env")}
+		node.exec_silent("mkdir -p ${homedir}/hero/bin")!
+		node.file_write("${homedir}/hero/bin/install.sh",cmd)!
+		node.exec_silent("chmod +x ${homedir}/hero/bin/install.sh")!
+		node.exec_interactive("${homedir}/hero/bin/install.sh")!
+	}else{
+		node.exec_cmd(cmd: cmd)!	
+	}
 }
 
 // println(n)

@@ -28,10 +28,10 @@ fn (addr GitAddr) check() {
 // return the path on the filesystem pointing to the address (is always a dir)
 pub fn (addr GitAddr) path() !pathlib.Path {
 	addr.check()
-	provider := texttools.name_fix(addr.provider)
-	name := texttools.name_fix(addr.name)
-	account := texttools.name_fix(addr.account)
-	mut path_string := '${addr.gsconfig.root}/${provider}/${account}/${name}'
+	// provider := texttools.name_fix(addr.provider)
+	// name := texttools.name_fix(addr.name)
+	// account := texttools.name_fix(addr.account)
+	mut path_string := '${addr.gsconfig.root}/${addr.provider}/${addr.account}/${addr.name}'
 	if addr.gsconfig.root == '' {
 		panic('rootpath cannot be empty')
 	}

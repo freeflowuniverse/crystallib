@@ -1,6 +1,7 @@
 module zola
 
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.osal
 // import log
 // import os
@@ -25,22 +26,22 @@ pub mut:
 	url  string
 }
 
-pub fn (mut b ZSite) playbook_add(args_ ZSiteCollectionArgs) ! {
+pub fn (mut b ZSite) collection_add(args_ ZSiteCollectionArgs) ! {
 	mut args := args_
 	mut c := ZSiteCollection{
 		url: args.url
 		name: args.name
 		site: &b
 	}
-	b.playbooks << c
+	b.collections << c
 }
 
 pub fn (mut self ZSiteCollection) prepare() ! {
-	console.print_header(' zola playbook prepare: ${self.url}')
-	mut gs := self.site.sites.gitstructure
+	console.print_header(' zola collection prepare: ${self.url}')
+	mut gs := self.site.zola.gitstructure
 	mut locator := gs.locator_new(self.url)!
 	mut repo := gs.repo_get(locator: locator, reset: false, pull: false)!
-	self.site.sites.gitrepos[repo.key()] = repo
+	self.site.zola.gitrepos[repo.key()] = repo
 	self.gitrepokey = repo.key()
 	self.path = locator.path_on_fs()!
 	self.path.link('${self.site.path_build.path}/src/${self.name}', true)!

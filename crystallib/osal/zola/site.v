@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.webcomponents.preprocessor
 import freeflowuniverse.crystallib.osal.tailwind
+import freeflowuniverse.crystallib.ui.console
 import vweb
 import os
 
@@ -16,7 +17,7 @@ pub mut:
 	path_content pathlib.Path
 	path_build   pathlib.Path
 	path_publish pathlib.Path
-	playbooks    []ZSiteCollection
+	collections    []ZSiteCollection
 	gitrepokey   string
 	tailwind     tailwind.Tailwind
 	tailwindcss  bool // whether sie uses tailwindcss
@@ -124,9 +125,9 @@ pub fn (mut site ZolaSite) serve(params ServeParams) ! {
 fn (mut site ZolaSite) gitrepo_keys() []string {
 	mut res := []string{}
 	res << site.gitrepokey
-	for playbook in site.playbooks {
-		if playbook.gitrepokey !in res {
-			res << playbook.gitrepokey
+	for collection in site.collections {
+		if collection.gitrepokey !in res {
+			res << collection.gitrepokey
 		}
 	}
 	return res

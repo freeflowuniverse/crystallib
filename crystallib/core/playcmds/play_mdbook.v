@@ -5,9 +5,9 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.play
 
 pub fn play_mdbook(mut session play.Session) ! {
-	mut coderoot := '~/hero/code'
-	mut buildroot := '~/hero/var/mdbuild'
-	mut publishroot := '~/hero/www/info'
+	mut coderoot := ''
+	mut buildroot := ''
+	mut publishroot := ''
 	mut install := false
 	mut reset := false
 	mut pull := false

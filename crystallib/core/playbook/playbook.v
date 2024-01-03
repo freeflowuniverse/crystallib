@@ -146,6 +146,18 @@ pub fn (mut plbook PlayBook) action_get_by_name(args ActionGetArgs)! &Action{
 }
 
 
+pub fn (mut plbook PlayBook) actions_find_by_name(args ActionGetArgs)! []&Action{
+	mut res:=[]&Action{}
+	for a in plbook.actions {
+		if (a.actor == args.actor) && (a.name==args.name) {
+			res<<a
+		}
+	}
+	return res
+}
+
+
+
 pub fn (mut plbook PlayBook) action_get(id int) !&Action {
 	for a in plbook.actions {
 		if a.id == id {

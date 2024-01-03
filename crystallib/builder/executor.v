@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.ui.console
 type Executor = ExecutorLocal | ExecutorSSH
 
 pub struct ExecutorNewArguments {
+pub mut:
 	local  bool // if this set then will always be the local machine
 	ipaddr string
 	user   string = 'root'
@@ -23,8 +24,12 @@ pub struct ExecutorNewArguments {
 //- format ipaddr: 192.168.6.6
 //- format ipaddr: any ipv6 addr
 //- if ipaddr is empty or starts with localhost or 127.0.0.1 -> will be the ExecutorLocal
-fn executor_new(args ExecutorNewArguments) !Executor {
+fn executor_new(args_ ExecutorNewArguments) !Executor {
+	mut args:=args_
 	hasport := args.ipaddr.contains(':')
+	if !hasport{
+		args.ipaddr=args.ipaddr+":22"
+	}
 	if args.ipaddr == ''
 		|| (args.ipaddr.starts_with('localhost') && hasport == false)
 		|| (args.ipaddr.starts_with('127.0.0.1') && hasport == false) {

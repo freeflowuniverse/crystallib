@@ -85,6 +85,18 @@ pub fn (mut node Node) exec_silent(cmd string) !string {
 	panic('did not find right executor')
 }
 
+pub fn (mut node Node) exec_interactive(cmd_ string) ! {
+	if mut node.executor is ExecutorLocal {
+		node.executor.exec_interactive(cmd: cmd_)!
+	} else if mut node.executor is ExecutorSSH {
+		node.executor.exec_interactive(cmd: cmd_)!
+	}
+	panic('did not find right executor')
+}
+
+
+
+
 pub fn (mut node Node) file_write(path string, text string) ! {
 	if mut node.executor is ExecutorLocal {
 		return node.executor.file_write(path, text)

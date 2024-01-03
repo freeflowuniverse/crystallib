@@ -46,7 +46,6 @@ pub fn cmd_bootstrap(mut cmdroot Command) {
 
 	cmd_run.add_flag(Flag{
 		flag: .string
-		required: true
 		name: 'address'
 		abbrev: 'a'
 		description: 'address in form root@212.3.4.5:2222 or root@212.3.4.5 or root@info.three.com'
@@ -61,9 +60,14 @@ fn cmd_bootstrap_execute(cmd Command) ! {
 	mut hero := cmd.flags.get_bool('hero') or { false }
 	mut crystal := cmd.flags.get_bool('crystal') or { false }
 	mut address := cmd.flags.get_string('address') or { '' }
+	if address==""{
+		address="localhost"
+	}
 
 	mut b := builder.new()!
 	mut n := b.node_new(ipaddr: address)!
+
+	
 
 	if crystal {
 		n.crystal_install()!

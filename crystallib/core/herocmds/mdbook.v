@@ -46,7 +46,6 @@ pub fn cmd_mdbook(mut cmdroot Command) {
 	for mut c in urlcmds {
 		c.add_flag(Flag{
 			flag: .string
-			required: true
 			name: 'name'
 			abbrev: 'n'
 			description: 'name of the mdbook.'
@@ -75,7 +74,7 @@ pub fn cmd_mdbook(mut cmdroot Command) {
 }
 
 fn cmd_mdbook_execute(cmd Command) ! {
-	mut name := cmd.flags.get_string('name')!
+	mut name := cmd.flags.get_string('name') or {""}
 	mut context := cmd.flags.get_string('context') or { '' }
 	mut reset := cmd.flags.get_bool('reset') or { false }
 

@@ -21,7 +21,7 @@ function os_update {
         if command -v brew >/dev/null 2>&1; then
             echo 'homebrew installed'
         else 
-            export HOMEBREW_NO_INSTALL_FROM_API=1
+            export NONINTERACTIVE=1
             /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"            
         fi
     elif [[ "${OSNAME}" == "alpine"* ]]; then

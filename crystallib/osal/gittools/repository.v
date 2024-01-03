@@ -43,9 +43,9 @@ fn (repo GitRepo) cache_key_path() string {
 }
 
 pub fn (mut repo GitRepo) load() !GitRepoStatus {
-	path := repo.path.path
+	repo.path.check()! //could be that path changed
 	if !repo.path.exists() {
-		return error("cannot load from path, doesn't exist for ${repo.path}")
+		return error("cannot load from path, doesn't exist for '${repo.path}'")
 	}
 	mut st := repo_load(repo.addr, repo.path.path)!
 	repo.status_set(st)!
