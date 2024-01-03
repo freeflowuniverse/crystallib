@@ -29,7 +29,7 @@ jobs:
           if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
             sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis
           else
-            brew install libgc tmux git rsync curl redis
+            brew install libgc tmux git rsync curl redis libpq
           fi          
 
       - name: Setup Vlang
@@ -65,4 +65,7 @@ jobs:
           # v -enable-globals -stats test crystallib/data/ourtime
           # v -enable-globals -stats test crystallib/data/paramsparser
 
-
+      - name: Build hero
+        run: |
+          cd $(pwd)/cli/hero
+          v -enable-globals -w hero.v
