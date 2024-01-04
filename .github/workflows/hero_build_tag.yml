@@ -1,4 +1,4 @@
-name: Release Hero
+name: Release Hero On Github Based on Tag
 
 permissions:
   contents: write

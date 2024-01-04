@@ -1,11 +1,13 @@
-name: Release Hero
+name: Release Hero on S3
 
 permissions:
   contents: write
 
+
 on:
   push:
     branches: ["development"]   
+  workflow_dispatch:
 
 jobs:
   build:
@@ -30,14 +32,18 @@ jobs:
       - name: Install dependencies
         run: |
           if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
-            sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis   
+            set -x
+            sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis
             sudo systemctl start redis         
+            wget https://github.com/Backblaze/B2_Command_Line_Tool/releases/latest/download/b2-linux
+            chmod +x  b2-linux
+            mv b2-linux /usr/local/bin/b2
           else
-            brew install libgc tmux git rsync curl redis libpq
+            brew install libgc tmux git rsync curl redis libpq b2-tools
             brew services start redis
           fi          
           sleep 2
-          redis-cli ping  
+          redis-cli ping
 
       - name: Setup Vlang
         uses: vlang/setup-v@v1.3
@@ -84,7 +90,7 @@ jobs:
 
 
   publish-me:
-    name: Create GitHub Release
+    name: Push to S3
     needs: build
     permissions:
       contents: write       
