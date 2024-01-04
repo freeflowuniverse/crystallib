@@ -1,0 +1,72 @@
+name: Build & Create Hero
+
+on:
+  push:
+    branches: ["dontdo"] #CHANGE TO RELEVANT BRANCH IF WE WANT TO DO IT
+  workflow_dispatch:
+
+jobs:
+  build-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-12, macos-13]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref_name }} and your repository is ${{ github.repository }}."
+      - name: Install dependencies
+        run: |
+          if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
+            set -x
+            sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis
+            sudo systemctl start redis         
+            wget https://github.com/Backblaze/B2_Command_Line_Tool/releases/latest/download/b2-linux
+            chmod +x  b2-linux
+            mv b2-linux /usr/local/bin/b2
+          else
+            brew install libgc tmux git rsync curl redis libpq b2-tools
+            brew services start redis
+          fi          
+          sleep 2
+          redis-cli ping  
+
+      - name: Setup Vlang
+        uses: vlang/setup-v@v1.3
+        with:
+          check-latest: true
+
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Checkout another repository
+        uses: actions/checkout@v3
+        with:
+          repository: freeflowuniverse/webcomponents
+          path: webcomponents
+
+
+      - name: Install crystallib
+        run: |
+          mkdir -p ~/.vmodules/freeflowuniverse
+          rm -f ~/.vmodules/freeflowuniverse/crystallib
+          ln -s $(pwd)/crystallib ~/.vmodules/freeflowuniverse/crystallib
+          rm -f ~/.vmodules/freeflowuniverse/webcomponents
+          ln -s $(pwd)/webcomponents/webcomponents ~/.vmodules/freeflowuniverse/webcomponents    
+
+      - name: Build hero
+        run: |
+          pushd cli/hero
+          v -enable-globals -w hero.v
+          chmod +x hero
+          find $(pwd)
+          popd
+
+      - name: S3 Upload
+        run: |
+          set -x
+          export bucket=threefold
+          export B2_APPLICATION_KEY_ID=${{ secrets.S3KEYID }}
+          export B2_APPLICATION_KEY=${{ secrets.S3APPID }}
+          b2 authorize-account
+          b2 upload_file ${bucket} cli/hero/hero hero/hero-${{ matrix.os }}

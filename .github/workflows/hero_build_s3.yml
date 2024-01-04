@@ -1,31 +1,39 @@
-name: Build & Create Hero
+name: Release Hero
+
+permissions:
+  contents: write
 
 on:
   push:
-    branches: ["development"]
-  workflow_dispatch:
+    branches: ["development"]   
 
 jobs:
-  build-test:
+  build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-12, macos-13]
+        include:
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            short-name: macos-arm64
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+            short-name: linux-i64
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            short-name: macos-i64
     runs-on: ${{ matrix.os }}
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref_name }} and your repository is ${{ github.repository }}."
+
       - name: Install dependencies
         run: |
           if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
-            set -x
-            sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis
+            sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis   
             sudo systemctl start redis         
-            wget https://github.com/Backblaze/B2_Command_Line_Tool/releases/latest/download/b2-linux
-            chmod +x  b2-linux
-            mv b2-linux /usr/local/bin/b2
           else
-            brew install libgc tmux git rsync curl redis libpq b2-tools
+            brew install libgc tmux git rsync curl redis libpq
             brew services start redis
           fi          
           sleep 2
@@ -45,7 +53,6 @@ jobs:
           repository: freeflowuniverse/webcomponents
           path: webcomponents
 
-
       - name: Install crystallib
         run: |
           mkdir -p ~/.vmodules/freeflowuniverse
@@ -59,8 +66,39 @@ jobs:
           pushd cli/hero
           v -enable-globals -w hero.v
           chmod +x hero
-          find $(pwd)
+          mkdir -p ~/upload
+          mv hero ~/upload/hero-${{ matrix.short-name }}
+          find ~/upload
           popd
+
+      - name: Extract tag name
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: upload hero
+        uses: actions/upload-artifact@v4
+        with:
+          name: hero-${{ matrix.short-name }}.zip
+          path: ~/upload/hero-${{ matrix.short-name }}
+          if-no-files-found: error
+
+
+
+  publish-me:
+    name: Create GitHub Release
+    needs: build
+    permissions:
+      contents: write       
+    runs-on: ubuntu-latest
+    steps:
+      - name: download hero
+        uses: actions/download-artifact@v4
+        with:
+          path: download
+          pattern: hero-*
+          merge-multiple: true          
+      - run: |
+          set -x
+          find  download
 
       - name: S3 Upload
         run: |
@@ -69,4 +107,5 @@ jobs:
           export B2_APPLICATION_KEY_ID=${{ secrets.S3KEYID }}
           export B2_APPLICATION_KEY=${{ secrets.S3APPID }}
           b2 authorize-account
-          b2 upload_file ${bucket} cli/hero/hero hero/hero-${{ matrix.os }}
+          b2 upload_file ${bucket} ~/upload/hero* hero/
+
