@@ -25,6 +25,7 @@ jobs:
         with:
           # name: ${{ github.ref }}
           name: '0.9.7'
+          tag: '0.9.7'
           commit: 'latest'
           draft: true
           prerelease: false
