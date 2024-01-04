@@ -115,5 +115,7 @@ jobs:
           export B2_APPLICATION_KEY_ID=${{ secrets.S3KEYID }}
           export B2_APPLICATION_KEY=${{ secrets.S3APPID }}
           b2 authorize-account
-          b2 sync download b2://${bucket}/hero
+          b2 sync download/hero-linux-i64 b2://${bucket}/linux-i64/hero
+          b2 sync download/hero-macos-arm64 b2://${bucket}/macos-arm64/hero
+          b2 sync download/hero-macos-i64 b2://${bucket}/macos-i64/hero
 
