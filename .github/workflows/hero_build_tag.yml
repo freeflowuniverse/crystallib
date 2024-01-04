@@ -5,9 +5,9 @@ permissions:
 
 on:
   push:
-    branches: ["development"]
     tags:
       - v[0-9]+.*    
+    # branches: ["development"]
 
 jobs:
   build:

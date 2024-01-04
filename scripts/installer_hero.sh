@@ -1,6 +1,8 @@
-set -e
+set -ex
 # Get the latest release URLs
 urls=$(curl -s https://api.github.com/repos/freeflowuniverse/crystallib/releases/latest | grep browser_download_url | cut -d '"' -f 4)
+
+echo $urls
 
 # Identify current platform
 os_name="$(uname -s)"
