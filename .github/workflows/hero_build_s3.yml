@@ -94,15 +94,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
-            set -x
-            # sudo apt install -y git
-            wget https://github.com/Backblaze/B2_Command_Line_Tool/releases/latest/download/b2-linux
-            chmod +x  b2-linux
-            mv b2-linux /usr/local/bin/b2
-          else
-            brew install b2-tools
-          fi          
+          wget https://github.com/Backblaze/B2_Command_Line_Tool/releases/latest/download/b2-linux
+          chmod +x  b2-linux
+          mv b2-linux /usr/local/bin/b2
 
       - name: download hero
         uses: actions/download-artifact@v4
