@@ -19,14 +19,15 @@ jobs:
     steps:
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: ncipollo/release-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
+          # name: ${{ github.ref }}
+          name: '0.9.7'
           draft: true
           prerelease: false
+          allowUpdates: true
 
   build-publish:
     needs: create-release
