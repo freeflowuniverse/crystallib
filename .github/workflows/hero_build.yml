@@ -5,48 +5,30 @@ permissions:
 
 on:
   push:
-    branches: ["githubactions"]    
-    # tags:
-    #   - v[0-9]+.*
+    branches: ["development"]
+    tags:
+      - v[0-9]+.*    
 
 jobs:
-
-  create-release:
-    name: Create Release
-    runs-on: ubuntu-latest
-    outputs: 
-      upload_url: ${{ steps.create_release.outputs.upload_url }} 
-    steps:
-      - name: Create Release
-        id: create_release
-        uses: ncipollo/release-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          # name: ${{ github.ref }}
-          name: '0.9.7'
-          tag: '0.9.7'
-          commit: 'latest'
-          draft: true
-          prerelease: false
-          allowUpdates: true
-
-  build-publish:
-    needs: create-release
+  build:
     strategy:
       matrix:
         include:
           - target: aarch64-apple-darwin
             os: macos-latest
+            short-name: macos-arm64
           - target: x86_64-unknown-linux-musl
             os: ubuntu-latest
+            short-name: linux-i64
           - target: x86_64-apple-darwin
             os: macos-latest
+            short-name: macos-i64
     runs-on: ${{ matrix.os }}
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref_name }} and your repository is ${{ github.repository }}."
+
       - name: Install dependencies
         run: |
           if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
@@ -86,20 +68,48 @@ jobs:
           pushd cli/hero
           v -enable-globals -w hero.v
           chmod +x hero
-          find $(pwd)
+          mkdir -p ~/upload
+          mv hero ~/upload/hero_${{ matrix.short-name }}
+          find ~/upload
           popd
 
       - name: Extract tag name
         run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-                
-  
-      - name: Upload assets
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
+
+      - name: upload hero
+        uses: actions/upload-artifact@v4
+        with:
+          name: hero-${{ matrix.short-name }}.zip
+          path: ~/upload/hero_${{ matrix.short-name }}
+          if-no-files-found: error
+
+
+
+  publish-me:
+    name: Create GitHub Release
+    needs: build
+    permissions:
+      contents: write       
+    runs-on: ubuntu-latest
+    steps:
+      - name: download hero
+        uses: actions/download-artifact@v4
+        with:
+          path: download
+          pattern: hero-*
+          merge-multiple: true          
+      - run: |
+          set -x
+          find  download
+
+      - uses: xresloader/upload-to-github-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: cli/hero/hero
-          asset_name: ${{ matrix.os }}.tar.gz
-          asset_content_type: application/gzip
+          file: "download/*"
+          tags: false
+          tag_name: "latest"     
+          update_latest_release: true
+          verbose: true
+          default_release_name: "latest"
+          overwrite: true
