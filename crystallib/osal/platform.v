@@ -17,6 +17,7 @@ pub enum PlatformType {
 	ubuntu
 	alpine
 	arch
+	suse
 }
 
 // Returns the enum value that matches the provided string for CPUType
@@ -108,3 +109,9 @@ pub fn is_osx_intel() bool {
 pub fn is_ubuntu() bool {
 	return platform() == .ubuntu
 }
+
+pub fn is_linux() bool {
+	return platform() == .ubuntu || platform() == .arch || platform() == .suse || platform() == .alpine
+}
+
+

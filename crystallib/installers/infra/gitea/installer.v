@@ -21,7 +21,7 @@ pub fn install() ! {
 	postgresinstaller.install()!
 	zinitinstaller.install()!
 
-	version := '1.21.0'
+	version := '1.21.3'
 	url := 'https://github.com/go-gitea/gitea/releases/download/v${version}/gitea-${version}-linux-amd64.xz'
 	println(' download ${url}')
 	mut dest := osal.download(

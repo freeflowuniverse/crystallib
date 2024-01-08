@@ -1,7 +1,7 @@
 module zola
 
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.installers.zola as zola_installer
+import freeflowuniverse.crystallib.installers.web.zola as zola_installer
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.data.ourtime

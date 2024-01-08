@@ -2,14 +2,20 @@
 set -e
 
 rm -f ${HOME}/.env.sh
-# sed -i '/env\.sh/d' "${HOME}/.zprofile"
-# sed -i '/env\.sh/d' "${HOME}/.bashrc"
-# sed -i '/env\.sh/d' "${HOME}/.profile"
-# sed -i '/hero/bin/d' "${HOME}/.profile"
-# sed -i '/hero/bin/d' "${HOME}/.bash_profile"
+
 touch ~/.profile
-echo 'export PATH="${HOME}/hero/bin:$PATH"' >> ~/.profile
-echo 'export PATH="${HOME}/hero/bin:$PATH"' >> ~/.bash_profile
+
+remove_include_shell() {
+    for file in "$@"; do
+        if [[ -f "$file" ]]; then
+            sed -i '' '/env\.sh/d' "$file"
+            sed -i '' '/hero\/bin/d' "$file"
+            echo 'export PATH="$HOME/hero/bin:$PATH"' >> "$file"
+        fi
+    done
+}
+
+remove_include_shell "$HOME/.zprofile" "$HOME/.bashrc" "$HOME/.profile" "$HOME/.config/fish/config.fish" "$HOME/.zshrc"
 
 if [[ -z "${CLBRANCH}" ]]; then 
     export CLBRANCH="development"

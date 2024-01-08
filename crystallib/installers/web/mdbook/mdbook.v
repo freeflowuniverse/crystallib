@@ -2,7 +2,7 @@ module mdbook
 
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.installers.rust
+import freeflowuniverse.crystallib.installers.lang.rust
 
 // install mdbook will return true if it was already installed
 pub fn install() ! {

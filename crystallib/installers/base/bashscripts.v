@@ -1,4 +1,4 @@
-module bashscripts
+module base
 
 import freeflowuniverse.crystallib.core.pathlib
 import os
@@ -28,21 +28,21 @@ pub fn bash_installers_package() !string {
 		if name == '' {
 			continue
 		}
-		mut p := pathlib.get_file(path: '${bashscripts.scriptspath}/lib/${name}', create: false)!
+		mut p := pathlib.get_file(path: '${base.scriptspath}/lib/${name}', create: false)!
 		c := p.read()!
 		out += c
 	}
 
-	mut p := pathlib.get_file(path: '${bashscripts.scriptspath}/installer_base.sh', create: true)!
+	mut p := pathlib.get_file(path: '${base.scriptspath}/installer_base.sh', create: true)!
 	p.write(out)!
 	os.chmod(p.path, 0o777)!
 
 	out += '\nfreeflow_dev_env_install\n'
 
-	mut p2 := pathlib.get_file(path: '${bashscripts.scriptspath}/installer.sh', create: true)!
+	mut p2 := pathlib.get_file(path: '${base.scriptspath}/installer.sh', create: true)!
 	p2.write(out)!
 	os.chmod(p2.path, 0o777)!
 
-	mut p3 := pathlib.get_dir(path: '${bashscripts.scriptspath}', create: false)!
+	mut p3 := pathlib.get_dir(path: '${base.scriptspath}', create: false)!
 	return p3.path
 }

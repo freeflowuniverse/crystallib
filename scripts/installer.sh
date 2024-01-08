@@ -2,14 +2,20 @@
 set -e
 
 rm -f ${HOME}/.env.sh
-# sed -i '/env\.sh/d' "${HOME}/.zprofile"
-# sed -i '/env\.sh/d' "${HOME}/.bashrc"
-# sed -i '/env\.sh/d' "${HOME}/.profile"
-# sed -i '/hero/bin/d' "${HOME}/.profile"
-# sed -i '/hero/bin/d' "${HOME}/.bash_profile"
+
 touch ~/.profile
-echo 'export PATH="${HOME}/hero/bin:$PATH"' >> ~/.profile
-echo 'export PATH="${HOME}/hero/bin:$PATH"' >> ~/.bash_profile
+
+remove_include_shell() {
+    for file in "$@"; do
+        if [[ -f "$file" ]]; then
+            sed -i '' '/env\.sh/d' "$file"
+            sed -i '' '/hero\/bin/d' "$file"
+            echo 'export PATH="$HOME/hero/bin:$PATH"' >> "$file"
+        fi
+    done
+}
+
+remove_include_shell "$HOME/.zprofile" "$HOME/.bashrc" "$HOME/.profile" "$HOME/.config/fish/config.fish" "$HOME/.zshrc"
 
 if [[ -z "${CLBRANCH}" ]]; then 
     export CLBRANCH="development"
@@ -418,22 +424,22 @@ function os_update {
         apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        package_install "mc curl tmux net-tools git htop ca-certificates lsb-release"
+        package_install "fish mc curl tmux net-tools git htop ca-certificates lsb-release"
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         if command -v brew >/dev/null 2>&1; then
             echo 'homebrew installed'
         else 
-            export HOMEBREW_NO_INSTALL_FROM_API=1
+            export NONINTERACTIVE=1
             /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"            
         fi
     elif [[ "${OSNAME}" == "alpine"* ]]; then
         sudo -s apk update
-        sudo -s apk add mc curl rsync htop redis bash bash-completion yq jq tmux git
+        sudo -s apk add mc fish curl rsync htop redis bash bash-completion yq jq tmux git
         sed -i 's#/bin/ash#/bin/bash#g' /etc/passwd             
     elif [[ "${OSNAME}" == "arch"* ]]; then
         pacman -Syy --noconfirm
         pacman -Syu --noconfirm
-        pacman -Su --noconfirm mc git tmux curl htop
+        pacman -Su --noconfirm mc fish  git tmux curl htop
     fi
 }
 

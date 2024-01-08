@@ -1,6 +1,6 @@
 module s3
 
-import freeflowuniverse.crystallib.installers.rust
+import freeflowuniverse.crystallib.installers.lang.rust
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.gittools
 

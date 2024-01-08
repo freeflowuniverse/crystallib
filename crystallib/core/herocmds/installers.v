@@ -1,6 +1,6 @@
 module herocmds
 
-import freeflowuniverse.crystallib.installers.tools
+import freeflowuniverse.crystallib.installers
 import cli { Command, Flag }
 
 pub fn cmd_installers(mut cmdroot Command) {
@@ -56,5 +56,5 @@ fn cmd_installers_execute(cmd Command) ! {
 	// } else {
 	// 	return error(cmd.help_message())
 	// }
-	tools.install_multi(reset: reset, names: names, uninstall: uninstall)!
+	installers.install_multi(reset: reset, names: names, uninstall: uninstall)!
 }

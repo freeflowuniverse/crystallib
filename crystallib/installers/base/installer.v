@@ -1,6 +1,7 @@
 module base
 
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.texttools
@@ -73,35 +74,39 @@ pub fn develop(args InstallArgs) ! {
 		panic('only ubuntu and osx supported for now')
 	}
 
-	coderoot := '${os.home_dir()}/code_'
-	iam := osal.whoami()!
-	cmd := texttools.template_replace($tmpl('templates/vinstaller.sh'))
-	osal.exec(cmd: cmd)!
+	mut b := builder.new()!
+	mut n := b.node_new()!
+	n.crystal_install()!
 
-	mut path := gittools.code_get(
-		pull: false
-		reset: false
-		url: 'https://github.com/freeflowuniverse/crystallib/tree/development'
-	)!
+	// coderoot := '${os.home_dir()}/code_'
+	// iam := osal.whoami()!
+	// cmd := texttools.template_replace($tmpl('templates/vinstaller.sh'))
+	// osal.exec(cmd: cmd)!
 
-	mut path2 := gittools.code_get(
-		pull: true
-		reset: false
-		url: 'https://github.com/freeflowuniverse/webcomponents.git'
-	)!
+	// mut path := gittools.code_get(
+	// 	pull: false
+	// 	reset: false
+	// 	url: 'https://github.com/freeflowuniverse/crystallib/tree/development'
+	// )!
 
-	c := '
-	echo - link modules
-	mkdir -p ~/.vmodules/freeflowuniverse
-	rm -f ~/.vmodules/freeflowuniverse/crystallib
-	rm -f ~/.vmodules/freeflowuniverse/webcomponents
-	ln -s ${path}/crystallib ~/.vmodules/freeflowuniverse/crystallib
-	ln -s ${path2}/webcomponents ~/.vmodules/freeflowuniverse/webcomponents
+	// mut path2 := gittools.code_get(
+	// 	pull: true
+	// 	reset: false
+	// 	url: 'https://github.com/freeflowuniverse/webcomponents.git'
+	// )!
+
+	// c := '
+	// echo - link modules
+	// mkdir -p ~/.vmodules/freeflowuniverse
+	// rm -f ~/.vmodules/freeflowuniverse/crystallib
+	// rm -f ~/.vmodules/freeflowuniverse/webcomponents
+	// ln -s ${path}/crystallib ~/.vmodules/freeflowuniverse/crystallib
+	// ln -s ${path2}/webcomponents ~/.vmodules/freeflowuniverse/webcomponents
 			
-	'
-	osal.exec(cmd: c)!
+	// '
+	// osal.exec(cmd: c)!
 
-	hero(args)!
+	// hero(args)!
 
 	osal.done_set('crystal_development', 'OK')!
 }

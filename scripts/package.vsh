@@ -1,9 +1,9 @@
-#!/usr/bin/env v -enable-globals run
+#!/usr/bin/env v -w -enable-globals run
 
-import freeflowuniverse.crystallib.installers.bashscripts
+import freeflowuniverse.crystallib.installers.base
 import os
 
-mypath:=bashscripts.bash_installers_package()!
+mypath:=base.bash_installers_package()!
 
 
 res := os.execute("bash ${mypath}/installer.sh")

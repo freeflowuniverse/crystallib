@@ -16,7 +16,7 @@ function os_update {
         apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        package_install "mc curl tmux net-tools git htop ca-certificates lsb-release"
+        package_install "fish mc curl tmux net-tools git htop ca-certificates lsb-release"
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         if command -v brew >/dev/null 2>&1; then
             echo 'homebrew installed'
@@ -26,12 +26,12 @@ function os_update {
         fi
     elif [[ "${OSNAME}" == "alpine"* ]]; then
         sudo -s apk update
-        sudo -s apk add mc curl rsync htop redis bash bash-completion yq jq tmux git
+        sudo -s apk add mc fish curl rsync htop redis bash bash-completion yq jq tmux git
         sed -i 's#/bin/ash#/bin/bash#g' /etc/passwd             
     elif [[ "${OSNAME}" == "arch"* ]]; then
         pacman -Syy --noconfirm
         pacman -Syu --noconfirm
-        pacman -Su --noconfirm mc git tmux curl htop
+        pacman -Su --noconfirm mc fish  git tmux curl htop
     fi
 }
 

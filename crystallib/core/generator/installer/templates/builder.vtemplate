@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.installers
 @if "rust" in args.build_deps
-import freeflowuniverse.crystallib.installers.rust
+import freeflowuniverse.crystallib.installers.lang.rust
 @end
 @if "golang" in args.build_deps
 import freeflowuniverse.crystallib.installers.golang

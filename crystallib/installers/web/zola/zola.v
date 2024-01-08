@@ -2,8 +2,8 @@ module zola
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
-import freeflowuniverse.crystallib.installers.rust
-import freeflowuniverse.crystallib.installers.tailwind
+import freeflowuniverse.crystallib.installers.lang.rust
+import freeflowuniverse.crystallib.installers.web.tailwind
 import freeflowuniverse.crystallib.ui.console
 import os
 
@@ -22,7 +22,7 @@ pub fn install(args_ InstallArgs) ! {
 
 	res := os.execute('source ${osal.profile_path()} && zola -V')
 	if res.exit_code == 0 {
-		if !(res.output.contains('0.17.2')) {
+		if !(res.output.contains('0.18.0')) {
 			args.reset = true
 		}
 	} else {
@@ -38,9 +38,9 @@ pub fn install(args_ InstallArgs) ! {
 
 	mut url := ''
 	if osal.is_ubuntu() {
-		url = 'https://github.com/getzola/zola/releases/download/v0.17.2/zola-v0.17.2-x86_64-unknown-linux-gnu.tar.gz'
+		url = 'https://github.com/getzola/zola/releases/download/v0.18.0/zola-v0.18.0-x86_64-unknown-linux-gnu.tar.gz'
 	} else if osal.is_osx_arm() {
-		url = 'https://github.com/getzola/zola/releases/download/v0.17.2/zola-v0.17.2-x86_64-apple-darwin.tar.gz'
+		url = 'https://github.com/getzola/zola/releases/download/v0.18.0/zola-v0.18.0-x86_64-apple-darwin.tar.gz'
 	} else {
 		return error('only support ubuntu & osx arm for now')
 	}
