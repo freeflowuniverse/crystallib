@@ -132,7 +132,7 @@ type PathItemRef = PathItem | Reference
 type RequestRef = Reference | RequestBody
 
 pub struct PathItem {
-mut:
+pub mut:
 	ref         ?string      // Allows for a referenced definition of this path item. The referenced structure MUST be in the form of a Path Item Object. In case a Path Item Object field appears both in the defined object and the referenced object, the behavior is undefined. See the rules for resolving Relative References.
 	summary     ?string      // An optional, string summary, intended to apply to all operations in this path.
 	description ?string      //	An optional, string description, intended to apply to all operations in this path. CommonMark syntax MAY be used for rich text representation.
@@ -149,7 +149,7 @@ mut:
 }
 
 pub struct Operation {
-mut:
+pub mut:
 	tags          ?[]string //	A list of tags for API documentation control. Tags can be used for logical grouping of operations by resources or any other qualifier.
 	summary       ?string   //	A short summary of what the operation does.
 	description   ?string   // A verbose explanation of the operation behavior. CommonMark syntax MAY be used for rich text representation.
