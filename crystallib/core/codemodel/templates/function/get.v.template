@@ -1,0 +1,12 @@
+import net.http
+
+pub fn @receiver get_@{function.name}(@{params}) !net.http.Response {
+    return http.get('@request_url')!
+        
+}
+
+if resp := http.get('https://google.com') {
+	println(resp.body) // resp is a http.Response, not an option
+} else {
+	println(err)
+}

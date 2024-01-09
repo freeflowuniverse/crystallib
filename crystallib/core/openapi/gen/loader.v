@@ -1,8 +1,11 @@
 module gen
 
+import codemodel {Function, Param, Result, Struct, Type}
+
 struct Loader{
 	spec openapi.OpenAPI
 	structs map[string]codemodel.Struct
+	functions map[string]Function
 }
 
 fn (mut l Loader) load_schema(struct_name string, schema openapi.Schema){
@@ -89,10 +92,98 @@ fn (mut l Loader) load_components_structs(components openapi.Components){
 	}
 */
 
-fn (mut l Loader) load_operation(method http.Method, operation openapi.Operation) []codemodel.CodeItem{
-	// load codemodel function from openapi operation
+fn (mut l Loader) load_operation(method http.Method, path string, operation openapi.Operation) []codemodel.CodeItem{
+	/*
+		load codemodel function from openapi operation
+		an operation corresponds to a client method that makes an http call to the server
+
+		ClientGetSomethingInput{
+			path_dagId string
+			query_tab ?string
+			query_file ?string
+			header_token string
+			body GetRequestBody
+		}
+
+		pub fn (c Client) get_something(input ClientGetSomething) !GetResponse{
+			mut url := c.url + 'some path'
+
+			// replace path parameters
+			// add lines to replace path parameters
+			url = url.replace('parameter', '${input.parameter}')
+
+			// add query parameters
+			// add lines to add query parameters
+			url += '?'
+			if x := input.query_parameter{
+				url += '${parameter}=${x}'
+			}
+
+
+			// if contenttype is 'application/json' add this line:
+			// body := json.encode(input.body)
+			// if contenttype is 'plain/text' add this line:
+			// body := input.body
+
+			mut req := http.new_request(method, url, body)
+
+			// add lines to add headers
+			if x := input.header_parameter{
+				req.add_custom_header('${header_parameter}', x)
+			}
+			
+			res := req.do()!
+
+		}
+
+	*/
+
+	mut operation_fn_body := ''
+	operation_fn_body += 'mut url := c.url + ${path}\n'
+
+	add_path_parameters(operation_fn_body, operation)
+
+	add_query_parameters(operation_fn_body, operation)
+
+	add_body_encoding(operation_fn_body, operation)
+
+	operation_fn_body += 'mut req := http.new_request(method, url, body)\n'
+
+	add_header_parameters(operation_fn_body, operation)
+
+	operation_fn_body += 'res := req.do()!'
+	add_response_decoding(operation_fn_body, operation)
+
+	// TODO: build input struct
+	// TODO: build result struct
+
+	l.functions << Function{
+		name: '${operation.operationId.capitalize()}'
+		receiver: Param{
+			name: 'c'
+			typ: Type{
+				symbol: 'Client'
+			}
+		}
+		params: [Param{
+			name: 'input'
+			type: Type{
+				symbol: '${operation.operationId.capitalize()}Parameters'
+			}
+		}]
+		body: operation_fn_body
+		result: Result{
+			typ: Type{
+				symbol: '${operation.operation.Id.capitalize()}Response'
+			}
+			result: true
+		}
+	}
+
 	
 }
+
+
 
 
 // 
