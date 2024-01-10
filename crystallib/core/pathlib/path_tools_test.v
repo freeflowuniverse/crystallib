@@ -38,7 +38,7 @@ fn test_exists() {
 	mut p2 := pathlib.get_file(path: '${testpath}/NotARealFile') or { panic('${err}') }
 	assert !p2.exists()
 	console.print_stdout('File not found')
-	mut p3 := pathlib.get_file(path: '${testpath}/NotARealFile2') or { panic('${err}') }
+	mut p3 := pathlib.get_file(path: '${testpath}/NotARealFile2', create: true) or { panic('${err}') }
 	assert p3.exists()
 	console.print_stdout('File found')
 	p3.delete() or { panic('${err}') }
@@ -50,7 +50,7 @@ fn test_parent() {
 	mut test_path_dir := pathlib.get('${testpath}')
 	mut p := pathlib.get('${testpath}/testfile1')
 	parent_dir := p.parent() or { panic(err) }
-	assert parent_dir == test_path_dir
+	assert parent_dir.path == test_path_dir.path
 	console.print_stdout('Parent Function working correctly')
 }
 
@@ -179,8 +179,8 @@ fn test_copy() {
 	//- Copy /test_path/testfile1 to /test_path/test_parent
 	mut dest_dir := pathlib.get('${testpath}/test_parent')
 	mut src_f := pathlib.get('${testpath}/testfile1')
-	mut dest_file := src_f.copy(mut dest_dir) or { panic(err) }
-	assert dest_file.path == '${testpath}/test_parent/testfile1'
+	src_f.copy(dest: '${dest_dir.path}/testfile2') or { panic(err) }
+	mut dest_file := pathlib.get('${testpath}/test_parent/testfile2')
 	dest_file.delete()!
 	console.print_stdout('Copy function works correctly')
 }

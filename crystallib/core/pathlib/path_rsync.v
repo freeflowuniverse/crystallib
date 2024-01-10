@@ -42,7 +42,7 @@ pub fn rsync(args_ RsyncArgs) ! {
 	if r.exit_code > 0 {
 		return error('Could not find the rsync command, please install.')
 	}
-	rsyncpath := r.output.trim_space()
+	
 	cmd := 'rsync ${cmdoptions}'
 	res := os.execute(cmd)
 	if res.exit_code > 0 {
