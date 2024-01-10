@@ -17,6 +17,7 @@ jobs:
       - name: Install dependencies
         run: |
           if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
+            sudo apt update
             sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis
           else
             brew install libgc tmux git rsync curl redis libpq
