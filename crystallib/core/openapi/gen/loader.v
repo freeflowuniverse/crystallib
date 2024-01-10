@@ -1,6 +1,7 @@
 module gen
 
 import codemodel {Function, Param, Result, Struct, Type}
+import openapi {Operation, RequestBody}
 
 struct Loader{
 	spec openapi.OpenAPI
@@ -179,12 +180,66 @@ fn (mut l Loader) load_operation(method http.Method, path string, operation open
 			result: true
 		}
 	}
-
-	
 }
 
+fn add_path_parameters(mut body string, operation openapi.Operation){
+	for param in operation.parameters{
+		if param.in_ == 'path'{
+			if param.required == true{
+				body += 'url = url.replace(\'{${param.name}}\', \'\${input.path_${param.name}}\')\n'
+				continue
+			}
+			body += 'if p := input.path_${param.name}{ url = url.replace(\'{${param.name}}\', \${p})\n}'
+		}
+	}
+}
 
+fn add_query_parameters(mut body string, operation openapi.Operation){
+	body += 'url += \'?\' \n'
+	for param in operation.parameters{
+		if param.in_ == 'query'{
+			if param.required == true{
+				body += 'url += "${param.name}=\${input.query_${param.name}}"'
+				continue
+			}
+			body += 'if p := input.query_${param.name}{ url += "${param.name}=\${p}"}'
+		}
+	}
+}
 
+fn add_body_encoding(mut body string, operation openapi.Operation){
+	if request_body := operation.request_body{
+		if request_body is RequestBody{
+			if _ := request_body.content['application/json']{
+				body += 'body := json.encode(input.body)\n'
+				return
+			}
+			body += 'body := input.body\n'
+			return
+		}
+
+		// TODO: get request body reference
+	}
+
+	body += 'body := ""\n'
+}
+
+fn add_header_parameters(mut body string, operation openapi.Operation){
+	for param in operation.parameters{
+		if param.in_ == 'header'{
+			if param.required == true{
+				body += 'req.add_custom_header(${param.name}, \${input.header_${param.name}})\n'
+				continue
+			}
+
+			body += 'if p := input.header_${param.name} { req.add_custom_header(${param.name}, \${p})\n}'
+		}
+	}
+}
+
+fn add_response_decoding(mut body string, operation openapi.Operation){
+	
+}
 
 // 
 
