@@ -1,6 +1,6 @@
 module elements
 
-import freeflowuniverse.crystallib.baobab.smartid
+import freeflowuniverse.crystallib.core.smartid
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.playbook

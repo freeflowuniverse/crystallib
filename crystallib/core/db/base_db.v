@@ -2,7 +2,7 @@ module db
 
 // import freeflowuniverse.crystallib.data.paramsparser
 // import freeflowuniverse.crystallib.data.encoder
-import freeflowuniverse.crystallib.baobab.smartid
+import freeflowuniverse.crystallib.core.smartid
 import freeflowuniverse.crystallib.data.ourtime
 // import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.playbook

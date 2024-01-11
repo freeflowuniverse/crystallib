@@ -2,7 +2,7 @@ module pathlib
 
 import os
 import regex
-import freeflowuniverse.crystallib.baobab.smartid
+import freeflowuniverse.crystallib.core.smartid
 import freeflowuniverse.crystallib.ui.console
 
 @[params]

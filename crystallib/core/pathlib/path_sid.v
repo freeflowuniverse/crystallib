@@ -1,6 +1,6 @@
 module pathlib
 
-import freeflowuniverse.crystallib.baobab.smartid
+import freeflowuniverse.crystallib.core.smartid
 
 // sids_acknowledge .
 // means our redis server knows about the sid's found, so we know which ones to generate new

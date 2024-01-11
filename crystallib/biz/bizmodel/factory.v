@@ -1,7 +1,7 @@
 module bizmodel
 
 import freeflowuniverse.crystallib.biz.spreadsheet
-import freeflowuniverse.crystallib.baobab.smartid
+import freeflowuniverse.crystallib.core.smartid
 // import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.texttools

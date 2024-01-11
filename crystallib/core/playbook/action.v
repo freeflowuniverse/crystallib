@@ -3,7 +3,7 @@ module playbook
 import crypto.blake2b
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.texttools
-// import freeflowuniverse.crystallib.baobab.smartid
+// import freeflowuniverse.crystallib.core.smartid
 
 pub struct Action {
 pub mut:

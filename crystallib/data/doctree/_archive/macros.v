@@ -1,7 +1,5 @@
 module doctree
 
-// import freeflowuniverse.crystallib.baobab.spawner
-
 pub enum MacroResultState {
 	ok
 	error

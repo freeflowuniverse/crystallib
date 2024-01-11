@@ -4,7 +4,7 @@ import json
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.data.encoder
-import freeflowuniverse.crystallib.baobab.smartid
+import freeflowuniverse.crystallib.core.smartid
 
 @[heap]
 pub struct Base {

@@ -1,6 +1,6 @@
 module db
 
-import freeflowuniverse.crystallib.baobab.smartid
+import freeflowuniverse.crystallib.core.smartid
 
 fn table_delete(mut mydb DB, args DBDeleteArgs) ! {
 	if mydb.sql_table_exist(table_name_find(mydb))! {

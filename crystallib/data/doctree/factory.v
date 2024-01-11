@@ -2,9 +2,9 @@ module doctree
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.texttools
-// import freeflowuniverse.crystallib.baobab.context
+
 import log
-import freeflowuniverse.crystallib.baobab.smartid
+import freeflowuniverse.crystallib.core.smartid
 
 __global (
 	knowledgetrees shared map[string]&Tree

@@ -2,8 +2,8 @@ module doctree
 
 import log
 // import v.embed_file
-// import freeflowuniverse.crystallib.baobab.context
-// import freeflowuniverse.crystallib.baobab.smartid
+
+// import freeflowuniverse.crystallib.core.smartid
 
 @[heap]
 pub struct Tree {

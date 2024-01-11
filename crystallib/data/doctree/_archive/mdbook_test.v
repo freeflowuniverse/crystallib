@@ -1,6 +1,5 @@
 module doctree
 
-import freeflowuniverse.crystallib.baobab.spawner
 import freeflowuniverse.crystallib.data.markdownparser.elements
 import os
 import time

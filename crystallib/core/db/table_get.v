@@ -1,6 +1,6 @@
 module db
 
-import freeflowuniverse.crystallib.baobab.smartid
+import freeflowuniverse.crystallib.core.smartid
 import encoding.base32
 
 fn table_get(mut db DB, g smartid.GID) ![]u8 {

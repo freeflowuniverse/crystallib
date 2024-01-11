@@ -1,7 +1,7 @@
 module db
 
 import time
-import freeflowuniverse.crystallib.baobab.smartid
+import freeflowuniverse.crystallib.core.smartid
 import freeflowuniverse.crystallib.data.ourtime
 
 pub struct MyStruct {
