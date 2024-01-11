@@ -17,6 +17,7 @@ jobs:
       - name: Install dependencies
         run: |
           if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
+            sudo apt update
             sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis
           else
             brew install libgc tmux git rsync curl redis libpq
@@ -46,8 +47,8 @@ jobs:
           VJOBS: 1
           OFFLINE: 1
         run: |
-          # v -enable-globals -stats test crystallib/core/pathlib
-          # v -enable-globals -stats test crystallib/core/texttools
+          v -enable-globals -stats test crystallib/core/pathlib
+          v -enable-globals -stats test crystallib/core/texttools
           # v -enable-globals -stats test crystallib/core/playbook
           v -enable-globals -stats test crystallib/data/fskvs
           # v -enable-globals -stats test crystallib/data/encoder

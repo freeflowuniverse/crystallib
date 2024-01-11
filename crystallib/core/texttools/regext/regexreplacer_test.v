@@ -1,6 +1,7 @@
 module regext
 
 import os
+import freeflowuniverse.crystallib.core.texttools {dedent}
 
 fn test_stdtext() {
 	// this is test without much fancyness, just rext replace, no regex, all case sensitive
@@ -42,7 +43,7 @@ fn test_dirreplace() {
 
 	// get path where to look for text
 	mut p := @FILE.split('/')
-	p = p[0..p.len - 1]
+	p = p[0..p.len - 1].clone()
 	mut path := os.real_path(os.join_path(p.join('/'), 'testdata'))
 
 	mut ri := regex_instructions_new()

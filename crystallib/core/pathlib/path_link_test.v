@@ -1,4 +1,5 @@
 import freeflowuniverse.crystallib.core.pathlib { Path }
+import freeflowuniverse.crystallib.ui.console
 import os
 
 const testpath = os.dir(@FILE) + '/examples/test_path'

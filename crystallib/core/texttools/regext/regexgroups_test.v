@@ -1,7 +1,5 @@
 module regext
 
-import os
-
 fn test_stdtext() {
 	// this is test without much fancyness, just rext replace, no regex, all case sensitive
 

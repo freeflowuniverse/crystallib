@@ -1,4 +1,5 @@
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 import os
 
 const testpath = os.dir(@FILE) + '/testdata'
@@ -30,7 +31,7 @@ fn test_list() {
 fn test_list_dirs() {
 	console.print_stdout('************ TEST_list_dir ************')
 	mut test_path_dir := pathlib.get('${testpath}')
-	result := test_path_dir.dir_list(recursive: true) or { panic(err) }
+	result := test_path_dir.list(recursive: true) or { panic(err) }
 	println(result)
 }
 
@@ -39,12 +40,12 @@ fn test_list_files() {
 	mut test_path_dir := pathlib.get('${testpath}')
 	mut fl := test_path_dir.list() or { panic(err) }
 	result := fl.paths
-	assert result.paths.len == 3
+	assert result.len == 5
 }
 
 fn test_list_links() {
 	console.print_stdout('************ TEST_list_link ************')
 	mut test_path_dir := pathlib.get('${testpath}')
-	result := test_path_dir.link_list(pathlib.ListArgs{}) or { panic(err) }
+	result := test_path_dir.list(pathlib.ListArgs{}) or { panic(err) }
 	println(result)
 }
