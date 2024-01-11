@@ -59,6 +59,10 @@ hero will be installed in
 ```bash
 curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/installer_hero.sh > /tmp/hero_install.sh
 bash /tmp/hero_install.sh
+#to debug
+bash -x /tmp/hero_install.sh
+#maybe you want to copy to your system bin dir
+cp ~/hero/bin/hero /usr/local/bin
 #to use hero make sure you restart your shell or you do (if osx)
 source ~/.zprofile 
 #check how to use, can also do on each of the subcommands
