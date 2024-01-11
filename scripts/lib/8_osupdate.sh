@@ -18,15 +18,17 @@ function os_update {
         apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         package_install "fish mc curl tmux net-tools git htop ca-certificates lsb-release"
     elif [[ "${OSNAME}" == "darwin"* ]]; then
-        if command -v brew >/dev/null 2>&1; then
-            echo 'homebrew installed'
-        else 
-            export NONINTERACTIVE=1
-            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"            
-        fi
+        # if command -v brew >/dev/null 2>&1; then
+        #     echo 'homebrew installed'
+        # else 
+        #     export NONINTERACTIVE=1
+        #     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"            
+        #     # unset NONINTERACTIVE
+        # fi
+        nix-env --install redis mc curl 
     elif [[ "${OSNAME}" == "alpine"* ]]; then
-        sudo -s apk update
-        sudo -s apk add mc fish curl rsync htop redis bash bash-completion yq jq tmux git
+        sudo -s apk update screen git
+        sudo -s apk add mc nushell curl rsync htop redis bash bash-completion screen git
         sed -i 's#/bin/ash#/bin/bash#g' /etc/passwd             
     elif [[ "${OSNAME}" == "arch"* ]]; then
         pacman -Syy --noconfirm

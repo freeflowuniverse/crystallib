@@ -3,6 +3,7 @@ module milvus
 import freeflowuniverse.crystallib.installers.docker
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.tools.tmux
+import freeflowuniverse.crystallib.ui.console
 
 pub struct Milvus {
 pub mut:

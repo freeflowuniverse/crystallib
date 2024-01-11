@@ -87,7 +87,7 @@ pub fn play_mdbook(mut session play.Session) ! {
 		}
 		mut name := p.get_default('name', '')!
 		if name.contains(',') {
-			names := texttools.toarray(name)
+			names := texttools.to_array(name)
 			for name2 in names {
 				mut book2 := mdbook.new_from_config(
 					books: &books

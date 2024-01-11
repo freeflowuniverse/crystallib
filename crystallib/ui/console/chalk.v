@@ -6,7 +6,7 @@ module console
 const prefix = '\e['
 const suffix = 'm'
 
-enum ForegroundColor {
+pub enum ForegroundColor {
 	default_color = 39 // 'default' is a reserved keyword in V	
 	white         = 97
 	black         = 30
@@ -26,7 +26,7 @@ enum ForegroundColor {
 	light_cyan    = 96
 }
 
-enum BackgroundColor {
+pub enum BackgroundColor {
 	default_color = 49 // 'default' is a reserved keyword in V	
 	black         = 40
 	red           = 41
@@ -46,7 +46,7 @@ enum BackgroundColor {
 	white         = 107
 }
 
-enum Style {
+pub enum Style {
 	normal    = 99
 	bold      = 1
 	dim       = 2
@@ -56,7 +56,7 @@ enum Style {
 	hidden    = 8
 }
 
-const reset = '${prefix}0${suffix}'
+pub const reset = '${prefix}0${suffix}'
 
 // will give ansi codes to change foreground color .
 // don't forget to call reset to change back to normal

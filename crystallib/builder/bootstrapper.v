@@ -34,7 +34,7 @@ pub fn bootstrapper() BootStrapper {
 
 pub fn (mut bs BootStrapper) run(args_ BootstrapperArgs) ! {
 	mut args := args_
-	addr := texttools.toarray(args.addr)
+	addr := texttools.to_array(args.addr)
 	mut b := new()!
 	for a in addr {
 		mut n := b.node_new(ipaddr: a, name: args.name)!

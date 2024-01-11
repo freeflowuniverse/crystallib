@@ -7,27 +7,29 @@ function redis_install {
         return 
     fi
 
-    if [[ "${OSTYPE}" == "linux-gnu"* ]]; then 
-        # package_install "libssl-dev redis"
-        package_install "redis"
-        set +e
-        /etc/init.d/redis-server stop
-        update-rc.d redis-server disable
-        set -e
-        if pgrep redis >/dev/null; then
-            # If running, kill Redis server
-            echo "redis is running. Stopping..."
-            pkill redis-server
-            echo "redis server has been stopped."
-        else
-            echo "redis server is not running."
-        fi
-    elif [[ "${OSTYPE}" == "darwin"* ]]; then
-        if ! [ -x "$(command -v redis-server)" ]; then
-            brew install redis
-            brew services start redis
-        fi        
-    fi
+     nix-env --install redis
+
+    # if [[ "${OSTYPE}" == "linux-gnu"* ]]; then 
+    #     # package_install "libssl-dev redis"
+    #     package_install "redis"
+    #     set +e
+    #     /etc/init.d/redis-server stop
+    #     update-rc.d redis-server disable
+    #     set -e
+    #     if pgrep redis >/dev/null; then
+    #         # If running, kill Redis server
+    #         echo "redis is running. Stopping..."
+    #         pkill redis-server
+    #         echo "redis server has been stopped."
+    #     else
+    #         echo "redis server is not running."
+    #     fi
+    # elif [[ "${OSTYPE}" == "darwin"* ]]; then
+    #     if ! [ -x "$(command -v redis-server)" ]; then
+    #         brew install redis
+    #         brew services start redis
+    #     fi        
+    # fi
 }
 
 

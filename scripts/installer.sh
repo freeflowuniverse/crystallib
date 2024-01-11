@@ -426,15 +426,17 @@ function os_update {
         apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         package_install "fish mc curl tmux net-tools git htop ca-certificates lsb-release"
     elif [[ "${OSNAME}" == "darwin"* ]]; then
-        if command -v brew >/dev/null 2>&1; then
-            echo 'homebrew installed'
-        else 
-            export NONINTERACTIVE=1
-            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"            
-        fi
+        # if command -v brew >/dev/null 2>&1; then
+        #     echo 'homebrew installed'
+        # else 
+        #     export NONINTERACTIVE=1
+        #     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"            
+        #     # unset NONINTERACTIVE
+        # fi
+        nix-env --install redis mc curl 
     elif [[ "${OSNAME}" == "alpine"* ]]; then
-        sudo -s apk update
-        sudo -s apk add mc fish curl rsync htop redis bash bash-completion yq jq tmux git
+        sudo -s apk update screen git
+        sudo -s apk add mc nushell curl rsync htop redis bash bash-completion screen git
         sed -i 's#/bin/ash#/bin/bash#g' /etc/passwd             
     elif [[ "${OSNAME}" == "arch"* ]]; then
         pacman -Syy --noconfirm
@@ -452,27 +454,29 @@ function redis_install {
         return 
     fi
 
-    if [[ "${OSTYPE}" == "linux-gnu"* ]]; then 
-        # package_install "libssl-dev redis"
-        package_install "redis"
-        set +e
-        /etc/init.d/redis-server stop
-        update-rc.d redis-server disable
-        set -e
-        if pgrep redis >/dev/null; then
-            # If running, kill Redis server
-            echo "redis is running. Stopping..."
-            pkill redis-server
-            echo "redis server has been stopped."
-        else
-            echo "redis server is not running."
-        fi
-    elif [[ "${OSTYPE}" == "darwin"* ]]; then
-        if ! [ -x "$(command -v redis-server)" ]; then
-            brew install redis
-            brew services start redis
-        fi        
-    fi
+     nix-env --install redis
+
+    # if [[ "${OSTYPE}" == "linux-gnu"* ]]; then 
+    #     # package_install "libssl-dev redis"
+    #     package_install "redis"
+    #     set +e
+    #     /etc/init.d/redis-server stop
+    #     update-rc.d redis-server disable
+    #     set -e
+    #     if pgrep redis >/dev/null; then
+    #         # If running, kill Redis server
+    #         echo "redis is running. Stopping..."
+    #         pkill redis-server
+    #         echo "redis server has been stopped."
+    #     else
+    #         echo "redis server is not running."
+    #     fi
+    # elif [[ "${OSTYPE}" == "darwin"* ]]; then
+    #     if ! [ -x "$(command -v redis-server)" ]; then
+    #         brew install redis
+    #         brew services start redis
+    #     fi        
+    # fi
 }
 
 

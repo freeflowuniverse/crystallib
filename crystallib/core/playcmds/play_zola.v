@@ -75,7 +75,7 @@ for mut action in session.plbook.find(filter: 'website:define')! {
 		mut name := p.get_default('name', '')!
 		panic("implement")
 		// if name.contains(',') {
-		// 	names := texttools.toarray(name)
+		// 	names := texttools.to_array(name)
 		// 	for name2 in names {
 		// 		mut wsite := website.new_from_config(
 		// 			websites: &websites
