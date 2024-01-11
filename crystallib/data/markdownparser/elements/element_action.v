@@ -13,7 +13,13 @@ fn (mut self Action) process(mut doc Doc) !int {
 	if self.processed {
 		return 0
 	}
-	self.action = playbook.parse(text: self.content)!
+
+	p := playbook.new(text: self.content)!
+	if p.actions.len != 1 {
+		return error('a single action is expected, but found ${p.actions.len}')
+	}
+
+	self.action = p.actions[0]
 	self.process_base()!
 	self.process_elements(mut doc)!
 	self.processed = true

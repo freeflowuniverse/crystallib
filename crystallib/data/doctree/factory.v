@@ -3,7 +3,6 @@ module doctree
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.texttools
 import log
-import freeflowuniverse.crystallib.core.smartid
 
 __global (
 	knowledgetrees shared map[string]&Tree

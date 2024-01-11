@@ -13,25 +13,25 @@ pub fn (mut self Codeblock) process(mut doc Doc) !int {
 	if self.processed {
 		return 0
 	}
-	mut playbook := playbook.parse_playbook(text: self.content)!
-	for mut action in playbook.actions {
+	mut pb := playbook.new(text: self.content)!
+	for mut action in pb.actions {
 		mut a := doc.action_new(
 			parent: ElementRef{
 				ref: self
 			}
 			content: action.script3()
 		)
-		a.action = action
+		a.action = *action
 		a.processed = true
 	}
 
 	// now see if there is something left in codeblock, if yes add that one to the parent_elements
-	if playbook.othertext.len > 0 {
+	if pb.othertext.len > 0 {
 		doc.text_new(
 			parent: ElementRef{
 				ref: self
 			}
-			content: playbook.othertext
+			content: pb.othertext
 		)
 	}
 

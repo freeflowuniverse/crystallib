@@ -1,6 +1,5 @@
 module sshagent
 
-import freeflowuniverse.crystallib.ui.console
 import os
 import freeflowuniverse.crystallib.core.pathlib
 

@@ -10,7 +10,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 	for {
 		if parser.eof() {
 			// go out of loop if end of file
-			println('--- end')
+			// println('--- end')
 			break
 		}
 
@@ -20,7 +20,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 
 		mut llast := parser.lastitem()!
 
-		console.print_header('- line: ${llast.type_name} ${line}')
+		// console.print_header('- line: ${llast.type_name} ${line}')
 
 		if mut llast is elements.Table {
 			if trimmed_line != '' {
@@ -138,8 +138,8 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				}
 			}
 			else {
-				println(line)
-				println(llast)
+				// println(line)
+				// println(llast)
 				panic('parser error, means we got element which is not supported')
 			}
 		}

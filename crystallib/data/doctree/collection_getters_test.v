@@ -29,7 +29,7 @@ fn test_playbook_exists() {
 
 	playbooks := ['btc_examples', 'eth_examples', 'explorer_examples', 'ipfs_examples',
 		'metrics_examples', 'nostr_examples', 'sftpgo_examples', 'stellar_examples',
-		'tfchain_examples', 'tfgrid_examples', 'fruits', 'playground', 'rpc', 'server',
+		'tfchain_examples', 'tfgrid_examples', 'fruits', 'rpc', 'server',
 		'test_vegetables']
 	for playbook in playbooks {
 		assert tree.playbook_exists(playbook)
