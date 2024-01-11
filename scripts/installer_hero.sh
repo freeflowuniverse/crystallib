@@ -1,8 +1,5 @@
+#!/usr/bin/env bash
 set -ex
-# Get the latest release URLs
-urls=$(curl -s https://api.github.com/repos/freeflowuniverse/crystallib/releases/latest | grep browser_download_url | cut -d '"' -f 4)
-
-echo $urls
 
 # Identify current platform
 os_name="$(uname -s)"
@@ -10,11 +7,11 @@ arch_name="$(uname -m)"
 
 # Select the URL based on the platform
 if [[ "$os_name" == "Linux" && "$arch_name" == "x86_64" ]]; then
-    url=$(echo "$urls" | grep hero | grep "linux-i64")
+    url="https://f003.backblazeb2.com/file/threefold/linux-i64/hero"
 elif [[ "$os_name" == "Darwin" && "$arch_name" == "arm64" ]]; then
-    url=$(echo "$urls" | grep hero | grep "macos-arm64")
+    url="https://f003.backblazeb2.com/file/threefold/macos-arm64/hero"
 elif [[ "$os_name" == "Darwin" && "$arch_name" == "x86_64" ]]; then
-    url=$(echo "$urls" | grep hero | grep "macos-i64")
+    url="https://f003.backblazeb2.com/file/threefold/macos-i64/hero"
 else
     echo "Unsupported platform."
     exit 1
