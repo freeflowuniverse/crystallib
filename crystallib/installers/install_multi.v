@@ -30,7 +30,7 @@ pub fn install_multi(args_ InstallArgs) ! {
 			}
 			'mycelium' {
 				mycelium.install(reset: args.reset)!
-			}			
+			}
 			'lima' {
 				lima.install(reset: args.reset, uninstall: args.uninstall)!
 			}
@@ -40,7 +40,6 @@ pub fn install_multi(args_ InstallArgs) ! {
 			'vscode' {
 				vscode.install(reset: args.reset)!
 			}
-
 			else {
 				return error('cannot find installer for: ${item}')
 			}

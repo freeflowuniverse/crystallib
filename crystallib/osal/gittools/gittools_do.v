@@ -6,8 +6,6 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.ui.console
-
-
 import os
 
 pub const gitcmds = 'clone,commit,pull,push,delete,reload,list,edit,sourcetree'

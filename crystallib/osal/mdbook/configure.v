@@ -2,7 +2,7 @@ module mdbook
 
 import freeflowuniverse.crystallib.core.play
 
-[heap]
+@[heap]
 pub struct MDBookConfig {
 pub mut:
 	instance     string
@@ -16,7 +16,7 @@ pub mut:
 	title string
 }
 
-[heap]
+@[heap]
 pub struct MDBookCollectionConfig {
 pub mut:
 	name string
@@ -79,8 +79,8 @@ pub fn new_from_config(args_ NewFromConfigArgs) !&MDBook {
 
 // save the object to a config on the filesystem as part of the context
 pub fn save_to_config(mdbook MDBook, mut context play.Context) ! {
-	if mdbook.name==""{
-		return error("need name for mdbook, now empty.")
+	if mdbook.name == '' {
+		return error('need name for mdbook, now empty.')
 	}
 	mut c := configurator(mdbook.name, mut context)!
 	mut myconfig := MDBookConfig{

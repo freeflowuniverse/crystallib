@@ -38,11 +38,11 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !GitRepo {
 				console.print_header(' branch switch ${branchname} -> ${r2.addr.branch} for ${r2.addr.remote_url}')
 				r2.branch_switch(r2.addr.branch)!
 			}
-		// } else {
-		// 	print_backtrace()
-		// 	return error('branch should have been known for ${r2.addr.remote_url}')
+			// } else {
+			// 	print_backtrace()
+			// 	return error('branch should have been known for ${r2.addr.remote_url}')
 		}
-		r2.path.check() //make sure we check state of path
+		r2.path.check() // make sure we check state of path
 		r2
 	}
 	if args.reset {
@@ -63,7 +63,7 @@ fn (mut gitstructure GitStructure) repo_get_internal(l GitLocator) !GitRepo {
 		return error('cannot find repo with locator.\n${l}')
 	}
 	if res.len > 1 {
-		repos:=res.map("- ${it.addr.account}.${it.addr.name}").join_lines()
+		repos := res.map('- ${it.addr.account}.${it.addr.name}').join_lines()
 		return error('Found more than 1 repo with locator.\n${l}\n${repos}')
 	}
 	if res[0].addr.name != l.addr.name || res[0].addr.name != l.addr.name {
@@ -78,8 +78,8 @@ pub fn (mut gitstructure GitStructure) repo_exists(l GitLocator) !bool {
 		return false
 	}
 	if res.len > 1 {
-		repos:=res.map("- ${it.addr.account}.${it.addr.name}").join_lines()
-		return error('Found more than 1 repo with locator (exist).\n${l}\n$res')
+		repos := res.map('- ${it.addr.account}.${it.addr.name}').join_lines()
+		return error('Found more than 1 repo with locator (exist).\n${l}\n${res}')
 	}
 	return true
 }

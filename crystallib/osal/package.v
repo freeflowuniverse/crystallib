@@ -5,6 +5,13 @@ import freeflowuniverse.crystallib.ui.console
 // update the package list
 pub fn package_refresh() ! {
 	platform_ := platform()
+
+	if cmd_exists("nix-env"){
+		//means nix package manager is installed
+		//nothing to do
+		return
+	}
+
 	if platform_ == .ubuntu {
 		exec(cmd: 'apt-get update') or {
 			return error('Could not update packages list\nerror:\n${err}')
@@ -30,6 +37,15 @@ pub fn package_install(name string) ! {
 		}
 		return
 	}
+	if cmd_exists("nix-env"){
+		//means nix package manager is installed
+		//nothing to do
+		exec(cmd: 'nix-env --install ${name}') or {
+			return error('could not install package using nix:${name}\nerror:\n${err}')
+		}		
+		return
+	}
+
 	platform_ := platform()
 	if platform_ == .osx {
 		exec(cmd: 'brew install ${name}') or {
@@ -56,30 +72,3 @@ pub fn package_install(name string) ! {
 	}
 }
 
-// // upgrade the OS, only implemented for ubuntu right now
-// pub fn upgrade() ! {
-// 	platform_ := platform()
-// 	if platform_ == .ubuntu {
-// 		upgrade_cmds := '
-// 			set +ex
-// 			sudo killall apt apt-get > /dev/null 2>&1
-// 			set -ex
-// 			rm -f /var/lib/apt/lists/lock
-// 			rm -f /var/cache/apt/archives/lock
-// 			rm -f /var/lib/dpkg/lock*		
-// 			dpkg --configure -a
-// 			apt update
-// 			apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-// 			apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-// 			apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-// 			'
-
-// 		exec(
-// 			cmd: upgrade_cmds
-// 			retry: 2
-// 			description: 'upgrade operating system packages'
-// 		)!
-// 	} else {
-// 		return error('Only ubuntu is supported for now')
-// 	}
-// }

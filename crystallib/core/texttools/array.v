@@ -18,8 +18,7 @@ pub fn to_array(r string) []string {
 	return res
 }
 
-
-//intelligent way how to map a line to a map
+// intelligent way how to map a line to a map
 //```
 // r:=texttools.to_map("name,-,-,-,-,pid,-,-,-,-,path",
 // 	"root   304   0.0  0.0 408185328   1360   ??  S    16Dec23   0:34.06 /usr/sbin/distnoted\n \n")
@@ -33,18 +32,17 @@ pub fn to_array(r string) []string {
 // 	"root   304   0.0  0.0 408185328   1360   ??  S    16Dec23   0:34.06 \n \n")
 // assert {'name': 'root', 'pid': '1360', 'path': ''} == r3
 //```
-pub fn to_map(mapstring string, line string,delimiter_ string) map[string]string {
-	mapstring_array:=split_smart(mapstring,"")
-	mut line_array:=split_smart(line,"")
-	mut result :=map[string]string{}
-	for x in 0..mapstring_array.len{
-		mapstring_item:=mapstring_array[x] or {""}
-		if mapstring_item != "-" {			
-			result[mapstring_item]=line_array[x] or {""}
+pub fn to_map(mapstring string, line string, delimiter_ string) map[string]string {
+	mapstring_array := split_smart(mapstring, '')
+	mut line_array := split_smart(line, '')
+	mut result := map[string]string{}
+	for x in 0 .. mapstring_array.len {
+		mapstring_item := mapstring_array[x] or { '' }
+		if mapstring_item != '-' {
+			result[mapstring_item] = line_array[x] or { '' }
 		}
 	}
 	return result
-
 }
 
 // smart way how to get useful info out of text block
@@ -58,17 +56,17 @@ pub fn to_map(mapstring string, line string,delimiter_ string) map[string]string
 // '
 
 // r4:=texttools.to_list_map("name,-,-,-,-,pid,-,-,-,-,path",t)
-// assert [{'name': '_cmiodalassistants', 'pid': '1360', 'path': '/usr/sbin/distnoted'}, 
-// 		{'name': '_locationd', 'pid': '1344', 'path': '/usr/sbin/distnoted'}, 
-// 		{'name': 'root', 'pid': '7296', 'path': '/usr/libexec/storagekitd'}, 
+// assert [{'name': '_cmiodalassistants', 'pid': '1360', 'path': '/usr/sbin/distnoted'},
+// 		{'name': '_locationd', 'pid': '1344', 'path': '/usr/sbin/distnoted'},
+// 		{'name': 'root', 'pid': '7296', 'path': '/usr/libexec/storagekitd'},
 // 		{'name': '_coreaudiod', 'pid': '1344', 'path': '/usr/sbin/distnoted'}] == r4
 // ```
 pub fn to_list_map(mapstring string, txt_ string, delimiter_ string) []map[string]string {
-	mut result :=[]map[string]string{}
-	mut txt:=remove_empty_lines(txt_)
-	txt=dedent(txt)
-	for line in txt.split_into_lines(){
-		result<<to_map(mapstring,line,delimiter_)
+	mut result := []map[string]string{}
+	mut txt := remove_empty_lines(txt_)
+	txt = dedent(txt)
+	for line in txt.split_into_lines() {
+		result << to_map(mapstring, line, delimiter_)
 	}
 	return result
 }

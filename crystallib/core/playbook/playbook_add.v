@@ -8,9 +8,9 @@ import freeflowuniverse.crystallib.ui.console
 @[params]
 pub struct PLayBookAddArgs {
 pub mut:
-	path    string
-	text    string
-	prio    int = 50
+	path string
+	text string
+	prio int = 50
 }
 
 enum State {
@@ -38,7 +38,7 @@ pub fn (mut plbook PlayBook) add(args_ PLayBookAddArgs) ! {
 			mut ol := p.list(recursive: true, regex: [r'.*\.md$'])!
 			for mut p2 in ol.paths {
 				c2 := p2.read()!
-				plbook.add(text: c2,  prio: args.prio)!
+				plbook.add(text: c2, prio: args.prio)!
 			}
 			return
 		}
@@ -104,7 +104,6 @@ pub fn (mut plbook PlayBook) add(args_ PLayBookAddArgs) ! {
 				state = .action
 				action = plbook.action_new(
 					priority: args.prio
-					
 				)
 				action.comments = comments.join('\n')
 				comments = []string{}
@@ -145,7 +144,7 @@ pub fn (mut plbook PlayBook) add(args_ PLayBookAddArgs) ! {
 			} else if line.starts_with('//') {
 				state = .comment_for_action_maybe
 				comments << line_strip.trim_left('/ ')
-			// } else {
+				// } else {
 				// plbook.othertext += '${line_strip}\n'
 			}
 		}

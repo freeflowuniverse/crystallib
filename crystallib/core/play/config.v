@@ -15,7 +15,7 @@ pub struct ConfiguratorArgs {
 pub mut:
 	context  &Context
 	name     string
-	instance string [required]
+	instance string   @[required]
 }
 
 // name is e.g. mailclient (the type of configuration setting)

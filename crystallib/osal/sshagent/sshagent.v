@@ -1,4 +1,5 @@
 module sshagent
+
 import freeflowuniverse.crystallib.ui.console
 import os
 import freeflowuniverse.crystallib.core.pathlib
@@ -108,8 +109,8 @@ pub fn (mut agent SSHAgent) generate(name string, passphrase string) !SSHKey {
 
 // unload all ssh keys
 pub fn (mut agent SSHAgent) reset() ! {
-	if true{
-		panic("reset_ssh")
+	if true {
+		panic('reset_ssh')
 	}
 	res := os.execute('ssh-add -D')
 	if res.exit_code > 0 {
@@ -121,16 +122,16 @@ pub fn (mut agent SSHAgent) reset() ! {
 // load the key, they key is content (private key) .
 // a name is required
 pub fn (mut agent SSHAgent) add(name string, privkey_ string) !SSHKey {
-	mut privkey:=privkey_
+	mut privkey := privkey_
 	path := '${agent.homepath.path}/${name}'
 	if os.exists(path) {
 		os.rm(path)!
 	}
-	if !privkey.ends_with("\n"){
-		privkey+="\n"
+	if !privkey.ends_with('\n') {
+		privkey += '\n'
 	}
 	os.write_file(path, privkey)!
-	os.chmod(path,0o600)!
+	os.chmod(path, 0o600)!
 	return agent.load(path)!
 }
 
@@ -143,20 +144,22 @@ pub fn (mut agent SSHAgent) load(keypath string) !SSHKey {
 		return error('can only load private keys')
 	}
 	name := keypath.split('/').last()
-	os.chmod(keypath,0o600)!
+	os.chmod(keypath, 0o600)!
 	res := os.execute('ssh-add ${keypath}')
 	if res.exit_code > 0 {
 		return error('cannot add ssh-key with path ${keypath}.\n${res.output}')
 	}
 	agent.init()!
-	return agent.get(name: name) or { panic("can't find sshkey with name:'${name}' from agent.\n$err") }
+	return agent.get(name: name) or {
+		panic("can't find sshkey with name:'${name}' from agent.\n${err}")
+	}
 }
 
 // forget the specified key
 pub fn (mut agent SSHAgent) forget(name string) ! {
-	if true{
-		panic("reset_ssh")
-	}	
+	if true {
+		panic('reset_ssh')
+	}
 	mut key := agent.get(name: name) or { return }
 	agent.pop(key.pubkey)
 	key.forget()!

@@ -2,7 +2,7 @@ module zola
 
 import freeflowuniverse.crystallib.core.play
 
-[heap]
+@[heap]
 pub struct WebSiteConfig {
 pub mut:
 	instance     string
@@ -13,16 +13,16 @@ pub mut:
 	collections  []WebSiteCollectionConfig
 }
 
-[heap]
+@[heap]
 pub struct WebSiteCollectionConfig {
 pub mut:
-	name string
-	url  string
-	cat ContentCat
-	prefix_dir string //subdir inside the destination for the content category
+	name       string
+	url        string
+	cat        ContentCat
+	prefix_dir string // subdir inside the destination for the content category
 }
 
-pub enum ContentCat{
+pub enum ContentCat {
 	content
 	css
 	template
@@ -43,7 +43,7 @@ pub fn configurator(name string, mut context play.Context) !play.Configurator[We
 @[params]
 pub struct NewFromConfigArgs {
 pub mut:
-	websites    ?&Zola
+	websites ?&Zola
 	instance string        @[required]
 	reset    bool
 	context  &play.Context @[required]
@@ -83,8 +83,8 @@ pub fn new_from_config(args_ NewFromConfigArgs) !&ZSite {
 
 // save the object to a config on the filesystem as part of the context
 pub fn save_to_config(website ZolaSite, mut context play.Context) ! {
-	if website.name==""{
-		return error("need name for website, now empty.")
+	if website.name == '' {
+		return error('need name for website, now empty.')
 	}
 	mut c := configurator(website.name, mut context)!
 	// mut myconfig := WebSiteConfig{

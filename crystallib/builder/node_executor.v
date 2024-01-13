@@ -94,9 +94,6 @@ pub fn (mut node Node) exec_interactive(cmd_ string) ! {
 	panic('did not find right executor')
 }
 
-
-
-
 pub fn (mut node Node) file_write(path string, text string) ! {
 	if mut node.executor is ExecutorLocal {
 		return node.executor.file_write(path, text)

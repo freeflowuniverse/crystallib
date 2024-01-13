@@ -15,9 +15,9 @@ pub mut:
 	name         string // a unique name in cid
 	params       paramsparser.Params
 	snippets     map[string]string
-	gitstructure &gittools.GitStructure         @[skip; str: skip]
-	redis        &redisclient.Redis             @[skip; str: skip]
-	kvs          &fskvs.KVSContext              @[skip; str: skip]
+	gitstructure &gittools.GitStructure @[skip; str: skip]
+	redis        &redisclient.Redis     @[skip; str: skip]
+	kvs          &fskvs.KVSContext      @[skip; str: skip]
 }
 
 @[params]

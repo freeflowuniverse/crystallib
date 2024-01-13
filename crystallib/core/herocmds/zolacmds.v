@@ -83,7 +83,7 @@ fn cmd_zola_execute(cmd Command) ! {
 		context_name: context
 		interactive: true
 	)!
-	panic("implement")
+	panic('implement')
 	// if cmd.name == 'edit' {	
 	// 	mut wsite2 := zola.new_from_config(instance: name, reset: reset, context: &session.context)!
 	// 	wsite2.edit()!
@@ -99,5 +99,4 @@ fn cmd_zola_execute(cmd Command) ! {
 	// }else{
 	// 	return error(cmd.help_message())
 	// }
-	
 }

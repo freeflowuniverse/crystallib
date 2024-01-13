@@ -95,15 +95,14 @@ fn str_normalize(txt_ string) string {
 	txt = txt.replace('\\\\n', '\n')
 	txt = txt.replace("\\'", "'")
 	txt = txt.replace('<<BR>>', '\n')
-	txt = txt.replace('<BR>', '\n')	// println(txt)
+	txt = txt.replace('<BR>', '\n') // println(txt)
 	return txt.trim_space()
 }
 
 fn comment_normalize(txt_ string) string {
 	mut txt := str_normalize(txt_)
-	return txt.trim_space().trim_right("-").trim_space()
+	return txt.trim_space().trim_right('-').trim_space()
 }
-
 
 // parse new txt as params and merge into params
 pub fn (mut params Params) add(txt string) ! {

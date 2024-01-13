@@ -121,42 +121,38 @@ pub fn (plbook PlayBook) action_exists(id int) bool {
 @[params]
 pub struct ActionGetArgs {
 pub mut:
-	actor    string
-	name    string
+	actor string
+	name  string
 }
-
 
 pub fn (plbook PlayBook) action_exists_once(args ActionGetArgs) bool {
-	mut counter:=0
+	mut counter := 0
 	for a in plbook.actions {
-		if (a.actor == args.actor) && (a.name==args.name) {
-			counter+=1
+		if a.actor == args.actor && a.name == args.name {
+			counter += 1
 		}
 	}
-	return counter==1
+	return counter == 1
 }
 
-pub fn (mut plbook PlayBook) action_get_by_name(args ActionGetArgs)! &Action{
+pub fn (mut plbook PlayBook) action_get_by_name(args ActionGetArgs) !&Action {
 	for a in plbook.actions {
-		if (a.actor == args.actor) && (a.name==args.name) {
+		if a.actor == args.actor && a.name == args.name {
 			return a
 		}
 	}
-	return error("couldn't find action with args:$args")
+	return error("couldn't find action with args:${args}")
 }
 
-
-pub fn (mut plbook PlayBook) actions_find_by_name(args ActionGetArgs)! []&Action{
-	mut res:=[]&Action{}
+pub fn (mut plbook PlayBook) actions_find_by_name(args ActionGetArgs) ![]&Action {
+	mut res := []&Action{}
 	for a in plbook.actions {
-		if (a.actor == args.actor) && (a.name==args.name) {
-			res<<a
+		if a.actor == args.actor && a.name == args.name {
+			res << a
 		}
 	}
 	return res
 }
-
-
 
 pub fn (mut plbook PlayBook) action_get(id int) !&Action {
 	for a in plbook.actions {

@@ -4,10 +4,8 @@ module playcmds
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.play
 
-pub fn play_core(mut session play.Session)  ! {
-
-
-	mut t:=session.plbook.find(filter: 'core.context_set')!
+pub fn play_core(mut session play.Session) ! {
+	mut t := session.plbook.find(filter: 'core.context_set')!
 	for mut action in session.plbook.find(filter: 'core.context_set')! {
 		mut p := action.params
 		if p.exists('name') || session.context.name == '' {
@@ -46,7 +44,6 @@ pub fn play_core(mut session play.Session)  ! {
 		action.done = true
 	}
 
-
 	for mut action in session.plbook.find(filter: 'core.params_context_set')! {
 		mut p := action.params
 		for param in p.params {
@@ -62,6 +59,4 @@ pub fn play_core(mut session play.Session)  ! {
 		}
 		action.done = true
 	}
-
 }
-

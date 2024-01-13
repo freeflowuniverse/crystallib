@@ -259,10 +259,9 @@ pub fn git_dir_get(args_ GitDirGetArgs) !string {
 @[params]
 pub struct GitRepoGetArgs {
 pub mut:
-	path string
+	path     string
 	coderoot string
 }
-
 
 // look for git dir at (.git location), .
 // if path not specified will take current path, .
@@ -274,9 +273,9 @@ pub mut:
 // 		coderoot string
 //```
 pub fn git_repo_get(args_ GitRepoGetArgs) !GitRepo {
-	mut args:=args_
-	path:=git_dir_get(path:args.path)!
-	mut gs := gittools.get(coderoot: args.coderoot) or {
+	mut args := args_
+	path := git_dir_get(path: args.path)!
+	mut gs := get(coderoot: args.coderoot) or {
 		return error("Could not find gittools on '${args.coderoot}'\n${err}")
 	}
 	return gs.repo_from_path(path)

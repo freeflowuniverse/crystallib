@@ -11,10 +11,10 @@ import freeflowuniverse.crystallib.ui.console
 @[heap]
 pub struct Session {
 mut:
-	nrtimes_processed int
-	script3_preprocess				string
-	processed bool
-	playbook_priorities_defined 	[]string
+	nrtimes_processed           int
+	script3_preprocess          string
+	processed                   bool
+	playbook_priorities_defined []string
 pub mut:
 	name                string // unique id for session (session id), can be more than one per context
 	plbook              playbook.PlayBook
@@ -64,15 +64,14 @@ pub fn (context Context) session_new(args_ SessionNewArgs) !Session {
 	return s
 }
 
-
-//add playbook context to session
+// add playbook context to session
 //```
 // path    string
 // text    string
 // prio    int = 99
 //```	
 pub fn (mut session Session) playbook_add(args_ playbook.PLayBookAddArgs) ! {
-	session.processed=false
+	session.processed = false
 	mut args := args_
 
 	// walk over directory
@@ -99,56 +98,54 @@ pub fn (mut session Session) playbook_add(args_ playbook.PLayBookAddArgs) ! {
 	console.print_header('Session add plbook add text')
 	console.print_stdout(args.text)
 
-	//for internal processing
-	session.script3_preprocess+="\n"+texttools.dedent(args.text)	
-
+	// for internal processing
+	session.script3_preprocess += '\n' + texttools.dedent(args.text)
 }
 
 pub fn (mut session Session) process() ! {
-	if session.processed{
-		return 
+	if session.processed {
+		return
 	}
-	println("session ${session.name} process")
-	session.pre_process()!	
-	session.plbook.add(text:session.script3_preprocess)!
+	println('session ${session.name} process')
+	session.pre_process()!
+	session.plbook.add(text: session.script3_preprocess)!
 
-	priorities:= {
-			1: 'core:*'			
-			5: 'sshagent:*'
-			10: 'gittools:*'		
-			40: 'books:configure'
-			45: 'book:define'
-			60: 'books:generate'
-			70: 'book:edit,book:open'
+	priorities := {
+		1:  'core:*'
+		5:  'sshagent:*'
+		10: 'gittools:*'
+		40: 'books:configure'
+		45: 'book:define'
+		60: 'books:generate'
+		70: 'book:edit,book:open'
 	}
 
 	session.playbook_priorities_add(priorities)
-	session.plbook.filtersort(priorities:session.playbook_priorities)!
-	session.processed=true
+	session.plbook.filtersort(priorities: session.playbook_priorities)!
+	session.processed = true
 }
 
-//add priorities for the playbook
-pub fn (mut self Session) playbook_priorities_add(prios map[int]string)  {
-	for prio,val in prios{
-		if !(prio in self.playbook_priorities){
-			self.playbook_priorities[prio]=""
-		}		
-		if val.contains(","){
-			for item in val.split(",").map(it.trim_space()).filter(it!="") {
-				if !(item in self.playbook_priorities_defined){
-					self.playbook_priorities[prio]+=",${item}"
-					self.playbook_priorities_defined<<item
+// add priorities for the playbook
+pub fn (mut self Session) playbook_priorities_add(prios map[int]string) {
+	for prio, val in prios {
+		if prio !in self.playbook_priorities {
+			self.playbook_priorities[prio] = ''
+		}
+		if val.contains(',') {
+			for item in val.split(',').map(it.trim_space()).filter(it != '') {
+				if item !in self.playbook_priorities_defined {
+					self.playbook_priorities[prio] += ',${item}'
+					self.playbook_priorities_defined << item
 				}
 			}
-		}else{
-			if !(val.trim_space() in self.playbook_priorities_defined){					
-				self.playbook_priorities[prio]+=",${val.trim_space()}"
-				self.playbook_priorities_defined<<val
-			}			
+		} else {
+			if val.trim_space() !in self.playbook_priorities_defined {
+				self.playbook_priorities[prio] += ',${val.trim_space()}'
+				self.playbook_priorities_defined << val
+			}
 		}
-	}	
+	}
 }
-
 
 ///////// LOAD & SAVE
 

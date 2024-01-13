@@ -43,7 +43,7 @@ fn (repo GitRepo) cache_key_path() string {
 }
 
 pub fn (mut repo GitRepo) load() !GitRepoStatus {
-	repo.path.check() //could be that path changed
+	repo.path.check() // could be that path changed
 	if !repo.path.exists() {
 		return error("cannot load from path, doesn't exist for '${repo.path}'")
 	}
@@ -340,21 +340,18 @@ fn (repo GitRepo) ssh_key_path() string {
 	return '${os.home_dir()}/.ssh/${repo.key()}'
 }
 
-
 //////////////////////////EDIT CODE MGMT
 //////////////////////////////////
 
-//open sourcetree for the git repo
-pub fn (repo GitRepo) sourcetree()! {
-	sourcetree.open(path:repo.path.path)!		
+// open sourcetree for the git repo
+pub fn (repo GitRepo) sourcetree() ! {
+	sourcetree.open(path: repo.path.path)!
 }
 
-//open visual studio code for repo
-pub fn (repo GitRepo) vscode()! {
-	vscode.open(path:repo.path.path)!		
+// open visual studio code for repo
+pub fn (repo GitRepo) vscode() ! {
+	vscode.open(path: repo.path.path)!
 }
-
-
 
 // // check if sshkey for a repo exists in the homedir/.ssh
 // // we check on name, if nameof repo is same as name of key we will load

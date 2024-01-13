@@ -17,7 +17,7 @@ pub mut:
 	path_content pathlib.Path
 	path_build   pathlib.Path
 	path_publish pathlib.Path
-	collections    []ZSiteCollection
+	collections  []ZSiteCollection
 	gitrepokey   string
 	tailwind     tailwind.Tailwind
 	tailwindcss  bool // whether sie uses tailwindcss

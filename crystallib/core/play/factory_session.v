@@ -6,21 +6,20 @@ import freeflowuniverse.crystallib.data.ourtime
 @[params]
 pub struct PlayArgs {
 pub mut:
-	context               ?&Context      @[skip; str: skip]
-	session               ?&Session      @[skip; str: skip]
-	context_name          string = 'default'
-	session_name          string
-	coderoot              string
-	interactive           bool
-	fsdb_encrypted        bool
-	playbook_priorities   map[int]string // filter and give priority
+	context             ?&Context      @[skip; str: skip]
+	session             ?&Session      @[skip; str: skip]
+	context_name        string = 'default'
+	session_name        string
+	coderoot            string
+	interactive         bool
+	fsdb_encrypted      bool
+	playbook_priorities map[int]string // filter and give priority
 }
 
 // return a session which has link to the actions and params on context and session level
 // the session also has link to fskvs (filesystem key val stor and gitstructure if relevant)
 pub fn session_new(args_ PlayArgs) !&Session {
 	mut args := args_
-
 
 	mut context := args.context or {
 		mut c := new(

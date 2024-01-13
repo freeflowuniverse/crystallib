@@ -100,7 +100,7 @@ pub fn play_mdbook(mut session play.Session) ! {
 		} else if name == '' {
 			for mut book2 in books.books {
 				book2.generate()!
-				mdbook.save_to_config(*book2, mut session.context) !
+				mdbook.save_to_config(*book2, mut session.context)!
 			}
 		} else {
 			mut book2 := mdbook.new_from_config(
@@ -110,7 +110,7 @@ pub fn play_mdbook(mut session play.Session) ! {
 				context: &session.context
 			)!
 			book2.generate()!
-			mdbook.save_to_config(*book2, mut session.context) !
+			mdbook.save_to_config(*book2, mut session.context)!
 		}
 		action.done = true
 	}

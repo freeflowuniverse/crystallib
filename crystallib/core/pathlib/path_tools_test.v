@@ -38,7 +38,9 @@ fn test_exists() {
 	mut p2 := pathlib.get_file(path: '${testpath}/NotARealFile') or { panic('${err}') }
 	assert !p2.exists()
 	console.print_stdout('File not found')
-	mut p3 := pathlib.get_file(path: '${testpath}/NotARealFile2', create: true) or { panic('${err}') }
+	mut p3 := pathlib.get_file(path: '${testpath}/NotARealFile2', create: true) or {
+		panic('${err}')
+	}
 	assert p3.exists()
 	console.print_stdout('File found')
 	p3.delete() or { panic('${err}') }

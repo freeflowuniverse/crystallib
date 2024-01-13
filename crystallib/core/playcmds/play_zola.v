@@ -17,9 +17,9 @@ pub fn play_website(mut session play.Session) ! {
 		return error('can only have 1 config action for websites')
 	} else if config_actions.len == 1 {
 		mut p := config_actions[0].params
-		coderoot = p.get_default('coderoot','')!
-		buildroot = p.get_default('buildroot','')!
-		publishroot = p.get_default('publishroot','')!
+		coderoot = p.get_default('coderoot', '')!
+		buildroot = p.get_default('buildroot', '')!
+		publishroot = p.get_default('publishroot', '')!
 		install = p.get_default_true('install')
 		reset = p.get_default_false('reset')
 		config_actions[0].done = true
@@ -37,23 +37,21 @@ pub fn play_website(mut session play.Session) ! {
 		reset: reset
 	)!
 
-
-for mut action in session.plbook.find(filter: 'website:define')! {
+	for mut action in session.plbook.find(filter: 'website:define')! {
 		mut p := action.params
 		name := p.get('name')!
-		panic("implement")
+		panic('implement')
 		// mut wsite := websites.get(website)!
 		// wsite.collection_add(name: name, url: url)!
 		action.done = true
 	}
-
 
 	for mut action in session.plbook.find(filter: 'website:add')! {
 		mut p := action.params
 		name := p.get('name')!
 		website := p.get('website')!
 		url := p.get('url')!
-		panic("implement")
+		panic('implement')
 		// mut wsite := websites.get(website)!
 		// wsite.collection_add(name: name, url: url)!
 		action.done = true
@@ -73,7 +71,7 @@ for mut action in session.plbook.find(filter: 'website:define')! {
 			websites.pull()!
 		}
 		mut name := p.get_default('name', '')!
-		panic("implement")
+		panic('implement')
 		// if name.contains(',') {
 		// 	names := texttools.to_array(name)
 		// 	for name2 in names {

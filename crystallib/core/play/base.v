@@ -4,8 +4,8 @@ import json
 
 pub struct Base {
 pub mut:
-	session  ?&Session
-	name string
+	session ?&Session
+	name    string
 }
 
 fn (mut self Base) session() !&Session {

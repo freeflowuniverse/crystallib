@@ -25,10 +25,10 @@ pub mut:
 //- format ipaddr: any ipv6 addr
 //- if ipaddr is empty or starts with localhost or 127.0.0.1 -> will be the ExecutorLocal
 fn executor_new(args_ ExecutorNewArguments) !Executor {
-	mut args:=args_
+	mut args := args_
 	hasport := args.ipaddr.contains(':')
-	if !hasport{
-		args.ipaddr=args.ipaddr+":22"
+	if !hasport {
+		args.ipaddr = args.ipaddr + ':22'
 	}
 	if args.ipaddr == ''
 		|| (args.ipaddr.starts_with('localhost') && hasport == false)

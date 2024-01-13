@@ -1,4 +1,5 @@
 module zola
+
 import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.osal
 // import os
@@ -9,12 +10,12 @@ import os
 @[heap]
 pub struct ZSite {
 pub mut:
-	zola        &Zola             @[skip; str: skip]
+	zola         &Zola             @[skip; str: skip]
 	url          string // url of site repo
 	name         string
 	path_build   pathlib.Path
 	path_publish pathlib.Path
-	collections    []ZSiteCollection
+	collections  []ZSiteCollection
 	gitrepokey   string
 	tailwindcss  bool // whether site uses tailwindcss
 }

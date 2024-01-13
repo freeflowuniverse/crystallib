@@ -102,7 +102,7 @@ pub fn develop(args InstallArgs) ! {
 	// rm -f ~/.vmodules/freeflowuniverse/webcomponents
 	// ln -s ${path}/crystallib ~/.vmodules/freeflowuniverse/crystallib
 	// ln -s ${path2}/webcomponents ~/.vmodules/freeflowuniverse/webcomponents
-			
+
 	// '
 	// osal.exec(cmd: c)!
 
@@ -111,7 +111,8 @@ pub fn develop(args InstallArgs) ! {
 	osal.done_set('crystal_development', 'OK')!
 }
 
-pub fn hero(args InstallArgs) ! {
+//compile the hero command line
+pub fn hero_compile(args InstallArgs) ! {
 	pl := osal.platform()
 
 	cmd_hero := texttools.template_replace($tmpl('templates/hero.sh'))

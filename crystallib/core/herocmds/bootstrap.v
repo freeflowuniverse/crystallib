@@ -60,14 +60,12 @@ fn cmd_bootstrap_execute(cmd Command) ! {
 	mut hero := cmd.flags.get_bool('hero') or { false }
 	mut crystal := cmd.flags.get_bool('crystal') or { false }
 	mut address := cmd.flags.get_string('address') or { '' }
-	if address==""{
-		address="localhost"
+	if address == '' {
+		address = 'localhost'
 	}
 
 	mut b := builder.new()!
 	mut n := b.node_new(ipaddr: address)!
-
-	
 
 	if crystal {
 		n.crystal_install()!

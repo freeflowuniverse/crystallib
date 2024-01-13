@@ -68,7 +68,6 @@ fn test_hexhash() {
 	assert h == 'fca5c320391e7a91ec91999b1b3d66bf5cb7658905284c431777ff6d2fa4a4c3'
 }
 
-
 fn test_textin3() {
 	params := parse(paramsparser.textin3) or { panic(err) }
 	assert params == Params{
@@ -134,13 +133,11 @@ fn test_args_get() {
 fn test_url1() {
 	mut text := "color:red url:'https://github.com/freeflowuniverse/crystallib/tree/development/examples/mdbook/books_to_include1'"
 	mut params := parse(text) or { panic(err) }
-	mut text2 := "color:red url:\"https://github.com/freeflowuniverse/crystallib/tree/development/examples/mdbook/books_to_include1 \""
+	mut text2 := 'color:red url:"https://github.com/freeflowuniverse/crystallib/tree/development/examples/mdbook/books_to_include1 "'
 	mut params2 := parse(text2) or { panic(err) }
-	assert params.get("url")?=='https://github.com/freeflowuniverse/crystallib/tree/development/examples/mdbook/books_to_include1'
-	assert params2.get("url")?=='https://github.com/freeflowuniverse/crystallib/tree/development/examples/mdbook/books_to_include1'
+	assert params.get('url')? == 'https://github.com/freeflowuniverse/crystallib/tree/development/examples/mdbook/books_to_include1'
+	assert params2.get('url')? == 'https://github.com/freeflowuniverse/crystallib/tree/development/examples/mdbook/books_to_include1'
 }
-
-
 
 // // fn test_json() {
 
@@ -230,7 +227,6 @@ fn test_url1() {
 // 	assert params.equal(params2)
 // }
 
-
 // fn test_params_default_false() {
 // 	mut params := parse('
 // 	certified:false
@@ -304,8 +300,6 @@ fn test_url1() {
 
 // 	assert params.get('urgency') or { '' } == 'green'
 // }
-
-
 
 // fn test_textin2() {
 // 	params := parse(paramsparser.textin2) or { panic(err) }

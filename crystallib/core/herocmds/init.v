@@ -8,7 +8,15 @@ import cli { Command, Flag }
 pub fn cmd_init(mut cmdroot Command) {
 	mut cmd_run := Command{
 		name: 'init'
-		description: 'init hero'
+		description: '
+Initialization Helpers for Hero
+
+-r will reset everything e.g. done states (when installing something)
+-d will put the platform in development mode, get V, crystallib, ...
+-c will compile hero on local platform (requires local crystallib)
+-n install nix on the base system
+
+'
 		required_args: 0
 		execute: cmd_init_execute
 	}
@@ -32,9 +40,19 @@ pub fn cmd_init(mut cmdroot Command) {
 	cmd_run.add_flag(Flag{
 		flag: .bool
 		required: false
-		name: 'hero'
+		name: 'compile'
+		abbrev: 'c'
 		description: 'will compile hero.'
 	})
+
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'nix'
+		abbrev: 'n'
+		description: 'will install nix.'
+	})
+
 
 	cmdroot.add_command(cmd_run)
 }
@@ -43,16 +61,27 @@ fn cmd_init_execute(cmd Command) ! {
 	mut develop := cmd.flags.get_bool('develop') or { false }
 	mut reset := cmd.flags.get_bool('reset') or { false }
 	mut hero := cmd.flags.get_bool('hero') or { false }
+	mut nix := cmd.flags.get_bool('nix') or { false }
 
-	base.install()!
-
-	if hero {
-		base.hero()!
-	} else if develop {
-		base.develop(reset: reset)!
+	if !(develop || hero || nix){
+		// cmd.help_message()
+		return error(cmd.help_message())
 	}
 
-	r := osal.profile_path_add_hero()!
-	console.print_header(' add path ${r} to profile.')
-	console.print_header(' hero init ok.')
+	if develop || hero || nix{
+		base.install()!
+	}
+
+	if develop || hero {
+		base.develop(reset: reset)!
+	} 
+	if hero {
+		base.hero_compile()!
+		r := osal.profile_path_add_hero()!
+		console.print_header(' add path ${r} to profile.')
+	}
+	if nix{
+		base.nix_install(reset: reset)!
+	}
+
 }

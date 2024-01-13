@@ -15,7 +15,7 @@ pub fn (params &Params) get_path(key string) !string {
 	return path
 }
 
-//create the path if it doesn't exist
+// create the path if it doesn't exist
 pub fn (params &Params) get_path_create(key string) !string {
 	mut path := params.get(key)!
 
@@ -27,4 +27,3 @@ pub fn (params &Params) get_path_create(key string) !string {
 
 	return path
 }
-

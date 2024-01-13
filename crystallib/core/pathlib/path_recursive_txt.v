@@ -1,18 +1,18 @@
 module pathlib
 
-//get all text for path and underneith (works for dir & file)
+// get all text for path and underneith (works for dir & file)
 pub fn (mut path Path) recursive_text() ![]string {
-	mut res:=[]string{}
+	mut res := []string{}
 	// path.check_exists()!
 	// console.print_debug("path recursive text: $path.path")
 	if path.cat == .file {
-		c:=path.read()!
-		res<<c.split_into_lines()		
+		c := path.read()!
+		res << c.split_into_lines()
 	} else {
 		mut pl := path.list(recursive: true)!
 		for mut p in pl.paths {
 			res << p.recursive_text()!
-		}		
+		}
 	}
 	return res
 }

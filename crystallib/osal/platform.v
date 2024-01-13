@@ -111,7 +111,6 @@ pub fn is_ubuntu() bool {
 }
 
 pub fn is_linux() bool {
-	return platform() == .ubuntu || platform() == .arch || platform() == .suse || platform() == .alpine
+	return platform() == .ubuntu || platform() == .arch || platform() == .suse
+		|| platform() == .alpine
 }
-
-

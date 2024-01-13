@@ -12,91 +12,59 @@ import cli { Command, Flag }
 pub fn cmd_mdbook(mut cmdroot Command) {
 	mut cmd_mdbook := Command{
 		name: 'mdbook'
-		description: ''
-		required_args: 0
-		usage: ''
-	}
+		description: '
+## Manage your MDBooks
 
-	mut cmd_mdbook_run := Command{
-		name: 'run'
-		description: 'run actions from 3script'
-		required_args: 0
-		usage: ''
-		execute: cmd_mdbook_execute
-	}
-	cmds_run_add(mut cmd_mdbook_run) // add the run command as sub to the mdbook
 
-	mut cmd_mdbook_open := Command{
-		name: 'open'
-		description: 'open specified mdbook (in browser)'
+example:
+
+hero run -u https://git.ourworld.tf/threefold_coop/info_asimov/src/branch/main/script3 -r
+
+The -r will run it, can also do -e or -st to see sourcetree
+
+		
+		'
 		required_args: 0
 		usage: ''
 		execute: cmd_mdbook_execute
 	}
 
-	mut cmd_mdbook_edit := Command{
-		name: 'edit'
-		description: 'edit specified mdbook (in vscode)'
-		required_args: 0
-		usage: ''
-		execute: cmd_mdbook_execute
-	}
+	cmd_run_add_flags(mut cmd_mdbook)
 
-	mut urlcmds := [&cmd_mdbook_open, &cmd_mdbook_edit]
-	for mut c in urlcmds {
-		c.add_flag(Flag{
-			flag: .string
-			name: 'name'
-			abbrev: 'n'
-			description: 'name of the mdbook.'
-		})
+	cmd_mdbook.add_flag(Flag{
+		flag: .string
+		name: 'name'
+		abbrev: 'n'
+		description: 'name of the mdbook.'
+	})
 
-		c.add_flag(Flag{
-			flag: .bool
-			name: 'reset'
-			abbrev: 'r'
-			description: 'reset, means lose changes of your repos.'
-		})
-
-		c.add_flag(Flag{
-			flag: .string
-			required: false
-			name: 'context'
-			abbrev: 'cn'
-			description: 'name for the context (optional).'
-		})
-	}
-	cmd_mdbook.add_command(cmd_mdbook_run)
-	cmd_mdbook.add_command(cmd_mdbook_open)
-	cmd_mdbook.add_command(cmd_mdbook_edit)
 
 	cmdroot.add_command(cmd_mdbook)
 }
 
 fn cmd_mdbook_execute(cmd Command) ! {
-	mut name := cmd.flags.get_string('name') or {""}
-	mut context := cmd.flags.get_string('context') or { '' }
-	mut reset := cmd.flags.get_bool('reset') or { false }
+	mut name := cmd.flags.get_string('name') or { '' }
+	mut run := cmd.flags.get_bool('run') or { false }
+	mut sourcetree := cmd.flags.get_bool('sourcetree') or { false }
+	mut edit := cmd.flags.get_bool('edit') or { false }
 
-	mut session := play.session_new(
-		context_name: context
-		interactive: true
-	)!
+	if run{
+		mut session:=session_codetree_lib_run(cmd)!
+	}
 
-	if cmd.name == 'edit' {	
+	if cmd.name == 'edit' {
 		mut book2 := mdbook.new_from_config(instance: name, reset: reset, context: &session.context)!
 		book2.edit()!
-	}else if cmd.name == 'open' {
+	} else if cmd.name == 'open' {
 		mut book2 := mdbook.new_from_config(instance: name, reset: reset, context: &session.context)!
 		book2.generate()!
 		book2.open()!
-	}else if cmd.name == 'run'{
+	} else if cmd.name == 'run' {
 		cmd_3script_execute(cmd)!
 		mut book2 := mdbook.new_from_config(instance: name, reset: reset, context: &session.context)!
 		book2.generate()!
 		book2.open()!
-	}else{
+	} else {
 		return error(cmd.help_message())
 	}
-	
 }

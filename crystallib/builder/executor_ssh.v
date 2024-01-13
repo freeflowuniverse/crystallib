@@ -64,7 +64,6 @@ pub fn (mut executor ExecutorSSH) exec_interactive(args_ ExecArgs) ! {
 	osal.execute_interactive(args.cmd)!
 }
 
-
 pub fn (mut executor ExecutorSSH) file_write(path string, text string) ! {
 	if executor.debug {
 		console.print_debug('${executor.ipaddr.addr} file write: ${path}')

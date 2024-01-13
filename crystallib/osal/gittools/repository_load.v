@@ -1,4 +1,5 @@
 module gittools
+
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.clients.redisclient
@@ -6,7 +7,7 @@ import json
 
 fn repo_load(addr GitAddr, path string) !GitRepoStatus {
 	$if debug {
-	console.print_debug(' git repo get: ${path}')
+		console.print_debug(' git repo get: ${path}')
 	}
 
 	mut redis := redisclient.core_get()!

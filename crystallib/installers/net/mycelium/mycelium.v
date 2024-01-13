@@ -1,4 +1,3 @@
-
 module mycelium
 
 import freeflowuniverse.crystallib.osal
@@ -67,7 +66,7 @@ pub fn build() ! {
 	rust.install()!
 	console.print_header('build mycelium')
 	if !osal.done_exists('build_mycelium') && !osal.cmd_exists('mycelium') {
-		panic("implement")
+		panic('implement')
 		// USE OUR PRIMITIVES (TODO, needs to change, was from zola)
 		cmd := '
 		source ~/.cargo/env
@@ -87,4 +86,3 @@ pub fn build() ! {
 		console.print_header('mycelium already installed')
 	}
 }
-
