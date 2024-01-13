@@ -43,15 +43,11 @@ The -r will run it, can also do -e or -st to see sourcetree
 }
 
 fn cmd_mdbook_execute(cmd Command) ! {
-	mut name := cmd.flags.get_string('name') or { '' }
-	mut run := cmd.flags.get_bool('run') or { false }
-	mut sourcetree := cmd.flags.get_bool('sourcetree') or { false }
-	mut edit := cmd.flags.get_bool('edit') or { false }
-	mut edit := cmd.flags.get_bool('edit') or { false }
 
-	if run{
-		mut session:=session_codetree_lib_run(cmd)!
-	}
+	mut session,path := session_run_do(cmd)!
+
+	mut name := cmd.flags.get_string('name') or { '' }
+	reset := cmd.flags.get_bool('gitreset') or { false }
 
 	if cmd.name == 'edit' {
 		mut book2 := mdbook.new_from_config(instance: name, reset: reset, context: &session.context)!
@@ -61,7 +57,6 @@ fn cmd_mdbook_execute(cmd Command) ! {
 		book2.generate()!
 		book2.open()!
 	} else if cmd.name == 'run' {
-		cmd_3script_execute(cmd)!
 		mut book2 := mdbook.new_from_config(instance: name, reset: reset, context: &session.context)!
 		book2.generate()!
 		book2.open()!

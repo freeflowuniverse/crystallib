@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.core.play
 import freeflowuniverse.crystallib.core.playcmds
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.osal.vscode
+import freeflowuniverse.crystallib.osal.sourcetree
 import cli { Command, Flag }
 import os
 
@@ -111,7 +112,7 @@ pub fn cmd_run_add_flags(mut cmd_run Command) {
 }
 
 //returns the session and the path of the fetched repo
-fn session_get(cmd Command) !(play.Session,get_string) {	
+fn session_run_get(cmd Command) !(&play.Session,string) {	
 
 	//TODO: need to use gitstructure in session !!!
 
@@ -130,18 +131,6 @@ fn session_get(cmd Command) !(play.Session,get_string) {
 	pull := cmd.flags.get_bool('gitpull') or { false }
 	interactive := !cmd.flags.get_bool('script') or { false }
 
-	run := cmd.flags.get_bool('run') or { false }
-	edit := cmd.flags.get_bool('edit') or { false }
-	sourcetree := cmd.flags.get_bool('sourcetree') or { false }
-
-	if url.len > 0 {
-		path = gittools.code_get(
-			coderoot: coderoot
-			pull: pull
-			reset: reset
-			url: url
-		)!
-	}
 
 	mut session := play.session_new(
 		session_name: sessionname
@@ -150,19 +139,46 @@ fn session_get(cmd Command) !(play.Session,get_string) {
 		interactive: interactive
 	)!
 
+	mut gs := session.context.gitstructure
+	if url.len > 0 {
+		path = gs.code_get(
+			pull: pull
+			reset: reset
+			url: url
+			reload: true
+		)!
+	}
+
+	return session,path
 }
 
-//get the repo, check if we need to run
-fn session_run(cmd Command) !play.Session {
+//same as session_run_get but will also run the playbook
+fn session_run_do(cmd Command) !(&play.Session,string)  {
 
+	mut session,path := session_run_get(cmd)!
+
+	// add all actions inside to the playbook
+	session.playbook_add(path: path)!
+	session.process()!
+	console.print_stdout(session.plbook.str())
+	playcmds.run(mut session)!
+	
+	return session,path
 }
 
 //get the repo, check if we need to do 
-fn session_run_edit_sourcecode(cmd Command) !play.Session {
+fn session_run_edit_sourcecode(cmd Command) !(&play.Session,string) {
 
-	if sourcetree {
-		mut repo := gittools.git_repo_get(coderoot: coderoot, path: path)!
-		repo.sourcetree()!
+	mut session,path := session_run_get(cmd)!
+
+	run := cmd.flags.get_bool('run') or { false }
+	edit := cmd.flags.get_bool('edit') or { false }
+	treedo := cmd.flags.get_bool('sourcetree') or { false }
+
+	if treedo {
+		// mut repo := gittools.git_repo_get(coderoot: coderoot, path: path)!
+		// repo.sourcetree()!
+		sourcetree.open(path: path)!
 	} else if edit {
 		vscode.open(path: path)!
 	} else if run {
@@ -175,5 +191,5 @@ fn session_run_edit_sourcecode(cmd Command) !play.Session {
 		return error(cmd.help_message())
 	}
 
-	return session
+	return session,path
 }

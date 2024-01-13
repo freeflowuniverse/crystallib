@@ -1,12 +1,7 @@
 module herocmds
 
-import freeflowuniverse.crystallib.osal.gittools
-import freeflowuniverse.crystallib.core.play
-import freeflowuniverse.crystallib.core.playcmds
-import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.osal.vscode
 import cli { Command, Flag }
-import os
+
 
 // path string //if location on filessytem, if exists, this has prio on git_url
 // git_url   string // location of where the hero scripts are
@@ -35,10 +30,9 @@ The -r will run it, can also do -e or -st to see sourcetree
 	}
 	cmd_run_add_flags(mut cmd_run)
 
-
 	cmdroot.add_command(cmd_run)
 }
 
 fn cmd_3script_execute(cmd Command) ! {
-	session_codetree_lib_run(cmd)!
+	mut session,path := session_run_edit_sourcecode(cmd)!
 }

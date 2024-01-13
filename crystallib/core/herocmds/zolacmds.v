@@ -12,91 +12,54 @@ import cli { Command, Flag }
 pub fn cmd_zola(mut cmdroot Command) {
 	mut cmd_zola := Command{
 		name: 'zola'
-		description: ''
-		required_args: 0
-		usage: ''
-	}
+		description: '
+## Manage your ZolaSites
 
-	mut cmd_zola_run := Command{
-		name: 'run'
-		description: 'run actions from 3script'
-		required_args: 0
-		usage: ''
-		execute: cmd_zola_execute
-	}
-	cmds_run_add(mut cmd_zola_run) // add the run command as sub to the zola
+example:
 
-	mut cmd_zola_open := Command{
-		name: 'open'
-		description: 'open specified website (in browser)'
+hero run -u https://git.ourworld.tf/threefold_coop/info_asimov/src/branch/main/script3 -r
+
+The -r will run it, can also do -e or -st to see sourcetree
+
+		
+		'
 		required_args: 0
 		usage: ''
 		execute: cmd_zola_execute
 	}
 
-	mut cmd_zola_edit := Command{
-		name: 'edit'
-		description: 'edit specified website (in vscode)'
-		required_args: 0
-		usage: ''
-		execute: cmd_zola_execute
-	}
+	cmd_run_add_flags(mut cmd_zola)
 
-	mut urlcmds := [&cmd_zola_open, &cmd_zola_edit]
-	for mut c in urlcmds {
-		c.add_flag(Flag{
-			flag: .string
-			required: true
-			name: 'name'
-			abbrev: 'n'
-			description: 'name of the website.'
-		})
+	cmd_zola.add_flag(Flag{
+		flag: .string
+		name: 'name'
+		abbrev: 'n'
+		description: 'name of the zola.'
+	})
 
-		c.add_flag(Flag{
-			flag: .bool
-			name: 'reset'
-			abbrev: 'r'
-			description: 'reset, means lose changes of your repos.'
-		})
-
-		c.add_flag(Flag{
-			flag: .string
-			required: false
-			name: 'context'
-			abbrev: 'cn'
-			description: 'name for the context (optional).'
-		})
-	}
-	cmd_zola.add_command(cmd_zola_run)
-	cmd_zola.add_command(cmd_zola_open)
-	cmd_zola.add_command(cmd_zola_edit)
 
 	cmdroot.add_command(cmd_zola)
 }
 
 fn cmd_zola_execute(cmd Command) ! {
-	mut name := cmd.flags.get_string('name')!
-	mut context := cmd.flags.get_string('context') or { '' }
-	mut reset := cmd.flags.get_bool('reset') or { false }
 
-	mut session := play.session_new(
-		context_name: context
-		interactive: true
-	)!
-	panic('implement')
-	// if cmd.name == 'edit' {	
-	// 	mut wsite2 := zola.new_from_config(instance: name, reset: reset, context: &session.context)!
-	// 	wsite2.edit()!
-	// }else if cmd.name == 'open' {
-	// 	mut wsite2 := zola.new_from_config(instance: name, reset: reset, context: &session.context)!
-	// 	wsite2.generate()!
-	// 	wsite2.open()!
-	// }else if cmd.name == 'run'{
-	// 	cmd_3script_execute(cmd)!
-	// 	mut wsite2 := zola.new_from_config(instance: name, reset: reset, context: &session.context)!
-	// 	wsite2.generate()!
-	// 	wsite2.open()!
-	// }else{
+	mut session,path := session_run_do(cmd)!
+
+	mut name := cmd.flags.get_string('name') or { '' }
+	reset := cmd.flags.get_bool('gitreset') or { false }
+
+	// if cmd.name == 'edit' {
+	// 	mut book2 := zola.new_from_config(instance: name, reset: reset, context: &session.context)!
+	// 	book2.edit()!
+	// } else if cmd.name == 'open' {
+	// 	mut book2 := zola.new_from_config(instance: name, reset: reset, context: &session.context)!
+	// 	book2.generate()!
+	// 	book2.open()!
+	// } else if cmd.name == 'run' {
+	// 	mut book2 := zola.new_from_config(instance: name, reset: reset, context: &session.context)!
+	// 	book2.generate()!
+	// 	book2.open()!
+	// } else {
 	// 	return error(cmd.help_message())
 	// }
 }
