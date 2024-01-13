@@ -9,7 +9,7 @@ mut scr:=screen.new(reset:false)!
 
 mut s:=scr.add(name:"test")!
 
-mut s:=scr.add(name:"redis",cmd:"")!
+mut s2:=scr.add(name:"redis",cmd:"")!
 
 println(scr)
 
