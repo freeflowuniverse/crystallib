@@ -47,6 +47,7 @@ fn cmd_mdbook_execute(cmd Command) ! {
 	mut run := cmd.flags.get_bool('run') or { false }
 	mut sourcetree := cmd.flags.get_bool('sourcetree') or { false }
 	mut edit := cmd.flags.get_bool('edit') or { false }
+	mut edit := cmd.flags.get_bool('edit') or { false }
 
 	if run{
 		mut session:=session_codetree_lib_run(cmd)!

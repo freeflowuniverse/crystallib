@@ -152,8 +152,13 @@ fn session_get(cmd Command) !(play.Session,get_string) {
 
 }
 
+//get the repo, check if we need to run
+fn session_run(cmd Command) !play.Session {
 
-fn session_codetree_lib_run(cmd Command) !play.Session {
+}
+
+//get the repo, check if we need to do 
+fn session_run_edit_sourcecode(cmd Command) !play.Session {
 
 	if sourcetree {
 		mut repo := gittools.git_repo_get(coderoot: coderoot, path: path)!
