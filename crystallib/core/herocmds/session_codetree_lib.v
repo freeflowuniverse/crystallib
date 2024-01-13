@@ -149,6 +149,7 @@ fn session_run_get(cmd Command) !(&play.Session,string) {
 		)!
 	}
 
+
 	return session,path
 }
 
@@ -169,7 +170,9 @@ fn session_run_do(cmd Command) !(&play.Session,string)  {
 //get the repo, check if we need to do 
 fn session_run_edit_sourcecode(cmd Command) !(&play.Session,string) {
 
-	mut session,path := session_run_get(cmd)!
+	mut session,path := session_run_do(cmd)!
+
+	if true{panic("Sd")}
 
 	run := cmd.flags.get_bool('run') or { false }
 	edit := cmd.flags.get_bool('edit') or { false }

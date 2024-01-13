@@ -3,6 +3,7 @@ module zdb
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
+import freeflowuniverse.crystallib.ui.console
 
 // install zdb will return true if it was already installed
 pub fn install() ! {

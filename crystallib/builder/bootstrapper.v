@@ -44,7 +44,8 @@ pub fn (mut bs BootStrapper) run(args_ BootstrapperArgs) ! {
 
 pub fn (mut node Node) upgrade() ! {
 	mut bs := bootstrapper()
-	installer_base_content := bs.embedded_files['installer_base.sh'].to_string()
+	installer_base_content_ := bs.embedded_files['installer_base.sh'] or {panic("bug")}
+	installer_base_content := installer_base_content_.to_string()
 	cmd := '${installer_base_content}\n'
 	node.exec_cmd(
 		cmd: cmd
@@ -56,7 +57,8 @@ pub fn (mut node Node) upgrade() ! {
 
 pub fn (mut node Node) crystal_install() ! {
 	mut bs := bootstrapper()
-	installer_base_content := bs.embedded_files['installer_base.sh'].to_string()
+	installer_base_content_ := bs.embedded_files['installer_base.sh'] or {panic("bug")}
+	installer_base_content := installer_base_content_.to_string()
 	cmd := '${installer_base_content}\nfreeflow_dev_env_install\n'
 	if node.platform == .osx {
 		// we have no choice then to do it interactive
