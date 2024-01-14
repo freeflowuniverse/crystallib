@@ -2,6 +2,7 @@ module herocmds
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
+import freeflowuniverse.crystallib.installers.db.redis as redisinstaller
 import freeflowuniverse.crystallib.ui.console
 import cli { Command, Flag }
 
@@ -53,6 +54,12 @@ Initialization Helpers for Hero
 		description: 'will install nix.'
 	})
 
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'redis'
+		description: 'will make sure redis is in system and is running.'
+	})
 
 	cmdroot.add_command(cmd_run)
 }
@@ -62,15 +69,21 @@ fn cmd_init_execute(cmd Command) ! {
 	mut reset := cmd.flags.get_bool('reset') or { false }
 	mut hero := cmd.flags.get_bool('hero') or { false }
 	mut nix := cmd.flags.get_bool('nix') or { false }
+	mut redis := cmd.flags.get_bool('redis') or { false }
 
-	if !(develop || hero || nix){
+	if !(develop || hero || nix || redis){
 		// cmd.help_message()
 		return error(cmd.help_message())
 	}
 
-	if develop || hero || nix{
+	if develop || hero || nix || redis{
 		base.install()!
 	}
+
+	if redis{
+		redisinstaller.install()!
+	}
+
 
 	if develop || hero {
 		base.develop(reset: reset)!

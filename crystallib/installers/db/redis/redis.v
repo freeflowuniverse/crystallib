@@ -23,6 +23,19 @@ pub mut:
 	start   bool = true
 }
 
+pub fn install(args_ RedisInstallerArgs) !RedisInstaller {
+	mut args := args_
+
+	args.start = true
+
+	if ! (osal.cmd_exists_profile("redis-server")){
+		osal.package_install("redis")!
+	}
+	
+	
+	return new(args)!
+}
+
 pub fn new(args_ RedisInstallerArgs) !RedisInstaller {
 	mut args := args_
 	if args.datadir == '' {

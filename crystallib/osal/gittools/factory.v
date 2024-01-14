@@ -103,7 +103,7 @@ pub fn get(args_ GitStructureGetArgs) !GitStructure {
 	for key, i in instances {
 		if i.name() == args.name {
 			rlock instances {
-				mut gs := instances[key]
+				mut gs := instances[key] or {panic("bug")}
 				if args.reload {
 					gs.load()!
 				}

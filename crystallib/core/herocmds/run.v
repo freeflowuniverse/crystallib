@@ -35,4 +35,5 @@ The -r will run it, can also do -e or -st to see sourcetree
 
 fn cmd_3script_execute(cmd Command) ! {
 	mut session,path := session_run_edit_sourcecode(cmd)!
+	println("sdsdsdddd")
 }
