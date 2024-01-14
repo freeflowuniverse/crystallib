@@ -189,7 +189,6 @@ pub fn (mut zp ZProcess) destroy() ! {
 	path1.delete()!
 	path2.delete()!
 	pathyaml.delete()!
-	// if true{panic("Sd")}
 }
 
 // how long to wait till the specified output shows up, timeout in sec
