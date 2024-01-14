@@ -1,3 +1,5 @@
+module ourtime
+
 import freeflowuniverse.crystallib.data.ourtime
 import time
 
@@ -13,20 +15,20 @@ import time
 
 // // check every period
 // fn test_every_period() {
-// 	input_strings := {
-// 		'+5s': 5
-// 		'+3m': 180
-// 		'+2h': 7200
-// 		'+1d': 86_400
-// 		'+1w': 604_800
-// 		'+1M': 2_592_000
-// 		'+1Q': 7_776_000
-// 		'+1Y': 31_536_000
-// 	}
+	// input_strings := {
+	// 	'+5s': 5
+	// 	'+3m': 180
+	// 	'+2h': 7200
+	// 	'+1d': 86_400
+	// 	'+1w': 604_800
+	// 	'+1M': 2_592_000
+	// 	'+1Q': 7_776_000
+	// 	'+1Y': 31_536_000
+	// }
 
-// 	for key, value in input_strings {
-// 		check_input(key, value)
-// 	}
+	// for key, value in input_strings {
+	// 	check_input(key, value)
+	// }
 // }
 
 // // check multiple periods input
