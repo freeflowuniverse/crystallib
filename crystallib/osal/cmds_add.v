@@ -21,13 +21,7 @@ pub fn cmd_add(args_ CmdAddArgs) ! {
 	if args.cmdname == '' {
 		args.cmdname = os.base(args.source)
 	}
-	mut dest := ''
-	if is_osx() {
-		dest = '${os.home_dir()}/hero/bin'
-		dir_ensure(dest)!
-	} else {
-		dest = '/usr/local/bin'
-	}
+	mut dest := bin_path()!
 
 	mut sourcepath := pathlib.get_file(path: args.source, create: false)!
 	mut destpath := '${dest}/${args.cmdname}'
@@ -36,11 +30,12 @@ pub fn cmd_add(args_ CmdAddArgs) ! {
 	res := os.execute('which ${args.cmdname}')
 	if res.exit_code == 0 {
 		existing_path := res.output.trim_space()
-		if dest != existing_path {
+		if destpath != existing_path {
+				println(" - did find a cmd which is not in path we expect:\n    expected:${destpath}\n    got:${existing_path}")
 			if args.reset {
 				os.rm(existing_path)!
 			} else {
-				return error("existing cmd found on: ${existing_path} and can't delete.")
+				return error("existing cmd found on: ${existing_path} and can't delete.\nWas trying to install on ${destpath}.")
 			}
 		}
 	}
@@ -56,24 +51,26 @@ pub fn cmd_add(args_ CmdAddArgs) ! {
 	destfile.chmod(0o770)! // includes read & write & execute
 
 	// lets make sure this path is in profile
-	profile_path_add(dest)!
+	profile_path_add(path:dest)!
 }
 
 pub fn profile_path_add_hero() !string {
-	mut dest := ''
-	if is_osx() {
-		dest = '${os.home_dir()}/hero/bin'
-		dir_ensure(dest)!
-	} else {
-		dest = '/usr/local/bin'
-	}
-	profile_path_add(dest)!
+	mut dest := bin_path()!
+	profile_path_add(path:dest)!
 	return dest
 }
 
+[params]
+pub struct ProfilePathAddArgs{
+pub mut:
+	path string [required]
+	todelete string //see which one to remove
+}
+
 // add the following path to a profile
-pub fn profile_path_add(path string) ! {
+pub fn profile_path_add(args ProfilePathAddArgs) ! {
 	mut toadd := []string{}
+	path:=args.path
 	if is_osx() {
 		toadd << '${os.home_dir()}/.zprofile'
 		toadd << '${os.home_dir()}/.zshrc'
@@ -83,7 +80,7 @@ pub fn profile_path_add(path string) ! {
 	}
 
 	for profile_path in toadd {
-		profile_path_add_(profile_path, path)!
+		profile_path_add_(profile_path, path, args.todelete)!
 	}
 }
 
@@ -93,6 +90,36 @@ pub fn profile_path() string {
 	} else {
 		return '${os.home_dir()}/.bash_profile'
 	}
+}
+
+pub fn bin_path() !string {
+	mut dest:=""
+	if is_osx() {
+		dest = '${os.home_dir()}/hero/bin'
+		dir_ensure(dest)!
+	} else {
+		dest = '/usr/local/bin'
+	}
+	return dest
+}
+
+pub fn hero_path() !string {
+	mut dest:=""
+	dest = '${os.home_dir()}/hero'
+	dir_ensure(dest)!
+	return dest
+}
+
+///usr/local on linux, ${os.home_dir()}/hero on osx
+pub fn usr_local_path() !string {
+	mut dest:=""
+	if is_osx() {
+		dest = '${os.home_dir()}/hero'
+		dir_ensure(dest)!
+	} else {
+		dest = '/usr/local'
+	}
+	return dest
 }
 
 // return the source statement if the profile exists
@@ -131,15 +158,20 @@ fn profile_paths_get(content string) []string {
 	return paths
 }
 
-fn profile_path_add_(profile_path_ string, path2add string) ! {
-	// println(" -- profile path process: ${profile_path_}")
+fn profile_path_add_(profile_path_ string, path2add string, todelete string) ! {
+	// println(" -- profile path add: ${profile_path_} : ${path2add} : $todelete")
 	mut profile_path := pathlib.get_file(path: profile_path_, create: true)!
 	mut c := profile_path.read()!
 
+	if todelete.len>0{
+		c=c.split_into_lines().filter(! it.contains(todelete)).join_lines()
+	}
+	
 	paths := profile_paths_get(c)
 	if path2add in paths {
 		return
 	}
 	c += '\nexport PATH=\$PATH:${path2add}\n'
 	profile_path.write(c)!
+	// println(c)
 }

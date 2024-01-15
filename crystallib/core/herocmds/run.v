@@ -18,9 +18,12 @@ pub fn cmd_run(mut cmdroot Command) {
 
 example:
 
-hero run -u https://git.ourworld.tf/threefold_coop/info_asimov/src/branch/main/script3 -r
+hero run -u https://git.ourworld.tf/threefold_coop/info_asimov/src/branch/main/script3
 
-The -r will run it, can also do -e or -st to see sourcetree
+Can also do -e or -st to see sourcetree
+
+If you do -gp it will pull newest 3scripts from git and give error if there are local changes.
+If you do -gr it will pull newest 3scripts from git and overwrite local changes (careful).
 
 
 		'
@@ -34,6 +37,5 @@ The -r will run it, can also do -e or -st to see sourcetree
 }
 
 fn cmd_3script_execute(cmd Command) ! {
-	mut session,path := session_run_edit_sourcecode(cmd)!
-	println("sdsdsdddd")
+	session_run_edit_sourcecode(cmd)!
 }

@@ -1,6 +1,5 @@
 module herocmds
 
-import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.play
 import freeflowuniverse.crystallib.core.playcmds
 import freeflowuniverse.crystallib.ui.console
@@ -17,13 +16,7 @@ pub fn cmd_run_add_flags(mut cmd_run Command) {
 		abbrev: 'p'
 		description: 'path where 3scripts can be found.'
 	})
-	// cmd_run.add_flag(Flag{
-	// 	flag: .string
-	// 	required: false
-	// 	name: 'circle'
-	// 	abbrev: 'c'
-	// 	description: 'circle id or circle name.'
-	// })
+
 	cmd_run.add_flag(Flag{
 		flag: .string
 		required: false
@@ -101,14 +94,6 @@ pub fn cmd_run_add_flags(mut cmd_run Command) {
 		description: 'Open sourcetree (git mgmt) for the repo where we found the content.'
 	})
 
-	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'run'
-		abbrev: 'r'
-		description: 'Run the actions as found in the content.'
-	})	
-
 }
 
 //returns the session and the path of the fetched repo
@@ -158,25 +143,28 @@ fn session_run_do(cmd Command) !(&play.Session,string)  {
 
 	mut session,path := session_run_get(cmd)!
 
-	// add all actions inside to the playbook
-	session.playbook_add(path: path)!
-	session.process()!
-	console.print_stdout(session.plbook.str())
-	playcmds.run(mut session)!
-	
+	if path.len>0{
+		// add all actions inside to the playbook
+		session.playbook_add(path: path)!
+		session.process()!
+		console.print_stdout(session.plbook.str())
+		playcmds.run(mut session)!
+	}
 	return session,path
 }
 
 //get the repo, check if we need to do 
 fn session_run_edit_sourcecode(cmd Command) !(&play.Session,string) {
 
-	mut session,path := session_run_do(cmd)!
 
-	if true{panic("Sd")}
-
-	run := cmd.flags.get_bool('run') or { false }
 	edit := cmd.flags.get_bool('edit') or { false }
 	treedo := cmd.flags.get_bool('sourcetree') or { false }
+
+	mut session, path := session_run_do(cmd)!
+
+	if path.len==0{
+		return error("path or url needs to be specified")
+	}
 
 	if treedo {
 		// mut repo := gittools.git_repo_get(coderoot: coderoot, path: path)!
@@ -184,14 +172,6 @@ fn session_run_edit_sourcecode(cmd Command) !(&play.Session,string) {
 		sourcetree.open(path: path)!
 	} else if edit {
 		vscode.open(path: path)!
-	} else if run {
-		// add all actions inside to the playbook
-		session.playbook_add(path: path)!
-		session.process()!
-		console.print_stdout(session.plbook.str())
-		playcmds.run(mut session)!
-	} else {
-		return error(cmd.help_message())
 	}
 
 	return session,path

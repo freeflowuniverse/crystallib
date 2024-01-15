@@ -103,7 +103,7 @@ pub fn is_osx_arm() bool {
 }
 
 pub fn is_osx_intel() bool {
-	return platform() == .osx && cputype() != .arm
+	return platform() == .osx && cputype() != .intel
 }
 
 pub fn is_ubuntu() bool {
@@ -113,4 +113,14 @@ pub fn is_ubuntu() bool {
 pub fn is_linux() bool {
 	return platform() == .ubuntu || platform() == .arch || platform() == .suse
 		|| platform() == .alpine
+}
+
+
+pub fn is_linux_arm() bool {
+	return is_linux() &&  cputype() != .arm
+}
+
+
+pub fn is_linux_intel() bool {
+	return is_linux() &&  cputype() != .intel
 }

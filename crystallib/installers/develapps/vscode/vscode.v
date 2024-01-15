@@ -14,7 +14,7 @@ pub mut:
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 	// base.install()!
-	console.print_header('package_install install vscode')
+	console.print_header('install vscode')
 	if !args.reset && osal.done_exists('install_vscode') && osal.cmd_exists('code') {
 		println(' - already installed')
 		return

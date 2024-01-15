@@ -1,7 +1,7 @@
 module mdbook
 
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.installers.web.mdbook
+import freeflowuniverse.crystallib.installers.web.mdbook as mdbook_installer
 // import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.data.ourtime
@@ -40,7 +40,7 @@ pub mut:
 
 pub fn new(args MDBooksArgs) !MDBooks {
 	if args.install {
-		mdbook.install()!
+		mdbook_installer.install()!
 	}
 	mut gs := gittools.get(coderoot: args.coderoot)!
 	mut books := MDBooks{

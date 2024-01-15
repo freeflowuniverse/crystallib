@@ -1,6 +1,5 @@
 module herocmds
 
-import freeflowuniverse.crystallib.core.play
 import freeflowuniverse.crystallib.osal.mdbook
 import cli { Command, Flag }
 
@@ -15,14 +14,13 @@ pub fn cmd_mdbook(mut cmdroot Command) {
 		description: '
 ## Manage your MDBooks
 
-
 example:
 
-hero run -u https://git.ourworld.tf/threefold_coop/info_asimov/src/branch/main/script3 -r
+hero mdbook -u https://git.ourworld.tf/threefold_coop/info_asimov/src/branch/main/script3
 
-The -r will run it, can also do -e or -st to see sourcetree
+If you do -gp it will pull newest book content from git and give error if there are local changes.
+If you do -gr it will pull newest book content from git and overwrite local changes (careful).
 
-		
 		'
 		required_args: 0
 		usage: ''
@@ -44,23 +42,31 @@ The -r will run it, can also do -e or -st to see sourcetree
 
 fn cmd_mdbook_execute(cmd Command) ! {
 
-	mut session,path := session_run_do(cmd)!
+	mut session,_ := session_run_do(cmd)!
 
 	mut name := cmd.flags.get_string('name') or { '' }
-	reset := cmd.flags.get_bool('gitreset') or { false }
 
-	if cmd.name == 'edit' {
-		mut book2 := mdbook.new_from_config(instance: name, reset: reset, context: &session.context)!
-		book2.edit()!
-	} else if cmd.name == 'open' {
-		mut book2 := mdbook.new_from_config(instance: name, reset: reset, context: &session.context)!
-		book2.generate()!
-		book2.open()!
-	} else if cmd.name == 'run' {
-		mut book2 := mdbook.new_from_config(instance: name, reset: reset, context: &session.context)!
-		book2.generate()!
-		book2.open()!
-	} else {
+	if name==""{
+		mut a:=session.plbook.action_get_by_name(actor:"book",name:"define")!
+		name = a.params.get("name") or {""}
+	}
+
+	if name==""{
+		println("did not find defined book, or name not specified")
 		return error(cmd.help_message())
 	}
+
+	reset := cmd.flags.get_bool('gitreset') or { false }
+
+	mut book2 := mdbook.new_from_config(instance: name, reset: reset, context: &session.context)!
+
+	book2.generate()!
+	book2.open()!
+
+	edit := cmd.flags.get_bool('edit') or { false }
+
+	if edit {
+		book2.edit()!
+	}
+
 }

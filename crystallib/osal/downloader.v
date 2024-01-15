@@ -3,6 +3,7 @@ module osal
 import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
+import os
 
 @[params]
 pub struct DownloadArgs {
@@ -133,9 +134,16 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 	// if true{panic("s")}
 
 	if args.expand_dir.len > 0 {
+		if os.exists(args.expand_dir){
+			os.rmdir_all(args.expand_dir)!
+		}
+		
 		return dest.expand(args.expand_dir)!
 	}
 	if args.expand_file.len > 0 {
+		if os.exists(args.expand_file){
+			os.rm(args.expand_file)!
+		}
 		return dest.expand(args.expand_file)!
 	}
 

@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.lang.rust
 import freeflowuniverse.crystallib.installers.web.tailwind
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.core.texttools
 import os
 
 @[params]
@@ -16,33 +17,38 @@ pub mut:
 // install zola will return true if it was already installed
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	// make sure we install base on the node
-	base.install()!
-	tailwind.install()!
+	version:="0.18.0"
 
 	res := os.execute('source ${osal.profile_path()} && zola -V')
 	if res.exit_code == 0 {
-		if !(res.output.contains('0.18.0')) {
+		v:=texttools.version(res.output)
+		if v<texttools.version(version) {
 			args.reset = true
 		}
 	} else {
 		args.reset = true
 	}
 
-	if args.reset == false && osal.done_exists('install_zola') {
+	if args.reset == false {
 		return
 	}
 
 	// install zola if it was already done will return true
-	console.print_header('install zola')
+	console.print_header('install Zola')
+
+	// make sure we install base on the node
+	base.install()!
+	tailwind.install()!
 
 	mut url := ''
-	if osal.is_ubuntu() {
-		url = 'https://github.com/getzola/zola/releases/download/v0.18.0/zola-v0.18.0-x86_64-unknown-linux-gnu.tar.gz'
+	if osal.is_linux() {
+		url = 'https://github.com/getzola/zola/releases/download/v0.18.0/zola-v${version}-x86_64-unknown-linux-gnu.tar.gz'
 	} else if osal.is_osx_arm() {
-		url = 'https://github.com/getzola/zola/releases/download/v0.18.0/zola-v0.18.0-x86_64-apple-darwin.tar.gz'
+		url = 'https://github.com/getzola/zola/releases/download/v0.18.0/zola-v${version}-aarch64-apple-darwin.tar.gz'		
+	} else if osal.is_osx_intel() {
+		url = 'https://github.com/getzola/zola/releases/download/v0.18.0/zola-v${version}-x86_64-apple-darwin.tar.gz'
 	} else {
-		return error('only support ubuntu & osx arm for now')
+		return error('unsupported platform')
 	}
 
 	mut dest := osal.download(
@@ -55,13 +61,11 @@ pub fn install(args_ InstallArgs) ! {
 	mut zolafile := dest.file_get('zola')! // file in the dest
 
 	osal.cmd_add(
-		// cmdname: ''
 		source: zolafile.path
 	)!
 
-	println(' zola INSTALLED')
+	console.print_header('Zola Installed')
 
-	osal.done_set('install_zola', 'OK')!
 	return
 }
 
