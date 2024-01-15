@@ -1,7 +1,8 @@
 module auth
 
-import freeflowuniverse.spiderlib.auth.jwt { SignedJWT }
+import freeflowuniverse.crystallib.web.auth.jwt { SignedJWT }
 import freeflowuniverse.crystallib.web.auth.analytics
+import freeflowuniverse.crystallib.web.auth.authorization
 import freeflowuniverse.crystallib.web.auth.tokens
 import freeflowuniverse.crystallib.web.auth.email
 import freeflowuniverse.crystallib.web.auth.session
@@ -13,21 +14,18 @@ import rand
 import db.sqlite
 import vweb
 
-pub fn (mut auth Authenticator) authenticate(context vweb.Context) ! {
-	access_token := auth.get_access_token(context) or { return error('not found') }
+pub fn (mut auth Authenticator) authenticate(access_token string) ! {
 	auth.tokens.authenticate_access_token(access_token) or {
 		return error('failed to authenticate access token')
 	}
 }
 
-pub fn (mut auth Authenticator) get_user(context vweb.Context) !identity.User {
-	access_token := auth.get_access_token(context) or { return error('not found') }
-	auth.tokens.authenticate_access_token(access_token) or {
+pub fn (mut auth Authenticator) get_user(token_ string) !identity.User {
+	auth.tokens.authenticate_access_token(token_) or {
 		auth.logger.debug('Failed to authenticate token ${err}')
 		return error('error')
 	}
-
-	token := SignedJWT(access_token).decode() or { panic('this should never happen') }
+	token := SignedJWT(token_).decode() or { panic('this should never happen') }
 	sesh := auth.session.get_session(token.sub) or {
 		auth.logger.debug('Failed to get session from access token')
 		return error('error')
@@ -76,22 +74,22 @@ pub fn (mut auth Authenticator) login(identifier string) !Registration {
 
 // TODO
 // log_analytics logs analytic related logs
-pub fn (mut app Authenticator) log_analytics(context vweb.Context) ! {
-	user := app.get_user(context)!
-	app.analytics.log(
-		subject: user.id
-		object: 'app.req.url'
-		event: .http_request
-	)
+pub fn (mut app Authenticator) log_analytics(token string) ! {
+	user := app.get_user(token)!
+	// app.analytics.log(
+	// 	subject: user.id
+	// 	object: 'app.req.url'
+	// 	event: .http_request
+	// )
 }
 
 pub fn (mut app Authenticator) get_access_token(context vweb.Context) ?SignedJWT {
 	mut access_token_str := context.get_cookie('access_token') or {
-		// logger.debug('Access token coookie not found.')
+		app.logger.debug('Access token coookie not found.')
 		return none
 	}
 	access_token := SignedJWT(access_token_str).decode() or {
-		// logger.error('Failed to decode user\'s access token: ${err}')
+		app.logger.error('Failed to decode user\'s access token: ${err}')
 		return none
 	}
 	if access_token.is_expired() {
@@ -117,3 +115,47 @@ pub fn (mut app Authenticator) get_access_token(context vweb.Context) ?SignedJWT
 	}
 	return SignedJWT(access_token_str)
 }
+
+
+
+pub struct AccessRequest {
+	asset_id    string
+	access_type authorization.AccessType
+}
+
+pub struct AuthorizeParams {
+	asset_id    string
+	access_type authorization.AccessType
+	access_token string
+}
+
+// // TODO
+// pub fn (mut app Authenticator) authorize(req AccessRequest, context vweb.Context) ! {
+// 	app.logger.debug('Authorizing access request ${req}')
+// 	user := app.get_user(context) or { return error('user not logged in') }
+// 	return app.authorizer.authorize(
+// 		accessor: user.id
+// 	)
+// }
+
+// TODO
+pub fn (mut app Authenticator) authorize(params AuthorizeParams) !bool {
+	app.logger.debug('Authorizing access request')
+	user := app.get_user(params.access_token) or { 
+		return error('user not logged in') 
+	}
+	return app.authorizer.authorize(
+		accessor: user.id
+	)
+}
+
+// pub fn (mut app Authenticator) authorize(req AccessRequest) !bool {
+// 	app.logger.debug('Authorizing access request ${req}')
+// 	// todo
+// 	user := app.get_user() or { return error('user not logged in') }
+// 	return app.authorizer.authorize(
+// 		accessor: user.id
+// 	)
+// }
+
+// TODO: protect_route and authorize_route
