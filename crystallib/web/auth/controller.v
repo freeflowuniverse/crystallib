@@ -67,7 +67,8 @@ pub fn (mut ctrl AuthServer) login() vweb.Result {
 
 @[POST]
 pub fn (mut ctrl AuthServer) authenticate() vweb.Result {
-	ctrl.auth.authenticate(ctrl.Context) or {
+	//todo
+	ctrl.auth.authenticate('') or {
 		ctrl.set_status(400, '')
 		return ctrl.text('error: ${err}')
 	}
@@ -75,7 +76,8 @@ pub fn (mut ctrl AuthServer) authenticate() vweb.Result {
 }
 
 pub fn (mut ctrl AuthServer) get_user() vweb.Result {
-	response := ctrl.auth.get_user(ctrl.Context) or {
+	//todo
+	response := ctrl.auth.get_user('') or {
 		ctrl.set_status(400, '')
 		return ctrl.text('error: ${err}')
 	}

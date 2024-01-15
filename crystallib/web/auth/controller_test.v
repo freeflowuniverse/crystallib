@@ -11,7 +11,7 @@ const server_url = 'http://localhost:8091'
 
 fn testsuite_begin() {
 	controller := configure_controller()!
-	spawn vweb.run(&controller, 8091)
+	spawn vweb.run_at(&controller, port:8091, nr_workers:1)
 }
 
 fn configure_controller() !AuthServer {
@@ -31,7 +31,7 @@ fn configure_controller() !AuthServer {
 fn test_register() {
 	// controller := configure_controller()!
 	// spawn vweb.run(&controller, 8091)
-
+	println('registering1')
 	req := http.new_request(.post, '${auth.server_url}/register', 'test@email.com')
 	resp := req.do()!
 
@@ -45,12 +45,13 @@ fn test_register() {
 fn test_authenticate() {
 	// controller := configure_controller()!
 	// spawn vweb.run(&controller, 8092)
+	println('registering2')
 
-	req0 := http.new_request(.post, '${auth.server_url}/register', 'test@email.com')
+	req0 := http.new_request(.post, '${auth.server_url}/register', 'test@email2.com')
 	resp0 := req0.do()!
 	registration := json.decode(Registration, resp0.body)!
 
-	mut req1 := http.new_request(.post, '${auth.server_url}/register', 'test@email.com')
+	mut req1 := http.new_request(.post, '${auth.server_url}/authenticate', '')
 	req1.add_cookie(
 		name: 'access_token'
 		value: registration.tokens.access_token

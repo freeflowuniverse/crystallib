@@ -2,7 +2,7 @@ module tokens
 
 import time
 import log
-import freeflowuniverse.spiderlib.auth.jwt { SignedJWT }
+import freeflowuniverse.crystallib.web.auth.jwt { SignedJWT }
 
 @[params]
 pub struct TokenParams {
