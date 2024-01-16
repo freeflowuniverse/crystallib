@@ -66,18 +66,18 @@ fn test_hashkey() {
 fn test_filter() {
 	mut a := new(text: playbook.text2) or { panic(err) }
 
-	mut b := a.find(filter:'payment.*')!
+	mut b := a.find(filter: 'payment.*')!
 	assert b.len == 2
 
-	mut c := a.find(filter:'payment.else')!
+	mut c := a.find(filter: 'payment.else')!
 	assert c.len == 1
 
-	mut d := a.find(filter:'actor2.*')!
+	mut d := a.find(filter: 'actor2.*')!
 	assert d.len == 1
 
-	mut e := a.find(filter:'actor2.else')!
+	mut e := a.find(filter: 'actor2.else')!
 	assert e.len == 1
 
-	mut f := a.find(filter:'actor2:else2')!
+	mut f := a.find(filter: 'actor2:else2')!
 	assert f.len == 0
 }

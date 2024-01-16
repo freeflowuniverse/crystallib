@@ -77,8 +77,7 @@ fn test_filter1() ! {
 
 	mut asorted := plbook.actions_sorted()!
 
-	assert asorted.map('${it.actor}:${it.name}') == ['digital_payment:add',
-			'core:select_actor', 'core:select_circle', 'person:delete', 
-			'person:define', 'core:circle_link', 'people:circle_comment', 
-			'circle:comment', 'test:myaction', 'person:define']
+	assert asorted.map('${it.actor}:${it.name}') == ['digital_payment:add', 'core:select_actor',
+		'core:select_circle', 'person:delete', 'person:define', 'core:circle_link',
+		'people:circle_comment', 'circle:comment', 'test:myaction', 'person:define']
 }

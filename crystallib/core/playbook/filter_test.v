@@ -74,13 +74,15 @@ fn test_filter_on_circle_aaa() ! {
 fn test_filter_with_names_asterix() ! {
 	mut parser := new(text: playbook.text2)!
 	assert parser.actions.len == 13
-	assert parser.actions.map(it.name) == ['select_actor', 'select_circle', 'person_delete', 'person_define', 'circle_link',
-		'circle_comment', 'circle_comment', 'digital_payment_add','select_actor', 'test_action','select_circle','select_actor', 'person_define']
+	assert parser.actions.map(it.name) == ['select_actor', 'select_circle', 'person_delete',
+		'person_define', 'circle_link', 'circle_comment', 'circle_comment', 'digital_payment_add',
+		'select_actor', 'test_action', 'select_circle', 'select_actor', 'person_define']
 
 	sorted := parser.find(filter: '*.*')!
 	assert sorted.len == 13
-	assert sorted.map(it.name) == ['select_actor', 'select_circle', 'person_delete', 'person_define', 'circle_link',
-		'circle_comment', 'circle_comment', 'digital_payment_add','select_actor', 'test_action','select_circle','select_actor', 'person_define']
+	assert sorted.map(it.name) == ['select_actor', 'select_circle', 'person_delete', 'person_define',
+		'circle_link', 'circle_comment', 'circle_comment', 'digital_payment_add', 'select_actor',
+		'test_action', 'select_circle', 'select_actor', 'person_define']
 }
 
 // test filtering with names_filter with one empty string
@@ -94,13 +96,15 @@ fn test_filter_with_names_list_with_empty_string() ! {
 	)!
 
 	assert parser.actions.len == 13
-	assert parser.actions.map(it.name) == ['select_actor', 'select_circle', 'person_delete', 'person_define', 'circle_link',
-		'circle_comment', 'circle_comment', 'digital_payment_add','select_actor', 'test_action','select_circle','select_actor', 'person_define']
+	assert parser.actions.map(it.name) == ['select_actor', 'select_circle', 'person_delete',
+		'person_define', 'circle_link', 'circle_comment', 'circle_comment', 'digital_payment_add',
+		'select_actor', 'test_action', 'select_circle', 'select_actor', 'person_define']
 
 	filtered := parser.find(filter: '*.')!
 	assert filtered.len == 13
-	assert filtered.map(it.name) == ['select_actor', 'select_circle', 'person_delete', 'person_define', 'circle_link',
-		'circle_comment', 'circle_comment', 'digital_payment_add','select_actor', 'test_action','select_circle','select_actor', 'person_define']
+	assert filtered.map(it.name) == ['select_actor', 'select_circle', 'person_delete',
+		'person_define', 'circle_link', 'circle_comment', 'circle_comment', 'digital_payment_add',
+		'select_actor', 'test_action', 'select_circle', 'select_actor', 'person_define']
 }
 
 // test filter with names in same order as parser
@@ -111,7 +115,8 @@ fn test_filter_with_names_in_same_order() ! {
 
 	sorted := parser.find(filter: 'person_define,circle_link,circle_comment,digital_payment_add')!
 	assert sorted.len == 5
-	assert sorted.map(it.name) == ['person_define', 'circle_link', 'circle_comment', 'digital_payment_add', 'person_define']
+	assert sorted.map(it.name) == ['person_define', 'circle_link', 'circle_comment',
+		'digital_payment_add', 'person_define']
 }
 
 // test filter with names in different order than parser
@@ -120,10 +125,13 @@ fn test_filter_with_names_in_different_order() ! {
 		text: playbook.text2
 	)!
 
-	sorted := parser.find(filter: 'people.circle_comment,person_define,digital_payment_add,person_delete,circle_link')!
-	
+	sorted := parser.find(
+		filter: 'people.circle_comment,person_define,digital_payment_add,person_delete,circle_link'
+	)!
+
 	assert sorted.len == 6
-	assert sorted.map(it.name) == ['person_delete', 'person_define', 'circle_link', 'circle_comment', 'digital_payment_add', 'person_define']
+	assert sorted.map(it.name) == ['person_delete', 'person_define', 'circle_link', 'circle_comment',
+		'digital_payment_add', 'person_define']
 }
 
 // test filter with only two names in filter
@@ -136,5 +144,5 @@ fn test_filter_with_only_two_names_in_filter() ! {
 
 	sorted := parser.find(filter: 'person_define,person_delete')!
 	assert sorted.len == 3
-	assert sorted.map(it.name) == ['person_delete','person_define', 'person_define']
+	assert sorted.map(it.name) == ['person_delete', 'person_define', 'person_define']
 }
