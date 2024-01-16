@@ -4,7 +4,6 @@ import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.data.paramsparser
 // import os
-import log
 
 @[heap]
 pub struct Logger {

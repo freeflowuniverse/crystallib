@@ -1,6 +1,5 @@
 module play
 
-import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.core.texttools.regext

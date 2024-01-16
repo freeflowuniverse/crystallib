@@ -1,7 +1,5 @@
 module play
 
-import json
-
 pub struct Base {
 pub mut:
 	session ?&Session
