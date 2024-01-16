@@ -28,28 +28,27 @@ pub mut:
 	pull bool
 }
 
-pub fn (mut sites Zola) site_new(args ZSiteArgs) !&ZSite {
-	path_build := '${sites.path_build}/${args.name}'
-	path_publish := '${sites.path_publish}/${args.name}'
+// pub fn (mut sites Zola) site_new(args ZSiteArgs) !&ZolaSite {
+// 	path_build := '${sites.path_build}/${args.name}'
+// 	path_publish := '${sites.path_publish}/${args.name}'
 
-	mut site := ZSite{
-		name: args.name
-		// url: args.url
-		path_build: pathlib.get_dir(path: path_build, create: true)!
-		path_publish: pathlib.get_dir(path: path_publish, create: true)!
-		zola: &sites
-	}
-	sites.sites << &site
+// 	mut site := ZolaSite{
+// 		name: args.name
+// 		// url: args.url
+// 		path_build: pathlib.get_dir(path: path_build, create: true)!
+// 		path_publish: pathlib.get_dir(path: path_publish, create: true)!
+// 	}
+// 	sites.sites << &site
 
-	// mut gs := sites.gitstructure
-	// mut locator := gs.locator_new(args.url)!
-	// mut repo := gs.repo_get(locator: locator, reset: false, pull: false)!
-	// sites.gitrepos[repo.key()] = repo
-	// site.gitrepokey = repo.key()
-	// mut path_site_dir := locator.path_on_fs()!
+// 	// mut gs := sites.gitstructure
+// 	// mut locator := gs.locator_new(args.url)!
+// 	// mut repo := gs.repo_get(locator: locator, reset: false, pull: false)!
+// 	// sites.gitrepos[repo.key()] = repo
+// 	// site.gitrepokey = repo.key()
+// 	// mut path_site_dir := locator.path_on_fs()!
 
-	return &site
-}
+// 	return &site
+// }
 
 pub fn (mut self ZSite) prepare() ! {
 	// os.mkdir_all('${site.path_build.path}/src')!

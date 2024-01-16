@@ -29,36 +29,39 @@ pub struct SiteConfig {
 	url          string
 	path_content string
 	path_static string
-	path_build   string [required] = '/tmp/zola/build'
-	path_publish string [required] = '/tmp/zola/publish'
+	path_build   string = '/tmp/zola/build' @[required]
+	path_publish string = '/tmp/zola/publish' @[required]
 }
 
-pub fn new_site(config SiteConfig) !ZolaSite {
-	zola_installer.install()!
+pub fn (mut sites Zola) site_new(args SiteConfig) !&ZolaSite {
+	path_build := '${sites.path_build}/${args.name}'
+	path_publish := '${sites.path_publish}/${args.name}'
 
-	return ZolaSite{
+	mut site :=  ZolaSite{
 		path_content: pathlib.get_dir(
-			path: config.path_content
+			path: args.path_content
 			create: true
 		)!
 		path_static: pathlib.get_dir(
-			path: config.path_static
+			path: args.path_static
 			create: true
 		)!
 		path_build: pathlib.get_dir(
-			path: config.path_build
+			path: args.path_build
 			create: true
 		)!
 		path_publish: pathlib.get_dir(
-			path: config.path_publish
+			path: args.path_publish
 		)!
 		tailwind: tailwind.new(
-			name: config.name
-			path_build: config.path_build
-			content_paths: ['${config.path_build}/templates/**/*.html',
-				'${config.path_build}/content/**/*.md']
+			name: args.name
+			path_build: args.path_build
+			content_paths: ['${args.path_build}/templates/**/*.html',
+				'${args.path_build}/content/**/*.md']
 		)!
 	}
+	sites.sites << &site
+	return &site
 }
 
 pub fn (mut site ZolaSite) prepare() ! {
@@ -71,11 +74,12 @@ pub fn (mut site ZolaSite) prepare() ! {
 	preprocessor.preprocess('${site.path_build.path}/content')!
 }
 
-pub fn (mut site ZolaSite) generate() ! {
-	if site.changed() == false {
+pub fn (mut site ZolaSite) generate(gitrepos_status map[string]RepoStatus) ! {
+	if !site.changed(gitrepos_status) {
 		return
 	}
 	console.print_header(' site generate: ${site.name} on ${site.path_build.path}')
+	
 	css_source := '${site.path_build.path}/css/index.css'
 	css_dest := '${site.path_build.path}/static/css/index.css'
 	site.tailwind.compile(css_source, css_dest)!
@@ -141,18 +145,18 @@ fn (mut site ZolaSite) gitrepo_keys() []string {
 }
 
 // is there change in repo since last build?
-fn (mut site ZolaSite) changed() bool {
+fn (mut site ZolaSite) changed(gitrepos_status map[string]RepoStatus) bool {
 	mut change := false
 	gitrepokeys := site.gitrepo_keys()
-	// todo
-	// for key, status in site.sites.gitrepos_status {
-	// 	if key in gitrepokeys {
-	// 		// means this site is using that gitrepo, so if it changed the site changed
-	// 		if status.revlast != status.revlast {
-	// 			change = true
-	// 		}
-	// 	}
-	// }
+
+	for key, status in gitrepos_status {
+		if key in gitrepokeys {
+			// means this site is using that gitrepo, so if it changed the site changed
+			if status.revlast != status.revlast {
+				change = true
+			}
+		}
+	}
 	return true
 }
 

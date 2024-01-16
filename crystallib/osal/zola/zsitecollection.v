@@ -2,6 +2,7 @@ module zola
 
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.osal.gittools
 // import freeflowuniverse.crystallib.osal
 // import log
 // import os
@@ -10,7 +11,7 @@ import freeflowuniverse.crystallib.ui.console
 
 pub struct ZSiteCollection {
 pub mut:
-	site       &ZSite       @[skip; str: skip]
+	site       &ZolaSite       @[skip; str: skip]
 	name       string
 	url        string
 	reset      bool
@@ -26,7 +27,7 @@ pub mut:
 	url  string
 }
 
-pub fn (mut b ZSite) collection_add(args_ ZSiteCollectionArgs) ! {
+pub fn (mut b ZolaSite) collection_add(args_ ZSiteCollectionArgs) ! {
 	mut args := args_
 	mut c := ZSiteCollection{
 		url: args.url
@@ -36,12 +37,13 @@ pub fn (mut b ZSite) collection_add(args_ ZSiteCollectionArgs) ! {
 	b.collections << c
 }
 
-pub fn (mut self ZSiteCollection) prepare() ! {
+pub fn (mut self ZSiteCollection) prepare(gs_ gittools.GitStructure, gitrepos_ map[string]gittools.GitRepo) ! {
 	console.print_header(' zola collection prepare: ${self.url}')
-	mut gs := self.site.zola.gitstructure
+	mut gs := gs_
 	mut locator := gs.locator_new(self.url)!
 	mut repo := gs.repo_get(locator: locator, reset: false, pull: false)!
-	self.site.zola.gitrepos[repo.key()] = repo
+	mut gitrepos := gitrepos_.clone()
+	gitrepos[repo.key()] = repo
 	self.gitrepokey = repo.key()
 	self.path = locator.path_on_fs()!
 	self.path.link('${self.site.path_build.path}/src/${self.name}', true)!
