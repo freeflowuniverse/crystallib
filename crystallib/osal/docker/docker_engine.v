@@ -56,16 +56,17 @@ pub fn (mut e DockerEngine) load() ! {
 pub fn (mut e DockerEngine) containers_load() ! {
 	e.containers = []DockerContainer{}
 	mut ljob := exec(
-		cmd: "docker ps -a --no-trunc --format '{{.ID}}|{{.Names}}|{{.Image}}|{{.Command}}|{{.CreatedAt}}|{{.Ports}}|{{.State}}|{{.Size}}|{{.Mounts}}|{{.Networks}}|{{.Labels}}'"
+		// we used || because sometimes the command has | in it and this will ruin all subsequent columns
+		cmd: "docker ps -a --no-trunc --format '{{.ID}}||{{.Names}}||{{.Image}}||{{.Command}}||{{.CreatedAt}}||{{.Ports}}||{{.State}}||{{.Size}}||{{.Mounts}}||{{.Networks}}||{{.Labels}}'"
 		ignore_error_codes: [6]
 		stdout: false
 	)!
 	lines := ljob.output
-	for line in lines.split_into_lines() {
+	for line in lines {
 		if line.trim_space() == '' {
 			continue
 		}
-		fields := line.split('|').map(clear_str)
+		fields := line.split('||').map(clear_str)
 		if fields.len < 11 {
 			panic('docker ps needs to output 11 parts.\n${fields}')
 		}
