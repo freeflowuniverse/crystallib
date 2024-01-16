@@ -81,14 +81,14 @@ pub fn name_fix_no_underscore(name string) string {
 
 pub fn name_fix_snake_to_pascal(name string) string {
 	x := name.replace('_', ' ')
-	pascal := x.title().replace(' ', '')
-	return pascal
+	p := x.title().replace(' ', '')
+	return p
 }
 
 pub fn name_fix_dot_notation_to_pascal(name string) string {
 	x := name.replace('.', ' ')
-	pascal := x.title().replace(' ', '')
-	return pascal
+	p := x.title().replace(' ', '')
+	return p
 }
 
 pub fn name_fix_pascal(name string) string {
