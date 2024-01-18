@@ -82,13 +82,6 @@ pub fn install(args_ InstallArgs) ! {
 		// reset: true
 	)!
 
-    //the downloader is cool, it will check the download succeeds and also check the minimum size
-	mut dest := osal.download(
-		url: url
-		minsize_kb: 40000
-		// reset: true
-	)!
-
 	// println(dest)
 
     //the cmd_add adds tailwind to ~/hero/bin and makes sure ~/hero/bin is in our profile
