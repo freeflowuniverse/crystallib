@@ -14,7 +14,7 @@ import log
 pub struct Authenticator {
 	secret string
 mut:
-	client  smtp.Client @[required]
+	config  SmtpConfig @[required]
 	backend IBackend // Backend for authenticator
 	logger  &log.Logger = &log.Logger(&log.Log{
 	level: .info
@@ -53,20 +53,21 @@ pub fn new(config AuthenticatorConfig) !Authenticator {
 	// )!
 
 	return Authenticator{
-		client: smtp.new_client(
-			server: config.smtp.server
-			from: config.smtp.from
-			port: config.smtp.port
-			username: config.smtp.username
-			password: config.smtp.password
-		)!
+		config: config.smtp
+		// client: smtp.new_client(
+		// 	server: config.smtp.server
+		// 	from: config.smtp.from
+		// 	port: config.smtp.port
+		// 	username: config.smtp.username
+		// 	password: config.smtp.password
+		// )!
 		backend: config.backend
 		logger: config.logger
 		secret: config.secret
 	}
 }
 
-@[params]
+@[params] 
 pub struct SendMailConfig {
 	email string
 	mail  VerificationMail
@@ -112,9 +113,17 @@ pub fn (mut auth Authenticator) send_verification_mail(config SendMailConfig) ! 
 		body: '${config.mail.body}\n${link}'
 	}
 
-	auth.client.send(mail) or { panic('Error resolving email address') }
+		mut client:= smtp.new_client(
+			server: auth.config.server
+			from: auth.config.from
+			port: auth.config.port
+			username: auth.config.username
+			password: auth.config.password
+		)!
+
+	client.send(mail) or { panic('Error resolving email address') }
 	auth.logger.debug('Email Authenticator: Sent authentication email to ${config.email}')
-	auth.client.quit() or { panic('Could not close connection to server') }
+	client.quit() or { panic('Could not close connection to server') }
 }
 
 // sends mail with login link
@@ -136,9 +145,18 @@ pub fn (mut auth Authenticator) send_login_link(config SendMailConfig) ! {
 		body: '${config.mail.body}\n${link}'
 	}
 
-	auth.client.send(mail) or { panic('Error resolving email address') }
+	mut client:= smtp.new_client(
+			server: auth.config.server
+			from: auth.config.from
+			port: auth.config.port
+			username: auth.config.username
+			password: auth.config.password
+		)!
+
+
+	client.send(mail) or { panic('Error resolving email address') }
 	auth.logger.debug('Email Authenticator: Sent login link to ${config.email}')
-	auth.client.quit() or { panic('Could not close connection to server') }
+	client.quit() or { panic('Could not close connection to server') }
 }
 
 pub struct LoginAttempt {

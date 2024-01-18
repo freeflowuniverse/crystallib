@@ -1,6 +1,6 @@
 module auth
 
-import freeflowuniverse.spiderlib.auth.jwt
+import freeflowuniverse.crystallib.web.auth.jwt
 import freeflowuniverse.crystallib.web.auth.email
 import freeflowuniverse.crystallib.web.auth.session
 import freeflowuniverse.crystallib.web.auth.tokens
@@ -20,12 +20,30 @@ pub struct Authenticator {
 	refresh_secret string = jwt.create_secret() // secret used for signing/verifying refresh tokens
 	access_secret  string = jwt.create_secret() // secret used for signing/verifying refresh tokens
 pub mut:
-	identity   identity.IdentityManager @[vweb_global]
-	email      ?email.Authenticator     @[vweb_global]
-	analytics  analytics.Analyzer       @[vweb_global]
-	authorizer authorization.Authorizer @[vweb_global]
-	session    session.SessionAuth      @[vweb_global]
-	tokens     tokens.Tokens            @[vweb_global]
+	identity   identity.IdentityManager 
+	email      ?email.Authenticator     
+	// analytics  analytics.Analyzer       
+	authorizer authorization.Authorizer 
+	session    session.SessionAuth      
+	tokens     tokens.Tokens            
+	route      string
+	// backend   DatabaseBackend
+	logger &log.Logger = &log.Logger(&log.Log{
+	level: .debug
+})
+}
+// Authenticator deals and authenticates refresh and access tokens
+pub struct Authenticator2 {
+	// vweb.Context
+	refresh_secret string = jwt.create_secret() // secret used for signing/verifying refresh tokens
+	access_secret  string = jwt.create_secret() // secret used for signing/verifying refresh tokens
+pub mut:
+	identity   identity.IdentityManager 
+	email      ?email.Authenticator     
+	// analytics  analytics.Analyzer       
+	authorizer authorization.Authorizer 
+	session    session.SessionAuth      
+	tokens     tokens.Tokens            
 	route      string
 	// backend   DatabaseBackend
 	logger &log.Logger = &log.Logger(&log.Log{
@@ -48,7 +66,7 @@ pub struct AuthenticatorConfig {
 pub fn new(config AuthenticatorConfig) !Authenticator {
 	return Authenticator{
 		identity: identity.new()!
-		analytics: analytics.new()!
+		// analytics: analytics.new()!
 		access_secret: config.access_secret
 		session: session.new()!
 		refresh_secret: config.refresh_secret

@@ -2,7 +2,6 @@ module gittools
 
 import os
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.ui.console
 // import time
 
 // the factory for getting the gitstructure

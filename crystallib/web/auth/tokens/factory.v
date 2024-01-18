@@ -1,6 +1,6 @@
 module tokens
 
-import freeflowuniverse.spiderlib.auth.jwt
+import freeflowuniverse.crystallib.web.auth.jwt
 import log
 
 // Authenticator deals and authenticates refresh and access tokens

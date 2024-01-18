@@ -1,10 +1,8 @@
 module play
 
-import json
-
 pub struct Base {
 pub mut:
-	session ?&Session
+	session ?&Session @[skip; str: skip]
 	name    string
 }
 

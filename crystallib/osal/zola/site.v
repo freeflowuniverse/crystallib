@@ -16,6 +16,7 @@ pub mut:
 	name         string
 	path_content pathlib.Path
 	path_build   pathlib.Path
+	path_static   pathlib.Path
 	path_publish pathlib.Path
 	collections  []ZSiteCollection
 	gitrepokey   string
@@ -27,8 +28,9 @@ pub struct SiteConfig {
 	name         string
 	url          string
 	path_content string
-	path_build   string = '/tmp/zola/build' @[required]
-	path_publish string = '/tmp/zola/publish' @[required]
+	path_static string
+	path_build   string [required] = '/tmp/zola/build'
+	path_publish string [required] = '/tmp/zola/publish'
 }
 
 pub fn new_site(config SiteConfig) !ZolaSite {
@@ -37,6 +39,10 @@ pub fn new_site(config SiteConfig) !ZolaSite {
 	return ZolaSite{
 		path_content: pathlib.get_dir(
 			path: config.path_content
+			create: true
+		)!
+		path_static: pathlib.get_dir(
+			path: config.path_static
 			create: true
 		)!
 		path_build: pathlib.get_dir(
@@ -61,6 +67,7 @@ pub fn (mut site ZolaSite) prepare() ! {
 		os.rmdir_all('${site.path_publish.path}/content')!
 	}
 	os.cp_all(site.path_content.path, '${site.path_build.path}/content', true)!
+	os.cp_all(site.path_content.path, '${site.path_build.path}/static/', false)!
 	preprocessor.preprocess('${site.path_build.path}/content')!
 }
 
@@ -150,16 +157,12 @@ fn (mut site ZolaSite) changed() bool {
 }
 
 fn (mut site ZolaSite) template_install() ! {
-	// if book.title == '' {
-	// 	book.title = book.name
-	// }
-
 	config := $tmpl('./templates/config.toml')
 	mut config_dest := pathlib.get('${site.path_build.path}/config.toml')
 	config_dest.write(config)!
 
 	os.cp('${os.dir(@FILE)}/templates/vercel.json', '${site.path_build.path}/vercel.json')!
 	os.cp_all('${os.dir(@FILE)}/templates/css', '${site.path_build.path}/css', true)!
-	os.cp_all('${os.dir(@FILE)}/templates/templates', '${site.path_build.path}/templates',
-		true)!
+	os.cp_all('${os.dir(@FILE)}/templates/templates', '${site.path_build.path}/templates', true)!
+	os.cp_all('${os.dir(@FILE)}/templates/static', '${site.path_build.path}/static', true)!
 }
