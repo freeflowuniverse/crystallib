@@ -1,0 +1,5 @@
+example.org:53 {
+    log
+    errors
+    file ../dnszones/db.example.org
+}

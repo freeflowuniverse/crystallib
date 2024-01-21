@@ -1,5 +1,4 @@
 module httpconnection
-
 import net.http { Header, Method }
 import freeflowuniverse.crystallib.clients.redisclient { Redis }
 
@@ -32,19 +31,6 @@ pub mut:
 pub struct HTTPConnections {
 pub mut:
 	connections map[string]&HTTPConnection
-}
-
-@[params]
-pub struct Request {
-pub mut:
-	method        Method
-	prefix        string
-	id            string
-	params        map[string]string
-	data          string
-	cache_disable bool
-	header        Header
-	dict_key      string
 }
 
 pub struct Result {

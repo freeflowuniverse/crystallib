@@ -2,7 +2,7 @@ module main
 
 import vweb
 import db.sqlite
-import freeflowuniverse.crystallib.web.components
+// import freeflowuniverse.crystallib.web.components
 import os
 
 const pubpath = os.dir(@FILE) + '/public'
@@ -47,6 +47,73 @@ fn new_app() &App {
 }
 
 fn midleware_debug(mut ctx vweb.Context) bool {
-	// ...
+	println(ctx.req)
+	println(ctx.query)
+	println(ctx.form)
 	return true
+}
+
+struct Object {
+	title       string
+	description string
+}
+
+
+@['/']
+pub fn (mut app App) page_home() vweb.Result {
+	// all this constants can be accessed by src/templates/page/home.html file.
+	page_title := 'V is the new V'
+	v_url := 'https://github.com/vlang/v'
+
+	list_of_object := [
+		Object{
+			title: 'One good title'
+			description: 'this is the first'
+		},
+			Object{
+			title: 'Other good title'
+			description: 'more one'
+		},
+	]
+	// $vweb.html() in `<folder>_<name> vweb.Result ()` like this
+	// render the `<name>.html` in folder `./templates/<folder>`
+	return $vweb.html()
+}
+
+@['/register']
+pub fn (mut app App) page_register() vweb.Result {
+	description:='
+		Welcome to the ThreeFold Ecosystem, please register your interest.
+	'
+	legal:='		
+	'
+	return $vweb.html()
+}
+
+
+@['/foo']
+fn (mut app App) world() vweb.Result {
+	return app.text('World')
+}
+
+@['/register_submit'; post]
+fn (mut app App) register_submit() vweb.Result {
+	println(app.form)
+	return app.json(app.form)
+}
+
+@['/email_check'; get]
+fn (mut app App) register_check() vweb.Result {
+	println(app.query)
+	email:= app.query["email"] or {""}
+	if ! email.contains("@"){
+		return app.text("email is not in right format, please fix.")
+	}
+	return app.text("")
+}
+
+
+@['/editor']
+pub fn (mut app App) page_editor() vweb.Result {
+	return $vweb.html()
 }

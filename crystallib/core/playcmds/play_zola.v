@@ -26,7 +26,7 @@ pub fn play_website(mut session play.Session) ! {
 	}
 
 	if coderoot == '' {
-		coderoot = session.context.coderoot()
+		coderoot = session.context.coderoot()!
 	}
 
 	mut websites := zola.new(
