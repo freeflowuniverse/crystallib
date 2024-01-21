@@ -1,0 +1,36 @@
+node_groups:
+@for deployment in j.deployments
+  - name: @{deployment.config.name}_group
+    nodes_count: @{deployment.quantity} # amount of nodes to be found
+    free_cpu: @{deployment.config.nrcores} # number of logical cores
+    free_mru: @{deployment.config.memory_mb} # amount of memory in MB
+    free_ssd: 100 # amount of ssd storage in GB
+    free_hdd: 50 # amount of hdd storage in GB
+    dedicated: false # are nodes dedicated
+    pubip4: @{deployment.config.pub_ip} # should the nodes have free ip v4
+    pubip6: @{deployment.config.pub_ip} # should the nodes have free ip v6
+    certified: false # should the nodes be certified(if false the nodes could be certified of diyed) 
+    region: @{deployment.config.region} # region could be the name of the continents the nodes are located in (africa, americas, antarctic, antarctic ocean, asia, europe, oceania, polar)
+@end
+vms:
+@for deployment in j.deployments
+  - name: @{deployment.config.name}
+    vms_count: @{deployment.quantity} # amount of vms with the same configurations
+    node_group: @{deployment.config.name}_group # the name of the predefined group of nodes
+    cpu: @{deployment.config.nrcores} # number of logical cores
+    mem: @{deployment.config.memory_mb} # amount of memory in MB
+    pubip4: @{deployment.config.pub_ip}
+    pubip6: @{deployment.config.pub_ip}
+    flist: @{deployment.config.flist}
+    entry_point: /sbin/zinit init
+    root_size: 0 # root size in GB
+    ssh_key: @{deployment.config.ssh_key} # the name of the predefined ssh key
+@end
+
+ssh_keys: # map of ssh keys with key=name and value=the actual ssh key
+@for key, val in j.ssh_keys
+  @{key}: ${val}
+@end
+
+mnemonic: @{j.mneumonic} # mnemonic of the user
+network: @{j.network} # eg: main, test, qa, dev
