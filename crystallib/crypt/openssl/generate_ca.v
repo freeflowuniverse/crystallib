@@ -51,13 +51,13 @@ pub fn (mut ossl OpenSSL) generate_ca(args OpenSSLGenerateArgs) !OpenSSLKey {
 
 	'
 
-	node.exec(cmd)!
+	node.exec(cmd: cmd)!
 
 	cmd2 := '
 	openssl req -newkey rsa:4096 -nodes -sha256 -keyout ${r.path_key.path} -addext "subjectAltName = DNS:${args.domain}" -subj "/C=BE/ST=Ghent/L=Something/O=Global Security/OU=IT Department/CN=${args.domain}" -x509 -days 365 -out ${r.path_cert.path}
 	'
 
-	node.exec(cmd2)!
+	node.exec(cmd: cmd2)!
 
 	r.hexhash()!
 

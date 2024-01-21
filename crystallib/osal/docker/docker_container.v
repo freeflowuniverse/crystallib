@@ -69,7 +69,7 @@ pub fn (mut container DockerContainer) halt() ! {
 
 // delete docker container
 pub fn (mut container DockerContainer) delete() ! {
-	console.print_header(' CONTAINER DELETE: ${container.name}')
+	println(' CONTAINER DELETE: ${container.name}')
 
 	exec(cmd: 'docker rm ${container.id} -f', stdout: false)!
 	mut x := 0

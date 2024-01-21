@@ -24,7 +24,7 @@ pub fn (mut ossl OpenSSL) generate(args OpenSSLGenerateArgs) !OpenSSLKey {
 	mut b := builder.new()!
 	mut node := b.node_local()!
 
-	node.exec(cmd)!
+	node.exec(cmd: cmd)!
 
 	r.hexhash()!
 

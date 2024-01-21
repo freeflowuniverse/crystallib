@@ -63,7 +63,7 @@ fn (mut b DockerComposeRecipe) render() ! {
 pub fn (mut b DockerComposeRecipe) start() ! {
 	b.render()!
 	println(b)
-	console.print_header(' start compose file in: ${b.path}')
+	println(' start compose file in: ${b.path}')
 	os.mkdir_all(b.path)!
 	file_write('${b.path}/docker-compose.yml', b.content)!
 	for composeitem in b.items {
