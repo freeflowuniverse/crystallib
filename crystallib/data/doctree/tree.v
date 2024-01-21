@@ -1,6 +1,7 @@
 module doctree
 
 import log
+import freeflowuniverse.crystallib.core.pathlib
 // import v.embed_file
 
 // import freeflowuniverse.crystallib.core.smartid
@@ -176,4 +177,23 @@ pub fn (mut tree Tree) file_exists(name string) bool {
 		}
 	}
 	return true
+}
+
+pub fn (mut tree Tree) write(p string)!{
+	path := pathlib.get_dir(path: p, create: true)!
+	
+	for name, mut collection in tree.collections{
+		dir := pathlib.get_dir(path: path.path + '/' + name, create: true)!
+		for _, mut page in collection.pages{
+			page.export(dest: dir.path + '/' + page.path.name())!
+		}
+
+		for _, mut file in collection.files{
+			file.copy(dir.path + '/' + file.path.name())!
+		}
+
+		for _, mut image in collection.images{
+			image.copy(dir.path + '/' + image.path.name())!
+		}
+	}
 }

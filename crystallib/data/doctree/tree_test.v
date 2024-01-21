@@ -79,3 +79,12 @@ fn test_page_get() {
 		assert false, 'this should fail: faulty pointer ${apple_ptr_faulty1}'
 	}
 }
+
+fn test_write_tree(){
+	mut tree := tree_create(name: doctree.tree_name)!
+	tree.scan(
+		path: doctree.collections_path
+	)!
+
+	tree.write('/tmp/tree_write')!
+}
