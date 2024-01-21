@@ -5,20 +5,17 @@ import freeflowuniverse.crystallib.core.smartid
 // import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.data.doctree
+// import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.core.playbook
-import os
 
-__global (
-	bizmodels shared map[string]BizModel
-)
+
+// import os
 
 pub struct BizModel {
 pub mut:
 	sheet     spreadsheet.Sheet
 	params    BizModelArgs
 	employees map[string]&Employee
-	// currencies currency.Currencies
 }
 
 @[params]
@@ -30,13 +27,14 @@ pub mut:
 	git_reset   bool
 	git_root    string
 	git_pull    bool
+	mdbook_source string 
 	mdbook_name string // if empty will be same as name of bizmodel
 	mdbook_path string
 	mdbook_dest string // if empty is /tmp/mdbooks/$name
 	cid         smartid.CID
 }
 
-pub fn new(args_ BizModelArgs) !doctree.MDBook {
+pub fn new(args_ BizModelArgs) !BizModel {
 	mut args := args_
 
 	// mut cs := currency.new()
@@ -48,10 +46,6 @@ pub fn new(args_ BizModelArgs) !doctree.MDBook {
 	}
 	bm.load()!
 
-	lock bizmodels {
-		bizmodels[args.name] = bm
-	}
-
 	if args.name == '' {
 		return error('bizmodel needs to have a name')
 	}
@@ -62,11 +56,11 @@ pub fn new(args_ BizModelArgs) !doctree.MDBook {
 		args.mdbook_name = args.name
 	}
 
-	tree_name := 'bizmodel_${args.name}'
-	mut tree := doctree.new(name: tree_name)!
+	// tree_name := 'bizmodel_${args.name}'
+	// mut tree := doctree.new(name: tree_name)!
 
-	mp := macroprocessor_new(args_.name)
-	tree.macroprocessor_add(mp)!
+	// mp := macroprocessor_new(args_.name)
+	// tree.macroprocessor_add(mp)!
 
 	if args.git_url.len > 0 {
 		args.path = gittools.code_get(
@@ -78,50 +72,55 @@ pub fn new(args_ BizModelArgs) !doctree.MDBook {
 		)!
 	}
 
-	tree.scan(
-		name: 'crystal_manual'
-		git_url: 'https://github.com/freeflowuniverse/crystallib/tree/development/manual/biz' // TODO: needs to be come development
-		heal: false
-		cid: args.cid
-	)!
 
-	tree.scan(
-		name: tree_name
-		path: args.path
-		heal: true
-		cid: args.cid
-	)!
 
-	mut book := doctree.book_generate(
-		path: args.mdbook_path
-		name: args.mdbook_name
-		tree: tree
-		dest: args.mdbook_dest
-	)!
+	// tree.scan(
+	// 	name: 'crystal_manual'
+	// 	git_url: 'https://github.com/freeflowuniverse/crystallib/tree/development/manual/biz' // TODO: needs to be come development
+	// 	heal: false
+	// 	cid: args.cid
+	// )!
 
-	return *book
+	// tree.scan(
+	// 	name: tree_name
+	// 	path: args.path
+	// 	heal: true
+	// 	cid: args.cid
+	// )!
+
+	// mut book := doctree.book_generate(
+	// 	path: args.mdbook_path
+	// 	name: args.mdbook_name
+	// 	tree: tree
+	// 	dest: args.mdbook_dest
+	// )!
+
+	// return *book
+	return bm
 }
 
 pub fn (mut m BizModel) load() ! {
-	println('ACTIONS LOAD ${m.params.name}')
+	println('BIZMODEL LOAD ${m.params.name}')
 
 	// m.replace_smart_ids()!
-	mut tree := doctree.new(name: 'bizmodel_${m.params.name}')!
-	tree.scan(path: m.params.path)!
-	mut actions_playbooks := playbook.PlayBook{}
-	for playbook in tree.playbooks.values() {
-		for page in playbook.pages.values() {
-			if d := page.doc {
-				actions_playbooks.actions << d.actions()
-			}
-		}
-	}
+	// mut tree := doctree.new(name: 'bizmodel_${m.params.name}')!
+	// tree.scan(path: m.params.path)!
+	// mut actions_playbooks := playbook.PlayBook{}
+	// for playbook in tree.playbooks.values() {
+	// 	for page in playbook.pages.values() {
+	// 		if d := page.doc {
+	// 			actions_playbooks.actions << d.actions()
+	// 		}
+	// 	}
+	// }
+
+	mut plbook := playbook.new(path: m.params.path)!
 
 	// ap := playbook.parse(path: m.params.path, defaultcircle: 'bizmodel_${m.params.name}')!
-	m.revenue_actions(actions_playbooks)!
-	m.hr_actions(actions_playbooks)!
-	m.funding_actions(actions_playbooks)!
-	m.overhead_actions(actions_playbooks)!
+	m.revenue_actions(plbook)!
+	m.hr_actions(plbook)!
+	m.funding_actions(plbook)!
+	m.overhead_actions(plbook)!
 
 	// tr.scan(
 	// 	path: wikipath
@@ -142,4 +141,12 @@ pub fn (mut m BizModel) load() ! {
 	// 	tags: 'cashflow'
 	// 	descr: 'Cashflow of company.'
 	// )!
+
+	m.process_macros()!
+
 }
+
+
+
+
+

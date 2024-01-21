@@ -1,16 +1,18 @@
 module bizmodel
 
-import freeflowuniverse.crystallib.data.doctree
 import os
 
 fn test_scan() ! {
-	mut tree := doctree.new(name: 'test_tree')!
-	tree.scan(
-		name: 'test_tree'
-		path: '${os.dir(@FILE)}/example/wiki'
-		heal: true
-	)!
-	rlock knowledgetrees {
-		println(knowledgetrees)
-	}
+
+	p1:="${os.dir(@FILE)}/example/params"
+	p2:="${os.dir(@FILE)}/example/wikisource"
+
+	mut bm := new(name: 'test',
+		path:p1
+		mdbook_source:p2)!
+
+	println(bm)
+
+
+
 }

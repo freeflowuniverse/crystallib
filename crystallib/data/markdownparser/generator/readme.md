@@ -2,7 +2,7 @@
 to make sure all types are generated do
 
 ```bash
-run ~/code/github/freeflowuniverse/crystallib/crystallib/data/markdownparser/generator/generator.v
+vrun ~/code/github/freeflowuniverse/crystallib/crystallib/data/markdownparser/generator/generator.v
 ```
 
 make sure you adjust the types you want in generator.v see
