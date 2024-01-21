@@ -261,12 +261,14 @@ fn (mut page Page) process_includes(mut include_tree []string) ! {
 			mut page_to_include := page.tree.page_get(include.content) or {
 				println('debugzo')
 				msg := "include:'${include.content}' not found for page:${page.path.path}"
-				page.tree.playbooks[playbook.name].error(
-					path: page.path
-					msg: 'include ${msg}'
-					cat: .page_not_found
-				)
-				continue
+				if mut p := page.tree.playbooks[playbook.name]{
+					p.error(
+						path: page.path
+						msg: 'include ${msg}'
+						cat: .page_not_found
+					)
+					continue
+				}else {panic('bug')}
 			}
 			$if debug {
 				println('Found page in playbook ${page_to_include.playbook_name}')

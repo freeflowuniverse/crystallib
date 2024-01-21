@@ -302,10 +302,8 @@ pub fn (mut job Job) wait() ! {
 	if job.status != .running && job.status != .init {
 		return error('can only wait for running job')
 	}
-	mut counter := 0
+	
 	for {
-		counter += 1
-		// println("loop $counter")
 		result := job.process()!
 		// println(result)
 		if result.done {

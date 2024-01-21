@@ -3,7 +3,6 @@ module playbook
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct PLayBookAddArgs {

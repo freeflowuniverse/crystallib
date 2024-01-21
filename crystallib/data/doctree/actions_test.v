@@ -1,19 +1,16 @@
 module doctree
 
-import freeflowuniverse.crystallib.osal.gittools
-import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.data.paramsparser
 import os
 
 const playbooks_path = os.dir(@FILE) + '/testdata/playbooks'
 
 fn test_actionscan() ! {
-	mut tree := new()!
+	mut tree := tree_create()!
 	tree.scan(
 		path: doctree.playbooks_path
 		heal: false
 	)!
-
+	println(tree)
 	mut c := tree.playbook_get('actions')!
 
 	assert c.page_exists('actions1')

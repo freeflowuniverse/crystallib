@@ -3,9 +3,7 @@ module doctree
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.osal.gittools
-import freeflowuniverse.crystallib.core.texttools
 import os
-import freeflowuniverse.crystallib.core.smartid
 
 @[params]
 pub struct TreeScannerArgs {

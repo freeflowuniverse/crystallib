@@ -1,6 +1,5 @@
 module gittools
 
-import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
 
 @[params]
@@ -78,8 +77,7 @@ pub fn (mut gitstructure GitStructure) repo_exists(l GitLocator) !bool {
 		return false
 	}
 	if res.len > 1 {
-		repos := res.map('- ${it.addr.account}.${it.addr.name}').join_lines()
-		return error('Found more than 1 repo with locator (exist).\n${l}\n${res}')
+		return error('Found more than 1 repo with locator (exist).\n${l}\n$res')
 	}
 	return true
 }

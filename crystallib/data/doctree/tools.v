@@ -11,10 +11,10 @@ fn name_parse(name string) !(string, string) {
 			return error("format is playbook:name or just 'name'")
 		}
 		playbook := texttools.name_fix(splitted[0])
-		name_ := texttools.name_fix(splitted[1])
+		name_ := texttools.name_fix_no_ext(splitted[1])
 		return playbook, name_
 	} else {
-		name_ := texttools.name_fix(name)
+		name_ := texttools.name_fix_no_ext(name)
 		return '', name_
 	}
 	return '', ''

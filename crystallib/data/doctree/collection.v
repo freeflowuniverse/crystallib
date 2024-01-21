@@ -268,6 +268,6 @@ fn (playbook Collection) errors_report(where string) ! {
 		p.delete()!
 		return
 	}
-	c := $tmpl('template/errors_playbook.md')
+	c := $tmpl('template/errors.md')
 	p.write(c)!
 }
